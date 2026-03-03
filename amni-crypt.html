@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Amni-Crypt — 1024-bit File Encryption | AMNI-SCIENT</title>
+<meta name="description" content="Amni-Crypt: military-grade file encryption with proprietary 1024-bit block cipher, 16-round SPN, and Shadow Texture Protocol. Free on Android.">
+<meta name="keywords" content="amni-crypt,file encryption,1024-bit cipher,SPN,shadow texture protocol,android encryption,privacy">
+<meta property="og:title" content="Amni-Crypt — 1024-bit File Encryption">
+<meta property="og:description" content="Proprietary 1024-bit block cipher with dual-stream Shadow Texture Protocol. Encrypt any file. Free on Android.">
+<meta property="og:type" content="product">
+<meta property="og:url" content="https://amni-scient.com/amni-crypt">
+<link rel="canonical" href="https://amni-scient.com/amni-crypt">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="grid-bg"></div>
+<div class="scanlines"></div>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<a href="amni-crypt.html" class="active">AMNI-CRYPT</a>
+<a href="privacy.html">PRIVACY</a>
+<a href="terms.html">TERMS</a>
+</div>
+<div class="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<div class="product-hero">
+<div class="shield-icon float">
+<svg viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M50 5 L90 25 L90 65 Q90 95 50 115 Q10 95 10 65 L10 25 Z" stroke="#00ff9d" stroke-width="2.5" fill="rgba(0,255,157,0.05)"/>
+<path d="M50 20 L75 33 L75 60 Q75 82 50 98 Q25 82 25 60 L25 33 Z" stroke="#00ff9d" stroke-width="1" fill="rgba(0,255,157,0.03)"/>
+<rect x="42" y="48" width="16" height="14" rx="2" stroke="#00ff9d" stroke-width="2" fill="none"/>
+<path d="M44 48 L44 42 Q44 35 50 35 Q56 35 56 42 L56 48" stroke="#00ff9d" stroke-width="2" fill="none"/>
+<circle cx="50" cy="55" r="2" fill="#00ff9d"/>
+</svg>
+</div>
+<h1>AMNI-CRYPT</h1>
+<p class="desc">1024-BIT FILE ENCRYPTION &bull; 16-ROUND SPN &bull; SHADOW TEXTURE PROTOCOL</p>
+</div>
+<section>
+<h2>ENCRYPT ANY FILE</h2>
+<p style="text-align:center;color:var(--dim);max-width:700px;margin:0 auto 2rem;font-size:.9rem">Select any file. Enter a passphrase. Get an unreadable .acrypt container locked with military-grade encryption. No account. No cloud. No backdoor.</p>
+<div class="features">
+<div class="feature">
+<div class="icon">&#128274;</div>
+<h4>1024-BIT BLOCKS</h4>
+<p>8192-bit block cipher operating on a 16&times;16 pixel grid. 256 pixels per block, 4 bytes per pixel.</p>
+</div>
+<div class="feature">
+<div class="icon">&#128737;</div>
+<h4>SHADOW PROTOCOL</h4>
+<p>Dual-stream architecture where data and shadow co-evolve through identical transformations. Doubly-wide effective state space.</p>
+</div>
+<div class="feature">
+<div class="icon">&#9881;</div>
+<h4>16 ROUNDS</h4>
+<p>SubBytes + MixColumns (T-table fusion), ShiftRows, LaneMix. Every round processes both streams in lockstep.</p>
+</div>
+<div class="feature">
+<div class="icon">&#128272;</div>
+<h4>HMAC VERIFIED</h4>
+<p>HMAC-SHA256 integrity tag detects tampering or wrong passphrases before decryption begins.</p>
+</div>
+<div class="feature">
+<div class="icon">&#127919;</div>
+<h4>CIPHER SEAL</h4>
+<p>Unique visual certificate per encryption with fingerprint, context label, and verification QR code.</p>
+</div>
+<div class="feature">
+<div class="icon">&#128247;</div>
+<h4>QR SCANNER</h4>
+<p>Built-in camera scanner reads Amni-Crypt QR codes to verify seals across devices.</p>
+</div>
+</div>
+</section>
+<section>
+<h2>SPECIFICATIONS</h2>
+<table class="spec-table">
+<tr><th>PARAMETER</th><th>VALUE</th></tr>
+<tr><td>Block Size</td><td>1024 bytes (8192 bits)</td></tr>
+<tr><td>Grid Geometry</td><td>16&times;16 pixels &times; 4 bytes</td></tr>
+<tr><td>Rounds</td><td>16</td></tr>
+<tr><td>S-Box</td><td>Rijndael (AES-identical)</td></tr>
+<tr><td>Key Derivation</td><td>PBKDF2-HMAC-SHA256, 600K iterations</td></tr>
+<tr><td>Derived Key</td><td>512 bits</td></tr>
+<tr><td>Shadow Generator</td><td>SHAKE-256 XOF (Keccak, post-quantum)</td></tr>
+<tr><td>Integrity</td><td>HMAC-SHA256</td></tr>
+<tr><td>Compression</td><td>zlib (pre-encryption)</td></tr>
+<tr><td>Container Format</td><td>AMNILOCL v3 (.acrypt)</td></tr>
+<tr><td>Salt/Nonce</td><td>Random per operation</td></tr>
+<tr><td>ECCN</td><td>5D992 (mass market)</td></tr>
+</table>
+</section>
+<section>
+<h2>HOW IT WORKS</h2>
+<div class="card-grid">
+<div class="card">
+<h3>1. KEY DERIVATION</h3>
+<p>Your passphrase is stretched through PBKDF2-HMAC-SHA256 with 600,000 iterations and a random salt, producing a 512-bit derived key split into encryption key + HMAC key.</p>
+</div>
+<div class="card">
+<h3>2. SHADOW SEEDING</h3>
+<p>SHAKE-256 generates the initial shadow stream from (key || nonce), creating a deterministic pseudorandom stream unique to every encryption.</p>
+</div>
+<div class="card">
+<h3>3. 16-ROUND SPN</h3>
+<p>Each round: T-table fusion (SubBytes + MixColumns), ShiftRows permutation, LaneMix diffusion. Shadow XORs into data after substitution creating entangled state.</p>
+</div>
+<div class="card">
+<h3>4. CONTAINER SEAL</h3>
+<p>Compressed + encrypted payload is packaged in AMNILOCL v3 binary format with salt, nonce, HMAC tag, and metadata. Output: .acrypt file.</p>
+</div>
+</div>
+</section>
+<section style="text-align:center">
+<h2>GET AMNI-CRYPT</h2>
+<p style="color:var(--dim);margin-bottom:2rem;font-size:.9rem">Free on Google Play. All encryption features included. Premium removes ads.</p>
+<div class="cta-row" style="justify-content:center">
+<a href="#" class="btn btn-primary" id="play-store-btn">GOOGLE PLAY &mdash; COMING SOON</a>
+<a href="https://amni-scient.com/privacy" class="btn btn-outline">PRIVACY POLICY</a>
+</div>
+<p style="color:var(--dim);font-size:.7rem;margin-top:1.5rem">Android 7.0+ (API 24) &bull; ~15 MB &bull; No root required</p>
+</section>
+<section>
+<h2>LEGAL</h2>
+<div class="features">
+<div class="feature">
+<div class="icon">&#128220;</div>
+<h4>EAR COMPLIANT</h4>
+<p>ECCN 5D992, License Exception ENC &sect;740.17(b)(1). Mass market classification.</p>
+</div>
+<div class="feature">
+<div class="icon">&#128203;</div>
+<h4>MIT LICENSED</h4>
+<p>Open-source friendly. Use, modify, distribute. See full <a href="terms.html">Terms</a>.</p>
+</div>
+<div class="feature">
+<div class="icon">&#128275;</div>
+<h4>NO BACKDOOR</h4>
+<p>If you lose your passphrase, your file cannot be recovered. By design.</p>
+</div>
+</div>
+</section>
+<footer>
+<div class="footer-links">
+<a href="privacy.html">PRIVACY</a>
+<a href="terms.html">TERMS</a>
+<a href="/">AMNI-SCIENT</a>
+<a href="mailto:areffelt@outlook.com">CONTACT</a>
+</div>
+<p>&copy; 2025-2026 Amni-Scient. All rights reserved.</p>
+</footer>
+</body>
+</html>
