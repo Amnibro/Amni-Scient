@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Amni-Haven — Private Chat Client | AMNI-SCIENT</title>
+<meta name="description" content="Amni-Haven: native Android chat client for private servers. Socket.IO real-time messaging, FCM push, voice, WebRTC. No cloud dependency.">
+<meta name="keywords" content="amni-haven,private chat,socket.io,android chat,self-hosted,encrypted messaging">
+<meta property="og:title" content="Amni-Haven — Private Chat Client">
+<meta property="og:description" content="Native Android client for Haven private servers. Real-time messaging, push notifications, voice calls.">
+<meta property="og:type" content="product">
+<meta property="og:url" content="https://amni-scient.com/amni-haven">
+<link rel="canonical" href="https://amni-scient.com/amni-haven">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="grid-bg"></div>
+<div class="scanlines"></div>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<a href="amni-crypt.html">AMNI-CRYPT</a>
+<a href="amni-haven.html" class="active">AMNI-HAVEN</a>
+<a href="amni-ai.html">AMNI-AI</a>
+<a href="amni-core.html">AMNI-CORE</a>
+<a href="privacy.html">PRIVACY</a>
+<a href="terms.html">TERMS</a>
+</div>
+<div class="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<div class="product-hero">
+<div class="shield-icon float">
+<svg viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M20 30 Q20 15 50 15 Q80 15 80 30 L80 75 Q80 100 50 110 Q20 100 20 75 Z" stroke="#00ff9d" stroke-width="2.5" fill="rgba(0,255,157,0.05)"/>
+<circle cx="50" cy="50" r="12" stroke="#00ff9d" stroke-width="2" fill="none"/>
+<circle cx="50" cy="50" r="4" fill="#00ff9d"/>
+<path d="M38 62 L30 80" stroke="#00ff9d" stroke-width="1.5"/>
+<path d="M62 62 L70 80" stroke="#00ff9d" stroke-width="1.5"/>
+<path d="M50 62 L50 85" stroke="#00ff9d" stroke-width="1.5"/>
+<rect x="35" y="78" width="30" height="8" rx="2" stroke="#00ff9d" stroke-width="1" fill="rgba(0,255,157,0.03)"/>
+</svg>
+</div>
+<h1>AMNI-HAVEN</h1>
+<p class="desc">PRIVATE CHAT CLIENT &bull; SOCKET.IO &bull; YOUR SERVER, YOUR RULES</p>
+</div>
+<section>
+<h2>YOUR MESSAGES. YOUR SERVER.</h2>
+<p style="text-align:center;color:var(--dim);max-width:700px;margin:0 auto 2rem;font-size:.9rem">Native Android chat client that connects to Haven private servers. No third-party cloud. No message scanning. No metadata harvesting. You own the infrastructure.</p>
+<div class="features">
+<div class="feature">
+<div class="icon">&#128172;</div>
+<h4>REAL-TIME CHAT</h4>
+<p>Socket.IO persistent connection with JWT authentication. Typing indicators, message grouping, instant delivery.</p>
+</div>
+<div class="feature">
+<div class="icon">&#128276;</div>
+<h4>FCM PUSH</h4>
+<p>Firebase Cloud Messaging with per-channel deep links. Never miss a message, even when the app is closed.</p>
+</div>
+<div class="feature">
+<div class="icon">&#127897;</div>
+<h4>VOICE + VIDEO</h4>
+<p>WebRTC peer-to-peer calls via Stream SDK. Direct connection between devices when possible.</p>
+</div>
+<div class="feature">
+<div class="icon">&#128271;</div>
+<h4>SELF-HOSTED</h4>
+<p>Point at any Haven server URL. Self-signed cert support included. Your server, your data, your rules.</p>
+</div>
+<div class="feature">
+<div class="icon">&#128260;</div>
+<h4>AUTO-RECONNECT</h4>
+<p>Exponential backoff with 10 retry attempts. Connection error screen with one-tap retry or server switch.</p>
+</div>
+<div class="feature">
+<div class="icon">&#128241;</div>
+<h4>DEEP LINKS</h4>
+<p>haven:// URI scheme for direct server connections. Share links to auto-connect with optional SSL flag.</p>
+</div>
+</div>
+</section>
+<section>
+<h2>SPECIFICATIONS</h2>
+<table class="spec-table">
+<tr><th>PARAMETER</th><th>VALUE</th></tr>
+<tr><td>Protocol</td><td>Socket.IO 2.1 + REST API</td></tr>
+<tr><td>Auth</td><td>JWT (login/register flows)</td></tr>
+<tr><td>Push</td><td>Firebase Cloud Messaging</td></tr>
+<tr><td>Voice/Video</td><td>WebRTC (Stream SDK 1.3.7)</td></tr>
+<tr><td>Media</td><td>ExoPlayer (Media3 1.5.1)</td></tr>
+<tr><td>HTTP Client</td><td>OkHttp 4.12</td></tr>
+<tr><td>Image Loading</td><td>Glide 4.16</td></tr>
+<tr><td>Min SDK</td><td>Android 8.0 (API 26)</td></tr>
+<tr><td>Target SDK</td><td>36</td></tr>
+<tr><td>Architecture</td><td>Native Kotlin + ViewBinding</td></tr>
+</table>
+</section>
+<section>
+<h2>HOW IT WORKS</h2>
+<div class="card-grid">
+<div class="card">
+<h3>1. CONNECT</h3>
+<p>Enter your Haven server URL. Supports HTTP, HTTPS, and self-signed certificates. Server history with autocomplete.</p>
+</div>
+<div class="card">
+<h3>2. AUTHENTICATE</h3>
+<p>Login or register via REST API. JWT token stored locally for persistent sessions. No third-party auth required.</p>
+</div>
+<div class="card">
+<h3>3. CHAT</h3>
+<p>Real-time messaging over Socket.IO. Channel sidebar with unread badges. Typing indicators. Message grouping by sender and timestamp.</p>
+</div>
+<div class="card">
+<h3>4. CALL</h3>
+<p>Tap to start voice or video calls via WebRTC. Foreground service keeps audio alive. Peer-to-peer when network allows.</p>
+</div>
+</div>
+</section>
+<section style="text-align:center">
+<h2>GET AMNI-HAVEN</h2>
+<p style="color:var(--dim);margin-bottom:2rem;font-size:.9rem">Free on Google Play. Connects to any Haven-compatible server.</p>
+<div class="cta-row" style="justify-content:center">
+<a href="#" class="btn btn-primary">GOOGLE PLAY &mdash; COMING SOON</a>
+<a href="privacy.html" class="btn btn-outline">PRIVACY POLICY</a>
+</div>
+<p style="color:var(--dim);font-size:.7rem;margin-top:1.5rem">Android 8.0+ (API 26) &bull; Requires Haven server &bull; No root required</p>
+</section>
+<footer>
+<div class="footer-links">
+<a href="privacy.html">PRIVACY</a>
+<a href="terms.html">TERMS</a>
+<a href="/">AMNI-SCIENT</a>
+<a href="mailto:amnibro7@gmail.com">CONTACT</a>
+</div>
+<p>&copy; 2025-2026 Amni-Scient. All rights reserved.</p>
+</footer>
+</body>
+</html>
