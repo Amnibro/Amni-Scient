@@ -3,9 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Privacy Policy — Amni-Scient Products | AMNI-SCIENT</title>
-<meta name="description" content="Privacy policy for all Amni-Scient products: Amni-Crypt, Amni-Haven, Amni-AI, and Amni-Core. No data collected. All operations local.">
-<meta name="robots" content="index,follow">
+<title>Privacy Policies | AMNI-SCIENT</title>
+<meta name="description" content="Privacy policies for all Amni-Scient products. Each product has its own policy reflecting its specific data handling.">
 <link rel="canonical" href="https://amni-scient.com/privacy">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,6 +13,7 @@
 </head>
 <body>
 <div class="grid-bg"></div>
+<div class="scanlines"></div>
 <nav>
 <a href="/" class="logo">AMNI<span>-SCIENT</span></a>
 <div class="links" id="nav-links">
@@ -29,100 +29,55 @@
 <span></span><span></span><span></span>
 </div>
 </nav>
-<div class="legal">
-<h1>PRIVACY POLICY</h1>
-<p class="effective">Effective Date: March 3, 2026 &nbsp;|&nbsp; Last Updated: March 3, 2026</p>
-<p>This privacy policy describes how software products developed and published by Amni-Scient ("we", "us", "our") handle user information. This policy covers the following products:</p>
-<ul>
-<li><strong>Amni-Crypt</strong> — File encryption application (Android)</li>
-<li><strong>Amni-Haven</strong> — Private chat client (Android)</li>
-<li><strong>Amni-AI</strong> — Local intelligence engine (Desktop)</li>
-<li><strong>Amni-Core</strong> — Systems platform (Desktop/Embedded)</li>
-</ul>
-<h2>1. DATA WE COLLECT</h2>
-<p><strong>We collect no personal data across any of our products.</strong> No product requires account creation, registration, login credentials, email addresses, phone numbers, names, or location data. We do not operate servers that receive, store, or process user information.</p>
-<h2>2. PRODUCT-SPECIFIC DATA HANDLING</h2>
-<h2>2.1 AMNI-CRYPT</h2>
-<p>All encryption and decryption operations execute entirely on your device. No files, passphrases, encryption keys, cipher seals, QR codes, or user content ever leaves your device via our application. The app uses Android's scoped storage model, accessing only files you explicitly select through the system file picker. Encrypted output (.acrypt files) is saved to your Downloads directory. The built-in QR scanner uses your camera only when explicitly opened; frames are processed on-device in real-time and immediately discarded.</p>
-<h2>2.2 AMNI-HAVEN</h2>
-<p>Amni-Haven is a client application that connects to user-operated Haven servers. Message content, authentication tokens, and channel data are transmitted between your device and the server you choose to connect to. We do not operate, control, or have access to any Haven servers. Your server administrator controls all message data. JWT authentication tokens are stored locally on your device. Firebase Cloud Messaging (FCM) tokens are registered with Google's push notification service and your chosen server for push delivery; we do not receive or store these tokens.</p>
-<h2>2.3 AMNI-AI</h2>
-<p>Amni-AI runs entirely on your local machine. All inference, knowledge storage, self-improvement cycles, and model operations execute on your hardware using your GPU and local storage. No queries, responses, learning data, or model state are transmitted externally. The Dictionary Atlas and all associated texture data reside on your local disk and VRAM exclusively.</p>
-<h2>2.4 AMNI-CORE</h2>
-<p>Amni-Core is a systems platform that operates at the hardware level. It collects no telemetry, usage data, crash reports, or diagnostic information. No data is transmitted to Amni-Scient or any third party. All system operations, storage management, and computational tasks execute locally on the hardware where it is installed.</p>
-<h2>3. THIRD-PARTY SERVICES</h2>
-<h2>3.1 Google AdMob (Amni-Crypt, Amni-Haven)</h2>
-<p>The free versions of Amni-Crypt and Amni-Haven display advertisements provided by Google AdMob. Google's AdMob SDK may collect and process the following data as described in <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google's Privacy Policy</a>:</p>
-<ul>
-<li>Advertising ID (Android Ad ID)</li>
-<li>Device information (model, OS version, screen size)</li>
-<li>IP address (for ad serving geolocation; not shared with us)</li>
-<li>Ad interaction data (impressions, clicks)</li>
-<li>App usage data related to ad display</li>
-</ul>
-<p>We do not have access to this data. It is collected and processed entirely by Google. Premium subscribers who remove ads will not have AdMob data collection active.</p>
-<h2>3.2 Google Play Billing (Amni-Crypt, Amni-Haven)</h2>
-<p>Premium subscription purchases are handled entirely by Google Play's billing system. Payment information is managed by Google and is never visible to or collected by us. We receive only a purchase token confirming subscription status.</p>
-<h2>3.3 Google ML Kit (Amni-Crypt)</h2>
-<p>The QR scanner uses Google ML Kit for barcode detection. ML Kit runs on-device and does not transmit camera data or scan results to Google servers. See <a href="https://developers.google.com/ml-kit/terms" target="_blank" rel="noopener">ML Kit Terms</a>.</p>
-<h2>3.4 Firebase Cloud Messaging (Amni-Haven)</h2>
-<p>Amni-Haven uses FCM for push notifications. FCM tokens are generated by Google's services on your device and shared with your chosen Haven server for push delivery. We do not receive, store, or process FCM tokens. See <a href="https://firebase.google.com/support/privacy" target="_blank" rel="noopener">Firebase Privacy</a>.</p>
-<h2>3.5 Third-Party Services (Amni-AI, Amni-Core)</h2>
-<p>Amni-AI and Amni-Core do not integrate any third-party analytics, advertising, or telemetry services. These products operate entirely offline once installed.</p>
-<h2>4. DATA SHARING</h2>
-<p>We do not sell, trade, share, or transfer any user data to third parties. The only third-party data processing occurs through Google AdMob and Firebase as described in Section 3, governed by Google's privacy policy.</p>
-<h2>5. DATA RETENTION</h2>
-<p>We retain no user data because we collect no user data. All application data exists only on your device under your control. Uninstalling any product removes all associated app data from your device.</p>
-<h2>6. SECURITY</h2>
-<h2>6.1 AMNI-CRYPT SECURITY</h2>
-<p>Amni-Crypt implements a proprietary cipher architecture that differs from conventional encryption software in several fundamental ways:</p>
-<ul>
-<li><strong>Extended block width:</strong> The cipher operates on 1024-byte (8192-bit) blocks, substantially wider than the 128-bit blocks used by AES and other standard ciphers. This expanded block size increases the internal state space and provides resistance against block-level pattern analysis.</li>
-<li><strong>Dual-stream entanglement:</strong> Unlike single-stream ciphers, Amni-Crypt processes two parallel data streams that co-evolve through identical nonlinear and linear transformations. The interaction between these streams at each round creates a cryptographically entangled state where attacking one stream requires simultaneous knowledge of the other, effectively doubling the state space an adversary must explore.</li>
-<li><strong>Proprietary round structure:</strong> Each of the 16 encryption rounds applies a unique sequence of fused nonlinear substitution, position-dependent permutation, and multi-lane linear diffusion layers. The specific composition, ordering, and parametric scheduling of these layers constitute proprietary intellectual property.</li>
-<li><strong>High-iteration key derivation:</strong> User passphrases undergo 600,000 rounds of key stretching with per-operation random salt, producing a 512-bit derived key. This exceeds OWASP recommended minimums by an order of magnitude, providing substantial resistance to brute-force and dictionary attacks.</li>
-<li><strong>Post-quantum shadow seeding:</strong> The secondary data stream is initialized using a NIST-standardized extendable output function from the SHA-3 family, ensuring the shadow state is unique per encryption and derived from a function resistant to known quantum computing attack vectors.</li>
-<li><strong>Authenticated encryption:</strong> Every encrypted container includes an integrity tag computed over the full ciphertext. Tampering, corruption, or incorrect passphrases are detected before decryption begins, preventing oracle attacks and ensuring data authenticity.</li>
-<li><strong>Zero key persistence:</strong> No encryption keys, derived keys, or passphrases are stored by the application after an operation completes. Key material exists only in volatile memory during active operations and is released immediately upon completion.</li>
-</ul>
-<p>All cryptographic operations execute locally on the user's device. The cipher engine, round structure, table construction methodology, and stream interaction protocol are proprietary and protected as trade secrets under applicable intellectual property law.</p>
-<h2>6.2 AMNI-HAVEN SECURITY</h2>
-<p>Amni-Haven supports TLS/SSL connections to Haven servers, including self-signed certificate trust for private deployments. JWT authentication tokens are stored in the application's private storage, inaccessible to other applications under Android's sandboxing model. WebRTC voice and video calls establish peer-to-peer connections with DTLS encryption where network topology permits. All authentication credentials are stored locally and never transmitted to Amni-Scient.</p>
-<h2>6.3 AMNI-AI SECURITY</h2>
-<p>All model inference, knowledge retrieval, and self-improvement operations execute on local hardware. The Dictionary Atlas resides on local storage and VRAM. No queries or generated content are transmitted externally. Internal integrity is enforced via cryptographic hash seals on protected system files, ensuring core safety axioms cannot be modified by the self-improvement subsystem.</p>
-<h2>6.4 AMNI-CORE SECURITY</h2>
-<p>Amni-Core implements security at the systems level through a proprietary computational architecture designed for quantum resilience and GPU-forward execution. The platform employs a novel encoding scheme and memory model that operates fundamentally differently from conventional operating systems. Specific security mechanisms constitute proprietary trade secrets. The platform is designed to provide hardware-level isolation, integrity verification, and resistance to classes of attacks that exploit assumptions inherent in legacy system architectures.</p>
-<h2>7. CHILDREN'S PRIVACY</h2>
-<p>None of our products are directed at children under the age of 13. We do not knowingly collect any information from children.</p>
-<h2>8. PERMISSIONS</h2>
-<h2>8.1 Amni-Crypt (Android)</h2>
-<ul>
-<li><strong>CAMERA</strong> — QR code scanner. Used only when scanner is explicitly opened.</li>
-<li><strong>INTERNET</strong> — AdMob ad serving and Google Play Billing verification.</li>
-<li><strong>STORAGE</strong> — Scoped storage for reading selected files and writing to Downloads.</li>
-</ul>
-<h2>8.2 Amni-Haven (Android)</h2>
-<ul>
-<li><strong>INTERNET</strong> — Server communication, ads, and push notifications.</li>
-<li><strong>NOTIFICATION</strong> — Push notification delivery (Android 13+).</li>
-<li><strong>MICROPHONE</strong> — Voice calls via WebRTC. Active only during calls.</li>
-<li><strong>CAMERA</strong> — Video calls via WebRTC. Active only during calls.</li>
-<li><strong>FOREGROUND SERVICE</strong> — Keeps voice calls alive when app is backgrounded.</li>
-</ul>
-<h2>8.3 Amni-AI, Amni-Core (Desktop)</h2>
-<p>Desktop applications run with standard user permissions. No elevated or administrative privileges are required for normal operation. GPU access is used for computational acceleration only.</p>
-<h2>9. YOUR RIGHTS</h2>
-<p>Since we collect no personal data, there is no personal data to access, modify, export, or delete. To stop AdMob data collection in mobile apps, you may: (a) subscribe to premium to disable ads, (b) reset your Android Advertising ID, or (c) opt out of personalized ads in device settings.</p>
-<h2>10. CHANGES TO THIS POLICY</h2>
-<p>We may update this privacy policy to reflect changes in our products or applicable laws. The "Last Updated" date at the top will be revised accordingly. Continued use of any product after changes constitutes acceptance of the revised policy.</p>
-<h2>11. CONTACT</h2>
-<p>For questions or concerns regarding this privacy policy:</p>
-<ul>
-<li><strong>Email:</strong> <a href="mailto:amnibro7@gmail.com">amnibro7@gmail.com</a></li>
-<li><strong>Developer:</strong> Amnibro (Amni-Scient)</li>
-<li><strong>Website:</strong> <a href="https://amni-scient.com">https://amni-scient.com</a></li>
-</ul>
+<section class="hero" style="min-height:auto;padding:8rem 2rem 3rem">
+<h1>PRIVACY POLICIES</h1>
+<p class="subtitle">PER-PRODUCT DATA HANDLING</p>
+<p class="tagline">Each product has different data requirements. Each gets its own policy. No blanket statements — just honest, specific disclosures.</p>
+</section>
+<section>
+<div class="privacy-grid">
+<a href="privacy-crypt.html" class="privacy-card">
+<span class="badge" style="border-color:#00ff9d;color:#00ff9d">ANDROID</span>
+<h3 style="color:#00ff9d">AMNI-CRYPT</h3>
+<p>File encryption. All operations local. No accounts. AdMob in free tier. No data leaves your device via our app.</p>
+</a>
+<a href="privacy-haven.html" class="privacy-card">
+<span class="badge" style="border-color:#64b5f6;color:#64b5f6">ANDROID</span>
+<h3 style="color:#64b5f6">AMNI-HAVEN</h3>
+<p>Mobile client for ANCSemi's Haven servers. Data transmitted to your chosen server. AdMob + FCM in free tier. Server-side data governed by your operator.</p>
+</a>
+<a href="privacy-ai.html" class="privacy-card">
+<span class="badge" style="border-color:#ffb74d;color:#ffb74d">DESKTOP</span>
+<h3 style="color:#ffb74d">AMNI-AI</h3>
+<p>Local intelligence engine. Fully offline. No accounts, no cloud, no telemetry. Everything runs on your hardware.</p>
+</a>
+<a href="privacy-core.html" class="privacy-card">
+<span class="badge" style="border-color:#ef5350;color:#ef5350">PLATFORM</span>
+<h3 style="color:#ef5350">AMNI-CORE</h3>
+<p>Systems platform. No telemetry, no data collection, no phone-home. Operates entirely on local hardware.</p>
+</a>
 </div>
+</section>
+<section>
+<h2>GENERAL PRINCIPLES</h2>
+<div class="features">
+<div class="feature">
+<div class="icon">&#128270;</div>
+<h4>TRANSPARENT</h4>
+<p>Every product discloses exactly what data it handles, what third parties are involved, and what permissions it needs.</p>
+</div>
+<div class="feature">
+<div class="icon">&#128274;</div>
+<h4>MINIMAL COLLECTION</h4>
+<p>Products that can operate offline do. Products that need network access disclose what goes where and why.</p>
+</div>
+<div class="feature">
+<div class="icon">&#128203;</div>
+<h4>NO BLANKET CLAIMS</h4>
+<p>Different products have different requirements. We won't pretend a chat client and an encryption tool handle data the same way.</p>
+</div>
+</div>
+</section>
 <footer>
 <div class="footer-links">
 <a href="privacy.html">PRIVACY</a>
