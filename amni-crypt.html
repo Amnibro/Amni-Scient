@@ -46,6 +46,9 @@
 </div>
 <h1>AMNI-CRYPT</h1>
 <p class="desc">1024-BIT FILE ENCRYPTION &bull; 16-ROUND SPN &bull; SHADOW TEXTURE PROTOCOL</p>
+<div class="cta-row" style="justify-content:center; margin-top:2rem; margin-bottom:1rem;">
+<button class="btn btn-primary" onclick="openBeta('crypt')">REQUEST BETA ACCESS</button>
+</div>
 </div>
 <section>
 <h2>ENCRYPT ANY FILE</h2>
@@ -69,7 +72,7 @@
 <div class="feature">
 <div class="icon">&#128272;</div>
 <h4>HMAC VERIFIED</h4>
-<p>HMAC-SHA256 integrity tag detects tampering or wrong passphrases before decryption begins.</p>
+<p>HMAC-SHA512 integrity tag detects tampering or wrong passphrases before decryption begins.</p>
 </div>
 <div class="feature">
 <div class="icon">&#127919;</div>
@@ -91,10 +94,10 @@
 <tr><td>Grid Geometry</td><td>16&times;16 pixels &times; 4 bytes</td></tr>
 <tr><td>Rounds</td><td>16</td></tr>
 <tr><td>S-Box</td><td>Rijndael (AES-identical)</td></tr>
-<tr><td>Key Derivation</td><td>PBKDF2-HMAC-SHA256, 600K iterations</td></tr>
-<tr><td>Derived Key</td><td>512 bits</td></tr>
+<tr><td>Key Derivation</td><td>PBKDF2-HMAC-SHA512, 1,000,000 iterations</td></tr>
+<tr><td>Derived Key</td><td>1024 bits</td></tr>
 <tr><td>Shadow Generator</td><td>SHAKE-256 XOF (Keccak, post-quantum)</td></tr>
-<tr><td>Integrity</td><td>HMAC-SHA256</td></tr>
+<tr><td>Integrity</td><td>HMAC-SHA512</td></tr>
 <tr><td>Compression</td><td>zlib (pre-encryption)</td></tr>
 <tr><td>Container Format</td><td>AMNILOCL v3 (.acrypt)</td></tr>
 <tr><td>Salt/Nonce</td><td>Random per operation</td></tr>
@@ -106,7 +109,7 @@
 <div class="card-grid">
 <div class="card">
 <h3>1. KEY DERIVATION</h3>
-<p>Your passphrase is stretched through PBKDF2-HMAC-SHA256 with 600,000 iterations and a random salt, producing a 512-bit derived key split into encryption key + HMAC key.</p>
+<p>Your passphrase is stretched through PBKDF2-HMAC-SHA512 with 1,000,000 iterations and a random salt, producing a 1024-bit derived key split into encryption key + HMAC key.</p>
 </div>
 <div class="card">
 <h3>2. SHADOW SEEDING</h3>
