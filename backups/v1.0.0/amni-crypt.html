@@ -4,10 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Amni-Crypt — 1024-bit File Encryption | AMNI-SCIENT</title>
-<meta name="description" content="Amni-Crypt: proprietary 1024-bit file encryption with 16-round SPN and Shadow Texture Protocol. Free on Android (ad-supported). Premium removes ads.">
+<meta name="description" content="Amni-Crypt: military-grade file encryption with proprietary 1024-bit block cipher, 16-round SPN, and Shadow Texture Protocol. Free on Android.">
 <meta name="keywords" content="amni-crypt,file encryption,1024-bit cipher,SPN,shadow texture protocol,android encryption,privacy">
 <meta property="og:title" content="Amni-Crypt — 1024-bit File Encryption">
-<meta property="og:description" content="Proprietary 1024-bit block cipher with dual-stream Shadow Texture Protocol. Encrypt any file. Free on Android (ad-supported).">
+<meta property="og:description" content="Proprietary 1024-bit block cipher with dual-stream Shadow Texture Protocol. Encrypt any file. Free on Android.">
 <meta property="og:type" content="product">
 <meta property="og:url" content="https://amni-scient.com/amni-crypt">
 <link rel="canonical" href="https://amni-scient.com/amni-crypt">
@@ -49,7 +49,7 @@
 </div>
 <section>
 <h2>ENCRYPT ANY FILE</h2>
-<p style="text-align:center;color:var(--dim);max-width:700px;margin:0 auto 2rem;font-size:.9rem">Select any file. Enter a passphrase. Get an unreadable .acrypt container. No account required. All encryption runs locally on your device. No backdoor. Free tier is ad-supported via Google AdMob; premium removes ads entirely.</p>
+<p style="text-align:center;color:var(--dim);max-width:700px;margin:0 auto 2rem;font-size:.9rem">Select any file. Enter a passphrase. Get an unreadable .acrypt container locked with military-grade encryption. No account. No cloud. No backdoor.</p>
 <div class="features">
 <div class="feature">
 <div class="icon">&#128274;</div>
@@ -83,21 +83,6 @@
 </div>
 </div>
 </section>
-<div class="screenshots">
-<h2>SCREENSHOTS &amp; GRAPHICS</h2>
-<p class="sub">AMNI-CRYPT &bull; FILE ENCRYPTION APP</p>
-<div class="feature-graphic-wrap">
-<img src="assets/crypt/feature_graphic.png" alt="Amni-Crypt feature graphic" loading="lazy">
-</div>
-<div class="promo-pair" style="margin-top:2rem">
-<div class="promo-img" style="max-width:200px;flex:0 0 auto">
-<img src="assets/crypt/icon-512.jpg" alt="Amni-Crypt app icon" loading="lazy">
-</div>
-<div class="promo-img" style="flex:1 1 400px">
-<img src="assets/crypt/amni-scient-header.jpg" alt="Amni-Scient studio header" loading="lazy">
-</div>
-</div>
-</div>
 <section>
 <h2>SPECIFICATIONS</h2>
 <table class="spec-table">
@@ -139,10 +124,9 @@
 </section>
 <section style="text-align:center">
 <h2>GET AMNI-CRYPT</h2>
-<p style="color:var(--dim);margin-bottom:.5rem;font-size:.9rem">Currently in <strong style="color:var(--accent)">closed beta</strong> on Google Play. Request access and we'll add you to the testing list.</p>
-<p style="color:var(--dim);font-size:.8rem;margin-bottom:2rem">Free &bull; All encryption features included &bull; Premium removes ads</p>
+<p style="color:var(--dim);margin-bottom:2rem;font-size:.9rem">Free on Google Play. All encryption features included. Premium removes ads.</p>
 <div class="cta-row" style="justify-content:center">
-<button class="btn btn-primary" onclick="openBeta('crypt')">REQUEST BETA ACCESS &mdash; AMNI-CRYPT</button>
+<a href="#" class="btn btn-primary" id="play-store-btn">GOOGLE PLAY &mdash; COMING SOON</a>
 <a href="privacy-crypt.html" class="btn btn-outline">PRIVACY POLICY</a>
 </div>
 <p style="color:var(--dim);font-size:.7rem;margin-top:1.5rem">Android 7.0+ (API 24) &bull; ~15 MB &bull; No root required</p>
@@ -176,41 +160,5 @@
 </div>
 <p>&copy; 2025-2026 Amni-Scient. All rights reserved.</p>
 </footer>
-<div id="beta-modal" style="display:none;position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,.75);backdrop-filter:blur(6px);align-items:center;justify-content:center">
-<div style="background:var(--panel);border:1px solid var(--accent);border-radius:8px;padding:2.5rem;max-width:480px;width:90%;position:relative">
-<button onclick="closeBeta()" style="position:absolute;top:1rem;right:1.25rem;background:none;border:none;color:var(--dim);font-size:1.4rem;cursor:pointer;font-family:var(--font)">&times;</button>
-<p style="font-size:.7rem;letter-spacing:2px;color:var(--dim);margin-bottom:.5rem">CLOSED BETA</p>
-<h3 id="beta-title" style="color:var(--accent);letter-spacing:2px;font-size:1.3rem;margin-bottom:.75rem"></h3>
-<p style="color:var(--dim);font-size:.82rem;line-height:1.7;margin-bottom:1.75rem">Enter your email and we'll add you to the Google Play closed beta testing list. Expect an invite within a few days.</p>
-<input id="beta-email" type="email" placeholder="your@email.com" style="width:100%;background:#0d0d0d;border:1px solid var(--border);border-radius:4px;padding:.75rem 1rem;color:var(--text);font-family:var(--font);font-size:.9rem;outline:none;margin-bottom:1rem;box-sizing:border-box" onfocus="this.style.borderColor=getComputedStyle(document.body).getPropertyValue('--accent')" onblur="this.style.borderColor=''">
-<div id="beta-err" style="color:#ff4444;font-size:.75rem;margin-bottom:.75rem;display:none">Please enter a valid email address.</div>
-<button onclick="submitBeta()" class="btn btn-primary" style="width:100%;justify-content:center">SEND REQUEST</button>
-</div>
-</div>
-<script>
-function openBeta(app){
-const titles={haven:'AMNI-HAVEN BETA',crypt:'AMNI-CRYPT BETA'};
-document.getElementById('beta-title').textContent=titles[app]||'BETA ACCESS';
-document.getElementById('beta-modal').style.display='flex';
-document.getElementById('beta-email').value='';
-document.getElementById('beta-err').style.display='none';
-document.getElementById('beta-email').focus();
-}
-function closeBeta(){
-document.getElementById('beta-modal').style.display='none';
-}
-function submitBeta(){
-const e=document.getElementById('beta-email').value.trim();
-const err=document.getElementById('beta-err');
-if(!e||!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e)){err.style.display='block';return;}
-err.style.display='none';
-const title=document.getElementById('beta-title').textContent;
-const sub=encodeURIComponent('Beta Access Request — '+title);
-const body=encodeURIComponent('Hi,\n\nPlease add me to the '+title+' closed beta on Google Play.\n\nMy email: '+e+'\n\nThanks!');
-window.location.href='mailto:amnibro7@gmail.com?subject='+sub+'&body='+body;
-closeBeta();
-}
-document.getElementById('beta-modal').addEventListener('click',function(ev){if(ev.target===this)closeBeta();});
-document.addEventListener('keydown',function(ev){if(ev.key==='Escape')closeBeta();});
-</script>
 </body>
+</html>

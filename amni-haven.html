@@ -83,6 +83,31 @@
 </div>
 </div>
 </section>
+<div class="screenshots">
+<h2>SCREENSHOTS</h2>
+<p class="sub">PHONE &bull; SCROLL TO EXPLORE</p>
+<div class="screenshot-strip">
+<div class="screenshot-phone"><img src="assets/haven/Screenshot_32.png" alt="Haven login screen" loading="lazy"></div>
+<div class="screenshot-phone"><img src="assets/haven/Screenshot_33.png" alt="Haven channels" loading="lazy"></div>
+<div class="screenshot-phone"><img src="assets/haven/Screenshot_34.png" alt="Haven general chat" loading="lazy"></div>
+<div class="screenshot-phone"><img src="assets/haven/Screenshot_35.png" alt="Haven messaging" loading="lazy"></div>
+<div class="screenshot-phone"><img src="assets/haven/Screenshot_36.png" alt="Haven chat view" loading="lazy"></div>
+<div class="screenshot-phone"><img src="assets/haven/Screenshot_37.png" alt="Haven conversation" loading="lazy"></div>
+</div>
+<p class="sub" style="margin-top:2.5rem">TABLET &bull; SCROLL TO EXPLORE</p>
+<div class="screenshot-strip">
+<div class="screenshot-tablet"><img src="assets/haven/10in_38.png" alt="Haven tablet view" loading="lazy"></div>
+<div class="screenshot-tablet"><img src="assets/haven/10in_39.png" alt="Haven tablet channels" loading="lazy"></div>
+<div class="screenshot-tablet"><img src="assets/haven/10in_40.png" alt="Haven tablet chat" loading="lazy"></div>
+<div class="screenshot-tablet"><img src="assets/haven/10in_41.png" alt="Haven tablet messaging" loading="lazy"></div>
+<div class="screenshot-tablet"><img src="assets/haven/10in_42.png" alt="Haven tablet view 2" loading="lazy"></div>
+<div class="screenshot-tablet"><img src="assets/haven/10in_43.png" alt="Haven tablet view 3" loading="lazy"></div>
+</div>
+<div class="promo-pair">
+<div class="promo-img"><img src="assets/haven/FfNHy.jpg" alt="Amni-Haven promo" loading="lazy"></div>
+<div class="promo-img"><img src="assets/haven/6Mxdg.jpg" alt="Amni-Haven feature" loading="lazy"></div>
+</div>
+</div>
 <section>
 <h2>SPECIFICATIONS</h2>
 <table class="spec-table">
@@ -123,9 +148,10 @@
 </section>
 <section style="text-align:center">
 <h2>GET AMNI-HAVEN</h2>
-<p style="color:var(--dim);margin-bottom:2rem;font-size:.9rem">Free on Google Play (ad-supported). Connects to any Haven-compatible server.</p>
+<p style="color:var(--dim);margin-bottom:.5rem;font-size:.9rem">Currently in <strong style="color:var(--accent)">closed beta</strong> on Google Play. Request access and we'll add you to the testing list.</p>
+<p style="color:var(--dim);font-size:.8rem;margin-bottom:2rem">Free &bull; Ad-supported &bull; Connects to any Haven-compatible server</p>
 <div class="cta-row" style="justify-content:center">
-<a href="#" class="btn btn-primary">GOOGLE PLAY &mdash; COMING SOON</a>
+<button class="btn btn-primary" onclick="openBeta('haven')">REQUEST BETA ACCESS &mdash; AMNI-HAVEN</button>
 <a href="privacy-haven.html" class="btn btn-outline">PRIVACY POLICY</a>
 </div>
 <p style="color:var(--dim);font-size:.7rem;margin-top:1.5rem">Android 8.0+ (API 26) &bull; Requires Haven server &bull; No root required</p>
@@ -142,5 +168,41 @@ Haven is created and maintained by <a href="https://github.com/ancsemi" target="
 </div>
 <p>&copy; 2025-2026 Amni-Scient. All rights reserved.</p>
 </footer>
+<div id="beta-modal" style="display:none;position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,.75);backdrop-filter:blur(6px);align-items:center;justify-content:center">
+<div style="background:var(--panel);border:1px solid var(--accent);border-radius:8px;padding:2.5rem;max-width:480px;width:90%;position:relative">
+<button onclick="closeBeta()" style="position:absolute;top:1rem;right:1.25rem;background:none;border:none;color:var(--dim);font-size:1.4rem;cursor:pointer;font-family:var(--font)">&times;</button>
+<p style="font-size:.7rem;letter-spacing:2px;color:var(--dim);margin-bottom:.5rem">CLOSED BETA</p>
+<h3 id="beta-title" style="color:var(--accent);letter-spacing:2px;font-size:1.3rem;margin-bottom:.75rem"></h3>
+<p style="color:var(--dim);font-size:.82rem;line-height:1.7;margin-bottom:1.75rem">Enter your email and we'll add you to the Google Play closed beta testing list. Expect an invite within a few days.</p>
+<input id="beta-email" type="email" placeholder="your@email.com" style="width:100%;background:#0d0d0d;border:1px solid var(--border);border-radius:4px;padding:.75rem 1rem;color:var(--text);font-family:var(--font);font-size:.9rem;outline:none;margin-bottom:1rem;box-sizing:border-box" onfocus="this.style.borderColor=getComputedStyle(document.body).getPropertyValue('--accent')" onblur="this.style.borderColor=''">
+<div id="beta-err" style="color:#ff4444;font-size:.75rem;margin-bottom:.75rem;display:none">Please enter a valid email address.</div>
+<button onclick="submitBeta()" class="btn btn-primary" style="width:100%;justify-content:center">SEND REQUEST</button>
+</div>
+</div>
+<script>
+function openBeta(app){
+const titles={haven:'AMNI-HAVEN BETA',crypt:'AMNI-CRYPT BETA'};
+document.getElementById('beta-title').textContent=titles[app]||'BETA ACCESS';
+document.getElementById('beta-modal').style.display='flex';
+document.getElementById('beta-email').value='';
+document.getElementById('beta-err').style.display='none';
+document.getElementById('beta-email').focus();
+}
+function closeBeta(){
+document.getElementById('beta-modal').style.display='none';
+}
+function submitBeta(){
+const e=document.getElementById('beta-email').value.trim();
+const err=document.getElementById('beta-err');
+if(!e||!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e)){err.style.display='block';return;}
+err.style.display='none';
+const title=document.getElementById('beta-title').textContent;
+const sub=encodeURIComponent('Beta Access Request — '+title);
+const body=encodeURIComponent('Hi,\n\nPlease add me to the '+title+' closed beta on Google Play.\n\nMy email: '+e+'\n\nThanks!');
+window.location.href='mailto:amnibro7@gmail.com?subject='+sub+'&body='+body;
+closeBeta();
+}
+document.getElementById('beta-modal').addEventListener('click',function(ev){if(ev.target===this)closeBeta();});
+document.addEventListener('keydown',function(ev){if(ev.key==='Escape')closeBeta();});
+</script>
 </body>
-</html>
