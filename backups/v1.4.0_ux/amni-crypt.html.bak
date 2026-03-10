@@ -23,16 +23,12 @@
 <a href="/" class="logo">AMNI<span>-SCIENT</span></a>
 <div class="links" id="nav-links">
 <a href="/">HOME</a>
-<div class="nav-dd nav-dd--active">
-<button class="nav-dd-trigger">PROJECTS</button>
-<div class="nav-dd-menu">
 <a href="amni-crypt.html" class="active">AMNI-CRYPT</a>
 <a href="amni-haven.html">AMNI-HAVEN</a>
 <a href="amni-ai.html">AMNI-AI</a>
 <a href="amni-core.html">AMNI-CORE</a>
-</div>
-</div>
 <a href="privacy.html">PRIVACY</a>
+<a href="terms.html">TERMS</a>
 </div>
 <div class="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
 <span></span><span></span><span></span>
@@ -110,7 +106,7 @@
 </section>
 <section>
 <h2>HOW IT WORKS</h2>
-<div class="how-works-grid">
+<div class="card-grid">
 <div class="card">
 <h3>1. KEY DERIVATION</h3>
 <p>Your passphrase is stretched through PBKDF2-HMAC-SHA512 with 1,000,000 iterations and a random salt, producing a 1024-bit derived key split into encryption key + HMAC key.</p>
@@ -134,14 +130,14 @@
 <div class="card" style="padding:2.5rem 1rem">
 <p style="text-align:center;color:var(--dim);font-size:.8rem;margin-bottom:2rem;letter-spacing:1px">AMNI-CRYPT &bull; FILE ENCRYPTION APP</p>
 <div class="feature-graphic-wrap" style="margin-top:0">
-<img class="gallery-thumb" src="assets/crypt/feature_graphic.png" alt="Amni-Crypt feature graphic" onclick="openLightbox(this.src,this.alt)">
+<img src="assets/crypt/feature_graphic.png" alt="Amni-Crypt feature graphic">
 </div>
 <div class="promo-pair" style="margin-top:2rem">
 <div class="promo-img" style="max-width:200px;flex:0 0 auto">
-<img class="gallery-thumb" src="assets/crypt/icon-512.jpg" alt="Amni-Crypt app icon" onclick="openLightbox(this.src,this.alt)">
+<img src="assets/crypt/icon-512.jpg" alt="Amni-Crypt app icon">
 </div>
 <div class="promo-img" style="flex:1 1 300px">
-<img class="gallery-thumb" src="assets/crypt/amni-scient-header.jpg" alt="Amni-Scient studio header" onclick="openLightbox(this.src,this.alt)">
+<img src="assets/crypt/amni-scient-header.jpg" alt="Amni-Scient studio header">
 </div>
 </div>
 </div>
@@ -197,13 +193,7 @@
 <button onclick="submitBeta()" class="btn btn-primary" style="width:100%;justify-content:center">SEND REQUEST</button>
 </div>
 </div>
-<div id="lightbox" class="lightbox" onclick="closeLightbox(event)">
-<span class="lightbox-close" onclick="closeLightbox()">&times;</span>
-<img id="lightbox-img" src="" alt="">
-</div>
 <script>
-function openLightbox(src,alt){const lb=document.getElementById('lightbox');document.getElementById('lightbox-img').src=src;document.getElementById('lightbox-img').alt=alt;lb.classList.add('open');document.body.style.overflow='hidden';}
-function closeLightbox(e){if(e&&e.target===document.getElementById('lightbox-img'))return;document.getElementById('lightbox').classList.remove('open');document.body.style.overflow='';}
 function openBeta(app){
 const titles={haven:'AMNI-HAVEN BETA',crypt:'AMNI-CRYPT BETA'};
 document.getElementById('beta-title').textContent=titles[app]||'BETA ACCESS';
@@ -227,6 +217,6 @@ window.location.href='mailto:amnibro7@gmail.com?subject='+sub+'&body='+body;
 closeBeta();
 }
 document.getElementById('beta-modal').addEventListener('click',function(ev){if(ev.target===this)closeBeta();});
-document.addEventListener('keydown',function(ev){if(ev.key==='Escape'){closeBeta();closeLightbox();}});
+document.addEventListener('keydown',function(ev){if(ev.key==='Escape')closeBeta();});
 </script>
 </body>
