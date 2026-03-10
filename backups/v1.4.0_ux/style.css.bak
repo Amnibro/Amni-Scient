@@ -14,24 +14,12 @@ nav .logo span{color:var(--dim);font-weight:400}
 nav .links{display:flex;gap:1.5rem;align-items:center}
 nav .links a{color:var(--dim);font-size:.8rem;letter-spacing:1px;text-transform:uppercase;transition:color .2s}
 nav .links a:hover,nav .links a.active{color:var(--accent);opacity:1}
-.nav-dd{position:relative;display:flex;align-items:center}
-.nav-dd-trigger{color:var(--dim);font-size:.8rem;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:color .2s;user-select:none;background:none;border:none;font-family:var(--font);padding:0}
-.nav-dd-trigger::after{content:' ▾';font-size:.6rem;vertical-align:middle}
-.nav-dd:hover .nav-dd-trigger,.nav-dd--active .nav-dd-trigger{color:var(--accent)}
-.nav-dd-menu{display:none;position:absolute;top:calc(100% + .75rem);left:50%;transform:translateX(-50%);background:rgba(10,10,10,.97);border:1px solid var(--border);border-radius:4px;padding:.5rem 0;min-width:160px;z-index:200}
-.nav-dd:hover .nav-dd-menu{display:block}
-.nav-dd-menu a{display:block;padding:.5rem 1.25rem;color:var(--dim);font-size:.8rem;letter-spacing:1px;text-transform:uppercase;white-space:nowrap;transition:color .2s}
-.nav-dd-menu a:hover,.nav-dd-menu a.active{color:var(--accent);opacity:1}
 .hamburger{display:none;flex-direction:column;gap:4px;cursor:pointer;padding:8px}
 .hamburger span{width:20px;height:2px;background:var(--accent);transition:all .3s}
 @media(max-width:768px){
 nav .links{position:fixed;top:56px;right:-100%;width:200px;height:calc(100vh - 56px);background:rgba(10,10,10,.97);flex-direction:column;padding:2rem;gap:1.5rem;transition:right .3s;border-left:1px solid var(--border)}
 nav .links.open{right:0}
 .hamburger{display:flex}
-.nav-dd{flex-direction:column;align-items:flex-start;width:100%}
-.nav-dd-trigger{width:100%;padding:.25rem 0}
-.nav-dd-menu{display:block;position:static;transform:none;background:none;border:none;padding:0 0 0 1rem;margin:.25rem 0 0;min-width:auto}
-.nav-dd-menu a{padding:.3rem 0;font-size:.75rem}
 }
 .hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden}
 .hero::before{content:'';position:absolute;top:50%;left:50%;width:600px;height:600px;background:radial-gradient(circle,var(--accent-dim) 0%,transparent 70%);transform:translate(-50%,-50%);pointer-events:none;animation:pulse 4s ease-in-out infinite}
@@ -40,8 +28,6 @@ nav .links.open{right:0}
 .hero .subtitle{font-size:clamp(.85rem,2vw,1.1rem);color:var(--dim);letter-spacing:3px;margin-top:.5rem;position:relative;z-index:1}
 .hero .tagline{font-size:clamp(1rem,2.5vw,1.3rem);color:var(--text);margin-top:2rem;max-width:600px;position:relative;z-index:1}
 .hero .cta-row{display:flex;gap:1rem;margin-top:2.5rem;position:relative;z-index:1;flex-wrap:wrap;justify-content:center}
-.hero .support-link{margin-top:.85rem;font-size:.75rem;letter-spacing:1px;color:var(--dim);position:relative;z-index:1;text-transform:uppercase}
-.hero .support-link:hover{color:var(--text);opacity:1}
 .btn{display:inline-flex;align-items:center;gap:.5rem;padding:.75rem 2rem;border-radius:4px;font-family:var(--font);font-size:.85rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all .2s;border:1px solid var(--accent)}
 .btn-primary{background:var(--accent);color:var(--bg)}
 .btn-primary:hover{background:transparent;color:var(--accent)}
@@ -55,18 +41,7 @@ section h2{font-size:1.8rem;font-weight:700;letter-spacing:3px;color:var(--accen
 .card h3{font-size:1.1rem;color:var(--accent);letter-spacing:2px;margin-bottom:.5rem}
 .card p{color:var(--dim);font-size:.85rem;line-height:1.6}
 .card .badge{display:inline-block;font-size:.65rem;padding:.2rem .6rem;border:1px solid var(--accent);border-radius:2px;color:var(--accent);letter-spacing:1px;margin-bottom:.75rem}
-.badge--released{border-color:#00ff9d!important;color:#00ff9d!important}
-.badge--dev{border-color:#444!important;color:#444!important}
-.card--featured{grid-column:1/-1}
-@media(max-width:600px){.card--featured{grid-column:auto}}
-.card--dim{opacity:.45;pointer-events:none}
-.how-works-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.5rem;margin-top:2rem}
-.how-works-grid .card{cursor:default}
-.how-works-grid .card:hover{border-color:var(--border);transform:none}
-@media(max-width:600px){.how-works-grid{grid-template-columns:1fr}}
 .features{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.5rem}
-.features-2x2{display:grid;grid-template-columns:repeat(2,1fr);gap:1.5rem}
-@media(max-width:600px){.features-2x2{grid-template-columns:1fr}}
 .feature{text-align:center;padding:1.5rem}
 .feature .icon{font-size:2rem;margin-bottom:.75rem}
 .feature h4{color:var(--accent);font-size:.9rem;letter-spacing:1px;margin-bottom:.5rem}
@@ -83,14 +58,10 @@ footer{border-top:1px solid var(--border);padding:2rem;text-align:center;color:v
 footer a{color:var(--dim)}
 footer a:hover{color:var(--accent)}
 .footer-links{display:flex;justify-content:center;gap:2rem;margin-bottom:1rem;flex-wrap:wrap}
+.btn-kofi{border-color:#ff5e5b;color:#ff5e5b;background:transparent}
+.btn-kofi:hover{background:#ff5e5b;color:var(--bg);border-color:#ff5e5b}
 .kofi-link{color:#ff5e5b!important}
 .kofi-link:hover{color:#ff8a88!important;opacity:1}
-.lightbox{display:none;position:fixed;inset:0;z-index:9997;background:rgba(0,0,0,.92);backdrop-filter:blur(8px);align-items:center;justify-content:center;cursor:pointer}
-.lightbox.open{display:flex}
-.lightbox img{max-width:90vw;max-height:90vh;border:1px solid var(--border);border-radius:6px;object-fit:contain;cursor:default}
-.lightbox-close{position:absolute;top:1.5rem;right:1.5rem;color:var(--dim);font-size:2rem;cursor:pointer;line-height:1}
-.lightbox-close:hover{color:var(--accent)}
-.gallery-thumb{cursor:zoom-in}
 .grid-bg{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:-1;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:60px 60px;opacity:.3}
 .product-hero{padding:8rem 2rem 4rem;text-align:center}
 .product-hero h1{font-size:clamp(2rem,5vw,3.5rem);color:var(--accent);letter-spacing:4px;font-weight:700}
