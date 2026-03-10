@@ -11,6 +11,22 @@ export function gen_galaxy(particle_count, seed) {
 }
 
 /**
+ * @param {string} ptype
+ * @param {number} seed
+ * @param {number} rade
+ * @param {number} _mass
+ * @param {number} eqt
+ * @param {number} sz
+ * @returns {Uint8Array}
+ */
+export function gen_planet_maps(ptype, seed, rade, _mass, eqt, sz) {
+    const ptr0 = passStringToWasm0(ptype, wasm.__wbindgen_export, wasm.__wbindgen_export2);
+    const len0 = WASM_VECTOR_LEN;
+    const ret = wasm.gen_planet_maps(ptr0, len0, seed, rade, _mass, eqt, sz);
+    return takeObject(ret);
+}
+
+/**
  * @param {string} nasa_json
  * @param {number} proc_count
  * @param {number} seed
