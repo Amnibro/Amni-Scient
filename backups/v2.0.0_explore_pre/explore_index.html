@@ -23,24 +23,6 @@ canvas:active{cursor:grabbing}
 .fbtn.active{color:var(--ct);border-color:var(--cm);background:rgba(0,120,200,0.25)}
 .fbtn.nasa-active{color:var(--cn);border-color:var(--cn);background:rgba(34,204,102,0.15)}
 .fbtn:hover{border-color:var(--cm);color:var(--ct)}
-#nasa-pnl{position:fixed;left:16px;top:16px;width:280px;max-height:calc(100vh - 32px);z-index:15;overflow:hidden;display:none;flex-direction:column}
-#nasa-pnl.open{display:flex}
-.nasa-hdr{display:flex;justify-content:space-between;align-items:center;padding:12px 14px 8px}
-.nasa-hdr h3{font-size:11px;letter-spacing:2px;color:var(--cn);text-transform:uppercase;margin:0}
-.nasa-x{background:none;border:none;color:var(--cd);font-size:16px;cursor:pointer;padding:0 4px}
-.nasa-x:hover{color:var(--ct)}
-#nasa-q{margin:0 14px 8px;padding:6px 10px;background:rgba(0,40,80,0.5);border:1px solid var(--cb);color:var(--ct);font-size:11px;outline:none;letter-spacing:1px}
-#nasa-q::placeholder{color:var(--cd)}
-#nasa-q:focus{border-color:var(--cn)}
-#nasa-map{margin:0 14px 8px;border:1px solid rgba(0,60,120,0.3);cursor:crosshair;display:block}
-#nasa-list{flex:1;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--cb) transparent;max-height:calc(100vh - 380px)}
-#nasa-list::-webkit-scrollbar{width:3px}
-#nasa-list::-webkit-scrollbar-thumb{background:var(--cb);border-radius:2px}
-.nl-item{padding:8px 14px;cursor:pointer;border-bottom:1px solid rgba(0,60,120,0.15);transition:background 0.2s}
-.nl-item:hover{background:rgba(34,204,102,0.1)}
-.nl-item.sel{background:rgba(34,204,102,0.2);border-left:2px solid var(--cn)}
-.nl-nm{font-size:10px;color:var(--cn);letter-spacing:1px;text-transform:uppercase}
-.nl-det{font-size:9px;color:var(--cd);margin-top:2px}
 #g-sel{position:fixed;right:16px;top:16px;width:300px;padding:16px;z-index:10;display:none}
 #g-sel h3{font-size:12px;font-weight:400;letter-spacing:2px;color:var(--cm);text-transform:uppercase;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--cb)}
 #g-sel .bd{font-size:11px;color:var(--cd);white-space:pre-line;line-height:1.6}
@@ -116,12 +98,10 @@ canvas:active{cursor:grabbing}
 <button class="fbtn active" id="f-all">ALL</button>
 <button class="fbtn" id="f-nasa">NASA</button>
 <button class="fbtn" id="f-proc">CALC</button>
-<button class="fbtn" id="f-find">FIND</button>
 </div>
 </div>
 </div>
 <div id="g-sel" class="pnl"></div>
-<div id="nasa-pnl" class="pnl"><div class="nasa-hdr"><h3>NASA CATALOGUE <span id="nasa-cnt"></span></h3><button class="nasa-x" id="nasa-close">&times;</button></div><input type="text" id="nasa-q" placeholder="Search systems..."><canvas id="nasa-map" width="250" height="250"></canvas><div id="nasa-list"></div></div>
 <div id="g-hint">Left-drag: rotate &middot; Right-drag: pan &middot; Scroll: zoom &middot; Click star &middot; Dbl-click: enter</div>
 <div id="s-hud">
 <button id="s-back" class="pnl">&larr; Galaxy [ESC]</button>
@@ -146,7 +126,7 @@ import*as T from'three';
 import{EffectComposer}from'three/addons/postprocessing/EffectComposer.js';
 import{RenderPass}from'three/addons/postprocessing/RenderPass.js';
 import{UnrealBloomPass}from'three/addons/postprocessing/UnrealBloomPass.js';
-import wInit,{gen_galaxy,gen_systems,gen_texture,gen_planet_maps}from'./pkg/amni_explore_wasm.js';
+import wInit,{gen_galaxy,gen_systems,gen_texture}from'./pkg/amni_explore_wasm.js';
 const $=s=>document.querySelector(s),$$=s=>document.querySelectorAll(s);
 const V={GAL:0,SYS:1,PLN:2};
 const GR=5000,GALP=80000,NPRC=3000;
@@ -157,7 +137,7 @@ let gTh=0,gPh=0.4,gD=9000,gTgt=new T.Vector3(0,0,0);
 let orbTh=0,orbPh=Math.PI/5,orbD=600,orbTgt=new T.Vector3();
 let pTh=0,pPh=Math.PI/4,pD=60,pTgt=new T.Vector3();
 let drag={on:false,btn:-1,lx:0,ly:0};
-let densPlane=null,dirty=true,curFilter='ALL',curPlanet=null,curPlanetSys=null,flyState=null,nasaBuilt=false;
+let densPlane=null,dirty=true,curFilter='ALL',curPlanet=null,curPlanetSys=null;
 const GAL_VS=`attribute vec3 color;varying vec3 vC;void main(){vC=color;vec4 mv=modelViewMatrix*vec4(position,1.0);gl_PointSize=clamp(10.0*(300.0/(-mv.z)),1.0,35.0);gl_Position=projectionMatrix*mv;}`;
 const GAL_FS=`varying vec3 vC;void main(){float d=length(gl_PointCoord-vec2(0.5));if(d>0.5)discard;float a=(1.0-smoothstep(0.0,0.5,d))*0.8;gl_FragColor=vec4(vC,a);}`;
 const SYS_VS=`attribute vec3 color;varying vec3 vC;uniform float uSz;void main(){vC=color;vec4 mv=modelViewMatrix*vec4(position,1.0);gl_PointSize=clamp(uSz*(300.0/(-mv.z)),2.0,60.0);gl_Position=projectionMatrix*mv;}`;
@@ -255,32 +235,12 @@ const fs=`varying vec3 vN;varying vec3 vP;uniform vec3 uC;void main(){float rim=
 const mat=new T.ShaderMaterial({vertexShader:ATMO_VS,fragmentShader:fs,transparent:true,depthWrite:false,side:T.BackSide,uniforms:{uC:{value:new T.Color(...c)}}});
 return new T.Mesh(geo,mat);
 }
-function mkTex(raw,sz,off,len,srgb){const cv=document.createElement('canvas');cv.width=cv.height=sz;const ctx=cv.getContext('2d'),img=ctx.createImageData(sz,sz);
-img.data.set(raw.slice(off,off+len));ctx.putImageData(img,0,0);const t=new T.CanvasTexture(cv);if(srgb)t.colorSpace=T.SRGBColorSpace;return t}
-function buildNasaFinder(){const nasa=allSys.filter(s=>s.src==='NASA').sort((a,b)=>a.host.localeCompare(b.host));
-$('#nasa-cnt').textContent=`(${nasa.length})`;const list=$('#nasa-list');list.innerHTML='';
-nasa.forEach(s=>{const d=document.createElement('div');d.className='nl-item';
-d.innerHTML=`<div class="nl-nm">${s.host}</div><div class="nl-det">Class ${s.cls} | ${s.planets.length}p | ${s.temp}K</div>`;
-d.onclick=()=>{$$('.nl-item').forEach(e=>e.classList.remove('sel'));d.classList.add('sel');startFlyTo(s);selectGalSys(s);drawNasaMap(s)};list.appendChild(d)});
-$('#nasa-q').oninput=e=>{const q=e.target.value.toLowerCase();list.querySelectorAll('.nl-item').forEach((el,i)=>{el.style.display=nasa[i].host.toLowerCase().includes(q)?'':'none'})};
-drawNasaMap(null)}
-function drawNasaMap(sel){const cv=$('#nasa-map'),ctx=cv.getContext('2d'),w=cv.width,h=cv.height;
-ctx.clearRect(0,0,w,h);ctx.fillStyle='rgba(1,2,8,0.95)';ctx.fillRect(0,0,w,h);
-ctx.strokeStyle='rgba(0,60,120,0.15)';ctx.lineWidth=0.5;
-for(let i=1;i<4;i++){const x=i*w/4;ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke();ctx.beginPath();ctx.moveTo(0,x);ctx.lineTo(w,x);ctx.stroke()}
-ctx.beginPath();ctx.arc(w/2,h/2,w*0.45,0,TAU);ctx.strokeStyle='rgba(0,60,120,0.2)';ctx.stroke();
-const mx=x=>(x/GR/2+0.5)*w,mz=z=>(z/GR/2+0.5)*h;
-ctx.fillStyle='rgba(34,204,102,0.6)';allSys.filter(s=>s.src==='NASA').forEach(s=>{ctx.beginPath();ctx.arc(mx(s.pos[0]),mz(s.pos[2]),2,0,TAU);ctx.fill()});
-if(sel){ctx.strokeStyle='#22cc66';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(mx(sel.pos[0]),mz(sel.pos[2]),6,0,TAU);ctx.stroke()}
-ctx.fillStyle='rgba(0,180,255,0.8)';ctx.beginPath();ctx.arc(mx(gTgt.x),mz(gTgt.z),3,0,TAU);ctx.fill()}
-function startFlyTo(sys){flyState={from:gTgt.clone(),fromD:gD,to:new T.Vector3(sys.pos[0],sys.pos[1],sys.pos[2]),toD:400,t:0}}
 function enterSys(sys){
 if(view===V.SYS||view===V.PLN)return;
 selSys=sys;view=V.SYS;
 $('#fade').classList.add('on');
 setTimeout(()=>{
 galPts.visible=false;nasaPts.visible=false;procPts.visible=false;if(densPlane)densPlane.visible=false;
-$('#nasa-pnl').classList.remove('open');
 $('#g-hud').style.display='none';$('#g-sel').style.display='none';$('#g-hint').style.display='none';
 $('#s-hud').style.display='block';$('#xhair').style.display='block';
 orbTgt.set(0,0,0);orbTh=0;orbPh=Math.PI/5;orbD=600;
@@ -351,81 +311,72 @@ sysObjs.forEach(o=>{if(o.visible!==undefined)o.visible=false});
 $('#s-hud').style.display='none';$('#xhair').style.display='none';$('#s-pinfo').style.display='none';
 $('#p-hud').style.display='block';
 const pd=mesh.userData.pdata,sd=mesh.userData.seed,tilt=mesh.userData.tilt;
-const pRad=clamp(pd.rade*3,4,40);const isGas=pd.rade>4;
-const maps=gen_planet_maps(pd.ptype,sd,pd.rade,pd.mass,pd.eqt||300,512);
-const stride=512*512*4;
-const colTex=mkTex(maps,512,0,stride,true);
-const htTex=mkTex(maps,512,stride,stride,false);
-const nrmTex=mkTex(maps,512,stride*2,stride,false);
-const cldTex=mkTex(maps,512,stride*3,stride,true);
-const dispScale=isGas?pRad*0.005:pRad*0.04;
-const mat=new T.MeshStandardMaterial({map:colTex,displacementMap:htTex,displacementScale:dispScale,
-normalMap:nrmTex,normalScale:new T.Vector2(1.5,1.5),roughness:isGas?0.9:0.6,metalness:0.02,
-emissive:new T.Color(0x0a1828),emissiveIntensity:0.1});
-const segs=isGas?96:128;
-const planet=new T.Mesh(new T.SphereGeometry(pRad,segs,segs),mat);
+const pRad=clamp(pd.rade*3,4,40);
+const hiTex=wasmTex(pd.ptype,sd,pd.rade,512);
+const mat=new T.MeshStandardMaterial({map:hiTex,roughness:0.5,metalness:0.03,emissive:new T.Color(0x0a1828),emissiveIntensity:0.1});
+const planet=new T.Mesh(new T.SphereGeometry(pRad,64,64),mat);
 planet.rotation.z=tilt;
 planet.userData.spin=0.003*(hash(sd*2.1)>0.5?1:-1);
-const oblate=isGas?0.02+hash(sd*4.3)*0.06:0.002;
-planet.scale.set(1,1-oblate,1);
 scene.add(planet);plnObjs.push(planet);
-const cldMat=new T.MeshStandardMaterial({map:cldTex,alphaMap:cldTex,transparent:true,depthWrite:false,
-color:0xffffff,emissive:0x222233,emissiveIntensity:0.15,side:T.DoubleSide,opacity:0.7});
-const clouds=new T.Mesh(new T.SphereGeometry(pRad*1.015,48,48),cldMat);
-clouds.userData.spin=planet.userData.spin*0.7;
-planet.add(clouds);plnObjs.push(clouds);
-const atmoTypes={'Temperate':[0.3,0.5,1],'Gas Giant':[0.6,0.5,0.3],'Hot Jupiter':[1,0.4,0.1],'Ice Giant':[0.3,0.6,0.9],'Ice World':[0.6,0.75,0.95],'Super Earth':[0.35,0.55,0.9]};
+const atmoTypes={'Temperate':[0.3,0.5,1],'Gas Giant':[0.6,0.5,0.3],'Hot Jupiter':[1,0.4,0.1],'Ice Giant':[0.3,0.6,0.9],'Ice World':[0.6,0.75,0.95]};
 const atmoC=atmoTypes[pd.ptype];
 if(atmoC){const atmo=mkAtmo(pRad,atmoC);planet.add(atmo);plnObjs.push(atmo)}
-if(isGas&&hash(sd*3.7)>0.4){
-const ringGeo=new T.RingGeometry(pRad*1.4,pRad*2.2,96);
-const ringMat=new T.MeshBasicMaterial({color:new T.Color(0.6,0.55,0.45),side:T.DoubleSide,transparent:true,opacity:0.2});
-const ring=new T.Mesh(ringGeo,ringMat);ring.rotation.x=Math.PI/2+tilt*0.3;
-planet.add(ring);plnObjs.push(ring)}
-const starMassEst=Math.pow(sys.temp/5778,7/3);
-const hillR=pd.orbit?(pd.orbit*215)*(Math.pow(pd.mass*3e-6/(3*starMassEst),1/3)):pRad*5;
-const rocheR=pRad*1.26*Math.pow(pd.mass/(pd.mass*0.01+0.1),1/3);
-const moonSpace=Math.max(0,hillR*0.4-rocheR);
-const nMoons=Math.min(Math.floor(hash(sd*5.9)*5*(moonSpace/(pRad*3+1))),6);
+if(pd.ptype==='Gas Giant'||pd.ptype==='Ice Giant'){
+if(hash(sd*3.7)>0.5){
+const ringGeo=new T.RingGeometry(pRad*1.4,pRad*2.2,64);
+const ringMat=new T.MeshBasicMaterial({color:new T.Color(0.6,0.55,0.45),side:T.DoubleSide,transparent:true,opacity:0.25});
+const ringMesh=new T.Mesh(ringGeo,ringMat);
+ringMesh.rotation.x=Math.PI/2+tilt*0.3;
+planet.add(ringMesh);plnObjs.push(ringMesh);
+}
+}
+const nMoons=Math.max(0,Math.floor(hash(sd*5.9)*4)-1);
 for(let m=0;m<nMoons;m++){
-const mRad=pRad*0.06+hash(sd+m*77)*pRad*0.12;
-const mOrb=Math.max(rocheR,pRad*1.5)+m*(moonSpace/(nMoons+1));
-const mTex=wasmTex('Rocky',sd+m*100+999,0.3,64);
-const moon=new T.Mesh(new T.SphereGeometry(mRad,16,16),new T.MeshStandardMaterial({map:mTex,roughness:0.85,emissive:new T.Color(0x111111),emissiveIntensity:0.15}));
-const mPiv=new T.Object3D();const mTilt=hash(sd+m*41)*0.5-0.25;
-mPiv.rotation.x=mTilt;mPiv.userData.speed=(0.008+hash(sd+m*29)*0.015)*(hash(sd+m*13)>0.5?1:-1);
-const ma=hash(sd+m*67)*TAU;moon.position.set(Math.cos(ma)*mOrb,0,Math.sin(ma)*mOrb);
+const mRad=pRad*0.08+hash(sd+m*77)*pRad*0.15;
+const mOrb=pRad*1.6+m*pRad*0.7;
+const mTex=wasmTex('Rocky',sd+m*100+999,0.5,64);
+const moon=new T.Mesh(new T.SphereGeometry(mRad,16,16),new T.MeshStandardMaterial({map:mTex,roughness:0.8,emissive:new T.Color(0x111111),emissiveIntensity:0.2}));
+const mPiv=new T.Object3D();
+const mTilt=(hash(sd+m*41)*0.6-0.3);
+mPiv.rotation.x=mTilt;
+mPiv.userData.speed=(0.01+hash(sd+m*29)*0.02)*(hash(sd+m*13)>0.5?1:-1);
+const ma=hash(sd+m*67)*TAU;
+moon.position.set(Math.cos(ma)*mOrb,0,Math.sin(ma)*mOrb);
 mPiv.add(moon);planet.add(mPiv);plnObjs.push(mPiv,moon);
-const mRing=mkOrbitRing(mOrb);mRing.rotation.x=mTilt;planet.add(mRing);plnObjs.push(mRing)}
+const mRing=mkOrbitRing(mOrb);
+mRing.rotation.x=mTilt;
+planet.add(mRing);plnObjs.push(mRing);
+}
 const keyLt=new T.DirectionalLight(0xffffff,4);keyLt.position.set(50,30,40);scene.add(keyLt);plnObjs.push(keyLt);
 const fillLt=new T.DirectionalLight(0x335577,1.5);fillLt.position.set(-30,-10,-20);scene.add(fillLt);plnObjs.push(fillLt);
 const rimLt=new T.DirectionalLight(0x88bbff,1);rimLt.position.set(0,0,-50);scene.add(rimLt);plnObjs.push(rimLt);
 const pAmb=new T.AmbientLight(0x223344,2);scene.add(pAmb);plnObjs.push(pAmb);
-pTgt.set(0,0,0);pTh=0.3;pPh=Math.PI/4;pD=pRad*4;updatePlnCam();
+pTgt.set(0,0,0);pTh=0.3;pPh=Math.PI/4;pD=pRad*4;
+updatePlnCam();
 $('#p-name').textContent=pd.name;
 $('#p-sub').textContent=`${pd.ptype} | ${sys.name}${sys.src==='NASA'?' [NASA]':''}`;
 const hz=pd.eqt&&pd.eqt>220&&pd.eqt<320;
-const grav=pd.mass/Math.pow(pd.rade,2);const dens=pd.mass*5.51/Math.pow(pd.rade,3);
-const esc=11.2*Math.sqrt(pd.mass/pd.rade);const dayLen=(10+hash(sd*9.1)*30).toFixed(1);
-const axTiltDeg=(tilt*180/Math.PI).toFixed(1);const hillKm=(hillR*6371).toFixed(0);
-const tideLock=pd.orbit&&pd.orbit<0.1&&starMassEst>0.3?'LIKELY':'NO';
-const magF=pd.mass>0.5&&!isGas?'Active':'Minimal';
-const surfP=isGas?'N/A (Gas)':(pd.eqt>500?'Volatile':(hz?`~${(0.5+hash(sd*11.3)*1.5).toFixed(1)} atm`:'Thin'));
-const nPlates=isGas?'N/A':`${Math.floor(8+hash(sd*3.7)*8)}`;
-const rows=[['Type',pd.ptype],['Radius',`${pd.rade.toFixed(2)} R\u2295`],['Mass',`${pd.mass} M\u2295`],
+const grav=pd.mass/Math.pow(pd.rade,2);
+const dens=pd.mass*5.51/Math.pow(pd.rade,3);
+const esc=11.2*Math.sqrt(pd.mass/pd.rade);
+const dayLen=(10+hash(sd*9.1)*30).toFixed(1);
+const axTiltDeg=(tilt*180/Math.PI).toFixed(1);
+const rows=[
+['Type',pd.ptype],['Radius',`${pd.rade.toFixed(2)} R⊕`],['Mass',`${pd.mass} M⊕`],
 ['Eq Temp',`${pd.eqt||'?'} K`,hz],['Orbit',`${pd.orbit||'?'} AU`],
-['Surface Gravity',`${grav.toFixed(2)} g`],['Density',`${dens.toFixed(2)} g/cm\u00b3`],
+['Surface Gravity',`${grav.toFixed(2)} g`],['Density',`${dens.toFixed(2)} g/cm³`],
 ['Escape Velocity',`${esc.toFixed(1)} km/s`],['Day Length',`~${dayLen} h`],
-['Axial Tilt',`${axTiltDeg}\u00b0`],['Oblateness',`${(oblate*100).toFixed(1)}%`],
-['Moons',`${nMoons}`],['Hill Sphere',`${hillKm} km`],['Roche Limit',`${(rocheR*6371).toFixed(0)} km`],
-['Tidal Lock',tideLock],['Magnetic Field',magF],['Surface Pressure',surfP],['Tectonic Plates',nPlates],
+['Axial Tilt',`${axTiltDeg}°`],['Moons',`${nMoons}`],
 ['Host Star',sys.host],['Star Class',`${sys.cls} (${sys.temp}K)`],
-['Source',sys.src==='NASA'?'NASA Exoplanet Archive':'Procedural'],['Habitable Zone',hz?'YES':'NO',hz]];
+['Source',sys.src==='NASA'?'NASA Exoplanet Archive':'Procedural'],
+['Habitable Zone',hz?'YES':'NO',hz],
+];
 let html='<h4>PLANETARY ANALYSIS</h4>';
 rows.forEach(r=>html+=`<div class="spec-row"><span class="lbl">${r[0]}</span><span class="val${r[2]?' hz':''}">${r[1]}</span></div>`);
 $('#p-data').innerHTML=html;
 score+=10;$('#g-score').textContent=score;$('#s-scr').textContent=score;
-showMsg(`SCANNING ${pd.name}...`);setTimeout(()=>$('#fade').classList.remove('on'),50);
+showMsg(`SCANNING ${pd.name}...`);
+setTimeout(()=>$('#fade').classList.remove('on'),50);
 },400);
 }
 function exitPlanet(){
@@ -514,9 +465,6 @@ updateGalCam();
 $('#f-all').onclick=()=>{curFilter='ALL';applyFilter();dirty=true};
 $('#f-nasa').onclick=()=>{curFilter='NASA';applyFilter();dirty=true};
 $('#f-proc').onclick=()=>{curFilter='PROC';applyFilter();dirty=true};
-$('#f-find').onclick=()=>{$('#nasa-pnl').classList.add('open');$('#g-hud').style.display='none';if(!nasaBuilt){buildNasaFinder();nasaBuilt=true}drawNasaMap(null)};
-$('#nasa-close').onclick=()=>{$('#nasa-pnl').classList.remove('open');$('#g-hud').style.display='block'};
-$('#nasa-map').addEventListener('click',e=>{const r=e.target.getBoundingClientRect();const mx=(e.clientX-r.left)/r.width*2-1,my=(e.clientY-r.top)/r.height*2-1;let best=null,bd=Infinity;const ns=allSys.filter(s=>s.src==='NASA');ns.forEach(s=>{const sx=s.pos[0]/6000,sz=s.pos[2]/6000;const d=Math.hypot(sx-mx,sz-my);if(d<bd){bd=d;best=s}});if(best&&bd<0.15){startFlyTo(best);selectGalSys(best);drawNasaMap(best)}});
 const cv=ren.domElement;
 cv.addEventListener('wheel',e=>{
 e.preventDefault();
@@ -593,7 +541,6 @@ animate();
 }
 function animate(){
 requestAnimationFrame(animate);
-if(flyState&&view===V.GAL){flyState.t+=0.015;const t=Math.min(flyState.t,1);const e=t*t*(3-2*t);gTgt.lerpVectors(flyState.from,flyState.to,e);gD=flyState.fromD+(flyState.toD-flyState.fromD)*e;updateGalCam();dirty=true;if(t>=1)flyState=null}
 if(view===V.SYS){sysObjs.forEach(o=>{if(o.isObject3D&&o.userData.speed)o.rotation.y+=o.userData.speed*0.002});dirty=true}
 if(view===V.PLN){
 plnObjs.forEach(o=>{
