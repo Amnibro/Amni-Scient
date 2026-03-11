@@ -23,7 +23,7 @@ canvas:active{cursor:grabbing}
 .fbtn.active{color:var(--ct);border-color:var(--cm);background:rgba(0,120,200,0.25)}
 .fbtn.nasa-active{color:var(--cn);border-color:var(--cn);background:rgba(34,204,102,0.15)}
 .fbtn:hover{border-color:var(--cm);color:var(--ct)}
-#nasa-pnl{position:fixed;left:16px;top:16px;width:280px;max-height:calc(100vh - 32px);z-index:15;overflow:hidden;display:none;flex-direction:column}
+#nasa-pnl{position:fixed;left:16px;top:16px;width:280px;max-height:calc(100vh - 32px);z-index:20;overflow:hidden;display:none;flex-direction:column;pointer-events:auto}
 #nasa-pnl.open{display:flex}
 .nasa-hdr{display:flex;justify-content:space-between;align-items:center;padding:12px 14px 8px}
 .nasa-hdr h3{font-size:11px;letter-spacing:2px;color:var(--cn);text-transform:uppercase;margin:0}
@@ -358,7 +358,7 @@ const colTex=mkTex(maps,512,0,stride,true);
 const htTex=mkTex(maps,512,stride,stride,false);
 const nrmTex=mkTex(maps,512,stride*2,stride,false);
 const cldTex=mkTex(maps,512,stride*3,stride,true);
-const dispScale=isGas?pRad*0.005:pRad*0.04;
+const dispScale=isGas?pRad*0.003:pRad*0.015;
 const mat=new T.MeshStandardMaterial({map:colTex,displacementMap:htTex,displacementScale:dispScale,
 normalMap:nrmTex,normalScale:new T.Vector2(1.5,1.5),roughness:isGas?0.9:0.6,metalness:0.02,
 emissive:new T.Color(0x0a1828),emissiveIntensity:0.1});
@@ -366,7 +366,7 @@ const segs=isGas?96:128;
 const planet=new T.Mesh(new T.SphereGeometry(pRad,segs,segs),mat);
 planet.rotation.z=tilt;
 planet.userData.spin=0.003*(hash(sd*2.1)>0.5?1:-1);
-const oblate=isGas?0.02+hash(sd*4.3)*0.06:0.002;
+const oblate=isGas?0.03+hash(sd*4.3)*0.06:0.003+hash(sd*4.3)*0.008;
 planet.scale.set(1,1-oblate,1);
 scene.add(planet);plnObjs.push(planet);
 const cldMat=new T.MeshStandardMaterial({map:cldTex,alphaMap:cldTex,transparent:true,depthWrite:false,
@@ -514,8 +514,8 @@ updateGalCam();
 $('#f-all').onclick=()=>{curFilter='ALL';applyFilter();dirty=true};
 $('#f-nasa').onclick=()=>{curFilter='NASA';applyFilter();dirty=true};
 $('#f-proc').onclick=()=>{curFilter='PROC';applyFilter();dirty=true};
-$('#f-find').onclick=()=>{$('#nasa-pnl').classList.add('open');$('#g-hud').style.display='none';if(!nasaBuilt){buildNasaFinder();nasaBuilt=true}drawNasaMap(null)};
-$('#nasa-close').onclick=()=>{$('#nasa-pnl').classList.remove('open');$('#g-hud').style.display='block'};
+$('#f-find').onclick=()=>{const p=$('#nasa-pnl');if(p.classList.contains('open')){p.classList.remove('open');return}p.classList.add('open');if(!nasaBuilt){buildNasaFinder();nasaBuilt=true}drawNasaMap(null)};
+$('#nasa-close').onclick=()=>{$('#nasa-pnl').classList.remove('open')};
 $('#nasa-map').addEventListener('click',e=>{const r=e.target.getBoundingClientRect();const mx=(e.clientX-r.left)/r.width*2-1,my=(e.clientY-r.top)/r.height*2-1;let best=null,bd=Infinity;const ns=allSys.filter(s=>s.src==='NASA');ns.forEach(s=>{const sx=s.pos[0]/6000,sz=s.pos[2]/6000;const d=Math.hypot(sx-mx,sz-my);if(d<bd){bd=d;best=s}});if(best&&bd<0.15){startFlyTo(best);selectGalSys(best);drawNasaMap(best)}});
 const cv=ren.domElement;
 cv.addEventListener('wheel',e=>{
