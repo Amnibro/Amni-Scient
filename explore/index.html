@@ -400,6 +400,39 @@ ctx.fillStyle='rgba(34,204,102,0.7)';allSys.filter(s=>s.src==='NASA').forEach(s=
 ctx.fillStyle='rgba(255,136,0,0.9)';const sol=allSys.find(s=>s.src==='SOL');if(sol){ctx.beginPath();ctx.arc(mx(sol.pos[0]),mz(sol.pos[2]),3,0,TAU);ctx.fill()}
 if(sel){ctx.strokeStyle=sel.src==='NASA'?'#22cc66':sel.src==='SOL'?'#ff8800':'#00b4ff';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(mx(sel.pos[0]),mz(sel.pos[2]),6,0,TAU);ctx.stroke()}
 ctx.fillStyle='rgba(0,180,255,0.8)';ctx.beginPath();ctx.arc(mx(gTgt.x),mz(gTgt.z),3,0,TAU);ctx.fill()}
+let isWarping=false;
+function triggerWarp(sys){
+if(isWarping)return;isWarping=true;
+$('#fund-pnl').classList.remove('open');$('#rocket-pnl').classList.remove('open');$('#nasa-pnl').classList.remove('open');$('#g-sel').style.display='none';
+const _doWarp=()=>{
+  startFlyTo(sys);
+  showMsg('FRAMESHIFT DRIVE CHARGING...');
+  let targetFov=140;
+  const warpInt=setInterval(()=>{
+    if(cam.fov<targetFov){cam.fov+=(targetFov-cam.fov)*0.08+0.5;cam.updateProjectionMatrix()}
+  },16);
+  setTimeout(()=>{
+    showMsg('JUMPING...');
+    $('#fade').style.background='#ffffff';$('#fade').classList.add('on');
+    setTimeout(()=>{
+      clearInterval(warpInt);cam.fov=60;cam.updateProjectionMatrix();$('#fade').style.background='#010208';
+      enterSys(sys);
+      setTimeout(()=>isWarping=false,600);
+    },400);
+  },1500);
+};
+if(view===V.PLN||view===V.SYS){
+  $('#fade').classList.add('on');
+  setTimeout(()=>{
+    if(view===V.PLN){plnObjs.forEach(o=>{if(o.parent)o.parent.remove(o)});plnObjs=[];}
+    if(view===V.SYS||view===V.PLN){sysObjs.forEach(o=>{if(o.parent)o.parent.remove(o)});sysObjs=[];}
+    $('#p-hud').style.display='none';$('#s-hud').style.display='none';$('#s-pinfo').style.display='none';
+    $('#g-hud').style.display='';$('#g-hint').style.display='';
+    view=V.GAL;galPts.visible=true;applyFilter();updateGalCam();
+    setTimeout(()=>{$('#fade').classList.remove('on');_doWarp()},100);
+  },400);
+}else{_doWarp();}
+}
 function startFlyTo(sys){flyState={from:gTgt.clone(),fromD:gD,to:new T.Vector3(sys.pos[0],sys.pos[1],sys.pos[2]),toD:400,t:0}}
 function enterSys(sys){
 if(view===V.SYS||view===V.PLN)return;
@@ -785,7 +818,7 @@ const srcSpan=sys.src==='NASA'?'<span class="src-nasa">NASA Exoplanet Archive</s
 const inRange=sysInRange(sys);
 const rangeTxt=sys.src==='SOL'?'HOME':inRange?'<span style="color:var(--cn)">IN RANGE</span>':'<span style="color:#ff4466">OUT OF RANGE ('+dist+' Ly)</span>';
 el.innerHTML=`<h3>${sys.name}</h3><div class="bd">Class: ${sys.cls} Star\nTemperature: ${sys.temp}K\nPlanets: ${sys.planets.length}\nSource: ${srcSpan}\nDistance: ${dist} Ly from Sol\nStatus: ${rangeTxt}</div><button class="enter-btn" id="enter-sys">Enter System &rarr;</button>`;
-$('#enter-sys').onclick=()=>enterSys(sys);
+$('#enter-sys').onclick=()=>triggerWarp(sys);
 }
 async function fetchNASA(){
 const urls=[API,API.replace('top+500','top+300')];
@@ -844,7 +877,7 @@ $('#btn-warp').onclick=()=>{
 if(!GS.escVel){showMsg('BUILD A ROCKET FIRST');return}
 if(selSys){
 if(!sysInRange(selSys)){showMsg('SYSTEM OUT OF RANGE (UPGRADE ROUTER)');return}
-enterSys(selSys);
+triggerWarp(selSys);
 }else{showMsg('SELECT A SYSTEM FIRST')}
 };
 $('#nasa-map').addEventListener('click',e=>{const r=e.target.getBoundingClientRect();const mx=(e.clientX-r.left)/r.width*2-1,my=(e.clientY-r.top)/r.height*2-1;let best=null,bd=Infinity;allSys.forEach(s=>{const sx=s.pos[0]/6000,sz=s.pos[2]/6000;const d=Math.hypot(sx-mx,sz-my);if(d<bd){bd=d;best=s}});if(best&&bd<0.15){startFlyTo(best);selectGalSys(best);drawNasaMap(best)}});
@@ -886,7 +919,7 @@ if(best){const sysIdx=best.pts.userData.idxMap[best.idx];if(sysIdx<allSys.length
 }
 });
 cv.addEventListener('dblclick',e=>{
-if(view===V.GAL&&selSys){enterSys(selSys);return}
+if(view===V.GAL&&selSys){triggerWarp(selSys);return}
 if(view===V.SYS){
 const mx=(e.clientX/innerWidth)*2-1,my=-(e.clientY/innerHeight)*2+1;
 ray.setFromCamera(new T.Vector2(mx,my),cam);
