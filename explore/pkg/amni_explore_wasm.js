@@ -27,6 +27,14 @@ export function gen_planet_maps(ptype, seed, rade, _mass, eqt, sz) {
 }
 
 /**
+ * @returns {any}
+ */
+export function gen_sol_system() {
+    const ret = wasm.gen_sol_system();
+    return takeObject(ret);
+}
+
+/**
  * @param {string} nasa_json
  * @param {number} proc_count
  * @param {number} seed
