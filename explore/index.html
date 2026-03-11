@@ -111,6 +111,15 @@ canvas:active{cursor:grabbing}
 .infra-btn:hover{border-color:var(--ca);color:var(--ca);box-shadow:0 0 8px rgba(255,136,0,0.2)}
 .infra-btn.built{border-color:var(--cn);color:var(--cn);background:rgba(34,204,102,0.1);pointer-events:none;cursor:default}
 .infra-cost{color:var(--ca);font-weight:600}
+.route-item{display:flex;justify-content:space-between;align-items:center;padding:6px 8px;margin:4px 0;border:1px solid var(--cb);background:rgba(0,60,120,0.15);font-size:9px;letter-spacing:1px}
+.route-item .r-ends{color:var(--ct)}
+.route-item .r-inc{color:var(--cn);font-weight:600}
+.ship-mod{display:flex;justify-content:space-between;align-items:center;padding:6px 8px;margin:4px 0;border:1px solid var(--cb);background:rgba(0,60,120,0.15);font-size:9px;letter-spacing:1px;cursor:pointer;transition:all .2s}
+.ship-mod:hover{border-color:var(--ca);color:var(--ca)}
+.ship-mod.owned{border-color:var(--cn);color:var(--cn);cursor:default}
+#trade-pnl,#fleet-pnl{position:fixed;bottom:40px;left:50%;transform:translateX(-50%);z-index:16;width:380px;max-height:50vh;overflow-y:auto;padding:16px;background:var(--cp);border:1px solid var(--cb);backdrop-filter:blur(12px);display:none}
+#trade-pnl.open,#fleet-pnl.open{display:block}
+#trade-pnl h3,#fleet-pnl h3{font-size:12px;font-weight:300;letter-spacing:4px;color:var(--cm);margin-bottom:10px;text-transform:uppercase}
 #site-back{position:fixed;bottom:56px;right:16px;z-index:10;padding:8px 16px;background:rgba(3,8,20,0.9);border:1px solid rgba(0,120,200,0.45);color:var(--cd);font-size:10px;letter-spacing:2px;text-decoration:none;text-transform:uppercase;transition:all 0.2s;backdrop-filter:blur(10px)}
 #site-back:hover{color:var(--cm);border-color:var(--cm);box-shadow:0 0 10px rgba(0,160,255,0.15)}
 #sol-marker{position:absolute;width:12px;height:12px;border-radius:50%;border:2px solid var(--ca);box-shadow:0 0 8px var(--ca),0 0 16px rgba(255,136,0,0.3);pointer-events:none;z-index:9;transform:translate(-50%,-50%);display:none}
@@ -196,10 +205,12 @@ canvas:active{cursor:grabbing}
 <div id="sol-marker"></div>
 <div id="game-bar">
 <div class="g-stat"><span class="g-lbl">Credits:</span><span class="g-val" id="g-cred">0</span><span class="g-sep">|</span><span class="g-lbl">Research:</span><span class="g-val" id="g-rp">0</span><span class="g-sep">|</span><span class="g-lbl">Tech:</span><span class="g-val" id="g-tech">1</span><span class="g-sep">|</span><span class="g-lbl">Discovered:</span><span class="g-val" id="g-disc">0</span><span class="g-sep">|</span><span class="g-lbl">Colonies:</span><span class="g-val" id="g-cols">0</span><span class="g-sep">|</span><span class="g-lbl">Income:</span><span class="g-val" id="g-inc">0/s</span></div>
-<div style="display:flex;gap:6px"><button class="g-btn" id="btn-save">Save</button><button class="g-btn" id="btn-fund">Funding</button><button class="g-btn" id="btn-rocket">Rocket Lab</button><button class="g-btn" id="btn-warp">Auto-Warp</button></div>
+<div style="display:flex;gap:6px"><button class="g-btn" id="btn-save">Save</button><button class="g-btn" id="btn-fund">Funding</button><button class="g-btn" id="btn-rocket">Rocket Lab</button><button class="g-btn" id="btn-trade">Routes</button><button class="g-btn" id="btn-fleet">Fleet</button><button class="g-btn" id="btn-warp">Auto-Warp</button></div>
 </div>
 <div id="fund-pnl" class="pnl"></div>
 <div id="rocket-pnl" class="pnl"></div>
+<div id="trade-pnl"></div>
+<div id="fleet-pnl"></div>
 <div id="disc-toast"></div>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}</script>
 <script type="module">
@@ -249,7 +260,7 @@ let densPlane=null,dirty=true,curFilter='ALL',curPlanet=null,curPlanetSys=null,f
 const SOL_POS=new T.Vector3(2600,2,0);
 let solSys=null;
 let GS={cr:100,rp:0,tech:1,disc:[],fuel:100,maxFuel:100,rktEng:0,rktFuel:0,rktCap:0,rktNav:0,
-funds:[],routes:[],colonies:[],infra:{},inc:1,lastTick:Date.now(),escVel:false,maxRange:0};
+funds:[],routes:[],colonies:[],infra:{},ship:[],inc:1,lastTick:Date.now(),escVel:false,maxRange:0};
 const FUNDS=[
 {id:'bake',nm:'Bake Sale',desc:'Selling space cookies door-to-door',cost:0,inc:1,owned:false},
 {id:'car',nm:'Car Wash for Science',desc:'Washing cars to fund interstellar travel',cost:50,inc:3,owned:false},
@@ -302,6 +313,16 @@ const INFRA=[
 {id:'ring',nm:'Orbital Ring',desc:'Megastructure trade hub',cost:1500000,inc:6000,rp:15},
 {id:'terra',nm:'Terraformer',desc:'Atmospheric processor array',cost:3000000,inc:5000,rp:50},
 {id:'dyson',nm:'Dyson Collector',desc:'Stellar energy harvester',cost:8000000,inc:25000,rp:100}
+];
+const SHIP_MODS=[
+{id:'cargo',nm:'Cargo Bay',desc:'Expanded resource hold',cost:20000,rngMul:1.0,incMul:1.15},
+{id:'scanner',nm:'Deep Scanner',desc:'Enhanced analysis suite',cost:30000,rngMul:1.1,incMul:1.0},
+{id:'shield',nm:'Deflector Array',desc:'Micro-meteor protection',cost:50000,rngMul:1.0,incMul:1.05},
+{id:'warp2',nm:'Warp Coil Mk2',desc:'Improved FTL stability',cost:75000,rngMul:1.3,incMul:1.0},
+{id:'refinery',nm:'Onboard Refinery',desc:'In-flight fuel synthesis',cost:100000,rngMul:1.2,incMul:1.1},
+{id:'cloak',nm:'Sensor Dampener',desc:'Reduced detection profile',cost:150000,rngMul:1.0,incMul:1.2},
+{id:'quantum',nm:'Quantum Entangler',desc:'Instant colony comms',cost:300000,rngMul:1.0,incMul:1.3},
+{id:'sail',nm:'Dyson Sail',desc:'Stellar wind propulsion',cost:500000,rngMul:1.5,incMul:1.0}
 ];
 const GAL_VS=`attribute vec3 color;varying vec3 vC;void main(){vC=color;vec4 mv=modelViewMatrix*vec4(position,1.0);gl_PointSize=clamp(10.0*(300.0/(-mv.z)),1.0,35.0);gl_Position=projectionMatrix*mv;}`;
 const GAL_FS=`varying vec3 vC;void main(){float d=length(gl_PointCoord-vec2(0.5));if(d>0.5)discard;float a=(1.0-smoothstep(0.0,0.5,d))*0.8;gl_FragColor=vec4(vC,a);}`;
@@ -629,43 +650,7 @@ const rows=[['Type',pd.ptype],['Radius',`${pd.rade.toFixed(2)} R\u2295`],['Mass'
 let html='<h4>PLANETARY ANALYSIS</h4>';
 rows.forEach(r=>html+=`<div class="spec-row"><span class="lbl">${r[0]}</span><span class="val${r[2]?' hz':''}">${r[1]}</span></div>`);
 $('#p-data').innerHTML=html;
-
-const isCol=GS.colonies.includes(pd.name);
-const colCost=isGas?5000000:(hz?50000:150000);
-if(isCol){
-const cb=document.createElement('div');cb.className='g-btn';cb.style.cssText='width:100%;margin-top:12px;text-align:center;background:rgba(34,204,102,0.2);color:var(--cn);border-color:var(--cn);pointer-events:none';cb.textContent='COLONY ESTABLISHED';
-$('#p-data').appendChild(cb);
-const built=GS.infra[pd.name]||[];
-const iDiv=document.createElement('div');iDiv.style.cssText='margin-top:8px';
-let iInc=0,iRp=0;built.forEach(id=>{const inf=INFRA.find(x=>x.id===id);if(inf){iInc+=inf.inc;iRp+=inf.rp}});
-if(built.length>0){const sum=document.createElement('div');sum.style.cssText='font-size:9px;color:var(--cd);margin-bottom:6px;letter-spacing:1.5px';sum.textContent=`COLONY OUTPUT: +${iInc}/s CR | +${iRp}/min RP`;iDiv.appendChild(sum)}
-INFRA.forEach(inf=>{
-const btn=document.createElement('button');
-const isBuilt=built.includes(inf.id);
-btn.className=isBuilt?'infra-btn built':'infra-btn';
-btn.innerHTML=isBuilt?`<span>\u2713 ${inf.nm}</span><span style="color:var(--cn)">+${inf.inc}/s</span>`:`<span>${inf.nm} <span style="font-size:8px;color:var(--cd)">${inf.desc}</span></span><span class="infra-cost">$${inf.cost.toLocaleString()}</span>`;
-if(!isBuilt)btn.onclick=()=>{
-if(GS.cr<inf.cost){showMsg('INSUFFICIENT FUNDS');return}
-GS.cr-=inf.cost;if(!GS.infra[pd.name])GS.infra[pd.name]=[];GS.infra[pd.name].push(inf.id);
-GS.inc=calcIncome();updateGameUI();saveGame();showDisc(`${inf.nm.toUpperCase()} ONLINE!`);showMsg(`+${inf.inc}/s INCOME`);
-exitPlanet();setTimeout(()=>enterPlanet(mesh,sys),500);
-};
-iDiv.appendChild(btn);
-});
-$('#p-data').appendChild(iDiv);
-}else if(GS.escVel){
-const cb=document.createElement('button');cb.className='g-btn';cb.style.cssText='width:100%;margin-top:12px;padding:8px';
-cb.textContent=`ESTABLISH COLONY - $${colCost.toLocaleString()}`;
-cb.onclick=()=>{
-if(GS.cr<colCost){showMsg('INSUFFICIENT FUNDS');return}
-GS.cr-=colCost;GS.colonies.push(pd.name);
-showDisc('COLONY ESTABLISHED!');showMsg('+500 CR/s INCOME');
-GS.inc=calcIncome();updateGameUI();saveGame();
-exitPlanet();setTimeout(()=>enterPlanet(mesh,sys),500);
-};
-$('#p-data').appendChild(cb);
-}
-
+buildColUI(pd,mesh,sys,isGas,hz);
 score+=10;$('#g-score').textContent=score;$('#s-scr').textContent=score;
 showMsg(`SCANNING ${pd.name}...`);$('#gen-load').classList.remove('on');setTimeout(()=>$('#fade').classList.remove('on'),50);
 },400);
@@ -735,13 +720,13 @@ li.upgrading=false;dirty=true;$('#gen-load').classList.remove('on');
 }
 function showMsg(t){const e=$('#msg');e.textContent=t;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),2500)}
 function showDisc(t){const e=$('#disc-toast');e.textContent=t;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),3000)}
-function calcIncome(){let base=1;FUNDS.forEach(f=>{if(f.owned)base+=f.inc});base+=GS.colonies.length*500;Object.values(GS.infra||{}).forEach(arr=>arr.forEach(id=>{const inf=INFRA.find(x=>x.id===id);if(inf)base+=inf.inc}));return base*GS.tech}
+function calcIncome(){let base=1;FUNDS.forEach(f=>{if(f.owned)base+=f.inc});base+=GS.colonies.length*500;Object.values(GS.infra||{}).forEach(arr=>arr.forEach(id=>{const inf=INFRA.find(x=>x.id===id);if(inf)base+=inf.inc}));base+=GS.routes.length*2000*GS.tech;let mul=GS.tech;GS.ship.forEach(id=>{const m=SHIP_MODS.find(x=>x.id===id);if(m)mul*=m.incMul});return Math.floor(base*mul)}
 function calcDeltaV(){
 const eng=ENGINES[GS.rktEng],ft=FUELTANKS[GS.rktFuel],cap=CAPSULES[GS.rktCap],nav=NAV[GS.rktNav];
 const dry=eng.mass+ft.mass+cap.mass+nav.mass;const wet=dry+ft.cap;
 return wet>0?eng.dv*Math.log(wet/dry)*nav.acc:0;
 }
-function calcRange(){const dv=calcDeltaV();return dv*0.5*GS.tech}
+function calcRange(){const dv=calcDeltaV();let mul=1;GS.ship.forEach(id=>{const m=SHIP_MODS.find(x=>x.id===id);if(m)mul*=m.rngMul});return dv*0.5*GS.tech*mul}
 function updateGameUI(){
 GS.inc=calcIncome();GS.maxRange=calcRange();
 $('#g-cred').textContent=Math.floor(GS.cr).toLocaleString();
@@ -810,6 +795,99 @@ if(!GS.escVel) {
 };
 pnl.appendChild(lb);
 }
+function buildColUI(pd,mesh,sys,isGas,hz){
+const old=document.getElementById('col-ui');if(old)old.remove();
+const wrap=document.createElement('div');wrap.id='col-ui';wrap.style.cssText='margin-top:12px';
+if(sys.src==='SOL'){
+const hw=document.createElement('div');hw.className='g-btn';hw.style.cssText='width:100%;text-align:center;background:rgba(100,180,255,0.15);color:var(--cm);border-color:var(--cm);pointer-events:none';hw.textContent='FEDERATION HOMEWORLD';wrap.appendChild(hw);$('#p-data').appendChild(wrap);return;
+}
+const isCol=GS.colonies.includes(pd.name);
+const colCost=isGas?5000000:(hz?50000:150000);
+if(isCol){
+const cb=document.createElement('div');cb.className='g-btn';cb.style.cssText='width:100%;text-align:center;background:rgba(34,204,102,0.2);color:var(--cn);border-color:var(--cn);pointer-events:none';cb.textContent='COLONY ESTABLISHED';wrap.appendChild(cb);
+const built=GS.infra[pd.name]||[];
+const iDiv=document.createElement('div');iDiv.style.cssText='margin-top:8px';
+let iInc=0,iRp=0;built.forEach(id=>{const inf=INFRA.find(x=>x.id===id);if(inf){iInc+=inf.inc;iRp+=inf.rp}});
+if(built.length>0){const sum=document.createElement('div');sum.style.cssText='font-size:9px;color:var(--cd);margin-bottom:6px;letter-spacing:1.5px';sum.textContent=`COLONY OUTPUT: +${iInc}/s CR | +${iRp}/min RP`;iDiv.appendChild(sum)}
+INFRA.forEach(inf=>{
+const btn=document.createElement('button');const isBuilt=built.includes(inf.id);
+btn.className=isBuilt?'infra-btn built':'infra-btn';
+btn.innerHTML=isBuilt?`<span>\u2713 ${inf.nm}</span><span style="color:var(--cn)">+${inf.inc}/s</span>`:`<span>${inf.nm} <span style="font-size:8px;color:var(--cd)">${inf.desc}</span></span><span class="infra-cost">$${inf.cost.toLocaleString()}</span>`;
+if(!isBuilt)btn.onclick=()=>{
+if(GS.cr<inf.cost){showMsg('INSUFFICIENT FUNDS');return}
+GS.cr-=inf.cost;if(!GS.infra[pd.name])GS.infra[pd.name]=[];GS.infra[pd.name].push(inf.id);
+GS.inc=calcIncome();updateGameUI();saveGame();showDisc(`${inf.nm.toUpperCase()} ONLINE!`);showMsg(`+${inf.inc}/s INCOME`);
+buildColUI(pd,mesh,sys,isGas,hz);
+};
+iDiv.appendChild(btn);
+});wrap.appendChild(iDiv);
+}else if(GS.escVel){
+const cb=document.createElement('button');cb.className='g-btn';cb.style.cssText='width:100%;padding:8px';
+cb.textContent=`ESTABLISH COLONY - $${colCost.toLocaleString()}`;
+cb.onclick=()=>{
+if(GS.cr<colCost){showMsg('INSUFFICIENT FUNDS');return}
+GS.cr-=colCost;GS.colonies.push(pd.name);
+showDisc('COLONY ESTABLISHED!');showMsg('+500 CR/s INCOME');
+GS.inc=calcIncome();updateGameUI();saveGame();
+buildColUI(pd,mesh,sys,isGas,hz);
+};
+wrap.appendChild(cb);
+}
+$('#p-data').appendChild(wrap);
+}
+function buildTradePnl(){
+const pnl=$('#trade-pnl');
+const maxR=Math.max(1,GS.tech);
+pnl.innerHTML=`<h3>Trade Routes <span style="font-size:9px;color:var(--cd)">${GS.routes.length}/${maxR}</span></h3>`;
+if(GS.colonies.length<2){const m=document.createElement('div');m.style.cssText='font-size:10px;color:var(--cd);letter-spacing:1.5px';m.textContent='NEED 2+ COLONIES TO ESTABLISH ROUTES';pnl.appendChild(m);return}
+GS.routes.forEach((rt,i)=>{
+const d=document.createElement('div');d.className='route-item';
+d.innerHTML=`<span class="r-ends">${rt.from} \u2194 ${rt.to}</span><span class="r-inc">+${(2000*GS.tech).toLocaleString()}/s</span><button class="g-btn" style="font-size:8px;padding:2px 6px;margin-left:8px" data-ri="${i}">X</button>`;
+d.querySelector('button').onclick=()=>{GS.routes.splice(i,1);GS.inc=calcIncome();updateGameUI();saveGame();buildTradePnl()};
+pnl.appendChild(d);
+});
+if(GS.routes.length<maxR){
+const row=document.createElement('div');row.style.cssText='margin-top:10px;display:flex;gap:6px;align-items:center';
+const s1=document.createElement('select');s1.style.cssText='flex:1;background:var(--cp);color:var(--ct);border:1px solid var(--cb);padding:4px;font-size:9px';
+const s2=s1.cloneNode();
+GS.colonies.forEach(c=>{const o1=document.createElement('option');o1.value=c;o1.textContent=c;s1.appendChild(o1);const o2=document.createElement('option');o2.value=c;o2.textContent=c;s2.appendChild(o2)});
+if(GS.colonies.length>1)s2.selectedIndex=1;
+const cost=10000*GS.tech;
+const ab=document.createElement('button');ab.className='g-btn';ab.style.cssText='font-size:9px;padding:4px 8px;white-space:nowrap';
+ab.textContent=`LINK $${cost.toLocaleString()}`;
+ab.onclick=()=>{
+const f=s1.value,t=s2.value;
+if(f===t){showMsg('SAME ENDPOINT');return}
+if(GS.routes.some(r=>(r.from===f&&r.to===t)||(r.from===t&&r.to===f))){showMsg('ROUTE EXISTS');return}
+if(GS.cr<cost){showMsg('INSUFFICIENT FUNDS');return}
+GS.cr-=cost;GS.routes.push({from:f,to:t});
+GS.inc=calcIncome();updateGameUI();saveGame();showDisc('TRADE ROUTE ONLINE!');buildTradePnl();
+};
+row.appendChild(s1);row.appendChild(s2);row.appendChild(ab);pnl.appendChild(row);
+}
+const tot=GS.routes.length*2000*GS.tech;
+if(tot>0){const ts=document.createElement('div');ts.style.cssText='margin-top:8px;font-size:9px;color:var(--cn);letter-spacing:1.5px';ts.textContent=`TOTAL ROUTE INCOME: +${tot.toLocaleString()}/s`;pnl.appendChild(ts)}
+}
+function buildFleetPnl(){
+const pnl=$('#fleet-pnl');
+pnl.innerHTML='<h3>Ship Modules</h3>';
+let tRng=1.0,tInc=1.0;
+GS.ship.forEach(id=>{const m=SHIP_MODS.find(x=>x.id===id);if(m){tRng*=m.rngMul;tInc*=m.incMul}});
+const stats=document.createElement('div');stats.style.cssText='margin-bottom:10px;font-size:9px;color:var(--cd);letter-spacing:1.5px';
+stats.textContent=`RANGE x${tRng.toFixed(2)} | INCOME x${tInc.toFixed(2)}`;pnl.appendChild(stats);
+SHIP_MODS.forEach(mod=>{
+const owned=GS.ship.includes(mod.id);
+const d=document.createElement('div');d.className=owned?'ship-mod owned':'ship-mod';
+const bonuses=[];if(mod.rngMul>1)bonuses.push(`RNG x${mod.rngMul}`);if(mod.incMul>1)bonuses.push(`INC x${mod.incMul}`);
+d.innerHTML=`<div><div style="font-weight:600">${owned?'\u2713 ':''}${mod.nm}</div><div style="font-size:8px;color:var(--cd)">${mod.desc}</div></div><div style="text-align:right"><div class="infra-cost">${owned?'INSTALLED':'$'+mod.cost.toLocaleString()}</div><div style="font-size:8px;color:var(--ca)">${bonuses.join(' | ')}</div></div>`;
+if(!owned)d.onclick=()=>{
+if(GS.cr<mod.cost){showMsg('INSUFFICIENT FUNDS');return}
+GS.cr-=mod.cost;GS.ship.push(mod.id);
+GS.inc=calcIncome();GS.maxRange=calcRange();updateGameUI();saveGame();showDisc(`${mod.nm.toUpperCase()} INSTALLED!`);buildFleetPnl();
+};
+pnl.appendChild(d);
+});
+}
 function discoverSystem(sys){
 if(!sys||GS.disc.includes(sys.name))return;
 GS.disc.push(sys.name);
@@ -828,7 +906,7 @@ function saveGame(){
 const sv={score,gs:{cr:GS.cr,rp:GS.rp,tech:GS.tech,disc:GS.disc,fuel:GS.fuel,maxFuel:GS.maxFuel,
 rktEng:GS.rktEng,rktFuel:GS.rktFuel,rktCap:GS.rktCap,rktNav:GS.rktNav,
 funds:FUNDS.filter(f=>f.owned).map(f=>f.id),routes:GS.routes,colonies:GS.colonies,
-infra:GS.infra,escVel:GS.escVel,lastTick:Date.now()}};
+infra:GS.infra,ship:GS.ship,escVel:GS.escVel,lastTick:Date.now()}};
 localStorage.setItem('amni_save',JSON.stringify(sv));showMsg('GAME DATA SYNCED');
 }
 function loadGame(){
@@ -839,7 +917,7 @@ if(sv.gs){const g=sv.gs;
 GS.cr=g.cr||0;GS.rp=g.rp||0;GS.tech=g.tech||1;GS.disc=g.disc||[];
 GS.fuel=g.fuel||100;GS.maxFuel=g.maxFuel||100;
 GS.rktEng=g.rktEng||0;GS.rktFuel=g.rktFuel||0;GS.rktCap=g.rktCap||0;GS.rktNav=g.rktNav||0;
-GS.routes=g.routes||[];GS.colonies=g.colonies||[];GS.infra=g.infra||{};GS.escVel=g.escVel||false;
+GS.routes=g.routes||[];GS.colonies=g.colonies||[];GS.infra=g.infra||{};GS.ship=g.ship||[];GS.escVel=g.escVel||false;
 (g.funds||[]).forEach(fid=>{const f=FUNDS.find(x=>x.id===fid);if(f)f.owned=true});
 GS.lastTick=g.lastTick||Date.now();
 const offline=(Date.now()-GS.lastTick)/1000;
@@ -916,8 +994,10 @@ $('#f-nasa').onclick=()=>{curFilter='NASA';applyFilter();dirty=true};
 $('#f-proc').onclick=()=>{curFilter='PROC';applyFilter();dirty=true};
 $('#f-find').onclick=()=>{const p=$('#nasa-pnl');if(p.classList.contains('open')){p.classList.remove('open');$('#g-hud').classList.remove('find-open');return}p.classList.add('open');$('#g-hud').classList.add('find-open');if(!nasaBuilt){buildNasaFinder();nasaBuilt=true}drawNasaMap(null)};
 $('#nasa-close').onclick=()=>{$('#nasa-pnl').classList.remove('open');$('#g-hud').classList.remove('find-open')};
-$('#btn-fund').onclick=()=>{$('#fund-pnl').classList.toggle('open');$('#rocket-pnl').classList.remove('open');buildFundPnl()};
-$('#btn-rocket').onclick=()=>{$('#rocket-pnl').classList.toggle('open');$('#fund-pnl').classList.remove('open');buildRocketPnl()};
+$('#btn-fund').onclick=()=>{$('#fund-pnl').classList.toggle('open');['rocket-pnl','trade-pnl','fleet-pnl'].forEach(p=>$('#'+p).classList.remove('open'));buildFundPnl()};
+$('#btn-rocket').onclick=()=>{$('#rocket-pnl').classList.toggle('open');['fund-pnl','trade-pnl','fleet-pnl'].forEach(p=>$('#'+p).classList.remove('open'));buildRocketPnl()};
+$('#btn-trade').onclick=()=>{$('#trade-pnl').classList.toggle('open');['fund-pnl','rocket-pnl','fleet-pnl'].forEach(p=>$('#'+p).classList.remove('open'));buildTradePnl()};
+$('#btn-fleet').onclick=()=>{$('#fleet-pnl').classList.toggle('open');['fund-pnl','rocket-pnl','trade-pnl'].forEach(p=>$('#'+p).classList.remove('open'));buildFleetPnl()};
 $('#btn-save').onclick=()=>saveGame();
 $('#btn-warp').onclick=()=>{
 if(!GS.escVel){showMsg('BUILD A ROCKET FIRST');return}
