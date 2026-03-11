@@ -946,6 +946,17 @@ if(e.code==='F9'){e.preventDefault();loadGame();showMsg('GAME DATA LOADED')}
 });
 $('#s-back').onclick=exitSys;
 $('#p-back').onclick=exitPlanet;
+  $('#p-explore').onclick=()=>{
+    $('#p-map-over').style.display='block';
+    const cv=$('#p-map-cv');const ctx=cv.getContext('2d');
+    const pd=curPlanet.userData.pdata,sd=curPlanet.userData.seed;
+    const maps=gen_planet_maps(pd.ptype,sd,pd.rade,pd.mass,pd.eqt||300,512);
+    const idat=new ImageData(new Uint8ClampedArray(maps.buffer,0,512*512*4),512,512);
+    ctx.putImageData(idat,0,0);
+  };
+  $('#p-map-close').onclick=()=>{
+    $('#p-map-over').style.display='none';
+  };
 $('#btn-resume').onclick=()=>$('#pause').classList.remove('open');
 $('#btn-fs').onclick=()=>{document.fullscreenElement?document.exitFullscreen?.():document.documentElement.requestFullscreen?.()};
 window.addEventListener('resize',()=>{
