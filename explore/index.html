@@ -102,6 +102,15 @@ canvas:active{cursor:grabbing}
 #pause-box .sub{font-size:11px;color:var(--cd);letter-spacing:3px;margin-bottom:20px}
 .mbtn{display:block;width:100%;padding:9px;margin:6px 0;background:rgba(0,60,120,0.35);border:1px solid var(--cb);color:var(--ct);font-size:11px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all 0.2s}
 .mbtn:hover{background:rgba(0,100,180,0.45);border-color:var(--cm);box-shadow:0 0 12px rgba(0,160,255,0.15)}
+#gen-load{position:fixed;top:0;left:0;width:100%;height:100%;z-index:19;background:rgba(1,2,8,0.88);display:none;align-items:center;justify-content:center;flex-direction:column;backdrop-filter:blur(4px)}
+#gen-load.on{display:flex}
+#gen-load .spinner{width:40px;height:40px;border:3px solid rgba(0,120,200,0.2);border-top:3px solid var(--cm);border-radius:50%;animation:spin 0.8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+#gen-load .gen-txt{margin-top:12px;font-size:11px;letter-spacing:3px;color:var(--cm);text-transform:uppercase}
+.infra-btn{display:flex;justify-content:space-between;align-items:center;width:100%;margin-top:6px;padding:6px 10px;border:1px solid var(--cb);background:rgba(0,60,120,0.2);color:var(--ct);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all .2s}
+.infra-btn:hover{border-color:var(--ca);color:var(--ca);box-shadow:0 0 8px rgba(255,136,0,0.2)}
+.infra-btn.built{border-color:var(--cn);color:var(--cn);background:rgba(34,204,102,0.1);pointer-events:none;cursor:default}
+.infra-cost{color:var(--ca);font-weight:600}
 #site-back{position:fixed;bottom:56px;right:16px;z-index:10;padding:8px 16px;background:rgba(3,8,20,0.9);border:1px solid rgba(0,120,200,0.45);color:var(--cd);font-size:10px;letter-spacing:2px;text-decoration:none;text-transform:uppercase;transition:all 0.2s;backdrop-filter:blur(10px)}
 #site-back:hover{color:var(--cm);border-color:var(--cm);box-shadow:0 0 10px rgba(0,160,255,0.15)}
 #sol-marker{position:absolute;width:12px;height:12px;border-radius:50%;border:2px solid var(--ca);box-shadow:0 0 8px var(--ca),0 0 16px rgba(255,136,0,0.3);pointer-events:none;z-index:9;transform:translate(-50%,-50%);display:none}
@@ -178,6 +187,7 @@ canvas:active{cursor:grabbing}
 <canvas id="p-map-cv" width="512" height="512" style="border:1px solid var(--cb);cursor:crosshair"></canvas>
 <button id="p-map-close" class="g-btn" style="margin-top:12px;padding:8px 20px">CLOSE MAP</button>
 </div>
+<div id="gen-load"><div class="spinner"></div><div class="gen-txt">GENERATING...</div></div>
 <div id="xhair"><svg viewBox="0 0 36 36"><circle cx="18" cy="18" r="12" fill="none" stroke="var(--cm)" stroke-width="1" opacity="0.5"/><line x1="18" y1="2" x2="18" y2="9" stroke="var(--cm)" stroke-width="1.2"/><line x1="18" y1="27" x2="18" y2="34" stroke="var(--cm)" stroke-width="1.2"/><line x1="2" y1="18" x2="9" y2="18" stroke="var(--cm)" stroke-width="1.2"/><line x1="27" y1="18" x2="34" y2="18" stroke="var(--cm)" stroke-width="1.2"/><circle cx="18" cy="18" r="1.5" fill="var(--cm)"/></svg></div>
 <div id="msg"></div>
 <div id="fade"></div>
@@ -239,7 +249,7 @@ let densPlane=null,dirty=true,curFilter='ALL',curPlanet=null,curPlanetSys=null,f
 const SOL_POS=new T.Vector3(2600,2,0);
 let solSys=null;
 let GS={cr:100,rp:0,tech:1,disc:[],fuel:100,maxFuel:100,rktEng:0,rktFuel:0,rktCap:0,rktNav:0,
-funds:[],routes:[],colonies:[],inc:1,lastTick:Date.now(),escVel:false,maxRange:0};
+funds:[],routes:[],colonies:[],infra:{},inc:1,lastTick:Date.now(),escVel:false,maxRange:0};
 const FUNDS=[
 {id:'bake',nm:'Bake Sale',desc:'Selling space cookies door-to-door',cost:0,inc:1,owned:false},
 {id:'car',nm:'Car Wash for Science',desc:'Washing cars to fund interstellar travel',cost:50,inc:3,owned:false},
@@ -283,6 +293,15 @@ const NAV=[
 {nm:'Computer',acc:0.8,mass:20,cost:8000},
 {nm:'AI Navigator',acc:0.95,mass:10,cost:40000},
 {nm:'Quantum Nav',acc:0.99,mass:5,cost:200000}
+];
+const INFRA=[
+{id:'mine',nm:'Mining Outpost',desc:'Rare mineral extraction',cost:100000,inc:1000,rp:0},
+{id:'lab',nm:'Research Station',desc:'Scientific analysis hub',cost:250000,inc:200,rp:25},
+{id:'depot',nm:'Supply Depot',desc:'Orbital logistics cache',cost:400000,inc:1500,rp:5},
+{id:'elev',nm:'Space Elevator',desc:'Surface-orbit transit system',cost:750000,inc:3000,rp:10},
+{id:'ring',nm:'Orbital Ring',desc:'Megastructure trade hub',cost:1500000,inc:6000,rp:15},
+{id:'terra',nm:'Terraformer',desc:'Atmospheric processor array',cost:3000000,inc:5000,rp:50},
+{id:'dyson',nm:'Dyson Collector',desc:'Stellar energy harvester',cost:8000000,inc:25000,rp:100}
 ];
 const GAL_VS=`attribute vec3 color;varying vec3 vC;void main(){vC=color;vec4 mv=modelViewMatrix*vec4(position,1.0);gl_PointSize=clamp(10.0*(300.0/(-mv.z)),1.0,35.0);gl_Position=projectionMatrix*mv;}`;
 const GAL_FS=`varying vec3 vC;void main(){float d=length(gl_PointCoord-vec2(0.5));if(d>0.5)discard;float a=(1.0-smoothstep(0.0,0.5,d))*0.8;gl_FragColor=vec4(vC,a);}`;
@@ -529,6 +548,7 @@ function enterPlanet(mesh,sys){
 if(view!==V.SYS)return;
 view=V.PLN;curPlanet=mesh;curPlanetSys=sys;
 $('#fade').classList.add('on');
+$('#gen-load').classList.add('on');$('#gen-load').querySelector('.gen-txt').textContent='GENERATING SURFACE...';
 setTimeout(()=>{
 sysObjs.forEach(o=>{if(o.visible!==undefined)o.visible=false});
 $('#s-hud').style.display='none';$('#xhair').style.display='none';$('#s-pinfo').style.display='none';
@@ -615,6 +635,24 @@ const colCost=isGas?5000000:(hz?50000:150000);
 if(isCol){
 const cb=document.createElement('div');cb.className='g-btn';cb.style.cssText='width:100%;margin-top:12px;text-align:center;background:rgba(34,204,102,0.2);color:var(--cn);border-color:var(--cn);pointer-events:none';cb.textContent='COLONY ESTABLISHED';
 $('#p-data').appendChild(cb);
+const built=GS.infra[pd.name]||[];
+const iDiv=document.createElement('div');iDiv.style.cssText='margin-top:8px';
+let iInc=0,iRp=0;built.forEach(id=>{const inf=INFRA.find(x=>x.id===id);if(inf){iInc+=inf.inc;iRp+=inf.rp}});
+if(built.length>0){const sum=document.createElement('div');sum.style.cssText='font-size:9px;color:var(--cd);margin-bottom:6px;letter-spacing:1.5px';sum.textContent=`COLONY OUTPUT: +${iInc}/s CR | +${iRp}/min RP`;iDiv.appendChild(sum)}
+INFRA.forEach(inf=>{
+const btn=document.createElement('button');
+const isBuilt=built.includes(inf.id);
+btn.className=isBuilt?'infra-btn built':'infra-btn';
+btn.innerHTML=isBuilt?`<span>\u2713 ${inf.nm}</span><span style="color:var(--cn)">+${inf.inc}/s</span>`:`<span>${inf.nm} <span style="font-size:8px;color:var(--cd)">${inf.desc}</span></span><span class="infra-cost">$${inf.cost.toLocaleString()}</span>`;
+if(!isBuilt)btn.onclick=()=>{
+if(GS.cr<inf.cost){showMsg('INSUFFICIENT FUNDS');return}
+GS.cr-=inf.cost;if(!GS.infra[pd.name])GS.infra[pd.name]=[];GS.infra[pd.name].push(inf.id);
+GS.inc=calcIncome();updateGameUI();saveGame();showDisc(`${inf.nm.toUpperCase()} ONLINE!`);showMsg(`+${inf.inc}/s INCOME`);
+exitPlanet();setTimeout(()=>enterPlanet(mesh,sys),500);
+};
+iDiv.appendChild(btn);
+});
+$('#p-data').appendChild(iDiv);
 }else if(GS.escVel){
 const cb=document.createElement('button');cb.className='g-btn';cb.style.cssText='width:100%;margin-top:12px;padding:8px';
 cb.textContent=`ESTABLISH COLONY - $${colCost.toLocaleString()}`;
@@ -629,7 +667,7 @@ $('#p-data').appendChild(cb);
 }
 
 score+=10;$('#g-score').textContent=score;$('#s-scr').textContent=score;
-showMsg(`SCANNING ${pd.name}...`);setTimeout(()=>$('#fade').classList.remove('on'),50);
+showMsg(`SCANNING ${pd.name}...`);$('#gen-load').classList.remove('on');setTimeout(()=>$('#fade').classList.remove('on'),50);
 },400);
 }
 function exitPlanet(){
@@ -682,6 +720,7 @@ if(li.upgrading)return;
 const want=pD<li.pRad*3?1024:512;
 if(want<=li.curLOD)return;
 li.upgrading=true;li.curLOD=want;
+$('#gen-load').classList.add('on');$('#gen-load').querySelector('.gen-txt').textContent='ENHANCING RESOLUTION...';
 setTimeout(()=>{
 const maps=gen_planet_maps(li.pd.ptype,li.sd,li.pd.rade,li.pd.mass,li.pd.eqt||300,want);
 const stride=want*want*4;
@@ -691,12 +730,12 @@ pm.material.normalMap=mkTex(maps,want,stride*2,stride,false);
 pm.material.needsUpdate=true;
 const cld=plnObjs.find(o=>o.isMesh&&o.userData.spin&&o!==pm&&!o.userData.lodInfo);
 if(cld){const ct=mkTex(maps,want,stride*3,stride,true);cld.material.map=ct;cld.material.alphaMap=ct;cld.material.needsUpdate=true}
-li.upgrading=false;dirty=true;
-},0);
+li.upgrading=false;dirty=true;$('#gen-load').classList.remove('on');
+},50);
 }
 function showMsg(t){const e=$('#msg');e.textContent=t;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),2500)}
 function showDisc(t){const e=$('#disc-toast');e.textContent=t;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),3000)}
-function calcIncome(){let base=1;FUNDS.forEach(f=>{if(f.owned)base+=f.inc});base+=GS.colonies.length*500;return base*GS.tech}
+function calcIncome(){let base=1;FUNDS.forEach(f=>{if(f.owned)base+=f.inc});base+=GS.colonies.length*500;Object.values(GS.infra||{}).forEach(arr=>arr.forEach(id=>{const inf=INFRA.find(x=>x.id===id);if(inf)base+=inf.inc}));return base*GS.tech}
 function calcDeltaV(){
 const eng=ENGINES[GS.rktEng],ft=FUELTANKS[GS.rktFuel],cap=CAPSULES[GS.rktCap],nav=NAV[GS.rktNav];
 const dry=eng.mass+ft.mass+cap.mass+nav.mass;const wet=dry+ft.cap;
@@ -713,6 +752,8 @@ $('#g-inc').textContent=`${GS.inc}/s`;
 function gameTick(){
 const now=Date.now(),dt=(now-GS.lastTick)/1000;
 GS.lastTick=now;GS.cr+=GS.inc*dt;
+let rpRate=0;Object.values(GS.infra||{}).forEach(arr=>arr.forEach(id=>{const inf=INFRA.find(x=>x.id===id);if(inf)rpRate+=inf.rp}));
+if(rpRate>0){GS.rp+=rpRate*dt/60;if(GS.rp>=10*GS.tech*GS.tech){GS.tech++;showDisc(`TECH LEVEL ${GS.tech} UNLOCKED!`)}}
 updateGameUI();
 }
 function buildFundPnl(){
@@ -787,7 +828,7 @@ function saveGame(){
 const sv={score,gs:{cr:GS.cr,rp:GS.rp,tech:GS.tech,disc:GS.disc,fuel:GS.fuel,maxFuel:GS.maxFuel,
 rktEng:GS.rktEng,rktFuel:GS.rktFuel,rktCap:GS.rktCap,rktNav:GS.rktNav,
 funds:FUNDS.filter(f=>f.owned).map(f=>f.id),routes:GS.routes,colonies:GS.colonies,
-escVel:GS.escVel,lastTick:Date.now()}};
+infra:GS.infra,escVel:GS.escVel,lastTick:Date.now()}};
 localStorage.setItem('amni_save',JSON.stringify(sv));showMsg('GAME DATA SYNCED');
 }
 function loadGame(){
@@ -798,7 +839,7 @@ if(sv.gs){const g=sv.gs;
 GS.cr=g.cr||0;GS.rp=g.rp||0;GS.tech=g.tech||1;GS.disc=g.disc||[];
 GS.fuel=g.fuel||100;GS.maxFuel=g.maxFuel||100;
 GS.rktEng=g.rktEng||0;GS.rktFuel=g.rktFuel||0;GS.rktCap=g.rktCap||0;GS.rktNav=g.rktNav||0;
-GS.routes=g.routes||[];GS.colonies=g.colonies||[];GS.escVel=g.escVel||false;
+GS.routes=g.routes||[];GS.colonies=g.colonies||[];GS.infra=g.infra||{};GS.escVel=g.escVel||false;
 (g.funds||[]).forEach(fid=>{const f=FUNDS.find(x=>x.id===fid);if(f)f.owned=true});
 GS.lastTick=g.lastTick||Date.now();
 const offline=(Date.now()-GS.lastTick)/1000;
@@ -953,11 +994,15 @@ $('#s-back').onclick=exitSys;
 $('#p-back').onclick=exitPlanet;
   $('#p-explore').onclick=()=>{
     const ov=$('#p-map-over');ov.style.display='flex';
-    const cv=$('#p-map-cv');const ctx=cv.getContext('2d');
-    const pd=curPlanet.userData.pdata,sd=curPlanet.userData.seed;
-    const maps=gen_planet_maps(pd.ptype,sd,pd.rade,pd.mass,pd.eqt||300,512);
-    const idat=new ImageData(new Uint8ClampedArray(maps.buffer,0,512*512*4),512,512);
-    ctx.putImageData(idat,0,0);
+    $('#gen-load').classList.add('on');$('#gen-load').querySelector('.gen-txt').textContent='MAPPING SURFACE...';
+    setTimeout(()=>{
+      const cv=$('#p-map-cv');const ctx=cv.getContext('2d');
+      const pd=curPlanet.userData.pdata,sd=curPlanet.userData.seed;
+      const maps=gen_planet_maps(pd.ptype,sd,pd.rade,pd.mass,pd.eqt||300,512);
+      const idat=new ImageData(new Uint8ClampedArray(maps.buffer,0,512*512*4),512,512);
+      ctx.putImageData(idat,0,0);
+      $('#gen-load').classList.remove('on');
+    },50);
   };
   $('#p-map-close').onclick=()=>{
     $('#p-map-over').style.display='none';
