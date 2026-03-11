@@ -181,7 +181,7 @@ canvas:active{cursor:grabbing}
 <div id="sol-marker"></div>
 <div id="game-bar">
 <div class="g-stat"><span class="g-lbl">Credits:</span><span class="g-val" id="g-cred">0</span><span class="g-sep">|</span><span class="g-lbl">Research:</span><span class="g-val" id="g-rp">0</span><span class="g-sep">|</span><span class="g-lbl">Tech:</span><span class="g-val" id="g-tech">1</span><span class="g-sep">|</span><span class="g-lbl">Discovered:</span><span class="g-val" id="g-disc">0</span><span class="g-sep">|</span><span class="g-lbl">Income:</span><span class="g-val" id="g-inc">0/s</span></div>
-<div style="display:flex;gap:6px"><button class="g-btn" id="btn-fund">Funding</button><button class="g-btn" id="btn-rocket">Rocket Lab</button><button class="g-btn" id="btn-launch">Launch Pad</button></div>
+<div style="display:flex;gap:6px"><button class="g-btn" id="btn-save">Save</button><button class="g-btn" id="btn-fund">Funding</button><button class="g-btn" id="btn-rocket">Rocket Lab</button><button class="g-btn" id="btn-launch">Launch Pad</button></div>
 </div>
 <div id="fund-pnl" class="pnl"></div>
 <div id="rocket-pnl" class="pnl"></div>
@@ -492,8 +492,8 @@ const dispScale=isGas?pRad*0.001:pRad*0.003;
 const mat=new T.MeshStandardMaterial({map:colTex,displacementMap:htTex,displacementScale:dispScale,
 normalMap:nrmTex,normalScale:new T.Vector2(0.8,0.8),roughness:isGas?0.95:0.82,metalness:0.0,
 emissive:new T.Color(0x0a1828),emissiveIntensity:0.08});
-const segs=isGas?128:192;
-const planet=new T.Mesh(new T.SphereGeometry(pRad,segs,segs),mat);
+const detail=isGas?96:128;
+const planet=new T.Mesh(new T.SphereGeometry(pRad,detail,detail),mat);
 planet.rotation.z=tilt;
 planet.userData.spin=0.003*(hash(sd*2.1)>0.5?1:-1);
 planet.userData.lodInfo={pd,sd,pRad,isGas,curLOD,upgrading:false};
@@ -501,7 +501,7 @@ const oblate=isGas?0.03+hash(sd*4.3)*0.06:0.003+hash(sd*4.3)*0.008;
 planet.scale.set(1,1-oblate,1);
 scene.add(planet);plnObjs.push(planet);
 const cldMat=new T.MeshStandardMaterial({map:cldTex,alphaMap:cldTex,transparent:true,depthWrite:false,
-color:0xffffff,emissive:0x222233,emissiveIntensity:0.15,side:T.DoubleSide,opacity:0.7});
+color:0xffffff,emissive:0x222233,emissiveIntensity:0.1,side:T.DoubleSide,opacity:0.35});
 const clouds=new T.Mesh(new T.SphereGeometry(pRad*1.015,48,48),cldMat);
 clouds.userData.spin=planet.userData.spin*0.7;
 planet.add(clouds);plnObjs.push(clouds);
@@ -528,10 +528,10 @@ mPiv.rotation.x=mTilt;mPiv.userData.speed=(0.008+hash(sd+m*29)*0.015)*(hash(sd+m
 const ma=hash(sd+m*67)*TAU;moon.position.set(Math.cos(ma)*mOrb,0,Math.sin(ma)*mOrb);
 mPiv.add(moon);planet.add(mPiv);plnObjs.push(mPiv,moon);
 const mRing=mkOrbitRing(mOrb);mRing.rotation.x=mTilt;planet.add(mRing);plnObjs.push(mRing)}
-const keyLt=new T.DirectionalLight(0xffeedd,1.5);keyLt.position.set(50,30,40);scene.add(keyLt);plnObjs.push(keyLt);
-const fillLt=new T.DirectionalLight(0x335577,0.5);fillLt.position.set(-30,-10,-20);scene.add(fillLt);plnObjs.push(fillLt);
-const rimLt=new T.DirectionalLight(0x88bbff,0.4);rimLt.position.set(0,0,-50);scene.add(rimLt);plnObjs.push(rimLt);
-const pAmb=new T.AmbientLight(0x223344,0.5);scene.add(pAmb);plnObjs.push(pAmb);
+const keyLt=new T.DirectionalLight(0xffeedd,2.5);keyLt.position.set(50,30,40);scene.add(keyLt);plnObjs.push(keyLt);
+const fillLt=new T.DirectionalLight(0x446688,0.8);fillLt.position.set(-30,-10,-20);scene.add(fillLt);plnObjs.push(fillLt);
+const rimLt=new T.DirectionalLight(0x88bbff,0.6);rimLt.position.set(0,0,-50);scene.add(rimLt);plnObjs.push(rimLt);
+const pAmb=new T.AmbientLight(0x334455,0.8);scene.add(pAmb);plnObjs.push(pAmb);
 pTgt.set(0,0,0);pTh=0.3;pPh=Math.PI/4;pD=pRad*4;updatePlnCam();
 $('#p-name').textContent=pd.name;
 $('#p-sub').textContent=`${pd.ptype} | ${sys.name}${sys.src==='NASA'?' [NASA]':''}`;
@@ -606,7 +606,7 @@ const pm=plnObjs.find(o=>o.isMesh&&o.userData.lodInfo);
 if(!pm)return;
 const li=pm.userData.lodInfo;
 if(li.upgrading)return;
-const want=pD<li.pRad*2.2?2048:pD<li.pRad*3.5?1024:512;
+const want=pD<li.pRad*3?1024:512;
 if(want<=li.curLOD)return;
 li.upgrading=true;li.curLOD=want;
 setTimeout(()=>{
@@ -650,7 +650,7 @@ d.innerHTML=`<div><div class="fund-nm">${f.nm}</div><div class="fund-desc">${f.d
 d.onclick=()=>{
 if(f.owned||GS.cr<f.cost)return;
 GS.cr-=f.cost;f.owned=true;GS.inc=calcIncome();
-buildFundPnl();updateGameUI();showMsg(`ACQUIRED: ${f.nm}`);
+buildFundPnl();updateGameUI();saveGame();showMsg(`ACQUIRED: ${f.nm}`);
 };pnl.appendChild(d);
 });
 }
@@ -676,7 +676,7 @@ b.textContent=`T${i+1}`;b.title=`${item.nm} - $${item.cost.toLocaleString()}`;
 b.onclick=()=>{
 if(i<=cur)return;
 if(GS.cr<item.cost){showMsg('INSUFFICIENT CREDITS');return}
-GS.cr-=item.cost;GS[key]=i;buildRocketPnl();updateGameUI();showMsg(`UPGRADED: ${item.nm}`);
+GS.cr-=item.cost;GS[key]=i;buildRocketPnl();updateGameUI();saveGame();showMsg(`UPGRADED: ${item.nm}`);
 };
 tier.appendChild(b);
 });
@@ -697,7 +697,7 @@ GS.disc.push(sys.name);
 const bonus=sys.src==='NASA'?50:sys.src==='SOL'?0:20;
 GS.cr+=bonus;GS.rp+=sys.src==='NASA'?10:5;
 if(GS.rp>=10*GS.tech*GS.tech){GS.tech++;showDisc(`TECH LEVEL ${GS.tech} UNLOCKED!`)}
-updateGameUI();
+updateGameUI();saveGame();
 if(bonus>0)showMsg(`+${bonus} CR | +${sys.src==='NASA'?10:5} RP`);
 }
 function sysInRange(sys){
@@ -799,6 +799,7 @@ $('#f-find').onclick=()=>{const p=$('#nasa-pnl');if(p.classList.contains('open')
 $('#nasa-close').onclick=()=>{$('#nasa-pnl').classList.remove('open');$('#g-hud').classList.remove('find-open')};
 $('#btn-fund').onclick=()=>{$('#fund-pnl').classList.toggle('open');$('#rocket-pnl').classList.remove('open');buildFundPnl()};
 $('#btn-rocket').onclick=()=>{$('#rocket-pnl').classList.toggle('open');$('#fund-pnl').classList.remove('open');buildRocketPnl()};
+$('#btn-save').onclick=()=>saveGame();
 $('#btn-launch').onclick=()=>{
 if(!GS.escVel){showMsg('BUILD A ROCKET FIRST');return}
 if(selSys){
