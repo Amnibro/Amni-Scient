@@ -172,6 +172,11 @@ canvas:active{cursor:grabbing}
 <button id="p-back" class="pnl">&larr; System [ESC]</button>
 <div id="p-title"><h1 id="p-name"></h1><p id="p-sub"></p></div>
 <div id="p-data" class="pnl"></div>
+<button id="p-explore" class="g-btn" style="position:absolute;left:16px;bottom:60px;padding:8px 16px">EXPLORE SURFACE</button>
+</div>
+<div id="p-map-over" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:20;background:rgba(1,2,8,0.92);align-items:center;justify-content:center;display:none;flex-direction:column">
+<canvas id="p-map-cv" width="512" height="512" style="border:1px solid var(--cb);cursor:crosshair"></canvas>
+<button id="p-map-close" class="g-btn" style="margin-top:12px;padding:8px 20px">CLOSE MAP</button>
 </div>
 <div id="xhair"><svg viewBox="0 0 36 36"><circle cx="18" cy="18" r="12" fill="none" stroke="var(--cm)" stroke-width="1" opacity="0.5"/><line x1="18" y1="2" x2="18" y2="9" stroke="var(--cm)" stroke-width="1.2"/><line x1="18" y1="27" x2="18" y2="34" stroke="var(--cm)" stroke-width="1.2"/><line x1="2" y1="18" x2="9" y2="18" stroke="var(--cm)" stroke-width="1.2"/><line x1="27" y1="18" x2="34" y2="18" stroke="var(--cm)" stroke-width="1.2"/><circle cx="18" cy="18" r="1.5" fill="var(--cm)"/></svg></div>
 <div id="msg"></div>
@@ -947,7 +952,7 @@ if(e.code==='F9'){e.preventDefault();loadGame();showMsg('GAME DATA LOADED')}
 $('#s-back').onclick=exitSys;
 $('#p-back').onclick=exitPlanet;
   $('#p-explore').onclick=()=>{
-    $('#p-map-over').style.display='block';
+    const ov=$('#p-map-over');ov.style.display='flex';
     const cv=$('#p-map-cv');const ctx=cv.getContext('2d');
     const pd=curPlanet.userData.pdata,sd=curPlanet.userData.seed;
     const maps=gen_planet_maps(pd.ptype,sd,pd.rade,pd.mass,pd.eqt||300,512);
