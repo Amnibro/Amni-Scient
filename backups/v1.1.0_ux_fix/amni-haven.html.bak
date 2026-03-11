@@ -30,7 +30,9 @@
 <a href="amni-crypt.html">AMNI-CRYPT</a>
 <a href="amni-ai.html">AMNI-AI</a>
 <a href="amni-core.html">AMNI-CORE</a>
+<span class="nav-dd-dim">AMNI-GEN</span>
 <a href="amni-explore.html">AMNI-EXPLORE</a>
+<span class="nav-dd-dim">AZNO</span>
 </div>
 </div>
 </div>
@@ -135,25 +137,25 @@
 <div class="card" style="padding:2.5rem 1rem">
 <p style="text-align:center;color:var(--dim);font-size:.8rem;margin-bottom:2rem;letter-spacing:1px">PHONE VIEWS &bull; SCROLL TO EXPLORE</p>
 <div class="screenshot-strip">
-<div class="screenshot-phone"><img class="gallery-thumb" src="assets/haven/Screenshot_32.png" alt="Haven login screen" onclick="openLightbox(this.src,this.alt)"></div>
-<div class="screenshot-phone"><img class="gallery-thumb" src="assets/haven/Screenshot_33.png" alt="Haven channels" onclick="openLightbox(this.src,this.alt)"></div>
-<div class="screenshot-phone"><img class="gallery-thumb" src="assets/haven/Screenshot_34.png" alt="Haven general chat" onclick="openLightbox(this.src,this.alt)"></div>
-<div class="screenshot-phone"><img class="gallery-thumb" src="assets/haven/Screenshot_35.png" alt="Haven messaging" onclick="openLightbox(this.src,this.alt)"></div>
-<div class="screenshot-phone"><img class="gallery-thumb" src="assets/haven/Screenshot_36.png" alt="Haven chat view" onclick="openLightbox(this.src,this.alt)"></div>
-<div class="screenshot-phone"><img class="gallery-thumb" src="assets/haven/Screenshot_37.png" alt="Haven conversation" onclick="openLightbox(this.src,this.alt)"></div>
+<div class="screenshot-phone"><img src="assets/haven/Screenshot_32.png" alt="Haven login screen"></div>
+<div class="screenshot-phone"><img src="assets/haven/Screenshot_33.png" alt="Haven channels"></div>
+<div class="screenshot-phone"><img src="assets/haven/Screenshot_34.png" alt="Haven general chat"></div>
+<div class="screenshot-phone"><img src="assets/haven/Screenshot_35.png" alt="Haven messaging"></div>
+<div class="screenshot-phone"><img src="assets/haven/Screenshot_36.png" alt="Haven chat view"></div>
+<div class="screenshot-phone"><img src="assets/haven/Screenshot_37.png" alt="Haven conversation"></div>
 </div>
 <p style="text-align:center;color:var(--dim);font-size:.8rem;margin:2.5rem 0 2rem;letter-spacing:1px">TABLET &bull; SCROLL TO EXPLORE</p>
 <div class="screenshot-strip">
-<div class="screenshot-tablet"><img class="gallery-thumb" src="assets/haven/10in_38.png" alt="Haven tablet view" onclick="openLightbox(this.src,this.alt)"></div>
-<div class="screenshot-tablet"><img class="gallery-thumb" src="assets/haven/10in_39.png" alt="Haven tablet channels" onclick="openLightbox(this.src,this.alt)"></div>
-<div class="screenshot-tablet"><img class="gallery-thumb" src="assets/haven/10in_40.png" alt="Haven tablet chat" onclick="openLightbox(this.src,this.alt)"></div>
-<div class="screenshot-tablet"><img class="gallery-thumb" src="assets/haven/10in_41.png" alt="Haven tablet messaging" onclick="openLightbox(this.src,this.alt)"></div>
-<div class="screenshot-tablet"><img class="gallery-thumb" src="assets/haven/10in_42.png" alt="Haven tablet view 2" onclick="openLightbox(this.src,this.alt)"></div>
-<div class="screenshot-tablet"><img class="gallery-thumb" src="assets/haven/10in_43.png" alt="Haven tablet view 3" onclick="openLightbox(this.src,this.alt)"></div>
+<div class="screenshot-tablet"><img src="assets/haven/10in_38.png" alt="Haven tablet view"></div>
+<div class="screenshot-tablet"><img src="assets/haven/10in_39.png" alt="Haven tablet channels"></div>
+<div class="screenshot-tablet"><img src="assets/haven/10in_40.png" alt="Haven tablet chat"></div>
+<div class="screenshot-tablet"><img src="assets/haven/10in_41.png" alt="Haven tablet messaging"></div>
+<div class="screenshot-tablet"><img src="assets/haven/10in_42.png" alt="Haven tablet view 2"></div>
+<div class="screenshot-tablet"><img src="assets/haven/10in_43.png" alt="Haven tablet view 3"></div>
 </div>
 <div class="promo-pair">
-<div class="promo-img"><img class="gallery-thumb" src="assets/haven/FfNHy.jpg" alt="Amni-Haven promo" onclick="openLightbox(this.src,this.alt)"></div>
-<div class="promo-img"><img class="gallery-thumb" src="assets/haven/6Mxdg.jpg" alt="Amni-Haven feature" onclick="openLightbox(this.src,this.alt)"></div>
+<div class="promo-img"><img src="assets/haven/FfNHy.jpg" alt="Amni-Haven promo"></div>
+<div class="promo-img"><img src="assets/haven/6Mxdg.jpg" alt="Amni-Haven feature"></div>
 </div>
 </div>
 </section>
@@ -191,13 +193,7 @@ Haven is created and maintained by <a href="https://github.com/ancsemi" target="
 <button onclick="submitBeta()" class="btn btn-primary" style="width:100%;justify-content:center">SEND REQUEST</button>
 </div>
 </div>
-<div id="lightbox" class="lightbox" onclick="closeLightbox(event)">
-<span class="lightbox-close" onclick="closeLightbox()">&times;</span>
-<img id="lightbox-img" src="" alt="">
-</div>
 <script>
-function openLightbox(src,alt){var lb=document.getElementById('lightbox');document.getElementById('lightbox-img').src=src;document.getElementById('lightbox-img').alt=alt;lb.classList.add('open');document.body.style.overflow='hidden';}
-function closeLightbox(e){if(e&&e.target===document.getElementById('lightbox-img'))return;document.getElementById('lightbox').classList.remove('open');document.body.style.overflow='';}
 function openBeta(app){
 const titles={haven:'AMNI-HAVEN BETA',crypt:'AMNI-CRYPT BETA'};
 document.getElementById('beta-title').textContent=titles[app]||'BETA ACCESS';
@@ -221,6 +217,6 @@ window.location.href='mailto:amnibro7@gmail.com?subject='+sub+'&body='+body;
 closeBeta();
 }
 document.getElementById('beta-modal').addEventListener('click',function(ev){if(ev.target===this)closeBeta();});
-document.addEventListener('keydown',function(ev){if(ev.key==='Escape'){closeBeta();closeLightbox();}});
+document.addEventListener('keydown',function(ev){if(ev.key==='Escape')closeBeta();});
 </script>
 </body>
