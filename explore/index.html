@@ -180,8 +180,8 @@ canvas:active{cursor:grabbing}
 <a id="site-back" href="../amni-explore.html">&larr; AMNI-SCIENT</a>
 <div id="sol-marker"></div>
 <div id="game-bar">
-<div class="g-stat"><span class="g-lbl">Credits:</span><span class="g-val" id="g-cred">0</span><span class="g-sep">|</span><span class="g-lbl">Research:</span><span class="g-val" id="g-rp">0</span><span class="g-sep">|</span><span class="g-lbl">Tech:</span><span class="g-val" id="g-tech">1</span><span class="g-sep">|</span><span class="g-lbl">Discovered:</span><span class="g-val" id="g-disc">0</span><span class="g-sep">|</span><span class="g-lbl">Income:</span><span class="g-val" id="g-inc">0/s</span></div>
-<div style="display:flex;gap:6px"><button class="g-btn" id="btn-save">Save</button><button class="g-btn" id="btn-fund">Funding</button><button class="g-btn" id="btn-rocket">Rocket Lab</button><button class="g-btn" id="btn-launch">Launch Pad</button></div>
+<div class="g-stat"><span class="g-lbl">Credits:</span><span class="g-val" id="g-cred">0</span><span class="g-sep">|</span><span class="g-lbl">Research:</span><span class="g-val" id="g-rp">0</span><span class="g-sep">|</span><span class="g-lbl">Tech:</span><span class="g-val" id="g-tech">1</span><span class="g-sep">|</span><span class="g-lbl">Discovered:</span><span class="g-val" id="g-disc">0</span><span class="g-sep">|</span><span class="g-lbl">Colonies:</span><span class="g-val" id="g-cols">0</span><span class="g-sep">|</span><span class="g-lbl">Income:</span><span class="g-val" id="g-inc">0/s</span></div>
+<div style="display:flex;gap:6px"><button class="g-btn" id="btn-save">Save</button><button class="g-btn" id="btn-fund">Funding</button><button class="g-btn" id="btn-rocket">Rocket Lab</button><button class="g-btn" id="btn-warp">Auto-Warp</button></div>
 </div>
 <div id="fund-pnl" class="pnl"></div>
 <div id="rocket-pnl" class="pnl"></div>
@@ -403,9 +403,25 @@ ctx.fillStyle='rgba(0,180,255,0.8)';ctx.beginPath();ctx.arc(mx(gTgt.x),mz(gTgt.z
 function startFlyTo(sys){flyState={from:gTgt.clone(),fromD:gD,to:new T.Vector3(sys.pos[0],sys.pos[1],sys.pos[2]),toD:400,t:0}}
 function enterSys(sys){
 if(view===V.SYS||view===V.PLN)return;
+if(!sysInRange(sys)) {
+  showMsg('SYSTEM OUT OF RANGE (UPGRADE ROCKET)');
+  return;
+}
 selSys=sys;view=V.SYS;discoverSystem(sys);
+
 $('#fade').classList.add('on');
+let warpT=0;
+const wInt=setInterval(()=>{
+  warpT+=0.1;
+  if(warpT<=1){
+    if(cam.fov<140)cam.fov+=15;
+    cam.updateProjectionMatrix();
+  }
+},30);
+
 setTimeout(()=>{
+clearInterval(wInt);cam.fov=60;cam.updateProjectionMatrix();
+
 galPts.visible=false;nasaPts.visible=false;procPts.visible=false;if(densPlane)densPlane.visible=false;
 $('#nasa-pnl').classList.remove('open');$('#g-hud').classList.remove('find-open');
 $('#g-hud').style.display='none';$('#g-sel').style.display='none';$('#g-hint').style.display='none';
@@ -555,6 +571,25 @@ const rows=[['Type',pd.ptype],['Radius',`${pd.rade.toFixed(2)} R\u2295`],['Mass'
 let html='<h4>PLANETARY ANALYSIS</h4>';
 rows.forEach(r=>html+=`<div class="spec-row"><span class="lbl">${r[0]}</span><span class="val${r[2]?' hz':''}">${r[1]}</span></div>`);
 $('#p-data').innerHTML=html;
+
+const isCol=GS.colonies.includes(pd.name);
+const colCost=isGas?5000000:(hz?50000:150000);
+if(isCol){
+const cb=document.createElement('div');cb.className='g-btn';cb.style.cssText='width:100%;margin-top:12px;text-align:center;background:rgba(34,204,102,0.2);color:var(--cn);border-color:var(--cn);pointer-events:none';cb.textContent='COLONY ESTABLISHED';
+$('#p-data').appendChild(cb);
+}else if(GS.escVel){
+const cb=document.createElement('button');cb.className='g-btn';cb.style.cssText='width:100%;margin-top:12px;padding:8px';
+cb.textContent=`ESTABLISH COLONY - $${colCost.toLocaleString()}`;
+cb.onclick=()=>{
+if(GS.cr<colCost){showMsg('INSUFFICIENT FUNDS');return}
+GS.cr-=colCost;GS.colonies.push(pd.name);
+showDisc('COLONY ESTABLISHED!');showMsg('+500 CR/s INCOME');
+GS.inc=calcIncome();updateGameUI();saveGame();
+exitPlanet();setTimeout(()=>enterPlanet(mesh,sys),500);
+};
+$('#p-data').appendChild(cb);
+}
+
 score+=10;$('#g-score').textContent=score;$('#s-scr').textContent=score;
 showMsg(`SCANNING ${pd.name}...`);setTimeout(()=>$('#fade').classList.remove('on'),50);
 },400);
@@ -623,7 +658,7 @@ li.upgrading=false;dirty=true;
 }
 function showMsg(t){const e=$('#msg');e.textContent=t;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),2500)}
 function showDisc(t){const e=$('#disc-toast');e.textContent=t;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),3000)}
-function calcIncome(){let base=1;FUNDS.forEach(f=>{if(f.owned)base+=f.inc});return base*GS.tech}
+function calcIncome(){let base=1;FUNDS.forEach(f=>{if(f.owned)base+=f.inc});base+=GS.colonies.length*500;return base*GS.tech}
 function calcDeltaV(){
 const eng=ENGINES[GS.rktEng],ft=FUELTANKS[GS.rktFuel],cap=CAPSULES[GS.rktCap],nav=NAV[GS.rktNav];
 const dry=eng.mass+ft.mass+cap.mass+nav.mass;const wet=dry+ft.cap;
@@ -634,7 +669,8 @@ function updateGameUI(){
 GS.inc=calcIncome();GS.maxRange=calcRange();
 $('#g-cred').textContent=Math.floor(GS.cr).toLocaleString();
 $('#g-rp').textContent=GS.rp;$('#g-tech').textContent=GS.tech;
-$('#g-disc').textContent=GS.disc.length;$('#g-inc').textContent=`${GS.inc}/s`;
+$('#g-disc').textContent=GS.disc.length;$('#g-cols').textContent=GS.colonies.length;
+$('#g-inc').textContent=`${GS.inc}/s`;
 }
 function gameTick(){
 const now=Date.now(),dt=(now-GS.lastTick)/1000;
@@ -683,11 +719,15 @@ tier.appendChild(b);
 pnl.appendChild(tier);
 });
 const lb=document.createElement('button');lb.id='launch-btn';
-lb.className=canEsc?'':'disabled';lb.textContent=canEsc?'LAUNCH SEQUENCE':'INSUFFICIENT DELTA-V';
+lb.className=canEsc?'':'disabled';lb.textContent=canEsc?(GS.escVel?'SYSTEMS ONLINE':'LAUNCH SEQUENCE'):'INSUFFICIENT DELTA-V';
 lb.onclick=()=>{
 if(!canEsc)return;
-GS.escVel=true;GS.maxRange=calcRange();updateGameUI();
-showDisc('ESCAPE VELOCITY ACHIEVED!');showMsg('SPACE EXPLORATION UNLOCKED');
+if(!GS.escVel) {
+  GS.escVel=true;GS.maxRange=calcRange();updateGameUI();
+  showDisc('ESCAPE VELOCITY ACHIEVED!');showMsg('HYPERDRIVE UNLOCKED');
+} else {
+  showMsg('ROCKET SYSTEMS OPTIMAL');
+}
 };
 pnl.appendChild(lb);
 }
@@ -800,10 +840,10 @@ $('#nasa-close').onclick=()=>{$('#nasa-pnl').classList.remove('open');$('#g-hud'
 $('#btn-fund').onclick=()=>{$('#fund-pnl').classList.toggle('open');$('#rocket-pnl').classList.remove('open');buildFundPnl()};
 $('#btn-rocket').onclick=()=>{$('#rocket-pnl').classList.toggle('open');$('#fund-pnl').classList.remove('open');buildRocketPnl()};
 $('#btn-save').onclick=()=>saveGame();
-$('#btn-launch').onclick=()=>{
+$('#btn-warp').onclick=()=>{
 if(!GS.escVel){showMsg('BUILD A ROCKET FIRST');return}
 if(selSys){
-if(!sysInRange(selSys)){showMsg('SYSTEM OUT OF RANGE');return}
+if(!sysInRange(selSys)){showMsg('SYSTEM OUT OF RANGE (UPGRADE ROUTER)');return}
 enterSys(selSys);
 }else{showMsg('SELECT A SYSTEM FIRST')}
 };
