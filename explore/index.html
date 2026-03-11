@@ -23,8 +23,9 @@ canvas:active{cursor:grabbing}
 .fbtn.active{color:var(--ct);border-color:var(--cm);background:rgba(0,120,200,0.25)}
 .fbtn.nasa-active{color:var(--cn);border-color:var(--cn);background:rgba(34,204,102,0.15)}
 .fbtn:hover{border-color:var(--cm);color:var(--ct)}
-#nasa-pnl{position:fixed;left:16px;top:16px;width:280px;max-height:calc(100vh - 32px);z-index:20;overflow:hidden;display:none;flex-direction:column;pointer-events:auto}
+#nasa-pnl{position:fixed;left:16px;top:16px;width:280px;max-height:calc(100vh - 32px);z-index:25;overflow:hidden;display:none;flex-direction:column;pointer-events:auto}
 #nasa-pnl.open{display:flex}
+#g-hud.find-open{visibility:hidden;pointer-events:none}
 .nasa-hdr{display:flex;justify-content:space-between;align-items:center;padding:12px 14px 8px}
 .nasa-hdr h3{font-size:11px;letter-spacing:2px;color:var(--cn);text-transform:uppercase;margin:0}
 .nasa-x{background:none;border:none;color:var(--cd);font-size:16px;cursor:pointer;padding:0 4px}
@@ -103,10 +104,47 @@ canvas:active{cursor:grabbing}
 .mbtn:hover{background:rgba(0,100,180,0.45);border-color:var(--cm);box-shadow:0 0 12px rgba(0,160,255,0.15)}
 #site-back{position:fixed;bottom:16px;right:16px;z-index:10;padding:8px 16px;background:rgba(3,8,20,0.9);border:1px solid rgba(0,120,200,0.45);color:var(--cd);font-size:10px;letter-spacing:2px;text-decoration:none;text-transform:uppercase;transition:all 0.2s;backdrop-filter:blur(10px)}
 #site-back:hover{color:var(--cm);border-color:var(--cm);box-shadow:0 0 10px rgba(0,160,255,0.15)}
+#sol-marker{position:absolute;width:12px;height:12px;border-radius:50%;border:2px solid var(--ca);box-shadow:0 0 8px var(--ca),0 0 16px rgba(255,136,0,0.3);pointer-events:none;z-index:9;transform:translate(-50%,-50%);display:none}
+#sol-marker::after{content:'SOL';position:absolute;top:-16px;left:50%;transform:translateX(-50%);font-size:8px;letter-spacing:2px;color:var(--ca);white-space:nowrap}
+#game-bar{position:fixed;bottom:0;left:0;width:100%;z-index:15;display:flex;align-items:center;justify-content:space-between;padding:6px 16px;background:rgba(3,8,20,0.92);border-top:1px solid var(--cb);backdrop-filter:blur(8px);font-size:10px;letter-spacing:1px}
+#game-bar .g-stat{display:flex;align-items:center;gap:6px}
+#game-bar .g-lbl{color:var(--cd);text-transform:uppercase}
+#game-bar .g-val{color:var(--ca);font-weight:600}
+#game-bar .g-sep{color:rgba(0,60,120,0.4);margin:0 4px}
+.g-btn{padding:4px 10px;border:1px solid var(--cb);background:rgba(0,60,120,0.25);color:var(--ct);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all .2s}
+.g-btn:hover{border-color:var(--ca);color:var(--ca);box-shadow:0 0 8px rgba(255,136,0,0.2)}
+.g-btn.active{border-color:var(--ca);background:rgba(255,136,0,0.15);color:var(--ca)}
+#fund-pnl{position:fixed;right:16px;bottom:48px;width:300px;max-height:360px;overflow-y:auto;z-index:16;display:none;flex-direction:column;scrollbar-width:thin;scrollbar-color:var(--cb) transparent}
+#fund-pnl.open{display:flex}
+#fund-pnl h3{font-size:11px;letter-spacing:2px;color:var(--ca);text-transform:uppercase;padding:12px 14px 8px;margin:0}
+.fund-item{display:flex;justify-content:space-between;align-items:center;padding:8px 14px;border-bottom:1px solid rgba(0,60,120,0.15);cursor:pointer;transition:background .2s}
+.fund-item:hover{background:rgba(255,136,0,0.08)}
+.fund-item.owned{opacity:0.6;cursor:default}
+.fund-nm{font-size:10px;color:var(--ct)}
+.fund-desc{font-size:8px;color:var(--cd);margin-top:1px}
+.fund-cost{font-size:10px;color:var(--ca);white-space:nowrap}
+.fund-inc{font-size:8px;color:var(--cn)}
+#rocket-pnl{position:fixed;left:16px;bottom:48px;width:320px;max-height:400px;overflow-y:auto;z-index:16;display:none;flex-direction:column;scrollbar-width:thin}
+#rocket-pnl.open{display:flex}
+#rocket-pnl h3{font-size:11px;letter-spacing:2px;color:var(--cm);text-transform:uppercase;padding:12px 14px 8px;margin:0}
+.rkt-row{display:flex;justify-content:space-between;align-items:center;padding:6px 14px;border-bottom:1px solid rgba(0,60,120,0.15)}
+.rkt-lbl{font-size:10px;color:var(--cd);letter-spacing:1px;text-transform:uppercase}
+.rkt-val{font-size:10px;color:var(--ct);text-align:right}
+.rkt-val.good{color:var(--cn)}
+.rkt-val.bad{color:#ff4466}
+.rkt-tier{display:flex;gap:3px;margin-top:4px;padding:4px 14px 8px}
+.tier-btn{flex:1;padding:4px;border:1px solid var(--cb);background:transparent;color:var(--cd);font-size:8px;letter-spacing:1px;cursor:pointer;text-align:center;transition:all .2s}
+.tier-btn.sel{border-color:var(--cm);color:var(--cm);background:rgba(0,180,255,0.1)}
+.tier-btn:hover{border-color:var(--cm);color:var(--ct)}
+#launch-btn{display:block;margin:8px 14px;padding:8px;background:rgba(255,136,0,0.2);border:1px solid var(--ca);color:var(--ca);font-size:11px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;text-align:center;transition:all .2s}
+#launch-btn:hover{background:rgba(255,136,0,0.35);box-shadow:0 0 12px rgba(255,136,0,0.3)}
+#launch-btn.disabled{opacity:0.4;cursor:default;pointer-events:none}
+#disc-toast{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:20;padding:16px 28px;background:rgba(3,8,20,0.95);border:1px solid var(--ca);color:var(--ca);font-size:14px;letter-spacing:3px;text-transform:uppercase;text-align:center;opacity:0;pointer-events:none;transition:opacity .3s;text-shadow:0 0 12px var(--ca)}
+#disc-toast.show{opacity:1}
 </style>
 </head>
 <body>
-<div id="loading"><h1>GALACTIC CARTOGRAPHICS</h1><div class="bar"><div class="fill" id="lbar"></div></div></div>
+<div id="loading"><h1>COSMOS COMMANDER</h1><div class="bar"><div class="fill" id="lbar"></div></div></div>
 <div id="g-hud" class="hud">
 <div id="g-info" class="pnl">
 <h2>Galactic Cartographics</h2>
@@ -122,7 +160,7 @@ canvas:active{cursor:grabbing}
 </div>
 <div id="g-sel" class="pnl"></div>
 <div id="nasa-pnl" class="pnl"><div class="nasa-hdr"><h3>NASA CATALOGUE <span id="nasa-cnt"></span></h3><button class="nasa-x" id="nasa-close">&times;</button></div><input type="text" id="nasa-q" placeholder="Search systems..."><canvas id="nasa-map" width="250" height="250"></canvas><div id="nasa-list"></div></div>
-<div id="g-hint">Left-drag: rotate &middot; Right-drag: pan &middot; Scroll: zoom &middot; Click star &middot; Dbl-click: enter</div>
+<div id="g-hint">Left-drag: rotate &middot; Right-drag: pan &middot; Scroll: zoom &middot; Click star &middot; Dbl-click: enter &middot; H: Home</div>
 <div id="s-hud">
 <button id="s-back" class="pnl">&larr; Galaxy [ESC]</button>
 <div id="s-top"><h1 id="s-name"></h1><p id="s-class"></p></div>
@@ -140,13 +178,21 @@ canvas:active{cursor:grabbing}
 <div id="fade"></div>
 <div id="pause"><div id="pause-box" class="pnl"><h2>Ship Computer</h2><div class="sub">PAUSED</div><button class="mbtn" id="btn-resume">Resume</button><button class="mbtn" id="btn-fs">Toggle Fullscreen</button></div></div>
 <a id="site-back" href="../amni-explore.html">&larr; AMNI-SCIENT</a>
+<div id="sol-marker"></div>
+<div id="game-bar">
+<div class="g-stat"><span class="g-lbl">Credits:</span><span class="g-val" id="g-cred">0</span><span class="g-sep">|</span><span class="g-lbl">Research:</span><span class="g-val" id="g-rp">0</span><span class="g-sep">|</span><span class="g-lbl">Tech:</span><span class="g-val" id="g-tech">1</span><span class="g-sep">|</span><span class="g-lbl">Discovered:</span><span class="g-val" id="g-disc">0</span><span class="g-sep">|</span><span class="g-lbl">Income:</span><span class="g-val" id="g-inc">0/s</span></div>
+<div style="display:flex;gap:6px"><button class="g-btn" id="btn-fund">Funding</button><button class="g-btn" id="btn-rocket">Rocket Lab</button><button class="g-btn" id="btn-launch">Launch Pad</button></div>
+</div>
+<div id="fund-pnl" class="pnl"></div>
+<div id="rocket-pnl" class="pnl"></div>
+<div id="disc-toast"></div>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}</script>
 <script type="module">
 import*as T from'three';
 import{EffectComposer}from'three/addons/postprocessing/EffectComposer.js';
 import{RenderPass}from'three/addons/postprocessing/RenderPass.js';
 import{UnrealBloomPass}from'three/addons/postprocessing/UnrealBloomPass.js';
-import wInit,{gen_galaxy,gen_systems,gen_texture,gen_planet_maps}from'./pkg/amni_explore_wasm.js';
+import wInit,{gen_galaxy,gen_systems,gen_texture,gen_planet_maps,gen_sol_system}from'./pkg/amni_explore_wasm.js';
 const $=s=>document.querySelector(s),$$=s=>document.querySelectorAll(s);
 const V={GAL:0,SYS:1,PLN:2};
 const GR=5000,GALP=80000,NPRC=3000;
@@ -158,6 +204,54 @@ let orbTh=0,orbPh=Math.PI/5,orbD=600,orbTgt=new T.Vector3();
 let pTh=0,pPh=Math.PI/4,pD=60,pTgt=new T.Vector3();
 let drag={on:false,btn:-1,lx:0,ly:0};
 let densPlane=null,dirty=true,curFilter='ALL',curPlanet=null,curPlanetSys=null,flyState=null,nasaBuilt=false;
+const SOL_POS=new T.Vector3(2600,2,0);
+let solSys=null;
+let GS={cr:100,rp:0,tech:1,disc:[],fuel:100,maxFuel:100,rktEng:0,rktFuel:0,rktCap:0,rktNav:0,
+funds:[],routes:[],colonies:[],inc:1,lastTick:Date.now(),escVel:false,maxRange:0};
+const FUNDS=[
+{id:'bake',nm:'Bake Sale',desc:'Selling space cookies door-to-door',cost:0,inc:1,owned:false},
+{id:'car',nm:'Car Wash for Science',desc:'Washing cars to fund interstellar travel',cost:50,inc:3,owned:false},
+{id:'crowd',nm:'Crowdfunding Campaign',desc:'"Help me build a REAL rocket" - 97% funded',cost:200,inc:8,owned:false},
+{id:'naming',nm:'Crater Naming Rights',desc:'Name a crater after your cat for $50',cost:500,inc:15,owned:false},
+{id:'reality',nm:'Reality TV Show',desc:'"Space Junk" - viewers love watching you fail',cost:1500,inc:35,owned:false},
+{id:'merch',nm:'Space Merch Empire',desc:'T-shirts: "My other vehicle is a rocket"',cost:4000,inc:80,owned:false},
+{id:'govt',nm:'Government Subsidy',desc:'Convinced them aliens = national security',cost:10000,inc:200,owned:false},
+{id:'crypto',nm:'SpaceCoin ICO',desc:'To the moon! No literally to the moon',cost:25000,inc:500,owned:false},
+{id:'patent',nm:'Anti-Gravity Patent',desc:'It doesnt work but the patent sells',cost:60000,inc:1200,owned:false},
+{id:'tourism',nm:'Space Tourism Pre-Sales',desc:'Selling tickets to nowhere (yet)',cost:150000,inc:3000,owned:false}
+];
+const ENGINES=[
+{nm:'Bottle Rocket',dv:0.5,mass:1,cost:0},
+{nm:'Model Engine',dv:5,mass:10,cost:500},
+{nm:'Solid Booster',dv:50,mass:100,cost:5000},
+{nm:'Liquid Engine',dv:200,mass:300,cost:25000},
+{nm:'Ion Drive',dv:800,mass:50,cost:100000},
+{nm:'Fusion Drive',dv:5000,mass:200,cost:500000}
+];
+const FUELTANKS=[
+{nm:'Soda Bottle',cap:1,mass:0.5,cost:0},
+{nm:'Barrel',cap:10,mass:5,cost:300},
+{nm:'Tanker',cap:100,mass:40,cost:3000},
+{nm:'Cryo Tank',cap:500,mass:100,cost:15000},
+{nm:'Mega Tank',cap:2000,mass:300,cost:75000},
+{nm:'Antimatter Cell',cap:10000,mass:50,cost:400000}
+];
+const CAPSULES=[
+{nm:'Cardboard Box',crew:1,mass:5,cost:0},
+{nm:'Tin Can',crew:2,mass:20,cost:200},
+{nm:'Pod',crew:4,mass:80,cost:2000},
+{nm:'Module',crew:8,mass:200,cost:10000},
+{nm:'Habitat',crew:20,mass:500,cost:50000},
+{nm:'Colony Ship',crew:100,mass:2000,cost:250000}
+];
+const NAV=[
+{nm:'Paper Map',acc:0.1,mass:1,cost:0},
+{nm:'Compass',acc:0.3,mass:2,cost:100},
+{nm:'Star Chart',acc:0.5,mass:5,cost:1000},
+{nm:'Computer',acc:0.8,mass:20,cost:8000},
+{nm:'AI Navigator',acc:0.95,mass:10,cost:40000},
+{nm:'Quantum Nav',acc:0.99,mass:5,cost:200000}
+];
 const GAL_VS=`attribute vec3 color;varying vec3 vC;void main(){vC=color;vec4 mv=modelViewMatrix*vec4(position,1.0);gl_PointSize=clamp(10.0*(300.0/(-mv.z)),1.0,35.0);gl_Position=projectionMatrix*mv;}`;
 const GAL_FS=`varying vec3 vC;void main(){float d=length(gl_PointCoord-vec2(0.5));if(d>0.5)discard;float a=(1.0-smoothstep(0.0,0.5,d))*0.8;gl_FragColor=vec4(vC,a);}`;
 const SYS_VS=`attribute vec3 color;varying vec3 vC;uniform float uSz;void main(){vC=color;vec4 mv=modelViewMatrix*vec4(position,1.0);gl_PointSize=clamp(uSz*(300.0/(-mv.z)),2.0,60.0);gl_Position=projectionMatrix*mv;}`;
@@ -276,11 +370,11 @@ ctx.fillStyle='rgba(0,180,255,0.8)';ctx.beginPath();ctx.arc(mx(gTgt.x),mz(gTgt.z
 function startFlyTo(sys){flyState={from:gTgt.clone(),fromD:gD,to:new T.Vector3(sys.pos[0],sys.pos[1],sys.pos[2]),toD:400,t:0}}
 function enterSys(sys){
 if(view===V.SYS||view===V.PLN)return;
-selSys=sys;view=V.SYS;
+selSys=sys;view=V.SYS;discoverSystem(sys);
 $('#fade').classList.add('on');
 setTimeout(()=>{
 galPts.visible=false;nasaPts.visible=false;procPts.visible=false;if(densPlane)densPlane.visible=false;
-$('#nasa-pnl').classList.remove('open');
+$('#nasa-pnl').classList.remove('open');$('#g-hud').classList.remove('find-open');
 $('#g-hud').style.display='none';$('#g-sel').style.display='none';$('#g-hint').style.display='none';
 $('#s-hud').style.display='block';$('#xhair').style.display='block';
 orbTgt.set(0,0,0);orbTh=0;orbPh=Math.PI/5;orbD=600;
@@ -333,6 +427,7 @@ setTimeout(()=>$('#fade').classList.remove('on'),50);
 function exitSys(){
 if(view===V.GAL)return;
 $('#fade').classList.add('on');
+$('#fund-pnl').classList.remove('open');$('#rocket-pnl').classList.remove('open');
 setTimeout(()=>{
 sysObjs.forEach(o=>{if(o.parent)o.parent.remove(o)});sysObjs=[];
 galPts.visible=true;applyFilter();
@@ -352,12 +447,13 @@ $('#s-hud').style.display='none';$('#xhair').style.display='none';$('#s-pinfo').
 $('#p-hud').style.display='block';
 const pd=mesh.userData.pdata,sd=mesh.userData.seed,tilt=mesh.userData.tilt;
 const pRad=clamp(pd.rade*3,4,40);const isGas=pd.rade>4;
-const maps=gen_planet_maps(pd.ptype,sd,pd.rade,pd.mass,pd.eqt||300,512);
-const stride=512*512*4;
-const colTex=mkTex(maps,512,0,stride,true);
-const htTex=mkTex(maps,512,stride,stride,false);
-const nrmTex=mkTex(maps,512,stride*2,stride,false);
-const cldTex=mkTex(maps,512,stride*3,stride,true);
+let curLOD=512;
+const maps=gen_planet_maps(pd.ptype,sd,pd.rade,pd.mass,pd.eqt||300,curLOD);
+const stride=curLOD*curLOD*4;
+const colTex=mkTex(maps,curLOD,0,stride,true);
+const htTex=mkTex(maps,curLOD,stride,stride,false);
+const nrmTex=mkTex(maps,curLOD,stride*2,stride,false);
+const cldTex=mkTex(maps,curLOD,stride*3,stride,true);
 const dispScale=isGas?pRad*0.003:pRad*0.015;
 const mat=new T.MeshStandardMaterial({map:colTex,displacementMap:htTex,displacementScale:dispScale,
 normalMap:nrmTex,normalScale:new T.Vector2(1.5,1.5),roughness:isGas?0.9:0.6,metalness:0.02,
@@ -366,6 +462,7 @@ const segs=isGas?96:128;
 const planet=new T.Mesh(new T.SphereGeometry(pRad,segs,segs),mat);
 planet.rotation.z=tilt;
 planet.userData.spin=0.003*(hash(sd*2.1)>0.5?1:-1);
+planet.userData.lodInfo={pd,sd,pRad,isGas,curLOD,upgrading:false};
 const oblate=isGas?0.03+hash(sd*4.3)*0.06:0.003+hash(sd*4.3)*0.008;
 planet.scale.set(1,1-oblate,1);
 scene.add(planet);plnObjs.push(planet);
@@ -468,19 +565,161 @@ function updatePlnCam(){
 dirty=true;
 const x=pD*Math.sin(pPh)*Math.sin(pTh),y=pD*Math.cos(pPh),z=pD*Math.sin(pPh)*Math.cos(pTh);
 cam.position.set(pTgt.x+x,pTgt.y+y,pTgt.z+z);cam.lookAt(pTgt);
+checkPlnLOD();
+}
+function checkPlnLOD(){
+const pm=plnObjs.find(o=>o.isMesh&&o.userData.lodInfo);
+if(!pm)return;
+const li=pm.userData.lodInfo;
+if(li.upgrading)return;
+const want=pD<li.pRad*2.2?2048:pD<li.pRad*3.5?1024:512;
+if(want<=li.curLOD)return;
+li.upgrading=true;li.curLOD=want;
+setTimeout(()=>{
+const maps=gen_planet_maps(li.pd.ptype,li.sd,li.pd.rade,li.pd.mass,li.pd.eqt||300,want);
+const stride=want*want*4;
+pm.material.map=mkTex(maps,want,0,stride,true);
+pm.material.displacementMap=mkTex(maps,want,stride,stride,false);
+pm.material.normalMap=mkTex(maps,want,stride*2,stride,false);
+pm.material.needsUpdate=true;
+const cld=plnObjs.find(o=>o.isMesh&&o.userData.spin&&o!==pm&&!o.userData.lodInfo);
+if(cld){const ct=mkTex(maps,want,stride*3,stride,true);cld.material.map=ct;cld.material.alphaMap=ct;cld.material.needsUpdate=true}
+li.upgrading=false;dirty=true;
+},0);
 }
 function showMsg(t){const e=$('#msg');e.textContent=t;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),2500)}
+function showDisc(t){const e=$('#disc-toast');e.textContent=t;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),3000)}
+function calcIncome(){let base=1;FUNDS.forEach(f=>{if(f.owned)base+=f.inc});return base*GS.tech}
+function calcDeltaV(){
+const eng=ENGINES[GS.rktEng],ft=FUELTANKS[GS.rktFuel],cap=CAPSULES[GS.rktCap],nav=NAV[GS.rktNav];
+const dry=eng.mass+ft.mass+cap.mass+nav.mass;const wet=dry+ft.cap;
+return wet>0?eng.dv*Math.log(wet/dry)*nav.acc:0;
+}
+function calcRange(){const dv=calcDeltaV();return dv*0.5*GS.tech}
+function updateGameUI(){
+GS.inc=calcIncome();GS.maxRange=calcRange();
+$('#g-cred').textContent=Math.floor(GS.cr).toLocaleString();
+$('#g-rp').textContent=GS.rp;$('#g-tech').textContent=GS.tech;
+$('#g-disc').textContent=GS.disc.length;$('#g-inc').textContent=`${GS.inc}/s`;
+}
+function gameTick(){
+const now=Date.now(),dt=(now-GS.lastTick)/1000;
+GS.lastTick=now;GS.cr+=GS.inc*dt;
+updateGameUI();
+}
+function buildFundPnl(){
+const pnl=$('#fund-pnl');
+pnl.innerHTML='<h3>Funding Methods</h3>';
+FUNDS.forEach((f,i)=>{
+const d=document.createElement('div');d.className='fund-item'+(f.owned?' owned':'');
+d.innerHTML=`<div><div class="fund-nm">${f.nm}</div><div class="fund-desc">${f.desc}</div><div class="fund-inc">+${f.inc}/s</div></div><div class="fund-cost">${f.cost>0?'$'+f.cost.toLocaleString():'FREE'}</div>`;
+d.onclick=()=>{
+if(f.owned||GS.cr<f.cost)return;
+GS.cr-=f.cost;f.owned=true;GS.inc=calcIncome();
+buildFundPnl();updateGameUI();showMsg(`ACQUIRED: ${f.nm}`);
+};pnl.appendChild(d);
+});
+}
+function buildRocketPnl(){
+const pnl=$('#rocket-pnl');
+const dv=calcDeltaV();const rng=calcRange();
+const escV=11.2;const canEsc=dv>=escV;
+pnl.innerHTML=`<h3>Rocket Lab</h3>`;
+const stats=document.createElement('div');
+stats.innerHTML=`<div class="rkt-row"><span class="rkt-lbl">Delta-V</span><span class="rkt-val">${dv.toFixed(1)} km/s</span></div>`+
+`<div class="rkt-row"><span class="rkt-lbl">Escape Vel</span><span class="rkt-val ${canEsc?'good':'bad'}">${canEsc?'READY':'NEED '+escV+' km/s'}</span></div>`+
+`<div class="rkt-row"><span class="rkt-lbl">Range</span><span class="rkt-val">${rng.toFixed(0)} Ly</span></div>`;
+pnl.appendChild(stats);
+const parts=[['Engine',ENGINES,GS.rktEng,'rktEng'],['Fuel Tank',FUELTANKS,GS.rktFuel,'rktFuel'],['Capsule',CAPSULES,GS.rktCap,'rktCap'],['Navigation',NAV,GS.rktNav,'rktNav']];
+parts.forEach(([label,arr,cur,key])=>{
+const row=document.createElement('div');row.className='rkt-row';
+row.innerHTML=`<span class="rkt-lbl">${label}</span><span class="rkt-val">${arr[cur].nm}</span>`;
+pnl.appendChild(row);
+const tier=document.createElement('div');tier.className='rkt-tier';
+arr.forEach((item,i)=>{
+const b=document.createElement('button');b.className='tier-btn'+(i===cur?' sel':'');
+b.textContent=`T${i+1}`;b.title=`${item.nm} - $${item.cost.toLocaleString()}`;
+b.onclick=()=>{
+if(i<=cur)return;
+if(GS.cr<item.cost){showMsg('INSUFFICIENT CREDITS');return}
+GS.cr-=item.cost;GS[key]=i;buildRocketPnl();updateGameUI();showMsg(`UPGRADED: ${item.nm}`);
+};
+tier.appendChild(b);
+});
+pnl.appendChild(tier);
+});
+const lb=document.createElement('button');lb.id='launch-btn';
+lb.className=canEsc?'':'disabled';lb.textContent=canEsc?'LAUNCH SEQUENCE':'INSUFFICIENT DELTA-V';
+lb.onclick=()=>{
+if(!canEsc)return;
+GS.escVel=true;GS.maxRange=calcRange();updateGameUI();
+showDisc('ESCAPE VELOCITY ACHIEVED!');showMsg('SPACE EXPLORATION UNLOCKED');
+};
+pnl.appendChild(lb);
+}
+function discoverSystem(sys){
+if(!sys||GS.disc.includes(sys.name))return;
+GS.disc.push(sys.name);
+const bonus=sys.src==='NASA'?50:sys.src==='SOL'?0:20;
+GS.cr+=bonus;GS.rp+=sys.src==='NASA'?10:5;
+if(GS.rp>=10*GS.tech*GS.tech){GS.tech++;showDisc(`TECH LEVEL ${GS.tech} UNLOCKED!`)}
+updateGameUI();
+if(bonus>0)showMsg(`+${bonus} CR | +${sys.src==='NASA'?10:5} RP`);
+}
+function sysInRange(sys){
+if(!GS.escVel)return sys.name==='Sol System';
+const dx=sys.pos[0]-SOL_POS.x,dy=sys.pos[1]-SOL_POS.y,dz=sys.pos[2]-SOL_POS.z;
+return Math.sqrt(dx*dx+dy*dy+dz*dz)<=GS.maxRange;
+}
+function saveGame(){
+const sv={score,gs:{cr:GS.cr,rp:GS.rp,tech:GS.tech,disc:GS.disc,fuel:GS.fuel,maxFuel:GS.maxFuel,
+rktEng:GS.rktEng,rktFuel:GS.rktFuel,rktCap:GS.rktCap,rktNav:GS.rktNav,
+funds:FUNDS.filter(f=>f.owned).map(f=>f.id),routes:GS.routes,colonies:GS.colonies,
+escVel:GS.escVel,lastTick:Date.now()}};
+localStorage.setItem('amni_save',JSON.stringify(sv));showMsg('GAME DATA SYNCED');
+}
+function loadGame(){
+const raw=localStorage.getItem('amni_save');if(!raw)return;
+try{const sv=JSON.parse(raw);
+score=sv.score||0;
+if(sv.gs){const g=sv.gs;
+GS.cr=g.cr||0;GS.rp=g.rp||0;GS.tech=g.tech||1;GS.disc=g.disc||[];
+GS.fuel=g.fuel||100;GS.maxFuel=g.maxFuel||100;
+GS.rktEng=g.rktEng||0;GS.rktFuel=g.rktFuel||0;GS.rktCap=g.rktCap||0;GS.rktNav=g.rktNav||0;
+GS.routes=g.routes||[];GS.colonies=g.colonies||[];GS.escVel=g.escVel||false;
+(g.funds||[]).forEach(fid=>{const f=FUNDS.find(x=>x.id===fid);if(f)f.owned=true});
+GS.lastTick=g.lastTick||Date.now();
+const offline=(Date.now()-GS.lastTick)/1000;
+if(offline>5){GS.cr+=calcIncome()*offline*0.5;showMsg(`OFFLINE EARNINGS: +${Math.floor(calcIncome()*offline*0.5)} CR`)}
+}
+$('#g-score').textContent=score;$('#s-scr').textContent=score;
+updateGameUI();
+}catch{}
+}
+function updateSolMarker(){
+if(view!==V.GAL){$('#sol-marker').style.display='none';return}
+const sp=SOL_POS.clone().project(cam);
+if(sp.z>1){$('#sol-marker').style.display='none';return}
+const x=(sp.x*0.5+0.5)*innerWidth,y=(-sp.y*0.5+0.5)*innerHeight;
+const mk=$('#sol-marker');mk.style.display='block';mk.style.left=x+'px';mk.style.top=y+'px';
+}
 function selectGalSys(sys){
 selSys=sys;
 const el=$('#g-sel');el.style.display='block';
 const dist=Math.sqrt(Math.pow(sys.pos[0]-2600,2)+Math.pow(sys.pos[1]-2,2)+Math.pow(sys.pos[2],2)).toFixed(0);
-const srcSpan=sys.src==='NASA'?'<span class="src-nasa">NASA Exoplanet Archive</span>':'Procedural Calculation';
-el.innerHTML=`<h3>${sys.name}</h3><div class="bd">Class: ${sys.cls} Star\nTemperature: ${sys.temp}K\nPlanets: ${sys.planets.length}\nSource: ${srcSpan}\nDistance: ${dist} Ly from Sol</div><button class="enter-btn" id="enter-sys">Enter System &rarr;</button>`;
+const srcSpan=sys.src==='NASA'?'<span class="src-nasa">NASA Exoplanet Archive</span>':sys.src==='SOL'?'<span style="color:var(--ca)">Home System</span>':'Procedural Calculation';
+const inRange=sysInRange(sys);
+const rangeTxt=sys.src==='SOL'?'HOME':inRange?'<span style="color:var(--cn)">IN RANGE</span>':'<span style="color:#ff4466">OUT OF RANGE ('+dist+' Ly)</span>';
+el.innerHTML=`<h3>${sys.name}</h3><div class="bd">Class: ${sys.cls} Star\nTemperature: ${sys.temp}K\nPlanets: ${sys.planets.length}\nSource: ${srcSpan}\nDistance: ${dist} Ly from Sol\nStatus: ${rangeTxt}</div><button class="enter-btn" id="enter-sys">Enter System &rarr;</button>`;
 $('#enter-sys').onclick=()=>enterSys(sys);
 }
 async function fetchNASA(){
-try{const r=await fetch(API);return r.ok?await r.json():[]}catch{return[]}
-}
+const urls=[API,API.replace('top+500','top+300')];
+for(const url of urls){
+try{const c=new AbortController();const tid=setTimeout(()=>c.abort(),12000);
+const r=await fetch(url,{signal:c.signal});clearTimeout(tid);
+if(r.ok){const d=await r.json();if(d.length)return d}}catch{}}
+console.warn('NASA API unreachable, using procedural-only mode');return[]}
 async function init(){
 $('#lbar').style.width='15%';
 await wInit();
@@ -507,15 +746,31 @@ const nasaJson=JSON.stringify(nasaRaw.length?nasaRaw:[]);
 $('#lbar').style.width='70%';
 const sysJson=gen_systems(nasaJson,NPRC,42);
 allSys=JSON.parse(sysJson);
+const solJson=gen_sol_system();
+solSys=JSON.parse(solJson);
+allSys.unshift(solSys);
 $('#lbar').style.width='85%';
 buildSysPts();genDensMap();
+gTgt.copy(SOL_POS);gD=2000;
 $('#lbar').style.width='90%';
 updateGalCam();
+loadGame();
+setInterval(gameTick,1000);
+buildFundPnl();
 $('#f-all').onclick=()=>{curFilter='ALL';applyFilter();dirty=true};
 $('#f-nasa').onclick=()=>{curFilter='NASA';applyFilter();dirty=true};
 $('#f-proc').onclick=()=>{curFilter='PROC';applyFilter();dirty=true};
-$('#f-find').onclick=()=>{const p=$('#nasa-pnl');if(p.classList.contains('open')){p.classList.remove('open');return}p.classList.add('open');if(!nasaBuilt){buildNasaFinder();nasaBuilt=true}drawNasaMap(null)};
-$('#nasa-close').onclick=()=>{$('#nasa-pnl').classList.remove('open')};
+$('#f-find').onclick=()=>{const p=$('#nasa-pnl');if(p.classList.contains('open')){p.classList.remove('open');$('#g-hud').classList.remove('find-open');return}p.classList.add('open');$('#g-hud').classList.add('find-open');if(!nasaBuilt){buildNasaFinder();nasaBuilt=true}drawNasaMap(null)};
+$('#nasa-close').onclick=()=>{$('#nasa-pnl').classList.remove('open');$('#g-hud').classList.remove('find-open')};
+$('#btn-fund').onclick=()=>{$('#fund-pnl').classList.toggle('open');$('#rocket-pnl').classList.remove('open');buildFundPnl()};
+$('#btn-rocket').onclick=()=>{$('#rocket-pnl').classList.toggle('open');$('#fund-pnl').classList.remove('open');buildRocketPnl()};
+$('#btn-launch').onclick=()=>{
+if(!GS.escVel){showMsg('BUILD A ROCKET FIRST');return}
+if(selSys){
+if(!sysInRange(selSys)){showMsg('SYSTEM OUT OF RANGE');return}
+enterSys(selSys);
+}else{showMsg('SELECT A SYSTEM FIRST')}
+};
 $('#nasa-map').addEventListener('click',e=>{const r=e.target.getBoundingClientRect();const mx=(e.clientX-r.left)/r.width*2-1,my=(e.clientY-r.top)/r.height*2-1;let best=null,bd=Infinity;const ns=allSys.filter(s=>s.src==='NASA');ns.forEach(s=>{const sx=s.pos[0]/6000,sz=s.pos[2]/6000;const d=Math.hypot(sx-mx,sz-my);if(d<bd){bd=d;best=s}});if(best&&bd<0.15){startFlyTo(best);selectGalSys(best);drawNasaMap(best)}});
 const cv=ren.domElement;
 cv.addEventListener('wheel',e=>{
@@ -576,8 +831,9 @@ if(e.code==='KeyM'){
 if(view===V.PLN)exitPlanet();
 else if(view===V.SYS)exitSys();
 }
-if(e.code==='F5'){e.preventDefault();localStorage.setItem('amni_save',JSON.stringify({score}));showMsg('DATA SYNCED')}
-if(e.code==='F9'){e.preventDefault();const sv=localStorage.getItem('amni_save');if(sv){score=JSON.parse(sv).score;$('#g-score').textContent=score;$('#s-scr').textContent=score;showMsg('DATA LOADED')}}
+if(e.code==='KeyH'&&view===V.GAL){startFlyTo(solSys);selectGalSys(solSys)}
+if(e.code==='F5'){e.preventDefault();saveGame()}
+if(e.code==='F9'){e.preventDefault();loadGame();showMsg('GAME DATA LOADED')}
 });
 $('#s-back').onclick=exitSys;
 $('#p-back').onclick=exitPlanet;
@@ -588,7 +844,7 @@ cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix();
 ren.setSize(innerWidth,innerHeight);comp.setSize(innerWidth,innerHeight);dirty=true;
 });
 $('#lbar').style.width='100%';
-setTimeout(()=>{$('#loading').style.display='none';showMsg('GALACTIC CARTOGRAPHICS ONLINE')},300);
+setTimeout(()=>{$('#loading').style.display='none';showMsg('COSMOS COMMANDER ONLINE')},300);
 animate();
 }
 function animate(){
@@ -602,6 +858,7 @@ if(o.isObject3D&&o.userData.speed)o.rotation.y+=o.userData.speed;
 });
 dirty=true;
 }
+updateSolMarker();
 if(dirty){comp.render();dirty=false}
 }
 init();
