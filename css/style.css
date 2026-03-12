@@ -33,7 +33,7 @@ nav .links.open{right:0}
 .nav-dd-menu{display:block;position:static;transform:none;background:none;border:none;padding:0 0 0 1rem;margin:.25rem 0 0;min-width:auto}
 .nav-dd-menu a{padding:.3rem 0;font-size:.75rem}
 }
-.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden}
+.hero{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:8rem 2rem 3rem;position:relative;overflow:hidden}
 .hero::before{content:'';position:absolute;top:50%;left:50%;width:600px;height:600px;background:radial-gradient(circle,var(--accent-dim) 0%,transparent 70%);transform:translate(-50%,-50%);pointer-events:none;animation:pulse 4s ease-in-out infinite}
 @keyframes pulse{0%,100%{opacity:.3;transform:translate(-50%,-50%) scale(1)}50%{opacity:.5;transform:translate(-50%,-50%) scale(1.1)}}
 .hero h1{font-size:clamp(2.5rem,6vw,4.5rem);font-weight:700;letter-spacing:6px;color:var(--accent);position:relative;z-index:1}
@@ -47,9 +47,10 @@ nav .links.open{right:0}
 .btn-primary:hover{background:transparent;color:var(--accent)}
 .btn-outline{background:transparent;color:var(--accent)}
 .btn-outline:hover{background:var(--accent);color:var(--bg)}
-section{padding:5rem 2rem;max-width:1000px;margin:0 auto}
-section h2{font-size:1.8rem;font-weight:700;letter-spacing:3px;color:var(--accent);margin-bottom:2rem;text-align:center}
-.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;margin-top:2rem}
+section{padding:3.5rem 2rem;max-width:1000px;margin:0 auto}
+section h2{font-size:1.8rem;font-weight:700;letter-spacing:3px;color:var(--accent);margin-bottom:1.5rem;text-align:center}
+.card-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.5rem;margin-top:2rem;max-width:700px;margin-left:auto;margin-right:auto}
+@media(max-width:600px){.card-grid{grid-template-columns:1fr;max-width:none}}
 .card{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:2rem;transition:border-color .3s,transform .2s}
 .card:hover{border-color:var(--accent-glow);transform:translateY(-2px)}
 .card h3{font-size:1.1rem;color:var(--accent);letter-spacing:2px;margin-bottom:.5rem}
@@ -91,7 +92,7 @@ footer a:hover{color:var(--accent)}
 .lightbox-close:hover{color:var(--accent)}
 .gallery-thumb{cursor:zoom-in}
 .grid-bg{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:-1;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:60px 60px;opacity:.3}
-.product-hero{padding:8rem 2rem 4rem;text-align:center}
+.product-hero{padding:7rem 2rem 3rem;text-align:center}
 .product-hero h1{font-size:clamp(2rem,5vw,3.5rem);color:var(--accent);letter-spacing:4px;font-weight:700}
 .product-hero .desc{color:var(--dim);font-size:1rem;margin-top:.5rem;letter-spacing:2px}
 .spec-table{width:100%;border-collapse:collapse;margin:1.5rem 0}
@@ -103,8 +104,8 @@ footer a:hover{color:var(--accent)}
 .shield-icon svg{width:100%;height:100%}
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
 .float{animation:float 3s ease-in-out infinite}
-body.theme-crypt{--accent:#4da6ff;--accent-dim:rgba(77,166,255,0.15);--accent-glow:rgba(77,166,255,0.3)}
-body.theme-crypt .scanlines{background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(77,166,255,.015) 2px,rgba(77,166,255,.015) 4px)}
+body.theme-crypt{--accent:#2979ff;--accent-dim:rgba(41,121,255,0.15);--accent-glow:rgba(41,121,255,0.3)}
+body.theme-crypt .scanlines{background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(41,121,255,.015) 2px,rgba(41,121,255,.015) 4px)}
 body.theme-haven{--accent:#7c5cfc;--accent-dim:rgba(124,92,252,0.15);--accent-glow:rgba(124,92,252,0.3)}
 body.theme-haven .scanlines{background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(124,92,252,.015) 2px,rgba(124,92,252,.015) 4px)}
 body.theme-ai{--accent:#ffb74d;--accent-dim:rgba(255,183,77,0.15);--accent-glow:rgba(255,183,77,0.3)}
