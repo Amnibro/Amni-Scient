@@ -131,9 +131,9 @@ canvas:active{cursor:grabbing}
 .ship-mod{display:flex;justify-content:space-between;align-items:center;padding:6px 8px;margin:4px 0;border:1px solid var(--cb);background:rgba(0,60,120,0.15);font-size:9px;letter-spacing:1px;cursor:pointer;transition:all .2s}
 .ship-mod:hover{border-color:var(--ca);color:var(--ca)}
 .ship-mod.owned{border-color:var(--cn);color:var(--cn);cursor:default}
-#trade-pnl,#fleet-pnl,#mega-pnl{position:fixed;bottom:40px;left:50%;transform:translateX(-50%);z-index:16;width:380px;max-height:50vh;overflow-y:auto;padding:16px;background:var(--cp);border:1px solid var(--cb);backdrop-filter:blur(12px);display:none}
-#trade-pnl.open,#fleet-pnl.open,#mega-pnl.open{display:block}
-#trade-pnl h3,#fleet-pnl h3,#mega-pnl h3{font-size:12px;font-weight:300;letter-spacing:4px;color:var(--cm);margin-bottom:10px;text-transform:uppercase}
+#trade-pnl,#fleet-pnl{position:fixed;bottom:40px;left:50%;transform:translateX(-50%);z-index:16;width:380px;max-height:50vh;overflow-y:auto;padding:16px;background:var(--cp);border:1px solid var(--cb);backdrop-filter:blur(12px);display:none}
+#trade-pnl.open,#fleet-pnl.open{display:block}
+#trade-pnl h3,#fleet-pnl h3{font-size:12px;font-weight:300;letter-spacing:4px;color:var(--cm);margin-bottom:10px;text-transform:uppercase}
 #site-back{position:fixed;bottom:56px;right:16px;z-index:10;padding:8px 16px;background:rgba(3,8,20,0.9);border:1px solid rgba(0,120,200,0.45);color:var(--cd);font-size:10px;letter-spacing:2px;text-decoration:none;text-transform:uppercase;transition:all 0.2s;backdrop-filter:blur(10px)}
 #site-back:hover{color:var(--cm);border-color:var(--cm);box-shadow:0 0 10px rgba(0,160,255,0.15)}
 #sol-marker{position:absolute;width:12px;height:12px;border-radius:50%;border:2px solid var(--ca);box-shadow:0 0 8px var(--ca),0 0 16px rgba(255,136,0,0.3);pointer-events:none;z-index:9;transform:translate(-50%,-50%);display:none}
@@ -235,13 +235,12 @@ canvas:active{cursor:grabbing}
 <div id="sol-marker"></div>
 <div id="game-bar">
 <div class="g-stat"><span class="g-lbl">Credits:</span><span class="g-val" id="g-cred">0</span><span class="g-sep">|</span><span class="g-lbl">Research:</span><span class="g-val" id="g-rp">0</span><span class="g-sep">|</span><span class="g-lbl">Tech:</span><span class="g-val" id="g-tech">1</span><span class="g-sep">|</span><span class="g-lbl">Discovered:</span><span class="g-val" id="g-disc">0</span><span class="g-sep">|</span><span class="g-lbl">Colonies:</span><span class="g-val" id="g-cols">0</span><span class="g-sep">|</span><span class="g-lbl">Income:</span><span class="g-val" id="g-inc">0/s</span></div>
-<div style="display:flex;gap:6px"><button class="g-btn" id="btn-save">Save</button><button class="g-btn" id="btn-fund">Funding</button><button class="g-btn" id="btn-rocket">Launch Bay</button><button class="g-btn" id="btn-trade">Routes</button><button class="g-btn" id="btn-fleet">Fleet</button><button class="g-btn" id="btn-mega" style="color:#ffcc00;border-color:rgba(255,204,0,0.5)">Megacorp</button><button class="g-btn" id="btn-warp">Auto-Warp</button><button id="btn-share">&#x1F4E1; Share</button></div>
+<div style="display:flex;gap:6px"><button class="g-btn" id="btn-save">Save</button><button class="g-btn" id="btn-fund">Funding</button><button class="g-btn" id="btn-rocket">Launch Bay</button><button class="g-btn" id="btn-trade">Routes</button><button class="g-btn" id="btn-fleet">Fleet</button><button class="g-btn" id="btn-warp">Auto-Warp</button><button id="btn-share">&#x1F4E1; Share</button></div>
 </div>
 <div id="fund-pnl" class="pnl"></div>
 <div id="rocket-pnl" class="pnl"></div>
-<div id="trade-pnl" class="pnl"></div>
-<div id="fleet-pnl" class="pnl"></div>
-<div id="mega-pnl" class="pnl"></div>
+<div id="trade-pnl"></div>
+<div id="fleet-pnl"></div>
 <div id="disc-toast"></div>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}</script>
 <script type="module">
@@ -291,19 +290,7 @@ let densPlane=null,dirty=true,curFilter='ALL',curPlanet=null,curPlanetSys=null,f
 const SOL_POS=new T.Vector3(2600,2,0);
 let solSys=null;
 let GS={cr:100,rp:0,tech:1,disc:[],fuel:100,maxFuel:100,rktEng:0,rktFuel:0,rktCap:0,rktNav:0,
-funds:[],routes:[],colonies:[],infra:{},ship:[],vanity:[],inc:1,lastTick:Date.now(),escVel:false,maxRange:0};
-const VANITY=[
-{id:'v_moon',nm:'Carve Moon Face',desc:'Use orbital lasers to carve your face into a barren moon. Achievement unlocked: Ego Trip.',cost:10_000_000,owned:false},
-{id:'v_slime',nm:'Nebula Slime Pet',desc:'A legally distinct glowing blob of expensive cosmic goo that jiggles in your UI.',cost:50_000_000,owned:false},
-{id:'v_billboard',nm:'Deep Space Billboard',desc:'A giant floating billboard in deep space where nobody can read it.',cost:500_000_000,owned:false},
-{id:'v_void',nm:'Privatize the Vacuum',desc:'Buy the empty space between stars. Receive an official certificate of nothing.',cost:5_000_000_000,owned:false},
-{id:'v_tax',nm:'Galactic Tax Evasion',desc:'Hostile takeover of the space IRS. Saves you 0.00% annually!',cost:50_000_000_000,owned:false},
-{id:'v_sun',nm:'Artificial Sun',desc:'Because the real ones are too mainstream. Produces terrible lighting.',cost:100_000_000_000,owned:false},
-{id:'v_diamond',nm:'Diamond Escape Pod',desc:'Too heavy to actually launch. Looks great in the hangar though.',cost:500_000_000_000,owned:false},
-{id:'v_nuke',nm:'World Nuke Auth',desc:'Pay off regulators to let you press the big red doom button for funsies. Does nothing.',cost:1_000_000_000_000,owned:false},
-{id:'v_dubai',nm:'Dubai Megaplanet',desc:'An artificial world made entirely of luxury shopping malls and sand.',cost:5_000_000_000_000,owned:false},
-{id:'v_death',nm:'Definitely-Not-A-Death-Star',desc:'A spherical peace-keeping diplomatic station. Extremely peaceful.',cost:10_000_000_000_000,owned:false}
-];
+funds:[],routes:[],colonies:[],infra:{},ship:[],inc:1,lastTick:Date.now(),escVel:false,maxRange:0};
 const FUNDS=[
 {id:'bake',nm:'Bake Sale',desc:'Selling space cookies door-to-door',cost:0,inc:1,owned:false},
 {id:'car',nm:'Car Wash for Science',desc:'Washing cars to fund interstellar travel',cost:50,inc:3,owned:false},
@@ -931,19 +918,6 @@ GS.inc=calcIncome();GS.maxRange=calcRange();updateGameUI();saveGame();showDisc(`
 pnl.appendChild(d);
 });
 }
-function buildMegaPnl(){
-const pnl=$('#mega-pnl');
-pnl.innerHTML='<h3 style="color:#ffcc00">Megacorp Vanity Projects</h3>';
-VANITY.forEach((v)=>{
-const d=document.createElement('div');d.className='fund-item'+(v.owned?' owned':'');
-d.innerHTML=`<div><div class="fund-nm" style="color:#ffbb00">${v.nm}</div><div class="fund-desc">${v.desc}</div></div><div class="fund-cost">${v.owned?'OWNED':'$'+v.cost.toLocaleString()}</div>`;
-d.onclick=()=>{
-if(v.owned||GS.cr<v.cost)return;
-GS.cr-=v.cost;v.owned=true;
-buildMegaPnl();updateGameUI();saveGame();showMsg(`PURCHASED: ${v.nm}`);
-};pnl.appendChild(d);
-});
-}
 function discoverSystem(sys){
 if(!sys||GS.disc.includes(sys.name))return;
 GS.disc.push(sys.name);
@@ -962,7 +936,7 @@ function saveGame(){
 const sv={score,gs:{cr:GS.cr,rp:GS.rp,tech:GS.tech,disc:GS.disc,fuel:GS.fuel,maxFuel:GS.maxFuel,
 rktEng:GS.rktEng,rktFuel:GS.rktFuel,rktCap:GS.rktCap,rktNav:GS.rktNav,
 funds:FUNDS.filter(f=>f.owned).map(f=>f.id),routes:GS.routes,colonies:GS.colonies,
-infra:GS.infra,ship:GS.ship,vanity:VANITY.filter(v=>v.owned).map(v=>v.id),escVel:GS.escVel,lastTick:Date.now()}};
+infra:GS.infra,ship:GS.ship,escVel:GS.escVel,lastTick:Date.now()}};
 localStorage.setItem('amni_save',JSON.stringify(sv));showMsg('GAME DATA SYNCED');
 }
 function loadGame(){
@@ -975,7 +949,6 @@ GS.fuel=g.fuel||100;GS.maxFuel=g.maxFuel||100;
 GS.rktEng=g.rktEng||0;GS.rktFuel=g.rktFuel||0;GS.rktCap=g.rktCap||0;GS.rktNav=g.rktNav||0;
 GS.routes=g.routes||[];GS.colonies=g.colonies||[];GS.infra=g.infra||{};GS.ship=g.ship||[];GS.escVel=g.escVel||false;
 (g.funds||[]).forEach(fid=>{const f=FUNDS.find(x=>x.id===fid);if(f)f.owned=true});
-(g.vanity||[]).forEach(vid=>{const v=VANITY.find(x=>x.id===vid);if(v)v.owned=true});
 GS.lastTick=g.lastTick||Date.now();
 const offline=(Date.now()-GS.lastTick)/1000;
 if(offline>5){GS.cr+=calcIncome()*offline*0.5;showMsg(`OFFLINE EARNINGS: +${Math.floor(calcIncome()*offline*0.5)} CR`)}
@@ -1051,11 +1024,10 @@ $('#f-nasa').onclick=()=>{curFilter='NASA';applyFilter();dirty=true};
 $('#f-proc').onclick=()=>{curFilter='PROC';applyFilter();dirty=true};
 $('#f-find').onclick=()=>{const p=$('#nasa-pnl');if(p.classList.contains('open')){p.classList.remove('open');$('#g-hud').classList.remove('find-open');return}p.classList.add('open');$('#g-hud').classList.add('find-open');if(!nasaBuilt){buildNasaFinder();nasaBuilt=true}drawNasaMap(null)};
 $('#nasa-close').onclick=()=>{$('#nasa-pnl').classList.remove('open');$('#g-hud').classList.remove('find-open')};
-$('#btn-fund').onclick=()=>{$('#fund-pnl').classList.toggle('open');['rocket-pnl','trade-pnl','fleet-pnl','mega-pnl'].forEach(p=>$('#'+p).classList.remove('open'));buildFundPnl()};
-$('#btn-rocket').onclick=()=>{$('#rocket-pnl').classList.toggle('open');['fund-pnl','trade-pnl','fleet-pnl','mega-pnl'].forEach(p=>$('#'+p).classList.remove('open'));buildRocketPnl()};
-$('#btn-trade').onclick=()=>{$('#trade-pnl').classList.toggle('open');['fund-pnl','rocket-pnl','fleet-pnl','mega-pnl'].forEach(p=>$('#'+p).classList.remove('open'));buildTradePnl()};
-$('#btn-fleet').onclick=()=>{$('#fleet-pnl').classList.toggle('open');['fund-pnl','rocket-pnl','trade-pnl','mega-pnl'].forEach(p=>$('#'+p).classList.remove('open'));buildFleetPnl()};
-$('#btn-mega').onclick=()=>{$('#mega-pnl').classList.toggle('open');['fund-pnl','rocket-pnl','trade-pnl','fleet-pnl'].forEach(p=>$('#'+p).classList.remove('open'));buildMegaPnl()};
+$('#btn-fund').onclick=()=>{$('#fund-pnl').classList.toggle('open');['rocket-pnl','trade-pnl','fleet-pnl'].forEach(p=>$('#'+p).classList.remove('open'));buildFundPnl()};
+$('#btn-rocket').onclick=()=>{$('#rocket-pnl').classList.toggle('open');['fund-pnl','trade-pnl','fleet-pnl'].forEach(p=>$('#'+p).classList.remove('open'));buildRocketPnl()};
+$('#btn-trade').onclick=()=>{$('#trade-pnl').classList.toggle('open');['fund-pnl','rocket-pnl','fleet-pnl'].forEach(p=>$('#'+p).classList.remove('open'));buildTradePnl()};
+$('#btn-fleet').onclick=()=>{$('#fleet-pnl').classList.toggle('open');['fund-pnl','rocket-pnl','trade-pnl'].forEach(p=>$('#'+p).classList.remove('open'));buildFleetPnl()};
 $('#btn-save').onclick=()=>saveGame();
 $('#btn-warp').onclick=()=>{
 if(!GS.escVel){showMsg('BUILD A ROCKET FIRST');return}
