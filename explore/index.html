@@ -3,7 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Amni-Explore: Galactic Cartographics</title>
+<title>Amni-Explore: Stellar Cartographics — Play Free</title>
+<meta name="description" content="Explore an 80,000-particle procedural galaxy with NASA exoplanet data. Free WebGL space game with WASM engine, 3000+ star systems, and real orbital mechanics.">
+<meta name="keywords" content="galaxy explorer,space game,webgl,wasm,nasa exoplanets,procedural generation,free browser game,star map">
+<meta property="og:title" content="Amni-Explore: Stellar Cartographics">
+<meta property="og:description" content="80K-particle galaxy explorer with NASA exoplanet data. Free in-browser space game.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://amni-scient.com/explore/">
+<meta property="og:image" content="https://amni-scient.com/assets/explore/og-explore.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Amni-Explore: Stellar Cartographics">
+<meta name="twitter:description" content="80K-particle galaxy with NASA data. Free WebGL space explorer.">
+<meta name="twitter:image" content="https://amni-scient.com/assets/explore/og-explore.png">
+<link rel="canonical" href="https://amni-scient.com/explore/">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{--cm:#00b4ff;--ca:#ff8800;--cd:#4a6a8a;--cp:rgba(3,8,20,0.9);--cb:rgba(0,120,200,0.45);--ct:#c8dcf0;--cn:#22cc66}
@@ -159,13 +173,27 @@ canvas:active{cursor:grabbing}
 #launch-btn.disabled{opacity:0.4;cursor:default;pointer-events:none}
 #disc-toast{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:20;padding:16px 28px;background:rgba(3,8,20,0.95);border:1px solid var(--ca);color:var(--ca);font-size:14px;letter-spacing:3px;text-transform:uppercase;text-align:center;opacity:0;pointer-events:none;transition:opacity .3s;text-shadow:0 0 12px var(--ca)}
 #disc-toast.show{opacity:1}
+#ad-tx{position:fixed;bottom:44px;left:16px;z-index:14;width:320px;min-height:100px;background:rgba(3,8,20,0.92);border:1px solid rgba(0,120,200,0.35);backdrop-filter:blur(8px);display:flex;flex-direction:column;pointer-events:auto;overflow:hidden;transition:opacity .4s}
+#ad-tx .ad-hdr{display:flex;justify-content:space-between;align-items:center;padding:4px 10px;border-bottom:1px solid rgba(0,60,120,0.25)}
+#ad-tx .ad-hdr span{font-size:8px;letter-spacing:2px;color:rgba(0,180,255,0.4);text-transform:uppercase}
+#ad-tx .ad-x{background:none;border:none;color:rgba(74,106,138,0.6);font-size:12px;cursor:pointer;padding:0 2px}
+#ad-tx .ad-x:hover{color:var(--ct)}
+#ad-tx .ad-body{padding:6px 10px;min-height:60px;display:flex;align-items:center;justify-content:center}
+#ad-tx.hidden{opacity:0;pointer-events:none}
+.pause-support{display:flex;gap:8px;margin-top:12px}
+.pause-support a{flex:1;display:block;padding:9px;text-align:center;font-size:11px;letter-spacing:2px;text-transform:uppercase;text-decoration:none;border:1px solid var(--cb);color:var(--ct);transition:all .2s}
+.pause-support a:hover{border-color:var(--cm);box-shadow:0 0 12px rgba(0,160,255,0.15)}
+.pause-support .kofi{border-color:rgba(255,94,91,0.4);color:#ff5e5b}
+.pause-support .kofi:hover{border-color:#ff5e5b;box-shadow:0 0 12px rgba(255,94,91,0.2)}
+#btn-share{padding:4px 10px;border:1px solid var(--cb);background:rgba(0,60,120,0.25);color:var(--ct);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all .2s}
+#btn-share:hover{border-color:var(--cn);color:var(--cn);box-shadow:0 0 8px rgba(34,204,102,0.2)}
 </style>
 </head>
 <body>
 <div id="loading"><h1>COSMOS COMMANDER</h1><div class="bar"><div class="fill" id="lbar"></div></div></div>
 <div id="g-hud" class="hud">
 <div id="g-info" class="pnl">
-<h2>Galactic Cartographics</h2>
+<h2>Stellar Cartographics</h2>
 <div class="scr">DATA SCANS: <span id="g-score">0</span> TB</div>
 <div class="zm" id="g-zoom">ZOOM: GALAXY VIEW</div>
 <div id="g-filter">
@@ -200,12 +228,13 @@ canvas:active{cursor:grabbing}
 <div id="xhair"><svg viewBox="0 0 36 36"><circle cx="18" cy="18" r="12" fill="none" stroke="var(--cm)" stroke-width="1" opacity="0.5"/><line x1="18" y1="2" x2="18" y2="9" stroke="var(--cm)" stroke-width="1.2"/><line x1="18" y1="27" x2="18" y2="34" stroke="var(--cm)" stroke-width="1.2"/><line x1="2" y1="18" x2="9" y2="18" stroke="var(--cm)" stroke-width="1.2"/><line x1="27" y1="18" x2="34" y2="18" stroke="var(--cm)" stroke-width="1.2"/><circle cx="18" cy="18" r="1.5" fill="var(--cm)"/></svg></div>
 <div id="msg"></div>
 <div id="fade"></div>
-<div id="pause"><div id="pause-box" class="pnl"><h2>Ship Computer</h2><div class="sub">PAUSED</div><button class="mbtn" id="btn-resume">Resume</button><button class="mbtn" id="btn-fs">Toggle Fullscreen</button></div></div>
+<div id="pause"><div id="pause-box" class="pnl"><h2>Ship Computer</h2><div class="sub">PAUSED</div><button class="mbtn" id="btn-resume">Resume</button><button class="mbtn" id="btn-fs">Toggle Fullscreen</button><div class="pause-support"><a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi">&#9749; Support</a><a href="https://amni-scient.com" target="_blank" rel="noopener noreferrer">&#127760; AMNI-SCIENT</a></div></div></div>
+<div id="ad-tx" class="hidden"><div class="ad-hdr"><span>&#x25C8; deep space transmission</span><button class="ad-x" id="ad-close">&times;</button></div><div class="ad-body" id="ad-slot"></div></div>
 <a id="site-back" href="../amni-explore.html">&larr; AMNI-SCIENT</a>
 <div id="sol-marker"></div>
 <div id="game-bar">
 <div class="g-stat"><span class="g-lbl">Credits:</span><span class="g-val" id="g-cred">0</span><span class="g-sep">|</span><span class="g-lbl">Research:</span><span class="g-val" id="g-rp">0</span><span class="g-sep">|</span><span class="g-lbl">Tech:</span><span class="g-val" id="g-tech">1</span><span class="g-sep">|</span><span class="g-lbl">Discovered:</span><span class="g-val" id="g-disc">0</span><span class="g-sep">|</span><span class="g-lbl">Colonies:</span><span class="g-val" id="g-cols">0</span><span class="g-sep">|</span><span class="g-lbl">Income:</span><span class="g-val" id="g-inc">0/s</span></div>
-<div style="display:flex;gap:6px"><button class="g-btn" id="btn-save">Save</button><button class="g-btn" id="btn-fund">Funding</button><button class="g-btn" id="btn-rocket">Rocket Lab</button><button class="g-btn" id="btn-trade">Routes</button><button class="g-btn" id="btn-fleet">Fleet</button><button class="g-btn" id="btn-warp">Auto-Warp</button></div>
+<div style="display:flex;gap:6px"><button class="g-btn" id="btn-save">Save</button><button class="g-btn" id="btn-fund">Funding</button><button class="g-btn" id="btn-rocket">Launch Bay</button><button class="g-btn" id="btn-trade">Routes</button><button class="g-btn" id="btn-fleet">Fleet</button><button class="g-btn" id="btn-warp">Auto-Warp</button><button id="btn-share">&#x1F4E1; Share</button></div>
 </div>
 <div id="fund-pnl" class="pnl"></div>
 <div id="rocket-pnl" class="pnl"></div>
@@ -317,8 +346,8 @@ const INFRA=[
 const SHIP_MODS=[
 {id:'cargo',nm:'Cargo Bay',desc:'Expanded resource hold',cost:20000,rngMul:1.0,incMul:1.15},
 {id:'scanner',nm:'Deep Scanner',desc:'Enhanced analysis suite',cost:30000,rngMul:1.1,incMul:1.0},
-{id:'shield',nm:'Deflector Array',desc:'Micro-meteor protection',cost:50000,rngMul:1.0,incMul:1.05},
-{id:'warp2',nm:'Warp Coil Mk2',desc:'Improved FTL stability',cost:75000,rngMul:1.3,incMul:1.0},
+{id:'shield',nm:'Particle Screen',desc:'Micro-meteor protection',cost:50000,rngMul:1.0,incMul:1.05},
+{id:'warp2',nm:'Fold Drive Mk2',desc:'Improved FTL stability',cost:75000,rngMul:1.3,incMul:1.0},
 {id:'refinery',nm:'Onboard Refinery',desc:'In-flight fuel synthesis',cost:100000,rngMul:1.2,incMul:1.1},
 {id:'cloak',nm:'Sensor Dampener',desc:'Reduced detection profile',cost:150000,rngMul:1.0,incMul:1.2},
 {id:'quantum',nm:'Quantum Entangler',desc:'Instant colony comms',cost:300000,rngMul:1.0,incMul:1.3},
@@ -451,7 +480,7 @@ if(isWarping)return;isWarping=true;
 $('#fund-pnl').classList.remove('open');$('#rocket-pnl').classList.remove('open');$('#nasa-pnl').classList.remove('open');$('#g-sel').style.display='none';
 const _doWarp=()=>{
   startFlyTo(sys);
-  showMsg('FRAMESHIFT DRIVE CHARGING...');
+  showMsg('EIGENFOLD ENGINE CHARGING...');
   let targetFov=140;
   const warpInt=setInterval(()=>{
     if(cam.fov<targetFov){cam.fov+=(targetFov-cam.fov)*0.08+0.5;cam.updateProjectionMatrix()}
@@ -758,7 +787,7 @@ function buildRocketPnl(){
 const pnl=$('#rocket-pnl');
 const dv=calcDeltaV();const rng=calcRange();
 const escV=11.2;const canEsc=dv>=escV;
-pnl.innerHTML=`<h3>Rocket Lab</h3>`;
+pnl.innerHTML=`<h3>Launch Bay</h3>`;
 const stats=document.createElement('div');
 stats.innerHTML=`<div class="rkt-row"><span class="rkt-lbl">Delta-V</span><span class="rkt-val">${dv.toFixed(1)} km/s</span></div>`+
 `<div class="rkt-row"><span class="rkt-lbl">Escape Vel</span><span class="rkt-val ${canEsc?'good':'bad'}">${canEsc?'READY':'NEED '+escV+' km/s'}</span></div>`+
@@ -799,7 +828,7 @@ function buildColUI(pd,mesh,sys,isGas,hz){
 const old=document.getElementById('col-ui');if(old)old.remove();
 const wrap=document.createElement('div');wrap.id='col-ui';wrap.style.cssText='margin-top:12px';
 if(sys.src==='SOL'){
-const hw=document.createElement('div');hw.className='g-btn';hw.style.cssText='width:100%;text-align:center;background:rgba(100,180,255,0.15);color:var(--cm);border-color:var(--cm);pointer-events:none';hw.textContent='FEDERATION HOMEWORLD';wrap.appendChild(hw);$('#p-data').appendChild(wrap);return;
+const hw=document.createElement('div');hw.className='g-btn';hw.style.cssText='width:100%;text-align:center;background:rgba(100,180,255,0.15);color:var(--cm);border-color:var(--cm);pointer-events:none';hw.textContent='ORIGIN HOMEWORLD';wrap.appendChild(hw);$('#p-data').appendChild(wrap);return;
 }
 const isCol=GS.colonies.includes(pd.name);
 const colCost=isGas?5000000:(hz?50000:150000);
@@ -1112,6 +1141,29 @@ updateSolMarker();
 if(dirty){comp.render();dirty=false}
 }
 init();
+const adEl=$('#ad-tx'),adSlot=$('#ad-slot'),adClose=$('#ad-close');
+function initAds(){
+const s=document.createElement('script');
+s.async=true;s.crossOrigin='anonymous';
+s.src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8345487545441889';
+document.head.appendChild(s);
+s.onload=()=>{
+adSlot.innerHTML='<ins class="adsbygoogle" style="display:block;width:300px;height:60px" data-ad-client="ca-pub-8345487545441889" data-ad-slot="" data-ad-format="horizontal" data-full-width-responsive="false"></ins>';
+try{(window.adsbygoogle=window.adsbygoogle||[]).push({})}catch(e){}
+adEl.classList.remove('hidden');
+};
+s.onerror=()=>{
+adSlot.innerHTML='<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" style="display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--ct);font-size:10px;letter-spacing:1px"><span style="font-size:18px">&#9749;</span><span>ENJOY COSMOS COMMANDER?<br><span style="color:#ff5e5b;font-weight:600">SUPPORT THE DEVELOPER</span></span></a>';
+adEl.classList.remove('hidden');
+};
+}
+setTimeout(initAds,2000);
+adClose.onclick=()=>{adEl.classList.add('hidden');setTimeout(()=>adEl.classList.remove('hidden'),120000)};
+$('#btn-share').onclick=async()=>{
+const txt='I\'m exploring a galaxy of 80,000 stars in Cosmos Commander! 🌌\nhttps://amni-scient.com/explore/';
+if(navigator.share){try{await navigator.share({title:'Cosmos Commander',text:txt,url:'https://amni-scient.com/explore/'})}catch(e){}}
+else{try{await navigator.clipboard.writeText(txt);showMsg('LINK COPIED')}catch(e){}}
+};
 </script>
 </body>
 </html>
