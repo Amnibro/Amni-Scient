@@ -187,6 +187,26 @@ canvas:active{cursor:grabbing}
 .pause-support .kofi:hover{border-color:#ff5e5b;box-shadow:0 0 12px rgba(255,94,91,0.2)}
 #btn-share{padding:4px 10px;border:1px solid var(--cb);background:rgba(0,60,120,0.25);color:var(--ct);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all .2s}
 #btn-share:hover{border-color:var(--cn);color:var(--cn);box-shadow:0 0 8px rgba(34,204,102,0.2)}
+#slime-pet{position:fixed;bottom:50px;right:80px;z-index:18;width:40px;height:40px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#7ff59a,#0abb55 60%,#044a22);box-shadow:0 0 20px rgba(0,255,100,0.4);cursor:pointer;display:none;animation:slimeJig 1.5s ease-in-out infinite}
+@keyframes slimeJig{0%,100%{transform:scale(1) translateY(0)}25%{transform:scale(1.12,0.88) translateY(2px)}50%{transform:scale(0.92,1.1) translateY(-3px)}75%{transform:scale(1.05,0.95) translateY(1px)}}
+#slime-pet:hover{box-shadow:0 0 30px rgba(0,255,100,0.7);filter:brightness(1.3)}
+#nuke-btn{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:999;display:none;flex-direction:column;align-items:center;gap:8px}
+#nuke-btn button{width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,#ff2020,#8b0000);border:6px solid #ff4444;box-shadow:0 0 40px rgba(255,0,0,0.6),inset 0 0 20px rgba(0,0,0,0.5);cursor:pointer;font-size:24px;color:#fff;font-weight:bold;text-shadow:0 0 10px #ff0000;transition:all .15s}
+#nuke-btn button:hover{transform:scale(1.1);box-shadow:0 0 80px rgba(255,0,0,0.9)}
+#nuke-btn button:active{transform:scale(0.95)}
+#nuke-btn span{font-size:8px;letter-spacing:3px;color:#ff4444;text-transform:uppercase}
+.mega-item{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;margin:3px 0;border:1px solid rgba(255,204,0,0.2);background:rgba(255,204,0,0.04);cursor:pointer;transition:all .2s;font-size:9px;letter-spacing:1px}
+.mega-item:hover{border-color:rgba(255,204,0,0.6);background:rgba(255,204,0,0.1)}
+.mega-item.owned{border-color:rgba(0,255,100,0.3);background:rgba(0,255,100,0.05);cursor:default;opacity:0.7}
+.mega-nm{color:#ffcc00;font-weight:600;font-size:10px}
+.mega-desc{color:var(--cd);font-size:7px;margin-top:2px}
+.mega-fx{color:var(--cn);font-size:7px;margin-top:1px}
+.mega-cost{color:#ffcc00;white-space:nowrap;font-size:10px}
+.mega-cat{font-size:8px;letter-spacing:3px;color:rgba(255,204,0,0.5);text-transform:uppercase;margin:12px 0 6px;border-bottom:1px solid rgba(255,204,0,0.15);padding-bottom:4px}
+#toll-counter{position:fixed;top:16px;right:16px;z-index:18;display:none;padding:6px 14px;background:rgba(3,8,20,0.9);border:1px solid rgba(255,204,0,0.4);font-size:9px;letter-spacing:2px;color:#ffcc00}
+#trash-can{position:fixed;bottom:50px;left:80px;z-index:18;display:none;font-size:28px;cursor:pointer;filter:grayscale(0.5);transition:all .2s}
+#trash-can:hover{filter:grayscale(0) brightness(1.3);transform:scale(1.2)}
+.title-badge{display:inline-block;margin-left:8px;padding:1px 6px;font-size:7px;letter-spacing:1.5px;border:1px solid rgba(255,204,0,0.4);color:#ffcc00;text-transform:uppercase;vertical-align:middle}
 </style>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6279792832546496" crossorigin="anonymous"></script>
 </head>
@@ -232,6 +252,10 @@ canvas:active{cursor:grabbing}
 <div id="pause"><div id="pause-box" class="pnl"><h2>Ship Computer</h2><div class="sub">PAUSED</div><button class="mbtn" id="btn-resume">Resume</button><button class="mbtn" id="btn-fs">Toggle Fullscreen</button><div class="pause-support"><a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi">&#9749; Support</a><a href="https://amni-scient.com" target="_blank" rel="noopener noreferrer">&#127760; AMNI-SCIENT</a></div></div></div>
 <div id="ad-tx" class="hidden"><div class="ad-hdr"><span>&#x25C8; deep space transmission</span><button class="ad-x" id="ad-close">&times;</button></div><div class="ad-body" id="ad-slot"></div></div>
 <a id="site-back" href="../amni-explore.html">&larr; AMNI-SCIENT</a>
+<div id="slime-pet" title="Nebula Slime"></div>
+<div id="trash-can" title="Premium Galactic Trash Can">&#128465;</div>
+<div id="toll-counter">TOLL REVENUE: <span id="toll-cr">0</span></div>
+<div id="nuke-btn"><button id="nuke-press">&#9762;</button><span>WORLD NUKE AUTHORIZATION</span></div>
 <div id="sol-marker"></div>
 <div id="game-bar">
 <div class="g-stat"><span class="g-lbl">Credits:</span><span class="g-val" id="g-cred">0</span><span class="g-sep">|</span><span class="g-lbl">Research:</span><span class="g-val" id="g-rp">0</span><span class="g-sep">|</span><span class="g-lbl">Tech:</span><span class="g-val" id="g-tech">1</span><span class="g-sep">|</span><span class="g-lbl">Discovered:</span><span class="g-val" id="g-disc">0</span><span class="g-sep">|</span><span class="g-lbl">Colonies:</span><span class="g-val" id="g-cols">0</span><span class="g-sep">|</span><span class="g-lbl">Income:</span><span class="g-val" id="g-inc">0/s</span></div>
@@ -291,19 +315,45 @@ let densPlane=null,dirty=true,curFilter='ALL',curPlanet=null,curPlanetSys=null,f
 const SOL_POS=new T.Vector3(2600,2,0);
 let solSys=null;
 let GS={cr:100,rp:0,tech:1,disc:[],fuel:100,maxFuel:100,rktEng:0,rktFuel:0,rktCap:0,rktNav:0,
-funds:[],routes:[],colonies:[],infra:{},ship:[],vanity:[],inc:1,lastTick:Date.now(),escVel:false,maxRange:0};
+funds:[],routes:[],colonies:[],infra:{},ship:[],vanity:[],blinged:[],nuked:[],trashBurned:0,tollRev:0,slimeFed:0,moonCarved:[],inc:1,lastTick:Date.now(),escVel:false,maxRange:0};
 const VANITY=[
-{id:'v_moon',nm:'Carve Moon Face',desc:'Use orbital lasers to carve your face into a barren moon. Achievement unlocked: Ego Trip.',cost:10_000_000,owned:false},
-{id:'v_slime',nm:'Nebula Slime Pet',desc:'A legally distinct glowing blob of expensive cosmic goo that jiggles in your UI.',cost:50_000_000,owned:false},
-{id:'v_billboard',nm:'Deep Space Billboard',desc:'A giant floating billboard in deep space where nobody can read it.',cost:500_000_000,owned:false},
-{id:'v_void',nm:'Privatize the Vacuum',desc:'Buy the empty space between stars. Receive an official certificate of nothing.',cost:5_000_000_000,owned:false},
-{id:'v_tax',nm:'Galactic Tax Evasion',desc:'Hostile takeover of the space IRS. Saves you 0.00% annually!',cost:50_000_000_000,owned:false},
-{id:'v_sun',nm:'Artificial Sun',desc:'Because the real ones are too mainstream. Produces terrible lighting.',cost:100_000_000_000,owned:false},
-{id:'v_diamond',nm:'Diamond Escape Pod',desc:'Too heavy to actually launch. Looks great in the hangar though.',cost:500_000_000_000,owned:false},
-{id:'v_nuke',nm:'World Nuke Auth',desc:'Pay off regulators to let you press the big red doom button for funsies. Does nothing.',cost:1_000_000_000_000,owned:false},
-{id:'v_dubai',nm:'Dubai Megaplanet',desc:'An artificial world made entirely of luxury shopping malls and sand.',cost:5_000_000_000_000,owned:false},
-{id:'v_death',nm:'Definitely-Not-A-Death-Star',desc:'A spherical peace-keeping diplomatic station. Extremely peaceful.',cost:10_000_000_000_000,owned:false}
+{id:'v_moon',cat:'FLEX',nm:'Orbital Face Carver',desc:'Laser-engrave your face onto any moon you visit. Unlocks CARVE button on moons.',cost:10_000_000,inc:500,incMul:1.0,fx:'Carve moons (+500/s base)'},
+{id:'v_slime',cat:'FLEX',nm:'Nebula Slime Pet',desc:'A legally distinct glowing blob. Click to feed it your research points. It grows.',cost:50_000_000,inc:0,incMul:1.0,fx:'Slime pet appears (eats RP, grows)'},
+{id:'v_billboard',cat:'FLEX',nm:'Deep Space Billboard Co.',desc:'Deploy floating billboards near stars. Nobody reads them. +0.5% income per discovered system.',cost:500_000_000,inc:0,incMul:1.0,fx:'+0.5% income per discovered system'},
+{id:'v_bling',cat:'FLEX',nm:'Planetary Bling Kit',desc:'Gold-plate any colonized world. Makes it sparkle on the galaxy map and boosts colony income x3.',cost:1_000_000_000,inc:0,incMul:1.0,fx:'Unlock BLING OUT on colonies (x3 income)'},
+{id:'v_void',cat:'HOSTILE TAKEOVER',nm:'Privatize the Vacuum',desc:'Buy the empty space between stars. Charge rent on nothing. +10,000/s passive.',cost:5_000_000_000,inc:10000,incMul:1.0,fx:'+10,000/s passive rent on nothing'},
+{id:'v_tax',cat:'HOSTILE TAKEOVER',nm:'Galactic Tax Evasion',desc:'Hostile takeover of the Space IRS. All colony costs reduced by 90%.',cost:50_000_000_000,inc:0,incMul:1.0,fx:'Colony costs -90%'},
+{id:'v_toll',cat:'HOSTILE TAKEOVER',nm:'Intergalactic Toll Booths',desc:'Monetize hyperspace lanes. Generates +1 CR per discovered system per second. Terrible ROI.',cost:100_000_000_000,inc:0,incMul:1.0,fx:'+1/s per discovered system (awful ROI)'},
+{id:'v_sun',cat:'MEGASTRUCTURE',nm:'Artificial Sun',desc:'Build a miniature star. Doubles ALL income. Produces terrible lighting.',cost:200_000_000_000,inc:0,incMul:2.0,fx:'Income x2.0'},
+{id:'v_diamond',cat:'MEGASTRUCTURE',nm:'Diamond Escape Pod',desc:'Too heavy to actually launch. But your ship range doubles anyway because physics is a suggestion.',cost:500_000_000_000,inc:0,incMul:1.0,fx:'Ship range x2'},
+{id:'v_trash',cat:'UNHINGED',nm:'Premium Galactic Trash Can',desc:'A gold-plated bin. Throw away 1B credits per click. Achievement at 100B wasted.',cost:750_000_000_000,inc:0,incMul:1.0,fx:'Unlock the golden trash can'},
+{id:'v_nuke',cat:'MEGASTRUCTURE',nm:'World Nuke Authorization',desc:'A big red button appears on screen. Press it on a planet for a dramatic explosion animation. The planet is fine.',cost:1_000_000_000_000,inc:0,incMul:1.0,fx:'Big Red Nuke Button (cosmetic only)'},
+{id:'v_dubai',cat:'MEGASTRUCTURE',nm:'Dubai Megaplanet',desc:'An artificial world of luxury malls and artificial sand. Generates +500,000/s.',cost:5_000_000_000_000,inc:500000,incMul:1.0,fx:'+500,000/s income'},
+{id:'v_death',cat:'MEGASTRUCTURE',nm:'Definitely-Not-A-Death-Star',desc:'A spherical peace-keeping station. Extremely peaceful. Income x5.',cost:10_000_000_000_000,inc:0,incMul:5.0,fx:'Income x5.0'},
+{id:'v_lobby',cat:'UNHINGED',nm:'Bribe the Speed of Light',desc:'Fund a smear campaign against thermodynamics. "Entropy is a scam invented by Big Universe." Tech level +5.',cost:25_000_000_000_000,inc:0,incMul:1.0,fx:'Tech level +5 instantly'},
+{id:'v_prestige',cat:'UNHINGED',nm:'Amni-Corp Platinum Prestige',desc:'A monthly subscription that drains 1% of income. Gives you a tiny crown icon. That is literally it.',cost:50_000_000_000_000,inc:0,incMul:1.0,fx:'Crown icon + perpetual 1% income drain'},
+{id:'v_pothole',cat:'UNHINGED',nm:'Galactic Pothole Commission',desc:'Donate to fix hyperspace turbulence. It never gets fixed. Random bureaucrat thank-you letters.',cost:100_000_000_000_000,inc:0,incMul:1.0,fx:'Random thank-you notifications'},
+{id:'v_rain',cat:'UNHINGED',nm:'The Make-It-Rain Button',desc:'Delete 10% of your credits with one click. Fireworks. Confetti. Regret. Repeatable.',cost:200_000_000_000_000,inc:0,incMul:1.0,fx:'MAKE IT RAIN (repeatable 10% burn)'},
+{id:'v_dyson',cat:'ENDGAME',nm:'Dyson Sphere',desc:'Encase an entire star in solar panels. Income x10. Takes 60 real seconds to build.',cost:500_000_000_000_000,inc:0,incMul:10.0,fx:'Income x10 (60s build time)'},
+{id:'v_sim',cat:'ENDGAME',nm:'Universe Simulator',desc:'Build the universe inside the universe. Generates income equal to your current income (doubles it).',cost:1_000_000_000_000_000,inc:0,incMul:2.0,fx:'Income x2 (stacks with others)'},
+{id:'v_buy',cat:'ENDGAME',nm:'Buy the Game',desc:'Purchase the actual game you are playing. Congratulations. You own this. Income x100.',cost:9_999_999_999_999_999,inc:0,incMul:100.0,fx:'Income x100. You won capitalism.'}
 ];
+const BUREAUCRAT_MSGS=[
+'Dear Valued Taxpayer, your donation has been received. We will look into it. Eventually. - Dept. of Hyperspace Maintenance',
+'Thank you for your generous contribution. We bought new office chairs. Very comfortable. - GPC Regional Office',
+'Your funds have been allocated to Project: Pothole Alpha. Current status: On Hold. Indefinitely.',
+'We appreciate your patience. The potholes have filed a counter-complaint. Legal is involved now.',
+'Good news! We fixed ONE pothole. Bad news: 47 new ones appeared. We need more funding.',
+'Your donation receipt is attached. Just kidding, our printer broke. Please donate a printer.',
+'The Galactic Pothole Commission thanks you. Our annual retreat to Nebula Resort was lovely.',
+'UPDATE: We have reclassified potholes as "features of the hyperspace landscape." Case closed.',
+'Sincere thanks from the GPC. We named a pothole after you. It is the largest one.'
+];
+const VANITY_TITLES={
+v_void:'Void Landlord',v_tax:'Tax Evader Supreme',v_death:'Galactic Overlord',
+v_dubai:'Mall Emperor',v_nuke:'Nuke Commander',v_lobby:'Physics Denier',
+v_prestige:'Platinum VIP',v_dyson:'Stellar Architect',v_sim:'Reality Admin',v_buy:'Game Owner'
+};
 const FUNDS=[
 {id:'bake',nm:'Bake Sale',desc:'Selling space cookies door-to-door',cost:0,inc:1,owned:false},
 {id:'car',nm:'Car Wash for Science',desc:'Washing cars to fund interstellar travel',cost:50,inc:3,owned:false},
@@ -763,23 +813,30 @@ li.upgrading=false;dirty=true;$('#gen-load').classList.remove('on');
 }
 function showMsg(t){const e=$('#msg');e.textContent=t;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),2500)}
 function showDisc(t){const e=$('#disc-toast');e.textContent=t;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),3000)}
-function calcIncome(){let base=1;FUNDS.forEach(f=>{if(f.owned)base+=f.inc});base+=GS.colonies.length*500;Object.values(GS.infra||{}).forEach(arr=>arr.forEach(id=>{const inf=INFRA.find(x=>x.id===id);if(inf)base+=inf.inc}));base+=GS.routes.length*2000*GS.tech;let mul=GS.tech;GS.ship.forEach(id=>{const m=SHIP_MODS.find(x=>x.id===id);if(m)mul*=m.incMul});return Math.floor(base*mul)}
+function calcIncome(){let base=1;FUNDS.forEach(f=>{if(f.owned)base+=f.inc});base+=GS.colonies.length*500;Object.values(GS.infra||{}).forEach(arr=>arr.forEach(id=>{const inf=INFRA.find(x=>x.id===id);if(inf)base+=inf.inc}));base+=GS.routes.length*2000*GS.tech;VANITY.forEach(v=>{if(v.owned)base+=v.inc});if(vOwned('v_billboard'))base*=1+GS.disc.length*0.005;if(vOwned('v_bling'))GS.blinged.forEach(()=>base+=1500);if(vOwned('v_toll'))base+=GS.disc.length;let mul=GS.tech;GS.ship.forEach(id=>{const m=SHIP_MODS.find(x=>x.id===id);if(m)mul*=m.incMul});VANITY.forEach(v=>{if(v.owned&&v.incMul>1)mul*=v.incMul});if(vOwned('v_prestige'))mul*=0.99;return Math.floor(base*mul)}
 function calcDeltaV(){
 const eng=ENGINES[GS.rktEng],ft=FUELTANKS[GS.rktFuel],cap=CAPSULES[GS.rktCap],nav=NAV[GS.rktNav];
 const dry=eng.mass+ft.mass+cap.mass+nav.mass;const wet=dry+ft.cap;
 return wet>0?eng.dv*Math.log(wet/dry)*nav.acc:0;
 }
-function calcRange(){const dv=calcDeltaV();let mul=1;GS.ship.forEach(id=>{const m=SHIP_MODS.find(x=>x.id===id);if(m)mul*=m.rngMul});return dv*0.5*GS.tech*mul}
+function calcRange(){const dv=calcDeltaV();let mul=1;GS.ship.forEach(id=>{const m=SHIP_MODS.find(x=>x.id===id);if(m)mul*=m.rngMul});if(vOwned('v_diamond'))mul*=2;return dv*0.5*GS.tech*mul}
 function updateGameUI(){
 GS.inc=calcIncome();GS.maxRange=calcRange();
 $('#g-cred').textContent=Math.floor(GS.cr).toLocaleString();
-$('#g-rp').textContent=GS.rp;$('#g-tech').textContent=GS.tech;
+$('#g-rp').textContent=Math.floor(GS.rp);$('#g-tech').textContent=GS.tech;
 $('#g-disc').textContent=GS.disc.length;$('#g-cols').textContent=GS.colonies.length;
-$('#g-inc').textContent=`${GS.inc}/s`;
+const crownPfx=vOwned('v_prestige')?'\u{1F451} ':'';
+$('#g-inc').textContent=`${crownPfx}${GS.inc.toLocaleString()}/s`;
+$('#slime-pet').style.display=vOwned('v_slime')?'block':'none';
+$('#toll-counter').style.display=vOwned('v_toll')?'block':'none';
+$('#trash-can').style.display=vOwned('v_trash')?'block':'none';
+if(vOwned('v_slime')){const sz=Math.min(40+GS.slimeFed*2,120);$('#slime-pet').style.width=sz+'px';$('#slime-pet').style.height=sz+'px'}
 }
 function gameTick(){
 const now=Date.now(),dt=(now-GS.lastTick)/1000;
 GS.lastTick=now;GS.cr+=GS.inc*dt;
+if(vOwned('v_toll')){const tollDt=GS.disc.length*dt;GS.tollRev+=tollDt;$('#toll-cr').textContent=Math.floor(GS.tollRev).toLocaleString()}
+if(vOwned('v_pothole')&&Math.random()<0.002*dt)showMsg(BUREAUCRAT_MSGS[Math.floor(Math.random()*BUREAUCRAT_MSGS.length)]);
 let rpRate=0;Object.values(GS.infra||{}).forEach(arr=>arr.forEach(id=>{const inf=INFRA.find(x=>x.id===id);if(inf)rpRate+=inf.rp}));
 if(rpRate>0){GS.rp+=rpRate*dt/60;if(GS.rp>=10*GS.tech*GS.tech){GS.tech++;showDisc(`TECH LEVEL ${GS.tech} UNLOCKED!`)}}
 updateGameUI();
@@ -845,7 +902,8 @@ if(sys.src==='SOL'){
 const hw=document.createElement('div');hw.className='g-btn';hw.style.cssText='width:100%;text-align:center;background:rgba(100,180,255,0.15);color:var(--cm);border-color:var(--cm);pointer-events:none';hw.textContent='ORIGIN HOMEWORLD';wrap.appendChild(hw);$('#p-data').appendChild(wrap);return;
 }
 const isCol=GS.colonies.includes(pd.name);
-const colCost=isGas?5000000:(hz?50000:150000);
+let colCost=isGas?5000000:(hz?50000:150000);
+if(vOwned('v_tax'))colCost=Math.floor(colCost*0.1);
 if(isCol){
 const cb=document.createElement('div');cb.className='g-btn';cb.style.cssText='width:100%;text-align:center;background:rgba(34,204,102,0.2);color:var(--cn);border-color:var(--cn);pointer-events:none';cb.textContent='COLONY ESTABLISHED';wrap.appendChild(cb);
 const built=GS.infra[pd.name]||[];
@@ -864,6 +922,20 @@ buildColUI(pd,mesh,sys,isGas,hz);
 };
 iDiv.appendChild(btn);
 });wrap.appendChild(iDiv);
+if(vOwned('v_bling')&&!GS.blinged.includes(pd.name)){
+const bb=document.createElement('button');bb.className='g-btn';bb.style.cssText='width:100%;margin-top:6px;padding:8px;color:#ffcc00;border-color:rgba(255,204,0,0.5);background:rgba(255,204,0,0.1)';
+const blingCost=Math.floor(colCost*100);
+bb.textContent=`\u2728 BLING OUT - $${blingCost.toLocaleString()}`;
+bb.onclick=()=>{
+if(GS.cr<blingCost){showMsg('INSUFFICIENT BLING FUNDS');return}
+GS.cr-=blingCost;GS.blinged.push(pd.name);
+showDisc(`${pd.name.toUpperCase()} IS NOW BLINGED OUT!`);showMsg('+1500/s BLING INCOME');
+GS.inc=calcIncome();updateGameUI();saveGame();buildColUI(pd,mesh,sys,isGas,hz);
+};wrap.appendChild(bb);
+}
+if(vOwned('v_bling')&&GS.blinged.includes(pd.name)){
+const bg=document.createElement('div');bg.className='g-btn';bg.style.cssText='width:100%;margin-top:6px;text-align:center;color:#ffcc00;border-color:rgba(255,204,0,0.5);pointer-events:none';bg.textContent='\u2728 BLINGED OUT \u2728';wrap.appendChild(bg);
+}
 }else if(GS.escVel){
 const cb=document.createElement('button');cb.className='g-btn';cb.style.cssText='width:100%;padding:8px';
 cb.textContent=`ESTABLISH COLONY - $${colCost.toLocaleString()}`;
@@ -933,16 +1005,62 @@ pnl.appendChild(d);
 }
 function buildMegaPnl(){
 const pnl=$('#mega-pnl');
-pnl.innerHTML='<h3 style="color:#ffcc00">Megacorp Vanity Projects</h3>';
-VANITY.forEach((v)=>{
-const d=document.createElement('div');d.className='fund-item'+(v.owned?' owned':'');
-d.innerHTML=`<div><div class="fund-nm" style="color:#ffbb00">${v.nm}</div><div class="fund-desc">${v.desc}</div></div><div class="fund-cost">${v.owned?'OWNED':'$'+v.cost.toLocaleString()}</div>`;
+pnl.innerHTML='<h3 style="color:#ffcc00">\u2B50 MEGACORP VANITY PROJECTS</h3>';
+const titles=Object.entries(VANITY_TITLES).filter(([k])=>vOwned(k)).map(([,t])=>t);
+if(titles.length>0){const tb=document.createElement('div');tb.style.cssText='margin-bottom:10px;font-size:8px;letter-spacing:2px;color:#ffcc00';tb.innerHTML='TITLES: '+titles.map(t=>`<span class="title-badge">${t}</span>`).join(' ');pnl.appendChild(tb)}
+const stats=document.createElement('div');stats.style.cssText='font-size:8px;color:var(--cd);letter-spacing:1.5px;margin-bottom:10px';
+const ownedCt=VANITY.filter(v=>v.owned).length;
+const totalSpent=VANITY.filter(v=>v.owned).reduce((s,v)=>s+v.cost,0);
+stats.textContent=`OWNED: ${ownedCt}/${VANITY.length} | TOTAL SPENT: $${totalSpent.toLocaleString()}`;pnl.appendChild(stats);
+const cats=[...new Set(VANITY.map(v=>v.cat))];
+cats.forEach(cat=>{
+const ch=document.createElement('div');ch.className='mega-cat';ch.textContent=cat;pnl.appendChild(ch);
+VANITY.filter(v=>v.cat===cat).forEach(v=>{
+const d=document.createElement('div');d.className='mega-item'+(v.owned?' owned':'');
+const repeatable=v.id==='v_rain';
+d.innerHTML=`<div><div class="mega-nm">${v.owned&&!repeatable?'\u2713 ':''}${v.nm}</div><div class="mega-desc">${v.desc}</div><div class="mega-fx">\u26A1 ${v.fx}</div></div><div class="mega-cost">${v.owned&&!repeatable?'OWNED':'$'+v.cost.toLocaleString()}</div>`;
 d.onclick=()=>{
+if(v.id==='v_rain'&&v.owned){makeItRain();return}
 if(v.owned||GS.cr<v.cost)return;
 GS.cr-=v.cost;v.owned=true;
-buildMegaPnl();updateGameUI();saveGame();showMsg(`PURCHASED: ${v.nm}`);
+onVanityBuy(v);
+buildMegaPnl();updateGameUI();saveGame();showDisc(`PURCHASED: ${v.nm.toUpperCase()}`);
 };pnl.appendChild(d);
 });
+});
+}
+function vOwned(id){return VANITY.find(v=>v.id===id)?.owned||false}
+function onVanityBuy(v){
+if(v.id==='v_lobby'){GS.tech+=5;showMsg(`TECH LEVEL BOOSTED TO ${GS.tech}!`)}
+if(v.id==='v_nuke')$('#nuke-btn').style.display='flex';
+if(v.id==='v_dyson'){v.incMul=1.0;showMsg('DYSON SPHERE CONSTRUCTION STARTED...');setTimeout(()=>{v.incMul=10.0;GS.inc=calcIncome();updateGameUI();showDisc('DYSON SPHERE ONLINE! INCOME x10');saveGame()},60000)}
+}
+function makeItRain(){
+const burn=Math.floor(GS.cr*0.1);
+if(burn<1){showMsg('NOTHING TO RAIN');return}
+GS.cr-=burn;
+showDisc(`MADE IT RAIN! -$${burn.toLocaleString()}`);
+const ct=document.createElement('div');ct.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;z-index:999;pointer-events:none;overflow:hidden';
+for(let i=0;i<60;i++){const s=document.createElement('div');s.textContent=['\u{1F4B0}','\u{1F4B5}','\u2728','\u{1F389}','\u{1F4B8}'][Math.floor(Math.random()*5)];s.style.cssText=`position:absolute;top:-30px;left:${Math.random()*100}%;font-size:${16+Math.random()*24}px;animation:rainDrop ${1.5+Math.random()*2}s linear forwards;opacity:0.9`;ct.appendChild(s)}
+document.body.appendChild(ct);
+const st=document.createElement('style');st.textContent='@keyframes rainDrop{0%{transform:translateY(0) rotate(0deg);opacity:1}100%{transform:translateY(110vh) rotate(360deg);opacity:0}}';document.head.appendChild(st);
+setTimeout(()=>{ct.remove();st.remove()},4000);
+updateGameUI();saveGame();buildMegaPnl();
+}
+function nukeExplosion(){
+if(!vOwned('v_nuke')){showMsg('NO AUTHORIZATION');return}
+if(view!==V.PLN){showMsg('MUST BE ON A PLANET');return}
+$('#nuke-btn').style.display='none';
+const flash=document.createElement('div');flash.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;z-index:998;background:white;opacity:0;transition:opacity 0.1s';
+document.body.appendChild(flash);
+flash.offsetHeight;flash.style.opacity='1';
+setTimeout(()=>{flash.style.transition='opacity 2s';flash.style.opacity='0'},200);
+setTimeout(()=>{flash.remove();$('#nuke-btn').style.display='flex'},2500);
+const nm=curPlanet?.userData?.pdata?.name||'UNKNOWN';
+showDisc(`${nm.toUpperCase()} HAS BEEN "PEACEFULLY REORGANIZED"`);
+showMsg('The planet is fine. Probably.');
+if(GS.nuked.indexOf(nm)===-1)GS.nuked.push(nm);
+saveGame();
 }
 function discoverSystem(sys){
 if(!sys||GS.disc.includes(sys.name))return;
@@ -962,7 +1080,9 @@ function saveGame(){
 const sv={score,gs:{cr:GS.cr,rp:GS.rp,tech:GS.tech,disc:GS.disc,fuel:GS.fuel,maxFuel:GS.maxFuel,
 rktEng:GS.rktEng,rktFuel:GS.rktFuel,rktCap:GS.rktCap,rktNav:GS.rktNav,
 funds:FUNDS.filter(f=>f.owned).map(f=>f.id),routes:GS.routes,colonies:GS.colonies,
-infra:GS.infra,ship:GS.ship,vanity:VANITY.filter(v=>v.owned).map(v=>v.id),escVel:GS.escVel,lastTick:Date.now()}};
+infra:GS.infra,ship:GS.ship,vanity:VANITY.filter(v=>v.owned).map(v=>v.id),
+blinged:GS.blinged,nuked:GS.nuked,trashBurned:GS.trashBurned,tollRev:GS.tollRev,slimeFed:GS.slimeFed,moonCarved:GS.moonCarved,
+escVel:GS.escVel,lastTick:Date.now()}};
 localStorage.setItem('amni_save',JSON.stringify(sv));showMsg('GAME DATA SYNCED');
 }
 function loadGame(){
@@ -974,6 +1094,7 @@ GS.cr=g.cr||0;GS.rp=g.rp||0;GS.tech=g.tech||1;GS.disc=g.disc||[];
 GS.fuel=g.fuel||100;GS.maxFuel=g.maxFuel||100;
 GS.rktEng=g.rktEng||0;GS.rktFuel=g.rktFuel||0;GS.rktCap=g.rktCap||0;GS.rktNav=g.rktNav||0;
 GS.routes=g.routes||[];GS.colonies=g.colonies||[];GS.infra=g.infra||{};GS.ship=g.ship||[];GS.escVel=g.escVel||false;
+GS.blinged=g.blinged||[];GS.nuked=g.nuked||[];GS.trashBurned=g.trashBurned||0;GS.tollRev=g.tollRev||0;GS.slimeFed=g.slimeFed||0;GS.moonCarved=g.moonCarved||[];
 (g.funds||[]).forEach(fid=>{const f=FUNDS.find(x=>x.id===fid);if(f)f.owned=true});
 (g.vanity||[]).forEach(vid=>{const v=VANITY.find(x=>x.id===vid);if(v)v.owned=true});
 GS.lastTick=g.lastTick||Date.now();
@@ -1057,6 +1178,24 @@ $('#btn-trade').onclick=()=>{$('#trade-pnl').classList.toggle('open');['fund-pnl
 $('#btn-fleet').onclick=()=>{$('#fleet-pnl').classList.toggle('open');['fund-pnl','rocket-pnl','trade-pnl','mega-pnl'].forEach(p=>$('#'+p).classList.remove('open'));buildFleetPnl()};
 $('#btn-mega').onclick=()=>{$('#mega-pnl').classList.toggle('open');['fund-pnl','rocket-pnl','trade-pnl','fleet-pnl'].forEach(p=>$('#'+p).classList.remove('open'));buildMegaPnl()};
 $('#btn-save').onclick=()=>saveGame();
+$('#slime-pet').onclick=()=>{
+if(GS.rp<1){showMsg('NO RP TO FEED');return}
+const eat=Math.min(Math.floor(GS.rp*0.1)||1,GS.rp);GS.rp-=eat;GS.slimeFed++;
+const msgs=['*happy jiggle*','*nom nom*','SLIME GROWS STRONGER','*burp*','*vibrates contentedly*','IT DEMANDS MORE'];
+showMsg(msgs[Math.floor(Math.random()*msgs.length)]);
+const sz=Math.min(40+GS.slimeFed*2,120);$('#slime-pet').style.width=sz+'px';$('#slime-pet').style.height=sz+'px';
+updateGameUI();saveGame();
+};
+$('#trash-can').onclick=()=>{
+const burn=1_000_000_000;
+if(GS.cr<burn){showMsg('NOT ENOUGH TO WASTE');return}
+GS.cr-=burn;GS.trashBurned+=burn;
+const msgs=['Money well spent.','Into the void it goes.','The trash can thanks you.','Your accountant is crying.','Perfectly balanced waste.'];
+showMsg(msgs[Math.floor(Math.random()*msgs.length)]);
+if(GS.trashBurned>=100_000_000_000)showDisc('ACHIEVEMENT: TRASH PANDA ELITE');
+updateGameUI();saveGame();
+};
+$('#nuke-press').onclick=()=>nukeExplosion();
 $('#btn-warp').onclick=()=>{
 if(!GS.escVel){showMsg('BUILD A ROCKET FIRST');return}
 if(selSys){
