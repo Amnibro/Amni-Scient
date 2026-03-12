@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AMNI-CALC | Mechanical Engineering Calculator</title>
+<meta name="description" content="Free mechanical engineering calculator: beam analysis, cross-section properties, bolt analysis, spring design, material database, finishes recommender, unit conversion.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0a0a;--panel:#111;--panel2:#161616;--border:#1a1a1a;--border2:#252525;--accent:#ff6b35;--accent-dim:rgba(255,107,53,0.15);--accent-glow:rgba(255,107,53,0.3);--text:#e0e0e0;--dim:#666;--ok:#00ff9d;--warn:#ffd700;--err:#ff4444;--font:'JetBrains Mono','Fira Code','SF Mono',Consolas,monospace}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14px;line-height:1.6;overflow-x:hidden;min-height:100vh}
+a{color:var(--accent);text-decoration:none;transition:opacity .2s}
+a:hover{opacity:.8}
+::selection{background:var(--accent);color:var(--bg)}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--accent-dim);border-radius:3px}
+input,select,textarea,button{font-family:var(--font);font-size:.85rem}
+input[type="number"],input[type="text"],select{background:var(--panel2);border:1px solid var(--border2);color:var(--text);padding:6px 10px;border-radius:3px;outline:none;transition:border-color .2s}
+input:focus,select:focus{border-color:var(--accent)}
+button{cursor:pointer}
+.btn{display:inline-flex;align-items:center;gap:.4rem;padding:6px 16px;border-radius:3px;font-size:.8rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;border:1px solid var(--accent);transition:all .2s;background:transparent;color:var(--accent)}
+.btn:hover{background:var(--accent);color:var(--bg)}
+.btn-sm{padding:4px 10px;font-size:.7rem}
+.btn-fill{background:var(--accent);color:var(--bg)}
+.btn-fill:hover{background:transparent;color:var(--accent)}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(10,10,10,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:48px}
+nav .logo{font-size:.95rem;font-weight:700;letter-spacing:3px;color:var(--accent)}
+nav .logo span{color:var(--dim);font-weight:400}
+nav .back{color:var(--dim);font-size:.75rem;letter-spacing:1px;text-transform:uppercase}
+nav .back:hover{color:var(--accent)}
+.app{padding-top:48px;display:flex;flex-direction:column;min-height:calc(100vh - 48px)}
+.tabs{display:flex;background:var(--panel);border-bottom:1px solid var(--border);overflow-x:auto;flex-shrink:0}
+.tab{padding:10px 18px;font-size:.75rem;letter-spacing:1px;text-transform:uppercase;color:var(--dim);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s;user-select:none;background:none;border-top:none;border-left:none;border-right:none;font-family:var(--font)}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.view{display:none;flex:1;overflow-y:auto;padding:1.5rem}
+.view.active{display:block}
+.view h2{font-size:1.2rem;color:var(--accent);letter-spacing:2px;margin-bottom:1rem}
+.view h3{font-size:.9rem;color:var(--accent);letter-spacing:1px;margin:1rem 0 .5rem}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:1.25rem;margin-bottom:1rem}
+.card h3{margin-top:0}
+.row{display:flex;gap:1rem;flex-wrap:wrap;align-items:flex-end}
+.field{display:flex;flex-direction:column;gap:3px;min-width:120px}
+.field label{font-size:.7rem;color:var(--dim);letter-spacing:1px;text-transform:uppercase}
+.field input,.field select{width:100%}
+.field-row{display:flex;gap:4px;align-items:center}
+.field-row select{width:70px;flex-shrink:0}
+.results{margin-top:1rem}
+.result-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.75rem}
+.result-item{background:var(--panel2);border:1px solid var(--border);border-radius:3px;padding:10px 12px}
+.result-item .lbl{font-size:.65rem;color:var(--dim);letter-spacing:1px;text-transform:uppercase;margin-bottom:2px}
+.result-item .val{font-size:1.1rem;color:var(--accent);font-weight:700}
+.result-item .val.ok{color:var(--ok)}
+.result-item .val.warn{color:var(--warn)}
+.result-item .val.err{color:var(--err)}
+.diagram-wrap{background:var(--panel2);border:1px solid var(--border);border-radius:3px;padding:8px;margin-top:.75rem}
+.diagram-wrap canvas{width:100%;height:200px;display:block}
+.canvas-draw{background:var(--panel2);border:1px solid var(--border);border-radius:3px;cursor:crosshair;display:block}
+table.data{width:100%;border-collapse:collapse;font-size:.8rem;margin-top:.5rem}
+table.data th{text-align:left;color:var(--accent);font-size:.7rem;letter-spacing:1px;text-transform:uppercase;padding:6px 8px;border-bottom:1px solid var(--border2);font-weight:700}
+table.data td{padding:6px 8px;border-bottom:1px solid var(--border);color:var(--text)}
+table.data tr:hover{background:var(--accent-dim)}
+table.data tr{cursor:pointer}
+.tag{display:inline-block;font-size:.6rem;padding:2px 6px;border:1px solid var(--accent);border-radius:2px;color:var(--accent);letter-spacing:1px;margin:1px}
+.tag-ok{border-color:var(--ok);color:var(--ok)}
+.tag-warn{border-color:var(--warn);color:var(--warn)}
+.tag-err{border-color:var(--err);color:var(--err)}
+.slider-row{display:flex;align-items:center;gap:10px;margin:4px 0}
+.slider-row label{width:110px;font-size:.7rem;color:var(--dim);text-transform:uppercase;letter-spacing:1px;flex-shrink:0}
+.slider-row input[type="range"]{flex:1;accent-color:var(--accent);background:transparent}
+.slider-row .sv{width:24px;text-align:right;font-size:.8rem;color:var(--accent)}
+.chk-row{display:flex;align-items:center;gap:8px;margin:3px 0;font-size:.8rem;color:var(--dim)}
+.chk-row input{accent-color:var(--accent)}
+.finish-card{background:var(--panel2);border:1px solid var(--border);border-radius:4px;padding:1rem;margin-bottom:.75rem;transition:border-color .2s}
+.finish-card:hover{border-color:var(--accent-glow)}
+.finish-card .fname{font-size:.9rem;color:var(--accent);font-weight:700;letter-spacing:1px}
+.finish-card .fcat{font-size:.65rem;color:var(--dim);letter-spacing:1px;text-transform:uppercase}
+.finish-card .fscore{float:right;font-size:1.1rem;color:var(--accent);font-weight:700}
+.finish-card .fdet{margin-top:.5rem;font-size:.75rem;color:var(--text);line-height:1.5}
+.meter{display:inline-block;width:60px;height:6px;background:var(--border);border-radius:3px;overflow:hidden;vertical-align:middle;margin-left:4px}
+.meter-fill{height:100%;border-radius:3px;background:var(--accent)}
+#disclaimer{position:fixed;top:0;left:0;right:0;bottom:0;z-index:999;background:rgba(10,10,10,.95);backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:center;padding:2rem}
+#disclaimer .box{max-width:600px;text-align:center}
+#disclaimer h1{font-size:1.8rem;color:var(--accent);letter-spacing:4px;margin-bottom:.5rem}
+#disclaimer .icon{font-size:3rem;margin-bottom:1rem}
+#disclaimer p{color:var(--dim);font-size:.85rem;line-height:1.8;margin:.75rem 0}
+#disclaimer .warn-text{color:var(--warn);font-size:.8rem;border:1px solid var(--warn);border-radius:4px;padding:1rem;margin:1.5rem 0;line-height:1.7}
+#disclaimer .btn{margin-top:1rem;font-size:.9rem;padding:10px 30px}
+.preset-chips{display:flex;flex-wrap:wrap;gap:6px;margin:.5rem 0}
+.chip{padding:4px 10px;font-size:.7rem;border:1px solid var(--border2);border-radius:3px;color:var(--dim);cursor:pointer;transition:all .2s;background:none;font-family:var(--font);letter-spacing:1px}
+.chip:hover,.chip.active{border-color:var(--accent);color:var(--accent);background:var(--accent-dim)}
+.beam-canvas-wrap{position:relative;margin:.5rem 0}
+.beam-toolbar{display:flex;gap:6px;margin-bottom:6px;flex-wrap:wrap}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media(max-width:768px){.split{grid-template-columns:1fr}.tabs{flex-wrap:nowrap}}
+.scanlines{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(255,107,53,.008) 2px,rgba(255,107,53,.008) 4px)}
+footer{text-align:center;padding:2rem 1rem;font-size:.7rem;color:var(--dim);border-top:1px solid var(--border)}
+footer a{color:var(--accent);font-size:.7rem}
+</style>
+</head>
+<body>
+<div class="scanlines"></div>
+<div id="disclaimer">
+<div class="box">
+<div class="icon">&#9888;</div>
+<h1>AMNI-CALC</h1>
+<p>MECHANICAL ENGINEERING CALCULATOR</p>
+<div class="warn-text">
+<strong>IMPORTANT DISCLAIMER</strong><br>
+This tool is provided for educational and preliminary estimation purposes only. All calculations should be independently verified by a qualified professional engineer before use in any critical, structural, safety-related, or production application.<br><br>
+Amni-Scient assumes no liability for designs, decisions, or outcomes based on results from this calculator. Always consult a licensed engineer for final design validation.
+</div>
+<p style="color:var(--text);font-size:.75rem">By continuing, you acknowledge that this tool is not a substitute for professional engineering judgment.</p>
+<button class="btn btn-fill" onclick="document.getElementById('disclaimer').style.display='none'">I UNDERSTAND &mdash; CONTINUE</button>
+</div>
+</div>
+<nav>
+<a href="https://amni-scient.com" class="back">&larr; AMNI-SCIENT</a>
+<span class="logo">AMNI<span>-CALC</span></span>
+<span style="width:80px"></span>
+</nav>
+<div class="app">
+<div class="tabs" id="tabs">
+<button class="tab active" data-v="beam">BEAMS</button>
+<button class="tab" data-v="section">SECTIONS</button>
+<button class="tab" data-v="materials">MATERIALS</button>
+<button class="tab" data-v="stress">STRESS</button>
+<button class="tab" data-v="bolts">BOLTS</button>
+<button class="tab" data-v="springs">SPRINGS</button>
+<button class="tab" data-v="finishes">FINISHES</button>
+<button class="tab" data-v="units">UNITS</button>
+</div>
+<div class="view active" id="v-beam">
+<h2>BEAM ANALYSIS</h2>
+<div class="card">
+<h3>BEAM CONFIGURATION</h3>
+<div class="row">
+<div class="field"><label>LENGTH</label><div class="field-row"><input type="number" id="bm-len" value="3000" step="any"><select id="bm-len-u"><option>mm</option><option>m</option><option>in</option><option>ft</option></select></div></div>
+<div class="field"><label>E MODULUS</label><div class="field-row"><input type="number" id="bm-e" value="200" step="any"><select id="bm-e-u"><option>GPa</option><option>MPa</option><option>psi</option><option>ksi</option></select></div></div>
+<div class="field"><label>I (MOMENT)</label><div class="field-row"><input type="number" id="bm-i" value="8356" step="any"><select id="bm-i-u"><option>cm4</option><option>mm4</option><option>in4</option></select></div></div>
+</div>
+</div>
+<div class="card">
+<h3>SUPPORTS (CLICK TO PLACE)</h3>
+<div class="beam-toolbar">
+<button class="chip active" data-sup="pin" id="sup-pin">&#9650; PIN</button>
+<button class="chip" data-sup="roller" id="sup-roller">&#9711; ROLLER</button>
+<button class="chip" data-sup="fixed" id="sup-fixed">&#9632; FIXED</button>
+<button class="btn btn-sm" onclick="clearSupports()">CLEAR</button>
+</div>
+<div class="beam-canvas-wrap">
+<canvas id="c-beam-sup" class="canvas-draw" width="800" height="120"></canvas>
+</div>
+<div id="sup-list" style="font-size:.75rem;color:var(--dim);margin-top:4px"></div>
+</div>
+<div class="card">
+<h3>LOADS</h3>
+<div class="row">
+<div class="field"><label>TYPE</label><select id="ld-type"><option value="point">POINT LOAD</option><option value="distributed">DISTRIBUTED</option><option value="moment">MOMENT</option></select></div>
+<div class="field"><label>POSITION</label><div class="field-row"><input type="number" id="ld-pos" value="1500" step="any"><select id="ld-pos-u"><option>mm</option><option>m</option><option>in</option><option>ft</option></select></div></div>
+<div class="field"><label>MAGNITUDE</label><div class="field-row"><input type="number" id="ld-mag" value="-10" step="any"><select id="ld-mag-u"><option>kN</option><option>N</option><option>lbf</option><option>kip</option></select></div></div>
+<div class="field" id="ld-end-wrap" style="display:none"><label>END POS</label><div class="field-row"><input type="number" id="ld-end" step="any"><select id="ld-end-u"><option>mm</option><option>m</option><option>in</option><option>ft</option></select></div></div>
+</div>
+<div style="margin-top:.5rem"><button class="btn btn-sm" onclick="addLoad()">+ ADD LOAD</button> <button class="btn btn-sm" onclick="clearLoads()">CLEAR ALL</button></div>
+<div id="load-list" style="font-size:.75rem;color:var(--dim);margin-top:6px"></div>
+</div>
+<button class="btn btn-fill" onclick="solveBeam()" style="margin-bottom:1rem">SOLVE BEAM</button>
+<div id="beam-results"></div>
+</div>
+<div class="view" id="v-section">
+<h2>CROSS SECTION PROPERTIES</h2>
+<div class="split">
+<div>
+<div class="card">
+<h3>PRESETS</h3>
+<div class="preset-chips" id="sec-presets"></div>
+<div id="sec-preset-params"></div>
+<button class="btn btn-sm" onclick="applyPreset()" style="margin-top:.5rem">APPLY PRESET</button>
+</div>
+<div class="card">
+<h3>DRAW CUSTOM SECTION</h3>
+<p style="font-size:.7rem;color:var(--dim);margin-bottom:.5rem">CLICK TO PLACE VERTICES. RIGHT-CLICK TO CLOSE POLYGON. SCROLL TO ZOOM.</p>
+<canvas id="c-section" class="canvas-draw" width="400" height="400"></canvas>
+<div style="margin-top:.5rem">
+<button class="btn btn-sm" onclick="undoVertex()">UNDO</button>
+<button class="btn btn-sm" onclick="clearSection()">CLEAR</button>
+<button class="btn btn-sm btn-fill" onclick="calcSection()">CALCULATE</button>
+</div>
+</div>
+</div>
+<div>
+<div class="card" id="sec-results">
+<h3>SECTION PROPERTIES</h3>
+<p style="font-size:.75rem;color:var(--dim)">Draw or select a section to see results</p>
+</div>
+</div>
+</div>
+</div>
+<div class="view" id="v-materials">
+<h2>MATERIALS DATABASE</h2>
+<div class="card">
+<div class="row">
+<div class="field" style="flex:1"><label>SEARCH</label><input type="text" id="mat-search" placeholder="Search materials..."></div>
+<div class="field"><label>CATEGORY</label><select id="mat-cat"><option value="">ALL</option></select></div>
+</div>
+</div>
+<div id="mat-table-wrap">
+<table class="data" id="mat-table">
+<thead><tr><th>NAME</th><th>E (GPa)</th><th>Sy (MPa)</th><th>Su (MPa)</th><th>DENSITY</th><th>POISSON</th></tr></thead>
+<tbody id="mat-tbody"></tbody>
+</table>
+</div>
+<div class="card" id="mat-detail" style="display:none;margin-top:1rem">
+<h3 id="mat-det-name">MATERIAL DETAIL</h3>
+<div class="result-grid" id="mat-det-grid"></div>
+</div>
+</div>
+<div class="view" id="v-stress">
+<h2>STRESS ANALYSIS</h2>
+<div class="split">
+<div>
+<div class="card">
+<h3>STRESS STATE</h3>
+<div class="row">
+<div class="field"><label>&sigma;x</label><div class="field-row"><input type="number" id="st-sx" value="120" step="any"><select id="st-u"><option>MPa</option><option>ksi</option><option>psi</option><option>GPa</option></select></div></div>
+<div class="field"><label>&sigma;y</label><input type="number" id="st-sy" value="-40" step="any"></div>
+<div class="field"><label>&tau;xy</label><input type="number" id="st-txy" value="50" step="any"></div>
+</div>
+<div class="row" style="margin-top:.5rem">
+<div class="field"><label>&sigma;z (3D)</label><input type="number" id="st-sz" value="0" step="any"></div>
+<div class="field"><label>&tau;xz</label><input type="number" id="st-txz" value="0" step="any"></div>
+<div class="field"><label>&tau;yz</label><input type="number" id="st-tyz" value="0" step="any"></div>
+</div>
+<div class="row" style="margin-top:.5rem">
+<div class="field"><label>YIELD STR</label><div class="field-row"><input type="number" id="st-sy-val" value="250" step="any"><span style="color:var(--dim);font-size:.75rem">MPa</span></div></div>
+<div class="field"><label>ULT STR</label><div class="field-row"><input type="number" id="st-su-val" value="400" step="any"><span style="color:var(--dim);font-size:.75rem">MPa</span></div></div>
+</div>
+<button class="btn btn-fill" onclick="calcStress()" style="margin-top:.75rem">ANALYZE</button>
+</div>
+</div>
+<div>
+<div class="card" id="stress-results">
+<h3>RESULTS</h3>
+<p style="font-size:.75rem;color:var(--dim)">Enter stress state and click Analyze</p>
+</div>
+<div class="card">
+<h3>MOHR'S CIRCLE</h3>
+<canvas id="c-mohr" class="canvas-draw" width="400" height="400"></canvas>
+</div>
+</div>
+</div>
+</div>
+<div class="view" id="v-bolts">
+<h2>BOLT ANALYSIS</h2>
+<div class="split">
+<div>
+<div class="card">
+<h3>BOLT CONFIGURATION</h3>
+<div class="row">
+<div class="field"><label>GRADE</label><select id="bl-grade"></select></div>
+<div class="field"><label>SIZE</label><select id="bl-size"></select></div>
+<div class="field"><label># BOLTS</label><input type="number" id="bl-num" value="4" min="1"></div>
+</div>
+<div class="row" style="margin-top:.5rem">
+<div class="field"><label>EXTERNAL LOAD</label><div class="field-row"><input type="number" id="bl-fext" value="20000" step="any"><select id="bl-fext-u"><option>N</option><option>kN</option><option>lbf</option><option>kip</option></select></div></div>
+<div class="field"><label>SHEAR LOAD</label><div class="field-row"><input type="number" id="bl-shear" value="0" step="any"><span style="color:var(--dim);font-size:.75rem">N</span></div></div>
+</div>
+<div class="row" style="margin-top:.5rem">
+<div class="field"><label>PRELOAD %</label><input type="number" id="bl-preload" value="75" min="0" max="100"></div>
+<div class="field"><label>STIFFNESS RATIO C</label><input type="number" id="bl-c" value="0.25" min="0" max="1" step="0.05"></div>
+<div class="field"><label>FRICTION COEFF</label><input type="number" id="bl-mu" value="0.15" step="0.01"></div>
+</div>
+<button class="btn btn-fill" onclick="calcBolt()" style="margin-top:.75rem">ANALYZE JOINT</button>
+</div>
+</div>
+<div>
+<div class="card" id="bolt-results">
+<h3>JOINT RESULTS</h3>
+<p style="font-size:.75rem;color:var(--dim)">Configure bolt and click Analyze</p>
+</div>
+</div>
+</div>
+<div class="card" style="margin-top:1rem">
+<h3>BOLT REFERENCE TABLES</h3>
+<div class="split">
+<div>
+<h3 style="font-size:.75rem">GRADES</h3>
+<table class="data"><thead><tr><th>GRADE</th><th>Sp (MPa)</th><th>Sy (MPa)</th><th>Su (MPa)</th></tr></thead><tbody id="bl-grade-tbl"></tbody></table>
+</div>
+<div>
+<h3 style="font-size:.75rem">SIZES</h3>
+<table class="data"><thead><tr><th>SIZE</th><th>NOM (mm)</th><th>PITCH</th><th>At (mm²)</th></tr></thead><tbody id="bl-size-tbl"></tbody></table>
+</div>
+</div>
+</div>
+</div>
+<div class="view" id="v-springs">
+<h2>SPRING DESIGN</h2>
+<div class="split">
+<div>
+<div class="card">
+<h3>SPRING PARAMETERS</h3>
+<div class="row">
+<div class="field"><label>TYPE</label><select id="sp-type"><option value="compression">COMPRESSION</option><option value="extension">EXTENSION</option><option value="torsion">TORSION</option></select></div>
+<div class="field"><label>WIRE DIA</label><div class="field-row"><input type="number" id="sp-d" value="3" step="any"><select id="sp-d-u"><option>mm</option><option>in</option></select></div></div>
+<div class="field"><label>COIL DIA (MEAN)</label><div class="field-row"><input type="number" id="sp-D" value="25" step="any"><select id="sp-D-u"><option>mm</option><option>in</option></select></div></div>
+</div>
+<div class="row" style="margin-top:.5rem">
+<div class="field"><label>ACTIVE COILS</label><input type="number" id="sp-na" value="8" step="0.5"></div>
+<div class="field"><label>TOTAL COILS</label><input type="number" id="sp-nt" value="10" step="0.5"></div>
+<div class="field"><label>FREE LENGTH</label><div class="field-row"><input type="number" id="sp-fl" value="60" step="any"><span style="color:var(--dim);font-size:.7rem">mm</span></div></div>
+</div>
+<div class="row" style="margin-top:.5rem">
+<div class="field"><label>SHEAR MODULUS G</label><div class="field-row"><input type="number" id="sp-g" value="79.3" step="any"><select id="sp-g-u"><option>GPa</option><option>MPa</option><option>psi</option></select></div></div>
+<div class="field"><label>APPLIED FORCE</label><div class="field-row"><input type="number" id="sp-f" value="100" step="any"><select id="sp-f-u"><option>N</option><option>lbf</option><option>kgf</option></select></div></div>
+<div class="field"><label>YIELD STRENGTH</label><div class="field-row"><input type="number" id="sp-sy" value="1000" step="any"><span style="color:var(--dim);font-size:.7rem">MPa</span></div></div>
+</div>
+<button class="btn btn-fill" onclick="calcSpring()" style="margin-top:.75rem">CALCULATE</button>
+</div>
+</div>
+<div>
+<div class="card" id="spring-results">
+<h3>SPRING RESULTS</h3>
+<p style="font-size:.75rem;color:var(--dim)">Enter parameters and click Calculate</p>
+</div>
+</div>
+</div>
+</div>
+<div class="view" id="v-finishes">
+<h2>FINISHES &amp; COATINGS GLOSSARY</h2>
+<div class="card">
+<h3>RECOMMENDATION ENGINE</h3>
+<p style="font-size:.7rem;color:var(--dim);margin-bottom:.75rem">SET YOUR PRIORITIES (1-10) TO RANK FINISHES BY WEIGHTED SCORE</p>
+<div class="slider-row"><label>CORROSION</label><input type="range" min="0" max="10" value="7" id="fin-corr"><span class="sv" id="fin-corr-v">7</span></div>
+<div class="slider-row"><label>WEAR</label><input type="range" min="0" max="10" value="5" id="fin-wear"><span class="sv" id="fin-wear-v">5</span></div>
+<div class="slider-row"><label>APPEARANCE</label><input type="range" min="0" max="10" value="3" id="fin-app"><span class="sv" id="fin-app-v">3</span></div>
+<div class="slider-row"><label>COST</label><input type="range" min="0" max="10" value="6" id="fin-cost"><span class="sv" id="fin-cost-v">6</span></div>
+<div class="slider-row"><label>TEMPERATURE</label><input type="range" min="0" max="10" value="2" id="fin-temp"><span class="sv" id="fin-temp-v">2</span></div>
+<div class="slider-row"><label>COVERAGE</label><input type="range" min="0" max="10" value="4" id="fin-cov"><span class="sv" id="fin-cov-v">4</span></div>
+<div class="slider-row"><label>MIN THICKNESS</label><input type="range" min="0" max="10" value="3" id="fin-thk"><span class="sv" id="fin-thk-v">3</span></div>
+<div class="row" style="margin-top:.75rem">
+<div class="field"><label>SUBSTRATE</label><select id="fin-sub"><option value="">ANY</option><option>Carbon Steel</option><option>Stainless Steel</option><option>Aluminum</option><option>Titanium</option><option>Copper Alloy</option></select></div>
+<div class="chk-row"><input type="checkbox" id="fin-full"> FULL COVERAGE REQUIRED</div>
+</div>
+<button class="btn btn-fill" onclick="recommendFinishes()" style="margin-top:.75rem">RECOMMEND</button>
+</div>
+<div id="fin-results"></div>
+</div>
+<div class="view" id="v-units">
+<h2>UNIT CONVERTER</h2>
+<div class="card">
+<div class="row">
+<div class="field"><label>CATEGORY</label><select id="uc-cat"></select></div>
+</div>
+<div class="row" style="margin-top:1rem;align-items:center">
+<div class="field" style="flex:1"><label>FROM</label><div class="field-row"><input type="number" id="uc-val" value="1" step="any"><select id="uc-from"></select></div></div>
+<span style="font-size:1.5rem;color:var(--accent);padding:0 .5rem">&rarr;</span>
+<div class="field" style="flex:1"><label>TO</label><div class="field-row"><input type="number" id="uc-result" readonly style="color:var(--accent);font-weight:700"><select id="uc-to"></select></div></div>
+</div>
+</div>
+<div class="card" style="margin-top:1rem">
+<h3>QUICK REFERENCE</h3>
+<table class="data" id="uc-table">
+<thead><tr><th>FROM</th><th>TO</th><th>FACTOR</th></tr></thead>
+<tbody id="uc-tbody"></tbody>
+</table>
+</div>
+</div>
+</div>
+<footer>
+AMNI-CALC v1.0.0 &mdash; <a href="https://amni-scient.com">AMNI-SCIENT</a> &mdash; FOR EDUCATIONAL &amp; ESTIMATION PURPOSES ONLY
+</footer>
+<script type="module">
+import wInit,{calc_beam,calc_section,section_presets,get_materials,get_material,calc_bolt,bolt_tables,calc_spring,calc_stress,get_finishes,recommend_finishes,convert_unit,unit_categories} from './pkg/amni_calc_wasm.js';
+let W=null,MAT=[],BOLT_TBL=null,SEC_PRESETS=[],UNIT_CATS=[];
+let supports=[],loads=[],secVerts=[],curSupType='pin';
+const $=s=>document.querySelector(s),$$=s=>document.querySelectorAll(s);
+const fmt=(v,d=4)=>typeof v==='number'?(Math.abs(v)>1e12?'INF':Math.abs(v)<1e-12?'0':Math.abs(v)>1e6||Math.abs(v)<0.001?v.toExponential(d):v.toFixed(d)):''+v;
+const fosClass=v=> v>=3?'ok':v>=1.5?'warn':'err';
+async function init(){
+await wInit();W=true;
+MAT=JSON.parse(get_materials());
+BOLT_TBL=JSON.parse(bolt_tables());
+SEC_PRESETS=JSON.parse(section_presets());
+UNIT_CATS=JSON.parse(unit_categories());
+setupTabs();setupMaterials();setupBolts();setupSections();setupUnits();setupSliders();setupBeamCanvas();setupSectionCanvas();
+}
+function setupTabs(){
+$$('.tab').forEach(t=>t.addEventListener('click',()=>{
+$$('.tab').forEach(x=>x.classList.remove('active'));
+$$('.view').forEach(x=>x.classList.remove('active'));
+t.classList.add('active');
+$('#v-'+t.dataset.v).classList.add('active');
+}));
+}
+function setupSliders(){
+['corr','wear','app','cost','temp','cov','thk'].forEach(k=>{
+const sl=$('#fin-'+k);
+const sv=$('#fin-'+k+'-v');
+sl.addEventListener('input',()=>sv.textContent=sl.value);
+});
+}
+function setupMaterials(){
+const cats=[...new Set(MAT.map(m=>m.category))];
+cats.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;$('#mat-cat').appendChild(o);});
+renderMatTable();
+$('#mat-search').addEventListener('input',renderMatTable);
+$('#mat-cat').addEventListener('change',renderMatTable);
+}
+function renderMatTable(){
+const q=$('#mat-search').value.toLowerCase();
+const c=$('#mat-cat').value;
+const tb=$('#mat-tbody');
+tb.innerHTML='';
+MAT.filter(m=>(c===''||m.category===c)&&(q===''||m.name.toLowerCase().includes(q)||m.category.toLowerCase().includes(q))).forEach(m=>{
+const tr=document.createElement('tr');
+tr.innerHTML=`<td>${m.name}</td><td>${(m.e_modulus/1e9).toFixed(1)}</td><td>${(m.yield_strength/1e6).toFixed(0)}</td><td>${(m.ultimate_strength/1e6).toFixed(0)}</td><td>${m.density.toFixed(0)}</td><td>${m.poisson.toFixed(2)}</td>`;
+tr.addEventListener('click',()=>showMatDetail(m));
+tb.appendChild(tr);
+});
+}
+function showMatDetail(m){
+$('#mat-detail').style.display='block';
+$('#mat-det-name').textContent=m.name+' ('+m.category+')';
+const props=[
+{l:'E MODULUS',v:(m.e_modulus/1e9).toFixed(1)+' GPa'},
+{l:'YIELD STRENGTH',v:(m.yield_strength/1e6).toFixed(0)+' MPa'},
+{l:'ULTIMATE STRENGTH',v:(m.ultimate_strength/1e6).toFixed(0)+' MPa'},
+{l:'DENSITY',v:m.density.toFixed(0)+' kg/m³'},
+{l:'POISSON RATIO',v:m.poisson.toFixed(2)},
+{l:'SHEAR MODULUS',v:(m.shear_modulus/1e9).toFixed(1)+' GPa'},
+{l:'ELONGATION',v:m.elongation.toFixed(1)+'%'},
+{l:'HARDNESS',v:m.hardness},
+{l:'THERMAL EXPANSION',v:(m.thermal_expansion*1e6).toFixed(1)+' µm/m·K'},
+{l:'THERMAL CONDUCTIVITY',v:m.thermal_conductivity.toFixed(1)+' W/m·K'},
+];
+$('#mat-det-grid').innerHTML=props.map(p=>`<div class="result-item"><div class="lbl">${p.l}</div><div class="val">${p.v}</div></div>`).join('');
+}
+function setupBolts(){
+BOLT_TBL.grades.forEach(g=>{const o=document.createElement('option');o.value=g.name;o.textContent=g.name;$('#bl-grade').appendChild(o);});
+BOLT_TBL.sizes.forEach(s=>{const o=document.createElement('option');o.value=s.name;o.textContent=s.name;$('#bl-size').appendChild(o);});
+$('#bl-grade').value='ISO 8.8';
+$('#bl-size').value='M10';
+$('#bl-grade-tbl').innerHTML=BOLT_TBL.grades.map(g=>`<tr><td>${g.name}</td><td>${(g.proof_strength/1e6).toFixed(0)}</td><td>${(g.yield_strength/1e6).toFixed(0)}</td><td>${(g.ultimate_strength/1e6).toFixed(0)}</td></tr>`).join('');
+$('#bl-size-tbl').innerHTML=BOLT_TBL.sizes.map(s=>`<tr><td>${s.name}</td><td>${s.nominal.toFixed(2)}</td><td>${s.pitch.toFixed(3)}</td><td>${(s.tensile_area*1e6).toFixed(1)}</td></tr>`).join('');
+}
+function setupSections(){
+const wrap=$('#sec-presets');
+SEC_PRESETS.forEach((p,i)=>{
+const c=document.createElement('button');
+c.className='chip'+(i===0?' active':'');
+c.textContent=p.name;
+c.addEventListener('click',()=>{
+wrap.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));
+c.classList.add('active');
+renderPresetParams(p);
+});
+wrap.appendChild(c);
+});
+if(SEC_PRESETS.length>0)renderPresetParams(SEC_PRESETS[0]);
+}
+function renderPresetParams(p){
+const wrap=$('#sec-preset-params');
+wrap.innerHTML='';
+p.params.forEach(pm=>{
+const d=document.createElement('div');
+d.className='field';
+d.style.marginTop='.5rem';
+d.innerHTML=`<label>${pm.name.toUpperCase()} (${pm.unit})</label><input type="number" value="${pm.default}" step="any" data-pname="${pm.name}">`;
+wrap.appendChild(d);
+});
+}
+window.applyPreset=function(){
+const activeChip=$('#sec-presets .chip.active');
+if(!activeChip)return;
+const name=activeChip.textContent;
+const preset=SEC_PRESETS.find(p=>p.name===name);
+if(!preset)return;
+const params={};
+$$('#sec-preset-params input').forEach(inp=>{params[inp.dataset.pname]=parseFloat(inp.value)||0;});
+secVerts=generatePresetVerts(name,params);
+drawSection();
+calcSection();
+};
+function generatePresetVerts(name,p){
+const s=20;
+if(name==='Rectangle'){const w=p.width/s,h=p.height/s;return [[0,0],[w,0],[w,h],[0,h]];}
+if(name==='Circle'){const r=p.diameter/(2*s),pts=[];for(let i=0;i<32;i++){const a=2*Math.PI*i/32;pts.push([200+r*Math.cos(a),200+r*Math.sin(a)]);}return pts;}
+if(name==='Hollow Circle'){const ro=p.outer_diameter/(2*s),ri=ro-p.wall_thickness/s,pts=[];for(let i=0;i<32;i++){const a=2*Math.PI*i/32;pts.push([200+ro*Math.cos(a),200+ro*Math.sin(a)]);}return pts;}
+if(name==='I-Beam'){
+const h=p.total_height/s,fw=p.flange_width/s,ft=p.flange_thickness/s,wt=p.web_thickness/s;
+const cx=fw/2,hw=(fw-wt)/2;
+return [[0,0],[fw,0],[fw,ft],[cx+wt/2,ft],[cx+wt/2,h-ft],[fw,h-ft],[fw,h],[0,h],[0,h-ft],[cx-wt/2,h-ft],[cx-wt/2,ft],[0,ft]];
+}
+if(name==='C-Channel'){
+const h=p.total_height/s,fw=p.flange_width/s,ft=p.flange_thickness/s,wt=p.web_thickness/s;
+return [[0,0],[fw,0],[fw,ft],[wt,ft],[wt,h-ft],[fw,h-ft],[fw,h],[0,h]];
+}
+if(name==='L-Angle'){
+const a=p.leg_a/s,b=p.leg_b/s,t=p.thickness/s;
+return [[0,0],[a,0],[a,t],[t,t],[t,b],[0,b]];
+}
+if(name==='T-Section'){
+const fw=p.flange_width/s,h=p.total_height/s,ft=p.flange_thickness/s,wt=p.web_thickness/s;
+return [[0,0],[fw,0],[fw,ft],[(fw+wt)/2,ft],[(fw+wt)/2,h],[(fw-wt)/2,h],[(fw-wt)/2,ft],[0,ft]];
+}
+if(name==='Hollow Rectangle'){
+const w=p.outer_width/s,h=p.outer_height/s;
+return [[0,0],[w,0],[w,h],[0,h]];
+}
+return [[0,0],[10,0],[10,10],[0,10]];
+}
+function setupUnits(){
+const catSel=$('#uc-cat');
+UNIT_CATS.forEach(c=>{const o=document.createElement('option');o.value=c.name;o.textContent=c.name.toUpperCase().replace(/_/g,' ');catSel.appendChild(o);});
+catSel.addEventListener('change',updateUnitSelects);
+$('#uc-val').addEventListener('input',doConvert);
+$('#uc-from').addEventListener('change',doConvert);
+$('#uc-to').addEventListener('change',doConvert);
+updateUnitSelects();
+}
+function updateUnitSelects(){
+const cat=UNIT_CATS.find(c=>c.name===$('#uc-cat').value);
+if(!cat)return;
+['#uc-from','#uc-to'].forEach(sel=>{
+const s=$(sel);
+s.innerHTML='';
+cat.units.forEach(u=>{const o=document.createElement('option');o.value=u.symbol;o.textContent=u.symbol;s.appendChild(o);});
+});
+if(cat.units.length>1)$('#uc-to').value=cat.units[1].symbol;
+doConvert();
+updateRefTable();
+}
+function doConvert(){
+const v=parseFloat($('#uc-val').value)||0;
+const from=$('#uc-from').value;
+const to=$('#uc-to').value;
+const result=convert_unit(v,from,to);
+$('#uc-result').value=isNaN(result)?'N/A':fmt(result,6);
+}
+function updateRefTable(){
+const cat=UNIT_CATS.find(c=>c.name===$('#uc-cat').value);
+if(!cat)return;
+const tb=$('#uc-tbody');
+tb.innerHTML='';
+const base=cat.units[0];
+cat.units.slice(1).forEach(u=>{
+const f=convert_unit(1,base.symbol,u.symbol);
+const tr=document.createElement('tr');
+tr.innerHTML=`<td>1 ${base.symbol}</td><td>${u.symbol}</td><td>${fmt(f,6)}</td>`;
+tb.appendChild(tr);
+});
+}
+let beamCanvas,beamCtx;
+function setupBeamCanvas(){
+beamCanvas=$('#c-beam-sup');
+beamCtx=beamCanvas.getContext('2d');
+beamCanvas.addEventListener('click',onBeamClick);
+$$('[data-sup]').forEach(b=>b.addEventListener('click',()=>{
+$$('[data-sup]').forEach(x=>x.classList.remove('active'));
+b.classList.add('active');
+curSupType=b.dataset.sup;
+}));
+$('#ld-type').addEventListener('change',()=>{
+$('#ld-end-wrap').style.display=$('#ld-type').value==='distributed'?'':'none';
+});
+drawBeam();
+}
+function onBeamClick(e){
+const rect=beamCanvas.getBoundingClientRect();
+const sx=beamCanvas.width/rect.width;
+const x=(e.clientX-rect.left)*sx;
+const margin=60,bw=beamCanvas.width-2*margin;
+const pct=(x-margin)/bw;
+if(pct<0||pct>1)return;
+const len=parseFloat($('#bm-len').value)||3000;
+const pos=Math.round(pct*len);
+supports.push({pos,kind:curSupType});
+drawBeam();
+updateSupList();
+}
+function drawBeam(){
+const c=beamCtx,w=beamCanvas.width,h=beamCanvas.height;
+c.clearRect(0,0,w,h);
+const margin=60,bw=w-2*margin,by=h*0.45;
+c.strokeStyle='#333';c.lineWidth=1;
+c.beginPath();c.moveTo(margin,by);c.lineTo(margin+bw,by);c.stroke();
+c.strokeStyle='var(--accent,#ff6b35)';c.lineWidth=3;
+c.beginPath();c.moveTo(margin,by);c.lineTo(margin+bw,by);c.stroke();
+const len=parseFloat($('#bm-len').value)||3000;
+supports.forEach((s,i)=>{
+const x=margin+(s.pos/len)*bw;
+c.fillStyle='#ff6b35';c.strokeStyle='#ff6b35';c.lineWidth=2;
+if(s.kind==='pin'){
+c.beginPath();c.moveTo(x,by);c.lineTo(x-10,by+20);c.lineTo(x+10,by+20);c.closePath();c.fill();
+}else if(s.kind==='roller'){
+c.beginPath();c.moveTo(x,by);c.lineTo(x-10,by+15);c.lineTo(x+10,by+15);c.closePath();c.stroke();
+c.beginPath();c.arc(x,by+20,5,0,Math.PI*2);c.stroke();
+}else if(s.kind==='fixed'){
+c.fillRect(x-3,by-15,6,30);
+for(let j=0;j<4;j++){c.beginPath();c.moveTo(x-8,by-12+j*8);c.lineTo(x+2,by-8+j*8);c.stroke();}
+}
+c.fillStyle='#e0e0e0';c.font='10px monospace';c.textAlign='center';
+c.fillText(s.kind.toUpperCase(),x,by+35);
+c.fillText(s.pos+'',x,by+46);
+});
+loads.forEach(l=>{
+const x=margin+(l.pos/len)*bw;
+c.strokeStyle='#00ff9d';c.fillStyle='#00ff9d';c.lineWidth=2;
+if(l.kind==='point'){
+const dir=l.mag<0?1:-1;
+c.beginPath();c.moveTo(x,by+dir*-30);c.lineTo(x,by);c.stroke();
+c.beginPath();c.moveTo(x,by);c.lineTo(x-4,by+dir*-8);c.moveTo(x,by);c.lineTo(x+4,by+dir*-8);c.stroke();
+c.font='10px monospace';c.textAlign='center';c.fillText(l.mag+'',x,by+dir*-35);
+}else if(l.kind==='distributed'){
+const x2=margin+((l.end_pos||len)/len)*bw;
+for(let ax=x;ax<=x2;ax+=15){
+c.beginPath();c.moveTo(ax,by-25);c.lineTo(ax,by);c.stroke();
+c.beginPath();c.moveTo(ax,by);c.lineTo(ax-3,by-6);c.moveTo(ax,by);c.lineTo(ax+3,by-6);c.stroke();
+}
+c.beginPath();c.moveTo(x,by-25);c.lineTo(x2,by-25);c.stroke();
+c.font='10px monospace';c.textAlign='center';c.fillText(l.mag+'/mm',((x+x2)/2),by-30);
+}else if(l.kind==='moment'){
+c.beginPath();c.arc(x,by-15,12,0,Math.PI*1.5);c.stroke();
+c.beginPath();c.moveTo(x+12,by-15);c.lineTo(x+8,by-19);c.moveTo(x+12,by-15);c.lineTo(x+16,by-19);c.stroke();
+c.font='10px monospace';c.textAlign='center';c.fillText(l.mag+'',x,by-35);
+}
+});
+c.fillStyle='#666';c.font='10px monospace';c.textAlign='center';
+c.fillText('0',margin,by+60);
+c.fillText(len+'',margin+bw,by+60);
+}
+function updateSupList(){
+$('#sup-list').textContent=supports.map((s,i)=>`${s.kind}@${s.pos}`).join(' | ');
+}
+window.clearSupports=function(){supports=[];drawBeam();$('#sup-list').textContent='';};
+window.addLoad=function(){
+const len=parseFloat($('#bm-len').value)||3000;
+const toMM={'mm':1,'m':1000,'in':25.4,'ft':304.8};
+const pu=toMM[$('#ld-pos-u').value]||1;
+const pos=parseFloat($('#ld-pos').value)*pu;
+const toN={'N':1,'kN':1000,'lbf':4.44822,'kip':4448.22,'kN/m':1,'N/mm':1};
+const mu_f=toN[$('#ld-mag-u').value]||1;
+const mag=parseFloat($('#ld-mag').value)*mu_f;
+const kind=$('#ld-type').value;
+const l={kind,pos,mag};
+if(kind==='distributed'){
+l.end_pos=parseFloat($('#ld-end').value)*pu||len;
+}
+loads.push(l);
+drawBeam();
+$('#load-list').textContent=loads.map(l=>l.kind==='point'?`P=${l.mag}N @ ${l.pos}mm`:l.kind==='distributed'?`w=${l.mag}N/mm [${l.pos}-${l.end_pos}]`:`M=${l.mag}N·mm @ ${l.pos}mm`).join(' | ');
+};
+window.clearLoads=function(){loads=[];drawBeam();$('#load-list').textContent='';};
+window.solveBeam=function(){
+const toM={'mm':0.001,'m':1,'in':0.0254,'ft':0.3048};
+const lu=toM[$('#bm-len-u').value]||0.001;
+const len=parseFloat($('#bm-len').value)*lu;
+const toPA={'GPa':1e9,'MPa':1e6,'psi':6894.757,'ksi':6.894757e6};
+const e=parseFloat($('#bm-e').value)*(toPA[$('#bm-e-u').value]||1e9);
+const toM4={'cm4':1e-8,'mm4':1e-12,'in4':4.162314e-7};
+const im=parseFloat($('#bm-i').value)*(toM4[$('#bm-i-u').value]||1e-8);
+const sups=supports.map(s=>({pos:s.pos*lu/((parseFloat($('#bm-len').value)||3000)*lu)*len,kind:s.kind}));
+const lds=loads.map(l=>{
+const scale=lu/0.001;
+const r={kind:l.kind,pos:l.pos*0.001,mag:l.mag};
+if(l.end_pos)r.end_pos=l.end_pos*0.001;
+return r;
+});
+const inp={length:len,e_modulus:e,i_moment:im,supports:sups,loads:lds,num_points:200};
+const res=JSON.parse(calc_beam(JSON.stringify(inp)));
+if(res.error){$('#beam-results').innerHTML=`<div class="card"><p style="color:var(--err)">${res.error}</p></div>`;return;}
+let html=`<div class="card"><h3>REACTIONS</h3><div class="result-grid">`;
+res.reactions.forEach((r,i)=>{
+html+=`<div class="result-item"><div class="lbl">R${i+1} @ ${fmt(r.pos,2)} m</div><div class="val">${fmt(r.fy)} N</div></div>`;
+if(r.moment!=null)html+=`<div class="result-item"><div class="lbl">M${i+1}</div><div class="val">${fmt(r.moment)} N·m</div></div>`;
+});
+html+=`</div></div>`;
+html+=`<div class="card"><h3>MAXIMUMS</h3><div class="result-grid">
+<div class="result-item"><div class="lbl">MAX SHEAR</div><div class="val">${fmt(res.max_shear)} N</div></div>
+<div class="result-item"><div class="lbl">MAX MOMENT</div><div class="val">${fmt(res.max_moment)} N·m</div></div>
+<div class="result-item"><div class="lbl">MAX DEFLECTION</div><div class="val">${fmt(res.max_deflection*1000)} mm</div></div>
+<div class="result-item"><div class="lbl">MAX SLOPE</div><div class="val">${fmt(res.max_slope*180/Math.PI,3)}°</div></div>
+</div></div>`;
+html+=`<div class="card"><h3>SHEAR DIAGRAM</h3><div class="diagram-wrap"><canvas id="c-shear" width="800" height="200"></canvas></div></div>`;
+html+=`<div class="card"><h3>MOMENT DIAGRAM</h3><div class="diagram-wrap"><canvas id="c-moment" width="800" height="200"></canvas></div></div>`;
+html+=`<div class="card"><h3>DEFLECTION CURVE</h3><div class="diagram-wrap"><canvas id="c-defl" width="800" height="200"></canvas></div></div>`;
+$('#beam-results').innerHTML=html;
+setTimeout(()=>{
+drawDiagram('c-shear',res.shear_diagram,'N','#00ff9d');
+drawDiagram('c-moment',res.moment_diagram,'N·m','#ff6b35');
+drawDiagram('c-defl',res.deflection_curve,'m','#4da6ff');
+},50);
+};
+function drawDiagram(id,data,unit,color){
+const canvas=document.getElementById(id);
+if(!canvas)return;
+const c=canvas.getContext('2d');
+const w=canvas.width,h=canvas.height;
+const margin={l:60,r:20,t:20,b:30};
+const pw=w-margin.l-margin.r,ph=h-margin.t-margin.b;
+c.clearRect(0,0,w,h);
+const xs=data.map(d=>d[0]),ys=data.map(d=>d[1]);
+const xmin=Math.min(...xs),xmax=Math.max(...xs);
+const ymin=Math.min(...ys),ymax=Math.max(...ys);
+const yr=Math.max(Math.abs(ymin),Math.abs(ymax))||1;
+const xr=xmax-xmin||1;
+c.strokeStyle='#333';c.lineWidth=1;
+const zy=margin.t+ph/2+(ymax+ymin)/(2*yr)*(ph/2)*-1;
+c.beginPath();c.moveTo(margin.l,zy);c.lineTo(margin.l+pw,zy);c.stroke();
+c.strokeStyle=color;c.lineWidth=2;
+c.beginPath();
+data.forEach((d,i)=>{
+const x=margin.l+((d[0]-xmin)/xr)*pw;
+const y=margin.t+ph/2-((d[1])/(yr||1))*(ph/2);
+i===0?c.moveTo(x,y):c.lineTo(x,y);
+});
+c.stroke();
+c.globalAlpha=0.1;c.fillStyle=color;
+c.beginPath();
+data.forEach((d,i)=>{
+const x=margin.l+((d[0]-xmin)/xr)*pw;
+const y=margin.t+ph/2-((d[1])/(yr||1))*(ph/2);
+i===0?c.moveTo(x,zy):c.lineTo(x,y);
+});
+c.lineTo(margin.l+pw,zy);c.closePath();c.fill();
+c.globalAlpha=1;
+c.fillStyle='#666';c.font='10px monospace';c.textAlign='right';
+c.fillText(fmt(yr,2)+' '+unit,margin.l-5,margin.t+5);
+c.fillText(fmt(-yr,2),margin.l-5,h-margin.b);
+c.textAlign='center';
+c.fillText(fmt(xmin,2)+' m',margin.l,h-5);
+c.fillText(fmt(xmax,2)+' m',w-margin.r,h-5);
+}
+let secCanvas,secCtx;
+function setupSectionCanvas(){
+secCanvas=$('#c-section');
+secCtx=secCanvas.getContext('2d');
+secCanvas.addEventListener('click',onSecClick);
+secCanvas.addEventListener('contextmenu',e=>{e.preventDefault();if(secVerts.length>2){drawSection();calcSection();}});
+drawSection();
+}
+function onSecClick(e){
+const rect=secCanvas.getBoundingClientRect();
+const sx=secCanvas.width/rect.width;
+const x=(e.clientX-rect.left)*sx;
+const y=(e.clientY-rect.top)*sx;
+secVerts.push([x,y]);
+drawSection();
+}
+function drawSection(){
+const c=secCtx,w=secCanvas.width,h=secCanvas.height;
+c.clearRect(0,0,w,h);
+c.strokeStyle='#333';c.lineWidth=0.5;
+for(let x=0;x<w;x+=20){c.beginPath();c.moveTo(x,0);c.lineTo(x,h);c.stroke();}
+for(let y=0;y<h;y+=20){c.beginPath();c.moveTo(0,y);c.lineTo(w,y);c.stroke();}
+if(secVerts.length===0)return;
+c.fillStyle='rgba(255,107,53,0.1)';c.strokeStyle='#ff6b35';c.lineWidth=2;
+c.beginPath();
+secVerts.forEach((v,i)=>i===0?c.moveTo(v[0],v[1]):c.lineTo(v[0],v[1]));
+if(secVerts.length>2)c.closePath();
+c.fill();c.stroke();
+c.fillStyle='#ff6b35';
+secVerts.forEach(v=>{c.beginPath();c.arc(v[0],v[1],4,0,Math.PI*2);c.fill();});
+}
+window.undoVertex=function(){secVerts.pop();drawSection();};
+window.clearSection=function(){secVerts=[];drawSection();$('#sec-results').innerHTML='<h3>SECTION PROPERTIES</h3><p style="font-size:.75rem;color:var(--dim)">Draw or select a section to see results</p>';};
+window.calcSection=function(){
+if(secVerts.length<3)return;
+const inp={vertices:secVerts,holes:null};
+const res=JSON.parse(calc_section(JSON.stringify(inp)));
+if(res.error){$('#sec-results').innerHTML=`<h3>ERROR</h3><p style="color:var(--err)">${res.error}</p>`;return;}
+const p=[
+{l:'AREA',v:fmt(res.area)+' units²'},
+{l:'CENTROID X',v:fmt(res.centroid[0])},
+{l:'CENTROID Y',v:fmt(res.centroid[1])},
+{l:'Ix',v:fmt(res.ix)+' units⁴'},
+{l:'Iy',v:fmt(res.iy)+' units⁴'},
+{l:'Ixy',v:fmt(res.ixy)+' units⁴'},
+{l:'I₁ (PRINCIPAL)',v:fmt(res.i1)},
+{l:'I₂ (PRINCIPAL)',v:fmt(res.i2)},
+{l:'θp',v:fmt(res.theta_p*180/Math.PI,2)+'°'},
+{l:'Sx TOP',v:fmt(res.sx_top)},
+{l:'Sx BOT',v:fmt(res.sx_bot)},
+{l:'rx',v:fmt(res.rx)},
+{l:'ry',v:fmt(res.ry)},
+{l:'J (APPROX)',v:fmt(res.j_approx)},
+{l:'Zx (PLASTIC)',v:fmt(res.zx)},
+];
+$('#sec-results').innerHTML=`<h3>SECTION PROPERTIES</h3><div class="result-grid">${p.map(x=>`<div class="result-item"><div class="lbl">${x.l}</div><div class="val">${x.v}</div></div>`).join('')}</div>`;
+};
+window.calcStress=function(){
+const u=$('#st-u').value;
+const toPA={'MPa':1e6,'ksi':6.894757e6,'psi':6894.757,'GPa':1e9};
+const mu=toPA[u]||1e6;
+const inp={
+sigma_x:parseFloat($('#st-sx').value)*mu,
+sigma_y:parseFloat($('#st-sy').value)*mu,
+tau_xy:parseFloat($('#st-txy').value)*mu,
+sigma_z:parseFloat($('#st-sz').value)*mu,
+tau_xz:parseFloat($('#st-txz').value)*mu,
+tau_yz:parseFloat($('#st-tyz').value)*mu,
+yield_strength:parseFloat($('#st-sy-val').value)*1e6,
+ultimate_strength:parseFloat($('#st-su-val').value)*1e6,
+};
+const res=JSON.parse(calc_stress(JSON.stringify(inp)));
+if(res.error){$('#stress-results').innerHTML=`<h3>ERROR</h3><p style="color:var(--err)">${res.error}</p>`;return;}
+const d=1e6;
+const p=[
+{l:'σ₁',v:fmt(res.sigma_1/d)+' MPa'},
+{l:'σ₂',v:fmt(res.sigma_2/d)+' MPa'},
+{l:'σ₃',v:fmt(res.sigma_3/d)+' MPa'},
+{l:'τ MAX',v:fmt(res.tau_max/d)+' MPa'},
+{l:'VON MISES',v:fmt(res.von_mises/d)+' MPa'},
+{l:'TRESCA',v:fmt(res.tresca/d)+' MPa'},
+{l:'θ PRINCIPAL',v:fmt(res.theta_p,2)+'°'},
+{l:'FoS YIELD (VM)',v:fmt(res.fos_yield_vm,2),c:fosClass(res.fos_yield_vm)},
+{l:'FoS YIELD (TR)',v:fmt(res.fos_yield_tresca,2),c:fosClass(res.fos_yield_tresca)},
+{l:'FoS ULTIMATE',v:fmt(res.fos_ultimate,2),c:fosClass(res.fos_ultimate)},
+];
+$('#stress-results').innerHTML=`<h3>RESULTS</h3><div class="result-grid">${p.map(x=>`<div class="result-item"><div class="lbl">${x.l}</div><div class="val${x.c?' '+x.c:''}">${x.v}</div></div>`).join('')}</div>`;
+drawMohr(res.mohr_circle,d);
+};
+function drawMohr(mc,d){
+const canvas=$('#c-mohr');
+const c=canvas.getContext('2d');
+const w=canvas.width,h=canvas.height;
+c.clearRect(0,0,w,h);
+const cx_w=w/2,cy_w=h/2;
+const center=mc.center/d,radius=mc.radius/d;
+const scale=radius>0?(w*0.35)/radius:1;
+c.strokeStyle='#333';c.lineWidth=1;
+c.beginPath();c.moveTo(0,cy_w);c.lineTo(w,cy_w);c.stroke();
+c.beginPath();c.moveTo(cx_w,0);c.lineTo(cx_w,h);c.stroke();
+c.strokeStyle='#ff6b35';c.lineWidth=2;
+c.beginPath();
+c.arc(cx_w+(center)*scale,cy_w,radius*scale,0,Math.PI*2);
+c.stroke();
+c.fillStyle='#ff6b35';c.beginPath();
+c.arc(cx_w+(center)*scale,cy_w,4,0,Math.PI*2);c.fill();
+c.fillStyle='#666';c.font='10px monospace';c.textAlign='center';
+c.fillText('σ',w-15,cy_w-8);
+c.fillText('τ',cx_w+8,15);
+c.fillText('C='+fmt(center,1),cx_w+(center)*scale,cy_w+radius*scale+20);
+c.fillText('R='+fmt(radius,1),cx_w+(center)*scale+radius*scale*0.7,cy_w-radius*scale*0.7);
+}
+window.calcBolt=function(){
+const toN={'N':1,'kN':1000,'lbf':4.44822,'kip':4448.22};
+const fu=toN[$('#bl-fext-u').value]||1;
+const inp={
+grade:$('#bl-grade').value,
+size:$('#bl-size').value,
+external_load:parseFloat($('#bl-fext').value)*fu,
+shear_load:parseFloat($('#bl-shear').value)||0,
+num_bolts:parseInt($('#bl-num').value)||1,
+preload_pct:(parseFloat($('#bl-preload').value)||75)/100,
+joint_stiffness_ratio:parseFloat($('#bl-c').value)||0.25,
+friction_coeff:parseFloat($('#bl-mu').value)||0.15,
+};
+const res=JSON.parse(calc_bolt(JSON.stringify(inp)));
+if(res.error){$('#bolt-results').innerHTML=`<h3>ERROR</h3><p style="color:var(--err)">${res.error}</p>`;return;}
+const jc=res.joint_status.includes('SEPARATION')?'err':'ok';
+const p=[
+{l:'TENSILE AREA',v:fmt(res.tensile_area*1e6,1)+' mm²'},
+{l:'PROOF LOAD',v:fmt(res.proof_load,0)+' N'},
+{l:'PRELOAD (Fi)',v:fmt(res.preload,0)+' N'},
+{l:'BOLT LOAD (Fb)',v:fmt(res.bolt_load,0)+' N'},
+{l:'JOINT LOAD (Fj)',v:fmt(res.joint_load,0)+' N',c:jc},
+{l:'BOLT STRESS',v:fmt(res.bolt_stress/1e6,1)+' MPa'},
+{l:'FoS PROOF',v:fmt(res.fos_proof,2),c:fosClass(res.fos_proof)},
+{l:'FoS YIELD',v:fmt(res.fos_yield,2),c:fosClass(res.fos_yield)},
+{l:'FoS SEPARATION',v:fmt(res.fos_separation,2),c:fosClass(res.fos_separation)},
+{l:'FoS SHEAR',v:res.fos_shear>1e10?'N/A':fmt(res.fos_shear,2),c:res.fos_shear>1e10?'':fosClass(res.fos_shear)},
+{l:'TORQUE (K=0.20)',v:fmt(res.torque_k02,2)+' N·m'},
+{l:'TORQUE (K=0.15)',v:fmt(res.torque_k015,2)+' N·m'},
+{l:'JOINT STATUS',v:res.joint_status,c:jc},
+];
+$('#bolt-results').innerHTML=`<h3>JOINT RESULTS</h3><div class="result-grid">${p.map(x=>`<div class="result-item"><div class="lbl">${x.l}</div><div class="val${x.c?' '+x.c:''}">${x.v}</div></div>`).join('')}</div>`;
+};
+window.calcSpring=function(){
+const toM={'mm':0.001,'in':0.0254};
+const du=toM[$('#sp-d-u').value]||0.001;
+const Du=toM[$('#sp-D-u').value]||0.001;
+const toPA={'GPa':1e9,'MPa':1e6,'psi':6894.757};
+const gu=toPA[$('#sp-g-u').value]||1e9;
+const toN={'N':1,'lbf':4.44822,'kgf':9.80665};
+const fu=toN[$('#sp-f-u').value]||1;
+const inp={
+kind:$('#sp-type').value,
+wire_diameter:parseFloat($('#sp-d').value)*du,
+coil_diameter:parseFloat($('#sp-D').value)*du,
+active_coils:parseFloat($('#sp-na').value)||8,
+total_coils:parseFloat($('#sp-nt').value)||10,
+free_length:(parseFloat($('#sp-fl').value)||60)*0.001,
+shear_modulus:parseFloat($('#sp-g').value)*gu,
+applied_force:parseFloat($('#sp-f').value)*fu,
+yield_strength:(parseFloat($('#sp-sy').value)||1000)*1e6,
+};
+const res=JSON.parse(calc_spring(JSON.stringify(inp)));
+if(res.error){$('#spring-results').innerHTML=`<h3>ERROR</h3><p style="color:var(--err)">${res.error}</p>`;return;}
+const p=[
+{l:'SPRING RATE',v:fmt(res.spring_rate,2)+' N/m'},
+{l:'FORCE',v:fmt(res.force,2)+' N'},
+{l:'DEFLECTION',v:fmt(res.deflection*1000,2)+' mm'},
+{l:'SHEAR STRESS (τ)',v:fmt(res.shear_stress/1e6,1)+' MPa'},
+{l:'CORRECTED (WAHL)',v:fmt(res.corrected_stress/1e6,1)+' MPa'},
+{l:'SPRING INDEX C',v:fmt(res.spring_index,2)},
+{l:'WAHL FACTOR Kw',v:fmt(res.wahl_factor,3)},
+{l:'SOLID LENGTH',v:fmt(res.solid_length*1000,1)+' mm'},
+{l:'MAX DEFLECTION',v:fmt(res.max_deflection*1000,1)+' mm'},
+{l:'NATURAL FREQ',v:fmt(res.natural_freq_hz,1)+' Hz'},
+{l:'BUCKLING RATIO',v:fmt(res.buckling_ratio,2),c:res.buckling_ratio>4?'warn':''},
+{l:'FoS STATIC',v:fmt(res.fos_static,2),c:fosClass(res.fos_static)},
+{l:'ENERGY STORED',v:fmt(res.energy_stored,4)+' J'},
+{l:'WEIGHT APPROX',v:fmt(res.weight_approx*1000,2)+' g'},
+];
+$('#spring-results').innerHTML=`<h3>SPRING RESULTS</h3><div class="result-grid">${p.map(x=>`<div class="result-item"><div class="lbl">${x.l}</div><div class="val${x.c?' '+x.c:''}">${x.v}</div></div>`).join('')}</div>`;
+};
+window.recommendFinishes=function(){
+const priorities=[
+{factor:'corrosion',weight:parseInt($('#fin-corr').value)},
+{factor:'wear',weight:parseInt($('#fin-wear').value)},
+{factor:'appearance',weight:parseInt($('#fin-app').value)},
+{factor:'cost',weight:parseInt($('#fin-cost').value)},
+{factor:'temperature',weight:parseInt($('#fin-temp').value)},
+{factor:'coverage',weight:parseInt($('#fin-cov').value)},
+{factor:'thickness',weight:parseInt($('#fin-thk').value)},
+];
+const inp={
+priorities,
+substrate:$('#fin-sub').value||null,
+needs_full_coverage:$('#fin-full').checked||null,
+};
+const recs=JSON.parse(recommend_finishes(JSON.stringify(inp)));
+if(typeof recs==='string'&&recs.includes('error')){$('#fin-results').innerHTML=`<div class="card"><p style="color:var(--err)">${recs}</p></div>`;return;}
+const maxScore=recs.length>0?recs[0].score:1;
+$('#fin-results').innerHTML=recs.map((r,i)=>{
+const f=r.finish;
+const pct=maxScore>0?(r.score/maxScore*100).toFixed(0):0;
+const bars=r.breakdown.map(b=>`<span style="font-size:.65rem;color:var(--dim)">${b.factor}: ${b.rating.toFixed(0)}/10</span> <span class="meter"><span class="meter-fill" style="width:${b.rating*10}%"></span></span>`).join(' &nbsp; ');
+return `<div class="finish-card">
+<span class="fscore">#${i+1} &mdash; ${r.score.toFixed(1)} pts</span>
+<div class="fname">${f.name}</div>
+<div class="fcat">${f.category} &mdash; ${f.process}</div>
+<div class="fdet">
+<strong>Thickness:</strong> ${f.thickness_um[0]}-${f.thickness_um[1]} µm &nbsp;|&nbsp;
+<strong>Max Temp:</strong> ${f.temp_max_c}°C &nbsp;|&nbsp;
+<strong>Hardness:</strong> ${f.hardness}<br>
+<strong>Colors:</strong> ${f.color_options.join(', ')}<br>
+<strong>Substrates:</strong> ${f.substrates.join(', ')}<br>
+<strong>Adds Thickness:</strong> ${f.adds_thickness?'Yes':'No'} &nbsp;|&nbsp;
+<strong>Full Coverage:</strong> ${f.full_coverage?'Yes':'No'}<br>
+<em>${f.notes}</em><br>
+<div style="margin-top:4px">${bars}</div>
+</div>
+</div>`;
+}).join('');
+};
+init();
+</script>
+</body>
+</html>
