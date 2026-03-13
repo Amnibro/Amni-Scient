@@ -154,6 +154,15 @@
 </div>
 </div>
 </section>
+<section>
+<h2>GALLERY</h2>
+<p style="text-align:center;color:var(--dim);font-size:.85rem;margin-bottom:1.5rem">Click to enlarge</p>
+<div class="screenshot-strip">
+<div class="screenshot-desktop"><img class="gallery-thumb" src="assets/explore/ss_galaxy.png" alt="Amni-Explore galaxy view with 80K particles" onclick="openLightbox(this.src,this.alt)"></div>
+<div class="screenshot-desktop"><img class="gallery-thumb" src="assets/explore/ss_solar_system.png" alt="Amni-Explore Sol System with planet list" onclick="openLightbox(this.src,this.alt)"></div>
+<div class="screenshot-desktop"><img class="gallery-thumb" src="assets/explore/ss_planet.png" alt="Amni-Explore planet detail view GJ 1214 b" onclick="openLightbox(this.src,this.alt)"></div>
+</div>
+</section>
 <section style="text-align:center">
 <h2>LAUNCH AMNI-EXPLORE</h2>
 <p style="color:var(--dim);margin-bottom:.5rem;font-size:.9rem">Run directly in your browser. No download, no account, no installation.</p>
@@ -172,5 +181,7 @@
 </div>
 <p>&copy; 2025-2026 Amni-Scient. All rights reserved.</p>
 </footer>
+<div class="lightbox" onclick="closeLightbox(event)"><span class="lightbox-close">&times;</span><img></div>
+<script>function openLightbox(s,a){const l=document.querySelector('.lightbox'),i=l.querySelector('img');i.src=s;i.alt=a;l.classList.add('open')}function closeLightbox(e){e.target.tagName!=='IMG'&&document.querySelector('.lightbox').classList.remove('open')}</script>
 </body>
 </html>
