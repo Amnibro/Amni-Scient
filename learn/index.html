@@ -180,6 +180,73 @@
   .chord-display { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin:10px 0; }
   .chord-btn { padding:10px 20px; background:#0f3460; border:2px solid #0f3460; border-radius:10px; color:#fff; font-family:'Comic Neue',cursive; font-size:1.1rem; cursor:pointer; transition:0.2s; }
   .chord-btn.active { background:#e94560; border-color:#e94560; }
+  .game-btn.reflex { border-color: #00cec9; } .game-btn.reflex:hover { box-shadow: 0 0 15px rgba(0,206,201,0.4); }
+  .game-btn.blocks { border-color: #6c5ce7; } .game-btn.blocks:hover { box-shadow: 0 0 15px rgba(108,92,231,0.4); }
+  .game-btn.sorthat { border-color: #fdcb6e; } .game-btn.sorthat:hover { box-shadow: 0 0 15px rgba(253,203,110,0.4); }
+  .game-btn.wbridge { border-color: #55efc4; } .game-btn.wbridge:hover { box-shadow: 0 0 15px rgba(85,239,196,0.4); }
+  .game-btn.mtnclimb { border-color: #fab1a0; } .game-btn.mtnclimb:hover { box-shadow: 0 0 15px rgba(250,177,160,0.4); }
+  #reflex-view { background:#0d1b2a; }
+  .rfx-arena { position:relative; width:90%; max-width:600px; height:400px; background:#1b2838; border:3px solid #00cec9; border-radius:20px; overflow:hidden; touch-action:none; }
+  .rfx-target { position:absolute; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:2rem; transition:transform 0.1s; user-select:none; animation:rfxPop 0.3s ease-out; }
+  .rfx-target:active { transform:scale(0.8); }
+  @keyframes rfxPop { 0%{transform:scale(0)} 50%{transform:scale(1.2)} 100%{transform:scale(1)} }
+  .rfx-hud { display:flex; gap:20px; font-family:'Comic Neue',cursive; font-size:1.5rem; color:#fff; margin-bottom:15px; }
+  .rfx-timer { color:#00cec9; font-weight:bold; }
+  .rfx-score { color:#fdcb6e; font-weight:bold; }
+  .rfx-start { background:#00cec9; color:#000; border:none; padding:18px 40px; font-size:1.6rem; border-radius:14px; cursor:pointer; font-family:'Comic Neue',cursive; font-weight:bold; box-shadow:0 6px 0 #00a8a3; transition:0.1s; }
+  .rfx-start:active { transform:translateY(6px); box-shadow:none; }
+  #blocks-view { background:#1a1040; }
+  .blk-grid { display:grid; grid-template-columns:repeat(6,50px); grid-template-rows:repeat(6,50px); gap:2px; background:#2d1b69; border:3px solid #6c5ce7; border-radius:12px; padding:4px; }
+  .blk-cell { width:50px; height:50px; background:#3d2b79; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:1.8rem; }
+  .blk-cell.wall { background:#1a0e3d; }
+  .blk-cell.goal { background:#00b894; animation:goalPulse 1.5s infinite; }
+  @keyframes goalPulse { 0%,100%{box-shadow:0 0 5px #00b894} 50%{box-shadow:0 0 20px #00b894} }
+  .blk-cmds { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin:15px 0; }
+  .blk-cmd { background:#6c5ce7; color:#fff; border:none; padding:12px 18px; font-size:1.8rem; border-radius:10px; cursor:pointer; box-shadow:0 4px 0 #5a4bd1; transition:0.1s; }
+  .blk-cmd:active { transform:translateY(4px); box-shadow:none; }
+  .blk-queue { display:flex; gap:6px; min-height:50px; padding:8px; background:#2d1b69; border-radius:10px; margin:10px 0; flex-wrap:wrap; justify-content:center; }
+  .blk-queued { background:#a29bfe; color:#1a1040; padding:6px 12px; border-radius:8px; font-size:1.4rem; font-family:'Comic Neue',cursive; font-weight:bold; cursor:pointer; }
+  .blk-run { background:#00b894; color:#fff; border:none; padding:14px 30px; font-size:1.3rem; border-radius:12px; cursor:pointer; font-family:'Comic Neue',cursive; font-weight:bold; box-shadow:0 5px 0 #00a381; }
+  .blk-run:active { transform:translateY(5px); box-shadow:none; }
+  .blk-reset { background:#e17055; color:#fff; border:none; padding:14px 30px; font-size:1.3rem; border-radius:12px; cursor:pointer; font-family:'Comic Neue',cursive; font-weight:bold; box-shadow:0 5px 0 #d05040; }
+  .blk-info { color:#a29bfe; font-family:'Comic Neue',cursive; font-size:1.2rem; text-align:center; margin:8px 0; }
+  #sorthat-view { background:#1a2634; }
+  .sort-area { display:flex; gap:30px; width:90%; max-width:700px; justify-content:center; align-items:flex-start; flex-wrap:wrap; }
+  .sort-bucket { width:180px; min-height:200px; background:#2d3a4a; border:3px dashed #fdcb6e; border-radius:16px; padding:12px; text-align:center; transition:0.2s; }
+  .sort-bucket.hover { border-color:#00b894; background:#2d4a3a; transform:scale(1.03); }
+  .sort-label { font-family:'Comic Neue',cursive; font-size:1.4rem; color:#fdcb6e; font-weight:bold; margin-bottom:10px; }
+  .sort-items { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; }
+  .sort-item { font-size:2.5rem; cursor:grab; user-select:none; padding:8px; background:#3d4f63; border-radius:12px; transition:0.15s; display:inline-block; }
+  .sort-item:active { transform:scale(0.9); cursor:grabbing; }
+  .sort-item.correct { animation:sortCorrect 0.5s ease-out; }
+  @keyframes sortCorrect { 0%{transform:scale(1)} 50%{transform:scale(1.3) rotate(10deg)} 100%{transform:scale(1)} }
+  .sort-tray { display:flex; gap:12px; flex-wrap:wrap; justify-content:center; margin-bottom:20px; min-height:70px; padding:10px; background:#1d2a3a; border-radius:12px; }
+  .sort-info { color:#fdcb6e; font-family:'Comic Neue',cursive; font-size:1.3rem; text-align:center; margin:10px 0; }
+  #wbridge-view { background:#0b2027; }
+  .wb-card { background:#1a3c40; border:3px solid #55efc4; border-radius:16px; padding:20px; text-align:center; min-width:140px; cursor:pointer; transition:0.2s; }
+  .wb-card:hover { transform:scale(1.05); }
+  .wb-card:active { transform:scale(0.95); }
+  .wb-card.correct { border-color:#00b894; background:#0d4a3a; }
+  .wb-card.wrong { border-color:#e74c3c; background:#3a1a1a; }
+  .wb-prompt { font-family:'Comic Neue',cursive; font-size:3rem; color:#55efc4; margin-bottom:5px; }
+  .wb-sub { font-family:'Comic Neue',cursive; font-size:1.2rem; color:#aaa; margin-bottom:15px; }
+  .wb-choices { display:flex; gap:15px; flex-wrap:wrap; justify-content:center; }
+  .wb-choice-text { font-family:'Comic Neue',cursive; font-size:1.5rem; color:#fff; }
+  .wb-flag { font-size:2rem; display:block; margin-bottom:5px; }
+  .wb-lang-pick { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-bottom:15px; }
+  .wb-lang-btn { background:#1a3c40; border:2px solid #55efc4; color:#55efc4; padding:10px 18px; border-radius:10px; cursor:pointer; font-family:'Comic Neue',cursive; font-size:1.1rem; transition:0.2s; }
+  .wb-lang-btn.active { background:#55efc4; color:#000; }
+  .wb-score-bar { color:#55efc4; font-family:'Comic Neue',cursive; font-size:1.3rem; margin:10px 0; }
+  #mountain-view { background:#0f0f23; overflow:hidden; }
+  .mtn-canvas { width:100%; max-width:700px; height:450px; border:3px solid #fab1a0; border-radius:16px; background:#1a1a3e; position:relative; overflow:hidden; }
+  .mtn-platform { position:absolute; background:#fab1a0; border-radius:6px; display:flex; align-items:center; justify-content:center; font-family:'Comic Neue',cursive; font-size:0.9rem; color:#1a1a3e; font-weight:bold; padding:2px 8px; }
+  .mtn-player { position:absolute; font-size:2.5rem; transition:left 0.15s,bottom 0.3s; z-index:5; }
+  .mtn-problem { position:absolute; top:10px; left:50%; transform:translateX(-50%); background:rgba(0,0,0,0.7); color:#fab1a0; font-family:'Comic Neue',cursive; font-size:1.6rem; padding:10px 20px; border-radius:10px; z-index:10; }
+  .mtn-choices { position:absolute; bottom:10px; left:50%; transform:translateX(-50%); display:flex; gap:10px; z-index:10; }
+  .mtn-choice { background:#fab1a0; color:#1a1a3e; border:none; padding:12px 22px; font-size:1.3rem; border-radius:10px; cursor:pointer; font-family:'Comic Neue',cursive; font-weight:bold; box-shadow:0 4px 0 #e08070; }
+  .mtn-choice:active { transform:translateY(4px); box-shadow:none; }
+  .mtn-info { color:#fab1a0; font-family:'Comic Neue',cursive; font-size:1.3rem; text-align:center; margin:10px 0; }
+  .mtn-summit { position:absolute; top:10px; font-size:2rem; }
 </style>
 </head>
 <body>
@@ -214,6 +281,14 @@
         <button class="game-btn music" data-game="music"><span class="btn-icon">🎵</span><span class="btn-text">Music Studio</span></button>
         <button class="game-btn quiz" data-game="quiz" data-subject="languages"><span class="btn-icon">🗣️</span><span class="btn-text">Reading & Languages</span></button>
         <button class="game-btn quiz" data-game="quiz" data-subject="science"><span class="btn-icon">🔬</span><span class="btn-text">Science & Nature</span></button>
+        <div class="cat-title">Action & Sports</div>
+        <button class="game-btn reflex" data-game="reflex"><span class="btn-icon">⚡</span><span class="btn-text">Reflex Racer</span></button>
+        <button class="game-btn mtnclimb" data-game="mountain"><span class="btn-icon">🏔️</span><span class="btn-text">Math Mountain</span></button>
+        <div class="cat-title">Coding & AI</div>
+        <button class="game-btn blocks" data-game="blocks"><span class="btn-icon">🤖</span><span class="btn-text">Block Mover</span></button>
+        <button class="game-btn sorthat" data-game="sorthat"><span class="btn-icon">🎩</span><span class="btn-text">Sorting Hat</span></button>
+        <div class="cat-title">Languages</div>
+        <button class="game-btn wbridge" data-game="wbridge"><span class="btn-icon">🌍</span><span class="btn-text">Word Bridge</span></button>
         <div class="cat-title" id="stem-title" style="display:none;">Higher Education (STEM)</div>
         <button class="game-btn quiz" id="btn-math" data-game="quiz" data-subject="math" style="display:none;"><span class="btn-icon">📐</span><span class="btn-text">Advanced Math</span></button>
         <button class="game-btn quiz" id="btn-engineering" data-game="quiz" data-subject="engineering" style="display:none;"><span class="btn-icon">⚙️</span><span class="btn-text">Physics & Engineering</span></button>
@@ -284,6 +359,47 @@
       <div class="life-controls" id="life-controls">
       </div>
   </div>
+  <div id="reflex-view" class="view">
+    <div class="life-title">⚡ Reflex Racer</div>
+    <div class="rfx-hud"><span>Time: <span class="rfx-timer" id="rfx-timer">30</span>s</span><span>Hits: <span class="rfx-score" id="rfx-score">0</span></span></div>
+    <div class="rfx-arena" id="rfx-arena"></div>
+    <button class="rfx-start" id="rfx-start">TAP TO START!</button>
+  </div>
+  <div id="blocks-view" class="view">
+    <div class="life-title">🤖 Block Mover</div>
+    <div class="blk-info" id="blk-info">Guide the robot 🤖 to the star ⭐!</div>
+    <div class="blk-grid" id="blk-grid"></div>
+    <div class="blk-cmds">
+      <button class="blk-cmd" data-dir="up">⬆️</button>
+      <button class="blk-cmd" data-dir="left">⬅️</button>
+      <button class="blk-cmd" data-dir="down">⬇️</button>
+      <button class="blk-cmd" data-dir="right">➡️</button>
+    </div>
+    <div class="blk-queue" id="blk-queue"></div>
+    <div style="display:flex;gap:10px;justify-content:center;">
+      <button class="blk-run" id="blk-run">▶ Run</button>
+      <button class="blk-reset" id="blk-reset">↺ Reset</button>
+    </div>
+  </div>
+  <div id="sorthat-view" class="view">
+    <div class="life-title">🎩 Sorting Hat</div>
+    <div class="sort-info" id="sort-info">Drag each item into the right bucket!</div>
+    <div class="sort-tray" id="sort-tray"></div>
+    <div class="sort-area" id="sort-area"></div>
+  </div>
+  <div id="wbridge-view" class="view">
+    <div class="life-title">🌍 Word Bridge</div>
+    <div class="wb-lang-pick" id="wb-lang-pick"></div>
+    <div class="wb-score-bar" id="wb-score-bar"></div>
+    <div class="wb-prompt" id="wb-prompt"></div>
+    <div class="wb-sub" id="wb-sub"></div>
+    <div class="wb-choices" id="wb-choices"></div>
+  </div>
+  <div id="mountain-view" class="view">
+    <div class="life-title">🏔️ Math Mountain</div>
+    <div class="mtn-info" id="mtn-info">Solve to climb!</div>
+    <div class="mtn-canvas" id="mtn-canvas"></div>
+  </div>
   <div id="feedback">Great Job!</div>
   <canvas id="confetti-canvas"></canvas>
 </div>
@@ -298,7 +414,12 @@
     typing: $$('#typing-view'),
     life: $$('#life-view'),
     quiz: $$('#quiz-view'),
-    music: $$('#music-view')
+    music: $$('#music-view'),
+    reflex: $$('#reflex-view'),
+    blocks: $$('#blocks-view'),
+    sorthat: $$('#sorthat-view'),
+    wbridge: $$('#wbridge-view'),
+    mountain: $$('#mountain-view')
   };
   let currentGame = null;
   let currentSubgame = null;
@@ -374,6 +495,9 @@
       cleanupLifeGame();
       if(rhythmTimer){clearInterval(rhythmTimer);rhythmTimer=null;}
       melodyState=null;
+      if(rfxTimer){clearInterval(rfxTimer);rfxTimer=null;}
+      if(blkRunning){blkRunning=false;}
+      if(mtnTimer){clearInterval(mtnTimer);mtnTimer=null;}
     } else {
       window.location.href = '../amni-learn.html';
     }
@@ -397,6 +521,11 @@
           initQuiz(subject);
       }
       if(game === 'music') initMusic();
+      if(game === 'reflex') initReflex();
+      if(game === 'blocks') initBlocks();
+      if(game === 'sorthat') initSortHat();
+      if(game === 'wbridge') initWordBridge();
+      if(game === 'mountain') initMountain();
     });
   });
   function showView(viewId) {
@@ -1446,6 +1575,427 @@ function playAnimalSound(type) {
           };
           quizChoices.appendChild(btn);
       });
+  }
+  let rfxTimer = null;
+  function initReflex() {
+    const arena = $$('#rfx-arena');
+    const timerEl = $$('#rfx-timer');
+    const scoreEl = $$('#rfx-score');
+    const startBtn = $$('#rfx-start');
+    let rfxScore = 0, rfxTime = 30, rfxActive = false;
+    arena.innerHTML = '';
+    scoreEl.textContent = '0';
+    timerEl.textContent = '30';
+    startBtn.style.display = 'block';
+    startBtn.onclick = () => {
+      startBtn.style.display = 'none';
+      rfxScore = 0; rfxTime = currentLevel <= 2 ? 20 : 30; rfxActive = true;
+      scoreEl.textContent = '0';
+      timerEl.textContent = rfxTime;
+      if(rfxTimer) clearInterval(rfxTimer);
+      rfxTimer = setInterval(() => {
+        rfxTime--;
+        timerEl.textContent = rfxTime;
+        if(rfxTime <= 0) {
+          clearInterval(rfxTimer); rfxTimer = null; rfxActive = false;
+          arena.innerHTML = '';
+          const msg = rfxScore >= 20 ? 'Lightning Fast! ⚡' : (rfxScore >= 10 ? 'Great Reflexes! 🏆' : 'Keep Practicing! 💪');
+          showFeedback(msg, '#00cec9');
+          addScore(Math.floor(rfxScore / 3));
+          startBtn.style.display = 'block';
+          startBtn.textContent = `Score: ${rfxScore} — Play Again!`;
+        }
+      }, 1000);
+      spawnTarget();
+    };
+    function spawnTarget() {
+      if(!rfxActive) return;
+      arena.querySelectorAll('.rfx-target').forEach(t => { if(Date.now() - parseInt(t.dataset.born) > 2000) t.remove(); });
+      const colors = ['#e74c3c','#3498db','#2ecc71','#f1c40f','#e84393','#00cec9','#6c5ce7','#fd79a8'];
+      const emojis = currentLevel <= 2 ? ['🍎','🌟','🎈','🐱','🐶','🦋','🌈','🎯'] : ['🎯','⚡','💎','🔥','❄️','💫','🌀','⭐'];
+      const size = currentLevel <= 2 ? 70 : 55;
+      const t = document.createElement('div');
+      t.className = 'rfx-target';
+      t.dataset.born = Date.now();
+      const maxX = arena.offsetWidth - size, maxY = arena.offsetHeight - size;
+      t.style.cssText = `width:${size}px;height:${size}px;left:${Math.random()*maxX}px;top:${Math.random()*maxY}px;background:${colors[Math.floor(Math.random()*colors.length)]};`;
+      t.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+      t.addEventListener('pointerdown', (e) => {
+        e.preventDefault();
+        rfxScore++;
+        scoreEl.textContent = rfxScore;
+        t.remove();
+        spawnTarget();
+      });
+      arena.appendChild(t);
+      const delay = currentLevel <= 2 ? 1200 : (currentLevel <= 3 ? 800 : 500);
+      setTimeout(spawnTarget, delay + Math.random() * 400);
+    }
+  }
+  let blkRunning = false;
+  function initBlocks() {
+    const grid = $$('#blk-grid');
+    const queue = $$('#blk-queue');
+    const info = $$('#blk-info');
+    const levels = [
+      {g:[[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,1,1,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0]],s:[0,0],e:[5,5]},
+      {g:[[0,0,0,0,0,0],[0,1,1,0,0,0],[0,1,0,0,0,0],[0,0,0,1,1,0],[0,0,0,0,0,0],[0,0,0,0,0,0]],s:[0,0],e:[5,5]},
+      {g:[[0,0,0,0,0,0],[1,1,0,1,0,0],[0,0,0,1,0,0],[0,1,0,0,0,1],[0,1,0,0,0,0],[0,0,0,0,0,0]],s:[0,0],e:[5,5]},
+      {g:[[0,0,1,0,0,0],[0,0,1,0,1,0],[0,0,0,0,1,0],[1,1,0,0,0,0],[0,0,0,1,0,0],[0,0,0,1,0,0]],s:[0,0],e:[5,5]},
+      {g:[[0,0,0,0,0,0],[0,1,0,1,0,1],[0,1,0,1,0,0],[0,0,0,1,0,1],[0,1,0,0,0,1],[0,1,0,0,0,0]],s:[0,0],e:[5,5]}
+    ];
+    let blkLvl = 0, playerPos = [0,0];
+    const cmdQueue = [];
+    function renderGrid() {
+      const lv = levels[blkLvl];
+      grid.innerHTML = '';
+      for(let r = 0; r < 6; r++) for(let c = 0; c < 6; c++) {
+        const cell = document.createElement('div');
+        cell.className = 'blk-cell' + (lv.g[r][c] ? ' wall' : '');
+        if(r === lv.e[0] && c === lv.e[1]) { cell.className = 'blk-cell goal'; cell.textContent = '⭐'; }
+        if(r === playerPos[0] && c === playerPos[1]) cell.textContent = '🤖';
+        grid.appendChild(cell);
+      }
+    }
+    function renderQueue() {
+      queue.innerHTML = '';
+      cmdQueue.forEach((cmd, i) => {
+        const el = document.createElement('span');
+        el.className = 'blk-queued';
+        el.textContent = {up:'⬆️',down:'⬇️',left:'⬅️',right:'➡️'}[cmd];
+        el.onclick = () => { cmdQueue.splice(i, 1); renderQueue(); };
+        queue.appendChild(el);
+      });
+    }
+    playerPos = [...levels[blkLvl].s];
+    renderGrid(); renderQueue();
+    info.textContent = `Level ${blkLvl+1}/${levels.length} — Guide 🤖 to ⭐!`;
+    $$all('.blk-cmd').forEach(btn => {
+      btn.onclick = () => {
+        if(blkRunning) return;
+        cmdQueue.push(btn.dataset.dir);
+        renderQueue();
+      };
+    });
+    $$('#blk-run').onclick = async () => {
+      if(blkRunning || cmdQueue.length === 0) return;
+      blkRunning = true;
+      const lv = levels[blkLvl];
+      for(let i = 0; i < cmdQueue.length; i++) {
+        if(!blkRunning) return;
+        const dir = cmdQueue[i];
+        let nr = playerPos[0], nc = playerPos[1];
+        if(dir==='up') nr--; else if(dir==='down') nr++; else if(dir==='left') nc--; else if(dir==='right') nc++;
+        if(nr >= 0 && nr < 6 && nc >= 0 && nc < 6 && !lv.g[nr][nc]) {
+          playerPos = [nr, nc];
+          renderGrid();
+          queue.children[i] && (queue.children[i].style.background = '#00b894');
+        } else {
+          queue.children[i] && (queue.children[i].style.background = '#e17055');
+          showFeedback('Blocked! 🧱', '#e17055');
+          break;
+        }
+        await new Promise(r => setTimeout(r, 400));
+        if(playerPos[0] === lv.e[0] && playerPos[1] === lv.e[1]) {
+          showFeedback('Level Clear! 🌟', '#2ecc71');
+          addScore(3);
+          blkLvl = (blkLvl + 1) % levels.length;
+          cmdQueue.length = 0;
+          playerPos = [...levels[blkLvl].s];
+          setTimeout(() => { info.textContent = `Level ${blkLvl+1}/${levels.length} — Guide 🤖 to ⭐!`; renderGrid(); renderQueue(); }, 1500);
+          blkRunning = false;
+          return;
+        }
+      }
+      cmdQueue.length = 0; renderQueue();
+      blkRunning = false;
+    };
+    $$('#blk-reset').onclick = () => {
+      blkRunning = false;
+      cmdQueue.length = 0;
+      playerPos = [...levels[blkLvl].s];
+      renderGrid(); renderQueue();
+    };
+  }
+  function initSortHat() {
+    const tray = $$('#sort-tray');
+    const area = $$('#sort-area');
+    const info = $$('#sort-info');
+    const rounds = [
+      {title:'Fruits vs Vegetables',buckets:['🍎 Fruits','🥦 Vegetables'],items:[{e:'🍌',b:0},{e:'🥕',b:1},{e:'🍇',b:0},{e:'🥒',b:1},{e:'🍓',b:0},{e:'🌽',b:1},{e:'🍊',b:0},{e:'🥬',b:1}]},
+      {title:'Animals: Land vs Water',buckets:['🌍 Land','🌊 Water'],items:[{e:'🐶',b:0},{e:'🐟',b:1},{e:'🐱',b:0},{e:'🐙',b:1},{e:'🐘',b:0},{e:'🦈',b:1},{e:'🐴',b:0},{e:'🐋',b:1}]},
+      {title:'Hot vs Cold',buckets:['🔥 Hot','❄️ Cold'],items:[{e:'☀️',b:0},{e:'⛄',b:1},{e:'🌋',b:0},{e:'🧊',b:1},{e:'🏝️',b:0},{e:'🐧',b:1},{e:'🌶️',b:0},{e:'🏔️',b:1}]},
+      {title:'Living vs Non-Living',buckets:['🌱 Living','🪨 Non-Living'],items:[{e:'🌸',b:0},{e:'🪑',b:1},{e:'🐝',b:0},{e:'📱',b:1},{e:'🌲',b:0},{e:'🔑',b:1},{e:'🐸',b:0},{e:'💎',b:1}]},
+      {title:'Day vs Night',buckets:['🌞 Day','🌙 Night'],items:[{e:'☀️',b:0},{e:'⭐',b:1},{e:'🌈',b:0},{e:'🦉',b:1},{e:'🦋',b:0},{e:'🦇',b:1},{e:'🐓',b:0},{e:'🌜',b:1}]}
+    ];
+    let roundIdx = 0, sorted = 0, totalItems = 0;
+    let dragItem = null, dragBucket = null;
+    function loadRound() {
+      const round = rounds[roundIdx % rounds.length];
+      info.textContent = round.title;
+      tray.innerHTML = '';
+      area.innerHTML = '';
+      sorted = 0;
+      const items = [...round.items].sort(() => Math.random() - 0.5);
+      totalItems = items.length;
+      items.forEach((item, idx) => {
+        const el = document.createElement('span');
+        el.className = 'sort-item';
+        el.textContent = item.e;
+        el.dataset.bucket = item.b;
+        el.dataset.idx = idx;
+        el.draggable = true;
+        el.addEventListener('dragstart', (e) => { dragItem = el; e.dataTransfer.effectAllowed = 'move'; });
+        el.addEventListener('touchstart', (e) => { dragItem = el; }, {passive:true});
+        tray.appendChild(el);
+      });
+      round.buckets.forEach((label, bi) => {
+        const bucket = document.createElement('div');
+        bucket.className = 'sort-bucket';
+        bucket.dataset.bi = bi;
+        bucket.innerHTML = `<div class="sort-label">${label}</div><div class="sort-items"></div>`;
+        bucket.addEventListener('dragover', (e) => { e.preventDefault(); bucket.classList.add('hover'); });
+        bucket.addEventListener('dragleave', () => bucket.classList.remove('hover'));
+        bucket.addEventListener('drop', (e) => {
+          e.preventDefault(); bucket.classList.remove('hover');
+          if(!dragItem) return;
+          handleDrop(dragItem, bi, bucket);
+        });
+        bucket.addEventListener('click', () => {
+          if(!dragItem) { const firstItem = tray.querySelector('.sort-item'); if(firstItem) dragItem = firstItem; return; }
+          handleDrop(dragItem, bi, bucket);
+        });
+        area.appendChild(bucket);
+      });
+    }
+    function handleDrop(item, bi, bucket) {
+      if(parseInt(item.dataset.bucket) === bi) {
+        item.classList.add('correct');
+        bucket.querySelector('.sort-items').appendChild(item);
+        item.style.cursor = 'default';
+        item.draggable = false;
+        sorted++;
+        addScore(1);
+        if(sorted >= totalItems) {
+          showFeedback('All Sorted! 🎉', '#2ecc71');
+          roundIdx++;
+          setTimeout(loadRound, 2000);
+        }
+      } else {
+        showFeedback('Try again!', '#e74c3c');
+        resetStreak();
+        item.style.transform = 'translateX(10px)';
+        setTimeout(() => item.style.transform = '', 300);
+      }
+      dragItem = null;
+    }
+    loadRound();
+  }
+  let wbLang = 'es';
+  function initWordBridge() {
+    const langPick = $$('#wb-lang-pick');
+    const prompt = $$('#wb-prompt');
+    const sub = $$('#wb-sub');
+    const choices = $$('#wb-choices');
+    const scoreBar = $$('#wb-score-bar');
+    const langs = {
+      es: {flag:'🇪🇸',name:'Spanish'}, fr: {flag:'🇫🇷',name:'French'}, de: {flag:'🇩🇪',name:'German'},
+      it: {flag:'🇮🇹',name:'Italian'}, zh: {flag:'🇨🇳',name:'Chinese'}, hi: {flag:'🇮🇳',name:'Hindi'}
+    };
+    const words = {
+      1: [
+        {en:'Dog',img:'🐶',es:'Perro',fr:'Chien',de:'Hund',it:'Cane',zh:'狗',hi:'कुत्ता'},
+        {en:'Cat',img:'🐱',es:'Gato',fr:'Chat',de:'Katze',it:'Gatto',zh:'猫',hi:'बिल्ली'},
+        {en:'Sun',img:'☀️',es:'Sol',fr:'Soleil',de:'Sonne',it:'Sole',zh:'太阳',hi:'सूरज'},
+        {en:'Water',img:'💧',es:'Agua',fr:'Eau',de:'Wasser',it:'Acqua',zh:'水',hi:'पानी'},
+        {en:'House',img:'🏠',es:'Casa',fr:'Maison',de:'Haus',it:'Casa',zh:'房子',hi:'घर'},
+        {en:'Fish',img:'🐟',es:'Pez',fr:'Poisson',de:'Fisch',it:'Pesce',zh:'鱼',hi:'मछली'},
+        {en:'Bird',img:'🐦',es:'Pájaro',fr:'Oiseau',de:'Vogel',it:'Uccello',zh:'鸟',hi:'चिड़िया'},
+        {en:'Tree',img:'🌳',es:'Árbol',fr:'Arbre',de:'Baum',it:'Albero',zh:'树',hi:'पेड़'}
+      ],
+      2: [
+        {en:'Hello',img:'👋',es:'Hola',fr:'Bonjour',de:'Hallo',it:'Ciao',zh:'你好',hi:'नमस्ते'},
+        {en:'Thank you',img:'🙏',es:'Gracias',fr:'Merci',de:'Danke',it:'Grazie',zh:'谢谢',hi:'धन्यवाद'},
+        {en:'Goodbye',img:'👋',es:'Adiós',fr:'Au revoir',de:'Tschüss',it:'Arrivederci',zh:'再见',hi:'अलविदा'},
+        {en:'Please',img:'🤲',es:'Por favor',fr:'S\'il vous plaît',de:'Bitte',it:'Per favore',zh:'请',hi:'कृपया'},
+        {en:'Friend',img:'🤝',es:'Amigo',fr:'Ami',de:'Freund',it:'Amico',zh:'朋友',hi:'दोस्त'},
+        {en:'School',img:'🏫',es:'Escuela',fr:'École',de:'Schule',it:'Scuola',zh:'学校',hi:'स्कूल'},
+        {en:'Book',img:'📖',es:'Libro',fr:'Livre',de:'Buch',it:'Libro',zh:'书',hi:'किताब'},
+        {en:'Star',img:'⭐',es:'Estrella',fr:'Étoile',de:'Stern',it:'Stella',zh:'星星',hi:'तारा'}
+      ],
+      3: [
+        {en:'Butterfly',img:'🦋',es:'Mariposa',fr:'Papillon',de:'Schmetterling',it:'Farfalla',zh:'蝴蝶',hi:'तितली'},
+        {en:'Mountain',img:'🏔️',es:'Montaña',fr:'Montagne',de:'Berg',it:'Montagna',zh:'山',hi:'पहाड़'},
+        {en:'Ocean',img:'🌊',es:'Océano',fr:'Océan',de:'Ozean',it:'Oceano',zh:'海洋',hi:'महासागर'},
+        {en:'Heart',img:'❤️',es:'Corazón',fr:'Cœur',de:'Herz',it:'Cuore',zh:'心',hi:'दिल'},
+        {en:'Music',img:'🎵',es:'Música',fr:'Musique',de:'Musik',it:'Musica',zh:'音乐',hi:'संगीत'},
+        {en:'Rainbow',img:'🌈',es:'Arcoíris',fr:'Arc-en-ciel',de:'Regenbogen',it:'Arcobaleno',zh:'彩虹',hi:'इंद्रधनुष'},
+        {en:'Earth',img:'🌍',es:'Tierra',fr:'Terre',de:'Erde',it:'Terra',zh:'地球',hi:'पृथ्वी'},
+        {en:'Snow',img:'❄️',es:'Nieve',fr:'Neige',de:'Schnee',it:'Neve',zh:'雪',hi:'बर्फ़'}
+      ]
+    };
+    let wbIdx = 0, wbCorrect = 0, wbTotal = 0, wbPool = [];
+    langPick.innerHTML = '';
+    Object.entries(langs).forEach(([code, {flag, name}]) => {
+      const btn = document.createElement('button');
+      btn.className = 'wb-lang-btn' + (code === wbLang ? ' active' : '');
+      btn.textContent = `${flag} ${name}`;
+      btn.onclick = () => {
+        wbLang = code;
+        $$all('.wb-lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        startWB();
+      };
+      langPick.appendChild(btn);
+    });
+    function startWB() {
+      const lvl = Math.min(currentLevel, 3);
+      wbPool = [...words[lvl]].sort(() => Math.random() - 0.5);
+      wbIdx = 0; wbCorrect = 0; wbTotal = wbPool.length;
+      loadWBQuestion();
+    }
+    function loadWBQuestion() {
+      scoreBar.textContent = `${wbCorrect}/${wbTotal} correct`;
+      if(wbIdx >= wbPool.length) {
+        prompt.textContent = '🎉 Complete!';
+        sub.textContent = `Score: ${wbCorrect}/${wbTotal}`;
+        choices.innerHTML = '';
+        showFeedback(wbCorrect >= wbTotal - 1 ? 'Language Master! 🌍' : 'Great effort!', '#55efc4');
+        addScore(wbCorrect);
+        return;
+      }
+      const word = wbPool[wbIdx];
+      prompt.textContent = `${word.img} ${word.en}`;
+      sub.textContent = `What is "${word.en}" in ${langs[wbLang].name}?`;
+      const correct = word[wbLang];
+      const allWords = words[Math.min(currentLevel, 3)].map(w => w[wbLang]);
+      let wrongs = allWords.filter(w => w !== correct).sort(() => Math.random() - 0.5).slice(0, 3);
+      let opts = [correct, ...wrongs].sort(() => Math.random() - 0.5);
+      choices.innerHTML = '';
+      opts.forEach(opt => {
+        const card = document.createElement('div');
+        card.className = 'wb-card';
+        card.innerHTML = `<span class="wb-flag">${langs[wbLang].flag}</span><span class="wb-choice-text">${opt}</span>`;
+        card.onclick = () => {
+          if(opt === correct) {
+            card.classList.add('correct');
+            wbCorrect++;
+            addScore(1);
+            showFeedback('Correct! ✨', '#2ecc71');
+            wbIdx++;
+            setTimeout(loadWBQuestion, 1200);
+          } else {
+            card.classList.add('wrong');
+            showFeedback(`It's "${correct}"`, '#e74c3c');
+            resetStreak();
+            wbIdx++;
+            setTimeout(loadWBQuestion, 2000);
+          }
+          $$all('.wb-card').forEach(c => c.style.pointerEvents = 'none');
+        };
+        choices.appendChild(card);
+      });
+    }
+    startWB();
+  }
+  let mtnTimer = null;
+  function initMountain() {
+    const canvas = $$('#mtn-canvas');
+    const info = $$('#mtn-info');
+    canvas.innerHTML = '';
+    let mtnLevel = 0, playerY = 0;
+    const totalPlatforms = currentLevel <= 2 ? 5 : 8;
+    const platformH = Math.floor(400 / (totalPlatforms + 1));
+    const platforms = [];
+    for(let i = 0; i < totalPlatforms; i++) {
+      const plat = document.createElement('div');
+      plat.className = 'mtn-platform';
+      const w = 80 + Math.random() * 100;
+      const left = 20 + Math.random() * (canvas.offsetWidth - w - 60 || 400);
+      plat.style.cssText = `width:${w}px;height:20px;bottom:${(i+1)*platformH}px;left:${left}px;`;
+      plat.dataset.idx = i;
+      platforms.push({el:plat,y:(i+1)*platformH,solved:false});
+      canvas.appendChild(plat);
+    }
+    const summit = document.createElement('div');
+    summit.className = 'mtn-summit';
+    summit.textContent = '🏆';
+    summit.style.cssText = `position:absolute;top:5px;left:50%;transform:translateX(-50%);font-size:2.5rem;`;
+    canvas.appendChild(summit);
+    const player = document.createElement('div');
+    player.className = 'mtn-player';
+    player.textContent = '🧗';
+    player.style.cssText = `bottom:5px;left:50%;transform:translateX(-50%);`;
+    canvas.appendChild(player);
+    playerY = 0;
+    info.textContent = `Climb ${totalPlatforms} platforms! Solve to jump!`;
+    showMtnProblem(0);
+    function genProblem() {
+      let a, b, op, answer;
+      if(currentLevel <= 2) {
+        a = Math.floor(Math.random()*10)+1; b = Math.floor(Math.random()*10)+1;
+        op = '+'; answer = a + b;
+      } else if(currentLevel === 3) {
+        const ops = ['+','-','×'];
+        op = ops[Math.floor(Math.random()*ops.length)];
+        if(op === '×') { a = Math.floor(Math.random()*10)+1; b = Math.floor(Math.random()*10)+1; answer = a*b; }
+        else if(op === '-') { a = Math.floor(Math.random()*20)+10; b = Math.floor(Math.random()*10)+1; answer = a-b; }
+        else { a = Math.floor(Math.random()*50)+10; b = Math.floor(Math.random()*50)+10; answer = a+b; }
+      } else {
+        const ops = ['+','-','×','÷'];
+        op = ops[Math.floor(Math.random()*ops.length)];
+        if(op === '÷') { answer = Math.floor(Math.random()*12)+1; b = Math.floor(Math.random()*12)+1; a = answer*b; }
+        else if(op === '×') { a = Math.floor(Math.random()*12)+1; b = Math.floor(Math.random()*12)+1; answer = a*b; }
+        else if(op === '-') { a = Math.floor(Math.random()*100)+20; b = Math.floor(Math.random()*20)+1; answer = a-b; }
+        else { a = Math.floor(Math.random()*100)+20; b = Math.floor(Math.random()*100)+20; answer = a+b; }
+      }
+      return {text:`${a} ${op} ${b} = ?`, answer};
+    }
+    function showMtnProblem(pIdx) {
+      if(pIdx >= totalPlatforms) {
+        canvas.querySelectorAll('.mtn-problem,.mtn-choices').forEach(e=>e.remove());
+        player.style.bottom = (canvas.offsetHeight - 40) + 'px';
+        showFeedback('Summit Reached! 🏆', '#2ecc71');
+        addScore(totalPlatforms * 2);
+        info.textContent = 'You conquered the mountain!';
+        setTimeout(() => { showView('menu'); currentGame = null; }, 3000);
+        return;
+      }
+      canvas.querySelectorAll('.mtn-problem,.mtn-choices').forEach(e=>e.remove());
+      const prob = genProblem();
+      const probEl = document.createElement('div');
+      probEl.className = 'mtn-problem';
+      probEl.textContent = prob.text;
+      canvas.appendChild(probEl);
+      const choicesEl = document.createElement('div');
+      choicesEl.className = 'mtn-choices';
+      let opts = [prob.answer];
+      while(opts.length < 4) { const w = prob.answer + (Math.floor(Math.random()*10)-5); if(w !== prob.answer && !opts.includes(w)) opts.push(w); }
+      opts.sort(() => Math.random() - 0.5);
+      opts.forEach(o => {
+        const btn = document.createElement('button');
+        btn.className = 'mtn-choice';
+        btn.textContent = o;
+        btn.onclick = () => {
+          if(o === prob.answer) {
+            platforms[pIdx].solved = true;
+            platforms[pIdx].el.style.background = '#2ecc71';
+            player.style.bottom = platforms[pIdx].y + 'px';
+            playerY = pIdx + 1;
+            addScore(2);
+            showFeedback('Jump! ⬆️', '#fab1a0');
+            info.textContent = `Platform ${pIdx+2}/${totalPlatforms+1}`;
+            setTimeout(() => showMtnProblem(pIdx + 1), 1000);
+          } else {
+            btn.style.background = '#e74c3c';
+            showFeedback('Wrong!', '#e74c3c');
+            resetStreak();
+          }
+        };
+        choicesEl.appendChild(btn);
+      });
+      canvas.appendChild(choicesEl);
+    }
   }
 </script>
 </body>
