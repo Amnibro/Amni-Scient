@@ -23,7 +23,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8345487545441889" crossorigin="anonymous"></script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8345487545441889" crossorigin="anonymous" data-overlays="false"></script>
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
@@ -47,6 +47,9 @@
 <a href="amni-learn.html">AMNI-LEARN</a>
 </div>
 </div>
+<a href="research.html">RESEARCH</a>
+<a href="about.html">ABOUT</a>
+<a href="faq.html">FAQ</a>
 <a href="privacy.html">PRIVACY</a>
 </div>
 <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
@@ -175,8 +178,25 @@
 <a href="explore/" class="btn btn-primary">LAUNCH EXPLORER</a>
 </div>
 </section>
+<section>
+<h2>UNDERSTANDING PROCEDURAL GALAXY GENERATION</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
+<p>Procedural generation is a technique where content is created algorithmically rather than manually. In Amni-Explore, the entire galaxy &mdash; 80,000 particles forming spiral arms, a central bar, a galactic bulge, and a diffuse halo &mdash; is generated from mathematical functions compiled to WebAssembly.</p>
+<p style="margin-top:1.2rem"><strong style="color:var(--text)">Spiral arm formation</strong> uses logarithmic spiral equations with added Gaussian noise to create the characteristic shape of barred spiral galaxies (similar to the Milky Way&rsquo;s SBbc classification). Each arm has a pitch angle, width gradient, and star density profile that controls how particles distribute from the core outward.</p>
+<p style="margin-top:1.2rem"><strong style="color:var(--text)">Star classification</strong> follows the Hertzsprung-Russell diagram &mdash; hot blue stars (O/B type) appear in arm regions where star formation is active, while cooler orange and red stars (K/M type) populate the bulge and inter-arm regions. The color temperature mapping uses real astrophysical blackbody radiation curves.</p>
+<p style="margin-top:1.2rem"><strong style="color:var(--text)">Planet textures</strong> use fractional Brownian motion (fBm), a layered noise algorithm where multiple octaves of Perlin-like noise are summed at decreasing amplitudes and increasing frequencies. The result produces realistic-looking terrain, gas cloud bands, lava cracks, and ice shelf patterns &mdash; all computed per-pixel in the WASM module without any pre-baked texture files.</p>
+<p style="margin-top:1.2rem"><strong style="color:var(--text)">NASA integration</strong> bridges procedural and real data by querying the Exoplanet Archive&rsquo;s Table Access Protocol (TAP) API for confirmed planets. The API returns standardized parameters (stellar effective temperature, planet radius in Jupiter radii, orbital semi-major axis) that Amni-Explore maps onto the same rendering pipeline as procedural systems. This lets you compare real exoplanets against procedurally generated worlds using the NASA/Calc filter toggle.</p>
+</div>
+</section>
+<div style="max-width:800px;margin:2rem auto;text-align:center">
+<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8345487545441889" data-ad-slot="1720203631" data-ad-format="auto" data-full-width-responsive="true"></ins>
+<script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>
+</div>
 <footer>
 <div class="footer-links">
+<a href="about.html">ABOUT</a>
+<a href="faq.html">FAQ</a>
+<a href="research.html">RESEARCH</a>
 <a href="privacy.html">PRIVACY</a>
 <a href="terms.html">TERMS</a>
 <a href="/">AMNI-SCIENT</a>

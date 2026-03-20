@@ -22,7 +22,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8345487545441889" crossorigin="anonymous"></script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8345487545441889" crossorigin="anonymous" data-overlays="false"></script>
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
@@ -47,6 +47,9 @@
 </div>
 </div>
 </div>
+<a href="research.html">RESEARCH</a>
+<a href="about.html">ABOUT</a>
+<a href="faq.html">FAQ</a>
 <a href="privacy.html">PRIVACY</a>
 </div>
 <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
@@ -184,8 +187,24 @@
 <div class="attribution">
 Haven is created and maintained by <a href="https://github.com/ancsemi" target="_blank" rel="noopener">ANCSemi</a> &bull; <a href="https://github.com/ancsemi/Haven" target="_blank" rel="noopener">GitHub</a> &bull; <a href="https://ancsemi.github.io/Haven/" target="_blank" rel="noopener">Website</a> &bull; <a href="https://github.com/ancsemi/Haven/blob/main/LICENSE" target="_blank" rel="noopener">MIT-NC License</a>
 </div>
+<section>
+<h2>SELF-HOSTED MESSAGING EXPLAINED</h2>
+<div style="max-width:800px;margin:0 auto;text-align:left">
+<p><strong>Self-hosted messaging</strong> means running your own server infrastructure rather than relying on a third-party service. When you use platforms like Discord, Slack, or WhatsApp, your messages pass through (and are stored on) servers controlled by those companies. With a self-hosted approach, you control where data lives, who can access it, and how long it's retained. This is the architecture Haven is built around.</p>
+<p><strong>Socket.IO and real-time communication:</strong> Haven uses Socket.IO, a library built on top of WebSockets, for real-time bidirectional communication. Unlike traditional HTTP request-response cycles, WebSockets maintain a persistent connection between client and server. This enables instant message delivery without polling. Socket.IO adds automatic reconnection, room-based broadcasting, and fallback to HTTP long-polling when WebSocket connections aren't available&mdash;making it resilient across different network conditions.</p>
+<p><strong>Push notifications and FCM:</strong> Mobile operating systems aggressively manage battery by suspending background apps. Firebase Cloud Messaging (FCM) solves this by maintaining a single persistent connection per device that all apps share. When a Haven server needs to notify an offline user, it sends a lightweight signal through FCM that wakes the app just enough to display a notification&mdash;no background service drain required. The actual message content can be fetched on-demand when the user opens the app, keeping sensitive data off Google's infrastructure.</p>
+<p><strong>Federation vs. centralization:</strong> Haven occupies a middle ground between fully centralized platforms (one company controls everything) and federated protocols like Matrix or XMPP (servers interoperate across domains). Each Haven instance is independent, giving server operators complete sovereignty. This makes it ideal for families, small teams, and communities who want messaging without external dependencies or data harvesting.</p>
+</div>
+</section>
+<div style="max-width:800px;margin:2rem auto;text-align:center">
+<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8345487545441889" data-ad-slot="1720203631" data-ad-format="auto" data-full-width-responsive="true"></ins>
+<script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>
+</div>
 <footer>
 <div class="footer-links">
+<a href="about.html">ABOUT</a>
+<a href="faq.html">FAQ</a>
+<a href="research.html">RESEARCH</a>
 <a href="privacy-haven.html">PRIVACY</a>
 <a href="terms.html">TERMS</a>
 <a href="/">AMNI-SCIENT</a>

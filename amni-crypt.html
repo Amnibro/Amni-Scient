@@ -22,7 +22,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8345487545441889" crossorigin="anonymous"></script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8345487545441889" crossorigin="anonymous" data-overlays="false"></script>
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
@@ -47,6 +47,9 @@
 </div>
 </div>
 </div>
+<a href="research.html">RESEARCH</a>
+<a href="about.html">ABOUT</a>
+<a href="faq.html">FAQ</a>
 <a href="privacy.html">PRIVACY</a>
 </div>
 <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
@@ -192,8 +195,24 @@
 </div>
 </div>
 </section>
+<section>
+<h2>UNDERSTANDING FILE ENCRYPTION</h2>
+<div style="max-width:800px;margin:0 auto;text-align:left">
+<p>File encryption transforms readable data into ciphertext using a mathematical algorithm and a secret key. Modern ciphers fall into two broad families: <strong>Feistel networks</strong> (like DES and Blowfish) split data into halves and apply round functions iteratively, while <strong>substitution-permutation networks</strong> (SPN), used by AES and Amni-Crypt's proprietary cipher, apply layers of substitution (S-boxes) and permutation (P-boxes) in sequence. SPN designs offer excellent diffusion&mdash;changing a single input bit cascades across the entire output block within a few rounds.</p>
+<p><strong>Key derivation</strong> is equally critical. Rather than using a passphrase directly, algorithms like PBKDF2 or Argon2 stretch the passphrase through thousands of iterations, combining it with a random salt. This makes brute-force attacks computationally expensive even when the attacker knows the algorithm. Amni-Crypt applies high-iteration key derivation so that each encryption operation produces a unique derived key, even from the same passphrase.</p>
+<p><strong>Why file-level encryption matters:</strong> Full-disk encryption protects data at rest when a device is powered off, but it doesn't help if an attacker gains access while the system is running. File-level encryption ensures each individual file remains protected independently. This is particularly important for cloud storage, USB drives, and file sharing&mdash;the encrypted file can travel across untrusted channels while remaining unreadable without the correct passphrase.</p>
+<p>The <strong>Shadow Protocol</strong> in Amni-Crypt adds an additional layer: a secondary passphrase that decrypts to plausible but different content. This is a form of <em>deniable encryption</em>, a concept explored in academic cryptography where the existence of a hidden payload cannot be proven without the correct key. It addresses scenarios where users may be compelled to reveal their passphrase&mdash;the shadow layer provides a credible alternative decryption result.</p>
+</div>
+</section>
+<div style="max-width:800px;margin:2rem auto;text-align:center">
+<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8345487545441889" data-ad-slot="1720203631" data-ad-format="auto" data-full-width-responsive="true"></ins>
+<script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>
+</div>
 <footer>
 <div class="footer-links">
+<a href="about.html">ABOUT</a>
+<a href="faq.html">FAQ</a>
+<a href="research.html">RESEARCH</a>
 <a href="privacy-crypt.html">PRIVACY</a>
 <a href="terms.html">TERMS</a>
 <a href="/">AMNI-SCIENT</a>

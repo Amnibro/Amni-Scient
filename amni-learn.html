@@ -46,6 +46,9 @@
 <a href="amni-learn.html" class="active">AMNI-LEARN</a>
 </div>
 </div>
+<a href="research.html">RESEARCH</a>
+<a href="about.html">ABOUT</a>
+<a href="faq.html">FAQ</a>
 <a href="privacy.html">PRIVACY</a>
 </div>
 <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
@@ -129,8 +132,20 @@
 <a href="learn/?level=5" class="btn btn-primary" style="background:#9b59b6;color:var(--bg);box-shadow:0 0 10px #9b59b6;">HIGH SCHOOL / STEM</a>
 </div>
 </section>
+<section>
+<h2>EARLY EDUCATION DESIGN PHILOSOPHY</h2>
+<div style="max-width:800px;margin:0 auto;text-align:left">
+<p><strong>Scaffolded learning</strong> is a pedagogical approach where content is structured in progressive difficulty tiers, each building on skills mastered in the previous level. Amni-Learn implements five tiers (Pre-K through High School STEM) that adapt content complexity&mdash;from basic shape and color recognition to algebraic concepts and scientific notation. This mirrors the Zone of Proximal Development theory proposed by Vygotsky: learners progress most effectively when challenges sit just beyond their current ability, with appropriate support structures in place.</p>
+<p><strong>Canvas-based interaction</strong> offers advantages over traditional DOM-based educational apps. The HTML5 Canvas API provides a pixel-level drawing surface where touch interactions map directly to visual feedback. For young learners, this means drag-and-drop exercises, drawing recognition, and animated rewards can run at 60fps without the layout reflow overhead that plagues complex DOM trees. Amni-Learn's engine renders all interactive elements on canvas while using the DOM only for UI chrome, achieving responsive touch input even on budget tablets commonly used in educational settings.</p>
+<p><strong>Privacy-by-design for children</strong> is not optional&mdash;regulations like COPPA (Children's Online Privacy Protection Act) in the US and the Age Appropriate Design Code in the UK impose strict requirements on digital products targeting children under 13. Amni-Learn collects zero personal data: no accounts, no cookies, no analytics, no ad tracking. The application loads once and runs entirely client-side. This architecture eliminates compliance complexity while providing the strongest possible privacy guarantee&mdash;data that doesn't exist cannot be breached.</p>
+<p><strong>Offline capability</strong> matters for educational tools because reliable internet access is not universal, especially in the school and home environments where learning apps are most used. After the initial page load, Amni-Learn's assets are cached locally, allowing continued use without a network connection. This design choice prioritizes accessibility and ensures learning isn't interrupted by connectivity issues.</p>
+</div>
+</section>
 <footer>
 <div class="footer-links">
+<a href="about.html">ABOUT</a>
+<a href="faq.html">FAQ</a>
+<a href="research.html">RESEARCH</a>
 <a href="privacy.html">PRIVACY</a>
 <a href="terms.html">TERMS</a>
 <a href="/">AMNI-SCIENT</a>
