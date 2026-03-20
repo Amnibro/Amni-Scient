@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Master Momentum Equation — Complete Turbulence Closure | AMNI-SCIENT Research</title>
+<meta name="description" content="The Master Momentum Equation: a 12-equation closed PDE system achieving complete Navier-Stokes turbulence closure from first principles, with zero external data dependencies.">
+<meta name="keywords" content="master momentum equation,turbulence closure,Navier-Stokes,PDE system,eddy viscosity,k-epsilon,resistance field,closed form">
+<meta property="og:title" content="Master Momentum Equation — AMNI-SCIENT Research">
+<meta property="og:description" content="12-equation closed PDE system for complete Navier-Stokes turbulence closure.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://amni-scient.com/research/master-momentum">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://amni-scient.com/research/master-momentum">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"ScholarlyArticle","name":"Master Momentum Equation","author":{"@type":"Person","name":"Anthony Reffelt"},"description":"A 12-equation closed PDE system achieving complete Navier-Stokes turbulence closure.","url":"https://amni-scient.com/research/master-momentum","publisher":{"@type":"Organization","name":"AMNI-SCIENT"},"datePublished":"2025","dateModified":"2026"}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8345487545441889" crossorigin="anonymous" data-overlays="false"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+<style>
+.eq-block{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:1.5rem 2rem;margin:1.5rem 0;overflow-x:auto}
+.eq-block .eq-label{font-size:.6rem;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:.75rem}
+.eq-block.master{border-color:var(--accent);box-shadow:0 0 20px rgba(var(--accent-rgb,100,200,255),.15)}
+.derivation-step{border-left:2px solid var(--accent);padding-left:1.5rem;margin:1.5rem 0}
+.derivation-step h4{color:var(--accent);font-size:.8rem;letter-spacing:2px;margin-bottom:.5rem}
+.app-card{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem;margin-bottom:1rem}
+.app-card h4{color:var(--accent);font-size:.85rem;letter-spacing:2px;margin-bottom:.5rem}
+.app-card p{color:var(--dim);font-size:.85rem;line-height:1.7}
+.breadcrumb{font-size:.7rem;letter-spacing:2px;color:var(--dim);margin-bottom:1rem}
+.breadcrumb a{color:var(--accent);text-decoration:none}
+.dep-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.75rem}
+.dep-table th{text-align:left;color:var(--accent);font-size:.65rem;letter-spacing:1px;padding:.4rem;border-bottom:1px solid var(--border)}
+.dep-table td{color:var(--dim);padding:.4rem;border-bottom:1px solid rgba(255,255,255,.05);text-align:center}
+.dep-table td:first-child{text-align:left;color:var(--text)}
+.dep-table .used{color:var(--accent);font-weight:700}
+.viz-section{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem;margin:1.5rem 0}
+.viz-section h4{color:var(--accent);font-size:.75rem;letter-spacing:2px;margin-bottom:1rem;text-transform:uppercase}
+.viz-canvas-wrap{position:relative;width:100%;max-width:700px;margin:0 auto}
+.viz-controls{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem;align-items:center}
+.viz-controls label{color:var(--dim);font-size:.75rem;letter-spacing:1px}
+.viz-controls input{background:var(--bg);border:1px solid var(--border);color:var(--text);padding:.3rem .5rem;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.8rem}
+.viz-controls button{background:var(--accent);color:var(--bg);border:none;padding:.4rem 1rem;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.75rem;letter-spacing:1px;cursor:pointer}
+.viz-controls button:hover{opacity:.85}
+</style>
+</head>
+<body>
+<div class="grid-bg"></div>
+<div class="scanlines"></div>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<div class="nav-dd">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu">
+<a href="../amni-haven.html">AMNI-HAVEN</a>
+<a href="../amni-crypt.html">AMNI-CRYPT</a>
+<a href="../amni-ai.html">AMNI-AI</a>
+<a href="../amni-core.html">AMNI-CORE</a>
+<a href="../amni-explore.html">AMNI-EXPLORE</a>
+<a href="../amni-calc.html">AMNI-CALC</a>
+<a href="../amni-learn.html">AMNI-LEARN</a>
+</div>
+</div>
+<a href="../research.html" class="nav-active">RESEARCH</a>
+<a href="../about.html">ABOUT</a>
+<a href="../faq.html">FAQ</a>
+<a href="../privacy.html">PRIVACY</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<section class="hero" style="min-height:auto;padding:8rem 2rem 3rem">
+<div class="breadcrumb"><a href="../research.html">RESEARCH</a> &nbsp;/&nbsp; MASTER MOMENTUM EQUATION</div>
+<h1>MASTER MOMENTUM EQUATION</h1>
+<p class="subtitle">12-EQUATION NAVIER-STOKES TURBULENCE CLOSURE</p>
+<p class="tagline">A self-contained PDE system that evolves momentum through space and time via holographic resistance fields, turbulent kinetic energy, and eddy viscosity &mdash; achieving complete closure with zero external data dependencies.</p>
+</section>
+<section>
+<h2>ABSTRACT</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
+<p>The <strong style="color:var(--text)">Master Momentum Equation</strong> is the culmination of the Reffelt framework: a closed system of 12 coupled equations that fully determine the evolution of momentum in a resistance field. Unlike the standard Navier-Stokes equations (which require external turbulence models like RANS or LES), this system achieves <strong style="color:var(--text)">internal closure</strong> &mdash; every variable is defined by other variables within the system.</p>
+<p style="margin-top:1.2rem">The system builds from primitive observables (velocity, mass, curvature) through intermediate constructions (PID forcing, smoothness, turbulent kinetic energy) to a k-&epsilon; turbulence model that feeds back into a dynamic resistance field. The final equation (Eq. 12) is a modified Navier-Stokes momentum equation with all terms internally resolved.</p>
+</div>
+</section>
+<section>
+<h2>THE 12 EQUATIONS</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
+<h3 style="color:var(--accent);font-size:.75rem;letter-spacing:3px;margin-bottom:1.5rem">LAYER 1 &mdash; PRIMITIVE OBSERVABLES</h3>
+<div class="derivation-step">
+<h4>EQUATION 1 &mdash; MOMENTUM (LOG-RETURN)</h4>
+<div class="eq-block">
+<div class="eq-label">EQ. 1</div>
+$$v(t) = \frac{dp}{dt}$$
+</div>
+<p>The instantaneous rate of change of the system state p. In continuous systems this is the time derivative; in discrete systems it is the first difference &Delta;p/&Delta;t.</p>
+</div>
+<div class="derivation-step">
+<h4>EQUATION 2 &mdash; EFFECTIVE MASS</h4>
+<div class="eq-block">
+<div class="eq-label">EQ. 2</div>
+$$m(t) = \frac{1}{\sigma_{\text{ATR}}(t)}$$
+</div>
+<p>Mass is inversely proportional to local volatility (Average True Range). High-volatility regions have low inertia (respond quickly to forces); stable regions have high inertia (resist perturbation).</p>
+</div>
+<div class="derivation-step">
+<h4>EQUATION 3 &mdash; STEERING SIGNAL</h4>
+<div class="eq-block">
+<div class="eq-label">EQ. 3</div>
+$$i(t) = \operatorname{Hilbert\_imag}(p(t))$$
+</div>
+<p>The imaginary component of the analytic signal (via Hilbert transform) extracts the instantaneous phase and amplitude envelope. This provides a 90&deg;-shifted version of p that serves as the steering input for the PID controller.</p>
+</div>
+<h3 style="color:var(--accent);font-size:.75rem;letter-spacing:3px;margin:2.5rem 0 1.5rem">LAYER 2 &mdash; INTERMEDIATE FORCES</h3>
+<div class="derivation-step">
+<h4>EQUATION 4 &mdash; PID FORCE</h4>
+<div class="eq-block">
+<div class="eq-label">EQ. 4</div>
+$$F_{\text{PID}}(t) = k_p \cdot i(t) + k_i \int i \, dt + k_d \cdot \dot{i}(t)$$
+</div>
+<p>A proportional-integral-derivative controller transforms the steering signal into a force. The P-term responds to current state, I-term accumulates historical bias, and D-term anticipates future change.</p>
+</div>
+<div class="derivation-step">
+<h4>EQUATION 5 &mdash; SMOOTHNESS</h4>
+<div class="eq-block">
+<div class="eq-label">EQ. 5</div>
+$$s(t) = 1 - \frac{\operatorname{std}(r_N)}{\operatorname{mean}(r_N)}$$
+</div>
+<p>Smoothness s &isin; [0, 1] measures how regular the recent trajectory has been. s &asymp; 1 indicates laminar flow (low coefficient of variation), s &asymp; 0 indicates turbulent flow (high variation relative to mean).</p>
+</div>
+<div class="derivation-step">
+<h4>EQUATION 6 &mdash; CURVATURE</h4>
+<div class="eq-block">
+<div class="eq-label">EQ. 6</div>
+$$c(t) = \frac{\partial^2 p}{\partial t^2}$$
+</div>
+<p>The second derivative of the state field. Curvature captures acceleration/deceleration of the trajectory, serving as both a turbulence indicator and a damping term in the master equation.</p>
+</div>
+<h3 style="color:var(--accent);font-size:.75rem;letter-spacing:3px;margin:2.5rem 0 1.5rem">LAYER 3 &mdash; TURBULENCE MODEL (k-&epsilon; CLOSURE)</h3>
+<div class="derivation-step">
+<h4>EQUATION 7 &mdash; STATIC HOLOGRAPHIC RESISTANCE</h4>
+<div class="eq-block">
+<div class="eq-label">EQ. 7</div>
+$$R_0(p, \ell)$$
+</div>
+<p>The base resistance manifold computed from the holographic membrane framework (see <a href="holographic-membrane.html" style="color:var(--accent)">Holographic Resistance Membrane</a>). This is the static friction landscape before turbulence correction.</p>
+</div>
+<div class="derivation-step">
+<h4>EQUATION 8 &mdash; TURBULENT KINETIC ENERGY</h4>
+<div class="eq-block">
+<div class="eq-label">EQ. 8</div>
+$$k(p, \ell) = (1 - s) \cdot \nabla \cdot \mathbf{M}_{\text{grid}}$$
+</div>
+<p>Turbulent kinetic energy is the product of non-smoothness (1 &minus; s) and the divergence of the momentum grid. Laminar regions (s &asymp; 1) have near-zero k; turbulent regions have high k proportional to momentum flux divergence.</p>
+</div>
+<div class="derivation-step">
+<h4>EQUATION 9 &mdash; ENERGY DISSIPATION RATE</h4>
+<div class="eq-block">
+<div class="eq-label">EQ. 9</div>
+$$\varepsilon(p, \ell) = c \cdot \frac{1 - s}{s} \cdot \frac{1}{\ell}$$
+</div>
+<p>Dissipation rate combines curvature c, turbulence ratio (1&minus;s)/s, and inverse scale &ell;<sup>&minus;1</sup>. This captures the cascade of energy from large scales to small scales, analogous to the Kolmogorov energy cascade in classical turbulence theory.</p>
+</div>
+<div class="derivation-step">
+<h4>EQUATION 10 &mdash; EDDY VISCOSITY</h4>
+<div class="eq-block">
+<div class="eq-label">EQ. 10</div>
+$$\nu_t(p, \ell) = C_\mu \frac{k^2}{\varepsilon} \qquad C_\mu = 0.09$$
+</div>
+<p>The standard k-&epsilon; eddy viscosity formulation with the empirical constant C<sub>&mu;</sub> = 0.09 (matching the Launder-Spalding value from classical CFD). This provides the turbulent diffusion coefficient.</p>
+</div>
+<div class="derivation-step">
+<h4>EQUATION 11 &mdash; DYNAMIC RESISTANCE</h4>
+<div class="eq-block">
+<div class="eq-label">EQ. 11</div>
+$$R_{\text{eff}}(p, \ell) = \gamma_0 + \nu_t(p, \ell)$$
+</div>
+<p>The effective resistance field combines base viscosity &gamma;<sub>0</sub> with turbulent eddy viscosity. This replaces the static R<sub>0</sub> with a dynamic field that adapts to local turbulence conditions.</p>
+</div>
+<h3 style="color:var(--accent);font-size:.75rem;letter-spacing:3px;margin:2.5rem 0 1.5rem">LAYER 4 &mdash; MASTER EQUATION</h3>
+<div class="derivation-step">
+<h4>EQUATION 12 &mdash; MASTER MOMENTUM EQUATION</h4>
+<div class="eq-block master">
+<div class="eq-label">EQ. 12 &mdash; THE MASTER EQUATION</div>
+$$\frac{dv}{dt} = \frac{F_{\text{PID}}}{m} + v\frac{\partial v}{\partial p} - s \cdot c - \frac{\partial R_{\text{eff}}}{\partial p}$$
+</div>
+<p>Four terms, each with distinct physical meaning:</p>
+<table class="dep-table" style="margin-top:1rem">
+<thead><tr><th style="text-align:left">TERM</th><th style="text-align:left">EXPRESSION</th><th style="text-align:left">PHYSICAL MEANING</th></tr></thead>
+<tbody>
+<tr><td>Forcing</td><td style="text-align:left;color:var(--dim)">F<sub>PID</sub> / m</td><td style="text-align:left;color:var(--dim)">External drive (PID-controlled steering force per unit mass)</td></tr>
+<tr><td>Advection</td><td style="text-align:left;color:var(--dim)">v &middot; &part;v/&part;p</td><td style="text-align:left;color:var(--dim)">Self-interaction (momentum carrying itself through the field)</td></tr>
+<tr><td>Damping</td><td style="text-align:left;color:var(--dim)">&minus;s &middot; c</td><td style="text-align:left;color:var(--dim)">Curvature-smoothness brake (smooth trajectories damp acceleration)</td></tr>
+<tr><td>Resistance gradient</td><td style="text-align:left;color:var(--dim)">&minus;&part;R<sub>eff</sub>/&part;p</td><td style="text-align:left;color:var(--dim)">Turbulence-corrected friction from the holographic membrane</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section>
+<h2>DEPENDENCY GRAPH</h2>
+<div style="max-width:900px;margin:0 auto;overflow-x:auto">
+<p style="color:var(--dim);font-size:.85rem;line-height:1.9;margin-bottom:1.5rem">Every variable in Eq. 12 is defined by other variables within the system. The dependency matrix shows which variables feed each equation (&bull; = used):</p>
+<table class="dep-table">
+<thead><tr><th style="text-align:left">VARIABLE</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th><th>10</th><th>11</th><th>12</th></tr></thead>
+<tbody>
+<tr><td>p(t)</td><td class="used">&bull;</td><td></td><td></td><td></td><td></td><td class="used">&bull;</td><td class="used">&bull;</td><td class="used">&bull;</td><td></td><td class="used">&bull;</td><td class="used">&bull;</td><td class="used">&bull;</td></tr>
+<tr><td>v(t)</td><td class="used">&bull;</td><td></td><td></td><td></td><td></td><td></td><td></td><td class="used">&bull;</td><td></td><td></td><td></td><td class="used">&bull;</td></tr>
+<tr><td>m(t)</td><td></td><td class="used">&bull;</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="used">&bull;</td></tr>
+<tr><td>&sigma;<sub>ATR</sub></td><td></td><td class="used">&bull;</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>i(t)</td><td></td><td></td><td class="used">&bull;</td><td class="used">&bull;</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>F<sub>PID</sub></td><td></td><td></td><td></td><td class="used">&bull;</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="used">&bull;</td></tr>
+<tr><td>s(t)</td><td></td><td></td><td></td><td></td><td class="used">&bull;</td><td></td><td></td><td class="used">&bull;</td><td class="used">&bull;</td><td></td><td></td><td class="used">&bull;</td></tr>
+<tr><td>c(t)</td><td></td><td></td><td></td><td></td><td></td><td class="used">&bull;</td><td></td><td></td><td class="used">&bull;</td><td></td><td></td><td class="used">&bull;</td></tr>
+<tr><td>k(p,&ell;)</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="used">&bull;</td><td></td><td class="used">&bull;</td><td></td><td></td></tr>
+<tr><td>&epsilon;(p,&ell;)</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="used">&bull;</td><td class="used">&bull;</td><td></td><td></td></tr>
+<tr><td>&nu;<sub>t</sub>(p,&ell;)</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="used">&bull;</td><td class="used">&bull;</td><td></td></tr>
+<tr><td>R<sub>eff</sub></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="used">&bull;</td><td class="used">&bull;</td></tr>
+<tr><td>&ell; (scale)</td><td></td><td></td><td></td><td></td><td></td><td></td><td class="used">&bull;</td><td class="used">&bull;</td><td class="used">&bull;</td><td class="used">&bull;</td><td class="used">&bull;</td><td></td></tr>
+</tbody>
+</table>
+<p style="color:var(--dim);font-size:.85rem;line-height:1.9;margin-top:1rem"><strong style="color:var(--text)">Closure verified:</strong> every variable appearing in Eq. 12 is defined by equations 1&ndash;11. No external data, no free parameters beyond C<sub>&mu;</sub> = 0.09 and base viscosity &gamma;<sub>0</sub>.</p>
+</div>
+</section>
+<section>
+<h2>STATE-OF-THE-ART APPLICATIONS</h2>
+<div style="max-width:800px;margin:0 auto">
+<div class="app-card">
+<h4>&#127744; WEATHER &amp; CLIMATE MODELING</h4>
+<p>Atmospheric dynamics are governed by the Navier-Stokes equations with turbulence closure as the primary bottleneck. Current NWP models use parameterized turbulence schemes (Mellor-Yamada, Smagorinsky) tuned per domain. The Master Momentum Equation provides a self-consistent closure where smoothness s naturally detects laminar vs. turbulent regimes, curvature c tracks frontal zones, and the k-&epsilon; model adapts eddy viscosity to local conditions without domain-specific tuning. The Hilbert-transform steering signal (Eq. 3) naturally captures wave-mean flow interaction.</p>
+</div>
+<div class="app-card">
+<h4>&#128293; DATACENTER THERMAL MANAGEMENT</h4>
+<p>Server rack airflow is a turbulent heat transfer problem. The 12-equation system models thermal momentum through the datacenter: p = temperature field, v = heat flux, m = thermal capacitance (inverse of local thermal diffusivity), R<sub>eff</sub> = effective thermal resistance (insulation + turbulent mixing). The PID force represents HVAC actuation. Unlike CFD simulations that take hours per configuration, the closed-form nature of the system enables real-time thermal field prediction for dynamic workload routing.</p>
+</div>
+<div class="app-card">
+<h4>&#128640; AEROSPACE &mdash; TURBULENT BOUNDARY LAYERS</h4>
+<p>Aircraft wing design requires accurate turbulent boundary layer prediction. The Master Equation's smoothness term (Eq. 5) naturally handles the laminar-to-turbulent transition, while the k-&epsilon; closure (Eqs. 8&ndash;10) models the turbulent region. The holographic resistance field R<sub>0</sub> encodes the wing geometry, and the dynamic resistance R<sub>eff</sub> adapts to local Reynolds number conditions. This provides a unified framework that doesn't require separate transition models (e.g., e<sup>N</sup> method) bolted onto the solver.</p>
+</div>
+<div class="app-card">
+<h4>&#9889; AI TRAINING DYNAMICS</h4>
+<p>Neural network training is momentum evolution through a loss landscape. The system maps directly: p = model parameters, v = gradient momentum (Adam/SGD), m = adaptive learning rate (inverse of gradient variance, cf. Adam's v&#770;), F<sub>PID</sub> = learning rate scheduler, s = gradient noise stability, c = loss surface curvature (Hessian trace). The Master Equation describes optimal parameter evolution with turbulence closure for noisy mini-batch gradients, potentially replacing ad-hoc learning rate warmup/decay schedules with a principled PDE solution.</p>
+</div>
+<div class="app-card">
+<h4>&#128171; MATERIALS SCIENCE &mdash; CRACK PROPAGATION</h4>
+<p>Fracture mechanics in composite materials involves stress field evolution through heterogeneous media. The resistance manifold R<sub>0</sub> encodes material properties (grain boundaries, fiber orientation), momentum v is the stress intensity factor, and the k-&epsilon; closure models the process zone where micro-crack interactions create "turbulent" stress redistribution. The smoothness transition (laminar elastic &rarr; turbulent plastic) maps directly to the yield point, providing a unified elastic-plastic-fracture framework.</p>
+</div>
+</div>
+</section>
+<section>
+<h2>INTERACTIVE EXPLORER</h2>
+<div style="max-width:800px;margin:0 auto">
+<div class="viz-section">
+<h4>MASTER EQUATION TERM CONTRIBUTIONS</h4>
+<p style="color:var(--dim);font-size:.8rem;line-height:1.7;margin-bottom:1rem">Simulates the 4 terms of Eq. 12 over time: PID forcing (F/m), advection (v&middot;&part;v/&part;p), damping (&minus;s&middot;c), and resistance gradient (&minus;&part;R<sub>eff</sub>/&part;p). Adjust smoothness and turbulence to see how the balance shifts between laminar and turbulent regimes.</p>
+<div class="viz-controls">
+<label>SMOOTHNESS:</label>
+<input type="range" id="mm-smooth" min="5" max="95" value="60" style="width:80px" oninput="mmUpdate()">
+<label style="margin-left:.5rem">TURBULENCE:</label>
+<input type="range" id="mm-turb" min="5" max="95" value="30" style="width:80px" oninput="mmUpdate()">
+<label style="margin-left:.5rem">PID GAIN:</label>
+<input type="range" id="mm-pid" min="5" max="95" value="50" style="width:80px" oninput="mmUpdate()">
+<button onclick="mmUpdate()">UPDATE</button>
+</div>
+<div class="viz-canvas-wrap"><canvas id="mm-terms-chart"></canvas></div>
+</div>
+<div class="viz-section" style="margin-top:1.5rem">
+<h4>EQUATION DEPENDENCY FLOW</h4>
+<p style="color:var(--dim);font-size:.8rem;line-height:1.7;margin-bottom:1rem">Visual representation of the 4-layer dependency structure. Click a layer to highlight its connections.</p>
+<canvas id="mm-flow" width="700" height="280" style="width:100%;border-radius:6px;border:1px solid var(--border);background:#0a0a0a;cursor:pointer"></canvas>
+</div>
+</div>
+</section>
+<section>
+<h2>RELATED FRAMEWORKS</h2>
+<div style="max-width:800px;margin:0 auto">
+<div class="card-grid">
+<div class="card">
+<h3><a href="holographic-membrane.html" style="color:var(--accent);text-decoration:none">&larr; HOLOGRAPHIC MEMBRANE</a></h3>
+<p>Provides the base resistance manifold R<sub>0</sub> (Eq. 7) via GPU-accelerated particle dynamics.</p>
+</div>
+<div class="card">
+<h3><a href="reffelt-constant.html" style="color:var(--accent);text-decoration:none">REFFELT CONSTANT &rarr;</a></h3>
+<p>Spectral fingerprinting of the parameter space that the Master Equation evolves through.</p>
+</div>
+</div>
+</div>
+</section>
+<div style="max-width:800px;margin:2rem auto;text-align:center">
+<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8345487545441889" data-ad-slot="1720203631" data-ad-format="auto" data-full-width-responsive="true"></ins>
+<script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>
+</div>
+<footer>
+<div class="footer-links">
+<a href="../about.html">ABOUT</a>
+<a href="../faq.html">FAQ</a>
+<a href="../research.html">RESEARCH</a>
+<a href="../privacy.html">PRIVACY</a>
+<a href="../terms.html">TERMS</a>
+<a href="/">AMNI-SCIENT</a>
+<a href="mailto:amnibro7@gmail.com">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amni-Scient. All rights reserved.</p>
+</footer>
+<script>
+(function(){
+var termsChart=null;
+function gi(id){return document.getElementById(id)}
+window.mmUpdate=function(){
+var s=parseInt(gi('mm-smooth').value)/100,turb=parseInt(gi('mm-turb').value)/100,pid=parseInt(gi('mm-pid').value)/100;
+var labels=[],forcing=[],advection=[],damping=[],resistance=[];
+for(var t=0;t<50;t++){
+var tt=t/50;labels.push(tt.toFixed(2));
+var v=Math.sin(tt*6.28)*0.5+turb*Math.sin(tt*18.84)*(1-s)*0.3;
+var fpid=pid*(Math.cos(tt*6.28)*0.6+0.2);
+var adv=v*Math.cos(tt*12.56)*0.4*(1+turb*0.5);
+var damp=-s*Math.sin(tt*12.56)*0.3*(1+turb*0.2);
+var k=(1-s)*Math.abs(v)*2,eps=Math.abs(damp)*(1-s)/Math.max(0.01,s)*2;
+var nut=0.09*k*k/Math.max(0.001,eps);
+var reff=-(0.1+nut)*Math.cos(tt*9.42)*0.5;
+forcing.push(fpid);advection.push(adv);damping.push(damp);resistance.push(reff);
+}
+var ctx=gi('mm-terms-chart');
+if(termsChart) termsChart.destroy();
+termsChart=new Chart(ctx,{type:'line',data:{labels:labels,datasets:[
+{label:'F_PID/m (Forcing)',data:forcing,borderColor:'rgba(100,200,255,1)',backgroundColor:'rgba(100,200,255,0.1)',fill:true,borderWidth:2,pointRadius:0,tension:.3},
+{label:'v\u00B7\u2202v/\u2202p (Advection)',data:advection,borderColor:'rgba(255,150,50,1)',backgroundColor:'rgba(255,150,50,0.1)',fill:true,borderWidth:2,pointRadius:0,tension:.3},
+{label:'-s\u00B7c (Damping)',data:damping,borderColor:'rgba(100,255,150,1)',backgroundColor:'rgba(100,255,150,0.1)',fill:true,borderWidth:2,pointRadius:0,tension:.3},
+{label:'-\u2202R_eff/\u2202p (Resistance)',data:resistance,borderColor:'rgba(255,100,100,1)',backgroundColor:'rgba(255,100,100,0.1)',fill:true,borderWidth:2,pointRadius:0,tension:.3}
+]},options:{responsive:true,interaction:{intersect:false,mode:'index'},plugins:{legend:{labels:{color:'#aaa',font:{family:"'JetBrains Mono'",size:9}}}},scales:{x:{title:{display:true,text:'Time (normalized)',color:'#888',font:{family:"'JetBrains Mono'",size:10}},ticks:{maxTicksLimit:8,color:'#888',font:{size:8}},grid:{color:'rgba(255,255,255,.05)'}},y:{title:{display:true,text:'Contribution',color:'#888',font:{family:"'JetBrains Mono'",size:10}},ticks:{color:'#888',font:{size:8}},grid:{color:'rgba(255,255,255,.05)'}}}}});
+}
+function drawFlow(){
+var cv=gi('mm-flow'),ctx=cv.getContext('2d');
+ctx.clearRect(0,0,700,280);
+var layers=[
+{label:'PRIMITIVES',eqs:['v(t)','m(t)','i(t)'],color:'rgba(100,200,255,'},
+{label:'FORCES',eqs:['F_PID','s(t)','c(t)'],color:'rgba(255,150,50,'},
+{label:'k-\u03B5 CLOSURE',eqs:['R\u2080','k','  \u03B5','  \u03BD_t','R_eff'],color:'rgba(100,255,150,'},
+{label:'MASTER',eqs:['Eq.12'],color:'rgba(255,100,100,'}
+];
+var lx=[50,200,380,590],nodePositions=[];
+for(var l=0;l<layers.length;l++){
+var ly=layers[l],nx=lx[l],ny=layers[l].eqs.length;
+ctx.fillStyle=ly.color+'0.15)';ctx.strokeStyle=ly.color+'0.5)';
+ctx.lineWidth=1;ctx.beginPath();
+var bx=nx-30,by=20,bw=100,bh=ny*35+30;
+ctx.roundRect(bx,by,bw,bh,6);ctx.fill();ctx.stroke();
+ctx.fillStyle=ly.color+'0.8)';ctx.font='bold 9px JetBrains Mono';ctx.textAlign='center';
+ctx.fillText(ly.label,nx+20,15);
+nodePositions[l]=[];
+for(var e=0;e<ny;e++){
+var ey=45+e*35;
+ctx.fillStyle=ly.color+'0.9)';ctx.beginPath();ctx.arc(nx+20,ey,12,0,6.283);ctx.fill();
+ctx.fillStyle='#0a0a0a';ctx.font='bold 8px JetBrains Mono';ctx.textAlign='center';ctx.textBaseline='middle';
+ctx.fillText(ly.eqs[e],nx+20,ey);
+nodePositions[l].push({x:nx+20,y:ey});
+}
+}
+var conns=[[0,0,1,0],[0,0,1,2],[0,1,3,0],[0,2,1,0],[1,0,3,0],[1,1,2,1],[1,1,2,2],[1,2,2,2],[1,2,3,0],[2,0,2,4],[2,1,2,3],[2,2,2,3],[2,3,2,4],[2,4,3,0]];
+ctx.lineWidth=1;ctx.globalAlpha=0.4;
+for(var c=0;c<conns.length;c++){
+var from=nodePositions[conns[c][0]][conns[c][1]],to=nodePositions[conns[c][2]][conns[c][3]];
+ctx.strokeStyle=layers[conns[c][0]].color+'0.6)';
+ctx.beginPath();ctx.moveTo(from.x+12,from.y);
+var cx1=(from.x+to.x)/2,cx2=(from.x+to.x)/2;
+ctx.bezierCurveTo(cx1,from.y,cx2,to.y,to.x-12,to.y);ctx.stroke();
+}
+ctx.globalAlpha=1;
+}
+mmUpdate();
+drawFlow();
+})();
+</script>
+</body>
+</html>

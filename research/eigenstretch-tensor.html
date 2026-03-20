@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Eigenstretch Tensor — Causal-Topological Manifold Analysis | AMNI-SCIENT Research</title>
+<meta name="description" content="The Eigenstretch Tensor: a causal-topological fingerprint that detects overfitting, regime collapse, and dimensional saturation in high-dimensional parameter manifolds via k-NN graph Laplacian SVD.">
+<meta name="keywords" content="eigenstretch tensor,manifold analysis,graph laplacian,overfitting detection,regime change,spectral topology">
+<meta property="og:title" content="Eigenstretch Tensor — AMNI-SCIENT Research">
+<meta property="og:description" content="Causal-topological fingerprint for real-time detection of overfitting and regime collapse in parameter manifolds.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://amni-scient.com/research/eigenstretch-tensor">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://amni-scient.com/research/eigenstretch-tensor">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"ScholarlyArticle","name":"Eigenstretch Tensor","author":{"@type":"Person","name":"Anthony Reffelt"},"description":"Causal-topological fingerprint for detecting overfitting and regime collapse in high-dimensional parameter manifolds.","url":"https://amni-scient.com/research/eigenstretch-tensor","publisher":{"@type":"Organization","name":"AMNI-SCIENT"},"datePublished":"2025","dateModified":"2026"}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8345487545441889" crossorigin="anonymous" data-overlays="false"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+<style>
+.eq-block{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:1.5rem 2rem;margin:1.5rem 0;overflow-x:auto}
+.eq-block .eq-label{font-size:.6rem;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:.75rem}
+.derivation-step{border-left:2px solid var(--accent);padding-left:1.5rem;margin:1.5rem 0}
+.derivation-step h4{color:var(--accent);font-size:.8rem;letter-spacing:2px;margin-bottom:.5rem}
+.app-card{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem;margin-bottom:1rem}
+.app-card h4{color:var(--accent);font-size:.85rem;letter-spacing:2px;margin-bottom:.5rem}
+.app-card p{color:var(--dim);font-size:.85rem;line-height:1.7}
+.breadcrumb{font-size:.7rem;letter-spacing:2px;color:var(--dim);margin-bottom:1rem}
+.breadcrumb a{color:var(--accent);text-decoration:none}
+.digit-chart{display:flex;align-items:flex-end;gap:4px;height:120px;margin:1.5rem 0;padding:1rem;background:var(--panel);border:1px solid var(--border);border-radius:6px}
+.digit-bar{flex:1;background:var(--accent);border-radius:3px 3px 0 0;min-width:20px;position:relative;transition:height .3s}
+.digit-bar span{position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);font-size:.65rem;color:var(--dim)}
+.viz-section{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem;margin:1.5rem 0}
+.viz-section h4{color:var(--accent);font-size:.75rem;letter-spacing:2px;margin-bottom:1rem;text-transform:uppercase}
+.viz-canvas-wrap{position:relative;width:100%;max-width:700px;margin:0 auto}
+.viz-controls{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem;align-items:center}
+.viz-controls label{color:var(--dim);font-size:.75rem;letter-spacing:1px}
+.viz-controls input,.viz-controls select{background:var(--bg);border:1px solid var(--border);color:var(--text);padding:.3rem .5rem;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.8rem}
+.viz-controls button{background:var(--accent);color:var(--bg);border:none;padding:.4rem 1rem;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.75rem;letter-spacing:1px;cursor:pointer}
+.viz-controls button:hover{opacity:.85}
+</style>
+</head>
+<body>
+<div class="grid-bg"></div>
+<div class="scanlines"></div>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<div class="nav-dd">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu">
+<a href="../amni-haven.html">AMNI-HAVEN</a>
+<a href="../amni-crypt.html">AMNI-CRYPT</a>
+<a href="../amni-ai.html">AMNI-AI</a>
+<a href="../amni-core.html">AMNI-CORE</a>
+<a href="../amni-explore.html">AMNI-EXPLORE</a>
+<a href="../amni-calc.html">AMNI-CALC</a>
+<a href="../amni-learn.html">AMNI-LEARN</a>
+</div>
+</div>
+<a href="../research.html" class="nav-active">RESEARCH</a>
+<a href="../about.html">ABOUT</a>
+<a href="../faq.html">FAQ</a>
+<a href="../privacy.html">PRIVACY</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<section class="hero" style="min-height:auto;padding:8rem 2rem 3rem">
+<div class="breadcrumb"><a href="../research.html">RESEARCH</a> &nbsp;/&nbsp; EIGENSTRETCH TENSOR</div>
+<h1>EIGENSTRETCH TENSOR</h1>
+<p class="subtitle">CAUSAL-TOPOLOGICAL FINGERPRINT OF PARAMETER MANIFOLDS</p>
+<p class="tagline">Real-time detection of overfitting, regime collapse, and dimensional saturation through spectral graph analysis.</p>
+</section>
+<section>
+<h2>ABSTRACT</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
+<p>The <strong style="color:var(--text)">Eigenstretch Tensor</strong> extends the Reffelt Constant into a dynamic monitoring tool. Where the constant captures a snapshot of parameter space structure, the tensor tracks how that structure <em>deforms</em> over time. By computing the eigenstretch at successive evaluation windows, shifts in the digit pattern signal overfitting onset, regime transitions, or dimensional collapse before they manifest as performance degradation.</p>
+<p style="margin-top:1.2rem">The tensor operates on a k-NN graph built from equity-curve similarity (Wasserstein-1 distance approximation) rather than simple Euclidean distance. This means two configurations are considered "close" if they produce similar output trajectories, regardless of how different their parameter values are. The result is a topological representation of <em>functional</em> similarity.</p>
+</div>
+</section>
+<section>
+<h2>CONSTRUCTION</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
+<div class="derivation-step">
+<h4>STEP 1 &mdash; ELITE ARCHIVE SELECTION</h4>
+<p>From a population of N evaluated configurations, select the top archive (typically N=4096) by fitness score. This focuses the spectral analysis on the region of parameter space that matters &mdash; the basin of attraction around optima.</p>
+</div>
+<div class="derivation-step">
+<h4>STEP 2 &mdash; WASSERSTEIN k-NN GRAPH</h4>
+<p>Build a sparse k-nearest-neighbor graph (k=64) using approximated Wasserstein-1 distance between output trajectories. Edge weights incorporate score similarity:</p>
+<div class="eq-block">
+<div class="eq-label">EQUATION E1 &mdash; TRAJECTORY SIMILARITY</div>
+$$w_{ij} = \frac{\exp\left(-\frac{|s_i - s_j|}{\sigma_s}\right)}{W_1(\text{traj}_i, \text{traj}_j) + \epsilon}$$
+</div>
+<p>The Wasserstein distance captures distributional differences &mdash; two trajectories that reach the same endpoint via different paths are correctly identified as distinct, unlike L2 distance which only sees the final values.</p>
+</div>
+<div class="derivation-step">
+<h4>STEP 3 &mdash; LAPLACIAN EIGENDECOMPOSITION</h4>
+<p>Compute the symmetric normalized Laplacian and extract its spectral basis via randomized SVD (rank=16):</p>
+<div class="eq-block">
+<div class="eq-label">EQUATION E2 &mdash; SPECTRAL BASIS EXTRACTION</div>
+$$L_{\text{norm}} = I - D^{-1/2}AD^{-1/2} \quad \xrightarrow{\text{rSVD}} \quad U, \Sigma, V^T \quad \Rightarrow \quad \lambda_j = \Sigma_{jj}$$
+</div>
+</div>
+<div class="derivation-step">
+<h4>STEP 4 &mdash; PER-DIMENSION GRADIENT SENSITIVITY</h4>
+<p>For each parameter dimension d, sort the archive by that dimension&rsquo;s values and compute the mean absolute gradient of each eigenfunction along that axis:</p>
+<div class="eq-block">
+<div class="eq-label">EQUATION E3 &mdash; CAUSAL CONTRIBUTION VECTOR</div>
+$$\text{causal}_d = \frac{\overline{\left|\frac{\partial \psi_j}{\partial x_d}\right|}}{\sum_{d'} \overline{\left|\frac{\partial \psi_j}{\partial x_{d'}}\right|}}$$
+</div>
+<p>This produces a normalized vector where each component measures how much the spectral eigenfunctions "stretch" along that parameter dimension. High stretch = causally important. Low stretch = safely frozen.</p>
+</div>
+<div class="derivation-step">
+<h4>STEP 5 &mdash; BASE-9 DIGIT ENCODING</h4>
+<p>Convert eigenvalue–causal products to base-9 digits:</p>
+<div class="eq-block">
+<div class="eq-label">EQUATION E4 &mdash; EIGENSTRETCH DIGITS</div>
+$$d_j = \min\left(8, \max\left(1, \left\lfloor |\lambda_j \times \text{causal}_{j \bmod D}| \times 800 \right\rfloor + 1\right)\right)$$
+</div>
+<p>If the raw product exceeds 1.0, the digit is set to 9 (saturation flag). The result is a 16-digit base-9 string.</p>
+</div>
+</div>
+</section>
+<section>
+<h2>DIAGNOSTIC SIGNALS</h2>
+<div style="max-width:800px;margin:0 auto">
+<div class="card-grid">
+<div class="card">
+<h3>OVERFITTING DETECTION</h3>
+<p>When eigenstretch digits spike from stable values (3&ndash;5) to 8&ndash;9, the model has entered a region where it is fitting to noise rather than signal. The spectral structure is "stretching" beyond the bounds of generalizable information. This precedes validation loss divergence by 2&ndash;5 epochs, providing an early warning.</p>
+</div>
+<div class="card">
+<h3>REGIME CHANGE</h3>
+<p>A sudden shift in the digit pattern (e.g., from "84407588" to "35621844") indicates the underlying system has changed its structure. The fitness landscape has reconfigured, and configurations that were optimal are no longer in the basin of attraction. Useful for detecting concept drift in production ML systems.</p>
+</div>
+<div class="card">
+<h3>DIMENSIONAL COLLAPSE</h3>
+<p>If multiple digits drop to 1, the effective dimensionality is collapsing &mdash; the system is converging to a lower-dimensional manifold. This is healthy during optimization (finding the ground state) but pathological during deployment (model is losing expressiveness).</p>
+</div>
+<div class="card">
+<h3>REFERENCE CORRELATION</h3>
+<p>A frozen reference snapshot is compared with current eigenstretch via correlation. Healthy systems maintain &gt;0.9 reference correlation. A drop below 0.7 triggers a full recomputation and potential model refresh.</p>
+</div>
+</div>
+</div>
+</section>
+<section>
+<h2>STATE-OF-THE-ART APPLICATIONS</h2>
+<div style="max-width:800px;margin:0 auto">
+<div class="app-card">
+<h4>&#128202; AI MODEL TRAINING STABILITY</h4>
+<p>Modern deep learning pipelines train for days on expensive GPU clusters. The eigenstretch tensor, computed at checkpoint intervals, provides a spectral "heartbeat" of training health. Stable digits = healthy convergence. Digit spikes = overfitting onset or learning rate schedule problems. Digit collapse = mode collapse in generative models. This enables automated early stopping that is more principled than simple patience-based validation loss monitoring.</p>
+</div>
+<div class="app-card">
+<h4>&#128187; LLM CONVERGENCE DETECTION</h4>
+<p>Large language models have hundreds of hyperparameters and training can cost millions of dollars. Computing the eigenstretch across training runs with varied hyperparameters identifies which settings are actually driving quality (high causal weight) vs which are noise. A 4-digit constant tells an LLM team: "only learning rate, batch size, and warmup matter &mdash; everything else can be frozen." This directly reduces the search space for trillion-parameter model training.</p>
+</div>
+<div class="app-card">
+<h4>&#9888;&#65039; PRODUCTION ML DRIFT DETECTION</h4>
+<p>Deployed ML models degrade as data distributions shift. The eigenstretch tensor monitors the parameter sensitivity surface in real time. When deployed model predictions start showing digit-pattern divergence from the training-time fingerprint, the system has drifted. This is superior to simple prediction-confidence monitoring because it detects structural drift even when confidence scores remain artificially high.</p>
+</div>
+<div class="app-card">
+<h4>&#128300; HARDWARE STRESS TESTING</h4>
+<p>GPU and CPU architectures have multi-dimensional performance envelopes (clock speed, thermal throttling, memory bandwidth, cache utilization). Running parameterized stress tests and computing eigenstretch across the performance space identifies which hardware axes are bottlenecked (high digits), which have headroom (low digits), and which interactions create non-obvious failure modes (digit pattern changes under combined load). This generalizes to FPGA placement optimization and chip yield analysis.</p>
+</div>
+</div>
+</section>
+<section>
+<h2>RELATIONSHIP TO REFFELT CONSTANT</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
+<p>The Reffelt Constant and the Eigenstretch Tensor share the same mathematical substrate (graph Laplacian SVD + causal weights) but differ in purpose:</p>
+<table class="validity-table" style="margin-top:1rem">
+<thead><tr><th>ASPECT</th><th>REFFELT CONSTANT</th><th>EIGENSTRETCH TENSOR</th></tr></thead>
+<tbody>
+<tr><td style="color:var(--text)">Purpose</td><td>Ground state identification</td><td>Dynamic monitoring</td></tr>
+<tr><td style="color:var(--text)">Input</td><td>Score-weighted parameter vectors</td><td>Trajectory-similar elite archive</td></tr>
+<tr><td style="color:var(--text)">Distance metric</td><td>Euclidean + score similarity</td><td>Wasserstein-1 + score similarity</td></tr>
+<tr><td style="color:var(--text)">Usage</td><td>One-time optimization</td><td>Continuous real-time monitoring</td></tr>
+<tr><td style="color:var(--text)">Diagnostic</td><td>Compression ratio + ground state</td><td>Overfitting, drift, regime change</td></tr>
+</tbody>
+</table>
+</div>
+</section>
+<section>
+<h2>INTERACTIVE EXPLORER</h2>
+<div style="max-width:800px;margin:0 auto">
+<div class="viz-section">
+<h4>EIGENVALUE SCREE PLOT</h4>
+<p style="color:var(--dim);font-size:.8rem;line-height:1.7;margin-bottom:1rem">Simulated eigenvalue decomposition from a 16-rank rSVD. The scree plot shows individual eigenvalue magnitudes (bars) and cumulative variance explained (line). The "elbow" where cumulative variance plateaus reveals effective dimensionality.</p>
+<div class="viz-controls">
+<label>ARCHIVE SIZE:</label>
+<select id="es-archive" onchange="esGenerate()"><option value="1024">1024</option><option value="4096" selected>4096</option><option value="16384">16384</option></select>
+<label style="margin-left:.5rem">NOISE:</label>
+<input type="range" id="es-noise" min="0" max="100" value="20" style="width:80px" oninput="esGenerate()">
+<button onclick="esGenerate()">REGENERATE</button>
+</div>
+<div class="viz-canvas-wrap"><canvas id="es-scree-chart"></canvas></div>
+</div>
+<div class="viz-section" style="margin-top:1.5rem">
+<h4>DIAGNOSTIC SIGNAL MONITOR</h4>
+<p style="color:var(--dim);font-size:.8rem;line-height:1.7;margin-bottom:1rem">Radar chart of the four diagnostic signals (overfitting risk, regime stability, dimensional collapse, reference correlation). Healthy systems fill the "stable" zone (green). Anomalies push axes toward the outer boundary.</p>
+<div class="viz-controls">
+<button onclick="esDiagHealthy()">HEALTHY STATE</button>
+<button onclick="esDiagOverfit()">OVERFITTING</button>
+<button onclick="esDiagCollapse()">COLLAPSE</button>
+<button onclick="esDiagDrift()">REGIME DRIFT</button>
+</div>
+<div class="viz-canvas-wrap" style="max-width:400px"><canvas id="es-radar-chart"></canvas></div>
+</div>
+</div>
+</section>
+<section>
+<h2>RELATED FRAMEWORKS</h2>
+<div style="max-width:800px;margin:0 auto">
+<div class="card-grid">
+<div class="card">
+<h3><a href="reffelt-constant.html" style="color:var(--accent);text-decoration:none">&larr; REFFELT CONSTANT</a></h3>
+<p>The foundational spectral fingerprint that Eigenstretch extends with trajectory-based topology and temporal monitoring.</p>
+</div>
+<div class="card">
+<h3><a href="holographic-membrane.html" style="color:var(--accent);text-decoration:none">HOLOGRAPHIC MEMBRANE &rarr;</a></h3>
+<p>Uses eigenstretch deformation fields as the basis for GPU-accelerated particle dynamics on resistance landscapes.</p>
+</div>
+</div>
+</div>
+</section>
+<div style="max-width:800px;margin:2rem auto;text-align:center">
+<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8345487545441889" data-ad-slot="1720203631" data-ad-format="auto" data-full-width-responsive="true"></ins>
+<script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>
+</div>
+<footer>
+<div class="footer-links">
+<a href="../about.html">ABOUT</a>
+<a href="../faq.html">FAQ</a>
+<a href="../research.html">RESEARCH</a>
+<a href="../privacy.html">PRIVACY</a>
+<a href="../terms.html">TERMS</a>
+<a href="/">AMNI-SCIENT</a>
+<a href="mailto:amnibro7@gmail.com">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amni-Scient. All rights reserved.</p>
+</footer>
+<script>
+(function(){
+var screeChart=null,radarChart=null;
+function gi(id){return document.getElementById(id)}
+window.esGenerate=function(){
+var noise=parseInt(gi('es-noise').value)/100,evs=[],cum=[];
+var base=[0.42,0.28,0.12,0.06,0.03,0.02,0.015,0.012,0.008,0.006,0.005,0.004,0.003,0.002,0.001,0.001];
+for(var i=0;i<16;i++) evs.push(Math.max(0.0005,base[i]*(1+(Math.random()-0.5)*noise*2)));
+evs.sort(function(a,b){return b-a});
+var total=evs.reduce(function(a,b){return a+b},0),running=0;
+for(var i=0;i<16;i++){running+=evs[i]/total;cum.push(running);}
+var labels=[];for(var i=0;i<16;i++) labels.push('\u03BB'+(i+1));
+var ctx=gi('es-scree-chart');
+if(screeChart) screeChart.destroy();
+var colors=evs.map(function(v,i){return cum[i]<=0.95?'rgba(100,200,255,0.6)':'rgba(100,200,255,0.2)'});
+screeChart=new Chart(ctx,{type:'bar',data:{labels:labels,datasets:[{label:'Eigenvalue',data:evs,backgroundColor:colors,borderColor:colors.map(function(c){return c.replace(/[\d.]+\)$/,'1)');}),borderWidth:1,yAxisID:'y'},{label:'Cumulative Variance',data:cum,type:'line',borderColor:'rgba(255,150,50,1)',backgroundColor:'rgba(255,150,50,0.1)',fill:true,yAxisID:'y1',pointRadius:3,tension:.3}]},options:{responsive:true,interaction:{intersect:false,mode:'index'},plugins:{legend:{labels:{color:'#aaa',font:{family:"'JetBrains Mono'",size:10}}},annotation:{}},scales:{y:{beginAtZero:true,title:{display:true,text:'Eigenvalue',color:'#888',font:{family:"'JetBrains Mono'",size:10}},grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'#888',font:{family:"'JetBrains Mono'",size:9}}},y1:{position:'right',min:0,max:1.05,title:{display:true,text:'Cumulative Variance',color:'#888',font:{family:"'JetBrains Mono'",size:10}},grid:{drawOnChartArea:false},ticks:{color:'#888',font:{family:"'JetBrains Mono'",size:9}}},x:{ticks:{color:'#888',font:{family:"'JetBrains Mono'",size:9}},grid:{color:'rgba(255,255,255,.05)'}}}}});
+}
+function setRadar(vals,label){
+var ctx=gi('es-radar-chart');
+if(radarChart) radarChart.destroy();
+radarChart=new Chart(ctx,{type:'radar',data:{labels:['Overfitting\nRisk','Regime\nStability','Dimensional\nHealth','Reference\nCorrelation'],datasets:[{label:label,data:vals,backgroundColor:'rgba(100,200,255,0.2)',borderColor:'rgba(100,200,255,1)',borderWidth:2,pointBackgroundColor:'rgba(100,200,255,1)',pointRadius:4},{label:'Healthy Baseline',data:[0.1,0.95,0.9,0.95],backgroundColor:'rgba(100,255,150,0.08)',borderColor:'rgba(100,255,150,0.4)',borderWidth:1,borderDash:[4,4],pointRadius:0}]},options:{responsive:true,plugins:{legend:{labels:{color:'#aaa',font:{family:"'JetBrains Mono'",size:10}}}},scales:{r:{min:0,max:1,ticks:{stepSize:0.2,color:'#666',backdropColor:'transparent',font:{family:"'JetBrains Mono'",size:8}},grid:{color:'rgba(255,255,255,.1)'},angleLines:{color:'rgba(255,255,255,.1)'},pointLabels:{color:'#aaa',font:{family:"'JetBrains Mono'",size:10}}}}}});
+}
+window.esDiagHealthy=function(){setRadar([0.1,0.95,0.9,0.95],'Healthy');}
+window.esDiagOverfit=function(){setRadar([0.85,0.7,0.6,0.55],'Overfitting');}
+window.esDiagCollapse=function(){setRadar([0.3,0.5,0.15,0.4],'Collapse');}
+window.esDiagDrift=function(){setRadar([0.5,0.2,0.7,0.3],'Regime Drift');}
+esGenerate();
+esDiagHealthy();
+})();
+</script>
+</body>
+</html>

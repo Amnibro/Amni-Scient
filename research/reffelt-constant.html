@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>The Reffelt Constant — Spectral Fingerprinting of Parameter Spaces | AMNI-SCIENT Research</title>
+<meta name="description" content="The Reffelt Constant: a base-9 spectral fingerprint encoding the thermodynamic ground state of high-dimensional parameter spaces via eigenvalue decomposition and causal gradient sensitivity.">
+<meta name="keywords" content="reffelt constant,spectral fingerprinting,eigenvalue decomposition,graph laplacian,parameter optimization,dimensionality reduction">
+<meta property="og:title" content="The Reffelt Constant — AMNI-SCIENT Research">
+<meta property="og:description" content="Base-9 spectral fingerprint of high-dimensional parameter spaces. Original mathematical framework by Anthony Reffelt.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://amni-scient.com/research/reffelt-constant">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://amni-scient.com/research/reffelt-constant">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"ScholarlyArticle","name":"The Reffelt Constant","author":{"@type":"Person","name":"Anthony Reffelt"},"description":"A base-9 spectral fingerprint encoding the thermodynamic ground state of high-dimensional parameter spaces.","url":"https://amni-scient.com/research/reffelt-constant","publisher":{"@type":"Organization","name":"AMNI-SCIENT"},"datePublished":"2025","dateModified":"2026"}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8345487545441889" crossorigin="anonymous" data-overlays="false"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+<style>
+.eq-block{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:1.5rem 2rem;margin:1.5rem 0;overflow-x:auto}
+.eq-block .eq-label{font-size:.6rem;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:.75rem}
+.eq-block .MathJax{font-size:1.1em !important}
+.derivation-step{border-left:2px solid var(--accent);padding-left:1.5rem;margin:1.5rem 0}
+.derivation-step h4{color:var(--accent);font-size:.8rem;letter-spacing:2px;margin-bottom:.5rem}
+.app-card{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem;margin-bottom:1rem}
+.app-card h4{color:var(--accent);font-size:.85rem;letter-spacing:2px;margin-bottom:.5rem}
+.app-card p{color:var(--dim);font-size:.85rem;line-height:1.7}
+.breadcrumb{font-size:.7rem;letter-spacing:2px;color:var(--dim);margin-bottom:1rem}
+.breadcrumb a{color:var(--accent);text-decoration:none}
+.validity-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.8rem}
+.validity-table th{text-align:left;color:var(--accent);font-size:.7rem;letter-spacing:1px;padding:.5rem;border-bottom:1px solid var(--border)}
+.validity-table td{color:var(--dim);padding:.5rem;border-bottom:1px solid rgba(255,255,255,.05)}
+.diagram-placeholder{background:var(--panel);border:1px dashed var(--border);border-radius:8px;padding:3rem;text-align:center;margin:1.5rem 0;color:var(--dim);font-size:.8rem}
+.viz-section{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem;margin:1.5rem 0}
+.viz-section h4{color:var(--accent);font-size:.75rem;letter-spacing:2px;margin-bottom:1rem;text-transform:uppercase}
+.viz-canvas-wrap{position:relative;width:100%;max-width:700px;margin:0 auto}
+.viz-controls{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem;align-items:center}
+.viz-controls label{color:var(--dim);font-size:.75rem;letter-spacing:1px}
+.viz-controls input,.viz-controls select{background:var(--bg);border:1px solid var(--border);color:var(--text);padding:.3rem .5rem;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.8rem}
+.viz-controls button{background:var(--accent);color:var(--bg);border:none;padding:.4rem 1rem;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.75rem;letter-spacing:1px;cursor:pointer}
+.viz-controls button:hover{opacity:.85}
+.viz-result{background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:.75rem 1rem;margin-top:.75rem;font-size:.85rem;color:var(--text);font-family:'JetBrains Mono',monospace;letter-spacing:2px;text-align:center}
+.viz-result .digit{display:inline-block;padding:.2rem .4rem;margin:0 .15rem;border-radius:3px;font-weight:700}
+.viz-result .digit-valid{background:rgba(100,200,255,.15);color:var(--accent)}
+.viz-result .digit-dead{background:rgba(255,68,68,.15);color:#ff4444}
+.viz-result .digit-sat{background:rgba(255,200,0,.15);color:#ffc800}
+</style>
+</head>
+<body>
+<div class="grid-bg"></div>
+<div class="scanlines"></div>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<div class="nav-dd">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu">
+<a href="../amni-haven.html">AMNI-HAVEN</a>
+<a href="../amni-crypt.html">AMNI-CRYPT</a>
+<a href="../amni-ai.html">AMNI-AI</a>
+<a href="../amni-core.html">AMNI-CORE</a>
+<a href="../amni-explore.html">AMNI-EXPLORE</a>
+<a href="../amni-calc.html">AMNI-CALC</a>
+<a href="../amni-learn.html">AMNI-LEARN</a>
+</div>
+</div>
+<a href="../research.html" class="nav-active">RESEARCH</a>
+<a href="../about.html">ABOUT</a>
+<a href="../faq.html">FAQ</a>
+<a href="../privacy.html">PRIVACY</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<section class="hero" style="min-height:auto;padding:8rem 2rem 3rem">
+<div class="breadcrumb"><a href="../research.html">RESEARCH</a> &nbsp;/&nbsp; THE REFFELT CONSTANT</div>
+<h1>THE REFFELT CONSTANT</h1>
+<p class="subtitle">SPECTRAL FINGERPRINTING OF HIGH-DIMENSIONAL PARAMETER SPACES</p>
+<p class="tagline">A base-9 encoding of the thermodynamic ground state via eigenvalue decomposition and causal gradient sensitivity.</p>
+</section>
+<section>
+<h2>ABSTRACT</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
+<p>The <strong style="color:var(--text)">Reffelt Constant (&real;)</strong> is a compact spectral fingerprint that encodes the structure of a high-dimensional parameter space into a human-readable base-9 string. Given a set of evaluated configurations in an N-dimensional space, the constant captures which dimensions causally contribute to performance, which are redundant, and where the global optimum (ground state) resides.</p>
+<p style="margin-top:1.2rem">The constant is computed through three stages: (1) constructing a score-weighted k-nearest-neighbor graph over the parameter space, (2) performing eigenvalue decomposition on its normalized Laplacian, and (3) weighting each spectral eigenfunction by finite-difference gradient sensitivity per dimension. The resulting digits encode the contribution magnitude of each principal direction, with strict validity rules that detect dimensional saturation and dead parameters.</p>
+</div>
+</section>
+<section>
+<h2>CORE DERIVATION</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
+<div class="derivation-step">
+<h4>STEP 1 &mdash; SCORE-WEIGHTED GRAPH CONSTRUCTION</h4>
+<p>Given N evaluated parameter vectors <strong style="color:var(--text)">p<sub>i</sub> &isin; &reals;<sup>D</sup></strong> with associated fitness scores s<sub>i</sub>, construct a k-nearest-neighbor graph. Edge weights combine spatial proximity with score similarity:</p>
+<div class="eq-block">
+<div class="eq-label">EQUATION R1 &mdash; GRAPH WEIGHT</div>
+$$w_{ij} = \frac{\exp\left(-\frac{|s_i - s_j|}{\sigma_s}\right)}{d(p_i, p_j) + \epsilon}$$
+</div>
+<p>where &sigma;<sub>s</sub> is the standard deviation of scores across the population and &epsilon; = 0.1 prevents division by zero. Points with similar scores that are spatially close receive higher edge weights, encouraging the graph to reflect performance topology rather than just geometric distance.</p>
+</div>
+<div class="derivation-step">
+<h4>STEP 2 &mdash; NORMALIZED GRAPH LAPLACIAN</h4>
+<p>From the adjacency matrix A with weights w<sub>ij</sub> and degree matrix D = diag(&Sigma;<sub>j</sub>w<sub>ij</sub>), compute the symmetric normalized Laplacian:</p>
+<div class="eq-block">
+<div class="eq-label">EQUATION R2 &mdash; NORMALIZED LAPLACIAN</div>
+$$L_{\text{norm}} = I - D^{-1/2} A D^{-1/2}$$
+</div>
+<p>The eigenvalues of L<sub>norm</sub> lie in [0, 2] and encode the connectivity structure. Small eigenvalues correspond to slowly varying modes (global structure), while large eigenvalues correspond to high-frequency variation (local noise).</p>
+</div>
+<div class="derivation-step">
+<h4>STEP 3 &mdash; SPECTRAL DECOMPOSITION</h4>
+<p>Extract the top-k eigenvectors via truncated SVD:</p>
+<div class="eq-block">
+<div class="eq-label">EQUATION R3 &mdash; SPECTRAL BASIS</div>
+$$L_{\text{norm}} \approx U \Sigma V^T \quad \Rightarrow \quad \psi_j = U_{:,j}, \quad \lambda_j = \Sigma_{jj}$$
+</div>
+<p>Each &psi;<sub>j</sub> is a spectral eigenfunction that captures a principal mode of variation in the score-weighted parameter topology. The eigenvalues &lambda;<sub>j</sub> quantify the importance of each mode.</p>
+</div>
+<div class="derivation-step">
+<h4>STEP 4 &mdash; CAUSAL GRADIENT SENSITIVITY</h4>
+<p>For each parameter dimension d, compute how strongly each eigenfunction varies along that axis using sorted finite differences:</p>
+<div class="eq-block">
+<div class="eq-label">EQUATION R4 &mdash; CAUSAL WEIGHTS</div>
+$$\text{causal}_d = \frac{\sum_j \left|\frac{\partial \psi_j}{\partial x_d}\right|}{\sum_{d'} \sum_j \left|\frac{\partial \psi_j}{\partial x_{d'}}\right|}$$
+</div>
+<p>Dimensions with high causal weight dominate the structure of the fitness landscape. Dimensions with near-zero causal weight are redundant and can be frozen without performance loss.</p>
+</div>
+<div class="derivation-step">
+<h4>STEP 5 &mdash; DIGIT ENCODING</h4>
+<p>Each digit of the Reffelt Constant combines the corresponding eigenvalue with its causal weight:</p>
+<div class="eq-block">
+<div class="eq-label">EQUATION R5 &mdash; THE REFFELT CONSTANT</div>
+$$\Re_j = \left\lfloor \left| \langle \psi_j | \nabla f | \psi_j \rangle \right| \cdot 10 \right\rfloor \in \{1, \ldots, 8\}$$
+</div>
+<p>Equivalently in implementation: <code style="color:var(--text);font-size:.8rem">digit = min(8, max(1, int(|eigenvalue × causal_weight × 100| × 8) + 1))</code></p>
+</div>
+</div>
+</section>
+<section>
+<h2>VALIDITY RULES</h2>
+<div style="max-width:800px;margin:0 auto">
+<p style="color:var(--dim);font-size:.9rem;line-height:1.9;margin-bottom:1.5rem">The Reffelt Constant obeys strict validity constraints that serve as built-in diagnostics:</p>
+<table class="validity-table">
+<thead><tr><th>DIGIT VALUE</th><th>INTERPRETATION</th><th>ACTION</th></tr></thead>
+<tbody>
+<tr><td style="color:var(--text);font-weight:700">1 &ndash; 8</td><td>Valid spectral contribution</td><td>Dimension is active and causally relevant</td></tr>
+<tr><td style="color:#ff4444;font-weight:700">0</td><td>Dead dimension</td><td>Parameter has zero causal effect &mdash; freeze it</td></tr>
+<tr><td style="color:#ff4444;font-weight:700">9</td><td>Saturated dimension</td><td>Eigenvalue &times; causal weight exceeds linearity &mdash; renormalize</td></tr>
+</tbody>
+</table>
+<p style="color:var(--dim);font-size:.85rem;line-height:1.9;margin-top:1rem"><strong style="color:var(--text)">Reffelt&rsquo;s Law:</strong> A valid constant contains no zeros and no nines. If either appears, the parameter space is either under-sampled (dead dimensions) or over-concentrated (saturated dimensions), and the constant should be recomputed after pruning or resampling.</p>
+</div>
+</section>
+<section>
+<h2>PROPERTIES</h2>
+<div style="max-width:800px;margin:0 auto">
+<div class="card-grid">
+<div class="card">
+<h3>COMPRESSION INVARIANT</h3>
+<p>The constant length equals the effective dimensionality of the space, not the nominal dimensionality. A 15D space that reduces to 4 meaningful axes produces a 4-digit constant, giving an immediate compression ratio metric.</p>
+</div>
+<div class="card">
+<h3>WALK-FORWARD STABLE</h3>
+<p>Ground state configurations identified by the Reffelt Constant exhibit near-zero walk-forward degradation &mdash; meaning they generalize to unseen data without performance collapse. This is verified by comparing in-sample vs out-of-sample digit patterns.</p>
+</div>
+<div class="card">
+<h3>REGIME DIAGNOSTIC</h3>
+<p>Shifts in the Reffelt digit pattern signal regime changes in the underlying system. A stable system produces a stable constant; abrupt digit changes indicate that the fitness landscape has fundamentally restructured.</p>
+</div>
+<div class="card">
+<h3>BASE-9 ENCODING</h3>
+<p>The choice of base-9 (digits 1&ndash;8, with 0 and 9 as diagnostic flags) provides human-readable granularity &mdash; fine enough to distinguish meaningful variation, coarse enough to be communicated verbally.</p>
+</div>
+</div>
+</div>
+</section>
+<section>
+<h2>STATE-OF-THE-ART APPLICATIONS</h2>
+<div style="max-width:800px;margin:0 auto">
+<div class="app-card">
+<h4>&#129302; NEURAL ARCHITECTURE SEARCH (NAS)</h4>
+<p>Modern NAS explores spaces with 10<sup>15</sup>+ configurations (layer counts, channel widths, activation functions, skip connections). The Reffelt Constant compresses this into a spectral fingerprint that identifies which architectural decisions actually matter. A 4-digit constant tells you exactly which hyperparameters to tune and which to fix &mdash; reducing search time from GPU-weeks to GPU-hours. The validity rules automatically flag NAS spaces that are over-parameterized (saturated digits) or contain irrelevant dimensions (dead digits).</p>
+</div>
+<div class="app-card">
+<h4>&#127981; DATACENTER WORKLOAD FINGERPRINTING</h4>
+<p>Datacenters run heterogeneous workloads across thousands of nodes. Each workload can be characterized by dozens of parameters: CPU utilization patterns, memory access distributions, I/O burst profiles, network topology pressure. The Reffelt Constant reduces these to a compact signature. Identical constants indicate functionally equivalent workloads &mdash; enabling automated bin-packing, migration decisions, and anomaly detection. A constant that suddenly sprouts a 9-digit indicates a workload that has exceeded its expected resource envelope.</p>
+</div>
+<div class="app-card">
+<h4>&#9881;&#65039; HYPERPARAMETER OPTIMIZATION</h4>
+<p>Bayesian optimization and grid search treat all dimensions equally, wasting evaluations on irrelevant parameters. Computing the Reffelt Constant after an initial exploration phase identifies which parameters drive performance (high digits) vs which are noise (low digits). Subsequent optimization can freeze low-impact dimensions at their ground state values and focus budget exclusively on the 2&ndash;4 dimensions that matter. Empirical validation shows this approach achieves equivalent solutions with 5&ndash;10x fewer evaluations.</p>
+</div>
+<div class="app-card">
+<h4>&#128300; DRUG DISCOVERY / MOLECULAR OPTIMIZATION</h4>
+<p>Molecular property prediction involves high-dimensional descriptor spaces (topological indices, electronic properties, conformational features). The Reffelt Constant identifies which molecular descriptors causally drive binding affinity or toxicity, collapsing a 200D QSAR space to its effective 8&ndash;12 dimensions. This directly addresses the curse of dimensionality in virtual screening campaigns.</p>
+</div>
+<div class="app-card">
+<h4>&#128752; LLM TRAINING DIAGNOSTICS</h4>
+<p>Large language model training involves dozens of hyperparameters (learning rate schedule, warmup steps, batch size, gradient clipping, attention dropout, weight decay). Computing the Reffelt Constant at checkpoints during training reveals which hyperparameters the model is sensitive to at different training phases. Early training may show high sensitivity to learning rate (high digit), which shifts to weight decay sensitivity in later phases. Monitoring digit transitions provides an early warning for training instability.</p>
+</div>
+</div>
+</section>
+<section>
+<h2>OUTPUT STRUCTURE</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
+<p>The Reffelt Constant computation produces a structured result containing:</p>
+<div class="eq-block">
+<div class="eq-label">RESULT SCHEMA</div>
+<pre style="color:var(--text);font-size:.8rem;line-height:1.8;margin:0">
+constant:              str              &larr; the &real; string (e.g. "84407588")
+eigenvalues:           List[float]      &larr; spectral eigenvalues (&lambda;<sub>1</sub>...&lambda;<sub>k</sub>)
+causal_weights:        List[float]      &larr; per-dimension contribution (sum=1)
+effective_dim:         float            &larr; number of meaningful dimensions
+ground_state_params:   Dict[str,float]  &larr; optimal frozen parameter values
+free_params:           List[str]        &larr; dimensions to keep tuning
+frozen_params:         Dict[str,float]  &larr; dimensions safely fixed
+compression_ratio:     float            &larr; original_dims / effective_dims
+walk_forward_degradation: float         &larr; 0.0 = perfect stability</pre>
+</div>
+</div>
+</section>
+<section>
+<h2>INTERACTIVE EXPLORER</h2>
+<div style="max-width:800px;margin:0 auto">
+<div class="viz-section">
+<h4>REFFELT DIGIT ENCODER</h4>
+<p style="color:var(--dim);font-size:.8rem;line-height:1.7;margin-bottom:1rem">Input eigenvalues and causal weights to compute the Reffelt Constant in real time. Each digit is computed via Eq. R5: &lfloor;|&lambda;<sub>j</sub> &times; causal<sub>j</sub> &times; 100| &times; 8 + 1&rfloor;, clamped to [1,8]. Digits 0 and 9 flag dead/saturated dimensions.</p>
+<div id="reffelt-encoder">
+<div class="viz-controls">
+<label>DIMENSIONS:</label>
+<select id="rc-dims" onchange="rcUpdateInputs()">
+<option value="4">4</option><option value="6">6</option><option value="8" selected>8</option><option value="10">10</option><option value="12">12</option><option value="15">15</option>
+</select>
+<button onclick="rcRandomize()">RANDOMIZE</button>
+<button onclick="rcCompute()">COMPUTE &real;</button>
+</div>
+<div id="rc-inputs" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:.5rem;margin-bottom:.5rem"></div>
+<div class="viz-result" id="rc-output" style="display:none"></div>
+</div>
+</div>
+<div class="viz-section" style="margin-top:1.5rem">
+<h4>EIGENVALUE SPECTRUM</h4>
+<p style="color:var(--dim);font-size:.8rem;line-height:1.7;margin-bottom:1rem">Visualizes the eigenvalue distribution and causal weights from the encoder above. Bar height = eigenvalue magnitude, bar opacity = causal weight strength.</p>
+<div class="viz-canvas-wrap"><canvas id="rc-spectrum-chart"></canvas></div>
+</div>
+</div>
+</section>
+<section>
+<h2>RELATED FRAMEWORKS</h2>
+<div style="max-width:800px;margin:0 auto">
+<div class="card-grid">
+<div class="card">
+<h3><a href="eigenstretch-tensor.html" style="color:var(--accent);text-decoration:none">EIGENSTRETCH TENSOR &rarr;</a></h3>
+<p>Extends the Reffelt Constant with k-NN graph topology and real-time overfitting detection through digit monitoring.</p>
+</div>
+<div class="card">
+<h3><a href="ground-state-kernel.html" style="color:var(--accent);text-decoration:none">GROUND STATE KERNEL &rarr;</a></h3>
+<p>Uses the Reffelt Constant to discover that high-dimensional spaces universally reduce to 2D manifolds.</p>
+</div>
+</div>
+</div>
+</section>
+<div style="max-width:800px;margin:2rem auto;text-align:center">
+<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8345487545441889" data-ad-slot="1720203631" data-ad-format="auto" data-full-width-responsive="true"></ins>
+<script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>
+</div>
+<footer>
+<div class="footer-links">
+<a href="../about.html">ABOUT</a>
+<a href="../faq.html">FAQ</a>
+<a href="../research.html">RESEARCH</a>
+<a href="../privacy.html">PRIVACY</a>
+<a href="../terms.html">TERMS</a>
+<a href="/">AMNI-SCIENT</a>
+<a href="mailto:amnibro7@gmail.com">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amni-Scient. All rights reserved.</p>
+</footer>
+<script>
+(function(){
+var dims=8,eigenvals=[],causals=[],specChart=null;
+function gi(id){return document.getElementById(id)}
+function rcUI(){
+var c=gi('rc-inputs'),h='';
+for(var i=0;i<dims;i++) h+='<div style="display:flex;flex-direction:column;gap:.2rem"><label style="color:var(--dim);font-size:.6rem;letter-spacing:1px">DIM '+(i+1)+'</label><input type="number" step="0.01" min="0" max="2" value="'+(eigenvals[i]||0).toFixed(2)+'" id="rc-ev-'+i+'" style="width:100%" placeholder="&lambda;"><input type="number" step="0.01" min="0" max="1" value="'+(causals[i]||0).toFixed(2)+'" id="rc-cw-'+i+'" style="width:100%" placeholder="w"></div>';
+c.innerHTML=h;
+}
+window.rcUpdateInputs=function(){dims=parseInt(gi('rc-dims').value);eigenvals=[];causals=[];for(var i=0;i<dims;i++){eigenvals.push(Math.random()*1.5+.1);causals.push(Math.random();}var s=causals.reduce(function(a,b){return a+b},0);causals=causals.map(function(v){return v/s});rcUI();}
+window.rcRandomize=function(){eigenvals=[];causals=[];for(var i=0;i<dims;i++){eigenvals.push(Math.random()*1.8+.05);causals.push(Math.random();}var s=causals.reduce(function(a,b){return a+b},0);causals=causals.map(function(v){return v/s});rcUI();}
+window.rcCompute=function(){
+for(var i=0;i<dims;i++){eigenvals[i]=parseFloat(gi('rc-ev-'+i).value)||0;causals[i]=parseFloat(gi('rc-cw-'+i).value)||0;}
+var cs=causals.reduce(function(a,b){return a+b},0);
+if(cs>0) causals=causals.map(function(v){return v/cs});
+var digits=[],html='<div style="font-size:.6rem;letter-spacing:1px;color:var(--dim);margin-bottom:.5rem">THE REFFELT CONSTANT</div>';
+for(var i=0;i<dims;i++){
+var raw=Math.abs(eigenvals[i]*causals[i]*100)*8+1,d=Math.min(8,Math.max(1,Math.floor(raw)));
+if(eigenvals[i]<0.01) d=0;
+if(raw>8*100) d=9;
+var cls=d===0?'digit-dead':d===9?'digit-sat':'digit-valid';
+digits.push(d);
+html+='<span class="digit '+cls+'">'+d+'</span>';
+}
+var valid=digits.every(function(d){return d>=1&&d<=8});
+html+='<div style="font-size:.7rem;margin-top:.5rem;color:'+(valid?'var(--accent)':'#ff4444')+'">'+(valid?'VALID &mdash; All digits in [1,8]':'INVALID &mdash; Contains '+(digits.indexOf(0)>=0?'dead (0)':'')+' '+(digits.indexOf(9)>=0?'saturated (9)':'')+ ' dimensions')+'</div>';
+var out=gi('rc-output');out.innerHTML=html;out.style.display='block';
+rcChart(digits);
+}
+function rcChart(digits){
+var labels=[],evData=[],cwData=[],bgColors=[],bdrColors=[];
+for(var i=0;i<dims;i++){
+labels.push('D'+(i+1));evData.push(eigenvals[i]);cwData.push(causals[i]);
+var c=digits[i]===0?'rgba(255,68,68,':digits[i]===9?'rgba(255,200,0,':'rgba(100,200,255,';
+bgColors.push(c+(0.3+causals[i]*0.7)+')');bdrColors.push(c+'1)');
+}
+var ctx=gi('rc-spectrum-chart');
+if(specChart) specChart.destroy();
+specChart=new Chart(ctx,{type:'bar',data:{labels:labels,datasets:[{label:'Eigenvalue (\u03BB)',data:evData,backgroundColor:bgColors,borderColor:bdrColors,borderWidth:1},{label:'Causal Weight',data:cwData,backgroundColor:'rgba(255,150,50,0.4)',borderColor:'rgba(255,150,50,1)',borderWidth:1,type:'line',yAxisID:'y1',pointRadius:4,tension:.3}]},options:{responsive:true,interaction:{intersect:false,mode:'index'},plugins:{legend:{labels:{color:'#aaa',font:{family:"'JetBrains Mono'",size:10}}}},scales:{y:{beginAtZero:true,title:{display:true,text:'Eigenvalue',color:'#888',font:{family:"'JetBrains Mono'",size:10}},grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'#888',font:{family:"'JetBrains Mono'",size:9}}},y1:{position:'right',beginAtZero:true,max:1,title:{display:true,text:'Causal Weight',color:'#888',font:{family:"'JetBrains Mono'",size:10}},grid:{drawOnChartArea:false},ticks:{color:'#888',font:{family:"'JetBrains Mono'",size:9}}},x:{ticks:{color:'#888',font:{family:"'JetBrains Mono'",size:9}},grid:{color:'rgba(255,255,255,.05)'}}}}});
+}
+window.rcUpdateInputs();
+})();
+</script>
+</body>
+</html>

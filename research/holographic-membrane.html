@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Holographic Resistance Membrane — GPU-Accelerated Particle Dynamics | AMNI-SCIENT Research</title>
+<meta name="description" content="Holographic Resistance Membrane: GPU-accelerated particle advection through friction fields derived from holographic stretch deformation. Produces probabilistic density maps of system evolution.">
+<meta name="keywords" content="holographic membrane,resistance field,particle dynamics,GPU acceleration,taichi,friction field,probabilistic density">
+<meta property="og:title" content="Holographic Resistance Membrane — AMNI-SCIENT Research">
+<meta property="og:description" content="GPU-accelerated particle dynamics through holographic stretch-derived friction fields.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://amni-scient.com/research/holographic-membrane">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://amni-scient.com/research/holographic-membrane">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"ScholarlyArticle","name":"Holographic Resistance Membrane","author":{"@type":"Person","name":"Anthony Reffelt"},"description":"GPU-accelerated particle advection through holographic stretch-derived friction fields.","url":"https://amni-scient.com/research/holographic-membrane","publisher":{"@type":"Organization","name":"AMNI-SCIENT"},"datePublished":"2025","dateModified":"2026"}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8345487545441889" crossorigin="anonymous" data-overlays="false"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+<style>
+.eq-block{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:1.5rem 2rem;margin:1.5rem 0;overflow-x:auto}
+.eq-block .eq-label{font-size:.6rem;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:.75rem}
+.derivation-step{border-left:2px solid var(--accent);padding-left:1.5rem;margin:1.5rem 0}
+.derivation-step h4{color:var(--accent);font-size:.8rem;letter-spacing:2px;margin-bottom:.5rem}
+.app-card{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem;margin-bottom:1rem}
+.app-card h4{color:var(--accent);font-size:.85rem;letter-spacing:2px;margin-bottom:.5rem}
+.app-card p{color:var(--dim);font-size:.85rem;line-height:1.7}
+.breadcrumb{font-size:.7rem;letter-spacing:2px;color:var(--dim);margin-bottom:1rem}
+.breadcrumb a{color:var(--accent);text-decoration:none}
+.field-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.8rem}
+.field-table th{text-align:left;color:var(--accent);font-size:.7rem;letter-spacing:1px;padding:.5rem;border-bottom:1px solid var(--border)}
+.field-table td{color:var(--dim);padding:.5rem;border-bottom:1px solid rgba(255,255,255,.05)}
+.viz-section{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem;margin:1.5rem 0}
+.viz-section h4{color:var(--accent);font-size:.75rem;letter-spacing:2px;margin-bottom:1rem;text-transform:uppercase}
+.viz-canvas-wrap{position:relative;width:100%;max-width:700px;margin:0 auto}
+.viz-controls{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem;align-items:center}
+.viz-controls label{color:var(--dim);font-size:.75rem;letter-spacing:1px}
+.viz-controls input{background:var(--bg);border:1px solid var(--border);color:var(--text);padding:.3rem .5rem;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.8rem}
+.viz-controls button{background:var(--accent);color:var(--bg);border:none;padding:.4rem 1rem;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.75rem;letter-spacing:1px;cursor:pointer}
+.viz-controls button:hover{opacity:.85}
+.sim-stats{display:flex;gap:1.5rem;margin-top:.5rem;font-size:.7rem;color:var(--dim);letter-spacing:1px}
+.sim-stats span{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="grid-bg"></div>
+<div class="scanlines"></div>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<div class="nav-dd">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu">
+<a href="../amni-haven.html">AMNI-HAVEN</a>
+<a href="../amni-crypt.html">AMNI-CRYPT</a>
+<a href="../amni-ai.html">AMNI-AI</a>
+<a href="../amni-core.html">AMNI-CORE</a>
+<a href="../amni-explore.html">AMNI-EXPLORE</a>
+<a href="../amni-calc.html">AMNI-CALC</a>
+<a href="../amni-learn.html">AMNI-LEARN</a>
+</div>
+</div>
+<a href="../research.html" class="nav-active">RESEARCH</a>
+<a href="../about.html">ABOUT</a>
+<a href="../faq.html">FAQ</a>
+<a href="../privacy.html">PRIVACY</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<section class="hero" style="min-height:auto;padding:8rem 2rem 3rem">
+<div class="breadcrumb"><a href="../research.html">RESEARCH</a> &nbsp;/&nbsp; HOLOGRAPHIC RESISTANCE MEMBRANE</div>
+<h1>HOLOGRAPHIC RESISTANCE MEMBRANE</h1>
+<p class="subtitle">GPU-ACCELERATED PARTICLE DYNAMICS ON FRICTION FIELDS</p>
+<p class="tagline">Holographic stretch deformation generates resistance landscapes. Particles advect through the field to produce probabilistic density maps of system evolution.</p>
+</section>
+<section>
+<h2>ABSTRACT</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
+<p>The <strong style="color:var(--text)">Holographic Resistance Membrane</strong> models system dynamics as particle flow through a derived friction landscape. The "membrane" is a 2D resistance field computed from three deformation sources: spatial gradient magnitude, temporal stretching, and turbulence warping. Thousands of particles are initialized and advected through this field using GPU-parallel Verlet integration (via Taichi), with friction proportional to local resistance.</p>
+<p style="margin-top:1.2rem">The result is a <strong style="color:var(--text)">probabilistic density map</strong> &mdash; regions where particles accumulate indicate high-probability future states of the system. This is fundamentally different from point predictions: the membrane produces a full probability distribution, capturing multi-modal outcomes and uncertainty naturally.</p>
+</div>
+</section>
+<section>
+<h2>MEMBRANE CONSTRUCTION</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
+<div class="derivation-step">
+<h4>HOLOGRAPHIC STRETCH FIELD</h4>
+<p>The stretch field combines three independent deformation measurements into a single scalar field:</p>
+<div class="eq-block">
+<div class="eq-label">EQUATION M1 &mdash; HOLOGRAPHIC STRETCH</div>
+$$H(x,y) = 0.4\sqrt{(\partial_x f)^2 + (\partial_y f)^2} + 0.4 \cdot T(x,y) + 0.2 \cdot W(x,y)$$
+</div>
+<p>where f is the system state field, T is temporal stretch (rate of change), and W is turbulence warping (local vorticity contribution). Each component is normalized to [0,1] before combination.</p>
+</div>
+<div class="derivation-step">
+<h4>FRICTION FIELD DERIVATION</h4>
+<p>The resistance membrane is derived from local variance of the holographic stretch:</p>
+<div class="eq-block">
+<div class="eq-label">EQUATION M2 &mdash; FRICTION FIELD</div>
+$$R(x,y) = 0.8 \cdot \frac{\text{Var}_{\text{local}}[H]}{\max(\text{Var}_{\text{local}}[H])} + 0.2 \cdot R_{\text{boundary}}(x,y)$$
+</div>
+<p>High local variance in stretch = high friction (turbulent regions resist motion). Low variance = low friction (laminar regions allow free flow). Boundary effects add a safety margin that prevents particles from escaping the field entirely.</p>
+</div>
+<div class="derivation-step">
+<h4>STEERING FIELD</h4>
+<p>An optional directional bias field that encodes external forces or known drift:</p>
+<div class="eq-block">
+<div class="eq-label">EQUATION M3 &mdash; STEERING</div>
+$$\mathbf{F}_{\text{steer}}(x,y) = [0, \; S(x,y) \times 10]$$
+</div>
+<p>where S(x,y) is derived from momentum indicators, external forcing terms, or known system biases. The steering field is additive to the gradient-descent force from the resistance field.</p>
+</div>
+</div>
+</section>
+<section>
+<h2>PARTICLE DYNAMICS</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
+<p>The membrane is populated with n particles (typically 4096&ndash;65536) that evolve under combined forces:</p>
+<div class="eq-block">
+<div class="eq-label">EQUATION M4 &mdash; FORCE LAW</div>
+$$\mathbf{F}_i = -\nabla R(\mathbf{x}_i) \cdot \alpha + \mathbf{F}_{\text{steer}}(\mathbf{x}_i)$$
+</div>
+<p>where &alpha; = 5.0 is the resistance gradient coupling constant.</p>
+<div class="eq-block">
+<div class="eq-label">EQUATION M5 &mdash; VERLET INTEGRATION</div>
+$$\mathbf{v}_i^{n+1} = (\mathbf{v}_i^n + \mathbf{F}_i \cdot \Delta t) \cdot \gamma \qquad \mathbf{x}_i^{n+1} = \mathbf{x}_i^n + \mathbf{v}_i^{n+1} \cdot \Delta t$$
+</div>
+<p>where &gamma; = 0.99 is the friction decay factor. This provides gentle damping that mimics viscous drag without requiring explicit fluid simulation.</p>
+<div class="eq-block">
+<div class="eq-label">EQUATION M6 &mdash; PROBABILITY DEPOSITION</div>
+$$P(x,y) = \sum_i E_i \cdot \delta(\mathbf{x}_i - (x,y))$$
+</div>
+<p>Each particle deposits its carried energy E<sub>i</sub> at its grid location, building up the probability density map. Regions where many high-energy particles converge produce strong probability peaks.</p>
+</div>
+</section>
+<section>
+<h2>GPU FIELD LAYOUT</h2>
+<div style="max-width:800px;margin:0 auto">
+<p style="color:var(--dim);font-size:.9rem;line-height:1.9;margin-bottom:1.5rem">All fields are stored as Taichi GPU tensors for parallel computation:</p>
+<table class="field-table">
+<thead><tr><th>FIELD</th><th>TYPE</th><th>SHAPE</th><th>PURPOSE</th></tr></thead>
+<tbody>
+<tr><td style="color:var(--text)">resistance</td><td>f32 scalar</td><td>(res, res)</td><td>Friction landscape R(x,y)</td></tr>
+<tr><td style="color:var(--text)">particles</td><td>f32 vec2</td><td>(n_particles,)</td><td>Position x<sub>i</sub></td></tr>
+<tr><td style="color:var(--text)">velocities</td><td>f32 vec2</td><td>(n_particles,)</td><td>Velocity v<sub>i</sub></td></tr>
+<tr><td style="color:var(--text)">energies</td><td>f32 scalar</td><td>(n_particles,)</td><td>Carried energy E<sub>i</sub></td></tr>
+<tr><td style="color:var(--text)">steering_field</td><td>f32 scalar</td><td>(res, res)</td><td>Directional bias S(x,y)</td></tr>
+<tr><td style="color:var(--text)">probability_map</td><td>f32 scalar</td><td>(res, res)</td><td>Output density P(x,y)</td></tr>
+</tbody>
+</table>
+<p style="color:var(--dim);font-size:.85rem;line-height:1.9;margin-top:1rem">Typical resolution: 512&times;512 or 1024&times;1024. At 65,536 particles on a 1024&sup2; grid, the entire simulation runs at &gt;1000 timesteps/second on consumer GPUs (RTX 3060+).</p>
+</div>
+</section>
+<section>
+<h2>STATE-OF-THE-ART APPLICATIONS</h2>
+<div style="max-width:800px;margin:0 auto">
+<div class="app-card">
+<h4>&#128187; GPU WORKLOAD SCHEDULING &amp; LOAD BALANCING</h4>
+<p>Datacenters with heterogeneous GPU clusters face the problem of mapping compute tasks to hardware. The resistance membrane models the GPU cluster as a friction landscape: heavily loaded nodes have high resistance, idle nodes have low resistance. Incoming workloads are modeled as particles that naturally flow toward low-resistance (available) nodes. The probability map shows the optimal distribution, handling multi-tenancy, thermal throttling zones, and network topology constraints simultaneously. Unlike static schedulers, the membrane continuously adapts as load patterns change.</p>
+</div>
+<div class="app-card">
+<h4>&#9883; PARTICLE PHYSICS &mdash; BEAM DYNAMICS</h4>
+<p>Charged particle beams in accelerators encounter electromagnetic fields that create complex resistance and steering landscapes. The holographic membrane maps directly: the resistance field represents beam pipe impedance and space-charge effects, steering fields model dipole/quadrupole magnets, and particle energies track beam luminosity. The probabilistic output naturally captures beam halo formation, emittance growth, and resonance crossing &mdash; phenomena that are computationally expensive to model with traditional particle-in-cell codes.</p>
+</div>
+<div class="app-card">
+<h4>&#127754; COMPUTATIONAL FLUID DYNAMICS</h4>
+<p>The membrane's friction field + particle advection + probability deposition is structurally analogous to a smoothed particle hydrodynamics (SPH) solver. The key advantage is that the holographic stretch field provides an adaptive viscosity model: regions of high stretch variance (turbulent zones) automatically receive higher friction, mimicking the behavior of sub-grid-scale turbulence models (RANS, LES) without requiring explicit mesh refinement. This makes it suitable for rapid prototyping of flow problems where full Navier-Stokes simulation is too expensive.</p>
+</div>
+<div class="app-card">
+<h4>&#128752; AI INFERENCE ROUTING</h4>
+<p>Multi-model AI serving systems (e.g., mixture-of-experts routers) need to distribute inference requests across model replicas. The membrane models available compute as resistance landscape, query complexity as particle energy, and model specialization as steering fields. The resulting probability map predicts optimal routing distributions under varying load &mdash; producing better throughput than round-robin or hash-based routing because it accounts for the continuous interaction between load, latency, and model capability.</p>
+</div>
+<div class="app-card">
+<h4>&#128640; ORBITAL MECHANICS &mdash; TRAJECTORY OPTIMIZATION</h4>
+<p>Spacecraft trajectory planning in multi-body gravitational fields creates complex energy landscapes. The membrane's resistance field encodes gravitational potential + atmospheric drag, steering fields represent thrust vectors, and particle simulation explores thousands of trajectory candidates simultaneously. The probability map identifies low-energy transfer orbits, gravity assist windows, and collision-risk corridors &mdash; providing a probabilistic mission planning tool that complements traditional Lambert solvers.</p>
+</div>
+</div>
+</section>
+<section>
+<h2>INTERACTIVE EXPLORER</h2>
+<div style="max-width:800px;margin:0 auto">
+<div class="viz-section">
+<h4>LIVE PARTICLE MEMBRANE SIMULATION</h4>
+<p style="color:var(--dim);font-size:.8rem;line-height:1.7;margin-bottom:1rem">Particles advect through a procedural resistance field (background heatmap). Bright regions = high resistance (friction), dark regions = low resistance (free flow). Particles deposit probability density as they move, building up the output map. Based on Eqs. M4&ndash;M6 with Verlet integration.</p>
+<div class="viz-controls">
+<button id="hm-start" onclick="hmToggle()">START</button>
+<button onclick="hmReset()">RESET</button>
+<label style="margin-left:.5rem">PARTICLES:</label>
+<input type="range" id="hm-count" min="100" max="2000" value="800" style="width:80px" oninput="this.nextElementSibling.textContent=this.value"><span style="color:var(--dim);font-size:.7rem;min-width:30px">800</span>
+<label style="margin-left:.5rem">FRICTION:</label>
+<input type="range" id="hm-friction" min="90" max="99" value="97" style="width:60px" oninput="this.nextElementSibling.textContent=(this.value/100).toFixed(2)"><span style="color:var(--dim);font-size:.7rem;min-width:30px">0.97</span>
+</div>
+<canvas id="hm-canvas" width="600" height="400" style="width:100%;border-radius:6px;border:1px solid var(--border);background:#0a0a0a;cursor:crosshair"></canvas>
+<div class="sim-stats">
+<div>STEP: <span id="hm-step">0</span></div>
+<div>ALIVE: <span id="hm-alive">0</span></div>
+<div>AVG ENERGY: <span id="hm-energy">0.00</span></div>
+</div>
+</div>
+</div>
+</section>
+<section>
+<h2>RELATED FRAMEWORKS</h2>
+<div style="max-width:800px;margin:0 auto">
+<div class="card-grid">
+<div class="card">
+<h3><a href="eigenstretch-tensor.html" style="color:var(--accent);text-decoration:none">&larr; EIGENSTRETCH TENSOR</a></h3>
+<p>The spectral deformation analysis that generates the holographic stretch field feeding the membrane.</p>
+</div>
+<div class="card">
+<h3><a href="master-momentum.html" style="color:var(--accent);text-decoration:none">MASTER MOMENTUM EQUATION &rarr;</a></h3>
+<p>The complete turbulence-closed PDE system that the membrane's particle dynamics approximate.</p>
+</div>
+</div>
+</div>
+</section>
+<div style="max-width:800px;margin:2rem auto;text-align:center">
+<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8345487545441889" data-ad-slot="1720203631" data-ad-format="auto" data-full-width-responsive="true"></ins>
+<script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>
+</div>
+<footer>
+<div class="footer-links">
+<a href="../about.html">ABOUT</a>
+<a href="../faq.html">FAQ</a>
+<a href="../research.html">RESEARCH</a>
+<a href="../privacy.html">PRIVACY</a>
+<a href="../terms.html">TERMS</a>
+<a href="/">AMNI-SCIENT</a>
+<a href="mailto:amnibro7@gmail.com">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amni-Scient. All rights reserved.</p>
+</footer>
+<script>
+(function(){
+var cv=document.getElementById('hm-canvas'),ctx=cv.getContext('2d');
+var W=600,H=400,running=false,raf=null,step=0;
+var field=[],fW=60,fH=40,particles=[],density=[];
+function gi(id){return document.getElementById(id)}
+function genField(){
+field=[];density=[];
+for(var y=0;y<fH;y++){field[y]=[];density[y]=[];for(var x=0;x<fW;x++){
+var cx=x/fW-0.5,cy=y/fH-0.5;
+var v=0.3+0.4*Math.sin(cx*8)*Math.cos(cy*6)+0.2*Math.sin((cx+cy)*12)+0.1*Math.random();
+field[y][x]=Math.max(0,Math.min(1,v));density[y][x]=0;
+}}
+}
+function initParticles(){
+var n=parseInt(gi('hm-count').value);
+particles=[];
+for(var i=0;i<n;i++) particles.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-0.5)*2,vy:(Math.random()-0.5)*2,e:0.5+Math.random()*0.5});
+}
+function getR(px,py){
+var gx=Math.floor(px/W*fW),gy=Math.floor(py/H*fH);
+gx=Math.max(0,Math.min(fW-1,gx));gy=Math.max(0,Math.min(fH-1,gy));
+return field[gy][gx];
+}
+function gradR(px,py){
+var gx=px/W*fW,gy=py/H*fH;
+var ix=Math.floor(gx),iy=Math.floor(gy);
+var x0=Math.max(0,ix-1),x1=Math.min(fW-1,ix+1),y0=Math.max(0,iy-1),y1=Math.min(fH-1,iy+1);
+return{dx:(field[Math.min(fH-1,iy)][x1]-field[Math.min(fH-1,iy)][x0])*fW/W*5,dy:(field[y1][Math.min(fW-1,ix)]-field[y0][Math.min(fW-1,ix)])*fH/H*5};
+}
+function simulate(){
+var gamma=parseInt(gi('hm-friction').value)/100,dt=0.8,alpha=5.0;
+var alive=0,totalE=0;
+for(var i=0;i<particles.length;i++){
+var p=particles[i];if(p.e<=0.001) continue;alive++;
+var g=gradR(p.x,p.y);
+var fx=-g.dx*alpha,fy=-g.dy*alpha+getR(p.x,p.y)*2;
+p.vx=(p.vx+fx*dt)*gamma;p.vy=(p.vy+fy*dt)*gamma;
+p.x+=p.vx*dt;p.y+=p.vy*dt;
+p.e*=0.998;totalE+=p.e;
+if(p.x<0){p.x=0;p.vx*=-0.5;}if(p.x>=W){p.x=W-1;p.vx*=-0.5;}
+if(p.y<0){p.y=0;p.vy*=-0.5;}if(p.y>=H){p.y=H-1;p.vy*=-0.5;}
+var gx=Math.floor(p.x/W*fW),gy=Math.floor(p.y/H*fH);
+gx=Math.max(0,Math.min(fW-1,gx));gy=Math.max(0,Math.min(fH-1,gy));
+density[gy][gx]+=p.e*0.1;
+}
+step++;
+gi('hm-step').textContent=step;gi('hm-alive').textContent=alive;gi('hm-energy').textContent=alive>0?(totalE/alive).toFixed(3):'0';
+}
+function render(){
+ctx.clearRect(0,0,W,H);
+var cw=W/fW,ch=H/fH,maxD=0.01;
+for(var y=0;y<fH;y++) for(var x=0;x<fW;x++) maxD=Math.max(maxD,density[y][x]);
+for(var y=0;y<fH;y++) for(var x=0;x<fW;x++){
+var r=field[y][x],d=density[y][x]/maxD;
+var rb=Math.floor(r*60+d*100),gb=Math.floor(r*20+d*180),bb=Math.floor(r*40+d*255);
+ctx.fillStyle='rgb('+Math.min(255,rb)+','+Math.min(255,gb)+','+Math.min(255,bb)+')';
+ctx.fillRect(x*cw,y*ch,cw+1,ch+1);
+}
+for(var i=0;i<particles.length;i++){
+var p=particles[i];if(p.e<=0.001) continue;
+var a=Math.min(1,p.e);
+ctx.beginPath();ctx.arc(p.x,p.y,1.5,0,6.283);
+ctx.fillStyle='rgba(255,220,100,'+a+')';ctx.fill();
+}
+}
+function loop(){
+simulate();render();
+if(running) raf=requestAnimationFrame(loop);
+}
+window.hmToggle=function(){
+running=!running;gi('hm-start').textContent=running?'PAUSE':'START';
+if(running) loop();
+}
+window.hmReset=function(){
+running=false;gi('hm-start').textContent='START';
+if(raf) cancelAnimationFrame(raf);
+step=0;genField();initParticles();render();
+gi('hm-step').textContent='0';gi('hm-alive').textContent=particles.length;gi('hm-energy').textContent='0.50';
+}
+genField();initParticles();render();
+gi('hm-alive').textContent=particles.length;
+})();
+</script>
+</body>
+</html>

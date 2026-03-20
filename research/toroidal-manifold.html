@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Toroidal Manifold Geometry — State-Space Topology | AMNI-SCIENT Research</title>
+<meta name="description" content="Toroidal Manifold Geometry: mapping high-dimensional state vectors onto a torus surface with hourglass pinch model, magnetic field dynamics, and hierarchical addressing.">
+<meta name="keywords" content="toroidal manifold,torus topology,hourglass model,magnetic field,hierarchical addressing,state space,spectral geometry">
+<meta property="og:title" content="Toroidal Manifold Geometry — AMNI-SCIENT Research">
+<meta property="og:description" content="State-space topology on a torus surface with hourglass pinch and hierarchical addressing.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://amni-scient.com/research/toroidal-manifold">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://amni-scient.com/research/toroidal-manifold">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"ScholarlyArticle","name":"Toroidal Manifold Geometry","author":{"@type":"Person","name":"Anthony Reffelt"},"description":"Maps high-dimensional state vectors onto a torus surface with hourglass pinch model and hierarchical addressing.","url":"https://amni-scient.com/research/toroidal-manifold","publisher":{"@type":"Organization","name":"AMNI-SCIENT"},"datePublished":"2025","dateModified":"2026"}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8345487545441889" crossorigin="anonymous" data-overlays="false"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+<style>
+.eq-block{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:1.5rem 2rem;margin:1.5rem 0;overflow-x:auto}
+.eq-block .eq-label{font-size:.6rem;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:.75rem}
+.derivation-step{border-left:2px solid var(--accent);padding-left:1.5rem;margin:1.5rem 0}
+.derivation-step h4{color:var(--accent);font-size:.8rem;letter-spacing:2px;margin-bottom:.5rem}
+.app-card{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem;margin-bottom:1rem}
+.app-card h4{color:var(--accent);font-size:.85rem;letter-spacing:2px;margin-bottom:.5rem}
+.app-card p{color:var(--dim);font-size:.85rem;line-height:1.7}
+.breadcrumb{font-size:.7rem;letter-spacing:2px;color:var(--dim);margin-bottom:1rem}
+.breadcrumb a{color:var(--accent);text-decoration:none}
+.addr-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.8rem}
+.addr-table th{text-align:left;color:var(--accent);font-size:.7rem;letter-spacing:1px;padding:.5rem;border-bottom:1px solid var(--border)}
+.addr-table td{color:var(--dim);padding:.5rem;border-bottom:1px solid rgba(255,255,255,.05)}
+.addr-visual{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:1.5rem;margin:1.5rem 0;text-align:center;font-family:'JetBrains Mono',monospace}
+.addr-visual .addr-seg{display:inline-block;padding:.5rem .75rem;margin:0 .25rem;border-radius:4px;font-size:1rem;letter-spacing:3px}
+.addr-visual .seg-coarse{background:rgba(255,100,100,.15);color:#ff6464;border:1px solid rgba(255,100,100,.3)}
+.addr-visual .seg-medium{background:rgba(100,200,255,.15);color:#64c8ff;border:1px solid rgba(100,200,255,.3)}
+.addr-visual .seg-fine{background:rgba(100,255,150,.15);color:#64ff96;border:1px solid rgba(100,255,150,.3)}
+.addr-visual .seg-pinch{background:rgba(255,200,100,.15);color:#ffc864;border:1px solid rgba(255,200,100,.3)}
+.addr-visual .seg-label{display:block;font-size:.55rem;letter-spacing:2px;margin-top:.35rem;opacity:.7}
+.viz-section{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem;margin:1.5rem 0}
+.viz-section h4{color:var(--accent);font-size:.75rem;letter-spacing:2px;margin-bottom:1rem;text-transform:uppercase}
+.viz-canvas-wrap{position:relative;width:100%;max-width:700px;margin:0 auto}
+.viz-controls{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem;align-items:center}
+.viz-controls label{color:var(--dim);font-size:.75rem;letter-spacing:1px}
+.viz-controls input{background:var(--bg);border:1px solid var(--border);color:var(--text);padding:.3rem .5rem;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.8rem}
+.viz-controls button{background:var(--accent);color:var(--bg);border:none;padding:.4rem 1rem;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.75rem;letter-spacing:1px;cursor:pointer}
+.viz-controls button:hover{opacity:.85}
+.viz-charts-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}@media(max-width:600px){.viz-charts-row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="grid-bg"></div>
+<div class="scanlines"></div>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<div class="nav-dd">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu">
+<a href="../amni-haven.html">AMNI-HAVEN</a>
+<a href="../amni-crypt.html">AMNI-CRYPT</a>
+<a href="../amni-ai.html">AMNI-AI</a>
+<a href="../amni-core.html">AMNI-CORE</a>
+<a href="../amni-explore.html">AMNI-EXPLORE</a>
+<a href="../amni-calc.html">AMNI-CALC</a>
+<a href="../amni-learn.html">AMNI-LEARN</a>
+</div>
+</div>
+<a href="../research.html" class="nav-active">RESEARCH</a>
+<a href="../about.html">ABOUT</a>
+<a href="../faq.html">FAQ</a>
+<a href="../privacy.html">PRIVACY</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<section class="hero" style="min-height:auto;padding:8rem 2rem 3rem">
+<div class="breadcrumb"><a href="../research.html">RESEARCH</a> &nbsp;/&nbsp; TOROIDAL MANIFOLD GEOMETRY</div>
+<h1>TOROIDAL MANIFOLD GEOMETRY</h1>
+<p class="subtitle">STATE-SPACE TOPOLOGY WITH HOURGLASS PINCH</p>
+<p class="tagline">High-dimensional state vectors map onto a torus surface where angular position encodes phase, radial distance encodes entropy, and an hourglass constriction at maximum entropy creates a universal transit bottleneck.</p>
+</section>
+<section>
+<h2>ABSTRACT</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
+<p>The <strong style="color:var(--text)">Toroidal Manifold</strong> is a geometric framework for analyzing systems whose internal states can be decomposed into rotational (phase) and density (entropy) components. Any process that operates on fixed-width binary words &mdash; hash functions, neural network weight tensors, quantum gate sequences &mdash; traces trajectories on a torus parameterized by angular position &theta;, bit density r, and azimuthal lift &phi;.</p>
+<p style="margin-top:1.2rem">The critical feature is an <strong style="color:var(--text)">hourglass pinch</strong> at r = 0.5 (maximum entropy). All well-mixed trajectories must transit this bottleneck, making it a thermodynamic ground state and a natural observation point for characterizing system behavior. A magnetic field model assigns field strength proportional to pinch proximity, enabling energy-based analysis of trajectory dynamics.</p>
+</div>
+</section>
+<section>
+<h2>COORDINATE SYSTEM</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
+<div class="derivation-step">
+<h4>STEP T1 &mdash; ANGULAR COORDINATE</h4>
+<p>Split each state word w into upper and lower halves, then compute phase angle:</p>
+<div class="eq-block">
+<div class="eq-label">EQUATION T1 &mdash; ANGULAR POSITION</div>
+$$\theta_i = \arctan2\!\left(w_{\text{upper}} - 2^{15},\; w_{\text{lower}} - 2^{15}\right) + \pi \qquad \theta \in [0, 2\pi)$$
+</div>
+<p>The subtraction of 2<sup>15</sup> centers each half-word at zero, mapping the full range symmetrically around the origin. Adding &pi; shifts the domain to [0, 2&pi;).</p>
+</div>
+<div class="derivation-step">
+<h4>STEP T2 &mdash; RADIAL COORDINATE (BIT DENSITY)</h4>
+<p>The radial position on the torus measures information density:</p>
+<div class="eq-block">
+<div class="eq-label">EQUATION T2 &mdash; BIT DENSITY</div>
+$$r_i = \frac{\operatorname{popcount}(w_i)}{N_{\text{bits}}} \qquad r \in [0, 1]$$
+</div>
+<p>For 32-bit words, N<sub>bits</sub> = 32. The radius r = 0 means all zeros (minimum entropy), r = 1 means all ones (also minimum entropy), and r = 0.5 represents maximum entropy (half bits set).</p>
+</div>
+<div class="derivation-step">
+<h4>STEP T3 &mdash; HOURGLASS TRANSFORMATION</h4>
+<p>A nonlinear transformation compresses coordinates near the entropy equator:</p>
+<div class="eq-block">
+<div class="eq-label">EQUATION T3 &mdash; HOURGLASS PINCH</div>
+$$\tilde{r}_i = 0.5 + \operatorname{sign}(r - 0.5) \cdot |r - 0.5|^{\alpha} \qquad \alpha = 0.5$$
+</div>
+<p>With &alpha; = 0.5 (square-root pinch), trajectories near r = 0.5 are compressed into a narrow band, amplifying structural differences between states near maximum entropy while preserving the topological ordering of all states.</p>
+</div>
+<div class="derivation-step">
+<h4>STEP T4 &mdash; AZIMUTHAL LIFT</h4>
+<p>A third coordinate lifts the torus into full 3D:</p>
+<div class="eq-block">
+<div class="eq-label">EQUATION T4 &mdash; AZIMUTHAL COORDINATE</div>
+$$\phi_i = \frac{\operatorname{nibble\_parities}(w_i)}{2^{N_{\text{nibbles}}} - 1} \cdot 2\pi \qquad \phi \in [0, 2\pi)$$
+</div>
+<p>Nibble parities compute XOR-parity of each 4-bit sub-group, encoding local bit-structure information that &theta; and r cannot capture.</p>
+</div>
+<div class="derivation-step">
+<h4>STEP T5 &mdash; 3D TORUS EMBEDDING</h4>
+<p>The Cartesian embedding onto a torus with major radius R:</p>
+<div class="eq-block">
+<div class="eq-label">EQUATION T5 &mdash; TORUS SURFACE</div>
+$$x = (R + r\cos\phi)\cos\theta \qquad y = (R + r\cos\phi)\sin\theta \qquad z = r\sin\phi$$
+</div>
+<p>with R = 2.0. Each state vector now occupies a unique position on the torus surface.</p>
+</div>
+</div>
+</section>
+<section>
+<h2>MAGNETIC FIELD MODEL</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
+<p>The torus carries an intrinsic magnetic field whose strength is inversely proportional to distance from the pinch:</p>
+<div class="eq-block">
+<div class="eq-label">EQUATION T6 &mdash; TOROIDAL MAGNETIC FIELD</div>
+$$B_\theta = 1 - 2|r - 0.5|$$
+</div>
+<p>Properties: B<sub>&theta;</sub> = 1 at the pinch (r = 0.5), and B<sub>&theta;</sub> = 0 at the extremes (r = 0 or r = 1). Trajectories passing through the pinch experience maximum field strength, enabling characterization via the field line integral:</p>
+<div class="eq-block">
+<div class="eq-label">EQUATION T7 &mdash; FIELD LINE INTEGRAL</div>
+$$\oint \mathbf{B} \cdot d\mathbf{l} = \sum_{t=1}^{T} B_\theta(t) \cdot d\theta(t)$$
+</div>
+<p>This integral serves as a trajectory signature: distinct trajectories through the same manifold region produce different field integrals, enabling discrimination even when start/end coordinates coincide.</p>
+<div class="eq-block">
+<div class="eq-label">EQUATION T8 &mdash; ENERGY FUNCTIONAL</div>
+$$E = \frac{1}{2}\sum_i (r_i - 0.5)^2 + \frac{1}{2}\sum_i \left(\frac{\phi_i}{\pi}\right)^2$$
+</div>
+<p>The ground state E<sub>min</sub> occurs at r = 0.5, &phi; = 0 &mdash; the pinch equator. This is the thermodynamic attractor for all well-mixed systems.</p>
+</div>
+</section>
+<section>
+<h2>HIERARCHICAL ADDRESSING</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
+<p>Every trajectory through the manifold receives a unique <strong style="color:var(--text)">16-digit hierarchical address</strong> in base-9 encoding, structured as four cascading resolution levels:</p>
+<div class="addr-visual">
+<span class="addr-seg seg-coarse">4 3 2 1<span class="seg-label">COARSE</span></span>
+<span style="color:var(--dim)">-</span>
+<span class="addr-seg seg-medium">8 5 3 0<span class="seg-label">MEDIUM</span></span>
+<span style="color:var(--dim)">-</span>
+<span class="addr-seg seg-fine">2 7 4 6<span class="seg-label">FINE</span></span>
+<span style="color:var(--dim)">-</span>
+<span class="addr-seg seg-pinch">1 3 0 5<span class="seg-label">PINCH</span></span>
+</div>
+<table class="addr-table">
+<thead><tr><th>LEVEL</th><th>DIGITS</th><th>CAPTURES</th><th>EQUATIONS</th></tr></thead>
+<tbody>
+<tr>
+<td style="color:#ff6464">COARSE (CCCC)</td>
+<td>4</td>
+<td>Global manifold region &mdash; angular mean, bit density, winding number, radius variance</td>
+<td>$$C_1 = \left\lfloor\tfrac{\bar\theta + \pi}{2\pi}\cdot 9\right\rfloor \quad C_2 = \lfloor\bar{r}\cdot 9\rfloor \quad C_3 = \left\lfloor\tfrac{\sum\theta}{2\pi}\bmod 9\right\rfloor \quad C_4 = \min(8,\lfloor\text{Var}(r)\cdot 100\rfloor)$$</td>
+</tr>
+<tr>
+<td style="color:#64c8ff">MEDIUM (MMMM)</td>
+<td>4</td>
+<td>Local dynamics &mdash; angular velocity, radial velocity, angular acceleration, radial acceleration</td>
+<td>$$M_1 = \lfloor|\dot\theta|\cdot 5\rfloor \quad M_2 = \min(8,\lfloor|\dot r|\cdot 50\rfloor) \quad M_3 = \lfloor|\ddot\theta|\cdot 10\rfloor \quad M_4 = \min(8,\lfloor|\ddot r|\cdot 100\rfloor)$$</td>
+</tr>
+<tr>
+<td style="color:#64ff96">FINE (FFFF)</td>
+<td>4</td>
+<td>Spectral features &mdash; peak FFT frequency, spectral energy, skewness, kurtosis of radius</td>
+<td>$$F_1 = \lfloor\arg\max|\mathcal{F}(\theta)|/10\rfloor \quad F_2 = \lfloor\log(\|\mathcal{F}\|^2+1)\rfloor \quad F_3 = \lfloor(E[(r-.5)^3]+.5)\cdot 9\rfloor \quad F_4 = \min(8,\lfloor E[(r-.5)^4]\cdot 100\rfloor)$$</td>
+</tr>
+<tr>
+<td style="color:#ffc864">PINCH (PPPP)</td>
+<td>4</td>
+<td>Transit pattern through r = 0.5 &mdash; entry timing, dwell time, angular displacement, radial velocity at pinch</td>
+<td>$$P_1 = \min(8,\lfloor t_{\text{entry}}/8\rfloor) \quad P_2 = \lfloor\tfrac{\Delta t}{T}\cdot 9\rfloor \quad P_3 = \min(8,\lfloor\tfrac{|\Delta\theta|}{2\pi}\cdot 9\rfloor) \quad P_4 = \min(8,\lfloor|\dot r_{\text{pinch}}|\cdot 50\rfloor)$$</td>
+</tr>
+</tbody>
+</table>
+<p>The addressing scheme enables <strong style="color:var(--text)">hierarchical lookup</strong>: queries at coarse level return broad candidate sets (&sim;10<sup>3</sup>), medium level narrows by &sim;10&times;, fine level isolates individual trajectories. The pinch code provides an independent cross-reference orthogonal to spatial addressing.</p>
+</div>
+</section>
+<section>
+<h2>HOLOGRAPHIC RESONANCE</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
+<p>Multiple manifold views (clusters in different coordinate frames) can be stacked and compared via constructive interference:</p>
+<div class="eq-block">
+<div class="eq-label">EQUATION T9 &mdash; RESONANCE FIELD</div>
+$$\text{Resonance}(p) = \sum_{a=1}^{M} w_a \exp\!\left(-\frac{\|p - c_a\|^2}{2\sigma^2}\right) \qquad \sigma = 5.0$$
+</div>
+<p>Points with high resonance across multiple views are <strong style="color:var(--text)">resonant nodes</strong> &mdash; structurally significant positions where independent analyses converge. The interference field I(p) averages centrality across all M views:</p>
+<div class="eq-block">
+<div class="eq-label">EQUATION T10 &mdash; INTERFERENCE FIELD</div>
+$$I(p) = \frac{1}{M}\sum_{v=1}^{M} \exp\!\left(-\frac{d_v(p)^2}{2\sigma_v^2}\right)$$
+</div>
+<p>Facade matrices provide linear transforms between view-local and global coordinates, learned via weighted least squares to minimize reconstruction error for high-value trajectories.</p>
+</div>
+</section>
+<section>
+<h2>STATE-OF-THE-ART APPLICATIONS</h2>
+<div style="max-width:800px;margin:0 auto">
+<div class="app-card">
+<h4>&#128300; CRYPTOGRAPHIC ANALYSIS &amp; HASH FUNCTION DESIGN</h4>
+<p>Hash functions transform input to fixed-width output through sequences of rotation, XOR, and modular addition &mdash; exactly the operations encoded by (&theta;, r, &phi;). Mapping hash round states onto the torus reveals structural biases invisible in raw bit analysis: non-uniform pinch transit patterns indicate weak mixing, asymmetric &theta;-winding exposes rotational symmetry leakage, and anomalous B<sub>&theta;</sub> integrals detect differential characteristics. The hierarchical address provides a compact 16-digit fingerprint for classifying hash behavior across difficulty levels.</p>
+</div>
+<div class="app-card">
+<h4>&#9883; QUANTUM STATE REPRESENTATION</h4>
+<p>Quantum gates (Hadamard, CNOT, T-gate) perform operations directly analogous to the torus coordinates: rotation on the Bloch sphere (&theta;), superposition coefficient magnitude (r as probability amplitude), and relative phase (&phi;). The toroidal manifold provides a classical embedding for quantum circuit analysis where the hourglass pinch at r = 0.5 corresponds to maximum superposition (equal probability amplitudes). Circuit depth optimization can be analyzed via field integral minimization, and decoherence pathways correspond to trajectories that fail to transit the pinch.</p>
+</div>
+<div class="app-card">
+<h4>&#128293; TOKAMAK PLASMA CONFINEMENT</h4>
+<p>Tokamak fusion reactors confine plasma on a physical torus. The mathematical framework maps directly: &theta; is the toroidal angle, r is the normalized flux coordinate, &phi; is the poloidal angle. The hourglass model's pinch corresponds to the magnetic axis (maximum confinement), and B<sub>&theta;</sub> models the safety factor profile. Hierarchical addressing enables rapid classification of plasma instability modes (ELMs, kink modes, tearing modes) from diagnostic data, providing a compact representation for real-time plasma control systems.</p>
+</div>
+<div class="app-card">
+<h4>&#128421; DATABASE INDEXING &amp; NETWORK ROUTING</h4>
+<p>The hierarchical CCCC-MMMM-FFFF-PPPP addressing scheme is a general-purpose multi-resolution index. Applied to high-dimensional vector databases (e.g., embedding search for LLMs), it provides cascading resolution lookup: coarse level partitions the space into &sim;6561 (9<sup>4</sup>) buckets for O(1) access, with progressive refinement at each level. The pinch code adds an independent verification dimension, enabling cross-validation that reduces false positives. Compression ratio: 16 base-9 digits address a space of 9<sup>16</sup> &asymp; 1.85 &times; 10<sup>15</sup> distinct locations.</p>
+</div>
+<div class="app-card">
+<h4>&#127760; SATELLITE CONSTELLATION MANAGEMENT</h4>
+<p>Satellite orbits are inherently toroidal (right ascension = &theta;, orbital altitude = r, argument of perigee = &phi;). The holographic resonance field identifies orbital slots where multiple constellation requirements constructively interfere &mdash; positions that simultaneously satisfy coverage, inter-satellite link geometry, and ground station visibility. The magnetic field model provides a natural metric for orbital stability, with B<sub>&theta;</sub> peaks at the most stable altitude bands.</p>
+</div>
+</div>
+</section>
+<section>
+<h2>INTERACTIVE EXPLORER</h2>
+<div style="max-width:800px;margin:0 auto">
+<div class="viz-section">
+<h4>3D TORUS WITH TRAJECTORY</h4>
+<p style="color:var(--dim);font-size:.8rem;line-height:1.7;margin-bottom:1rem">Rotating wireframe torus (R=2, r=0.8) with a sample trajectory plotted on the surface. The hourglass pinch at r=0.5 is highlighted in gold. Drag to adjust rotation speed.</p>
+<div class="viz-controls">
+<button id="tm-toggle" onclick="tmToggle()">START</button>
+<button onclick="tmReset()">RESET</button>
+<label style="margin-left:.5rem">SPEED:</label>
+<input type="range" id="tm-speed" min="1" max="20" value="8" style="width:80px">
+<label style="margin-left:.5rem">PINCH &alpha;:</label>
+<input type="range" id="tm-alpha" min="20" max="100" value="50" style="width:80px" oninput="tmUpdateCharts()">
+</div>
+<canvas id="tm-torus" width="600" height="400" style="width:100%;border-radius:6px;border:1px solid var(--border);background:#0a0a0a"></canvas>
+</div>
+<div class="viz-charts-row" style="margin-top:1.5rem">
+<div class="viz-section">
+<h4>HOURGLASS PINCH: r vs r&#771;</h4>
+<div class="viz-canvas-wrap"><canvas id="tm-pinch-chart"></canvas></div>
+</div>
+<div class="viz-section">
+<h4>MAGNETIC FIELD B<sub>&theta;</sub> vs r</h4>
+<div class="viz-canvas-wrap"><canvas id="tm-bfield-chart"></canvas></div>
+</div>
+</div>
+</div>
+</section>
+<section>
+<h2>RELATED FRAMEWORKS</h2>
+<div style="max-width:800px;margin:0 auto">
+<div class="card-grid">
+<div class="card">
+<h3><a href="holographic-membrane.html" style="color:var(--accent);text-decoration:none">&larr; HOLOGRAPHIC MEMBRANE</a></h3>
+<p>Particle dynamics on friction fields derived from the holographic stretch that feeds the toroidal mapping.</p>
+</div>
+<div class="card">
+<h3><a href="ground-state-kernel.html" style="color:var(--accent);text-decoration:none">GROUND STATE KERNEL &rarr;</a></h3>
+<p>The universal dimensionality reduction that discovers the ground state at the toroidal pinch.</p>
+</div>
+</div>
+</div>
+</section>
+<div style="max-width:800px;margin:2rem auto;text-align:center">
+<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8345487545441889" data-ad-slot="1720203631" data-ad-format="auto" data-full-width-responsive="true"></ins>
+<script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>
+</div>
+<footer>
+<div class="footer-links">
+<a href="../about.html">ABOUT</a>
+<a href="../faq.html">FAQ</a>
+<a href="../research.html">RESEARCH</a>
+<a href="../privacy.html">PRIVACY</a>
+<a href="../terms.html">TERMS</a>
+<a href="/">AMNI-SCIENT</a>
+<a href="mailto:amnibro7@gmail.com">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amni-Scient. All rights reserved.</p>
+</footer>
+<script>
+(function(){
+var cv=document.getElementById('tm-torus'),ctx=cv.getContext('2d');
+var W=600,H=400,angle=0,running=false,raf=null;
+var R=2.0,rr=0.8,pinchChart=null,bfChart=null;
+function gi(id){return document.getElementById(id)}
+function project(x,y,z){var s=4/(4+z);return{x:W/2+x*s*80,y:H/2+y*s*80,s:s};}
+function rotY(x,y,z,a){var c=Math.cos(a),s=Math.sin(a);return{x:x*c+z*s,y:y,z:-x*s+z*c};}
+function rotX(x,y,z,a){var c=Math.cos(a),s=Math.sin(a);return{x:x,y:y*c-z*s,z:y*s+z*c};}
+function drawTorus(){
+ctx.clearRect(0,0,W,H);
+var nT=40,nP=20;
+for(var i=0;i<nT;i++){
+var th=i/nT*Math.PI*2;
+for(var j=0;j<nP;j++){
+var ph=j/nP*Math.PI*2;
+var x=(R+rr*Math.cos(ph))*Math.cos(th),y=rr*Math.sin(ph),z=(R+rr*Math.cos(ph))*Math.sin(th);
+var r1=rotX(x,y,z,0.4),r2=rotY(r1.x,r1.y,r1.z,angle);
+var p=project(r2.x,r2.y,r2.z);
+var bDist=Math.abs(Math.cos(ph));
+ctx.beginPath();ctx.arc(p.x,p.y,Math.max(0.5,p.s*1.5),0,6.283);
+ctx.fillStyle=bDist<0.15?'rgba(255,200,100,'+(0.4+p.s*0.4)+')':'rgba(100,200,255,'+(0.15+p.s*0.2)+')';
+ctx.fill();
+}
+}
+var traj=[];
+for(var t=0;t<200;t++){
+var th=t/200*Math.PI*4,rd=0.3+0.5*Math.abs(Math.sin(th*1.5));
+var ph=t/200*Math.PI*6;
+var x=(R+rd*Math.cos(ph))*Math.cos(th),y=rd*Math.sin(ph),z=(R+rd*Math.cos(ph))*Math.sin(th);
+var r1=rotX(x,y,z,0.4),r2=rotY(r1.x,r1.y,r1.z,angle);
+traj.push(project(r2.x,r2.y,r2.z));
+}
+ctx.beginPath();ctx.strokeStyle='rgba(255,100,100,0.7)';ctx.lineWidth=1.5;
+for(var i=0;i<traj.length;i++) i===0?ctx.moveTo(traj[i].x,traj[i].y):ctx.lineTo(traj[i].x,traj[i].y);
+ctx.stroke();
+}
+function loop(){
+var spd=parseInt(gi('tm-speed').value)/1000;
+angle+=spd;
+drawTorus();
+if(running) raf=requestAnimationFrame(loop);
+}
+window.tmToggle=function(){running=!running;gi('tm-toggle').textContent=running?'PAUSE':'START';if(running) loop();}
+window.tmReset=function(){running=false;gi('tm-toggle').textContent='START';if(raf) cancelAnimationFrame(raf);angle=0;drawTorus();}
+window.tmUpdateCharts=function(){
+var alpha=parseInt(gi('tm-alpha').value)/100;
+var labels=[],rData=[],rtData=[],bData=[];
+for(var i=0;i<=100;i++){
+var rv=i/100;labels.push(rv.toFixed(2));
+var rt=0.5+Math.sign(rv-0.5)*Math.pow(Math.abs(rv-0.5),alpha);
+rData.push(rv);rtData.push(rt);bData.push(1-2*Math.abs(rv-0.5));
+}
+var ctxP=gi('tm-pinch-chart');
+if(pinchChart) pinchChart.destroy();
+pinchChart=new Chart(ctxP,{type:'line',data:{labels:labels,datasets:[{label:'r (original)',data:rData,borderColor:'rgba(100,200,255,0.4)',borderWidth:1,borderDash:[3,3],pointRadius:0},{label:'r\u0303 (pinched)',data:rtData,borderColor:'rgba(255,200,100,1)',borderWidth:2,pointRadius:0,tension:.3}]},options:{responsive:true,plugins:{legend:{labels:{color:'#aaa',font:{family:"'JetBrains Mono'",size:9}}}},scales:{x:{display:true,title:{display:true,text:'r',color:'#888',font:{family:"'JetBrains Mono'",size:10}},ticks:{maxTicksLimit:6,color:'#888',font:{size:8}},grid:{color:'rgba(255,255,255,.05)'}},y:{title:{display:true,text:'value',color:'#888',font:{family:"'JetBrains Mono'",size:10}},ticks:{color:'#888',font:{size:8}},grid:{color:'rgba(255,255,255,.05)'}}}}});
+var ctxB=gi('tm-bfield-chart');
+if(bfChart) bfChart.destroy();
+bfChart=new Chart(ctxB,{type:'line',data:{labels:labels,datasets:[{label:'B\u03B8',data:bData,borderColor:'rgba(100,255,150,1)',backgroundColor:'rgba(100,255,150,0.1)',borderWidth:2,fill:true,pointRadius:0,tension:.1}]},options:{responsive:true,plugins:{legend:{labels:{color:'#aaa',font:{family:"'JetBrains Mono'",size:9}}}},scales:{x:{display:true,title:{display:true,text:'r',color:'#888',font:{family:"'JetBrains Mono'",size:10}},ticks:{maxTicksLimit:6,color:'#888',font:{size:8}},grid:{color:'rgba(255,255,255,.05)'}},y:{title:{display:true,text:'B\u03B8',color:'#888',font:{family:"'JetBrains Mono'",size:10}},ticks:{color:'#888',font:{size:8}},grid:{color:'rgba(255,255,255,.05)'}}}}});
+}
+drawTorus();
+tmUpdateCharts();
+})();
+</script>
+</body>
+</html>

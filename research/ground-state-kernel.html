@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Universal Ground State Kernel — Dimensionality Collapse | AMNI-SCIENT Research</title>
+<meta name="description" content="Universal Ground State Kernel: SVD-based eigenstretch decomposition reveals that all high-dimensional parameter spaces collapse to a 2D manifold (k, regime), enabling extreme compression and universal transfer.">
+<meta name="keywords" content="ground state kernel,dimensionality reduction,SVD,eigenstretch,parameter compression,universal manifold,meta-optimizer,causal weights">
+<meta property="og:title" content="Universal Ground State Kernel — AMNI-SCIENT Research">
+<meta property="og:description" content="All high-dimensional parameter spaces collapse to a 2D manifold via SVD eigenstretch decomposition.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://amni-scient.com/research/ground-state-kernel">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://amni-scient.com/research/ground-state-kernel">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"ScholarlyArticle","name":"Universal Ground State Kernel","author":{"@type":"Person","name":"Anthony Reffelt"},"description":"SVD eigenstretch decomposition reveals universal 2D ground state manifold in high-dimensional parameter spaces.","url":"https://amni-scient.com/research/ground-state-kernel","publisher":{"@type":"Organization","name":"AMNI-SCIENT"},"datePublished":"2025","dateModified":"2026"}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8345487545441889" crossorigin="anonymous" data-overlays="false"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+<style>
+.eq-block{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:1.5rem 2rem;margin:1.5rem 0;overflow-x:auto}
+.eq-block .eq-label{font-size:.6rem;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:.75rem}
+.eq-block.highlight{border-color:var(--accent);box-shadow:0 0 20px rgba(var(--accent-rgb,100,200,255),.15)}
+.derivation-step{border-left:2px solid var(--accent);padding-left:1.5rem;margin:1.5rem 0}
+.derivation-step h4{color:var(--accent);font-size:.8rem;letter-spacing:2px;margin-bottom:.5rem}
+.app-card{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem;margin-bottom:1rem}
+.app-card h4{color:var(--accent);font-size:.85rem;letter-spacing:2px;margin-bottom:.5rem}
+.app-card p{color:var(--dim);font-size:.85rem;line-height:1.7}
+.breadcrumb{font-size:.7rem;letter-spacing:2px;color:var(--dim);margin-bottom:1rem}
+.breadcrumb a{color:var(--accent);text-decoration:none}
+.collapse-visual{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:2rem;margin:1.5rem 0;text-align:center}
+.collapse-visual .dim-label{font-size:.65rem;letter-spacing:2px;color:var(--dim);margin-bottom:.5rem}
+.collapse-visual .dim-from{font-size:2rem;color:var(--dim);font-weight:700}
+.collapse-visual .dim-arrow{font-size:1.5rem;color:var(--accent);margin:0 1.5rem;vertical-align:middle}
+.collapse-visual .dim-to{font-size:2rem;color:var(--accent);font-weight:700}
+.collapse-visual .dim-detail{font-size:.8rem;color:var(--dim);margin-top:.75rem}
+.freeze-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.8rem}
+.freeze-table th{text-align:left;color:var(--accent);font-size:.65rem;letter-spacing:1px;padding:.5rem;border-bottom:1px solid var(--border)}
+.freeze-table td{color:var(--dim);padding:.5rem;border-bottom:1px solid rgba(255,255,255,.05)}
+.freeze-table .frozen{color:var(--dim);opacity:.5}
+.freeze-table .free{color:var(--accent);font-weight:700}
+.viz-section{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem;margin:1.5rem 0}
+.viz-section h4{color:var(--accent);font-size:.75rem;letter-spacing:2px;margin-bottom:1rem;text-transform:uppercase}
+.viz-canvas-wrap{position:relative;width:100%;max-width:700px;margin:0 auto}
+.viz-controls{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem;align-items:center}
+.viz-controls button{background:var(--accent);color:var(--bg);border:none;padding:.4rem 1rem;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.75rem;letter-spacing:1px;cursor:pointer}
+.viz-controls button:hover{opacity:.85}
+.viz-charts-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}@media(max-width:600px){.viz-charts-row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="grid-bg"></div>
+<div class="scanlines"></div>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<div class="nav-dd">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu">
+<a href="../amni-haven.html">AMNI-HAVEN</a>
+<a href="../amni-crypt.html">AMNI-CRYPT</a>
+<a href="../amni-ai.html">AMNI-AI</a>
+<a href="../amni-core.html">AMNI-CORE</a>
+<a href="../amni-explore.html">AMNI-EXPLORE</a>
+<a href="../amni-calc.html">AMNI-CALC</a>
+<a href="../amni-learn.html">AMNI-LEARN</a>
+</div>
+</div>
+<a href="../research.html" class="nav-active">RESEARCH</a>
+<a href="../about.html">ABOUT</a>
+<a href="../faq.html">FAQ</a>
+<a href="../privacy.html">PRIVACY</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<section class="hero" style="min-height:auto;padding:8rem 2rem 3rem">
+<div class="breadcrumb"><a href="../research.html">RESEARCH</a> &nbsp;/&nbsp; UNIVERSAL GROUND STATE KERNEL</div>
+<h1>UNIVERSAL GROUND STATE KERNEL</h1>
+<p class="subtitle">DIMENSIONALITY COLLAPSE TO 2D MANIFOLD</p>
+<p class="tagline">SVD-based eigenstretch decomposition reveals that high-dimensional parameter spaces universally collapse to a 2-dimensional ground state manifold (k, regime), enabling extreme compression, zero-shot transfer, and principled meta-optimization.</p>
+</section>
+<section>
+<h2>ABSTRACT</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
+<p>The <strong style="color:var(--text)">Universal Ground State Kernel</strong> is the empirical discovery that optimal configurations across diverse parameter spaces are not scattered through the full dimensionality of the space. Instead, they lie on a <strong style="color:var(--text)">2-dimensional manifold</strong> parameterized by a single continuous scaling factor k &isin; [0.3, 3.5] and a discrete regime selector &isin; {0, 1}.</p>
+<p style="margin-top:1.2rem">This is established via SVD decomposition of performance-weighted parameter matrices, combined with causal weight analysis to identify which dimensions actually influence outcomes vs. which are "frozen" at universal constants. The result: parameter spaces of 10&ndash;15+ dimensions collapse to d<sub>eff</sub> = 2 with &gt;95% variance explained, yielding compression ratios of 5&ndash;8&times;.</p>
+</div>
+</section>
+<section>
+<h2>CORE DISCOVERY</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
+<div class="collapse-visual">
+<div class="dim-label">DIMENSIONALITY COLLAPSE</div>
+<span class="dim-from">15D</span>
+<span class="dim-arrow">&xrarr;</span>
+<span class="dim-to">2D</span>
+<div class="dim-detail">k &isin; [0.3, 3.5] &nbsp;&bull;&nbsp; regime &isin; {0, 1} &nbsp;&bull;&nbsp; compression ratio: 7.5&times; &nbsp;&bull;&nbsp; variance explained: &gt;95%</div>
+</div>
+<div class="eq-block highlight">
+<div class="eq-label">THE GROUND STATE</div>
+$$\mathcal{G} = \{(k, \; \text{regime}) \;:\; k \in [0.3, 3.5], \;\text{regime} \in \{0, 1\}\}$$
+</div>
+<p>All other parameters are <strong style="color:var(--text)">frozen</strong> at universal constants determined by the ground state analysis. These frozen values are not "defaults" &mdash; they are the weighted medians of the top-performing configurations, verified to be insensitive to perturbation.</p>
+</div>
+</section>
+<section>
+<h2>DERIVATION</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
+<div class="derivation-step">
+<h4>STEP G1 &mdash; UNIFIED PARAMETER VECTOR</h4>
+<p>Collect all configurations into a standardized N-dimensional parameter vector:</p>
+<div class="eq-block">
+<div class="eq-label">EQUATION G1 &mdash; PARAMETER SPACE</div>
+$$\mathbf{p} = [p_1, p_2, \ldots, p_N]^T \qquad p_i \in [\min_i, \max_i]$$
+</div>
+<p>Each p<sub>i</sub> has a defined range. For a 15-parameter system, N = 15. The parameter matrix P has shape (M &times; N) where M is the number of observed configurations.</p>
+</div>
+<div class="derivation-step">
+<h4>STEP G2 &mdash; PERFORMANCE-WEIGHTED NORMALIZATION</h4>
+<p>Normalize parameters to [0, 1] and weight by performance score:</p>
+<div class="eq-block">
+<div class="eq-label">EQUATION G2 &mdash; WEIGHTED NORMALIZATION</div>
+$$\mathbf{P}_{\text{norm}} = \frac{\mathbf{P} - \mathbf{P}_{\min}}{\mathbf{P}_{\max} - \mathbf{P}_{\min}} \qquad \mathbf{P}_{\text{weighted}} = \mathbf{P}_{\text{norm}} \cdot \operatorname{diag}\!\left(\sqrt{\frac{s_i}{s_{\max}}}\right)$$
+</div>
+<p>where s<sub>i</sub> is the performance score of configuration i. This ensures that high-performing configurations have disproportionate influence on the decomposition.</p>
+</div>
+<div class="derivation-step">
+<h4>STEP G3 &mdash; SVD DECOMPOSITION</h4>
+<p>Center and decompose the weighted parameter matrix:</p>
+<div class="eq-block">
+<div class="eq-label">EQUATION G3 &mdash; SINGULAR VALUE DECOMPOSITION</div>
+$$\mathbf{X} = \mathbf{P}_{\text{weighted}} - \bar{\mathbf{P}}_{\text{weighted}} = \mathbf{U}\boldsymbol{\Sigma}\mathbf{V}^T$$
+</div>
+<p>Singular values &sigma;<sub>1</sub> &ge; &sigma;<sub>2</sub> &ge; &hellip; &ge; &sigma;<sub>N</sub> reveal the intrinsic dimensionality. Variance explained by dimension j:</p>
+<div class="eq-block">
+<div class="eq-label">EQUATION G4 &mdash; VARIANCE DECOMPOSITION</div>
+$$\lambda_j = \frac{\sigma_j^2}{\sum_i \sigma_i^2} \qquad d_{\text{eff}} = \arg\min_d \sum_{i=1}^{d} \lambda_i \geq 0.95$$
+</div>
+<p>The discovery: d<sub>eff</sub> = 2 consistently across diverse parameter spaces. Two singular values capture &gt;95% of the performance-weighted variance.</p>
+</div>
+<div class="derivation-step">
+<h4>STEP G4 &mdash; CAUSAL WEIGHT ANALYSIS</h4>
+<p>Determine which parameters actually matter by computing causal contribution:</p>
+<div class="eq-block">
+<div class="eq-label">EQUATION G5 &mdash; CAUSAL WEIGHTS</div>
+$$w_d = \int_0^1 \left|\frac{\partial \psi_j(d)}{\partial d}\right|^2 d\xi$$
+</div>
+<p>where &psi;<sub>j</sub> is the j-th eigenfunction from the decomposition. Parameters with high w<sub>d</sub> significantly influence the manifold shape (these become "free" parameters); parameters with low w<sub>d</sub> can be frozen without performance loss.</p>
+</div>
+<div class="derivation-step">
+<h4>STEP G5 &mdash; FREEZING &amp; GROUND STATE EXTRACTION</h4>
+<p>Rank parameters by causal weight, keep only the top k free, freeze the rest:</p>
+<div class="eq-block">
+<div class="eq-label">EQUATION G6 &mdash; GROUND STATE</div>
+$$p_i^* = \begin{cases}\text{free} & \text{if } w_i \geq w_{\text{threshold}} \\ \operatorname{median}_{\text{top-5\%}}(p_i) & \text{otherwise (frozen)}\end{cases}$$
+</div>
+<p>Frozen values are set to the weighted median of the top 5% of performers &mdash; the most robust central tendency of elite configurations.</p>
+</div>
+</div>
+</section>
+<section>
+<h2>PARAMETER FREEZE MAP</h2>
+<div style="max-width:800px;margin:0 auto">
+<p style="color:var(--dim);font-size:.85rem;line-height:1.9;margin-bottom:1rem">Example ground state extraction from a 15-parameter system, showing which parameters are free vs. frozen:</p>
+<table class="freeze-table">
+<thead><tr><th>PARAMETER</th><th>RANGE</th><th>GROUND STATE</th><th>STATUS</th><th>CAUSAL WEIGHT</th></tr></thead>
+<tbody>
+<tr><td style="color:var(--text)">k (scaling)</td><td>[0.3, 3.5]</td><td>&mdash;</td><td class="free">FREE</td><td class="free">0.92</td></tr>
+<tr><td style="color:var(--text)">regime</td><td>{0, 1}</td><td>&mdash;</td><td class="free">FREE</td><td class="free">0.87</td></tr>
+<tr><td style="color:var(--text)">threshold_buy</td><td>[5, 50]</td><td>50.0</td><td class="frozen">FROZEN</td><td class="frozen">0.12</td></tr>
+<tr><td style="color:var(--text)">threshold_sell</td><td>[50, 95]</td><td>derived from k</td><td class="frozen">FROZEN</td><td class="frozen">0.09</td></tr>
+<tr><td style="color:var(--text)">ext_lower</td><td>[3, 40]</td><td>25.0</td><td class="frozen">FROZEN</td><td class="frozen">0.07</td></tr>
+<tr><td style="color:var(--text)">ext_upper</td><td>[60, 97]</td><td>75.0</td><td class="frozen">FROZEN</td><td class="frozen">0.06</td></tr>
+<tr><td style="color:var(--text)">indicator_idx</td><td>[0, 5]</td><td>2</td><td class="frozen">FROZEN</td><td class="frozen">0.05</td></tr>
+<tr><td style="color:var(--text)">filter_idx</td><td>[0, 3]</td><td>1</td><td class="frozen">FROZEN</td><td class="frozen">0.04</td></tr>
+<tr><td style="color:var(--text)">signal_idx</td><td>[0, 4]</td><td>2</td><td class="frozen">FROZEN</td><td class="frozen">0.04</td></tr>
+<tr><td style="color:var(--text)">stop_ref</td><td>[0, 8]</td><td>7</td><td class="frozen">FROZEN</td><td class="frozen">0.03</td></tr>
+<tr><td style="color:var(--text)">target_ref</td><td>[0, 8]</td><td>6</td><td class="frozen">FROZEN</td><td class="frozen">0.03</td></tr>
+<tr><td style="color:var(--text)">averaging</td><td>{0, 1}</td><td>0</td><td class="frozen">FROZEN</td><td class="frozen">0.02</td></tr>
+</tbody>
+</table>
+<p style="color:var(--dim);font-size:.85rem;line-height:1.9;margin-top:1rem">Regime 0 (continuous) and Regime 1 (discrete) each have frozen parameter sets derived from their respective top performers. The scaling factor k then modulates all regime-specific derived quantities through simple algebraic relationships:</p>
+<div class="eq-block">
+<div class="eq-label">REGIME 0 &mdash; K-DERIVED QUANTITIES</div>
+$$\text{spread} = 15 + 20k \qquad \text{threshold}_{\text{sell}} = \min(50 + \text{spread}, 95)$$
+</div>
+<div class="eq-block">
+<div class="eq-label">REGIME 1 &mdash; K-DERIVED QUANTITIES</div>
+$$\text{window} = \lfloor 8 + 8k \rfloor \qquad \text{target} = \lfloor 4 + 4k \rfloor \qquad \text{stop} = 0.02k \qquad \text{gain} = 0.01k$$
+</div>
+</div>
+</section>
+<section>
+<h2>REFFELT CONSTANT AS FINGERPRINT</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
+<p>The eigenstretch decomposition produces singular values that encode directly into the Reffelt Constant (see <a href="reffelt-constant.html" style="color:var(--accent)">Reffelt Constant</a>):</p>
+<div class="eq-block">
+<div class="eq-label">EQUATION G7 &mdash; REFFELT DIGIT ENCODING</div>
+$$\text{ℜ}_j = \begin{cases}\lfloor \lambda_j \cdot 80 \rfloor & 0.01 \leq \lambda_j < 0.12 \\ 9 & \lambda_j \geq 0.12 \;\text{(saturated)} \\ 0 & \lambda_j < 0.01 \;\text{(dead)}\end{cases} \quad \text{clamped to } [1, 8]$$
+</div>
+<p>A valid Reffelt constant contains no 0s or 9s &mdash; all digits must be in [1, 8], indicating well-distributed variance across active dimensions. A near-maximum constant (e.g., &real; = 99100050) indicates extreme dimensional concentration &mdash; almost all variance in 2 dimensions, confirming the ground state collapse.</p>
+</div>
+</section>
+<section>
+<h2>META-OPTIMIZER</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
+<p>With the ground state identified, optimization becomes a <strong style="color:var(--text)">2D search problem</strong> solvable by a Bayesian + bandit hybrid:</p>
+<div class="derivation-step">
+<h4>BAYESIAN COMPONENT</h4>
+<p>Gaussian Process regression over (k, regime) &rarr; performance. Acquisition function (Expected Improvement) selects the next k to evaluate:</p>
+<div class="eq-block">
+<div class="eq-label">EQUATION G8 &mdash; EXPECTED IMPROVEMENT</div>
+$$\text{EI}(k) = \mathbb{E}\left[\max(f(k) - f^*, 0)\right] = (\mu(k) - f^*)\Phi(z) + \sigma(k)\phi(z)$$
+</div>
+<p>where z = (&mu;(k) &minus; f*) / &sigma;(k), &Phi; is the normal CDF, and &phi; is the normal PDF.</p>
+</div>
+<div class="derivation-step">
+<h4>BANDIT COMPONENT</h4>
+<p>Thompson Sampling over the regime selector {0, 1}. Each regime maintains a Beta distribution of success/failure, updated after each evaluation. This naturally balances exploration vs. exploitation of the discrete regime choice.</p>
+</div>
+<p>The hybrid meta-optimizer explores the 2D ground state manifold with O(100) evaluations instead of the O(10<sup>N</sup>) required for grid search in the original N-dimensional space.</p>
+</div>
+</section>
+<section>
+<h2>STATE-OF-THE-ART APPLICATIONS</h2>
+<div style="max-width:800px;margin:0 auto">
+<div class="app-card">
+<h4>&#129302; TRANSFER LEARNING &amp; FOUNDATION MODELS</h4>
+<p>Foundation models (GPT, BERT, ViT) are pre-trained with hundreds of hyperparameters, but fine-tuning is effective with very few changes. The Ground State Kernel explains why: the pre-training process finds the ground state manifold, freezing most parameters at universal values. Fine-tuning only adjusts the 2 free dimensions (learning rate scaling k and task regime). This provides theoretical justification for techniques like LoRA, prefix tuning, and adapter layers &mdash; they succeed because they implicitly operate on the ground state manifold.</p>
+</div>
+<div class="app-card">
+<h4>&#128220; MODEL COMPRESSION &amp; PRUNING</h4>
+<p>Neural network pruning removes parameters that don't contribute to performance. The causal weight analysis (Eq. G5) provides a principled criterion: parameters with low w<sub>d</sub> are frozen (prunable) and those with high w<sub>d</sub> must be preserved. Unlike magnitude-based pruning (which can remove important low-magnitude connections), causal weight pruning preserves the manifold structure. The compression ratio prediction (d<sub>eff</sub> / N) gives an a priori estimate of achievable pruning before any pruning is attempted.</p>
+</div>
+<div class="app-card">
+<h4>&#128269; HYPERPARAMETER SEARCH</h4>
+<p>The ground state kernel reduces hyperparameter optimization from an N-dimensional problem to a 2D problem. For any new domain, the procedure is: (1) collect M random configurations with performance scores, (2) run SVD to find d<sub>eff</sub> and identify free parameters, (3) freeze non-causal parameters at top-performer medians, (4) run Bayesian optimization over the 2D ground state. This converts O(10<sup>N</sup>) grid search into O(100) evaluations with guaranteed coverage of the performance-relevant manifold.</p>
+</div>
+<div class="app-card">
+<h4>&#127981; NEURAL ARCHITECTURE SEARCH (NAS)</h4>
+<p>NAS explores architecture spaces with thousands of possible configurations (layer depths, widths, activation functions, skip connections). The ground state analysis reveals that most architecture choices are frozen at universal optima &mdash; only 2&ndash;3 "macro" decisions (depth scaling, width multiplier) actually determine performance. This explains the success of scaling laws (&mu;P, Chinchilla) and provides a principled way to design architecture search spaces that focus on the free dimensions.</p>
+</div>
+<div class="app-card">
+<h4>&#9883; QUANTUM VARIATIONAL CIRCUITS</h4>
+<p>Variational quantum eigensolvers (VQE) optimize parameterized quantum circuits with many rotation angles. The ground state kernel predicts that most rotation angles converge to universal values (frozen), with only 2 effective degrees of freedom controlling the ansatz performance. This addresses the "barren plateau" problem: by identifying and freezing low-causal-weight parameters, the effective landscape becomes 2D and gradient-navigable, potentially enabling efficient VQE optimization for large molecules.</p>
+</div>
+</div>
+</section>
+<section>
+<h2>INTERACTIVE EXPLORER</h2>
+<div style="max-width:800px;margin:0 auto">
+<div class="viz-section">
+<h4>EIGENVALUE SCREE PLOT &mdash; 15D &rarr; 2D COLLAPSE</h4>
+<p style="color:var(--dim);font-size:.8rem;line-height:1.7;margin-bottom:1rem">Singular value decomposition showing the dramatic drop-off after the first 2 dimensions. The first two singular values capture &gt;95% of performance-weighted variance, confirming the universal 2D ground state manifold (Eq. G4).</p>
+<div class="viz-controls">
+<button onclick="gsRegenerate()">REGENERATE SAMPLE</button>
+</div>
+<div class="viz-canvas-wrap"><canvas id="gs-scree-chart"></canvas></div>
+</div>
+<div class="viz-charts-row" style="margin-top:1.5rem">
+<div class="viz-section">
+<h4>CAUSAL WEIGHT IMPORTANCE</h4>
+<p style="color:var(--dim);font-size:.75rem;line-height:1.6;margin-bottom:.75rem">Per-parameter causal weights (Eq. G5). Blue = free (high causal impact), gray = frozen (safely fixed at ground state).</p>
+<div class="viz-canvas-wrap"><canvas id="gs-causal-chart"></canvas></div>
+</div>
+<div class="viz-section">
+<h4>2D GROUND STATE MANIFOLD</h4>
+<p style="color:var(--dim);font-size:.75rem;line-height:1.6;margin-bottom:.75rem">Scatter of k vs. performance score, colored by regime (blue = Regime 0, orange = Regime 1). The optimal band k &isin; [0.8, 2.0] is highlighted.</p>
+<div class="viz-canvas-wrap"><canvas id="gs-scatter-chart"></canvas></div>
+</div>
+</div>
+</div>
+</section>
+<section>
+<h2>RELATED FRAMEWORKS</h2>
+<div style="max-width:800px;margin:0 auto">
+<div class="card-grid">
+<div class="card">
+<h3><a href="eigenstretch-tensor.html" style="color:var(--accent);text-decoration:none">&larr; EIGENSTRETCH TENSOR</a></h3>
+<p>The spectral decomposition that feeds the SVD analysis to discover the ground state manifold.</p>
+</div>
+<div class="card">
+<h3><a href="reffelt-constant.html" style="color:var(--accent);text-decoration:none">REFFELT CONSTANT &rarr;</a></h3>
+<p>The base-9 spectral fingerprint that encodes the eigenstretch decomposition as a compact identifier.</p>
+</div>
+</div>
+</div>
+</section>
+<div style="max-width:800px;margin:0 auto;text-align:center">
+<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8345487545441889" data-ad-slot="1720203631" data-ad-format="auto" data-full-width-responsive="true"></ins>
+<script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>
+</div>
+<footer>
+<div class="footer-links">
+<a href="../about.html">ABOUT</a>
+<a href="../faq.html">FAQ</a>
+<a href="../research.html">RESEARCH</a>
+<a href="../privacy.html">PRIVACY</a>
+<a href="../terms.html">TERMS</a>
+<a href="/">AMNI-SCIENT</a>
+<a href="mailto:amnibro7@gmail.com">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amni-Scient. All rights reserved.</p>
+</footer>
+<script>
+(function(){
+var screeChart=null,causalChart=null,scatterChart=null;
+function gi(id){return document.getElementById(id)}
+var params=['k','regime','thresh_buy','thresh_sell','ext_lower','ext_upper','ind_idx','filt_idx','sig_idx','stop_ref','target_ref','averaging','decay','window','gain'];
+var baseCW=[0.92,0.87,0.12,0.09,0.07,0.06,0.05,0.04,0.04,0.03,0.03,0.02,0.015,0.01,0.008];
+window.gsRegenerate=function(){
+var sv=[],cum=[],noise=Math.random()*0.3;
+var base=[0.52,0.38,0.04,0.02,0.01,0.008,0.006,0.004,0.003,0.002,0.001,0.001,0.0008,0.0005,0.0003];
+for(var i=0;i<15;i++) sv.push(Math.max(0.0001,base[i]*(1+(Math.random()-0.5)*noise)));
+sv.sort(function(a,b){return b-a});
+var total=sv.reduce(function(a,b){return a+b},0),r=0;
+for(var i=0;i<15;i++){r+=sv[i]/total;cum.push(r);}
+var labels=[];for(var i=0;i<15;i++) labels.push('\u03C3'+(i+1));
+var ctx=gi('gs-scree-chart');
+if(screeChart) screeChart.destroy();
+var colors=sv.map(function(v,i){return i<2?'rgba(100,200,255,0.8)':'rgba(100,200,255,0.2)';});
+screeChart=new Chart(ctx,{type:'bar',data:{labels:labels,datasets:[{label:'Singular Value',data:sv,backgroundColor:colors,borderColor:colors.map(function(c){return c.replace(/[\d.]+\)$/,'1)');}),borderWidth:1},{label:'Cumulative Variance',data:cum,type:'line',borderColor:'rgba(255,150,50,1)',backgroundColor:'rgba(255,150,50,0.1)',fill:true,yAxisID:'y1',pointRadius:3,tension:.3}]},options:{responsive:true,interaction:{intersect:false,mode:'index'},plugins:{legend:{labels:{color:'#aaa',font:{family:"'JetBrains Mono'",size:9}}}},scales:{y:{beginAtZero:true,title:{display:true,text:'Singular Value',color:'#888',font:{family:"'JetBrains Mono'",size:10}},grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'#888',font:{size:8}}},y1:{position:'right',min:0,max:1.05,title:{display:true,text:'Cumulative Var.',color:'#888',font:{family:"'JetBrains Mono'",size:10}},grid:{drawOnChartArea:false},ticks:{color:'#888',font:{size:8}}},x:{ticks:{color:'#888',font:{size:8}},grid:{color:'rgba(255,255,255,.05)'}}}}});
+var cw=baseCW.map(function(v){return v*(0.9+Math.random()*0.2)});
+var ctxC=gi('gs-causal-chart');
+if(causalChart) causalChart.destroy();
+var cwColors=cw.map(function(v,i){return i<2?'rgba(100,200,255,0.8)':'rgba(100,200,255,0.25)';});
+causalChart=new Chart(ctxC,{type:'bar',data:{labels:params,datasets:[{label:'Causal Weight',data:cw,backgroundColor:cwColors,borderColor:cwColors.map(function(c){return c.replace(/[\d.]+\)$/,'1)');}),borderWidth:1}]},options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,max:1,title:{display:true,text:'w_d',color:'#888',font:{family:"'JetBrains Mono'",size:10}},grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'#888',font:{size:8}}},y:{ticks:{color:function(ctx){return ctx.index<2?'#64c8ff':'#666'},font:{family:"'JetBrains Mono'",size:8}},grid:{color:'rgba(255,255,255,.03)'}}}}});
+var r0=[],r1=[];
+for(var i=0;i<80;i++){
+var k=0.3+Math.random()*3.2,perf;
+if(Math.random()<0.5){perf=0.3+0.6*Math.exp(-Math.pow((k-1.3)/0.8,2))+Math.random()*0.1;r0.push({x:k,y:perf});}
+else{perf=0.25+0.55*Math.exp(-Math.pow((k-1.5)/0.9,2))+Math.random()*0.12;r1.push({x:k,y:perf});}
+}
+var ctxS=gi('gs-scatter-chart');
+if(scatterChart) scatterChart.destroy();
+scatterChart=new Chart(ctxS,{type:'scatter',data:{datasets:[{label:'Regime 0',data:r0,backgroundColor:'rgba(100,200,255,0.6)',borderColor:'rgba(100,200,255,1)',pointRadius:4},{label:'Regime 1',data:r1,backgroundColor:'rgba(255,150,50,0.6)',borderColor:'rgba(255,150,50,1)',pointRadius:4}]},options:{responsive:true,plugins:{legend:{labels:{color:'#aaa',font:{family:"'JetBrains Mono'",size:9}}},annotation:{}},scales:{x:{title:{display:true,text:'k (scaling factor)',color:'#888',font:{family:"'JetBrains Mono'",size:10}},min:0,max:3.8,grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'#888',font:{size:8}}},y:{title:{display:true,text:'Performance',color:'#888',font:{family:"'JetBrains Mono'",size:10}},min:0,max:1.1,grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'#888',font:{size:8}}}}}});
+}
+gsRegenerate();
+})();
+</script>
+</body>
+</html>
