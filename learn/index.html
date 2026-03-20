@@ -2,16 +2,16 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no,maximum-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Amni-Learn</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Comic+Neue:wght@700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../css/style.css">
 <style>
-  body { overflow: hidden; margin: 0; padding: 0; touch-action: none; background: #0c0f12; color: #ecf0f1; }
-  #app { width: 100vw; height: 100vh; position: relative; display: flex; flex-direction: column; }
-  .top-bar { display: flex; justify-content: space-between; padding: 10px 20px; background: rgba(0,0,0,0.8); z-index: 10; border-bottom: 1px solid #333; align-items: center; }
+  body { overflow-x: hidden; overflow-y: auto; margin: 0; padding: 0; background: #0c0f12; color: #ecf0f1; }
+  #app { width: 100%; min-height: 100vh; position: relative; display: flex; flex-direction: column; }
+  .top-bar { display: flex; justify-content: space-between; padding: clamp(6px,1.5vw,10px) clamp(10px,2vw,20px); background: rgba(0,0,0,0.95); z-index: 50; border-bottom: 1px solid #333; align-items: center; position: sticky; top: 0; flex-shrink: 0; }
   .back-btn, .fs-btn { background: none; border: 1px solid #4db8ff; color: #4db8ff; padding: 5px 15px; border-radius: 4px; cursor: pointer; font-family: 'JetBrains Mono'; }
   .back-btn:hover, .fs-btn:hover { background: rgba(77,184,255,0.2); }
   .top-controls { display: flex; gap: 10px; align-items: center; }
@@ -20,16 +20,16 @@
   .score-val { color: #2ecc71; font-weight: bold; }
   .streak-val { color: #f1c40f; font-weight: bold; }
   .streak-fire { display: none; }
-  .view { display: none; flex: 1; width: 100%; height: 100%; position: absolute; top: 0; left: 0; padding-top: 80px; box-sizing: border-box; overflow-y: auto; }
+  .view { display: none; flex: 1; width: 100%; min-height: 0; box-sizing: border-box; overflow-y: auto; padding: clamp(10px,2vw,20px); }
   .view.active { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; }
   #menu-view { background: #0c0f12; color: #fff; justify-content: center; }
   .menu-title { font-size: 2.5rem; color: #4db8ff; margin-bottom: 1rem; text-shadow: 0 0 10px rgba(77,184,255,0.5); text-align: center; }
   .diff-selector { display: flex; justify-content: center; gap: 10px; margin-bottom: 1rem; }
-  .diff-btn { background: #111; border: 1px solid #555; color: #aaa; padding: 10px 20px; border-radius: 20px; cursor: pointer; font-family: 'JetBrains Mono'; font-size: 1rem; transition: 0.2s; }
+  .diff-btn { background: #111; border: 1px solid #555; color: #aaa; padding: clamp(6px,1.5vw,10px) clamp(12px,3vw,20px); border-radius: 20px; cursor: pointer; font-family: 'JetBrains Mono'; font-size: clamp(0.8rem,2vw,1rem); transition: 0.2s; }
   .diff-btn.active { background: #4db8ff; color: #000; border-color: #4db8ff; font-weight: bold; }
-  .game-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 900px; padding: 20px; width: 100%; box-sizing: border-box; }
+  .game-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(10px,3vw,20px); max-width: 900px; padding: clamp(10px,2vw,20px); width: 100%; box-sizing: border-box; }
   .cat-title { grid-column: 1 / -1; color: #888; font-family: 'JetBrains Mono'; border-bottom: 1px solid #333; padding-bottom: 5px; margin-top: 10px; text-transform: uppercase; letter-spacing: 2px; }
-  .game-btn { background: #1a222a; border: 2px solid #4db8ff; color: #fff; padding: 15px 20px; font-size: 1.2rem; border-radius: 12px; cursor: pointer; transition: 0.2s; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); font-family: 'JetBrains Mono'; display: flex; align-items: center; justify-content: center; gap: 10px; }
+  .game-btn { background: #1a222a; border: 2px solid #4db8ff; color: #fff; padding: clamp(10px,2vw,15px) clamp(12px,2.5vw,20px); font-size: clamp(0.9rem,2vw,1.2rem); border-radius: 12px; cursor: pointer; transition: 0.2s; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); font-family: 'JetBrains Mono'; display: flex; align-items: center; justify-content: center; gap: clamp(6px,1.5vw,10px); }
   .game-btn:hover { transform: scale(1.05); background: #2a3642; box-shadow: 0 0 15px rgba(77,184,255,0.4); }
   .game-btn.tracing { border-color: #ff6b35; } .game-btn.tracing:hover { box-shadow: 0 0 15px rgba(255,107,53,0.4); }
   .game-btn.math { border-color: #4cd137; } .game-btn.math:hover { box-shadow: 0 0 15px rgba(76,209,55,0.4); }
@@ -52,8 +52,8 @@
   #life-view { background: #1a2522; justify-content: center; }
   #quiz-view { background: #26211d; justify-content: center; }
   #trace-canvas { background: #fff; border: 4px dashed #ccc; border-radius: 20px; cursor: crosshair; touch-action: none; box-shadow: 0 10px 20px rgba(0,0,0,0.1); margin-top: 10px; }
-  .tracing-controls { margin-top: 15px; display: flex; gap: 10px; margin-bottom: 20px; }
-  .t-btn { padding: 10px 20px; font-size: 1.2rem; border-radius: 8px; border: none; cursor: pointer; font-family: 'Comic Neue', cursive; font-weight: bold; color: white; }
+  .tracing-controls { margin-top: 15px; display: flex; gap: 10px; margin-bottom: 20px; position: sticky; bottom: 10px; z-index: 20; background: rgba(27,30,35,0.95); padding: 10px; border-radius: 12px; }
+  .t-btn { padding: clamp(8px,2vw,10px) clamp(12px,3vw,20px); font-size: clamp(0.9rem,2.5vw,1.2rem); border-radius: 8px; border: none; cursor: pointer; font-family: 'Comic Neue', cursive; font-weight: bold; color: white; }
   .t-clear { background: #e74c3c; } .t-next { background: #2ecc71; }
   #creative-mode-toggle { font-family: 'Comic Neue', cursive; font-size: 1.2rem; margin-top: 15px; padding: 10px 20px; border-radius: 8px; border: none; cursor: pointer; background: #9b59b6; color: #fff; box-shadow: 0 4px 0 #8e44ad; transition: transform 0.1s; }
   #creative-mode-toggle:active { transform: translateY(4px); box-shadow: none; }
@@ -64,11 +64,11 @@
   .color-btn.active { border-color: #333; transform: scale(1.15); box-shadow: 0 0 10px rgba(0,0,0,0.2); }
   .brush-btn { font-size: 1.5rem; background: #fff; border: 2px solid #ddd; border-radius: 8px; padding: 8px 12px; cursor: pointer; }
   .brush-btn.active { border-color: #333; background: #f0f0f0; }
-  .math-problem { font-family: 'Comic Neue', cursive; font-size: 5rem; color: #ecf0f1; font-weight: bold; margin-bottom: 20px; text-align: center; }
-  .math-choices { display: flex; gap: 20px; margin-top: 20px; flex-wrap: wrap; justify-content: center; }
-  .m-choice { background: #fff; border: 4px solid #4cd137; border-radius: 15px; font-size: 3rem; padding: 20px 40px; cursor: pointer; font-family: 'Comic Neue', cursive; color: #333; box-shadow: 0 8px 0 #38a829; transition: transform 0.1s; min-width: 100px; text-align: center; }
+  .math-problem { font-family: 'Comic Neue', cursive; font-size: clamp(2.5rem,8vw,5rem); color: #ecf0f1; font-weight: bold; margin-bottom: 20px; text-align: center; }
+  .math-choices { display: flex; gap: clamp(10px,3vw,20px); margin-top: 20px; flex-wrap: wrap; justify-content: center; position: sticky; bottom: 10px; z-index: 20; background: rgba(30,37,43,0.95); padding: 12px; border-radius: 12px; }
+  .m-choice { background: #fff; border: 4px solid #4cd137; border-radius: 15px; font-size: clamp(1.5rem,5vw,3rem); padding: clamp(12px,3vw,20px) clamp(20px,5vw,40px); cursor: pointer; font-family: 'Comic Neue', cursive; color: #333; box-shadow: 0 8px 0 #38a829; transition: transform 0.1s; min-width: clamp(60px,15vw,100px); text-align: center; }
   .m-choice:active { transform: translateY(8px); box-shadow: 0 0 0 #38a829; }
-  #hint-btn { background: #f39c12; color: #fff; border: none; padding: 15px 30px; font-size: 1.5rem; border-radius: 12px; cursor: pointer; font-family: 'Comic Neue'; box-shadow: 0 6px 0 #e67e22; transition: 0.1s; margin-bottom: 20px; }
+  #hint-btn { background: #f39c12; color: #fff; border: none; padding: clamp(10px,2vw,15px) clamp(18px,4vw,30px); font-size: clamp(1rem,3vw,1.5rem); border-radius: 12px; cursor: pointer; font-family: 'Comic Neue'; box-shadow: 0 6px 0 #e67e22; transition: 0.1s; margin-bottom: 20px; }
   #hint-btn:active { transform: translateY(6px); box-shadow: none; }
   .math-viz { display: none; align-items: center; justify-content: center; gap: 20px; min-height: 120px; margin-bottom: 20px; font-size: 3rem; font-family: 'Comic Neue', cursive; color: #555; }
   .apple-group { display: flex; flex-direction: column; align-items: center; background: rgba(255,255,255,0.5); padding: 10px; border-radius: 15px; }
@@ -82,7 +82,7 @@
   .m-card.flipped { background: #fff; border: 3px solid #9c88ff; color: #333; box-shadow: 0 2px 0 #7158e2; transform: translateY(4px); }
   .m-card.matched { background: #2ecc71; border-color: #27ae60; color: #fff; box-shadow: 0 2px 0 #27ae60; transform: translateY(4px) scale(0.95); opacity: 0.8; }
   .type-container { display: flex; justify-content: center; gap: 5px; margin-bottom: 30px; flex-wrap: wrap; }
-  .type-letter { font-size: 6rem; font-family: 'JetBrains Mono', monospace; font-weight: bold; color: #ddd; text-transform: uppercase; transition: transform 0.1s, color 0.2s; text-align: center; border-bottom: 4px solid #ccc; padding: 0 10px; min-width: 60px; }
+  .type-letter { font-size: clamp(2.5rem,8vw,6rem); font-family: 'JetBrains Mono', monospace; font-weight: bold; color: #ddd; text-transform: uppercase; transition: transform 0.1s, color 0.2s; text-align: center; border-bottom: 4px solid #ccc; padding: 0 clamp(4px,1vw,10px); min-width: clamp(30px,8vw,60px); }
   .type-letter.filled { color: #333; border-bottom-color: #2ecc71; }
   .type-letter.active-target { border-bottom-color: #3498db; transform: scale(1.1); color: #999; }
   .type-letter.error { color: #e74c3c; transform: translateX(5px); }
@@ -90,9 +90,9 @@
   .type-prompt { font-family: 'Comic Neue', cursive; font-size: 2rem; color: #7f8c8d; margin-bottom: 20px; }
   .type-stats { font-family: 'Comic Neue', cursive; font-size: 1.5rem; color: #e67e22; margin-top: 20px; text-align: center; height: 40px; font-weight: bold; }
   .life-title { font-family: 'Comic Neue', cursive; font-size: 2.5rem; color: #ecf0f1; margin-bottom: 20px; text-align: center; }
-  .life-task-area { touch-action: none; background: #fff; border: 4px solid #bdc3c7; border-radius: 20px; padding: 20px; width: 90%; max-width: 600px; min-height: 400px; position: relative; box-shadow: 0 10px 20px rgba(0,0,0,0.1); overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-  #quiz-prompt { font-size: 2.5rem; margin-bottom: 30px; font-family: 'Comic Neue', cursive; text-align: center; width: 100%; color: #2c3e50 !important; font-weight: bold !important; opacity: 1 !important; text-shadow: none !important; margin-top: 0; }
-  @media (min-width: 600px) { #quiz-prompt { font-size: 3.5rem; } }
+  .life-task-area { touch-action: none; background: #fff; border: 4px solid #bdc3c7; border-radius: 20px; padding: clamp(10px,2vw,20px); width: 90%; max-width: 600px; min-height: clamp(250px,50vw,400px); position: relative; box-shadow: 0 10px 20px rgba(0,0,0,0.1); overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  #quiz-prompt { font-size: clamp(1.5rem,5vw,2.5rem); margin-bottom: 30px; font-family: 'Comic Neue', cursive; text-align: center; width: 100%; color: #2c3e50 !important; font-weight: bold !important; opacity: 1 !important; text-shadow: none !important; margin-top: 0; }
+  @media (min-width: 600px) { #quiz-prompt { font-size: clamp(2rem,5vw,3.5rem); } }
   #quiz-choices { display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; width: 100%; }
   .dirt { position: absolute; font-size: 2rem; user-select: none; z-index: 1; transition: transform 0.2s, opacity 0.2s; }
   #vacuum { position: absolute; font-size: 4rem; z-index: 2; pointer-events: none; transform: translate(-50%, -50%); transition: transform 0.1s ease-out; }
@@ -107,23 +107,22 @@
   .coin { background: #f6e58d; border: 2px solid #f9ca24; color: #222; font-family: 'JetBrains Mono'; width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 1.2rem; cursor: pointer; box-shadow: 0 4px 0 #f9ca24; transition: transform 0.1s; }
   .coin.silver { background: #dff9fb; border-color: #95afc0; box-shadow: 0 4px 0 #95afc0; }
   .coin:active { transform: translateY(4px); box-shadow: none; }
-  .life-controls { margin-top: 20px; display: flex; gap: 10px; }
-  #feedback { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 5rem; font-family: 'Comic Neue', cursive; font-weight: bold; color: #f1c40f; text-shadow: 2px 2px 0 #333, -2px -2px 0 #333, 2px -2px 0 #333, -2px 2px 0 #333; opacity: 0; pointer-events: none; transition: opacity 0.3s, transform 0.3s; z-index: 100; text-align: center; width: 100%; }
+  .life-controls { margin-top: 20px; display: flex; gap: 10px; position: sticky; bottom: 10px; z-index: 20; background: rgba(26,37,34,0.95); padding: 10px; border-radius: 12px; justify-content: center; }
+  #feedback { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: clamp(2.5rem,8vw,5rem); font-family: 'Comic Neue', cursive; font-weight: bold; color: #f1c40f; text-shadow: 2px 2px 0 #333, -2px -2px 0 #333, 2px -2px 0 #333, -2px 2px 0 #333; opacity: 0; pointer-events: none; transition: opacity 0.3s, transform 0.3s; z-index: 100; text-align: center; width: 100%; }
   #feedback.show { animation: celebPop 1.8s ease-out forwards; }
   #feedback { transition: none; }
   @keyframes celebPop { 0%{opacity:0;transform:translate(-50%,-50%) scale(0.3)} 12%{opacity:1;transform:translate(-50%,-50%) scale(1.35)} 25%{transform:translate(-50%,-55%) scale(1)} 75%{opacity:1} 100%{opacity:0;transform:translate(-50%,-60%) scale(0.8)} }
-  .game-btn { transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s, background 0.3s; min-height: 60px; }
-  .game-btn:active { transform: scale(0.93) !important; box-shadow: 0 2px 3px rgba(0,0,0,0.3) !important; }
   .game-btn.music { border-color: #e94560; } .game-btn.music:hover { box-shadow: 0 0 15px rgba(233,69,96,0.4); }
   .game-btn.quiz { border-color: #00b894; } .game-btn.quiz:hover { box-shadow: 0 0 15px rgba(0,184,148,0.4); }
-  .view { padding-top: 56px; }
-  .game-grid.mode-1 .game-btn { min-height: 100px; box-shadow: 0 4px 8px rgba(0,0,0,0.4); }
-  .game-grid.mode-1 .btn-icon { font-size: 4.5rem; }
-  .game-grid.mode-1 .btn-text { font-size: 1.4rem; }
-  .game-grid.mode-2 .game-btn { min-height: 90px; box-shadow: 0 6px 8px rgba(0,0,0,0.35); }
-  .game-grid.mode-2 .btn-icon { font-size: 4.5rem; }
-  .game-grid.mode-2 .btn-text { font-size: 1.6rem; }
-  .m-choice { min-height: 70px; display: flex; align-items: center; justify-content: center; }
+  .game-btn { transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s, background 0.3s; min-height: clamp(48px,10vw,60px); }
+  .view { padding-top: 0; }
+  .game-grid.mode-1 .game-btn { min-height: clamp(70px,15vw,100px); box-shadow: 0 4px 8px rgba(0,0,0,0.4); }
+  .game-grid.mode-1 .btn-icon { font-size: clamp(2.5rem,8vw,4.5rem); }
+  .game-grid.mode-1 .btn-text { font-size: clamp(1rem,3vw,1.4rem); }
+  .game-grid.mode-2 .game-btn { min-height: clamp(60px,12vw,90px); box-shadow: 0 6px 8px rgba(0,0,0,0.35); }
+  .game-grid.mode-2 .btn-icon { font-size: clamp(2.5rem,8vw,4.5rem); }
+  .game-grid.mode-2 .btn-text { font-size: clamp(1.1rem,3vw,1.6rem); }
+  .m-choice { min-height: clamp(50px,10vw,70px); display: flex; align-items: center; justify-content: center; }
   #music-view { background: #1a1a2e; }
   .music-tabs { display:flex; gap:10px; margin-bottom:15px; justify-content:center; flex-wrap:wrap; }
   .music-tab { background:#16213e; border:2px solid #0f3460; color:#e94560; padding:12px 24px; border-radius:12px; cursor:pointer; font-family:'Comic Neue',cursive; font-size:1.3rem; font-weight:bold; transition:0.2s; }
@@ -186,7 +185,7 @@
   .game-btn.wbridge { border-color: #55efc4; } .game-btn.wbridge:hover { box-shadow: 0 0 15px rgba(85,239,196,0.4); }
   .game-btn.mtnclimb { border-color: #fab1a0; } .game-btn.mtnclimb:hover { box-shadow: 0 0 15px rgba(250,177,160,0.4); }
   #reflex-view { background:#0d1b2a; }
-  .rfx-arena { position:relative; width:90%; max-width:600px; height:400px; background:#1b2838; border:3px solid #00cec9; border-radius:20px; overflow:hidden; touch-action:none; }
+  .rfx-arena { position:relative; width:90%; max-width:600px; height:clamp(250px,50vw,400px); background:#1b2838; border:3px solid #00cec9; border-radius:20px; overflow:hidden; touch-action:none; }
   .rfx-target { position:absolute; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:2rem; transition:transform 0.1s; user-select:none; animation:rfxPop 0.3s ease-out; }
   .rfx-target:active { transform:scale(0.8); }
   @keyframes rfxPop { 0%{transform:scale(0)} 50%{transform:scale(1.2)} 100%{transform:scale(1)} }
@@ -639,9 +638,17 @@
   ];
   function initMath() {
     mViz.style.display = 'none'; hintBtn.style.display = 'block';
-    let maxVal = currentLevel===1?5:(currentLevel===2?20:100);
+    let maxVal = currentLevel===1?5:(currentLevel===2?20:(currentLevel===3?100:(currentLevel===4?200:500)));
     const roll = Math.random();
-    if(currentLevel === 3 && roll < 0.2) {
+    if(currentLevel >= 4 && roll < 0.25) {
+        const x = Math.floor(Math.random()*(currentLevel===4?20:50))+2;
+        const b = Math.floor(Math.random()*(currentLevel===4?15:30))+1;
+        const r = Math.floor(Math.random()*3);
+        if(r===0) { const a = Math.floor(Math.random()*12)+2; mathAns = x; mProb.textContent=`${a}x + ${b} = ${a*x+b}, x = ?`; }
+        else if(r===1) { const a = Math.floor(Math.random()*10)+2; mathAns = x; mProb.textContent=`${a}x - ${b} = ${a*x-b}, x = ?`; }
+        else { const a = Math.floor(Math.random()*8)+2; const c = Math.floor(Math.random()*5)+1; mathAns = x; mProb.textContent=`${a}x + ${c} = ${a*x+c}, x = ?`; }
+        mProb.style.fontSize = 'clamp(1.5rem,4vw,2.5rem)'; hintBtn.style.display='none'; mathState.op='alg';
+    } else if(currentLevel === 3 && roll < 0.2) {
         const gp = geoProblems[Math.floor(Math.random()*geoProblems.length)];
         mProb.textContent = gp(); hintBtn.style.display = 'none'; mathState.op = 'geo';
     } else if(currentLevel >= 2 && roll < 0.35) {
@@ -665,7 +672,7 @@
         else { v2=Math.floor(Math.random()*(currentLevel===2?8:12))+2; mathAns=Math.floor(Math.random()*(currentLevel===2?10:15))+1; v1=mathAns*v2; mathState.a=v1; mathState.b=v2; mProb.textContent=`${v1} ÷ ${v2} = ?`; hintBtn.style.display='none'; }
     }
     let choices = [mathAns];
-    const spread = currentLevel===1?3:(currentLevel===2?10:20);
+    const spread = currentLevel===1?3:(currentLevel===2?10:(currentLevel===3?20:(currentLevel===4?30:50)));
     while(choices.length<4) { const n = typeof mathAns==='number' ? +(mathAns + (Math.floor(Math.random()*spread*2)-spread) + (choices.length)).toFixed(1) : mathAns+choices.length; if(n>=0 && !choices.includes(n) && n!==mathAns) choices.push(n); else { const f = Math.floor(Math.random()*50)+1; if(!choices.includes(f)) choices.push(f); } }
     choices.sort(()=>Math.random()-0.5); mChoices.innerHTML = '';
     choices.forEach(c => { const btn = document.createElement('div'); btn.className='m-choice'; btn.textContent=c; btn.onclick=()=>{ if(c===mathAns){showFeedback('Correct!','#2ecc71'); addScore(1); setTimeout(initMath,1500);} else showFeedback('Oops!','#e74c3c');}; mChoices.appendChild(btn); });
@@ -685,42 +692,80 @@
       mViz.innerHTML = html;
   });
   const matchGrid = $$('#match-grid'), emojis = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐸','🐯','🦁','🐮','🐷','🐵','🐧','🐦','🐤','🐣','🦇','🦉','🦅','🦆','🐺','🦋','🐌','🐛','🐜','🐝','🪲','🐞','🦗','🕷','🕸','🦂','🐢','🐍','🦎','🦖','🦕','🐙','🦑','🦐','🦞','🦀','🐡','🐠','🐟','🐬','🐳','🐋','🦈','🐊','🐅','🐆','🦓','🦍','🦧','🐘','🦛','🦏','🐪','🐫','🦒','🦘','🐃','🐂','🐄','🐎','🐖','🐏','🐑','🦙','🐐','🦌','🐕','🐩','🦮','🐕‍🦺','🐈','🐈‍⬛','🐓','🦃','🦚','🦜','🦢','🦩','🕊','🐇','🦝','🦨','🦡','🦦','🦥','🐁','🐀','🐿','🦔'];
+  const conceptPairs = [
+    ['H₂O','Water'],['NaCl','Salt'],['O₂','Oxygen'],['CO₂','Carbon Dioxide'],['Fe','Iron'],
+    ['Au','Gold'],['Ag','Silver'],['Cu','Copper'],['Pb','Lead'],['Sn','Tin'],
+    ['DNA','Genetics'],['ATP','Energy'],['RNA','Protein Synthesis'],['pH 7','Neutral'],
+    ['Newton','Force'],['Joule','Energy'],['Watt','Power'],['Ampere','Current'],
+    ['Ohm','Resistance'],['Hertz','Frequency'],['Kelvin','Temperature'],['Pascal','Pressure'],
+    ['Mitosis','Cell Division'],['Photosynthesis','Food from Light'],['Entropy','Disorder'],
+    ['Velocity','Speed+Direction'],['Momentum','Mass×Velocity'],['Density','Mass/Volume'],
+    ['Derivative','Rate of Change'],['Integral','Area Under Curve'],['Matrix','Number Grid'],
+    ['π','3.14159...'],['e','2.71828...'],['φ','1.61803...'],['i²','−1']
+  ];
   let flipped = [], matchedCount = 0, totalPairs = 6;
   function initMatching() {
     matchGrid.innerHTML = ''; flipped = []; matchedCount = 0;
     let cols = 3; totalPairs = 3;
-    if(currentLevel===2){totalPairs=8;cols=4;} 
+    if(currentLevel===2){totalPairs=8;cols=4;}
     if(currentLevel===3){totalPairs=10;cols=5;}
     if(currentLevel===4){totalPairs=12;cols=6;}
     if(currentLevel===5){totalPairs=15;cols=6;}
     matchGrid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
-    let deck = [...emojis].sort(()=>Math.random()-0.5).slice(0,totalPairs); deck = [...deck,...deck].sort(()=>Math.random()-0.5);
-    deck.forEach(e => {
-      const card = document.createElement('div'); card.className='m-card'; card.dataset.val=e;
-      card.onclick = () => {
-        if(card.classList.contains('flipped')||card.classList.contains('matched')||flipped.length>=2) return;
-        card.classList.add('flipped'); card.textContent=e; flipped.push(card);
-        if(flipped.length===2) setTimeout(()=>{
-          if(flipped[0].dataset.val===flipped[1].dataset.val) {
-            flipped[0].classList.add('matched'); flipped[1].classList.add('matched'); matchedCount+=2; showFeedback('Match!','#9b59b6'); addScore(1);
-            if(matchedCount===totalPairs*2) setTimeout(()=>{showFeedback('You Won!','#f1c40f');initMatching();},1500);
-          } else { flipped[0].classList.remove('flipped'); flipped[0].textContent=''; flipped[1].classList.remove('flipped'); flipped[1].textContent=''; }
-          flipped = [];
-        }, 700);
-      };
-      matchGrid.appendChild(card);
-    });
+    let deck;
+    if(currentLevel >= 4) {
+      const pairs = [...conceptPairs].sort(()=>Math.random()-0.5).slice(0,totalPairs);
+      deck = []; pairs.forEach(p => { deck.push({display:p[0],id:p[0]+'|'+p[1]}); deck.push({display:p[1],id:p[0]+'|'+p[1]}); });
+      deck.sort(()=>Math.random()-0.5);
+      deck.forEach(item => {
+        const card = document.createElement('div'); card.className='m-card'; card.dataset.val=item.id;
+        card.style.fontSize = 'clamp(1rem,3vw,1.8rem)'; card.style.fontFamily = "'JetBrains Mono',monospace";
+        card.onclick = () => {
+          if(card.classList.contains('flipped')||card.classList.contains('matched')||flipped.length>=2) return;
+          card.classList.add('flipped'); card.textContent=item.display; card.style.color='#333'; flipped.push(card);
+          if(flipped.length===2) setTimeout(()=>{
+            if(flipped[0].dataset.val===flipped[1].dataset.val) {
+              flipped[0].classList.add('matched'); flipped[1].classList.add('matched'); matchedCount+=2; showFeedback('Match!','#9b59b6'); addScore(2);
+              if(matchedCount===totalPairs*2) setTimeout(()=>{showFeedback('You Won!','#f1c40f');initMatching();},1500);
+            } else { flipped[0].classList.remove('flipped'); flipped[0].textContent=''; flipped[1].classList.remove('flipped'); flipped[1].textContent=''; }
+            flipped = [];
+          }, 1200);
+        };
+        matchGrid.appendChild(card);
+      });
+    } else {
+      let emojiPool = [...emojis].sort(()=>Math.random()-0.5).slice(0,totalPairs);
+      deck = [...emojiPool,...emojiPool].sort(()=>Math.random()-0.5);
+      deck.forEach(e => {
+        const card = document.createElement('div'); card.className='m-card'; card.dataset.val=e;
+        card.onclick = () => {
+          if(card.classList.contains('flipped')||card.classList.contains('matched')||flipped.length>=2) return;
+          card.classList.add('flipped'); card.textContent=e; flipped.push(card);
+          if(flipped.length===2) setTimeout(()=>{
+            if(flipped[0].dataset.val===flipped[1].dataset.val) {
+              flipped[0].classList.add('matched'); flipped[1].classList.add('matched'); matchedCount+=2; showFeedback('Match!','#9b59b6'); addScore(1);
+              if(matchedCount===totalPairs*2) setTimeout(()=>{showFeedback('You Won!','#f1c40f');initMatching();},1500);
+            } else { flipped[0].classList.remove('flipped'); flipped[0].textContent=''; flipped[1].classList.remove('flipped'); flipped[1].textContent=''; }
+            flipped = [];
+          }, 700);
+        };
+        matchGrid.appendChild(card);
+      });
+    }
   }
   const typeContainer = $$('#type-container'), typeStats = $$('#type-stats');
   const wordLists = {
-      1: ['CAT','DOG','SUN','STAR','APPLE','BIRD','FISH','TREE','MOON','CAR','HAT','BAT','MAT','BUG','RED','BLUE','RUN','JUMP','PLAY','BALL','CUP','PIG','COW','HEN','BEE','ANT','FOX','BOX','PEN','TEN','BED','NET','MAP','VAN','JAM','CAN','FAN','PAN','LOG','FOG','MOP','TOP','HOP','ZIP','SIP','DIG','FIG','WIG','JET','PET'],
-      2: ['ELEPHANT','COMPUTER','OCEAN','PLANET','GUITAR','BICYCLE','PYRAMID','ROCKET','FOREST','CASTLE','MOUNTAIN','GALAXY','UNIVERSE','DINOSAUR','VOLCANO','PENGUIN','KANGAROO','TELESCOPE','MICROSCOPE','LIBRARY','CHOCOLATE','BUTTERFLY','SUBMARINE','CROCODILE','PINEAPPLE','WATERFALL','ADVENTURE','DETECTIVE','INVENTOR','PAINTING','SCULPTOR','TREASURE','CALENDAR','LANGUAGE','MAGNETIC','PARADISE','MUSHROOM','ELEPHANT','PRINCESS','CHAMPION','DOLPHIN','OSTRICH','COMPASS','CRYSTAL','DIAMOND','FANTASY','GRAVITY','HOLIDAY','JOURNAL','KITCHEN'],
-      3: ['PHILOSOPHY','ENGINEERING','ARCHITECTURE','ASTRONOMY','CHEMISTRY','LITERATURE','MATHEMATICS','SYMPHONY','QUANTUM','THERMODYNAMICS','CALCULUS','TRIGONOMETRY','PSYCHOLOGY','SOCIOLOGY','ECONOMICS','METEOROLOGY','PALEONTOLOGY','NEUROSCIENCE','KINEMATICS','AERODYNAMICS','PHOTOSYNTHESIS','ELECTROMAGNETIC','BIODIVERSITY','CRYPTOCURRENCY','JURISPRUDENCE','EXTRATERRESTRIAL','NANOTECHNOLOGY','BIOTECHNOLOGY','GEOPOLITICAL','ENTREPRENEURSHIP','PHARMACOLOGY','ANTHROPOLOGY','SEISMOLOGY','MICROBIOLOGY','ASTROPHYSICS','OCEANOGRAPHY','EPIDEMIOLOGY','CRYSTALLOGRAPHY','TELECOMMUNICATION','CONSCIOUSNESS','INFRASTRUCTURE','METAMORPHOSIS','SUSTAINABILITY','BIOLUMINESCENCE','ELECTRODYNAMICS','SPECTROSCOPY','THERMOELECTRIC','SEMICONDUCTOR','PERPENDICULAR','CIRCUMFERENCE']
+      1: ['CAT','DOG','SUN','HAT','BAT','MAT','BUG','RED','RUN','CUP','PIG','COW','HEN','BEE','ANT','FOX','BOX','PEN','TEN','BED','NET','MAP','VAN','JAM','CAN','FAN','PAN','LOG','FOG','MOP','TOP','HOP','ZIP','SIP','DIG','FIG','WIG','JET','PET','MUD'],
+      2: ['APPLE','BIRD','FISH','TREE','MOON','STAR','BALL','JUMP','PLAY','BLUE','CAKE','FROG','KITE','DRUM','SEED','LEAF','ROCK','BELL','SHIP','SWIM','DUCK','SNOW','RAIN','RIDE','HIDE','SING','RING','KING','WAVE','ROAD','GOAT','LION','BEAR','MILK','CORN'],
+      3: ['ELEPHANT','COMPUTER','OCEAN','PLANET','GUITAR','BICYCLE','PYRAMID','ROCKET','FOREST','CASTLE','MOUNTAIN','GALAXY','DINOSAUR','VOLCANO','PENGUIN','KANGAROO','LIBRARY','CHOCOLATE','BUTTERFLY','SUBMARINE','CROCODILE','PINEAPPLE','WATERFALL','ADVENTURE','DETECTIVE','INVENTOR','TREASURE','CALENDAR','LANGUAGE','MUSHROOM','PRINCESS','CHAMPION','DOLPHIN','COMPASS','CRYSTAL','DIAMOND','FANTASY','GRAVITY','HOLIDAY','JOURNAL','KITCHEN'],
+      4: ['PHILOSOPHY','ENGINEERING','ARCHITECTURE','ASTRONOMY','CHEMISTRY','LITERATURE','MATHEMATICS','PSYCHOLOGY','ECONOMICS','METEOROLOGY','LABORATORY','MICROSCOPE','EXPERIMENT','TECHNOLOGY','ATMOSPHERE','PARLIAMENT','POPULATION','GENERATION','PERMISSION','COMBUSTION','REVOLUTION','FOUNDATION','GOVERNMENT','INDUSTRIAL','PERCENTAGE','EQUIVALENT','HYPOTHESIS','OPPOSITION','COMMENTARY','COORDINATE'],
+      5: ['THERMODYNAMICS','ELECTROMAGNETIC','PHOTOSYNTHESIS','EXTRATERRESTRIAL','NANOTECHNOLOGY','BIOTECHNOLOGY','ENTREPRENEURSHIP','JURISPRUDENCE','CRYSTALLOGRAPHY','TELECOMMUNICATION','BIOLUMINESCENCE','ELECTRODYNAMICS','SEMICONDUCTOR','PERPENDICULAR','CIRCUMFERENCE','PALEONTOLOGY','EPIDEMIOLOGY','ASTROPHYSICS','OCEANOGRAPHY','CONSCIOUSNESS','INFRASTRUCTURE','METAMORPHOSIS','SUSTAINABILITY','SPECTROSCOPY','BIODIVERSITY','CRYPTOCURRENCY','PHARMACOLOGY','ANTHROPOLOGY','SEISMOLOGY','MICROBIOLOGY']
   };
   let currentWord='', currentIndex=0, wordStartTime=0;
   function initTyping() { typeStats.textContent=''; nextTypeTarget(); }
   function nextTypeTarget() {
-      const list = wordLists[currentLevel]; currentWord = list[Math.floor(Math.random()*list.length)]; currentIndex = 0; wordStartTime = Date.now();
+      const lvl = Math.min(currentLevel, 5);
+      const list = wordLists[lvl]; currentWord = list[Math.floor(Math.random()*list.length)]; currentIndex = 0; wordStartTime = Date.now();
       typeContainer.innerHTML = '';
       for(let i=0; i<currentWord.length; i++) {
           const span = document.createElement('span'); span.className='type-letter'; span.textContent=currentWord[i];
@@ -1266,6 +1311,30 @@
               {q: "What is the hardest natural substance?", a: "Diamond", wrong: ["Quartz", "Topaz", "Corundum"]},
               {q: "What phylum do insects belong to?", a: "Arthropoda", wrong: ["Chordata", "Mollusca", "Annelida"]},
               {q: "What is the collective noun for a group of flamingos?", a: "Flamboyance", wrong: ["Flock", "Colony", "Stand"]}
+          ],
+          4: [
+              {q: "What is the term for an organism that produces its own food?", a: "Autotroph", wrong: ["Heterotroph", "Decomposer", "Parasite"]},
+              {q: "Which animal has the largest brain relative to body size?", a: "Ant", wrong: ["Dolphin", "Elephant", "Crow"]},
+              {q: "What is the study of fungi called?", a: "Mycology", wrong: ["Virology", "Bryology", "Phycology"]},
+              {q: "Which marine creature has three hearts?", a: "Octopus", wrong: ["Squid", "Jellyfish", "Starfish"]},
+              {q: "What is the term for animals that are active at twilight?", a: "Crepuscular", wrong: ["Nocturnal", "Diurnal", "Cathemeral"]},
+              {q: "What organelle produces ribosomes?", a: "Nucleolus", wrong: ["Golgi body", "Endoplasmic reticulum", "Lysosome"]},
+              {q: "What is the process of cell death called?", a: "Apoptosis", wrong: ["Mitosis", "Meiosis", "Necrosis"]},
+              {q: "Which kingdom includes organisms like amoeba and paramecium?", a: "Protista", wrong: ["Fungi", "Monera", "Animalia"]},
+              {q: "What is biomimicry?", a: "Design inspired by nature", wrong: ["Genetic modification", "Fossil analysis", "Animal training"]},
+              {q: "What is the largest known invertebrate?", a: "Colossal Squid", wrong: ["Giant Octopus", "Japanese Spider Crab", "Lion's Mane Jellyfish"]}
+          ],
+          5: [
+              {q: "What is the Hardy-Weinberg equilibrium used for?", a: "Predicting allele frequencies", wrong: ["Measuring biodiversity", "Calculating mutation rates", "Determining extinction risk"]},
+              {q: "What is the endosymbiotic theory?", a: "Mitochondria/chloroplasts were once free-living prokaryotes", wrong: ["Cells evolved from viruses", "Nuclei formed from membrane folding", "Ribosomes originated from RNA"]},
+              {q: "What is a keystone species?", a: "Species with disproportionate ecosystem impact", wrong: ["Most abundant species", "Largest predator", "First species to colonize"]},
+              {q: "What is the difference between homologous and analogous structures?", a: "Common ancestry vs. similar function", wrong: ["Size vs. shape", "Internal vs. external", "Dominant vs. recessive"]},
+              {q: "What is CRISPR-Cas9 used for?", a: "Gene editing", wrong: ["Protein folding", "Cell imaging", "DNA sequencing"]},
+              {q: "What is an extremophile?", a: "Organism thriving in extreme conditions", wrong: ["Extinct organism", "Rapidly evolving species", "Parasitic organism"]},
+              {q: "What is the Red Queen hypothesis?", a: "Species must constantly evolve to survive", wrong: ["Dominant genes always win", "Mutations are always harmful", "Evolution has a final goal"]},
+              {q: "What does the term 'phylogenetics' refer to?", a: "Evolutionary relationships among organisms", wrong: ["Cellular reproduction", "Gene expression patterns", "Ecological succession"]},
+              {q: "What is horizontal gene transfer?", a: "Gene transfer between non-parent-offspring organisms", wrong: ["Mutation during replication", "Crossing over in meiosis", "Vertical inheritance"]},
+              {q: "What is the Cambrian Explosion?", a: "Rapid diversification of animal life ~541 Mya", wrong: ["A volcanic event", "An ice age", "The origin of photosynthesis"]}
           ]
       },
       music: {
@@ -1367,6 +1436,30 @@
               {q: "What is synecdoche?", a: "Part represents the whole", wrong: ["Whole represents a part", "Opposite meaning", "Repeated sounds"]},
               {q: "What narrative perspective uses 'I' and 'me'?", a: "First person", wrong: ["Second person", "Third person limited", "Third person omniscient"]},
               {q: "What is a caesura in poetry?", a: "A deliberate pause in a line", wrong: ["End-of-line break", "Repeated refrain", "Unstressed syllable"]}
+          ],
+          4: [
+              {q: "What is a morpheme?", a: "Smallest unit of meaning", wrong: ["Smallest unit of sound", "A type of sentence", "A dialect region"]},
+              {q: "What is the Sapir-Whorf hypothesis?", a: "Language shapes thought", wrong: ["All languages share grammar", "Writing predates speech", "Languages evolve randomly"]},
+              {q: "What is a palimpsest?", a: "Manuscript reused after erasing", wrong: ["Ancient dictionary", "Type of poem", "Language family tree"]},
+              {q: "What is code-switching?", a: "Alternating between languages in conversation", wrong: ["Learning to program", "Translating idioms", "Forgetting words"]},
+              {q: "What is an agglutinative language?", a: "Language that builds words from many morphemes", wrong: ["Language with no written form", "Language with fixed word order", "Language with tonal distinctions"]},
+              {q: "What is a cognate?", a: "Words in different languages from same origin", wrong: ["A false friend", "A borrowed word", "A dead language"]},
+              {q: "What is anaphora in rhetoric?", a: "Repetition of a word at the start of successive clauses", wrong: ["Comparison using 'like'", "Addressing an absent entity", "Reversal of word order"]},
+              {q: "What does 'diachronic' mean in linguistics?", a: "Study of language change over time", wrong: ["Study of language at one point", "Study of dialects", "Study of writing systems"]},
+              {q: "What is a pidgin language?", a: "Simplified language for communication between groups", wrong: ["An extinct language", "A programming language", "A formal register"]},
+              {q: "What is metonymy?", a: "Substituting a related term for something", wrong: ["Exaggeration for effect", "Contradictory terms", "Sound imitation"]}
+          ],
+          5: [
+              {q: "What is Chomsky's Universal Grammar?", a: "Innate biological language faculty", wrong: ["A style guide", "A translation algorithm", "A phonetic notation"]},
+              {q: "What is a phoneme?", a: "Smallest distinctive sound unit in a language", wrong: ["Smallest unit of meaning", "A written character", "A stress pattern"]},
+              {q: "What is the difference between 'langue' and 'parole' (Saussure)?", a: "Language system vs. individual speech acts", wrong: ["Written vs. spoken", "Formal vs. informal", "Modern vs. ancient"]},
+              {q: "What is a creole language?", a: "Fully developed language from a pidgin", wrong: ["An artificial language", "A dead language", "A sign language"]},
+              {q: "What is pragmatics?", a: "Study of language in context", wrong: ["Study of sentence structure", "Study of word formation", "Study of sound patterns"]},
+              {q: "What is the International Phonetic Alphabet used for?", a: "Standardized representation of speech sounds", wrong: ["Encoding secret messages", "Teaching grammar rules", "Translating between languages"]},
+              {q: "What is a hapax legomenon?", a: "A word occurring only once in a corpus", wrong: ["A grammatical error", "A borrowed word", "A neologism"]},
+              {q: "What is deixis?", a: "Words whose meaning depends on context (this, here, now)", wrong: ["Use of formal language", "Repetition for emphasis", "Omission of words"]},
+              {q: "What is Grice's Cooperative Principle?", a: "Speakers follow maxims of quantity, quality, relation, manner", wrong: ["Languages evolve toward simplicity", "Grammar rules are universal", "Meaning is always literal"]},
+              {q: "What is a minimal pair?", a: "Two words differing by one phoneme", wrong: ["Two synonyms", "A compound word", "An abbreviation pair"]}
           ]
       },
       math: {
@@ -1387,6 +1480,30 @@
               {q: "What is the Pythagorean theorem?", a: "a² + b² = c²", wrong: ["a + b = c", "a² - b² = c²", "2a + 2b = c"]},
               {q: "What does the Fundamental Theorem of Calculus connect?", a: "Derivatives and integrals", wrong: ["Limits and series", "Algebra and geometry", "Probability and statistics"]},
               {q: "What is log₂(8)?", a: "3", wrong: ["2", "4", "8"]}
+          ],
+          4: [
+              {q: "What is the Taylor series expansion of e^x at x=0?", a: "1 + x + x²/2! + x³/3! + ...", wrong: ["x + x² + x³ + ...", "1 - x + x² - x³ + ...", "x - x³/3! + x⁵/5! - ..."]},
+              {q: "What is the determinant of a 2×2 matrix [[a,b],[c,d]]?", a: "ad - bc", wrong: ["ac - bd", "ab - cd", "ad + bc"]},
+              {q: "What is L'Hôpital's rule used for?", a: "Evaluating indeterminate forms (0/0 or ∞/∞)", wrong: ["Finding derivatives", "Solving integrals", "Factoring polynomials"]},
+              {q: "What is the Fundamental Theorem of Algebra?", a: "Every non-constant polynomial has at least one complex root", wrong: ["Every equation has a real solution", "Polynomials can always be factored over integers", "Complex numbers form a field"]},
+              {q: "What is a eigenvalue?", a: "Scalar λ such that Av = λv", wrong: ["Determinant of a matrix", "Trace of a matrix", "Rank of a matrix"]},
+              {q: "What is the divergence theorem?", a: "Relates flux through surface to divergence in volume", wrong: ["Relates curl to line integral", "Gradient equals zero at extrema", "Every series converges"]},
+              {q: "What is a Fourier transform used for?", a: "Decomposing functions into frequency components", wrong: ["Solving differential equations directly", "Computing integrals numerically", "Finding matrix inverses"]},
+              {q: "What is modular arithmetic?", a: "Arithmetic where numbers wrap around at a modulus", wrong: ["Arithmetic with fractions", "Base conversion", "Floating point math"]},
+              {q: "What is the Riemann zeta function famous for?", a: "Its connection to prime number distribution", wrong: ["Defining transcendental numbers", "Computing pi digits", "Solving quintic equations"]},
+              {q: "What is a Hilbert space?", a: "Complete inner product space", wrong: ["Finite dimensional vector space", "A topological manifold", "A discrete set"]}
+          ],
+          5: [
+              {q: "What is the Langlands program?", a: "A web of conjectures connecting number theory and geometry", wrong: ["A numerical computation framework", "An algorithm for prime factoring", "A physics simulation method"]},
+              {q: "What is a manifold in topology?", a: "Space locally resembling Euclidean space", wrong: ["A higher-dimensional sphere", "An algebraic group", "A fractal set"]},
+              {q: "What is Gödel's Incompleteness Theorem?", a: "Consistent systems contain unprovable true statements", wrong: ["All mathematical systems are complete", "Logic always produces truth", "Every statement is decidable"]},
+              {q: "What is the P vs NP problem?", a: "Whether every verifiable problem is also quickly solvable", wrong: ["Whether polynomials equal natural numbers", "Whether prime numbers are infinite", "Whether π is normal"]},
+              {q: "What is a Lie group?", a: "A group that is also a differentiable manifold", wrong: ["A finite simple group", "A discrete symmetry group", "An abelian group"]},
+              {q: "What is the Banach-Tarski paradox?", a: "A ball can be decomposed and reassembled into two identical balls", wrong: ["Pi is irrational", "Infinity comes in sizes", "Space-filling curves exist"]},
+              {q: "What is homological algebra?", a: "Study of algebraic structures via chain complexes and functors", wrong: ["Geometry of polynomial roots", "Theory of finite fields", "Combinatorics of permutations"]},
+              {q: "What is the Navier-Stokes existence problem?", a: "Whether smooth solutions always exist for the equations", wrong: ["Whether fluids can exceed light speed", "Computing turbulent flow exactly", "Existence of steady-state solutions"]},
+              {q: "What is a category in category theory?", a: "Collection of objects and morphisms between them", wrong: ["A set with an operation", "A topological space", "A measure space"]},
+              {q: "What is the Hodge conjecture?", a: "Certain cohomology classes are algebraic", wrong: ["Every surface is orientable", "All manifolds are smooth", "Homology groups are finite"]}
           ]
       },
       engineering: {
@@ -1407,6 +1524,30 @@
               {q: "What unit is power measured in?", a: "Watt", wrong: ["Joule", "Newton", "Volt"]},
               {q: "What is the ideal gas law?", a: "PV = nRT", wrong: ["F = ma", "E = mc²", "V = IR"]},
               {q: "What type of bridge uses cables attached to towers?", a: "Cable-stayed", wrong: ["Arch", "Beam", "Truss"]}
+          ],
+          4: [
+              {q: "What is the Reynolds number?", a: "Ratio of inertial to viscous forces in fluid flow", wrong: ["Speed of sound ratio", "Heat transfer coefficient", "Electrical resistance ratio"]},
+              {q: "What is a PID controller?", a: "Proportional-Integral-Derivative feedback controller", wrong: ["Power Input Device", "Passive Induction Driver", "Pressure Indicator Display"]},
+              {q: "What is fatigue failure in materials?", a: "Failure from repeated cyclic loading below yield strength", wrong: ["Instant fracture from overload", "Corrosion over time", "Thermal expansion crack"]},
+              {q: "What is Kirchhoff's Voltage Law?", a: "Sum of voltages around closed loop equals zero", wrong: ["Current in equals current out", "Power equals V × I", "Resistance is constant"]},
+              {q: "What is a Carnot engine?", a: "Theoretical engine with maximum possible efficiency", wrong: ["A steam turbine design", "An internal combustion type", "A perpetual motion device"]},
+              {q: "What is Poisson's ratio?", a: "Ratio of transverse to axial strain", wrong: ["Stress divided by strain", "Force per unit area", "Moment of inertia ratio"]},
+              {q: "What is an op-amp?", a: "High-gain voltage amplifier with differential inputs", wrong: ["A logic gate", "A power converter", "A frequency filter"]},
+              {q: "What is the Nyquist frequency?", a: "Half the sampling rate", wrong: ["Double the signal frequency", "Maximum carrier frequency", "Minimum detectable frequency"]},
+              {q: "What is a Bode plot?", a: "Frequency response graph showing magnitude and phase", wrong: ["Circuit diagram", "Stress-strain curve", "Temperature gradient plot"]},
+              {q: "What is a finite element method?", a: "Numerical technique dividing domain into small elements", wrong: ["Analytical closed-form solution", "Statistical sampling method", "Dimensional analysis technique"]}
+          ],
+          5: [
+              {q: "What is the Navier-Stokes equation?", a: "Governs motion of viscous fluid substances", wrong: ["Describes electromagnetic waves", "Models heat conduction", "Predicts structural buckling"]},
+              {q: "What is a Smith chart used for?", a: "Impedance matching in RF engineering", wrong: ["Stress analysis visualization", "Control system design", "Thermodynamic cycle analysis"]},
+              {q: "What is the Shannon-Hartley theorem?", a: "Maximum data rate for a channel with noise", wrong: ["Minimum sampling rate", "Error correction bounds", "Signal compression limit"]},
+              {q: "What is a Kalman filter?", a: "Optimal recursive state estimation algorithm", wrong: ["Noise reduction circuit", "Signal amplifier", "Frequency band selector"]},
+              {q: "What is computational fluid dynamics (CFD)?", a: "Numerical simulation of fluid flow equations", wrong: ["Measuring fluid viscosity", "Designing piping systems", "Chemical reaction modeling"]},
+              {q: "What is a MOSFET?", a: "Metal-Oxide-Semiconductor Field-Effect Transistor", wrong: ["Magnetic Oscillating Switch", "Modulated Output Signal Filter", "Micro-Optical Sensor Element"]},
+              {q: "What is the Von Mises yield criterion?", a: "Material yields when distortion energy reaches critical value", wrong: ["Maximum stress causes failure", "Shear stress equals tensile strength", "Strain exceeds elastic limit"]},
+              {q: "What is a phase-locked loop (PLL)?", a: "Circuit synchronizing output phase with reference signal", wrong: ["Voltage regulator circuit", "Current limiter device", "Temperature control system"]},
+              {q: "What is topology optimization?", a: "Finding optimal material distribution within a design space", wrong: ["Sorting network nodes", "Balancing chemical equations", "Minimizing code complexity"]},
+              {q: "What is the Rayleigh-Bénard convection?", a: "Convection cells forming in heated fluid from below", wrong: ["Turbulent pipe flow", "Supersonic shock waves", "Laminar boundary layer"]}
           ]
       },
       science: {
@@ -1461,6 +1602,30 @@
               {q: "What is the unit of frequency?", a: "Hertz", wrong: ["Watt", "Joule", "Ampere"]},
               {q: "What is the second law of thermodynamics about?", a: "Entropy always increases", wrong: ["Energy is conserved", "Absolute zero is unreachable", "Heat flows from hot to cold only"]},
               {q: "What organelle is responsible for photosynthesis?", a: "Chloroplast", wrong: ["Mitochondria", "Nucleus", "Vacuole"]}
+          ],
+          4: [
+              {q: "What is the Heisenberg Uncertainty Principle?", a: "Cannot know both position and momentum exactly", wrong: ["Energy is always conserved", "Light is both wave and particle", "Entropy always increases"]},
+              {q: "What is a black body in physics?", a: "Object that absorbs all incident radiation", wrong: ["A collapsed star", "Dark matter", "A vacuum chamber"]},
+              {q: "What is the Krebs cycle?", a: "Metabolic pathway producing ATP in mitochondria", wrong: ["DNA replication process", "Protein synthesis pathway", "Cell division cycle"]},
+              {q: "What is the difference between an isotope and an ion?", a: "Different neutrons vs. different electrons", wrong: ["Different protons vs. different neutrons", "Same element vs. different element", "Stable vs. unstable"]},
+              {q: "What is the photoelectric effect?", a: "Electrons ejected from metal by light", wrong: ["Light bending through prism", "Electricity generating light", "Heat from friction"]},
+              {q: "What are Van der Waals forces?", a: "Weak intermolecular attractions", wrong: ["Strong nuclear forces", "Ionic bonds", "Covalent bonds"]},
+              {q: "What is redshift in astronomy?", a: "Light wavelength increase from receding objects", wrong: ["Star color change", "Gravitational lensing", "Solar flare spectrum"]},
+              {q: "What is the strong nuclear force?", a: "Force binding quarks within protons/neutrons", wrong: ["Gravity at quantum scale", "Electromagnetic attraction", "Weak decay force"]},
+              {q: "What is an allotrope?", a: "Different structural forms of the same element", wrong: ["A radioactive isotope", "A chemical compound", "A molecular bond"]},
+              {q: "What is the significance of the Higgs boson?", a: "Gives particles mass via the Higgs field", wrong: ["Carries electromagnetic force", "Mediates gravity", "Causes radioactive decay"]}
+          ],
+          5: [
+              {q: "What is quantum entanglement?", a: "Correlated quantum states regardless of distance", wrong: ["Particles orbiting each other", "Wave function visualization", "Electron tunneling"]},
+              {q: "What is the Pauli Exclusion Principle?", a: "No two fermions can occupy the same quantum state", wrong: ["Energy is quantized", "Particles have wave properties", "Observation affects measurement"]},
+              {q: "What is a Bose-Einstein condensate?", a: "State of matter at near absolute zero", wrong: ["Plasma at extreme heat", "Supercritical fluid", "Degenerate electron gas"]},
+              {q: "What is the renormalization group in QFT?", a: "Mathematical framework for scale-dependent physics", wrong: ["A symmetry group", "A particle classification", "A measurement technique"]},
+              {q: "What is the holographic principle?", a: "Volume information encoded on boundary surface", wrong: ["Universe is a simulation", "Light creates 3D images", "Spacetime has extra dimensions"]},
+              {q: "What is the Chandrasekhar limit?", a: "Maximum mass for a stable white dwarf (~1.4 solar masses)", wrong: ["Minimum mass for nuclear fusion", "Speed limit in spacetime", "Temperature limit for plasma"]},
+              {q: "What is topological quantum computing?", a: "Uses anyons and braiding for fault-tolerant qubits", wrong: ["Classical computing on curved surfaces", "Quantum simulation of topology", "Error correction via repetition"]},
+              {q: "What is the Casimir effect?", a: "Attractive force between close parallel plates in vacuum", wrong: ["Repulsion between like charges", "Gravitational time dilation", "Photon momentum transfer"]},
+              {q: "What is a quasicrystal?", a: "Ordered but non-periodic atomic structure", wrong: ["A liquid crystal", "An amorphous solid", "A crystalline defect"]},
+              {q: "What is the AdS/CFT correspondence?", a: "Duality between gravity in AdS space and CFT on boundary", wrong: ["Dark energy equation", "String theory compactification", "Quantum error correction code"]}
           ]
       }
   };
@@ -1468,17 +1633,23 @@
     animals: {
       1: [{emoji:'🐶',title:'Dog',fact:'Dogs wag their tails when happy! They are loyal friends.'},{emoji:'🐱',title:'Cat',fact:'Cats purr when content. They can make over 100 sounds!'},{emoji:'🐦',title:'Bird',fact:'Birds have feathers and most can fly through the sky!'},{emoji:'🐠',title:'Fish',fact:'Fish breathe through gills and live in water!'},{emoji:'🦋',title:'Butterfly',fact:'Butterflies start as caterpillars before they transform!'}],
       2: [{emoji:'🐘',title:'Elephant',fact:'Elephants are the largest land animals with amazing memory!'},{emoji:'🦁',title:'Lion',fact:'Lions live in groups called prides. Males have manes!'},{emoji:'🐧',title:'Penguin',fact:'Penguins are birds that cannot fly but swim beautifully!'},{emoji:'🦒',title:'Giraffe',fact:'Giraffes are the tallest animals with 18-inch tongues!'},{emoji:'🐙',title:'Octopus',fact:'Octopuses have 3 hearts and blue blood! Very smart creatures.'}],
-      3: [{emoji:'🧬',title:'Classification',fact:'Scientists classify life: Kingdom → Phylum → Class → Order → Family → Genus → Species.'},{emoji:'🦎',title:'Adaptation',fact:'Chameleons change color, arctic foxes grow white fur — survival adaptations!'},{emoji:'🌊',title:'Marine Life',fact:'95% of ocean unexplored. Greenland sharks live 400+ years!'},{emoji:'🔬',title:'Entomology',fact:'Study of insects — more insect species than all other animals combined!'},{emoji:'🦠',title:'Ecosystems',fact:'Every animal plays a role in food webs and energy cycles.'}]
+      3: [{emoji:'🧬',title:'Classification',fact:'Scientists classify life: Kingdom → Phylum → Class → Order → Family → Genus → Species.'},{emoji:'🦎',title:'Adaptation',fact:'Chameleons change color, arctic foxes grow white fur — survival adaptations!'},{emoji:'🌊',title:'Marine Life',fact:'95% of ocean unexplored. Greenland sharks live 400+ years!'},{emoji:'🔬',title:'Entomology',fact:'Study of insects — more insect species than all other animals combined!'},{emoji:'🦠',title:'Ecosystems',fact:'Every animal plays a role in food webs and energy cycles.'}],
+      4: [{emoji:'🧬',title:'Genetics',fact:'DNA encodes traits via codons. Mutations drive evolution and adaptation.'},{emoji:'🔬',title:'Cell Biology',fact:'Apoptosis is programmed cell death — essential for development and health.'},{emoji:'🌍',title:'Biogeography',fact:'Wallace Line separates Asian and Australian fauna — plate tectonics at work!'},{emoji:'🧪',title:'Biomimicry',fact:'Velcro was inspired by burrs; bullet trains by kingfisher beaks!'},{emoji:'🦠',title:'Microbiome',fact:'Your gut contains trillions of bacteria that influence mood and immunity.'}],
+      5: [{emoji:'🧬',title:'CRISPR',fact:'CRISPR-Cas9 enables precise gene editing — revolutionizing medicine and agriculture.'},{emoji:'🔬',title:'Endosymbiosis',fact:'Mitochondria and chloroplasts were once free-living bacteria engulfed by ancestral cells.'},{emoji:'🌍',title:'Phylogenetics',fact:'Molecular clocks use DNA mutation rates to date evolutionary divergences.'},{emoji:'🧪',title:'Epigenetics',fact:'Gene expression changes without altering DNA — environmental factors flip switches.'},{emoji:'🦠',title:'Horizontal Gene Transfer',fact:'Bacteria share genes laterally, spreading antibiotic resistance rapidly.'}]
     },
     languages: {
       1: [{emoji:'🔤',title:'Letters',fact:'The alphabet has 26 letters. A, E, I, O, U are vowels!'},{emoji:'📖',title:'Reading',fact:'Words are made of letters. Put letters together to make sounds!'},{emoji:'🗣️',title:'Sounds',fact:'Every letter makes a sound. B says "buh", C says "kuh"!'},{emoji:'🎵',title:'Rhyming',fact:'Words that sound alike rhyme! Cat, Hat, Bat rhyme!'},{emoji:'✍️',title:'Writing',fact:'We read left to right. Sentences start with a capital letter!'}],
       2: [{emoji:'📝',title:'Grammar',fact:'Nouns name things, verbs show actions, adjectives describe!'},{emoji:'🌍',title:'Spanish',fact:'Hola = Hello, Gracias = Thank you, Agua = Water!'},{emoji:'🇫🇷',title:'French',fact:'Bonjour = Hello, Merci = Thank you, Eau = Water!'},{emoji:'📚',title:'Vocabulary',fact:'Reading more books helps you learn new words and ideas!'},{emoji:'❓',title:'Punctuation',fact:'Periods end sentences. ? ends questions. ! shows excitement!'}],
-      3: [{emoji:'🏛️',title:'Etymology',fact:'Word origins: "Telephone" = Greek tele (far) + phone (voice).'},{emoji:'✨',title:'Literary Devices',fact:'Metaphor, simile, personification make writing vivid and expressive.'},{emoji:'🌐',title:'Language Families',fact:'English is Germanic. Spanish, French, Italian are Romance (from Latin).'},{emoji:'📜',title:'Poetry',fact:'Iambic pentameter: 5 pairs of unstressed-stressed syllables.'},{emoji:'🧠',title:'Linguistics',fact:'Syntax = sentence structure. Phonology = sounds. Semantics = meaning.'}]
+      3: [{emoji:'🏛️',title:'Etymology',fact:'Word origins: "Telephone" = Greek tele (far) + phone (voice).'},{emoji:'✨',title:'Literary Devices',fact:'Metaphor, simile, personification make writing vivid and expressive.'},{emoji:'🌐',title:'Language Families',fact:'English is Germanic. Spanish, French, Italian are Romance (from Latin).'},{emoji:'📜',title:'Poetry',fact:'Iambic pentameter: 5 pairs of unstressed-stressed syllables.'},{emoji:'🧠',title:'Linguistics',fact:'Syntax = sentence structure. Phonology = sounds. Semantics = meaning.'}],
+      4: [{emoji:'🏛️',title:'Morphology',fact:'Morphemes are the smallest units of meaning. "Un-break-able" has three!'},{emoji:'✨',title:'Rhetoric',fact:'Anaphora, chiasmus, antithesis — rhetorical devices that make speeches powerful.'},{emoji:'🌐',title:'Sociolinguistics',fact:'Code-switching is alternating languages mid-conversation — common in multilingual societies.'},{emoji:'📜',title:'Historical Linguistics',fact:'Languages evolve: Latin → French, Spanish, Italian, Portuguese, Romanian.'},{emoji:'🧠',title:'Pragmatics',fact:'Context determines meaning. "Can you pass the salt?" is a request, not a question.'}],
+      5: [{emoji:'🏛️',title:'Universal Grammar',fact:'Chomsky proposed all humans share an innate language faculty — a biological blueprint.'},{emoji:'✨',title:'Semiotics',fact:'Signs = signifier + signified. Language, gestures, and symbols all carry meaning.'},{emoji:'🌐',title:'Computational Linguistics',fact:'NLP uses transformers and attention mechanisms to process human language.'},{emoji:'📜',title:'Phonetics',fact:'IPA transcribes sounds precisely. /θ/ = "th" in "think", /ð/ = "th" in "this".'},{emoji:'🧠',title:'Discourse Analysis',fact:'Studies how language constructs meaning in conversations, texts, and social contexts.'}]
     },
     science: {
       1: [{emoji:'☀️',title:'The Sun',fact:'The Sun gives light & warmth. It is a star, the closest to Earth!'},{emoji:'💧',title:'Water',fact:'Water can be solid (ice), liquid (water), or gas (steam)!'},{emoji:'🌱',title:'Plants',fact:'Plants need sunlight, water, soil to grow. They give us oxygen!'},{emoji:'🦋',title:'Life Cycle',fact:'Caterpillars become butterflies! Many animals transform as they grow.'},{emoji:'🌈',title:'Rainbow',fact:'Rainbows appear when sunlight shines through raindrops!'}],
       2: [{emoji:'🪐',title:'Solar System',fact:'8 planets orbit our Sun. Earth is the only one known to have life!'},{emoji:'⚡',title:'Energy',fact:'Energy forms: light, heat, sound, electrical, kinetic!'},{emoji:'🧲',title:'Forces',fact:'Gravity pulls down. Magnets attract/repel. Friction slows things!'},{emoji:'🔬',title:'Cells',fact:'All living things are made of tiny cells. You have trillions!'},{emoji:'💨',title:'Weather',fact:'Water cycle: evaporation → condensation → precipitation!'}],
-      3: [{emoji:'⚛️',title:'Atoms',fact:'Everything is atoms: protons (+), neutrons (0), electrons (-).'},{emoji:'🧪',title:'Chemistry',fact:'Periodic table: 118 elements. H₂O = water, NaCl = salt!'},{emoji:'🧬',title:'DNA',fact:'DNA stores genetics. Double helix discovered by Watson & Crick.'},{emoji:'🔭',title:'Astronomy',fact:'Light: 3×10⁸ m/s. Observable universe: 93 billion light-years!'},{emoji:'⚡',title:'Thermodynamics',fact:'Energy can\'t be created/destroyed (1st law). Entropy increases (2nd).'}]
+      3: [{emoji:'⚛️',title:'Atoms',fact:'Everything is atoms: protons (+), neutrons (0), electrons (-).'},{emoji:'🧪',title:'Chemistry',fact:'Periodic table: 118 elements. H₂O = water, NaCl = salt!'},{emoji:'🧬',title:'DNA',fact:'DNA stores genetics. Double helix discovered by Watson & Crick.'},{emoji:'🔭',title:'Astronomy',fact:'Light: 3×10⁸ m/s. Observable universe: 93 billion light-years!'},{emoji:'⚡',title:'Thermodynamics',fact:'Energy can\'t be created/destroyed (1st law). Entropy increases (2nd).'}],
+      4: [{emoji:'⚛️',title:'Quantum Mechanics',fact:'Particles behave as waves. Heisenberg: can\'t know position AND momentum exactly.'},{emoji:'🧪',title:'Organic Chemistry',fact:'Carbon forms 4 bonds — backbone of life. Benzene ring = aromatic compounds.'},{emoji:'🧬',title:'Molecular Biology',fact:'mRNA carries DNA instructions to ribosomes for protein synthesis.'},{emoji:'🔭',title:'Cosmology',fact:'Dark energy accelerates expansion. Dark matter holds galaxies together.'},{emoji:'⚡',title:'Electromagnetism',fact:'Maxwell unified electricity + magnetism. EM waves travel at light speed.'}],
+      5: [{emoji:'⚛️',title:'Particle Physics',fact:'Standard Model: quarks, leptons, gauge bosons. Higgs gives mass.'},{emoji:'🧪',title:'Quantum Chemistry',fact:'Molecular orbitals from overlapping atomic orbitals. HOMO-LUMO gap = reactivity.'},{emoji:'🧬',title:'Systems Biology',fact:'Networks of genes, proteins, metabolites interact — emergent properties arise.'},{emoji:'🔭',title:'General Relativity',fact:'Spacetime curves around mass. Gravitational waves confirmed by LIGO in 2015.'},{emoji:'⚡',title:'Statistical Mechanics',fact:'Boltzmann distribution connects microscopic states to macroscopic thermodynamics.'}]
     }
   };
   let currentQuiz = [];
@@ -1512,7 +1683,7 @@ function playAnimalSound(type) {
   function startQuizDirectly(subject) {
       const data = quizData[subject];
       quizTitle.textContent = data.title;
-      currentQuiz = data[Math.min(currentLevel,3)] || [];
+      currentQuiz = data[Math.min(currentLevel,5)] || data[3] || [];
       if('speechSynthesis' in window) window.speechSynthesis.cancel();
       if(currentQuiz.length === 0) { quizPrompt.textContent = "More questions coming soon!"; audioBtn.style.display = 'none'; quizChoices.innerHTML = ''; return; }
       currentQuiz = [...currentQuiz].sort(() => Math.random() - 0.5);
@@ -1521,7 +1692,7 @@ function playAnimalSound(type) {
       loadQuestion();
   }
   function showTeachPhase(subject) {
-      const tData = teachData[subject]?.[Math.min(currentLevel,3)];
+      const tData = teachData[subject]?.[Math.min(currentLevel,5)] || teachData[subject]?.[3];
       if(!tData || tData.length === 0) { startQuizDirectly(subject); return; }
       teachPhaseEl.style.display='flex'; quizTaskArea.style.display='none'; teachPhaseEl.innerHTML='';
       const ttl=document.createElement('div'); ttl.className='music-title'; ttl.style.color='#2c3e50'; ttl.textContent='📚 Learn First!'; teachPhaseEl.appendChild(ttl);
@@ -1613,7 +1784,7 @@ function playAnimalSound(type) {
       arena.querySelectorAll('.rfx-target').forEach(t => { if(Date.now() - parseInt(t.dataset.born) > 2000) t.remove(); });
       const colors = ['#e74c3c','#3498db','#2ecc71','#f1c40f','#e84393','#00cec9','#6c5ce7','#fd79a8'];
       const emojis = currentLevel <= 2 ? ['🍎','🌟','🎈','🐱','🐶','🦋','🌈','🎯'] : ['🎯','⚡','💎','🔥','❄️','💫','🌀','⭐'];
-      const size = currentLevel <= 2 ? 70 : 55;
+      const size = currentLevel <= 2 ? 70 : (currentLevel <= 4 ? 55 : 40);
       const t = document.createElement('div');
       t.className = 'rfx-target';
       t.dataset.born = Date.now();
@@ -1628,7 +1799,17 @@ function playAnimalSound(type) {
         spawnTarget();
       });
       arena.appendChild(t);
-      const delay = currentLevel <= 2 ? 1200 : (currentLevel <= 3 ? 800 : 500);
+      if(currentLevel >= 5 && Math.random() < 0.3) {
+        const d = document.createElement('div');
+        d.className = 'rfx-target';
+        d.dataset.born = Date.now();
+        d.style.cssText = `width:${size}px;height:${size}px;left:${Math.random()*maxX}px;top:${Math.random()*maxY}px;background:#555;opacity:0.7;`;
+        d.textContent = '💀';
+        d.addEventListener('pointerdown', (e) => { e.preventDefault(); rfxScore = Math.max(0, rfxScore-2); scoreEl.textContent = rfxScore; d.remove(); showFeedback('Decoy! -2','#e74c3c'); });
+        arena.appendChild(d);
+        setTimeout(() => d.remove(), 1800);
+      }
+      const delay = currentLevel <= 2 ? 1200 : (currentLevel <= 3 ? 800 : (currentLevel <= 4 ? 500 : 350));
       setTimeout(spawnTarget, delay + Math.random() * 400);
     }
   }
@@ -1642,9 +1823,14 @@ function playAnimalSound(type) {
       {g:[[0,0,0,0,0,0],[0,1,1,0,0,0],[0,1,0,0,0,0],[0,0,0,1,1,0],[0,0,0,0,0,0],[0,0,0,0,0,0]],s:[0,0],e:[5,5]},
       {g:[[0,0,0,0,0,0],[1,1,0,1,0,0],[0,0,0,1,0,0],[0,1,0,0,0,1],[0,1,0,0,0,0],[0,0,0,0,0,0]],s:[0,0],e:[5,5]},
       {g:[[0,0,1,0,0,0],[0,0,1,0,1,0],[0,0,0,0,1,0],[1,1,0,0,0,0],[0,0,0,1,0,0],[0,0,0,1,0,0]],s:[0,0],e:[5,5]},
-      {g:[[0,0,0,0,0,0],[0,1,0,1,0,1],[0,1,0,1,0,0],[0,0,0,1,0,1],[0,1,0,0,0,1],[0,1,0,0,0,0]],s:[0,0],e:[5,5]}
+      {g:[[0,0,0,0,0,0],[0,1,0,1,0,1],[0,1,0,1,0,0],[0,0,0,1,0,1],[0,1,0,0,0,1],[0,1,0,0,0,0]],s:[0,0],e:[5,5]},
+      {g:[[0,0,1,0,0,0],[1,0,1,0,1,0],[0,0,0,0,1,0],[0,1,1,0,0,0],[0,1,0,0,1,0],[0,0,0,0,1,0]],s:[0,0],e:[5,5]},
+      {g:[[0,0,0,1,0,0],[0,1,0,1,0,0],[0,1,0,0,0,1],[0,0,1,0,0,1],[1,0,1,0,0,0],[1,0,0,0,1,0]],s:[0,0],e:[5,5]},
+      {g:[[0,0,0,0,1,0],[1,1,0,0,1,0],[0,0,0,1,0,0],[0,1,0,1,0,1],[0,1,0,0,0,1],[0,0,0,0,0,0]],s:[0,0],e:[5,5]},
+      {g:[[0,1,0,0,0,0],[0,1,0,1,1,0],[0,0,0,0,1,0],[1,0,1,0,0,0],[1,0,1,0,1,0],[0,0,0,0,1,0]],s:[0,0],e:[5,5]},
+      {g:[[0,0,0,1,0,0],[0,1,0,1,0,1],[0,1,0,0,0,1],[0,0,1,1,0,0],[1,0,0,1,0,0],[1,0,0,0,0,0]],s:[0,0],e:[5,5]}
     ];
-    let blkLvl = 0, playerPos = [0,0];
+    let blkLvl = Math.min(currentLevel - 1, 4) * 2, playerPos = [0,0];
     const cmdQueue = [];
     function renderGrid() {
       const lv = levels[blkLvl];
@@ -1721,17 +1907,38 @@ function playAnimalSound(type) {
     const tray = $$('#sort-tray');
     const area = $$('#sort-area');
     const info = $$('#sort-info');
-    const rounds = [
-      {title:'Fruits vs Vegetables',buckets:['🍎 Fruits','🥦 Vegetables'],items:[{e:'🍌',b:0},{e:'🥕',b:1},{e:'🍇',b:0},{e:'🥒',b:1},{e:'🍓',b:0},{e:'🌽',b:1},{e:'🍊',b:0},{e:'🥬',b:1}]},
-      {title:'Animals: Land vs Water',buckets:['🌍 Land','🌊 Water'],items:[{e:'🐶',b:0},{e:'🐟',b:1},{e:'🐱',b:0},{e:'🐙',b:1},{e:'🐘',b:0},{e:'🦈',b:1},{e:'🐴',b:0},{e:'🐋',b:1}]},
-      {title:'Hot vs Cold',buckets:['🔥 Hot','❄️ Cold'],items:[{e:'☀️',b:0},{e:'⛄',b:1},{e:'🌋',b:0},{e:'🧊',b:1},{e:'🏝️',b:0},{e:'🐧',b:1},{e:'🌶️',b:0},{e:'🏔️',b:1}]},
-      {title:'Living vs Non-Living',buckets:['🌱 Living','🪨 Non-Living'],items:[{e:'🌸',b:0},{e:'🪑',b:1},{e:'🐝',b:0},{e:'📱',b:1},{e:'🌲',b:0},{e:'🔑',b:1},{e:'🐸',b:0},{e:'💎',b:1}]},
-      {title:'Day vs Night',buckets:['🌞 Day','🌙 Night'],items:[{e:'☀️',b:0},{e:'⭐',b:1},{e:'🌈',b:0},{e:'🦉',b:1},{e:'🦋',b:0},{e:'🦇',b:1},{e:'🐓',b:0},{e:'🌜',b:1}]}
-    ];
+    const allRounds = {
+      1:[
+        {title:'Fruits vs Vegetables',buckets:['🍎 Fruits','🥦 Vegetables'],items:[{e:'🍌',b:0},{e:'🥕',b:1},{e:'🍇',b:0},{e:'🥒',b:1},{e:'🍓',b:0},{e:'🌽',b:1},{e:'🍊',b:0},{e:'🥬',b:1}]},
+        {title:'Animals: Land vs Water',buckets:['🌍 Land','🌊 Water'],items:[{e:'🐶',b:0},{e:'🐟',b:1},{e:'🐱',b:0},{e:'🐙',b:1},{e:'🐘',b:0},{e:'🦈',b:1},{e:'🐴',b:0},{e:'🐋',b:1}]},
+        {title:'Hot vs Cold',buckets:['🔥 Hot','❄️ Cold'],items:[{e:'☀️',b:0},{e:'⛄',b:1},{e:'🌋',b:0},{e:'🧊',b:1},{e:'🏝️',b:0},{e:'🐧',b:1},{e:'🌶️',b:0},{e:'🏔️',b:1}]}
+      ],
+      2:[
+        {title:'Living vs Non-Living',buckets:['🌱 Living','🪨 Non-Living'],items:[{e:'🌸',b:0},{e:'🪑',b:1},{e:'🐝',b:0},{e:'📱',b:1},{e:'🌲',b:0},{e:'🔑',b:1},{e:'🐸',b:0},{e:'💎',b:1}]},
+        {title:'Day vs Night',buckets:['🌞 Day','🌙 Night'],items:[{e:'☀️',b:0},{e:'⭐',b:1},{e:'🌈',b:0},{e:'🦉',b:1},{e:'🦋',b:0},{e:'🦇',b:1},{e:'🐓',b:0},{e:'🌜',b:1}]},
+        {title:'Big vs Small',buckets:['🐋 Big','🐜 Small'],items:[{e:'🐘',b:0},{e:'🐜',b:1},{e:'🏔️',b:0},{e:'🌱',b:1},{e:'🐋',b:0},{e:'🐛',b:1},{e:'🌳',b:0},{e:'🍓',b:1}]}
+      ],
+      3:[
+        {title:'Metals vs Non-Metals',buckets:['⚙️ Metals','💨 Non-Metals'],items:[{e:'Fe (Iron)',b:0},{e:'O (Oxygen)',b:1},{e:'Cu (Copper)',b:0},{e:'N (Nitrogen)',b:1},{e:'Au (Gold)',b:0},{e:'C (Carbon)',b:1},{e:'Ag (Silver)',b:0},{e:'He (Helium)',b:1}]},
+        {title:'Vertebrates vs Invertebrates',buckets:['🦴 Vertebrate','🪱 Invertebrate'],items:[{e:'🐍 Snake',b:0},{e:'🐙 Octopus',b:1},{e:'🐸 Frog',b:0},{e:'🦋 Butterfly',b:1},{e:'🐟 Fish',b:0},{e:'🐌 Snail',b:1},{e:'🦅 Eagle',b:0},{e:'🕷 Spider',b:1}]},
+        {title:'Renewable vs Non-Renewable',buckets:['♻️ Renewable','⛽ Non-Renewable'],items:[{e:'☀️ Solar',b:0},{e:'🛢️ Oil',b:1},{e:'💨 Wind',b:0},{e:'⛏️ Coal',b:1},{e:'🌊 Hydro',b:0},{e:'⚛️ Nuclear',b:1},{e:'🌿 Biomass',b:0},{e:'🔥 Gas',b:1}]}
+      ],
+      4:[
+        {title:'Acids vs Bases',buckets:['🍋 Acid (pH<7)','🧼 Base (pH>7)'],items:[{e:'Lemon juice',b:0},{e:'Soap',b:1},{e:'Vinegar',b:0},{e:'Baking soda',b:1},{e:'Stomach acid',b:0},{e:'Bleach',b:1},{e:'Battery acid',b:0},{e:'Ammonia',b:1}]},
+        {title:'Potential vs Kinetic Energy',buckets:['📦 Potential','🏃 Kinetic'],items:[{e:'Boulder on cliff',b:0},{e:'Rolling ball',b:1},{e:'Stretched spring',b:0},{e:'Flying arrow',b:1},{e:'Water in dam',b:0},{e:'Wind blowing',b:1},{e:'Charged battery',b:0},{e:'Spinning wheel',b:1}]},
+        {title:'Prokaryote vs Eukaryote',buckets:['🦠 Prokaryote','🧬 Eukaryote'],items:[{e:'E. coli',b:0},{e:'Human cell',b:1},{e:'Salmonella',b:0},{e:'Yeast',b:1},{e:'Streptococcus',b:0},{e:'Plant cell',b:1},{e:'Archaea',b:0},{e:'Amoeba',b:1}]}
+      ],
+      5:[
+        {title:'Exothermic vs Endothermic',buckets:['🔥 Exothermic','❄️ Endothermic'],items:[{e:'Combustion',b:0},{e:'Photosynthesis',b:1},{e:'Neutralization',b:0},{e:'Electrolysis',b:1},{e:'Rusting',b:0},{e:'Melting ice',b:1},{e:'Respiration',b:0},{e:'Evaporation',b:1}]},
+        {title:'Classical vs Quantum Physics',buckets:['🍎 Classical','⚛️ Quantum'],items:[{e:'F=ma',b:0},{e:'Schrödinger eq.',b:1},{e:'Gravity',b:0},{e:'Wave-particle duality',b:1},{e:'Projectile motion',b:0},{e:'Superposition',b:1},{e:'Friction',b:0},{e:'Tunneling',b:1}]},
+        {title:'Ionic vs Covalent Bonds',buckets:['⚡ Ionic','🤝 Covalent'],items:[{e:'NaCl',b:0},{e:'H₂O',b:1},{e:'MgO',b:0},{e:'CO₂',b:1},{e:'KBr',b:0},{e:'CH₄',b:1},{e:'CaF₂',b:0},{e:'O₂',b:1}]}
+      ]
+    };
     let roundIdx = 0, sorted = 0, totalItems = 0;
     let dragItem = null, dragBucket = null;
     function loadRound() {
-      const round = rounds[roundIdx % rounds.length];
+      const lvlRounds = allRounds[Math.min(currentLevel, 5)] || allRounds[3];
+      const round = lvlRounds[roundIdx % lvlRounds.length];
       info.textContent = round.title;
       tray.innerHTML = '';
       area.innerHTML = '';
@@ -1832,6 +2039,26 @@ function playAnimalSound(type) {
         {en:'Rainbow',img:'🌈',es:'Arcoíris',fr:'Arc-en-ciel',de:'Regenbogen',it:'Arcobaleno',zh:'彩虹',hi:'इंद्रधनुष'},
         {en:'Earth',img:'🌍',es:'Tierra',fr:'Terre',de:'Erde',it:'Terra',zh:'地球',hi:'पृथ्वी'},
         {en:'Snow',img:'❄️',es:'Nieve',fr:'Neige',de:'Schnee',it:'Neve',zh:'雪',hi:'बर्फ़'}
+      ],
+      4: [
+        {en:'Knowledge',img:'📚',es:'Conocimiento',fr:'Connaissance',de:'Wissen',it:'Conoscenza',zh:'知识',hi:'ज्ञान'},
+        {en:'Freedom',img:'🕊️',es:'Libertad',fr:'Liberté',de:'Freiheit',it:'Libertà',zh:'自由',hi:'स्वतंत्रता'},
+        {en:'Courage',img:'🦁',es:'Valentía',fr:'Courage',de:'Mut',it:'Coraggio',zh:'勇气',hi:'साहस'},
+        {en:'Strength',img:'💪',es:'Fuerza',fr:'Force',de:'Stärke',it:'Forza',zh:'力量',hi:'शक्ति'},
+        {en:'Discovery',img:'🔭',es:'Descubrimiento',fr:'Découverte',de:'Entdeckung',it:'Scoperta',zh:'发现',hi:'खोज'},
+        {en:'Electricity',img:'⚡',es:'Electricidad',fr:'Électricité',de:'Elektrizität',it:'Elettricità',zh:'电',hi:'बिजली'},
+        {en:'Universe',img:'🌌',es:'Universo',fr:'Univers',de:'Universum',it:'Universo',zh:'宇宙',hi:'ब्रह्मांड'},
+        {en:'Philosophy',img:'🤔',es:'Filosofía',fr:'Philosophie',de:'Philosophie',it:'Filosofia',zh:'哲学',hi:'दर्शन'}
+      ],
+      5: [
+        {en:'Consciousness',img:'🧠',es:'Conciencia',fr:'Conscience',de:'Bewusstsein',it:'Coscienza',zh:'意识',hi:'चेतना'},
+        {en:'Civilization',img:'🏛️',es:'Civilización',fr:'Civilisation',de:'Zivilisation',it:'Civiltà',zh:'文明',hi:'सभ्यता'},
+        {en:'Environment',img:'🌿',es:'Medio ambiente',fr:'Environnement',de:'Umwelt',it:'Ambiente',zh:'环境',hi:'पर्यावरण'},
+        {en:'Revolution',img:'✊',es:'Revolución',fr:'Révolution',de:'Revolution',it:'Rivoluzione',zh:'革命',hi:'क्रांति'},
+        {en:'Technology',img:'💻',es:'Tecnología',fr:'Technologie',de:'Technologie',it:'Tecnologia',zh:'技术',hi:'प्रौद्योगिकी'},
+        {en:'Democracy',img:'🗳️',es:'Democracia',fr:'Démocratie',de:'Demokratie',it:'Democrazia',zh:'民主',hi:'लोकतंत्र'},
+        {en:'Phenomenon',img:'✨',es:'Fenómeno',fr:'Phénomène',de:'Phänomen',it:'Fenomeno',zh:'现象',hi:'घटना'},
+        {en:'Architecture',img:'🏗️',es:'Arquitectura',fr:'Architecture',de:'Architektur',it:'Architettura',zh:'建筑',hi:'वास्तुकला'}
       ]
     };
     let wbIdx = 0, wbCorrect = 0, wbTotal = 0, wbPool = [];
@@ -1849,7 +2076,7 @@ function playAnimalSound(type) {
       langPick.appendChild(btn);
     });
     function startWB() {
-      const lvl = Math.min(currentLevel, 3);
+      const lvl = Math.min(currentLevel, 5);
       wbPool = [...words[lvl]].sort(() => Math.random() - 0.5);
       wbIdx = 0; wbCorrect = 0; wbTotal = wbPool.length;
       loadWBQuestion();
@@ -1868,7 +2095,7 @@ function playAnimalSound(type) {
       prompt.textContent = `${word.img} ${word.en}`;
       sub.textContent = `What is "${word.en}" in ${langs[wbLang].name}?`;
       const correct = word[wbLang];
-      const allWords = words[Math.min(currentLevel, 3)].map(w => w[wbLang]);
+      const allWords = words[Math.min(currentLevel, 5)].map(w => w[wbLang]);
       let wrongs = allWords.filter(w => w !== correct).sort(() => Math.random() - 0.5).slice(0, 3);
       let opts = [correct, ...wrongs].sort(() => Math.random() - 0.5);
       choices.innerHTML = '';
@@ -1904,7 +2131,7 @@ function playAnimalSound(type) {
     const info = $$('#mtn-info');
     canvas.innerHTML = '';
     let mtnLevel = 0, playerY = 0;
-    const totalPlatforms = currentLevel <= 2 ? 5 : 8;
+    const totalPlatforms = currentLevel <= 2 ? 5 : (currentLevel === 3 ? 8 : (currentLevel === 4 ? 10 : 12));
     const platformH = Math.floor(400 / (totalPlatforms + 1));
     const platforms = [];
     for(let i = 0; i < totalPlatforms; i++) {
@@ -1941,6 +2168,10 @@ function playAnimalSound(type) {
         if(op === '×') { a = Math.floor(Math.random()*10)+1; b = Math.floor(Math.random()*10)+1; answer = a*b; }
         else if(op === '-') { a = Math.floor(Math.random()*20)+10; b = Math.floor(Math.random()*10)+1; answer = a-b; }
         else { a = Math.floor(Math.random()*50)+10; b = Math.floor(Math.random()*50)+10; answer = a+b; }
+      } else if(currentLevel === 5 && Math.random() < 0.4) {
+        const r = Math.floor(Math.random()*2);
+        if(r===0) { a = Math.floor(Math.random()*12)+2; answer = a*a; return {text:`${a}² = ?`, answer}; }
+        else { const sq = [4,9,16,25,36,49,64,81,100,121,144]; a = sq[Math.floor(Math.random()*sq.length)]; answer = Math.sqrt(a); return {text:`√${a} = ?`, answer}; }
       } else {
         const ops = ['+','-','×','÷'];
         op = ops[Math.floor(Math.random()*ops.length)];
