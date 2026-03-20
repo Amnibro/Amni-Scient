@@ -183,6 +183,38 @@
   .game-btn.blocks { border-color: #6c5ce7; } .game-btn.blocks:hover { box-shadow: 0 0 15px rgba(108,92,231,0.4); }
   .game-btn.sorthat { border-color: #fdcb6e; } .game-btn.sorthat:hover { box-shadow: 0 0 15px rgba(253,203,110,0.4); }
   .game-btn.wbridge { border-color: #55efc4; } .game-btn.wbridge:hover { box-shadow: 0 0 15px rgba(85,239,196,0.4); }
+  .game-btn.memseq { border-color: #ff6348; } .game-btn.memseq:hover { box-shadow: 0 0 15px rgba(255,99,72,0.4); }
+  .game-btn.scramble { border-color: #ffa502; } .game-btn.scramble:hover { box-shadow: 0 0 15px rgba(255,165,2,0.4); }
+  .game-btn.pattern { border-color: #7bed9f; } .game-btn.pattern:hover { box-shadow: 0 0 15px rgba(123,237,159,0.4); }
+  .game-btn.geo { border-color: #70a1ff; } .game-btn.geo:hover { box-shadow: 0 0 15px rgba(112,161,255,0.4); }
+  #memseq-view { background: #1a1a2e; justify-content: center; }
+  #scramble-view { background: #2d1b00; justify-content: center; }
+  #pattern-view { background: #0d2818; justify-content: center; }
+  #geo-view { background: #0a1628; justify-content: center; }
+  .seq-board { display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; max-width: 300px; margin: 20px auto; }
+  .seq-pad { width: 100%; aspect-ratio: 1; border-radius: 16px; border: 3px solid rgba(255,255,255,0.15); cursor: pointer; transition: filter 0.1s, transform 0.1s; opacity: 0.6; }
+  .seq-pad.lit { opacity: 1; filter: brightness(1.6); transform: scale(1.08); }
+  .seq-info { font-family: 'Comic Neue',cursive; font-size: 1.5rem; color: #ecf0f1; text-align: center; margin-bottom: 10px; }
+  .seq-start { font-family: 'Comic Neue',cursive; font-size: 1.3rem; padding: 12px 30px; border: none; border-radius: 12px; cursor: pointer; background: #e74c3c; color: #fff; margin-top: 15px; }
+  .scr-letters { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin: 20px 0; }
+  .scr-tile { width: clamp(40px,10vw,60px); height: clamp(40px,10vw,60px); background: #ffa502; color: #fff; font-family: 'JetBrains Mono',monospace; font-size: clamp(1.2rem,4vw,2rem); font-weight: bold; border-radius: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; user-select: none; border: 3px solid rgba(255,255,255,0.2); }
+  .scr-tile.used { opacity: 0.3; pointer-events: none; }
+  .scr-answer { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; min-height: 60px; margin: 15px 0; }
+  .scr-slot { width: clamp(40px,10vw,60px); height: clamp(40px,10vw,60px); background: rgba(255,255,255,0.1); border: 2px dashed rgba(255,255,255,0.3); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono',monospace; font-size: clamp(1.2rem,4vw,2rem); font-weight: bold; color: #ffa502; }
+  .scr-slot.filled { background: rgba(255,165,2,0.2); border-style: solid; }
+  .scr-hint { font-family: 'Comic Neue',cursive; font-size: 1.2rem; color: #bbb; text-align: center; margin: 10px 0; }
+  .scr-img { font-size: 4rem; text-align: center; margin-bottom: 5px; }
+  .pat-seq { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin: 20px 0; align-items: center; }
+  .pat-cell { width: clamp(50px,12vw,80px); height: clamp(50px,12vw,80px); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: clamp(1.5rem,5vw,2.5rem); font-family: 'JetBrains Mono',monospace; font-weight: bold; background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.2); color: #ecf0f1; }
+  .pat-cell.blank { background: rgba(123,237,159,0.2); border: 3px dashed #7bed9f; font-size: 2rem; }
+  .pat-choices { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 20px; }
+  .pat-opt { padding: clamp(10px,2vw,20px) clamp(15px,3vw,30px); border-radius: 12px; cursor: pointer; font-family: 'JetBrains Mono',monospace; font-size: clamp(1.2rem,4vw,2rem); font-weight: bold; background: #2ecc71; color: #fff; border: none; transition: 0.2s; }
+  .pat-opt:hover { transform: translateY(-3px); }
+  .geo-flag { font-size: clamp(4rem,15vw,8rem); text-align: center; margin: 10px 0; }
+  .geo-prompt { font-family: 'Comic Neue',cursive; font-size: clamp(1.3rem,4vw,2rem); color: #ecf0f1; text-align: center; margin: 10px 0; }
+  .geo-choices { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 15px; }
+  .geo-opt { padding: clamp(10px,2vw,15px) clamp(15px,3vw,25px); border-radius: 12px; cursor: pointer; font-family: 'Comic Neue',cursive; font-size: clamp(1rem,3vw,1.4rem); font-weight: bold; background: #70a1ff; color: #fff; border: none; transition: 0.2s; }
+  .geo-opt:hover { transform: translateY(-3px); }
   .game-btn.mtnclimb { border-color: #fab1a0; } .game-btn.mtnclimb:hover { box-shadow: 0 0 15px rgba(250,177,160,0.4); }
   #reflex-view { background:#0d1b2a; }
   .rfx-arena { position:relative; width:90%; max-width:600px; height:clamp(250px,50vw,400px); background:#1b2838; border:3px solid #00cec9; border-radius:20px; overflow:hidden; touch-action:none; }
@@ -288,6 +320,12 @@
         <button class="game-btn sorthat" data-game="sorthat"><span class="btn-icon">🎩</span><span class="btn-text">Sorting Hat</span></button>
         <div class="cat-title">Languages</div>
         <button class="game-btn wbridge" data-game="wbridge"><span class="btn-icon">🌍</span><span class="btn-text">Word Bridge</span></button>
+        <button class="game-btn scramble" data-game="scramble"><span class="btn-icon">🔤</span><span class="btn-text">Word Scramble</span></button>
+        <div class="cat-title">Brain Training</div>
+        <button class="game-btn memseq" data-game="memseq"><span class="btn-icon">🧠</span><span class="btn-text">Memory Sequence</span></button>
+        <button class="game-btn pattern" data-game="pattern"><span class="btn-icon">🔢</span><span class="btn-text">Pattern Puzzle</span></button>
+        <div class="cat-title">World Knowledge</div>
+        <button class="game-btn geo" data-game="geo"><span class="btn-icon">🌎</span><span class="btn-text">Geography Explorer</span></button>
         <div class="cat-title" id="stem-title" style="display:none;">Higher Education (STEM)</div>
         <button class="game-btn quiz" id="btn-math" data-game="quiz" data-subject="math" style="display:none;"><span class="btn-icon">📐</span><span class="btn-text">Advanced Math</span></button>
         <button class="game-btn quiz" id="btn-engineering" data-game="quiz" data-subject="engineering" style="display:none;"><span class="btn-icon">⚙️</span><span class="btn-text">Physics & Engineering</span></button>
@@ -399,6 +437,31 @@
     <div class="mtn-info" id="mtn-info">Solve to climb!</div>
     <div class="mtn-canvas" id="mtn-canvas"></div>
   </div>
+  <div id="memseq-view" class="view">
+    <div class="life-title">🧠 Memory Sequence</div>
+    <div class="seq-info" id="seq-info">Watch the pattern, then repeat it!</div>
+    <div class="seq-board" id="seq-board"></div>
+    <button class="seq-start" id="seq-start">START</button>
+  </div>
+  <div id="scramble-view" class="view">
+    <div class="life-title">🔤 Word Scramble</div>
+    <div class="scr-img" id="scr-img"></div>
+    <div class="scr-hint" id="scr-hint"></div>
+    <div class="scr-answer" id="scr-answer"></div>
+    <div class="scr-letters" id="scr-letters"></div>
+  </div>
+  <div id="pattern-view" class="view">
+    <div class="life-title">🔢 Pattern Puzzle</div>
+    <div class="seq-info" id="pat-info">What comes next?</div>
+    <div class="pat-seq" id="pat-seq"></div>
+    <div class="pat-choices" id="pat-choices"></div>
+  </div>
+  <div id="geo-view" class="view">
+    <div class="life-title">🌎 Geography Explorer</div>
+    <div class="geo-flag" id="geo-flag"></div>
+    <div class="geo-prompt" id="geo-prompt"></div>
+    <div class="geo-choices" id="geo-choices"></div>
+  </div>
   <div id="feedback">Great Job!</div>
   <canvas id="confetti-canvas"></canvas>
 </div>
@@ -418,7 +481,11 @@
     blocks: $$('#blocks-view'),
     sorthat: $$('#sorthat-view'),
     wbridge: $$('#wbridge-view'),
-    mountain: $$('#mountain-view')
+    mountain: $$('#mountain-view'),
+    memseq: $$('#memseq-view'),
+    scramble: $$('#scramble-view'),
+    pattern: $$('#pattern-view'),
+    geo: $$('#geo-view')
   };
   let currentGame = null;
   let currentSubgame = null;
@@ -525,6 +592,10 @@
       if(game === 'sorthat') initSortHat();
       if(game === 'wbridge') initWordBridge();
       if(game === 'mountain') initMountain();
+      if(game === 'memseq') initMemSeq();
+      if(game === 'scramble') initScramble();
+      if(game === 'pattern') initPattern();
+      if(game === 'geo') initGeo();
     });
   });
   function showView(viewId) {
@@ -2227,6 +2298,345 @@ function playAnimalSound(type) {
       });
       canvas.appendChild(choicesEl);
     }
+  }
+  function initMemSeq() {
+    const board = $$('#seq-board');
+    const info = $$('#seq-info');
+    const startBtn = $$('#seq-start');
+    const colors = ['#e74c3c','#3498db','#2ecc71','#f1c40f'];
+    const padCount = currentLevel <= 2 ? 4 : (currentLevel <= 4 ? 4 : 6);
+    const startLen = currentLevel <= 2 ? 2 : (currentLevel <= 3 ? 3 : 4);
+    let seq = [], playerIdx = 0, seqLen = startLen, playing = false, showing = false;
+    board.innerHTML = '';
+    board.style.gridTemplateColumns = `repeat(${padCount <= 4 ? 2 : 3}, 1fr)`;
+    const pads = [];
+    const padColors = padCount <= 4 ? colors : [...colors, '#9b59b6', '#e67e22'];
+    padColors.slice(0, padCount).forEach((c, i) => {
+      const pad = document.createElement('div');
+      pad.className = 'seq-pad';
+      pad.style.background = c;
+      pad.dataset.idx = i;
+      pad.addEventListener('pointerdown', () => {
+        if(showing || !playing) return;
+        flashPad(i, 200);
+        if(seq[playerIdx] === i) {
+          playerIdx++;
+          if(playerIdx >= seq.length) {
+            addScore(seqLen);
+            showFeedback(`Round ${seqLen - startLen + 1} Clear! 🎉`, '#2ecc71');
+            seqLen++;
+            playing = false;
+            setTimeout(() => playSequence(), 1200);
+          }
+        } else {
+          showFeedback(`Oops! Got to round ${seqLen - startLen}`, '#e74c3c');
+          resetStreak();
+          info.textContent = `Game Over — Score: ${seqLen - startLen}`;
+          playing = false;
+          startBtn.style.display = 'block';
+          startBtn.textContent = 'Try Again';
+          seqLen = startLen;
+          seq = [];
+        }
+      });
+      board.appendChild(pad);
+      pads.push(pad);
+    });
+    function flashPad(idx, dur) {
+      pads[idx].classList.add('lit');
+      setTimeout(() => pads[idx].classList.remove('lit'), dur);
+    }
+    function playSequence() {
+      seq.push(Math.floor(Math.random() * padCount));
+      playerIdx = 0;
+      showing = true;
+      info.textContent = `Watch... (${seq.length} to remember)`;
+      startBtn.style.display = 'none';
+      let i = 0;
+      const speed = currentLevel <= 2 ? 600 : (currentLevel <= 3 ? 450 : 300);
+      const iv = setInterval(() => {
+        flashPad(seq[i], speed * 0.6);
+        i++;
+        if(i >= seq.length) {
+          clearInterval(iv);
+          setTimeout(() => { showing = false; playing = true; info.textContent = `Your turn! (${seq.length} pads)`; }, speed);
+        }
+      }, speed);
+    }
+    startBtn.onclick = () => { seq = []; seqLen = startLen; playSequence(); };
+    info.textContent = 'Press START to begin!';
+    startBtn.style.display = 'block';
+    startBtn.textContent = 'START';
+  }
+  function initScramble() {
+    const imgEl = $$('#scr-img');
+    const hintEl = $$('#scr-hint');
+    const answerEl = $$('#scr-answer');
+    const lettersEl = $$('#scr-letters');
+    const wordBank = {
+      1: [{w:'CAT',h:'Goes meow',e:'🐱'},{w:'DOG',h:'Goes woof',e:'🐶'},{w:'SUN',h:'In the sky',e:'☀️'},{w:'HAT',h:'On your head',e:'🎩'},{w:'CUP',h:'Drink from it',e:'🍵'},{w:'BUS',h:'A vehicle',e:'🚌'},{w:'RED',h:'A warm color',e:'🔴'},{w:'BIG',h:'Not small',e:'📦'},{w:'RUN',h:'Move fast',e:'🏃'},{w:'EGG',h:'From a chicken',e:'🥚'}],
+      2: [{w:'APPLE',h:'A fruit',e:'🍎'},{w:'HOUSE',h:'You live here',e:'🏠'},{w:'WATER',h:'You drink this',e:'💧'},{w:'TIGER',h:'Striped big cat',e:'🐯'},{w:'MUSIC',h:'You listen to it',e:'🎵'},{w:'PLANT',h:'It grows',e:'🌱'},{w:'CLOUD',h:'In the sky',e:'☁️'},{w:'OCEAN',h:'Big body of water',e:'🌊'},{w:'FAIRY',h:'Magical being',e:'🧚'},{w:'TRAIN',h:'Rides on tracks',e:'🚂'}],
+      3: [{w:'ELEPHANT',h:'Largest land animal',e:'🐘'},{w:'COMPUTER',h:'You code on it',e:'💻'},{w:'MOUNTAIN',h:'Very tall land',e:'🏔️'},{w:'DINOSAUR',h:'Extinct reptile',e:'🦕'},{w:'TRIANGLE',h:'Three-sided shape',e:'🔺'},{w:'UMBRELLA',h:'Rain protection',e:'☂️'},{w:'SANDWICH',h:'Lunch food',e:'🥪'},{w:'TREASURE',h:'Valuable loot',e:'💎'},{w:'KANGAROO',h:'Hops around',e:'🦘'},{w:'MUSHROOM',h:'Fungus',e:'🍄'}],
+      4: [{w:'ALGORITHM',h:'Step-by-step process',e:'🔢'},{w:'ECOSYSTEM',h:'Living community',e:'🌿'},{w:'TELESCOPE',h:'See distant stars',e:'🔭'},{w:'DEMOCRACY',h:'People govern',e:'🗳️'},{w:'FREQUENCY',h:'Cycles per second',e:'📡'},{w:'MAGNETISM',h:'Attracts iron',e:'🧲'},{w:'CHEMISTRY',h:'Study of matter',e:'⚗️'},{w:'EVOLUTION',h:'Species change',e:'🧬'},{w:'CONTINENT',h:'Large land mass',e:'🌍'},{w:'ADRENALINE',h:'Fight or flight',e:'💉'}],
+      5: [{w:'PHOTOSYNTHESIS',h:'Plants make food',e:'🌱'},{w:'CONSTELLATION',h:'Star pattern',e:'⭐'},{w:'METAMORPHOSIS',h:'Body transformation',e:'🦋'},{w:'ENCYCLOPEDIA',h:'Knowledge book',e:'📚'},{w:'THERMOELECTRIC',h:'Heat to electricity',e:'⚡'},{w:'BIODIVERSITY',h:'Life variety',e:'🌿'},{w:'ARCHAEOLOGY',h:'Study of the past',e:'🏺'},{w:'NEUROSCIENCE',h:'Brain study',e:'🧠'},{w:'CRYPTOCURRENCY',h:'Digital money',e:'₿'},{w:'ELECTROMAGNETIC',h:'EM spectrum',e:'🌈'}]
+    };
+    let current = null, placed = [];
+    function shuffle(arr) { const a = [...arr]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+    function loadWord() {
+      const lvl = Math.min(currentLevel, 5);
+      const bank = wordBank[lvl];
+      current = bank[Math.floor(Math.random() * bank.length)];
+      placed = new Array(current.w.length).fill(null);
+      imgEl.textContent = current.e;
+      hintEl.textContent = `Hint: ${current.h}`;
+      renderAnswer();
+      renderTiles();
+    }
+    function renderAnswer() {
+      answerEl.innerHTML = '';
+      placed.forEach((ch, i) => {
+        const slot = document.createElement('div');
+        slot.className = 'scr-slot' + (ch ? ' filled' : '');
+        slot.textContent = ch || '';
+        slot.onclick = () => {
+          if(!ch) return;
+          placed[i] = null;
+          renderAnswer();
+          renderTiles();
+        };
+        answerEl.appendChild(slot);
+      });
+    }
+    function renderTiles() {
+      const shuffled = shuffle(current.w.split(''));
+      lettersEl.innerHTML = '';
+      shuffled.forEach((ch, origI) => {
+        const tile = document.createElement('div');
+        tile.className = 'scr-tile';
+        tile.textContent = ch;
+        const usedCount = placed.filter(p => p === ch).length;
+        const availCount = shuffled.slice(0, origI + 1).filter(c => c === ch).length;
+        const totalInPlaced = placed.filter(p => p === ch).length;
+        const totalAvail = current.w.split('').filter(c => c === ch).length;
+        if(totalInPlaced >= totalAvail) tile.classList.add('used');
+        tile.onclick = () => {
+          if(tile.classList.contains('used')) return;
+          const emptyIdx = placed.indexOf(null);
+          if(emptyIdx === -1) return;
+          placed[emptyIdx] = ch;
+          renderAnswer();
+          renderTiles();
+          if(!placed.includes(null)) {
+            const guess = placed.join('');
+            if(guess === current.w) { addScore(current.w.length > 8 ? 3 : (current.w.length > 5 ? 2 : 1)); showFeedback('Correct! 🎉', '#2ecc71'); setTimeout(loadWord, 1500); }
+            else { showFeedback('Not quite! Tap letters to remove', '#e74c3c'); resetStreak(); }
+          }
+        };
+        lettersEl.appendChild(tile);
+      });
+    }
+    loadWord();
+  }
+  function initPattern() {
+    const seqEl = $$('#pat-seq');
+    const choicesEl = $$('#pat-choices');
+    const info = $$('#pat-info');
+    let solved = 0;
+    const generators = {
+      1: [
+        () => { const shapes = ['🔴','🔵','🔴','🔵','🔴','🔵']; return {seq:shapes.slice(0,5), ans:'🔵', opts:['🔵','🔴','🟢','🟡']}; },
+        () => { const n = [1,2,3,4,5,6]; return {seq:n.slice(0,5).map(String), ans:'6', opts:['5','6','7','8']}; },
+        () => { const s = ['⭐','🌙','⭐','🌙','⭐','🌙']; return {seq:s.slice(0,5), ans:'🌙', opts:['🌙','⭐','☀️','🌈']}; },
+        () => { const s = ['🐱','🐶','🐱','🐶','🐱','🐶']; return {seq:s.slice(0,5), ans:'🐶', opts:['🐶','🐱','🐰','🐸']}; }
+      ],
+      2: [
+        () => { const n = [2,4,6,8,10,12]; return {seq:n.slice(0,5).map(String), ans:'12', opts:['10','11','12','14']}; },
+        () => { const s = ['🔴','🔵','🟢','🔴','🔵','🟢']; return {seq:s.slice(0,5), ans:'🟢', opts:['🟢','🔴','🔵','🟡']}; },
+        () => { const n = [5,10,15,20,25,30]; return {seq:n.slice(0,5).map(String), ans:'30', opts:['28','30','35','25']}; },
+        () => { const s = ['🍎','🍎','🍌','🍎','🍎','🍌']; return {seq:s.slice(0,5), ans:'🍌', opts:['🍌','🍎','🍇','🍊']}; }
+      ],
+      3: [
+        () => { const n = [1,1,2,3,5,8]; return {seq:n.slice(0,5).map(String), ans:'8', opts:['7','8','9','10']}; },
+        () => { const n = [1,4,9,16,25,36]; return {seq:n.slice(0,5).map(String), ans:'36', opts:['30','36','35','49']}; },
+        () => { const s = ['🔺','🔵','🔺','🔺','🔵','🔺']; return {seq:s.slice(0,5), ans:'🔺', opts:['🔺','🔵','⬛','🔶']}; },
+        () => { const n = [3,6,12,24,48,96]; return {seq:n.slice(0,5).map(String), ans:'96', opts:['72','96','84','108']}; }
+      ],
+      4: [
+        () => { const n = [2,6,18,54,162,486]; return {seq:n.slice(0,5).map(String), ans:'486', opts:['324','486','500','450']}; },
+        () => { const n = [1,3,6,10,15,21]; return {seq:n.slice(0,5).map(String), ans:'21', opts:['18','20','21','25']}; },
+        () => { const n = [0,1,1,2,3,5]; return {seq:n.slice(0,5).map(String), ans:'5', opts:['4','5','6','8']}; },
+        () => { const n = [2,3,5,7,11,13]; return {seq:n.slice(0,5).map(String), ans:'13', opts:['12','13','14','15']}; }
+      ],
+      5: [
+        () => { const n = [1,8,27,64,125,216]; return {seq:n.slice(0,5).map(String), ans:'216', opts:['196','210','216','225']}; },
+        () => { const n = [1,2,4,8,16,32]; return {seq:n.slice(0,5).map(String), ans:'32', opts:['24','28','32','36']}; },
+        () => { const n = [1,1,2,6,24,120]; return {seq:n.slice(0,5).map(String), ans:'120', opts:['100','110','120','150']}; },
+        () => { const n = [0,1,4,9,16,25]; return {seq:n.slice(0,5).map(String), ans:'25', opts:['20','24','25','36']}; }
+      ]
+    };
+    function loadPuzzle() {
+      const lvl = Math.min(currentLevel, 5);
+      const gens = generators[lvl];
+      const puzzle = gens[Math.floor(Math.random() * gens.length)]();
+      seqEl.innerHTML = '';
+      puzzle.seq.forEach(item => {
+        const cell = document.createElement('div');
+        cell.className = 'pat-cell';
+        cell.textContent = item;
+        seqEl.appendChild(cell);
+      });
+      const blank = document.createElement('div');
+      blank.className = 'pat-cell blank';
+      blank.textContent = '?';
+      seqEl.appendChild(blank);
+      choicesEl.innerHTML = '';
+      const shuffled = puzzle.opts.sort(() => Math.random() - 0.5);
+      shuffled.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'pat-opt';
+        btn.textContent = opt;
+        btn.onclick = () => {
+          if(opt === puzzle.ans) {
+            blank.textContent = opt;
+            blank.classList.remove('blank');
+            blank.style.background = 'rgba(46,204,113,0.3)';
+            blank.style.borderColor = '#2ecc71';
+            solved++;
+            addScore(currentLevel >= 4 ? 3 : (currentLevel >= 2 ? 2 : 1));
+            showFeedback('Pattern Found! ✨', '#2ecc71');
+            info.textContent = `Solved: ${solved}`;
+            setTimeout(loadPuzzle, 1500);
+          } else {
+            btn.style.background = '#e74c3c';
+            showFeedback('Try again!', '#e74c3c');
+            resetStreak();
+            setTimeout(() => btn.style.background = '#2ecc71', 600);
+          }
+        };
+        choicesEl.appendChild(btn);
+      });
+    }
+    solved = 0;
+    info.textContent = 'What comes next?';
+    loadPuzzle();
+  }
+  function initGeo() {
+    const flagEl = $$('#geo-flag');
+    const promptEl = $$('#geo-prompt');
+    const choicesEl = $$('#geo-choices');
+    const data = {
+      1: [
+        {flag:'🇺🇸',country:'United States',capital:'Washington D.C.',continent:'North America'},
+        {flag:'🇬🇧',country:'United Kingdom',capital:'London',continent:'Europe'},
+        {flag:'🇫🇷',country:'France',capital:'Paris',continent:'Europe'},
+        {flag:'🇯🇵',country:'Japan',capital:'Tokyo',continent:'Asia'},
+        {flag:'🇧🇷',country:'Brazil',capital:'Brasília',continent:'South America'},
+        {flag:'🇦🇺',country:'Australia',capital:'Canberra',continent:'Oceania'},
+        {flag:'🇨🇳',country:'China',capital:'Beijing',continent:'Asia'},
+        {flag:'🇮🇳',country:'India',capital:'New Delhi',continent:'Asia'}
+      ],
+      2: [
+        {flag:'🇩🇪',country:'Germany',capital:'Berlin',continent:'Europe'},
+        {flag:'🇮🇹',country:'Italy',capital:'Rome',continent:'Europe'},
+        {flag:'🇪🇸',country:'Spain',capital:'Madrid',continent:'Europe'},
+        {flag:'🇲🇽',country:'Mexico',capital:'Mexico City',continent:'North America'},
+        {flag:'🇰🇷',country:'South Korea',capital:'Seoul',continent:'Asia'},
+        {flag:'🇨🇦',country:'Canada',capital:'Ottawa',continent:'North America'},
+        {flag:'🇷🇺',country:'Russia',capital:'Moscow',continent:'Europe/Asia'},
+        {flag:'🇪🇬',country:'Egypt',capital:'Cairo',continent:'Africa'}
+      ],
+      3: [
+        {flag:'🇸🇪',country:'Sweden',capital:'Stockholm',continent:'Europe'},
+        {flag:'🇳🇴',country:'Norway',capital:'Oslo',continent:'Europe'},
+        {flag:'🇿🇦',country:'South Africa',capital:'Pretoria',continent:'Africa'},
+        {flag:'🇦🇷',country:'Argentina',capital:'Buenos Aires',continent:'South America'},
+        {flag:'🇹🇭',country:'Thailand',capital:'Bangkok',continent:'Asia'},
+        {flag:'🇳🇬',country:'Nigeria',capital:'Abuja',continent:'Africa'},
+        {flag:'🇵🇱',country:'Poland',capital:'Warsaw',continent:'Europe'},
+        {flag:'🇹🇷',country:'Turkey',capital:'Ankara',continent:'Europe/Asia'}
+      ],
+      4: [
+        {flag:'🇵🇭',country:'Philippines',capital:'Manila',continent:'Asia'},
+        {flag:'🇨🇴',country:'Colombia',capital:'Bogotá',continent:'South America'},
+        {flag:'🇰🇪',country:'Kenya',capital:'Nairobi',continent:'Africa'},
+        {flag:'🇵🇰',country:'Pakistan',capital:'Islamabad',continent:'Asia'},
+        {flag:'🇻🇳',country:'Vietnam',capital:'Hanoi',continent:'Asia'},
+        {flag:'🇨🇱',country:'Chile',capital:'Santiago',continent:'South America'},
+        {flag:'🇺🇦',country:'Ukraine',capital:'Kyiv',continent:'Europe'},
+        {flag:'🇳🇿',country:'New Zealand',capital:'Wellington',continent:'Oceania'}
+      ],
+      5: [
+        {flag:'🇱🇰',country:'Sri Lanka',capital:'Sri Jayawardenepura Kotte',continent:'Asia'},
+        {flag:'🇪🇹',country:'Ethiopia',capital:'Addis Ababa',continent:'Africa'},
+        {flag:'🇲🇲',country:'Myanmar',capital:'Naypyidaw',continent:'Asia'},
+        {flag:'🇵🇪',country:'Peru',capital:'Lima',continent:'South America'},
+        {flag:'🇭🇺',country:'Hungary',capital:'Budapest',continent:'Europe'},
+        {flag:'🇧🇩',country:'Bangladesh',capital:'Dhaka',continent:'Asia'},
+        {flag:'🇲🇦',country:'Morocco',capital:'Rabat',continent:'Africa'},
+        {flag:'🇨🇿',country:'Czech Republic',capital:'Prague',continent:'Europe'}
+      ]
+    };
+    let geoIdx = 0, geoCorrect = 0, pool = [];
+    function startGeo() {
+      const lvl = Math.min(currentLevel, 5);
+      pool = [...data[lvl]].sort(() => Math.random() - 0.5);
+      geoIdx = 0; geoCorrect = 0;
+      loadGeoQ();
+    }
+    function loadGeoQ() {
+      if(geoIdx >= pool.length) {
+        flagEl.textContent = '🏆';
+        promptEl.textContent = `Complete! ${geoCorrect}/${pool.length} correct`;
+        choicesEl.innerHTML = '';
+        showFeedback(geoCorrect >= pool.length - 1 ? 'Geography Master! 🌍' : 'Great effort!', '#70a1ff');
+        addScore(geoCorrect * 2);
+        return;
+      }
+      const q = pool[geoIdx];
+      flagEl.textContent = q.flag;
+      const mode = currentLevel <= 2 ? 0 : (Math.random() < 0.5 ? 1 : 2);
+      let question, correct, allOpts;
+      if(mode === 0) {
+        question = 'Which country is this flag from?';
+        correct = q.country;
+        allOpts = pool.map(p => p.country);
+      } else if(mode === 1) {
+        question = `What is the capital of ${q.country}?`;
+        correct = q.capital;
+        allOpts = pool.map(p => p.capital);
+      } else {
+        question = `Which continent is ${q.country} in?`;
+        correct = q.continent;
+        allOpts = [...new Set(pool.map(p => p.continent))];
+        if(allOpts.length < 4) allOpts = [...allOpts, 'Antarctica', 'South America', 'Africa', 'Oceania'];
+      }
+      promptEl.textContent = question;
+      let wrongs = allOpts.filter(o => o !== correct).sort(() => Math.random() - 0.5).slice(0, 3);
+      const opts = [correct, ...wrongs].sort(() => Math.random() - 0.5);
+      choicesEl.innerHTML = '';
+      opts.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'geo-opt';
+        btn.textContent = opt;
+        btn.onclick = () => {
+          $$all('.geo-opt').forEach(b => b.style.pointerEvents = 'none');
+          if(opt === correct) {
+            btn.style.background = '#2ecc71';
+            geoCorrect++;
+            addScore(mode === 0 ? 1 : 2);
+            showFeedback('Correct! ✨', '#2ecc71');
+          } else {
+            btn.style.background = '#e74c3c';
+            showFeedback(`It's ${correct}`, '#e74c3c');
+            resetStreak();
+          }
+          geoIdx++;
+          setTimeout(loadGeoQ, 1500);
+        };
+        choicesEl.appendChild(btn);
+      });
+    }
+    startGeo();
   }
 </script>
 </body>
