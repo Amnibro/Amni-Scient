@@ -1,0 +1,427 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>2D Turbulent Jet | Master Momentum Closure</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css">
+<style>
+:root {
+--bg-body: #0d0d12;
+--color-text: #00ffcc;
+--bg-sidebar: rgba(0,10,20,0.95);
+--border-sidebar: #00ffcc;
+--shadow-sidebar: rgba(0,255,200,0.2);
+--bg-charts: #050508;
+--border-charts: #00ffcc;
+--border-cpan: #1a1a2a;
+--color-clbl: #888;
+--bg-eqb: rgba(0,255,200,0.04);
+--border-eqb: rgba(0,255,200,0.2);
+--color-eqt: #fff;
+--color-eql: rgba(255,255,255,0.4);
+--bg-hud: rgba(0,0,0,0.9);
+--border-hud: #00ffcc;
+--bg-barc: #222;
+--bg-bar: #00ffcc;
+--bg-button: transparent;
+--border-button: #00ffcc;
+--color-button: #00ffcc;
+--bg-button-hover: #00ffcc;
+--color-button-hover: #000;
+--bg-ineq: rgba(0,0,0,0.9);
+--border-ineq: #ffaa00;
+--color-ineq-text: #ffaa00;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{overflow:hidden;background:var(--bg-body);color:var(--color-text);font-family:'Courier New',monospace;display:flex;height:100vh}
+#sidebar{width:340px;background:var(--bg-sidebar);border-right:1px solid var(--border-sidebar);padding:10px;overflow-y:auto;box-shadow:2px 0 15px var(--shadow-sidebar);flex-shrink:0;font-size:0.72em}
+#main{flex:1;display:flex;flex-direction:column;position:relative;min-width:0}
+canvas#fc{flex:1;display:block;image-rendering:pixelated}
+#charts{height:180px;background:var(--bg-charts);border-top:1px solid var(--border-charts);display:flex}
+.cpan{flex:1;position:relative;border-right:1px solid var(--border-cpan)}
+.cpan:last-child{border-right:none}
+.clbl{position:absolute;top:3px;left:5px;font-size:0.55em;color:var(--color-clbl);z-index:2;pointer-events:none}
+.eqb{background:var(--bg-eqb);border:1px solid var(--border-eqb);padding:5px;margin-bottom:6px;border-radius:3px}
+.eqt{font-size:0.85em;font-weight:bold;color:var(--color-eqt);margin-bottom:2px}
+.eql{font-size:0.55em;color:var(--color-eql)}
+.katex{font-size:0.72em !important}
+.hud{position:absolute;top:10px;right:10px;background:var(--bg-hud);padding:10px;border:1px solid var(--border-hud);border-radius:4px;pointer-events:none;z-index:5;min-width:240px;font-size:0.7em}
+.hud div{margin-bottom:2px}
+.barc{width:100%;height:4px;background:var(--bg-barc);margin-top:2px;border-radius:2px;overflow:hidden}
+.bar{height:100%;background:var(--bg-bar);width:0%;transition:width 0.08s}
+.ctrl{display:flex;flex-wrap:wrap;gap:3px;margin-top:8px}
+button{background:var(--bg-button);border:1px solid var(--border-button);color:var(--color-button);padding:4px 7px;cursor:pointer;border-radius:3px;text-transform:uppercase;font-weight:bold;font-size:0.6em;transition:all 0.12s}
+button:hover{background:var(--bg-button-hover);color:var(--color-button-hover)}
+button.active{background:var(--bg-button-active);color:var(--color-button-active)}
+.sld{display:flex;align-items:center;gap:5px;margin-top:5px;font-size:0.65em}
+.sld input{flex:1;accent-color:#00ffcc}
+.ineq{position:absolute;top:10px;left:10px;background:var(--bg-ineq);padding:8px;border:1px solid var(--border-ineq);border-radius:4px;pointer-events:none;z-index:5;font-size:0.65em;min-width:200px}
+</style>
+</head>
+<body>
+<div id="sidebar">
+<h2 style="color:#fff;text-shadow:0 0 8px #00ffcc;font-size:1.1em;margin-bottom:6px">TURBULENT JET SOLVER</h2>
+<div class="eqb"><div class="eqt">Layer 1 - Primitive</div>
+<div class="eql">Eq 1: Momentum</div><div id="eq1"></div>
+<div class="eql">Eq 2: Effective Mass</div><div id="eq2"></div>
+<div class="eql">Eq 3: Steering</div><div id="eq3"></div></div>
+<div class="eqb"><div class="eqt">Layer 2 - Intermediate</div>
+<div class="eql">Eq 4: PID Force</div><div id="eq4"></div>
+<div class="eql">Eq 5: Smoothness</div><div id="eq5"></div>
+<div class="eql">Eq 6: Curvature</div><div id="eq6"></div></div>
+<div class="eqb"><div class="eqt">Layer 3 - Turbulence</div>
+<div class="eql">Eq 7: Static Resistance</div><div id="eq7"></div>
+<div class="eql">Eq 8: TKE</div><div id="eq8"></div>
+<div class="eql">Eq 9: Dissipation</div><div id="eq9"></div>
+<div class="eql">Eq 10: Eddy Visc</div><div id="eq10"></div>
+<div class="eql">Eq 11: Dyn Resistance</div><div id="eq11"></div></div>
+<div class="eqb"><div class="eqt">Layer 4 - Master</div>
+<div class="eql">Eq 12: Master Momentum</div><div id="eq12"></div></div>
+<div class="ctrl">
+<button onclick="toggleMode()" id="modeBtn" class="active">Master Momentum</button>
+<button onclick="toggleMode()">Classical NS</button>
+<button onclick="resetSim()">Reset</button>
+<button onclick="exportCSV()">Export CSV</button>
+<a href="fluid_sim_3d.html" style="text-decoration:none"><button type="button">3D Mode</button></a>
+</div>
+<div class="sld"><span>Theme:</span><select id="slTheme"><option value="dark">Dark</option><option value="light">Light</option><option value="neon">Neon</option></select></div>
+<div class="sld"><span>Jet V:</span><input type="range" id="slJet" min="0.5" max="8" step="0.1" value="3"><span id="vJet">3.0</span></div>
+<div class="sld"><span>Re:</span><input type="range" id="slRe" min="100" max="10000" step="100" value="2000"><span id="vRe">2000</span></div>
+<div class="sld"><span>Turb:</span><input type="range" id="slTurb" min="0" max="1" step="0.01" value="0.15"><span id="vTurb">0.15</span></div>
+<div class="sld"><span>Vibrancy:</span><input type="range" id="slVib" min="0.1" max="3" step="0.1" value="1"><span id="vVib">1.0</span></div>
+<div class="sld"><span>Color:</span><input type="range" id="slCol" min="-1" max="1" step="0.1" value="0"><span id="vCol">0.0</span></div>
+<div class="sld"><span>Pos Color:</span><input type="color" id="posColor" value="#00ff00"></div>
+<div class="sld"><span>Neg Color:</span><input type="color" id="negColor" value="#800080"></div>
+<div style="margin-top:8px;font-size:0.6em;color:#555" id="status">Frame: 0</div>
+</div>
+<div id="main">
+<canvas id="fc"></canvas>
+<div class="ineq">
+<div style="color:#ffaa00;font-weight:bold;margin-bottom:3px">LIVE INEQUALITY</div>
+<div>dZ/dt: <span id="iq_dz" style="color:#ff3366">0</span></div>
+<div>C*Z^1.5: <span id="iq_st" style="color:#ffaa00">0</span></div>
+<div>-&gamma;*Z&sup2;*s: <span id="iq_dp" style="color:#00ffcc">0</span></div>
+<div style="margin-top:3px;border-top:1px solid #333;padding-top:3px">Net: <span id="iq_net" style="font-weight:bold">0</span></div>
+<div>Bounded: <span id="iq_bnd" style="font-weight:bold">---</span></div>
+</div>
+<div class="hud">
+<div>Z: <span id="hz">0.00</span> (Max: <span id="hmz" style="color:#ff3366">0.00</span>)</div><div class="barc"><div id="bz" class="bar" style="background:#ff3366"></div></div>
+<div>Reffelt &#8476;: <span id="hr" style="color:#ffaa00;font-weight:bold;font-size:1.1em">1</span> (<span id="hr17" style="color:#66ccff">1</span><sub>17</sub>)</div>
+<div>s: <span id="hs">1.00</span></div><div class="barc"><div id="bs" class="bar"></div></div>
+<div>k: <span id="hk">0.00</span> &nbsp;&epsilon;: <span id="he">0.00</span></div>
+<div>&nu;<sub>t</sub>: <span id="hnt">0.00</span> &nbsp;R<sub>eff</sub>: <span id="hre">0.00</span></div>
+<div>Mode: <span id="hmode" style="color:#00ffcc;font-weight:bold">MASTER</span></div>
+</div>
+<div id="charts">
+<div class="cpan"><div class="clbl"><span style="color:#ff3366">&#9632;Z</span> <span style="color:#ffaa00">&#9632;Stretch</span> <span style="color:#00ffcc">&#9632;Damp</span></div><canvas id="c1"></canvas></div>
+<div class="cpan"><div class="clbl"><span style="color:#cc66ff">&#9632;&nu;<sub>t</sub></span> <span style="color:#66ccff">&#9632;R<sub>eff</sub></span></div><canvas id="c2"></canvas></div>
+<div class="cpan"><div class="clbl"><span style="color:#ffaa00">&#9632;|&omega;|<sub>max</sub></span> <span style="color:#ff3366">&#9632;k<sub>avg</sub></span></div><canvas id="c3"></canvas></div>
+</div>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const hexToRgb=hex=>{let r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);return{r,g,b};};
+const kR=(tex,el)=>katex.render(tex,el,{displayMode:true});
+kR("v(t)=\\frac{dp}{dt}",$("eq1"));
+kR("m(t)=\\frac{1}{\\sigma_{\\text{ATR}}(t)}",$("eq2"));
+kR("i(t)=\\text{Hilbert\\_imag}(p(t))",$("eq3"));
+kR("F_{\\text{PID}}=k_p i+k_i\\!\\int\\!i\\,dt+k_d\\dot{i}",$("eq4"));
+kR("s(t)=1-\\frac{\\text{std}(r_N)}{\\text{mean}(r_N)}",$("eq5"));
+kR("c(t)=\\frac{\\partial^2 p}{\\partial t^2}",$("eq6"));
+kR("R_0(p,\\ell)",$("eq7"));
+kR("k=(1\\!-\\!s)\\nabla\\!\\cdot\\!\\mathbf{M}_{\\text{grid}}",$("eq8"));
+kR("\\epsilon=c\\cdot\\frac{1-s}{s}\\cdot\\frac{1}{\\ell}",$("eq9"));
+kR("\\nu_t=0.09\\frac{k^2}{\\epsilon}",$("eq10"));
+kR("R_{\\text{eff}}=\\nu_t\\cdot|\\mathbf{v}|",$("eq11"));
+kR("\\frac{dv}{dt}=\\frac{F_{\\text{PID}}}{m}+v\\frac{\\partial v}{\\partial p}-sc-\\frac{\\partial R_{\\text{eff}}}{\\partial p}",$("eq12"));
+const cv=$("fc"),ct=cv.getContext("2d");
+const c1=$("c1"),c2=$("c2"),c3=$("c3");
+const x1=c1.getContext("2d"),x2=c2.getContext("2d"),x3=c3.getContext("2d");
+let GN=256,dt=0.004;
+let master=true,frame=0,gZ=0,gZprev=0,maxZ=0,gS=0,gK=0,gEps=0,gNut=0,gReff=0;
+let hist=[],csvLog=[];
+function resizeCanvas(){
+let r=cv.parentElement.getBoundingClientRect();
+cv.width=Math.min(r.width|0,1024);cv.height=Math.min((r.height-180)|0,1024);
+c1.width=c1.parentElement.offsetWidth;c1.height=180;
+c1.style.width = c1.width + 'px';
+c1.style.height = '180px';
+c2.width=c2.parentElement.offsetWidth;c2.height=180;
+c2.style.width = c2.width + 'px';
+c2.style.height = '180px';
+c3.width=c3.parentElement.offsetWidth;c3.height=180;
+c3.style.width = c3.width + 'px';
+c3.style.height = '180px';
+}
+resizeCanvas();
+setTimeout(resizeCanvas, 100);
+window.addEventListener("resize",resizeCanvas);
+let ux=new Float64Array(GN*GN),uy=new Float64Array(GN*GN);
+let ux0=new Float64Array(GN*GN),uy0=new Float64Array(GN*GN);
+let pr=new Float64Array(GN*GN),div=new Float64Array(GN*GN);
+let ww=new Float64Array(GN*GN);
+let sF=new Float64Array(GN*GN),kF=new Float64Array(GN*GN);
+let epsF=new Float64Array(GN*GN),nutF=new Float64Array(GN*GN),reffF=new Float64Array(GN*GN);
+function I(i,j){return((i%GN+GN)%GN)*GN+((j%GN+GN)%GN);}
+function toB17(n){n=Math.abs(Math.round(n));if(n===0)return'0';let s='';while(n>0){let r=n%17;s=(r<10?''+r:String.fromCharCode(55+r))+s;n=(n/17)|0;}return s;}
+function getJetV(){return parseFloat($("slJet").value);}
+function getRe(){return parseFloat($("slRe").value);}
+function getTurb(){return parseFloat($("slTurb").value);}
+function getVibrancy(){return parseFloat($("slVib").value);}
+function getColorShift(){return parseFloat($("slCol").value);}
+$("slJet").oninput=()=>$("vJet").innerText=parseFloat($("slJet").value).toFixed(1);
+$("slRe").oninput=()=>$("vRe").innerText=$("slRe").value;
+$("slTurb").oninput=()=>$("vTurb").innerText=parseFloat($("slTurb").value).toFixed(2);
+$("slVib").oninput=()=>$("vVib").innerText=parseFloat($("slVib").value).toFixed(1);
+$("slCol").oninput=()=>$("vCol").innerText=parseFloat($("slCol").value).toFixed(1);
+const themes={
+dark:{
+'--bg-body':'#0d0d12','--color-text':'#00ffcc','--bg-sidebar':'rgba(0,10,20,0.95)','--border-sidebar':'#00ffcc','--shadow-sidebar':'rgba(0,255,200,0.2)',
+'--bg-charts':'#050508','--border-charts':'#00ffcc','--border-cpan':'#1a1a2a','--color-clbl':'#888',
+'--bg-eqb':'rgba(0,255,200,0.04)','--border-eqb':'rgba(0,255,200,0.2)','--color-eqt':'#fff','--color-eql':'rgba(255,255,255,0.4)',
+'--bg-hud':'rgba(0,0,0,0.9)','--border-hud':'#00ffcc','--bg-barc':'#222','--bg-bar':'#00ffcc',
+'--bg-button':'transparent','--border-button':'#00ffcc','--color-button':'#00ffcc','--bg-button-hover':'#00ffcc','--color-button-hover':'#000','--bg-button-active':'#00ffcc','--color-button-active':'#000',
+'--bg-ineq':'rgba(0,0,0,0.9)','--border-ineq':'#ffaa00','--color-ineq-text':'#ffaa00'
+},
+light:{
+'--bg-body':'#ffffff','--color-text':'#000000','--bg-sidebar':'#f8f8f8','--border-sidebar':'#0066cc','--shadow-sidebar':'rgba(0,102,204,0.2)',
+'--bg-charts':'#f0f0f0','--border-charts':'#0066cc','--border-cpan':'#cccccc','--color-clbl':'#333',
+'--bg-eqb':'rgba(0,102,204,0.04)','--border-eqb':'rgba(0,102,204,0.2)','--color-eqt':'#000','--color-eql':'rgba(0,0,0,0.4)',
+'--bg-hud':'rgba(255,255,255,0.9)','--border-hud':'#0066cc','--bg-barc':'#ddd','--bg-bar':'#0066cc',
+'--bg-button':'transparent','--border-button':'#0066cc','--color-button':'#0066cc','--bg-button-hover':'#0066cc','--color-button-hover':'#fff','--bg-button-active':'#0066cc','--color-button-active':'#fff',
+'--bg-ineq':'rgba(255,255,255,0.9)','--border-ineq':'#ff6600','--color-ineq-text':'#ff6600'
+},
+neon:{
+'--bg-body':'#000000','--color-text':'#ff00ff','--bg-sidebar':'rgba(0,0,50,0.95)','--border-sidebar':'#ff00ff','--shadow-sidebar':'rgba(255,0,255,0.2)',
+'--bg-charts':'#000000','--border-charts':'#ff00ff','--border-cpan':'#333','--color-clbl':'#aaa',
+'--bg-eqb':'rgba(255,0,255,0.04)','--border-eqb':'rgba(255,0,255,0.2)','--color-eqt':'#fff','--color-eql':'rgba(255,255,255,0.4)',
+'--bg-hud':'rgba(0,0,0,0.9)','--border-hud':'#ff00ff','--bg-barc':'#222','--bg-bar':'#ff00ff',
+'--bg-button':'transparent','--border-button':'#ff00ff','--color-button':'#ff00ff','--bg-button-hover':'#ff00ff','--color-button-hover':'#000','--bg-button-active':'#ff00ff','--color-button-active':'#000',
+'--bg-ineq':'rgba(0,0,0,0.9)','--border-ineq':'#ffff00','--color-ineq-text':'#ffff00'
+}
+};
+function applyTheme(theme){Object.keys(themes[theme]).forEach(k=>document.documentElement.style.setProperty(k,themes[theme][k]));}
+$("slTheme").onchange=()=>applyTheme($("slTheme").value);
+function toggleMode(){master=!master;$("modeBtn").innerText=master?'Master Momentum':'Classical NS';$("modeBtn").className=master?'active':'';$("hmode").innerText=master?'MASTER':'CLASSICAL';$("hmode").style.color=master?'#00ffcc':'#ff3366';}
+function resetSim(){
+ux.fill(0);uy.fill(0);ux0.fill(0);uy0.fill(0);pr.fill(0);div.fill(0);ww.fill(0);
+sF.fill(1);kF.fill(0);epsF.fill(0.01);nutF.fill(0);reffF.fill(0);
+gZ=0;gZprev=0;maxZ=0;frame=0;hist=[];csvLog=[];
+}
+function jetBC(){
+let jv=getJetV(),turb=getTurb();
+let ctr=GN/2,hw=GN/16;
+for(let j=ctr-hw;j<=ctr+hw;j++){
+let noise=(Math.random()-0.5)*turb*jv;
+ux[I(1,j)]=jv+noise;
+ux[I(2,j)]=jv+noise*0.8;
+uy[I(1,j)]=(Math.random()-0.5)*turb*jv*0.5;
+uy[I(2,j)]=(Math.random()-0.5)*turb*jv*0.3;
+}
+for(let j=0;j<GN;j++){ux[I(0,j)]=ux[I(1,j)];uy[I(0,j)]=uy[I(1,j)];}
+for(let j=0;j<GN;j++){ux[I(GN-1,j)]=ux[I(GN-2,j)];uy[I(GN-1,j)]=0;}
+for(let i=0;i<GN;i++){ux[I(i,0)]=0;uy[I(i,0)]=0;ux[I(i,GN-1)]=0;uy[I(i,GN-1)]=0;}
+}
+function computeVorticity(){
+for(let i=1;i<GN-1;i++)for(let j=1;j<GN-1;j++){
+ww[I(i,j)]=(uy[I(i+1,j)]-uy[I(i-1,j)]-ux[I(i,j+1)]+ux[I(i,j-1)])*(GN*0.5);
+}
+}
+function computeClosure(){
+gS=0;gK=0;gEps=0;gNut=0;gReff=0;
+let nutCap=0.1;
+for(let i=1;i<GN-1;i++)for(let j=1;j<GN-1;j++){
+let ii=I(i,j);
+let w0=ww[ii];
+let wn=ww[I(i-1,j)]+ww[I(i+1,j)]+ww[I(i,j-1)]+ww[I(i,j+1)];
+let wMean=wn*0.25;
+let wVar=((ww[I(i-1,j)]-wMean)**2+(ww[I(i+1,j)]-wMean)**2+(ww[I(i,j-1)]-wMean)**2+(ww[I(i,j+1)]-wMean)**2)*0.25;
+let wStd=Math.sqrt(wVar);
+let wAbs=Math.abs(wMean)+1e-8;
+sF[ii]=master?Math.max(0.01,Math.min(1.0,1.0-wStd/wAbs)):1;
+let vm=Math.sqrt(ux[ii]*ux[ii]+uy[ii]*uy[ii]);
+kF[ii]=master?Math.max(0,(1-sF[ii])*vm*0.5):0;
+epsF[ii]=Math.max(0.01,0.1*(1-sF[ii])/(sF[ii]+0.01));
+nutF[ii]=master?Math.min(nutCap,0.09*kF[ii]*kF[ii]/epsF[ii]):0;
+reffF[ii]=master?nutF[ii]*vm:0;
+gS+=sF[ii];gK+=kF[ii];gEps+=epsF[ii];gNut+=nutF[ii];gReff+=reffF[ii];
+}
+let cnt=(GN-2)*(GN-2);
+gS/=cnt;gK/=cnt;gEps/=cnt;gNut/=cnt;gReff/=cnt;
+}
+function advect(){
+let h=1.0/GN;
+for(let i=1;i<GN-1;i++)for(let j=1;j<GN-1;j++){
+let ii=I(i,j);
+let xi=i-ux[ii]*dt/h,yj=j-uy[ii]*dt/h;
+xi=Math.max(0.5,Math.min(GN-1.5,xi));
+yj=Math.max(0.5,Math.min(GN-1.5,yj));
+let i0=xi|0,j0=yj|0,i1=i0+1,j1=j0+1;
+let sx=xi-i0,sy=yj-j0;
+ux0[ii]=ux[I(i0,j0)]*(1-sx)*(1-sy)+ux[I(i1,j0)]*sx*(1-sy)+ux[I(i0,j1)]*(1-sx)*sy+ux[I(i1,j1)]*sx*sy;
+uy0[ii]=uy[I(i0,j0)]*(1-sx)*(1-sy)+uy[I(i1,j0)]*sx*(1-sy)+uy[I(i0,j1)]*(1-sx)*sy+uy[I(i1,j1)]*sx*sy;
+}
+let t=ux;ux=ux0;ux0=t;t=uy;uy=uy0;uy0=t;
+}
+function diffuse(){
+let visc=1.0/getRe();
+let a=dt*visc*GN*GN;
+let nutCap=50.0*visc;
+for(let iter=0;iter<20;iter++){
+for(let i=1;i<GN-1;i++)for(let j=1;j<GN-1;j++){
+let ii=I(i,j);
+let effA=master?a+dt*Math.min(nutF[ii],nutCap)*GN*GN:a;
+ux[ii]=(ux0[ii]+effA*(ux[I(i-1,j)]+ux[I(i+1,j)]+ux[I(i,j-1)]+ux[I(i,j+1)]))/(1+4*effA);
+uy[ii]=(uy0[ii]+effA*(uy[I(i-1,j)]+uy[I(i+1,j)]+uy[I(i,j-1)]+uy[I(i,j+1)]))/(1+4*effA);
+}
+}
+}
+function applyMasterForce(){
+if(!master)return;
+for(let i=1;i<GN-1;i++)for(let j=1;j<GN-1;j++){
+let ii=I(i,j);
+let dRx=(reffF[I(i+1,j)]-reffF[I(i-1,j)])*0.5*GN*2;
+let dRy=(reffF[I(i,j+1)]-reffF[I(i,j-1)])*0.5*GN*2;
+ux[ii]-=dRx*dt;
+uy[ii]-=dRy*dt;
+}
+}
+function project(){
+let h=1.0/GN;
+div.fill(0);pr.fill(0);
+for(let i=1;i<GN-1;i++)for(let j=1;j<GN-1;j++){
+div[I(i,j)]=-0.5*h*((ux[I(i+1,j)]-ux[I(i-1,j)])+(uy[I(i,j+1)]-uy[I(i,j-1)]));
+}
+for(let iter=0;iter<40;iter++){
+for(let i=1;i<GN-1;i++)for(let j=1;j<GN-1;j++){
+pr[I(i,j)]=(div[I(i,j)]+pr[I(i-1,j)]+pr[I(i+1,j)]+pr[I(i,j-1)]+pr[I(i,j+1)])*0.25;
+}
+}
+for(let i=1;i<GN-1;i++)for(let j=1;j<GN-1;j++){
+ux[I(i,j)]-=0.5*(pr[I(i+1,j)]-pr[I(i-1,j)])/h;
+uy[I(i,j)]-=0.5*(pr[I(i,j+1)]-pr[I(i,j-1)])/h;
+}
+}
+function classicalBoost(){}
+function computeEnstrophy(){
+gZprev=gZ;gZ=0;
+for(let i=1;i<GN-1;i++)for(let j=1;j<GN-1;j++)gZ+=ww[I(i,j)]*ww[I(i,j)];
+gZ/=(GN-2)*(GN-2);
+maxZ=Math.max(maxZ,gZ);
+}
+function computeReffelt(){
+return master?Math.min(8,Math.max(1,Math.floor((1-gS)*15)+1)):0;
+}
+function render(){
+let W=cv.width,H=cv.height;
+let img=ct.createImageData(W,H);
+let maxW=0;
+for(let i=0;i<GN;i++)for(let j=0;j<GN;j++){let aw=Math.abs(ww[I(i,j)]);if(aw>maxW)maxW=aw;}
+maxW=Math.max(maxW,0.01);
+let sx=W/GN,sy=H/GN;
+for(let i=0;i<GN;i++)for(let j=0;j<GN;j++){
+let ii=I(i,j);
+let val=ww[ii]/maxW;
+let r,g,b;
+let vib=getVibrancy(),cshift=getColorShift()*50;
+let posRGB=hexToRgb($("posColor").value),negRGB=hexToRgb($("negColor").value);
+if(val>0){r=val*posRGB.r;g=val*posRGB.g;b=val*posRGB.b;}
+else{let av=-val;r=av*negRGB.r;g=av*negRGB.g;b=av*negRGB.b;}
+r*=vib;g*=vib;b*=vib;
+r+=cshift;b-=cshift;
+r=Math.max(0,Math.min(255,r));g=Math.max(0,Math.min(255,g));b=Math.max(0,Math.min(255,b));
+let spd=Math.sqrt(ux[ii]*ux[ii]+uy[ii]*uy[ii]);
+let bright=spd>0.2?Math.min(1,(spd-0.2)*0.4):0;
+r=Math.min(255,(r*0.8+bright*60)|0);
+g=Math.min(255,(g*0.8+bright*60)|0);
+b=Math.min(255,(b*0.8+bright*60)|0);
+let px0=(i*sx)|0,py0=(j*sy)|0;
+let px1=Math.min(W-1,((i+1)*sx)|0),py1=Math.min(H-1,((j+1)*sy)|0);
+for(let px=px0;px<=px1;px++)for(let py=py0;py<=py1;py++){
+let off=(py*W+px)*4;
+img.data[off]=r;img.data[off+1]=g;img.data[off+2]=b;img.data[off+3]=255;
+}
+}
+ct.putImageData(img,0,0);
+ct.strokeStyle='rgba(0,255,200,0.3)';ct.lineWidth=1;
+ct.strokeRect(0,(GN/2-GN/16)*sy/1,2,GN/8*sy);
+ct.fillStyle='rgba(0,255,200,0.15)';ct.font='10px monospace';
+ct.fillText('JET INLET',4,(GN/2)*sy/1);
+}
+function drawLine(cx,data,key,color,maxV,cw,ch){
+cx.strokeStyle=color;cx.lineWidth=1.2;cx.beginPath();
+data.forEach((v,i)=>{let py=ch-3-(v[key]/maxV)*(ch-6);py=Math.max(1,Math.min(ch-1,py));i===0?cx.moveTo(i,py):cx.lineTo(i,py);});
+cx.stroke();
+}
+function renderCharts(){
+let cw=c1.width,ch=c1.height;
+x1.clearRect(0,0,cw,ch);x2.clearRect(0,0,cw,ch);x3.clearRect(0,0,cw,ch);
+if(hist.length<2)return;
+let m1=Math.max(0.1,...hist.map(h=>Math.max(h.z,h.st,Math.abs(h.dp))));
+drawLine(x1,hist,'z','#ff3366',m1,cw,ch);
+drawLine(x1,hist,'st','#ffaa00',m1,cw,ch);
+drawLine(x1,hist,'dp','#00ffcc',m1,cw,ch);
+let m2=Math.max(0.001,...hist.map(h=>Math.max(h.nt,h.re)));
+drawLine(x2,hist,'nt','#cc66ff',m2,cw,ch);
+drawLine(x2,hist,'re','#66ccff',m2,cw,ch);
+let m3=Math.max(0.001,...hist.map(h=>Math.max(h.wm,h.ka)));
+drawLine(x3,hist,'wm','#ffaa00',m3,cw,ch);
+drawLine(x3,hist,'ka','#ff3366',m3,cw,ch);
+}
+function updateHUD(){
+let reffelt=computeReffelt();
+let stretch=0.5*Math.pow(gZ,1.5);
+let damp=master?0.3*gZ*gZ*gS:0;
+let dzdt=(gZ-gZprev)/dt;
+let net=stretch-damp;
+$("hz").innerText=gZ.toFixed(3);$("hmz").innerText=maxZ.toFixed(3);
+$("bz").style.width=Math.min(100,gZ*5)+'%';
+$("hr").innerText=master?reffelt:'--';$("hr17").innerText=master?toB17(reffelt):'N/A';
+$("hs").innerText=master?gS.toFixed(4):'N/A';$("bs").style.width=master?(gS*100)+'%':'0%';
+$("hk").innerText=master?gK.toFixed(4):'OFF';$("he").innerText=master?gEps.toFixed(4):'OFF';
+$("hnt").innerText=master?gNut.toFixed(5):'OFF';$("hre").innerText=master?gReff.toFixed(5):'OFF';
+$("iq_dz").innerText=dzdt.toFixed(4);
+$("iq_st").innerText=stretch.toFixed(4);
+$("iq_dp").innerText=master?(-damp).toFixed(4):'NONE';
+$("iq_net").innerText=master?net.toFixed(4):stretch.toFixed(4);
+$("iq_net").style.color=master?(net<=0?'#00ffcc':'#ff3366'):'#ff3366';
+$("iq_bnd").innerText=master?(net<=0.01?'YES':'NO'):'NO (no closure)';
+$("iq_bnd").style.color=master?(net<=0.01?'#00ffcc':'#ff3366'):'#ff3366';
+let wmx=0;
+for(let i=0;i<GN*GN;i++){let aw=Math.abs(ww[i]);if(aw>wmx)wmx=aw;}
+hist.push({z:gZ,st:stretch,dp:damp,nt:gNut,re:gReff,wm:wmx,ka:gK});
+if(hist.length>c1.width)hist.shift();
+if(frame%10===0)csvLog.push({f:frame,z:gZ,mz:maxZ,s:gS,k:gK,e:gEps,nt:gNut,re:gReff,r:computeReffelt(),st:stretch,dp:damp});
+$("status").innerText='Frame: '+frame+' | Z: '+gZ.toFixed(3)+' | Mode: '+(master?'MASTER':'CLASSICAL');
+}
+function exportCSV(){
+let hdr='frame,Z,maxZ,s,k,eps,nu_t,R_eff,reffelt,stretch,damp\n';
+let rows=csvLog.map(r=>r.f+','+r.z+','+r.mz+','+r.s+','+r.k+','+r.e+','+r.nt+','+r.re+','+r.r+','+r.st+','+r.dp).join('\n');
+let blob=new Blob([hdr+rows],{type:'text/csv'});
+let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='turbulent_jet_data.csv';a.click();
+}
+function step(){
+frame++;
+ux0.set(ux);uy0.set(uy);
+jetBC();
+advect();
+ux0.set(ux);uy0.set(uy);
+diffuse();
+applyMasterForce();
+classicalBoost();
+project();
+jetBC();
+computeVorticity();
+computeClosure();
+computeEnstrophy();
+render();
+updateHUD();
+renderCharts();
+requestAnimationFrame(step);
+}
+step();
+</script>
+</body>
+</html>

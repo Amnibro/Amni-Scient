@@ -1,0 +1,733 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>3D Turbulent Jet | Master Momentum Closure</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css">
+<style>
+:root{--bg:#0a0a10;--txt:#00ffcc;--side:rgba(0,10,20,0.95);--bdr:#00ffcc;--shd:rgba(0,255,200,0.2);--cbg:#050508;--eqbg:rgba(0,255,200,0.04);--eqbdr:rgba(0,255,200,0.2);--hudbg:rgba(0,0,0,0.9);--btnbg:transparent;--btnc:#00ffcc;--ineqbdr:#ffaa00}
+*{box-sizing:border-box;margin:0;padding:0}
+body{overflow:hidden;background:var(--bg);color:var(--txt);font-family:'Courier New',monospace;display:flex;height:100vh}
+#sidebar{width:340px;background:var(--side);border-right:1px solid var(--bdr);padding:12px;overflow-y:auto;box-shadow:2px 0 15px var(--shd);flex-shrink:0;font-size:0.9em}
+#main{flex:1;display:flex;flex-direction:column;position:relative;min-width:0}
+#viewport{flex:1;position:relative;overflow:hidden}
+#viewport canvas{display:block}
+#charts{height:120px;background:var(--cbg);border-top:1px solid var(--bdr);display:flex}
+.cpan{flex:1;position:relative;border-right:1px solid #1a1a2a}
+.cpan:last-child{border-right:none}
+.clbl{position:absolute;top:2px;left:4px;font-size:0.7em;color:#888;z-index:2;pointer-events:none}
+.eqb{background:var(--eqbg);border:1px solid var(--eqbdr);padding:4px;margin-bottom:4px;border-radius:3px}
+.eqt{font-size:1em;font-weight:bold;color:#fff;margin-bottom:2px}
+.eql{font-size:0.7em;color:rgba(255,255,255,0.4)}
+.katex{font-size:0.85em !important}
+.hud{position:absolute;top:8px;right:8px;background:var(--hudbg);padding:10px;border:1px solid var(--bdr);border-radius:4px;pointer-events:none;z-index:5;min-width:240px;font-size:0.85em}
+.hud div{margin-bottom:1px}
+.barc{width:100%;height:3px;background:#222;margin-top:1px;border-radius:2px;overflow:hidden}
+.bar{height:100%;background:var(--btnc);width:0%;transition:width 0.08s}
+.ctrl{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
+button{background:var(--btnbg);border:1px solid var(--btnc);color:var(--btnc);padding:5px 10px;cursor:pointer;border-radius:3px;text-transform:uppercase;font-weight:bold;font-size:0.75em;transition:all 0.12s}
+button:hover{background:var(--btnc);color:#000}
+button.active{background:var(--btnc);color:#000}
+.sld{display:flex;align-items:center;gap:6px;margin-top:5px;font-size:0.8em}
+.sld input[type=range]{flex:1;accent-color:var(--btnc)}
+.sld input[type=color]{width:40px;height:18px;border:1px solid var(--bdr);background:transparent;cursor:pointer}
+.ineq{position:absolute;top:8px;left:8px;background:var(--hudbg);padding:8px;border:1px solid var(--ineqbdr);border-radius:4px;pointer-events:none;z-index:5;font-size:0.8em;min-width:200px}
+.badge{display:inline-block;background:#ff3366;color:#fff;padding:1px 6px;border-radius:3px;font-size:0.7em;margin-left:6px}
+#errOverlay{display:none;position:fixed;top:0;left:0;right:0;background:#ff3366;color:#fff;padding:10px;z-index:9999;font-size:14px;white-space:pre-wrap}
+</style>
+</head>
+<body>
+<div id="errOverlay"></div>
+<div id="sidebar">
+<h2 style="color:#fff;text-shadow:0 0 8px #00ffcc;font-size:1em;margin-bottom:4px">TURBULENT JET SOLVER<span class="badge">3D</span></h2>
+<div class="eqb"><div class="eqt">Layer 1 - Primitive</div>
+<div class="eql">Eq 1: Momentum</div><div id="eq1"></div>
+<div class="eql">Eq 2: Effective Mass</div><div id="eq2"></div>
+<div class="eql">Eq 3: Steering</div><div id="eq3"></div></div>
+<div class="eqb"><div class="eqt">Layer 2 - Intermediate</div>
+<div class="eql">Eq 4: PID Force</div><div id="eq4"></div>
+<div class="eql">Eq 5: Smoothness</div><div id="eq5"></div>
+<div class="eql">Eq 6: Curvature</div><div id="eq6"></div></div>
+<div class="eqb"><div class="eqt">Layer 3 - Turbulence</div>
+<div class="eql">Eq 7: Static Resistance</div><div id="eq7"></div>
+<div class="eql">Eq 8: TKE</div><div id="eq8"></div>
+<div class="eql">Eq 9: Dissipation</div><div id="eq9"></div>
+<div class="eql">Eq 10: Eddy Visc</div><div id="eq10"></div>
+<div class="eql">Eq 11: Dyn Resistance</div><div id="eq11"></div></div>
+<div class="eqb"><div class="eqt">Layer 4 - Master</div>
+<div class="eql">Eq 12: Master Momentum</div><div id="eq12"></div></div>
+<div class="ctrl">
+<button id="modeBtn" class="active">Master Momentum</button>
+<button id="classBtn">Classical NS</button>
+<button id="resetBtn">Reset</button>
+<button id="exportBtn">Export CSV</button>
+<a href="fluid_sim.html" style="text-decoration:none"><button type="button">2D Mode</button></a>
+<a href="curvature_proof.html" style="text-decoration:none"><button type="button">Visual Proof</button></a>
+<a href="navier-stokes-proof.html" style="text-decoration:none"><button type="button" style="border-color:#00ff9d;color:#00ff9d">Full Proof</button></a>
+</div>
+<div class="sld"><span>Jet V:</span><input type="range" id="slJet" min="0.5" max="8" step="0.1" value="3"><span id="vJet">3.0</span></div>
+<div class="sld"><span>Re:</span><input type="range" id="slRe" min="100" max="100000" step="500" value="2000"><span id="vRe">2000</span></div>
+<div class="sld"><span>Turb:</span><input type="range" id="slTurb" min="0" max="1" step="0.01" value="0.2"><span id="vTurb">0.20</span></div>
+<div class="sld"><span>Vibrancy:</span><input type="range" id="slVib" min="0.5" max="8" step="0.1" value="3.0"><span id="vVib">3.0</span></div>
+<div class="sld"><span>Pos:</span><input type="color" id="posColor" value="#00ff88"><span>Neg:</span><input type="color" id="negColor" value="#ff3366"></div>
+<div style="margin-top:6px;font-size:0.55em;color:#555" id="status">Frame: 0</div>
+</div>
+<div id="main">
+<div id="viewport"></div>
+<div class="ineq">
+<div style="color:#ffaa00;font-weight:bold;margin-bottom:2px">LIVE INEQUALITY</div>
+<div>dZ/dt: <span id="iq_dz" style="color:#ff3366">0</span></div>
+<div>C*Z^1.5: <span id="iq_st" style="color:#ffaa00">0</span></div>
+<div>-&gamma;*Z&sup2;*s: <span id="iq_dp" style="color:#00ffcc">0</span></div>
+<div>Net: <span id="iq_net" style="font-weight:bold">0</span></div>
+<div>Bounded: <span id="iq_bnd" style="font-weight:bold">---</span></div>
+</div>
+<div class="hud">
+<div>Z: <span id="hz">0</span> (Max: <span id="hmz" style="color:#ff3366">0</span>)</div><div class="barc"><div id="bz" class="bar" style="background:#ff3366"></div></div>
+<div>Reffelt &#8476;: <span id="hr" style="color:#ffaa00;font-weight:bold;font-size:1.1em">1</span> (<span id="hr17" style="color:#66ccff">1</span><sub>17</sub>)</div>
+<div>s: <span id="hs">1.00</span></div><div class="barc"><div id="bs" class="bar"></div></div>
+<div>k: <span id="hk">0</span> &epsilon;: <span id="he">0</span></div>
+<div>&nu;<sub>t</sub>: <span id="hnt">0</span> R<sub>eff</sub>: <span id="hre">0</span></div>
+<div>Mode: <span id="hmode" style="color:#00ffcc;font-weight:bold">MASTER</span></div>
+<div>Grid: <span id="hgrid" style="color:#888">--</span></div>
+</div>
+<div id="charts">
+<div class="cpan"><div class="clbl"><span style="color:#ff3366">&#9632;Z</span> <span style="color:#ffaa00">&#9632;Str</span> <span style="color:#00ffcc">&#9632;Dmp</span></div><canvas id="c1"></canvas></div>
+<div class="cpan"><div class="clbl"><span style="color:#cc66ff">&#9632;&nu;t</span> <span style="color:#66ccff">&#9632;Reff</span></div><canvas id="c2"></canvas></div>
+<div class="cpan"><div class="clbl"><span style="color:#ffaa00">&#9632;|&omega;|</span> <span style="color:#ff3366">&#9632;k</span></div><canvas id="c3"></canvas></div>
+</div>
+</div>
+<script>
+window.onerror=function(msg,src,line,col,err){
+  var el=document.getElementById('errOverlay');
+  el.style.display='block';
+  el.textContent='JS ERROR: '+msg+'\nLine: '+line+' Col: '+col+'\nSource: '+src;
+};
+window.addEventListener('unhandledrejection',function(e){
+  var el=document.getElementById('errOverlay');
+  el.style.display='block';
+  el.textContent='PROMISE ERROR: '+e.reason;
+});
+</script>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.162.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.162.0/examples/jsm/"}}</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+const $ = id => document.getElementById(id);
+const hex2rgb = h => ({
+  r: parseInt(h.slice(1, 3), 16),
+  g: parseInt(h.slice(3, 5), 16),
+  b: parseInt(h.slice(5, 7), 16)
+});
+const kR = (t, e) => katex.render(t, e, { displayMode: true });
+
+/* â”€â”€ KaTeX equations â”€â”€ */
+kR("v(t)=\\frac{dp}{dt}", $("eq1"));
+kR("m(t)=\\frac{1}{\\sigma_{\\text{ATR}}(t)}", $("eq2"));
+kR("i(t)=\\text{Hilbert\\_imag}(p(t))", $("eq3"));
+kR("F_{\\text{PID}}=k_p i+k_i\\!\\int\\!i\\,dt+k_d\\dot{i}", $("eq4"));
+kR("s(t)=1-\\frac{\\text{std}(r_N)}{\\text{mean}(r_N)}", $("eq5"));
+kR("c(t)=\\frac{\\partial^2 p}{\\partial t^2}", $("eq6"));
+kR("R_0(p,\\ell)", $("eq7"));
+kR("k=(1\\!-\\!s)\\nabla\\!\\cdot\\!\\mathbf{M}_{\\text{grid}}", $("eq8"));
+kR("\\epsilon=c\\cdot\\frac{1-s}{s}\\cdot\\frac{1}{\\ell}", $("eq9"));
+kR("\\nu_t=0.09\\frac{k^2}{\\epsilon}", $("eq10"));
+kR("R_{\\text{eff}}=\\nu_t\\cdot|\\mathbf{v}|", $("eq11"));
+kR("\\frac{d\\mathbf{v}}{dt}=\\frac{F_{\\text{PID}}}{m}+(\\mathbf{v}\\cdot\\nabla)\\mathbf{v}-s\\,c-\\nabla R_{\\text{eff}}", $("eq12"));
+
+/* â”€â”€ Grid constants â”€â”€ */
+const GN = 40, GN2 = GN * GN, N3 = GN * GN * GN, dt = 0.002;
+
+/* â”€â”€ Simulation state â”€â”€ */
+let master = true, frame = 0, gZ = 0, gZprev = 0, maxZ = 0;
+let gS = 0, gK = 0, gEps = 0, gNut = 0, gReff = 0;
+let hist = [], csvLog = [];
+
+const I3 = (i, j, k) => i * GN2 + j * GN + k;
+
+let ux  = new Float32Array(N3), uy  = new Float32Array(N3), uz  = new Float32Array(N3);
+let ux0 = new Float32Array(N3), uy0 = new Float32Array(N3), uz0 = new Float32Array(N3);
+let pr  = new Float32Array(N3), dv  = new Float32Array(N3);
+let wmag = new Float32Array(N3), wy_arr = new Float32Array(N3);
+let sF = new Float32Array(N3), kF = new Float32Array(N3), epsF = new Float32Array(N3);
+let nutF = new Float32Array(N3), reffF = new Float32Array(N3), rNorm = new Float32Array(N3);
+let hitMap = new Float32Array(GN * GN), hitWy = new Float32Array(GN * GN), hitMax = 1;
+
+$("hgrid").innerText = GN + '\u00B3 = ' + N3.toLocaleString() + ' cells';
+
+const getV    = () => parseFloat($("slJet").value);
+const getRe   = () => parseFloat($("slRe").value);
+const getTurb = () => parseFloat($("slTurb").value);
+const getVib  = () => parseFloat($("slVib").value);
+
+$("slJet").oninput  = () => $("vJet").innerText  = parseFloat($("slJet").value).toFixed(1);
+$("slRe").oninput   = () => $("vRe").innerText   = $("slRe").value;
+$("slTurb").oninput = () => $("vTurb").innerText  = parseFloat($("slTurb").value).toFixed(2);
+$("slVib").oninput  = () => $("vVib").innerText   = parseFloat($("slVib").value).toFixed(1);
+
+const toB17 = n => {
+  n = Math.abs(Math.round(n));
+  if (!n) return '0';
+  let s = '';
+  while (n > 0) {
+    let r = n % 17;
+    s = (r < 10 ? '' + r : String.fromCharCode(55 + r)) + s;
+    n = (n / 17) | 0;
+  }
+  return s;
+};
+
+function toggleMode() {
+  master = !master;
+  $("modeBtn").className = master ? 'active' : '';
+  $("classBtn").className = master ? '' : 'active';
+  $("hmode").innerText = master ? 'MASTER' : 'CLASSICAL';
+  $("hmode").style.color = master ? '#00ffcc' : '#ff3366';
+}
+$("modeBtn").onclick  = () => { if (!master) toggleMode(); };
+$("classBtn").onclick = () => { if (master) toggleMode(); };
+
+function resetSim() {
+  ux.fill(0); uy.fill(0); uz.fill(0);
+  ux0.fill(0); uy0.fill(0); uz0.fill(0);
+  pr.fill(0); dv.fill(0);
+  wmag.fill(0); wy_arr.fill(0);
+  sF.fill(1); kF.fill(0); epsF.fill(0.01);
+  nutF.fill(0); reffF.fill(0); rNorm.fill(0);
+  hitMap.fill(0); hitWy.fill(0); hitMax = 1;
+  gZ = 0; gZprev = 0; maxZ = 0; frame = 0;
+  hist = []; csvLog = [];
+}
+$("resetBtn").onclick = resetSim;
+
+/* â”€â”€ Trilinear interpolation â”€â”€ */
+const trilin = (f, x, y, z) => {
+  let i0 = x | 0, j0 = y | 0, k0 = z | 0;
+  let sx = x - i0, sy = y - j0, sz = z - k0;
+  let b = i0 * GN2 + j0 * GN + k0;
+  return (
+    ((f[b] * (1 - sx) + f[b + GN2] * sx) * (1 - sy) +
+     (f[b + GN] * (1 - sx) + f[b + GN2 + GN] * sx) * sy) * (1 - sz) +
+    ((f[b + 1] * (1 - sx) + f[b + GN2 + 1] * sx) * (1 - sy) +
+     (f[b + GN + 1] * (1 - sx) + f[b + GN2 + GN + 1] * sx) * sy) * sz
+  );
+};
+
+/* â”€â”€ Jet boundary conditions â”€â”€ */
+function jetBC() {
+  let jv = getV(), turb = getTurb(), c = GN / 2, rad = GN / 8;
+  for (let j = 0; j < GN; j++) {
+    for (let k = 0; k < GN; k++) {
+      let dj = j - c, dk = k - c, d = Math.sqrt(dj * dj + dk * dk);
+      if (d < rad) {
+        let prof = 1 - d / rad, base = jv * prof;
+        let n = (Math.random() - 0.5) * turb * base;
+        ux[I3(1, j, k)] = base + n;
+        ux[I3(2, j, k)] = base + n * 0.8;
+        uy[I3(1, j, k)] = (Math.random() - 0.5) * turb * base * 0.3;
+        uz[I3(1, j, k)] = (Math.random() - 0.5) * turb * base * 0.3;
+      }
+    }
+  }
+  for (let i = 0; i < GN; i++) {
+    for (let k = 0; k < GN; k++) {
+      uy[I3(i, 0, k)] = 0; uy[I3(i, GN - 1, k)] = 0;
+      ux[I3(i, 0, k)] = ux[I3(i, 1, k)]; uz[I3(i, 0, k)] = uz[I3(i, 1, k)];
+      ux[I3(i, GN - 1, k)] = ux[I3(i, GN - 2, k)]; uz[I3(i, GN - 1, k)] = uz[I3(i, GN - 2, k)];
+    }
+    for (let j = 0; j < GN; j++) {
+      uz[I3(i, j, 0)] = 0; uz[I3(i, j, GN - 1)] = 0;
+      ux[I3(i, j, 0)] = ux[I3(i, j, 1)]; uy[I3(i, j, 0)] = uy[I3(i, j, 1)];
+      ux[I3(i, j, GN - 1)] = ux[I3(i, j, GN - 2)]; uy[I3(i, j, GN - 1)] = uy[I3(i, j, GN - 2)];
+    }
+  }
+  for (let j = 0; j < GN; j++) {
+    for (let k = 0; k < GN; k++) {
+      ux[I3(0, j, k)] = ux[I3(1, j, k)];
+      uy[I3(0, j, k)] = uy[I3(1, j, k)];
+      uz[I3(0, j, k)] = uz[I3(1, j, k)];
+      let ii = I3(GN - 2, j, k);
+      if (ux[ii] > 0) {
+        let ke = ux[ii] * ux[ii] + uy[ii] * uy[ii] + uz[ii] * uz[ii];
+        hitMap[j * GN + k] += ke * dt * 0.5;
+        hitWy[j * GN + k] += wy_arr[ii] * dt * 0.5;
+      }
+      ux[I3(GN - 1, j, k)] = ux[ii];
+      uy[I3(GN - 1, j, k)] = uy[ii];
+      uz[I3(GN - 1, j, k)] = uz[ii];
+    }
+  }
+}
+
+/* â”€â”€ Semi-Lagrangian advection â”€â”€ */
+function advect() {
+  let h = 1.0 / GN;
+  for (let i = 1; i < GN - 1; i++) {
+    for (let j = 1; j < GN - 1; j++) {
+      for (let k = 1; k < GN - 1; k++) {
+        let ii = I3(i, j, k);
+        let xi = Math.max(0.5, Math.min(GN - 1.5, i - ux[ii] * dt / h));
+        let yj = Math.max(0.5, Math.min(GN - 1.5, j - uy[ii] * dt / h));
+        let zk = Math.max(0.5, Math.min(GN - 1.5, k - uz[ii] * dt / h));
+        ux0[ii] = trilin(ux, xi, yj, zk);
+        uy0[ii] = trilin(uy, xi, yj, zk);
+        uz0[ii] = trilin(uz, xi, yj, zk);
+      }
+    }
+  }
+  let t;
+  t = ux; ux = ux0; ux0 = t;
+  t = uy; uy = uy0; uy0 = t;
+  t = uz; uz = uz0; uz0 = t;
+}
+
+/* â”€â”€ Implicit diffusion (Gauss-Seidel) with eddy viscosity â”€â”€ */
+function diffuse() {
+  let visc = 1.0 / getRe(), aBase = dt * visc * GN * GN;
+  let nutScale = dt * GN * GN;
+  for (let iter = 0; iter < 12; iter++) {
+    for (let i = 1; i < GN - 1; i++) {
+      let iG2 = i * GN2;
+      for (let j = 1; j < GN - 1; j++) {
+        let ijG = iG2 + j * GN;
+        for (let k = 1; k < GN - 1; k++) {
+          let ii = ijG + k;
+          let effA = aBase + (master ? nutF[ii] * nutScale : 0);
+          let s6x = ux[ii - GN2] + ux[ii + GN2] + ux[ii - GN] + ux[ii + GN] + ux[ii - 1] + ux[ii + 1];
+          let s6y = uy[ii - GN2] + uy[ii + GN2] + uy[ii - GN] + uy[ii + GN] + uy[ii - 1] + uy[ii + 1];
+          let s6z = uz[ii - GN2] + uz[ii + GN2] + uz[ii - GN] + uz[ii + GN] + uz[ii - 1] + uz[ii + 1];
+          let d = 1 / (1 + 6 * effA);
+          ux[ii] = (ux0[ii] + effA * s6x) * d;
+          uy[ii] = (uy0[ii] + effA * s6y) * d;
+          uz[ii] = (uz0[ii] + effA * s6z) * d;
+        }
+      }
+    }
+  }
+}
+
+/* â”€â”€ Master momentum force â”€â”€ */
+const ALPHA = 5.0, GAMMA = 0.99;
+
+function applyMasterForce() {
+  if (!master) return;
+  let g = GN * 0.5 * ALPHA * dt;
+  for (let i = 1; i < GN - 1; i++) {
+    let iG2 = i * GN2;
+    for (let j = 1; j < GN - 1; j++) {
+      let ijG = iG2 + j * GN;
+      for (let k = 1; k < GN - 1; k++) {
+        let ii = ijG + k;
+        ux[ii] -= (rNorm[ii + GN2] - rNorm[ii - GN2]) * g;
+        uy[ii] -= (rNorm[ii + GN] - rNorm[ii - GN]) * g;
+        uz[ii] -= (rNorm[ii + 1] - rNorm[ii - 1]) * g;
+      }
+    }
+  }
+}
+
+/* â”€â”€ Pressure projection â”€â”€ */
+function project() {
+  let h = 1.0 / GN;
+  dv.fill(0); pr.fill(0);
+  for (let i = 1; i < GN - 1; i++) {
+    let iG2 = i * GN2;
+    for (let j = 1; j < GN - 1; j++) {
+      let ijG = iG2 + j * GN;
+      for (let k = 1; k < GN - 1; k++) {
+        let ii = ijG + k;
+        dv[ii] = -0.5 * h * ((ux[ii + GN2] - ux[ii - GN2]) + (uy[ii + GN] - uy[ii - GN]) + (uz[ii + 1] - uz[ii - 1]));
+      }
+    }
+  }
+  for (let iter = 0; iter < 20; iter++) {
+    for (let i = 1; i < GN - 1; i++) {
+      let iG2 = i * GN2;
+      for (let j = 1; j < GN - 1; j++) {
+        let ijG = iG2 + j * GN;
+        for (let k = 1; k < GN - 1; k++) {
+          let ii = ijG + k;
+          pr[ii] = (dv[ii] + pr[ii - GN2] + pr[ii + GN2] + pr[ii - GN] + pr[ii + GN] + pr[ii - 1] + pr[ii + 1]) / 6;
+        }
+      }
+    }
+  }
+  for (let i = 1; i < GN - 1; i++) {
+    let iG2 = i * GN2;
+    for (let j = 1; j < GN - 1; j++) {
+      let ijG = iG2 + j * GN;
+      for (let k = 1; k < GN - 1; k++) {
+        let ii = ijG + k;
+        ux[ii] -= 0.5 * (pr[ii + GN2] - pr[ii - GN2]) / h;
+        uy[ii] -= 0.5 * (pr[ii + GN] - pr[ii - GN]) / h;
+        uz[ii] -= 0.5 * (pr[ii + 1] - pr[ii - 1]) / h;
+      }
+    }
+  }
+}
+
+/* â”€â”€ Vorticity â”€â”€ */
+function computeVorticity() {
+  for (let i = 1; i < GN - 1; i++) {
+    let iG2 = i * GN2;
+    for (let j = 1; j < GN - 1; j++) {
+      let ijG = iG2 + j * GN;
+      for (let k = 1; k < GN - 1; k++) {
+        let ii = ijG + k, g = GN * 0.5;
+        let wx  = (uz[ii + GN] - uz[ii - GN] - uy[ii + 1] + uy[ii - 1]) * g;
+        let wyv = (ux[ii + 1] - ux[ii - 1] - uz[ii + GN2] + uz[ii - GN2]) * g;
+        let wz  = (uy[ii + GN2] - uy[ii - GN2] - ux[ii + GN] + ux[ii - GN]) * g;
+        wmag[ii] = Math.sqrt(wx * wx + wyv * wyv + wz * wz);
+        wy_arr[ii] = wyv;
+      }
+    }
+  }
+}
+
+/* â”€â”€ Turbulence closure â”€â”€ */
+function computeClosure() {
+  gS = 0; gK = 0; gEps = 0; gNut = 0; gReff = 0;
+  for (let i = 1; i < GN - 1; i++) {
+    let iG2 = i * GN2;
+    for (let j = 1; j < GN - 1; j++) {
+      let ijG = iG2 + j * GN;
+      for (let k = 1; k < GN - 1; k++) {
+        let ii = ijG + k;
+        let wn = wmag[ii - GN2] + wmag[ii + GN2] + wmag[ii - GN] + wmag[ii + GN] + wmag[ii - 1] + wmag[ii + 1];
+        let wM = wn / 6;
+        let wV = ((wmag[ii - GN2] - wM) ** 2 + (wmag[ii + GN2] - wM) ** 2 +
+                   (wmag[ii - GN] - wM) ** 2 + (wmag[ii + GN] - wM) ** 2 +
+                   (wmag[ii - 1] - wM) ** 2 + (wmag[ii + 1] - wM) ** 2) / 6;
+        let wS = Math.sqrt(wV), wA = Math.abs(wM) + 1e-8;
+        sF[ii] = master ? Math.max(0.01, Math.min(1.0, 1.0 - wS / wA)) : 1;
+        let vm = Math.sqrt(ux[ii] * ux[ii] + uy[ii] * uy[ii] + uz[ii] * uz[ii]);
+        kF[ii] = master ? Math.max(0, (1 - sF[ii]) * vm * 0.5) : 0;
+        epsF[ii] = Math.max(1e-8, (1 - sF[ii]) / (sF[ii] + 0.01) * vm);
+        nutF[ii] = master ? 0.09 * kF[ii] * kF[ii] / epsF[ii] : 0;
+        reffF[ii] = master ? nutF[ii] * vm : 0;
+        gS += sF[ii]; gK += kF[ii]; gEps += epsF[ii]; gNut += nutF[ii]; gReff += reffF[ii];
+      }
+    }
+  }
+  let cnt = (GN - 2) ** 3, maxR = 1e-10;
+  for (let n = 0; n < N3; n++) { if (reffF[n] > maxR) maxR = reffF[n]; }
+  for (let n = 0; n < N3; n++) { rNorm[n] = reffF[n] / maxR; }
+  let rs = new Float32Array(N3);
+  for (let n = 0; n < N3; n++) rs[n] = rNorm[n];
+  for (let iter = 0; iter < 2; iter++) {
+    for (let i = 1; i < GN - 1; i++) {
+      let iG2 = i * GN2;
+      for (let j = 1; j < GN - 1; j++) {
+        let ijG = iG2 + j * GN;
+        for (let k = 1; k < GN - 1; k++) {
+          let ii = ijG + k;
+          rNorm[ii] = (rs[ii] * 6 + rs[ii - GN2] + rs[ii + GN2] + rs[ii - GN] + rs[ii + GN] + rs[ii - 1] + rs[ii + 1]) / 12;
+        }
+      }
+    }
+    if (iter === 0) {
+      for (let n = 0; n < N3; n++) rs[n] = rNorm[n];
+    }
+  }
+  gS /= cnt; gK /= cnt; gEps /= cnt; gNut /= cnt; gReff /= cnt;
+}
+
+/* â”€â”€ Enstrophy â”€â”€ */
+function computeEnstrophy() {
+  gZprev = gZ; gZ = 0;
+  for (let i = 1; i < GN - 1; i++) {
+    let iG2 = i * GN2;
+    for (let j = 1; j < GN - 1; j++) {
+      let ijG = iG2 + j * GN;
+      for (let k = 1; k < GN - 1; k++) {
+        gZ += wmag[ijG + k] * wmag[ijG + k];
+      }
+    }
+  }
+  gZ /= (GN - 2) ** 3;
+  maxZ = Math.max(maxZ, gZ);
+}
+
+/* â”€â”€ Time step â”€â”€ */
+function simStep() {
+  frame++;
+  ux0.set(ux); uy0.set(uy); uz0.set(uz);
+  jetBC(); advect();
+  ux0.set(ux); uy0.set(uy); uz0.set(uz);
+  diffuse(); applyMasterForce(); project(); jetBC();
+  computeVorticity(); computeClosure(); computeEnstrophy();
+}
+
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• THREE.JS SETUP â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x0a0a10);
+
+const vp = $("viewport");
+const camera = new THREE.PerspectiveCamera(55, vp.clientWidth / Math.max(1, vp.clientHeight), 0.1, 100);
+camera.position.set(2.5, 1.8, 2.5);
+camera.lookAt(0, 0, 0);
+
+let renderer;
+try {
+  const canvas = document.createElement('canvas');
+  const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
+  if (!gl) throw new Error('WebGL not available');
+  renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+} catch (e) {
+  renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: 'low-power' });
+}
+renderer.setSize(vp.clientWidth, vp.clientHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+vp.appendChild(renderer.domElement);
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true; controls.dampingFactor = 0.08; controls.target.set(0, 0, 0);
+
+/* â”€â”€ Point cloud â”€â”€ */
+const positions = new Float32Array(N3 * 3);
+const colors    = new Float32Array(N3 * 3);
+const sizes     = new Float32Array(N3);
+const alphas    = new Float32Array(N3);
+
+for (let i = 0; i < GN; i++) {
+  for (let j = 0; j < GN; j++) {
+    for (let k = 0; k < GN; k++) {
+      let idx = I3(i, j, k);
+      positions[idx * 3]     = (i / (GN - 1) - 0.5) * 2;
+      positions[idx * 3 + 1] = (j / (GN - 1) - 0.5) * 2;
+      positions[idx * 3 + 2] = (k / (GN - 1) - 0.5) * 2;
+    }
+  }
+}
+
+const geom = new THREE.BufferGeometry();
+geom.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+geom.setAttribute('aColor',   new THREE.BufferAttribute(colors, 3));
+geom.setAttribute('aSize',    new THREE.BufferAttribute(sizes, 1));
+geom.setAttribute('aAlpha',   new THREE.BufferAttribute(alphas, 1));
+
+const ptMat = new THREE.ShaderMaterial({
+  vertexShader: `
+    attribute vec3  aColor;
+    attribute float aSize;
+    attribute float aAlpha;
+    varying vec3  vC;
+    varying float vA;
+    void main() {
+      vC = aColor; vA = aAlpha;
+      vec4 mv = modelViewMatrix * vec4(position, 1.0);
+      gl_PointSize = aSize * (60.0 / max(1.0, -mv.z));
+      gl_Position  = projectionMatrix * mv;
+    }`,
+  fragmentShader: `
+    varying vec3  vC;
+    varying float vA;
+    void main() {
+      float d = length(gl_PointCoord - vec2(0.5));
+      if (d > 0.5) discard;
+      float f = 1.0 - d * 2.0;
+      gl_FragColor = vec4(vC, vA * f * f * 0.4);
+    }`,
+  transparent: true,
+  depthWrite: false,
+  blending: THREE.AdditiveBlending
+});
+
+const pts = new THREE.Points(geom, ptMat);
+scene.add(pts);
+
+/* â”€â”€ Scene furniture â”€â”€ */
+const boxEdge = new THREE.EdgesGeometry(new THREE.BoxGeometry(2, 2, 2));
+const boxLine = new THREE.LineSegments(boxEdge, new THREE.LineBasicMaterial({ color: 0x00ffcc, transparent: true, opacity: 0.15 }));
+scene.add(boxLine);
+
+const inletMesh = new THREE.Mesh(
+  new THREE.CircleGeometry(2 * (GN / 8) / (GN - 1), 32),
+  new THREE.MeshBasicMaterial({ color: 0x00ffcc, transparent: true, opacity: 0.08, side: THREE.DoubleSide })
+);
+inletMesh.position.set(-1, 0, 0);
+inletMesh.rotation.y = Math.PI / 2;
+scene.add(inletMesh);
+
+const hitData = new Uint8Array(GN * GN * 4);
+const hitTex  = new THREE.DataTexture(hitData, GN, GN, THREE.RGBAFormat);
+hitTex.needsUpdate = true;
+const hitPlane = new THREE.Mesh(
+  new THREE.PlaneGeometry(2, 2),
+  new THREE.MeshBasicMaterial({ map: hitTex, transparent: true, opacity: 0.85, side: THREE.DoubleSide })
+);
+hitPlane.position.set(1, 0, 0);
+hitPlane.rotation.y = -Math.PI / 2;
+scene.add(hitPlane);
+
+const axH = new THREE.AxesHelper(0.3);
+axH.position.set(-1.1, -1.1, -1.1);
+scene.add(axH);
+
+/* â”€â”€ Particle visualisation â”€â”€ */
+function updateViz() {
+  let pRGB = hex2rgb($("posColor").value), nRGB = hex2rgb($("negColor").value);
+  let vib = getVib(), mxW = 0.01;
+  for (let n = 0; n < N3; n++) { if (wmag[n] > mxW) mxW = wmag[n]; }
+  for (let i = 1; i < GN - 1; i++) {
+    let iG2 = i * GN2;
+    for (let j = 1; j < GN - 1; j++) {
+      let ijG = iG2 + j * GN;
+      for (let k = 1; k < GN - 1; k++) {
+        let n = ijG + k, w = wmag[n] / mxW;
+        let spd = Math.sqrt(ux[n] * ux[n] + uy[n] * uy[n] + uz[n] * uz[n]);
+        let vis = Math.max(w, spd > 0.3 ? (spd - 0.3) * 0.3 : 0);
+        if (vis < 0.05) { sizes[n] = 0; alphas[n] = 0; continue; }
+        sizes[n]  = (0.5 + vis * 2.0) * vib;
+        alphas[n] = Math.min(0.6, vis * 1.2);
+        let rgb = wy_arr[n] > 0 ? pRGB : nRGB;
+        let ci  = vis * Math.min(vib * 0.3, 1.5);
+        colors[n * 3]     = rgb.r / 255 * ci;
+        colors[n * 3 + 1] = rgb.g / 255 * ci;
+        colors[n * 3 + 2] = rgb.b / 255 * ci;
+      }
+    }
+  }
+  geom.attributes.aColor.needsUpdate = true;
+  geom.attributes.aSize.needsUpdate  = true;
+  geom.attributes.aAlpha.needsUpdate = true;
+
+  let hm = 0;
+  for (let n = 0; n < GN * GN; n++) { if (hitMap[n] > hm) hm = hitMap[n]; }
+  hitMax = Math.max(hitMax, hm);
+  for (let j = 0; j < GN; j++) {
+    for (let k = 0; k < GN; k++) {
+      let v = hitMax > 0 ? hitMap[j * GN + k] / hitMax : 0;
+      let idx = (j * GN + k) * 4;
+      hitData[idx]     = Math.min(255, (v * 2 * 255) | 0);
+      hitData[idx + 1] = Math.min(255, (v * 0.6 * 255) | 0);
+      hitData[idx + 2] = Math.min(255, ((1 - v) * 0.3 * 255) | 0);
+      hitData[idx + 3] = Math.min(255, (v * 220) | 0);
+    }
+  }
+  hitTex.needsUpdate = true;
+}
+
+/* â”€â”€ Charts â”€â”€ */
+const c1 = $("c1"), c2 = $("c2"), c3 = $("c3");
+const x1 = c1.getContext("2d"), x2 = c2.getContext("2d"), x3 = c3.getContext("2d");
+
+function resizeCharts() {
+  [c1, c2, c3].forEach(c => {
+    c.width  = c.parentElement.offsetWidth;
+    c.height = 120;
+    c.style.width  = c.width + 'px';
+    c.style.height = '120px';
+  });
+}
+resizeCharts();
+setTimeout(resizeCharts, 100);
+
+function drawLine(cx, data, key, color, maxV, cw, ch) {
+  cx.strokeStyle = color; cx.lineWidth = 1.2; cx.beginPath();
+  data.forEach((v, i) => {
+    let py = ch - 2 - (v[key] / maxV) * (ch - 4);
+    py = Math.max(1, Math.min(ch - 1, py));
+    i === 0 ? cx.moveTo(i, py) : cx.lineTo(i, py);
+  });
+  cx.stroke();
+}
+
+function renderCharts() {
+  let cw = c1.width, ch = c1.height;
+  x1.clearRect(0, 0, cw, ch); x2.clearRect(0, 0, cw, ch); x3.clearRect(0, 0, cw, ch);
+  if (hist.length < 2) return;
+  let m1 = Math.max(0.1, ...hist.map(h => Math.max(h.z, h.st, Math.abs(h.dp))));
+  drawLine(x1, hist, 'z', '#ff3366', m1, cw, ch);
+  drawLine(x1, hist, 'st', '#ffaa00', m1, cw, ch);
+  drawLine(x1, hist, 'dp', '#00ffcc', m1, cw, ch);
+  let m2 = Math.max(0.001, ...hist.map(h => Math.max(h.nt, h.re)));
+  drawLine(x2, hist, 'nt', '#cc66ff', m2, cw, ch);
+  drawLine(x2, hist, 're', '#66ccff', m2, cw, ch);
+  let m3 = Math.max(0.001, ...hist.map(h => Math.max(h.wm, h.ka)));
+  drawLine(x3, hist, 'wm', '#ffaa00', m3, cw, ch);
+  drawLine(x3, hist, 'ka', '#ff3366', m3, cw, ch);
+}
+
+/* â”€â”€ HUD â”€â”€ */
+function computeReffelt() {
+  return master ? Math.min(8, Math.max(1, Math.floor((1 - gS) * 15) + 1)) : 0;
+}
+
+function updateHUD() {
+  let reffelt = computeReffelt();
+  let stretch = 0.5 * Math.pow(gZ, 1.5);
+  let damp = master ? 0.3 * gZ * gZ * gS : 0;
+  let dzdt = (gZ - gZprev) / dt, net = stretch - damp;
+
+  $("hz").innerText  = gZ.toFixed(3);
+  $("hmz").innerText = maxZ.toFixed(3);
+  $("bz").style.width = Math.min(100, gZ * 5) + '%';
+  $("hr").innerText  = master ? reffelt : '--';
+  $("hr17").innerText = master ? toB17(reffelt) : 'N/A';
+  $("hs").innerText  = master ? gS.toFixed(4) : 'N/A';
+  $("bs").style.width = master ? (gS * 100) + '%' : '0%';
+  $("hk").innerText  = master ? gK.toFixed(4) : 'OFF';
+  $("he").innerText  = master ? gEps.toFixed(4) : 'OFF';
+  $("hnt").innerText = master ? gNut.toFixed(5) : 'OFF';
+  $("hre").innerText = master ? gReff.toFixed(5) : 'OFF';
+
+  $("iq_dz").innerText = dzdt.toFixed(4);
+  $("iq_st").innerText = stretch.toFixed(4);
+  $("iq_dp").innerText = master ? (-damp).toFixed(4) : '0';
+  $("iq_net").innerText = master ? net.toFixed(4) : stretch.toFixed(4);
+  $("iq_net").style.color = master ? (net <= 0 ? '#00ffcc' : '#ff3366') : '#ff3366';
+  $("iq_bnd").innerText = master ? (net <= 0.01 ? 'YES' : 'NO') : 'NO (no closure)';
+  $("iq_bnd").style.color = master ? (net <= 0.01 ? '#00ffcc' : '#ff3366') : '#ff3366';
+
+  let wmx = 0;
+  for (let n = 0; n < N3; n++) { if (wmag[n] > wmx) wmx = wmag[n]; }
+
+  hist.push({ z: gZ, st: stretch, dp: damp, nt: gNut, re: gReff, wm: wmx, ka: gK });
+  if (hist.length > c1.width) hist.shift();
+
+  if (frame % 10 === 0) {
+    csvLog.push({ f: frame, z: gZ, mz: maxZ, s: gS, k: gK, e: gEps, nt: gNut, re: gReff, r: computeReffelt(), st: stretch, dp: damp });
+  }
+  $("status").innerText = 'Frame: ' + frame + ' | Z: ' + gZ.toFixed(3) + ' | Mode: ' + (master ? 'MASTER' : 'CLASSICAL');
+}
+
+/* â”€â”€ CSV export â”€â”€ */
+function exportCSV() {
+  let hdr = 'frame,Z,maxZ,s,k,eps,nu_t,R_eff,reffelt,stretch,damp\n';
+  let rows = csvLog.map(r => r.f + ',' + r.z + ',' + r.mz + ',' + r.s + ',' + r.k + ',' + r.e + ',' + r.nt + ',' + r.re + ',' + r.r + ',' + r.st + ',' + r.dp).join('\n');
+  let blob = new Blob([hdr + rows], { type: 'text/csv' });
+  let a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'turbulent_jet_3d.csv'; a.click();
+}
+$("exportBtn").onclick = exportCSV;
+
+/* â”€â”€ Resize â”€â”€ */
+function onResize() {
+  let w = vp.clientWidth, h = vp.clientHeight;
+  renderer.setSize(w, h);
+  camera.aspect = w / Math.max(1, h);
+  camera.updateProjectionMatrix();
+  resizeCharts();
+}
+window.addEventListener('resize', onResize);
+setTimeout(onResize, 100);
+
+/* â”€â”€ Main loop â”€â”€ */
+let vizFrame = 0;
+function animate() {
+  requestAnimationFrame(animate);
+  simStep();
+  if (vizFrame++ % 2 === 0) { updateViz(); updateHUD(); renderCharts(); }
+  controls.update();
+  renderer.render(scene, camera);
+}
+animate();
+</script>
+</body>
+</html>
