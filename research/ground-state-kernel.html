@@ -1,12 +1,12 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Universal Ground State Kernel — Dimensionality Collapse | AMNI-SCIENT Research</title>
+<title>Universal Ground State Kernel â€” Dimensionality Collapse | AMNI-SCIENT Research</title>
 <meta name="description" content="Universal Ground State Kernel: SVD-based eigenstretch decomposition reveals that all high-dimensional parameter spaces collapse to a 2D manifold (k, regime), enabling extreme compression and universal transfer.">
 <meta name="keywords" content="ground state kernel,dimensionality reduction,SVD,eigenstretch,parameter compression,universal manifold,meta-optimizer,causal weights">
-<meta property="og:title" content="Universal Ground State Kernel — AMNI-SCIENT Research">
+<meta property="og:title" content="Universal Ground State Kernel â€” AMNI-SCIENT Research">
 <meta property="og:description" content="All high-dimensional parameter spaces collapse to a 2D manifold via SVD eigenstretch decomposition.">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://amni-scient.com/research/ground-state-kernel">
@@ -69,7 +69,6 @@
 <a href="../amni-ai.html">AMNI-AI</a>
 <a href="../amni-core.html">AMNI-CORE</a>
 <a href="../amni-explore.html">AMNI-EXPLORE</a>
-<a href="../amni-calc.html">AMNI-CALC</a>
 <a href="../amni-learn.html">AMNI-LEARN</a>
 </div>
 </div>
@@ -206,7 +205,7 @@ $$\text{window} = \lfloor 8 + 8k \rfloor \qquad \text{target} = \lfloor 4 + 4k \
 <p>The eigenstretch decomposition produces singular values that encode directly into the Reffelt Constant (see <a href="reffelt-constant.html" style="color:var(--accent)">Reffelt Constant</a>):</p>
 <div class="eq-block">
 <div class="eq-label">EQUATION G7 &mdash; REFFELT DIGIT ENCODING</div>
-$$\text{ℜ}_j = \begin{cases}\lfloor \lambda_j \cdot 80 \rfloor & 0.01 \leq \lambda_j < 0.12 \\ 9 & \lambda_j \geq 0.12 \;\text{(saturated)} \\ 0 & \lambda_j < 0.01 \;\text{(dead)}\end{cases} \quad \text{clamped to } [1, 8]$$
+$$\text{â„œ}_j = \begin{cases}\lfloor \lambda_j \cdot 80 \rfloor & 0.01 \leq \lambda_j < 0.12 \\ 9 & \lambda_j \geq 0.12 \;\text{(saturated)} \\ 0 & \lambda_j < 0.01 \;\text{(dead)}\end{cases} \quad \text{clamped to } [1, 8]$$
 </div>
 <p>A valid Reffelt constant contains no 0s or 9s &mdash; all digits must be in [1, 8], indicating well-distributed variance across active dimensions. A near-maximum constant (e.g., &real; = 99100050) indicates extreme dimensional concentration &mdash; almost all variance in 2 dimensions, confirming the ground state collapse.</p>
 </div>
