@@ -68,8 +68,10 @@
 </div>
 <h1>AMNI-HAVEN</h1>
 <p class="desc">ANDROID CLIENT FOR <a href="https://github.com/ancsemi/Haven" target="_blank" rel="noopener" style="color:#7c5cfc;text-decoration:underline">HAVEN</a> &bull; BY <a href="https://github.com/ancsemi" target="_blank" rel="noopener" style="color:#7c5cfc;text-decoration:underline">ANCSEMI</a></p>
-<div class="cta-row" style="justify-content:center; margin-top:1.5rem; margin-bottom:2rem;">
-<button class="btn btn-primary" onclick="openBeta('haven')">REQUEST BETA ACCESS</button>
+<div class="cta-row" style="justify-content:center; margin-top:1.5rem; margin-bottom:2rem; gap:1rem; flex-wrap:wrap;">
+<a href="https://play.google.com/store/apps/details?id=com.havenapp.mobile&hl=en_US" target="_blank" rel="noopener" class="btn btn-primary" style="text-decoration:none">PLAY STORE DOWNLOAD</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="btn btn-outline" style="text-decoration:none">&#9749; SUPPORT APP DEVELOPMENT</a>
+<a href="https://ko-fi.com/ancsemi" target="_blank" rel="noopener noreferrer" class="btn btn-outline" style="text-decoration:none">&#9749; SUPPORT HAVEN</a>
 </div>
 </div>
 <section>
@@ -175,13 +177,23 @@
 </section>
 <section style="text-align:center">
 <h2>GET AMNI-HAVEN</h2>
-<p style="color:var(--dim);margin-bottom:.5rem;font-size:.9rem">Currently in <strong style="color:var(--accent)">closed beta</strong> on Google Play. Request access and we'll add you to the testing list.</p>
+<p style="color:var(--dim);margin-bottom:.5rem;font-size:.9rem">Now available on <strong style="color:var(--accent)">Google Play</strong>.</p>
 <p style="color:var(--dim);font-size:.8rem;margin-bottom:2rem">Free &bull; Ad-supported &bull; Connects to any Haven-compatible server</p>
-<div class="cta-row" style="justify-content:center">
-<button class="btn btn-primary" onclick="openBeta('haven')">REQUEST BETA ACCESS &mdash; AMNI-HAVEN</button>
+<div class="cta-row" style="justify-content:center; gap:1rem; flex-wrap:wrap;">
+<a href="https://play.google.com/store/apps/details?id=com.havenapp.mobile&hl=en_US" target="_blank" rel="noopener" class="btn btn-primary" style="text-decoration:none">PLAY STORE DOWNLOAD</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="btn btn-outline" style="text-decoration:none">&#9749; SUPPORT APP DEVELOPMENT</a>
+<a href="https://ko-fi.com/ancsemi" target="_blank" rel="noopener noreferrer" class="btn btn-outline" style="text-decoration:none">&#9749; SUPPORT HAVEN</a>
 <a href="privacy-haven.html" class="btn btn-outline">PRIVACY POLICY</a>
 </div>
 <p style="color:var(--dim);font-size:.7rem;margin-top:1.5rem">Android 8.0+ (API 26) &bull; Requires Haven server &bull; No root required</p>
+</section>
+<section style="text-align:center">
+<h2>THANK YOU, BETA TESTERS</h2>
+<p style="color:var(--dim);max-width:700px;margin:0 auto 1.5rem;font-size:.9rem;line-height:1.7">Amni-Haven wouldn't be here without the testers who put the early builds through their paces. Every bug report, crash log, and piece of feedback helped shape the app into what it is today. You helped us ship&mdash;thank you.</p>
+<p style="color:var(--dim);max-width:700px;margin:0 auto 2rem;font-size:.85rem;line-height:1.7">Want to keep testing? We're always working on new Amni-Scient apps and features. Sign up below and we'll reach out when the next beta opens.</p>
+<div class="cta-row" style="justify-content:center">
+<button class="btn btn-outline" onclick="openBetaOptIn()">JOIN FUTURE BETAS</button>
+</div>
 </section>
 <div class="attribution">
 Haven is created and maintained by <a href="https://github.com/ancsemi" target="_blank" rel="noopener">ANCSemi</a> &bull; <a href="https://github.com/ancsemi/Haven" target="_blank" rel="noopener">GitHub</a> &bull; <a href="https://ancsemi.github.io/Haven/" target="_blank" rel="noopener">Website</a> &bull; <a href="https://github.com/ancsemi/Haven/blob/main/LICENSE" target="_blank" rel="noopener">MIT-NC License</a>
@@ -212,17 +224,6 @@ Haven is created and maintained by <a href="https://github.com/ancsemi" target="
 </div>
 <p>&copy; 2025-2026 Amni-Scient. All rights reserved.</p>
 </footer>
-<div id="beta-modal" style="display:none;position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,.75);backdrop-filter:blur(6px);align-items:center;justify-content:center">
-<div style="background:var(--panel);border:1px solid var(--accent);border-radius:8px;padding:2.5rem;max-width:480px;width:90%;position:relative">
-<button onclick="closeBeta()" style="position:absolute;top:1rem;right:1.25rem;background:none;border:none;color:var(--dim);font-size:1.4rem;cursor:pointer;font-family:var(--font)">&times;</button>
-<p style="font-size:.7rem;letter-spacing:2px;color:var(--dim);margin-bottom:.5rem">CLOSED BETA</p>
-<h3 id="beta-title" style="color:var(--accent);letter-spacing:2px;font-size:1.3rem;margin-bottom:.75rem"></h3>
-<p style="color:var(--dim);font-size:.82rem;line-height:1.7;margin-bottom:1.75rem">Enter your email and we'll add you to the Google Play closed beta testing list. Expect an invite within a few days.</p>
-<input id="beta-email" type="email" placeholder="your@email.com" style="width:100%;background:#0d0d0d;border:1px solid var(--border);border-radius:4px;padding:.75rem 1rem;color:var(--text);font-family:var(--font);font-size:.9rem;outline:none;margin-bottom:1rem;box-sizing:border-box" onfocus="this.style.borderColor=getComputedStyle(document.body).getPropertyValue('--accent')" onblur="this.style.borderColor=''">
-<div id="beta-err" style="color:#ff4444;font-size:.75rem;margin-bottom:.75rem;display:none">Please enter a valid email address.</div>
-<button onclick="submitBeta()" class="btn btn-primary" style="width:100%;justify-content:center">SEND REQUEST</button>
-</div>
-</div>
 <div id="lightbox" class="lightbox" onclick="closeLightbox(event)">
 <span class="lightbox-close" onclick="closeLightbox()">&times;</span>
 <img id="lightbox-img" src="" alt="">
@@ -230,29 +231,34 @@ Haven is created and maintained by <a href="https://github.com/ancsemi" target="
 <script>
 function openLightbox(src,alt){var lb=document.getElementById('lightbox');document.getElementById('lightbox-img').src=src;document.getElementById('lightbox-img').alt=alt;lb.classList.add('open');document.body.style.overflow='hidden';}
 function closeLightbox(e){if(e&&e.target===document.getElementById('lightbox-img'))return;document.getElementById('lightbox').classList.remove('open');document.body.style.overflow='';}
-function openBeta(app){
-const titles={haven:'AMNI-HAVEN BETA',crypt:'AMNI-CRYPT BETA'};
-document.getElementById('beta-title').textContent=titles[app]||'BETA ACCESS';
-document.getElementById('beta-modal').style.display='flex';
-document.getElementById('beta-email').value='';
-document.getElementById('beta-err').style.display='none';
-document.getElementById('beta-email').focus();
+document.addEventListener('keydown',function(ev){if(ev.key==='Escape'){closeLightbox();closeBetaOptIn();}});
+function openBetaOptIn(){
+document.getElementById('beta-optin-modal').style.display='flex';
+document.getElementById('beta-optin-email').value='';
+document.getElementById('beta-optin-err').style.display='none';
+document.getElementById('beta-optin-email').focus();
 }
-function closeBeta(){
-document.getElementById('beta-modal').style.display='none';
-}
-function submitBeta(){
-const e=document.getElementById('beta-email').value.trim();
-const err=document.getElementById('beta-err');
+function closeBetaOptIn(){var m=document.getElementById('beta-optin-modal');if(m)m.style.display='none';}
+function submitBetaOptIn(){
+var e=document.getElementById('beta-optin-email').value.trim();
+var err=document.getElementById('beta-optin-err');
 if(!e||!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e)){err.style.display='block';return;}
 err.style.display='none';
-const title=document.getElementById('beta-title').textContent;
-const sub=encodeURIComponent('Beta Access Request â€” '+title);
-const body=encodeURIComponent('Hi,\n\nPlease add me to the '+title+' closed beta on Google Play.\n\nMy email: '+e+'\n\nThanks!');
+var sub=encodeURIComponent('Future Beta Opt-In \u2014 Amni-Scient');
+var body=encodeURIComponent('Hi,\n\nI\'d like to be included in future beta testing for Amni-Scient apps.\n\nMy email: '+e+'\n\nThanks!');
 window.location.href='mailto:amnibro7@gmail.com?subject='+sub+'&body='+body;
-closeBeta();
+closeBetaOptIn();
 }
-document.getElementById('beta-modal').addEventListener('click',function(ev){if(ev.target===this)closeBeta();});
-document.addEventListener('keydown',function(ev){if(ev.key==='Escape'){closeBeta();closeLightbox();}});
 </script>
+<div id="beta-optin-modal" style="display:none;position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,.75);backdrop-filter:blur(6px);align-items:center;justify-content:center" onclick="if(event.target===this)closeBetaOptIn()">
+<div style="background:var(--panel);border:1px solid var(--accent);border-radius:8px;padding:2.5rem;max-width:480px;width:90%;position:relative">
+<button onclick="closeBetaOptIn()" style="position:absolute;top:1rem;right:1.25rem;background:none;border:none;color:var(--dim);font-size:1.4rem;cursor:pointer;font-family:var(--font)">&times;</button>
+<p style="font-size:.7rem;letter-spacing:2px;color:var(--dim);margin-bottom:.5rem">FUTURE BETAS</p>
+<h3 style="color:var(--accent);letter-spacing:2px;font-size:1.3rem;margin-bottom:.75rem">JOIN THE TESTING LIST</h3>
+<p style="color:var(--dim);font-size:.82rem;line-height:1.7;margin-bottom:1.75rem">Enter your email and we'll reach out when new Amni-Scient apps or features are ready for beta testing.</p>
+<input id="beta-optin-email" type="email" placeholder="your@email.com" style="width:100%;background:#0d0d0d;border:1px solid var(--border);border-radius:4px;padding:.75rem 1rem;color:var(--text);font-family:var(--font);font-size:.9rem;outline:none;margin-bottom:1rem;box-sizing:border-box" onfocus="this.style.borderColor=getComputedStyle(document.body).getPropertyValue('--accent')" onblur="this.style.borderColor=''">
+<div id="beta-optin-err" style="color:#ff4444;font-size:.75rem;margin-bottom:.75rem;display:none">Please enter a valid email address.</div>
+<button onclick="submitBetaOptIn()" class="btn btn-primary" style="width:100%;justify-content:center">SIGN UP</button>
+</div>
+</div>
 </body>
