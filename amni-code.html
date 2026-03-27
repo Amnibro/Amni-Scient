@@ -4,10 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Amni-Code â€” AI Coding Assistant | AMNI-SCIENT</title>
-<meta name="description" content="Amni-Code: AI Coding Assistant designed for intelligent and rapid software development.">
+<meta name="description" content="Amni-Code: Agentic AI coding assistant. Single Rust binary with autonomous tool use, multi-provider LLM support, and local model discovery.">
 <meta name="keywords" content="amni-code,ai coding assistant,ai tools,developer tools,programming,machine learning">
 <meta property="og:title" content="Amni-Code â€” AI Coding Assistant">
-<meta property="og:description" content="AI-powered coding assistant with advanced intelligence, codebase awareness, and multi-agent frameworks.">
+<meta property="og:description" content="Agentic AI coding assistant with autonomous tool use, multi-provider LLM support, diff viewer, and local GGUF model discovery. Single Rust binary.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://amni-scient.com/amni-code">
 <meta property="og:image" content="https://amni-scient.com/assets/code/Interface.png">
@@ -15,10 +15,10 @@
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Amni-Code â€” AI Coding Assistant">
-<meta name="twitter:description" content="Amni-Code AI coding assistant. Code faster with built-in intelligent capabilities.">
+<meta name="twitter:description" content="Agentic AI coding assistant. Autonomous tool loop, multi-provider LLM, local model discovery. Single Rust binary.">
 <meta name="twitter:image" content="https://amni-scient.com/assets/code/Interface.png">
 <link rel="canonical" href="https://amni-scient.com/amni-code">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Amni-Code","url":"https://amni-scient.com/amni-code.html","description":"Intelligent AI coding assistant for fast development and repository management.","applicationCategory":"SoftwareApplication","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Organization","name":"AMNI-SCIENT","url":"https://amni-scient.com"},"image":"https://amni-scient.com/assets/code/Interface.png"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Amni-Code","url":"https://amni-scient.com/amni-code.html","description":"Agentic AI coding assistant with autonomous tool use, multi-provider LLM support, and local model discovery. Single Rust binary.","applicationCategory":"SoftwareApplication","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Organization","name":"AMNI-SCIENT","url":"https://amni-scient.com"},"image":"https://amni-scient.com/assets/code/Interface.png"}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -70,49 +70,96 @@
 </svg>
 </div>
 <h1>AMNI-CODE</h1>
-<p class="desc">AI CODING ASSISTANT &bull; MULTI-AGENT ARCHITECTURE &bull; SMART REFACTORING</p>
+<p class="desc">AGENTIC AI CODING ASSISTANT &bull; MULTI-PROVIDER &bull; AUTONOMOUS TOOL USE</p>
 <div class="cta-row" style="justify-content:center;margin-top:2rem;margin-bottom:1rem">
 <a href="#gallery" class="btn btn-primary">VIEW INTERFACE</a>
 </div>
 </div>
 <section>
 <h2>AI CODING WORKFLOW</h2>
-<p style="text-align:center;color:var(--dim);max-width:700px;margin:0 auto 2rem;font-size:.9rem">Experience accelerated development with an AI coding assistant that understands your codebase. Write, debug, and optimize faster with an intuitive and responsive workspace.</p>
+<p style="text-align:center;color:var(--dim);max-width:700px;margin:0 auto 2rem;font-size:.9rem">A lightweight, agentic AI coding assistant that lives in a single binary. Connects to any LLM provider, explores your codebase autonomously, and executes multi-step tasks with built-in tools &mdash; no extensions, no plugins, no setup.</p>
 <div class="features">
 <div class="feature">
-<div class="icon">&#129302;</div>
-<h4>INTELLIGENT AI</h4>
-<p>Context-aware capabilities that learn your coding style and suggest optimal solutions.</p>
+<div class="icon">&#128640;</div>
+<h4>AGENTIC TOOL LOOP</h4>
+<p>Up to 15 autonomous iterations per request. The AI reads files, writes code, runs commands, and verifies &mdash; without waiting for you.</p>
+</div>
+<div class="feature">
+<div class="icon">&#128268;</div>
+<h4>MULTI-PROVIDER</h4>
+<p>Switch between xAI Grok, OpenAI GPT, Anthropic Claude, Ollama, or any OpenAI-compatible local server from one settings panel.</p>
+</div>
+<div class="feature">
+<div class="icon">&#128193;</div>
+<h4>DEEP FILE SYSTEM</h4>
+<p>Read, write, edit, search, and list files across your entire project. The agent resolves relative paths from your working directory automatically.</p>
 </div>
 <div class="feature">
 <div class="icon">&#128187;</div>
 <h4>INTEGRATED TERMINAL</h4>
-<p>Run builds and tests seamlessly with an embedded rapid-response terminal.</p>
+<p>The agent runs shell commands in your project directory &mdash; builds, tests, git, package managers &mdash; and feeds the output back into its reasoning loop.</p>
+</div>
+<div class="feature">
+<div class="icon">&#128270;</div>
+<h4>LOCAL MODEL DISCOVERY</h4>
+<p>Auto-detects GGUF and SafeTensors model files on disk, and imports them into Ollama on first use. No manual model setup required.</p>
+</div>
+<div class="feature">
+<div class="icon">&#127912;</div>
+<h4>DIFF VIEWER &amp; HISTORY</h4>
+<p>Built-in diff highlighting shows exactly what the agent changed. Persistent chat history across sessions so you never lose context.</p>
 </div>
 </div>
 </section>
 <section>
+<h2>BUILT-IN AGENT TOOLS</h2>
+<p style="text-align:center;color:var(--dim);max-width:700px;margin:0 auto 2rem;font-size:.9rem">The AI agent has direct access to six tools it can invoke autonomously during each conversation turn.</p>
+<table class="spec-table">
+<tr><th>TOOL</th><th>DESCRIPTION</th></tr>
+<tr><td>read_file</td><td>Read a file&rsquo;s full contents from the project directory</td></tr>
+<tr><td>write_file</td><td>Create or overwrite a file with new content</td></tr>
+<tr><td>edit_file</td><td>Surgically replace a specific string inside a file</td></tr>
+<tr><td>run_command</td><td>Execute any shell command and capture stdout/stderr</td></tr>
+<tr><td>list_directory</td><td>List all files and folders in a given path</td></tr>
+<tr><td>search_files</td><td>Search for text across files using grep/findstr</td></tr>
+</table>
+</section>
+<section>
 <h2>SPECIFICATIONS</h2>
-<table class="spec-table"><tr><th>FEATURE</th><th>DETAILS</th></tr><tr><td>Type</td><td>AI Coding Assistant</td></tr><tr><td>Integration</td><td>Deep File System Access</td></tr><tr><td>Themes</td><td>Light & Dark Mode</td></tr><tr><td>Capabilities</td><td>Refactoring, Code Gen, Debugging</td></tr></table>
+<table class="spec-table">
+<tr><th>PARAMETER</th><th>DETAILS</th></tr>
+<tr><td>Type</td><td>Agentic AI Coding Assistant</td></tr>
+<tr><td>Language</td><td>Rust (Axum + WebView2)</td></tr>
+<tr><td>Binary</td><td>Single executable &mdash; no runtimes, no dependencies</td></tr>
+<tr><td>Platforms</td><td>Windows, macOS, Linux</td></tr>
+<tr><td>Providers</td><td>xAI Grok, OpenAI, Anthropic Claude, Ollama, Custom Local</td></tr>
+<tr><td>Agent Loop</td><td>Up to 15 autonomous iterations per request</td></tr>
+<tr><td>Tools</td><td>read_file, write_file, edit_file, run_command, list_directory, search_files</td></tr>
+<tr><td>Model Discovery</td><td>Auto-detect GGUF &amp; SafeTensors &bull; Auto-import into Ollama</td></tr>
+<tr><td>Themes</td><td>Light &amp; Dark mode with persistence</td></tr>
+<tr><td>Chat History</td><td>Persistent sessions stored locally</td></tr>
+<tr><td>Config Storage</td><td>~/.amni/config.json &bull; survives restarts</td></tr>
+<tr><td>License</td><td>MIT</td></tr>
+</table>
 </section>
 <section>
 <h2>HOW IT WORKS</h2>
 <div class="how-works-grid">
 <div class="card">
-<h3>1. CONTEXT GATHERING</h3>
-<p>Read your codebase and ingest patterns.</p>
+<h3>1. CONNECT</h3>
+<p>Pick a provider and model from the settings panel. For local models, point to your GGUF directory &mdash; Amni-Code discovers and imports them automatically.</p>
 </div>
 <div class="card">
-<h3>2. ANALYSIS</h3>
-<p>AI evaluates intentions and bugs.</p>
+<h3>2. EXPLORE</h3>
+<p>The agent reads your project structure, entry points, and config files to build context before responding. No copy-pasting required.</p>
 </div>
 <div class="card">
-<h3>3. CODE GEN</h3>
-<p>Produces precision edits.</p>
+<h3>3. ACT</h3>
+<p>Multi-step tool calls &mdash; reading code, writing fixes, running builds, searching for patterns &mdash; executed autonomously across up to 15 iterations.</p>
 </div>
 <div class="card">
-<h3>4. DEPLOY</h3>
-<p>Seamless commits and deployment.</p>
+<h3>4. VERIFY</h3>
+<p>The agent runs your tests and build commands, reads the output, and continues iterating until the task is complete or verified passing.</p>
 </div>
 </div>
 </section>
@@ -130,8 +177,8 @@
 </section>
 <section style="text-align:center">
 <h2>GET AMNI-CODE</h2>
-<p style="color:var(--dim);margin-bottom:.5rem;font-size:.9rem">A single Rust binary with native window. No Python, no Docker, no runtime deps.</p>
-<p style="color:var(--dim);font-size:.8rem;margin-bottom:2rem">Works with xAI Grok, OpenAI, Anthropic, Ollama &bull; Windows, macOS, Linux</p>
+<p style="color:var(--dim);margin-bottom:.5rem;font-size:.9rem">A single Rust binary with a native window. No runtimes, no Docker, zero dependencies.</p>
+<p style="color:var(--dim);font-size:.8rem;margin-bottom:2rem">Works with xAI Grok, OpenAI, Anthropic Claude, Ollama, or any OpenAI-compatible server &bull; Windows, macOS, Linux</p>
 <div class="cta-row" style="justify-content:center">
 <a href="https://github.com/anmire/Amni-Code" target="_blank" class="btn btn-primary">VIEW ON GITHUB</a>
 </div>
