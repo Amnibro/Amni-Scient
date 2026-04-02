@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -127,7 +127,7 @@ const hex2rgb = h => ({
 });
 const kR = (t, e) => katex.render(t, e, { displayMode: true });
 
-/* â”€â”€ KaTeX equations â”€â”€ */
+/* ── KaTeX equations ── */
 kR("v(t)=\\frac{dp}{dt}", $("eq1"));
 kR("m(t)=\\frac{1}{\\sigma_{\\text{ATR}}(t)}", $("eq2"));
 kR("i(t)=\\text{Hilbert\\_imag}(p(t))", $("eq3"));
@@ -141,10 +141,10 @@ kR("\\nu_t=0.09\\frac{k^2}{\\epsilon}", $("eq10"));
 kR("R_{\\text{eff}}=\\nu_t\\cdot|\\mathbf{v}|", $("eq11"));
 kR("\\frac{d\\mathbf{v}}{dt}=\\frac{F_{\\text{PID}}}{m}+(\\mathbf{v}\\cdot\\nabla)\\mathbf{v}-s\\,c-\\nabla R_{\\text{eff}}", $("eq12"));
 
-/* â”€â”€ Grid constants â”€â”€ */
+/* ── Grid constants ── */
 const GN = 40, GN2 = GN * GN, N3 = GN * GN * GN, dt = 0.002;
 
-/* â”€â”€ Simulation state â”€â”€ */
+/* ── Simulation state ── */
 let master = true, frame = 0, gZ = 0, gZprev = 0, maxZ = 0;
 let gS = 0, gK = 0, gEps = 0, gNut = 0, gReff = 0;
 let hist = [], csvLog = [];
@@ -206,7 +206,7 @@ function resetSim() {
 }
 $("resetBtn").onclick = resetSim;
 
-/* â”€â”€ Trilinear interpolation â”€â”€ */
+/* ── Trilinear interpolation ── */
 const trilin = (f, x, y, z) => {
   let i0 = x | 0, j0 = y | 0, k0 = z | 0;
   let sx = x - i0, sy = y - j0, sz = z - k0;
@@ -219,7 +219,7 @@ const trilin = (f, x, y, z) => {
   );
 };
 
-/* â”€â”€ Jet boundary conditions â”€â”€ */
+/* ── Jet boundary conditions ── */
 function jetBC() {
   let jv = getV(), turb = getTurb(), c = GN / 2, rad = GN / 8;
   for (let j = 0; j < GN; j++) {
@@ -265,7 +265,7 @@ function jetBC() {
   }
 }
 
-/* â”€â”€ Semi-Lagrangian advection â”€â”€ */
+/* ── Semi-Lagrangian advection ── */
 function advect() {
   let h = 1.0 / GN;
   for (let i = 1; i < GN - 1; i++) {
@@ -287,7 +287,7 @@ function advect() {
   t = uz; uz = uz0; uz0 = t;
 }
 
-/* â”€â”€ Implicit diffusion (Gauss-Seidel) with eddy viscosity â”€â”€ */
+/* ── Implicit diffusion (Gauss-Seidel) with eddy viscosity ── */
 function diffuse() {
   let visc = 1.0 / getRe(), aBase = dt * visc * GN * GN;
   let nutScale = dt * GN * GN;
@@ -312,7 +312,7 @@ function diffuse() {
   }
 }
 
-/* â”€â”€ Master momentum force â”€â”€ */
+/* ── Master momentum force ── */
 const ALPHA = 5.0, GAMMA = 0.99;
 
 function applyMasterForce() {
@@ -332,7 +332,7 @@ function applyMasterForce() {
   }
 }
 
-/* â”€â”€ Pressure projection â”€â”€ */
+/* ── Pressure projection ── */
 function project() {
   let h = 1.0 / GN;
   dv.fill(0); pr.fill(0);
@@ -372,7 +372,7 @@ function project() {
   }
 }
 
-/* â”€â”€ Vorticity â”€â”€ */
+/* ── Vorticity ── */
 function computeVorticity() {
   for (let i = 1; i < GN - 1; i++) {
     let iG2 = i * GN2;
@@ -390,7 +390,7 @@ function computeVorticity() {
   }
 }
 
-/* â”€â”€ Turbulence closure â”€â”€ */
+/* ── Turbulence closure ── */
 function computeClosure() {
   gS = 0; gK = 0; gEps = 0; gNut = 0; gReff = 0;
   for (let i = 1; i < GN - 1; i++) {
@@ -438,7 +438,7 @@ function computeClosure() {
   gS /= cnt; gK /= cnt; gEps /= cnt; gNut /= cnt; gReff /= cnt;
 }
 
-/* â”€â”€ Enstrophy â”€â”€ */
+/* ── Enstrophy ── */
 function computeEnstrophy() {
   gZprev = gZ; gZ = 0;
   for (let i = 1; i < GN - 1; i++) {
@@ -454,7 +454,7 @@ function computeEnstrophy() {
   maxZ = Math.max(maxZ, gZ);
 }
 
-/* â”€â”€ Time step â”€â”€ */
+/* ── Time step ── */
 function simStep() {
   frame++;
   ux0.set(ux); uy0.set(uy); uz0.set(uz);
@@ -464,7 +464,7 @@ function simStep() {
   computeVorticity(); computeClosure(); computeEnstrophy();
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• THREE.JS SETUP â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+/* ═══════════════ THREE.JS SETUP ═══════════════ */
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x0a0a10);
 
@@ -489,7 +489,7 @@ vp.appendChild(renderer.domElement);
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true; controls.dampingFactor = 0.08; controls.target.set(0, 0, 0);
 
-/* â”€â”€ Point cloud â”€â”€ */
+/* ── Point cloud ── */
 const positions = new Float32Array(N3 * 3);
 const colors    = new Float32Array(N3 * 3);
 const sizes     = new Float32Array(N3);
@@ -542,7 +542,7 @@ const ptMat = new THREE.ShaderMaterial({
 const pts = new THREE.Points(geom, ptMat);
 scene.add(pts);
 
-/* â”€â”€ Scene furniture â”€â”€ */
+/* ── Scene furniture ── */
 const boxEdge = new THREE.EdgesGeometry(new THREE.BoxGeometry(2, 2, 2));
 const boxLine = new THREE.LineSegments(boxEdge, new THREE.LineBasicMaterial({ color: 0x00ffcc, transparent: true, opacity: 0.15 }));
 scene.add(boxLine);
@@ -570,7 +570,7 @@ const axH = new THREE.AxesHelper(0.3);
 axH.position.set(-1.1, -1.1, -1.1);
 scene.add(axH);
 
-/* â”€â”€ Particle visualisation â”€â”€ */
+/* ── Particle visualisation ── */
 function updateViz() {
   let pRGB = hex2rgb($("posColor").value), nRGB = hex2rgb($("negColor").value);
   let vib = getVib(), mxW = 0.01;
@@ -614,7 +614,7 @@ function updateViz() {
   hitTex.needsUpdate = true;
 }
 
-/* â”€â”€ Charts â”€â”€ */
+/* ── Charts ── */
 const c1 = $("c1"), c2 = $("c2"), c3 = $("c3");
 const x1 = c1.getContext("2d"), x2 = c2.getContext("2d"), x3 = c3.getContext("2d");
 
@@ -655,7 +655,7 @@ function renderCharts() {
   drawLine(x3, hist, 'ka', '#ff3366', m3, cw, ch);
 }
 
-/* â”€â”€ HUD â”€â”€ */
+/* ── HUD ── */
 function computeReffelt() {
   return master ? Math.min(8, Math.max(1, Math.floor((1 - gS) * 15) + 1)) : 0;
 }
@@ -698,7 +698,7 @@ function updateHUD() {
   $("status").innerText = 'Frame: ' + frame + ' | Z: ' + gZ.toFixed(3) + ' | Mode: ' + (master ? 'MASTER' : 'CLASSICAL');
 }
 
-/* â”€â”€ CSV export â”€â”€ */
+/* ── CSV export ── */
 function exportCSV() {
   let hdr = 'frame,Z,maxZ,s,k,eps,nu_t,R_eff,reffelt,stretch,damp\n';
   let rows = csvLog.map(r => r.f + ',' + r.z + ',' + r.mz + ',' + r.s + ',' + r.k + ',' + r.e + ',' + r.nt + ',' + r.re + ',' + r.r + ',' + r.st + ',' + r.dp).join('\n');
@@ -707,7 +707,7 @@ function exportCSV() {
 }
 $("exportBtn").onclick = exportCSV;
 
-/* â”€â”€ Resize â”€â”€ */
+/* ── Resize ── */
 function onResize() {
   let w = vp.clientWidth, h = vp.clientHeight;
   renderer.setSize(w, h);
@@ -718,7 +718,7 @@ function onResize() {
 window.addEventListener('resize', onResize);
 setTimeout(onResize, 100);
 
-/* â”€â”€ Main loop â”€â”€ */
+/* ── Main loop ── */
 let vizFrame = 0;
 function animate() {
   requestAnimationFrame(animate);

@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Geometric Regularity Proof | Bakry-Ã‰mery Curvature</title>
+<title>Geometric Regularity Proof | Bakry-Émery Curvature</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css">
 <style>
@@ -40,18 +40,18 @@ a.nav:hover{background:var(--txt);color:#000}
 <body>
 <div id="sidebar">
 <h2>GEOMETRIC REGULARITY<span class="badge">PROOF</span></h2>
-<div style="margin-bottom:6px;font-size:0.65em;color:#888">Bakry-Ã‰mery curvature of the eddy viscosity manifold</div>
+<div style="margin-bottom:6px;font-size:0.65em;color:#888">Bakry-Émery curvature of the eddy viscosity manifold</div>
 
-<div class="step"><div class="stl">Step 1 â€” Given (Eq 10 closure)</div><div id="eq1"></div></div>
-<div class="step"><div class="stl">Step 2 â€” Log-viscosity</div><div id="eq2"></div></div>
-<div class="step"><div class="stl">Step 3 â€” Hessian of Ïˆ</div><div id="eq3"></div>
-<div style="color:#4488ff;font-size:0.85em;margin-top:3px">Both eigenvalues negative â†’ Ïˆ strictly concave</div></div>
-<div class="step"><div class="stl">Step 4 â€” Bakry-Ã‰mery Ricci</div><div id="eq4"></div>
+<div class="step"><div class="stl">Step 1 — Given (Eq 10 closure)</div><div id="eq1"></div></div>
+<div class="step"><div class="stl">Step 2 — Log-viscosity</div><div id="eq2"></div></div>
+<div class="step"><div class="stl">Step 3 — Hessian of ψ</div><div id="eq3"></div>
+<div style="color:#4488ff;font-size:0.85em;margin-top:3px">Both eigenvalues negative → ψ strictly concave</div></div>
+<div class="step"><div class="stl">Step 4 — Bakry-Émery Ricci</div><div id="eq4"></div>
 <div style="color:#00ffcc;font-size:0.85em;margin-top:3px">Positive definite! (negative of negative = positive)</div></div>
-<div class="step"><div class="stl">Step 5 â€” Spectral gap (Îº > 0)</div><div id="eq5"></div></div>
-<div class="step"><div class="stl">Step 6 â€” Wasserstein-LSV transfer</div><div id="eq6"></div>
-<div style="color:#ffaa00;font-size:0.85em;margin-top:3px">Ric_BE â‰¥ Îº âŸº Îº-displacement convexity of H along Wâ‚‚ geodesics (Villani 2009) âŸ¹ weighted PoincarÃ© via HWI (Otto-Villani 2000)</div></div>
-<div class="step"><div class="stl">Step 7 â€” Enstrophy inequality (ZÂ² supercritical)</div><div id="eq7"></div></div>
+<div class="step"><div class="stl">Step 5 — Spectral gap (κ > 0)</div><div id="eq5"></div></div>
+<div class="step"><div class="stl">Step 6 — Wasserstein-LSV transfer</div><div id="eq6"></div>
+<div style="color:#ffaa00;font-size:0.85em;margin-top:3px">Ric_BE ≥ κ ⟺ κ-displacement convexity of H along W₂ geodesics (Villani 2009) ⟹ weighted Poincaré via HWI (Otto-Villani 2000)</div></div>
+<div class="step"><div class="stl">Step 7 — Enstrophy inequality (Z² supercritical)</div><div id="eq7"></div></div>
 
 <div class="result"><div style="font-size:0.65em;color:#888;margin-bottom:4px">CONCLUSION</div><div id="eq8"></div>
 <div style="font-size:0.75em;color:#00ffcc;margin-top:4px">Global regularity by Sobolev bootstrap</div></div>
@@ -68,10 +68,10 @@ a.nav:hover{background:var(--txt);color:#000}
 <div id="top">
 <div id="viewport">
 <div id="info">
-<div style="color:#fff;font-weight:bold;margin-bottom:3px">Î½_t MANIFOLD</div>
+<div style="color:#fff;font-weight:bold;margin-bottom:3px">ν_t MANIFOLD</div>
 <div>Height = smoothness s</div>
-<div>Radius = Î½_t scale</div>
-<div>Angle Î¸ = vorticity phase (spin)</div>
+<div>Radius = ν_t scale</div>
+<div>Angle θ = vorticity phase (spin)</div>
 <div style="margin-top:4px;color:#4488ff">Blue = negative K (spectral gap)</div>
 <div style="color:#ff3366">Red = positive K</div>
 <div style="margin-top:4px;color:#888">Geodesics diverge at the <span style="color:#4488ff">pinch</span></div>
@@ -79,19 +79,19 @@ a.nav:hover{background:var(--txt);color:#000}
 <div id="cbar">
 <div>Gaussian Curvature K</div>
 <div class="grad" style="background:linear-gradient(to right,#0044ff,#4488ff,#555,#ff6644,#ff3366)"></div>
-<div class="labels"><span style="color:#4488ff">Kâ‰ª0</span><span style="color:#555">0</span><span style="color:#ff3366">Kâ‰«0</span></div>
+<div class="labels"><span style="color:#4488ff">K≪0</span><span style="color:#555">0</span><span style="color:#ff3366">K≫0</span></div>
 </div>
 </div>
 <div id="rp">
-<div class="pbox"><div class="plbl"><span style="color:#4488ff">â—</span> Gaussian K(s) <span style="color:#ff3366">â—</span></div><canvas id="c1"></canvas></div>
-<div class="pbox"><div class="plbl"><span style="color:#00ffcc">â—</span> Spectral gap Îº(s,|v|)</div><canvas id="c2"></canvas></div>
-<div class="pbox"><div class="plbl"><span style="color:#ffaa00">â—</span> dZ/dt = CZ^1.5 âˆ’ Î³'sZÂ²</div><canvas id="c3"></canvas></div>
+<div class="pbox"><div class="plbl"><span style="color:#4488ff">●</span> Gaussian K(s) <span style="color:#ff3366">●</span></div><canvas id="c1"></canvas></div>
+<div class="pbox"><div class="plbl"><span style="color:#00ffcc">●</span> Spectral gap κ(s,|v|)</div><canvas id="c2"></canvas></div>
+<div class="pbox"><div class="plbl"><span style="color:#ffaa00">●</span> dZ/dt = CZ^1.5 − γ'sZ²</div><canvas id="c3"></canvas></div>
 </div>
 </div>
 <div id="ctrl">
 <span>|v|:</span><input type="range" id="slV" min="0.5" max="8" step="0.1" value="3"><span id="vV">3.0</span>
 <span>s_min:</span><input type="range" id="slS" min="0.01" max="0.5" step="0.01" value="0.05"><span id="vS">0.05</span>
-<span>C/Î³':</span><input type="range" id="slR" min="0.1" max="5" step="0.1" value="1.0"><span id="vR">1.0</span>
+<span>C/γ':</span><input type="range" id="slR" min="0.1" max="5" step="0.1" value="1.0"><span id="vR">1.0</span>
 <span id="zc" style="color:#ffaa00"></span>
 </div>
 </div>
@@ -103,7 +103,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 const kR = (t, e) => katex.render(t, e, { displayMode: true });
 
-/* â”€â”€ KaTeX equations â”€â”€ */
+/* ── KaTeX equations ── */
 kR("\\nu_t = \\frac{C_\\mu}{4}(1\\!-\\!s)(s\\!+\\!0.01)|\\mathbf{v}|", document.getElementById("eq1"));
 kR("\\psi = \\ln\\nu_t = c + \\ln(1\\!-\\!s) + \\ln(s\\!+\\!0.01) + \\ln|\\mathbf{v}|", document.getElementById("eq2"));
 kR("H(\\psi) = \\begin{pmatrix} -\\frac{1}{(1-s)^2} - \\frac{1}{(s+.01)^2} & 0 \\\\ 0 & -\\frac{1}{|v|^2} \\end{pmatrix}", document.getElementById("eq3"));
@@ -113,7 +113,7 @@ kR("\\int\\!\\nu_t|\\nabla\\omega|^2 dx \\;\\geq\\; \\kappa\\!\\int\\!\\nu_t|\\o
 kR("\\frac{dZ}{dt} \\leq C Z^{3/2} - \\gamma' s\\, Z^2", document.getElementById("eq7"));
 kR("\\boxed{Z(t) \\leq Z_{\\max} < \\infty \\quad \\forall\\, t > 0}", document.getElementById("eq8"));
 
-/* â”€â”€ Hourglass profile â”€â”€ */
+/* ── Hourglass profile ── */
 const R_MIN = 0.3, R_MAX = 1.0, PINCH_W = 1.2;
 function profile(z) {
   const t = Math.tanh(PINCH_W * z);
@@ -133,7 +133,7 @@ function gaussK(z) {
   return -rpp / (r * d * d);
 }
 
-/* â”€â”€ Three.js setup â”€â”€ */
+/* ── Three.js setup ── */
 const vp = document.getElementById('viewport');
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x0a0a10);
@@ -156,13 +156,13 @@ vp.appendChild(renderer.domElement);
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true; controls.dampingFactor = 0.08;
 
-/* â”€â”€ Lighting â”€â”€ */
+/* ── Lighting ── */
 scene.add(new THREE.AmbientLight(0x334455, 1.2));
 const dl = new THREE.DirectionalLight(0xffffff, 0.8);
 dl.position.set(3, 4, 2);
 scene.add(dl);
 
-/* â”€â”€ Build hourglass geometry â”€â”€ */
+/* ── Build hourglass geometry ── */
 const NZ = 100, NT = 64, Z_RANGE = 1.8;
 const positions = [], normals = [], colors = [], indices = [];
 let K_MAX = 0;
@@ -216,7 +216,7 @@ scene.add(mesh);
 const wireMat = new THREE.MeshBasicMaterial({ color: 0x00ffcc, wireframe: true, transparent: true, opacity: 0.04 });
 scene.add(new THREE.Mesh(geom.clone(), wireMat));
 
-/* â”€â”€ Geodesics â”€â”€ */
+/* ── Geodesics ── */
 function traceGeodesic(z0, theta0, h, dz, steps) {
   const pts = [];
   let z = z0, th = theta0;
@@ -239,7 +239,7 @@ function addGeoLine(pts, color) {
   scene.add(new THREE.Line(g, new THREE.LineBasicMaterial({ color, linewidth: 2 })));
 }
 
-/* pair of geodesics that pass through the neck â€” start close, diverge */
+/* pair of geodesics that pass through the neck — start close, diverge */
 const r_top = profile(Z_RANGE);
 const geo_colors = [0x00ffcc, 0x66ffee, 0xff66aa, 0xffaa66];
 for (let g = 0; g < 4; g++) {
@@ -254,7 +254,7 @@ const h_bounce = R_MIN + 0.08;
 const bounce_pts = traceGeodesic(Z_RANGE, Math.PI, h_bounce, -0.01, 350);
 addGeoLine(bounce_pts, 0xffaa00);
 
-/* â”€â”€ Labels â”€â”€ */
+/* ── Labels ── */
 function makeLabel(text, pos, color) {
   const canvas = document.createElement('canvas');
   canvas.width = 256; canvas.height = 48;
@@ -270,8 +270,8 @@ function makeLabel(text, pos, color) {
   scene.add(sp);
 }
 
-makeLabel('s â†’ 1  (laminar)', new THREE.Vector3(0, Z_RANGE + 0.2, 0), '#888888');
-makeLabel('s â†’ 0  (turbulent)', new THREE.Vector3(0, -Z_RANGE - 0.2, 0), '#888888');
+makeLabel('s → 1  (laminar)', new THREE.Vector3(0, Z_RANGE + 0.2, 0), '#888888');
+makeLabel('s → 0  (turbulent)', new THREE.Vector3(0, -Z_RANGE - 0.2, 0), '#888888');
 makeLabel('PINCH  K < 0', new THREE.Vector3(R_MIN + 0.6, 0, 0), '#4488ff');
 
 /* thin ring at the pinch */
@@ -286,7 +286,7 @@ const axH = new THREE.AxesHelper(0.25);
 axH.position.set(-1.2, -Z_RANGE, -1.2);
 scene.add(axH);
 
-/* â”€â”€ Plots â”€â”€ */
+/* ── Plots ── */
 const c1 = document.getElementById('c1'), c2 = document.getElementById('c2'), c3 = document.getElementById('c3');
 const x1 = c1.getContext('2d'), x2 = c2.getContext('2d'), x3 = c3.getContext('2d');
 
@@ -361,7 +361,7 @@ function renderPlot2(ctx, w, h) {
   const pw = w - 45, ph = h - 28;
   const V = parseFloat(document.getElementById('slV').value);
   const N = 200;
-  /* Îº vs s for different |v| */
+  /* κ vs s for different |v| */
   const vvals = [V, 1, 5];
   const vcolors = ['#00ffcc', '#666', '#666'];
   const vlabels = ['|v|=' + V.toFixed(1), '|v|=1', '|v|=5'];
@@ -389,19 +389,19 @@ function renderPlot2(ctx, w, h) {
     }
     ctx.stroke();
   }
-  /* highlight: Îº = 1/|v|Â² line */
+  /* highlight: κ = 1/|v|² line */
   const kv = 1/(V*V);
   const yv = 8 + ph * (1 - kv / kmax);
   ctx.strokeStyle = '#ffaa00'; ctx.setLineDash([4,4]); ctx.lineWidth = 1;
   ctx.beginPath(); ctx.moveTo(36, yv); ctx.lineTo(w-5, yv); ctx.stroke();
   ctx.setLineDash([]);
   ctx.fillStyle = '#ffaa00'; ctx.font = '9px Courier New';
-  ctx.fillText('Îº=1/|v|Â²=' + kv.toFixed(3), w - 100, yv - 4);
+  ctx.fillText('κ=1/|v|²=' + kv.toFixed(3), w - 100, yv - 4);
   /* axis labels */
   ctx.fillStyle = '#666'; ctx.font = '10px Courier New';
   ctx.fillText('s=0', 36, h - 4);
   ctx.fillText('s=1', w - 28, h - 4);
-  ctx.fillStyle = '#00ffcc'; ctx.fillText('Îº>0 âˆ€s', 6, 18);
+  ctx.fillStyle = '#00ffcc'; ctx.fillText('κ>0 ∀s', 6, 18);
 }
 
 function renderPlot3(ctx, w, h) {
@@ -477,7 +477,7 @@ function renderPlot3(ctx, w, h) {
   ctx.stroke();
   /* labels */
   ctx.fillStyle = '#ff3366'; ctx.font = '9px Courier New'; ctx.fillText('CZ^1.5', w - 50, 16);
-  ctx.fillStyle = '#00ffcc'; ctx.fillText('Î³\'sZÂ²', w - 50, 28);
+  ctx.fillStyle = '#00ffcc'; ctx.fillText('γ\'sZ²', w - 50, 28);
   ctx.fillStyle = '#ffaa00'; ctx.fillText('net', w - 50, 40);
   ctx.fillStyle = '#666'; ctx.fillText('Z=0', 36, h - 4);
 }
@@ -496,7 +496,7 @@ renderAllPlots();
 setTimeout(renderAllPlots, 400);
 setTimeout(renderAllPlots, 1000);
 
-/* â”€â”€ Controls â”€â”€ */
+/* ── Controls ── */
 document.getElementById('slV').oninput = () => {
   document.getElementById('vV').innerText = parseFloat(document.getElementById('slV').value).toFixed(1);
   plotsDirty = true;
@@ -510,7 +510,7 @@ document.getElementById('slR').oninput = () => {
   plotsDirty = true;
 };
 
-/* â”€â”€ Resize â”€â”€ */
+/* ── Resize ── */
 function onResize() {
   const w = vp.clientWidth, h = vp.clientHeight;
   renderer.setSize(w, h);
@@ -521,7 +521,7 @@ function onResize() {
 window.addEventListener('resize', onResize);
 setTimeout(onResize, 100);
 
-/* â”€â”€ Animate â”€â”€ */
+/* ── Animate ── */
 function animate() {
   requestAnimationFrame(animate);
   mesh.rotation.y += 0.002;
