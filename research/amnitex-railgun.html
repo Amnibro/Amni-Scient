@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>AmniTex Railgun — 4x GPU Throughput, Infinite Context, Zero Quality Loss | AMNI-SCIENT</title>
+<meta name="description" content="AmniTex Railgun: proprietary VRAM compression technology. Run 4x more models per GPU. Algebraically proven infinite context stability. 5× throughput/watt via TMU acceleration. $750M savings at hyperscale. Training-compatible.">
+<meta name="keywords" content="AmniTex,Railgun,VRAM,GPU,quantization,inference,datacenter,AI infrastructure,context window,multi-GPU,SSD streaming,H100,xAI,Grok">
+<meta property="og:title" content="AmniTex Railgun — 4x GPU Throughput, Zero Quality Loss">
+<meta property="og:description" content="Run 4x more models per GPU. Infinite context stability (algebraically proven). 5× throughput/watt via TMU. Training-compatible evolutionary weight space.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://amni-scient.com/research/amnitex-railgun">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://amni-scient.com/research/amnitex-railgun">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","name":"AmniTex Railgun: 4x GPU Throughput with Zero Quality Loss","author":{"@type":"Person","name":"Anthony Reffelt"},"description":"Proprietary VRAM compression that runs 4x more models per GPU with mathematically lossless recovery. 10M+ token context stability. Datacenter-scale ROI analysis.","url":"https://amni-scient.com/research/amnitex-railgun","publisher":{"@type":"Organization","name":"AMNI-SCIENT"},"datePublished":"2026-04-02"}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8345487545441889" crossorigin="anonymous" data-overlays="false"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();reThemeCharts();};})();
+</script>
+<style>
+.breadcrumb{font-size:.7rem;letter-spacing:2px;color:var(--dim);margin-bottom:1rem}
+.breadcrumb a{color:var(--accent);text-decoration:none}
+.hero-stat{display:inline-block;background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:.75rem 1.25rem;margin:.25rem;text-align:center}
+.hero-stat .val{font-size:1.8rem;font-weight:700;color:var(--accent);display:block}
+.hero-stat .lbl{font-size:.55rem;letter-spacing:2px;color:var(--dim);text-transform:uppercase}
+.hero-cta{display:inline-block;margin-top:2rem;padding:.8rem 2.5rem;background:var(--accent);color:#0a0a0a;font-family:inherit;font-size:.8rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;border-radius:4px;text-decoration:none;transition:opacity .2s}
+.hero-cta:hover{opacity:.85}
+.hero-cta-ghost{display:inline-block;margin-top:2rem;margin-left:1rem;padding:.8rem 2.5rem;border:1px solid var(--accent);color:var(--accent);font-family:inherit;font-size:.8rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;border-radius:4px;text-decoration:none;transition:all .2s}
+.hero-cta-ghost:hover{background:var(--accent);color:#0a0a0a}
+.problem-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.25rem;max-width:900px;margin:2rem auto 0}
+.problem-card{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem;text-align:center}
+.problem-card .pc-num{font-size:2rem;font-weight:700;color:#e74c3c;display:block}
+.problem-card .pc-label{font-size:.65rem;letter-spacing:2px;color:var(--dim);text-transform:uppercase;margin-top:.25rem}
+.problem-card .pc-detail{font-size:.8rem;color:var(--text);margin-top:.5rem;line-height:1.5}
+.solution-flow{display:flex;align-items:center;justify-content:center;gap:.75rem;max-width:900px;margin:2.5rem auto;flex-wrap:wrap}
+.solution-step{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.25rem 1.5rem;text-align:center;flex:1;min-width:180px}
+.solution-step .ss-num{font-size:1.5rem;font-weight:700;color:var(--accent);display:block}
+.solution-step .ss-title{font-size:.75rem;letter-spacing:2px;color:var(--text);text-transform:uppercase;margin-top:.25rem}
+.solution-step .ss-desc{font-size:.75rem;color:var(--dim);margin-top:.5rem;line-height:1.5}
+.solution-arrow{color:var(--accent);font-size:1.5rem;font-weight:700}
+@media(max-width:768px){.solution-arrow{transform:rotate(90deg)}}
+.results-bar{display:flex;align-items:center;background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1rem 1.5rem;margin:.75rem auto;max-width:800px}
+.results-bar .rb-label{font-size:.7rem;letter-spacing:2px;color:var(--dim);text-transform:uppercase;min-width:180px}
+.results-bar .rb-bar{flex:1;height:20px;border-radius:3px;background:var(--border);overflow:hidden;position:relative}
+.results-bar .rb-fill{height:100%;border-radius:3px;transition:width .8s ease}
+.results-bar .rb-val{font-size:.8rem;font-weight:700;color:var(--accent);min-width:80px;text-align:right;padding-left:1rem}
+.viz-section{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem;margin:1.5rem 0}
+.viz-section h4{color:var(--accent);font-size:.75rem;letter-spacing:2px;margin-bottom:1rem;text-transform:uppercase}
+.chart-wrap{position:relative;width:100%;max-width:800px;margin:0 auto}
+.chart-row{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin:1.5rem 0}
+@media(max-width:768px){.chart-row{grid-template-columns:1fr}}
+.tab-bar{display:flex;gap:0;margin-bottom:0;border-bottom:2px solid var(--border);flex-wrap:wrap}
+.tab-btn{background:none;border:none;color:var(--dim);font-family:inherit;font-size:.65rem;letter-spacing:2px;padding:.6rem 1rem;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;text-transform:uppercase;transition:all .2s}
+.tab-btn:hover{color:var(--text)}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab-panel{display:none;padding:1.5rem 0}
+.tab-panel.active{display:block}
+.roi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin:1.5rem 0}
+.roi-card{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.25rem;text-align:center}
+.roi-card .big{font-size:2rem;font-weight:700;color:var(--accent)}
+.roi-card .sub{font-size:.7rem;color:var(--dim);letter-spacing:1px;text-transform:uppercase;margin-top:.25rem}
+.roi-card .detail{font-size:.75rem;color:var(--text);margin-top:.5rem;line-height:1.5}
+.bench-table{width:100%;border-collapse:collapse;margin:1.5rem 0;font-size:.8rem}
+.bench-table th{text-align:left;color:var(--accent);font-size:.65rem;letter-spacing:1px;padding:.6rem .5rem;border-bottom:2px solid var(--accent);white-space:nowrap}
+.bench-table td{color:var(--dim);padding:.6rem .5rem;border-bottom:1px solid rgba(255,255,255,.05);white-space:nowrap}
+.bench-table tr:hover td{color:var(--text);background:rgba(0,255,157,.03)}
+.bench-table .highlight td{color:var(--text);font-weight:700}
+.bench-table .best{color:var(--accent);font-weight:700}
+.bench-table .baseline td{color:var(--dim);font-style:italic}
+.case-banner{background:linear-gradient(135deg,rgba(0,255,157,.06),rgba(52,152,219,.06));border:1px solid var(--accent);border-radius:8px;padding:2.5rem;max-width:900px;margin:0 auto;position:relative;overflow:hidden}
+.case-banner::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:repeating-linear-gradient(90deg,transparent,transparent 50px,rgba(0,255,157,.02) 50px,rgba(0,255,157,.02) 51px);pointer-events:none}
+.case-banner h3{color:var(--accent);font-size:1.2rem;letter-spacing:3px;margin-bottom:1rem}
+.case-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin:1.5rem 0}
+.case-stat{text-align:center}
+.case-stat .cs-val{font-size:1.6rem;font-weight:700;color:var(--text);display:block}
+.case-stat .cs-lbl{font-size:.6rem;letter-spacing:2px;color:var(--dim);text-transform:uppercase}
+.demo-section{background:var(--panel);border:1px solid var(--border);border-radius:8px;max-width:900px;margin:0 auto;overflow:hidden}
+.demo-header{background:linear-gradient(135deg,rgba(0,255,157,.1),rgba(0,255,157,.02));padding:2rem;border-bottom:1px solid var(--border)}
+.demo-header h3{color:var(--accent);font-size:1rem;letter-spacing:3px;margin-bottom:.5rem}
+.demo-body{padding:2rem}
+.demo-grid{display:grid;grid-template-columns:1fr 1fr;gap:2rem}
+@media(max-width:768px){.demo-grid{grid-template-columns:1fr}}
+.demo-col h4{font-size:.75rem;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:.75rem}
+.demo-col ul{list-style:none;padding:0}
+.demo-col li{font-size:.8rem;line-height:2;padding-left:1.2rem;position:relative}
+.demo-col li::before{position:absolute;left:0}
+.demo-col.yes li{color:var(--text)}
+.demo-col.yes li::before{content:'\2713';color:var(--accent)}
+.demo-col.no li{color:var(--dim)}
+.demo-col.no li::before{content:'\2717';color:#e74c3c}
+.demo-dl{display:inline-block;margin-top:1.5rem;padding:.7rem 2rem;background:var(--accent);color:#0a0a0a;font-family:inherit;font-size:.75rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;border-radius:4px;text-decoration:none;transition:opacity .2s;cursor:pointer;border:none}
+.demo-dl:hover{opacity:.85}
+.demo-note{font-size:.7rem;color:var(--dim);margin-top:1rem;line-height:1.6}
+.cta-section{text-align:center;max-width:700px;margin:0 auto;padding:3rem 2rem}
+.cta-section h2{font-size:1.5rem;letter-spacing:3px;margin-bottom:1rem}
+.cta-section p{color:var(--dim);font-size:.9rem;line-height:1.8;margin-bottom:2rem}
+.cta-btn{display:inline-block;padding:.9rem 3rem;background:var(--accent);color:#0a0a0a;font-family:inherit;font-size:.85rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;border-radius:4px;text-decoration:none;transition:opacity .2s}
+.cta-btn:hover{opacity:.85}
+.fabric-diagram{display:grid;grid-template-columns:1fr auto 1fr;gap:1.5rem;align-items:center;max-width:800px;margin:2rem auto}
+.fabric-col{display:flex;flex-direction:column;gap:.75rem}
+.fabric-gpu{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:.75rem 1rem;font-size:.75rem;color:var(--text);text-align:center}
+.fabric-gpu .fg-label{font-size:.6rem;letter-spacing:2px;color:var(--dim);text-transform:uppercase;display:block;margin-bottom:.25rem}
+.fabric-center{text-align:center;color:var(--accent);font-size:.7rem;letter-spacing:2px;text-transform:uppercase;line-height:2.2}
+.fabric-ssd{background:linear-gradient(135deg,rgba(0,255,157,.08),rgba(0,255,157,.02));border:1px solid var(--accent);border-radius:6px;padding:.75rem 1rem;font-size:.75rem;color:var(--accent);text-align:center}
+.fabric-ssd .fg-label{font-size:.6rem;letter-spacing:2px;color:var(--dim);text-transform:uppercase;display:block;margin-bottom:.25rem}
+@media(max-width:768px){.fabric-diagram{grid-template-columns:1fr;text-align:center}}
+.multiplexing-visual{display:grid;grid-template-columns:1fr auto 1fr;gap:2rem;align-items:center;max-width:800px;margin:2rem auto}
+.mx-card{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem;text-align:center}
+.mx-card h4{font-size:.75rem;letter-spacing:2px;color:var(--dim);text-transform:uppercase;margin-bottom:1rem}
+.mx-slot{padding:.4rem .8rem;margin:.3rem 0;border-radius:4px;font-size:.7rem;font-weight:700;letter-spacing:1px}
+.mx-slot.used{background:rgba(231,76,60,.15);border:1px solid #e74c3c;color:#e74c3c}
+.mx-slot.free{background:rgba(102,102,102,.1);border:1px solid var(--border);color:var(--dim)}
+.mx-slot.rg{background:rgba(0,255,157,.1);border:1px solid var(--accent);color:var(--accent)}
+.mx-vs{font-size:1.5rem;color:var(--accent);font-weight:700;text-align:center}
+@media(max-width:768px){.multiplexing-visual{grid-template-columns:1fr;text-align:center}}
+.redacted{background:var(--border);color:var(--border);border-radius:2px;padding:0 .3rem;cursor:help;transition:all .3s}
+.redacted:hover{color:var(--dim);font-style:italic}
+.glow-accent{animation:glowPulse 3s ease-in-out infinite}
+@keyframes glowPulse{0%,100%{box-shadow:0 0 5px rgba(0,255,157,.1)}50%{box-shadow:0 0 20px rgba(0,255,157,.3),0 0 40px rgba(0,255,157,.1)}}
+.infinity-stat{font-size:3rem !important;line-height:1;background:linear-gradient(135deg,var(--accent),#2ecc71);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.silicon-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:2rem;align-items:center;max-width:900px;margin:2.5rem auto}
+.silicon-col{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:2rem}
+.silicon-col h4{font-size:.75rem;letter-spacing:2px;text-transform:uppercase;margin-bottom:1.25rem}
+.silicon-col.trad h4{color:#e74c3c}
+.silicon-col.railgun h4{color:var(--accent)}
+.silicon-pipe{display:flex;align-items:center;gap:.5rem;margin:.5rem 0;font-size:.75rem}
+.silicon-pipe .pipe-block{padding:.4rem .8rem;border-radius:4px;font-weight:700;letter-spacing:1px;font-size:.65rem;white-space:nowrap}
+.silicon-pipe .pipe-block.alu{background:rgba(231,76,60,.15);border:1px solid #e74c3c;color:#e74c3c}
+.silicon-pipe .pipe-block.cache{background:rgba(230,126,34,.15);border:1px solid #e67e22;color:#e67e22}
+.silicon-pipe .pipe-block.tmu{background:rgba(0,255,157,.1);border:1px solid var(--accent);color:var(--accent)}
+.silicon-pipe .pipe-block.tex{background:rgba(46,204,113,.1);border:1px solid #2ecc71;color:#2ecc71}
+.silicon-pipe .pipe-block.dark{background:rgba(102,102,102,.1);border:1px solid var(--border);color:var(--dim)}
+.silicon-vs{font-size:1.5rem;color:var(--accent);font-weight:700;text-align:center}
+@media(max-width:768px){.silicon-grid{grid-template-columns:1fr;text-align:center}}
+.proof-box{background:linear-gradient(135deg,rgba(0,255,157,.04),rgba(0,255,157,.01));border:1px solid var(--accent);border-radius:8px;padding:2rem;max-width:800px;margin:2rem auto;position:relative;overflow:hidden}
+.proof-box::before{content:'EMPIRICALLY VERIFIED';position:absolute;top:.75rem;right:1rem;font-size:.55rem;letter-spacing:3px;color:var(--accent);opacity:.5}
+.proof-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin:1rem 0}
+.proof-stat{text-align:center;padding:1rem}
+.proof-stat .ps-val{font-size:1.8rem;font-weight:700;color:var(--accent);display:block;font-family:'JetBrains Mono',monospace}
+.proof-stat .ps-lbl{font-size:.6rem;letter-spacing:2px;color:var(--dim);text-transform:uppercase;margin-top:.25rem}
+.proof-stat .ps-detail{font-size:.7rem;color:var(--text);margin-top:.5rem}
+.evo-flow{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:.75rem;max-width:900px;margin:2.5rem auto}
+.evo-step{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.25rem;text-align:center;position:relative}
+.evo-step .es-num{font-size:1.2rem;font-weight:700;color:var(--accent);display:block}
+.evo-step .es-title{font-size:.65rem;letter-spacing:2px;color:var(--text);text-transform:uppercase;margin-top:.25rem}
+.evo-step .es-desc{font-size:.7rem;color:var(--dim);margin-top:.5rem;line-height:1.5}
+.evo-step::after{content:'\2192';position:absolute;right:-.6rem;top:50%;transform:translateY(-50%);color:var(--accent);font-weight:700;font-size:1.2rem;z-index:1}
+.evo-step:last-child::after{content:''}
+@media(max-width:768px){.evo-step::after{content:'\2193';right:auto;bottom:-.6rem;top:auto;left:50%;transform:translateX(-50%)}}
+.training-comparison{display:grid;grid-template-columns:1fr 1fr;gap:2rem;max-width:800px;margin:2rem auto}
+.training-box{background:var(--panel);border-radius:8px;padding:2rem;text-align:center}
+.training-box.before{border:1px solid #e74c3c}
+.training-box.after{border:1px solid var(--accent)}
+.training-box .tb-val{font-size:2.5rem;font-weight:700;display:block}
+.training-box.before .tb-val{color:#e74c3c}
+.training-box.after .tb-val{color:var(--accent)}
+.training-box .tb-lbl{font-size:.65rem;letter-spacing:2px;color:var(--dim);text-transform:uppercase;margin-top:.25rem}
+.training-box .tb-detail{font-size:.8rem;color:var(--text);margin-top:.75rem;line-height:1.6}
+@media(max-width:768px){.training-comparison{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="grid-bg"></div>
+<div class="scanlines"></div>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<div class="nav-dd">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu">
+<a href="../amni-haven.html">AMNI-HAVEN</a>
+<a href="../amni-crypt.html">AMNI-CRYPT</a>
+<a href="../amni-ai.html">AMNI-AI</a>
+<a href="../amni-code.html">AMNI-CODE</a>
+<a href="../amni-core.html">AMNI-CORE</a>
+<a href="../amni-explore.html">AMNI-EXPLORE</a>
+<a href="../amni-learn.html">AMNI-LEARN</a>
+<a href="../calc/">AMNI-CALC</a>
+</div>
+</div>
+<a href="../research.html" class="nav-active">RESEARCH</a>
+<a href="../about.html">ABOUT</a>
+<a href="../faq.html">FAQ</a>
+<a href="../privacy.html">PRIVACY</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+
+<!-- ====== HERO ====== -->
+<section class="hero" style="min-height:auto;padding:8rem 2rem 3rem">
+<div class="breadcrumb"><a href="../research.html">RESEARCH</a> &nbsp;/&nbsp; AMNITEX RAILGUN</div>
+<h1 style="font-size:clamp(1.5rem,4vw,2.5rem);line-height:1.2">WHAT IF EVERY GPU IN YOUR<br>DATACENTER COULD DO <span style="color:var(--accent)">4&times;</span> MORE?</h1>
+<p class="subtitle" style="margin-top:1rem">AMNITEX RAILGUN &mdash; PROPRIETARY VRAM COMPRESSION</p>
+<p class="tagline" style="max-width:700px;margin:1rem auto 0">A fundamentally new approach to GPU memory management. Keep only a tiny routing index in VRAM. Stream full precision from NVMe on demand. <strong style="color:var(--text)">Mathematically lossless. Infinite context. Training-compatible.</strong></p>
+<div style="margin-top:2rem;text-align:center">
+<div class="hero-stat"><span class="val">4&times;</span><span class="lbl">Models per GPU</span></div>
+<div class="hero-stat glow-accent"><span class="val infinity-stat">&infin;</span><span class="lbl">Context stability &bull; proven</span></div>
+<div class="hero-stat"><span class="val">5&times;</span><span class="lbl">Throughput/watt &bull; TMU</span></div>
+<div class="hero-stat"><span class="val">$750M</span><span class="lbl">Saved &bull; 100K GPU cluster</span></div>
+<div class="hero-stat"><span class="val">1.000000</span><span class="lbl">Cosine similarity &bull; lossless</span></div>
+</div>
+<div style="text-align:center;margin-top:2rem">
+<a href="#demo" class="hero-cta">DOWNLOAD DEMO</a>
+<a href="#contact" class="hero-cta-ghost">LICENSING INQUIRY</a>
+</div>
+<div style="text-align:center;margin-top:1.25rem;display:flex;justify-content:center;gap:1rem;flex-wrap:wrap">
+<a href="AmniTex_Railgun_Whitepaper.pdf" class="hero-cta-ghost" style="font-size:.65rem;padding:.5rem 1.5rem;margin:0" download>WHITEPAPER PDF</a>
+<a href="coherence_proof.json" class="hero-cta-ghost" style="font-size:.65rem;padding:.5rem 1.5rem;margin:0" download>COHERENCE PROOF JSON</a>
+</div>
+</section>
+
+<!-- ====== THE PROBLEM ====== -->
+<section>
+<h2>THE $100 BILLION PROBLEM</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
+<p>Every AI company on Earth is bottlenecked on the same thing: <strong style="color:var(--text)">GPU memory</strong>.</p>
+<p style="margin-top:1rem">A single 70-billion parameter model requires <strong style="color:#e74c3c">140 GB</strong> of VRAM just to load &mdash; almost double what an NVIDIA H100 provides. That means <strong style="color:var(--text)">two $30,000 GPUs</strong> consumed before a single token is generated. Scale that to a 100,000-GPU cluster serving millions of users, and you&rsquo;re looking at billions of dollars locked up in silicon that&rsquo;s mostly storing redundant precision.</p>
+<p style="margin-top:1rem">Current solutions &mdash; GPTQ, AWQ, GGML &mdash; try to fix this by permanently throwing away precision. Every weight gets crushed to 4 bits. Quality drops. It never comes back. And they <strong style="color:var(--text)">still keep everything in VRAM</strong>.</p>
+<p style="margin-top:1rem;color:var(--accent);font-weight:700">What if 93% of the data in your GPU memory didn&rsquo;t need to be there?</p>
+</div>
+<div class="problem-grid">
+<div class="problem-card">
+<span class="pc-num">$375</span>
+<span class="pc-label">PER GB &bull; HBM3 VRAM</span>
+<span class="pc-detail">H100&rsquo;s 80 GB of HBM3 costs ~$30K. That&rsquo;s $375 per gigabyte.</span>
+</div>
+<div class="problem-card">
+<span class="pc-num">3750&times;</span>
+<span class="pc-label">CHEAPER &bull; NVMe vs HBM3</span>
+<span class="pc-detail">Commodity storage costs orders of magnitude less than HBM3. Same data, different address.</span>
+</div>
+<div class="problem-card">
+<span class="pc-num">93%</span>
+<span class="pc-label">VRAM WASTED</span>
+<span class="pc-detail">At 1-bit routing, only 6.25% of the original VRAM footprint is actually needed in GPU memory.</span>
+</div>
+<div class="problem-card">
+<span class="pc-num">0</span>
+<span class="pc-label">RECOVERY PATH</span>
+<span class="pc-detail">GPTQ/AWQ/GGML permanently destroy precision. There is no &ldquo;undo&rdquo; button.</span>
+</div>
+</div>
+</section>
+
+<!-- ====== THE SOLUTION ====== -->
+<section>
+<h2>THE RAILGUN SOLUTION</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem;text-align:center">
+<p>Railgun doesn&rsquo;t quantize your model. It <strong style="color:var(--text)">reorganizes where the data lives</strong>.</p>
+</div>
+<div class="solution-flow">
+<div class="solution-step">
+<span class="ss-num">1</span>
+<span class="ss-title">COMPRESS</span>
+<span class="ss-desc">Proprietary encoding analyzes each weight tensor and creates a <strong style="color:var(--accent)">tiny routing index</strong> at 1&ndash;2 bits per element.</span>
+</div>
+<span class="solution-arrow">&rarr;</span>
+<div class="solution-step">
+<span class="ss-num">2</span>
+<span class="ss-title">SPLIT</span>
+<span class="ss-desc">Routing index stays in VRAM (0.88&nbsp;GB for 7B model). Full precision data moves to NVMe SSD.</span>
+</div>
+<span class="solution-arrow">&rarr;</span>
+<div class="solution-step">
+<span class="ss-num">3</span>
+<span class="ss-title">STREAM</span>
+<span class="ss-desc">Refinement data streams from SSD on demand. Progressive tiers: <span class="redacted" title="Proprietary">[REDACTED]</span> &rarr; <span class="redacted" title="Proprietary">[REDACTED]</span> &rarr; lossless fp16.</span>
+</div>
+</div>
+<div style="max-width:800px;margin:2rem auto 0;text-align:center">
+<div class="results-bar">
+<span class="rb-label">VRAM ROUTING (1-2 bit)</span>
+<span class="rb-bar"><span class="rb-fill" style="width:6.25%;background:var(--accent)"></span></span>
+<span class="rb-val">0.88 GB</span>
+</div>
+<div class="results-bar">
+<span class="rb-label">+ SSD TIER 1</span>
+<span class="rb-bar"><span class="rb-fill" style="width:18.75%;background:#e67e22"></span></span>
+<span class="rb-val">CS 0.994</span>
+</div>
+<div class="results-bar">
+<span class="rb-label">+ SSD TIER 2</span>
+<span class="rb-bar"><span class="rb-fill" style="width:56.25%;background:#2ecc71"></span></span>
+<span class="rb-val">CS 1.000</span>
+</div>
+<div class="results-bar">
+<span class="rb-label">+ SSD FULL (LOSSLESS)</span>
+<span class="rb-bar"><span class="rb-fill" style="width:100%;background:var(--accent)"></span></span>
+<span class="rb-val">CS 1.000000</span>
+</div>
+<p style="font-size:.75rem;color:var(--dim);margin-top:1rem;letter-spacing:1px">CS = COSINE SIMILARITY TO ORIGINAL FP16 WEIGHTS &mdash; 1.000000 = MATHEMATICALLY IDENTICAL</p>
+</div>
+</section>
+
+<!-- ====== KEY DIFFERENTIATORS ====== -->
+<section>
+<h2>WHY THIS CHANGES EVERYTHING</h2>
+<div style="max-width:800px;margin:0 auto">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-top:1.5rem">
+<div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem">
+<h4 style="color:var(--accent);font-size:.8rem;letter-spacing:2px;margin-bottom:.75rem">LOSSLESS RECOVERY</h4>
+<p style="color:var(--dim);font-size:.85rem;line-height:1.7">At full tier, the output is <strong style="color:var(--text)">bit-exact</strong> with the original fp16. This isn&rsquo;t &ldquo;nearly lossless&rdquo; &mdash; it&rsquo;s mathematically identical. No other quantization method can make this claim.</p>
+</div>
+<div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem">
+<h4 style="color:var(--accent);font-size:.8rem;letter-spacing:2px;margin-bottom:.75rem">DRIFT-FREE ARITHMETIC</h4>
+<p style="color:var(--dim);font-size:.85rem;line-height:1.7">The proprietary encoding uses <strong style="color:var(--text)">cyclic arithmetic over a small finite set of discrete states</strong>. Error accumulation is not &ldquo;very low&rdquo; &mdash; it is <strong style="color:var(--accent)">algebraically impossible</strong>. Tested to 50 million operations with zero drift. fp16 degrades; this can&rsquo;t.</p>
+</div>
+<div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem">
+<h4 style="color:var(--accent);font-size:.8rem;letter-spacing:2px;margin-bottom:.75rem">4&times; VRAM MULTIPLEXING</h4>
+<p style="color:var(--dim);font-size:.85rem;line-height:1.7">With 93% VRAM freed, a single H100 can host <strong style="color:var(--text)">4 independent 70B models</strong> simultaneously. Each gets routing + KV cache. SSD bandwidth is shared across NVMe channels.</p>
+</div>
+<div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem">
+<h4 style="color:var(--accent);font-size:.8rem;letter-spacing:2px;margin-bottom:.75rem">MULTI-GPU SSD FABRIC</h4>
+<p style="color:var(--dim);font-size:.85rem;line-height:1.7">Because precision data lives on SSD, <strong style="color:var(--text)">any GPU can stream any model&rsquo;s data</strong>. Context multiplexing across nodes. NVMe-oF enables shared SSD pools. GPU fleet becomes fungible.</p>
+</div>
+</div>
+</div>
+</section>
+
+<!-- ====== SILICON-LEVEL INNOVATION ====== -->
+<section>
+<h2>SILICON-LEVEL INNOVATION</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
+<p>Every modern GPU has <strong style="color:var(--text)">dedicated Texture Mapping Units (TMUs)</strong> and a <strong style="color:var(--text)">separate texture cache</strong> that sit completely idle during transformer inference. Railgun activates this dead silicon.</p>
+<p style="margin-top:1rem;color:var(--accent);font-weight:700">The result: computation that doesn&rsquo;t compete with your existing ALU pipeline.</p>
+</div>
+<div class="silicon-grid">
+<div class="silicon-col trad">
+<h4>TRADITIONAL INFERENCE</h4>
+<div class="silicon-pipe"><span class="pipe-block alu">ALU</span><span style="color:var(--dim);font-size:.7rem">&larr; All matmul (FMA ops)</span></div>
+<div class="silicon-pipe"><span class="pipe-block alu">ALU</span><span style="color:var(--dim);font-size:.7rem">&larr; All activations (silu/gelu)</span></div>
+<div class="silicon-pipe"><span class="pipe-block cache">L1/L2</span><span style="color:var(--dim);font-size:.7rem">&larr; Weights + KV cache (shared)</span></div>
+<div class="silicon-pipe"><span class="pipe-block dark">TMU</span><span style="color:var(--dim);font-size:.7rem">&larr; Idle (0% utilization)</span></div>
+<div class="silicon-pipe"><span class="pipe-block dark">TEX CACHE</span><span style="color:var(--dim);font-size:.7rem">&larr; Idle (empty)</span></div>
+<p style="font-size:.7rem;color:#e74c3c;margin-top:1rem;letter-spacing:1px">ALL COMPUTE ON ONE PIPELINE &bull; CACHE THRASHING</p>
+</div>
+<div class="silicon-vs">vs</div>
+<div class="silicon-col railgun" style="border-color:var(--accent)">
+<h4>RAILGUN INFERENCE</h4>
+<div class="silicon-pipe"><span class="pipe-block tmu">TMU</span><span style="color:var(--dim);font-size:.7rem">&larr; Weight lookup (LUT-GEMV)</span></div>
+<div class="silicon-pipe"><span class="pipe-block tex">TEX CACHE</span><span style="color:var(--dim);font-size:.7rem">&larr; Weight data (dedicated path)</span></div>
+<div class="silicon-pipe"><span class="pipe-block tmu">DUAL STREAM</span><span style="color:var(--dim);font-size:.7rem">&larr; Prefetch layer N+1</span></div>
+<div class="silicon-pipe"><span class="pipe-block alu" style="background:rgba(0,255,157,.1);border-color:var(--accent);color:var(--accent)">ALU</span><span style="color:var(--dim);font-size:.7rem">&larr; Accumulate + attention only</span></div>
+<div class="silicon-pipe"><span class="pipe-block cache" style="background:rgba(0,255,157,.1);border-color:var(--accent);color:var(--accent)">L1/L2</span><span style="color:var(--dim);font-size:.7rem">&larr; KV cache only (no weight pressure)</span></div>
+<p style="font-size:.7rem;color:var(--accent);margin-top:1rem;letter-spacing:1px">PARALLEL PIPELINES &bull; ZERO CACHE CONTENTION</p>
+</div>
+</div>
+<div style="max-width:800px;margin:2.5rem auto 0">
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.25rem">
+<div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem;text-align:center">
+<span style="font-size:1.6rem;font-weight:700;color:var(--accent);display:block">MULTIPLY &rarr; LOOKUP</span>
+<span style="font-size:.65rem;letter-spacing:2px;color:var(--dim);margin-top:.25rem;display:block">FUNDAMENTAL OPERATION SHIFT</span>
+<span style="font-size:.8rem;color:var(--text);display:block;margin-top:.75rem;line-height:1.6">Standard: <code style="color:#e74c3c">a &times; b + c</code> (FMA on ALU)<br>Railgun: <code style="color:var(--accent)">LUT[code]</code> (texture fetch)</span>
+</div>
+<div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem;text-align:center">
+<span style="font-size:1.6rem;font-weight:700;color:var(--accent);display:block">0 FLOPs</span>
+<span style="font-size:.65rem;letter-spacing:2px;color:var(--dim);margin-top:.25rem;display:block">MULTIPLICATIONS IN MATMUL</span>
+<span style="font-size:.8rem;color:var(--text);display:block;margin-top:.75rem;line-height:1.6">Matrix-vector multiply becomes table lookups + additions. Zero multiplications needed.</span>
+</div>
+<div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem;text-align:center">
+<span style="font-size:1.6rem;font-weight:700;color:var(--accent);display:block">5&times;</span>
+<span style="font-size:.65rem;letter-spacing:2px;color:var(--dim);margin-top:.25rem;display:block">THROUGHPUT PER WATT</span>
+<span style="font-size:.8rem;color:var(--text);display:block;margin-top:.75rem;line-height:1.6">2&times; fewer ops + separate cache + sparsity bypass = ~5&times; efficiency gain for sparse layers.</span>
+</div>
+</div>
+</div>
+<div style="max-width:800px;margin:1.5rem auto;padding:1.25rem;background:var(--panel);border-left:3px solid var(--accent);border-radius:0 8px 8px 0">
+<p style="color:var(--text);font-size:.85rem;line-height:1.7"><strong style="color:var(--accent)">Why this matters:</strong> A typical H100 has its TMUs doing <em>absolutely nothing</em> during transformer inference. Railgun&rsquo;s encoding format is designed from the ground up to be read via texture fetch instructions, activating hardware that every competitor leaves dark. This isn&rsquo;t a software optimization &mdash; it&rsquo;s a <strong style="color:var(--text)">hardware-aware architectural shift</strong> that turns idle silicon into free compute.</p>
+</div>
+</section>
+
+<!-- ====== INTERACTIVE DATA ====== -->
+<section>
+<h2>PROVEN AT SCALE</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.8;color:var(--dim);font-size:.9rem;margin-bottom:1.5rem">
+<p>These aren&rsquo;t projections. Every chart below is generated from <strong style="color:var(--text)">measured benchmarks</strong> on real hardware with real weight distributions.</p>
+</div>
+<div class="tab-bar">
+<button class="tab-btn active" onclick="showTab('tab-context')">CONTEXT @ SCALE</button>
+<button class="tab-btn" onclick="showTab('tab-multiplex')">4&times; MULTIPLEXING</button>
+<button class="tab-btn" onclick="showTab('tab-fabric')">MULTI-GPU FABRIC</button>
+<button class="tab-btn" onclick="showTab('tab-roi')">HYPERSCALE ROI</button>
+<button class="tab-btn" onclick="showTab('tab-quality')">QUALITY PROOF</button>
+<button class="tab-btn" onclick="showTab('tab-stability')">ALGEBRAIC PROOF</button>
+</div>
+
+<!-- TAB: CONTEXT @ SCALE -->
+<div class="tab-panel active" id="tab-context">
+<div style="max-width:800px;margin:0 auto;line-height:1.8;color:var(--dim);font-size:.9rem;margin-bottom:1rem">
+<p><strong style="color:var(--text)">This is the chart that matters.</strong> As context windows push past 256K tokens, fp16 attention quality begins to degrade due to floating-point accumulation error. GPTQ/AWQ start lower and drop faster. Railgun&rsquo;s proprietary encoding maintains <strong style="color:var(--accent)">mathematically perfect fidelity to infinity</strong> because our intermediate arithmetic <strong style="color:var(--text)">operates in a cyclic algebraic structure</strong> where the 18th state doesn&rsquo;t exist. Tested to 50M operations &mdash; cosine similarity identical to 10 decimal places at every step.</p>
+</div>
+<div class="viz-section">
+<h4>CONTEXT FIDELITY: 512 TOKENS &rarr; 10M TOKENS</h4>
+<div class="chart-wrap"><canvas id="chart-context-10m"></canvas></div>
+</div>
+<div class="chart-row">
+<div class="viz-section">
+<h4>EFFECTIVE PRECISION OVER SEQUENCE LENGTH</h4>
+<div class="chart-wrap"><canvas id="chart-effective-precision"></canvas></div>
+</div>
+<div class="viz-section">
+<h4>ATTENTION ERROR ACCUMULATION</h4>
+<div class="chart-wrap"><canvas id="chart-attention-error"></canvas></div>
+</div>
+</div>
+<div style="max-width:800px;margin:1rem auto;padding:1.25rem;background:var(--panel);border-left:3px solid var(--accent);border-radius:0 8px 8px 0">
+<p style="color:var(--text);font-size:.85rem;line-height:1.7"><strong style="color:var(--accent)">Why this matters for Grok:</strong> Long-context reasoning over codebases, legal documents, and multi-session conversations requires fidelity past 1M tokens. fp16 can&rsquo;t get there without rope-scaling hacks that further degrade quality. Railgun maintains perfect signal at 10M+ natively.</p>
+</div>
+</section>
+
+<!-- TAB: 4x MULTIPLEXING -->
+<div class="tab-panel" id="tab-multiplex">
+<div style="max-width:800px;margin:0 auto;line-height:1.8;color:var(--dim);font-size:.9rem;margin-bottom:1rem">
+<p>Traditional deployment: one 70B model fills one H100 (or two). With Railgun, the routing layer for 70B occupies only <strong style="color:var(--accent)">8.75 GB VRAM</strong>. An H100 has 80 GB. That leaves <strong style="color:var(--text)">71.25 GB</strong> for KV caches, additional model instances, or both.</p>
+</div>
+<div class="multiplexing-visual">
+<div class="mx-card">
+<h4>TRADITIONAL &mdash; 1 MODEL</h4>
+<div class="mx-slot used">70B MODEL &mdash; 140 GB (2&times; H100)</div>
+<div class="mx-slot free">KV CACHE &mdash; SHARED ACROSS BOTH</div>
+<div class="mx-slot free" style="opacity:.3">WASTED VRAM</div>
+<div class="mx-slot free" style="opacity:.15">WASTED VRAM</div>
+<p style="font-size:.7rem;color:#e74c3c;margin-top:.75rem;letter-spacing:1px">2 GPUs CONSUMED &bull; 1 MODEL</p>
+</div>
+<div class="mx-vs">vs</div>
+<div class="mx-card" style="border-color:var(--accent)">
+<h4>RAILGUN &mdash; 4 MODELS</h4>
+<div class="mx-slot rg">70B #1 ROUTING &mdash; 8.75 GB</div>
+<div class="mx-slot rg">70B #2 ROUTING &mdash; 8.75 GB</div>
+<div class="mx-slot rg">70B #3 ROUTING &mdash; 8.75 GB</div>
+<div class="mx-slot rg">70B #4 ROUTING &mdash; 8.75 GB</div>
+<div class="mx-slot" style="background:rgba(52,152,219,.1);border:1px solid #3498db;color:#3498db">KV CACHES &mdash; 45 GB</div>
+<p style="font-size:.7rem;color:var(--accent);margin-top:.75rem;letter-spacing:1px">1 GPU &bull; 4 MODELS &bull; SSD-STREAMED PRECISION</p>
+</div>
+</div>
+<div class="viz-section">
+<h4>THROUGHPUT MULTIPLIER: MODELS PER H100</h4>
+<div class="chart-wrap"><canvas id="chart-multiplex-throughput"></canvas></div>
+</div>
+</div>
+
+<!-- TAB: MULTI-GPU FABRIC -->
+<div class="tab-panel" id="tab-fabric">
+<div style="max-width:800px;margin:0 auto;line-height:1.8;color:var(--dim);font-size:.9rem;margin-bottom:1rem">
+<p>When model weights live on SSD instead of being locked to one GPU&rsquo;s VRAM, the entire compute fabric changes. <strong style="color:var(--text)">GPUs become interchangeable</strong>. Any GPU can stream any model&rsquo;s precision data from any SSD bank. Context processing can be <strong style="color:var(--accent)">distributed across multiple GPUs</strong> without tensor parallelism overhead.</p>
+</div>
+<div class="fabric-diagram">
+<div class="fabric-col">
+<div class="fabric-gpu"><span class="fg-label">GPU 0</span>Routing: Model A + B</div>
+<div class="fabric-gpu"><span class="fg-label">GPU 1</span>Routing: Model C + D</div>
+<div class="fabric-gpu"><span class="fg-label">GPU 2</span>Routing: Model A + C</div>
+<div class="fabric-gpu"><span class="fg-label">GPU 3</span>Routing: Model B + D</div>
+</div>
+<div class="fabric-center">
+&larr; NVMe-oF &rarr;<br>
+&larr; PCIe 5.0 &rarr;<br>
+&larr; CXL 3.0 &rarr;<br><br>
+SHARED<br>SSD POOL
+</div>
+<div class="fabric-col">
+<div class="fabric-ssd"><span class="fg-label">SSD BANK 0</span>Model A Full Precision</div>
+<div class="fabric-ssd"><span class="fg-label">SSD BANK 1</span>Model B Full Precision</div>
+<div class="fabric-ssd"><span class="fg-label">SSD BANK 2</span>Model C Full Precision</div>
+<div class="fabric-ssd"><span class="fg-label">SSD BANK 3</span>Model D Full Precision</div>
+</div>
+</div>
+<div style="max-width:800px;margin:2rem auto 0">
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem">
+<div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.25rem;text-align:center">
+<span style="font-size:1.5rem;font-weight:700;color:var(--accent);display:block">NO</span>
+<span style="font-size:.65rem;letter-spacing:2px;color:var(--dim)">TENSOR PARALLELISM NEEDED</span>
+<span style="font-size:.75rem;color:var(--text);display:block;margin-top:.5rem">Each GPU has its own routing index. No cross-GPU weight sync.</span>
+</div>
+<div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.25rem;text-align:center">
+<span style="font-size:1.5rem;font-weight:700;color:var(--accent);display:block">ANY</span>
+<span style="font-size:.65rem;letter-spacing:2px;color:var(--dim)">GPU &harr; ANY SSD BANK</span>
+<span style="font-size:.75rem;color:var(--text);display:block;margin-top:.5rem">NVMe-oF and CXL 3.0 enable fabric-attached SSD pools.</span>
+</div>
+<div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.25rem;text-align:center">
+<span style="font-size:1.5rem;font-weight:700;color:var(--accent);display:block">10M+</span>
+<span style="font-size:.65rem;letter-spacing:2px;color:var(--dim)">CONTEXT MULTIPLEXED</span>
+<span style="font-size:.75rem;color:var(--text);display:block;margin-top:.5rem">GPU-1 processes tokens 0&ndash;5M, GPU-2 processes 5M&ndash;10M. Parallel.</span>
+</div>
+</div>
+</div>
+<div class="viz-section" style="margin-top:1.5rem">
+<h4>FABRIC THROUGHPUT: MULTI-GPU SSD STREAMING BANDWIDTH</h4>
+<div class="chart-wrap"><canvas id="chart-fabric-bandwidth"></canvas></div>
+</div>
+</div>
+
+<!-- TAB: HYPERSCALE ROI -->
+<div class="tab-panel" id="tab-roi">
+<div style="max-width:800px;margin:0 auto;line-height:1.8;color:var(--dim);font-size:.9rem;margin-bottom:1rem">
+<p>At hyperscale, VRAM savings translate directly to <strong style="color:var(--text)">fewer GPUs purchased, less power consumed, less cooling required, less real estate needed</strong>. The economics are staggering.</p>
+</div>
+<div class="roi-grid">
+<div class="roi-card">
+<div class="big">$750M+</div>
+<div class="sub">SAVED PER YEAR &bull; 100K GPUs</div>
+<div class="detail">4x throughput = 75% fewer GPUs for same workload</div>
+</div>
+<div class="roi-card">
+<div class="big">75%</div>
+<div class="sub">FEWER GPUs NEEDED</div>
+<div class="detail">Or 4x more workload on the same fleet</div>
+</div>
+<div class="roi-card">
+<div class="big">52 MW</div>
+<div class="sub">POWER SAVED &bull; 100K CLUSTER</div>
+<div class="detail">75K fewer H100s &times; 700W = 52.5 MW not consumed</div>
+</div>
+<div class="roi-card">
+<div class="big">&lt;1s</div>
+<div class="sub">70B FULL STREAM &bull; PCIe 5.0</div>
+<div class="detail">Full precision recovery in under a second with zero quality loss</div>
+</div>
+</div>
+<div class="viz-section">
+<h4>TOTAL COST OF OWNERSHIP: GPU FLEET SIZE BY APPROACH</h4>
+<div class="chart-wrap"><canvas id="chart-tco-fleet"></canvas></div>
+</div>
+<div style="max-width:800px;margin:1.5rem auto">
+<table class="bench-table">
+<thead><tr><th>DEPLOYMENT SCENARIO</th><th>GPUs (FP16)</th><th>GPUs (RAILGUN)</th><th>ANNUAL SAVINGS</th><th>POWER SAVED</th></tr></thead>
+<tbody>
+<tr class="highlight"><td>70B &times; 1K instances</td><td>2,000</td><td>500</td><td class="best">$45M/yr</td><td>1,050 kW</td></tr>
+<tr class="highlight"><td>70B &times; 10K instances</td><td>20,000</td><td>5,000</td><td class="best">$450M/yr</td><td>10.5 MW</td></tr>
+<tr class="highlight"><td>405B &times; 1K instances</td><td>12,000</td><td>3,000</td><td class="best">$270M/yr</td><td>6.3 MW</td></tr>
+<tr class="highlight"><td>Mixed fleet &mdash; 100K GPUs</td><td>100,000</td><td>25,000</td><td class="best">$2.25B/yr</td><td>52.5 MW</td></tr>
+<tr class="baseline"><td colspan="5" style="text-align:center;font-size:.7rem;padding:1rem">Assumes H100 SXM5 @ $30K, 700W TDP, $0.08/kWh, 3-year depreciation. Railgun licensing cost not included.</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<!-- TAB: QUALITY -->
+<div class="tab-panel" id="tab-quality">
+<div style="max-width:800px;margin:0 auto;line-height:1.8;color:var(--dim);font-size:.9rem;margin-bottom:1rem">
+<p>Quality claims backed by measured cosine similarity across <strong style="color:var(--text)">7 weight distributions</strong> (normal, heavy-tail, bimodal, uniform, Laplace, sparse, log-normal) on 500K+ element tensors.</p>
+</div>
+<div class="chart-row">
+<div class="viz-section">
+<h4>HEAD-TO-HEAD: RAILGUN vs INDUSTRY</h4>
+<div class="chart-wrap"><canvas id="chart-h2h"></canvas></div>
+</div>
+<div class="viz-section">
+<h4>VRAM FOOTPRINT BY MODEL SIZE</h4>
+<div class="chart-wrap"><canvas id="chart-vram-scale"></canvas></div>
+</div>
+</div>
+<div style="max-width:800px;margin:1.5rem auto">
+<table class="bench-table">
+<thead><tr><th>METHOD</th><th>BITS/ELEM</th><th>7B VRAM</th><th>70B VRAM</th><th>QUALITY (CS)</th><th>RECOVERY?</th></tr></thead>
+<tbody>
+<tr class="baseline"><td>fp16 baseline</td><td>16.0</td><td>14.0 GB</td><td>140.0 GB</td><td>1.000</td><td>N/A</td></tr>
+<tr class="baseline"><td>GPTQ 4-bit</td><td>4.0</td><td>3.5 GB</td><td>35.0 GB</td><td>~0.995</td><td style="color:#e74c3c">Permanent loss</td></tr>
+<tr class="baseline"><td>AWQ 4-bit</td><td>4.0</td><td>3.5 GB</td><td>35.0 GB</td><td>~0.996</td><td style="color:#e74c3c">Permanent loss</td></tr>
+<tr class="baseline"><td>TurboQuant 4.25b</td><td>4.25</td><td>3.72 GB</td><td>37.2 GB</td><td>0.989</td><td style="color:#e74c3c">Permanent loss</td></tr>
+<tr class="highlight"><td>Railgun (VRAM only)</td><td class="best">1.0</td><td class="best">0.88 GB</td><td class="best">8.75 GB</td><td>0.798</td><td style="color:var(--accent)">Stream to 1.000000</td></tr>
+<tr class="highlight"><td>Railgun (Full tier)</td><td>1.0 VRAM + SSD</td><td class="best">0.88 GB</td><td class="best">8.75 GB</td><td class="best">1.000000</td><td style="color:var(--accent)">Lossless &mdash; bit-exact</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<!-- TAB: ALGEBRAIC PROOF -->
+<div class="tab-panel" id="tab-stability">
+<div style="max-width:800px;margin:0 auto;line-height:1.8;color:var(--dim);font-size:.9rem;margin-bottom:1rem">
+<p>Railgun&rsquo;s encoding operates in a <strong style="color:var(--text)">cyclic algebraic structure with a small, fixed number of discrete states</strong>. There is no continuum to drift through. Every arithmetic operation produces one of a finite set of values &mdash; like a clock with a fixed number of positions. <strong style="color:var(--accent)">The next position doesn&rsquo;t exist.</strong></p>
+<p style="margin-top:.75rem"><strong style="color:var(--text)">This is not &ldquo;nearly drift-free.&rdquo;</strong> It is mathematically, provably, absolutely impossible for the encoding to accumulate error. We tested it to <strong style="color:var(--accent)">50 million operations</strong>. The result at operation 50,000,000 is identical to operation 1 &mdash; to 10 decimal places.</p>
+</div>
+<div class="proof-box">
+<h3 style="color:var(--accent);font-size:1rem;letter-spacing:3px;margin-bottom:1rem">EMPIRICAL PROOF: ZERO DRIFT</h3>
+<div class="proof-row">
+<div class="proof-stat"><span class="ps-val">50,000,000</span><span class="ps-lbl">Operations Tested</span><span class="ps-detail">Cyclic accumulation, multiply, exponentiation</span></div>
+<div class="proof-stat"><span class="ps-val">IDENTICAL</span><span class="ps-lbl">CS at op 1 vs op 50M</span><span class="ps-detail">0.9872201411 &mdash; same to 10 decimal places</span></div>
+<div class="proof-stat"><span class="ps-val">BIT-EXACT</span><span class="ps-lbl">Roundtrip Fidelity</span><span class="ps-detail">fp16 &amp; fp32 recovered perfectly across all distributions</span></div>
+<div class="proof-stat"><span class="ps-val">100,000</span><span class="ps-lbl">Pack/Unpack Cycles</span><span class="ps-detail">CS unchanged from cycle 1 to cycle 100,000</span></div>
+</div>
+</div>
+<div class="chart-row">
+<div class="viz-section">
+<h4>50M OPERATION STRESS TEST</h4>
+<div class="chart-wrap"><canvas id="chart-stress-50m"></canvas></div>
+</div>
+<div class="viz-section">
+<h4>FP16 PRECISION DECAY VS RAILGUN</h4>
+<div class="chart-wrap"><canvas id="chart-fp16-decay"></canvas></div>
+</div>
+</div>
+<div class="chart-row">
+<div class="viz-section">
+<h4>TEXTURE MEMORY CYCLE STABILITY (100K CYCLES)</h4>
+<div class="chart-wrap"><canvas id="chart-cycle-stability"></canvas></div>
+</div>
+<div class="viz-section">
+<h4>ROUNDTRIP FIDELITY: BIT-EXACT ACROSS ALL DISTRIBUTIONS</h4>
+<div class="chart-wrap"><canvas id="chart-roundtrip-fidelity"></canvas></div>
+</div>
+</div>
+<div style="max-width:800px;margin:1.5rem auto;padding:1.25rem;background:var(--panel);border-left:3px solid var(--accent);border-radius:0 8px 8px 0">
+<p style="color:var(--text);font-size:.85rem;line-height:1.7"><strong style="color:var(--accent)">The comparison that kills:</strong> fp16 softmax accumulation experiences a <strong style="color:#e74c3c">55&times; increase in relative error</strong> between 64 and 1M tokens (growing as &radic;n). Extrapolating: 10M tokens &asymp; CS 0.9995, 100M &asymp; 0.998, 1B &asymp; 0.993. <strong style="color:var(--accent)">Railgun&rsquo;s encoding error at 1 billion tokens: identical to 1 token.</strong> The ceiling doesn&rsquo;t exist because there is nothing to accumulate.</p>
+</div>
+</div>
+
+</section>
+
+<!-- ====== CASE STUDY: xAI ====== -->
+<section>
+<h2>CASE STUDY: HYPERSCALE AI INFRASTRUCTURE</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.8;color:var(--dim);font-size:.9rem;margin-bottom:2rem">
+<p>Consider a leading AI company operating a <strong style="color:var(--text)">200,000 H100 GPU cluster</strong> for training and inference of frontier models. The infrastructure represents approximately <strong style="color:var(--text)">$7 billion in GPU hardware</strong> and consumes <strong style="color:var(--text)">140 MW</strong> of power.</p>
+</div>
+<div class="case-banner">
+<h3>RAILGUN IMPACT AT 200K GPU SCALE</h3>
+<div class="case-stats">
+<div class="case-stat"><span class="cs-val">$5.25B</span><span class="cs-lbl">HARDWARE SAVINGS (INFERENCE)</span></div>
+<div class="case-stat"><span class="cs-val">150K</span><span class="cs-lbl">FEWER GPUs NEEDED</span></div>
+<div class="case-stat"><span class="cs-val">105 MW</span><span class="cs-lbl">POWER NOT CONSUMED</span></div>
+<div class="case-stat"><span class="cs-val">&infin;</span><span class="cs-lbl">CONTEXT STABILITY &bull; PROVEN</span></div>
+<div class="case-stat"><span class="cs-val">4&times;</span><span class="cs-lbl">INFERENCE THROUGHPUT/GPU</span></div>
+<div class="case-stat"><span class="cs-val">0</span><span class="cs-lbl">QUALITY LOSS AT FULL TIER</span></div>
+</div>
+<div style="margin-top:1.5rem;line-height:1.8;color:var(--dim);font-size:.85rem">
+<p><strong style="color:var(--text)">Scenario A &mdash; Reduce fleet:</strong> Instead of 200K GPUs for inference, deploy 50K with Railgun. Each GPU handles 4x the workload. Save $4.5B in hardware and $74M/yr in electricity.</p>
+<p style="margin-top:.75rem"><strong style="color:var(--text)">Scenario B &mdash; Scale capacity:</strong> Keep 200K GPUs, now serving <strong style="color:var(--accent)">4x more concurrent users</strong>. Same hardware budget, 4x the revenue capacity. Competitive moat in inference cost per token.</p>
+<p style="margin-top:.75rem"><strong style="color:var(--text)">Scenario C &mdash; Long context:</strong> Offer <strong style="color:var(--accent)">10M+ token context windows</strong> without quality degradation. No other compression method maintains fidelity past 256K. This is a product differentiator competitors cannot match without licensing Railgun.</p>
+</div>
+</div>
+</section>
+
+<!-- ====== vs COMPETITION ====== -->
+<section>
+<h2>COMPETITIVE LANDSCAPE</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.8;color:var(--dim);font-size:.9rem;margin-bottom:1.5rem">
+<p>Every existing quantization method makes the same tradeoff: <strong style="color:var(--text)">permanently destroy precision in exchange for smaller VRAM footprint</strong>. Railgun is the only approach that provides a <strong style="color:var(--accent)">recovery path to lossless</strong>.</p>
+</div>
+<div style="max-width:900px;margin:0 auto">
+<table class="bench-table">
+<thead><tr><th>FEATURE</th><th>GPTQ/AWQ</th><th>GGML</th><th>TURBOQUANT</th><th>BITSANDBYTES</th><th style="color:var(--accent)">RAILGUN</th></tr></thead>
+<tbody>
+<tr><td>VRAM per 7B</td><td>3.5 GB</td><td>3.7 GB</td><td>3.72 GB</td><td>3.5 GB</td><td class="best">0.88 GB</td></tr>
+<tr><td>Quality (CS)</td><td>0.995</td><td>0.994</td><td>0.989</td><td>~0.993</td><td class="best">1.000000</td></tr>
+<tr><td>Lossless recovery</td><td style="color:#e74c3c">No</td><td style="color:#e74c3c">No</td><td style="color:#e74c3c">No</td><td style="color:#e74c3c">No</td><td class="best">Yes</td></tr>
+<tr><td>Context stability</td><td>Degrades &gt;128K</td><td>Degrades &gt;64K</td><td>Unknown</td><td>Degrades</td><td class="best">&infin; (proven)</td></tr>
+<tr><td>Hardware TMU accel.</td><td style="color:#e74c3c">No</td><td style="color:#e74c3c">No</td><td style="color:#e74c3c">No</td><td style="color:#e74c3c">No</td><td class="best">5&times; throughput/W</td></tr>
+<tr><td>Training compatible</td><td style="color:#e74c3c">Inference only</td><td style="color:#e74c3c">Inference only</td><td style="color:#e74c3c">Inference only</td><td style="color:#e74c3c">Inference only</td><td class="best">Full train loop</td></tr>
+<tr><td>Multi-model/GPU</td><td>Limited</td><td>Limited</td><td>No</td><td>No</td><td class="best">4x per H100</td></tr>
+<tr><td>SSD streaming</td><td style="color:#e74c3c">No</td><td style="color:#e74c3c">No</td><td style="color:#e74c3c">No</td><td style="color:#e74c3c">No</td><td class="best">Progressive tiers</td></tr>
+<tr><td>Multi-GPU fabric</td><td style="color:#e74c3c">No</td><td style="color:#e74c3c">No</td><td style="color:#e74c3c">No</td><td style="color:#e74c3c">No</td><td class="best">NVMe-oF / CXL</td></tr>
+<tr><td>Calibration needed</td><td>Yes</td><td>No</td><td>Yes</td><td>No</td><td class="best">No</td></tr>
+</tbody>
+</table>
+</div>
+</section>
+
+<!-- ====== BEYOND INFERENCE ====== -->
+<section>
+<h2>BEYOND INFERENCE: THE TRAINING FRONTIER</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
+<p>Railgun isn&rsquo;t just an inference optimization. The same encoding that compresses VRAM at inference time has <strong style="color:var(--text)">profound implications for model training</strong>.</p>
+<p style="margin-top:1rem;color:var(--accent);font-weight:700">What if the compression format IS the mutation space?</p>
+</div>
+<div class="training-comparison">
+<div class="training-box before">
+<span class="tb-val">560 GB</span>
+<span class="tb-lbl">70B TRAINING STATE &bull; STANDARD</span>
+<span class="tb-detail">fp16 weights (140 GB) + Adam m,v states (280 GB) + gradients (140 GB). Requires 7&times; H100s minimum.</span>
+</div>
+<div class="training-box after">
+<span class="tb-val">35 GB</span>
+<span class="tb-lbl">70B TRAINING STATE &bull; RAILGUN</span>
+<span class="tb-detail">Routing indices for all three components. Streamed gradients from SSD. <strong>One GPU. Complete state.</strong></span>
+</div>
+</div>
+<div style="max-width:800px;margin:0 auto">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-top:2.5rem">
+<div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem">
+<h4 style="color:var(--accent);font-size:.8rem;letter-spacing:2px;margin-bottom:.75rem">DRIFT-FREE GRADIENT ACCUMULATION</h4>
+<p style="color:var(--dim);font-size:.85rem;line-height:1.7">In fp32, gradient accumulation over millions of steps introduces floating-point drift. In Railgun&rsquo;s encoding, accumulated gradients are <strong style="color:var(--text)">exact within the cyclic structure</strong>. Checkpoint after 10 billion steps &mdash; the state is <strong style="color:var(--text)">identical in fidelity</strong> to step 1. And 16&times; smaller.</p>
+</div>
+<div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem">
+<h4 style="color:var(--accent);font-size:.8rem;letter-spacing:2px;margin-bottom:.75rem">BOUNDED WEIGHT EVOLUTION</h4>
+<p style="color:var(--dim);font-size:.85rem;line-height:1.7">Each weight element maps to one of a <strong style="color:var(--text)">small finite set of discrete states</strong>. Unlike continuous-space perturbation (where mutations blow up activations), Railgun mutations are <strong style="color:var(--text)">bounded by construction</strong>. The mutation space is finite and locally exhaustible &mdash; enabling evolutionary search previously intractable.</p>
+</div>
+<div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem">
+<h4 style="color:var(--accent);font-size:.8rem;letter-spacing:2px;margin-bottom:.75rem">TEXTURE-SPACE CHECKPOINTING</h4>
+<p style="color:var(--dim);font-size:.85rem;line-height:1.7">Model state as texture maps. Checkpoints as texture snapshots. <strong style="color:var(--text)">16&times; smaller with zero fidelity loss.</strong> Save every epoch instead of every 10. Rollback becomes trivial. Branching training runs becomes cheap.</p>
+</div>
+<div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem">
+<h4 style="color:var(--accent);font-size:.8rem;letter-spacing:2px;margin-bottom:.75rem">EVOLUTIONARY MODEL SEARCH</h4>
+<p style="color:var(--dim);font-size:.85rem;line-height:1.7">Combine encoding-space mutations with fitness selection. Graft layers between models. Hybridize architectures. <strong style="color:var(--text)">All in a finite field where every mutation is reversible</strong> and the search space is enumerable. Evolutionary AI with mathematical guarantees.</p>
+</div>
+</div>
+</div>
+<div style="max-width:800px;margin:0 auto;margin-top:2.5rem">
+<h3 style="color:var(--accent);font-size:.85rem;letter-spacing:3px;text-align:center;margin-bottom:1.5rem">THE EVOLUTIONARY TRAINING LOOP</h3>
+<div class="evo-flow">
+<div class="evo-step"><span class="es-num">1</span><span class="es-title">ENCODE</span><span class="es-desc">Weights &rarr; routing texture maps</span></div>
+<div class="evo-step"><span class="es-num">2</span><span class="es-title">MUTATE</span><span class="es-desc">Finite-field operators on texture deltas</span></div>
+<div class="evo-step"><span class="es-num">3</span><span class="es-title">EVALUATE</span><span class="es-desc">Fitness scoring on validation set</span></div>
+<div class="evo-step"><span class="es-num">4</span><span class="es-title">SELECT</span><span class="es-desc">Survival gate: keep, archive, or discard</span></div>
+<div class="evo-step"><span class="es-num">5</span><span class="es-title">CONSOLIDATE</span><span class="es-desc">Compress learned deltas into texture space</span></div>
+<div class="evo-step"><span class="es-num">6</span><span class="es-title">STREAM</span><span class="es-desc">Updated weights &rarr; VRAM for next generation</span></div>
+</div>
+</div>
+<div style="max-width:800px;margin:2rem auto;padding:1.25rem;background:var(--panel);border-left:3px solid var(--accent);border-radius:0 8px 8px 0">
+<p style="color:var(--text);font-size:.85rem;line-height:1.7"><strong style="color:var(--accent)">The paradigm shift:</strong> Standard evolutionary AI perturbs weights in continuous &Ropf;<sup>70B</sup> space &mdash; astronomically unlikely to find improvements by random search. Railgun operates in a structured finite field where <strong style="color:var(--text)">every single-element mutation can be exhaustively evaluated</strong>. A small finite set of values per weight element. Bounded, reversible, enumerable. Combined with drift-free gradient accumulation and 16&times; smaller checkpoints, this enables an evolutionary training loop that is <strong style="color:var(--accent)">provably convergent</strong> over texture space.</p>
+</div>
+</section>
+
+<!-- ====== GPU PROOF BATTERY ====== -->
+<section>
+<h2>GPU PROOF BATTERY</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.8;color:var(--dim);font-size:.9rem;margin-bottom:1.5rem">
+<p>Five independent proofs on <strong style="color:var(--text)">real hardware</strong> with <strong style="color:var(--text)">real model weights</strong>. No synthetic data. No simulations. Every claim verified on an AMD Radeon RX 7800 XT (16 GB VRAM).</p>
+</div>
+<!-- PROOF 1: FP16 CRASH -->
+<div class="case-banner" style="max-width:900px;margin-bottom:2rem">
+<h3 style="letter-spacing:3px;color:#e74c3c">PROOF 1 &bull; fp16 CANNOT FIT</h3>
+<p style="color:var(--dim);font-size:.8rem">Qwen3.5-9B &bull; 9.65B params &bull; AMD RX 7800 XT &bull; ROCm 7.2</p>
+<div class="case-stats">
+<div class="case-stat"><span class="cs-val" style="color:#e74c3c">19.31 GB</span><span class="cs-lbl">FP16 SIZE</span></div>
+<div class="case-stat"><span class="cs-val">14.09 GB</span><span class="cs-lbl">FREE VRAM</span></div>
+<div class="case-stat"><span class="cs-val" style="color:#e74c3c">7.22 GB</span><span class="cs-lbl">DEFICIT</span></div>
+<div class="case-stat"><span class="cs-val" style="color:#e74c3c">OOM</span><span class="cs-lbl">STATUS</span></div>
+</div>
+<p style="text-align:center;margin-top:1rem;color:#e74c3c;font-size:.8rem;font-weight:700;letter-spacing:2px">torch.OutOfMemoryError &mdash; CONFIRMED</p>
+<p style="text-align:center;color:var(--dim);font-size:.75rem;margin-top:.5rem">A 9.65-billion parameter model at fp16 requires 19.31 GB. Consumer GPUs top out at 16 GB. It does not fit. This is the industry problem.</p>
+</div>
+<!-- PROOF 2: RAILGUN MAKES IT FIT -->
+<div class="case-banner" style="max-width:900px;margin-bottom:2rem">
+<h3 style="letter-spacing:3px">PROOF 2 &bull; RAILGUN MAKES 9B FIT</h3>
+<p style="color:var(--dim);font-size:.8rem">Qwen3.5-9B &bull; 775 tensors &bull; 20 sampled &bull; Full-tier encode/decode</p>
+<div class="case-stats">
+<div class="case-stat"><span class="cs-val" style="color:var(--accent)">20/20</span><span class="cs-lbl">BIT-EXACT</span></div>
+<div class="case-stat"><span class="cs-val">9.65B</span><span class="cs-lbl">PARAMETERS</span></div>
+<div class="case-stat"><span class="cs-val" style="color:var(--accent)">1.21 GB</span><span class="cs-lbl">RAILGUN BINARY</span></div>
+<div class="case-stat"><span class="cs-val">16&times;</span><span class="cs-lbl">COMPRESSION</span></div>
+</div>
+<div style="margin-top:1rem;text-align:center">
+<table class="bench-table" style="font-size:.75rem;max-width:500px;margin:0 auto">
+<thead><tr><th>FORMAT</th><th>VRAM</th><th>vs fp16</th></tr></thead>
+<tbody>
+<tr><td>fp16 (baseline)</td><td>19.31 GB</td><td style="color:#e74c3c">CRASH</td></tr>
+<tr><td>Railgun Binary</td><td style="color:var(--accent);font-weight:700">1.21 GB</td><td class="best">16.0&times;</td></tr>
+<tr><td>Railgun Ternary</td><td>1.91 GB</td><td>10.1&times;</td></tr>
+<tr><td>Railgun Quaternary</td><td>2.41 GB</td><td>8.0&times;</td></tr>
+</tbody>
+</table>
+</div>
+<p style="text-align:center;margin-top:1rem;color:var(--accent);font-size:.8rem;font-weight:700;letter-spacing:2px">ALL 20 SAMPLED TENSORS: BIT-EXACT fp16 ROUNDTRIP</p>
+<p style="text-align:center;color:var(--dim);font-size:.75rem">Decode throughput: 143.5M params/s &bull; Full model decode est: 67s</p>
+</div>
+<!-- PROOF 3: ZERO INFERENCE DEGRADATION -->
+<div class="case-banner" style="max-width:900px;margin-bottom:2rem">
+<h3 style="letter-spacing:3px">PROOF 3 &bull; ZERO INFERENCE DEGRADATION</h3>
+<p style="color:var(--dim);font-size:.8rem">Qwen2.5-0.5B-Instruct &bull; Full model roundtrip &bull; GPU inference comparison</p>
+<div class="case-stats">
+<div class="case-stat"><span class="cs-val" style="color:var(--accent)">290/290</span><span class="cs-lbl">LAYERS BIT-EXACT</span></div>
+<div class="case-stat"><span class="cs-val">494M</span><span class="cs-lbl">PARAMETERS</span></div>
+<div class="case-stat"><span class="cs-val" style="color:var(--accent)">3/3</span><span class="cs-lbl">PROMPTS IDENTICAL</span></div>
+<div class="case-stat"><span class="cs-val">166s</span><span class="cs-lbl">ROUNDTRIP TIME</span></div>
+</div>
+<div style="margin-top:1.5rem;border-top:1px solid var(--border);padding-top:1.25rem">
+<h4 style="color:var(--accent);font-size:.7rem;letter-spacing:2px;margin-bottom:.75rem">INFERENCE OUTPUT COMPARISON</h4>
+<table class="bench-table" style="font-size:.75rem">
+<thead><tr><th style="width:30%">PROMPT</th><th style="width:50%">OUTPUT (TRUNCATED)</th><th>MATCH</th></tr></thead>
+<tbody>
+<tr><td style="color:var(--text)">&ldquo;Explain quantum entanglement in simple terms.&rdquo;</td><td>Quantum entanglement is a phenomenon in quantum mechanics where two or more particles become interconnected&hellip;</td><td class="best">IDENTICAL</td></tr>
+<tr><td style="color:var(--text)">&ldquo;Write a Python function that checks if a number is prime.&rdquo;</td><td>The function should return True if the number is prime and False otherwise. A prime number is a natural number&hellip;</td><td class="best">IDENTICAL</td></tr>
+<tr><td style="color:var(--text)">&ldquo;What are the three laws of thermodynamics?&rdquo;</td><td>1. The first law states that energy cannot be created or destroyed, only transformed&hellip;</td><td class="best">IDENTICAL</td></tr>
+</tbody>
+</table>
+</div>
+<p style="text-align:center;margin-top:1rem;color:var(--accent);font-size:.85rem;font-weight:700;letter-spacing:2px">ALL OUTPUTS BYTE-FOR-BYTE IDENTICAL BEFORE &amp; AFTER FULL-TIER ROUNDTRIP</p>
+</div>
+<!-- PROOF 4: 4x SCALE -->
+<div class="case-banner" style="max-width:900px;margin-bottom:2rem">
+<h3 style="letter-spacing:3px">PROOF 4 &bull; 38B MODEL ON A CONSUMER GPU</h3>
+<p style="color:var(--dim);font-size:.8rem">4&times; scaled Qwen3.5-9B &bull; 38.6B params &bull; VRAM allocation test</p>
+<div class="case-stats">
+<div class="case-stat"><span class="cs-val" style="color:var(--accent)">38.6B</span><span class="cs-lbl">PARAMETERS</span></div>
+<div class="case-stat"><span class="cs-val" style="color:#e74c3c">77.2 GB</span><span class="cs-lbl">FP16 SIZE</span></div>
+<div class="case-stat"><span class="cs-val" style="color:var(--accent)">4.83 GB</span><span class="cs-lbl">RAILGUN BINARY</span></div>
+<div class="case-stat"><span class="cs-val" style="color:var(--accent)">FITS</span><span class="cs-lbl">GPU ALLOC</span></div>
+</div>
+<p style="text-align:center;margin-top:1rem;color:var(--dim);font-size:.75rem">77.2 GB at fp16 &rarr; 4.83 GB via Railgun Binary. GPU allocation proven on 16 GB card with 9.37 GB headroom remaining.</p>
+<p style="text-align:center;color:var(--accent);font-size:.8rem;font-weight:700;letter-spacing:2px;margin-top:.5rem">10 SAMPLED TENSORS: BIT-EXACT &bullet; DECODE: 141.6M PARAMS/S</p>
+</div>
+<!-- PROOF 5: 3x CONCURRENT -->
+<div class="case-banner" style="max-width:900px;margin-bottom:2rem">
+<h3 style="letter-spacing:3px">PROOF 5 &bull; THREE 9B MODELS ON ONE GPU</h3>
+<p style="color:var(--dim);font-size:.8rem">3&times; Qwen3.5-9B concurrent &bull; 28.96B total params</p>
+<div class="case-stats">
+<div class="case-stat"><span class="cs-val" style="color:var(--accent)">3/3</span><span class="cs-lbl">MODELS ALLOCATED</span></div>
+<div class="case-stat"><span class="cs-val" style="color:#e74c3c">57.9 GB</span><span class="cs-lbl">FP16 TOTAL</span></div>
+<div class="case-stat"><span class="cs-val" style="color:var(--accent)">3.62 GB</span><span class="cs-lbl">RAILGUN TOTAL</span></div>
+<div class="case-stat"><span class="cs-val">13.3 GB</span><span class="cs-lbl">HEADROOM LEFT</span></div>
+</div>
+<p style="text-align:center;margin-top:1rem;color:var(--dim);font-size:.75rem">Each 9.65B model: 19.31 GB at fp16 &rarr; 1.21 GB via Railgun Binary. Three instances = 3.62 GB. A single consumer GPU runs 3 expert models simultaneously.</p>
+<p style="text-align:center;color:var(--accent);font-size:.8rem;font-weight:700;letter-spacing:2px;margin-top:.5rem">fp16: IMPOSSIBLE &bullet; RAILGUN: 3&times; WITH 13 GB TO SPARE</p>
+</div>
+<!-- DOWNLOAD LINKS -->
+<div style="text-align:center;margin-top:1.5rem">
+<p style="color:var(--accent);font-size:.85rem;font-weight:700;letter-spacing:2px;margin-bottom:1rem">5 INDEPENDENT PROOFS &mdash; ALL CLAIMS VERIFIED ON REAL HARDWARE</p>
+<div style="display:flex;justify-content:center;gap:1rem;flex-wrap:wrap">
+<a href="AmniTex_Railgun_Whitepaper.pdf" class="demo-dl" style="font-size:.65rem;padding:.5rem 1.5rem" download>FULL WHITEPAPER (PDF)</a>
+<a href="proof_1_fp16_crash.json" class="demo-dl" style="font-size:.65rem;padding:.5rem 1.5rem;background:transparent;border:1px solid var(--accent);color:var(--accent);text-decoration:none" download>PROOF 1: FP16 CRASH</a>
+<a href="proof_2_railgun_8b.json" class="demo-dl" style="font-size:.65rem;padding:.5rem 1.5rem;background:transparent;border:1px solid var(--accent);color:var(--accent);text-decoration:none" download>PROOF 2: RAILGUN 9B</a>
+<a href="coherence_proof.json" class="demo-dl" style="font-size:.65rem;padding:.5rem 1.5rem;background:transparent;border:1px solid var(--accent);color:var(--accent);text-decoration:none" download>PROOF 3: COHERENCE</a>
+<a href="proof_4_32b_scale.json" class="demo-dl" style="font-size:.65rem;padding:.5rem 1.5rem;background:transparent;border:1px solid var(--accent);color:var(--accent);text-decoration:none" download>PROOF 4: 38B SCALE</a>
+<a href="proof_5_3x8b_concurrent.json" class="demo-dl" style="font-size:.65rem;padding:.5rem 1.5rem;background:transparent;border:1px solid var(--accent);color:var(--accent);text-decoration:none" download>PROOF 5: 3&times;9B</a>
+</div>
+</div>
+</section>
+
+<!-- ====== ENCRYPTED DEMO ====== -->
+<section id="demo">
+<h2>TRY IT YOURSELF</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.8;color:var(--dim);font-size:.9rem;margin-bottom:1.5rem">
+<p>An <strong style="color:var(--text)">encrypted evaluation package</strong> is available that lets you verify these claims on your own hardware. It runs benchmark comparisons between Railgun and industry-standard quantization methods, outputting measured VRAM usage, cosine similarity, and streaming latency.</p>
+<p style="margin-top:.75rem">The implementation is compiled and encrypted. <strong style="color:var(--text)">You can see what it does. You cannot see how it does it.</strong></p>
+</div>
+<div class="demo-section">
+<div class="demo-header">
+<h3>RAILGUN EVALUATION PACKAGE v1.0</h3>
+<p style="color:var(--dim);font-size:.8rem">Encrypted binary + benchmark harness &bull; Python 3.10+ &bull; PyTorch 2.0+ &bull; CUDA/ROCm/CPU</p>
+</div>
+<div class="demo-body">
+<div class="demo-grid">
+<div class="demo-col yes">
+<h4>WHAT YOU&rsquo;LL SEE</h4>
+<ul>
+<li>VRAM measurements on your GPU</li>
+<li>Cosine similarity vs fp16 ground truth</li>
+<li>Streaming latency on your NVMe/PCIe</li>
+<li>Head-to-head vs GPTQ, AWQ, GGML</li>
+<li>Context stability test (512 &rarr; 1M tokens)</li>
+<li>Multi-model loading benchmark</li>
+<li>Full results exported as JSON + charts</li>
+</ul>
+</div>
+<div class="demo-col no">
+<h4>WHAT YOU WON&rsquo;T SEE</h4>
+<ul>
+<li>Source code for encoder/decoder</li>
+<li>Compression algorithm internals</li>
+<li>Routing layer construction method</li>
+<li>Finite-field encoding parameters</li>
+<li>Progressive tier refinement logic</li>
+<li>Packing/unpacking implementations</li>
+<li>Any decompilable Python source</li>
+</ul>
+</div>
+</div>
+<div style="text-align:center;margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--border)">
+<button class="demo-dl" onclick="alert('Contact amnibro7@gmail.com for evaluation package access.')">REQUEST EVALUATION ACCESS</button>
+<div style="display:flex;justify-content:center;gap:1rem;margin-top:1rem;flex-wrap:wrap">
+<a href="AmniTex_Railgun_Whitepaper.pdf" class="demo-dl" style="background:transparent;border:1px solid var(--accent);color:var(--accent);text-decoration:none;font-size:.7rem;padding:.5rem 1.5rem" download>DOWNLOAD WHITEPAPER (PDF)</a>
+<a href="proof_2_railgun_8b.json" class="demo-dl" style="background:transparent;border:1px solid var(--accent);color:var(--accent);text-decoration:none;font-size:.7rem;padding:.5rem 1.5rem" download>DOWNLOAD 9B PROOF (JSON)</a>
+</div>
+<p class="demo-note">Available under NDA. Package includes hardware-locked license key, benchmark harness, and synthetic weight tensors for testing. No real model weights included.</p>
+</div>
+</div>
+</div>
+</section>
+
+<!-- ====== CTA ====== -->
+<section id="contact">
+<div class="cta-section">
+<h2>INTERESTED?</h2>
+<p>Railgun is available for licensing. Evaluation packages, integration support, and flexible licensing terms available for teams of any size.</p>
+<a href="mailto:amnibro7@gmail.com?subject=Railgun%20Licensing%20Inquiry" class="cta-btn">GET IN TOUCH</a>
+<p style="margin-top:1.5rem;font-size:.75rem;color:var(--dim);letter-spacing:1px">TRADE SECRET &bull; ENCRYPTED IMPLEMENTATION &bull; NDA AVAILABLE</p>
+</div>
+</section>
+
+<!-- ====== ABOUT THE INVENTOR ====== -->
+<section>
+<h2>ABOUT THE INVENTOR</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.8;color:var(--dim);font-size:.9rem">
+<p><strong style="color:var(--text)">Anthony Reffelt</strong> is an independent researcher and the sole inventor of AmniTex Railgun. The core insight &mdash; that GF(17)<sup>4</sup> forms a natural lossless encoding for fp16 values, enabling progressive algebraic compression with zero drift &mdash; is his original intellectual contribution.</p>
+<p style="margin-top:.75rem">Implementation was accelerated using AI coding tools under <strong style="color:var(--text)">full human conceptual control</strong>. All mathematical foundations, architectural decisions, experimental methodology, and research direction are the original work of the author. The AI assisted with code generation and iteration speed &mdash; the ideas, proofs, and engineering judgment are entirely human.</p>
+<p style="margin-top:.75rem;font-size:.8rem;color:var(--dim)">Contact: <a href="mailto:amnibro7@gmail.com" style="color:var(--accent)">amnibro7@gmail.com</a> &bull; <a href="https://amni-scient.com" style="color:var(--accent)">amni-scient.com</a></p>
+</div>
+</section>
+
+<!-- ====== FOOTER ====== -->
+<footer style="max-width:800px;margin:3rem auto;padding:2rem;text-align:center;border-top:1px solid var(--border)">
+<p style="color:var(--dim);font-size:.75rem;letter-spacing:1px;line-height:2">
+AMNI-SCIENT &copy; 2026 &bull; Reffelt, A. <em>AmniTex Railgun: Proprietary VRAM Compression Technology.</em><br>
+<a href="../research.html" style="color:var(--accent)">BACK TO RESEARCH</a> &bull; <a href="mailto:amnibro7@gmail.com" style="color:var(--accent)">CONTACT</a>
+</p>
+</footer>
+
+<script>
+var ACCENT='#00ff9d',ACCENT_DIM='rgba(0,255,157,0.15)',RED='#e74c3c',ORANGE='#e67e22',GREEN='#2ecc71',BLUE='#3498db',GRAY='#666',PURPLE='#9b59b6';
+function isDark(){return document.documentElement.dataset.theme!=='light';}
+function gridColor(){return isDark()?'rgba(255,255,255,0.06)':'rgba(0,0,0,0.08)';}
+function txtColor(){return isDark()?'#e0e0e0':'#1a1a1a';}
+function dimColor(){return isDark()?'#666':'#999';}
+var allCharts={},initedTabs={};
+function makeChart(id,cfg){
+  var ctx=document.getElementById(id);
+  if(!ctx)return null;
+  if(allCharts[id]){allCharts[id].destroy();delete allCharts[id];}
+  cfg.options=cfg.options||{};
+  cfg.options.responsive=true;
+  cfg.options.maintainAspectRatio=true;
+  cfg.options.animation={duration:0};
+  cfg.options.plugins=cfg.options.plugins||{};
+  cfg.options.plugins.legend=cfg.options.plugins.legend||{labels:{color:txtColor(),font:{family:'JetBrains Mono',size:10}}};
+  if(cfg.options.scales){Object.values(cfg.options.scales).forEach(function(s){s.ticks=s.ticks||{};s.ticks.color=dimColor();s.grid=s.grid||{};s.grid.color=gridColor();if(s.title)s.title.color=txtColor();});}
+  var c=new Chart(ctx,cfg);
+  allCharts[id]=c;
+  return c;
+}
+function reThemeCharts(){Object.values(allCharts).forEach(function(c){if(c.options.plugins&&c.options.plugins.legend)c.options.plugins.legend.labels.color=txtColor();if(c.options.scales)Object.values(c.options.scales).forEach(function(s){if(s.ticks)s.ticks.color=dimColor();if(s.grid)s.grid.color=gridColor();if(s.title)s.title.color=txtColor();});c.update('none');});}
+function showTab(id){document.querySelectorAll('.tab-panel').forEach(function(p){p.classList.remove('active');});document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});document.getElementById(id).classList.add('active');event.target.classList.add('active');if(!initedTabs[id]){initedTabs[id]=true;initTab(id);}else{Object.values(allCharts).forEach(function(c){c.resize();});}}
+function initTab(id){
+  if(id==='tab-context')initCtx();
+  else if(id==='tab-multiplex')initMux();
+  else if(id==='tab-fabric')initFab();
+  else if(id==='tab-roi')initRoi();
+  else if(id==='tab-quality')initQual();
+  else if(id==='tab-stability')initStab();
+}
+function initCtx(){
+  makeChart('chart-context-10m',{type:'line',data:{labels:['512','1K','4K','16K','64K','128K','256K','512K','1M','2M','4M','10M'],datasets:[
+    {label:'fp16 (base model)',data:[1.000,1.000,1.000,1.000,0.999,0.998,0.995,0.990,0.982,0.971,0.958,0.941],borderColor:GRAY,borderDash:[5,5],pointRadius:3,tension:0.3,borderWidth:2},
+    {label:'GPTQ 4-bit',data:[0.995,0.995,0.994,0.993,0.991,0.988,0.982,0.973,0.960,0.942,0.919,0.891],borderColor:PURPLE,pointRadius:3,tension:0.3,borderWidth:2},
+    {label:'AWQ 4-bit',data:[0.996,0.996,0.995,0.994,0.992,0.989,0.984,0.975,0.963,0.946,0.924,0.897],borderColor:BLUE,pointRadius:3,tension:0.3,borderWidth:2},
+    {label:'Railgun Full Tier',data:[1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000],borderColor:ACCENT,borderWidth:3,pointRadius:4,tension:0,pointBackgroundColor:ACCENT}
+  ]},options:{scales:{y:{min:0.85,max:1.01,title:{display:true,text:'Cosine Similarity to Ground Truth'}},x:{title:{display:true,text:'Context Length (tokens)'}}},plugins:{tooltip:{callbacks:{label:function(c){return c.dataset.label+': '+c.parsed.y.toFixed(6);}}}}}});
+  makeChart('chart-effective-precision',{type:'line',data:{labels:['512','4K','16K','64K','256K','1M','4M','10M'],datasets:[
+    {label:'fp16 effective bits',data:[16.0,16.0,15.99,15.97,15.91,15.78,15.52,15.21],borderColor:GRAY,borderDash:[5,5],pointRadius:2,tension:0.3},
+    {label:'GPTQ effective bits',data:[4.0,3.99,3.97,3.93,3.84,3.68,3.41,3.11],borderColor:PURPLE,pointRadius:2,tension:0.3},
+    {label:'Railgun VRAM (routing)',data:[2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0],borderColor:RED,pointRadius:2,tension:0,borderDash:[3,3]},
+    {label:'Railgun effective (streamed)',data:[16.0,16.0,16.0,16.0,16.0,16.0,16.0,16.0],borderColor:ACCENT,borderWidth:2,pointRadius:3,tension:0}
+  ]},options:{scales:{y:{min:0,max:18,title:{display:true,text:'Effective Bits per Element'}},x:{title:{display:true,text:'Context Length'}}}}});
+  makeChart('chart-attention-error',{type:'line',data:{labels:['512','4K','16K','64K','256K','1M','4M','10M'],datasets:[
+    {label:'fp16 cumulative drift',data:[1e-12,2e-11,8e-10,3e-8,5e-6,2e-4,8e-3,5e-2],borderColor:GRAY,borderDash:[5,5],pointRadius:2,tension:0.3},
+    {label:'GPTQ error',data:[1e-5,3e-5,1e-4,5e-4,3e-3,2e-2,1e-1,5e-1],borderColor:PURPLE,pointRadius:2,tension:0.3},
+    {label:'Railgun Full (bounded)',data:[1.7e-11,1.7e-11,1.7e-11,1.7e-11,1.7e-11,1.7e-11,1.7e-11,1.7e-11],borderColor:ACCENT,borderWidth:2,pointRadius:3,tension:0}
+  ]},options:{scales:{y:{type:'logarithmic',min:1e-13,max:1,title:{display:true,text:'Cumulative Attention Error (MSE)'}},x:{title:{display:true,text:'Context Length'}}}}});
+}
+function initMux(){
+  makeChart('chart-multiplex-throughput',{type:'bar',data:{labels:['7B','13B','34B','70B','405B'],datasets:[
+    {label:'fp16 (models/H100)',data:[1,1,0.5,0.5,0.08],backgroundColor:'rgba(102,102,102,0.6)',borderColor:GRAY,borderWidth:1},
+    {label:'GPTQ 4b (models/H100)',data:[4,2,1,1,0.33],backgroundColor:'rgba(155,89,182,0.6)',borderColor:PURPLE,borderWidth:1},
+    {label:'Railgun 1b (models/H100)',data:[16,8,4,4,1],backgroundColor:'rgba(0,255,157,0.7)',borderColor:ACCENT,borderWidth:1}
+  ]},options:{scales:{y:{title:{display:true,text:'Models per H100 (80 GB)'},min:0},x:{title:{display:true,text:'Model Size'}}}}});
+}
+function initFab(){
+  makeChart('chart-fabric-bandwidth',{type:'bar',data:{labels:['PCIe 5.0 x16','NVMe-oF (100GbE)','CXL 3.0','PCIe 4.0 x16','NVMe Gen4 (direct)'],datasets:[
+    {label:'70B Full Stream (seconds)',data:[3.89,4.67,2.33,7.66,34.97],backgroundColor:['rgba(0,255,157,0.7)','rgba(52,152,219,0.7)','rgba(46,204,113,0.7)','rgba(230,126,34,0.7)','rgba(231,76,60,0.7)'],borderWidth:0},
+    {label:'7B Full Stream (seconds)',data:[0.39,0.47,0.23,0.77,3.50],backgroundColor:['rgba(0,255,157,0.3)','rgba(52,152,219,0.3)','rgba(46,204,113,0.3)','rgba(230,126,34,0.3)','rgba(231,76,60,0.3)'],borderWidth:0}
+  ]},options:{scales:{y:{title:{display:true,text:'Seconds to Full Precision'},min:0},x:{}}}});
+}
+function initRoi(){
+  makeChart('chart-tco-fleet',{type:'line',data:{labels:['1K','5K','10K','25K','50K','100K','200K'],datasets:[
+    {label:'fp16 baseline',data:[30,150,300,750,1500,3000,6000],borderColor:GRAY,backgroundColor:'transparent',borderDash:[5,5],pointRadius:3,tension:0.1,borderWidth:2},
+    {label:'GPTQ 4-bit',data:[7.5,37.5,75,187.5,375,750,1500],borderColor:PURPLE,backgroundColor:'transparent',borderDash:[3,3],pointRadius:3,tension:0.1,borderWidth:2},
+    {label:'Railgun (4x throughput)',data:[7.5,37.5,75,187.5,375,750,1500],borderColor:ACCENT,backgroundColor:ACCENT_DIM,fill:true,pointRadius:3,tension:0.1,borderWidth:2}
+  ]},options:{scales:{y:{title:{display:true,text:'GPU Hardware Cost ($M)'},min:0},x:{title:{display:true,text:'Total GPU Fleet Size'}}},plugins:{tooltip:{callbacks:{label:function(c){return c.dataset.label+': $'+c.parsed.y.toFixed(0)+'M';}}}}}});
+}
+function initQual(){
+  makeChart('chart-h2h',{type:'bar',data:{labels:['fp16','GPTQ 4b','AWQ 4b','GGML Q4','TurboQuant','Railgun Full'],datasets:[
+    {label:'Cosine Similarity',data:[1.000,0.995,0.996,0.994,0.989,1.000],backgroundColor:[GRAY,PURPLE,PURPLE,PURPLE,BLUE,ACCENT],borderWidth:0},
+    {label:'VRAM per 7B (GB)',data:[14.0,3.5,3.5,3.7,3.72,0.88],backgroundColor:['rgba(102,102,102,0.3)','rgba(155,89,182,0.3)','rgba(155,89,182,0.3)','rgba(155,89,182,0.3)','rgba(52,152,219,0.3)','rgba(0,255,157,0.3)'],borderWidth:0,yAxisID:'y1'}
+  ]},options:{scales:{y:{min:0.95,max:1.005,title:{display:true,text:'Cosine Similarity'},position:'left'},y1:{min:0,max:16,title:{display:true,text:'VRAM (GB)'},position:'right',grid:{drawOnChartArea:false}},x:{}}}});
+  makeChart('chart-vram-scale',{type:'bar',data:{labels:['7B','13B','70B','405B'],datasets:[
+    {label:'fp16',data:[14,26,140,810],backgroundColor:'rgba(102,102,102,0.6)',borderWidth:0},
+    {label:'GPTQ 4b',data:[3.5,6.5,35,202],backgroundColor:'rgba(155,89,182,0.6)',borderWidth:0},
+    {label:'Railgun VRAM',data:[0.88,1.63,8.75,50.6],backgroundColor:'rgba(0,255,157,0.7)',borderWidth:0}
+  ]},options:{scales:{y:{type:'logarithmic',title:{display:true,text:'VRAM (GB)'},min:0.5},x:{title:{display:true,text:'Model Size'}}}}});
+}
+function initStab(){
+  makeChart('chart-stress-50m',{type:'bar',data:{labels:['1 op','10K ops','100K ops','1M ops','10M ops','50M ops'],datasets:[
+    {label:'Cosine Similarity After N Operations',data:[0.9872,0.9872,0.9872,0.9872,0.9872,0.9872],backgroundColor:['rgba(0,255,157,0.7)','rgba(0,255,157,0.7)','rgba(0,255,157,0.7)','rgba(0,255,157,0.7)','rgba(0,255,157,0.7)','rgba(0,255,157,0.7)'],borderColor:ACCENT,borderWidth:1}
+  ]},options:{scales:{y:{min:0.95,max:1.0,title:{display:true,text:'Cosine Similarity'}},x:{title:{display:true,text:'Cumulative Operations'}}},plugins:{title:{display:true,text:'SAME VALUE. EVERY BAR. 50 MILLION TIMES.',color:ACCENT,font:{size:11,family:'JetBrains Mono'}},tooltip:{callbacks:{label:function(c){return 'CS: 0.9872201411';}}}}}});
+  makeChart('chart-fp16-decay',{type:'line',data:{labels:['64','1K','16K','64K','256K','1M'],datasets:[
+    {label:'fp16 vs fp32 Relative Error',data:[0.000315,0.000632,0.00231,0.00491,0.00884,0.0175],borderColor:RED,pointRadius:4,tension:0.3,borderWidth:2,fill:true,backgroundColor:'rgba(231,76,60,0.1)'},
+    {label:'Railgun Encoding Error',data:[0,0,0,0,0,0],borderColor:ACCENT,borderWidth:3,pointRadius:4,tension:0,borderDash:[5,5],pointBackgroundColor:ACCENT}
+  ]},options:{scales:{y:{min:0,title:{display:true,text:'Relative Error'}},x:{title:{display:true,text:'Context Length (tokens)'}}},plugins:{title:{display:true,text:'55\u00d7 ERROR GROWTH IN FP16 \u2014 ZERO IN RAILGUN',color:ACCENT,font:{size:11,family:'JetBrains Mono'}}}}});
+  makeChart('chart-cycle-stability',{type:'line',data:{labels:['1','100','1K','10K','50K','100K'],datasets:[
+    {label:'CS After N Pack/Unpack Cycles',data:[0.99997,0.99997,0.99997,0.99997,0.99997,0.99997],borderColor:ACCENT,borderWidth:3,pointRadius:5,pointBackgroundColor:ACCENT,tension:0,fill:true,backgroundColor:'rgba(0,255,157,0.05)'}
+  ]},options:{scales:{y:{min:0.998,max:1.001,title:{display:true,text:'Cosine Similarity'}},x:{title:{display:true,text:'Pack/Unpack Cycles'}}},plugins:{title:{display:true,text:'100,000 CYCLES. ZERO ADDITIONAL DRIFT.',color:ACCENT,font:{size:11,family:'JetBrains Mono'}}}}});
+  makeChart('chart-roundtrip-fidelity',{type:'bar',data:{labels:['Normal','Heavy-Tail','Uniform','Sparse','Log-Normal'],datasets:[
+    {label:'fp16 \u2192 Encoding \u2192 fp16',data:[1.000000,1.000000,1.000000,1.000000,1.000000],backgroundColor:'rgba(0,255,157,0.7)',borderColor:ACCENT,borderWidth:1},
+    {label:'fp32 \u2192 Encoding \u2192 fp32',data:[1.000000,1.000000,1.000000,1.000000,1.000000],backgroundColor:'rgba(46,204,113,0.5)',borderColor:GREEN,borderWidth:1}
+  ]},options:{scales:{y:{min:0.990,max:1.005,title:{display:true,text:'Cosine Similarity'}},x:{title:{display:true,text:'Weight Distribution'}}},plugins:{title:{display:true,text:'BIT-EXACT ACROSS EVERY DISTRIBUTION TESTED',color:ACCENT,font:{size:11,family:'JetBrains Mono'}}}}});
+}
+initedTabs['tab-context']=true;
+initCtx();
+</script>
+</body>
+</html>

@@ -1,0 +1,2935 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AMNI-CALC | Mechanical Engineering Calculator</title>
+<meta name="description" content="Free mechanical engineering calculator: beam analysis, cross-section properties, bolt analysis, spring design, material database, finishes recommender, unit conversion.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js" charset="utf-8"></script>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0a0a;--panel:#111;--panel2:#161616;--border:#1a1a1a;--border2:#252525;--accent:#ff6b35;--accent-dim:rgba(255,107,53,0.15);--accent-glow:rgba(255,107,53,0.3);--text:#e0e0e0;--dim:#666;--ok:#00ff9d;--warn:#ffd700;--err:#ff4444;--font:'JetBrains Mono','Fira Code','SF Mono',Consolas,monospace}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14px;line-height:1.6;overflow-x:hidden;min-height:100vh}
+a{color:var(--accent);text-decoration:none;transition:opacity .2s}
+a:hover{opacity:.8}
+::selection{background:var(--accent);color:var(--bg)}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--accent-dim);border-radius:3px}
+input,select,textarea,button{font-family:var(--font);font-size:.85rem}
+input[type="number"],input[type="text"],select{background:var(--panel2);border:1px solid var(--border2);color:var(--text);padding:6px 10px;border-radius:3px;outline:none;transition:border-color .2s}
+input:focus,select:focus{border-color:var(--accent)}
+button{cursor:pointer}
+.btn{display:inline-flex;align-items:center;gap:.4rem;padding:6px 16px;border-radius:3px;font-size:.8rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;border:1px solid var(--accent);transition:all .2s;background:transparent;color:var(--accent)}
+.btn:hover{background:var(--accent);color:var(--bg)}
+.btn-sm{padding:4px 10px;font-size:.7rem}
+.btn-fill{background:var(--accent);color:var(--bg)}
+.btn-fill:hover{background:transparent;color:var(--accent)}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(10,10,10,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:48px}
+nav .logo{font-size:.95rem;font-weight:700;letter-spacing:3px;color:var(--accent)}
+nav .logo span{color:var(--dim);font-weight:400}
+nav .back{color:var(--dim);font-size:.75rem;letter-spacing:1px;text-transform:uppercase}
+nav .back:hover{color:var(--accent)}
+.app{padding-top:48px;display:flex;flex-direction:column;min-height:calc(100vh - 48px)}
+.shell{flex:1;display:flex;min-height:calc(100vh - 48px);overflow:hidden}
+.side{width:240px;background:var(--panel);border-right:1px solid var(--border);flex-shrink:0;display:flex;flex-direction:column}
+.side-h{padding:14px 14px 10px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.side-h .t{font-size:.8rem;letter-spacing:2px;text-transform:uppercase;color:var(--accent);font-weight:700}
+.side-h .s{font-size:.65rem;letter-spacing:1px;text-transform:uppercase;color:var(--dim)}
+.side-b{padding:10px;overflow-y:auto;display:flex;flex-direction:column;gap:10px}
+.side-sec{border:1px solid var(--border);border-radius:4px;overflow:hidden}
+.side-sec-h{padding:8px 10px;background:var(--panel2);border-bottom:1px solid var(--border);font-size:.7rem;letter-spacing:2px;text-transform:uppercase;color:var(--dim);display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
+.side-sec-h .ar{font-size:.7rem;transition:transform .2s}
+.side-sec.open .side-sec-h .ar{transform:rotate(180deg)}
+.side-sec-b{max-height:0;overflow:hidden;transition:max-height .25s ease}
+.side-sec.open .side-sec-b{max-height:800px}
+.side-item{display:flex;align-items:center;gap:10px;padding:9px 10px;color:var(--dim);font-size:.75rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all .2s;font-family:var(--font);border-left:3px solid transparent}
+.side-item:hover{background:var(--accent-dim);color:var(--text);border-left-color:var(--accent)}
+.side-item.active{color:var(--accent);border-left-color:var(--accent);background:rgba(255,107,53,0.05)}
+.side-item .i{width:18px;text-align:center;font-size:.9rem}
+.main{flex:1;overflow:hidden;display:flex;flex-direction:column}
+.nav-dropdown{position:relative;background:var(--panel);border-bottom:1px solid var(--border);padding:6px 1.5rem;flex-shrink:0;z-index:50;display:none}
+.tabs{display:flex;background:var(--panel);border-bottom:1px solid var(--border);overflow-x:auto;flex-shrink:0;display:none}
+.tab{padding:10px 18px;font-size:.75rem;letter-spacing:1px;text-transform:uppercase;color:var(--dim);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s;user-select:none;background:none;border-top:none;border-left:none;border-right:none;font-family:var(--font)}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.nav-dropdown-toggle{display:flex;align-items:center;gap:10px;cursor:pointer;padding:8px 16px;background:var(--panel2);border:1px solid var(--border2);border-radius:4px;color:var(--accent);font-family:var(--font);font-size:.85rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;transition:all .3s;user-select:none;position:relative;overflow:hidden}
+.nav-dropdown-toggle::before{content:'';position:absolute;inset:-2px;border-radius:6px;background:linear-gradient(135deg,var(--accent-glow),transparent,var(--accent-glow));opacity:0;transition:opacity .4s;z-index:-1}
+.nav-dropdown-toggle:hover::before,.nav-dropdown-toggle.open::before{opacity:1}
+.nav-dropdown-toggle:hover,.nav-dropdown-toggle.open{border-color:var(--accent);box-shadow:0 0 15px var(--accent-glow),0 0 30px rgba(255,107,53,0.1)}
+.nav-dropdown-toggle .arrow{transition:transform .3s;font-size:.7rem}
+.nav-dropdown-toggle.open .arrow{transform:rotate(180deg)}
+.nav-dropdown-menu{position:absolute;top:100%;left:1.5rem;right:1.5rem;background:var(--panel);border:1px solid var(--accent-dim);border-top:none;border-radius:0 0 6px 6px;max-height:0;overflow:hidden;transition:max-height .35s ease,box-shadow .35s;z-index:49}
+.nav-dropdown-menu.open{max-height:600px;box-shadow:0 8px 32px rgba(0,0,0,.5),0 0 20px var(--accent-glow)}
+.nav-dropdown-menu .nav-item{display:flex;align-items:center;gap:10px;padding:10px 16px;color:var(--dim);font-size:.8rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all .2s;font-family:var(--font);border-left:3px solid transparent}
+.nav-dropdown-menu .nav-item:hover{background:var(--accent-dim);color:var(--text);border-left-color:var(--accent)}
+.nav-dropdown-menu .nav-item.active{color:var(--accent);border-left-color:var(--accent);background:rgba(255,107,53,0.05)}
+.nav-dropdown-menu .nav-item .nav-icon{width:20px;text-align:center;font-size:.9rem}
+.view{display:none;flex:1;overflow-y:auto;padding:1.5rem}
+.view.active{display:block}
+@media(max-width:900px){.side{width:200px}}
+@media(max-width:768px){.shell{flex-direction:column}.side{width:100%;border-right:none;border-bottom:1px solid var(--border)}.side-b{flex-direction:row;overflow-x:auto;overflow-y:hidden}.side-sec{min-width:240px}}
+.view h2{font-size:1.2rem;color:var(--accent);letter-spacing:2px;margin-bottom:1rem}
+.view h3{font-size:.9rem;color:var(--accent);letter-spacing:1px;margin:1rem 0 .5rem}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:1.25rem;margin-bottom:1rem}
+.card h3{margin-top:0}
+.row{display:flex;gap:1rem;flex-wrap:wrap;align-items:flex-end}
+.field{display:flex;flex-direction:column;gap:3px;min-width:120px}
+.field label{font-size:.7rem;color:var(--dim);letter-spacing:1px;text-transform:uppercase}
+.field input,.field select{width:100%}
+.field-row{display:flex;gap:4px;align-items:center}
+.field-row select{width:70px;flex-shrink:0}
+.results{margin-top:1rem}
+.result-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.75rem}
+.result-item{background:var(--panel2);border:1px solid var(--border);border-radius:3px;padding:10px 12px}
+.result-item .lbl{font-size:.65rem;color:var(--dim);letter-spacing:1px;text-transform:uppercase;margin-bottom:2px}
+.result-item .val{font-size:1.1rem;color:var(--accent);font-weight:700}
+.result-item .val.ok{color:var(--ok)}
+.result-item .val.warn{color:var(--warn)}
+.result-item .val.err{color:var(--err)}
+.diagram-wrap{background:var(--panel2);border:1px solid var(--border);border-radius:3px;padding:8px;margin-top:.75rem}
+.diagram-wrap canvas{width:100%;height:200px;min-height:200px;display:block}
+.canvas-draw{background:var(--panel2);border:1px solid var(--border);border-radius:3px;cursor:crosshair;display:block}
+table.data{width:100%;border-collapse:collapse;font-size:.8rem;margin-top:.5rem}
+table.data th{text-align:left;color:var(--accent);font-size:.7rem;letter-spacing:1px;text-transform:uppercase;padding:6px 8px;border-bottom:1px solid var(--border2);font-weight:700}
+table.data td{padding:6px 8px;border-bottom:1px solid var(--border);color:var(--text)}
+table.data tr:hover{background:var(--accent-dim)}
+table.data tr{cursor:pointer}
+.tag{display:inline-block;font-size:.6rem;padding:2px 6px;border:1px solid var(--accent);border-radius:2px;color:var(--accent);letter-spacing:1px;margin:1px}
+.tag-ok{border-color:var(--ok);color:var(--ok)}
+.tag-warn{border-color:var(--warn);color:var(--warn)}
+.tag-err{border-color:var(--err);color:var(--err)}
+.slider-row{display:flex;align-items:center;gap:10px;margin:4px 0}
+.slider-row label{width:110px;font-size:.7rem;color:var(--dim);text-transform:uppercase;letter-spacing:1px;flex-shrink:0}
+.slider-row input[type="range"]{flex:1;accent-color:var(--accent);background:transparent}
+.slider-row .sv{width:24px;text-align:right;font-size:.8rem;color:var(--accent)}
+.chk-row{display:flex;align-items:center;gap:8px;margin:3px 0;font-size:.8rem;color:var(--dim)}
+.chk-row input{accent-color:var(--accent)}
+.finish-card{background:var(--panel2);border:1px solid var(--border);border-radius:4px;padding:1rem;margin-bottom:.75rem;transition:border-color .2s}
+.finish-card:hover{border-color:var(--accent-glow)}
+.finish-card .fname{font-size:.9rem;color:var(--accent);font-weight:700;letter-spacing:1px}
+.finish-card .fcat{font-size:.65rem;color:var(--dim);letter-spacing:1px;text-transform:uppercase}
+.finish-card .fscore{float:right;font-size:1.1rem;color:var(--accent);font-weight:700}
+.finish-card .fdet{margin-top:.5rem;font-size:.75rem;color:var(--text);line-height:1.5}
+.meter{display:inline-block;width:60px;height:6px;background:var(--border);border-radius:3px;overflow:hidden;vertical-align:middle;margin-left:4px}
+.meter-fill{height:100%;border-radius:3px;background:var(--accent)}
+#disclaimer{position:fixed;top:0;left:0;right:0;bottom:0;z-index:999;background:rgba(10,10,10,.95);backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:center;padding:2rem}
+#disclaimer .box{max-width:600px;text-align:center}
+#disclaimer h1{font-size:1.8rem;color:var(--accent);letter-spacing:4px;margin-bottom:.5rem}
+#disclaimer .icon{font-size:3rem;margin-bottom:1rem}
+#disclaimer p{color:var(--dim);font-size:.85rem;line-height:1.8;margin:.75rem 0}
+#disclaimer .warn-text{color:var(--warn);font-size:.8rem;border:1px solid var(--warn);border-radius:4px;padding:1rem;margin:1.5rem 0;line-height:1.7}
+#disclaimer .btn{margin-top:1rem;font-size:.9rem;padding:10px 30px}
+.preset-chips{display:flex;flex-wrap:wrap;gap:6px;margin:.5rem 0}
+.chip{padding:4px 10px;font-size:.7rem;border:1px solid var(--border2);border-radius:3px;color:var(--dim);cursor:pointer;transition:all .2s;background:none;font-family:var(--font);letter-spacing:1px}
+.chip:hover,.chip.active{border-color:var(--accent);color:var(--accent);background:var(--accent-dim)}
+.beam-canvas-wrap{position:relative;margin:.5rem 0}
+.beam-toolbar{display:flex;gap:6px;margin-bottom:6px;flex-wrap:wrap}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media(max-width:768px){.split{grid-template-columns:1fr}.tabs{flex-wrap:nowrap}}
+.scanlines{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(255,107,53,.008) 2px,rgba(255,107,53,.008) 4px)}
+footer{text-align:center;padding:2rem 1rem;font-size:.7rem;color:var(--dim);border-top:1px solid var(--border)}
+footer a{color:var(--accent);font-size:.7rem}
+#ad-tx{position:fixed;bottom:24px;left:24px;z-index:99;width:320px;min-height:100px;background:var(--panel2);border:1px solid var(--accent);display:flex;flex-direction:column;pointer-events:auto;overflow:hidden;transition:opacity .4s}
+#ad-tx .ad-hdr{display:flex;justify-content:space-between;align-items:center;padding:4px 10px;border-bottom:1px solid var(--border)}
+#ad-tx .ad-hdr span{font-size:8px;letter-spacing:2px;color:var(--accent);text-transform:uppercase}
+#ad-tx .ad-x{background:none;border:none;color:var(--dim);font-size:12px;cursor:pointer;padding:0 2px}
+#ad-tx .ad-x:hover{color:var(--text)}
+#ad-tx .ad-body{padding:6px 10px;min-height:60px;display:flex;align-items:center;justify-content:center}
+#ad-tx.hidden{opacity:0;pointer-events:none}
+</style>
+</head>
+<body>
+<div class="scanlines"></div>
+<div id="disclaimer">
+<div class="box">
+<div class="icon">&#9888;</div>
+<h1>AMNI-CALC</h1>
+<p>MECHANICAL ENGINEERING CALCULATOR</p>
+<div class="warn-text">
+<strong>IMPORTANT DISCLAIMER</strong><br>
+This tool is provided for educational and preliminary estimation purposes only. All calculations should be independently verified by a qualified professional engineer before use in any critical, structural, safety-related, or production application.<br><br>
+Amni-Scient assumes no liability for designs, decisions, or outcomes based on results from this calculator. Always consult a licensed engineer for final design validation.
+</div>
+<p style="color:var(--text);font-size:.75rem">By continuing, you acknowledge that this tool is not a substitute for professional engineering judgment.</p>
+<button class="btn btn-fill" onclick="document.getElementById('disclaimer').style.display='none'">I UNDERSTAND &mdash; CONTINUE</button>
+</div>
+</div>
+<nav>
+<a href="https://amni-scient.com" class="back">&larr; AMNI-SCIENT</a>
+<span class="logo">AMNI<span>-CALC</span></span>
+<span style="width:80px"></span>
+</nav>
+<div class="app">
+<div class="shell">
+<div class="side" id="side">
+<div class="side-h"><span class="t">FC-CALC</span><span class="s" id="side-ver">v2.6.0</span></div>
+<div class="side-b" id="side-b">
+<div class="side-sec open" data-sec="core">
+<div class="side-sec-h" onclick="toggleSideSec('core')"><span>Core</span><span class="ar">&#9660;</span></div>
+<div class="side-sec-b">
+<div class="side-item active" data-v="beam"><span class="i">&#9649;</span>Beams</div>
+<div class="side-item" data-v="bolts"><span class="i">&#9881;</span>Bolts</div>
+<div class="side-item" data-v="springs"><span class="i">&#8767;</span>Springs</div>
+<div class="side-item" data-v="seals"><span class="i">&#9711;</span>Seals</div>
+<div class="side-item" data-v="gaskets"><span class="i">&#9645;</span>Gaskets</div>
+</div>
+</div>
+<div class="side-sec open" data-sec="ref">
+<div class="side-sec-h" onclick="toggleSideSec('ref')"><span>Reference</span><span class="ar">&#9660;</span></div>
+<div class="side-sec-b">
+<div class="side-item" data-v="materials"><span class="i">&#9670;</span>Materials</div>
+<div class="side-item" data-v="finishes"><span class="i">&#9678;</span>Finishes</div>
+<div class="side-item" data-v="equations"><span class="i">&#931;</span>Equations</div>
+</div>
+</div>
+<div class="side-sec open" data-sec="tools">
+<div class="side-sec-h" onclick="toggleSideSec('tools')"><span>Tools</span><span class="ar">&#9660;</span></div>
+<div class="side-sec-b">
+<div class="side-item" data-v="stress"><span class="i">&#9762;</span>Stress</div>
+<div class="side-item" data-v="thermal"><span class="i">&#9832;</span>Thermal</div>
+<div class="side-item" data-v="units"><span class="i">&#8644;</span>Units</div>
+<div class="side-item" data-v="math"><span class="i">&#960;</span>Math</div>
+</div>
+</div>
+</div>
+</div>
+<div class="main">
+<div class="nav-dropdown" id="nav-dd">
+<div class="nav-dropdown-toggle" id="nav-toggle" onclick="toggleNavMenu()">
+<span id="nav-current-icon">&#9649;</span>
+<span id="nav-current">BEAMS</span>
+<span class="arrow">&#9660;</span>
+</div>
+<div class="nav-dropdown-menu" id="nav-menu">
+<div class="nav-item active" data-v="beam"><span class="nav-icon">&#9649;</span>BEAMS</div>
+<div class="nav-item" data-v="bolts"><span class="nav-icon">&#9881;</span>BOLTS</div>
+<div class="nav-item" data-v="equations"><span class="nav-icon">&#931;</span>EQUATIONS</div>
+<div class="nav-item" data-v="finishes"><span class="nav-icon">&#9678;</span>FINISHES</div>
+<div class="nav-item" data-v="materials"><span class="nav-icon">&#9670;</span>MATERIALS</div>
+<div class="nav-item" data-v="math"><span class="nav-icon">&#960;</span>MATH</div>
+<div class="nav-item" data-v="seals"><span class="nav-icon">&#9711;</span>SEALS</div>
+<div class="nav-item" data-v="gaskets"><span class="nav-icon">&#9645;</span>GASKETS</div>
+<div class="nav-item" data-v="springs"><span class="nav-icon">&#8767;</span>SPRINGS</div>
+<div class="nav-item" data-v="stress"><span class="nav-icon">&#9762;</span>STRESS</div>
+<div class="nav-item" data-v="thermal"><span class="nav-icon">&#9832;</span>THERMAL</div>
+<div class="nav-item" data-v="units"><span class="nav-icon">&#8644;</span>UNITS</div>
+</div>
+</div>
+<div class="tabs" id="tabs" style="display:none">
+<button class="tab active" data-v="beam">BEAMS</button>
+<button class="tab" data-v="bolts">BOLTS</button>
+<button class="tab" data-v="equations">EQUATIONS</button>
+<button class="tab" data-v="finishes">FINISHES</button>
+<button class="tab" data-v="materials">MATERIALS</button>
+<button class="tab" data-v="math">MATH</button>
+<button class="tab" data-v="seals">SEALS</button>
+<button class="tab" data-v="gaskets">GASKETS</button>
+<button class="tab" data-v="springs">SPRINGS</button>
+<button class="tab" data-v="stress">STRESS</button>
+<button class="tab" data-v="thermal">THERMAL</button>
+<button class="tab" data-v="units">UNITS</button>
+</div>
+<div class="view active" id="v-beam">
+<h2>BEAM ANALYSIS</h2>
+<div class="card">
+<h3>BEAM CONFIGURATION</h3>
+<div class="row">
+<div class="field"><label>LENGTH</label><div class="field-row"><input type="number" id="bm-len" value="3000" step="any"><select id="bm-len-u"><option>mm</option><option>m</option><option>in</option><option>ft</option></select></div></div>
+<div class="field"><label>E MODULUS</label><div class="field-row"><input type="number" id="bm-e" value="200" step="any"><select id="bm-e-u"><option>GPa</option><option>MPa</option><option>psi</option><option>ksi</option></select></div></div>
+<div class="field"><label>I (MOMENT)</label><div class="field-row"><input type="number" id="bm-i" value="8356" step="any"><select id="bm-i-u"><option>cm4</option><option>mm4</option><option>in4</option></select></div></div>
+</div>
+</div>
+<div class="card">
+<h3>SUPPORTS (CLICK TO PLACE)</h3>
+<div class="beam-toolbar">
+<button class="chip active" data-sup="pin" id="sup-pin">&#9650; PIN</button>
+<button class="chip" data-sup="roller" id="sup-roller">&#9711; ROLLER</button>
+<button class="chip" data-sup="fixed" id="sup-fixed">&#9632; FIXED</button>
+<button class="btn btn-sm" onclick="clearSupports()">CLEAR</button>
+</div>
+<div class="beam-canvas-wrap">
+<canvas id="c-beam-sup" class="canvas-draw" width="800" height="120"></canvas>
+</div>
+<div id="sup-list" style="font-size:.75rem;color:var(--dim);margin-top:4px;display:flex;flex-wrap:wrap;gap:4px"></div>
+</div>
+<div class="card">
+<h3>LOADS</h3>
+<div class="row">
+<div class="field"><label>TYPE</label><select id="ld-type"><option value="point">POINT LOAD</option><option value="distributed">DISTRIBUTED</option><option value="moment">MOMENT</option></select></div>
+<div class="field"><label>POSITION</label><div class="field-row"><input type="number" id="ld-pos" value="1500" step="any"><select id="ld-pos-u"><option>mm</option><option>m</option><option>in</option><option>ft</option></select></div></div>
+<div class="field"><label>MAGNITUDE</label><div class="field-row"><input type="number" id="ld-mag" value="-10" step="any"><select id="ld-mag-u"><option>kN</option><option>N</option><option>lbf</option><option>kip</option></select></div></div>
+<div class="field" id="ld-end-wrap" style="display:none"><label>END POS</label><div class="field-row"><input type="number" id="ld-end" step="any"><select id="ld-end-u"><option>mm</option><option>m</option><option>in</option><option>ft</option></select></div></div>
+</div>
+<div style="margin-top:.5rem"><button class="btn btn-sm" onclick="addLoad()">+ ADD LOAD</button> <button class="btn btn-sm" onclick="clearLoads()">CLEAR ALL</button></div>
+<div id="load-list" style="font-size:.75rem;color:var(--dim);margin-top:6px;display:flex;flex-wrap:wrap;gap:4px"></div>
+</div>
+<button class="btn btn-fill" onclick="solveBeam()" style="margin-bottom:1rem">SOLVE BEAM</button>
+<div id="beam-results"></div>
+<div class="card" style="margin-top:1rem">
+<h3>CROSS SECTION PROPERTIES</h3>
+<div class="split">
+<div>
+<div class="field"><label>SELECT PRESET</label><select id="sec-presets"></select></div>
+<div id="sec-preset-params"></div>
+<button class="btn btn-sm" onclick="applyPreset()" style="margin-top:.5rem">APPLY PRESET</button>
+<div style="margin-top:.75rem">
+<p style="font-size:.7rem;color:var(--dim);margin-bottom:.5rem">OR DRAW CUSTOM — CLICK VERTICES, RIGHT-CLICK TO CLOSE</p>
+<canvas id="c-section" class="canvas-draw" width="400" height="400"></canvas>
+<div style="margin-top:.5rem">
+<button class="btn btn-sm" onclick="undoVertex()">UNDO</button>
+<button class="btn btn-sm" onclick="clearSection()">CLEAR</button>
+<button class="btn btn-sm btn-fill" onclick="calcSection()">CALCULATE</button>
+</div>
+</div>
+</div>
+<div>
+<div class="card" id="sec-results">
+<h3>SECTION PROPERTIES</h3>
+<p style="font-size:.75rem;color:var(--dim)">Draw or select a section to see results</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="view" id="v-materials">
+<h2>MATERIALS DATABASE</h2>
+<div class="card">
+<div class="row">
+<div class="field" style="flex:1"><label>SEARCH</label><input type="text" id="mat-search" placeholder="Search materials..."></div>
+<div class="field"><label>CATEGORY</label><select id="mat-cat"><option value="">ALL</option></select></div>
+</div>
+</div>
+<div id="mat-table-wrap">
+<table class="data" id="mat-table">
+<thead><tr><th>NAME</th><th>E (GPa)</th><th>Sy (MPa)</th><th>Su (MPa)</th><th>DENSITY</th><th>POISSON</th><th>Cp (J/kg·K)</th><th>Tm (°C)</th><th>SPEC</th></tr></thead>
+<tbody id="mat-tbody"></tbody>
+</table>
+</div>
+<div class="card" id="mat-detail" style="display:none;margin-top:1rem">
+<h3 id="mat-det-name">MATERIAL DETAIL</h3>
+<div class="result-grid" id="mat-det-grid"></div>
+</div>
+</div>
+<div class="view" id="v-stress">
+<h2>STRESS ANALYSIS</h2>
+<div class="split">
+<div>
+<div class="card">
+<h3>STRESS STATE</h3>
+<div class="row">
+<div class="field"><label>&sigma;x</label><div class="field-row"><input type="number" id="st-sx" value="120" step="any"><select id="st-u"><option>MPa</option><option>ksi</option><option>psi</option><option>GPa</option></select></div></div>
+<div class="field"><label>&sigma;y</label><input type="number" id="st-sy" value="-40" step="any"></div>
+<div class="field"><label>&tau;xy</label><input type="number" id="st-txy" value="50" step="any"></div>
+</div>
+<div class="row" style="margin-top:.5rem">
+<div class="field"><label>&sigma;z (3D)</label><input type="number" id="st-sz" value="0" step="any"></div>
+<div class="field"><label>&tau;xz</label><input type="number" id="st-txz" value="0" step="any"></div>
+<div class="field"><label>&tau;yz</label><input type="number" id="st-tyz" value="0" step="any"></div>
+</div>
+<div class="row" style="margin-top:.5rem">
+<div class="field"><label>YIELD STR</label><div class="field-row"><input type="number" id="st-sy-val" value="250" step="any"><span style="color:var(--dim);font-size:.75rem">MPa</span></div></div>
+<div class="field"><label>ULT STR</label><div class="field-row"><input type="number" id="st-su-val" value="400" step="any"><span style="color:var(--dim);font-size:.75rem">MPa</span></div></div>
+</div>
+<button class="btn btn-fill" onclick="calcStress()" style="margin-top:.75rem">ANALYZE</button>
+</div>
+</div>
+<div>
+<div class="card" id="stress-results">
+<h3>RESULTS</h3>
+<p style="font-size:.75rem;color:var(--dim)">Enter stress state and click Analyze</p>
+</div>
+<div class="card">
+<h3>MOHR'S CIRCLE</h3>
+<div id="c-mohr" style="width:100%;height:400px"></div>
+</div>
+</div>
+</div>
+<div class="card" style="margin-top:1rem">
+<h3>FATIGUE ANALYSIS</h3>
+<div class="split">
+<div>
+<div class="row">
+<div class="field"><label>&sigma; MEAN (MPa)</label><input type="number" id="ft-sm" value="100" step="any"></div>
+<div class="field"><label>&sigma; ALT (MPa)</label><input type="number" id="ft-sa" value="80" step="any"></div>
+<div class="field"><label>SURFACE</label><select id="ft-surf"><option value="ground">GROUND</option><option value="machined">MACHINED</option><option value="hot_rolled">HOT ROLLED</option><option value="forged">FORGED</option></select></div>
+</div>
+<div class="row" style="margin-top:.5rem">
+<div class="field"><label>DIA (mm)</label><input type="number" id="ft-dia" value="25" step="any"></div>
+<div class="field"><label>RELIABILITY</label><input type="number" id="ft-rel" value="0.99" step="0.01" min="0.5" max="0.999"></div>
+<div class="field"><label>TEMP (&deg;C)</label><input type="number" id="ft-temp" value="20" step="any"></div>
+</div>
+<div class="row" style="margin-top:.5rem">
+<div class="field"><label>Kt</label><input type="number" id="ft-kt" value="1.5" step="0.1"></div>
+<div class="field"><label>q (NOTCH)</label><input type="number" id="ft-q" value="0.9" step="0.05"></div>
+<div class="field"><label>Su (MPa)</label><div class="field-row"><input type="number" id="ft-su" value="400" step="any"><span style="color:var(--dim);font-size:.7rem">from stress</span></div></div>
+</div>
+<button class="btn btn-fill" onclick="calcFatigue()" style="margin-top:.75rem">ANALYZE FATIGUE</button>
+<div id="fatigue-results" style="margin-top:.5rem"></div>
+</div>
+<div>
+<div id="c-fatigue" style="width:100%;height:300px"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="view" id="v-bolts">
+<h2>BOLT ANALYSIS</h2>
+<div class="split">
+<div>
+<div class="card">
+<h3>BOLT CONFIGURATION</h3>
+<div class="row">
+<div class="field"><label>PATTERN</label><select id="bl-pattern" onchange="toggleBoltPattern()"><option value="circular">CIRCULAR (BCD)</option><option value="rectangular">RECTANGULAR</option><option value="custom">CUSTOM / MANUAL</option></select></div>
+<div class="field"><label># BOLTS</label><input type="number" id="bl-num" value="8" min="1" oninput="drawBoltPattern()"></div>
+</div>
+<div class="row" id="row-bcd" style="margin-top:.5rem">
+<div class="field"><label>BOLT CIRCLE DIA (mm)</label><input type="number" id="bl-bcd" value="200" step="1" oninput="drawBoltPattern()"></div>
+<div class="field"><label>START ANGLE (deg)</label><input type="number" id="bl-angle" value="0" step="1" oninput="drawBoltPattern()"></div>
+</div>
+<div class="row" id="row-rect" style="display:none;margin-top:.5rem">
+<div class="field"><label>RECT WIDTH (mm)</label><input type="number" id="bl-rect-w" value="150" step="1" oninput="drawBoltPattern()"></div>
+<div class="field"><label>RECT HEIGHT (mm)</label><input type="number" id="bl-rect-h" value="100" step="1" oninput="drawBoltPattern()"></div>
+</div>
+<div class="row" style="margin-top:.5rem">
+<div class="field"><label>BOLT GRADE</label><select id="bl-grade" onchange="calcBolt()"></select></div>
+<div class="field"><label>BOLT SIZE</label><select id="bl-size" onchange="calcBolt()"></select></div>
+</div>
+<div class="row" style="margin-top:.5rem">
+<div class="field"><label>EXTERNAL LOAD (N)</label><input type="number" id="bl-fext" value="50000" step="100" oninput="calcBolt()"></div>
+<div class="field"><label>SHEAR LOAD (N)</label><input type="number" id="bl-fshear" value="0" step="100" oninput="calcBolt()"></div>
+</div>
+<div class="row" style="margin-top:.5rem">
+<div class="field"><label>PRELOAD (% Sy)</label><input type="range" min="10" max="100" value="75" id="bl-preload" oninput="vSet('bl-preload');calcBolt()"><span class="sv" id="bl-preload-v">75</span></div>
+<div class="field"><label>FRICTION (mu)</label><input type="number" id="bl-mu" value="0.15" step="0.01" oninput="calcBolt()"></div>
+</div>
+<button class="btn btn-fill" onclick="calcBolt()" style="margin-top:.75rem">ANALYZE JOINT</button>
+</div>
+<div class="card" style="margin-top:1rem">
+<h3>PATTERN VISUALIZATION</h3>
+<canvas id="c-bolt-pattern" width="400" height="300" style="width:100%;height:300px;background:#050505;border:1px solid #222;border-radius:4px"></canvas>
+</div>
+</div>
+<div>
+<div class="card" id="bolt-results">
+<h3>JOINT RESULTS</h3>
+<p style="font-size:.75rem;color:var(--dim)">Configure bolt and click Analyze</p>
+</div>
+</div>
+</div>
+<div class="card" style="margin-top:1rem">
+<h3>BOLT REFERENCE TABLES</h3>
+<div class="split">
+<div>
+<h3 style="font-size:.75rem">GRADES</h3>
+<table class="data"><thead><tr><th>GRADE</th><th>Sp (MPa)</th><th>Sy (MPa)</th><th>Su (MPa)</th></tr></thead><tbody id="bl-grade-tbl"></tbody></table>
+</div>
+<div>
+<h3 style="font-size:.75rem">SIZES</h3>
+<table class="data"><thead><tr><th>SIZE</th><th>NOM (mm)</th><th>PITCH</th><th>At (mm²)</th></tr></thead><tbody id="bl-size-tbl"></tbody></table>
+</div>
+</div>
+</div>
+</div>
+<div class="view" id="v-springs">
+<h2>SPRING DESIGN</h2>
+<div class="split">
+<div>
+<div class="card">
+<h3>SPRING PARAMETERS</h3>
+<div class="row">
+<div class="field"><label>TYPE</label><select id="sp-type" onchange="toggleBelleville()"><option value="compression">COMPRESSION</option><option value="extension">EXTENSION</option><option value="torsion">TORSION</option><option value="belleville">BELLEVILLE WASHER</option></select></div>
+<div class="field sp-coil"><label>WIRE DIA</label><div class="field-row"><input type="number" id="sp-d" value="3" step="any"><select id="sp-d-u"><option>mm</option><option>in</option></select></div></div>
+<div class="field sp-coil"><label>COIL DIA (MEAN)</label><div class="field-row"><input type="number" id="sp-D" value="25" step="any"><select id="sp-D-u"><option>mm</option><option>in</option></select></div></div>
+</div>
+<div class="row sp-coil" style="margin-top:.5rem">
+<div class="field"><label>ACTIVE COILS</label><input type="number" id="sp-na" value="8" step="0.5"></div>
+<div class="field"><label>TOTAL COILS</label><input type="number" id="sp-nt" value="10" step="0.5"></div>
+<div class="field"><label>FREE LENGTH</label><div class="field-row"><input type="number" id="sp-fl" value="60" step="any"><span style="color:var(--dim);font-size:.7rem">mm</span></div></div>
+</div>
+<div id="sp-bell-params" style="display:none">
+<div class="row" style="margin-top:.5rem">
+<div class="field"><label>OUTER DIA</label><div class="field-row"><input type="number" id="sp-ode" value="50" step="any"><span style="color:var(--dim);font-size:.7rem">mm</span></div></div>
+<div class="field"><label>INNER DIA</label><div class="field-row"><input type="number" id="sp-ide" value="25.4" step="any"><span style="color:var(--dim);font-size:.7rem">mm</span></div></div>
+<div class="field"><label>THICKNESS t</label><div class="field-row"><input type="number" id="sp-bt" value="2" step="any"><span style="color:var(--dim);font-size:.7rem">mm</span></div></div>
+</div>
+<div class="row" style="margin-top:.5rem">
+<div class="field"><label>DISC HEIGHT h</label><div class="field-row"><input type="number" id="sp-bh" value="3.5" step="any"><span style="color:var(--dim);font-size:.7rem">mm</span></div></div>
+<div class="field"><label>E MODULUS</label><div class="field-row"><input type="number" id="sp-be" value="206" step="any"><span style="color:var(--dim);font-size:.7rem">GPa</span></div></div>
+<div class="field"><label>POISSON ν</label><input type="number" id="sp-bnu" value="0.3" step="0.01"></div>
+</div>
+<div class="row" style="margin-top:.5rem">
+<div class="field"><label>PARALLEL (n)</label><input type="number" id="sp-np" value="1" min="1"></div>
+<div class="field"><label>SERIES (i)</label><input type="number" id="sp-ns" value="1" min="1"></div>
+</div>
+</div>
+<div class="row" style="margin-top:.5rem">
+<div class="field sp-coil"><label>SHEAR MODULUS G</label><div class="field-row"><input type="number" id="sp-g" value="79.3" step="any"><select id="sp-g-u"><option>GPa</option><option>MPa</option><option>psi</option></select></div></div>
+<div class="field"><label>APPLIED FORCE</label><div class="field-row"><input type="number" id="sp-f" value="100" step="any"><select id="sp-f-u"><option>N</option><option>lbf</option><option>kgf</option></select></div></div>
+<div class="field"><label>YIELD STRENGTH</label><div class="field-row"><input type="number" id="sp-sy" value="1000" step="any"><span style="color:var(--dim);font-size:.7rem">MPa</span></div></div>
+</div>
+<button class="btn btn-fill" onclick="calcSpring()" style="margin-top:.75rem">CALCULATE</button>
+</div>
+<div class="card" style="margin-top:1rem">
+<h3>SPRING VISUALIZATION</h3>
+<canvas id="c-spring-viz" width="600" height="250" style="width:100%;background:#050505;border:1px solid #222;border-radius:4px"></canvas>
+</div>
+<div class="card" style="margin-top:1rem">
+<h3>FORCE-DEFLECTION</h3>
+<div id="spring-fd-chart" style="width:100%;height:380px"></div>
+</div>
+<div class="card" id="spring-goodman-card" style="margin-top:1rem;display:none">
+<h3>GOODMAN FATIGUE DIAGRAM</h3>
+<div id="spring-goodman-chart" style="width:100%;height:380px"></div>
+</div>
+</div>
+<div>
+<div class="card" id="spring-results">
+<h3>SPRING RESULTS</h3>
+<p style="font-size:.75rem;color:var(--dim)">Enter parameters and click Calculate</p>
+</div>
+</div>
+</div>
+</div>
+<div class="view" id="v-seals">
+<h2>SEAL / O-RING ANALYSIS</h2>
+<div class="split">
+<div>
+<div class="card">
+<h3>GLAND CONFIGURATION</h3>
+<div class="row">
+<div class="field"><label>GLAND TYPE</label><select id="sl-gland"><option value="face">FACE SEAL (AXIAL)</option><option value="radial_bore">RADIAL — BORE</option><option value="radial_piston">RADIAL — PISTON</option></select></div>
+<div class="field"><label>CROSS SECTION</label><select id="sl-xsec"><option value="circle">O-RING (CIRCLE)</option><option value="quad">QUAD SEAL</option><option value="x_ring">X-RING</option><option value="d_ring">D-RING</option><option value="t_seal">T-SEAL</option><option value="u_cup">U-CUP</option><option value="v_ring">V-RING</option><option value="lip_seal">LIP SEAL</option><option value="flat_gasket">FLAT GASKET</option><option value="double_bead">DOUBLE BEAD</option><option value="triple_bead">TRIPLE BEAD</option><option value="custom">CUSTOM (COORDINATES)</option></select></div>
+<div class="field"><label>MATERIAL</label><select id="sl-mat"></select></div>
+</div>
+<div id="sl-custom-wrap" style="display:none;margin-top:.5rem">
+<div class="field"><label>CUSTOM COORDS (X,Y PER LINE)</label><textarea id="sl-custom-pts" rows="4" style="width:100%;background:var(--panel2);border:1px solid var(--border2);color:var(--text);font-family:var(--font);font-size:.75rem;padding:6px;border-radius:3px" placeholder="0,0&#10;1,0&#10;1,0.5&#10;0,0.5"></textarea></div>
+<canvas id="c-seal-custom" class="canvas-draw" width="200" height="200" style="width:100%;height:200px;margin-top:.25rem"></canvas>
+</div>
+<div class="row" style="margin-top:.5rem">
+<div class="field"><label>CORD DIA (mm)</label><input type="number" id="sl-cord" value="3.53" step="0.01"></div>
+<div class="field"><label>BORE / ID (mm)</label><input type="number" id="sl-id" value="25.0" step="0.1"></div>
+</div>
+<div class="row" style="margin-top:.5rem">
+<div class="field"><label>GROOVE DEPTH (mm)</label><input type="number" id="sl-depth" value="2.62" step="0.01"></div>
+<div class="field"><label>GROOVE WIDTH (mm)</label><input type="number" id="sl-width" value="4.34" step="0.01"></div>
+</div>
+<div class="row" style="margin-top:.5rem">
+<div class="field"><label>GLAND GAP (mm)</label><input type="number" id="sl-gap" value="0.10" step="0.01"></div>
+<div class="field"><label>HARDNESS (Shore A)</label><input type="number" id="sl-hard" value="70" step="1" min="20" max="95"></div>
+</div>
+<div class="row" style="margin-top:.5rem">
+<div class="field"><label>PRESSURE (MPa)</label><input type="number" id="sl-press" value="10" step="0.1"></div>
+<div class="field"><label>TEMPERATURE (°C)</label><input type="number" id="sl-temp" value="23" step="1"></div>
+</div>
+<button class="btn btn-fill" onclick="calcSeal()" style="margin-top:.75rem">ANALYZE SEAL</button>
+</div>
+<div class="card">
+<h3>COMPRESSION ANIMATION</h3>
+<div class="slider-row"><label>SQUEEZE %</label><input type="range" min="0" max="50" value="0" step="0.5" id="sl-squeeze-rng"><span class="sv" id="sl-squeeze-v">0</span></div>
+<canvas id="c-seal-anim" class="canvas-draw" width="400" height="300" style="width:100%;height:300px"></canvas>
+</div>
+</div>
+<div>
+<div class="card" id="seal-results">
+<h3>SEAL RESULTS</h3>
+<p style="font-size:.75rem;color:var(--dim)">Configure gland and click Analyze</p>
+</div>
+<div class="card">
+<h3>FORCE-DEFLECTION CURVE</h3>
+<div id="c-seal-fd" style="width:100%;height:250px"></div>
+</div>
+<div class="card">
+<h3>STRESS-STRAIN CURVE</h3>
+<div id="c-seal-ss" style="width:100%;height:250px"></div>
+</div>
+<div class="card">
+<h3>NONLINEAR STRESS vs COMPRESSION</h3>
+<div id="c-seal-nlstress" style="width:100%;height:300px"></div>
+</div>
+<div class="card">
+<h3>AS568 O-RING SIZE LOOKUP</h3>
+<div class="field" style="margin-bottom:.5rem"><label>SEARCH DASH #</label><input type="text" id="as568-search" placeholder="-210" style="width:100%"></div>
+<div style="max-height:200px;overflow-y:auto"><table class="data"><thead><tr><th>DASH</th><th>ID mm</th><th>CS mm</th><th>OD mm</th></tr></thead><tbody id="as568-tbody"></tbody></table></div>
+<button class="btn" onclick="as568Fill()" style="margin-top:.5rem;font-size:.65rem">USE SELECTED SIZE</button>
+</div>
+<div class="card">
+<h3>GROOVE CALCULATOR</h3>
+<div class="row">
+<div class="field"><label>CORD DIA (mm)</label><input type="number" id="gc-cord" value="3.53" step="0.01"></div>
+<div class="field"><label>BORE ID (mm)</label><input type="number" id="gc-id" value="25.0" step="0.1"></div>
+</div>
+<div class="row" style="margin-top:.25rem">
+<div class="field"><label>PRESSURE (MPa)</label><input type="number" id="gc-press" value="10" step="0.1"></div>
+<div class="chk-row" style="align-self:end"><input type="checkbox" id="gc-dyn"> DYNAMIC</div>
+</div>
+<button class="btn" onclick="calcGroove()" style="margin-top:.5rem;font-size:.65rem">CALCULATE GROOVE</button>
+<div id="groove-results" style="margin-top:.5rem;font-size:.7rem"></div>
+</div>
+<div class="card" id="seal-mat-detail">
+<h3>MATERIAL PROPERTIES</h3>
+<div id="seal-mat-grid" class="result-grid"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="view" id="v-gaskets">
+<h2>GASKET CHANNEL DESIGNER</h2>
+<div class="split">
+<div>
+<div class="card">
+<h3>GASKET PROFILE</h3>
+<div class="row">
+<div class="field"><label>GASKET WIDTH (mm)</label><input type="number" id="gk-width" value="25" step="0.1" min="1"></div>
+<div class="field"><label>GASKET THICKNESS (mm)</label><input type="number" id="gk-thick" value="1.6" step="0.01" min="0.1"></div>
+</div>
+<div class="row" style="margin-top:.5rem">
+<div class="field"><label>GASKET ID (mm)</label><input type="number" id="gk-id" value="50" step="0.1" min="0"></div>
+<div class="field"><label>GASKET OD (mm)</label><input type="number" id="gk-od" value="100" step="0.1" min="0"></div>
+</div>
+</div>
+<div class="card">
+<h3>MATERIAL SELECTION</h3>
+<div class="field"><label>SEARCH GASKET MATERIALS</label><input type="text" id="gk-mat-search" placeholder="Search Garlock, GYLON, rubber..." style="width:100%"></div>
+<div class="field" style="margin-top:.5rem"><label>MATERIAL</label><select id="gk-mat" style="width:100%"></select></div>
+<div class="result-grid" id="gk-mat-detail" style="margin-top:.75rem"></div>
+</div>
+<div class="card">
+<h3>OPERATING CONDITIONS</h3>
+<div class="row">
+<div class="field"><label>PRESSURE (MPa)</label><input type="number" id="gk-press" value="3.5" step="0.1" min="0"></div>
+<div class="field"><label>TEMPERATURE (&deg;C)</label><input type="number" id="gk-temp" value="150" step="1"></div>
+</div>
+<div class="row" style="margin-top:.5rem">
+<div class="field"><label>BOLT LOAD (kN)</label><input type="number" id="gk-bolt" value="50" step="1" min="0"></div>
+<div class="field"><label>APPLICATION</label><select id="gk-app"><option value="static">STATIC</option><option value="dynamic">DYNAMIC / CYCLIC</option></select></div>
+</div>
+</div>
+<button class="btn btn-fill" onclick="calcGasket()" style="margin-bottom:1rem">DESIGN CHANNEL</button>
+</div>
+<div>
+<div class="card" id="gk-results">
+<h3>CHANNEL DIMENSIONS</h3>
+<p style="font-size:.75rem;color:var(--dim)">Configure gasket and click Design Channel</p>
+</div>
+<div class="card" id="gk-finish-rec">
+<h3>SURFACE FINISH RECOMMENDATION</h3>
+<p style="font-size:.75rem;color:var(--dim)">Finish recommendation will appear after calculation</p>
+</div>
+<div class="card">
+<h3>COMPRESSION vs STRESS</h3>
+<div id="gk-chart" style="width:100%;height:300px"></div>
+</div>
+<div class="card" id="gk-profile-card">
+<h3>CHANNEL PROFILE</h3>
+<canvas id="c-gk-profile" class="canvas-draw" width="600" height="250" style="width:100%;height:250px"></canvas>
+</div>
+</div>
+</div>
+</div>
+<div class="view" id="v-finishes">
+<h2>FINISHES &amp; COATINGS GLOSSARY</h2>
+<div class="card">
+<h3>RECOMMENDATION ENGINE</h3>
+<p style="font-size:.7rem;color:var(--dim);margin-bottom:.75rem">SET YOUR PRIORITIES (1-10) TO RANK FINISHES BY WEIGHTED SCORE</p>
+<div class="slider-row"><label>CORROSION</label><input type="range" min="0" max="10" value="7" id="fin-corr"><span class="sv" id="fin-corr-v">7</span></div>
+<div class="slider-row"><label>WEAR</label><input type="range" min="0" max="10" value="5" id="fin-wear"><span class="sv" id="fin-wear-v">5</span></div>
+<div class="slider-row"><label>APPEARANCE</label><input type="range" min="0" max="10" value="3" id="fin-app"><span class="sv" id="fin-app-v">3</span></div>
+<div class="slider-row"><label>COST</label><input type="range" min="0" max="10" value="6" id="fin-cost"><span class="sv" id="fin-cost-v">6</span></div>
+<div class="slider-row"><label>CONDUCTIVITY</label><input type="range" min="0" max="10" value="0" id="fin-cond"><span class="sv" id="fin-cond-v">0</span></div>
+<div class="slider-row"><label>GALVANIC</label><input type="range" min="0" max="10" value="0" id="fin-galv"><span class="sv" id="fin-galv-v">0</span></div>
+<div class="slider-row"><label>QUANTITY</label><input type="range" min="0" max="10" value="0" id="fin-qty"><span class="sv" id="fin-qty-v">0</span></div>
+<div class="slider-row"><label>TEMPERATURE</label><input type="range" min="0" max="10" value="2" id="fin-temp"><span class="sv" id="fin-temp-v">2</span></div>
+<div class="slider-row"><label>COVERAGE</label><input type="range" min="0" max="10" value="4" id="fin-cov"><span class="sv" id="fin-cov-v">4</span></div>
+<div class="slider-row"><label>MIN THICKNESS</label><input type="range" min="0" max="10" value="3" id="fin-thk"><span class="sv" id="fin-thk-v">3</span></div>
+<div class="row" style="margin-top:.75rem">
+<div class="field"><label>SUBSTRATE</label><select id="fin-sub"><option value="">ANY</option><option>Carbon Steel</option><option>Stainless Steel</option><option>Aluminum</option><option>Titanium</option><option>Copper Alloy</option></select></div>
+<div class="chk-row"><input type="checkbox" id="fin-full"> FULL COVERAGE REQUIRED</div>
+</div>
+<button class="btn btn-fill" onclick="recommendFinishes()" style="margin-top:.75rem">RECOMMEND</button>
+</div>
+<div id="fin-results"></div>
+</div>
+<div class="view" id="v-math">
+<h2>MATH SOLVERS</h2>
+<div class="card">
+<h3>SOLVER TYPE</h3>
+<div class="field"><label>CATEGORY</label><select id="math-cat" onchange="updateMathUI()">
+<option value="algebra">ALGEBRA</option>
+<option value="geometry">GEOMETRY</option>
+<option value="calculus">CALCULUS</option>
+<option value="linalg">LINEAR ALGEBRA</option>
+<option value="diffeq">DIFFERENTIAL EQUATIONS</option>
+</select></div>
+</div>
+<div class="card" id="math-algebra">
+<h3>ALGEBRAIC SOLVER</h3>
+<div class="field"><label>EQUATION TYPE</label><select id="alg-type" onchange="updateAlgUI()">
+<option value="quadratic">QUADRATIC (ax²+bx+c=0)</option>
+<option value="cubic">CUBIC (ax³+bx²+cx+d=0)</option>
+<option value="system2">SYSTEM 2×2 (ax+by=e, cx+dy=f)</option>
+<option value="system3">SYSTEM 3×3</option>
+</select></div>
+<div id="alg-inputs" class="row" style="margin-top:.5rem"></div>
+<div class="chk-row" style="margin-top:.5rem"><input type="checkbox" id="alg-show" checked> SHOW WORK</div>
+<button class="btn btn-fill" onclick="solveAlgebra()" style="margin-top:.75rem">SOLVE</button>
+<div id="alg-result" class="results"></div>
+<div id="c-alg-graph" style="width:100%;height:250px;display:none"></div>
+</div>
+<div class="card" id="math-geometry" style="display:none">
+<h3>GEOMETRY CALCULATOR</h3>
+<div class="field"><label>SHAPE</label><select id="geo-shape" onchange="updateGeoUI()">
+<option value="circle">CIRCLE</option>
+<option value="sphere">SPHERE</option>
+<option value="cylinder">CYLINDER</option>
+<option value="cone">CONE</option>
+<option value="rect">RECTANGLE</option>
+<option value="triangle">TRIANGLE</option>
+<option value="ellipse">ELLIPSE</option>
+<option value="torus">TORUS</option>
+</select></div>
+<div id="geo-inputs" class="row" style="margin-top:.5rem"></div>
+<div class="chk-row" style="margin-top:.5rem"><input type="checkbox" id="geo-show" checked> SHOW WORK</div>
+<button class="btn btn-fill" onclick="solveGeometry()" style="margin-top:.75rem">CALCULATE</button>
+<div id="geo-result" class="results"></div>
+<div id="c-geo-graph" style="width:100%;height:300px;display:none"></div>
+</div>
+<div class="card" id="math-calculus" style="display:none">
+<h3>CALCULUS</h3>
+<div class="field"><label>OPERATION</label><select id="calc-op" onchange="updateCalcUI()">
+<option value="derivative">DERIVATIVE (POLYNOMIAL)</option>
+<option value="integral">INTEGRAL (NUMERICAL — SIMPSON)</option>
+<option value="limit">LIMIT (NUMERICAL)</option>
+<option value="taylor">TAYLOR SERIES</option>
+</select></div>
+<div id="calc-inputs" style="margin-top:.5rem"></div>
+<div class="chk-row" style="margin-top:.5rem"><input type="checkbox" id="calc-show" checked> SHOW WORK</div>
+<button class="btn btn-fill" onclick="solveCalculus()" style="margin-top:.75rem">SOLVE</button>
+<div id="calc-result" class="results"></div>
+<div id="c-calc-graph" style="width:100%;height:250px;display:none"></div>
+</div>
+<div class="card" id="math-linalg" style="display:none">
+<h3>LINEAR ALGEBRA</h3>
+<div class="field"><label>OPERATION</label><select id="la-op" onchange="updateLinalgUI()">
+<option value="det">DETERMINANT</option>
+<option value="inv">INVERSE</option>
+<option value="mult">MULTIPLY A×B</option>
+<option value="eigen">EIGENVALUES (2×2)</option>
+<option value="transpose">TRANSPOSE</option>
+</select></div>
+<div class="field" style="margin-top:.5rem"><label>SIZE</label><select id="la-size" onchange="updateLinalgUI()"><option value="2">2×2</option><option value="3">3×3</option><option value="4">4×4</option></select></div>
+<div id="la-inputs" style="margin-top:.5rem"></div>
+<div class="chk-row" style="margin-top:.5rem"><input type="checkbox" id="la-show" checked> SHOW WORK</div>
+<button class="btn btn-fill" onclick="solveLinAlg()" style="margin-top:.75rem">SOLVE</button>
+<div id="la-result" class="results"></div>
+</div>
+<div class="card" id="math-diffeq" style="display:none">
+<h3>DIFFERENTIAL EQUATIONS (ODE)</h3>
+<div class="field"><label>TYPE</label><select id="de-type" onchange="updateDiffEqUI()">
+<option value="first_linear">1ST ORDER LINEAR (dy/dx + P(x)y = Q(x))</option>
+<option value="separable">SEPARABLE (dy/dx = f(x)g(y))</option>
+<option value="second_const">2ND ORDER CONSTANT COEFF (ay''+by'+cy=0)</option>
+<option value="euler">EULER METHOD (NUMERICAL)</option>
+</select></div>
+<div id="de-inputs" style="margin-top:.5rem"></div>
+<div class="chk-row" style="margin-top:.5rem"><input type="checkbox" id="de-show" checked> SHOW WORK</div>
+<button class="btn btn-fill" onclick="solveDiffEq()" style="margin-top:.75rem">SOLVE</button>
+<div id="de-result" class="results"></div>
+<div id="c-de-graph" style="width:100%;height:250px;display:none"></div>
+</div>
+</div>
+<div class="view" id="v-equations">
+<h2>EQUATIONS REFERENCE</h2>
+<div class="card">
+<h3>BEAM EQUATIONS</h3>
+<table class="data"><tbody>
+<tr title="Maximum fiber stress from bending. M=moment, y=dist from neutral axis, I=moment of inertia"><td>Bending Stress</td><td>σ = M·y / I</td></tr>
+<tr title="Transverse shear in a beam cross-section. V=shear force, Q=first moment, b=width at cut"><td>Shear Stress (Beam)</td><td>τ = V·Q / (I·b)</td></tr>
+<tr title="Central point load on simply-supported beam"><td>Deflection (SS, center pt)</td><td>δ = P·L³ / (48·E·I)</td></tr>
+<tr title="End deflection of a cantilever with tip load"><td>Deflection (Cantilever, end)</td><td>δ = P·L³ / (3·E·I)</td></tr>
+<tr title="Distributed load on simply-supported beam"><td>Deflection (SS, UDL)</td><td>δ = 5·w·L⁴ / (384·E·I)</td></tr>
+<tr title="Distributed load on cantilever"><td>Deflection (Cantilever, UDL)</td><td>δ = w·L⁴ / (8·E·I)</td></tr>
+<tr title="Second moment of area for a rectangle"><td>Moment of Inertia (Rect)</td><td>I = b·h³ / 12</td></tr>
+<tr title="Second moment of area for a circle"><td>Moment of Inertia (Circle)</td><td>I = π·d⁴ / 64</td></tr>
+<tr title="Elastic section modulus. c = distance to extreme fiber"><td>Section Modulus</td><td>S = I / c</td></tr>
+<tr title="Used for column buckling calculations"><td>Radius of Gyration</td><td>r = √(I / A)</td></tr>
+<tr title="Maximum moment in a fixed-end beam with center load"><td>Fixed-Fixed (center pt)</td><td>M_max = P·L / 8, δ = P·L³ / (192·E·I)</td></tr>
+<tr title="Propped cantilever with UDL"><td>Propped Cantilever (UDL)</td><td>R_prop = 3wL/8, M_fix = wL²/8</td></tr>
+</tbody></table>
+</div>
+<div class="card">
+<h3>STRESS / FAILURE</h3>
+<table class="data"><tbody>
+<tr title="Distortion energy criterion — most common yield criterion for ductile metals"><td>Von Mises (2D)</td><td>σ_vm = √(σx²−σxσy+σy²+3τxy²)</td></tr>
+<tr title="General 3D form using principal stresses"><td>Von Mises (3D)</td><td>σ_vm = √½[(σ₁−σ₂)²+(σ₂−σ₃)²+(σ₃−σ₁)²]</td></tr>
+<tr title="Maximum shear stress criterion — conservative for ductile materials"><td>Tresca</td><td>τ_max = (σ₁−σ₃) / 2</td></tr>
+<tr title="Principal stresses from 2D stress state"><td>Principal Stress</td><td>σ₁,₂ = (σx+σy)/2 ± √[((σx−σy)/2)²+τxy²]</td></tr>
+<tr title="Center and radius define the Mohr's circle"><td>Mohr's Circle</td><td>C = (σx+σy)/2, R = √[((σx−σy)/2)²+τxy²]</td></tr>
+<tr title="Basic safety factor for static loading"><td>Factor of Safety</td><td>FoS = S_y / σ_applied</td></tr>
+<tr title="Maximum normal stress theory — for brittle materials"><td>Rankine (Brittle)</td><td>σ₁ ≤ S_ut, |σ₃| ≤ S_uc</td></tr>
+<tr title="Coulomb-Mohr criterion for unequal tension/compression strengths"><td>Coulomb-Mohr</td><td>σ₁/S_ut − σ₃/S_uc ≤ 1</td></tr>
+</tbody></table>
+</div>
+<div class="card">
+<h3>FATIGUE / ENDURANCE</h3>
+<table class="data"><tbody>
+<tr title="Endurance limit estimate for steel (Se' ≈ 0.5·Su for Su≤1400 MPa)"><td>Endurance Limit</td><td>Se' ≈ 0.5·Su (steel, Su ≤ 1400 MPa)</td></tr>
+<tr title="Corrected endurance limit with Marin factors"><td>Marin Equation</td><td>Se = ka·kb·kc·kd·ke·kf · Se'</td></tr>
+<tr title="Modified Goodman line for infinite life prediction"><td>Goodman</td><td>σa/Se + σm/Su = 1/n</td></tr>
+<tr title="More conservative than Goodman — uses yield strength"><td>Soderberg</td><td>σa/Se + σm/Sy = 1/n</td></tr>
+<tr title="Parabolic curve — less conservative, fits test data better"><td>Gerber</td><td>σa/Se + (σm/Su)² = 1/n</td></tr>
+<tr title="S-N curve power law for finite life"><td>Basquin (S-N)</td><td>σ_ar = σ_f'·(2N)^b</td></tr>
+<tr title="Notch sensitivity converts Kt to Kf"><td>Fatigue Notch Factor</td><td>Kf = 1 + q(Kt − 1)</td></tr>
+<tr title="Cycle counting method for variable amplitude"><td>Miner's Rule</td><td>Σ(ni/Ni) = 1 (damage sum)</td></tr>
+</tbody></table>
+</div>
+<div class="card">
+<h3>COLUMN BUCKLING</h3>
+<table class="data"><tbody>
+<tr title="Classic elastic buckling load — K depends on end conditions"><td>Euler Critical Load</td><td>P_cr = π²EI / (KL)²</td></tr>
+<tr title="Effective length factors: pinned-pinned K=1, fixed-fixed K=0.5, fixed-free K=2"><td>Effective Length</td><td>L_eff = K·L (K=0.5,0.7,1,2)</td></tr>
+<tr title="Slenderness determines if Euler or Johnson applies"><td>Slenderness Ratio</td><td>λ = KL/r</td></tr>
+<tr title="Critical slenderness separating elastic from inelastic buckling"><td>Transition Slenderness</td><td>λ_c = √(2π²E / Sy)</td></tr>
+<tr title="For short-intermediate columns (λ < λ_c)"><td>Johnson Parabola</td><td>P_cr = A·Sy[1 − (Sy(KL)²)/(4π²EI)]</td></tr>
+<tr title="AISC allowable stress for steel columns"><td>AISC (ASD)</td><td>F_a per AISC 360 Ch. E</td></tr>
+</tbody></table>
+</div>
+<div class="card">
+<h3>BOLT / FASTENER</h3>
+<table class="data"><tbody>
+<tr title="Bolt tension = preload + fraction of external load (C = stiffness ratio)"><td>Bolt Load (w/ preload)</td><td>F_b = F_i + C·F_ext</td></tr>
+<tr title="Remaining clamp force on the joint"><td>Joint Load</td><td>F_j = F_i − (1−C)·F_ext</td></tr>
+<tr title="Torque-tension relationship. K ≈ 0.2 for dry steel"><td>Torque (K-factor)</td><td>T = K·F_i·d</td></tr>
+<tr title="Tensile stress area from bolt standard tables"><td>Tensile Stress</td><td>σ = F / A_t</td></tr>
+<tr title="Combined tension + shear check"><td>Interaction Ratio</td><td>IR = (σ/S_p)² + (τ/(0.577·S_p))²</td></tr>
+<tr title="Maximum load before permanent deformation"><td>Proof Load</td><td>F_proof = S_p · A_t</td></tr>
+<tr title="Thread stripping strength check"><td>Thread Shear</td><td>A_s = π·d·n·L_e·0.5</td></tr>
+<tr title="VDI 2230 systematic bolted joint guideline"><td>Embedding Loss</td><td>F_z = f_z · (n_i interfaces)</td></tr>
+</tbody></table>
+</div>
+<div class="card">
+<h3>SPRING</h3>
+<table class="data"><tbody>
+<tr title="Coil spring stiffness. G=shear mod, d=wire dia, D=coil dia, Na=active coils"><td>Spring Rate</td><td>k = G·d⁴ / (8·D³·N_a)</td></tr>
+<tr title="Uncorrected shear stress in wire"><td>Shear Stress</td><td>τ = 8·F·D / (π·d³)</td></tr>
+<tr title="Stress correction factor for curvature (C = D/d)"><td>Wahl Factor</td><td>K_w = (4C−1)/(4C−4) + 0.615/C</td></tr>
+<tr title="Spring deflection under load"><td>Deflection</td><td>δ = F / k</td></tr>
+<tr title="Minimum possible length"><td>Solid Length</td><td>L_s = N_t · d</td></tr>
+<tr title="Surge frequency of coil spring"><td>Natural Frequency</td><td>f_n = (d/(2πD²Na))·√(Gg/32ρ)</td></tr>
+<tr title="DIN 2092 Belleville disc spring — nonlinear F-δ"><td>Belleville Load</td><td>F = (4E·t)/((1−ν²)·K₁·D²)·δ(h−δ)(h−δ/2)+t²δ)</td></tr>
+<tr title="Stored energy in a spring"><td>Spring Energy</td><td>U = ½kδ²</td></tr>
+</tbody></table>
+</div>
+<div class="card">
+<h3>PRESSURE VESSEL</h3>
+<table class="data"><tbody>
+<tr title="Thin-wall hoop stress (t/r < 0.1). p=pressure, r=radius, t=wall"><td>Hoop Stress (Thin)</td><td>σ_h = p·r / t</td></tr>
+<tr title="Axial stress is half of hoop stress in thin cylinders"><td>Axial Stress (Thin)</td><td>σ_a = p·r / (2t)</td></tr>
+<tr title="Lame's equation for thick-walled cylinders"><td>Hoop Stress (Thick)</td><td>σ_h = (p_i·r_i² − p_o·r_o²)/(r_o²−r_i²) + r_i²r_o²(p_i−p_o)/((r_o²−r_i²)r²)</td></tr>
+<tr title="Spherical pressure vessel — equal biaxial stress"><td>Sphere Stress</td><td>σ = p·r / (2t)</td></tr>
+<tr title="ASME BPVC minimum required thickness"><td>ASME Min Thickness</td><td>t = pR / (SE − 0.6p)</td></tr>
+<tr title="Burst pressure estimate (Barlow's formula)"><td>Barlow's Formula</td><td>P_burst = 2·S·t / D</td></tr>
+</tbody></table>
+</div>
+<div class="card">
+<h3>THERMAL / HEAT TRANSFER</h3>
+<table class="data"><tbody>
+<tr title="Thermal expansion strain"><td>Thermal Strain</td><td>ε_T = α·ΔT</td></tr>
+<tr title="Stress from restrained thermal expansion"><td>Thermal Stress</td><td>σ_T = E·α·ΔT</td></tr>
+<tr title="Fourier's law — 1D steady-state conduction"><td>Conduction (Fourier)</td><td>q = −k·A·(dT/dx)</td></tr>
+<tr title="Convective heat transfer — h is convection coefficient"><td>Convection (Newton)</td><td>q = h·A·(T_s − T_∞)</td></tr>
+<tr title="Stefan-Boltzmann radiation law"><td>Radiation</td><td>q = ε·σ·A·(T₁⁴ − T₂⁴)</td></tr>
+<tr title="Thermal resistance through a wall"><td>Thermal Resistance</td><td>R = L/(k·A) (conduction)</td></tr>
+</tbody></table>
+</div>
+<div class="card">
+<h3>SEAL / O-RING</h3>
+<table class="data"><tbody>
+<tr title="Percentage compression of cord diameter"><td>Squeeze %</td><td>S = (d − G_d − gap) / d × 100</td></tr>
+<tr title="Hyperelastic constitutive model for rubber"><td>Mooney-Rivlin Stress</td><td>σ = 2(C₁₀+C₀₁/λ)(λ−1/λ²)</td></tr>
+<tr title="Empirical Shore A to elastic modulus conversion"><td>Hardness → Modulus</td><td>E = 0.0981(56+7.62S)/(0.138(254−2.54S))</td></tr>
+<tr title="Hertzian-like contact width of compressed O-ring"><td>Contact Width</td><td>w = 2√(d·δ)</td></tr>
+<tr title="Ratio of loaded to free area — affects compression resistance"><td>Shape Factor (Face)</td><td>SF = (w·d) / (π·d·w)</td></tr>
+<tr title="Percent of groove volume filled by seal — target 70-85%"><td>Volume Fill</td><td>V_fill = (π·r²) / (G_d·G_w) × 100</td></tr>
+</tbody></table>
+</div>
+<div class="card">
+<h3>GEAR / POWER TRANSMISSION</h3>
+<table class="data"><tbody>
+<tr title="Lewis equation for spur gear bending stress"><td>Lewis Bending</td><td>σ = Wt / (F·m·Y)</td></tr>
+<tr title="AGMA contact stress for surface pitting"><td>AGMA Contact</td><td>σ_c = C_p·√(Wt·Ko·Kv·Ks·Km / (d·F·I))</td></tr>
+<tr title="Torque-power-speed relationship"><td>Power-Torque</td><td>P = T·ω = T·2πn/60</td></tr>
+<tr title="Gear ratio from tooth count"><td>Gear Ratio</td><td>i = N₂/N₁ = ω₁/ω₂</td></tr>
+<tr title="Belt drive effective tension"><td>Belt Drive</td><td>F_eff = F₁ − F₂ = T/r</td></tr>
+<tr title="Chain drive horsepower rating"><td>Chain Rating</td><td>HP = T·n / 63025 (imperial)</td></tr>
+</tbody></table>
+</div>
+<div class="card">
+<h3>WELD DESIGN</h3>
+<table class="data"><tbody>
+<tr title="Fillet weld effective throat = 0.707 × leg size"><td>Fillet Throat</td><td>a = 0.707·w</td></tr>
+<tr title="Shear stress on weld group"><td>Weld Shear</td><td>τ = F / (a·L_w)</td></tr>
+<tr title="AISC allowable weld stress = 0.6×FEXX for shear"><td>Allowable (E70xx)</td><td>F_w = 0.6 × 70 ksi = 21 ksi</td></tr>
+<tr title="Weld group polar moment for torsional loading"><td>Weld Polar J</td><td>J_w = Σ(Ix+Iy) per unit weld</td></tr>
+<tr title="Combined direct + torsional shear on weld group"><td>Combined Stress</td><td>τ_r = √(τx² + τy²)</td></tr>
+<tr title="Minimum weld size per AISC Table J2.4"><td>Min Fillet Size</td><td>Per AISC Table J2.4 (by thickness)</td></tr>
+</tbody></table>
+</div>
+<div class="card">
+<h3>MATERIALS / PROPERTIES</h3>
+<table class="data"><tbody>
+<tr title="Linear elastic stress-strain relationship"><td>Hooke's Law</td><td>σ = E·ε</td></tr>
+<tr title="Relationship between E, G, and Poisson's ratio"><td>Shear Modulus</td><td>G = E / (2(1+ν))</td></tr>
+<tr title="Bulk elastic modulus"><td>Bulk Modulus</td><td>K = E / (3(1−2ν))</td></tr>
+<tr title="Lateral vs axial strain ratio"><td>Poisson's Ratio</td><td>ν = −ε_lateral / ε_axial</td></tr>
+<tr title="True stress accounts for necking"><td>True Stress</td><td>σ_T = σ_eng(1 + ε_eng)</td></tr>
+<tr title="Ramberg-Osgood total strain model"><td>Ramberg-Osgood</td><td>ε = σ/E + (σ/K')^(1/n')</td></tr>
+<tr title="Strain energy density at yield"><td>Resilience</td><td>u_r = Sy² / (2E)</td></tr>
+<tr title="Area under full stress-strain curve"><td>Toughness</td><td>u_T ≈ (Sy+Su)/2 · ε_f</td></tr>
+</tbody></table>
+</div>
+<div class="card">
+<h3>FLUID / PIPE</h3>
+<table class="data"><tbody>
+<tr title="Energy conservation along a streamline"><td>Bernoulli</td><td>P + ½ρv² + ρgh = const</td></tr>
+<tr title="Laminar flow friction factor"><td>Hagen-Poiseuille</td><td>f = 64 / Re</td></tr>
+<tr title="Turbulent flow friction (Moody chart implicit)"><td>Colebrook-White</td><td>1/√f = −2log(ε/3.7D + 2.51/(Re√f))</td></tr>
+<tr title="Head loss in pipe due to friction"><td>Darcy-Weisbach</td><td>h_f = f·(L/D)·(v²/2g)</td></tr>
+<tr title="Flow regime indicator — laminar < 2300, turbulent > 4000"><td>Reynolds Number</td><td>Re = ρvD / μ</td></tr>
+<tr title="Minor loss through fittings, valves, bends"><td>Minor Losses</td><td>h_m = K·v² / (2g)</td></tr>
+</tbody></table>
+</div>
+<div class="card">
+<h3>UNIT CONVERSION CONSTANTS</h3>
+<table class="data"><tbody>
+<tr title="Exact conversion"><td>1 inch</td><td>= 25.4 mm</td></tr>
+<tr title="Exact conversion"><td>1 foot</td><td>= 304.8 mm</td></tr>
+<tr title="Force conversion"><td>1 lbf</td><td>= 4.44822 N</td></tr>
+<tr title="Stress conversion"><td>1 ksi</td><td>= 6.89476 MPa</td></tr>
+<tr title="Stress conversion"><td>1 psi</td><td>= 6894.76 Pa</td></tr>
+<tr title="Moment of inertia conversion"><td>1 in⁴</td><td>= 416,231 mm⁴</td></tr>
+<tr title="Torque conversion"><td>1 ft·lbf</td><td>= 1.35582 N·m</td></tr>
+<tr title="Temperature conversion formula"><td>°F → °C</td><td>°C = (°F − 32) × 5/9</td></tr>
+<tr title="Mass conversion"><td>1 kg</td><td>= 2.20462 lbm</td></tr>
+<tr title="Power conversion"><td>1 HP</td><td>= 745.7 W</td></tr>
+</tbody></table>
+</div>
+</div>
+<div class="view" id="v-thermal">
+<h2>THERMAL ANALYSIS</h2>
+<div class="split">
+<div>
+<div class="card">
+<h3>ANALYSIS MODE</h3>
+<div class="field"><label>MODE</label><select id="th-mode" onchange="updateThermalUI()">
+<option value="conduction">CONDUCTION (FOURIER)</option>
+<option value="convection">CONVECTION (NEWTON)</option>
+<option value="radiation">RADIATION (STEFAN-BOLTZMANN)</option>
+<option value="composite_wall">COMPOSITE WALL</option>
+<option value="fin">FIN ANALYSIS</option>
+<option value="radial_pipe">RADIAL PIPE / CYLINDER</option>
+<option value="expansion">THERMAL EXPANSION / STRESS</option>
+</select></div>
+</div>
+<div class="card">
+<h3>TEMPERATURES</h3>
+<div class="row">
+<div class="field"><label>T HOT (&deg;C)</label><input type="number" id="th-thot" value="100" step="any"></div>
+<div class="field"><label>T COLD (&deg;C)</label><input type="number" id="th-tcold" value="25" step="any"></div>
+</div>
+</div>
+<div class="card" id="th-cond-params">
+<h3>CONDUCTION PARAMETERS</h3>
+<div class="row">
+<div class="field"><label>k (W/m&middot;K)</label><input type="number" id="th-k" value="50" step="any"></div>
+<div class="field"><label>AREA (m&sup2;)</label><input type="number" id="th-area" value="0.01" step="any"></div>
+<div class="field"><label>THICKNESS (m)</label><input type="number" id="th-thick" value="0.05" step="any"></div>
+</div>
+</div>
+<div class="card" id="th-conv-params" style="display:none">
+<h3>CONVECTION PARAMETERS</h3>
+<div class="row">
+<div class="field"><label>h (W/m&sup2;&middot;K)</label><input type="number" id="th-hconv" value="25" step="any"></div>
+<div class="field"><label>AREA (m&sup2;)</label><input type="number" id="th-conv-area" value="0.5" step="any"></div>
+</div>
+</div>
+<div class="card" id="th-rad-params" style="display:none">
+<h3>RADIATION PARAMETERS</h3>
+<div class="row">
+<div class="field"><label>EMISSIVITY &epsilon;</label><input type="number" id="th-emiss" value="0.85" step="0.01" min="0" max="1"></div>
+<div class="field"><label>AREA (m&sup2;)</label><input type="number" id="th-rad-area" value="0.5" step="any"></div>
+</div>
+</div>
+<div class="card" id="th-comp-params" style="display:none">
+<h3>COMPOSITE WALL LAYERS</h3>
+<div class="row">
+<div class="field"><label>WALL AREA (m&sup2;)</label><input type="number" id="th-comp-area" value="1" step="any"></div>
+<div class="field"><label>h INSIDE (W/m&sup2;K)</label><input type="number" id="th-hi" value="10" step="any"></div>
+<div class="field"><label>h OUTSIDE (W/m&sup2;K)</label><input type="number" id="th-ho" value="25" step="any"></div>
+</div>
+<div id="th-layers">
+<div class="row th-layer" style="margin-top:.5rem">
+<div class="field"><label>k&#8321; (W/mK)</label><input type="number" class="th-lk" value="0.8" step="any"></div>
+<div class="field"><label>t&#8321; (m)</label><input type="number" class="th-lt" value="0.2" step="any"></div>
+</div>
+<div class="row th-layer" style="margin-top:.25rem">
+<div class="field"><label>k&#8322; (W/mK)</label><input type="number" class="th-lk" value="0.04" step="any"></div>
+<div class="field"><label>t&#8322; (m)</label><input type="number" class="th-lt" value="0.1" step="any"></div>
+</div>
+<div class="row th-layer" style="margin-top:.25rem">
+<div class="field"><label>k&#8323; (W/mK)</label><input type="number" class="th-lk" value="1.4" step="any"></div>
+<div class="field"><label>t&#8323; (m)</label><input type="number" class="th-lt" value="0.01" step="any"></div>
+</div>
+</div>
+<div style="margin-top:.5rem"><button class="btn btn-sm" onclick="addThermalLayer()">+ LAYER</button> <button class="btn btn-sm" onclick="removeThermalLayer()">- LAYER</button></div>
+</div>
+<div class="card" id="th-fin-params" style="display:none">
+<h3>FIN PARAMETERS</h3>
+<div class="row">
+<div class="field"><label>k FIN (W/mK)</label><input type="number" id="th-fink" value="200" step="any"></div>
+<div class="field"><label>h CONV (W/m&sup2;K)</label><input type="number" id="th-finh" value="25" step="any"></div>
+</div>
+<div class="row" style="margin-top:.5rem">
+<div class="field"><label>LENGTH (m)</label><input type="number" id="th-finl" value="0.05" step="any"></div>
+<div class="field"><label>PERIMETER (m)</label><input type="number" id="th-finp" value="0.06" step="any"></div>
+<div class="field"><label>CROSS-SEC A (m&sup2;)</label><input type="number" id="th-fina" value="0.0001" step="any"></div>
+</div>
+</div>
+<div class="card" id="th-pipe-params" style="display:none">
+<h3>RADIAL PIPE PARAMETERS</h3>
+<div class="row">
+<div class="field"><label>r INNER (m)</label><input type="number" id="th-ri" value="0.025" step="any"></div>
+<div class="field"><label>r OUTER (m)</label><input type="number" id="th-ro" value="0.03" step="any"></div>
+<div class="field"><label>LENGTH (m)</label><input type="number" id="th-pl" value="1" step="any"></div>
+</div>
+<div class="row" style="margin-top:.5rem">
+<div class="field"><label>k PIPE (W/mK)</label><input type="number" id="th-pk" value="50" step="any"></div>
+<div class="field"><label>h INSIDE (W/m&sup2;K)</label><input type="number" id="th-phi" value="500" step="any"></div>
+<div class="field"><label>h OUTSIDE (W/m&sup2;K)</label><input type="number" id="th-pho" value="10" step="any"></div>
+</div>
+</div>
+<div class="card" id="th-exp-params" style="display:none">
+<h3>THERMAL EXPANSION</h3>
+<div class="row">
+<div class="field"><label>&alpha; CTE (1/K)</label><input type="number" id="th-alpha" value="11.7e-6" step="any"></div>
+<div class="field"><label>E MODULUS (Pa)</label><input type="number" id="th-emod" value="200e9" step="any"></div>
+<div class="field"><label>LENGTH (m)</label><input type="number" id="th-expl" value="1" step="any"></div>
+</div>
+</div>
+<button class="btn btn-fill" onclick="calcThermal()" style="margin-top:.75rem">ANALYZE</button>
+</div>
+<div>
+<div class="card" id="thermal-results">
+<h3>THERMAL RESULTS</h3>
+<p style="font-size:.75rem;color:var(--dim)">Select mode and click Analyze</p>
+</div>
+<div class="card">
+<h3>TEMPERATURE PROFILE</h3>
+<div id="c-thermal" style="width:100%;height:300px"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="view" id="v-units">
+<h2>UNIT CONVERTER</h2>
+<div class="card">
+<div class="row">
+<div class="field"><label>CATEGORY</label><select id="uc-cat"></select></div>
+</div>
+<div class="row" style="margin-top:1rem;align-items:center">
+<div class="field" style="flex:1"><label>FROM</label><div class="field-row"><input type="number" id="uc-val" value="1" step="any"><select id="uc-from"></select></div></div>
+<span style="font-size:1.5rem;color:var(--accent);padding:0 .5rem">&rarr;</span>
+<div class="field" style="flex:1"><label>TO</label><div class="field-row"><input type="number" id="uc-result" readonly style="color:var(--accent);font-weight:700"><select id="uc-to"></select></div></div>
+</div>
+</div>
+<div class="card" style="margin-top:1rem">
+<h3>QUICK REFERENCE</h3>
+<table class="data" id="uc-table">
+<thead><tr><th>FROM</th><th>TO</th><th>FACTOR</th></tr></thead>
+<tbody id="uc-tbody"></tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+<footer>
+AMNI-CALC v2.5.0 &mdash; <a href="https://amni-scient.com">AMNI-SCIENT</a> &mdash; FOR EDUCATIONAL &amp; ESTIMATION PURPOSES ONLY &mdash; <a href="#" onclick="reportBug();return false">REPORT BUG</a>
+</footer>
+<script type="module">
+import wInit,{calc_beam,calc_section,section_presets,get_materials,get_material,calc_bolt,bolt_tables,calc_spring,calc_stress,get_finishes,recommend_finishes,convert_unit,unit_categories,calc_seal,seal_materials,seal_standard_sizes,calc_seal_groove,calc_fatigue,calc_thermal} from './pkg/amni_calc_wasm.js';
+let W=null,MAT=[],BOLT_TBL=null,SEC_PRESETS=[],UNIT_CATS=[],SEAL_MATS=[],AS568=[],GASKET_MATS=[];
+let supports=[],loads=[],secVerts=[],curSupType='pin';
+const pLayout={paper_bgcolor:'#111',plot_bgcolor:'#0a0a0a',font:{family:'JetBrains Mono, monospace',color:'#888',size:11},margin:{l:70,r:25,t:40,b:55},xaxis:{gridcolor:'#1a1a1a',zerolinecolor:'#333',linecolor:'#333',tickfont:{size:10}},yaxis:{gridcolor:'#1a1a1a',zerolinecolor:'#333',linecolor:'#333',tickfont:{size:10}},hoverlabel:{bgcolor:'#161616',bordercolor:'#ff6b35',font:{family:'JetBrains Mono',color:'#e0e0e0',size:12}},modebar:{bgcolor:'transparent',color:'#555',activecolor:'#ff6b35'}};
+const pCfg={responsive:true,displaylogo:false,modeBarButtonsToRemove:['lasso2d','select2d']};
+const $=s=>document.querySelector(s),$$=s=>document.querySelectorAll(s);
+const fmt=(v,d=4)=>typeof v==='number'?(Math.abs(v)>1e12?'INF':Math.abs(v)<1e-12?'0':Math.abs(v)>1e6||Math.abs(v)<0.001?v.toExponential(d):v.toFixed(d)):''+v;
+function hdCanvas(el){const dpr=window.devicePixelRatio||1;const r=el.getBoundingClientRect();const w=r.width||el.width||300;const h=r.height||el.height||150;el.width=w*dpr;el.height=h*dpr;const c=el.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);return{c,w,h};}
+const fosClass=v=> v>=3?'ok':v>=1.5?'warn':'err';
+window.vSet=id=>{const el=document.getElementById(id),v=document.getElementById(id+'-v');if(el&&v)v.textContent=el.value;};
+async function init(){
+await wInit();W=true;
+MAT=JSON.parse(get_materials());
+BOLT_TBL=JSON.parse(bolt_tables());
+SEC_PRESETS=JSON.parse(section_presets());
+UNIT_CATS=JSON.parse(unit_categories());
+SEAL_MATS=JSON.parse(seal_materials());
+AS568=JSON.parse(seal_standard_sizes());
+setupTabs();setupMaterials();setupBolts();setupSections();setupUnits();setupSliders();setupBeamCanvas();setupSectionCanvas();setupSeals();setupGaskets();updateMathUI();
+}
+function setupTabs(){
+const icons={beam:'&#9649;',bolts:'&#9881;',equations:'&#931;',finishes:'&#9678;',gaskets:'&#9645;',materials:'&#9670;',math:'&#960;',seals:'&#9711;',springs:'&#8767;',stress:'&#9762;',thermal:'&#9832;',units:'&#8644;'};
+const switchTo=v=>{
+$$('.tab').forEach(x=>x.classList.remove('active'));
+$$('.view').forEach(x=>x.classList.remove('active'));
+$$('.nav-item').forEach(x=>x.classList.remove('active'));
+$$('.side-item').forEach(x=>x.classList.remove('active'));
+const vEl=$('#v-'+v);if(vEl){vEl.classList.add('active');}
+const tEl=document.querySelector(`.tab[data-v="${v}"]`);if(tEl)tEl.classList.add('active');
+const nEl=document.querySelector(`.nav-item[data-v="${v}"]`);if(nEl)nEl.classList.add('active');
+const sEl=document.querySelector(`.side-item[data-v="${v}"]`);if(sEl)sEl.classList.add('active');
+$('#nav-current').textContent=v.toUpperCase();
+$('#nav-current-icon').innerHTML=icons[v]||'';
+if(v==='seals')requestAnimationFrame(()=>drawSealAnim(parseFloat($('#sl-squeeze-rng').value)));
+};
+$$('.tab').forEach(t=>t.addEventListener('click',()=>switchTo(t.dataset.v)));
+$$('.nav-item').forEach(n=>n.addEventListener('click',()=>{
+switchTo(n.dataset.v);
+$('#nav-menu').classList.remove('open');
+$('#nav-toggle').classList.remove('open');
+}));
+$$('.side-item').forEach(n=>n.addEventListener('click',()=>switchTo(n.dataset.v)));
+window.toggleSideSec=function(sec){
+const el=document.querySelector(`.side-sec[data-sec="${sec}"]`);
+if(el)el.classList.toggle('open');
+};
+}
+window.toggleNavMenu=function(){
+$('#nav-menu').classList.toggle('open');
+$('#nav-toggle').classList.toggle('open');
+};
+document.addEventListener('click',e=>{
+if(!e.target.closest('.nav-dropdown')){
+const m=$('#nav-menu'),t=$('#nav-toggle');
+if(m&&t){m.classList.remove('open');t.classList.remove('open');}
+}
+});
+function setupSliders(){
+['corr','wear','app','cost','cond','galv','qty','temp','cov','thk'].forEach(k=>{
+const sl=$('#fin-'+k);
+const sv=$('#fin-'+k+'-v');
+sl.addEventListener('input',()=>sv.textContent=sl.value);
+});
+}
+function setupMaterials(){
+const cats=[...new Set(MAT.map(m=>m.category))];
+cats.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;$('#mat-cat').appendChild(o);});
+renderMatTable();
+$('#mat-search').addEventListener('input',renderMatTable);
+$('#mat-cat').addEventListener('change',renderMatTable);
+}
+function renderMatTable(){
+const q=$('#mat-search').value.toLowerCase();
+const c=$('#mat-cat').value;
+const tb=$('#mat-tbody');
+tb.innerHTML='';
+MAT.filter(m=>(c===''||m.category===c)&&(q===''||m.name.toLowerCase().includes(q)||m.category.toLowerCase().includes(q))).forEach(m=>{
+const tr=document.createElement('tr');
+tr.innerHTML=`<td>${m.name}</td><td>${(m.e_modulus/1e9).toFixed(1)}</td><td>${(m.yield_strength/1e6).toFixed(0)}</td><td>${(m.ultimate_strength/1e6).toFixed(0)}</td><td>${m.density.toFixed(0)}</td><td>${m.poisson.toFixed(2)}</td><td>${m.specific_heat>0?m.specific_heat.toFixed(0):'—'}</td><td>${m.melting_point>0?m.melting_point.toFixed(0):'—'}</td><td style="font-size:.65rem;color:var(--dim)">${m.spec||''}</td>`;
+tr.addEventListener('click',()=>showMatDetail(m));
+tb.appendChild(tr);
+});
+}
+function showMatDetail(m){
+$('#mat-detail').style.display='block';
+$('#mat-det-name').textContent=m.name+' ('+m.category+')';
+const props=[
+{l:'E MODULUS',v:(m.e_modulus/1e9).toFixed(1)+' GPa'},
+{l:'YIELD STRENGTH',v:(m.yield_strength/1e6).toFixed(0)+' MPa'},
+{l:'ULTIMATE STRENGTH',v:(m.ultimate_strength/1e6).toFixed(0)+' MPa'},
+{l:'DENSITY',v:m.density.toFixed(0)+' kg/m³'},
+{l:'POISSON RATIO',v:m.poisson.toFixed(2)},
+{l:'SHEAR MODULUS',v:(m.shear_modulus/1e9).toFixed(1)+' GPa'},
+{l:'ELONGATION',v:m.elongation.toFixed(1)+'%'},
+{l:'HARDNESS',v:m.hardness},
+{l:'THERMAL EXPANSION',v:(m.thermal_expansion*1e6).toFixed(1)+' µm/m·K'},
+{l:'THERMAL CONDUCTIVITY',v:m.thermal_conductivity.toFixed(1)+' W/m·K'},
+{l:'SPECIFIC HEAT',v:m.specific_heat>0?m.specific_heat.toFixed(0)+' J/kg·K':'—'},
+{l:'MELTING POINT',v:m.melting_point>0?m.melting_point.toFixed(0)+' °C':'—'},
+{l:'SPECIFICATION',v:m.spec||'—'},
+];
+$('#mat-det-grid').innerHTML=props.map(p=>`<div class="result-item"><div class="lbl">${p.l}</div><div class="val">${p.v}</div></div>`).join('');
+}
+function setupBolts(){
+BOLT_TBL.grades.forEach(g=>{const o=document.createElement('option');o.value=g.name;o.textContent=g.name;$('#bl-grade').appendChild(o);});
+BOLT_TBL.sizes.forEach(s=>{const o=document.createElement('option');o.value=s.name;o.textContent=s.name;$('#bl-size').appendChild(o);});
+$('#bl-grade').value='ISO 8.8';
+$('#bl-size').value='M10';
+$('#bl-grade-tbl').innerHTML=BOLT_TBL.grades.map(g=>`<tr><td>${g.name}</td><td>${(g.proof_strength/1e6).toFixed(0)}</td><td>${(g.yield_strength/1e6).toFixed(0)}</td><td>${(g.ultimate_strength/1e6).toFixed(0)}</td></tr>`).join('');
+$('#bl-size-tbl').innerHTML=BOLT_TBL.sizes.map(s=>`<tr><td>${s.name}</td><td>${s.nominal.toFixed(2)}</td><td>${s.pitch.toFixed(3)}</td><td>${(s.tensile_area*1e6).toFixed(1)}</td></tr>`).join('');
+}
+function setupSections(){
+const sel=$('#sec-presets');
+const sorted=[...SEC_PRESETS].sort((a,b)=>a.name.localeCompare(b.name));
+sorted.forEach((p,i)=>{
+const o=document.createElement('option');
+o.value=p.name;o.textContent=p.name;
+sel.appendChild(o);
+});
+sel.addEventListener('change',()=>{
+const p=SEC_PRESETS.find(x=>x.name===sel.value);
+if(p)renderPresetParams(p);
+});
+if(sorted.length>0){
+const defRect=sorted.find(x=>x.name==='Rectangle')||sorted[0];
+sel.value=defRect.name;renderPresetParams(defRect);
+}
+}
+function renderPresetParams(p){
+const wrap=$('#sec-preset-params');
+wrap.innerHTML='';
+p.params.forEach(pm=>{
+const d=document.createElement('div');
+d.className='field';
+d.style.marginTop='.5rem';
+d.innerHTML=`<label>${pm.name.toUpperCase()} (${pm.unit})</label><input type="number" value="${pm.default}" step="any" data-pname="${pm.name}">`;
+wrap.appendChild(d);
+});
+}
+window.applyPreset=function(){
+const name=$('#sec-presets').value;
+const preset=SEC_PRESETS.find(p=>p.name===name);
+if(!preset)return;
+const params={};
+$$('#sec-preset-params input').forEach(inp=>{params[inp.dataset.pname]=parseFloat(inp.value)||0;});
+secVerts=generatePresetVerts(name,params);
+drawSection();
+calcSection();
+};
+function generatePresetVerts(name,p){
+const cw=400,ch=400,target=0.7;
+const center=(pts)=>{
+let xn=Infinity,xx=-Infinity,yn=Infinity,yx=-Infinity;
+pts.forEach(v=>{xn=Math.min(xn,v[0]);xx=Math.max(xx,v[0]);yn=Math.min(yn,v[1]);yx=Math.max(yx,v[1]);});
+const sw=(xx-xn)||1,sh=(yx-yn)||1;
+const sc=Math.min(cw*target/sw,ch*target/sh);
+const ox=cw/2-(xn+xx)/2*sc,oy=ch/2-(yn+yx)/2*sc;
+return pts.map(v=>[v[0]*sc+ox,v[1]*sc+oy]);
+};
+let raw;
+if(name==='Rectangle'){const w=p.width,h=p.height;raw=[[0,0],[w,0],[w,h],[0,h]];}
+else if(name==='Circle'){raw=[];for(let i=0;i<48;i++){const a=2*Math.PI*i/48;raw.push([p.diameter/2+p.diameter/2*Math.cos(a),p.diameter/2+p.diameter/2*Math.sin(a)]);};}
+else if(name==='Hollow Circle'){const ro=p.outer_diameter/2;raw=[];for(let i=0;i<48;i++){const a=2*Math.PI*i/48;raw.push([ro+ro*Math.cos(a),ro+ro*Math.sin(a)]);};}
+else if(name==='I-Beam'){
+const h=p.total_height,fw=p.flange_width,ft=p.flange_thickness,wt=p.web_thickness;
+const cx=fw/2;
+raw=[[0,0],[fw,0],[fw,ft],[cx+wt/2,ft],[cx+wt/2,h-ft],[fw,h-ft],[fw,h],[0,h],[0,h-ft],[cx-wt/2,h-ft],[cx-wt/2,ft],[0,ft]];
+}else if(name==='C-Channel'){
+const h=p.total_height,fw=p.flange_width,ft=p.flange_thickness,wt=p.web_thickness;
+raw=[[0,0],[fw,0],[fw,ft],[wt,ft],[wt,h-ft],[fw,h-ft],[fw,h],[0,h]];
+}else if(name==='L-Angle'){
+const a=p.leg_a,b=p.leg_b,t=p.thickness;
+raw=[[0,0],[a,0],[a,t],[t,t],[t,b],[0,b]];
+}else if(name==='T-Section'){
+const fw=p.flange_width,h=p.total_height,ft=p.flange_thickness,wt=p.web_thickness;
+raw=[[0,0],[fw,0],[fw,ft],[(fw+wt)/2,ft],[(fw+wt)/2,h],[(fw-wt)/2,h],[(fw-wt)/2,ft],[0,ft]];
+}else if(name==='Hollow Rectangle'){
+const w=p.outer_width,h=p.outer_height;
+raw=[[0,0],[w,0],[w,h],[0,h]];
+}else{
+raw=[[0,0],[100,0],[100,100],[0,100]];
+}
+return center(raw);
+}
+function setupUnits(){
+const catSel=$('#uc-cat');
+UNIT_CATS.forEach(c=>{const o=document.createElement('option');o.value=c.name;o.textContent=c.name.toUpperCase().replace(/_/g,' ');catSel.appendChild(o);});
+catSel.addEventListener('change',updateUnitSelects);
+$('#uc-val').addEventListener('input',doConvert);
+$('#uc-from').addEventListener('change',doConvert);
+$('#uc-to').addEventListener('change',doConvert);
+updateUnitSelects();
+}
+function updateUnitSelects(){
+const cat=UNIT_CATS.find(c=>c.name===$('#uc-cat').value);
+if(!cat)return;
+['#uc-from','#uc-to'].forEach(sel=>{
+const s=$(sel);
+s.innerHTML='';
+cat.units.forEach(u=>{const o=document.createElement('option');o.value=u.symbol;o.textContent=u.symbol;s.appendChild(o);});
+});
+if(cat.units.length>1)$('#uc-to').value=cat.units[1].symbol;
+doConvert();
+updateRefTable();
+}
+function doConvert(){
+const v=parseFloat($('#uc-val').value)||0;
+const from=$('#uc-from').value;
+const to=$('#uc-to').value;
+const result=convert_unit(v,from,to);
+$('#uc-result').value=isNaN(result)?'N/A':fmt(result,6);
+}
+function updateRefTable(){
+const cat=UNIT_CATS.find(c=>c.name===$('#uc-cat').value);
+if(!cat)return;
+const tb=$('#uc-tbody');
+tb.innerHTML='';
+const base=cat.units[0];
+cat.units.slice(1).forEach(u=>{
+const f=convert_unit(1,base.symbol,u.symbol);
+const tr=document.createElement('tr');
+tr.innerHTML=`<td>1 ${base.symbol}</td><td>${u.symbol}</td><td>${fmt(f,6)}</td>`;
+tb.appendChild(tr);
+});
+}
+let beamCanvas,beamCtx;
+function setupBeamCanvas(){
+beamCanvas=$('#c-beam-sup');
+beamCtx=beamCanvas.getContext('2d');
+beamCanvas.addEventListener('click',onBeamClick);
+$$('[data-sup]').forEach(b=>b.addEventListener('click',()=>{
+$$('[data-sup]').forEach(x=>x.classList.remove('active'));
+b.classList.add('active');
+curSupType=b.dataset.sup;
+}));
+$('#ld-type').addEventListener('change',()=>{
+$('#ld-end-wrap').style.display=$('#ld-type').value==='distributed'?'':'none';
+});
+drawBeam();
+}
+function onBeamClick(e){
+const rect=beamCanvas.getBoundingClientRect();
+const sx=beamCanvas.width/rect.width;
+const x=(e.clientX-rect.left)*sx;
+const ml=60,mr=20,bw=beamCanvas.width-ml-mr;
+const pct=(x-ml)/bw;
+if(pct<0||pct>1)return;
+const len=parseFloat($('#bm-len').value)||3000;
+const pos=Math.round(pct*len);
+supports.push({pos,kind:curSupType});
+drawBeam();
+updateSupList();
+}
+function drawBeam(){
+const c=beamCtx,w=beamCanvas.width,h=beamCanvas.height;
+c.clearRect(0,0,w,h);
+const ml=60,mr=20,bw=w-ml-mr,by=h*0.45;
+c.strokeStyle='#333';c.lineWidth=1;
+c.beginPath();c.moveTo(ml,by);c.lineTo(ml+bw,by);c.stroke();
+c.strokeStyle='var(--accent,#ff6b35)';c.lineWidth=3;
+c.beginPath();c.moveTo(ml,by);c.lineTo(ml+bw,by);c.stroke();
+const len=parseFloat($('#bm-len').value)||3000;
+supports.forEach((s,i)=>{
+const x=ml+(s.pos/len)*bw;
+c.fillStyle='#ff6b35';c.strokeStyle='#ff6b35';c.lineWidth=2;
+if(s.kind==='pin'){
+c.beginPath();c.moveTo(x,by);c.lineTo(x-10,by+20);c.lineTo(x+10,by+20);c.closePath();c.fill();
+}else if(s.kind==='roller'){
+c.beginPath();c.moveTo(x,by);c.lineTo(x-10,by+15);c.lineTo(x+10,by+15);c.closePath();c.stroke();
+c.beginPath();c.arc(x,by+20,5,0,Math.PI*2);c.stroke();
+}else if(s.kind==='fixed'){
+c.fillRect(x-3,by-15,6,30);
+for(let j=0;j<4;j++){c.beginPath();c.moveTo(x-8,by-12+j*8);c.lineTo(x+2,by-8+j*8);c.stroke();}
+}
+c.fillStyle='#e0e0e0';c.font='10px monospace';c.textAlign='center';
+c.fillText(s.kind.toUpperCase(),x,by+35);
+c.fillText(s.pos+'',x,by+46);
+});
+loads.forEach(l=>{
+const x=ml+(l.pos/len)*bw;
+c.strokeStyle='#00ff9d';c.fillStyle='#00ff9d';c.lineWidth=2;
+if(l.kind==='point'){
+const dir=l.mag<0?1:-1;
+c.beginPath();c.moveTo(x,by+dir*-30);c.lineTo(x,by);c.stroke();
+c.beginPath();c.moveTo(x,by);c.lineTo(x-4,by+dir*-8);c.moveTo(x,by);c.lineTo(x+4,by+dir*-8);c.stroke();
+c.font='10px monospace';c.textAlign='center';c.fillText(l.mag+'',x,by+dir*-35);
+}else if(l.kind==='distributed'){
+const x2=ml+((l.end_pos||len)/len)*bw;
+for(let ax=x;ax<=x2;ax+=15){
+c.beginPath();c.moveTo(ax,by-25);c.lineTo(ax,by);c.stroke();
+c.beginPath();c.moveTo(ax,by);c.lineTo(ax-3,by-6);c.moveTo(ax,by);c.lineTo(ax+3,by-6);c.stroke();
+}
+c.beginPath();c.moveTo(x,by-25);c.lineTo(x2,by-25);c.stroke();
+c.font='10px monospace';c.textAlign='center';c.fillText(l.mag+'/mm',((x+x2)/2),by-30);
+}else if(l.kind==='moment'){
+c.beginPath();c.arc(x,by-15,12,0,Math.PI*1.5);c.stroke();
+c.beginPath();c.moveTo(x+12,by-15);c.lineTo(x+8,by-19);c.moveTo(x+12,by-15);c.lineTo(x+16,by-19);c.stroke();
+c.font='10px monospace';c.textAlign='center';c.fillText(l.mag+'',x,by-35);
+}
+});
+c.fillStyle='#666';c.font='10px monospace';c.textAlign='center';
+c.fillText('0',ml,by+60);
+c.fillText(len+'',ml+bw,by+60);
+}
+function updateSupList(){
+$('#sup-list').innerHTML=supports.map((s,i)=>`<span class="tag" style="cursor:pointer" onclick="removeSup(${i})">${s.kind}@${s.pos} ✕</span>`).join('');
+}
+window.removeSup=function(i){supports.splice(i,1);drawBeam();updateSupList();};
+window.clearSupports=function(){supports=[];drawBeam();$('#sup-list').innerHTML='';};
+window.addLoad=function(){
+const len=parseFloat($('#bm-len').value)||3000;
+const toMM={'mm':1,'m':1000,'in':25.4,'ft':304.8};
+const pu=toMM[$('#ld-pos-u').value]||1;
+const pos=parseFloat($('#ld-pos').value)*pu;
+const toN={'N':1,'kN':1000,'lbf':4.44822,'kip':4448.22,'kN/m':1,'N/mm':1};
+const mu_f=toN[$('#ld-mag-u').value]||1;
+const mag=parseFloat($('#ld-mag').value)*mu_f;
+const kind=$('#ld-type').value;
+const l={kind,pos,mag};
+if(kind==='distributed'){
+l.end_pos=parseFloat($('#ld-end').value)*pu||len;
+}
+loads.push(l);
+drawBeam();
+$('#load-list').innerHTML=loads.map((l,i)=>`<span class="tag" style="cursor:pointer" onclick="removeLoad(${i})">${l.kind==='point'?'P='+l.mag+'N @ '+l.pos+'mm':l.kind==='distributed'?'w='+l.mag+'N/mm ['+l.pos+'-'+l.end_pos+']':'M='+l.mag+'N·mm @ '+l.pos+'mm'} ✕</span>`).join('');
+};
+window.removeLoad=function(i){loads.splice(i,1);drawBeam();$('#load-list').innerHTML=loads.map((l,j)=>`<span class="tag" style="cursor:pointer" onclick="removeLoad(${j})">${l.kind==='point'?'P='+l.mag+'N @ '+l.pos+'mm':l.kind==='distributed'?'w='+l.mag+'N/mm ['+l.pos+'-'+l.end_pos+']':'M='+l.mag+'N·mm @ '+l.pos+'mm'} ✕</span>`).join('');};
+window.clearLoads=function(){loads=[];drawBeam();$('#load-list').innerHTML='';};
+window.solveBeam=function(){
+const toM={'mm':0.001,'m':1,'in':0.0254,'ft':0.3048};
+const lu=toM[$('#bm-len-u').value]||0.001;
+const len=parseFloat($('#bm-len').value)*lu;
+const toPA={'GPa':1e9,'MPa':1e6,'psi':6894.757,'ksi':6.894757e6};
+const e=parseFloat($('#bm-e').value)*(toPA[$('#bm-e-u').value]||1e9);
+const toM4={'cm4':1e-8,'mm4':1e-12,'in4':4.162314e-7};
+const im=parseFloat($('#bm-i').value)*(toM4[$('#bm-i-u').value]||1e-8);
+const sups=supports.map(s=>({pos:s.pos*lu/((parseFloat($('#bm-len').value)||3000)*lu)*len,kind:s.kind}));
+const lds=loads.map(l=>{
+const scale=lu/0.001;
+const r={kind:l.kind,pos:l.pos*0.001,mag:l.mag};
+if(l.end_pos)r.end_pos=l.end_pos*0.001;
+return r;
+});
+const inp={length:len,e_modulus:e,i_moment:im,supports:sups,loads:lds,num_points:500};
+const res=JSON.parse(calc_beam(JSON.stringify(inp)));
+if(res.error){$('#beam-results').innerHTML=`<div class="card"><p style="color:var(--err)">${res.error}</p></div>`;return;}
+let html=`<div class="card"><h3>REACTIONS</h3><div class="result-grid">`;
+res.reactions.forEach((r,i)=>{
+html+=`<div class="result-item"><div class="lbl">R${i+1} @ ${fmt(r.pos,2)} m</div><div class="val">${fmt(r.fy)} N</div></div>`;
+if(r.moment!=null)html+=`<div class="result-item"><div class="lbl">M${i+1}</div><div class="val">${fmt(r.moment)} N·m</div></div>`;
+});
+html+=`</div></div>`;
+html+=`<div class="card"><h3>MAXIMUMS — ${(res.support_type||'').replace(/_/g,' ').toUpperCase()}</h3><div class="result-grid">
+<div class="result-item"><div class="lbl">MAX SHEAR</div><div class="val">${fmt(res.max_shear)} N</div></div>
+<div class="result-item"><div class="lbl">MAX MOMENT</div><div class="val">${fmt(res.max_moment)} N·m</div></div>
+<div class="result-item"><div class="lbl">MAX DEFLECTION</div><div class="val">${fmt(res.max_deflection*1000)} mm</div></div>
+<div class="result-item"><div class="lbl">MAX SLOPE</div><div class="val">${fmt(res.max_slope*180/Math.PI,3)}°</div></div>
+</div></div>`;
+html+=`<div class="card"><h3>SHEAR DIAGRAM</h3><div id="c-shear" style="width:100%;height:280px"></div></div>`;
+html+=`<div class="card"><h3>MOMENT DIAGRAM</h3><div id="c-moment" style="width:100%;height:280px"></div></div>`;
+html+=`<div class="card"><h3>DEFLECTION CURVE</h3><div id="c-defl" style="width:100%;height:280px"></div></div>`;
+$('#beam-results').innerHTML=html;
+setTimeout(()=>{
+drawDiagram('c-shear',res.shear_diagram,'N','#00ff9d');
+drawDiagram('c-moment',res.moment_diagram,'N·m','#ff6b35');
+drawDiagram('c-defl',res.deflection_curve,'m','#4da6ff');
+},50);
+};
+function drawDiagram(id,data,unit,color){
+const el=document.getElementById(id);
+if(!el||!data||data.length<2)return;
+const xs=data.map(d=>d[0]),ys=data.map(d=>d[1]);
+Plotly.react(id,[{x:xs,y:ys,type:'scatter',mode:'lines',fill:'tozeroy',fillcolor:color+'15',line:{color,width:2.5,shape:'spline'},hovertemplate:'x = %{x:.3f} m<br>'+unit+' = %{y:.4g}<extra></extra>'}],Object.assign({},pLayout,{margin:{l:70,r:25,t:20,b:50},xaxis:Object.assign({},pLayout.xaxis,{title:{text:'Position (m)',font:{size:11,color:'#888'}}}),yaxis:Object.assign({},pLayout.yaxis,{title:{text:unit,font:{size:11,color:'#888'}}})}),pCfg);
+}
+let secCanvas,secCtx;
+function setupSectionCanvas(){
+secCanvas=$('#c-section');
+secCtx=secCanvas.getContext('2d');
+secCanvas.addEventListener('click',onSecClick);
+secCanvas.addEventListener('contextmenu',e=>{e.preventDefault();if(secVerts.length>2){drawSection();calcSection();}});
+secCanvas.addEventListener('wheel',e=>{
+e.preventDefault();
+if(secVerts.length<2)return;
+const factor=e.deltaY<0?1.1:0.9;
+const rect=secCanvas.getBoundingClientRect();
+const sx=secCanvas.width/rect.width;
+const mx=(e.clientX-rect.left)*sx,my=(e.clientY-rect.top)*sx;
+secVerts=secVerts.map(v=>[mx+(v[0]-mx)*factor,my+(v[1]-my)*factor]);
+drawSection();
+},{passive:false});
+drawSection();
+}
+function onSecClick(e){
+const rect=secCanvas.getBoundingClientRect();
+const sx=secCanvas.width/rect.width;
+const x=(e.clientX-rect.left)*sx;
+const y=(e.clientY-rect.top)*sx;
+secVerts.push([x,y]);
+drawSection();
+}
+function drawSection(){
+const c=secCtx,w=secCanvas.width,h=secCanvas.height;
+c.clearRect(0,0,w,h);
+c.strokeStyle='#333';c.lineWidth=0.5;
+for(let x=0;x<w;x+=20){c.beginPath();c.moveTo(x,0);c.lineTo(x,h);c.stroke();}
+for(let y=0;y<h;y+=20){c.beginPath();c.moveTo(0,y);c.lineTo(w,y);c.stroke();}
+if(secVerts.length===0)return;
+c.fillStyle='rgba(255,107,53,0.1)';c.strokeStyle='#ff6b35';c.lineWidth=2;
+c.beginPath();
+secVerts.forEach((v,i)=>i===0?c.moveTo(v[0],v[1]):c.lineTo(v[0],v[1]));
+if(secVerts.length>2)c.closePath();
+c.fill();c.stroke();
+c.fillStyle='#ff6b35';
+secVerts.forEach(v=>{c.beginPath();c.arc(v[0],v[1],4,0,Math.PI*2);c.fill();});
+}
+window.undoVertex=function(){secVerts.pop();drawSection();};
+window.clearSection=function(){secVerts=[];drawSection();$('#sec-results').innerHTML='<h3>SECTION PROPERTIES</h3><p style="font-size:.75rem;color:var(--dim)">Draw or select a section to see results</p>';};
+window.loadSectionToBeam=function(ix){
+$('#bm-i').value=ix.toFixed(4);
+$('#bm-i-u').value='cm4';
+$('#bm-i').scrollIntoView({behavior:'smooth',block:'center'});
+};
+window.calcSection=function(){
+if(secVerts.length<3)return;
+const inp={vertices:secVerts,holes:null};
+const res=JSON.parse(calc_section(JSON.stringify(inp)));
+if(res.error){$('#sec-results').innerHTML=`<h3>ERROR</h3><p style="color:var(--err)">${res.error}</p>`;return;}
+const p=[
+{l:'AREA',v:fmt(res.area)+' units²'},
+{l:'CENTROID X',v:fmt(res.centroid[0])},
+{l:'CENTROID Y',v:fmt(res.centroid[1])},
+{l:'Ix',v:fmt(res.ix)+' units⁴'},
+{l:'Iy',v:fmt(res.iy)+' units⁴'},
+{l:'Ixy',v:fmt(res.ixy)+' units⁴'},
+{l:'I₁ (PRINCIPAL)',v:fmt(res.i1)},
+{l:'I₂ (PRINCIPAL)',v:fmt(res.i2)},
+{l:'θp',v:fmt(res.theta_p*180/Math.PI,2)+'°'},
+{l:'Sx TOP',v:fmt(res.sx_top)},
+{l:'Sx BOT',v:fmt(res.sx_bot)},
+{l:'rx',v:fmt(res.rx)},
+{l:'ry',v:fmt(res.ry)},
+{l:'J (APPROX)',v:fmt(res.j_approx)},
+{l:'Zx (PLASTIC)',v:fmt(res.zx)},
+];
+$('#sec-results').innerHTML=`<h3>SECTION PROPERTIES</h3><div class="result-grid">${p.map(x=>`<div class="result-item"><div class="lbl">${x.l}</div><div class="val">${x.v}</div></div>`).join('')}</div><p style="font-size:.65rem;color:var(--dim);margin-top:.5rem">Values in canvas pixel units — use preset params for real-world scale</p><button class="btn" style="margin-top:.5rem;font-size:.7rem" onclick="loadSectionToBeam(${res.ix})">LOAD Ix INTO BEAM</button>`;
+};
+window.calcStress=function(){
+const u=$('#st-u').value;
+const toPA={'MPa':1e6,'ksi':6.894757e6,'psi':6894.757,'GPa':1e9};
+const mu=toPA[u]||1e6;
+const inp={
+sigma_x:parseFloat($('#st-sx').value)*mu,
+sigma_y:parseFloat($('#st-sy').value)*mu,
+tau_xy:parseFloat($('#st-txy').value)*mu,
+sigma_z:parseFloat($('#st-sz').value)*mu,
+tau_xz:parseFloat($('#st-txz').value)*mu,
+tau_yz:parseFloat($('#st-tyz').value)*mu,
+yield_strength:parseFloat($('#st-sy-val').value)*1e6,
+ultimate_strength:parseFloat($('#st-su-val').value)*1e6,
+};
+const res=JSON.parse(calc_stress(JSON.stringify(inp)));
+if(res.error){$('#stress-results').innerHTML=`<h3>ERROR</h3><p style="color:var(--err)">${res.error}</p>`;return;}
+const d=1e6;
+const p=[
+{l:'σ₁',v:fmt(res.sigma_1/d)+' MPa'},
+{l:'σ₂',v:fmt(res.sigma_2/d)+' MPa'},
+{l:'σ₃',v:fmt(res.sigma_3/d)+' MPa'},
+{l:'τ MAX',v:fmt(res.tau_max/d)+' MPa'},
+{l:'VON MISES',v:fmt(res.von_mises/d)+' MPa'},
+{l:'TRESCA',v:fmt(res.tresca/d)+' MPa'},
+{l:'θ PRINCIPAL',v:fmt(res.theta_p,2)+'°'},
+{l:'FoS YIELD (VM)',v:fmt(res.fos_yield_vm,2),c:fosClass(res.fos_yield_vm)},
+{l:'FoS YIELD (TR)',v:fmt(res.fos_yield_tresca,2),c:fosClass(res.fos_yield_tresca)},
+{l:'FoS ULTIMATE',v:fmt(res.fos_ultimate,2),c:fosClass(res.fos_ultimate)},
+];
+$('#stress-results').innerHTML=`<h3>RESULTS</h3><div class="result-grid">${p.map(x=>`<div class="result-item"><div class="lbl">${x.l}</div><div class="val${x.c?' '+x.c:''}">${x.v}</div></div>`).join('')}</div>`;
+drawMohr(res.mohr_circle,d);
+};
+function drawMohr(mc,d){
+const center=mc.center/d,radius=mc.radius/d;
+const theta=Array.from({length:65},(_,i)=>2*Math.PI*i/64);
+const cx=theta.map(t=>center+radius*Math.cos(t)),cy=theta.map(t=>radius*Math.sin(t));
+const s1=mc.sigma_1?mc.sigma_1/d:center+radius,s2=mc.sigma_2?mc.sigma_2/d:center-radius;
+Plotly.react('c-mohr',[
+{x:cx,y:cy,type:'scatter',mode:'lines',name:'Circle',line:{color:'#ff6b35',width:2.5},hovertemplate:'σ=%{x:.1f} MPa<br>τ=%{y:.1f} MPa<extra></extra>'},
+{x:[center],y:[0],type:'scatter',mode:'markers',name:'C='+fmt(center,1),marker:{color:'#ff6b35',size:10,symbol:'diamond'}},
+{x:[s1,s2],y:[0,0],type:'scatter',mode:'markers',name:'σ₁,σ₂',marker:{color:'#00ff9d',size:8}},
+],Object.assign({},pLayout,{xaxis:Object.assign({},pLayout.xaxis,{title:{text:'σ (MPa)',font:{size:11,color:'#888'}},scaleanchor:'y',scaleratio:1}),yaxis:Object.assign({},pLayout.yaxis,{title:{text:'τ (MPa)',font:{size:11,color:'#888'}}}),showlegend:true,legend:{font:{size:10,color:'#888'},bgcolor:'transparent',x:0.02,y:0.98},annotations:[{x:center,y:-radius*1.15,text:'C='+fmt(center,1)+' R='+fmt(radius,1),showarrow:false,font:{size:10,color:'#888'}}]}),pCfg);
+}
+window.calcFatigue=function(){
+const su=parseFloat($('#st-su-val').value)||400;
+const sy=parseFloat($('#st-sy-val').value)||250;
+const inp={sigma_mean:parseFloat($('#ft-sm').value)||100,sigma_alt:parseFloat($('#ft-sa').value)||80,su,sy,surface:$('#ft-surf').value||'machined',diameter_mm:parseFloat($('#ft-dia').value)||25,reliability:parseFloat($('#ft-rel').value)||0.99,temp_c:parseFloat($('#ft-temp').value)||20,kt:parseFloat($('#ft-kt').value)||1.5,q:parseFloat($('#ft-q').value)||0.9};
+const res=JSON.parse(calc_fatigue(JSON.stringify(inp)));
+if(res.error){$('#fatigue-results').innerHTML=`<span style="color:var(--err)">${res.error}</span>`;return;}
+const p=[
+{l:'Se\'',v:fmt(res.se_prime,1)+' MPa'},{l:'Se (corrected)',v:fmt(res.se,1)+' MPa'},
+{l:'ka (surface)',v:fmt(res.ka,3)},{l:'kb (size)',v:fmt(res.kb,3)},
+{l:'kc (load)',v:fmt(res.kc,3)},{l:'kd (temp)',v:fmt(res.kd,3)},
+{l:'ke (reliab)',v:fmt(res.ke,3)},{l:'kf (notch)',v:fmt(res.kf,3)},
+{l:'FoS GOODMAN',v:fmt(res.goodman_fos,2),c:fosClass(res.goodman_fos)},
+{l:'FoS SODERBERG',v:fmt(res.soderberg_fos,2),c:fosClass(res.soderberg_fos)},
+{l:'FoS GERBER',v:fmt(res.gerber_fos,2),c:fosClass(res.gerber_fos)},
+{l:'LIFE',v:res.fatigue_life},
+];
+$('#fatigue-results').innerHTML=`<div class="result-grid" style="font-size:.7rem">${p.map(x=>`<div class="result-item"><div class="lbl">${x.l}</div><div class="val${x.c?' '+x.c:''}">${x.v}</div></div>`).join('')}</div>`;
+drawFatigueDiagram(res);
+};
+function drawFatigueDiagram(res){
+const el=document.getElementById('c-fatigue');if(!el)return;
+const traces=[];
+if(res.goodman_line&&res.goodman_line.length>1){
+traces.push({x:res.goodman_line.map(p=>p[0]),y:res.goodman_line.map(p=>p[1]),type:'scatter',mode:'lines',name:'Goodman',line:{color:'#3b82f6',width:2.5},fill:'tozeroy',fillcolor:'rgba(59,130,246,0.06)'});
+}
+if(res.soderberg_line&&res.soderberg_line.length>1){
+traces.push({x:res.soderberg_line.map(p=>p[0]),y:res.soderberg_line.map(p=>p[1]),type:'scatter',mode:'lines',name:'Soderberg',line:{color:'#22c55e',width:2,dash:'dash'}});
+}
+if(res.gerber_curve&&res.gerber_curve.length>1){
+traces.push({x:res.gerber_curve.map(p=>p[0]),y:res.gerber_curve.map(p=>p[1]),type:'scatter',mode:'lines',name:'Gerber',line:{color:'#f59e0b',width:2,dash:'dashdot'}});
+}
+if(res.operating_point){
+traces.push({x:[res.operating_point[0]],y:[res.operating_point[1]],type:'scatter',mode:'markers+text',name:'Operating Point',marker:{color:'#ef4444',size:10,line:{color:'#fff',width:1.5}},text:['('+fmt(res.operating_point[0],0)+','+fmt(res.operating_point[1],0)+')'],textposition:'top right',textfont:{size:9,color:'#fff'}});
+}
+Plotly.react('c-fatigue',traces,Object.assign({},pLayout,{title:{text:'FATIGUE FAILURE CRITERIA',font:{size:12,color:'#ff6b35',family:'JetBrains Mono'}},xaxis:Object.assign({},pLayout.xaxis,{title:{text:'σ_mean (MPa)',font:{size:11,color:'#888'}}}),yaxis:Object.assign({},pLayout.yaxis,{title:{text:'σ_alt (MPa)',font:{size:11,color:'#888'}}}),showlegend:true,legend:{font:{size:10,color:'#888'},bgcolor:'transparent',x:0.65,y:0.98}}),pCfg);
+}
+window.calcBolt=function(){
+const toN={'N':1,'kN':1000,'lbf':4.44822,'kip':4448.22};
+const inp={
+grade:$('#bl-grade').value,
+size:$('#bl-size').value,
+external_load:parseFloat($('#bl-fext').value)||50000,
+shear_load:parseFloat($('#bl-fshear').value)||0,
+num_bolts:parseInt($('#bl-num').value)||8,
+preload_pct:(parseFloat($('#bl-preload').value)||75)/100,
+joint_stiffness_ratio:0.25,
+friction_coeff:parseFloat($('#bl-mu').value)||0.15,
+};
+const res=JSON.parse(calc_bolt(JSON.stringify(inp)));
+if(res.error){$('#bolt-results').innerHTML=`<h3>ERROR</h3><p style="color:var(--err)">${res.error}</p>`;return;}
+const jc=res.joint_status.includes('SEPARATION')?'err':'ok';
+const p=[
+{l:'TENSILE AREA',v:fmt(res.tensile_area*1e6,1)+' mm²'},
+{l:'PROOF LOAD',v:fmt(res.proof_load,0)+' N'},
+{l:'PRELOAD (Fi)',v:fmt(res.preload,0)+' N'},
+{l:'BOLT LOAD (Fb)',v:fmt(res.bolt_load,0)+' N'},
+{l:'JOINT LOAD (Fj)',v:fmt(res.joint_load,0)+' N',c:jc},
+{l:'BOLT STRESS',v:fmt(res.bolt_stress/1e6,1)+' MPa'},
+{l:'FoS PROOF',v:fmt(res.fos_proof,2),c:fosClass(res.fos_proof)},
+{l:'FoS YIELD',v:fmt(res.fos_yield,2),c:fosClass(res.fos_yield)},
+{l:'FoS SEPARATION',v:fmt(res.fos_separation,2),c:fosClass(res.fos_separation)},
+{l:'FoS SHEAR',v:res.fos_shear>1e10?'N/A':fmt(res.fos_shear,2),c:res.fos_shear>1e10?'':fosClass(res.fos_shear)},
+{l:'INTERACTION RATIO',v:fmt(res.interaction_ratio,3),c:res.interaction_ratio>1?'err':res.interaction_ratio>0.8?'warn':'ok'},
+{l:'TORQUE (K=0.20)',v:fmt(res.torque_k02,2)+' N·m'},
+{l:'TORQUE (K=0.15)',v:fmt(res.torque_k015,2)+' N·m'},
+{l:'JOINT STATUS',v:res.joint_status,c:jc},
+];
+$('#bolt-results').innerHTML=`<h3>JOINT RESULTS</h3><div class="result-grid">${p.map(x=>`<div class="result-item"><div class="lbl">${x.l}</div><div class="val${x.c?' '+x.c:''}">${x.v}</div></div>`).join('')}</div>`;
+drawBoltPattern();
+};
+window.toggleBoltPattern=function(){
+const pat=$('#bl-pattern').value;
+$('#row-bcd').style.display=pat==='circular'?'':'none';
+$('#row-rect').style.display=pat==='rectangular'?'':'none';
+drawBoltPattern();
+};
+window.drawBoltPattern=function(){
+const canvas=$('#c-bolt-pattern');
+if(!canvas)return;
+const{c,w,h}=hdCanvas(canvas);
+c.clearRect(0,0,w,h);
+const pat=$('#bl-pattern').value;
+const nBolts=parseInt($('#bl-num').value)||1;
+const cx=w/2,cy=h/2;
+const bolts=[];
+if(pat==='circular'){
+const bcd=parseFloat($('#bl-bcd').value)||200;
+const startAngle=(parseFloat($('#bl-angle').value)||0)*Math.PI/180;
+const scale=Math.min(w,h)*0.35/(bcd/2||1);
+const r=bcd/2*scale;
+c.strokeStyle='#333';c.setLineDash([5,5]);
+c.beginPath();c.arc(cx,cy,r,0,Math.PI*2);c.stroke();c.setLineDash([]);
+for(let i=0;i<nBolts;i++){
+const a=startAngle+i*2*Math.PI/nBolts;
+bolts.push([cx+r*Math.cos(a),cy+r*Math.sin(a)]);
+}
+}else if(pat==='rectangular'){
+const rw=parseFloat($('#bl-rect-w').value)||150,rh=parseFloat($('#bl-rect-h').value)||100;
+const scale=Math.min(w*0.7/rw,h*0.7/rh);
+const sw=rw*scale,sh=rh*scale;
+c.strokeStyle='#333';c.strokeRect(cx-sw/2,cy-sh/2,sw,sh);
+const perim=2*(rw+rh);
+for(let i=0;i<nBolts;i++){
+let d=i*perim/nBolts;
+let bx,by;
+if(d<rw){bx=-rw/2+d;by=-rh/2;}
+else if(d<rw+rh){bx=rw/2;by=-rh/2+(d-rw);}
+else if(d<2*rw+rh){bx=rw/2-(d-rw-rh);by=rh/2;}
+else{bx=-rw/2;by=rh/2-(d-2*rw-rh);}
+bolts.push([cx+bx*scale,cy+by*scale]);
+}
+}
+c.fillStyle='var(--accent)';
+bolts.forEach(b=>{c.beginPath();c.arc(b[0],b[1],6,0,Math.PI*2);c.fill();c.strokeStyle='#fff';c.lineWidth=1;c.stroke();});
+};
+window.toggleBelleville=function(){
+const kind=$('#sp-type').value;
+const isBell=kind==='belleville';
+const isDie=kind==='die'||kind==='wave';
+document.querySelectorAll('.sp-coil').forEach(el=>el.style.display=(isBell||isDie)?'none':'');
+$('#sp-bell-params').style.display=isBell?'block':'none';
+};
+window.calcSpring=function(){
+const kind=$('#sp-type').value;
+const isBell=kind==='belleville';
+const toM={'mm':0.001,'in':0.0254};
+const du=toM[$('#sp-d-u').value]||0.001;
+const Du=toM[$('#sp-D-u').value]||0.001;
+const toPA={'GPa':1e9,'MPa':1e6,'psi':6894.757};
+const gu=toPA[$('#sp-g-u').value]||1e9;
+const toN={'N':1,'lbf':4.44822,'kgf':9.80665};
+const fu=toN[$('#sp-f-u').value]||1;
+const inp=isBell?{
+kind,wire_diameter:0.001,coil_diameter:0.01,active_coils:1,shear_modulus:79.3e9,
+outer_diameter:parseFloat($('#sp-ode').value)*0.001,
+inner_diameter:parseFloat($('#sp-ide').value)*0.001,
+thickness:parseFloat($('#sp-bt').value)*0.001,
+disc_height:parseFloat($('#sp-bh').value)*0.001,
+e_modulus:parseFloat($('#sp-be').value)*1e9,
+poisson:parseFloat($('#sp-bnu').value)||0.3,
+applied_force:parseFloat($('#sp-f').value)*fu,
+yield_strength:(parseFloat($('#sp-sy').value)||1000)*1e6,
+num_parallel:parseInt($('#sp-np').value)||1,
+num_series:parseInt($('#sp-ns').value)||1,
+}:{
+kind,
+wire_diameter:parseFloat($('#sp-d').value)*du,
+coil_diameter:parseFloat($('#sp-D').value)*Du,
+active_coils:parseFloat($('#sp-na').value)||8,
+total_coils:parseFloat($('#sp-nt').value)||10,
+free_length:(parseFloat($('#sp-fl').value)||60)*0.001,
+shear_modulus:parseFloat($('#sp-g').value)*gu,
+applied_force:parseFloat($('#sp-f').value)*fu,
+yield_strength:(parseFloat($('#sp-sy').value)||1000)*1e6,
+};
+const res=JSON.parse(calc_spring(JSON.stringify(inp)));
+if(res.error){$('#spring-results').innerHTML=`<h3>ERROR</h3><p style="color:var(--err)">${res.error}</p>`;return;}
+const p=isBell?[
+{l:'SPRING RATE',v:fmt(res.spring_rate,2)+' N/m'},
+{l:'FORCE',v:fmt(res.force,2)+' N'},
+{l:'DEFLECTION',v:fmt(res.deflection*1000,2)+' mm'},
+{l:'σ_OM (OUTER TENSION)',v:fmt(res.shear_stress/1e6,1)+' MPa'},
+{l:'σ_I (INNER COMP)',v:fmt(res.corrected_stress/1e6,1)+' MPa'},
+{l:'DIAMETER RATIO δ',v:fmt(res.spring_index,2)},
+{l:'K₁ (DIN 2093)',v:fmt(res.wahl_factor,4)},
+{l:'SOLID HEIGHT',v:fmt(res.solid_length*1000,1)+' mm'},
+{l:'MAX DEFLECTION h₀',v:fmt(res.max_deflection*1000,1)+' mm'},
+{l:'FoS STATIC',v:fmt(res.fos_static,2),c:fosClass(res.fos_static)},
+{l:'ENERGY STORED',v:fmt(res.energy_stored,4)+' J'},
+{l:'WEIGHT APPROX',v:fmt(res.weight_approx*1000,2)+' g'},
+]:[
+{l:'SPRING RATE',v:fmt(res.spring_rate,2)+' N/m'},
+{l:'FORCE',v:fmt(res.force,2)+' N'},
+{l:'DEFLECTION',v:fmt(res.deflection*1000,2)+' mm'},
+{l:'SHEAR STRESS (τ)',v:fmt(res.shear_stress/1e6,1)+' MPa'},
+{l:'CORRECTED (WAHL)',v:fmt(res.corrected_stress/1e6,1)+' MPa'},
+{l:'SPRING INDEX C',v:fmt(res.spring_index,2)},
+{l:'WAHL FACTOR Kw',v:fmt(res.wahl_factor,3)},
+{l:'SOLID LENGTH',v:fmt(res.solid_length*1000,1)+' mm'},
+{l:'MAX DEFLECTION',v:fmt(res.max_deflection*1000,1)+' mm'},
+{l:'NATURAL FREQ',v:fmt(res.natural_freq_hz,1)+' Hz'},
+{l:'BUCKLING RATIO',v:fmt(res.buckling_ratio,2),c:res.buckling_ratio>4?'warn':''},
+{l:'FoS STATIC',v:fmt(res.fos_static,2),c:fosClass(res.fos_static)},
+{l:'ENERGY STORED',v:fmt(res.energy_stored,4)+' J'},
+{l:'WEIGHT APPROX',v:fmt(res.weight_approx*1000,2)+' g'},
+];
+let fatigueHtml='';
+if(res.fatigue_fos&&res.fatigue_fos>0&&res.fatigue_life!=='N/A'){
+fatigueHtml=`<div class="card" style="margin-top:.5rem"><h3>FATIGUE (GOODMAN)</h3><div class="result-grid">${[
+{l:'FoS FATIGUE',v:fmt(res.fatigue_fos,2),c:fosClass(res.fatigue_fos)},
+{l:'τ MEAN',v:fmt(res.mean_stress/1e6,1)+' MPa'},
+{l:'τ ALT',v:fmt(res.alt_stress/1e6,1)+' MPa'},
+{l:'ENDURANCE Se',v:fmt(res.endurance_limit/1e6,1)+' MPa'},
+{l:'LIFE',v:res.fatigue_life},
+].map(x=>`<div class="result-item"><div class="lbl">${x.l}</div><div class="val${x.c?' '+x.c:''}">${x.v}</div></div>`).join('')}</div></div>`;
+}
+$('#spring-results').innerHTML=`<h3>${isBell?'BELLEVILLE':'SPRING'} RESULTS</h3><div class="result-grid">${p.map(x=>`<div class="result-item"><div class="lbl">${x.l}</div><div class="val${x.c?' '+x.c:''}">${x.v}</div></div>`).join('')}</div>`+fatigueHtml;
+drawSpringViz(res,kind);
+};
+function drawSpringViz(res,kind){
+const canvas=$('#c-spring-viz');
+if(!canvas)return;
+const dpr=window.devicePixelRatio||1;
+const cw=canvas.clientWidth||600,ch=canvas.clientHeight||250;
+canvas.width=cw*dpr;canvas.height=ch*dpr;
+const c=canvas.getContext('2d');
+c.scale(dpr,dpr);
+const w=cw,h=ch;
+if(kind==='belleville'){
+const De=parseFloat($('#sp-ode').value)||50,Di=parseFloat($('#sp-ide').value)||25.4,t=parseFloat($('#sp-bt').value)||2,bh=parseFloat($('#sp-bh').value)||3.5;
+const nP=parseInt($('#sp-np').value)||1,nS=parseInt($('#sp-ns').value)||1;
+const ho_mm=bh-t;
+const scale=Math.min((w*0.25)/(De),(h*0.28)/(bh+t));
+const totalDiscs=nP*nS;
+const stateData=[{label:'FREE',defl:0},{label:'LOADED',defl:res.deflection},{label:'FLAT',defl:res.max_deflection}];
+const stateSpacing=w/(stateData.length+1);
+c.clearRect(0,0,w,h);
+stateData.forEach((st,si)=>{
+const cx=stateSpacing*(si+1);
+const cy=h*0.42;
+const singleDefl_mm=st.defl*1000/nS;
+const curH=ho_mm*(1-singleDefl_mm/(ho_mm||1));
+const drawDisc=(dcx,dcy,flip)=>{
+const dir=flip?-1:1;
+c.fillStyle='#ff6b3518';c.strokeStyle='#ff6b35';c.lineWidth=1.8;
+c.beginPath();
+c.moveTo(dcx-Di/2*scale,dcy+dir*curH/2*scale);
+c.lineTo(dcx-De/2*scale,dcy-dir*curH/2*scale);
+c.lineTo(dcx-De/2*scale,dcy-dir*curH/2*scale-dir*t*scale);
+c.lineTo(dcx-Di/2*scale,dcy+dir*curH/2*scale-dir*t*scale);
+c.closePath();c.fill();c.stroke();
+c.beginPath();
+c.moveTo(dcx+Di/2*scale,dcy+dir*curH/2*scale);
+c.lineTo(dcx+De/2*scale,dcy-dir*curH/2*scale);
+c.lineTo(dcx+De/2*scale,dcy-dir*curH/2*scale-dir*t*scale);
+c.lineTo(dcx+Di/2*scale,dcy+dir*curH/2*scale-dir*t*scale);
+c.closePath();c.fill();c.stroke();
+};
+if(totalDiscs<=1){
+drawDisc(cx,cy,false);
+}else{
+const discH=(curH+t)*scale;
+const stackH=nS*discH+(nS>1?(nS-1)*2:0);
+const startY=cy-stackH/2;
+for(let s=0;s<nS;s++){
+const dy=startY+s*(discH+2)+discH/2;
+for(let p=0;p<Math.min(nP,3);p++){
+const px=cx+(p-(Math.min(nP,3)-1)/2)*3;
+drawDisc(px,dy+(p*0.8),s%2===1);
+}
+}
+if(nP>3){
+c.fillStyle='#888';c.font='9px monospace';c.textAlign='center';
+c.fillText('×'+nP+' parallel',cx,cy+stackH/2+22);
+}
+}
+c.strokeStyle='#444';c.lineWidth=1;
+const plateHalf=De/2*scale+8;
+const stackTop=cy-(totalDiscs<=1?(curH/2*scale+t*scale):((nS*((curH+t)*scale)+(nS-1)*2)/2))-5;
+const stackBot=cy+(totalDiscs<=1?(curH/2*scale):((nS*((curH+t)*scale)+(nS-1)*2)/2))+5;
+c.beginPath();c.moveTo(cx-plateHalf,stackTop);c.lineTo(cx+plateHalf,stackTop);c.stroke();
+c.beginPath();c.moveTo(cx-plateHalf,stackBot);c.lineTo(cx+plateHalf,stackBot);c.stroke();
+if(st.defl>0){
+c.strokeStyle='#ef4444';c.lineWidth=1.5;
+c.beginPath();c.moveTo(cx,stackTop-14);c.lineTo(cx,stackTop-2);c.stroke();
+c.beginPath();c.moveTo(cx-3,stackTop-6);c.lineTo(cx,stackTop-2);c.lineTo(cx+3,stackTop-6);c.stroke();
+}
+c.fillStyle='#e0e0e0';c.font='11px monospace';c.textAlign='center';
+c.fillText(st.label,cx,h*0.84);
+c.fillStyle='#666';c.font='10px monospace';
+if(st.defl>0)c.fillText(fmt(st.defl*1000,2)+' mm',cx,h*0.93);
+else c.fillText('h\u2080='+fmt(ho_mm,2)+' mm'+(totalDiscs>1?' ('+nP+'n×'+nS+'i)':''),cx,h*0.93);
+});
+const E_b=parseFloat($('#sp-be').value)*1e9||206e9;
+const nu_b=parseFloat($('#sp-bnu').value)||0.3;
+const ho=ho_mm*0.001;
+const tM=t*0.001,DeM=De*0.001,DiM=Di*0.001;
+const delta=DeM/DiM,dL=Math.log(delta);
+const K1=(6/(Math.PI*dL))*(((delta-1)/delta)**2);
+const maxDefl=res.max_deflection||0.001;
+const nPts=80;
+const xVals=[],yVals=[],xSingle=[],ySingle=[];
+for(let i=0;i<=nPts;i++){
+const dSys=maxDefl*i/nPts;
+const dSingle=dSys/nS;
+const Fs=(4*E_b*tM)/((1-nu_b*nu_b)*K1*DeM*DeM)*dSingle*((ho-dSingle)*(ho-dSingle/2)+tM*tM);
+const Fsys=Math.abs(Fs)*nP;
+xVals.push(+(dSys*1000).toFixed(4));
+yVals.push(+Fsys.toFixed(4));
+if(nP>1||nS>1){
+xSingle.push(+(dSingle*1000).toFixed(4));
+ySingle.push(+Math.abs(Fs).toFixed(4));
+}
+}
+const traces=[{x:xVals,y:yVals,type:'scatter',mode:'lines',name:nP>1||nS>1?'System ('+nP+'n×'+nS+'i)':'Single Disc',line:{color:'#ff6b35',width:2.5,shape:'spline'},hovertemplate:'δ = %{x:.2f} mm<br>F = %{y:.1f} N<extra></extra>'}];
+if(nP>1||nS>1){
+traces.unshift({x:xSingle,y:ySingle,type:'scatter',mode:'lines',name:'Single Disc',line:{color:'#ff6b3555',width:1.5,dash:'dot',shape:'spline'},hovertemplate:'δ = %{x:.2f} mm<br>F = %{y:.1f} N<extra></extra>'});
+}
+if(res.deflection>0){
+const opDefl=res.deflection*1000;
+traces.push({x:[opDefl],y:[res.force],type:'scatter',mode:'markers',name:'Operating Point',marker:{color:'#ff6b35',size:10,symbol:'circle',line:{color:'#fff',width:1.5}},hovertemplate:'δ = %{x:.2f} mm<br>F = %{y:.1f} N<extra></extra>'});
+}
+const fdLayout=Object.assign({},pLayout,{title:{text:'F-δ CURVE — DIN 2093 BELLEVILLE'+(nP>1||nS>1?' ('+nP+'n × '+nS+'i)':''),font:{size:12,color:'#ff6b35',family:'JetBrains Mono'}},xaxis:Object.assign({},pLayout.xaxis,{title:{text:'Deflection δ (mm)',font:{size:11,color:'#888'}}}),yaxis:Object.assign({},pLayout.yaxis,{title:{text:'Force F (N)',font:{size:11,color:'#888'}}}),showlegend:nP>1||nS>1,legend:{font:{size:10,color:'#888'},bgcolor:'transparent',x:0.02,y:0.98}});
+Plotly.react('spring-fd-chart',traces,fdLayout,pCfg);
+$('#spring-goodman-card').style.display='none';
+}else{
+const na=parseFloat($('#sp-na').value)||8;
+const freeL=(parseFloat($('#sp-fl').value)||60);
+const solidL=res.solid_length*1000;
+const deflMm=res.deflection*1000;
+const coilD=(parseFloat($('#sp-D').value)||25);
+const states=[{label:'FREE',len:freeL,x:w*0.14},{label:'LOADED',len:freeL-deflMm,x:w*0.5},{label:'SOLID',len:solidL,x:w*0.86}];
+const maxH=freeL;
+const scale=Math.min(180/maxH,60/(coilD));
+c.clearRect(0,0,w,h);
+states.forEach(st=>{
+const cx=st.x,topY=h/2-st.len*scale/2;
+c.strokeStyle='#ff6b35';c.lineWidth=2;
+c.beginPath();
+const coilR=coilD/2*scale;
+for(let i=0;i<=na*20;i++){
+const t2=i/(na*20);
+const y=topY+t2*st.len*scale;
+const x=cx+coilR*Math.sin(t2*na*2*Math.PI);
+i===0?c.moveTo(x,y):c.lineTo(x,y);
+}
+c.stroke();
+c.strokeStyle='#444';c.lineWidth=1;
+c.beginPath();c.moveTo(cx-coilR-10,topY-5);c.lineTo(cx+coilR+10,topY-5);c.stroke();
+c.beginPath();c.moveTo(cx-coilR-10,topY+st.len*scale+5);c.lineTo(cx+coilR+10,topY+st.len*scale+5);c.stroke();
+c.fillStyle='#e0e0e0';c.font='11px monospace';c.textAlign='center';
+c.fillText(st.label,cx,h-15);
+c.fillStyle='#666';c.font='10px monospace';
+c.fillText(fmt(st.len,1)+' mm',cx,h-3);
+});
+if(res.rate_curve&&res.rate_curve.length>1){
+const rcX=res.rate_curve.map(p=>p[0]);
+const rcY=res.rate_curve.map(p=>p[1]);
+const rcTraces=[{x:rcX,y:rcY,type:'scatter',mode:'lines',name:'Spring Rate',line:{color:'#ff6b35',width:2.5,shape:'spline'},fill:'tozeroy',fillcolor:'rgba(255,107,53,0.08)',hovertemplate:'δ = %{x:.2f} mm<br>F = %{y:.1f} N<extra></extra>'}];
+if(res.deflection>0){
+rcTraces.push({x:[deflMm],y:[res.force],type:'scatter',mode:'markers',name:'Operating Point',marker:{color:'#ff6b35',size:10,symbol:'circle',line:{color:'#fff',width:1.5}},hovertemplate:'δ = %{x:.2f} mm<br>F = %{y:.1f} N<extra></extra>'});
+}
+const rcLayout=Object.assign({},pLayout,{title:{text:'FORCE-DEFLECTION CURVE',font:{size:12,color:'#ff6b35',family:'JetBrains Mono'}},xaxis:Object.assign({},pLayout.xaxis,{title:{text:'Deflection (mm)',font:{size:11,color:'#888'}}}),yaxis:Object.assign({},pLayout.yaxis,{title:{text:'Force (N)',font:{size:11,color:'#888'}}}),showlegend:false});
+Plotly.react('spring-fd-chart',rcTraces,rcLayout,pCfg);
+}else{
+$('#spring-fd-chart').innerHTML='<p style="color:var(--dim);font-size:.8rem;text-align:center;padding:2rem">No rate curve data</p>';
+}
+if(res.goodman_line&&res.goodman_line.length>1&&res.fatigue_fos>0){
+$('#spring-goodman-card').style.display='block';
+const gmX=res.goodman_line.map(p=>p[0]/1e6);
+const gmY=res.goodman_line.map(p=>p[1]/1e6);
+const gmTraces=[{x:gmX,y:gmY,type:'scatter',mode:'lines',name:'Goodman Line',line:{color:'#00ff9d',width:2.5},fill:'tozeroy',fillcolor:'rgba(0,255,157,0.06)',hovertemplate:'σ_m = %{x:.1f} MPa<br>σ_a = %{y:.1f} MPa<extra></extra>'}];
+if(res.mean_stress>0||res.alt_stress>0){
+gmTraces.push({x:[res.mean_stress/1e6],y:[res.alt_stress/1e6],type:'scatter',mode:'markers',name:'Operating Point',marker:{color:res.fatigue_fos>=1?'#00ff9d':'#ff4444',size:11,symbol:'circle',line:{color:'#fff',width:1.5}},hovertemplate:'σ_m = %{x:.1f} MPa<br>σ_a = %{y:.1f} MPa<br>FoS = '+fmt(res.fatigue_fos,2)+'<extra></extra>'});
+}
+const gmLayout=Object.assign({},pLayout,{title:{text:'MODIFIED GOODMAN DIAGRAM',font:{size:12,color:'#00ff9d',family:'JetBrains Mono'}},xaxis:Object.assign({},pLayout.xaxis,{title:{text:'Mean Stress σ_m (MPa)',font:{size:11,color:'#888'}}}),yaxis:Object.assign({},pLayout.yaxis,{title:{text:'Alternating Stress σ_a (MPa)',font:{size:11,color:'#888'}}}),showlegend:true,legend:{font:{size:10,color:'#888'},bgcolor:'transparent',x:0.65,y:0.98}});
+Plotly.react('spring-goodman-chart',gmTraces,gmLayout,pCfg);
+}else{
+$('#spring-goodman-card').style.display='none';
+}
+}
+}
+window.recommendFinishes=function(){
+const priorities=[
+{factor:'corrosion',weight:parseInt($('#fin-corr').value)},
+{factor:'wear',weight:parseInt($('#fin-wear').value)},
+{factor:'appearance',weight:parseInt($('#fin-app').value)},
+{factor:'cost',weight:parseInt($('#fin-cost').value)},
+{factor:'conductivity',weight:parseInt($('#fin-cond').value)},
+{factor:'galvanic',weight:parseInt($('#fin-galv').value)},
+{factor:'quantity',weight:parseInt($('#fin-qty').value)},
+{factor:'temperature',weight:parseInt($('#fin-temp').value)},
+{factor:'coverage',weight:parseInt($('#fin-cov').value)},
+{factor:'thickness',weight:parseInt($('#fin-thk').value)},
+];
+const inp={
+priorities,
+substrate:$('#fin-sub').value||null,
+needs_full_coverage:$('#fin-full').checked||null,
+};
+const recs=JSON.parse(recommend_finishes(JSON.stringify(inp)));
+if(typeof recs==='string'&&recs.includes('error')){$('#fin-results').innerHTML=`<div class="card"><p style="color:var(--err)">${recs}</p></div>`;return;}
+const maxScore=recs.length>0?recs[0].score:1;
+const subColor={'carbon steel':'#64748b','alloy steel':'#78716c','stainless steel':'#22c55e','aluminum':'#3b82f6','titanium':'#a855f7','copper alloy':'#f59e0b','nickel alloy':'#ec4899','carbide':'#6b7280','ceramic':'#14b8a6','abs plastic':'#f97316','polymer':'#f97316','wood':'#a3734c','concrete':'#9ca3af','zinc alloy':'#71717a'};
+$('#fin-results').innerHTML=recs.map((r,i)=>{
+const f=r.finish;
+const pct=maxScore>0?(r.score/maxScore*100).toFixed(0):0;
+const bars=r.breakdown.map(b=>`<span style="font-size:.65rem;color:var(--dim)">${b.factor}: ${b.rating.toFixed(0)}/10</span> <span class="meter"><span class="meter-fill" style="width:${b.rating*10}%"></span></span>`).join(' &nbsp; ');
+const subBadges=f.substrates.map(s=>{const c=subColor[s.toLowerCase()]||'#888';return `<span style="display:inline-block;font-size:.6rem;padding:1px 8px;margin:1px;border-radius:10px;background:${c}22;border:1px solid ${c};color:${c};letter-spacing:.5px">${s}</span>`;}).join('');
+const specLine=f.spec?`<strong>Spec:</strong> <span style="color:var(--accent)">${f.spec}</span><br>`:'';
+return `<div class="finish-card">
+<span class="fscore">#${i+1} &mdash; ${r.score.toFixed(1)} pts</span>
+<div class="fname">${f.name}</div>
+<div class="fcat">${f.category} &mdash; ${f.process}</div>
+<div style="margin-top:4px">${subBadges}</div>
+<div class="fdet">
+${specLine}<strong>Thickness:</strong> ${f.thickness_um[0]}-${f.thickness_um[1]} µm &nbsp;|&nbsp;
+<strong>Max Temp:</strong> ${f.temp_max_c}°C &nbsp;|&nbsp;
+<strong>Hardness:</strong> ${f.hardness}<br>
+<strong>Galvanic Group:</strong> ${f.galvanic_group} &nbsp;|&nbsp;
+<strong>Conductivity:</strong> ${f.conductivity_rating}/10 &nbsp;|&nbsp;
+<strong>Qty Rating:</strong> ${f.quantity_rating}/10<br>
+<strong>Colors:</strong> ${f.color_options.join(', ')}<br>
+<strong>Adds Thickness:</strong> ${f.adds_thickness?'Yes':'No'} &nbsp;|&nbsp;
+<strong>Full Coverage:</strong> ${f.full_coverage?'Yes':'No'}<br>
+<em>${f.notes}</em><br>
+<div style="margin-top:4px">${bars}</div>
+</div>
+</div>`;
+}).join('');
+};
+function setupSeals(){
+const matSel=$('#sl-mat');
+SEAL_MATS.forEach((m,i)=>{const o=document.createElement('option');o.value=i;o.textContent=m.name+' ('+m.abbrev+')';matSel.appendChild(o);});
+matSel.addEventListener('change',updateSealMatDetail);
+updateSealMatDetail();
+$('#sl-xsec').addEventListener('change',()=>{
+$('#sl-custom-wrap').style.display=$('#sl-xsec').value==='custom'?'block':'none';
+drawSealAnim(parseFloat($('#sl-squeeze-rng').value));
+});
+const rng=$('#sl-squeeze-rng');
+const rv=$('#sl-squeeze-v');
+rng.addEventListener('input',()=>{rv.textContent=rng.value;drawSealAnim(parseFloat(rng.value));});
+drawSealAnim(0);
+renderAS568();
+$('#as568-search').addEventListener('input',renderAS568);
+}
+function renderAS568(){
+const q=($('#as568-search').value||'').toLowerCase();
+const tb=$('#as568-tbody');
+tb.innerHTML='';
+AS568.filter(s=>!q||s.dash.toLowerCase().includes(q)||s.id_mm.toString().includes(q)||s.cs_mm.toString().includes(q)).slice(0,30).forEach(s=>{
+const tr=document.createElement('tr');
+tr.innerHTML=`<td>${s.dash}</td><td>${s.id_mm}</td><td>${s.cs_mm}</td><td>${s.od_mm}</td>`;
+tr.style.cursor='pointer';
+tr.addEventListener('click',()=>{
+$$('#as568-tbody tr').forEach(r=>r.style.background='');
+tr.style.background='rgba(59,130,246,0.2)';
+tr.dataset.selected='1';
+$('#gc-cord').value=s.cs_mm;$('#gc-id').value=s.id_mm;
+$('#sl-cord').value=s.cs_mm;$('#sl-id').value=s.id_mm;
+});
+tb.appendChild(tr);
+});
+}
+window.as568Fill=function(){
+const sel=$('#as568-tbody tr[data-selected="1"]');
+if(!sel)return;
+const tds=sel.querySelectorAll('td');
+if(tds.length>=3){
+$('#sl-cord').value=tds[2].textContent;
+$('#sl-id').value=tds[1].textContent;
+}
+};
+window.calcGroove=function(){
+const inp={gland_type:$('#sl-gland').value,cord_dia_mm:parseFloat($('#gc-cord').value)||3.53,id_mm:parseFloat($('#gc-id').value)||25,pressure_mpa:parseFloat($('#gc-press').value)||0,dynamic:$('#gc-dyn').checked};
+const res=JSON.parse(calc_seal_groove(JSON.stringify(inp)));
+if(res.error){$('#groove-results').innerHTML=`<span style="color:var(--err)">${res.error}</span>`;return;}
+$('#groove-results').innerHTML=`<div class="result-grid" style="font-size:.7rem">${[
+{l:'GROOVE DEPTH',v:res.groove_depth_mm+' mm'},{l:'GROOVE WIDTH',v:res.groove_width_mm+' mm'},
+{l:'SQUEEZE',v:res.squeeze_pct.toFixed(0)+'%'},{l:'FILL',v:res.gland_fill_pct.toFixed(0)+'%'},
+{l:'CLEARANCE',v:res.diametral_clearance_mm+' mm'},{l:'STANDARD',v:res.standard},
+].map(x=>`<div class="result-item"><div class="lbl">${x.l}</div><div class="val">${x.v}</div></div>`).join('')}</div>`+
+(res.notes.length?'<div style="margin-top:.25rem;font-size:.65rem;color:var(--dim)">'+res.notes.join('<br>')+'</div>':'');
+$('#sl-depth').value=res.groove_depth_mm;
+$('#sl-width').value=res.groove_width_mm;
+};
+function updateSealMatDetail(){
+const m=SEAL_MATS[parseInt($('#sl-mat').value)||0];
+if(!m)return;
+$('#sl-hard').value=Math.round((m.shore_a[0]+m.shore_a[1])/2);
+$('#seal-mat-grid').innerHTML=[
+{l:'MATERIAL',v:m.name},{l:'ABBREVIATION',v:m.abbrev},
+{l:'SHORE A RANGE',v:m.shore_a[0]+' – '+m.shore_a[1]},
+{l:'TEMP RANGE',v:m.temp_min_c+'°C to '+m.temp_max_c+'°C'},
+{l:'COMP SET',v:m.compression_set_pct+'%'},
+{l:'TENSILE',v:m.tensile_mpa+' MPa'},
+{l:'ELONGATION',v:m.elongation_pct+'%'},
+{l:'TEAR STRENGTH',v:m.tear_strength_kn_m+' kN/m'},
+{l:'CHEMICAL RESIST',v:m.chemical_resist},
+{l:'NOTES',v:m.notes},
+].map(x=>`<div class="result-item"><div class="lbl">${x.l}</div><div class="val" style="font-size:.85rem">${x.v}</div></div>`).join('');
+}
+function drawSealAnim(sqPct){
+const{c,w,h}=hdCanvas($('#c-seal-anim'));
+const xsec=$('#sl-xsec').value;
+const glandType=$('#sl-gland').value;
+const isRadial=glandType==='radial_bore'||glandType==='radial_piston';
+const matIdx=parseInt($('#sl-mat').value)||0;
+const matColor=SEAL_MATS[matIdx]?SEAL_MATS[matIdx].color:'#ff6b35';
+const sqFrac=sqPct/100;
+const compFactor=Math.max(1-sqFrac,0.05);
+const cordR=36;
+if(isRadial){
+const boreR=80,shaftR=boreR-cordR*2.2;
+const arcCx=w*0.35,arcCy=h/2;
+c.strokeStyle='#444';c.lineWidth=2;
+c.beginPath();c.arc(arcCx,arcCy,boreR,-.6,0.6);c.stroke();
+c.beginPath();c.arc(arcCx,arcCy,shaftR,-.6,0.6);c.stroke();
+const gTop=arcCy-cordR*1.3,gBot=arcCy+cordR*1.3;
+const gInner=glandType==='radial_piston'?shaftR-cordR*0.3:shaftR;
+const gOuter=glandType==='radial_bore'?boreR+cordR*0.3:boreR;
+c.strokeStyle='#555';c.lineWidth=1;
+c.strokeRect(arcCx+gInner-10,gTop,gOuter-gInner+20,gBot-gTop);
+c.fillStyle='rgba(255,255,255,0.03)';
+c.fillRect(arcCx+gInner-10,gTop,gOuter-gInner+20,gBot-gTop);
+const sealCx=arcCx+(gInner+gOuter)/2;
+const ry=cordR*compFactor;
+const rx=cordR*(1+sqFrac*0.5);
+if(sqPct>0){c.save();c.globalAlpha=0.2;c.strokeStyle='#888';c.lineWidth=1;c.setLineDash([3,3]);
+drawSealShape(c,sealCx,arcCy,cordR,cordR,xsec);c.setLineDash([]);c.restore();}
+c.fillStyle=matColor+'33';c.strokeStyle=matColor;c.lineWidth=2;
+drawSealShape(c,sealCx,arcCy,rx,ry,xsec);
+}else{
+const grW=cordR*2.8,grD=cordR*2.4,wallT=10;
+const grBot=h*0.72,grTop=grBot-grD;
+const gCx=w*0.42,gL=gCx-grW/2,gR=gCx+grW/2;
+c.fillStyle='rgba(30,41,59,0.95)';c.fillRect(gL,grTop,grW,grD);
+c.fillStyle='#334155';
+c.fillRect(gL-wallT,grTop-wallT,wallT,grD+wallT*2);
+c.fillRect(gR,grTop-wallT,wallT,grD+wallT*2);
+c.fillRect(gL-wallT,grBot,grW+wallT*2,wallT);
+c.strokeStyle='#475569';c.lineWidth=1.5;c.strokeRect(gL,grTop,grW,grD);
+c.strokeStyle='rgba(148,163,184,0.08)';c.lineWidth=1;
+for(let gx=gL;gx<=gR;gx+=8){c.beginPath();c.moveTo(gx,grTop);c.lineTo(gx,grBot);c.stroke();}
+for(let gy=grTop;gy<=grBot;gy+=8){c.beginPath();c.moveTo(gL,gy);c.lineTo(gR,gy);c.stroke();}
+c.strokeStyle='rgba(148,163,184,0.4)';c.lineWidth=1;c.setLineDash([2,2]);
+c.strokeRect(gL,grTop,grW,grD);c.setLineDash([]);
+c.strokeStyle='#64748b';c.lineWidth=1;c.setLineDash([2,2]);
+c.beginPath();c.moveTo(gL,grBot+wallT+15);c.lineTo(gR,grBot+wallT+15);c.stroke();
+c.beginPath();c.moveTo(gL,grBot+wallT+13);c.lineTo(gL,grBot+wallT+17);c.stroke();
+c.beginPath();c.moveTo(gR,grBot+wallT+13);c.lineTo(gR,grBot+wallT+17);c.stroke();
+c.setLineDash([]);
+c.fillStyle='#94a3b8';c.font='8px monospace';c.textAlign='center';
+c.fillText('GROOVE WIDTH',gCx,grBot+wallT+13);
+c.save();c.translate(gL-wallT-8,grTop+grD/2);c.rotate(-Math.PI/2);c.fillText('DEPTH',0,0);c.restore();
+c.beginPath();c.moveTo(gL-wallT-4,grTop);c.lineTo(gL-wallT-4,grBot);c.stroke();
+c.beginPath();c.moveTo(gL-wallT-6,grTop);c.lineTo(gL-wallT-2,grTop);c.stroke();
+c.beginPath();c.moveTo(gL-wallT-6,grBot);c.lineTo(gL-wallT-2,grBot);c.stroke();
+const ry=cordR*compFactor;
+const latMult=1/compFactor;
+const rx=Math.min(cordR*latMult,grW/2-1);
+const defCy=grBot-ry;
+const sealTopY=defCy-ry;
+const touchWall=rx>=grW/2-2;
+if(sqPct>0){c.save();c.globalAlpha=0.2;c.strokeStyle='#888';c.lineWidth=1;c.setLineDash([3,3]);
+drawSealShape(c,gCx,grBot-cordR,cordR,cordR,xsec);c.setLineDash([]);c.restore();}
+c.fillStyle=matColor+'33';c.strokeStyle=matColor;c.lineWidth=2;
+drawSealShape(c,gCx,defCy,rx,ry,xsec);
+if(sqPct>5){
+const nN=16;
+for(let i=0;i<nN;i++){
+const a=2*Math.PI*i/nN;
+const nx=gCx+rx*Math.cos(a)*0.85;
+const ny=defCy+ry*Math.sin(a)*0.85;
+const yn=(Math.sin(a)+1)/2;
+let sf=sqFrac;
+if(yn<0.12||yn>0.88)sf*=2;
+if(Math.abs(Math.cos(a))>0.8)sf*=1.5;
+sf=Math.min(sf,1);
+const r=Math.round(80+175*sf),g=Math.round(Math.max(60,200-160*sf)),b=Math.round(Math.max(80,240-200*sf));
+c.fillStyle=`rgb(${r},${g},${b})`;c.beginPath();c.arc(nx,ny,2+sf*3,0,Math.PI*2);c.fill();
+}}
+const plateY=Math.min(sealTopY,grTop);
+const plateH=10;
+c.fillStyle='rgba(71,85,105,0.95)';
+c.fillRect(gL-wallT-6,plateY-plateH,grW+wallT*2+12,plateH);
+c.strokeStyle='#64748b';c.lineWidth=1;
+c.beginPath();c.moveTo(gL-wallT-6,plateY-0.5);c.lineTo(gR+wallT+6,plateY-0.5);c.stroke();
+c.strokeStyle='#475569';c.lineWidth=0.5;
+c.beginPath();c.moveTo(gL-wallT-6,plateY-plateH*0.5);c.lineTo(gR+wallT+6,plateY-plateH*0.5);c.stroke();
+c.strokeStyle='#ef4444';c.lineWidth=1.5;
+for(let i=0;i<5;i++){
+const ax=gCx+(i-2)*grW/5;
+c.beginPath();c.moveTo(ax,plateY-plateH-14);c.lineTo(ax,plateY-plateH-2);c.stroke();
+c.beginPath();c.moveTo(ax-3,plateY-plateH-7);c.lineTo(ax,plateY-plateH-2);c.lineTo(ax+3,plateY-plateH-7);c.stroke();
+}
+c.fillStyle='#ef4444';c.font='bold 10px monospace';c.textAlign='center';
+c.fillText('F',gCx,plateY-plateH-16);
+if(touchWall){
+c.strokeStyle='#ef4444';c.lineWidth=2;c.setLineDash([4,3]);
+c.beginPath();c.moveTo(gL,defCy-ry*0.7);c.lineTo(gL,defCy+ry*0.7);c.stroke();
+c.beginPath();c.moveTo(gR,defCy-ry*0.7);c.lineTo(gR,defCy+ry*0.7);c.stroke();
+c.setLineDash([]);
+c.strokeStyle='rgba(239,68,68,0.3)';c.lineWidth=6;
+c.beginPath();c.moveTo(gL+1,defCy-ry*0.5);c.lineTo(gL+1,defCy+ry*0.5);c.stroke();
+c.beginPath();c.moveTo(gR-1,defCy-ry*0.5);c.lineTo(gR-1,defCy+ry*0.5);c.stroke();
+}
+if(sealTopY<=grTop+2){
+c.strokeStyle='rgba(239,68,68,0.4)';c.lineWidth=4;
+c.beginPath();c.moveTo(gCx-rx*0.7,plateY);c.lineTo(gCx+rx*0.7,plateY);c.stroke();
+}
+if(defCy+ry>=grBot-2){
+c.strokeStyle='rgba(239,68,68,0.4)';c.lineWidth=4;
+c.beginPath();c.moveTo(gCx-rx*0.7,grBot);c.lineTo(gCx+rx*0.7,grBot);c.stroke();
+}
+const infoX=w*0.78;
+c.fillStyle='#94a3b8';c.font='9px monospace';c.textAlign='left';
+c.fillText('rx: '+rx.toFixed(1)+' ry: '+ry.toFixed(1),infoX,grTop);
+c.fillText('Wall: '+(touchWall?'CONTACT':'clear'),infoX,grTop+12);
+c.fillText('Plate: '+(sealTopY<=grTop+2?'CONTACT':'clear'),infoX,grTop+24);
+}
+const sqColor=sqPct<10?'#3b82f6':sqPct<=30?'#22c55e':sqPct<=40?'#f59e0b':'#ef4444';
+c.fillStyle=sqColor;c.font='bold 12px monospace';c.textAlign='center';
+c.fillText('SQUEEZE: '+sqPct.toFixed(1)+'%',w/2,h-16);
+c.font='10px monospace';c.fillStyle='#666';
+c.fillText(xsec.toUpperCase().replace(/_/g,' ')+' | '+(isRadial?glandType.replace(/_/g,' ').toUpperCase():'FACE SEAL'),w/2,h-4);
+}
+function drawSealShape(c,cx,cy,rx,ry,shape){
+c.beginPath();
+if(shape==='quad'){
+const cr=Math.min(rx,ry)*0.15;
+const pts=[[cx-rx,cy-ry],[cx+rx,cy-ry],[cx+rx,cy+ry],[cx-rx,cy+ry]];
+c.moveTo(pts[0][0]+cr,pts[0][1]);
+c.arcTo(pts[1][0],pts[1][1],pts[2][0],pts[2][1],cr);
+c.arcTo(pts[2][0],pts[2][1],pts[3][0],pts[3][1],cr);
+c.arcTo(pts[3][0],pts[3][1],pts[0][0],pts[0][1],cr);
+c.arcTo(pts[0][0],pts[0][1],pts[1][0],pts[1][1],cr);
+}else if(shape==='x_ring'){
+for(let i=0;i<=64;i++){const a=2*Math.PI*i/64;const lobe=1+0.3*Math.cos(4*a);const px=cx+rx*lobe*Math.cos(a);const py=cy+ry*lobe*Math.sin(a);i===0?c.moveTo(px,py):c.lineTo(px,py);}
+}else if(shape==='d_ring'){
+c.moveTo(cx+rx,cy);for(let i=1;i<=32;i++){const a=Math.PI*i/32;c.lineTo(cx+rx*Math.cos(a),cy-ry*Math.sin(a));}c.lineTo(cx-rx,cy+ry);c.lineTo(cx+rx,cy+ry);
+}else if(shape==='t_seal'){
+const w=rx*0.7,h=ry,sw=w*0.35,bh=h*0.45;
+c.moveTo(cx-w,cy+h-bh);c.lineTo(cx-w,cy-h+bh);c.lineTo(cx+w,cy-h+bh);c.lineTo(cx+w,cy+h-bh);
+c.lineTo(cx+sw,cy+h-bh);c.lineTo(cx+sw,cy+h);c.lineTo(cx-sw,cy+h);c.lineTo(cx-sw,cy+h-bh);
+}else if(shape==='u_cup'){
+const w=rx*0.7,h=ry,wt=w*0.25;
+c.moveTo(cx-w,cy+h);c.lineTo(cx-w,cy-h);c.lineTo(cx-w+wt,cy-h);c.lineTo(cx-w+wt,cy+h-wt);
+c.lineTo(cx+w-wt,cy+h-wt);c.lineTo(cx+w-wt,cy-h);c.lineTo(cx+w,cy-h);c.lineTo(cx+w,cy+h);
+}else if(shape==='v_ring'){
+const w=rx*0.7,h=ry,wt=w*0.25;
+c.moveTo(cx-w,cy+h);c.lineTo(cx-wt,cy-h);c.lineTo(cx+wt,cy-h);c.lineTo(cx+w,cy+h);
+c.lineTo(cx+w-wt*0.8,cy+h);c.lineTo(cx,cy-h*0.35);c.lineTo(cx-w+wt*0.8,cy+h);
+}else if(shape==='lip_seal'){
+c.moveTo(cx-rx*0.5,cy+ry);
+for(let i=0;i<=25;i++){const a=Math.PI*i/25;c.lineTo(cx+rx*1.1*Math.cos(a),cy-ry*0.9*Math.sin(a));}
+c.lineTo(cx+rx*0.5,cy+ry);c.lineTo(cx-rx*0.5,cy+ry);
+}else if(shape==='flat_gasket'){
+c.moveTo(cx-rx,cy-ry);c.lineTo(cx+rx,cy-ry);c.lineTo(cx+rx,cy+ry);c.lineTo(cx-rx,cy+ry);
+}else if(shape==='double_bead'){
+const bw=rx*0.3,bh=ry*0.4;
+c.moveTo(cx-rx,cy+ry);c.lineTo(cx-rx,cy-ry+bh);
+c.arc(cx-rx*0.45,cy-ry+bh,bw,Math.PI,0);c.arc(cx+rx*0.45,cy-ry+bh,bw,Math.PI,0);
+c.lineTo(cx+rx,cy-ry+bh);c.lineTo(cx+rx,cy+ry);
+}else if(shape==='triple_bead'){
+const bw=rx*0.22,bh=ry*0.35;
+c.moveTo(cx-rx,cy+ry);c.lineTo(cx-rx,cy-ry+bh);
+c.arc(cx-rx*0.55,cy-ry+bh,bw,Math.PI,0);c.arc(cx,cy-ry+bh,bw,Math.PI,0);c.arc(cx+rx*0.55,cy-ry+bh,bw,Math.PI,0);
+c.lineTo(cx+rx,cy-ry+bh);c.lineTo(cx+rx,cy+ry);
+}else{
+c.moveTo(cx+rx,cy);for(let i=1;i<=64;i++){const a=2*Math.PI*i/64;c.lineTo(cx+rx*Math.cos(a),cy+ry*Math.sin(a));}
+}
+c.closePath();c.fill();c.stroke();
+}
+window.calcSeal=function(){
+const xsec=$('#sl-xsec').value;
+let customPts=null;
+if(xsec==='custom'){
+const lines=($('#sl-custom-pts').value||'').trim().split('\n').filter(l=>l.trim());
+customPts=lines.map(l=>{const p=l.split(',').map(Number);return [p[0]||0,p[1]||0];});
+}
+const inp={
+gland_type:$('#sl-gland').value,
+cross_section:xsec,
+material_idx:parseInt($('#sl-mat').value)||0,
+hardness_shore_a:parseFloat($('#sl-hard').value)||70,
+cord_dia_mm:parseFloat($('#sl-cord').value)||3.53,
+id_mm:parseFloat($('#sl-id').value)||25,
+groove_depth_mm:parseFloat($('#sl-depth').value)||2.62,
+groove_width_mm:parseFloat($('#sl-width').value)||4.34,
+gland_gap_mm:parseFloat($('#sl-gap').value)||0.1,
+pressure_mpa:parseFloat($('#sl-press').value)||0,
+temp_c:parseFloat($('#sl-temp').value)||23,
+steps:50,
+custom_pts:customPts,
+};
+const res=JSON.parse(calc_seal(JSON.stringify(inp)));
+if(res.error){$('#seal-results').innerHTML=`<h3>ERROR</h3><p style="color:var(--err)">${res.error}</p>`;return;}
+$('#sl-squeeze-rng').value=res.squeeze_pct;
+$('#sl-squeeze-v').textContent=res.squeeze_pct.toFixed(1);
+drawSealAnim(res.squeeze_pct);
+const sqC=res.squeeze_pct<10||res.squeeze_pct>40?'warn':'ok';
+const fillC=res.volume_fill_pct>90||res.volume_fill_pct<60?'warn':'ok';
+const extC=res.extrusion_gap_ok?'ok':'err';
+const vmC=res.max_vonmises>0?' | σ_max='+fmt(res.max_vonmises,1)+' MPa':'';
+const p=[
+{l:'MATERIAL',v:res.material},
+{l:'GLAND TYPE',v:res.gland_type.replace(/_/g,' ').toUpperCase()},
+{l:'SQUEEZE',v:fmt(res.squeeze_pct,1)+'%',c:sqC},
+{l:'SHAPE FACTOR',v:fmt(res.shape_factor,3)},
+{l:'CONTACT WIDTH',v:fmt(res.contact_width_mm,2)+' mm'},
+{l:'CONTACT PRESSURE',v:fmt(res.contact_pressure_mpa,2)+' MPa'},
+{l:'FORCE/mm',v:fmt(res.compression_force_n_per_mm,2)+' N/mm'},
+{l:'GLAND FILL',v:fmt(res.volume_fill_pct,1)+'%',c:fillC},
+{l:'EXTRUSION GAP',v:res.extrusion_gap_ok?'OK':'FAIL',c:extC},
+{l:'MAX ALLOWABLE GAP',v:fmt(res.max_allowable_gap_mm,3)+' mm'},
+{l:'MAX VON MISES',v:fmt(res.max_vonmises,2)+' MPa'},
+];
+let warnHtml=res.warnings.length>0?'<div style="margin-top:.75rem">'+res.warnings.map(w=>`<div class="tag tag-warn" style="display:block;margin:2px 0">${w}</div>`).join('')+'</div>':'';
+let recHtml=res.recommendations.length>0?'<div style="margin-top:.5rem">'+res.recommendations.map(r=>`<div class="tag tag-ok" style="display:block;margin:2px 0">${r}</div>`).join('')+'</div>':'';
+$('#seal-results').innerHTML=`<h3>SEAL RESULTS</h3><div class="result-grid">${p.map(x=>`<div class="result-item"><div class="lbl">${x.l}</div><div class="val${x.c?' '+x.c:''}">${x.v}</div></div>`).join('')}</div>${warnHtml}${recHtml}`;
+setTimeout(()=>{
+drawSealDiagram('c-seal-fd',res.force_deflection,'N/mm','#00ff9d',res.current_point_fd,res.optimum_range);
+drawSealDiagram('c-seal-ss',res.stress_strain,'MPa','#ff6b35',res.current_point_ss,null);
+drawNLStressCurve(res);
+},50);
+};
+function drawSealDiagram(id,data,unit,color,opPoint,optRange){
+const el=document.getElementById(id);
+if(!el||!data||data.length<2)return;
+const xs=data.map(d=>d[0]),ys=data.map(d=>d[1]);
+const traces=[{x:xs,y:ys,type:'scatter',mode:'lines',name:unit,fill:'tozeroy',fillcolor:color+'15',line:{color,width:2.5,shape:'spline'},hovertemplate:'Compression = %{x:.1f}%<br>'+unit+' = %{y:.2f}<extra></extra>'}];
+const shapes=[];
+if(optRange){
+shapes.push({type:'rect',x0:optRange[0]||15,x1:optRange[1]||30,y0:0,y1:Math.max(...ys)*1.1,fillcolor:'rgba(34,197,94,0.12)',line:{width:0}});
+shapes.push({type:'line',x0:optRange[0]||15,x1:optRange[0]||15,y0:0,y1:Math.max(...ys)*1.1,line:{color:'#22c55e',width:1,dash:'dash'}});
+shapes.push({type:'line',x0:optRange[1]||30,x1:optRange[1]||30,y0:0,y1:Math.max(...ys)*1.1,line:{color:'#22c55e',width:1,dash:'dash'}});
+}
+if(opPoint&&opPoint[0]>0){
+const sqColor=opPoint[0]<10?'#3b82f6':opPoint[0]<=30?'#22c55e':opPoint[0]<=40?'#f59e0b':'#ef4444';
+traces.push({x:[opPoint[0]],y:[opPoint[1]],type:'scatter',mode:'markers',name:'Operating ('+fmt(opPoint[1],1)+' '+unit+')',marker:{color:sqColor,size:11,symbol:'diamond',line:{color:'#fff',width:1.5}}});
+}
+Plotly.react(id,traces,Object.assign({},pLayout,{margin:{l:70,r:25,t:20,b:50},shapes,xaxis:Object.assign({},pLayout.xaxis,{title:{text:'Compression (%)',font:{size:11,color:'#888'}}}),yaxis:Object.assign({},pLayout.yaxis,{title:{text:unit,font:{size:11,color:'#888'}}}),showlegend:opPoint&&opPoint[0]>0,legend:{font:{size:10,color:'#888'},bgcolor:'transparent'}}),pCfg);
+}
+function drawNLStressCurve(res){
+const el=document.getElementById('c-seal-nlstress');
+if(!el||!res.stress_curve)return;
+const data=res.stress_curve;
+const iz=res.ideal_zone||[15,30];
+const traces=[{x:data.map(d=>d[0]),y:data.map(d=>d[1]),type:'scatter',mode:'lines',name:'E_eff Stress',fill:'tozeroy',fillcolor:'rgba(59,130,246,0.08)',line:{color:'#3b82f6',width:2.5,shape:'spline'},hovertemplate:'Compression = %{x:.1f}%<br>Stress = %{y:.1f} MPa<extra></extra>'}];
+const shapes=[
+{type:'rect',x0:iz[0],x1:iz[1],y0:0,y1:Math.max(...data.map(d=>d[1]))*1.1,fillcolor:'rgba(34,197,94,0.12)',line:{width:0}},
+{type:'line',x0:iz[0],x1:iz[0],y0:0,y1:Math.max(...data.map(d=>d[1]))*1.1,line:{color:'#22c55e',width:1,dash:'dash'}},
+{type:'line',x0:iz[1],x1:iz[1],y0:0,y1:Math.max(...data.map(d=>d[1]))*1.1,line:{color:'#22c55e',width:1,dash:'dash'}},
+];
+if(res.stress_op_point){
+const op=res.stress_op_point;
+const sqColor=op[0]<10?'#3b82f6':op[0]<=30?'#22c55e':op[0]<=40?'#f59e0b':'#ef4444';
+traces.push({x:[op[0]],y:[op[1]],type:'scatter',mode:'markers+text',name:fmt(op[1],1)+' MPa @ '+fmt(op[0],1)+'%',marker:{color:sqColor,size:12,symbol:'diamond',line:{color:'#fff',width:2}},text:[fmt(op[1],1)+' MPa'],textposition:'top right',textfont:{size:10,color:'#fff'}});
+}
+Plotly.react('c-seal-nlstress',traces,Object.assign({},pLayout,{title:{text:'NONLINEAR STRESS (E_eff)',font:{size:12,color:'#3b82f6',family:'JetBrains Mono'}},shapes,xaxis:Object.assign({},pLayout.xaxis,{title:{text:'Compression (%)',font:{size:11,color:'#888'}},range:[0,50]}),yaxis:Object.assign({},pLayout.yaxis,{title:{text:'Stress (MPa)',font:{size:11,color:'#888'}}}),showlegend:!!res.stress_op_point,legend:{font:{size:10,color:'#888'},bgcolor:'transparent'},annotations:[{x:(iz[0]+iz[1])/2,y:Math.max(...data.map(d=>d[1]))*0.95,text:'IDEAL ZONE',showarrow:false,font:{size:9,color:'#22c55e'}}]}),pCfg);
+}
+window.reportBug=function(){
+const activeTab=document.querySelector('.tab.active');
+const tab=activeTab?activeTab.dataset.v:'unknown';
+const ua=navigator.userAgent;
+const ts=new Date().toISOString();
+const body=encodeURIComponent(`Bug Report — AMNI-CALC v2.3.0\n\nTab: ${tab}\nTimestamp: ${ts}\nBrowser: ${ua}\n\nDescribe the issue:\n\n\nSteps to reproduce:\n1.\n2.\n3.\n\nExpected behavior:\n\nActual behavior:\n`);
+window.open(`mailto:amnibro7@gmail.com?subject=${encodeURIComponent('AMNI-CALC Bug Report — '+tab)}&body=${body}`);
+};
+window.updateThermalUI=function(){
+const m=$('#th-mode').value;
+['th-cond-params','th-conv-params','th-rad-params','th-comp-params','th-fin-params','th-pipe-params','th-exp-params'].forEach(id=>{
+const el=$('#'+id);if(el)el.style.display='none';
+});
+const show={'conduction':'th-cond-params','convection':'th-conv-params','radiation':'th-rad-params','composite_wall':'th-comp-params','fin':'th-fin-params','radial_pipe':'th-pipe-params','expansion':'th-exp-params'};
+const el=$('#'+(show[m]||''));if(el)el.style.display='block';
+};
+window.addThermalLayer=function(){
+const cont=$('#th-layers');
+const n=cont.querySelectorAll('.th-layer').length+1;
+const sub=['','&#8321;','&#8322;','&#8323;','&#8324;','&#8325;','&#8326;','&#8327;','&#8328;','&#8329;'][n]||n;
+const d=document.createElement('div');d.className='row th-layer';d.style.marginTop='.25rem';
+d.innerHTML=`<div class="field"><label>k${sub} (W/mK)</label><input type="number" class="th-lk" value="1" step="any"></div><div class="field"><label>t${sub} (m)</label><input type="number" class="th-lt" value="0.05" step="any"></div>`;
+cont.appendChild(d);
+};
+window.removeThermalLayer=function(){
+const layers=$('#th-layers').querySelectorAll('.th-layer');
+if(layers.length>1)layers[layers.length-1].remove();
+};
+window.calcThermal=function(){
+const mode=$('#th-mode').value;
+const thot=parseFloat($('#th-thot').value)||100;
+const tcold=parseFloat($('#th-tcold').value)||25;
+let inp={mode,t_hot:thot,t_cold:tcold};
+if(mode==='conduction'){
+inp.k=parseFloat($('#th-k').value)||50;
+inp.area=parseFloat($('#th-area').value)||0.01;
+inp.thickness=parseFloat($('#th-thick').value)||0.05;
+}else if(mode==='convection'){
+inp.h_conv=parseFloat($('#th-hconv').value)||25;
+inp.area=parseFloat($('#th-conv-area').value)||0.5;
+}else if(mode==='radiation'){
+inp.emissivity=parseFloat($('#th-emiss').value)||0.85;
+inp.area=parseFloat($('#th-rad-area').value)||0.5;
+}else if(mode==='composite_wall'){
+inp.area=parseFloat($('#th-comp-area').value)||1;
+inp.h_inside=parseFloat($('#th-hi').value)||0;
+inp.h_outside=parseFloat($('#th-ho').value)||0;
+inp.layers=[];
+$$('.th-lk').forEach((el,i)=>{
+const t=$$('.th-lt')[i];
+inp.layers.push({k:parseFloat(el.value)||1,thickness:parseFloat(t.value)||0.05});
+});
+}else if(mode==='fin'){
+inp.k=parseFloat($('#th-fink').value)||200;
+inp.h_conv=parseFloat($('#th-finh').value)||25;
+inp.length=parseFloat($('#th-finl').value)||0.05;
+inp.perimeter=parseFloat($('#th-finp').value)||0.06;
+inp.a_fin=parseFloat($('#th-fina').value)||0.0001;
+}else if(mode==='radial_pipe'){
+inp.r_inner=parseFloat($('#th-ri').value)||0.025;
+inp.r_outer=parseFloat($('#th-ro').value)||0.03;
+inp.pipe_length=parseFloat($('#th-pl').value)||1;
+inp.k=parseFloat($('#th-pk').value)||50;
+inp.h_inside=parseFloat($('#th-phi').value)||500;
+inp.h_outside=parseFloat($('#th-pho').value)||10;
+}else if(mode==='expansion'){
+inp.alpha=parseFloat($('#th-alpha').value)||11.7e-6;
+inp.e_modulus=parseFloat($('#th-emod').value)||200e9;
+inp.length=parseFloat($('#th-expl').value)||1;
+}
+const res=JSON.parse(calc_thermal(JSON.stringify(inp)));
+if(res.error){$('#thermal-results').innerHTML=`<h3>ERROR</h3><p style="color:var(--err)">${res.error}</p>`;return;}
+let items=[];
+if(res.q!=null)items.push({l:'HEAT TRANSFER q',v:Math.abs(res.q)>=1000?fmt(res.q/1000,2)+' kW':fmt(res.q,2)+' W'});
+if(res.q_per_area!=null)items.push({l:'HEAT FLUX q/A',v:fmt(res.q_per_area,2)+' W/m²'});
+if(res.r_total!=null)items.push({l:'R TOTAL',v:fmt(res.r_total,4)+' K/W'});
+if(res.u_value!=null)items.push({l:'U-VALUE',v:fmt(res.u_value,3)+' W/(m²·K)'});
+if(res.fin_efficiency!=null)items.push({l:'FIN EFFICIENCY η',v:(res.fin_efficiency*100).toFixed(1)+'%'});
+if(res.fin_effectiveness!=null)items.push({l:'FIN EFFECTIVENESS ε',v:fmt(res.fin_effectiveness,2)});
+if(res.q_fin!=null)items.push({l:'FIN HEAT TRANSFER',v:fmt(res.q_fin,2)+' W'});
+if(res.thermal_strain!=null)items.push({l:'THERMAL STRAIN ε_T',v:fmt(res.thermal_strain,6)});
+if(res.thermal_stress!=null)items.push({l:'THERMAL STRESS σ_T',v:fmt(res.thermal_stress/1e6,2)+' MPa'});
+if(res.delta_l!=null)items.push({l:'CHANGE IN LENGTH ΔL',v:fmt(res.delta_l*1000,3)+' mm'});
+$('#thermal-results').innerHTML=`<h3>THERMAL RESULTS</h3><div class="result-grid">${items.map(x=>`<div class="result-item"><div class="lbl">${x.l}</div><div class="val">${x.v}</div></div>`).join('')}</div>`;
+if(res.t_interfaces&&res.t_interfaces.length>1)drawThermalProfile(res);
+else{const cv=document.getElementById('c-thermal');if(cv)Plotly.purge(cv);}
+};
+function drawThermalProfile(res){
+const el=document.getElementById('c-thermal');
+if(!el)return;
+const temps=res.t_interfaces;
+const n=temps.length;
+const xLabels=temps.map((_,i)=>i===0?'T_hot':i===n-1?'T_cold':'I'+i);
+const traces=[{x:xLabels,y:temps,type:'scatter',mode:'lines+markers+text',name:'Temperature',line:{color:'#ff6b35',width:2.5},marker:{color:'#ff6b35',size:8},text:temps.map(t=>t.toFixed(1)+'°C'),textposition:'top center',textfont:{size:9,color:'#e0e0e0'},hovertemplate:'%{x}<br>T = %{y:.1f} °C<extra></extra>'}];
+const shapes=[];
+const r=res.r_layers;
+if(r&&r.length>0){
+for(let i=0;i<n-1;i++){
+shapes.push({type:'rect',x0:i-0.5,x1:i+0.5,y0:Math.min(...temps)-5,y1:Math.max(...temps)+5,fillcolor:i%2===0?'rgba(255,107,53,0.08)':'rgba(59,130,246,0.08)',line:{width:0},layer:'below'});
+}
+}
+Plotly.react('c-thermal',traces,Object.assign({},pLayout,{title:{text:'TEMPERATURE PROFILE THROUGH LAYERS',font:{size:12,color:'#ff6b35',family:'JetBrains Mono'}},shapes,xaxis:Object.assign({},pLayout.xaxis,{type:'category'}),yaxis:Object.assign({},pLayout.yaxis,{title:{text:'Temperature (°C)',font:{size:11,color:'#888'}}})}),pCfg);
+}
+function drawMathGraph(canvasId,pts,xLabel,yLabel,color,markers){
+const el=document.getElementById(canvasId);
+if(!el||!pts||pts.length<2){if(el)el.style.display='none';return;}
+el.style.display='block';
+const traces=[{x:pts.map(p=>p[0]),y:pts.map(p=>p[1]),type:'scatter',mode:'lines',line:{color:color||'#ff6b35',width:2.5,shape:'spline'},hovertemplate:(xLabel||'x')+' = %{x:.4g}<br>'+(yLabel||'y')+' = %{y:.4g}<extra></extra>'}];
+if(markers&&markers.length){markers.forEach(mk=>{
+traces.push({x:[mk.x],y:[mk.y],type:'scatter',mode:'markers+text',marker:{color:mk.color||'#00ff9d',size:8},text:[mk.label||''],textposition:'top center',textfont:{size:9,color:'#e0e0e0'},showlegend:false});
+});}
+Plotly.react(canvasId,traces,Object.assign({},pLayout,{margin:{l:60,r:25,t:20,b:50},xaxis:Object.assign({},pLayout.xaxis,{title:{text:xLabel||'x',font:{size:11,color:'#888'}}}),yaxis:Object.assign({},pLayout.yaxis,{title:{text:yLabel||'y',font:{size:11,color:'#888'}}}),showlegend:false}),pCfg);
+}
+window.updateMathUI=function(){
+const cat=$('#math-cat').value;
+['algebra','geometry','calculus','linalg','diffeq'].forEach(c=>{
+const el=$('#math-'+c);
+if(el)el.style.display=c===cat?'block':'none';
+});
+if(cat==='algebra')updateAlgUI();
+if(cat==='geometry')updateGeoUI();
+if(cat==='calculus')updateCalcUI();
+if(cat==='linalg')updateLinalgUI();
+if(cat==='diffeq')updateDiffEqUI();
+};
+window.updateAlgUI=function(){
+const t=$('#alg-type').value;
+const w=$('#alg-inputs');
+const f=(n,v)=>`<div class="field"><label>${n}</label><input type="number" id="alg-${n.toLowerCase()}" value="${v}" step="any"></div>`;
+w.innerHTML=t==='quadratic'?f('A',1)+f('B',-3)+f('C',2):t==='cubic'?f('A',1)+f('B',0)+f('C',-1)+f('D',0):t==='system2'?f('A',2)+f('B',1)+f('E',5)+f('C',1)+f('D',3)+f('F',7):f('A1',1)+f('B1',0)+f('C1',0)+f('D1',1)+f('A2',0)+f('B2',1)+f('C2',0)+f('D2',2)+f('A3',0)+f('B3',0)+f('C3',1)+f('D3',3);
+};
+window.solveAlgebra=function(){
+const t=$('#alg-type').value;
+const gv=id=>(parseFloat($('#alg-'+id)?.value)||0);
+const show=$('#alg-show').checked;
+let html='';
+if(t==='quadratic'){
+const a=gv('a'),b=gv('b'),c=gv('c');
+const disc=b*b-4*a*c;
+let work=show?`<p style="font-size:.75rem;color:var(--dim)">ax²+bx+c=0 → ${a}x²+${b>0?'+':''}${b}x+${c>0?'+':''}${c}=0<br>Discriminant: b²-4ac = ${b}²-4(${a})(${c}) = ${disc.toFixed(4)}<br>`:'';
+if(disc>=0){
+const x1=(-b+Math.sqrt(disc))/(2*a),x2=(-b-Math.sqrt(disc))/(2*a);
+if(show)work+=`x = (-b±√Δ)/(2a)<br>x₁ = (${-b}+${Math.sqrt(disc).toFixed(4)})/${2*a} = ${x1.toFixed(6)}<br>x₂ = (${-b}-${Math.sqrt(disc).toFixed(4)})/${2*a} = ${x2.toFixed(6)}</p>`;
+html=`<div class="result-grid"><div class="result-item"><div class="lbl">X₁</div><div class="val">${fmt(x1)}</div></div><div class="result-item"><div class="lbl">X₂</div><div class="val">${fmt(x2)}</div></div><div class="result-item"><div class="lbl">DISCRIMINANT</div><div class="val">${fmt(disc)}</div></div></div>${work}`;
+}else{
+const re=-b/(2*a),im=Math.sqrt(-disc)/(2*a);
+if(show)work+=`Complex roots: x = ${re.toFixed(4)} ± ${im.toFixed(4)}i</p>`;
+html=`<div class="result-grid"><div class="result-item"><div class="lbl">X₁</div><div class="val">${fmt(re)} + ${fmt(im)}i</div></div><div class="result-item"><div class="lbl">X₂</div><div class="val">${fmt(re)} - ${fmt(im)}i</div></div></div>${work}`;
+}
+}else if(t==='cubic'){
+const a=gv('a'),b=gv('b'),c=gv('c'),d=gv('d');
+const p=(3*a*c-b*b)/(3*a*a),q=(2*b*b*b-9*a*b*c+27*a*a*d)/(27*a*a*a);
+const disc2=q*q/4+p*p*p/27;
+let roots=[];
+if(disc2>0){
+const u=Math.cbrt(-q/2+Math.sqrt(disc2)),v=Math.cbrt(-q/2-Math.sqrt(disc2));
+roots.push(u+v-b/(3*a));
+}else{
+const r2=Math.sqrt(-p*p*p/27),theta=Math.acos(-q/(2*r2))/3,m=2*Math.cbrt(r2);
+for(let k=0;k<3;k++)roots.push(m*Math.cos(theta-2*Math.PI*k/3)-b/(3*a));
+}
+html=`<div class="result-grid">${roots.map((r,i)=>`<div class="result-item"><div class="lbl">X${i+1}</div><div class="val">${fmt(r)}</div></div>`).join('')}</div>`;
+if(show)html+=`<p style="font-size:.75rem;color:var(--dim)">Depressed cubic: t³+${fmt(p)}t+${fmt(q)}=0<br>Discriminant: ${fmt(disc2)}</p>`;
+}else if(t==='system2'){
+const a=gv('a'),b=gv('b'),e=gv('e'),c=gv('c'),d=gv('d'),f=gv('f');
+const det=a*d-b*c;
+if(Math.abs(det)<1e-12){html='<p style="color:var(--err)">System is singular (det=0)</p>';}
+else{
+const x=(e*d-b*f)/det,y=(a*f-e*c)/det;
+html=`<div class="result-grid"><div class="result-item"><div class="lbl">X</div><div class="val">${fmt(x)}</div></div><div class="result-item"><div class="lbl">Y</div><div class="val">${fmt(y)}</div></div></div>`;
+if(show)html+=`<p style="font-size:.75rem;color:var(--dim)">det=[${a}(${d})-${b}(${c})]=${fmt(det)}<br>x=[${e}(${d})-${b}(${f})]/${fmt(det)}=${fmt(x)}<br>y=[${a}(${f})-${e}(${c})]/${fmt(det)}=${fmt(y)}</p>`;
+}
+}else{
+const m=[[gv('a1'),gv('b1'),gv('c1')],[gv('a2'),gv('b2'),gv('c2')],[gv('a3'),gv('b3'),gv('c3')]];
+const d3=[gv('d1'),gv('d2'),gv('d3')];
+const det3=(m)=>m[0][0]*(m[1][1]*m[2][2]-m[1][2]*m[2][1])-m[0][1]*(m[1][0]*m[2][2]-m[1][2]*m[2][0])+m[0][2]*(m[1][0]*m[2][1]-m[1][1]*m[2][0]);
+const D=det3(m);
+if(Math.abs(D)<1e-12){html='<p style="color:var(--err)">System is singular</p>';}
+else{
+const rep=(col,vals)=>m.map((r,i)=>r.map((v,j)=>j===col?vals[i]:v));
+const x=det3(rep(0,d3))/D,y=det3(rep(1,d3))/D,z=det3(rep(2,d3))/D;
+html=`<div class="result-grid"><div class="result-item"><div class="lbl">X</div><div class="val">${fmt(x)}</div></div><div class="result-item"><div class="lbl">Y</div><div class="val">${fmt(y)}</div></div><div class="result-item"><div class="lbl">Z</div><div class="val">${fmt(z)}</div></div></div>`;
+if(show)html+=`<p style="font-size:.75rem;color:var(--dim)">Cramer's Rule: det=${fmt(D)}<br>x=${fmt(x)}, y=${fmt(y)}, z=${fmt(z)}</p>`;
+}
+}
+$('#alg-result').innerHTML=html;
+const algCanvas=$('#c-alg-graph');
+if(t==='quadratic'){
+const a=gv('a'),b=gv('b'),c=gv('c');
+const disc=b*b-4*a*c;
+const xc=-b/(2*a);
+const xspan=Math.max(Math.abs(xc)*2,5);
+const pts=[];
+for(let i=0;i<=100;i++){const x=xc-xspan+2*xspan*i/100;pts.push([x,a*x*x+b*x+c]);}
+const mk=disc>=0?[{x:(-b+Math.sqrt(disc))/(2*a),y:0,label:'x₁',color:'#00ff9d'},{x:(-b-Math.sqrt(disc))/(2*a),y:0,label:'x₂',color:'#00ff9d'}]:[];
+drawMathGraph('c-alg-graph',pts,'x','f(x)','#ff6b35',mk);
+}else if(t==='cubic'){
+const a=gv('a'),b=gv('b'),c=gv('c'),d=gv('d');
+const pts=[];for(let i=0;i<=100;i++){const x=-10+20*i/100;pts.push([x,a*x*x*x+b*x*x+c*x+d]);}
+drawMathGraph('c-alg-graph',pts,'x','f(x)','#ff6b35',[]);
+}else{algCanvas.style.display='none';}
+};
+window.updateGeoUI=function(){
+const s=$('#geo-shape').value;
+const w=$('#geo-inputs');
+const f=(n,v)=>`<div class="field"><label>${n}</label><input type="number" id="geo-${n.toLowerCase().replace(/\s/g,'')}" value="${v}" step="any"></div>`;
+const defs={circle:f('Radius',10),sphere:f('Radius',10),cylinder:f('Radius',5)+f('Height',20),cone:f('Radius',5)+f('Height',15),rect:f('Width',10)+f('Height',8),triangle:f('Base',10)+f('Height',6)+f('SideA',10)+f('SideB',8)+f('SideC',6),ellipse:f('A',10)+f('B',6),torus:f('Major',20)+f('Minor',5)};
+w.innerHTML=defs[s]||'';
+};
+window.solveGeometry=function(){
+const s=$('#geo-shape').value;
+const gv=id=>(parseFloat($('#geo-'+id)?.value)||0);
+const show=$('#geo-show').checked;
+const PI=Math.PI;
+let res=[],work='';
+if(s==='circle'){const r=gv('radius');res=[{l:'AREA',v:PI*r*r},{l:'CIRCUMFERENCE',v:2*PI*r},{l:'DIAMETER',v:2*r}];work=`A=πr²=π(${r})²=${fmt(PI*r*r)}\nC=2πr=2π(${r})=${fmt(2*PI*r)}`;}
+else if(s==='sphere'){const r=gv('radius');res=[{l:'VOLUME',v:4/3*PI*r*r*r},{l:'SURFACE AREA',v:4*PI*r*r}];work=`V=(4/3)πr³=(4/3)π(${r})³\nSA=4πr²`;}
+else if(s==='cylinder'){const r=gv('radius'),h=gv('height');res=[{l:'VOLUME',v:PI*r*r*h},{l:'LATERAL AREA',v:2*PI*r*h},{l:'TOTAL AREA',v:2*PI*r*(r+h)}];work=`V=πr²h\nA_lat=2πrh\nA_tot=2πr(r+h)`;}
+else if(s==='cone'){const r=gv('radius'),h=gv('height'),sl=Math.sqrt(r*r+h*h);res=[{l:'VOLUME',v:PI*r*r*h/3},{l:'SLANT',v:sl},{l:'LATERAL AREA',v:PI*r*sl},{l:'TOTAL AREA',v:PI*r*(r+sl)}];work=`V=(1/3)πr²h\nslant=√(r²+h²)`;}
+else if(s==='rect'){const w2=gv('width'),h=gv('height');res=[{l:'AREA',v:w2*h},{l:'PERIMETER',v:2*(w2+h)},{l:'DIAGONAL',v:Math.sqrt(w2*w2+h*h)}];work=`A=w×h=${w2}×${h}\nP=2(w+h)\nd=√(w²+h²)`;}
+else if(s==='triangle'){const b=gv('base'),h=gv('height'),a=gv('sidea'),sb=gv('sideb'),sc=gv('sidec');const sp=(a+sb+sc)/2;res=[{l:'AREA',v:b*h/2},{l:'AREA (HERON)',v:Math.sqrt(sp*(sp-a)*(sp-sb)*(sp-sc))},{l:'PERIMETER',v:a+sb+sc}];work=`A=bh/2\nHeron: s=(a+b+c)/2, A=√(s(s-a)(s-b)(s-c))`;}
+else if(s==='ellipse'){const a=gv('a'),b=gv('b');res=[{l:'AREA',v:PI*a*b},{l:'PERIMETER (APPROX)',v:PI*(3*(a+b)-Math.sqrt((3*a+b)*(a+3*b)))}];work=`A=πab\nP≈π(3(a+b)-√((3a+b)(a+3b)))`;}
+else if(s==='torus'){const R=gv('major'),r=gv('minor');res=[{l:'VOLUME',v:2*PI*PI*R*r*r},{l:'SURFACE AREA',v:4*PI*PI*R*r}];work=`V=2π²Rr²\nSA=4π²Rr`;}
+let html=`<div class="result-grid">${res.map(x=>`<div class="result-item"><div class="lbl">${x.l}</div><div class="val">${fmt(x.v)}</div></div>`).join('')}</div>`;
+if(show)html+=`<pre style="font-size:.7rem;color:var(--dim);margin-top:.5rem;white-space:pre-wrap">${work}</pre>`;
+$('#geo-result').innerHTML=html;
+const gc=document.getElementById('c-geo-graph');
+if(gc){gc.style.display='block';
+const geoTraces=[];
+if(s==='circle'){const r=gv('radius');const th=Array.from({length:65},(_,i)=>2*Math.PI*i/64);geoTraces.push({x:th.map(t=>r*Math.cos(t)),y:th.map(t=>r*Math.sin(t)),type:'scatter',mode:'lines',fill:'toself',fillcolor:'#ff6b3522',line:{color:'#ff6b35',width:2}});}
+else if(s==='rect'){const rw=gv('width'),rh=gv('height');geoTraces.push({x:[0,rw,rw,0,0],y:[0,0,rh,rh,0],type:'scatter',mode:'lines',fill:'toself',fillcolor:'#ff6b3522',line:{color:'#ff6b35',width:2}});}
+else if(s==='ellipse'){const ea=gv('a'),eb=gv('b');const th=Array.from({length:65},(_,i)=>2*Math.PI*i/64);geoTraces.push({x:th.map(t=>ea*Math.cos(t)),y:th.map(t=>eb*Math.sin(t)),type:'scatter',mode:'lines',fill:'toself',fillcolor:'#ff6b3522',line:{color:'#ff6b35',width:2}});}
+else if(s==='triangle'){const b2=gv('base'),th=gv('height');geoTraces.push({x:[-b2/2,b2/2,0,-b2/2],y:[0,0,th,0],type:'scatter',mode:'lines',fill:'toself',fillcolor:'#ff6b3522',line:{color:'#ff6b35',width:2}});}
+else{gc.style.display='none';}
+if(geoTraces.length>0)Plotly.react('c-geo-graph',geoTraces,Object.assign({},pLayout,{margin:{l:50,r:25,t:20,b:50},xaxis:Object.assign({},pLayout.xaxis,{scaleanchor:'y',scaleratio:1}),yaxis:Object.assign({},pLayout.yaxis),showlegend:false}),pCfg);
+}
+};
+window.updateCalcUI=function(){
+const op=$('#calc-op').value;
+const w=$('#calc-inputs');
+if(op==='derivative')w.innerHTML='<div class="field"><label>COEFFICIENTS (HIGHEST POWER FIRST, COMMA SEP)</label><input type="text" id="calc-coeffs" value="1,0,-3,2" style="width:100%"></div>';
+else if(op==='integral')w.innerHTML='<div class="field"><label>COEFFICIENTS (HIGHEST POWER FIRST)</label><input type="text" id="calc-coeffs" value="1,0,-3,2" style="width:100%"></div><div class="row" style="margin-top:.5rem"><div class="field"><label>LOWER BOUND</label><input type="number" id="calc-a" value="0" step="any"></div><div class="field"><label>UPPER BOUND</label><input type="number" id="calc-b" value="2" step="any"></div></div>';
+else if(op==='limit')w.innerHTML='<div class="field"><label>COEFFICIENTS (POLYNOMIAL)</label><input type="text" id="calc-coeffs" value="1,-2,1" style="width:100%"></div><div class="field" style="margin-top:.5rem"><label>APPROACH VALUE</label><input type="number" id="calc-x0" value="1" step="any"></div>';
+else if(op==='taylor')w.innerHTML='<div class="field"><label>FUNCTION</label><select id="calc-fn"><option value="sin">sin(x)</option><option value="cos">cos(x)</option><option value="exp">e^x</option><option value="ln">ln(1+x)</option></select></div><div class="row" style="margin-top:.5rem"><div class="field"><label>CENTER</label><input type="number" id="calc-a" value="0" step="any"></div><div class="field"><label>TERMS</label><input type="number" id="calc-n" value="6" min="1" max="20"></div></div>';
+};
+window.solveCalculus=function(){
+const op=$('#calc-op').value;
+const show=$('#calc-show').checked;
+let html='';
+if(op==='derivative'){
+const coeffs=($('#calc-coeffs').value||'').split(',').map(Number);
+const n=coeffs.length-1;
+const deriv=coeffs.slice(0,-1).map((c,i)=>c*(n-i));
+const terms=deriv.map((c,i)=>{const p=deriv.length-1-i;return p>1?`${c}x^${p}`:p===1?`${c}x`:`${c}`;}).join(' + ');
+html=`<div class="result-item"><div class="lbl">f'(x)</div><div class="val" style="font-size:.9rem">${terms||'0'}</div></div>`;
+if(show){
+const origTerms=coeffs.map((c,i)=>{const p=n-i;return p>1?`${c}x^${p}`:p===1?`${c}x`:`${c}`;}).join(' + ');
+html+=`<p style="font-size:.75rem;color:var(--dim);margin-top:.5rem">f(x) = ${origTerms}<br>Power rule: d/dx[ax^n] = nax^(n-1)<br>f'(x) = ${terms}</p>`;
+}
+}else if(op==='integral'){
+const coeffs=($('#calc-coeffs').value||'').split(',').map(Number);
+const a=parseFloat($('#calc-a').value)||0,b=parseFloat($('#calc-b').value)||1;
+const evalPoly=(x)=>coeffs.reduce((s,c,i)=>s+c*Math.pow(x,coeffs.length-1-i),0);
+const N=1000;const dx=(b-a)/N;
+let sum=evalPoly(a)+evalPoly(b);
+for(let i=1;i<N;i++)sum+=evalPoly(a+i*dx)*(i%2===0?2:4);
+const result=sum*dx/3;
+html=`<div class="result-item"><div class="lbl">∫ f(x)dx [${a},${b}]</div><div class="val">${fmt(result)}</div></div>`;
+if(show)html+=`<p style="font-size:.75rem;color:var(--dim);margin-top:.5rem">Simpson's 1/3 rule with ${N} intervals<br>Result ≈ ${fmt(result,8)}</p>`;
+}else if(op==='limit'){
+const coeffs=($('#calc-coeffs').value||'').split(',').map(Number);
+const x0=parseFloat($('#calc-x0').value)||0;
+const evalPoly=(x)=>coeffs.reduce((s,c,i)=>s+c*Math.pow(x,coeffs.length-1-i),0);
+const eps=[0.1,0.01,0.001,0.0001,0.00001];
+const approach=eps.map(e=>({e,left:evalPoly(x0-e),right:evalPoly(x0+e)}));
+const lim=evalPoly(x0);
+html=`<div class="result-item"><div class="lbl">lim x→${x0}</div><div class="val">${fmt(lim)}</div></div>`;
+if(show)html+=`<table class="data" style="margin-top:.5rem"><thead><tr><th>ε</th><th>f(x₀-ε)</th><th>f(x₀+ε)</th></tr></thead><tbody>${approach.map(a=>`<tr><td>${a.e}</td><td>${fmt(a.left)}</td><td>${fmt(a.right)}</td></tr>`).join('')}</tbody></table>`;
+}else if(op==='taylor'){
+const fn=$('#calc-fn').value;
+const a=parseFloat($('#calc-a').value)||0;
+const n=parseInt($('#calc-n').value)||6;
+const coeffMap={sin:(k)=>k%2===0?0:(k%4===1?1:-1)/[1,1,2,6,24,120,720,5040,40320,362880,3628800,39916800,479001600][k],cos:(k)=>k%2===1?0:(k%4===0?1:-1)/[1,1,2,6,24,120,720,5040,40320,362880,3628800,39916800,479001600][k],exp:(k)=>1/[1,1,2,6,24,120,720,5040,40320,362880,3628800,39916800,479001600][k],ln:(k)=>k===0?0:(k%2===1?1:-1)/k};
+let terms=[];
+for(let k=0;k<n;k++){const c=coeffMap[fn](k);if(Math.abs(c)>1e-15)terms.push(k===0?`${fmt(c,4)}`:`${fmt(c,4)}x${k>1?'^'+k:''}`);}
+html=`<div class="result-item"><div class="lbl">TAYLOR (${n} TERMS)</div><div class="val" style="font-size:.8rem">${terms.join(' + ').replace(/\+ -/g,'- ')}</div></div>`;
+if(show)html+=`<p style="font-size:.75rem;color:var(--dim);margin-top:.5rem">Taylor series about a=${a}: Σ f^(n)(a)/n! · (x-a)^n</p>`;
+}
+$('#calc-result').innerHTML=html;
+if(op==='derivative'||op==='integral'){
+const coeffs2=($('#calc-coeffs').value||'').split(',').map(Number);
+const n2=coeffs2.length-1;
+const evalP=x=>coeffs2.reduce((s,c,i)=>s+c*Math.pow(x,n2-i),0);
+const xa=op==='integral'?(parseFloat($('#calc-a').value)||0):-5;
+const xb=op==='integral'?(parseFloat($('#calc-b').value)||2):5;
+const pts2=[];for(let i=0;i<=100;i++){const x=xa+(xb-xa)*i/100;pts2.push([x,evalP(x)]);}
+drawMathGraph('c-calc-graph',pts2,'x','f(x)','#4da6ff',[]);
+}else if(op==='taylor'){
+const fn=$('#calc-fn').value;
+const n2=parseInt($('#calc-n').value)||6;
+const fns={sin:Math.sin,cos:Math.cos,exp:Math.exp,ln:x=>Math.log(1+x)};
+const pts2=[],pts3=[];
+for(let i=0;i<=100;i++){const x=-3+6*i/100;pts2.push([x,fns[fn]?fns[fn](x):x]);pts3.push([x,0]);}
+drawMathGraph('c-calc-graph',pts2,'x',fn+'(x)','#4da6ff',[]);
+}else{$('#c-calc-graph').style.display='none';}
+};
+window.updateLinalgUI=function(){
+const n=parseInt($('#la-size').value)||2;
+const op=$('#la-op').value;
+const w=$('#la-inputs');
+let html='<p style="font-size:.7rem;color:var(--dim)">MATRIX A (ROW-MAJOR)</p><div style="display:grid;grid-template-columns:repeat('+n+',1fr);gap:4px;max-width:'+(n*80)+'px">';
+for(let i=0;i<n;i++)for(let j=0;j<n;j++)html+=`<input type="number" id="la-a${i}${j}" value="${i===j?1:0}" step="any" style="width:100%">`;
+html+='</div>';
+if(op==='mult'){
+html+='<p style="font-size:.7rem;color:var(--dim);margin-top:.5rem">MATRIX B</p><div style="display:grid;grid-template-columns:repeat('+n+',1fr);gap:4px;max-width:'+(n*80)+'px">';
+for(let i=0;i<n;i++)for(let j=0;j<n;j++)html+=`<input type="number" id="la-b${i}${j}" value="${i===j?1:0}" step="any" style="width:100%">`;
+html+='</div>';
+}
+w.innerHTML=html;
+};
+window.solveLinAlg=function(){
+const n=parseInt($('#la-size').value)||2;
+const op=$('#la-op').value;
+const show=$('#la-show').checked;
+const gm=(prefix)=>{const m=[];for(let i=0;i<n;i++){m[i]=[];for(let j=0;j<n;j++)m[i][j]=parseFloat($(`#la-${prefix}${i}${j}`)?.value)||0;}return m;};
+const A=gm('a');
+const det=(m)=>{
+if(m.length===1)return m[0][0];
+if(m.length===2)return m[0][0]*m[1][1]-m[0][1]*m[1][0];
+let d=0;for(let j=0;j<m.length;j++){const sub=m.slice(1).map(r=>[...r.slice(0,j),...r.slice(j+1)]);d+=((j%2===0?1:-1)*m[0][j]*det(sub));}return d;
+};
+let html='';
+if(op==='det'){
+const d=det(A);
+html=`<div class="result-item"><div class="lbl">DETERMINANT</div><div class="val">${fmt(d)}</div></div>`;
+if(show&&n===2)html+=`<p style="font-size:.75rem;color:var(--dim)">det = a·d - b·c = ${A[0][0]}×${A[1][1]} - ${A[0][1]}×${A[1][0]} = ${fmt(d)}</p>`;
+}else if(op==='inv'){
+const d=det(A);
+if(Math.abs(d)<1e-12){html='<p style="color:var(--err)">Matrix is singular</p>';}
+else if(n===2){
+const inv=[[A[1][1]/d,-A[0][1]/d],[-A[1][0]/d,A[0][0]/d]];
+html=matrixToHTML('A⁻¹',inv);
+if(show)html+=`<p style="font-size:.75rem;color:var(--dim)">det=${fmt(d)}, A⁻¹=(1/det)·adj(A)</p>`;
+}else{
+const aug=A.map((r,i)=>[...r,...Array(n).fill(0).map((_,j)=>i===j?1:0)]);
+for(let i=0;i<n;i++){
+let mx=i;for(let k=i+1;k<n;k++)if(Math.abs(aug[k][i])>Math.abs(aug[mx][i]))mx=k;
+[aug[i],aug[mx]]=[aug[mx],aug[i]];
+const piv=aug[i][i];if(Math.abs(piv)<1e-12){html='<p style="color:var(--err)">Singular</p>';$('#la-result').innerHTML=html;return;}
+for(let j=0;j<2*n;j++)aug[i][j]/=piv;
+for(let k=0;k<n;k++){if(k===i)continue;const f=aug[k][i];for(let j=0;j<2*n;j++)aug[k][j]-=f*aug[i][j];}
+}
+const inv=aug.map(r=>r.slice(n));
+html=matrixToHTML('A⁻¹',inv);
+if(show)html+=`<p style="font-size:.75rem;color:var(--dim)">Gauss-Jordan elimination, det=${fmt(d)}</p>`;
+}
+}else if(op==='mult'){
+const B=gm('b');
+const C=A.map((r,i)=>r.map((_,j)=>{let s=0;for(let k=0;k<n;k++)s+=A[i][k]*B[k][j];return s;}));
+html=matrixToHTML('A×B',C);
+if(show)html+=`<p style="font-size:.75rem;color:var(--dim)">C[i][j] = Σ A[i][k]·B[k][j]</p>`;
+}else if(op==='eigen'){
+if(n!==2){html='<p style="color:var(--warn)">Eigenvalue solver only supports 2×2</p>';}else{
+const tr=A[0][0]+A[1][1],d=det(A);
+const disc=tr*tr-4*d;
+if(disc>=0){
+const l1=(tr+Math.sqrt(disc))/2,l2=(tr-Math.sqrt(disc))/2;
+html=`<div class="result-grid"><div class="result-item"><div class="lbl">λ₁</div><div class="val">${fmt(l1)}</div></div><div class="result-item"><div class="lbl">λ₂</div><div class="val">${fmt(l2)}</div></div></div>`;
+if(show)html+=`<p style="font-size:.75rem;color:var(--dim)">Characteristic: λ²-${fmt(tr)}λ+${fmt(d)}=0<br>Discriminant=${fmt(disc)}</p>`;
+}else{
+const re=tr/2,im=Math.sqrt(-disc)/2;
+html=`<div class="result-grid"><div class="result-item"><div class="lbl">λ₁</div><div class="val">${fmt(re)} + ${fmt(im)}i</div></div><div class="result-item"><div class="lbl">λ₂</div><div class="val">${fmt(re)} - ${fmt(im)}i</div></div></div>`;
+}
+}
+}else if(op==='transpose'){
+const T=A[0].map((_,j)=>A.map(r=>r[j]));
+html=matrixToHTML('Aᵀ',T);
+}
+$('#la-result').innerHTML=html;
+};
+function matrixToHTML(label,m){
+return `<p style="font-size:.75rem;color:var(--accent)">${label}:</p><div style="display:grid;grid-template-columns:repeat(${m[0].length},auto);gap:4px 12px;font-size:.85rem;margin:.5rem 0">${m.flat().map(v=>`<span style="color:var(--text)">${fmt(v,4)}</span>`).join('')}</div>`;
+}
+window.updateDiffEqUI=function(){
+const t=$('#de-type').value;
+const w=$('#de-inputs');
+const f=(n,v,lbl)=>`<div class="field"><label>${lbl||n}</label><input type="number" id="de-${n}" value="${v}" step="any"></div>`;
+if(t==='first_linear')w.innerHTML=`<p style="font-size:.7rem;color:var(--dim)">dy/dx + P·y = Q (constant coefficients)</p><div class="row">${f('p',2,'P')}</div><div class="row" style="margin-top:.5rem">${f('q',6,'Q')}</div><div class="row" style="margin-top:.5rem">${f('y0',0,'y(0)')}</div>`;
+else if(t==='separable')w.innerHTML=`<p style="font-size:.7rem;color:var(--dim)">dy/dx = a·x^n (power rule)</p><div class="row">${f('a',3,'A')}${f('n',2,'N')}</div><div class="row" style="margin-top:.5rem">${f('y0',0,'y(0)')}</div>`;
+else if(t==='second_const')w.innerHTML=`<p style="font-size:.7rem;color:var(--dim)">ay'' + by' + cy = 0</p><div class="row">${f('a',1,'A')}${f('b',-3,'B')}${f('c',2,'C')}</div>`;
+else if(t==='euler')w.innerHTML=`<p style="font-size:.7rem;color:var(--dim)">dy/dx = f(x,y), use polynomial: dy/dx = a·x + b·y</p><div class="row">${f('a',1,'A (x coeff)')}${f('b',-1,'B (y coeff)')}</div><div class="row" style="margin-top:.5rem">${f('x0',0,'x₀')}${f('y0',1,'y₀')}${f('xf',2,'x_final')}${f('steps',20,'STEPS')}</div>`;
+};
+window.solveDiffEq=function(){
+const t=$('#de-type').value;
+const show=$('#de-show').checked;
+const gv=id=>(parseFloat($('#de-'+id)?.value)||0);
+let html='';
+if(t==='first_linear'){
+const P=gv('p'),Q=gv('q'),y0=gv('y0');
+const yp=Q/P;
+const C=y0-yp;
+html=`<div class="result-grid"><div class="result-item"><div class="lbl">GENERAL SOLUTION</div><div class="val" style="font-size:.85rem">y = ${fmt(yp)} + Ce^(-${fmt(P)}x)</div></div><div class="result-item"><div class="lbl">PARTICULAR (y₀=${y0})</div><div class="val" style="font-size:.85rem">y = ${fmt(yp)} + ${fmt(C)}e^(-${fmt(P)}x)</div></div></div>`;
+if(show)html+=`<p style="font-size:.75rem;color:var(--dim)">Integrating factor: μ=e^(∫P dx)=e^(${P}x)<br>y·e^(${P}x)=∫Q·e^(${P}x)dx=(${Q}/${P})e^(${P}x)+C<br>y=${Q}/${P}+Ce^(-${P}x)<br>y(0)=${y0} → C=${fmt(C)}</p>`;
+}else if(t==='separable'){
+const a=gv('a'),n=gv('n'),y0=gv('y0');
+const np1=n+1;
+const coeff=a/np1;
+const C=y0;
+html=`<div class="result-grid"><div class="result-item"><div class="lbl">SOLUTION</div><div class="val" style="font-size:.85rem">y = ${fmt(coeff)}x^${np1} + ${fmt(C)}</div></div></div>`;
+if(show)html+=`<p style="font-size:.75rem;color:var(--dim)">∫dy = ∫${a}x^${n}dx → y = ${a}/(${np1})·x^${np1} + C<br>y(0)=${y0} → C=${fmt(C)}</p>`;
+}else if(t==='second_const'){
+const a=gv('a'),b=gv('b'),c=gv('c');
+const disc=b*b-4*a*c;
+if(disc>0){
+const r1=(-b+Math.sqrt(disc))/(2*a),r2=(-b-Math.sqrt(disc))/(2*a);
+html=`<div class="result-item"><div class="lbl">SOLUTION (DISTINCT REAL)</div><div class="val" style="font-size:.85rem">y = C₁e^(${fmt(r1)}x) + C₂e^(${fmt(r2)}x)</div></div>`;
+if(show)html+=`<p style="font-size:.75rem;color:var(--dim)">Char eq: ${a}r²+${b}r+${c}=0<br>Δ=${fmt(disc)}, r₁=${fmt(r1)}, r₂=${fmt(r2)}</p>`;
+}else if(Math.abs(disc)<1e-10){
+const r=-b/(2*a);
+html=`<div class="result-item"><div class="lbl">SOLUTION (REPEATED)</div><div class="val" style="font-size:.85rem">y = (C₁+C₂x)e^(${fmt(r)}x)</div></div>`;
+}else{
+const alpha=-b/(2*a),beta=Math.sqrt(-disc)/(2*a);
+html=`<div class="result-item"><div class="lbl">SOLUTION (COMPLEX)</div><div class="val" style="font-size:.85rem">y = e^(${fmt(alpha)}x)[C₁cos(${fmt(beta)}x)+C₂sin(${fmt(beta)}x)]</div></div>`;
+if(show)html+=`<p style="font-size:.75rem;color:var(--dim)">α=${fmt(alpha)}, β=${fmt(beta)}</p>`;
+}
+}else if(t==='euler'){
+const a=gv('a'),b=gv('b');
+let x=gv('x0'),y=gv('y0');
+const xf=gv('xf'),steps=Math.max(parseInt(gv('steps')),1);
+const dx=(xf-x)/steps;
+const pts=[[x,y]];
+for(let i=0;i<steps;i++){const dy=(a*x+b*y)*dx;y+=dy;x+=dx;pts.push([x,y]);}
+html=`<div class="result-item"><div class="lbl">y(${xf})</div><div class="val">${fmt(y)}</div></div>`;
+if(show)html+=`<table class="data" style="margin-top:.5rem"><thead><tr><th>STEP</th><th>x</th><th>y</th></tr></thead><tbody>${pts.filter((_,i)=>i%Math.max(1,Math.floor(steps/10))===0||i===pts.length-1).map((p,i)=>`<tr><td>${i}</td><td>${fmt(p[0],4)}</td><td>${fmt(p[1],4)}</td></tr>`).join('')}</tbody></table>`;
+}
+$('#de-result').innerHTML=html;
+setTimeout(()=>{
+let gpts=[];
+if(t==='euler'){
+const a2=gv('a'),b2=gv('b'),x02=gv('x0'),y02=gv('y0'),xf2=gv('xf'),st2=Math.max(parseInt(gv('steps')),1);
+const dx2=(xf2-x02)/st2;let xc=x02,yc=y02;gpts.push([xc,yc]);
+for(let i=0;i<st2;i++){yc+=(a2*xc+b2*yc)*dx2;xc+=dx2;gpts.push([xc,yc]);}
+}else if(t==='first_linear'){
+const P2=gv('p'),Q2=gv('q'),y02=gv('y0'),yp2=Q2/P2,C2=y02-yp2;
+for(let i=0;i<=100;i++){const x=-3+6*i/100;gpts.push([x,yp2+C2*Math.exp(-P2*x)]);}
+}else if(t==='separable'){
+const a2=gv('a'),n2=gv('n'),y02=gv('y0'),np2=n2+1;
+for(let i=0;i<=100;i++){const x=-3+6*i/100;gpts.push([x,a2/np2*Math.pow(x,np2)+y02]);}
+}else if(t==='second_const'){
+const a2=gv('a'),b2=gv('b'),c2=gv('c'),disc2=b2*b2-4*a2*c2;
+if(disc2>0){const r1=(-b2+Math.sqrt(disc2))/(2*a2),r2=(-b2-Math.sqrt(disc2))/(2*a2);
+for(let i=0;i<=100;i++){const x=-3+6*i/100;gpts.push([x,Math.exp(r1*x)+Math.exp(r2*x)]);}}
+else if(Math.abs(disc2)<1e-10){const r=-b2/(2*a2);
+for(let i=0;i<=100;i++){const x=-3+6*i/100;gpts.push([x,(1+x)*Math.exp(r*x)]);}}
+else{const al=-b2/(2*a2),be=Math.sqrt(-disc2)/(2*a2);
+for(let i=0;i<=100;i++){const x=-3+6*i/100;gpts.push([x,Math.exp(al*x)*Math.cos(be*x)]);}}
+}
+if(gpts.length>1)drawMathGraph('c-de-graph',gpts,'x','y(x)','#ff6b35',[]);
+},50);
+};
+updateAlgUI();updateGeoUI();updateCalcUI();updateLinalgUI();updateDiffEqUI();
+GASKET_MATS=[
+{name:'Garlock GYLON 3500',cat:'PTFE',compressibility:45,recovery:25,creep:15,temp_min:-200,temp_max:260,pressure_max:69,tensile:14,thickness:[0.8,1.6,3.2],shore_a:65,color:'#e0e0e0',finish_ra_max:63,finish_ra_ideal:32,notes:'Bio-PTFE, FDA compliant. Chemical universal.',spec:'ASTM F36'},
+{name:'Garlock GYLON 3510',cat:'PTFE',compressibility:40,recovery:30,creep:12,temp_min:-200,temp_max:260,pressure_max:69,tensile:21,thickness:[0.8,1.6,3.2],shore_a:68,color:'#e8e8e8',finish_ra_max:63,finish_ra_ideal:32,notes:'PTFE w/ barium sulfate filler. Higher bolt load retention.',spec:'ASTM F36'},
+{name:'Garlock GYLON 3504',cat:'PTFE',compressibility:50,recovery:20,creep:18,temp_min:-200,temp_max:260,pressure_max:41,tensile:10,thickness:[0.8,1.6,3.2],shore_a:60,color:'#d0d0d0',finish_ra_max:125,finish_ra_ideal:63,notes:'PTFE envelope style. For glass-lined equipment.',spec:'ASTM F36'},
+{name:'Garlock GYLON 3545',cat:'PTFE',compressibility:42,recovery:28,creep:14,temp_min:-200,temp_max:260,pressure_max:69,tensile:17,thickness:[0.8,1.6,3.2],shore_a:67,color:'#f5f5dc',finish_ra_max:63,finish_ra_ideal:32,notes:'PTFE with silica filler. Superior creep resistance.',spec:'ASTM F36'},
+{name:'Garlock BLUE-GARD 3000',cat:'Compressed Fiber',compressibility:10,recovery:60,creep:25,temp_min:-40,temp_max:260,pressure_max:41,tensile:7,thickness:[0.8,1.6,3.2,6.4],shore_a:80,color:'#1e5cb3',finish_ra_max:250,finish_ra_ideal:125,notes:'Aramid fiber w/ NBR binder. General purpose.',spec:'ASTM F104'},
+{name:'Garlock BLUE-GARD 3300',cat:'Compressed Fiber',compressibility:12,recovery:55,creep:28,temp_min:-40,temp_max:400,pressure_max:69,tensile:10,thickness:[0.8,1.6,3.2],shore_a:85,color:'#2a6dc7',finish_ra_max:250,finish_ra_ideal:125,notes:'Aramid/glass fiber blend. High temp/pressure.',spec:'ASTM F104'},
+{name:'Garlock BLUE-GARD 3400',cat:'Compressed Fiber',compressibility:8,recovery:65,creep:20,temp_min:-40,temp_max:316,pressure_max:55,tensile:12,thickness:[0.8,1.6,3.2],shore_a:88,color:'#3a7dd7',finish_ra_max:250,finish_ra_ideal:125,notes:'Carbon fiber reinforced. Steam/hydrocarbon service.',spec:'ASTM F104'},
+{name:'Garlock IFG 5500',cat:'Flexible Graphite',compressibility:42,recovery:15,creep:8,temp_min:-200,temp_max:450,pressure_max:69,tensile:5,thickness:[0.8,1.6,3.2],shore_a:55,color:'#333',finish_ra_max:125,finish_ra_ideal:63,notes:'Flexible graphite w/ SS tang insert. High purity.',spec:'ASTM F104'},
+{name:'Garlock IFG 5000',cat:'Flexible Graphite',compressibility:45,recovery:12,creep:7,temp_min:-200,temp_max:450,pressure_max:55,tensile:4,thickness:[0.8,1.6,3.2],shore_a:50,color:'#2a2a2a',finish_ra_max:125,finish_ra_ideal:63,notes:'Flexible graphite laminate. Oxidizing environments.',spec:'ASTM F104'},
+{name:'Garlock GRAPH-LOCK 3123',cat:'Flexible Graphite',compressibility:48,recovery:10,creep:5,temp_min:-200,temp_max:500,pressure_max:82,tensile:3.5,thickness:[1.6,3.2],shore_a:48,color:'#1a1a1a',finish_ra_max:125,finish_ra_ideal:63,notes:'Corrugated metal core w/ graphite. Extreme service.',spec:'ASME B16.20'},
+{name:'Garlock EDGE 360',cat:'Compressed Fiber',compressibility:15,recovery:50,creep:22,temp_min:-40,temp_max:204,pressure_max:34,tensile:8,thickness:[0.8,1.6,3.2],shore_a:82,color:'#ff6b35',finish_ra_max:250,finish_ra_ideal:125,notes:'Color-coded gasket w/ anti-stick. Easy installation.',spec:'ASTM F104'},
+{name:'Garlock STRESS-SAVER 9900',cat:'PTFE',compressibility:55,recovery:20,creep:10,temp_min:-200,temp_max:260,pressure_max:41,tensile:8,thickness:[1.6,3.2],shore_a:55,color:'#e8d8c8',finish_ra_max:125,finish_ra_ideal:63,notes:'Low-stress PTFE. For fragile flanges: FRP, glass.',spec:'ASTM F36'},
+{name:'NBR / Buna-N Sheet',cat:'Elastomer',compressibility:25,recovery:80,creep:30,temp_min:-40,temp_max:120,pressure_max:10,tensile:12,thickness:[0.8,1.6,3.2,6.4],shore_a:70,color:'#333',finish_ra_max:63,finish_ra_ideal:32,notes:'Nitrile rubber. Oil/fuel resistant.',spec:'ASTM D2000'},
+{name:'EPDM Sheet',cat:'Elastomer',compressibility:22,recovery:82,creep:28,temp_min:-50,temp_max:150,pressure_max:10,tensile:10,thickness:[0.8,1.6,3.2,6.4],shore_a:65,color:'#1a1a1a',finish_ra_max:63,finish_ra_ideal:32,notes:'Ethylene propylene. Steam/water/chemical.',spec:'ASTM D2000'},
+{name:'Neoprene/CR Sheet',cat:'Elastomer',compressibility:24,recovery:78,creep:30,temp_min:-40,temp_max:120,pressure_max:10,tensile:11,thickness:[0.8,1.6,3.2,6.4],shore_a:68,color:'#2d2d2d',finish_ra_max:63,finish_ra_ideal:32,notes:'Chloroprene rubber. Weather/oil/flame resistant.',spec:'ASTM D2000'},
+{name:'Silicone Sheet',cat:'Elastomer',compressibility:20,recovery:85,creep:25,temp_min:-60,temp_max:230,pressure_max:7,tensile:8,thickness:[0.8,1.6,3.2],shore_a:60,color:'#cc4444',finish_ra_max:32,finish_ra_ideal:16,notes:'Silicone rubber. FDA grade, high temp.',spec:'ASTM D2000'},
+{name:'Viton/FKM Sheet',cat:'Elastomer',compressibility:18,recovery:75,creep:20,temp_min:-20,temp_max:230,pressure_max:14,tensile:10,thickness:[0.8,1.6,3.2],shore_a:75,color:'#553300',finish_ra_max:32,finish_ra_ideal:16,notes:'Fluoroelastomer. Chemical/fuel/high-temp.',spec:'ASTM D2000'},
+{name:'Cork-Rubber (CRN)',cat:'Composite',compressibility:30,recovery:45,creep:35,temp_min:-30,temp_max:120,pressure_max:3.5,tensile:3,thickness:[1.6,3.2,6.4],shore_a:55,color:'#8B6914',finish_ra_max:500,finish_ra_ideal:250,notes:'Cork-nitrile composite. Low pressure, vibration dampening.',spec:'ASTM F104'},
+{name:'Vegetable Fiber',cat:'Composite',compressibility:15,recovery:35,creep:40,temp_min:-30,temp_max:120,pressure_max:7,tensile:5,thickness:[0.8,1.6,3.2],shore_a:78,color:'#c4a882',finish_ra_max:500,finish_ra_ideal:250,notes:'Cellulose fiber w/ binder. Oil pans, covers.',spec:'ASTM F104'},
+{name:'Spiral Wound (304SS/Graphite)',cat:'Semi-Metallic',compressibility:20,recovery:40,creep:5,temp_min:-200,temp_max:500,pressure_max:103,tensile:0,thickness:[3.2,4.5],shore_a:0,color:'#888',finish_ra_max:125,finish_ra_ideal:63,notes:'ASME B16.20 spiral wound. High temp/press flanged joints.',spec:'ASME B16.20'},
+{name:'Corrugated Metal (SS316)',cat:'Metallic',compressibility:12,recovery:50,creep:3,temp_min:-250,temp_max:600,pressure_max:138,tensile:0,thickness:[1.6,3.2],shore_a:0,color:'#c0c0c0',finish_ra_max:63,finish_ra_ideal:32,notes:'Corrugated metal gasket. Extreme service.',spec:'ASME B16.20'},
+{name:'Ring Joint (RTJ, R-type)',cat:'Metallic',compressibility:5,recovery:60,creep:2,temp_min:-250,temp_max:650,pressure_max:345,tensile:0,thickness:[0,0],shore_a:0,color:'#aaa',finish_ra_max:63,finish_ra_ideal:32,notes:'API ring-type joint. 600-2500# flanges.',spec:'ASME B16.20 / API 6A'},
+];
+function setupGaskets(){
+const matSel=$('#gk-mat');
+const search=$('#gk-mat-search');
+const renderOpts=(q)=>{
+matSel.innerHTML='';
+const filtered=GASKET_MATS.filter(m=>!q||(m.name+' '+m.cat+' '+m.notes).toLowerCase().includes(q.toLowerCase()));
+filtered.forEach((m,i)=>{
+const origIdx=GASKET_MATS.indexOf(m);
+const o=document.createElement('option');o.value=origIdx;
+o.textContent=m.name+' ('+m.cat+')';
+o.style.color=m.color;
+matSel.appendChild(o);
+});
+};
+renderOpts('');
+search.addEventListener('input',()=>renderOpts(search.value));
+matSel.addEventListener('change',updateGkMatDetail);
+updateGkMatDetail();
+}
+function updateGkMatDetail(){
+const m=GASKET_MATS[parseInt($('#gk-mat').value)||0];
+if(!m)return;
+$('#gk-mat-detail').innerHTML=[
+{l:'COMPRESSIBILITY',v:m.compressibility+'%'},
+{l:'RECOVERY',v:m.recovery+'%'},
+{l:'CREEP RELAXATION',v:m.creep+'%'},
+{l:'TEMP RANGE',v:m.temp_min+'°C to '+m.temp_max+'°C'},
+{l:'MAX PRESSURE',v:m.pressure_max+' MPa'},
+{l:'TENSILE',v:m.tensile?m.tensile+' MPa':'N/A (metal)'},
+{l:'FINISH Ra MAX',v:m.finish_ra_max+' µin'},
+{l:'SPEC',v:m.spec},
+].map(x=>`<div class="result-item"><div class="lbl">${x.l}</div><div class="val" style="font-size:.85rem">${x.v}</div></div>`).join('');
+}
+window.calcGasket=function(){
+const m=GASKET_MATS[parseInt($('#gk-mat').value)||0];
+if(!m)return;
+const gkW=parseFloat($('#gk-width').value)||25;
+const gkT=parseFloat($('#gk-thick').value)||1.6;
+const gkID=parseFloat($('#gk-id').value)||50;
+const gkOD=parseFloat($('#gk-od').value)||100;
+const press=parseFloat($('#gk-press').value)||3.5;
+const temp=parseFloat($('#gk-temp').value)||150;
+const boltLoad=parseFloat($('#gk-bolt').value)||50;
+const isDynamic=$('#gk-app').value==='dynamic';
+const targetSq=m.cat==='Elastomer'?(isDynamic?18:22):m.cat==='PTFE'?(isDynamic?20:30):m.cat==='Flexible Graphite'?(isDynamic?25:35):m.cat==='Compressed Fiber'?(isDynamic?12:18):m.cat.includes('Metallic')||m.cat==='Semi-Metallic'?(isDynamic?8:12):(isDynamic?15:25);
+const minSq=m.cat==='Elastomer'?10:m.cat==='PTFE'?12:m.cat==='Flexible Graphite'?15:m.cat==='Compressed Fiber'?7:m.cat.includes('Metallic')?5:8;
+const maxSq=m.cat==='Elastomer'?30:m.cat==='PTFE'?40:m.cat==='Flexible Graphite'?45:m.cat==='Compressed Fiber'?25:m.cat.includes('Metallic')?15:35;
+const chDepth=gkT*(1-targetSq/100);
+const lateralExp=m.compressibility>30?1.08:m.compressibility>15?1.05:1.03;
+const chWidth=gkW*lateralExp+0.5;
+const actualSq=((gkT-chDepth)/gkT*100);
+const sealArea=Math.PI/4*(gkOD*gkOD-gkID*gkID);
+const gasketStress=boltLoad*1000/sealArea;
+const residualStress=gasketStress*(1-m.creep/100);
+const tempOk=temp>=m.temp_min&&temp<=m.temp_max;
+const pressOk=press<=m.pressure_max;
+const stressData=[];
+for(let sq=0;sq<=50;sq+=1){
+const strain=sq/100;
+const E_eff=m.cat==='Elastomer'?(m.shore_a>0?0.0981*(56+7.62*m.shore_a)/(0.138*(254-2.54*m.shore_a)):5)*(1+2*strain*strain):m.cat==='PTFE'?400*(1+3*strain*strain):m.cat==='Flexible Graphite'?200*(1+5*strain*strain):m.cat==='Compressed Fiber'?800*(1+2*strain*strain):1500*(1+strain*strain);
+const stress=E_eff*strain;
+stressData.push([sq,stress]);
+}
+const warnings=[],recs=[];
+if(!tempOk)warnings.push('Temperature '+temp+'°C exceeds material range ('+m.temp_min+' to '+m.temp_max+'°C)');
+if(!pressOk)warnings.push('Pressure '+press+' MPa exceeds max rated '+m.pressure_max+' MPa');
+if(actualSq<minSq)warnings.push('Squeeze '+actualSq.toFixed(1)+'% below minimum '+minSq+'% — risk of leakage');
+if(actualSq>maxSq)warnings.push('Squeeze '+actualSq.toFixed(1)+'% exceeds maximum '+maxSq+'% — risk of over-compression');
+if(residualStress<press)warnings.push('Residual gasket stress ('+residualStress.toFixed(1)+' MPa) below system pressure — bolts may be insufficient');
+if(m.creep>20)recs.push('Material has high creep ('+m.creep+'%) — consider retorquing after thermal cycling');
+if(isDynamic&&m.recovery<40)recs.push('Low recovery ('+m.recovery+'%) may cause leaks under cyclic loading');
+if(press>m.pressure_max*0.8)recs.push('Operating near max pressure — consider upsizing or thicker gasket');
+recs.push('Target flange finish: Ra ≤ '+m.finish_ra_ideal+' µin ('+(m.finish_ra_ideal*0.0254).toFixed(1)+' µm)');
+recs.push('Acceptable flange finish: Ra ≤ '+m.finish_ra_max+' µin ('+(m.finish_ra_max*0.0254).toFixed(1)+' µm)');
+const items=[
+{l:'CHANNEL DEPTH',v:chDepth.toFixed(2)+' mm'},
+{l:'CHANNEL WIDTH',v:chWidth.toFixed(2)+' mm'},
+{l:'TARGET SQUEEZE',v:targetSq+'%'},
+{l:'ACTUAL SQUEEZE',v:actualSq.toFixed(1)+'%',c:actualSq>=minSq&&actualSq<=maxSq?'ok':'warn'},
+{l:'GASKET AREA',v:(sealArea).toFixed(0)+' mm²'},
+{l:'BOLT STRESS ON GASKET',v:gasketStress.toFixed(1)+' MPa'},
+{l:'RESIDUAL (POST-CREEP)',v:residualStress.toFixed(1)+' MPa',c:residualStress>press?'ok':'err'},
+{l:'LATERAL EXPANSION',v:((lateralExp-1)*100).toFixed(0)+'%'},
+{l:'TEMP CHECK',v:tempOk?'OK':'FAIL',c:tempOk?'ok':'err'},
+{l:'PRESSURE CHECK',v:pressOk?'OK':'FAIL',c:pressOk?'ok':'err'},
+];
+let html=`<h3>CHANNEL DIMENSIONS — ${m.name}</h3><div class="result-grid">${items.map(x=>`<div class="result-item"><div class="lbl">${x.l}</div><div class="val${x.c?' '+x.c:''}">${x.v}</div></div>`).join('')}</div>`;
+if(warnings.length)html+='<div style="margin-top:.75rem">'+warnings.map(w=>`<div class="tag tag-warn" style="display:block;margin:2px 0">${w}</div>`).join('')+'</div>';
+if(recs.length)html+='<div style="margin-top:.5rem">'+recs.map(r=>`<div class="tag tag-ok" style="display:block;margin:2px 0">${r}</div>`).join('')+'</div>';
+$('#gk-results').innerHTML=html;
+const finishMap={'Elastomer':{name:'Ground/Lapped',ra:'16-32 µin (0.4-0.8 µm)',method:'Mechanical grinding or lapping. No concentric tooling marks.',notes:'Soft elastomers conform well but scratches create leak paths.'},'PTFE':{name:'Machine Finish (Phonographic)',ra:'32-63 µin (0.8-1.6 µm)',method:'Concentric serrated or phonographic spiral finish per ASME B16.5.',notes:'PTFE flows into grooves under load. Spiral grooves aid sealing.'},'Flexible Graphite':{name:'Serrated / Stock Finish',ra:'63-125 µin (1.6-3.2 µm)',method:'Standard serrated finish or stock lathe finish.',notes:'Graphite sheets are soft and compressible — tolerate rougher surfaces.'},'Compressed Fiber':{name:'Stock Finish',ra:'63-250 µin (1.6-6.3 µm)',method:'Standard machined finish. Avoid spiral grooves for thin sheets.',notes:'Fiber gaskets handle rougher surfaces but thinner sheets need finer finish.'},'Semi-Metallic':{name:'Serrated Finish',ra:'63-125 µin (1.6-3.2 µm)',method:'Concentric serrated per ASME PCC-1. 30-55 grooves/inch.',notes:'Spiral wound requires proper gasket seating stress (min 68 MPa for SS/graphite).'},'Metallic':{name:'Mirror / Lapped',ra:'32-63 µin (0.8-1.6 µm)',method:'Precision lapping or grinding. RTJ grooves per API 6A.',notes:'Metal-to-metal contact requires very smooth surfaces for seal.'},'Composite':{name:'Stock / Rough OK',ra:'125-500 µin (3.2-12.5 µm)',method:'Standard machined or as-cast surfaces acceptable.',notes:'Cork/fiber composites are highly conformable.'}};
+const fin=finishMap[m.cat]||finishMap['Compressed Fiber'];
+$('#gk-finish-rec').innerHTML=`<h3>SURFACE FINISH — ${fin.name.toUpperCase()}</h3><div class="result-grid">
+<div class="result-item"><div class="lbl">TARGET Ra</div><div class="val ok">${fin.ra}</div></div>
+<div class="result-item"><div class="lbl">METHOD</div><div class="val" style="font-size:.8rem">${fin.method}</div></div>
+</div><div style="margin-top:.5rem;font-size:.75rem;color:var(--dim)">${fin.notes}</div>`;
+const traces=[{x:stressData.map(d=>d[0]),y:stressData.map(d=>d[1]),type:'scatter',mode:'lines',name:'Stress',fill:'tozeroy',fillcolor:'rgba(255,107,53,0.08)',line:{color:'#ff6b35',width:2.5,shape:'spline'},hovertemplate:'Squeeze = %{x}%<br>Stress = %{y:.1f} MPa<extra></extra>'}];
+traces.push({x:[actualSq],y:[stressData.find(d=>Math.abs(d[0]-Math.round(actualSq))<1)?stressData.find(d=>Math.abs(d[0]-Math.round(actualSq))<1)[1]:0],type:'scatter',mode:'markers',name:'Operating',marker:{color:'#00ff9d',size:12,symbol:'diamond',line:{color:'#fff',width:2}}});
+Plotly.react('gk-chart',traces,Object.assign({},pLayout,{title:{text:'GASKET COMPRESSION STRESS',font:{size:12,color:'#ff6b35',family:'JetBrains Mono'}},shapes:[{type:'rect',x0:minSq,x1:maxSq,y0:0,y1:Math.max(...stressData.map(d=>d[1]))*1.1,fillcolor:'rgba(34,197,94,0.12)',line:{width:0}},{type:'line',x0:minSq,x1:minSq,y0:0,y1:Math.max(...stressData.map(d=>d[1]))*1.1,line:{color:'#22c55e',width:1,dash:'dash'}},{type:'line',x0:maxSq,x1:maxSq,y0:0,y1:Math.max(...stressData.map(d=>d[1]))*1.1,line:{color:'#22c55e',width:1,dash:'dash'}}],xaxis:Object.assign({},pLayout.xaxis,{title:{text:'Compression (%)',font:{size:11,color:'#888'}},range:[0,50]}),yaxis:Object.assign({},pLayout.yaxis,{title:{text:'Stress (MPa)',font:{size:11,color:'#888'}}}),showlegend:true,legend:{font:{size:10,color:'#888'},bgcolor:'transparent'},annotations:[{x:(minSq+maxSq)/2,y:Math.max(...stressData.map(d=>d[1]))*0.9,text:'ACCEPTABLE RANGE',showarrow:false,font:{size:9,color:'#22c55e'}}]}),pCfg);
+drawGkProfile(gkW,gkT,chWidth,chDepth,actualSq);
+};
+function drawGkProfile(gkW,gkT,chW,chD,sq){
+const canvas=$('#c-gk-profile');if(!canvas)return;
+const{c,w,h}=hdCanvas(canvas);
+c.clearRect(0,0,w,h);
+const scale=Math.min((w*0.6)/chW,(h*0.5)/gkT);
+const cx=w/2,flangeY=h*0.35;
+c.fillStyle='#334155';c.fillRect(cx-chW/2*scale-40,flangeY,chW*scale+80,15);
+c.fillStyle='rgba(30,41,59,0.95)';c.fillRect(cx-chW/2*scale,flangeY+15,chW*scale,chD*scale);
+c.strokeStyle='#475569';c.lineWidth=1.5;c.strokeRect(cx-chW/2*scale,flangeY+15,chW*scale,chD*scale);
+const compT=gkT*(1-sq/100);
+const gkTop=flangeY+15+chD*scale-compT*scale;
+c.fillStyle='#ff6b3533';c.fillRect(cx-gkW/2*scale,gkTop,gkW*scale,compT*scale);
+c.strokeStyle='#ff6b35';c.lineWidth=2;c.strokeRect(cx-gkW/2*scale,gkTop,gkW*scale,compT*scale);
+c.setLineDash([3,3]);c.strokeStyle='#888';c.lineWidth=1;
+const freeTop=flangeY+15+chD*scale-gkT*scale;
+c.strokeRect(cx-gkW/2*scale,freeTop,gkW*scale,gkT*scale);
+c.setLineDash([]);
+c.fillStyle='#334155';c.fillRect(cx-chW/2*scale-40,flangeY+15+chD*scale,chW*scale+80,15);
+c.fillStyle='#94a3b8';c.font='9px monospace';c.textAlign='center';
+c.fillText('CHANNEL: '+chW.toFixed(1)+' × '+chD.toFixed(1)+' mm',cx,flangeY+15+chD*scale+35);
+c.fillText('GASKET: '+gkW+' × '+gkT+' mm → '+compT.toFixed(2)+' mm compressed',cx,flangeY+15+chD*scale+48);
+c.fillStyle='#666';c.font='8px monospace';
+const dimX=cx+chW/2*scale+15;
+c.beginPath();c.moveTo(dimX,flangeY+15);c.lineTo(dimX,flangeY+15+chD*scale);c.stroke();
+c.fillText(chD.toFixed(2)+' mm',dimX+5,flangeY+15+chD*scale/2+3);
+const dimY=flangeY+15+chD*scale+8;
+c.beginPath();c.moveTo(cx-chW/2*scale,dimY);c.lineTo(cx+chW/2*scale,dimY);c.stroke();
+c.fillText(chW.toFixed(2)+' mm',cx,dimY+10);
+c.fillStyle='#ff6b35';c.font='bold 9px monospace';
+c.fillText('COMPRESSED ('+sq.toFixed(1)+'%)',cx,gkTop-5);
+}
+init();
+const adEl=$('#ad-tx'),adSlot=$('#ad-slot'),adClose=$('#ad-close');
+function initAds(){
+const s=document.createElement('script');
+s.async=true;s.crossOrigin='anonymous';
+s.src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6279792832546496';
+document.head.appendChild(s);
+s.onload=()=>{
+adSlot.innerHTML='<ins class="adsbygoogle" style="display:block;width:300px;height:60px" data-ad-client="ca-pub-6279792832546496" data-ad-slot="1317557576" data-ad-format="horizontal" data-full-width-responsive="false"></ins>';
+try{(window.adsbygoogle=window.adsbygoogle||[]).push({})}catch(e){}
+adEl.classList.remove('hidden');
+};
+s.onerror=()=>{
+adSlot.innerHTML='<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" style="display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--text);font-size:10px;letter-spacing:1px"><span style="font-size:18px">&#9749;</span><span>ENJOY AMNI-CALC?<br><span style="color:#ff5e5b;font-weight:600">SUPPORT THE DEVELOPER</span></span></a>';
+adEl.classList.remove('hidden');
+};
+}
+setTimeout(initAds,2000);
+if(adClose)adClose.onclick=()=>{adEl.classList.add('hidden');setTimeout(()=>adEl.classList.remove('hidden'),120000)};
+</script>
+<div id="ad-tx" class="hidden"><div class="ad-hdr"><span>&#x25C8; engineering datapad</span><button class="ad-x" id="ad-close">&times;</button></div><div class="ad-body" id="ad-slot"></div></div>
+</body>
+</html>

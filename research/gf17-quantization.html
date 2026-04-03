@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>GF(17) Quantization Strategies — Neural Network Weight Compression | AMNI-SCIENT Research</title>
+<meta name="description" content="GF(17) quantization strategies for neural network weight compression: finite-field arithmetic, holographic membrane optimization, LUT-accelerated Lloyd-Max, and GPU-native texture packing. Compared against Google TurboQuant (ICLR 2026).">
+<meta name="keywords" content="GF17,quantization,neural network,weight compression,finite field,holographic membrane,Lloyd-Max,texture packing,TurboQuant,ATRP,AmniTex">
+<meta property="og:title" content="GF(17) Quantization Strategies — AMNI-SCIENT Research">
+<meta property="og:description" content="Finite-field weight compression with distribution-adaptive Membrane codec. Benchmarked against TurboQuant (ICLR 2026).">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://amni-scient.com/research/gf17-quantization">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://amni-scient.com/research/gf17-quantization">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"ScholarlyArticle","name":"GF(17) Quantization Strategies for Neural Network Weight Compression","author":{"@type":"Person","name":"Anthony Reffelt"},"description":"Finite-field quantization codecs using GF(17) arithmetic with holographic membrane optimization. Compared against Google TurboQuant.","url":"https://amni-scient.com/research/gf17-quantization","publisher":{"@type":"Organization","name":"AMNI-SCIENT"},"datePublished":"2026-04-02","license":"https://creativecommons.org/licenses/by/4.0/"}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8345487545441889" crossorigin="anonymous" data-overlays="false"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+<style>
+.eq-block{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:1.5rem 2rem;margin:1.5rem 0;overflow-x:auto}
+.eq-block .eq-label{font-size:.6rem;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:.75rem}
+.derivation-step{border-left:2px solid var(--accent);padding-left:1.5rem;margin:1.5rem 0}
+.derivation-step h4{color:var(--accent);font-size:.8rem;letter-spacing:2px;margin-bottom:.5rem}
+.app-card{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem;margin-bottom:1rem}
+.app-card h4{color:var(--accent);font-size:.85rem;letter-spacing:2px;margin-bottom:.5rem}
+.app-card p{color:var(--dim);font-size:.85rem;line-height:1.7}
+.breadcrumb{font-size:.7rem;letter-spacing:2px;color:var(--dim);margin-bottom:1rem}
+.breadcrumb a{color:var(--accent);text-decoration:none}
+.bench-table{width:100%;border-collapse:collapse;margin:1.5rem 0;font-size:.8rem}
+.bench-table th{text-align:left;color:var(--accent);font-size:.7rem;letter-spacing:1px;padding:.6rem .5rem;border-bottom:2px solid var(--accent);white-space:nowrap}
+.bench-table td{color:var(--dim);padding:.6rem .5rem;border-bottom:1px solid rgba(255,255,255,.05);white-space:nowrap}
+.bench-table tr:hover td{color:var(--text);background:rgba(0,255,157,.03)}
+.bench-table .highlight td{color:var(--text);font-weight:700}
+.bench-table .best{color:var(--accent);font-weight:700}
+.bench-table .baseline td{color:var(--dim);font-style:italic}
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin:1.5rem 0}
+@media(max-width:768px){.compare-grid{grid-template-columns:1fr}}
+.compare-card{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem}
+.compare-card h4{font-size:.85rem;letter-spacing:2px;margin-bottom:.75rem}
+.compare-card ul{list-style:none;padding:0}
+.compare-card li{color:var(--dim);font-size:.8rem;line-height:1.8;padding-left:1.2rem;position:relative}
+.compare-card li::before{content:'▸';position:absolute;left:0;color:var(--accent)}
+.codec-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem;margin:1.5rem 0}
+.codec-card{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.25rem;transition:border-color .3s}
+.codec-card:hover{border-color:var(--accent)}
+.codec-card .codec-tag{font-size:.55rem;letter-spacing:2px;color:var(--dim);text-transform:uppercase;margin-bottom:.4rem}
+.codec-card h4{color:var(--accent);font-size:.9rem;letter-spacing:1px;margin-bottom:.5rem}
+.codec-card p{color:var(--dim);font-size:.8rem;line-height:1.6}
+.codec-card .codec-stats{display:flex;gap:.75rem;margin-top:.75rem;flex-wrap:wrap}
+.codec-card .codec-stat{font-size:.7rem;padding:.2rem .5rem;border:1px solid var(--border);border-radius:3px;color:var(--text);letter-spacing:.5px}
+.codec-card .codec-stat strong{color:var(--accent)}
+.license-box{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem;margin:1.5rem 0;text-align:center}
+.license-box .cc-icon{font-size:2rem;margin-bottom:.5rem}
+.license-box p{color:var(--dim);font-size:.8rem;line-height:1.7}
+.license-box a{color:var(--accent)}
+.viz-section{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem;margin:1.5rem 0}
+.viz-section h4{color:var(--accent);font-size:.75rem;letter-spacing:2px;margin-bottom:1rem;text-transform:uppercase}
+.viz-canvas-wrap{position:relative;width:100%;max-width:700px;margin:0 auto}
+.scenario-table{width:100%;border-collapse:collapse;margin:1.5rem 0;font-size:.8rem}
+.scenario-table th{text-align:left;color:var(--accent);font-size:.7rem;letter-spacing:1px;padding:.6rem .5rem;border-bottom:1px solid var(--border)}
+.scenario-table td{color:var(--dim);padding:.6rem .5rem;border-bottom:1px solid rgba(255,255,255,.05)}
+.scenario-table td:nth-child(2){color:var(--text);font-weight:700}
+</style>
+</head>
+<body>
+<div class="grid-bg"></div>
+<div class="scanlines"></div>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<div class="nav-dd">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu">
+<a href="../amni-haven.html">AMNI-HAVEN</a>
+<a href="../amni-crypt.html">AMNI-CRYPT</a>
+<a href="../amni-ai.html">AMNI-AI</a>
+<a href="../amni-code.html">AMNI-CODE</a>
+<a href="../amni-core.html">AMNI-CORE</a>
+<a href="../amni-explore.html">AMNI-EXPLORE</a>
+<a href="../amni-learn.html">AMNI-LEARN</a>
+<a href="../calc/">AMNI-CALC</a>
+</div>
+</div>
+<a href="../research.html" class="nav-active">RESEARCH</a>
+<a href="../about.html">ABOUT</a>
+<a href="../faq.html">FAQ</a>
+<a href="../privacy.html">PRIVACY</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<section class="hero" style="min-height:auto;padding:8rem 2rem 3rem">
+<div class="breadcrumb"><a href="../research.html">RESEARCH</a> &nbsp;/&nbsp; GF(17) QUANTIZATION</div>
+<h1>GF(17) QUANTIZATION</h1>
+<p class="subtitle">NEURAL NETWORK WEIGHT COMPRESSION VIA FINITE-FIELD ARITHMETIC</p>
+<p class="tagline">Distribution-adaptive codecs using Galois field GF(17), holographic membrane optimization, and GPU texture-unit acceleration &mdash; benchmarked against TurboQuant (ICLR 2026).</p>
+</section>
+<section>
+<div class="license-box">
+<div class="cc-icon">&#9400;</div>
+<p>This work is licensed under <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">Creative Commons Attribution 4.0 International (CC BY 4.0)</a>.<br>You are free to share and adapt this material for any purpose, provided appropriate credit is given.</p>
+<p style="margin-top:.75rem;font-size:.7rem;color:var(--dim)">Reffelt, A. (2026). <em>GF(17) Quantization Strategies for Neural Network Weight Compression.</em> AMNI-SCIENT.</p>
+</div>
+</section>
+<section>
+<h2>ABSTRACT</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
+<p>We present a family of quantization strategies built on arithmetic in the Galois field <strong style="color:var(--text)">GF(17)</strong> for compressing neural network weight matrices. Unlike conventional methods operating in floating-point or power-of-two integer domains, our approach maps weights into a prime finite field where all arithmetic &mdash; addition, multiplication, and inversion &mdash; is <strong style="color:var(--text)">exact and drift-free</strong>.</p>
+<p style="margin-top:1.2rem">We introduce five complementary codecs spanning 2-bit to 16-bit operating points: <em>GF(17) Legendre 4-bit</em>, <em>Contextual GF(17)</em>, <em>Membrane GF(17)</em>, <em>ATRP</em>, and <em>AmniTex Progressive</em>. The <strong style="color:var(--text)">Membrane GF(17)</strong> codec &mdash; derived from our <a href="holographic-membrane.html">Holographic Resistance Membrane</a> framework &mdash; achieves cosine similarity <strong style="color:var(--accent)">0.939 at 4 bits/element</strong> on heavy-tail distributions (2.5&times; improvement over uniform quantization), encoding in 17ms via a 65K LUT-optimized Lloyd-Max refinement.</p>
+<p style="margin-top:1.2rem">We compare against Google&rsquo;s <strong style="color:var(--text)">TurboQuant</strong> (ICLR 2026) and related methods (QJL, PolarQuant), demonstrating complementary strengths: TurboQuant excels at online KV-cache compression with provable distortion bounds, while GF(17) strategies offer exact arithmetic, GPU texture-unit acceleration, and progressive decoding for persistent weight storage.</p>
+</div>
+</section>
+<section>
+<h2>WHY GF(17)?</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
+<p>The choice of prime <strong style="color:var(--text)">p = 17</strong> is deliberate. The 17 values {0, &hellip;, 16} yield a complete finite field where every non-zero element has a multiplicative inverse. The Legendre symbol partitions GF(17)\{0} into 8 quadratic residues and 8 non-residues, enabling bijective <strong style="color:var(--text)">4-bit packing</strong> (4.09 bits compressed to exactly 4.0).</p>
+</div>
+<div class="features-2x2" style="max-width:800px;margin:1.5rem auto 0">
+<div class="feature" style="text-align:left;padding:1rem 1.5rem;background:var(--panel);border:1px solid var(--border);border-radius:8px">
+<h4>EXACT ARITHMETIC</h4>
+<p>All operations &mdash; add, multiply, invert &mdash; are exact in mod-17. No rounding, no accumulation error, no drift over arbitrarily long computations.</p>
+</div>
+<div class="feature" style="text-align:left;padding:1rem 1.5rem;background:var(--panel);border:1px solid var(--border);border-radius:8px">
+<h4>TMU ACCELERATION</h4>
+<p>Values 0&ndash;16 map to a 17-texel 1D texture. GPU texture-mapping units perform bilinear interpolation for free &mdash; dedicated silicon, zero ALU cost.</p>
+</div>
+<div class="feature" style="text-align:left;padding:1rem 1.5rem;background:var(--panel);border:1px solid var(--border);border-radius:8px">
+<h4>PROGRESSIVE REFINEMENT</h4>
+<p>Multi-layer residuals compose coherently in the same field. Decode at any layer for quality/speed tradeoff &mdash; from 2-bit preview to 16-bit exact.</p>
+</div>
+<div class="feature" style="text-align:left;padding:1rem 1.5rem;background:var(--panel);border:1px solid var(--border);border-radius:8px">
+<h4>ZERO DRIFT</h4>
+<p>Cumulative sums cycle within {0, &hellip;, 16}. Linear attention accumulations stay exact regardless of sequence length. fp16 drifts; GF(17) doesn&rsquo;t.</p>
+</div>
+</div>
+</section>
+<section>
+<h2>CODEC FAMILY</h2>
+<div class="codec-grid" style="max-width:900px;margin:0 auto">
+<div class="codec-card">
+<div class="codec-tag">BASELINE &bull; 4-BIT</div>
+<h4>GF(17) LEGENDRE</h4>
+<p>Uniform min-max quantization to {0&hellip;16} with Legendre-symbol packing. Fastest encode (3ms) but collapses on heavy-tail data.</p>
+<div class="codec-stats">
+<span class="codec-stat"><strong>4.0</strong> bits/e</span>
+<span class="codec-stat"><strong>3ms</strong> enc</span>
+<span class="codec-stat"><strong>0.98</strong> cs (normal)</span>
+</div>
+</div>
+<div class="codec-card">
+<div class="codec-tag">CONTEXTUAL &bull; 5-BIT</div>
+<h4>CTX GF(17) 2&sigma;</h4>
+<p>Two-segment quantization: inner 2&sigma; and outer tails quantized independently. Better tail coverage at slight overhead.</p>
+<div class="codec-stats">
+<span class="codec-stat"><strong>5.2</strong> bits/e</span>
+<span class="codec-stat"><strong>8ms</strong> enc</span>
+<span class="codec-stat"><strong>0.997</strong> cs (normal)</span>
+</div>
+</div>
+<div class="codec-card" style="border-color:var(--accent)">
+<div class="codec-tag">DISTRIBUTION-ADAPTIVE &bull; 4-BIT</div>
+<h4>MEMBRANE GF(17)</h4>
+<p>Holographic resistance field steers quantization boundaries toward stable regions. LUT-optimized Lloyd-Max achieves 13&times; speedup. Excels on heavy tails.</p>
+<div class="codec-stats">
+<span class="codec-stat"><strong>4.0</strong> bits/e</span>
+<span class="codec-stat"><strong>17ms</strong> enc</span>
+<span class="codec-stat"><strong>0.939</strong> cs (heavy-tail)</span>
+</div>
+</div>
+<div class="codec-card">
+<div class="codec-tag">PROGRESSIVE &bull; 2&ndash;16 BIT</div>
+<h4>ATRP</h4>
+<p>Adaptive Texture Residual Packing. Layer-by-layer residual encoding in GF(17). At 4 layers &times; 4 bits = 16b, achieves bit-exact reconstruction (SNR 85dB).</p>
+<div class="codec-stats">
+<span class="codec-stat"><strong>2&ndash;16</strong> bits/e</span>
+<span class="codec-stat"><strong>7ms</strong> enc (4L)</span>
+<span class="codec-stat"><strong>1.000</strong> cs (4&times;4L)</span>
+</div>
+</div>
+<div class="codec-card">
+<div class="codec-tag">MULTI-RESOLUTION &bull; 16-BIT</div>
+<h4>AMNITEX PROGRESSIVE</h4>
+<p>Coarse-to-fine hierarchy with 4 resolution levels. Full progressive decode &mdash; stop at any level for LOD rendering.</p>
+<div class="codec-stats">
+<span class="codec-stat"><strong>16.0</strong> bits/e</span>
+<span class="codec-stat"><strong>18ms</strong> enc</span>
+<span class="codec-stat"><strong>1.000</strong> cs (normal)</span>
+</div>
+</div>
+<div class="codec-card" style="border-color:rgba(1,163,164,.5)">
+<div class="codec-tag">MEMBRANE + PROGRESSIVE &bull; 16-BIT</div>
+<h4>MEMBRANE &times;4L</h4>
+<p>Membrane GF(17) applied at each progressive depth. Best heavy-tail progressive: 0.996 CosSim at 16 bits.</p>
+<div class="codec-stats">
+<span class="codec-stat"><strong>16.0</strong> bits/e</span>
+<span class="codec-stat"><strong>69ms</strong> enc</span>
+<span class="codec-stat"><strong>0.996</strong> cs (heavy-tail)</span>
+</div>
+</div>
+</div>
+</section>
+<section>
+<h2>MEMBRANE M6 &mdash; CORE ALGORITHM</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
+<p>The Membrane codec applies Equation M6 (probability deposition) from the <a href="holographic-membrane.html">Holographic Resistance Membrane</a> framework. Instead of uniform bin spacing, it models a resistance field derived from local variance in the data distribution:</p>
+<div class="eq-block">
+<div class="eq-label">EQUATION M6 &mdash; RESISTANCE WEIGHTING</div>
+$$w(x) = \frac{h(x)}{1 + 3\,R(x)} \qquad R(x) = \frac{\text{Var}_{\text{local}}(h)}{\max(\text{Var}_{\text{local}}(h))}$$
+</div>
+<p>High-variance regions (distribution tails, peaks) generate high resistance <em>R</em>, causing their weight <em>w</em> to decrease. This steers quantization boundaries toward <strong style="color:var(--text)">stable, high-density regions</strong> where precision yields the greatest cosine similarity gain.</p>
+<div class="derivation-step">
+<h4>STEP 1 &mdash; HISTOGRAM &amp; RESISTANCE FIELD</h4>
+<p>Compute a 256-bin histogram of the weight distribution. Apply a sliding kernel (width k = max(3, 256/32) = 8) to estimate local mean and variance. Normalize variance to [0, 1] to form the resistance field R(x).</p>
+</div>
+<div class="derivation-step">
+<h4>STEP 2 &mdash; WEIGHTED CDF BOUNDARY PLACEMENT</h4>
+<p>Compute the CDF of the resistance-weighted histogram w(x). Place 17 boundaries at evenly-spaced CDF quantiles. These initial boundaries already cluster in low-variance regions.</p>
+</div>
+<div class="derivation-step">
+<h4>STEP 3 &mdash; HISTOGRAM-BASED LLOYD-MAX (10 ITERATIONS)</h4>
+<p>Refine boundaries using Lloyd-Max iteration on the 256 bin centers (not the raw 800K values). Each iteration: assign bins to nearest centroid, recompute centroids from bin-weighted sums. Cost: 0.1ms total for 10 iterations.</p>
+</div>
+<div class="derivation-step">
+<h4>STEP 4 &mdash; 65K LUT REFINEMENT (10 ITERATIONS)</h4>
+<p>Build a 65,536-entry lookup table mapping the value range to bin indices. Run 10 more Lloyd iterations on the LUT &mdash; each iteration operates on 65K entries instead of 800K raw values. The LUT provides higher resolution than the 256-bin histogram while remaining orders of magnitude faster than raw-data passes.</p>
+</div>
+<div class="derivation-step">
+<h4>STEP 5 &mdash; FINAL QUANTIZATION &amp; PACKING</h4>
+<p>Map each raw value to its LUT index, look up the pre-computed quantization assignment, and Legendre-pack to 4 bits/element.</p>
+</div>
+<p style="margin-top:1.5rem">The LUT optimization (v3.108.0) replaced <code style="background:rgba(0,0,0,.3);padding:.1rem .3rem;border-radius:3px;font-size:.85em">searchsorted</code> on 800K elements per Lloyd iteration (~4ms each, 150ms total) with operations on a 65K LUT (~0.2ms each), achieving a <strong style="color:var(--accent)">13&times; encode speedup</strong> from 200ms to 17ms while slightly improving quality through the higher-resolution LUT centroid estimates.</p>
+</div>
+</section>
+<section>
+<h2>BENCHMARK RESULTS</h2>
+<div style="max-width:900px;margin:0 auto">
+<h3 style="font-size:.9rem;letter-spacing:2px;color:var(--text);margin-bottom:.5rem">SINGLE-SHOT CODECS &mdash; 4-BIT OPERATING POINT</h3>
+<p style="color:var(--dim);font-size:.8rem;margin-bottom:1rem">802,816 elements (896&times;896 matrix). CPU timing, Python 3.14, NumPy 2.4.3.</p>
+<div style="overflow-x:auto">
+<table class="bench-table">
+<thead>
+<tr><th>Codec</th><th>Bits/e</th><th>Ratio</th><th>Enc (ms)</th><th>Dec (ms)</th><th>CosSim (normal)</th><th>CosSim (heavy-tail)</th><th>SNR (dB)</th></tr>
+</thead>
+<tbody>
+<tr class="baseline"><td>fp16 (baseline)</td><td>16.00</td><td>1.0&times;</td><td>1.2</td><td>0.8</td><td>1.0000</td><td>1.0000</td><td>73.7</td></tr>
+<tr><td>TQ turbo4</td><td>4.25</td><td>3.8&times;</td><td>25.4</td><td>21.5</td><td>0.9914</td><td>0.9907</td><td>17.6</td></tr>
+<tr><td>TQ turbo3</td><td>3.50</td><td>4.6&times;</td><td>26.1</td><td>21.2</td><td>0.9728</td><td>0.9710</td><td>12.5</td></tr>
+<tr><td>GF(17) Leg 4b</td><td>4.00</td><td>4.0&times;</td><td>3.2</td><td>2.0</td><td>0.9843</td><td>0.3732</td><td>14.9</td></tr>
+<tr><td>Ctx GF17 (2&sigma;)</td><td>5.18</td><td>3.1&times;</td><td>8.4</td><td>3.6</td><td>0.9965</td><td>0.7965</td><td>21.5</td></tr>
+<tr class="highlight"><td>Membrane GF17</td><td>4.00</td><td>4.0&times;</td><td>17.3</td><td>2.8</td><td class="best">0.9911</td><td class="best">0.9391</td><td>17.4</td></tr>
+</tbody>
+</table>
+</div>
+<div class="viz-section" style="margin-top:2rem">
+<h4>QUALITY VS. COMPRESSION RATIO (INTERACTIVE)</h4>
+<div class="viz-canvas-wrap">
+<canvas id="chart-quality"></canvas>
+</div>
+</div>
+<h3 style="font-size:.9rem;letter-spacing:2px;color:var(--text);margin:2rem 0 .5rem">PROGRESSIVE CODECS &mdash; 16-BIT OPERATING POINT</h3>
+<div style="overflow-x:auto">
+<table class="bench-table">
+<thead>
+<tr><th>Codec</th><th>Bits/e</th><th>Enc (ms)</th><th>Dec (ms)</th><th>CosSim (normal)</th><th>CosSim (heavy-tail)</th><th>SNR (dB)</th></tr>
+</thead>
+<tbody>
+<tr><td>AmniTex full (4L)</td><td>16.0</td><td>18.2</td><td>8.8</td><td>1.0000</td><td>0.9998</td><td>43.1</td></tr>
+<tr class="highlight"><td>ATRP 4b&times;4L</td><td>16.0</td><td>7.2</td><td>5.4</td><td class="best">1.0000</td><td class="best">1.0000</td><td class="best">84.9</td></tr>
+<tr><td>Tex3D 4-layer</td><td>16.0</td><td>15.0</td><td>8.8</td><td>1.0000</td><td>0.9998</td><td>43.1</td></tr>
+<tr><td>Membrane &times;4L</td><td>16.0</td><td>68.8</td><td>9.4</td><td>0.9999</td><td>0.9957</td><td>37.8</td></tr>
+</tbody>
+</table>
+</div>
+<div class="viz-section" style="margin-top:2rem">
+<h4>HEAVY-TAIL RESILIENCE COMPARISON</h4>
+<div class="viz-canvas-wrap">
+<canvas id="chart-heavytail"></canvas>
+</div>
+</div>
+</div>
+</section>
+<section>
+<h2>HEAVY-TAIL ANALYSIS</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
+<p>Neural network weights &mdash; particularly in attention layers and embedding tables &mdash; frequently exhibit long-tailed distributions where uniform quantization wastes most bins on rare extreme values. The <strong style="color:var(--text)">quality drop from normal to heavy-tail data</strong> reveals a codec&rsquo;s robustness:</p>
+<div style="overflow-x:auto">
+<table class="bench-table" style="max-width:700px;margin:1.5rem auto">
+<thead>
+<tr><th>Codec</th><th>Normal CosSim</th><th>Heavy-Tail CosSim</th><th>&Delta; (quality drop)</th></tr>
+</thead>
+<tbody>
+<tr><td>GF(17) Leg 4b</td><td>0.9843</td><td>0.3732</td><td style="color:#ff4444;font-weight:700">0.611</td></tr>
+<tr><td>TQ turbo4</td><td>0.9914</td><td>0.9907</td><td style="color:var(--accent)">0.001</td></tr>
+<tr><td>Ctx GF17</td><td>0.9965</td><td>0.7965</td><td style="color:#ff8844">0.200</td></tr>
+<tr class="highlight"><td>Membrane GF17</td><td>0.9911</td><td>0.9391</td><td style="color:var(--accent)">0.052</td></tr>
+</tbody>
+</table>
+</div>
+<p>TurboQuant&rsquo;s random rotation preprocessing naturally redistributes tail energy across all coordinates, making it inherently distribution-agnostic (&Delta; = 0.001). The Membrane codec achieves comparable robustness (&Delta; = 0.052) through explicit resistance-field adaptation, while maintaining exact finite-field arithmetic that TurboQuant&rsquo;s continuous-domain approach cannot provide.</p>
+</div>
+</section>
+<section>
+<h2>CUMULATIVE DRIFT</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
+<p>In linear attention mechanisms, key-value pairs accumulate over long sequences. Floating-point representations suffer progressive drift &mdash; GF(17) arithmetic does not:</p>
+<div style="overflow-x:auto">
+<table class="bench-table" style="max-width:500px;margin:1.5rem auto">
+<thead>
+<tr><th>Sequence Step</th><th>fp16 RMSE</th><th>GF(17) Drift</th></tr>
+</thead>
+<tbody>
+<tr><td>512</td><td>0.000760</td><td class="best">0 (exact)</td></tr>
+<tr><td>1,024</td><td>0.001482</td><td class="best">0 (exact)</td></tr>
+<tr><td>2,048</td><td>0.003029</td><td class="best">0 (exact)</td></tr>
+<tr><td>4,096</td><td>0.006138</td><td class="best">0 (exact)</td></tr>
+</tbody>
+</table>
+</div>
+<p>GF(17) operations cycle within {0, &hellip;, 16} by construction. There is zero accumulation error regardless of sequence length &mdash; a property that floating-point arithmetic fundamentally cannot achieve.</p>
+</div>
+</section>
+<section>
+<h2>VRAM PROJECTIONS</h2>
+<div style="max-width:800px;margin:0 auto">
+<div style="overflow-x:auto">
+<table class="bench-table">
+<thead>
+<tr><th>Model</th><th>fp16</th><th>TQ turbo4</th><th>GF(17) Leg 4b</th><th>GF(17) + TQ KV</th></tr>
+</thead>
+<tbody>
+<tr><td>Qwen-0.5B</td><td>1,164 MB</td><td>1,035 MB</td><td class="best">291 MB</td><td class="best">291 MB</td></tr>
+<tr><td>Qwen-3B</td><td>7,208 MB</td><td>6,321 MB</td><td class="best">1,802 MB</td><td class="best">1,802 MB</td></tr>
+<tr><td>Qwen-7B</td><td>15,879 MB</td><td>14,499 MB</td><td class="best">3,970 MB</td><td class="best">3,970 MB</td></tr>
+</tbody>
+</table>
+</div>
+<p style="color:var(--dim);font-size:.8rem;margin-top:1rem;text-align:center">GF(17) compresses weights 4&times; independently of any activation-side compression. Combined with TurboQuant KV-cache compression = best of both.</p>
+</div>
+</section>
+<section>
+<h2>COMPARISON WITH TURBOQUANT</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
+<p>The two approaches are <strong style="color:var(--text)">complementary rather than competing</strong>. They target different components of the inference pipeline:</p>
+</div>
+<div class="compare-grid" style="max-width:800px;margin:1.5rem auto 0">
+<div class="compare-card">
+<h4 style="color:#ff6b6b">TURBOQUANT / QJL / POLARQUANT</h4>
+<ul>
+<li>Targets <strong style="color:var(--text)">KV-cache activations</strong> (online, streaming)</li>
+<li>Data-oblivious random rotation preprocessing</li>
+<li>Provable near-optimal distortion rate (&asymp;2.7&times; of lower bound)</li>
+<li>1-bit QJL residual for unbiased inner-product estimation</li>
+<li>8&times; speedup on H100 GPUs via CUDA kernels</li>
+<li>Quality-neutral at 3.5 bits/channel</li>
+<li>Continuous floating-point domain</li>
+</ul>
+</div>
+<div class="compare-card">
+<h4 style="color:var(--accent)">GF(17) STRATEGIES (THIS WORK)</h4>
+<ul>
+<li>Targets <strong style="color:var(--text)">model weights</strong> (offline, persistent storage)</li>
+<li>Distribution-adaptive Membrane resistance field</li>
+<li>Exact finite-field arithmetic (zero drift by construction)</li>
+<li>Progressive decode: 2-bit preview to 16-bit exact</li>
+<li>GPU texture-unit acceleration (free bilinear MACs)</li>
+<li>ATRP 4b&times;4L: bit-exact at 16 bits (SNR 85dB)</li>
+<li>Discrete algebraic domain (mod-17)</li>
+</ul>
+</div>
+</div>
+</section>
+<section>
+<h2>WHERE EACH APPROACH SHINES</h2>
+<div style="max-width:800px;margin:0 auto">
+<table class="scenario-table">
+<thead>
+<tr><th>Scenario</th><th>Best Approach</th><th>Rationale</th></tr>
+</thead>
+<tbody>
+<tr><td>KV-cache compression (online inference)</td><td>TurboQuant</td><td>Data-oblivious, provable bounds, H100 CUDA kernels</td></tr>
+<tr><td>Weight storage &amp; loading</td><td>GF(17) Leg 4b</td><td>4&times; compression, exact field, 3ms encode, TMU compatible</td></tr>
+<tr><td>Heavy-tail weight distributions</td><td>Membrane GF(17)</td><td>Distribution-adaptive, 0.939 vs. 0.373 (uniform) at 4 bits</td></tr>
+<tr><td>Progressive level-of-detail</td><td>ATRP / AmniTex</td><td>Multi-layer GF(17) residuals, stop at any layer</td></tr>
+<tr><td>Long-sequence linear attention</td><td>GF(17) cumulative</td><td>Zero drift, exact mod-17 arithmetic at any sequence length</td></tr>
+<tr><td>Lossless at minimum bits</td><td>ATRP 4b&times;4L</td><td>Bit-exact reconstruction, SNR 85dB, 16 bits in algebra-exact field</td></tr>
+<tr><td>Combined deployment</td><td>GF(17) weights + TQ KV</td><td>4&times; weight compression + KV-cache compression in parallel</td></tr>
+</tbody>
+</table>
+</div>
+</section>
+<section>
+<h2>LIMITATIONS</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
+<div class="app-card">
+<h4>ENCODE OVERHEAD</h4>
+<p>Membrane GF(17) encodes at 17ms (CPU). TurboQuant reports &ldquo;negligible&rdquo; runtime overhead on H100 GPUs. Direct speed comparison is not meaningful across CPU vs. datacenter GPU.</p>
+</div>
+<div class="app-card">
+<h4>DISTRIBUTION SENSITIVITY</h4>
+<p>Base GF(17) Legendre collapses on heavy-tail data (CosSim 0.37). The Membrane variant solves this but at higher encode cost. TurboQuant&rsquo;s rotation preprocessing handles all distributions uniformly by design.</p>
+</div>
+<div class="app-card">
+<h4>THEORETICAL GAP</h4>
+<p>TurboQuant has formal proofs of near-optimal distortion rates within constant factor of information-theoretic lower bounds. GF(17) codecs are empirically validated but lack equivalent formal analysis.</p>
+</div>
+<div class="app-card">
+<h4>INFERENCE INTEGRATION</h4>
+<p>TurboQuant integrates directly into attention computation. GF(17) weight quantization requires dequantization before standard compute, unless TMU interpolation is used for acceleration.</p>
+</div>
+</div>
+</section>
+<section>
+<h2>RADAR &mdash; MULTI-DIMENSIONAL COMPARISON</h2>
+<div class="viz-section">
+<div class="viz-canvas-wrap" style="max-width:500px">
+<canvas id="chart-radar"></canvas>
+</div>
+</div>
+</section>
+<section>
+<h2>CITATION</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
+<div style="background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:1.2rem 1.5rem;margin-top:1rem;font-family:'JetBrains Mono',monospace;font-size:.75rem;line-height:1.8;color:var(--text)">
+Reffelt, A. (2026). <em>GF(17) Quantization Strategies for Neural Network Weight Compression: Finite-Field Arithmetic, Holographic Membrane Optimization, and GPU-Native Texture Packing.</em> AMNI-SCIENT Technical Report. https://amni-scient.com/research/gf17-quantization
+</div>
+<h3 style="font-size:.85rem;letter-spacing:2px;color:var(--text);margin:2rem 0 .75rem">REFERENCES</h3>
+<ol style="color:var(--dim);font-size:.8rem;line-height:2;padding-left:1.5rem">
+<li>Zandieh, A., Daliri, M., Hadian, M., &amp; Mirrokni, V. (2025). <em>TurboQuant: Online Vector Quantization with Near-optimal Distortion Rate.</em> ICLR 2026. <a href="https://arxiv.org/abs/2504.19874" target="_blank" rel="noopener noreferrer">arXiv:2504.19874</a></li>
+<li>Zandieh, A., Daliri, M., &amp; Han, I. (2024). <em>QJL: 1-Bit Quantized JL Transform for KV Cache Quantization with Zero Overhead.</em> AAAI 2025. <a href="https://arxiv.org/abs/2406.03482" target="_blank" rel="noopener noreferrer">arXiv:2406.03482</a></li>
+<li>Han, I., Kacham, P., Karbasi, A., Mirrokni, V., &amp; Zandieh, A. (2025). <em>PolarQuant: Quantizing KV Caches with Polar Transformation.</em> AISTATS 2026. <a href="https://arxiv.org/abs/2502.02617" target="_blank" rel="noopener noreferrer">arXiv:2502.02617</a></li>
+<li>Reffelt, A. (2019&ndash;2026). <em>Holographic Resistance Membrane.</em> AMNI-SCIENT. <a href="holographic-membrane.html">Framework page</a></li>
+<li>Reffelt, A. (2019&ndash;2026). <em>Toroidal Manifold Geometry.</em> AMNI-SCIENT. <a href="toroidal-manifold.html">Framework page</a></li>
+</ol>
+</div>
+</section>
+<div style="max-width:800px;margin:2rem auto;text-align:center">
+<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8345487545441889" data-ad-slot="1720203631" data-ad-format="auto" data-full-width-responsive="true"></ins>
+<script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>
+</div>
+<footer>
+<div class="footer-links">
+<a href="../about.html">ABOUT</a>
+<a href="../faq.html">FAQ</a>
+<a href="../research.html">RESEARCH</a>
+<a href="../privacy.html">PRIVACY</a>
+<a href="../terms.html">TERMS</a>
+<a href="/">AMNI-SCIENT</a>
+<a href="mailto:amnibro7@gmail.com">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amni-Scient. All rights reserved.</p>
+</footer>
+<script>
+(function(){
+var isDark=function(){return document.documentElement.dataset.theme==='dark'};
+var txtC=function(){return isDark()?'#aaa':'#666'};
+var gridC=function(){return isDark()?'rgba(255,255,255,.08)':'rgba(0,0,0,.08)'};
+var panelC=function(){return isDark()?'#111':'#fff'};
+Chart.defaults.font.family="'JetBrains Mono',monospace";
+Chart.defaults.font.size=10;
+var qCtx=document.getElementById('chart-quality');
+if(qCtx){
+new Chart(qCtx,{type:'scatter',data:{datasets:[
+{label:'fp16',data:[{x:1.0,y:1.0}],backgroundColor:'#666',pointRadius:8,pointStyle:'rectRot'},
+{label:'TQ turbo4',data:[{x:3.76,y:0.9914}],backgroundColor:'#e74c3c',pointRadius:8},
+{label:'TQ turbo3',data:[{x:4.57,y:0.9728}],backgroundColor:'#c0392b',pointRadius:8},
+{label:'GF17 Leg4b',data:[{x:4.0,y:0.9843}],backgroundColor:'#3498db',pointRadius:8},
+{label:'Ctx GF17',data:[{x:3.09,y:0.9965}],backgroundColor:'#2980b9',pointRadius:8},
+{label:'Membrane GF17',data:[{x:4.0,y:0.9911}],backgroundColor:'#00d2d3',pointRadius:10,pointStyle:'triangle'}
+]},options:{responsive:true,plugins:{legend:{labels:{color:txtC(),usePointStyle:true,padding:12}},title:{display:true,text:'Quality vs Compression Ratio (Normal Distribution, 896²)',color:txtC(),font:{size:12}}},scales:{x:{title:{display:true,text:'Compression Ratio (×)',color:txtC()},grid:{color:gridC()},ticks:{color:txtC()},min:0,max:6},y:{title:{display:true,text:'Cosine Similarity',color:txtC()},grid:{color:gridC()},ticks:{color:txtC()},min:0.95,max:1.005}}}});
+}
+var htCtx=document.getElementById('chart-heavytail');
+if(htCtx){
+new Chart(htCtx,{type:'bar',data:{
+labels:['GF17 Leg4b','Ctx GF17','TQ turbo4','TQ turbo3','Membrane GF17'],
+datasets:[
+{label:'Normal',data:[0.9843,0.9965,0.9914,0.9728,0.9911],backgroundColor:'rgba(52,152,219,0.7)',borderColor:'#3498db',borderWidth:1},
+{label:'Heavy-Tail',data:[0.3732,0.7965,0.9907,0.9710,0.9391],backgroundColor:'rgba(0,210,211,0.7)',borderColor:'#00d2d3',borderWidth:1}
+]},options:{responsive:true,plugins:{legend:{labels:{color:txtC()}},title:{display:true,text:'CosSim: Normal vs Heavy-Tail Distribution (4-bit, 896²)',color:txtC(),font:{size:12}}},scales:{x:{ticks:{color:txtC()},grid:{color:gridC()}},y:{title:{display:true,text:'Cosine Similarity',color:txtC()},ticks:{color:txtC()},grid:{color:gridC()},min:0,max:1.1}}}});
+}
+var rCtx=document.getElementById('chart-radar');
+if(rCtx){
+new Chart(rCtx,{type:'radar',data:{
+labels:['Quality\n(CosSim)','Compression\n(Ratio)','Encode\nSpeed','Decode\nSpeed','Heavy-Tail\nResilience','TMU\nCompat','Progressive\nSupport'],
+datasets:[
+{label:'TQ turbo4',data:[0.99,0.6,0.8,0.8,0.99,0.0,0.0],borderColor:'#e74c3c',backgroundColor:'rgba(231,76,60,0.08)',pointBackgroundColor:'#e74c3c',borderWidth:2},
+{label:'GF17 Leg 4b',data:[0.98,0.9,0.85,0.85,0.37,0.9,0.0],borderColor:'#3498db',backgroundColor:'rgba(52,152,219,0.08)',pointBackgroundColor:'#3498db',borderWidth:2},
+{label:'Membrane GF17',data:[0.99,0.9,0.75,0.85,0.94,0.9,1.0],borderColor:'#00d2d3',backgroundColor:'rgba(0,210,211,0.08)',pointBackgroundColor:'#00d2d3',borderWidth:2.5},
+{label:'ATRP 4b×4L',data:[1.0,0.3,0.55,0.6,1.0,1.0,1.0],borderColor:'#9b59b6',backgroundColor:'rgba(155,89,182,0.08)',pointBackgroundColor:'#9b59b6',borderWidth:2}
+]},options:{responsive:true,plugins:{legend:{labels:{color:txtC(),usePointStyle:true,padding:12}}},scales:{r:{angleLines:{color:gridC()},grid:{color:gridC()},pointLabels:{color:txtC(),font:{size:10}},ticks:{display:false},suggestedMin:0,suggestedMax:1.1}}}});
+}
+})();
+</script>
+</body>
+</html>
