@@ -55,6 +55,7 @@
 <a href="amni-core.html">AMNI-CORE</a>
 <a href="amni-explore.html">AMNI-EXPLORE</a>
 <a href="amni-learn.html">AMNI-LEARN</a>
+<a href="calc/">AMNI-CALC</a>
 </div>
 </div>
 <a href="research.html" class="nav-active">RESEARCH</a>
@@ -155,6 +156,32 @@
 <span>UNIVERSAL APPROXIMATION</span>
 </div>
 <a href="research/ground-state-kernel.html" class="btn btn-primary">EXPLORE FRAMEWORK &rarr;</a>
+</div>
+<div class="research-card" style="border-color:rgba(0,210,211,.4)">
+<div class="rc-tag">QUANTIZATION &bull; FINITE FIELD &bull; WEIGHT COMPRESSION</div>
+<h3>GF(17) QUANTIZATION STRATEGIES</h3>
+<p>A family of neural network weight compression codecs built on Galois field GF(17) arithmetic. Features distribution-adaptive Membrane codec (from Holographic Membrane M6), LUT-optimized Lloyd-Max, and progressive ATRP texture packing. Benchmarked against Google TurboQuant (ICLR 2026).</p>
+<div class="rc-eq">w(x) = h(x) / (1 + 3R(x)) &nbsp;&rarr;&nbsp; Lloyd-Max<sub>LUT</sub> &nbsp;&rarr;&nbsp; GF(17) Legendre 4b</div>
+<div class="rc-apps">
+<span>LLM WEIGHT COMPRESSION</span>
+<span>GPU TEXTURE ACCELERATION</span>
+<span>DRIFT-FREE ATTENTION</span>
+<span>PROGRESSIVE LOD</span>
+</div>
+<a href="research/gf17-quantization.html" class="btn btn-primary">EXPLORE FRAMEWORK &rarr;</a>
+</div>
+<div class="research-card" style="border-color:rgba(231,76,60,.5)">
+<div class="rc-tag">QUANTIZATION &bull; VRAM/SSD TIERED &bull; SUB-2-BIT ROUTING</div>
+<h3>AMNITEX RAILGUN</h3>
+<p>Hierarchical VRAM/SSD tiered quantization with variable routing widths (1&ndash;2 bits). Binary 1-bit mode fits a 7B model in 0.88&nbsp;GB VRAM &mdash; a 16&times; reduction. Progressive SSD streaming through GF(17) residuals, 8-bit LUT, and lossless fp16 tiers. <strong style="color:var(--accent)">Full tier is mathematically bit-exact (CS=1.000000).</strong></p>
+<div class="rc-eq">w &rarr; Lloyd(k) &rarr; R[1&ndash;2b VRAM] + G[GF17 SSD] + B[8b SSD] + A[fp16 SSD]</div>
+<div class="rc-apps">
+<span>DATACENTER GPU SAVINGS</span>
+<span>SUB-2-BIT QUANTIZATION</span>
+<span>PROGRESSIVE STREAMING</span>
+<span>LOSSLESS RECOVERY</span>
+</div>
+<a href="research/amnitex-railgun.html" class="btn btn-primary">EXPLORE FRAMEWORK &rarr;</a>
 </div>
 </div>
 </section>
