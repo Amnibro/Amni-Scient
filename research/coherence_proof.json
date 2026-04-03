@@ -1,0 +1,244 @@
+{
+  "model": "Qwen2.5-0.5B-Instruct",
+  "device": "AMD Radeon RX 7800 XT",
+  "pytorch": "2.12.0.dev20260328+rocm7.2",
+  "total_params": 494032768,
+  "n_layers": 290,
+  "bit_exact_layers": 290,
+  "all_exact": true,
+  "all_outputs_match": true,
+  "prompts": [
+    {
+      "prompt": "Explain quantum entanglement in simple terms.",
+      "baseline": "Explain quantum entanglement in simple terms. Quantum entanglement is a phenomenon in quantum mechanics where two or more particles become interconnected in such a way that the state of one particle cannot be described independently of the state of the other, even when the particles are separated by large distances. This means that the state of one particle is dependent on the state of the other, even if they are far apart. For example, if you have two entangled particles, you can measure the state of one particle and instantly know the state of the other, no matter how far apart they are. This is a fundamental property of quantum mechanics and has important implications for our understanding of the universe. It",
+      "roundtrip": "Explain quantum entanglement in simple terms. Quantum entanglement is a phenomenon in quantum mechanics where two or more particles become interconnected in such a way that the state of one particle cannot be described independently of the state of the other, even when the particles are separated by large distances. This means that the state of one particle is dependent on the state of the other, even if they are far apart. For example, if you have two entangled particles, you can measure the state of one particle and instantly know the state of the other, no matter how far apart they are. This is a fundamental property of quantum mechanics and has important implications for our understanding of the universe. It",
+      "match": true
+    },
+    {
+      "prompt": "Write a Python function that checks if a number is prime.",
+      "baseline": "Write a Python function that checks if a number is prime. The function should return `True` if the number is prime and `False` otherwise. A prime number is a natural number greater than 1 that has no positive divisors other than 1 and itself. The function should handle both positive and negative numbers, returning `True` for both positive and negative numbers. Additionally, the function should handle the case where the input is `None` or `0`, returning `False` for these cases.\n\n```python\ndef is_prime(n):\n    \"\"\"\n    Check if the given number is prime.\n    \n    Parameters:\n    n (int): The number to check.\n    \n    Returns:\n   ",
+      "roundtrip": "Write a Python function that checks if a number is prime. The function should return `True` if the number is prime and `False` otherwise. A prime number is a natural number greater than 1 that has no positive divisors other than 1 and itself. The function should handle both positive and negative numbers, returning `True` for both positive and negative numbers. Additionally, the function should handle the case where the input is `None` or `0`, returning `False` for these cases.\n\n```python\ndef is_prime(n):\n    \"\"\"\n    Check if the given number is prime.\n    \n    Parameters:\n    n (int): The number to check.\n    \n    Returns:\n   ",
+      "match": true
+    },
+    {
+      "prompt": "What are the three laws of thermodynamics?",
+      "baseline": "What are the three laws of thermodynamics? The three laws of thermodynamics are:\n\n1. The first law of thermodynamics states that energy cannot be created or destroyed, only transformed from one form to another. This is known as the law of conservation of energy.\n\n2. The second law of thermodynamics states that the total entropy of an isolated system will always increase over time. This is known as the law of entropy production.\n\n3. The third law of thermodynamics states that the entropy of a perfect crystal at absolute zero temperature is zero. This is known as the law of entropy at absolute zero. \n\nThese laws are fundamental to understanding the behavior of energy and matter in the universe",
+      "roundtrip": "What are the three laws of thermodynamics? The three laws of thermodynamics are:\n\n1. The first law of thermodynamics states that energy cannot be created or destroyed, only transformed from one form to another. This is known as the law of conservation of energy.\n\n2. The second law of thermodynamics states that the total entropy of an isolated system will always increase over time. This is known as the law of entropy production.\n\n3. The third law of thermodynamics states that the entropy of a perfect crystal at absolute zero temperature is zero. This is known as the law of entropy at absolute zero. \n\nThese laws are fundamental to understanding the behavior of energy and matter in the universe",
+      "match": true
+    }
+  ],
+  "layer_stats": [
+    {
+      "name": "model.embed_tokens.weight",
+      "n": 136134656,
+      "cs": 1.0010259806852762,
+      "exact": true,
+      "dtype": "torch.float16",
+      "shape": [
+        151936,
+        896
+      ]
+    },
+    {
+      "name": "model.layers.0.self_attn.q_proj.weight",
+      "n": 802816,
+      "cs": 0.9999946133593575,
+      "exact": true,
+      "dtype": "torch.float16",
+      "shape": [
+        896,
+        896
+      ]
+    },
+    {
+      "name": "model.layers.0.self_attn.q_proj.bias",
+      "n": 896,
+      "cs": 1.0000000153728863,
+      "exact": true,
+      "dtype": "torch.float16",
+      "shape": [
+        896
+      ]
+    },
+    {
+      "name": "model.layers.0.self_attn.k_proj.weight",
+      "n": 114688,
+      "cs": 1.0000011091604772,
+      "exact": true,
+      "dtype": "torch.float16",
+      "shape": [
+        128,
+        896
+      ]
+    },
+    {
+      "name": "model.layers.0.self_attn.k_proj.bias",
+      "n": 128,
+      "cs": 1.0000001898877282,
+      "exact": true,
+      "dtype": "torch.float16",
+      "shape": [
+        128
+      ]
+    },
+    {
+      "name": "model.layers.0.self_attn.v_proj.weight",
+      "n": 114688,
+      "cs": 1.0000020287273321,
+      "exact": true,
+      "dtype": "torch.float16",
+      "shape": [
+        128,
+        896
+      ]
+    },
+    {
+      "name": "model.layers.0.self_attn.v_proj.bias",
+      "n": 128,
+      "cs": 1.0000000188618987,
+      "exact": true,
+      "dtype": "torch.float16",
+      "shape": [
+        128
+      ]
+    },
+    {
+      "name": "model.layers.0.self_attn.o_proj.weight",
+      "n": 802816,
+      "cs": 1.0000002866286946,
+      "exact": true,
+      "dtype": "torch.float16",
+      "shape": [
+        896,
+        896
+      ]
+    },
+    {
+      "name": "model.layers.0.mlp.gate_proj.weight",
+      "n": 4358144,
+      "cs": 0.999961793835255,
+      "exact": true,
+      "dtype": "torch.float16",
+      "shape": [
+        4864,
+        896
+      ]
+    },
+    {
+      "name": "model.layers.0.mlp.up_proj.weight",
+      "n": 4358144,
+      "cs": 0.9999576154677369,
+      "exact": true,
+      "dtype": "torch.float16",
+      "shape": [
+        4864,
+        896
+      ]
+    },
+    {
+      "name": "model.layers.0.mlp.down_proj.weight",
+      "n": 4358144,
+      "cs": 0.9999593690403051,
+      "exact": true,
+      "dtype": "torch.float16",
+      "shape": [
+        896,
+        4864
+      ]
+    },
+    {
+      "name": "model.layers.0.input_layernorm.weight",
+      "n": 896,
+      "cs": 0.9999999600456361,
+      "exact": true,
+      "dtype": "torch.float16",
+      "shape": [
+        896
+      ]
+    },
+    {
+      "name": "model.layers.0.post_attention_layernorm.weight",
+      "n": 896,
+      "cs": 1.0000000705616758,
+      "exact": true,
+      "dtype": "torch.float16",
+      "shape": [
+        896
+      ]
+    },
+    {
+      "name": "model.layers.1.self_attn.q_proj.weight",
+      "n": 802816,
+      "cs": 0.9999989570570582,
+      "exact": true,
+      "dtype": "torch.float16",
+      "shape": [
+        896,
+        896
+      ]
+    },
+    {
+      "name": "model.layers.1.self_attn.q_proj.bias",
+      "n": 896,
+      "cs": 0.999999895973496,
+      "exact": true,
+      "dtype": "torch.float16",
+      "shape": [
+        896
+      ]
+    },
+    {
+      "name": "model.layers.1.self_attn.k_proj.weight",
+      "n": 114688,
+      "cs": 1.0000020804065444,
+      "exact": true,
+      "dtype": "torch.float16",
+      "shape": [
+        128,
+        896
+      ]
+    },
+    {
+      "name": "model.layers.1.self_attn.k_proj.bias",
+      "n": 128,
+      "cs": 0.9999999260543324,
+      "exact": true,
+      "dtype": "torch.float16",
+      "shape": [
+        128
+      ]
+    },
+    {
+      "name": "model.layers.1.self_attn.v_proj.weight",
+      "n": 114688,
+      "cs": 1.0000022743074837,
+      "exact": true,
+      "dtype": "torch.float16",
+      "shape": [
+        128,
+        896
+      ]
+    },
+    {
+      "name": "model.layers.1.self_attn.v_proj.bias",
+      "n": 128,
+      "cs": 1.0000000379029526,
+      "exact": true,
+      "dtype": "torch.float16",
+      "shape": [
+        128
+      ]
+    },
+    {
+      "name": "model.layers.1.self_attn.o_proj.weight",
+      "n": 802816,
+      "cs": 0.9999976738826043,
+      "exact": true,
+      "dtype": "torch.float16",
+      "shape": [
+        896,
+        896
+      ]
+    }
+  ]
+}

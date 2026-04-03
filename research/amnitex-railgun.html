@@ -118,8 +118,9 @@
 .mx-slot.rg{background:rgba(0,255,157,.1);border:1px solid var(--accent);color:var(--accent)}
 .mx-vs{font-size:1.5rem;color:var(--accent);font-weight:700;text-align:center}
 @media(max-width:768px){.multiplexing-visual{grid-template-columns:1fr;text-align:center}}
-.redacted{background:var(--border);color:var(--border);border-radius:2px;padding:0 .3rem;cursor:help;transition:all .3s}
-.redacted:hover{color:var(--dim);font-style:italic}
+.redacted{background:var(--border);color:var(--border);border-radius:2px;padding:0 .3rem;cursor:help;transition:all .3s;user-select:none;letter-spacing:1px}
+.redacted:hover{color:var(--dim);font-style:italic;background:rgba(255,255,255,.08)}
+.classified-banner{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(231,76,60,.9);color:#fff;text-align:center;font-size:.6rem;letter-spacing:4px;padding:.35rem 0;font-weight:700;text-transform:uppercase;backdrop-filter:blur(4px)}
 .glow-accent{animation:glowPulse 3s ease-in-out infinite}
 @keyframes glowPulse{0%,100%{box-shadow:0 0 5px rgba(0,255,157,.1)}50%{box-shadow:0 0 20px rgba(0,255,157,.3),0 0 40px rgba(0,255,157,.1)}}
 .infinity-stat{font-size:3rem !important;line-height:1;background:linear-gradient(135deg,var(--accent),#2ecc71);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
@@ -165,6 +166,7 @@
 </style>
 </head>
 <body>
+<div class="classified-banner">PROPRIETARY &bull; SELECTIVE DISCLOSURE &bull; FULL DETAILS AVAILABLE UNDER NDA</div>
 <div class="grid-bg"></div>
 <div class="scanlines"></div>
 <nav>
@@ -204,7 +206,7 @@
 <div style="margin-top:2rem;text-align:center">
 <div class="hero-stat"><span class="val">4&times;</span><span class="lbl">Models per GPU</span></div>
 <div class="hero-stat glow-accent"><span class="val infinity-stat">&infin;</span><span class="lbl">Context stability &bull; proven</span></div>
-<div class="hero-stat"><span class="val">5&times;</span><span class="lbl">Throughput/watt &bull; TMU</span></div>
+<div class="hero-stat"><span class="val">5&times;</span><span class="lbl">Throughput/watt &bull; <span class="redacted" title="Proprietary">[▓▓▓]</span></span></div>
 <div class="hero-stat"><span class="val">$750M</span><span class="lbl">Saved &bull; 100K GPU cluster</span></div>
 <div class="hero-stat"><span class="val">1.000000</span><span class="lbl">Cosine similarity &bull; lossless</span></div>
 </div>
@@ -312,7 +314,7 @@
 </div>
 <div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem">
 <h4 style="color:var(--accent);font-size:.8rem;letter-spacing:2px;margin-bottom:.75rem">DRIFT-FREE ARITHMETIC</h4>
-<p style="color:var(--dim);font-size:.85rem;line-height:1.7">The proprietary encoding uses <strong style="color:var(--text)">cyclic arithmetic over a small finite set of discrete states</strong>. Error accumulation is not &ldquo;very low&rdquo; &mdash; it is <strong style="color:var(--accent)">algebraically impossible</strong>. Tested to 50 million operations with zero drift. fp16 degrades; this can&rsquo;t.</p>
+<p style="color:var(--dim);font-size:.85rem;line-height:1.7">The proprietary encoding uses <strong style="color:var(--text)"><span class="redacted" title="Proprietary">[PROPRIETARY ALGEBRAIC MECHANISM]</span></strong>. Error accumulation is not &ldquo;very low&rdquo; &mdash; it is <strong style="color:var(--accent)">algebraically impossible</strong>. Tested to 50 million operations with zero drift. fp16 degrades; this can&rsquo;t.</p>
 </div>
 <div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem">
 <h4 style="color:var(--accent);font-size:.8rem;letter-spacing:2px;margin-bottom:.75rem">4&times; VRAM MULTIPLEXING</h4>
@@ -330,7 +332,7 @@
 <section>
 <h2>SILICON-LEVEL INNOVATION</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
-<p>Every modern GPU has <strong style="color:var(--text)">dedicated Texture Mapping Units (TMUs)</strong> and a <strong style="color:var(--text)">separate texture cache</strong> that sit completely idle during transformer inference. Railgun activates this dead silicon.</p>
+<p>Every modern GPU has <strong style="color:var(--text)">dedicated <span class="redacted" title="Proprietary">[CLASSIFIED HARDWARE UNITS]</span></strong> and a <strong style="color:var(--text)"><span class="redacted" title="Proprietary">[DEDICATED CACHE PATHWAY]</span></strong> that sit completely idle during transformer inference. Railgun activates this dead silicon.</p>
 <p style="margin-top:1rem;color:var(--accent);font-weight:700">The result: computation that doesn&rsquo;t compete with your existing ALU pipeline.</p>
 </div>
 <div class="silicon-grid">
@@ -339,16 +341,16 @@
 <div class="silicon-pipe"><span class="pipe-block alu">ALU</span><span style="color:var(--dim);font-size:.7rem">&larr; All matmul (FMA ops)</span></div>
 <div class="silicon-pipe"><span class="pipe-block alu">ALU</span><span style="color:var(--dim);font-size:.7rem">&larr; All activations (silu/gelu)</span></div>
 <div class="silicon-pipe"><span class="pipe-block cache">L1/L2</span><span style="color:var(--dim);font-size:.7rem">&larr; Weights + KV cache (shared)</span></div>
-<div class="silicon-pipe"><span class="pipe-block dark">TMU</span><span style="color:var(--dim);font-size:.7rem">&larr; Idle (0% utilization)</span></div>
-<div class="silicon-pipe"><span class="pipe-block dark">TEX CACHE</span><span style="color:var(--dim);font-size:.7rem">&larr; Idle (empty)</span></div>
+<div class="silicon-pipe"><span class="pipe-block dark"><span class="redacted" title="Proprietary">[▓▓▓]</span></span><span style="color:var(--dim);font-size:.7rem">&larr; Idle (0% utilization)</span></div>
+<div class="silicon-pipe"><span class="pipe-block dark"><span class="redacted" title="Proprietary">[▓▓▓▓▓▓]</span></span><span style="color:var(--dim);font-size:.7rem">&larr; Idle (empty)</span></div>
 <p style="font-size:.7rem;color:#e74c3c;margin-top:1rem;letter-spacing:1px">ALL COMPUTE ON ONE PIPELINE &bull; CACHE THRASHING</p>
 </div>
 <div class="silicon-vs">vs</div>
 <div class="silicon-col railgun" style="border-color:var(--accent)">
 <h4>RAILGUN INFERENCE</h4>
-<div class="silicon-pipe"><span class="pipe-block tmu">TMU</span><span style="color:var(--dim);font-size:.7rem">&larr; Weight lookup (LUT-GEMV)</span></div>
-<div class="silicon-pipe"><span class="pipe-block tex">TEX CACHE</span><span style="color:var(--dim);font-size:.7rem">&larr; Weight data (dedicated path)</span></div>
-<div class="silicon-pipe"><span class="pipe-block tmu">DUAL STREAM</span><span style="color:var(--dim);font-size:.7rem">&larr; Prefetch layer N+1</span></div>
+<div class="silicon-pipe"><span class="pipe-block tmu"><span class="redacted" title="Proprietary">[UNIT A]</span></span><span style="color:var(--dim);font-size:.7rem">&larr; <span class="redacted" title="Proprietary">[CLASSIFIED OPERATION]</span></span></div>
+<div class="silicon-pipe"><span class="pipe-block tex"><span class="redacted" title="Proprietary">[UNIT B]</span></span><span style="color:var(--dim);font-size:.7rem">&larr; <span class="redacted" title="Proprietary">[DEDICATED PATHWAY]</span></span></div>
+<div class="silicon-pipe"><span class="pipe-block tmu"><span class="redacted" title="Proprietary">[DUAL PATH]</span></span><span style="color:var(--dim);font-size:.7rem">&larr; Prefetch layer N+1</span></div>
 <div class="silicon-pipe"><span class="pipe-block alu" style="background:rgba(0,255,157,.1);border-color:var(--accent);color:var(--accent)">ALU</span><span style="color:var(--dim);font-size:.7rem">&larr; Accumulate + attention only</span></div>
 <div class="silicon-pipe"><span class="pipe-block cache" style="background:rgba(0,255,157,.1);border-color:var(--accent);color:var(--accent)">L1/L2</span><span style="color:var(--dim);font-size:.7rem">&larr; KV cache only (no weight pressure)</span></div>
 <p style="font-size:.7rem;color:var(--accent);margin-top:1rem;letter-spacing:1px">PARALLEL PIPELINES &bull; ZERO CACHE CONTENTION</p>
@@ -357,24 +359,24 @@
 <div style="max-width:800px;margin:2.5rem auto 0">
 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.25rem">
 <div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem;text-align:center">
-<span style="font-size:1.6rem;font-weight:700;color:var(--accent);display:block">MULTIPLY &rarr; LOOKUP</span>
+<span style="font-size:1.6rem;font-weight:700;color:var(--accent);display:block"><span class="redacted" title="Proprietary">[OPERATION A]</span> &rarr; <span class="redacted" title="Proprietary">[OPERATION B]</span></span>
 <span style="font-size:.65rem;letter-spacing:2px;color:var(--dim);margin-top:.25rem;display:block">FUNDAMENTAL OPERATION SHIFT</span>
-<span style="font-size:.8rem;color:var(--text);display:block;margin-top:.75rem;line-height:1.6">Standard: <code style="color:#e74c3c">a &times; b + c</code> (FMA on ALU)<br>Railgun: <code style="color:var(--accent)">LUT[code]</code> (texture fetch)</span>
+<span style="font-size:.8rem;color:var(--text);display:block;margin-top:.75rem;line-height:1.6">Standard: <code style="color:#e74c3c">a &times; b + c</code> (FMA on ALU)<br>Railgun: <code style="color:var(--accent)"><span class="redacted" title="Proprietary">[CLASSIFIED]</span></code></span>
 </div>
 <div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem;text-align:center">
 <span style="font-size:1.6rem;font-weight:700;color:var(--accent);display:block">0 FLOPs</span>
 <span style="font-size:.65rem;letter-spacing:2px;color:var(--dim);margin-top:.25rem;display:block">MULTIPLICATIONS IN MATMUL</span>
-<span style="font-size:.8rem;color:var(--text);display:block;margin-top:.75rem;line-height:1.6">Matrix-vector multiply becomes table lookups + additions. Zero multiplications needed.</span>
+<span style="font-size:.8rem;color:var(--text);display:block;margin-top:.75rem;line-height:1.6">Matrix-vector multiply becomes <span class="redacted" title="Proprietary">[CLASSIFIED OPERATIONS]</span>. Zero multiplications needed.</span>
 </div>
 <div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem;text-align:center">
 <span style="font-size:1.6rem;font-weight:700;color:var(--accent);display:block">5&times;</span>
 <span style="font-size:.65rem;letter-spacing:2px;color:var(--dim);margin-top:.25rem;display:block">THROUGHPUT PER WATT</span>
-<span style="font-size:.8rem;color:var(--text);display:block;margin-top:.75rem;line-height:1.6">2&times; fewer ops + separate cache + sparsity bypass = ~5&times; efficiency gain for sparse layers.</span>
+<span style="font-size:.8rem;color:var(--text);display:block;margin-top:.75rem;line-height:1.6"><span class="redacted" title="Proprietary">[CLASSIFIED PIPELINE FACTORS]</span> = ~5&times; efficiency gain for sparse layers.</span>
 </div>
 </div>
 </div>
 <div style="max-width:800px;margin:1.5rem auto;padding:1.25rem;background:var(--panel);border-left:3px solid var(--accent);border-radius:0 8px 8px 0">
-<p style="color:var(--text);font-size:.85rem;line-height:1.7"><strong style="color:var(--accent)">Why this matters:</strong> A typical H100 has its TMUs doing <em>absolutely nothing</em> during transformer inference. Railgun&rsquo;s encoding format is designed from the ground up to be read via texture fetch instructions, activating hardware that every competitor leaves dark. This isn&rsquo;t a software optimization &mdash; it&rsquo;s a <strong style="color:var(--text)">hardware-aware architectural shift</strong> that turns idle silicon into free compute.</p>
+<p style="color:var(--text);font-size:.85rem;line-height:1.7"><strong style="color:var(--accent)">Why this matters:</strong> A typical H100 has its <span class="redacted" title="Proprietary">[CLASSIFIED HARDWARE]</span> doing <em>absolutely nothing</em> during transformer inference. Railgun&rsquo;s encoding format is designed from the ground up to <span class="redacted" title="Proprietary">[INTERFACE WITH CLASSIFIED HARDWARE PATH]</span>, activating hardware that every competitor leaves dark. This isn&rsquo;t a software optimization &mdash; it&rsquo;s a <strong style="color:var(--text)">hardware-aware architectural shift</strong> that turns idle silicon into free compute.</p>
 </div>
 </section>
 
@@ -396,7 +398,7 @@
 <!-- TAB: CONTEXT @ SCALE -->
 <div class="tab-panel active" id="tab-context">
 <div style="max-width:800px;margin:0 auto;line-height:1.8;color:var(--dim);font-size:.9rem;margin-bottom:1rem">
-<p><strong style="color:var(--text)">This is the chart that matters.</strong> As context windows push past 256K tokens, fp16 attention quality begins to degrade due to floating-point accumulation error. GPTQ/AWQ start lower and drop faster. Railgun&rsquo;s proprietary encoding maintains <strong style="color:var(--accent)">mathematically perfect fidelity to infinity</strong> because our intermediate arithmetic <strong style="color:var(--text)">operates in a cyclic algebraic structure</strong> where the 18th state doesn&rsquo;t exist. Tested to 50M operations &mdash; cosine similarity identical to 10 decimal places at every step.</p>
+<p><strong style="color:var(--text)">This is the chart that matters.</strong> As context windows push past 256K tokens, fp16 attention quality begins to degrade due to floating-point accumulation error. GPTQ/AWQ start lower and drop faster. Railgun&rsquo;s proprietary encoding maintains <strong style="color:var(--accent)">mathematically perfect fidelity to infinity</strong> because our intermediate arithmetic <strong style="color:var(--text)">operates in a <span class="redacted" title="Proprietary">[PROPRIETARY ALGEBRAIC STRUCTURE]</span></strong> where <span class="redacted" title="Proprietary">[OVERFLOW CONDITION]</span> doesn&rsquo;t exist. Tested to 50M operations &mdash; cosine similarity identical to 10 decimal places at every step.</p>
 </div>
 <div class="viz-section">
 <h4>CONTEXT FIDELITY: 512 TOKENS &rarr; 10M TOKENS</h4>
@@ -576,13 +578,13 @@ SHARED<br>SSD POOL
 <!-- TAB: ALGEBRAIC PROOF -->
 <div class="tab-panel" id="tab-stability">
 <div style="max-width:800px;margin:0 auto;line-height:1.8;color:var(--dim);font-size:.9rem;margin-bottom:1rem">
-<p>Railgun&rsquo;s encoding operates in a <strong style="color:var(--text)">cyclic algebraic structure with a small, fixed number of discrete states</strong>. There is no continuum to drift through. Every arithmetic operation produces one of a finite set of values &mdash; like a clock with a fixed number of positions. <strong style="color:var(--accent)">The next position doesn&rsquo;t exist.</strong></p>
+<p>Railgun&rsquo;s encoding operates in a <strong style="color:var(--text)"><span class="redacted" title="Proprietary">[PROPRIETARY ALGEBRAIC STRUCTURE]</span> with a <span class="redacted" title="Proprietary">[BOUNDED STATE SPACE]</span></strong>. There is no continuum to drift through. Every arithmetic operation produces one of a <span class="redacted" title="Proprietary">[FINITE SET]</span> of values &mdash; like a clock with a fixed number of positions. <strong style="color:var(--accent)">The next position doesn&rsquo;t exist.</strong></p>
 <p style="margin-top:.75rem"><strong style="color:var(--text)">This is not &ldquo;nearly drift-free.&rdquo;</strong> It is mathematically, provably, absolutely impossible for the encoding to accumulate error. We tested it to <strong style="color:var(--accent)">50 million operations</strong>. The result at operation 50,000,000 is identical to operation 1 &mdash; to 10 decimal places.</p>
 </div>
 <div class="proof-box">
 <h3 style="color:var(--accent);font-size:1rem;letter-spacing:3px;margin-bottom:1rem">EMPIRICAL PROOF: ZERO DRIFT</h3>
 <div class="proof-row">
-<div class="proof-stat"><span class="ps-val">50,000,000</span><span class="ps-lbl">Operations Tested</span><span class="ps-detail">Cyclic accumulation, multiply, exponentiation</span></div>
+<div class="proof-stat"><span class="ps-val">50,000,000</span><span class="ps-lbl">Operations Tested</span><span class="ps-detail"><span class="redacted" title="Proprietary">[CLASSIFIED]</span> accumulation, multiply, exponentiation</span></div>
 <div class="proof-stat"><span class="ps-val">IDENTICAL</span><span class="ps-lbl">CS at op 1 vs op 50M</span><span class="ps-detail">0.9872201411 &mdash; same to 10 decimal places</span></div>
 <div class="proof-stat"><span class="ps-val">BIT-EXACT</span><span class="ps-lbl">Roundtrip Fidelity</span><span class="ps-detail">fp16 &amp; fp32 recovered perfectly across all distributions</span></div>
 <div class="proof-stat"><span class="ps-val">100,000</span><span class="ps-lbl">Pack/Unpack Cycles</span><span class="ps-detail">CS unchanged from cycle 1 to cycle 100,000</span></div>
@@ -600,7 +602,7 @@ SHARED<br>SSD POOL
 </div>
 <div class="chart-row">
 <div class="viz-section">
-<h4>TEXTURE MEMORY CYCLE STABILITY (100K CYCLES)</h4>
+<h4><span class="redacted" title="Proprietary">[CLASSIFIED]</span> MEMORY CYCLE STABILITY (100K CYCLES)</h4>
 <div class="chart-wrap"><canvas id="chart-cycle-stability"></canvas></div>
 </div>
 <div class="viz-section">
@@ -653,7 +655,7 @@ SHARED<br>SSD POOL
 <tr><td>Quality (CS)</td><td>0.995</td><td>0.994</td><td>0.989</td><td>~0.993</td><td class="best">1.000000</td></tr>
 <tr><td>Lossless recovery</td><td style="color:#e74c3c">No</td><td style="color:#e74c3c">No</td><td style="color:#e74c3c">No</td><td style="color:#e74c3c">No</td><td class="best">Yes</td></tr>
 <tr><td>Context stability</td><td>Degrades &gt;128K</td><td>Degrades &gt;64K</td><td>Unknown</td><td>Degrades</td><td class="best">&infin; (proven)</td></tr>
-<tr><td>Hardware TMU accel.</td><td style="color:#e74c3c">No</td><td style="color:#e74c3c">No</td><td style="color:#e74c3c">No</td><td style="color:#e74c3c">No</td><td class="best">5&times; throughput/W</td></tr>
+<tr><td>Hardware <span class="redacted" title="Proprietary">[▓▓▓]</span> accel.</td><td style="color:#e74c3c">No</td><td style="color:#e74c3c">No</td><td style="color:#e74c3c">No</td><td style="color:#e74c3c">No</td><td class="best">5&times; throughput/W</td></tr>
 <tr><td>Training compatible</td><td style="color:#e74c3c">Inference only</td><td style="color:#e74c3c">Inference only</td><td style="color:#e74c3c">Inference only</td><td style="color:#e74c3c">Inference only</td><td class="best">Full train loop</td></tr>
 <tr><td>Multi-model/GPU</td><td>Limited</td><td>Limited</td><td>No</td><td>No</td><td class="best">4x per H100</td></tr>
 <tr><td>SSD streaming</td><td style="color:#e74c3c">No</td><td style="color:#e74c3c">No</td><td style="color:#e74c3c">No</td><td style="color:#e74c3c">No</td><td class="best">Progressive tiers</td></tr>
@@ -680,42 +682,42 @@ SHARED<br>SSD POOL
 <div class="training-box after">
 <span class="tb-val">35 GB</span>
 <span class="tb-lbl">70B TRAINING STATE &bull; RAILGUN</span>
-<span class="tb-detail">Routing indices for all three components. Streamed gradients from SSD. <strong>One GPU. Complete state.</strong></span>
+<span class="tb-detail"><span class="redacted" title="Proprietary">[CLASSIFIED ENCODING]</span> for all three components. Streamed gradients from SSD. <strong>One GPU. Complete state.</strong></span>
 </div>
 </div>
 <div style="max-width:800px;margin:0 auto">
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-top:2.5rem">
 <div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem">
 <h4 style="color:var(--accent);font-size:.8rem;letter-spacing:2px;margin-bottom:.75rem">DRIFT-FREE GRADIENT ACCUMULATION</h4>
-<p style="color:var(--dim);font-size:.85rem;line-height:1.7">In fp32, gradient accumulation over millions of steps introduces floating-point drift. In Railgun&rsquo;s encoding, accumulated gradients are <strong style="color:var(--text)">exact within the cyclic structure</strong>. Checkpoint after 10 billion steps &mdash; the state is <strong style="color:var(--text)">identical in fidelity</strong> to step 1. And 16&times; smaller.</p>
+<p style="color:var(--dim);font-size:.85rem;line-height:1.7">In fp32, gradient accumulation over millions of steps introduces floating-point drift. In Railgun&rsquo;s encoding, accumulated gradients are <strong style="color:var(--text)">exact within the <span class="redacted" title="Proprietary">[ALGEBRAIC STRUCTURE]</span></strong>. Checkpoint after 10 billion steps &mdash; the state is <strong style="color:var(--text)">identical in fidelity</strong> to step 1. And 16&times; smaller.</p>
 </div>
 <div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem">
 <h4 style="color:var(--accent);font-size:.8rem;letter-spacing:2px;margin-bottom:.75rem">BOUNDED WEIGHT EVOLUTION</h4>
-<p style="color:var(--dim);font-size:.85rem;line-height:1.7">Each weight element maps to one of a <strong style="color:var(--text)">small finite set of discrete states</strong>. Unlike continuous-space perturbation (where mutations blow up activations), Railgun mutations are <strong style="color:var(--text)">bounded by construction</strong>. The mutation space is finite and locally exhaustible &mdash; enabling evolutionary search previously intractable.</p>
+<p style="color:var(--dim);font-size:.85rem;line-height:1.7">Each weight element maps to one of a <strong style="color:var(--text)"><span class="redacted" title="Proprietary">[BOUNDED STATE SPACE]</span></strong>. Unlike continuous-space perturbation (where mutations blow up activations), Railgun mutations are <strong style="color:var(--text)">bounded by construction</strong>. The mutation space is finite and locally exhaustible &mdash; enabling evolutionary search previously intractable.</p>
 </div>
 <div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem">
-<h4 style="color:var(--accent);font-size:.8rem;letter-spacing:2px;margin-bottom:.75rem">TEXTURE-SPACE CHECKPOINTING</h4>
-<p style="color:var(--dim);font-size:.85rem;line-height:1.7">Model state as texture maps. Checkpoints as texture snapshots. <strong style="color:var(--text)">16&times; smaller with zero fidelity loss.</strong> Save every epoch instead of every 10. Rollback becomes trivial. Branching training runs becomes cheap.</p>
+<h4 style="color:var(--accent);font-size:.8rem;letter-spacing:2px;margin-bottom:.75rem"><span class="redacted" title="Proprietary">[CLASSIFIED]</span>-SPACE CHECKPOINTING</h4>
+<p style="color:var(--dim);font-size:.85rem;line-height:1.7">Model state as <span class="redacted" title="Proprietary">[CLASSIFIED FORMAT]</span>. Checkpoints as <span class="redacted" title="Proprietary">[CLASSIFIED]</span> snapshots. <strong style="color:var(--text)">16&times; smaller with zero fidelity loss.</strong> Save every epoch instead of every 10. Rollback becomes trivial. Branching training runs becomes cheap.</p>
 </div>
 <div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem">
 <h4 style="color:var(--accent);font-size:.8rem;letter-spacing:2px;margin-bottom:.75rem">EVOLUTIONARY MODEL SEARCH</h4>
-<p style="color:var(--dim);font-size:.85rem;line-height:1.7">Combine encoding-space mutations with fitness selection. Graft layers between models. Hybridize architectures. <strong style="color:var(--text)">All in a finite field where every mutation is reversible</strong> and the search space is enumerable. Evolutionary AI with mathematical guarantees.</p>
+<p style="color:var(--dim);font-size:.85rem;line-height:1.7">Combine encoding-space mutations with fitness selection. Graft layers between models. Hybridize architectures. <strong style="color:var(--text)">All in a <span class="redacted" title="Proprietary">[CLASSIFIED ALGEBRAIC DOMAIN]</span> where every mutation is reversible</strong> and the search space is enumerable. Evolutionary AI with mathematical guarantees.</p>
 </div>
 </div>
 </div>
 <div style="max-width:800px;margin:0 auto;margin-top:2.5rem">
 <h3 style="color:var(--accent);font-size:.85rem;letter-spacing:3px;text-align:center;margin-bottom:1.5rem">THE EVOLUTIONARY TRAINING LOOP</h3>
 <div class="evo-flow">
-<div class="evo-step"><span class="es-num">1</span><span class="es-title">ENCODE</span><span class="es-desc">Weights &rarr; routing texture maps</span></div>
-<div class="evo-step"><span class="es-num">2</span><span class="es-title">MUTATE</span><span class="es-desc">Finite-field operators on texture deltas</span></div>
+<div class="evo-step"><span class="es-num">1</span><span class="es-title">ENCODE</span><span class="es-desc">Weights &rarr; <span class="redacted" title="Proprietary">[CLASSIFIED]</span></span></div>
+<div class="evo-step"><span class="es-num">2</span><span class="es-title">MUTATE</span><span class="es-desc"><span class="redacted" title="Proprietary">[CLASSIFIED OPERATORS]</span> on <span class="redacted" title="Proprietary">[CLASSIFIED]</span> deltas</span></div>
 <div class="evo-step"><span class="es-num">3</span><span class="es-title">EVALUATE</span><span class="es-desc">Fitness scoring on validation set</span></div>
 <div class="evo-step"><span class="es-num">4</span><span class="es-title">SELECT</span><span class="es-desc">Survival gate: keep, archive, or discard</span></div>
-<div class="evo-step"><span class="es-num">5</span><span class="es-title">CONSOLIDATE</span><span class="es-desc">Compress learned deltas into texture space</span></div>
+<div class="evo-step"><span class="es-num">5</span><span class="es-title">CONSOLIDATE</span><span class="es-desc">Compress learned deltas into <span class="redacted" title="Proprietary">[CLASSIFIED SPACE]</span></span></div>
 <div class="evo-step"><span class="es-num">6</span><span class="es-title">STREAM</span><span class="es-desc">Updated weights &rarr; VRAM for next generation</span></div>
 </div>
 </div>
 <div style="max-width:800px;margin:2rem auto;padding:1.25rem;background:var(--panel);border-left:3px solid var(--accent);border-radius:0 8px 8px 0">
-<p style="color:var(--text);font-size:.85rem;line-height:1.7"><strong style="color:var(--accent)">The paradigm shift:</strong> Standard evolutionary AI perturbs weights in continuous &Ropf;<sup>70B</sup> space &mdash; astronomically unlikely to find improvements by random search. Railgun operates in a structured finite field where <strong style="color:var(--text)">every single-element mutation can be exhaustively evaluated</strong>. A small finite set of values per weight element. Bounded, reversible, enumerable. Combined with drift-free gradient accumulation and 16&times; smaller checkpoints, this enables an evolutionary training loop that is <strong style="color:var(--accent)">provably convergent</strong> over texture space.</p>
+<p style="color:var(--text);font-size:.85rem;line-height:1.7"><strong style="color:var(--accent)">The paradigm shift:</strong> Standard evolutionary AI perturbs weights in continuous &Ropf;<sup>70B</sup> space &mdash; astronomically unlikely to find improvements by random search. Railgun operates in a <span class="redacted" title="Proprietary">[CLASSIFIED ALGEBRAIC STRUCTURE]</span> where <strong style="color:var(--text)">every single-element mutation can be exhaustively evaluated</strong>. A <span class="redacted" title="Proprietary">[BOUNDED STATE SPACE]</span> per weight element. Bounded, reversible, enumerable. Combined with drift-free gradient accumulation and 16&times; smaller checkpoints, this enables an evolutionary training loop that is <strong style="color:var(--accent)">provably convergent</strong> over <span class="redacted" title="Proprietary">[CLASSIFIED]</span> space.</p>
 </div>
 </section>
 
@@ -857,7 +859,7 @@ SHARED<br>SSD POOL
 <li>Source code for encoder/decoder</li>
 <li>Compression algorithm internals</li>
 <li>Routing layer construction method</li>
-<li>Finite-field encoding parameters</li>
+<li><span class="redacted" title="Proprietary">[▓▓▓▓▓▓▓▓▓▓▓▓]</span> encoding parameters</li>
 <li>Progressive tier refinement logic</li>
 <li>Packing/unpacking implementations</li>
 <li>Any decompilable Python source</li>
@@ -890,7 +892,7 @@ SHARED<br>SSD POOL
 <section>
 <h2>ABOUT THE INVENTOR</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.8;color:var(--dim);font-size:.9rem">
-<p><strong style="color:var(--text)">Anthony Reffelt</strong> is an independent researcher and the sole inventor of AmniTex Railgun. The core insight &mdash; that GF(17)<sup>4</sup> forms a natural lossless encoding for fp16 values, enabling progressive algebraic compression with zero drift &mdash; is his original intellectual contribution.</p>
+<p><strong style="color:var(--text)">Anthony Reffelt</strong> is an independent researcher and the sole inventor of AmniTex Railgun. The core insight &mdash; that <span class="redacted" title="Proprietary">[CLASSIFIED ALGEBRAIC STRUCTURE]</span> forms a natural lossless encoding for fp16 values, enabling progressive algebraic compression with zero drift &mdash; is his original intellectual contribution.</p>
 <p style="margin-top:.75rem">Implementation was accelerated using AI coding tools under <strong style="color:var(--text)">full human conceptual control</strong>. All mathematical foundations, architectural decisions, experimental methodology, and research direction are the original work of the author. The AI assisted with code generation and iteration speed &mdash; the ideas, proofs, and engineering judgment are entirely human.</p>
 <p style="margin-top:.75rem;font-size:.8rem;color:var(--dim)">Contact: <a href="mailto:amnibro7@gmail.com" style="color:var(--accent)">amnibro7@gmail.com</a> &bull; <a href="https://amni-scient.com" style="color:var(--accent)">amni-scient.com</a></p>
 </div>
