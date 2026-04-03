@@ -4,15 +4,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>GF(17) Quantization Strategies — Neural Network Weight Compression | AMNI-SCIENT Research</title>
-<meta name="description" content="GF(17) quantization strategies for neural network weight compression: finite-field arithmetic, holographic membrane optimization, LUT-accelerated Lloyd-Max, and GPU-native texture packing. Compared against Google TurboQuant (ICLR 2026).">
-<meta name="keywords" content="GF17,quantization,neural network,weight compression,finite field,holographic membrane,Lloyd-Max,texture packing,TurboQuant,ATRP,AmniTex">
+<meta name="description" content="GF(17) quantization strategies for neural network weight compression: finite-field arithmetic, proprietary optimization, and hardware-accelerated packing. Compared against Google TurboQuant (ICLR 2026).">
+<meta name="keywords" content="GF17,quantization,neural network,weight compression,finite field,adaptive codec,TurboQuant,ATRP,AmniTex">
 <meta property="og:title" content="GF(17) Quantization Strategies — AMNI-SCIENT Research">
-<meta property="og:description" content="Finite-field weight compression with distribution-adaptive Membrane codec. Benchmarked against TurboQuant (ICLR 2026).">
+<meta property="og:description" content="Finite-field weight compression with distribution-adaptive codec. Benchmarked against TurboQuant (ICLR 2026).">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://amni-scient.com/research/gf17-quantization">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="https://amni-scient.com/research/gf17-quantization">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"ScholarlyArticle","name":"GF(17) Quantization Strategies for Neural Network Weight Compression","author":{"@type":"Person","name":"Anthony Reffelt"},"description":"Finite-field quantization codecs using GF(17) arithmetic with holographic membrane optimization. Compared against Google TurboQuant.","url":"https://amni-scient.com/research/gf17-quantization","publisher":{"@type":"Organization","name":"AMNI-SCIENT"},"datePublished":"2026-04-02","license":"https://creativecommons.org/licenses/by/4.0/"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"ScholarlyArticle","name":"GF(17) Quantization Strategies for Neural Network Weight Compression","author":{"@type":"Person","name":"Anthony Reffelt"},"description":"Finite-field quantization codecs using GF(17) arithmetic with proprietary optimization. Compared against Google TurboQuant.","url":"https://amni-scient.com/research/gf17-quantization","publisher":{"@type":"Organization","name":"AMNI-SCIENT"},"datePublished":"2026-04-02"}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -67,9 +67,13 @@
 .scenario-table th{text-align:left;color:var(--accent);font-size:.7rem;letter-spacing:1px;padding:.6rem .5rem;border-bottom:1px solid var(--border)}
 .scenario-table td{color:var(--dim);padding:.6rem .5rem;border-bottom:1px solid rgba(255,255,255,.05)}
 .scenario-table td:nth-child(2){color:var(--text);font-weight:700}
+.redacted{background:var(--border);color:var(--border);border-radius:2px;padding:0 .3rem;cursor:help;transition:all .3s;user-select:none;letter-spacing:1px}
+.redacted:hover{color:var(--dim);font-style:italic;background:rgba(255,255,255,.08)}
+.classified-banner{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(231,76,60,.9);color:#fff;text-align:center;font-size:.6rem;letter-spacing:4px;padding:.35rem 0;font-weight:700;text-transform:uppercase;backdrop-filter:blur(4px)}
 </style>
 </head>
 <body>
+<div class="classified-banner">PROPRIETARY &bull; SELECTIVE DISCLOSURE &bull; FULL DETAILS AVAILABLE UNDER NDA</div>
 <div class="grid-bg"></div>
 <div class="scanlines"></div>
 <nav>
@@ -103,12 +107,12 @@
 <div class="breadcrumb"><a href="../research.html">RESEARCH</a> &nbsp;/&nbsp; GF(17) QUANTIZATION</div>
 <h1>GF(17) QUANTIZATION</h1>
 <p class="subtitle">NEURAL NETWORK WEIGHT COMPRESSION VIA FINITE-FIELD ARITHMETIC</p>
-<p class="tagline">Distribution-adaptive codecs using Galois field GF(17), holographic membrane optimization, and GPU texture-unit acceleration &mdash; benchmarked against TurboQuant (ICLR 2026).</p>
+<p class="tagline">Distribution-adaptive codecs using Galois field GF(17), <span class="redacted" title="Proprietary">[PROPRIETARY OPTIMIZATION]</span>, and <span class="redacted" title="Proprietary">[CLASSIFIED HARDWARE ACCELERATION]</span> &mdash; benchmarked against TurboQuant (ICLR 2026).</p>
 </section>
 <section>
-<div class="license-box">
-<div class="cc-icon">&#9400;</div>
-<p>This work is licensed under <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">Creative Commons Attribution 4.0 International (CC BY 4.0)</a>.<br>You are free to share and adapt this material for any purpose, provided appropriate credit is given.</p>
+<div class="license-box" style="border-color:rgba(231,76,60,.4)">
+<div class="cc-icon">&#128274;</div>
+<p><strong style="color:#e74c3c">PROPRIETARY RESEARCH</strong> &mdash; All rights reserved. This work describes proprietary technology protected as trade secret.<br>Results and benchmarks are published for evaluation purposes. Implementation details are <span class="redacted" title="Proprietary">[CLASSIFIED]</span>.</p>
 <p style="margin-top:.75rem;font-size:.7rem;color:var(--dim)">Reffelt, A. (2026). <em>GF(17) Quantization Strategies for Neural Network Weight Compression.</em> AMNI-SCIENT.</p>
 </div>
 </section>
@@ -116,14 +120,14 @@
 <h2>ABSTRACT</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
 <p>We present a family of quantization strategies built on arithmetic in the Galois field <strong style="color:var(--text)">GF(17)</strong> for compressing neural network weight matrices. Unlike conventional methods operating in floating-point or power-of-two integer domains, our approach maps weights into a prime finite field where all arithmetic &mdash; addition, multiplication, and inversion &mdash; is <strong style="color:var(--text)">exact and drift-free</strong>.</p>
-<p style="margin-top:1.2rem">We introduce five complementary codecs spanning 2-bit to 16-bit operating points: <em>GF(17) Legendre 4-bit</em>, <em>Contextual GF(17)</em>, <em>Membrane GF(17)</em>, <em>ATRP</em>, and <em>AmniTex Progressive</em>. The <strong style="color:var(--text)">Membrane GF(17)</strong> codec &mdash; derived from our <a href="holographic-membrane.html">Holographic Resistance Membrane</a> framework &mdash; achieves cosine similarity <strong style="color:var(--accent)">0.939 at 4 bits/element</strong> on heavy-tail distributions (2.5&times; improvement over uniform quantization), encoding in 17ms via a 65K LUT-optimized Lloyd-Max refinement.</p>
-<p style="margin-top:1.2rem">We compare against Google&rsquo;s <strong style="color:var(--text)">TurboQuant</strong> (ICLR 2026) and related methods (QJL, PolarQuant), demonstrating complementary strengths: TurboQuant excels at online KV-cache compression with provable distortion bounds, while GF(17) strategies offer exact arithmetic, GPU texture-unit acceleration, and progressive decoding for persistent weight storage.</p>
+<p style="margin-top:1.2rem">We introduce five complementary codecs spanning 2-bit to 16-bit operating points: <em>GF(17) Legendre 4-bit</em>, <em>Contextual GF(17)</em>, <em>Membrane GF(17)</em>, <em>ATRP</em>, and <em>AmniTex Progressive</em>. The <strong style="color:var(--text)">Membrane GF(17)</strong> codec &mdash; derived from our <a href="holographic-membrane.html">Holographic Resistance Membrane</a> framework &mdash; achieves cosine similarity <strong style="color:var(--accent)">0.939 at 4 bits/element</strong> on heavy-tail distributions (2.5&times; improvement over uniform quantization), encoding in 17ms via a <span class="redacted" title="Proprietary">[PROPRIETARY ACCELERATION TECHNIQUE]</span>.</p>
+<p style="margin-top:1.2rem">We compare against Google&rsquo;s <strong style="color:var(--text)">TurboQuant</strong> (ICLR 2026) and related methods (QJL, PolarQuant), demonstrating complementary strengths: TurboQuant excels at online KV-cache compression with provable distortion bounds, while GF(17) strategies offer exact arithmetic, <span class="redacted" title="Proprietary">[CLASSIFIED HARDWARE ACCELERATION]</span>, and progressive decoding for persistent weight storage.</p>
 </div>
 </section>
 <section>
 <h2>WHY GF(17)?</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
-<p>The choice of prime <strong style="color:var(--text)">p = 17</strong> is deliberate. The 17 values {0, &hellip;, 16} yield a complete finite field where every non-zero element has a multiplicative inverse. The Legendre symbol partitions GF(17)\{0} into 8 quadratic residues and 8 non-residues, enabling bijective <strong style="color:var(--text)">4-bit packing</strong> (4.09 bits compressed to exactly 4.0).</p>
+<p>The choice of prime <strong style="color:var(--text)">p = 17</strong> is deliberate. The 17 values {0, &hellip;, 16} yield a complete finite field where every non-zero element has a multiplicative inverse. <span class="redacted" title="Proprietary">[ALGEBRAIC PARTITIONING METHOD]</span> enables bijective <strong style="color:var(--text)">4-bit packing</strong> (<span class="redacted" title="Proprietary">[COMPRESSION MECHANISM]</span>).</p>
 </div>
 <div class="features-2x2" style="max-width:800px;margin:1.5rem auto 0">
 <div class="feature" style="text-align:left;padding:1rem 1.5rem;background:var(--panel);border:1px solid var(--border);border-radius:8px">
@@ -131,8 +135,8 @@
 <p>All operations &mdash; add, multiply, invert &mdash; are exact in mod-17. No rounding, no accumulation error, no drift over arbitrarily long computations.</p>
 </div>
 <div class="feature" style="text-align:left;padding:1rem 1.5rem;background:var(--panel);border:1px solid var(--border);border-radius:8px">
-<h4>TMU ACCELERATION</h4>
-<p>Values 0&ndash;16 map to a 17-texel 1D texture. GPU texture-mapping units perform bilinear interpolation for free &mdash; dedicated silicon, zero ALU cost.</p>
+<h4>HARDWARE ACCELERATION</h4>
+<p>Values 0&ndash;16 map to a <span class="redacted" title="Proprietary">[CLASSIFIED HARDWARE FORMAT]</span>. GPU <span class="redacted" title="Proprietary">[CLASSIFIED HARDWARE UNITS]</span> perform <span class="redacted" title="Proprietary">[CLASSIFIED OPERATION]</span> for free &mdash; dedicated silicon, zero ALU cost.</p>
 </div>
 <div class="feature" style="text-align:left;padding:1rem 1.5rem;background:var(--panel);border:1px solid var(--border);border-radius:8px">
 <h4>PROGRESSIVE REFINEMENT</h4>
@@ -150,7 +154,7 @@
 <div class="codec-card">
 <div class="codec-tag">BASELINE &bull; 4-BIT</div>
 <h4>GF(17) LEGENDRE</h4>
-<p>Uniform min-max quantization to {0&hellip;16} with Legendre-symbol packing. Fastest encode (3ms) but collapses on heavy-tail data.</p>
+<p>Uniform min-max quantization to {0&hellip;16} with <span class="redacted" title="Proprietary">[CLASSIFIED PACKING]</span>. Fastest encode (3ms) but collapses on heavy-tail data.</p>
 <div class="codec-stats">
 <span class="codec-stat"><strong>4.0</strong> bits/e</span>
 <span class="codec-stat"><strong>3ms</strong> enc</span>
@@ -170,7 +174,7 @@
 <div class="codec-card" style="border-color:var(--accent)">
 <div class="codec-tag">DISTRIBUTION-ADAPTIVE &bull; 4-BIT</div>
 <h4>MEMBRANE GF(17)</h4>
-<p>Holographic resistance field steers quantization boundaries toward stable regions. LUT-optimized Lloyd-Max achieves 13&times; speedup. Excels on heavy tails.</p>
+<p><span class="redacted" title="Proprietary">[PROPRIETARY ADAPTIVE FIELD]</span> steers quantization boundaries toward stable regions. <span class="redacted" title="Proprietary">[CLASSIFIED ACCELERATION]</span> achieves 13&times; speedup. Excels on heavy tails.</p>
 <div class="codec-stats">
 <span class="codec-stat"><strong>4.0</strong> bits/e</span>
 <span class="codec-stat"><strong>17ms</strong> enc</span>
@@ -180,7 +184,7 @@
 <div class="codec-card">
 <div class="codec-tag">PROGRESSIVE &bull; 2&ndash;16 BIT</div>
 <h4>ATRP</h4>
-<p>Adaptive Texture Residual Packing. Layer-by-layer residual encoding in GF(17). At 4 layers &times; 4 bits = 16b, achieves bit-exact reconstruction (SNR 85dB).</p>
+<p>Adaptive <span class="redacted" title="Proprietary">[CLASSIFIED]</span> Residual Packing. Layer-by-layer residual encoding in GF(17). At 4 layers &times; 4 bits = 16b, achieves bit-exact reconstruction (SNR 85dB).</p>
 <div class="codec-stats">
 <span class="codec-stat"><strong>2&ndash;16</strong> bits/e</span>
 <span class="codec-stat"><strong>7ms</strong> enc (4L)</span>
@@ -212,33 +216,33 @@
 <section>
 <h2>MEMBRANE M6 &mdash; CORE ALGORITHM</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
-<p>The Membrane codec applies Equation M6 (probability deposition) from the <a href="holographic-membrane.html">Holographic Resistance Membrane</a> framework. Instead of uniform bin spacing, it models a resistance field derived from local variance in the data distribution:</p>
+<p>The Membrane codec applies <span class="redacted" title="Proprietary">[PROPRIETARY EQUATION]</span> from the <a href="holographic-membrane.html">Holographic Resistance Membrane</a> framework. Instead of uniform bin spacing, it models a <span class="redacted" title="Proprietary">[CLASSIFIED ADAPTIVE FIELD]</span> derived from local properties of the data distribution:</p>
 <div class="eq-block">
-<div class="eq-label">EQUATION M6 &mdash; RESISTANCE WEIGHTING</div>
-$$w(x) = \frac{h(x)}{1 + 3\,R(x)} \qquad R(x) = \frac{\text{Var}_{\text{local}}(h)}{\max(\text{Var}_{\text{local}}(h))}$$
+<div class="eq-label">EQUATION M6 &mdash; <span class="redacted" title="Proprietary">[CLASSIFIED]</span></div>
+$$w(x) = \frac{h(x)}{\text{\small<span class="redacted" title="Proprietary">[PROPRIETARY WEIGHTING FUNCTION]</span>}} \qquad R(x) = \text{\small<span class="redacted" title="Proprietary">[PROPRIETARY FIELD DERIVATION]</span>}$$
 </div>
-<p>High-variance regions (distribution tails, peaks) generate high resistance <em>R</em>, causing their weight <em>w</em> to decrease. This steers quantization boundaries toward <strong style="color:var(--text)">stable, high-density regions</strong> where precision yields the greatest cosine similarity gain.</p>
+<p><span class="redacted" title="Proprietary">[CLASSIFIED MECHANISM]</span> regions generate high resistance <em>R</em>, causing their weight <em>w</em> to decrease. This steers quantization boundaries toward <strong style="color:var(--text)">stable, high-density regions</strong> where precision yields the greatest cosine similarity gain.</p>
 <div class="derivation-step">
-<h4>STEP 1 &mdash; HISTOGRAM &amp; RESISTANCE FIELD</h4>
-<p>Compute a 256-bin histogram of the weight distribution. Apply a sliding kernel (width k = max(3, 256/32) = 8) to estimate local mean and variance. Normalize variance to [0, 1] to form the resistance field R(x).</p>
-</div>
-<div class="derivation-step">
-<h4>STEP 2 &mdash; WEIGHTED CDF BOUNDARY PLACEMENT</h4>
-<p>Compute the CDF of the resistance-weighted histogram w(x). Place 17 boundaries at evenly-spaced CDF quantiles. These initial boundaries already cluster in low-variance regions.</p>
+<h4>STEP 1 &mdash; <span class="redacted" title="Proprietary">[CLASSIFIED]</span></h4>
+<p><span class="redacted" title="Proprietary">[PROPRIETARY INITIALIZATION PROCEDURE — 5-STEP PIPELINE REDACTED]</span></p>
 </div>
 <div class="derivation-step">
-<h4>STEP 3 &mdash; HISTOGRAM-BASED LLOYD-MAX (10 ITERATIONS)</h4>
-<p>Refine boundaries using Lloyd-Max iteration on the 256 bin centers (not the raw 800K values). Each iteration: assign bins to nearest centroid, recompute centroids from bin-weighted sums. Cost: 0.1ms total for 10 iterations.</p>
+<h4>STEP 2 &mdash; <span class="redacted" title="Proprietary">[CLASSIFIED]</span></h4>
+<p><span class="redacted" title="Proprietary">[PROPRIETARY BOUNDARY PLACEMENT METHOD]</span></p>
 </div>
 <div class="derivation-step">
-<h4>STEP 4 &mdash; 65K LUT REFINEMENT (10 ITERATIONS)</h4>
-<p>Build a 65,536-entry lookup table mapping the value range to bin indices. Run 10 more Lloyd iterations on the LUT &mdash; each iteration operates on 65K entries instead of 800K raw values. The LUT provides higher resolution than the 256-bin histogram while remaining orders of magnitude faster than raw-data passes.</p>
+<h4>STEP 3 &mdash; <span class="redacted" title="Proprietary">[CLASSIFIED]</span></h4>
+<p><span class="redacted" title="Proprietary">[PROPRIETARY ITERATIVE REFINEMENT]</span></p>
 </div>
 <div class="derivation-step">
-<h4>STEP 5 &mdash; FINAL QUANTIZATION &amp; PACKING</h4>
-<p>Map each raw value to its LUT index, look up the pre-computed quantization assignment, and Legendre-pack to 4 bits/element.</p>
+<h4>STEP 4 &mdash; <span class="redacted" title="Proprietary">[CLASSIFIED]</span></h4>
+<p><span class="redacted" title="Proprietary">[PROPRIETARY ACCELERATION TECHNIQUE]</span></p>
 </div>
-<p style="margin-top:1.5rem">The LUT optimization (v3.108.0) replaced <code style="background:rgba(0,0,0,.3);padding:.1rem .3rem;border-radius:3px;font-size:.85em">searchsorted</code> on 800K elements per Lloyd iteration (~4ms each, 150ms total) with operations on a 65K LUT (~0.2ms each), achieving a <strong style="color:var(--accent)">13&times; encode speedup</strong> from 200ms to 17ms while slightly improving quality through the higher-resolution LUT centroid estimates.</p>
+<div class="derivation-step">
+<h4>STEP 5 &mdash; <span class="redacted" title="Proprietary">[CLASSIFIED]</span></h4>
+<p><span class="redacted" title="Proprietary">[PROPRIETARY PACKING METHOD]</span></p>
+</div>
+<p style="margin-top:1.5rem">The <span class="redacted" title="Proprietary">[CLASSIFIED OPTIMIZATION]</span> (v3.108.0) achieved a <strong style="color:var(--accent)">13&times; encode speedup</strong> from 200ms to 17ms while slightly improving quality through <span class="redacted" title="Proprietary">[CLASSIFIED TECHNIQUE]</span>.</p>
 </div>
 </section>
 <section>
@@ -306,7 +310,7 @@ $$w(x) = \frac{h(x)}{1 + 3\,R(x)} \qquad R(x) = \frac{\text{Var}_{\text{local}}(
 </tbody>
 </table>
 </div>
-<p>TurboQuant&rsquo;s random rotation preprocessing naturally redistributes tail energy across all coordinates, making it inherently distribution-agnostic (&Delta; = 0.001). The Membrane codec achieves comparable robustness (&Delta; = 0.052) through explicit resistance-field adaptation, while maintaining exact finite-field arithmetic that TurboQuant&rsquo;s continuous-domain approach cannot provide.</p>
+<p>TurboQuant&rsquo;s random rotation preprocessing naturally redistributes tail energy across all coordinates, making it inherently distribution-agnostic (&Delta; = 0.001). The Membrane codec achieves comparable robustness (&Delta; = 0.052) through <span class="redacted" title="Proprietary">[CLASSIFIED]</span> adaptation, while maintaining exact finite-field arithmetic that TurboQuant&rsquo;s continuous-domain approach cannot provide.</p>
 </div>
 </section>
 <section>
@@ -369,10 +373,10 @@ $$w(x) = \frac{h(x)}{1 + 3\,R(x)} \qquad R(x) = \frac{\text{Var}_{\text{local}}(
 <h4 style="color:var(--accent)">GF(17) STRATEGIES (THIS WORK)</h4>
 <ul>
 <li>Targets <strong style="color:var(--text)">model weights</strong> (offline, persistent storage)</li>
-<li>Distribution-adaptive Membrane resistance field</li>
+<li>Distribution-adaptive <span class="redacted" title="Proprietary">[CLASSIFIED]</span> field</li>
 <li>Exact finite-field arithmetic (zero drift by construction)</li>
 <li>Progressive decode: 2-bit preview to 16-bit exact</li>
-<li>GPU texture-unit acceleration (free bilinear MACs)</li>
+<li><span class="redacted" title="Proprietary">[CLASSIFIED HARDWARE]</span> acceleration (free <span class="redacted" title="Proprietary">[CLASSIFIED]</span> MACs)</li>
 <li>ATRP 4b&times;4L: bit-exact at 16 bits (SNR 85dB)</li>
 <li>Discrete algebraic domain (mod-17)</li>
 </ul>
@@ -388,7 +392,7 @@ $$w(x) = \frac{h(x)}{1 + 3\,R(x)} \qquad R(x) = \frac{\text{Var}_{\text{local}}(
 </thead>
 <tbody>
 <tr><td>KV-cache compression (online inference)</td><td>TurboQuant</td><td>Data-oblivious, provable bounds, H100 CUDA kernels</td></tr>
-<tr><td>Weight storage &amp; loading</td><td>GF(17) Leg 4b</td><td>4&times; compression, exact field, 3ms encode, TMU compatible</td></tr>
+<tr><td>Weight storage &amp; loading</td><td>GF(17) Leg 4b</td><td>4&times; compression, exact field, 3ms encode, <span class="redacted" title="Proprietary">[CLASSIFIED]</span> compatible</td></tr>
 <tr><td>Heavy-tail weight distributions</td><td>Membrane GF(17)</td><td>Distribution-adaptive, 0.939 vs. 0.373 (uniform) at 4 bits</td></tr>
 <tr><td>Progressive level-of-detail</td><td>ATRP / AmniTex</td><td>Multi-layer GF(17) residuals, stop at any layer</td></tr>
 <tr><td>Long-sequence linear attention</td><td>GF(17) cumulative</td><td>Zero drift, exact mod-17 arithmetic at any sequence length</td></tr>
@@ -415,7 +419,7 @@ $$w(x) = \frac{h(x)}{1 + 3\,R(x)} \qquad R(x) = \frac{\text{Var}_{\text{local}}(
 </div>
 <div class="app-card">
 <h4>INFERENCE INTEGRATION</h4>
-<p>TurboQuant integrates directly into attention computation. GF(17) weight quantization requires dequantization before standard compute, unless TMU interpolation is used for acceleration.</p>
+<p>TurboQuant integrates directly into attention computation. GF(17) weight quantization requires dequantization before standard compute, unless <span class="redacted" title="Proprietary">[CLASSIFIED HARDWARE ACCELERATION]</span> is used.</p>
 </div>
 </div>
 </section>
@@ -431,7 +435,7 @@ $$w(x) = \frac{h(x)}{1 + 3\,R(x)} \qquad R(x) = \frac{\text{Var}_{\text{local}}(
 <h2>CITATION</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
 <div style="background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:1.2rem 1.5rem;margin-top:1rem;font-family:'JetBrains Mono',monospace;font-size:.75rem;line-height:1.8;color:var(--text)">
-Reffelt, A. (2026). <em>GF(17) Quantization Strategies for Neural Network Weight Compression: Finite-Field Arithmetic, Holographic Membrane Optimization, and GPU-Native Texture Packing.</em> AMNI-SCIENT Technical Report. https://amni-scient.com/research/gf17-quantization
+Reffelt, A. (2026). <em>GF(17) Quantization Strategies for Neural Network Weight Compression: Finite-Field Arithmetic, Proprietary Optimization, and Hardware-Accelerated Packing.</em> AMNI-SCIENT Technical Report. https://amni-scient.com/research/gf17-quantization
 </div>
 <h3 style="font-size:.85rem;letter-spacing:2px;color:var(--text);margin:2rem 0 .75rem">REFERENCES</h3>
 <ol style="color:var(--dim);font-size:.8rem;line-height:2;padding-left:1.5rem">
@@ -491,7 +495,7 @@ datasets:[
 var rCtx=document.getElementById('chart-radar');
 if(rCtx){
 new Chart(rCtx,{type:'radar',data:{
-labels:['Quality\n(CosSim)','Compression\n(Ratio)','Encode\nSpeed','Decode\nSpeed','Heavy-Tail\nResilience','TMU\nCompat','Progressive\nSupport'],
+labels:['Quality\n(CosSim)','Compression\n(Ratio)','Encode\nSpeed','Decode\nSpeed','Heavy-Tail\nResilience','HW\nCompat','Progressive\nSupport'],
 datasets:[
 {label:'TQ turbo4',data:[0.99,0.6,0.8,0.8,0.99,0.0,0.0],borderColor:'#e74c3c',backgroundColor:'rgba(231,76,60,0.08)',pointBackgroundColor:'#e74c3c',borderWidth:2},
 {label:'GF17 Leg 4b',data:[0.98,0.9,0.85,0.85,0.37,0.9,0.0],borderColor:'#3498db',backgroundColor:'rgba(52,152,219,0.08)',pointBackgroundColor:'#3498db',borderWidth:2},
