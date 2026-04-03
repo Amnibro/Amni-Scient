@@ -34,6 +34,9 @@ nav .logo{font-size:.95rem;font-weight:700;letter-spacing:3px;color:var(--accent
 nav .logo span{color:var(--dim);font-weight:400}
 nav .back{color:var(--dim);font-size:.75rem;letter-spacing:1px;text-transform:uppercase}
 nav .back:hover{color:var(--accent)}
+.unit-toggle{background:var(--panel2);border:1px solid var(--border2);color:var(--dim);font-family:var(--font);font-size:.65rem;padding:4px 12px;border-radius:3px;letter-spacing:1.5px;font-weight:700;cursor:pointer;transition:all .2s;text-transform:uppercase}
+.unit-toggle:hover{border-color:var(--accent);color:var(--accent)}
+.unit-toggle.imperial{border-color:var(--accent);color:var(--accent);background:var(--accent-dim)}
 .app{padding-top:48px;display:flex;flex-direction:column;min-height:calc(100vh - 48px)}
 .shell{flex:1;display:flex;min-height:calc(100vh - 48px);overflow:hidden}
 .side{width:240px;background:var(--panel);border-right:1px solid var(--border);flex-shrink:0;display:flex;flex-direction:column}
@@ -162,7 +165,7 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <nav>
 <a href="https://amni-scient.com" class="back">&larr; AMNI-SCIENT</a>
 <span class="logo">AMNI<span>-CALC</span></span>
-<span style="width:80px"></span>
+<button id="unit-toggle" class="unit-toggle" onclick="toggleUnits()" title="Switch between Metric and Imperial units">METRIC</button>
 </nav>
 <div class="app">
 <div class="shell">
@@ -1064,11 +1067,50 @@ AMNI-CALC v2.5.0 &mdash; <a href="https://amni-scient.com">AMNI-SCIENT</a> &mdas
 import wInit,{calc_beam,calc_section,section_presets,get_materials,get_material,calc_bolt,bolt_tables,calc_spring,calc_stress,get_finishes,recommend_finishes,convert_unit,unit_categories,calc_seal,seal_materials,seal_standard_sizes,calc_seal_groove,calc_fatigue,calc_thermal} from './pkg/amni_calc_wasm.js';
 let W=null,MAT=[],BOLT_TBL=null,SEC_PRESETS=[],UNIT_CATS=[],SEAL_MATS=[],AS568=[],GASKET_MATS=[];
 let supports=[],loads=[],secVerts=[],curSupType='pin';
+let USYS=localStorage.getItem('amni-calc-usys')||'metric';
+function _uf(v,si,imp,fac,d){return USYS==='imperial'?fmt(v*fac,d)+' '+imp:fmt(v,d)+' '+si;}
+const U={
+f:(n,d)=>_uf(n,'N','lbf',0.224809,d),fk:(n,d)=>_uf(n/1000,'kN','kip',0.224809,d),
+m:(nm,d)=>_uf(nm,'N·m','lbf·ft',0.737562,d),
+dm:(mm,d)=>_uf(mm,'mm','in',0.03937,d),ds:(m,d)=>_uf(m,'m','ft',3.28084,d),
+s:(mpa,d)=>_uf(mpa,'MPa','ksi',0.145038,d),
+a2:(mm2,d)=>_uf(mm2,'mm²','in²',0.00155,d),
+t:(c,d)=>USYS==='imperial'?fmt(c*9/5+32,d)+' °F':fmt(c,d)+' °C',
+e:(j,d)=>_uf(j,'J','ft·lbf',0.737562,d),
+wt:(g,d)=>_uf(g,'g','oz',0.03527,d),
+p:(w,d)=>_uf(w,'W','BTU/h',3.41214,d),
+sr:(nm,d)=>_uf(nm,'N/m','lbf/in',0.00571015,d),
+pf:(wm2,d)=>_uf(wm2,'W/m²','BTU/(h·ft²)',0.316998,d),
+rt:(kw,d)=>_uf(kw,'K/W','°F·h/BTU',1.8956,d),
+uv:(v,d)=>_uf(v,'W/(m²·K)','BTU/(h·ft²·°F)',0.176110,d),
+fl:(n,d)=>_uf(n,'N/mm','lbf/in',5.71015,d),
+fU:()=>USYS==='imperial'?'lbf':'N',mU:()=>USYS==='imperial'?'lbf·ft':'N·m',
+sU:()=>USYS==='imperial'?'ksi':'MPa',dU:()=>USYS==='imperial'?'ft':'m',
+dmU:()=>USYS==='imperial'?'in':'mm',tU:()=>USYS==='imperial'?'°F':'°C',
+fS:()=>USYS==='imperial'?0.224809:1,mS:()=>USYS==='imperial'?0.737562:1,
+sS:()=>USYS==='imperial'?0.145038:1,dS:()=>USYS==='imperial'?3.28084:1,
+dmS:()=>USYS==='imperial'?0.03937:1,tC:(c)=>USYS==='imperial'?c*9/5+32:c,
+};
 const pLayout={paper_bgcolor:'#111',plot_bgcolor:'#0a0a0a',font:{family:'JetBrains Mono, monospace',color:'#888',size:11},margin:{l:70,r:25,t:40,b:55},xaxis:{gridcolor:'#1a1a1a',zerolinecolor:'#333',linecolor:'#333',tickfont:{size:10}},yaxis:{gridcolor:'#1a1a1a',zerolinecolor:'#333',linecolor:'#333',tickfont:{size:10}},hoverlabel:{bgcolor:'#161616',bordercolor:'#ff6b35',font:{family:'JetBrains Mono',color:'#e0e0e0',size:12}},modebar:{bgcolor:'transparent',color:'#555',activecolor:'#ff6b35'}};
 const pCfg={responsive:true,displaylogo:false,modeBarButtonsToRemove:['lasso2d','select2d']};
 const $=s=>document.querySelector(s),$$=s=>document.querySelectorAll(s);
 const fmt=(v,d=4)=>typeof v==='number'?(Math.abs(v)>1e12?'INF':Math.abs(v)<1e-12?'0':Math.abs(v)>1e6||Math.abs(v)<0.001?v.toExponential(d):v.toFixed(d)):''+v;
 function hdCanvas(el){const dpr=window.devicePixelRatio||1;const r=el.getBoundingClientRect();const w=r.width||el.width||300;const h=r.height||el.height||150;el.width=w*dpr;el.height=h*dpr;const c=el.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);return{c,w,h};}
+let _lastBeam=null,_lastStress=null,_lastFatigue=null,_lastBolt=null,_lastSpring=null,_lastSpringKind=null,_lastThermal=null,_lastSeal=null,_lastMatDetail=null;
+window.toggleUnits=function(){
+USYS=USYS==='metric'?'imperial':'metric';
+localStorage.setItem('amni-calc-usys',USYS);
+const btn=$('#unit-toggle');
+if(btn){btn.textContent=USYS.toUpperCase();btn.classList.toggle('imperial',USYS==='imperial');}
+if(_lastBeam)renderBeamResults(_lastBeam);
+if(_lastStress)renderStressResults(_lastStress);
+if(_lastFatigue)renderFatigueResults(_lastFatigue);
+if(_lastBolt)renderBoltResults(_lastBolt);
+if(_lastSpring)renderSpringResults(_lastSpring,_lastSpringKind);
+if(_lastThermal)renderThermalResults(_lastThermal);
+if(_lastSeal)renderSealResults(_lastSeal);
+if(_lastMatDetail)showMatDetail(_lastMatDetail);
+};
 const fosClass=v=> v>=3?'ok':v>=1.5?'warn':'err';
 window.vSet=id=>{const el=document.getElementById(id),v=document.getElementById(id+'-v');if(el&&v)v.textContent=el.value;};
 async function init(){
@@ -1080,6 +1122,7 @@ UNIT_CATS=JSON.parse(unit_categories());
 SEAL_MATS=JSON.parse(seal_materials());
 AS568=JSON.parse(seal_standard_sizes());
 setupTabs();setupMaterials();setupBolts();setupSections();setupUnits();setupSliders();setupBeamCanvas();setupSectionCanvas();setupSeals();setupGaskets();updateMathUI();
+const ubtn=$('#unit-toggle');if(ubtn){ubtn.textContent=USYS.toUpperCase();ubtn.classList.toggle('imperial',USYS==='imperial');}
 }
 function setupTabs(){
 const icons={beam:'&#9649;',bolts:'&#9881;',equations:'&#931;',finishes:'&#9678;',gaskets:'&#9645;',materials:'&#9670;',math:'&#960;',seals:'&#9711;',springs:'&#8767;',stress:'&#9762;',thermal:'&#9832;',units:'&#8644;'};
@@ -1145,21 +1188,27 @@ tb.appendChild(tr);
 });
 }
 function showMatDetail(m){
+_lastMatDetail=m;
 $('#mat-detail').style.display='block';
 $('#mat-det-name').textContent=m.name+' ('+m.category+')';
+const gpa=(v,d)=>_uf(v,'GPa','Mpsi',0.145038,d);
+const dens=(v)=>USYS==='imperial'?fmt(v*0.062428,2)+' lb/ft³':fmt(v,0)+' kg/m³';
+const thexp=(v)=>USYS==='imperial'?fmt(v*0.5556,1)+' µin/in·°F':fmt(v,1)+' µm/m·K';
+const thcond=(v)=>USYS==='imperial'?fmt(v*0.5778,1)+' BTU/(h·ft·°F)':fmt(v,1)+' W/m·K';
+const spheat=(v)=>USYS==='imperial'?fmt(v*0.000239006,4)+' BTU/(lb·°F)':fmt(v,0)+' J/kg·K';
 const props=[
-{l:'E MODULUS',v:(m.e_modulus/1e9).toFixed(1)+' GPa'},
-{l:'YIELD STRENGTH',v:(m.yield_strength/1e6).toFixed(0)+' MPa'},
-{l:'ULTIMATE STRENGTH',v:(m.ultimate_strength/1e6).toFixed(0)+' MPa'},
-{l:'DENSITY',v:m.density.toFixed(0)+' kg/m³'},
+{l:'E MODULUS',v:gpa((m.e_modulus/1e9),1)},
+{l:'YIELD STRENGTH',v:U.s(m.yield_strength/1e6,0)},
+{l:'ULTIMATE STRENGTH',v:U.s(m.ultimate_strength/1e6,0)},
+{l:'DENSITY',v:dens(m.density)},
 {l:'POISSON RATIO',v:m.poisson.toFixed(2)},
-{l:'SHEAR MODULUS',v:(m.shear_modulus/1e9).toFixed(1)+' GPa'},
+{l:'SHEAR MODULUS',v:gpa((m.shear_modulus/1e9),1)},
 {l:'ELONGATION',v:m.elongation.toFixed(1)+'%'},
 {l:'HARDNESS',v:m.hardness},
-{l:'THERMAL EXPANSION',v:(m.thermal_expansion*1e6).toFixed(1)+' µm/m·K'},
-{l:'THERMAL CONDUCTIVITY',v:m.thermal_conductivity.toFixed(1)+' W/m·K'},
-{l:'SPECIFIC HEAT',v:m.specific_heat>0?m.specific_heat.toFixed(0)+' J/kg·K':'—'},
-{l:'MELTING POINT',v:m.melting_point>0?m.melting_point.toFixed(0)+' °C':'—'},
+{l:'THERMAL EXPANSION',v:thexp(m.thermal_expansion*1e6)},
+{l:'THERMAL CONDUCTIVITY',v:thcond(m.thermal_conductivity)},
+{l:'SPECIFIC HEAT',v:m.specific_heat>0?spheat(m.specific_heat):'—'},
+{l:'MELTING POINT',v:m.melting_point>0?U.t(m.melting_point,0):'—'},
 {l:'SPECIFICATION',v:m.spec||'—'},
 ];
 $('#mat-det-grid').innerHTML=props.map(p=>`<div class="result-item"><div class="lbl">${p.l}</div><div class="val">${p.v}</div></div>`).join('');
@@ -1407,16 +1456,19 @@ return r;
 const inp={length:len,e_modulus:e,i_moment:im,supports:sups,loads:lds,num_points:500};
 const res=JSON.parse(calc_beam(JSON.stringify(inp)));
 if(res.error){$('#beam-results').innerHTML=`<div class="card"><p style="color:var(--err)">${res.error}</p></div>`;return;}
+_lastBeam=res;renderBeamResults(res);
+};
+function renderBeamResults(res){
 let html=`<div class="card"><h3>REACTIONS</h3><div class="result-grid">`;
 res.reactions.forEach((r,i)=>{
-html+=`<div class="result-item"><div class="lbl">R${i+1} @ ${fmt(r.pos,2)} m</div><div class="val">${fmt(r.fy)} N</div></div>`;
-if(r.moment!=null)html+=`<div class="result-item"><div class="lbl">M${i+1}</div><div class="val">${fmt(r.moment)} N·m</div></div>`;
+html+=`<div class="result-item"><div class="lbl">R${i+1} @ ${U.ds(r.pos,2)}</div><div class="val">${U.f(r.fy)}</div></div>`;
+if(r.moment!=null)html+=`<div class="result-item"><div class="lbl">M${i+1}</div><div class="val">${U.m(r.moment)}</div></div>`;
 });
 html+=`</div></div>`;
 html+=`<div class="card"><h3>MAXIMUMS — ${(res.support_type||'').replace(/_/g,' ').toUpperCase()}</h3><div class="result-grid">
-<div class="result-item"><div class="lbl">MAX SHEAR</div><div class="val">${fmt(res.max_shear)} N</div></div>
-<div class="result-item"><div class="lbl">MAX MOMENT</div><div class="val">${fmt(res.max_moment)} N·m</div></div>
-<div class="result-item"><div class="lbl">MAX DEFLECTION</div><div class="val">${fmt(res.max_deflection*1000)} mm</div></div>
+<div class="result-item"><div class="lbl">MAX SHEAR</div><div class="val">${U.f(res.max_shear)}</div></div>
+<div class="result-item"><div class="lbl">MAX MOMENT</div><div class="val">${U.m(res.max_moment)}</div></div>
+<div class="result-item"><div class="lbl">MAX DEFLECTION</div><div class="val">${U.dm(res.max_deflection*1000)}</div></div>
 <div class="result-item"><div class="lbl">MAX SLOPE</div><div class="val">${fmt(res.max_slope*180/Math.PI,3)}°</div></div>
 </div></div>`;
 html+=`<div class="card"><h3>SHEAR DIAGRAM</h3><div id="c-shear" style="width:100%;height:280px"></div></div>`;
@@ -1424,16 +1476,17 @@ html+=`<div class="card"><h3>MOMENT DIAGRAM</h3><div id="c-moment" style="width:
 html+=`<div class="card"><h3>DEFLECTION CURVE</h3><div id="c-defl" style="width:100%;height:280px"></div></div>`;
 $('#beam-results').innerHTML=html;
 setTimeout(()=>{
-drawDiagram('c-shear',res.shear_diagram,'N','#00ff9d');
-drawDiagram('c-moment',res.moment_diagram,'N·m','#ff6b35');
-drawDiagram('c-defl',res.deflection_curve,'m','#4da6ff');
+drawDiagram('c-shear',res.shear_diagram,U.fU(),'#00ff9d',U.fS(),U.dS());
+drawDiagram('c-moment',res.moment_diagram,U.mU(),'#ff6b35',U.mS(),U.dS());
+drawDiagram('c-defl',res.deflection_curve,U.dU(),'#4da6ff',U.dS(),U.dS());
 },50);
-};
-function drawDiagram(id,data,unit,color){
+}
+function drawDiagram(id,data,unit,color,yScale,xScale){
 const el=document.getElementById(id);
 if(!el||!data||data.length<2)return;
-const xs=data.map(d=>d[0]),ys=data.map(d=>d[1]);
-Plotly.react(id,[{x:xs,y:ys,type:'scatter',mode:'lines',fill:'tozeroy',fillcolor:color+'15',line:{color,width:2.5,shape:'spline'},hovertemplate:'x = %{x:.3f} m<br>'+unit+' = %{y:.4g}<extra></extra>'}],Object.assign({},pLayout,{margin:{l:70,r:25,t:20,b:50},xaxis:Object.assign({},pLayout.xaxis,{title:{text:'Position (m)',font:{size:11,color:'#888'}}}),yaxis:Object.assign({},pLayout.yaxis,{title:{text:unit,font:{size:11,color:'#888'}}})}),pCfg);
+const xs=data.map(d=>d[0]*(xScale||1)),ys=data.map(d=>d[1]*(yScale||1));
+const xU=USYS==='imperial'?'ft':'m';
+Plotly.react(id,[{x:xs,y:ys,type:'scatter',mode:'lines',fill:'tozeroy',fillcolor:color+'15',line:{color,width:2.5,shape:'spline'},hovertemplate:'x = %{x:.3f} '+xU+'<br>'+unit+' = %{y:.4g}<extra></extra>'}],Object.assign({},pLayout,{margin:{l:70,r:25,t:20,b:50},xaxis:Object.assign({},pLayout.xaxis,{title:{text:'Position ('+xU+')',font:{size:11,color:'#888'}}}),yaxis:Object.assign({},pLayout.yaxis,{title:{text:unit,font:{size:11,color:'#888'}}})}),pCfg);
 }
 let secCanvas,secCtx;
 function setupSectionCanvas(){
@@ -1481,7 +1534,7 @@ window.clearSection=function(){secVerts=[];drawSection();$('#sec-results').inner
 window.loadSectionToBeam=function(ix){
 $('#bm-i').value=ix.toFixed(4);
 $('#bm-i-u').value='cm4';
-$('#bm-i').scrollIntoView({behavior:'smooth',block:'center'});
+if(supports.length>0&&loads.length>0)solveBeam();
 };
 window.calcSection=function(){
 if(secVerts.length<3)return;
@@ -1506,6 +1559,7 @@ const p=[
 {l:'Zx (PLASTIC)',v:fmt(res.zx)},
 ];
 $('#sec-results').innerHTML=`<h3>SECTION PROPERTIES</h3><div class="result-grid">${p.map(x=>`<div class="result-item"><div class="lbl">${x.l}</div><div class="val">${x.v}</div></div>`).join('')}</div><p style="font-size:.65rem;color:var(--dim);margin-top:.5rem">Values in canvas pixel units — use preset params for real-world scale</p><button class="btn" style="margin-top:.5rem;font-size:.7rem" onclick="loadSectionToBeam(${res.ix})">LOAD Ix INTO BEAM</button>`;
+loadSectionToBeam(res.ix);
 };
 window.calcStress=function(){
 const u=$('#st-u').value;
@@ -1523,14 +1577,17 @@ ultimate_strength:parseFloat($('#st-su-val').value)*1e6,
 };
 const res=JSON.parse(calc_stress(JSON.stringify(inp)));
 if(res.error){$('#stress-results').innerHTML=`<h3>ERROR</h3><p style="color:var(--err)">${res.error}</p>`;return;}
+_lastStress=res;renderStressResults(res);
+};
+function renderStressResults(res){
 const d=1e6;
 const p=[
-{l:'σ₁',v:fmt(res.sigma_1/d)+' MPa'},
-{l:'σ₂',v:fmt(res.sigma_2/d)+' MPa'},
-{l:'σ₃',v:fmt(res.sigma_3/d)+' MPa'},
-{l:'τ MAX',v:fmt(res.tau_max/d)+' MPa'},
-{l:'VON MISES',v:fmt(res.von_mises/d)+' MPa'},
-{l:'TRESCA',v:fmt(res.tresca/d)+' MPa'},
+{l:'σ₁',v:U.s(res.sigma_1/d)},
+{l:'σ₂',v:U.s(res.sigma_2/d)},
+{l:'σ₃',v:U.s(res.sigma_3/d)},
+{l:'τ MAX',v:U.s(res.tau_max/d)},
+{l:'VON MISES',v:U.s(res.von_mises/d)},
+{l:'TRESCA',v:U.s(res.tresca/d)},
 {l:'θ PRINCIPAL',v:fmt(res.theta_p,2)+'°'},
 {l:'FoS YIELD (VM)',v:fmt(res.fos_yield_vm,2),c:fosClass(res.fos_yield_vm)},
 {l:'FoS YIELD (TR)',v:fmt(res.fos_yield_tresca,2),c:fosClass(res.fos_yield_tresca)},
@@ -1538,17 +1595,21 @@ const p=[
 ];
 $('#stress-results').innerHTML=`<h3>RESULTS</h3><div class="result-grid">${p.map(x=>`<div class="result-item"><div class="lbl">${x.l}</div><div class="val${x.c?' '+x.c:''}">${x.v}</div></div>`).join('')}</div>`;
 drawMohr(res.mohr_circle,d);
-};
+}
 function drawMohr(mc,d){
 const center=mc.center/d,radius=mc.radius/d;
 const theta=Array.from({length:65},(_,i)=>2*Math.PI*i/64);
 const cx=theta.map(t=>center+radius*Math.cos(t)),cy=theta.map(t=>radius*Math.sin(t));
 const s1=mc.sigma_1?mc.sigma_1/d:center+radius,s2=mc.sigma_2?mc.sigma_2/d:center-radius;
+const su=U.sU();
+const sc=U.sS();
+const cxS=cx.map(v=>v*sc),cyS=cy.map(v=>v*sc);
+const cS=center*sc,rS=radius*sc,s1S=s1*sc,s2S=s2*sc;
 Plotly.react('c-mohr',[
-{x:cx,y:cy,type:'scatter',mode:'lines',name:'Circle',line:{color:'#ff6b35',width:2.5},hovertemplate:'σ=%{x:.1f} MPa<br>τ=%{y:.1f} MPa<extra></extra>'},
-{x:[center],y:[0],type:'scatter',mode:'markers',name:'C='+fmt(center,1),marker:{color:'#ff6b35',size:10,symbol:'diamond'}},
-{x:[s1,s2],y:[0,0],type:'scatter',mode:'markers',name:'σ₁,σ₂',marker:{color:'#00ff9d',size:8}},
-],Object.assign({},pLayout,{xaxis:Object.assign({},pLayout.xaxis,{title:{text:'σ (MPa)',font:{size:11,color:'#888'}},scaleanchor:'y',scaleratio:1}),yaxis:Object.assign({},pLayout.yaxis,{title:{text:'τ (MPa)',font:{size:11,color:'#888'}}}),showlegend:true,legend:{font:{size:10,color:'#888'},bgcolor:'transparent',x:0.02,y:0.98},annotations:[{x:center,y:-radius*1.15,text:'C='+fmt(center,1)+' R='+fmt(radius,1),showarrow:false,font:{size:10,color:'#888'}}]}),pCfg);
+{x:cxS,y:cyS,type:'scatter',mode:'lines',name:'Circle',line:{color:'#ff6b35',width:2.5},hovertemplate:'σ=%{x:.1f} '+su+'<br>τ=%{y:.1f} '+su+'<extra></extra>'},
+{x:[cS],y:[0],type:'scatter',mode:'markers',name:'C='+fmt(cS,1),marker:{color:'#ff6b35',size:10,symbol:'diamond'}},
+{x:[s1S,s2S],y:[0,0],type:'scatter',mode:'markers',name:'σ₁,σ₂',marker:{color:'#00ff9d',size:8}},
+],Object.assign({},pLayout,{xaxis:Object.assign({},pLayout.xaxis,{title:{text:'σ ('+su+')',font:{size:11,color:'#888'}},scaleanchor:'y',scaleratio:1}),yaxis:Object.assign({},pLayout.yaxis,{title:{text:'τ ('+su+')',font:{size:11,color:'#888'}}}),showlegend:true,legend:{font:{size:10,color:'#888'},bgcolor:'transparent',x:0.02,y:0.98},annotations:[{x:cS,y:-rS*1.15,text:'C='+fmt(cS,1)+' R='+fmt(rS,1),showarrow:false,font:{size:10,color:'#888'}}]}),pCfg);
 }
 window.calcFatigue=function(){
 const su=parseFloat($('#st-su-val').value)||400;
@@ -1556,8 +1617,11 @@ const sy=parseFloat($('#st-sy-val').value)||250;
 const inp={sigma_mean:parseFloat($('#ft-sm').value)||100,sigma_alt:parseFloat($('#ft-sa').value)||80,su,sy,surface:$('#ft-surf').value||'machined',diameter_mm:parseFloat($('#ft-dia').value)||25,reliability:parseFloat($('#ft-rel').value)||0.99,temp_c:parseFloat($('#ft-temp').value)||20,kt:parseFloat($('#ft-kt').value)||1.5,q:parseFloat($('#ft-q').value)||0.9};
 const res=JSON.parse(calc_fatigue(JSON.stringify(inp)));
 if(res.error){$('#fatigue-results').innerHTML=`<span style="color:var(--err)">${res.error}</span>`;return;}
+_lastFatigue=res;renderFatigueResults(res);
+};
+function renderFatigueResults(res){
 const p=[
-{l:'Se\'',v:fmt(res.se_prime,1)+' MPa'},{l:'Se (corrected)',v:fmt(res.se,1)+' MPa'},
+{l:'Se\'',v:U.s(res.se_prime,1)},{l:'Se (corrected)',v:U.s(res.se,1)},
 {l:'ka (surface)',v:fmt(res.ka,3)},{l:'kb (size)',v:fmt(res.kb,3)},
 {l:'kc (load)',v:fmt(res.kc,3)},{l:'kd (temp)',v:fmt(res.kd,3)},
 {l:'ke (reliab)',v:fmt(res.ke,3)},{l:'kf (notch)',v:fmt(res.kf,3)},
@@ -1568,7 +1632,7 @@ const p=[
 ];
 $('#fatigue-results').innerHTML=`<div class="result-grid" style="font-size:.7rem">${p.map(x=>`<div class="result-item"><div class="lbl">${x.l}</div><div class="val${x.c?' '+x.c:''}">${x.v}</div></div>`).join('')}</div>`;
 drawFatigueDiagram(res);
-};
+}
 function drawFatigueDiagram(res){
 const el=document.getElementById('c-fatigue');if(!el)return;
 const traces=[];
@@ -1584,7 +1648,8 @@ traces.push({x:res.gerber_curve.map(p=>p[0]),y:res.gerber_curve.map(p=>p[1]),typ
 if(res.operating_point){
 traces.push({x:[res.operating_point[0]],y:[res.operating_point[1]],type:'scatter',mode:'markers+text',name:'Operating Point',marker:{color:'#ef4444',size:10,line:{color:'#fff',width:1.5}},text:['('+fmt(res.operating_point[0],0)+','+fmt(res.operating_point[1],0)+')'],textposition:'top right',textfont:{size:9,color:'#fff'}});
 }
-Plotly.react('c-fatigue',traces,Object.assign({},pLayout,{title:{text:'FATIGUE FAILURE CRITERIA',font:{size:12,color:'#ff6b35',family:'JetBrains Mono'}},xaxis:Object.assign({},pLayout.xaxis,{title:{text:'σ_mean (MPa)',font:{size:11,color:'#888'}}}),yaxis:Object.assign({},pLayout.yaxis,{title:{text:'σ_alt (MPa)',font:{size:11,color:'#888'}}}),showlegend:true,legend:{font:{size:10,color:'#888'},bgcolor:'transparent',x:0.65,y:0.98}}),pCfg);
+const su=U.sU();
+Plotly.react('c-fatigue',traces,Object.assign({},pLayout,{title:{text:'FATIGUE FAILURE CRITERIA',font:{size:12,color:'#ff6b35',family:'JetBrains Mono'}},xaxis:Object.assign({},pLayout.xaxis,{title:{text:'σ_mean ('+su+')',font:{size:11,color:'#888'}}}),yaxis:Object.assign({},pLayout.yaxis,{title:{text:'σ_alt ('+su+')',font:{size:11,color:'#888'}}}),showlegend:true,legend:{font:{size:10,color:'#888'},bgcolor:'transparent',x:0.65,y:0.98}}),pCfg);
 }
 window.calcBolt=function(){
 const toN={'N':1,'kN':1000,'lbf':4.44822,'kip':4448.22};
@@ -1600,26 +1665,29 @@ friction_coeff:parseFloat($('#bl-mu').value)||0.15,
 };
 const res=JSON.parse(calc_bolt(JSON.stringify(inp)));
 if(res.error){$('#bolt-results').innerHTML=`<h3>ERROR</h3><p style="color:var(--err)">${res.error}</p>`;return;}
+_lastBolt=res;renderBoltResults(res);
+};
+function renderBoltResults(res){
 const jc=res.joint_status.includes('SEPARATION')?'err':'ok';
 const p=[
-{l:'TENSILE AREA',v:fmt(res.tensile_area*1e6,1)+' mm²'},
-{l:'PROOF LOAD',v:fmt(res.proof_load,0)+' N'},
-{l:'PRELOAD (Fi)',v:fmt(res.preload,0)+' N'},
-{l:'BOLT LOAD (Fb)',v:fmt(res.bolt_load,0)+' N'},
-{l:'JOINT LOAD (Fj)',v:fmt(res.joint_load,0)+' N',c:jc},
-{l:'BOLT STRESS',v:fmt(res.bolt_stress/1e6,1)+' MPa'},
+{l:'TENSILE AREA',v:U.a2(res.tensile_area*1e6,1)},
+{l:'PROOF LOAD',v:U.f(res.proof_load,0)},
+{l:'PRELOAD (Fi)',v:U.f(res.preload,0)},
+{l:'BOLT LOAD (Fb)',v:U.f(res.bolt_load,0)},
+{l:'JOINT LOAD (Fj)',v:U.f(res.joint_load,0),c:jc},
+{l:'BOLT STRESS',v:U.s(res.bolt_stress/1e6,1)},
 {l:'FoS PROOF',v:fmt(res.fos_proof,2),c:fosClass(res.fos_proof)},
 {l:'FoS YIELD',v:fmt(res.fos_yield,2),c:fosClass(res.fos_yield)},
 {l:'FoS SEPARATION',v:fmt(res.fos_separation,2),c:fosClass(res.fos_separation)},
 {l:'FoS SHEAR',v:res.fos_shear>1e10?'N/A':fmt(res.fos_shear,2),c:res.fos_shear>1e10?'':fosClass(res.fos_shear)},
 {l:'INTERACTION RATIO',v:fmt(res.interaction_ratio,3),c:res.interaction_ratio>1?'err':res.interaction_ratio>0.8?'warn':'ok'},
-{l:'TORQUE (K=0.20)',v:fmt(res.torque_k02,2)+' N·m'},
-{l:'TORQUE (K=0.15)',v:fmt(res.torque_k015,2)+' N·m'},
+{l:'TORQUE (K=0.20)',v:U.m(res.torque_k02,2)},
+{l:'TORQUE (K=0.15)',v:U.m(res.torque_k015,2)},
 {l:'JOINT STATUS',v:res.joint_status,c:jc},
 ];
 $('#bolt-results').innerHTML=`<h3>JOINT RESULTS</h3><div class="result-grid">${p.map(x=>`<div class="result-item"><div class="lbl">${x.l}</div><div class="val${x.c?' '+x.c:''}">${x.v}</div></div>`).join('')}</div>`;
 drawBoltPattern();
-};
+}
 window.toggleBoltPattern=function(){
 const pat=$('#bl-pattern').value;
 $('#row-bcd').style.display=pat==='circular'?'':'none';
@@ -1707,48 +1775,52 @@ yield_strength:(parseFloat($('#sp-sy').value)||1000)*1e6,
 };
 const res=JSON.parse(calc_spring(JSON.stringify(inp)));
 if(res.error){$('#spring-results').innerHTML=`<h3>ERROR</h3><p style="color:var(--err)">${res.error}</p>`;return;}
+_lastSpring=res;_lastSpringKind=kind;renderSpringResults(res,kind);
+};
+function renderSpringResults(res,kind){
+const isBell=kind==='belleville';
 const p=isBell?[
-{l:'SPRING RATE',v:fmt(res.spring_rate,2)+' N/m'},
-{l:'FORCE',v:fmt(res.force,2)+' N'},
-{l:'DEFLECTION',v:fmt(res.deflection*1000,2)+' mm'},
-{l:'σ_OM (OUTER TENSION)',v:fmt(res.shear_stress/1e6,1)+' MPa'},
-{l:'σ_I (INNER COMP)',v:fmt(res.corrected_stress/1e6,1)+' MPa'},
+{l:'SPRING RATE',v:U.sr(res.spring_rate,2)},
+{l:'FORCE',v:U.f(res.force,2)},
+{l:'DEFLECTION',v:U.dm(res.deflection*1000,2)},
+{l:'σ_OM (OUTER TENSION)',v:U.s(res.shear_stress/1e6,1)},
+{l:'σ_I (INNER COMP)',v:U.s(res.corrected_stress/1e6,1)},
 {l:'DIAMETER RATIO δ',v:fmt(res.spring_index,2)},
 {l:'K₁ (DIN 2093)',v:fmt(res.wahl_factor,4)},
-{l:'SOLID HEIGHT',v:fmt(res.solid_length*1000,1)+' mm'},
-{l:'MAX DEFLECTION h₀',v:fmt(res.max_deflection*1000,1)+' mm'},
+{l:'SOLID HEIGHT',v:U.dm(res.solid_length*1000,1)},
+{l:'MAX DEFLECTION h₀',v:U.dm(res.max_deflection*1000,1)},
 {l:'FoS STATIC',v:fmt(res.fos_static,2),c:fosClass(res.fos_static)},
-{l:'ENERGY STORED',v:fmt(res.energy_stored,4)+' J'},
-{l:'WEIGHT APPROX',v:fmt(res.weight_approx*1000,2)+' g'},
+{l:'ENERGY STORED',v:U.e(res.energy_stored,4)},
+{l:'WEIGHT APPROX',v:U.wt(res.weight_approx*1000,2)},
 ]:[
-{l:'SPRING RATE',v:fmt(res.spring_rate,2)+' N/m'},
-{l:'FORCE',v:fmt(res.force,2)+' N'},
-{l:'DEFLECTION',v:fmt(res.deflection*1000,2)+' mm'},
-{l:'SHEAR STRESS (τ)',v:fmt(res.shear_stress/1e6,1)+' MPa'},
-{l:'CORRECTED (WAHL)',v:fmt(res.corrected_stress/1e6,1)+' MPa'},
+{l:'SPRING RATE',v:U.sr(res.spring_rate,2)},
+{l:'FORCE',v:U.f(res.force,2)},
+{l:'DEFLECTION',v:U.dm(res.deflection*1000,2)},
+{l:'SHEAR STRESS (τ)',v:U.s(res.shear_stress/1e6,1)},
+{l:'CORRECTED (WAHL)',v:U.s(res.corrected_stress/1e6,1)},
 {l:'SPRING INDEX C',v:fmt(res.spring_index,2)},
 {l:'WAHL FACTOR Kw',v:fmt(res.wahl_factor,3)},
-{l:'SOLID LENGTH',v:fmt(res.solid_length*1000,1)+' mm'},
-{l:'MAX DEFLECTION',v:fmt(res.max_deflection*1000,1)+' mm'},
+{l:'SOLID LENGTH',v:U.dm(res.solid_length*1000,1)},
+{l:'MAX DEFLECTION',v:U.dm(res.max_deflection*1000,1)},
 {l:'NATURAL FREQ',v:fmt(res.natural_freq_hz,1)+' Hz'},
 {l:'BUCKLING RATIO',v:fmt(res.buckling_ratio,2),c:res.buckling_ratio>4?'warn':''},
 {l:'FoS STATIC',v:fmt(res.fos_static,2),c:fosClass(res.fos_static)},
-{l:'ENERGY STORED',v:fmt(res.energy_stored,4)+' J'},
-{l:'WEIGHT APPROX',v:fmt(res.weight_approx*1000,2)+' g'},
+{l:'ENERGY STORED',v:U.e(res.energy_stored,4)},
+{l:'WEIGHT APPROX',v:U.wt(res.weight_approx*1000,2)},
 ];
 let fatigueHtml='';
 if(res.fatigue_fos&&res.fatigue_fos>0&&res.fatigue_life!=='N/A'){
 fatigueHtml=`<div class="card" style="margin-top:.5rem"><h3>FATIGUE (GOODMAN)</h3><div class="result-grid">${[
 {l:'FoS FATIGUE',v:fmt(res.fatigue_fos,2),c:fosClass(res.fatigue_fos)},
-{l:'τ MEAN',v:fmt(res.mean_stress/1e6,1)+' MPa'},
-{l:'τ ALT',v:fmt(res.alt_stress/1e6,1)+' MPa'},
-{l:'ENDURANCE Se',v:fmt(res.endurance_limit/1e6,1)+' MPa'},
+{l:'τ MEAN',v:U.s(res.mean_stress/1e6,1)},
+{l:'τ ALT',v:U.s(res.alt_stress/1e6,1)},
+{l:'ENDURANCE Se',v:U.s(res.endurance_limit/1e6,1)},
 {l:'LIFE',v:res.fatigue_life},
 ].map(x=>`<div class="result-item"><div class="lbl">${x.l}</div><div class="val${x.c?' '+x.c:''}">${x.v}</div></div>`).join('')}</div></div>`;
 }
 $('#spring-results').innerHTML=`<h3>${isBell?'BELLEVILLE':'SPRING'} RESULTS</h3><div class="result-grid">${p.map(x=>`<div class="result-item"><div class="lbl">${x.l}</div><div class="val${x.c?' '+x.c:''}">${x.v}</div></div>`).join('')}</div>`+fatigueHtml;
 drawSpringViz(res,kind);
-};
+}
 function drawSpringViz(res,kind){
 const canvas=$('#c-spring-viz');
 if(!canvas)return;
@@ -1820,8 +1892,8 @@ c.beginPath();c.moveTo(cx-3,stackTop-6);c.lineTo(cx,stackTop-2);c.lineTo(cx+3,st
 c.fillStyle='#e0e0e0';c.font='11px monospace';c.textAlign='center';
 c.fillText(st.label,cx,h*0.84);
 c.fillStyle='#666';c.font='10px monospace';
-if(st.defl>0)c.fillText(fmt(st.defl*1000,2)+' mm',cx,h*0.93);
-else c.fillText('h\u2080='+fmt(ho_mm,2)+' mm'+(totalDiscs>1?' ('+nP+'n×'+nS+'i)':''),cx,h*0.93);
+if(st.defl>0)c.fillText(U.dm(st.defl*1000,2),cx,h*0.93);
+else c.fillText('h\u2080='+U.dm(ho_mm,2)+(totalDiscs>1?' ('+nP+'n×'+nS+'i)':''),cx,h*0.93);
 });
 const E_b=parseFloat($('#sp-be').value)*1e9||206e9;
 const nu_b=parseFloat($('#sp-bnu').value)||0.3;
@@ -1844,15 +1916,16 @@ xSingle.push(+(dSingle*1000).toFixed(4));
 ySingle.push(+Math.abs(Fs).toFixed(4));
 }
 }
-const traces=[{x:xVals,y:yVals,type:'scatter',mode:'lines',name:nP>1||nS>1?'System ('+nP+'n×'+nS+'i)':'Single Disc',line:{color:'#ff6b35',width:2.5,shape:'spline'},hovertemplate:'δ = %{x:.2f} mm<br>F = %{y:.1f} N<extra></extra>'}];
+const dS=U.dmS(),fSc=U.fS();
+const traces=[{x:xVals.map(v=>v*dS),y:yVals.map(v=>v*fSc),type:'scatter',mode:'lines',name:nP>1||nS>1?'System ('+nP+'n×'+nS+'i)':'Single Disc',line:{color:'#ff6b35',width:2.5,shape:'spline'},hovertemplate:`δ = %{x:.2f} ${U.dmU()}<br>F = %{y:.1f} ${U.fU()}<extra></extra>`}];
 if(nP>1||nS>1){
-traces.unshift({x:xSingle,y:ySingle,type:'scatter',mode:'lines',name:'Single Disc',line:{color:'#ff6b3555',width:1.5,dash:'dot',shape:'spline'},hovertemplate:'δ = %{x:.2f} mm<br>F = %{y:.1f} N<extra></extra>'});
+traces.unshift({x:xSingle.map(v=>v*dS),y:ySingle.map(v=>v*fSc),type:'scatter',mode:'lines',name:'Single Disc',line:{color:'#ff6b3555',width:1.5,dash:'dot',shape:'spline'},hovertemplate:`δ = %{x:.2f} ${U.dmU()}<br>F = %{y:.1f} ${U.fU()}<extra></extra>`});
 }
 if(res.deflection>0){
-const opDefl=res.deflection*1000;
-traces.push({x:[opDefl],y:[res.force],type:'scatter',mode:'markers',name:'Operating Point',marker:{color:'#ff6b35',size:10,symbol:'circle',line:{color:'#fff',width:1.5}},hovertemplate:'δ = %{x:.2f} mm<br>F = %{y:.1f} N<extra></extra>'});
+const opDefl=res.deflection*1000*dS;
+traces.push({x:[opDefl],y:[res.force*fSc],type:'scatter',mode:'markers',name:'Operating Point',marker:{color:'#ff6b35',size:10,symbol:'circle',line:{color:'#fff',width:1.5}},hovertemplate:`δ = %{x:.2f} ${U.dmU()}<br>F = %{y:.1f} ${U.fU()}<extra></extra>`});
 }
-const fdLayout=Object.assign({},pLayout,{title:{text:'F-δ CURVE — DIN 2093 BELLEVILLE'+(nP>1||nS>1?' ('+nP+'n × '+nS+'i)':''),font:{size:12,color:'#ff6b35',family:'JetBrains Mono'}},xaxis:Object.assign({},pLayout.xaxis,{title:{text:'Deflection δ (mm)',font:{size:11,color:'#888'}}}),yaxis:Object.assign({},pLayout.yaxis,{title:{text:'Force F (N)',font:{size:11,color:'#888'}}}),showlegend:nP>1||nS>1,legend:{font:{size:10,color:'#888'},bgcolor:'transparent',x:0.02,y:0.98}});
+const fdLayout=Object.assign({},pLayout,{title:{text:'F-δ CURVE — DIN 2093 BELLEVILLE'+(nP>1||nS>1?' ('+nP+'n × '+nS+'i)':''),font:{size:12,color:'#ff6b35',family:'JetBrains Mono'}},xaxis:Object.assign({},pLayout.xaxis,{title:{text:`Deflection δ (${U.dmU()})`,font:{size:11,color:'#888'}}}),yaxis:Object.assign({},pLayout.yaxis,{title:{text:`Force F (${U.fU()})`,font:{size:11,color:'#888'}}}),showlegend:nP>1||nS>1,legend:{font:{size:10,color:'#888'},bgcolor:'transparent',x:0.02,y:0.98}});
 Plotly.react('spring-fd-chart',traces,fdLayout,pCfg);
 $('#spring-goodman-card').style.display='none';
 }else{
@@ -1883,16 +1956,17 @@ c.beginPath();c.moveTo(cx-coilR-10,topY+st.len*scale+5);c.lineTo(cx+coilR+10,top
 c.fillStyle='#e0e0e0';c.font='11px monospace';c.textAlign='center';
 c.fillText(st.label,cx,h-15);
 c.fillStyle='#666';c.font='10px monospace';
-c.fillText(fmt(st.len,1)+' mm',cx,h-3);
+c.fillText(U.dm(st.len,1),cx,h-3);
 });
 if(res.rate_curve&&res.rate_curve.length>1){
 const rcX=res.rate_curve.map(p=>p[0]);
 const rcY=res.rate_curve.map(p=>p[1]);
-const rcTraces=[{x:rcX,y:rcY,type:'scatter',mode:'lines',name:'Spring Rate',line:{color:'#ff6b35',width:2.5,shape:'spline'},fill:'tozeroy',fillcolor:'rgba(255,107,53,0.08)',hovertemplate:'δ = %{x:.2f} mm<br>F = %{y:.1f} N<extra></extra>'}];
+const cdS=U.dmS(),cfS=U.fS();
+const rcTraces=[{x:rcX.map(v=>v*cdS),y:rcY.map(v=>v*cfS),type:'scatter',mode:'lines',name:'Spring Rate',line:{color:'#ff6b35',width:2.5,shape:'spline'},fill:'tozeroy',fillcolor:'rgba(255,107,53,0.08)',hovertemplate:`δ = %{x:.2f} ${U.dmU()}<br>F = %{y:.1f} ${U.fU()}<extra></extra>`}];
 if(res.deflection>0){
-rcTraces.push({x:[deflMm],y:[res.force],type:'scatter',mode:'markers',name:'Operating Point',marker:{color:'#ff6b35',size:10,symbol:'circle',line:{color:'#fff',width:1.5}},hovertemplate:'δ = %{x:.2f} mm<br>F = %{y:.1f} N<extra></extra>'});
+rcTraces.push({x:[deflMm*cdS],y:[res.force*cfS],type:'scatter',mode:'markers',name:'Operating Point',marker:{color:'#ff6b35',size:10,symbol:'circle',line:{color:'#fff',width:1.5}},hovertemplate:`δ = %{x:.2f} ${U.dmU()}<br>F = %{y:.1f} ${U.fU()}<extra></extra>`});
 }
-const rcLayout=Object.assign({},pLayout,{title:{text:'FORCE-DEFLECTION CURVE',font:{size:12,color:'#ff6b35',family:'JetBrains Mono'}},xaxis:Object.assign({},pLayout.xaxis,{title:{text:'Deflection (mm)',font:{size:11,color:'#888'}}}),yaxis:Object.assign({},pLayout.yaxis,{title:{text:'Force (N)',font:{size:11,color:'#888'}}}),showlegend:false});
+const rcLayout=Object.assign({},pLayout,{title:{text:'FORCE-DEFLECTION CURVE',font:{size:12,color:'#ff6b35',family:'JetBrains Mono'}},xaxis:Object.assign({},pLayout.xaxis,{title:{text:`Deflection (${U.dmU()})`,font:{size:11,color:'#888'}}}),yaxis:Object.assign({},pLayout.yaxis,{title:{text:`Force (${U.fU()})`,font:{size:11,color:'#888'}}}),showlegend:false});
 Plotly.react('spring-fd-chart',rcTraces,rcLayout,pCfg);
 }else{
 $('#spring-fd-chart').innerHTML='<p style="color:var(--dim);font-size:.8rem;text-align:center;padding:2rem">No rate curve data</p>';
@@ -1901,11 +1975,12 @@ if(res.goodman_line&&res.goodman_line.length>1&&res.fatigue_fos>0){
 $('#spring-goodman-card').style.display='block';
 const gmX=res.goodman_line.map(p=>p[0]/1e6);
 const gmY=res.goodman_line.map(p=>p[1]/1e6);
-const gmTraces=[{x:gmX,y:gmY,type:'scatter',mode:'lines',name:'Goodman Line',line:{color:'#00ff9d',width:2.5},fill:'tozeroy',fillcolor:'rgba(0,255,157,0.06)',hovertemplate:'σ_m = %{x:.1f} MPa<br>σ_a = %{y:.1f} MPa<extra></extra>'}];
+const sS=U.sS();
+const gmTraces=[{x:gmX.map(v=>v*sS),y:gmY.map(v=>v*sS),type:'scatter',mode:'lines',name:'Goodman Line',line:{color:'#00ff9d',width:2.5},fill:'tozeroy',fillcolor:'rgba(0,255,157,0.06)',hovertemplate:`σ_m = %{x:.1f} ${U.sU()}<br>σ_a = %{y:.1f} ${U.sU()}<extra></extra>`}];
 if(res.mean_stress>0||res.alt_stress>0){
-gmTraces.push({x:[res.mean_stress/1e6],y:[res.alt_stress/1e6],type:'scatter',mode:'markers',name:'Operating Point',marker:{color:res.fatigue_fos>=1?'#00ff9d':'#ff4444',size:11,symbol:'circle',line:{color:'#fff',width:1.5}},hovertemplate:'σ_m = %{x:.1f} MPa<br>σ_a = %{y:.1f} MPa<br>FoS = '+fmt(res.fatigue_fos,2)+'<extra></extra>'});
+gmTraces.push({x:[res.mean_stress/1e6*sS],y:[res.alt_stress/1e6*sS],type:'scatter',mode:'markers',name:'Operating Point',marker:{color:res.fatigue_fos>=1?'#00ff9d':'#ff4444',size:11,symbol:'circle',line:{color:'#fff',width:1.5}},hovertemplate:`σ_m = %{x:.1f} ${U.sU()}<br>σ_a = %{y:.1f} ${U.sU()}<br>FoS = `+fmt(res.fatigue_fos,2)+'<extra></extra>'});
 }
-const gmLayout=Object.assign({},pLayout,{title:{text:'MODIFIED GOODMAN DIAGRAM',font:{size:12,color:'#00ff9d',family:'JetBrains Mono'}},xaxis:Object.assign({},pLayout.xaxis,{title:{text:'Mean Stress σ_m (MPa)',font:{size:11,color:'#888'}}}),yaxis:Object.assign({},pLayout.yaxis,{title:{text:'Alternating Stress σ_a (MPa)',font:{size:11,color:'#888'}}}),showlegend:true,legend:{font:{size:10,color:'#888'},bgcolor:'transparent',x:0.65,y:0.98}});
+const gmLayout=Object.assign({},pLayout,{title:{text:'MODIFIED GOODMAN DIAGRAM',font:{size:12,color:'#00ff9d',family:'JetBrains Mono'}},xaxis:Object.assign({},pLayout.xaxis,{title:{text:`Mean Stress σ_m (${U.sU()})`,font:{size:11,color:'#888'}}}),yaxis:Object.assign({},pLayout.yaxis,{title:{text:`Alternating Stress σ_a (${U.sU()})`,font:{size:11,color:'#888'}}}),showlegend:true,legend:{font:{size:10,color:'#888'},bgcolor:'transparent',x:0.65,y:0.98}});
 Plotly.react('spring-goodman-chart',gmTraces,gmLayout,pCfg);
 }else{
 $('#spring-goodman-card').style.display='none';
@@ -2229,40 +2304,45 @@ custom_pts:customPts,
 };
 const res=JSON.parse(calc_seal(JSON.stringify(inp)));
 if(res.error){$('#seal-results').innerHTML=`<h3>ERROR</h3><p style="color:var(--err)">${res.error}</p>`;return;}
+_lastSeal=res;renderSealResults(res);
+};
+function renderSealResults(res){
 $('#sl-squeeze-rng').value=res.squeeze_pct;
 $('#sl-squeeze-v').textContent=res.squeeze_pct.toFixed(1);
 drawSealAnim(res.squeeze_pct);
 const sqC=res.squeeze_pct<10||res.squeeze_pct>40?'warn':'ok';
 const fillC=res.volume_fill_pct>90||res.volume_fill_pct<60?'warn':'ok';
 const extC=res.extrusion_gap_ok?'ok':'err';
-const vmC=res.max_vonmises>0?' | σ_max='+fmt(res.max_vonmises,1)+' MPa':'';
 const p=[
 {l:'MATERIAL',v:res.material},
 {l:'GLAND TYPE',v:res.gland_type.replace(/_/g,' ').toUpperCase()},
 {l:'SQUEEZE',v:fmt(res.squeeze_pct,1)+'%',c:sqC},
 {l:'SHAPE FACTOR',v:fmt(res.shape_factor,3)},
-{l:'CONTACT WIDTH',v:fmt(res.contact_width_mm,2)+' mm'},
-{l:'CONTACT PRESSURE',v:fmt(res.contact_pressure_mpa,2)+' MPa'},
-{l:'FORCE/mm',v:fmt(res.compression_force_n_per_mm,2)+' N/mm'},
+{l:'CONTACT WIDTH',v:U.dm(res.contact_width_mm,2)},
+{l:'CONTACT PRESSURE',v:U.s(res.contact_pressure_mpa,2)},
+{l:'FORCE/mm',v:U.fl(res.compression_force_n_per_mm,2)},
 {l:'GLAND FILL',v:fmt(res.volume_fill_pct,1)+'%',c:fillC},
 {l:'EXTRUSION GAP',v:res.extrusion_gap_ok?'OK':'FAIL',c:extC},
-{l:'MAX ALLOWABLE GAP',v:fmt(res.max_allowable_gap_mm,3)+' mm'},
-{l:'MAX VON MISES',v:fmt(res.max_vonmises,2)+' MPa'},
+{l:'MAX ALLOWABLE GAP',v:U.dm(res.max_allowable_gap_mm,3)},
+{l:'MAX VON MISES',v:U.s(res.max_vonmises,2)},
 ];
 let warnHtml=res.warnings.length>0?'<div style="margin-top:.75rem">'+res.warnings.map(w=>`<div class="tag tag-warn" style="display:block;margin:2px 0">${w}</div>`).join('')+'</div>':'';
 let recHtml=res.recommendations.length>0?'<div style="margin-top:.5rem">'+res.recommendations.map(r=>`<div class="tag tag-ok" style="display:block;margin:2px 0">${r}</div>`).join('')+'</div>':'';
 $('#seal-results').innerHTML=`<h3>SEAL RESULTS</h3><div class="result-grid">${p.map(x=>`<div class="result-item"><div class="lbl">${x.l}</div><div class="val${x.c?' '+x.c:''}">${x.v}</div></div>`).join('')}</div>${warnHtml}${recHtml}`;
+const flU=USYS==='imperial'?'lbf/in':'N/mm',sU=U.sU();
 setTimeout(()=>{
-drawSealDiagram('c-seal-fd',res.force_deflection,'N/mm','#00ff9d',res.current_point_fd,res.optimum_range);
-drawSealDiagram('c-seal-ss',res.stress_strain,'MPa','#ff6b35',res.current_point_ss,null);
+drawSealDiagram('c-seal-fd',res.force_deflection,flU,'#00ff9d',res.current_point_fd,res.optimum_range);
+drawSealDiagram('c-seal-ss',res.stress_strain,sU,'#ff6b35',res.current_point_ss,null);
 drawNLStressCurve(res);
 },50);
-};
+}
 function drawSealDiagram(id,data,unit,color,opPoint,optRange){
 const el=document.getElementById(id);
 if(!el||!data||data.length<2)return;
-const xs=data.map(d=>d[0]),ys=data.map(d=>d[1]);
-const traces=[{x:xs,y:ys,type:'scatter',mode:'lines',name:unit,fill:'tozeroy',fillcolor:color+'15',line:{color,width:2.5,shape:'spline'},hovertemplate:'Compression = %{x:.1f}%<br>'+unit+' = %{y:.2f}<extra></extra>'}];
+const isFL=unit.includes('/')&&!unit.includes('si');
+const sf=USYS==='imperial'?(isFL?5.71015:0.145038):1;
+const xs=data.map(d=>d[0]),ys=data.map(d=>d[1]*sf);
+const traces=[{x:xs,y:ys,type:'scatter',mode:'lines',name:unit,fill:'tozeroy',fillcolor:color+'15',line:{color,width:2.5,shape:'spline'},hovertemplate:`Compression = %{x:.1f}%<br>${unit} = %{y:.2f}<extra></extra>`}];
 const shapes=[];
 if(optRange){
 shapes.push({type:'rect',x0:optRange[0]||15,x1:optRange[1]||30,y0:0,y1:Math.max(...ys)*1.1,fillcolor:'rgba(34,197,94,0.12)',line:{width:0}});
@@ -2271,7 +2351,7 @@ shapes.push({type:'line',x0:optRange[1]||30,x1:optRange[1]||30,y0:0,y1:Math.max(
 }
 if(opPoint&&opPoint[0]>0){
 const sqColor=opPoint[0]<10?'#3b82f6':opPoint[0]<=30?'#22c55e':opPoint[0]<=40?'#f59e0b':'#ef4444';
-traces.push({x:[opPoint[0]],y:[opPoint[1]],type:'scatter',mode:'markers',name:'Operating ('+fmt(opPoint[1],1)+' '+unit+')',marker:{color:sqColor,size:11,symbol:'diamond',line:{color:'#fff',width:1.5}}});
+traces.push({x:[opPoint[0]],y:[opPoint[1]*sf],type:'scatter',mode:'markers',name:'Operating ('+fmt(opPoint[1]*sf,1)+' '+unit+')',marker:{color:sqColor,size:11,symbol:'diamond',line:{color:'#fff',width:1.5}}});
 }
 Plotly.react(id,traces,Object.assign({},pLayout,{margin:{l:70,r:25,t:20,b:50},shapes,xaxis:Object.assign({},pLayout.xaxis,{title:{text:'Compression (%)',font:{size:11,color:'#888'}}}),yaxis:Object.assign({},pLayout.yaxis,{title:{text:unit,font:{size:11,color:'#888'}}}),showlegend:opPoint&&opPoint[0]>0,legend:{font:{size:10,color:'#888'},bgcolor:'transparent'}}),pCfg);
 }
@@ -2280,7 +2360,8 @@ const el=document.getElementById('c-seal-nlstress');
 if(!el||!res.stress_curve)return;
 const data=res.stress_curve;
 const iz=res.ideal_zone||[15,30];
-const traces=[{x:data.map(d=>d[0]),y:data.map(d=>d[1]),type:'scatter',mode:'lines',name:'E_eff Stress',fill:'tozeroy',fillcolor:'rgba(59,130,246,0.08)',line:{color:'#3b82f6',width:2.5,shape:'spline'},hovertemplate:'Compression = %{x:.1f}%<br>Stress = %{y:.1f} MPa<extra></extra>'}];
+const nlSf=U.sS();
+const traces=[{x:data.map(d=>d[0]),y:data.map(d=>d[1]*nlSf),type:'scatter',mode:'lines',name:'E_eff Stress',fill:'tozeroy',fillcolor:'rgba(59,130,246,0.08)',line:{color:'#3b82f6',width:2.5,shape:'spline'},hovertemplate:`Compression = %{x:.1f}%<br>Stress = %{y:.1f} ${U.sU()}<extra></extra>`}];
 const shapes=[
 {type:'rect',x0:iz[0],x1:iz[1],y0:0,y1:Math.max(...data.map(d=>d[1]))*1.1,fillcolor:'rgba(34,197,94,0.12)',line:{width:0}},
 {type:'line',x0:iz[0],x1:iz[0],y0:0,y1:Math.max(...data.map(d=>d[1]))*1.1,line:{color:'#22c55e',width:1,dash:'dash'}},
@@ -2289,9 +2370,9 @@ const shapes=[
 if(res.stress_op_point){
 const op=res.stress_op_point;
 const sqColor=op[0]<10?'#3b82f6':op[0]<=30?'#22c55e':op[0]<=40?'#f59e0b':'#ef4444';
-traces.push({x:[op[0]],y:[op[1]],type:'scatter',mode:'markers+text',name:fmt(op[1],1)+' MPa @ '+fmt(op[0],1)+'%',marker:{color:sqColor,size:12,symbol:'diamond',line:{color:'#fff',width:2}},text:[fmt(op[1],1)+' MPa'],textposition:'top right',textfont:{size:10,color:'#fff'}});
+traces.push({x:[op[0]],y:[op[1]*nlSf],type:'scatter',mode:'markers+text',name:fmt(op[1]*nlSf,1)+' '+U.sU()+' @ '+fmt(op[0],1)+'%',marker:{color:sqColor,size:12,symbol:'diamond',line:{color:'#fff',width:2}},text:[fmt(op[1]*nlSf,1)+' '+U.sU()],textposition:'top right',textfont:{size:10,color:'#fff'}});
 }
-Plotly.react('c-seal-nlstress',traces,Object.assign({},pLayout,{title:{text:'NONLINEAR STRESS (E_eff)',font:{size:12,color:'#3b82f6',family:'JetBrains Mono'}},shapes,xaxis:Object.assign({},pLayout.xaxis,{title:{text:'Compression (%)',font:{size:11,color:'#888'}},range:[0,50]}),yaxis:Object.assign({},pLayout.yaxis,{title:{text:'Stress (MPa)',font:{size:11,color:'#888'}}}),showlegend:!!res.stress_op_point,legend:{font:{size:10,color:'#888'},bgcolor:'transparent'},annotations:[{x:(iz[0]+iz[1])/2,y:Math.max(...data.map(d=>d[1]))*0.95,text:'IDEAL ZONE',showarrow:false,font:{size:9,color:'#22c55e'}}]}),pCfg);
+Plotly.react('c-seal-nlstress',traces,Object.assign({},pLayout,{title:{text:'NONLINEAR STRESS (E_eff)',font:{size:12,color:'#3b82f6',family:'JetBrains Mono'}},shapes,xaxis:Object.assign({},pLayout.xaxis,{title:{text:'Compression (%)',font:{size:11,color:'#888'}},range:[0,50]}),yaxis:Object.assign({},pLayout.yaxis,{title:{text:`Stress (${U.sU()})`,font:{size:11,color:'#888'}}}),showlegend:!!res.stress_op_point,legend:{font:{size:10,color:'#888'},bgcolor:'transparent'},annotations:[{x:(iz[0]+iz[1])/2,y:Math.max(...data.map(d=>d[1]*nlSf))*0.95,text:'IDEAL ZONE',showarrow:false,font:{size:9,color:'#22c55e'}}]}),pCfg);
 }
 window.reportBug=function(){
 const activeTab=document.querySelector('.tab.active');
@@ -2365,28 +2446,32 @@ inp.length=parseFloat($('#th-expl').value)||1;
 }
 const res=JSON.parse(calc_thermal(JSON.stringify(inp)));
 if(res.error){$('#thermal-results').innerHTML=`<h3>ERROR</h3><p style="color:var(--err)">${res.error}</p>`;return;}
+_lastThermal=res;renderThermalResults(res);
+};
+function renderThermalResults(res){
 let items=[];
-if(res.q!=null)items.push({l:'HEAT TRANSFER q',v:Math.abs(res.q)>=1000?fmt(res.q/1000,2)+' kW':fmt(res.q,2)+' W'});
-if(res.q_per_area!=null)items.push({l:'HEAT FLUX q/A',v:fmt(res.q_per_area,2)+' W/m²'});
-if(res.r_total!=null)items.push({l:'R TOTAL',v:fmt(res.r_total,4)+' K/W'});
-if(res.u_value!=null)items.push({l:'U-VALUE',v:fmt(res.u_value,3)+' W/(m²·K)'});
+if(res.q!=null)items.push({l:'HEAT TRANSFER q',v:USYS==='imperial'?fmt(res.q*3.41214,2)+' BTU/h':Math.abs(res.q)>=1000?fmt(res.q/1000,2)+' kW':fmt(res.q,2)+' W'});
+if(res.q_per_area!=null)items.push({l:'HEAT FLUX q/A',v:U.pf(res.q_per_area,2)});
+if(res.r_total!=null)items.push({l:'R TOTAL',v:U.rt(res.r_total,4)});
+if(res.u_value!=null)items.push({l:'U-VALUE',v:U.uv(res.u_value,3)});
 if(res.fin_efficiency!=null)items.push({l:'FIN EFFICIENCY η',v:(res.fin_efficiency*100).toFixed(1)+'%'});
 if(res.fin_effectiveness!=null)items.push({l:'FIN EFFECTIVENESS ε',v:fmt(res.fin_effectiveness,2)});
-if(res.q_fin!=null)items.push({l:'FIN HEAT TRANSFER',v:fmt(res.q_fin,2)+' W'});
+if(res.q_fin!=null)items.push({l:'FIN HEAT TRANSFER',v:U.p(res.q_fin,2)});
 if(res.thermal_strain!=null)items.push({l:'THERMAL STRAIN ε_T',v:fmt(res.thermal_strain,6)});
-if(res.thermal_stress!=null)items.push({l:'THERMAL STRESS σ_T',v:fmt(res.thermal_stress/1e6,2)+' MPa'});
-if(res.delta_l!=null)items.push({l:'CHANGE IN LENGTH ΔL',v:fmt(res.delta_l*1000,3)+' mm'});
+if(res.thermal_stress!=null)items.push({l:'THERMAL STRESS σ_T',v:U.s(res.thermal_stress/1e6,2)});
+if(res.delta_l!=null)items.push({l:'CHANGE IN LENGTH ΔL',v:U.dm(res.delta_l*1000,3)});
 $('#thermal-results').innerHTML=`<h3>THERMAL RESULTS</h3><div class="result-grid">${items.map(x=>`<div class="result-item"><div class="lbl">${x.l}</div><div class="val">${x.v}</div></div>`).join('')}</div>`;
 if(res.t_interfaces&&res.t_interfaces.length>1)drawThermalProfile(res);
 else{const cv=document.getElementById('c-thermal');if(cv)Plotly.purge(cv);}
-};
+}
 function drawThermalProfile(res){
 const el=document.getElementById('c-thermal');
 if(!el)return;
 const temps=res.t_interfaces;
 const n=temps.length;
 const xLabels=temps.map((_,i)=>i===0?'T_hot':i===n-1?'T_cold':'I'+i);
-const traces=[{x:xLabels,y:temps,type:'scatter',mode:'lines+markers+text',name:'Temperature',line:{color:'#ff6b35',width:2.5},marker:{color:'#ff6b35',size:8},text:temps.map(t=>t.toFixed(1)+'°C'),textposition:'top center',textfont:{size:9,color:'#e0e0e0'},hovertemplate:'%{x}<br>T = %{y:.1f} °C<extra></extra>'}];
+const tC=v=>USYS==='imperial'?v*9/5+32:v;
+const traces=[{x:xLabels,y:temps.map(tC),type:'scatter',mode:'lines+markers+text',name:'Temperature',line:{color:'#ff6b35',width:2.5},marker:{color:'#ff6b35',size:8},text:temps.map(t=>U.t(t,1)),textposition:'top center',textfont:{size:9,color:'#e0e0e0'},hovertemplate:`%{x}<br>T = %{y:.1f} ${U.tU()}<extra></extra>`}];
 const shapes=[];
 const r=res.r_layers;
 if(r&&r.length>0){
@@ -2394,7 +2479,7 @@ for(let i=0;i<n-1;i++){
 shapes.push({type:'rect',x0:i-0.5,x1:i+0.5,y0:Math.min(...temps)-5,y1:Math.max(...temps)+5,fillcolor:i%2===0?'rgba(255,107,53,0.08)':'rgba(59,130,246,0.08)',line:{width:0},layer:'below'});
 }
 }
-Plotly.react('c-thermal',traces,Object.assign({},pLayout,{title:{text:'TEMPERATURE PROFILE THROUGH LAYERS',font:{size:12,color:'#ff6b35',family:'JetBrains Mono'}},shapes,xaxis:Object.assign({},pLayout.xaxis,{type:'category'}),yaxis:Object.assign({},pLayout.yaxis,{title:{text:'Temperature (°C)',font:{size:11,color:'#888'}}})}),pCfg);
+Plotly.react('c-thermal',traces,Object.assign({},pLayout,{title:{text:'TEMPERATURE PROFILE THROUGH LAYERS',font:{size:12,color:'#ff6b35',family:'JetBrains Mono'}},shapes,xaxis:Object.assign({},pLayout.xaxis,{type:'category'}),yaxis:Object.assign({},pLayout.yaxis,{title:{text:`Temperature (${U.tU()})`,font:{size:11,color:'#888'}}})}),pCfg);
 }
 function drawMathGraph(canvasId,pts,xLabel,yLabel,color,markers){
 const el=document.getElementById(canvasId);
@@ -2853,13 +2938,13 @@ if(press>m.pressure_max*0.8)recs.push('Operating near max pressure — consider 
 recs.push('Target flange finish: Ra ≤ '+m.finish_ra_ideal+' µin ('+(m.finish_ra_ideal*0.0254).toFixed(1)+' µm)');
 recs.push('Acceptable flange finish: Ra ≤ '+m.finish_ra_max+' µin ('+(m.finish_ra_max*0.0254).toFixed(1)+' µm)');
 const items=[
-{l:'CHANNEL DEPTH',v:chDepth.toFixed(2)+' mm'},
-{l:'CHANNEL WIDTH',v:chWidth.toFixed(2)+' mm'},
+{l:'CHANNEL DEPTH',v:U.dm(chDepth,2)},
+{l:'CHANNEL WIDTH',v:U.dm(chWidth,2)},
 {l:'TARGET SQUEEZE',v:targetSq+'%'},
 {l:'ACTUAL SQUEEZE',v:actualSq.toFixed(1)+'%',c:actualSq>=minSq&&actualSq<=maxSq?'ok':'warn'},
-{l:'GASKET AREA',v:(sealArea).toFixed(0)+' mm²'},
-{l:'BOLT STRESS ON GASKET',v:gasketStress.toFixed(1)+' MPa'},
-{l:'RESIDUAL (POST-CREEP)',v:residualStress.toFixed(1)+' MPa',c:residualStress>press?'ok':'err'},
+{l:'GASKET AREA',v:U.a2(sealArea,0)},
+{l:'BOLT STRESS ON GASKET',v:U.s(gasketStress,1)},
+{l:'RESIDUAL (POST-CREEP)',v:U.s(residualStress,1),c:residualStress>press?'ok':'err'},
 {l:'LATERAL EXPANSION',v:((lateralExp-1)*100).toFixed(0)+'%'},
 {l:'TEMP CHECK',v:tempOk?'OK':'FAIL',c:tempOk?'ok':'err'},
 {l:'PRESSURE CHECK',v:pressOk?'OK':'FAIL',c:pressOk?'ok':'err'},
@@ -2874,9 +2959,10 @@ $('#gk-finish-rec').innerHTML=`<h3>SURFACE FINISH — ${fin.name.toUpperCase()}<
 <div class="result-item"><div class="lbl">TARGET Ra</div><div class="val ok">${fin.ra}</div></div>
 <div class="result-item"><div class="lbl">METHOD</div><div class="val" style="font-size:.8rem">${fin.method}</div></div>
 </div><div style="margin-top:.5rem;font-size:.75rem;color:var(--dim)">${fin.notes}</div>`;
-const traces=[{x:stressData.map(d=>d[0]),y:stressData.map(d=>d[1]),type:'scatter',mode:'lines',name:'Stress',fill:'tozeroy',fillcolor:'rgba(255,107,53,0.08)',line:{color:'#ff6b35',width:2.5,shape:'spline'},hovertemplate:'Squeeze = %{x}%<br>Stress = %{y:.1f} MPa<extra></extra>'}];
-traces.push({x:[actualSq],y:[stressData.find(d=>Math.abs(d[0]-Math.round(actualSq))<1)?stressData.find(d=>Math.abs(d[0]-Math.round(actualSq))<1)[1]:0],type:'scatter',mode:'markers',name:'Operating',marker:{color:'#00ff9d',size:12,symbol:'diamond',line:{color:'#fff',width:2}}});
-Plotly.react('gk-chart',traces,Object.assign({},pLayout,{title:{text:'GASKET COMPRESSION STRESS',font:{size:12,color:'#ff6b35',family:'JetBrains Mono'}},shapes:[{type:'rect',x0:minSq,x1:maxSq,y0:0,y1:Math.max(...stressData.map(d=>d[1]))*1.1,fillcolor:'rgba(34,197,94,0.12)',line:{width:0}},{type:'line',x0:minSq,x1:minSq,y0:0,y1:Math.max(...stressData.map(d=>d[1]))*1.1,line:{color:'#22c55e',width:1,dash:'dash'}},{type:'line',x0:maxSq,x1:maxSq,y0:0,y1:Math.max(...stressData.map(d=>d[1]))*1.1,line:{color:'#22c55e',width:1,dash:'dash'}}],xaxis:Object.assign({},pLayout.xaxis,{title:{text:'Compression (%)',font:{size:11,color:'#888'}},range:[0,50]}),yaxis:Object.assign({},pLayout.yaxis,{title:{text:'Stress (MPa)',font:{size:11,color:'#888'}}}),showlegend:true,legend:{font:{size:10,color:'#888'},bgcolor:'transparent'},annotations:[{x:(minSq+maxSq)/2,y:Math.max(...stressData.map(d=>d[1]))*0.9,text:'ACCEPTABLE RANGE',showarrow:false,font:{size:9,color:'#22c55e'}}]}),pCfg);
+const gkSf=U.sS();
+const traces=[{x:stressData.map(d=>d[0]),y:stressData.map(d=>d[1]*gkSf),type:'scatter',mode:'lines',name:'Stress',fill:'tozeroy',fillcolor:'rgba(255,107,53,0.08)',line:{color:'#ff6b35',width:2.5,shape:'spline'},hovertemplate:`Squeeze = %{x}%<br>Stress = %{y:.1f} ${U.sU()}<extra></extra>`}];
+traces.push({x:[actualSq],y:[stressData.find(d=>Math.abs(d[0]-Math.round(actualSq))<1)?stressData.find(d=>Math.abs(d[0]-Math.round(actualSq))<1)[1]*gkSf:0],type:'scatter',mode:'markers',name:'Operating',marker:{color:'#00ff9d',size:12,symbol:'diamond',line:{color:'#fff',width:2}}});
+Plotly.react('gk-chart',traces,Object.assign({},pLayout,{title:{text:'GASKET COMPRESSION STRESS',font:{size:12,color:'#ff6b35',family:'JetBrains Mono'}},shapes:[{type:'rect',x0:minSq,x1:maxSq,y0:0,y1:Math.max(...stressData.map(d=>d[1]*gkSf))*1.1,fillcolor:'rgba(34,197,94,0.12)',line:{width:0}},{type:'line',x0:minSq,x1:minSq,y0:0,y1:Math.max(...stressData.map(d=>d[1]*gkSf))*1.1,line:{color:'#22c55e',width:1,dash:'dash'}},{type:'line',x0:maxSq,x1:maxSq,y0:0,y1:Math.max(...stressData.map(d=>d[1]*gkSf))*1.1,line:{color:'#22c55e',width:1,dash:'dash'}}],xaxis:Object.assign({},pLayout.xaxis,{title:{text:'Compression (%)',font:{size:11,color:'#888'}},range:[0,50]}),yaxis:Object.assign({},pLayout.yaxis,{title:{text:`Stress (${U.sU()})`,font:{size:11,color:'#888'}}}),showlegend:true,legend:{font:{size:10,color:'#888'},bgcolor:'transparent'},annotations:[{x:(minSq+maxSq)/2,y:Math.max(...stressData.map(d=>d[1]*gkSf))*0.9,text:'ACCEPTABLE RANGE',showarrow:false,font:{size:9,color:'#22c55e'}}]}),pCfg);
 drawGkProfile(gkW,gkT,chWidth,chDepth,actualSq);
 };
 function drawGkProfile(gkW,gkT,chW,chD,sq){
