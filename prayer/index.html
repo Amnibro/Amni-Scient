@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Imago Nuntii Divini — Bible Pointcloud</title>
+<link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+<div id="ui">
+  <h1>Imago Nuntii Divini</h1>
+  <p class="sub">35,817 verses · 64,497 cross-references · OT + NT<br><span style="opacity:0.4;font-size:0.65rem">Click = select/zoom · Double-click = read chapter · Click empty = deselect</span></p>
+  <div id="legend">
+    <span class="ot-dot"></span> Old Testament
+    <span class="nt-dot"></span> New Testament
+  </div>
+  <div id="controls">
+    <label>Edges <input type="checkbox" id="showEdges" checked/></label>
+    <label>Spin <input type="checkbox" id="autoRotate" checked/></label>
+    <label>Kind <select id="kindFilter"><option value="all">All</option></select></label>
+    <label>Mode <select id="modeSelect">
+      <option value="timeline" selected>Timeline</option>
+      <option value="solar">Solar</option>
+      <option value="graph">Graph</option>
+      <option value="silhouette">Silhouette</option>
+      <option value="waterfall">Waterfall</option>
+      <option value="golden">Golden</option>
+      <option value="cross">INRI</option>
+      <option value="iam">I AM</option>
+      <option value="clean">Clean Web</option>
+    </select></label>
+    <button id="tandemBtn" title="Split view: book text + visualizer + connected passages">⇨ TANDEM</button>
+  </div>
+  <div id="book-legend"></div>
+  <div id="solar-legend" style="display:none">
+    <span style="opacity:0.5;font-size:0.7rem">Books = stars · Chapters orbit · Verses = moons<br>Click node to select · Double-click to read · Click empty to deselect</span>
+  </div>
+  <div id="graph-legend" style="display:none">
+    <span style="opacity:0.5;font-size:0.7rem">Nodes cluster by cross-reference proximity<br>Connected verses pull together · Slow spin</span>
+  </div>
+  <div id="waterfall-legend" style="display:none">
+    <span style="opacity:0.5;font-size:0.7rem">← OT (Genesis→Malachi) &nbsp;|&nbsp; NT (Matthew→Revelation) →<br>↕ canonical order · ★ pivotal nodes float forward</span>
+  </div>
+  <div id="clean-legend" style="display:none">
+    <span style="opacity:0.5;font-size:0.7rem">BFS-ordered grid · median crossing reduction · fewest edge crossings<br>Edges visible at higher opacity · Pivotal nodes float on z-axis</span>
+  </div>
+  <div id="tooltip"></div>
+  <div id="stats"></div>
+</div>
+<div id="tandem-wrapper" style="display:none">
+  <div id="tandem-book"></div>
+  <div id="tandem-connections"></div>
+</div>
+<div id="book-panel" class="hidden">
+  <div id="book-panel-header">
+    <span id="book-panel-title"></span>
+    <button id="book-panel-close">✕</button>
+  </div>
+  <div id="book-panel-body"></div>
+</div>
+<canvas id="canvas"></canvas>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/"
+  }
+}
+</script>
+<script type="module" src="main.js"></script>
+</body>
+</html>

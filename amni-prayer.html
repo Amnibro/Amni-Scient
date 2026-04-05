@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Amni-Prayer &mdash; Catholic Bible Nodal Map | AMNI-SCIENT</title>
+<meta name="description" content="Amni-Prayer: Interactive 3D nodal map of the entire Catholic Bible — 35,817 verses, 64,497 cross-references visualized across 9 layouts with Tandem reading mode. Rust/WASM engine, runs in-browser.">
+<meta name="keywords" content="amni-prayer,bible visualization,catholic bible,3d bible map,cross-references,imago nuntii divini,wasm,three.js,interactive bible">
+<meta property="og:title" content="Amni-Prayer &mdash; Catholic Bible Nodal Map">
+<meta property="og:description" content="35,817 verses. 64,497 cross-references. 9 sacred geometry layouts. Tandem reading mode. The entire Catholic Bible as an interactive 3D pointcloud.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://amni-scient.com/amni-prayer">
+<meta property="og:image" content="https://amni-scient.com/assets/prayer/og-prayer.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Amni-Prayer &mdash; Catholic Bible Nodal Map">
+<meta name="twitter:description" content="35,817 verses. 64,497 cross-references. The entire Catholic Bible as a living 3D nodal map with sacred geometry layouts and Tandem reading mode.">
+<meta name="twitter:image" content="https://amni-scient.com/assets/prayer/og-prayer.png">
+<link rel="canonical" href="https://amni-scient.com/amni-prayer">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Amni-Prayer","url":"https://amni-scient.com/amni-prayer","description":"Interactive 3D Catholic Bible nodal map with 35,817 verses and 64,497 cross-references across 9 sacred geometry layouts plus Tandem reading mode.","applicationCategory":"ReligiousApplication","operatingSystem":"Any (WebGL2)","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Organization","name":"AMNI-SCIENT","url":"https://amni-scient.com"}}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8345487545441889" crossorigin="anonymous" data-overlays="false"></script>
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+<style>
+.prayer-hero{text-align:center;padding:6rem 2rem 3rem;position:relative}
+.prayer-hero h1{font-size:clamp(2rem,5vw,3.5rem);letter-spacing:.15em;margin-bottom:.5rem;background:linear-gradient(135deg,#e8d5a3 0%,#f5c842 40%,#e8d5a3 70%,#b8960c 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.prayer-hero .desc{color:var(--dim);font-size:.8rem;letter-spacing:.12em;margin-bottom:2rem}
+.prayer-cross-icon{width:60px;height:60px;margin:0 auto 1.5rem;position:relative;opacity:.9}
+.prayer-cross-icon::before{content:'';position:absolute;left:50%;top:0;transform:translateX(-50%);width:12px;height:60px;background:linear-gradient(to bottom,#f5c842,#b8960c);border-radius:2px}
+.prayer-cross-icon::after{content:'';position:absolute;left:0;top:18px;width:60px;height:12px;background:linear-gradient(to right,#f5c842,#b8960c);border-radius:2px}
+.viz-frame-wrap{width:100%;max-width:1400px;margin:0 auto 3rem;padding:0 1rem;position:relative}
+.viz-frame{width:100%;aspect-ratio:16/9;border:1px solid rgba(245,200,66,.2);border-radius:4px;background:#0a0a12;overflow:hidden}
+.viz-frame iframe{width:100%;height:100%;border:none;display:block}
+.viz-note{text-align:center;color:var(--dim);font-size:.72rem;margin-top:.6rem;letter-spacing:.05em}
+.stat-row{display:flex;justify-content:center;gap:3rem;flex-wrap:wrap;padding:2rem 1rem;margin-bottom:1rem}
+.stat-item{text-align:center}
+.stat-num{font-size:clamp(1.4rem,3vw,2rem);color:#f5c842;letter-spacing:.05em;display:block}
+.stat-label{font-size:.7rem;color:var(--dim);letter-spacing:.1em;margin-top:.2rem}
+.layout-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem;max-width:1000px;margin:0 auto 3rem;padding:0 1rem}
+.layout-card{background:rgba(245,200,66,.04);border:1px solid rgba(245,200,66,.15);border-radius:4px;padding:1.2rem;transition:border-color .2s}
+.layout-card:hover{border-color:rgba(245,200,66,.35)}
+.layout-card h4{color:#f5c842;font-size:.8rem;letter-spacing:.1em;margin-bottom:.5rem}
+.layout-card p{color:var(--dim);font-size:.75rem;line-height:1.5}
+.layout-tag{display:inline-block;font-size:.6rem;padding:.15rem .4rem;border-radius:2px;margin-bottom:.5rem;letter-spacing:.05em;border:1px solid rgba(245,200,66,.3);color:rgba(245,200,66,.7)}
+</style>
+</head>
+<body>
+<div class="grid-bg"></div>
+<div class="scanlines"></div>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu">
+<a href="amni-haven.html">AMNI-HAVEN</a>
+<a href="amni-crypt.html">AMNI-CRYPT</a>
+<a href="amni-ai.html">AMNI-AI</a>
+<a href="amni-code.html">AMNI-CODE</a>
+<a href="amni-core.html">AMNI-CORE</a>
+<a href="amni-explore.html">AMNI-EXPLORE</a>
+<a href="amni-learn.html">AMNI-LEARN</a>
+<a href="calc/">AMNI-CALC</a>
+<a href="amni-prayer.html" class="active">AMNI-PRAYER</a>
+</div>
+</div>
+<a href="research.html">RESEARCH</a>
+<a href="about.html">ABOUT</a>
+<a href="faq.html">FAQ</a>
+<a href="privacy.html">PRIVACY</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<div class="prayer-hero">
+<div class="prayer-cross-icon"></div>
+<h1>AMNI-PRAYER</h1>
+<p class="desc">IMAGO NUNTII DIVINI &bull; CATHOLIC BIBLE NODAL MAP &bull; 35,817 VERSES &bull; 64,497 CROSS-REFERENCES &bull; WASM ENGINE</p>
+<div class="cta-row" style="justify-content:center;margin-top:1rem;margin-bottom:2rem">
+<a href="prayer/" class="btn btn-primary" style="background:linear-gradient(135deg,#b8960c,#f5c842);color:#0a0a12;border:none">OPEN IMAGO NUNTII DIVINI</a>
+</div>
+</div>
+<div class="stat-row">
+<div class="stat-item"><span class="stat-num">35,817</span><span class="stat-label">VERSES MAPPED</span></div>
+<div class="stat-item"><span class="stat-num">64,497</span><span class="stat-label">CROSS-REFERENCES</span></div>
+<div class="stat-item"><span class="stat-num">73</span><span class="stat-label">BOOKS (OT + NT)</span></div>
+<div class="stat-item"><span class="stat-num">9</span><span class="stat-label">SACRED LAYOUTS</span></div>
+</div>
+<section>
+<h2>NAVIGATE THE WORD</h2>
+<p style="text-align:center;color:var(--dim);max-width:700px;margin:0 auto 2rem;font-size:.9rem">Imago Nuntii Divini renders the entire Douay-Rheims Catholic Bible as a live 3D pointcloud. Every verse is a node; every cross-reference is an edge. Click any verse to fly to it, read its chapter, and trace its connections through scripture. Tandem Mode splits the screen into book reading + visualizer + connected passages.</p>
+<div class="viz-frame-wrap">
+<div class="viz-frame">
+<iframe src="prayer/" title="Imago Nuntii Divini — Catholic Bible Nodal Map" loading="lazy" allow="cross-origin-isolated"></iframe>
+</div>
+<p class="viz-note">&#9881; WebGL2 required &nbsp;&bull;&nbsp; Loads 10 MB of scripture data &nbsp;&bull;&nbsp; Click &amp; drag to orbit &nbsp;&bull;&nbsp; Scroll to zoom &nbsp;&bull;&nbsp; Click verse = select &nbsp;&bull;&nbsp; Double-click = read chapter</p>
+</div>
+<div class="layout-grid">
+<div class="layout-card">
+<span class="layout-tag">DEFAULT</span>
+<h4>TIMELINE</h4>
+<p>Books arranged left-to-right in canonical order. Chapters flow vertically; verse depth encodes position within chapter.</p>
+</div>
+<div class="layout-card">
+<span class="layout-tag">ASTRONOMY</span>
+<h4>SOLAR</h4>
+<p>Books become stars in a galaxy spiral. Chapters orbit each star; verses form moon-rings with tilted orbits.</p>
+</div>
+<div class="layout-card">
+<span class="layout-tag">SACRED</span>
+<h4>GOLDEN RATIO</h4>
+<p>Books placed via the golden angle (&phi;&asymp;137.5&deg;) on a Fibonacci spiral. Emergence of mathematical divine proportion.</p>
+</div>
+<div class="layout-card">
+<span class="layout-tag">SACRED</span>
+<h4>I AM / EHYEH</h4>
+<p>Verses wind through a double helix, encoding the divine name &ldquo;I AM WHO AM&rdquo; (Exodus 3:14) as an infinite spiral of scripture.</p>
+</div>
+<div class="layout-card">
+<span class="layout-tag">SACRED</span>
+<h4>INRI</h4>
+<p>Old and New Testament form two vertical columns of a luminous cross. The z-axis encodes mass and pivotal significance.</p>
+</div>
+<div class="layout-card">
+<span class="layout-tag">NETWORK</span>
+<h4>GRAPH</h4>
+<p>Force-directed layout. Verses cluster by cross-reference proximity — densely connected passages pull together over 120 iterations.</p>
+</div>
+<div class="layout-card">
+<span class="layout-tag">BODY</span>
+<h4>SILHOUETTE</h4>
+<p>WASM-computed humanoid pose. Scripture takes on the form of a standing figure — the Word made flesh.</p>
+</div>
+<div class="layout-card">
+<span class="layout-tag">BOOK</span>
+<h4>WATERFALL</h4>
+<p>OT and NT fan out in dual columns, books cascading top-to-bottom. Pivotal verses float forward on the z-axis.</p>
+</div>
+<div class="layout-card">
+<span class="layout-tag">TOPOLOGY</span>
+<h4>CLEAN WEB</h4>
+<p>BFS-ordered grid with barycentric median-crossing reduction. Nodes placed for the fewest possible edge crossings &mdash; the cleanest possible web of scripture.</p>
+</div>
+</div>
+<div style="max-width:700px;margin:0 auto 3rem;padding:0 1rem">
+<div class="layout-card" style="border-color:rgba(138,180,248,0.3)">
+<span class="layout-tag" style="border-color:rgba(138,180,248,.4);color:rgba(138,180,248,.8)">INTERACTIVE</span>
+<h4 style="color:#8ab4f8">TANDEM MODE</h4>
+<p>Split-screen reading &mdash; book text on the left, 3D visualizer on the right, and all connected passages listed below with full context. Click any connection to navigate both the text and the pointcloud simultaneously.</p>
+</div>
+</div>
+</section>
+<section>
+<h2>HOW IT WORKS</h2>
+<div class="features">
+<div class="feature">
+<div class="icon">&#9997;</div>
+<h4>DOUAY-RHEIMS TEXT</h4>
+<p>Full Catholic canon including Deuterocanonical books (Tobit, Judith, 1&ndash;2 Maccabees, Wisdom, Sirach, Baruch). Complete verse text accessible via double-click on any node.</p>
+</div>
+<div class="feature">
+<div class="icon">&#9881;</div>
+<h4>RUST / WASM ENGINE</h4>
+<p>The humanoid Silhouette layout is computed by a compiled Rust binary (97 KB .wasm) for maximum performance and IP protection.</p>
+</div>
+<div class="feature">
+<div class="icon">&#127760;</div>
+<h4>THREE.JS RENDERER</h4>
+<p>Custom ShaderMaterial with per-point sizing, pulse animation on selected nodes, additive-blended edges, and smooth 60-frame camera fly-to on selection.</p>
+</div>
+<div class="feature">
+<div class="icon">&#128301;</div>
+<h4>CROSS-REFERENCE GRAPH</h4>
+<p>64,497 edges connect related verses across the entire canon. Select any verse and its connections glow gold — tracing theological threads through both Testaments.</p>
+</div>
+</div>
+</section>
+<div style="max-width:800px;margin:2rem auto;text-align:center">
+<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8345487545441889" data-ad-slot="1720203631" data-ad-format="auto" data-full-width-responsive="true"></ins>
+<script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>
+</div>
+<footer>
+<div class="footer-links">
+<a href="about.html">ABOUT</a>
+<a href="faq.html">FAQ</a>
+<a href="research.html">RESEARCH</a>
+<a href="privacy.html">PRIVACY</a>
+<a href="terms.html">TERMS</a>
+<a href="mailto:amnibro7@gmail.com">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amni-Scient. All rights reserved.</p>
+</footer>
+<div class="lightbox" onclick="closeLightbox(event)"><span class="lightbox-close">&times;</span><img></div>
+<script>function openLightbox(s,a){const l=document.querySelector('.lightbox'),i=l.querySelector('img');i.src=s;i.alt=a;l.classList.add('open')}function closeLightbox(e){e.target.tagName!=='IMG'&&document.querySelector('.lightbox').classList.remove('open')}</script>
+</body>
+</html>
