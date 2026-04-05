@@ -50,13 +50,31 @@ body.tandem-on #patterns-panel{right:0;width:60%;border-radius:0;border-top:1px 
 .pat-insight{font-size:0.75rem;color:#b0a8c8;line-height:1.5;margin-bottom:5px;padding-left:8px;border-left:2px solid rgba(180,120,255,0.35)}
 .patterns-inline-wrap{margin-top:14px;padding-top:12px;border-top:1px solid rgba(180,120,255,0.2)}
 .pat-header{color:#c89eff;font-size:0.75rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px}
+#discussBtn{background:rgba(100,200,140,.07);color:#7dd6a0;border:1px solid rgba(100,200,140,.28);border-radius:3px;padding:3px 10px;font-size:.72rem;cursor:pointer;letter-spacing:.04em;font-family:inherit;transition:background .2s}
+#discussBtn:hover{background:rgba(100,200,140,.2)}
+#search-row{display:flex;gap:6px;align-items:center;margin-top:5px;pointer-events:all}
+#search-input{background:#12121e;color:#ccc;border:1px solid #2a2a3a;border-radius:3px;padding:3px 8px;font-size:.75rem;width:170px;font-family:inherit;outline:none;transition:border-color .2s}
+#search-input:focus{border-color:rgba(240,200,80,.5)}
+#search-btn{background:rgba(240,200,80,.08);color:#f0c850;border:1px solid rgba(240,200,80,.25);border-radius:3px;padding:3px 8px;font-size:.75rem;cursor:pointer;font-family:inherit}
+#search-result{font-size:.68rem;color:#888;white-space:nowrap}
+#discuss-panel{position:fixed;bottom:52px;right:24px;width:370px;max-height:480px;z-index:26;background:rgba(8,10,20,.98);border:1px solid rgba(100,200,140,.2);border-radius:6px;flex-direction:column;backdrop-filter:blur(10px)}
+#discuss-header{flex-shrink:0;display:flex;justify-content:space-between;align-items:center;padding:8px 13px;border-bottom:1px solid rgba(100,200,140,.18);font-size:.75rem;font-weight:600;color:#7dd6a0;letter-spacing:.06em}
+#discuss-close{background:none;border:none;color:#555;font-size:.9rem;cursor:pointer;padding:0 2px}
+#discuss-close:hover{color:#aaa}
+#discuss-log{flex:1;overflow-y:auto;padding:10px 13px;font-size:.78rem;line-height:1.6;max-height:310px}
+.msg-user{color:#f0c850;margin-bottom:6px;padding:5px 9px;background:rgba(240,200,80,.05);border-radius:3px;border-left:2px solid rgba(240,200,80,.5)}
+.msg-ai{color:#b0d8b8;margin-bottom:10px;padding:5px 9px;background:rgba(100,200,140,.04);border-radius:3px;border-left:2px solid rgba(100,200,140,.35);line-height:1.65}
+#discuss-input-row{display:flex;gap:6px;padding:8px 10px;border-top:1px solid rgba(100,200,140,.12);flex-shrink:0}
+#discuss-input{flex:1;background:#0d0f1a;color:#ccc;border:1px solid #2a2a3a;border-radius:3px;padding:5px 8px;font-size:.75rem;font-family:inherit;outline:none;resize:none;height:40px}
+#discuss-input:focus{border-color:rgba(100,200,140,.4)}
+#discuss-send{background:rgba(100,200,140,.1);color:#7dd6a0;border:1px solid rgba(100,200,140,.3);border-radius:3px;padding:5px 10px;font-size:.7rem;cursor:pointer;font-family:inherit}
 body.tandem-on #canvas{position:fixed;top:0;right:0;width:60%;height:100%;left:auto}
 body.tandem-on #ui{left:40%;max-width:60%}
 #tandem-wrapper{position:fixed;top:0;left:0;width:40%;height:100%;z-index:15;display:flex;flex-direction:column;background:rgba(10,10,18,0.97);border-right:1px solid #2a2a3a;backdrop-filter:blur(8px)}
-#tandem-header{flex-shrink:0;display:flex;justify-content:space-between;align-items:center;padding:7px 14px;border-bottom:1px solid #2a2a3a;background:rgba(10,10,18,0.99);gap:8px}
+#tandem-header{flex-shrink:0;display:flex;justify-content:space-between;align-items:center;padding:7px 14px;border-bottom:1px solid #2a2a3a;background:rgba(10,10,18,0.99);gap:8px;pointer-events:all}
 #tandem-title{font-size:.75rem;color:#f0e6c8;font-weight:600;letter-spacing:.03em;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-#tandem-close-btn{flex-shrink:0;background:rgba(255,80,80,0.1);color:#ff9999;border:1px solid rgba(255,80,80,0.25);border-radius:3px;padding:2px 9px;cursor:pointer;font-size:.7rem;letter-spacing:.04em;font-family:inherit;transition:background .2s}
-#tandem-close-btn:hover{background:rgba(255,80,80,0.28)}
+#tandem-close-btn{flex-shrink:0;background:rgba(240,200,80,0.12);color:#f0c850;border:1px solid rgba(240,200,80,0.35);border-radius:3px;padding:2px 10px;cursor:pointer;font-size:.7rem;letter-spacing:.04em;font-family:inherit;transition:background .2s;pointer-events:all}
+#tandem-close-btn:hover{background:rgba(240,200,80,0.3)}
 #tandem-book{flex:1;overflow-y:auto;min-height:0;padding:10px 14px;font-size:0.84rem;line-height:1.65}
 #tandem-book .verse-row{padding:6px 8px;border-radius:4px;cursor:pointer;transition:background 0.15s}
 #tandem-book .verse-row:hover{background:rgba(255,255,255,0.05)}
