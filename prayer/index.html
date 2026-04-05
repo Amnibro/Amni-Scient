@@ -29,6 +29,10 @@
       <option value="iam">Radiant</option>
       <option value="clean">Lattice</option>
       <option value="voice">Voice</option>
+      <option value="book">Books</option>
+      <option value="kind">Kinds</option>
+      <option value="degree">Nexus</option>
+      <option value="flat">Plane</option>
     </select></label>
     <button id="tandemBtn" title="Split view: book text + visualizer + connected passages">&#x21E8; TANDEM</button>    <label style="gap:5px;align-items:center">&#x03B1; <input type="range" id="alphaSlider" min="0.1" max="2.0" step="0.05" value="1.0" style="width:58px;vertical-align:middle;accent-color:#f0c850" title="Node / edge brightness"/></label>
     <button id="patternsBtn" title="Theological pattern analysis for selected verse">&#x2726; PATTERNS</button>
@@ -54,6 +58,18 @@
   <div id="voice-legend" style="display:none">
     <span style="opacity:0.6;font-size:0.65rem">Verses sorted by voice &amp; kind &mdash; top to bottom:</span><br>
     <span style="font-size:0.65rem"><span style="color:#f0c850">Parable</span> &middot; <span style="color:#60ff90">Praise &amp; Song</span> &middot; <span style="color:#ff6060">Prophecy</span> &middot; <span style="color:#cc60ff">Vision</span> &middot; <span style="color:#60aaff">Apostolic</span> &middot; <span style="color:#40ddcc">Acts</span> &middot; <span style="color:#ffa030">Gospel</span> &middot; <span style="color:#ffcc88">Law &amp; Covenant</span> &middot; <span style="color:#8899aa">Narrative</span></span>
+  </div>
+  <div id="book-legend" style="display:none">
+    <span style="opacity:0.5;font-size:0.7rem">Clusters by book &middot; OT top row &middot; NT bottom row &middot; cluster size = verse count</span>
+  </div>
+  <div id="kind-legend" style="display:none">
+    <span style="opacity:0.5;font-size:0.7rem">Clusters by literary kind &middot; narrative at center &middot; types orbit outward</span>
+  </div>
+  <div id="degree-legend" style="display:none">
+    <span style="opacity:0.5;font-size:0.7rem">Concentric rings by cross-reference count &middot; hub nodes at center &middot; isolated nodes at edge</span>
+  </div>
+  <div id="flat-legend" style="display:none">
+    <span style="opacity:0.5;font-size:0.7rem">Force-directed flat plane &middot; z=0 &middot; connected nodes pull together &middot; edges fully visible</span>
   </div>
   <div id="tooltip"></div>
   <div id="stats"></div>
