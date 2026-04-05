@@ -1,0 +1,517 @@
+{
+  "proof": "a1_speed_benchmark",
+  "version": "3.124.0",
+  "timestamp": "2026-04-04T00:13:36",
+  "config": "a1-medium",
+  "est_params": "~14B",
+  "accelerator": "GPU",
+  "gpu": "AMD Radeon RX 7800 XT",
+  "total_model_params": 13990625280,
+  "unique_shapes": 8,
+  "total_wall_time_s": 110.4,
+  "modes": {
+    "binary": {
+      "mode": "Binary",
+      "routing_k": 2,
+      "routing_bits": "1-bit routing",
+      "unique_shapes": 8,
+      "total_model_params": 13990625280,
+      "sample_params": 1053818880,
+      "sample_encode_ms": 2702.0,
+      "sample_decode_ms": 219.0,
+      "encode_throughput_mps": 390.0,
+      "decode_throughput_mps": 4801.9,
+      "total_vram_bytes": 1664009896,
+      "total_ssd_bytes": 46592569604,
+      "total_fp16_bytes": 27981250560,
+      "compression_ratio_vram": 16.8,
+      "all_bit_exact": true,
+      "est_full_a1_encode_s": 35.9,
+      "est_full_a1_decode_s": 2.9,
+      "per_shape": [
+        {
+          "enc_ms": 529.56,
+          "dec_ms": 48.72,
+          "vram_bytes": 8847368,
+          "ssd_bytes": 247727172,
+          "fp16_bytes": 141557760,
+          "compression_ratio": 16.0,
+          "cs": 0.9999999785,
+          "snr_db": 73.66,
+          "bit_exact": true,
+          "streaming": false,
+          "name": "mlp.gate_proj",
+          "shape": [
+            13824,
+            5120
+          ],
+          "n": 70778880,
+          "instances": 48
+        },
+        {
+          "enc_ms": 520.61,
+          "dec_ms": 42.96,
+          "vram_bytes": 8847368,
+          "ssd_bytes": 247727172,
+          "fp16_bytes": 141557760,
+          "compression_ratio": 16.0,
+          "cs": 0.9999999785,
+          "snr_db": 73.66,
+          "bit_exact": true,
+          "streaming": false,
+          "name": "mlp.up_proj",
+          "shape": [
+            13824,
+            5120
+          ],
+          "n": 70778880,
+          "instances": 48
+        },
+        {
+          "enc_ms": 504.42,
+          "dec_ms": 41.53,
+          "vram_bytes": 8847368,
+          "ssd_bytes": 247727172,
+          "fp16_bytes": 141557760,
+          "compression_ratio": 16.0,
+          "cs": 0.9999999785,
+          "snr_db": 73.66,
+          "bit_exact": true,
+          "streaming": false,
+          "name": "mlp.down_proj",
+          "shape": [
+            5120,
+            13824
+          ],
+          "n": 70778880,
+          "instances": 48
+        },
+        {
+          "enc_ms": 177.25,
+          "dec_ms": 14.0,
+          "vram_bytes": 3276808,
+          "ssd_bytes": 91751492,
+          "fp16_bytes": 52428800,
+          "compression_ratio": 16.0,
+          "cs": 0.9999999785,
+          "snr_db": 73.67,
+          "bit_exact": true,
+          "streaming": false,
+          "name": "attn.q_proj",
+          "shape": [
+            5120,
+            5120
+          ],
+          "n": 26214400,
+          "instances": 48
+        },
+        {
+          "enc_ms": 175.11,
+          "dec_ms": 11.02,
+          "vram_bytes": 3276808,
+          "ssd_bytes": 91751492,
+          "fp16_bytes": 52428800,
+          "compression_ratio": 16.0,
+          "cs": 0.9999999785,
+          "snr_db": 73.67,
+          "bit_exact": true,
+          "streaming": false,
+          "name": "attn.o_proj",
+          "shape": [
+            5120,
+            5120
+          ],
+          "n": 26214400,
+          "instances": 48
+        },
+        {
+          "enc_ms": 38.83,
+          "dec_ms": 1.28,
+          "vram_bytes": 655368,
+          "ssd_bytes": 18351172,
+          "fp16_bytes": 10485760,
+          "compression_ratio": 16.0,
+          "cs": 0.9999999785,
+          "snr_db": 73.67,
+          "bit_exact": true,
+          "streaming": false,
+          "name": "attn.k_proj",
+          "shape": [
+            1024,
+            5120
+          ],
+          "n": 5242880,
+          "instances": 48
+        },
+        {
+          "enc_ms": 38.37,
+          "dec_ms": 1.24,
+          "vram_bytes": 655368,
+          "ssd_bytes": 18351172,
+          "fp16_bytes": 10485760,
+          "compression_ratio": 16.0,
+          "cs": 0.9999999785,
+          "snr_db": 73.67,
+          "bit_exact": true,
+          "streaming": false,
+          "name": "attn.v_proj",
+          "shape": [
+            1024,
+            5120
+          ],
+          "n": 5242880,
+          "instances": 48
+        },
+        {
+          "enc_ms": 717.66,
+          "dec_ms": 58.71,
+          "vram_bytes": 12500008,
+          "ssd_bytes": 350001092,
+          "fp16_bytes": 1557135360,
+          "compression_ratio": 124.6,
+          "cs": 0.9999999785,
+          "snr_db": 73.66,
+          "bit_exact": true,
+          "streaming": false,
+          "name": "lm_head",
+          "shape": [
+            152064,
+            5120
+          ],
+          "n": 778567680,
+          "instances": 1
+        }
+      ]
+    },
+    "quaternary": {
+      "mode": "Quaternary",
+      "routing_k": 4,
+      "routing_bits": "2-bit routing",
+      "unique_shapes": 8,
+      "total_model_params": 13990625280,
+      "sample_params": 1053818880,
+      "sample_encode_ms": 2340.0,
+      "sample_decode_ms": 231.0,
+      "encode_throughput_mps": 450.4,
+      "decode_throughput_mps": 4563.0,
+      "total_vram_bytes": 3328019792,
+      "total_ssd_bytes": 46592569604,
+      "total_fp16_bytes": 27981250560,
+      "compression_ratio_vram": 8.4,
+      "all_bit_exact": true,
+      "est_full_a1_encode_s": 31.1,
+      "est_full_a1_decode_s": 3.1,
+      "per_shape": [
+        {
+          "enc_ms": 442.71,
+          "dec_ms": 42.5,
+          "vram_bytes": 17694736,
+          "ssd_bytes": 247727172,
+          "fp16_bytes": 141557760,
+          "compression_ratio": 8.0,
+          "cs": 0.9999999785,
+          "snr_db": 73.66,
+          "bit_exact": true,
+          "streaming": false,
+          "name": "mlp.gate_proj",
+          "shape": [
+            13824,
+            5120
+          ],
+          "n": 70778880,
+          "instances": 48
+        },
+        {
+          "enc_ms": 438.63,
+          "dec_ms": 47.56,
+          "vram_bytes": 17694736,
+          "ssd_bytes": 247727172,
+          "fp16_bytes": 141557760,
+          "compression_ratio": 8.0,
+          "cs": 0.9999999785,
+          "snr_db": 73.66,
+          "bit_exact": true,
+          "streaming": false,
+          "name": "mlp.up_proj",
+          "shape": [
+            13824,
+            5120
+          ],
+          "n": 70778880,
+          "instances": 48
+        },
+        {
+          "enc_ms": 443.38,
+          "dec_ms": 45.86,
+          "vram_bytes": 17694736,
+          "ssd_bytes": 247727172,
+          "fp16_bytes": 141557760,
+          "compression_ratio": 8.0,
+          "cs": 0.9999999785,
+          "snr_db": 73.66,
+          "bit_exact": true,
+          "streaming": false,
+          "name": "mlp.down_proj",
+          "shape": [
+            5120,
+            13824
+          ],
+          "n": 70778880,
+          "instances": 48
+        },
+        {
+          "enc_ms": 158.42,
+          "dec_ms": 14.47,
+          "vram_bytes": 6553616,
+          "ssd_bytes": 91751492,
+          "fp16_bytes": 52428800,
+          "compression_ratio": 8.0,
+          "cs": 0.9999999785,
+          "snr_db": 73.67,
+          "bit_exact": true,
+          "streaming": false,
+          "name": "attn.q_proj",
+          "shape": [
+            5120,
+            5120
+          ],
+          "n": 26214400,
+          "instances": 48
+        },
+        {
+          "enc_ms": 160.18,
+          "dec_ms": 13.0,
+          "vram_bytes": 6553616,
+          "ssd_bytes": 91751492,
+          "fp16_bytes": 52428800,
+          "compression_ratio": 8.0,
+          "cs": 0.9999999785,
+          "snr_db": 73.67,
+          "bit_exact": true,
+          "streaming": false,
+          "name": "attn.o_proj",
+          "shape": [
+            5120,
+            5120
+          ],
+          "n": 26214400,
+          "instances": 48
+        },
+        {
+          "enc_ms": 36.64,
+          "dec_ms": 1.42,
+          "vram_bytes": 1310736,
+          "ssd_bytes": 18351172,
+          "fp16_bytes": 10485760,
+          "compression_ratio": 8.0,
+          "cs": 0.9999999785,
+          "snr_db": 73.67,
+          "bit_exact": true,
+          "streaming": false,
+          "name": "attn.k_proj",
+          "shape": [
+            1024,
+            5120
+          ],
+          "n": 5242880,
+          "instances": 48
+        },
+        {
+          "enc_ms": 36.14,
+          "dec_ms": 1.38,
+          "vram_bytes": 1310736,
+          "ssd_bytes": 18351172,
+          "fp16_bytes": 10485760,
+          "compression_ratio": 8.0,
+          "cs": 0.9999999785,
+          "snr_db": 73.67,
+          "bit_exact": true,
+          "streaming": false,
+          "name": "attn.v_proj",
+          "shape": [
+            1024,
+            5120
+          ],
+          "n": 5242880,
+          "instances": 48
+        },
+        {
+          "enc_ms": 623.48,
+          "dec_ms": 64.76,
+          "vram_bytes": 25000016,
+          "ssd_bytes": 350001092,
+          "fp16_bytes": 1557135360,
+          "compression_ratio": 62.3,
+          "cs": 0.9999999785,
+          "snr_db": 73.66,
+          "bit_exact": true,
+          "streaming": false,
+          "name": "lm_head",
+          "shape": [
+            152064,
+            5120
+          ],
+          "n": 778567680,
+          "instances": 1
+        }
+      ]
+    },
+    "streaming": {
+      "mode": "streaming",
+      "routing_k": 4,
+      "encode_throughput_mps": 89.6,
+      "decode_throughput_mps": 1227.6,
+      "per_shape": [
+        {
+          "enc_ms": 2139.23,
+          "dec_ms": 160.4,
+          "vram_bytes": 17694736,
+          "ssd_bytes": 247727172,
+          "fp16_bytes": 141557760,
+          "compression_ratio": 8.0,
+          "cs": 0.9999999785,
+          "snr_db": 73.66,
+          "bit_exact": true,
+          "streaming": true,
+          "name": "mlp.gate_proj",
+          "shape": [
+            13824,
+            5120
+          ],
+          "n": 70778880
+        },
+        {
+          "enc_ms": 2110.73,
+          "dec_ms": 167.46,
+          "vram_bytes": 17694736,
+          "ssd_bytes": 247727172,
+          "fp16_bytes": 141557760,
+          "compression_ratio": 8.0,
+          "cs": 0.9999999785,
+          "snr_db": 73.66,
+          "bit_exact": true,
+          "streaming": true,
+          "name": "mlp.up_proj",
+          "shape": [
+            13824,
+            5120
+          ],
+          "n": 70778880
+        },
+        {
+          "enc_ms": 2280.45,
+          "dec_ms": 165.01,
+          "vram_bytes": 17694736,
+          "ssd_bytes": 247727172,
+          "fp16_bytes": 141557760,
+          "compression_ratio": 8.0,
+          "cs": 0.9999999785,
+          "snr_db": 73.66,
+          "bit_exact": true,
+          "streaming": true,
+          "name": "mlp.down_proj",
+          "shape": [
+            5120,
+            13824
+          ],
+          "n": 70778880
+        },
+        {
+          "enc_ms": 856.37,
+          "dec_ms": 63.25,
+          "vram_bytes": 6553616,
+          "ssd_bytes": 91751492,
+          "fp16_bytes": 52428800,
+          "compression_ratio": 8.0,
+          "cs": 0.9999999785,
+          "snr_db": 73.67,
+          "bit_exact": true,
+          "streaming": true,
+          "name": "attn.q_proj",
+          "shape": [
+            5120,
+            5120
+          ],
+          "n": 26214400
+        },
+        {
+          "enc_ms": 899.15,
+          "dec_ms": 53.87,
+          "vram_bytes": 6553616,
+          "ssd_bytes": 91751492,
+          "fp16_bytes": 52428800,
+          "compression_ratio": 8.0,
+          "cs": 0.9999999785,
+          "snr_db": 73.67,
+          "bit_exact": true,
+          "streaming": true,
+          "name": "attn.o_proj",
+          "shape": [
+            5120,
+            5120
+          ],
+          "n": 26214400
+        },
+        {
+          "enc_ms": 217.51,
+          "dec_ms": 11.82,
+          "vram_bytes": 1310736,
+          "ssd_bytes": 18351172,
+          "fp16_bytes": 10485760,
+          "compression_ratio": 8.0,
+          "cs": 0.9999999785,
+          "snr_db": 73.67,
+          "bit_exact": true,
+          "streaming": true,
+          "name": "attn.k_proj",
+          "shape": [
+            1024,
+            5120
+          ],
+          "n": 5242880
+        },
+        {
+          "enc_ms": 197.46,
+          "dec_ms": 11.42,
+          "vram_bytes": 1310736,
+          "ssd_bytes": 18351172,
+          "fp16_bytes": 10485760,
+          "compression_ratio": 8.0,
+          "cs": 0.9999999785,
+          "snr_db": 73.67,
+          "bit_exact": true,
+          "streaming": true,
+          "name": "attn.v_proj",
+          "shape": [
+            1024,
+            5120
+          ],
+          "n": 5242880
+        },
+        {
+          "enc_ms": 3065.61,
+          "dec_ms": 225.18,
+          "vram_bytes": 25000016,
+          "ssd_bytes": 350001092,
+          "fp16_bytes": 1557135360,
+          "compression_ratio": 62.3,
+          "cs": 0.9999999785,
+          "snr_db": 73.66,
+          "bit_exact": true,
+          "streaming": true,
+          "name": "lm_head",
+          "shape": [
+            152064,
+            5120
+          ],
+          "n": 778567680
+        }
+      ],
+      "peak_vram_mb": 200.0
+    },
+    "a1_integration": {
+      "status": "skipped",
+      "reason": "No module named 'amni'"
+    }
+  }
+}
