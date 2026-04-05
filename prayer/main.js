@@ -35,7 +35,7 @@ let fulltext = null;
 const bookPanel = () => document.getElementById('book-panel');
 const bookBody = () => document.getElementById('book-panel-body');
 const bookTitle = () => document.getElementById('book-panel-title');
-let silhouettePos=null,waterfallPos=null,timelinePos=null,graphPos=null,solarPos=null,goldenPos=null,crossPos=null,iamPos=null,cleanPos=null;let mode='timeline';let lerpSrc=null,lerpDst=null,lerpT=1.0;const LERP_FRAMES=90;const ease=t=>t<0.5?2*t*t:-1+(4-2*t)*t;const SCALE=1.8;let camSrc=null,camDst=null,camTgtSrc=null,camTgtDst=null,camT=1.0;const CAM_FRAMES=60;let pulsePhase=0;let clickTimer=null;let downX=0,downY=0,wasDrag=false;let tandemActive=false;let userAlpha=1.0;let patternsActive=false;
+let silhouettePos=null,waterfallPos=null,timelinePos=null,graphPos=null,solarPos=null,goldenPos=null,crossPos=null,iamPos=null,cleanPos=null;let mode='timeline';let lerpSrc=null,lerpDst=null,lerpT=1.0;const LERP_FRAMES=90;const ease=t=>t<0.5?2*t*t:-1+(4-2*t)*t;const SCALE=1.8;let camSrc=null,camDst=null,camTgtSrc=null,camTgtDst=null,camT=1.0;const CAM_FRAMES=60;let pulsePhase=0;let clickTimer=null;let downX=0,downY=0,wasDrag=false;let tandemActive=false;let userAlpha=1.0;let edgeAlphaBase=0.06;let patternsActive=false;
 
 async function load() {
   await init();
@@ -326,14 +326,18 @@ function setupScene() {
   canvas.addEventListener('dblclick', onDoubleClick);
   document.getElementById('book-panel-close').addEventListener('click', closeBookPanel);
   document.getElementById('tandemBtn').addEventListener('click', toggleTandem);
+  document.getElementById('tandem-close-btn').addEventListener('click', toggleTandem);
   document.getElementById('alphaSlider').addEventListener('input', e => {
-    if (pointsMesh) pointsMesh.material.uniforms.uAlphaMul.value = parseFloat(e.target.value);
+    userAlpha = parseFloat(e.target.value);
+    if (pointsMesh) pointsMesh.material.uniforms.uAlphaMul.value = userAlpha;
+    if (edgesMesh) edgesMesh.material.opacity = Math.min(1.0, edgeAlphaBase * userAlpha);
   });
   document.getElementById('patternsBtn').addEventListener('click', togglePatterns);
 }
 
 function getPositionsForMode(m){return m==='timeline'?timelinePos:m==='waterfall'?waterfallPos:m==='graph'?graphPos:m==='solar'?solarPos:m==='golden'?goldenPos:m==='cross'?crossPos:m==='iam'?iamPos:m==='clean'?cleanPos:silhouettePos;}
-function switchMode(newMode){if(newMode===mode)return;mode=newMode;const posAttr=pointsMesh.geometry.attributes.position;lerpSrc=new Float32Array(posAttr.array);lerpDst=getPositionsForMode(newMode);lerpT=0.0;if(edgesMesh)edgesMesh.visible=false;document.getElementById('waterfall-legend').style.display=newMode==='waterfall'?'block':'none';document.getElementById('graph-legend').style.display=newMode==='graph'?'block':'none';document.getElementById('solar-legend').style.display=(newMode==='solar'||newMode==='golden'||newMode==='iam')?'block':'none';document.getElementById('clean-legend').style.display=newMode==='clean'?'block':'none';const isSpecial=newMode==='solar'||newMode==='golden'||newMode==='iam';if(isSpecial){flyCamera(newMode==='golden'?new THREE.Vector3(0,5,90):newMode==='iam'?new THREE.Vector3(0,10,55):new THREE.Vector3(0,0,70),new THREE.Vector3(0,0,0));controls.autoRotate=true;controls.autoRotateSpeed=newMode==='golden'?0.25:0.15;document.getElementById('autoRotate').checked=true;scene.fog.density=0.004;if(edgesMesh)edgesMesh.material.opacity=0.02;pointsMesh.material.uniforms.uAlphaMul.value=0.9;}else if(newMode==='clean'){flyCamera(new THREE.Vector3(0,0,65),new THREE.Vector3(0,0,0));controls.autoRotate=false;controls.autoRotateSpeed=0.15;document.getElementById('autoRotate').checked=false;scene.fog.density=0.003;if(edgesMesh)edgesMesh.material.opacity=0.12;pointsMesh.material.uniforms.uAlphaMul.value=0.7;}else if(newMode==='graph'){flyCamera(new THREE.Vector3(0,0,80),new THREE.Vector3(0,0,0));controls.autoRotate=true;controls.autoRotateSpeed=0.3;document.getElementById('autoRotate').checked=true;scene.fog.density=0.003;if(edgesMesh)edgesMesh.material.opacity=0.06;pointsMesh.material.uniforms.uAlphaMul.value=0.35;}else if(newMode==='timeline'){flyCamera(new THREE.Vector3(0,2,35),new THREE.Vector3(0,0,0));controls.autoRotate=false;controls.autoRotateSpeed=0.3;document.getElementById('autoRotate').checked=false;scene.fog.density=0.008;if(edgesMesh)edgesMesh.material.opacity=0.03;pointsMesh.material.uniforms.uAlphaMul.value=1.0;}else if(newMode==='waterfall'){flyCamera(new THREE.Vector3(-1,0,28),new THREE.Vector3(-1,0,0));controls.autoRotate=false;controls.autoRotateSpeed=0.3;document.getElementById('autoRotate').checked=false;scene.fog.density=0.008;if(edgesMesh)edgesMesh.material.opacity=0.05;pointsMesh.material.uniforms.uAlphaMul.value=1.0;}else{flyCamera(new THREE.Vector3(0,4,16),new THREE.Vector3(0,3.5,0));controls.autoRotate=true;controls.autoRotateSpeed=0.3;document.getElementById('autoRotate').checked=true;scene.fog.density=0.02;if(edgesMesh)edgesMesh.material.opacity=0.02;pointsMesh.material.uniforms.uAlphaMul.value=1.0;}}
+function setEdgeOpacity(v){edgeAlphaBase=v;if(edgesMesh)edgesMesh.material.opacity=Math.min(1,v*userAlpha);}
+function switchMode(newMode){if(newMode===mode)return;mode=newMode;const posAttr=pointsMesh.geometry.attributes.position;lerpSrc=new Float32Array(posAttr.array);lerpDst=getPositionsForMode(newMode);lerpT=0.0;if(edgesMesh)edgesMesh.visible=false;document.getElementById('waterfall-legend').style.display=newMode==='waterfall'?'block':'none';document.getElementById('graph-legend').style.display=newMode==='graph'?'block':'none';document.getElementById('solar-legend').style.display=(newMode==='solar'||newMode==='golden'||newMode==='iam')?'block':'none';document.getElementById('clean-legend').style.display=newMode==='clean'?'block':'none';const isSpecial=newMode==='solar'||newMode==='golden'||newMode==='iam';if(isSpecial){flyCamera(newMode==='golden'?new THREE.Vector3(0,5,90):newMode==='iam'?new THREE.Vector3(0,10,55):new THREE.Vector3(0,0,70),new THREE.Vector3(0,0,0));controls.autoRotate=true;controls.autoRotateSpeed=newMode==='golden'?0.25:0.15;document.getElementById('autoRotate').checked=true;scene.fog.density=0.004;setEdgeOpacity(0.02);pointsMesh.material.uniforms.uAlphaMul.value=0.9;}else if(newMode==='clean'){flyCamera(new THREE.Vector3(0,0,65),new THREE.Vector3(0,0,0));controls.autoRotate=false;controls.autoRotateSpeed=0.15;document.getElementById('autoRotate').checked=false;scene.fog.density=0.003;setEdgeOpacity(0.12);pointsMesh.material.uniforms.uAlphaMul.value=0.7;}else if(newMode==='graph'){flyCamera(new THREE.Vector3(0,0,80),new THREE.Vector3(0,0,0));controls.autoRotate=true;controls.autoRotateSpeed=0.3;document.getElementById('autoRotate').checked=true;scene.fog.density=0.003;setEdgeOpacity(0.06);pointsMesh.material.uniforms.uAlphaMul.value=0.35;}else if(newMode==='timeline'){flyCamera(new THREE.Vector3(0,2,35),new THREE.Vector3(0,0,0));controls.autoRotate=false;controls.autoRotateSpeed=0.3;document.getElementById('autoRotate').checked=false;scene.fog.density=0.008;setEdgeOpacity(0.03);pointsMesh.material.uniforms.uAlphaMul.value=1.0;}else if(newMode==='waterfall'){flyCamera(new THREE.Vector3(-1,0,28),new THREE.Vector3(-1,0,0));controls.autoRotate=false;controls.autoRotateSpeed=0.3;document.getElementById('autoRotate').checked=false;scene.fog.density=0.008;setEdgeOpacity(0.05);pointsMesh.material.uniforms.uAlphaMul.value=1.0;}else{flyCamera(new THREE.Vector3(0,4,16),new THREE.Vector3(0,3.5,0));controls.autoRotate=true;controls.autoRotateSpeed=0.3;document.getElementById('autoRotate').checked=true;scene.fog.density=0.02;setEdgeOpacity(0.02);pointsMesh.material.uniforms.uAlphaMul.value=1.0;}}
 function flyCamera(posDst, tgtDst) {
   camSrc = camera.position.clone();
   camDst = posDst;
@@ -652,7 +656,7 @@ function highlightNode(idx) {
       ec[i*6+3] = hot ? 1.0 : 0; ec[i*6+4] = hot ? 0.85 : 0; ec[i*6+5] = hot ? 0.4 : 0;
     }
     edgesMesh.geometry.attributes.color.needsUpdate = true;
-    edgesMesh.material.opacity = 0.7;
+    edgesMesh.material.opacity = Math.min(1, 0.7 * userAlpha);
     edgesMesh.visible = true;
   }
   if (tandemActive) populateTandem(idx);
@@ -717,6 +721,8 @@ function populateTandem(idx) {
   const key = `${nd.book_id}:${nd.ch}`;
   const verses = fulltext[key];
   if (!verses) return;
+  const titleEl = document.getElementById('tandem-title');
+  if (titleEl) titleEl.textContent = `${nd.book} — Ch. ${nd.ch}`;
   const chapterIndices = new Map();
   for (let i = 0; i < graph.nodes.length; i++) {
     const n2 = graph.nodes[i];
