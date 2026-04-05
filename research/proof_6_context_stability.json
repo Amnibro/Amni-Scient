@@ -1,0 +1,196 @@
+{
+  "proof": "context_stability",
+  "version": "3.126.0",
+  "timestamp": "2026-04-04T11:51:53",
+  "total_wall_time_s": 423.6,
+  "cumulative_drift": [
+    {
+      "n_ops": 1000000,
+      "fp16_cs": -0.0300148231,
+      "fp16_max_err": 7.85351562,
+      "gf17_cs": 1.0,
+      "gf17_max_err": 0.0,
+      "gf17_bit_exact": true,
+      "fp16_time_s": 6.2,
+      "gf17_time_s": 0.0
+    },
+    {
+      "n_ops": 10000000,
+      "fp16_cs": -0.0300148231,
+      "fp16_max_err": 7.85351562,
+      "gf17_cs": 1.0,
+      "gf17_max_err": 0.0,
+      "gf17_bit_exact": true,
+      "fp16_time_s": 61.8,
+      "gf17_time_s": 0.0
+    },
+    {
+      "n_ops": 20000000,
+      "fp16_cs": -0.0300148231,
+      "fp16_max_err": 7.85351562,
+      "gf17_cs": 1.0,
+      "gf17_max_err": 0.0,
+      "gf17_bit_exact": true,
+      "fp16_time_s": 122.8,
+      "gf17_time_s": 0.0
+    }
+  ],
+  "attention_accumulation": [
+    {
+      "seq_len": 1024,
+      "fp16_sum": 36.625,
+      "f64_sum": 36.838735,
+      "fp16_relative_error": 0.0058019121,
+      "gf17_domain": "exact_within_field",
+      "fp16_time_s": 0.0,
+      "gf17_time_s": 0.001
+    },
+    {
+      "seq_len": 8192,
+      "fp16_sum": 198.5,
+      "f64_sum": 268.194846,
+      "fp16_relative_error": 0.2598664633,
+      "gf17_domain": "exact_within_field",
+      "fp16_time_s": 0.001,
+      "gf17_time_s": 0.007
+    },
+    {
+      "seq_len": 32768,
+      "fp16_sum": 258.25,
+      "f64_sum": 609.568324,
+      "fp16_relative_error": 0.5763395345,
+      "gf17_domain": "exact_within_field",
+      "fp16_time_s": 0.003,
+      "gf17_time_s": 0.027
+    },
+    {
+      "seq_len": 131072,
+      "fp16_sum": 414.5,
+      "f64_sum": 2256.624257,
+      "fp16_relative_error": 0.816318557,
+      "gf17_domain": "exact_within_field",
+      "fp16_time_s": 0.009,
+      "gf17_time_s": 0.11
+    },
+    {
+      "seq_len": 1000000,
+      "fp16_sum": 691.0,
+      "f64_sum": 15284.081539,
+      "fp16_relative_error": 0.9547895634,
+      "gf17_domain": "exact_within_field",
+      "fp16_time_s": 0.072,
+      "gf17_time_s": 0.824
+    }
+  ],
+  "cycle_stability": {
+    "n_cycles": 10000,
+    "n_elements": 10000,
+    "final_cs": 1.0,
+    "final_exact": true,
+    "elapsed_s": 97.1,
+    "checkpoints": [
+      {
+        "cycle": 1,
+        "cs": 1.0,
+        "exact": true,
+        "max_err": 0.0
+      },
+      {
+        "cycle": 10,
+        "cs": 1.0,
+        "exact": true,
+        "max_err": 0.0
+      },
+      {
+        "cycle": 100,
+        "cs": 1.0,
+        "exact": true,
+        "max_err": 0.0
+      },
+      {
+        "cycle": 1000,
+        "cs": 1.0,
+        "exact": true,
+        "max_err": 0.0
+      },
+      {
+        "cycle": 5000,
+        "cs": 1.0,
+        "exact": true,
+        "max_err": 0.0
+      },
+      {
+        "cycle": 10000,
+        "cs": 1.0,
+        "exact": true,
+        "max_err": 0.0
+      }
+    ]
+  },
+  "cross_distribution": [
+    {
+      "distribution": "normal",
+      "n": 500000,
+      "initial_cs": 1.0,
+      "initial_exact": true,
+      "after_1000_cycles_cs": 1.0,
+      "after_1000_cycles_exact": true,
+      "max_err": 0.0
+    },
+    {
+      "distribution": "heavy_tail",
+      "n": 500000,
+      "initial_cs": 1.0,
+      "initial_exact": true,
+      "after_1000_cycles_cs": 1.0,
+      "after_1000_cycles_exact": true,
+      "max_err": 0.0
+    },
+    {
+      "distribution": "bimodal",
+      "n": 500000,
+      "initial_cs": 1.0,
+      "initial_exact": true,
+      "after_1000_cycles_cs": 1.0,
+      "after_1000_cycles_exact": true,
+      "max_err": 0.0
+    },
+    {
+      "distribution": "uniform",
+      "n": 500000,
+      "initial_cs": 1.0,
+      "initial_exact": true,
+      "after_1000_cycles_cs": 1.0,
+      "after_1000_cycles_exact": true,
+      "max_err": 0.0
+    },
+    {
+      "distribution": "laplace",
+      "n": 500000,
+      "initial_cs": 1.0,
+      "initial_exact": true,
+      "after_1000_cycles_cs": 1.0,
+      "after_1000_cycles_exact": true,
+      "max_err": 0.0
+    },
+    {
+      "distribution": "sparse_90",
+      "n": 500000,
+      "initial_cs": 1.0,
+      "initial_exact": true,
+      "after_1000_cycles_cs": 1.0,
+      "after_1000_cycles_exact": true,
+      "max_err": 0.0
+    },
+    {
+      "distribution": "lognormal",
+      "n": 500000,
+      "initial_cs": 1.0,
+      "initial_exact": true,
+      "after_1000_cycles_cs": 1.0,
+      "after_1000_cycles_exact": true,
+      "max_err": 0.0
+    }
+  ],
+  "all_gf17_exact": true
+}

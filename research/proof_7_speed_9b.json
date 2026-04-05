@@ -1,0 +1,394 @@
+{
+  "proof": "speed_throughput_9b",
+  "version": "3.122.0",
+  "timestamp": "2026-04-03T17:50:23",
+  "model": "Qwen3.5-9B",
+  "accelerator": "GPU",
+  "gpu": "AMD Radeon RX 7800 XT",
+  "total_model_params": 9653104368,
+  "sample_tensors": 10,
+  "sample_params": 503316480,
+  "total_wall_time_s": 84.7,
+  "modes": {
+    "binary": {
+      "mode": "Binary",
+      "routing_k": 2,
+      "routing_bits": "1-bit routing",
+      "sample_tensors": 10,
+      "sample_params": 503316480,
+      "total_encode_ms": 5211.0,
+      "total_decode_ms": 4137.0,
+      "encode_throughput_mps": 96.6,
+      "decode_throughput_mps": 121.7,
+      "total_vram_bytes": 62914640,
+      "total_ssd_bytes": 1761618600,
+      "total_fp16_bytes": 1006632960,
+      "compression_ratio_vram": 16.0,
+      "all_bit_exact": true,
+      "est_full_model_encode_s": 99.9,
+      "est_full_model_decode_s": 79.3,
+      "per_tensor": [
+        {
+          "enc_ms": 546.93,
+          "dec_ms": 483.06,
+          "vram_bytes": 6291464,
+          "ssd_bytes": 176161860,
+          "fp16_bytes": 100663296,
+          "compression_ratio": 16.0,
+          "cs": 1.0,
+          "snr_db": 147.34,
+          "bit_exact": true,
+          "name": "model.language_model.layers.14.mlp.down_proj.weight",
+          "n": 50331648,
+          "shape": [
+            4096,
+            12288
+          ]
+        },
+        {
+          "enc_ms": 474.03,
+          "dec_ms": 372.91,
+          "vram_bytes": 6291464,
+          "ssd_bytes": 176161860,
+          "fp16_bytes": 100663296,
+          "compression_ratio": 16.0,
+          "cs": 1.0,
+          "snr_db": 147.0,
+          "bit_exact": true,
+          "name": "model.language_model.layers.14.mlp.gate_proj.weight",
+          "n": 50331648,
+          "shape": [
+            12288,
+            4096
+          ]
+        },
+        {
+          "enc_ms": 510.05,
+          "dec_ms": 363.01,
+          "vram_bytes": 6291464,
+          "ssd_bytes": 176161860,
+          "fp16_bytes": 100663296,
+          "compression_ratio": 16.0,
+          "cs": 1.0,
+          "snr_db": 147.9,
+          "bit_exact": true,
+          "name": "model.language_model.layers.14.mlp.up_proj.weight",
+          "n": 50331648,
+          "shape": [
+            12288,
+            4096
+          ]
+        },
+        {
+          "enc_ms": 501.96,
+          "dec_ms": 381.87,
+          "vram_bytes": 6291464,
+          "ssd_bytes": 176161860,
+          "fp16_bytes": 100663296,
+          "compression_ratio": 16.0,
+          "cs": 1.0,
+          "snr_db": 147.4,
+          "bit_exact": true,
+          "name": "model.language_model.layers.15.mlp.down_proj.weight",
+          "n": 50331648,
+          "shape": [
+            4096,
+            12288
+          ]
+        },
+        {
+          "enc_ms": 599.66,
+          "dec_ms": 436.8,
+          "vram_bytes": 6291464,
+          "ssd_bytes": 176161860,
+          "fp16_bytes": 100663296,
+          "compression_ratio": 16.0,
+          "cs": 1.0,
+          "snr_db": 146.98,
+          "bit_exact": true,
+          "name": "model.language_model.layers.15.mlp.gate_proj.weight",
+          "n": 50331648,
+          "shape": [
+            12288,
+            4096
+          ]
+        },
+        {
+          "enc_ms": 554.46,
+          "dec_ms": 495.37,
+          "vram_bytes": 6291464,
+          "ssd_bytes": 176161860,
+          "fp16_bytes": 100663296,
+          "compression_ratio": 16.0,
+          "cs": 1.0,
+          "snr_db": 147.9,
+          "bit_exact": true,
+          "name": "model.language_model.layers.15.mlp.up_proj.weight",
+          "n": 50331648,
+          "shape": [
+            12288,
+            4096
+          ]
+        },
+        {
+          "enc_ms": 505.61,
+          "dec_ms": 382.05,
+          "vram_bytes": 6291464,
+          "ssd_bytes": 176161860,
+          "fp16_bytes": 100663296,
+          "compression_ratio": 16.0,
+          "cs": 1.0,
+          "snr_db": 148.43,
+          "bit_exact": true,
+          "name": "model.language_model.layers.25.mlp.down_proj.weight",
+          "n": 50331648,
+          "shape": [
+            4096,
+            12288
+          ]
+        },
+        {
+          "enc_ms": 489.94,
+          "dec_ms": 368.01,
+          "vram_bytes": 6291464,
+          "ssd_bytes": 176161860,
+          "fp16_bytes": 100663296,
+          "compression_ratio": 16.0,
+          "cs": 1.0,
+          "snr_db": 148.66,
+          "bit_exact": true,
+          "name": "model.language_model.layers.26.mlp.down_proj.weight",
+          "n": 50331648,
+          "shape": [
+            4096,
+            12288
+          ]
+        },
+        {
+          "enc_ms": 525.24,
+          "dec_ms": 395.35,
+          "vram_bytes": 6291464,
+          "ssd_bytes": 176161860,
+          "fp16_bytes": 100663296,
+          "compression_ratio": 16.0,
+          "cs": 1.0,
+          "snr_db": 150.32,
+          "bit_exact": true,
+          "name": "model.language_model.layers.26.mlp.gate_proj.weight",
+          "n": 50331648,
+          "shape": [
+            12288,
+            4096
+          ]
+        },
+        {
+          "enc_ms": 502.88,
+          "dec_ms": 458.81,
+          "vram_bytes": 6291464,
+          "ssd_bytes": 176161860,
+          "fp16_bytes": 100663296,
+          "compression_ratio": 16.0,
+          "cs": 1.0,
+          "snr_db": 148.93,
+          "bit_exact": true,
+          "name": "model.language_model.layers.26.mlp.up_proj.weight",
+          "n": 50331648,
+          "shape": [
+            12288,
+            4096
+          ]
+        }
+      ]
+    },
+    "quaternary": {
+      "mode": "Quaternary",
+      "routing_k": 4,
+      "routing_bits": "2-bit routing",
+      "sample_tensors": 10,
+      "sample_params": 503316480,
+      "total_encode_ms": 4959.0,
+      "total_decode_ms": 4336.0,
+      "encode_throughput_mps": 101.5,
+      "decode_throughput_mps": 116.1,
+      "total_vram_bytes": 125829280,
+      "total_ssd_bytes": 1761618600,
+      "total_fp16_bytes": 1006632960,
+      "compression_ratio_vram": 8.0,
+      "all_bit_exact": true,
+      "est_full_model_encode_s": 95.1,
+      "est_full_model_decode_s": 83.2,
+      "per_tensor": [
+        {
+          "enc_ms": 467.03,
+          "dec_ms": 369.63,
+          "vram_bytes": 12582928,
+          "ssd_bytes": 176161860,
+          "fp16_bytes": 100663296,
+          "compression_ratio": 8.0,
+          "cs": 1.0,
+          "snr_db": 147.34,
+          "bit_exact": true,
+          "name": "model.language_model.layers.14.mlp.down_proj.weight",
+          "n": 50331648,
+          "shape": [
+            4096,
+            12288
+          ]
+        },
+        {
+          "enc_ms": 573.01,
+          "dec_ms": 593.25,
+          "vram_bytes": 12582928,
+          "ssd_bytes": 176161860,
+          "fp16_bytes": 100663296,
+          "compression_ratio": 8.0,
+          "cs": 1.0,
+          "snr_db": 147.0,
+          "bit_exact": true,
+          "name": "model.language_model.layers.14.mlp.gate_proj.weight",
+          "n": 50331648,
+          "shape": [
+            12288,
+            4096
+          ]
+        },
+        {
+          "enc_ms": 465.39,
+          "dec_ms": 383.23,
+          "vram_bytes": 12582928,
+          "ssd_bytes": 176161860,
+          "fp16_bytes": 100663296,
+          "compression_ratio": 8.0,
+          "cs": 1.0,
+          "snr_db": 147.9,
+          "bit_exact": true,
+          "name": "model.language_model.layers.14.mlp.up_proj.weight",
+          "n": 50331648,
+          "shape": [
+            12288,
+            4096
+          ]
+        },
+        {
+          "enc_ms": 482.93,
+          "dec_ms": 384.76,
+          "vram_bytes": 12582928,
+          "ssd_bytes": 176161860,
+          "fp16_bytes": 100663296,
+          "compression_ratio": 8.0,
+          "cs": 1.0,
+          "snr_db": 147.4,
+          "bit_exact": true,
+          "name": "model.language_model.layers.15.mlp.down_proj.weight",
+          "n": 50331648,
+          "shape": [
+            4096,
+            12288
+          ]
+        },
+        {
+          "enc_ms": 476.1,
+          "dec_ms": 383.04,
+          "vram_bytes": 12582928,
+          "ssd_bytes": 176161860,
+          "fp16_bytes": 100663296,
+          "compression_ratio": 8.0,
+          "cs": 1.0,
+          "snr_db": 146.98,
+          "bit_exact": true,
+          "name": "model.language_model.layers.15.mlp.gate_proj.weight",
+          "n": 50331648,
+          "shape": [
+            12288,
+            4096
+          ]
+        },
+        {
+          "enc_ms": 468.31,
+          "dec_ms": 369.2,
+          "vram_bytes": 12582928,
+          "ssd_bytes": 176161860,
+          "fp16_bytes": 100663296,
+          "compression_ratio": 8.0,
+          "cs": 1.0,
+          "snr_db": 147.9,
+          "bit_exact": true,
+          "name": "model.language_model.layers.15.mlp.up_proj.weight",
+          "n": 50331648,
+          "shape": [
+            12288,
+            4096
+          ]
+        },
+        {
+          "enc_ms": 518.27,
+          "dec_ms": 459.0,
+          "vram_bytes": 12582928,
+          "ssd_bytes": 176161860,
+          "fp16_bytes": 100663296,
+          "compression_ratio": 8.0,
+          "cs": 1.0,
+          "snr_db": 148.43,
+          "bit_exact": true,
+          "name": "model.language_model.layers.25.mlp.down_proj.weight",
+          "n": 50331648,
+          "shape": [
+            4096,
+            12288
+          ]
+        },
+        {
+          "enc_ms": 471.12,
+          "dec_ms": 417.26,
+          "vram_bytes": 12582928,
+          "ssd_bytes": 176161860,
+          "fp16_bytes": 100663296,
+          "compression_ratio": 8.0,
+          "cs": 1.0,
+          "snr_db": 148.66,
+          "bit_exact": true,
+          "name": "model.language_model.layers.26.mlp.down_proj.weight",
+          "n": 50331648,
+          "shape": [
+            4096,
+            12288
+          ]
+        },
+        {
+          "enc_ms": 492.32,
+          "dec_ms": 510.85,
+          "vram_bytes": 12582928,
+          "ssd_bytes": 176161860,
+          "fp16_bytes": 100663296,
+          "compression_ratio": 8.0,
+          "cs": 1.0,
+          "snr_db": 150.32,
+          "bit_exact": true,
+          "name": "model.language_model.layers.26.mlp.gate_proj.weight",
+          "n": 50331648,
+          "shape": [
+            12288,
+            4096
+          ]
+        },
+        {
+          "enc_ms": 544.15,
+          "dec_ms": 465.52,
+          "vram_bytes": 12582928,
+          "ssd_bytes": 176161860,
+          "fp16_bytes": 100663296,
+          "compression_ratio": 8.0,
+          "cs": 1.0,
+          "snr_db": 148.93,
+          "bit_exact": true,
+          "name": "model.language_model.layers.26.mlp.up_proj.weight",
+          "n": 50331648,
+          "shape": [
+            12288,
+            4096
+          ]
+        }
+      ]
+    }
+  }
+}
