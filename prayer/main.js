@@ -25,6 +25,17 @@ ERAS.forEach(era => {
 const EDGE_OT    = new THREE.Color(0x6b5020);
 const EDGE_NT    = new THREE.Color(0x224488);
 const EDGE_CROSS = new THREE.Color(0x553366);
+const VOICE_GROUPS=[
+  {l:'Parable',        c:'#f0c850',m:nd=>nd.kind==='parable'},
+  {l:'Praise & Song',  c:'#60ff90',m:nd=>nd.kind==='praise'},
+  {l:'Prophecy',       c:'#ff6060',m:nd=>nd.kind==='prophecy'},
+  {l:'Vision',         c:'#cc60ff',m:nd=>nd.book_id===73},
+  {l:'Apostolic',      c:'#60aaff',m:nd=>nd.book_id>=52&&nd.book_id<=72},
+  {l:'Acts',           c:'#40ddcc',m:nd=>nd.book_id===51},
+  {l:'Gospel',         c:'#ffa030',m:nd=>nd.book_id>=47&&nd.book_id<=50},
+  {l:'Law & Covenant', c:'#ffcc88',m:nd=>BOOK_ERA[nd.book_id]===0||nd.kind==='covenant'},
+  {l:'Narrative',      c:'#8899aa',m:_=>true},
+];
 
 let graph, scene, camera, renderer, controls;
 let pointsMesh, edgesMesh, raycaster, mouse, tooltip, statsEl;
@@ -35,7 +46,7 @@ let fulltext = null;
 const bookPanel = () => document.getElementById('book-panel');
 const bookBody = () => document.getElementById('book-panel-body');
 const bookTitle = () => document.getElementById('book-panel-title');
-let silhouettePos=null,waterfallPos=null,timelinePos=null,graphPos=null,solarPos=null,goldenPos=null,crossPos=null,iamPos=null,cleanPos=null;let mode='timeline';let lerpSrc=null,lerpDst=null,lerpT=1.0;const LERP_FRAMES=90;const ease=t=>t<0.5?2*t*t:-1+(4-2*t)*t;const SCALE=1.8;let camSrc=null,camDst=null,camTgtSrc=null,camTgtDst=null,camT=1.0;const CAM_FRAMES=60;let pulsePhase=0;let clickTimer=null;let downX=0,downY=0,wasDrag=false;let tandemActive=false;let userAlpha=1.0;let edgeAlphaBase=0.06;let patternsActive=false;
+let silhouettePos=null,waterfallPos=null,timelinePos=null,graphPos=null,solarPos=null,goldenPos=null,crossPos=null,iamPos=null,cleanPos=null,voicePos=null;let mode='timeline';let lerpSrc=null,lerpDst=null,lerpT=1.0;const LERP_FRAMES=90;const ease=t=>t<0.5?2*t*t:-1+(4-2*t)*t;const SCALE=1.8;let camSrc=null,camDst=null,camTgtSrc=null,camTgtDst=null,camT=1.0;const CAM_FRAMES=60;let pulsePhase=0;let clickTimer=null;let downX=0,downY=0,wasDrag=false;let tandemActive=false;let userAlpha=1.0;let edgeAlphaBase=0.06;let patternsActive=false;
 
 async function load() {
   await init();
@@ -63,6 +74,7 @@ async function load() {
   console.time('Graph layout');graphPos=computeGraphLayout();console.timeEnd('Graph layout');
   console.time('Solar layout');solarPos=computeSolarLayout('solar');goldenPos=computeSolarLayout('golden');crossPos=computeSolarLayout('cross');iamPos=computeSolarLayout('iam');console.timeEnd('Solar layout');
   console.time('Clean layout');cleanPos=computeCleanLayout();console.timeEnd('Clean layout');
+  console.time('Voice layout');voicePos=computeVoiceLayout();console.timeEnd('Voice layout');
   buildBookLegend();setupScene();buildPoints(timelinePos);buildEdges(timelinePos);animate();
 }
 function computeWaterfallLayout() {
@@ -245,6 +257,24 @@ function computeCleanLayout() {
   for (let i = 0; i < n; i++) { pos[i].x *= sc; pos[i].y *= sc; }
   return pos;
 }
+function computeVoiceLayout(){
+  const n=graph.nodes.length,G=VOICE_GROUPS.length,buckets=Array.from({length:G},()=>[]);
+  for(let i=0;i<n;i++){const nd=graph.nodes[i];let g=G-1;for(let gi=0;gi<G-1;gi++){if(VOICE_GROUPS[gi].m(nd)){g=gi;break;}}buckets[g].push(i);}
+  const pos=new Array(n);
+  const XW=54,ZD=2.0,Y0=(G-1)*2.75;
+  for(let gi=0;gi<G;gi++){
+    const ids=buckets[gi];
+    ids.sort((a,b)=>{const na=graph.nodes[a],nb=graph.nodes[b];return na.book_id-nb.book_id||na.ch-nb.ch||na.v-nb.v;});
+    const total=ids.length,yBase=Y0-gi*5.5;
+    for(let j=0;j<total;j++){
+      const nd=graph.nodes[ids[j]];
+      const t=total>1?j/(total-1):0.5;
+      const zr=((j*1664525+1013904223)>>>0)/4294967296;
+      pos[ids[j]]={x:(t-0.5)*XW,y:yBase+((nd.mass||1)>1.5?1.2:0),z:(zr*2-1)*ZD};
+    }
+  }
+  return pos;
+}
 function buildBookLegend() {
   const container = document.getElementById('book-legend');
   if (!container) return;
@@ -350,9 +380,9 @@ function setupScene() {
   si.addEventListener('keydown', e => { if (e.key === 'Enter') searchVerse(si.value); });
 }
 
-function getPositionsForMode(m){return m==='timeline'?timelinePos:m==='waterfall'?waterfallPos:m==='graph'?graphPos:m==='solar'?solarPos:m==='golden'?goldenPos:m==='cross'?crossPos:m==='iam'?iamPos:m==='clean'?cleanPos:silhouettePos;}
+function getPositionsForMode(m){return m==='timeline'?timelinePos:m==='waterfall'?waterfallPos:m==='graph'?graphPos:m==='solar'?solarPos:m==='golden'?goldenPos:m==='cross'?crossPos:m==='iam'?iamPos:m==='clean'?cleanPos:m==='voice'?voicePos:silhouettePos;}
 function setEdgeOpacity(v){edgeAlphaBase=v;if(edgesMesh)edgesMesh.material.opacity=Math.min(1,v*userAlpha);}
-function switchMode(newMode){if(newMode===mode)return;mode=newMode;const posAttr=pointsMesh.geometry.attributes.position;lerpSrc=new Float32Array(posAttr.array);lerpDst=getPositionsForMode(newMode);lerpT=0.0;if(edgesMesh)edgesMesh.visible=false;document.getElementById('waterfall-legend').style.display=newMode==='waterfall'?'block':'none';document.getElementById('graph-legend').style.display=newMode==='graph'?'block':'none';document.getElementById('solar-legend').style.display=(newMode==='solar'||newMode==='golden'||newMode==='iam')?'block':'none';document.getElementById('clean-legend').style.display=newMode==='clean'?'block':'none';const isSpecial=newMode==='solar'||newMode==='golden'||newMode==='iam';if(isSpecial){flyCamera(newMode==='golden'?new THREE.Vector3(0,5,90):newMode==='iam'?new THREE.Vector3(0,10,55):new THREE.Vector3(0,0,70),new THREE.Vector3(0,0,0));controls.autoRotate=true;controls.autoRotateSpeed=newMode==='golden'?0.25:0.15;document.getElementById('autoRotate').checked=true;scene.fog.density=0.004;setEdgeOpacity(0.02);pointsMesh.material.uniforms.uAlphaMul.value=0.9;}else if(newMode==='clean'){flyCamera(new THREE.Vector3(0,0,65),new THREE.Vector3(0,0,0));controls.autoRotate=false;controls.autoRotateSpeed=0.15;document.getElementById('autoRotate').checked=false;scene.fog.density=0.003;setEdgeOpacity(0.12);pointsMesh.material.uniforms.uAlphaMul.value=0.7;}else if(newMode==='graph'){flyCamera(new THREE.Vector3(0,0,80),new THREE.Vector3(0,0,0));controls.autoRotate=true;controls.autoRotateSpeed=0.3;document.getElementById('autoRotate').checked=true;scene.fog.density=0.003;setEdgeOpacity(0.06);pointsMesh.material.uniforms.uAlphaMul.value=0.35;}else if(newMode==='timeline'){flyCamera(new THREE.Vector3(0,2,35),new THREE.Vector3(0,0,0));controls.autoRotate=false;controls.autoRotateSpeed=0.3;document.getElementById('autoRotate').checked=false;scene.fog.density=0.008;setEdgeOpacity(0.03);pointsMesh.material.uniforms.uAlphaMul.value=1.0;}else if(newMode==='waterfall'){flyCamera(new THREE.Vector3(-1,0,28),new THREE.Vector3(-1,0,0));controls.autoRotate=false;controls.autoRotateSpeed=0.3;document.getElementById('autoRotate').checked=false;scene.fog.density=0.008;setEdgeOpacity(0.05);pointsMesh.material.uniforms.uAlphaMul.value=1.0;}else{flyCamera(new THREE.Vector3(0,4,16),new THREE.Vector3(0,3.5,0));controls.autoRotate=true;controls.autoRotateSpeed=0.3;document.getElementById('autoRotate').checked=true;scene.fog.density=0.02;setEdgeOpacity(0.02);pointsMesh.material.uniforms.uAlphaMul.value=1.0;}}
+function switchMode(newMode){if(newMode===mode)return;mode=newMode;const posAttr=pointsMesh.geometry.attributes.position;lerpSrc=new Float32Array(posAttr.array);lerpDst=getPositionsForMode(newMode);lerpT=0.0;if(edgesMesh)edgesMesh.visible=false;document.getElementById('waterfall-legend').style.display=newMode==='waterfall'?'block':'none';document.getElementById('graph-legend').style.display=newMode==='graph'?'block':'none';document.getElementById('solar-legend').style.display=(newMode==='solar'||newMode==='golden'||newMode==='iam')?'block':'none';document.getElementById('clean-legend').style.display=newMode==='clean'?'block':'none';document.getElementById('voice-legend').style.display=newMode==='voice'?'block':'none';const isSpecial=newMode==='solar'||newMode==='golden'||newMode==='iam';if(isSpecial){flyCamera(newMode==='golden'?new THREE.Vector3(0,5,90):newMode==='iam'?new THREE.Vector3(0,10,55):new THREE.Vector3(0,0,70),new THREE.Vector3(0,0,0));controls.autoRotate=true;controls.autoRotateSpeed=newMode==='golden'?0.25:0.15;document.getElementById('autoRotate').checked=true;scene.fog.density=0.004;setEdgeOpacity(0.02);pointsMesh.material.uniforms.uAlphaMul.value=0.9;}else if(newMode==='clean'){flyCamera(new THREE.Vector3(0,0,65),new THREE.Vector3(0,0,0));controls.autoRotate=false;controls.autoRotateSpeed=0.15;document.getElementById('autoRotate').checked=false;scene.fog.density=0.003;setEdgeOpacity(0.12);pointsMesh.material.uniforms.uAlphaMul.value=0.7;}else if(newMode==='graph'){flyCamera(new THREE.Vector3(0,0,80),new THREE.Vector3(0,0,0));controls.autoRotate=true;controls.autoRotateSpeed=0.3;document.getElementById('autoRotate').checked=true;scene.fog.density=0.003;setEdgeOpacity(0.06);pointsMesh.material.uniforms.uAlphaMul.value=0.35;}else if(newMode==='timeline'){flyCamera(new THREE.Vector3(0,2,35),new THREE.Vector3(0,0,0));controls.autoRotate=false;controls.autoRotateSpeed=0.3;document.getElementById('autoRotate').checked=false;scene.fog.density=0.008;setEdgeOpacity(0.03);pointsMesh.material.uniforms.uAlphaMul.value=1.0;}else if(newMode==='waterfall'){flyCamera(new THREE.Vector3(-1,0,28),new THREE.Vector3(-1,0,0));controls.autoRotate=false;controls.autoRotateSpeed=0.3;document.getElementById('autoRotate').checked=false;scene.fog.density=0.008;setEdgeOpacity(0.05);pointsMesh.material.uniforms.uAlphaMul.value=1.0;}else if(newMode==='voice'){flyCamera(new THREE.Vector3(0,2,50),new THREE.Vector3(0,0,0));controls.autoRotate=false;controls.autoRotateSpeed=0.3;document.getElementById('autoRotate').checked=false;scene.fog.density=0.006;setEdgeOpacity(0.03);pointsMesh.material.uniforms.uAlphaMul.value=1.0;}else{flyCamera(new THREE.Vector3(0,4,16),new THREE.Vector3(0,3.5,0));controls.autoRotate=true;controls.autoRotateSpeed=0.3;document.getElementById('autoRotate').checked=true;scene.fog.density=0.02;setEdgeOpacity(0.02);pointsMesh.material.uniforms.uAlphaMul.value=1.0;}}
 function flyCamera(posDst, tgtDst) {
   camSrc = camera.position.clone();
   camDst = posDst;
