@@ -333,6 +333,21 @@ function setupScene() {
     if (edgesMesh) edgesMesh.material.opacity = Math.min(1.0, edgeAlphaBase * userAlpha);
   });
   document.getElementById('patternsBtn').addEventListener('click', togglePatterns);
+  document.getElementById('discussBtn').addEventListener('click', toggleDiscuss);
+  document.getElementById('discuss-close').addEventListener('click', toggleDiscuss);
+  document.getElementById('discuss-send').addEventListener('click', () => {
+    const inp = document.getElementById('discuss-input');
+    const q = inp.value.trim(); if (!q) return;
+    addDiscussMsg(q, 'user');
+    addDiscussMsg(generateDiscussResponse(q, selectedIdx), 'ai');
+    inp.value = '';
+  });
+  document.getElementById('discuss-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); document.getElementById('discuss-send').click(); }
+  });
+  const si = document.getElementById('search-input');
+  document.getElementById('search-btn').addEventListener('click', () => searchVerse(si.value));
+  si.addEventListener('keydown', e => { if (e.key === 'Enter') searchVerse(si.value); });
 }
 
 function getPositionsForMode(m){return m==='timeline'?timelinePos:m==='waterfall'?waterfallPos:m==='graph'?graphPos:m==='solar'?solarPos:m==='golden'?goldenPos:m==='cross'?crossPos:m==='iam'?iamPos:m==='clean'?cleanPos:silhouettePos;}
@@ -546,7 +561,7 @@ function onSingleClick(e) {
 }
 
 function onDoubleClick(e) {
-  if (wasDrag) return;
+  wasDrag = false;
   if (clickTimer) { clearTimeout(clickTimer); clickTimer = null; }
   const rect2 = renderer.domElement.getBoundingClientRect();
   mouse.x = ((e.clientX - rect2.left) / rect2.width) * 2 - 1;
@@ -821,5 +836,78 @@ function analyzePatterns(idx){
   html+='<div class="pat-stats">'+'<span>\u21c4 '+conns.length+'</span>'+'<span>\ud83d\udcd6 '+bookSet.size+'bks</span>'+'<span>'+(otLinks>0&&ntLinks>0?'\u2696 OT+NT':nd.testament==='OT'?'\ud83d\udcdc OT':'\u271d NT')+'</span>'+(people.size>0?'<span>\ud83d\udc64 '+people.size+'</span>':'')+'</div>';
   ins.forEach(s=>html+='<div class="pat-insight">'+escHtml(s)+'</div>');
   tandemActive?(()=>{const ce=document.getElementById('tandem-connections');const old=ce.querySelector('#patterns-inline');if(old)old.remove();ce.insertAdjacentHTML('beforeend','<div id="patterns-inline" class="patterns-inline-wrap"><div class="pat-header">\u2726 PATTERN ANALYSIS</div>'+html+'</div>');})():(document.getElementById('patterns-body').innerHTML=html,document.getElementById('patterns-panel').style.display='block');
+}
+function searchVerse(q) {
+  q = q.trim(); const res = document.getElementById('search-result');
+  if (!q) { res.textContent = ''; return; }
+  const m = q.match(/^([\w\s']+?)\s+(\d+)[:\s](\d+)$/i);
+  let idx = -1;
+  if (m) {
+    const bl = m[1].toLowerCase().replace(/^(\d+)\s*/, '$1 ').trim();
+    const ch = +m[2], v = +m[3];
+    idx = graph.nodes.findIndex(n => n.book.toLowerCase().includes(bl) && n.ch === ch && n.v === v);
+  }
+  if (idx < 0) {
+    const ql = q.toLowerCase();
+    idx = graph.nodes.findIndex(n => (n.preview||'').toLowerCase().includes(ql) || n.book.toLowerCase().includes(ql));
+  }
+  if (idx >= 0) {
+    selectedIdx = idx; highlightNode(idx); flyToNode(idx);
+    if (tandemActive) populateTandem(idx);
+    if (patternsActive) analyzePatterns(idx);
+    const n = graph.nodes[idx];
+    res.textContent = `→ ${n.book} ${n.ch}:${n.v}`;
+    res.style.color = '#f0c850';
+  } else { res.textContent = 'not found'; res.style.color = '#888'; }
+}
+function toggleDiscuss() {
+  const p = document.getElementById('discuss-panel');
+  const on = p.style.display !== 'flex';
+  p.style.display = on ? 'flex' : 'none';
+  document.getElementById('discussBtn').style.background = on ? 'rgba(100,200,140,0.2)' : '';
+  if (on && selectedIdx >= 0 && !document.getElementById('discuss-log').children.length)
+    addDiscussMsg(generateDiscussResponse('', selectedIdx), 'ai');
+}
+function addDiscussMsg(html, role) {
+  const log = document.getElementById('discuss-log');
+  const d = document.createElement('div');
+  d.className = role === 'user' ? 'msg-user' : 'msg-ai';
+  d.innerHTML = html;
+  log.appendChild(d);
+  log.scrollTop = log.scrollHeight;
+}
+function generateDiscussResponse(query, idx) {
+  if (idx < 0) return 'Select a verse node first by clicking on a point in the visualization.';
+  const nd = graph.nodes[idx], conns = adj[idx], cns = conns.map(ci => graph.nodes[ci]);
+  const era = ERAS[BOOK_ERA[nd.book_id]]?.name || '';
+  const ot = cns.filter(n => n.testament === 'OT').length;
+  const nt = cns.filter(n => n.testament === 'NT').length;
+  const ppl = [...new Set([nd,...cns].flatMap(n => n.ppl||[]))].slice(0,5);
+  const locs = [...new Set([nd,...cns].flatMap(n => n.loc||[]))].slice(0,4);
+  const bks = new Set(cns.map(n => n.book_id)).size;
+  const vt = fulltext?.[`${nd.book_id}:${nd.ch}`]?.[nd.v-1] || nd.preview || '';
+  const vtS = vt.length > 110 ? vt.slice(0,110)+'\u2026' : vt;
+  const pivots = cns.filter(n => (n.mass||1) > 1.5).slice(0,2);
+  const isHub = conns.length >= 10;
+  const bridgesT = ot > 0 && nt > 0;
+  const ref = `<b>${nd.book} ${nd.ch}:${nd.v}</b>`;
+  const q = query.toLowerCase();
+  if (q.match(/who|people|person|figure|name/)) {
+    if (!ppl.length) return `${ref} \u2014 no named figures are recorded in this passage or its connections. The verse speaks without specific human reference.`;
+    return `${ref} \u2014 figures: <em>${ppl.join(', ')}</em>. ${ppl.length > 3 ? 'This verse participates in a rich character web across ' + bks + ' books.' : ''} ${cns.filter(n=>n.ppl?.includes(ppl[0])).length > 1 ? ppl[0] + ' also appears in ' + cns.filter(n=>n.ppl?.includes(ppl[0])).length + ' connected passages.' : ''}`;
+  }
+  if (q.match(/where|place|location|land|city/)) {
+    if (!locs.length) return `${ref} \u2014 no specific locations recorded. Its message transcends geography.`;
+    return `${ref} \u2014 locations: <em>${locs.join(', ')}</em>. ${era === 'Historical' ? 'As Historical literature, geography is central to its narrative theology.' : era === 'Prophets' ? 'Prophetic use of place names carries covenantal weight.' : 'These places anchor the text in salvation history.'}`;
+  }
+  if (q.match(/connect|relate|link|bridge|reference/)) {
+    if (!conns.length) return `${ref} \u2014 no cross-references are recorded. It stands as a distinct scriptural voice.`;
+    const tops = cns.slice(0,3).map(c=>`<em>${c.book} ${c.ch}:${c.v}</em>`).join(', ');
+    return `${ref} connects to ${tops}${conns.length > 3 ? ` and ${conns.length-3} more` : ''} across ${bks} books. ${bridgesT ? `Its ${ot} OT \xb7 ${nt} NT links reveal a <em>typological pattern</em> \u2014 Old Covenant shadow meeting New Covenant substance.` : `All connections lie within the ${nd.testament}.`} ${pivots.length ? 'Notably connected to ' + pivots.map(p=>`<em>${p.book} ${p.ch}:${p.v}</em>`).join(' and ') + ' \u2014 highly pivotal verses.' : ''}`;
+  }
+  if (q.match(/pray|meditat|how do|how should|guidance|help|practice/)) {
+    return `To pray with ${ref}: <em>\u201c${escHtml(vtS)}\u201d</em><br><br>${era === 'Wisdom' ? 'Wisdom literature invites slow, ruminative reading (lectio divina) \u2014 read it once for meaning, again for tone, a third time for what surprises you.' : era === 'Prophets' ? 'Prophetic texts reward sitting with the discomfort of divine address. Let the call land before seeking comfort.' : bridgesT ? 'The bridge across both Testaments invites a sweeping gaze \u2014 from promise to fulfillment, shadow to substance.' : 'Read slowly, then re-read. Note what word or phrase catches you.'} ${ppl.length ? '<br><br>Bring ' + ppl[0] + ' before God, considering their role in this narrative.' : ''} Ask: what in this word is alive for me today?`;
+  }
+  return `${ref}${vt ? ` \u2014 <em>\u201c${escHtml(vtS)}\u201d</em>` : ''}<br><br>A ${era} text with ${conns.length} cross-references across ${bks} books. ${isHub ? 'As a <em>scriptural nexus</em> it anchors connections across the canon. ' : ''}${bridgesT ? `Its ${ot} OT \xb7 ${nt} NT connections mark it as a <em>covenant bridge</em>, where promise meets fulfillment. ` : ''}${(nd.mass||1) > 1.5 ? 'Designated <em>pivotal</em> \u2014 this verse carries above-average canonical weight. ' : ''}${nd.conflict ? 'It sits at a point of <em>spiritual conflict</em> in the narrative. ' : ''}${ppl.length ? 'Figures: ' + ppl.slice(0,3).join(', ') + '. ' : ''}<br><br>Ask a specific question \u2014 <em>who, where, how does it connect, how to pray</em> \u2014 to go deeper.`;
 }
 load().catch(e => console.error('Failed to load:', e));
