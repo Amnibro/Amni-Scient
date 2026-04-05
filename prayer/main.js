@@ -35,7 +35,7 @@ let fulltext = null;
 const bookPanel = () => document.getElementById('book-panel');
 const bookBody = () => document.getElementById('book-panel-body');
 const bookTitle = () => document.getElementById('book-panel-title');
-let silhouettePos=null,waterfallPos=null,timelinePos=null,graphPos=null,solarPos=null,goldenPos=null,crossPos=null,iamPos=null,cleanPos=null;let mode='timeline';let lerpSrc=null,lerpDst=null,lerpT=1.0;const LERP_FRAMES=90;const ease=t=>t<0.5?2*t*t:-1+(4-2*t)*t;const SCALE=1.8;let camSrc=null,camDst=null,camTgtSrc=null,camTgtDst=null,camT=1.0;const CAM_FRAMES=60;let pulsePhase=0;let clickTimer=null;let downX=0,downY=0,wasDrag=false;let tandemActive=false;
+let silhouettePos=null,waterfallPos=null,timelinePos=null,graphPos=null,solarPos=null,goldenPos=null,crossPos=null,iamPos=null,cleanPos=null;let mode='timeline';let lerpSrc=null,lerpDst=null,lerpT=1.0;const LERP_FRAMES=90;const ease=t=>t<0.5?2*t*t:-1+(4-2*t)*t;const SCALE=1.8;let camSrc=null,camDst=null,camTgtSrc=null,camTgtDst=null,camT=1.0;const CAM_FRAMES=60;let pulsePhase=0;let clickTimer=null;let downX=0,downY=0,wasDrag=false;let tandemActive=false;let userAlpha=1.0;let patternsActive=false;
 
 async function load() {
   await init();
@@ -189,7 +189,7 @@ function computeGraphLayout() {
   for (let i = 0; i < n; i++) { pos[i].x *= sc; pos[i].y *= sc; pos[i].z *= sc; }
   return pos;
 }
-function computeSolarLayout(m='solar'){const n=graph.nodes.length;const pos=new Array(n);if(m==='cross'){const sz=28;for(let i=0;i<n;i++){const nd=graph.nodes[i];const phase=i/n*6.28;pos[i]={x:(nd.book_id<40?-sz:sz)*Math.sin(phase),y:nd.ch*0.6-12,z:Math.cos(phase)*sz*0.6+(nd.mass||1)*3};}return pos;}if(m==='iam'){const r=25;for(let i=0;i<n;i++){const nd=graph.nodes[i];const a=i*0.1;pos[i]={x:Math.sin(a)*r,y:i/n*35-18,z:Math.cos(a*2.3)*(nd.mass||1)*6};}return pos;}const bookData={};for(const nd of graph.nodes){if(!bookData[nd.book_id])bookData[nd.book_id]={chapters:{},count:0};bookData[nd.book_id].count++;if(!bookData[nd.book_id].chapters[nd.ch])bookData[nd.book_id].chapters[nd.ch]=[];bookData[nd.book_id].chapters[nd.ch].push(nd.id);}const bookIds=Object.keys(bookData).map(Number).sort((a,b)=>a-b);const totalBooks=bookIds.length;const bookCenters={};const goldenAngle=Math.PI*(3-Math.sqrt(5));bookIds.forEach((bid,bi)=>{const era=BOOK_ERA[bid]||0;const arm=era/8*Math.PI*2;const spiralR=(m==='golden'?12:8)+bi/totalBooks*(m==='golden'?55:45);const spiralA=arm+bi*goldenAngle*(m==='golden'?0.65:0.4);const tilt=(era%2===0?1:-1)*(bi%3)*1.5;bookCenters[bid]={x:Math.cos(spiralA)*spiralR,y:Math.sin(spiralA)*spiralR,z:tilt};});for(let i=0;i<n;i++){const nd=graph.nodes[i];const center=bookCenters[nd.book_id];const bd=bookData[nd.book_id];const chapters=Object.keys(bd.chapters).map(Number).sort((a,b)=>a-b);const chIdx=chapters.indexOf(nd.ch);const chCount=chapters.length;const orbitR=1.5+chIdx/Math.max(chCount-1,1)*3.5;const chAngle=(chIdx/chCount)*Math.PI*2;const chX=center.x+Math.cos(chAngle)*orbitR;const chY=center.y+Math.sin(chAngle)*orbitR;const chZ=center.z+Math.sin(chAngle*2)*0.5;const versesInCh=bd.chapters[nd.ch];const vIdx=versesInCh.indexOf(nd.id);const vCount=versesInCh.length;const moonR=0.3+(vCount>30?0.8:vCount*0.02);const moonAngle=(vIdx/Math.max(vCount,1))*Math.PI*2;const tiltAngle=chAngle*0.3;const mX=Math.cos(moonAngle)*moonR;const mY=Math.sin(moonAngle)*moonR*Math.cos(tiltAngle);const mZ=Math.sin(moonAngle)*moonR*Math.sin(tiltAngle);pos[i]={x:chX+mX,y:chY+mY,z:chZ+mZ};}return pos;}
+function computeSolarLayout(m='solar'){const n=graph.nodes.length;const pos=new Array(n);if(m==='cross'){const sz=28;for(let i=0;i<n;i++){const nd=graph.nodes[i];const phase=i/n*6.28;pos[i]={x:(nd.book_id<40?-sz:sz)*Math.sin(phase),y:nd.ch*0.6-12,z:Math.cos(phase)*sz*0.6+(nd.mass||1)*3};}return pos;}if(m==='iam'){const r=25;for(let i=0;i<n;i++){const nd=graph.nodes[i];const a=i*0.1;pos[i]={x:Math.sin(a)*r,y:i/n*35-18,z:Math.cos(a*2.3)*(nd.mass||1)*6};}return pos;}const bookData={};for(const nd of graph.nodes){if(!bookData[nd.book_id])bookData[nd.book_id]={chapters:{},count:0};bookData[nd.book_id].count++;if(!bookData[nd.book_id].chapters[nd.ch])bookData[nd.book_id].chapters[nd.ch]=[];bookData[nd.book_id].chapters[nd.ch].push(nd.id);}const bookIds=Object.keys(bookData).map(Number).sort((a,b)=>a-b);const totalBooks=bookIds.length;const bookCenters={};const goldenAngle=Math.PI*(3-Math.sqrt(5));bookIds.forEach((bid,bi)=>{const era=BOOK_ERA[bid]||0;const spiralR=(m==='golden'?12:8)+bi/totalBooks*(m==='golden'?55:45);const spiralA=bi*goldenAngle;const tilt=(era%2===0?1:-1)*(bi%3)*1.5;bookCenters[bid]={x:Math.cos(spiralA)*spiralR,y:Math.sin(spiralA)*spiralR,z:tilt};});for(let i=0;i<n;i++){const nd=graph.nodes[i];const center=bookCenters[nd.book_id];const bd=bookData[nd.book_id];const chapters=Object.keys(bd.chapters).map(Number).sort((a,b)=>a-b);const chIdx=chapters.indexOf(nd.ch);const chCount=chapters.length;const orbitR=1.5+chIdx/Math.max(chCount-1,1)*3.5;const chAngle=(chIdx/chCount)*Math.PI*2;const chX=center.x+Math.cos(chAngle)*orbitR;const chY=center.y+Math.sin(chAngle)*orbitR;const chZ=center.z+Math.sin(chAngle*2)*0.5;const versesInCh=bd.chapters[nd.ch];const vIdx=versesInCh.indexOf(nd.id);const vCount=versesInCh.length;const moonR=0.3+(vCount>30?0.8:vCount*0.02);const moonAngle=(vIdx/Math.max(vCount,1))*Math.PI*2;const tiltAngle=chAngle*0.3;const mX=Math.cos(moonAngle)*moonR;const mY=Math.sin(moonAngle)*moonR*Math.cos(tiltAngle);const mZ=Math.sin(moonAngle)*moonR*Math.sin(tiltAngle);pos[i]={x:chX+mX,y:chY+mY,z:chZ+mZ};}return pos;}
 function computeCleanLayout() {
   const n = graph.nodes.length;
   const pos = new Array(n);
@@ -326,6 +326,10 @@ function setupScene() {
   canvas.addEventListener('dblclick', onDoubleClick);
   document.getElementById('book-panel-close').addEventListener('click', closeBookPanel);
   document.getElementById('tandemBtn').addEventListener('click', toggleTandem);
+  document.getElementById('alphaSlider').addEventListener('input', e => {
+    if (pointsMesh) pointsMesh.material.uniforms.uAlphaMul.value = parseFloat(e.target.value);
+  });
+  document.getElementById('patternsBtn').addEventListener('click', togglePatterns);
 }
 
 function getPositionsForMode(m){return m==='timeline'?timelinePos:m==='waterfall'?waterfallPos:m==='graph'?graphPos:m==='solar'?solarPos:m==='golden'?goldenPos:m==='cross'?crossPos:m==='iam'?iamPos:m==='clean'?cleanPos:silhouettePos;}
@@ -562,6 +566,8 @@ function deselectNode() {
   selectedIdx = -1;
   resetHighlight();
   bookPanel().classList.add('hidden');
+  document.getElementById('patterns-panel').style.display='none';
+  const old=document.getElementById('patterns-inline');if(old)old.remove();
 }
 
 function openBookPanel(idx) {
@@ -650,11 +656,14 @@ function highlightNode(idx) {
     edgesMesh.visible = true;
   }
   if (tandemActive) populateTandem(idx);
+  if (patternsActive) analyzePatterns(idx);
 }
 function closeBookPanel() {
   bookPanel().classList.add('hidden');
   selectedIdx = -1;
   resetHighlight();
+  document.getElementById('patterns-panel').style.display='none';
+  const old=document.getElementById('patterns-inline');if(old)old.remove();
 }
 
 function resetHighlight() {
@@ -765,4 +774,46 @@ function populateTandem(idx) {
   });
 }
 
+function togglePatterns(){patternsActive=!patternsActive;const btn=document.getElementById('patternsBtn');btn.textContent=patternsActive?'✦ ON':'✦ PATTERNS';btn.style.background=patternsActive?'rgba(180,120,255,0.25)':'rgba(180,120,255,0.08)';if(patternsActive&&selectedIdx>=0)analyzePatterns(selectedIdx);else{document.getElementById('patterns-panel').style.display='none';const old=document.getElementById('patterns-inline');if(old)old.remove();}}
+function analyzePatterns(idx){
+  if(!patternsActive)return;
+  const nd=graph.nodes[idx],conns=adj[idx],connNodes=conns.map(ci=>graph.nodes[ci]),allNodes=[nd,...connNodes];
+  const eraCounts={};
+  connNodes.forEach(cn=>{const en=ERAS[BOOK_ERA[cn.book_id]]?.name||'Other';eraCounts[en]=(eraCounts[en]||0)+1;});
+  const topEras=Object.entries(eraCounts).sort((a,b)=>b[1]-a[1]).slice(0,3);
+  const otLinks=connNodes.filter(cn=>cn.testament==='OT').length;
+  const ntLinks=connNodes.filter(cn=>cn.testament==='NT').length;
+  const people=new Set(allNodes.flatMap(n=>n.ppl||[]));
+  const locs=new Set(allNodes.flatMap(n=>n.loc||[]));
+  const bookSet=new Set(connNodes.map(cn=>cn.book_id));
+  const pivotConns=connNodes.filter(cn=>(cn.mass||1)>1.5).length;
+  const conflicts=allNodes.filter(n=>n.conflict).length;
+  const isHub=conns.length>=10;
+  const themes=[];
+  nd.testament==='OT'&&ntLinks>0&&themes.push('Messianic Type');
+  nd.testament==='NT'&&otLinks>3&&themes.push('Fulfilled Prophecy');
+  ERAS[BOOK_ERA[nd.book_id]]?.name==='Wisdom'&&themes.push('Wisdom Literature');
+  ERAS[BOOK_ERA[nd.book_id]]?.name==='Prophets'&&themes.push('Prophetic Voice');
+  people.size>3&&themes.push('Character Web');
+  locs.size>2&&themes.push('Geographic Trail');
+  conflicts>2&&themes.push('Spiritual Conflict');
+  isHub&&themes.push('Scriptural Nexus');
+  pivotConns>3&&themes.push('Pivotal Cluster');
+  bookSet.size>5&&themes.push('Canon-Wide Echo');
+  otLinks>0&&ntLinks>0&&themes.push('Covenant Bridge');
+  const pType=isHub&&otLinks>0&&ntLinks>0?'Canonical Axis':isHub?'Scriptural Hub':otLinks>0&&ntLinks>0?'Typological Link':ERAS[BOOK_ERA[nd.book_id]]?.name==='Wisdom'?'Sapiential Pattern':ERAS[BOOK_ERA[nd.book_id]]?.name==='Prophets'?'Prophetic Echo':'Scriptural Reference';
+  const ins=[];
+  otLinks>0&&ntLinks>0&&ins.push('Bridges both Testaments \u2014 '+otLinks+' OT \xb7 '+ntLinks+' NT connections.');
+  people.size>0&&ins.push('Figures: '+[...people].slice(0,5).join(', ')+(people.size>5?' +'+(people.size-5)+' more':'')+'.') ;
+  isHub&&ins.push('High-degree nexus ('+conns.length+' refs, '+bookSet.size+' books) \u2014 doctrinally central passage.');
+  topEras.length>0&&ins.push('Top eras: '+topEras.map(([e,n])=>e+' ('+n+')').join(', ')+'.');
+  conflicts>0&&ins.push(conflicts+' conflict-marked passages \u2014 spiritual warfare or doctrinal tension.');
+  locs.size>0&&ins.push('Locations: '+[...locs].slice(0,4).join(', ')+'.');
+  pivotConns>0&&ins.push(pivotConns+' pivotal verse'+(pivotConns>1?'s':'')+' in network \u2014 high-significance cluster.');
+  let html='<div class="pat-ref">'+nd.book+' '+nd.ch+':'+nd.v+'</div>'+'<div class="pat-type">'+pType+'</div>';
+  themes.length>0&&(html+='<div class="pat-themes">'+themes.map(t=>'<span class="pat-tag">'+escHtml(t)+'</span>').join('')+'</div>');
+  html+='<div class="pat-stats">'+'<span>\u21c4 '+conns.length+'</span>'+'<span>\ud83d\udcd6 '+bookSet.size+'bks</span>'+'<span>'+(otLinks>0&&ntLinks>0?'\u2696 OT+NT':nd.testament==='OT'?'\ud83d\udcdc OT':'\u271d NT')+'</span>'+(people.size>0?'<span>\ud83d\udc64 '+people.size+'</span>':'')+'</div>';
+  ins.forEach(s=>html+='<div class="pat-insight">'+escHtml(s)+'</div>');
+  tandemActive?(()=>{const ce=document.getElementById('tandem-connections');const old=ce.querySelector('#patterns-inline');if(old)old.remove();ce.insertAdjacentHTML('beforeend','<div id="patterns-inline" class="patterns-inline-wrap"><div class="pat-header">\u2726 PATTERN ANALYSIS</div>'+html+'</div>');})():(document.getElementById('patterns-body').innerHTML=html,document.getElementById('patterns-panel').style.display='block');
+}
 load().catch(e => console.error('Failed to load:', e));
