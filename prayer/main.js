@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import init, { compute_layout } from './pkg/bible_viz.js';
+import init, { compute_layout } from '../pkg/bible_viz.js';
 
 const ERAS = [
   {name:'Pentateuch', books:[1,2,3,4,5], hueBase:25},
@@ -46,13 +46,13 @@ let fulltext = null;
 const bookPanel = () => document.getElementById('book-panel');
 const bookBody = () => document.getElementById('book-panel-body');
 const bookTitle = () => document.getElementById('book-panel-title');
-let silhouettePos=null,waterfallPos=null,timelinePos=null,graphPos=null,solarPos=null,goldenPos=null,crossPos=null,iamPos=null,cleanPos=null,voicePos=null,bookPos=null,kindPos=null,degreePos=null,flatPos=null;let mode='timeline';let lerpSrc=null,lerpDst=null,lerpT=1.0;const LERP_FRAMES=90;const ease=t=>t<0.5?2*t*t:-1+(4-2*t)*t;const SCALE=1.8;let camSrc=null,camDst=null,camTgtSrc=null,camTgtDst=null,camT=1.0;const CAM_FRAMES=60;let pulsePhase=0;let clickTimer=null;let clickPrevAR=false;let downX=0,downY=0,wasDrag=false;let tandemActive=false;let userAlpha=1.0;let edgeAlphaBase=0.06;let patternsActive=false;
+let silhouettePos=null,waterfallPos=null,timelinePos=null,graphPos=null,solarPos=null,goldenPos=null,crossPos=null,iamPos=null,cleanPos=null,voicePos=null,bookPos=null,kindPos=null,degreePos=null,flatPos=null;let mode='timeline';let lerpSrc=null,lerpDst=null,lerpT=1.0;const LERP_FRAMES=90;const ease=t=>t<0.5?2*t*t:-1+(4-2*t)*t;const SCALE=1.8;let camSrc=null,camDst=null,camTgtSrc=null,camTgtDst=null,camT=1.0;const CAM_FRAMES=60;let pulsePhase=0;let clickTimer=null;let clickPrevAR=false;let downX=0,downY=0,wasDrag=false;let tandemActive=false;let userAlpha=1.0;let edgeAlphaBase=0.06;let patternsActive=false;let discHistory=[];let adamOnline=null;
 
 async function load() {
   await init();
-  const resp = await fetch('./data/bible_graph.json');
+  const resp = await fetch('../data/bible_graph.json');
   graph = await resp.json();
-  const ftResp = await fetch('./data/bible_fulltext.json');
+  const ftResp = await fetch('../data/bible_fulltext.json');
   fulltext = await ftResp.json();
   adj = new Array(graph.nodes.length);
   for (let i = 0; i < adj.length; i++) adj[i] = [];
@@ -309,7 +309,7 @@ function buildBookLegend() {
 function setupScene() {
   const canvas = document.getElementById('canvas');
   renderer = new THREE.WebGLRenderer({canvas, antialias: true, alpha: false});
-  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setSize(window.innerWidth, window.innerHeight, false);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.setClearColor(0x0a0a12, 1);
   scene = new THREE.Scene();
@@ -331,7 +331,7 @@ function setupScene() {
     const c = document.getElementById('canvas');
     camera.aspect = c.clientWidth / c.clientHeight;
     camera.updateProjectionMatrix();
-    renderer.setSize(c.clientWidth, c.clientHeight);
+    renderer.setSize(c.clientWidth, c.clientHeight, false);
   });
   canvas.addEventListener('mousemove', e => {
     const rect = canvas.getBoundingClientRect();
@@ -370,12 +370,20 @@ function setupScene() {
   document.getElementById('patternsBtn').addEventListener('click', togglePatterns);
   document.getElementById('discussBtn').addEventListener('click', toggleDiscuss);
   document.getElementById('discuss-close').addEventListener('click', toggleDiscuss);
-  document.getElementById('discuss-send').addEventListener('click', () => {
+  document.getElementById('discuss-send').addEventListener('click', async () => {
     const inp = document.getElementById('discuss-input');
     const q = inp.value.trim(); if (!q) return;
-    addDiscussMsg(q, 'user');
-    addDiscussMsg(generateDiscussResponse(q, selectedIdx), 'ai');
     inp.value = '';
+    addDiscussMsg(escHtml(q), 'user');
+    const log = document.getElementById('discuss-log');
+    const td = document.createElement('div'); td.className = 'msg-ai'; td.innerHTML = '<em style="opacity:0.4">thinking\u2026</em>'; log.appendChild(td); log.scrollTop = log.scrollHeight;
+    let html;
+    const frustrated = /\b(not what i asked|wrong|that.s not|thats not|no no|try again|didn.t ask|didn.t answer|off topic)\b/i.test(q);
+    const adamQ = frustrated ? `The user is unsatisfied with the previous response. They say: "${q}". Please re-read the verse and give a more focused, direct answer.` : q;
+    if (adamOnline) html = await askAdam(adamQ, selectedIdx);
+    if (!html) html = generateDiscussResponse(q, selectedIdx);
+    td.innerHTML = html;
+    log.scrollTop = log.scrollHeight;
   });
   document.getElementById('discuss-input').addEventListener('keydown', e => {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); document.getElementById('discuss-send').click(); }
@@ -387,7 +395,7 @@ function setupScene() {
 
 function getPositionsForMode(m){return m==='timeline'?timelinePos:m==='waterfall'?waterfallPos:m==='graph'?graphPos:m==='solar'?solarPos:m==='golden'?goldenPos:m==='cross'?crossPos:m==='iam'?iamPos:m==='clean'?cleanPos:m==='voice'?voicePos:m==='book'?bookPos:m==='kind'?kindPos:m==='degree'?degreePos:m==='flat'?flatPos:silhouettePos;}
 function setEdgeOpacity(v){edgeAlphaBase=v;if(edgesMesh)edgesMesh.material.opacity=Math.min(1,v*userAlpha);}
-function switchMode(newMode){if(newMode===mode)return;mode=newMode;const posAttr=pointsMesh.geometry.attributes.position;lerpSrc=new Float32Array(posAttr.array);lerpDst=getPositionsForMode(newMode);lerpT=0.0;if(edgesMesh)edgesMesh.visible=false;document.getElementById('waterfall-legend').style.display=newMode==='waterfall'?'block':'none';document.getElementById('graph-legend').style.display=newMode==='graph'?'block':'none';document.getElementById('solar-legend').style.display=(newMode==='solar'||newMode==='golden'||newMode==='iam')?'block':'none';document.getElementById('clean-legend').style.display=newMode==='clean'?'block':'none';document.getElementById('voice-legend').style.display=newMode==='voice'?'block':'none';document.getElementById('book-legend').style.display=newMode==='book'?'block':'none';document.getElementById('kind-legend').style.display=newMode==='kind'?'block':'none';document.getElementById('degree-legend').style.display=newMode==='degree'?'block':'none';document.getElementById('flat-legend').style.display=newMode==='flat'?'block':'none';const isSpecial=newMode==='solar'||newMode==='golden'||newMode==='iam';if(isSpecial){flyCamera(newMode==='golden'?new THREE.Vector3(0,5,90):newMode==='iam'?new THREE.Vector3(0,10,55):new THREE.Vector3(0,0,70),new THREE.Vector3(0,0,0));controls.autoRotate=true;controls.autoRotateSpeed=newMode==='golden'?0.25:0.15;document.getElementById('autoRotate').checked=true;scene.fog.density=0.004;setEdgeOpacity(0.02);pointsMesh.material.uniforms.uAlphaMul.value=0.9;}else if(newMode==='clean'){flyCamera(new THREE.Vector3(0,0,65),new THREE.Vector3(0,0,0));controls.autoRotate=false;controls.autoRotateSpeed=0.15;document.getElementById('autoRotate').checked=false;scene.fog.density=0.003;setEdgeOpacity(0.12);pointsMesh.material.uniforms.uAlphaMul.value=0.7;}else if(newMode==='graph'){flyCamera(new THREE.Vector3(0,0,80),new THREE.Vector3(0,0,0));controls.autoRotate=true;controls.autoRotateSpeed=0.3;document.getElementById('autoRotate').checked=true;scene.fog.density=0.003;setEdgeOpacity(0.06);pointsMesh.material.uniforms.uAlphaMul.value=0.35;}else if(newMode==='timeline'){flyCamera(new THREE.Vector3(0,2,35),new THREE.Vector3(0,0,0));controls.autoRotate=false;controls.autoRotateSpeed=0.3;document.getElementById('autoRotate').checked=false;scene.fog.density=0.008;setEdgeOpacity(0.03);pointsMesh.material.uniforms.uAlphaMul.value=1.0;}else if(newMode==='waterfall'){flyCamera(new THREE.Vector3(-1,0,28),new THREE.Vector3(-1,0,0));controls.autoRotate=false;controls.autoRotateSpeed=0.3;document.getElementById('autoRotate').checked=false;scene.fog.density=0.008;setEdgeOpacity(0.05);pointsMesh.material.uniforms.uAlphaMul.value=1.0;}else if(newMode==='voice'){flyCamera(new THREE.Vector3(0,2,50),new THREE.Vector3(0,0,0));controls.autoRotate=false;controls.autoRotateSpeed=0.3;document.getElementById('autoRotate').checked=false;scene.fog.density=0.006;setEdgeOpacity(0.03);pointsMesh.material.uniforms.uAlphaMul.value=1.0;}else if(newMode==='book'){flyCamera(new THREE.Vector3(0,1,50),new THREE.Vector3(0,1,0));controls.autoRotate=false;controls.autoRotateSpeed=0.15;document.getElementById('autoRotate').checked=false;scene.fog.density=0.005;setEdgeOpacity(0.02);pointsMesh.material.uniforms.uAlphaMul.value=1.0;}else if(newMode==='kind'){flyCamera(new THREE.Vector3(0,0,58),new THREE.Vector3(0,0,0));controls.autoRotate=true;controls.autoRotateSpeed=0.12;document.getElementById('autoRotate').checked=true;scene.fog.density=0.004;setEdgeOpacity(0.02);pointsMesh.material.uniforms.uAlphaMul.value=1.0;}else if(newMode==='degree'){flyCamera(new THREE.Vector3(0,0,70),new THREE.Vector3(0,0,0));controls.autoRotate=true;controls.autoRotateSpeed=0.15;document.getElementById('autoRotate').checked=true;scene.fog.density=0.003;setEdgeOpacity(0.03);pointsMesh.material.uniforms.uAlphaMul.value=0.9;}else if(newMode==='flat'){flyCamera(new THREE.Vector3(0,0,72),new THREE.Vector3(0,0,0));controls.autoRotate=false;controls.autoRotateSpeed=0.15;document.getElementById('autoRotate').checked=false;scene.fog.density=0.003;setEdgeOpacity(0.10);pointsMesh.material.uniforms.uAlphaMul.value=0.75;}else{flyCamera(new THREE.Vector3(0,4,16),new THREE.Vector3(0,3.5,0));controls.autoRotate=true;controls.autoRotateSpeed=0.3;document.getElementById('autoRotate').checked=true;scene.fog.density=0.02;setEdgeOpacity(0.02);pointsMesh.material.uniforms.uAlphaMul.value=1.0;}}
+function switchMode(newMode){if(newMode===mode)return;mode=newMode;const posAttr=pointsMesh.geometry.attributes.position;lerpSrc=new Float32Array(posAttr.array);lerpDst=getPositionsForMode(newMode);lerpT=0.0;if(edgesMesh)edgesMesh.visible=false;document.getElementById('waterfall-legend').style.display=newMode==='waterfall'?'block':'none';document.getElementById('graph-legend').style.display=newMode==='graph'?'block':'none';document.getElementById('solar-legend').style.display=(newMode==='solar'||newMode==='golden'||newMode==='iam')?'block':'none';document.getElementById('clean-legend').style.display=newMode==='clean'?'block':'none';document.getElementById('voice-legend').style.display=newMode==='voice'?'block':'none';document.getElementById('book-layout-legend').style.display=newMode==='book'?'block':'none';document.getElementById('kind-legend').style.display=newMode==='kind'?'block':'none';document.getElementById('degree-legend').style.display=newMode==='degree'?'block':'none';document.getElementById('flat-legend').style.display=newMode==='flat'?'block':'none';const isSpecial=newMode==='solar'||newMode==='golden'||newMode==='iam';if(isSpecial){flyCamera(newMode==='golden'?new THREE.Vector3(0,5,90):newMode==='iam'?new THREE.Vector3(0,10,55):new THREE.Vector3(0,0,70),new THREE.Vector3(0,0,0));controls.autoRotate=true;controls.autoRotateSpeed=newMode==='golden'?0.25:0.15;document.getElementById('autoRotate').checked=true;scene.fog.density=0.004;setEdgeOpacity(0.02);pointsMesh.material.uniforms.uAlphaMul.value=0.9;}else if(newMode==='clean'){flyCamera(new THREE.Vector3(0,0,65),new THREE.Vector3(0,0,0));controls.autoRotate=false;controls.autoRotateSpeed=0.15;document.getElementById('autoRotate').checked=false;scene.fog.density=0.003;setEdgeOpacity(0.12);pointsMesh.material.uniforms.uAlphaMul.value=0.7;}else if(newMode==='graph'){flyCamera(new THREE.Vector3(0,0,80),new THREE.Vector3(0,0,0));controls.autoRotate=true;controls.autoRotateSpeed=0.3;document.getElementById('autoRotate').checked=true;scene.fog.density=0.003;setEdgeOpacity(0.06);pointsMesh.material.uniforms.uAlphaMul.value=0.35;}else if(newMode==='timeline'){flyCamera(new THREE.Vector3(0,2,35),new THREE.Vector3(0,0,0));controls.autoRotate=false;controls.autoRotateSpeed=0.3;document.getElementById('autoRotate').checked=false;scene.fog.density=0.008;setEdgeOpacity(0.03);pointsMesh.material.uniforms.uAlphaMul.value=1.0;}else if(newMode==='waterfall'){flyCamera(new THREE.Vector3(-1,0,28),new THREE.Vector3(-1,0,0));controls.autoRotate=false;controls.autoRotateSpeed=0.3;document.getElementById('autoRotate').checked=false;scene.fog.density=0.008;setEdgeOpacity(0.05);pointsMesh.material.uniforms.uAlphaMul.value=1.0;}else if(newMode==='voice'){flyCamera(new THREE.Vector3(0,2,50),new THREE.Vector3(0,0,0));controls.autoRotate=false;controls.autoRotateSpeed=0.3;document.getElementById('autoRotate').checked=false;scene.fog.density=0.006;setEdgeOpacity(0.03);pointsMesh.material.uniforms.uAlphaMul.value=1.0;}else if(newMode==='book'){flyCamera(new THREE.Vector3(0,1,50),new THREE.Vector3(0,1,0));controls.autoRotate=false;controls.autoRotateSpeed=0.15;document.getElementById('autoRotate').checked=false;scene.fog.density=0.005;setEdgeOpacity(0.02);pointsMesh.material.uniforms.uAlphaMul.value=1.0;}else if(newMode==='kind'){flyCamera(new THREE.Vector3(0,0,58),new THREE.Vector3(0,0,0));controls.autoRotate=true;controls.autoRotateSpeed=0.12;document.getElementById('autoRotate').checked=true;scene.fog.density=0.004;setEdgeOpacity(0.02);pointsMesh.material.uniforms.uAlphaMul.value=1.0;}else if(newMode==='degree'){flyCamera(new THREE.Vector3(0,0,70),new THREE.Vector3(0,0,0));controls.autoRotate=true;controls.autoRotateSpeed=0.15;document.getElementById('autoRotate').checked=true;scene.fog.density=0.003;setEdgeOpacity(0.03);pointsMesh.material.uniforms.uAlphaMul.value=0.9;}else if(newMode==='flat'){flyCamera(new THREE.Vector3(0,0,72),new THREE.Vector3(0,0,0));controls.autoRotate=false;controls.autoRotateSpeed=0.15;document.getElementById('autoRotate').checked=false;scene.fog.density=0.003;setEdgeOpacity(0.10);pointsMesh.material.uniforms.uAlphaMul.value=0.75;}else{flyCamera(new THREE.Vector3(0,4,16),new THREE.Vector3(0,3.5,0));controls.autoRotate=true;controls.autoRotateSpeed=0.3;document.getElementById('autoRotate').checked=true;scene.fog.density=0.02;setEdgeOpacity(0.02);pointsMesh.material.uniforms.uAlphaMul.value=1.0;}}
 function flyCamera(posDst, tgtDst) {
   camSrc = camera.position.clone();
   camDst = posDst;
@@ -574,14 +582,16 @@ function animate() {
 
 function onSingleClick(e) {
   if (wasDrag) return;
-  if (clickTimer) { clearTimeout(clickTimer); clickTimer = null; controls.autoRotate = clickPrevAR; return; }
+  if (clickTimer) { clearTimeout(clickTimer); clickTimer = null; controls.autoRotate = clickPrevAR; controls.enabled = true; return; }
   const rect = renderer.domElement.getBoundingClientRect();
   const cx = ((e.clientX - rect.left) / rect.width) * 2 - 1;
   const cy = -((e.clientY - rect.top) / rect.height) * 2 + 1;
   clickPrevAR = controls.autoRotate;
   controls.autoRotate = false;
+  controls.enabled = false;
   clickTimer = setTimeout(() => {
     clickTimer = null;
+    controls.enabled = true;
     controls.autoRotate = clickPrevAR;
     mouse.x = cx; mouse.y = cy;
     raycaster.setFromCamera(mouse, camera);
@@ -600,7 +610,7 @@ function onSingleClick(e) {
 
 function onDoubleClick(e) {
   wasDrag = false;
-  if (clickTimer) { clearTimeout(clickTimer); clickTimer = null; controls.autoRotate = clickPrevAR; }
+  if (clickTimer) { clearTimeout(clickTimer); clickTimer = null; controls.autoRotate = clickPrevAR; controls.enabled = true; }
   const rect2 = renderer.domElement.getBoundingClientRect();
   mouse.x = ((e.clientX - rect2.left) / rect2.width) * 2 - 1;
   mouse.y = -((e.clientY - rect2.top) / rect2.height) * 2 + 1;
@@ -765,7 +775,7 @@ function toggleTandem() {
   setTimeout(() => {
     camera.aspect = renderer.domElement.clientWidth / renderer.domElement.clientHeight;
     camera.updateProjectionMatrix();
-    renderer.setSize(renderer.domElement.clientWidth, renderer.domElement.clientHeight);
+    renderer.setSize(renderer.domElement.clientWidth, renderer.domElement.clientHeight, false);
   }, 50);
 }
 function populateTandem(idx) {
@@ -898,13 +908,57 @@ function searchVerse(q) {
     res.style.color = '#f0c850';
   } else { res.textContent = 'not found'; res.style.color = '#888'; }
 }
-function toggleDiscuss() {
+async function probeAdam() {
+  try {
+    const r = await fetch('http://localhost:7700/health', {signal: AbortSignal.timeout(3000)});
+    adamOnline = r.ok;
+  } catch { adamOnline = false; }
+  const badge = document.getElementById('adam-badge');
+  badge.textContent = adamOnline ? '\u25CF Adam' : '\u25CF local';
+  badge.style.color = adamOnline ? '#7dd6a0' : '';
+  badge.style.opacity = adamOnline ? '0.9' : '0.5';
+}
+async function askAdam(query, idx) {
+  if (idx < 0 || !adamOnline) return null;
+  const nd = graph.nodes[idx], conns = adj[idx], cns = conns.map(ci => graph.nodes[ci]);
+  const vt = fulltext?.[`${nd.book_id}:${nd.ch}`]?.[nd.v-1] || nd.preview || '';
+  const era = ERAS[BOOK_ERA[nd.book_id]]?.name || '';
+  const ppl = [...new Set([nd,...cns].flatMap(n => n.ppl||[]))].slice(0,5);
+  const locs = [...new Set([nd,...cns].flatMap(n => n.loc||[]))].slice(0,4);
+  const connRefs = cns.slice(0,5).map(c => `${c.book} ${c.ch}:${c.v}`);
+  const sys = `You are a Catholic theological guide for "Imago Nuntii Divini", a Bible visualization of 35,817 Douay-Rheims verses. The user is viewing ${nd.book} ${nd.ch}:${nd.v} (${era} era, ${nd.testament}, kind: ${nd.kind}).\nVerse: "${vt}"\nCross-refs (${conns.length} total): ${connRefs.join(', ')}${conns.length>5?' and more':''}\n${ppl.length?'Figures: '+ppl.join(', '):''}\n${locs.length?'Locations: '+locs.join(', '):''}\nRespond concisely (2-4 sentences). Use Catholic theological tradition. Reference specific cross-references when relevant. Key symbolic numbers: 3=Trinity/divine, 7=completion/sabbath, 8=new creation/circumcision, 12=governance/apostles, 40=trial/testing.`;
+  const messages = [{role:'system',content:sys}];
+  discHistory.slice(-8).forEach(h => messages.push({role:h.role,content:h.content}));
+  messages.push({role:'user',content:query});
+  try {
+    const resp = await fetch('http://localhost:7700/v1/chat/completions', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({messages, temperature:0.7, max_tokens:300}),
+      signal: AbortSignal.timeout(15000)
+    });
+    if (!resp.ok) return null;
+    const data = await resp.json();
+    const text = data.choices?.[0]?.message?.content;
+    if (!text) return null;
+    discHistory.push({role:'user',content:query},{role:'assistant',content:text});
+    if (discHistory.length > 20) discHistory = discHistory.slice(-10);
+    return escHtml(text).replace(/\n/g,'<br>');
+  } catch { return null; }
+}
+async function toggleDiscuss() {
   const p = document.getElementById('discuss-panel');
   const on = p.style.display !== 'flex';
   p.style.display = on ? 'flex' : 'none';
   document.getElementById('discussBtn').style.background = on ? 'rgba(100,200,140,0.2)' : '';
-  if (on && selectedIdx >= 0 && !document.getElementById('discuss-log').children.length)
-    addDiscussMsg(generateDiscussResponse('', selectedIdx), 'ai');
+  if (on) {
+    await probeAdam();
+    if (selectedIdx >= 0 && !document.getElementById('discuss-log').children.length) {
+      let html;
+      if (adamOnline) html = await askAdam('Give a brief theological overview of this verse, its era, and its cross-references.', selectedIdx);
+      if (!html) html = generateDiscussResponse('', selectedIdx);
+      addDiscussMsg(html, 'ai');
+    }
+  }
 }
 function addDiscussMsg(html, role) {
   const log = document.getElementById('discuss-log');
@@ -973,6 +1027,11 @@ function generateDiscussResponse(query, idx) {
     [/\b(fear|afraid|tremble|awe|reverence|dread|terror|holy|sacred|awesome)\b/,'fear of the Lord','Biblical fear of God is not panic but the appropriate posture of a creature before its Creator \u2014 the orientation from which all wisdom, worship, and right action flow. It is simultaneously terrifying and the safest place in the universe.'],
     [/\b(faith|trust|believe|belief|hope|wait|patient|endure|abide|persevere)\b/,'faith and hope','Biblical faith is not intellectual assent but covenantal fidelity \u2014 the orientation of the whole self toward God in the face of what remains unseen. Hope is its future tense: trust extended into the not-yet.'],
     [/\b(holy|holiness|sanctif|pure|purif|clean|sacred|dedicate|consecrat|set apart)\b/,'holiness','Holiness is first an attribute of God before it is a command to humans. \u201cBe holy as I am holy\u201d is a call to participate in the divine nature \u2014 set apart not merely from impurity but for the specific purposes of God.'],
+    [/\b(eight|eighth|circumcis|new creation|octave)\b/,'numeric \u2014 8, new creation','The number 8 in Scripture signifies new creation and new beginnings. Circumcision on the 8th day marks entry into covenant. The Resurrection on the 8th day (Sunday) inaugurates the new creation \u2014 the old seven-day cycle is transcended.'],
+    [/\b(seven|seventh|sabbath|rest|complete|perfect|seal|week)\b/,'numeric \u2014 7, completion','Seven marks divine completion and covenant rest \u2014 the sabbath structure woven into creation itself. Seven seals, seven churches, seven spirits all point to God\u2019s perfect ordering of all things. To be \u201cfinished\u201d in Scripture is to reach seven.'],
+    [/\b(forty|desert|wilderness|tempt|fast|flood|wander)\b/,'numeric \u2014 40, trial','Forty is the number of trial, testing, and preparation: 40 days of flood, 40 years wandering, 40 days on Sinai, 40 days of Christ\u2019s temptation. Every period of 40 ends with a new phase of salvation history \u2014 judgment becomes doorway.'],
+    [/\b(three|third|trinity|triune|triple)\b/,'numeric \u2014 3, divine','Three encodes the Trinitarian structure of reality \u2014 Father, Son, Holy Spirit. Peter\u2019s triple denial and restoration, Jonah\u2019s three days, the Resurrection on the third day all participate in this divine pattern of wholeness.'],
+    [/\b(twelve|twelfth|tribe|apostle)\b/,'numeric \u2014 12, governance','Twelve is the number of divine governance \u2014 12 tribes of Israel, 12 apostles, 12 gates of the New Jerusalem. It signifies the fullness of God\u2019s ordered rule through chosen representatives among His people.'],
   ];
   if (q.match(/mean|what|explain|interpret|signif|symbol|understand|why|word|term/) && !q.match(/^what about|^what is this|^what do you|^what can/)) {
     for (const [pat,concept,analysis] of CONCEPTS) {
