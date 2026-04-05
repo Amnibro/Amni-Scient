@@ -754,6 +754,8 @@ function resetHighlight() {
       ec[i*6+3]=c.r; ec[i*6+4]=c.g; ec[i*6+5]=c.b;
     }
     edgesMesh.geometry.attributes.color.needsUpdate = true;
+    edgesMesh.material.opacity = Math.min(1, edgeAlphaBase * userAlpha);
+    edgesMesh.visible = showEdges;
   }
 }
 
