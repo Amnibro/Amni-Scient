@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import init, { compute_layout } from './pkg/bible_viz.js';
+import init, { compute_layout } from '../pkg/bible_viz.js';
 
 const ERAS = [
   {name:'Pentateuch', books:[1,2,3,4,5], hueBase:25},
@@ -50,9 +50,9 @@ let silhouettePos=null,waterfallPos=null,timelinePos=null,graphPos=null,solarPos
 
 async function load() {
   await init();
-  const resp = await fetch('./data/bible_graph.json');
+  const resp = await fetch('../data/bible_graph.json');
   graph = await resp.json();
-  const ftResp = await fetch('./data/bible_fulltext.json');
+  const ftResp = await fetch('../data/bible_fulltext.json');
   fulltext = await ftResp.json();
   adj = new Array(graph.nodes.length);
   for (let i = 0; i < adj.length; i++) adj[i] = [];
@@ -94,6 +94,8 @@ function computeWaterfallLayout() {
   return pos;
 }
 
+const ERA_Z = [-10, -6.5, -3.5, -0.5, 3, 5.5, 7.5, 10];
+const KIND_Z = {parable:0.8,praise:0.6,prophecy:0.4,vision:0.3,covenant:0.2,blessing:0.1,curse:-0.1,command:-0.2,law:-0.3,narrative:0,genealogy:-0.5,iteration:-0.4,loop:-0.4,assertion:0.1,creation:0.5,resurrection:0.7,question:0,woe:-0.2,conditional:0};
 function computeTimelineLayout() {
   const n = graph.nodes.length;
   const pos = new Array(n);
@@ -105,31 +107,31 @@ function computeTimelineLayout() {
   }
   let xCursor = 0;
   const bookX = {};
-  const eraGaps = new Set();
   let prevEra = -1;
   for (let bid = 1; bid <= 73; bid++) {
     if (!bookChapters[bid]) continue;
     const era = BOOK_ERA[bid];
-    if (prevEra >= 0 && era !== prevEra) { xCursor += 2.5; eraGaps.add(xCursor); }
+    if (prevEra >= 0 && era !== prevEra) xCursor += 3.5;
     prevEra = era;
     bookX[bid] = xCursor;
     const chapters = Object.keys(bookChapters[bid]).map(Number).sort((a,b) => a-b);
-    xCursor += Math.max(1.2, chapters.length * 0.12);
+    xCursor += Math.max(1.4, chapters.length * 0.14);
   }
-  const xScale = 50 / Math.max(xCursor, 1);
+  const xScale = 56 / Math.max(xCursor, 1);
   for (let i = 0; i < n; i++) {
     const nd = graph.nodes[i];
-    const bx = (bookX[nd.book_id] || 0) * xScale - 25;
+    const bx = (bookX[nd.book_id] || 0) * xScale - 28;
     const chapters = Object.keys(bookChapters[nd.book_id]).map(Number).sort((a,b) => a-b);
     const maxCh = chapters.length;
     const chIdx = chapters.indexOf(nd.ch);
     const versesInCh = bookChapters[nd.book_id][nd.ch];
     const vIdx = versesInCh.indexOf(nd.id);
     const vFrac = versesInCh.length > 1 ? vIdx / (versesInCh.length - 1) : 0.5;
-    const y = 8 - (chIdx / Math.max(maxCh-1,1)) * 16;
+    const y = 9 - (chIdx / Math.max(maxCh-1,1)) * 18;
     const mass = nd.mass || 1.0;
-    const zBase = (vFrac - 0.5) * 1.5;
-    const z = zBase + Math.max(0, mass-1) * 1.2;
+    const eraZ = ERA_Z[BOOK_ERA[nd.book_id]] || 0;
+    const kindZ = KIND_Z[nd.kind] || 0;
+    const z = eraZ + kindZ * 0.8 + (vFrac - 0.5) * 0.6 + Math.max(0, mass-1) * 0.8;
     pos[i] = {x: bx, y, z};
   }
   return pos;
@@ -310,7 +312,7 @@ function setupScene() {
   scene = new THREE.Scene();
   scene.fog = new THREE.FogExp2(0x0a0a12, 0.008);
   camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 200);
-  camera.position.set(0, 2, 35);
+  camera.position.set(0, 2, 55);
   controls = new OrbitControls(camera, canvas);
   controls.enableDamping = true;
   controls.dampingFactor = 0.05;
@@ -354,6 +356,14 @@ function setupScene() {
   });
   canvas.addEventListener('click', onSingleClick);
   canvas.addEventListener('dblclick', onDoubleClick);
+  let lastTap=0,lastTapX=0,lastTapY=0;
+  canvas.addEventListener('touchend', e => {
+    if (e.changedTouches.length !== 1) return;
+    const t = e.changedTouches[0], now = Date.now();
+    const dx=t.clientX-lastTapX, dy=t.clientY-lastTapY;
+    if (now-lastTap < 320 && dx*dx+dy*dy < 1600) { e.preventDefault(); onDoubleClick({clientX:t.clientX,clientY:t.clientY}); lastTap=0; }
+    else { lastTap=now; lastTapX=t.clientX; lastTapY=t.clientY; }
+  }, {passive:false});
   document.getElementById('book-panel-close').addEventListener('click', closeBookPanel);
   document.getElementById('tandemBtn').addEventListener('click', toggleTandem);
   document.getElementById('tandem-close-btn').addEventListener('click', toggleTandem);
@@ -400,7 +410,7 @@ function ensureLayout(m){
 }
 function getPositionsForMode(m){ensureLayout(m);return m==='timeline'?timelinePos:m==='waterfall'?waterfallPos:m==='graph'?graphPos:m==='solar'?solarPos:m==='golden'?goldenPos:m==='cross'?crossPos:m==='iam'?iamPos:m==='clean'?cleanPos:m==='voice'?voicePos:m==='book'?bookPos:m==='kind'?kindPos:m==='degree'?degreePos:m==='flat'?flatPos:silhouettePos;}
 function setEdgeOpacity(v){edgeAlphaBase=v;if(edgesMesh)edgesMesh.material.opacity=Math.min(1,v*userAlpha);}
-function switchMode(newMode){if(newMode===mode)return;mode=newMode;const posAttr=pointsMesh.geometry.attributes.position;lerpSrc=new Float32Array(posAttr.array);lerpDst=getPositionsForMode(newMode);lerpT=0.0;if(edgesMesh)edgesMesh.visible=false;document.getElementById('waterfall-legend').style.display=newMode==='waterfall'?'block':'none';document.getElementById('graph-legend').style.display=newMode==='graph'?'block':'none';document.getElementById('solar-legend').style.display=(newMode==='solar'||newMode==='golden'||newMode==='iam')?'block':'none';document.getElementById('clean-legend').style.display=newMode==='clean'?'block':'none';document.getElementById('voice-legend').style.display=newMode==='voice'?'block':'none';document.getElementById('book-layout-legend').style.display=newMode==='book'?'block':'none';document.getElementById('kind-legend').style.display=newMode==='kind'?'block':'none';document.getElementById('degree-legend').style.display=newMode==='degree'?'block':'none';document.getElementById('flat-legend').style.display=newMode==='flat'?'block':'none';const isSpecial=newMode==='solar'||newMode==='golden'||newMode==='iam';if(isSpecial){flyCamera(newMode==='golden'?new THREE.Vector3(0,5,90):newMode==='iam'?new THREE.Vector3(0,10,55):new THREE.Vector3(0,0,70),new THREE.Vector3(0,0,0));controls.autoRotate=true;controls.autoRotateSpeed=newMode==='golden'?0.25:0.15;document.getElementById('autoRotate').checked=true;scene.fog.density=0.004;setEdgeOpacity(0.02);pointsMesh.material.uniforms.uAlphaMul.value=0.9;}else if(newMode==='clean'){flyCamera(new THREE.Vector3(0,0,65),new THREE.Vector3(0,0,0));controls.autoRotate=false;controls.autoRotateSpeed=0.15;document.getElementById('autoRotate').checked=false;scene.fog.density=0.003;setEdgeOpacity(0.12);pointsMesh.material.uniforms.uAlphaMul.value=0.7;}else if(newMode==='graph'){flyCamera(new THREE.Vector3(0,0,80),new THREE.Vector3(0,0,0));controls.autoRotate=true;controls.autoRotateSpeed=0.3;document.getElementById('autoRotate').checked=true;scene.fog.density=0.003;setEdgeOpacity(0.06);pointsMesh.material.uniforms.uAlphaMul.value=0.35;}else if(newMode==='timeline'){flyCamera(new THREE.Vector3(0,2,35),new THREE.Vector3(0,0,0));controls.autoRotate=false;controls.autoRotateSpeed=0.3;document.getElementById('autoRotate').checked=false;scene.fog.density=0.008;setEdgeOpacity(0.03);pointsMesh.material.uniforms.uAlphaMul.value=1.0;}else if(newMode==='waterfall'){flyCamera(new THREE.Vector3(-1,0,28),new THREE.Vector3(-1,0,0));controls.autoRotate=false;controls.autoRotateSpeed=0.3;document.getElementById('autoRotate').checked=false;scene.fog.density=0.008;setEdgeOpacity(0.05);pointsMesh.material.uniforms.uAlphaMul.value=1.0;}else if(newMode==='voice'){flyCamera(new THREE.Vector3(0,2,50),new THREE.Vector3(0,0,0));controls.autoRotate=false;controls.autoRotateSpeed=0.3;document.getElementById('autoRotate').checked=false;scene.fog.density=0.006;setEdgeOpacity(0.03);pointsMesh.material.uniforms.uAlphaMul.value=1.0;}else if(newMode==='book'){flyCamera(new THREE.Vector3(0,1,50),new THREE.Vector3(0,1,0));controls.autoRotate=false;controls.autoRotateSpeed=0.15;document.getElementById('autoRotate').checked=false;scene.fog.density=0.005;setEdgeOpacity(0.02);pointsMesh.material.uniforms.uAlphaMul.value=1.0;}else if(newMode==='kind'){flyCamera(new THREE.Vector3(0,0,58),new THREE.Vector3(0,0,0));controls.autoRotate=true;controls.autoRotateSpeed=0.12;document.getElementById('autoRotate').checked=true;scene.fog.density=0.004;setEdgeOpacity(0.02);pointsMesh.material.uniforms.uAlphaMul.value=1.0;}else if(newMode==='degree'){flyCamera(new THREE.Vector3(0,0,70),new THREE.Vector3(0,0,0));controls.autoRotate=true;controls.autoRotateSpeed=0.15;document.getElementById('autoRotate').checked=true;scene.fog.density=0.003;setEdgeOpacity(0.03);pointsMesh.material.uniforms.uAlphaMul.value=0.9;}else if(newMode==='flat'){flyCamera(new THREE.Vector3(0,0,72),new THREE.Vector3(0,0,0));controls.autoRotate=false;controls.autoRotateSpeed=0.15;document.getElementById('autoRotate').checked=false;scene.fog.density=0.003;setEdgeOpacity(0.10);pointsMesh.material.uniforms.uAlphaMul.value=0.75;}else{flyCamera(new THREE.Vector3(0,4,16),new THREE.Vector3(0,3.5,0));controls.autoRotate=true;controls.autoRotateSpeed=0.3;document.getElementById('autoRotate').checked=true;scene.fog.density=0.02;setEdgeOpacity(0.02);pointsMesh.material.uniforms.uAlphaMul.value=1.0;}}
+function switchMode(newMode){if(newMode===mode)return;mode=newMode;const posAttr=pointsMesh.geometry.attributes.position;lerpSrc=new Float32Array(posAttr.array);lerpDst=getPositionsForMode(newMode);lerpT=0.0;if(edgesMesh)edgesMesh.visible=false;document.getElementById('waterfall-legend').style.display=newMode==='waterfall'?'block':'none';document.getElementById('graph-legend').style.display=newMode==='graph'?'block':'none';document.getElementById('solar-legend').style.display=(newMode==='solar'||newMode==='golden'||newMode==='iam')?'block':'none';document.getElementById('clean-legend').style.display=newMode==='clean'?'block':'none';document.getElementById('voice-legend').style.display=newMode==='voice'?'block':'none';document.getElementById('book-layout-legend').style.display=newMode==='book'?'block':'none';document.getElementById('kind-legend').style.display=newMode==='kind'?'block':'none';document.getElementById('degree-legend').style.display=newMode==='degree'?'block':'none';document.getElementById('flat-legend').style.display=newMode==='flat'?'block':'none';const isSpecial=newMode==='solar'||newMode==='golden'||newMode==='iam';if(isSpecial){flyCamera(newMode==='golden'?new THREE.Vector3(0,5,90):newMode==='iam'?new THREE.Vector3(0,10,55):new THREE.Vector3(0,0,70),new THREE.Vector3(0,0,0));controls.autoRotate=true;controls.autoRotateSpeed=newMode==='golden'?0.25:0.15;document.getElementById('autoRotate').checked=true;scene.fog.density=0.004;setEdgeOpacity(0.02);pointsMesh.material.uniforms.uAlphaMul.value=0.9;}else if(newMode==='clean'){flyCamera(new THREE.Vector3(0,0,65),new THREE.Vector3(0,0,0));controls.autoRotate=false;controls.autoRotateSpeed=0.15;document.getElementById('autoRotate').checked=false;scene.fog.density=0.003;setEdgeOpacity(0.12);pointsMesh.material.uniforms.uAlphaMul.value=0.7;}else if(newMode==='graph'){flyCamera(new THREE.Vector3(0,0,80),new THREE.Vector3(0,0,0));controls.autoRotate=true;controls.autoRotateSpeed=0.3;document.getElementById('autoRotate').checked=true;scene.fog.density=0.003;setEdgeOpacity(0.06);pointsMesh.material.uniforms.uAlphaMul.value=0.35;}else if(newMode==='timeline'){flyCamera(new THREE.Vector3(0,2,55),new THREE.Vector3(0,0,0));controls.autoRotate=false;controls.autoRotateSpeed=0.3;document.getElementById('autoRotate').checked=false;scene.fog.density=0.008;setEdgeOpacity(0.03);pointsMesh.material.uniforms.uAlphaMul.value=1.0;}else if(newMode==='waterfall'){flyCamera(new THREE.Vector3(-1,0,28),new THREE.Vector3(-1,0,0));controls.autoRotate=false;controls.autoRotateSpeed=0.3;document.getElementById('autoRotate').checked=false;scene.fog.density=0.008;setEdgeOpacity(0.05);pointsMesh.material.uniforms.uAlphaMul.value=1.0;}else if(newMode==='voice'){flyCamera(new THREE.Vector3(0,2,50),new THREE.Vector3(0,0,0));controls.autoRotate=false;controls.autoRotateSpeed=0.3;document.getElementById('autoRotate').checked=false;scene.fog.density=0.006;setEdgeOpacity(0.03);pointsMesh.material.uniforms.uAlphaMul.value=1.0;}else if(newMode==='book'){flyCamera(new THREE.Vector3(0,1,50),new THREE.Vector3(0,1,0));controls.autoRotate=false;controls.autoRotateSpeed=0.15;document.getElementById('autoRotate').checked=false;scene.fog.density=0.005;setEdgeOpacity(0.02);pointsMesh.material.uniforms.uAlphaMul.value=1.0;}else if(newMode==='kind'){flyCamera(new THREE.Vector3(0,0,58),new THREE.Vector3(0,0,0));controls.autoRotate=true;controls.autoRotateSpeed=0.12;document.getElementById('autoRotate').checked=true;scene.fog.density=0.004;setEdgeOpacity(0.02);pointsMesh.material.uniforms.uAlphaMul.value=1.0;}else if(newMode==='degree'){flyCamera(new THREE.Vector3(0,0,70),new THREE.Vector3(0,0,0));controls.autoRotate=true;controls.autoRotateSpeed=0.15;document.getElementById('autoRotate').checked=true;scene.fog.density=0.003;setEdgeOpacity(0.03);pointsMesh.material.uniforms.uAlphaMul.value=0.9;}else if(newMode==='flat'){flyCamera(new THREE.Vector3(0,0,72),new THREE.Vector3(0,0,0));controls.autoRotate=false;controls.autoRotateSpeed=0.15;document.getElementById('autoRotate').checked=false;scene.fog.density=0.003;setEdgeOpacity(0.10);pointsMesh.material.uniforms.uAlphaMul.value=0.75;}else{flyCamera(new THREE.Vector3(0,4,16),new THREE.Vector3(0,3.5,0));controls.autoRotate=true;controls.autoRotateSpeed=0.3;document.getElementById('autoRotate').checked=true;scene.fog.density=0.02;setEdgeOpacity(0.02);pointsMesh.material.uniforms.uAlphaMul.value=1.0;}}
 function flyCamera(posDst, tgtDst) {
   camSrc = camera.position.clone();
   camDst = posDst;
@@ -551,6 +561,7 @@ function animate() {
       if (edgesMesh) edgesMesh.visible = showEdges;
     }
   }
+  raycaster.params.Points.threshold = Math.max(0.25, camera.position.distanceTo(controls.target) * 0.011);
   raycaster.setFromCamera(mouse, camera);
   const hits = raycaster.intersectObject(pointsMesh);
   if (hits.length > 0) {
