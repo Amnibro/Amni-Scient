@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import init, { compute_layout } from '../pkg/bible_viz.js';
+import init, { compute_layout } from './pkg/bible_viz.js';
 
 const ERAS = [
   {name:'Pentateuch', books:[1,2,3,4,5], hueBase:25},
@@ -50,9 +50,9 @@ let silhouettePos=null,waterfallPos=null,timelinePos=null,graphPos=null,solarPos
 
 async function load() {
   await init();
-  const resp = await fetch('../data/bible_graph.json');
+  const resp = await fetch('./data/bible_graph.json');
   graph = await resp.json();
-  const ftResp = await fetch('../data/bible_fulltext.json');
+  const ftResp = await fetch('./data/bible_fulltext.json');
   fulltext = await ftResp.json();
   adj = new Array(graph.nodes.length);
   for (let i = 0; i < adj.length; i++) adj[i] = [];
