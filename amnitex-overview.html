@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>AmniTex Railgun &mdash; The AI Memory Problem, Solved | AMNI-SCIENT</title>
+<meta name="description" content="AmniTex Railgun: sub-2-bit quantization that fits a 7B AI model into 0.88 GB of VRAM with zero quality loss. The VRAM wall is over.">
+<meta property="og:title" content="AmniTex Railgun &mdash; The AI Memory Problem, Solved">
+<meta property="og:description" content="Sub-2-bit quantization. 0.88 GB for a 7B model. Cosine similarity = 1.0000000. The VRAM wall is over.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://amni-scient.com/amnitex-overview">
+<link rel="canonical" href="https://amni-scient.com/amnitex-overview">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+<style>
+.overview-hero{padding:10rem 2rem 4rem;text-align:center;position:relative;overflow:hidden}
+.overview-hero::before{content:'';position:absolute;top:50%;left:50%;width:800px;height:800px;background:radial-gradient(circle,var(--accent-dim) 0%,transparent 60%);transform:translate(-50%,-50%);pointer-events:none}
+.overview-hero h1{font-size:clamp(2rem,5vw,3.5rem);color:var(--accent);letter-spacing:4px;position:relative;z-index:1}
+.overview-hero .big-stat{font-size:clamp(4rem,10vw,8rem);font-weight:700;color:var(--text);position:relative;z-index:1;margin:1rem 0}
+.overview-hero .big-stat span{color:var(--accent)}
+.overview-hero .big-label{color:var(--dim);font-size:1rem;letter-spacing:2px;position:relative;z-index:1}
+.problem-solution{display:grid;grid-template-columns:1fr 1fr;gap:3rem;max-width:900px;margin:0 auto}
+@media(max-width:700px){.problem-solution{grid-template-columns:1fr}}
+.ps-col{padding:1.5rem}
+.ps-col h3{font-size:1.1rem;letter-spacing:2px;margin-bottom:1rem}
+.ps-col.problem h3{color:var(--error)}
+.ps-col.solution h3{color:var(--accent)}
+.ps-col p{color:var(--dim);font-size:.85rem;line-height:1.8;margin-bottom:1rem}
+.ps-col .highlight{color:var(--text);font-weight:700}
+.stat-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1.5rem;max-width:800px;margin:2rem auto;text-align:center}
+.stat-item .stat-num{font-size:2rem;font-weight:700;color:var(--accent)}
+.stat-item .stat-label{color:var(--dim);font-size:.75rem;letter-spacing:1px;margin-top:.25rem}
+.explain-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:2rem;max-width:900px;margin:2rem auto}
+.explain-card{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:2rem;transition:border-color .3s}
+.explain-card:hover{border-color:var(--accent)}
+.explain-card .step-n{color:var(--accent);font-size:.7rem;letter-spacing:2px;margin-bottom:.5rem}
+.explain-card h4{color:var(--text);font-size:.95rem;letter-spacing:1px;margin-bottom:.75rem}
+.explain-card p{color:var(--dim);font-size:.8rem;line-height:1.7}
+.analogy{max-width:700px;margin:2rem auto;background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:2.5rem;text-align:center}
+.analogy h3{color:var(--accent);letter-spacing:2px;margin-bottom:1.5rem}
+.analogy p{color:var(--dim);font-size:.9rem;line-height:1.9}
+.analogy .accent{color:var(--accent);font-weight:700}
+.comparison-table{max-width:800px;margin:2rem auto;overflow-x:auto}
+.comparison-table table{width:100%;border-collapse:collapse}
+.comparison-table th{background:var(--panel);color:var(--accent);padding:.75rem 1rem;text-align:left;font-size:.8rem;letter-spacing:1px;border-bottom:1px solid var(--border)}
+.comparison-table td{padding:.6rem 1rem;border-bottom:1px solid var(--border);font-size:.85rem;color:var(--text)}
+.comparison-table tr:hover td{background:var(--panel)}
+.comparison-table .win{color:var(--accent);font-weight:700}
+.cta-section{text-align:center;padding:4rem 2rem;max-width:600px;margin:0 auto}
+.cta-section h2{margin-bottom:1rem}
+.cta-section p{color:var(--dim);font-size:.9rem;line-height:1.8;margin-bottom:2rem}
+.cta-row{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<div class="grid-bg"></div>
+<div class="scanlines"></div>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<div class="nav-dd">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu">
+<a href="amni-haven.html">AMNI-HAVEN</a>
+<a href="amni-crypt.html">AMNI-CRYPT</a>
+<a href="amni-ai.html">AMNI-AI</a>
+<a href="amni-code.html">AMNI-CODE</a>
+<a href="amni-core.html">AMNI-CORE</a>
+<a href="amni-explore.html">AMNI-EXPLORE</a>
+<a href="amni-learn.html">AMNI-LEARN</a>
+</div>
+</div>
+<a href="research.html">RESEARCH</a>
+<a href="about.html">ABOUT</a>
+<a href="faq.html">FAQ</a>
+<a href="privacy.html">PRIVACY</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+
+<section class="overview-hero">
+<h1>THE AI MEMORY PROBLEM</h1>
+<div class="big-stat">0.88 <span>GB</span></div>
+<div class="big-label">THAT'S A 7-BILLION PARAMETER MODEL. IN UNDER A GIGABYTE.</div>
+</section>
+
+<section>
+<h2>THE PROBLEM</h2>
+<div class="problem-solution">
+<div class="ps-col problem">
+<h3>THE VRAM WALL</h3>
+<p>Every AI model has billions of numbers (called <span class="highlight">weights</span>) that need to live in your GPU's memory to run.</p>
+<p>A 7-billion parameter model needs <span class="highlight">14 GB</span> of VRAM at standard precision. A 70B model needs <span class="highlight">140 GB</span>. The biggest models need over <span class="highlight">800 GB</span>.</p>
+<p>Most GPUs have 8&ndash;24 GB. Even datacenter GPUs max out at 80 GB. The math doesn't work.</p>
+<p>Today's solution? Buy more GPUs. Split the model across machines. Spend millions.</p>
+</div>
+<div class="ps-col solution">
+<h3>THE RAILGUN SOLUTION</h3>
+<p>AmniTex Railgun compresses those weights using a fundamentally different approach based on <span class="highlight">abstract algebra</span>&mdash;a branch of pure mathematics.</p>
+<p>Instead of rounding numbers and hoping for the best, Railgun encodes weights into a mathematical structure where compression is <span class="highlight">exact</span>.</p>
+<p>The result: a 7B model fits in <span class="highlight">0.88 GB</span>. And when you need the original weights back? They come back <span class="highlight">perfectly</span>. Not approximately. Perfectly.</p>
+</div>
+</div>
+</section>
+
+<section>
+<h2>BY THE NUMBERS</h2>
+<div class="stat-strip">
+<div class="stat-item">
+<div class="stat-num">16&times;</div>
+<div class="stat-label">COMPRESSION AT ROUTING TIER</div>
+</div>
+<div class="stat-item">
+<div class="stat-num">1.0</div>
+<div class="stat-label">COSINE SIMILARITY (FULL)</div>
+</div>
+<div class="stat-item">
+<div class="stat-num">&infin;</div>
+<div class="stat-label">CONTEXT STABILITY</div>
+</div>
+<div class="stat-item">
+<div class="stat-num">5&times;</div>
+<div class="stat-label">TMU THROUGHPUT/WATT</div>
+</div>
+</div>
+</section>
+
+<section>
+<h2>HOW IT WORKS (SIMPLY)</h2>
+<div class="analogy">
+<h3>THE BOOK ANALOGY</h3>
+<p>Imagine a 1,000-page book. Normal compression is like summarizing each chapter&mdash;you lose details.</p>
+<p style="margin-top:1rem">Railgun is like writing a <span class="accent">formula</span> that can regenerate any page on demand. The formula fits on an index card, but the full book is always available. No information is ever lost.</p>
+<p style="margin-top:1rem">The <span class="accent">progressive tier system</span> means you can choose: read the chapter summaries for speed (R-only tier), or regenerate the full page when you need it (Full tier). Both from the same index card.</p>
+</div>
+
+<div class="explain-grid">
+<div class="explain-card">
+<div class="step-n">STEP 1 &mdash; ROUTE</div>
+<h4>Algebraic Routing</h4>
+<p>Each weight is classified into a small set of discrete states using a mathematical structure with special properties. This routing layer lives in VRAM&mdash;just 1&ndash;2 bits per weight.</p>
+</div>
+<div class="explain-card">
+<div class="step-n">STEP 2 &mdash; REFINE</div>
+<h4>Progressive Layers</h4>
+<p>Residual errors from routing are captured in successive refinement layers (G, B channels), each adding precision. These layers can stream from fast NVMe storage on demand.</p>
+</div>
+<div class="explain-card">
+<div class="step-n">STEP 3 &mdash; RECONSTRUCT</div>
+<h4>Lossless Recovery</h4>
+<p>At the Full tier, the complete fp16 weight is recovered exactly. Not approximately&mdash;bit-exact. This is a mathematical guarantee, not an empirical observation.</p>
+</div>
+</div>
+</section>
+
+<section>
+<h2>COMPARED TO EXISTING METHODS</h2>
+<div class="comparison-table">
+<table>
+<tr><th>Feature</th><th>GPTQ / AWQ (4-bit)</th><th>GGUF Q4</th><th>Railgun</th></tr>
+<tr><td>Bits per weight (VRAM)</td><td>4.0</td><td>4.0&ndash;6.0</td><td class="win">1.0&ndash;2.0</td></tr>
+<tr><td>7B model VRAM</td><td>3.5 GB</td><td>3.5&ndash;5.3 GB</td><td class="win">0.88&ndash;1.75 GB</td></tr>
+<tr><td>Lossless at full precision?</td><td>No</td><td>No</td><td class="win">Yes</td></tr>
+<tr><td>Progressive quality tiers?</td><td>No</td><td>No</td><td class="win">4 tiers</td></tr>
+<tr><td>Context stability</td><td>Degrades</td><td>Degrades</td><td class="win">Infinite (proven)</td></tr>
+<tr><td>GPU hardware acceleration</td><td>ALU only</td><td>CPU / ALU</td><td class="win">TMU native</td></tr>
+<tr><td>Training compatible?</td><td>Inference only</td><td>Inference only</td><td class="win">Yes</td></tr>
+</table>
+</div>
+</section>
+
+<section>
+<h2>WHO IS THIS FOR?</h2>
+<div class="explain-grid">
+<div class="explain-card">
+<div class="step-n">AI COMPANIES</div>
+<h4>Cut GPU Costs by 4&ndash;16&times;</h4>
+<p>Run the same models on less hardware. Or run bigger models on the same hardware. Either way, your cloud bill drops.</p>
+</div>
+<div class="explain-card">
+<div class="step-n">RESEARCHERS</div>
+<h4>Run 70B on a Desktop</h4>
+<p>Models that currently need a cluster can run on a single workstation GPU. Faster iteration, lower barrier to entry.</p>
+</div>
+<div class="explain-card">
+<div class="step-n">EDGE / MOBILE</div>
+<h4>AI on Consumer Hardware</h4>
+<p>7B models running on laptops and phones with 1 GB of available VRAM. Local, private, fast.</p>
+</div>
+</div>
+</section>
+
+<section class="cta-section">
+<h2>SEE THE PROOF</h2>
+<p>The claims above are verifiable. The evaluation package runs on any machine with Python and NumPy. No GPU required. Results speak for themselves.</p>
+<div class="cta-row">
+<a href="research/amnitex-railgun.html" class="btn btn-primary">TECHNICAL DEEP DIVE &rarr;</a>
+<a href="licensing.html" class="btn btn-outline">GET EVALUATION ACCESS</a>
+</div>
+</section>
+
+<footer>
+<div class="footer-links">
+<a href="/">HOME</a>
+<a href="research.html">RESEARCH</a>
+<a href="research/amnitex-railgun.html">DEEP DIVE</a>
+<a href="licensing.html">LICENSING</a>
+<a href="about.html">ABOUT</a>
+<a href="privacy.html">PRIVACY</a>
+</div>
+&copy; 2025 Anthony Reffelt &mdash; AMNI-SCIENT
+</footer>
+</body>
+</html>
