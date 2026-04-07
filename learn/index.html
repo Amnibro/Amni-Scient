@@ -13,7 +13,7 @@
   #app { width: 100%; min-height: 100vh; position: relative; display: flex; flex-direction: column; }
   .top-bar { display: flex; justify-content: space-between; padding: clamp(6px,1.5vw,10px) clamp(10px,2vw,20px); background: rgba(0,0,0,0.95); z-index: 50; border-bottom: 1px solid #333; align-items: center; position: sticky; top: 0; flex-shrink: 0; }
   .back-btn, .fs-btn { background: none; border: 1px solid #4db8ff; color: #4db8ff; padding: 5px 15px; border-radius: 4px; cursor: pointer; font-family: 'JetBrains Mono'; }
-  .back-btn:hover, .fs-btn:hover { background: rgba(77,184,255,0.2); }
+  .back-btn:hover, .fs-btn:hover { background: rgba(255,255,255,0.1); }
   .top-controls { display: flex; gap: 10px; align-items: center; }
   .fs-hint { color: #888; font-size: 0.8rem; font-family: 'JetBrains Mono'; display: none; margin-left: 10px; }
   .score-bar { display: flex; gap: 15px; align-items: center; font-family: 'JetBrains Mono'; font-size: 0.9rem; }
@@ -396,6 +396,54 @@
   .lgc-opt.lgc-correct{border-color:#2ecc71;background:rgba(46,204,113,0.2);color:#2ecc71;}
   .lgc-opt.lgc-wrong{border-color:#e74c3c;background:rgba(231,76,60,0.2);color:#e74c3c;}
   .lgc-explain{font-family:'JetBrains Mono',monospace;font-size:0.9rem;color:#7a8a9a;margin-top:12px;padding:12px;background:rgba(255,255,255,0.03);border-radius:8px;text-align:left;line-height:1.5;}
+  #nummem-view{background:linear-gradient(135deg,#0a2a1a 0%,#1a2a0d 50%,#0a2a1a 100%);background-size:200% 200%;animation:bgShift 12s ease infinite;justify-content:center;}
+  #stroop-view{background:linear-gradient(135deg,#2a0a1a 0%,#1a0a2a 50%,#2a0a1a 100%);background-size:200% 200%;animation:bgShift 10s ease infinite;justify-content:center;}
+  #reaction-view{background:linear-gradient(135deg,#0a0a2a 0%,#2a1a0a 50%,#0a0a2a 100%);background-size:200% 200%;animation:bgShift 8s ease infinite;justify-content:center;}
+  #nback-view{background:linear-gradient(135deg,#1a0a2a 0%,#0a2a2a 50%,#1a0a2a 100%);background-size:200% 200%;animation:bgShift 11s ease infinite;justify-content:center;}
+  #anagram-view{background:linear-gradient(135deg,#0d2a0a 0%,#0a1a2a 50%,#0d2a0a 100%);background-size:200% 200%;animation:bgShift 13s ease infinite;justify-content:center;}
+  #chimp-view{background:linear-gradient(135deg,#2a2a0a 0%,#0a2a1a 50%,#2a2a0a 100%);background-size:200% 200%;animation:bgShift 9s ease infinite;justify-content:center;}
+  .nmm-display{font-family:'JetBrains Mono',monospace;font-size:clamp(2.5rem,8vw,5rem);color:#1abc9c;text-align:center;letter-spacing:8px;padding:20px;min-height:60px;}
+  .nmm-input{font-family:'JetBrains Mono',monospace;font-size:clamp(1.5rem,5vw,3rem);color:#ecf0f1;background:transparent;border:2px solid #1abc9c;border-radius:12px;padding:12px 20px;text-align:center;outline:none;letter-spacing:4px;width:80%;max-width:400px;}
+  .nmm-btn{padding:12px 28px;border-radius:12px;border:2px solid #1abc9c;background:transparent;color:#1abc9c;font-family:'JetBrains Mono',monospace;font-size:1rem;cursor:pointer;transition:0.2s;margin:8px;}
+  .nmm-btn:hover{background:rgba(26,188,156,0.2);transform:translateY(-2px);}
+  .nmm-msg{font-family:'JetBrains Mono',monospace;font-size:1.1rem;color:#7a8a9a;text-align:center;margin:10px 0;line-height:1.5;}
+  .stp-word{font-family:'JetBrains Mono',monospace;font-size:clamp(3rem,10vw,6rem);font-weight:bold;text-align:center;margin:20px 0;text-transform:uppercase;}
+  .stp-choices{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin:15px 0;}
+  .stp-choice{padding:14px 28px;border-radius:12px;border:3px solid;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:clamp(0.9rem,2.5vw,1.2rem);font-weight:bold;transition:0.2s;color:#fff;}
+  .stp-choice:hover{transform:translateY(-3px);filter:brightness(1.2);}
+  .rxt-zone{width:90%;max-width:500px;height:clamp(200px,40vw,350px);border-radius:20px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background 0.15s;user-select:none;}
+  .rxt-zone.wait{background:#e74c3c;}
+  .rxt-zone.ready{background:#2ecc71;}
+  .rxt-zone.early{background:#f39c12;}
+  .rxt-zone.done{background:#3498db;}
+  .rxt-text{font-family:'JetBrains Mono',monospace;font-size:clamp(1.5rem,5vw,2.5rem);color:#fff;text-align:center;font-weight:bold;}
+  .rxt-results{display:flex;flex-direction:column;gap:6px;margin-top:12px;width:90%;max-width:400px;}
+  .rxt-result{display:flex;justify-content:space-between;padding:6px 14px;background:rgba(255,255,255,0.05);border-radius:8px;font-family:'JetBrains Mono',monospace;color:#7a8a9a;font-size:0.85rem;}
+  .rxt-result-val{color:#1abc9c;font-weight:bold;}
+  .nbk-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:280px;width:70%;margin:12px auto;}
+  .nbk-cell{aspect-ratio:1;background:#1a2a3a;border:2px solid #2a3a4a;border-radius:12px;transition:background 0.2s,border-color 0.2s;}
+  .nbk-cell.active{background:#1abc9c;border-color:#1abc9c;box-shadow:0 0 20px rgba(26,188,156,0.5);}
+  .nbk-btns{display:flex;gap:15px;margin:12px 0;}
+  .nbk-btn{padding:12px 28px;border-radius:12px;border:2px solid;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:bold;transition:0.2s;background:transparent;}
+  .nbk-btn.match{border-color:#2ecc71;color:#2ecc71;}
+  .nbk-btn.match:hover{background:rgba(46,204,113,0.2);}
+  .nbk-btn.nomatch{border-color:#e74c3c;color:#e74c3c;}
+  .nbk-btn.nomatch:hover{background:rgba(231,76,60,0.2);}
+  .nbk-info{font-family:'JetBrains Mono',monospace;font-size:1rem;color:#7a8a9a;text-align:center;margin:8px 0;}
+  .agm-tiles{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:12px 0;}
+  .agm-tile{width:clamp(42px,10vw,54px);height:clamp(42px,10vw,54px);border-radius:10px;border:2px solid #1abc9c;background:transparent;color:#1abc9c;font-family:'JetBrains Mono',monospace;font-size:clamp(1.2rem,4vw,1.8rem);font-weight:bold;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:0.2s;text-transform:uppercase;user-select:none;}
+  .agm-tile:hover:not(.used){background:rgba(26,188,156,0.2);transform:translateY(-3px);}
+  .agm-tile.used{opacity:0.3;pointer-events:none;}
+  .agm-answer{display:flex;gap:6px;justify-content:center;min-height:54px;margin:12px 0;}
+  .agm-slot{width:clamp(42px,10vw,54px);height:clamp(42px,10vw,54px);border-radius:10px;border:2px dashed rgba(26,188,156,0.3);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:clamp(1.2rem,4vw,1.8rem);font-weight:bold;color:#1abc9c;text-transform:uppercase;}
+  .agm-slot.filled{border-style:solid;background:rgba(26,188,156,0.1);animation:bounceIn 0.2s ease-out;}
+  .agm-hint{font-family:'JetBrains Mono',monospace;font-size:0.85rem;color:#5a7a8a;text-align:center;margin:6px 0;}
+  .chm-grid{display:grid;gap:5px;max-width:500px;width:90%;margin:10px auto;}
+  .chm-cell{aspect-ratio:1;background:#1a2a3a;border:2px solid #2a3a4a;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:clamp(1rem,3.5vw,1.8rem);font-weight:bold;color:#fff;cursor:pointer;transition:0.15s;user-select:none;}
+  .chm-cell.num{background:rgba(26,188,156,0.3);border-color:#1abc9c;}
+  .chm-cell.hidden{color:transparent;background:#1a2a3a;border-color:#2a3a4a;}
+  .chm-cell.correct{background:rgba(46,204,113,0.3);border-color:#2ecc71;}
+  .chm-cell.wrong{background:rgba(231,76,60,0.3);border-color:#e74c3c;animation:shake 0.3s;}
 </style>
 </head>
 <body>
@@ -486,6 +534,12 @@
           <button class="game-btn brain" data-game="speedmath"><span class="btn-icon">⚡</span><span class="btn-text">Speed Math</span><span class="btn-desc">Mental arithmetic blitz</span></button>
           <button class="game-btn brain" data-game="wordsearch"><span class="btn-icon">🔍</span><span class="btn-text">Word Search</span><span class="btn-desc">Find hidden words</span></button>
           <button class="game-btn brain" data-game="logic"><span class="btn-icon">🧩</span><span class="btn-text">Logic Puzzles</span><span class="btn-desc">Teasers & riddles</span></button>
+          <button class="game-btn brain" data-game="nummem"><span class="btn-icon">🔢</span><span class="btn-text">Number Memory</span><span class="btn-desc">How many digits?</span></button>
+          <button class="game-btn brain" data-game="stroop"><span class="btn-icon">🎨</span><span class="btn-text">Stroop Test</span><span class="btn-desc">Color vs word</span></button>
+          <button class="game-btn brain" data-game="reaction"><span class="btn-icon">⚡</span><span class="btn-text">Reaction Time</span><span class="btn-desc">Test your reflexes</span></button>
+          <button class="game-btn brain" data-game="nback"><span class="btn-icon">🧠</span><span class="btn-text">N-Back</span><span class="btn-desc">Working memory</span></button>
+          <button class="game-btn brain" data-game="anagram"><span class="btn-icon">🔤</span><span class="btn-text">Anagrams</span><span class="btn-desc">Unscramble words</span></button>
+          <button class="game-btn brain" data-game="chimp"><span class="btn-icon">🐵</span><span class="btn-text">Chimp Test</span><span class="btn-desc">Beat the chimps!</span></button>
         </div>
       </section>
     </div>
@@ -651,6 +705,36 @@
     <div class="game-hud" id="lgc-hud"></div>
     <div class="lgc-container" id="lgc-container"></div>
   </div>
+  <div id="nummem-view" class="view">
+    <div class="life-title" style="color:#1abc9c">🔢 Number Memory</div>
+    <div class="game-hud" id="nmm-hud"></div>
+    <div id="nmm-container" style="display:flex;flex-direction:column;align-items:center;gap:10px;width:100%"></div>
+  </div>
+  <div id="stroop-view" class="view">
+    <div class="life-title" style="color:#1abc9c">🎨 Stroop Test</div>
+    <div class="game-hud" id="stp-hud"></div>
+    <div id="stp-container" style="display:flex;flex-direction:column;align-items:center;gap:10px;width:100%"></div>
+  </div>
+  <div id="reaction-view" class="view">
+    <div class="life-title" style="color:#1abc9c">⚡ Reaction Time</div>
+    <div class="game-hud" id="rxt-hud"></div>
+    <div id="rxt-container" style="display:flex;flex-direction:column;align-items:center;gap:10px;width:100%"></div>
+  </div>
+  <div id="nback-view" class="view">
+    <div class="life-title" style="color:#1abc9c">🧠 N-Back</div>
+    <div class="game-hud" id="nbk-hud"></div>
+    <div id="nbk-container" style="display:flex;flex-direction:column;align-items:center;gap:10px;width:100%"></div>
+  </div>
+  <div id="anagram-view" class="view">
+    <div class="life-title" style="color:#1abc9c">🔤 Anagrams</div>
+    <div class="game-hud" id="agm-hud"></div>
+    <div id="agm-container" style="display:flex;flex-direction:column;align-items:center;gap:10px;width:100%"></div>
+  </div>
+  <div id="chimp-view" class="view">
+    <div class="life-title" style="color:#1abc9c">🐵 Chimp Test</div>
+    <div class="game-hud" id="chm-hud"></div>
+    <div id="chm-container" style="display:flex;flex-direction:column;align-items:center;gap:10px;width:100%"></div>
+  </div>
   <div id="feedback">Great Job!</div>
   <canvas id="confetti-canvas"></canvas>
 </div>
@@ -679,12 +763,21 @@
     cardpairs: $$('#cardpairs-view'),
     speedmath: $$('#speedmath-view'),
     wordsearch: $$('#wordsearch-view'),
-    logic: $$('#logic-view')
+    logic: $$('#logic-view'),
+    nummem: $$('#nummem-view'),
+    stroop: $$('#stroop-view'),
+    reaction: $$('#reaction-view'),
+    nback: $$('#nback-view'),
+    anagram: $$('#anagram-view'),
+    chimp: $$('#chimp-view')
   };
   let currentGame = null;
   let currentSubgame = null;
   const urlParams = new URLSearchParams(window.location.search);
-  let currentLevel=parseInt(urlParams.get('level'))||1;currentLevel=(currentLevel<1||currentLevel>6)?1:currentLevel;$$('#main-game-grid').classList.add('mode-'+Math.min(currentLevel,3));currentLevel===1?$$all('[data-subgame="money"],[data-subgame="clock"]').forEach(el=>el?el.style.display='none':0):0;currentLevel>=4&&currentLevel!==6?($$('#stem-section').style.display='block',$$all('[data-subgame="vacuum"],[data-subgame="dishes"],[data-subgame="clock"],.tracing,.matching').forEach(el=>el?el.style.display='none':0)):0;currentLevel===6?($$all('.game-category:not(#brain-section)').forEach(c=>c.style.display='none'),$$('#brain-section').style.display='block',$$('.menu-title').textContent='BRAIN EXERCISE',$$('.menu-title').style.color='#1abc9c'):0;
+  let currentLevel=parseInt(urlParams.get('level'))||1;currentLevel=(currentLevel<1||currentLevel>6)?1:currentLevel;$$('#main-game-grid').classList.add('mode-'+Math.min(currentLevel,3));
+  const _lc={1:'#2ecc71',2:'#f1c40f',3:'#e67e22',4:'#e74c3c',5:'#9b59b6',6:'#1abc9c'},_ln={1:'PRE-K GAMES',2:'GRADES K-2',3:'GRADES 3-5',4:'MIDDLE SCHOOL',5:'STEM CHALLENGE',6:'BRAIN EXERCISE'},_ac=_lc[currentLevel];
+  $$('.menu-title').textContent=_ln[currentLevel];$$('.menu-title').style.color=_ac;$$('.menu-title').style.textShadow=`0 0 15px ${_ac}`;$$('#nav-back').style.borderColor=_ac;$$('#nav-back').style.color=_ac;$$('#fs-btn').style.borderColor=_ac;$$('#fs-btn').style.color=_ac;$$('.top-bar').children[1].style.color=_ac;$$('#menu-view').style.background=`radial-gradient(ellipse at 50% 30%,${_ac}12 0%,#0c0f12 60%)`;$$all('.cat-header').forEach(h=>h.style.borderBottomColor=_ac+'30');
+  currentLevel===1?$$all('[data-subgame="money"],[data-subgame="clock"]').forEach(el=>el?el.style.display='none':0):0;currentLevel>=4&&currentLevel!==6?($$('#stem-section').style.display='block',$$all('[data-subgame="vacuum"],[data-subgame="dishes"],[data-subgame="clock"],.tracing,.matching').forEach(el=>el?el.style.display='none':0)):0;currentLevel===6?($$all('.game-category:not(#brain-section)').forEach(c=>c.style.display='none'),$$('#brain-section').style.display='block'):0;
   let sessionScore = parseInt(sessionStorage.getItem('amni-learn-score')||'0');
   let currentStreak = parseInt(sessionStorage.getItem('amni-learn-streak')||'0');
   let bestStreak = parseInt(sessionStorage.getItem('amni-learn-best')||'0');
@@ -752,6 +845,9 @@
       if(window._sdkTimer){clearInterval(window._sdkTimer);window._sdkTimer=null;}
       if(window._spmTimer){clearInterval(window._spmTimer);window._spmTimer=null;}
       if(window._cpTimer){clearInterval(window._cpTimer);window._cpTimer=null;}
+      if(window._stpTimer){clearInterval(window._stpTimer);window._stpTimer=null;}
+      if(window._nmmTimeout){clearTimeout(window._nmmTimeout);window._nmmTimeout=null;}
+      if(window._rxtTimeout){clearTimeout(window._rxtTimeout);window._rxtTimeout=null;}
     } else {
       window.location.href = '../amni-learn.html';
     }
@@ -789,6 +885,12 @@
       if(game === 'speedmath') initSpeedMath();
       if(game === 'wordsearch') initWordSearch();
       if(game === 'logic') initLogic();
+      if(game === 'nummem') initNumMem();
+      if(game === 'stroop') initStroop();
+      if(game === 'reaction') initReaction();
+      if(game === 'nback') initNBack();
+      if(game === 'anagram') initAnagram();
+      if(game === 'chimp') initChimp();
     });
   });
   function showView(viewId) {
@@ -3236,6 +3338,58 @@ function playAnimalSound(type) {
       container.appendChild(cDiv);
     }
     lgcIdx=0;lgcScore=0;lgcStreak=0;loadPuzzle();
+  }
+  function initNumMem(){
+    const ct=$$('#nmm-container'),hud=$$('#nmm-hud');
+    let dg=3,best=parseInt(sessionStorage.getItem('nmm-best')||'0'),tgt='';
+    if(window._nmmTimeout){clearTimeout(window._nmmTimeout);window._nmmTimeout=null;}
+    hud.innerHTML=`<span class="game-stat">\ud83d\udccf <span class="game-stat-val" id="nmm-dg">${dg}</span> digits</span><span class="game-stat">\ud83c\udfc6 Best: <span class="game-stat-val" id="nmm-best">${best}</span></span>`;
+    function show(){tgt='';for(let i=0;i<dg;i++)tgt+=Math.floor(Math.random()*10);ct.innerHTML=`<div class="nmm-display">${tgt}</div><div class="nmm-msg">Memorize this number!</div>`;window._nmmTimeout=setTimeout(()=>{ct.innerHTML=`<div class="nmm-msg">What was the number?</div><input type="text" class="nmm-input" id="nmm-inp" maxlength="${dg}" autocomplete="off" inputmode="numeric"><br>`;const inp=$$('#nmm-inp');inp.focus();const sub=document.createElement('button');sub.className='nmm-btn';sub.textContent='SUBMIT';const go=()=>{const v=inp.value;if(v===tgt){dg>best&&(best=dg,sessionStorage.setItem('nmm-best',best),$$('#nmm-best').textContent=best);dg++;$$('#nmm-dg').textContent=dg;addScore(dg>=8?3:(dg>=5?2:1));showFeedback(`\u2705 ${dg-1} digits!`,'#2ecc71');setTimeout(show,1200);}else{showFeedback(`\u274c It was ${tgt}`,'#e74c3c');resetStreak();ct.innerHTML=`<div class="nmm-display" style="color:#e74c3c">${tgt}</div><div class="nmm-msg">Your answer: ${v}</div><div class="nmm-msg">Best: ${best} digits</div>`;const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='TRY AGAIN';rb.onclick=()=>{dg=3;$$('#nmm-dg').textContent=3;show();};ct.appendChild(rb);}};sub.onclick=go;ct.appendChild(sub);inp.onkeydown=e=>e.key==='Enter'&&go();},Math.min(1000+dg*500,5000));}
+    ct.innerHTML=`<div class="nmm-msg">See a number, memorize it, type it back!</div>`;const sb=document.createElement('button');sb.className='nmm-btn';sb.textContent='START';sb.onclick=()=>{dg=3;show();};ct.appendChild(sb);
+  }
+  function initStroop(){
+    const ct=$$('#stp-container'),hud=$$('#stp-hud');
+    let sc=0,tot=0,tm=30,act=false;
+    if(window._stpTimer){clearInterval(window._stpTimer);window._stpTimer=null;}
+    const cls=[{n:'RED',h:'#e74c3c'},{n:'BLUE',h:'#3498db'},{n:'GREEN',h:'#2ecc71'},{n:'YELLOW',h:'#f1c40f'},{n:'PURPLE',h:'#9b59b6'},{n:'ORANGE',h:'#e67e22'}];
+    hud.innerHTML=`<span class="game-stat">\u2705 <span class="game-stat-val" id="stp-sc">0</span></span><span class="game-stat">\ud83d\udcca <span class="game-stat-val" id="stp-acc">--</span></span><span class="game-stat">\u23f1 <span class="game-stat-val" id="stp-tm">30</span>s</span>`;
+    function show(){const w=cls[Math.floor(Math.random()*cls.length)];let ink;do{ink=cls[Math.floor(Math.random()*cls.length)];}while(ink.n===w.n);ct.innerHTML=`<div class="stp-word" style="color:${ink.h}">${w.n}</div><div class="nmm-msg">Tap the INK COLOR!</div><div class="stp-choices" id="stp-opts"></div>`;const opts=$$('#stp-opts');let pool=[...cls].sort(()=>Math.random()-0.5).slice(0,4);if(!pool.find(c=>c.n===ink.n))pool[0]=ink;pool.sort(()=>Math.random()-0.5);pool.forEach(c=>{const b=document.createElement('button');b.className='stp-choice';b.textContent=c.n;b.style.cssText=`background:${c.h};border-color:${c.h}`;b.onclick=()=>{if(!act)return;tot++;c.n===ink.n?(sc++,addScore(1),showFeedback('\u2705','#2ecc71')):(resetStreak(),showFeedback(`${ink.n}!`,'#e74c3c'));$$('#stp-sc').textContent=sc;$$('#stp-acc').textContent=Math.round(sc/tot*100)+'%';show();};opts.appendChild(b);});}
+    ct.innerHTML=`<div class="nmm-msg">Words appear in wrong colors.<br>Tap the button matching the INK COLOR!</div>`;const sb=document.createElement('button');sb.className='nmm-btn';sb.textContent='START';sb.onclick=()=>{act=true;sc=0;tot=0;tm=30;show();window._stpTimer=setInterval(()=>{tm--;$$('#stp-tm').textContent=tm;if(tm<=0){clearInterval(window._stpTimer);window._stpTimer=null;act=false;const pct=tot?Math.round(sc/tot*100):0;ct.innerHTML=`<div class="nmm-display">${sc} correct</div><div class="nmm-msg">${pct}% accuracy in ${tot} rounds</div>`;const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='PLAY AGAIN';rb.onclick=()=>initStroop();ct.appendChild(rb);showFeedback(`Stroop: ${sc} (${pct}%) \ud83e\udde0`,'#f1c40f');addScore(sc);}},1000);};ct.appendChild(sb);
+  }
+  function initReaction(){
+    const ct=$$('#rxt-container'),hud=$$('#rxt-hud');
+    let rd=0,res=[],wait=false,st=0;
+    if(window._rxtTimeout){clearTimeout(window._rxtTimeout);window._rxtTimeout=null;}
+    hud.innerHTML=`<span class="game-stat">\ud83c\udfaf Round <span class="game-stat-val" id="rxt-rd">0</span>/5</span><span class="game-stat">\u26a1 <span class="game-stat-val" id="rxt-avg">--</span>ms</span>`;
+    function updRes(){const el=$$('#rxt-res');if(!el)return;el.innerHTML='';res.forEach((r,i)=>{const d=document.createElement('div');d.className='rxt-result';d.innerHTML=`<span>Round ${i+1}</span><span class="rxt-result-val">${r}ms</span>`;el.appendChild(d);});if(res.length)$$('#rxt-avg').textContent=Math.round(res.reduce((a,b)=>a+b,0)/res.length);}
+    function go(){rd++;$$('#rxt-rd').textContent=rd;ct.innerHTML=`<div class="rxt-zone wait" id="rxt-zone"><div class="rxt-text">Wait for green...</div></div><div class="rxt-results" id="rxt-res"></div>`;updRes();wait=true;const z=$$('#rxt-zone');window._rxtTimeout=setTimeout(()=>{z.className='rxt-zone ready';z.querySelector('.rxt-text').textContent='TAP NOW!';st=performance.now();wait=false;},2000+Math.random()*3000);z.onclick=()=>{if(wait){clearTimeout(window._rxtTimeout);z.className='rxt-zone early';z.querySelector('.rxt-text').textContent='Too early! Tap to retry';rd--;z.onclick=go;}else if(st){const dt=Math.round(performance.now()-st);st=0;res.push(dt);z.className='rxt-zone done';z.querySelector('.rxt-text').textContent=`${dt}ms`;updRes();addScore(dt<250?3:(dt<400?2:1));showFeedback(dt<200?'Lightning! \u26a1\u26a1':'Nice! \u26a1','#2ecc71');rd>=5?setTimeout(()=>{const avg=Math.round(res.reduce((a,b)=>a+b,0)/res.length);ct.innerHTML=`<div class="nmm-display">${avg}ms</div><div class="nmm-msg">Best: ${Math.min(...res)}ms</div><div class="rxt-results" id="rxt-res"></div>`;updRes();showFeedback(`Average: ${avg}ms \ud83c\udfc6`,'#f1c40f');addScore(Math.max(1,Math.floor(20-avg/25)));const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='AGAIN';rb.onclick=()=>{rd=0;res=[];initReaction();};ct.appendChild(rb);},1200):setTimeout(go,1200);}};}
+    ct.innerHTML=`<div class="nmm-msg">When the box turns GREEN, tap ASAP!</div>`;const sb=document.createElement('button');sb.className='nmm-btn';sb.textContent='START';sb.onclick=()=>{rd=0;res=[];go();};ct.appendChild(sb);
+  }
+  function initNBack(){
+    const ct=$$('#nbk-container'),hud=$$('#nbk-hud');
+    let nLv=parseInt(sessionStorage.getItem('nbk-n')||'1'),seq=[],ci=0,sc=0,tot=0;
+    const SL=20;
+    hud.innerHTML=`<span class="game-stat">\ud83e\udde0 <span class="game-stat-val" id="nbk-n">${nLv}</span>-Back</span><span class="game-stat">\u2705 <span class="game-stat-val" id="nbk-sc">0</span>/<span id="nbk-tot">0</span></span><span class="game-stat">\ud83d\udcca <span class="game-stat-val" id="nbk-rd">0</span>/${SL}</span>`;
+    function gen(){seq=[];for(let i=0;i<SL;i++)i>=nLv&&Math.random()<0.35?seq.push(seq[i-nLv]):seq.push(Math.floor(Math.random()*9));}
+    function build(){ct.innerHTML='';const g=document.createElement('div');g.className='nbk-grid';g.id='nbk-g';for(let i=0;i<9;i++){const c=document.createElement('div');c.className='nbk-cell';c.dataset.idx=i;g.appendChild(c);}ct.appendChild(g);const info=document.createElement('div');info.className='nbk-info';info.textContent=`Same position as ${nLv} step${nLv>1?'s':''} ago?`;ct.appendChild(info);const bd=document.createElement('div');bd.className='nbk-btns';bd.style.justifyContent='center';const mb=document.createElement('button');mb.className='nbk-btn match';mb.textContent='MATCH';mb.id='nbk-m';const nb=document.createElement('button');nb.className='nbk-btn nomatch';nb.textContent='NO MATCH';nb.id='nbk-nm';bd.appendChild(mb);bd.appendChild(nb);ct.appendChild(bd);}
+    function step(){if(ci>=SL){const pct=tot?Math.round(sc/tot*100):0;ct.innerHTML=`<div class="nmm-display">${sc}/${tot}</div><div class="nmm-msg">${pct}% at ${nLv}-Back</div>`;pct>=80&&nLv<4&&(nLv++,sessionStorage.setItem('nbk-n',nLv),ct.innerHTML+=`<div class="nmm-msg" style="color:#2ecc71">Level up to ${nLv}-Back!</div>`);const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='PLAY AGAIN';rb.onclick=initNBack;ct.appendChild(rb);showFeedback(`${nLv}-Back: ${pct}% \ud83e\udde0`,'#f1c40f');addScore(sc);return;}$$('#nbk-rd').textContent=ci+1;$$all('.nbk-cell').forEach(c=>c.classList.remove('active'));const cell=ct.querySelector(`[data-idx="${seq[ci]}"]`);if(cell)cell.classList.add('active');const isM=ci>=nLv&&seq[ci]===seq[ci-nLv];let done=false;const ans=(a)=>{if(done)return;done=true;tot++;const ok=(a==='m')===isM;ok?(sc++,addScore(nLv>=3?3:nLv>=2?2:1),showFeedback('\u2705','#2ecc71')):(resetStreak(),showFeedback(isM?'Was a match!':'Not a match!','#e74c3c'));$$('#nbk-sc').textContent=sc;$$('#nbk-tot').textContent=tot;ci++;setTimeout(()=>{$$all('.nbk-cell').forEach(c=>c.classList.remove('active'));setTimeout(step,400);},600);};$$('#nbk-m').onclick=()=>ans('m');$$('#nbk-nm').onclick=()=>ans('nm');if(ci<nLv){done=true;ci++;setTimeout(()=>{$$all('.nbk-cell').forEach(c=>c.classList.remove('active'));setTimeout(step,400);},1000);}}
+    function start(){gen();ci=0;sc=0;tot=0;build();setTimeout(step,800);}
+    ct.innerHTML=`<div class="nmm-msg">A square lights up. Is it the same as ${nLv} step${nLv>1?'s':''} ago?</div>`;const sd=document.createElement('div');sd.className='sdk-controls';sd.style.margin='10px 0';[1,2,3].forEach(n=>{const b=document.createElement('button');b.className='sdk-btn'+(n===nLv?' active':'');b.textContent=`${n}-Back`;b.onclick=()=>{nLv=n;sessionStorage.setItem('nbk-n',n);$$('#nbk-n').textContent=n;sd.querySelectorAll('.sdk-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');};sd.appendChild(b);});ct.appendChild(sd);const sb=document.createElement('button');sb.className='nmm-btn';sb.textContent='START';sb.onclick=start;ct.appendChild(sb);
+  }
+  function initAnagram(){
+    const ct=$$('#agm-container'),hud=$$('#agm-hud');
+    let sc=0,stk=0,lvl=0;
+    const words=[['MATH','FIRE','RAIN','BLUE','DARK','WIND','COLD','STAR','LAMP','BOOK'],['BRAIN','CHESS','DREAM','FLAME','GHOST','HONEY','LIGHT','OCEAN','PRIME','SOLAR'],['CASTLE','FREEZE','GARDEN','MENTAL','ORIGIN','PUZZLE','ROCKET','SILVER','TEMPLE','WIZARD'],['BALANCE','CRYSTAL','DECRYPT','FORTUNE','GRAVITY','MACHINE','PHOENIX','SCIENCE','THEOREM','VOLCANO'],['ABSTRACT','CALCULUS','DEXTROUS','GRAPHENE','MULTIPLY','PARADIGM','SEQUENCE','THEORIZE','VELOCITY','WHIPLASH']];
+    hud.innerHTML=`<span class="game-stat">\ud83c\udfc6 <span class="game-stat-val" id="agm-sc">0</span></span><span class="game-stat">\ud83d\udd25 <span class="game-stat-val" id="agm-stk">0</span></span><span class="game-stat">\ud83d\udccf <span class="game-stat-val" id="agm-len">${words[lvl][0].length}</span> letters</span>`;
+    function load(){const pool=words[Math.min(lvl,words.length-1)];const word=pool[Math.floor(Math.random()*pool.length)];const letters=[...word].sort(()=>Math.random()-0.5);let buf=[];ct.innerHTML='';const hint=document.createElement('div');hint.className='agm-hint';hint.textContent=`${word.length} letters`;ct.appendChild(hint);const ansDiv=document.createElement('div');ansDiv.className='agm-answer';ansDiv.id='agm-ans';for(let i=0;i<word.length;i++){const s=document.createElement('div');s.className='agm-slot';s.dataset.i=i;ansDiv.appendChild(s);}ct.appendChild(ansDiv);const tiles=document.createElement('div');tiles.className='agm-tiles';tiles.id='agm-tiles';letters.forEach((l,i)=>{const t=document.createElement('button');t.className='agm-tile';t.textContent=l;t.dataset.i=i;t.onclick=()=>{if(t.classList.contains('used'))return;t.classList.add('used');buf.push({l,ti:i});const slot=ansDiv.children[buf.length-1];slot.textContent=l;slot.classList.add('filled');if(buf.length===word.length){const guess=buf.map(b=>b.l).join('');if(guess===word){sc++;stk++;$$('#agm-sc').textContent=sc;$$('#agm-stk').textContent=stk;addScore(stk>=3?3:(word.length>=7?3:2));showFeedback(stk>=3?`${stk}x Streak! \ud83d\udd25`:'Correct! \u2728','#2ecc71');stk%3===0&&lvl<words.length-1&&(lvl++,$$('#agm-len').textContent=words[Math.min(lvl,words.length-1)][0].length);setTimeout(load,1200);}else{stk=0;$$('#agm-stk').textContent=0;resetStreak();showFeedback(`It was ${word}`,'#e74c3c');setTimeout(load,1800);}}};tiles.appendChild(t);});ct.appendChild(tiles);const ctrl=document.createElement('div');ctrl.style.cssText='display:flex;gap:8px;justify-content:center;margin-top:10px';const ub=document.createElement('button');ub.className='nmm-btn';ub.textContent='\u232b UNDO';ub.onclick=()=>{if(!buf.length)return;const last=buf.pop();const slot=ansDiv.children[buf.length];slot.textContent='';slot.classList.remove('filled');tiles.children[last.ti].classList.remove('used');};ctrl.appendChild(ub);const cb=document.createElement('button');cb.className='nmm-btn';cb.textContent='\u21bb CLEAR';cb.onclick=()=>{buf=[];$$all('.agm-slot').forEach(s=>{s.textContent='';s.classList.remove('filled');});$$all('.agm-tile').forEach(t=>t.classList.remove('used'));};ctrl.appendChild(cb);ct.appendChild(ctrl);}
+    load();
+  }
+  function initChimp(){
+    const ct=$$('#chm-container'),hud=$$('#chm-hud');
+    let sz=4,best=parseInt(sessionStorage.getItem('chm-best')||'4');
+    hud.innerHTML=`<span class="game-stat">\ud83d\udc35 Numbers: <span class="game-stat-val" id="chm-sz">${sz}</span></span><span class="game-stat">\ud83c\udfc6 Best: <span class="game-stat-val" id="chm-best">${best}</span></span>`;
+    function play(){const gSz=Math.max(5,Math.ceil(Math.sqrt(sz*3)));const total=gSz*gSz;const positions=Array.from({length:total},(_,i)=>i).sort(()=>Math.random()-0.5).slice(0,sz);const numMap={};positions.forEach((p,i)=>numMap[p]=i+1);ct.innerHTML='';const g=document.createElement('div');g.className='chm-grid';g.style.gridTemplateColumns=`repeat(${gSz},1fr)`;let nextExp=1,hidden=false;for(let i=0;i<total;i++){const c=document.createElement('div');c.className='chm-cell'+(numMap[i]?' num':'');c.textContent=numMap[i]||'';c.dataset.num=numMap[i]||'0';c.dataset.idx=i;c.onclick=()=>{const n=parseInt(c.dataset.num);if(!n)return;if(!hidden){hidden=true;g.querySelectorAll('.chm-cell.num').forEach(x=>{if(parseInt(x.dataset.num)!==1)x.classList.add('hidden');});}if(n===nextExp){c.classList.remove('num','hidden');c.classList.add('correct');c.style.color='#2ecc71';nextExp++;if(nextExp>sz){sz++;sz>best&&(best=sz,sessionStorage.setItem('chm-best',best),$$('#chm-best').textContent=best);$$('#chm-sz').textContent=sz;addScore(sz>=10?5:(sz>=7?3:2));showFeedback(`Level ${sz-1}! \ud83d\udc35`,'#2ecc71');setTimeout(play,1200);}}else{c.classList.add('wrong');g.querySelectorAll('.chm-cell').forEach(x=>{if(x.dataset.num!=='0'){x.classList.remove('hidden');x.style.color=x.classList.contains('correct')?'#2ecc71':'#e74c3c';}});showFeedback(`Numbers: ${sz} \ud83d\udc35`,'#e74c3c');resetStreak();setTimeout(()=>{const score=sz-1;sz=4;$$('#chm-sz').textContent=sz;ct.innerHTML=`<div class="nmm-display">${score} numbers</div><div class="nmm-msg">Best: ${best}</div>`;const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='TRY AGAIN';rb.onclick=play;ct.appendChild(rb);addScore(Math.max(1,score-3));},2000);}};g.appendChild(c);}ct.appendChild(g);}
+    ct.innerHTML='<div class="nmm-msg">Numbers appear briefly, then hide.<br>Click them in order: 1, 2, 3...</div>';const sb=document.createElement('button');sb.className='nmm-btn';sb.textContent='START';sb.onclick=()=>{sz=4;play();};ct.appendChild(sb);
   }
 </script>
 </body>
