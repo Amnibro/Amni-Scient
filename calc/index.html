@@ -4287,59 +4287,89 @@ Plotly.newPlot(el,traces,{paper_bgcolor:'transparent',plot_bgcolor:'transparent'
 const EL_COMPS=[],EL_WIRES=[];
 let elSel=null,elPlacing=null,elDragComp=null,elDragOff={x:0,y:0};
 let elPan={x:0,y:0},elZoom=1,elGridSz=20;
-let elNextId=1;
-function elG(id){return EL_COMPS.find(c=>c.id===id);}
-const EL_DEFS={vsrc:{label:'V1',val:12,unit:'V',pins:2,w:40,h:60,draw:'vsrc'},isrc:{label:'I1',val:0.5,unit:'A',pins:2,w:40,h:60,draw:'isrc'},res:{label:'R1',val:1000,unit:'Ω',pins:2,w:60,h:20,draw:'res'},cap:{label:'C1',val:10e-6,unit:'F',pins:2,w:40,h:20,draw:'cap'},ind:{label:'L1',val:0.01,unit:'H',pins:2,w:60,h:20,draw:'ind'},diode:{label:'D1',val:0.7,unit:'Vf',pins:2,w:40,h:20,draw:'diode'},led:{label:'LED1',val:2.0,unit:'Vf',pins:2,w:40,h:20,draw:'led'},sw:{label:'SW1',val:1,unit:'',pins:2,w:50,h:20,draw:'sw'},wire:{label:'W',val:0,unit:'',pins:2,w:0,h:0,draw:'wire'},gnd:{label:'GND',val:0,unit:'',pins:1,w:20,h:30,draw:'gnd'}};
-window.elAddComp=function(type){elPlacing=type;const cvs=$('#c-circuit');if(cvs)cvs.style.cursor='copy';};
+let elNextId=1,elWireStart=null,elMousePos={x:0,y:0};
+const EL_DEFS={vsrc:{label:'V1',val:12,unit:'V',pins:2,w:40,h:60,draw:'vsrc'},isrc:{label:'I1',val:0.5,unit:'A',pins:2,w:40,h:60,draw:'isrc'},res:{label:'R1',val:1000,unit:'Ω',pins:2,w:60,h:20,draw:'res'},cap:{label:'C1',val:10e-6,unit:'F',pins:2,w:40,h:20,draw:'cap'},ind:{label:'L1',val:0.01,unit:'H',pins:2,w:60,h:20,draw:'ind'},diode:{label:'D1',val:0.7,unit:'Vf',pins:2,w:40,h:20,draw:'diode'},led:{label:'LED1',val:2.0,unit:'Vf',pins:2,w:40,h:20,draw:'led'},sw:{label:'SW1',val:1,unit:'',pins:2,w:50,h:20,draw:'sw'},gnd:{label:'GND',val:0,unit:'',pins:1,w:20,h:30,draw:'gnd'}};
+function elGetPins(c){
+const def=EL_DEFS[c.type];if(!def)return[];
+const hw=def.w/2,hh=def.h/2,r=c.rot*Math.PI/180;
+const cos=Math.cos(r),sin=Math.sin(r);
+const rot=(lx,ly)=>({x:c.x+lx*cos-ly*sin,y:c.y+lx*sin+ly*cos});
+if(c.type==='gnd')return[rot(0,-hh)];
+if(c.type==='vsrc'||c.type==='isrc')return[rot(0,-hh),rot(0,hh)];
+const lead=hw+15;
+return[rot(-lead,0),rot(lead,0)];
+}
+function elSnapToPin(mx,my,snapR){
+let best=null,bd=snapR*snapR;
+EL_COMPS.forEach(c=>elGetPins(c).forEach(p=>{const d=(p.x-mx)**2+(p.y-my)**2;if(d<bd){bd=d;best=p;}}));
+return best||{x:elSnapGrid(mx),y:elSnapGrid(my)};
+}
+window.elAddComp=function(type){
+if(type==='wire'){elPlacing='wire';elWireStart=null;const cvs=$('#c-circuit');if(cvs)cvs.style.cursor='crosshair';return;}
+elPlacing=type;elWireStart=null;const cvs=$('#c-circuit');if(cvs)cvs.style.cursor='copy';
+};
 window.elRotSel=function(){if(elSel){elSel.rot=(elSel.rot+90)%360;elDrawCircuit();}};
-window.elDelSel=function(){if(!elSel)return;const idx=EL_COMPS.indexOf(elSel);if(idx>=0)EL_COMPS.splice(idx,1);elSel=null;$('#el-comp-props').style.display='none';elDrawCircuit();};
-window.elClearAll=function(){EL_COMPS.length=0;EL_WIRES.length=0;elSel=null;$('#el-comp-props').style.display='none';elNextId=1;elDrawCircuit();};
+window.elDelSel=function(){
+if(!elSel)return;
+const idx=EL_COMPS.indexOf(elSel);if(idx>=0)EL_COMPS.splice(idx,1);
+elSel=null;$('#el-comp-props').style.display='none';elDrawCircuit();
+};
+window.elClearAll=function(){EL_COMPS.length=0;EL_WIRES.length=0;elSel=null;elWireStart=null;elPlacing=null;$('#el-comp-props').style.display='none';elNextId=1;elDrawCircuit();};
 function elSnapGrid(v){return Math.round(v/elGridSz)*elGridSz;}
 function elInitCircuit(){
 const cvs=$('#c-circuit');if(!cvs)return;
 const dpr=window.devicePixelRatio||1;
 function resize(){cvs.width=cvs.clientWidth*dpr;cvs.height=cvs.clientHeight*dpr;elDrawCircuit();}
-resize();
-window.addEventListener('resize',resize);
+resize();window.addEventListener('resize',resize);
 cvs.addEventListener('mousedown',function(e){
 const rect=cvs.getBoundingClientRect();
 const mx=(e.clientX-rect.left-elPan.x)/elZoom,my=(e.clientY-rect.top-elPan.y)/elZoom;
+if(elPlacing==='wire'){
+const snap=elSnapToPin(mx,my,20);
+if(!elWireStart){elWireStart={x:snap.x,y:snap.y};}
+else{
+const snap2=elSnapToPin(mx,my,20);
+if(Math.abs(snap2.x-elWireStart.x)>2||Math.abs(snap2.y-elWireStart.y)>2)
+EL_WIRES.push({x1:elWireStart.x,y1:elWireStart.y,x2:snap2.x,y2:snap2.y});
+elWireStart=null;elPlacing=null;cvs.style.cursor='crosshair';
+}
+elDrawCircuit();return;
+}
 if(elPlacing){
 const def=EL_DEFS[elPlacing];
-const comp={id:elNextId++,type:elPlacing,x:elSnapGrid(mx),y:elSnapGrid(my),rot:0,label:def.label.replace(/\d+/,elNextId-1),val:def.val,unit:def.unit};
+const snap=elSnapToPin(mx,my,20);
+const comp={id:elNextId++,type:elPlacing,x:snap.x,y:snap.y,rot:0,label:def.label.replace(/\d+/,elNextId-1),val:def.val,unit:def.unit};
 EL_COMPS.push(comp);
-elSel=comp;
-elPlacing=null;
-cvs.style.cursor='crosshair';
-elShowProps(comp);
-elDrawCircuit();
-return;
+elSel=comp;elPlacing=null;cvs.style.cursor='crosshair';
+elShowProps(comp);elDrawCircuit();return;
 }
 const hit=EL_COMPS.slice().reverse().find(c=>{
 const dx=mx-c.x,dy=my-c.y,def=EL_DEFS[c.type];
-const hw=(def.w||40)/2+10,hh=(def.h||40)/2+10;
+const hw=(def.w||40)/2+15,hh=(def.h||40)/2+10;
 return Math.abs(dx)<hw&&Math.abs(dy)<hh;
 });
-if(hit){
-elSel=hit;elDragComp=hit;
-elDragOff={x:mx-hit.x,y:my-hit.y};
-elShowProps(hit);
-}else{elSel=null;$('#el-comp-props').style.display='none';}
+if(hit){elSel=hit;elDragComp=hit;elDragOff={x:mx-hit.x,y:my-hit.y};elShowProps(hit);}
+else{elSel=null;$('#el-comp-props').style.display='none';}
 elDrawCircuit();
 });
 cvs.addEventListener('mousemove',function(e){
-if(!elDragComp)return;
 const rect=cvs.getBoundingClientRect();
 const mx=(e.clientX-rect.left-elPan.x)/elZoom,my=(e.clientY-rect.top-elPan.y)/elZoom;
+elMousePos={x:mx,y:my};
+if(elDragComp){
+const snap=elSnapToPin(mx-elDragOff.x,my-elDragOff.y,0);
 elDragComp.x=elSnapGrid(mx-elDragOff.x);
 elDragComp.y=elSnapGrid(my-elDragOff.y);
-elDrawCircuit();
+}
+if(elDragComp||elPlacing||elWireStart)elDrawCircuit();
 });
 cvs.addEventListener('mouseup',function(){elDragComp=null;});
+cvs.addEventListener('dblclick',function(e){
+if(elPlacing==='wire'&&elWireStart){elWireStart=null;elPlacing=null;elDrawCircuit();}
+});
 cvs.addEventListener('wheel',function(e){
 e.preventDefault();
-const d=e.deltaY>0?0.9:1.1;
-elZoom=Math.max(0.3,Math.min(3,elZoom*d));
+elZoom=Math.max(0.3,Math.min(3,elZoom*(e.deltaY>0?0.9:1.1)));
 elDrawCircuit();
 },{passive:false});
 }
@@ -4365,9 +4395,21 @@ const ctx=cvs.getContext('2d');
 ctx.scale(dpr,dpr);
 ctx.clearRect(0,0,W,H);
 ctx.save();ctx.translate(elPan.x,elPan.y);ctx.scale(elZoom,elZoom);
+const gx0=Math.floor(-elPan.x/elZoom/elGridSz-1)*elGridSz,gy0=Math.floor(-elPan.y/elZoom/elGridSz-1)*elGridSz;
+const gx1=gx0+W/elZoom+elGridSz*2,gy1=gy0+H/elZoom+elGridSz*2;
 ctx.strokeStyle='#1a1a2e';ctx.lineWidth=0.5;
-for(let x=-2000;x<2000;x+=elGridSz){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,2000);ctx.stroke();}
-for(let y=-2000;y<2000;y+=elGridSz){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(2000,y);ctx.stroke();}
+for(let x=gx0;x<gx1;x+=elGridSz){ctx.beginPath();ctx.moveTo(x,gy0);ctx.lineTo(x,gy1);ctx.stroke();}
+for(let y=gy0;y<gy1;y+=elGridSz){ctx.beginPath();ctx.moveTo(gx0,y);ctx.lineTo(gx1,y);ctx.stroke();}
+ctx.strokeStyle='#52d6f4';ctx.lineWidth=1.5;
+EL_WIRES.forEach(w=>{ctx.beginPath();ctx.moveTo(w.x1,w.y1);ctx.lineTo(w.x2,w.y2);ctx.stroke();});
+if(elWireStart){
+const snap=elSnapToPin(elMousePos.x,elMousePos.y,20);
+ctx.strokeStyle='rgba(82,214,244,0.5)';ctx.setLineDash([4,4]);
+ctx.beginPath();ctx.moveTo(elWireStart.x,elWireStart.y);ctx.lineTo(snap.x,snap.y);ctx.stroke();
+ctx.setLineDash([]);
+ctx.fillStyle='#ffd700';ctx.beginPath();ctx.arc(elWireStart.x,elWireStart.y,4,0,2*Math.PI);ctx.fill();
+ctx.fillStyle='#52d6f4';ctx.beginPath();ctx.arc(snap.x,snap.y,4,0,2*Math.PI);ctx.fill();
+}
 EL_COMPS.forEach(c=>{
 const def=EL_DEFS[c.type];if(!def)return;
 ctx.save();ctx.translate(c.x,c.y);ctx.rotate(c.rot*Math.PI/180);
@@ -4380,6 +4422,22 @@ const vTxt=c.val>=1e6?fmt(c.val/1e6,2)+'M':c.val>=1e3?fmt(c.val/1e3,2)+'k':c.val
 ctx.fillText(vTxt+c.unit,0,def.h/2+22);
 }
 ctx.restore();
+});
+if(elPlacing&&elPlacing!=='wire'){
+const def=EL_DEFS[elPlacing];
+const snap=elSnapToPin(elMousePos.x,elMousePos.y,20);
+ctx.save();ctx.translate(snap.x,snap.y);ctx.globalAlpha=0.5;
+ctx.strokeStyle='#52d6f4';ctx.lineWidth=1.5;ctx.fillStyle='#b0b8c8';ctx.font='10px monospace';ctx.textAlign='center';
+if(def)elDrawComp(ctx,elPlacing,def);
+ctx.restore();ctx.globalAlpha=1;
+}
+EL_COMPS.forEach(c=>{
+elGetPins(c).forEach(p=>{
+const snap=elSnapToPin(elMousePos.x,elMousePos.y,15);
+const isNear=(snap.x===p.x&&snap.y===p.y);
+ctx.fillStyle=isNear?'#ffd700':'rgba(82,214,244,0.6)';
+ctx.beginPath();ctx.arc(p.x,p.y,isNear?5:3,0,2*Math.PI);ctx.fill();
+});
 });
 ctx.restore();
 }
@@ -4419,8 +4477,6 @@ ctx.beginPath();ctx.arc(-hw-15,0,3,0,2*Math.PI);ctx.arc(hw+15,0,3,0,2*Math.PI);c
 ctx.beginPath();ctx.moveTo(0,-hh);ctx.lineTo(0,0);ctx.stroke();
 for(let i=0;i<3;i++){const w_=hw*(1-i*0.3),yy=i*6;ctx.beginPath();ctx.moveTo(-w_,yy);ctx.lineTo(w_,yy);ctx.stroke();}
 ctx.beginPath();ctx.arc(0,-hh,3,0,2*Math.PI);ctx.fillStyle='#52d6f4';ctx.fill();
-}else if(type==='wire'){
-ctx.beginPath();ctx.moveTo(-20,0);ctx.lineTo(20,0);ctx.stroke();
 }
 }
 window.elSolve=function(){
@@ -4493,9 +4549,10 @@ html+='</div>';
 el.innerHTML=html;
 };
 window.elExportSVG=function(){
-if(EL_COMPS.length===0){alert('No circuit to export');return;}
+if(EL_COMPS.length===0&&EL_WIRES.length===0){alert('No circuit to export');return;}
 let svg='<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" style="background:#0a0a1a">';
 svg+='<style>line,circle,path,polyline,rect{stroke:#52d6f4;fill:none;stroke-width:1.5}text{fill:#b0b8c8;font:10px monospace;text-anchor:middle}</style>';
+EL_WIRES.forEach(w=>{svg+=`<line x1="${w.x1}" y1="${w.y1}" x2="${w.x2}" y2="${w.y2}"/>`;});
 EL_COMPS.forEach(c=>{
 const def=EL_DEFS[c.type];
 svg+=`<g transform="translate(${c.x},${c.y}) rotate(${c.rot})">`;
@@ -4503,7 +4560,7 @@ if(c.type==='res'){svg+=`<line x1="-45" y1="0" x2="45" y2="0"/><polyline points=
 else if(c.type==='vsrc'){svg+=`<circle cx="0" cy="0" r="20"/><line x1="0" y1="-30" x2="0" y2="-20"/><line x1="0" y1="20" x2="0" y2="30"/><text y="-8">+</text><text y="12">−</text>`;}
 else if(c.type==='cap'){svg+=`<line x1="-35" y1="0" x2="-4" y2="0"/><line x1="4" y1="0" x2="35" y2="0"/><line x1="-4" y1="-12" x2="-4" y2="12" stroke-width="2.5"/><line x1="4" y1="-12" x2="4" y2="12" stroke-width="2.5"/>`;}
 else if(c.type==='gnd'){svg+=`<line x1="0" y1="-15" x2="0" y2="0"/><line x1="-10" y1="0" x2="10" y2="0"/><line x1="-6" y1="6" x2="6" y2="6"/><line x1="-3" y1="12" x2="3" y2="12"/>`;}
-svg+=`<text y="${(def.h||20)/2+12}">${c.label}</text>`;
+svg+=`<text y="${(def?.h||20)/2+12}">${c.label}</text>`;
 svg+='</g>';
 });
 svg+='</svg>';
@@ -4513,13 +4570,23 @@ const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=
 window.elLoadExample=function(){
 elClearAll();
 const comps=[
-{type:'vsrc',x:100,y:200,rot:0,label:'V1',val:12,unit:'V'},
-{type:'res',x:250,y:100,rot:0,label:'R1',val:1000,unit:'Ω'},
-{type:'res',x:400,y:200,rot:90,label:'R2',val:2200,unit:'Ω'},
-{type:'led',x:250,y:300,rot:0,label:'LED1',val:2.0,unit:'Vf'},
-{type:'gnd',x:100,y:350,rot:0,label:'GND',val:0,unit:''}
+{type:'vsrc',x:100,y:240,rot:0,label:'V1',val:12,unit:'V'},
+{type:'res',x:260,y:140,rot:0,label:'R1',val:1000,unit:'Ω'},
+{type:'led',x:260,y:340,rot:0,label:'LED1',val:2.0,unit:'Vf'},
+{type:'gnd',x:100,y:380,rot:0,label:'GND',val:0,unit:''}
 ];
 comps.forEach(c=>{c.id=elNextId++;EL_COMPS.push(c);});
+const pins={};
+EL_COMPS.forEach(c=>{const ps=elGetPins(c);c.p=ps;});
+const v=EL_COMPS[0],r=EL_COMPS[1],led=EL_COMPS[2],gnd=EL_COMPS[3];
+const vPins=elGetPins(v),rPins=elGetPins(r),lPins=elGetPins(led),gPins=elGetPins(gnd);
+EL_WIRES.push({x1:vPins[0].x,y1:vPins[0].y,x2:rPins[0].x,y2:vPins[0].y});
+EL_WIRES.push({x1:rPins[0].x,y1:vPins[0].y,x2:rPins[0].x,y2:rPins[0].y});
+EL_WIRES.push({x1:rPins[1].x,y1:rPins[1].y,x2:lPins[0].x,y2:rPins[1].y});
+EL_WIRES.push({x1:lPins[0].x,y1:rPins[1].y,x2:lPins[0].x,y2:lPins[0].y});
+EL_WIRES.push({x1:lPins[1].x,y1:lPins[1].y,x2:gPins[0].x,y2:lPins[1].y});
+EL_WIRES.push({x1:gPins[0].x,y1:lPins[1].y,x2:gPins[0].x,y2:gPins[0].y});
+EL_WIRES.push({x1:vPins[1].x,y1:vPins[1].y,x2:gPins[0].x,y2:vPins[1].y});
 elDrawCircuit();
 };
 function updateElecUI(){
