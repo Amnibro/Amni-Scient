@@ -29,6 +29,8 @@
   .diff-btn.active { background: #4db8ff; color: #000; border-color: #4db8ff; font-weight: bold; }
   .game-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; max-width: 1400px; width: 100%; padding: 0 clamp(12px,3vw,24px) clamp(16px,3vw,24px); box-sizing: border-box; }
   .game-category { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; overflow: hidden; }
+  #brain-section,.brain-cat { grid-column: 1 / -1; }
+  #brain-section .cat-games,.brain-cat .cat-games { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
   .cat-header { display: flex; align-items: center; gap: 10px; padding: 11px 18px; font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2.5px; color: #7e8fa3; background: rgba(0,0,0,0.3); border-bottom: 1px solid rgba(255,255,255,0.05); margin: 0; }
   .cat-header-icon { font-size: 1.1rem; }
   .cat-games { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 14px; padding: 14px; }
@@ -49,7 +51,7 @@
   .game-grid.mode-2 .game-btn { padding: 26px 14px 20px; border-width: 3px; min-height: clamp(110px,20vw,155px); }
   .game-grid.mode-2 .btn-icon { font-size: clamp(2.5rem,8vw,4rem); margin-bottom: 6px; }
   .game-grid.mode-2 .btn-text { font-size: clamp(1rem,2.5vw,1.4rem); }
-  @media (max-width: 768px) { .game-grid { grid-template-columns: 1fr !important; max-width: 960px !important; } }
+  @media (max-width: 768px) { .game-grid { grid-template-columns: 1fr !important; max-width: 960px !important; } #brain-section,.brain-cat { grid-column: auto; } }
   @media (max-width: 500px) { .cat-games { grid-template-columns: repeat(2, 1fr) !important; } .game-btn { min-height: 90px !important; padding: 16px 10px 14px !important; } .btn-icon { font-size: 2rem !important; } .btn-text { font-size: 0.8rem !important; } .btn-desc { display: none; } .cat-header { font-size: 0.7rem; padding: 8px 12px; } }
   #tracing-view { background: #1b1e23; }
   #math-view { background: #1e252b; justify-content: center; }
