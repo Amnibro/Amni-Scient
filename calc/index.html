@@ -234,7 +234,7 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 </div>
 <div class="shell" id="shell" style="display:none">
 <div class="side" id="side">
-<div class="side-h"><span class="t">FC-CALC</span><span class="s" id="side-ver">v2.12.0</span></div>
+<div class="side-h"><span class="t">FC-CALC</span><span class="s" id="side-ver">v2.13.0</span></div>
 <div class="side-b" id="side-b">
 <div class="side-sec open" data-sec="core">
 <div class="side-sec-h" onclick="toggleSideSec('core')"><span>Core</span><span class="ar">&#9660;</span></div>
@@ -1339,72 +1339,185 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <div class="field"><label>FLUID</label><select id="fl-fluid" onchange="calcFlow()">
 <option value="water">WATER (20°C)</option>
 <option value="water_hot">WATER (80°C)</option>
-<option value="air">AIR (20°C)</option>
-<option value="oil">HYDRAULIC OIL</option>
+<option value="water_cold">WATER (5°C)</option>
+<option value="air">AIR (20°C, 1atm)</option>
+<option value="air_hot">AIR (200°C, 1atm)</option>
+<option value="steam">STEAM (100°C, 1atm)</option>
+<option value="oil">HYDRAULIC OIL (ISO 46)</option>
+<option value="oil_light">LIGHT OIL (ISO 10)</option>
 <option value="glycol">ETHYLENE GLYCOL 50%</option>
+<option value="diesel">DIESEL FUEL</option>
+<option value="methanol">METHANOL</option>
 <option value="custom">CUSTOM</option>
 </select></div>
 <div id="fl-custom" style="display:none">
 <div class="row">
-<div class="field"><label>DENSITY (kg/m³)</label><input type="number" id="fl-rho" value="998" step="any"></div>
-<div class="field"><label>VISCOSITY (Pa·s)</label><input type="number" id="fl-mu" value="0.001" step="any"></div>
+<div class="field"><label>DENSITY ρ (kg/m³)</label><input type="number" id="fl-rho" value="998" step="any"></div>
+<div class="field"><label>DYN. VISCOSITY μ (Pa·s)</label><input type="number" id="fl-mu" value="0.001" step="any"></div>
 </div>
+</div>
+<div class="field"><label>PIPE CROSS SECTION</label><select id="fl-xsec" onchange="flUpdateXsec();calcFlow()">
+<option value="circular">CIRCULAR</option>
+<option value="rect">RECTANGULAR DUCT</option>
+<option value="annular">ANNULAR (CONCENTRIC)</option>
+<option value="trapezoidal">OPEN CHANNEL — TRAPEZOIDAL</option>
+</select></div>
+<div id="fl-xsec-params">
+<div class="row">
+<div class="field"><label>INNER DIA (mm)</label><input type="number" id="fl-d" value="50" step="any" oninput="calcFlow()"></div>
+<div class="field"><label>WALL THICK (mm)</label><input type="number" id="fl-wall" value="3" step="any"></div>
+</div>
+</div>
+<div id="fl-rect-params" style="display:none">
+<div class="row">
+<div class="field"><label>WIDTH (mm)</label><input type="number" id="fl-rw" value="200" step="any" oninput="calcFlow()"></div>
+<div class="field"><label>HEIGHT (mm)</label><input type="number" id="fl-rh" value="100" step="any" oninput="calcFlow()"></div>
+</div>
+</div>
+<div id="fl-ann-params" style="display:none">
+<div class="row">
+<div class="field"><label>OUTER DIA (mm)</label><input type="number" id="fl-do" value="60" step="any" oninput="calcFlow()"></div>
+<div class="field"><label>INNER DIA (mm)</label><input type="number" id="fl-di" value="30" step="any" oninput="calcFlow()"></div>
+</div>
+</div>
+<div id="fl-trap-params" style="display:none">
+<div class="row">
+<div class="field"><label>BOTTOM W (mm)</label><input type="number" id="fl-tb" value="500" step="any" oninput="calcFlow()"></div>
+<div class="field"><label>DEPTH (mm)</label><input type="number" id="fl-td" value="300" step="any" oninput="calcFlow()"></div>
+</div>
+<div class="field"><label>SIDE SLOPE (H:V)</label><input type="number" id="fl-ts" value="1.5" step="any" oninput="calcFlow()"></div>
 </div>
 <div class="row">
-<div class="field"><label>PIPE DIA (mm)</label><input type="number" id="fl-d" value="50" step="any" oninput="calcFlow()"></div>
 <div class="field"><label>LENGTH (m)</label><input type="number" id="fl-len" value="100" step="any" oninput="calcFlow()"></div>
-</div>
-<div class="row">
-<div class="field"><label>FLOW RATE (L/min)</label><input type="number" id="fl-q" value="100" step="any" oninput="calcFlow()"></div>
 <div class="field"><label>ROUGHNESS ε (mm)</label><input type="number" id="fl-eps" value="0.045" step="any" oninput="calcFlow()"></div>
 </div>
-<div class="card" style="margin-top:.5rem">
+<div class="field"><label>PIPE MATERIAL (sets ε)</label><select id="fl-pipe-mat" onchange="flSetRoughness()">
+<option value="">— Manual ε —</option>
+<option value="0.0015">DRAWN TUBING (0.0015 mm)</option>
+<option value="0.015">COMMERCIAL STEEL (0.015 mm)</option>
+<option value="0.045">WELDED STEEL (0.045 mm)</option>
+<option value="0.15">GALVANIZED IRON (0.15 mm)</option>
+<option value="0.26">CAST IRON (0.26 mm)</option>
+<option value="0.0015">COPPER / BRASS (0.0015 mm)</option>
+<option value="0.003">PVC / PLASTIC (0.003 mm)</option>
+<option value="1.0">CONCRETE (1.0 mm)</option>
+<option value="3.0">RIVETED STEEL (3.0 mm)</option>
+</select></div>
+<div class="row">
+<div class="field"><label>FLOW RATE (L/min)</label><input type="number" id="fl-q" value="100" step="any" oninput="calcFlow()"></div>
+<div class="field"><label>ELEVATION Δ (m)</label><input type="number" id="fl-elev" value="0" step="any" oninput="calcFlow()"></div>
+</div>
+<div class="row">
+<div class="field"><label>INLET PRESS (kPa)</label><input type="number" id="fl-pin" value="500" step="any" oninput="calcFlow()"></div>
+<div class="field"><label>TEMPERATURE (°C)</label><input type="number" id="fl-temp" value="20" step="any"></div>
+</div>
+</div>
+<div class="card">
 <h3>FITTINGS / MINOR LOSSES</h3>
 <div class="row">
-<div class="field"><label>90° ELBOWS</label><input type="number" id="fl-elb" value="4" step="1"></div>
-<div class="field"><label>TEEs</label><input type="number" id="fl-tee" value="0" step="1"></div>
-<div class="field"><label>VALVES</label><input type="number" id="fl-val" value="2" step="1"></div>
+<div class="field"><label>90° ELBOWS</label><input type="number" id="fl-elb" value="4" step="1" oninput="calcFlow()"></div>
+<div class="field"><label>45° ELBOWS</label><input type="number" id="fl-elb45" value="0" step="1" oninput="calcFlow()"></div>
+</div>
+<div class="row">
+<div class="field"><label>TEEs (BRANCH)</label><input type="number" id="fl-tee" value="0" step="1" oninput="calcFlow()"></div>
+<div class="field"><label>TEEs (RUN)</label><input type="number" id="fl-tee-run" value="0" step="1" oninput="calcFlow()"></div>
+</div>
+<div class="row">
+<div class="field"><label>GATE VALVES</label><input type="number" id="fl-vgate" value="2" step="1" oninput="calcFlow()"></div>
+<div class="field"><label>GLOBE VALVES</label><input type="number" id="fl-vglobe" value="0" step="1" oninput="calcFlow()"></div>
+</div>
+<div class="row">
+<div class="field"><label>CHECK VALVES</label><input type="number" id="fl-vcheck" value="0" step="1" oninput="calcFlow()"></div>
+<div class="field"><label>BALL VALVES</label><input type="number" id="fl-vball" value="0" step="1" oninput="calcFlow()"></div>
+</div>
+<div class="row">
+<div class="field"><label>SUDDEN EXPAND</label><input type="number" id="fl-sexp" value="0" step="1" oninput="calcFlow()"></div>
+<div class="field"><label>SUDDEN CONTRACT</label><input type="number" id="fl-scon" value="0" step="1" oninput="calcFlow()"></div>
+</div>
+<div class="row">
+<div class="field"><label>PIPE ENTRANCE</label><input type="number" id="fl-ent" value="1" step="1" oninput="calcFlow()"></div>
+<div class="field"><label>PIPE EXIT</label><input type="number" id="fl-exit" value="1" step="1" oninput="calcFlow()"></div>
 </div>
 </div>
 <button class="btn btn-fill" onclick="calcFlow()" style="margin-top:.5rem">ANALYZE</button>
 </div>
-</div>
 <div>
 <div class="card" id="fl-results"><h3>FLOW RESULTS</h3><p style="font-size:.75rem;color:var(--dim)">Set parameters to see results</p></div>
+<div class="card"><h3>PIPE CROSS SECTION</h3><canvas id="c-pipe-xsec" style="width:100%;height:200px"></canvas></div>
+<div class="card"><h3>VELOCITY PROFILE</h3><div id="c-vel-profile" style="width:100%;height:240px"></div></div>
 <div class="card"><h3>MOODY DIAGRAM</h3><div id="c-moody" style="width:100%;height:300px"></div></div>
 </div>
 </div>
 </div>
 <div class="view" id="v-electrical">
-<h2>ELECTRICAL ANALYSIS</h2>
+<h2>CIRCUIT DESIGNER & ANALYSIS</h2>
+<div class="card" style="margin-bottom:.5rem">
+<div class="row" style="gap:.5rem;flex-wrap:wrap;align-items:center">
+<span style="font-size:.75rem;color:var(--dim);margin-right:.25rem">COMPONENTS:</span>
+<button class="btn" onclick="elAddComp('vsrc')" title="Voltage Source">⚡ V-SRC</button>
+<button class="btn" onclick="elAddComp('isrc')" title="Current Source">🔌 I-SRC</button>
+<button class="btn" onclick="elAddComp('res')" title="Resistor">◼ R</button>
+<button class="btn" onclick="elAddComp('cap')" title="Capacitor">⊟ C</button>
+<button class="btn" onclick="elAddComp('ind')" title="Inductor">⊞ L</button>
+<button class="btn" onclick="elAddComp('diode')" title="Diode">▷ D</button>
+<button class="btn" onclick="elAddComp('led')" title="LED">💡 LED</button>
+<button class="btn" onclick="elAddComp('sw')" title="Switch">⏻ SW</button>
+<button class="btn" onclick="elAddComp('wire')" title="Wire">― WIRE</button>
+<button class="btn" onclick="elAddComp('gnd')" title="Ground">⏚ GND</button>
+<span style="border-left:1px solid var(--border);height:1.5rem"></span>
+<button class="btn" onclick="elRotSel()" title="Rotate Selected">↻ ROT</button>
+<button class="btn" onclick="elDelSel()" title="Delete Selected" style="color:var(--err)">✕ DEL</button>
+<button class="btn" onclick="elClearAll()" title="Clear All" style="color:var(--err)">⌫ CLR</button>
+<span style="border-left:1px solid var(--border);height:1.5rem"></span>
+<button class="btn btn-fill" onclick="elSolve()">⚙ SOLVE</button>
+<button class="btn" onclick="elExportSVG()" title="Export SVG">📥 SVG</button>
+<button class="btn" onclick="elLoadExample()" title="Load Example">📂 EXAMPLE</button>
+</div>
+</div>
 <div class="split">
-<div>
+<div style="flex:2">
+<div class="card" style="padding:0;overflow:hidden;position:relative">
+<canvas id="c-circuit" style="width:100%;height:500px;cursor:crosshair"></canvas>
+<div style="position:absolute;bottom:.25rem;left:.5rem;font-size:.6rem;color:var(--dim)">Click to place · Drag to move · Click component to select · Scroll to zoom</div>
+</div>
+<div class="card" id="el-comp-props" style="display:none">
+<h3>COMPONENT PROPERTIES</h3>
+<div class="row">
+<div class="field"><label>TYPE</label><input type="text" id="el-cp-type" readonly></div>
+<div class="field"><label>LABEL</label><input type="text" id="el-cp-label" oninput="elUpdateProp()"></div>
+</div>
+<div class="row">
+<div class="field"><label>VALUE</label><input type="number" id="el-cp-val" step="any" oninput="elUpdateProp()"></div>
+<div class="field"><label>UNIT</label><input type="text" id="el-cp-unit" readonly></div>
+</div>
+<div class="row" id="el-cp-extra"></div>
+</div>
+</div>
+<div style="flex:1">
+<div class="card" id="el-results"><h3>CIRCUIT ANALYSIS</h3><p style="font-size:.75rem;color:var(--dim)">Place components and click SOLVE</p></div>
 <div class="card">
-<h3>ANALYSIS MODE</h3>
+<h3>QUICK CALCULATOR</h3>
 <div class="field"><label>MODE</label><select id="el-mode" onchange="updateElecUI()">
-<option value="dc">DC CIRCUIT (OHM'S LAW)</option>
+<option value="dc">DC OHM'S LAW</option>
 <option value="ac">AC IMPEDANCE</option>
 <option value="wire">WIRE SIZING</option>
 <option value="motor">MOTOR POWER</option>
 <option value="transformer">TRANSFORMER</option>
 </select></div>
-</div>
-<div class="card" id="el-dc-params">
-<h3>DC PARAMETERS</h3>
+<div id="el-dc-params">
 <div class="row">
-<div class="field"><label>VOLTAGE (V)</label><input type="number" id="el-v" value="24" step="any" oninput="calcElec()"></div>
-<div class="field"><label>RESISTANCE (Ω)</label><input type="number" id="el-r" value="100" step="any" oninput="calcElec()"></div>
+<div class="field"><label>V</label><input type="number" id="el-v" value="24" step="any" oninput="calcElec()"></div>
+<div class="field"><label>R (Ω)</label><input type="number" id="el-r" value="100" step="any" oninput="calcElec()"></div>
 </div>
 <div class="row">
-<div class="field"><label>CURRENT (A)</label><input type="number" id="el-i" value="" step="any" placeholder="auto" oninput="calcElec()"></div>
-<div class="field"><label>POWER (W)</label><input type="number" id="el-p" value="" step="any" placeholder="auto" oninput="calcElec()"></div>
+<div class="field"><label>I (A)</label><input type="number" id="el-i" value="" step="any" placeholder="auto" oninput="calcElec()"></div>
+<div class="field"><label>P (W)</label><input type="number" id="el-p" value="" step="any" placeholder="auto" oninput="calcElec()"></div>
 </div>
 </div>
-<div class="card" id="el-ac-params" style="display:none">
-<h3>AC IMPEDANCE</h3>
+<div id="el-ac-params" style="display:none">
 <div class="row">
-<div class="field"><label>FREQUENCY (Hz)</label><input type="number" id="el-freq" value="60" step="any" oninput="calcElec()"></div>
-<div class="field"><label>VOLTAGE (Vrms)</label><input type="number" id="el-vac" value="120" step="any" oninput="calcElec()"></div>
+<div class="field"><label>f (Hz)</label><input type="number" id="el-freq" value="60" step="any" oninput="calcElec()"></div>
+<div class="field"><label>Vrms</label><input type="number" id="el-vac" value="120" step="any" oninput="calcElec()"></div>
 </div>
 <div class="row">
 <div class="field"><label>R (Ω)</label><input type="number" id="el-rac" value="50" step="any" oninput="calcElec()"></div>
@@ -1412,45 +1525,41 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 </div>
 <div class="field"><label>C (µF)</label><input type="number" id="el-cac" value="10" step="any" oninput="calcElec()"></div>
 </div>
-<div class="card" id="el-wire-params" style="display:none">
-<h3>WIRE SIZING</h3>
+<div id="el-wire-params" style="display:none">
 <div class="row">
-<div class="field"><label>CURRENT (A)</label><input type="number" id="el-wi" value="20" step="any" oninput="calcElec()"></div>
-<div class="field"><label>LENGTH (m)</label><input type="number" id="el-wl" value="30" step="any" oninput="calcElec()"></div>
-</div>
-<div class="row">
-<div class="field"><label>VOLTAGE (V)</label><input type="number" id="el-wv" value="240" step="any" oninput="calcElec()"></div>
-<div class="field"><label>MAX DROP (%)</label><input type="number" id="el-wd" value="3" step="any" oninput="calcElec()"></div>
-</div>
-<div class="field"><label>MATERIAL</label><select id="el-wm" onchange="calcElec()"><option value="cu">COPPER</option><option value="al">ALUMINUM</option></select></div>
-</div>
-<div class="card" id="el-motor-params" style="display:none">
-<h3>MOTOR</h3>
-<div class="row">
-<div class="field"><label>POWER (kW)</label><input type="number" id="el-mp" value="7.5" step="any" oninput="calcElec()"></div>
-<div class="field"><label>VOLTAGE (V)</label><input type="number" id="el-mv" value="400" step="any" oninput="calcElec()"></div>
+<div class="field"><label>I (A)</label><input type="number" id="el-wi" value="20" step="any" oninput="calcElec()"></div>
+<div class="field"><label>L (m)</label><input type="number" id="el-wl" value="30" step="any" oninput="calcElec()"></div>
 </div>
 <div class="row">
-<div class="field"><label>EFFICIENCY (%)</label><input type="number" id="el-me" value="90" step="any" oninput="calcElec()"></div>
-<div class="field"><label>POWER FACTOR</label><input type="number" id="el-mpf" value="0.85" step="any" oninput="calcElec()"></div>
+<div class="field"><label>V</label><input type="number" id="el-wv" value="240" step="any" oninput="calcElec()"></div>
+<div class="field"><label>Drop%</label><input type="number" id="el-wd" value="3" step="any" oninput="calcElec()"></div>
 </div>
-<div class="field"><label>PHASES</label><select id="el-mph" onchange="calcElec()"><option value="3">THREE PHASE</option><option value="1">SINGLE PHASE</option></select></div>
+<div class="field"><label>MAT</label><select id="el-wm" onchange="calcElec()"><option value="cu">COPPER</option><option value="al">ALUMINUM</option></select></div>
 </div>
-<div class="card" id="el-xfmr-params" style="display:none">
-<h3>TRANSFORMER</h3>
+<div id="el-motor-params" style="display:none">
 <div class="row">
-<div class="field"><label>PRIMARY V</label><input type="number" id="el-tp" value="480" step="any" oninput="calcElec()"></div>
-<div class="field"><label>SECONDARY V</label><input type="number" id="el-ts" value="120" step="any" oninput="calcElec()"></div>
+<div class="field"><label>kW</label><input type="number" id="el-mp" value="7.5" step="any" oninput="calcElec()"></div>
+<div class="field"><label>V</label><input type="number" id="el-mv" value="400" step="any" oninput="calcElec()"></div>
 </div>
 <div class="row">
-<div class="field"><label>KVA RATING</label><input type="number" id="el-tkva" value="50" step="any" oninput="calcElec()"></div>
-<div class="field"><label>EFFICIENCY (%)</label><input type="number" id="el-te" value="98" step="any" oninput="calcElec()"></div>
+<div class="field"><label>η%</label><input type="number" id="el-me" value="90" step="any" oninput="calcElec()"></div>
+<div class="field"><label>PF</label><input type="number" id="el-mpf" value="0.85" step="any" oninput="calcElec()"></div>
+</div>
+<div class="field"><label>φ</label><select id="el-mph" onchange="calcElec()"><option value="3">3φ</option><option value="1">1φ</option></select></div>
+</div>
+<div id="el-xfmr-params" style="display:none">
+<div class="row">
+<div class="field"><label>Vp</label><input type="number" id="el-tp" value="480" step="any" oninput="calcElec()"></div>
+<div class="field"><label>Vs</label><input type="number" id="el-ts" value="120" step="any" oninput="calcElec()"></div>
+</div>
+<div class="row">
+<div class="field"><label>kVA</label><input type="number" id="el-tkva" value="50" step="any" oninput="calcElec()"></div>
+<div class="field"><label>η%</label><input type="number" id="el-te" value="98" step="any" oninput="calcElec()"></div>
 </div>
 </div>
-<button class="btn btn-fill" onclick="calcElec()" style="margin-top:.5rem">CALCULATE</button>
+<button class="btn btn-fill" onclick="calcElec()" style="margin-top:.5rem;width:100%">CALCULATE</button>
+<div id="el-quick-results" style="margin-top:.5rem"></div>
 </div>
-<div>
-<div class="card" id="el-results"><h3>ELECTRICAL RESULTS</h3><p style="font-size:.75rem;color:var(--dim)">Set parameters to see results</p></div>
 </div>
 </div>
 </div>
@@ -1479,7 +1588,7 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 </div>
 <div id="ad-tx" class="hidden"><div class="ad-hdr"><span>&#x25C8; engineering datapad</span><button class="ad-x" id="ad-close">&times;</button></div><div class="ad-body" id="ad-slot"></div></div>
 <footer>
-AMNI-CALC v2.12.0 &mdash; <a href="https://amni-scient.com">AMNI-SCIENT</a> &mdash; FOR EDUCATIONAL &amp; ESTIMATION PURPOSES ONLY &mdash; <a href="#" onclick="reportBug();return false">REPORT BUG</a>
+AMNI-CALC v2.13.0 &mdash; <a href="https://amni-scient.com">AMNI-SCIENT</a> &mdash; FOR EDUCATIONAL &amp; ESTIMATION PURPOSES ONLY &mdash; <a href="#" onclick="reportBug();return false">REPORT BUG</a>
 </footer>
 <script type="module">
 import wInit,{calc_beam,calc_section,section_presets,get_materials,get_material,calc_bolt,bolt_tables,calc_spring,calc_stress,get_finishes,recommend_finishes,convert_unit,unit_categories,calc_seal,seal_materials,seal_standard_sizes,calc_seal_groove,calc_fatigue,calc_thermal} from './pkg/amni_calc_wasm.js';
@@ -2982,7 +3091,7 @@ const activeTab=document.querySelector('.tab.active');
 const tab=activeTab?activeTab.dataset.v:'unknown';
 const ua=navigator.userAgent;
 const ts=new Date().toISOString();
-const body=encodeURIComponent(`Bug Report — AMNI-CALC v2.12.0\n\nTab: ${tab}\nTimestamp: ${ts}\nBrowser: ${ua}\n\nDescribe the issue:\n\n\nSteps to reproduce:\n1.\n2.\n3.\n\nExpected behavior:\n\nActual behavior:\n`);
+const body=encodeURIComponent(`Bug Report — AMNI-CALC v2.13.0\n\nTab: ${tab}\nTimestamp: ${ts}\nBrowser: ${ua}\n\nDescribe the issue:\n\n\nSteps to reproduce:\n1.\n2.\n3.\n\nExpected behavior:\n\nActual behavior:\n`);
 window.open(`mailto:amnibro7@gmail.com?subject=${encodeURIComponent('AMNI-CALC Bug Report — '+tab)}&body=${body}`);
 };
 window.updateThermalUI=function(){
@@ -4021,36 +4130,144 @@ a.href=URL.createObjectURL(blob);
 a.download=which===1?'pinion.stl':which===2?'gear.stl':'gear_mesh.stl';
 a.click();URL.revokeObjectURL(a.href);
 };
-const FLUIDS={water:{rho:998,mu:0.001002},water_hot:{rho:971.8,mu:0.000355},air:{rho:1.204,mu:1.825e-5},oil:{rho:870,mu:0.032},glycol:{rho:1082,mu:0.00365}};
+const FLUIDS={water:{rho:998,mu:0.001002,Pvap:2339},water_hot:{rho:971.8,mu:0.000355,Pvap:47390},water_cold:{rho:999.9,mu:0.001519,Pvap:872},air:{rho:1.204,mu:1.825e-5,Pvap:0},air_hot:{rho:0.746,mu:2.57e-5,Pvap:0},steam:{rho:0.598,mu:1.2e-5,Pvap:101325},oil:{rho:870,mu:0.032,Pvap:50},oil_light:{rho:850,mu:0.005,Pvap:200},glycol:{rho:1082,mu:0.00365,Pvap:1200},diesel:{rho:832,mu:0.0024,Pvap:500},methanol:{rho:791,mu:0.00059,Pvap:12900}};
+window.flUpdateXsec=function(){
+const xs=$('#fl-xsec').value;
+$('#fl-xsec-params').style.display=xs==='circular'?'':'none';
+$('#fl-rect-params').style.display=xs==='rect'?'':'none';
+$('#fl-ann-params').style.display=xs==='annular'?'':'none';
+$('#fl-trap-params').style.display=xs==='trapezoidal'?'':'none';
+};
+window.flSetRoughness=function(){
+const v=$('#fl-pipe-mat').value;
+if(v)$('#fl-eps').value=v;
+};
+function getFlowGeom(){
+const xs=$('#fl-xsec').value;
+if(xs==='rect'){
+const w=(parseFloat($('#fl-rw').value)||200)/1e3,h=(parseFloat($('#fl-rh').value)||100)/1e3;
+const A=w*h,P=2*(w+h),Dh=4*A/P;
+return{A,Dh,shape:'rect',w,h};
+}else if(xs==='annular'){
+const Do=(parseFloat($('#fl-do').value)||60)/1e3,Di=(parseFloat($('#fl-di').value)||30)/1e3;
+const A=Math.PI*(Do*Do-Di*Di)/4,Dh=Do-Di;
+return{A,Dh,shape:'annular',Do,Di};
+}else if(xs==='trapezoidal'){
+const b=(parseFloat($('#fl-tb').value)||500)/1e3,y=(parseFloat($('#fl-td').value)||300)/1e3,z=parseFloat($('#fl-ts').value)||1.5;
+const topW=b+2*z*y,A=(b+topW)/2*y,P=b+2*y*Math.sqrt(1+z*z),Dh=4*A/P;
+return{A,Dh,shape:'trap',b,y,z,topW};
+}
+const D=(parseFloat($('#fl-d').value)||50)/1e3;
+return{A:Math.PI*D*D/4,Dh:D,shape:'circ',D};
+}
 window.calcFlow=function(){
 const fl=$('#fl-fluid').value;
 $('#fl-custom').style.display=fl==='custom'?'':'none';
-const props=fl==='custom'?{rho:parseFloat($('#fl-rho').value)||998,mu:parseFloat($('#fl-mu').value)||0.001}:FLUIDS[fl]||FLUIDS.water;
-const D=(parseFloat($('#fl-d').value)||50)/1e3,L=parseFloat($('#fl-len').value)||100;
-const Q=(parseFloat($('#fl-q').value)||100)/60000,eps=(parseFloat($('#fl-eps').value)||0.045)/1e3;
-const A=Math.PI*D*D/4,V=Q/A,Re=props.rho*V*D/props.mu;
-const relR=eps/D;
+const props=fl==='custom'?{rho:parseFloat($('#fl-rho').value)||998,mu:parseFloat($('#fl-mu').value)||0.001,Pvap:2339}:FLUIDS[fl]||FLUIDS.water;
+const geo=getFlowGeom();
+const L=parseFloat($('#fl-len').value)||100,eps=(parseFloat($('#fl-eps').value)||0.045)/1e3;
+const Q=(parseFloat($('#fl-q').value)||100)/60000;
+const dz=parseFloat($('#fl-elev').value)||0;
+const Pin=(parseFloat($('#fl-pin').value)||500)*1e3;
+const V=Q/geo.A,Re=props.rho*V*geo.Dh/props.mu;
+const relR=eps/geo.Dh;
 let f;
-if(Re<2300){f=64/Re;}
-else{
-let fi=0.02;
-for(let i=0;i<50;i++){
-const rhs=-2*Math.log10(relR/3.7+2.51/(Re*Math.sqrt(fi)));
-fi=1/(rhs*rhs);
-}
-f=fi;
-}
-const hf=f*L/D*V*V/(2*9.81);
-const dpFric=f*L/D*props.rho*V*V/2;
-const nElb=parseInt($('#fl-elb').value)||0,nTee=parseInt($('#fl-tee').value)||0,nVal=parseInt($('#fl-val').value)||0;
-const Km=nElb*0.9+nTee*1.8+nVal*4.5;
+if(Re<2300){f=Re>0?64/Re:0.02;}
+else{let fi=0.02;for(let i=0;i<50;i++){const rhs=-2*Math.log10(relR/3.7+2.51/(Re*Math.sqrt(fi)));fi=1/(rhs*rhs);}f=fi;}
+const hf=f*L/geo.Dh*V*V/(2*9.81);
+const dpFric=f*L/geo.Dh*props.rho*V*V/2;
+const KF={elb:0.9,elb45:0.42,tee:1.8,'tee-run':0.4,vgate:0.15,vglobe:10,vcheck:2.5,vball:0.05,sexp:1.0,scon:0.5,ent:0.5,exit:1.0};
+let Km=0;
+['elb','elb45','tee','tee-run','vgate','vglobe','vcheck','vball','sexp','scon','ent','exit'].forEach(k=>{
+const n=parseInt($('#fl-'+k).value)||0;
+Km+=n*(KF[k]||0);
+});
 const dpMinor=Km*props.rho*V*V/2;
-const dpTotal=dpFric+dpMinor;
+const dpElev=props.rho*9.81*dz;
+const dpTotal=dpFric+dpMinor+dpElev;
+const Pout=Pin-dpTotal;
 const regime=Re<2300?'LAMINAR':Re<4000?'TRANSITION':'TURBULENT';
+const Qm3s=Q,Qgpm=Q*15850.32,Vm_s=V,Vfps=V*3.281;
+const pumpkW=dpTotal*Q/1e3;
+const pumpHP=pumpkW*1.341;
+const cavOk=Pout>props.Pvap;
+const NPSHa=(Pout-props.Pvap)/(props.rho*9.81);
 const el=$('#fl-results');
-el.innerHTML=`<h3>FLOW RESULTS</h3><div class="result-grid"><div class="result-item"><div class="lbl">REGIME</div><div class="val">${regime}</div></div><div class="result-item"><div class="lbl">REYNOLDS #</div><div class="val">${fmt(Re,0)}</div></div><div class="result-item"><div class="lbl">VELOCITY</div><div class="val">${fmt(V,3)} m/s</div></div><div class="result-item"><div class="lbl">FRICTION f</div><div class="val">${fmt(f,6)}</div></div><div class="result-item"><div class="lbl">HEAD LOSS</div><div class="val">${fmt(hf,2)} m</div></div><div class="result-item"><div class="lbl">ΔP FRICTION</div><div class="val">${fmt(dpFric/1e3,2)} kPa</div></div><div class="result-item"><div class="lbl">ΔP MINOR</div><div class="val">${fmt(dpMinor/1e3,2)} kPa</div></div><div class="result-item"><div class="lbl">ΔP TOTAL</div><div class="val">${fmt(dpTotal/1e3,2)} kPa</div></div><div class="result-item"><div class="lbl">ΔP (bar)</div><div class="val">${fmt(dpTotal/1e5,3)} bar</div></div><div class="result-item"><div class="lbl">ε/D</div><div class="val">${fmt(relR,6)}</div></div></div>${Re>2300&&Re<4000?'<p style="color:#ffd700;font-size:.75rem;margin-top:8px">⚠ TRANSITION ZONE — results approximate</p>':''}`;
+el.innerHTML=`<h3>FLOW RESULTS</h3><div class="result-grid">
+<div class="result-item"><div class="lbl">REGIME</div><div class="val">${regime}</div></div>
+<div class="result-item"><div class="lbl">REYNOLDS #</div><div class="val">${fmt(Re,0)}</div></div>
+<div class="result-item"><div class="lbl">VELOCITY</div><div class="val">${fmt(Vm_s,3)} m/s (${fmt(Vfps,2)} ft/s)</div></div>
+<div class="result-item"><div class="lbl">FLOW</div><div class="val">${fmt(Q*60000,2)} L/min (${fmt(Qgpm,2)} GPM)</div></div>
+<div class="result-item"><div class="lbl">CROSS-SEC AREA</div><div class="val">${fmt(geo.A*1e6,1)} mm² (${fmt(geo.A*1e4,4)} cm²)</div></div>
+<div class="result-item"><div class="lbl">HYDRAULIC Dh</div><div class="val">${fmt(geo.Dh*1e3,2)} mm</div></div>
+<div class="result-item"><div class="lbl">FRICTION f</div><div class="val">${fmt(f,6)}</div></div>
+<div class="result-item"><div class="lbl">ε/D</div><div class="val">${fmt(relR,6)}</div></div>
+<div class="result-item"><div class="lbl">HEAD LOSS</div><div class="val">${fmt(hf,2)} m</div></div>
+<div class="result-item"><div class="lbl">ΔP FRICTION</div><div class="val">${fmt(dpFric/1e3,2)} kPa</div></div>
+<div class="result-item"><div class="lbl">ΔP MINOR</div><div class="val">${fmt(dpMinor/1e3,2)} kPa</div></div>
+<div class="result-item"><div class="lbl">ΔP ELEVATION</div><div class="val">${fmt(dpElev/1e3,2)} kPa</div></div>
+<div class="result-item"><div class="lbl">ΔP TOTAL</div><div class="val">${fmt(dpTotal/1e3,2)} kPa (${fmt(dpTotal/1e5,3)} bar)</div></div>
+<div class="result-item"><div class="lbl">OUTLET PRESS</div><div class="val">${fmt(Pout/1e3,2)} kPa</div></div>
+<div class="result-item"><div class="lbl">PUMP POWER</div><div class="val">${fmt(pumpkW,3)} kW (${fmt(pumpHP,3)} HP)</div></div>
+<div class="result-item"><div class="lbl">NPSHa</div><div class="val">${fmt(NPSHa,2)} m</div></div>
+<div class="result-item"><div class="lbl">CAVITATION</div><div class="val" style="color:${cavOk?'var(--ok)':'var(--err)'}">${cavOk?'OK — ABOVE VAPOR':'⚠ RISK — BELOW Pvap'}</div></div>
+</div>${Re>2300&&Re<4000?'<p style="color:#ffd700;font-size:.75rem;margin-top:8px">⚠ TRANSITION ZONE — results approximate</p>':''}`;
+drawPipeXsec(geo);
+drawVelProfile(Re,V,geo);
 drawMoody(Re,f,relR);
 };
+function drawPipeXsec(geo){
+const cvs=$('#c-pipe-xsec');if(!cvs)return;
+const dpr=window.devicePixelRatio||1;
+const W=cvs.clientWidth,H=cvs.clientHeight;
+cvs.width=W*dpr;cvs.height=H*dpr;
+const ctx=cvs.getContext('2d');
+ctx.scale(dpr,dpr);
+ctx.clearRect(0,0,W,H);
+const cx=W/2,cy=H/2,sc=Math.min(W,H)*0.35;
+ctx.strokeStyle='#52d6f4';ctx.lineWidth=2;ctx.fillStyle='rgba(82,214,244,0.15)';
+if(geo.shape==='circ'){
+const r=sc;
+ctx.beginPath();ctx.arc(cx,cy,r,0,2*Math.PI);ctx.fill();ctx.stroke();
+const wt=(parseFloat($('#fl-wall').value)||3)/(parseFloat($('#fl-d').value)||50)*sc;
+ctx.strokeStyle='#7dd87d';ctx.beginPath();ctx.arc(cx,cy,r+wt,0,2*Math.PI);ctx.stroke();
+ctx.fillStyle='#b0b8c8';ctx.font='11px sans-serif';ctx.textAlign='center';
+ctx.fillText(`ID ${$('#fl-d').value}mm`,cx,cy+r+wt+14);
+}else if(geo.shape==='rect'){
+const rw=sc*1.4,rh=sc*0.7*geo.h/geo.w*2;
+ctx.fillRect(cx-rw,cy-rh,rw*2,rh*2);ctx.strokeRect(cx-rw,cy-rh,rw*2,rh*2);
+ctx.fillStyle='#b0b8c8';ctx.font='11px sans-serif';ctx.textAlign='center';
+ctx.fillText(`${$('#fl-rw').value}×${$('#fl-rh').value}mm`,cx,cy+rh+14);
+}else if(geo.shape==='annular'){
+const ro=sc,ri=sc*geo.Di/geo.Do;
+ctx.beginPath();ctx.arc(cx,cy,ro,0,2*Math.PI);ctx.fill();ctx.stroke();
+ctx.globalCompositeOperation='destination-out';
+ctx.beginPath();ctx.arc(cx,cy,ri,0,2*Math.PI);ctx.fill();
+ctx.globalCompositeOperation='source-over';
+ctx.strokeStyle='#ffd700';ctx.beginPath();ctx.arc(cx,cy,ri,0,2*Math.PI);ctx.stroke();
+ctx.fillStyle='#b0b8c8';ctx.font='11px sans-serif';ctx.textAlign='center';
+ctx.fillText(`OD ${$('#fl-do').value} / ID ${$('#fl-di').value}mm`,cx,cy+ro+14);
+}else if(geo.shape==='trap'){
+const bPx=sc*0.8,yPx=sc*0.6,zPx=bPx*geo.z*geo.y/geo.b;
+ctx.beginPath();
+ctx.moveTo(cx-bPx,cy+yPx);ctx.lineTo(cx+bPx,cy+yPx);
+ctx.lineTo(cx+bPx+zPx,cy-yPx);ctx.lineTo(cx-bPx-zPx,cy-yPx);
+ctx.closePath();ctx.fill();ctx.stroke();
+ctx.fillStyle='#b0b8c8';ctx.font='11px sans-serif';ctx.textAlign='center';
+ctx.fillText(`b=${$('#fl-tb').value}mm y=${$('#fl-td').value}mm`,cx,cy+yPx+14);
+}
+}
+function drawVelProfile(Re,Vmax,geo){
+const el=$('#c-vel-profile');if(!el)return;
+const n=80,rs=[],vs=[];
+for(let i=0;i<=n;i++){
+const r=-1+2*i/n;
+rs.push(r);
+if(Re<2300){vs.push(Vmax*2*(1-r*r));}
+else{const nn=Re<1e5?6.6:Re<1e6?7.0:8.0;vs.push(Vmax*(1+2/(nn+1)/(nn+2))*Math.pow(1-Math.abs(r),1/nn));}
+}
+Plotly.newPlot(el,[{x:vs,y:rs,mode:'lines',fill:'tozerox',fillcolor:'rgba(82,214,244,0.2)',line:{color:'#52d6f4',width:2},name:'Velocity'}],{paper_bgcolor:'transparent',plot_bgcolor:'transparent',font:{color:'#b0b8c8',size:9},margin:{t:10,r:10,b:35,l:55},xaxis:{title:'Velocity (m/s)',gridcolor:'#222'},yaxis:{title:'r/R',gridcolor:'#222',range:[-1,1]},showlegend:false},{responsive:true,displayModeBar:false});
+}
 function drawMoody(Re_pt,f_pt,ed_pt){
 const el=$('#c-moody');if(!el)return;
 const reRange=[];for(let e=3;e<=7;e+=0.05)reRange.push(Math.pow(10,e));
@@ -4068,6 +4285,244 @@ traces.push({x:reRange.filter(r=>r<2300),y:reRange.filter(r=>r<2300).map(r=>64/r
 traces.push({x:[Re_pt],y:[f_pt],name:'Operating Pt',mode:'markers',marker:{size:10,color:'#ff5e5b',symbol:'star'}});
 Plotly.newPlot(el,traces,{paper_bgcolor:'transparent',plot_bgcolor:'transparent',font:{color:'#b0b8c8',size:9},margin:{t:10,r:10,b:40,l:55},xaxis:{title:'Reynolds Number',type:'log',gridcolor:'#222',range:[3,7]},yaxis:{title:'Friction Factor f',type:'log',gridcolor:'#222',range:[-2.5,-0.7]},legend:{x:0.01,y:0.01,font:{size:8}},showlegend:true},{responsive:true,displayModeBar:false});
 }
+const EL_COMPS=[],EL_WIRES=[];
+let elSel=null,elPlacing=null,elDragComp=null,elDragOff={x:0,y:0};
+let elPan={x:0,y:0},elZoom=1,elGridSz=20;
+let elNextId=1;
+function elG(id){return EL_COMPS.find(c=>c.id===id);}
+const EL_DEFS={vsrc:{label:'V1',val:12,unit:'V',pins:2,w:40,h:60,draw:'vsrc'},isrc:{label:'I1',val:0.5,unit:'A',pins:2,w:40,h:60,draw:'isrc'},res:{label:'R1',val:1000,unit:'Ω',pins:2,w:60,h:20,draw:'res'},cap:{label:'C1',val:10e-6,unit:'F',pins:2,w:40,h:20,draw:'cap'},ind:{label:'L1',val:0.01,unit:'H',pins:2,w:60,h:20,draw:'ind'},diode:{label:'D1',val:0.7,unit:'Vf',pins:2,w:40,h:20,draw:'diode'},led:{label:'LED1',val:2.0,unit:'Vf',pins:2,w:40,h:20,draw:'led'},sw:{label:'SW1',val:1,unit:'',pins:2,w:50,h:20,draw:'sw'},wire:{label:'W',val:0,unit:'',pins:2,w:0,h:0,draw:'wire'},gnd:{label:'GND',val:0,unit:'',pins:1,w:20,h:30,draw:'gnd'}};
+window.elAddComp=function(type){elPlacing=type;const cvs=$('#c-circuit');if(cvs)cvs.style.cursor='copy';};
+window.elRotSel=function(){if(elSel){elSel.rot=(elSel.rot+90)%360;elDrawCircuit();}};
+window.elDelSel=function(){if(!elSel)return;const idx=EL_COMPS.indexOf(elSel);if(idx>=0)EL_COMPS.splice(idx,1);elSel=null;$('#el-comp-props').style.display='none';elDrawCircuit();};
+window.elClearAll=function(){EL_COMPS.length=0;EL_WIRES.length=0;elSel=null;$('#el-comp-props').style.display='none';elNextId=1;elDrawCircuit();};
+function elSnapGrid(v){return Math.round(v/elGridSz)*elGridSz;}
+function elInitCircuit(){
+const cvs=$('#c-circuit');if(!cvs)return;
+const dpr=window.devicePixelRatio||1;
+function resize(){cvs.width=cvs.clientWidth*dpr;cvs.height=cvs.clientHeight*dpr;elDrawCircuit();}
+resize();
+window.addEventListener('resize',resize);
+cvs.addEventListener('mousedown',function(e){
+const rect=cvs.getBoundingClientRect();
+const mx=(e.clientX-rect.left-elPan.x)/elZoom,my=(e.clientY-rect.top-elPan.y)/elZoom;
+if(elPlacing){
+const def=EL_DEFS[elPlacing];
+const comp={id:elNextId++,type:elPlacing,x:elSnapGrid(mx),y:elSnapGrid(my),rot:0,label:def.label.replace(/\d+/,elNextId-1),val:def.val,unit:def.unit};
+EL_COMPS.push(comp);
+elSel=comp;
+elPlacing=null;
+cvs.style.cursor='crosshair';
+elShowProps(comp);
+elDrawCircuit();
+return;
+}
+const hit=EL_COMPS.slice().reverse().find(c=>{
+const dx=mx-c.x,dy=my-c.y,def=EL_DEFS[c.type];
+const hw=(def.w||40)/2+10,hh=(def.h||40)/2+10;
+return Math.abs(dx)<hw&&Math.abs(dy)<hh;
+});
+if(hit){
+elSel=hit;elDragComp=hit;
+elDragOff={x:mx-hit.x,y:my-hit.y};
+elShowProps(hit);
+}else{elSel=null;$('#el-comp-props').style.display='none';}
+elDrawCircuit();
+});
+cvs.addEventListener('mousemove',function(e){
+if(!elDragComp)return;
+const rect=cvs.getBoundingClientRect();
+const mx=(e.clientX-rect.left-elPan.x)/elZoom,my=(e.clientY-rect.top-elPan.y)/elZoom;
+elDragComp.x=elSnapGrid(mx-elDragOff.x);
+elDragComp.y=elSnapGrid(my-elDragOff.y);
+elDrawCircuit();
+});
+cvs.addEventListener('mouseup',function(){elDragComp=null;});
+cvs.addEventListener('wheel',function(e){
+e.preventDefault();
+const d=e.deltaY>0?0.9:1.1;
+elZoom=Math.max(0.3,Math.min(3,elZoom*d));
+elDrawCircuit();
+},{passive:false});
+}
+function elShowProps(comp){
+const pp=$('#el-comp-props');pp.style.display='';
+$('#el-cp-type').value=comp.type.toUpperCase();
+$('#el-cp-label').value=comp.label;
+$('#el-cp-val').value=comp.val;
+$('#el-cp-unit').value=comp.unit;
+}
+window.elUpdateProp=function(){
+if(!elSel)return;
+elSel.label=$('#el-cp-label').value;
+elSel.val=parseFloat($('#el-cp-val').value)||0;
+elDrawCircuit();
+};
+function elDrawCircuit(){
+const cvs=$('#c-circuit');if(!cvs)return;
+const dpr=window.devicePixelRatio||1;
+const W=cvs.clientWidth,H=cvs.clientHeight;
+cvs.width=W*dpr;cvs.height=H*dpr;
+const ctx=cvs.getContext('2d');
+ctx.scale(dpr,dpr);
+ctx.clearRect(0,0,W,H);
+ctx.save();ctx.translate(elPan.x,elPan.y);ctx.scale(elZoom,elZoom);
+ctx.strokeStyle='#1a1a2e';ctx.lineWidth=0.5;
+for(let x=-2000;x<2000;x+=elGridSz){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,2000);ctx.stroke();}
+for(let y=-2000;y<2000;y+=elGridSz){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(2000,y);ctx.stroke();}
+EL_COMPS.forEach(c=>{
+const def=EL_DEFS[c.type];if(!def)return;
+ctx.save();ctx.translate(c.x,c.y);ctx.rotate(c.rot*Math.PI/180);
+const isSel=c===elSel;
+ctx.strokeStyle=isSel?'#ffd700':'#52d6f4';ctx.lineWidth=isSel?2.5:1.5;ctx.fillStyle='#b0b8c8';ctx.font='10px monospace';ctx.textAlign='center';
+elDrawComp(ctx,c.type,def);
+ctx.fillText(c.label,0,def.h/2+12);
+if(c.val&&c.unit){
+const vTxt=c.val>=1e6?fmt(c.val/1e6,2)+'M':c.val>=1e3?fmt(c.val/1e3,2)+'k':c.val<0.001&&c.val>0?fmt(c.val*1e6,1)+'µ':fmt(c.val,2);
+ctx.fillText(vTxt+c.unit,0,def.h/2+22);
+}
+ctx.restore();
+});
+ctx.restore();
+}
+function elDrawComp(ctx,type,def){
+const hw=def.w/2,hh=def.h/2;
+if(type==='res'){
+ctx.beginPath();ctx.moveTo(-hw-15,0);ctx.lineTo(-hw,0);
+for(let i=0;i<6;i++){ctx.lineTo(-hw+(i+0.25)*def.w/6,(i%2?-1:1)*hh);} ctx.lineTo(hw,0);ctx.lineTo(hw+15,0);ctx.stroke();
+ctx.beginPath();ctx.arc(-hw-15,0,3,0,2*Math.PI);ctx.arc(hw+15,0,3,0,2*Math.PI);ctx.fillStyle='#52d6f4';ctx.fill();
+}else if(type==='cap'){
+ctx.beginPath();ctx.moveTo(-hw-15,0);ctx.lineTo(-4,0);ctx.moveTo(4,0);ctx.lineTo(hw+15,0);ctx.stroke();
+ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(-4,-hh-5);ctx.lineTo(-4,hh+5);ctx.moveTo(4,-hh-5);ctx.lineTo(4,hh+5);ctx.stroke();ctx.lineWidth=1.5;
+ctx.beginPath();ctx.arc(-hw-15,0,3,0,2*Math.PI);ctx.arc(hw+15,0,3,0,2*Math.PI);ctx.fillStyle='#52d6f4';ctx.fill();
+}else if(type==='ind'){
+ctx.beginPath();ctx.moveTo(-hw-15,0);ctx.lineTo(-hw,0);ctx.stroke();
+for(let i=0;i<4;i++){const cx_=-hw+i*def.w/4+def.w/8;ctx.beginPath();ctx.arc(cx_,-3,def.w/8,Math.PI,0);ctx.stroke();}
+ctx.beginPath();ctx.moveTo(hw,0);ctx.lineTo(hw+15,0);ctx.stroke();
+ctx.beginPath();ctx.arc(-hw-15,0,3,0,2*Math.PI);ctx.arc(hw+15,0,3,0,2*Math.PI);ctx.fillStyle='#52d6f4';ctx.fill();
+}else if(type==='vsrc'||type==='isrc'){
+ctx.beginPath();ctx.arc(0,0,hw,0,2*Math.PI);ctx.stroke();
+ctx.beginPath();ctx.moveTo(0,-hh);ctx.lineTo(0,-hw);ctx.moveTo(0,hw);ctx.lineTo(0,hh);ctx.stroke();
+if(type==='vsrc'){ctx.fillText('+',0,-hw*0.5+3);ctx.fillText('−',0,hw*0.5+4);}
+else{ctx.beginPath();ctx.moveTo(0,-8);ctx.lineTo(0,8);ctx.moveTo(-4,4);ctx.lineTo(0,8);ctx.lineTo(4,4);ctx.stroke();}
+ctx.beginPath();ctx.arc(0,-hh,3,0,2*Math.PI);ctx.arc(0,hh,3,0,2*Math.PI);ctx.fillStyle='#52d6f4';ctx.fill();
+}else if(type==='diode'||type==='led'){
+ctx.beginPath();ctx.moveTo(-hw-15,0);ctx.lineTo(-10,0);ctx.moveTo(10,0);ctx.lineTo(hw+15,0);ctx.stroke();
+ctx.beginPath();ctx.moveTo(-10,-hh);ctx.lineTo(-10,hh);ctx.lineTo(10,0);ctx.closePath();ctx.stroke();
+ctx.beginPath();ctx.moveTo(10,-hh);ctx.lineTo(10,hh);ctx.stroke();
+if(type==='led'){ctx.beginPath();ctx.moveTo(6,-hh-4);ctx.lineTo(14,-hh-10);ctx.moveTo(12,-hh-2);ctx.lineTo(20,-hh-8);ctx.stroke();}
+ctx.beginPath();ctx.arc(-hw-15,0,3,0,2*Math.PI);ctx.arc(hw+15,0,3,0,2*Math.PI);ctx.fillStyle='#52d6f4';ctx.fill();
+}else if(type==='sw'){
+ctx.beginPath();ctx.moveTo(-hw-15,0);ctx.lineTo(-10,0);ctx.moveTo(10,0);ctx.lineTo(hw+15,0);ctx.stroke();
+ctx.beginPath();ctx.arc(-10,0,3,0,2*Math.PI);ctx.stroke();
+ctx.beginPath();ctx.moveTo(-7,0);ctx.lineTo(10,-12);ctx.stroke();
+ctx.beginPath();ctx.arc(-hw-15,0,3,0,2*Math.PI);ctx.arc(hw+15,0,3,0,2*Math.PI);ctx.fillStyle='#52d6f4';ctx.fill();
+}else if(type==='gnd'){
+ctx.beginPath();ctx.moveTo(0,-hh);ctx.lineTo(0,0);ctx.stroke();
+for(let i=0;i<3;i++){const w_=hw*(1-i*0.3),yy=i*6;ctx.beginPath();ctx.moveTo(-w_,yy);ctx.lineTo(w_,yy);ctx.stroke();}
+ctx.beginPath();ctx.arc(0,-hh,3,0,2*Math.PI);ctx.fillStyle='#52d6f4';ctx.fill();
+}else if(type==='wire'){
+ctx.beginPath();ctx.moveTo(-20,0);ctx.lineTo(20,0);ctx.stroke();
+}
+}
+window.elSolve=function(){
+const el=$('#el-results');
+if(EL_COMPS.length===0){el.innerHTML='<h3>CIRCUIT ANALYSIS</h3><p style="color:var(--err)">No components placed</p>';return;}
+const vsrcs=EL_COMPS.filter(c=>c.type==='vsrc');
+const isrcs=EL_COMPS.filter(c=>c.type==='isrc');
+const resistors=EL_COMPS.filter(c=>c.type==='res');
+const caps=EL_COMPS.filter(c=>c.type==='cap');
+const inds=EL_COMPS.filter(c=>c.type==='ind');
+const diodes=EL_COMPS.filter(c=>c.type==='diode'||c.type==='led');
+const switches=EL_COMPS.filter(c=>c.type==='sw');
+let totalV=vsrcs.reduce((s,c)=>s+c.val,0);
+let totalR=resistors.reduce((s,c)=>s+c.val,0);
+let totalI=isrcs.reduce((s,c)=>s+c.val,0);
+let Vf=diodes.reduce((s,c)=>s+c.val,0);
+let swOpen=switches.filter(c=>c.val===0).length;
+let html='<h3>CIRCUIT ANALYSIS</h3>';
+if(swOpen>0){
+html+=`<p style="color:var(--warn)">⚠ ${swOpen} switch(es) open — circuit broken</p>`;
+}else if(totalV>0&&totalR>0){
+const effV=totalV-Vf;
+const I_eff=effV/totalR;
+const P_total=I_eff*I_eff*totalR;
+html+='<div class="result-grid">';
+html+=`<div class="result-item"><div class="lbl">SOURCES</div><div class="val">${vsrcs.length} V-src (${fmt(totalV,2)}V), ${isrcs.length} I-src</div></div>`;
+html+=`<div class="result-item"><div class="lbl">TOTAL V</div><div class="val">${fmt(totalV,3)} V</div></div>`;
+html+=`<div class="result-item"><div class="lbl">DIODE DROPS</div><div class="val">${fmt(Vf,2)} V</div></div>`;
+html+=`<div class="result-item"><div class="lbl">EFFECTIVE V</div><div class="val">${fmt(effV,3)} V</div></div>`;
+html+=`<div class="result-item"><div class="lbl">TOTAL R (series)</div><div class="val">${fmt(totalR,2)} Ω</div></div>`;
+html+=`<div class="result-item"><div class="lbl">CURRENT</div><div class="val">${fmt(I_eff*1e3,3)} mA (${fmt(I_eff,6)} A)</div></div>`;
+html+=`<div class="result-item"><div class="lbl">POWER DISSIPATED</div><div class="val">${fmt(P_total*1e3,3)} mW</div></div>`;
+html+='</div>';
+html+='<h3 style="margin-top:1rem">PER-COMPONENT</h3><div class="result-grid">';
+resistors.forEach(c=>{
+const Vr=I_eff*c.val,Pr=I_eff*I_eff*c.val;
+html+=`<div class="result-item"><div class="lbl">${c.label}</div><div class="val">${fmt(c.val,0)}Ω → ${fmt(Vr,3)}V, ${fmt(Pr*1e3,3)}mW</div></div>`;
+});
+diodes.forEach(c=>{
+html+=`<div class="result-item"><div class="lbl">${c.label}</div><div class="val">Vf=${fmt(c.val,2)}V, ${fmt(I_eff*c.val*1e3,3)}mW</div></div>`;
+});
+if(caps.length>0){
+const totalC=caps.reduce((s,c)=>s+c.val,0);
+html+=`<div class="result-item"><div class="lbl">CAPACITANCE</div><div class="val">${fmt(totalC*1e6,3)} µF (series sum)</div></div>`;
+const tau=totalR*totalC;
+html+=`<div class="result-item"><div class="lbl">TIME CONST τ</div><div class="val">${fmt(tau*1e3,3)} ms</div></div>`;
+}
+if(inds.length>0){
+const totalL=inds.reduce((s,c)=>s+c.val,0);
+html+=`<div class="result-item"><div class="lbl">INDUCTANCE</div><div class="val">${fmt(totalL*1e3,3)} mH (series sum)</div></div>`;
+const tauL=totalL/totalR;
+html+=`<div class="result-item"><div class="lbl">TIME CONST τ</div><div class="val">${fmt(tauL*1e6,3)} µs</div></div>`;
+}
+html+='</div>';
+}else if(totalI>0&&totalR>0){
+const V_drop=totalI*totalR;
+html+='<div class="result-grid">';
+html+=`<div class="result-item"><div class="lbl">CURRENT SRC</div><div class="val">${fmt(totalI,4)} A</div></div>`;
+html+=`<div class="result-item"><div class="lbl">TOTAL R</div><div class="val">${fmt(totalR,2)} Ω</div></div>`;
+html+=`<div class="result-item"><div class="lbl">VOLTAGE DROP</div><div class="val">${fmt(V_drop,3)} V</div></div>`;
+html+=`<div class="result-item"><div class="lbl">POWER</div><div class="val">${fmt(totalI*V_drop,4)} W</div></div>`;
+html+='</div>';
+}else{
+html+='<p style="font-size:.75rem;color:var(--dim)">Add voltage/current sources + resistors to analyze</p>';
+html+='<div class="result-grid">';
+html+=`<div class="result-item"><div class="lbl">COMPONENTS</div><div class="val">${EL_COMPS.length}</div></div>`;
+EL_COMPS.forEach(c=>{html+=`<div class="result-item"><div class="lbl">${c.label}</div><div class="val">${c.type.toUpperCase()} = ${c.val} ${c.unit}</div></div>`;});
+html+='</div>';
+}
+el.innerHTML=html;
+};
+window.elExportSVG=function(){
+if(EL_COMPS.length===0){alert('No circuit to export');return;}
+let svg='<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" style="background:#0a0a1a">';
+svg+='<style>line,circle,path,polyline,rect{stroke:#52d6f4;fill:none;stroke-width:1.5}text{fill:#b0b8c8;font:10px monospace;text-anchor:middle}</style>';
+EL_COMPS.forEach(c=>{
+const def=EL_DEFS[c.type];
+svg+=`<g transform="translate(${c.x},${c.y}) rotate(${c.rot})">`;
+if(c.type==='res'){svg+=`<line x1="-45" y1="0" x2="45" y2="0"/><polyline points="-30,-8 -20,8 -10,-8 0,8 10,-8 20,8 30,0"/>`;}
+else if(c.type==='vsrc'){svg+=`<circle cx="0" cy="0" r="20"/><line x1="0" y1="-30" x2="0" y2="-20"/><line x1="0" y1="20" x2="0" y2="30"/><text y="-8">+</text><text y="12">−</text>`;}
+else if(c.type==='cap'){svg+=`<line x1="-35" y1="0" x2="-4" y2="0"/><line x1="4" y1="0" x2="35" y2="0"/><line x1="-4" y1="-12" x2="-4" y2="12" stroke-width="2.5"/><line x1="4" y1="-12" x2="4" y2="12" stroke-width="2.5"/>`;}
+else if(c.type==='gnd'){svg+=`<line x1="0" y1="-15" x2="0" y2="0"/><line x1="-10" y1="0" x2="10" y2="0"/><line x1="-6" y1="6" x2="6" y2="6"/><line x1="-3" y1="12" x2="3" y2="12"/>`;}
+svg+=`<text y="${(def.h||20)/2+12}">${c.label}</text>`;
+svg+='</g>';
+});
+svg+='</svg>';
+const blob=new Blob([svg],{type:'image/svg+xml'});
+const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='circuit.svg';a.click();URL.revokeObjectURL(a.href);
+};
+window.elLoadExample=function(){
+elClearAll();
+const comps=[
+{type:'vsrc',x:100,y:200,rot:0,label:'V1',val:12,unit:'V'},
+{type:'res',x:250,y:100,rot:0,label:'R1',val:1000,unit:'Ω'},
+{type:'res',x:400,y:200,rot:90,label:'R2',val:2200,unit:'Ω'},
+{type:'led',x:250,y:300,rot:0,label:'LED1',val:2.0,unit:'Vf'},
+{type:'gnd',x:100,y:350,rot:0,label:'GND',val:0,unit:''}
+];
+comps.forEach(c=>{c.id=elNextId++;EL_COMPS.push(c);});
+elDrawCircuit();
+};
 function updateElecUI(){
 const mode=$('#el-mode').value;
 ['dc','ac','wire','motor','xfmr'].forEach(m=>{
@@ -4077,14 +4532,14 @@ calcElec();
 }
 window.updateElecUI=updateElecUI;
 window.calcElec=function(){
-const mode=$('#el-mode').value,el=$('#el-results');
-let html='<h3>ELECTRICAL RESULTS</h3><div class="result-grid">';
+const mode=$('#el-mode').value,el=$('#el-quick-results')||$('#el-results');
+let html='<div class="result-grid">';
 if(mode==='dc'){
 const V=parseFloat($('#el-v').value),R=parseFloat($('#el-r').value);
 const I_=V&&R?V/R:parseFloat($('#el-i').value)||0;
 const P_=V?V*I_:0;
 const E_kwh=P_*8/1000;
-html+=`<div class="result-item"><div class="lbl">VOLTAGE</div><div class="val">${fmt(V||I_*(R||1),3)} V</div></div><div class="result-item"><div class="lbl">CURRENT</div><div class="val">${fmt(I_,4)} A</div></div><div class="result-item"><div class="lbl">RESISTANCE</div><div class="val">${fmt(R||1,2)} Ω</div></div><div class="result-item"><div class="lbl">POWER</div><div class="val">${fmt(P_,3)} W</div></div><div class="result-item"><div class="lbl">ENERGY (8h)</div><div class="val">${fmt(E_kwh,3)} kWh</div></div>`;
+html+=`<div class="result-item"><div class="lbl">V</div><div class="val">${fmt(V||I_*(R||1),3)} V</div></div><div class="result-item"><div class="lbl">I</div><div class="val">${fmt(I_,4)} A</div></div><div class="result-item"><div class="lbl">R</div><div class="val">${fmt(R||1,2)} Ω</div></div><div class="result-item"><div class="lbl">P</div><div class="val">${fmt(P_,3)} W</div></div><div class="result-item"><div class="lbl">E(8h)</div><div class="val">${fmt(E_kwh,3)} kWh</div></div>`;
 }else if(mode==='ac'){
 const f=parseFloat($('#el-freq').value)||60,Vac=parseFloat($('#el-vac').value)||120;
 const R=parseFloat($('#el-rac').value)||0,L=(parseFloat($('#el-lac').value)||0)/1e3,C_=(parseFloat($('#el-cac').value)||0)/1e6;
@@ -4092,35 +4547,31 @@ const w=2*Math.PI*f,XL=w*L,XC=C_>0?1/(w*C_):0;
 const Z=Math.sqrt(R*R+(XL-XC)*(XL-XC)),phi=Math.atan2(XL-XC,R)*180/Math.PI;
 const I_=Vac/Z,P_=Vac*I_*Math.cos(phi*Math.PI/180),Q_=Vac*I_*Math.sin(phi*Math.PI/180),S_=Vac*I_;
 const fRes=L>0&&C_>0?1/(2*Math.PI*Math.sqrt(L*C_)):0;
-const PF=Math.cos(phi*Math.PI/180);
-html+=`<div class="result-item"><div class="lbl">IMPEDANCE |Z|</div><div class="val">${fmt(Z,3)} Ω</div></div><div class="result-item"><div class="lbl">PHASE ANGLE</div><div class="val">${fmt(phi,2)}°</div></div><div class="result-item"><div class="lbl">XL (INDUCTIVE)</div><div class="val">${fmt(XL,3)} Ω</div></div><div class="result-item"><div class="lbl">XC (CAPACITIVE)</div><div class="val">${fmt(XC,3)} Ω</div></div><div class="result-item"><div class="lbl">CURRENT</div><div class="val">${fmt(I_,4)} A</div></div><div class="result-item"><div class="lbl">REAL POWER P</div><div class="val">${fmt(P_,2)} W</div></div><div class="result-item"><div class="lbl">REACTIVE Q</div><div class="val">${fmt(Q_,2)} VAR</div></div><div class="result-item"><div class="lbl">APPARENT S</div><div class="val">${fmt(S_,2)} VA</div></div><div class="result-item"><div class="lbl">POWER FACTOR</div><div class="val">${fmt(PF,4)}</div></div>${fRes>0?`<div class="result-item"><div class="lbl">RESONANT FREQ</div><div class="val">${fmt(fRes,2)} Hz</div></div>`:''}`;
+html+=`<div class="result-item"><div class="lbl">|Z|</div><div class="val">${fmt(Z,3)} Ω</div></div><div class="result-item"><div class="lbl">φ</div><div class="val">${fmt(phi,2)}°</div></div><div class="result-item"><div class="lbl">I</div><div class="val">${fmt(I_,4)} A</div></div><div class="result-item"><div class="lbl">P</div><div class="val">${fmt(P_,2)} W</div></div><div class="result-item"><div class="lbl">Q</div><div class="val">${fmt(Q_,2)} VAR</div></div><div class="result-item"><div class="lbl">PF</div><div class="val">${fmt(Math.cos(phi*Math.PI/180),4)}</div></div>${fRes>0?`<div class="result-item"><div class="lbl">f₀</div><div class="val">${fmt(fRes,2)} Hz</div></div>`:''}`;
 }else if(mode==='wire'){
 const I_=parseFloat($('#el-wi').value)||20,L_=parseFloat($('#el-wl').value)||30;
 const V_=parseFloat($('#el-wv').value)||240,maxDrop=(parseFloat($('#el-wd').value)||3)/100;
 const mat=$('#el-wm').value,rho_=mat==='cu'?1.724e-8:2.65e-8;
-const Rmax=maxDrop*V_/I_,Amin=rho_*2*L_/Rmax;
-const dMin=Math.sqrt(4*Amin/Math.PI)*1e3;
+const Rmax=maxDrop*V_/I_,Amin=rho_*2*L_/Rmax,dMin=Math.sqrt(4*Amin/Math.PI)*1e3;
 const awgSizes=[{awg:14,d:1.628},{awg:12,d:2.053},{awg:10,d:2.588},{awg:8,d:3.264},{awg:6,d:4.115},{awg:4,d:5.189},{awg:2,d:6.544},{awg:1,d:7.348},{awg:'1/0',d:8.252},{awg:'2/0',d:9.266},{awg:'3/0',d:10.404},{awg:'4/0',d:11.684}];
 const rec=awgSizes.find(s=>s.d>=dMin)||awgSizes[awgSizes.length-1];
 const Aact=Math.PI*Math.pow(rec.d/1e3,2)/4,Ract=rho_*2*L_/Aact,vDrop=I_*Ract;
-html+=`<div class="result-item"><div class="lbl">MIN AREA</div><div class="val">${fmt(Amin*1e6,3)} mm²</div></div><div class="result-item"><div class="lbl">MIN DIA</div><div class="val">${fmt(dMin,2)} mm</div></div><div class="result-item"><div class="lbl">REC. AWG</div><div class="val">#${rec.awg} (${fmt(rec.d,2)} mm)</div></div><div class="result-item"><div class="lbl">V DROP</div><div class="val">${fmt(vDrop,2)} V (${fmt(vDrop/V_*100,2)}%)</div></div><div class="result-item"><div class="lbl">WIRE R</div><div class="val">${fmt(Ract,4)} Ω</div></div><div class="result-item"><div class="lbl">POWER LOSS</div><div class="val">${fmt(I_*I_*Ract,2)} W</div></div>`;
+html+=`<div class="result-item"><div class="lbl">A min</div><div class="val">${fmt(Amin*1e6,3)} mm²</div></div><div class="result-item"><div class="lbl">AWG</div><div class="val">#${rec.awg}</div></div><div class="result-item"><div class="lbl">V drop</div><div class="val">${fmt(vDrop,2)}V (${fmt(vDrop/V_*100,2)}%)</div></div><div class="result-item"><div class="lbl">P loss</div><div class="val">${fmt(I_*I_*Ract,2)} W</div></div>`;
 }else if(mode==='motor'){
 const P_kw=parseFloat($('#el-mp').value)||7.5,V_=parseFloat($('#el-mv').value)||400;
 const eff=(parseFloat($('#el-me').value)||90)/100,pf=parseFloat($('#el-mpf').value)||0.85;
-const ph=parseInt($('#el-mph').value)||3;
-const P_in=P_kw/eff,S_=P_in/pf;
+const ph=parseInt($('#el-mph').value)||3,P_in=P_kw/eff,S_=P_in/pf;
 const I_=ph===3?S_*1e3/(Math.sqrt(3)*V_):S_*1e3/V_;
-const T_=P_kw*1e3*60/(2*Math.PI*1500);
-html+=`<div class="result-item"><div class="lbl">INPUT POWER</div><div class="val">${fmt(P_in,3)} kW</div></div><div class="result-item"><div class="lbl">APPARENT PWR</div><div class="val">${fmt(S_,3)} kVA</div></div><div class="result-item"><div class="lbl">LINE CURRENT</div><div class="val">${fmt(I_,2)} A</div></div><div class="result-item"><div class="lbl">TORQUE @1500</div><div class="val">${fmt(T_,2)} Nm</div></div><div class="result-item"><div class="lbl">LOSSES</div><div class="val">${fmt((P_in-P_kw)*1e3,1)} W</div></div>`;
+html+=`<div class="result-item"><div class="lbl">Pin</div><div class="val">${fmt(P_in,3)} kW</div></div><div class="result-item"><div class="lbl">S</div><div class="val">${fmt(S_,3)} kVA</div></div><div class="result-item"><div class="lbl">I</div><div class="val">${fmt(I_,2)} A</div></div><div class="result-item"><div class="lbl">Loss</div><div class="val">${fmt((P_in-P_kw)*1e3,1)} W</div></div>`;
 }else if(mode==='transformer'){
 const Vp=parseFloat($('#el-tp').value)||480,Vs=parseFloat($('#el-ts').value)||120;
 const kva=parseFloat($('#el-tkva').value)||50,eff=(parseFloat($('#el-te').value)||98)/100;
 const ratio=Vp/Vs,Ip=kva*1e3/Vp,Is=kva*1e3/Vs;
-const losses=kva*(1-eff);
-html+=`<div class="result-item"><div class="lbl">TURNS RATIO</div><div class="val">${fmt(ratio,3)}</div></div><div class="result-item"><div class="lbl">PRIMARY I</div><div class="val">${fmt(Ip,2)} A</div></div><div class="result-item"><div class="lbl">SECONDARY I</div><div class="val">${fmt(Is,2)} A</div></div><div class="result-item"><div class="lbl">LOSSES</div><div class="val">${fmt(losses,3)} kW</div></div><div class="result-item"><div class="lbl">FULL LOAD S</div><div class="val">${fmt(kva,1)} kVA</div></div>`;
+html+=`<div class="result-item"><div class="lbl">Ratio</div><div class="val">${fmt(ratio,3)}</div></div><div class="result-item"><div class="lbl">Ip</div><div class="val">${fmt(Ip,2)} A</div></div><div class="result-item"><div class="lbl">Is</div><div class="val">${fmt(Is,2)} A</div></div><div class="result-item"><div class="lbl">Loss</div><div class="val">${fmt(kva*(1-eff),3)} kW</div></div>`;
 }
 html+='</div>';el.innerHTML=html;
 };
+setTimeout(elInitCircuit,100);
 </script>
 </body>
 </html>
