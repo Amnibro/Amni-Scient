@@ -458,6 +458,27 @@
   .tut-btn:hover{background:#16a085;}
   .tut-trigger{padding:4px 12px;border-radius:12px;border:1px solid #888;background:transparent;color:#888;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:0.75rem;transition:0.2s;margin-left:6px;}
   .tut-trigger:hover{border-color:#1abc9c;color:#1abc9c;}
+  .mot-arena{position:relative;width:min(90vw,450px);height:min(90vw,450px);background:#0a1520;border:2px solid #1abc9c;border-radius:12px;overflow:hidden;touch-action:none;}
+  .mot-dot{position:absolute;width:28px;height:28px;border-radius:50%;transition:background 0.3s;cursor:pointer;transform:translate(-50%,-50%);z-index:2;}
+  .mot-dot.target{background:#e74c3c;box-shadow:0 0 10px #e74c3c;}
+  .mot-dot.normal{background:#3498db;}
+  .mot-dot.hidden{background:#3498db;}
+  .mot-dot.picked{outline:3px solid #f1c40f;outline-offset:2px;}
+  .pv-focus{width:80px;height:80px;background:#1abc9c;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:bold;font-family:'JetBrains Mono',monospace;color:#0a1a2a;position:relative;z-index:3;}
+  .pv-ring{position:relative;width:min(90vw,420px);height:min(90vw,420px);border:2px dashed rgba(26,188,156,0.3);border-radius:50%;display:flex;align-items:center;justify-content:center;}
+  .pv-flash{position:absolute;width:36px;height:36px;border-radius:50%;background:#f1c40f;opacity:0;transition:opacity 0.1s;}
+  .vs-field{display:grid;gap:3px;max-width:min(90vw,500px);width:100%;}
+  .vs-item{display:flex;align-items:center;justify-content:center;font-size:clamp(1rem,3vw,1.6rem);cursor:pointer;aspect-ratio:1;background:#1a2a3a;border-radius:6px;border:1px solid #2a3a4a;transition:0.15s;user-select:none;}
+  .vs-item:hover{background:#2a3a4a;}
+  .vs-item.found{background:rgba(46,204,113,0.3);border-color:#2ecc71;}
+  .mr-shapes{display:flex;gap:clamp(15px,4vw,40px);justify-content:center;align-items:center;flex-wrap:wrap;}
+  .mr-shape{background:#1a2a3a;border:2px solid #2a3a4a;border-radius:12px;padding:12px;display:flex;align-items:center;justify-content:center;}
+  .mr-shape canvas{border-radius:8px;}
+  .mr-choices{display:flex;gap:12px;justify-content:center;margin-top:16px;}
+  .mr-btn{padding:12px 32px;border-radius:12px;border:2px solid;font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:bold;cursor:pointer;background:transparent;transition:0.2s;}
+  .mr-btn.same{border-color:#2ecc71;color:#2ecc71;}.mr-btn.same:hover{background:rgba(46,204,113,0.2);}
+  .mr-btn.mirror{border-color:#e74c3c;color:#e74c3c;}.mr-btn.mirror:hover{background:rgba(231,76,60,0.2);}
+  .tm-canvas{background:#0a1520;border:2px solid #1abc9c;border-radius:12px;cursor:pointer;touch-action:none;}
 </style>
 </head>
 <body>
@@ -541,19 +562,39 @@
         </div>
       </section>
       <section class="game-category" id="brain-section" style="display:none;">
-        <h2 class="cat-header"><span class="cat-header-icon">🧠</span> Adult Brain Exercise</h2>
+        <h2 class="cat-header"><span class="cat-header-icon">🧠</span> Memory &amp; Focus</h2>
+        <div class="cat-games">
+          <button class="game-btn brain" data-game="cardpairs"><span class="btn-icon">🃏</span><span class="btn-text">Card Pairs</span><span class="btn-desc">Memory concentration</span></button>
+          <button class="game-btn brain" data-game="nummem"><span class="btn-icon">🔢</span><span class="btn-text">Number Memory</span><span class="btn-desc">How many digits?</span></button>
+          <button class="game-btn brain" data-game="nback"><span class="btn-icon">🧠</span><span class="btn-text">N-Back</span><span class="btn-desc">Working memory</span></button>
+          <button class="game-btn brain" data-game="chimp"><span class="btn-icon">🐵</span><span class="btn-text">Chimp Test</span><span class="btn-desc">Beat the chimps!</span></button>
+        </div>
+      </section>
+      <section class="game-category brain-cat" id="brain-section-2" style="display:none;">
+        <h2 class="cat-header"><span class="cat-header-icon">⚡</span> Speed &amp; Reflexes</h2>
+        <div class="cat-games">
+          <button class="game-btn brain" data-game="reaction"><span class="btn-icon">⚡</span><span class="btn-text">Reaction Time</span><span class="btn-desc">Test your reflexes</span></button>
+          <button class="game-btn brain" data-game="speedmath"><span class="btn-icon">🔥</span><span class="btn-text">Speed Math</span><span class="btn-desc">Mental arithmetic blitz</span></button>
+          <button class="game-btn brain" data-game="stroop"><span class="btn-icon">🎨</span><span class="btn-text">Stroop Test</span><span class="btn-desc">Color vs word</span></button>
+        </div>
+      </section>
+      <section class="game-category brain-cat" id="brain-section-3" style="display:none;">
+        <h2 class="cat-header"><span class="cat-header-icon">🧩</span> Logic &amp; Language</h2>
         <div class="cat-games">
           <button class="game-btn brain" data-game="sudoku"><span class="btn-icon">🔢</span><span class="btn-text">Sudoku</span><span class="btn-desc">Classic 9×9 number puzzle</span></button>
-          <button class="game-btn brain" data-game="cardpairs"><span class="btn-icon">🃏</span><span class="btn-text">Card Pairs</span><span class="btn-desc">Memory concentration</span></button>
-          <button class="game-btn brain" data-game="speedmath"><span class="btn-icon">⚡</span><span class="btn-text">Speed Math</span><span class="btn-desc">Mental arithmetic blitz</span></button>
-          <button class="game-btn brain" data-game="wordsearch"><span class="btn-icon">🔍</span><span class="btn-text">Word Search</span><span class="btn-desc">Find hidden words</span></button>
           <button class="game-btn brain" data-game="logic"><span class="btn-icon">🧩</span><span class="btn-text">Logic Puzzles</span><span class="btn-desc">Teasers & riddles</span></button>
-          <button class="game-btn brain" data-game="nummem"><span class="btn-icon">🔢</span><span class="btn-text">Number Memory</span><span class="btn-desc">How many digits?</span></button>
-          <button class="game-btn brain" data-game="stroop"><span class="btn-icon">🎨</span><span class="btn-text">Stroop Test</span><span class="btn-desc">Color vs word</span></button>
-          <button class="game-btn brain" data-game="reaction"><span class="btn-icon">⚡</span><span class="btn-text">Reaction Time</span><span class="btn-desc">Test your reflexes</span></button>
-          <button class="game-btn brain" data-game="nback"><span class="btn-icon">🧠</span><span class="btn-text">N-Back</span><span class="btn-desc">Working memory</span></button>
           <button class="game-btn brain" data-game="anagram"><span class="btn-icon">🔤</span><span class="btn-text">Anagrams</span><span class="btn-desc">Unscramble words</span></button>
-          <button class="game-btn brain" data-game="chimp"><span class="btn-icon">🐵</span><span class="btn-text">Chimp Test</span><span class="btn-desc">Beat the chimps!</span></button>
+          <button class="game-btn brain" data-game="wordsearch"><span class="btn-icon">🔍</span><span class="btn-text">Word Search</span><span class="btn-desc">Find hidden words</span></button>
+        </div>
+      </section>
+      <section class="game-category brain-cat" id="brain-section-4" style="display:none;">
+        <h2 class="cat-header"><span class="cat-header-icon">🎯</span> Visual &amp; Spatial</h2>
+        <div class="cat-games">
+          <button class="game-btn brain" data-game="dottrack"><span class="btn-icon">👁️</span><span class="btn-text">Dot Tracking</span><span class="btn-desc">Track moving targets</span></button>
+          <button class="game-btn brain" data-game="peripheral"><span class="btn-icon">🔭</span><span class="btn-text">Peripheral Vision</span><span class="btn-desc">Spot the edge flash</span></button>
+          <button class="game-btn brain" data-game="visualsearch"><span class="btn-icon">🎯</span><span class="btn-text">Visual Scan</span><span class="btn-desc">Find the target fast</span></button>
+          <button class="game-btn brain" data-game="mentalrot"><span class="btn-icon">🔄</span><span class="btn-text">Mental Rotation</span><span class="btn-desc">Same shape or mirror?</span></button>
+          <button class="game-btn brain" data-game="trailmake"><span class="btn-icon">🔗</span><span class="btn-text">Trail Making</span><span class="btn-desc">Connect in order</span></button>
         </div>
       </section>
     </div>
@@ -749,6 +790,31 @@
     <div class="game-hud" id="chm-hud"></div>
     <div id="chm-container" style="display:flex;flex-direction:column;align-items:center;gap:10px;width:100%"></div>
   </div>
+  <div id="dottrack-view" class="view">
+    <div class="life-title" style="color:#1abc9c">👁️ Dot Tracking <button class="tut-trigger" onclick="showTutorial('dottrack')">? How to Play</button></div>
+    <div class="game-hud" id="mot-hud"></div>
+    <div id="mot-container" style="display:flex;flex-direction:column;align-items:center;gap:10px;width:100%"></div>
+  </div>
+  <div id="peripheral-view" class="view">
+    <div class="life-title" style="color:#1abc9c">🔭 Peripheral Vision <button class="tut-trigger" onclick="showTutorial('peripheral')">? How to Play</button></div>
+    <div class="game-hud" id="pv-hud"></div>
+    <div id="pv-container" style="display:flex;flex-direction:column;align-items:center;gap:10px;width:100%"></div>
+  </div>
+  <div id="visualsearch-view" class="view">
+    <div class="life-title" style="color:#1abc9c">🎯 Visual Scan <button class="tut-trigger" onclick="showTutorial('visualsearch')">? How to Play</button></div>
+    <div class="game-hud" id="vs-hud"></div>
+    <div id="vs-container" style="display:flex;flex-direction:column;align-items:center;gap:10px;width:100%"></div>
+  </div>
+  <div id="mentalrot-view" class="view">
+    <div class="life-title" style="color:#1abc9c">🔄 Mental Rotation <button class="tut-trigger" onclick="showTutorial('mentalrot')">? How to Play</button></div>
+    <div class="game-hud" id="mr-hud"></div>
+    <div id="mr-container" style="display:flex;flex-direction:column;align-items:center;gap:10px;width:100%"></div>
+  </div>
+  <div id="trailmake-view" class="view">
+    <div class="life-title" style="color:#1abc9c">🔗 Trail Making <button class="tut-trigger" onclick="showTutorial('trailmake')">? How to Play</button></div>
+    <div class="game-hud" id="tm-hud"></div>
+    <div id="tm-container" style="display:flex;flex-direction:column;align-items:center;gap:10px;width:100%"></div>
+  </div>
   <div id="feedback">Great Job!</div>
   <canvas id="confetti-canvas"></canvas>
 </div>
@@ -783,7 +849,12 @@
     reaction: $$('#reaction-view'),
     nback: $$('#nback-view'),
     anagram: $$('#anagram-view'),
-    chimp: $$('#chimp-view')
+    chimp: $$('#chimp-view'),
+    dottrack: $$('#dottrack-view'),
+    peripheral: $$('#peripheral-view'),
+    visualsearch: $$('#visualsearch-view'),
+    mentalrot: $$('#mentalrot-view'),
+    trailmake: $$('#trailmake-view')
   };
   let currentGame = null;
   let currentSubgame = null;
@@ -791,7 +862,7 @@
   let currentLevel=parseInt(urlParams.get('level'))||1;currentLevel=(currentLevel<1||currentLevel>6)?1:currentLevel;$$('#main-game-grid').classList.add('mode-'+Math.min(currentLevel,3));
   const _lc={1:'#2ecc71',2:'#f1c40f',3:'#e67e22',4:'#e74c3c',5:'#9b59b6',6:'#1abc9c'},_ln={1:'PRE-K GAMES',2:'GRADES K-2',3:'GRADES 3-5',4:'MIDDLE SCHOOL',5:'STEM CHALLENGE',6:'BRAIN EXERCISE'},_ac=_lc[currentLevel];
   $$('.menu-title').textContent=_ln[currentLevel];$$('.menu-title').style.color=_ac;$$('.menu-title').style.textShadow=`0 0 15px ${_ac}`;$$('#nav-back').style.borderColor=_ac;$$('#nav-back').style.color=_ac;$$('#fs-btn').style.borderColor=_ac;$$('#fs-btn').style.color=_ac;$$('.top-bar').children[1].style.color=_ac;$$('#menu-view').style.background=`radial-gradient(ellipse at 50% 30%,${_ac}12 0%,#0c0f12 60%)`;$$all('.cat-header').forEach(h=>h.style.borderBottomColor=_ac+'30');
-  currentLevel===1?$$all('[data-subgame="money"],[data-subgame="clock"]').forEach(el=>el?el.style.display='none':0):0;currentLevel>=4&&currentLevel!==6?($$('#stem-section').style.display='block',$$all('[data-subgame="vacuum"],[data-subgame="dishes"],[data-subgame="clock"],.tracing,.matching').forEach(el=>el?el.style.display='none':0)):0;currentLevel===6?($$all('.game-category:not(#brain-section)').forEach(c=>c.style.display='none'),$$('#brain-section').style.display='block'):0;
+  currentLevel===1?$$all('[data-subgame="money"],[data-subgame="clock"]').forEach(el=>el?el.style.display='none':0):0;currentLevel>=4&&currentLevel!==6?($$('#stem-section').style.display='block',$$all('[data-subgame="vacuum"],[data-subgame="dishes"],[data-subgame="clock"],.tracing,.matching').forEach(el=>el?el.style.display='none':0)):0;currentLevel===6?($$all('.game-category:not(#brain-section):not(.brain-cat)').forEach(c=>c.style.display='none'),$$('#brain-section').style.display='block',$$all('.brain-cat').forEach(c=>c.style.display='block')):0;
   let sessionScore = parseInt(sessionStorage.getItem('amni-learn-score')||'0');
   let currentStreak = parseInt(sessionStorage.getItem('amni-learn-streak')||'0');
   let bestStreak = parseInt(sessionStorage.getItem('amni-learn-best')||'0');
@@ -862,6 +933,10 @@
       if(window._stpTimer){clearInterval(window._stpTimer);window._stpTimer=null;}
       if(window._nmmTimeout){clearTimeout(window._nmmTimeout);window._nmmTimeout=null;}
       if(window._rxtTimeout){clearTimeout(window._rxtTimeout);window._rxtTimeout=null;}
+      if(window._motAnim){cancelAnimationFrame(window._motAnim);window._motAnim=null;}
+      if(window._pvTimer){clearInterval(window._pvTimer);window._pvTimer=null;}
+      if(window._vsTimer){clearInterval(window._vsTimer);window._vsTimer=null;}
+      if(window._tmTimer){clearInterval(window._tmTimer);window._tmTimer=null;}
     } else {
       window.location.href = '../amni-learn.html';
     }
@@ -905,6 +980,11 @@
       if(game === 'nback') initNBack();
       if(game === 'anagram') initAnagram();
       if(game === 'chimp') initChimp();
+      if(game === 'dottrack') initDotTrack();
+      if(game === 'peripheral') initPeripheral();
+      if(game === 'visualsearch') initVisualSearch();
+      if(game === 'mentalrot') initMentalRot();
+      if(game === 'trailmake') initTrailMake();
     });
   });
   function showView(viewId) {
@@ -3407,6 +3487,234 @@ function playAnimalSound(type) {
     function play(){const gSz=Math.max(5,Math.ceil(Math.sqrt(sz*3)));const total=gSz*gSz;const positions=Array.from({length:total},(_,i)=>i).sort(()=>Math.random()-0.5).slice(0,sz);const numMap={};positions.forEach((p,i)=>numMap[p]=i+1);ct.innerHTML='';const g=document.createElement('div');g.className='chm-grid';g.style.gridTemplateColumns=`repeat(${gSz},1fr)`;let nextExp=1,hidden=false;for(let i=0;i<total;i++){const c=document.createElement('div');c.className='chm-cell'+(numMap[i]?' num':'');c.textContent=numMap[i]||'';c.dataset.num=numMap[i]||'0';c.dataset.idx=i;c.onclick=()=>{const n=parseInt(c.dataset.num);if(!n)return;if(!hidden){hidden=true;g.querySelectorAll('.chm-cell.num').forEach(x=>{if(parseInt(x.dataset.num)!==1)x.classList.add('hidden');});}if(n===nextExp){c.classList.remove('num','hidden');c.classList.add('correct');c.style.color='#2ecc71';nextExp++;if(nextExp>sz){sz++;sz>best&&(best=sz,sessionStorage.setItem('chm-best',best),$$('#chm-best').textContent=best);$$('#chm-sz').textContent=sz;addScore(sz>=10?5:(sz>=7?3:2));showFeedback(`Level ${sz-1}! \ud83d\udc35`,'#2ecc71');setTimeout(play,1200);}}else{c.classList.add('wrong');g.querySelectorAll('.chm-cell').forEach(x=>{if(x.dataset.num!=='0'){x.classList.remove('hidden');x.style.color=x.classList.contains('correct')?'#2ecc71':'#e74c3c';}});showFeedback(`Numbers: ${sz} \ud83d\udc35`,'#e74c3c');resetStreak();setTimeout(()=>{const score=sz-1;sz=4;$$('#chm-sz').textContent=sz;ct.innerHTML=`<div class="nmm-display">${score} numbers</div><div class="nmm-msg">Best: ${best}</div>`;const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='TRY AGAIN';rb.onclick=play;ct.appendChild(rb);addScore(Math.max(1,score-3));},2000);}};g.appendChild(c);}ct.appendChild(g);}
     ct.innerHTML='<div class="nmm-msg">Numbers appear briefly, then hide.<br>Click them in order: 1, 2, 3...</div>';const sb=document.createElement('button');sb.className='nmm-btn';sb.textContent='START';sb.onclick=()=>{sz=4;play();};ct.appendChild(sb);
   }
+  function initDotTrack(){
+    const ct=$$('#mot-container'),hud=$$('#mot-hud');
+    let dotCount=8,targetCount=3,rd=0,sc=0,phase='idle';
+    if(window._motAnim){cancelAnimationFrame(window._motAnim);window._motAnim=null;}
+    hud.innerHTML=`<span class="game-stat">\ud83c\udfaf <span class="game-stat-val" id="mot-sc">0</span></span><span class="game-stat">\ud83d\udcca Round <span class="game-stat-val" id="mot-rd">0</span>/5</span><span class="game-stat">\ud83d\udc41 Track <span class="game-stat-val" id="mot-tc">${targetCount}</span></span>`;
+    function run(){
+      rd++;$$('#mot-rd').textContent=rd;phase='show';
+      ct.innerHTML='';const arena=document.createElement('div');arena.className='mot-arena';
+      const sz=Math.min(window.innerWidth*0.9,450);arena.style.width=sz+'px';arena.style.height=sz+'px';
+      const dots=[];const margin=30;
+      for(let i=0;i<dotCount;i++){const d=document.createElement('div');d.className='mot-dot '+(i<targetCount?'target':'normal');d.dataset.idx=i;const x=margin+Math.random()*(sz-margin*2),y=margin+Math.random()*(sz-margin*2);d.style.left=x+'px';d.style.top=y+'px';const speed=0.5+Math.random()*0.8;const angle=Math.random()*Math.PI*2;dots.push({el:d,x,y,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed});arena.appendChild(d);}
+      ct.appendChild(arena);
+      const msg=document.createElement('div');msg.className='nmm-msg';msg.textContent='Remember the RED dots!';ct.appendChild(msg);
+      setTimeout(()=>{
+        dots.forEach(d=>{d.el.className='mot-dot hidden';});
+        msg.textContent='Dots are moving... watch carefully!';phase='track';
+        function animate(){
+          if(phase!=='track'&&phase!=='pick')return;
+          dots.forEach(d=>{
+            d.x+=d.vx;d.y+=d.vy;
+            if(d.x<14||d.x>sz-14){d.vx*=-1;d.x=Math.max(14,Math.min(sz-14,d.x));}
+            if(d.y<14||d.y>sz-14){d.vy*=-1;d.y=Math.max(14,Math.min(sz-14,d.y));}
+            d.el.style.left=d.x+'px';d.el.style.top=d.y+'px';
+          });
+          window._motAnim=requestAnimationFrame(animate);
+        }
+        animate();
+        setTimeout(()=>{
+          phase='pick';msg.textContent='Click the dots you were tracking!';
+          let picked=0,correct=0;
+          dots.forEach((d,i)=>{d.el.onclick=()=>{
+            if(phase!=='pick'||d.el.classList.contains('picked'))return;
+            d.el.classList.add('picked');picked++;
+            if(i<targetCount){correct++;d.el.style.background='#2ecc71';}else{d.el.style.background='#e74c3c';}
+            if(picked>=targetCount){
+              phase='done';if(window._motAnim){cancelAnimationFrame(window._motAnim);window._motAnim=null;}
+              dots.forEach((dd,j)=>{dd.el.style.background=j<targetCount?'#2ecc71':'#555';dd.el.classList.remove('hidden');});
+              sc+=correct;$$('#mot-sc').textContent=sc;
+              correct===targetCount?(addScore(targetCount>=4?3:2),showFeedback('Perfect! \ud83c\udfaf','#2ecc71')):(resetStreak(),showFeedback(`${correct}/${targetCount}`,correct>0?'#f1c40f':'#e74c3c'));
+              if(rd>=5){setTimeout(()=>{ct.innerHTML=`<div class="nmm-display">${sc}/${targetCount*5}</div><div class="nmm-msg">Tracking Accuracy</div>`;addScore(sc);const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='PLAY AGAIN';rb.onclick=()=>{rd=0;sc=0;initDotTrack();};ct.appendChild(rb);showFeedback(`Score: ${sc}/${targetCount*5} \ud83d\udc41`,'#f1c40f');},1500);}
+              else setTimeout(run,1500);
+            }
+          };});
+        },3000+targetCount*500);
+      },2000);
+    }
+    ct.innerHTML='<div class="nmm-msg">Red dots flash briefly, then all dots look the same and start moving.<br>Track the originals and click them when prompted!</div>';
+    const sd=document.createElement('div');sd.style.cssText='display:flex;gap:8px;justify-content:center;margin:10px 0';
+    [3,4,5].forEach(n=>{const b=document.createElement('button');b.className='sdk-btn'+(n===targetCount?' active':'');b.textContent=`${n} Targets`;b.onclick=()=>{targetCount=n;$$('#mot-tc').textContent=n;sd.querySelectorAll('.sdk-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');};sd.appendChild(b);});
+    ct.appendChild(sd);
+    const sb=document.createElement('button');sb.className='nmm-btn';sb.textContent='START';sb.onclick=()=>{rd=0;sc=0;run();};ct.appendChild(sb);
+  }
+  function initPeripheral(){
+    const ct=$$('#pv-container'),hud=$$('#pv-hud');
+    let sc=0,tot=0,tm=30,act=false,lvl=1;
+    if(window._pvTimer){clearInterval(window._pvTimer);window._pvTimer=null;}
+    const shapes=['\u25cf','\u25b2','\u25a0','\u2666','\u2605','\u2b22'];
+    hud.innerHTML=`<span class="game-stat">\u2705 <span class="game-stat-val" id="pv-sc">0</span></span><span class="game-stat">\ud83d\udcca <span class="game-stat-val" id="pv-acc">--</span></span><span class="game-stat">\u23f1 <span class="game-stat-val" id="pv-tm">30</span>s</span>`;
+    function flash(){
+      if(!act)return;
+      const ring=$$('#pv-ring');if(!ring)return;
+      ring.querySelectorAll('.pv-flash').forEach(f=>f.remove());
+      const angle=Math.random()*Math.PI*2;const r=ring.offsetWidth/2-30;
+      const fx=Math.cos(angle)*r+ring.offsetWidth/2-18;const fy=Math.sin(angle)*r+ring.offsetHeight/2-18;
+      const shape=shapes[Math.floor(Math.random()*shapes.length)];
+      const fl=document.createElement('div');fl.className='pv-flash';fl.style.left=fx+'px';fl.style.top=fy+'px';fl.textContent=shape;fl.style.cssText+=`display:flex;align-items:center;justify-content:center;font-size:1.4rem;color:#0a1520;`;
+      ring.appendChild(fl);
+      const dur=Math.max(150,600-lvl*50);
+      setTimeout(()=>{fl.style.opacity='1';},50);
+      setTimeout(()=>{fl.style.opacity='0';
+        setTimeout(()=>{
+          fl.remove();tot++;
+          const opts=$$('#pv-opts');if(!opts)return;opts.innerHTML='';
+          const pool=[...shapes].sort(()=>Math.random()-0.5).slice(0,4);
+          if(!pool.includes(shape))pool[0]=shape;
+          pool.sort(()=>Math.random()-0.5);
+          pool.forEach(s=>{const b=document.createElement('button');b.className='stp-choice';b.textContent=s;b.style.cssText='font-size:1.8rem;width:55px;height:55px;border-radius:12px;border:2px solid #1abc9c;background:transparent;color:#ecf0f1;cursor:pointer;';b.onclick=()=>{if(!act)return;s===shape?(sc++,lvl=Math.min(lvl+1,8),addScore(lvl>=5?3:2),showFeedback('\u2705','#2ecc71')):(lvl=Math.max(1,lvl-1),resetStreak(),showFeedback(shape,'#e74c3c'));$$('#pv-sc').textContent=sc;$$('#pv-acc').textContent=tot?Math.round(sc/tot*100)+'%':'--';setTimeout(flash,600);};opts.appendChild(b);});
+        },200);
+      },dur);
+    }
+    ct.innerHTML='<div class="nmm-msg">Focus on the center. A shape will flash at the edge of the ring.<br>Identify which shape it was!</div>';
+    const sb=document.createElement('button');sb.className='nmm-btn';sb.textContent='START';sb.onclick=()=>{
+      act=true;sc=0;tot=0;tm=30;lvl=1;
+      ct.innerHTML='';
+      const ring=document.createElement('div');ring.className='pv-ring';ring.id='pv-ring';
+      const focus=document.createElement('div');focus.className='pv-focus';focus.textContent='+';
+      ring.appendChild(focus);ct.appendChild(ring);
+      const opts=document.createElement('div');opts.id='pv-opts';opts.style.cssText='display:flex;gap:10px;justify-content:center;margin-top:14px;min-height:60px';ct.appendChild(opts);
+      window._pvTimer=setInterval(()=>{tm--;const te=$$('#pv-tm');if(te)te.textContent=tm;if(tm<=0){clearInterval(window._pvTimer);window._pvTimer=null;act=false;const pct=tot?Math.round(sc/tot*100):0;ct.innerHTML=`<div class="nmm-display">${sc} correct</div><div class="nmm-msg">${pct}% accuracy</div>`;showFeedback(`Peripheral: ${sc} (${pct}%) \ud83d\udc41`,'#f1c40f');addScore(sc);const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='PLAY AGAIN';rb.onclick=initPeripheral;ct.appendChild(rb);}},1000);
+      setTimeout(flash,800);
+    };ct.appendChild(sb);
+  }
+  function initVisualSearch(){
+    const ct=$$('#vs-container'),hud=$$('#vs-hud');
+    let rd=0,sc=0,tm=0,gridSz=6;
+    if(window._vsTimer){clearInterval(window._vsTimer);window._vsTimer=null;}
+    const sets=[
+      {target:'Q',distractors:['O','C','G','D']},
+      {target:'T',distractors:['L','I','F','E']},
+      {target:'\u2606',distractors:['\u25cb','\u25b3','\u25c7','\u2b21']},
+      {target:'Z',distractors:['N','M','W','V']},
+      {target:'\u25c6',distractors:['\u25cb','\u25b3','\u25a1','\u2b22']}
+    ];
+    hud.innerHTML=`<span class="game-stat">\u23f1 <span class="game-stat-val" id="vs-time">0.0</span>s</span><span class="game-stat">\u2705 <span class="game-stat-val" id="vs-sc">0</span>/10</span><span class="game-stat">\ud83c\udfaf Target: <span class="game-stat-val" id="vs-tgt">?</span></span>`;
+    function buildRound(){
+      rd++;$$('#vs-sc').textContent=rd-1;
+      const set=sets[Math.floor(Math.random()*sets.length)];
+      $$('#vs-tgt').textContent=set.target;
+      const total=gridSz*gridSz;const tIdx=Math.floor(Math.random()*total);
+      ct.innerHTML='';const field=document.createElement('div');field.className='vs-field';field.style.gridTemplateColumns=`repeat(${gridSz},1fr)`;
+      const startT=performance.now();
+      for(let i=0;i<total;i++){
+        const it=document.createElement('div');it.className='vs-item';
+        const isTarget=i===tIdx;it.textContent=isTarget?set.target:set.distractors[Math.floor(Math.random()*set.distractors.length)];
+        it.onclick=()=>{
+          if(isTarget){
+            it.classList.add('found');const dt=((performance.now()-startT)/1000).toFixed(1);
+            sc++;$$('#vs-sc').textContent=sc;
+            addScore(parseFloat(dt)<1.5?3:(parseFloat(dt)<3?2:1));
+            showFeedback(`${dt}s \u26a1`,'#2ecc71');
+            if(rd>=10){setTimeout(()=>{ct.innerHTML=`<div class="nmm-display">${sc}/10</div><div class="nmm-msg">Visual Scan Complete</div>`;showFeedback(`Scan: ${sc}/10 \ud83c\udfaf`,'#f1c40f');addScore(sc);const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='PLAY AGAIN';rb.onclick=()=>{rd=0;sc=0;initVisualSearch();};ct.appendChild(rb);},1200);}
+            else{gridSz=Math.min(10,6+Math.floor(rd/3));setTimeout(buildRound,800);}
+          }else{resetStreak();showFeedback('Not it!','#e74c3c');it.style.opacity='0.3';}
+        };
+        field.appendChild(it);
+      }
+      ct.appendChild(field);
+    }
+    ct.innerHTML='<div class="nmm-msg">A target symbol is shown. Find it in the grid of distractors as fast as possible!</div>';
+    const sb=document.createElement('button');sb.className='nmm-btn';sb.textContent='START';sb.onclick=()=>{rd=0;sc=0;gridSz=6;buildRound();};ct.appendChild(sb);
+  }
+  function initMentalRot(){
+    const ct=$$('#mr-container'),hud=$$('#mr-hud');
+    let sc=0,tot=0,stk=0;
+    hud.innerHTML=`<span class="game-stat">\u2705 <span class="game-stat-val" id="mr-sc">0</span></span><span class="game-stat">\ud83d\udd25 <span class="game-stat-val" id="mr-stk">0</span></span><span class="game-stat">\ud83d\udcca <span class="game-stat-val" id="mr-tot">0</span>/12</span>`;
+    function genShape(){
+      const pts=[];const n=4+Math.floor(Math.random()*4);
+      for(let i=0;i<n;i++){const a=(Math.PI*2/n)*i+Math.random()*0.6-0.3;const r=25+Math.random()*25;pts.push([60+Math.cos(a)*r,60+Math.sin(a)*r]);}
+      return pts;
+    }
+    function drawShape(canvas,pts,angle,mirror){
+      const ctx=canvas.getContext('2d');ctx.clearRect(0,0,120,120);ctx.save();ctx.translate(60,60);ctx.rotate(angle);if(mirror)ctx.scale(-1,1);ctx.translate(-60,-60);
+      ctx.beginPath();ctx.moveTo(pts[0][0],pts[0][1]);for(let i=1;i<pts.length;i++)ctx.lineTo(pts[i][0],pts[i][1]);ctx.closePath();ctx.fillStyle='rgba(26,188,156,0.4)';ctx.fill();ctx.strokeStyle='#1abc9c';ctx.lineWidth=2.5;ctx.stroke();
+      ctx.beginPath();ctx.arc(pts[0][0],pts[0][1],4,0,Math.PI*2);ctx.fillStyle='#e74c3c';ctx.fill();
+      ctx.restore();
+    }
+    function round(){
+      tot++;$$('#mr-tot').textContent=tot;
+      if(tot>12){ct.innerHTML=`<div class="nmm-display">${sc}/12</div><div class="nmm-msg">${Math.round(sc/12*100)}% Correct</div>`;showFeedback(`Rotation: ${sc}/12 \ud83e\udde0`,'#f1c40f');addScore(sc);const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='PLAY AGAIN';rb.onclick=()=>{sc=0;tot=0;stk=0;$$('#mr-sc').textContent=0;$$('#mr-stk').textContent=0;initMentalRot();};ct.appendChild(rb);return;}
+      const pts=genShape();const isMirror=Math.random()<0.5;const angle=(Math.floor(Math.random()*3)+1)*(Math.PI/4)*(Math.random()<0.5?1:-1);
+      ct.innerHTML='';const wrap=document.createElement('div');wrap.className='mr-shapes';
+      const c1=document.createElement('canvas');c1.width=120;c1.height=120;const s1=document.createElement('div');s1.className='mr-shape';s1.appendChild(c1);
+      const c2=document.createElement('canvas');c2.width=120;c2.height=120;const s2=document.createElement('div');s2.className='mr-shape';s2.appendChild(c2);
+      drawShape(c1,pts,0,false);drawShape(c2,pts,angle,isMirror);
+      wrap.appendChild(s1);wrap.appendChild(s2);ct.appendChild(wrap);
+      const lbl=document.createElement('div');lbl.className='nmm-msg';lbl.textContent='Same shape rotated, or mirrored?';ct.appendChild(lbl);
+      const ch=document.createElement('div');ch.className='mr-choices';
+      const sb=document.createElement('button');sb.className='mr-btn same';sb.textContent='SAME';
+      const mb=document.createElement('button');mb.className='mr-btn mirror';mb.textContent='MIRROR';
+      const ans=a=>{
+        const ok=(a==='same')===!isMirror;
+        ok?(sc++,stk++,$$('#mr-sc').textContent=sc,$$('#mr-stk').textContent=stk,addScore(stk>=3?3:2),showFeedback('\u2705','#2ecc71')):(stk=0,$$('#mr-stk').textContent=0,resetStreak(),showFeedback(isMirror?'Mirrored!':'Same shape!','#e74c3c'));
+        setTimeout(round,1000);
+      };
+      sb.onclick=()=>ans('same');mb.onclick=()=>ans('mirror');
+      ch.appendChild(sb);ch.appendChild(mb);ct.appendChild(ch);
+    }
+    ct.innerHTML='<div class="nmm-msg">Two shapes appear \u2014 one is rotated.<br>Are they the SAME shape, or is one MIRRORED?</div>';
+    const sb=document.createElement('button');sb.className='nmm-btn';sb.textContent='START';sb.onclick=()=>{sc=0;tot=0;stk=0;round();};ct.appendChild(sb);
+  }
+  function initTrailMake(){
+    const ct=$$('#tm-container'),hud=$$('#tm-hud');
+    let mode='num',tm=0,act=false;
+    if(window._tmTimer){clearInterval(window._tmTimer);window._tmTimer=null;}
+    hud.innerHTML=`<span class="game-stat">\u23f1 <span class="game-stat-val" id="tm-time">0.0</span>s</span><span class="game-stat">\u274c <span class="game-stat-val" id="tm-err">0</span></span><span class="game-stat">\ud83d\udcca <span class="game-stat-val" id="tm-mode">${mode==='num'?'Numbers':'Num-Letter'}</span></span>`;
+    function run(){
+      ct.innerHTML='';
+      const cw=Math.min(window.innerWidth*0.9,480),ch=Math.min(window.innerHeight*0.6,480);
+      const canvas=document.createElement('canvas');canvas.className='tm-canvas';canvas.width=cw;canvas.height=ch;canvas.style.width=cw+'px';canvas.style.height=ch+'px';
+      ct.appendChild(canvas);const ctx=canvas.getContext('2d');
+      const count=mode==='num'?15:12;const letters='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      const sequence=[];
+      if(mode==='num'){for(let i=1;i<=count;i++)sequence.push({label:''+i,idx:i-1});}
+      else{for(let i=0;i<count;i++){const isNum=i%2===0;const n=Math.floor(i/2)+1;sequence.push({label:isNum?''+n:letters[Math.floor(i/2)],idx:i});}}
+      const nodes=[];const margin=30;const minDist=50;
+      sequence.forEach(s=>{let x,y,attempts=0,ok=false;
+        while(!ok&&attempts<200){x=margin+Math.random()*(cw-margin*2);y=margin+Math.random()*(ch-margin*2);ok=nodes.every(n=>Math.hypot(n.x-x,n.y-y)>minDist);attempts++;}
+        nodes.push({...s,x,y});
+      });
+      let nextIdx=0,errors=0,lines=[];
+      function draw(){
+        ctx.clearRect(0,0,cw,ch);
+        ctx.strokeStyle='#1abc9c';ctx.lineWidth=2;
+        for(let i=1;i<lines.length;i++){ctx.beginPath();ctx.moveTo(lines[i-1].x,lines[i-1].y);ctx.lineTo(lines[i].x,lines[i].y);ctx.stroke();}
+        nodes.forEach((n,i)=>{
+          const done=i<nextIdx;const active=i===nextIdx;
+          ctx.beginPath();ctx.arc(n.x,n.y,18,0,Math.PI*2);
+          ctx.fillStyle=done?'rgba(46,204,113,0.5)':(active?'rgba(26,188,156,0.3)':'rgba(255,255,255,0.1)');ctx.fill();
+          ctx.strokeStyle=done?'#2ecc71':(active?'#1abc9c':'#555');ctx.lineWidth=2;ctx.stroke();
+          ctx.fillStyle=done?'#2ecc71':'#ecf0f1';ctx.font='bold 14px JetBrains Mono';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(n.label,n.x,n.y);
+        });
+      }
+      draw();tm=0;errors=0;act=true;$$('#tm-err').textContent=0;
+      const startT=performance.now();
+      window._tmTimer=setInterval(()=>{if(!act)return;tm=((performance.now()-startT)/1000).toFixed(1);const te=$$('#tm-time');if(te)te.textContent=tm;},100);
+      canvas.onclick=e=>{
+        if(!act)return;
+        const rect=canvas.getBoundingClientRect();const mx=e.clientX-rect.left,my=e.clientY-rect.top;
+        const hit=nodes.find(n=>Math.hypot(n.x-mx,n.y-my)<22);
+        if(!hit)return;
+        if(hit.idx===nextIdx){lines.push(hit);nextIdx++;draw();addScore(1);
+          if(nextIdx>=nodes.length){act=false;clearInterval(window._tmTimer);window._tmTimer=null;
+            showFeedback(`${tm}s \u2014 ${errors} errors \ud83c\udfc6`,'#2ecc71');addScore(errors===0?10:Math.max(1,8-errors));
+            const info=document.createElement('div');info.className='nmm-msg';info.innerHTML=`<b>${tm}s</b> \u2014 ${errors} error${errors!==1?'s':''}`;ct.appendChild(info);
+            const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='PLAY AGAIN';rb.style.marginTop='10px';rb.onclick=()=>initTrailMake();ct.appendChild(rb);
+          }
+        }else{errors++;$$('#tm-err').textContent=errors;resetStreak();showFeedback('Wrong order!','#e74c3c');
+          ctx.beginPath();ctx.arc(hit.x,hit.y,18,0,Math.PI*2);ctx.fillStyle='rgba(231,76,60,0.4)';ctx.fill();ctx.strokeStyle='#e74c3c';ctx.lineWidth=2;ctx.stroke();
+          setTimeout(draw,500);
+        }
+      };
+    }
+    ct.innerHTML='<div class="nmm-msg">Tap the circles in order as fast as possible!<br>Numbers: 1\u21922\u21923...<br>Alternating: 1\u2192A\u21922\u2192B\u21923\u2192C...</div>';
+    const sd=document.createElement('div');sd.style.cssText='display:flex;gap:8px;justify-content:center;margin:10px 0';
+    ['num','alt'].forEach(m=>{const b=document.createElement('button');b.className='sdk-btn'+(m===mode?' active':'');b.textContent=m==='num'?'Numbers':'Num-Letter';b.onclick=()=>{mode=m;$$('#tm-mode').textContent=m==='num'?'Numbers':'Num-Letter';sd.querySelectorAll('.sdk-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');};sd.appendChild(b);});
+    ct.appendChild(sd);
+    const sb=document.createElement('button');sb.className='nmm-btn';sb.textContent='START';sb.onclick=run;ct.appendChild(sb);
+  }
   const _tutorials={
     sudoku:{title:'\ud83d\udd22 How to Play Sudoku',steps:[
       'Fill every <b>row</b>, <b>column</b>, and <b>3\u00d73 box</b> with the numbers 1\u20139. No repeats allowed!',
@@ -3497,6 +3805,46 @@ function playAnimalSound(type) {
       '<b>Strategy:</b> Don\u2019t memorize all positions equally. Focus on <b>groups</b> \u2014 cluster nearby numbers together.',
       '<b>Fun fact:</b> This test is based on research where chimpanzees <b>outperformed humans</b> at short-term spatial memory!',
       'One mistake ends the round. Your <b>best score</b> is saved automatically.'
+    ]},
+    dottrack:{title:'\ud83d\udc41\ufe0f How to Play Dot Tracking',steps:[
+      'Several dots appear \u2014 some are highlighted in <b>red</b>. Memorize which ones they are!',
+      'After a moment, all dots become <b>identical</b> and start <b>moving</b> around the arena.',
+      'Keep your eyes on the original red dots as they bounce around. Don\u2019t let them blend in!',
+      'When the dots stop, <b>click the ones</b> you think were originally highlighted.',
+      '<b>Strategy:</b> Don\u2019t stare at one dot \u2014 use <b>soft focus</b> to track groups with your peripheral vision.',
+      'Choose 3, 4, or 5 targets to increase difficulty. You play 5 rounds per game.'
+    ]},
+    peripheral:{title:'\ud83d\udd2d How to Play Peripheral Vision',steps:[
+      'Stare at the <b>+ in the center</b> of the ring. Don\u2019t move your eyes!',
+      'A shape will flash briefly at the <b>edge</b> of the ring \u2014 in your peripheral vision.',
+      'After the flash, pick which shape you saw from the <b>4 options</b> below.',
+      'The flashes get <b>shorter</b> as you improve. Each correct answer speeds things up!',
+      '<b>Strategy:</b> Relax your gaze. Peripheral vision works better when you\u2019re not trying too hard to "see" the edge.',
+      'You have <b>30 seconds</b>. Accuracy % is tracked at the end.'
+    ]},
+    visualsearch:{title:'\ud83c\udfaf How to Play Visual Scan',steps:[
+      'A <b>target symbol</b> is shown at the top. Find it in the grid of look-alike distractors!',
+      'Tap the <b>correct symbol</b> as fast as possible. Speed matters!',
+      'The grid gets <b>bigger</b> as you progress \u2014 more items to scan through.',
+      '<b>Strategy \u2014 Systematic scan:</b> Sweep your eyes left-to-right, row by row, instead of jumping randomly.',
+      '<b>Strategy \u2014 Feature pop:</b> Focus on what makes the target <b>unique</b> (a tail on Q vs O, a star vs circle).',
+      'You play <b>10 rounds</b>. Under 1.5s per find earns maximum points!'
+    ]},
+    mentalrot:{title:'\ud83d\udd04 How to Play Mental Rotation',steps:[
+      'Two shapes appear side by side. One is <b>rotated</b> compared to the other.',
+      'Decide: is the second shape the <b>SAME</b> shape rotated, or is it <b>MIRRORED</b> (flipped)?',
+      'Look for the <b>red dot</b> on each shape \u2014 it marks a corner to help you compare orientations.',
+      '<b>Strategy:</b> Mentally "grab" the shape and <b>rotate it in your mind</b>. If the red dot ends up in the right place, it\u2019s the same.',
+      'If the shape looks right but the red dot is on the <b>wrong side</b>, it\u2019s mirrored!',
+      'You play <b>12 rounds</b>. Build streaks for bonus points.'
+    ]},
+    trailmake:{title:'\ud83d\udd17 How to Play Trail Making',steps:[
+      'Circles with numbers (or numbers and letters) are scattered on the screen.',
+      '<b>Numbers mode:</b> Click in order \u2014 1, 2, 3, 4, 5...',
+      '<b>Num-Letter mode:</b> Alternate \u2014 1, A, 2, B, 3, C... This is much harder!',
+      'The next circle to click is <b>subtly highlighted</b>. Clicking wrong adds an error.',
+      '<b>Strategy:</b> Before starting, quickly <b>scan the board</b> and mentally plan a rough path for the first few.',
+      'Your <b>time and errors</b> are both tracked. Aim for speed with zero mistakes!'
     ]}
   };
   window.showTutorial=function(game){
