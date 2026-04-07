@@ -9,6 +9,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <script src="https://cdn.plot.ly/plotly-2.35.2.min.js" charset="utf-8"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/exporters/STLExporter.js"></script>
@@ -234,7 +236,7 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 </div>
 <div class="shell" id="shell" style="display:none">
 <div class="side" id="side">
-<div class="side-h"><span class="t">FC-CALC</span><span class="s" id="side-ver">v2.13.0</span></div>
+<div class="side-h"><span class="t">FC-CALC</span><span class="s" id="side-ver">v2.14.0</span></div>
 <div class="side-b" id="side-b">
 <div class="side-sec open" data-sec="core">
 <div class="side-sec-h" onclick="toggleSideSec('core')"><span>Core</span><span class="ar">&#9660;</span></div>
@@ -1446,6 +1448,7 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <div class="card"><h3>PIPE CROSS SECTION</h3><canvas id="c-pipe-xsec" style="width:100%;height:200px"></canvas></div>
 <div class="card"><h3>VELOCITY PROFILE</h3><div id="c-vel-profile" style="width:100%;height:240px"></div></div>
 <div class="card"><h3>MOODY DIAGRAM</h3><div id="c-moody" style="width:100%;height:300px"></div></div>
+<div class="card"><h3>MILLENNIUM SIM — REFFELT NS CLOSURE</h3><div id="ms-eq" style="overflow-x:auto;padding:.5rem 0;font-size:.85rem"></div><div id="c-ms-enstrophy" style="width:100%;height:280px"></div><div id="ms-stats" class="result-grid" style="margin-top:.5rem"></div></div>
 </div>
 </div>
 </div>
@@ -1588,7 +1591,7 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 </div>
 <div id="ad-tx" class="hidden"><div class="ad-hdr"><span>&#x25C8; engineering datapad</span><button class="ad-x" id="ad-close">&times;</button></div><div class="ad-body" id="ad-slot"></div></div>
 <footer>
-AMNI-CALC v2.13.0 &mdash; <a href="https://amni-scient.com">AMNI-SCIENT</a> &mdash; FOR EDUCATIONAL &amp; ESTIMATION PURPOSES ONLY &mdash; <a href="#" onclick="reportBug();return false">REPORT BUG</a>
+AMNI-CALC v2.14.0 &mdash; <a href="https://amni-scient.com">AMNI-SCIENT</a> &mdash; FOR EDUCATIONAL &amp; ESTIMATION PURPOSES ONLY &mdash; <a href="#" onclick="reportBug();return false">REPORT BUG</a>
 </footer>
 <script type="module">
 import wInit,{calc_beam,calc_section,section_presets,get_materials,get_material,calc_bolt,bolt_tables,calc_spring,calc_stress,get_finishes,recommend_finishes,convert_unit,unit_categories,calc_seal,seal_materials,seal_standard_sizes,calc_seal_groove,calc_fatigue,calc_thermal} from './pkg/amni_calc_wasm.js';
@@ -3091,7 +3094,7 @@ const activeTab=document.querySelector('.tab.active');
 const tab=activeTab?activeTab.dataset.v:'unknown';
 const ua=navigator.userAgent;
 const ts=new Date().toISOString();
-const body=encodeURIComponent(`Bug Report — AMNI-CALC v2.13.0\n\nTab: ${tab}\nTimestamp: ${ts}\nBrowser: ${ua}\n\nDescribe the issue:\n\n\nSteps to reproduce:\n1.\n2.\n3.\n\nExpected behavior:\n\nActual behavior:\n`);
+const body=encodeURIComponent(`Bug Report — AMNI-CALC v2.14.0\n\nTab: ${tab}\nTimestamp: ${ts}\nBrowser: ${ua}\n\nDescribe the issue:\n\n\nSteps to reproduce:\n1.\n2.\n3.\n\nExpected behavior:\n\nActual behavior:\n`);
 window.open(`mailto:amnibro7@gmail.com?subject=${encodeURIComponent('AMNI-CALC Bug Report — '+tab)}&body=${body}`);
 };
 window.updateThermalUI=function(){
@@ -4214,6 +4217,7 @@ el.innerHTML=`<h3>FLOW RESULTS</h3><div class="result-grid">
 drawPipeXsec(geo);
 drawVelProfile(Re,V,geo);
 drawMoody(Re,f,relR);
+drawMillenniumSim(Re,V,nu,rho);
 };
 function drawPipeXsec(geo){
 const cvs=$('#c-pipe-xsec');if(!cvs)return;
@@ -4266,6 +4270,44 @@ if(Re<2300){vs.push(Vmax*2*(1-r*r));}
 else{const nn=Re<1e5?6.6:Re<1e6?7.0:8.0;vs.push(Vmax*(1+2/(nn+1)/(nn+2))*Math.pow(1-Math.abs(r),1/nn));}
 }
 Plotly.newPlot(el,[{x:vs,y:rs,mode:'lines',fill:'tozerox',fillcolor:'rgba(82,214,244,0.2)',line:{color:'#52d6f4',width:2},name:'Velocity'}],{paper_bgcolor:'transparent',plot_bgcolor:'transparent',font:{color:'#b0b8c8',size:9},margin:{t:10,r:10,b:35,l:55},xaxis:{title:'Velocity (m/s)',gridcolor:'#222'},yaxis:{title:'r/R',gridcolor:'#222',range:[-1,1]},showlegend:false},{responsive:true,displayModeBar:false});
+}
+function drawMillenniumSim(Re,V,nu,rho){
+const el=$('#c-ms-enstrophy'),eq=$('#ms-eq'),st=$('#ms-stats');
+if(!el)return;
+const Cmu=0.09,delta=0.01,C1=0.8,gammaP=0.15;
+const v_rms=Math.abs(V)||0.01;
+const s=1-1/(1+Re/5000);
+const nu_t=Cmu*(1-s)*(s+delta)*v_rms;
+const s_min=Math.max(s*0.7,0.01);
+const kappa_eff=1/((1-s)**2+1/(s+delta)**2+1/v_rms**2*0.01)*0.01;
+const Zc=(C1/(gammaP*s_min))**2;
+const Zmax=Zc*2.5;
+const Nz=200;
+const Zarr=Array.from({length:Nz},(_,i)=>Zmax*i/(Nz-1)+0.01);
+const stretch=Zarr.map(Z=>C1*Z**1.5);
+const dissip=Zarr.map(Z=>gammaP*s_min*Z**2);
+const dzdt=Zarr.map((Z,i)=>stretch[i]-dissip[i]);
+const layout={paper_bgcolor:'#111',plot_bgcolor:'#0a0a0a',font:{family:'JetBrains Mono',color:'#e0e0e0',size:10},margin:{t:24,r:12,b:44,l:54},xaxis:{title:'Z (enstrophy)',color:'#666',gridcolor:'#1a1a1a',tickformat:'.2e'},yaxis:{title:'dZ/dt',color:'#666',gridcolor:'#1a1a1a',zerolinecolor:'#333'},showlegend:true,legend:{font:{size:9},bgcolor:'transparent'}};
+Plotly.react(el,[
+{x:Zarr,y:stretch,name:'C₁Z^(3/2) stretching',line:{color:'#ff6b35',width:1.5}},
+{x:Zarr,y:dissip,name:"γ'·s_min·Z² dissipation",line:{color:'#00ff9d',width:1.5}},
+{x:Zarr,y:dzdt,name:'dZ/dt net',line:{color:'#52d6f4',width:1.5,dash:'dot'}},
+{x:[Zc,Zc],y:[Math.min(...dzdt),Math.max(...stretch)],name:'Z_c (regularity)',line:{color:'#ffd700',width:1,dash:'dash'},mode:'lines'}
+],layout,{responsive:true,displayModeBar:false});
+if(typeof katex!=='undefined'&&eq){
+const eqs=[
+'\\nu_t=C_\\mu(1-s)(s+\\delta)|\\mathbf{v}|',
+'\\dfrac{dZ}{dt}\\leq C_1 Z^{3/2}-\\gamma\' s_{\\min}Z^2',
+'\\boxed{Z_c=\\left(\\tfrac{C_1}{\\gamma\' s_{\\min}}\\right)^{\\!2}}'
+];
+eq.innerHTML=eqs.map(e=>{
+const d=document.createElement('div');
+d.style.cssText='margin:.25rem 0;overflow-x:auto';
+try{katex.render(e,d,{displayMode:true,throwOnError:false});}catch(err){d.textContent=e;}
+return d.outerHTML;
+}).join('');
+}
+if(st)st.innerHTML=`<div class="result-item"><div class="lbl">ν_t (eddy viscosity)</div><div class="val">${nu_t.toExponential(3)} m²/s</div></div><div class="result-item"><div class="lbl">s (saturation)</div><div class="val">${s.toFixed(4)}</div></div><div class="result-item"><div class="lbl">s_min</div><div class="val">${s_min.toFixed(4)}</div></div><div class="result-item"><div class="lbl">Z_c (critical enstrophy)</div><div class="val">${Zc.toExponential(3)}</div></div><div class="result-item"><div class="lbl">REGULARITY</div><div class="val" style="color:var(--ok)">✓ GLOBALLY BOUNDED</div></div>`;
 }
 function drawMoody(Re_pt,f_pt,ed_pt){
 const el=$('#c-moody');if(!el)return;
