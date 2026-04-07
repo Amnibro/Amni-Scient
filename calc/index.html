@@ -3812,8 +3812,7 @@ sigJ.push(s<SRcc?Sy*(1-Sy*s*s/(4*Math.PI*Math.PI*E)):null);
 Plotly.newPlot('c-buckling',[{x:srs,y:sigE,name:'Euler',mode:'lines',line:{color:'#ff5e5b'}},{x:srs,y:sigJ.map(v=>v!==null?v:undefined),name:'Johnson',mode:'lines',line:{color:'#52d6f4'}},{x:[SR],y:[Math.min(sCr,Sy)],name:'This Column',mode:'markers',marker:{size:10,color:'#ffd700'}}],{paper_bgcolor:'transparent',plot_bgcolor:'transparent',font:{color:'#b0b8c8',size:10},margin:{t:10,r:10,b:40,l:50},xaxis:{title:'Slenderness Ratio',gridcolor:'#222',range:[0,260]},yaxis:{title:'Stress (MPa)',gridcolor:'#222'},legend:{x:0.7,y:0.95},showlegend:true},{responsive:true,displayModeBar:false});
 };
 updateBkSec();
-populateBrCatalog();
-populateGrCatalog();
+setTimeout(()=>{populateBrCatalog();populateGrCatalog();},0);
 window.calcBearing=function(){
 const type=$('#br-type').value;
 const C=parseFloat($('#br-c').value)||1,C0=parseFloat($('#br-c0').value)||1;
