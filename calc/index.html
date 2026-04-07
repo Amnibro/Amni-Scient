@@ -4217,7 +4217,7 @@ el.innerHTML=`<h3>FLOW RESULTS</h3><div class="result-grid">
 drawPipeXsec(geo);
 drawVelProfile(Re,V,geo);
 drawMoody(Re,f,relR);
-drawMillenniumSim(Re,V,nu,rho);
+drawMillenniumSim(Re,V,props.mu/props.rho,props.rho);
 };
 function drawPipeXsec(geo){
 const cvs=$('#c-pipe-xsec');if(!cvs)return;
