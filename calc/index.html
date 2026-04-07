@@ -144,6 +144,26 @@ footer a{color:var(--accent);font-size:.7rem}
 #ad-tx .ad-x:hover{color:var(--text)}
 #ad-tx .ad-body{padding:6px 10px;min-height:60px;display:flex;align-items:center;justify-content:center}
 #ad-tx.hidden{opacity:0;pointer-events:none}
+#home-view{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;flex:1;padding:clamp(1rem,3vw,2.5rem);overflow-y:auto;min-height:calc(100vh - 48px)}
+#home-view.hidden{display:none}
+.home-title{font-size:clamp(1.2rem,3vw,2rem);color:var(--accent);letter-spacing:4px;text-transform:uppercase;font-weight:700;margin-bottom:.5rem;text-align:center}
+.home-sub{font-size:.8rem;color:var(--dim);letter-spacing:2px;margin-bottom:clamp(1rem,3vw,2rem);text-align:center}
+.home-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:clamp(14px,2vw,22px);width:100%;max-width:1400px}
+.home-card{background:var(--panel);border:2px solid var(--border2);border-radius:12px;padding:clamp(20px,3vw,32px) clamp(14px,2vw,20px);display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .3s,border-color .3s;min-height:clamp(120px,18vw,170px);position:relative;overflow:hidden}
+.home-card::before{content:'';position:absolute;inset:-2px;border-radius:14px;background:linear-gradient(135deg,var(--accent-glow),transparent,var(--accent-glow));opacity:0;transition:opacity .4s;z-index:0}
+.home-card:hover{transform:translateY(-6px) scale(1.03);box-shadow:0 12px 30px rgba(255,107,53,.25);border-color:var(--accent)}
+.home-card:hover::before{opacity:1}
+.home-card .hc-icon{font-size:clamp(2rem,5vw,3rem);line-height:1;z-index:1}
+.home-card .hc-name{font-size:clamp(.85rem,2vw,1rem);font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text);text-align:center;z-index:1}
+.home-card .hc-desc{font-size:.7rem;color:var(--dim);text-align:center;line-height:1.3;z-index:1}
+.home-card.core{border-color:rgba(255,107,53,.15)}.home-card.core:hover{border-color:var(--accent)}
+.home-card.ref{border-color:rgba(0,255,157,.1)}.home-card.ref:hover{border-color:var(--ok)}
+.home-card.tool{border-color:rgba(255,215,0,.1)}.home-card.tool:hover{border-color:var(--warn)}
+.home-sec-label{grid-column:1/-1;font-size:.7rem;letter-spacing:3px;text-transform:uppercase;color:var(--dim);padding:8px 0 0;margin-top:.5rem;border-top:1px solid var(--border)}
+.home-sec-label:first-child{border-top:none;margin-top:0}
+nav .back-calc{display:none;color:var(--dim);font-size:.75rem;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:color .2s;background:none;border:none;font-family:var(--font)}
+nav .back-calc:hover{color:var(--accent)}
+@media(max-width:600px){.home-grid{grid-template-columns:repeat(2,1fr)}.home-card{min-height:110px;padding:16px 10px}.home-card .hc-desc{display:none}}
 </style>
 </head>
 <body>
@@ -164,11 +184,33 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 </div>
 <nav>
 <a href="https://amni-scient.com" class="back">&larr; AMNI-SCIENT</a>
+<button class="back-calc" id="back-home" onclick="goHome()">&larr; ALL TOOLS</button>
 <span class="logo">AMNI<span>-CALC</span></span>
 <button id="unit-toggle" class="unit-toggle" onclick="toggleUnits()" title="Switch between Metric and Imperial units">METRIC</button>
 </nav>
 <div class="app">
-<div class="shell">
+<div id="home-view">
+<div class="home-title">AMNI-CALC</div>
+<div class="home-sub">MECHANICAL ENGINEERING CALCULATOR</div>
+<div class="home-grid">
+<div class="home-sec-label">&#9670; CORE CALCULATORS</div>
+<div class="home-card core" onclick="launchTool('beam')"><span class="hc-icon">&#9649;</span><span class="hc-name">Beams</span><span class="hc-desc">Deflection, reactions, shear/moment diagrams</span></div>
+<div class="home-card core" onclick="launchTool('bolts')"><span class="hc-icon">&#9881;</span><span class="hc-name">Bolts</span><span class="hc-desc">Joint analysis, preload, torque spec</span></div>
+<div class="home-card core" onclick="launchTool('springs')"><span class="hc-icon">&#8767;</span><span class="hc-name">Springs</span><span class="hc-desc">Coil, torsion, Belleville design</span></div>
+<div class="home-card core" onclick="launchTool('seals')"><span class="hc-icon">&#9711;</span><span class="hc-name">Seals</span><span class="hc-desc">O-ring, gland analysis, hyperelastic</span></div>
+<div class="home-card core" onclick="launchTool('gaskets')"><span class="hc-icon">&#9645;</span><span class="hc-name">Gaskets</span><span class="hc-desc">Channel design, compression, creep</span></div>
+<div class="home-sec-label">&#9670; REFERENCE</div>
+<div class="home-card ref" onclick="launchTool('materials')"><span class="hc-icon">&#9670;</span><span class="hc-name">Materials</span><span class="hc-desc">Properties database, specs</span></div>
+<div class="home-card ref" onclick="launchTool('finishes')"><span class="hc-icon">&#9678;</span><span class="hc-name">Finishes</span><span class="hc-desc">Coatings recommender</span></div>
+<div class="home-card ref" onclick="launchTool('equations')"><span class="hc-icon">&#931;</span><span class="hc-name">Equations</span><span class="hc-desc">Engineering formula reference</span></div>
+<div class="home-sec-label">&#9670; TOOLS</div>
+<div class="home-card tool" onclick="launchTool('stress')"><span class="hc-icon">&#9762;</span><span class="hc-name">Stress</span><span class="hc-desc">Von Mises, Mohr's circle, fatigue</span></div>
+<div class="home-card tool" onclick="launchTool('thermal')"><span class="hc-icon">&#9832;</span><span class="hc-name">Thermal</span><span class="hc-desc">Heat transfer, conduction, radiation</span></div>
+<div class="home-card tool" onclick="launchTool('units')"><span class="hc-icon">&#8644;</span><span class="hc-name">Units</span><span class="hc-desc">Unit conversion tool</span></div>
+<div class="home-card tool" onclick="launchTool('math')"><span class="hc-icon">&#960;</span><span class="hc-name">Math</span><span class="hc-desc">Algebra, geometry, calculus solvers</span></div>
+</div>
+</div>
+<div class="shell" id="shell" style="display:none">
 <div class="side" id="side">
 <div class="side-h"><span class="t">FC-CALC</span><span class="s" id="side-ver">v2.6.0</span></div>
 <div class="side-b" id="side-b">
@@ -823,7 +865,7 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <tr title="Spring deflection under load"><td>Deflection</td><td>δ = F / k</td></tr>
 <tr title="Minimum possible length"><td>Solid Length</td><td>L_s = N_t · d</td></tr>
 <tr title="Surge frequency of coil spring"><td>Natural Frequency</td><td>f_n = (d/(2πD²Na))·√(Gg/32ρ)</td></tr>
-<tr title="DIN 2092 Belleville disc spring — nonlinear F-δ"><td>Belleville Load</td><td>F = (4E·t)/((1−ν²)·K₁·D²)·δ(h−δ)(h−δ/2)+t²δ)</td></tr>
+<tr title="DIN 2093 Belleville disc spring — nonlinear F-δ"><td>Belleville Load</td><td>F = (4E·t)/((1−ν²)·K₁·D²) · δ·[(h−δ)(h−δ/2) + t²]</td></tr>
 <tr title="Stored energy in a spring"><td>Spring Energy</td><td>U = ½kδ²</td></tr>
 </tbody></table>
 </div>
@@ -856,7 +898,7 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <tr title="Hyperelastic constitutive model for rubber"><td>Mooney-Rivlin Stress</td><td>σ = 2(C₁₀+C₀₁/λ)(λ−1/λ²)</td></tr>
 <tr title="Empirical Shore A to elastic modulus conversion"><td>Hardness → Modulus</td><td>E = 0.0981(56+7.62S)/(0.138(254−2.54S))</td></tr>
 <tr title="Hertzian-like contact width of compressed O-ring"><td>Contact Width</td><td>w = 2√(d·δ)</td></tr>
-<tr title="Ratio of loaded to free area — affects compression resistance"><td>Shape Factor (Face)</td><td>SF = (w·d) / (π·d·w)</td></tr>
+<tr title="Ratio of loaded to free area — affects compression resistance"><td>Shape Factor (Face)</td><td>SF = A_load / A_free = w_c / (π·d_s − 2·w_c)</td></tr>
 <tr title="Percent of groove volume filled by seal — target 70-85%"><td>Volume Fill</td><td>V_fill = (π·r²) / (G_d·G_w) × 100</td></tr>
 </tbody></table>
 </div>
@@ -1149,6 +1191,17 @@ $$('.side-item').forEach(n=>n.addEventListener('click',()=>switchTo(n.dataset.v)
 window.toggleSideSec=function(sec){
 const el=document.querySelector(`.side-sec[data-sec="${sec}"]`);
 if(el)el.classList.toggle('open');
+};
+window.launchTool=function(v){
+$('#home-view').style.display='none';
+$('#shell').style.display='flex';
+$('#back-home').style.display='inline-flex';
+switchTo(v);
+};
+window.goHome=function(){
+$('#shell').style.display='none';
+$('#home-view').style.display='flex';
+$('#back-home').style.display='none';
 };
 }
 window.toggleNavMenu=function(){
