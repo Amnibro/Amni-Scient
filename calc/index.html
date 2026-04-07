@@ -37,6 +37,7 @@ nav .back:hover{color:var(--accent)}
 .unit-toggle{background:var(--panel2);border:1px solid var(--border2);color:var(--dim);font-family:var(--font);font-size:.65rem;padding:4px 12px;border-radius:3px;letter-spacing:1.5px;font-weight:700;cursor:pointer;transition:all .2s;text-transform:uppercase}
 .unit-toggle:hover{border-color:var(--accent);color:var(--accent)}
 .unit-toggle.imperial{border-color:var(--accent);color:var(--accent);background:var(--accent-dim)}
+.unit-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}.unit-row label{font-size:.65rem;color:var(--dim);letter-spacing:1px;font-weight:600}.unit-row select{background:var(--panel2);border:1px solid var(--border);color:var(--fg);font-family:var(--font);font-size:.7rem;padding:2px 6px;border-radius:3px}
 .app{padding-top:48px;display:flex;flex-direction:column;min-height:calc(100vh - 48px)}
 .shell{flex:1;display:flex;min-height:calc(100vh - 48px);overflow:hidden}
 .side{width:240px;background:var(--panel);border-right:1px solid var(--border);flex-shrink:0;display:flex;flex-direction:column}
@@ -79,6 +80,7 @@ nav .back:hover{color:var(--accent)}
 .view h2{font-size:1.2rem;color:var(--accent);letter-spacing:2px;margin-bottom:1rem}
 .view h3{font-size:.9rem;color:var(--accent);letter-spacing:1px;margin:1rem 0 .5rem}
 .card{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:1.25rem;margin-bottom:1rem}
+details.card>summary{list-style:none;padding:.5rem 0}details.card>summary::-webkit-details-marker{display:none}details.card[open]>summary span{transform:rotate(180deg);display:inline-block}
 .card h3{margin-top:0}
 .row{display:flex;gap:1rem;flex-wrap:wrap;align-items:flex-end}
 .field{display:flex;flex-direction:column;gap:3px;min-width:120px}
@@ -143,7 +145,7 @@ footer a{color:var(--accent);font-size:.7rem}
 #ad-tx .ad-x{background:none;border:none;color:var(--dim);font-size:12px;cursor:pointer;padding:0 2px}
 #ad-tx .ad-x:hover{color:var(--text)}
 #ad-tx .ad-body{padding:6px 10px;min-height:60px;display:flex;align-items:center;justify-content:center}
-#ad-tx.hidden{opacity:0;pointer-events:none}
+#ad-tx.hidden{opacity:0;pointer-events:none;height:0;min-height:0;overflow:hidden;margin:0;border:none}
 #home-view{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;flex:1;padding:clamp(1rem,3vw,2.5rem);overflow-y:auto;min-height:calc(100vh - 48px)}
 #home-view.hidden{display:none}
 .home-title{font-size:clamp(1.2rem,3vw,2rem);color:var(--accent);letter-spacing:4px;text-transform:uppercase;font-weight:700;margin-bottom:.5rem;text-align:center}
@@ -187,6 +189,18 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <button class="back-calc" id="back-home" onclick="goHome()">&larr; ALL TOOLS</button>
 <span class="logo">AMNI<span>-CALC</span></span>
 <button id="unit-toggle" class="unit-toggle" onclick="toggleUnits()" title="Switch between Metric and Imperial units">METRIC</button>
+<div style="position:relative;display:inline-block">
+<button class="unit-toggle" onclick="toggleUnitMenu()" title="Unit preferences" style="font-size:.8rem;padding:4px 8px">&#9881;</button>
+<div id="unit-menu" style="display:none;position:absolute;right:0;top:110%;background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:.75rem;z-index:100;min-width:260px;box-shadow:0 8px 24px rgba(0,0,0,.6)">
+<div style="font-size:.7rem;color:var(--accent);font-weight:700;margin-bottom:.5rem;letter-spacing:1px">UNIT PREFERENCES</div>
+<div class="unit-row"><label>LENGTH</label><select id="up-len" onchange="saveUnitPrefs()"><option value="mm">mm</option><option value="m">m</option><option value="in">in</option><option value="ft">ft</option></select></div>
+<div class="unit-row"><label>FORCE</label><select id="up-force" onchange="saveUnitPrefs()"><option value="N">N</option><option value="kN">kN</option><option value="lbf">lbf</option><option value="kip">kip</option></select></div>
+<div class="unit-row"><label>STRESS</label><select id="up-stress" onchange="saveUnitPrefs()"><option value="MPa">MPa</option><option value="GPa">GPa</option><option value="psi">psi</option><option value="ksi">ksi</option></select></div>
+<div class="unit-row"><label>TEMPERATURE</label><select id="up-temp" onchange="saveUnitPrefs()"><option value="C">°C</option><option value="F">°F</option></select></div>
+<div class="unit-row"><label>MOMENT</label><select id="up-moment" onchange="saveUnitPrefs()"><option value="Nm">N·m</option><option value="lbfft">lbf·ft</option></select></div>
+<div style="font-size:.6rem;color:var(--dim);margin-top:.5rem">Applies to all output displays. Input fields have their own unit selectors.</div>
+</div>
+</div>
 </nav>
 <div class="app">
 <div id="home-view">
@@ -199,6 +213,11 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <div class="home-card core" onclick="launchTool('springs')"><span class="hc-icon">&#8767;</span><span class="hc-name">Springs</span><span class="hc-desc">Coil, torsion, Belleville design</span></div>
 <div class="home-card core" onclick="launchTool('seals')"><span class="hc-icon">&#9711;</span><span class="hc-name">Seals</span><span class="hc-desc">O-ring, gland analysis, hyperelastic</span></div>
 <div class="home-card core" onclick="launchTool('gaskets')"><span class="hc-icon">&#9645;</span><span class="hc-name">Gaskets</span><span class="hc-desc">Channel design, compression, creep</span></div>
+<div class="home-card core" onclick="launchTool('buckling')"><span class="hc-icon">&#9608;</span><span class="hc-name">Buckling</span><span class="hc-desc">Euler column, end conditions, slenderness</span></div>
+<div class="home-card core" onclick="launchTool('bearings')"><span class="hc-icon">&#9673;</span><span class="hc-name">Bearings</span><span class="hc-desc">L10 life, dynamic load rating, speed</span></div>
+<div class="home-card core" onclick="launchTool('gears')"><span class="hc-icon">&#9881;</span><span class="hc-name">Gears</span><span class="hc-desc">Spur, helical, bevel geometry & forces</span></div>
+<div class="home-card core" onclick="launchTool('flow')"><span class="hc-icon">&#8776;</span><span class="hc-name">Flow</span><span class="hc-desc">Pipe flow, Darcy-Weisbach, Reynolds</span></div>
+<div class="home-card core" onclick="launchTool('electrical')"><span class="hc-icon">&#9889;</span><span class="hc-name">Electrical</span><span class="hc-desc">DC/AC circuits, wire sizing, motors</span></div>
 <div class="home-sec-label">&#9670; REFERENCE</div>
 <div class="home-card ref" onclick="launchTool('materials')"><span class="hc-icon">&#9670;</span><span class="hc-name">Materials</span><span class="hc-desc">Properties database, specs</span></div>
 <div class="home-card ref" onclick="launchTool('finishes')"><span class="hc-icon">&#9678;</span><span class="hc-name">Finishes</span><span class="hc-desc">Coatings recommender</span></div>
@@ -212,7 +231,7 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 </div>
 <div class="shell" id="shell" style="display:none">
 <div class="side" id="side">
-<div class="side-h"><span class="t">FC-CALC</span><span class="s" id="side-ver">v2.6.0</span></div>
+<div class="side-h"><span class="t">FC-CALC</span><span class="s" id="side-ver">v2.11.0</span></div>
 <div class="side-b" id="side-b">
 <div class="side-sec open" data-sec="core">
 <div class="side-sec-h" onclick="toggleSideSec('core')"><span>Core</span><span class="ar">&#9660;</span></div>
@@ -222,6 +241,11 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <div class="side-item" data-v="springs"><span class="i">&#8767;</span>Springs</div>
 <div class="side-item" data-v="seals"><span class="i">&#9711;</span>Seals</div>
 <div class="side-item" data-v="gaskets"><span class="i">&#9645;</span>Gaskets</div>
+<div class="side-item" data-v="buckling"><span class="i">&#9608;</span>Buckling</div>
+<div class="side-item" data-v="bearings"><span class="i">&#9673;</span>Bearings</div>
+<div class="side-item" data-v="gears"><span class="i">&#9881;</span>Gears</div>
+<div class="side-item" data-v="flow"><span class="i">&#8776;</span>Flow</div>
+<div class="side-item" data-v="electrical"><span class="i">&#9889;</span>Electrical</div>
 </div>
 </div>
 <div class="side-sec open" data-sec="ref">
@@ -251,10 +275,15 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <span class="arrow">&#9660;</span>
 </div>
 <div class="nav-dropdown-menu" id="nav-menu">
-<div class="nav-item active" data-v="beam"><span class="nav-icon">&#9649;</span>BEAMS</div>
+<div class="nav-item" data-v="beam"><span class="nav-icon">&#9649;</span>BEAMS</div>
+<div class="nav-item" data-v="bearings"><span class="nav-icon">&#9673;</span>BEARINGS</div>
 <div class="nav-item" data-v="bolts"><span class="nav-icon">&#9881;</span>BOLTS</div>
+<div class="nav-item" data-v="buckling"><span class="nav-icon">&#9608;</span>BUCKLING</div>
+<div class="nav-item" data-v="electrical"><span class="nav-icon">&#9889;</span>ELECTRICAL</div>
 <div class="nav-item" data-v="equations"><span class="nav-icon">&#931;</span>EQUATIONS</div>
 <div class="nav-item" data-v="finishes"><span class="nav-icon">&#9678;</span>FINISHES</div>
+<div class="nav-item" data-v="flow"><span class="nav-icon">&#8776;</span>FLOW</div>
+<div class="nav-item" data-v="gears"><span class="nav-icon">&#9881;</span>GEARS</div>
 <div class="nav-item" data-v="materials"><span class="nav-icon">&#9670;</span>MATERIALS</div>
 <div class="nav-item" data-v="math"><span class="nav-icon">&#960;</span>MATH</div>
 <div class="nav-item" data-v="seals"><span class="nav-icon">&#9711;</span>SEALS</div>
@@ -267,9 +296,14 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 </div>
 <div class="tabs" id="tabs" style="display:none">
 <button class="tab active" data-v="beam">BEAMS</button>
+<button class="tab" data-v="bearings">BEARINGS</button>
 <button class="tab" data-v="bolts">BOLTS</button>
+<button class="tab" data-v="buckling">BUCKLING</button>
+<button class="tab" data-v="electrical">ELECTRICAL</button>
 <button class="tab" data-v="equations">EQUATIONS</button>
 <button class="tab" data-v="finishes">FINISHES</button>
+<button class="tab" data-v="flow">FLOW</button>
+<button class="tab" data-v="gears">GEARS</button>
 <button class="tab" data-v="materials">MATERIALS</button>
 <button class="tab" data-v="math">MATH</button>
 <button class="tab" data-v="seals">SEALS</button>
@@ -319,8 +353,8 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 </div>
 <button class="btn btn-fill" onclick="solveBeam()" style="margin-bottom:1rem">SOLVE BEAM</button>
 <div id="beam-results"></div>
-<div class="card" style="margin-top:1rem">
-<h3>CROSS SECTION PROPERTIES</h3>
+<details class="card" style="margin-top:1rem">
+<summary style="cursor:pointer;user-select:none"><h3 style="display:inline">CROSS SECTION PROPERTIES</h3> <span style="font-size:.7rem;color:var(--dim)">&#9660; ADVANCED</span></summary>
 <div class="split">
 <div>
 <div class="field"><label>SELECT PRESET</label><select id="sec-presets"></select></div>
@@ -343,7 +377,7 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 </div>
 </div>
 </div>
-</div>
+</details>
 </div>
 <div class="view" id="v-materials">
 <h2>MATERIALS DATABASE</h2>
@@ -1083,6 +1117,242 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 </div>
 </div>
 </div>
+<div class="view" id="v-buckling">
+<h2>COLUMN BUCKLING ANALYSIS</h2>
+<div class="split">
+<div>
+<div class="card">
+<h3>COLUMN PARAMETERS</h3>
+<div class="field"><label>END CONDITION</label><select id="bk-end" onchange="calcBuckling()">
+<option value="1.0">PINNED-PINNED (K=1.0)</option>
+<option value="0.5">FIXED-FIXED (K=0.5)</option>
+<option value="0.7">FIXED-PINNED (K=0.7)</option>
+<option value="2.0">FIXED-FREE (K=2.0)</option>
+</select></div>
+<div class="row">
+<div class="field"><label>LENGTH (m)</label><input type="number" id="bk-l" value="3" step="any" oninput="calcBuckling()"></div>
+<div class="field"><label>E MODULUS (GPa)</label><input type="number" id="bk-e" value="200" step="any" oninput="calcBuckling()"></div>
+</div>
+<div class="row">
+<div class="field"><label>YIELD STRENGTH (MPa)</label><input type="number" id="bk-sy" value="250" step="any" oninput="calcBuckling()"></div>
+<div class="field"><label>ECCENTRICITY (mm)</label><input type="number" id="bk-ecc" value="0" step="any" oninput="calcBuckling()"></div>
+</div>
+<div class="field"><label>CROSS SECTION</label><select id="bk-sec" onchange="updateBkSec();calcBuckling()">
+<option value="circle">SOLID CIRCLE</option>
+<option value="hollow_circle">HOLLOW CIRCLE</option>
+<option value="rect">RECTANGLE</option>
+<option value="hollow_rect">HOLLOW RECTANGLE</option>
+<option value="i_beam">I-BEAM / W-SHAPE</option>
+</select></div>
+<div id="bk-sec-params"></div>
+<button class="btn btn-fill" onclick="calcBuckling()" style="margin-top:.5rem">ANALYZE</button>
+</div>
+</div>
+<div>
+<div class="card" id="bk-results"><h3>BUCKLING RESULTS</h3><p style="font-size:.75rem;color:var(--dim)">Set parameters and click Analyze</p></div>
+<div class="card"><h3>LOAD vs SLENDERNESS</h3><div id="c-buckling" style="width:100%;height:280px"></div></div>
+</div>
+</div>
+</div>
+<div class="view" id="v-bearings">
+<h2>BEARING ANALYSIS</h2>
+<div class="split">
+<div>
+<div class="card">
+<h3>BEARING PARAMETERS</h3>
+<div class="field"><label>BEARING TYPE</label><select id="br-type" onchange="calcBearing()">
+<option value="ball">DEEP GROOVE BALL</option>
+<option value="roller">CYLINDRICAL ROLLER</option>
+<option value="tapered">TAPERED ROLLER</option>
+<option value="needle">NEEDLE ROLLER</option>
+<option value="thrust_ball">THRUST BALL</option>
+<option value="spherical">SPHERICAL ROLLER</option>
+</select></div>
+<div class="row">
+<div class="field"><label>DYNAMIC RATING C (kN)</label><input type="number" id="br-c" value="25.5" step="any" oninput="calcBearing()"></div>
+<div class="field"><label>STATIC RATING C₀ (kN)</label><input type="number" id="br-c0" value="14.6" step="any" oninput="calcBearing()"></div>
+</div>
+<div class="row">
+<div class="field"><label>RADIAL LOAD Fr (kN)</label><input type="number" id="br-fr" value="5" step="any" oninput="calcBearing()"></div>
+<div class="field"><label>AXIAL LOAD Fa (kN)</label><input type="number" id="br-fa" value="1" step="any" oninput="calcBearing()"></div>
+</div>
+<div class="row">
+<div class="field"><label>SPEED (RPM)</label><input type="number" id="br-rpm" value="1500" step="any" oninput="calcBearing()"></div>
+<div class="field"><label>RELIABILITY (%)</label><input type="number" id="br-rel" value="90" step="any" oninput="calcBearing()"></div>
+</div>
+<div class="row">
+<div class="field"><label>LOAD FACTOR X</label><input type="number" id="br-x" value="0.56" step="any" oninput="calcBearing()"></div>
+<div class="field"><label>LOAD FACTOR Y</label><input type="number" id="br-y" value="1.63" step="any" oninput="calcBearing()"></div>
+</div>
+<div class="field"><label>TEMP (°C)</label><input type="number" id="br-temp" value="80" step="any" oninput="calcBearing()"></div>
+<button class="btn btn-fill" onclick="calcBearing()" style="margin-top:.5rem">CALCULATE</button>
+</div>
+</div>
+<div>
+<div class="card" id="br-results"><h3>BEARING RESULTS</h3><p style="font-size:.75rem;color:var(--dim)">Set parameters to see results</p></div>
+</div>
+</div>
+</div>
+<div class="view" id="v-gears">
+<h2>GEAR GEOMETRY</h2>
+<div class="split">
+<div>
+<div class="card">
+<h3>GEAR PARAMETERS</h3>
+<div class="field"><label>GEAR TYPE</label><select id="gr-type" onchange="calcGear()">
+<option value="spur">SPUR GEAR</option>
+<option value="helical">HELICAL GEAR</option>
+<option value="bevel">BEVEL GEAR</option>
+</select></div>
+<div class="row">
+<div class="field"><label>MODULE (mm)</label><input type="number" id="gr-mod" value="2" step="any" oninput="calcGear()"></div>
+<div class="field"><label>PRESSURE ANGLE (°)</label><input type="number" id="gr-pa" value="20" step="any" oninput="calcGear()"></div>
+</div>
+<div class="row">
+<div class="field"><label>PINION TEETH Z₁</label><input type="number" id="gr-z1" value="20" step="1" oninput="calcGear()"></div>
+<div class="field"><label>GEAR TEETH Z₂</label><input type="number" id="gr-z2" value="40" step="1" oninput="calcGear()"></div>
+</div>
+<div class="row">
+<div class="field"><label>FACE WIDTH (mm)</label><input type="number" id="gr-fw" value="20" step="any" oninput="calcGear()"></div>
+<div class="field" id="gr-helix-wrap"><label>HELIX ANGLE (°)</label><input type="number" id="gr-ha" value="20" step="any" oninput="calcGear()"></div>
+</div>
+<div class="row">
+<div class="field"><label>POWER (kW)</label><input type="number" id="gr-pw" value="10" step="any" oninput="calcGear()"></div>
+<div class="field"><label>SPEED (RPM)</label><input type="number" id="gr-rpm" value="1500" step="any" oninput="calcGear()"></div>
+</div>
+<button class="btn btn-fill" onclick="calcGear()" style="margin-top:.5rem">CALCULATE</button>
+</div>
+</div>
+<div>
+<div class="card" id="gr-results"><h3>GEAR RESULTS</h3><p style="font-size:.75rem;color:var(--dim)">Set parameters to see results</p></div>
+<div class="card"><h3>GEAR MESH</h3><canvas id="c-gear" style="width:100%;height:300px"></canvas></div>
+</div>
+</div>
+</div>
+<div class="view" id="v-flow">
+<h2>PIPE FLOW ANALYSIS</h2>
+<div class="split">
+<div>
+<div class="card">
+<h3>FLOW PARAMETERS</h3>
+<div class="field"><label>FLUID</label><select id="fl-fluid" onchange="calcFlow()">
+<option value="water">WATER (20°C)</option>
+<option value="water_hot">WATER (80°C)</option>
+<option value="air">AIR (20°C)</option>
+<option value="oil">HYDRAULIC OIL</option>
+<option value="glycol">ETHYLENE GLYCOL 50%</option>
+<option value="custom">CUSTOM</option>
+</select></div>
+<div id="fl-custom" style="display:none">
+<div class="row">
+<div class="field"><label>DENSITY (kg/m³)</label><input type="number" id="fl-rho" value="998" step="any"></div>
+<div class="field"><label>VISCOSITY (Pa·s)</label><input type="number" id="fl-mu" value="0.001" step="any"></div>
+</div>
+</div>
+<div class="row">
+<div class="field"><label>PIPE DIA (mm)</label><input type="number" id="fl-d" value="50" step="any" oninput="calcFlow()"></div>
+<div class="field"><label>LENGTH (m)</label><input type="number" id="fl-len" value="100" step="any" oninput="calcFlow()"></div>
+</div>
+<div class="row">
+<div class="field"><label>FLOW RATE (L/min)</label><input type="number" id="fl-q" value="100" step="any" oninput="calcFlow()"></div>
+<div class="field"><label>ROUGHNESS ε (mm)</label><input type="number" id="fl-eps" value="0.045" step="any" oninput="calcFlow()"></div>
+</div>
+<div class="card" style="margin-top:.5rem">
+<h3>FITTINGS / MINOR LOSSES</h3>
+<div class="row">
+<div class="field"><label>90° ELBOWS</label><input type="number" id="fl-elb" value="4" step="1"></div>
+<div class="field"><label>TEEs</label><input type="number" id="fl-tee" value="0" step="1"></div>
+<div class="field"><label>VALVES</label><input type="number" id="fl-val" value="2" step="1"></div>
+</div>
+</div>
+<button class="btn btn-fill" onclick="calcFlow()" style="margin-top:.5rem">ANALYZE</button>
+</div>
+</div>
+<div>
+<div class="card" id="fl-results"><h3>FLOW RESULTS</h3><p style="font-size:.75rem;color:var(--dim)">Set parameters to see results</p></div>
+<div class="card"><h3>MOODY DIAGRAM</h3><div id="c-moody" style="width:100%;height:300px"></div></div>
+</div>
+</div>
+</div>
+<div class="view" id="v-electrical">
+<h2>ELECTRICAL ANALYSIS</h2>
+<div class="split">
+<div>
+<div class="card">
+<h3>ANALYSIS MODE</h3>
+<div class="field"><label>MODE</label><select id="el-mode" onchange="updateElecUI()">
+<option value="dc">DC CIRCUIT (OHM'S LAW)</option>
+<option value="ac">AC IMPEDANCE</option>
+<option value="wire">WIRE SIZING</option>
+<option value="motor">MOTOR POWER</option>
+<option value="transformer">TRANSFORMER</option>
+</select></div>
+</div>
+<div class="card" id="el-dc-params">
+<h3>DC PARAMETERS</h3>
+<div class="row">
+<div class="field"><label>VOLTAGE (V)</label><input type="number" id="el-v" value="24" step="any" oninput="calcElec()"></div>
+<div class="field"><label>RESISTANCE (Ω)</label><input type="number" id="el-r" value="100" step="any" oninput="calcElec()"></div>
+</div>
+<div class="row">
+<div class="field"><label>CURRENT (A)</label><input type="number" id="el-i" value="" step="any" placeholder="auto" oninput="calcElec()"></div>
+<div class="field"><label>POWER (W)</label><input type="number" id="el-p" value="" step="any" placeholder="auto" oninput="calcElec()"></div>
+</div>
+</div>
+<div class="card" id="el-ac-params" style="display:none">
+<h3>AC IMPEDANCE</h3>
+<div class="row">
+<div class="field"><label>FREQUENCY (Hz)</label><input type="number" id="el-freq" value="60" step="any" oninput="calcElec()"></div>
+<div class="field"><label>VOLTAGE (Vrms)</label><input type="number" id="el-vac" value="120" step="any" oninput="calcElec()"></div>
+</div>
+<div class="row">
+<div class="field"><label>R (Ω)</label><input type="number" id="el-rac" value="50" step="any" oninput="calcElec()"></div>
+<div class="field"><label>L (mH)</label><input type="number" id="el-lac" value="100" step="any" oninput="calcElec()"></div>
+</div>
+<div class="field"><label>C (µF)</label><input type="number" id="el-cac" value="10" step="any" oninput="calcElec()"></div>
+</div>
+<div class="card" id="el-wire-params" style="display:none">
+<h3>WIRE SIZING</h3>
+<div class="row">
+<div class="field"><label>CURRENT (A)</label><input type="number" id="el-wi" value="20" step="any" oninput="calcElec()"></div>
+<div class="field"><label>LENGTH (m)</label><input type="number" id="el-wl" value="30" step="any" oninput="calcElec()"></div>
+</div>
+<div class="row">
+<div class="field"><label>VOLTAGE (V)</label><input type="number" id="el-wv" value="240" step="any" oninput="calcElec()"></div>
+<div class="field"><label>MAX DROP (%)</label><input type="number" id="el-wd" value="3" step="any" oninput="calcElec()"></div>
+</div>
+<div class="field"><label>MATERIAL</label><select id="el-wm" onchange="calcElec()"><option value="cu">COPPER</option><option value="al">ALUMINUM</option></select></div>
+</div>
+<div class="card" id="el-motor-params" style="display:none">
+<h3>MOTOR</h3>
+<div class="row">
+<div class="field"><label>POWER (kW)</label><input type="number" id="el-mp" value="7.5" step="any" oninput="calcElec()"></div>
+<div class="field"><label>VOLTAGE (V)</label><input type="number" id="el-mv" value="400" step="any" oninput="calcElec()"></div>
+</div>
+<div class="row">
+<div class="field"><label>EFFICIENCY (%)</label><input type="number" id="el-me" value="90" step="any" oninput="calcElec()"></div>
+<div class="field"><label>POWER FACTOR</label><input type="number" id="el-mpf" value="0.85" step="any" oninput="calcElec()"></div>
+</div>
+<div class="field"><label>PHASES</label><select id="el-mph" onchange="calcElec()"><option value="3">THREE PHASE</option><option value="1">SINGLE PHASE</option></select></div>
+</div>
+<div class="card" id="el-xfmr-params" style="display:none">
+<h3>TRANSFORMER</h3>
+<div class="row">
+<div class="field"><label>PRIMARY V</label><input type="number" id="el-tp" value="480" step="any" oninput="calcElec()"></div>
+<div class="field"><label>SECONDARY V</label><input type="number" id="el-ts" value="120" step="any" oninput="calcElec()"></div>
+</div>
+<div class="row">
+<div class="field"><label>KVA RATING</label><input type="number" id="el-tkva" value="50" step="any" oninput="calcElec()"></div>
+<div class="field"><label>EFFICIENCY (%)</label><input type="number" id="el-te" value="98" step="any" oninput="calcElec()"></div>
+</div>
+</div>
+<button class="btn btn-fill" onclick="calcElec()" style="margin-top:.5rem">CALCULATE</button>
+</div>
+<div>
+<div class="card" id="el-results"><h3>ELECTRICAL RESULTS</h3><p style="font-size:.75rem;color:var(--dim)">Set parameters to see results</p></div>
+</div>
+</div>
+</div>
 <div class="view" id="v-units">
 <h2>UNIT CONVERTER</h2>
 <div class="card">
@@ -1106,15 +1376,18 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 </div>
 </div>
 </div>
+<div id="ad-tx" class="hidden"><div class="ad-hdr"><span>&#x25C8; engineering datapad</span><button class="ad-x" id="ad-close">&times;</button></div><div class="ad-body" id="ad-slot"></div></div>
 <footer>
-AMNI-CALC v2.5.0 &mdash; <a href="https://amni-scient.com">AMNI-SCIENT</a> &mdash; FOR EDUCATIONAL &amp; ESTIMATION PURPOSES ONLY &mdash; <a href="#" onclick="reportBug();return false">REPORT BUG</a>
+AMNI-CALC v2.11.0 &mdash; <a href="https://amni-scient.com">AMNI-SCIENT</a> &mdash; FOR EDUCATIONAL &amp; ESTIMATION PURPOSES ONLY &mdash; <a href="#" onclick="reportBug();return false">REPORT BUG</a>
 </footer>
 <script type="module">
 import wInit,{calc_beam,calc_section,section_presets,get_materials,get_material,calc_bolt,bolt_tables,calc_spring,calc_stress,get_finishes,recommend_finishes,convert_unit,unit_categories,calc_seal,seal_materials,seal_standard_sizes,calc_seal_groove,calc_fatigue,calc_thermal} from './pkg/amni_calc_wasm.js';
 let W=null,MAT=[],BOLT_TBL=null,SEC_PRESETS=[],UNIT_CATS=[],SEAL_MATS=[],AS568=[],GASKET_MATS=[];
 let supports=[],loads=[],secVerts=[],curSupType='pin';
 let USYS=localStorage.getItem('amni-calc-usys')||'metric';
+let UPREFS=JSON.parse(localStorage.getItem('amni-calc-uprefs')||'{}');
 function _uf(v,si,imp,fac,d){return USYS==='imperial'?fmt(v*fac,d)+' '+imp:fmt(v,d)+' '+si;}
+function _upf(v,cat,units,d){const u=UPREFS[cat];if(!u)return _uf(v,units[0].l,units[1].l,units[1].f,d);const m=units.find(x=>x.k===u);return m?fmt(v*m.f,d)+' '+m.l:fmt(v,d)+' '+units[0].l;}
 const U={
 f:(n,d)=>_uf(n,'N','lbf',0.224809,d),fk:(n,d)=>_uf(n/1000,'kN','kip',0.224809,d),
 m:(nm,d)=>_uf(nm,'N·m','lbf·ft',0.737562,d),
@@ -1142,12 +1415,15 @@ const pCfg={responsive:true,displaylogo:false,modeBarButtonsToRemove:['lasso2d',
 const $=s=>document.querySelector(s),$$=s=>document.querySelectorAll(s);
 const fmt=(v,d=4)=>typeof v==='number'?(Math.abs(v)>1e12?'INF':Math.abs(v)<1e-12?'0':Math.abs(v)>1e6||Math.abs(v)<0.001?v.toExponential(d):v.toFixed(d)):''+v;
 function hdCanvas(el){const dpr=window.devicePixelRatio||1;const r=el.getBoundingClientRect();const w=r.width||el.width||300;const h=r.height||el.height||150;el.width=w*dpr;el.height=h*dpr;const c=el.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);return{c,w,h};}
-let _lastBeam=null,_lastStress=null,_lastFatigue=null,_lastBolt=null,_lastSpring=null,_lastSpringKind=null,_lastThermal=null,_lastSeal=null,_lastMatDetail=null;
+let _lastBeam=null,_lastStress=null,_lastFatigue=null,_lastBolt=null,_lastSpring=null,_lastSpringKind=null,_lastThermal=null,_lastThermalMode=null,_lastThermalInp=null,_lastSeal=null,_lastMatDetail=null;
 window.toggleUnits=function(){
 USYS=USYS==='metric'?'imperial':'metric';
 localStorage.setItem('amni-calc-usys',USYS);
 const btn=$('#unit-toggle');
 if(btn){btn.textContent=USYS.toUpperCase();btn.classList.toggle('imperial',USYS==='imperial');}
+const presets=USYS==='imperial'?{len:'in',force:'lbf',stress:'ksi',temp:'F',moment:'lbfft'}:{len:'mm',force:'N',stress:'MPa',temp:'C',moment:'Nm'};
+Object.entries(presets).forEach(([k,v])=>{UPREFS[k]=v;const el=$('#up-'+k);if(el)el.value=v;});
+localStorage.setItem('amni-calc-uprefs',JSON.stringify(UPREFS));
 if(_lastBeam)renderBeamResults(_lastBeam);
 if(_lastStress)renderStressResults(_lastStress);
 if(_lastFatigue)renderFatigueResults(_lastFatigue);
@@ -1158,6 +1434,21 @@ if(_lastSeal)renderSealResults(_lastSeal);
 if(_lastMatDetail)showMatDetail(_lastMatDetail);
 };
 const fosClass=v=> v>=3?'ok':v>=1.5?'warn':'err';
+window.toggleUnitMenu=function(){const m=$('#unit-menu');m.style.display=m.style.display==='none'?'block':'none';};
+window.saveUnitPrefs=function(){
+['len','force','stress','temp','moment'].forEach(k=>{const el=$('#up-'+k);if(el)UPREFS[k]=el.value;});
+localStorage.setItem('amni-calc-uprefs',JSON.stringify(UPREFS));
+const hasImp=['in','ft','lbf','kip','ksi','psi','F','lbfft'].some(v=>Object.values(UPREFS).includes(v));
+USYS=hasImp?'imperial':'metric';
+localStorage.setItem('amni-calc-usys',USYS);
+const btn=$('#unit-toggle');if(btn){btn.textContent=USYS.toUpperCase();btn.classList.toggle('imperial',USYS==='imperial');}
+if(_lastBeam)renderBeamResults(_lastBeam);
+if(_lastStress)renderStressResults(_lastStress);
+if(_lastBolt)renderBoltResults(_lastBolt);
+if(_lastSpring)renderSpringResults(_lastSpring,_lastSpringKind);
+if(_lastThermal)renderThermalResults(_lastThermal);
+if(_lastSeal)renderSealResults(_lastSeal);
+};
 window.vSet=id=>{const el=document.getElementById(id),v=document.getElementById(id+'-v');if(el&&v)v.textContent=el.value;};
 async function init(){
 await wInit();W=true;
@@ -1169,9 +1460,11 @@ SEAL_MATS=JSON.parse(seal_materials());
 AS568=JSON.parse(seal_standard_sizes());
 setupTabs();setupMaterials();setupBolts();setupSections();setupUnits();setupSliders();setupBeamCanvas();setupSectionCanvas();setupSeals();setupGaskets();updateMathUI();
 const ubtn=$('#unit-toggle');if(ubtn){ubtn.textContent=USYS.toUpperCase();ubtn.classList.toggle('imperial',USYS==='imperial');}
+['len','force','stress','temp','moment'].forEach(k=>{const el=$('#up-'+k);if(el&&UPREFS[k])el.value=UPREFS[k];});
+document.addEventListener('click',e=>{const m=$('#unit-menu');if(m&&m.style.display==='block'&&!e.target.closest('#unit-menu')&&!e.target.closest('[onclick*="toggleUnitMenu"]'))m.style.display='none';});
 }
 function setupTabs(){
-const icons={beam:'&#9649;',bolts:'&#9881;',equations:'&#931;',finishes:'&#9678;',gaskets:'&#9645;',materials:'&#9670;',math:'&#960;',seals:'&#9711;',springs:'&#8767;',stress:'&#9762;',thermal:'&#9832;',units:'&#8644;'};
+const icons={beam:'&#9649;',bearings:'&#9673;',bolts:'&#9881;',buckling:'&#9608;',electrical:'&#9889;',equations:'&#931;',finishes:'&#9678;',flow:'&#8776;',gaskets:'&#9645;',gears:'&#9881;',materials:'&#9670;',math:'&#960;',seals:'&#9711;',springs:'&#8767;',stress:'&#9762;',thermal:'&#9832;',units:'&#8644;'};
 const switchTo=v=>{
 $$('.tab').forEach(x=>x.classList.remove('active'));
 $$('.view').forEach(x=>x.classList.remove('active'));
@@ -1271,6 +1564,17 @@ const props=[
 $('#mat-det-grid').innerHTML=props.map(p=>`<div class="result-item"><div class="lbl">${p.l}</div><div class="val">${p.v}</div></div>`).join('');
 }
 function setupBolts(){
+const xGrades=[
+{name:'SAE Grade 2',proof_strength:393e6,yield_strength:462e6,ultimate_strength:517e6},
+{name:'SAE Grade 5',proof_strength:586e6,yield_strength:634e6,ultimate_strength:827e6},
+{name:'SAE Grade 8',proof_strength:827e6,yield_strength:896e6,ultimate_strength:1034e6},
+{name:'ASTM A307',proof_strength:248e6,yield_strength:248e6,ultimate_strength:414e6},
+{name:'ASTM A325',proof_strength:586e6,yield_strength:634e6,ultimate_strength:827e6},
+{name:'ASTM A490',proof_strength:827e6,yield_strength:896e6,ultimate_strength:1034e6},
+{name:'ASTM A193 B7',proof_strength:724e6,yield_strength:724e6,ultimate_strength:862e6},
+];
+const existing=new Set(BOLT_TBL.grades.map(g=>g.name));
+xGrades.forEach(g=>{if(!existing.has(g.name))BOLT_TBL.grades.push(g);});
 BOLT_TBL.grades.forEach(g=>{const o=document.createElement('option');o.value=g.name;o.textContent=g.name;$('#bl-grade').appendChild(o);});
 BOLT_TBL.sizes.forEach(s=>{const o=document.createElement('option');o.value=s.name;o.textContent=s.name;$('#bl-size').appendChild(o);});
 $('#bl-grade').value='ISO 8.8';
@@ -1398,9 +1702,15 @@ tb.appendChild(tr);
 }
 let beamCanvas,beamCtx;
 function resizeBeamCanvas(){
+if(!beamCanvas||!beamCanvas.parentElement)return;
 const wrap=beamCanvas.parentElement;
+const dpr=window.devicePixelRatio||1;
 const w=Math.max(600,wrap.offsetWidth-4);
-beamCanvas.width=w;beamCanvas.height=140;
+beamCanvas.width=w*dpr;beamCanvas.height=140*dpr;
+beamCanvas.style.width=w+'px';beamCanvas.style.height='140px';
+beamCanvas._cw=w;beamCanvas._ch=140;
+beamCtx=beamCanvas.getContext('2d');
+beamCtx.setTransform(dpr,0,0,dpr,0,0);
 drawBeam();
 }
 window.addSupAtPos=function(){
@@ -1428,9 +1738,10 @@ window.addEventListener('resize',()=>{if(beamCanvas)resizeBeamCanvas();});
 }
 function onBeamClick(e){
 const rect=beamCanvas.getBoundingClientRect();
-const sx=beamCanvas.width/rect.width;
+const cw=beamCanvas._cw||beamCanvas.clientWidth||800;
+const sx=cw/rect.width;
 const x=(e.clientX-rect.left)*sx;
-const ml=60,mr=20,bw=beamCanvas.width-ml-mr;
+const ml=60,mr=20,bw=cw-ml-mr;
 const pct=(x-ml)/bw;
 if(pct<0||pct>1)return;
 const len=parseFloat($('#bm-len').value)||3000;
@@ -1440,7 +1751,7 @@ drawBeam();
 updateSupList();
 }
 function drawBeam(){
-const c=beamCtx,w=beamCanvas.width,h=beamCanvas.height;
+const c=beamCtx,w=beamCanvas._cw||beamCanvas.clientWidth||800,h=beamCanvas._ch||140;
 c.clearRect(0,0,w,h);
 const ml=60,mr=20,bw=w-ml-mr,by=h*0.4;
 const len=parseFloat($('#bm-len').value)||3000;
@@ -1529,7 +1840,6 @@ const toM4={'cm4':1e-8,'mm4':1e-12,'in4':4.162314e-7};
 const im=parseFloat($('#bm-i').value)*(toM4[$('#bm-i-u').value]||1e-8);
 const sups=supports.map(s=>({pos:s.pos*lu/((parseFloat($('#bm-len').value)||3000)*lu)*len,kind:s.kind}));
 const lds=loads.map(l=>{
-const scale=lu/0.001;
 const r={kind:l.kind,pos:l.pos*0.001,mag:l.mag};
 if(l.end_pos)r.end_pos=l.end_pos*0.001;
 return r;
@@ -1572,7 +1882,13 @@ Plotly.react(id,[{x:xs,y:ys,type:'scatter',mode:'lines',fill:'tozeroy',fillcolor
 let secCanvas,secCtx;
 function setupSectionCanvas(){
 secCanvas=$('#c-section');
+const dpr=window.devicePixelRatio||1;
+const cw=secCanvas.clientWidth||400,ch=secCanvas.clientHeight||400;
+secCanvas.width=cw*dpr;secCanvas.height=ch*dpr;
+secCanvas.style.width=cw+'px';secCanvas.style.height=ch+'px';
 secCtx=secCanvas.getContext('2d');
+secCtx.setTransform(dpr,0,0,dpr,0,0);
+secCanvas._dpr=dpr;secCanvas._cw=cw;secCanvas._ch=ch;
 secCanvas.addEventListener('click',onSecClick);
 secCanvas.addEventListener('contextmenu',e=>{e.preventDefault();if(secVerts.length>2){drawSection();calcSection();}});
 secCanvas.addEventListener('wheel',e=>{
@@ -1580,7 +1896,7 @@ e.preventDefault();
 if(secVerts.length<2)return;
 const factor=e.deltaY<0?1.1:0.9;
 const rect=secCanvas.getBoundingClientRect();
-const sx=secCanvas.width/rect.width;
+const sx=(secCanvas._cw||secCanvas.clientWidth)/rect.width;
 const mx=(e.clientX-rect.left)*sx,my=(e.clientY-rect.top)*sx;
 secVerts=secVerts.map(v=>[mx+(v[0]-mx)*factor,my+(v[1]-my)*factor]);
 drawSection();
@@ -1589,35 +1905,38 @@ drawSection();
 }
 function onSecClick(e){
 const rect=secCanvas.getBoundingClientRect();
-const sx=secCanvas.width/rect.width;
+const sx=(secCanvas._cw||secCanvas.clientWidth)/rect.width;
 const x=(e.clientX-rect.left)*sx;
 const y=(e.clientY-rect.top)*sx;
 secVerts.push([x,y]);
 drawSection();
 }
 function drawSection(){
-const c=secCtx,w=secCanvas.width,h=secCanvas.height;
+const c=secCtx,w=secCanvas._cw||secCanvas.clientWidth||400,h=secCanvas._ch||secCanvas.clientHeight||400;
 c.clearRect(0,0,w,h);
 c.strokeStyle='#333';c.lineWidth=0.5;
 for(let x=0;x<w;x+=20){c.beginPath();c.moveTo(x,0);c.lineTo(x,h);c.stroke();}
 for(let y=0;y<h;y+=20){c.beginPath();c.moveTo(0,y);c.lineTo(w,y);c.stroke();}
 if(secVerts.length===0)return;
-c.fillStyle='rgba(255,107,53,0.1)';c.strokeStyle='#ff6b35';c.lineWidth=2;
+c.fillStyle='rgba(255,107,53,0.25)';c.strokeStyle='#ff6b35';c.lineWidth=2;
+if(window._secHole&&window._secHole.length>2){
+c.beginPath();
+secVerts.forEach((v,i)=>i===0?c.moveTo(v[0],v[1]):c.lineTo(v[0],v[1]));
+c.closePath();
+window._secHole.forEach((v,i)=>i===0?c.moveTo(v[0],v[1]):c.lineTo(v[0],v[1]));
+c.closePath();
+c.fill('evenodd');
+c.beginPath();
+secVerts.forEach((v,i)=>i===0?c.moveTo(v[0],v[1]):c.lineTo(v[0],v[1]));
+c.closePath();c.stroke();
+c.beginPath();
+window._secHole.forEach((v,i)=>i===0?c.moveTo(v[0],v[1]):c.lineTo(v[0],v[1]));
+c.closePath();c.stroke();
+}else{
 c.beginPath();
 secVerts.forEach((v,i)=>i===0?c.moveTo(v[0],v[1]):c.lineTo(v[0],v[1]));
 if(secVerts.length>2)c.closePath();
 c.fill();c.stroke();
-if(window._secHole&&window._secHole.length>2){
-c.globalCompositeOperation='destination-out';
-c.fillStyle='rgba(255,255,255,1)';
-c.beginPath();
-window._secHole.forEach((v,i)=>i===0?c.moveTo(v[0],v[1]):c.lineTo(v[0],v[1]));
-c.closePath();c.fill();
-c.globalCompositeOperation='source-over';
-c.strokeStyle='#ff6b35';c.lineWidth=2;
-c.beginPath();
-window._secHole.forEach((v,i)=>i===0?c.moveTo(v[0],v[1]):c.lineTo(v[0],v[1]));
-c.closePath();c.stroke();
 }
 c.fillStyle='#ff6b35';
 secVerts.forEach(v=>{c.beginPath();c.arc(v[0],v[1],4,0,Math.PI*2);c.fill();});
@@ -1745,7 +2064,6 @@ const su=U.sU();
 Plotly.react('c-fatigue',traces,Object.assign({},pLayout,{title:{text:'FATIGUE FAILURE CRITERIA',font:{size:12,color:'#ff6b35',family:'JetBrains Mono'}},xaxis:Object.assign({},pLayout.xaxis,{title:{text:'σ_mean ('+su+')',font:{size:11,color:'#888'}}}),yaxis:Object.assign({},pLayout.yaxis,{title:{text:'σ_alt ('+su+')',font:{size:11,color:'#888'}}}),showlegend:true,legend:{font:{size:10,color:'#888'},bgcolor:'transparent',x:0.65,y:0.98}}),pCfg);
 }
 window.calcBolt=function(){
-const toN={'N':1,'kN':1000,'lbf':4.44822,'kip':4448.22};
 const inp={
 grade:$('#bl-grade').value,
 size:$('#bl-size').value,
@@ -1823,8 +2141,23 @@ else{bx=-rw/2;by=rh/2-(d-2*rw-rh);}
 bolts.push([cx+bx*scale,cy+by*scale]);
 }
 }
-c.fillStyle='var(--accent)';
-bolts.forEach(b=>{c.beginPath();c.arc(b[0],b[1],6,0,Math.PI*2);c.fill();c.strokeStyle='#fff';c.lineWidth=1;c.stroke();});
+c.fillStyle='#ff6b35';
+const seq=[];
+if(nBolts>=4){
+const half=Math.floor(nBolts/2);
+for(let i=0;i<half;i++){seq.push(i);seq.push(i+half);}
+if(nBolts%2===1)seq.push(nBolts-1);
+}else{for(let i=0;i<nBolts;i++)seq.push(i);}
+bolts.forEach((b,i)=>{
+c.beginPath();c.arc(b[0],b[1],8,0,Math.PI*2);c.fill();
+c.strokeStyle='#fff';c.lineWidth=1;c.stroke();
+const order=seq.indexOf(i)+1;
+c.fillStyle='#fff';c.font='bold 9px monospace';c.textAlign='center';c.textBaseline='middle';
+c.fillText(order+'',b[0],b[1]);
+c.fillStyle='#ff6b35';
+});
+c.fillStyle='#666';c.font='9px monospace';c.textAlign='center';
+c.fillText('Torque sequence: star pattern',cx,h-8);
 };
 window.toggleBelleville=function(){
 const kind=$('#sp-type').value;
@@ -1872,6 +2205,8 @@ _lastSpring=res;_lastSpringKind=kind;renderSpringResults(res,kind);
 };
 function renderSpringResults(res,kind){
 const isBell=kind==='belleville';
+const Sy=(parseFloat($('#sp-sy').value)||1000)*1e6;
+const corrFoS=isBell?Sy/Math.max(Math.abs(res.shear_stress||1),Math.abs(res.corrected_stress||1)):Sy/(res.corrected_stress||1);
 const p=isBell?[
 {l:'SPRING RATE',v:U.sr(res.spring_rate,2)},
 {l:'FORCE',v:U.f(res.force,2)},
@@ -1883,6 +2218,7 @@ const p=isBell?[
 {l:'SOLID HEIGHT',v:U.dm(res.solid_length*1000,1)},
 {l:'MAX DEFLECTION h₀',v:U.dm(res.max_deflection*1000,1)},
 {l:'FoS STATIC',v:fmt(res.fos_static,2),c:fosClass(res.fos_static)},
+{l:'FoS (Sy/σ_max)',v:fmt(corrFoS,2),c:fosClass(corrFoS)},
 {l:'ENERGY STORED',v:U.e(res.energy_stored,4)},
 {l:'WEIGHT APPROX',v:U.wt(res.weight_approx*1000,2)},
 ]:[
@@ -1898,6 +2234,7 @@ const p=isBell?[
 {l:'NATURAL FREQ',v:fmt(res.natural_freq_hz,1)+' Hz'},
 {l:'BUCKLING RATIO',v:fmt(res.buckling_ratio,2),c:res.buckling_ratio>4?'warn':''},
 {l:'FoS STATIC',v:fmt(res.fos_static,2),c:fosClass(res.fos_static)},
+{l:'FoS (Sy/τ_Wahl)',v:fmt(corrFoS,2),c:fosClass(corrFoS)},
 {l:'ENERGY STORED',v:U.e(res.energy_stored,4)},
 {l:'WEIGHT APPROX',v:U.wt(res.weight_approx*1000,2)},
 ];
@@ -1957,13 +2294,14 @@ if(totalDiscs<=1){
 drawDisc(cx,cy,false);
 }else{
 const discH=(curH+t)*scale;
-const stackH=nS*discH+(nS>1?(nS-1)*2:0);
+const stackH=nS*discH+(nS>1?(nS-1)*Math.max(6,t*scale*0.5):0);
 const startY=cy-stackH/2;
 for(let s=0;s<nS;s++){
-const dy=startY+s*(discH+2)+discH/2;
+const dy=startY+s*(discH+Math.max(6,t*scale*0.5))+discH/2;
+const pOff=Math.max(4,t*scale*0.4);
 for(let p=0;p<Math.min(nP,3);p++){
-const px=cx+(p-(Math.min(nP,3)-1)/2)*3;
-drawDisc(px,dy+(p*0.8),s%2===1);
+const px=cx+(p-(Math.min(nP,3)-1)/2)*pOff;
+drawDisc(px,dy+(p*Math.max(2,t*scale*0.3)),s%2===1);
 }
 }
 if(nP>3){
@@ -1973,8 +2311,8 @@ c.fillText('×'+nP+' parallel',cx,cy+stackH/2+22);
 }
 c.strokeStyle='#444';c.lineWidth=1;
 const plateHalf=De/2*scale+8;
-const stackTop=cy-(totalDiscs<=1?(curH/2*scale+t*scale):((nS*((curH+t)*scale)+(nS-1)*2)/2))-5;
-const stackBot=cy+(totalDiscs<=1?(curH/2*scale):((nS*((curH+t)*scale)+(nS-1)*2)/2))+5;
+const stackTop=cy-(totalDiscs<=1?(curH/2*scale+t*scale):((nS*((curH+t)*scale)+(nS-1)*Math.max(6,t*scale*0.5))/2))-5;
+const stackBot=cy+(totalDiscs<=1?(curH/2*scale):((nS*((curH+t)*scale)+(nS-1)*Math.max(6,t*scale*0.5))/2))+5;
 c.beginPath();c.moveTo(cx-plateHalf,stackTop);c.lineTo(cx+plateHalf,stackTop);c.stroke();
 c.beginPath();c.moveTo(cx-plateHalf,stackBot);c.lineTo(cx+plateHalf,stackBot);c.stroke();
 if(st.defl>0){
@@ -2212,25 +2550,96 @@ const sqFrac=sqPct/100;
 const compFactor=Math.max(1-sqFrac,0.05);
 const cordR=36;
 if(isRadial){
-const boreR=80,shaftR=boreR-cordR*2.2;
-const arcCx=w*0.35,arcCy=h/2;
-c.strokeStyle='#444';c.lineWidth=2;
-c.beginPath();c.arc(arcCx,arcCy,boreR,-.6,0.6);c.stroke();
-c.beginPath();c.arc(arcCx,arcCy,shaftR,-.6,0.6);c.stroke();
-const gTop=arcCy-cordR*1.3,gBot=arcCy+cordR*1.3;
-const gInner=glandType==='radial_piston'?shaftR-cordR*0.3:shaftR;
-const gOuter=glandType==='radial_bore'?boreR+cordR*0.3:boreR;
-c.strokeStyle='#555';c.lineWidth=1;
-c.strokeRect(arcCx+gInner-10,gTop,gOuter-gInner+20,gBot-gTop);
-c.fillStyle='rgba(255,255,255,0.03)';
-c.fillRect(arcCx+gInner-10,gTop,gOuter-gInner+20,gBot-gTop);
-const sealCx=arcCx+(gInner+gOuter)/2;
+const isPiston=glandType==='radial_piston';
+const boreR=90,shaftR=boreR-cordR*2.6;
+const arcCx=w*0.38,arcCy=h/2;
+const arcSpan=0.7;
+c.strokeStyle='#475569';c.lineWidth=2;
+c.beginPath();c.arc(arcCx,arcCy,boreR,-arcSpan,arcSpan);c.stroke();
+c.beginPath();c.arc(arcCx,arcCy,shaftR,-arcSpan,arcSpan);c.stroke();
+c.fillStyle='rgba(30,41,59,0.4)';
+c.beginPath();c.arc(arcCx,arcCy,boreR,-arcSpan,arcSpan);
+c.arc(arcCx,arcCy,shaftR,arcSpan,-arcSpan,true);c.fill();
+const gapR=boreR-shaftR;
+const grDepth=cordR*1.4;
+const grHalf=cordR*1.2;
+const grInnerR=isPiston?shaftR-grDepth*0.5:boreR-gapR;
+const grOuterR=isPiston?shaftR:boreR+grDepth*0.5;
+const grAngHalf=grHalf/(((grInnerR+grOuterR)/2)||1);
+c.fillStyle='rgba(30,41,59,0.95)';
+c.beginPath();
+c.arc(arcCx,arcCy,grOuterR,-grAngHalf,grAngHalf);
+c.arc(arcCx,arcCy,grInnerR,grAngHalf,-grAngHalf,true);c.closePath();c.fill();
+c.strokeStyle='#475569';c.lineWidth=1.5;
+c.beginPath();c.arc(arcCx,arcCy,grOuterR,-grAngHalf,grAngHalf);
+c.arc(arcCx,arcCy,grInnerR,grAngHalf,-grAngHalf,true);c.closePath();c.stroke();
+c.strokeStyle='rgba(148,163,184,0.08)';c.lineWidth=1;
+for(let gr=grInnerR;gr<=grOuterR;gr+=6){c.beginPath();c.arc(arcCx,arcCy,gr,-grAngHalf,grAngHalf);c.stroke();}
+for(let ga=-grAngHalf;ga<=grAngHalf;ga+=6/((grInnerR+grOuterR)/2)){
+c.beginPath();c.moveTo(arcCx+grInnerR*Math.cos(ga),arcCy+grInnerR*Math.sin(ga));
+c.lineTo(arcCx+grOuterR*Math.cos(ga),arcCy+grOuterR*Math.sin(ga));c.stroke();}
+const sealMidR=(grInnerR+grOuterR)/2;
+const radialGap=grOuterR-grInnerR;
 const ry=cordR*compFactor;
-const rx=cordR*(1+sqFrac*0.5);
+const rx=Math.min(cordR*(1+sqFrac*0.5),radialGap/2-1);
+const sealCx_r=sealMidR;
 if(sqPct>0){c.save();c.globalAlpha=0.2;c.strokeStyle='#888';c.lineWidth=1;c.setLineDash([3,3]);
-drawSealShape(c,sealCx,arcCy,cordR,cordR,xsec);c.setLineDash([]);c.restore();}
+const nG=48;c.beginPath();
+for(let i=0;i<=nG;i++){const a=-grAngHalf+2*grAngHalf*i/nG;
+const px=arcCx+(sealCx_r+cordR*Math.cos(2*Math.PI*i/nG))*Math.cos(a);
+const py=arcCy+(sealCx_r+cordR*Math.cos(2*Math.PI*i/nG))*Math.sin(a);
+i===0?c.moveTo(px,py):c.lineTo(px,py);}
+c.closePath();c.stroke();c.setLineDash([]);c.restore();}
 c.fillStyle=matColor+'33';c.strokeStyle=matColor;c.lineWidth=2;
-drawSealShape(c,sealCx,arcCy,rx,ry,xsec);
+const nPts=64;
+c.beginPath();
+for(let i=0;i<=nPts;i++){
+const t=i/nPts;const ang=-grAngHalf+2*grAngHalf*t;
+const pa=2*Math.PI*t;
+let sr=rx,st=ry;
+if(xsec==='x_ring'){const lobe=1+0.25*Math.cos(4*pa);sr*=lobe;st*=lobe;}
+else if(xsec==='quad'){const qf=1+0.08*Math.cos(4*pa);sr*=qf;st*=qf;}
+const pr=sealCx_r+sr*Math.cos(pa);
+const px=arcCx+pr*Math.cos(ang);
+const py=arcCy+pr*Math.sin(ang);
+i===0?c.moveTo(px,py):c.lineTo(px,py);}
+c.closePath();c.fill();c.stroke();
+if(sqPct>5){const nN=16;
+for(let i=0;i<nN;i++){
+const t=i/nN;const ang=-grAngHalf+2*grAngHalf*t;
+const pa=2*Math.PI*t;
+const nr=sealCx_r+rx*Math.cos(pa)*0.85;
+const nx=arcCx+nr*Math.cos(ang);
+const ny=arcCy+nr*Math.sin(ang);
+const radN=(Math.cos(pa)+1)/2;
+let sf=sqFrac;
+if(radN<0.12||radN>0.88)sf*=2;
+if(Math.abs(Math.sin(pa))>0.8)sf*=1.5;
+sf=Math.min(sf,1);
+const r=Math.round(80+175*sf),g=Math.round(Math.max(60,200-160*sf)),b=Math.round(Math.max(80,240-200*sf));
+c.fillStyle=`rgb(${r},${g},${b})`;c.beginPath();c.arc(nx,ny,2+sf*3,0,Math.PI*2);c.fill();
+}}
+const touchInner=sealCx_r-rx<=grInnerR+2;
+const touchOuter=sealCx_r+rx>=grOuterR-2;
+if(touchInner||touchOuter){
+c.strokeStyle='rgba(239,68,68,0.4)';c.lineWidth=4;
+if(touchInner){c.beginPath();c.arc(arcCx,arcCy,grInnerR,-grAngHalf*0.7,grAngHalf*0.7);c.stroke();}
+if(touchOuter){c.beginPath();c.arc(arcCx,arcCy,grOuterR,-grAngHalf*0.7,grAngHalf*0.7);c.stroke();}
+}
+const infoX=w*0.72;
+c.fillStyle='#94a3b8';c.font='9px monospace';c.textAlign='left';
+c.fillText('rx: '+rx.toFixed(1)+' ry: '+ry.toFixed(1),infoX,h*0.28);
+c.fillText((isPiston?'Shaft':'Bore')+': '+(touchInner||touchOuter?'CONTACT':'clear'),infoX,h*0.28+12);
+c.fillText('Groove: '+(isPiston?'piston':'bore'),infoX,h*0.28+24);
+c.strokeStyle='#64748b';c.lineWidth=1;c.setLineDash([2,2]);
+const dimAng=grAngHalf+0.15;
+c.beginPath();c.moveTo(arcCx+grInnerR*Math.cos(dimAng),arcCy+grInnerR*Math.sin(dimAng));
+c.lineTo(arcCx+grOuterR*Math.cos(dimAng),arcCy+grOuterR*Math.sin(dimAng));c.stroke();
+c.setLineDash([]);
+c.fillStyle='#94a3b8';c.font='8px monospace';c.textAlign='center';
+const dimMidR=(grInnerR+grOuterR)/2;
+c.save();c.translate(arcCx+dimMidR*Math.cos(dimAng+0.08),arcCy+dimMidR*Math.sin(dimAng+0.08));
+c.rotate(dimAng);c.fillText('GROOVE',0,0);c.restore();
 }else{
 const grW=cordR*2.8,grD=cordR*2.4,wallT=10;
 const grBot=h*0.72,grTop=grBot-grD;
@@ -2472,7 +2881,7 @@ const activeTab=document.querySelector('.tab.active');
 const tab=activeTab?activeTab.dataset.v:'unknown';
 const ua=navigator.userAgent;
 const ts=new Date().toISOString();
-const body=encodeURIComponent(`Bug Report — AMNI-CALC v2.3.0\n\nTab: ${tab}\nTimestamp: ${ts}\nBrowser: ${ua}\n\nDescribe the issue:\n\n\nSteps to reproduce:\n1.\n2.\n3.\n\nExpected behavior:\n\nActual behavior:\n`);
+const body=encodeURIComponent(`Bug Report — AMNI-CALC v2.11.0\n\nTab: ${tab}\nTimestamp: ${ts}\nBrowser: ${ua}\n\nDescribe the issue:\n\n\nSteps to reproduce:\n1.\n2.\n3.\n\nExpected behavior:\n\nActual behavior:\n`);
 window.open(`mailto:amnibro7@gmail.com?subject=${encodeURIComponent('AMNI-CALC Bug Report — '+tab)}&body=${body}`);
 };
 window.updateThermalUI=function(){
@@ -2539,7 +2948,39 @@ inp.length=parseFloat($('#th-expl').value)||1;
 }
 const res=JSON.parse(calc_thermal(JSON.stringify(inp)));
 if(res.error){$('#thermal-results').innerHTML=`<h3>ERROR</h3><p style="color:var(--err)">${res.error}</p>`;return;}
-_lastThermal=res;renderThermalResults(res);
+if(!res.t_interfaces||res.t_interfaces.length<2){
+if(mode==='conduction'){
+const nPts=10;res.t_interfaces=[];
+for(let i=0;i<=nPts;i++)res.t_interfaces.push(inp.t_hot-(inp.t_hot-inp.t_cold)*i/nPts);
+res._xLabels=res.t_interfaces.map((_,i,a)=>i===0?'T_hot':i===a.length-1?'T_cold':(i/(a.length-1)*inp.thickness*1000).toFixed(1)+' mm');
+}else if(mode==='convection'){
+res.t_interfaces=[inp.t_hot,inp.t_hot,inp.t_cold];
+res._xLabels=['T_surface','Boundary','T_fluid'];
+}else if(mode==='radiation'){
+res.t_interfaces=[inp.t_hot,inp.t_cold];
+res._xLabels=['T_surface','T_surround'];
+}else if(mode==='fin'){
+const L=inp.length||0.05,hc=inp.h_conv||25,k=inp.k||200,P=inp.perimeter||0.06,Ac=inp.a_fin||0.0001;
+const m=Math.sqrt(hc*P/(k*Ac));const nPts=20;res.t_interfaces=[];
+const Tb=inp.t_hot,Ta=inp.t_cold;
+for(let i=0;i<=nPts;i++){const x=L*i/nPts;const theta=(Math.cosh(m*(L-x))/Math.cosh(m*L));res.t_interfaces.push(Ta+(Tb-Ta)*theta);}
+res._xLabels=res.t_interfaces.map((_,i,a)=>i===0?'Base':i===a.length-1?'Tip':(i/(a.length-1)*L*1000).toFixed(1)+' mm');
+}else if(mode==='radial_pipe'){
+const ri=inp.r_inner||0.025,ro=inp.r_outer||0.03,hi=inp.h_inside||500,ho=inp.h_outside||10,k=inp.k||50,pL=inp.pipe_length||1;
+const Ri=1/(2*Math.PI*ri*pL*hi),Rw=Math.log(ro/ri)/(2*Math.PI*k*pL),Ro=1/(2*Math.PI*ro*pL*ho);
+const Rt=Ri+Rw+Ro,dT=inp.t_hot-inp.t_cold;
+const Ti=inp.t_hot-dT*(Ri/Rt),To=inp.t_hot-dT*((Ri+Rw)/Rt);
+const nPts=10;res.t_interfaces=[inp.t_hot,Ti];
+for(let i=1;i<nPts;i++){const r=ri+(ro-ri)*i/nPts;const Tr=Ti-(Ti-To)*Math.log(r/ri)/Math.log(ro/ri);res.t_interfaces.push(Tr);}
+res.t_interfaces.push(To,inp.t_cold);
+res._xLabels=[...res.t_interfaces.map((_,i,a)=>i===0?'T_hot':i===1?'r_i':i===a.length-2?'r_o':i===a.length-1?'T_cold':'r='+(ri+(ro-ri)*(i-1)/(nPts)).toFixed(4))];
+}else if(mode==='expansion'){
+const dT=inp.t_hot-inp.t_cold;const nPts=10;res.t_interfaces=[];
+for(let i=0;i<=nPts;i++)res.t_interfaces.push(inp.t_cold+dT*i/nPts);
+res._xLabels=res.t_interfaces.map((_,i,a)=>i===0?'T_cold':i===a.length-1?'T_hot':fmt(inp.t_cold+dT*i/(a.length-1),0)+'°');
+}
+}
+_lastThermal=res;_lastThermalMode=mode;_lastThermalInp=inp;renderThermalResults(res);
 };
 function renderThermalResults(res){
 let items=[];
@@ -2562,7 +3003,7 @@ const el=document.getElementById('c-thermal');
 if(!el)return;
 const temps=res.t_interfaces;
 const n=temps.length;
-const xLabels=temps.map((_,i)=>i===0?'T_hot':i===n-1?'T_cold':'I'+i);
+const xLabels=res._xLabels||temps.map((_,i)=>i===0?'T_hot':i===n-1?'T_cold':'I'+i);
 const tC=v=>USYS==='imperial'?v*9/5+32:v;
 const traces=[{x:xLabels,y:temps.map(tC),type:'scatter',mode:'lines+markers+text',name:'Temperature',line:{color:'#ff6b35',width:2.5},marker:{color:'#ff6b35',size:8},text:temps.map(t=>U.t(t,1)),textposition:'top center',textfont:{size:9,color:'#e0e0e0'},hovertemplate:`%{x}<br>T = %{y:.1f} ${U.tU()}<extra></extra>`}];
 const shapes=[];
@@ -3008,7 +3449,7 @@ const lateralExp=m.compressibility>30?1.08:m.compressibility>15?1.05:1.03;
 const chWidth=gkW*lateralExp+0.5;
 const actualSq=((gkT-chDepth)/gkT*100);
 const sealArea=Math.PI/4*(gkOD*gkOD-gkID*gkID);
-const gasketStress=boltLoad*1000/sealArea;
+const gasketStress=sealArea>0?boltLoad*1000/sealArea:0;
 const residualStress=gasketStress*(1-m.creep/100);
 const tempOk=temp>=m.temp_min&&temp<=m.temp_max;
 const pressOk=press<=m.pressure_max;
@@ -3108,7 +3549,235 @@ adEl.classList.remove('hidden');
 }
 setTimeout(initAds,2000);
 if(adClose)adClose.onclick=()=>{adEl.classList.add('hidden');setTimeout(()=>adEl.classList.remove('hidden'),120000)};
+function updateBkSec(){
+const s=$('#bk-sec').value,el=$('#bk-sec-params');
+const r=(id,lb,v)=>`<div class="field"><label>${lb}</label><input type="number" id="${id}" value="${v}" step="any" oninput="calcBuckling()"></div>`;
+const mp={circle:r('bk-d','DIAMETER (mm)',50),hollow_circle:`<div class="row">${r('bk-d','OUTER DIA (mm)',60)}${r('bk-di','INNER DIA (mm)',50)}</div>`,rect:`<div class="row">${r('bk-b','WIDTH (mm)',40)}${r('bk-h','HEIGHT (mm)',60)}</div>`,hollow_rect:`<div class="row">${r('bk-b','WIDTH (mm)',60)}${r('bk-h','HEIGHT (mm)',80)}</div><div class="row">${r('bk-tb','WALL-B (mm)',5)}${r('bk-th','WALL-H (mm)',5)}</div>`,i_beam:`<div class="row">${r('bk-bf','FLANGE W (mm)',100)}${r('bk-d','DEPTH (mm)',200)}</div><div class="row">${r('bk-tf','FLANGE T (mm)',10)}${r('bk-tw','WEB T (mm)',6)}</div>`};
+el.innerHTML=mp[s]||'';
+}
+window.updateBkSec=updateBkSec;
+function calcBkI(){
+const s=$('#bk-sec').value,g=id=>(parseFloat($('#'+id)?.value)||0);
+const pi=Math.PI;
+if(s==='circle'){const d=g('bk-d');return pi*Math.pow(d,4)/64;}
+if(s==='hollow_circle'){const d=g('bk-d'),di=g('bk-di');return pi*(Math.pow(d,4)-Math.pow(di,4))/64;}
+if(s==='rect'){const b=g('bk-b'),h=g('bk-h');return b*Math.pow(h,3)/12;}
+if(s==='hollow_rect'){const b=g('bk-b'),h=g('bk-h'),tb=g('bk-tb'),th=g('bk-th');return(b*Math.pow(h,3)-(b-2*tb)*Math.pow(h-2*th,3))/12;}
+if(s==='i_beam'){const bf=g('bk-bf'),d=g('bk-d'),tf=g('bk-tf'),tw=g('bk-tw');return(bf*Math.pow(d,3)-(bf-tw)*Math.pow(d-2*tf,3))/12;}
+return 1;
+}
+function calcBkA(){
+const s=$('#bk-sec').value,g=id=>(parseFloat($('#'+id)?.value)||0),pi=Math.PI;
+if(s==='circle')return pi*Math.pow(g('bk-d'),2)/4;
+if(s==='hollow_circle')return pi*(Math.pow(g('bk-d'),2)-Math.pow(g('bk-di'),2))/4;
+if(s==='rect')return g('bk-b')*g('bk-h');
+if(s==='hollow_rect'){const b=g('bk-b'),h=g('bk-h'),tb=g('bk-tb'),th=g('bk-th');return b*h-(b-2*tb)*(h-2*th);}
+if(s==='i_beam'){const bf=g('bk-bf'),d=g('bk-d'),tf=g('bk-tf'),tw=g('bk-tw');return 2*bf*tf+tw*(d-2*tf);}
+return 1;
+}
+window.calcBuckling=function(){
+const K=parseFloat($('#bk-end').value)||1,L=(parseFloat($('#bk-l').value)||1)*1e3,E=(parseFloat($('#bk-e').value)||200)*1e3,Sy=parseFloat($('#bk-sy').value)||250,ecc=parseFloat($('#bk-ecc').value)||0;
+const I_mm4=calcBkI(),A=calcBkA(),r=Math.sqrt(I_mm4/A),Le=K*L,SR=Le/r;
+const Pcr=Math.PI*Math.PI*E*I_mm4/(Le*Le),sCr=Pcr/A;
+const SRcc=Math.sqrt(2*Math.PI*Math.PI*E/Sy);
+let safeLoad,method;
+if(ecc>0){
+const c_=($('#bk-sec').value==='circle'?(parseFloat($('#bk-d')?.value)||50)/2:($('#bk-sec').value==='rect'||$('#bk-sec').value==='hollow_rect')?(parseFloat($('#bk-h')?.value)||60)/2:(parseFloat($('#bk-d')?.value)||200)/2);
+const ec_r2=ecc*c_/(r*r),secant=1/Math.cos((Le/(2*r))*Math.sqrt(Pcr/(E*A*1e6))*0.001);
+const sMax=Pcr/A*(1+ec_r2*secant);
+safeLoad=Sy*A/Math.max(sMax/Pcr*A,1);method='SECANT (ECCENTRIC)';
+}else if(SR<SRcc){
+const sJ=Sy*(1-Sy*SR*SR/(4*Math.PI*Math.PI*E));
+safeLoad=sJ*A/2;method='J.B. JOHNSON (SHORT)';
+}else{
+safeLoad=Pcr/2;method='EULER (LONG)';
+}
+const el=$('#bk-results');
+el.innerHTML=`<h3>BUCKLING RESULTS</h3><div class="result-grid"><div class="result-item"><div class="lbl">METHOD</div><div class="val">${method}</div></div><div class="result-item"><div class="lbl">EULER Pcr</div><div class="val">${fmt(Pcr/1e3,2)} kN</div></div><div class="result-item"><div class="lbl">CRITICAL STRESS</div><div class="val">${fmt(sCr,1)} MPa</div></div><div class="result-item"><div class="lbl">SLENDERNESS RATIO</div><div class="val">${fmt(SR,1)}</div></div><div class="result-item"><div class="lbl">Cc (TRANSITION)</div><div class="val">${fmt(SRcc,1)}</div></div><div class="result-item"><div class="lbl">SAFE LOAD (FoS=2)</div><div class="val">${fmt(safeLoad/1e3,2)} kN</div></div><div class="result-item"><div class="lbl">I (mm⁴)</div><div class="val">${fmt(I_mm4,0)}</div></div><div class="result-item"><div class="lbl">A (mm²)</div><div class="val">${fmt(A,1)}</div></div><div class="result-item"><div class="lbl">r (mm)</div><div class="val">${fmt(r,2)}</div></div><div class="result-item"><div class="lbl">Leff (mm)</div><div class="val">${fmt(Le,0)}</div></div></div>`;
+const srs=[],sigE=[],sigJ=[];
+for(let s=10;s<=250;s+=2){
+srs.push(s);sigE.push(Math.PI*Math.PI*E/(s*s));
+sigJ.push(s<SRcc?Sy*(1-Sy*s*s/(4*Math.PI*Math.PI*E)):null);
+}
+Plotly.newPlot('c-buckling',[{x:srs,y:sigE,name:'Euler',mode:'lines',line:{color:'#ff5e5b'}},{x:srs,y:sigJ.map(v=>v!==null?v:undefined),name:'Johnson',mode:'lines',line:{color:'#52d6f4'}},{x:[SR],y:[Math.min(sCr,Sy)],name:'This Column',mode:'markers',marker:{size:10,color:'#ffd700'}}],{paper_bgcolor:'transparent',plot_bgcolor:'transparent',font:{color:'#b0b8c8',size:10},margin:{t:10,r:10,b:40,l:50},xaxis:{title:'Slenderness Ratio',gridcolor:'#222',range:[0,260]},yaxis:{title:'Stress (MPa)',gridcolor:'#222'},legend:{x:0.7,y:0.95},showlegend:true},{responsive:true,displayModeBar:false});
+};
+updateBkSec();
+window.calcBearing=function(){
+const type=$('#br-type').value;
+const C=parseFloat($('#br-c').value)||1,C0=parseFloat($('#br-c0').value)||1;
+const Fr=parseFloat($('#br-fr').value)||0,Fa=parseFloat($('#br-fa').value)||0;
+const rpm=parseFloat($('#br-rpm').value)||1,rel=parseFloat($('#br-rel').value)||90;
+const X=parseFloat($('#br-x').value)||0.56,Y=parseFloat($('#br-y').value)||1.63;
+const temp=parseFloat($('#br-temp').value)||20;
+const p=type==='ball'?3:10/3;
+const e_ratio=Fa/C0;
+const P_eq=Math.max(X*Fr+Y*Fa,Fr);
+const L10=Math.pow(C/P_eq,p);
+const L10h=L10*1e6/(60*rpm);
+const a1_map={90:1,95:0.62,96:0.53,97:0.44,98:0.33,99:0.21};
+const a1=a1_map[Math.round(rel)]||1;
+const ft=temp<=150?1:temp<=200?0.9:temp<=250?0.75:0.6;
+const Lna=a1*ft*L10h;
+const dN=rpm*(type==='ball'?500000:350000)/C;
+const el=$('#br-results');
+el.innerHTML=`<h3>BEARING RESULTS</h3><div class="result-grid"><div class="result-item"><div class="lbl">TYPE</div><div class="val">${type.toUpperCase().replace('_',' ')}</div></div><div class="result-item"><div class="lbl">EQUIV. LOAD P</div><div class="val">${fmt(P_eq,2)} kN</div></div><div class="result-item"><div class="lbl">BASIC LIFE L₁₀</div><div class="val">${fmt(L10,0)} Mrev</div></div><div class="result-item"><div class="lbl">L₁₀ HOURS</div><div class="val">${fmt(L10h,0)} h</div></div><div class="result-item"><div class="lbl">ADJUSTED LIFE</div><div class="val">${fmt(Lna,0)} h</div></div><div class="result-item"><div class="lbl">RELIABILITY a₁</div><div class="val">${a1}</div></div><div class="result-item"><div class="lbl">TEMP FACTOR</div><div class="val">${ft}</div></div><div class="result-item"><div class="lbl">Fa/C₀ RATIO</div><div class="val">${fmt(e_ratio,3)}</div></div><div class="result-item"><div class="lbl">LIFE EXPONENT p</div><div class="val">${fmt(p,2)}</div></div><div class="result-item"><div class="lbl">C/P RATIO</div><div class="val">${fmt(C/P_eq,2)}</div></div></div>${L10h<5000?'<p style="color:#ff5e5b;font-size:.75rem;margin-top:8px">⚠ SHORT LIFE — consider higher C rating or reduced load</p>':''}${Lna>100000?'<p style="color:#52d6f4;font-size:.75rem;margin-top:4px">✓ Excellent bearing life</p>':''}`;
+};
+window.calcGear=function(){
+const type=$('#gr-type').value;
+const m_mod=parseFloat($('#gr-mod').value)||2,pa=(parseFloat($('#gr-pa').value)||20)*Math.PI/180;
+const z1=parseInt($('#gr-z1').value)||20,z2=parseInt($('#gr-z2').value)||40;
+const fw=parseFloat($('#gr-fw').value)||20,pw=parseFloat($('#gr-pw').value)||10,spd=parseFloat($('#gr-rpm').value)||1500;
+const ha_deg=parseFloat($('#gr-ha')?.value)||20,ha=ha_deg*Math.PI/180;
+const isH=type==='helical',mn=isH?m_mod:m_mod,mt=isH?mn/Math.cos(ha):mn;
+const d1=mt*z1,d2=mt*z2,db1=d1*Math.cos(pa),db2=d2*Math.cos(pa);
+const da1=d1+2*mn,da2=d2+2*mn,df1=d1-2.5*mn,df2=d2-2.5*mn;
+const cd=(d1+d2)/2,gr_ratio=z2/z1;
+const omega=spd*2*Math.PI/60,T1=pw*1e3/omega,Ft=2*T1/d1*1e3;
+const Fr=Ft*Math.tan(pa),Fa_g=isH?Ft*Math.tan(ha):0;
+const v=d1/1e3*Math.PI*spd/60;
+const el=$('#gr-results');
+el.innerHTML=`<h3>GEAR RESULTS</h3><div class="result-grid"><div class="result-item"><div class="lbl">PINION PCD</div><div class="val">${fmt(d1,2)} mm</div></div><div class="result-item"><div class="lbl">GEAR PCD</div><div class="val">${fmt(d2,2)} mm</div></div><div class="result-item"><div class="lbl">CENTER DIST</div><div class="val">${fmt(cd,2)} mm</div></div><div class="result-item"><div class="lbl">RATIO</div><div class="val">${fmt(gr_ratio,3)}</div></div><div class="result-item"><div class="lbl">ADDENDUM DIA₁</div><div class="val">${fmt(da1,2)} mm</div></div><div class="result-item"><div class="lbl">ADDENDUM DIA₂</div><div class="val">${fmt(da2,2)} mm</div></div><div class="result-item"><div class="lbl">DEDENDUM DIA₁</div><div class="val">${fmt(df1,2)} mm</div></div><div class="result-item"><div class="lbl">DEDENDUM DIA₂</div><div class="val">${fmt(df2,2)} mm</div></div><div class="result-item"><div class="lbl">TANGENTIAL F</div><div class="val">${fmt(Ft,1)} N</div></div><div class="result-item"><div class="lbl">RADIAL F</div><div class="val">${fmt(Fr,1)} N</div></div>${isH?`<div class="result-item"><div class="lbl">AXIAL F</div><div class="val">${fmt(Fa_g,1)} N</div></div>`:''}${isH?`<div class="result-item"><div class="lbl">TRANSVERSE MOD</div><div class="val">${fmt(mt,3)} mm</div></div>`:''}<div class="result-item"><div class="lbl">PITCH VEL</div><div class="val">${fmt(v,2)} m/s</div></div><div class="result-item"><div class="lbl">TORQUE₁</div><div class="val">${fmt(T1,2)} Nm</div></div></div>`;
+drawGearMesh(z1,z2,mn,pa,d1,d2,da1,da2,df1,df2,db1,db2);
+};
+function drawGearMesh(z1,z2,mn,pa,d1,d2,da1,da2,df1,df2,db1,db2){
+const cv=$('#c-gear');if(!cv)return;
+const dpr=window.devicePixelRatio||1,cw=cv.clientWidth,ch=cv.clientHeight||300;
+cv.width=cw*dpr;cv.height=ch*dpr;
+const ctx=cv.getContext('2d');ctx.scale(dpr,dpr);
+ctx.clearRect(0,0,cw,ch);
+const totalD=da1+da2+4*mn,sc=Math.min(cw,ch)*0.85/totalD;
+const cx1=cw/2-((d1+d2)/2*sc)/2,cy=ch/2,cx2=cx1+(d1+d2)/2*sc;
+function involute(rb,ra,n,cx,cy,rot){
+const pts=[];
+for(let i=0;i<=n;i++){
+const r=rb+(ra-rb)*i/n,a=Math.sqrt(r*r-rb*rb)/rb,t=a-Math.atan(a)+rot;
+pts.push([cx+r*sc*Math.cos(t),cy+r*sc*Math.sin(t)]);
+}
+return pts;
+}
+function drawGear(cx_,cy_,z,dp,da,df,db,rot0){
+ctx.strokeStyle='#52d6f4';ctx.lineWidth=1;
+ctx.beginPath();ctx.arc(cx_,cy_,da/2*sc,0,2*Math.PI);ctx.stroke();
+ctx.strokeStyle='#333';
+ctx.beginPath();ctx.arc(cx_,cy_,dp/2*sc,0,2*Math.PI);ctx.stroke();
+ctx.beginPath();ctx.arc(cx_,cy_,df/2*sc,0,2*Math.PI);ctx.stroke();
+ctx.strokeStyle='#ff5e5b';ctx.lineWidth=1.2;
+const step=2*Math.PI/z;
+for(let t=0;t<z;t++){
+const base_a=step*t+rot0;
+const inv=involute(db/2,da/2,12,cx_,cy_,base_a);
+if(inv.length>1){ctx.beginPath();ctx.moveTo(inv[0][0],inv[0][1]);inv.forEach(p=>ctx.lineTo(p[0],p[1]));ctx.stroke();}
+const inv2=involute(db/2,da/2,12,cx_,cy_,base_a);
+const mir=inv2.map(p=>[2*cx_-p[0],p[1]]);
+if(mir.length>1){ctx.beginPath();ctx.moveTo(mir[0][0],mir[0][1]);mir.forEach(p=>ctx.lineTo(p[0],p[1]));ctx.stroke();}
+}
+}
+drawGear(cx1,cy,z1,d1,da1,df1,db1,0);
+drawGear(cx2,cy,z2,d2,da2,df2,db2,Math.PI/z2);
+ctx.fillStyle='#b0b8c8';ctx.font='10px monospace';ctx.textAlign='center';
+ctx.fillText(`Z₁=${z1}`,cx1,cy+da1/2*sc+14);
+ctx.fillText(`Z₂=${z2}`,cx2,cy+da2/2*sc+14);
+}
+const FLUIDS={water:{rho:998,mu:0.001002},water_hot:{rho:971.8,mu:0.000355},air:{rho:1.204,mu:1.825e-5},oil:{rho:870,mu:0.032},glycol:{rho:1082,mu:0.00365}};
+window.calcFlow=function(){
+const fl=$('#fl-fluid').value;
+$('#fl-custom').style.display=fl==='custom'?'':'none';
+const props=fl==='custom'?{rho:parseFloat($('#fl-rho').value)||998,mu:parseFloat($('#fl-mu').value)||0.001}:FLUIDS[fl]||FLUIDS.water;
+const D=(parseFloat($('#fl-d').value)||50)/1e3,L=parseFloat($('#fl-len').value)||100;
+const Q=(parseFloat($('#fl-q').value)||100)/60000,eps=(parseFloat($('#fl-eps').value)||0.045)/1e3;
+const A=Math.PI*D*D/4,V=Q/A,Re=props.rho*V*D/props.mu;
+const relR=eps/D;
+let f;
+if(Re<2300){f=64/Re;}
+else{
+let fi=0.02;
+for(let i=0;i<50;i++){
+const rhs=-2*Math.log10(relR/3.7+2.51/(Re*Math.sqrt(fi)));
+fi=1/(rhs*rhs);
+}
+f=fi;
+}
+const hf=f*L/D*V*V/(2*9.81);
+const dpFric=f*L/D*props.rho*V*V/2;
+const nElb=parseInt($('#fl-elb').value)||0,nTee=parseInt($('#fl-tee').value)||0,nVal=parseInt($('#fl-val').value)||0;
+const Km=nElb*0.9+nTee*1.8+nVal*4.5;
+const dpMinor=Km*props.rho*V*V/2;
+const dpTotal=dpFric+dpMinor;
+const regime=Re<2300?'LAMINAR':Re<4000?'TRANSITION':'TURBULENT';
+const el=$('#fl-results');
+el.innerHTML=`<h3>FLOW RESULTS</h3><div class="result-grid"><div class="result-item"><div class="lbl">REGIME</div><div class="val">${regime}</div></div><div class="result-item"><div class="lbl">REYNOLDS #</div><div class="val">${fmt(Re,0)}</div></div><div class="result-item"><div class="lbl">VELOCITY</div><div class="val">${fmt(V,3)} m/s</div></div><div class="result-item"><div class="lbl">FRICTION f</div><div class="val">${fmt(f,6)}</div></div><div class="result-item"><div class="lbl">HEAD LOSS</div><div class="val">${fmt(hf,2)} m</div></div><div class="result-item"><div class="lbl">ΔP FRICTION</div><div class="val">${fmt(dpFric/1e3,2)} kPa</div></div><div class="result-item"><div class="lbl">ΔP MINOR</div><div class="val">${fmt(dpMinor/1e3,2)} kPa</div></div><div class="result-item"><div class="lbl">ΔP TOTAL</div><div class="val">${fmt(dpTotal/1e3,2)} kPa</div></div><div class="result-item"><div class="lbl">ΔP (bar)</div><div class="val">${fmt(dpTotal/1e5,3)} bar</div></div><div class="result-item"><div class="lbl">ε/D</div><div class="val">${fmt(relR,6)}</div></div></div>${Re>2300&&Re<4000?'<p style="color:#ffd700;font-size:.75rem;margin-top:8px">⚠ TRANSITION ZONE — results approximate</p>':''}`;
+drawMoody(Re,f,relR);
+};
+function drawMoody(Re_pt,f_pt,ed_pt){
+const el=$('#c-moody');if(!el)return;
+const reRange=[];for(let e=3;e<=7;e+=0.05)reRange.push(Math.pow(10,e));
+const eds=[0.0001,0.0005,0.001,0.005,0.01,0.02,0.05];
+const colors=['#52d6f4','#7dd87d','#ffd700','#ff9f43','#ff5e5b','#c39bd3','#85c1e9'];
+const traces=eds.map((ed,idx)=>{
+const ys=reRange.map(re=>{
+if(re<2300)return 64/re;
+let fi=0.02;for(let i=0;i<40;i++){const rhs=-2*Math.log10(ed/3.7+2.51/(re*Math.sqrt(fi)));fi=1/(rhs*rhs);}
+return fi;
+});
+return{x:reRange,y:ys,name:`ε/D=${ed}`,mode:'lines',line:{color:colors[idx],width:1}};
+});
+traces.push({x:reRange.filter(r=>r<2300),y:reRange.filter(r=>r<2300).map(r=>64/r),name:'Laminar',mode:'lines',line:{color:'#fff',width:2,dash:'dot'}});
+traces.push({x:[Re_pt],y:[f_pt],name:'Operating Pt',mode:'markers',marker:{size:10,color:'#ff5e5b',symbol:'star'}});
+Plotly.newPlot(el,traces,{paper_bgcolor:'transparent',plot_bgcolor:'transparent',font:{color:'#b0b8c8',size:9},margin:{t:10,r:10,b:40,l:55},xaxis:{title:'Reynolds Number',type:'log',gridcolor:'#222',range:[3,7]},yaxis:{title:'Friction Factor f',type:'log',gridcolor:'#222',range:[-2.5,-0.7]},legend:{x:0.01,y:0.01,font:{size:8}},showlegend:true},{responsive:true,displayModeBar:false});
+}
+function updateElecUI(){
+const mode=$('#el-mode').value;
+['dc','ac','wire','motor','xfmr'].forEach(m=>{
+const el=$('#el-'+m+'-params');if(el)el.style.display=mode===(m==='xfmr'?'transformer':m)?'':'none';
+});
+calcElec();
+}
+window.updateElecUI=updateElecUI;
+window.calcElec=function(){
+const mode=$('#el-mode').value,el=$('#el-results');
+let html='<h3>ELECTRICAL RESULTS</h3><div class="result-grid">';
+if(mode==='dc'){
+const V=parseFloat($('#el-v').value),R=parseFloat($('#el-r').value);
+const I_=V&&R?V/R:parseFloat($('#el-i').value)||0;
+const P_=V?V*I_:0;
+const E_kwh=P_*8/1000;
+html+=`<div class="result-item"><div class="lbl">VOLTAGE</div><div class="val">${fmt(V||I_*(R||1),3)} V</div></div><div class="result-item"><div class="lbl">CURRENT</div><div class="val">${fmt(I_,4)} A</div></div><div class="result-item"><div class="lbl">RESISTANCE</div><div class="val">${fmt(R||1,2)} Ω</div></div><div class="result-item"><div class="lbl">POWER</div><div class="val">${fmt(P_,3)} W</div></div><div class="result-item"><div class="lbl">ENERGY (8h)</div><div class="val">${fmt(E_kwh,3)} kWh</div></div>`;
+}else if(mode==='ac'){
+const f=parseFloat($('#el-freq').value)||60,Vac=parseFloat($('#el-vac').value)||120;
+const R=parseFloat($('#el-rac').value)||0,L=(parseFloat($('#el-lac').value)||0)/1e3,C_=(parseFloat($('#el-cac').value)||0)/1e6;
+const w=2*Math.PI*f,XL=w*L,XC=C_>0?1/(w*C_):0;
+const Z=Math.sqrt(R*R+(XL-XC)*(XL-XC)),phi=Math.atan2(XL-XC,R)*180/Math.PI;
+const I_=Vac/Z,P_=Vac*I_*Math.cos(phi*Math.PI/180),Q_=Vac*I_*Math.sin(phi*Math.PI/180),S_=Vac*I_;
+const fRes=L>0&&C_>0?1/(2*Math.PI*Math.sqrt(L*C_)):0;
+const PF=Math.cos(phi*Math.PI/180);
+html+=`<div class="result-item"><div class="lbl">IMPEDANCE |Z|</div><div class="val">${fmt(Z,3)} Ω</div></div><div class="result-item"><div class="lbl">PHASE ANGLE</div><div class="val">${fmt(phi,2)}°</div></div><div class="result-item"><div class="lbl">XL (INDUCTIVE)</div><div class="val">${fmt(XL,3)} Ω</div></div><div class="result-item"><div class="lbl">XC (CAPACITIVE)</div><div class="val">${fmt(XC,3)} Ω</div></div><div class="result-item"><div class="lbl">CURRENT</div><div class="val">${fmt(I_,4)} A</div></div><div class="result-item"><div class="lbl">REAL POWER P</div><div class="val">${fmt(P_,2)} W</div></div><div class="result-item"><div class="lbl">REACTIVE Q</div><div class="val">${fmt(Q_,2)} VAR</div></div><div class="result-item"><div class="lbl">APPARENT S</div><div class="val">${fmt(S_,2)} VA</div></div><div class="result-item"><div class="lbl">POWER FACTOR</div><div class="val">${fmt(PF,4)}</div></div>${fRes>0?`<div class="result-item"><div class="lbl">RESONANT FREQ</div><div class="val">${fmt(fRes,2)} Hz</div></div>`:''}`;
+}else if(mode==='wire'){
+const I_=parseFloat($('#el-wi').value)||20,L_=parseFloat($('#el-wl').value)||30;
+const V_=parseFloat($('#el-wv').value)||240,maxDrop=(parseFloat($('#el-wd').value)||3)/100;
+const mat=$('#el-wm').value,rho_=mat==='cu'?1.724e-8:2.65e-8;
+const Rmax=maxDrop*V_/I_,Amin=rho_*2*L_/Rmax;
+const dMin=Math.sqrt(4*Amin/Math.PI)*1e3;
+const awgSizes=[{awg:14,d:1.628},{awg:12,d:2.053},{awg:10,d:2.588},{awg:8,d:3.264},{awg:6,d:4.115},{awg:4,d:5.189},{awg:2,d:6.544},{awg:1,d:7.348},{awg:'1/0',d:8.252},{awg:'2/0',d:9.266},{awg:'3/0',d:10.404},{awg:'4/0',d:11.684}];
+const rec=awgSizes.find(s=>s.d>=dMin)||awgSizes[awgSizes.length-1];
+const Aact=Math.PI*Math.pow(rec.d/1e3,2)/4,Ract=rho_*2*L_/Aact,vDrop=I_*Ract;
+html+=`<div class="result-item"><div class="lbl">MIN AREA</div><div class="val">${fmt(Amin*1e6,3)} mm²</div></div><div class="result-item"><div class="lbl">MIN DIA</div><div class="val">${fmt(dMin,2)} mm</div></div><div class="result-item"><div class="lbl">REC. AWG</div><div class="val">#${rec.awg} (${fmt(rec.d,2)} mm)</div></div><div class="result-item"><div class="lbl">V DROP</div><div class="val">${fmt(vDrop,2)} V (${fmt(vDrop/V_*100,2)}%)</div></div><div class="result-item"><div class="lbl">WIRE R</div><div class="val">${fmt(Ract,4)} Ω</div></div><div class="result-item"><div class="lbl">POWER LOSS</div><div class="val">${fmt(I_*I_*Ract,2)} W</div></div>`;
+}else if(mode==='motor'){
+const P_kw=parseFloat($('#el-mp').value)||7.5,V_=parseFloat($('#el-mv').value)||400;
+const eff=(parseFloat($('#el-me').value)||90)/100,pf=parseFloat($('#el-mpf').value)||0.85;
+const ph=parseInt($('#el-mph').value)||3;
+const P_in=P_kw/eff,S_=P_in/pf;
+const I_=ph===3?S_*1e3/(Math.sqrt(3)*V_):S_*1e3/V_;
+const T_=P_kw*1e3*60/(2*Math.PI*1500);
+html+=`<div class="result-item"><div class="lbl">INPUT POWER</div><div class="val">${fmt(P_in,3)} kW</div></div><div class="result-item"><div class="lbl">APPARENT PWR</div><div class="val">${fmt(S_,3)} kVA</div></div><div class="result-item"><div class="lbl">LINE CURRENT</div><div class="val">${fmt(I_,2)} A</div></div><div class="result-item"><div class="lbl">TORQUE @1500</div><div class="val">${fmt(T_,2)} Nm</div></div><div class="result-item"><div class="lbl">LOSSES</div><div class="val">${fmt((P_in-P_kw)*1e3,1)} W</div></div>`;
+}else if(mode==='transformer'){
+const Vp=parseFloat($('#el-tp').value)||480,Vs=parseFloat($('#el-ts').value)||120;
+const kva=parseFloat($('#el-tkva').value)||50,eff=(parseFloat($('#el-te').value)||98)/100;
+const ratio=Vp/Vs,Ip=kva*1e3/Vp,Is=kva*1e3/Vs;
+const losses=kva*(1-eff);
+html+=`<div class="result-item"><div class="lbl">TURNS RATIO</div><div class="val">${fmt(ratio,3)}</div></div><div class="result-item"><div class="lbl">PRIMARY I</div><div class="val">${fmt(Ip,2)} A</div></div><div class="result-item"><div class="lbl">SECONDARY I</div><div class="val">${fmt(Is,2)} A</div></div><div class="result-item"><div class="lbl">LOSSES</div><div class="val">${fmt(losses,3)} kW</div></div><div class="result-item"><div class="lbl">FULL LOAD S</div><div class="val">${fmt(kva,1)} kVA</div></div>`;
+}
+html+='</div>';el.innerHTML=html;
+};
 </script>
-<div id="ad-tx" class="hidden"><div class="ad-hdr"><span>&#x25C8; engineering datapad</span><button class="ad-x" id="ad-close">&times;</button></div><div class="ad-body" id="ad-slot"></div></div>
 </body>
 </html>
