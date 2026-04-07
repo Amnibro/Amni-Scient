@@ -27,7 +27,7 @@
   .diff-selector { display: flex; justify-content: center; gap: 10px; margin-bottom: 1rem; }
   .diff-btn { background: #111; border: 1px solid #555; color: #aaa; padding: clamp(6px,1.5vw,10px) clamp(12px,3vw,20px); border-radius: 20px; cursor: pointer; font-family: 'JetBrains Mono'; font-size: clamp(0.8rem,2vw,1rem); transition: 0.2s; }
   .diff-btn.active { background: #4db8ff; color: #000; border-color: #4db8ff; font-weight: bold; }
-  .game-grid { display: flex; flex-direction: column; gap: 22px; max-width: 960px; width: 100%; padding: 0 clamp(12px,3vw,24px) clamp(16px,3vw,24px); box-sizing: border-box; }
+  .game-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; max-width: 1400px; width: 100%; padding: 0 clamp(12px,3vw,24px) clamp(16px,3vw,24px); box-sizing: border-box; }
   .game-category { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; overflow: hidden; }
   .cat-header { display: flex; align-items: center; gap: 10px; padding: 11px 18px; font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2.5px; color: #7e8fa3; background: rgba(0,0,0,0.3); border-bottom: 1px solid rgba(255,255,255,0.05); margin: 0; }
   .cat-header-icon { font-size: 1.1rem; }
@@ -49,6 +49,7 @@
   .game-grid.mode-2 .game-btn { padding: 26px 14px 20px; border-width: 3px; min-height: clamp(110px,20vw,155px); }
   .game-grid.mode-2 .btn-icon { font-size: clamp(2.5rem,8vw,4rem); margin-bottom: 6px; }
   .game-grid.mode-2 .btn-text { font-size: clamp(1rem,2.5vw,1.4rem); }
+  @media (max-width: 768px) { .game-grid { grid-template-columns: 1fr !important; max-width: 960px !important; } }
   @media (max-width: 500px) { .cat-games { grid-template-columns: repeat(2, 1fr) !important; } .game-btn { min-height: 90px !important; padding: 16px 10px 14px !important; } .btn-icon { font-size: 2rem !important; } .btn-text { font-size: 0.8rem !important; } .btn-desc { display: none; } .cat-header { font-size: 0.7rem; padding: 8px 12px; } }
   #tracing-view { background: #1b1e23; }
   #math-view { background: #1e252b; justify-content: center; }
@@ -81,7 +82,7 @@
   .apple-icons { display: flex; gap: 5px; flex-wrap: wrap; justify-content: center; max-width: 250px; }
   .apple { transition: opacity 1s, transform 1s, filter 1s; font-size: 2.5rem; display: inline-block; }
   .apple.removed { opacity: 0; transform: translateY(-30px) scale(0.5); filter: grayscale(100%); }
-  .match-grid { display: grid; gap: 15px; padding: 20px; max-width: 800px; margin: 0 auto; }
+  .match-grid { display: grid; gap: 15px; padding: 20px; max-width: min(95vw,950px); margin: 0 auto; }
   .m-card { width: 100px; height: 120px; background: #9c88ff; border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 3.5rem; cursor: pointer; box-shadow: 0 6px 0 #7158e2; color: transparent; transition: 0.3s; user-select: none; }
   @media (min-width: 600px) { .m-card { width: 140px; height: 160px; font-size: 5rem; } }
   .m-card.flipped { background: #fff; border: 3px solid #9c88ff; color: #333; box-shadow: 0 2px 0 #7158e2; transform: translateY(4px); }
@@ -215,7 +216,7 @@
   .geo-opt:hover { transform: translateY(-3px); }
   .game-btn.mtnclimb { border-color: #fab1a0; } .game-btn.mtnclimb:hover { box-shadow: 0 10px 30px rgba(250,177,160,0.25); }
   #reflex-view { background:#0d1b2a; }
-  .rfx-arena { position:relative; width:90%; max-width:600px; height:clamp(250px,50vw,400px); background:#1b2838; border:3px solid #00cec9; border-radius:20px; overflow:hidden; touch-action:none; }
+  .rfx-arena { position:relative; width:95%; max-width:min(95vw,800px); height:clamp(300px,55vh,550px); background:#1b2838; border:3px solid #00cec9; border-radius:20px; overflow:hidden; touch-action:none; }
   .rfx-target { position:absolute; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:2rem; transition:transform 0.1s; user-select:none; animation:rfxPop 0.3s ease-out; }
   .rfx-target:active { transform:scale(0.8); }
   @keyframes rfxPop { 0%{transform:scale(0)} 50%{transform:scale(1.2)} 100%{transform:scale(1)} }
@@ -225,7 +226,7 @@
   .rfx-start { background:#00cec9; color:#000; border:none; padding:18px 40px; font-size:1.6rem; border-radius:14px; cursor:pointer; font-family:'Comic Neue',cursive; font-weight:bold; box-shadow:0 6px 0 #00a8a3; transition:0.1s; }
   .rfx-start:active { transform:translateY(6px); box-shadow:none; }
   #blocks-view { background:#1a1040; }
-  .blk-grid { display:grid; grid-template-columns:repeat(6,50px); grid-template-rows:repeat(6,50px); gap:2px; background:#2d1b69; border:3px solid #6c5ce7; border-radius:12px; padding:4px; }
+  .blk-grid { display:grid; grid-template-columns:repeat(6,clamp(50px,8vw,75px)); grid-template-rows:repeat(6,clamp(50px,8vw,75px)); gap:2px; background:#2d1b69; border:3px solid #6c5ce7; border-radius:12px; padding:4px; }
   .blk-cell { width:50px; height:50px; background:#3d2b79; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:1.8rem; }
   .blk-cell.wall { background:#1a0e3d; }
   .blk-cell.goal { background:#00b894; animation:goalPulse 1.5s infinite; }
@@ -267,7 +268,7 @@
   .wb-lang-btn.active { background:#55efc4; color:#000; }
   .wb-score-bar { color:#55efc4; font-family:'Comic Neue',cursive; font-size:1.3rem; margin:10px 0; }
   #mountain-view { background:#0f0f23; overflow:hidden; }
-  .mtn-canvas { width:100%; max-width:700px; height:450px; border:3px solid #fab1a0; border-radius:16px; background:#1a1a3e; position:relative; overflow:hidden; }
+  .mtn-canvas { width:100%; max-width:min(95vw,900px); height:clamp(350px,55vh,600px); border:3px solid #fab1a0; border-radius:16px; background:#1a1a3e; position:relative; overflow:hidden; }
   .mtn-platform { position:absolute; background:#fab1a0; border-radius:6px; display:flex; align-items:center; justify-content:center; font-family:'Comic Neue',cursive; font-size:0.9rem; color:#1a1a3e; font-weight:bold; padding:2px 8px; }
   .mtn-player { position:absolute; font-size:2.5rem; transition:left 0.15s,bottom 0.3s; z-index:5; }
   .mtn-problem { position:absolute; top:10px; left:50%; transform:translateX(-50%); background:rgba(0,0,0,0.7); color:#fab1a0; font-family:'Comic Neue',cursive; font-size:1.6rem; padding:10px 20px; border-radius:10px; z-index:10; }
@@ -347,7 +348,7 @@
   #speedmath-view{background:linear-gradient(135deg,#1a0d2a 0%,#2a1a0d 50%,#1a0d2a 100%);background-size:200% 200%;animation:bgShift 10s ease infinite;}
   #wordsearch-view{background:linear-gradient(135deg,#0d1a2a 0%,#1a2a0d 50%,#0d1a2a 100%);background-size:200% 200%;animation:bgShift 13s ease infinite;}
   #logic-view{background:linear-gradient(135deg,#2a0d1a 0%,#0d2a2a 50%,#2a0d1a 100%);background-size:200% 200%;animation:bgShift 11s ease infinite;}
-  .sdk-grid{display:grid;grid-template-columns:repeat(9,1fr);gap:1px;background:#1abc9c;border:3px solid #1abc9c;border-radius:8px;max-width:450px;width:90%;margin:0 auto;}
+  .sdk-grid{display:grid;grid-template-columns:repeat(9,1fr);gap:1px;background:#1abc9c;border:3px solid #1abc9c;border-radius:8px;max-width:min(90vw,580px);width:95%;margin:0 auto;}
   .sdk-cell{background:#1a2a3a;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:clamp(1.2rem,4vw,1.8rem);font-weight:bold;color:#ecf0f1;cursor:pointer;aspect-ratio:1;transition:background 0.15s,color 0.15s;position:relative;user-select:none;}
   .sdk-cell.given{color:#1abc9c;cursor:default;}
   .sdk-cell.selected{background:#2a4a5a;}
@@ -368,7 +369,7 @@
   .sdk-btn{padding:6px 16px;border-radius:16px;border:1px solid #1abc9c;background:transparent;color:#1abc9c;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:0.8rem;transition:0.2s;}
   .sdk-btn:hover{background:rgba(26,188,156,0.2);}
   .sdk-btn.active{background:#1abc9c;color:#0a1a2a;}
-  .cp-grid{display:grid;gap:10px;max-width:600px;width:95%;margin:0 auto;}
+  .cp-grid{display:grid;gap:10px;max-width:min(95vw,750px);width:95%;margin:0 auto;}
   .cp-card{background:linear-gradient(135deg,#1abc9c,#16a085);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:clamp(1.5rem,4vw,2.5rem);cursor:pointer;aspect-ratio:1;color:transparent;user-select:none;transition:transform 0.3s,background 0.3s,box-shadow 0.3s;box-shadow:0 4px 8px rgba(0,0,0,0.3);}
   .cp-card:hover:not(.cp-flipped):not(.cp-matched){transform:translateY(-3px) scale(1.03);box-shadow:0 8px 20px rgba(26,188,156,0.3);}
   .cp-card.cp-flipped{background:#fff;color:#333;transform:rotateY(0deg);box-shadow:0 0 15px rgba(26,188,156,0.4);}
@@ -413,7 +414,7 @@
   .stp-choices{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin:15px 0;}
   .stp-choice{padding:14px 28px;border-radius:12px;border:3px solid;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:clamp(0.9rem,2.5vw,1.2rem);font-weight:bold;transition:0.2s;color:#fff;}
   .stp-choice:hover{transform:translateY(-3px);filter:brightness(1.2);}
-  .rxt-zone{width:90%;max-width:500px;height:clamp(200px,40vw,350px);border-radius:20px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background 0.15s;user-select:none;}
+  .rxt-zone{width:95%;max-width:min(95vw,650px);height:clamp(250px,45vh,450px);border-radius:20px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background 0.15s;user-select:none;}
   .rxt-zone.wait{background:#e74c3c;}
   .rxt-zone.ready{background:#2ecc71;}
   .rxt-zone.early{background:#f39c12;}
@@ -422,7 +423,7 @@
   .rxt-results{display:flex;flex-direction:column;gap:6px;margin-top:12px;width:90%;max-width:400px;}
   .rxt-result{display:flex;justify-content:space-between;padding:6px 14px;background:rgba(255,255,255,0.05);border-radius:8px;font-family:'JetBrains Mono',monospace;color:#7a8a9a;font-size:0.85rem;}
   .rxt-result-val{color:#1abc9c;font-weight:bold;}
-  .nbk-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:280px;width:70%;margin:12px auto;}
+  .nbk-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(8px,1.5vw,14px);max-width:min(90vw,500px);width:90%;margin:12px auto;}
   .nbk-cell{aspect-ratio:1;background:#1a2a3a;border:2px solid #2a3a4a;border-radius:12px;transition:background 0.2s,border-color 0.2s;}
   .nbk-cell.active{background:#1abc9c;border-color:#1abc9c;box-shadow:0 0 20px rgba(26,188,156,0.5);}
   .nbk-btns{display:flex;gap:15px;margin:12px 0;}
@@ -440,7 +441,7 @@
   .agm-slot{width:clamp(42px,10vw,54px);height:clamp(42px,10vw,54px);border-radius:10px;border:2px dashed rgba(26,188,156,0.3);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:clamp(1.2rem,4vw,1.8rem);font-weight:bold;color:#1abc9c;text-transform:uppercase;}
   .agm-slot.filled{border-style:solid;background:rgba(26,188,156,0.1);animation:bounceIn 0.2s ease-out;}
   .agm-hint{font-family:'JetBrains Mono',monospace;font-size:0.85rem;color:#5a7a8a;text-align:center;margin:6px 0;}
-  .chm-grid{display:grid;gap:5px;max-width:500px;width:90%;margin:10px auto;}
+  .chm-grid{display:grid;gap:5px;max-width:min(90vw,650px);width:95%;margin:10px auto;}
   .chm-cell{aspect-ratio:1;background:#1a2a3a;border:2px solid #2a3a4a;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:clamp(1rem,3.5vw,1.8rem);font-weight:bold;color:#fff;cursor:pointer;transition:0.15s;user-select:none;}
   .chm-cell.num{background:rgba(26,188,156,0.3);border-color:#1abc9c;}
   .chm-cell.hidden{color:transparent;background:#1a2a3a;border-color:#2a3a4a;}
@@ -458,16 +459,16 @@
   .tut-btn:hover{background:#16a085;}
   .tut-trigger{padding:4px 12px;border-radius:12px;border:1px solid #888;background:transparent;color:#888;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:0.75rem;transition:0.2s;margin-left:6px;}
   .tut-trigger:hover{border-color:#1abc9c;color:#1abc9c;}
-  .mot-arena{position:relative;width:min(90vw,450px);height:min(90vw,450px);background:#0a1520;border:2px solid #1abc9c;border-radius:12px;overflow:hidden;touch-action:none;}
+  .mot-arena{position:relative;width:min(90vw,65vh,650px);height:min(90vw,65vh,650px);background:#0a1520;border:2px solid #1abc9c;border-radius:12px;overflow:hidden;touch-action:none;}
   .mot-dot{position:absolute;width:28px;height:28px;border-radius:50%;transition:background 0.3s;cursor:pointer;transform:translate(-50%,-50%);z-index:2;}
   .mot-dot.target{background:#e74c3c;box-shadow:0 0 10px #e74c3c;}
   .mot-dot.normal{background:#3498db;}
   .mot-dot.hidden{background:#3498db;}
   .mot-dot.picked{outline:3px solid #f1c40f;outline-offset:2px;}
   .pv-focus{width:80px;height:80px;background:#1abc9c;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:bold;font-family:'JetBrains Mono',monospace;color:#0a1a2a;position:relative;z-index:3;}
-  .pv-ring{position:relative;width:min(90vw,420px);height:min(90vw,420px);border:2px dashed rgba(26,188,156,0.3);border-radius:50%;display:flex;align-items:center;justify-content:center;}
+  .pv-ring{position:relative;width:min(90vw,65vh,600px);height:min(90vw,65vh,600px);border:2px dashed rgba(26,188,156,0.3);border-radius:50%;display:flex;align-items:center;justify-content:center;}
   .pv-flash{position:absolute;width:36px;height:36px;border-radius:50%;background:#f1c40f;opacity:0;transition:opacity 0.1s;}
-  .vs-field{display:grid;gap:3px;max-width:min(90vw,500px);width:100%;}
+  .vs-field{display:grid;gap:3px;max-width:min(95vw,700px);width:100%;}
   .vs-item{display:flex;align-items:center;justify-content:center;font-size:clamp(1rem,3vw,1.6rem);cursor:pointer;aspect-ratio:1;background:#1a2a3a;border-radius:6px;border:1px solid #2a3a4a;transition:0.15s;user-select:none;}
   .vs-item:hover{background:#2a3a4a;}
   .vs-item.found{background:rgba(46,204,113,0.3);border-color:#2ecc71;}
@@ -1059,7 +1060,7 @@
   }
   function initTracing() {
     tTargets = getTracingTargets(); tCurrentTarget = 0;
-    const sizeW = Math.min(window.innerWidth - 40, 800), sizeH = Math.min(window.innerHeight - 250, 600);
+    const sizeW = Math.min(window.innerWidth - 40, 1000), sizeH = Math.min(window.innerHeight - 200, 700);
     tCanvas.style.width = sizeW+'px'; tCanvas.style.height = sizeH+'px'; tCanvas.width = sizeW; tCanvas.height = sizeH;
     tCanvas.onpointerdown = (e) => { tIsDrawing = true; tCtx.beginPath(); draw(e); };
     tCanvas.onpointermove = (e) => { if(tIsDrawing) draw(e); };
@@ -3624,11 +3625,11 @@ function playAnimalSound(type) {
     hud.innerHTML=`<span class="game-stat">\u2705 <span class="game-stat-val" id="mr-sc">0</span></span><span class="game-stat">\ud83d\udd25 <span class="game-stat-val" id="mr-stk">0</span></span><span class="game-stat">\ud83d\udcca <span class="game-stat-val" id="mr-tot">0</span>/12</span>`;
     function genShape(){
       const pts=[];const n=4+Math.floor(Math.random()*4);
-      for(let i=0;i<n;i++){const a=(Math.PI*2/n)*i+Math.random()*0.6-0.3;const r=25+Math.random()*25;pts.push([60+Math.cos(a)*r,60+Math.sin(a)*r]);}
+      for(let i=0;i<n;i++){const a=(Math.PI*2/n)*i+Math.random()*0.6-0.3;const r=40+Math.random()*40;pts.push([100+Math.cos(a)*r,100+Math.sin(a)*r]);}
       return pts;
     }
     function drawShape(canvas,pts,angle,mirror){
-      const ctx=canvas.getContext('2d');ctx.clearRect(0,0,120,120);ctx.save();ctx.translate(60,60);ctx.rotate(angle);if(mirror)ctx.scale(-1,1);ctx.translate(-60,-60);
+      const ctx=canvas.getContext('2d');ctx.clearRect(0,0,200,200);ctx.save();ctx.translate(100,100);ctx.rotate(angle);if(mirror)ctx.scale(-1,1);ctx.translate(-100,-100);
       ctx.beginPath();ctx.moveTo(pts[0][0],pts[0][1]);for(let i=1;i<pts.length;i++)ctx.lineTo(pts[i][0],pts[i][1]);ctx.closePath();ctx.fillStyle='rgba(26,188,156,0.4)';ctx.fill();ctx.strokeStyle='#1abc9c';ctx.lineWidth=2.5;ctx.stroke();
       ctx.beginPath();ctx.arc(pts[0][0],pts[0][1],4,0,Math.PI*2);ctx.fillStyle='#e74c3c';ctx.fill();
       ctx.restore();
@@ -3638,8 +3639,8 @@ function playAnimalSound(type) {
       if(tot>12){ct.innerHTML=`<div class="nmm-display">${sc}/12</div><div class="nmm-msg">${Math.round(sc/12*100)}% Correct</div>`;showFeedback(`Rotation: ${sc}/12 \ud83e\udde0`,'#f1c40f');addScore(sc);const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='PLAY AGAIN';rb.onclick=()=>{sc=0;tot=0;stk=0;$$('#mr-sc').textContent=0;$$('#mr-stk').textContent=0;initMentalRot();};ct.appendChild(rb);return;}
       const pts=genShape();const isMirror=Math.random()<0.5;const angle=(Math.floor(Math.random()*3)+1)*(Math.PI/4)*(Math.random()<0.5?1:-1);
       ct.innerHTML='';const wrap=document.createElement('div');wrap.className='mr-shapes';
-      const c1=document.createElement('canvas');c1.width=120;c1.height=120;const s1=document.createElement('div');s1.className='mr-shape';s1.appendChild(c1);
-      const c2=document.createElement('canvas');c2.width=120;c2.height=120;const s2=document.createElement('div');s2.className='mr-shape';s2.appendChild(c2);
+      const c1=document.createElement('canvas');c1.width=200;c1.height=200;const s1=document.createElement('div');s1.className='mr-shape';s1.appendChild(c1);
+      const c2=document.createElement('canvas');c2.width=200;c2.height=200;const s2=document.createElement('div');s2.className='mr-shape';s2.appendChild(c2);
       drawShape(c1,pts,0,false);drawShape(c2,pts,angle,isMirror);
       wrap.appendChild(s1);wrap.appendChild(s2);ct.appendChild(wrap);
       const lbl=document.createElement('div');lbl.className='nmm-msg';lbl.textContent='Same shape rotated, or mirrored?';ct.appendChild(lbl);
@@ -3664,7 +3665,7 @@ function playAnimalSound(type) {
     hud.innerHTML=`<span class="game-stat">\u23f1 <span class="game-stat-val" id="tm-time">0.0</span>s</span><span class="game-stat">\u274c <span class="game-stat-val" id="tm-err">0</span></span><span class="game-stat">\ud83d\udcca <span class="game-stat-val" id="tm-mode">${mode==='num'?'Numbers':'Num-Letter'}</span></span>`;
     function run(){
       ct.innerHTML='';
-      const cw=Math.min(window.innerWidth*0.9,480),ch=Math.min(window.innerHeight*0.6,480);
+      const cw=Math.min(window.innerWidth*0.9,650),ch=Math.min(window.innerHeight*0.65,650);
       const canvas=document.createElement('canvas');canvas.className='tm-canvas';canvas.width=cw;canvas.height=ch;canvas.style.width=cw+'px';canvas.style.height=ch+'px';
       ct.appendChild(canvas);const ctx=canvas.getContext('2d');
       const count=mode==='num'?15:12;const letters='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
