@@ -360,8 +360,10 @@
   .sdk-pencil span{font-size:clamp(0.45rem,1.5vw,0.65rem);color:#5a8a9a;display:flex;align-items:center;justify-content:center;}
   .sdk-numpad{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:12px;}
   .sdk-num{width:clamp(36px,9vw,48px);height:clamp(36px,9vw,48px);border-radius:10px;border:2px solid #1abc9c;background:transparent;color:#1abc9c;font-family:'JetBrains Mono',monospace;font-size:clamp(1.1rem,3vw,1.5rem);font-weight:bold;cursor:pointer;transition:0.2s;display:flex;align-items:center;justify-content:center;}
-  .sdk-num:hover{background:rgba(26,188,156,0.2);transform:translateY(-2px);}
+  .sdk-num:hover:not(.sdk-num-done){background:rgba(26,188,156,0.2);transform:translateY(-2px);}
   .sdk-num.active{background:#1abc9c;color:#0a1a2a;}
+  .sdk-num.sdk-num-done{opacity:0.25;border-color:#555;color:#555;cursor:default;pointer-events:none;}
+  .sdk-cell.num-covered{background:rgba(26,188,156,0.08);}
   .sdk-controls{display:flex;gap:8px;margin:8px 0;justify-content:center;flex-wrap:wrap;}
   .sdk-btn{padding:6px 16px;border-radius:16px;border:1px solid #1abc9c;background:transparent;color:#1abc9c;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:0.8rem;transition:0.2s;}
   .sdk-btn:hover{background:rgba(26,188,156,0.2);}
@@ -444,6 +446,18 @@
   .chm-cell.hidden{color:transparent;background:#1a2a3a;border-color:#2a3a4a;}
   .chm-cell.correct{background:rgba(46,204,113,0.3);border-color:#2ecc71;}
   .chm-cell.wrong{background:rgba(231,76,60,0.3);border-color:#e74c3c;animation:shake 0.3s;}
+  .tut-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box;}
+  .tut-box{background:#1a2a3a;border:2px solid #1abc9c;border-radius:16px;max-width:520px;width:100%;padding:28px 24px;position:relative;max-height:85vh;overflow-y:auto;}
+  .tut-title{font-family:'JetBrains Mono',monospace;font-size:1.3rem;color:#1abc9c;margin-bottom:16px;text-align:center;}
+  .tut-step{font-family:'JetBrains Mono',monospace;font-size:0.9rem;color:#ccc;line-height:1.6;margin-bottom:12px;padding:10px;background:rgba(0,0,0,0.3);border-radius:8px;border-left:3px solid #1abc9c;}
+  .tut-step b{color:#1abc9c;}
+  .tut-step .tut-num{display:inline-block;width:22px;height:22px;background:#1abc9c;color:#0a1a2a;border-radius:50%;text-align:center;line-height:22px;font-weight:bold;font-size:0.75rem;margin-right:6px;}
+  .tut-close{position:absolute;top:10px;right:14px;background:none;border:none;color:#888;font-size:1.5rem;cursor:pointer;font-family:'JetBrains Mono',monospace;}
+  .tut-close:hover{color:#e74c3c;}
+  .tut-btn{display:block;margin:18px auto 0;padding:10px 28px;border-radius:12px;border:2px solid #1abc9c;background:#1abc9c;color:#0a1a2a;font-family:'JetBrains Mono',monospace;font-weight:bold;font-size:0.95rem;cursor:pointer;}
+  .tut-btn:hover{background:#16a085;}
+  .tut-trigger{padding:4px 12px;border-radius:12px;border:1px solid #888;background:transparent;color:#888;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:0.75rem;transition:0.2s;margin-left:6px;}
+  .tut-trigger:hover{border-color:#1abc9c;color:#1abc9c;}
 </style>
 </head>
 <body>
@@ -676,19 +690,19 @@
     <div class="geo-choices" id="geo-choices"></div>
   </div>
   <div id="sudoku-view" class="view">
-    <div class="life-title" style="color:#1abc9c">🔢 Sudoku</div>
+    <div class="life-title" style="color:#1abc9c">🔢 Sudoku <button class="tut-trigger" onclick="showTutorial('sudoku')">? How to Play</button></div>
     <div class="game-hud" id="sdk-hud"></div>
     <div class="sdk-controls" id="sdk-controls"></div>
     <div class="sdk-grid" id="sdk-board"></div>
     <div class="sdk-numpad" id="sdk-numpad"></div>
   </div>
   <div id="cardpairs-view" class="view">
-    <div class="life-title" style="color:#1abc9c">🃏 Card Pairs</div>
+    <div class="life-title" style="color:#1abc9c">🃏 Card Pairs <button class="tut-trigger" onclick="showTutorial('cardpairs')">? How to Play</button></div>
     <div class="game-hud" id="cp-hud"></div>
     <div class="cp-grid" id="cp-grid"></div>
   </div>
   <div id="speedmath-view" class="view">
-    <div class="life-title" style="color:#1abc9c">⚡ Speed Math</div>
+    <div class="life-title" style="color:#1abc9c">⚡ Speed Math <button class="tut-trigger" onclick="showTutorial('speedmath')">? How to Play</button></div>
     <div class="game-hud" id="spm-hud"></div>
     <div class="spm-timer-bar"><div class="spm-timer-fill" id="spm-timer-fill"></div></div>
     <div class="spm-display" id="spm-display"></div>
@@ -696,42 +710,42 @@
     <div class="spm-input-row" id="spm-input"></div>
   </div>
   <div id="wordsearch-view" class="view">
-    <div class="life-title" style="color:#1abc9c">🔍 Word Search</div>
+    <div class="life-title" style="color:#1abc9c">🔍 Word Search <button class="tut-trigger" onclick="showTutorial('wordsearch')">? How to Play</button></div>
     <div class="game-hud" id="ws-hud"></div>
     <div class="ws-container" id="ws-container"></div>
   </div>
   <div id="logic-view" class="view">
-    <div class="life-title" style="color:#1abc9c">🧩 Logic Puzzles</div>
+    <div class="life-title" style="color:#1abc9c">🧩 Logic Puzzles <button class="tut-trigger" onclick="showTutorial('logic')">? How to Play</button></div>
     <div class="game-hud" id="lgc-hud"></div>
     <div class="lgc-container" id="lgc-container"></div>
   </div>
   <div id="nummem-view" class="view">
-    <div class="life-title" style="color:#1abc9c">🔢 Number Memory</div>
+    <div class="life-title" style="color:#1abc9c">🔢 Number Memory <button class="tut-trigger" onclick="showTutorial('nummem')">? How to Play</button></div>
     <div class="game-hud" id="nmm-hud"></div>
     <div id="nmm-container" style="display:flex;flex-direction:column;align-items:center;gap:10px;width:100%"></div>
   </div>
   <div id="stroop-view" class="view">
-    <div class="life-title" style="color:#1abc9c">🎨 Stroop Test</div>
+    <div class="life-title" style="color:#1abc9c">🎨 Stroop Test <button class="tut-trigger" onclick="showTutorial('stroop')">? How to Play</button></div>
     <div class="game-hud" id="stp-hud"></div>
     <div id="stp-container" style="display:flex;flex-direction:column;align-items:center;gap:10px;width:100%"></div>
   </div>
   <div id="reaction-view" class="view">
-    <div class="life-title" style="color:#1abc9c">⚡ Reaction Time</div>
+    <div class="life-title" style="color:#1abc9c">⚡ Reaction Time <button class="tut-trigger" onclick="showTutorial('reaction')">? How to Play</button></div>
     <div class="game-hud" id="rxt-hud"></div>
     <div id="rxt-container" style="display:flex;flex-direction:column;align-items:center;gap:10px;width:100%"></div>
   </div>
   <div id="nback-view" class="view">
-    <div class="life-title" style="color:#1abc9c">🧠 N-Back</div>
+    <div class="life-title" style="color:#1abc9c">🧠 N-Back <button class="tut-trigger" onclick="showTutorial('nback')">? How to Play</button></div>
     <div class="game-hud" id="nbk-hud"></div>
     <div id="nbk-container" style="display:flex;flex-direction:column;align-items:center;gap:10px;width:100%"></div>
   </div>
   <div id="anagram-view" class="view">
-    <div class="life-title" style="color:#1abc9c">🔤 Anagrams</div>
+    <div class="life-title" style="color:#1abc9c">🔤 Anagrams <button class="tut-trigger" onclick="showTutorial('anagram')">? How to Play</button></div>
     <div class="game-hud" id="agm-hud"></div>
     <div id="agm-container" style="display:flex;flex-direction:column;align-items:center;gap:10px;width:100%"></div>
   </div>
   <div id="chimp-view" class="view">
-    <div class="life-title" style="color:#1abc9c">🐵 Chimp Test</div>
+    <div class="life-title" style="color:#1abc9c">🐵 Chimp Test <button class="tut-trigger" onclick="showTutorial('chimp')">? How to Play</button></div>
     <div class="game-hud" id="chm-hud"></div>
     <div id="chm-container" style="display:flex;flex-direction:column;align-items:center;gap:10px;width:100%"></div>
   </div>
@@ -3213,26 +3227,28 @@ function playAnimalSound(type) {
   }
   function initSudoku(){
     const board=$$('#sdk-board'),hud=$$('#sdk-hud'),controls=$$('#sdk-controls'),numpad=$$('#sdk-numpad');
-    let grid=[],solution=[],given=[],selected=null,pencilMode=false,sdkTime=0,sdkErrors=0;
+    let grid=[],solution=[],given=[],selected=null,pencilMode=false,sdkTime=0,sdkErrors=0,pencilMarks=[],activeNum=0;
     if(window._sdkTimer){clearInterval(window._sdkTimer);window._sdkTimer=null;}
     let sdkDiff=sessionStorage.getItem('sdk-diff')||'medium';
-    const clues={easy:40,medium:32,hard:25};
+    const clues={easy:55,medium:40,hard:30};
     function isValid(g,r,c,n){for(let i=0;i<9;i++){if(g[r][i]===n||g[i][c]===n)return false;}const br=Math.floor(r/3)*3,bc=Math.floor(c/3)*3;for(let i=br;i<br+3;i++)for(let j=bc;j<bc+3;j++){if(g[i][j]===n)return false;}return true;}
     function solve(g){for(let r=0;r<9;r++)for(let c=0;c<9;c++){if(g[r][c]===0){const nums=[1,2,3,4,5,6,7,8,9].sort(()=>Math.random()-0.5);for(const n of nums){if(isValid(g,r,c,n)){g[r][c]=n;if(solve(g))return true;g[r][c]=0;}}return false;}}return true;}
-    function generate(){const g=Array.from({length:9},()=>Array(9).fill(0));solve(g);solution=g.map(r=>[...r]);const cells=[];for(let r=0;r<9;r++)for(let c=0;c<9;c++)cells.push([r,c]);cells.sort(()=>Math.random()-0.5);const rem=81-clues[sdkDiff];for(let i=0;i<rem&&i<cells.length;i++){const[r,c]=cells[i];g[r][c]=0;}grid=g.map(r=>[...r]);given=g.map(r=>r.map(v=>v!==0));return g;}
-    function render(){board.innerHTML='';for(let r=0;r<9;r++)for(let c=0;c<9;c++){const cell=document.createElement('div');cell.className='sdk-cell'+(given[r][c]?' given':'');cell.dataset.r=r;cell.dataset.c=c;const v=grid[r][c];if(v){cell.textContent=v;}else{const pm=document.createElement('div');pm.className='sdk-pencil';for(let n=1;n<=9;n++){const s=document.createElement('span');s.textContent=cell.dataset['p'+n]?n:'';pm.appendChild(s);}cell.appendChild(pm);}cell.onclick=()=>{if(given[r][c])return;selected={r,c};highlight();};board.appendChild(cell);}}
-    function highlight(){$$all('.sdk-cell').forEach(cell=>{cell.classList.remove('selected','same-val','highlight-row','highlight-col','highlight-box');if(!selected)return;const cr=+cell.dataset.r,cc=+cell.dataset.c;if(cr===selected.r&&cc===selected.c)cell.classList.add('selected');else if(cr===selected.r)cell.classList.add('highlight-row');else if(cc===selected.c)cell.classList.add('highlight-col');else if(Math.floor(cr/3)===Math.floor(selected.r/3)&&Math.floor(cc/3)===Math.floor(selected.c/3))cell.classList.add('highlight-box');if(grid[selected.r][selected.c]&&grid[cr][cc]===grid[selected.r][selected.c]&&(cr!==selected.r||cc!==selected.c))cell.classList.add('same-val');});}
-    function placeNum(n){if(!selected||given[selected.r][selected.c])return;const{r,c}=selected;if(pencilMode){const cell=board.querySelector(`[data-r="${r}"][data-c="${c}"]`);const key='p'+n;cell.dataset[key]=cell.dataset[key]?'':'1';render();highlight();return;}grid[r][c]=n;if(n!==solution[r][c]){sdkErrors++;$$('#sdk-errors').textContent=sdkErrors;const cell=board.querySelector(`[data-r="${r}"][data-c="${c}"]`);cell.classList.add('error');showFeedback('Wrong!','#e74c3c');resetStreak();setTimeout(()=>{grid[r][c]=0;render();highlight();},800);}else{render();highlight();addScore(1);checkWin();}}
+    function generate(){const g=Array.from({length:9},()=>Array(9).fill(0));solve(g);solution=g.map(r=>[...r]);const cells=[];for(let r=0;r<9;r++)for(let c=0;c<9;c++)cells.push([r,c]);cells.sort(()=>Math.random()-0.5);const rem=81-clues[sdkDiff];for(let i=0;i<rem&&i<cells.length;i++){const[r,c]=cells[i];g[r][c]=0;}grid=g.map(r=>[...r]);given=g.map(r=>r.map(v=>v!==0));pencilMarks=Array.from({length:9},()=>Array.from({length:9},()=>new Set()));return g;}
+    function digitCount(n){let ct=0;for(let r=0;r<9;r++)for(let c=0;c<9;c++){if(grid[r][c]===n)ct++;}return ct;}
+    function updateNumpad(){numpad.querySelectorAll('.sdk-num').forEach(b=>{const n=parseInt(b.textContent);if(!isNaN(n)){const full=digitCount(n)>=9;b.classList.toggle('sdk-num-done',full);b.disabled=full;b.classList.toggle('active',n===activeNum&&!full);}});}
+    function render(){board.innerHTML='';for(let r=0;r<9;r++)for(let c=0;c<9;c++){const cell=document.createElement('div');cell.className='sdk-cell'+(given[r][c]?' given':'');cell.dataset.r=r;cell.dataset.c=c;const v=grid[r][c];if(v){cell.textContent=v;}else if(pencilMarks[r][c].size){const pm=document.createElement('div');pm.className='sdk-pencil';for(let n=1;n<=9;n++){const s=document.createElement('span');s.textContent=pencilMarks[r][c].has(n)?n:'';pm.appendChild(s);}cell.appendChild(pm);}cell.onclick=()=>{selected={r,c};highlight();if(v)activeNum=v;updateNumpad();};board.appendChild(cell);}updateNumpad();}
+    function highlight(){const an=activeNum||(selected&&grid[selected.r]?grid[selected.r][selected.c]:0);$$all('.sdk-cell').forEach(cell=>{cell.classList.remove('selected','same-val','highlight-row','highlight-col','highlight-box','num-covered');const cr=+cell.dataset.r,cc=+cell.dataset.c;if(selected){if(cr===selected.r&&cc===selected.c)cell.classList.add('selected');else if(cr===selected.r)cell.classList.add('highlight-row');else if(cc===selected.c)cell.classList.add('highlight-col');else if(Math.floor(cr/3)===Math.floor(selected.r/3)&&Math.floor(cc/3)===Math.floor(selected.c/3))cell.classList.add('highlight-box');}if(an&&grid[cr][cc]===an&&!(selected&&cr===selected.r&&cc===selected.c))cell.classList.add('same-val');if(an&&grid[cr][cc]===an){const br=Math.floor(cr/3)*3,bc=Math.floor(cc/3)*3;$$all('.sdk-cell').forEach(c2=>{const r2=+c2.dataset.r,c2c=+c2.dataset.c;if(r2===cr||c2c===cc||(r2>=br&&r2<br+3&&c2c>=bc&&c2c<bc+3))c2.classList.add('num-covered');});}});}
+    function placeNum(n){if(!selected||given[selected.r][selected.c])return;const{r,c}=selected;if(pencilMode){pencilMarks[r][c].has(n)?pencilMarks[r][c].delete(n):pencilMarks[r][c].add(n);render();highlight();return;}pencilMarks[r][c].clear();grid[r][c]=n;activeNum=n;if(n!==solution[r][c]){sdkErrors++;$$('#sdk-errors').textContent=sdkErrors;render();highlight();const cell=board.querySelector(`[data-r="${r}"][data-c="${c}"]`);cell.classList.add('error');showFeedback('Wrong!','#e74c3c');resetStreak();setTimeout(()=>{grid[r][c]=0;render();highlight();},800);}else{render();highlight();addScore(1);checkWin();}}
     function checkWin(){for(let r=0;r<9;r++)for(let c=0;c<9;c++){if(grid[r][c]!==solution[r][c])return;}clearInterval(window._sdkTimer);window._sdkTimer=null;const mins=Math.floor(sdkTime/60),secs=sdkTime%60;showFeedback(`Sudoku Complete! ${mins}:${secs<10?'0'+secs:secs} \u2014 ${sdkErrors} errors \ud83c\udfc6`,'#2ecc71');addScore(sdkDiff==='hard'?20:(sdkDiff==='medium'?12:8));}
     hud.innerHTML=`<span class="game-stat">\u23f1 <span class="game-stat-val" id="sdk-time">0:00</span></span><span class="game-stat">\u274c <span class="game-stat-val" id="sdk-errors">0</span></span><span class="game-stat">\u270f\ufe0f <span class="game-stat-val" id="sdk-pencil-lbl">OFF</span></span>`;
     controls.innerHTML='';['easy','medium','hard'].forEach(d=>{const b=document.createElement('button');b.className='sdk-btn'+(d===sdkDiff?' active':'');b.textContent=d.toUpperCase();b.onclick=()=>{sdkDiff=d;sessionStorage.setItem('sdk-diff',d);initSudoku();};controls.appendChild(b);});
     const nb=document.createElement('button');nb.className='sdk-btn';nb.textContent='NEW';nb.onclick=()=>initSudoku();controls.appendChild(nb);
     const pb=document.createElement('button');pb.className='sdk-btn'+(pencilMode?' active':'');pb.id='sdk-pencil-btn';pb.textContent='\u270f\ufe0f PENCIL';pb.onclick=()=>{pencilMode=!pencilMode;pb.classList.toggle('active');$$('#sdk-pencil-lbl').textContent=pencilMode?'ON':'OFF';};controls.appendChild(pb);
-    numpad.innerHTML='';for(let n=1;n<=9;n++){const b=document.createElement('button');b.className='sdk-num';b.textContent=n;b.onclick=()=>placeNum(n);numpad.appendChild(b);}
-    const eb=document.createElement('button');eb.className='sdk-num';eb.textContent='\u232b';eb.onclick=()=>{if(selected&&!given[selected.r][selected.c]){grid[selected.r][selected.c]=0;render();highlight();}};numpad.appendChild(eb);
+    numpad.innerHTML='';for(let n=1;n<=9;n++){const b=document.createElement('button');b.className='sdk-num';b.textContent=n;b.onclick=()=>{activeNum=n;selected?placeNum(n):(highlight(),updateNumpad());};numpad.appendChild(b);}
+    const eb=document.createElement('button');eb.className='sdk-num';eb.textContent='\u232b';eb.onclick=()=>{if(selected&&!given[selected.r][selected.c]){grid[selected.r][selected.c]=0;pencilMarks[selected.r][selected.c].clear();activeNum=0;render();highlight();}};numpad.appendChild(eb);
     generate();render();sdkTime=0;sdkErrors=0;
     window._sdkTimer=setInterval(()=>{sdkTime++;const m=Math.floor(sdkTime/60),s=sdkTime%60;const te=$$('#sdk-time');if(te)te.textContent=m+':'+(s<10?'0'+s:s);},1000);
-    document.onkeydown=e=>{if(currentGame!=='sudoku')return;const n=parseInt(e.key);if(n>=1&&n<=9)placeNum(n);if(e.key==='Backspace'||e.key==='Delete'){if(selected&&!given[selected.r][selected.c]){grid[selected.r][selected.c]=0;render();highlight();}}if(e.key==='p'||e.key==='P'){pencilMode=!pencilMode;$$('#sdk-pencil-btn')?.classList.toggle('active');const pl=$$('#sdk-pencil-lbl');if(pl)pl.textContent=pencilMode?'ON':'OFF';}};
+    document.onkeydown=e=>{if(currentGame!=='sudoku')return;const n=parseInt(e.key);if(n>=1&&n<=9){activeNum=n;placeNum(n);}if(e.key==='Backspace'||e.key==='Delete'){if(selected&&!given[selected.r][selected.c]){grid[selected.r][selected.c]=0;pencilMarks[selected.r][selected.c].clear();activeNum=0;render();highlight();}}if(e.key==='p'||e.key==='P'){pencilMode=!pencilMode;$$('#sdk-pencil-btn')?.classList.toggle('active');const pl=$$('#sdk-pencil-lbl');if(pl)pl.textContent=pencilMode?'ON':'OFF';}};
   }
   function initCardPairs(){
     const grid=$$('#cp-grid'),hud=$$('#cp-hud');
@@ -3391,6 +3407,109 @@ function playAnimalSound(type) {
     function play(){const gSz=Math.max(5,Math.ceil(Math.sqrt(sz*3)));const total=gSz*gSz;const positions=Array.from({length:total},(_,i)=>i).sort(()=>Math.random()-0.5).slice(0,sz);const numMap={};positions.forEach((p,i)=>numMap[p]=i+1);ct.innerHTML='';const g=document.createElement('div');g.className='chm-grid';g.style.gridTemplateColumns=`repeat(${gSz},1fr)`;let nextExp=1,hidden=false;for(let i=0;i<total;i++){const c=document.createElement('div');c.className='chm-cell'+(numMap[i]?' num':'');c.textContent=numMap[i]||'';c.dataset.num=numMap[i]||'0';c.dataset.idx=i;c.onclick=()=>{const n=parseInt(c.dataset.num);if(!n)return;if(!hidden){hidden=true;g.querySelectorAll('.chm-cell.num').forEach(x=>{if(parseInt(x.dataset.num)!==1)x.classList.add('hidden');});}if(n===nextExp){c.classList.remove('num','hidden');c.classList.add('correct');c.style.color='#2ecc71';nextExp++;if(nextExp>sz){sz++;sz>best&&(best=sz,sessionStorage.setItem('chm-best',best),$$('#chm-best').textContent=best);$$('#chm-sz').textContent=sz;addScore(sz>=10?5:(sz>=7?3:2));showFeedback(`Level ${sz-1}! \ud83d\udc35`,'#2ecc71');setTimeout(play,1200);}}else{c.classList.add('wrong');g.querySelectorAll('.chm-cell').forEach(x=>{if(x.dataset.num!=='0'){x.classList.remove('hidden');x.style.color=x.classList.contains('correct')?'#2ecc71':'#e74c3c';}});showFeedback(`Numbers: ${sz} \ud83d\udc35`,'#e74c3c');resetStreak();setTimeout(()=>{const score=sz-1;sz=4;$$('#chm-sz').textContent=sz;ct.innerHTML=`<div class="nmm-display">${score} numbers</div><div class="nmm-msg">Best: ${best}</div>`;const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='TRY AGAIN';rb.onclick=play;ct.appendChild(rb);addScore(Math.max(1,score-3));},2000);}};g.appendChild(c);}ct.appendChild(g);}
     ct.innerHTML='<div class="nmm-msg">Numbers appear briefly, then hide.<br>Click them in order: 1, 2, 3...</div>';const sb=document.createElement('button');sb.className='nmm-btn';sb.textContent='START';sb.onclick=()=>{sz=4;play();};ct.appendChild(sb);
   }
+  const _tutorials={
+    sudoku:{title:'\ud83d\udd22 How to Play Sudoku',steps:[
+      'Fill every <b>row</b>, <b>column</b>, and <b>3\u00d73 box</b> with the numbers 1\u20139. No repeats allowed!',
+      'Tap an <b>empty cell</b> to select it, then tap a <b>number</b> on the numpad below to place it.',
+      '<b>Highlighting trick:</b> When you tap a number, the board shows you rows, columns, and boxes where that number already exists \u2014 the safe spots glow subtly.',
+      'When all 9 copies of a digit are placed, its button <b>greys out</b> so you know it\u2019s done.',
+      '<b>Pencil mode (\u270f\ufe0f):</b> Toggle it on, then tap numbers to write small candidates in a cell. Tap again to remove. Great for narrowing down options!',
+      '<b>Strategy \u2014 Naked Single:</b> Look for a cell where <b>only one number</b> is possible. Check its row, column, and box \u2014 if 8 of the 9 digits are already present, the missing one goes there!',
+      '<b>Strategy \u2014 Hidden Single:</b> In a row/col/box, if a number can only go in <b>one cell</b>, that\u2019s where it belongs, even if other numbers could also fit.',
+      'Start with <b>Easy</b> (only 26 blanks) to build confidence, then work up to Medium and Hard.'
+    ]},
+    cardpairs:{title:'\ud83c\udccf How to Play Card Pairs',steps:[
+      'Find all matching pairs by flipping two cards at a time.',
+      'Tap a card to <b>flip</b> it and reveal the symbol underneath.',
+      'Flip a <b>second card</b> \u2014 if both symbols match, they stay face-up! If not, both flip back.',
+      '<b>Memory tip:</b> Pay attention to cards you\u2019ve already flipped. Try to remember their positions.',
+      'Build <b>combos</b> by finding consecutive matches without mistakes \u2014 each combo increases your score multiplier!',
+      'Finish in fewer moves for <b>bonus points</b>. The board size grows as you improve.'
+    ]},
+    speedmath:{title:'\u26a1 How to Play Speed Math',steps:[
+      'Solve math problems as fast as possible before the <b>timer runs out</b>!',
+      'Type your answer using the numpad, then hit <b>\u2713</b> (or press Enter) to submit.',
+      'Correct answers add <b>+3 seconds</b> to the clock. Build streaks for bonus points!',
+      'Problems get harder as you go \u2014 starting with simple addition, then subtraction and multiplication.',
+      '<b>Tip:</b> For multiplication, break it down: 17\u00d76 = (10\u00d76) + (7\u00d76) = 60 + 42 = 102.',
+      'Use the <b>\u00b1</b> button for negative answers. Use <b>\u232b</b> to delete a digit.'
+    ]},
+    wordsearch:{title:'\ud83d\udd0d How to Play Word Search',steps:[
+      'Find all the hidden words in the letter grid. Words come from a <b>themed category</b>.',
+      '<b>Click and drag</b> across letters to select a word. Words can go in any direction \u2014 horizontal, vertical, diagonal, even backwards!',
+      'The <b>word list</b> on top shows which words to find. Found words get crossed off.',
+      '<b>Strategy:</b> Start by scanning for <b>uncommon letters</b> (Q, X, Z) \u2014 they\u2019re easy to spot and give you a starting point.',
+      '<b>Tip:</b> Look for the <b>first and last letters</b> of a word, then check if the letters between them line up in a straight direction.',
+      'Find all words to <b>auto-generate</b> a new puzzle with a fresh topic!'
+    ]},
+    logic:{title:'\ud83e\udde9 How to Play Logic Puzzles',steps:[
+      'Read each riddle or brain teaser carefully, then pick the correct answer from the options.',
+      '<b>Key tip:</b> These puzzles are tricky on purpose! The obvious answer is usually <b>wrong</b>.',
+      'Watch for <b>wordplay</b> \u2014 questions like "how many do YOU have?" focus on what you took, not what\u2019s left.',
+      'Look for <b>literal meanings</b> \u2014 "all but 9" means 9 remain, not that 9 die.',
+      'Build a <b>streak</b> for bonus points. After answering, read the \ud83d\udca1 explanation to learn the trick.',
+      'The puzzles are shuffled each round, so you can replay with a fresh sequence!'
+    ]},
+    nummem:{title:'\ud83d\udd22 How to Play Number Memory',steps:[
+      'A number appears on screen. <b>Memorize it</b>, then type it back when it disappears!',
+      'You start with <b>3 digits</b>. Each correct answer adds one more digit.',
+      'The display time scales with length \u2014 longer numbers stay visible longer.',
+      '<b>Strategy \u2014 Chunking:</b> Break long numbers into groups. "4815162342" becomes "48-15-16-23-42" \u2014 much easier!',
+      '<b>Strategy \u2014 Rhythm:</b> Say the number in your head with a rhythm, like a phone number.',
+      'Your <b>best score</b> is saved between rounds. Try to beat your record!'
+    ]},
+    stroop:{title:'\ud83c\udfa8 How to Play Stroop Test',steps:[
+      'A color word appears in a <b>different ink color</b>. Tap the button matching the <b>INK COLOR</b>, not the word!',
+      'Example: The word "RED" written in <b style="color:#3498db">blue ink</b> \u2014 you tap <b>BLUE</b>.',
+      'You have <b>30 seconds</b>. Focus on the <b>color you see</b>, not the word you read.',
+      '<b>Why it\u2019s hard:</b> Your brain reads the word automatically. You have to override that instinct!',
+      '<b>Tip:</b> Try <b>squinting</b> or <b>unfocusing</b> slightly \u2014 it makes the ink color more prominent and the word harder to read.',
+      'Tracks your <b>accuracy %</b> at the end. Aim for 90%+ at speed!'
+    ]},
+    reaction:{title:'\u26a1 How to Play Reaction Time',steps:[
+      'Wait for the box to turn <b>GREEN</b>, then tap it as <b>fast</b> as possible!',
+      'The box starts <b>red</b> (wait) and changes to <b>green</b> (go!) after a random delay.',
+      'If you tap <b>too early</b> (while still red), that round doesn\u2019t count \u2014 tap to retry.',
+      'You play <b>5 rounds</b>. Your average reaction time is shown at the end.',
+      '<b>Good benchmarks:</b> Under 250ms is great, under 200ms is elite!',
+      '<b>Tip:</b> Don\u2019t try to predict the timing. Relax your hand and react to the color change \u2014 prediction leads to early taps.'
+    ]},
+    nback:{title:'\ud83e\udde0 How to Play N-Back',steps:[
+      'A square lights up in a <b>3\u00d73 grid</b>. Your job: was it in the <b>same position</b> as N steps ago?',
+      'In <b>1-Back</b>: compare to the <b>previous</b> position. In 2-Back: compare to <b>2 steps ago</b>.',
+      'Tap <b>MATCH</b> if the position is the same, or <b>NO MATCH</b> if it\u2019s different.',
+      '<b>Strategy:</b> Keep a mental "buffer" of only the last N positions. Don\u2019t try to remember everything!',
+      'Score <b>80%+</b> to level up automatically. The game tracks your accuracy.',
+      '<b>Why train N-Back?</b> It\u2019s one of the few exercises shown to improve <b>working memory</b> and fluid intelligence!'
+    ]},
+    anagram:{title:'\ud83d\udd24 How to Play Anagrams',steps:[
+      'The letters of a word are <b>scrambled</b>. Tap them in the right order to spell the original word!',
+      'Tap a letter tile to place it in the next <b>empty slot</b>. Tap <b>\u232b UNDO</b> to remove the last letter.',
+      'Use <b>\u21bb CLEAR</b> to start over with all tiles available.',
+      '<b>Strategy:</b> Look for common <b>prefixes</b> (UN-, RE-, PRE-) and <b>suffixes</b> (-ING, -TION, -LY) first.',
+      '<b>Tip:</b> Try saying the scrambled letters aloud \u2014 sometimes your tongue spots the word before your eyes do!',
+      'Words get <b>longer</b> as you streak. Start with 4-letter words, work up to 8!'
+    ]},
+    chimp:{title:'\ud83d\udc35 How to Play Chimp Test',steps:[
+      'Numbers appear on a grid. <b>Memorize their positions</b>, then click them in order: 1, 2, 3...',
+      'After you click <b>1</b>, the remaining numbers <b>hide</b>! You must remember where they were.',
+      'Click all numbers correctly to advance. Each level adds <b>one more number</b>.',
+      '<b>Strategy:</b> Don\u2019t memorize all positions equally. Focus on <b>groups</b> \u2014 cluster nearby numbers together.',
+      '<b>Fun fact:</b> This test is based on research where chimpanzees <b>outperformed humans</b> at short-term spatial memory!',
+      'One mistake ends the round. Your <b>best score</b> is saved automatically.'
+    ]}
+  };
+  window.showTutorial=function(game){
+    const t=_tutorials[game];if(!t)return;
+    const ov=document.createElement('div');ov.className='tut-overlay';
+    const box=document.createElement('div');box.className='tut-box';
+    const cl=document.createElement('button');cl.className='tut-close';cl.textContent='\u2715';cl.onclick=()=>ov.remove();
+    const ttl=document.createElement('div');ttl.className='tut-title';ttl.textContent=t.title;
+    box.appendChild(cl);box.appendChild(ttl);
+    t.steps.forEach((s,i)=>{const d=document.createElement('div');d.className='tut-step';d.innerHTML=`<span class="tut-num">${i+1}</span>${s}`;box.appendChild(d);});
+    const gb=document.createElement('button');gb.className='tut-btn';gb.textContent='Got it!';gb.onclick=()=>ov.remove();box.appendChild(gb);
+    ov.appendChild(box);ov.onclick=e=>{if(e.target===ov)ov.remove();};document.body.appendChild(ov);
+  };
 </script>
 </body>
 </html>
