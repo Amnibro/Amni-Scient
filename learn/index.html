@@ -378,6 +378,8 @@
   .bj-cell.selected { transform:scale(1.12); box-shadow:0 0 18px rgba(255,255,255,0.5); border-color:#fff; }
   .bj-cell.matched { animation:bjMatch 0.5s ease-out; }
   @keyframes bjMatch { 0%{transform:scale(1);opacity:1} 40%{transform:scale(1.4) rotate(15deg);opacity:1} 100%{transform:scale(0);opacity:0} }
+  .bj-cell.hint { animation:bjHint 1s ease-in-out infinite; }
+  @keyframes bjHint { 0%,100%{box-shadow:0 0 4px rgba(241,196,15,0.3)} 50%{box-shadow:0 0 18px rgba(241,196,15,0.8);transform:scale(1.06)} }
   .bj-cell.falling { animation:bjFall 0.35s ease-in; }
   @keyframes bjFall { 0%{transform:translateY(-100%);opacity:0} 100%{transform:translateY(0);opacity:1} }
   .bj-cell.swapping-left { animation:bjSwapL 0.25s ease-in-out; }
@@ -389,6 +391,59 @@
   @keyframes bjSwapU { 0%{transform:translateY(100%)} 100%{transform:translateY(0)} }
   @keyframes bjSwapD { 0%{transform:translateY(-100%)} 100%{transform:translateY(0)} }
   .bj-score-popup { position:absolute; font-family:'Comic Neue',cursive; font-weight:bold; font-size:1.2rem; color:#f1c40f; pointer-events:none; z-index:50; animation:floatUp 0.8s ease-out forwards; text-shadow:1px 1px 2px rgba(0,0,0,0.8); }
+  .game-btn.retro80 { border-color: #ff6b9d; } .game-btn.retro80:hover { box-shadow: 0 10px 30px rgba(255,107,157,0.25); }
+  .game-btn.retro90 { border-color: #a29bfe; } .game-btn.retro90:hover { box-shadow: 0 10px 30px rgba(162,155,254,0.25); }
+  .game-btn.idle { border-color: #fdcb6e; } .game-btn.idle:hover { box-shadow: 0 10px 30px rgba(253,203,110,0.25); }
+  .game-btn.adgame { border-color: #55efc4; } .game-btn.adgame:hover { box-shadow: 0 10px 30px rgba(85,239,196,0.25); }
+  .game-btn.college { border-color: #48dbfb; } .game-btn.college:hover { box-shadow: 0 10px 30px rgba(72,219,251,0.25); }
+  #snake80-view,#breakout-view,#pong-view,#invaders-view { background:linear-gradient(135deg,#0a0014 0%,#1a0028 50%,#0a0014 100%); background-size:200% 200%; animation:bgShift 10s ease infinite; }
+  #minesweeper-view,#pipes-view,#tetris-view,#flappy-view { background:linear-gradient(135deg,#0a0a1e 0%,#1a1a2e 50%,#0a0a1e 100%); background-size:200% 200%; animation:bgShift 12s ease infinite; }
+  #clicker-view,#autominer-view { background:linear-gradient(135deg,#1a1400 0%,#2a2000 50%,#1a1400 100%); background-size:200% 200%; animation:bgShift 14s ease infinite; }
+  #pullpin-view,#fillcup-view { background:linear-gradient(135deg,#001a1a 0%,#002a2a 50%,#001a1a 100%); background-size:200% 200%; animation:bgShift 11s ease infinite; }
+  #calculus-view,#linalg-view,#stats-view,#discrete-view,#physics-view,#chemistry-view,#biology-view,#algorithms-view,#datastructs-view,#philosophy-view,#economics-view,#writing-view,#psychology-view { background:linear-gradient(135deg,#001428 0%,#002040 50%,#001428 100%); background-size:200% 200%; animation:bgShift 15s ease infinite; }
+  .retro-canvas { background:#000; border:3px solid; border-radius:8px; image-rendering:pixelated; touch-action:none; }
+  .retro-hud { display:flex; gap:15px; font-family:'JetBrains Mono',monospace; font-size:1.1rem; color:#0f0; margin:8px 0; text-shadow:0 0 6px #0f0; }
+  .retro-btn { font-family:'JetBrains Mono',monospace; font-size:1.1rem; padding:10px 24px; border:2px solid #ff6b9d; background:transparent; color:#ff6b9d; border-radius:8px; cursor:pointer; transition:0.2s; }
+  .retro-btn:hover { background:rgba(255,107,157,0.15); }
+  .retro-btn:active { transform:scale(0.95); }
+  .retro-dpad { display:grid; grid-template-columns:repeat(3,50px); grid-template-rows:repeat(3,50px); gap:3px; justify-content:center; margin:10px 0; }
+  .retro-dpad button { background:#222; border:2px solid #555; color:#fff; font-size:1.4rem; border-radius:8px; cursor:pointer; }
+  .retro-dpad button:active { background:#444; }
+  .retro-dpad .empty { visibility:hidden; }
+  .idle-container { display:flex; flex-direction:column; align-items:center; width:100%; max-width:600px; gap:12px; }
+  .idle-display { font-family:'JetBrains Mono',monospace; font-size:clamp(2rem,6vw,4rem); color:#fdcb6e; text-shadow:0 0 15px rgba(253,203,110,0.5); text-align:center; margin:10px 0; }
+  .idle-main-btn { width:clamp(120px,30vw,180px); height:clamp(120px,30vw,180px); border-radius:50%; border:4px solid #fdcb6e; background:radial-gradient(circle,#3d2b00 0%,#1a1400 100%); font-size:clamp(3rem,8vw,5rem); cursor:pointer; transition:transform 0.1s; box-shadow:0 0 20px rgba(253,203,110,0.3); display:flex; align-items:center; justify-content:center; }
+  .idle-main-btn:active { transform:scale(0.9); }
+  .idle-shop { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:10px; width:100%; margin-top:10px; }
+  .idle-item { background:rgba(255,255,255,0.05); border:2px solid rgba(253,203,110,0.3); border-radius:12px; padding:12px; cursor:pointer; transition:0.2s; }
+  .idle-item:hover { border-color:#fdcb6e; transform:translateY(-2px); }
+  .idle-item.locked { opacity:0.4; pointer-events:none; }
+  .idle-item-name { font-family:'Comic Neue',cursive; font-size:1rem; font-weight:bold; color:#fdcb6e; }
+  .idle-item-desc { font-family:'Comic Neue',cursive; font-size:0.8rem; color:#aaa; margin-top:4px; }
+  .idle-item-cost { font-family:'JetBrains Mono',monospace; font-size:0.9rem; color:#e67e22; margin-top:6px; }
+  .idle-rate { font-family:'JetBrains Mono',monospace; font-size:0.9rem; color:#aaa; }
+  .college-container { display:flex; flex-direction:column; align-items:center; width:100%; max-width:800px; gap:12px; padding:10px; }
+  .college-card { background:rgba(72,219,251,0.05); border:2px solid rgba(72,219,251,0.2); border-radius:16px; padding:24px; width:100%; max-width:700px; }
+  .college-question { font-family:'JetBrains Mono',monospace; font-size:clamp(1rem,3vw,1.4rem); color:#ecf0f1; line-height:1.6; margin-bottom:16px; }
+  .college-formula { font-family:'JetBrains Mono',monospace; font-size:clamp(1.2rem,4vw,2rem); color:#48dbfb; text-align:center; margin:16px 0; padding:16px; background:rgba(0,0,0,0.3); border-radius:8px; border-left:3px solid #48dbfb; }
+  .college-choices { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
+  .college-opt { padding:12px 22px; border-radius:10px; border:2px solid rgba(72,219,251,0.3); background:rgba(0,0,0,0.2); color:#ecf0f1; font-family:'JetBrains Mono',monospace; font-size:1rem; cursor:pointer; transition:0.2s; min-width:80px; text-align:center; }
+  .college-opt:hover { border-color:#48dbfb; background:rgba(72,219,251,0.1); transform:translateY(-2px); }
+  .college-opt.correct { background:rgba(46,204,113,0.3); border-color:#2ecc71; }
+  .college-opt.wrong { background:rgba(231,76,60,0.3); border-color:#e74c3c; }
+  .college-explain { font-family:'JetBrains Mono',monospace; font-size:0.9rem; color:#aaa; line-height:1.5; margin-top:12px; padding:12px; background:rgba(0,0,0,0.2); border-radius:8px; display:none; }
+  .college-progress { display:flex; gap:4px; justify-content:center; margin:8px 0; }
+  .college-dot { width:12px; height:12px; border-radius:50%; background:rgba(255,255,255,0.15); transition:0.3s; }
+  .college-dot.done { background:#2ecc71; }
+  .college-dot.wrong-dot { background:#e74c3c; }
+  .college-dot.current { background:#48dbfb; transform:scale(1.3); }
+  .college-topic { font-family:'Comic Neue',cursive; font-size:0.85rem; color:#888; text-align:center; margin-top:4px; }
+  .ms-grid { display:grid; gap:1px; background:#999; border:3px solid #999; border-radius:4px; }
+  .ms-cell { width:clamp(28px,6vw,36px); height:clamp(28px,6vw,36px); background:#bbb; display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono',monospace; font-size:clamp(0.7rem,2vw,1rem); font-weight:bold; cursor:pointer; user-select:none; transition:background 0.1s; border:1px outset #ddd; }
+  .ms-cell.revealed { background:#ddd; border:1px solid #999; }
+  .ms-cell.mine { background:#e74c3c; }
+  .ms-cell.flagged::after { content:'🚩'; }
+  .ms-cell[data-n="1"]{ color:#0000ff } .ms-cell[data-n="2"]{ color:#008000 } .ms-cell[data-n="3"]{ color:#ff0000 } .ms-cell[data-n="4"]{ color:#000080 } .ms-cell[data-n="5"]{ color:#800000 } .ms-cell[data-n="6"]{ color:#008080 } .ms-cell[data-n="7"]{ color:#000 } .ms-cell[data-n="8"]{ color:#808080 }
   .mtn-platform { transition:background 0.3s,box-shadow 0.3s; }
   .mtn-platform[data-solved="true"] { background:#2ecc71; box-shadow:0 0 10px rgba(46,204,113,0.5); }
   #feedback.show { animation:celebPop 1.8s ease-out forwards; filter:drop-shadow(0 0 20px rgba(0,0,0,0.5)); }
@@ -649,6 +704,71 @@
           <button class="game-btn brain" data-game="trailmake"><span class="btn-icon">🔗</span><span class="btn-text">Trail Making</span><span class="btn-desc">Connect in order</span></button>
         </div>
       </section>
+      <section class="game-category destress-cat" style="display:none;">
+        <h2 class="cat-header"><span class="cat-header-icon">👾</span> 80s Retro Arcade</h2>
+        <div class="cat-games">
+          <button class="game-btn retro80" data-game="snake80"><span class="btn-icon">🐍</span><span class="btn-text">Snake</span><span class="btn-desc">Classic snake game</span></button>
+          <button class="game-btn retro80" data-game="breakout"><span class="btn-icon">🧱</span><span class="btn-text">Breakout</span><span class="btn-desc">Smash all the bricks</span></button>
+          <button class="game-btn retro80" data-game="pong"><span class="btn-icon">🏓</span><span class="btn-text">Pong</span><span class="btn-desc">The original arcade</span></button>
+          <button class="game-btn retro80" data-game="invaders"><span class="btn-icon">👽</span><span class="btn-text">Space Invaders</span><span class="btn-desc">Defend earth!</span></button>
+        </div>
+      </section>
+      <section class="game-category destress-cat" style="display:none;">
+        <h2 class="cat-header"><span class="cat-header-icon">💾</span> 90s Retro</h2>
+        <div class="cat-games">
+          <button class="game-btn retro90" data-game="minesweeper"><span class="btn-icon">💣</span><span class="btn-text">Minesweeper</span><span class="btn-desc">Don't hit a mine</span></button>
+          <button class="game-btn retro90" data-game="pipes"><span class="btn-icon">🔧</span><span class="btn-text">Pipe Connect</span><span class="btn-desc">Connect the flow</span></button>
+          <button class="game-btn retro90" data-game="tetris"><span class="btn-icon">🟦</span><span class="btn-text">Block Drop</span><span class="btn-desc">Stack & clear lines</span></button>
+          <button class="game-btn retro90" data-game="flappy"><span class="btn-icon">🐦</span><span class="btn-text">Flappy Jump</span><span class="btn-desc">Tap to fly!</span></button>
+        </div>
+      </section>
+      <section class="game-category destress-cat" style="display:none;">
+        <h2 class="cat-header"><span class="cat-header-icon">⏳</span> Idle & Clicker</h2>
+        <div class="cat-games">
+          <button class="game-btn idle" data-game="clicker"><span class="btn-icon">🍪</span><span class="btn-text">Cookie Clicker</span><span class="btn-desc">Click for cookies!</span></button>
+          <button class="game-btn idle" data-game="autominer"><span class="btn-icon">⛏️</span><span class="btn-text">Auto Miner</span><span class="btn-desc">Dig & upgrade</span></button>
+        </div>
+      </section>
+      <section class="game-category destress-cat" style="display:none;">
+        <h2 class="cat-header"><span class="cat-header-icon">📱</span> Ad-Style Mini Games</h2>
+        <div class="cat-games">
+          <button class="game-btn adgame" data-game="pullpin"><span class="btn-icon">📌</span><span class="btn-text">Pull the Pin</span><span class="btn-desc">Pull pins to solve</span></button>
+          <button class="game-btn adgame" data-game="fillcup"><span class="btn-icon">🥤</span><span class="btn-text">Fill the Cup</span><span class="btn-desc">Pour to the line</span></button>
+        </div>
+      </section>
+      <section class="game-category college-cat" style="display:none;">
+        <h2 class="cat-header"><span class="cat-header-icon">📐</span> Mathematics</h2>
+        <div class="cat-games">
+          <button class="game-btn college" data-game="calculus"><span class="btn-icon">∫</span><span class="btn-text">Calculus</span><span class="btn-desc">Derivatives & integrals</span></button>
+          <button class="game-btn college" data-game="linalg"><span class="btn-icon">📊</span><span class="btn-text">Linear Algebra</span><span class="btn-desc">Matrices & vectors</span></button>
+          <button class="game-btn college" data-game="stats"><span class="btn-icon">📈</span><span class="btn-text">Statistics</span><span class="btn-desc">Probability & data</span></button>
+          <button class="game-btn college" data-game="discrete"><span class="btn-icon">🔣</span><span class="btn-text">Discrete Math</span><span class="btn-desc">Logic, sets & proofs</span></button>
+        </div>
+      </section>
+      <section class="game-category college-cat" style="display:none;">
+        <h2 class="cat-header"><span class="cat-header-icon">🔬</span> Sciences</h2>
+        <div class="cat-games">
+          <button class="game-btn college" data-game="physics"><span class="btn-icon">⚛️</span><span class="btn-text">Physics</span><span class="btn-desc">Mechanics to quantum</span></button>
+          <button class="game-btn college" data-game="chemistry"><span class="btn-icon">🧪</span><span class="btn-text">Chemistry</span><span class="btn-desc">Reactions & bonds</span></button>
+          <button class="game-btn college" data-game="biology"><span class="btn-icon">🧬</span><span class="btn-text">Biology</span><span class="btn-desc">Cell to ecosystem</span></button>
+        </div>
+      </section>
+      <section class="game-category college-cat" style="display:none;">
+        <h2 class="cat-header"><span class="cat-header-icon">💻</span> Computer Science</h2>
+        <div class="cat-games">
+          <button class="game-btn college" data-game="algorithms"><span class="btn-icon">🔀</span><span class="btn-text">Algorithms</span><span class="btn-desc">Sort, search & graph</span></button>
+          <button class="game-btn college" data-game="datastructs"><span class="btn-icon">🏗️</span><span class="btn-text">Data Structures</span><span class="btn-desc">Stacks, trees & more</span></button>
+        </div>
+      </section>
+      <section class="game-category college-cat" style="display:none;">
+        <h2 class="cat-header"><span class="cat-header-icon">📚</span> Humanities & Social</h2>
+        <div class="cat-games">
+          <button class="game-btn college" data-game="philosophy"><span class="btn-icon">🤔</span><span class="btn-text">Philosophy</span><span class="btn-desc">Logic & critical thinking</span></button>
+          <button class="game-btn college" data-game="economics"><span class="btn-icon">💹</span><span class="btn-text">Economics</span><span class="btn-desc">Micro & macro</span></button>
+          <button class="game-btn college" data-game="writing"><span class="btn-icon">✍️</span><span class="btn-text">Academic Writing</span><span class="btn-desc">Grammar & rhetoric</span></button>
+          <button class="game-btn college" data-game="psychology"><span class="btn-icon">🧠</span><span class="btn-text">Psychology</span><span class="btn-desc">Mind & behavior</span></button>
+        </div>
+      </section>
     </div>
   </div>
   <div id="quiz-view" class="view">
@@ -867,6 +987,31 @@
     <div class="game-hud" id="tm-hud"></div>
     <div id="tm-container" style="display:flex;flex-direction:column;align-items:center;gap:10px;width:100%"></div>
   </div>
+  <div id="snake80-view" class="view"><div class="life-title" style="color:#ff6b9d">🐍 Snake</div><div id="snake80-game" style="display:flex;flex-direction:column;align-items:center;gap:10px"></div></div>
+  <div id="breakout-view" class="view"><div class="life-title" style="color:#ff6b9d">🧱 Breakout</div><div id="breakout-game" style="display:flex;flex-direction:column;align-items:center;gap:10px"></div></div>
+  <div id="pong-view" class="view"><div class="life-title" style="color:#ff6b9d">🏓 Pong</div><div id="pong-game" style="display:flex;flex-direction:column;align-items:center;gap:10px"></div></div>
+  <div id="invaders-view" class="view"><div class="life-title" style="color:#ff6b9d">👽 Space Invaders</div><div id="invaders-game" style="display:flex;flex-direction:column;align-items:center;gap:10px"></div></div>
+  <div id="minesweeper-view" class="view"><div class="life-title" style="color:#a29bfe">💣 Minesweeper</div><div id="minesweeper-game" style="display:flex;flex-direction:column;align-items:center;gap:10px"></div></div>
+  <div id="pipes-view" class="view"><div class="life-title" style="color:#a29bfe">🔧 Pipe Connect</div><div id="pipes-game" style="display:flex;flex-direction:column;align-items:center;gap:10px"></div></div>
+  <div id="tetris-view" class="view"><div class="life-title" style="color:#a29bfe">🟦 Block Drop</div><div id="tetris-game" style="display:flex;flex-direction:column;align-items:center;gap:10px"></div></div>
+  <div id="flappy-view" class="view"><div class="life-title" style="color:#a29bfe">🐦 Flappy Jump</div><div id="flappy-game" style="display:flex;flex-direction:column;align-items:center;gap:10px"></div></div>
+  <div id="clicker-view" class="view"><div class="life-title" style="color:#fdcb6e">🍪 Cookie Clicker</div><div id="clicker-game" class="idle-container"></div></div>
+  <div id="autominer-view" class="view"><div class="life-title" style="color:#fdcb6e">⛏️ Auto Miner</div><div id="autominer-game" class="idle-container"></div></div>
+  <div id="pullpin-view" class="view"><div class="life-title" style="color:#55efc4">📌 Pull the Pin</div><div id="pullpin-game" style="display:flex;flex-direction:column;align-items:center;gap:10px"></div></div>
+  <div id="fillcup-view" class="view"><div class="life-title" style="color:#55efc4">🥤 Fill the Cup</div><div id="fillcup-game" style="display:flex;flex-direction:column;align-items:center;gap:10px"></div></div>
+  <div id="calculus-view" class="view"><div class="life-title" style="color:#48dbfb">∫ Calculus</div><div id="calculus-game" class="college-container"></div></div>
+  <div id="linalg-view" class="view"><div class="life-title" style="color:#48dbfb">📊 Linear Algebra</div><div id="linalg-game" class="college-container"></div></div>
+  <div id="stats-view" class="view"><div class="life-title" style="color:#48dbfb">📈 Statistics</div><div id="stats-game" class="college-container"></div></div>
+  <div id="discrete-view" class="view"><div class="life-title" style="color:#48dbfb">🔣 Discrete Math</div><div id="discrete-game" class="college-container"></div></div>
+  <div id="physics-view" class="view"><div class="life-title" style="color:#48dbfb">⚛️ Physics</div><div id="physics-game" class="college-container"></div></div>
+  <div id="chemistry-view" class="view"><div class="life-title" style="color:#48dbfb">🧪 Chemistry</div><div id="chemistry-game" class="college-container"></div></div>
+  <div id="biology-view" class="view"><div class="life-title" style="color:#48dbfb">🧬 Biology</div><div id="biology-game" class="college-container"></div></div>
+  <div id="algorithms-view" class="view"><div class="life-title" style="color:#48dbfb">🔀 Algorithms</div><div id="algorithms-game" class="college-container"></div></div>
+  <div id="datastructs-view" class="view"><div class="life-title" style="color:#48dbfb">🏗️ Data Structures</div><div id="datastructs-game" class="college-container"></div></div>
+  <div id="philosophy-view" class="view"><div class="life-title" style="color:#48dbfb">🤔 Philosophy</div><div id="philosophy-game" class="college-container"></div></div>
+  <div id="economics-view" class="view"><div class="life-title" style="color:#48dbfb">💹 Economics</div><div id="economics-game" class="college-container"></div></div>
+  <div id="writing-view" class="view"><div class="life-title" style="color:#48dbfb">✍️ Academic Writing</div><div id="writing-game" class="college-container"></div></div>
+  <div id="psychology-view" class="view"><div class="life-title" style="color:#48dbfb">🧠 Psychology</div><div id="psychology-game" class="college-container"></div></div>
   <div id="colorsort-view" class="view">
     <div class="life-title" style="color:#e056a0">🧪 Color Sort <button class="tut-trigger" onclick="showTutorial('colorsort')">? How to Play</button></div>
     <div class="cs-game" id="cs-game"></div>
@@ -916,15 +1061,40 @@
     mentalrot: $$('#mentalrot-view'),
     trailmake: $$('#trailmake-view'),
     colorsort: $$('#colorsort-view'),
-    bejeweled: $$('#bejeweled-view')
+    bejeweled: $$('#bejeweled-view'),
+    snake80: $$('#snake80-view'),
+    breakout: $$('#breakout-view'),
+    pong: $$('#pong-view'),
+    invaders: $$('#invaders-view'),
+    minesweeper: $$('#minesweeper-view'),
+    pipes: $$('#pipes-view'),
+    tetris: $$('#tetris-view'),
+    flappy: $$('#flappy-view'),
+    clicker: $$('#clicker-view'),
+    autominer: $$('#autominer-view'),
+    pullpin: $$('#pullpin-view'),
+    fillcup: $$('#fillcup-view'),
+    calculus: $$('#calculus-view'),
+    linalg: $$('#linalg-view'),
+    stats: $$('#stats-view'),
+    discrete: $$('#discrete-view'),
+    physics: $$('#physics-view'),
+    chemistry: $$('#chemistry-view'),
+    biology: $$('#biology-view'),
+    algorithms: $$('#algorithms-view'),
+    datastructs: $$('#datastructs-view'),
+    philosophy: $$('#philosophy-view'),
+    economics: $$('#economics-view'),
+    writing: $$('#writing-view'),
+    psychology: $$('#psychology-view')
   };
   let currentGame = null;
   let currentSubgame = null;
   const urlParams = new URLSearchParams(window.location.search);
-  let currentLevel=parseInt(urlParams.get('level'))||1;currentLevel=(currentLevel<1||currentLevel>6)?1:currentLevel;$$('#main-game-grid').classList.add('mode-'+Math.min(currentLevel,3));
-  const _lc={1:'#2ecc71',2:'#f1c40f',3:'#e67e22',4:'#e74c3c',5:'#9b59b6',6:'#1abc9c'},_ln={1:'PRE-K GAMES',2:'GRADES K-2',3:'GRADES 3-5',4:'MIDDLE SCHOOL',5:'STEM CHALLENGE',6:'BRAIN EXERCISE'},_ac=_lc[currentLevel];
+  let currentLevel=parseInt(urlParams.get('level'))||1;currentLevel=(currentLevel<1||currentLevel>8)?1:currentLevel;$$('#main-game-grid').classList.add('mode-'+Math.min(currentLevel,3));
+  const _lc={1:'#2ecc71',2:'#f1c40f',3:'#e67e22',4:'#e74c3c',5:'#9b59b6',6:'#1abc9c',7:'#ff6b9d',8:'#48dbfb'},_ln={1:'PRE-K GAMES',2:'GRADES K-2',3:'GRADES 3-5',4:'MIDDLE SCHOOL',5:'STEM CHALLENGE',6:'BRAIN EXERCISE',7:'DESTRESS ARCADE',8:'COLLEGE PREP'},_ac=_lc[currentLevel];
   $$('.menu-title').textContent=_ln[currentLevel];$$('.menu-title').style.color=_ac;$$('.menu-title').style.textShadow=`0 0 15px ${_ac}`;$$('#nav-back').style.borderColor=_ac;$$('#nav-back').style.color=_ac;$$('#fs-btn').style.borderColor=_ac;$$('#fs-btn').style.color=_ac;$$('.top-bar').children[1].style.color=_ac;$$('#menu-view').style.background=`radial-gradient(ellipse at 50% 30%,${_ac}12 0%,#0c0f12 60%)`;$$all('.cat-header').forEach(h=>h.style.borderBottomColor=_ac+'30');
-  currentLevel===1?$$all('[data-subgame="money"],[data-subgame="clock"]').forEach(el=>el?el.style.display='none':0):0;currentLevel>=4&&currentLevel!==6?($$('#stem-section').style.display='block',$$all('[data-subgame="vacuum"],[data-subgame="dishes"],[data-subgame="clock"],.tracing,.matching').forEach(el=>el?el.style.display='none':0)):0;currentLevel===6?($$all('.game-category:not(#brain-section):not(.brain-cat)').forEach(c=>c.style.display='none'),$$('#brain-section').style.display='block',$$all('.brain-cat').forEach(c=>c.style.display='block'),$$('#main-game-grid').classList.add('brain-mode')):0;
+  currentLevel===1?$$all('[data-subgame="money"],[data-subgame="clock"]').forEach(el=>el?el.style.display='none':0):0;currentLevel>=4&&currentLevel!==6&&currentLevel!==7&&currentLevel!==8?($$('#stem-section').style.display='block',$$all('[data-subgame="vacuum"],[data-subgame="dishes"],[data-subgame="clock"],.tracing,.matching').forEach(el=>el?el.style.display='none':0)):0;currentLevel===6?($$all('.game-category:not(#brain-section):not(.brain-cat)').forEach(c=>c.style.display='none'),$$('#brain-section').style.display='block',$$all('.brain-cat').forEach(c=>c.style.display='block'),$$('#main-game-grid').classList.add('brain-mode')):0;currentLevel===7?($$all('.game-category:not(.destress-cat)').forEach(c=>c.style.display='none'),$$all('.destress-cat').forEach(c=>c.style.display='block'),$$('#main-game-grid').classList.add('brain-mode')):0;currentLevel===8?($$all('.game-category:not(.college-cat)').forEach(c=>c.style.display='none'),$$all('.college-cat').forEach(c=>c.style.display='block'),$$('#main-game-grid').classList.add('brain-mode')):0;
   let sessionScore = parseInt(sessionStorage.getItem('amni-learn-score')||'0');
   let currentStreak = parseInt(sessionStorage.getItem('amni-learn-streak')||'0');
   let bestStreak = parseInt(sessionStorage.getItem('amni-learn-best')||'0');
@@ -1003,6 +1173,14 @@
       if(window._vsTimer){clearInterval(window._vsTimer);window._vsTimer=null;}
       if(window._tmTimer){clearInterval(window._tmTimer);window._tmTimer=null;}
       if(window._bjTimer){clearInterval(window._bjTimer);window._bjTimer=null;}
+      if(window._snakeTimer){clearInterval(window._snakeTimer);window._snakeTimer=null;}
+      if(window._breakoutAF){cancelAnimationFrame(window._breakoutAF);window._breakoutAF=null;}
+      if(window._pongAF){cancelAnimationFrame(window._pongAF);window._pongAF=null;}
+      if(window._invadersAF){cancelAnimationFrame(window._invadersAF);window._invadersAF=null;}
+      if(window._tetrisTimer){clearInterval(window._tetrisTimer);window._tetrisTimer=null;}
+      if(window._flappyAF){cancelAnimationFrame(window._flappyAF);window._flappyAF=null;}
+      if(window._clickerTimer){clearInterval(window._clickerTimer);window._clickerTimer=null;}
+      if(window._minerTimer){clearInterval(window._minerTimer);window._minerTimer=null;}
       if(window._vacTimer){clearInterval(window._vacTimer);window._vacTimer=null;}
       window.onpointerup=null;
     } else {
@@ -1055,6 +1233,31 @@
       if(game === 'trailmake') initTrailMake();
       if(game === 'colorsort') initColorSort();
       if(game === 'bejeweled') initBejeweled();
+      if(game === 'snake80') initSnake();
+      if(game === 'breakout') initBreakout();
+      if(game === 'pong') initPong();
+      if(game === 'invaders') initInvaders();
+      if(game === 'minesweeper') initMinesweeper();
+      if(game === 'pipes') initPipes();
+      if(game === 'tetris') initTetris();
+      if(game === 'flappy') initFlappy();
+      if(game === 'clicker') initClicker();
+      if(game === 'autominer') initAutoMiner();
+      if(game === 'pullpin') initPullPin();
+      if(game === 'fillcup') initFillCup();
+      if(game === 'calculus') initCollege('calculus');
+      if(game === 'linalg') initCollege('linalg');
+      if(game === 'stats') initCollege('stats');
+      if(game === 'discrete') initCollege('discrete');
+      if(game === 'physics') initCollege('physics');
+      if(game === 'chemistry') initCollege('chemistry');
+      if(game === 'biology') initCollege('biology');
+      if(game === 'algorithms') initCollege('algorithms');
+      if(game === 'datastructs') initCollege('datastructs');
+      if(game === 'philosophy') initCollege('philosophy');
+      if(game === 'economics') initCollege('economics');
+      if(game === 'writing') initCollege('writing');
+      if(game === 'psychology') initCollege('psychology');
     });
   });
   function showView(viewId) {
@@ -3810,6 +4013,10 @@ function playAnimalSound(type) {
       selected=-1;moves=0;hist=[];won=false;
     }
     function isSolved(){return tubes.every(t=>t.length===0||(t.length===CAPACITY&&t.every(c=>c===t[0])));}
+    function hasValidMoves(){
+      for(let i=0;i<tubes.length;i++)for(let j=0;j<tubes.length;j++){if(canPour(i,j))return true;}
+      return false;
+    }
     function canPour(from,to){
       if(from===to||tubes[from].length===0||tubes[to].length>=CAPACITY)return false;
       return tubes[to].length===0||tubes[to][tubes[to].length-1]===tubes[from][tubes[from].length-1];
@@ -3861,6 +4068,14 @@ function playAnimalSound(type) {
         pour(selected,ti);selected=-1;
         if(isSolved()){won=true;addScore(Math.max(5,20-moves));showFeedback(`Level ${lvl} Complete! 🎉`,'#2ecc71');spawnConfetti(window.innerWidth/2,window.innerHeight/2,100);}
         render();
+        if(!won&&!hasValidMoves()){
+          showFeedback('No valid moves!','#e74c3c');resetStreak();
+          const overlay=document.createElement('div');overlay.style.cssText='text-align:center;padding:20px;margin-top:10px;';
+          overlay.innerHTML=`<div style="font-size:1.4rem;color:#e74c3c;font-weight:bold;margin-bottom:12px">😵 Out of Moves!</div><button class="cs-btn reset" style="margin:4px">↺ Restart Level</button><button class="cs-btn undo" style="margin:4px">↩ Undo Last</button>`;
+          overlay.querySelectorAll('button')[0].onclick=()=>{gen();render();};
+          overlay.querySelectorAll('button')[1].onclick=()=>{if(hist.length===0)return;const last=hist[hist.length-1];const tc=last.c;while(hist.length>0&&hist[hist.length-1].c===tc&&hist[hist.length-1].f===last.f){const h=hist.pop();tubes[h.f].push(h.c);tubes[h.t].pop();}moves=Math.max(0,moves-1);selected=-1;render();};
+          root.appendChild(overlay);
+        }
         if(!won){const segs=root.querySelectorAll('.cs-tube:nth-child('+(ti+1)+') .cs-segment');segs.forEach(s=>s.classList.add('pouring'));}
       }else{
         const tEl=root.querySelectorAll('.cs-tube')[ti];if(tEl)tEl.classList.add('shake');
@@ -3874,7 +4089,8 @@ function playAnimalSound(type) {
     const root=$$('#bj-game');root.innerHTML='';
     const GEMS=['💎','🔴','🟢','🔵','🟡','🟣','🟠'];
     const ROWS=8,COLS=8;
-    let grid=[],score=0,movesLeft=30,sel=null,busy=false,combo=0;
+    let grid=[],score=0,movesLeft=30,sel=null,busy=false,combo=0,bestScore=parseInt(sessionStorage.getItem('bj-best')||'0');
+    let _bhud=null,_bgrid=null,_bcells=null,_hintTmr=null;
     if(window._bjTimer){clearInterval(window._bjTimer);window._bjTimer=null;}
     function rGem(){return GEMS[Math.floor(Math.random()*GEMS.length)];}
     function init(){
@@ -3882,7 +4098,7 @@ function playAnimalSound(type) {
         let g;do{g=rGem();}while((c>=2&&grid[r][c-1]===g&&grid[r][c-2]===g)||(r>=2&&grid[r-1][c]===g&&grid[r-2][c]===g));
         grid[r][c]=g;
       }}
-      score=0;movesLeft=30;sel=null;busy=false;combo=0;
+      score=0;movesLeft=30;sel=null;busy=false;combo=0;_bhud=null;_bgrid=null;_bcells=null;
     }
     function findMatches(){
       const matched=new Set();
@@ -3899,11 +4115,13 @@ function playAnimalSound(type) {
     function removeAndDrop(matched){
       const pts=(matched.size*10)*(1+combo*0.5);score+=Math.round(pts);combo++;
       matched.forEach(idx=>{const r=Math.floor(idx/COLS),c=idx%COLS;grid[r][c]=null;});
+      const changed=new Set(matched);
       for(let c=0;c<COLS;c++){
         let wr=ROWS-1;
-        for(let r=ROWS-1;r>=0;r--)if(grid[r][c]){if(wr!==r){grid[wr][c]=grid[r][c];grid[r][c]=null;}wr--;}
-        for(let r=wr;r>=0;r--)grid[r][c]=rGem();
+        for(let r=ROWS-1;r>=0;r--)if(grid[r][c]){if(wr!==r){grid[wr][c]=grid[r][c];grid[r][c]=null;changed.add(wr*COLS+c);}wr--;}
+        for(let r=wr;r>=0;r--){grid[r][c]=rGem();changed.add(r*COLS+c);}
       }
+      return changed;
     }
     function hasValidMove(){
       for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){
@@ -3912,15 +4130,28 @@ function playAnimalSound(type) {
       }
       return false;
     }
+    function scheduleHint(){
+      if(_hintTmr)clearTimeout(_hintTmr);
+      _hintTmr=setTimeout(()=>{
+        if(busy||movesLeft<=0||currentGame!=='bejeweled'||!_bcells)return;
+        for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){
+          if(c+1<COLS){[grid[r][c],grid[r][c+1]]=[grid[r][c+1],grid[r][c]];const m=findMatches();[grid[r][c],grid[r][c+1]]=[grid[r][c+1],grid[r][c]];if(m.size>0){_bcells[r*COLS+c].classList.add('hint');_bcells[r*COLS+c+1].classList.add('hint');return;}}
+          if(r+1<ROWS){[grid[r][c],grid[r+1][c]]=[grid[r+1][c],grid[r][c]];const m=findMatches();[grid[r][c],grid[r+1][c]]=[grid[r+1][c],grid[r][c]];if(m.size>0){_bcells[r*COLS+c].classList.add('hint');_bcells[(r+1)*COLS+c].classList.add('hint');return;}}
+        }
+      },5000);
+    }
     function render(anim){
-      root.innerHTML='';
-      const hud=document.createElement('div');hud.className='bj-hud';
-      hud.innerHTML=`<span class="game-stat">💎 Score <span class="game-stat-val">${score}</span></span><span class="game-stat">🔄 Moves <span class="game-stat-val">${movesLeft}</span></span>${combo>1?`<span class="game-stat">🔥 x${combo}</span>`:''}`;
-      root.appendChild(hud);
-      const gEl=document.createElement('div');gEl.className='bj-grid';
-      gEl.style.gridTemplateColumns=`repeat(${COLS},clamp(40px,9vw,56px))`;
+      if(!_bgrid){
+        root.innerHTML='';
+        _bhud=document.createElement('div');_bhud.className='bj-hud';root.appendChild(_bhud);
+        _bgrid=document.createElement('div');_bgrid.className='bj-grid';_bgrid.style.gridTemplateColumns=`repeat(${COLS},clamp(40px,9vw,56px))`;
+        _bcells=[];
+        for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){const cell=document.createElement('div');cell.className='bj-cell';const ri=r,ci=c;cell.addEventListener('click',()=>tapCell(ri,ci));_bgrid.appendChild(cell);_bcells.push(cell);}
+        root.appendChild(_bgrid);
+      }
+      _bhud.innerHTML=`<span class="game-stat">💎 Score <span class="game-stat-val">${score}</span></span><span class="game-stat">🔄 Moves <span class="game-stat-val">${movesLeft}</span></span>${combo>1?`<span class="game-stat">🔥 x${combo}</span>`:''}<span class="game-stat">🏆 ${bestScore}</span>`;
       for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){
-        const cell=document.createElement('div');cell.className='bj-cell';
+        const cell=_bcells[r*COLS+c];cell.className='bj-cell';
         if(sel&&sel.r===r&&sel.c===c)cell.classList.add('selected');
         if(anim&&anim.matched&&anim.matched.has(r*COLS+c))cell.classList.add('matched');
         if(anim&&anim.fell&&anim.fell.has(r*COLS+c))cell.classList.add('falling');
@@ -3930,10 +4161,8 @@ function playAnimalSound(type) {
           if(r===s.r2&&c===s.c2){s.c1>s.c2?cell.classList.add('swapping-left'):s.c1<s.c2?cell.classList.add('swapping-right'):s.r1>s.r2?cell.classList.add('swapping-up'):cell.classList.add('swapping-down');}
         }
         cell.textContent=grid[r][c]||'';
-        cell.addEventListener('click',()=>tapCell(r,c));
-        gEl.appendChild(cell);
       }
-      root.appendChild(gEl);
+      scheduleHint();
     }
     async function cascade(){
       busy=true;
@@ -3941,16 +4170,18 @@ function playAnimalSound(type) {
       while(m.size>0){
         render({matched:m});
         await delay(450);
-        removeAndDrop(m);
-        const fell=new Set();for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++)fell.add(r*COLS+c);
+        const fell=removeAndDrop(m);
         render({fell});
         await delay(350);
         m=findMatches();
       }
       combo=0;
       if(movesLeft<=0){
+        if(score>bestScore){bestScore=score;sessionStorage.setItem('bj-best',bestScore);}
+        if(_hintTmr)clearTimeout(_hintTmr);
+        _bgrid=null;_bhud=null;_bcells=null;
         const pb=getPersonalBest('bejeweled',score);const medal=medalFor(Math.min(100,score/50));
-        let rhtml=buildResultCard('bejeweled',score,movesLeft+30+' moves','');
+        let rhtml=buildResultCard('bejeweled',score,30+' moves','');
         rhtml+=`<button class="nmm-btn" onclick="initBejeweled()" style="margin-top:10px">PLAY AGAIN</button>`;
         root.innerHTML=`<div style="text-align:center;padding:20px">${rhtml}</div>`;
         showFeedback(`Game Over! ${score} pts`,'#ff4757');
@@ -3981,6 +4212,794 @@ function playAnimalSound(type) {
     }
     window.initBejeweled=initBejeweled;
     init();render();
+  }
+  function initSnake(){
+    const root=$$('#snake80-game');root.innerHTML='';
+    const W=20,H=15,SZ=Math.min(Math.floor((window.innerWidth-40)/W),Math.floor((window.innerHeight-200)/H),24);
+    const canvas=document.createElement('canvas');canvas.className='retro-canvas';canvas.style.borderColor='#0f0';canvas.width=W*SZ;canvas.height=H*SZ;
+    const ctx=canvas.getContext('2d');
+    let best=parseInt(sessionStorage.getItem('snake-best')||'0');
+    let snake,dir,food,bonus,sc,alive,speed,walls,wave;
+    function restart(){snake=[{x:10,y:7}];dir={x:1,y:0};sc=0;alive=true;speed=150;walls=[];wave=1;spawnFood();bonus=null;const ov=$$('#snake-over');if(ov)ov.remove();draw();}
+    function spawnFood(){do{food={x:Math.floor(Math.random()*W),y:Math.floor(Math.random()*H)};}while(snake.some(s=>s.x===food.x&&s.y===food.y)||walls.some(w=>w.x===food.x&&w.y===food.y));}
+    function spawnBonus(){if(Math.random()<0.3&&!bonus){do{bonus={x:Math.floor(Math.random()*W),y:Math.floor(Math.random()*H),ttl:80};}while(snake.some(s=>s.x===bonus.x&&s.y===bonus.y)||walls.some(w=>w.x===bonus.x&&w.y===bonus.y)||(food.x===bonus.x&&food.y===bonus.y));}}
+    function addWalls(){const nw=Math.min(wave*2,20);walls=[];for(let i=0;i<nw;i++){let w;do{w={x:Math.floor(Math.random()*W),y:Math.floor(Math.random()*H)};}while(snake.some(s=>s.x===w.x&&s.y===w.y)||(food.x===w.x&&food.y===w.y)||(Math.abs(w.x-snake[0].x)<3&&Math.abs(w.y-snake[0].y)<3));walls.push(w);}}
+    const hud=document.createElement('div');hud.className='retro-hud';hud.innerHTML=`Score: <span id="snake-sc">0</span> | Best: <span id="snake-best">${best}</span> | Wave: <span id="snake-wave">1</span>`;
+    root.appendChild(hud);root.appendChild(canvas);
+    const dpad=document.createElement('div');dpad.className='retro-dpad';
+    [['','⬆',''],['⬅','','➡'],['','⬇','']].flat().forEach((t,i)=>{const b=document.createElement('button');if(!t){b.className='empty';}else{b.textContent=t;b.onclick=()=>{const d=[[0,0],[0,-1],[0,0],[-1,0],[0,0],[1,0],[0,0],[0,1],[0,0]][i];if(d[0]!==0||d[1]!==0){if(dir.x!==-d[0]||dir.y!==-d[1])dir={x:d[0],y:d[1]};};};}dpad.appendChild(b);});
+    root.appendChild(dpad);
+    document.addEventListener('keydown',e=>{if(currentGame!=='snake80')return;const m={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0],w:[0,-1],s:[0,1],a:[-1,0],d:[1,0]}[e.key];if(m&&(dir.x!==-m[0]||dir.y!==-m[1]))dir={x:m[0],y:m[1]};});
+    function gameOver(){
+      alive=false;if(sc>best){best=sc;sessionStorage.setItem('snake-best',best);const bEl=$$('#snake-best');if(bEl)bEl.textContent=best;}
+      draw();resetStreak();
+      const ov=document.createElement('div');ov.id='snake-over';ov.style.cssText='text-align:center;padding:16px;margin-top:8px;';
+      ov.innerHTML=`<div style="font-size:1.6rem;font-weight:bold;color:#e74c3c;margin-bottom:6px">GAME OVER</div><div style="font-size:1.2rem;color:#fff;margin-bottom:12px">Score: ${sc} | Wave: ${wave}${sc>=best?' | 🏆 NEW BEST!':''}</div><button class="retro-btn" style="margin:4px" id="snake-restart">🔄 RESTART</button><button class="retro-btn" style="margin:4px;background:#e74c3c" id="snake-exit">🚪 EXIT</button>`;
+      root.appendChild(ov);
+      $$('#snake-restart').onclick=restart;$$('#snake-exit').onclick=()=>{if(window._snakeTimer)clearInterval(window._snakeTimer);goBack();};
+    }
+    function tick(){
+      if(!alive||currentGame!=='snake80')return;
+      const head={x:snake[0].x+dir.x,y:snake[0].y+dir.y};
+      if(head.x<0||head.x>=W||head.y<0||head.y>=H||snake.some(s=>s.x===head.x&&s.y===head.y)||walls.some(w=>w.x===head.x&&w.y===head.y)){gameOver();return;}
+      snake.unshift(head);
+      if(head.x===food.x&&head.y===food.y){sc+=10*wave;$$('#snake-sc').textContent=sc;addScore(2);spawnFood();spawnBonus();if(speed>60)speed-=3;if(sc>0&&sc%(100*wave)===0){wave++;$$('#snake-wave').textContent=wave;addWalls();showFeedback(`Wave ${wave}!`,'#f1c40f');}}else{snake.pop();}
+      if(bonus){bonus.ttl--;if(head.x===bonus.x&&head.y===bonus.y){sc+=50*wave;$$('#snake-sc').textContent=sc;addScore(5);showFeedback('+'+50*wave+'!','#f1c40f');bonus=null;}else if(bonus.ttl<=0){bonus=null;}}
+      draw();
+    }
+    function draw(){
+      ctx.fillStyle='#000';ctx.fillRect(0,0,canvas.width,canvas.height);
+      walls.forEach(w=>{ctx.fillStyle='#555';ctx.fillRect(w.x*SZ,w.y*SZ,SZ,SZ);});
+      ctx.fillStyle='#f00';ctx.fillRect(food.x*SZ+2,food.y*SZ+2,SZ-4,SZ-4);
+      if(bonus){ctx.fillStyle=bonus.ttl%10<5?'#f1c40f':'#e67e22';ctx.fillRect(bonus.x*SZ+1,bonus.y*SZ+1,SZ-2,SZ-2);ctx.fillStyle='#000';ctx.font=`bold ${SZ-4}px JetBrains Mono`;ctx.textAlign='center';ctx.fillText('★',bonus.x*SZ+SZ/2,bonus.y*SZ+SZ-3);}
+      snake.forEach((s,i)=>{const g=Math.max(40,255-i*8);ctx.fillStyle=i===0?'#0f0':`rgb(0,${g},0)`;ctx.fillRect(s.x*SZ+1,s.y*SZ+1,SZ-2,SZ-2);});
+      if(!alive){ctx.fillStyle='rgba(0,0,0,0.6)';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.fillStyle='#f00';ctx.font='bold 24px JetBrains Mono';ctx.textAlign='center';ctx.fillText('GAME OVER',canvas.width/2,canvas.height/2-10);ctx.fillStyle='#fff';ctx.font='16px JetBrains Mono';ctx.fillText(`Score: ${sc} | Wave: ${wave}`,canvas.width/2,canvas.height/2+16);}
+    }
+    restart();window._snakeTimer=setInterval(tick,speed);
+    const speedWatch=setInterval(()=>{if(currentGame!=='snake80'){clearInterval(speedWatch);return;}clearInterval(window._snakeTimer);window._snakeTimer=setInterval(tick,speed);},2000);
+  }
+  function initBreakout(){
+    const root=$$('#breakout-game');root.innerHTML='';
+    const cW=Math.min(480,window.innerWidth-20),cH=Math.min(400,window.innerHeight-200);
+    const canvas=document.createElement('canvas');canvas.className='retro-canvas';canvas.style.borderColor='#ff0';canvas.width=cW;canvas.height=cH;
+    const ctx=canvas.getContext('2d');
+    const ROWS=6,COLS=9,BW=cW/COLS-4,BH=14;
+    let best=parseInt(sessionStorage.getItem('brk-best')||'0');
+    let padX,padW,bx,by,bdx,bdy,sc,lives,bricks,wave,go,powerups,multiBalls;
+    const colors=['#e74c3c','#e67e22','#f1c40f','#2ecc71','#3498db','#9b59b6'];
+    function resetBricks(){bricks=[];for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){const hp=r<2&&wave>2?2:1;bricks.push({x:c*(BW+4)+4,y:r*(BH+4)+30,w:BW,h:BH,alive:true,color:colors[r%colors.length],hp});}}
+    function restart(){padX=cW/2-30;padW=60;bx=cW/2;by=cH-30;bdx=3;bdy=-3;sc=0;lives=3;wave=1;go=false;powerups=[];multiBalls=[];resetBricks();const ov=$$('#brk-over');if(ov)ov.remove();}
+    function spawnPowerup(x,y){if(Math.random()<0.2)powerups.push({x,y,type:['wide','extra','multi'][Math.floor(Math.random()*3)],vy:1.5});}
+    const hud=document.createElement('div');hud.className='retro-hud';hud.innerHTML=`Score: <span id="brk-sc">0</span> | Lives: <span id="brk-lv">3</span> | Wave: <span id="brk-wv">1</span> | Best: <span id="brk-best">${best}</span>`;
+    root.appendChild(hud);root.appendChild(canvas);
+    canvas.addEventListener('pointermove',e=>{const r=canvas.getBoundingClientRect();padX=Math.max(0,Math.min(cW-padW,e.clientX-r.left-padW/2));});
+    document.addEventListener('keydown',e=>{if(currentGame!=='breakout')return;if(e.key==='ArrowLeft')padX=Math.max(0,padX-20);if(e.key==='ArrowRight')padX=Math.min(cW-padW,padX+20);});
+    function gameOver(){
+      go=true;if(sc>best){best=sc;sessionStorage.setItem('brk-best',best);}
+      const ov=document.createElement('div');ov.id='brk-over';ov.style.cssText='text-align:center;padding:16px;margin-top:8px;';
+      ov.innerHTML=`<div style="font-size:1.6rem;font-weight:bold;color:#e74c3c;margin-bottom:6px">GAME OVER</div><div style="font-size:1.2rem;color:#fff;margin-bottom:12px">Score: ${sc} | Wave: ${wave}${sc>=best?' | 🏆 NEW BEST!':''}</div><button class="retro-btn" style="margin:4px" id="brk-restart">🔄 RESTART</button><button class="retro-btn" style="margin:4px;background:#e74c3c" id="brk-exit">🚪 EXIT</button>`;
+      root.appendChild(ov);$$('#brk-restart').onclick=()=>{restart();};$$('#brk-exit').onclick=()=>{if(window._breakoutAF)cancelAnimationFrame(window._breakoutAF);goBack();};
+    }
+    function processBall(bxi,byi,bdxi,bdyi){
+      let nbx=bxi+bdxi,nby=byi+bdyi,nbdx=bdxi,nbdy=bdyi;
+      if(nbx<5||nbx>cW-5)nbdx=-nbdx;
+      if(nby<5)nbdy=-nbdy;
+      if(nby>cH-18&&nby<cH-6&&nbx>padX&&nbx<padX+padW){nbdy=-Math.abs(nbdy);nbdx+=(nbx-(padX+padW/2))*0.12;}
+      let hit=false;
+      bricks.forEach(b=>{if(!b.alive||hit)return;if(nbx>b.x&&nbx<b.x+b.w&&nby>b.y&&nby<b.y+b.h){b.hp--;if(b.hp<=0){b.alive=false;spawnPowerup(b.x+b.w/2,b.y+b.h);}nbdy=-nbdy;sc+=10*wave;hit=true;addScore(1);}});
+      return{bx:bxi+nbdx,by:byi+nbdy,bdx:nbdx,bdy:nbdy};
+    }
+    function loop(){
+      if(currentGame!=='breakout'||go)return;
+      ctx.fillStyle='#000';ctx.fillRect(0,0,cW,cH);
+      bricks.forEach(b=>{if(!b.alive)return;ctx.fillStyle=b.hp>1?'#fff':b.color;ctx.fillRect(b.x,b.y,b.w,b.h);if(b.hp>1){ctx.fillStyle=b.color;ctx.fillRect(b.x+2,b.y+2,b.w-4,b.h-4);}});
+      ctx.fillStyle='#fff';ctx.fillRect(padX,cH-14,padW,10);
+      const r=processBall(bx,by,bdx,bdy);bx=r.bx;by=r.by;bdx=r.bdx;bdy=r.bdy;
+      ctx.beginPath();ctx.arc(bx,by,5,0,Math.PI*2);ctx.fillStyle='#ff0';ctx.fill();
+      multiBalls=multiBalls.filter(mb=>{const r2=processBall(mb.bx,mb.by,mb.bdx,mb.bdy);mb.bx=r2.bx;mb.by=r2.by;mb.bdx=r2.bdx;mb.bdy=r2.bdy;ctx.beginPath();ctx.arc(mb.bx,mb.by,4,0,Math.PI*2);ctx.fillStyle='#f39c12';ctx.fill();return mb.by<cH+10;});
+      if(by>cH+10){lives--;$$('#brk-lv').textContent=lives;if(lives<=0){gameOver();return;}bx=cW/2;by=cH-30;bdx=3;bdy=-3;}
+      powerups=powerups.filter(p=>{p.y+=p.vy;const sym=p.type==='wide'?'━':p.type==='extra'?'♥':'◆';ctx.fillStyle=p.type==='wide'?'#2ecc71':p.type==='extra'?'#e74c3c':'#f39c12';ctx.font='bold 16px JetBrains Mono';ctx.textAlign='center';ctx.fillText(sym,p.x,p.y);if(p.y>cH-14&&p.x>padX&&p.x<padX+padW){if(p.type==='wide'){padW=Math.min(120,padW+20);setTimeout(()=>{padW=60;},8000);}if(p.type==='extra'){lives++;$$('#brk-lv').textContent=lives;}if(p.type==='multi'){multiBalls.push({bx,by:by-10,bdx:-bdx,bdy:bdy});multiBalls.push({bx,by:by-10,bdx:bdx*0.5,bdy:-Math.abs(bdy)});}showFeedback(p.type.toUpperCase()+'!','#2ecc71');return false;}return p.y<cH+20;});
+      $$('#brk-sc').textContent=sc;$$('#brk-wv').textContent=wave;$$('#brk-best').textContent=best;
+      if(bricks.every(b=>!b.alive)){wave++;showFeedback(`Wave ${wave}! 🎉`,'#2ecc71');addScore(wave*10);resetBricks();bx=cW/2;by=cH-30;bdx=3+(wave*0.5);bdy=-3-(wave*0.3);}
+      window._breakoutAF=requestAnimationFrame(loop);
+    }
+    restart();window._breakoutAF=requestAnimationFrame(loop);
+  }
+  function initPong(){
+    const root=$$('#pong-game');root.innerHTML='';
+    const cW=Math.min(480,window.innerWidth-20),cH=Math.min(320,window.innerHeight-200);
+    const canvas=document.createElement('canvas');canvas.className='retro-canvas';canvas.style.borderColor='#0ff';canvas.width=cW;canvas.height=cH;
+    const ctx=canvas.getContext('2d');
+    let py,cy,bx,by,bdx,bdy,ps,cs,PH=60,PW=10,aiTrack=0.06,spd=3,pWins=0,cWins=0,matchPt=7,paused=false;
+    function resetRound(){bx=cW/2;by=cH/2;bdx=spd*(Math.random()>0.5?1:-1);bdy=(Math.random()-0.5)*4;py=cH/2-PH/2;cy=cH/2-PH/2;}
+    function restart(){ps=0;cs=0;pWins=0;cWins=0;spd=3;aiTrack=0.06;resetRound();paused=false;}
+    const hud=document.createElement('div');hud.className='retro-hud';hud.innerHTML=`You: <span id="pong-p">0</span> | CPU: <span id="pong-c">0</span> | Sets: <span id="pong-pw">0</span>-<span id="pong-cw">0</span>`;
+    root.appendChild(hud);root.appendChild(canvas);
+    const diffDiv=document.createElement('div');diffDiv.style.cssText='text-align:center;margin-top:6px;';
+    ['Easy','Medium','Hard'].forEach((d,i)=>{const b=document.createElement('button');b.className='retro-btn';b.style.cssText='margin:3px;font-size:0.8rem;padding:4px 12px;';b.textContent=d;b.onclick=()=>{aiTrack=[0.04,0.06,0.09][i];spd=[2.5,3,4][i];restart();};diffDiv.appendChild(b);});
+    root.appendChild(diffDiv);
+    canvas.addEventListener('pointermove',e=>{const r=canvas.getBoundingClientRect();py=Math.max(0,Math.min(cH-PH,e.clientY-r.top-PH/2));});
+    document.addEventListener('keydown',e=>{if(currentGame!=='pong')return;if(e.key==='ArrowUp')py=Math.max(0,py-18);if(e.key==='ArrowDown')py=Math.min(cH-PH,py+18);});
+    function loop(){
+      if(currentGame!=='pong')return;
+      if(!paused){
+        cy+=(by-(cy+PH/2))*aiTrack;cy=Math.max(0,Math.min(cH-PH,cy));
+        bx+=bdx;by+=bdy;
+        if(by<5||by>cH-5)bdy=-bdy;
+        if(bx<PW+5&&by>py&&by<py+PH){bdx=Math.abs(bdx)*1.02;bdy+=(by-(py+PH/2))*0.12;}
+        if(bx>cW-PW-5&&by>cy&&by<cy+PH){bdx=-Math.abs(bdx)*1.02;bdy+=(by-(cy+PH/2))*0.12;}
+        if(bx<0){cs++;$$('#pong-c').textContent=cs;resetRound();resetStreak();if(cs>=matchPt){cWins++;$$('#pong-cw').textContent=cWins;ps=0;cs=0;$$('#pong-p').textContent=0;$$('#pong-c').textContent=0;showFeedback(`CPU wins set ${pWins+cWins}!`,'#e74c3c');if(cWins>=2){paused=true;showFeedback('CPU wins the match!','#e74c3c');}}}
+        if(bx>cW){ps++;$$('#pong-p').textContent=ps;resetRound();addScore(5);if(ps>=matchPt){pWins++;$$('#pong-pw').textContent=pWins;ps=0;cs=0;$$('#pong-p').textContent=0;$$('#pong-c').textContent=0;showFeedback(`You win set ${pWins+cWins}! 🎉`,'#2ecc71');if(pWins>=2){paused=true;showFeedback('You win the match! 🏆','#2ecc71');addScore(50);}}}
+      }
+      ctx.fillStyle='#000';ctx.fillRect(0,0,cW,cH);
+      ctx.setLineDash([4,4]);ctx.strokeStyle='#333';ctx.beginPath();ctx.moveTo(cW/2,0);ctx.lineTo(cW/2,cH);ctx.stroke();ctx.setLineDash([]);
+      ctx.fillStyle='#0ff';ctx.fillRect(2,py,PW,PH);ctx.fillRect(cW-PW-2,cy,PW,PH);
+      ctx.beginPath();ctx.arc(bx,by,5,0,Math.PI*2);ctx.fillStyle='#fff';ctx.fill();
+      ctx.fillStyle='#0ff';ctx.font='bold 36px JetBrains Mono';ctx.textAlign='center';ctx.fillText(ps,cW/4,50);ctx.fillText(cs,3*cW/4,50);
+      if(paused){ctx.fillStyle='rgba(0,0,0,0.6)';ctx.fillRect(0,0,cW,cH);ctx.fillStyle=pWins>=2?'#2ecc71':'#e74c3c';ctx.font='bold 22px JetBrains Mono';ctx.fillText(pWins>=2?'YOU WIN THE MATCH!':'CPU WINS THE MATCH',cW/2,cH/2-10);ctx.fillStyle='#fff';ctx.font='16px JetBrains Mono';ctx.fillText('Tap difficulty to play again',cW/2,cH/2+20);}
+      window._pongAF=requestAnimationFrame(loop);
+    }
+    restart();window._pongAF=requestAnimationFrame(loop);
+  }
+  function initInvaders(){
+    const root=$$('#invaders-game');root.innerHTML='';
+    const cW=Math.min(400,window.innerWidth-20),cH=Math.min(420,window.innerHeight-200);
+    const canvas=document.createElement('canvas');canvas.className='retro-canvas';canvas.style.borderColor='#0f0';canvas.width=cW;canvas.height=cH;
+    const ctx=canvas.getContext('2d');
+    let best=parseInt(sessionStorage.getItem('inv-best')||'0');
+    let px,bullets,eBullets,sc,lives,enemies,eDir,eSpeed,frame,wave,go,shield;
+    function spawnEnemies(){enemies=[];const rows=Math.min(4+Math.floor(wave/3),6),cols=Math.min(8,6+Math.floor(wave/4));for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){const hp=r===0&&wave>3?2:1;enemies.push({x:20+c*(cW-40)/cols,y:20+r*28,alive:true,r,hp});}}
+    function restart(){px=cW/2;bullets=[];eBullets=[];sc=0;lives=3;eDir=1;eSpeed=0.5;frame=0;wave=1;go=false;shield=3;spawnEnemies();const ov=$$('#inv-over');if(ov)ov.remove();}
+    const hud=document.createElement('div');hud.className='retro-hud';hud.innerHTML=`Score: <span id="inv-sc">0</span> | Lives: <span id="inv-lv">3</span> | Wave: <span id="inv-wv">1</span> | 🛡 <span id="inv-sh">3</span> | Best: <span id="inv-best">${best}</span>`;
+    root.appendChild(hud);root.appendChild(canvas);
+    canvas.addEventListener('pointermove',e=>{const r=canvas.getBoundingClientRect();px=Math.max(10,Math.min(cW-10,e.clientX-r.left));});
+    canvas.addEventListener('pointerdown',()=>{if(go)return;if(bullets.length<4)bullets.push({x:px,y:cH-25});});
+    document.addEventListener('keydown',e=>{if(currentGame!=='invaders')return;if(e.key==='ArrowLeft')px=Math.max(10,px-15);if(e.key==='ArrowRight')px=Math.min(cW-10,px+15);if(e.key===' '&&!go&&bullets.length<4)bullets.push({x:px,y:cH-25});if(e.key==='s'&&shield>0&&!go){shield--;$$('#inv-sh').textContent=shield;eBullets=[];showFeedback('Shield used!','#3498db');}});
+    function gameOver(){
+      go=true;if(sc>best){best=sc;sessionStorage.setItem('inv-best',best);}$$('#inv-best').textContent=best;
+      ctx.fillStyle='rgba(0,0,0,0.7)';ctx.fillRect(0,0,cW,cH);ctx.fillStyle='#e74c3c';ctx.font='bold 24px JetBrains Mono';ctx.textAlign='center';ctx.fillText('GAME OVER',cW/2,cH/2-20);ctx.fillStyle='#fff';ctx.font='16px JetBrains Mono';ctx.fillText(`Score: ${sc} | Wave: ${wave}`,cW/2,cH/2+10);
+      const ov=document.createElement('div');ov.id='inv-over';ov.style.cssText='text-align:center;padding:12px;';
+      ov.innerHTML=`<button class="retro-btn" style="margin:4px" id="inv-restart">🔄 RESTART</button><button class="retro-btn" style="margin:4px;background:#e74c3c" id="inv-exit">🚪 EXIT</button>`;
+      root.appendChild(ov);$$('#inv-restart').onclick=restart;$$('#inv-exit').onclick=()=>{if(window._invadersAF)cancelAnimationFrame(window._invadersAF);goBack();};
+    }
+    function loop(){
+      if(currentGame!=='invaders')return;
+      if(go){window._invadersAF=requestAnimationFrame(loop);return;}
+      frame++;
+      ctx.fillStyle='#000';ctx.fillRect(0,0,cW,cH);
+      let rightmost=0,leftmost=cW;
+      enemies.forEach(en=>{if(!en.alive)return;rightmost=Math.max(rightmost,en.x);leftmost=Math.min(leftmost,en.x);});
+      if(rightmost>cW-20||leftmost<20){eDir=-eDir;enemies.forEach(en=>{if(en.alive)en.y+=8;});}
+      const cols=['#e74c3c','#e67e22','#f1c40f','#2ecc71','#3498db','#9b59b6'];
+      enemies.forEach(en=>{if(!en.alive)return;en.x+=eDir*eSpeed;ctx.fillStyle=en.hp>1?'#fff':cols[en.r%cols.length];ctx.fillRect(en.x-10,en.y-8,20,16);if(en.hp>1){ctx.fillStyle=cols[en.r%cols.length];ctx.fillRect(en.x-8,en.y-6,16,12);}if(en.y>cH-20){lives=0;}});
+      const fireRate=Math.max(30,90-wave*8);
+      if(frame%fireRate===0){const shooters=enemies.filter(e=>e.alive);if(shooters.length){const n=Math.min(Math.ceil(wave/2),3);for(let i=0;i<n&&shooters.length;i++){const s=shooters[Math.floor(Math.random()*shooters.length)];eBullets.push({x:s.x,y:s.y+10});}}}
+      bullets=bullets.filter(b=>{b.y-=7;ctx.fillStyle='#fff';ctx.fillRect(b.x-1,b.y,3,8);let hit=false;enemies.forEach(en=>{if(!en.alive)return;if(Math.abs(b.x-en.x)<12&&Math.abs(b.y-en.y)<10){en.hp--;if(en.hp<=0){en.alive=false;sc+=10*wave;$$('#inv-sc').textContent=sc;addScore(1);}hit=true;}});return b.y>0&&!hit;});
+      eBullets=eBullets.filter(b=>{b.y+=4+wave*0.3;ctx.fillStyle='#f00';ctx.fillRect(b.x-1,b.y,3,8);if(Math.abs(b.x-px)<10&&b.y>cH-20){lives--;$$('#inv-lv').textContent=lives;return false;}return b.y<cH;});
+      ctx.fillStyle='#0f0';ctx.beginPath();ctx.moveTo(px,cH-20);ctx.lineTo(px-12,cH-6);ctx.lineTo(px+12,cH-6);ctx.fill();
+      ctx.fillStyle='#0f0';ctx.font='10px JetBrains Mono';ctx.textAlign='center';ctx.fillText('▲',px,cH-22);
+      if(lives<=0){gameOver();resetStreak();return;}
+      if(enemies.every(e=>!e.alive)){wave++;eSpeed+=0.3;$$('#inv-wv').textContent=wave;showFeedback(`Wave ${wave}! 🎉`,'#2ecc71');addScore(wave*5);spawnEnemies();}
+      window._invadersAF=requestAnimationFrame(loop);
+    }
+    restart();window._invadersAF=requestAnimationFrame(loop);
+  }
+  function initMinesweeper(){
+    const root=$$('#minesweeper-game');root.innerHTML='';
+    const DIFFS={easy:{rows:8,cols:8,mines:10},medium:{rows:10,cols:10,mines:15},hard:{rows:12,cols:12,mines:25}};
+    let diff='medium',ROWS,COLS,MINES;
+    let grid=[],revealed=[],flagged=[],gameOver=false,firstClick=true,startTime=0,elapsed=0,timerInt=null,best=JSON.parse(sessionStorage.getItem('ms-best')||'{}');
+    function setDiff(d){diff=d;const c=DIFFS[d];ROWS=c.rows;COLS=c.cols;MINES=c.mines;firstClick=true;gameOver=false;elapsed=0;if(timerInt)clearInterval(timerInt);timerInt=null;gen(0,0);render();}
+    function gen(safeR,safeC){
+      grid=Array.from({length:ROWS},()=>Array(COLS).fill(0));revealed=Array.from({length:ROWS},()=>Array(COLS).fill(false));flagged=Array.from({length:ROWS},()=>Array(COLS).fill(false));gameOver=false;
+      let placed=0;while(placed<MINES){const r=Math.floor(Math.random()*ROWS),c=Math.floor(Math.random()*COLS);if(grid[r][c]===-1||(Math.abs(r-safeR)<=1&&Math.abs(c-safeC)<=1))continue;grid[r][c]=-1;placed++;}
+      for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){if(grid[r][c]===-1)continue;let n=0;for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++){const nr=r+dr,nc=c+dc;if(nr>=0&&nr<ROWS&&nc>=0&&nc<COLS&&grid[nr][nc]===-1)n++;}grid[r][c]=n;}
+    }
+    function reveal(r,c){
+      if(r<0||r>=ROWS||c<0||c>=COLS||revealed[r][c]||flagged[r][c])return;
+      revealed[r][c]=true;
+      if(grid[r][c]===0)for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++)reveal(r+dr,c+dc);
+    }
+    function checkWin(){const safe=ROWS*COLS-MINES;let cnt=0;for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++)if(revealed[r][c])cnt++;return cnt===safe;}
+    function render(){
+      root.innerHTML='';
+      const diffBar=document.createElement('div');diffBar.style.cssText='text-align:center;margin-bottom:6px;';
+      ['easy','medium','hard'].forEach(d=>{const b=document.createElement('button');b.className='retro-btn';b.style.cssText=`margin:2px;font-size:0.75rem;padding:3px 10px;${d===diff?'background:#2ecc71;':''}`;b.textContent=d.toUpperCase();b.onclick=()=>setDiff(d);diffBar.appendChild(b);});
+      root.appendChild(diffBar);
+      const hud=document.createElement('div');hud.className='retro-hud';
+      let flagCnt=0;flagged.forEach(row=>row.forEach(f=>{if(f)flagCnt++;}));
+      const bestStr=best[diff]?`Best: ${best[diff]}s`:'';
+      hud.innerHTML=`💣 ${MINES-flagCnt} | ⏱ <span id="ms-time">${elapsed}</span>s | ${gameOver?'GAME OVER':'🚩 Right-click/long-press'} ${bestStr?'| '+bestStr:''}`;root.appendChild(hud);
+      const g=document.createElement('div');g.className='ms-grid';g.style.gridTemplateColumns=`repeat(${COLS},clamp(24px,${Math.floor(70/COLS)}vw,36px))`;
+      for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){
+        const cell=document.createElement('div');cell.className='ms-cell';
+        if(revealed[r][c]){
+          cell.classList.add('revealed');
+          if(grid[r][c]===-1){cell.classList.add('mine');cell.textContent='💣';}
+          else if(grid[r][c]>0){cell.textContent=grid[r][c];cell.dataset.n=grid[r][c];}
+        }else if(flagged[r][c]){cell.classList.add('flagged');}
+        let longTimer=null;
+        cell.addEventListener('pointerdown',e=>{longTimer=setTimeout(()=>{e.preventDefault();if(gameOver||revealed[r][c])return;flagged[r][c]=!flagged[r][c];render();longTimer='done';},400);});
+        cell.addEventListener('pointerup',e=>{if(longTimer==='done')return;clearTimeout(longTimer);
+          if(gameOver)return;
+          if(firstClick){gen(r,c);firstClick=false;startTime=Date.now();timerInt=setInterval(()=>{if(gameOver||currentGame!=='minesweeper'){clearInterval(timerInt);return;}elapsed=Math.floor((Date.now()-startTime)/1000);const te=$$('#ms-time');if(te)te.textContent=elapsed;},1000);reveal(r,c);render();return;}
+          if(flagged[r][c])return;
+          if(grid[r][c]===-1){gameOver=true;if(timerInt)clearInterval(timerInt);for(let rr=0;rr<ROWS;rr++)for(let cc=0;cc<COLS;cc++)revealed[rr][cc]=true;render();showFeedback('💥 BOOM!','#e74c3c');resetStreak();return;}
+          reveal(r,c);if(checkWin()){gameOver=true;if(timerInt)clearInterval(timerInt);if(!best[diff]||elapsed<best[diff]){best[diff]=elapsed;sessionStorage.setItem('ms-best',JSON.stringify(best));}showFeedback(`Cleared in ${elapsed}s! 🎉`,'#2ecc71');addScore(20);}render();
+        });
+        cell.addEventListener('contextmenu',e=>{e.preventDefault();if(gameOver||revealed[r][c])return;flagged[r][c]=!flagged[r][c];render();});
+        g.appendChild(cell);
+      }
+      root.appendChild(g);
+      const btnRow=document.createElement('div');btnRow.style.cssText='text-align:center;margin-top:8px;';
+      const rb=document.createElement('button');rb.className='retro-btn';rb.style.margin='3px';rb.textContent='🔄 NEW GAME';rb.onclick=()=>setDiff(diff);
+      const eb=document.createElement('button');eb.className='retro-btn';eb.style.cssText='margin:3px;background:#e74c3c;';eb.textContent='🚪 EXIT';eb.onclick=()=>{if(timerInt)clearInterval(timerInt);goBack();};
+      btnRow.appendChild(rb);btnRow.appendChild(eb);root.appendChild(btnRow);
+    }
+    setDiff('medium');
+  }
+  function initPipes(){
+    const root=$$('#pipes-game');root.innerHTML='';
+    const TYPES=['┃','━','┏','┓','┗','┛','╋','┣','┫','┳','┻'];
+    const CONNS={0:[[0,-1],[0,1]],1:[[-1,0],[1,0]],2:[[1,0],[0,1]],3:[[-1,0],[0,1]],4:[[1,0],[0,-1]],5:[[-1,0],[0,-1]],6:[[-1,0],[1,0],[0,-1],[0,1]],7:[[1,0],[0,-1],[0,1]],8:[[-1,0],[0,-1],[0,1]],9:[[-1,0],[1,0],[0,1]],10:[[-1,0],[1,0],[0,-1]]};
+    let grid=[],moves=0,lvl=parseInt(sessionStorage.getItem('pipe-lvl')||'1'),best=parseInt(sessionStorage.getItem('pipe-best')||'999');
+    function sz(){return Math.min(4+Math.floor(lvl/2),8);}
+    function gen(){
+      const SZ=sz();grid=[];moves=0;
+      for(let r=0;r<SZ;r++){grid[r]=[];for(let c=0;c<SZ;c++){grid[r][c]={type:Math.floor(Math.random()*TYPES.length),rot:Math.floor(Math.random()*4)};}}
+    }
+    function rotateConns(type,rot){let c=CONNS[type].map(d=>[...d]);for(let i=0;i<rot;i++)c=c.map(([dr,dc])=>[dc,-dr]);return c;}
+    function getConnected(){
+      const SZ=sz(),visited=Array.from({length:SZ},()=>Array(SZ).fill(false));
+      const q=[[0,0]];visited[0][0]=true;
+      while(q.length){
+        const[r,c]=q.shift();const myConns=rotateConns(grid[r][c].type,grid[r][c].rot);
+        myConns.forEach(([dr,dc])=>{const nr=r+dr,nc=c+dc;if(nr>=0&&nr<SZ&&nc>=0&&nc<SZ&&!visited[nr][nc]){const theirConns=rotateConns(grid[nr][nc].type,grid[nr][nc].rot);if(theirConns.some(([tdr,tdc])=>tdr===-dr&&tdc===-dc)){visited[nr][nc]=true;q.push([nr,nc]);}}});
+      }
+      return visited;
+    }
+    function isConnected(){return getConnected().every(row=>row.every(v=>v));}
+    function render(){
+      const SZ=sz();root.innerHTML='';
+      const hud=document.createElement('div');hud.className='retro-hud';hud.innerHTML=`Level: <span>${lvl}</span> | Grid: ${SZ}×${SZ} | Moves: <span id="pipe-sc">${moves}</span> | Best: ${best<999?best:'—'}`;root.appendChild(hud);
+      const connected=getConnected();
+      const cellSz=`clamp(40px,${Math.floor(80/SZ)}vw,60px)`;
+      const g=document.createElement('div');g.style.cssText=`display:grid;grid-template-columns:repeat(${SZ},${cellSz});gap:2px;justify-content:center;`;
+      for(let r=0;r<SZ;r++)for(let c=0;c<SZ;c++){
+        const cell=document.createElement('div');
+        const glow=connected[r][c]?'color:#2ecc71;text-shadow:0 0 8px #2ecc71;':'color:#a29bfe;';
+        cell.style.cssText=`width:${cellSz};height:${cellSz};background:${connected[r][c]?'#1a2a1a':'#1a1a3a'};border:2px solid ${connected[r][c]?'#2ecc71':'#333'};border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:clamp(1.4rem,${Math.floor(50/SZ)}vw,2.4rem);cursor:pointer;transform:rotate(${grid[r][c].rot*90}deg);transition:transform 0.2s,background 0.3s,border-color 0.3s;${glow}`;
+        cell.textContent=TYPES[grid[r][c].type];
+        cell.addEventListener('click',()=>{grid[r][c].rot=(grid[r][c].rot+1)%4;moves++;render();
+          if(isConnected()){if(moves<best){best=moves;sessionStorage.setItem('pipe-best',best);}lvl++;sessionStorage.setItem('pipe-lvl',lvl);showFeedback(`Level ${lvl-1} cleared in ${moves} moves! 🎉`,'#2ecc71');addScore(Math.max(5,30-moves));setTimeout(()=>{gen();render();},1200);}
+        });
+        g.appendChild(cell);
+      }
+      root.appendChild(g);
+      const btnRow=document.createElement('div');btnRow.style.cssText='text-align:center;margin-top:8px;';
+      const rb=document.createElement('button');rb.className='retro-btn';rb.style.margin='3px';rb.textContent='🔄 NEW PUZZLE';rb.onclick=()=>{gen();render();};
+      const eb=document.createElement('button');eb.className='retro-btn';eb.style.cssText='margin:3px;background:#e74c3c;';eb.textContent='🚪 EXIT';eb.onclick=goBack;
+      btnRow.appendChild(rb);btnRow.appendChild(eb);root.appendChild(btnRow);
+    }
+    gen();render();
+  }
+  function initTetris(){
+    const root=$$('#tetris-game');root.innerHTML='';
+    const COLS=10,ROWS=20,SZ=Math.min(Math.floor((window.innerWidth-40)/COLS),Math.floor((window.innerHeight-200)/ROWS),24);
+    const canvas=document.createElement('canvas');canvas.className='retro-canvas';canvas.style.borderColor='#a29bfe';canvas.width=COLS*SZ;canvas.height=ROWS*SZ;
+    const ctx=canvas.getContext('2d');
+    const SHAPES=[[[1,1,1,1]],[[1,1],[1,1]],[[0,1,0],[1,1,1]],[[1,0,0],[1,1,1]],[[0,0,1],[1,1,1]],[[0,1,1],[1,1,0]],[[1,1,0],[0,1,1]]];
+    const COLORS=['#00f0f0','#f0f000','#a000f0','#f0a000','#0000f0','#00f000','#f00000'];
+    let best=parseInt(sessionStorage.getItem('tet-best')||'0');
+    let board,piece,px,py,pi,sc,lines,go,level,holdPi,canHold,dropSpeed;
+    function restart(){board=Array.from({length:ROWS},()=>Array(COLS).fill(0));sc=0;lines=0;go=false;level=1;holdPi=-1;canHold=true;dropSpeed=500;newPiece();const ov=$$('#tet-over');if(ov)ov.remove();draw();}
+    function newPiece(){pi=Math.floor(Math.random()*SHAPES.length);piece=SHAPES[pi].map(r=>[...r]);px=Math.floor((COLS-piece[0].length)/2);py=0;canHold=true;if(!canPlace(piece,px,py)){go=true;if(sc>best){best=sc;sessionStorage.setItem('tet-best',best);}gameOver();}}
+    function canPlace(p,x,y){for(let r=0;r<p.length;r++)for(let c=0;c<p[r].length;c++){if(!p[r][c])continue;const nr=y+r,nc=x+c;if(nc<0||nc>=COLS||nr>=ROWS||(nr>=0&&board[nr][nc]))return false;}return true;}
+    function place(){piece.forEach((row,r)=>row.forEach((v,c)=>{if(v&&py+r>=0)board[py+r][px+c]=pi+1;}));clearLines();newPiece();}
+    function clearLines(){let cleared=0;for(let r=ROWS-1;r>=0;r--){if(board[r].every(c=>c)){board.splice(r,1);board.unshift(Array(COLS).fill(0));cleared++;r++;}}if(cleared){lines+=cleared;sc+=cleared*cleared*100*level;addScore(cleared*5);const newLvl=Math.floor(lines/10)+1;if(newLvl>level){level=newLvl;dropSpeed=Math.max(80,500-level*40);showFeedback(`Level ${level}!`,'#a29bfe');}}}
+    function rotate(){const newP=piece[0].map((_,c)=>piece.map(r=>r[c]).reverse());if(canPlace(newP,px,py))piece=newP;else if(canPlace(newP,px-1,py)){px--;piece=newP;}else if(canPlace(newP,px+1,py)){px++;piece=newP;}}
+    function holdSwap(){if(!canHold||go)return;canHold=false;const prev=holdPi;holdPi=pi;if(prev===-1){newPiece();}else{pi=prev;piece=SHAPES[pi].map(r=>[...r]);px=Math.floor((COLS-piece[0].length)/2);py=0;}}
+    function ghostY(){let gy=py;while(canPlace(piece,px,gy+1))gy++;return gy;}
+    function draw(){
+      ctx.fillStyle='#111';ctx.fillRect(0,0,canvas.width,canvas.height);
+      for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){if(board[r][c]){ctx.fillStyle=COLORS[board[r][c]-1];ctx.fillRect(c*SZ+1,r*SZ+1,SZ-2,SZ-2);}}
+      if(piece&&!go){
+        const gy=ghostY();
+        piece.forEach((row,r)=>row.forEach((v,c)=>{if(v){ctx.strokeStyle=COLORS[pi];ctx.globalAlpha=0.3;ctx.strokeRect((px+c)*SZ+2,(gy+r)*SZ+2,SZ-4,SZ-4);ctx.globalAlpha=1;}}));
+        piece.forEach((row,r)=>row.forEach((v,c)=>{if(v){ctx.fillStyle=COLORS[pi];ctx.fillRect((px+c)*SZ+1,(py+r)*SZ+1,SZ-2,SZ-2);}}));
+      }
+      if(holdPi>=0){ctx.fillStyle='#666';ctx.font='10px JetBrains Mono';ctx.textAlign='left';ctx.fillText('HOLD:',2,12);const hp=SHAPES[holdPi];hp.forEach((row,r)=>row.forEach((v,c)=>{if(v){ctx.fillStyle=canHold?COLORS[holdPi]:'#444';ctx.fillRect(c*8+4,16+r*8,7,7);}}));}
+      if(go){ctx.fillStyle='rgba(0,0,0,0.7)';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.fillStyle='#e74c3c';ctx.font='bold 20px JetBrains Mono';ctx.textAlign='center';ctx.fillText('GAME OVER',canvas.width/2,canvas.height/2-16);ctx.fillStyle='#fff';ctx.font='14px JetBrains Mono';ctx.fillText(`Score: ${sc} | Lines: ${lines}`,canvas.width/2,canvas.height/2+8);ctx.fillText(`Level: ${level}`,canvas.width/2,canvas.height/2+26);}
+    }
+    function gameOver(){
+      draw();resetStreak();
+      const ov=document.createElement('div');ov.id='tet-over';ov.style.cssText='text-align:center;padding:12px;';
+      ov.innerHTML=`<div style="font-size:1.2rem;color:#fff;margin-bottom:8px">${sc>=best?'🏆 NEW BEST! ':''}Best: ${best}</div><button class="retro-btn" style="margin:4px" id="tet-restart">🔄 RESTART</button><button class="retro-btn" style="margin:4px;background:#e74c3c" id="tet-exit">🚪 EXIT</button>`;
+      root.appendChild(ov);$$('#tet-restart').onclick=restart;$$('#tet-exit').onclick=()=>{if(window._tetrisTimer)clearInterval(window._tetrisTimer);goBack();};
+    }
+    const hud=document.createElement('div');hud.className='retro-hud';hud.innerHTML=`Score: <span id="tet-sc">0</span> | Lines: <span id="tet-ln">0</span> | Lvl: <span id="tet-lv">1</span> | Best: ${best}`;
+    root.appendChild(hud);root.appendChild(canvas);
+    const dpad=document.createElement('div');dpad.className='retro-dpad';
+    [['','⬆',''],['⬅','','➡'],['','⬇','']].flat().forEach((t,i)=>{const b=document.createElement('button');if(!t){b.className='empty';}else{b.textContent=t;b.onclick=()=>{if(go)return;if(i===1)rotate();if(i===3&&canPlace(piece,px-1,py))px--;if(i===5&&canPlace(piece,px+1,py))px++;if(i===7){while(canPlace(piece,px,py+1))py++;place();}draw();upHud();};}dpad.appendChild(b);});
+    root.appendChild(dpad);
+    const holdBtn=document.createElement('button');holdBtn.className='retro-btn';holdBtn.style.cssText='margin:4px;font-size:0.8rem;';holdBtn.textContent='📦 HOLD (C)';holdBtn.onclick=()=>{holdSwap();draw();upHud();};root.appendChild(holdBtn);
+    function upHud(){$$('#tet-sc').textContent=sc;$$('#tet-ln').textContent=lines;$$('#tet-lv').textContent=level;}
+    document.addEventListener('keydown',e=>{if(currentGame!=='tetris'||go)return;if(e.key==='ArrowLeft'&&canPlace(piece,px-1,py))px--;if(e.key==='ArrowRight'&&canPlace(piece,px+1,py))px++;if(e.key==='ArrowUp')rotate();if(e.key==='ArrowDown'){while(canPlace(piece,px,py+1))py++;place();}if(e.key==='c'||e.key==='C')holdSwap();draw();upHud();});
+    window._tetrisTimer=setInterval(()=>{if(currentGame!=='tetris'||go)return;if(canPlace(piece,px,py+1))py++;else place();draw();upHud();},dropSpeed);
+    const spdWatch=setInterval(()=>{if(currentGame!=='tetris'){clearInterval(spdWatch);return;}clearInterval(window._tetrisTimer);window._tetrisTimer=setInterval(()=>{if(currentGame!=='tetris'||go)return;if(canPlace(piece,px,py+1))py++;else place();draw();upHud();},dropSpeed);},3000);
+    restart();
+  }
+  function initFlappy(){
+    const root=$$('#flappy-game');root.innerHTML='';
+    const cW=Math.min(320,window.innerWidth-20),cH=Math.min(480,window.innerHeight-180);
+    const canvas=document.createElement('canvas');canvas.className='retro-canvas';canvas.style.borderColor='#2ecc71';canvas.width=cW;canvas.height=cH;
+    const ctx=canvas.getContext('2d');
+    let best=parseInt(sessionStorage.getItem('flp-best')||'0');
+    let by,bv,pipes,sc,alive,frame,speed,gap,dead;
+    const PW=40,GRAV=0.4,FLAP=-6.2;
+    function medal(){return sc>=40?'🏆':sc>=25?'🥇':sc>=15?'🥈':sc>=5?'🥉':'';}
+    function reset(){by=cH/2;bv=0;pipes=[];sc=0;frame=0;alive=true;dead=false;speed=2;gap=120;for(let i=0;i<3;i++)pipes.push({x:cW+i*180,top:50+Math.random()*(cH-gap-100),scored:false,coin:Math.random()<0.3});const ov=$$('#flp-over');if(ov)ov.remove();}
+    function tap(){if(dead)return;if(!alive){reset();return;}bv=FLAP;}
+    canvas.addEventListener('pointerdown',tap);
+    document.addEventListener('keydown',e=>{if(currentGame!=='flappy')return;if(e.key===' ')tap();});
+    function die(){
+      alive=false;dead=true;resetStreak();
+      if(sc>best){best=sc;sessionStorage.setItem('flp-best',best);}
+      drawDeath();
+      const ov=document.createElement('div');ov.id='flp-over';ov.style.cssText='text-align:center;padding:10px;';
+      const m=medal();
+      ov.innerHTML=`<div style="font-size:1.2rem;color:#fff;margin-bottom:6px">${m} Score: ${sc} | Best: ${best}</div><button class="retro-btn" style="margin:4px" id="flp-restart">🔄 RESTART</button><button class="retro-btn" style="margin:4px;background:#e74c3c" id="flp-exit">🚪 EXIT</button>`;
+      root.appendChild(ov);$$('#flp-restart').onclick=()=>{dead=false;reset();};$$('#flp-exit').onclick=()=>{if(window._flappyAF)cancelAnimationFrame(window._flappyAF);goBack();};
+    }
+    function drawDeath(){
+      ctx.fillStyle='rgba(0,0,0,0.6)';ctx.fillRect(0,0,cW,cH);
+      ctx.fillStyle='#e74c3c';ctx.font='bold 24px JetBrains Mono';ctx.textAlign='center';ctx.fillText('GAME OVER',cW/2,cH/2-20);
+      ctx.fillStyle='#fff';ctx.font='16px JetBrains Mono';ctx.fillText(`Score: ${sc}`,cW/2,cH/2+10);
+    }
+    function loop(){
+      if(currentGame!=='flappy')return;
+      ctx.fillStyle='#1a3f2a';ctx.fillRect(0,0,cW,cH);
+      for(let i=0;i<cW;i+=20){ctx.fillStyle=i%40===0?'#1e4a30':'#1a3f2a';ctx.fillRect(i,cH-15,20,15);}
+      if(!alive&&!dead){ctx.fillStyle='#2ecc71';ctx.font='bold 24px Comic Neue';ctx.textAlign='center';ctx.fillText('TAP TO START',cW/2,cH/2);ctx.fillText(`Best: ${best}`,cW/2,cH/2+30);window._flappyAF=requestAnimationFrame(loop);return;}
+      if(dead){window._flappyAF=requestAnimationFrame(loop);return;}
+      bv+=GRAV;by+=bv;frame++;
+      if(sc>0&&sc%10===0){speed=2+Math.floor(sc/10)*0.3;gap=Math.max(90,120-Math.floor(sc/10)*5);}
+      pipes.forEach(p=>{p.x-=speed;});
+      pipes=pipes.filter(p=>p.x>-PW);
+      if(pipes.length<3){const last=pipes[pipes.length-1];pipes.push({x:last.x+180,top:50+Math.random()*(cH-gap-100),scored:false,coin:Math.random()<0.3});}
+      pipes.forEach(p=>{
+        const grad=ctx.createLinearGradient(p.x,0,p.x+PW,0);grad.addColorStop(0,'#27ae60');grad.addColorStop(1,'#2ecc71');ctx.fillStyle=grad;
+        ctx.fillRect(p.x,0,PW,p.top);ctx.fillRect(p.x-4,p.top-8,PW+8,8);ctx.fillRect(p.x,p.top+gap,PW,cH-p.top-gap);ctx.fillRect(p.x-4,p.top+gap,PW+8,8);
+        if(p.coin&&!p.scored){ctx.fillStyle='#f1c40f';ctx.beginPath();ctx.arc(p.x+PW/2,p.top+gap/2,8,0,Math.PI*2);ctx.fill();}
+        if(!p.scored&&p.x+PW<cW/2-10){p.scored=true;sc++;addScore(p.coin?4:2);if(sc%10===0)showFeedback(`Speed Up! ${medal()}`,'#f39c12');}
+        if(cW/2>p.x&&cW/2<p.x+PW&&(by<p.top+5||by>p.top+gap-5))die();
+      });
+      if(by>cH-15||by<0)die();
+      const angle=Math.max(-0.5,Math.min(bv*0.05,0.5));ctx.save();ctx.translate(cW/2-10,by);ctx.rotate(angle);
+      ctx.fillStyle='#f1c40f';ctx.beginPath();ctx.ellipse(0,0,12,9,0,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle='#e67e22';ctx.beginPath();ctx.moveTo(10,0);ctx.lineTo(16,-3);ctx.lineTo(16,3);ctx.fill();
+      ctx.fillStyle='#000';ctx.beginPath();ctx.arc(4,-3,2,0,Math.PI*2);ctx.fill();
+      const wingY=Math.sin(frame*0.3)*4;ctx.fillStyle='rgba(255,255,255,0.7)';ctx.beginPath();ctx.ellipse(-5,wingY,8,4,0,0,Math.PI*2);ctx.fill();
+      ctx.restore();
+      ctx.fillStyle='#fff';ctx.font='bold 22px JetBrains Mono';ctx.textAlign='center';ctx.strokeStyle='#000';ctx.lineWidth=3;ctx.strokeText(sc,cW/2,35);ctx.fillText(sc,cW/2,35);
+      window._flappyAF=requestAnimationFrame(loop);
+    }
+    root.appendChild(canvas);
+    const exitBtn=document.createElement('button');exitBtn.className='retro-btn';exitBtn.style.cssText='margin:6px;background:#e74c3c;';exitBtn.textContent='🚪 EXIT';exitBtn.onclick=()=>{if(window._flappyAF)cancelAnimationFrame(window._flappyAF);goBack();};root.appendChild(exitBtn);
+    alive=false;dead=false;by=cH/2;bv=0;pipes=[];sc=0;frame=0;speed=2;gap=120;
+    window._flappyAF=requestAnimationFrame(loop);
+  }
+  function initClicker(){
+    const root=$$('#clicker-game');root.innerHTML='';
+    let cookies=parseFloat(sessionStorage.getItem('ck-c')||'0'),cps=parseFloat(sessionStorage.getItem('ck-cps')||'0');
+    let goldenActive=false,goldenMult=1,goldenTimer=null;
+    const upgrades=[
+      {name:'Cursor',desc:'Auto-clicks once/sec',baseCost:15,cpsAdd:1,count:0},
+      {name:'Grandma',desc:'Bakes 5 cookies/sec',baseCost:100,cpsAdd:5,count:0},
+      {name:'Farm',desc:'Grows 20 cookies/sec',baseCost:500,cpsAdd:20,count:0},
+      {name:'Factory',desc:'Produces 80 cookies/sec',baseCost:2000,cpsAdd:80,count:0},
+      {name:'Wizard',desc:'Conjures 300 cookies/sec',baseCost:10000,cpsAdd:300,count:0},
+      {name:'Portal',desc:'Imports 1000 cookies/sec',baseCost:50000,cpsAdd:1000,count:0},
+      {name:'Time Machine',desc:'Harvests 5000/sec',baseCost:250000,cpsAdd:5000,count:0},
+      {name:'Antimatter',desc:'Generates 20000/sec',baseCost:1000000,cpsAdd:20000,count:0}
+    ];
+    const achievements=[
+      {name:'🍪 First Cookie',desc:'Click your first cookie',check:()=>cookies>=1,earned:false},
+      {name:'💯 Century',desc:'Reach 100 cookies',check:()=>cookies>=100,earned:false},
+      {name:'🏭 Industrialist',desc:'Buy a Factory',check:()=>upgrades[3].count>0,earned:false},
+      {name:'🧙 Arcane',desc:'Buy a Wizard',check:()=>upgrades[4].count>0,earned:false},
+      {name:'🌀 Portal Master',desc:'Buy a Portal',check:()=>upgrades[5].count>0,earned:false},
+      {name:'💰 Millionaire',desc:'Reach 1M cookies',check:()=>cookies>=1e6,earned:false},
+      {name:'⏰ Time Lord',desc:'Buy a Time Machine',check:()=>upgrades[6].count>0,earned:false},
+      {name:'🌟 Golden Touch',desc:'Click a golden cookie',check:()=>false,earned:false}
+    ];
+    const savedAch=JSON.parse(sessionStorage.getItem('ck-ach')||'null');
+    if(savedAch)savedAch.forEach((s,i)=>{if(achievements[i])achievements[i].earned=s;});
+    const saved=JSON.parse(sessionStorage.getItem('ck-up')||'null');
+    if(saved)saved.forEach((s,i)=>{if(upgrades[i])upgrades[i].count=s;});
+    cps=upgrades.reduce((a,u)=>a+u.cpsAdd*u.count,0);
+    function cost(u){return Math.floor(u.baseCost*Math.pow(1.15,u.count));}
+    function save(){sessionStorage.setItem('ck-c',cookies);sessionStorage.setItem('ck-cps',cps);sessionStorage.setItem('ck-up',JSON.stringify(upgrades.map(u=>u.count)));sessionStorage.setItem('ck-ach',JSON.stringify(achievements.map(a=>a.earned)));}
+    function fmt(n){return n>=1e9?(n/1e9).toFixed(1)+'B':n>=1e6?(n/1e6).toFixed(1)+'M':n>=1e3?(n/1e3).toFixed(1)+'K':Math.floor(n);}
+    function checkAch(){achievements.forEach(a=>{if(!a.earned&&a.check()){a.earned=true;showFeedback(`🎖️ ${a.name}`,'#f1c40f');}});}
+    function spawnGolden(){
+      if(goldenActive||currentGame!=='clicker')return;
+      const gc=document.createElement('div');gc.id='ck-golden';gc.textContent='🍪';gc.style.cssText=`position:absolute;font-size:2rem;cursor:pointer;animation:pulse 0.5s infinite alternate;top:${30+Math.random()*200}px;left:${10+Math.random()*60}%;z-index:10;filter:hue-rotate(60deg) brightness(1.5);`;
+      gc.onclick=()=>{gc.remove();goldenActive=true;goldenMult=7;showFeedback('🌟 7x CPS for 10s!','#f1c40f');achievements[7].earned=true;save();if(goldenTimer)clearTimeout(goldenTimer);goldenTimer=setTimeout(()=>{goldenMult=1;goldenActive=false;},10000);};
+      root.style.position='relative';root.appendChild(gc);
+      setTimeout(()=>{const el=$$('#ck-golden');if(el)el.remove();},6000);
+    }
+    function render(){
+      const existing=$$('#ck-golden');root.innerHTML='';if(existing)root.appendChild(existing);
+      const display=document.createElement('div');display.className='idle-display';display.id='ck-display';display.textContent=`🍪 ${fmt(cookies)}`;root.appendChild(display);
+      const rate=document.createElement('div');rate.className='idle-rate';rate.textContent=`${fmt(cps*goldenMult)} per second${goldenMult>1?' (🌟 GOLDEN!)':''}`;root.appendChild(rate);
+      const btn=document.createElement('div');btn.className='idle-main-btn';btn.textContent='🍪';btn.onclick=()=>{cookies+=Math.max(1,Math.floor(cps*0.1)+1)*goldenMult;save();checkAch();render();};root.appendChild(btn);
+      const shop=document.createElement('div');shop.className='idle-shop';
+      upgrades.forEach(u=>{
+        const c=cost(u);const item=document.createElement('div');item.className='idle-item'+(cookies<c?' locked':'');
+        item.innerHTML=`<div class="idle-item-name">${u.name} (${u.count})</div><div class="idle-item-desc">${u.desc}</div><div class="idle-item-cost">🍪 ${fmt(c)}</div>`;
+        item.onclick=()=>{if(cookies>=c){cookies-=c;u.count++;cps=upgrades.reduce((a,uu)=>a+uu.cpsAdd*uu.count,0);save();checkAch();render();}};
+        shop.appendChild(item);
+      });
+      root.appendChild(shop);
+      const achDiv=document.createElement('div');achDiv.style.cssText='margin:8px 0;padding:6px;background:rgba(255,255,255,0.05);border-radius:8px;';
+      achDiv.innerHTML='<div style="font-size:0.9rem;color:#f1c40f;margin-bottom:4px">🏆 Achievements</div>'+achievements.map(a=>`<span style="margin:2px;opacity:${a.earned?1:0.3}">${a.name}</span>`).join(' ');
+      root.appendChild(achDiv);
+      const btns=document.createElement('div');btns.style.cssText='display:flex;gap:6px;justify-content:center;margin-top:8px;';
+      const rb=document.createElement('button');rb.className='retro-btn';rb.textContent='🔄 RESET';rb.onclick=()=>{cookies=0;cps=0;goldenMult=1;goldenActive=false;upgrades.forEach(u=>u.count=0);achievements.forEach(a=>a.earned=false);save();render();};
+      const eb=document.createElement('button');eb.className='retro-btn';eb.style.background='#e74c3c';eb.textContent='🚪 EXIT';eb.onclick=()=>{if(window._clickerTimer)clearInterval(window._clickerTimer);if(window._goldenSpawner)clearInterval(window._goldenSpawner);goBack();};
+      btns.appendChild(rb);btns.appendChild(eb);root.appendChild(btns);
+    }
+    render();
+    window._clickerTimer=setInterval(()=>{if(currentGame!=='clicker')return;cookies+=cps*goldenMult/10;save();checkAch();const d=$$('#ck-display');if(d)d.textContent=`🍪 ${fmt(cookies)}`;},100);
+    window._goldenSpawner=setInterval(()=>{if(currentGame!=='clicker')return;if(Math.random()<0.15)spawnGolden();},15000);
+  }
+  function initAutoMiner(){
+    const root=$$('#autominer-game');root.innerHTML='';
+    let gems=parseFloat(sessionStorage.getItem('am-g')||'0'),gps=parseFloat(sessionStorage.getItem('am-gps')||'0'),depth=parseInt(sessionStorage.getItem('am-d')||'1');
+    let prestige=parseInt(sessionStorage.getItem('am-p')||'0'),pMult=1+prestige*0.5;
+    const upgrades=[
+      {name:'Pickaxe',desc:'+2 gems per click',baseCost:20,clickAdd:2,cpsAdd:0,count:0},
+      {name:'Drill',desc:'Auto-mines 3/sec',baseCost:80,clickAdd:0,cpsAdd:3,count:0},
+      {name:'TNT',desc:'Auto-mines 15/sec',baseCost:400,clickAdd:0,cpsAdd:15,count:0},
+      {name:'Excavator',desc:'Auto-mines 60/sec',baseCost:2000,clickAdd:0,cpsAdd:60,count:0},
+      {name:'Deep Bore',desc:'Go deeper +1 depth (2x mult)',baseCost:5000,clickAdd:0,cpsAdd:0,count:0},
+      {name:'Laser Drill',desc:'Auto-mines 250/sec',baseCost:15000,clickAdd:0,cpsAdd:250,count:0},
+      {name:'Quantum Miner',desc:'Auto-mines 1000/sec',baseCost:80000,clickAdd:0,cpsAdd:1000,count:0},
+      {name:'Warp Engine',desc:'+10 per click',baseCost:50000,clickAdd:10,cpsAdd:0,count:0}
+    ];
+    const saved=JSON.parse(sessionStorage.getItem('am-up')||'null');
+    if(saved)saved.forEach((s,i)=>{if(upgrades[i])upgrades[i].count=s;});
+    depth=1+upgrades[4].count;
+    gps=upgrades.reduce((a,u)=>a+u.cpsAdd*u.count,0)*depth*pMult;
+    function clickPower(){return (1+upgrades.filter(u=>u.clickAdd).reduce((a,u)=>a+u.clickAdd*u.count,0))*depth*pMult;}
+    function cost(u){return Math.floor(u.baseCost*Math.pow(1.2,u.count));}
+    function save(){sessionStorage.setItem('am-g',gems);sessionStorage.setItem('am-gps',gps);sessionStorage.setItem('am-d',depth);sessionStorage.setItem('am-p',prestige);sessionStorage.setItem('am-up',JSON.stringify(upgrades.map(u=>u.count)));}
+    function fmt(n){return n>=1e9?(n/1e9).toFixed(1)+'B':n>=1e6?(n/1e6).toFixed(1)+'M':n>=1e3?(n/1e3).toFixed(1)+'K':Math.floor(n);}
+    function doPrestige(){
+      if(gems<100000)return;
+      prestige++;pMult=1+prestige*0.5;gems=0;upgrades.forEach(u=>u.count=0);depth=1;gps=0;
+      showFeedback(`⭐ Prestige ${prestige}! ${pMult}x mult`,'#f1c40f');save();render();
+    }
+    function render(){
+      root.innerHTML='';
+      const display=document.createElement('div');display.className='idle-display';display.id='am-display';display.textContent=`⛏️ ${fmt(gems)}`;root.appendChild(display);
+      const rate=document.createElement('div');rate.className='idle-rate';rate.textContent=`${fmt(gps)}/sec | Depth: ${depth} (${depth}x) | Click: +${fmt(clickPower())}${prestige>0?` | ⭐×${pMult}`:''}`;root.appendChild(rate);
+      const btn=document.createElement('div');btn.className='idle-main-btn';btn.textContent='⛏️';btn.onclick=()=>{gems+=clickPower();save();const d=$$('#am-display');if(d)d.textContent=`⛏️ ${fmt(gems)}`;};root.appendChild(btn);
+      const shop=document.createElement('div');shop.className='idle-shop';
+      upgrades.forEach(u=>{
+        const c=cost(u);const item=document.createElement('div');item.className='idle-item'+(gems<c?' locked':'');
+        item.innerHTML=`<div class="idle-item-name">${u.name} (${u.count})</div><div class="idle-item-desc">${u.desc}</div><div class="idle-item-cost">⛏️ ${fmt(c)}</div>`;
+        item.onclick=()=>{if(gems>=c){gems-=c;u.count++;depth=1+upgrades[4].count;gps=upgrades.reduce((a,uu)=>a+uu.cpsAdd*uu.count,0)*depth*pMult;save();render();}};
+        shop.appendChild(item);
+      });
+      root.appendChild(shop);
+      const btns=document.createElement('div');btns.style.cssText='display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:8px;';
+      const pb=document.createElement('button');pb.className='retro-btn';pb.style.background=gems>=100000?'#f1c40f':'#555';pb.textContent=`⭐ PRESTIGE (100K)`;pb.onclick=doPrestige;
+      const eb=document.createElement('button');eb.className='retro-btn';eb.style.background='#e74c3c';eb.textContent='🚪 EXIT';eb.onclick=()=>{if(window._minerTimer)clearInterval(window._minerTimer);goBack();};
+      btns.appendChild(pb);btns.appendChild(eb);root.appendChild(btns);
+    }
+    render();
+    window._minerTimer=setInterval(()=>{if(currentGame!=='autominer')return;gems+=gps/10;save();const d=$$('#am-display');if(d)d.textContent=`⛏️ ${fmt(gems)}`;},100);
+  }
+  function initPullPin(){
+    const root=$$('#pullpin-game');root.innerHTML='';
+    const cW=Math.min(360,window.innerWidth-20),cH=Math.min(500,window.innerHeight-200);
+    const canvas=document.createElement('canvas');canvas.className='retro-canvas';canvas.style.borderColor='#55efc4';canvas.width=cW;canvas.height=cH;
+    const ctx=canvas.getContext('2d');root.appendChild(canvas);
+    let lvl=parseInt(sessionStorage.getItem('pp-lvl')||'1'),pins=[],balls=[],hazards=[],goal,solved=false,failed=false;
+    let bestLvl=parseInt(sessionStorage.getItem('pp-best')||'1');
+    function genLevel(){
+      solved=false;failed=false;
+      balls=[{x:cW/2,y:80,r:15,vx:0,vy:0,color:'#55efc4',type:'good'}];
+      goal={x:cW/2-30,y:cH-60,w:60,h:30};
+      pins=[];hazards=[];
+      const np=Math.min(2+Math.floor(lvl/2),6);
+      for(let i=0;i<np;i++){
+        const horizontal=Math.random()>0.5;
+        pins.push({x:40+Math.random()*(cW-80),y:120+i*55+Math.random()*20,horizontal,w:horizontal?80:6,h:horizontal?6:60,pulled:false});
+      }
+      if(lvl>=3){const nh=Math.min(Math.floor((lvl-1)/2),3);for(let i=0;i<nh;i++){hazards.push({x:30+Math.random()*(cW-60),y:100+Math.random()*(cH-250),r:12,vx:0,vy:0,color:'#e74c3c',type:'lava'});}}
+      if(lvl>=5)balls.push({x:cW/3,y:60,r:12,vx:0,vy:0,color:'#f1c40f',type:'bonus'});
+      const ov=$$('#pp-over');if(ov)ov.remove();
+    }
+    function draw(){
+      ctx.fillStyle='#1a2a2a';ctx.fillRect(0,0,cW,cH);
+      ctx.fillStyle='#2ecc71';ctx.fillRect(goal.x,goal.y,goal.w,goal.h);ctx.fillStyle='#fff';ctx.font='bold 12px JetBrains Mono';ctx.textAlign='center';ctx.fillText('GOAL',goal.x+goal.w/2,goal.y+18);
+      pins.forEach(p=>{if(p.pulled)return;ctx.fillStyle='#e74c3c';ctx.fillRect(p.x,p.y,p.w,p.h);ctx.fillStyle='#c0392b';ctx.beginPath();ctx.arc(p.horizontal?p.x:p.x+p.w/2,p.horizontal?p.y+p.h/2:p.y,8,0,Math.PI*2);ctx.fill();});
+      hazards.forEach(h=>{ctx.fillStyle=h.color;ctx.globalAlpha=0.7;ctx.beginPath();ctx.arc(h.x,h.y,h.r,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;ctx.fillStyle='#fff';ctx.font='10px JetBrains Mono';ctx.fillText('☠',h.x,h.y+4);});
+      balls.forEach(b=>{ctx.fillStyle=b.color;ctx.beginPath();ctx.arc(b.x,b.y,b.r,0,Math.PI*2);ctx.fill();if(b.type==='bonus'){ctx.fillStyle='#000';ctx.font='10px JetBrains Mono';ctx.textAlign='center';ctx.fillText('★',b.x,b.y+4);}});
+      ctx.fillStyle='#55efc4';ctx.font='bold 16px JetBrains Mono';ctx.textAlign='center';ctx.fillText(`Level ${lvl}`,cW/2,24);
+      if(lvl>1)ctx.fillText(`Best: ${bestLvl}`,cW/2,cH-8);
+      if(solved){ctx.fillStyle='rgba(0,0,0,0.4)';ctx.fillRect(0,0,cW,cH);ctx.fillStyle='#2ecc71';ctx.font='bold 28px Comic Neue';ctx.textAlign='center';ctx.fillText('✓ CLEAR!',cW/2,cH/2);}
+      if(failed){ctx.fillStyle='rgba(0,0,0,0.5)';ctx.fillRect(0,0,cW,cH);ctx.fillStyle='#e74c3c';ctx.font='bold 24px JetBrains Mono';ctx.textAlign='center';ctx.fillText('💀 FAILED!',cW/2,cH/2-10);ctx.fillStyle='#fff';ctx.font='14px JetBrains Mono';ctx.fillText('Lava touched the goal',cW/2,cH/2+14);}
+    }
+    function physics(){
+      if(solved||failed)return;
+      [...balls,...hazards].forEach(b=>{
+        b.vy+=0.3;b.x+=b.vx;b.y+=b.vy;b.vx*=0.99;
+        if(b.x<b.r){b.x=b.r;b.vx=-b.vx*0.5;}if(b.x>cW-b.r){b.x=cW-b.r;b.vx=-b.vx*0.5;}
+        if(b.y>cH-b.r){b.y=cH-b.r;b.vy=-b.vy*0.3;b.vx*=0.9;}
+        pins.forEach(p=>{
+          if(p.pulled)return;
+          if(b.x+b.r>p.x&&b.x-b.r<p.x+p.w&&b.y+b.r>p.y&&b.y-b.r<p.y+p.h){
+            if(p.horizontal){b.vy=-Math.abs(b.vy)*0.5;b.y=p.y-b.r;}else{b.vx=b.x<p.x+p.w/2?-2:2;b.x=b.x<p.x+p.w/2?p.x-b.r:p.x+p.w+b.r;}
+          }
+        });
+      });
+      balls.forEach(b=>{
+        if(b.x>goal.x&&b.x<goal.x+goal.w&&b.y>goal.y&&b.y<goal.y+goal.h){
+          if(!solved){solved=true;const pts=b.type==='bonus'?15:5;addScore(pts);showFeedback(`Level ${lvl} Clear!${b.type==='bonus'?' ★ Bonus!':''}`,b.type==='bonus'?'#f1c40f':'#2ecc71');lvl++;if(lvl>bestLvl){bestLvl=lvl;sessionStorage.setItem('pp-best',bestLvl);}sessionStorage.setItem('pp-lvl',lvl);setTimeout(genLevel,1200);}
+        }
+      });
+      hazards.forEach(h=>{
+        if(h.x>goal.x&&h.x<goal.x+goal.w&&h.y>goal.y&&h.y<goal.y+goal.h){
+          if(!failed){failed=true;resetStreak();showOverlay();}
+        }
+      });
+    }
+    function showOverlay(){
+      const ov=document.createElement('div');ov.id='pp-over';ov.style.cssText='text-align:center;padding:10px;';
+      ov.innerHTML=`<button class="retro-btn" style="margin:4px" id="pp-retry">🔄 RETRY</button><button class="retro-btn" style="margin:4px;background:#e74c3c" id="pp-exit">🚪 EXIT</button>`;
+      root.appendChild(ov);$$('#pp-retry').onclick=genLevel;$$('#pp-exit').onclick=goBack;
+    }
+    canvas.addEventListener('pointerdown',e=>{
+      if(solved||failed)return;
+      const r=canvas.getBoundingClientRect();const mx=e.clientX-r.left,my=e.clientY-r.top;
+      pins.forEach(p=>{if(p.pulled)return;if(mx>p.x-10&&mx<p.x+p.w+10&&my>p.y-10&&my<p.y+p.h+10)p.pulled=true;});
+    });
+    const exitBtn=document.createElement('button');exitBtn.className='retro-btn';exitBtn.style.cssText='margin:6px;background:#e74c3c;';exitBtn.textContent='🚪 EXIT';exitBtn.onclick=goBack;root.appendChild(exitBtn);
+    genLevel();
+    function loop(){if(currentGame!=='pullpin')return;physics();draw();requestAnimationFrame(loop);}
+    requestAnimationFrame(loop);
+  }
+  function initFillCup(){
+    const root=$$('#fillcup-game');root.innerHTML='';
+    const cW=Math.min(360,window.innerWidth-20),cH=Math.min(500,window.innerHeight-200);
+    const canvas=document.createElement('canvas');canvas.className='retro-canvas';canvas.style.borderColor='#55efc4';canvas.width=cW;canvas.height=cH;
+    const ctx=canvas.getContext('2d');root.appendChild(canvas);
+    let lvl=1,filling=false,fillAmt=0,target=0,poured=false,result='',streak=0,best=parseInt(sessionStorage.getItem('fc-best')||'0'),fillSpeed=0.8;
+    function genLevel(){fillAmt=0;target=15+Math.floor(Math.random()*70);poured=false;result='';filling=false;fillSpeed=0.5+lvl*0.15+Math.random()*0.3;const ov=$$('#fc-over');if(ov)ov.remove();}
+    function draw(){
+      ctx.fillStyle='#1a2a2a';ctx.fillRect(0,0,cW,cH);
+      const cupX=cW/2-40,cupY=cH-200,cupW=80,cupH=150;
+      ctx.strokeStyle='#fff';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(cupX,cupY);ctx.lineTo(cupX-10,cupY+cupH);ctx.lineTo(cupX+cupW+10,cupY+cupH);ctx.lineTo(cupX+cupW,cupY);ctx.stroke();
+      const targetY=cupY+cupH-(target/100)*cupH;
+      ctx.setLineDash([4,4]);ctx.strokeStyle='#e74c3c';ctx.beginPath();ctx.moveTo(cupX-15,targetY);ctx.lineTo(cupX+cupW+15,targetY);ctx.stroke();ctx.setLineDash([]);
+      ctx.fillStyle='#48dbfb';ctx.font='bold 12px JetBrains Mono';ctx.textAlign='left';ctx.fillText(`${target}%`,cupX+cupW+18,targetY+4);
+      const fillH=(fillAmt/100)*cupH;
+      const grd=ctx.createLinearGradient(cupX,cupY+cupH-fillH,cupX,cupY+cupH);grd.addColorStop(0,'rgba(72,219,251,0.4)');grd.addColorStop(1,'rgba(72,219,251,0.8)');
+      ctx.fillStyle=grd;ctx.fillRect(cupX-8,cupY+cupH-fillH,cupW+16,fillH);
+      if(filling){ctx.fillStyle='rgba(72,219,251,0.8)';ctx.fillRect(cW/2-4,40,8,cupY-40);}
+      ctx.fillStyle='#fff';ctx.font='bold 20px JetBrains Mono';ctx.textAlign='center';ctx.fillText(`Level ${lvl}`,cW/2,30);
+      ctx.fillText(`${Math.round(fillAmt)}%`,cW/2,cupY+cupH+30);
+      ctx.fillStyle='#aaa';ctx.font='12px JetBrains Mono';ctx.fillText(`Speed: ${fillSpeed.toFixed(1)}x | Streak: ${streak} | Best: ${best}`,cW/2,cupY+cupH+50);
+      if(result){
+        const col=result==='perfect'?'#2ecc71':result==='close'?'#f39c12':'#e74c3c';
+        ctx.fillStyle=col;ctx.font='bold 28px Comic Neue';ctx.fillText(result==='perfect'?'🎯 PERFECT!':result==='close'?'👍 Close!':'💦 Overflow!',cW/2,cupY-20);
+        if(result==='overflow'){ctx.fillStyle='rgba(72,219,251,0.3)';for(let i=0;i<5;i++)ctx.fillRect(cupX-20+Math.random()*cupW+40,cupY+cupH+Math.random()*30,6,6);}
+      }
+    }
+    canvas.addEventListener('pointerdown',()=>{if(poured)return;filling=true;});
+    canvas.addEventListener('pointerup',pour);
+    document.addEventListener('keydown',e=>{if(currentGame!=='fillcup')return;if(e.key===' '){if(!poured)filling=!filling;if(!filling&&!poured)pour();}});
+    function pour(){
+      if(!filling||poured)return;filling=false;poured=true;
+      const diff=Math.abs(fillAmt-target);
+      if(diff<=2){result='perfect';streak++;addScore(15);showFeedback('🎯 Perfect! +15','#2ecc71');}
+      else if(diff<=8){result='close';streak++;addScore(5);}
+      else if(fillAmt>target){result='overflow';streak=0;resetStreak();}
+      else{result='miss';streak=0;resetStreak();}
+      if(streak>best){best=streak;sessionStorage.setItem('fc-best',best);}
+      lvl++;setTimeout(genLevel,1500);
+    }
+    genLevel();
+    const exitBtn=document.createElement('button');exitBtn.className='retro-btn';exitBtn.style.cssText='margin:6px;background:#e74c3c;';exitBtn.textContent='🚪 EXIT';exitBtn.onclick=goBack;root.appendChild(exitBtn);
+    function loop(){
+      if(currentGame!=='fillcup')return;
+      if(filling&&fillAmt<100)fillAmt+=fillSpeed;
+      if(filling&&fillAmt>=100){fillAmt=100;pour();}
+      draw();requestAnimationFrame(loop);
+    }
+    requestAnimationFrame(loop);
+  }
+  const _collegeData={
+    calculus:{name:'Calculus',questions:[
+      {q:'What is d/dx [x³]?',formula:'d/dx [x³] = ?',opts:['3x²','3x','x²','2x³'],ans:0,explain:'Power rule: d/dx [xⁿ] = nxⁿ⁻¹, so d/dx [x³] = 3x²'},
+      {q:'What is ∫ 2x dx?',formula:'∫ 2x dx = ?',opts:['x²+C','2x²+C','x+C','2+C'],ans:0,explain:'Reverse power rule: ∫ 2x dx = 2·x²/2 + C = x² + C'},
+      {q:'What is the derivative of sin(x)?',formula:'d/dx [sin(x)] = ?',opts:['cos(x)','-cos(x)','sin(x)','-sin(x)'],ans:0,explain:'The derivative of sin(x) is cos(x). This is a fundamental trig derivative.'},
+      {q:'What is ∫ eˣ dx?',formula:'∫ eˣ dx = ?',opts:['eˣ + C','xeˣ + C','eˣ/x + C','ln(x) + C'],ans:0,explain:'eˣ is its own antiderivative: ∫ eˣ dx = eˣ + C'},
+      {q:'What is d/dx [ln(x)]?',formula:'d/dx [ln(x)] = ?',opts:['1/x','x','ln(x)/x','1'],ans:0,explain:'The derivative of ln(x) is 1/x for x > 0'},
+      {q:'limₓ→₀ sin(x)/x = ?',formula:'lim(x→0) sin(x)/x = ?',opts:['1','0','∞','undefined'],ans:0,explain:'This is a famous limit. By L\'Hôpital\'s rule or the squeeze theorem, lim sin(x)/x = 1.'},
+      {q:'∫₀¹ 3x² dx = ?',formula:'∫₀¹ 3x² dx = ?',opts:['1','3','1/3','2'],ans:0,explain:'∫ 3x² dx = x³. Evaluated from 0 to 1: 1³ - 0³ = 1'},
+      {q:'d/dx [x·eˣ] = ?',formula:'d/dx [x·eˣ] = ?',opts:['eˣ + xeˣ','xeˣ','eˣ','2xeˣ'],ans:0,explain:'Product rule: d/dx[fg] = f\'g + fg\'. So (1)(eˣ) + (x)(eˣ) = eˣ(1+x)'},
+      {q:'What is d/dx [cos(x)]?',formula:'d/dx [cos(x)] = ?',opts:['-sin(x)','sin(x)','cos(x)','-cos(x)'],ans:0,explain:'The derivative of cos(x) is -sin(x).'},
+      {q:'∫ 1/x dx = ?',formula:'∫ 1/x dx = ?',opts:['ln|x|+C','1/x²+C','x+C','-1/x²+C'],ans:0,explain:'The antiderivative of 1/x is the natural log: ln|x| + C'},
+      {q:'What is the chain rule for d/dx [f(g(x))]?',formula:'d/dx [f(g(x))] = ?',opts:['f\'(g(x))·g\'(x)','f\'(x)·g\'(x)','f(g\'(x))','f\'(g(x))'],ans:0,explain:'Chain rule: the derivative of the outer function evaluated at the inner, times the derivative of the inner.'},
+      {q:'∫ cos(x) dx = ?',formula:'∫ cos(x) dx = ?',opts:['sin(x)+C','-sin(x)+C','cos(x)+C','tan(x)+C'],ans:0,explain:'Since d/dx[sin(x)] = cos(x), the antiderivative of cos(x) is sin(x) + C.'}
+    ]},
+    linalg:{name:'Linear Algebra',questions:[
+      {q:'What is the determinant of [[2,3],[1,4]]?',formula:'det([[2,3],[1,4]]) = ?',opts:['5','11','8','2'],ans:0,explain:'det = ad - bc = 2(4) - 3(1) = 8 - 3 = 5'},
+      {q:'What is the rank of a 3×3 identity matrix?',formula:'rank(I₃) = ?',opts:['3','1','0','9'],ans:0,explain:'The identity matrix has 3 linearly independent rows/columns, so rank = 3'},
+      {q:'If A is 3×2 and B is 2×4, what size is AB?',formula:'A₃ₓ₂ · B₂ₓ₄ = ?',opts:['3×4','2×3','3×2','4×2'],ans:0,explain:'Matrix multiplication (m×n)(n×p) = m×p. So (3×2)(2×4) = 3×4'},
+      {q:'What are eigenvalues?',formula:'Av = λv — what is λ?',opts:['Scalar multiples where Av=λv','Matrix dimensions','Row operations','Determinant factors'],ans:0,explain:'Eigenvalues λ satisfy Av = λv: the matrix A scales eigenvector v by factor λ.'},
+      {q:'The transpose of [[1,2],[3,4]] is?',formula:'[[1,2],[3,4]]ᵀ = ?',opts:['[[1,3],[2,4]]','[[4,3],[2,1]]','[[1,2],[3,4]]','[[2,1],[4,3]]'],ans:0,explain:'Transpose swaps rows and columns: element (i,j) becomes (j,i).'},
+      {q:'What is the null space of a matrix?',formula:'Null(A) = ?',opts:['All x where Ax=0','All columns of A','The determinant','Row echelon form'],ans:0,explain:'The null space is the set of all vectors x such that Ax = 0.'},
+      {q:'How many solutions does a consistent system with free variables have?',formula:'Consistent + free variables → ?',opts:['Infinitely many','Exactly one','None','Two'],ans:0,explain:'Free variables can take any value, creating infinitely many solutions.'},
+      {q:'What does it mean for vectors to be linearly independent?',formula:'Linear independence means?',opts:['No vector is a combination of others','All vectors are parallel','Vectors span R³','Determinant is 0'],ans:0,explain:'Vectors are linearly independent if none can be written as a linear combination of the others.'}
+    ]},
+    stats:{name:'Statistics',questions:[
+      {q:'What is the mean of {2, 4, 6, 8, 10}?',formula:'μ = ?',opts:['6','5','7','8'],ans:0,explain:'Mean = sum/count = 30/5 = 6'},
+      {q:'In a normal distribution, ~68% of data falls within how many standard deviations?',formula:'68% rule: μ ± ?σ',opts:['1σ','2σ','3σ','0.5σ'],ans:0,explain:'The empirical rule: ~68% within 1σ, ~95% within 2σ, ~99.7% within 3σ'},
+      {q:'What is Bayes\' theorem used for?',formula:'P(A|B) = P(B|A)·P(A)/P(B)',opts:['Updating probability with new evidence','Calculating means','Finding standard deviation','Counting combinations'],ans:0,explain:'Bayes\' theorem updates the probability of a hypothesis given observed evidence.'},
+      {q:'P(A∪B) for mutually exclusive events?',formula:'P(A∪B) = ?',opts:['P(A)+P(B)','P(A)·P(B)','P(A)+P(B)-P(A∩B)','1-P(A)'],ans:0,explain:'For mutually exclusive events, P(A∩B)=0, so P(A∪B) = P(A) + P(B)'},
+      {q:'What is the median of {1, 3, 5, 7, 9, 11}?',formula:'Median = ?',opts:['6','5','7','5.5'],ans:0,explain:'With even count, median = average of two middle values: (5+7)/2 = 6'},
+      {q:'What does a p-value < 0.05 mean?',formula:'p < 0.05 → ?',opts:['Result is statistically significant','The null hypothesis is true','100% certainty','The sample is too small'],ans:0,explain:'p < 0.05 means there\'s less than 5% probability the result occurred by chance under the null hypothesis.'},
+      {q:'What is the standard deviation a measure of?',formula:'σ measures?',opts:['Spread/dispersion of data','Central tendency','Skewness','Sample size'],ans:0,explain:'Standard deviation quantifies how spread out data points are from the mean.'},
+      {q:'n choose k (ⁿCₖ) counts what?',formula:'ⁿCₖ = ?',opts:['Combinations (order doesn\'t matter)','Permutations','Probabilities','Means'],ans:0,explain:'ⁿCₖ = n!/(k!(n-k)!) counts the number of ways to choose k items from n without regard to order.'}
+    ]},
+    discrete:{name:'Discrete Math',questions:[
+      {q:'What is 5! (5 factorial)?',formula:'5! = ?',opts:['120','60','24','720'],ans:0,explain:'5! = 5×4×3×2×1 = 120'},
+      {q:'In propositional logic, what is ¬(A∧B) equivalent to?',formula:'¬(A∧B) ≡ ?',opts:['¬A ∨ ¬B','¬A ∧ ¬B','A ∨ B','A → B'],ans:0,explain:'De Morgan\'s Law: ¬(A∧B) ≡ ¬A ∨ ¬B'},
+      {q:'How many edges does a complete graph K₅ have?',formula:'|E(K₅)| = ?',opts:['10','5','15','20'],ans:0,explain:'Complete graph Kₙ has n(n-1)/2 edges. K₅ = 5(4)/2 = 10'},
+      {q:'What is the contrapositive of P→Q?',formula:'Contrapositive of P→Q?',opts:['¬Q→¬P','Q→P','¬P→¬Q','P∧¬Q'],ans:0,explain:'The contrapositive ¬Q→¬P is logically equivalent to P→Q.'},
+      {q:'How many subsets does a set with n elements have?',formula:'|P(S)| where |S|=n?',opts:['2ⁿ','n!','n²','2n'],ans:0,explain:'The power set has 2ⁿ subsets (each element is either in or out).'},
+      {q:'What is mathematical induction used for?',formula:'Induction proves?',opts:['Statements true for all natural numbers','A single case','Probability','Averages'],ans:0,explain:'Induction proves a base case, then shows if true for k, it\'s true for k+1.'},
+      {q:'In a tree with n vertices, how many edges?',formula:'|E(Tree)| = ?',opts:['n-1','n','n+1','2n'],ans:0,explain:'A tree with n vertices always has exactly n-1 edges.'},
+      {q:'What does the pigeonhole principle state?',formula:'n items in m boxes, n>m → ?',opts:['At least one box has ≥2 items','All boxes have 1 item','Some boxes are empty','Items are ordered'],ans:0,explain:'If n > m, at least one container must hold more than one item.'}
+    ]},
+    physics:{name:'Physics',questions:[
+      {q:'F = ma is which law of Newton?',formula:'F = ma',opts:['Second Law','First Law','Third Law','Law of Gravity'],ans:0,explain:'Newton\'s Second Law: Force equals mass times acceleration.'},
+      {q:'What is the SI unit of energy?',formula:'Energy unit = ?',opts:['Joule','Watt','Newton','Pascal'],ans:0,explain:'The Joule (J) = kg·m²/s². Watts are power (J/s), Newtons are force.'},
+      {q:'What is the speed of light in vacuum?',formula:'c = ?',opts:['3×10⁸ m/s','3×10⁶ m/s','3×10¹⁰ m/s','3×10⁵ m/s'],ans:0,explain:'The speed of light c ≈ 3 × 10⁸ m/s (299,792,458 m/s exactly).'},
+      {q:'KE = ½mv². If velocity doubles, KE becomes?',formula:'v→2v, KE→?',opts:['4× original','2× original','8× original','Same'],ans:0,explain:'KE ∝ v². If v doubles: KE = ½m(2v)² = ½m·4v² = 4 × original KE'},
+      {q:'What is the first law of thermodynamics?',formula:'ΔU = Q - W',opts:['Energy conservation (heat & work)','Entropy always increases','Absolute zero is unattainable','F=ma'],ans:0,explain:'First law: internal energy change equals heat added minus work done by the system.'},
+      {q:'What is Ohm\'s Law?',formula:'V = ?',opts:['IR','P/I','I/R','PR'],ans:0,explain:'Ohm\'s Law: Voltage = Current × Resistance (V = IR)'},
+      {q:'A projectile\'s horizontal velocity (no air resistance) is?',formula:'vₓ = ?',opts:['Constant','Increasing','Decreasing','Zero'],ans:0,explain:'With no air resistance, horizontal velocity is constant (no horizontal force).'},
+      {q:'What is the unit of frequency?',formula:'Frequency unit = ?',opts:['Hertz (Hz)','Watt (W)','Ampere (A)','Ohm (Ω)'],ans:0,explain:'Frequency is measured in Hertz (Hz) = 1/second = cycles per second.'}
+    ]},
+    chemistry:{name:'Chemistry',questions:[
+      {q:'How many elements are in H₂O?',formula:'H₂O contains?',opts:['2 elements (H, O)','3 elements','1 element','4 elements'],ans:0,explain:'Water (H₂O) contains 2 elements: Hydrogen and Oxygen'},
+      {q:'What is Avogadro\'s number?',formula:'Nₐ ≈ ?',opts:['6.022×10²³','6.022×10²⁰','3.14×10²³','1.602×10²³'],ans:0,explain:'Avogadro\'s number ≈ 6.022 × 10²³ particles per mole'},
+      {q:'What type of bond shares electrons?',formula:'Shared electrons = ?',opts:['Covalent bond','Ionic bond','Metallic bond','Hydrogen bond'],ans:0,explain:'Covalent bonds involve sharing electron pairs between atoms.'},
+      {q:'pH of 7 indicates?',formula:'pH 7 = ?',opts:['Neutral','Acidic','Basic','Cannot determine'],ans:0,explain:'pH 7 is neutral. Below 7 is acidic, above 7 is basic.'},
+      {q:'What is the molar mass of CO₂?',formula:'M(CO₂) = ?',opts:['44 g/mol','28 g/mol','32 g/mol','18 g/mol'],ans:0,explain:'C=12, O=16. CO₂ = 12 + 2(16) = 44 g/mol'},
+      {q:'In a balanced equation, what is conserved?',formula:'Conservation of?',opts:['Mass (atoms)','Volume','Temperature','Color'],ans:0,explain:'The law of conservation of mass: atoms are neither created nor destroyed.'},
+      {q:'What determines an element\'s identity?',formula:'Element identity = ?',opts:['Number of protons','Number of electrons','Atomic mass','Number of neutrons'],ans:0,explain:'The atomic number (proton count) uniquely identifies each element.'},
+      {q:'Exothermic reactions release what?',formula:'Exothermic → ?',opts:['Heat (energy)','Light only','Mass','Electrons only'],ans:0,explain:'Exothermic reactions release energy as heat (ΔH < 0).'}
+    ]},
+    biology:{name:'Biology',questions:[
+      {q:'What organelle is the "powerhouse of the cell"?',formula:'Cell energy → ?',opts:['Mitochondria','Nucleus','Ribosome','Golgi body'],ans:0,explain:'Mitochondria produce ATP through cellular respiration.'},
+      {q:'DNA stands for?',formula:'DNA = ?',opts:['Deoxyribonucleic acid','Dinitrogen acid','Dynamic nuclear assembly','Dual nucleotide array'],ans:0,explain:'DNA = Deoxyribonucleic acid, the molecule carrying genetic instructions.'},
+      {q:'What is the complementary base pair of Adenine?',formula:'A pairs with?',opts:['Thymine (DNA) / Uracil (RNA)','Guanine','Cytosine','Adenine'],ans:0,explain:'In DNA: A-T and G-C. In RNA: A-U and G-C.'},
+      {q:'Which process converts CO₂ + H₂O → glucose + O₂?',formula:'CO₂ + H₂O → C₆H₁₂O₆ + O₂',opts:['Photosynthesis','Respiration','Fermentation','Glycolysis'],ans:0,explain:'Photosynthesis: plants use light energy to convert CO₂ and water into glucose and oxygen.'},
+      {q:'What is natural selection?',formula:'Survival of the?',opts:['Fittest (best adapted)','Strongest','Largest','Fastest'],ans:0,explain:'Natural selection favors organisms best adapted to their environment, not necessarily the strongest.'},
+      {q:'What is the basic unit of life?',formula:'Life unit = ?',opts:['Cell','Atom','Molecule','Organ'],ans:0,explain:'The cell is the fundamental unit of life — all living things are made of cells.'},
+      {q:'How many chromosomes do humans have?',formula:'Human chromosomes = ?',opts:['46','23','48','44'],ans:0,explain:'Humans have 46 chromosomes (23 pairs) — 22 autosomal pairs + 1 sex chromosome pair.'},
+      {q:'What does mRNA do?',formula:'mRNA function?',opts:['Carries genetic code to ribosomes','Stores genetic info','Makes proteins directly','Replicates DNA'],ans:0,explain:'mRNA (messenger RNA) copies DNA code and carries it to ribosomes for protein synthesis.'}
+    ]},
+    algorithms:{name:'Algorithms',questions:[
+      {q:'What is the time complexity of binary search?',formula:'Binary search = O(?)',opts:['O(log n)','O(n)','O(n²)','O(1)'],ans:0,explain:'Binary search halves the search space each step: O(log n)'},
+      {q:'What sorting algorithm has worst-case O(n log n)?',formula:'Worst O(n log n) sort?',opts:['Merge Sort','Quick Sort','Bubble Sort','Selection Sort'],ans:0,explain:'Merge Sort guarantees O(n log n) in all cases. Quick Sort is O(n²) worst-case.'},
+      {q:'BFS uses which data structure?',formula:'BFS uses?',opts:['Queue','Stack','Heap','Array'],ans:0,explain:'BFS (Breadth-First Search) explores level by level using a FIFO queue.'},
+      {q:'DFS uses which data structure?',formula:'DFS uses?',opts:['Stack','Queue','Heap','Hash table'],ans:0,explain:'DFS (Depth-First Search) uses a LIFO stack (or recursion).'},
+      {q:'What is the time complexity of bubble sort?',formula:'Bubble sort = O(?)',opts:['O(n²)','O(n log n)','O(n)','O(log n)'],ans:0,explain:'Bubble sort compares adjacent pairs repeatedly: O(n²) average and worst case.'},
+      {q:'Dijkstra\'s algorithm finds?',formula:'Dijkstra finds?',opts:['Shortest path in weighted graph','Minimum spanning tree','Topological order','Maximum flow'],ans:0,explain:'Dijkstra\'s algorithm finds the shortest path from a source to all other vertices in a weighted graph.'},
+      {q:'What does Big-O notation describe?',formula:'O(f(n)) describes?',opts:['Upper bound on growth rate','Exact running time','Memory usage only','Best case only'],ans:0,explain:'Big-O describes the upper bound of an algorithm\'s growth rate as input size increases.'},
+      {q:'Hash table average lookup time is?',formula:'Hash lookup = O(?)',opts:['O(1)','O(n)','O(log n)','O(n²)'],ans:0,explain:'Hash tables provide O(1) average-case lookup through direct addressing via hash function.'}
+    ]},
+    datastructs:{name:'Data Structures',questions:[
+      {q:'A stack follows which principle?',formula:'Stack = ?',opts:['LIFO','FIFO','Random','Priority'],ans:0,explain:'Stack = Last In, First Out. The last element added is the first removed.'},
+      {q:'A queue follows which principle?',formula:'Queue = ?',opts:['FIFO','LIFO','Random','Sorted'],ans:0,explain:'Queue = First In, First Out. The first element added is the first removed.'},
+      {q:'A binary tree node has at most how many children?',formula:'Binary tree children ≤ ?',opts:['2','3','1','Unlimited'],ans:0,explain:'Binary: each node has at most 2 children (left and right).'},
+      {q:'What is the height of a balanced BST with n nodes?',formula:'BST height ≈ ?',opts:['O(log n)','O(n)','O(1)','O(n²)'],ans:0,explain:'A balanced binary search tree has height O(log n), enabling efficient search.'},
+      {q:'Linked list vs array: which has O(1) insertion at head?',formula:'O(1) head insert?',opts:['Linked list','Array','Both','Neither'],ans:0,explain:'Linked lists insert at head in O(1) by pointer reassignment. Arrays require shifting all elements.'},
+      {q:'What data structure is a heap?',formula:'Heap is a?',opts:['Complete binary tree with ordering','Linked list','Hash table','Graph'],ans:0,explain:'A heap is a complete binary tree where parent ≤ children (min-heap) or parent ≥ children (max-heap).'},
+      {q:'What is a graph with no cycles called?',formula:'No cycles = ?',opts:['Tree (or forest)','Complete graph','Bipartite graph','Multigraph'],ans:0,explain:'A connected acyclic graph is a tree. A disconnected acyclic graph is a forest.'},
+      {q:'Trie data structure is optimized for?',formula:'Trie is best for?',opts:['String/prefix searching','Number sorting','Graph traversal','Matrix operations'],ans:0,explain:'Tries (prefix trees) store strings character by character for fast prefix-based lookups.'}
+    ]},
+    philosophy:{name:'Philosophy & Logic',questions:[
+      {q:'Who said "I think, therefore I am"?',formula:'Cogito ergo sum',opts:['Descartes','Plato','Aristotle','Kant'],ans:0,explain:'René Descartes: the act of thinking proves one\'s own existence.'},
+      {q:'What is a logical fallacy?',formula:'Fallacy = ?',opts:['An error in reasoning','A true statement','A mathematical proof','A hypothesis'],ans:0,explain:'A fallacy is a flaw in reasoning that makes an argument invalid.'},
+      {q:'What is the "ad hominem" fallacy?',formula:'Ad hominem = ?',opts:['Attacking the person, not the argument','Appeal to authority','Circular reasoning','False cause'],ans:0,explain:'Ad hominem attacks the person making the argument rather than the argument itself.'},
+      {q:'Plato\'s Allegory of the Cave illustrates?',formula:'Cave allegory = ?',opts:['Difference between perception and reality','Mathematics','Ethics','Political theory'],ans:0,explain:'The cave allegory shows how perceived reality (shadows) differs from true reality (the world outside).'},
+      {q:'What is Occam\'s Razor?',formula:'Occam\'s Razor = ?',opts:['Simplest explanation is usually best','Complexity is always better','All theories are equal','Evidence is unnecessary'],ans:0,explain:'Occam\'s Razor: among competing hypotheses, prefer the one with fewest assumptions.'},
+      {q:'What is a "straw man" fallacy?',formula:'Straw man = ?',opts:['Misrepresenting someone\'s argument','Attacking character','Circular logic','Appeal to emotion'],ans:0,explain:'A straw man distorts the opponent\'s position to make it easier to attack.'},
+      {q:'Who is considered the father of Western philosophy?',formula:'Father of philosophy?',opts:['Socrates','Plato','Aristotle','Pythagoras'],ans:0,explain:'Socrates is widely regarded as the founder of Western philosophy through his method of questioning.'},
+      {q:'What is deductive reasoning?',formula:'Deduction = ?',opts:['General rules → specific conclusions','Specific → general','Random guessing','Emotional reasoning'],ans:0,explain:'Deduction: if premises are true, the conclusion must be true. General → specific.'}
+    ]},
+    economics:{name:'Economics',questions:[
+      {q:'What happens to demand when price increases (normal good)?',formula:'Price ↑ → Demand ?',opts:['Decreases','Increases','Stays same','Doubles'],ans:0,explain:'Law of demand: price and quantity demanded move inversely (ceteris paribus).'},
+      {q:'GDP stands for?',formula:'GDP = ?',opts:['Gross Domestic Product','General Demand Pricing','Global Distribution Power','Grand Development Plan'],ans:0,explain:'GDP = Gross Domestic Product: total market value of all goods/services produced in a country.'},
+      {q:'What is an opportunity cost?',formula:'Opportunity cost = ?',opts:['Value of the next best alternative','Total cost of production','Price of a good','Fixed expenses'],ans:0,explain:'Opportunity cost is what you give up when choosing one option over another.'},
+      {q:'Inflation means?',formula:'Inflation = ?',opts:['General rise in price levels','Economic growth','Lower unemployment','More exports'],ans:0,explain:'Inflation is a sustained increase in the general price level, reducing purchasing power.'},
+      {q:'What shifts the supply curve right?',formula:'Supply curve → right?',opts:['Lower production costs','Higher taxes','Fewer producers','Higher input prices'],ans:0,explain:'Lower costs make production more profitable, increasing supply (rightward shift).'},
+      {q:'In a competitive market, equilibrium is where?',formula:'Equilibrium = ?',opts:['Supply meets demand','Supply exceeds demand','Demand exceeds supply','Price is highest'],ans:0,explain:'Equilibrium price is where quantity supplied equals quantity demanded.'},
+      {q:'What is a monopoly?',formula:'Monopoly = ?',opts:['Single seller dominates market','Many sellers compete','Government-run market','Free trade zone'],ans:0,explain:'A monopoly exists when one firm is the sole provider with no close substitutes.'},
+      {q:'The Federal Reserve controls?',formula:'Fed controls?',opts:['Monetary policy','Fiscal policy','Trade policy','Immigration'],ans:0,explain:'The Fed sets monetary policy: interest rates, money supply, and bank regulation.'}
+    ]},
+    writing:{name:'Academic Writing',questions:[
+      {q:'A thesis statement should be?',formula:'Thesis = ?',opts:['Clear, specific, arguable claim','A question','A list of topics','A summary of facts'],ans:0,explain:'A thesis is a clear, debatable claim that your paper will support with evidence.'},
+      {q:'Which is correct: "their," "there," or "they\'re" for possession?',formula:'_______ book',opts:['their','there','they\'re','theyre'],ans:0,explain:'"Their" = possessive. "There" = place. "They\'re" = they are.'},
+      {q:'What is a topic sentence?',formula:'Topic sentence = ?',opts:['First sentence stating paragraph\'s main idea','The thesis','A conclusion','A citation'],ans:0,explain:'A topic sentence introduces the main idea of a paragraph and connects to the thesis.'},
+      {q:'APA, MLA, and Chicago are types of?',formula:'APA/MLA/Chicago = ?',opts:['Citation/formatting styles','Programming languages','Math formulas','Literary genres'],ans:0,explain:'These are academic citation and formatting standards for research papers.'},
+      {q:'Which sentence is active voice?',formula:'Active voice?',opts:['"She wrote the paper"','"The paper was written"','"It was decided"','"Mistakes were made"'],ans:0,explain:'Active voice: subject performs action ("She wrote"). Passive: subject receives action ("was written").'},
+      {q:'"Effect" vs "Affect": which is typically a noun?',formula:'Noun form?',opts:['Effect','Affect','Both','Neither'],ans:0,explain:'"Effect" is usually a noun (the effect). "Affect" is usually a verb (to affect).'},
+      {q:'What makes a source "peer-reviewed"?',formula:'Peer-reviewed = ?',opts:['Evaluated by field experts before publishing','Published online','Written by a professor','Has many citations'],ans:0,explain:'Peer review means other experts in the field evaluated the work for quality before publication.'},
+      {q:'What is plagiarism?',formula:'Plagiarism = ?',opts:['Using others\' work without credit','Citing sources','Paraphrasing','Summarizing'],ans:0,explain:'Plagiarism is presenting someone else\'s ideas or words as your own without proper attribution.'}
+    ]},
+    psychology:{name:'Psychology',questions:[
+      {q:'Who is known for classical conditioning?',formula:'Classical conditioning?',opts:['Pavlov','Skinner','Freud','Maslow'],ans:0,explain:'Ivan Pavlov demonstrated classical conditioning with his famous dog salivation experiments.'},
+      {q:'What is Maslow\'s hierarchy about?',formula:'Maslow\'s pyramid?',opts:['Hierarchy of human needs','Learning stages','Brain regions','Personality types'],ans:0,explain:'Maslow\'s hierarchy: physiological → safety → love → esteem → self-actualization.'},
+      {q:'What is cognitive dissonance?',formula:'Cognitive dissonance = ?',opts:['Discomfort from conflicting beliefs','A learning disability','A memory technique','A personality trait'],ans:0,explain:'Cognitive dissonance: mental stress from holding contradictory beliefs or behaviors.'},
+      {q:'The Stanford Prison Experiment demonstrated?',formula:'Stanford experiment showed?',opts:['Power of social roles/authority','Memory capacity','Intelligence testing','Classical conditioning'],ans:0,explain:'Zimbardo\'s experiment showed how assigned social roles can dramatically alter behavior.'},
+      {q:'What does the prefrontal cortex primarily control?',formula:'Prefrontal cortex = ?',opts:['Decision-making & planning','Vision','Hearing','Motor control'],ans:0,explain:'The prefrontal cortex handles executive functions: planning, decision-making, and impulse control.'},
+      {q:'What is operant conditioning?',formula:'Operant conditioning = ?',opts:['Learning through rewards/punishment','Learning through observation','Instinctive behavior','Brain surgery'],ans:0,explain:'Operant conditioning (Skinner): behavior is modified by its consequences — reinforcement or punishment.'},
+      {q:'What is confirmation bias?',formula:'Confirmation bias = ?',opts:['Seeking info that confirms existing beliefs','Forgetting information','Learning new things','Being objective'],ans:0,explain:'Confirmation bias: tendency to search for, interpret, and recall info that confirms preexisting beliefs.'},
+      {q:'What are the Big Five personality traits?',formula:'OCEAN = ?',opts:['Openness, Conscientiousness, Extraversion, Agreeableness, Neuroticism','5 brain regions','5 senses','5 emotions'],ans:0,explain:'The Big Five (OCEAN): Openness, Conscientiousness, Extraversion, Agreeableness, Neuroticism.'}
+    ]}
+  };
+  function initCollege(subject){
+    const root=$$(`#${subject}-game`);root.innerHTML='';
+    const data=_collegeData[subject];if(!data)return;
+    const questions=[...data.questions].sort(()=>Math.random()-0.5);
+    let idx=0,correct=0,answered=false;
+    function render(){
+      root.innerHTML='';
+      if(idx>=questions.length){
+        const pct=Math.round(correct/questions.length*100);
+        root.innerHTML=buildResultCard(subject,correct,questions.length,`${data.name} — ${pct}% mastery`);
+        const rb=document.createElement('button');rb.className='retro-btn';rb.style.marginTop='10px';rb.textContent='STUDY AGAIN';rb.onclick=()=>initCollege(subject);root.appendChild(rb);
+        if(pct>=70)showFeedback(`${data.name} ${pct}%! 🎓`,'#2ecc71');
+        return;
+      }
+      const q=questions[idx];answered=false;
+      const prog=document.createElement('div');prog.className='college-progress';
+      questions.forEach((_,i)=>{const d=document.createElement('div');d.className='college-dot'+(i<idx?(questions[i]._correct?'done':'wrong-dot'):'')+(i===idx?' current':'');prog.appendChild(d);});
+      root.appendChild(prog);
+      const topic=document.createElement('div');topic.className='college-topic';topic.textContent=`${data.name} — Question ${idx+1}/${questions.length}`;root.appendChild(topic);
+      const hud=document.createElement('div');hud.className='bj-hud';hud.innerHTML=`<span class="game-stat">✅ ${correct}/${idx}</span><span class="game-stat">📊 ${idx>0?Math.round(correct/idx*100):0}%</span>`;root.appendChild(hud);
+      const card=document.createElement('div');card.className='college-card';
+      const qText=document.createElement('div');qText.className='college-question';qText.textContent=q.q;card.appendChild(qText);
+      if(q.formula){const f=document.createElement('div');f.className='college-formula';f.textContent=q.formula;card.appendChild(f);}
+      const choices=document.createElement('div');choices.className='college-choices';
+      const shuffled=q.opts.map((o,i)=>({text:o,origIdx:i})).sort(()=>Math.random()-0.5);
+      shuffled.forEach(opt=>{
+        const btn=document.createElement('div');btn.className='college-opt';btn.textContent=opt.text;
+        btn.addEventListener('click',()=>{
+          if(answered)return;answered=true;
+          const isCorrect=opt.origIdx===q.ans;
+          q._correct=isCorrect;
+          btn.classList.add(isCorrect?'correct':'wrong');
+          if(isCorrect){correct++;addScore(5);}else{resetStreak();choices.querySelectorAll('.college-opt').forEach((b,bi)=>{if(shuffled[bi].origIdx===q.ans)b.classList.add('correct');});}
+          const explain=document.createElement('div');explain.className='college-explain';explain.style.display='block';explain.innerHTML=`💡 ${q.explain}`;card.appendChild(explain);
+          setTimeout(()=>{idx++;render();},2500);
+        });
+        choices.appendChild(btn);
+      });
+      card.appendChild(choices);root.appendChild(card);
+    }
+    render();
   }
   const _tutorials={
     sudoku:{title:'\ud83d\udd22 How to Play Sudoku',steps:[
