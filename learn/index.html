@@ -348,6 +348,47 @@
   .life-title { text-shadow:0 0 20px rgba(77,184,255,0.3); }
   .wb-card { transition:transform 0.2s,box-shadow 0.2s,border-color 0.3s,background 0.3s; }
   .wb-card:hover { box-shadow:0 8px 25px rgba(85,239,196,0.3); transform:scale(1.06) translateY(-3px); }
+  .game-btn.colorsort { border-color: #e056a0; } .game-btn.colorsort:hover { box-shadow: 0 10px 30px rgba(224,86,160,0.25); }
+  .game-btn.bejeweled { border-color: #ff4757; } .game-btn.bejeweled:hover { box-shadow: 0 10px 30px rgba(255,71,87,0.25); }
+  #colorsort-view { background:linear-gradient(135deg,#1a1428 0%,#281a2e 50%,#1a1428 100%); background-size:200% 200%; animation:bgShift 12s ease infinite; }
+  #bejeweled-view { background:linear-gradient(135deg,#1a0a1e 0%,#2e0a1a 50%,#1a0a1e 100%); background-size:200% 200%; animation:bgShift 10s ease infinite; }
+  .cs-game { display:flex; flex-direction:column; align-items:center; gap:15px; width:100%; }
+  .cs-hud { display:flex; gap:15px; justify-content:center; flex-wrap:wrap; margin:8px 0; }
+  .cs-tubes { display:flex; gap:clamp(6px,1.5vw,14px); justify-content:center; flex-wrap:wrap; padding:10px; }
+  .cs-tube { display:flex; flex-direction:column-reverse; width:clamp(44px,10vw,60px); height:clamp(176px,40vw,240px); background:rgba(255,255,255,0.05); border:3px solid rgba(255,255,255,0.25); border-top:none; border-radius:0 0 20px 20px; position:relative; cursor:pointer; transition:transform 0.2s,box-shadow 0.2s; overflow:hidden; }
+  .cs-tube::before { content:''; position:absolute; top:-4px; left:-3px; right:-3px; height:8px; background:transparent; border:3px solid rgba(255,255,255,0.25); border-bottom:none; border-radius:6px 6px 0 0; }
+  .cs-tube:hover { transform:translateY(-4px); box-shadow:0 8px 20px rgba(224,86,160,0.3); }
+  .cs-tube.selected { transform:translateY(-12px); box-shadow:0 12px 30px rgba(224,86,160,0.5); border-color:#e056a0; }
+  .cs-tube.selected::before { border-color:#e056a0; }
+  .cs-segment { width:100%; transition:transform 0.3s ease-out,opacity 0.3s; }
+  .cs-segment.pouring { animation:csPour 0.4s ease-out; }
+  @keyframes csPour { 0%{transform:translateY(-60px);opacity:0} 60%{transform:translateY(5px);opacity:1} 100%{transform:translateY(0);opacity:1} }
+  .cs-tube.shake { animation:shake 0.4s ease-in-out; }
+  .cs-controls { display:flex; gap:10px; margin-top:10px; }
+  .cs-btn { font-family:'Comic Neue',cursive; font-size:1.1rem; padding:10px 22px; border:none; border-radius:10px; cursor:pointer; font-weight:bold; color:#fff; transition:0.15s; }
+  .cs-btn:active { transform:translateY(3px); }
+  .cs-btn.undo { background:#e67e22; box-shadow:0 4px 0 #d35400; }
+  .cs-btn.reset { background:#e74c3c; box-shadow:0 4px 0 #c0392b; }
+  .cs-btn.next { background:#2ecc71; box-shadow:0 4px 0 #27ae60; }
+  .bj-game { display:flex; flex-direction:column; align-items:center; gap:10px; width:100%; }
+  .bj-hud { display:flex; gap:15px; justify-content:center; flex-wrap:wrap; margin:8px 0; }
+  .bj-grid { display:grid; gap:3px; padding:6px; background:rgba(0,0,0,0.3); border-radius:12px; border:2px solid rgba(255,71,87,0.3); touch-action:none; }
+  .bj-cell { width:clamp(40px,9vw,56px); height:clamp(40px,9vw,56px); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:clamp(1.4rem,4vw,2rem); cursor:pointer; transition:transform 0.15s,box-shadow 0.15s,opacity 0.3s; user-select:none; position:relative; background:rgba(255,255,255,0.06); border:2px solid rgba(255,255,255,0.08); }
+  .bj-cell:hover { transform:scale(1.08); box-shadow:0 0 12px rgba(255,71,87,0.4); }
+  .bj-cell.selected { transform:scale(1.12); box-shadow:0 0 18px rgba(255,255,255,0.5); border-color:#fff; }
+  .bj-cell.matched { animation:bjMatch 0.5s ease-out; }
+  @keyframes bjMatch { 0%{transform:scale(1);opacity:1} 40%{transform:scale(1.4) rotate(15deg);opacity:1} 100%{transform:scale(0);opacity:0} }
+  .bj-cell.falling { animation:bjFall 0.35s ease-in; }
+  @keyframes bjFall { 0%{transform:translateY(-100%);opacity:0} 100%{transform:translateY(0);opacity:1} }
+  .bj-cell.swapping-left { animation:bjSwapL 0.25s ease-in-out; }
+  .bj-cell.swapping-right { animation:bjSwapR 0.25s ease-in-out; }
+  .bj-cell.swapping-up { animation:bjSwapU 0.25s ease-in-out; }
+  .bj-cell.swapping-down { animation:bjSwapD 0.25s ease-in-out; }
+  @keyframes bjSwapL { 0%{transform:translateX(100%)} 100%{transform:translateX(0)} }
+  @keyframes bjSwapR { 0%{transform:translateX(-100%)} 100%{transform:translateX(0)} }
+  @keyframes bjSwapU { 0%{transform:translateY(100%)} 100%{transform:translateY(0)} }
+  @keyframes bjSwapD { 0%{transform:translateY(-100%)} 100%{transform:translateY(0)} }
+  .bj-score-popup { position:absolute; font-family:'Comic Neue',cursive; font-weight:bold; font-size:1.2rem; color:#f1c40f; pointer-events:none; z-index:50; animation:floatUp 0.8s ease-out forwards; text-shadow:1px 1px 2px rgba(0,0,0,0.8); }
   .mtn-platform { transition:background 0.3s,box-shadow 0.3s; }
   .mtn-platform[data-solved="true"] { background:#2ecc71; box-shadow:0 0 10px rgba(46,204,113,0.5); }
   #feedback.show { animation:celebPop 1.8s ease-out forwards; filter:drop-shadow(0 0 20px rgba(0,0,0,0.5)); }
@@ -561,6 +602,8 @@
           <button class="game-btn memseq" data-game="memseq"><span class="btn-icon">💡</span><span class="btn-text">Memory Sequence</span><span class="btn-desc">Remember the pattern</span></button>
           <button class="game-btn pattern" data-game="pattern"><span class="btn-icon">🔢</span><span class="btn-text">Pattern Puzzle</span><span class="btn-desc">Find what comes next</span></button>
           <button class="game-btn geo" data-game="geo"><span class="btn-icon">🌎</span><span class="btn-text">Geography Explorer</span><span class="btn-desc">Flags & countries</span></button>
+          <button class="game-btn colorsort" data-game="colorsort"><span class="btn-icon">🧪</span><span class="btn-text">Color Sort</span><span class="btn-desc">Sort colors into tubes</span></button>
+          <button class="game-btn bejeweled" data-game="bejeweled"><span class="btn-icon">💎</span><span class="btn-text">Gem Crush</span><span class="btn-desc">Match 3 gems to score</span></button>
         </div>
       </section>
       <section class="game-category" id="stem-section" style="display:none;">
@@ -824,6 +867,14 @@
     <div class="game-hud" id="tm-hud"></div>
     <div id="tm-container" style="display:flex;flex-direction:column;align-items:center;gap:10px;width:100%"></div>
   </div>
+  <div id="colorsort-view" class="view">
+    <div class="life-title" style="color:#e056a0">🧪 Color Sort <button class="tut-trigger" onclick="showTutorial('colorsort')">? How to Play</button></div>
+    <div class="cs-game" id="cs-game"></div>
+  </div>
+  <div id="bejeweled-view" class="view">
+    <div class="life-title" style="color:#ff4757">💎 Gem Crush <button class="tut-trigger" onclick="showTutorial('bejeweled')">? How to Play</button></div>
+    <div class="bj-game" id="bj-game"></div>
+  </div>
   <div id="feedback">Great Job!</div>
   <canvas id="confetti-canvas"></canvas>
 </div>
@@ -863,7 +914,9 @@
     peripheral: $$('#peripheral-view'),
     visualsearch: $$('#visualsearch-view'),
     mentalrot: $$('#mentalrot-view'),
-    trailmake: $$('#trailmake-view')
+    trailmake: $$('#trailmake-view'),
+    colorsort: $$('#colorsort-view'),
+    bejeweled: $$('#bejeweled-view')
   };
   let currentGame = null;
   let currentSubgame = null;
@@ -949,6 +1002,7 @@
       if(window._pvTimer){clearInterval(window._pvTimer);window._pvTimer=null;}
       if(window._vsTimer){clearInterval(window._vsTimer);window._vsTimer=null;}
       if(window._tmTimer){clearInterval(window._tmTimer);window._tmTimer=null;}
+      if(window._bjTimer){clearInterval(window._bjTimer);window._bjTimer=null;}
       if(window._vacTimer){clearInterval(window._vacTimer);window._vacTimer=null;}
       window.onpointerup=null;
     } else {
@@ -999,6 +1053,8 @@
       if(game === 'visualsearch') initVisualSearch();
       if(game === 'mentalrot') initMentalRot();
       if(game === 'trailmake') initTrailMake();
+      if(game === 'colorsort') initColorSort();
+      if(game === 'bejeweled') initBejeweled();
     });
   });
   function showView(viewId) {
@@ -3733,6 +3789,199 @@ function playAnimalSound(type) {
     ct.appendChild(sd);
     const sb=document.createElement('button');sb.className='nmm-btn';sb.textContent='START';sb.onclick=run;ct.appendChild(sb);
   }
+  function initColorSort(){
+    const root=$$('#cs-game');root.innerHTML='';
+    const COLORS=['#e74c3c','#3498db','#2ecc71','#f1c40f','#9b59b6','#e67e22','#1abc9c','#e056a0','#fd79a8','#6c5ce7','#00cec9','#fdcb6e'];
+    const CAPACITY=4;
+    let lvl=parseInt(sessionStorage.getItem('cs-lvl')||'1');
+    let tubes=[],selected=-1,moves=0,hist=[],won=false;
+    function cfg(l){
+      const nc=Math.min(3+Math.floor((l-1)/2),COLORS.length);
+      const nt=nc+(l<=3?2:(l<=6?2:1));
+      return{nc,nt};
+    }
+    function gen(){
+      const{nc,nt}=cfg(lvl);
+      const pool=[];COLORS.slice(0,nc).forEach(c=>{for(let i=0;i<CAPACITY;i++)pool.push(c);});
+      for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}
+      tubes=[];
+      for(let t=0;t<nc;t++)tubes.push(pool.splice(0,CAPACITY));
+      for(let t=nc;t<nt;t++)tubes.push([]);
+      selected=-1;moves=0;hist=[];won=false;
+    }
+    function isSolved(){return tubes.every(t=>t.length===0||(t.length===CAPACITY&&t.every(c=>c===t[0])));}
+    function canPour(from,to){
+      if(from===to||tubes[from].length===0||tubes[to].length>=CAPACITY)return false;
+      return tubes[to].length===0||tubes[to][tubes[to].length-1]===tubes[from][tubes[from].length-1];
+    }
+    function pour(from,to){
+      const fc=tubes[from][tubes[from].length-1];let cnt=0;
+      while(tubes[from].length>0&&tubes[to].length<CAPACITY&&tubes[from][tubes[from].length-1]===fc){
+        hist.push({f:from,t:to,c:tubes[from].pop()});tubes[to].push(fc);cnt++;
+      }
+      moves++;return cnt;
+    }
+    function render(){
+      root.innerHTML='';
+      const hud=document.createElement('div');hud.className='cs-hud';
+      hud.innerHTML=`<span class="game-stat">📊 Level <span class="game-stat-val">${lvl}</span></span><span class="game-stat">🔄 Moves <span class="game-stat-val">${moves}</span></span>`;
+      root.appendChild(hud);
+      const tray=document.createElement('div');tray.className='cs-tubes';
+      tubes.forEach((t,ti)=>{
+        const el=document.createElement('div');el.className='cs-tube'+(ti===selected?' selected':'');
+        const segH=Math.floor((clamp(176,240)-6)/CAPACITY);
+        t.forEach((c,si)=>{
+          const seg=document.createElement('div');seg.className='cs-segment';
+          seg.style.cssText=`height:${segH}px;background:${c};`;
+          if(si===t.length-1&&ti===selected)seg.style.boxShadow=`0 0 10px ${c}`;
+          el.appendChild(seg);
+        });
+        el.addEventListener('click',()=>tapTube(ti));
+        tray.appendChild(el);
+      });
+      root.appendChild(tray);
+      const ctrl=document.createElement('div');ctrl.className='cs-controls';
+      const undoBtn=document.createElement('button');undoBtn.className='cs-btn undo';undoBtn.textContent='↩ Undo';
+      undoBtn.onclick=()=>{if(hist.length===0)return;const last=hist[hist.length-1];const tc=last.c;while(hist.length>0&&hist[hist.length-1].c===tc&&hist[hist.length-1].f===last.f){const h=hist.pop();tubes[h.f].push(h.c);tubes[h.t].pop();}moves=Math.max(0,moves-1);selected=-1;render();};
+      const rstBtn=document.createElement('button');rstBtn.className='cs-btn reset';rstBtn.textContent='↺ Reset';
+      rstBtn.onclick=()=>{gen();render();};
+      ctrl.appendChild(undoBtn);ctrl.appendChild(rstBtn);
+      if(won){const nxt=document.createElement('button');nxt.className='cs-btn next';nxt.textContent='Next Level ➡';nxt.onclick=()=>{lvl++;sessionStorage.setItem('cs-lvl',lvl);gen();render();};ctrl.appendChild(nxt);}
+      root.appendChild(ctrl);
+    }
+    function clamp(min,max){const vw=window.innerWidth;return Math.min(max,Math.max(min,vw*0.4));}
+    function tapTube(ti){
+      if(won)return;
+      if(selected===-1){
+        if(tubes[ti].length===0)return;
+        selected=ti;render();return;
+      }
+      if(selected===ti){selected=-1;render();return;}
+      if(canPour(selected,ti)){
+        pour(selected,ti);selected=-1;
+        if(isSolved()){won=true;addScore(Math.max(5,20-moves));showFeedback(`Level ${lvl} Complete! 🎉`,'#2ecc71');spawnConfetti(window.innerWidth/2,window.innerHeight/2,100);}
+        render();
+        if(!won){const segs=root.querySelectorAll('.cs-tube:nth-child('+(ti+1)+') .cs-segment');segs.forEach(s=>s.classList.add('pouring'));}
+      }else{
+        const tEl=root.querySelectorAll('.cs-tube')[ti];if(tEl)tEl.classList.add('shake');
+        setTimeout(()=>{if(tEl)tEl.classList.remove('shake');},400);
+        selected=-1;render();
+      }
+    }
+    gen();render();
+  }
+  function initBejeweled(){
+    const root=$$('#bj-game');root.innerHTML='';
+    const GEMS=['💎','🔴','🟢','🔵','🟡','🟣','🟠'];
+    const ROWS=8,COLS=8;
+    let grid=[],score=0,movesLeft=30,sel=null,busy=false,combo=0;
+    if(window._bjTimer){clearInterval(window._bjTimer);window._bjTimer=null;}
+    function rGem(){return GEMS[Math.floor(Math.random()*GEMS.length)];}
+    function init(){
+      grid=[];for(let r=0;r<ROWS;r++){grid[r]=[];for(let c=0;c<COLS;c++){
+        let g;do{g=rGem();}while((c>=2&&grid[r][c-1]===g&&grid[r][c-2]===g)||(r>=2&&grid[r-1][c]===g&&grid[r-2][c]===g));
+        grid[r][c]=g;
+      }}
+      score=0;movesLeft=30;sel=null;busy=false;combo=0;
+    }
+    function findMatches(){
+      const matched=new Set();
+      for(let r=0;r<ROWS;r++)for(let c=0;c<COLS-2;c++){
+        const g=grid[r][c];if(!g)continue;
+        if(grid[r][c+1]===g&&grid[r][c+2]===g){let e=c+2;while(e+1<COLS&&grid[r][e+1]===g)e++;for(let i=c;i<=e;i++)matched.add(r*COLS+i);}
+      }
+      for(let c=0;c<COLS;c++)for(let r=0;r<ROWS-2;r++){
+        const g=grid[r][c];if(!g)continue;
+        if(grid[r+1][c]===g&&grid[r+2][c]===g){let e=r+2;while(e+1<ROWS&&grid[e+1][c]===g)e++;for(let i=r;i<=e;i++)matched.add(i*COLS+c);}
+      }
+      return matched;
+    }
+    function removeAndDrop(matched){
+      const pts=(matched.size*10)*(1+combo*0.5);score+=Math.round(pts);combo++;
+      matched.forEach(idx=>{const r=Math.floor(idx/COLS),c=idx%COLS;grid[r][c]=null;});
+      for(let c=0;c<COLS;c++){
+        let wr=ROWS-1;
+        for(let r=ROWS-1;r>=0;r--)if(grid[r][c]){if(wr!==r){grid[wr][c]=grid[r][c];grid[r][c]=null;}wr--;}
+        for(let r=wr;r>=0;r--)grid[r][c]=rGem();
+      }
+    }
+    function hasValidMove(){
+      for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){
+        if(c+1<COLS){[grid[r][c],grid[r][c+1]]=[grid[r][c+1],grid[r][c]];const m=findMatches();[grid[r][c],grid[r][c+1]]=[grid[r][c+1],grid[r][c]];if(m.size>0)return true;}
+        if(r+1<ROWS){[grid[r][c],grid[r+1][c]]=[grid[r+1][c],grid[r][c]];const m=findMatches();[grid[r][c],grid[r+1][c]]=[grid[r+1][c],grid[r][c]];if(m.size>0)return true;}
+      }
+      return false;
+    }
+    function render(anim){
+      root.innerHTML='';
+      const hud=document.createElement('div');hud.className='bj-hud';
+      hud.innerHTML=`<span class="game-stat">💎 Score <span class="game-stat-val">${score}</span></span><span class="game-stat">🔄 Moves <span class="game-stat-val">${movesLeft}</span></span>${combo>1?`<span class="game-stat">🔥 x${combo}</span>`:''}`;
+      root.appendChild(hud);
+      const gEl=document.createElement('div');gEl.className='bj-grid';
+      gEl.style.gridTemplateColumns=`repeat(${COLS},clamp(40px,9vw,56px))`;
+      for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){
+        const cell=document.createElement('div');cell.className='bj-cell';
+        if(sel&&sel.r===r&&sel.c===c)cell.classList.add('selected');
+        if(anim&&anim.matched&&anim.matched.has(r*COLS+c))cell.classList.add('matched');
+        if(anim&&anim.fell&&anim.fell.has(r*COLS+c))cell.classList.add('falling');
+        if(anim&&anim.swap){
+          const s=anim.swap;
+          if(r===s.r1&&c===s.c1){s.c2>s.c1?cell.classList.add('swapping-left'):s.c2<s.c1?cell.classList.add('swapping-right'):s.r2>s.r1?cell.classList.add('swapping-up'):cell.classList.add('swapping-down');}
+          if(r===s.r2&&c===s.c2){s.c1>s.c2?cell.classList.add('swapping-left'):s.c1<s.c2?cell.classList.add('swapping-right'):s.r1>s.r2?cell.classList.add('swapping-up'):cell.classList.add('swapping-down');}
+        }
+        cell.textContent=grid[r][c]||'';
+        cell.addEventListener('click',()=>tapCell(r,c));
+        gEl.appendChild(cell);
+      }
+      root.appendChild(gEl);
+    }
+    async function cascade(){
+      busy=true;
+      let m=findMatches();
+      while(m.size>0){
+        render({matched:m});
+        await delay(450);
+        removeAndDrop(m);
+        const fell=new Set();for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++)fell.add(r*COLS+c);
+        render({fell});
+        await delay(350);
+        m=findMatches();
+      }
+      combo=0;
+      if(movesLeft<=0){
+        const pb=getPersonalBest('bejeweled',score);const medal=medalFor(Math.min(100,score/50));
+        let rhtml=buildResultCard('bejeweled',score,movesLeft+30+' moves','');
+        rhtml+=`<button class="nmm-btn" onclick="initBejeweled()" style="margin-top:10px">PLAY AGAIN</button>`;
+        root.innerHTML=`<div style="text-align:center;padding:20px">${rhtml}</div>`;
+        showFeedback(`Game Over! ${score} pts`,'#ff4757');
+        busy=false;return;
+      }
+      if(!hasValidMove()){
+        for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){let g;do{g=rGem();}while((c>=2&&grid[r][c-1]===g&&grid[r][c-2]===g)||(r>=2&&grid[r-1][c]===g&&grid[r-2][c]===g));grid[r][c]=g;}
+        showFeedback('Board shuffled!','#f39c12');render();
+      }else{render();}
+      busy=false;
+    }
+    function delay(ms){return new Promise(r=>setTimeout(r,ms));}
+    async function tapCell(r,c){
+      if(busy||movesLeft<=0)return;
+      if(!sel){sel={r,c};render();return;}
+      const dr=Math.abs(sel.r-r),dc=Math.abs(sel.c-c);
+      if((dr===1&&dc===0)||(dr===0&&dc===1)){
+        const sr=sel.r,sc=sel.c;sel=null;
+        [grid[sr][sc],grid[r][c]]=[grid[r][c],grid[sr][sc]];
+        render({swap:{r1:sr,c1:sc,r2:r,c2:c}});
+        await delay(260);
+        const m=findMatches();
+        if(m.size===0){[grid[sr][sc],grid[r][c]]=[grid[r][c],grid[sr][sc]];render({swap:{r1:r,c1:c,r2:sr,c2:sc}});await delay(260);render();resetStreak();return;}
+        movesLeft--;combo=0;
+        addScore(m.size*2);
+        await cascade();
+      }else{sel={r,c};render();}
+    }
+    window.initBejeweled=initBejeweled;
+    init();render();
+  }
   const _tutorials={
     sudoku:{title:'\ud83d\udd22 How to Play Sudoku',steps:[
       'Fill every <b>row</b>, <b>column</b>, and <b>3\u00d73 box</b> with the numbers 1\u20139. No repeats allowed!',
@@ -3863,6 +4112,22 @@ function playAnimalSound(type) {
       'The next circle to click is <b>subtly highlighted</b>. Clicking wrong adds an error.',
       '<b>Strategy:</b> Before starting, quickly <b>scan the board</b> and mentally plan a rough path for the first few.',
       'Your <b>time and errors</b> are both tracked. Aim for speed with zero mistakes!'
+    ]},
+    colorsort:{title:'\ud83e\uddea How to Play Color Sort',steps:[
+      'Sort the colored liquid into tubes so each tube contains <b>only one color</b>.',
+      'Tap a tube to <b>pick it up</b>, then tap another tube to <b>pour</b> the top color into it.',
+      'You can only pour onto the <b>same color</b>, or into an <b>empty tube</b>.',
+      'Each tube holds up to <b>4 segments</b>. Plan ahead to avoid getting stuck!',
+      '<b>Undo</b> your last move if you make a mistake. <b>Reset</b> to start the level fresh.',
+      'Complete each level to unlock harder puzzles with more colors!'
+    ]},
+    bejeweled:{title:'\ud83d\udc8e How to Play Gem Crush',steps:[
+      'Swap <b>adjacent gems</b> to create lines of <b>3 or more</b> matching gems.',
+      'Tap a gem to select it, then tap a <b>neighbor</b> (up/down/left/right) to swap.',
+      'If the swap creates a match, the gems <b>explode</b> and new ones fall from above!',
+      '<b>Cascades:</b> When falling gems create new matches, you get <b>combo multipliers</b> for bonus points!',
+      'You have <b>30 moves</b>. Make each one count \u2014 look for spots with multiple potential matches.',
+      '<b>Strategy:</b> Match from the <b>bottom</b> first \u2014 falling gems are more likely to create cascades.'
     ]}
   };
   window.showTutorial=function(game){
