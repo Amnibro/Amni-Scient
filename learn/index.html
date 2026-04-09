@@ -5339,47 +5339,64 @@ function playAnimalSound(type) {
     const root=$$('#circuitlab-game');root.innerHTML=`
       <canvas class="lab-canvas" id="circuit-canvas" width="800" height="600"></canvas>
       <div class="lab-toolbar">
+        <button class="lab-tool active" data-tool="wire">🔗 Wire</button>
         <button class="lab-tool" data-tool="battery">🔋 Battery</button>
         <button class="lab-tool" data-tool="resistor">🟫 Resistor</button>
-        <button class="lab-tool" data-tool="wire">🔗 Wire</button>
         <button class="lab-tool" data-tool="bulb">💡 Bulb</button>
         <button class="lab-tool" data-tool="switch">🔘 Switch</button>
         <button class="lab-tool" data-tool="clear">🗑️ Clear</button>
         <button class="lab-tool" data-tool="test">⚡ Test Circuit</button>
       </div>
-      <div style="font-family:'JetBrains Mono',monospace; color:#f1c40f; text-align:center;">Build circuits and test them! Drag components, connect with wires.</div>
+      <div style="font-family:'JetBrains Mono',monospace; color:#f1c40f; text-align:center;">Build circuits and test them! Select Wire tool to connect components.</div>
     `;
     const canvas=$$('#circuit-canvas'),ctx=canvas.getContext('2d');
-    let components=[],wires=[],selectedTool='wire',dragging=null,offsetX=0,offsetY=0;
+    let components=[],wires=[],selectedTool='wire',dragging=null,offsetX=0,offsetY=0,drawingWire=false,wireStart=null;
     canvas.addEventListener('mousedown',e=>{const r=canvas.getBoundingClientRect();const x=e.clientX-r.left,y=e.clientY-r.top;
       if(selectedTool==='clear'){components=[];wires=[];draw();return;}
       if(selectedTool==='test'){testCircuit();return;}
-      dragging=components.find(c=>Math.hypot(c.x-x,c.y-y)<30);
-      if(!dragging&&selectedTool!=='wire'){const c={type:selectedTool,x,y,v:0,i:0};components.push(c);dragging=c;}
-      if(dragging){offsetX=x-dragging.x;offsetY=y-dragging.y;}
+      const clickedComp=components.find(c=>Math.hypot(c.x-x,c.y-y)<30);
+      if(selectedTool==='wire'){
+        if(clickedComp){
+          if(!drawingWire){wireStart=clickedComp;drawingWire=true;}
+          else if(clickedComp!==wireStart&&!wires.some(w=>(w.from===wireStart&&w.to===clickedComp)||(w.from===clickedComp&&w.to===wireStart))){
+            wires.push({from:wireStart,to:clickedComp});drawingWire=false;wireStart=null;
+          }
+        }else{drawingWire=false;wireStart=null;}
+      }else{
+        dragging=clickedComp;
+        if(!dragging){const c={type:selectedTool,x,y,v:0,i:0};components.push(c);dragging=c;}
+        if(dragging){offsetX=x-dragging.x;offsetY=y-dragging.y;}
+      }
       draw();
     });
     canvas.addEventListener('mousemove',e=>{if(!dragging)return;const r=canvas.getBoundingClientRect();const x=e.clientX-r.left,y=e.clientY-r.top;
-      dragging.x=x-offsetX;dragging.y=y-offsetY;draw();
+      if(selectedTool!=='wire'){dragging.x=x-offsetX;dragging.y=y-offsetY;}
+      draw();
     });
     canvas.addEventListener('mouseup',()=>dragging=null);
     $$all('.lab-tool').forEach(b=>b.addEventListener('click',e=>{
       $$all('.lab-tool').forEach(bb=>bb.classList.remove('active'));e.target.classList.add('active');
-      selectedTool=e.target.dataset.tool;
+      selectedTool=e.target.dataset.tool;drawingWire=false;wireStart=null;
     }));
     function draw(){
       ctx.clearRect(0,0,800,600);
-      wires.forEach(w=>{ctx.strokeStyle='#f1c40f';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(w.x1,w.y1);ctx.lineTo(w.x2,w.y2);ctx.stroke();});
+      wires.forEach(w=>{ctx.strokeStyle='#f1c40f';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(w.from.x,w.from.y);ctx.lineTo(w.to.x,w.to.y);ctx.stroke();});
+      if(drawingWire&&wireStart){const r=canvas.getBoundingClientRect();const mx=e.clientX-r.left,my=e.clientY-r.top;ctx.strokeStyle='#f1c40f';ctx.setLineDash([5,5]);ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(wireStart.x,wireStart.y);ctx.lineTo(mx,my);ctx.stroke();ctx.setLineDash([]);}
       components.forEach(c=>{
-        ctx.fillStyle=c.type==='battery'?'#e74c3c':c.type==='resistor'?'#e67e22':c.type==='bulb'?'#f1c40f':c.type==='switch'?'#2ecc71':'#9b59b6';
+        ctx.fillStyle=c.type==='battery'?'#e74c3c':c.type==='resistor'?'#e67e22':c.type==='bulb'?(c.lit?'#ffff00':'#f1c40f'):c.type==='switch'?'#2ecc71':'#9b59b6';
         ctx.beginPath();ctx.arc(c.x,c.y,25,0,6.28);ctx.fill();
         ctx.fillStyle='#fff';ctx.font='16px Arial';ctx.textAlign='center';ctx.fillText(c.type[0].toUpperCase(),c.x,c.y+6);
       });
     }
     function testCircuit(){
+      components.forEach(c=>c.lit=false);
       let hasBattery=components.some(c=>c.type==='battery'),hasBulb=components.some(c=>c.type==='bulb');
-      if(hasBattery&&hasBulb&&wires.length>0){showFeedback('Circuit works! Bulb lights up!','#2ecc71');}
-      else{showFeedback('Circuit incomplete. Need battery, bulb, and connections.','#e74c3c');}
+      if(hasBattery&&hasBulb&&wires.length>0){
+        const bulbs=components.filter(c=>c.type==='bulb');
+        bulbs.forEach(b=>{b.lit=true;});
+        showFeedback('Circuit works! Bulbs light up!','#2ecc71');
+      }else{showFeedback('Circuit incomplete. Need battery, bulb, and connections.','#e74c3c');}
+      draw();
     }
     draw();
   }
@@ -5389,45 +5406,73 @@ function playAnimalSound(type) {
         <div style="flex:1;">
           <canvas class="lab-canvas" id="rxn-canvas" width="600" height="400"></canvas>
           <div class="lab-toolbar">
-            <button class="lab-tool" data-chemical="h2o">💧 Water</button>
+            <button class="lab-tool active" data-chemical="h2o">💧 Water</button>
             <button class="lab-tool" data-chemical="na">🧂 Sodium</button>
             <button class="lab-tool" data-chemical="cl2">⚗️ Chlorine</button>
             <button class="lab-tool" data-chemical="hcl">🧪 HCl</button>
-            <button class="lab-tool" data-chemical="mix">🔄 Mix</button>
+            <button class="lab-tool" data-chemical="fire">🔥 Fire</button>
             <button class="lab-tool" data-chemical="clear">🗑️ Clear</button>
           </div>
         </div>
         <div style="flex:1; font-family:'JetBrains Mono',monospace; color:#e67e22;">
           <h3>Reaction Log:</h3>
-          <div id="rxn-log" style="background:rgba(0,0,0,0.5); padding:12px; border-radius:8px; min-height:200px;">Add chemicals and mix to see reactions!</div>
+          <div id="rxn-log" style="background:rgba(0,0,0,0.5); padding:12px; border-radius:8px; min-height:200px;">Click to add particles! Watch them fall and react.</div>
         </div>
       </div>
     `;
     const canvas=$$('#rxn-canvas'),ctx=canvas.getContext('2d'),log=$$('#rxn-log');
-    let chemicals=[],selectedChem='h2o';
-    canvas.addEventListener('click',e=>{const r=canvas.getBoundingClientRect();const x=e.clientX-r.left,y=e.clientY-r.top;
-      if(selectedChem==='clear'){chemicals=[];log.textContent='Cleared!';draw();return;}
-      if(selectedChem==='mix'){mixChemicals();return;}
-      chemicals.push({type:selectedChem,x,y});draw();
+    let particles=[],selectedChem='h2o',animId=null;
+    const grid=new Uint8Array(600*400),gravity=0.5,friction=0.99;
+    canvas.addEventListener('mousedown',e=>{const r=canvas.getBoundingClientRect();let x=e.clientX-r.left,y=e.clientY-r.top;
+      const addParticle=()=>{if(selectedChem==='clear'){particles=[];updateGrid();draw();return;}
+        for(let i=0;i<5;i++){const px=x+Math.random()*20-10,py=y+Math.random()*20-10;
+          if(px>=0&&px<600&&py>=0&&py<400){particles.push({type:selectedChem,x:px,y:py,vx:(Math.random()-0.5)*2,vy:0,lifetime:1000});}}
+        updateGrid();draw();};
+      addParticle();const moveHandler=me=>{x=me.clientX-r.left;y=me.clientY-r.top;addParticle();};
+      canvas.addEventListener('mousemove',moveHandler);document.addEventListener('mouseup',()=>{canvas.removeEventListener('mousemove',moveHandler);}, {once:true});
     });
     $$all('.lab-tool').forEach(b=>b.addEventListener('click',e=>{
       $$all('.lab-tool').forEach(bb=>bb.classList.remove('active'));e.target.classList.add('active');
       selectedChem=e.target.dataset.chemical;
     }));
+    function updateGrid(){grid.fill(0);particles.forEach((p,i)=>{const idx=Math.floor(p.x)+Math.floor(p.y)*600;if(idx>=0&&idx<240000)grid[idx]=i+1;});}
+    function updateParticles(){
+      particles.forEach(p=>{
+        p.vy+=gravity;p.vx*=friction;p.vy*=friction;p.x+=p.vx;p.y+=p.vy;
+        if(p.x<0||p.x>=600){p.vx*=-0.8;p.x=Math.max(0,Math.min(599,p.x));}
+        if(p.y>=395){p.vy*=-0.3;p.y=395;}
+        if(p.y<0)p.y=0;
+        const belowIdx=Math.floor(p.x)+Math.floor(p.y+1)*600;
+        if(belowIdx<240000&&grid[belowIdx]===0){p.y+=1;}
+        else{const leftIdx=Math.floor(p.x-1)+Math.floor(p.y)*600,rightIdx=Math.floor(p.x+1)+Math.floor(p.y)*600;
+          if(leftIdx>=0&&grid[leftIdx]===0&&Math.random()<0.5){p.x-=1;}
+          else if(rightIdx<240000&&grid[rightIdx]===0){p.x+=1;}}
+        p.lifetime--;if(p.lifetime<=0)particles.splice(particles.indexOf(p),1);
+      });
+      checkReactions();updateGrid();
+    }
+    function checkReactions(){
+      for(let i=0;i<particles.length;i++){for(let j=i+1;j<particles.length;j++){
+        const p1=particles[i],p2=particles[j];if(Math.hypot(p1.x-p2.x,p1.y-p2.y)<15){
+          if((p1.type==='na'&&p2.type==='cl2')||(p1.type==='cl2'&&p2.type==='na')){createReaction(p1.x,p1.y,'salt');particles.splice(j,1);particles.splice(i,1);i--;break;}
+          else if((p1.type==='h2o'&&p2.type==='fire')||(p1.type==='fire'&&p2.type==='h2o')){createReaction(p1.x,p1.y,'steam');particles.splice(j,1);particles.splice(i,1);i--;break;}
+        }
+      }}
+    }
+    function createReaction(x,y,type){
+      for(let i=0;i<10;i++){particles.push({type:type,x:x+Math.random()*20-10,y:y+Math.random()*20-10,vx:(Math.random()-0.5)*4,vy:Math.random()*-3,lifetime:60});}
+      log.innerHTML+=`<br><b>${type==='salt'?'Na + Cl₂ → NaCl (Salt!)':'H₂O + Fire → Steam!'}</b>`;
+      showFeedback('Chemical reaction!','#2ecc71');
+    }
     function draw(){
       ctx.clearRect(0,0,600,400);
-      chemicals.forEach(c=>{
-        ctx.fillStyle=c.type==='h2o'?'#3498db':c.type==='na'?'#e74c3c':c.type==='cl2'?'#f1c40f':c.type==='hcl'?'#9b59b6':'#2ecc71';
-        ctx.beginPath();ctx.arc(c.x,c.y,20,0,6.28);ctx.fill();
-        ctx.fillStyle='#fff';ctx.font='12px Arial';ctx.textAlign='center';ctx.fillText(c.type.toUpperCase(),c.x,c.y+4);
+      particles.forEach(p=>{
+        ctx.fillStyle=p.type==='h2o'?'#3498db':p.type==='na'?'#e74c3c':p.type==='cl2'?'#f1c40f':p.type==='hcl'?'#9b59b6':p.type==='fire'?'#e67e22':p.type==='salt'?'#ecf0f1':p.type==='steam'?'#95a5a6':'#2ecc71';
+        ctx.beginPath();ctx.arc(p.x,p.y,3,0,6.28);ctx.fill();
       });
     }
-    function mixChemicals(){
-      const hasNa=chemicals.some(c=>c.type==='na'),hasCl2=chemicals.some(c=>c.type==='cl2');
-      if(hasNa&&hasCl2){log.innerHTML='Na + Cl₂ → 2NaCl<br><b>Sodium chloride (table salt) formed!</b>';showFeedback('Great reaction!','#2ecc71');}
-      else{log.textContent='No reaction. Try mixing sodium with chlorine.';showFeedback('No reaction occurred.','#e74c3c');}
-    }
-    draw();
+    function animate(){updateParticles();draw();animId=requestAnimationFrame(animate);}
+    animate();
   }
   function initNetDebug(){
     const root=$$('#netdebug-game');root.innerHTML=`
@@ -5455,14 +5500,15 @@ function playAnimalSound(type) {
       if(selectedAction==='reset'){nodes=[];connections=[];status.textContent='Status: Network reset';draw();return;}
       if(selectedAction==='test'){testNetwork();return;}
       const node=nodes.find(n=>Math.hypot(n.x-x,n.y-y)<30);
-      if(selectedAction==='add-node'&&!node){nodes.push({x,y,bias:0,output:0});}
+      if(selectedAction==='add-node'&&!node){nodes.push({x,y,bias:0,output:0});draw();}
       else if(selectedAction==='connect'&&node){dragging=node;}
-      draw();
+      else if(selectedAction==='bias'&&node){node.bias=(node.bias+1)%5;draw();}
     });
     canvas.addEventListener('mouseup',e=>{if(dragging&&selectedAction==='connect'){const r=canvas.getBoundingClientRect();const x=e.clientX-r.left,y=e.clientY-r.top;
       const target=nodes.find(n=>Math.hypot(n.x-x,n.y-y)<30&&n!==dragging);
       if(target&&!connections.some(c=>(c.from===dragging&&c.to===target)||(c.from===target&&c.to===dragging))){connections.push({from:dragging,to:target,weight:1});}
     }dragging=null;draw();});
+    canvas.addEventListener('mousemove',e=>{if(!dragging||selectedAction!=='connect')return;draw();});
     $$all('.lab-tool').forEach(b=>b.addEventListener('click',e=>{
       $$all('.lab-tool').forEach(bb=>bb.classList.remove('active'));e.target.classList.add('active');
       selectedAction=e.target.dataset.action;
@@ -5478,12 +5524,13 @@ function playAnimalSound(type) {
       });
       nodes.forEach(n=>{
         const el=document.createElement('div');el.className='node';el.style.left=(n.x-30)+'px';el.style.top=(n.y-30)+'px';
-        el.textContent=n.bias;el.draggable=true;
-        el.addEventListener('dragstart',e=>{dragging=n;});
-        el.addEventListener('dragend',e=>{const r=canvas.getBoundingClientRect();n.x=e.clientX-r.left;n.y=e.clientY-r.top;draw();});
+        el.textContent=n.bias;el.style.cursor='move';
+        el.addEventListener('mousedown',e=>{dragging=n;offsetX=e.clientX-n.x;offsetY=e.clientY-n.y;e.preventDefault();});
         canvas.appendChild(el);
       });
     }
+    canvas.addEventListener('mousemove',e=>{if(!dragging)return;dragging.x=e.clientX-offsetX;dragging.y=e.clientY-offsetY;draw();});
+    canvas.addEventListener('mouseup',()=>dragging=null);
     function testNetwork(){
       const hasConnections=connections.length>0,balancedBiases=nodes.every(n=>Math.abs(n.bias)<2);
       if(hasConnections&&balancedBiases){status.innerHTML='Status: <b>Network fixed! Ethical AI achieved.</b>';showFeedback('AI ethics puzzle solved!','#2ecc71');}
@@ -5508,44 +5555,68 @@ function playAnimalSound(type) {
         <div id="versus-game-area" style="display:none; margin-top:20px; width:100%;"></div>
       </div>
     `;
-    let currentMode=null;
+    let currentMode=null,roomCode=null,players=['You'],currentChallenge=null,teamScore=0;
     $$all('.versus-btn').forEach(b=>b.addEventListener('click',e=>{
       if(e.target.dataset.mode){currentMode=e.target.dataset.mode;$$('#versus-room').style.display='block';}
       if(e.target.id==='join-room'){joinRoom($$('#room-code').value);}
       if(e.target.id==='create-room'){createRoom();}
     }));
     function createRoom(){
-      const code=Math.random().toString(36).substr(2,6).toUpperCase();
+      roomCode=Math.random().toString(36).substr(2,6).toUpperCase();
+      players=['You'];
       $$('#versus-game-area').innerHTML=`<div style="text-align:center; color:#1abc9c; font-family:'JetBrains Mono',monospace;">
-        <h3>Room Created: ${code}</h3>
+        <h3>Room Created: ${roomCode}</h3>
         <p>Share this code with your team!</p>
-        <p>Waiting for players...</p>
-        <div id="player-list">Players: 1 (You)</div>
+        <div id="player-list">Players: ${players.join(', ')}</div>
+        <button class="versus-btn" onclick="startChallenge()">Start Challenge</button>
       </div>`;
       $$('#versus-game-area').style.display='block';
       showFeedback('Room created! Share the code.','#2ecc71');
+      // Simulate other players joining
+      setTimeout(()=>{players.push('Alice','Bob');updatePlayerList();},2000);
     }
     function joinRoom(code){
       if(!code){showFeedback('Enter a room code!','#e74c3c');return;}
+      roomCode=code;players=['You','Alice','Bob'];
       $$('#versus-game-area').innerHTML=`<div style="text-align:center; color:#1abc9c; font-family:'JetBrains Mono',monospace;">
         <h3>Joined Room: ${code}</h3>
+        <div id="player-list">Players: ${players.join(', ')}</div>
         <p>Connected! ${currentMode==='coding'?'Solve coding puzzles together!':'Answer geography questions as a team!'}</p>
         <button class="versus-btn" onclick="startChallenge()">Start Challenge</button>
       </div>`;
       $$('#versus-game-area').style.display='block';
       showFeedback('Joined room successfully!','#2ecc71');
     }
+    function updatePlayerList(){$$('#player-list').textContent=`Players: ${players.join(', ')}`;}
     window.startChallenge=()=>{
+      const challenges=currentMode==='coding'?[
+        {q:'Debug: function factorial(n){return n*factorial(n-1);}',a:'infinite loop - missing base case',pts:10},
+        {q:'What does this print? console.log(typeof null)',a:'object',pts:5},
+        {q:'Fix the bug: if(a = 5) console.log("equal");',a:'use == or === instead of =',pts:8}
+      ]:[
+        {q:'What is the capital of France?',a:'paris',pts:5},
+        {q:'Which river is the longest?',a:'nile',pts:10},
+        {q:'What is the smallest country?',a:'vatican city',pts:8}
+      ];
+      currentChallenge=challenges[Math.floor(Math.random()*challenges.length)];
       $$('#versus-game-area').innerHTML=`<div style="text-align:center; color:#1abc9c; font-family:'JetBrains Mono',monospace;">
-        <h3>Challenge Started!</h3>
-        <p>${currentMode==='coding'?'Debug this code: function factorial(n){return n*factorial(n-1);}'/*simplified*/:'What is the capital of France?'}</p>
-        <input type="text" id="answer-input" placeholder="Your answer" style="padding:8px; border-radius:4px; border:1px solid #1abc9c; background:#000; color:#1abc9c; margin:12px;">
-        <button class="versus-btn" onclick="submitAnswer()">Submit</button>
+        <h3>Team Challenge!</h3>
+        <div style="background:rgba(0,0,0,0.5); padding:16px; border-radius:8px; margin:12px 0;">
+          <p style="font-size:1.2rem; margin:0;">${currentChallenge.q}</p>
+        </div>
+        <div id="team-status">Team Score: ${teamScore} | Players: ${players.length}</div>
+        <input type="text" id="answer-input" placeholder="Your answer" style="padding:8px; border-radius:4px; border:1px solid #1abc9c; background:#000; color:#1abc9c; margin:12px; width:200px;">
+        <br><button class="versus-btn" onclick="submitAnswer()">Submit Answer</button>
+        <div id="feedback-area" style="margin-top:12px;"></div>
       </div>`;
     };
     window.submitAnswer=()=>{
-      const ans=$$('#answer-input').value;
-      showFeedback('Answer submitted! Team score updated.','#2ecc71');
+      const ans=$$('#answer-input').value.toLowerCase().trim();
+      const correct=currentChallenge.a.toLowerCase().includes(ans)||ans.includes(currentChallenge.a.toLowerCase());
+      if(correct){teamScore+=currentChallenge.pts;$$('#team-status').textContent=`Team Score: ${teamScore} | Players: ${players.length}`;
+        $$('#feedback-area').innerHTML='<span style="color:#2ecc71;">✓ Correct! +' + currentChallenge.pts + ' points</span>';
+        setTimeout(()=>{showFeedback('Team scores!','#2ecc71');startChallenge();},1500);
+      }else{$$('#feedback-area').innerHTML='<span style="color:#e74c3c;">✗ Try again!</span>';}
     };
   }
 </script>
