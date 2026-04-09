@@ -30,6 +30,7 @@
   .game-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; max-width: 1400px; width: 100%; padding: 0 clamp(12px,3vw,24px) clamp(16px,3vw,24px); box-sizing: border-box; }
   .game-grid.wide-mode { grid-template-columns: 1fr !important; max-width: 1600px !important; }
   .game-grid.wide-mode .cat-games { grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)) !important; gap: 16px !important; }
+  .game-grid.wide-mode #stem-section .cat-games { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)) !important; gap: 18px !important; }
   .game-category { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; overflow: hidden; }
   #brain-section,.brain-cat { grid-column: 1 / -1; }
   #brain-section .cat-games,.brain-cat .cat-games { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
@@ -39,6 +40,8 @@
   .game-grid.brain-mode .game-btn { min-height: clamp(120px,20vw,170px); padding: 26px 16px 20px; border-width: 3px; }
   .game-grid.brain-mode .btn-icon { font-size: clamp(2.8rem,8vw,4rem); }
   .game-grid.brain-mode .btn-text { font-size: clamp(1rem,2.5vw,1.3rem); }
+  #stem-section { grid-column: 1 / -1; }
+  #stem-section .cat-games { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)) !important; gap: 18px; }
   .cat-header { display: flex; align-items: center; gap: 10px; padding: 11px 18px; font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2.5px; color: #7e8fa3; background: rgba(0,0,0,0.3); border-bottom: 1px solid rgba(255,255,255,0.05); margin: 0; }
   .cat-header-icon { font-size: 1.1rem; }
   .cat-games { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 14px; padding: 14px; }
