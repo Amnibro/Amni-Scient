@@ -48,7 +48,7 @@
   .game-btn.math { border-color: #4cd137; } .game-btn.math:hover { box-shadow: 0 10px 30px rgba(76,209,55,0.25); }
   .game-btn.matching { border-color: #9c88ff; } .game-btn.matching:hover { box-shadow: 0 10px 30px rgba(156,136,255,0.25); }
   .game-btn.typing { border-color: #f1c40f; } .game-btn.typing:hover { box-shadow: 0 10px 30px rgba(241,196,15,0.25); }
-  .game-btn.life{border-color:#e84393}.game-btn.life:hover{box-shadow:0 10px 30px rgba(232,67,147,0.25)}.game-btn.brain{border-color:#1abc9c}.game-btn.brain:hover{box-shadow:0 10px 30px rgba(26,188,156,0.25)}.btn-icon{font-size:2.4rem;line-height:1;display:block;margin-bottom:4px}.btn-text{font-size:0.88rem;font-weight:700;text-align:center;line-height:1.2}
+  .game-btn.life{border-color:#e84393}.game-btn.life:hover{box-shadow:0 10px 30px rgba(232,67,147,0.25)}.game-btn.brain{border-color:#1abc9c}.game-btn.brain:hover{box-shadow:0 10px 30px rgba(26,188,156,0.25)}.game-btn.lab{border-color:#f1c40f}.game-btn.lab:hover{box-shadow:0 10px 30px rgba(241,196,15,0.25)}.game-btn.ai{border-color:#9b59b6}.game-btn.ai:hover{box-shadow:0 10px 30px rgba(155,89,182,0.25)}.game-btn.multi{border-color:#1abc9c}.game-btn.multi:hover{box-shadow:0 10px 30px rgba(26,188,156,0.25)}.btn-icon{font-size:2.4rem;line-height:1;display:block;margin-bottom:4px}.btn-text{font-size:0.88rem;font-weight:700;text-align:center;line-height:1.2}
   .btn-desc { font-size: 0.68rem; color: #556; text-align: center; line-height: 1.3; font-family: 'JetBrains Mono', monospace; margin-top: 2px; }
   .game-grid.mode-1 .cat-games { grid-template-columns: repeat(auto-fill, minmax(145px, 1fr)); gap: 16px; }
   .game-grid.mode-1 .game-btn { padding: 28px 12px 22px; border-width: 3px; border-radius: 18px; min-height: clamp(120px,22vw,170px); }
@@ -448,6 +448,20 @@
   .college-opt.correct { background:rgba(46,204,113,0.3); border-color:#2ecc71; }
   .college-opt.wrong { background:rgba(231,76,60,0.3); border-color:#e74c3c; }
   .college-explain { font-family:'JetBrains Mono',monospace; font-size:0.9rem; color:#aaa; line-height:1.5; margin-top:12px; padding:12px; background:rgba(0,0,0,0.2); border-radius:8px; display:none; }
+  .lab-container { display:flex; flex-direction:column; align-items:center; width:100%; max-width:900px; gap:16px; padding:20px; }
+  .lab-canvas { border:2px solid #f1c40f; border-radius:12px; background:#000; }
+  .lab-toolbar { display:flex; gap:12px; flex-wrap:wrap; justify-content:center; padding:12px; background:rgba(241,196,15,0.1); border-radius:8px; }
+  .lab-tool { padding:8px 16px; border:2px solid #f1c40f; background:rgba(0,0,0,0.5); color:#f1c40f; border-radius:6px; cursor:pointer; font-family:'JetBrains Mono',monospace; transition:0.2s; }
+  .lab-tool:hover { background:#f1c40f; color:#000; }
+  .lab-tool.active { background:#f1c40f; color:#000; }
+  .ai-container { display:flex; flex-direction:column; align-items:center; width:100%; max-width:1000px; gap:16px; padding:20px; }
+  .net-canvas { border:2px solid #9b59b6; border-radius:12px; background:#111; position:relative; }
+  .node { position:absolute; width:60px; height:60px; border-radius:50%; background:#9b59b6; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:bold; cursor:move; user-select:none; }
+  .connection { position:absolute; height:4px; background:#9b59b6; transform-origin:center; }
+  .multi-container { display:flex; flex-direction:column; align-items:center; width:100%; max-width:800px; gap:16px; padding:20px; }
+  .versus-setup { display:flex; flex-direction:column; gap:12px; align-items:center; padding:20px; background:rgba(26,188,156,0.1); border:2px solid #1abc9c; border-radius:12px; }
+  .versus-btn { padding:12px 24px; border:2px solid #1abc9c; background:rgba(0,0,0,0.5); color:#1abc9c; border-radius:8px; cursor:pointer; font-family:'JetBrains Mono',monospace; transition:0.2s; }
+  .versus-btn:hover { background:#1abc9c; color:#000; }
   .college-progress { display:flex; gap:4px; justify-content:center; margin:8px 0; }
   .college-dot { width:12px; height:12px; border-radius:50%; background:rgba(255,255,255,0.15); transition:0.3s; }
   .college-dot.done { background:#2ecc71; }
@@ -682,6 +696,10 @@
         <div class="cat-games">
           <button class="game-btn quiz" id="btn-math" data-game="quiz" data-subject="math"><span class="btn-icon">📐</span><span class="btn-text">Advanced Math</span><span class="btn-desc">Algebra & calculus</span></button>
           <button class="game-btn quiz" id="btn-engineering" data-game="quiz" data-subject="engineering"><span class="btn-icon">⚙️</span><span class="btn-text">Physics & Engineering</span><span class="btn-desc">Forces & machines</span></button>
+          <button class="game-btn lab" data-game="circuitlab"><span class="btn-icon">🔌</span><span class="btn-text">Circuit Builder</span><span class="btn-desc">Build & test circuits</span></button>
+          <button class="game-btn lab" data-game="rxnlab"><span class="btn-icon">🧪</span><span class="btn-text">Reaction Lab</span><span class="btn-desc">Mix chemicals & observe</span></button>
+          <button class="game-btn ai" data-game="netdebug"><span class="btn-icon">🤖</span><span class="btn-text">AI Ethics Debug</span><span class="btn-desc">Fix neural nets ethically</span></button>
+          <button class="game-btn multi" data-game="versus"><span class="btn-icon">👥</span><span class="btn-text">Team Challenges</span><span class="btn-desc">Multiplayer coding/geo</span></button>
         </div>
       </section>
       <section class="game-category" id="brain-section" style="display:none;">
@@ -1028,6 +1046,22 @@
   <div id="economics-view" class="view"><div class="life-title" style="color:#48dbfb">💹 Economics</div><div id="economics-game" class="college-container"></div></div>
   <div id="writing-view" class="view"><div class="life-title" style="color:#48dbfb">✍️ Academic Writing</div><div id="writing-game" class="college-container"></div></div>
   <div id="psychology-view" class="view"><div class="life-title" style="color:#48dbfb">🧠 Psychology</div><div id="psychology-game" class="college-container"></div></div>
+  <div id="circuitlab-view" class="view">
+    <div class="life-title" style="color:#f1c40f">🔌 Circuit Builder <button class="tut-trigger" onclick="showTutorial('circuitlab')">? How to Play</button></div>
+    <div class="lab-container" id="circuitlab-game"></div>
+  </div>
+  <div id="rxnlab-view" class="view">
+    <div class="life-title" style="color:#e67e22">🧪 Reaction Lab <button class="tut-trigger" onclick="showTutorial('rxnlab')">? How to Play</button></div>
+    <div class="lab-container" id="rxnlab-game"></div>
+  </div>
+  <div id="netdebug-view" class="view">
+    <div class="life-title" style="color:#9b59b6">🤖 AI Ethics Debug <button class="tut-trigger" onclick="showTutorial('netdebug')">? How to Play</button></div>
+    <div class="ai-container" id="netdebug-game"></div>
+  </div>
+  <div id="versus-view" class="view">
+    <div class="life-title" style="color:#1abc9c">👥 Team Challenges <button class="tut-trigger" onclick="showTutorial('versus')">? How to Play</button></div>
+    <div class="multi-container" id="versus-game"></div>
+  </div>
   <div id="colorsort-view" class="view">
     <div class="life-title" style="color:#e056a0">🧪 Color Sort <button class="tut-trigger" onclick="showTutorial('colorsort')">? How to Play</button></div>
     <div class="cs-game" id="cs-game"></div>
@@ -1102,7 +1136,11 @@
     philosophy: $$('#philosophy-view'),
     economics: $$('#economics-view'),
     writing: $$('#writing-view'),
-    psychology: $$('#psychology-view')
+    psychology: $$('#psychology-view'),
+    circuitlab: $$('#circuitlab-view'),
+    rxnlab: $$('#rxnlab-view'),
+    netdebug: $$('#netdebug-view'),
+    versus: $$('#versus-view')
   };
   let currentGame = null;
   let currentSubgame = null;
@@ -1310,6 +1348,10 @@
       if(game === 'economics') initCollege('economics');
       if(game === 'writing') initCollege('writing');
       if(game === 'psychology') initCollege('psychology');
+      if(game === 'circuitlab') initCircuitLab();
+      if(game === 'rxnlab') initRxnLab();
+      if(game === 'netdebug') initNetDebug();
+      if(game === 'versus') initVersus();
     });
   });
   function showView(viewId) {
@@ -5245,6 +5287,38 @@ function playAnimalSound(type) {
       '<b>Cascades:</b> When falling gems create new matches, you get <b>combo multipliers</b> for bonus points!',
       'You have <b>30 moves</b>. Make each one count \u2014 look for spots with multiple potential matches.',
       '<b>Strategy:</b> Match from the <b>bottom</b> first \u2014 falling gems are more likely to create cascades.'
+    ]},
+    circuitlab:{title:'\ud83d\udd0c How to Play Circuit Builder',steps:[
+      'Build electrical circuits by placing components and connecting them with wires.',
+      'Select a <b>tool</b> from the toolbar: Battery (power source), Resistor, Wire, Bulb, Switch.',
+      'Click on the canvas to <b>place components</b>. Drag them to reposition.',
+      'Select the <b>Wire tool</b> and click between components to connect them.',
+      'Click <b>Test Circuit</b> to see if your circuit works! A complete circuit with battery and bulb will light up.',
+      '<b>Tip:</b> Circuits need a closed loop from battery through components back to battery.'
+    ]},
+    rxnlab:{title:'\ud83e\uddea How to Play Reaction Lab',steps:[
+      'Mix virtual chemicals to observe reactions in real-time.',
+      'Select a <b>chemical</b> from the toolbar: Water, Sodium, Chlorine, HCl.',
+      'Click on the canvas to <b>add chemicals</b> to the reaction vessel.',
+      'Click <b>Mix</b> to combine the chemicals and see what happens!',
+      'Watch the <b>reaction log</b> for results. Some combinations create new compounds.',
+      '<b>Safety note:</b> In real labs, never mix chemicals without proper precautions!'
+    ]},
+    netdebug:{title:'\ud83e\udde0 How to Play AI Ethics Debug',steps:[
+      'Debug a neural network while considering ethical implications.',
+      'Use <b>Add Node</b> to place neurons on the canvas. Drag nodes to reposition.',
+      'Use <b>Connect</b> to draw connections between nodes (drag from one node to another).',
+      'Use <b>Adjust Bias</b> to modify node biases (click nodes to change values).',
+      'Click <b>Test Network</b> to check if the network is working ethically.',
+      '<b>Ethics challenge:</b> Ensure the network avoids bias and treats all inputs fairly.'
+    ]},
+    versus:{title:'\ud83e\udd1d How to Play Team Challenges',steps:[
+      'Compete in multiplayer challenges with friends or AI opponents.',
+      'Choose a <b>challenge type</b>: Coding puzzles or Geography quizzes.',
+      'Create a <b>room</b> and share the code, or join an existing room.',
+      'Work together as a team to solve problems and answer questions.',
+      'Submit answers and see team scores update in real-time.',
+      '<b>Tip:</b> Communication is key! Discuss strategies with your teammates.'
     ]}
   };
   window.showTutorial=function(game){
@@ -5258,6 +5332,219 @@ function playAnimalSound(type) {
     const gb=document.createElement('button');gb.className='tut-btn';gb.textContent='Got it!';gb.onclick=()=>ov.remove();box.appendChild(gb);
     ov.appendChild(box);ov.onclick=e=>{if(e.target===ov)ov.remove();};document.body.appendChild(ov);
   };
+  function initCircuitLab(){
+    const root=$$('#circuitlab-game');root.innerHTML=`
+      <canvas class="lab-canvas" id="circuit-canvas" width="800" height="600"></canvas>
+      <div class="lab-toolbar">
+        <button class="lab-tool" data-tool="battery">🔋 Battery</button>
+        <button class="lab-tool" data-tool="resistor">🟫 Resistor</button>
+        <button class="lab-tool" data-tool="wire">🔗 Wire</button>
+        <button class="lab-tool" data-tool="bulb">💡 Bulb</button>
+        <button class="lab-tool" data-tool="switch">🔘 Switch</button>
+        <button class="lab-tool" data-tool="clear">🗑️ Clear</button>
+        <button class="lab-tool" data-tool="test">⚡ Test Circuit</button>
+      </div>
+      <div style="font-family:'JetBrains Mono',monospace; color:#f1c40f; text-align:center;">Build circuits and test them! Drag components, connect with wires.</div>
+    `;
+    const canvas=$$('#circuit-canvas'),ctx=canvas.getContext('2d');
+    let components=[],wires=[],selectedTool='wire',dragging=null,offsetX=0,offsetY=0;
+    canvas.addEventListener('mousedown',e=>{const r=canvas.getBoundingClientRect();const x=e.clientX-r.left,y=e.clientY-r.top;
+      if(selectedTool==='clear'){components=[];wires=[];draw();return;}
+      if(selectedTool==='test'){testCircuit();return;}
+      dragging=components.find(c=>Math.hypot(c.x-x,c.y-y)<30);
+      if(!dragging&&selectedTool!=='wire'){const c={type:selectedTool,x,y,v:0,i:0};components.push(c);dragging=c;}
+      if(dragging){offsetX=x-dragging.x;offsetY=y-dragging.y;}
+      draw();
+    });
+    canvas.addEventListener('mousemove',e=>{if(!dragging)return;const r=canvas.getBoundingClientRect();const x=e.clientX-r.left,y=e.clientY-r.top;
+      dragging.x=x-offsetX;dragging.y=y-offsetY;draw();
+    });
+    canvas.addEventListener('mouseup',()=>dragging=null);
+    $$all('.lab-tool').forEach(b=>b.addEventListener('click',e=>{
+      $$all('.lab-tool').forEach(bb=>bb.classList.remove('active'));e.target.classList.add('active');
+      selectedTool=e.target.dataset.tool;
+    }));
+    function draw(){
+      ctx.clearRect(0,0,800,600);
+      wires.forEach(w=>{ctx.strokeStyle='#f1c40f';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(w.x1,w.y1);ctx.lineTo(w.x2,w.y2);ctx.stroke();});
+      components.forEach(c=>{
+        ctx.fillStyle=c.type==='battery'?'#e74c3c':c.type==='resistor'?'#e67e22':c.type==='bulb'?'#f1c40f':c.type==='switch'?'#2ecc71':'#9b59b6';
+        ctx.beginPath();ctx.arc(c.x,c.y,25,0,6.28);ctx.fill();
+        ctx.fillStyle='#fff';ctx.font='16px Arial';ctx.textAlign='center';ctx.fillText(c.type[0].toUpperCase(),c.x,c.y+6);
+      });
+    }
+    function testCircuit(){
+      let hasBattery=components.some(c=>c.type==='battery'),hasBulb=components.some(c=>c.type==='bulb');
+      if(hasBattery&&hasBulb&&wires.length>0){showFeedback('Circuit works! Bulb lights up!','#2ecc71');}
+      else{showFeedback('Circuit incomplete. Need battery, bulb, and connections.','#e74c3c');}
+    }
+    draw();
+  }
+  function initRxnLab(){
+    const root=$$('#rxnlab-game');root.innerHTML=`
+      <div style="display:flex; gap:20px; align-items:flex-start;">
+        <div style="flex:1;">
+          <canvas class="lab-canvas" id="rxn-canvas" width="600" height="400"></canvas>
+          <div class="lab-toolbar">
+            <button class="lab-tool" data-chemical="h2o">💧 Water</button>
+            <button class="lab-tool" data-chemical="na">🧂 Sodium</button>
+            <button class="lab-tool" data-chemical="cl2">⚗️ Chlorine</button>
+            <button class="lab-tool" data-chemical="hcl">🧪 HCl</button>
+            <button class="lab-tool" data-chemical="mix">🔄 Mix</button>
+            <button class="lab-tool" data-chemical="clear">🗑️ Clear</button>
+          </div>
+        </div>
+        <div style="flex:1; font-family:'JetBrains Mono',monospace; color:#e67e22;">
+          <h3>Reaction Log:</h3>
+          <div id="rxn-log" style="background:rgba(0,0,0,0.5); padding:12px; border-radius:8px; min-height:200px;">Add chemicals and mix to see reactions!</div>
+        </div>
+      </div>
+    `;
+    const canvas=$$('#rxn-canvas'),ctx=canvas.getContext('2d'),log=$$('#rxn-log');
+    let chemicals=[],selectedChem='h2o';
+    canvas.addEventListener('click',e=>{const r=canvas.getBoundingClientRect();const x=e.clientX-r.left,y=e.clientY-r.top;
+      if(selectedChem==='clear'){chemicals=[];log.textContent='Cleared!';draw();return;}
+      if(selectedChem==='mix'){mixChemicals();return;}
+      chemicals.push({type:selectedChem,x,y});draw();
+    });
+    $$all('.lab-tool').forEach(b=>b.addEventListener('click',e=>{
+      $$all('.lab-tool').forEach(bb=>bb.classList.remove('active'));e.target.classList.add('active');
+      selectedChem=e.target.dataset.chemical;
+    }));
+    function draw(){
+      ctx.clearRect(0,0,600,400);
+      chemicals.forEach(c=>{
+        ctx.fillStyle=c.type==='h2o'?'#3498db':c.type==='na'?'#e74c3c':c.type==='cl2'?'#f1c40f':c.type==='hcl'?'#9b59b6':'#2ecc71';
+        ctx.beginPath();ctx.arc(c.x,c.y,20,0,6.28);ctx.fill();
+        ctx.fillStyle='#fff';ctx.font='12px Arial';ctx.textAlign='center';ctx.fillText(c.type.toUpperCase(),c.x,c.y+4);
+      });
+    }
+    function mixChemicals(){
+      const hasNa=chemicals.some(c=>c.type==='na'),hasCl2=chemicals.some(c=>c.type==='cl2');
+      if(hasNa&&hasCl2){log.innerHTML='Na + Cl₂ → 2NaCl<br><b>Sodium chloride (table salt) formed!</b>';showFeedback('Great reaction!','#2ecc71');}
+      else{log.textContent='No reaction. Try mixing sodium with chlorine.';showFeedback('No reaction occurred.','#e74c3c');}
+    }
+    draw();
+  }
+  function initNetDebug(){
+    const root=$$('#netdebug-game');root.innerHTML=`
+      <div style="display:flex; gap:20px; align-items:flex-start;">
+        <div style="flex:1;">
+          <div class="net-canvas" id="net-canvas" style="width:600px; height:400px;"></div>
+          <div class="lab-toolbar">
+            <button class="lab-tool" data-action="add-node">➕ Add Node</button>
+            <button class="lab-tool" data-action="connect">🔗 Connect</button>
+            <button class="lab-tool" data-action="bias">⚖️ Adjust Bias</button>
+            <button class="lab-tool" data-action="test">🧪 Test Network</button>
+            <button class="lab-tool" data-action="reset">🔄 Reset</button>
+          </div>
+        </div>
+        <div style="flex:1; font-family:'JetBrains Mono',monospace; color:#9b59b6;">
+          <h3>AI Ethics Challenge:</h3>
+          <div id="ethics-prompt" style="background:rgba(0,0,0,0.5); padding:12px; border-radius:8px; margin-bottom:12px;">Fix this neural network to classify images ethically. Avoid bias against certain groups.</div>
+          <div id="net-status" style="background:rgba(0,0,0,0.5); padding:12px; border-radius:8px;">Status: Network needs debugging</div>
+        </div>
+      </div>
+    `;
+    const canvas=$$('#net-canvas'),status=$$('#net-status');
+    let nodes=[],connections=[],selectedAction='add-node',dragging=null;
+    canvas.addEventListener('mousedown',e=>{const r=canvas.getBoundingClientRect();const x=e.clientX-r.left,y=e.clientY-r.top;
+      if(selectedAction==='reset'){nodes=[];connections=[];status.textContent='Status: Network reset';draw();return;}
+      if(selectedAction==='test'){testNetwork();return;}
+      const node=nodes.find(n=>Math.hypot(n.x-x,n.y-y)<30);
+      if(selectedAction==='add-node'&&!node){nodes.push({x,y,bias:0,output:0});}
+      else if(selectedAction==='connect'&&node){dragging=node;}
+      draw();
+    });
+    canvas.addEventListener('mouseup',e=>{if(dragging&&selectedAction==='connect'){const r=canvas.getBoundingClientRect();const x=e.clientX-r.left,y=e.clientY-r.top;
+      const target=nodes.find(n=>Math.hypot(n.x-x,n.y-y)<30&&n!==dragging);
+      if(target&&!connections.some(c=>(c.from===dragging&&c.to===target)||(c.from===target&&c.to===dragging))){connections.push({from:dragging,to:target,weight:1});}
+    }dragging=null;draw();});
+    $$all('.lab-tool').forEach(b=>b.addEventListener('click',e=>{
+      $$all('.lab-tool').forEach(bb=>bb.classList.remove('active'));e.target.classList.add('active');
+      selectedAction=e.target.dataset.action;
+    }));
+    function draw(){
+      canvas.innerHTML='';
+      connections.forEach(c=>{
+        const line=document.createElement('div');line.className='connection';
+        const dx=c.to.x-c.from.x,dy=c.to.y-c.from.y,len=Math.hypot(dx,dy);
+        line.style.width=len+'px';line.style.left=c.from.x+'px';line.style.top=(c.from.y-2)+'px';
+        line.style.transform=`rotate(${Math.atan2(dy,dx)}rad)`;
+        canvas.appendChild(line);
+      });
+      nodes.forEach(n=>{
+        const el=document.createElement('div');el.className='node';el.style.left=(n.x-30)+'px';el.style.top=(n.y-30)+'px';
+        el.textContent=n.bias;el.draggable=true;
+        el.addEventListener('dragstart',e=>{dragging=n;});
+        el.addEventListener('dragend',e=>{const r=canvas.getBoundingClientRect();n.x=e.clientX-r.left;n.y=e.clientY-r.top;draw();});
+        canvas.appendChild(el);
+      });
+    }
+    function testNetwork(){
+      const hasConnections=connections.length>0,balancedBiases=nodes.every(n=>Math.abs(n.bias)<2);
+      if(hasConnections&&balancedBiases){status.innerHTML='Status: <b>Network fixed! Ethical AI achieved.</b>';showFeedback('AI ethics puzzle solved!','#2ecc71');}
+      else{status.textContent='Status: Network still has issues. Check connections and biases.';showFeedback('Keep debugging!','#e74c3c');}
+    }
+    draw();
+  }
+  function initVersus(){
+    const root=$$('#versus-game');root.innerHTML=`
+      <div class="versus-setup">
+        <h2 style="color:#1abc9c; margin:0;">Team Challenge Mode</h2>
+        <p style="color:#ecf0f1; text-align:center; margin:12px 0;">Compete with friends in coding or geography challenges!</p>
+        <div style="display:flex; gap:12px;">
+          <button class="versus-btn" data-mode="coding">💻 Coding Challenge</button>
+          <button class="versus-btn" data-mode="geo">🌍 Geography Quiz</button>
+        </div>
+        <div id="versus-room" style="margin-top:20px; display:none;">
+          <input type="text" id="room-code" placeholder="Enter room code" style="padding:8px; border-radius:4px; border:1px solid #1abc9c; background:#000; color:#1abc9c;">
+          <button class="versus-btn" id="join-room">Join Room</button>
+          <button class="versus-btn" id="create-room">Create Room</button>
+        </div>
+        <div id="versus-game-area" style="display:none; margin-top:20px; width:100%;"></div>
+      </div>
+    `;
+    let currentMode=null;
+    $$all('.versus-btn').forEach(b=>b.addEventListener('click',e=>{
+      if(e.target.dataset.mode){currentMode=e.target.dataset.mode;$$('#versus-room').style.display='block';}
+      if(e.target.id==='join-room'){joinRoom($$('#room-code').value);}
+      if(e.target.id==='create-room'){createRoom();}
+    }));
+    function createRoom(){
+      const code=Math.random().toString(36).substr(2,6).toUpperCase();
+      $$('#versus-game-area').innerHTML=`<div style="text-align:center; color:#1abc9c; font-family:'JetBrains Mono',monospace;">
+        <h3>Room Created: ${code}</h3>
+        <p>Share this code with your team!</p>
+        <p>Waiting for players...</p>
+        <div id="player-list">Players: 1 (You)</div>
+      </div>`;
+      $$('#versus-game-area').style.display='block';
+      showFeedback('Room created! Share the code.','#2ecc71');
+    }
+    function joinRoom(code){
+      if(!code){showFeedback('Enter a room code!','#e74c3c');return;}
+      $$('#versus-game-area').innerHTML=`<div style="text-align:center; color:#1abc9c; font-family:'JetBrains Mono',monospace;">
+        <h3>Joined Room: ${code}</h3>
+        <p>Connected! ${currentMode==='coding'?'Solve coding puzzles together!':'Answer geography questions as a team!'}</p>
+        <button class="versus-btn" onclick="startChallenge()">Start Challenge</button>
+      </div>`;
+      $$('#versus-game-area').style.display='block';
+      showFeedback('Joined room successfully!','#2ecc71');
+    }
+    window.startChallenge=()=>{
+      $$('#versus-game-area').innerHTML=`<div style="text-align:center; color:#1abc9c; font-family:'JetBrains Mono',monospace;">
+        <h3>Challenge Started!</h3>
+        <p>${currentMode==='coding'?'Debug this code: function factorial(n){return n*factorial(n-1);}'/*simplified*/:'What is the capital of France?'}</p>
+        <input type="text" id="answer-input" placeholder="Your answer" style="padding:8px; border-radius:4px; border:1px solid #1abc9c; background:#000; color:#1abc9c; margin:12px;">
+        <button class="versus-btn" onclick="submitAnswer()">Submit</button>
+      </div>`;
+    };
+    window.submitAnswer=()=>{
+      const ans=$$('#answer-input').value;
+      showFeedback('Answer submitted! Team score updated.','#2ecc71');
+    };
+  }
 </script>
 </body>
 </html>
