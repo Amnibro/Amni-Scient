@@ -1184,11 +1184,14 @@
       if(window._clickerTimer){clearInterval(window._clickerTimer);window._clickerTimer=null;}
       if(window._minerTimer){clearInterval(window._minerTimer);window._minerTimer=null;}
       if(window._vacTimer){clearInterval(window._vacTimer);window._vacTimer=null;}
+      if(window._tetrisSpdWatch){clearInterval(window._tetrisSpdWatch);window._tetrisSpdWatch=null;}
+      if(window._goldenSpawner){clearInterval(window._goldenSpawner);window._goldenSpawner=null;}
       window.onpointerup=null;
     } else {
       window.location.href = '../amni-learn.html';
     }
   });
+  function goBack(){$$('#nav-back').click();}
   $$all('.game-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
       const btnEl = e.target.closest('.game-btn');
@@ -4429,9 +4432,10 @@ function playAnimalSound(type) {
           if(grid[r][c]===-1){gameOver=true;if(timerInt)clearInterval(timerInt);for(let rr=0;rr<ROWS;rr++)for(let cc=0;cc<COLS;cc++)revealed[rr][cc]=true;render();showFeedback('💥 BOOM!','#e74c3c');resetStreak();return;}
           reveal(r,c);if(checkWin()){gameOver=true;if(timerInt)clearInterval(timerInt);if(!best[diff]||elapsed<best[diff]){best[diff]=elapsed;sessionStorage.setItem('ms-best',JSON.stringify(best));}showFeedback(`Cleared in ${elapsed}s! 🎉`,'#2ecc71');addScore(20);}render();
         });
-        cell.addEventListener('contextmenu',e=>{e.preventDefault();if(gameOver||revealed[r][c])return;flagged[r][c]=!flagged[r][c];render();});
+        cell.dataset.r=r;cell.dataset.c=c;
         g.appendChild(cell);
       }
+      g.addEventListener('contextmenu',e=>{e.preventDefault();const cell=e.target.closest('.ms-cell');if(!cell)return;const cr=parseInt(cell.dataset.r),cc=parseInt(cell.dataset.c);if(isNaN(cr)||gameOver||revealed[cr][cc])return;flagged[cr][cc]=!flagged[cr][cc];render();});
       root.appendChild(g);
       const btnRow=document.createElement('div');btnRow.style.cssText='text-align:center;margin-top:8px;';
       const rb=document.createElement('button');rb.className='retro-btn';rb.style.margin='3px';rb.textContent='🔄 NEW GAME';rb.onclick=()=>setDiff(diff);
@@ -4443,12 +4447,20 @@ function playAnimalSound(type) {
   function initPipes(){
     const root=$$('#pipes-game');root.innerHTML='';
     const TYPES=['┃','━','┏','┓','┗','┛','╋','┣','┫','┳','┻'];
-    const CONNS={0:[[0,-1],[0,1]],1:[[-1,0],[1,0]],2:[[1,0],[0,1]],3:[[-1,0],[0,1]],4:[[1,0],[0,-1]],5:[[-1,0],[0,-1]],6:[[-1,0],[1,0],[0,-1],[0,1]],7:[[1,0],[0,-1],[0,1]],8:[[-1,0],[0,-1],[0,1]],9:[[-1,0],[1,0],[0,1]],10:[[-1,0],[1,0],[0,-1]]};
+    const CONNS={0:[[-1,0],[1,0]],1:[[0,-1],[0,1]],2:[[1,0],[0,1]],3:[[1,0],[0,-1]],4:[[-1,0],[0,1]],5:[[-1,0],[0,-1]],6:[[-1,0],[1,0],[0,-1],[0,1]],7:[[-1,0],[1,0],[0,1]],8:[[-1,0],[1,0],[0,-1]],9:[[1,0],[0,-1],[0,1]],10:[[-1,0],[0,-1],[0,1]]};
     let grid=[],moves=0,lvl=parseInt(sessionStorage.getItem('pipe-lvl')||'1'),best=parseInt(sessionStorage.getItem('pipe-best')||'999');
     function sz(){return Math.min(4+Math.floor(lvl/2),8);}
     function gen(){
       const SZ=sz();grid=[];moves=0;
-      for(let r=0;r<SZ;r++){grid[r]=[];for(let c=0;c<SZ;c++){grid[r][c]={type:Math.floor(Math.random()*TYPES.length),rot:Math.floor(Math.random()*4)};}}
+      const pathConns=Array.from({length:SZ},()=>Array(SZ).fill(null).map(()=>[]));      const visited=Array.from({length:SZ},()=>Array(SZ).fill(false));const dirs=[[-1,0],[1,0],[0,-1],[0,1]];
+      function dfs(r,c){visited[r][c]=true;[...dirs].sort(()=>Math.random()-0.5).forEach(([dr,dc])=>{const nr=r+dr,nc=c+dc;if(nr>=0&&nr<SZ&&nc>=0&&nc<SZ&&!visited[nr][nc]){pathConns[r][c].push([dr,dc]);pathConns[nr][nc].push([-dr,-dc]);dfs(nr,nc);}});}
+      dfs(0,0);
+      for(let r=0;r<SZ;r++){grid[r]=[];for(let c=0;c<SZ;c++){
+        const need=new Set(pathConns[r][c].map(([dr,dc])=>`${dr},${dc}`));
+        let cellType=6,solvedRot=0;outer:for(let t=0;t<TYPES.length;t++){for(let rot=0;rot<4;rot++){const cs=rotateConns(t,rot);const has=new Set(cs.map(([dr,dc])=>`${dr},${dc}`));if(has.size===need.size&&[...need].every(k=>has.has(k))){cellType=t;solvedRot=rot;break outer;}}}
+        const randRot=(solvedRot+1+Math.floor(Math.random()*3))%4;
+        grid[r][c]={type:cellType,rot:randRot};
+      }}
     }
     function rotateConns(type,rot){let c=CONNS[type].map(d=>[...d]);for(let i=0;i<rot;i++)c=c.map(([dr,dc])=>[dc,-dr]);return c;}
     function getConnected(){
@@ -4486,6 +4498,8 @@ function playAnimalSound(type) {
     gen();render();
   }
   function initTetris(){
+    if(window._tetrisTimer){clearInterval(window._tetrisTimer);window._tetrisTimer=null;}
+    if(window._tetrisSpdWatch){clearInterval(window._tetrisSpdWatch);window._tetrisSpdWatch=null;}
     const root=$$('#tetris-game');root.innerHTML='';
     const COLS=10,ROWS=20,SZ=Math.min(Math.floor((window.innerWidth-40)/COLS),Math.floor((window.innerHeight-200)/ROWS),24);
     const canvas=document.createElement('canvas');canvas.className='retro-canvas';canvas.style.borderColor='#a29bfe';canvas.width=COLS*SZ;canvas.height=ROWS*SZ;
@@ -4493,7 +4507,7 @@ function playAnimalSound(type) {
     const SHAPES=[[[1,1,1,1]],[[1,1],[1,1]],[[0,1,0],[1,1,1]],[[1,0,0],[1,1,1]],[[0,0,1],[1,1,1]],[[0,1,1],[1,1,0]],[[1,1,0],[0,1,1]]];
     const COLORS=['#00f0f0','#f0f000','#a000f0','#f0a000','#0000f0','#00f000','#f00000'];
     let best=parseInt(sessionStorage.getItem('tet-best')||'0');
-    let board,piece,px,py,pi,sc,lines,go,level,holdPi,canHold,dropSpeed;
+    let board,piece,px,py,pi,sc,lines,go,level,holdPi,canHold,dropSpeed=500;
     function restart(){board=Array.from({length:ROWS},()=>Array(COLS).fill(0));sc=0;lines=0;go=false;level=1;holdPi=-1;canHold=true;dropSpeed=500;newPiece();const ov=$$('#tet-over');if(ov)ov.remove();draw();}
     function newPiece(){pi=Math.floor(Math.random()*SHAPES.length);piece=SHAPES[pi].map(r=>[...r]);px=Math.floor((COLS-piece[0].length)/2);py=0;canHold=true;if(!canPlace(piece,px,py)){go=true;if(sc>best){best=sc;sessionStorage.setItem('tet-best',best);}gameOver();}}
     function canPlace(p,x,y){for(let r=0;r<p.length;r++)for(let c=0;c<p[r].length;c++){if(!p[r][c])continue;const nr=y+r,nc=x+c;if(nc<0||nc>=COLS||nr>=ROWS||(nr>=0&&board[nr][nc]))return false;}return true;}
@@ -4527,11 +4541,13 @@ function playAnimalSound(type) {
     const holdBtn=document.createElement('button');holdBtn.className='retro-btn';holdBtn.style.cssText='margin:4px;font-size:0.8rem;';holdBtn.textContent='📦 HOLD (C)';holdBtn.onclick=()=>{holdSwap();draw();upHud();};root.appendChild(holdBtn);
     function upHud(){$$('#tet-sc').textContent=sc;$$('#tet-ln').textContent=lines;$$('#tet-lv').textContent=level;}
     document.addEventListener('keydown',e=>{if(currentGame!=='tetris'||go)return;if(e.key==='ArrowLeft'&&canPlace(piece,px-1,py))px--;if(e.key==='ArrowRight'&&canPlace(piece,px+1,py))px++;if(e.key==='ArrowUp')rotate();if(e.key==='ArrowDown'){while(canPlace(piece,px,py+1))py++;place();}if(e.key==='c'||e.key==='C')holdSwap();draw();upHud();});
-    window._tetrisTimer=setInterval(()=>{if(currentGame!=='tetris'||go)return;if(canPlace(piece,px,py+1))py++;else place();draw();upHud();},dropSpeed);
-    const spdWatch=setInterval(()=>{if(currentGame!=='tetris'){clearInterval(spdWatch);return;}clearInterval(window._tetrisTimer);window._tetrisTimer=setInterval(()=>{if(currentGame!=='tetris'||go)return;if(canPlace(piece,px,py+1))py++;else place();draw();upHud();},dropSpeed);},3000);
+    function startDropTimer(){clearInterval(window._tetrisTimer);window._tetrisTimer=setInterval(()=>{if(currentGame!=='tetris'||go)return;if(canPlace(piece,px,py+1))py++;else place();draw();upHud();},dropSpeed);}
+    startDropTimer();
+    window._tetrisSpdWatch=setInterval(()=>{if(currentGame!=='tetris'){clearInterval(window._tetrisSpdWatch);return;}startDropTimer();},2000);
     restart();
   }
   function initFlappy(){
+    if(window._flappyAF){cancelAnimationFrame(window._flappyAF);window._flappyAF=null;}
     const root=$$('#flappy-game');root.innerHTML='';
     const cW=Math.min(320,window.innerWidth-20),cH=Math.min(480,window.innerHeight-180);
     const canvas=document.createElement('canvas');canvas.className='retro-canvas';canvas.style.borderColor='#2ecc71';canvas.width=cW;canvas.height=cH;
