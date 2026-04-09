@@ -424,6 +424,20 @@
   .idle-item-desc { font-family:'Comic Neue',cursive; font-size:0.8rem; color:#aaa; margin-top:4px; }
   .idle-item-cost { font-family:'JetBrains Mono',monospace; font-size:0.9rem; color:#e67e22; margin-top:6px; }
   .idle-rate { font-family:'JetBrains Mono',monospace; font-size:0.9rem; color:#aaa; }
+  .hs-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:9000; display:flex; align-items:center; justify-content:center; }
+  .hs-modal { background:#0c0f12; border:2px solid #f1c40f; border-radius:16px; padding:28px 24px; min-width:min(360px,90vw); font-family:'JetBrains Mono',monospace; text-align:center; }
+  .hs-title { font-size:1.4rem; color:#f1c40f; font-weight:bold; margin-bottom:14px; letter-spacing:2px; }
+  .hs-table { width:100%; border-collapse:collapse; margin:10px 0 16px; }
+  .hs-table tr:nth-child(1) .hs-rank { color:#f1c40f; }
+  .hs-table tr:nth-child(2) .hs-rank { color:#aaa; }
+  .hs-table tr:nth-child(3) .hs-rank { color:#cd7f32; }
+  .hs-rank { width:30px; font-weight:bold; padding:4px 6px; color:#888; }
+  .hs-init { width:50px; color:#ecf0f1; font-size:1.1rem; letter-spacing:2px; padding:4px 6px; }
+  .hs-score { color:#2ecc71; font-size:1.1rem; padding:4px 6px; text-align:right; }
+  .hs-new { color:#f1c40f; font-size:0.7rem; vertical-align:middle; }
+  .hs-input-row { display:flex; gap:6px; justify-content:center; margin:10px 0; }
+  .hs-letter { width:48px; height:56px; font-size:1.8rem; text-align:center; font-family:'JetBrains Mono',monospace; background:#111; border:2px solid #f1c40f; color:#f1c40f; border-radius:8px; text-transform:uppercase; caret-color:transparent; }
+  .hs-letter:focus { outline:none; box-shadow:0 0 8px #f1c40f; }
   .college-container { display:flex; flex-direction:column; align-items:center; width:100%; max-width:800px; gap:12px; padding:10px; }
   .college-card { background:rgba(72,219,251,0.05); border:2px solid rgba(72,219,251,0.2); border-radius:16px; padding:24px; width:100%; max-width:700px; }
   .college-question { font-family:'JetBrains Mono',monospace; font-size:clamp(1rem,3vw,1.4rem); color:#ecf0f1; line-height:1.6; margin-bottom:16px; }
@@ -1192,6 +1206,39 @@
     }
   });
   function goBack(){$$('#nav-back').click();}
+  const _HS_LIMITS={tetris:999999,snake80:500,breakout:50000,pong:30,invaders:20000,minesweeper:9999,flappy:500,bejeweled:999999,colorsort:500,nummem:25,chimp:30,dottrack:75,reaction:300,visualsearch:10,mentalrot:12,trailmake:999};
+  function _hs_get(game){try{return JSON.parse(localStorage.getItem('hs-'+game)||'[]');}catch(e){return[];}}
+  function _hs_save(game,score,initials){
+    const lim=_HS_LIMITS[game];if(lim&&score>lim)return false;
+    const list=_hs_get(game);
+    list.push({i:(initials||'???').toUpperCase().slice(0,3).padEnd(3,'?'),s:score,d:Date.now()});
+    list.sort((a,b)=>b.s-a.s);list.splice(10);
+    localStorage.setItem('hs-'+game,JSON.stringify(list));return true;
+  }
+  function _hs_prompt(game,score,label,onDone){
+    const lim=_HS_LIMITS[game];if(lim&&score>lim){if(onDone)onDone();return;}
+    const list=_hs_get(game);
+    const rank=list.filter(e=>e.s>score).length+1;
+    if(rank>10){if(onDone)onDone();return;}
+    const ov=document.createElement('div');ov.className='hs-overlay';
+    const rows=list.slice(0,5).map((e,i)=>`<tr><td class="hs-rank">${['🥇','🥈','🥉','4','5'][i]}</td><td class="hs-init">${e.i}</td><td class="hs-score">${e.s}</td></tr>`).join('');
+    ov.innerHTML=`<div class="hs-modal"><div class="hs-title">🏆 HIGH SCORES</div><div style="color:#aaa;font-size:0.85rem;margin-bottom:6px">${label||''}</div>${rows?`<table class="hs-table">${rows}</table>`:'<div style="color:#555;margin:10px 0">No scores yet</div>'}<div style="color:#f1c40f;margin:10px 0;font-size:0.9rem">YOU: #${rank} — ${score}</div><div style="color:#aaa;font-size:0.85rem;margin-bottom:8px">Enter your initials:</div><div class="hs-input-row"><input class="hs-letter" id="hs-l0" maxlength="1"><input class="hs-letter" id="hs-l1" maxlength="1"><input class="hs-letter" id="hs-l2" maxlength="1"></div><button class="retro-btn" id="hs-submit" style="margin-top:10px;padding:10px 30px;font-size:1rem">SUBMIT ▶</button><button class="retro-btn" id="hs-skip" style="margin-top:6px;padding:6px 16px;font-size:0.8rem;background:#333">SKIP</button></div>`;
+    document.body.appendChild(ov);
+    const ls=[$$('#hs-l0'),$$('#hs-l1'),$$('#hs-l2')];
+    ls.forEach((l,i)=>{l.addEventListener('input',()=>{l.value=l.value.replace(/[^a-zA-Z]/g,'').toUpperCase().slice(-1);if(l.value&&i<2)ls[i+1].focus();});l.addEventListener('keydown',e=>{if(e.key==='Backspace'&&!l.value&&i>0)ls[i-1].focus();});});
+    ls[0].focus();
+    const submit=()=>{const init=ls.map(l=>l.value||'?').join('');if(_hs_save(game,score,init)){}ov.remove();if(onDone)onDone();};
+    $$('#hs-submit').onclick=submit;$$('#hs-skip').onclick=()=>{ov.remove();if(onDone)onDone();};
+    ov.addEventListener('keydown',e=>{if(e.key==='Enter')submit();});
+  }
+  function _hs_show(game,label){
+    const list=_hs_get(game);
+    const ov=document.createElement('div');ov.className='hs-overlay';ov.onclick=e=>{if(e.target===ov)ov.remove();};
+    const rows=list.slice(0,10).map((e,i)=>`<tr><td class="hs-rank">${['🥇','🥈','🥉','4','5','6','7','8','9','10'][i]}</td><td class="hs-init">${e.i}</td><td class="hs-score">${e.s}</td></tr>`).join('');
+    ov.innerHTML=`<div class="hs-modal"><div class="hs-title">🏆 ${label||'HIGH SCORES'}</div>${rows?`<table class="hs-table">${rows}</table>`:'<div style="color:#555;padding:20px">No scores yet — be the first!</div>'}<button class="retro-btn" style="margin-top:10px">CLOSE</button></div>`;
+    ov.querySelector('.retro-btn').onclick=()=>ov.remove();
+    document.body.appendChild(ov);
+  }
   $$all('.game-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
       const btnEl = e.target.closest('.game-btn');
@@ -4260,9 +4307,10 @@ function playAnimalSound(type) {
       alive=false;if(sc>best){best=sc;sessionStorage.setItem('snake-best',best);const bEl=$$('#snake-best');if(bEl)bEl.textContent=best;}
       draw();resetStreak();
       const ov=document.createElement('div');ov.id='snake-over';ov.style.cssText='text-align:center;padding:16px;margin-top:8px;';
-      ov.innerHTML=`<div style="font-size:1.6rem;font-weight:bold;color:#e74c3c;margin-bottom:6px">GAME OVER</div><div style="font-size:1.2rem;color:#fff;margin-bottom:12px">Score: ${sc} | Wave: ${wave}${sc>=best?' | 🏆 NEW BEST!':''}</div><button class="retro-btn" style="margin:4px" id="snake-restart">🔄 RESTART</button><button class="retro-btn" style="margin:4px;background:#e74c3c" id="snake-exit">🚪 EXIT</button>`;
+      ov.innerHTML=`<div style="font-size:1.6rem;font-weight:bold;color:#e74c3c;margin-bottom:6px">GAME OVER</div><div style="font-size:1.2rem;color:#fff;margin-bottom:12px">Score: ${sc} | Wave: ${wave}${sc>=best?' | 🏆 NEW BEST!':''}</div><button class="retro-btn" style="margin:4px" id="snake-restart">🔄 RESTART</button><button class="retro-btn" style="margin:4px;background:#e74c3c" id="snake-exit">🚪 EXIT</button><button class="tut-trigger" style="margin:4px" onclick="_hs_show('snake80','Snake')">🏆</button>`;
       root.appendChild(ov);
-      $$('#snake-restart').onclick=restart;$$('#snake-exit').onclick=()=>{if(window._snakeTimer)clearInterval(window._snakeTimer);goBack();};
+      $$('#snake-restart').onclick=restart;$$('#snake-exit').onclick=()=>{if(window._snakeTimer)clearInterval(window._snakeTimer);goBack()};
+      _hs_prompt('snake80',sc,`Wave: ${wave}`);
     }
     function tick(){
       if(!alive||currentGame!=='snake80')return;
@@ -4303,8 +4351,9 @@ function playAnimalSound(type) {
     function gameOver(){
       go=true;if(sc>best){best=sc;sessionStorage.setItem('brk-best',best);}
       const ov=document.createElement('div');ov.id='brk-over';ov.style.cssText='text-align:center;padding:16px;margin-top:8px;';
-      ov.innerHTML=`<div style="font-size:1.6rem;font-weight:bold;color:#e74c3c;margin-bottom:6px">GAME OVER</div><div style="font-size:1.2rem;color:#fff;margin-bottom:12px">Score: ${sc} | Wave: ${wave}${sc>=best?' | 🏆 NEW BEST!':''}</div><button class="retro-btn" style="margin:4px" id="brk-restart">🔄 RESTART</button><button class="retro-btn" style="margin:4px;background:#e74c3c" id="brk-exit">🚪 EXIT</button>`;
-      root.appendChild(ov);$$('#brk-restart').onclick=()=>{restart();};$$('#brk-exit').onclick=()=>{if(window._breakoutAF)cancelAnimationFrame(window._breakoutAF);goBack();};
+      ov.innerHTML=`<div style="font-size:1.6rem;font-weight:bold;color:#e74c3c;margin-bottom:6px">GAME OVER</div><div style="font-size:1.2rem;color:#fff;margin-bottom:12px">Score: ${sc} | Wave: ${wave}${sc>=best?' | 🏆 NEW BEST!':''}</div><button class="retro-btn" style="margin:4px" id="brk-restart">🔄 RESTART</button><button class="retro-btn" style="margin:4px;background:#e74c3c" id="brk-exit">🚪 EXIT</button><button class="tut-trigger" style="margin:4px" onclick="_hs_show('breakout','Breakout')">🏆</button>`;
+      root.appendChild(ov);$$('#brk-restart').onclick=()=>{restart();};$$('#brk-exit').onclick=()=>{if(window._breakoutAF)cancelAnimationFrame(window._breakoutAF);goBack()};
+      _hs_prompt('breakout',sc,`Wave: ${wave}`);
     }
     function processBall(bxi,byi,bdxi,bdyi){
       let nbx=bxi+bdxi,nby=byi+bdyi,nbdx=bdxi,nbdy=bdyi;
@@ -4385,8 +4434,9 @@ function playAnimalSound(type) {
       go=true;if(sc>best){best=sc;sessionStorage.setItem('inv-best',best);}$$('#inv-best').textContent=best;
       ctx.fillStyle='rgba(0,0,0,0.7)';ctx.fillRect(0,0,cW,cH);ctx.fillStyle='#e74c3c';ctx.font='bold 24px JetBrains Mono';ctx.textAlign='center';ctx.fillText('GAME OVER',cW/2,cH/2-20);ctx.fillStyle='#fff';ctx.font='16px JetBrains Mono';ctx.fillText(`Score: ${sc} | Wave: ${wave}`,cW/2,cH/2+10);
       const ov=document.createElement('div');ov.id='inv-over';ov.style.cssText='text-align:center;padding:12px;';
-      ov.innerHTML=`<button class="retro-btn" style="margin:4px" id="inv-restart">🔄 RESTART</button><button class="retro-btn" style="margin:4px;background:#e74c3c" id="inv-exit">🚪 EXIT</button>`;
-      root.appendChild(ov);$$('#inv-restart').onclick=restart;$$('#inv-exit').onclick=()=>{if(window._invadersAF)cancelAnimationFrame(window._invadersAF);goBack();};
+      ov.innerHTML=`<button class="retro-btn" style="margin:4px" id="inv-restart">🔄 RESTART</button><button class="retro-btn" style="margin:4px;background:#e74c3c" id="inv-exit">🚪 EXIT</button><button class="tut-trigger" style="margin:4px" onclick="_hs_show('invaders','Invaders')">🏆</button>`;
+      root.appendChild(ov);$$('#inv-restart').onclick=restart;$$('#inv-exit').onclick=()=>{if(window._invadersAF)cancelAnimationFrame(window._invadersAF);goBack()};
+      _hs_prompt('invaders',sc,`Wave: ${wave}`);
     }
     function loop(){
       if(currentGame!=='invaders')return;
@@ -4553,15 +4603,23 @@ function playAnimalSound(type) {
       const ov=document.createElement('div');ov.id='tet-over';ov.style.cssText='text-align:center;padding:12px;';
       ov.innerHTML=`<div style="font-size:1.2rem;color:#fff;margin-bottom:8px">${sc>=best?'🏆 NEW BEST! ':''}Best: ${best}</div><button class="retro-btn" style="margin:4px" id="tet-restart">🔄 RESTART</button><button class="retro-btn" style="margin:4px;background:#e74c3c" id="tet-exit">🚪 EXIT</button>`;
       root.appendChild(ov);$$('#tet-restart').onclick=restart;$$('#tet-exit').onclick=()=>{if(window._tetrisTimer)clearInterval(window._tetrisTimer);goBack();};
+      _hs_prompt('tetris',sc,`Lines: ${lines} | Level: ${level}`);
     }
-    const hud=document.createElement('div');hud.className='retro-hud';hud.innerHTML=`Score: <span id="tet-sc">0</span> | Lines: <span id="tet-ln">0</span> | Lvl: <span id="tet-lv">1</span> | Best: ${best}`;
+    const hud=document.createElement('div');hud.className='retro-hud';hud.innerHTML=`Score: <span id="tet-sc">0</span> | Lines: <span id="tet-ln">0</span> | Lvl: <span id="tet-lv">1</span> | Best: ${best} <button class="tut-trigger" style="margin-left:6px;font-size:0.7rem" onclick="_hs_show('tetris','Block Drop')">🏆 Scores</button>`;
     root.appendChild(hud);root.appendChild(canvas);
-    const dpad=document.createElement('div');dpad.className='retro-dpad';
-    [['','⬆',''],['⬅','','➡'],['','⬇','']].flat().forEach((t,i)=>{const b=document.createElement('button');if(!t){b.className='empty';}else{b.textContent=t;b.onclick=()=>{if(go)return;if(i===1)rotate();if(i===3&&canPlace(piece,px-1,py))px--;if(i===5&&canPlace(piece,px+1,py))px++;if(i===7){while(canPlace(piece,px,py+1))py++;place();}draw();upHud();};}dpad.appendChild(b);});
+    const dpad=document.createElement('div');dpad.style.cssText='display:grid;grid-template-columns:repeat(4,1fr);gap:4px;max-width:220px;margin:6px auto;';
+    const dbMap=[['⬅','⬇','➡','🔄'],['HOLD','⬇⬇','','']];
+    [
+      {t:'⬅',fn:()=>{if(!go&&canPlace(piece,px-1,py)){px--;draw();upHud();}}},
+      {t:'⬇',fn:()=>{if(!go){if(canPlace(piece,px,py+1))py++;else place();draw();upHud();}}},
+      {t:'➡',fn:()=>{if(!go&&canPlace(piece,px+1,py)){px++;draw();upHud();}}},
+      {t:'🔄 ROTATE',fn:()=>{if(!go){rotate();draw();upHud();}}},
+      {t:'📦 HOLD',fn:()=>{if(!go){holdSwap();draw();upHud();}}},
+      {t:'⬇⬇ DROP',fn:()=>{if(!go){while(canPlace(piece,px,py+1))py++;place();draw();upHud();}}}
+    ].forEach(({t,fn})=>{const b=document.createElement('button');b.className='retro-btn';b.style.cssText='padding:6px 4px;font-size:0.75rem;margin:2px;';b.textContent=t;b.onclick=fn;dpad.appendChild(b);});
     root.appendChild(dpad);
-    const holdBtn=document.createElement('button');holdBtn.className='retro-btn';holdBtn.style.cssText='margin:4px;font-size:0.8rem;';holdBtn.textContent='📦 HOLD (C)';holdBtn.onclick=()=>{holdSwap();draw();upHud();};root.appendChild(holdBtn);
     function upHud(){$$('#tet-sc').textContent=sc;$$('#tet-ln').textContent=lines;$$('#tet-lv').textContent=level;}
-    document.addEventListener('keydown',e=>{if(currentGame!=='tetris'||go)return;if(e.key==='ArrowLeft'&&canPlace(piece,px-1,py))px--;if(e.key==='ArrowRight'&&canPlace(piece,px+1,py))px++;if(e.key==='ArrowUp')rotate();if(e.key==='ArrowDown'){while(canPlace(piece,px,py+1))py++;place();}if(e.key==='c'||e.key==='C')holdSwap();draw();upHud();});
+    document.addEventListener('keydown',e=>{if(currentGame!=='tetris'||go)return;if(e.key==='ArrowLeft'&&canPlace(piece,px-1,py))px--;if(e.key==='ArrowRight'&&canPlace(piece,px+1,py))px++;if(e.key==='ArrowUp'||e.key==='x'||e.key==='X')rotate();if(e.key==='ArrowDown'){if(canPlace(piece,px,py+1))py++;else place();}if(e.key===' '){e.preventDefault();while(canPlace(piece,px,py+1))py++;place();}if(e.key==='c'||e.key==='C')holdSwap();draw();upHud();});
     function startDropTimer(){clearInterval(window._tetrisTimer);window._tetrisTimer=setInterval(()=>{if(currentGame!=='tetris'||go)return;if(canPlace(piece,px,py+1))py++;else place();draw();upHud();},dropSpeed);}
     startDropTimer();
     window._tetrisSpdWatch=setInterval(()=>{if(currentGame!=='tetris'){clearInterval(window._tetrisSpdWatch);return;}startDropTimer();},2000);
@@ -4587,8 +4645,9 @@ function playAnimalSound(type) {
       drawDeath();
       const ov=document.createElement('div');ov.id='flp-over';ov.style.cssText='text-align:center;padding:10px;';
       const m=medal();
-      ov.innerHTML=`<div style="font-size:1.2rem;color:#fff;margin-bottom:6px">${m} Score: ${sc} | Best: ${best}</div><button class="retro-btn" style="margin:4px" id="flp-restart">🔄 RESTART</button><button class="retro-btn" style="margin:4px;background:#e74c3c" id="flp-exit">🚪 EXIT</button>`;
-      root.appendChild(ov);$$('#flp-restart').onclick=()=>{dead=false;reset();};$$('#flp-exit').onclick=()=>{if(window._flappyAF)cancelAnimationFrame(window._flappyAF);goBack();};
+      ov.innerHTML=`<div style="font-size:1.2rem;color:#fff;margin-bottom:6px">${m} Score: ${sc} | Best: ${best}</div><button class="retro-btn" style="margin:4px" id="flp-restart">🔄 RESTART</button><button class="retro-btn" style="margin:4px;background:#e74c3c" id="flp-exit">🚪 EXIT</button><button class="tut-trigger" style="margin:4px" onclick="_hs_show('flappy','Flappy Jump')">🏆</button>`;
+      root.appendChild(ov);$$('#flp-restart').onclick=()=>{dead=false;reset();};$$('#flp-exit').onclick=()=>{if(window._flappyAF)cancelAnimationFrame(window._flappyAF);goBack()};
+      _hs_prompt('flappy',sc);
     }
     function drawDeath(){
       ctx.fillStyle='rgba(0,0,0,0.6)';ctx.fillRect(0,0,cW,cH);
@@ -4664,7 +4723,7 @@ function playAnimalSound(type) {
     function spawnGolden(){
       if(goldenActive||currentGame!=='clicker')return;
       const gc=document.createElement('div');gc.id='ck-golden';gc.textContent='🍪';gc.style.cssText=`position:absolute;font-size:2rem;cursor:pointer;animation:pulse 0.5s infinite alternate;top:${30+Math.random()*200}px;left:${10+Math.random()*60}%;z-index:10;filter:hue-rotate(60deg) brightness(1.5);`;
-      gc.onclick=()=>{gc.remove();goldenActive=true;goldenMult=7;showFeedback('🌟 7x CPS for 10s!','#f1c40f');achievements[7].earned=true;save();if(goldenTimer)clearTimeout(goldenTimer);goldenTimer=setTimeout(()=>{goldenMult=1;goldenActive=false;},10000);};
+      gc.onclick=()=>{gc.remove();goldenActive=true;goldenMult=7;showFeedback('🌟 7x CPS for 10s!','#f1c40f');achievements[7].earned=true;save();render();if(goldenTimer)clearTimeout(goldenTimer);goldenTimer=setTimeout(()=>{goldenMult=1;goldenActive=false;},10000);};
       root.style.position='relative';root.appendChild(gc);
       setTimeout(()=>{const el=$$('#ck-golden');if(el)el.remove();},6000);
     }
@@ -4690,7 +4749,7 @@ function playAnimalSound(type) {
       btns.appendChild(rb);btns.appendChild(eb);root.appendChild(btns);
     }
     render();
-    window._clickerTimer=setInterval(()=>{if(currentGame!=='clicker')return;cookies+=cps*goldenMult/10;save();checkAch();const d=$$('#ck-display');if(d)d.textContent=`🍪 ${fmt(cookies)}`;},100);
+    window._clickerTimer=setInterval(()=>{if(currentGame!=='clicker')return;cookies+=cps*goldenMult/10;save();checkAch();const d=$$('#ck-display');if(d)d.textContent=`🍪 ${fmt(cookies)}`;const r=root.querySelector('.idle-rate');if(r)r.textContent=`${fmt(cps*goldenMult)} per second${goldenMult>1?' (🌟 GOLDEN!)':''}`;root.querySelectorAll('.idle-shop .idle-item').forEach((el,i)=>{if(upgrades[i]){const c=cost(upgrades[i]);el.classList.toggle('locked',cookies<c);}});},100);
     window._goldenSpawner=setInterval(()=>{if(currentGame!=='clicker')return;if(Math.random()<0.15)spawnGolden();},15000);
   }
   function initAutoMiner(){
@@ -4739,7 +4798,7 @@ function playAnimalSound(type) {
       btns.appendChild(pb);btns.appendChild(eb);root.appendChild(btns);
     }
     render();
-    window._minerTimer=setInterval(()=>{if(currentGame!=='autominer')return;gems+=gps/10;save();const d=$$('#am-display');if(d)d.textContent=`⛏️ ${fmt(gems)}`;},100);
+    window._minerTimer=setInterval(()=>{if(currentGame!=='autominer')return;gems+=gps/10;save();const d=$$('#am-display');if(d)d.textContent=`⛏️ ${fmt(gems)}`;root.querySelectorAll('.idle-shop .idle-item').forEach((el,i)=>{if(upgrades[i]){const c=cost(upgrades[i]);el.classList.toggle('locked',gems<c);}});const pb=root.querySelector('[style*="100K"]');if(pb)pb.style.background=gems>=100000?'#f1c40f':'#555';},100);
   }
   function initPullPin(){
     const root=$$('#pullpin-game');root.innerHTML='';
