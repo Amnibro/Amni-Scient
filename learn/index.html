@@ -2668,21 +2668,22 @@
   
 function playAnimalSound(type) {
     const mappings = {
-        'moo': 'cow', 'woof': 'dog', 'meow': 'cat', 'oink': 'pig',
-        'baa': 'sheep', 'quack': 'duck', 'neigh': 'horse', 'ribbit': 'frog',
-        'roar': 'lion', 'hoot': 'owl', 'buzz': 'bee', 'chirp': 'bird',
-        'gobble': 'turkey', 'howl': 'wolf', 'cluck': 'chicken', 'squeak': 'mouse',
-        'hiss': 'snake', 'squawk': 'parrot', 'growl': 'bear', 'purr': 'cat',
-        'bleat': 'goat', 'coo': 'dove', 'chatter': 'monkey', 'screech': 'eagle',
-        'snort': 'rhino', 'caw': 'crow', 'whinny': 'horse', 'croak': 'crocodile',
-        'grunt': 'gorilla', 'squeal': 'boar', 'bark': 'seal', 'chitter': 'squirrel'
+        'moo':'cow','woof':'dog','meow':'cat','oink':'pig','baa':'sheep','quack':'duck','neigh':'horse','ribbit':'frog',
+        'roar':'lion','hoot':'owl','buzz':'bee','chirp':'bird','gobble':'turkey','howl':'wolf','cluck':'chicken',
+        'cock-a-doodle-doo':'chicken','squeak':'mouse','hiss':'snake','squawk':'parrot','growl':'bear','purr':'cat',
+        'bleat':'goat','trumpet':'elephant','chatter':'monkey','screech':'eagle','caw':'crow','croak':'crocodile',
+        'grunt':'gorilla','squeal':'boar','bark':'seal','chitter':'squirrel','hee-haw':'donkey','coo':'dove',
+        'snort':'rhino','bay':'deer','yip':'fox','snap':'crocodile','whinny':'horse'
     };
+    const mp3Only = new Set(['cow','dog','cat','pig','sheep','duck','horse','frog']);
     const animal = mappings[type.toLowerCase()] || type.toLowerCase();
-    new Audio('assets/audio/' + animal + '.mp3').play().catch(e => console.error("Audio block:", e));
+    const ext = mp3Only.has(animal) ? 'mp3' : 'wav';
+    const a = new Audio('assets/audio/' + animal + '.' + ext);
+    a.play().catch(() => { const b = new Audio('assets/audio/' + animal + '.mp3'); b.play().catch(e => console.error("Audio block:", e)); });
 }
 
   function speakText(text) {
-    if(["Moo","Woof","Meow","Oink","Baa","Quack","Neigh","Ribbit","Roar","Hoot","Buzz","Chirp","Gobble","Howl","Cluck","Squeak","Hiss","Squawk","Growl","Purr","Bleat","Coo","Chatter","Screech","Snort","Caw","Whinny","Croak","Grunt","Squeal","Bark","Chitter","Bay","Tweet"].includes(text)) { playAnimalSound(text); return; }
+    if(["Moo","Woof","Meow","Oink","Baa","Quack","Neigh","Ribbit","Roar","Hoot","Buzz","Chirp","Gobble","Howl","Cluck","Cock-a-doodle-doo","Squeak","Hiss","Squawk","Growl","Purr","Bleat","Trumpet","Chatter","Screech","Caw","Croak","Grunt","Squeal","Bark","Chitter","Hee-Haw","Coo","Snort","Bay","Yip","Snap","Whinny"].includes(text)) { playAnimalSound(text); return; }
         if('speechSynthesis' in window) {
           const utterance = new SpeechSynthesisUtterance(text);
           const voices = window.speechSynthesis.getVoices();
