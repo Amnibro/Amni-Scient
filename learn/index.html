@@ -629,6 +629,7 @@
     <div class="score-bar">
         <span>⭐ <span class="score-val" id="score-val">0</span></span>
         <span class="streak-fire" id="streak-fire">🔥 <span class="streak-val" id="streak-val">0</span></span>
+        <button class="retro-btn" id="leaderboard-btn" style="padding:2px 8px;font-size:0.75rem;margin-left:6px" onclick="window._showAllLeaderboards()">🏆</button>
     </div>
     <div class="top-controls">
         <span class="fs-hint" id="fs-hint">(Press ESC to exit)</span>
@@ -1282,7 +1283,7 @@
     $$('#hs-submit').onclick=submit;$$('#hs-skip').onclick=()=>{ov.remove();if(onDone)onDone();};
     ov.addEventListener('keydown',e=>{if(e.key==='Enter')submit();});
   }
-  function _hs_show(game,label){
+  window._hs_show=function(game,label){
     const list=_hs_get(game);
     const ov=document.createElement('div');ov.className='hs-overlay';ov.onclick=e=>{if(e.target===ov)ov.remove();};
     const rows=list.slice(0,10).map((e,i)=>`<tr><td class="hs-rank">${['🥇','🥈','🥉','4','5','6','7','8','9','10'][i]}</td><td class="hs-init">${e.i}</td><td class="hs-score">${e.s}</td></tr>`).join('');
@@ -1290,6 +1291,16 @@
     ov.querySelector('.retro-btn').onclick=()=>ov.remove();
     document.body.appendChild(ov);
   }
+  window._showAllLeaderboards=function(){
+    const games=[['breakout','Breakout'],['invaders','Invaders'],['snake80','Snake'],['tetris','Tetris'],['flappy','Flappy'],['pong','Pong'],['bejeweled','Bejeweled'],['colorSort','Color Sort']];
+    const ov=document.createElement('div');ov.className='hs-overlay';ov.onclick=e=>{if(e.target===ov)ov.remove();};
+    let html='<div class="hs-modal" style="max-height:80vh;overflow-y:auto;min-width:320px"><div class="hs-title">🏆 LEADERBOARD</div>';
+    games.forEach(([game,label])=>{const list=window._hs_get_pub(game);if(!list.length)return;const rows=list.slice(0,3).map((e,i)=>`<tr><td class="hs-rank">${['🥇','🥈','🥉'][i]}</td><td class="hs-init">${e.i}</td><td class="hs-score">${e.s}</td></tr>`).join('');html+=`<div style="margin:10px 0 4px;color:#4db8ff;font-size:0.85rem">${label}</div><table class="hs-table">${rows}</table>`;});
+    html+='<button class="retro-btn" style="margin-top:14px">CLOSE</button></div>';
+    ov.innerHTML=html;ov.querySelector('.retro-btn').onclick=()=>ov.remove();document.body.appendChild(ov);
+  };
+  window._hs_get_pub=function(game){try{return JSON.parse(localStorage.getItem('hs-'+game)||'[]');}catch(e){return[];}};
+
   $$all('.game-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
       const btnEl = e.target.closest('.game-btn');
@@ -2978,7 +2989,12 @@ function playAnimalSound(type) {
       1:[
         {title:'Fruits vs Vegetables',buckets:['🍎 Fruits','🥦 Vegetables'],items:[{e:'🍌',b:0},{e:'🥕',b:1},{e:'🍇',b:0},{e:'🥒',b:1},{e:'🍓',b:0},{e:'🌽',b:1},{e:'🍊',b:0},{e:'🥬',b:1}]},
         {title:'Animals: Land vs Water',buckets:['🌍 Land','🌊 Water'],items:[{e:'🐶',b:0},{e:'🐟',b:1},{e:'🐱',b:0},{e:'🐙',b:1},{e:'🐘',b:0},{e:'🦈',b:1},{e:'🐴',b:0},{e:'🐋',b:1}]},
-        {title:'Hot vs Cold',buckets:['🔥 Hot','❄️ Cold'],items:[{e:'☀️',b:0},{e:'⛄',b:1},{e:'🌋',b:0},{e:'🧊',b:1},{e:'🏝️',b:0},{e:'🐧',b:1},{e:'🌶️',b:0},{e:'🏔️',b:1}]}
+        {title:'Hot vs Cold',buckets:['🔥 Hot','❄️ Cold'],items:[{e:'☀️',b:0},{e:'⛄',b:1},{e:'🌋',b:0},{e:'🧊',b:1},{e:'🏝️',b:0},{e:'🐧',b:1},{e:'🌶️',b:0},{e:'🏔️',b:1}]},
+        {title:'Farm Animals vs Wild Animals',buckets:['🏡 Farm','🌿 Wild'],items:[{e:'🐄',b:0},{e:'🦁',b:1},{e:'🐔',b:0},{e:'🐯',b:1},{e:'🐑',b:0},{e:'🦊',b:1},{e:'🐷',b:0},{e:'🐻',b:1}]},
+        {title:'Things That Fly vs Things in Water',buckets:['🌤️ Flies','🌊 Swims'],items:[{e:'🦋',b:0},{e:'🐟',b:1},{e:'🐦',b:0},{e:'🐬',b:1},{e:'🐝',b:0},{e:'🦈',b:1},{e:'🦅',b:0},{e:'🐙',b:1}]},
+        {title:'Things You Eat vs Things You Wear',buckets:['🍽️ Eat','👕 Wear'],items:[{e:'🍕',b:0},{e:'👒',b:1},{e:'🍦',b:0},{e:'🧦',b:1},{e:'🍎',b:0},{e:'👗',b:1},{e:'🍪',b:0},{e:'🎩',b:1}]},
+        {title:'Happy vs Sad',buckets:['😊 Happy','😢 Sad'],items:[{e:'😀',b:0},{e:'😢',b:1},{e:'🥳',b:0},{e:'😭',b:1},{e:'😄',b:0},{e:'😟',b:1},{e:'🤩',b:0},{e:'😔',b:1}]},
+        {title:'Day vs Night',buckets:['☀️ Day','🌙 Night'],items:[{e:'🌈',b:0},{e:'⭐',b:1},{e:'🌸',b:0},{e:'🦇',b:1},{e:'🦋',b:0},{e:'🦉',b:1},{e:'☁️',b:0},{e:'🌜',b:1}]}
       ],
       2:[
         {title:'Living vs Non-Living',buckets:['🌱 Living','🪨 Non-Living'],items:[{e:'🌸',b:0},{e:'🪑',b:1},{e:'🐝',b:0},{e:'📱',b:1},{e:'🌲',b:0},{e:'🔑',b:1},{e:'🐸',b:0},{e:'💎',b:1}]},
@@ -4445,7 +4461,7 @@ function playAnimalSound(type) {
       go=true;if(sc>best){best=sc;sessionStorage.setItem('brk-best',best);}
       const ov=document.createElement('div');ov.id='brk-over';ov.style.cssText='text-align:center;padding:16px;margin-top:8px;';
       ov.innerHTML=`<div style="font-size:1.6rem;font-weight:bold;color:#e74c3c;margin-bottom:6px">GAME OVER</div><div style="font-size:1.2rem;color:#fff;margin-bottom:12px">Score: ${sc} | Wave: ${wave}${sc>=best?' | 🏆 NEW BEST!':''}</div><button class="retro-btn" style="margin:4px" id="brk-restart">🔄 RESTART</button><button class="retro-btn" style="margin:4px;background:#e74c3c" id="brk-exit">🚪 EXIT</button><button class="tut-trigger" style="margin:4px" onclick="_hs_show('breakout','Breakout')">🏆</button>`;
-      root.appendChild(ov);$$('#brk-restart').onclick=()=>{restart();};$$('#brk-exit').onclick=()=>{if(window._breakoutAF)cancelAnimationFrame(window._breakoutAF);goBack()};
+      root.appendChild(ov);$$('#brk-restart').onclick=()=>{restart();if(window._breakoutAF)cancelAnimationFrame(window._breakoutAF);window._breakoutAF=requestAnimationFrame(loop);};$$('#brk-exit').onclick=()=>{if(window._breakoutAF)cancelAnimationFrame(window._breakoutAF);goBack()};
       _hs_prompt('breakout',sc,`Wave: ${wave}`);
     }
     function processBall(bxi,byi,bdxi,bdyi){
