@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Amni-Browse &mdash; Privacy-First Web Browser | AMNI-SCIENT</title>
+<meta name="description" content="Amni-Browse: privacy-first, zero-telemetry web browser in a single Rust binary. Built-in ad blocker, DNS-over-HTTPS, encrypted password vault, multi-profile, private tabs.">
+<meta name="keywords" content="amni-browse,private browser,privacy browser,rust browser,no telemetry,ad blocker,dns over https,password vault">
+<meta property="og:title" content="Amni-Browse &mdash; Privacy-First Web Browser">
+<meta property="og:description" content="Zero-telemetry browser in a single Rust binary. Ad blocker, DoH, encrypted vault, private tabs, multi-profile. Local-only — your browsing never leaves your device.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://amni-scient.com/amni-browse">
+<meta property="og:image" content="https://amni-scient.com/assets/browse/Interface.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Amni-Browse &mdash; Privacy-First Web Browser">
+<meta name="twitter:description" content="Zero-telemetry browser in a single Rust binary. Ad blocker, DoH, encrypted vault, private tabs.">
+<meta name="twitter:image" content="https://amni-scient.com/assets/browse/Interface.png">
+<link rel="canonical" href="https://amni-scient.com/amni-browse">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Amni-Browse","url":"https://amni-scient.com/amni-browse.html","description":"Privacy-first, zero-telemetry web browser in a single Rust binary. Built-in ad blocker, DNS-over-HTTPS, encrypted password vault, multi-profile, private tabs.","applicationCategory":"WebBrowser","operatingSystem":"Windows, macOS, Linux","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Organization","name":"AMNI-SCIENT","url":"https://amni-scient.com"},"image":"https://amni-scient.com/assets/browse/Interface.png"}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8345487545441889" crossorigin="anonymous" data-overlays="false"></script>
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+</head>
+<body class="theme-ai">
+<div class="grid-bg"></div>
+<div class="scanlines"></div>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu">
+<a href="amni-haven.html">AMNI-HAVEN</a>
+<a href="amni-crypt.html">AMNI-CRYPT</a>
+<a href="amni-ai.html">AMNI-AI</a>
+<a href="amni-core.html">AMNI-CORE</a>
+<a href="amni-code.html">AMNI-CODE</a>
+<a href="amni-browse.html" class="active">AMNI-BROWSE</a>
+<a href="amni-explore.html">AMNI-EXPLORE</a>
+<a href="amni-learn.html">AMNI-LEARN</a>
+<a href="amni-calc.html">AMNI-CALC</a>
+<a href="amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</div>
+<a href="research.html">RESEARCH</a>
+<a href="about.html">ABOUT</a>
+<a href="faq.html">FAQ</a>
+<a href="privacy.html">PRIVACY</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<div class="product-hero">
+<div class="shield-icon float">
+<svg viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle cx="50" cy="55" r="38" stroke="#00d4ff" stroke-width="2" fill="rgba(0,212,255,0.04)"/>
+<ellipse cx="50" cy="55" rx="38" ry="14" stroke="#00d4ff" stroke-width="1.2" fill="none"/>
+<ellipse cx="50" cy="55" rx="38" ry="28" stroke="#00d4ff" stroke-width="1" fill="none" opacity="0.7"/>
+<line x1="12" y1="55" x2="88" y2="55" stroke="#00d4ff" stroke-width="1"/>
+<path d="M50 17 Q30 55 50 93 Q70 55 50 17 Z" stroke="#00d4ff" stroke-width="1.2" fill="none" opacity="0.85"/>
+<circle cx="50" cy="55" r="3" fill="#00d4ff"/>
+<path d="M50 35 L60 42 L58 54 L50 58 L42 54 L40 42 Z" stroke="#0df" stroke-width="1" fill="rgba(0,221,255,0.1)"/>
+</svg>
+</div>
+<h1>AMNI-BROWSE</h1>
+<p class="desc">PRIVACY-FIRST &bull; ZERO TELEMETRY &bull; SINGLE RUST BINARY</p>
+<div class="cta-row" style="justify-content:center;margin-top:2rem;margin-bottom:1rem">
+<a href="#gallery" class="btn btn-primary">VIEW INTERFACE</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="btn btn-outline">&#9749; SUPPORT</a>
+</div>
+</div>
+<section>
+<h2>YOUR BROWSING IS YOURS</h2>
+<p style="text-align:center;color:var(--dim);max-width:720px;margin:0 auto 2rem;font-size:.9rem">A ground-up web browser built in Rust around one principle &mdash; <em>nothing leaves your machine unless you tell it to</em>. No accounts, no sync servers, no telemetry pings. Bookmarks, history, vault, sessions &mdash; all local. Tracking parameters stripped before the request even fires.</p>
+<div class="features">
+<div class="feature">
+<div class="icon">&#128737;</div>
+<h4>ZERO TELEMETRY</h4>
+<p>No analytics, no crash reporting, no phone-home. The binary makes network requests only to the pages you navigate to and the DoH resolver you pick.</p>
+</div>
+<div class="feature">
+<div class="icon">&#128683;</div>
+<h4>BUILT-IN AD BLOCKER</h4>
+<p>Ad networks, tracking pixels, fingerprinting scripts blocked at the navigation layer. Filter rules bundled in the binary &mdash; no external list downloads.</p>
+</div>
+<div class="feature">
+<div class="icon">&#128274;</div>
+<h4>DNS-OVER-HTTPS</h4>
+<p>Encrypted DNS by default with Cloudflare, Google, or Quad9. Your resolver can&rsquo;t see plaintext queries; your ISP can&rsquo;t build a browsing profile.</p>
+</div>
+<div class="feature">
+<div class="icon">&#128273;</div>
+<h4>ENCRYPTED VAULT</h4>
+<p>AES-256-GCM password vault with PBKDF2-HMAC-SHA256 (600,000 iterations). Master password never stored &mdash; only the derived key lives in memory while unlocked.</p>
+</div>
+<div class="feature">
+<div class="icon">&#128065;</div>
+<h4>PRIVATE TABS</h4>
+<p>Private browsing mode keeps history, cookies, and cache out of persistent storage. Tracking parameters (UTM, fbclid, gclid) are stripped on every request.</p>
+</div>
+<div class="feature">
+<div class="icon">&#128101;</div>
+<h4>MULTI-PROFILE</h4>
+<p>Isolated data directories per profile &mdash; separate bookmarks, history, vault, and session. Create, switch, rename, and delete without ever crossing streams.</p>
+</div>
+</div>
+</section>
+<section>
+<h2>SEVEN-PILLAR ARCHITECTURE</h2>
+<p style="text-align:center;color:var(--dim);max-width:720px;margin:0 auto 2rem;font-size:.9rem">The source tree is organized into seven isolated pillars. Each pillar has a single responsibility and communicates over an explicit IPC boundary.</p>
+<table class="spec-table">
+<tr><th>PILLAR</th><th>ROLE</th></tr>
+<tr><td>UI</td><td>HTML/CSS/JS chrome (webview) or native egui chrome (servo-engine)</td></tr>
+<tr><td>Communication</td><td>IPC protocol (70+ message types) + DNS-over-HTTPS resolver</td></tr>
+<tr><td>Storage</td><td>Bookmarks, history, sessions, downloads, profiles &mdash; local only</td></tr>
+<tr><td>Encryption</td><td>AES-256-GCM vault, PBKDF2-HMAC-SHA256 KDF, encrypted autofill</td></tr>
+<tr><td>Platform</td><td>OS windowing: tao+wry or winit+wgpu+egui compositor</td></tr>
+<tr><td>Engine</td><td>Tabs, ad blocker, extensions, permissions, devtools, app launcher</td></tr>
+<tr><td>Media</td><td>Audio/video playback hooks (v0.5+ roadmap)</td></tr>
+</table>
+</section>
+<section>
+<h2>SPECIFICATIONS</h2>
+<table class="spec-table">
+<tr><th>PARAMETER</th><th>DETAILS</th></tr>
+<tr><td>Type</td><td>Privacy-First Web Browser</td></tr>
+<tr><td>Language</td><td>Rust 2021 (single binary)</td></tr>
+<tr><td>Platforms</td><td>Windows, macOS, Linux</td></tr>
+<tr><td>Rendering</td><td>WebView (tao + wry 0.46) &bull; Servo-egui (winit + wgpu + egui) planned</td></tr>
+<tr><td>DNS</td><td>DoH via Cloudflare, Google, Quad9 &mdash; pick your resolver</td></tr>
+<tr><td>Encryption</td><td>AES-256-GCM &bull; PBKDF2-HMAC-SHA256 &bull; 600,000 iterations</td></tr>
+<tr><td>Ad Blocking</td><td>Navigation-layer filter &bull; built-in rules &bull; no external fetch</td></tr>
+<tr><td>Tracking Strip</td><td>UTM, fbclid, gclid, and 20+ click-ID params removed from every URL</td></tr>
+<tr><td>Storage</td><td>Local only &mdash; OS config dir &bull; no cloud, no sync</td></tr>
+<tr><td>Profiles</td><td>Isolated data dirs &bull; unlimited profiles</td></tr>
+<tr><td>Telemetry</td><td>None &mdash; zero analytics, zero crash pings, zero ID pings</td></tr>
+<tr><td>License</td><td>CC BY-NC 4.0 (source-available, non-commercial)</td></tr>
+</table>
+</section>
+<section>
+<h2>HOW IT WORKS</h2>
+<div class="how-works-grid">
+<div class="card">
+<h3>1. LAUNCH</h3>
+<p>A single Rust binary opens a native window. The chrome (toolbar, URL bar, tab strip) is injected as a shadow-DOM overlay so no site can tamper with it.</p>
+</div>
+<div class="card">
+<h3>2. RESOLVE</h3>
+<p>DNS queries go out over HTTPS to the resolver you picked. Requests are scrubbed of tracking parameters before the socket opens.</p>
+</div>
+<div class="card">
+<h3>3. BLOCK</h3>
+<p>The ad blocker runs at the navigation layer, not as a content extension. Known ad networks, pixels, and fingerprinting scripts are cancelled before they fetch.</p>
+</div>
+<div class="card">
+<h3>4. KEEP LOCAL</h3>
+<p>Bookmarks, history, vault, sessions &mdash; every byte lands in your OS config directory. No account, no sync, no backup you didn&rsquo;t ask for.</p>
+</div>
+</div>
+</section>
+<section id="gallery">
+<h2>GALLERY</h2>
+<p style="text-align:center;color:var(--dim);font-size:.85rem;margin-bottom:1.5rem">Click to enlarge</p>
+<div class="screenshot-strip" style="flex-wrap:wrap; justify-content:center; gap: 1rem;">
+<div class="screenshot-desktop" style="margin-bottom:1rem;"><img class="gallery-thumb" src="assets/browse/Interface.png" alt="Amni-Browse Main Interface" onclick="openLightbox(this.src,this.alt)" onerror="this.style.display='none'"></div>
+<div class="screenshot-desktop" style="margin-bottom:1rem;"><img class="gallery-thumb" src="assets/browse/Toolbar.png" alt="Amni-Browse Toolbar" onclick="openLightbox(this.src,this.alt)" onerror="this.style.display='none'"></div>
+<div class="screenshot-desktop" style="margin-bottom:1rem;"><img class="gallery-thumb" src="assets/browse/Vault.png" alt="Amni-Browse Password Vault" onclick="openLightbox(this.src,this.alt)" onerror="this.style.display='none'"></div>
+<div class="screenshot-desktop" style="margin-bottom:1rem;"><img class="gallery-thumb" src="assets/browse/Settings.png" alt="Amni-Browse Settings" onclick="openLightbox(this.src,this.alt)" onerror="this.style.display='none'"></div>
+</div>
+</section>
+<section style="text-align:center">
+<h2>GET AMNI-BROWSE</h2>
+<p style="color:var(--dim);margin-bottom:.5rem;font-size:.9rem">A single Rust binary with a native window. No runtimes, no Electron, no bundled Chromium download.</p>
+<p style="color:var(--dim);font-size:.8rem;margin-bottom:2rem">Open source under CC BY-NC 4.0 &bull; source available on GitHub &bull; non-commercial use</p>
+<div class="cta-row" style="justify-content:center">
+<a href="https://github.com/amnibro/Amni-Browse" target="_blank" class="btn btn-primary">VIEW ON GITHUB</a>
+<a href="privacy-browse.html" class="btn btn-outline">PRIVACY POLICY</a>
+</div>
+</section>
+
+<aside class="site-ad-banner" aria-label="Sponsored">
+<div class="ad-note">Sponsored</div>
+<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8345487545441889" data-ad-slot="1720203631" data-ad-format="auto" data-full-width-responsive="true"></ins>
+<script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>
+</aside>
+<footer>
+<div class="footer-links">
+<a href="about.html">ABOUT</a>
+<a href="faq.html">FAQ</a>
+<a href="research.html">RESEARCH</a>
+<a href="privacy.html">PRIVACY</a>
+<a href="terms.html">TERMS</a>
+<a href="/">AMNI-SCIENT</a>
+<a href="mailto:amnibro7@gmail.com">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amni-Scient. All rights reserved.</p>
+</footer>
+<div class="lightbox" onclick="closeLightbox(event)"><span class="lightbox-close">&times;</span><img></div>
+<script>function openLightbox(s,a){const l=document.querySelector('.lightbox'),i=l.querySelector('img');i.src=s;i.alt=a;l.classList.add('open')}function closeLightbox(e){e.target.tagName!=='IMG'&&document.querySelector('.lightbox').classList.remove('open')}</script>
+</body>
+</html>
