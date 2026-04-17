@@ -115,6 +115,27 @@
       <button id="ai-reset-btn" title="Restore defaults">Reset</button>
     </div>
     <div id="ai-setup-msg" class="ai-msg"></div>
+    <div class="ai-divider"></div>
+    <div class="ai-subsection-title">IN-BROWSER ENGINE <span id="webllm-support-tag"></span></div>
+    <div class="ai-browser-card">
+      <div class="ai-hint" style="margin-bottom:8px">Run a small model directly in this tab. No server, no network once loaded. Great for mobile.</div>
+      <label class="ai-toggle"><input type="checkbox" id="webllm-enable"/><span>Auto-load on page open</span></label>
+      <label class="ai-field"><span class="ai-label">Model</span><select id="webllm-model">
+        <option value="Qwen2.5-0.5B-Instruct-q4f16_1-MLC">Qwen2.5 0.5B &middot; ~300MB (fastest)</option>
+        <option value="Llama-3.2-1B-Instruct-q4f32_1-MLC">Llama 3.2 1B &middot; ~800MB</option>
+        <option value="Qwen2.5-1.5B-Instruct-q4f16_1-MLC">Qwen2.5 1.5B &middot; ~900MB</option>
+        <option value="SmolLM2-1.7B-Instruct-q4f16_1-MLC">SmolLM2 1.7B &middot; ~1.1GB</option>
+      </select></label>
+      <div id="webllm-progress-wrap" style="display:none">
+        <div class="ai-progress-bar"><div id="webllm-progress-fill"></div></div>
+        <div id="webllm-progress-text" class="ai-hint">Idle</div>
+      </div>
+      <div class="ai-actions">
+        <button id="webllm-load-btn">LOAD MODEL</button>
+        <button id="webllm-unload-btn" style="display:none">Unload</button>
+      </div>
+      <div id="webllm-msg" class="ai-msg"></div>
+    </div>
     <div class="ai-guide">
       <div class="ai-guide-title">QUICK START</div>
       <ol class="ai-guide-steps">

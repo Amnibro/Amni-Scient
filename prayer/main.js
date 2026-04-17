@@ -49,8 +49,14 @@ const bookTitle = () => document.getElementById('book-panel-title');
 let silhouettePos=null,waterfallPos=null,timelinePos=null,graphPos=null,radialPos=null,spiralPos=null,crossPos=null,iamPos=null,cleanPos=null,voicePos=null,bookPos=null,kindPos=null,degreePos=null,flatPos=null,sabbathPos=null,helixPos=null,crownPos=null;let mode='timeline';let lerpSrc=null,lerpDst=null,lerpT=1.0;const LERP_FRAMES=90;const ease=t=>t<0.5?2*t*t:-1+(4-2*t)*t;const SCALE=1.8;let camSrc=null,camDst=null,camTgtSrc=null,camTgtDst=null,camT=1.0;const CAM_FRAMES=60;let pulsePhase=0;let clickTimer=null;let clickPrevAR=false;let downX=0,downY=0,wasDrag=false;let tandemActive=false;let userAlpha=1.0;let edgeAlphaBase=0.06;let patternsActive=false;let discHistory=[];let adamOnline=null;
 const AI_DEFAULTS={url:'http://localhost:7700',model:'qwen3.5-122b'};
 const AI_STORAGE_KEY='amni-prayer-ai-config';
+const WEBLLM_STORAGE_KEY='amni-prayer-webllm';
+const WEBLLM_DEFAULTS={enabled:false,model:'Qwen2.5-0.5B-Instruct-q4f16_1-MLC'};
+const WEBLLM_CDN='https://esm.run/@mlc-ai/web-llm@0.2';
+let webllmEngine=null,webllmReady=false,webllmLoading=false,webllmModule=null;
 function getAIConfig(){try{const s=localStorage.getItem(AI_STORAGE_KEY);if(!s)return{...AI_DEFAULTS};const p=JSON.parse(s);return{url:(p.url||AI_DEFAULTS.url).trim().replace(/\/+$/,''),model:(p.model||AI_DEFAULTS.model).trim()};}catch{return{...AI_DEFAULTS};}}
 function saveAIConfigLS(cfg){try{localStorage.setItem(AI_STORAGE_KEY,JSON.stringify(cfg));}catch{}}
+function getWebLLMConfig(){try{const s=localStorage.getItem(WEBLLM_STORAGE_KEY);if(!s)return{...WEBLLM_DEFAULTS};const p=JSON.parse(s);return{enabled:!!p.enabled,model:p.model||WEBLLM_DEFAULTS.model};}catch{return{...WEBLLM_DEFAULTS};}}
+function saveWebLLMConfig(cfg){try{localStorage.setItem(WEBLLM_STORAGE_KEY,JSON.stringify(cfg));}catch{}}
 
 async function load() {
   await init();
@@ -391,6 +397,25 @@ function setupScene() {
   document.getElementById('ai-save-btn').addEventListener('click', handleSaveAI);
   document.getElementById('ai-reset-btn').addEventListener('click', handleResetAI);
   document.getElementById('adam-badge').addEventListener('click', openAISetup);
+  document.getElementById('webllm-load-btn').addEventListener('click', () => {
+    const model = document.getElementById('webllm-model').value;
+    const enabled = document.getElementById('webllm-enable').checked;
+    saveWebLLMConfig({enabled, model});
+    loadBrowserEngine(model);
+  });
+  document.getElementById('webllm-unload-btn').addEventListener('click', unloadBrowserEngine);
+  document.getElementById('webllm-enable').addEventListener('change', e => {
+    const cfg = getWebLLMConfig();
+    saveWebLLMConfig({enabled: e.target.checked, model: cfg.model});
+  });
+  document.getElementById('webllm-model').addEventListener('change', e => {
+    const cfg = getWebLLMConfig();
+    saveWebLLMConfig({enabled: cfg.enabled, model: e.target.value});
+  });
+  const wcfg = getWebLLMConfig();
+  if (wcfg.enabled && navigator.gpu && !webllmReady && !webllmLoading) {
+    setTimeout(() => loadBrowserEngine(wcfg.model), 1500);
+  }
   document.getElementById('discuss-send').addEventListener('click', async () => {
     const inp = document.getElementById('discuss-input');
     const q = inp.value.trim(); if (!q) return;
@@ -402,6 +427,7 @@ function setupScene() {
     const frustrated = /\b(not what i asked|wrong|that.s not|thats not|no no|try again|didn.t ask|didn.t answer|off topic)\b/i.test(q);
     const adamQ = frustrated ? `The user is unsatisfied with the previous response. They say: "${q}". Please re-read the verse and give a more focused, direct answer.` : q;
     if (adamOnline) html = await askAdam(adamQ, selectedIdx);
+    if (!html && webllmReady) html = await askBrowser(adamQ, selectedIdx);
     if (!html) html = generateDiscussResponse(q, selectedIdx);
     td.innerHTML = html;
     log.scrollTop = log.scrollHeight;
@@ -950,11 +976,19 @@ function searchVerse(q) {
     res.style.color = '#f0c850';
   } else { res.textContent = 'not found'; res.style.color = '#888'; }
 }
+function updateBadge(){
+  const badge=document.getElementById('adam-badge');
+  if(!badge) return;
+  const cfg=getAIConfig();
+  adamOnline ? (badge.textContent='\u25CF Adam',badge.title=`Adam local AI connected (${cfg.url})`,badge.style.color='#7dd6a0',badge.style.opacity='0.9')
+    : webllmReady ? (badge.textContent='\u25CF Browser',badge.title='In-browser AI active \u2014 running fully on-device',badge.style.color='#8ab4f8',badge.style.opacity='0.9')
+    : webllmLoading ? (badge.textContent='\u25CF loading\u2026',badge.title='Loading in-browser model\u2026',badge.style.color='#e0a040',badge.style.opacity='0.75')
+    : (badge.textContent='\u25CF offline',badge.title='Using built-in theological guide. Click \u2699 to configure AI.',badge.style.color='',badge.style.opacity='0.55');
+}
 async function probeAdam() {
   const cfg = getAIConfig();
   const isHttps = location.protocol === 'https:';
-  const isHttpTarget = cfg.url.startsWith('http://');
-  const blocked = isHttps && isHttpTarget;
+  const blocked = isHttps && cfg.url.startsWith('http://');
   adamOnline = false;
   if (!blocked) {
     try {
@@ -962,20 +996,97 @@ async function probeAdam() {
       adamOnline = r.ok;
     } catch { adamOnline = false; }
   }
-  const badge = document.getElementById('adam-badge');
-  if (!badge) return;
-  badge.textContent = adamOnline ? '\u25CF Adam' : '\u25CF offline';
-  badge.title = adamOnline ? `Adam local AI connected (${cfg.url})` : blocked ? 'Mixed content: HTTPS page cannot reach HTTP localhost \u2014 built-in guide active. Click \u2699 to configure.' : `Adam not detected at ${cfg.url} \u2014 using built-in guide. Click \u2699 to configure.`;
-  badge.style.color = adamOnline ? '#7dd6a0' : '';
-  badge.style.opacity = adamOnline ? '0.9' : '0.55';
+  updateBadge();
+}
+function buildTheologicalPrompt(idx){
+  const nd = graph.nodes[idx], conns = adj[idx], cns = conns.map(ci => graph.nodes[ci]);
+  const vt = fulltext?.[`${nd.book_id}:${nd.ch}`]?.[nd.v-1] || nd.preview || '';
+  const era = ERAS[BOOK_ERA[nd.book_id]]?.name || '';
+  const ppl = [...new Set([nd,...cns].flatMap(n => n.ppl||[]))].slice(0,5);
+  const locs = [...new Set([nd,...cns].flatMap(n => n.loc||[]))].slice(0,4);
+  const connRefs = cns.slice(0,5).map(c => `${c.book} ${c.ch}:${c.v}`);
+  return `You are a Catholic theological guide for "Imago Nuntii Divini", a Bible visualization of 35,817 Douay-Rheims verses. The user is viewing ${nd.book} ${nd.ch}:${nd.v} (${era} era, ${nd.testament}, kind: ${nd.kind}).\nVerse: "${vt}"\nCross-refs (${conns.length} total): ${connRefs.join(', ')}${conns.length>5?' and more':''}\n${ppl.length?'Figures: '+ppl.join(', '):''}\n${locs.length?'Locations: '+locs.join(', '):''}\nRespond concisely (2-4 sentences). Use Catholic theological tradition. Reference specific cross-references when relevant. Key symbolic numbers: 3=Trinity/divine, 7=completion/sabbath, 8=new creation/circumcision, 12=governance/apostles, 40=trial/testing.`;
+}
+async function loadBrowserEngine(modelId){
+  if (webllmLoading) return;
+  const msgEl=document.getElementById('webllm-msg');
+  const setMsg=(t,c)=>{if(msgEl){msgEl.className='ai-msg'+(c?' '+c:'');msgEl.textContent=t;}};
+  if (!navigator.gpu) { setMsg('WebGPU not available \u2014 try Chrome/Edge (desktop or recent Android), or Safari on iOS 18+.', 'err'); return; }
+  webllmLoading=true; webllmReady=false; updateBadge();
+  const wrap=document.getElementById('webllm-progress-wrap');
+  const fill=document.getElementById('webllm-progress-fill');
+  const ptxt=document.getElementById('webllm-progress-text');
+  const loadBtn=document.getElementById('webllm-load-btn');
+  const unloadBtn=document.getElementById('webllm-unload-btn');
+  if (wrap) wrap.style.display='block';
+  if (loadBtn) loadBtn.disabled=true;
+  setMsg('Downloading weights\u2026 cached in your browser for future visits.','warn');
+  try {
+    if (!webllmModule) webllmModule = await import(WEBLLM_CDN);
+    webllmEngine = await webllmModule.CreateMLCEngine(modelId, {
+      initProgressCallback: (p) => {
+        const pct = Math.round((p.progress||0)*100);
+        if (fill) fill.style.width = pct + '%';
+        if (ptxt) ptxt.textContent = p.text || `${pct}% \u00b7 ${modelId}`;
+      }
+    });
+    webllmReady=true;
+    setMsg(`\u2713 ${modelId} ready \u2014 runs fully offline in this tab`,'ok');
+    if (loadBtn) loadBtn.style.display='none';
+    if (unloadBtn) unloadBtn.style.display='inline-block';
+  } catch (e) {
+    webllmReady=false;
+    setMsg(`Load failed: ${e.message||e}`,'err');
+  } finally {
+    webllmLoading=false;
+    if (loadBtn) loadBtn.disabled=false;
+    updateBadge();
+  }
+}
+async function unloadBrowserEngine(){
+  if (webllmEngine) { try { await webllmEngine.unload?.(); } catch {} }
+  webllmEngine=null; webllmReady=false;
+  const loadBtn=document.getElementById('webllm-load-btn');
+  const unloadBtn=document.getElementById('webllm-unload-btn');
+  const wrap=document.getElementById('webllm-progress-wrap');
+  const msgEl=document.getElementById('webllm-msg');
+  if (loadBtn) loadBtn.style.display='inline-block';
+  if (unloadBtn) unloadBtn.style.display='none';
+  if (wrap) wrap.style.display='none';
+  if (msgEl) { msgEl.className='ai-msg'; msgEl.textContent='Unloaded. Weights remain cached for next load.'; }
+  updateBadge();
+}
+async function askBrowser(query, idx){
+  if (idx < 0 || !webllmReady || !webllmEngine) return null;
+  const sys = buildTheologicalPrompt(idx);
+  const messages=[{role:'system',content:sys}];
+  discHistory.slice(-6).forEach(h=>messages.push({role:h.role,content:h.content}));
+  messages.push({role:'user',content:query});
+  try {
+    const reply = await webllmEngine.chat.completions.create({messages, temperature:0.7, max_tokens:300});
+    const text = reply.choices?.[0]?.message?.content;
+    if (!text) return null;
+    discHistory.push({role:'user',content:query},{role:'assistant',content:text});
+    if (discHistory.length > 20) discHistory = discHistory.slice(-10);
+    return escHtml(text).replace(/\n/g,'<br>');
+  } catch { return null; }
 }
 function openAISetup(){
   const cfg=getAIConfig();
+  const wcfg=getWebLLMConfig();
   const panel=document.getElementById('ai-setup-panel');
   document.getElementById('ai-url-input').value=cfg.url;
   document.getElementById('ai-model-input').value=cfg.model;
   document.getElementById('ai-setup-msg').textContent='';
   document.getElementById('ai-setup-msg').className='ai-msg';
+  document.getElementById('webllm-enable').checked=wcfg.enabled;
+  document.getElementById('webllm-model').value=wcfg.model;
+  const tag=document.getElementById('webllm-support-tag');
+  if(tag) tag.innerHTML=navigator.gpu?'<span class="ai-support-ok">WebGPU ready</span>':'<span class="ai-support-no">WebGPU unavailable</span>';
+  if(webllmReady){
+    const lb=document.getElementById('webllm-load-btn');const ub=document.getElementById('webllm-unload-btn');
+    if(lb) lb.style.display='none'; if(ub) ub.style.display='inline-block';
+  }
   panel.style.display='flex';
   refreshAIStatus();
 }
@@ -998,8 +1109,7 @@ async function refreshAIStatus(){
     if(r.ok){dot.className='ai-dot ai-dot-on';txt.textContent='Online \u2014 ready to discuss';hint.textContent=`Engine responding at ${cfg.url}. Model: ${cfg.model}.`;adamOnline=true;}
     else{dot.className='ai-dot ai-dot-err';txt.textContent=`HTTP ${r.status}`;hint.textContent='Server reachable but health check failed. Confirm the engine is fully loaded.';adamOnline=false;}
   }catch(e){dot.className='ai-dot ai-dot-off';txt.textContent='Offline';hint.textContent='No response. Start Amni-Ai (or another OpenAI-compatible server) at the URL above, then hit TEST.';adamOnline=false;}
-  const badge=document.getElementById('adam-badge');
-  if(badge){badge.textContent=adamOnline?'\u25CF Adam':'\u25CF offline';badge.style.color=adamOnline?'#7dd6a0':'';badge.style.opacity=adamOnline?'0.9':'0.55';}
+  updateBadge();
 }
 async function testAIConnection(){
   const urlIn=document.getElementById('ai-url-input').value.trim().replace(/\/+$/,'')||AI_DEFAULTS.url;
@@ -1029,13 +1139,7 @@ function handleResetAI(){
 }
 async function askAdam(query, idx) {
   if (idx < 0 || !adamOnline) return null;
-  const nd = graph.nodes[idx], conns = adj[idx], cns = conns.map(ci => graph.nodes[ci]);
-  const vt = fulltext?.[`${nd.book_id}:${nd.ch}`]?.[nd.v-1] || nd.preview || '';
-  const era = ERAS[BOOK_ERA[nd.book_id]]?.name || '';
-  const ppl = [...new Set([nd,...cns].flatMap(n => n.ppl||[]))].slice(0,5);
-  const locs = [...new Set([nd,...cns].flatMap(n => n.loc||[]))].slice(0,4);
-  const connRefs = cns.slice(0,5).map(c => `${c.book} ${c.ch}:${c.v}`);
-  const sys = `You are a Catholic theological guide for "Imago Nuntii Divini", a Bible visualization of 35,817 Douay-Rheims verses. The user is viewing ${nd.book} ${nd.ch}:${nd.v} (${era} era, ${nd.testament}, kind: ${nd.kind}).\nVerse: "${vt}"\nCross-refs (${conns.length} total): ${connRefs.join(', ')}${conns.length>5?' and more':''}\n${ppl.length?'Figures: '+ppl.join(', '):''}\n${locs.length?'Locations: '+locs.join(', '):''}\nRespond concisely (2-4 sentences). Use Catholic theological tradition. Reference specific cross-references when relevant. Key symbolic numbers: 3=Trinity/divine, 7=completion/sabbath, 8=new creation/circumcision, 12=governance/apostles, 40=trial/testing.`;
+  const sys = buildTheologicalPrompt(idx);
   const messages = [{role:'system',content:sys}];
   discHistory.slice(-8).forEach(h => messages.push({role:h.role,content:h.content}));
   messages.push({role:'user',content:query});
@@ -1065,6 +1169,7 @@ async function toggleDiscuss() {
     if (selectedIdx >= 0 && !document.getElementById('discuss-log').children.length) {
       let html;
       if (adamOnline) html = await askAdam('Give a brief theological overview of this verse, its era, and its cross-references.', selectedIdx);
+      if (!html && webllmReady) html = await askBrowser('Give a brief theological overview of this verse, its era, and its cross-references.', selectedIdx);
       if (!html) html = generateDiscussResponse('', selectedIdx);
       addDiscussMsg(html, 'ai');
     }
