@@ -47,6 +47,10 @@ const bookPanel = () => document.getElementById('book-panel');
 const bookBody = () => document.getElementById('book-panel-body');
 const bookTitle = () => document.getElementById('book-panel-title');
 let silhouettePos=null,waterfallPos=null,timelinePos=null,graphPos=null,radialPos=null,spiralPos=null,crossPos=null,iamPos=null,cleanPos=null,voicePos=null,bookPos=null,kindPos=null,degreePos=null,flatPos=null,sabbathPos=null,helixPos=null,crownPos=null;let mode='timeline';let lerpSrc=null,lerpDst=null,lerpT=1.0;const LERP_FRAMES=90;const ease=t=>t<0.5?2*t*t:-1+(4-2*t)*t;const SCALE=1.8;let camSrc=null,camDst=null,camTgtSrc=null,camTgtDst=null,camT=1.0;const CAM_FRAMES=60;let pulsePhase=0;let clickTimer=null;let clickPrevAR=false;let downX=0,downY=0,wasDrag=false;let tandemActive=false;let userAlpha=1.0;let edgeAlphaBase=0.06;let patternsActive=false;let discHistory=[];let adamOnline=null;
+const AI_DEFAULTS={url:'http://localhost:7700',model:'qwen3.5-122b'};
+const AI_STORAGE_KEY='amni-prayer-ai-config';
+function getAIConfig(){try{const s=localStorage.getItem(AI_STORAGE_KEY);if(!s)return{...AI_DEFAULTS};const p=JSON.parse(s);return{url:(p.url||AI_DEFAULTS.url).trim().replace(/\/+$/,''),model:(p.model||AI_DEFAULTS.model).trim()};}catch{return{...AI_DEFAULTS};}}
+function saveAIConfigLS(cfg){try{localStorage.setItem(AI_STORAGE_KEY,JSON.stringify(cfg));}catch{}}
 
 async function load() {
   await init();
@@ -381,6 +385,12 @@ function setupScene() {
   document.getElementById('patternsBtn').addEventListener('click', togglePatterns);
   document.getElementById('discussBtn').addEventListener('click', toggleDiscuss);
   document.getElementById('discuss-close').addEventListener('click', toggleDiscuss);
+  document.getElementById('ai-setup-btn').addEventListener('click', openAISetup);
+  document.getElementById('ai-setup-close').addEventListener('click', closeAISetup);
+  document.getElementById('ai-test-btn').addEventListener('click', testAIConnection);
+  document.getElementById('ai-save-btn').addEventListener('click', handleSaveAI);
+  document.getElementById('ai-reset-btn').addEventListener('click', handleResetAI);
+  document.getElementById('adam-badge').addEventListener('click', openAISetup);
   document.getElementById('discuss-send').addEventListener('click', async () => {
     const inp = document.getElementById('discuss-input');
     const q = inp.value.trim(); if (!q) return;
@@ -941,19 +951,81 @@ function searchVerse(q) {
   } else { res.textContent = 'not found'; res.style.color = '#888'; }
 }
 async function probeAdam() {
+  const cfg = getAIConfig();
   const isHttps = location.protocol === 'https:';
+  const isHttpTarget = cfg.url.startsWith('http://');
+  const blocked = isHttps && isHttpTarget;
   adamOnline = false;
-  if (!isHttps) {
+  if (!blocked) {
     try {
-      const r = await fetch('http://localhost:7700/health', {signal: AbortSignal.timeout(3000)});
+      const r = await fetch(`${cfg.url}/health`, {signal: AbortSignal.timeout(3000)});
       adamOnline = r.ok;
     } catch { adamOnline = false; }
   }
   const badge = document.getElementById('adam-badge');
+  if (!badge) return;
   badge.textContent = adamOnline ? '\u25CF Adam' : '\u25CF offline';
-  badge.title = adamOnline ? 'Adam local AI connected (localhost:7700)' : isHttps ? 'Adam local AI unavailable over HTTPS \u2014 built-in theological guide active' : 'Adam local AI not detected on localhost:7700 \u2014 using built-in guide';
+  badge.title = adamOnline ? `Adam local AI connected (${cfg.url})` : blocked ? 'Mixed content: HTTPS page cannot reach HTTP localhost \u2014 built-in guide active. Click \u2699 to configure.' : `Adam not detected at ${cfg.url} \u2014 using built-in guide. Click \u2699 to configure.`;
   badge.style.color = adamOnline ? '#7dd6a0' : '';
   badge.style.opacity = adamOnline ? '0.9' : '0.55';
+}
+function openAISetup(){
+  const cfg=getAIConfig();
+  const panel=document.getElementById('ai-setup-panel');
+  document.getElementById('ai-url-input').value=cfg.url;
+  document.getElementById('ai-model-input').value=cfg.model;
+  document.getElementById('ai-setup-msg').textContent='';
+  document.getElementById('ai-setup-msg').className='ai-msg';
+  panel.style.display='flex';
+  refreshAIStatus();
+}
+function closeAISetup(){document.getElementById('ai-setup-panel').style.display='none';}
+async function refreshAIStatus(){
+  const cfg=getAIConfig();
+  const isHttps=location.protocol==='https:';
+  const blocked=isHttps&&cfg.url.startsWith('http://');
+  const dot=document.getElementById('ai-status-dot');
+  const txt=document.getElementById('ai-status-text');
+  const url=document.getElementById('ai-status-url');
+  const hint=document.getElementById('ai-status-hint');
+  url.textContent=cfg.url;
+  dot.className='ai-dot ai-dot-warn';
+  txt.textContent='Probing\u2026';
+  hint.textContent='Checking reachability of the OpenAI-compatible endpoint.';
+  if(blocked){dot.className='ai-dot ai-dot-err';txt.textContent='Blocked (mixed content)';hint.textContent='HTTPS pages cannot call HTTP localhost. Run this page over http:// locally, or point to an HTTPS-reachable endpoint.';return;}
+  try{
+    const r=await fetch(`${cfg.url}/health`,{signal:AbortSignal.timeout(3500)});
+    if(r.ok){dot.className='ai-dot ai-dot-on';txt.textContent='Online \u2014 ready to discuss';hint.textContent=`Engine responding at ${cfg.url}. Model: ${cfg.model}.`;adamOnline=true;}
+    else{dot.className='ai-dot ai-dot-err';txt.textContent=`HTTP ${r.status}`;hint.textContent='Server reachable but health check failed. Confirm the engine is fully loaded.';adamOnline=false;}
+  }catch(e){dot.className='ai-dot ai-dot-off';txt.textContent='Offline';hint.textContent='No response. Start Amni-Ai (or another OpenAI-compatible server) at the URL above, then hit TEST.';adamOnline=false;}
+  const badge=document.getElementById('adam-badge');
+  if(badge){badge.textContent=adamOnline?'\u25CF Adam':'\u25CF offline';badge.style.color=adamOnline?'#7dd6a0':'';badge.style.opacity=adamOnline?'0.9':'0.55';}
+}
+async function testAIConnection(){
+  const urlIn=document.getElementById('ai-url-input').value.trim().replace(/\/+$/,'')||AI_DEFAULTS.url;
+  const msg=document.getElementById('ai-setup-msg');
+  msg.className='ai-msg warn';msg.textContent='Testing\u2026';
+  const isHttps=location.protocol==='https:';
+  if(isHttps&&urlIn.startsWith('http://')){msg.className='ai-msg err';msg.textContent='Mixed content blocked \u2014 HTTPS page cannot call HTTP.';return;}
+  try{
+    const r=await fetch(`${urlIn}/health`,{signal:AbortSignal.timeout(4000)});
+    if(r.ok){msg.className='ai-msg ok';msg.textContent=`\u2713 Reachable at ${urlIn}`;}
+    else{msg.className='ai-msg err';msg.textContent=`Reachable but returned HTTP ${r.status}.`;}
+  }catch(e){msg.className='ai-msg err';msg.textContent=`Cannot reach ${urlIn} \u2014 is the engine running?`;}
+}
+function handleSaveAI(){
+  const url=document.getElementById('ai-url-input').value.trim().replace(/\/+$/,'')||AI_DEFAULTS.url;
+  const model=document.getElementById('ai-model-input').value.trim()||AI_DEFAULTS.model;
+  saveAIConfigLS({url,model});
+  const msg=document.getElementById('ai-setup-msg');
+  msg.className='ai-msg ok';msg.textContent='\u2713 Saved. Re-probing\u2026';
+  refreshAIStatus();
+}
+function handleResetAI(){
+  document.getElementById('ai-url-input').value=AI_DEFAULTS.url;
+  document.getElementById('ai-model-input').value=AI_DEFAULTS.model;
+  const msg=document.getElementById('ai-setup-msg');
+  msg.className='ai-msg';msg.textContent='Defaults restored \u2014 hit SAVE to apply.';
 }
 async function askAdam(query, idx) {
   if (idx < 0 || !adamOnline) return null;
@@ -967,10 +1039,11 @@ async function askAdam(query, idx) {
   const messages = [{role:'system',content:sys}];
   discHistory.slice(-8).forEach(h => messages.push({role:h.role,content:h.content}));
   messages.push({role:'user',content:query});
+  const cfg = getAIConfig();
   try {
-    const resp = await fetch('http://localhost:7700/v1/chat/completions', {
+    const resp = await fetch(`${cfg.url}/v1/chat/completions`, {
       method:'POST', headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({messages, temperature:0.7, max_tokens:300}),
+      body:JSON.stringify({model:cfg.model, messages, temperature:0.7, max_tokens:300}),
       signal: AbortSignal.timeout(15000)
     });
     if (!resp.ok) return null;

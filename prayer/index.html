@@ -93,11 +93,37 @@
   <div id="stats"></div>
 </div>
 <div id="discuss-panel" style="display:none">
-  <div id="discuss-header"><span>&#x2756; DISCUSS <span id="adam-badge" style="font-size:0.6rem;opacity:0.5;margin-left:4px">&#x25CF; local</span></span><button id="discuss-close">&#x2715;</button></div>
+  <div id="discuss-header"><span>&#x2756; DISCUSS <span id="adam-badge" title="Click to configure local AI" style="font-size:0.6rem;opacity:0.5;margin-left:4px;cursor:pointer">&#x25CF; local</span> <button id="ai-setup-btn" title="Configure local AI (Amni-Ai)">&#x2699;</button></span><button id="discuss-close">&#x2715;</button></div>
   <div id="discuss-log"></div>
   <div id="discuss-input-row">
     <textarea id="discuss-input" placeholder="Ask about this passage&hellip;" rows="2"></textarea>
     <button id="discuss-send">SEND</button>
+  </div>
+</div>
+<div id="ai-setup-panel" style="display:none">
+  <div id="ai-setup-header"><span>&#x2699; LOCAL AI SETUP</span><button id="ai-setup-close">&#x2715;</button></div>
+  <div id="ai-setup-body">
+    <div class="ai-status-card">
+      <div class="ai-status-row"><span id="ai-status-dot" class="ai-dot ai-dot-off"></span><span id="ai-status-text">Checking&hellip;</span><span id="ai-status-url"></span></div>
+      <div id="ai-status-hint" class="ai-hint">Amni-Ai is a local-first language model engine. Install and run it to power in-depth theological discussion.</div>
+    </div>
+    <label class="ai-field"><span class="ai-label">Server URL</span><input type="text" id="ai-url-input" placeholder="http://localhost:7700" autocomplete="off" spellcheck="false"/></label>
+    <label class="ai-field"><span class="ai-label">Model</span><input type="text" id="ai-model-input" placeholder="qwen3.5-122b" autocomplete="off" spellcheck="false"/></label>
+    <div class="ai-actions">
+      <button id="ai-test-btn">TEST</button>
+      <button id="ai-save-btn">SAVE</button>
+      <button id="ai-reset-btn" title="Restore defaults">Reset</button>
+    </div>
+    <div id="ai-setup-msg" class="ai-msg"></div>
+    <div class="ai-guide">
+      <div class="ai-guide-title">QUICK START</div>
+      <ol class="ai-guide-steps">
+        <li>Install <a href="https://github.com/anthonyreffelt/Amni-Ai" target="_blank" rel="noopener">Amni-Ai</a> (or any OpenAI-compatible server).</li>
+        <li>Launch it on port <code>7700</code> (or set a custom URL above).</li>
+        <li>Hit <b>TEST</b> &rarr; <b>SAVE</b>. Adam badge turns green when connected.</li>
+      </ol>
+      <div class="ai-guide-note">Runs entirely on your machine. Nothing leaves your device. On HTTPS deployments, local AI is unreachable &mdash; the built-in theological guide takes over automatically.</div>
+    </div>
   </div>
 </div>
 <div id="patterns-panel" style="display:none">
