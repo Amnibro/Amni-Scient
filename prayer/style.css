@@ -144,6 +144,51 @@ body.tandem-on #patterns-panel{right:0;width:60%;border-radius:0;border-top:1px 
 .ai-guide-steps a:hover{text-decoration:underline}
 .ai-guide-steps code{background:rgba(240,200,80,.1);color:#f0c850;padding:1px 5px;border-radius:2px;font-size:.7rem}
 .ai-guide-note{font-size:.66rem;color:#7a7a86;margin-top:8px;padding-top:8px;border-top:1px solid rgba(240,200,80,.1);line-height:1.5}
+#prayBtn{background:linear-gradient(180deg,rgba(240,200,80,.2),rgba(180,100,40,.1));color:#ffe28a;border:1px solid rgba(240,200,80,.45);border-radius:3px;padding:3px 8px;cursor:pointer;font-family:inherit;letter-spacing:.05em;transition:background .2s,box-shadow .2s}
+#prayBtn:hover{background:linear-gradient(180deg,rgba(240,200,80,.32),rgba(180,100,40,.18));box-shadow:0 0 14px rgba(240,200,80,.35)}
+#pray-panel{position:fixed;bottom:52px;right:24px;width:410px;max-height:620px;z-index:29;background:radial-gradient(ellipse at top,rgba(30,18,6,.98),rgba(8,8,14,.99));border:1px solid rgba(240,200,80,.32);border-radius:6px;display:flex;flex-direction:column;backdrop-filter:blur(12px);overflow:hidden;box-shadow:0 0 40px rgba(240,200,80,.1),inset 0 0 60px rgba(240,200,80,.04)}
+#pray-header{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border-bottom:1px solid rgba(240,200,80,.18);background:rgba(10,6,2,.7)}
+#pray-title{font-size:.78rem;color:#ffe28a;font-weight:600;letter-spacing:.12em}
+.pray-header-actions{display:flex;gap:6px;align-items:center}
+#pray-lang-btn{background:rgba(240,200,80,.1);color:#f0c850;border:1px solid rgba(240,200,80,.32);border-radius:3px;padding:2px 8px;font-size:.58rem;letter-spacing:.08em;cursor:pointer;font-family:inherit;transition:background .15s}
+#pray-lang-btn:hover{background:rgba(240,200,80,.22)}
+#pray-close{background:rgba(240,200,80,.1);color:#f0c850;border:1px solid rgba(240,200,80,.3);border-radius:3px;padding:2px 9px;font-size:.68rem;cursor:pointer;font-family:inherit;transition:background .15s}
+#pray-close:hover{background:rgba(240,200,80,.22)}
+#pray-candle-row{display:flex;align-items:center;gap:12px;padding:10px 14px;border-bottom:1px solid rgba(240,200,80,.1)}
+.candle{width:36px;height:82px;flex-shrink:0;filter:drop-shadow(0 0 14px rgba(255,210,120,.5))}
+.candle-flame{transform-origin:50% 90%;animation:flame-flicker 2.8s ease-in-out infinite}
+.candle-halo{transform-origin:50% 40%;animation:halo-pulse 3.4s ease-in-out infinite}
+@keyframes flame-flicker{0%,100%{transform:scale(1,1) skewX(0deg);opacity:1}25%{transform:scale(.95,1.06) skewX(-2deg);opacity:.92}50%{transform:scale(1.05,.94) skewX(1.5deg);opacity:.98}75%{transform:scale(.97,1.08) skewX(2deg);opacity:.9}}
+@keyframes halo-pulse{0%,100%{opacity:.6;transform:scale(1)}50%{opacity:.85;transform:scale(1.15)}}
+#pray-subtitle{font-size:.68rem;color:#b8a270;letter-spacing:.06em;font-style:italic}
+#pray-nav{display:flex;gap:5px;padding:8px 12px;overflow-x:auto;overflow-y:hidden;border-bottom:1px solid rgba(240,200,80,.12);scrollbar-width:thin}
+#pray-nav::-webkit-scrollbar{height:4px}
+#pray-nav::-webkit-scrollbar-thumb{background:rgba(240,200,80,.3);border-radius:2px}
+.pray-pill{flex-shrink:0;background:rgba(240,200,80,.06);color:#ddcfa8;border:1px solid rgba(240,200,80,.2);border-radius:14px;padding:4px 10px;font-size:.58rem;letter-spacing:.05em;cursor:pointer;font-family:inherit;white-space:nowrap;transition:all .18s}
+.pray-pill:hover{background:rgba(240,200,80,.16);color:#ffe28a}
+.pray-pill.active{background:linear-gradient(180deg,rgba(240,200,80,.3),rgba(180,100,40,.2));color:#fff4c2;border-color:rgba(240,200,80,.6);box-shadow:0 0 10px rgba(240,200,80,.3)}
+#pray-body{position:relative;flex:1;overflow-y:auto;padding:18px 22px 22px;min-height:0}
+.pray-aureole{position:absolute;top:30%;left:50%;transform:translate(-50%,-50%);width:320px;height:320px;background:radial-gradient(circle,rgba(240,200,80,.08) 0%,rgba(240,200,80,0) 70%);pointer-events:none;z-index:0;animation:aureole-breathe 6s ease-in-out infinite}
+@keyframes aureole-breathe{0%,100%{opacity:.7}50%{opacity:1}}
+.pray-rubric{position:relative;z-index:1;font-size:.62rem;color:#d4a035;letter-spacing:.18em;text-align:center;margin-bottom:14px;font-style:italic;opacity:.85}
+.pray-text{position:relative;z-index:1;font-size:.86rem;line-height:1.85;color:#e8ddc2;margin-bottom:14px;text-align:center;font-family:Georgia,"Times New Roman",serif}
+.pray-text.latin{color:#c9b88a;font-style:italic;letter-spacing:.02em}
+.pray-text.english{color:#e8ddc2}
+.pray-text.hidden-lang{display:none}
+.pray-word{display:inline-block;opacity:0;transform:translateY(4px);animation:word-reveal .5s ease forwards;margin-right:.25em}
+@keyframes word-reveal{to{opacity:1;transform:translateY(0)}}
+.sacred{background:linear-gradient(90deg,#d4a035 0%,#fff4c2 40%,#ffd97a 60%,#d4a035 100%);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:700;animation:sacred-shimmer 3.5s linear infinite}
+@keyframes sacred-shimmer{0%{background-position:0% 0}100%{background-position:200% 0}}
+.pray-foot{position:relative;z-index:1;text-align:center;margin-top:16px;font-size:.7rem;color:#8a7a5a;letter-spacing:.06em;font-style:italic}
+.amen{display:inline-block;color:#ffd97a;font-weight:700;letter-spacing:.15em;font-size:.8rem;text-shadow:0 0 12px rgba(255,217,122,.5)}
+.drawn-cross{display:block;margin:0 auto 12px;width:54px;height:68px}
+.drawn-cross path{fill:none;stroke:#f0c850;stroke-width:2.2;stroke-linecap:round;stroke-dasharray:240;stroke-dashoffset:240;filter:drop-shadow(0 0 6px rgba(240,200,80,.4))}
+.drawn-cross.draw path{animation:cross-draw 2.6s ease-out forwards}
+@keyframes cross-draw{to{stroke-dashoffset:0}}
+.rosary-today{display:inline-block;margin-top:6px;padding:6px 12px;background:rgba(240,200,80,.08);border:1px solid rgba(240,200,80,.25);border-radius:14px;color:#ffe28a;font-size:.7rem;letter-spacing:.05em}
+.mystery-list{text-align:left;max-width:320px;margin:10px auto 0;font-size:.76rem;line-height:1.7;color:#c9b88a;list-style:none;padding:0}
+.mystery-list li{padding:3px 0 3px 18px;position:relative}
+.mystery-list li:before{content:"\2727";position:absolute;left:0;color:#d4a035}
 body.tandem-on #canvas{position:fixed;top:0;right:0;width:60%;height:100%;left:auto}
 body.tandem-on #ui{left:40%;max-width:60%}
 #tandem-wrapper{position:fixed;top:0;left:0;width:40%;height:100%;z-index:15;display:flex;flex-direction:column;background:rgba(10,10,18,0.97);border-right:1px solid #2a2a3a;backdrop-filter:blur(8px)}
@@ -173,7 +218,7 @@ body.tandem-on #ui{left:40%;max-width:60%}
 #legend{gap:8px;font-size:0.65rem;margin-top:6px}
 #controls{flex-wrap:wrap;gap:6px 10px;font-size:0.65rem;margin-top:6px}
 #controls select{font-size:0.65rem;padding:2px 3px}
-#tandemBtn,#patternsBtn,#discussBtn{font-size:0.6rem;padding:3px 7px}
+#tandemBtn,#patternsBtn,#discussBtn,#prayBtn{font-size:0.6rem;padding:3px 7px}
 #search-row{margin-top:4px;gap:4px}
 #search-input{width:120px;font-size:0.65rem;padding:3px 6px}
 #search-btn{font-size:0.65rem;padding:3px 6px}
@@ -187,6 +232,7 @@ body.tandem-on #ui{left:40%;max-width:60%}
 #discuss-log{max-height:40vh;font-size:0.72rem}
 #patterns-panel{width:calc(100% - 20px);right:10px;left:10px;bottom:10px}
 #ai-setup-panel{width:calc(100% - 20px);right:10px;left:10px;bottom:10px;max-height:72vh}
+#pray-panel{width:calc(100% - 20px);right:10px;left:10px;bottom:10px;max-height:80vh}
 body.tandem-on #canvas{width:100%;height:50%;left:0;top:0}
 body.tandem-on #ui{left:0;max-width:100%;top:50%}
 #tandem-wrapper{width:100%;height:50%;top:50%}
