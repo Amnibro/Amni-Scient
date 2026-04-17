@@ -19,11 +19,11 @@
     <label>Spin <input type="checkbox" id="autoRotate" checked/></label>
     <label>Kind <select id="kindFilter"><option value="all">All</option></select></label>
     <label>Mode <select id="modeSelect">
-      <option value="timeline" selected>Strata</option>
+      <option value="timeline">Strata</option>
       <option value="radial">Radial</option>
       <option value="spiral">Spiral</option>
       <option value="sabbath">Sabbath</option>
-      <option value="helix">Helix</option>
+      <option value="helix" selected>Helix</option>
       <option value="crown">Crown</option>
       <option value="graph">Cluster</option>
       <option value="silhouette">Contour</option>
@@ -167,6 +167,77 @@
   <div id="book-panel-body"></div>
 </div>
 <canvas id="canvas"></canvas>
+<div id="intro-loader" aria-hidden="true">
+  <div class="intro-stage-bg"></div>
+  <div class="intro-wrap">
+    <svg class="rose-window" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="rw-glow" cx="50%" cy="50%" r="55%">
+          <stop offset="0%" stop-color="#ffe3a3" stop-opacity="0.45"/>
+          <stop offset="55%" stop-color="#d4a035" stop-opacity="0.18"/>
+          <stop offset="100%" stop-color="#0a0a12" stop-opacity="0"/>
+        </radialGradient>
+        <radialGradient id="rw-center" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#fff4c2"/>
+          <stop offset="100%" stop-color="#d4a035"/>
+        </radialGradient>
+      </defs>
+      <circle cx="110" cy="110" r="108" fill="url(#rw-glow)"/>
+      <g fill="none" stroke="#f0c850" stroke-opacity="0.85" stroke-width="1.2">
+        <animateTransform attributeName="transform" type="rotate" from="0 110 110" to="360 110 110" dur="48s" repeatCount="indefinite"/>
+        <circle cx="110" cy="110" r="102"/>
+        <circle cx="110" cy="110" r="84"/>
+        <circle cx="110" cy="110" r="55" stroke-opacity="0.35"/>
+      </g>
+      <g fill="rgba(240,200,80,0.08)" stroke="#f0c850" stroke-opacity="0.9" stroke-width="0.9">
+        <animateTransform attributeName="transform" type="rotate" from="0 110 110" to="-360 110 110" dur="96s" repeatCount="indefinite"/>
+        <path d="M110,18 Q124,50 110,80 Q96,50 110,18 Z"/>
+        <path d="M110,18 Q124,50 110,80 Q96,50 110,18 Z" transform="rotate(30 110 110)"/>
+        <path d="M110,18 Q124,50 110,80 Q96,50 110,18 Z" transform="rotate(60 110 110)"/>
+        <path d="M110,18 Q124,50 110,80 Q96,50 110,18 Z" transform="rotate(90 110 110)"/>
+        <path d="M110,18 Q124,50 110,80 Q96,50 110,18 Z" transform="rotate(120 110 110)"/>
+        <path d="M110,18 Q124,50 110,80 Q96,50 110,18 Z" transform="rotate(150 110 110)"/>
+        <path d="M110,18 Q124,50 110,80 Q96,50 110,18 Z" transform="rotate(180 110 110)"/>
+        <path d="M110,18 Q124,50 110,80 Q96,50 110,18 Z" transform="rotate(210 110 110)"/>
+        <path d="M110,18 Q124,50 110,80 Q96,50 110,18 Z" transform="rotate(240 110 110)"/>
+        <path d="M110,18 Q124,50 110,80 Q96,50 110,18 Z" transform="rotate(270 110 110)"/>
+        <path d="M110,18 Q124,50 110,80 Q96,50 110,18 Z" transform="rotate(300 110 110)"/>
+        <path d="M110,18 Q124,50 110,80 Q96,50 110,18 Z" transform="rotate(330 110 110)"/>
+      </g>
+      <g stroke="#f0c850" stroke-opacity="0.45" stroke-width="0.6">
+        <animateTransform attributeName="transform" type="rotate" from="0 110 110" to="360 110 110" dur="30s" repeatCount="indefinite"/>
+        <line x1="110" y1="10" x2="110" y2="22"/>
+        <line x1="110" y1="10" x2="110" y2="22" transform="rotate(15 110 110)"/>
+        <line x1="110" y1="10" x2="110" y2="22" transform="rotate(45 110 110)"/>
+        <line x1="110" y1="10" x2="110" y2="22" transform="rotate(75 110 110)"/>
+        <line x1="110" y1="10" x2="110" y2="22" transform="rotate(105 110 110)"/>
+        <line x1="110" y1="10" x2="110" y2="22" transform="rotate(135 110 110)"/>
+        <line x1="110" y1="10" x2="110" y2="22" transform="rotate(165 110 110)"/>
+        <line x1="110" y1="10" x2="110" y2="22" transform="rotate(195 110 110)"/>
+        <line x1="110" y1="10" x2="110" y2="22" transform="rotate(225 110 110)"/>
+        <line x1="110" y1="10" x2="110" y2="22" transform="rotate(255 110 110)"/>
+        <line x1="110" y1="10" x2="110" y2="22" transform="rotate(285 110 110)"/>
+        <line x1="110" y1="10" x2="110" y2="22" transform="rotate(315 110 110)"/>
+        <line x1="110" y1="10" x2="110" y2="22" transform="rotate(345 110 110)"/>
+      </g>
+      <g class="rw-core">
+        <circle cx="110" cy="110" r="22" fill="url(#rw-center)" opacity="0.85"/>
+        <circle cx="110" cy="110" r="22" fill="none" stroke="#f0c850" stroke-width="1.2"/>
+        <g stroke="#2a1d08" stroke-width="2.6" stroke-linecap="round">
+          <line x1="110" y1="96" x2="110" y2="124"/>
+          <line x1="98" y1="110" x2="122" y2="110"/>
+        </g>
+      </g>
+    </svg>
+    <h1 class="intro-title">Imago Nuntii Divini</h1>
+    <div class="intro-sub">A Bible-Cosmos Visualization &middot; 35,817 Verses</div>
+    <div class="intro-latin" id="intro-latin">In principio erat Verbum</div>
+    <div class="intro-progress-wrap">
+      <div class="intro-progress-bar"><div id="intro-progress-fill"></div></div>
+      <div id="intro-stage">Gathering the scriptures&hellip;</div>
+    </div>
+  </div>
+</div>
 <script type="importmap">
 {
   "imports": {

@@ -58,12 +58,47 @@ function saveAIConfigLS(cfg){try{localStorage.setItem(AI_STORAGE_KEY,JSON.string
 function getWebLLMConfig(){try{const s=localStorage.getItem(WEBLLM_STORAGE_KEY);if(!s)return{...WEBLLM_DEFAULTS};const p=JSON.parse(s);return{enabled:!!p.enabled,model:p.model||WEBLLM_DEFAULTS.model};}catch{return{...WEBLLM_DEFAULTS};}}
 function saveWebLLMConfig(cfg){try{localStorage.setItem(WEBLLM_STORAGE_KEY,JSON.stringify(cfg));}catch{}}
 
+const LATIN_PHRASES=[
+  {la:'In principio erat Verbum',en:'In the beginning was the Word'},
+  {la:'Lux in tenebris lucet',en:'The light shines in the darkness'},
+  {la:'Verbum caro factum est',en:'The Word became flesh'},
+  {la:'Via, veritas, et vita',en:'The Way, the Truth, and the Life'},
+  {la:'Sicut in caelo et in terra',en:'As in heaven and on earth'},
+  {la:'Deus caritas est',en:'God is love'},
+  {la:'Ad maiorem Dei gloriam',en:'For the greater glory of God'},
+  {la:'Fiat lux',en:'Let there be light'},
+  {la:'Pax Christi',en:'The peace of Christ'},
+  {la:'Soli Deo gloria',en:'Glory to God alone'},
+];
+let _latinTimer=null;
+function startLatinRotator(){
+  const el=document.getElementById('intro-latin');if(!el)return;
+  let i=0;
+  _latinTimer=setInterval(()=>{
+    el.classList.add('swap');
+    setTimeout(()=>{i=(i+1)%LATIN_PHRASES.length;const p=LATIN_PHRASES[i];el.innerHTML=`${p.la}<span style="display:block;font-size:.65rem;opacity:.55;letter-spacing:.14em;font-style:normal;margin-top:4px;text-transform:uppercase">${p.en}</span>`;el.classList.remove('swap');},650);
+  },3800);
+  const p=LATIN_PHRASES[0];el.innerHTML=`${p.la}<span style="display:block;font-size:.65rem;opacity:.55;letter-spacing:.14em;font-style:normal;margin-top:4px;text-transform:uppercase">${p.en}</span>`;
+}
+function setIntroStage(text,pct){
+  const s=document.getElementById('intro-stage');if(s)s.textContent=text;
+  const f=document.getElementById('intro-progress-fill');if(f)f.style.width=Math.max(0,Math.min(100,pct))+'%';
+}
+function hideIntroLoader(){
+  if(_latinTimer){clearInterval(_latinTimer);_latinTimer=null;}
+  const el=document.getElementById('intro-loader');if(el){el.classList.add('fade');setTimeout(()=>{el.remove();},1600);}
+}
+startLatinRotator();
 async function load() {
+  setIntroStage('Awakening the engine\u2026',5);
   await init();
+  setIntroStage('Unveiling the Scriptures\u2026',15);
   const resp = await fetch('./data/bible_graph.json');
   graph = await resp.json();
+  setIntroStage('Gathering verse by verse\u2026',40);
   const ftResp = await fetch('./data/bible_fulltext.json');
   fulltext = await ftResp.json();
+  setIntroStage('Weaving cross-references\u2026',60);
   adj = new Array(graph.nodes.length);
   for (let i = 0; i < adj.length; i++) adj[i] = [];
   for (const e of graph.edges) { adj[e.s].push(e.t); adj[e.t].push(e.s); }
@@ -76,12 +111,17 @@ async function load() {
     sel.appendChild(opt);
   });
   const layoutInput=graph.nodes.map(n=>({id:n.id,book_id:n.book_id,region:n.region,mass:n.mass||1.0}));
+  setIntroStage('Tracing the canonical constellation\u2026',78);
   console.time('WASM layout');
   const rawSil=JSON.parse(compute_layout(JSON.stringify(layoutInput),45));
   silhouettePos=rawSil.map(p=>({x:p.x*SCALE,y:p.y*SCALE,z:p.z*SCALE}));
   console.timeEnd('WASM layout');
+  setIntroStage('Raising the firmament\u2026',90);
   waterfallPos=computeWaterfallLayout();timelinePos=computeTimelineLayout();
   buildBookLegend();setupScene();buildPoints(timelinePos);buildEdges(timelinePos);animate();
+  setIntroStage('Ad astra\u2026',100);
+  document.getElementById('modeSelect').value='helix';
+  setTimeout(()=>{switchMode('helix');hideIntroLoader();},400);
 }
 function computeWaterfallLayout() {
   const n = graph.nodes.length;
@@ -1010,8 +1050,10 @@ function buildTheologicalPrompt(idx){
 async function loadBrowserEngine(modelId){
   if (webllmLoading) return;
   const msgEl=document.getElementById('webllm-msg');
-  const setMsg=(t,c)=>{if(msgEl){msgEl.className='ai-msg'+(c?' '+c:'');msgEl.textContent=t;}};
+  const setMsg=(t,c)=>{if(msgEl){msgEl.className='ai-msg'+(c?' '+c:'');msgEl.innerHTML=t;}};
+  if (!window.isSecureContext) { setMsg('Secure context required \u2014 WebGPU + model download only work over <b>https://</b> or <b>localhost</b>. Open this page via one of those.', 'err'); return; }
   if (!navigator.gpu) { setMsg('WebGPU not available \u2014 try Chrome/Edge (desktop or recent Android), or Safari on iOS 18+.', 'err'); return; }
+  if (location.protocol === 'http:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') { setMsg('Mixed-content block likely \u2014 the model weights are fetched over HTTPS from Hugging Face, which a plain-HTTP page cannot load. Serve this page over HTTPS.', 'err'); return; }
   webllmLoading=true; webllmReady=false; updateBadge();
   const wrap=document.getElementById('webllm-progress-wrap');
   const fill=document.getElementById('webllm-progress-fill');
@@ -1036,7 +1078,9 @@ async function loadBrowserEngine(modelId){
     if (unloadBtn) unloadBtn.style.display='inline-block';
   } catch (e) {
     webllmReady=false;
-    setMsg(`Load failed: ${e.message||e}`,'err');
+    const em=(e&&e.message)||String(e);
+    const hint=/mixed|blocked:csp|insecure|https/i.test(em)?' \u2014 likely a mixed-content block; serve this page over HTTPS.':/webgpu|adapter|gpu/i.test(em)?' \u2014 WebGPU unavailable; check chrome://gpu or enable in browser flags.':/fetch|network|failed to fetch|cors/i.test(em)?' \u2014 network error; check connection or try again.':'';
+    setMsg(`Load failed: ${em}${hint}`,'err');
   } finally {
     webllmLoading=false;
     if (loadBtn) loadBtn.disabled=false;
