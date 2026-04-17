@@ -3,26 +3,26 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>AMNI-CALC &mdash; Mechanical Engineering Calculator (WASM) | AMNI-SCIENT</title>
-<meta name="description" content="Free in-browser mechanical engineering calculator: beam FEA, cross-section properties, bolt &amp; spring design, seal analysis, material database, finish recommender, and unit converter. WebAssembly-backed, runs entirely client-side.">
-<meta name="keywords" content="mechanical engineering calculator,beam fea,cross section properties,bolt analysis,spring design,o-ring seal,material database,surface finish,unit converter,wasm calculator,in-browser engineering">
+<title>AMNI-CALC &mdash; Engineering Calculator Suite (WASM) | AMNI-SCIENT</title>
+<meta name="description" content="Free in-browser engineering calculator: beam FEA, stress &amp; Mohr's circle, fatigue (Goodman/Gerber), thermal (conduction/convection/radiation/fin), electrochemistry (Nernst/Tafel/BV/corrosion), batteries, bolts, springs, seals, materials, finishes, unit converter. WASM, client-side.">
+<meta name="keywords" content="engineering calculator,beam fea,stress analysis,mohr circle,fatigue goodman gerber,thermal conduction convection radiation fin,electrochemistry nernst tafel butler-volmer corrosion rate,faraday deposition,battery peukert soc,bolt analysis,spring design,o-ring seal,material database,surface finish,unit converter,wasm calculator">
 <meta name="author" content="Amni-Scient">
 <meta name="theme-color" content="#ff6b35">
-<meta property="og:title" content="AMNI-CALC &mdash; In-Browser Mechanical Engineering Calculator">
-<meta property="og:description" content="Beam FEA, sections, bolts, springs, seals, materials, finishes, unit conversion &mdash; all in WebAssembly, all in your browser.">
+<meta property="og:title" content="AMNI-CALC &mdash; In-Browser Engineering Calculator Suite">
+<meta property="og:description" content="Beams, stress, fatigue, thermal, electrochem, batteries, sections, bolts, springs, seals, materials, finishes, units &mdash; all WebAssembly, all in your browser.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://amni-scient.com/calc/">
 <meta property="og:image" content="https://amni-scient.com/assets/explore/og-explore.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="AMNI-CALC &mdash; In-Browser Mechanical Engineering Calculator">
-<meta name="twitter:description" content="Beam FEA, sections, bolts, springs, seals, materials, finishes, units &mdash; WebAssembly, runs in your browser.">
+<meta name="twitter:title" content="AMNI-CALC &mdash; In-Browser Engineering Calculator Suite">
+<meta name="twitter:description" content="Beams, stress, fatigue, thermal, electrochem, batteries, sections, bolts, springs, seals, materials &mdash; WASM, runs in your browser.">
 <meta name="twitter:image" content="https://amni-scient.com/assets/explore/og-explore.png">
 <link rel="canonical" href="https://amni-scient.com/calc/">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230a0a0a'/%3E%3Ctext x='32' y='44' font-size='38' text-anchor='middle' font-family='monospace' font-weight='bold' fill='%23ff6b35'%3EAC%3C/text%3E%3C/svg%3E">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Amni-Calc","url":"https://amni-scient.com/calc/","description":"Browser-native mechanical engineering calculator: beam FEA, cross-section properties, bolt &amp; spring design, seal analysis, material database, finish recommender, unit converter. WebAssembly backend.","applicationCategory":"EngineeringApplication","operatingSystem":"Any (Modern Browser)","browserRequirements":"Requires JavaScript and WebAssembly","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Organization","name":"AMNI-SCIENT","url":"https://amni-scient.com"},"featureList":["Beam analysis (point/distributed/moment loads)","Cross-section property calculator","Bolt torque &amp; preload","Coil &amp; Belleville springs","O-ring seal design","Material database","Surface finish recommender","Unit conversion"]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Amni-Calc","url":"https://amni-scient.com/calc/","description":"Browser-native engineering calculator suite: beam FEA, stress &amp; Mohr's circle, fatigue (Goodman/Soderberg/Gerber/ASME-Elliptic), thermal (conduction/convection/radiation/fin), electrochemistry (Nernst/Tafel/Butler-Volmer/corrosion/Faraday), batteries (pack/Peukert/SOC), bolts, springs, seals, materials, finishes, unit converter. WebAssembly backend.","applicationCategory":"EngineeringApplication","operatingSystem":"Any (Modern Browser)","browserRequirements":"Requires JavaScript and WebAssembly","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Organization","name":"AMNI-SCIENT","url":"https://amni-scient.com"},"featureList":["Beam analysis (point/distributed/moment loads)","Stress analysis with Mohr's circle","Fatigue analysis (Goodman, Soderberg, Gerber, ASME-Elliptic)","Thermal analysis (conduction, convection, radiation, fin efficiency)","Electrochemistry (Nernst, Tafel, Butler-Volmer, corrosion rate, Faraday deposition)","Battery analysis (pack sizing, Peukert, state-of-charge, coulombic efficiency)","Cross-section property calculator","Bolt torque &amp; preload","Coil &amp; Belleville springs","O-ring seal design","Material database","Surface finish recommender","Unit conversion"]}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -140,7 +140,7 @@ footer a{color:var(--accent);font-size:.7rem}
 </head>
 <body>
 <div class="scanlines"></div>
-<noscript><div style="padding:2rem;text-align:center;color:#ff6b35;font-family:monospace">AMNI-CALC requires JavaScript and WebAssembly to run. Please enable JavaScript in your browser. The full calculator suite (beam FEA, sections, bolts, springs, seals, materials, finishes, units) runs entirely client-side &mdash; no data leaves your device.</div></noscript>
+<noscript><div style="padding:2rem;text-align:center;color:#ff6b35;font-family:monospace">AMNI-CALC requires JavaScript and WebAssembly to run. Please enable JavaScript in your browser. The full calculator suite (beam FEA, stress, fatigue, thermal, electrochem, batteries, sections, bolts, springs, seals, materials, finishes, units) runs entirely client-side &mdash; no data leaves your device.</div></noscript>
 <div id="disclaimer" role="dialog" aria-modal="true" aria-labelledby="disc-title" aria-describedby="disc-body">
 <div class="box">
 <div class="icon" aria-hidden="true">&#9888;</div>
@@ -179,6 +179,10 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <button class="tab" data-v="math" role="tab" id="tab-math" aria-controls="v-math" aria-selected="false" tabindex="-1">MATH</button>
 <button class="tab" data-v="equations" role="tab" id="tab-equations" aria-controls="v-equations" aria-selected="false" tabindex="-1">EQUATIONS</button>
 <button class="tab" data-v="units" role="tab" id="tab-units" aria-controls="v-units" aria-selected="false" tabindex="-1">UNITS</button>
+<button class="tab" data-v="fatigue" role="tab" id="tab-fatigue" aria-controls="v-fatigue" aria-selected="false" tabindex="-1">FATIGUE</button>
+<button class="tab" data-v="thermal" role="tab" id="tab-thermal" aria-controls="v-thermal" aria-selected="false" tabindex="-1">THERMAL</button>
+<button class="tab" data-v="echem" role="tab" id="tab-echem" aria-controls="v-echem" aria-selected="false" tabindex="-1">ELECTROCHEM</button>
+<button class="tab" data-v="battery" role="tab" id="tab-battery" aria-controls="v-battery" aria-selected="false" tabindex="-1">BATTERY</button>
 </div>
 <div class="view active" id="v-beam">
 <h2>BEAM ANALYSIS</h2>
@@ -638,9 +642,261 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 </table>
 </div>
 </div>
+<div class="view" id="v-fatigue">
+<h2>FATIGUE ANALYSIS</h2>
+<div class="split">
+<div>
+<div class="card">
+<h3>LOADING &amp; MATERIAL</h3>
+<div class="row">
+<div class="field"><label>&sigma;<sub>alt</sub></label><div class="field-row"><input type="number" id="ft-sa" value="80" step="any"><span style="color:var(--dim);font-size:.75rem">MPa</span></div></div>
+<div class="field"><label>&sigma;<sub>mean</sub></label><div class="field-row"><input type="number" id="ft-sm" value="60" step="any"><span style="color:var(--dim);font-size:.75rem">MPa</span></div></div>
+</div>
+<div class="row" style="margin-top:.5rem">
+<div class="field"><label>YIELD S<sub>y</sub></label><div class="field-row"><input type="number" id="ft-sy" value="250" step="any"><span style="color:var(--dim);font-size:.75rem">MPa</span></div></div>
+<div class="field"><label>ULTIMATE S<sub>ut</sub></label><div class="field-row"><input type="number" id="ft-su" value="400" step="any"><span style="color:var(--dim);font-size:.75rem">MPa</span></div></div>
+<div class="field"><label>ENDURANCE S<sub>e</sub></label><div class="field-row"><input type="number" id="ft-se" value="180" step="any"><span style="color:var(--dim);font-size:.75rem">MPa</span></div></div>
+</div>
+<p style="font-size:.7rem;color:var(--dim);margin-top:.5rem">Tip: default S<sub>e</sub> &asymp; 0.45&middot;S<sub>ut</sub> for wrought steel (S<sub>ut</sub> &lt; 1400 MPa).</p>
+<button class="btn btn-fill" onclick="calcFatigue()" style="margin-top:.75rem">ANALYZE</button>
+</div>
+<div class="card">
+<h3>EQUATIONS</h3>
+<table class="data"><tbody>
+<tr><td>Goodman</td><td>FoS&nbsp;=&nbsp;1&nbsp;/&nbsp;(&sigma;<sub>a</sub>/S<sub>e</sub>&nbsp;+&nbsp;&sigma;<sub>m</sub>/S<sub>ut</sub>)</td></tr>
+<tr><td>Soderberg</td><td>FoS&nbsp;=&nbsp;1&nbsp;/&nbsp;(&sigma;<sub>a</sub>/S<sub>e</sub>&nbsp;+&nbsp;&sigma;<sub>m</sub>/S<sub>y</sub>)</td></tr>
+<tr><td>Gerber</td><td>FoS from (&sigma;<sub>a</sub>/S<sub>e</sub>)&middot;FoS&nbsp;+&nbsp;(&sigma;<sub>m</sub>&middot;FoS/S<sub>ut</sub>)<sup>2</sup>&nbsp;=&nbsp;1</td></tr>
+<tr><td>ASME-Elliptic</td><td>(&sigma;<sub>a</sub>&middot;FoS/S<sub>e</sub>)<sup>2</sup>&nbsp;+&nbsp;(&sigma;<sub>m</sub>&middot;FoS/S<sub>y</sub>)<sup>2</sup>&nbsp;=&nbsp;1</td></tr>
+<tr><td>&sigma;<sub>ar</sub> (Goodman)</td><td>&sigma;<sub>a</sub>&nbsp;/&nbsp;(1&nbsp;&minus;&nbsp;&sigma;<sub>m</sub>/S<sub>ut</sub>)</td></tr>
+</tbody></table>
+</div>
+</div>
+<div>
+<div class="card" id="fatigue-results">
+<h3>RESULTS</h3>
+<p style="font-size:.75rem;color:var(--dim)">Enter loading &amp; material, click Analyze.</p>
+</div>
+<div class="card">
+<h3>MODIFIED GOODMAN DIAGRAM</h3>
+<canvas id="c-fatigue" class="canvas-draw" width="400" height="300"></canvas>
+</div>
+</div>
+</div>
+</div>
+<div class="view" id="v-thermal">
+<h2>THERMAL ANALYSIS</h2>
+<div class="split">
+<div>
+<div class="card">
+<h3>1-D CONDUCTION (PLANE WALL)</h3>
+<div class="row">
+<div class="field"><label>k [W/m&middot;K]</label><input type="number" id="th-k" value="45" step="any"></div>
+<div class="field"><label>AREA [m&sup2;]</label><input type="number" id="th-a" value="1" step="any"></div>
+<div class="field"><label>THICKNESS [m]</label><input type="number" id="th-l" value="0.05" step="any"></div>
+<div class="field"><label>&Delta;T [K]</label><input type="number" id="th-dt" value="100" step="any"></div>
+</div>
+<button class="btn btn-fill" onclick="calcThermalCond()" style="margin-top:.5rem">COMPUTE Q</button>
+</div>
+<div class="card">
+<h3>CONVECTION (NEWTON'S LAW)</h3>
+<div class="row">
+<div class="field"><label>h [W/m&sup2;&middot;K]</label><input type="number" id="tc-h" value="25" step="any"></div>
+<div class="field"><label>AREA [m&sup2;]</label><input type="number" id="tc-a" value="1" step="any"></div>
+<div class="field"><label>T<sub>s</sub> [&deg;C]</label><input type="number" id="tc-ts" value="80" step="any"></div>
+<div class="field"><label>T<sub>&infin;</sub> [&deg;C]</label><input type="number" id="tc-ti" value="20" step="any"></div>
+</div>
+<button class="btn btn-fill" onclick="calcThermalConv()" style="margin-top:.5rem">COMPUTE Q</button>
+</div>
+<div class="card">
+<h3>RADIATION (STEFAN-BOLTZMANN)</h3>
+<div class="row">
+<div class="field"><label>&epsilon;</label><input type="number" id="tr-e" value="0.9" step="any" min="0" max="1"></div>
+<div class="field"><label>AREA [m&sup2;]</label><input type="number" id="tr-a" value="1" step="any"></div>
+<div class="field"><label>T<sub>1</sub> [&deg;C]</label><input type="number" id="tr-t1" value="300" step="any"></div>
+<div class="field"><label>T<sub>2</sub> [&deg;C]</label><input type="number" id="tr-t2" value="25" step="any"></div>
+</div>
+<button class="btn btn-fill" onclick="calcThermalRad()" style="margin-top:.5rem">COMPUTE Q</button>
+</div>
+<div class="card">
+<h3>STRAIGHT RECTANGULAR FIN</h3>
+<div class="row">
+<div class="field"><label>k [W/m&middot;K]</label><input type="number" id="tf-k" value="200" step="any"></div>
+<div class="field"><label>h [W/m&sup2;&middot;K]</label><input type="number" id="tf-h" value="50" step="any"></div>
+<div class="field"><label>WIDTH w [m]</label><input type="number" id="tf-w" value="0.1" step="any"></div>
+<div class="field"><label>THICKNESS t [m]</label><input type="number" id="tf-t" value="0.003" step="any"></div>
+<div class="field"><label>LENGTH L [m]</label><input type="number" id="tf-l" value="0.05" step="any"></div>
+<div class="field"><label>T<sub>b</sub> [&deg;C]</label><input type="number" id="tf-tb" value="100" step="any"></div>
+<div class="field"><label>T<sub>&infin;</sub> [&deg;C]</label><input type="number" id="tf-ti" value="25" step="any"></div>
+</div>
+<button class="btn btn-fill" onclick="calcThermalFin()" style="margin-top:.5rem">COMPUTE Q<sub>fin</sub></button>
+</div>
+</div>
+<div>
+<div class="card" id="thermal-results">
+<h3>RESULTS</h3>
+<p style="font-size:.75rem;color:var(--dim)">Use any card on the left; results stack here.</p>
+</div>
+<div class="card">
+<h3>THERMAL EQUATIONS</h3>
+<table class="data"><tbody>
+<tr><td>Conduction (Fourier)</td><td>Q&nbsp;=&nbsp;k&middot;A&middot;&Delta;T/L</td></tr>
+<tr><td>Convection (Newton)</td><td>Q&nbsp;=&nbsp;h&middot;A&middot;(T<sub>s</sub>&minus;T<sub>&infin;</sub>)</td></tr>
+<tr><td>Radiation</td><td>Q&nbsp;=&nbsp;&epsilon;&middot;&sigma;&middot;A&middot;(T<sub>1</sub><sup>4</sup>&minus;T<sub>2</sub><sup>4</sup>)</td></tr>
+<tr><td>&sigma; (Stefan-Boltz)</td><td>5.67&times;10<sup>&minus;8</sup>&nbsp;W/m<sup>2</sup>K<sup>4</sup></td></tr>
+<tr><td>Fin m</td><td>&radic;(h&middot;P/(k&middot;A<sub>c</sub>))</td></tr>
+<tr><td>Fin Efficiency</td><td>&eta; = tanh(m&middot;L)/(m&middot;L)</td></tr>
+<tr><td>Q<sub>fin</sub></td><td>&eta;&middot;h&middot;A<sub>fin</sub>&middot;&theta;<sub>b</sub></td></tr>
+</tbody></table>
+</div>
+</div>
+</div>
+</div>
+<div class="view" id="v-echem">
+<h2>ELECTROCHEMISTRY</h2>
+<div class="split">
+<div>
+<div class="card">
+<h3>NERNST EQUATION</h3>
+<div class="row">
+<div class="field"><label>E&deg; [V]</label><input type="number" id="ec-e0" value="0.34" step="any"></div>
+<div class="field"><label>n (e<sup>&minus;</sup> transferred)</label><input type="number" id="ec-n" value="2" step="1" min="1"></div>
+<div class="field"><label>T [K]</label><input type="number" id="ec-t" value="298.15" step="any"></div>
+<div class="field"><label>Q (reaction quotient)</label><input type="number" id="ec-q" value="0.1" step="any"></div>
+</div>
+<button class="btn btn-fill" onclick="calcNernst()" style="margin-top:.5rem">COMPUTE E</button>
+</div>
+<div class="card">
+<h3>TAFEL (ACTIVATION OVERPOTENTIAL)</h3>
+<div class="row">
+<div class="field"><label>i<sub>0</sub> [A/cm&sup2;]</label><input type="number" id="tf-i0" value="1e-6" step="any"></div>
+<div class="field"><label>i [A/cm&sup2;]</label><input type="number" id="tf-i" value="1e-3" step="any"></div>
+<div class="field"><label>&beta; (Tafel slope) [V/dec]</label><input type="number" id="tf-b" value="0.12" step="any"></div>
+</div>
+<button class="btn btn-fill" onclick="calcTafel()" style="margin-top:.5rem">COMPUTE &eta;</button>
+</div>
+<div class="card">
+<h3>BUTLER-VOLMER</h3>
+<div class="row">
+<div class="field"><label>i<sub>0</sub> [A/cm&sup2;]</label><input type="number" id="bv-i0" value="1e-6" step="any"></div>
+<div class="field"><label>&alpha; (transfer coef.)</label><input type="number" id="bv-a" value="0.5" step="any"></div>
+<div class="field"><label>n</label><input type="number" id="bv-n" value="2" step="1" min="1"></div>
+<div class="field"><label>&eta; [V]</label><input type="number" id="bv-eta" value="0.05" step="any"></div>
+<div class="field"><label>T [K]</label><input type="number" id="bv-t" value="298.15" step="any"></div>
+</div>
+<button class="btn btn-fill" onclick="calcButlerVolmer()" style="margin-top:.5rem">COMPUTE i</button>
+</div>
+<div class="card">
+<h3>CORROSION RATE</h3>
+<div class="row">
+<div class="field"><label>i<sub>corr</sub> [&micro;A/cm&sup2;]</label><input type="number" id="cr-i" value="10" step="any"></div>
+<div class="field"><label>EW [g/eq]</label><input type="number" id="cr-ew" value="27.92" step="any"></div>
+<div class="field"><label>&rho; [g/cm&sup3;]</label><input type="number" id="cr-rho" value="7.87" step="any"></div>
+</div>
+<p style="font-size:.7rem;color:var(--dim);margin-top:.3rem">Default EW=27.92, &rho;=7.87 &rarr; carbon steel (Fe).</p>
+<button class="btn btn-fill" onclick="calcCorrosionRate()" style="margin-top:.5rem">COMPUTE CR</button>
+</div>
+<div class="card">
+<h3>FARADAY DEPOSITION</h3>
+<div class="row">
+<div class="field"><label>M [g/mol]</label><input type="number" id="fd-m" value="63.55" step="any"></div>
+<div class="field"><label>I [A]</label><input type="number" id="fd-i" value="2" step="any"></div>
+<div class="field"><label>t [s]</label><input type="number" id="fd-t" value="3600" step="any"></div>
+<div class="field"><label>n (valence)</label><input type="number" id="fd-n" value="2" step="1" min="1"></div>
+<div class="field"><label>&eta;<sub>F</sub> (efficiency 0-1)</label><input type="number" id="fd-ef" value="0.95" step="any" min="0" max="1"></div>
+</div>
+<p style="font-size:.7rem;color:var(--dim);margin-top:.3rem">Default M=63.55, n=2 &rarr; Cu electroplating.</p>
+<button class="btn btn-fill" onclick="calcFaraday()" style="margin-top:.5rem">COMPUTE MASS</button>
+</div>
+</div>
+<div>
+<div class="card" id="echem-results">
+<h3>RESULTS</h3>
+<p style="font-size:.75rem;color:var(--dim)">Run any card on the left; outputs stack here.</p>
+</div>
+<div class="card">
+<h3>ELECTROCHEM EQUATIONS</h3>
+<table class="data"><tbody>
+<tr><td>Nernst</td><td>E&nbsp;=&nbsp;E&deg;&nbsp;&minus;&nbsp;(RT/nF)&middot;ln(Q)</td></tr>
+<tr><td>Nernst (25&deg;C)</td><td>E&nbsp;=&nbsp;E&deg;&nbsp;&minus;&nbsp;(0.0592/n)&middot;log<sub>10</sub>(Q)</td></tr>
+<tr><td>Tafel</td><td>&eta;&nbsp;=&nbsp;&beta;&middot;log<sub>10</sub>(i/i<sub>0</sub>)</td></tr>
+<tr><td>Butler-Volmer</td><td>i&nbsp;=&nbsp;i<sub>0</sub>[exp(&alpha;nF&eta;/RT)&minus;exp(&minus;(1&minus;&alpha;)nF&eta;/RT)]</td></tr>
+<tr><td>Corrosion Rate</td><td>CR&nbsp;[mm/yr]&nbsp;=&nbsp;3.27&times;10<sup>&minus;3</sup>&middot;i<sub>corr</sub>[&micro;A/cm&sup2;]&middot;EW/&rho;</td></tr>
+<tr><td>Faraday</td><td>m&nbsp;=&nbsp;&eta;<sub>F</sub>&middot;M&middot;I&middot;t&nbsp;/&nbsp;(n&middot;F)</td></tr>
+<tr><td>F (Faraday const.)</td><td>96485&nbsp;C/mol</td></tr>
+<tr><td>R (gas const.)</td><td>8.314&nbsp;J/mol&middot;K</td></tr>
+</tbody></table>
+</div>
+</div>
+</div>
+</div>
+<div class="view" id="v-battery">
+<h2>BATTERY ANALYSIS</h2>
+<div class="split">
+<div>
+<div class="card">
+<h3>PACK SIZING</h3>
+<div class="row">
+<div class="field"><label>CELL V<sub>nom</sub> [V]</label><input type="number" id="bt-vc" value="3.7" step="any"></div>
+<div class="field"><label>CELL Q [Ah]</label><input type="number" id="bt-qc" value="3.5" step="any"></div>
+<div class="field"><label>N series</label><input type="number" id="bt-ns" value="14" step="1" min="1"></div>
+<div class="field"><label>N parallel</label><input type="number" id="bt-np" value="4" step="1" min="1"></div>
+</div>
+<button class="btn btn-fill" onclick="calcPack()" style="margin-top:.5rem">COMPUTE PACK</button>
+</div>
+<div class="card">
+<h3>RUNTIME &amp; C-RATE</h3>
+<div class="row">
+<div class="field"><label>CAPACITY [Ah]</label><input type="number" id="rt-q" value="14" step="any"></div>
+<div class="field"><label>LOAD [A]</label><input type="number" id="rt-i" value="5" step="any"></div>
+<div class="field"><label>USABLE DoD [0-1]</label><input type="number" id="rt-dod" value="0.8" step="any" min="0" max="1"></div>
+</div>
+<button class="btn btn-fill" onclick="calcRuntime()" style="margin-top:.5rem">COMPUTE RUNTIME</button>
+</div>
+<div class="card">
+<h3>PEUKERT RUNTIME (LEAD-ACID)</h3>
+<div class="row">
+<div class="field"><label>RATED C<sub>H</sub> [Ah]</label><input type="number" id="pk-c" value="100" step="any"></div>
+<div class="field"><label>RATED HOURS H</label><input type="number" id="pk-h" value="20" step="any"></div>
+<div class="field"><label>LOAD I [A]</label><input type="number" id="pk-i" value="25" step="any"></div>
+<div class="field"><label>Peukert k</label><input type="number" id="pk-k" value="1.15" step="any"></div>
+</div>
+<button class="btn btn-fill" onclick="calcPeukert()" style="margin-top:.5rem">COMPUTE t</button>
+</div>
+<div class="card">
+<h3>STATE OF CHARGE &amp; EFFICIENCY</h3>
+<div class="row">
+<div class="field"><label>Q<sub>remain</sub> [Ah]</label><input type="number" id="soc-qr" value="8" step="any"></div>
+<div class="field"><label>Q<sub>full</sub> [Ah]</label><input type="number" id="soc-qf" value="14" step="any"></div>
+<div class="field"><label>Q<sub>charge</sub> [Ah]</label><input type="number" id="soc-qc" value="14" step="any"></div>
+<div class="field"><label>Q<sub>discharge</sub> [Ah]</label><input type="number" id="soc-qd" value="13.6" step="any"></div>
+</div>
+<button class="btn btn-fill" onclick="calcSOC()" style="margin-top:.5rem">COMPUTE SOC &amp; &eta;<sub>C</sub></button>
+</div>
+</div>
+<div>
+<div class="card" id="battery-results">
+<h3>RESULTS</h3>
+<p style="font-size:.75rem;color:var(--dim)">Run any card; outputs stack here.</p>
+</div>
+<div class="card">
+<h3>BATTERY EQUATIONS</h3>
+<table class="data"><tbody>
+<tr><td>Pack Voltage</td><td>V<sub>pack</sub>&nbsp;=&nbsp;V<sub>cell</sub>&middot;N<sub>s</sub></td></tr>
+<tr><td>Pack Capacity</td><td>Q<sub>pack</sub>&nbsp;=&nbsp;Q<sub>cell</sub>&middot;N<sub>p</sub></td></tr>
+<tr><td>Pack Energy</td><td>E&nbsp;[Wh]&nbsp;=&nbsp;V<sub>pack</sub>&middot;Q<sub>pack</sub></td></tr>
+<tr><td>C-rate</td><td>I&nbsp;=&nbsp;C&middot;Q<sub>rated</sub></td></tr>
+<tr><td>Runtime</td><td>t&nbsp;=&nbsp;(Q&middot;DoD)&nbsp;/&nbsp;I<sub>load</sub></td></tr>
+<tr><td>Peukert</td><td>t&nbsp;=&nbsp;H&middot;(C<sub>H</sub>/(I&middot;H))<sup>k</sup></td></tr>
+<tr><td>SOC</td><td>SOC&nbsp;=&nbsp;Q<sub>remain</sub>&nbsp;/&nbsp;Q<sub>full</sub></td></tr>
+<tr><td>Coulombic Eff.</td><td>&eta;<sub>C</sub>&nbsp;=&nbsp;Q<sub>discharge</sub>&nbsp;/&nbsp;Q<sub>charge</sub></td></tr>
+</tbody></table>
+</div>
+</div>
+</div>
+</div>
 </div>
 <footer>
-AMNI-CALC v2.1.0 &mdash; <a href="https://amni-scient.com">AMNI-SCIENT</a> &mdash; FOR EDUCATIONAL &amp; ESTIMATION PURPOSES ONLY &mdash; <a href="#" onclick="reportBug();return false">REPORT BUG</a>
+AMNI-CALC v2.2.0 &mdash; <a href="https://amni-scient.com">AMNI-SCIENT</a> &mdash; FOR EDUCATIONAL &amp; ESTIMATION PURPOSES ONLY &mdash; <a href="#" onclick="reportBug();return false">REPORT BUG</a>
 </footer>
 <script type="module">
 
@@ -685,6 +941,50 @@ else if(e.key==='End')next=tabs[tabs.length-1];
 if(next){e.preventDefault();next.focus();next.click()}
 });
 }
+})();
+</script>
+<script>
+(function(){
+const $=id=>document.getElementById(id),v=id=>parseFloat($(id).value),F=96485,Rg=8.314,SB=5.67e-8;
+const fmt=(x,d=4)=>(!isFinite(x)?'&mdash;':Math.abs(x)>=1e4||(Math.abs(x)<1e-3&&x!==0)?x.toExponential(d):x.toFixed(d));
+const tag=(cond,good,bad)=>cond?`<span class="tag tag-ok">${good}</span>`:`<span class="tag tag-err">${bad}</span>`;
+const grid=items=>`<div class="result-grid">${items.map(i=>`<div class="result-item"><div class="lbl">${i[0]}</div><div class="val ${i[2]||''}">${i[1]}</div></div>`).join('')}</div>`;
+const setRes=(id,html)=>{const c=$(id);c.innerHTML=`<h3>RESULTS</h3>${html}`;};
+const appendRes=(id,title,html)=>{const c=$(id);const cur=c.innerHTML.includes('Run ')||c.innerHTML.includes('Use ')||c.innerHTML.includes('Enter ')?`<h3>RESULTS</h3>`:c.innerHTML;c.innerHTML=cur+`<div style="margin-top:.75rem"><h3 style="color:var(--accent);font-size:.75rem;letter-spacing:1px">${title}</h3>${html}</div>`;};
+window.calcFatigue=()=>{const sa=v('ft-sa'),sm=v('ft-sm'),sy=v('ft-sy'),su=v('ft-su'),se=v('ft-se');
+const good=1/(sa/se+sm/su),sod=1/(sa/se+sm/sy);
+const A=(sa/se)**2,B=(sm/sy)**2;const ell=A+B>0?1/Math.sqrt(A+B):Infinity;
+let ger=Infinity;if(sa>0&&su>0){const r=sm/su;const q=sa/se;const disc=1+(2*r*se/(sa))**2;ger=(su/sm)**2*q*(Math.sqrt(disc)-1)/2;if(!isFinite(ger)||ger<0)ger=(1-r*r)/q;}
+const sar=sm<su?sa/(1-sm/su):Infinity;
+setRes('fatigue-results',grid([['Goodman FoS',fmt(good,3),good>=1?'ok':'err'],['Soderberg FoS',fmt(sod,3),sod>=1?'ok':'err'],['Gerber FoS',fmt(ger,3),ger>=1?'ok':'err'],['ASME-Elliptic FoS',fmt(ell,3),ell>=1?'ok':'err'],['&sigma;_ar (Goodman)',fmt(sar,2)+' MPa','']])+`<p style="margin-top:.5rem;font-size:.75rem;color:var(--dim)">${tag(good>=1&&sod>=1,'SAFE (all criteria)','CHECK (at least one FoS<1)')}</p>`);
+drawGoodman(sa,sm,sy,su,se);};
+const drawGoodman=(sa,sm,sy,su,se)=>{const c=$('c-fatigue'),x=c.getContext('2d'),W=c.width,H=c.height,P=30;x.fillStyle='#161616';x.fillRect(0,0,W,H);
+const xm=W-P-5,ym=P+5,x0=P+25,y0=H-P;const maxX=Math.max(su,sy)*1.05,maxY=se*1.1;
+const mx=v2=>x0+(v2/maxX)*(xm-x0),my=v2=>y0-(v2/maxY)*(y0-ym);
+x.strokeStyle='#252525';x.lineWidth=1;x.beginPath();x.moveTo(x0,y0);x.lineTo(xm,y0);x.moveTo(x0,y0);x.lineTo(x0,ym);x.stroke();
+x.strokeStyle='#ff6b35';x.lineWidth=1.5;x.beginPath();x.moveTo(mx(0),my(se));x.lineTo(mx(su),my(0));x.stroke();
+x.strokeStyle='#00ff9d';x.setLineDash([4,4]);x.beginPath();x.moveTo(mx(0),my(se));x.lineTo(mx(sy),my(0));x.stroke();x.setLineDash([]);
+x.strokeStyle='#ffd700';x.beginPath();for(let i=0;i<=40;i++){const smi=(i/40)*su;const sai=se*(1-(smi/su)**2);const px=mx(smi),py=my(sai);i?x.lineTo(px,py):x.moveTo(px,py);}x.stroke();
+x.fillStyle='#00d4ff';x.beginPath();x.arc(mx(sm),my(sa),5,0,Math.PI*2);x.fill();
+x.fillStyle='#666';x.font='10px monospace';x.fillText('\u03C3m',xm-14,y0+14);x.fillText('\u03C3a',4,ym+8);x.fillStyle='#ff6b35';x.fillText('Goodman',xm-60,my(se/2));x.fillStyle='#ffd700';x.fillText('Gerber',mx(su*0.5),my(se*0.6));x.fillStyle='#00ff9d';x.fillText('Soderberg',x0+4,ym+20);};
+window.calcThermalCond=()=>{const k=v('th-k'),A=v('th-a'),L=v('th-l'),dT=v('th-dt'),Q=k*A*dT/L;appendRes('thermal-results','CONDUCTION',grid([['Q (W)',fmt(Q,3),''],['R<sub>th</sub> (K/W)',fmt(L/(k*A),4),''],['q" (W/m&sup2;)',fmt(Q/A,3),'']]));};
+window.calcThermalConv=()=>{const h=v('tc-h'),A=v('tc-a'),ts=v('tc-ts'),ti=v('tc-ti'),Q=h*A*(ts-ti);appendRes('thermal-results','CONVECTION',grid([['Q (W)',fmt(Q,3),''],['R<sub>th</sub> (K/W)',fmt(1/(h*A),4),''],['q" (W/m&sup2;)',fmt(Q/A,3),'']]));};
+window.calcThermalRad=()=>{const e=v('tr-e'),A=v('tr-a'),t1=v('tr-t1')+273.15,t2=v('tr-t2')+273.15,Q=e*SB*A*(t1**4-t2**4);appendRes('thermal-results','RADIATION',grid([['Q (W)',fmt(Q,3),''],['T<sub>1</sub> (K)',fmt(t1,1),''],['T<sub>2</sub> (K)',fmt(t2,1),'']]));};
+window.calcThermalFin=()=>{const k=v('tf-k'),h=v('tf-h'),w=v('tf-w'),t=v('tf-t'),L=v('tf-l'),Tb=v('tf-tb'),Ti=v('tf-ti');const P=2*(w+t),Ac=w*t,Af=2*w*L+w*t;const m=Math.sqrt(h*P/(k*Ac)),Lc=L+t/2;const eta=Math.tanh(m*Lc)/(m*Lc);const Q=eta*h*Af*(Tb-Ti);appendRes('thermal-results','RECT FIN',grid([['m (1/m)',fmt(m,3),''],['mL<sub>c</sub>',fmt(m*Lc,3),''],['&eta;<sub>fin</sub>',fmt(eta,3),eta>=0.9?'ok':eta>=0.6?'warn':'err'],['Q<sub>fin</sub> (W)',fmt(Q,3),''],['A<sub>fin</sub> (m&sup2;)',fmt(Af,4),'']]));};
+window.calcNernst=()=>{const e0=v('ec-e0'),n=v('ec-n'),T=v('ec-t'),Q=v('ec-q');if(Q<=0){appendRes('echem-results','NERNST','<p style="color:var(--err);font-size:.75rem">Q must be > 0</p>');return;}const E=e0-(Rg*T/(n*F))*Math.log(Q);const E25=e0-(0.0592/n)*Math.log10(Q);appendRes('echem-results','NERNST',grid([['E (exact, V)',fmt(E,4),''],['E (25&deg;C form, V)',fmt(E25,4),''],['RT/nF (V)',fmt(Rg*T/(n*F),5),''],['&Delta;G (kJ/mol)',fmt(-n*F*E/1000,3),'']]));};
+window.calcTafel=()=>{const i0=v('tf-i0'),i=v('tf-i'),b=v('tf-b');if(i<=0||i0<=0){appendRes('echem-results','TAFEL','<p style="color:var(--err);font-size:.75rem">i and i0 must be > 0</p>');return;}const eta=b*Math.log10(i/i0);appendRes('echem-results','TAFEL',grid([['&eta; (V)',fmt(eta,4),''],['log(i/i<sub>0</sub>)',fmt(Math.log10(i/i0),3),''],['&beta; (V/dec)',fmt(b,3),'']]));};
+window.calcButlerVolmer=()=>{const i0=v('bv-i0'),a=v('bv-a'),n=v('bv-n'),eta=v('bv-eta'),T=v('bv-t');const f=n*F/(Rg*T);const i=i0*(Math.exp(a*f*eta)-Math.exp(-(1-a)*f*eta));appendRes('echem-results','BUTLER-VOLMER',grid([['i (A/cm&sup2;)',fmt(i,4),''],['i (mA/cm&sup2;)',fmt(i*1000,3),''],['nF/RT (1/V)',fmt(f,2),''],['&alpha;',fmt(a,2),'']]));};
+window.calcCorrosionRate=()=>{const i=v('cr-i'),ew=v('cr-ew'),rho=v('cr-rho');const CR_mmpy=3.27e-3*i*ew/rho;const CR_mpy=CR_mmpy/0.0254;appendRes('echem-results','CORROSION RATE',grid([['CR (mm/yr)',fmt(CR_mmpy,3),CR_mmpy<0.1?'ok':CR_mmpy<0.5?'warn':'err'],['CR (mpy)',fmt(CR_mpy,2),''],['i<sub>corr</sub> (&micro;A/cm&sup2;)',fmt(i,3),'']])+`<p style="margin-top:.5rem;font-size:.7rem;color:var(--dim)">Rating: ${CR_mmpy<0.02?'Outstanding':CR_mmpy<0.1?'Excellent':CR_mmpy<0.5?'Good':CR_mmpy<1?'Fair':CR_mmpy<5?'Poor':'Unacceptable'} (NACE)</p>`);};
+window.calcFaraday=()=>{const M=v('fd-m'),I=v('fd-i'),t=v('fd-t'),n=v('fd-n'),ef=v('fd-ef');const m=ef*M*I*t/(n*F);const mol=ef*I*t/(n*F);appendRes('echem-results','FARADAY',grid([['Mass (g)',fmt(m,4),''],['Moles',fmt(mol,5),''],['Charge (C)',fmt(I*t,1),''],['Eq. charge (mol e<sup>&minus;</sup>)',fmt(I*t/F,5),'']]));};
+window.calcPack=()=>{const vc=v('bt-vc'),qc=v('bt-qc'),ns=v('bt-ns'),np=v('bt-np');const V=vc*ns,Q=qc*np,E=V*Q;appendRes('battery-results','PACK',grid([['V<sub>pack</sub> (V)',fmt(V,2),''],['Q<sub>pack</sub> (Ah)',fmt(Q,2),''],['Energy (Wh)',fmt(E,1),''],['Energy (kWh)',fmt(E/1000,3),''],['Cells total',ns*np,'']]));};
+window.calcRuntime=()=>{const Q=v('rt-q'),I=v('rt-i'),d=v('rt-dod');const t_h=Q*d/I;appendRes('battery-results','RUNTIME',grid([['Runtime (h)',fmt(t_h,2),''],['Runtime (min)',fmt(t_h*60,1),''],['C-rate',fmt(I/Q,3),I/Q<1?'ok':I/Q<3?'warn':'err'],['Usable Q (Ah)',fmt(Q*d,2),'']]));};
+window.calcPeukert=()=>{const C=v('pk-c'),H=v('pk-h'),I=v('pk-i'),k=v('pk-k');const t=H*Math.pow(C/(I*H),k);appendRes('battery-results','PEUKERT',grid([['Runtime (h)',fmt(t,2),''],['Effective Ah',fmt(I*t,2),''],['Nominal Ah',fmt(C,2),''],['Capacity loss (%)',fmt((1-I*t/C)*100,1),'']]));};
+window.calcSOC=()=>{const qr=v('soc-qr'),qf=v('soc-qf'),qc=v('soc-qc'),qd=v('soc-qd');const soc=qr/qf*100,eff=qd/qc*100;appendRes('battery-results','SOC &amp; EFFICIENCY',grid([['SOC (%)',fmt(soc,2),soc>20?'ok':'warn'],['DoD (%)',fmt(100-soc,2),''],['&eta;<sub>C</sub> (%)',fmt(eff,2),eff>99?'ok':eff>95?'warn':'err']]));};
+document.addEventListener('DOMContentLoaded',()=>{
+const tabs=document.querySelectorAll('.tab'),views=document.querySelectorAll('.view');
+const act=name=>{tabs.forEach(t=>{const on=t.getAttribute('data-v')===name;t.classList.toggle('active',on);t.setAttribute('aria-selected',on);t.setAttribute('tabindex',on?'0':'-1');});views.forEach(v=>v.classList.toggle('active',v.id===`v-${name}`));};
+tabs.forEach(b=>{const n=b.getAttribute('data-v');if(n)b.addEventListener('click',()=>act(n));});
+});
 })();
 </script>
 </body>
