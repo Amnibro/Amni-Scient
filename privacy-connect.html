@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Privacy Policy &mdash; Amni-Connect | AMNI-SCIENT</title>
+<meta name="description" content="Privacy policy for Amni-Connect remote desktop. Peer-to-peer WebRTC encryption. No recording, no cloud, self-hostable signaling.">
+<link rel="canonical" href="https://amni-scient.com/privacy-connect">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+</head>
+<body>
+<div class="grid-bg"></div>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<div class="nav-dd">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu">
+<a href="amni-browse.html">AMNI-BROWSE</a>
+<a href="amni-calc.html">AMNI-CALC</a>
+<a href="amni-learn.html">AMNI-LEARN</a>
+<a href="amni-connect.html">AMNI-CONNECT</a>
+<a href="amni-code.html">AMNI-CODE</a>
+<a href="amni-haven.html">AMNI-HAVEN</a>
+</div>
+</div>
+<a href="privacy.html" class="active">PRIVACY</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<div class="legal">
+<h1>AMNI-CONNECT &mdash; PRIVACY POLICY</h1>
+<p class="effective">Effective Date: April 17, 2026 &nbsp;|&nbsp; Last Updated: April 17, 2026</p>
+<p>This privacy policy describes how Amni-Connect, an end-to-end encrypted remote desktop tool developed by Amni-Scient ("we", "us", "our"), handles user information.</p>
+<h2>1. DATA WE COLLECT</h2>
+<p><strong>We collect nothing.</strong> Amni-Connect has no account system, no registration, no sign-in, and no cloud backend operated by Amni-Scient. The application binary contains no analytics SDK, no crash reporter, no usage pings, and no telemetry of any kind. Screen frames, keystrokes, and mouse input never pass through any server operated by Amni-Scient.</p>
+<h2>2. PEER-TO-PEER MEDIA</h2>
+<p>All media (screen video, audio if enabled, and input events) travels over WebRTC between the host and viewer directly. WebRTC uses DTLS-SRTP, which encrypts payloads end-to-end with keys negotiated peer-to-peer. The signaling server that helps the two peers find each other sees only session-description metadata (IP candidates, codec offers) &mdash; it never sees frames or keystrokes.</p>
+<h2>3. SIGNALING SERVER</h2>
+<p>Amni-Connect ships a Node.js + Socket.IO signaling server (<code>server.js</code>) that you host yourself on any machine &mdash; a VPS, a home Raspberry Pi, your LAN, anywhere. The default port is 3389. This server:</p>
+<ul>
+<li>Relays WebRTC offers, answers, and ICE candidates between peers</li>
+<li>Tracks ephemeral room IDs in memory only (never written to disk)</li>
+<li>Destroys room state the moment the host socket disconnects</li>
+<li>Writes no access logs by default (beyond standard stdout diagnostics you choose to capture)</li>
+</ul>
+<p>Because <em>you</em> run the signaling server, Amni-Scient has no visibility into who connects, when, or to what. We do not operate any hosted signaling service.</p>
+<h2>4. INPUT DAEMON</h2>
+<p>The Rust input daemon (<code>amni-control</code>) listens on <code>127.0.0.1:7878</code> &mdash; localhost only, never bound to a public interface. It receives JSON input events over that local socket and calls <code>enigo</code> to synthesize mouse and keyboard actions. The daemon does not read the screen, does not open files, and does not make outbound network requests of any kind.</p>
+<h2>5. LOCAL DATA HANDLING</h2>
+<p>Amni-Connect stores very little on disk:</p>
+<ul>
+<li>Electron preferences and window state in the default OS app-data directory</li>
+<li>A single optional <code>.env</code> file on the signaling host for configuring port and allowed origins</li>
+<li>No session history, no frame buffers, no keystroke logs, no recordings</li>
+</ul>
+<p>There is no "cloud backup", no sync folder, and no auto-upload.</p>
+<h2>6. RECORDING &amp; ARCHIVAL</h2>
+<p>Amni-Connect does not record sessions. Frames are transient WebRTC media &mdash; rendered on the viewer, discarded after the browser jitter buffer ages out. Closing either the host app or the viewer tab ends the session and releases all memory associated with it.</p>
+<h2>7. NETWORK TRAFFIC</h2>
+<p>The application opens network sockets for the following purposes only:</p>
+<ul>
+<li><strong>Signaling</strong> &mdash; WebSocket connection to the signaling server <em>you host</em> (your domain / your IP / port 3389).</li>
+<li><strong>WebRTC media</strong> &mdash; UDP (or TCP fallback) directly between host and viewer, negotiated through your signaling server.</li>
+<li><strong>STUN/TURN</strong> (optional) &mdash; if peers cannot reach each other directly, a STUN server you configure is consulted to discover public IPs. No STUN/TURN is configured by default.</li>
+</ul>
+<p>No traffic routes through Amni-Scient servers at any point. We literally have no way to observe your sessions.</p>
+<h2>8. THIRD-PARTY COMPONENTS</h2>
+<p>Amni-Connect depends on upstream open-source libraries (Electron, Socket.IO, the <code>enigo</code> crate, the WebRTC implementation shipped with Electron/Chromium). Each has its own license and privacy behavior; by default, none of them phone home in the configuration Amni-Connect ships. Review each project&rsquo;s own policy if you enable optional features (e.g., telemetry flags, auto-updaters) that ship with those libraries upstream.</p>
+<h2>9. WEBSITE (AMNI-SCIENT.COM) ADVERTISING</h2>
+<p>The <em>amni-scient.com</em> website that hosts this policy displays advertisements provided by Google AdSense. Google&rsquo;s AdSense SDK may collect and process data (cookies, device info, IP, ad interactions) as described in <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google&rsquo;s Privacy Policy</a>. <strong>This applies only to the website.</strong> The Amni-Connect desktop application contains no advertisements and no AdSense code.</p>
+<h2>10. DATA SHARING</h2>
+<p>We do not sell, trade, share, or transfer any user data to third parties &mdash; because we do not collect any user data from the application in the first place. The only third-party data processing is through Google AdSense on the website (Section 9), governed by Google&rsquo;s privacy policy.</p>
+<h2>11. DATA RETENTION</h2>
+<p>We retain no user data. Any session state lives only in the memory of your own signaling server and your own devices until processes exit or machines reboot.</p>
+<h2>12. SECURITY</h2>
+<p>Amni-Connect relies on the native WebRTC DTLS-SRTP stack for media encryption and on the operating system&rsquo;s TLS implementation for signaling transport. Input traffic between the Electron host and the Rust daemon stays on loopback (127.0.0.1) and never leaves the machine. You are responsible for securing your own signaling server (firewall, TLS reverse proxy, origin allowlist).</p>
+<h2>13. CHILDREN&rsquo;S PRIVACY</h2>
+<p>Amni-Connect is not directed at children under 13. Because the application collects no data at all, there is no child-specific data collection to disclose.</p>
+<h2>14. YOUR RIGHTS</h2>
+<p>Since we collect no personal data, there is no personal data held by Amni-Scient to access, modify, export, or delete. Your session metadata is fully under your control &mdash; it lives on your own signaling server and your own devices. To manage AdSense data collection on the website, use an ad blocker, adjust browser cookie preferences, or opt out of personalized ads via <a href="https://adssettings.google.com" target="_blank" rel="noopener">Google Ad Settings</a>.</p>
+<h2>15. CHANGES TO THIS POLICY</h2>
+<p>We may update this privacy policy to reflect changes in the application or applicable laws. The "Last Updated" date at the top will be revised accordingly. Continued use of Amni-Connect after changes constitutes acceptance of the revised policy.</p>
+<h2>16. CONTACT</h2>
+<p>For questions or concerns regarding this privacy policy:</p>
+<ul>
+<li><strong>Email:</strong> <a href="mailto:amnibro7@gmail.com">amnibro7@gmail.com</a></li>
+<li><strong>Developer:</strong> Amnibro (Amni-Scient)</li>
+<li><strong>Website:</strong> <a href="https://amni-scient.com">https://amni-scient.com</a></li>
+<li><strong>Source:</strong> <a href="https://github.com/amnibro/Amni-Connect" target="_blank" rel="noopener">github.com/amnibro/Amni-Connect</a></li>
+</ul>
+</div>
+<footer>
+<div class="footer-links">
+<a href="privacy.html">ALL PRIVACY POLICIES</a>
+<a href="terms.html">TERMS</a>
+<a href="/">AMNI-SCIENT</a>
+<a href="mailto:amnibro7@gmail.com">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amni-Scient. All rights reserved.</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Amni-Connect &mdash; E2EE Remote Desktop | AMNI-SCIENT</title>
+<meta name="description" content="Amni-Connect: end-to-end encrypted remote desktop. WebRTC peer-to-peer streaming, Rust input daemon, self-hostable signaling. No cloud, no accounts, no logs.">
+<meta name="keywords" content="amni-connect,remote desktop,e2ee,webrtc,rust,electron,self-hosted,peer-to-peer,screen share">
+<meta property="og:title" content="Amni-Connect &mdash; E2EE Remote Desktop">
+<meta property="og:description" content="End-to-end encrypted remote desktop over WebRTC. Rust input daemon, self-hostable signaling on port 3389. Zero cloud, zero logs.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://amni-scient.com/amni-connect">
+<meta property="og:image" content="https://amni-scient.com/assets/connect/hero.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Amni-Connect &mdash; E2EE Remote Desktop">
+<meta name="twitter:description" content="P2P encrypted remote desktop. Rust + Electron. Self-hostable. Zero logs.">
+<meta name="twitter:image" content="https://amni-scient.com/assets/connect/hero.png">
+<link rel="canonical" href="https://amni-scient.com/amni-connect">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Amni-Connect","url":"https://amni-scient.com/amni-connect.html","description":"End-to-end encrypted remote desktop over WebRTC. Rust input daemon, self-hostable signaling, zero logs.","applicationCategory":"UtilitiesApplication","operatingSystem":"Windows, macOS, Linux","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Organization","name":"AMNI-SCIENT","url":"https://amni-scient.com"}}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8345487545441889" crossorigin="anonymous" data-overlays="false"></script>
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+</head>
+<body class="theme-ai">
+<div class="grid-bg"></div>
+<div class="scanlines"></div>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu">
+<a href="amni-browse.html">AMNI-BROWSE</a>
+<a href="amni-calc.html">AMNI-CALC</a>
+<a href="amni-learn.html">AMNI-LEARN</a>
+<a href="amni-connect.html" class="active">AMNI-CONNECT</a>
+<a href="amni-code.html">AMNI-CODE</a>
+<a href="amni-haven.html">AMNI-HAVEN</a>
+</div>
+</div>
+<a href="about.html">ABOUT</a>
+<a href="faq.html">FAQ</a>
+<a href="privacy.html">PRIVACY</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<div class="product-hero">
+<div class="shield-icon float">
+<svg viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle cx="35" cy="55" r="18" stroke="#00ffaa" stroke-width="2" fill="rgba(0,255,170,0.05)"/>
+<circle cx="65" cy="55" r="18" stroke="#00ffaa" stroke-width="2" fill="rgba(0,255,170,0.05)"/>
+<line x1="53" y1="55" x2="47" y2="55" stroke="#00ffaa" stroke-width="2.5"/>
+<circle cx="35" cy="55" r="4" fill="#00ffaa"/>
+<circle cx="65" cy="55" r="4" fill="#00ffaa"/>
+<path d="M18 30 Q10 55 18 80" stroke="#00ffaa" stroke-width="1" fill="none" opacity="0.6"/>
+<path d="M82 30 Q90 55 82 80" stroke="#00ffaa" stroke-width="1" fill="none" opacity="0.6"/>
+<path d="M25 22 Q10 55 25 88" stroke="#00ffaa" stroke-width="0.8" fill="none" opacity="0.35"/>
+<path d="M75 22 Q90 55 75 88" stroke="#00ffaa" stroke-width="0.8" fill="none" opacity="0.35"/>
+<rect x="30" y="95" width="40" height="3" fill="#00ffaa" opacity="0.7"/>
+<text x="50" y="110" text-anchor="middle" fill="#00ffaa" font-size="6" font-family="monospace" opacity="0.8">E2EE</text>
+</svg>
+</div>
+<h1>AMNI-CONNECT</h1>
+<p class="desc">E2EE REMOTE DESKTOP &bull; PEER-TO-PEER &bull; SELF-HOSTABLE</p>
+<div class="cta-row" style="justify-content:center;margin-top:2rem;margin-bottom:1rem">
+<a href="#how" class="btn btn-primary">HOW IT WORKS</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="btn btn-outline">&#9749; SUPPORT</a>
+</div>
+</div>
+<section>
+<h2>REMOTE CONTROL WITHOUT THE CLOUD</h2>
+<p style="text-align:center;color:var(--dim);max-width:720px;margin:0 auto 2rem;font-size:.9rem">A modern alternative to Windows Remote Desktop &mdash; screen + input streamed directly between your devices over WebRTC. Signaling runs on a tiny Node server <em>you host</em>. No third-party relay sees your frames, no vendor stores your session, no account required.</p>
+<div class="features"><div class="feature">
+<div class="icon">&#128274;</div>
+<h4>END-TO-END ENCRYPTED</h4>
+<p>Video, audio, and input travel over DTLS-SRTP WebRTC channels. Keys are negotiated peer-to-peer &mdash; the signaling server never sees your frames or keystrokes.</p>
+</div>
+<div class="feature">
+<div class="icon">&#128640;</div>
+<h4>RUST INPUT DAEMON</h4>
+<p>Native mouse + keyboard injection through a small Rust binary (<code>enigo</code> crate). Localhost TCP socket on port 7878 &mdash; no kernel driver, no elevated service.</p>
+</div>
+<div class="feature">
+<div class="icon">&#127760;</div>
+<h4>SELF-HOSTABLE SIGNALING</h4>
+<p>Drop the Node.js signaling server on any VPS, home Pi, or your own LAN. Port 3389 by default. One JSON env file configures allowed origins.</p>
+</div>
+<div class="feature">
+<div class="icon">&#128241;</div>
+<h4>BROWSER VIEWER</h4>
+<p>Connect from any device with a browser &mdash; no app install on the viewing side. Phones, tablets, old laptops all work. Touch input is mapped to mouse events.</p>
+</div>
+<div class="feature">
+<div class="icon">&#9997;</div>
+<h4>CUSTOM ROOM CODES</h4>
+<p>Pick your own 4+ character room ID or let the server generate a UUID slice. Rooms are ephemeral &mdash; destroyed the moment the host disconnects.</p>
+</div>
+<div class="feature">
+<div class="icon">&#128065;</div>
+<h4>ZERO RECORDING</h4>
+<p>Frames are transient. Nothing is written to disk, nothing is buffered beyond the WebRTC jitter window. Close the tab and the session is gone.</p>
+</div>
+</div>
+</section>
+<section>
+<h2>THREE-COMPONENT ARCHITECTURE</h2>
+<p style="text-align:center;color:var(--dim);max-width:720px;margin:0 auto 2rem;font-size:.9rem">Amni-Connect splits into three isolated processes. Each can be restarted, replaced, or audited independently.</p>
+<table class="spec-table">
+<tr><th>COMPONENT</th><th>ROLE</th></tr>
+<tr><td>Electron Host</td><td>Screen capture (desktopCapturer), WebRTC peer, UI chrome &mdash; runs on the machine being controlled</td></tr>
+<tr><td>Rust Input Daemon</td><td>Tokio-driven TCP service on 127.0.0.1:7878 &mdash; receives JSON input events and calls <code>enigo</code> for mouse/keyboard synthesis</td></tr>
+<tr><td>Signaling Server</td><td>Express + Socket.IO on port 3389 &mdash; rooms, offers, answers, ICE candidates. Never sees media data.</td></tr>
+</table>
+</section>
+<section>
+<h2>SPECIFICATIONS</h2>
+<table class="spec-table">
+<tr><th>PARAMETER</th><th>DETAILS</th></tr>
+<tr><td>Type</td><td>End-to-End Encrypted Remote Desktop</td></tr>
+<tr><td>Stack</td><td>Electron 33 (host) &bull; Rust 2021 / tokio / enigo (input) &bull; Node.js + Socket.IO (signaling)</td></tr>
+<tr><td>Platforms</td><td>Host: Windows, macOS, Linux &bull; Viewer: any modern browser</td></tr>
+<tr><td>Transport</td><td>WebRTC &mdash; DTLS-SRTP over UDP (TCP fallback)</td></tr>
+<tr><td>Signaling</td><td>Socket.IO on port 3389 &bull; self-hostable &bull; origin allowlist</td></tr>
+<tr><td>Input Channel</td><td>Localhost TCP &bull; JSON-lines &bull; 127.0.0.1:7878</td></tr>
+<tr><td>Media</td><td>Screen capture via <code>desktopCapturer</code> &bull; VP8/H.264 (browser-negotiated)</td></tr>
+<tr><td>Rooms</td><td>4+ char custom ID or UUID slice &bull; ephemeral &bull; destroyed on host disconnect</td></tr>
+<tr><td>Recording</td><td>None &mdash; no disk writes, no session logs</td></tr>
+<tr><td>Account</td><td>None &mdash; no signup, no password, no email</td></tr>
+<tr><td>License</td><td>CC BY-NC 4.0 (source-available, non-commercial)</td></tr>
+</table>
+</section>
+<section id="how">
+<h2>HOW IT WORKS</h2>
+<div class="how-works-grid">
+<div class="card">
+<h3>1. HOST</h3>
+<p>Launch Amni-Connect on the machine you want to control. The Electron app spawns the Rust input daemon and registers a room with your signaling server.</p>
+</div>
+<div class="card">
+<h3>2. CONNECT</h3>
+<p>On any other device, open the viewer URL and enter the room code. Socket.IO exchanges the WebRTC offer/answer and ICE candidates in milliseconds.</p>
+</div>
+<div class="card">
+<h3>3. STREAM</h3>
+<p>DTLS-SRTP handshake completes peer-to-peer. Screen frames flow viewer-ward; input events flow host-ward. The signaling server goes silent.</p>
+</div>
+<div class="card">
+<h3>4. CONTROL</h3>
+<p>Mouse moves, clicks, and keystrokes from the viewer are JSON-serialized, sent over the WebRTC data channel, and replayed by the Rust daemon.</p>
+</div>
+</div>
+</section>
+<section style="text-align:center">
+<h2>GET AMNI-CONNECT</h2>
+<p style="color:var(--dim);margin-bottom:.5rem;font-size:.9rem">Host your own signaling, control your own hardware. No SaaS, no relay fees, no rate limits.</p>
+<p style="color:var(--dim);font-size:.8rem;margin-bottom:2rem">Open source under CC BY-NC 4.0 &bull; source available on GitHub &bull; non-commercial use</p>
+<div class="cta-row" style="justify-content:center">
+<a href="https://github.com/amnibro/Amni-Connect" target="_blank" class="btn btn-primary">VIEW ON GITHUB</a>
+<a href="privacy-connect.html" class="btn btn-outline">PRIVACY POLICY</a>
+</div>
+</section>
+
+<aside class="site-ad-banner" aria-label="Sponsored">
+<div class="ad-note">Sponsored</div>
+<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8345487545441889" data-ad-slot="1720203631" data-ad-format="auto" data-full-width-responsive="true"></ins>
+<script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>
+</aside>
+<footer>
+<div class="footer-links">
+<a href="about.html">ABOUT</a>
+<a href="faq.html">FAQ</a>
+<a href="privacy.html">PRIVACY</a>
+<a href="terms.html">TERMS</a>
+<a href="/">AMNI-SCIENT</a>
+<a href="mailto:amnibro7@gmail.com">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amni-Scient. All rights reserved.</p>
+</footer>
+</body>
+</html>
