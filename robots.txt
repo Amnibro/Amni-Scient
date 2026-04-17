@@ -1,5 +1,28 @@
 User-agent: *
 Allow: /
 Sitemap: https://amni-scient.com/sitemap.xml
+
+# Internal / non-content areas
 Disallow: /backups/
 Disallow: /assets/haven/
+Disallow: /src/
+Disallow: /node_modules/
+Disallow: /plug/
+Disallow: /packs/
+Disallow: /archive/
+
+# Raw research data (not content)
+Disallow: /research/proof_
+Disallow: /research/bench_
+Disallow: /research/*.json$
+
+# Dev helpers / build artifacts
+Disallow: /_
+Disallow: /*.bak$
+Disallow: /*.zip$
+Disallow: /*.log$
+Disallow: /test.js
+Disallow: /test_
+Disallow: /extract.js
+Disallow: /fix_
+Disallow: /obfuscate.js
