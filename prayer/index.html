@@ -39,7 +39,8 @@
     </select></label>
     <button id="tandemBtn" title="Split view: book text + visualizer + connected passages">&#x21E8; TANDEM</button>    <label style="gap:5px;align-items:center">&#x03B1; <input type="range" id="alphaSlider" min="0.1" max="2.0" step="0.05" value="1.0" style="width:58px;vertical-align:middle;accent-color:#f0c850" title="Node / edge brightness"/></label>
     <button id="patternsBtn" title="Theological pattern analysis for selected verse">&#x2726; PATTERNS</button>
-    <button id="discussBtn" title="Discuss this passage with the AI guide">&#x2756; DISCUSS</button>  </div>
+    <button id="discussBtn" title="Discuss this passage with the AI guide">&#x2756; DISCUSS</button>
+    <button id="prayBtn" title="Catholic prayers in Latin and English">&#x271D; PRAY</button></div>
   <div id="search-row">
     <input type="text" id="search-input" placeholder="Mark 13:34 or search text&hellip;" autocomplete="off" spellcheck="false"/>
     <button id="search-btn">&#x1F50D;</button>
@@ -145,6 +146,45 @@
       </ol>
       <div class="ai-guide-note">Runs entirely on your machine. Nothing leaves your device. On HTTPS deployments, local AI is unreachable &mdash; the built-in theological guide takes over automatically.</div>
     </div>
+  </div>
+</div>
+<div id="pray-panel" style="display:none">
+  <div id="pray-header">
+    <span id="pray-title">&#x271D; PRAYERS</span>
+    <div class="pray-header-actions">
+      <button id="pray-lang-btn" title="Toggle Latin / English / Both" data-lang="both">BOTH</button>
+      <button id="pray-close">&#x2715;</button>
+    </div>
+  </div>
+  <div id="pray-candle-row">
+    <svg class="candle" viewBox="0 0 40 90" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <defs>
+        <radialGradient id="flame-grad" cx="50%" cy="60%" r="55%">
+          <stop offset="0%" stop-color="#fff4c2"/>
+          <stop offset="45%" stop-color="#ffc857"/>
+          <stop offset="100%" stop-color="#c4541a" stop-opacity="0.0"/>
+        </radialGradient>
+        <radialGradient id="flame-halo" cx="50%" cy="55%" r="60%">
+          <stop offset="0%" stop-color="#ffe28a" stop-opacity="0.6"/>
+          <stop offset="100%" stop-color="#ffe28a" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <ellipse class="candle-halo" cx="20" cy="20" rx="18" ry="20" fill="url(#flame-halo)"/>
+      <path class="candle-flame" d="M20 6 C14 14, 14 22, 20 28 C26 22, 26 14, 20 6 Z" fill="url(#flame-grad)"/>
+      <ellipse cx="20" cy="24" rx="2.2" ry="4" fill="#3c5ba0" opacity="0.55"/>
+      <rect x="19.2" y="26" width="1.6" height="8" fill="#2a1d08"/>
+      <rect x="12" y="34" width="16" height="52" rx="2" fill="#f3e6c7"/>
+      <rect x="12" y="34" width="16" height="4" fill="#d4a035" opacity="0.65"/>
+    </svg>
+    <div id="pray-subtitle">Oratio &middot; A quiet place of prayer</div>
+  </div>
+  <div id="pray-nav"></div>
+  <div id="pray-body">
+    <div class="pray-aureole"></div>
+    <div class="pray-rubric" id="pray-rubric"></div>
+    <div class="pray-text" id="pray-text-latin"></div>
+    <div class="pray-text" id="pray-text-english"></div>
+    <div class="pray-foot" id="pray-foot"></div>
   </div>
 </div>
 <div id="patterns-panel" style="display:none">
