@@ -1,1 +1,196 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta http-equiv="refresh" content="0;url=calc/"><title>AMNI-CALC</title><link rel="canonical" href="https://amni-scient.com/calc/"></head><body style="background:#0a0a0a;color:#888;font-family:monospace;text-align:center;padding:3rem"><p>Redirecting to <a href="calc/" style="color:#ff6b35">AMNI-CALC</a>...</p></body></html>
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Amni-Calc &mdash; Browser Engineering Calculators (WASM) | AMNI-SCIENT</title>
+<meta name="description" content="Amni-Calc: browser-native mechanical engineering calculators with WASM backend. Beam FEA, gasket seal design, bolt torque, Belleville springs, thermal analysis, and interactive Plotly charts.">
+<meta name="keywords" content="amni-calc,engineering calculator,beam fea,gasket design,bolt torque,spring calculator,thermal analysis,wasm engineering,in-browser fea">
+<meta name="author" content="Amni-Scient">
+<meta property="og:title" content="Amni-Calc &mdash; Browser Engineering Calculators">
+<meta property="og:description" content="Beam FEA, seal/gasket design, bolt torque, Belleville springs, and thermal analysis &mdash; all in-browser via WebAssembly.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://amni-scient.com/amni-calc">
+<meta property="og:image" content="https://amni-scient.com/assets/explore/og-explore.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Amni-Calc &mdash; Browser Engineering Calculators">
+<meta name="twitter:description" content="Beam FEA, gasket design, bolt torque, springs, thermal analysis. WebAssembly backend, runs in any modern browser.">
+<meta name="twitter:image" content="https://amni-scient.com/assets/explore/og-explore.png">
+<link rel="canonical" href="https://amni-scient.com/amni-calc">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Amni-Calc","url":"https://amni-scient.com/calc/","description":"Browser-native engineering calculators: beam FEA, gasket seal design, bolt torque, Belleville springs, thermal analysis. WebAssembly backend with interactive Plotly charts.","applicationCategory":"EngineeringApplication","operatingSystem":"Any (Modern Browser)","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Organization","name":"AMNI-SCIENT","url":"https://amni-scient.com"}}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8345487545441889" crossorigin="anonymous" data-overlays="false"></script>
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+</head>
+<body class="theme-calc">
+<div class="grid-bg"></div>
+<div class="scanlines"></div>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu">
+<a href="amni-haven.html">AMNI-HAVEN</a>
+<a href="amni-crypt.html">AMNI-CRYPT</a>
+<a href="amni-ai.html">AMNI-AI</a>
+<a href="amni-code.html">AMNI-CODE</a>
+<a href="amni-core.html">AMNI-CORE</a>
+<a href="amni-explore.html">AMNI-EXPLORE</a>
+<a href="amni-learn.html">AMNI-LEARN</a>
+<a href="amni-calc.html" class="active">AMNI-CALC</a>
+<a href="amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</div>
+<a href="research.html">RESEARCH</a>
+<a href="about.html">ABOUT</a>
+<a href="faq.html">FAQ</a>
+<a href="privacy.html">PRIVACY</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<div class="product-hero">
+<div class="shield-icon float">
+<svg viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect x="20" y="20" width="60" height="80" rx="6" stroke="#ff6b35" stroke-width="2" fill="rgba(255,107,53,0.04)"/>
+<line x1="30" y1="40" x2="70" y2="40" stroke="#ff6b35" stroke-width="1.5"/>
+<line x1="30" y1="55" x2="70" y2="55" stroke="#ff6b35" stroke-width="1.5"/>
+<line x1="30" y1="70" x2="70" y2="70" stroke="#ff6b35" stroke-width="1.5"/>
+<line x1="30" y1="85" x2="55" y2="85" stroke="#ff6b35" stroke-width="1.5"/>
+<circle cx="65" cy="85" r="4" fill="#ff6b35"/>
+</svg>
+</div>
+<h1>AMNI-CALC</h1>
+<p class="desc">BROWSER-NATIVE MECHANICAL ENGINEERING CALCULATORS &bull; WASM BACKEND &bull; INTERACTIVE CHARTS</p>
+<div style="margin-top:2rem">
+<a href="calc/" class="btn btn-primary" style="background:#ff6b35;color:var(--bg);box-shadow:0 0 10px #ff6b35">LAUNCH AMNI-CALC &rarr;</a>
+</div>
+</div>
+<section>
+<h2>ENGINEERING MATH, WITHOUT THE INSTALL</h2>
+<p style="text-align:center;color:var(--dim);max-width:750px;margin:0 auto 2rem;font-size:.9rem">Amni-Calc is a suite of mechanical engineering calculators that run entirely in your browser. No downloads, no license servers, no Python environment to configure. Open a tab, pick a calculator, enter loads and geometry, and get plotted results. The numerics run on WebAssembly for near-native speed; the interface is plain HTML and Plotly.</p>
+<div class="features">
+<div class="feature">
+<div class="icon">&#9878;</div>
+<h4>BEAM FEA</h4>
+<p>Cantilever, simply-supported, and fixed-end beam analysis. Shear, moment, and deflection diagrams from distributed or point loads. Stress and deflection checks against yield and allowable deflection ratios.</p>
+</div>
+<div class="feature">
+<div class="icon">&#128737;</div>
+<h4>SEAL &amp; GASKET DESIGN</h4>
+<p>Compression set, seating stress, and minimum gasket load for flanged joints. ASME-style m and y factor lookups, bolt-up preload calculations, and leak-rate estimation for elastomer and metallic seals.</p>
+</div>
+<div class="feature">
+<div class="icon">&#128295;</div>
+<h4>BOLT TORQUE &amp; PRELOAD</h4>
+<p>Friction-based torque for any bolt diameter, grade, and thread class. Nut-factor method (T = KDF) and detailed thread/face friction split. Yield checks, preload scatter bands, and stretch calculations for critical joints.</p>
+</div>
+<div class="feature">
+<div class="icon">&#10149;</div>
+<h4>BELLEVILLE &amp; COIL SPRINGS</h4>
+<p>Belleville washer load-deflection curves (Almen-Laszlo), stack configurations (series/parallel), stress at inner edge, and coil compression spring sizing with Wahl stress correction. Cross-section optimizer and spring catalog.</p>
+</div>
+<div class="feature">
+<div class="icon">&#127777;</div>
+<h4>THERMAL ANALYSIS</h4>
+<p>Steady-state conduction through layered walls, convection and radiation boundary conditions, and transient temperature response for lumped bodies. Material database with k, cp, and density for common alloys and polymers.</p>
+</div>
+<div class="feature">
+<div class="icon">&#128202;</div>
+<h4>PLOTLY CHARTS</h4>
+<p>Every calculator outputs interactive charts: hover for exact values, zoom to a region, toggle series, and export as PNG. Design iterations stay visible on the same plot so you can compare configurations side-by-side.</p>
+</div>
+</div>
+</section>
+<section>
+<h2>WHY IN-BROWSER ENGINEERING TOOLS</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
+<p>Traditional engineering software falls into two camps. On one end are full FEA suites &mdash; ANSYS, Abaqus, SolidWorks Simulation &mdash; which cost thousands of dollars per seat and require Windows workstations with non-trivial setup. On the other end are hand-calc spreadsheets: cheap and portable but error-prone, unversioned, and full of magic numbers from handbooks that nobody quite remembers.</p>
+<p style="margin-top:1.2rem"><strong style="color:var(--text)">In-browser calculators split the difference.</strong> They run anywhere a modern browser does &mdash; desktops, laptops, Chromebooks, tablets. They can be deployed instantly to a team without IT approval for new software installs. And because the computation runs locally, proprietary design inputs never leave the device. The calculator page loads, executes your numerics against your inputs, and renders results &mdash; all without a round trip to a server.</p>
+<p style="margin-top:1.2rem"><strong style="color:var(--text)">WebAssembly matters here.</strong> JavaScript is great for UI but slow for dense numerical work like solving stiffness matrices or integrating beam deflection curves. Amni-Calc compiles the numerical kernels from systems languages to WASM, delivering 5&ndash;20x speedups over equivalent JavaScript. A beam analysis with 1000 elements renders in under 50 ms; a thermal transient with fine time steps in under 100 ms. Fast enough that users treat the calculator as interactive, iterating through design variations the way they would a spreadsheet.</p>
+<p style="margin-top:1.2rem"><strong style="color:var(--text)">Interactive charts are the other half.</strong> An engineer comparing two gasket materials or three spring stacks benefits from seeing both curves on a single plot with a hover-readout. Plotly handles this well in the browser, and because everything is client-side, zooming and panning feel instantaneous &mdash; no server re-render, no loading spinner between clicks.</p>
+</div>
+</section>
+<section>
+<h2>WHAT&rsquo;S INCLUDED</h2>
+<table class="spec-table">
+<tr><th>CALCULATOR</th><th>PURPOSE</th></tr>
+<tr><td>Beam FEA</td><td>Shear, moment, deflection for cantilever / simply-supported / fixed-end beams under mixed point and distributed loads. Cross-section library.</td></tr>
+<tr><td>Belleville Spring</td><td>Almen-Laszlo load-deflection with stress at the inner edge. Series/parallel stack configurations. Flat-stack warning.</td></tr>
+<tr><td>Coil Compression Spring</td><td>Wahl stress correction, solid height, buckling check, natural frequency, and material-based allowable stress curves.</td></tr>
+<tr><td>Gasket / Seal Design</td><td>ASME m-and-y-factor seating load, bolt-up preload, minimum compression, and leak-rate estimation for common seal materials.</td></tr>
+<tr><td>Bolt Torque</td><td>Nut-factor (T = KDF) and detailed thread/face friction model. Grade-based yield check, preload scatter, and elongation for hydraulically tensioned joints.</td></tr>
+<tr><td>Tie-Rod / Fastener Pattern</td><td>Bolt pattern analysis for flanged vessels and stacked assemblies. Per-bolt load distribution under axial + bending.</td></tr>
+<tr><td>Pressure Vessel Section</td><td>Thin and thick-wall cylindrical shell stress, hoop/longitudinal, and Mohr&rsquo;s circle visualization for stress states.</td></tr>
+<tr><td>Thermal (Steady + Transient)</td><td>Layered wall conduction with convection/radiation BCs. Lumped-capacitance transient response. Material database with temperature-dependent properties.</td></tr>
+<tr><td>Material Database</td><td>Yield, ultimate, modulus, density, thermal conductivity, specific heat, and allowable stress for common structural alloys, stainless, and engineering polymers.</td></tr>
+</table>
+</section>
+<section>
+<h2>TYPICAL WORKFLOW</h2>
+<div class="card-grid">
+<div class="card">
+<h3>1. PICK A CALCULATOR</h3>
+<p>Sidebar lists every module. Each opens as a single tab with inputs on the left, charts and tables on the right. No project files, no save dialogs &mdash; state lives in the URL and in browser storage.</p>
+</div>
+<div class="card">
+<h3>2. ENTER GEOMETRY &amp; LOADS</h3>
+<p>Numeric inputs use sensible engineering defaults. Unit toggles for SI and US customary. Material pickers pull from the shared database. Invalid combinations flag inline rather than silently producing garbage.</p>
+</div>
+<div class="card">
+<h3>3. READ THE CHARTS</h3>
+<p>Interactive Plotly plots show the answer: shear/moment diagrams, load-deflection curves, temperature profiles, stress circles. Hover for exact values. Compare configurations by stacking them on the same plot.</p>
+</div>
+<div class="card">
+<h3>4. EXPORT OR ITERATE</h3>
+<p>Right-click any chart to save as PNG for a report. Change inputs and the plot updates live. All computation is local, so large parameter sweeps run without network latency.</p>
+</div>
+</div>
+</section>
+<section>
+<h2>PRIVACY &amp; DATA</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
+<p>Amni-Calc runs entirely in your browser. Design inputs, material choices, and calculated results stay on your device &mdash; they are never transmitted to Amni-Scient or any third party. Browser local storage is used only to remember UI preferences (theme, last-opened tab) and cached material data. No accounts, no telemetry, no analytics of your engineering work.</p>
+<p style="margin-top:1.2rem">The app is ad-supported on the informational landing page (this page). The calculator app itself, at <a href="calc/" style="color:#ff6b35">/calc/</a>, carries no ads so you can focus on the work.</p>
+</div>
+</section>
+<section style="text-align:center">
+<h2>OPEN AMNI-CALC</h2>
+<p style="color:var(--dim);margin-bottom:1.5rem;font-size:.9rem">Runs in any modern browser. No install, no sign-up.</p>
+<div class="cta-row" style="justify-content:center;gap:1rem;flex-wrap:wrap">
+<a href="calc/" class="btn btn-primary" style="background:#ff6b35;color:var(--bg);box-shadow:0 0 10px #ff6b35">LAUNCH CALCULATOR</a>
+<a href="faq.html" class="btn btn-outline">FAQ</a>
+<a href="about.html" class="btn btn-outline">ABOUT</a>
+</div>
+</section>
+<div class="site-ad-banner">
+<span class="ad-note">Sponsored</span>
+<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8345487545441889" data-ad-slot="1720203631" data-ad-format="auto" data-full-width-responsive="true"></ins>
+<script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>
+</div>
+<footer>
+<div class="footer-links">
+<a href="about.html">ABOUT</a>
+<a href="faq.html">FAQ</a>
+<a href="research.html">RESEARCH</a>
+<a href="privacy.html">PRIVACY</a>
+<a href="terms.html">TERMS</a>
+<a href="/">AMNI-SCIENT</a>
+<a href="mailto:amnibro7@gmail.com">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amni-Scient. All rights reserved.</p>
+</footer>
+</body>
+</html>
