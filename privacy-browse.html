@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Privacy Policy &mdash; Amni-Browse | AMNI-SCIENT</title>
+<meta name="description" content="Privacy policy for Amni-Browse web browser. Zero telemetry. No accounts, no sync, no phone-home. All browsing data stays on your device.">
+<link rel="canonical" href="https://amni-scient.com/privacy-browse">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+</head>
+<body>
+<div class="grid-bg"></div>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<div class="nav-dd">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu">
+<a href="amni-haven.html">AMNI-HAVEN</a>
+<a href="amni-crypt.html">AMNI-CRYPT</a>
+<a href="amni-ai.html">AMNI-AI</a>
+<a href="amni-code.html">AMNI-CODE</a>
+<a href="amni-core.html">AMNI-CORE</a>
+<a href="amni-browse.html">AMNI-BROWSE</a>
+<a href="amni-explore.html">AMNI-EXPLORE</a>
+<a href="amni-learn.html">AMNI-LEARN</a>
+<a href="amni-calc.html">AMNI-CALC</a>
+<a href="amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</div>
+<a href="privacy.html" class="active">PRIVACY</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<div class="legal">
+<h1>AMNI-BROWSE &mdash; PRIVACY POLICY</h1>
+<p class="effective">Effective Date: April 17, 2026 &nbsp;|&nbsp; Last Updated: April 17, 2026</p>
+<p>This privacy policy describes how Amni-Browse, a privacy-first web browser developed by Amni-Scient ("we", "us", "our"), handles user information.</p>
+<h2>1. DATA WE COLLECT</h2>
+<p><strong>We collect nothing.</strong> Amni-Browse has no account system, no registration, no sign-in, and no sync. The binary contains no analytics SDK, no crash reporter, no usage pings, and no telemetry of any kind. We do not operate servers that receive or process your browsing activity, bookmarks, history, form data, or vault contents. Nothing you do in the browser is visible to us at any layer.</p>
+<h2>2. DATA HANDLING</h2>
+<p>All browsing data &mdash; bookmarks, history, sessions, downloads, autofill, password vault, site permissions, and profile metadata &mdash; is stored exclusively on your local device in your OS configuration directory:</p>
+<ul>
+<li>Windows: <code>%APPDATA%\amni-browse\</code></li>
+<li>macOS: <code>~/Library/Application Support/amni-browse/</code></li>
+<li>Linux: <code>~/.config/amni-browse/</code></li>
+</ul>
+<p>The password vault is encrypted at rest using AES-256-GCM with a key derived from your master password via PBKDF2-HMAC-SHA256 (600,000 iterations). The master password itself is never written to disk &mdash; only the derived key is held in memory while the vault is unlocked.</p>
+<h2>3. NETWORK TRAFFIC</h2>
+<p>Amni-Browse opens network connections only for these purposes:</p>
+<ul>
+<li><strong>Web navigation</strong> &mdash; when you visit a URL, Amni-Browse loads that URL and its subresources (as any browser would). Tracking parameters (UTM, fbclid, gclid, and 20+ other click IDs) are stripped from the request before the socket opens.</li>
+<li><strong>DNS-over-HTTPS</strong> &mdash; DNS queries are encrypted and sent to the resolver you configure (Cloudflare, Google, Quad9, or custom). We do not operate any DoH resolver.</li>
+<li><strong>Search</strong> &mdash; queries go directly to the search engine you pick (DuckDuckGo by default). We do not intermediate.</li>
+</ul>
+<p>No traffic routes through Amni-Scient servers at any point. We literally have no way to observe your browsing.</p>
+<h2>4. AD &amp; TRACKER BLOCKING</h2>
+<p>Amni-Browse ships with a built-in ad and tracker blocker that operates at the navigation layer. Known ad networks, tracking pixels, analytics scripts, and fingerprinting libraries are cancelled before they can fetch. Filter rules are bundled inside the binary &mdash; the browser does not download or update filter lists from external servers.</p>
+<h2>5. THIRD-PARTY WEBSITES</h2>
+<p>When you navigate to a third-party website, that site may set cookies, run JavaScript, and collect data according to its own privacy policy. Amni-Browse enforces sensible defaults (Do Not Track header, no third-party cookies, tracking-parameter stripping) but cannot control what a loaded website does inside its own sandbox. Review each site&rsquo;s privacy policy for its data practices.</p>
+<h2>6. PRIVATE BROWSING MODE</h2>
+<p>Private tabs keep history, cookies, cache, and form data out of persistent storage. When you close a private tab, that tab&rsquo;s session data is discarded. Private mode does not hide your activity from the websites you visit, your employer, or your ISP &mdash; it only prevents local persistence on your device.</p>
+<h2>7. WEBSITE (AMNI-SCIENT.COM) ADVERTISING</h2>
+<p>The <em>amni-scient.com</em> website that hosts this policy displays advertisements provided by Google AdSense. Google&rsquo;s AdSense SDK may collect and process the following data as described in <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google&rsquo;s Privacy Policy</a>:</p>
+<ul>
+<li>Cookies and web identifiers</li>
+<li>Device information (browser type, OS, screen size)</li>
+<li>IP address (for ad-serving geolocation; not shared with us)</li>
+<li>Ad interaction data (impressions, clicks)</li>
+</ul>
+<p><strong>This applies only to the website.</strong> The Amni-Browse desktop binary contains no advertisements and no AdSense code.</p>
+<h2>8. DATA SHARING</h2>
+<p>We do not sell, trade, share, or transfer any user data to third parties &mdash; because we do not collect any user data from the browser in the first place. The only third-party data processing is through Google AdSense on the website (Section 7), governed by Google&rsquo;s privacy policy.</p>
+<h2>9. DATA RETENTION</h2>
+<p>We retain no user data. Local bookmarks, history, vault, sessions, and settings stay on your device until you modify or delete them through the browser UI or by deleting the configuration directory directly.</p>
+<h2>10. SECURITY</h2>
+<p>Amni-Browse uses the system WebView (WebView2 on Windows, WKWebView on macOS, WebKit2GTK on Linux) for page rendering. All network traffic uses native TLS. The password vault uses authenticated encryption (AES-256-GCM) and a slow KDF (PBKDF2-HMAC-SHA256 at 600,000 iterations) to protect against offline brute-force.</p>
+<h2>11. CHILDREN&rsquo;S PRIVACY</h2>
+<p>Amni-Browse is not directed at children under 13. Because the browser collects no data at all, there is no child-specific data collection to disclose. Web content accessed through the browser is subject to the policies of those third-party sites.</p>
+<h2>12. YOUR RIGHTS</h2>
+<p>Since we collect no personal data, there is no personal data held by Amni-Scient to access, modify, export, or delete. Local browsing data is fully under your control: delete the configuration directory to remove everything, or use the in-app "Clear browsing data" option. To manage AdSense data collection on the website, use an ad blocker, adjust browser cookie preferences, or opt out of personalized ads via <a href="https://adssettings.google.com" target="_blank" rel="noopener">Google Ad Settings</a>.</p>
+<h2>13. CHANGES TO THIS POLICY</h2>
+<p>We may update this privacy policy to reflect changes in the application or applicable laws. The "Last Updated" date at the top will be revised accordingly. Continued use of Amni-Browse after changes constitutes acceptance of the revised policy.</p>
+<h2>14. CONTACT</h2>
+<p>For questions or concerns regarding this privacy policy:</p>
+<ul>
+<li><strong>Email:</strong> <a href="mailto:amnibro7@gmail.com">amnibro7@gmail.com</a></li>
+<li><strong>Developer:</strong> Amnibro (Amni-Scient)</li>
+<li><strong>Website:</strong> <a href="https://amni-scient.com">https://amni-scient.com</a></li>
+<li><strong>Source:</strong> <a href="https://github.com/amnibro/Amni-Browse" target="_blank" rel="noopener">github.com/amnibro/Amni-Browse</a></li>
+</ul>
+</div>
+<footer>
+<div class="footer-links">
+<a href="privacy.html">ALL PRIVACY POLICIES</a>
+<a href="terms.html">TERMS</a>
+<a href="/">AMNI-SCIENT</a>
+<a href="mailto:amnibro7@gmail.com">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amni-Scient. All rights reserved.</p>
+</footer>
+</body>
+</html>
