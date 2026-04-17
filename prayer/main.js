@@ -50,7 +50,8 @@ let silhouettePos=null,waterfallPos=null,timelinePos=null,graphPos=null,radialPo
 const AI_DEFAULTS={url:'http://localhost:7700',model:'qwen3.5-122b'};
 const AI_STORAGE_KEY='amni-prayer-ai-config';
 const WEBLLM_STORAGE_KEY='amni-prayer-webllm';
-const WEBLLM_DEFAULTS={enabled:false,model:'Qwen2.5-0.5B-Instruct-q4f16_1-MLC'};
+const IS_MOBILE=/Android|iPhone|iPad|iPod|Mobile|Opera Mini/i.test(navigator.userAgent)||(navigator.deviceMemory&&navigator.deviceMemory<=4);
+const WEBLLM_DEFAULTS={enabled:false,model:IS_MOBILE?'SmolLM2-135M-Instruct-q0f16-MLC':'Qwen2.5-0.5B-Instruct-q4f16_1-MLC'};
 const WEBLLM_CDN='https://esm.run/@mlc-ai/web-llm@0.2';
 let webllmEngine=null,webllmReady=false,webllmLoading=false,webllmModule=null;
 function getAIConfig(){try{const s=localStorage.getItem(AI_STORAGE_KEY);if(!s)return{...AI_DEFAULTS};const p=JSON.parse(s);return{url:(p.url||AI_DEFAULTS.url).trim().replace(/\/+$/,''),model:(p.model||AI_DEFAULTS.model).trim()};}catch{return{...AI_DEFAULTS};}}
@@ -768,6 +769,7 @@ function openBookPanel(idx) {
     html += `<div class="${cls}"${dataAttr}><span class="verse-num">${vNum}</span><span class="verse-text">${escHtml(verses[v])}</span></div>`;
   }
   bookBody().innerHTML = html;
+  if (tandemActive) { populateTandem(idx); bookPanel().classList.add('hidden'); return; }
   bookPanel().classList.remove('hidden');
   const target = bookBody().querySelector('.highlighted');
   if (target) setTimeout(() => target.scrollIntoView({behavior: 'smooth', block: 'center'}), 100);
@@ -876,6 +878,7 @@ function toggleTandem() {
   document.body.classList.toggle('tandem-on', tandemActive);
   wrapper.style.display = tandemActive ? 'flex' : 'none';
   btn.textContent = tandemActive ? '⇦ CLOSE TANDEM' : '⇨ TANDEM';
+  if (tandemActive) bookPanel().classList.add('hidden');
   if (tandemActive && selectedIdx >= 0) populateTandem(selectedIdx);
   else if (tandemActive) {
     const tt = document.getElementById('tandem-title');

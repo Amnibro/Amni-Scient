@@ -62,7 +62,7 @@ body{background:#0a0a12;color:#e0d8c8;font-family:'Segoe UI',system-ui,sans-seri
 #tandemBtn:hover{background:rgba(240,200,80,0.25)}
 #patternsBtn{background:rgba(180,120,255,0.08);color:#c89eff;border:1px solid rgba(180,120,255,0.3);border-radius:3px;padding:3px 10px;font-size:0.72rem;cursor:pointer;letter-spacing:0.04em;font-family:inherit;transition:background 0.2s}
 #patternsBtn:hover{background:rgba(180,120,255,0.22)}
-#patterns-panel{position:fixed;bottom:52px;right:24px;width:340px;max-height:420px;z-index:25;background:rgba(10,10,18,0.97);border:1px solid rgba(180,120,255,0.25);border-radius:6px;padding:14px 16px;overflow-y:auto;backdrop-filter:blur(10px)}
+#patterns-panel{position:fixed;bottom:52px;right:24px;width:340px;max-height:min(420px,calc(100vh - 80px));z-index:25;background:rgba(10,10,18,0.97);border:1px solid rgba(180,120,255,0.25);border-radius:6px;padding:14px 16px;overflow-y:auto;backdrop-filter:blur(10px)}
 body.tandem-on #patterns-panel{right:0;width:60%;border-radius:0;border-top:1px solid rgba(180,120,255,0.25);border-bottom:none;border-left:none;border-right:none}
 .pat-ref{color:#f0c850;font-weight:600;font-size:0.88rem;margin-bottom:2px}
 .pat-type{color:#c89eff;font-size:0.68rem;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px}
@@ -79,7 +79,7 @@ body.tandem-on #patterns-panel{right:0;width:60%;border-radius:0;border-top:1px 
 #search-input:focus{border-color:rgba(240,200,80,.5)}
 #search-btn{background:rgba(240,200,80,.08);color:#f0c850;border:1px solid rgba(240,200,80,.25);border-radius:3px;padding:3px 8px;font-size:.75rem;cursor:pointer;font-family:inherit}
 #search-result{font-size:.68rem;color:#888;white-space:nowrap}
-#discuss-panel{position:fixed;bottom:52px;right:24px;width:370px;max-height:480px;z-index:26;background:rgba(8,10,20,.98);border:1px solid rgba(100,200,140,.2);border-radius:6px;flex-direction:column;backdrop-filter:blur(10px)}
+#discuss-panel{position:fixed;bottom:52px;right:24px;width:370px;max-height:min(480px,calc(100vh - 80px));z-index:26;background:rgba(8,10,20,.98);border:1px solid rgba(100,200,140,.2);border-radius:6px;flex-direction:column;backdrop-filter:blur(10px)}
 #discuss-header{flex-shrink:0;display:flex;justify-content:space-between;align-items:center;padding:8px 13px;border-bottom:1px solid rgba(100,200,140,.18);font-size:.75rem;font-weight:600;color:#7dd6a0;letter-spacing:.06em}
 #discuss-close{background:none;border:none;color:#555;font-size:.9rem;cursor:pointer;padding:0 2px}
 #discuss-close:hover{color:#aaa}
@@ -92,7 +92,7 @@ body.tandem-on #patterns-panel{right:0;width:60%;border-radius:0;border-top:1px 
 #discuss-send{background:rgba(100,200,140,.1);color:#7dd6a0;border:1px solid rgba(100,200,140,.3);border-radius:3px;padding:5px 10px;font-size:.7rem;cursor:pointer;font-family:inherit}
 #ai-setup-btn{background:rgba(240,200,80,.06);color:#f0c850;border:1px solid rgba(240,200,80,.25);border-radius:3px;padding:0 6px;font-size:.75rem;cursor:pointer;font-family:inherit;margin-left:4px;line-height:1.4;transition:background .2s}
 #ai-setup-btn:hover{background:rgba(240,200,80,.2)}
-#ai-setup-panel{position:fixed;bottom:52px;right:24px;width:380px;max-height:560px;z-index:28;background:rgba(8,10,20,.98);border:1px solid rgba(240,200,80,.28);border-radius:6px;display:flex;flex-direction:column;backdrop-filter:blur(10px);overflow:hidden}
+#ai-setup-panel{position:fixed;bottom:52px;right:24px;width:380px;max-height:min(560px,calc(100vh - 80px));z-index:28;background:rgba(8,10,20,.98);border:1px solid rgba(240,200,80,.28);border-radius:6px;display:flex;flex-direction:column;backdrop-filter:blur(10px);overflow:hidden}
 #ai-setup-header{flex-shrink:0;display:flex;justify-content:space-between;align-items:center;padding:8px 13px;border-bottom:1px solid rgba(240,200,80,.2);font-size:.75rem;font-weight:600;color:#f0c850;letter-spacing:.06em}
 #ai-setup-close{background:none;border:none;color:#555;font-size:.9rem;cursor:pointer;padding:0 2px}
 #ai-setup-close:hover{color:#aaa}
@@ -155,7 +155,7 @@ body.tandem-on #patterns-panel{right:0;width:60%;border-radius:0;border-top:1px 
 .ai-troubleshoot code{background:rgba(240,200,80,.1);color:#ffd97a;padding:1px 5px;border-radius:2px;font-size:.68rem}
 #prayBtn{background:linear-gradient(180deg,rgba(240,200,80,.2),rgba(180,100,40,.1));color:#ffe28a;border:1px solid rgba(240,200,80,.45);border-radius:3px;padding:3px 8px;cursor:pointer;font-family:inherit;letter-spacing:.05em;transition:background .2s,box-shadow .2s}
 #prayBtn:hover{background:linear-gradient(180deg,rgba(240,200,80,.32),rgba(180,100,40,.18));box-shadow:0 0 14px rgba(240,200,80,.35)}
-#pray-panel{position:fixed;bottom:52px;right:24px;width:410px;max-height:620px;z-index:29;background:radial-gradient(ellipse at top,rgba(30,18,6,.98),rgba(8,8,14,.99));border:1px solid rgba(240,200,80,.32);border-radius:6px;display:flex;flex-direction:column;backdrop-filter:blur(12px);overflow:hidden;box-shadow:0 0 40px rgba(240,200,80,.1),inset 0 0 60px rgba(240,200,80,.04)}
+#pray-panel{position:fixed;bottom:52px;right:24px;width:410px;max-height:min(620px,calc(100vh - 80px));z-index:29;background:radial-gradient(ellipse at top,rgba(30,18,6,.98),rgba(8,8,14,.99));border:1px solid rgba(240,200,80,.32);border-radius:6px;display:flex;flex-direction:column;backdrop-filter:blur(12px);overflow:hidden;box-shadow:0 0 40px rgba(240,200,80,.1),inset 0 0 60px rgba(240,200,80,.04)}
 #pray-header{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border-bottom:1px solid rgba(240,200,80,.18);background:rgba(10,6,2,.7)}
 #pray-title{font-size:.78rem;color:#ffe28a;font-weight:600;letter-spacing:.12em}
 .pray-header-actions{display:flex;gap:6px;align-items:center}
@@ -237,11 +237,11 @@ body.tandem-on #ui{left:40%;max-width:60%}
 #stats{bottom:12px;right:12px;font-size:0.6rem}
 #book-panel{width:100%;border-left:none;border-top:1px solid #2a2a3a}
 #book-panel-body{font-size:0.8rem;padding:10px 14px}
-#discuss-panel{width:calc(100% - 20px);right:10px;left:10px;bottom:10px;max-height:60vh}
+#discuss-panel{width:calc(100% - 20px);right:10px;left:10px;bottom:10px;max-height:calc(100dvh - 70px)}
 #discuss-log{max-height:40vh;font-size:0.72rem}
-#patterns-panel{width:calc(100% - 20px);right:10px;left:10px;bottom:10px}
-#ai-setup-panel{width:calc(100% - 20px);right:10px;left:10px;bottom:10px;max-height:72vh}
-#pray-panel{width:calc(100% - 20px);right:10px;left:10px;bottom:10px;max-height:80vh}
+#patterns-panel{width:calc(100% - 20px);right:10px;left:10px;bottom:10px;max-height:calc(100dvh - 70px)}
+#ai-setup-panel{width:calc(100% - 20px);right:10px;left:10px;bottom:10px;max-height:calc(100dvh - 70px)}
+#pray-panel{width:calc(100% - 20px);right:10px;left:10px;bottom:10px;max-height:calc(100dvh - 70px)}
 body.tandem-on #canvas{width:100%;height:50%;left:0;top:0}
 body.tandem-on #ui{left:0;max-width:100%;top:50%}
 #tandem-wrapper{width:100%;height:50%;top:50%}
