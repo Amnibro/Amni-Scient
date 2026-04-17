@@ -1082,8 +1082,13 @@ async function loadBrowserEngine(modelId){
   } catch (e) {
     webllmReady=false;
     const em=(e&&e.message)||String(e);
-    const hint=/mixed|blocked:csp|insecure|https/i.test(em)?' \u2014 likely a mixed-content block; serve this page over HTTPS.':/webgpu|adapter|gpu/i.test(em)?' \u2014 WebGPU unavailable; check chrome://gpu or enable in browser flags.':/fetch|network|failed to fetch|cors/i.test(em)?' \u2014 network error; check connection or try again.':'';
-    setMsg(`Load failed: ${em}${hint}`,'err');
+    const isDriver=/VK_ERROR|CreateComputePipelines|dawn|vulkan|Metal|D3D12|compute.?pipeline|shader.?compil|out.?of.?memory/i.test(em);
+    const isMixed=/mixed|blocked:csp|insecure/i.test(em);
+    const isGpu=/webgpu|adapter|navigator\.gpu/i.test(em);
+    const isNet=/fetch|network|failed to fetch|cors|404|403|500/i.test(em);
+    const hint=isDriver?' <br><b>GPU driver rejected the shader.</b> Quick fixes: <br>1. Update your GPU drivers (NVIDIA/AMD/Intel) <br>2. Enable <code>chrome://flags/#enable-unsafe-webgpu</code> and restart <br>3. Try a smaller model (Qwen2.5 0.5B) <br>4. Or use <b>Adam</b> (local HTTP server) via the gear \u2699 icon above \u2014 falls back to built-in responses meanwhile.':isMixed?' \u2014 likely a mixed-content block; serve this page over HTTPS.':isGpu?' \u2014 WebGPU unavailable; check <code>chrome://gpu</code> or enable in browser flags.':isNet?' \u2014 network error fetching model weights; check connection or try again.':' \u2014 unexpected error; built-in responses will be used meanwhile.';
+    setMsg(`Load failed: ${em}${hint}`,isDriver?'warn':'err');
+    console.warn('[prayer-webllm] load failed:',e);
   } finally {
     webllmLoading=false;
     if (loadBtn) loadBtn.disabled=false;

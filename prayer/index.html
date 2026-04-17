@@ -136,6 +136,16 @@
         <button id="webllm-unload-btn" style="display:none">Unload</button>
       </div>
       <div id="webllm-msg" class="ai-msg"></div>
+      <details class="ai-troubleshoot">
+        <summary>Having trouble loading?</summary>
+        <ul>
+          <li><b>VK_ERROR / CreateComputePipelines</b> &rarr; update GPU drivers, or enable <code>chrome://flags/#enable-unsafe-webgpu</code>.</li>
+          <li><b>WebGPU not available</b> &rarr; use Chrome 113+ / Edge / Safari 18+, not Firefox (no WebGPU yet).</li>
+          <li><b>Out of memory</b> &rarr; pick Qwen2.5 0.5B (smallest) or close other tabs.</li>
+          <li><b>Mixed content</b> &rarr; served HTTPS but Hugging Face CDN blocked? hard-refresh and retry.</li>
+          <li>Built-in responses remain active either way.</li>
+        </ul>
+      </details>
     </div>
     <div class="ai-guide">
       <div class="ai-guide-title">QUICK START</div>
