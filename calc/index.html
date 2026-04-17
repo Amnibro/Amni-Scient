@@ -27,6 +27,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8345487545441889" crossorigin="anonymous" data-overlays="false"></script>
+<script>(()=>{try{const t=localStorage.getItem('calc-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 :root{--bg:#0a0a0a;--panel:#111;--panel2:#161616;--border:#1a1a1a;--border2:#252525;--accent:#ff6b35;--accent-dim:rgba(255,107,53,0.15);--accent-glow:rgba(255,107,53,0.3);--text:#e0e0e0;--dim:#666;--ok:#00ff9d;--warn:#ffd700;--err:#ff4444;--font:'JetBrains Mono','Fira Code','SF Mono',Consolas,monospace}
@@ -52,11 +53,41 @@ nav .logo{font-size:.95rem;font-weight:700;letter-spacing:3px;color:var(--accent
 nav .logo span{color:var(--dim);font-weight:400}
 nav .back{color:var(--dim);font-size:.75rem;letter-spacing:1px;text-transform:uppercase}
 nav .back:hover{color:var(--accent)}
-.app{padding-top:48px;display:flex;flex-direction:column;min-height:calc(100vh - 48px)}
-.tabs{display:flex;background:var(--panel);border-bottom:1px solid var(--border);overflow-x:auto;flex-shrink:0}
-.tab{padding:10px 18px;font-size:.75rem;letter-spacing:1px;text-transform:uppercase;color:var(--dim);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s;user-select:none;background:none;border-top:none;border-left:none;border-right:none;font-family:var(--font)}
-.tab:hover{color:var(--text)}
-.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.app{padding-top:48px;display:flex;flex-direction:row;min-height:calc(100vh - 48px)}
+.sidebar{width:220px;background:var(--panel);border-right:1px solid var(--border);flex-shrink:0;overflow-y:auto;position:sticky;top:48px;align-self:flex-start;max-height:calc(100vh - 48px);z-index:40}
+.sidebar-scrim{display:none;position:fixed;inset:48px 0 0 0;background:rgba(0,0,0,0.55);z-index:35}
+.sidebar-scrim.show{display:block}
+.sidebar-cat{padding:.65rem 1rem .25rem;font-size:.6rem;letter-spacing:2px;color:var(--accent);text-transform:uppercase;border-bottom:1px solid var(--border2);margin-top:.35rem;opacity:.8}
+.sidebar-cat:first-child{margin-top:0}
+.sidebar .tab{display:block;width:100%;padding:7px 16px;font-size:.72rem;letter-spacing:1px;text-transform:uppercase;color:var(--dim);cursor:pointer;white-space:nowrap;transition:all .15s;user-select:none;background:none;border:none;border-left:3px solid transparent;font-family:var(--font);text-align:left}
+.sidebar .tab:hover{color:var(--text);background:var(--panel2)}
+.sidebar .tab.active{color:var(--accent);background:var(--panel2);border-left-color:var(--accent)}
+.main-area{flex:1;display:flex;flex-direction:column;min-width:0;min-height:calc(100vh - 48px)}
+.view-wrap{flex:1}
+.sidebar-toggle{display:none;background:none;border:1px solid var(--border2);color:var(--accent);padding:5px 10px;border-radius:3px;font-family:var(--font);font-size:.7rem;letter-spacing:1px;cursor:pointer}
+.sidebar-toggle:hover{background:var(--accent-dim)}
+.theme-toggle{background:none;border:1px solid var(--border2);color:var(--text);padding:5px 10px;border-radius:3px;font-family:var(--font);font-size:.7rem;letter-spacing:1px;cursor:pointer;transition:all .2s;text-transform:uppercase}
+.theme-toggle:hover{color:var(--accent);border-color:var(--accent)}
+.nav-right{display:flex;gap:.5rem;align-items:center}
+.theory-refs{padding:1.5rem 1.5rem 2rem;border-top:1px solid var(--border);background:var(--panel)}
+.theory-refs h2{color:var(--accent);font-size:1rem;letter-spacing:2px;margin-bottom:.35rem;text-transform:uppercase}
+.theory-refs .intro{color:var(--dim);font-size:.78rem;margin-bottom:1rem;line-height:1.6;max-width:900px}
+.theory-refs .tref-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:.85rem}
+.theory-refs .tref{background:var(--panel2);border:1px solid var(--border);border-radius:4px;padding:.85rem 1rem}
+.theory-refs .tref h3{color:var(--accent);font-size:.78rem;letter-spacing:1px;margin-bottom:.4rem;text-transform:uppercase}
+.theory-refs .tref p{color:var(--text);font-size:.78rem;line-height:1.6;margin-bottom:.45rem}
+.theory-refs .tref code{background:var(--bg);color:var(--accent);padding:1px 5px;border-radius:2px;font-size:.72rem;border:1px solid var(--border2)}
+.theory-refs .tref .std{font-size:.65rem;color:var(--dim);letter-spacing:1px;text-transform:uppercase;margin-top:.5rem;padding-top:.4rem;border-top:1px dashed var(--border2)}
+.site-ad-banner{padding:1rem 1.5rem;border-top:1px solid var(--border);background:var(--panel);text-align:center}
+.site-ad-banner .ad-note{font-size:.65rem;color:var(--dim);letter-spacing:1px;text-transform:uppercase;margin-bottom:.5rem}
+:root[data-theme="light"]{--bg:#f4efe4;--panel:#ebe4d1;--panel2:#ddd4bb;--border:#c6bba0;--border2:#a89a75;--accent:#c44a14;--accent-dim:rgba(196,74,20,0.12);--accent-glow:rgba(196,74,20,0.25);--text:#1f1a12;--dim:#655a43;--ok:#1a7a3f;--warn:#9d7400;--err:#a92020}
+:root[data-theme="light"] nav{background:rgba(244,239,228,0.92)}
+@media (max-width: 800px){
+.sidebar{position:fixed;top:48px;left:-240px;bottom:0;transition:left .2s;box-shadow:2px 0 12px rgba(0,0,0,0.5);width:220px;max-height:none}
+.sidebar.open{left:0}
+.sidebar-toggle{display:inline-block}
+.main-area{width:100%}
+}
 .view{display:none;flex:1;overflow-y:auto;padding:1rem}
 .view.active{display:block}
 .view h2{font-size:1.1rem;color:var(--accent);letter-spacing:2px;margin-bottom:.75rem}
@@ -162,44 +193,59 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 </div>
 <div id="wasm-loading" role="status" aria-live="polite"><span class="spinner" aria-hidden="true"></span><span>Loading WebAssembly engine&hellip;</span></div>
 <nav>
+<div style="display:flex;gap:.75rem;align-items:center">
+<button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle module menu" aria-expanded="false">&#9776; MODULES</button>
 <a href="https://amni-scient.com" class="back">&larr; AMNI-SCIENT</a>
-<span class="logo">AMNI<span>-CALC</span></span>
-<span style="width:80px"></span>
-</nav>
-<div class="app">
-<div class="tabs" id="tabs" role="tablist" aria-label="Calculator categories">
-<button class="tab active" data-v="beam" role="tab" id="tab-beam" aria-controls="v-beam" aria-selected="true" tabindex="0">BEAMS</button>
-<button class="tab" data-v="stress" role="tab" id="tab-stress" aria-controls="v-stress" aria-selected="false" tabindex="-1">STRESS</button>
-<button class="tab" data-v="section" role="tab" id="tab-section" aria-controls="v-section" aria-selected="false" tabindex="-1">SECTIONS</button>
-<button class="tab" data-v="bolts" role="tab" id="tab-bolts" aria-controls="v-bolts" aria-selected="false" tabindex="-1">BOLTS</button>
-<button class="tab" data-v="springs" role="tab" id="tab-springs" aria-controls="v-springs" aria-selected="false" tabindex="-1">SPRINGS</button>
-<button class="tab" data-v="seals" role="tab" id="tab-seals" aria-controls="v-seals" aria-selected="false" tabindex="-1">SEALS</button>
-<button class="tab" data-v="materials" role="tab" id="tab-materials" aria-controls="v-materials" aria-selected="false" tabindex="-1">MATERIALS</button>
-<button class="tab" data-v="finishes" role="tab" id="tab-finishes" aria-controls="v-finishes" aria-selected="false" tabindex="-1">FINISHES</button>
-<button class="tab" data-v="math" role="tab" id="tab-math" aria-controls="v-math" aria-selected="false" tabindex="-1">MATH</button>
-<button class="tab" data-v="equations" role="tab" id="tab-equations" aria-controls="v-equations" aria-selected="false" tabindex="-1">EQUATIONS</button>
-<button class="tab" data-v="units" role="tab" id="tab-units" aria-controls="v-units" aria-selected="false" tabindex="-1">UNITS</button>
-<button class="tab" data-v="fatigue" role="tab" id="tab-fatigue" aria-controls="v-fatigue" aria-selected="false" tabindex="-1">FATIGUE</button>
-<button class="tab" data-v="thermal" role="tab" id="tab-thermal" aria-controls="v-thermal" aria-selected="false" tabindex="-1">THERMAL</button>
-<button class="tab" data-v="echem" role="tab" id="tab-echem" aria-controls="v-echem" aria-selected="false" tabindex="-1">ELECTROCHEM</button>
-<button class="tab" data-v="battery" role="tab" id="tab-battery" aria-controls="v-battery" aria-selected="false" tabindex="-1">BATTERY</button>
-<button class="tab" data-v="fluids" role="tab" id="tab-fluids" aria-controls="v-fluids" aria-selected="false" tabindex="-1">FLUIDS</button>
-<button class="tab" data-v="hx" role="tab" id="tab-hx" aria-controls="v-hx" aria-selected="false" tabindex="-1">HEAT&nbsp;EX</button>
-<button class="tab" data-v="pv" role="tab" id="tab-pv" aria-controls="v-pv" aria-selected="false" tabindex="-1">PRESSURE&nbsp;VESSEL</button>
-<button class="tab" data-v="cycles" role="tab" id="tab-cycles" aria-controls="v-cycles" aria-selected="false" tabindex="-1">CYCLES</button>
-<button class="tab" data-v="hvac" role="tab" id="tab-hvac" aria-controls="v-hvac" aria-selected="false" tabindex="-1">HVAC</button>
-<button class="tab" data-v="electrical" role="tab" id="tab-electrical" aria-controls="v-electrical" aria-selected="false" tabindex="-1">ELECTRICAL</button>
-<button class="tab" data-v="vibration" role="tab" id="tab-vibration" aria-controls="v-vibration" aria-selected="false" tabindex="-1">VIBRATION</button>
-<button class="tab" data-v="gears" role="tab" id="tab-gears" aria-controls="v-gears" aria-selected="false" tabindex="-1">GEARS</button>
-<button class="tab" data-v="columns" role="tab" id="tab-columns" aria-controls="v-columns" aria-selected="false" tabindex="-1">COLUMNS</button>
-<button class="tab" data-v="shafts" role="tab" id="tab-shafts" aria-controls="v-shafts" aria-selected="false" tabindex="-1">SHAFTS</button>
-<button class="tab" data-v="welds" role="tab" id="tab-welds" aria-controls="v-welds" aria-selected="false" tabindex="-1">WELDS</button>
-<button class="tab" data-v="bearings" role="tab" id="tab-bearings" aria-controls="v-bearings" aria-selected="false" tabindex="-1">BEARINGS</button>
-<button class="tab" data-v="pumps" role="tab" id="tab-pumps" aria-controls="v-pumps" aria-selected="false" tabindex="-1">PUMPS</button>
-<button class="tab" data-v="combustion" role="tab" id="tab-combustion" aria-controls="v-combustion" aria-selected="false" tabindex="-1">COMBUSTION</button>
-<button class="tab" data-v="motors" role="tab" id="tab-motors" aria-controls="v-motors" aria-selected="false" tabindex="-1">MOTORS</button>
-<button class="tab" data-v="nec" role="tab" id="tab-nec" aria-controls="v-nec" aria-selected="false" tabindex="-1">NEC&nbsp;WIRE</button>
 </div>
+<span class="logo">AMNI<span>-CALC</span></span>
+<div class="nav-right">
+<button class="theme-toggle" id="theme-toggle" aria-label="Toggle color theme" title="Toggle theme"><span id="theme-icon">&#9790;</span></button>
+</div>
+</nav>
+<div class="sidebar-scrim" id="sidebar-scrim" aria-hidden="true"></div>
+<div class="app">
+<aside class="sidebar" id="sidebar" aria-label="Calculator modules">
+<div id="tabs" role="tablist" aria-label="Calculator categories">
+<div class="sidebar-cat">Mechanical</div>
+<button class="tab active" data-v="beam" role="tab" id="tab-beam" aria-controls="v-beam" aria-selected="true" tabindex="0">Beams</button>
+<button class="tab" data-v="stress" role="tab" id="tab-stress" aria-controls="v-stress" aria-selected="false" tabindex="-1">Stress</button>
+<button class="tab" data-v="section" role="tab" id="tab-section" aria-controls="v-section" aria-selected="false" tabindex="-1">Sections</button>
+<button class="tab" data-v="bolts" role="tab" id="tab-bolts" aria-controls="v-bolts" aria-selected="false" tabindex="-1">Bolts</button>
+<button class="tab" data-v="springs" role="tab" id="tab-springs" aria-controls="v-springs" aria-selected="false" tabindex="-1">Springs</button>
+<button class="tab" data-v="seals" role="tab" id="tab-seals" aria-controls="v-seals" aria-selected="false" tabindex="-1">Seals</button>
+<button class="tab" data-v="columns" role="tab" id="tab-columns" aria-controls="v-columns" aria-selected="false" tabindex="-1">Columns</button>
+<button class="tab" data-v="shafts" role="tab" id="tab-shafts" aria-controls="v-shafts" aria-selected="false" tabindex="-1">Shafts</button>
+<button class="tab" data-v="welds" role="tab" id="tab-welds" aria-controls="v-welds" aria-selected="false" tabindex="-1">Welds</button>
+<button class="tab" data-v="bearings" role="tab" id="tab-bearings" aria-controls="v-bearings" aria-selected="false" tabindex="-1">Bearings</button>
+<button class="tab" data-v="gears" role="tab" id="tab-gears" aria-controls="v-gears" aria-selected="false" tabindex="-1">Gears</button>
+<button class="tab" data-v="fatigue" role="tab" id="tab-fatigue" aria-controls="v-fatigue" aria-selected="false" tabindex="-1">Fatigue</button>
+<button class="tab" data-v="vibration" role="tab" id="tab-vibration" aria-controls="v-vibration" aria-selected="false" tabindex="-1">Vibration</button>
+<div class="sidebar-cat">Fluids &amp; Thermal</div>
+<button class="tab" data-v="fluids" role="tab" id="tab-fluids" aria-controls="v-fluids" aria-selected="false" tabindex="-1">Fluids</button>
+<button class="tab" data-v="pumps" role="tab" id="tab-pumps" aria-controls="v-pumps" aria-selected="false" tabindex="-1">Pumps</button>
+<button class="tab" data-v="thermal" role="tab" id="tab-thermal" aria-controls="v-thermal" aria-selected="false" tabindex="-1">Thermal</button>
+<button class="tab" data-v="hx" role="tab" id="tab-hx" aria-controls="v-hx" aria-selected="false" tabindex="-1">Heat Exchangers</button>
+<button class="tab" data-v="pv" role="tab" id="tab-pv" aria-controls="v-pv" aria-selected="false" tabindex="-1">Pressure Vessels</button>
+<button class="tab" data-v="cycles" role="tab" id="tab-cycles" aria-controls="v-cycles" aria-selected="false" tabindex="-1">Cycles</button>
+<button class="tab" data-v="hvac" role="tab" id="tab-hvac" aria-controls="v-hvac" aria-selected="false" tabindex="-1">HVAC</button>
+<button class="tab" data-v="combustion" role="tab" id="tab-combustion" aria-controls="v-combustion" aria-selected="false" tabindex="-1">Combustion</button>
+<div class="sidebar-cat">Electrical</div>
+<button class="tab" data-v="electrical" role="tab" id="tab-electrical" aria-controls="v-electrical" aria-selected="false" tabindex="-1">Electrical</button>
+<button class="tab" data-v="motors" role="tab" id="tab-motors" aria-controls="v-motors" aria-selected="false" tabindex="-1">Motors</button>
+<button class="tab" data-v="nec" role="tab" id="tab-nec" aria-controls="v-nec" aria-selected="false" tabindex="-1">NEC Wire</button>
+<div class="sidebar-cat">Chemistry</div>
+<button class="tab" data-v="echem" role="tab" id="tab-echem" aria-controls="v-echem" aria-selected="false" tabindex="-1">Electrochem</button>
+<button class="tab" data-v="battery" role="tab" id="tab-battery" aria-controls="v-battery" aria-selected="false" tabindex="-1">Battery</button>
+<div class="sidebar-cat">Reference</div>
+<button class="tab" data-v="materials" role="tab" id="tab-materials" aria-controls="v-materials" aria-selected="false" tabindex="-1">Materials</button>
+<button class="tab" data-v="finishes" role="tab" id="tab-finishes" aria-controls="v-finishes" aria-selected="false" tabindex="-1">Finishes</button>
+<button class="tab" data-v="math" role="tab" id="tab-math" aria-controls="v-math" aria-selected="false" tabindex="-1">Math</button>
+<button class="tab" data-v="equations" role="tab" id="tab-equations" aria-controls="v-equations" aria-selected="false" tabindex="-1">Equations</button>
+<button class="tab" data-v="units" role="tab" id="tab-units" aria-controls="v-units" aria-selected="false" tabindex="-1">Units</button>
+</div>
+</aside>
+<div class="main-area">
+<div class="view-wrap">
 <div class="view active" id="v-beam">
 <h2>BEAM ANALYSIS</h2>
 <div class="card">
@@ -1436,8 +1482,49 @@ n_out = n_in/GR &nbsp;|&nbsp; T_out = T_in&middot;GR&middot;&eta;<br>
 </div>
 </div>
 </div>
+</div>
+<section class="theory-refs" aria-labelledby="theory-title">
+<h2 id="theory-title">Theory, Formulas &amp; Standards Referenced</h2>
+<p class="intro">Amni-Calc implements classical closed-form engineering methods and selected code-based checks for preliminary sizing and conceptual analysis. Results are always first-principles approximations &mdash; final designs must be validated against current editions of the governing codes and by a licensed professional engineer.</p>
+<div class="tref-grid">
+<div class="tref"><h3>Beam Bending</h3><p>Euler-Bernoulli theory: <code>EI y&#8243;&#8243; = w(x)</code>. Superposition of point, distributed, and moment loads via influence functions. Deflection at load <code>&delta; = PL&sup3;/48EI</code> for simply supported mid-span.</p><div class="std">Refs: Shigley, Roark's Formulas for Stress &amp; Strain</div></div>
+<div class="tref"><h3>Combined Stress &amp; Mohr's Circle</h3><p>Principal stresses from 2D state: <code>&sigma;<sub>1,2</sub> = (&sigma;<sub>x</sub>+&sigma;<sub>y</sub>)/2 &plusmn; &radic;[((&sigma;<sub>x</sub>-&sigma;<sub>y</sub>)/2)&sup2; + &tau;<sub>xy</sub>&sup2;]</code>. Von Mises equivalent stress gates yield.</p><div class="std">Refs: Shigley Ch. 3-4; ASME VIII Div 2 Sec 5</div></div>
+<div class="tref"><h3>Section Properties</h3><p>Area, centroid, second moment of area <code>I</code>, section modulus <code>S = I/c</code>, radius of gyration <code>r = &radic;(I/A)</code> for I-beams, HSS, channels, custom shapes via parallel-axis theorem.</p><div class="std">Refs: AISC Steel Construction Manual</div></div>
+<div class="tref"><h3>Bolt Preload &amp; Torque</h3><p><code>T = K &middot; d &middot; F<sub>i</sub></code> with nut factor K = 0.15-0.20. Recommended preload for static <code>F<sub>i</sub> = 0.75 F<sub>p</sub></code>, reusable joints 0.75&middot;S<sub>p</sub>&middot;A<sub>t</sub>.</p><div class="std">Refs: Shigley Ch. 8; VDI 2230; ISO 898-1</div></div>
+<div class="tref"><h3>Helical Springs</h3><p>Shear stress <code>&tau; = K<sub>w</sub> &middot; 8FD/(&pi;d&sup3;)</code>, rate <code>k = Gd&#8308;/(8D&sup3;N<sub>a</sub>)</code>. Bergstr&auml;sser/Wahl factor corrects curvature. Belleville disc via Almen-Laszlo.</p><div class="std">Refs: SAE HS-795; ASTM A228</div></div>
+<div class="tref"><h3>O-Ring &amp; Elastomer Seals</h3><p>Squeeze 15-30% typical for static radial; 10-20% face. Compression-set and swell bound service envelope. Internal node FEA approximates contact region and peak stress.</p><div class="std">Refs: Parker O-Ring Handbook ORD-5700; ISO 3601</div></div>
+<div class="tref"><h3>Column Buckling</h3><p>Transition slenderness <code>C<sub>c</sub> = &radic;(2&pi;&sup2;E/S<sub>y</sub>)</code>. Euler for long columns: <code>&sigma;<sub>cr</sub> = &pi;&sup2;E/(KL/r)&sup2;</code>. Johnson parabolic for intermediate: <code>&sigma;<sub>cr</sub> = S<sub>y</sub>[1 - S<sub>y</sub>(KL/r)&sup2;/(4&pi;&sup2;E)]</code>.</p><div class="std">Refs: AISC 360; Shigley Ch. 4</div></div>
+<div class="tref"><h3>Shaft Torsion &amp; Critical Speed</h3><p>Polar moment <code>J = &pi;(D<sub>o</sub>&#8308;-D<sub>i</sub>&#8308;)/32</code>; max shear <code>&tau; = Tr/J</code>; twist <code>&theta; = TL/GJ</code>. Dunkerley <code>&omega;<sub>n</sub> = &radic;(g/&delta;)</code> for first whirl.</p><div class="std">Refs: ASME B106.1M; Den Hartog</div></div>
+<div class="tref"><h3>Fillet Welds (AWS)</h3><p>Throat <code>t = 0.707 a</code> for equal-leg fillet. Allowable shear on throat = 0.30 F<sub>EXX</sub>. Weld-group polar moment <code>J<sub>g</sub> = I<sub>x</sub> + I<sub>y</sub></code> for eccentrically loaded groups.</p><div class="std">Refs: AWS D1.1; AISC 360 Ch. J2</div></div>
+<div class="tref"><h3>Bearing Life</h3><p>Basic rating life <code>L<sub>10</sub> = a<sub>1</sub> (C/P)<sup>p</sup></code>, with p = 3 for ball, 10/3 for roller bearings. Reliability factor a<sub>1</sub> for L5, L1 adjustments.</p><div class="std">Refs: ISO 281; ABMA 9/11</div></div>
+<div class="tref"><h3>Fatigue (High-Cycle)</h3><p>Four failure criteria on the Goodman diagram: Goodman, Soderberg, Gerber (parabolic), ASME-Elliptic. Marin factors modify endurance limit <code>S<sub>e</sub> = k<sub>a</sub>k<sub>b</sub>k<sub>c</sub>k<sub>d</sub>k<sub>e</sub>k<sub>f</sub> S<sub>e</sub>'</code>.</p><div class="std">Refs: Shigley Ch. 6; ASTM E466</div></div>
+<div class="tref"><h3>Vibration &amp; Isolation</h3><p>Natural frequency <code>f<sub>n</sub> = (1/2&pi;)&radic;(k/m)</code>. Transmissibility <code>TR = &radic;(1+(2&zeta;r)&sup2;)/&radic;((1-r&sup2;)&sup2;+(2&zeta;r)&sup2;)</code> where r = f/f<sub>n</sub>.</p><div class="std">Refs: Rao, Mechanical Vibrations; ISO 10816</div></div>
+<div class="tref"><h3>Gears (Lewis Bending)</h3><p>Tooth bending stress <code>&sigma; = W<sub>t</sub>P<sub>d</sub>/(FY)</code>. Geometry: module m, pressure angle 20&deg;/25&deg;, addendum a = m, dedendum b = 1.25m.</p><div class="std">Refs: AGMA 2001-D04; Shigley Ch. 13-14</div></div>
+<div class="tref"><h3>Fluid Flow (Moody)</h3><p>Darcy-Weisbach <code>&Delta;p = f (L/D)(&rho;V&sup2;/2)</code>. Friction factor f from Moody chart &mdash; Colebrook-White implicit or Swamee-Jain explicit. Reynolds <code>Re = &rho;VD/&mu;</code>.</p><div class="std">Refs: Crane TP-410; Moody (1944)</div></div>
+<div class="tref"><h3>Pumps &amp; NPSH</h3><p>NPSH<sub>a</sub> = (P<sub>atm</sub>-P<sub>vap</sub>)/(&rho;g) - H<sub>s</sub> - H<sub>L</sub>. Affinity laws: Q&prop;N, H&prop;N&sup2;, P&prop;N&sup3;. Specific speed <code>N<sub>s</sub> = N&radic;Q/H<sup>3/4</sup></code>.</p><div class="std">Refs: Hydraulic Institute Standards; Karassik</div></div>
+<div class="tref"><h3>Heat Transfer</h3><p>Conduction <code>q = -kA(dT/dx)</code>, convection <code>q = hA&Delta;T</code>, radiation <code>q = &epsilon;&sigma;A(T<sub>s</sub>&#8308;-T<sub>&infin;</sub>&#8308;)</code>. Fin efficiency <code>&eta; = tanh(mL)/(mL)</code>.</p><div class="std">Refs: Incropera; Mills</div></div>
+<div class="tref"><h3>Heat Exchangers</h3><p>LMTD <code>&Delta;T<sub>lm</sub> = (&Delta;T<sub>1</sub>-&Delta;T<sub>2</sub>)/ln(&Delta;T<sub>1</sub>/&Delta;T<sub>2</sub>)</code>. NTU-effectiveness for unknown outlet temps. Correction factor F for shell-and-tube.</p><div class="std">Refs: TEMA; Kern; Kakac</div></div>
+<div class="tref"><h3>Pressure Vessels</h3><p>Thin-wall circumferential <code>&sigma;<sub>h</sub> = PD/2t</code>, longitudinal <code>&sigma;<sub>l</sub> = PD/4t</code>. Thick-wall Lam&eacute; stress distribution. Code-based minimum thickness per ASME VIII-1 UG-27.</p><div class="std">Refs: ASME BPVC VIII-1; EN 13445</div></div>
+<div class="tref"><h3>Thermodynamic Cycles</h3><p>Carnot &eta; = 1 - T<sub>L</sub>/T<sub>H</sub>. Otto &eta; = 1 - 1/r<sup>k-1</sup>. Diesel, Brayton, Rankine efficiencies. Refrigeration COP<sub>R</sub> = Q<sub>L</sub>/W<sub>net</sub>.</p><div class="std">Refs: Cengel &amp; Boles; Moran</div></div>
+<div class="tref"><h3>HVAC &amp; Psychrometrics</h3><p>Humidity ratio <code>W = 0.622 P<sub>w</sub>/(P-P<sub>w</sub>)</code>, enthalpy <code>h = 1.006T + W(2501+1.86T)</code>, dew point from water-vapor saturation.</p><div class="std">Refs: ASHRAE Fundamentals Ch. 1</div></div>
+<div class="tref"><h3>Electrical &amp; Power</h3><p>Ohm V = IR, AC active <code>P = VI cos&phi;</code>, reactive Q = VI sin&phi;. 3-phase line-to-line <code>P = &radic;3 V<sub>LL</sub> I cos&phi;</code>. RC/RL time constants <code>&tau; = RC</code>, <code>&tau; = L/R</code>.</p><div class="std">Refs: IEEE Std 141 (Red Book)</div></div>
+<div class="tref"><h3>Motors (3-Phase)</h3><p>Synchronous speed <code>N<sub>s</sub> = 120f/P</code>, slip <code>s = (N<sub>s</sub>-N)/N<sub>s</sub></code>. Shaft torque <code>T = 9549 P<sub>kW</sub>/N<sub>rpm</sub></code>. FLA <code>I = P/(&radic;3 V &middot; pf &middot; &eta;)</code>.</p><div class="std">Refs: NEMA MG-1; IEEE 112</div></div>
+<div class="tref"><h3>NEC Wire Sizing</h3><p>75&deg;C Cu ampacity per NEC Table 310.16. 125% continuous-load multiplier, ambient temperature and conductor-count derating per 310.15. Voltage drop <code>V<sub>d</sub> = 2I &middot; R<sub>&Omega;/ft</sub> &middot; L</code>.</p><div class="std">Refs: NFPA 70 (NEC) 310.15/310.16</div></div>
+<div class="tref"><h3>Electrochemistry</h3><p>Nernst <code>E = E&deg; - (RT/nF) ln Q</code>. Tafel <code>&eta; = a + b log|i|</code>. Butler-Volmer for electrode kinetics. Faraday <code>m = ItM/(nF)</code> for deposition.</p><div class="std">Refs: Bard &amp; Faulkner; Newman</div></div>
+<div class="tref"><h3>Battery Sizing</h3><p>Peukert runtime <code>t = C/I<sup>k</sup></code> where k &asymp; 1.1-1.3 for Li-ion. Pack voltage = V<sub>cell</sub> &middot; S-count, capacity = C<sub>cell</sub> &middot; P-count, with thermal derating.</p><div class="std">Refs: IEC 62620; UL 1973</div></div>
+<div class="tref"><h3>Combustion</h3><p>Stoichiometric AFR for C<sub>x</sub>H<sub>y</sub>: <code>AFR<sub>s</sub> = (x+y/4) &middot; 4.76 &middot; 28.97 /(12x+y)</code>. Lambda &lambda; = AFR/AFR<sub>s</sub>. Adiabatic flame <code>T<sub>ad</sub> = T<sub>i</sub> + LHV/((AFR+1)c<sub>p</sub>)</code>.</p><div class="std">Refs: Turns, Combustion; Glassman</div></div>
+<div class="tref"><h3>Unit Conversion &amp; Constants</h3><p>SI / Imperial conversion for length, force, pressure, energy, power, temperature, torque, viscosity, density. Engineering constants (g, R, &sigma;<sub>SB</sub>, N<sub>A</sub>) to 6 significant figures.</p><div class="std">Refs: NIST SP 811; BIPM SI Brochure</div></div>
+</div>
+<p style="margin-top:1.5rem;font-size:.72rem;color:var(--dim);line-height:1.7;max-width:900px">Amni-Calc runs fully client-side: your inputs never leave your browser. The analysis engine is a WebAssembly module compiled from Rust. The module itself is open for inspection &mdash; view source to see the API surface. Use of results is at your own risk; refer to the disclaimer.</p>
+</section>
+<aside class="site-ad-banner" aria-label="Sponsored">
+<div class="ad-note">Sponsored</div>
+<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8345487545441889" data-ad-slot="1720203631" data-ad-format="auto" data-full-width-responsive="true"></ins>
+<script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>
+</aside>
+</div>
 <footer>
-AMNI-CALC v2.4.0 &mdash; <a href="https://amni-scient.com">AMNI-SCIENT</a> &mdash; FOR EDUCATIONAL &amp; ESTIMATION PURPOSES ONLY &mdash; <a href="#" onclick="reportBug();return false">REPORT BUG</a>
+AMNI-CALC v2.5.0 &mdash; <a href="https://amni-scient.com">AMNI-SCIENT</a> &mdash; FOR EDUCATIONAL &amp; ESTIMATION PURPOSES ONLY &mdash; <a href="#" onclick="reportBug();return false">REPORT BUG</a>
 </footer>
 <script type="module">
 
@@ -1583,7 +1670,7 @@ const tempFac=t=>t<=30?1:t<=35?0.94:t<=40?0.88:t<=45?0.82:t<=50?0.75:0.67;
 const condFac=n=>n<=3?1:n<=6?0.8:n<=9?0.7:n<=20?0.5:0.45;
 window.calcNEC=()=>{const I=v('nec-i'),c=parseFloat($('nec-c').value),n=v('nec-n'),ta=v('nec-ta'),m=$('nec-m').value;const Idesign=I*c,derate=tempFac(ta)*condFac(n),reqAmp=Idesign/derate,alFac=m==='Al'?0.75:1;let pick=null;for(const row of necTbl){if(row[1]*alFac>=reqAmp){pick=row;break}}const brk=Math.ceil(Idesign/5)*5;setRes('nec-results','NEC WIRE SIZE',grid([['Design I (A)',fmt(Idesign)],['Derate factor',fmt(derate)],['Required A',fmt(reqAmp)],['Wire',pick?pick[0]+' AWG':'>4/0 (larger)','ok'],['Wire ampacity (A)',pick?fmt(pick[1]*alFac):'--'],['Breaker (A)',fmt(brk)],['Material',m]]))};
 window.calcVDrop=()=>{const I=v('vd-i'),L=v('vd-l'),V=v('vd-v'),awg=$('vd-a').value;const ohmFt={'14':0.003138,'12':0.001973,'10':0.001240,'8':0.000778,'6':0.000491,'4':0.000308,'2':0.000194,'1/0':0.000122,'2/0':0.0000967,'4/0':0.0000608};const r=ohmFt[awg]||0.001,vd=2*I*r*L,pct=vd/V*100;setRes('nec-results','VOLTAGE DROP',grid([['V_drop (V)',fmt(vd)],['V_drop (%)',fmt(pct),pct<3?'ok':pct<5?'warn':'err'],['AWG',awg],['Status',tag(pct<3,'OK (<3%)','HIGH')]]))};
-document.addEventListener('DOMContentLoaded',()=>{const newIds=['fatigue','thermal','echem','battery','fluids','hx','pv','cycles','hvac','electrical','vibration','gears','columns','shafts','welds','bearings','pumps','combustion','motors','nec'];const tabs=document.querySelectorAll('[role="tab"]');tabs.forEach(t=>{t.addEventListener('click',()=>{const target=t.getAttribute('data-v');if(!newIds.includes(target))return;document.querySelectorAll('.view').forEach(vv=>vv.classList.remove('active'));document.querySelectorAll('[role="tab"]').forEach(tt=>tt.classList.remove('active'));const vEl=$('v-'+target);if(vEl)vEl.classList.add('active');t.classList.add('active')})})});
+document.addEventListener('DOMContentLoaded',()=>{const newIds=['fatigue','thermal','echem','battery','fluids','hx','pv','cycles','hvac','electrical','vibration','gears','columns','shafts','welds','bearings','pumps','combustion','motors','nec'];const tabs=document.querySelectorAll('[role="tab"]');const sb=document.getElementById('sidebar'),scr=document.getElementById('sidebar-scrim'),sbt=document.getElementById('sidebar-toggle');const closeSb=()=>{sb&&sb.classList.remove('open');scr&&scr.classList.remove('show');sbt&&sbt.setAttribute('aria-expanded','false');};tabs.forEach(t=>{t.addEventListener('click',()=>{const target=t.getAttribute('data-v');if(newIds.includes(target)){document.querySelectorAll('.view').forEach(vv=>vv.classList.remove('active'));document.querySelectorAll('[role="tab"]').forEach(tt=>tt.classList.remove('active'));const vEl=$('v-'+target);if(vEl)vEl.classList.add('active');t.classList.add('active')}if(window.matchMedia&&window.matchMedia('(max-width:800px)').matches)closeSb();})});sbt&&sbt.addEventListener('click',()=>{const open=!sb.classList.contains('open');sb.classList.toggle('open',open);scr.classList.toggle('show',open);sbt.setAttribute('aria-expanded',open?'true':'false');});scr&&scr.addEventListener('click',closeSb);const tt=document.getElementById('theme-toggle'),ti=document.getElementById('theme-icon');const applyIcon=()=>{if(!ti)return;const cur=document.documentElement.getAttribute('data-theme')||'dark';ti.innerHTML=cur==='light'?'&#9728;':'&#9790;';};applyIcon();tt&&tt.addEventListener('click',()=>{const cur=document.documentElement.getAttribute('data-theme')||'dark';const nxt=cur==='light'?'dark':'light';document.documentElement.setAttribute('data-theme',nxt);try{localStorage.setItem('calc-theme',nxt);}catch(e){}applyIcon();});});
 })();
 </script>
 </body>
