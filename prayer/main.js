@@ -799,8 +799,10 @@ function toggleTandem() {
   btn.textContent = tandemActive ? '⇦ CLOSE TANDEM' : '⇨ TANDEM';
   if (tandemActive && selectedIdx >= 0) populateTandem(selectedIdx);
   else if (tandemActive) {
-    document.getElementById('tandem-book').innerHTML = '<p style="opacity:0.4;padding:1rem">Click or double-click a verse node to open it here</p>';
-    document.getElementById('tandem-connections').innerHTML = '';
+    const tt = document.getElementById('tandem-title');
+    if (tt) tt.textContent = 'Tandem Explorer';
+    document.getElementById('tandem-book').innerHTML = '<div style="padding:1.5rem;opacity:0.8;line-height:1.6;font-size:13px"><h3 style="margin:0 0 0.8rem;font-size:13px;letter-spacing:1.5px;opacity:0.85">GET STARTED</h3><p style="margin:0 0 0.6rem">\u2022 Click any node in the visualization to load its chapter here.</p><p style="margin:0 0 0.6rem">\u2022 Use the search bar (top-right) to jump to a verse \u2014 e.g. <em>John 3:16</em> or <em>Genesis 1 1</em>.</p><p style="margin:0 0 0.6rem">\u2022 Connected cross-references appear in the panel below.</p><p style="margin:0.8rem 0 0;font-size:12px;opacity:0.6">35,817 Douay-Rheims verses \u00b7 select a node to begin.</p></div>';
+    document.getElementById('tandem-connections').innerHTML = '<h3 class="tandem-conn-title">Connected Passages</h3><p style="padding:0.5rem 1rem;opacity:0.5;font-size:12px">Cross-references will appear here once a verse is selected.</p>';
   }
   setTimeout(() => {
     camera.aspect = renderer.domElement.clientWidth / renderer.domElement.clientHeight;
@@ -931,7 +933,7 @@ function searchVerse(q) {
   }
   if (idx >= 0) {
     selectedIdx = idx; highlightNode(idx); flyToNode(idx);
-    if (tandemActive) populateTandem(idx);
+    tandemActive ? populateTandem(idx) : toggleTandem();
     if (patternsActive) analyzePatterns(idx);
     const n = graph.nodes[idx];
     res.textContent = `→ ${n.book} ${n.ch}:${n.v}`;
@@ -939,14 +941,19 @@ function searchVerse(q) {
   } else { res.textContent = 'not found'; res.style.color = '#888'; }
 }
 async function probeAdam() {
-  try {
-    const r = await fetch('http://localhost:7700/health', {signal: AbortSignal.timeout(3000)});
-    adamOnline = r.ok;
-  } catch { adamOnline = false; }
+  const isHttps = location.protocol === 'https:';
+  adamOnline = false;
+  if (!isHttps) {
+    try {
+      const r = await fetch('http://localhost:7700/health', {signal: AbortSignal.timeout(3000)});
+      adamOnline = r.ok;
+    } catch { adamOnline = false; }
+  }
   const badge = document.getElementById('adam-badge');
-  badge.textContent = adamOnline ? '\u25CF Adam' : '\u25CF local';
+  badge.textContent = adamOnline ? '\u25CF Adam' : '\u25CF offline';
+  badge.title = adamOnline ? 'Adam local AI connected (localhost:7700)' : isHttps ? 'Adam local AI unavailable over HTTPS \u2014 built-in theological guide active' : 'Adam local AI not detected on localhost:7700 \u2014 using built-in guide';
   badge.style.color = adamOnline ? '#7dd6a0' : '';
-  badge.style.opacity = adamOnline ? '0.9' : '0.5';
+  badge.style.opacity = adamOnline ? '0.9' : '0.55';
 }
 async function askAdam(query, idx) {
   if (idx < 0 || !adamOnline) return null;
