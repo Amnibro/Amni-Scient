@@ -62,7 +62,7 @@ canvas:active{cursor:grabbing}
 #g-sel .src-nasa{color:var(--cn);font-weight:600}
 #g-sel .enter-btn{display:block;width:100%;margin-top:12px;padding:9px;background:rgba(0,80,160,0.35);border:1px solid var(--cb);color:var(--ct);font-size:13px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all 0.2s;text-align:center}
 #g-sel .enter-btn:hover{background:rgba(0,120,200,0.5);border-color:var(--cm);box-shadow:0 0 16px rgba(0,160,255,0.2)}
-#g-hint{position:fixed;bottom:48px;left:50%;transform:translateX(-50%);z-index:10;font-size:12px;letter-spacing:2px;color:var(--cd);text-transform:uppercase;pointer-events:none;opacity:0.7}
+#g-hint{position:fixed;bottom:156px;left:50%;transform:translateX(-50%);z-index:10;font-size:12px;letter-spacing:2px;color:var(--cd);text-transform:uppercase;pointer-events:none;opacity:0.7}
 #s-hud{position:fixed;top:0;left:0;width:100%;height:100%;z-index:10;display:none;pointer-events:none}
 #s-hud>*{pointer-events:auto}
 #s-top{position:absolute;top:16px;left:50%;transform:translateX(-50%);text-align:center}
@@ -177,15 +177,19 @@ canvas:active{cursor:grabbing}
 #launch-btn.disabled{opacity:0.4;cursor:default;pointer-events:none}
 #disc-toast{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:20;padding:16px 28px;background:rgba(3,8,20,0.95);border:1px solid var(--ca);color:var(--ca);font-size:14px;letter-spacing:3px;text-transform:uppercase;text-align:center;opacity:0;pointer-events:none;transition:opacity .3s;text-shadow:0 0 12px var(--ca)}
 #disc-toast.show{opacity:1}
-#ad-tx{position:fixed;bottom:44px;left:16px;z-index:14;width:320px;min-height:100px;background:rgba(3,8,20,0.92);border:1px solid rgba(0,120,200,0.35);backdrop-filter:blur(8px);display:flex;flex-direction:column;pointer-events:auto;overflow:hidden;transition:opacity .4s}
-#ad-tx .ad-hdr{display:flex;justify-content:space-between;align-items:center;padding:4px 10px;border-bottom:1px solid rgba(0,60,120,0.25)}
-#ad-tx .ad-hdr span{font-size:8px;letter-spacing:2px;color:rgba(0,180,255,0.4);text-transform:uppercase}
-#ad-tx .ad-x{background:none;border:none;color:rgba(74,106,138,0.6);font-size:12px;cursor:pointer;padding:0 2px}
-#ad-tx .ad-x:hover{color:var(--ct)}
-#ad-tx .ad-body{padding:6px 10px;min-height:60px;display:flex;align-items:center;justify-content:center}
-#ad-tx .ad-kofi{padding:8px 10px;border-top:1px solid rgba(0,60,120,0.25);display:flex;align-items:center;justify-content:center;gap:6px;text-decoration:none;color:#ff5e5b;font-size:10px;letter-spacing:2px;text-transform:uppercase;transition:background .2s}
-#ad-tx .ad-kofi:hover{background:rgba(255,94,91,0.08)}
-#ad-tx.hidden{opacity:0;pointer-events:none}
+#ad-tx{position:fixed;bottom:58px;left:16px;z-index:14;width:220px;background:rgba(3,8,20,0.92);border:1px solid rgba(255,94,91,0.35);backdrop-filter:blur(8px);display:flex;flex-direction:column;pointer-events:auto;overflow:hidden;transition:opacity .25s,transform .25s}
+#ad-tx .ad-hdr{display:flex;justify-content:space-between;align-items:center;padding:6px 10px;border-bottom:1px solid rgba(255,94,91,0.18)}
+#ad-tx .ad-hdr span{font-size:8px;letter-spacing:2px;color:rgba(255,196,188,0.75);text-transform:uppercase}
+#ad-tx .ad-x{background:none;border:none;color:rgba(255,196,188,0.7);font-size:12px;cursor:pointer;padding:0 2px}
+#ad-tx .ad-x:hover{color:#fff0ed}
+#ad-tx .ad-body{padding:10px;display:flex;flex-direction:column;gap:8px}
+#ad-tx .ad-copy{font-size:11px;line-height:1.45;color:var(--ct)}
+#ad-tx .ad-kofi{display:flex;align-items:center;justify-content:center;gap:6px;padding:8px 10px;text-decoration:none;color:#ff8d7a;font-size:10px;letter-spacing:1.6px;text-transform:uppercase;border-top:1px solid rgba(255,94,91,0.18);transition:background .2s,color .2s}
+#ad-tx .ad-kofi:hover{background:rgba(255,94,91,0.08);color:#ffd1ca}
+#ad-tx.hidden{opacity:0;pointer-events:none;transform:translateY(10px)}
+#game-ad{position:fixed;left:50%;bottom:58px;transform:translateX(-50%);z-index:14;width:min(728px,calc(100vw - 280px));min-width:320px;padding:8px 12px 10px;background:rgba(3,8,20,0.92);border:1px solid rgba(0,120,200,0.35);backdrop-filter:blur(8px);display:flex;flex-direction:column;align-items:center;gap:6px}
+#game-ad .ad-note{font-size:8px;letter-spacing:2px;color:rgba(0,180,255,0.45);text-transform:uppercase}
+#game-ad ins{display:block;width:100%;min-height:90px}
 #slime-close{position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;background:rgba(0,0,0,0.85);border:1px solid rgba(255,94,91,0.5);color:#ff5e5b;font-size:11px;line-height:1;cursor:pointer;display:none;align-items:center;justify-content:center;z-index:19}
 #slime-pet:hover #slime-close{display:flex}
 .pause-support{display:flex;gap:8px;margin-top:12px}
@@ -215,6 +219,8 @@ canvas:active{cursor:grabbing}
 #trash-can{position:fixed;bottom:50px;left:80px;z-index:18;display:none;font-size:28px;cursor:pointer;filter:grayscale(0.5);transition:all .2s}
 #trash-can:hover{filter:grayscale(0) brightness(1.3);transform:scale(1.2)}
 .title-badge{display:inline-block;margin-left:8px;padding:1px 6px;font-size:7px;letter-spacing:1.5px;border:1px solid rgba(255,204,0,0.4);color:#ffcc00;text-transform:uppercase;vertical-align:middle}
+@media (max-width:960px){#game-ad{width:calc(100vw - 32px);min-width:0}#g-hint{display:none}}
+@media (max-width:720px){#ad-tx{bottom:164px;width:calc(100vw - 32px);max-width:240px}#site-back{bottom:164px}#game-ad{bottom:56px;width:calc(100vw - 16px)}}
 </style>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8345487545441889" crossorigin="anonymous"></script>
 </head>
@@ -258,7 +264,8 @@ canvas:active{cursor:grabbing}
 <div id="msg"></div>
 <div id="fade"></div>
 <div id="pause"><div id="pause-box" class="pnl"><h2>Ship Computer</h2><div class="sub">PAUSED</div><button class="mbtn" id="btn-resume">Resume</button><button class="mbtn" id="btn-fs">Toggle Fullscreen</button><div class="pause-support"><a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi">&#9749; Support</a><a href="https://amni-scient.com" target="_blank" rel="noopener noreferrer">&#127760; AMNI-SCIENT</a></div></div></div>
-<div id="ad-tx" class="hidden"><div class="ad-hdr"><span>&#x25C8; deep space transmission</span><button class="ad-x" id="ad-close">&times;</button></div><div class="ad-body" id="ad-slot"></div><a class="ad-kofi" href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer"><span style="font-size:13px">&#9749;</span><span>Support on Ko-fi</span></a></div>
+<div id="ad-tx"><div class="ad-hdr"><span>&#9749; support the mission</span><button class="ad-x" id="ad-close">&times;</button></div><div class="ad-body"><div class="ad-copy">Fuel Cosmos Commander with a tip for amnibro if you want more weird space tools and galaxy chaos.</div><a class="ad-kofi" href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer"><span style="font-size:13px">&#9749;</span><span>Support amnibro</span></a></div></div>
+<div id="game-ad" aria-label="Sponsored"><div class="ad-note">Sponsored</div><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8345487545441889" data-ad-slot="1720203631" data-ad-format="auto" data-full-width-responsive="true"></ins></div>
 <a id="site-back" href="../amni-explore.html">&larr; AMNI-SCIENT</a>
 <div id="slime-pet" title="Nebula Slime (click: feed | right-click: hide)"><button id="slime-close" title="Hide slime">&times;</button></div>
 <div id="trash-can" title="Premium Galactic Trash Can">&#128465;</div>
@@ -275,6 +282,7 @@ canvas:active{cursor:grabbing}
 <div id="fleet-pnl" class="pnl"></div>
 <div id="mega-pnl" class="pnl"></div>
 <div id="disc-toast"></div>
+<script>(()=>{const promo=document.getElementById('ad-tx'),close=document.getElementById('ad-close'),slot=document.querySelector('#game-ad .adsbygoogle');close&&promo&&close.addEventListener('click',()=>promo.classList.add('hidden'));slot&&window.addEventListener('load',()=>{try{(window.adsbygoogle=window.adsbygoogle||[]).push({});}catch(_){}} ,{once:true});})();</script>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}</script>
 <script type="module">
 
