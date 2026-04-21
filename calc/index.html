@@ -2486,7 +2486,8 @@ shapes.push({type:'line',x0:optRange[1]||30,x1:optRange[1]||30,y0:0,y1:Math.max(
 }
 if(opPoint&&opPoint[0]>0){
 const sqColor=opPoint[0]<10?'#3b82f6':opPoint[0]<=30?'#22c55e':opPoint[0]<=40?'#f59e0b':'#ef4444';
-traces.push({x:[opPoint[0]],y:[opPoint[1]],type:'scatter',mode:'markers',name:'Operating ('+fmt(opPoint[1],1)+' '+unit+')',marker:{color:sqColor,size:11,symbol:'diamond',line:{color:'#fff',width:1.5}}});
+const opVal=(typeof opPoint[1]==='number'&&isFinite(opPoint[1]))?opPoint[1].toFixed(1):'—';
+traces.push({x:[opPoint[0]],y:[opPoint[1]],type:'scatter',mode:'markers',name:'Operating ('+opVal+' '+unit+')',marker:{color:sqColor,size:11,symbol:'diamond',line:{color:'#fff',width:1.5}}});
 }
 Plotly.react(id,traces,Object.assign({},pLayout,{margin:{l:70,r:25,t:20,b:50},shapes,xaxis:Object.assign({},pLayout.xaxis,{title:{text:'Compression (%)',font:{size:11,color:'#888'}}}),yaxis:Object.assign({},pLayout.yaxis,{title:{text:unit,font:{size:11,color:'#888'}}}),showlegend:!!(opPoint&&opPoint[0]>0),legend:{font:{size:10,color:'#888'},bgcolor:'transparent'}}),pCfg);
 }
