@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>AMNI-CALC &mdash; Engineering Calculator Suite (WASM) | AMNI-SCIENT</title>
-<meta name="description" content="Free in-browser engineering calculator suite: beam FEA, stress, sections, bolts, springs, seals, fatigue, heat transfer, electrochemistry, batteries, fluids, heat exchangers, pressure vessels, thermo cycles, HVAC, electrical, vibration, gears, columns, shafts, welds, bearings, pumps, combustion, motors, NEC wire, materials, finishes, units. WebAssembly-backed, runs entirely client-side.">
+<meta name="description" content="Free in-browser engineering calculator suite and handbook: beam FEA, stress, sections, bolts, springs, seals, fatigue, thermal, fluids, heat exchangers, pressure vessels, HVAC, electrical, materials data, standards, and engineering reference tables. WebAssembly-backed and fully client-side.">
 <meta name="keywords" content="engineering calculator,beam fea,cross section,bolt,spring,o-ring seal,fatigue goodman,heat transfer,electrochemistry,battery pack,fluid mechanics moody,heat exchanger lmtd ntu,pressure vessel lame asme,thermodynamic cycles,hvac psychrometric,ac power,vibration isolator,gear lewis,column buckling euler johnson,shaft torsion critical speed,fillet weld aws,bearing L10 iso 281,pump npsh affinity,combustion afr flame,motor synchronous fla,nec 310.16 ampacity voltage drop,material database,surface finish,unit converter,wasm calculator">
 <meta name="author" content="Amni-Scient">
 <meta name="theme-color" content="#ff6b35">
 <meta property="og:title" content="AMNI-CALC &mdash; In-Browser Engineering Calculator Suite">
-<meta property="og:description" content="Beams, stress, sections, bolts, springs, seals, fatigue, heat transfer, electrochem, batteries, fluids, heat exchangers, pressure vessels, cycles, HVAC, electrical, vibration, gears, columns, shafts, welds, bearings, pumps, combustion, motors, NEC wire, materials, finishes, units &mdash; all WebAssembly, all in your browser.">
+<meta property="og:description" content="Beams, stress, sections, bolts, springs, seals, fatigue, thermal, fluids, heat exchangers, pressure vessels, cycles, HVAC, electrical, materials data, standards, and handbook reference tables &mdash; all WebAssembly, all in your browser.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://amni-scient.com/calc/">
 <meta property="og:image" content="https://amni-scient.com/assets/explore/og-explore.png">
@@ -17,7 +17,7 @@
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="AMNI-CALC &mdash; In-Browser Engineering Calculator Suite">
-<meta name="twitter:description" content="30+ modules: FEA, stress, fatigue, thermal, echem, batteries, fluids, heat ex, vessels, cycles, HVAC, electrical, vibration, gears, columns, shafts, welds, bearings, pumps, combustion, motors, NEC &mdash; WASM, in your browser.">
+<meta name="twitter:description" content="30+ engineering modules plus materials, standards, and handbook-grade reference tables &mdash; WebAssembly, fully in your browser.">
 <meta name="twitter:image" content="https://amni-scient.com/assets/explore/og-explore.png">
 <link rel="canonical" href="https://amni-scient.com/calc/">
 <link rel="manifest" href="manifest.webmanifest">
@@ -70,7 +70,8 @@ nav .back:hover{color:var(--accent)}
 .theme-toggle{background:none;border:1px solid var(--border2);color:var(--text);padding:5px 10px;border-radius:3px;font-family:var(--font);font-size:.7rem;letter-spacing:1px;cursor:pointer;transition:all .2s;text-transform:uppercase}
 .theme-toggle:hover{color:var(--accent);border-color:var(--accent)}
 .nav-right{display:flex;gap:.5rem;align-items:center}
-.theory-refs{padding:1.5rem 1.5rem 2rem;border-top:1px solid var(--border);background:var(--panel)}
+.theory-refs{display:none;padding:1.5rem 1.5rem 2rem;border-top:1px solid var(--border);background:var(--panel)}
+body:has(#v-refs.active) .theory-refs{display:block}
 .theory-refs h2{color:var(--accent);font-size:1rem;letter-spacing:2px;margin-bottom:.35rem;text-transform:uppercase}
 .theory-refs .intro{color:var(--dim);font-size:.78rem;margin-bottom:1rem;line-height:1.6;max-width:900px}
 .theory-refs .tref-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:.85rem}
@@ -82,6 +83,20 @@ nav .back:hover{color:var(--accent)}
 .theory-refs .tref .std{font-size:.65rem;color:var(--dim);letter-spacing:1px;text-transform:uppercase;margin-top:.5rem;padding-top:.4rem;border-top:1px dashed var(--border2)}
 .site-ad-banner{padding:1rem 1.5rem;border-top:1px solid var(--border);background:var(--panel);text-align:center}
 .site-ad-banner .ad-note{font-size:.65rem;color:var(--dim);letter-spacing:1px;text-transform:uppercase;margin-bottom:.5rem}
+.table-wrap,#mat-table-wrap{overflow:auto;max-width:100%;border:1px solid var(--border);border-radius:4px;background:var(--panel2)}
+.table-wrap table.data,#mat-table-wrap table.data{margin-top:0}
+.table-wide{min-width:820px}
+.table-wide th,.table-wide td{white-space:nowrap}
+.table-wide th:last-child,.table-wide td:last-child{white-space:normal;min-width:240px}
+.table-static tr{cursor:default}
+.handbook-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.75rem}
+.handbook-card{background:var(--panel2);border:1px solid var(--border);border-radius:4px;padding:.9rem 1rem}
+.handbook-card h4{margin:0 0 .45rem;color:var(--accent);font-size:.78rem;letter-spacing:1px;text-transform:uppercase}
+.handbook-card p{margin:0;color:var(--text);font-size:.76rem;line-height:1.65}
+.pill-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:.65rem}
+.pill{display:inline-flex;align-items:center;padding:3px 7px;border:1px solid var(--border2);border-radius:999px;color:var(--dim);font-size:.62rem;letter-spacing:1px;text-transform:uppercase}
+.note-block{font-size:.74rem;color:var(--dim);line-height:1.7}
+@media(max-width:768px){.table-wide{min-width:680px}}
 :root[data-theme="light"]{--bg:#f4efe4;--panel:#ebe4d1;--panel2:#ddd4bb;--border:#c6bba0;--border2:#a89a75;--accent:#c44a14;--accent-dim:rgba(196,74,20,0.12);--accent-glow:rgba(196,74,20,0.25);--text:#1f1a12;--dim:#655a43;--ok:#1a7a3f;--warn:#9d7400;--err:#a92020}
 :root[data-theme="light"] nav{background:rgba(244,239,228,0.92)}
 @media (max-width: 800px){
@@ -171,6 +186,68 @@ footer a{color:var(--accent);font-size:.7rem}
 #ad-tx .ad-x:hover{color:var(--text)}
 #ad-tx .ad-body{padding:6px 10px;min-height:60px;display:flex;align-items:center;justify-content:center}
 #ad-tx.hidden{opacity:0;pointer-events:none}
+.calc-ai-fab{position:fixed;right:24px;bottom:24px;z-index:140;display:flex;align-items:center;gap:.7rem;padding:.8rem 1rem;border-radius:999px;border:1px solid var(--accent-glow);background:rgba(12,12,14,.96);box-shadow:0 18px 40px rgba(0,0,0,.42);backdrop-filter:blur(16px);color:var(--text);cursor:pointer;transition:transform .18s,border-color .18s,background .18s}
+.calc-ai-fab:hover{transform:translateY(-1px);border-color:var(--accent);background:rgba(18,18,22,.98)}
+.calc-ai-fab-label{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:700}
+.calc-ai-badge{font-size:.7rem;letter-spacing:.08em;color:var(--dim);white-space:nowrap}
+.calc-ai-badge.online{color:var(--ok)}
+.calc-ai-badge.browser{color:#8ab4f8}
+.calc-ai-badge.warn{color:var(--warn)}
+.calc-ai-panel{position:fixed;right:24px;bottom:84px;z-index:145;width:min(430px,calc(100vw - 24px));max-height:min(78vh,760px);display:flex;flex-direction:column;border:1px solid var(--accent-glow);border-radius:14px;background:rgba(10,10,12,.98);box-shadow:0 26px 60px rgba(0,0,0,.5);backdrop-filter:blur(18px);overflow:hidden}
+.calc-ai-panel[hidden]{display:none}
+.calc-ai-header{display:flex;align-items:flex-start;justify-content:space-between;gap:.75rem;padding:1rem 1rem .85rem;border-bottom:1px solid var(--border2);background:linear-gradient(180deg,rgba(255,107,53,.12),rgba(255,107,53,0))}
+.calc-ai-title{display:flex;flex-direction:column;gap:.18rem}
+.calc-ai-title strong{font-size:.78rem;letter-spacing:.16em;color:var(--accent);text-transform:uppercase}
+.calc-ai-title span{font-size:.66rem;letter-spacing:.08em;color:var(--dim)}
+.calc-ai-header-actions{display:flex;gap:.4rem}
+.calc-ai-header-actions button{width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--panel2);color:var(--text);font-family:var(--font);font-size:.85rem}
+.calc-ai-header-actions button:hover{border-color:var(--accent);color:var(--accent)}
+.calc-ai-statusbar{padding:.68rem 1rem;border-bottom:1px solid var(--border);background:rgba(255,107,53,.05);font-size:.72rem;color:var(--dim);line-height:1.6}
+.calc-ai-log{flex:1;min-height:180px;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:.65rem;background:linear-gradient(180deg,rgba(255,255,255,.01),rgba(255,255,255,0))}
+.calc-ai-msg{max-width:100%;padding:.78rem .85rem;border:1px solid var(--border2);border-radius:12px;background:var(--panel2);font-size:.78rem;line-height:1.68}
+.calc-ai-msg.ai{align-self:flex-start}
+.calc-ai-msg.user{align-self:flex-end;max-width:86%;background:rgba(255,107,53,.11);border-color:rgba(255,107,53,.28)}
+.calc-ai-msg code{background:var(--bg);color:var(--accent);padding:1px 5px;border-radius:4px;border:1px solid var(--border2)}
+.calc-ai-quick{display:flex;flex-wrap:wrap;gap:.45rem;padding:0 1rem .9rem}
+.calc-ai-chip{padding:.42rem .65rem;border:1px solid var(--border2);border-radius:999px;background:var(--panel2);color:var(--dim);font-size:.63rem;letter-spacing:.08em;text-transform:uppercase}
+.calc-ai-chip:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-dim)}
+.calc-ai-input{padding:.9rem 1rem 1rem;border-top:1px solid var(--border2);background:var(--panel)}
+.calc-ai-input textarea{width:100%;min-height:78px;resize:vertical;background:var(--bg);border:1px solid var(--border2);color:var(--text);padding:.75rem .8rem;border-radius:10px;outline:none;line-height:1.6}
+.calc-ai-input textarea:focus{border-color:var(--accent)}
+.calc-ai-sendrow{display:flex;align-items:flex-end;justify-content:space-between;gap:.75rem;margin-top:.7rem}
+.calc-ai-hint{font-size:.66rem;color:var(--dim);line-height:1.5}
+.calc-ai-setup{display:none;padding:.95rem 1rem 1rem;border-top:1px solid var(--border2);background:var(--panel)}
+.calc-ai-setup.open{display:block}
+.calc-ai-setup-title{font-size:.64rem;letter-spacing:.15em;color:var(--accent);text-transform:uppercase;margin-bottom:.65rem}
+.calc-ai-status-card{padding:.75rem .8rem;border:1px solid var(--border2);border-radius:10px;background:var(--panel2);margin-bottom:.8rem}
+.calc-ai-status-row{display:flex;align-items:center;gap:.55rem;margin-bottom:.28rem}
+.calc-ai-status-dot{width:10px;height:10px;border-radius:50%;background:#666;flex-shrink:0}
+.calc-ai-status-dot.on{background:var(--ok);box-shadow:0 0 10px rgba(0,255,157,.35)}
+.calc-ai-status-dot.warn{background:var(--warn);box-shadow:0 0 10px rgba(255,215,0,.28)}
+.calc-ai-status-dot.err{background:var(--err);box-shadow:0 0 10px rgba(255,68,68,.28)}
+.calc-ai-status-text{font-size:.76rem;color:var(--text)}
+.calc-ai-status-url{font-size:.68rem;color:var(--dim);word-break:break-all;margin-bottom:.35rem}
+.calc-ai-row{display:flex;gap:.65rem;align-items:flex-end}
+.calc-ai-field{display:flex;flex-direction:column;gap:4px;flex:1;margin-bottom:.6rem}
+.calc-ai-field span{font-size:.64rem;color:var(--dim);letter-spacing:.08em;text-transform:uppercase}
+.calc-ai-field input,.calc-ai-field select{width:100%;background:var(--bg);border:1px solid var(--border2);color:var(--text);padding:7px 10px;border-radius:8px;outline:none}
+.calc-ai-field input:focus,.calc-ai-field select:focus{border-color:var(--accent)}
+.calc-ai-toggle{display:flex;align-items:center;gap:.55rem;font-size:.72rem;color:var(--text);margin-bottom:.7rem}
+.calc-ai-toggle input{accent-color:var(--accent)}
+.calc-ai-actions{display:flex;flex-wrap:wrap;gap:.5rem}
+.calc-ai-actions button{padding:.45rem .7rem;border-radius:8px;border:1px solid var(--border2);background:var(--panel2);color:var(--text);font-size:.68rem;letter-spacing:.08em;text-transform:uppercase}
+.calc-ai-actions button:hover{border-color:var(--accent);color:var(--accent)}
+.calc-ai-msgline{min-height:1.1rem;margin-top:.55rem;font-size:.68rem;color:var(--dim);line-height:1.45}
+.calc-ai-msgline.ok{color:var(--ok)}
+.calc-ai-msgline.warn{color:var(--warn)}
+.calc-ai-msgline.err{color:var(--err)}
+.calc-ai-browser{margin-top:.95rem;padding-top:.95rem;border-top:1px dashed var(--border2)}
+.calc-ai-progress{display:none;margin:.7rem 0 .45rem}
+.calc-ai-progress-bar{height:6px;background:var(--border);border-radius:999px;overflow:hidden}
+.calc-ai-progress-fill{height:100%;width:0;background:linear-gradient(90deg,#8ab4f8,#5fd1ff)}
+.calc-ai-progress-text{font-size:.66rem;color:var(--dim);margin-top:.32rem}
+.calc-ai-note{margin-top:.75rem;font-size:.67rem;color:var(--dim);line-height:1.55}
+@media(max-width:800px){.calc-ai-fab{left:12px;right:12px;bottom:12px;justify-content:space-between}.calc-ai-panel{left:10px;right:10px;width:auto;bottom:72px;max-height:calc(100dvh - 88px)}.calc-ai-sendrow,.calc-ai-row{flex-direction:column;align-items:stretch}}
 </style>
 </head>
 <body>
@@ -326,14 +403,158 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 </div>
 </div>
 <div id="mat-table-wrap">
-<table class="data" id="mat-table">
-<thead><tr><th>NAME</th><th>E (GPa)</th><th>Sy (MPa)</th><th>Su (MPa)</th><th>DENSITY</th><th>POISSON</th></tr></thead>
+<table class="data table-wide" id="mat-table">
+<thead><tr><th>NAME</th><th>E (GPa)</th><th>Sy (MPa)</th><th>Su (MPa)</th><th>DENSITY</th><th>POISSON</th><th>Cp</th><th>MELT</th><th>SPEC</th></tr></thead>
 <tbody id="mat-tbody"></tbody>
 </table>
 </div>
 <div class="card" id="mat-detail" style="display:none;margin-top:1rem">
 <h3 id="mat-det-name">MATERIAL DETAIL</h3>
 <div class="result-grid" id="mat-det-grid"></div>
+</div>
+<div class="card">
+<h3>MATERIALS HANDBOOK</h3>
+<p class="muted" style="max-width:980px;line-height:1.7">Use the searchable database for exact entries, then use these handbook notes to screen families fast. Values below are typical room-temperature ranges for early design only; final design should always be checked against the exact alloy, temper, heat treatment, mill cert, and governing code.</p>
+<div class="handbook-grid" style="margin-top:1rem">
+<article class="handbook-card"><h4>Carbon &amp; Alloy Steel</h4><p>Best first stop when stiffness, cost, machinability, and weldability matter more than mass. Great for shafts, frames, weldments, brackets, and bolted structure. Watch corrosion, coatings, weld HAZ hardness, and low-temperature toughness.</p><div class="pill-row"><span class="pill">High E</span><span class="pill">Low Cost</span><span class="pill">Needs Corrosion Plan</span></div></article>
+<article class="handbook-card"><h4>Stainless &amp; Corrosion Alloys</h4><p>Choose when washdown, humidity, chloride splash, food contact, or appearance matter. Austenitics are forgiving but not high-strength; precipitation-hardened grades raise strength but need heat-treatment control and crack-sensitivity review.</p><div class="pill-row"><span class="pill">Corrosion</span><span class="pill">Lower k</span><span class="pill">Galling Risk</span></div></article>
+<article class="handbook-card"><h4>Aluminum &amp; Light Alloys</h4><p>Good for weight reduction, thermal conductivity, and rapid machining. Excellent for enclosures, heat sinks, lightweight structures, and transport hardware. Check fatigue detail quality, thread bearing, creep near heat, and galvanic pairing with steels.</p><div class="pill-row"><span class="pill">Low Density</span><span class="pill">High k</span><span class="pill">Thermal Growth</span></div></article>
+<article class="handbook-card"><h4>Bronze &amp; Copper Alloys</h4><p>Strong choice for bushings, wear plates, electrical hardware, and marine/wet-service parts. Sliding wear behavior can be excellent, but density is high and yield is usually modest versus steels. Confirm lead content and galvanic compatibility.</p><div class="pill-row"><span class="pill">Bearing Use</span><span class="pill">Good Conductivity</span><span class="pill">Heavy</span></div></article>
+<article class="handbook-card"><h4>Engineering Polymers</h4><p>Use for low-friction guides, chemical resistance, electrical isolation, light load structures, and low-noise mechanisms. The real traps are creep, moisture pickup, thermal expansion, and property loss at heat. Check continuous-use temperature, not just melting point.</p><div class="pill-row"><span class="pill">Low Mass</span><span class="pill">Creep Review</span><span class="pill">Chemical Fit</span></div></article>
+<article class="handbook-card"><h4>Elastomers</h4><p>Seal success is mostly about fluid compatibility, compression set, temperature, and extrusion resistance. Hardness alone is not enough. Screen NBR for general oils, EPDM for water/steam, and FKM for fuels and hot oil; verify swell and low-temp behavior.</p><div class="pill-row"><span class="pill">Fluid Fit</span><span class="pill">Compression Set</span><span class="pill">Extrusion Gap</span></div></article>
+</div>
+</div>
+<div class="card">
+<h3>COMMON ENGINEERING MATERIALS QUICK CHART</h3>
+<p class="muted" style="line-height:1.7">Typical nominal values for first-pass screening. Continuous-use temperature is practical, not absolute melt or short-excursion limit.</p>
+<div class="table-wrap" style="margin-top:.75rem">
+<table class="data table-static table-wide">
+<thead><tr><th>MATERIAL</th><th>FAMILY</th><th>DENSITY (g/cc)</th><th>E (GPa)</th><th>Sy (MPa)</th><th>MAX CONT. (°C)</th><th>k (W/m·K)</th><th>CTE (µm/m·K)</th><th>SCREENING NOTES</th></tr></thead>
+<tbody>
+<tr><td>1018 / 1020 Steel</td><td>Low Carbon</td><td>7.87</td><td>205</td><td>370</td><td>400</td><td>51</td><td>11.7</td><td>Default structural and machined steel. Weldable, cheap, needs coating in wet service.</td></tr>
+<tr><td>4140 Q&amp;T</td><td>Alloy Steel</td><td>7.85</td><td>205</td><td>655</td><td>425</td><td>42</td><td>12.3</td><td>Good for shafts, pins, and heavily loaded parts. Review heat treatment and notch sensitivity.</td></tr>
+<tr><td>304 Stainless</td><td>Austenitic SS</td><td>8.00</td><td>193</td><td>215</td><td>870</td><td>16</td><td>17.2</td><td>General corrosion resistance and fabrication. Can pit in chlorides; lower thermal conductivity than steel.</td></tr>
+<tr><td>316 Stainless</td><td>Austenitic SS</td><td>8.00</td><td>193</td><td>205</td><td>870</td><td>14.6</td><td>16.0</td><td>Better chloride resistance than 304. Good washdown and marine-adjacent choice, still not immune to pitting.</td></tr>
+<tr><td>6061-T6</td><td>Aluminum</td><td>2.70</td><td>69</td><td>276</td><td>150</td><td>167</td><td>23.6</td><td>Great all-around light structural alloy. Watch thread stripping, local bearing, and thermal growth.</td></tr>
+<tr><td>7075-T6</td><td>Aluminum</td><td>2.81</td><td>71.7</td><td>503</td><td>120</td><td>130</td><td>23.5</td><td>High strength-to-weight for aerospace-style parts. Reduced weldability and more SCC sensitivity.</td></tr>
+<tr><td>Ti-6Al-4V</td><td>Titanium</td><td>4.43</td><td>114</td><td>880</td><td>315</td><td>6.7</td><td>8.6</td><td>High strength and corrosion resistance with moderate weight. Expensive, lower stiffness than steel.</td></tr>
+<tr><td>C932 Bronze</td><td>Bearing Bronze</td><td>8.90</td><td>105</td><td>170</td><td>260</td><td>58</td><td>17.8</td><td>Strong plain-bearing candidate with good embeddability. Verify lead restrictions and partner shaft hardness.</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="card">
+<h3>SPEC / DESIGNATION QUICK MAP</h3>
+<div class="table-wrap" style="margin-top:.25rem">
+<table class="data table-static table-wide">
+<thead><tr><th>FAMILY</th><th>COMMON SPECS / DESIGNATIONS</th><th>COMMON FORMS</th><th>START HERE FOR</th><th>WATCH FOR</th></tr></thead>
+<tbody>
+<tr><td>Low-Carbon Structural Steel</td><td>ASTM A36, A572 Gr 50, A500, A513, AISI 1018/1020</td><td>Plate, shapes, tubing, bar</td><td>Frames, brackets, weldments, guards, machine bases</td><td>A36 is a structural spec, not a precision shaft or bushing spec.</td></tr>
+<tr><td>Pressure / Process Carbon Steel</td><td>ASTM / ASME A516 Gr 70, A106, A53, SA-516</td><td>Plate, pipe, fittings, heads</td><td>Pressure shells, piping, hot process service</td><td>Impact testing, corrosion allowance, and code edition often govern more than handbook strength.</td></tr>
+<tr><td>Alloy Steel</td><td>AISI 4140/4340, ASTM A29/A322, AMS 6349</td><td>Bar, forgings, prehard stock</td><td>Shafts, gears, pins, wear parts, higher-torque hardware</td><td>Specify heat treatment or hardness, not just the alloy callout.</td></tr>
+<tr><td>General Stainless</td><td>ASTM A240/A276 304/304L/316/316L</td><td>Sheet, plate, bar, tube, pipe</td><td>Washdown, food contact, corrosion-resistant fabrication</td><td>Lower yield than carbon steel and frequent galling on threads.</td></tr>
+<tr><td>PH Stainless</td><td>ASTM A564/A693 17-4 PH</td><td>Bar, plate, forgings</td><td>High-strength corrosion-resistant shafts, fittings, fasteners</td><td>H900/H1025/H1150 condition changes strength, toughness, and SCC behavior.</td></tr>
+<tr><td>Wrought Aluminum</td><td>ASTM B221/B209 6061-T6, 5052-H32, 7075-T6</td><td>Extrusion, plate, sheet, bar</td><td>Enclosures, lightweight structures, transport hardware, heat spreaders</td><td>Temper, thickness, and weld HAZ knockdown move yield more than many teams expect.</td></tr>
+<tr><td>Copper / Bronze</td><td>ASTM B505 C932, B150 C110, B148 nickel-aluminum bronze</td><td>Castings, bushing stock, bar, bus</td><td>Bearings, electrical hardware, marine-adjacent parts</td><td>Lead content, galvanic pairing, and price volatility.</td></tr>
+<tr><td>Polymers / Elastomers</td><td>ASTM D6778 POM, ASTM D6262 PEEK, ASTM D2000 seals</td><td>Rod, sheet, molded parts, cord stock</td><td>Wear strips, seals, insulators, chemical-contact parts</td><td>Humidity, creep, and supplier formulation spread are far larger than with metals.</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="card">
+<h3>CORROSION / MEDIA COMPATIBILITY SCREEN</h3>
+<div class="table-wrap" style="margin-top:.25rem">
+<table class="data table-static table-wide">
+<thead><tr><th>SERVICE</th><th>GOOD STARTING METALS</th><th>COMMON CAUTIONS</th><th>SEAL / POLYMER START POINT</th><th>WHAT USUALLY GETS MISSED</th></tr></thead>
+<tbody>
+<tr><td>Fresh Water / Glycol</td><td>Coated carbon steel, 304/316, 5xxx/6xxx aluminum, brass</td><td>Bare low-alloy steel in stagnant zones, hot-water NBR</td><td>EPDM, silicone, PTFE</td><td>Oxygen content, microbiological growth, and dead legs control life.</td></tr>
+<tr><td>Wet Chlorides / Brine</td><td>316, duplex stainless, titanium, FRP, PTFE-lined systems</td><td>304, plain carbon steel, 17-4 without review</td><td>FKM, EPDM, PTFE</td><td>Deposits and crevices pit much faster than open splash exposure.</td></tr>
+<tr><td>Caustic / Alkaline Washdown</td><td>316, nickel alloys, PTFE, HDPE</td><td>Many aluminum finishes, zinc plate, some brasses</td><td>EPDM, PTFE</td><td>Cleaner concentration and cycle temperature matter more than the label on the tote.</td></tr>
+<tr><td>Hydrocarbons / Fuel</td><td>Carbon steel, stainless, aluminum, some copper alloys</td><td>EPDM, some nylons in aromatic fuel, unreviewed adhesives</td><td>NBR, FKM, PTFE</td><td>Swell, permeation, conductivity, and fire code often outrank raw strength.</td></tr>
+<tr><td>Steam / Condensate</td><td>Chemistry-controlled carbon steel, 316, graphite-compatible hardware</td><td>NBR, many zinc finishes, unprotected cast iron</td><td>EPDM, graphite, PTFE-filled materials</td><td>Compression set, oxygen pitting, and start-stop thermal cycle.</td></tr>
+<tr><td>Outdoor UV / Ozone</td><td>Stainless, anodized aluminum, hot-dip galvanized steel</td><td>Uncoated carbon steel, NBR, many commodity plastics</td><td>EPDM, silicone, fluoropolymer</td><td>Seals age from UV and ozone even with little chemical exposure.</td></tr>
+<tr><td>Vacuum / High Purity</td><td>304L/316L electropolished, aluminum, selected ceramics</td><td>Porous castings, high-outgassing elastomers, many greases</td><td>FFKM, PTFE, PEEK</td><td>Permeation, trapped volatiles, and cleanability drive the answer.</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="card">
+<h3>GALVANIC PAIRING QUICK CHECK</h3>
+<div class="table-wrap" style="margin-top:.25rem">
+<table class="data table-static table-wide">
+<thead><tr><th>PAIR</th><th>DRY SERVICE</th><th>WET / SALT SERVICE</th><th>MITIGATION</th><th>NOTE</th></tr></thead>
+<tbody>
+<tr><td>Zinc to Carbon Steel</td><td>Good sacrificial pairing</td><td>Good until the zinc is consumed</td><td>Maintain coating thickness and protect cut edges</td><td>Expected pairing for plated fasteners and galvanized assemblies.</td></tr>
+<tr><td>Carbon Steel to 304 / 316 SS</td><td>Usually manageable</td><td>High risk when the stainless area is large and wet</td><td>Coat the steel, isolate washers, keep noble area small</td><td>Crevice moisture makes the carbon steel the anode very quickly.</td></tr>
+<tr><td>Aluminum to Stainless</td><td>Fair if dry and ventilated</td><td>Poor in salt, condensate, or trapped washdown</td><td>Anodize or paint aluminum, add nonconductive barrier, seal joints</td><td>Fasteners are often the local initiator for attack.</td></tr>
+<tr><td>Aluminum to Copper / Brass</td><td>Fair if dry</td><td>Very poor when wet</td><td>Avoid direct contact or use tin / polymer barrier</td><td>Copper-rich runoff can stain and attack aluminum beyond the joint line.</td></tr>
+<tr><td>Copper / Brass to Carbon Steel</td><td>Usually fine in dry service</td><td>Moderate risk in wet utility systems</td><td>Use dielectric breaks, coatings, and drainage</td><td>Common plumbing and instrumentation trap.</td></tr>
+<tr><td>Titanium to Stainless</td><td>Good</td><td>Usually manageable</td><td>Isolate if aluminum or zinc-coated steel is also present</td><td>Both are relatively noble compared with aluminum and zinc.</td></tr>
+</tbody>
+</table>
+</div>
+<div class="note-block" style="margin-top:.75rem">Large cathode to small anode area ratios accelerate damage. A small aluminum bracket under a big stainless cover is a much worse galvanic problem than the same metals at equal exposed area.</div>
+</div>
+<div class="card">
+<h3>HEAT TREAT / TEMPER QUICK GUIDE</h3>
+<div class="table-wrap" style="margin-top:.25rem">
+<table class="data table-static table-wide">
+<thead><tr><th>SYSTEM</th><th>COMMON CONDITION</th><th>WHAT IT CHANGES</th><th>BEST FOR</th><th>WATCH FOR</th></tr></thead>
+<tbody>
+<tr><td>4140 Steel</td><td>Annealed vs Q&amp;T</td><td>Raises yield and hardness, cuts machinability and toughness margin</td><td>Shafts, pins, higher-stress machine elements</td><td>Quench cracking, notch sensitivity, and unspecified hardness ranges.</td></tr>
+<tr><td>17-4 PH Stainless</td><td>H900 vs H1150</td><td>H900 maximizes strength; H1150 improves toughness and corrosion behavior</td><td>High-strength corrosion-resistant hardware</td><td>Condition affects dimensions and SCC response.</td></tr>
+<tr><td>6061 Plate</td><td>T6 vs T651</td><td>T651 relieves residual stress for machining with similar strength</td><td>Machined plates, tooling, fixtures</td><td>Weld HAZ strength is much lower than parent T6 values.</td></tr>
+<tr><td>7075 Aluminum</td><td>T6 vs T73</td><td>T73 lowers strength somewhat but improves SCC resistance</td><td>Aerospace-style or marine-adjacent strength-limited parts</td><td>Temper selection is a corrosion decision as much as a strength decision.</td></tr>
+<tr><td>Spring Wire</td><td>Music wire vs oil-tempered</td><td>High spring strength with different temperature and fatigue behavior</td><td>Compression and extension springs</td><td>Relaxation at heat and the benefit of shot peen / preset.</td></tr>
+<tr><td>Nitrided Steel</td><td>Surface-hardened case</td><td>Raises wear resistance with limited bulk distortion</td><td>Seal lands, splines, shafts, gear flanks</td><td>Brittle white layer, grind stock, and case-depth control.</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="card">
+<h3>PLAIN BEARING / WEAR PAIR SCREEN</h3>
+<div class="table-wrap" style="margin-top:.25rem">
+<table class="data table-static table-wide">
+<thead><tr><th>PAIR</th><th>LOAD / SPEED FEEL</th><th>LUBRICATION</th><th>GOOD FOR</th><th>WATCH FOR</th></tr></thead>
+<tbody>
+<tr><td>Hardened Steel on C932 Bronze</td><td>Medium load, medium speed</td><td>Oil or grease</td><td>General bushings, pivots, oscillating joints</td><td>Shaft finish, hardness, and contamination control.</td></tr>
+<tr><td>Hardened Steel on PTFE-Lined Composite</td><td>Low-medium load, oscillatory motion</td><td>Dry or very light grease</td><td>Maintenance-light linkages and cylinders</td><td>PV limit, edge loading, and shock events.</td></tr>
+<tr><td>Stainless on UHMW / PEEK</td><td>Low load, low speed</td><td>Dry or boundary film</td><td>Food, chemical, and quiet-guidance mechanisms</td><td>Thermal growth and creep can close the designed clearance.</td></tr>
+<tr><td>Cast Iron on Steel</td><td>Dirty but lubricated service</td><td>Oil splash or bath</td><td>Ways, legacy machinery, enclosed rotating systems</td><td>Abrasive fines score both surfaces if filtration is poor.</td></tr>
+<tr><td>Ceramic / Stainless Ball on Polymer Seat</td><td>Very low load</td><td>Usually dry</td><td>Instrumentation, corrosive metering, nonmagnetic parts</td><td>Shock loading and point-contact indentation of the polymer.</td></tr>
+</tbody>
+</table>
+</div>
+<div class="note-block" style="margin-top:.75rem">When a dry sliding pair works on paper but not in service, the miss is usually PV, edge loading, debris, or thermal expansion mismatch rather than raw compressive strength.</div>
+</div>
+<div class="card">
+<h3>POLYMER &amp; ELASTOMER SCREENING</h3>
+<div class="table-wrap" style="margin-top:.25rem">
+<table class="data table-static table-wide">
+<thead><tr><th>MATERIAL</th><th>TYPE</th><th>DENSITY (g/cc)</th><th>MODULUS / HARDNESS</th><th>TYPICAL STRENGTH</th><th>MAX CONT. (°C)</th><th>BEST SERVICE</th><th>SCREENING NOTES</th></tr></thead>
+<tbody>
+<tr><td>Acetal (POM)</td><td>Polymer</td><td>1.41</td><td>3.0 GPa</td><td>65 MPa</td><td>100</td><td>Gears, slides, precision plastic parts</td><td>Low moisture pickup and stable dimensions. Good machineable polymer for dry mechanisms.</td></tr>
+<tr><td>Nylon 6/6</td><td>Polymer</td><td>1.14</td><td>2.8 GPa</td><td>80 MPa</td><td>90</td><td>Wear pads, bushings, housings</td><td>Strength changes with humidity. Good toughness, but dimensional stability needs review.</td></tr>
+<tr><td>UHMW-PE</td><td>Polymer</td><td>0.93</td><td>0.8 GPa</td><td>23 MPa</td><td>80</td><td>Low-friction liners and wear strips</td><td>Excellent abrasion resistance, poor stiffness, significant creep under load.</td></tr>
+<tr><td>PEEK</td><td>Polymer</td><td>1.30</td><td>3.6 GPa</td><td>100 MPa</td><td>250</td><td>Hot chemical service, electrical isolation</td><td>Premium high-temperature polymer. Costly but very strong when metals are overkill.</td></tr>
+<tr><td>PTFE</td><td>Polymer</td><td>2.16</td><td>0.5 GPa</td><td>25 MPa</td><td>260</td><td>Chemical seals and low-friction interfaces</td><td>Superb chemical resistance, but very high creep and cold flow. Back-up rings often needed.</td></tr>
+<tr><td>NBR 70A</td><td>Elastomer</td><td>1.20</td><td>70A</td><td>Oil seal service</td><td>110</td><td>Hydraulic oil, fuel splash</td><td>General-purpose sealing choice. Limited ozone, weathering, and hot-water performance.</td></tr>
+<tr><td>EPDM 70A</td><td>Elastomer</td><td>1.15</td><td>70A</td><td>Steam / water seal service</td><td>150</td><td>Water, glycol, outdoor weathering</td><td>Excellent steam and ozone resistance. Poor fit for petroleum oils and fuels.</td></tr>
+<tr><td>FKM 75A</td><td>Elastomer</td><td>1.85</td><td>75A</td><td>High-temp seal service</td><td>200</td><td>Fuels, hot oils, many solvents</td><td>Great for hot hydrocarbon service. Check low-temperature flexibility and steam compatibility.</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="card">
+<h3>SELECTION CHECKLIST</h3>
+<div class="handbook-grid" style="margin-top:.5rem">
+<article class="handbook-card"><h4>Load Path</h4><p>Screen yield, buckling, bearing, thread strip, local contact stress, and fatigue before comparing cost. Strength-only comparisons miss stiffness and stability failures.</p></article>
+<article class="handbook-card"><h4>Temperature</h4><p>Use continuous-use temperature, creep limits, temper loss, and seal compression-set data. Hot excursions often control before nominal room-temperature strength does.</p></article>
+<article class="handbook-card"><h4>Environment</h4><p>Check chloride, caustic, steam, fuels, UV, vacuum, and ozone separately. The wrong environment assumption can invalidate an otherwise correct material pick.</p></article>
+<article class="handbook-card"><h4>Contact Pair</h4><p>Look at galling, galvanic difference, hardness mismatch, seal swell, and thermal expansion mismatch. Assemblies fail at interfaces, not just in single materials.</p></article>
+<article class="handbook-card"><h4>Manufacturing</h4><p>Confirm weldability, castability, machinability, heat-treatment distortion, coating route, and supply chain form factor before carrying a material forward.</p></article>
+<article class="handbook-card"><h4>Compliance</h4><p>Tie every short list back to ASTM, ASME, SAE, AMS, FDA, NSF, UL, or NACE requirements early so the project does not need a late material restart.</p></article>
+</div>
 </div>
 </div>
 <div class="view" id="v-stress">
@@ -612,80 +833,313 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <h2>EQUATIONS REFERENCE</h2>
 <div class="card">
 <h3>BEAM EQUATIONS</h3>
-<table class="data"><tbody>
-<tr><td>Bending Stress</td><td>σ = M·y / I</td></tr>
-<tr><td>Shear Stress (Beam)</td><td>τ = V·Q / (I·b)</td></tr>
-<tr><td>Deflection (SS, center pt)</td><td>δ = P·L³ / (48·E·I)</td></tr>
-<tr><td>Deflection (Cantilever, end)</td><td>δ = P·L³ / (3·E·I)</td></tr>
-<tr><td>Moment of Inertia (Rect)</td><td>I = b·h³ / 12</td></tr>
-<tr><td>Section Modulus</td><td>S = I / c</td></tr>
-<tr><td>Radius of Gyration</td><td>r = √(I / A)</td></tr>
+<table class="data table-static"><tbody>
+<tr title="Maximum fiber stress from bending. M=moment, y=distance from neutral axis, I=moment of inertia"><td>Bending Stress</td><td>σ = M·y / I</td></tr>
+<tr title="Transverse shear in a beam cross-section. V=shear force, Q=first moment, b=width at cut"><td>Shear Stress (Beam)</td><td>τ = V·Q / (I·b)</td></tr>
+<tr title="Central point load on simply-supported beam"><td>Deflection (SS, center pt)</td><td>δ = P·L³ / (48·E·I)</td></tr>
+<tr title="End deflection of a cantilever with tip load"><td>Deflection (Cantilever, end)</td><td>δ = P·L³ / (3·E·I)</td></tr>
+<tr title="Distributed load on simply-supported beam"><td>Deflection (SS, UDL)</td><td>δ = 5·w·L⁴ / (384·E·I)</td></tr>
+<tr title="Distributed load on cantilever"><td>Deflection (Cantilever, UDL)</td><td>δ = w·L⁴ / (8·E·I)</td></tr>
+<tr title="Second moment of area for a rectangle"><td>Moment of Inertia (Rect)</td><td>I = b·h³ / 12</td></tr>
+<tr title="Second moment of area for a circle"><td>Moment of Inertia (Circle)</td><td>I = π·d⁴ / 64</td></tr>
+<tr title="Elastic section modulus. c = distance to extreme fiber"><td>Section Modulus</td><td>S = I / c</td></tr>
+<tr title="Used for column buckling calculations"><td>Radius of Gyration</td><td>r = √(I / A)</td></tr>
+<tr title="Maximum moment in a fixed-end beam with center load"><td>Fixed-Fixed (center pt)</td><td>M_max = P·L / 8, δ = P·L³ / (192·E·I)</td></tr>
+<tr title="Propped cantilever with UDL"><td>Propped Cantilever (UDL)</td><td>R_prop = 3wL/8, M_fix = wL²/8</td></tr>
 </tbody></table>
 </div>
 <div class="card">
 <h3>STRESS / FAILURE</h3>
-<table class="data"><tbody>
-<tr><td>Von Mises</td><td>σ_vm = √(σ₁²−σ₁σ₂+σ₂²+3τ²)</td></tr>
-<tr><td>Tresca</td><td>τ_max = (σ₁−σ₃) / 2</td></tr>
-<tr><td>Principal Stress</td><td>σ₁,₂ = (σx+σy)/2 ± √[((σx−σy)/2)²+τxy²]</td></tr>
-<tr><td>Mohr's Circle Center</td><td>C = (σx+σy) / 2</td></tr>
-<tr><td>Mohr's Circle Radius</td><td>R = √[((σx−σy)/2)²+τxy²]</td></tr>
-<tr><td>Factor of Safety</td><td>FoS = S_y / σ_applied</td></tr>
+<table class="data table-static"><tbody>
+<tr title="Distortion energy criterion — most common yield criterion for ductile metals"><td>Von Mises (2D)</td><td>σ_vm = √(σx²−σxσy+σy²+3τxy²)</td></tr>
+<tr title="General 3D form using principal stresses"><td>Von Mises (3D)</td><td>σ_vm = √½[(σ₁−σ₂)²+(σ₂−σ₃)²+(σ₃−σ₁)²]</td></tr>
+<tr title="Maximum shear stress criterion — conservative for ductile materials"><td>Tresca</td><td>τ_max = (σ₁−σ₃) / 2</td></tr>
+<tr title="Principal stresses from 2D stress state"><td>Principal Stress</td><td>σ₁,₂ = (σx+σy)/2 ± √[((σx−σy)/2)²+τxy²]</td></tr>
+<tr title="Center and radius define the Mohr's circle"><td>Mohr's Circle</td><td>C = (σx+σy)/2, R = √[((σx−σy)/2)²+τxy²]</td></tr>
+<tr title="Basic safety factor for static loading"><td>Factor of Safety</td><td>FoS = S_y / σ_applied</td></tr>
+<tr title="Maximum normal stress theory — for brittle materials"><td>Rankine (Brittle)</td><td>σ₁ ≤ S_ut, |σ₃| ≤ S_uc</td></tr>
+<tr title="Coulomb-Mohr criterion for unequal tension/compression strengths"><td>Coulomb-Mohr</td><td>σ₁/S_ut − σ₃/S_uc ≤ 1</td></tr>
+</tbody></table>
+</div>
+<div class="card">
+<h3>FATIGUE / ENDURANCE</h3>
+<table class="data table-static"><tbody>
+<tr title="Endurance limit estimate for steel"><td>Endurance Limit</td><td>Se' ≈ 0.5·Su (steel, Su ≤ 1400 MPa)</td></tr>
+<tr title="Corrected endurance limit with Marin factors"><td>Marin Equation</td><td>Se = ka·kb·kc·kd·ke·kf · Se'</td></tr>
+<tr title="Modified Goodman line for infinite life prediction"><td>Goodman</td><td>σa/Se + σm/Su = 1/n</td></tr>
+<tr title="More conservative than Goodman — uses yield strength"><td>Soderberg</td><td>σa/Se + σm/Sy = 1/n</td></tr>
+<tr title="Parabolic curve — less conservative, fits test data better"><td>Gerber</td><td>σa/Se + (σm/Su)² = 1/n</td></tr>
+<tr title="S-N curve power law for finite life"><td>Basquin (S-N)</td><td>σ_ar = σ_f'·(2N)^b</td></tr>
+<tr title="Notch sensitivity converts Kt to Kf"><td>Fatigue Notch Factor</td><td>Kf = 1 + q(Kt − 1)</td></tr>
+<tr title="Cycle counting method for variable amplitude"><td>Miner's Rule</td><td>Σ(ni/Ni) = 1</td></tr>
+</tbody></table>
+</div>
+<div class="card">
+<h3>COLUMN BUCKLING</h3>
+<table class="data table-static"><tbody>
+<tr title="Classic elastic buckling load — K depends on end conditions"><td>Euler Critical Load</td><td>P_cr = π²EI / (KL)²</td></tr>
+<tr title="Effective length factors: pinned-pinned K=1, fixed-fixed K=0.5, fixed-free K=2"><td>Effective Length</td><td>L_eff = K·L</td></tr>
+<tr title="Slenderness determines if Euler or Johnson applies"><td>Slenderness Ratio</td><td>λ = KL/r</td></tr>
+<tr title="Critical slenderness separating elastic from inelastic buckling"><td>Transition Slenderness</td><td>λ_c = √(2π²E / Sy)</td></tr>
+<tr title="For short-intermediate columns"><td>Johnson Parabola</td><td>P_cr = A·Sy[1 − (Sy(KL)²)/(4π²EI)]</td></tr>
+<tr title="AISC allowable stress for steel columns"><td>AISC (ASD)</td><td>F_a per AISC 360 Ch. E</td></tr>
 </tbody></table>
 </div>
 <div class="card">
 <h3>BOLT / FASTENER</h3>
-<table class="data"><tbody>
-<tr><td>Bolt Load (w/ preload)</td><td>F_b = F_i + C·F_ext</td></tr>
-<tr><td>Joint Load</td><td>F_j = F_i − (1−C)·F_ext</td></tr>
-<tr><td>Torque (K-factor)</td><td>T = K·F_i·d</td></tr>
-<tr><td>Tensile Stress</td><td>σ = F / A_t</td></tr>
-<tr><td>Interaction Ratio</td><td>IR = (σ/S_p)² + (τ/0.577·S_p)²</td></tr>
-<tr><td>Proof Load</td><td>F_proof = S_p · A_t</td></tr>
+<table class="data table-static"><tbody>
+<tr title="Bolt tension = preload + fraction of external load"><td>Bolt Load (w/ preload)</td><td>F_b = F_i + C·F_ext</td></tr>
+<tr title="Remaining clamp force on the joint"><td>Joint Load</td><td>F_j = F_i − (1−C)·F_ext</td></tr>
+<tr title="Torque-tension relationship. K ≈ 0.2 for dry steel"><td>Torque (K-factor)</td><td>T = K·F_i·d</td></tr>
+<tr title="Tensile stress area from bolt standard tables"><td>Tensile Stress</td><td>σ = F / A_t</td></tr>
+<tr title="Combined tension + shear check"><td>Interaction Ratio</td><td>IR = (σ/S_p)² + (τ/(0.577·S_p))²</td></tr>
+<tr title="Maximum load before permanent deformation"><td>Proof Load</td><td>F_proof = S_p · A_t</td></tr>
+<tr title="Thread stripping strength check"><td>Thread Shear</td><td>A_s = π·d·n·L_e·0.5</td></tr>
+<tr title="VDI 2230 systematic bolted joint guideline"><td>Embedding Loss</td><td>F_z = f_z · n_i</td></tr>
+</tbody></table>
+</div>
+<div class="card">
+<h3>SHAFT / TORSION / KEYED CONNECTION</h3>
+<table class="data table-static"><tbody>
+<tr title="Polar moment for a solid circular shaft"><td>Polar Moment (Solid)</td><td>J = πd⁴ / 32</td></tr>
+<tr title="Polar moment for a hollow circular shaft"><td>Polar Moment (Hollow)</td><td>J = π(Dₒ⁴−Dᵢ⁴) / 32</td></tr>
+<tr title="Maximum torsional shear at outer fiber"><td>Torsion Shear</td><td>τ = T·r / J</td></tr>
+<tr title="Elastic twist over shaft length"><td>Angle of Twist</td><td>θ = T·L / (G·J)</td></tr>
+<tr title="Power-speed-torque relationship"><td>Power-Torque</td><td>T = 9550·P_kW / n_rpm</td></tr>
+<tr title="Common machine-design equivalent torsion screen"><td>Equivalent Torque</td><td>T_e = √[(K_bM)² + (K_tT)²]</td></tr>
+<tr title="Rectangular sunk key shear stress"><td>Key Shear</td><td>τ = 2T / (d·b·l)</td></tr>
+<tr title="Projected bearing stress on key"><td>Key Bearing</td><td>σ_b = 4T / (d·t·l)</td></tr>
+<tr title="Approximate diametral thermal growth needed for shrink assembly"><td>Shrink-Fit Temp Rise</td><td>ΔT ≈ δ / (α·d)</td></tr>
 </tbody></table>
 </div>
 <div class="card">
 <h3>SPRING</h3>
-<table class="data"><tbody>
-<tr><td>Spring Rate</td><td>k = G·d⁴ / (8·D³·N_a)</td></tr>
-<tr><td>Shear Stress</td><td>τ = 8·F·D / (π·d³)</td></tr>
-<tr><td>Wahl Factor</td><td>K_w = (4C−1)/(4C−4) + 0.615/C</td></tr>
-<tr><td>Deflection</td><td>δ = F / k</td></tr>
-<tr><td>Solid Length</td><td>L_s = N_t · d</td></tr>
-<tr><td>Natural Frequency</td><td>f_n = (1/2)·√(k/m)</td></tr>
+<table class="data table-static"><tbody>
+<tr title="Coil spring stiffness"><td>Spring Rate</td><td>k = G·d⁴ / (8·D³·N_a)</td></tr>
+<tr title="Uncorrected shear stress in wire"><td>Shear Stress</td><td>τ = 8·F·D / (π·d³)</td></tr>
+<tr title="Stress correction factor for curvature"><td>Wahl Factor</td><td>K_w = (4C−1)/(4C−4) + 0.615/C</td></tr>
+<tr title="Spring deflection under load"><td>Deflection</td><td>δ = F / k</td></tr>
+<tr title="Minimum possible length"><td>Solid Length</td><td>L_s = N_t · d</td></tr>
+<tr title="Surge frequency of coil spring"><td>Natural Frequency</td><td>f_n = (d/(2πD²N_a))·√(Gg/32ρ)</td></tr>
+<tr title="DIN 2092 Belleville disc spring"><td>Belleville Load</td><td>F ∝ E·t·δ(h−δ)</td></tr>
+<tr title="Stored energy in a spring"><td>Spring Energy</td><td>U = ½kδ²</td></tr>
+</tbody></table>
+</div>
+<div class="card">
+<h3>BEARING / TRIBOLOGY</h3>
+<table class="data table-static"><tbody>
+<tr title="Basic rolling-element rating life"><td>Bearing Life (L10)</td><td>L₁₀ = (C/P)^p</td></tr>
+<tr title="Adjusted life using reliability and lubrication modifiers"><td>Adjusted Life</td><td>L_na = a₁·a_ISO·(C/P)^p</td></tr>
+<tr title="Plain-bearing pressure-velocity limit"><td>PV Limit</td><td>PV = p·v</td></tr>
+<tr title="Boundary-friction power loss"><td>Friction Power</td><td>P_f = μ·W·v</td></tr>
+<tr title="Friction torque for a loaded radius"><td>Friction Torque</td><td>T_f = μ·W·r</td></tr>
+<tr title="Archard wear relation"><td>Archard Wear</td><td>V = k·W·s / H</td></tr>
+<tr title="Journal-bearing similarity parameter"><td>Sommerfeld Number</td><td>S = (μN/P)(r/c)²</td></tr>
+<tr title="Film thickness quality metric"><td>Film Parameter</td><td>λ = h_min / √(σ₁² + σ₂²)</td></tr>
+<tr title="Viscous shear across lubricant film"><td>Viscous Shear</td><td>τ = μ·U / h</td></tr>
+</tbody></table>
+</div>
+<div class="card">
+<h3>PRESSURE VESSEL</h3>
+<table class="data table-static"><tbody>
+<tr title="Thin-wall hoop stress"><td>Hoop Stress (Thin)</td><td>σ_h = p·r / t</td></tr>
+<tr title="Axial stress is half of hoop stress in thin cylinders"><td>Axial Stress (Thin)</td><td>σ_a = p·r / (2t)</td></tr>
+<tr title="Lame's equation for thick-walled cylinders"><td>Hoop Stress (Thick)</td><td>σ_h = A + B/r²</td></tr>
+<tr title="Spherical pressure vessel"><td>Sphere Stress</td><td>σ = p·r / (2t)</td></tr>
+<tr title="ASME BPVC minimum required thickness"><td>ASME Min Thickness</td><td>t = pR / (SE − 0.6p)</td></tr>
+<tr title="Burst pressure estimate"><td>Barlow's Formula</td><td>P_burst = 2·S·t / D</td></tr>
+</tbody></table>
+</div>
+<div class="card">
+<h3>PIPE / FLANGE / GASKET</h3>
+<table class="data table-static"><tbody>
+<tr title="Internal flow area of a round pipe"><td>Pipe Area</td><td>A = πDᵢ² / 4</td></tr>
+<tr title="Mean velocity from volumetric flow"><td>Pipe Velocity</td><td>v = 4Q / (πDᵢ²)</td></tr>
+<tr title="Barlow form for pressure, thickness, and allowable stress"><td>Barlow Pressure</td><td>P = 2S·t / D</td></tr>
+<tr title="Appendix 2 style operating bolt-load term"><td>Operating Bolt Load</td><td>W_m1 = πG²p/4 + 2bπGmp</td></tr>
+<tr title="Appendix 2 style gasket seating bolt-load term"><td>Seating Bolt Load</td><td>W_m2 = πbGy</td></tr>
+<tr title="Average gasket stress"><td>Gasket Stress</td><td>q = F / A_g</td></tr>
+<tr title="Pipe growth from temperature change"><td>Pipe Thermal Growth</td><td>ΔL = α·L·ΔT</td></tr>
+<tr title="Ring gasket projected load area check"><td>Bolt Stress</td><td>σ_b = F / (n·A_t)</td></tr>
+</tbody></table>
+</div>
+<div class="card">
+<h3>THERMAL / HEAT TRANSFER</h3>
+<table class="data table-static"><tbody>
+<tr title="Thermal expansion strain"><td>Thermal Strain</td><td>ε_T = α·ΔT</td></tr>
+<tr title="Stress from restrained thermal expansion"><td>Thermal Stress</td><td>σ_T = E·α·ΔT</td></tr>
+<tr title="Fourier's law"><td>Conduction (Fourier)</td><td>q = −k·A·(dT/dx)</td></tr>
+<tr title="Convective heat transfer"><td>Convection (Newton)</td><td>q = h·A·(T_s − T_∞)</td></tr>
+<tr title="Stefan-Boltzmann radiation law"><td>Radiation</td><td>q = ε·σ·A·(T₁⁴ − T₂⁴)</td></tr>
+<tr title="Thermal resistance through a wall"><td>Thermal Resistance</td><td>R = L / (k·A)</td></tr>
+<tr title="Straight fin efficiency"><td>Fin Efficiency</td><td>η_f = tanh(mL) / (mL)</td></tr>
+<tr title="Biot number"><td>Biot Number</td><td>Bi = hL_c / k</td></tr>
 </tbody></table>
 </div>
 <div class="card">
 <h3>SEAL / O-RING</h3>
-<table class="data"><tbody>
-<tr><td>Squeeze %</td><td>S = (d − G_d − gap) / d × 100</td></tr>
-<tr><td>Mooney-Rivlin Stress</td><td>σ = 2(C₁₀+C₀₁/λ)(λ−1/λ²)</td></tr>
-<tr><td>Hardness → Modulus</td><td>E = 0.0981(56+7.62S)/(0.138(254−2.54S))</td></tr>
-<tr><td>Contact Width</td><td>w = 2√(d·δ)</td></tr>
-<tr><td>Shape Factor (Face)</td><td>SF = (w·d) / (π·d·w)</td></tr>
-<tr><td>Volume Fill</td><td>V_fill = (π·r²) / (G_d·G_w) × 100</td></tr>
+<table class="data table-static"><tbody>
+<tr title="Percentage compression of cord diameter"><td>Squeeze %</td><td>S = (d − G_d − gap) / d × 100</td></tr>
+<tr title="Hyperelastic constitutive model for rubber"><td>Mooney-Rivlin Stress</td><td>σ = 2(C₁₀+C₀₁/λ)(λ−1/λ²)</td></tr>
+<tr title="Empirical Shore A to elastic modulus conversion"><td>Hardness → Modulus</td><td>E = 0.0981(56+7.62S)/(0.138(254−2.54S))</td></tr>
+<tr title="Hertzian-like contact width of compressed O-ring"><td>Contact Width</td><td>w = 2√(d·δ)</td></tr>
+<tr title="Ratio of loaded to free area"><td>Shape Factor (Face)</td><td>SF = (w·d) / (π·d·w)</td></tr>
+<tr title="Percent of groove volume filled by seal"><td>Volume Fill</td><td>V_fill = (π·r²) / (G_d·G_w) × 100</td></tr>
+<tr title="Extrusion margin screening"><td>Gap Ratio</td><td>g / d_cord</td></tr>
+<tr title="Surface finish check"><td>Seal Land Finish</td><td>Ra ≈ 0.2-0.8 µm typical</td></tr>
+</tbody></table>
+</div>
+<div class="card">
+<h3>GEAR / POWER TRANSMISSION</h3>
+<table class="data table-static"><tbody>
+<tr title="Lewis equation for spur gear bending stress"><td>Lewis Bending</td><td>σ = W_t / (F·m·Y)</td></tr>
+<tr title="AGMA contact stress for surface pitting"><td>AGMA Contact</td><td>σ_c = C_p·√(W_t·K_o·K_v·K_s·K_m / (d·F·I))</td></tr>
+<tr title="Torque-power-speed relationship"><td>Power-Torque</td><td>P = T·ω = T·2πn/60</td></tr>
+<tr title="Gear ratio from tooth count"><td>Gear Ratio</td><td>i = N₂/N₁ = ω₁/ω₂</td></tr>
+<tr title="Belt drive effective tension"><td>Belt Drive</td><td>F_eff = F₁ − F₂ = T/r</td></tr>
+<tr title="Chain drive horsepower rating"><td>Chain Rating</td><td>HP = T·n / 63025</td></tr>
+</tbody></table>
+</div>
+<div class="card">
+<h3>WELD DESIGN</h3>
+<table class="data table-static"><tbody>
+<tr title="Fillet weld effective throat"><td>Fillet Throat</td><td>a = 0.707·w</td></tr>
+<tr title="Shear stress on weld group"><td>Weld Shear</td><td>τ = F / (a·L_w)</td></tr>
+<tr title="AISC allowable weld stress"><td>Allowable (E70xx)</td><td>F_w = 0.6 × 70 ksi = 21 ksi</td></tr>
+<tr title="Weld group polar moment"><td>Weld Polar J</td><td>J_w = Σ(I_x+I_y)</td></tr>
+<tr title="Combined direct + torsional shear"><td>Combined Stress</td><td>τ_r = √(τ_x² + τ_y²)</td></tr>
+<tr title="Minimum weld size per AISC Table J2.4"><td>Min Fillet Size</td><td>Per AISC Table J2.4</td></tr>
 </tbody></table>
 </div>
 <div class="card">
 <h3>MATERIALS / PROPERTIES</h3>
-<table class="data"><tbody>
-<tr><td>Hooke's Law</td><td>σ = E·ε</td></tr>
-<tr><td>Shear Modulus</td><td>G = E / (2(1+ν))</td></tr>
-<tr><td>Thermal Strain</td><td>ε_T = α·ΔT</td></tr>
-<tr><td>Poisson's Ratio</td><td>ν = −ε_lateral / ε_axial</td></tr>
-<tr><td>Bulk Modulus</td><td>K = E / (3(1−2ν))</td></tr>
+<table class="data table-static"><tbody>
+<tr title="Linear elastic stress-strain relationship"><td>Hooke's Law</td><td>σ = E·ε</td></tr>
+<tr title="Relationship between E, G, and Poisson's ratio"><td>Shear Modulus</td><td>G = E / (2(1+ν))</td></tr>
+<tr title="Bulk elastic modulus"><td>Bulk Modulus</td><td>K = E / (3(1−2ν))</td></tr>
+<tr title="Lateral vs axial strain ratio"><td>Poisson's Ratio</td><td>ν = −ε_lateral / ε_axial</td></tr>
+<tr title="True stress accounts for necking"><td>True Stress</td><td>σ_T = σ_eng(1 + ε_eng)</td></tr>
+<tr title="Ramberg-Osgood total strain model"><td>Ramberg-Osgood</td><td>ε = σ/E + (σ/K')^(1/n')</td></tr>
+<tr title="Strain energy density at yield"><td>Resilience</td><td>u_r = Sy² / (2E)</td></tr>
+<tr title="Area under full stress-strain curve"><td>Toughness</td><td>u_T ≈ (Sy+Su)/2 · ε_f</td></tr>
+</tbody></table>
+</div>
+<div class="card">
+<h3>FLUID / PIPE</h3>
+<table class="data table-static"><tbody>
+<tr title="Energy conservation along a streamline"><td>Bernoulli</td><td>P + ½ρv² + ρgh = const</td></tr>
+<tr title="Laminar flow friction factor"><td>Hagen-Poiseuille</td><td>f = 64 / Re</td></tr>
+<tr title="Turbulent flow friction"><td>Colebrook-White</td><td>1/√f = −2log(ε/3.7D + 2.51/(Re√f))</td></tr>
+<tr title="Head loss in pipe due to friction"><td>Darcy-Weisbach</td><td>h_f = f·(L/D)·(v²/2g)</td></tr>
+<tr title="Flow regime indicator"><td>Reynolds Number</td><td>Re = ρvD / μ</td></tr>
+<tr title="Minor loss through fittings, valves, bends"><td>Minor Losses</td><td>h_m = K·v² / (2g)</td></tr>
+<tr title="Flow from pressure drop"><td>Hydraulic Power</td><td>P_h = ρgQH</td></tr>
+<tr title="Valve flow coefficient"><td>Valve Cv</td><td>Q = C_v√(Δp/SG)</td></tr>
+</tbody></table>
+</div>
+<div class="card">
+<h3>HEAT EXCHANGER / THERMODYNAMICS</h3>
+<table class="data table-static"><tbody>
+<tr title="Log-mean temperature difference"><td>LMTD</td><td>ΔT_lm = (ΔT₁−ΔT₂) / ln(ΔT₁/ΔT₂)</td></tr>
+<tr title="Heat exchanger duty"><td>Heat Duty</td><td>Q = U·A·ΔT_lm</td></tr>
+<tr title="Effectiveness-NTU relation"><td>NTU</td><td>NTU = U·A / C_min</td></tr>
+<tr title="Heat capacity ratio"><td>Capacity Ratio</td><td>C_r = C_min / C_max</td></tr>
+<tr title="Carnot efficiency"><td>Carnot</td><td>η = 1 − T_L/T_H</td></tr>
+<tr title="Otto-cycle thermal efficiency"><td>Otto</td><td>η = 1 − 1/r^(k−1)</td></tr>
+<tr title="Brayton-cycle efficiency"><td>Brayton</td><td>η = 1 − 1/r_p^((k−1)/k)</td></tr>
+<tr title="Refrigeration coefficient of performance"><td>Refrigeration COP</td><td>COP_R = Q_L / W_net</td></tr>
+</tbody></table>
+</div>
+<div class="card">
+<h3>COMPRESSIBLE FLOW / PNEUMATICS</h3>
+<table class="data table-static"><tbody>
+<tr title="Ideal gas law"><td>Ideal Gas</td><td>P·V = n·R·T</td></tr>
+<tr title="Local acoustic propagation speed"><td>Speed of Sound</td><td>a = √(γRT)</td></tr>
+<tr title="Flow speed relative to acoustic speed"><td>Mach Number</td><td>M = V / a</td></tr>
+<tr title="Isentropic temperature-pressure relation"><td>Isentropic Relation</td><td>T₂/T₁ = (P₂/P₁)^((γ−1)/γ)</td></tr>
+<tr title="Critical pressure ratio for choked flow"><td>Critical Pressure Ratio</td><td>P₂/P₁ ≤ (2/(γ+1))^(γ/(γ−1))</td></tr>
+<tr title="Choked nozzle mass flux"><td>Choked Mass Flux</td><td>ṁ/A = C_dP₀√(γ/RT₀)(2/(γ+1))^((γ+1)/(2(γ−1)))</td></tr>
+<tr title="Ideal pneumatic cylinder force excluding friction"><td>Cylinder Force</td><td>F = P·A − F_f</td></tr>
+<tr title="Adiabatic compressor power estimate"><td>Compressor Power</td><td>W = (k/(k−1))P₁V₁[(P₂/P₁)^((k−1)/k)−1]/η</td></tr>
+</tbody></table>
+</div>
+<div class="card">
+<h3>HVAC / PSYCHROMETRICS</h3>
+<table class="data table-static"><tbody>
+<tr title="Humidity ratio"><td>Humidity Ratio</td><td>W = 0.622P_w / (P−P_w)</td></tr>
+<tr title="Moist air enthalpy"><td>Enthalpy</td><td>h = 1.006T + W(2501 + 1.86T)</td></tr>
+<tr title="Relative humidity"><td>Relative Humidity</td><td>RH = P_w / P_ws</td></tr>
+<tr title="Sensible heat ratio"><td>SHR</td><td>SHR = Q_sensible / Q_total</td></tr>
+<tr title="Imperial sensible cooling approximation"><td>Airflow (Imperial)</td><td>CFM = Q_sensible / (1.08ΔT)</td></tr>
+<tr title="Air changes per hour"><td>ACH</td><td>ACH = 60·CFM / Volume</td></tr>
+</tbody></table>
+</div>
+<div class="card">
+<h3>VIBRATION / ROTORDYNAMICS</h3>
+<table class="data table-static"><tbody>
+<tr title="Single-degree-of-freedom natural frequency"><td>Natural Frequency</td><td>f_n = (1/2π)√(k/m)</td></tr>
+<tr title="Undamped circular natural frequency"><td>Natural Circular Freq.</td><td>ω_n = √(k/m)</td></tr>
+<tr title="Critical damping coefficient"><td>Critical Damping</td><td>c_c = 2√(k·m)</td></tr>
+<tr title="Damping relative to critical"><td>Damping Ratio</td><td>ζ = c / c_c</td></tr>
+<tr title="Base-excited transmissibility"><td>Transmissibility</td><td>TR = √(1+(2ζr)²) / √((1−r²)²+(2ζr)²)</td></tr>
+<tr title="Force from rotating eccentric mass"><td>Unbalance Force</td><td>F = m_e·e·ω²</td></tr>
+<tr title="Rayleigh estimate for first mode"><td>Rayleigh Method</td><td>ω² ≈ gΣ(Wᵢyᵢ) / Σ(Wᵢyᵢ²)</td></tr>
+<tr title="Beat frequency from two close tones"><td>Beat Frequency</td><td>f_b = |f₁ − f₂|</td></tr>
+<tr title="Quality factor of a lightly damped system"><td>Q Factor</td><td>Q = 1 / (2ζ)</td></tr>
+</tbody></table>
+</div>
+<div class="card">
+<h3>ELECTRICAL / MOTORS / NEC</h3>
+<table class="data table-static"><tbody>
+<tr title="Ohm's law"><td>Ohm's Law</td><td>V = I·R</td></tr>
+<tr title="Single-phase real power"><td>Real Power</td><td>P = V·I·cosφ</td></tr>
+<tr title="Three-phase real power"><td>3φ Power</td><td>P = √3·V_LL·I·cosφ</td></tr>
+<tr title="Reactive power"><td>Reactive Power</td><td>Q = √3·V_LL·I·sinφ</td></tr>
+<tr title="Inductive reactance"><td>Inductive Reactance</td><td>X_L = 2πfL</td></tr>
+<tr title="Capacitive reactance"><td>Capacitive Reactance</td><td>X_C = 1/(2πfC)</td></tr>
+<tr title="Synchronous speed"><td>Synchronous Speed</td><td>N_s = 120f / P</td></tr>
+<tr title="Motor torque"><td>Motor Torque</td><td>T = 9549P_kW / n_rpm</td></tr>
+<tr title="Voltage drop approximation"><td>Voltage Drop</td><td>V_d = 2I·R·L</td></tr>
+</tbody></table>
+</div>
+<div class="card">
+<h3>ELECTROCHEMISTRY / BATTERY</h3>
+<table class="data table-static"><tbody>
+<tr title="Nernst relation"><td>Nernst</td><td>E = E° − (RT/nF)lnQ</td></tr>
+<tr title="Tafel relation"><td>Tafel</td><td>η = a + b·log|i|</td></tr>
+<tr title="Butler-Volmer kinetics"><td>Butler-Volmer</td><td>i = i₀[e^(α_aFη/RT) − e^(−α_cFη/RT)]</td></tr>
+<tr title="Faraday mass deposition"><td>Faraday</td><td>m = I·t·M / (nF)</td></tr>
+<tr title="Battery energy"><td>Battery Energy</td><td>Wh = V_nom·Ah</td></tr>
+<tr title="Peukert runtime"><td>Peukert</td><td>t = H(C/IH)^k</td></tr>
+<tr title="State of charge"><td>SOC</td><td>SOC = Q_remaining / Q_rated</td></tr>
+</tbody></table>
+</div>
+<div class="card">
+<h3>PUMPS / TURBOMACHINERY</h3>
+<table class="data table-static"><tbody>
+<tr title="Pump head from pressure rise"><td>Pump Head</td><td>H = Δp / (ρg)</td></tr>
+<tr title="Hydraulic power"><td>Hydraulic Power</td><td>P_h = ρgQH</td></tr>
+<tr title="Pump efficiency"><td>Pump Efficiency</td><td>η_p = P_h / P_shaft</td></tr>
+<tr title="Available net positive suction head"><td>NPSH_a</td><td>NPSH_a = (P_atm−P_vap)/(ρg) + z_s − h_f</td></tr>
+<tr title="Pump affinity law for flow"><td>Affinity: Flow</td><td>Q ∝ N</td></tr>
+<tr title="Pump affinity law for head"><td>Affinity: Head</td><td>H ∝ N²</td></tr>
+<tr title="Pump affinity law for power"><td>Affinity: Power</td><td>P ∝ N³</td></tr>
+<tr title="Specific speed"><td>Specific Speed</td><td>N_s = N√Q / H^(3/4)</td></tr>
 </tbody></table>
 </div>
 <div class="card">
 <h3>UNIT CONVERSION CONSTANTS</h3>
-<table class="data"><tbody>
-<tr><td>1 inch</td><td>= 25.4 mm</td></tr>
-<tr><td>1 foot</td><td>= 304.8 mm</td></tr>
-<tr><td>1 lbf</td><td>= 4.44822 N</td></tr>
-<tr><td>1 ksi</td><td>= 6.89476 MPa</td></tr>
-<tr><td>1 psi</td><td>= 6894.76 Pa</td></tr>
-<tr><td>1 in⁴</td><td>= 416,231 mm⁴</td></tr>
-<tr><td>1 ft·lbf</td><td>= 1.35582 N·m</td></tr>
+<table class="data table-static"><tbody>
+<tr title="Exact conversion"><td>1 inch</td><td>= 25.4 mm</td></tr>
+<tr title="Exact conversion"><td>1 foot</td><td>= 304.8 mm</td></tr>
+<tr title="Force conversion"><td>1 lbf</td><td>= 4.44822 N</td></tr>
+<tr title="Stress conversion"><td>1 ksi</td><td>= 6.89476 MPa</td></tr>
+<tr title="Stress conversion"><td>1 psi</td><td>= 6894.76 Pa</td></tr>
+<tr title="Moment of inertia conversion"><td>1 in⁴</td><td>= 416,231 mm⁴</td></tr>
+<tr title="Torque conversion"><td>1 ft·lbf</td><td>= 1.35582 N·m</td></tr>
+<tr title="Temperature conversion formula"><td>°F → °C</td><td>°C = (°F − 32) × 5/9</td></tr>
+<tr title="Mass conversion"><td>1 kg</td><td>= 2.20462 lbm</td></tr>
+<tr title="Power conversion"><td>1 HP</td><td>= 745.7 W</td></tr>
 </tbody></table>
 </div>
 </div>
@@ -1490,6 +1944,168 @@ n_out = n_in/GR &nbsp;|&nbsp; T_out = T_in&middot;GR&middot;&eta;<br>
 <div class="view" id="v-refs">
 <h2>REFERENCES &amp; STANDARDS</h2>
 <p class="muted" style="max-width:900px;line-height:1.6">Complete index of formulas, theory, and standards referenced across all Amni-Calc modules. Each module tab filters this to its own card; this tab shows the full list.</p>
+<div class="card">
+<h3>STANDARDS MAP</h3>
+<p class="muted" style="line-height:1.7">This page is built for concept sizing and handbook lookup. Detailed design still needs the current edition of the governing standard, project specifications, and supplier data.</p>
+<div class="table-wrap" style="margin-top:.75rem">
+<table class="data table-static table-wide">
+<thead><tr><th>TOPIC</th><th>PRIMARY REFERENCES</th><th>USE THIS FOR</th><th>FINAL-DESIGN CHECKS</th></tr></thead>
+<tbody>
+<tr><td>Beams / Sections / Columns / Shafts</td><td>AISC 360, AISC Manual, Roark, ASME B106.1M</td><td>Stress, deflection, buckling, section properties, torsion</td><td>Connection detailing, local buckling, serviceability, dynamic response, load combinations</td></tr>
+<tr><td>Bolted Joints</td><td>ISO 898-1, VDI 2230, ASTM F3125, ASTM F606</td><td>Preload, torque, proof strength, thread engagement</td><td>Scatter in nut factor, embedding loss, joint stiffness ratio, separation margin</td></tr>
+<tr><td>Welds / Fatigue</td><td>AWS D1.1, AISC 360 Ch. J, ASTM E466</td><td>Fillet throat checks, weld-group shear, cycle-life screening</td><td>Weld category, toe geometry, residual stress, inspection criteria, spectrum loading</td></tr>
+<tr><td>Seals / Gaskets</td><td>Parker ORD 5700, ISO 3601, ASME PCC-1, ASME B16.5</td><td>Squeeze, groove fill, material compatibility, flange seating</td><td>Surface finish, extrusion gap, swell, compression set, bolt load retention</td></tr>
+<tr><td>Fluids / Pumps / Pipe</td><td>Crane TP-410, Hydraulic Institute, ASME B31.3, ASME B36.10/B36.19</td><td>Pressure drop, pump head, NPSH, schedules, fitting losses</td><td>Actual roughness, valve Cv/K data, transient surge, minimum flow, cavitation margin</td></tr>
+<tr><td>Thermal / HX / Pressure Vessels</td><td>Incropera, TEMA, ASME VIII-1/2, EN 13445</td><td>Heat duty, LMTD/NTU, radial stress, code thickness screening</td><td>Transient thermal stress, creep, code allowables, corrosion allowance, joint efficiency</td></tr>
+<tr><td>HVAC / Electrical / Motors / NEC</td><td>ASHRAE Fundamentals, NFPA 70, NEMA MG-1, IEEE 141/112</td><td>Psychrometrics, wire sizing, power, motor slip and torque</td><td>Ambient correction, conductor fill, duty cycle, protection coordination, ventilation code</td></tr>
+<tr><td>Materials / Corrosion</td><td>ASM Handbooks, MMPDS, ASTM/ASME specs, NACE MR0175</td><td>Property screening, corrosion resistance, process compatibility</td><td>Exact alloy/temper, cert values, heat-treatment condition, environment-specific allowables</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="card">
+<h3>CONCEPT SAFETY FACTOR SCREENING</h3>
+<div class="table-wrap" style="margin-top:.25rem">
+<table class="data table-static table-wide">
+<thead><tr><th>CASE</th><th>TYPICAL INITIAL SCREEN</th><th>WHY IT MOVES</th><th>CAUTION</th></tr></thead>
+<tbody>
+<tr><td>Static ductile metal, known load</td><td>FoS 1.5-2.0</td><td>Manufacturing tolerance, load uncertainty, local stress concentration</td><td>Do not use when code allowables govern</td></tr>
+<tr><td>Static brittle / cast / ceramic</td><td>FoS 2-4</td><td>Defect sensitivity and weak tensile behavior</td><td>Proof test or NDE often matters more than handbook FoS</td></tr>
+<tr><td>Fatigue / cyclic loading</td><td>2-4 on endurance line</td><td>Surface finish, mean stress, notch sensitivity, scatter</td><td>Spectrum loading and weld class usually dominate</td></tr>
+<tr><td>Lifting / human exposure</td><td>Project and code specific</td><td>Stored energy and consequence of failure</td><td>Use the governing lifting, pressure, or building code instead</td></tr>
+<tr><td>High temperature / creep</td><td>2-5 or code allowable basis</td><td>Time-dependent deformation and strength loss</td><td>Room-temperature yield is not a valid basis</td></tr>
+<tr><td>Pressure-retaining parts</td><td>Code-based</td><td>Joint efficiency, corrosion allowance, material allowable stress</td><td>Generic FoS shortcuts are not acceptable</td></tr>
+<tr><td>Seals / leakage-critical joints</td><td>Margin on squeeze, gap, and clamp load</td><td>Compression set, thermal cycle, flange rotation</td><td>Stress-only checks miss leakage failure modes</td></tr>
+<tr><td>Electrical conductors</td><td>NEC ampacity basis</td><td>Ambient, bundling, insulation temperature class</td><td>Use code derating, not a mechanical-style FoS</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="card">
+<h3>CORROSION &amp; ENVIRONMENT SCREENING</h3>
+<div class="handbook-grid" style="margin-top:.5rem">
+<article class="handbook-card"><h4>Wet Chlorides</h4><p>304 can stain or pit fast. Start with 316, duplex, coated carbon steel, titanium, or polymers depending on load and cost. Crevices and deposits are usually the real problem, not open exposure.</p><div class="pill-row"><span class="pill">316</span><span class="pill">Duplex</span><span class="pill">Titanium</span></div></article>
+<article class="handbook-card"><h4>Steam / Hot Water</h4><p>EPDM and many stainlesses work well, while NBR is usually a poor long-term seal choice. Thermal cycling, oxygen content, and boiler chemistry can swing the answer hard.</p><div class="pill-row"><span class="pill">EPDM</span><span class="pill">316</span><span class="pill">Check Water Chem</span></div></article>
+<article class="handbook-card"><h4>Hydrocarbons / Fuel</h4><p>Carbon steel, alloy steel, aluminum, and FKM are common fits. Avoid EPDM for petroleum service and review permeation, seal swell, and ignition or conductivity requirements.</p><div class="pill-row"><span class="pill">FKM</span><span class="pill">CS / AS</span><span class="pill">Conductivity</span></div></article>
+<article class="handbook-card"><h4>Alkaline Washdown</h4><p>Some aluminum finishes fail fast in caustic cleaners. Stainless, certain fluoropolymers, and compatible elastomers hold up better. The cleaning cycle itself may be more aggressive than the process fluid.</p><div class="pill-row"><span class="pill">Stainless</span><span class="pill">PTFE</span><span class="pill">Cleaner Review</span></div></article>
+</div>
+</div>
+<div class="card">
+<h3>TOLERANCE &amp; SURFACE QUICK CHECK</h3>
+<div class="table-wrap" style="margin-top:.25rem">
+<table class="data table-static table-wide">
+<thead><tr><th>FEATURE</th><th>COMMON STARTING POINT</th><th>WHEN IT FITS</th><th>WATCH FOR</th></tr></thead>
+<tbody>
+<tr><td>Press-fit hub on shaft</td><td>Hole-basis starts around H7/p6 to H7/s6</td><td>Torque transmission without key or with anti-fretting margin</td><td>Hoop stress, assembly temperature, coating thickness, service temperature drift</td></tr>
+<tr><td>Sliding bearing / guide fit</td><td>H7/g6 or H8/f7 style starting point</td><td>Lubricated motion with controlled clearance</td><td>Surface finish, debris, thermal growth, stick-slip</td></tr>
+<tr><td>Dynamic elastomer seal land</td><td>Ra roughly 0.2-0.4 µm with generous lead-in</td><td>Rod and piston seals with reciprocation</td><td>Spiral machining marks, chrome damage, burrs, waviness</td></tr>
+<tr><td>Static gasketed flange</td><td>125-250 AARH raised-face range is common</td><td>Compressed fiber, spiral-wound, and many soft gaskets</td><td>Mismatch with gasket vendor envelope and flange rotation</td></tr>
+<tr><td>General machined seal groove</td><td>Smooth root, radiused edges, deburred entry</td><td>O-rings, back-up rings, static face seals</td><td>Sharp edges cutting seals during assembly</td></tr>
+<tr><td>Fatigue-sensitive weld toe</td><td>Blend transition, reduce undercut, remove notches</td><td>Cyclic structures and vibration-prone brackets</td><td>Weld category is often governed by geometry, not filler strength</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="card">
+<h3>FASTENER GRADE &amp; THREAD QUICK MAP</h3>
+<div class="table-wrap" style="margin-top:.25rem">
+<table class="data table-static table-wide">
+<thead><tr><th>SYSTEM</th><th>COMMON GRADES</th><th>START HERE FOR</th><th>THREAD / PRELOAD FEEL</th><th>WATCH FOR</th></tr></thead>
+<tbody>
+<tr><td>SAE J429</td><td>Grade 2, 5, 8</td><td>General inch-series machinery and fabricated equipment</td><td>Grade 5 is the common middle ground; Grade 8 carries higher preload in less area</td><td>Plating, engagement length, and reused hardware change the real clamp load a lot.</td></tr>
+<tr><td>ISO Metric</td><td>4.6, 8.8, 10.9, 12.9</td><td>Most metric machine design and imported equipment</td><td>8.8 is the default structural / machinery grade, 10.9 for more compact joints</td><td>12.9 is strong but less forgiving of hydrogen embrittlement and surface damage.</td></tr>
+<tr><td>Structural Bolting</td><td>ASTM F3125 Grade A325 / A490</td><td>Steel structures and slip-critical joints</td><td>Installation method and washer stack are part of the design, not accessories</td><td>Do not treat structural bolt practices like generic machine-screw assembly.</td></tr>
+<tr><td>Stainless Fasteners</td><td>A2-70, A4-80</td><td>Corrosion-exposed equipment, food, marine-adjacent assemblies</td><td>Lower preload than alloy steel for the same size, with frequent galling risk</td><td>Lubricate threads and validate torque targets from actual K-factor data.</td></tr>
+<tr><td>Pressure-Boundary Studs</td><td>ASTM A193 B7, B8, B8M</td><td>Flanges, hot pressure service, gasketed joints</td><td>Stud-and-nut systems give better control on large flanges</td><td>Temperature, relaxation, and gasket creep dominate long-term clamp load.</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="card">
+<h3>PIPE / FLANGE / GASKET QUICK MAP</h3>
+<div class="table-wrap" style="margin-top:.25rem">
+<table class="data table-static table-wide">
+<thead><tr><th>ITEM</th><th>COMMON STANDARD / CLASS</th><th>START HERE WHEN</th><th>GOOD FIT</th><th>WATCH FOR</th></tr></thead>
+<tbody>
+<tr><td>Pipe Wall / Schedule</td><td>ASME B36.10, B36.19</td><td>You know NPS and need wall thickness screening</td><td>Sched 10 for lighter corrosion-resistant service, 40 for general process, 80 when margin or threading matters</td><td>Corrosion allowance and mechanical loads can overrule the nominal schedule quickly.</td></tr>
+<tr><td>Raised-Face Flanges</td><td>ASME B16.5 Class 150 / 300 / 600</td><td>General utility and process service</td><td>150 for lighter utility duty, 300+ once pressure-temperature climbs</td><td>Class alone does not settle material, gasket, or bolt selection.</td></tr>
+<tr><td>High-Class Flanges</td><td>ASME B16.5 Class 900 / 1500 / 2500</td><td>High pressure, high consequence, compact joints</td><td>Hydrocarbon, steam, pressure-boundary service</td><td>Assembly practice and flange surface condition become dominant.</td></tr>
+<tr><td>Compressed Fiber Gasket</td><td>ASTM F104 families</td><td>General utility flanges with moderate temperature and pressure</td><td>Water, oil, general service with forgiving surfaces</td><td>Retorque and creep relaxation after thermal cycle.</td></tr>
+<tr><td>PTFE Sheet / Envelope</td><td>ASTM F36 style data</td><td>Chemical compatibility is the main driver</td><td>Acids, solvents, fragile flanges, clean service</td><td>Cold flow, low seating stress retention, and blowout without confinement.</td></tr>
+<tr><td>Spiral Wound</td><td>ASME B16.20</td><td>RF flanges at higher temperature or pressure</td><td>Process piping, steam, hydrocarbon service</td><td>Needs proper seating stress and flange finish discipline.</td></tr>
+<tr><td>Ring-Type Joint</td><td>ASME B16.20 / API 6A</td><td>Very high class flanges and metallic sealing</td><td>600-2500# and API pressure service</td><td>Groove geometry, bolt load, and reusable-ring practice.</td></tr>
+<tr><td>Assembly Guidance</td><td>ASME PCC-1</td><td>You need tightening pattern, stress targets, or flange discipline</td><td>Any leakage-critical bolted flange</td><td>Most joint failures are assembly and relaxation problems, not stress-calculation misses.</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="card">
+<h3>BEARING / LUBRICANT SCREENING</h3>
+<div class="table-wrap" style="margin-top:.25rem">
+<table class="data table-static table-wide">
+<thead><tr><th>ELEMENT</th><th>BEST WHEN</th><th>LUBRICATION</th><th>SPEED / LOAD FEEL</th><th>WATCH FOR</th></tr></thead>
+<tbody>
+<tr><td>Deep-Groove Ball</td><td>Low friction and moderate radial load are the default need</td><td>Grease or light oil</td><td>High speed, moderate load</td><td>Misalignment and contamination.</td></tr>
+<tr><td>Tapered Roller</td><td>Combined radial and axial load needs control</td><td>Oil or grease with preload discipline</td><td>Medium speed, high load</td><td>Preload, heat generation, and setup error.</td></tr>
+<tr><td>Spherical Roller</td><td>Heavy load with misalignment tolerance</td><td>Oil circulation or robust grease plan</td><td>Moderate speed, very high load</td><td>Housing stiffness and lubricant cleanliness.</td></tr>
+<tr><td>Needle Roller</td><td>Radial envelope is tight but capacity must stay high</td><td>Grease or oil</td><td>Medium speed, high load in small package</td><td>Race hardness and shaft finish if the shaft is the raceway.</td></tr>
+<tr><td>Sleeve Bronze</td><td>Oscillation, dirty service, or cost simplicity matter</td><td>Boundary oil / grease</td><td>Low-medium speed, steady load</td><td>PV limit, start-stop wear, and dry running.</td></tr>
+<tr><td>PTFE-Lined Composite</td><td>Maintenance-light, corrosive, or low-motion service</td><td>Usually dry</td><td>Low-medium speed, low-medium load</td><td>Edge loading and thermal growth mismatch.</td></tr>
+<tr><td>Dry Polymer Guide</td><td>Noise, corrosion, and no-lube service dominate</td><td>Dry</td><td>Low speed, low load</td><td>Creep, dirt embedment, and heat buildup.</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="card">
+<h3>WELD PROCESS &amp; NDT SCREENING</h3>
+<div class="table-wrap" style="margin-top:.25rem">
+<table class="data table-static table-wide">
+<thead><tr><th>PROCESS</th><th>BEST FOR</th><th>PRODUCTIVITY / QUALITY FEEL</th><th>COMMON NDT</th><th>WATCH FOR</th></tr></thead>
+<tbody>
+<tr><td>GMAW / MIG</td><td>General shop steel and aluminum fabrication</td><td>Fast and versatile with good repeatability</td><td>VT, PT on nonmag, MT on steels</td><td>Parameter drift, lack of fusion on thicker joints, spatter cleanup.</td></tr>
+<tr><td>GTAW / TIG</td><td>Thin wall, stainless, aluminum, root passes, appearance-critical welds</td><td>Slowest but highest control</td><td>VT, PT, RT on pressure roots when specified</td><td>Heat input, distortion, operator skill bottleneck.</td></tr>
+<tr><td>FCAW</td><td>Heavy steel fabrication and field productivity</td><td>High deposition and strong out-of-position capability</td><td>VT, UT, MT</td><td>Slag inclusions, wind sensitivity, consumable handling.</td></tr>
+<tr><td>SMAW / Stick</td><td>Field repair, erection, outdoor work</td><td>Flexible but operator dependent</td><td>VT, MT, UT on thicker work</td><td>Hydrogen control, slag removal, variable bead profile.</td></tr>
+<tr><td>SAW</td><td>Long heavy seams, vessels, beams, automated runs</td><td>Very high productivity and stable quality</td><td>UT, RT, VT</td><td>Fit-up discipline and limited portability.</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="card">
+<h3>FINISH / COATING PICKLIST</h3>
+<div class="table-wrap" style="margin-top:.25rem">
+<table class="data table-static table-wide">
+<thead><tr><th>ROUTE</th><th>START HERE FOR</th><th>TYPICAL VALUE</th><th>SURFACE FEEL</th><th>WATCH FOR</th></tr></thead>
+<tbody>
+<tr><td>Zinc Plate</td><td>Cheap indoor corrosion control on carbon steel</td><td>Fastener and small hardware default</td><td>Thin, bright, conductive</td><td>White rust, hydrogen embrittlement on high-strength parts, limited outdoor life.</td></tr>
+<tr><td>Hot-Dip Galvanize</td><td>Outdoor steel and structural assemblies</td><td>Thick sacrificial zinc</td><td>Rougher, larger coating build</td><td>Thread allowance, venting, and distortion on thin fabrications.</td></tr>
+<tr><td>Black Oxide</td><td>Low-cost appearance and mild oil-retained protection</td><td>Minimal dimensional change</td><td>Thin, matte</td><td>Not a real outdoor corrosion system without oil or wax maintenance.</td></tr>
+<tr><td>Anodize Type II</td><td>General aluminum appearance and oxide control</td><td>Good color and moderate wear</td><td>Harder than bare aluminum</td><td>Galvanic breaks and masked contact surfaces still matter.</td></tr>
+<tr><td>Hardcoat Anodize</td><td>Wear-resistant aluminum bores, guides, and housings</td><td>Higher hardness and dielectric value</td><td>Thicker, darker, more brittle</td><td>Build-up changes fit; sealing can change friction.</td></tr>
+<tr><td>Electroless Nickel</td><td>Uniform coverage, corrosion, and moderate wear</td><td>Complex geometry and bores</td><td>Smooth, bright, dimensionally significant</td><td>Thickness stack-up, phosphorus content, and adhesion prep.</td></tr>
+<tr><td>Passivation</td><td>Cleaning and oxide repair on stainless</td><td>Restores corrosion resistance after machining / welding</td><td>No meaningful dimension change</td><td>Does not replace proper alloy selection or remove embedded iron by magic.</td></tr>
+<tr><td>Nitriding</td><td>Wear-resistant steel surfaces with limited distortion</td><td>Seal lands, shafts, gears</td><td>Hard thin case, minimal growth</td><td>Case depth, brittle white layer, finish stock before treatment.</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="card">
+<h3>COMMON ALLOWANCES / DESIGN MARGIN CHECK</h3>
+<div class="table-wrap" style="margin-top:.25rem">
+<table class="data table-static table-wide">
+<thead><tr><th>ITEM</th><th>FIRST-PASS START</th><th>REVISIT WITH</th><th>FAILURE IF IGNORED</th></tr></thead>
+<tbody>
+<tr><td>Corrosion Allowance</td><td>1-3 mm for many carbon-steel process parts</td><td>Actual corrosion coupon data, code minimums, cleanability</td><td>Life estimate collapses even when stress is fine.</td></tr>
+<tr><td>Coating Build</td><td>5-25 µm plating, 25-75 µm paint, much more for galvanize</td><td>Supplier process window and masking plan</td><td>Fits bind, threads jam, electrical contact disappears.</td></tr>
+<tr><td>Embedding / Preload Loss</td><td>Expect clamp-load drop after first thermal cycle or surface seating</td><td>Joint tests, PCC-1 style assembly data, washer stack review</td><td>Leakage and loosening without any visible bolt yielding.</td></tr>
+<tr><td>Weld Shrink / Distortion</td><td>Budget rework and fixture control on long seams</td><td>Sequence, restraint, heat input, coupon trials</td><td>Flatness and hole location miss before strength is ever checked.</td></tr>
+<tr><td>Fouling Factor</td><td>Reserve heat-transfer margin on dirty fluids and HVAC coils</td><td>Service cleanliness and maintenance interval</td><td>UA falls short while nameplate duty looked correct.</td></tr>
+<tr><td>Seal Swell / Compression Set</td><td>Screen volume change and long-term clamp retention early</td><td>Exact fluid-temperature combination and supplier data</td><td>Leakage after soak or thermal aging, not on day-one assembly.</td></tr>
+<tr><td>Thermal Growth Gap</td><td>Check differential growth anywhere metals and polymers share a fit</td><td>Real duty-cycle temperature map</td><td>Cold assembly is fine, hot assembly binds or unloads.</td></tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 </div>
 <section class="theory-refs" aria-labelledby="theory-title">
@@ -1523,6 +2139,17 @@ n_out = n_in/GR &nbsp;|&nbsp; T_out = T_in&middot;GR&middot;&eta;<br>
 <div class="tref" data-m="battery"><h3>Battery Sizing</h3><p>Peukert runtime <code>t = C/I<sup>k</sup></code> where k &asymp; 1.1-1.3 for Li-ion. Pack voltage = V<sub>cell</sub> &middot; S-count, capacity = C<sub>cell</sub> &middot; P-count, with thermal derating.</p><div class="std">Refs: IEC 62620; UL 1973</div></div>
 <div class="tref" data-m="combustion"><h3>Combustion</h3><p>Stoichiometric AFR for C<sub>x</sub>H<sub>y</sub>: <code>AFR<sub>s</sub> = (x+y/4) &middot; 4.76 &middot; 28.97 /(12x+y)</code>. Lambda &lambda; = AFR/AFR<sub>s</sub>. Adiabatic flame <code>T<sub>ad</sub> = T<sub>i</sub> + LHV/((AFR+1)c<sub>p</sub>)</code>.</p><div class="std">Refs: Turns, Combustion; Glassman</div></div>
 <div class="tref" data-m="units"><h3>Unit Conversion &amp; Constants</h3><p>SI / Imperial conversion for length, force, pressure, energy, power, temperature, torque, viscosity, density. Engineering constants (g, R, &sigma;<sub>SB</sub>, N<sub>A</sub>) to 6 significant figures.</p><div class="std">Refs: NIST SP 811; BIPM SI Brochure</div></div>
+<div class="tref" data-m="materials"><h3>Materials Screening &amp; Allowables</h3><p>Early screening should compare <code>E/ρ</code>, yield, conductivity, CTE, corrosion behavior, and continuous-use temperature together. Final design values must come from the exact alloy, temper, heat treatment, and certified product form, not family averages.</p><div class="std">Refs: ASM Handbooks; MMPDS; ASTM / ASME material specs</div></div>
+<div class="tref" data-m="materials"><h3>Heat Treatment &amp; Temper State</h3><p>Alloy name without condition is incomplete engineering data. 4140 annealed and 4140 Q&amp;T are different materials in practice, just like 17-4 H900 and H1150 or 7075-T6 and T73. Machining distortion, SCC resistance, hardness, and toughness all follow the condition.</p><div class="std">Refs: ASM Heat Treating; AMS / ASTM temper and hardness specifications</div></div>
+<div class="tref" data-m="finishes"><h3>Finishes, Coatings &amp; Galvanic Control</h3><p>Surface treatments solve different problems: zinc and paint for carbon steel corrosion, anodize for aluminum oxide control, nitriding and hard chrome for wear, and electroless nickel for coverage. Galvanic separation, sealing, and contact area ratio matter as much as the finish itself.</p><div class="std">Refs: ASM Surface Engineering; MIL / ASTM coating specifications</div></div>
+<div class="tref" data-m="bolts"><h3>Threads, Preload Scatter &amp; Joint Stiffness</h3><p>Bolt strength is rarely the first problem; clamp load scatter, surface embedding, and joint stiffness ratio are. Torque is only an indirect preload method through a noisy nut factor, which is why washer stack, lubrication, and engagement length deserve as much attention as proof strength.</p><div class="std">Refs: VDI 2230; ISO 898-1; ASTM F606</div></div>
+<div class="tref" data-m="bearings"><h3>Tribology &amp; Lubrication</h3><p>Rolling-bearing life, plain-bearing PV, lubricant film thickness, and surface finish are all parts of the same problem. Systems that look safe on contact stress still fail when contamination, starvation, or edge loading collapse the film and shift the mechanism into boundary wear.</p><div class="std">Refs: ISO 281; Hamrock; SKF / NSK application handbooks</div></div>
+<div class="tref" data-m="fluids"><h3>Compressible Flow &amp; Pneumatics</h3><p>Air systems stop behaving like incompressible utilities once Mach number, choked flow, and line volume matter. Cylinder force, valve Cv, receiver volume, and regulator droop need to be reviewed together or the machine will miss cycle time even if the static pressure looked adequate.</p><div class="std">Refs: Crane TP-410; ASME fluids references; pneumatic component application guides</div></div>
+<div class="tref" data-m="refs"><h3>Fits, Tolerances &amp; Surface Texture</h3><p>Dimensioning is only half the interface. Clearance or interference fits, waviness, and roughness together decide bearing load distribution, seal life, and assembly force. Start from a hole-basis system, then verify thermal growth and coating stack-up.</p><div class="std">Refs: ISO 286; ASME Y14.5; Machinery's Handbook</div></div>
+<div class="tref" data-m="refs"><h3>Gaskets, Flanges &amp; Joint Integrity</h3><p>Leak-tight joints depend on gasket stress, flange stiffness, relaxation, and surface finish. Static stress checks miss the actual failure mode when clamp load falls below seating stress after thermal cycle, creep, or embedding.</p><div class="std">Refs: ASME PCC-1; ASME B16.5; EN 1591</div></div>
+<div class="tref" data-m="refs"><h3>Pipe, Flanges &amp; Pressure Boundaries</h3><p>Pipe schedule, flange class, gasket type, bolting, and assembly procedure are a single design system. Choosing any one of them in isolation is how teams end up with joints that meet stress checks but leak in startup, thermal shock, or maintenance reassembly.</p><div class="std">Refs: ASME B31.3; ASME B16.5; ASME B16.20; ASME PCC-1</div></div>
+<div class="tref" data-m="refs"><h3>Manufacturing Allowances &amp; Stack-Up</h3><p>Coating build, corrosion allowance, weld shrink, machining stock, and thermal growth are real dimensions that belong in the design model. The fastest way to lose a good concept is to size everything at nominal and discover after release that finish, distortion, or service temperature consumed the fit.</p><div class="std">Refs: Machinery's Handbook; ASM fabrication and finishing references</div></div>
+<div class="tref" data-m="refs"><h3>Corrosion &amp; Environment</h3><p>Environment screening should separate chlorides, caustics, steam, hydrocarbons, UV, and vacuum rather than bundling them into a single “chemical resistance” label. Crevices, deposits, and trapped condensate routinely dominate open-exposure assumptions.</p><div class="std">Refs: NACE; ASM Corrosion; Parker compatibility guides</div></div>
 </div>
 <p style="margin-top:1.5rem;font-size:.72rem;color:var(--dim);line-height:1.7;max-width:900px">Amni-Calc runs fully client-side: your inputs never leave your browser. The analysis engine is a WebAssembly module compiled from Rust. The module itself is open for inspection &mdash; view source to see the API surface. Use of results is at your own risk; refer to the disclaimer.</p>
 </section>
@@ -1535,6 +2162,76 @@ n_out = n_in/GR &nbsp;|&nbsp; T_out = T_in&middot;GR&middot;&eta;<br>
 <footer>
 AMNI-CALC v2.5.0 &mdash; <a href="https://amni-scient.com">AMNI-SCIENT</a> &mdash; FOR EDUCATIONAL &amp; ESTIMATION PURPOSES ONLY &mdash; <a href="#" onclick="reportBug();return false">REPORT BUG</a>
 </footer>
+<button id="calc-ai-open" class="calc-ai-fab" type="button" aria-haspopup="dialog" aria-expanded="false">
+<span id="calc-ai-fab-dot" class="calc-ai-badge">&#9679; offline</span>
+<span class="calc-ai-fab-label">Engineering AI</span>
+</button>
+<section id="calc-ai-panel" class="calc-ai-panel" aria-label="Engineering assistant" hidden>
+<div class="calc-ai-header">
+<div class="calc-ai-title">
+<strong>ENGINEERING ASSISTANT</strong>
+<span>Active module context + local model support</span>
+</div>
+<div class="calc-ai-header-actions">
+<button id="calc-ai-settings-toggle" type="button" title="Configure assistant">&#9881;</button>
+<button id="calc-ai-close" type="button" title="Close assistant">&#10005;</button>
+</div>
+</div>
+<div id="calc-ai-statusbar" class="calc-ai-statusbar">Built-in guide active - watching the current calc module.</div>
+<div id="calc-ai-log" class="calc-ai-log"></div>
+<div class="calc-ai-quick">
+<button class="calc-ai-chip" type="button" data-q="Explain the current module, the main equations, and when to use it.">Explain module</button>
+<button class="calc-ai-chip" type="button" data-q="Sanity-check the current inputs and tell me what looks risky or missing.">Check inputs</button>
+<button class="calc-ai-chip" type="button" data-q="List the key assumptions, failure modes, and standards I should verify for the current module.">Assumptions</button>
+<button class="calc-ai-chip" type="button" data-q="Summarize the current results in plain engineering language and tell me what they imply.">Explain results</button>
+</div>
+<div class="calc-ai-input">
+<textarea id="calc-ai-input" placeholder="Ask about the active calculation, handbook data, assumptions, units, or design checks..."></textarea>
+<div class="calc-ai-sendrow">
+<div class="calc-ai-hint">Local endpoint is preferred. Browser mode can run fully on-device when WebGPU is available.</div>
+<button id="calc-ai-send" class="btn btn-fill" type="button">SEND</button>
+</div>
+</div>
+<div id="calc-ai-setup" class="calc-ai-setup">
+<div class="calc-ai-setup-title">Local Endpoint</div>
+<div class="calc-ai-status-card">
+<div class="calc-ai-status-row"><span id="calc-ai-status-dot" class="calc-ai-status-dot"></span><span id="calc-ai-status-text" class="calc-ai-status-text">Checking...</span></div>
+<div id="calc-ai-status-url" class="calc-ai-status-url"></div>
+<div id="calc-ai-status-hint" class="calc-ai-hint">Use Amni-Ai or any OpenAI-compatible local server with CORS enabled.</div>
+</div>
+<div class="calc-ai-row">
+<label class="calc-ai-field"><span>Server URL</span><input type="text" id="calc-ai-url" placeholder="http://localhost:7700" autocomplete="off" spellcheck="false"></label>
+<label class="calc-ai-field"><span>Model</span><input type="text" id="calc-ai-model" placeholder="qwen3.5-122b" autocomplete="off" spellcheck="false"></label>
+</div>
+<div class="calc-ai-actions">
+<button id="calc-ai-test" type="button">TEST</button>
+<button id="calc-ai-save" type="button">SAVE</button>
+<button id="calc-ai-reset" type="button">RESET</button>
+</div>
+<div id="calc-ai-setup-msg" class="calc-ai-msgline"></div>
+<div class="calc-ai-browser">
+<div class="calc-ai-setup-title">In-Browser Model</div>
+<label class="calc-ai-toggle"><input type="checkbox" id="calc-ai-webllm-enable"><span>Auto-load when the page opens</span></label>
+<label class="calc-ai-field"><span>Model</span><select id="calc-ai-webllm-model">
+<option value="SmolLM2-135M-Instruct-q0f16-MLC">SmolLM2 135M - mobile / low VRAM</option>
+<option value="SmolLM2-360M-Instruct-q0f16-MLC">SmolLM2 360M - light desktop</option>
+<option value="Qwen2.5-0.5B-Instruct-q4f16_1-MLC">Qwen2.5 0.5B - balanced fallback</option>
+<option value="Llama-3.2-1B-Instruct-q4f32_1-MLC">Llama 3.2 1B - desktop</option>
+<option value="Qwen2.5-1.5B-Instruct-q4f16_1-MLC">Qwen2.5 1.5B - desktop</option>
+</select></label>
+<div id="calc-ai-webllm-progress" class="calc-ai-progress">
+<div class="calc-ai-progress-bar"><div id="calc-ai-webllm-fill" class="calc-ai-progress-fill"></div></div>
+<div id="calc-ai-webllm-progress-text" class="calc-ai-progress-text">Idle</div>
+</div>
+<div class="calc-ai-actions">
+<button id="calc-ai-webllm-load" type="button">LOAD MODEL</button>
+<button id="calc-ai-webllm-unload" type="button" style="display:none">UNLOAD</button>
+</div>
+<div id="calc-ai-webllm-msg" class="calc-ai-msgline"></div>
+<div class="calc-ai-note">HTTPS deployments cannot call plain HTTP localhost. In that case, browser mode or the built-in guide takes over automatically.</div>
+</div>
+</div>
+</section>
 <script type="module">
 
 import wInit,{calc_beam,calc_section,section_presets,get_materials,get_material,calc_bolt,bolt_tables,calc_spring,calc_stress,get_finishes,recommend_finishes,convert_unit,unit_categories,calc_seal,seal_materials} from './pkg/amni_calc_wasm.js';
@@ -1683,5 +2380,77 @@ window.calcVDrop=()=>{const I=v('vd-i'),L=v('vd-l'),V=v('vd-v'),awg=$('vd-a').va
 document.addEventListener('DOMContentLoaded',()=>{const newIds=['fatigue','thermal','echem','battery','fluids','hx','pv','cycles','hvac','electrical','vibration','gears','columns','shafts','welds','bearings','pumps','combustion','motors','nec','refs'];const trefSec=document.querySelector('.theory-refs');const allTrefs=trefSec?[...trefSec.querySelectorAll('.tref')]:[];const trefHdr=trefSec?trefSec.querySelector('h2'):null;const trefIntro=trefSec?trefSec.querySelector('.intro'):null;const trefNote=trefSec?trefSec.querySelector('p[style]'):null;const filterRefs=(m)=>{if(!trefSec)return;const isAll=m==='refs';let any=0;allTrefs.forEach(el=>{const ok=isAll||el.dataset.m===m;el.hidden=!ok;if(ok)any++;});if(trefHdr)trefHdr.hidden=!isAll;if(trefIntro)trefIntro.hidden=!isAll;if(trefNote)trefNote.hidden=!isAll;trefSec.style.display=any?'':'none';};const refreshFilter=()=>{const a=document.querySelector('[role="tab"].active')||document.querySelector('[role="tab"][aria-selected="true"]');if(a)filterRefs(a.getAttribute('data-v'));};const sb=document.getElementById('sidebar'),scr=document.getElementById('sidebar-scrim'),sbt=document.getElementById('sidebar-toggle');const closeSb=()=>{sb&&sb.classList.remove('open');scr&&scr.classList.remove('show');sbt&&sbt.setAttribute('aria-expanded','false');};document.addEventListener('click',e=>{const t=e.target.closest('[role="tab"]');if(!t)return;const target=t.getAttribute('data-v');if(newIds.includes(target)){document.querySelectorAll('.view').forEach(vv=>vv.classList.remove('active'));document.querySelectorAll('[role="tab"]').forEach(tt=>tt.classList.remove('active'));const vEl=$('v-'+target);if(vEl)vEl.classList.add('active');t.classList.add('active')}filterRefs(target);if(window.matchMedia&&window.matchMedia('(max-width:800px)').matches)closeSb();});document.querySelectorAll('[role="tab"]').forEach(t=>new MutationObserver(refreshFilter).observe(t,{attributes:true,attributeFilter:['class','aria-selected']}));refreshFilter();setTimeout(refreshFilter,50);sbt&&sbt.addEventListener('click',()=>{const open=!sb.classList.contains('open');sb.classList.toggle('open',open);scr.classList.toggle('show',open);sbt.setAttribute('aria-expanded',open?'true':'false');});scr&&scr.addEventListener('click',closeSb);const tt=document.getElementById('theme-toggle'),ti=document.getElementById('theme-icon');const applyIcon=()=>{if(!ti)return;const cur=document.documentElement.getAttribute('data-theme')||'dark';ti.innerHTML=cur==='light'?'&#9728;':'&#9790;';};applyIcon();tt&&tt.addEventListener('click',()=>{const cur=document.documentElement.getAttribute('data-theme')||'dark';const nxt=cur==='light'?'dark':'light';document.documentElement.setAttribute('data-theme',nxt);try{localStorage.setItem('calc-theme',nxt);}catch(e){}applyIcon();if(window.Plotly){const th=plTheme();document.querySelectorAll('.plot-wrap').forEach(el=>{if(el.data)Plotly.relayout(el.id,{paper_bgcolor:th.paper,plot_bgcolor:th.plot,'font.color':th.text,'xaxis.gridcolor':th.grid,'xaxis.zerolinecolor':th.grid,'xaxis.linecolor':th.grid,'xaxis.tickfont.color':th.text,'yaxis.gridcolor':th.grid,'yaxis.zerolinecolor':th.grid,'yaxis.linecolor':th.grid,'yaxis.tickfont.color':th.text});});}});});
 })();
 </script>
+<script>
+(()=>{
+const byId=id=>document.getElementById(id),flatText=value=>(value||'').replace(/\s+/g,' ').trim(),normText=value=>(value||'').replace(/\r/g,'').trim(),escHtml=value=>(value||'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+const rootInput=byId('calc-ai-input');
+if(!rootInput||rootInput.dataset.calcAiReady)return;
+rootInput.dataset.calcAiReady='1';
+const AI_DEFAULTS={url:'http://localhost:7700',model:'qwen3.5-122b'},AI_STORAGE_KEY='amni-calc-ai-config',WEBLLM_STORAGE_KEY='amni-calc-webllm',IS_MOBILE=/Android|iPhone|iPad|iPod|Mobile|Opera Mini/i.test(navigator.userAgent)||(navigator.deviceMemory&&navigator.deviceMemory<=4),WEBLLM_DEFAULTS={enabled:false,model:IS_MOBILE?'SmolLM2-135M-Instruct-q0f16-MLC':'Qwen2.5-0.5B-Instruct-q4f16_1-MLC'},WEBLLM_CDN='https://esm.run/@mlc-ai/web-llm@0.2';
+const MODULE_GROUPS={beam:'mechanical',stress:'mechanical',section:'mechanical',bolts:'mechanical',springs:'mechanical',seals:'mechanical',columns:'mechanical',shafts:'mechanical',welds:'mechanical',bearings:'mechanical',gears:'mechanical',fatigue:'mechanical',vibration:'mechanical',fluids:'thermal',pumps:'thermal',thermal:'thermal',hx:'thermal',pv:'thermal',cycles:'thermal',hvac:'thermal',combustion:'thermal',electrical:'electrical',motors:'electrical',nec:'electrical',echem:'chemistry',battery:'chemistry',materials:'reference',finishes:'reference',math:'reference',equations:'reference',units:'reference',refs:'reference'};
+const GROUP_GUIDES={mechanical:{focus:'Mechanical questions usually hinge on load path, stiffness, stress concentration, fatigue, preload, contact, or wear rather than one scalar output.',checks:['Verify boundary conditions and load path before trusting any number.','Keep units, section properties, and safety-factor basis consistent before comparing magnitudes.','Check the governing failure mode directly: yielding, buckling, fatigue, fretting, wear, leakage, or stiffness.'],standards:'Shigley, Roark, Machinery\'s Handbook, plus the relevant ASME / ISO / AGMA / AWS document for the component.'},thermal:{focus:'Thermal and flow answers depend on regime identification, property data, and boundary conditions more than algebra alone.',checks:['Confirm steady vs transient assumptions and whether properties vary materially with temperature.','Classify the regime first: laminar or turbulent, internal or external, compressible or incompressible, natural or forced convection.','Check pressure drop, fouling, approach temperature, cavitation, or radiation limits along with the headline result.'],standards:'Incropera, Crane TP-410, ASME, HEI, ASHRAE, and vendor performance curves.'},electrical:{focus:'Electrical answers depend on RMS vs peak basis, phase count, power factor, frequency, and temperature correction.',checks:['Keep voltage basis, phase count, power factor, and efficiency consistent.','For wire sizing, check ampacity, voltage drop, ambient correction, and bundling derate together.','Identify whether the limit is thermal, magnetic, insulation, protection, or starting torque before optimizing.'],standards:'NEC, IEEE, NEMA, and motor application handbooks.'},chemistry:{focus:'Electrochemistry and battery work are sensitive to basis choice, area normalization, temperature, and rate effects.',checks:['State the basis explicitly: cell vs stack, per-cell vs pack, per-area vs total current.','Check temperature, polarization, internal resistance, and state-of-charge effects before trusting a nominal value.','Separate thermodynamic limits from kinetics, transport limits, and practical efficiency.'],standards:'Electrochemistry handbooks, battery application notes, IEC references, and the exact cell datasheet.'},reference:{focus:'Reference tabs help narrow choices, but the final answer still depends on the exact alloy, condition, environment, tolerance, and governing code.',checks:['Tie handbook values to the exact alloy, temper, condition, and product form.','Check corrosion, coatings, temperature, tolerance stack-up, and inspection method along with nominal strength.','Use the calculator outputs to narrow options, then verify against the governing standard or datasheet.'],standards:'ASM, ASTM, ASME, ISO, Machinery\'s Handbook, and manufacturer data.'}};
+const SPECIFIC_HINTS={beam:'Work from support model to reactions, shear, moment, slope, and deflection; long spans often fail stiffness before strength.',stress:'Sign convention, principal stresses, and whether the state is really plane stress drive interpretation more than the raw arithmetic.',section:'Section properties are geometry truth inputs; verify the loaded axis, centroid, and section modulus before trusting downstream results.',bolts:'Joint behavior is usually driven by preload scatter, stiffness ratio, and clamp retention before fastener ultimate strength.',springs:'Check rate, working deflection, solid height, stress correction, and fatigue life together, not one at a time.',seals:'Seal success depends on squeeze, stretch, gland fill, pressure direction, thermal growth, and media compatibility as a system.',columns:'Buckling requires the right effective length and the right regime transition between Johnson and Euler.',shafts:'Treat torque, bending, stress concentration, fatigue, and critical speed as coupled shaft design checks.',welds:'Weld groups fail by load path, eccentricity, throat sizing, and distortion management, not throat size alone.',bearings:'Bearing selection needs life, load spectrum, lubrication, contamination, and misalignment checks together.',gears:'Gear design is a contact plus bending plus lubrication problem; ratio alone is never enough.',fatigue:'Mean stress model choice, notch sensitivity, surface finish, and reliability correction usually dominate fatigue answers.',vibration:'Natural frequency is only the start; forcing frequency, damping, transmissibility, and mounting stiffness determine the real risk.',fluids:'Head loss depends on regime, roughness, minor losses, and property basis; Reynolds and Darcy friction factor are the pivot points.',pumps:'Pump work is a curve-matching problem; always compare the pump curve, system curve, NPSH margin, and operating point together.',thermal:'Decide first whether the problem is conduction, convection, radiation, fin efficiency, or transient heating.',hx:'Heat exchanger sizing lives at the intersection of duty, approach temperature, pressure drop, and fouling margin.',pv:'Pressure vessel answers depend on the thin-wall assumption, stress category, weld efficiency, and code basis.',cycles:'Cycle calculations need a clean state map first; check what is idealized versus what is hardware-limited.',hvac:'Psychrometric answers depend on a clean dry-bulb, RH, and airflow basis; latent and sensible loads should stay separate.',combustion:'Combustion answers need a clear fuel basis, excess air basis, and whether you are talking equilibrium, flame temperature, or practical burner operation.',electrical:'Keep phase basis, power basis, and RMS basis straight before interpreting any current or drop calculation.',motors:'Motor answers depend on slip, torque-speed behavior, service factor, and thermal limits, not nameplate power alone.',nec:'NEC wire work is a code compliance path: ampacity, derating, breaker size, and voltage drop all matter together.',echem:'Electrochemistry requires a clear sign convention, area basis, and equilibrium vs polarization distinction.',battery:'Battery sizing should include pack configuration, cell limits, Peukert or rate effects, voltage sag, and reserve margin.',materials:'Material screening needs modulus, strength, density, corrosion, temperature, and temper or heat-treatment state together.',finishes:'Finishes solve different problems: wear, corrosion, friction, appearance, or electrical contact. Match the finish to the failure mode.',math:'Use the math tab to sharpen the problem statement before feeding values into a design module.',equations:'Equation cards are fast references; the burden is still on the user to confirm the assumptions behind each formula.',units:'Most bad answers are unit problems wearing a math disguise. Convert first, reason second.',refs:'The handbook content is best for framing decisions, standards lookup, and final verification planning.'};
+let history=[],localOnline=false,webllmEngine=null,webllmReady=false,webllmLoading=false,webllmModule=null;
+const visible=el=>!!(el&&!el.hidden&&getComputedStyle(el).display!=='none'&&getComputedStyle(el).visibility!=='hidden'&&!el.closest('[hidden]'));
+const renderText=text=>(text||'').split(/\n/).map(line=>/^\s*[-*]\s+/.test(line)?'• '+escHtml(line.replace(/^\s*[-*]\s+/,'')):escHtml(line)).join('<br>');
+const fetchWithTimeout=(url,options,ms)=>{const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),ms),next=Object.assign({},options,{signal:controller.signal});return fetch(url,next).finally(()=>clearTimeout(timer));};
+function getAIConfig(){try{const raw=localStorage.getItem(AI_STORAGE_KEY);if(!raw)return Object.assign({},AI_DEFAULTS);const parsed=JSON.parse(raw);return{url:flatText(parsed.url||AI_DEFAULTS.url).replace(/\/+$/,''),model:flatText(parsed.model||AI_DEFAULTS.model)||AI_DEFAULTS.model};}catch{return Object.assign({},AI_DEFAULTS);}}
+function saveAIConfig(config){try{localStorage.setItem(AI_STORAGE_KEY,JSON.stringify(config));}catch{}}
+function getWebLLMConfig(){try{const raw=localStorage.getItem(WEBLLM_STORAGE_KEY);if(!raw)return Object.assign({},WEBLLM_DEFAULTS);const parsed=JSON.parse(raw);return{enabled:!!parsed.enabled,model:parsed.model||WEBLLM_DEFAULTS.model};}catch{return Object.assign({},WEBLLM_DEFAULTS);}}
+function saveWebLLMConfig(config){try{localStorage.setItem(WEBLLM_STORAGE_KEY,JSON.stringify(config));}catch{}}
+function activeModule(){const tab=document.querySelector('[role="tab"].active')||document.querySelector('[role="tab"][aria-selected="true"]'),fallback=document.querySelector('.view.active'),key=tab?tab.getAttribute('data-v'):fallback&&fallback.id?fallback.id.replace(/^v-/,''):'beam',label=flatText(tab?tab.textContent:key),view=byId('v-'+key)||fallback;return{key:key||'beam',label:label||'beam',view};}
+function controlValue(el){if(!el)return'';if(el.type==='checkbox')return el.checked?'ON':'OFF';if(el.tagName==='SELECT'){const opt=el.options[el.selectedIndex];return flatText(opt?opt.textContent:el.value);}return flatText(el.value);}
+function readFields(view){return [...view.querySelectorAll('.field')].filter(visible).map(field=>{const label=flatText((field.querySelector('label')||{}).textContent||field.getAttribute('aria-label')||field.id||'');if(!label)return'';const parts=[...field.querySelectorAll('input,select,textarea')].filter(el=>!el.disabled&&el.type!=='hidden').map(controlValue).filter(Boolean);return parts.length?label+': '+parts.join(' '):'';}).filter(Boolean).slice(0,24);}
+function readChecks(view){return [...view.querySelectorAll('.chk-row')].filter(visible).map(row=>{const box=row.querySelector('input[type="checkbox"]'),label=flatText(row.textContent||'');return box&&label?label.replace(/\s+/g,' ').replace(/ON|OFF/g,'').trim()+': '+(box.checked?'ON':'OFF'):'';}).filter(Boolean).slice(0,8);}
+function readResults(view){const cards=[...view.querySelectorAll('.result-item')].filter(visible).map(item=>{const label=flatText((item.querySelector('.lbl')||{}).textContent||''),value=flatText((item.querySelector('.val')||{}).textContent||'');return label&&value?label+': '+value:'';}).filter(Boolean);if(cards.length)return cards.slice(0,12);const text=flatText((view.querySelector('.results')||{}).textContent||'');return text?[text.slice(0,240)]:[];}
+function readSections(view){return [...view.querySelectorAll('h3,h4')].filter(visible).map(el=>flatText(el.textContent)).filter(Boolean).slice(0,8);}
+function readSnippets(key,view){let nodes=[...view.querySelectorAll('.handbook-card p,.card p,.note-block,p')].filter(visible);if(key==='refs'){const tref=document.querySelector('.theory-refs');if(tref)nodes=nodes.concat([...tref.querySelectorAll('.tref:not([hidden]) p')].filter(visible));}const out=[];nodes.forEach(node=>{const text=flatText(node.textContent);if(text&&out.indexOf(text)===-1)out.push(text);});return out.slice(0,4);}
+function readTableRows(view){const rows=[];[...view.querySelectorAll('table.data')].filter(visible).slice(0,2).forEach(tbl=>{const headers=[...tbl.querySelectorAll('thead th')].map(th=>flatText(th.textContent)).slice(0,6);[...tbl.querySelectorAll('tbody tr')].slice(0,3).forEach(tr=>{const cells=[...tr.children].map(td=>flatText(td.textContent)).filter(Boolean).slice(0,headers.length||6);cells.length&&rows.push(cells.map((cell,index)=>headers[index]?headers[index]+': '+cell:cell).join(' | '));});});return rows.slice(0,4);}
+function collectContext(){const current=activeModule(),view=current.view||document.body,fields=readFields(view).concat(readChecks(view));return{key:current.key,label:current.label,sections:readSections(view),fields:fields.slice(0,28),results:readResults(view),notes:readSnippets(current.key,view),tableRows:readTableRows(view)};}
+function buildSystemPrompt(context){const group=GROUP_GUIDES[MODULE_GROUPS[context.key]||'reference']||GROUP_GUIDES.reference,specific=SPECIFIC_HINTS[context.key]||GROUP_GUIDES.reference.focus;return'You are an engineering assistant embedded in AMNI-CALC, a browser-based engineering calculator and handbook.\nPriorities:\n- answer with practical engineering reasoning tied to the active module\n- be concise, specific, and unit-aware\n- name assumptions, governing equations, failure modes, and standards when useful\n- never present this as final design approval, code compliance sign-off, or licensed engineering approval\n- if data is missing, ask targeted follow-up questions\n- prefer the current page context over generic explanations\n\nModule: '+context.label+'\nModule guidance: '+group.focus+'\nCritical checks: '+group.checks.join('; ')+'\nStandards cues: '+group.standards+'\nSpecific note: '+specific+'\nVisible sections: '+(context.sections.join(' | ')||'n/a')+'\nCurrent inputs: '+(context.fields.join(' | ')||'n/a')+'\nCurrent outputs: '+(context.results.join(' | ')||'n/a')+'\nVisible table snapshot: '+(context.tableRows.join(' | ')||'n/a')+'\nVisible handbook notes: '+(context.notes.join(' | ')||'n/a');}
+function setBadge(el,text,state,title){if(!el)return;el.className='calc-ai-badge'+(state?' '+state:'');el.textContent=text;title!==undefined&&(el.title=title);} 
+function updateBadge(){const cfg=getAIConfig(),fab=byId('calc-ai-fab-dot');if(localOnline){setBadge(fab,'● Adam','online','Local endpoint connected at '+cfg.url);}else if(webllmReady){setBadge(fab,'● Browser','browser','In-browser model ready.');}else if(webllmLoading){setBadge(fab,'● loading...','warn','Loading browser model.');}else{setBadge(fab,'● offline','','Built-in guide only until a model is connected.');}updateContextBar();}
+function updateContextBar(){const context=collectContext(),source=localOnline?'Local model online':webllmReady?'Browser model online':webllmLoading?'Browser model loading':'Built-in guide active',trail=context.sections.slice(0,3).join(' | ');byId('calc-ai-statusbar').textContent=source+' - '+context.label+(trail?' - '+trail:'');}
+function addMessage(text,role){const log=byId('calc-ai-log'),node=document.createElement('div');node.className='calc-ai-msg '+role;node.innerHTML=renderText(text);log.appendChild(node);log.scrollTop=log.scrollHeight;return node;}
+function addPending(){const log=byId('calc-ai-log'),node=document.createElement('div');node.className='calc-ai-msg ai';node.innerHTML='<em style="opacity:.55">thinking...</em>';log.appendChild(node);log.scrollTop=log.scrollHeight;return node;}
+function storeTurn(query,response){history.push({role:'user',content:query},{role:'assistant',content:response});history.length>20&&(history=history.slice(-12));}
+function seedIntro(force){const log=byId('calc-ai-log');if(!force&&log.children.length)return;const context=collectContext(),source=localOnline?'Local model connected.':webllmReady?'Browser model active.':'Built-in guidance active until a model is connected.';addMessage(source+'\n\nWatching '+context.label+'. Ask me to explain equations, review assumptions, sanity-check units, interpret results, or summarize the handbook content in the current tab.','ai');}
+async function probeEndpoint(url,timeout){try{const health=await fetchWithTimeout(url+'/health',{},timeout);if(health.ok)return{ok:true,via:'health'};}catch{}try{const models=await fetchWithTimeout(url+'/v1/models',{},timeout);if(models.ok)return{ok:true,via:'models'};return{ok:false,status:models.status};}catch{return{ok:false};}}
+async function probeLocalAI(){const cfg=getAIConfig(),blocked=location.protocol==='https:'&&cfg.url.indexOf('http://')===0;localOnline=false;if(!blocked){const probe=await probeEndpoint(cfg.url,3200);localOnline=!!probe.ok;}updateBadge();}
+async function refreshSetupStatus(){const cfg=getAIConfig(),dot=byId('calc-ai-status-dot'),text=byId('calc-ai-status-text'),url=byId('calc-ai-status-url'),hint=byId('calc-ai-status-hint'),blocked=location.protocol==='https:'&&cfg.url.indexOf('http://')===0;url.textContent=cfg.url;dot.className='calc-ai-status-dot';text.textContent='Checking...';hint.textContent='Probing the local endpoint for /health or /v1/models.';if(blocked){dot.className='calc-ai-status-dot err';text.textContent='Blocked on HTTPS';hint.textContent='This HTTPS page cannot call plain HTTP localhost. Use browser mode or serve the page locally over HTTP.';localOnline=false;updateBadge();return;}const probe=await probeEndpoint(cfg.url,3600);if(probe.ok){dot.className='calc-ai-status-dot on';text.textContent='Online via '+probe.via;hint.textContent='Endpoint reachable. Model setting: '+cfg.model+'.';localOnline=true;}else{dot.className='calc-ai-status-dot warn';text.textContent=probe.status?'HTTP '+probe.status:'Offline';hint.textContent='No response yet. Start Amni-Ai or another OpenAI-compatible local server with CORS enabled, then test again.';localOnline=false;}updateBadge();}
+function setLine(id,text,type){const el=byId(id);if(!el)return;el.className='calc-ai-msgline'+(type?' '+type:'');el.textContent=text;}
+async function testAIConnection(){const url=flatText(byId('calc-ai-url').value||AI_DEFAULTS.url).replace(/\/+$/,''),blocked=location.protocol==='https:'&&url.indexOf('http://')===0;setLine('calc-ai-setup-msg','Testing...','warn');if(blocked){setLine('calc-ai-setup-msg','Blocked on HTTPS: this page cannot call plain HTTP localhost.','err');return;}const probe=await probeEndpoint(url,4200);probe.ok?setLine('calc-ai-setup-msg','Reachable via '+probe.via+' at '+url+'.','ok'):setLine('calc-ai-setup-msg',probe.status?'Reachable but returned HTTP '+probe.status+'.':'Cannot reach '+url+' - is the engine running?','err');}
+function saveAISettings(){const cfg={url:flatText(byId('calc-ai-url').value||AI_DEFAULTS.url).replace(/\/+$/,''),model:flatText(byId('calc-ai-model').value||AI_DEFAULTS.model)||AI_DEFAULTS.model};saveAIConfig(cfg);setLine('calc-ai-setup-msg','Saved. Re-checking endpoint...','ok');refreshSetupStatus();}
+function resetAISettings(){byId('calc-ai-url').value=AI_DEFAULTS.url;byId('calc-ai-model').value=AI_DEFAULTS.model;setLine('calc-ai-setup-msg','Defaults restored. Hit SAVE to apply them.','');}
+async function loadBrowserEngine(modelId){if(webllmLoading)return;if(!window.isSecureContext){setLine('calc-ai-webllm-msg','Secure context required: use https:// or localhost for WebGPU model loading.','err');return;}if(!navigator.gpu){setLine('calc-ai-webllm-msg','WebGPU not available in this browser. Try Chrome, Edge, or Safari 18+.','err');return;}if(location.protocol==='http:'&&location.hostname!=='localhost'&&location.hostname!=='127.0.0.1'){setLine('calc-ai-webllm-msg','Mixed-content risk: serve the page over HTTPS before loading browser weights.','err');return;}webllmLoading=true;webllmReady=false;updateBadge();const wrap=byId('calc-ai-webllm-progress'),fill=byId('calc-ai-webllm-fill'),text=byId('calc-ai-webllm-progress-text'),loadBtn=byId('calc-ai-webllm-load'),unloadBtn=byId('calc-ai-webllm-unload');wrap.style.display='block';loadBtn.disabled=true;setLine('calc-ai-webllm-msg','Downloading weights and preparing the on-device model...','warn');try{if(!webllmModule)webllmModule=await import(WEBLLM_CDN);webllmEngine=await webllmModule.CreateMLCEngine(modelId,{initProgressCallback:progress=>{const pct=Math.round((progress.progress||0)*100);fill.style.width=pct+'%';text.textContent=(progress.text||pct+'%')+' - '+modelId;}});webllmReady=true;setLine('calc-ai-webllm-msg',modelId+' is ready and now runs fully in this tab.','ok');loadBtn.style.display='none';unloadBtn.style.display='inline-block';}catch(error){webllmReady=false;setLine('calc-ai-webllm-msg','Load failed: '+((error&&error.message)||String(error)),'err');console.warn('[calc-webllm] load failed',error);}finally{webllmLoading=false;loadBtn.disabled=false;updateBadge();}}
+async function unloadBrowserEngine(){if(webllmEngine){try{await webllmEngine.unload&&webllmEngine.unload();}catch{}}webllmEngine=null;webllmReady=false;byId('calc-ai-webllm-load').style.display='inline-block';byId('calc-ai-webllm-unload').style.display='none';byId('calc-ai-webllm-progress').style.display='none';setLine('calc-ai-webllm-msg','Browser model unloaded. Cached weights stay in the browser for later.','');updateBadge();}
+async function askLocalAI(query,context){if(!localOnline)return null;const cfg=getAIConfig(),messages=[{role:'system',content:buildSystemPrompt(context)}];history.slice(-8).forEach(item=>messages.push(item));messages.push({role:'user',content:query});try{const response=await fetchWithTimeout(cfg.url+'/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:cfg.model,messages,temperature:0.35,max_tokens:420})},16000);if(!response.ok)return null;const data=await response.json(),text=data&&data.choices&&data.choices[0]&&data.choices[0].message?normText(data.choices[0].message.content):'';return text||null;}catch{return null;}}
+async function askBrowserAI(query,context){if(!webllmReady||!webllmEngine)return null;const messages=[{role:'system',content:buildSystemPrompt(context)}];history.slice(-6).forEach(item=>messages.push(item));messages.push({role:'user',content:query});try{const reply=await webllmEngine.chat.completions.create({messages,temperature:0.35,max_tokens:420}),text=reply&&reply.choices&&reply.choices[0]&&reply.choices[0].message?normText(reply.choices[0].message.content):'';return text||null;}catch{return null;}}
+function generateBuiltInResponse(query,context){const group=GROUP_GUIDES[MODULE_GROUPS[context.key]||'reference']||GROUP_GUIDES.reference,specific=SPECIFIC_HINTS[context.key]||GROUP_GUIDES.reference.focus,lower=query.toLowerCase(),lines=[context.label+' guide','',specific];if(/result|output|summary|imply|mean|pass|fail/.test(lower)&&context.results.length){lines.push('','Current outputs:');context.results.slice(0,6).forEach(item=>lines.push('- '+item));}else if(/unit|dimension|convert/.test(lower)&&context.fields.length){lines.push('','Current input snapshot:');context.fields.slice(0,6).forEach(item=>lines.push('- '+item));lines.push('- Keep every term on one consistent unit basis before comparing magnitudes.');}else if(/assumption|risk|failure|check|verify|sanity/.test(lower)){lines.push('','Critical checks:');group.checks.slice(0,3).forEach(item=>lines.push('- '+item));}else{context.fields.length&&(lines.push('','Current input snapshot:'),context.fields.slice(0,6).forEach(item=>lines.push('- '+item)));if(context.results.length){lines.push('','Current outputs:');context.results.slice(0,4).forEach(item=>lines.push('- '+item));}else if(context.sections.length){lines.push('','Visible sections:');context.sections.slice(0,6).forEach(item=>lines.push('- '+item));}}context.notes.length&&(lines.push('','Reference cue:'),lines.push('- '+context.notes[0]));lines.push('','Standards / references to verify:','- '+group.standards,'','Ask next:','- Explain the governing equations for this module.','- Sanity-check the current inputs and units.','- List the main failure modes and assumptions.');!localOnline&&!webllmReady&&lines.push('','Model note: No local or browser model is active right now, so this answer is coming from the built-in guidance path.');return lines.join('\n');}
+function openPanel(){const panel=byId('calc-ai-panel'),button=byId('calc-ai-open');panel.hidden=false;button.setAttribute('aria-expanded','true');updateContextBar();seedIntro(false);probeLocalAI();rootInput.focus();}
+function closePanel(){byId('calc-ai-panel').hidden=true;byId('calc-ai-open').setAttribute('aria-expanded','false');}
+function toggleSetup(force){const setup=byId('calc-ai-setup'),open=typeof force==='boolean'?force:!setup.classList.contains('open');setup.classList.toggle('open',open);if(open){const cfg=getAIConfig(),wcfg=getWebLLMConfig();byId('calc-ai-url').value=cfg.url;byId('calc-ai-model').value=cfg.model;byId('calc-ai-webllm-enable').checked=wcfg.enabled;byId('calc-ai-webllm-model').value=wcfg.model;refreshSetupStatus();webllmReady&&(byId('calc-ai-webllm-load').style.display='none',byId('calc-ai-webllm-unload').style.display='inline-block');}}
+async function sendQuery(override){const query=normText(override!==undefined?override:rootInput.value);if(!query)return;override===undefined&&(rootInput.value='');openPanel();addMessage(query,'user');const pending=addPending(),context=collectContext();let response=await askLocalAI(query,context);response||(response=await askBrowserAI(query,context));response||(response=generateBuiltInResponse(query,context));pending.remove();storeTurn(query,response);addMessage(response,'ai');updateContextBar();}
+byId('calc-ai-open').addEventListener('click',()=>byId('calc-ai-panel').hidden?openPanel():closePanel());
+byId('calc-ai-close').addEventListener('click',closePanel);
+byId('calc-ai-settings-toggle').addEventListener('click',()=>toggleSetup());
+byId('calc-ai-send').addEventListener('click',()=>sendQuery());
+rootInput.addEventListener('keydown',event=>{if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendQuery();}});
+byId('calc-ai-test').addEventListener('click',testAIConnection);
+byId('calc-ai-save').addEventListener('click',saveAISettings);
+byId('calc-ai-reset').addEventListener('click',resetAISettings);
+byId('calc-ai-webllm-enable').addEventListener('change',event=>{const cfg=getWebLLMConfig();saveWebLLMConfig({enabled:event.target.checked,model:cfg.model});});
+byId('calc-ai-webllm-model').addEventListener('change',event=>{const cfg=getWebLLMConfig();saveWebLLMConfig({enabled:cfg.enabled,model:event.target.value});});
+byId('calc-ai-webllm-load').addEventListener('click',()=>{const model=byId('calc-ai-webllm-model').value,enabled=byId('calc-ai-webllm-enable').checked;saveWebLLMConfig({enabled,model});loadBrowserEngine(model);});
+byId('calc-ai-webllm-unload').addEventListener('click',unloadBrowserEngine);
+document.querySelectorAll('.calc-ai-chip').forEach(button=>button.addEventListener('click',()=>sendQuery(button.getAttribute('data-q')||'')));
+document.addEventListener('click',event=>{const tab=event.target.closest('[role="tab"]');tab&&setTimeout(updateContextBar,0);});
+const savedWebLLM=getWebLLMConfig();
+probeLocalAI();
+updateContextBar();
+savedWebLLM.enabled&&navigator.gpu&&setTimeout(()=>loadBrowserEngine(savedWebLLM.model),1200);
+})();
+</script>
+<script src="./calc-overrides.js" defer></script>
 </body>
 </html>
