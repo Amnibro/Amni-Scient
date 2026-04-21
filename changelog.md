@@ -1,6 +1,25 @@
 ﻿# Changelog 
 
-## [4.7.6] - 2026-04-21 - Superior AI Models Update
+## [4.7.7] - 2026-04-21 - WebLLM Model Compatibility Fix
+
+### Fixed
+- **WebLLM Integration** — Resolved "Cannot find model record in appConfig" errors by updating model IDs to supported WebLLM prebuiltAppConfig models:
+  - Replaced unsupported Qwen3.5 and Bonsai models with available Qwen2.5 series
+  - Updated calc page defaults: mobile `Qwen2.5-0.5B`, desktop `Qwen2.5-1.5B`
+  - Prayer page already used correct models, no changes needed
+
+### Changed
+- **Model Options** — Updated calc page WebLLM dropdown with accurate size estimates and supported models
+
+### Technical Notes
+- Qwen3.5 and Bonsai-8B models not yet available in WebLLM prebuiltAppConfig
+- Server-side Adam models remain unchanged and functional
+- WebLLM uses MLC-compiled models, requires specific model compilation for new additions
+
+### Files Touched
+- `amni-scient-site/calc/index.html`
+- `docs/checklists/checklist_fix_webllm_models_v1.3.0.md`
+- `amni-scient-site/changelog.md`
 
 ### Changed
 - **AI Models** — Major upgrade to superior smaller/efficient models based on latest benchmarks:
