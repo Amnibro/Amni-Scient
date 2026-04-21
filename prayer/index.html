@@ -109,7 +109,7 @@
       <div id="ai-status-hint" class="ai-hint">Amni-Ai is a local-first language model engine. Install and run it to power in-depth theological discussion.</div>
     </div>
     <label class="ai-field"><span class="ai-label">Server URL</span><input type="text" id="ai-url-input" placeholder="http://localhost:7700" autocomplete="off" spellcheck="false"/></label>
-    <label class="ai-field"><span class="ai-label">Model</span><input type="text" id="ai-model-input" placeholder="qwen3.5-9b" autocomplete="off" spellcheck="false"/></label>
+    <label class="ai-field"><span class="ai-label">Model</span><input type="text" id="ai-model-input" placeholder="qwen3.5-2b" autocomplete="off" spellcheck="false"/></label>
     <div class="ai-actions">
       <button id="ai-test-btn">TEST</button>
       <button id="ai-save-btn">SAVE</button>
@@ -123,12 +123,14 @@
       <label class="ai-toggle"><input type="checkbox" id="webllm-enable"/><span>Auto-load on page open</span></label>
       <label class="ai-field"><span class="ai-label">Model</span><select id="webllm-model">
         <option value="SmolLM2-135M-Instruct-q0f16-MLC">SmolLM2 135M &middot; ~90MB (mobile / low VRAM)</option>
+        <option value="Qwen3.5-0.8B-Instruct-q4f16_1-MLC">Qwen3.5 0.8B &middot; ~500MB (ultra-light)</option>
         <option value="SmolLM2-360M-Instruct-q0f16-MLC">SmolLM2 360M &middot; ~230MB</option>
-        <option value="Qwen2.5-0.5B-Instruct-q4f16_1-MLC">Qwen2.5 0.5B &middot; ~300MB</option>
+        <option value="Qwen3.5-2B-Instruct-q4f16_1-MLC">Qwen3.5 2B &middot; ~1.2GB (balanced performance)</option>
         <option value="Llama-3.2-3B-Instruct-q4f32_1-MLC">Llama 3.2 3B &middot; ~1.2GB (desktop)</option>
         <option value="Qwen2.5-1.5B-Instruct-q4f16_1-MLC">Qwen2.5 1.5B &middot; ~900MB (desktop)</option>
         <option value="Qwen2.5-3B-Instruct-q4f16_1-MLC">Qwen2.5 3B &middot; ~1.8GB (high performance)</option>
         <option value="SmolLM2-1.7B-Instruct-q4f16_1-MLC">SmolLM2 1.7B &middot; ~1.1GB (desktop)</option>
+        <option value="Bonsai-8B-mlx-1bit">Bonsai 8B 1-bit &middot; ~1.3GB (Apple Silicon)</option>
       </select></label>
       <div id="webllm-progress-wrap" style="display:none">
         <div class="ai-progress-bar"><div id="webllm-progress-fill"></div></div>
