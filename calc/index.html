@@ -333,9 +333,9 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <div class="card">
 <h3>BEAM CONFIGURATION</h3>
 <div class="row">
-<div class="field"><label for="bm-len">LENGTH</label><div class="field-row"><input type="number" id="bm-len" value="3000" step="any"><select id="bm-len-u"><option>mm</option><option>m</option><option>in</option><option>ft</option></select></div></div>
-<div class="field"><label for="bm-e">E MODULUS</label><div class="field-row"><input type="number" id="bm-e" value="200" step="any"><select id="bm-e-u"><option>GPa</option><option>MPa</option><option>psi</option><option>ksi</option></select></div></div>
-<div class="field"><label for="bm-i">I (MOMENT)</label><div class="field-row"><input type="number" id="bm-i" value="8356" step="any"><select id="bm-i-u"><option>cm4</option><option>mm4</option><option>in4</option></select></div></div>
+<div class="field"><label for="bm-len">LENGTH</label><div class="field-row"><input type="number" id="bm-len" value="3000" step="any"><select id="bm-len-u" aria-label="unit"><option>mm</option><option>m</option><option>in</option><option>ft</option></select></div></div>
+<div class="field"><label for="bm-e">E MODULUS</label><div class="field-row"><input type="number" id="bm-e" value="200" step="any"><select id="bm-e-u" aria-label="unit"><option>GPa</option><option>MPa</option><option>psi</option><option>ksi</option></select></div></div>
+<div class="field"><label for="bm-i">I (MOMENT)</label><div class="field-row"><input type="number" id="bm-i" value="8356" step="any"><select id="bm-i-u" aria-label="unit"><option>cm4</option><option>mm4</option><option>in4</option></select></div></div>
 </div>
 </div>
 <div class="card">
@@ -355,9 +355,9 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <h3>LOADS</h3>
 <div class="row">
 <div class="field"><label for="ld-type">TYPE</label><select id="ld-type"><option value="point">POINT LOAD</option><option value="distributed">DISTRIBUTED</option><option value="moment">MOMENT</option></select></div>
-<div class="field"><label for="ld-pos">POSITION</label><div class="field-row"><input type="number" id="ld-pos" value="1500" step="any"><select id="ld-pos-u"><option>mm</option><option>m</option><option>in</option><option>ft</option></select></div></div>
-<div class="field"><label for="ld-mag">MAGNITUDE</label><div class="field-row"><input type="number" id="ld-mag" value="-10" step="any"><select id="ld-mag-u"><option>kN</option><option>N</option><option>lbf</option><option>kip</option></select></div></div>
-<div class="field" id="ld-end-wrap" style="display:none"><label for="ld-end">END POS</label><div class="field-row"><input type="number" id="ld-end" step="any"><select id="ld-end-u"><option>mm</option><option>m</option><option>in</option><option>ft</option></select></div></div>
+<div class="field"><label for="ld-pos">POSITION</label><div class="field-row"><input type="number" id="ld-pos" value="1500" step="any"><select id="ld-pos-u" aria-label="unit"><option>mm</option><option>m</option><option>in</option><option>ft</option></select></div></div>
+<div class="field"><label for="ld-mag">MAGNITUDE</label><div class="field-row"><input type="number" id="ld-mag" value="-10" step="any"><select id="ld-mag-u" aria-label="unit"><option>kN</option><option>N</option><option>lbf</option><option>kip</option></select></div></div>
+<div class="field" id="ld-end-wrap" style="display:none"><label for="ld-end">END POS</label><div class="field-row"><input type="number" id="ld-end" step="any"><select id="ld-end-u" aria-label="unit"><option>mm</option><option>m</option><option>in</option><option>ft</option></select></div></div>
 </div>
 <div style="margin-top:.5rem"><button class="btn btn-sm" onclick="addLoad()">+ ADD LOAD</button> <button class="btn btn-sm" onclick="clearLoads()">CLEAR ALL</button></div>
 <div id="load-list" style="font-size:.75rem;color:var(--dim);margin-top:6px;display:flex;flex-wrap:wrap;gap:4px"></div>
@@ -564,7 +564,7 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <div class="card">
 <h3>STRESS STATE</h3>
 <div class="row">
-<div class="field"><label for="st-sx">&sigma;x</label><div class="field-row"><input type="number" id="st-sx" value="120" step="any"><select id="st-u"><option>MPa</option><option>ksi</option><option>psi</option><option>GPa</option></select></div></div>
+<div class="field"><label for="st-sx">&sigma;x</label><div class="field-row"><input type="number" id="st-sx" value="120" step="any"><select id="st-u" aria-label="unit"><option>MPa</option><option>ksi</option><option>psi</option><option>GPa</option></select></div></div>
 <div class="field"><label for="st-sy">&sigma;y</label><input type="number" id="st-sy" value="-40" step="any"></div>
 <div class="field"><label for="st-sz">&sigma;z</label><input type="number" id="st-sz" value="0" step="any"></div>
 <div class="field"><label for="st-txy">&tau;xy</label><input type="number" id="st-txy" value="50" step="any"></div>
@@ -600,7 +600,7 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <div class="field"><label for="bl-grade">GRADE</label><select id="bl-grade"></select></div>
 <div class="field"><label for="bl-size">SIZE</label><select id="bl-size"></select></div>
 <div class="field"><label for="bl-num"># BOLTS</label><input type="number" id="bl-num" value="4" min="1"></div>
-<div class="field"><label for="bl-fext">EXTERNAL LOAD</label><div class="field-row"><input type="number" id="bl-fext" value="20000" step="any"><select id="bl-fext-u"><option>N</option><option>kN</option><option>lbf</option><option>kip</option></select></div></div>
+<div class="field"><label for="bl-fext">EXTERNAL LOAD</label><div class="field-row"><input type="number" id="bl-fext" value="20000" step="any"><select id="bl-fext-u" aria-label="unit"><option>N</option><option>kN</option><option>lbf</option><option>kip</option></select></div></div>
 <div class="field"><label for="bl-shear">SHEAR LOAD</label><div class="field-row"><input type="number" id="bl-shear" value="0" step="any"><span style="color:var(--dim);font-size:.75rem">N</span></div></div>
 </div>
 <div class="row" style="margin-top:.5rem">
@@ -640,15 +640,15 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <h3>SPRING PARAMETERS</h3>
 <div class="row">
 <div class="field"><label for="sp-type">TYPE</label><select id="sp-type"><option value="compression">COMPRESSION (HELICAL)</option><option value="extension">EXTENSION (HELICAL)</option><option value="torsion">TORSION (HELICAL)</option><option value="belleville">BELLEVILLE (DISC / CONICAL)</option><option value="die">DIE (HEAVY COMPRESSION)</option></select></div>
-<div class="field"><label for="sp-d">WIRE DIA</label><div class="field-row"><input type="number" id="sp-d" value="3" step="any"><select id="sp-d-u"><option>mm</option><option>in</option></select></div></div>
-<div class="field"><label for="sp-D">COIL DIA (MEAN)</label><div class="field-row"><input type="number" id="sp-D" value="25" step="any"><select id="sp-D-u"><option>mm</option><option>in</option></select></div></div>
+<div class="field"><label for="sp-d">WIRE DIA</label><div class="field-row"><input type="number" id="sp-d" value="3" step="any"><select id="sp-d-u" aria-label="unit"><option>mm</option><option>in</option></select></div></div>
+<div class="field"><label for="sp-D">COIL DIA (MEAN)</label><div class="field-row"><input type="number" id="sp-D" value="25" step="any"><select id="sp-D-u" aria-label="unit"><option>mm</option><option>in</option></select></div></div>
 <div class="field"><label for="sp-na">ACTIVE COILS</label><input type="number" id="sp-na" value="8" step="0.5"></div>
 <div class="field"><label for="sp-nt">TOTAL COILS</label><input type="number" id="sp-nt" value="10" step="0.5"></div>
 <div class="field"><label for="sp-fl">FREE LENGTH</label><div class="field-row"><input type="number" id="sp-fl" value="60" step="any"><span style="color:var(--dim);font-size:.7rem">mm</span></div></div>
 </div>
 <div class="row" style="margin-top:.5rem">
-<div class="field"><label for="sp-g">SHEAR MODULUS G</label><div class="field-row"><input type="number" id="sp-g" value="79.3" step="any"><select id="sp-g-u"><option>GPa</option><option>MPa</option><option>psi</option></select></div></div>
-<div class="field"><label for="sp-f">APPLIED FORCE</label><div class="field-row"><input type="number" id="sp-f" value="100" step="any"><select id="sp-f-u"><option>N</option><option>lbf</option><option>kgf</option></select></div></div>
+<div class="field"><label for="sp-g">SHEAR MODULUS G</label><div class="field-row"><input type="number" id="sp-g" value="79.3" step="any"><select id="sp-g-u" aria-label="unit"><option>GPa</option><option>MPa</option><option>psi</option></select></div></div>
+<div class="field"><label for="sp-f">APPLIED FORCE</label><div class="field-row"><input type="number" id="sp-f" value="100" step="any"><select id="sp-f-u" aria-label="unit"><option>N</option><option>lbf</option><option>kgf</option></select></div></div>
 <div class="field"><label for="sp-sy">YIELD STRENGTH</label><div class="field-row"><input type="number" id="sp-sy" value="1000" step="any"><span style="color:var(--dim);font-size:.7rem">MPa</span></div></div>
 </div>
 <button class="btn btn-fill" onclick="calcSpring()" style="margin-top:.75rem">CALCULATE</button>
@@ -739,7 +739,7 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <div class="slider-row"><label for="fin-thk">MIN THICKNESS</label><input type="range" min="0" max="10" value="3" id="fin-thk"><span class="sv" id="fin-thk-v">3</span></div>
 <div class="row" style="margin-top:.75rem">
 <div class="field"><label for="fin-sub">SUBSTRATE</label><select id="fin-sub"><option value="">ANY</option><option>Carbon Steel</option><option>Alloy Steel</option><option>Stainless Steel</option><option>Aluminum</option><option>Titanium</option><option>Copper Alloy</option><option>Carbide</option><option>Polymer</option></select></div>
-<div class="chk-row"><input type="checkbox" id="fin-full"> FULL COVERAGE REQUIRED</div>
+<div class="chk-row"><label for="fin-full"><input type="checkbox" id="fin-full"> FULL COVERAGE REQUIRED</label></div>
 </div>
 <button class="btn btn-fill" onclick="recommendFinishes()" style="margin-top:.75rem">RECOMMEND</button>
 </div>
@@ -766,7 +766,7 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <option value="system3">SYSTEM 3×3</option>
 </select></div>
 <div id="alg-inputs" class="row" style="margin-top:.5rem"></div>
-<div class="chk-row" style="margin-top:.5rem"><input type="checkbox" id="alg-show" checked> SHOW WORK</div>
+<div class="chk-row" style="margin-top:.5rem"><label for="alg-show"><input type="checkbox" id="alg-show" checked> SHOW WORK</label></div>
 <button class="btn btn-fill" onclick="solveAlgebra()" style="margin-top:.75rem">SOLVE</button>
 <div id="alg-result" class="results"></div>
 </div>
@@ -783,7 +783,7 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <option value="torus">TORUS</option>
 </select></div>
 <div id="geo-inputs" class="row" style="margin-top:.5rem"></div>
-<div class="chk-row" style="margin-top:.5rem"><input type="checkbox" id="geo-show" checked> SHOW WORK</div>
+<div class="chk-row" style="margin-top:.5rem"><label for="geo-show"><input type="checkbox" id="geo-show" checked> SHOW WORK</label></div>
 <button class="btn btn-fill" onclick="solveGeometry()" style="margin-top:.75rem">CALCULATE</button>
 <div id="geo-result" class="results"></div>
 </div>
@@ -796,7 +796,7 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <option value="taylor">TAYLOR SERIES</option>
 </select></div>
 <div id="calc-inputs" style="margin-top:.5rem"></div>
-<div class="chk-row" style="margin-top:.5rem"><input type="checkbox" id="calc-show" checked> SHOW WORK</div>
+<div class="chk-row" style="margin-top:.5rem"><label for="calc-show"><input type="checkbox" id="calc-show" checked> SHOW WORK</label></div>
 <button class="btn btn-fill" onclick="solveCalculus()" style="margin-top:.75rem">SOLVE</button>
 <div id="calc-result" class="results"></div>
 </div>
@@ -811,7 +811,7 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 </select></div>
 <div class="field" style="margin-top:.5rem"><label for="la-size">SIZE</label><select id="la-size" onchange="updateLinalgUI()"><option value="2">2×2</option><option value="3">3×3</option><option value="4">4×4</option></select></div>
 <div id="la-inputs" style="margin-top:.5rem"></div>
-<div class="chk-row" style="margin-top:.5rem"><input type="checkbox" id="la-show" checked> SHOW WORK</div>
+<div class="chk-row" style="margin-top:.5rem"><label for="la-show"><input type="checkbox" id="la-show" checked> SHOW WORK</label></div>
 <button class="btn btn-fill" onclick="solveLinAlg()" style="margin-top:.75rem">SOLVE</button>
 <div id="la-result" class="results"></div>
 </div>
@@ -824,7 +824,7 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <option value="euler">EULER METHOD (NUMERICAL)</option>
 </select></div>
 <div id="de-inputs" style="margin-top:.5rem"></div>
-<div class="chk-row" style="margin-top:.5rem"><input type="checkbox" id="de-show" checked> SHOW WORK</div>
+<div class="chk-row" style="margin-top:.5rem"><label for="de-show"><input type="checkbox" id="de-show" checked> SHOW WORK</label></div>
 <button class="btn btn-fill" onclick="solveDiffEq()" style="margin-top:.75rem">SOLVE</button>
 <div id="de-result" class="results"></div>
 </div>
@@ -1150,9 +1150,9 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <div class="field"><label for="uc-cat">CATEGORY</label><select id="uc-cat"></select></div>
 </div>
 <div class="row" style="margin-top:1rem;align-items:center">
-<div class="field" style="flex:1"><label for="uc-val">FROM</label><div class="field-row"><input type="number" id="uc-val" value="1" step="any"><select id="uc-from"></select></div></div>
+<div class="field" style="flex:1"><label for="uc-val">FROM</label><div class="field-row"><input type="number" id="uc-val" value="1" step="any"><select id="uc-from" aria-label="from unit"></select></div></div>
 <span style="font-size:1.5rem;color:var(--accent);padding:0 .5rem">&rarr;</span>
-<div class="field" style="flex:1"><label for="uc-result">TO</label><div class="field-row"><input type="number" id="uc-result" readonly style="color:var(--accent);font-weight:700"><select id="uc-to"></select></div></div>
+<div class="field" style="flex:1"><label for="uc-result">TO</label><div class="field-row"><input type="number" id="uc-result" readonly style="color:var(--accent);font-weight:700"><select id="uc-to" aria-label="to unit"></select></div></div>
 </div>
 </div>
 <div class="card" style="margin-top:1rem">
@@ -2187,7 +2187,7 @@ AMNI-CALC v2.5.0 &mdash; <a href="https://amni-scient.com">AMNI-SCIENT</a> &mdas
 <button class="calc-ai-chip" type="button" data-q="Summarize the current results in plain engineering language and tell me what they imply.">Explain results</button>
 </div>
 <div class="calc-ai-input">
-<textarea id="calc-ai-input" placeholder="Ask about the active calculation, handbook data, assumptions, units, or design checks..."></textarea>
+<textarea id="calc-ai-input" aria-label="Engineering AI prompt" placeholder="Ask about the active calculation, handbook data, assumptions, units, or design checks..."></textarea>
 <div class="calc-ai-sendrow">
 <div class="calc-ai-hint">Local endpoint is preferred. Browser mode can run fully on-device when WebGPU is available.</div>
 <button id="calc-ai-send" class="btn btn-fill" type="button">SEND</button>
