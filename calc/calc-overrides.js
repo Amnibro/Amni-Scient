@@ -47,6 +47,17 @@ const fmt2=(n,d=2)=>(typeof n==='number'&&isFinite(n))?n.toFixed(d):'—';
 let _sealModP=null;
 const _loadSealMod=()=>_sealModP||(_sealModP=import('./pkg/amni_calc_wasm.js').then(async m=>{try{await m.default();}catch(_){ }window._calcSealWasm=(json)=>m.calc_seal(json);return m;}).catch(e=>{_sealModP=null;throw e;}));
 const _runSeal=async json=>{try{return typeof window._calcSealWasm==='function'?window._calcSealWasm(json):(await _loadSealMod()).calc_seal(json);}catch(_){const m=await _loadSealMod();return m.calc_seal(json);}};
+const _squeezeRangeByGland={face:[10,20],radial_bore:[15,30],radial_piston:[12,25]};
+const _squeezeMatAdjust=[
+{re:/(silicone|vmq|fvmq)/i,min:0,max:-2},
+{re:/(fkm|viton|ffkm)/i,min:0,max:-1},
+{re:/(epdm)/i,min:-1,max:0},
+{re:/(ptfe|teflon)/i,min:2,max:2},
+{re:/(urethane|polyurethane|pu)/i,min:1,max:1}
+];
+const _hardnessAdjust=h=>h<=50?{min:-1,max:-2}:h>=85?{min:1,max:2}:h>=75?{min:0,max:1}:{min:0,max:0};
+const _clampSqueezeRange=(min,max)=>{const lo=Math.max(5,Math.min(35,min)),hi=Math.max(lo+4,Math.min(40,max));return[lo,hi];};
+const _resolveSqueezeRange=(gland,material,hardness,fallback)=>{const base=_squeezeRangeByGland[gland]||(Array.isArray(fallback)&&fallback.length===2?[Number(fallback[0]),Number(fallback[1])]:[15,30]);let min=Number(base[0]),max=Number(base[1]);const mat=String(material||'').toLowerCase(),rule=_squeezeMatAdjust.find(r=>r.re.test(mat));if(rule){min+=rule.min;max+=rule.max;}if(Number.isFinite(hardness)){const hAdj=_hardnessAdjust(hardness);min+=hAdj.min;max+=hAdj.max;}return _clampSqueezeRange(min,max);};
 function _installCalcSeal(){
 if(window.__sealOverrideInstalled)return;
 window.__sealOverrideInstalled=true;
@@ -57,15 +68,23 @@ if(xsec==='custom'){const lines=((document.getElementById('sl-custom-pts')||{}).
 const inp={gland_type:(document.getElementById('sl-gland')||{}).value||'face',cross_section:xsec,material_idx:parseInt((document.getElementById('sl-mat')||{}).value)||0,hardness_shore_a:parseFloat((document.getElementById('sl-hard')||{}).value)||70,cord_dia_mm:parseFloat((document.getElementById('sl-cord')||{}).value)||3.53,id_mm:parseFloat((document.getElementById('sl-id')||{}).value)||25,groove_depth_mm:parseFloat((document.getElementById('sl-depth')||{}).value)||2.62,groove_width_mm:parseFloat((document.getElementById('sl-width')||{}).value)||4.34,gland_gap_mm:parseFloat((document.getElementById('sl-gap')||{}).value)||0.1,pressure_mpa:parseFloat((document.getElementById('sl-press')||{}).value)||0,temp_c:parseFloat((document.getElementById('sl-temp')||{}).value)||23,steps:50,custom_pts:customPts};
 let res;try{res=JSON.parse(await _runSeal(JSON.stringify(inp)));}catch(e){document.getElementById('seal-results').innerHTML=`<h3>SEAL RESULTS</h3><p style="color:var(--err)">${e.message}</p>`;return;}
 if(res.error){document.getElementById('seal-results').innerHTML=`<h3>SEAL RESULTS</h3><p style="color:var(--err)">${res.error}</p>`;return;}
-const sqC=res.squeeze_pct<10||res.squeeze_pct>40?'warn':'ok',fillC=res.volume_fill_pct>90||res.volume_fill_pct<60?'warn':'ok',extC=res.extrusion_gap_ok?'ok':'err';
+const gland=(String(res.gland_type||inp.gland_type||'face')).toLowerCase();
+const matSel=document.getElementById('sl-mat');
+const materialName=String(res.material||((matSel&&matSel.selectedOptions&&matSel.selectedOptions[0]&&matSel.selectedOptions[0].text)||''));
+const hardness=Number.isFinite(Number(res.hardness_shore_a))?Number(res.hardness_shore_a):Number(inp.hardness_shore_a);
+const squeezeRange=_resolveSqueezeRange(gland,materialName,hardness,res.optimum_range);
+const squeezeMin=squeezeRange[0],squeezeMax=squeezeRange[1],squeezeIn=res.squeeze_pct>=squeezeMin&&res.squeeze_pct<=squeezeMax;
+const sqC=squeezeIn?'ok':'warn',fillC=res.volume_fill_pct>90||res.volume_fill_pct<60?'warn':'ok',extC=res.extrusion_gap_ok?'ok':'err';
 const p=[['MATERIAL',res.material,''],['GLAND TYPE',res.gland_type.replace(/_/g,' ').toUpperCase(),''],['SQUEEZE',fmt2(res.squeeze_pct,1)+'%',sqC],['SHAPE FACTOR',fmt2(res.shape_factor,3),''],['CONTACT WIDTH',fmt2(res.contact_width_mm,2)+' mm',''],['CONTACT PRESSURE',fmt2(res.contact_pressure_mpa,2)+' MPa',''],['FORCE/mm',fmt2(res.compression_force_n_per_mm,2)+' N/mm',''],['GLAND FILL',fmt2(res.volume_fill_pct,1)+'%',fillC],['EXTRUSION GAP',res.extrusion_gap_ok?'OK':'FAIL',extC],['MAX ALLOWABLE GAP',fmt2(res.max_allowable_gap_mm,3)+' mm',''],['MAX VON MISES',fmt2(res.max_vonmises,2)+' MPa','']];
-const warns=res.warnings||[],recs=res.recommendations||[];
+const warns=(res.warnings||[]).filter(t=>!(/squeeze/i.test(t)&&/(ideal|range)/i.test(t))),recs=(res.recommendations||[]).filter(t=>!(/squeeze/i.test(t)&&/(ideal|range)/i.test(t))); 
+const squeezeMsg=`Squeeze ${squeezeIn?'in':'outside'} ideal range (${fmt2(squeezeMin,0)}-${fmt2(squeezeMax,0)}%) for ${materialName||'selected material'}`;
+const squeezeHtml='<div style="margin-top:.6rem"><div class="tag '+(squeezeIn?'tag-ok':'tag-warn')+'" style="display:block;margin:2px 0">'+squeezeMsg+'</div></div>';
 const warnHtml=warns.length?'<div style="margin-top:.75rem">'+warns.map(w=>`<div class="tag tag-warn" style="display:block;margin:2px 0">${w}</div>`).join('')+'</div>':'';
 const recHtml=recs.length?'<div style="margin-top:.5rem">'+recs.map(r=>`<div class="tag tag-ok" style="display:block;margin:2px 0">${r}</div>`).join('')+'</div>':'';
-document.getElementById('seal-results').innerHTML='<h3>SEAL RESULTS</h3><div class="result-grid">'+p.map(x=>'<div class="result-item"><div class="lbl">'+x[0]+'</div><div class="val'+(x[2]?' '+x[2]:'')+'">'+(x[1]||'—')+'</div></div>').join('')+'</div>'+warnHtml+recHtml;
+document.getElementById('seal-results').innerHTML='<h3>SEAL RESULTS</h3><div class="result-grid">'+p.map(x=>'<div class="result-item"><div class="lbl">'+x[0]+'</div><div class="val'+(x[2]?' '+x[2]:'')+'">'+(x[1]||'—')+'</div></div>').join('')+'</div>'+squeezeHtml+warnHtml+recHtml;
 const rng=document.getElementById('sl-squeeze-rng'),sqv=document.getElementById('sl-squeeze-v');if(rng)rng.value=res.squeeze_pct;if(sqv)sqv.textContent=res.squeeze_pct.toFixed(1);
 if(typeof drawSealAnim==='function')drawSealAnim(res.squeeze_pct);
-setTimeout(()=>{if(window.drawSealDiagram){window.drawSealDiagram('c-seal-fd',res.force_deflection,'N/mm','#00ff9d',res.current_point_fd,res.optimum_range);window.drawSealDiagram('c-seal-ss',res.stress_strain,'MPa','#ff6b35',res.current_point_ss,null);}},50);
+setTimeout(()=>{if(window.drawSealDiagram){window.drawSealDiagram('c-seal-fd',res.force_deflection,'N/mm','#00ff9d',res.current_point_fd,squeezeRange);window.drawSealDiagram('c-seal-ss',res.stress_strain,'MPa','#ff6b35',res.current_point_ss,null);}},50);
 };
 const sealFn=window.calcSeal;
 try{Object.defineProperty(window,'calcSeal',{configurable:true,get:()=>sealFn,set:()=>{}});}catch(_){ }
