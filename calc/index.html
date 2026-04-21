@@ -333,9 +333,9 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <div class="card">
 <h3>BEAM CONFIGURATION</h3>
 <div class="row">
-<div class="field"><label>LENGTH</label><div class="field-row"><input type="number" id="bm-len" value="3000" step="any"><select id="bm-len-u"><option>mm</option><option>m</option><option>in</option><option>ft</option></select></div></div>
-<div class="field"><label>E MODULUS</label><div class="field-row"><input type="number" id="bm-e" value="200" step="any"><select id="bm-e-u"><option>GPa</option><option>MPa</option><option>psi</option><option>ksi</option></select></div></div>
-<div class="field"><label>I (MOMENT)</label><div class="field-row"><input type="number" id="bm-i" value="8356" step="any"><select id="bm-i-u"><option>cm4</option><option>mm4</option><option>in4</option></select></div></div>
+<div class="field"><label for="bm-len">LENGTH</label><div class="field-row"><input type="number" id="bm-len" value="3000" step="any"><select id="bm-len-u"><option>mm</option><option>m</option><option>in</option><option>ft</option></select></div></div>
+<div class="field"><label for="bm-e">E MODULUS</label><div class="field-row"><input type="number" id="bm-e" value="200" step="any"><select id="bm-e-u"><option>GPa</option><option>MPa</option><option>psi</option><option>ksi</option></select></div></div>
+<div class="field"><label for="bm-i">I (MOMENT)</label><div class="field-row"><input type="number" id="bm-i" value="8356" step="any"><select id="bm-i-u"><option>cm4</option><option>mm4</option><option>in4</option></select></div></div>
 </div>
 </div>
 <div class="card">
@@ -354,10 +354,10 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <div class="card">
 <h3>LOADS</h3>
 <div class="row">
-<div class="field"><label>TYPE</label><select id="ld-type"><option value="point">POINT LOAD</option><option value="distributed">DISTRIBUTED</option><option value="moment">MOMENT</option></select></div>
-<div class="field"><label>POSITION</label><div class="field-row"><input type="number" id="ld-pos" value="1500" step="any"><select id="ld-pos-u"><option>mm</option><option>m</option><option>in</option><option>ft</option></select></div></div>
-<div class="field"><label>MAGNITUDE</label><div class="field-row"><input type="number" id="ld-mag" value="-10" step="any"><select id="ld-mag-u"><option>kN</option><option>N</option><option>lbf</option><option>kip</option></select></div></div>
-<div class="field" id="ld-end-wrap" style="display:none"><label>END POS</label><div class="field-row"><input type="number" id="ld-end" step="any"><select id="ld-end-u"><option>mm</option><option>m</option><option>in</option><option>ft</option></select></div></div>
+<div class="field"><label for="ld-type">TYPE</label><select id="ld-type"><option value="point">POINT LOAD</option><option value="distributed">DISTRIBUTED</option><option value="moment">MOMENT</option></select></div>
+<div class="field"><label for="ld-pos">POSITION</label><div class="field-row"><input type="number" id="ld-pos" value="1500" step="any"><select id="ld-pos-u"><option>mm</option><option>m</option><option>in</option><option>ft</option></select></div></div>
+<div class="field"><label for="ld-mag">MAGNITUDE</label><div class="field-row"><input type="number" id="ld-mag" value="-10" step="any"><select id="ld-mag-u"><option>kN</option><option>N</option><option>lbf</option><option>kip</option></select></div></div>
+<div class="field" id="ld-end-wrap" style="display:none"><label for="ld-end">END POS</label><div class="field-row"><input type="number" id="ld-end" step="any"><select id="ld-end-u"><option>mm</option><option>m</option><option>in</option><option>ft</option></select></div></div>
 </div>
 <div style="margin-top:.5rem"><button class="btn btn-sm" onclick="addLoad()">+ ADD LOAD</button> <button class="btn btn-sm" onclick="clearLoads()">CLEAR ALL</button></div>
 <div id="load-list" style="font-size:.75rem;color:var(--dim);margin-top:6px;display:flex;flex-wrap:wrap;gap:4px"></div>
@@ -371,7 +371,7 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <div>
 <div class="card">
 <h3>PRESETS</h3>
-<div class="field"><label>SELECT PRESET</label><select id="sec-presets"></select></div>
+<div class="field"><label for="sec-presets">SELECT PRESET</label><select id="sec-presets"></select></div>
 <div id="sec-preset-params"></div>
 <button class="btn btn-sm" onclick="applyPreset()" style="margin-top:.5rem">APPLY PRESET</button>
 </div>
@@ -398,8 +398,8 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <h2>MATERIALS DATABASE</h2>
 <div class="card">
 <div class="row">
-<div class="field" style="flex:1"><label>SEARCH</label><input type="text" id="mat-search" placeholder="Search materials..."></div>
-<div class="field"><label>CATEGORY</label><select id="mat-cat"><option value="">ALL</option></select></div>
+<div class="field" style="flex:1"><label for="mat-search">SEARCH</label><input type="text" id="mat-search" placeholder="Search materials..."></div>
+<div class="field"><label for="mat-cat">CATEGORY</label><select id="mat-cat"><option value="">ALL</option></select></div>
 </div>
 </div>
 <div id="mat-table-wrap">
@@ -564,16 +564,16 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <div class="card">
 <h3>STRESS STATE</h3>
 <div class="row">
-<div class="field"><label>&sigma;x</label><div class="field-row"><input type="number" id="st-sx" value="120" step="any"><select id="st-u"><option>MPa</option><option>ksi</option><option>psi</option><option>GPa</option></select></div></div>
-<div class="field"><label>&sigma;y</label><input type="number" id="st-sy" value="-40" step="any"></div>
-<div class="field"><label>&sigma;z</label><input type="number" id="st-sz" value="0" step="any"></div>
-<div class="field"><label>&tau;xy</label><input type="number" id="st-txy" value="50" step="any"></div>
-<div class="field"><label>&tau;xz</label><input type="number" id="st-txz" value="0" step="any"></div>
-<div class="field"><label>&tau;yz</label><input type="number" id="st-tyz" value="0" step="any"></div>
+<div class="field"><label for="st-sx">&sigma;x</label><div class="field-row"><input type="number" id="st-sx" value="120" step="any"><select id="st-u"><option>MPa</option><option>ksi</option><option>psi</option><option>GPa</option></select></div></div>
+<div class="field"><label for="st-sy">&sigma;y</label><input type="number" id="st-sy" value="-40" step="any"></div>
+<div class="field"><label for="st-sz">&sigma;z</label><input type="number" id="st-sz" value="0" step="any"></div>
+<div class="field"><label for="st-txy">&tau;xy</label><input type="number" id="st-txy" value="50" step="any"></div>
+<div class="field"><label for="st-txz">&tau;xz</label><input type="number" id="st-txz" value="0" step="any"></div>
+<div class="field"><label for="st-tyz">&tau;yz</label><input type="number" id="st-tyz" value="0" step="any"></div>
 </div>
 <div class="row" style="margin-top:.5rem">
-<div class="field"><label>YIELD STR</label><div class="field-row"><input type="number" id="st-sy-val" value="250" step="any"><span style="color:var(--dim);font-size:.75rem">MPa</span></div></div>
-<div class="field"><label>ULT STR</label><div class="field-row"><input type="number" id="st-su-val" value="400" step="any"><span style="color:var(--dim);font-size:.75rem">MPa</span></div></div>
+<div class="field"><label for="st-sy-val">YIELD STR</label><div class="field-row"><input type="number" id="st-sy-val" value="250" step="any"><span style="color:var(--dim);font-size:.75rem">MPa</span></div></div>
+<div class="field"><label for="st-su-val">ULT STR</label><div class="field-row"><input type="number" id="st-su-val" value="400" step="any"><span style="color:var(--dim);font-size:.75rem">MPa</span></div></div>
 </div>
 <button class="btn btn-fill" onclick="calcStress()" style="margin-top:.75rem">ANALYZE</button>
 </div>
@@ -597,16 +597,16 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <div class="card">
 <h3>BOLT CONFIGURATION</h3>
 <div class="row">
-<div class="field"><label>GRADE</label><select id="bl-grade"></select></div>
-<div class="field"><label>SIZE</label><select id="bl-size"></select></div>
-<div class="field"><label># BOLTS</label><input type="number" id="bl-num" value="4" min="1"></div>
-<div class="field"><label>EXTERNAL LOAD</label><div class="field-row"><input type="number" id="bl-fext" value="20000" step="any"><select id="bl-fext-u"><option>N</option><option>kN</option><option>lbf</option><option>kip</option></select></div></div>
-<div class="field"><label>SHEAR LOAD</label><div class="field-row"><input type="number" id="bl-shear" value="0" step="any"><span style="color:var(--dim);font-size:.75rem">N</span></div></div>
+<div class="field"><label for="bl-grade">GRADE</label><select id="bl-grade"></select></div>
+<div class="field"><label for="bl-size">SIZE</label><select id="bl-size"></select></div>
+<div class="field"><label for="bl-num"># BOLTS</label><input type="number" id="bl-num" value="4" min="1"></div>
+<div class="field"><label for="bl-fext">EXTERNAL LOAD</label><div class="field-row"><input type="number" id="bl-fext" value="20000" step="any"><select id="bl-fext-u"><option>N</option><option>kN</option><option>lbf</option><option>kip</option></select></div></div>
+<div class="field"><label for="bl-shear">SHEAR LOAD</label><div class="field-row"><input type="number" id="bl-shear" value="0" step="any"><span style="color:var(--dim);font-size:.75rem">N</span></div></div>
 </div>
 <div class="row" style="margin-top:.5rem">
-<div class="field"><label>PRELOAD %</label><input type="number" id="bl-preload" value="75" min="0" max="100"></div>
-<div class="field"><label>STIFFNESS RATIO C</label><input type="number" id="bl-c" value="0.25" min="0" max="1" step="0.05"></div>
-<div class="field"><label>FRICTION COEFF</label><input type="number" id="bl-mu" value="0.15" step="0.01"></div>
+<div class="field"><label for="bl-preload">PRELOAD %</label><input type="number" id="bl-preload" value="75" min="0" max="100"></div>
+<div class="field"><label for="bl-c">STIFFNESS RATIO C</label><input type="number" id="bl-c" value="0.25" min="0" max="1" step="0.05"></div>
+<div class="field"><label for="bl-mu">FRICTION COEFF</label><input type="number" id="bl-mu" value="0.15" step="0.01"></div>
 </div>
 <button class="btn btn-fill" onclick="calcBolt()" style="margin-top:.75rem">ANALYZE JOINT</button>
 </div>
@@ -639,17 +639,17 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <div class="card">
 <h3>SPRING PARAMETERS</h3>
 <div class="row">
-<div class="field"><label>TYPE</label><select id="sp-type"><option value="compression">COMPRESSION (HELICAL)</option><option value="extension">EXTENSION (HELICAL)</option><option value="torsion">TORSION (HELICAL)</option><option value="belleville">BELLEVILLE (DISC / CONICAL)</option><option value="die">DIE (HEAVY COMPRESSION)</option></select></div>
-<div class="field"><label>WIRE DIA</label><div class="field-row"><input type="number" id="sp-d" value="3" step="any"><select id="sp-d-u"><option>mm</option><option>in</option></select></div></div>
-<div class="field"><label>COIL DIA (MEAN)</label><div class="field-row"><input type="number" id="sp-D" value="25" step="any"><select id="sp-D-u"><option>mm</option><option>in</option></select></div></div>
-<div class="field"><label>ACTIVE COILS</label><input type="number" id="sp-na" value="8" step="0.5"></div>
-<div class="field"><label>TOTAL COILS</label><input type="number" id="sp-nt" value="10" step="0.5"></div>
-<div class="field"><label>FREE LENGTH</label><div class="field-row"><input type="number" id="sp-fl" value="60" step="any"><span style="color:var(--dim);font-size:.7rem">mm</span></div></div>
+<div class="field"><label for="sp-type">TYPE</label><select id="sp-type"><option value="compression">COMPRESSION (HELICAL)</option><option value="extension">EXTENSION (HELICAL)</option><option value="torsion">TORSION (HELICAL)</option><option value="belleville">BELLEVILLE (DISC / CONICAL)</option><option value="die">DIE (HEAVY COMPRESSION)</option></select></div>
+<div class="field"><label for="sp-d">WIRE DIA</label><div class="field-row"><input type="number" id="sp-d" value="3" step="any"><select id="sp-d-u"><option>mm</option><option>in</option></select></div></div>
+<div class="field"><label for="sp-D">COIL DIA (MEAN)</label><div class="field-row"><input type="number" id="sp-D" value="25" step="any"><select id="sp-D-u"><option>mm</option><option>in</option></select></div></div>
+<div class="field"><label for="sp-na">ACTIVE COILS</label><input type="number" id="sp-na" value="8" step="0.5"></div>
+<div class="field"><label for="sp-nt">TOTAL COILS</label><input type="number" id="sp-nt" value="10" step="0.5"></div>
+<div class="field"><label for="sp-fl">FREE LENGTH</label><div class="field-row"><input type="number" id="sp-fl" value="60" step="any"><span style="color:var(--dim);font-size:.7rem">mm</span></div></div>
 </div>
 <div class="row" style="margin-top:.5rem">
-<div class="field"><label>SHEAR MODULUS G</label><div class="field-row"><input type="number" id="sp-g" value="79.3" step="any"><select id="sp-g-u"><option>GPa</option><option>MPa</option><option>psi</option></select></div></div>
-<div class="field"><label>APPLIED FORCE</label><div class="field-row"><input type="number" id="sp-f" value="100" step="any"><select id="sp-f-u"><option>N</option><option>lbf</option><option>kgf</option></select></div></div>
-<div class="field"><label>YIELD STRENGTH</label><div class="field-row"><input type="number" id="sp-sy" value="1000" step="any"><span style="color:var(--dim);font-size:.7rem">MPa</span></div></div>
+<div class="field"><label for="sp-g">SHEAR MODULUS G</label><div class="field-row"><input type="number" id="sp-g" value="79.3" step="any"><select id="sp-g-u"><option>GPa</option><option>MPa</option><option>psi</option></select></div></div>
+<div class="field"><label for="sp-f">APPLIED FORCE</label><div class="field-row"><input type="number" id="sp-f" value="100" step="any"><select id="sp-f-u"><option>N</option><option>lbf</option><option>kgf</option></select></div></div>
+<div class="field"><label for="sp-sy">YIELD STRENGTH</label><div class="field-row"><input type="number" id="sp-sy" value="1000" step="any"><span style="color:var(--dim);font-size:.7rem">MPa</span></div></div>
 </div>
 <button class="btn btn-fill" onclick="calcSpring()" style="margin-top:.75rem">CALCULATE</button>
 </div>
@@ -669,9 +669,9 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <div class="card">
 <h3>GLAND CONFIGURATION</h3>
 <div class="row">
-<div class="field"><label>GLAND TYPE</label><select id="sl-gland"><option value="face">FACE SEAL (AXIAL)</option><option value="radial_bore">RADIAL — BORE</option><option value="radial_piston">RADIAL — PISTON</option></select></div>
-<div class="field"><label>CROSS SECTION</label><select id="sl-xsec"><option value="circle">O-RING (CIRCLE)</option><option value="quad">QUAD SEAL</option><option value="x_ring">X-RING</option><option value="d_ring">D-RING</option><option value="custom">CUSTOM (COORDINATES)</option></select></div>
-<div class="field"><label>MATERIAL</label><select id="sl-mat"></select></div>
+<div class="field"><label for="sl-gland">GLAND TYPE</label><select id="sl-gland"><option value="face">FACE SEAL (AXIAL)</option><option value="radial_bore">RADIAL — BORE</option><option value="radial_piston">RADIAL — PISTON</option></select></div>
+<div class="field"><label for="sl-xsec">CROSS SECTION</label><select id="sl-xsec"><option value="circle">O-RING (CIRCLE)</option><option value="quad">QUAD SEAL</option><option value="x_ring">X-RING</option><option value="d_ring">D-RING</option><option value="custom">CUSTOM (COORDINATES)</option></select></div>
+<div class="field"><label for="sl-mat">MATERIAL</label><select id="sl-mat"></select></div>
 </div>
 <div id="sl-custom-wrap" style="display:none;margin-top:.5rem">
 <p style="font-size:.7rem;color:var(--dim);margin-bottom:.5rem">CLICK TO PLACE VERTICES. RIGHT-CLICK TO CLOSE. SCROLL TO ZOOM. SNAPS TO GRID.</p>
@@ -680,25 +680,25 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <button class="btn btn-sm" onclick="undoSealVert()">UNDO</button>
 <button class="btn btn-sm" onclick="clearSealVerts()">CLEAR</button>
 </div>
-<div class="field" style="margin-top:.25rem"><label>COORDS (X,Y PER LINE)</label><textarea id="sl-custom-pts" rows="3" style="width:100%;background:var(--panel2);border:1px solid var(--border2);color:var(--text);font-family:var(--font);font-size:.7rem;padding:4px;border-radius:3px" placeholder="0,0&#10;1,0&#10;1,0.5&#10;0,0.5"></textarea></div>
+<div class="field" style="margin-top:.25rem"><label for="sl-custom-pts">COORDS (X,Y PER LINE)</label><textarea id="sl-custom-pts" rows="3" style="width:100%;background:var(--panel2);border:1px solid var(--border2);color:var(--text);font-family:var(--font);font-size:.7rem;padding:4px;border-radius:3px" placeholder="0,0&#10;1,0&#10;1,0.5&#10;0,0.5"></textarea></div>
 </div>
 <div class="row" style="margin-top:.5rem">
-<div class="field"><label>CORD DIA (mm)</label><input type="number" id="sl-cord" value="3.53" step="0.01"></div>
-<div class="field"><label>BORE / ID (mm)</label><input type="number" id="sl-id" value="25.0" step="0.1"></div>
-<div class="field"><label>GROOVE DEPTH (mm)</label><input type="number" id="sl-depth" value="2.62" step="0.01"></div>
-<div class="field"><label>GROOVE WIDTH (mm)</label><input type="number" id="sl-width" value="4.34" step="0.01"></div>
+<div class="field"><label for="sl-cord">CORD DIA (mm)</label><input type="number" id="sl-cord" value="3.53" step="0.01"></div>
+<div class="field"><label for="sl-id">BORE / ID (mm)</label><input type="number" id="sl-id" value="25.0" step="0.1"></div>
+<div class="field"><label for="sl-depth">GROOVE DEPTH (mm)</label><input type="number" id="sl-depth" value="2.62" step="0.01"></div>
+<div class="field"><label for="sl-width">GROOVE WIDTH (mm)</label><input type="number" id="sl-width" value="4.34" step="0.01"></div>
 </div>
 <div class="row" style="margin-top:.5rem">
-<div class="field"><label>GLAND GAP (mm)</label><input type="number" id="sl-gap" value="0.10" step="0.01"></div>
-<div class="field"><label>HARDNESS (Shore A)</label><input type="number" id="sl-hard" value="70" step="1" min="20" max="95"></div>
-<div class="field"><label>PRESSURE (MPa)</label><input type="number" id="sl-press" value="10" step="0.1"></div>
-<div class="field"><label>TEMPERATURE (°C)</label><input type="number" id="sl-temp" value="23" step="1"></div>
+<div class="field"><label for="sl-gap">GLAND GAP (mm)</label><input type="number" id="sl-gap" value="0.10" step="0.01"></div>
+<div class="field"><label for="sl-hard">HARDNESS (Shore A)</label><input type="number" id="sl-hard" value="70" step="1" min="20" max="95"></div>
+<div class="field"><label for="sl-press">PRESSURE (MPa)</label><input type="number" id="sl-press" value="10" step="0.1"></div>
+<div class="field"><label for="sl-temp">TEMPERATURE (°C)</label><input type="number" id="sl-temp" value="23" step="1"></div>
 </div>
 <button class="btn btn-fill" onclick="calcSeal()" style="margin-top:.75rem">ANALYZE SEAL</button>
 </div>
 <div class="card">
 <h3>COMPRESSION ANIMATION</h3>
-<div class="slider-row"><label>SQUEEZE %</label><input type="range" min="0" max="50" value="0" step="0.5" id="sl-squeeze-rng"><span class="sv" id="sl-squeeze-v">0</span></div>
+<div class="slider-row"><label for="sl-squeeze-rng">SQUEEZE %</label><input type="range" min="0" max="50" value="0" step="0.5" id="sl-squeeze-rng"><span class="sv" id="sl-squeeze-v">0</span></div>
 <canvas id="c-seal-anim" class="canvas-draw" width="400" height="300"></canvas>
 </div>
 </div>
@@ -727,18 +727,18 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <div class="card">
 <h3>RECOMMENDATION ENGINE</h3>
 <p style="font-size:.7rem;color:var(--dim);margin-bottom:.75rem">SET IMPORTANCE OF EACH PROPERTY (0 = IGNORE, 10 = CRITICAL). HIGHER RATING = BETTER PERFORMANCE.</p>
-<div class="slider-row"><label>CORROSION RESIST</label><input type="range" min="0" max="10" value="7" id="fin-corr"><span class="sv" id="fin-corr-v">7</span></div>
-<div class="slider-row"><label>WEAR RESIST</label><input type="range" min="0" max="10" value="5" id="fin-wear"><span class="sv" id="fin-wear-v">5</span></div>
-<div class="slider-row"><label>APPEARANCE</label><input type="range" min="0" max="10" value="3" id="fin-app"><span class="sv" id="fin-app-v">3</span></div>
-<div class="slider-row"><label>COST EFFICIENCY</label><input type="range" min="0" max="10" value="6" id="fin-cost"><span class="sv" id="fin-cost-v">6</span></div>
-<div class="slider-row"><label>CONDUCTIVITY</label><input type="range" min="0" max="10" value="0" id="fin-cond"><span class="sv" id="fin-cond-v">0</span></div>
-<div class="slider-row"><label>GALVANIC COMPAT</label><input type="range" min="0" max="10" value="0" id="fin-galv"><span class="sv" id="fin-galv-v">0</span></div>
-<div class="slider-row"><label>BATCH VOLUME</label><input type="range" min="0" max="10" value="0" id="fin-qty"><span class="sv" id="fin-qty-v">0</span></div>
-<div class="slider-row"><label>TEMP TOLERANCE</label><input type="range" min="0" max="10" value="2" id="fin-temp"><span class="sv" id="fin-temp-v">2</span></div>
-<div class="slider-row"><label>COVERAGE</label><input type="range" min="0" max="10" value="4" id="fin-cov"><span class="sv" id="fin-cov-v">4</span></div>
-<div class="slider-row"><label>MIN THICKNESS</label><input type="range" min="0" max="10" value="3" id="fin-thk"><span class="sv" id="fin-thk-v">3</span></div>
+<div class="slider-row"><label for="fin-corr">CORROSION RESIST</label><input type="range" min="0" max="10" value="7" id="fin-corr"><span class="sv" id="fin-corr-v">7</span></div>
+<div class="slider-row"><label for="fin-wear">WEAR RESIST</label><input type="range" min="0" max="10" value="5" id="fin-wear"><span class="sv" id="fin-wear-v">5</span></div>
+<div class="slider-row"><label for="fin-app">APPEARANCE</label><input type="range" min="0" max="10" value="3" id="fin-app"><span class="sv" id="fin-app-v">3</span></div>
+<div class="slider-row"><label for="fin-cost">COST EFFICIENCY</label><input type="range" min="0" max="10" value="6" id="fin-cost"><span class="sv" id="fin-cost-v">6</span></div>
+<div class="slider-row"><label for="fin-cond">CONDUCTIVITY</label><input type="range" min="0" max="10" value="0" id="fin-cond"><span class="sv" id="fin-cond-v">0</span></div>
+<div class="slider-row"><label for="fin-galv">GALVANIC COMPAT</label><input type="range" min="0" max="10" value="0" id="fin-galv"><span class="sv" id="fin-galv-v">0</span></div>
+<div class="slider-row"><label for="fin-qty">BATCH VOLUME</label><input type="range" min="0" max="10" value="0" id="fin-qty"><span class="sv" id="fin-qty-v">0</span></div>
+<div class="slider-row"><label for="fin-temp">TEMP TOLERANCE</label><input type="range" min="0" max="10" value="2" id="fin-temp"><span class="sv" id="fin-temp-v">2</span></div>
+<div class="slider-row"><label for="fin-cov">COVERAGE</label><input type="range" min="0" max="10" value="4" id="fin-cov"><span class="sv" id="fin-cov-v">4</span></div>
+<div class="slider-row"><label for="fin-thk">MIN THICKNESS</label><input type="range" min="0" max="10" value="3" id="fin-thk"><span class="sv" id="fin-thk-v">3</span></div>
 <div class="row" style="margin-top:.75rem">
-<div class="field"><label>SUBSTRATE</label><select id="fin-sub"><option value="">ANY</option><option>Carbon Steel</option><option>Alloy Steel</option><option>Stainless Steel</option><option>Aluminum</option><option>Titanium</option><option>Copper Alloy</option><option>Carbide</option><option>Polymer</option></select></div>
+<div class="field"><label for="fin-sub">SUBSTRATE</label><select id="fin-sub"><option value="">ANY</option><option>Carbon Steel</option><option>Alloy Steel</option><option>Stainless Steel</option><option>Aluminum</option><option>Titanium</option><option>Copper Alloy</option><option>Carbide</option><option>Polymer</option></select></div>
 <div class="chk-row"><input type="checkbox" id="fin-full"> FULL COVERAGE REQUIRED</div>
 </div>
 <button class="btn btn-fill" onclick="recommendFinishes()" style="margin-top:.75rem">RECOMMEND</button>
@@ -749,7 +749,7 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <h2>MATH SOLVERS</h2>
 <div class="card">
 <h3>SOLVER TYPE</h3>
-<div class="field"><label>CATEGORY</label><select id="math-cat" onchange="updateMathUI()">
+<div class="field"><label for="math-cat">CATEGORY</label><select id="math-cat" onchange="updateMathUI()">
 <option value="algebra">ALGEBRA</option>
 <option value="geometry">GEOMETRY</option>
 <option value="calculus">CALCULUS</option>
@@ -759,7 +759,7 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 </div>
 <div class="card" id="math-algebra">
 <h3>ALGEBRAIC SOLVER</h3>
-<div class="field"><label>EQUATION TYPE</label><select id="alg-type" onchange="updateAlgUI()">
+<div class="field"><label for="alg-type">EQUATION TYPE</label><select id="alg-type" onchange="updateAlgUI()">
 <option value="quadratic">QUADRATIC (ax²+bx+c=0)</option>
 <option value="cubic">CUBIC (ax³+bx²+cx+d=0)</option>
 <option value="system2">SYSTEM 2×2 (ax+by=e, cx+dy=f)</option>
@@ -772,7 +772,7 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 </div>
 <div class="card" id="math-geometry" style="display:none">
 <h3>GEOMETRY CALCULATOR</h3>
-<div class="field"><label>SHAPE</label><select id="geo-shape" onchange="updateGeoUI()">
+<div class="field"><label for="geo-shape">SHAPE</label><select id="geo-shape" onchange="updateGeoUI()">
 <option value="circle">CIRCLE</option>
 <option value="sphere">SPHERE</option>
 <option value="cylinder">CYLINDER</option>
@@ -789,7 +789,7 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 </div>
 <div class="card" id="math-calculus" style="display:none">
 <h3>CALCULUS</h3>
-<div class="field"><label>OPERATION</label><select id="calc-op" onchange="updateCalcUI()">
+<div class="field"><label for="calc-op">OPERATION</label><select id="calc-op" onchange="updateCalcUI()">
 <option value="derivative">DERIVATIVE (POLYNOMIAL)</option>
 <option value="integral">INTEGRAL (NUMERICAL — SIMPSON)</option>
 <option value="limit">LIMIT (NUMERICAL)</option>
@@ -802,14 +802,14 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 </div>
 <div class="card" id="math-linalg" style="display:none">
 <h3>LINEAR ALGEBRA</h3>
-<div class="field"><label>OPERATION</label><select id="la-op" onchange="updateLinalgUI()">
+<div class="field"><label for="la-op">OPERATION</label><select id="la-op" onchange="updateLinalgUI()">
 <option value="det">DETERMINANT</option>
 <option value="inv">INVERSE</option>
 <option value="mult">MULTIPLY A×B</option>
 <option value="eigen">EIGENVALUES (2×2)</option>
 <option value="transpose">TRANSPOSE</option>
 </select></div>
-<div class="field" style="margin-top:.5rem"><label>SIZE</label><select id="la-size" onchange="updateLinalgUI()"><option value="2">2×2</option><option value="3">3×3</option><option value="4">4×4</option></select></div>
+<div class="field" style="margin-top:.5rem"><label for="la-size">SIZE</label><select id="la-size" onchange="updateLinalgUI()"><option value="2">2×2</option><option value="3">3×3</option><option value="4">4×4</option></select></div>
 <div id="la-inputs" style="margin-top:.5rem"></div>
 <div class="chk-row" style="margin-top:.5rem"><input type="checkbox" id="la-show" checked> SHOW WORK</div>
 <button class="btn btn-fill" onclick="solveLinAlg()" style="margin-top:.75rem">SOLVE</button>
@@ -817,7 +817,7 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 </div>
 <div class="card" id="math-diffeq" style="display:none">
 <h3>DIFFERENTIAL EQUATIONS (ODE)</h3>
-<div class="field"><label>TYPE</label><select id="de-type" onchange="updateDiffEqUI()">
+<div class="field"><label for="de-type">TYPE</label><select id="de-type" onchange="updateDiffEqUI()">
 <option value="first_linear">1ST ORDER LINEAR (dy/dx + P(x)y = Q(x))</option>
 <option value="separable">SEPARABLE (dy/dx = f(x)g(y))</option>
 <option value="second_const">2ND ORDER CONSTANT COEFF (ay''+by'+cy=0)</option>
@@ -1147,12 +1147,12 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <h2>UNIT CONVERTER</h2>
 <div class="card">
 <div class="row">
-<div class="field"><label>CATEGORY</label><select id="uc-cat"></select></div>
+<div class="field"><label for="uc-cat">CATEGORY</label><select id="uc-cat"></select></div>
 </div>
 <div class="row" style="margin-top:1rem;align-items:center">
-<div class="field" style="flex:1"><label>FROM</label><div class="field-row"><input type="number" id="uc-val" value="1" step="any"><select id="uc-from"></select></div></div>
+<div class="field" style="flex:1"><label for="uc-val">FROM</label><div class="field-row"><input type="number" id="uc-val" value="1" step="any"><select id="uc-from"></select></div></div>
 <span style="font-size:1.5rem;color:var(--accent);padding:0 .5rem">&rarr;</span>
-<div class="field" style="flex:1"><label>TO</label><div class="field-row"><input type="number" id="uc-result" readonly style="color:var(--accent);font-weight:700"><select id="uc-to"></select></div></div>
+<div class="field" style="flex:1"><label for="uc-result">TO</label><div class="field-row"><input type="number" id="uc-result" readonly style="color:var(--accent);font-weight:700"><select id="uc-to"></select></div></div>
 </div>
 </div>
 <div class="card" style="margin-top:1rem">
@@ -1169,12 +1169,12 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <div>
 <div class="card"><h3>LOAD / MATERIAL</h3>
 <div class="row">
-<div class="field"><label>&sigma;_mean (MPa)</label><input type="number" id="fg-sm" value="80" step="any"></div>
-<div class="field"><label>&sigma;_alt (MPa)</label><input type="number" id="fg-sa" value="60" step="any"></div>
-<div class="field"><label>Sut (MPa)</label><input type="number" id="fg-sut" value="600" step="any"></div>
-<div class="field"><label>Sy (MPa)</label><input type="number" id="fg-sy" value="400" step="any"></div>
-<div class="field"><label>Se (MPa)</label><input type="number" id="fg-se" value="240" step="any"></div>
-<div class="field"><label>Kf (stress conc)</label><input type="number" id="fg-kf" value="1.0" step="any"></div>
+<div class="field"><label for="fg-sm">&sigma;_mean (MPa)</label><input type="number" id="fg-sm" value="80" step="any"></div>
+<div class="field"><label for="fg-sa">&sigma;_alt (MPa)</label><input type="number" id="fg-sa" value="60" step="any"></div>
+<div class="field"><label for="fg-sut">Sut (MPa)</label><input type="number" id="fg-sut" value="600" step="any"></div>
+<div class="field"><label for="fg-sy">Sy (MPa)</label><input type="number" id="fg-sy" value="400" step="any"></div>
+<div class="field"><label for="fg-se">Se (MPa)</label><input type="number" id="fg-se" value="240" step="any"></div>
+<div class="field"><label for="fg-kf">Kf (stress conc)</label><input type="number" id="fg-kf" value="1.0" step="any"></div>
 </div>
 <button class="btn btn-fill" onclick="calcFatigue()">COMPUTE</button>
 </div>
@@ -1191,41 +1191,41 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <div>
 <div class="card"><h3>CONDUCTION (PLANE WALL)</h3>
 <div class="row">
-<div class="field"><label>k (W/m&middot;K)</label><input type="number" id="tc-k" value="50" step="any"></div>
-<div class="field"><label>Area (m&sup2;)</label><input type="number" id="tc-a" value="1.0" step="any"></div>
-<div class="field"><label>Thickness (m)</label><input type="number" id="tc-l" value="0.05" step="any"></div>
-<div class="field"><label>T_hot (&deg;C)</label><input type="number" id="tc-th" value="150" step="any"></div>
-<div class="field"><label>T_cold (&deg;C)</label><input type="number" id="tc-tc" value="25" step="any"></div>
+<div class="field"><label for="tc-k">k (W/m&middot;K)</label><input type="number" id="tc-k" value="50" step="any"></div>
+<div class="field"><label for="tc-a">Area (m&sup2;)</label><input type="number" id="tc-a" value="1.0" step="any"></div>
+<div class="field"><label for="tc-l">Thickness (m)</label><input type="number" id="tc-l" value="0.05" step="any"></div>
+<div class="field"><label for="tc-th">T_hot (&deg;C)</label><input type="number" id="tc-th" value="150" step="any"></div>
+<div class="field"><label for="tc-tc">T_cold (&deg;C)</label><input type="number" id="tc-tc" value="25" step="any"></div>
 </div>
 <button class="btn btn-sm" onclick="calcThermalCond()">CONDUCTION</button>
 </div>
 <div class="card"><h3>CONVECTION</h3>
 <div class="row">
-<div class="field"><label>h (W/m&sup2;K)</label><input type="number" id="tv-h" value="25" step="any"></div>
-<div class="field"><label>Area (m&sup2;)</label><input type="number" id="tv-a" value="1.0" step="any"></div>
-<div class="field"><label>T_surf (&deg;C)</label><input type="number" id="tv-ts" value="120" step="any"></div>
-<div class="field"><label>T_inf (&deg;C)</label><input type="number" id="tv-ti" value="25" step="any"></div>
+<div class="field"><label for="tv-h">h (W/m&sup2;K)</label><input type="number" id="tv-h" value="25" step="any"></div>
+<div class="field"><label for="tv-a">Area (m&sup2;)</label><input type="number" id="tv-a" value="1.0" step="any"></div>
+<div class="field"><label for="tv-ts">T_surf (&deg;C)</label><input type="number" id="tv-ts" value="120" step="any"></div>
+<div class="field"><label for="tv-ti">T_inf (&deg;C)</label><input type="number" id="tv-ti" value="25" step="any"></div>
 </div>
 <button class="btn btn-sm" onclick="calcThermalConv()">CONVECTION</button>
 </div>
 <div class="card"><h3>RADIATION</h3>
 <div class="row">
-<div class="field"><label>Emissivity</label><input type="number" id="tr-e" value="0.9" step="any"></div>
-<div class="field"><label>Area (m&sup2;)</label><input type="number" id="tr-a" value="1.0" step="any"></div>
-<div class="field"><label>T_surf (&deg;C)</label><input type="number" id="tr-ts" value="300" step="any"></div>
-<div class="field"><label>T_amb (&deg;C)</label><input type="number" id="tr-ta" value="25" step="any"></div>
+<div class="field"><label for="tr-e">Emissivity</label><input type="number" id="tr-e" value="0.9" step="any"></div>
+<div class="field"><label for="tr-a">Area (m&sup2;)</label><input type="number" id="tr-a" value="1.0" step="any"></div>
+<div class="field"><label for="tr-ts">T_surf (&deg;C)</label><input type="number" id="tr-ts" value="300" step="any"></div>
+<div class="field"><label for="tr-ta">T_amb (&deg;C)</label><input type="number" id="tr-ta" value="25" step="any"></div>
 </div>
 <button class="btn btn-sm" onclick="calcThermalRad()">RADIATION</button>
 </div>
 <div class="card"><h3>FIN (ADIABATIC TIP)</h3>
 <div class="row">
-<div class="field"><label>k (W/m&middot;K)</label><input type="number" id="tf-k" value="200" step="any"></div>
-<div class="field"><label>h (W/m&sup2;K)</label><input type="number" id="tf-h" value="25" step="any"></div>
-<div class="field"><label>P (m)</label><input type="number" id="tf-p" value="0.04" step="any"></div>
-<div class="field"><label>Ac (m&sup2;)</label><input type="number" id="tf-ac" value="1e-4" step="any"></div>
-<div class="field"><label>L (m)</label><input type="number" id="tf-l" value="0.05" step="any"></div>
-<div class="field"><label>T_base (&deg;C)</label><input type="number" id="tf-tb" value="100" step="any"></div>
-<div class="field"><label>T_inf (&deg;C)</label><input type="number" id="tf-ti" value="25" step="any"></div>
+<div class="field"><label for="tf-k">k (W/m&middot;K)</label><input type="number" id="tf-k" value="200" step="any"></div>
+<div class="field"><label for="tf-h">h (W/m&sup2;K)</label><input type="number" id="tf-h" value="25" step="any"></div>
+<div class="field"><label for="tf-p">P (m)</label><input type="number" id="tf-p" value="0.04" step="any"></div>
+<div class="field"><label for="tf-ac">Ac (m&sup2;)</label><input type="number" id="tf-ac" value="1e-4" step="any"></div>
+<div class="field"><label for="tf-l">L (m)</label><input type="number" id="tf-l" value="0.05" step="any"></div>
+<div class="field"><label for="tf-tb">T_base (&deg;C)</label><input type="number" id="tf-tb" value="100" step="any"></div>
+<div class="field"><label for="tf-ti">T_inf (&deg;C)</label><input type="number" id="tf-ti" value="25" step="any"></div>
 </div>
 <button class="btn btn-sm" onclick="calcThermalFin()">FIN</button>
 </div>
@@ -1242,46 +1242,46 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <div>
 <div class="card"><h3>NERNST EQUATION</h3>
 <div class="row">
-<div class="field"><label>E&deg; (V)</label><input type="number" id="nr-e0" value="1.1" step="any"></div>
-<div class="field"><label>T (K)</label><input type="number" id="nr-t" value="298.15" step="any"></div>
-<div class="field"><label>n (electrons)</label><input type="number" id="nr-n" value="2" step="any"></div>
-<div class="field"><label>Q (reaction quotient)</label><input type="number" id="nr-q" value="0.01" step="any"></div>
+<div class="field"><label for="nr-e0">E&deg; (V)</label><input type="number" id="nr-e0" value="1.1" step="any"></div>
+<div class="field"><label for="nr-t">T (K)</label><input type="number" id="nr-t" value="298.15" step="any"></div>
+<div class="field"><label for="nr-n">n (electrons)</label><input type="number" id="nr-n" value="2" step="any"></div>
+<div class="field"><label for="nr-q">Q (reaction quotient)</label><input type="number" id="nr-q" value="0.01" step="any"></div>
 </div>
 <button class="btn btn-sm" onclick="calcNernst()">NERNST</button>
 </div>
 <div class="card"><h3>TAFEL</h3>
 <div class="row">
-<div class="field"><label>&eta; (V)</label><input type="number" id="tf2-eta" value="0.1" step="any"></div>
-<div class="field"><label>i0 (A/m&sup2;)</label><input type="number" id="tf2-i0" value="0.01" step="any"></div>
-<div class="field"><label>&beta; (V/dec)</label><input type="number" id="tf2-b" value="0.12" step="any"></div>
+<div class="field"><label for="tf2-eta">&eta; (V)</label><input type="number" id="tf2-eta" value="0.1" step="any"></div>
+<div class="field"><label for="tf2-i0">i0 (A/m&sup2;)</label><input type="number" id="tf2-i0" value="0.01" step="any"></div>
+<div class="field"><label for="tf2-b">&beta; (V/dec)</label><input type="number" id="tf2-b" value="0.12" step="any"></div>
 </div>
 <button class="btn btn-sm" onclick="calcTafel()">TAFEL</button>
 </div>
 <div class="card"><h3>BUTLER-VOLMER</h3>
 <div class="row">
-<div class="field"><label>&eta; (V)</label><input type="number" id="bv-eta" value="0.1" step="any"></div>
-<div class="field"><label>i0 (A/m&sup2;)</label><input type="number" id="bv-i0" value="0.01" step="any"></div>
-<div class="field"><label>&alpha; (charge xfr)</label><input type="number" id="bv-a" value="0.5" step="any"></div>
-<div class="field"><label>n</label><input type="number" id="bv-n" value="1" step="any"></div>
-<div class="field"><label>T (K)</label><input type="number" id="bv-t" value="298.15" step="any"></div>
+<div class="field"><label for="bv-eta">&eta; (V)</label><input type="number" id="bv-eta" value="0.1" step="any"></div>
+<div class="field"><label for="bv-i0">i0 (A/m&sup2;)</label><input type="number" id="bv-i0" value="0.01" step="any"></div>
+<div class="field"><label for="bv-a">&alpha; (charge xfr)</label><input type="number" id="bv-a" value="0.5" step="any"></div>
+<div class="field"><label for="bv-n">n</label><input type="number" id="bv-n" value="1" step="any"></div>
+<div class="field"><label for="bv-t">T (K)</label><input type="number" id="bv-t" value="298.15" step="any"></div>
 </div>
 <button class="btn btn-sm" onclick="calcButlerVolmer()">B-V</button>
 </div>
 <div class="card"><h3>CORROSION RATE (NACE)</h3>
 <div class="row">
-<div class="field"><label>i_corr (&mu;A/cm&sup2;)</label><input type="number" id="cr-i" value="10" step="any"></div>
-<div class="field"><label>EW (g/eq)</label><input type="number" id="cr-ew" value="27.92" step="any"></div>
-<div class="field"><label>&rho; (g/cm&sup3;)</label><input type="number" id="cr-rho" value="7.87" step="any"></div>
+<div class="field"><label for="cr-i">i_corr (&mu;A/cm&sup2;)</label><input type="number" id="cr-i" value="10" step="any"></div>
+<div class="field"><label for="cr-ew">EW (g/eq)</label><input type="number" id="cr-ew" value="27.92" step="any"></div>
+<div class="field"><label for="cr-rho">&rho; (g/cm&sup3;)</label><input type="number" id="cr-rho" value="7.87" step="any"></div>
 </div>
 <button class="btn btn-sm" onclick="calcCorrosionRate()">CORROSION</button>
 </div>
 <div class="card"><h3>FARADAY (ELECTROPLATING)</h3>
 <div class="row">
-<div class="field"><label>I (A)</label><input type="number" id="fd-i" value="5" step="any"></div>
-<div class="field"><label>t (s)</label><input type="number" id="fd-t" value="3600" step="any"></div>
-<div class="field"><label>M (g/mol)</label><input type="number" id="fd-m" value="63.55" step="any"></div>
-<div class="field"><label>n</label><input type="number" id="fd-n" value="2" step="any"></div>
-<div class="field"><label>&eta;_F (0-1)</label><input type="number" id="fd-eff" value="0.95" step="any"></div>
+<div class="field"><label for="fd-i">I (A)</label><input type="number" id="fd-i" value="5" step="any"></div>
+<div class="field"><label for="fd-t">t (s)</label><input type="number" id="fd-t" value="3600" step="any"></div>
+<div class="field"><label for="fd-m">M (g/mol)</label><input type="number" id="fd-m" value="63.55" step="any"></div>
+<div class="field"><label for="fd-n">n</label><input type="number" id="fd-n" value="2" step="any"></div>
+<div class="field"><label for="fd-eff">&eta;_F (0-1)</label><input type="number" id="fd-eff" value="0.95" step="any"></div>
 </div>
 <button class="btn btn-sm" onclick="calcFaraday()">FARADAY</button>
 </div>
@@ -1298,36 +1298,36 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <div>
 <div class="card"><h3>PACK SIZING</h3>
 <div class="row">
-<div class="field"><label>Cell V_nom</label><input type="number" id="bp-vc" value="3.7" step="any"></div>
-<div class="field"><label>Cell Q (Ah)</label><input type="number" id="bp-qc" value="3.5" step="any"></div>
-<div class="field"><label>Series (S)</label><input type="number" id="bp-s" value="14" step="any"></div>
-<div class="field"><label>Parallel (P)</label><input type="number" id="bp-p" value="4" step="any"></div>
+<div class="field"><label for="bp-vc">Cell V_nom</label><input type="number" id="bp-vc" value="3.7" step="any"></div>
+<div class="field"><label for="bp-qc">Cell Q (Ah)</label><input type="number" id="bp-qc" value="3.5" step="any"></div>
+<div class="field"><label for="bp-s">Series (S)</label><input type="number" id="bp-s" value="14" step="any"></div>
+<div class="field"><label for="bp-p">Parallel (P)</label><input type="number" id="bp-p" value="4" step="any"></div>
 </div>
 <button class="btn btn-sm" onclick="calcPack()">PACK</button>
 </div>
 <div class="card"><h3>RUNTIME</h3>
 <div class="row">
-<div class="field"><label>Pack Q (Ah)</label><input type="number" id="rt-q" value="14" step="any"></div>
-<div class="field"><label>Current I (A)</label><input type="number" id="rt-i" value="5" step="any"></div>
-<div class="field"><label>DoD (0-1)</label><input type="number" id="rt-dod" value="0.8" step="any"></div>
+<div class="field"><label for="rt-q">Pack Q (Ah)</label><input type="number" id="rt-q" value="14" step="any"></div>
+<div class="field"><label for="rt-i">Current I (A)</label><input type="number" id="rt-i" value="5" step="any"></div>
+<div class="field"><label for="rt-dod">DoD (0-1)</label><input type="number" id="rt-dod" value="0.8" step="any"></div>
 </div>
 <button class="btn btn-sm" onclick="calcRuntime()">RUNTIME</button>
 </div>
 <div class="card"><h3>PEUKERT</h3>
 <div class="row">
-<div class="field"><label>C (Ah @ H)</label><input type="number" id="pk-c" value="100" step="any"></div>
-<div class="field"><label>H (hr)</label><input type="number" id="pk-h" value="20" step="any"></div>
-<div class="field"><label>I (A)</label><input type="number" id="pk-i" value="25" step="any"></div>
-<div class="field"><label>k</label><input type="number" id="pk-k" value="1.15" step="any"></div>
+<div class="field"><label for="pk-c">C (Ah @ H)</label><input type="number" id="pk-c" value="100" step="any"></div>
+<div class="field"><label for="pk-h">H (hr)</label><input type="number" id="pk-h" value="20" step="any"></div>
+<div class="field"><label for="pk-i">I (A)</label><input type="number" id="pk-i" value="25" step="any"></div>
+<div class="field"><label for="pk-k">k</label><input type="number" id="pk-k" value="1.15" step="any"></div>
 </div>
 <button class="btn btn-sm" onclick="calcPeukert()">PEUKERT</button>
 </div>
 <div class="card"><h3>SOC &amp; COULOMBIC EFF.</h3>
 <div class="row">
-<div class="field"><label>Q_rated (Ah)</label><input type="number" id="soc-qr" value="3.5" step="any"></div>
-<div class="field"><label>Q_now (Ah)</label><input type="number" id="soc-qn" value="2.8" step="any"></div>
-<div class="field"><label>Q_in (Ah)</label><input type="number" id="soc-qi" value="3.5" step="any"></div>
-<div class="field"><label>Q_out (Ah)</label><input type="number" id="soc-qo" value="3.45" step="any"></div>
+<div class="field"><label for="soc-qr">Q_rated (Ah)</label><input type="number" id="soc-qr" value="3.5" step="any"></div>
+<div class="field"><label for="soc-qn">Q_now (Ah)</label><input type="number" id="soc-qn" value="2.8" step="any"></div>
+<div class="field"><label for="soc-qi">Q_in (Ah)</label><input type="number" id="soc-qi" value="3.5" step="any"></div>
+<div class="field"><label for="soc-qo">Q_out (Ah)</label><input type="number" id="soc-qo" value="3.45" step="any"></div>
 </div>
 <button class="btn btn-sm" onclick="calcSOC()">SOC / &eta;_C</button>
 </div>
@@ -1344,32 +1344,32 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <div>
 <div class="card"><h3>MOODY / PIPE FLOW</h3>
 <div class="row">
-<div class="field"><label>D (m)</label><input type="number" id="fl-d" value="0.05" step="any"></div>
-<div class="field"><label>L (m)</label><input type="number" id="fl-l" value="10" step="any"></div>
-<div class="field"><label>Q (m&sup3;/s)</label><input type="number" id="fl-q" value="0.003" step="any"></div>
-<div class="field"><label>&rho; (kg/m&sup3;)</label><input type="number" id="fl-rho" value="998" step="any"></div>
-<div class="field"><label>&mu; (Pa&middot;s)</label><input type="number" id="fl-mu" value="0.001" step="any"></div>
-<div class="field"><label>&epsilon; (m)</label><input type="number" id="fl-e" value="4.5e-5" step="any"></div>
+<div class="field"><label for="fl-d">D (m)</label><input type="number" id="fl-d" value="0.05" step="any"></div>
+<div class="field"><label for="fl-l">L (m)</label><input type="number" id="fl-l" value="10" step="any"></div>
+<div class="field"><label for="fl-q">Q (m&sup3;/s)</label><input type="number" id="fl-q" value="0.003" step="any"></div>
+<div class="field"><label for="fl-rho">&rho; (kg/m&sup3;)</label><input type="number" id="fl-rho" value="998" step="any"></div>
+<div class="field"><label for="fl-mu">&mu; (Pa&middot;s)</label><input type="number" id="fl-mu" value="0.001" step="any"></div>
+<div class="field"><label for="fl-e">&epsilon; (m)</label><input type="number" id="fl-e" value="4.5e-5" step="any"></div>
 </div>
 <button class="btn btn-sm" onclick="calcMoody()">FRICTION / &Delta;P</button>
 </div>
 <div class="card"><h3>BERNOULLI</h3>
 <div class="row">
-<div class="field"><label>v1 (m/s)</label><input type="number" id="br-v1" value="2" step="any"></div>
-<div class="field"><label>v2 (m/s)</label><input type="number" id="br-v2" value="5" step="any"></div>
-<div class="field"><label>z1 (m)</label><input type="number" id="br-z1" value="10" step="any"></div>
-<div class="field"><label>z2 (m)</label><input type="number" id="br-z2" value="0" step="any"></div>
-<div class="field"><label>P1 (kPa)</label><input type="number" id="br-p1" value="200" step="any"></div>
-<div class="field"><label>&rho; (kg/m&sup3;)</label><input type="number" id="br-rho" value="998" step="any"></div>
+<div class="field"><label for="br-v1">v1 (m/s)</label><input type="number" id="br-v1" value="2" step="any"></div>
+<div class="field"><label for="br-v2">v2 (m/s)</label><input type="number" id="br-v2" value="5" step="any"></div>
+<div class="field"><label for="br-z1">z1 (m)</label><input type="number" id="br-z1" value="10" step="any"></div>
+<div class="field"><label for="br-z2">z2 (m)</label><input type="number" id="br-z2" value="0" step="any"></div>
+<div class="field"><label for="br-p1">P1 (kPa)</label><input type="number" id="br-p1" value="200" step="any"></div>
+<div class="field"><label for="br-rho">&rho; (kg/m&sup3;)</label><input type="number" id="br-rho" value="998" step="any"></div>
 </div>
 <button class="btn btn-sm" onclick="calcBernoulli()">P2</button>
 </div>
 <div class="card"><h3>REYNOLDS</h3>
 <div class="row">
-<div class="field"><label>&rho; (kg/m&sup3;)</label><input type="number" id="re-rho" value="998" step="any"></div>
-<div class="field"><label>v (m/s)</label><input type="number" id="re-v" value="1.5" step="any"></div>
-<div class="field"><label>D (m)</label><input type="number" id="re-d" value="0.05" step="any"></div>
-<div class="field"><label>&mu; (Pa&middot;s)</label><input type="number" id="re-mu" value="0.001" step="any"></div>
+<div class="field"><label for="re-rho">&rho; (kg/m&sup3;)</label><input type="number" id="re-rho" value="998" step="any"></div>
+<div class="field"><label for="re-v">v (m/s)</label><input type="number" id="re-v" value="1.5" step="any"></div>
+<div class="field"><label for="re-d">D (m)</label><input type="number" id="re-d" value="0.05" step="any"></div>
+<div class="field"><label for="re-mu">&mu; (Pa&middot;s)</label><input type="number" id="re-mu" value="0.001" step="any"></div>
 </div>
 <button class="btn btn-sm" onclick="calcReynolds()">Re</button>
 </div>
@@ -1386,22 +1386,22 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <div>
 <div class="card"><h3>LMTD</h3>
 <div class="row">
-<div class="field"><label>T_h,in (&deg;C)</label><input type="number" id="hx-thi" value="150" step="any"></div>
-<div class="field"><label>T_h,out (&deg;C)</label><input type="number" id="hx-tho" value="90" step="any"></div>
-<div class="field"><label>T_c,in (&deg;C)</label><input type="number" id="hx-tci" value="25" step="any"></div>
-<div class="field"><label>T_c,out (&deg;C)</label><input type="number" id="hx-tco" value="70" step="any"></div>
-<div class="field"><label>Flow</label><select id="hx-flow"><option value="counter">Counterflow</option><option value="parallel">Parallel</option></select></div>
-<div class="field"><label>U (W/m&sup2;K)</label><input type="number" id="hx-u" value="500" step="any"></div>
-<div class="field"><label>A (m&sup2;)</label><input type="number" id="hx-a" value="10" step="any"></div>
+<div class="field"><label for="hx-thi">T_h,in (&deg;C)</label><input type="number" id="hx-thi" value="150" step="any"></div>
+<div class="field"><label for="hx-tho">T_h,out (&deg;C)</label><input type="number" id="hx-tho" value="90" step="any"></div>
+<div class="field"><label for="hx-tci">T_c,in (&deg;C)</label><input type="number" id="hx-tci" value="25" step="any"></div>
+<div class="field"><label for="hx-tco">T_c,out (&deg;C)</label><input type="number" id="hx-tco" value="70" step="any"></div>
+<div class="field"><label for="hx-flow">Flow</label><select id="hx-flow"><option value="counter">Counterflow</option><option value="parallel">Parallel</option></select></div>
+<div class="field"><label for="hx-u">U (W/m&sup2;K)</label><input type="number" id="hx-u" value="500" step="any"></div>
+<div class="field"><label for="hx-a">A (m&sup2;)</label><input type="number" id="hx-a" value="10" step="any"></div>
 </div>
 <button class="btn btn-sm" onclick="calcLMTD()">LMTD / Q</button>
 </div>
 <div class="card"><h3>NTU / &epsilon;</h3>
 <div class="row">
-<div class="field"><label>C_h (W/K)</label><input type="number" id="nt-ch" value="2000" step="any"></div>
-<div class="field"><label>C_c (W/K)</label><input type="number" id="nt-cc" value="3000" step="any"></div>
-<div class="field"><label>UA (W/K)</label><input type="number" id="nt-ua" value="5000" step="any"></div>
-<div class="field"><label>Flow</label><select id="nt-flow"><option value="counter">Counter</option><option value="parallel">Parallel</option></select></div>
+<div class="field"><label for="nt-ch">C_h (W/K)</label><input type="number" id="nt-ch" value="2000" step="any"></div>
+<div class="field"><label for="nt-cc">C_c (W/K)</label><input type="number" id="nt-cc" value="3000" step="any"></div>
+<div class="field"><label for="nt-ua">UA (W/K)</label><input type="number" id="nt-ua" value="5000" step="any"></div>
+<div class="field"><label for="nt-flow">Flow</label><select id="nt-flow"><option value="counter">Counter</option><option value="parallel">Parallel</option></select></div>
 </div>
 <button class="btn btn-sm" onclick="calcNTU()">&epsilon; / Q</button>
 </div>
@@ -1418,28 +1418,28 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <div>
 <div class="card"><h3>THIN-WALL (HOOP / AXIAL)</h3>
 <div class="row">
-<div class="field"><label>P (MPa)</label><input type="number" id="tw-p" value="5" step="any"></div>
-<div class="field"><label>D_i (mm)</label><input type="number" id="tw-d" value="500" step="any"></div>
-<div class="field"><label>t (mm)</label><input type="number" id="tw-t" value="10" step="any"></div>
+<div class="field"><label for="tw-p">P (MPa)</label><input type="number" id="tw-p" value="5" step="any"></div>
+<div class="field"><label for="tw-d">D_i (mm)</label><input type="number" id="tw-d" value="500" step="any"></div>
+<div class="field"><label for="tw-t">t (mm)</label><input type="number" id="tw-t" value="10" step="any"></div>
 </div>
 <button class="btn btn-sm" onclick="calcThinWall()">HOOP / AXIAL</button>
 </div>
 <div class="card"><h3>LAM&Eacute; (THICK-WALL)</h3>
 <div class="row">
-<div class="field"><label>P_i (MPa)</label><input type="number" id="lm-pi" value="30" step="any"></div>
-<div class="field"><label>P_o (MPa)</label><input type="number" id="lm-po" value="0" step="any"></div>
-<div class="field"><label>r_i (mm)</label><input type="number" id="lm-ri" value="50" step="any"></div>
-<div class="field"><label>r_o (mm)</label><input type="number" id="lm-ro" value="80" step="any"></div>
+<div class="field"><label for="lm-pi">P_i (MPa)</label><input type="number" id="lm-pi" value="30" step="any"></div>
+<div class="field"><label for="lm-po">P_o (MPa)</label><input type="number" id="lm-po" value="0" step="any"></div>
+<div class="field"><label for="lm-ri">r_i (mm)</label><input type="number" id="lm-ri" value="50" step="any"></div>
+<div class="field"><label for="lm-ro">r_o (mm)</label><input type="number" id="lm-ro" value="80" step="any"></div>
 </div>
 <button class="btn btn-sm" onclick="calcLame()">&sigma;(r)</button>
 </div>
 <div class="card"><h3>ASME VIII-1 THICKNESS</h3>
 <div class="row">
-<div class="field"><label>P (MPa)</label><input type="number" id="as-p" value="3" step="any"></div>
-<div class="field"><label>R (mm)</label><input type="number" id="as-r" value="300" step="any"></div>
-<div class="field"><label>S (MPa)</label><input type="number" id="as-s" value="138" step="any"></div>
-<div class="field"><label>E (joint eff)</label><input type="number" id="as-e" value="0.85" step="any"></div>
-<div class="field"><label>CA (mm)</label><input type="number" id="as-ca" value="3" step="any"></div>
+<div class="field"><label for="as-p">P (MPa)</label><input type="number" id="as-p" value="3" step="any"></div>
+<div class="field"><label for="as-r">R (mm)</label><input type="number" id="as-r" value="300" step="any"></div>
+<div class="field"><label for="as-s">S (MPa)</label><input type="number" id="as-s" value="138" step="any"></div>
+<div class="field"><label for="as-e">E (joint eff)</label><input type="number" id="as-e" value="0.85" step="any"></div>
+<div class="field"><label for="as-ca">CA (mm)</label><input type="number" id="as-ca" value="3" step="any"></div>
 </div>
 <button class="btn btn-sm" onclick="calcASME()">t_min</button>
 </div>
@@ -1456,38 +1456,38 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <div>
 <div class="card"><h3>CARNOT</h3>
 <div class="row">
-<div class="field"><label>T_H (K)</label><input type="number" id="ca-th" value="800" step="any"></div>
-<div class="field"><label>T_C (K)</label><input type="number" id="ca-tc" value="300" step="any"></div>
-<div class="field"><label>Q_H (kJ)</label><input type="number" id="ca-qh" value="1000" step="any"></div>
+<div class="field"><label for="ca-th">T_H (K)</label><input type="number" id="ca-th" value="800" step="any"></div>
+<div class="field"><label for="ca-tc">T_C (K)</label><input type="number" id="ca-tc" value="300" step="any"></div>
+<div class="field"><label for="ca-qh">Q_H (kJ)</label><input type="number" id="ca-qh" value="1000" step="any"></div>
 </div>
 <button class="btn btn-sm" onclick="calcCarnot()">CARNOT</button>
 </div>
 <div class="card"><h3>OTTO (SI ENGINE)</h3>
 <div class="row">
-<div class="field"><label>r (compression)</label><input type="number" id="ot-r" value="10" step="any"></div>
-<div class="field"><label>&gamma;</label><input type="number" id="ot-g" value="1.4" step="any"></div>
+<div class="field"><label for="ot-r">r (compression)</label><input type="number" id="ot-r" value="10" step="any"></div>
+<div class="field"><label for="ot-g">&gamma;</label><input type="number" id="ot-g" value="1.4" step="any"></div>
 </div>
 <button class="btn btn-sm" onclick="calcOtto()">&eta;_Otto</button>
 </div>
 <div class="card"><h3>DIESEL</h3>
 <div class="row">
-<div class="field"><label>r (compression)</label><input type="number" id="di-r" value="18" step="any"></div>
-<div class="field"><label>r_c (cutoff)</label><input type="number" id="di-rc" value="2.0" step="any"></div>
-<div class="field"><label>&gamma;</label><input type="number" id="di-g" value="1.4" step="any"></div>
+<div class="field"><label for="di-r">r (compression)</label><input type="number" id="di-r" value="18" step="any"></div>
+<div class="field"><label for="di-rc">r_c (cutoff)</label><input type="number" id="di-rc" value="2.0" step="any"></div>
+<div class="field"><label for="di-g">&gamma;</label><input type="number" id="di-g" value="1.4" step="any"></div>
 </div>
 <button class="btn btn-sm" onclick="calcDiesel()">&eta;_Diesel</button>
 </div>
 <div class="card"><h3>BRAYTON</h3>
 <div class="row">
-<div class="field"><label>r_p (pressure)</label><input type="number" id="br2-rp" value="10" step="any"></div>
-<div class="field"><label>&gamma;</label><input type="number" id="br2-g" value="1.4" step="any"></div>
+<div class="field"><label for="br2-rp">r_p (pressure)</label><input type="number" id="br2-rp" value="10" step="any"></div>
+<div class="field"><label for="br2-g">&gamma;</label><input type="number" id="br2-g" value="1.4" step="any"></div>
 </div>
 <button class="btn btn-sm" onclick="calcBrayton()">&eta;_Brayton</button>
 </div>
 <div class="card"><h3>REFRIGERATION COP</h3>
 <div class="row">
-<div class="field"><label>T_L (K)</label><input type="number" id="rf-tl" value="263" step="any"></div>
-<div class="field"><label>T_H (K)</label><input type="number" id="rf-th" value="303" step="any"></div>
+<div class="field"><label for="rf-tl">T_L (K)</label><input type="number" id="rf-tl" value="263" step="any"></div>
+<div class="field"><label for="rf-th">T_H (K)</label><input type="number" id="rf-th" value="303" step="any"></div>
 </div>
 <button class="btn btn-sm" onclick="calcCOP()">COP (Carnot)</button>
 </div>
@@ -1504,24 +1504,24 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <div>
 <div class="card"><h3>PSYCHROMETRIC</h3>
 <div class="row">
-<div class="field"><label>T_db (&deg;C)</label><input type="number" id="ps-tdb" value="25" step="any"></div>
-<div class="field"><label>RH (%)</label><input type="number" id="ps-rh" value="50" step="any"></div>
-<div class="field"><label>P_atm (kPa)</label><input type="number" id="ps-p" value="101.325" step="any"></div>
+<div class="field"><label for="ps-tdb">T_db (&deg;C)</label><input type="number" id="ps-tdb" value="25" step="any"></div>
+<div class="field"><label for="ps-rh">RH (%)</label><input type="number" id="ps-rh" value="50" step="any"></div>
+<div class="field"><label for="ps-p">P_atm (kPa)</label><input type="number" id="ps-p" value="101.325" step="any"></div>
 </div>
 <button class="btn btn-sm" onclick="calcPsych()">STATE</button>
 </div>
 <div class="card"><h3>COOLING LOAD</h3>
 <div class="row">
-<div class="field"><label>CFM</label><input type="number" id="cl-cfm" value="400" step="any"></div>
-<div class="field"><label>&Delta;T (&deg;F)</label><input type="number" id="cl-dt" value="20" step="any"></div>
-<div class="field"><label>&Delta;W (gr/lb)</label><input type="number" id="cl-dw" value="20" step="any"></div>
+<div class="field"><label for="cl-cfm">CFM</label><input type="number" id="cl-cfm" value="400" step="any"></div>
+<div class="field"><label for="cl-dt">&Delta;T (&deg;F)</label><input type="number" id="cl-dt" value="20" step="any"></div>
+<div class="field"><label for="cl-dw">&Delta;W (gr/lb)</label><input type="number" id="cl-dw" value="20" step="any"></div>
 </div>
 <button class="btn btn-sm" onclick="calcCoolLoad()">Q_s / Q_l</button>
 </div>
 <div class="card"><h3>DUCT SIZING (EQ.)</h3>
 <div class="row">
-<div class="field"><label>Q (CFM)</label><input type="number" id="dk-q" value="400" step="any"></div>
-<div class="field"><label>&Delta;P/L (in.wg/100ft)</label><input type="number" id="dk-dp" value="0.08" step="any"></div>
+<div class="field"><label for="dk-q">Q (CFM)</label><input type="number" id="dk-q" value="400" step="any"></div>
+<div class="field"><label for="dk-dp">&Delta;P/L (in.wg/100ft)</label><input type="number" id="dk-dp" value="0.08" step="any"></div>
 </div>
 <button class="btn btn-sm" onclick="calcDuct()">D_eq</button>
 </div>
@@ -1538,42 +1538,42 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <div>
 <div class="card"><h3>OHM'S LAW</h3>
 <div class="row">
-<div class="field"><label>V (V)</label><input type="number" id="om-v" value="12" step="any"></div>
-<div class="field"><label>I (A)</label><input type="number" id="om-i" value="2" step="any"></div>
-<div class="field"><label>R (&Omega;)</label><input type="number" id="om-r" value="" step="any"></div>
+<div class="field"><label for="om-v">V (V)</label><input type="number" id="om-v" value="12" step="any"></div>
+<div class="field"><label for="om-i">I (A)</label><input type="number" id="om-i" value="2" step="any"></div>
+<div class="field"><label for="om-r">R (&Omega;)</label><input type="number" id="om-r" value="" step="any"></div>
 </div>
 <button class="btn btn-sm" onclick="calcOhm()">SOLVE</button>
 </div>
 <div class="card"><h3>AC POWER TRIANGLE</h3>
 <div class="row">
-<div class="field"><label>V (Vrms)</label><input type="number" id="ac-v" value="230" step="any"></div>
-<div class="field"><label>I (Arms)</label><input type="number" id="ac-i" value="10" step="any"></div>
-<div class="field"><label>PF (0-1)</label><input type="number" id="ac-pf" value="0.85" step="any"></div>
+<div class="field"><label for="ac-v">V (Vrms)</label><input type="number" id="ac-v" value="230" step="any"></div>
+<div class="field"><label for="ac-i">I (Arms)</label><input type="number" id="ac-i" value="10" step="any"></div>
+<div class="field"><label for="ac-pf">PF (0-1)</label><input type="number" id="ac-pf" value="0.85" step="any"></div>
 </div>
 <button class="btn btn-sm" onclick="calcACPower()">S / P / Q</button>
 </div>
 <div class="card"><h3>3-PHASE POWER</h3>
 <div class="row">
-<div class="field"><label>V_LL (V)</label><input type="number" id="tp-v" value="480" step="any"></div>
-<div class="field"><label>I_line (A)</label><input type="number" id="tp-i" value="25" step="any"></div>
-<div class="field"><label>PF</label><input type="number" id="tp-pf" value="0.9" step="any"></div>
+<div class="field"><label for="tp-v">V_LL (V)</label><input type="number" id="tp-v" value="480" step="any"></div>
+<div class="field"><label for="tp-i">I_line (A)</label><input type="number" id="tp-i" value="25" step="any"></div>
+<div class="field"><label for="tp-pf">PF</label><input type="number" id="tp-pf" value="0.9" step="any"></div>
 </div>
 <button class="btn btn-sm" onclick="calc3PH()">P_3&phi;</button>
 </div>
 <div class="card"><h3>WIRE DROP</h3>
 <div class="row">
-<div class="field"><label>L (m, one-way)</label><input type="number" id="wd-l" value="20" step="any"></div>
-<div class="field"><label>I (A)</label><input type="number" id="wd-i" value="15" step="any"></div>
-<div class="field"><label>A (mm&sup2;)</label><input type="number" id="wd-a" value="2.5" step="any"></div>
-<div class="field"><label>Material</label><select id="wd-m"><option value="Cu">Cu</option><option value="Al">Al</option></select></div>
+<div class="field"><label for="wd-l">L (m, one-way)</label><input type="number" id="wd-l" value="20" step="any"></div>
+<div class="field"><label for="wd-i">I (A)</label><input type="number" id="wd-i" value="15" step="any"></div>
+<div class="field"><label for="wd-a">A (mm&sup2;)</label><input type="number" id="wd-a" value="2.5" step="any"></div>
+<div class="field"><label for="wd-m">Material</label><select id="wd-m"><option value="Cu">Cu</option><option value="Al">Al</option></select></div>
 </div>
 <button class="btn btn-sm" onclick="calcDrop()">V_drop</button>
 </div>
 <div class="card"><h3>RC / RL TIME CONST.</h3>
 <div class="row">
-<div class="field"><label>R (&Omega;)</label><input type="number" id="rc-r" value="1000" step="any"></div>
-<div class="field"><label>C (&mu;F)</label><input type="number" id="rc-c" value="10" step="any"></div>
-<div class="field"><label>L (mH)</label><input type="number" id="rc-l" value="10" step="any"></div>
+<div class="field"><label for="rc-r">R (&Omega;)</label><input type="number" id="rc-r" value="1000" step="any"></div>
+<div class="field"><label for="rc-c">C (&mu;F)</label><input type="number" id="rc-c" value="10" step="any"></div>
+<div class="field"><label for="rc-l">L (mH)</label><input type="number" id="rc-l" value="10" step="any"></div>
 </div>
 <button class="btn btn-sm" onclick="calcTimeConst()">&tau; (RC / RL)</button>
 </div>
@@ -1590,26 +1590,26 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <div>
 <div class="card"><h3>NATURAL FREQUENCY (SDOF)</h3>
 <div class="row">
-<div class="field"><label>k (N/m)</label><input type="number" id="nf-k" value="10000" step="any"></div>
-<div class="field"><label>m (kg)</label><input type="number" id="nf-m" value="25" step="any"></div>
-<div class="field"><label>c (N&middot;s/m)</label><input type="number" id="nf-c" value="50" step="any"></div>
+<div class="field"><label for="nf-k">k (N/m)</label><input type="number" id="nf-k" value="10000" step="any"></div>
+<div class="field"><label for="nf-m">m (kg)</label><input type="number" id="nf-m" value="25" step="any"></div>
+<div class="field"><label for="nf-c">c (N&middot;s/m)</label><input type="number" id="nf-c" value="50" step="any"></div>
 </div>
 <button class="btn btn-sm" onclick="calcNatFreq()">&omega;_n / &zeta;</button>
 </div>
 <div class="card"><h3>ISOLATOR (TRANSMISSIBILITY)</h3>
 <div class="row">
-<div class="field"><label>f_drive (Hz)</label><input type="number" id="is-fd" value="60" step="any"></div>
-<div class="field"><label>f_n (Hz)</label><input type="number" id="is-fn" value="10" step="any"></div>
-<div class="field"><label>&zeta;</label><input type="number" id="is-z" value="0.05" step="any"></div>
+<div class="field"><label for="is-fd">f_drive (Hz)</label><input type="number" id="is-fd" value="60" step="any"></div>
+<div class="field"><label for="is-fn">f_n (Hz)</label><input type="number" id="is-fn" value="10" step="any"></div>
+<div class="field"><label for="is-z">&zeta;</label><input type="number" id="is-z" value="0.05" step="any"></div>
 </div>
 <button class="btn btn-sm" onclick="calcIsolator()">TR</button>
 </div>
 <div class="card"><h3>RESONANCE AMP.</h3>
 <div class="row">
-<div class="field"><label>F0 (N)</label><input type="number" id="res-f" value="100" step="any"></div>
-<div class="field"><label>k (N/m)</label><input type="number" id="res-k" value="10000" step="any"></div>
-<div class="field"><label>&zeta;</label><input type="number" id="res-z" value="0.05" step="any"></div>
-<div class="field"><label>r = &omega;/&omega;_n</label><input type="number" id="res-r" value="1.0" step="any"></div>
+<div class="field"><label for="res-f">F0 (N)</label><input type="number" id="res-f" value="100" step="any"></div>
+<div class="field"><label for="res-k">k (N/m)</label><input type="number" id="res-k" value="10000" step="any"></div>
+<div class="field"><label for="res-z">&zeta;</label><input type="number" id="res-z" value="0.05" step="any"></div>
+<div class="field"><label for="res-r">r = &omega;/&omega;_n</label><input type="number" id="res-r" value="1.0" step="any"></div>
 </div>
 <button class="btn btn-sm" onclick="calcResonance()">X_peak</button>
 </div>
@@ -1626,28 +1626,28 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <div>
 <div class="card"><h3>SPUR GEAR GEOMETRY</h3>
 <div class="row">
-<div class="field"><label>N (teeth)</label><input type="number" id="gg-n" value="24" step="any"></div>
-<div class="field"><label>m (module, mm)</label><input type="number" id="gg-m" value="2" step="any"></div>
-<div class="field"><label>&phi; (pressure angle&deg;)</label><input type="number" id="gg-phi" value="20" step="any"></div>
+<div class="field"><label for="gg-n">N (teeth)</label><input type="number" id="gg-n" value="24" step="any"></div>
+<div class="field"><label for="gg-m">m (module, mm)</label><input type="number" id="gg-m" value="2" step="any"></div>
+<div class="field"><label for="gg-phi">&phi; (pressure angle&deg;)</label><input type="number" id="gg-phi" value="20" step="any"></div>
 </div>
 <button class="btn btn-sm" onclick="calcGearGeom()">d / d_a / d_b / p</button>
 </div>
 <div class="card"><h3>GEAR RATIO &amp; SPEED</h3>
 <div class="row">
-<div class="field"><label>N_pinion</label><input type="number" id="gr-np" value="20" step="any"></div>
-<div class="field"><label>N_gear</label><input type="number" id="gr-ng" value="60" step="any"></div>
-<div class="field"><label>n_in (rpm)</label><input type="number" id="gr-ni" value="1750" step="any"></div>
-<div class="field"><label>T_in (N&middot;m)</label><input type="number" id="gr-ti" value="20" step="any"></div>
-<div class="field"><label>&eta; (0-1)</label><input type="number" id="gr-eff" value="0.96" step="any"></div>
+<div class="field"><label for="gr-np">N_pinion</label><input type="number" id="gr-np" value="20" step="any"></div>
+<div class="field"><label for="gr-ng">N_gear</label><input type="number" id="gr-ng" value="60" step="any"></div>
+<div class="field"><label for="gr-ni">n_in (rpm)</label><input type="number" id="gr-ni" value="1750" step="any"></div>
+<div class="field"><label for="gr-ti">T_in (N&middot;m)</label><input type="number" id="gr-ti" value="20" step="any"></div>
+<div class="field"><label for="gr-eff">&eta; (0-1)</label><input type="number" id="gr-eff" value="0.96" step="any"></div>
 </div>
 <button class="btn btn-sm" onclick="calcGearRatio()">n_out / T_out</button>
 </div>
 <div class="card"><h3>LEWIS BENDING STRESS</h3>
 <div class="row">
-<div class="field"><label>W_t (N)</label><input type="number" id="lw-w" value="500" step="any"></div>
-<div class="field"><label>F (face, mm)</label><input type="number" id="lw-f" value="20" step="any"></div>
-<div class="field"><label>m (mm)</label><input type="number" id="lw-m" value="2" step="any"></div>
-<div class="field"><label>Y (form factor)</label><input type="number" id="lw-y" value="0.322" step="any"></div>
+<div class="field"><label for="lw-w">W_t (N)</label><input type="number" id="lw-w" value="500" step="any"></div>
+<div class="field"><label for="lw-f">F (face, mm)</label><input type="number" id="lw-f" value="20" step="any"></div>
+<div class="field"><label for="lw-m">m (mm)</label><input type="number" id="lw-m" value="2" step="any"></div>
+<div class="field"><label for="lw-y">Y (form factor)</label><input type="number" id="lw-y" value="0.322" step="any"></div>
 </div>
 <button class="btn btn-sm" onclick="calcLewis()">&sigma;_b</button>
 </div>
@@ -1670,12 +1670,12 @@ n_out = n_in/GR &nbsp;|&nbsp; T_out = T_in&middot;GR&middot;&eta;<br>
 <div>
 <div class="card"><h3>EULER / JOHNSON</h3>
 <div class="row">
-<div class="field"><label>L (mm)</label><input type="number" id="cl-l" value="2000" step="any"></div>
-<div class="field"><label>r (gyr, mm)</label><input type="number" id="cl-r" value="15" step="any"></div>
-<div class="field"><label>A (mm&sup2;)</label><input type="number" id="cl-a" value="1500" step="any"></div>
-<div class="field"><label>E (GPa)</label><input type="number" id="cl-e" value="200" step="any"></div>
-<div class="field"><label>Sy (MPa)</label><input type="number" id="cl-sy" value="250" step="any"></div>
-<div class="field"><label>End condition</label><select id="cl-k"><option value="1.0">Pinned-Pinned (K=1.0)</option><option value="0.5">Fixed-Fixed (K=0.5)</option><option value="0.7">Fixed-Pinned (K=0.7)</option><option value="2.0">Fixed-Free (K=2.0)</option></select></div>
+<div class="field"><label for="cl-l">L (mm)</label><input type="number" id="cl-l" value="2000" step="any"></div>
+<div class="field"><label for="cl-r">r (gyr, mm)</label><input type="number" id="cl-r" value="15" step="any"></div>
+<div class="field"><label for="cl-a">A (mm&sup2;)</label><input type="number" id="cl-a" value="1500" step="any"></div>
+<div class="field"><label for="cl-e">E (GPa)</label><input type="number" id="cl-e" value="200" step="any"></div>
+<div class="field"><label for="cl-sy">Sy (MPa)</label><input type="number" id="cl-sy" value="250" step="any"></div>
+<div class="field"><label for="cl-k">End condition</label><select id="cl-k"><option value="1.0">Pinned-Pinned (K=1.0)</option><option value="0.5">Fixed-Fixed (K=0.5)</option><option value="0.7">Fixed-Pinned (K=0.7)</option><option value="2.0">Fixed-Free (K=2.0)</option></select></div>
 </div>
 <button class="btn btn-fill" onclick="calcColumn()">COMPUTE</button></div>
 </div>
@@ -1691,27 +1691,27 @@ n_out = n_in/GR &nbsp;|&nbsp; T_out = T_in&middot;GR&middot;&eta;<br>
 <div>
 <div class="card"><h3>TORSION</h3>
 <div class="row">
-<div class="field"><label>T (N&middot;m)</label><input type="number" id="sh-t" value="500" step="any"></div>
-<div class="field"><label>d_o (mm)</label><input type="number" id="sh-do" value="40" step="any"></div>
-<div class="field"><label>d_i (mm, 0 solid)</label><input type="number" id="sh-di" value="0" step="any"></div>
-<div class="field"><label>L (mm)</label><input type="number" id="sh-l" value="500" step="any"></div>
-<div class="field"><label>G (GPa)</label><input type="number" id="sh-g" value="77" step="any"></div>
+<div class="field"><label for="sh-t">T (N&middot;m)</label><input type="number" id="sh-t" value="500" step="any"></div>
+<div class="field"><label for="sh-do">d_o (mm)</label><input type="number" id="sh-do" value="40" step="any"></div>
+<div class="field"><label for="sh-di">d_i (mm, 0 solid)</label><input type="number" id="sh-di" value="0" step="any"></div>
+<div class="field"><label for="sh-l">L (mm)</label><input type="number" id="sh-l" value="500" step="any"></div>
+<div class="field"><label for="sh-g">G (GPa)</label><input type="number" id="sh-g" value="77" step="any"></div>
 </div>
 <button class="btn btn-sm" onclick="calcShaftTorsion()">&tau; / &theta;</button>
 </div>
 <div class="card"><h3>CRITICAL SPEED (SDOF)</h3>
 <div class="row">
-<div class="field"><label>W (N, rotor)</label><input type="number" id="scr-w" value="200" step="any"></div>
-<div class="field"><label>&delta;_static (mm)</label><input type="number" id="scr-d" value="0.5" step="any"></div>
+<div class="field"><label for="scr-w">W (N, rotor)</label><input type="number" id="scr-w" value="200" step="any"></div>
+<div class="field"><label for="scr-d">&delta;_static (mm)</label><input type="number" id="scr-d" value="0.5" step="any"></div>
 </div>
 <button class="btn btn-sm" onclick="calcCritSpeed()">N_cr</button>
 </div>
 <div class="card"><h3>KEY SIZING (ASME)</h3>
 <div class="row">
-<div class="field"><label>T (N&middot;m)</label><input type="number" id="sk-t" value="500" step="any"></div>
-<div class="field"><label>Shaft d (mm)</label><input type="number" id="sk-d" value="40" step="any"></div>
-<div class="field"><label>Key W (mm)</label><input type="number" id="sk-w" value="10" step="any"></div>
-<div class="field"><label>&tau;_allow (MPa)</label><input type="number" id="sk-ta" value="60" step="any"></div>
+<div class="field"><label for="sk-t">T (N&middot;m)</label><input type="number" id="sk-t" value="500" step="any"></div>
+<div class="field"><label for="sk-d">Shaft d (mm)</label><input type="number" id="sk-d" value="40" step="any"></div>
+<div class="field"><label for="sk-w">Key W (mm)</label><input type="number" id="sk-w" value="10" step="any"></div>
+<div class="field"><label for="sk-ta">&tau;_allow (MPa)</label><input type="number" id="sk-ta" value="60" step="any"></div>
 </div>
 <button class="btn btn-sm" onclick="calcKey()">L_key</button>
 </div>
@@ -1728,21 +1728,21 @@ n_out = n_in/GR &nbsp;|&nbsp; T_out = T_in&middot;GR&middot;&eta;<br>
 <div>
 <div class="card"><h3>FILLET WELD</h3>
 <div class="row">
-<div class="field"><label>Load F (kN)</label><input type="number" id="wl-f" value="50" step="any"></div>
-<div class="field"><label>Weld length L (mm)</label><input type="number" id="wl-l" value="200" step="any"></div>
-<div class="field"><label>Leg a (mm)</label><input type="number" id="wl-a" value="6" step="any"></div>
-<div class="field"><label>Electrode</label><select id="wl-e"><option value="70">E70XX (70 ksi)</option><option value="60">E60XX</option><option value="80">E80XX</option><option value="90">E90XX</option></select></div>
-<div class="field"><label>Load type</label><select id="wl-t"><option value="shear">Shear (parallel)</option><option value="tension">Tension (transverse)</option></select></div>
+<div class="field"><label for="wl-f">Load F (kN)</label><input type="number" id="wl-f" value="50" step="any"></div>
+<div class="field"><label for="wl-l">Weld length L (mm)</label><input type="number" id="wl-l" value="200" step="any"></div>
+<div class="field"><label for="wl-a">Leg a (mm)</label><input type="number" id="wl-a" value="6" step="any"></div>
+<div class="field"><label for="wl-e">Electrode</label><select id="wl-e"><option value="70">E70XX (70 ksi)</option><option value="60">E60XX</option><option value="80">E80XX</option><option value="90">E90XX</option></select></div>
+<div class="field"><label for="wl-t">Load type</label><select id="wl-t"><option value="shear">Shear (parallel)</option><option value="tension">Tension (transverse)</option></select></div>
 </div>
 <button class="btn btn-fill" onclick="calcWeld()">COMPUTE</button>
 </div>
 <div class="card"><h3>WELD GROUP (POLAR)</h3>
 <div class="row">
-<div class="field"><label>P (kN)</label><input type="number" id="wg-p" value="20" step="any"></div>
-<div class="field"><label>e (mm, eccentric)</label><input type="number" id="wg-e" value="200" step="any"></div>
-<div class="field"><label>b (width, mm)</label><input type="number" id="wg-b" value="100" step="any"></div>
-<div class="field"><label>d (height, mm)</label><input type="number" id="wg-d" value="200" step="any"></div>
-<div class="field"><label>leg a (mm)</label><input type="number" id="wg-a" value="6" step="any"></div>
+<div class="field"><label for="wg-p">P (kN)</label><input type="number" id="wg-p" value="20" step="any"></div>
+<div class="field"><label for="wg-e">e (mm, eccentric)</label><input type="number" id="wg-e" value="200" step="any"></div>
+<div class="field"><label for="wg-b">b (width, mm)</label><input type="number" id="wg-b" value="100" step="any"></div>
+<div class="field"><label for="wg-d">d (height, mm)</label><input type="number" id="wg-d" value="200" step="any"></div>
+<div class="field"><label for="wg-a">leg a (mm)</label><input type="number" id="wg-a" value="6" step="any"></div>
 </div>
 <button class="btn btn-sm" onclick="calcWeldGroup()">&tau;_max</button>
 </div>
@@ -1759,15 +1759,15 @@ n_out = n_in/GR &nbsp;|&nbsp; T_out = T_in&middot;GR&middot;&eta;<br>
 <div>
 <div class="card"><h3>L10 / LIFE HOURS (ISO 281)</h3>
 <div class="row">
-<div class="field"><label>C (kN, dyn rating)</label><input type="number" id="br-c" value="30" step="any"></div>
-<div class="field"><label>F_r (kN, radial)</label><input type="number" id="br-fr" value="2" step="any"></div>
-<div class="field"><label>F_a (kN, axial)</label><input type="number" id="br-fa" value="0.5" step="any"></div>
-<div class="field"><label>X (radial fac)</label><input type="number" id="br-x" value="1.0" step="any"></div>
-<div class="field"><label>Y (thrust fac)</label><input type="number" id="br-y" value="0" step="any"></div>
-<div class="field"><label>V (rotation)</label><input type="number" id="br-v" value="1.0" step="any"></div>
-<div class="field"><label>n (rpm)</label><input type="number" id="br-n" value="1800" step="any"></div>
-<div class="field"><label>Type</label><select id="br-ty"><option value="3">Ball (p=3)</option><option value="3.333">Roller (p=10/3)</option></select></div>
-<div class="field"><label>a_1 (reliab.)</label><input type="number" id="br-a1" value="1.0" step="any"></div>
+<div class="field"><label for="br-c">C (kN, dyn rating)</label><input type="number" id="br-c" value="30" step="any"></div>
+<div class="field"><label for="br-fr">F_r (kN, radial)</label><input type="number" id="br-fr" value="2" step="any"></div>
+<div class="field"><label for="br-fa">F_a (kN, axial)</label><input type="number" id="br-fa" value="0.5" step="any"></div>
+<div class="field"><label for="br-x">X (radial fac)</label><input type="number" id="br-x" value="1.0" step="any"></div>
+<div class="field"><label for="br-y">Y (thrust fac)</label><input type="number" id="br-y" value="0" step="any"></div>
+<div class="field"><label for="br-v">V (rotation)</label><input type="number" id="br-v" value="1.0" step="any"></div>
+<div class="field"><label for="br-n">n (rpm)</label><input type="number" id="br-n" value="1800" step="any"></div>
+<div class="field"><label for="br-ty">Type</label><select id="br-ty"><option value="3">Ball (p=3)</option><option value="3.333">Roller (p=10/3)</option></select></div>
+<div class="field"><label for="br-a1">a_1 (reliab.)</label><input type="number" id="br-a1" value="1.0" step="any"></div>
 </div>
 <button class="btn btn-fill" onclick="calcBearing()">COMPUTE</button>
 </div>
@@ -1784,39 +1784,39 @@ n_out = n_in/GR &nbsp;|&nbsp; T_out = T_in&middot;GR&middot;&eta;<br>
 <div>
 <div class="card"><h3>HYDRAULIC POWER</h3>
 <div class="row">
-<div class="field"><label>Q (m&sup3;/hr)</label><input type="number" id="pp-q" value="50" step="any"></div>
-<div class="field"><label>H (m)</label><input type="number" id="pp-h" value="30" step="any"></div>
-<div class="field"><label>&rho; (kg/m&sup3;)</label><input type="number" id="pp-rho" value="998" step="any"></div>
-<div class="field"><label>&eta; (0-1)</label><input type="number" id="pp-eff" value="0.75" step="any"></div>
+<div class="field"><label for="pp-q">Q (m&sup3;/hr)</label><input type="number" id="pp-q" value="50" step="any"></div>
+<div class="field"><label for="pp-h">H (m)</label><input type="number" id="pp-h" value="30" step="any"></div>
+<div class="field"><label for="pp-rho">&rho; (kg/m&sup3;)</label><input type="number" id="pp-rho" value="998" step="any"></div>
+<div class="field"><label for="pp-eff">&eta; (0-1)</label><input type="number" id="pp-eff" value="0.75" step="any"></div>
 </div>
 <button class="btn btn-sm" onclick="calcPumpPwr()">P_w / P_shaft</button>
 </div>
 <div class="card"><h3>NPSH AVAILABLE</h3>
 <div class="row">
-<div class="field"><label>P_atm (kPa)</label><input type="number" id="np-pa" value="101.325" step="any"></div>
-<div class="field"><label>P_vap (kPa)</label><input type="number" id="np-pv" value="2.34" step="any"></div>
-<div class="field"><label>H_suction (m)</label><input type="number" id="np-hs" value="2" step="any"></div>
-<div class="field"><label>H_losses (m)</label><input type="number" id="np-hl" value="1" step="any"></div>
-<div class="field"><label>&rho; (kg/m&sup3;)</label><input type="number" id="np-rho" value="998" step="any"></div>
-<div class="field"><label>NPSH_r (m)</label><input type="number" id="np-nr" value="3" step="any"></div>
+<div class="field"><label for="np-pa">P_atm (kPa)</label><input type="number" id="np-pa" value="101.325" step="any"></div>
+<div class="field"><label for="np-pv">P_vap (kPa)</label><input type="number" id="np-pv" value="2.34" step="any"></div>
+<div class="field"><label for="np-hs">H_suction (m)</label><input type="number" id="np-hs" value="2" step="any"></div>
+<div class="field"><label for="np-hl">H_losses (m)</label><input type="number" id="np-hl" value="1" step="any"></div>
+<div class="field"><label for="np-rho">&rho; (kg/m&sup3;)</label><input type="number" id="np-rho" value="998" step="any"></div>
+<div class="field"><label for="np-nr">NPSH_r (m)</label><input type="number" id="np-nr" value="3" step="any"></div>
 </div>
 <button class="btn btn-sm" onclick="calcNPSH()">NPSH_a</button>
 </div>
 <div class="card"><h3>AFFINITY LAWS</h3>
 <div class="row">
-<div class="field"><label>N1 (rpm)</label><input type="number" id="af-n1" value="1750" step="any"></div>
-<div class="field"><label>N2 (rpm)</label><input type="number" id="af-n2" value="1450" step="any"></div>
-<div class="field"><label>Q1 (m&sup3;/hr)</label><input type="number" id="af-q1" value="50" step="any"></div>
-<div class="field"><label>H1 (m)</label><input type="number" id="af-h1" value="30" step="any"></div>
-<div class="field"><label>P1 (kW)</label><input type="number" id="af-p1" value="5" step="any"></div>
+<div class="field"><label for="af-n1">N1 (rpm)</label><input type="number" id="af-n1" value="1750" step="any"></div>
+<div class="field"><label for="af-n2">N2 (rpm)</label><input type="number" id="af-n2" value="1450" step="any"></div>
+<div class="field"><label for="af-q1">Q1 (m&sup3;/hr)</label><input type="number" id="af-q1" value="50" step="any"></div>
+<div class="field"><label for="af-h1">H1 (m)</label><input type="number" id="af-h1" value="30" step="any"></div>
+<div class="field"><label for="af-p1">P1 (kW)</label><input type="number" id="af-p1" value="5" step="any"></div>
 </div>
 <button class="btn btn-sm" onclick="calcAffinity()">Q2 / H2 / P2</button>
 </div>
 <div class="card"><h3>SPECIFIC SPEED</h3>
 <div class="row">
-<div class="field"><label>N (rpm)</label><input type="number" id="ns-n" value="1750" step="any"></div>
-<div class="field"><label>Q (gpm)</label><input type="number" id="ns-q" value="200" step="any"></div>
-<div class="field"><label>H (ft)</label><input type="number" id="ns-h" value="100" step="any"></div>
+<div class="field"><label for="ns-n">N (rpm)</label><input type="number" id="ns-n" value="1750" step="any"></div>
+<div class="field"><label for="ns-q">Q (gpm)</label><input type="number" id="ns-q" value="200" step="any"></div>
+<div class="field"><label for="ns-h">H (ft)</label><input type="number" id="ns-h" value="100" step="any"></div>
 </div>
 <button class="btn btn-sm" onclick="calcSpecSpeed()">N_s</button>
 </div>
@@ -1833,25 +1833,25 @@ n_out = n_in/GR &nbsp;|&nbsp; T_out = T_in&middot;GR&middot;&eta;<br>
 <div>
 <div class="card"><h3>STOICHIOMETRIC AFR (C_xH_y)</h3>
 <div class="row">
-<div class="field"><label>x (carbon)</label><input type="number" id="co-x" value="8" step="any"></div>
-<div class="field"><label>y (hydrogen)</label><input type="number" id="co-y" value="18" step="any"></div>
-<div class="field"><label>Actual AFR (mass)</label><input type="number" id="co-afr" value="14.7" step="any"></div>
+<div class="field"><label for="co-x">x (carbon)</label><input type="number" id="co-x" value="8" step="any"></div>
+<div class="field"><label for="co-y">y (hydrogen)</label><input type="number" id="co-y" value="18" step="any"></div>
+<div class="field"><label for="co-afr">Actual AFR (mass)</label><input type="number" id="co-afr" value="14.7" step="any"></div>
 </div>
 <button class="btn btn-sm" onclick="calcAFR()">AFR / &lambda;</button>
 </div>
 <div class="card"><h3>ADIABATIC FLAME (SIMPLE)</h3>
 <div class="row">
-<div class="field"><label>LHV (MJ/kg)</label><input type="number" id="af2-lhv" value="44.0" step="any"></div>
-<div class="field"><label>AFR (mass)</label><input type="number" id="af2-af" value="14.7" step="any"></div>
-<div class="field"><label>cp_products (kJ/kg&middot;K)</label><input type="number" id="af2-cp" value="1.15" step="any"></div>
-<div class="field"><label>T_in (&deg;C)</label><input type="number" id="af2-ti" value="25" step="any"></div>
+<div class="field"><label for="af2-lhv">LHV (MJ/kg)</label><input type="number" id="af2-lhv" value="44.0" step="any"></div>
+<div class="field"><label for="af2-af">AFR (mass)</label><input type="number" id="af2-af" value="14.7" step="any"></div>
+<div class="field"><label for="af2-cp">cp_products (kJ/kg&middot;K)</label><input type="number" id="af2-cp" value="1.15" step="any"></div>
+<div class="field"><label for="af2-ti">T_in (&deg;C)</label><input type="number" id="af2-ti" value="25" step="any"></div>
 </div>
 <button class="btn btn-sm" onclick="calcFlameTemp()">T_ad</button>
 </div>
 <div class="card"><h3>LHV &harr; HHV</h3>
 <div class="row">
-<div class="field"><label>HHV (MJ/kg)</label><input type="number" id="hv-hhv" value="47.3" step="any"></div>
-<div class="field"><label>H mass frac (0-1)</label><input type="number" id="hv-hf" value="0.156" step="any"></div>
+<div class="field"><label for="hv-hhv">HHV (MJ/kg)</label><input type="number" id="hv-hhv" value="47.3" step="any"></div>
+<div class="field"><label for="hv-hf">H mass frac (0-1)</label><input type="number" id="hv-hf" value="0.156" step="any"></div>
 </div>
 <button class="btn btn-sm" onclick="calcLHV()">LHV</button>
 </div>
@@ -1868,32 +1868,32 @@ n_out = n_in/GR &nbsp;|&nbsp; T_out = T_in&middot;GR&middot;&eta;<br>
 <div>
 <div class="card"><h3>SYNCHRONOUS / SLIP</h3>
 <div class="row">
-<div class="field"><label>f (Hz)</label><input type="number" id="mt-f" value="60" step="any"></div>
-<div class="field"><label>Poles</label><input type="number" id="mt-p" value="4" step="any"></div>
-<div class="field"><label>N_rotor (rpm)</label><input type="number" id="mt-nr" value="1750" step="any"></div>
+<div class="field"><label for="mt-f">f (Hz)</label><input type="number" id="mt-f" value="60" step="any"></div>
+<div class="field"><label for="mt-p">Poles</label><input type="number" id="mt-p" value="4" step="any"></div>
+<div class="field"><label for="mt-nr">N_rotor (rpm)</label><input type="number" id="mt-nr" value="1750" step="any"></div>
 </div>
 <button class="btn btn-sm" onclick="calcSync()">N_s / slip</button>
 </div>
 <div class="card"><h3>TORQUE FROM POWER</h3>
 <div class="row">
-<div class="field"><label>P (kW)</label><input type="number" id="mt-pk" value="7.5" step="any"></div>
-<div class="field"><label>N (rpm)</label><input type="number" id="mt-n" value="1750" step="any"></div>
+<div class="field"><label for="mt-pk">P (kW)</label><input type="number" id="mt-pk" value="7.5" step="any"></div>
+<div class="field"><label for="mt-n">N (rpm)</label><input type="number" id="mt-n" value="1750" step="any"></div>
 </div>
 <button class="btn btn-sm" onclick="calcMotorT()">T (N&middot;m)</button>
 </div>
 <div class="card"><h3>FULL-LOAD CURRENT (3&phi;)</h3>
 <div class="row">
-<div class="field"><label>P (kW)</label><input type="number" id="fla-p" value="7.5" step="any"></div>
-<div class="field"><label>V_LL (V)</label><input type="number" id="fla-v" value="480" step="any"></div>
-<div class="field"><label>PF</label><input type="number" id="fla-pf" value="0.85" step="any"></div>
-<div class="field"><label>&eta; (0-1)</label><input type="number" id="fla-eff" value="0.91" step="any"></div>
+<div class="field"><label for="fla-p">P (kW)</label><input type="number" id="fla-p" value="7.5" step="any"></div>
+<div class="field"><label for="fla-v">V_LL (V)</label><input type="number" id="fla-v" value="480" step="any"></div>
+<div class="field"><label for="fla-pf">PF</label><input type="number" id="fla-pf" value="0.85" step="any"></div>
+<div class="field"><label for="fla-eff">&eta; (0-1)</label><input type="number" id="fla-eff" value="0.91" step="any"></div>
 </div>
 <button class="btn btn-sm" onclick="calcFLA()">FLA</button>
 </div>
 <div class="card"><h3>NEMA SERVICE FACTOR</h3>
 <div class="row">
-<div class="field"><label>P_rated (kW)</label><input type="number" id="sf-p" value="7.5" step="any"></div>
-<div class="field"><label>SF</label><input type="number" id="sf-s" value="1.15" step="any"></div>
+<div class="field"><label for="sf-p">P_rated (kW)</label><input type="number" id="sf-p" value="7.5" step="any"></div>
+<div class="field"><label for="sf-s">SF</label><input type="number" id="sf-s" value="1.15" step="any"></div>
 </div>
 <button class="btn btn-sm" onclick="calcSF()">P_max</button>
 </div>
@@ -1910,20 +1910,20 @@ n_out = n_in/GR &nbsp;|&nbsp; T_out = T_in&middot;GR&middot;&eta;<br>
 <div>
 <div class="card"><h3>WIRE SIZING (NEC 310.16, 75&deg;C Cu)</h3>
 <div class="row">
-<div class="field"><label>Load I (A, continuous)</label><input type="number" id="nec-i" value="35" step="any"></div>
-<div class="field"><label>Continuous?</label><select id="nec-c"><option value="1.25">Yes (125% rule)</option><option value="1.0">No</option></select></div>
-<div class="field"><label># conductors in raceway</label><input type="number" id="nec-n" value="3" step="any"></div>
-<div class="field"><label>Ambient T (&deg;C)</label><input type="number" id="nec-ta" value="30" step="any"></div>
-<div class="field"><label>Material</label><select id="nec-m"><option value="Cu">Cu</option><option value="Al">Al (75% of Cu)</option></select></div>
+<div class="field"><label for="nec-i">Load I (A, continuous)</label><input type="number" id="nec-i" value="35" step="any"></div>
+<div class="field"><label for="nec-c">Continuous?</label><select id="nec-c"><option value="1.25">Yes (125% rule)</option><option value="1.0">No</option></select></div>
+<div class="field"><label for="nec-n"># conductors in raceway</label><input type="number" id="nec-n" value="3" step="any"></div>
+<div class="field"><label for="nec-ta">Ambient T (&deg;C)</label><input type="number" id="nec-ta" value="30" step="any"></div>
+<div class="field"><label for="nec-m">Material</label><select id="nec-m"><option value="Cu">Cu</option><option value="Al">Al (75% of Cu)</option></select></div>
 </div>
 <button class="btn btn-fill" onclick="calcNEC()">MIN AWG / BREAKER</button>
 </div>
 <div class="card"><h3>VOLTAGE DROP (NEC 3% rec.)</h3>
 <div class="row">
-<div class="field"><label>I (A)</label><input type="number" id="vd-i" value="35" step="any"></div>
-<div class="field"><label>L (ft, one-way)</label><input type="number" id="vd-l" value="100" step="any"></div>
-<div class="field"><label>V (V)</label><input type="number" id="vd-v" value="240" step="any"></div>
-<div class="field"><label>AWG</label><select id="vd-a"><option>14</option><option>12</option><option>10</option><option>8</option><option>6</option><option>4</option><option>2</option><option>1/0</option><option>2/0</option><option>4/0</option></select></div>
+<div class="field"><label for="vd-i">I (A)</label><input type="number" id="vd-i" value="35" step="any"></div>
+<div class="field"><label for="vd-l">L (ft, one-way)</label><input type="number" id="vd-l" value="100" step="any"></div>
+<div class="field"><label for="vd-v">V (V)</label><input type="number" id="vd-v" value="240" step="any"></div>
+<div class="field"><label for="vd-a">AWG</label><select id="vd-a"><option>14</option><option>12</option><option>10</option><option>8</option><option>6</option><option>4</option><option>2</option><option>1/0</option><option>2/0</option><option>4/0</option></select></div>
 </div>
 <button class="btn btn-sm" onclick="calcVDrop()">V_drop / %</button>
 </div>
