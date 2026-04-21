@@ -58,6 +58,8 @@ const _squeezeMatAdjust=[
 const _hardnessAdjust=h=>h<=50?{min:-1,max:-2}:h>=85?{min:1,max:2}:h>=75?{min:0,max:1}:{min:0,max:0};
 const _clampSqueezeRange=(min,max)=>{const lo=Math.max(5,Math.min(35,min)),hi=Math.max(lo+4,Math.min(40,max));return[lo,hi];};
 const _resolveSqueezeRange=(gland,material,hardness,fallback)=>{const base=_squeezeRangeByGland[gland]||(Array.isArray(fallback)&&fallback.length===2?[Number(fallback[0]),Number(fallback[1])]:[15,30]);let min=Number(base[0]),max=Number(base[1]);const mat=String(material||'').toLowerCase(),rule=_squeezeMatAdjust.find(r=>r.re.test(mat));if(rule){min+=rule.min;max+=rule.max;}if(Number.isFinite(hardness)){const hAdj=_hardnessAdjust(hardness);min+=hAdj.min;max+=hAdj.max;}return _clampSqueezeRange(min,max);};
+const _polyArea=pts=>{if(!Array.isArray(pts)||pts.length<3)return NaN;let a=0;for(let i=0;i<pts.length;i++){const j=(i+1)%pts.length,pi=pts[i],pj=pts[j],xi=Array.isArray(pi)?Number(pi[0]):Number(pi&&pi.x),yi=Array.isArray(pi)?Number(pi[1]):Number(pi&&pi.y),xj=Array.isArray(pj)?Number(pj[0]):Number(pj&&pj.x),yj=Array.isArray(pj)?Number(pj[1]):Number(pj&&pj.y);if(!Number.isFinite(xi)||!Number.isFinite(yi)||!Number.isFinite(xj)||!Number.isFinite(yj))return NaN;a+=xi*yj-xj*yi;}return Math.abs(a)/2;};
+const _shapeAreaFactor=(crossSection,res,cordDia)=>{if(crossSection==='circle')return 1;const ac=Math.PI*Math.pow((Number(cordDia)||0)/2,2);if(Number.isFinite(ac)&&ac>0){const ap=_polyArea(res&&res.free_profile);if(Number.isFinite(ap)&&ap>0){return Math.max(0.35,Math.min(1.2,ap/ac));}}return crossSection==='x_ring'?0.891:crossSection==='d_ring'?0.48:crossSection==='quad'?1.02:1;};
 function _installCalcSeal(){
 if(window.__sealOverrideInstalled)return;
 window.__sealOverrideInstalled=true;
@@ -74,17 +76,23 @@ const materialName=String(res.material||((matSel&&matSel.selectedOptions&&matSel
 const hardness=Number.isFinite(Number(res.hardness_shore_a))?Number(res.hardness_shore_a):Number(inp.hardness_shore_a);
 const squeezeRange=_resolveSqueezeRange(gland,materialName,hardness,res.optimum_range);
 const squeezeMin=squeezeRange[0],squeezeMax=squeezeRange[1],squeezeIn=res.squeeze_pct>=squeezeMin&&res.squeeze_pct<=squeezeMax;
-const sqC=squeezeIn?'ok':'warn',fillC=res.volume_fill_pct>90||res.volume_fill_pct<60?'warn':'ok',extC=res.extrusion_gap_ok?'ok':'err';
-const p=[['MATERIAL',res.material,''],['GLAND TYPE',res.gland_type.replace(/_/g,' ').toUpperCase(),''],['SQUEEZE',fmt2(res.squeeze_pct,1)+'%',sqC],['SHAPE FACTOR',fmt2(res.shape_factor,3),''],['CONTACT WIDTH',fmt2(res.contact_width_mm,2)+' mm',''],['CONTACT PRESSURE',fmt2(res.contact_pressure_mpa,2)+' MPa',''],['FORCE/mm',fmt2(res.compression_force_n_per_mm,2)+' N/mm',''],['GLAND FILL',fmt2(res.volume_fill_pct,1)+'%',fillC],['EXTRUSION GAP',res.extrusion_gap_ok?'OK':'FAIL',extC],['MAX ALLOWABLE GAP',fmt2(res.max_allowable_gap_mm,3)+' mm',''],['MAX VON MISES',fmt2(res.max_vonmises,2)+' MPa','']];
-const warns=(res.warnings||[]).filter(t=>!(/squeeze/i.test(t)&&/(ideal|range)/i.test(t))),recs=(res.recommendations||[]).filter(t=>!(/squeeze/i.test(t)&&/(ideal|range)/i.test(t))); 
+const areaFactor=_shapeAreaFactor(xsec,res,inp.cord_dia_mm);
+const fillPct=(Number(res.volume_fill_pct)||0)*areaFactor;
+const fillIn=fillPct>=60&&fillPct<=90;
+const sqC=squeezeIn?'ok':'warn',fillC=fillIn?'ok':'warn',extC=res.extrusion_gap_ok?'ok':'err';
+const p=[['MATERIAL',res.material,''],['GLAND TYPE',res.gland_type.replace(/_/g,' ').toUpperCase(),''],['SQUEEZE',fmt2(res.squeeze_pct,1)+'%',sqC],['SHAPE FACTOR',fmt2(res.shape_factor,3),''],['CONTACT WIDTH',fmt2(res.contact_width_mm,2)+' mm',''],['CONTACT PRESSURE',fmt2(res.contact_pressure_mpa,2)+' MPa',''],['FORCE/mm',fmt2(res.compression_force_n_per_mm,2)+' N/mm',''],['GLAND FILL',fmt2(fillPct,1)+'%',fillC],['EXTRUSION GAP',res.extrusion_gap_ok?'OK':'FAIL',extC],['MAX ALLOWABLE GAP',fmt2(res.max_allowable_gap_mm,3)+' mm',''],['MAX VON MISES',fmt2(res.max_vonmises,2)+' MPa','']];
+const warns=(res.warnings||[]).filter(t=>!((/squeeze/i.test(t)&&/(ideal|range)/i.test(t))||(/gland\s*fill/i.test(t)&&/(90|thermal|expansion)/i.test(t)))),recs=(res.recommendations||[]).filter(t=>!((/squeeze/i.test(t)&&/(ideal|range)/i.test(t))||(/gland\s*fill/i.test(t)&&/(90|thermal|expansion)/i.test(t))));
 const squeezeMsg=`Squeeze ${squeezeIn?'in':'outside'} ideal range (${fmt2(squeezeMin,0)}-${fmt2(squeezeMax,0)}%) for ${materialName||'selected material'}`;
 const squeezeHtml='<div style="margin-top:.6rem"><div class="tag '+(squeezeIn?'tag-ok':'tag-warn')+'" style="display:block;margin:2px 0">'+squeezeMsg+'</div></div>';
+const fillMsg=`Gland fill ${fillIn?'in':'outside'} target range (60-90%)${xsec!=='circle'?' using '+xsec.replace('_',' ')+' area':''}`;
+const fillHtml='<div style="margin-top:.3rem"><div class="tag '+(fillIn?'tag-ok':'tag-warn')+'" style="display:block;margin:2px 0">'+fillMsg+'</div></div>';
 const warnHtml=warns.length?'<div style="margin-top:.75rem">'+warns.map(w=>`<div class="tag tag-warn" style="display:block;margin:2px 0">${w}</div>`).join('')+'</div>':'';
 const recHtml=recs.length?'<div style="margin-top:.5rem">'+recs.map(r=>`<div class="tag tag-ok" style="display:block;margin:2px 0">${r}</div>`).join('')+'</div>':'';
-document.getElementById('seal-results').innerHTML='<h3>SEAL RESULTS</h3><div class="result-grid">'+p.map(x=>'<div class="result-item"><div class="lbl">'+x[0]+'</div><div class="val'+(x[2]?' '+x[2]:'')+'">'+(x[1]||'—')+'</div></div>').join('')+'</div>'+squeezeHtml+warnHtml+recHtml;
+document.getElementById('seal-results').innerHTML='<h3>SEAL RESULTS</h3><div class="result-grid">'+p.map(x=>'<div class="result-item"><div class="lbl">'+x[0]+'</div><div class="val'+(x[2]?' '+x[2]:'')+'">'+(x[1]||'—')+'</div></div>').join('')+'</div>'+fillHtml+squeezeHtml+warnHtml+recHtml;
 const rng=document.getElementById('sl-squeeze-rng'),sqv=document.getElementById('sl-squeeze-v');if(rng)rng.value=res.squeeze_pct;if(sqv)sqv.textContent=res.squeeze_pct.toFixed(1);
 if(typeof drawSealAnim==='function')drawSealAnim(res.squeeze_pct);
-setTimeout(()=>{if(window.drawSealDiagram){window.drawSealDiagram('c-seal-fd',res.force_deflection,'N/mm','#00ff9d',res.current_point_fd,squeezeRange);window.drawSealDiagram('c-seal-ss',res.stress_strain,'MPa','#ff6b35',res.current_point_ss,null);}},50);
+const pMpa=Number(inp.pressure_mpa)||0,baseFd=Array.isArray(res.current_point_fd)&&res.current_point_fd.length===2?[Number(res.current_point_fd[0]),Number(res.current_point_fd[1])]:[Number(res.squeeze_pct)||0,Number(res.compression_force_n_per_mm)||0],baseSs=Array.isArray(res.current_point_ss)&&res.current_point_ss.length===2?[Number(res.current_point_ss[0]),Number(res.current_point_ss[1])]:[Number(res.squeeze_pct)||0,Number(res.contact_pressure_mpa)||0],boostF=pMpa*(Number(res.contact_width_mm)||Number(inp.cord_dia_mm)||0),fdOp=[baseFd[0],baseFd[1]+boostF],ssOp=[baseSs[0],baseSs[1]+pMpa];
+setTimeout(()=>{if(window.drawSealDiagram){window.drawSealDiagram('c-seal-fd',res.force_deflection,'N/mm','#00ff9d',fdOp,squeezeRange);window.drawSealDiagram('c-seal-ss',res.stress_strain,'MPa','#ff6b35',ssOp,null);}},50);
 };
 const sealFn=window.calcSeal;
 try{Object.defineProperty(window,'calcSeal',{configurable:true,get:()=>sealFn,set:()=>{}});}catch(_){ }
