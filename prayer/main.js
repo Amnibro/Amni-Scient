@@ -47,7 +47,7 @@ const bookPanel = () => document.getElementById('book-panel');
 const bookBody = () => document.getElementById('book-panel-body');
 const bookTitle = () => document.getElementById('book-panel-title');
 let silhouettePos=null,waterfallPos=null,timelinePos=null,graphPos=null,radialPos=null,spiralPos=null,crossPos=null,iamPos=null,cleanPos=null,voicePos=null,bookPos=null,kindPos=null,degreePos=null,flatPos=null,sabbathPos=null,helixPos=null,crownPos=null;let mode='timeline';let lerpSrc=null,lerpDst=null,lerpT=1.0;const LERP_FRAMES=90;const ease=t=>t<0.5?2*t*t:-1+(4-2*t)*t;const SCALE=1.8;let camSrc=null,camDst=null,camTgtSrc=null,camTgtDst=null,camT=1.0;const CAM_FRAMES=60;let pulsePhase=0;let clickTimer=null;let clickPrevAR=false;let downX=0,downY=0,wasDrag=false;let tandemActive=false;let userAlpha=1.0;let edgeAlphaBase=0.06;let patternsActive=false;let discHistory=[];let adamOnline=null;
-const AI_DEFAULTS={url:'http://localhost:7700',model:'qwen3.5-122b'};
+const AI_DEFAULTS={url:'http://localhost:7700',model:'qwen3.5-2b'};
 const AI_STORAGE_KEY='amni-prayer-ai-config';
 const WEBLLM_STORAGE_KEY='amni-prayer-webllm';
 const IS_MOBILE=/Android|iPhone|iPad|iPod|Mobile|Opera Mini/i.test(navigator.userAgent)||(navigator.deviceMemory&&navigator.deviceMemory<=4);
