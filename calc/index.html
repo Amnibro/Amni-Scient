@@ -708,11 +708,11 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 </div>
 <div class="card">
 <h3>FORCE-DEFLECTION CURVE</h3>
-<div class="diagram-wrap"><canvas id="c-seal-fd" width="800" height="200"></canvas></div>
+<div id="c-seal-fd" style="width:100%;height:250px"></div>
 </div>
 <div class="card">
 <h3>STRESS-STRAIN CURVE</h3>
-<div class="diagram-wrap"><canvas id="c-seal-ss" width="800" height="200"></canvas></div>
+<div id="c-seal-ss" style="width:100%;height:250px"></div>
 </div>
 <div class="card" id="seal-mat-detail">
 <h3>MATERIAL PROPERTIES</h3>
@@ -2471,6 +2471,26 @@ probeLocalAI();
 updateContextBar();
 savedWebLLM.enabled&&navigator.gpu&&setTimeout(()=>loadBrowserEngine(savedWebLLM.model),1200);
 })();
+const pLayout={paper_bgcolor:'#111',plot_bgcolor:'#0a0a0a',font:{family:'JetBrains Mono, monospace',color:'#888',size:11},margin:{l:70,r:25,t:40,b:55},xaxis:{gridcolor:'#1a1a1a',zerolinecolor:'#333',linecolor:'#333',tickfont:{size:10}},yaxis:{gridcolor:'#1a1a1a',zerolinecolor:'#333',linecolor:'#333',tickfont:{size:10}},hoverlabel:{bgcolor:'#161616',bordercolor:'#ff6b35',font:{family:'JetBrains Mono',color:'#e0e0e0',size:12}},modebar:{bgcolor:'transparent',color:'#555',activecolor:'#ff6b35'}};
+const pCfg={responsive:true,displaylogo:false,modeBarButtonsToRemove:['lasso2d','select2d']};
+function drawSealDiagram(id,data,unit,color,opPoint,optRange){
+const el=document.getElementById(id);
+if(!el||!data||data.length<2)return;
+const xs=data.map(d=>d[0]),ys=data.map(d=>d[1]);
+const traces=[{x:xs,y:ys,type:'scatter',mode:'lines',name:unit,fill:'tozeroy',fillcolor:color+'15',line:{color,width:2.5,shape:'spline'},hovertemplate:`Compression = %{x:.1f}%<br>${unit} = %{y:.2f}<extra></extra>`}];
+const shapes=[];
+if(optRange){
+shapes.push({type:'rect',x0:optRange[0]||15,x1:optRange[1]||30,y0:0,y1:Math.max(...ys)*1.1,fillcolor:'rgba(34,197,94,0.12)',line:{width:0}});
+shapes.push({type:'line',x0:optRange[0]||15,x1:optRange[0]||15,y0:0,y1:Math.max(...ys)*1.1,line:{color:'#22c55e',width:1,dash:'dash'}});
+shapes.push({type:'line',x0:optRange[1]||30,x1:optRange[1]||30,y0:0,y1:Math.max(...ys)*1.1,line:{color:'#22c55e',width:1,dash:'dash'}});
+}
+if(opPoint&&opPoint[0]>0){
+const sqColor=opPoint[0]<10?'#3b82f6':opPoint[0]<=30?'#22c55e':opPoint[0]<=40?'#f59e0b':'#ef4444';
+traces.push({x:[opPoint[0]],y:[opPoint[1]],type:'scatter',mode:'markers',name:'Operating ('+fmt(opPoint[1],1)+' '+unit+')',marker:{color:sqColor,size:11,symbol:'diamond',line:{color:'#fff',width:1.5}}});
+}
+Plotly.react(id,traces,Object.assign({},pLayout,{margin:{l:70,r:25,t:20,b:50},shapes,xaxis:Object.assign({},pLayout.xaxis,{title:{text:'Compression (%)',font:{size:11,color:'#888'}}}),yaxis:Object.assign({},pLayout.yaxis,{title:{text:unit,font:{size:11,color:'#888'}}}),showlegend:opPoint&&opPoint[0]>0,legend:{font:{size:10,color:'#888'},bgcolor:'transparent'}}),pCfg);
+}
+['sl-cord','sl-id','sl-depth','sl-width','sl-gap','sl-hard','sl-press','sl-temp'].forEach(id=>document.getElementById(id)?.addEventListener('input',calcSeal));
 </script>
 <script src="./calc-overrides.js" defer></script>
 </body>
