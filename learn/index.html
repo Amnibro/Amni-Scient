@@ -1233,10 +1233,9 @@
     const app=$$('#app');
     on ? (app.classList.add('amni-fs'),document.body.style.overflow='hidden',$$('#fs-btn').textContent='✖ EXIT FULLSCREEN',$$('#fs-hint').style.display='inline') : (app.classList.remove('amni-fs'),document.body.style.overflow='',$$('#fs-btn').textContent='⛶ FULLSCREEN',$$('#fs-hint').style.display='none');
   }
-  $$('#fs-btn').addEventListener('click', () => $$('#app').classList.contains('amni-fs')||_fsNative ? _exitFs() : _enterFs());
+  $$('#fs-btn').addEventListener('click', () => ($$('#app').classList.contains('amni-fs')||_fsNative) ? _exitFs() : _enterFs());
   document.addEventListener('fullscreenchange', () => { document.fullscreenElement ? (_fsNative=true,_cssFallback(true)) : (_fsNative=false,_cssFallback(false)); });
   document.addEventListener('webkitfullscreenchange', () => { document.webkitFullscreenElement ? (_fsNative=true,_cssFallback(true)) : (_fsNative=false,_cssFallback(false)); });
-  });
   window.addEventListener('keydown', (e) => {
     if (document.fullscreenElement) {
       const allowedKeys = ['Escape', 'F11', 'F12'];
