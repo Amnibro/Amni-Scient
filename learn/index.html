@@ -639,6 +639,13 @@
   .learn-footer .lf-copy{margin-top:18px;color:#556;font-size:0.72rem;text-align:center}
   @media (max-width:500px){.learn-footer{font-size:0.82rem}.learn-footer h2{font-size:1.1rem}}
   body:has(.view.active:not(#menu-view)) .learn-footer{display:none}
+  body.game-active .learn-footer{display:none}
+  body.game-active{overflow:hidden}
+  body.game-active #app{height:100dvh;height:100vh}
+  :fullscreen #app,:-webkit-full-screen #app{height:100vh;overflow:hidden}
+  :fullscreen body,:-webkit-full-screen body{padding:0!important;overflow:hidden}
+  :fullscreen .top-bar,:-webkit-full-screen .top-bar{top:0!important}
+  :fullscreen,:-webkit-full-screen{--site-banner-offset:0px}
 </style>
 </head>
 <body>
@@ -1209,7 +1216,8 @@
   updateScoreUI();
   $$('#fs-btn').addEventListener('click', () => {
     if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().catch(err => console.log(err));
+      const el = $$('#app');
+      (el.requestFullscreen||el.webkitRequestFullscreen||el.mozRequestFullscreen||el.msRequestFullscreen).call(el).catch(err => console.log(err));
       $$('#fs-btn').textContent = '✖ EXIT FULLSCREEN';
       $$('#fs-hint').style.display = 'inline';
     } else {
@@ -1402,6 +1410,7 @@
   function showView(viewId) {
     Object.values(views).forEach(v => v.classList.remove('active'));
     views[viewId].classList.add('active');
+    viewId !== 'menu' ? document.body.classList.add('game-active') : document.body.classList.remove('game-active');
     if(viewId !== 'menu') {
       const lt = views[viewId].querySelector('.life-title');
       if(lt && !lt.querySelector('.exit-btn')) {
@@ -1727,7 +1736,7 @@
                       const we=$$('#type-words'); if(we) we.textContent=typeWordCount+'/'+typeGoal;
                       const be=$$('#type-best'); if(be) be.textContent=typeBestWpm;
                       letters.forEach(l=>l.classList.add('pop'));
-                      if(typeWordCount>=typeGoal) { const avgWpm=Math.round(typeWpmSum/typeWordCount); typeContainer.innerHTML=`<div style="text-align:center;padding:1.5rem"><div style="font-size:3rem;margin-bottom:.8rem">⌨️🌟</div><div style="font-size:1.3rem;font-weight:bold;margin-bottom:.5rem">${typeGoal} Words Complete!</div><div style="margin-bottom:.5rem">Best: ${typeBestWpm} WPM | Avg: ${avgWpm} WPM</div><div>${typeBestWpm>60?'Cyber Ninja! 🥷':(typeBestWpm>30?'Typing Wizard! 🧙‍♂️':'Keep practicing!')}</div><div class="m-choice" style="display:inline-block;padding:.8rem 2rem;cursor:pointer;margin-top:1rem" onclick="typeWordCount=0;typeBestWpm=0;typeWpmSum=0;initTyping()">Play Again</div></div>`; return; }
+                      if(typeWordCount>=typeGoal) { const avgWpm=Math.round(typeWpmSum/typeWordCount); typeContainer.innerHTML=`<div style="text-align:center;padding:1.5rem"><div style="font-size:3rem;margin-bottom:.8rem">⌨️🌟</div><div style="font-size:1.3rem;font-weight:bold;margin-bottom:.5rem">${typeGoal} Words Complete!</div><div style="margin-bottom:.5rem">Best: ${typeBestWpm} WPM | Avg: ${avgWpm} WPM</div><div>${typeBestWpm>60?'Cyber Ninja! 🥷':(typeBestWpm>30?'Typing Wizard! 🧙‍♂️':'Keep practicing!')}</div><div class="m-choice" id="type-play-again" style="display:inline-block;padding:.8rem 2rem;cursor:pointer;margin-top:1rem">Play Again</div></div>`; const pa=$$('#type-play-again');if(pa)pa.onclick=initTyping; return; }
                       let msg="Super!";
                       if(currentLevel===1) { msg=time<3?"Speedy Turtle! 🐢💨":"Happy Hippo! 🦛"; typeStats.textContent=`Typed ${currentWord.length} letters!`; }
                       else { msg=wpm>60?"Cyber Ninja! 🥷":(wpm>30?"Typing Wizard! 🧙‍♂️":"Great Job! 👍"); typeStats.textContent=`Speed: ~${wpm} WPM!`; }
@@ -3054,9 +3063,44 @@ function playAnimalSound(type) {
         el.textContent = item.e;
         el.dataset.bucket = item.b;
         el.dataset.idx = idx;
-        el.draggable = true;
-        el.addEventListener('dragstart', (e) => { dragItem = el; e.dataTransfer.effectAllowed = 'move'; });
-        el.addEventListener('pointerdown', () => { if(dragItem) dragItem.classList.remove('selected'); dragItem = el; el.classList.add('selected'); });
+        el.addEventListener('pointerdown', (e) => {
+          e.preventDefault();
+          if(dragItem) dragItem.classList.remove('selected');
+          dragItem = el; el.classList.add('selected');
+          const clone = el.cloneNode(true);
+          clone.style.cssText = 'position:fixed;pointer-events:none;z-index:9999;opacity:0.85;transform:scale(1.1);transition:none;';
+          const r = el.getBoundingClientRect();
+          clone.style.left = (r.left + (e.clientX - r.left - r.width/2)) + 'px';
+          clone.style.top = (r.top + (e.clientY - r.top - r.height/2)) + 'px';
+          clone.style.width = r.width + 'px'; clone.style.height = r.height + 'px';
+          document.body.appendChild(clone);
+          const move = ev => {
+            ev.preventDefault();
+            const cx = ev.touches ? ev.touches[0].clientX : ev.clientX;
+            const cy = ev.touches ? ev.touches[0].clientY : ev.clientY;
+            clone.style.left = (cx - r.width/2) + 'px';
+            clone.style.top = (cy - r.height/2) + 'px';
+          };
+          const up = ev => {
+            ev.preventDefault();
+            clone.remove();
+            document.removeEventListener('pointermove', move);
+            document.removeEventListener('pointerup', up);
+            const cx = ev.clientX, cy = ev.clientY;
+            const buckets = $$('#sort-area').querySelectorAll('.sort-bucket');
+            let dropped = false;
+            buckets.forEach(b => {
+              const br = b.getBoundingClientRect();
+              if(cx>=br.left&&cx<=br.right&&cy>=br.top&&cy<=br.bottom) {
+                dropped = true;
+                handleDrop(dragItem, parseInt(b.dataset.bi), b);
+              }
+            });
+            if(!dropped && dragItem) dragItem.classList.remove('selected');
+          };
+          document.addEventListener('pointermove', move, {passive:false});
+          document.addEventListener('pointerup', up, {passive:false});
+        }, {passive:false});
         tray.appendChild(el);
       });
       round.buckets.forEach((label, bi) => {
@@ -5544,14 +5588,14 @@ function playAnimalSound(type) {
         groups.forEach(g=>{
           const connected=g.ids.some(id=>id<nextDot),isNext=g.isNext;
           const x=g.x,y=g.y;
-          ctx.beginPath();ctx.arc(x,y,connected?8:isNext?13:9,0,6.28);
-          ctx.fillStyle=connected?sh.color:isNext?(hintOn?'#e74c3c':'#f1c40f'):'#ccc';
+          ctx.beginPath();ctx.arc(x,y,isNext?13:connected?8:9,0,6.28);
+          ctx.fillStyle=isNext?(hintOn?'#e74c3c':'#f1c40f'):connected?sh.color:'#ccc';
           if(isNext&&hintOn){ctx.shadowColor='#e74c3c';ctx.shadowBlur=20;ctx.fill();ctx.shadowBlur=0;ctx.strokeStyle='#e74c3c';ctx.lineWidth=3;ctx.setLineDash([5,4]);ctx.stroke();ctx.setLineDash([]);}
-          else{ctx.fill();ctx.strokeStyle=connected?sh.color:'#999';ctx.lineWidth=2;ctx.stroke();}
-          if(!done){
-            ctx.fillStyle=connected?'#fff':isNext?'#333':'#555';
-            let lbl=g.ids.map(n=>n+1).join(',');
-            ctx.font=`bold ${lbl.length>2?8:12}px 'JetBrains Mono',monospace`;
+          else{ctx.fill();ctx.strokeStyle=isNext?'#e67e22':connected?sh.color:'#999';ctx.lineWidth=2;ctx.stroke();}
+          if(!done&&isNext){
+            const lbl=String(nextDot+1);
+            ctx.fillStyle='#333';
+            ctx.font=`bold 13px 'JetBrains Mono',monospace`;
             ctx.textAlign='center';ctx.textBaseline='middle';
             ctx.fillText(lbl,x,y);
           }
