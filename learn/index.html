@@ -263,7 +263,7 @@
   .sort-bucket.hover { border-color:#00b894; background:#2d4a3a; transform:scale(1.03); }
   .sort-label { font-family:'Comic Neue',cursive; font-size:1.4rem; color:#fdcb6e; font-weight:bold; margin-bottom:10px; }
   .sort-items { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; }
-  .sort-item { font-size:2.5rem; cursor:grab; user-select:none; padding:8px; background:#3d4f63; border-radius:12px; transition:0.15s; display:inline-block; }
+  .sort-item { font-size:2.5rem; cursor:grab; user-select:none; touch-action:none; padding:8px; background:#3d4f63; border-radius:12px; transition:0.15s; display:inline-block; }
   .sort-item:active { transform:scale(0.9); cursor:grabbing; }
   .sort-item.correct { animation:sortCorrect 0.5s ease-out; }
   @keyframes sortCorrect { 0%{transform:scale(1)} 50%{transform:scale(1.3) rotate(10deg)} 100%{transform:scale(1)} }
@@ -639,13 +639,14 @@
   .learn-footer .lf-copy{margin-top:18px;color:#556;font-size:0.72rem;text-align:center}
   @media (max-width:500px){.learn-footer{font-size:0.82rem}.learn-footer h2{font-size:1.1rem}}
   body:has(.view.active:not(#menu-view)) .learn-footer{display:none}
-  body.game-active .learn-footer{display:none}
+  body.game-active .learn-footer{display:none!important}
   body.game-active{overflow:hidden}
   body.game-active #app{height:100dvh;height:100vh}
   :fullscreen #app,:-webkit-full-screen #app{height:100vh;overflow:hidden}
   :fullscreen body,:-webkit-full-screen body{padding:0!important;overflow:hidden}
   :fullscreen .top-bar,:-webkit-full-screen .top-bar{top:0!important}
   :fullscreen,:-webkit-full-screen{--site-banner-offset:0px}
+  .amni-fs{position:fixed!important;inset:0!important;z-index:99999!important;width:100vw!important;height:100svh!important;overflow-y:auto!important;background:#0c0f12!important;--site-banner-offset:0px}
 </style>
 </head>
 <body>
@@ -1214,25 +1215,27 @@
   function medalFor(pct){return pct>=90?'🥇':pct>=70?'🥈':pct>=50?'🥉':'💪';}
   function buildResultCard(game,score,total,extra){const pct=total?Math.round(score/total*100):0;const pb=getPersonalBest(game,score);const medal=medalFor(pct);let html=`<div style="text-align:center;padding:20px"><div style="font-size:3rem;margin:8px 0">${medal}</div><div class="nmm-display" style="font-size:2.4rem">${score}/${total}</div><div class="nmm-msg" style="font-size:1.1rem;margin:6px 0">${pct}% Accuracy</div>`;pb.isNew?html+=`<div style="color:#2ecc71;font-size:1rem;font-weight:bold;margin:4px 0">⭐ NEW PERSONAL BEST! ⭐</div>`:pb.prev>0?html+=`<div style="color:#888;font-size:0.85rem">Best: ${pb.prev}</div>`:0;extra?html+=`<div style="color:#aaa;font-size:0.85rem;margin-top:4px">${extra}</div>`:0;html+=`</div>`;return html;}
   updateScoreUI();
-  $$('#fs-btn').addEventListener('click', () => {
-    if (!document.fullscreenElement) {
-      const el = $$('#app');
-      (el.requestFullscreen||el.webkitRequestFullscreen||el.mozRequestFullscreen||el.msRequestFullscreen).call(el).catch(err => console.log(err));
-      $$('#fs-btn').textContent = '✖ EXIT FULLSCREEN';
-      $$('#fs-hint').style.display = 'inline';
-    } else {
-      if (document.exitFullscreen) {
-        document.exitFullscreen();
-        $$('#fs-btn').textContent = '⛶ FULLSCREEN';
-        $$('#fs-hint').style.display = 'none';
-      }
-    }
-  });
-  document.addEventListener('fullscreenchange', () => {
-      if (!document.fullscreenElement) {
-          $$('#fs-btn').textContent = '⛶ FULLSCREEN';
-          $$('#fs-hint').style.display = 'none';
-      }
+  let _fsNative = false;
+  function _enterFs() {
+    const app = $$('#app');
+    const ios = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+    if(!ios && (app.requestFullscreen||app.webkitRequestFullscreen||app.mozRequestFullscreen||app.msRequestFullscreen)) {
+      (app.requestFullscreen||app.webkitRequestFullscreen||app.mozRequestFullscreen||app.msRequestFullscreen).call(app).then(()=>{_fsNative=true;}).catch(()=>_cssFallback(true));
+    } else { _cssFallback(true); }
+  }
+  function _exitFs() {
+    _cssFallback(false);
+    if(_fsNative && document.fullscreenElement) document.exitFullscreen().catch(()=>{});
+    else if(_fsNative && document.webkitFullscreenElement) document.webkitExitFullscreen();
+    _fsNative=false;
+  }
+  function _cssFallback(on) {
+    const app=$$('#app');
+    on ? (app.classList.add('amni-fs'),document.body.style.overflow='hidden',$$('#fs-btn').textContent='✖ EXIT FULLSCREEN',$$('#fs-hint').style.display='inline') : (app.classList.remove('amni-fs'),document.body.style.overflow='',$$('#fs-btn').textContent='⛶ FULLSCREEN',$$('#fs-hint').style.display='none');
+  }
+  $$('#fs-btn').addEventListener('click', () => $$('#app').classList.contains('amni-fs')||_fsNative ? _exitFs() : _enterFs());
+  document.addEventListener('fullscreenchange', () => { document.fullscreenElement ? (_fsNative=true,_cssFallback(true)) : (_fsNative=false,_cssFallback(false)); });
+  document.addEventListener('webkitfullscreenchange', () => { document.webkitFullscreenElement ? (_fsNative=true,_cssFallback(true)) : (_fsNative=false,_cssFallback(false)); });
   });
   window.addEventListener('keydown', (e) => {
     if (document.fullscreenElement) {
