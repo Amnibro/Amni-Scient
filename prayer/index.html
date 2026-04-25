@@ -122,15 +122,27 @@
       <div class="ai-hint" style="margin-bottom:8px">Run a small model directly in this tab. No server, no network once loaded. Great for mobile.</div>
       <label class="ai-toggle"><input type="checkbox" id="webllm-enable"/><span>Auto-load on page open</span></label>
       <label class="ai-field"><span class="ai-label">Model</span><select id="webllm-model">
-        <option value="SmolLM2-135M-Instruct-q0f16-MLC">SmolLM2 135M &middot; ~90MB (mobile / low VRAM)</option>
-        <option value="Qwen3.5-0.8B-Instruct-q4f16_1-MLC">Qwen3.5 0.8B &middot; ~500MB (ultra-light)</option>
-        <option value="SmolLM2-360M-Instruct-q0f16-MLC">SmolLM2 360M &middot; ~230MB</option>
-        <option value="Qwen3.5-2B-Instruct-q4f16_1-MLC">Qwen3.5 2B &middot; ~1.2GB (balanced performance)</option>
-        <option value="Llama-3.2-3B-Instruct-q4f32_1-MLC">Llama 3.2 3B &middot; ~1.2GB (desktop)</option>
-        <option value="Qwen2.5-1.5B-Instruct-q4f16_1-MLC">Qwen2.5 1.5B &middot; ~900MB (desktop)</option>
-        <option value="Qwen2.5-3B-Instruct-q4f16_1-MLC">Qwen2.5 3B &middot; ~1.8GB (high performance)</option>
-        <option value="SmolLM2-1.7B-Instruct-q4f16_1-MLC">SmolLM2 1.7B &middot; ~1.1GB (desktop)</option>
-        <option value="Bonsai-8B-mlx-1bit">Bonsai 8B 1-bit &middot; ~1.3GB (Apple Silicon)</option>
+        <optgroup label="Lightweight (mobile / low RAM)">
+          <option value="SmolLM2-360M-Instruct-q0f16-MLC">SmolLM2 360M &middot; ~230MB (ultra-light, basic chat)</option>
+          <option value="Qwen3-0.6B-q4f16_1-MLC">Qwen3 0.6B &middot; ~400MB (still coherent)</option>
+          <option value="Qwen3-1.7B-q4f16_1-MLC">Qwen3 1.7B &middot; ~1.0GB (recommended low-end)</option>
+        </optgroup>
+        <optgroup label="Balanced (recommended)">
+          <option value="Qwen2.5-3B-Instruct-q4f16_1-MLC">Qwen2.5 3B &middot; ~1.8GB (sweet spot)</option>
+          <option value="gemma-2-2b-it-q4f16_1-MLC">Gemma 2 2B &middot; ~1.4GB</option>
+          <option value="Phi-3.5-mini-instruct-q4f16_1-MLC">Phi-3.5 mini 3.8B &middot; ~2GB</option>
+        </optgroup>
+        <optgroup label="High quality (desktop / 6GB+ RAM)">
+          <option value="Qwen3-4B-q4f16_1-MLC">Qwen3 4B &middot; ~2.4GB</option>
+          <option value="Qwen2.5-7B-Instruct-q4f16_1-MLC">Qwen2.5 7B &middot; ~4.5GB</option>
+          <option value="Qwen3-8B-q4f16_1-MLC">Qwen3 8B &middot; ~5GB (desktop only)</option>
+        </optgroup>
+        <optgroup label="Specialized">
+          <option value="Qwen2.5-Coder-1.5B-Instruct-q4f16_1-MLC">Qwen2.5 Coder 1.5B &middot; ~900MB (code/scripting)</option>
+          <option value="Qwen2.5-Coder-3B-Instruct-q4f16_1-MLC">Qwen2.5 Coder 3B &middot; ~1.8GB (code/scripting)</option>
+          <option value="Qwen2.5-Math-1.5B-Instruct-q4f16_1-MLC">Qwen2.5 Math 1.5B &middot; ~900MB (math/reasoning)</option>
+          <option value="DeepSeek-R1-Distill-Qwen-7B-q4f16_1-MLC">DeepSeek-R1 Distill 7B &middot; ~4.5GB (reasoning)</option>
+        </optgroup>
       </select></label>
       <div id="webllm-progress-wrap" style="display:none">
         <div class="ai-progress-bar"><div id="webllm-progress-fill"></div></div>
@@ -146,7 +158,7 @@
         <ul>
           <li><b>VK_ERROR / CreateComputePipelines</b> &rarr; update GPU drivers, or enable <code>chrome://flags/#enable-unsafe-webgpu</code>.</li>
           <li><b>WebGPU not available</b> &rarr; use Chrome 113+ / Edge / Safari 18+, not Firefox (no WebGPU yet).</li>
-          <li><b>Out of memory</b> &rarr; pick Qwen2.5 0.5B (smallest) or close other tabs.</li>
+          <li><b>Out of memory</b> &rarr; pick SmolLM2 360M (smallest) or close other tabs.</li>
           <li><b>Mixed content</b> &rarr; served HTTPS but Hugging Face CDN blocked? hard-refresh and retry.</li>
           <li>Built-in responses remain active either way.</li>
         </ul>
