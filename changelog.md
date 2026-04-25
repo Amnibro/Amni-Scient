@@ -1,5 +1,86 @@
 ﻿# Changelog 
 
+## [4.7.11] - 2026-04-25 - Prayer WebLLM: drop Qwen3.5 (TVM ABI mismatch), revert to Qwen3 + prebuilt-only
+
+### Fixed
+- v4.7.10 added Qwen3.5 via custom appConfig pointing at `binary-mlc-llm-libs/.../v0_2_83/base/`. Loading then failed with TVM error "value attached to scope multiple times" — the WASMs at v0_2_83/base/ are compiled for an unreleased web-llm 0.2.83 runtime, but `@0.2` resolves to `0.2.82` whose runtime hardcodes `modelVersion = "v0_2_80"`. ABI mismatch at the WASM IR level — not fixable by us, only by waiting for npm publish of 0.2.83
+- **Removed:** `WEBLLM_CUSTOM_MODELS`, `Q35_LIB_PFX`, `Q35_OVR`, `getMergedAppConfig()` helper from `prayer/main.js`. Reverted `CreateMLCEngine` call to pure prebuilt path
+- **Dropdown swapped:** Qwen3.5 0.8B/2B/4B/9B → Qwen3 0.6B/1.7B/4B/8B (one generation behind, but registered in 0.2.82 with matching v0_2_80 libs)
+- **WEBLLM_DEFAULTS:** mobile `Qwen3-0.6B-q4f16_1-MLC` (~400MB), desktop `Qwen2.5-3B-Instruct-q4f16_1-MLC` (~1.8GB) — both verified in `prebuiltAppConfig`
+- All 13 dropdown IDs grep-verified against `cdn.jsdelivr.net/npm/@mlc-ai/web-llm@0.2.82/lib/index.js` before shipping
+
+### Files Touched
+- `amni-scient-site/prayer/index.html`
+- `amni-scient-site/prayer/main.js`
+- `amni-scient-site/changelog.md`
+- Backups: `amni-scient-site/backups/prayer_index_v4.7.11_drop_qwen35.bak`, `amni-scient-site/backups/prayer_main_v4.7.11_drop_qwen35.bak`
+
+### Notes
+- Same Qwen3.5 → Qwen3 revert shipped to Amni-Haven v5.6.6
+- Hard-learned verification chain (will live in memory now): for any web-llm model_id, BOTH must be true — (1) ID present in published `lib/index.js` (use jsdelivr CDN at exact version), AND (2) `<modelLibURLPrefix><runtime-modelVersion>/<filename>.wasm` returns 200. v5.6.4 broke (1); v5.6.5 broke (2). Only when both clear does a model actually load
+
+## [4.7.10] - 2026-04-25 - Prayer WebLLM: register Qwen3.5 via custom appConfig (was throwing "model record not found")
+
+### Fixed
+- v4.7.9 added Qwen3.5 IDs to the dropdown after I confirmed they exist in web-llm's *main branch* `config.ts`. Mistake: `main` ≠ published. The npm-published `@mlc-ai/web-llm@0.2.82` (current latest, what `@0.2` resolves to) does NOT yet ship Qwen3.5 in its bundled `prebuiltAppConfig`. Selecting Qwen3.5-2B etc. threw "cannot find model record in appConfig"
+- **Fix:** wired a `WEBLLM_CUSTOM_MODELS` array (Qwen3.5 0.8B / 2B / 4B / 9B, all q4f16_1) and a `getMergedAppConfig()` helper that merges these with `webllmModule.prebuiltAppConfig.model_list`. Passed merged result as `appConfig` to `CreateMLCEngine`. This is the path documented in web-llm's README "Custom Models" section — it works because MLC has already published Qwen3.5 model weights to HF and the WebGPU WASM libs to `binary-mlc-llm-libs` even though the npm bundle hasn't bumped
+- **Verification before shipping:** every custom URL probed with `curl -sI` — HF repos `mlc-ai/Qwen3.5-{0.8B,2B,4B,9B}-q4f16_1-MLC` all 200, WASM libs at `v0_2_83/base/` all 200
+- Added `Qwen2.5-7B-Instruct-q4f32_1-MLC` (~5GB) to the dropdown for desktops without f16 GPU support — already in published `prebuiltAppConfig`, no custom entry needed
+
+### Files Touched
+- `amni-scient-site/prayer/main.js` (added CUSTOM_MODELS, getMergedAppConfig, passed appConfig to CreateMLCEngine)
+- `amni-scient-site/prayer/index.html` (added Qwen2.5 7B q4f32 option)
+- `amni-scient-site/changelog.md`
+- Backups: `amni-scient-site/backups/prayer_main_v4.7.10_qwen35_customcfg.bak`
+
+### Notes
+- Same fix shipped to sibling Amni-Haven v5.6.5
+- Lesson on top of the v4.7.8/v4.7.9 ones: `main` branch source files describe what the *next* release will contain, not what `npm install` gives you today. The only ground truth for "what does my pin actually have" is `https://cdn.jsdelivr.net/npm/<pkg>@<version>/lib/index.js` (or whichever path holds the published bundle), grepped directly. Saved this to memory
+
+## [4.7.9] - 2026-04-25 - Prayer WebLLM dropdown: promote Qwen3.5, add specialized optgroup
+
+### Fixed
+- v4.7.8 used Qwen2.5-1.5B as desktop default. User pointed out Qwen3.5 (released Feb 2026) is stronger at every comparable size and IS supported by `@mlc-ai/web-llm@0.2.82` (current latest pin). Verified via raw HF API + raw config.ts grep — Qwen3.5-{0.8B,2B,4B,9B} and Qwen3-{0.6B,1.7B,4B,8B} all present in prebuiltAppConfig
+- **New `WEBLLM_DEFAULTS` in `prayer/main.js`:** mobile `Qwen3.5-0.8B-q4f16_1-MLC` (~500MB), desktop `Qwen3.5-2B-q4f16_1-MLC` (~1.2GB) — both meaningfully smarter than the v4.7.8 picks at similar memory cost
+- **Dropdown reorganized:**
+  - Lightweight: SmolLM2 360M, Qwen3.5 0.8B, Qwen3 1.7B
+  - Balanced: Qwen3.5 2B, Gemma 2 2B, Phi-3.5 mini 3.8B
+  - High quality: Qwen3.5 4B, Qwen2.5 7B, Qwen3.5 9B (desktop only)
+  - **NEW Specialized optgroup:** Qwen2.5 Coder 1.5B/3B (code), Qwen2.5 Math 1.5B (math), DeepSeek-R1 Distill 7B (reasoning)
+- Removed v4.7.8's now-suboptimal picks: Qwen2.5 1.5B, Qwen2.5 3B, Llama 3.2 3B, SmolLM2 1.7B (all beaten by Qwen3.5 at similar sizes)
+
+### Files Touched
+- `amni-scient-site/prayer/index.html`
+- `amni-scient-site/prayer/main.js`
+- `amni-scient-site/changelog.md`
+- Backups: `amni-scient-site/backups/prayer_index_v4.7.9_qwen35.bak`, `amni-scient-site/backups/prayer_main_v4.7.9_qwen35.bak`
+
+### Notes
+- Same dropdown shipped to sibling Amni-Haven v5.6.4. Haven keeps a flat dropdown (mobile-only context); Prayer uses optgroups for desktop/mobile spread
+- Lesson re v4.7.8: I assumed Qwen2.5 was the latest because it was in my training data. Always check `https://raw.githubusercontent.com/mlc-ai/web-llm/main/src/config.ts` before defending a model pick — it's the only ground truth for "what does the @0.2 pin actually resolve to today"
+
+## [4.7.8] - 2026-04-25 - Prayer WebLLM dropdown: drop junk, ship coherent models
+
+### Fixed
+- **Prayer in-browser engine dropdown** had four broken or sub-coherent entries that v4.7.7 missed (4.7.7 changelog claimed "Prayer page already used correct models, no changes needed" — incorrect):
+  - `Qwen3.5-0.8B-Instruct-q4f16_1-MLC` — Qwen3.5 doesn't exist in web-llm's prebuiltAppConfig (Qwen line goes 1.5 → 2.5 → 3, no 3.5). Would throw "Cannot find model record" on load
+  - `Qwen3.5-2B-Instruct-q4f16_1-MLC` — same, fictional
+  - `Bonsai-8B-mlx-1bit` — MLX is Apple's format. web-llm only loads MLC format. Would fail unconditionally
+  - `SmolLM2-135M-Instruct-q0f16-MLC` — loads, but cannot do basic instruction-following ("what's 14!?" → "14 is a holiday")
+- **Replaced dropdown** with three labeled `<optgroup>`s — Lightweight (SmolLM2 360M, SmolLM2 1.7B), Balanced (Qwen2.5 1.5B, Gemma 2 2B), High quality (Llama 3.2 3B, Qwen2.5 3B, Phi-3.5 mini 3.8B). Every option is in web-llm's actual prebuilt config and produces coherent chat
+- **Updated `WEBLLM_DEFAULTS` in `prayer/main.js`** — mobile default `SmolLM2-135M` → `SmolLM2-360M-Instruct-q0f16-MLC` (smallest *coherent* model); desktop default `Qwen2.5-0.5B` → `Qwen2.5-1.5B-Instruct-q4f16_1-MLC`
+- Updated OOM troubleshooting tip from "Qwen2.5 0.5B (smallest)" to "SmolLM2 360M (smallest)" to match new dropdown
+
+### Files Touched
+- `amni-scient-site/prayer/index.html`
+- `amni-scient-site/prayer/main.js`
+- `amni-scient-site/changelog.md`
+- Backups: `amni-scient-site/backups/prayer_index_v4.7.8_pre_model_overhaul.bak`, `amni-scient-site/backups/prayer_main_v4.7.8_pre_model_overhaul.bak`
+
+### Notes
+- Same fix shipped to sibling Amni-Haven app v5.6.3 (same junk dropdown, different runtime — Haven runs in Android System WebView, Prayer in mobile/desktop browser)
+- Lesson re v4.7.7: "audited and clean" claims need spot-check evidence. v4.7.7 fixed `calc/` page and asserted Prayer was already fine without verifying. It wasn't
+
 ## [4.7.7] - 2026-04-21 - WebLLM Model Compatibility Fix
 
 ### Fixed
