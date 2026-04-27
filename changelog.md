@@ -1,5 +1,32 @@
 ﻿# Changelog 
 
+## [4.7.12] - 2026-04-27 - Prayer tandem graceful fallback + patterns visual upgrade
+
+### Fixed (tandem)
+- `populateTandem(idx)` no longer silently early-returns when `fulltext[key]` is missing. 21 of 73 books in `bible_fulltext.json` have no full-text data (1-2 Sam, 1-2 Kings, 1-2 Chr, Tobit, Zechariah, Malachi, 1-2 Cor, 1-2 Thess, 1-2 Tim, 1-2 Pet, 1-3 John, Revelation), causing the tandem panel to render blank space when a verse from any of those books was selected. Now falls back to graph node `preview` text per verse and shows a small notice ("Full chapter text not available for this book yet — showing cross-reference graph previews. Connections and patterns work normally."). Connections panel always renders regardless of fulltext availability.
+- Removed `if (!fulltext) return;` guard from the entry condition; only `tandemActive` gates the function now.
+
+### Added (patterns)
+- `analyzePatterns(idx)` now renders three visual sections in addition to the existing insights:
+  - **OT/NT split bar**: gradient stacked bar (purple OT, blue NT) with absolute counts.
+  - **Strongest connection callout**: highest-mass cross-referenced verse, scored by mass + cross-testament bonus, displayed with book color dot and 160-char preview.
+  - **Era distribution mini-chart**: top 5 eras with horizontal bars showing each era's share of total connections.
+- Existing insights (people, locations, themes, conflicts) preserved below the new visuals.
+
+### Files Touched
+- `prayer/main.js` — populateTandem rewrite, analyzePatterns visual additions
+- `prayer/style.css` — `.tandem-fallback-notice`, `.pat-bar-row`, `.pat-bar-track`, `.pat-bar-seg.ot`, `.pat-bar-seg.nt`, `.pat-bar-num`, `.pat-era-row/lbl/track/fill/num`, `.pat-strongest/-lbl/-ref/-text`, `.pat-section/-title`
+- Backups: `backups/prayer-main.v4.7.11.bak`, `backups/prayer-style.v4.7.11.bak`
+- Patcher scripts (gitignored): `src/fix-tandem.js`, `src/fix-patterns.js`
+
+### Known data gap
+- The 21 missing-fulltext books are a `bible_fulltext.json` ingest issue (likely the original parser tripped on multi-token book names like "1 Samuel"). Cross-reference previews from `bible_graph.json` cover the gap; a future ingest fix would reach full text.
+
+### WebLLM model registry status (verified 2026-04-27)
+- Fetched `cdn.jsdelivr.net/npm/@mlc-ai/web-llm@0.2/lib/index.js`. modelVersion = `v0_2_80`.
+- Registered models include: SmolLM2, Qwen2.5 (incl. Math/Coder), **Qwen3** (0.6B/1.7B/4B/8B), Llama-3.2 (1B/3B), Llama-3.1, Llama-3, Phi-3.5, Hermes-3-Llama-3.x, gemma-2, DeepSeek-R1-Distill-Qwen/Llama, Mistral, stablelm, TinyLlama.
+- **Qwen 3.5 / Qwen 3.6 NOT in registry.** **Llama 4 NOT in registry.** The base models exist on HuggingFace, but the MLC team has not yet published WebGPU-compiled WASM bundles for them. Adding a model_id to our dropdown does not work without those bundles (per v4.7.10/v4.7.11 prebuilt-only lesson). Current calc dropdown reflects the actual ceiling.
+
 ## [4.5.2] - 2026-04-27 - Calc local AI: drop phantom models, port verified WebLLM list
 
 ### Fixed
