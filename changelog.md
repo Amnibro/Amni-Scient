@@ -1,5 +1,29 @@
 ﻿# Changelog 
 
+## [5.0.0] - 2026-04-27 - Amni-LLM v0.1.0 — universal in-browser GGUF runtime
+
+### Added
+- `lib/amni-llm/` — new top-level library that loads any GGUF model in the browser with no pre-compilation requirement. Built as a thin clean layer over [wllama](https://github.com/ngxson/wllama) (MIT-licensed llama.cpp WASM port). Amni-Scient owns the loader, registry, browser UI, HuggingFace search/install, arbitrary URL/file loading, and WebLLM-compatible API surface.
+- `lib/amni-llm/amni-llm.js` — `AmniLLMEngine` class + `createEngine(spec, opts)` helper. WebLLM-compatible: `engine.chatCompletions.create({messages, temperature, max_tokens, stream})`. Streaming via `engine.chatStream()`. Supports three load forms: registry id (`'Qwen3-4B-Q4_K_M'`), arbitrary URL (`{url:'...'}`), local file (`{file:File}`).
+- `lib/amni-llm/registry.js` — 4 SOTA defaults (Qwen3 0.6B, Qwen3 4B, DeepSeek-R1 Distill 7B, Qwen2.5 Math 7B) + helpers: `hfSearchModels(query)` calls `huggingface.co/api/models?library=gguf`, `hfListGgufFiles(repoId)` enumerates `.gguf` artifacts in a repo, `getInstalled/saveInstalled/removeInstalled` persist user-installed models in `localStorage` under `amni-llm-installed`.
+- `lib/amni-llm/index.html` — demo page with five tabs: SOTA defaults, Installed, HF search (live), Custom URL, Local file. Each search result expands to a quantization picker with Load + Install buttons.
+- `lib/amni-llm/README.md` — full docs incl. honest stack disclosure (wllama/llama.cpp dependency, MIT license, performance tradeoff vs WebLLM).
+
+### Why
+WebLLM (MLC) requires every model to be specifically TVM-compiled to WebGPU shaders before it works in-browser. New base models like Qwen 3.5/3.6 and Llama 4 wait on MLC team capacity for that compile step. Amni-LLM uses GGUF, which has near-universal community coverage on HuggingFace within days of any model release. Tradeoff: llama.cpp WASM is CPU-SIMD-only currently, so per-token throughput is ~3-8 t/s on 7B Q4 vs MLC's ~15-30 t/s WebGPU. For interactive chat at small models the gap is barely noticeable; the real win is universal model coverage and arbitrary URL/file loading.
+
+### Files Touched
+- `lib/amni-llm/amni-llm.js` (new)
+- `lib/amni-llm/registry.js` (new)
+- `lib/amni-llm/index.html` (new)
+- `lib/amni-llm/README.md` (new)
+
+### Follow-ups (not in this release)
+- Wire Amni-LLM into prayer/calc AI panels as alternative engine alongside WebLLM
+- Add to homepage projects grid
+- Per-product privacy disclosure update
+- Add to amni-calc landing page as the recommended path for browser-side AI
+
 ## [4.7.12] - 2026-04-27 - Prayer tandem graceful fallback + patterns visual upgrade
 
 ### Fixed (tandem)
