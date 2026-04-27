@@ -893,28 +893,41 @@ function toggleTandem() {
   }, 50);
 }
 function populateTandem(idx) {
-  if (!tandemActive || !fulltext) return;
+  if (!tandemActive) return;
   const nd = graph.nodes[idx];
   const key = `${nd.book_id}:${nd.ch}`;
-  const verses = fulltext[key];
-  if (!verses) return;
-  const titleEl = document.getElementById('tandem-title');
-  if (titleEl) titleEl.textContent = `${nd.book} — Ch. ${nd.ch}`;
   const chapterIndices = new Map();
+  const chapterNodes = [];
   for (let i = 0; i < graph.nodes.length; i++) {
     const n2 = graph.nodes[i];
-    if (n2.book_id === nd.book_id && n2.ch === nd.ch) chapterIndices.set(n2.v, i);
+    if (n2.book_id === nd.book_id && n2.ch === nd.ch) { chapterIndices.set(n2.v, i); chapterNodes.push(n2); }
   }
+  let verses = fulltext ? fulltext[key] : null;
+  let usingFallback = false;
+  if (!verses && chapterNodes.length) {
+    const maxV = Math.max(...chapterNodes.map(n => n.v));
+    verses = new Array(maxV).fill('');
+    chapterNodes.forEach(n => { verses[n.v - 1] = n.preview || ''; });
+    usingFallback = true;
+  }
+  if (!verses) verses = [];
+  const titleEl = document.getElementById('tandem-title');
+  if (titleEl) titleEl.textContent = `${nd.book} — Ch. ${nd.ch}`;
   const connectedSet = new Set(adj[idx]);
   let html = `<h3 class="tandem-chapter-title">${nd.book} — Chapter ${nd.ch}</h3>`;
+  if (usingFallback) html += `<div class="tandem-fallback-notice">Full chapter text not available for this book yet — showing cross-reference graph previews. Connections and patterns work normally.</div>`;
+  if (verses.length === 0) html += `<div class="tandem-fallback-notice">No verse data found for this chapter. Cross-references shown below.</div>`;
   for (let v = 0; v < verses.length; v++) {
     const vNum = v + 1;
+    const text = verses[v];
     const nodeIdx = chapterIndices.get(vNum);
+    if (!text && nodeIdx === undefined) continue;
     const isSelected = (vNum === nd.v);
     const isConnected = nodeIdx !== undefined && connectedSet.has(nodeIdx);
     const cls = isSelected ? 'verse-row highlighted' : isConnected ? 'verse-row connected' : 'verse-row';
     const dataAttr = nodeIdx !== undefined ? ` data-idx="${nodeIdx}"` : '';
-    html += `<div class="${cls}"${dataAttr}><span class="verse-num">${vNum}</span><span class="verse-text">${escHtml(verses[v])}</span></div>`;
+    const showText = text || '(graph node only — no preview text)';
+    html += `<div class="${cls}"${dataAttr}><span class="verse-num">${vNum}</span><span class="verse-text">${escHtml(showText)}</span></div>`;
   }
   const bookEl = document.getElementById('tandem-book');
   bookEl.innerHTML = html;
@@ -993,7 +1006,17 @@ function analyzePatterns(idx){
   conflicts>0&&ins.push(conflicts+' conflict-marked passages \u2014 spiritual warfare or doctrinal tension.');
   locs.size>0&&ins.push('Locations: '+[...locs].slice(0,4).join(', ')+'.');
   pivotConns>0&&ins.push(pivotConns+' pivotal verse'+(pivotConns>1?'s':'')+' in network \u2014 high-significance cluster.');
+  const totalLinks=otLinks+ntLinks;
+  const otPct=totalLinks?Math.round(otLinks/totalLinks*100):0;
+  const ntPct=totalLinks?100-otPct:0;
+  let strongest=null;
+  if(connNodes.length){let best=connNodes[0],bestScore=(best.mass||1)+conns.length*0.001;for(const cn of connNodes){const sc=(cn.mass||1)+(cn.testament!==nd.testament?0.5:0);if(sc>bestScore){bestScore=sc;best=cn;}}strongest=best;}
+  const eraTotal=Object.values(eraCounts).reduce((a,b)=>a+b,0);
+  const eraSorted=Object.entries(eraCounts).sort((a,b)=>b[1]-a[1]).slice(0,5);
   let html='<div class="pat-ref">'+nd.book+' '+nd.ch+':'+nd.v+'</div>'+'<div class="pat-type">'+pType+'</div>';
+  if(totalLinks>0){html+='<div class="pat-bar-row"><span class="pat-bar-lbl">OT/NT</span><span class="pat-bar-track">'+(otLinks>0?'<span class="pat-bar-seg ot" style="width:'+otPct+'%"></span>':'')+(ntLinks>0?'<span class="pat-bar-seg nt" style="width:'+ntPct+'%"></span>':'')+'</span><span class="pat-bar-num">'+otLinks+'/'+ntLinks+'</span></div>';}
+  if(strongest&&strongest!==nd){const sc=BOOK_COLORS[strongest.book_id],hex=sc?'#'+sc.getHexString():'#ccc';html+='<div class="pat-strongest"><div class="pat-strongest-lbl">★ Strongest connection</div><div class="pat-strongest-ref"><span style="color:'+hex+'">●</span> '+strongest.book+' '+strongest.ch+':'+strongest.v+'</div><div class="pat-strongest-text">'+escHtml((strongest.preview||'').slice(0,160))+'</div></div>';}
+  if(eraSorted.length>0){html+='<div class="pat-section"><div class="pat-section-title">Era distribution</div>';eraSorted.forEach(([e,n])=>{const pct=Math.round(n/eraTotal*100);html+='<div class="pat-era-row"><span class="pat-era-lbl">'+escHtml(e)+'</span><span class="pat-era-track"><span class="pat-era-fill" style="width:'+pct+'%"></span></span><span class="pat-era-num">'+n+'</span></div>';});html+='</div>';}
   themes.length>0&&(html+='<div class="pat-themes">'+themes.map(t=>'<span class="pat-tag">'+escHtml(t)+'</span>').join('')+'</div>');
   html+='<div class="pat-stats">'+'<span>\u21c4 '+conns.length+'</span>'+'<span>\ud83d\udcd6 '+bookSet.size+'bks</span>'+'<span>'+(otLinks>0&&ntLinks>0?'\u2696 OT+NT':nd.testament==='OT'?'\ud83d\udcdc OT':'\u271d NT')+'</span>'+(people.size>0?'<span>\ud83d\udc64 '+people.size+'</span>':'')+'</div>';
   ins.forEach(s=>html+='<div class="pat-insight">'+escHtml(s)+'</div>');
