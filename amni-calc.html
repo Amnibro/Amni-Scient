@@ -1,1 +1,228 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta http-equiv="refresh" content="0;url=calc/"><title>AMNI-CALC</title><link rel="canonical" href="https://amni-scient.com/calc/"></head><body style="background:#0a0a0a;color:#888;font-family:monospace;text-align:center;padding:3rem"><p>Redirecting to <a href="calc/" style="color:#ff6b35">AMNI-CALC</a>...</p></body></html>
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Amni-Calc &mdash; Browser Engineering Calculators (WASM) | AMNI-SCIENT</title>
+<meta name="description" content="Amni-Calc: free in-browser engineering calculator suite. 31 modules covering beam stress, bolts, springs, seals, fatigue, fluids, heat exchangers, pressure vessels, HVAC, electrical, electrochem, batteries, and reference tables. WebAssembly backend. No install, no telemetry.">
+<meta name="keywords" content="amni-calc,engineering calculator,beam fea,stress analysis,bolt torque,spring calculator,seal design,fatigue goodman,heat transfer,heat exchanger lmtd,pressure vessel asme,thermodynamic cycles,hvac psychrometric,electrochemistry nernst,battery sizing,wasm engineering,in-browser fea">
+<meta name="author" content="Amni-Scient">
+<meta property="og:title" content="Amni-Calc &mdash; Browser Engineering Calculator Suite">
+<meta property="og:description" content="31 engineering modules: beam stress, bolts, springs, seals, fatigue, heat transfer, fluids, electrical, electrochem, batteries, materials. All client-side WASM, no install required.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://amni-scient.com/amni-calc.html">
+<meta property="og:image" content="https://amni-scient.com/assets/explore/og-explore.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Amni-Calc &mdash; Engineering Calculator Suite">
+<meta name="twitter:description" content="31 engineering modules in your browser. Beams, bolts, springs, seals, fatigue, heat transfer, electrical, batteries, materials. WASM backend.">
+<meta name="twitter:image" content="https://amni-scient.com/assets/explore/og-explore.png">
+<link rel="canonical" href="https://amni-scient.com/amni-calc.html">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Amni-Calc","url":"https://amni-scient.com/calc/","description":"Browser-native engineering calculator suite with 31 modules: beams, stress, sections, bolts, springs, seals, columns, shafts, welds, bearings, gears, fatigue, vibration, fluids, pumps, thermal, heat exchangers, pressure vessels, cycles, HVAC, combustion, electrical, motors, NEC wire, electrochemistry, batteries, materials, finishes, math, equations, units, references.","applicationCategory":"EngineeringApplication","operatingSystem":"Any (Modern Browser)","browserRequirements":"Requires JavaScript and WebAssembly","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Organization","name":"AMNI-SCIENT","url":"https://amni-scient.com"}}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8345487545441889" crossorigin="anonymous" data-overlays="false"></script>
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+</head>
+<body class="theme-calc">
+<div class="grid-bg"></div>
+<div class="scanlines"></div>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu">
+<a href="amni-browse.html">AMNI-BROWSE</a>
+<a href="amni-calc.html" class="active">AMNI-CALC</a>
+<a href="amni-explore.html">AMNI-EXPLORE</a>
+<a href="amni-learn.html">AMNI-LEARN</a>
+<a href="amni-connect.html">AMNI-CONNECT</a>
+<a href="amni-code.html">AMNI-CODE</a>
+<a href="amni-haven.html">AMNI-HAVEN</a>
+<a href="amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</div>
+<a href="about.html">ABOUT</a>
+<a href="faq.html">FAQ</a>
+<a href="privacy.html">PRIVACY</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<div class="product-hero">
+<div class="shield-icon float">
+<svg viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect x="20" y="20" width="60" height="80" rx="6" stroke="#ff6b35" stroke-width="2" fill="rgba(255,107,53,0.04)"/>
+<line x1="30" y1="40" x2="70" y2="40" stroke="#ff6b35" stroke-width="1.5"/>
+<line x1="30" y1="55" x2="70" y2="55" stroke="#ff6b35" stroke-width="1.5"/>
+<line x1="30" y1="70" x2="70" y2="70" stroke="#ff6b35" stroke-width="1.5"/>
+<line x1="30" y1="85" x2="55" y2="85" stroke="#ff6b35" stroke-width="1.5"/>
+<circle cx="65" cy="85" r="4" fill="#ff6b35"/>
+</svg>
+</div>
+<h1>AMNI-CALC</h1>
+<p class="desc">31 ENGINEERING MODULES &bull; WEBASSEMBLY BACKEND &bull; INTERACTIVE PLOTLY CHARTS</p>
+<div style="margin-top:2rem">
+<a href="calc/" class="btn btn-primary" style="background:#ff6b35;color:var(--bg);box-shadow:0 0 10px #ff6b35">LAUNCH AMNI-CALC &rarr;</a>
+</div>
+</div>
+<section>
+<h2>ENGINEERING MATH, WITHOUT THE INSTALL</h2>
+<p style="text-align:center;color:var(--dim);max-width:750px;margin:0 auto 2rem;font-size:.9rem">Amni-Calc is a suite of 31 mechanical, electrical, fluid, thermal, and electrochemical engineering calculators that run entirely in your browser. No downloads, no license servers, no Python environment to configure. Open a tab, pick a calculator, enter loads and geometry, and read plotted results. The numerics run on WebAssembly for near-native speed; the interface is plain HTML and Plotly.</p>
+<div class="features">
+<div class="feature">
+<div class="icon">&#9878;</div>
+<h4>STRESS &amp; STRUCTURAL</h4>
+<p>Mohr's circle, beam shear/moment/deflection, cross-section properties, columns (Euler/Johnson), shafts (torsion/critical speed), welds (AWS fillet/group polar), bearings (ISO 281 L10), and fatigue (Goodman/Soderberg/Gerber/ASME-Elliptic).</p>
+</div>
+<div class="feature">
+<div class="icon">&#128737;</div>
+<h4>FASTENERS &amp; SEALS</h4>
+<p>Bolt torque (nut-factor and detailed thread/face friction), preload scatter, Belleville and coil spring sizing with Wahl correction, O-ring seal design with industry-standard groove geometry, gland selection.</p>
+</div>
+<div class="feature">
+<div class="icon">&#127777;</div>
+<h4>FLUIDS &amp; THERMAL</h4>
+<p>Moody diagram with explicit Colebrook solution, Bernoulli with minor losses, pump NPSH/affinity laws, heat conduction/convection/radiation, fin efficiency, LMTD/NTU heat exchangers, ASME pressure vessels, thermodynamic cycles (Carnot/Otto/Diesel/Brayton/refrigeration).</p>
+</div>
+<div class="feature">
+<div class="icon">&#9889;</div>
+<h4>ELECTRICAL &amp; MOTORS</h4>
+<p>Ohm's law, AC power triangle, three-phase calculations, RC/RL transients, induction-motor synchronous speed and full-load amps, NEC 310.16 wire ampacity with voltage-drop checks, vibration isolator transmissibility, gear-tooth Lewis bending.</p>
+</div>
+<div class="feature">
+<div class="icon">&#129514;</div>
+<h4>ELECTROCHEMISTRY &amp; BATTERIES</h4>
+<p>Nernst potential, Tafel and Butler-Volmer kinetics, Faraday-law mass deposition, corrosion-rate from current density, battery pack sizing with Peukert exponent, runtime/SOC, and series-parallel cell configurations.</p>
+</div>
+<div class="feature">
+<div class="icon">&#128218;</div>
+<h4>REFERENCE LIBRARY</h4>
+<p>Material database (yield, ultimate, modulus, density, thermal conductivity, specific heat) for structural alloys, stainless, polymers. Surface finish recommender, math handbook, equation reference, unit converter, and an indexed catalog of standards (ASME, ASTM, NEC, AWS, ISO).</p>
+</div>
+</div>
+</section>
+<section>
+<h2>WHY IN-BROWSER ENGINEERING TOOLS</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
+<p>Traditional engineering software falls into two camps. On one end are full FEA suites &mdash; ANSYS, Abaqus, SolidWorks Simulation &mdash; which cost thousands per seat and require Windows workstations with non-trivial setup. On the other end are hand-calc spreadsheets: cheap and portable but error-prone, unversioned, and full of magic numbers from handbooks nobody quite remembers.</p>
+<p style="margin-top:1.2rem"><strong style="color:var(--text)">In-browser calculators split the difference.</strong> They run anywhere a modern browser does &mdash; desktops, laptops, Chromebooks, tablets. They deploy instantly to a team without IT approval. And because computation is local, proprietary design inputs never leave the device. The page loads, executes the kernel against your inputs, and renders results &mdash; no server round trip.</p>
+<p style="margin-top:1.2rem"><strong style="color:var(--text)">WebAssembly matters here.</strong> JavaScript is great for UI but slow for dense numerical work like solving stiffness matrices, integrating beam deflection curves, or iterating Colebrook for friction factor. Amni-Calc compiles its numerical kernels to WASM, delivering 5&ndash;20x speedups. A beam analysis with 1000 elements renders in under 50 ms; a thermal transient with fine time steps in under 100 ms. Fast enough that you treat the calculator as interactive, iterating like a spreadsheet.</p>
+<p style="margin-top:1.2rem"><strong style="color:var(--text)">Interactive charts are the other half.</strong> Comparing two gasket materials or three spring stacks benefits from seeing both curves on one plot with hover-readout. Plotly handles this well in the browser, and because everything is client-side, zooming and panning feel instantaneous &mdash; no server re-render, no spinner between clicks.</p>
+</div>
+</section>
+<section>
+<h2>BROWSE BY CATEGORY</h2>
+<p style="text-align:center;color:var(--dim);max-width:750px;margin:0 auto 2rem;font-size:.9rem">Each calculator has its own deep-dive page covering theory, equations, when to use it, and which standards it follows. Open the calculator to run inputs, or read the page first if you want to brush up on the formulas.</p>
+<h3 style="color:var(--text);margin:1.5rem 0 .8rem;font-size:.95rem;letter-spacing:1px">MECHANICAL &amp; STRUCTURAL</h3>
+<div class="card-grid">
+<a href="calc/stress.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">STRESS</h3><p>Mohr's circle, principal stresses, max shear, von Mises, Tresca yield criterion.</p></a>
+<a href="calc/sections.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">SECTIONS</h3><p>Cross-section properties: area, centroid, moment of inertia, section modulus, radius of gyration.</p></a>
+<a href="calc/bolts.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">BOLTS</h3><p>Torque-preload (nut-factor), detailed thread/face friction, yield checks, preload scatter, stretch.</p></a>
+<a href="calc/springs.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">SPRINGS</h3><p>Coil compression with Wahl correction, Belleville (Almen-Laszlo), stack configurations, fatigue.</p></a>
+<a href="calc/seals.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">SEALS</h3><p>O-ring squeeze, gland design, friction estimate, extrusion-gap check, material selection.</p></a>
+<a href="calc/columns.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">COLUMNS</h3><p>Euler buckling, Johnson short-column transition, end-condition K factors, slenderness ratio.</p></a>
+<a href="calc/shafts.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">SHAFTS</h3><p>Torsional stress, angle of twist, critical speed (Rayleigh), key/keyway sizing, fatigue.</p></a>
+<a href="calc/welds.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">WELDS</h3><p>Fillet throat sizing per AWS, weld-group polar moment for eccentric loads, allowable strength.</p></a>
+<a href="calc/bearings.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">BEARINGS</h3><p>ISO 281 L10 life, dynamic and static load, equivalent load under combined radial/axial.</p></a>
+<a href="calc/gears.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">GEARS</h3><p>Geometry (module, pitch, addendum), ratios, Lewis bending stress, contact ratio, mesh viz.</p></a>
+<a href="calc/fatigue.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">FATIGUE</h3><p>Goodman, Soderberg, Gerber, ASME-Elliptic mean-stress lines; endurance limit modifiers.</p></a>
+<a href="calc/vibration.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">VIBRATION</h3><p>Natural frequency, isolator transmissibility, resonance check, damping ratio.</p></a>
+</div>
+<h3 style="color:var(--text);margin:1.8rem 0 .8rem;font-size:.95rem;letter-spacing:1px">FLUIDS &amp; THERMAL</h3>
+<div class="card-grid">
+<a href="calc/fluids.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">FLUIDS</h3><p>Moody/Colebrook friction, Bernoulli energy balance, Reynolds number, minor losses.</p></a>
+<a href="calc/pumps.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">PUMPS</h3><p>NPSH available vs required, affinity laws, specific speed, system curve intersection.</p></a>
+<a href="calc/thermal.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">THERMAL</h3><p>Conduction (1D/multilayer), convection (Nu correlations), radiation, fin efficiency.</p></a>
+<a href="calc/hx.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">HEAT EXCHANGERS</h3><p>LMTD method, NTU-effectiveness, fouling resistance, parallel/counter/cross flow.</p></a>
+<a href="calc/pv.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">PRESSURE VESSELS</h3><p>Thin-wall hoop/longitudinal, Lam&eacute; thick-wall, ASME VIII-1 minimum thickness.</p></a>
+<a href="calc/cycles.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">CYCLES</h3><p>Carnot, Otto, Diesel, Brayton, vapor compression refrigeration, COP and thermal efficiency.</p></a>
+<a href="calc/hvac.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">HVAC</h3><p>Psychrometric properties, sensible/latent heat, mixing, cooling coil, evaporative cooling.</p></a>
+<a href="calc/combustion.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">COMBUSTION</h3><p>Stoichiometric AFR, adiabatic flame temperature, LHV/HHV, excess-air analysis.</p></a>
+</div>
+<h3 style="color:var(--text);margin:1.8rem 0 .8rem;font-size:.95rem;letter-spacing:1px">ELECTRICAL</h3>
+<div class="card-grid">
+<a href="calc/electrical.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">ELECTRICAL</h3><p>Ohm's law, AC power triangle (P/Q/S), three-phase calcs, RC/RL transients, voltage drop.</p></a>
+<a href="calc/motors.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">MOTORS</h3><p>Synchronous speed, slip, full-load amps, torque, starting current, motor service factor.</p></a>
+<a href="calc/nec.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">NEC WIRE</h3><p>NEC 310.16 ampacity tables, voltage-drop check, conduit fill, breaker selection.</p></a>
+</div>
+<h3 style="color:var(--text);margin:1.8rem 0 .8rem;font-size:.95rem;letter-spacing:1px">CHEMISTRY</h3>
+<div class="card-grid">
+<a href="calc/echem.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">ELECTROCHEM</h3><p>Nernst potential, Tafel/Butler-Volmer kinetics, corrosion rate, Faraday deposition.</p></a>
+<a href="calc/battery.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">BATTERY</h3><p>Pack sizing (Wh, kWh), runtime, Peukert capacity, SOC estimation, series/parallel cells.</p></a>
+</div>
+<h3 style="color:var(--text);margin:1.8rem 0 .8rem;font-size:.95rem;letter-spacing:1px">REFERENCE</h3>
+<div class="card-grid">
+<a href="calc/materials.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">MATERIALS</h3><p>Yield, ultimate, modulus, density, k, cp for steels, aluminums, stainless, polymers.</p></a>
+<a href="calc/finishes.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">FINISHES</h3><p>Surface roughness Ra/Rz, achievable finishes by process (turning, grinding, lapping).</p></a>
+<a href="calc/math.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">MATH</h3><p>Calculus identities, Taylor series, common integrals, vector ops, complex numbers.</p></a>
+<a href="calc/equations.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">EQUATIONS</h3><p>Searchable index of every formula in the suite, grouped by discipline and module.</p></a>
+<a href="calc/units.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">UNITS</h3><p>Bidirectional SI &harr; US customary converter for force, pressure, energy, viscosity, more.</p></a>
+<a href="calc/refs.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">REFS &amp; STANDARDS</h3><p>Cross-referenced index of ASME, ASTM, NEC, AWS, ISO standards used by each module.</p></a>
+</div>
+</section>
+<section>
+<h2>TYPICAL WORKFLOW</h2>
+<div class="card-grid">
+<div class="card">
+<h3>1. PICK A MODULE</h3>
+<p>Sidebar lists every calculator. Each opens with inputs on the left, charts and tables on the right. No project files, no save dialogs &mdash; state lives in the URL hash and in browser storage.</p>
+</div>
+<div class="card">
+<h3>2. ENTER GEOMETRY &amp; LOADS</h3>
+<p>Numeric inputs use sensible engineering defaults. Unit toggles for SI and US customary. Material pickers pull from the shared database. Invalid combinations flag inline rather than silently producing garbage.</p>
+</div>
+<div class="card">
+<h3>3. READ THE CHARTS</h3>
+<p>Interactive Plotly plots show the answer: shear/moment diagrams, load-deflection curves, temperature profiles, stress circles. Hover for exact values. Compare configurations by stacking them on one plot.</p>
+</div>
+<div class="card">
+<h3>4. EXPORT OR ITERATE</h3>
+<p>Right-click any chart to save as PNG for a report. Change inputs and the plot updates live. All computation is local, so large parameter sweeps run without network latency.</p>
+</div>
+</div>
+</section>
+<section>
+<h2>PRIVACY &amp; DATA</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
+<p>Amni-Calc runs entirely in your browser. Design inputs, material choices, and calculated results stay on your device &mdash; they are never transmitted to Amni-Scient or any third party. Browser local storage is used only to remember UI preferences (theme, last-opened tab) and cached material data. No accounts, no telemetry, no analytics of your engineering work.</p>
+<p style="margin-top:1.2rem">The app is ad-supported on the informational landing pages (this page and the per-module pages). The calculator app itself, at <a href="calc/" style="color:#ff6b35">/calc/</a>, carries a single Ko-fi support panel and no AdSense banners so you can focus on the work.</p>
+</div>
+</section>
+<section style="text-align:center">
+<h2>OPEN AMNI-CALC</h2>
+<p style="color:var(--dim);margin-bottom:1.5rem;font-size:.9rem">Runs in any modern browser. No install, no sign-up.</p>
+<div class="cta-row" style="justify-content:center;gap:1rem;flex-wrap:wrap">
+<a href="calc/" class="btn btn-primary" style="background:#ff6b35;color:var(--bg);box-shadow:0 0 10px #ff6b35">LAUNCH CALCULATOR</a>
+<a href="faq.html" class="btn btn-outline">FAQ</a>
+<a href="about.html" class="btn btn-outline">ABOUT</a>
+</div>
+</section>
+<div class="site-ad-banner">
+<span class="ad-note">Sponsored</span>
+<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8345487545441889" data-ad-slot="1720203631" data-ad-format="auto" data-full-width-responsive="true"></ins>
+<script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>
+</div>
+<aside class="support-cta" aria-label="Support"><a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="support-link"><span class="support-ico">&#9749;</span><span>Enjoying this? <strong>Support on Ko-fi</strong></span></a></aside>
+<footer>
+<div class="footer-links">
+<a href="about.html">ABOUT</a>
+<a href="faq.html">FAQ</a>
+<a href="privacy.html">PRIVACY</a>
+<a href="terms.html">TERMS</a>
+<a href="mailto:amnibro7@gmail.com">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amni-Scient. All rights reserved.</p>
+</footer>
+</body>
+</html>

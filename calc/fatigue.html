@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Fatigue (Goodman, Soderberg, Gerber) &mdash; Amni-Calc | AMNI-SCIENT</title>
+<meta name="description" content="Mean-stress diagrams, endurance limit modifiers, infinite life. In-browser engineering calculator with theory, formulas, when-to-use scenarios, and cited standards. WebAssembly backend, no install.">
+<meta name="keywords" content="amni-calc,fatigue,mean-stress diagrams, endurance limit modifiers, infinite life,engineering calculator,mechanical & structural">
+<meta name="author" content="Amni-Scient">
+<meta property="og:title" content="Fatigue (Goodman, Soderberg, Gerber) &mdash; Amni-Calc">
+<meta property="og:description" content="Mean-stress diagrams, endurance limit modifiers, infinite life. In-browser WASM calculator.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://amni-scient.com/calc/fatigue.html">
+<meta property="og:image" content="https://amni-scient.com/assets/explore/og-explore.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Fatigue (Goodman, Soderberg, Gerber) &mdash; Amni-Calc">
+<meta name="twitter:description" content="Mean-stress diagrams, endurance limit modifiers, infinite life">
+<link rel="canonical" href="https://amni-scient.com/calc/fatigue.html">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Fatigue (Goodman, Soderberg, Gerber)","description":"Mean-stress diagrams, endurance limit modifiers, infinite life","author":{"@type":"Organization","name":"AMNI-SCIENT"},"publisher":{"@type":"Organization","name":"AMNI-SCIENT","url":"https://amni-scient.com"},"mainEntityOfPage":"https://amni-scient.com/calc/fatigue.html"}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8345487545441889" crossorigin="anonymous" data-overlays="false"></script>
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+<style>
+.eq-list{list-style:none;padding:0;margin:1rem 0}
+.eq-list li{background:rgba(255,107,53,0.06);border-left:3px solid #ff6b35;padding:.7rem 1rem;margin-bottom:.5rem;font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--text);border-radius:0 3px 3px 0;overflow-x:auto}
+.eq-list code{color:var(--text);font-family:inherit}
+.crumbs{color:var(--dim);font-size:.75rem;letter-spacing:1px;text-transform:uppercase;margin:1rem 0 0;padding:0 1.5rem}
+.crumbs a{color:var(--dim)}
+.crumbs a:hover{color:#ff6b35}
+.std-line{font-size:.78rem;color:var(--dim);margin-top:1rem;padding-top:.7rem;border-top:1px dashed var(--border,rgba(255,255,255,.08))}
+.std-line strong{color:var(--text);letter-spacing:1px;text-transform:uppercase;font-size:.7rem;display:block;margin-bottom:.3rem}
+</style>
+</head>
+<body class="theme-calc">
+<div class="grid-bg"></div>
+<div class="scanlines"></div>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu">
+<a href="../amni-browse.html">AMNI-BROWSE</a>
+<a href="../amni-calc.html" class="active">AMNI-CALC</a>
+<a href="../amni-explore.html">AMNI-EXPLORE</a>
+<a href="../amni-learn.html">AMNI-LEARN</a>
+<a href="../amni-connect.html">AMNI-CONNECT</a>
+<a href="../amni-code.html">AMNI-CODE</a>
+<a href="../amni-haven.html">AMNI-HAVEN</a>
+<a href="../amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</div>
+<a href="../about.html">ABOUT</a>
+<a href="../faq.html">FAQ</a>
+<a href="../privacy.html">PRIVACY</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<p class="crumbs"><a href="../">Home</a> &rsaquo; <a href="../amni-calc.html">Amni-Calc</a> &rsaquo; Mechanical & Structural &rsaquo; Fatigue (Goodman, Soderberg, Gerber)</p>
+<div class="product-hero">
+<h1>FATIGUE (GOODMAN, SODERBERG, GERBER)</h1>
+<p class="desc">MEAN-STRESS DIAGRAMS, ENDURANCE LIMIT MODIFIERS, INFINITE LIFE</p>
+<div style="margin-top:1.5rem">
+<a href="./#tab-fatigue" class="btn btn-primary" style="background:#ff6b35;color:var(--bg);box-shadow:0 0 10px #ff6b35">OPEN FATIGUE CALCULATOR &rarr;</a>
+</div>
+</div>
+<section>
+<h2>WHAT IT COMPUTES</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.85;color:var(--text);font-size:.88rem">
+<p>Cyclic loading at stresses below static yield can still cause failure by fatigue. The endurance limit Se is the stress amplitude below which steel survives infinite cycles; for non-ferrous metals there's no true endurance limit. Marin modifiers reduce Se for surface finish, size, loading type, temperature, and reliability. Mean stress σ_m raises the effective amplitude; Goodman, Soderberg, Gerber, and ASME-Elliptic lines plot allowable amplitude vs mean on a Haigh diagram.</p>
+</div>
+</section>
+<section>
+<h2>KEY EQUATIONS</h2>
+<div style="max-width:800px;margin:0 auto">
+<ul class="eq-list"><li><code>Se = ka·kb·kc·kd·ke·kf · 0.5·Sut</code></li><li><code>Goodman: σ_a/Se + σ_m/Sut = 1/n</code></li><li><code>Soderberg: σ_a/Se + σ_m/Sy = 1/n</code></li><li><code>Gerber: n·σ_a/Se + (n·σ_m/Sut)² = 1</code></li><li><code>ASME-Ell: (n·σ_a/Se)² + (n·σ_m/Sy)² = 1</code></li></ul>
+<p class="std-line"><strong>References &amp; Standards</strong>Shigley Ch. 6, Norton Ch. 6, MIL-HDBK-5</p>
+</div>
+</section>
+<section>
+<h2>WHEN TO USE THIS MODULE</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.85;color:var(--text);font-size:.88rem">
+<p>Apply fatigue analysis to any cyclically loaded component: rotating shafts under bending, springs in compression cycles, pressurized vessels with cyclic pressure, structural members in vibration. Identify mean and amplitude stress separately. Use Goodman for ductile materials with a conservative bias; Soderberg if you can't accept any yielding; Gerber for less conservative match with test data; ASME-Elliptic for combined yield + fatigue safety.</p>
+</div>
+</section>
+<section>
+<h2>RELATED MODULES</h2>
+<div class="card-grid"><a href="stress.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">STRESS</h3><p>Principal stresses, max shear, von Mises, Tresca yield</p></a><a href="bolts.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">BOLTS</h3><p>Nut-factor, detailed friction, yield checks, preload scatter</p></a><a href="shafts.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">SHAFTS</h3><p>Torsional stress, twist angle, Rayleigh critical speed, keyway sizing</p></a><a href="springs.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">SPRINGS</h3><p>Wahl correction, Almen-Laszlo Belleville, stack configurations</p></a></div>
+</section>
+<section style="text-align:center">
+<h2>OPEN THE CALCULATOR</h2>
+<p style="color:var(--dim);margin-bottom:1.5rem;font-size:.9rem">All calculations run locally in your browser. No data leaves the device.</p>
+<div class="cta-row" style="justify-content:center;gap:1rem;flex-wrap:wrap">
+<a href="./#tab-fatigue" class="btn btn-primary" style="background:#ff6b35;color:var(--bg);box-shadow:0 0 10px #ff6b35">LAUNCH FATIGUE &rarr;</a>
+<a href="../amni-calc.html" class="btn btn-outline">ALL CALC MODULES</a>
+</div>
+</section>
+<div class="site-ad-banner">
+<span class="ad-note">Sponsored</span>
+<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8345487545441889" data-ad-slot="1720203631" data-ad-format="auto" data-full-width-responsive="true"></ins>
+<script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>
+</div>
+<footer>
+<div class="footer-links">
+<a href="../about.html">ABOUT</a>
+<a href="../faq.html">FAQ</a>
+<a href="../amni-calc.html">AMNI-CALC</a>
+<a href="../privacy.html">PRIVACY</a>
+<a href="../terms.html">TERMS</a>
+<a href="mailto:amnibro7@gmail.com">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amni-Scient. All rights reserved.</p>
+</footer>
+</body>
+</html>

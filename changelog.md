@@ -1,5 +1,60 @@
 ﻿# Changelog 
 
+## [4.5.0] - 2026-04-27 - Live Compute + Real 3D (Three.js) for Amni-Calc
+
+### Context
+Manual `CALCULATE` buttons on every tab plus zero real 3D made the calculator feel dated. Shipped option C from earlier triage: live compute everywhere + Three.js 3D viewer for every module that has a meaningful 3D representation.
+
+### Added
+- **Live compute bootstrap** in `calc/calc-overrides.js` (`setupLiveCompute()`). Walks every `<button[onclick^="calc"]>`, attaches debounced (260 ms) `input`/`change` listeners to all sibling inputs/selects within the same `.card`, hides the button, fires once on mount, and re-fires when a tab is opened. MutationObserver re-runs the bootstrap when new inputs are injected by overrides. 65 calc handlers now run live as users edit values; no more "click Calculate."
+- **Three.js 3D viewer** at `calc/calc-3d.js`. Loads `three@0.149.0` + `OrbitControls` from jsDelivr at first paint. Per-module scene factory creates a `<canvas id="d-<mod>">` inside the right pane of each applicable `.split`, with ambient + directional lighting, grid, axes helper, orbit/zoom/pan controls, and ResizeObserver-driven aspect handling. Public API `window.calc3DUpdate(moduleKey)` re-meshes the scene from current input values; the live-compute layer calls it after each calc.
+- **18 parametric 3D scenes** (every module that has a meaningful 3D representation):
+  - Mechanical/structural: stress (cube + principal-stress arrows), sections (extruded cross-section incl. I-beam, hollow rect, pipe), bolts (bolt + plates + preload arrows), springs (helical 3D coil), seals (O-ring in lathe-extruded gland), columns (Euler buckled mode shape), shafts (twisted cylinder with shear-stress vertex colors), welds (fillet bead between two plates), bearings (race + balls + cage with rotation), gears (real 3D involute mesh with counter-rotation)
+  - Fluids/thermal: fluids (transparent pipe + animated flow arrows), pumps (impeller with curved blades, rotates), thermal (fin with cosh temperature gradient as vertex colors), hx (shell-and-tube cutaway), pv (pressure vessel with hoop-stress colormap)
+  - Electrical/storage: motors (rotor + stator + alternating-pole coils, rotor spins), battery (n_s × n_p cell pack)
+  - Vibration: mass-spring-damper with live oscillation
+- Modules without meaningful 3D (cycles, hvac, combustion, electrical, nec, echem, fatigue, materials, finishes, math, equations, units, refs) get live compute only — they remain tabular or 2D-natural.
+
+### Files Touched
+- `calc/calc-overrides.js` — live-compute bootstrap added; init now calls `setupLiveCompute()` and a MutationObserver to handle late-injected inputs
+- `calc/calc-3d.js` — new file (~270 lines), Three.js loader + viewer factory + 18 scene definitions
+- `calc/index.html` — added `<script src="./calc-3d.js" defer></script>` after the overrides loader
+- Backups: `backups/calc-overrides.v4.4.0.bak`, `backups/calc-index.v4.4.0.bak`
+
+### Known limitations
+- Three.js bundle (~600 KB minified) loads from CDN on first calc visit. Expected first-paint cost ~250 ms on broadband, ~1 s on mobile 4G. No CDN dependency on subsequent loads (browser cache).
+- Bearings, pumps, motors animate continuously; CPU/GPU draw is minimal but a power-saving toggle is a future addition.
+- Per-module scene update is debounced at 260 ms; very rapid input scrubbing will appear smooth but with that latency.
+
+## [4.4.0] - 2026-04-26 - SEO Landing Pages (AdSense Round 3) — DO NOT REVERT
+
+### Context
+v4.3.0 work (full `amni-calc.html` landing page) was reverted in commit `72c7964 Revert "Amni-Calc: full product page, PWA manifest, a11y + SEO"`, leaving the page as a 1-line meta-refresh. AdSense rejected with "Low value content" again. This release restores the landing page, adds 31 per-module calc landing pages, 11 per-category learn landing pages, rebuilds the sitemap, and documents the noindex+ads conflict on `amni-explore.html` / `amni-ai.html` for follow-up.
+
+### Added
+- 31 per-module calc landing pages at `/calc/<module>.html` (stress, sections, bolts, springs, seals, columns, shafts, welds, bearings, gears, fatigue, vibration, fluids, pumps, thermal, hx, pv, cycles, hvac, combustion, electrical, motors, nec, echem, battery, materials, finishes, math, equations, units, refs). Each ~600-900 words covering theory, key equations, when-to-use scenarios, references/standards, related modules, and CTA into the live calculator at `/calc/#tab-<module>`.
+- 11 per-category learn landing pages at `/learn/<category>.html` (prek, life-skills, subjects, elementary, stem-labs, brain-cognitive, brain-puzzles, brain-vision, retro-arcade, casual, college). Each ~500-700 words covering category overview, pedagogical basis, game roster, and related categories.
+- Generators at `src/gen-calc-modules.js` and `src/gen-learn-categories.js` (gitignored source; emit committed HTML).
+
+### Restored
+- `amni-calc.html` rebuilt as a full landing page adapted to current site nav (was a 1-line meta-refresh after the v4.3.0 revert). Hero, 6-feature grid, "Why In-Browser" essay, category-grouped 31-card module catalog with cross-links to per-module pages, 4-step workflow, privacy disclosure, CTAs, AdSense banner, Ko-fi support.
+
+### Updated
+- `sitemap.xml` rebuilt with 56 canonical URLs: home, about, faq, all 8 indexable amni-* product pages, /calc/ + 31 module pages, /learn/ + 11 category pages, /prayer/, licensing, privacy, terms.
+- `docs/checklists/checklist_v4.4.0_seo_landing_pages.md` — full task checklist.
+- `docs/guardian_councils/guardian_council_v4.4.0_seo_landing_pages.md` — 5/5 council vote in favor.
+- `architecture_map.md` — new SEO landing-page structure.
+- Backups: `backups/amni-calc.v_pre-revert.bak` (recovered from commit e944521), `backups/amni-calc.v_post-revert.bak` (the reverted 1-liner).
+
+### Resolved follow-ups
+- `amni-explore.html` — removed `<meta name="robots" content="noindex,nofollow">`; page now indexable. Added to sitemap.xml. Existing AdSense banner kept.
+- `amni-ai.html` — kept `noindex,nofollow` (speculative product); stripped AdSense loader script (line 26) and the `<aside class="site-ad-banner">` block (lines 287-291). Page is now ad-free and stays out of the index.
+- `research/*.html` deep-dives (especially `amnitex-railgun.html` and `gf17-quantization.html`) — confirmed speculative; stay noindex and stay ad-free (verified no `adsbygoogle` in any `research/*.html`).
+- Backups: `backups/amni-ai.v4.4.0.bak`, `backups/amni-explore.v4.4.0.bak`.
+
+### DO NOT REVERT
+This release re-applies work that was previously reverted in commit `72c7964`. Tag this commit `v4.4.0-seo-pages` after merge so the work is preserved.
+
 ## [4.7.11] - 2026-04-25 - Prayer WebLLM: drop Qwen3.5 (TVM ABI mismatch), revert to Qwen3 + prebuilt-only
 
 ### Fixed
