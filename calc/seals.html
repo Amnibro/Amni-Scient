@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>O-Ring & Gasket Seal Design &mdash; Amni-Calc | AMNI-SCIENT</title>
+<meta name="description" content="Squeeze, gland geometry, friction, extrusion-gap, materials. In-browser engineering calculator with theory, formulas, when-to-use scenarios, and cited standards. WebAssembly backend, no install.">
+<meta name="keywords" content="amni-calc,seals,squeeze, gland geometry, friction, extrusion-gap, materials,engineering calculator,mechanical & structural">
+<meta name="author" content="Amni-Scient">
+<meta property="og:title" content="O-Ring & Gasket Seal Design &mdash; Amni-Calc">
+<meta property="og:description" content="Squeeze, gland geometry, friction, extrusion-gap, materials. In-browser WASM calculator.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://amni-scient.com/calc/seals.html">
+<meta property="og:image" content="https://amni-scient.com/assets/explore/og-explore.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="O-Ring & Gasket Seal Design &mdash; Amni-Calc">
+<meta name="twitter:description" content="Squeeze, gland geometry, friction, extrusion-gap, materials">
+<link rel="canonical" href="https://amni-scient.com/calc/seals.html">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"O-Ring &amp; Gasket Seal Design","description":"Squeeze, gland geometry, friction, extrusion-gap, materials","author":{"@type":"Organization","name":"AMNI-SCIENT"},"publisher":{"@type":"Organization","name":"AMNI-SCIENT","url":"https://amni-scient.com"},"mainEntityOfPage":"https://amni-scient.com/calc/seals.html"}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8345487545441889" crossorigin="anonymous" data-overlays="false"></script>
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+<style>
+.eq-list{list-style:none;padding:0;margin:1rem 0}
+.eq-list li{background:rgba(255,107,53,0.06);border-left:3px solid #ff6b35;padding:.7rem 1rem;margin-bottom:.5rem;font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--text);border-radius:0 3px 3px 0;overflow-x:auto}
+.eq-list code{color:var(--text);font-family:inherit}
+.crumbs{color:var(--dim);font-size:.75rem;letter-spacing:1px;text-transform:uppercase;margin:1rem 0 0;padding:0 1.5rem}
+.crumbs a{color:var(--dim)}
+.crumbs a:hover{color:#ff6b35}
+.std-line{font-size:.78rem;color:var(--dim);margin-top:1rem;padding-top:.7rem;border-top:1px dashed var(--border,rgba(255,255,255,.08))}
+.std-line strong{color:var(--text);letter-spacing:1px;text-transform:uppercase;font-size:.7rem;display:block;margin-bottom:.3rem}
+</style>
+</head>
+<body class="theme-calc">
+<div class="grid-bg"></div>
+<div class="scanlines"></div>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu">
+<a href="../amni-browse.html">AMNI-BROWSE</a>
+<a href="../amni-calc.html" class="active">AMNI-CALC</a>
+<a href="../amni-explore.html">AMNI-EXPLORE</a>
+<a href="../amni-learn.html">AMNI-LEARN</a>
+<a href="../amni-connect.html">AMNI-CONNECT</a>
+<a href="../amni-code.html">AMNI-CODE</a>
+<a href="../amni-haven.html">AMNI-HAVEN</a>
+<a href="../amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</div>
+<a href="../about.html">ABOUT</a>
+<a href="../faq.html">FAQ</a>
+<a href="../privacy.html">PRIVACY</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<p class="crumbs"><a href="../">Home</a> &rsaquo; <a href="../amni-calc.html">Amni-Calc</a> &rsaquo; Mechanical & Structural &rsaquo; O-Ring & Gasket Seal Design</p>
+<div class="product-hero">
+<h1>O-RING & GASKET SEAL DESIGN</h1>
+<p class="desc">SQUEEZE, GLAND GEOMETRY, FRICTION, EXTRUSION-GAP, MATERIALS</p>
+<div style="margin-top:1.5rem">
+<a href="./#tab-seals" class="btn btn-primary" style="background:#ff6b35;color:var(--bg);box-shadow:0 0 10px #ff6b35">OPEN SEALS CALCULATOR &rarr;</a>
+</div>
+</div>
+<section>
+<h2>WHAT IT COMPUTES</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.85;color:var(--text);font-size:.88rem">
+<p>Elastomer seals rely on compression (squeeze) of the cross-section to fill machining marks and resist pressure. Typical squeeze is 15-30% of free cross-section diameter, lower for dynamic seals to limit friction, higher for static. Groove fill should be 60-85% to allow for elastomer swell and thermal expansion. Extrusion gap (clearance between the two sealed surfaces) must stay below the limit set by elastomer hardness and pressure differential, otherwise the seal extrudes into the gap and fails.</p>
+</div>
+</section>
+<section>
+<h2>KEY EQUATIONS</h2>
+<div style="max-width:800px;margin:0 auto">
+<ul class="eq-list"><li><code>Squeeze % = (CS_free - CS_compressed) / CS_free × 100</code></li><li><code>Gland fill % = (CS_area) / (groove area) × 100</code></li><li><code>Friction F = f_c · π · D · CS</code></li><li><code>Max gap = f(durometer, ΔP) per Parker/Apple Rubber chart</code></li></ul>
+<p class="std-line"><strong>References &amp; Standards</strong>AS568, ISO 3601, Parker O-Ring Handbook ORD 5700</p>
+</div>
+</section>
+<section>
+<h2>WHEN TO USE THIS MODULE</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.85;color:var(--text);font-size:.88rem">
+<p>Use this module for any static or dynamic O-ring, X-ring, or square-cut seal: hydraulic cylinders, pneumatic actuators, pressure-vessel flanges, vacuum chambers. Pick the cord diameter from a standard size table (AS568 for inch, ISO 3601 for metric), set squeeze and gland fill, and verify extrusion gap. For elevated pressure, add an anti-extrusion backup ring or use a harder durometer.</p>
+</div>
+</section>
+<section>
+<h2>RELATED MODULES</h2>
+<div class="card-grid"><a href="bolts.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">BOLTS</h3><p>Nut-factor, detailed friction, yield checks, preload scatter</p></a><a href="springs.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">SPRINGS</h3><p>Wahl correction, Almen-Laszlo Belleville, stack configurations</p></a><a href="pv.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">PV</h3><p>Hoop, longitudinal, Lamé, ASME VIII-1 minimum thickness</p></a><a href="fluids.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">FLUIDS</h3><p>Friction factor, energy balance, minor losses</p></a></div>
+</section>
+<section style="text-align:center">
+<h2>OPEN THE CALCULATOR</h2>
+<p style="color:var(--dim);margin-bottom:1.5rem;font-size:.9rem">All calculations run locally in your browser. No data leaves the device.</p>
+<div class="cta-row" style="justify-content:center;gap:1rem;flex-wrap:wrap">
+<a href="./#tab-seals" class="btn btn-primary" style="background:#ff6b35;color:var(--bg);box-shadow:0 0 10px #ff6b35">LAUNCH SEALS &rarr;</a>
+<a href="../amni-calc.html" class="btn btn-outline">ALL CALC MODULES</a>
+</div>
+</section>
+<div class="site-ad-banner">
+<span class="ad-note">Sponsored</span>
+<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8345487545441889" data-ad-slot="1720203631" data-ad-format="auto" data-full-width-responsive="true"></ins>
+<script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>
+</div>
+<footer>
+<div class="footer-links">
+<a href="../about.html">ABOUT</a>
+<a href="../faq.html">FAQ</a>
+<a href="../amni-calc.html">AMNI-CALC</a>
+<a href="../privacy.html">PRIVACY</a>
+<a href="../terms.html">TERMS</a>
+<a href="mailto:amnibro7@gmail.com">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amni-Scient. All rights reserved.</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Thermodynamic Cycles &mdash; Amni-Calc | AMNI-SCIENT</title>
+<meta name="description" content="Carnot, Otto, Diesel, Brayton, vapor-compression refrigeration. In-browser engineering calculator with theory, formulas, when-to-use scenarios, and cited standards. WebAssembly backend, no install.">
+<meta name="keywords" content="amni-calc,cycles,carnot, otto, diesel, brayton, vapor-compression refrigeration,engineering calculator,fluids & thermal">
+<meta name="author" content="Amni-Scient">
+<meta property="og:title" content="Thermodynamic Cycles &mdash; Amni-Calc">
+<meta property="og:description" content="Carnot, Otto, Diesel, Brayton, vapor-compression refrigeration. In-browser WASM calculator.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://amni-scient.com/calc/cycles.html">
+<meta property="og:image" content="https://amni-scient.com/assets/explore/og-explore.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Thermodynamic Cycles &mdash; Amni-Calc">
+<meta name="twitter:description" content="Carnot, Otto, Diesel, Brayton, vapor-compression refrigeration">
+<link rel="canonical" href="https://amni-scient.com/calc/cycles.html">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Thermodynamic Cycles","description":"Carnot, Otto, Diesel, Brayton, vapor-compression refrigeration","author":{"@type":"Organization","name":"AMNI-SCIENT"},"publisher":{"@type":"Organization","name":"AMNI-SCIENT","url":"https://amni-scient.com"},"mainEntityOfPage":"https://amni-scient.com/calc/cycles.html"}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8345487545441889" crossorigin="anonymous" data-overlays="false"></script>
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+<style>
+.eq-list{list-style:none;padding:0;margin:1rem 0}
+.eq-list li{background:rgba(255,107,53,0.06);border-left:3px solid #ff6b35;padding:.7rem 1rem;margin-bottom:.5rem;font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--text);border-radius:0 3px 3px 0;overflow-x:auto}
+.eq-list code{color:var(--text);font-family:inherit}
+.crumbs{color:var(--dim);font-size:.75rem;letter-spacing:1px;text-transform:uppercase;margin:1rem 0 0;padding:0 1.5rem}
+.crumbs a{color:var(--dim)}
+.crumbs a:hover{color:#ff6b35}
+.std-line{font-size:.78rem;color:var(--dim);margin-top:1rem;padding-top:.7rem;border-top:1px dashed var(--border,rgba(255,255,255,.08))}
+.std-line strong{color:var(--text);letter-spacing:1px;text-transform:uppercase;font-size:.7rem;display:block;margin-bottom:.3rem}
+</style>
+</head>
+<body class="theme-calc">
+<div class="grid-bg"></div>
+<div class="scanlines"></div>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu">
+<a href="../amni-browse.html">AMNI-BROWSE</a>
+<a href="../amni-calc.html" class="active">AMNI-CALC</a>
+<a href="../amni-explore.html">AMNI-EXPLORE</a>
+<a href="../amni-learn.html">AMNI-LEARN</a>
+<a href="../amni-connect.html">AMNI-CONNECT</a>
+<a href="../amni-code.html">AMNI-CODE</a>
+<a href="../amni-haven.html">AMNI-HAVEN</a>
+<a href="../amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</div>
+<a href="../about.html">ABOUT</a>
+<a href="../faq.html">FAQ</a>
+<a href="../privacy.html">PRIVACY</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<p class="crumbs"><a href="../">Home</a> &rsaquo; <a href="../amni-calc.html">Amni-Calc</a> &rsaquo; Fluids & Thermal &rsaquo; Thermodynamic Cycles</p>
+<div class="product-hero">
+<h1>THERMODYNAMIC CYCLES</h1>
+<p class="desc">CARNOT, OTTO, DIESEL, BRAYTON, VAPOR-COMPRESSION REFRIGERATION</p>
+<div style="margin-top:1.5rem">
+<a href="./#tab-cycles" class="btn btn-primary" style="background:#ff6b35;color:var(--bg);box-shadow:0 0 10px #ff6b35">OPEN CYCLES CALCULATOR &rarr;</a>
+</div>
+</div>
+<section>
+<h2>WHAT IT COMPUTES</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.85;color:var(--text);font-size:.88rem">
+<p>Heat-engine cycles convert thermal energy to work; refrigeration cycles do the opposite using work input. Carnot is the upper-bound efficiency η = 1 - Tc/Th between hot and cold reservoirs. Otto (gasoline IC engine) efficiency η = 1 - 1/r^(γ-1) depends on compression ratio r. Diesel adds heat at constant pressure: η = 1 - (1/r^(γ-1))·(rc^γ - 1)/[γ(rc - 1)]. Brayton (gas turbine) η = 1 - 1/rp^((γ-1)/γ) depends on pressure ratio rp. Vapor-compression: COP = Qc/W_in.</p>
+</div>
+</section>
+<section>
+<h2>KEY EQUATIONS</h2>
+<div style="max-width:800px;margin:0 auto">
+<ul class="eq-list"><li><code>η_Carnot = 1 - Tc/Th</code></li><li><code>η_Otto = 1 - r^(1-γ)</code></li><li><code>η_Brayton = 1 - rp^((1-γ)/γ)</code></li><li><code>COP_R = Qc / W_in</code></li><li><code>COP_HP = Qh / W_in = COP_R + 1</code></li></ul>
+<p class="std-line"><strong>References &amp; Standards</strong>Cengel "Thermodynamics" Ch. 9-11, ASHRAE Fundamentals Ch. 2</p>
+</div>
+</section>
+<section>
+<h2>WHEN TO USE THIS MODULE</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.85;color:var(--text);font-size:.88rem">
+<p>Use for first-pass cycle analysis and component sizing in engines, turbines, refrigerators, heat pumps. Compute ideal efficiency or COP, then derate for real-component irreversibilities (compressor isentropic efficiency 0.7-0.85, turbine 0.85-0.92). For refrigeration, COP_real ≈ 0.4-0.6 × COP_Carnot at typical evaporator/condenser temperatures.</p>
+</div>
+</section>
+<section>
+<h2>RELATED MODULES</h2>
+<div class="card-grid"><a href="hvac.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">HVAC</h3><p>Mixing, sensible/latent, cooling coil, evaporative cooling</p></a><a href="combustion.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">COMBUSTION</h3><p>Stoichiometric AFR, adiabatic flame temperature, excess air</p></a><a href="thermal.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">THERMAL</h3><p>1D conduction, Nu correlations, radiation, fin efficiency</p></a><a href="hx.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">HX</h3><p>LMTD, NTU-effectiveness, fouling, parallel/counter/cross</p></a></div>
+</section>
+<section style="text-align:center">
+<h2>OPEN THE CALCULATOR</h2>
+<p style="color:var(--dim);margin-bottom:1.5rem;font-size:.9rem">All calculations run locally in your browser. No data leaves the device.</p>
+<div class="cta-row" style="justify-content:center;gap:1rem;flex-wrap:wrap">
+<a href="./#tab-cycles" class="btn btn-primary" style="background:#ff6b35;color:var(--bg);box-shadow:0 0 10px #ff6b35">LAUNCH CYCLES &rarr;</a>
+<a href="../amni-calc.html" class="btn btn-outline">ALL CALC MODULES</a>
+</div>
+</section>
+<div class="site-ad-banner">
+<span class="ad-note">Sponsored</span>
+<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8345487545441889" data-ad-slot="1720203631" data-ad-format="auto" data-full-width-responsive="true"></ins>
+<script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>
+</div>
+<footer>
+<div class="footer-links">
+<a href="../about.html">ABOUT</a>
+<a href="../faq.html">FAQ</a>
+<a href="../amni-calc.html">AMNI-CALC</a>
+<a href="../privacy.html">PRIVACY</a>
+<a href="../terms.html">TERMS</a>
+<a href="mailto:amnibro7@gmail.com">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amni-Scient. All rights reserved.</p>
+</footer>
+</body>
+</html>
