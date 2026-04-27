@@ -1,5 +1,30 @@
 ﻿# Changelog 
 
+## [4.5.2] - 2026-04-27 - Calc local AI: drop phantom models, port verified WebLLM list
+
+### Fixed
+- `calc/index.html` in-browser model dropdown listed `Bonsai-8B-mlx-1bit` (an Apple MLX-only model that was never in `@mlc-ai/web-llm`'s `prebuiltAppConfig`), causing `Cannot find model record in appConfig for Bonsai-8B-mlx-1bit` on load. Removed.
+- Replaced the calc dropdown with the verified-working list already shipping in `prayer/index.html` (per v4.7.11 prebuilt-only lesson): SmolLM2 360M, Qwen3 0.6B/1.7B/4B/8B, Qwen2.5 3B/7B, gemma-2-2b, Phi-3.5-mini, Qwen2.5-Math 1.5B, Qwen2.5-Coder 1.5B/3B, DeepSeek-R1-Distill-Qwen 7B. Grouped via `<optgroup>` (lightweight / balanced / engineering / high quality).
+- `WEBLLM_DEFAULTS` updated: mobile default `Qwen3-0.6B-q4f16_1-MLC` (~400 MB), desktop default `Qwen2.5-3B-Instruct-q4f16_1-MLC` (~1.8 GB) — matches prayer.
+- `getWebLLMConfig()` now validates `parsed.model` against `VALID_WEBLLM_MODELS` set; falls back to default if a stale `localStorage` entry references a removed ID. Prevents repeat failures for users who previously had Bonsai cached.
+
+### Notes about model availability
+- Qwen 3.5 / Qwen 3.6 do not exist in `@mlc-ai/web-llm` (or anywhere as of writing). Latest published Qwen series in WebLLM is **Qwen3** (0.6B / 1.7B / 4B / 8B), released 2025; that is what is shipped.
+- Llama 4 Scout / Maverick (Meta) is MoE at 109B / 400B parameters — not viable for browser WebGPU and not in WebLLM. Llama 3.x is also not currently in WebLLM's 0.2 line; for capable in-browser models stick to Qwen3 or DeepSeek-R1-Distill.
+- For any new model_id added later, both must be true (per v4.7.11 lesson): (1) ID present in `cdn.jsdelivr.net/npm/@mlc-ai/web-llm@<exact-version>/lib/index.js`, AND (2) `<modelLibURLPrefix><runtime-modelVersion>/<filename>.wasm` returns 200.
+
+### Files Touched
+- `calc/index.html` — dropdown options, `WEBLLM_DEFAULTS`, `VALID_WEBLLM_MODELS` set, `getWebLLMConfig` validation
+- Backup: `backups/calc-index.v4.5.0.bak`
+
+## [4.5.1] - 2026-04-27 - Calc fixes: live-compute loop, fake gear "3D isometric"
+
+### Fixed
+- `setupLiveCompute` now tags buttons with `__liveBound` after first init; was rebinding every MutationObserver tick. Added re-entry guard (`running` flag) inside `fire()`.
+- MutationObserver narrowed: only re-runs the live-compute setup when an actual `<input>/<select>/<textarea>/calc-button` is added. Was firing on every result-panel innerHTML change → infinite re-fire loop visible as flicker on gears, vibration, fluids and other modules.
+- `drawGears` no longer injects the "3D ISOMETRIC" card (concentric ellipses on a 2D canvas — the spiral the user reported). The Three.js gear mesh from `calc-3d.js` at `<canvas id="d-gears">` is now the only 3D view.
+- `drawGear3D` stubbed to no-op (no remaining callers).
+
 ## [4.5.0] - 2026-04-27 - Live Compute + Real 3D (Three.js) for Amni-Calc
 
 ### Context
