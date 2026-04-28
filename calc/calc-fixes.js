@@ -993,6 +993,218 @@ function injectNECChart(){
 }
 
 /* ============================================================
+ * ELECTRICAL — phasor diagram, transformer sizing, short-circuit
+ * ============================================================ */
+function injectElectricalExtras(){
+  const view=$('v-electrical');if(!view)return;
+  const left=view.querySelector('.split>div:first-child');
+  const right=view.querySelector('.split>div:last-child');
+  if(!left||!right)return;
+  /* Transformer sizing card */
+  if(!$('xfmr-card')){
+    const card=document.createElement('div');card.className='card';card.id='xfmr-card';
+    card.innerHTML='<h3>TRANSFORMER SIZING</h3>'+
+      '<div class="row">'+
+        '<div class="field"><label for="xf-kva">RATED kVA</label><input type="number" id="xf-kva" value="75" step="any"></div>'+
+        '<div class="field"><label for="xf-vp">PRIMARY V (LL)</label><input type="number" id="xf-vp" value="480" step="any"></div>'+
+        '<div class="field"><label for="xf-vs">SECONDARY V (LL)</label><input type="number" id="xf-vs" value="208" step="any"></div>'+
+        '<div class="field"><label for="xf-z">% IMPEDANCE Z</label><input type="number" id="xf-z" value="5.75" step="0.05"></div>'+
+        '<div class="field"><label for="xf-ph">PHASE</label><select id="xf-ph"><option value="3">3-Φ</option><option value="1">1-Φ</option></select></div>'+
+      '</div>'+
+      '<button class="btn btn-sm" onclick="calcXfmr()">FLA / SCC</button>';
+    left.appendChild(card);
+  }
+  /* Phasor diagram chart in right column */
+  if(!$('p-phasor')){
+    const card=document.createElement('div');card.className='card';card.style.marginTop='.6rem';
+    card.innerHTML='<h3>POWER PHASOR DIAGRAM</h3><div id="p-phasor" style="width:100%;height:320px"></div><div id="phasor-out" style="margin-top:.4rem"></div>';
+    right.appendChild(card);
+  }
+}
+window.calcXfmr=function(){
+  const kva=v('xf-kva'),Vp=v('xf-vp'),Vs=v('xf-vs'),Z=v('xf-z'),ph=parseInt(sv('xf-ph'))||3;
+  if(!isFinite(kva)||!isFinite(Vp)||!isFinite(Vs)||!isFinite(Z))return;
+  const factor=ph===3?Math.sqrt(3):1;
+  const FLA_p=kva*1000/(factor*Vp);
+  const FLA_s=kva*1000/(factor*Vs);
+  const SCC_s=FLA_s/(Z/100);
+  const I2t_thermal=Math.pow(SCC_s,2)*0.1;
+  const Z_per_unit=Z/100;
+  const turnsRatio=Vp/Vs;
+  const out=$('xfmr-card');if(!out)return;
+  let html=out.innerHTML.split('<button')[0];
+  html+='<button class="btn btn-sm" onclick="calcXfmr()">FLA / SCC</button>';
+  html+='<div class="result-grid" style="margin-top:.5rem">'+
+    [['Primary FLA',FLA_p.toFixed(1)+' A'],['Secondary FLA',FLA_s.toFixed(1)+' A'],['Turns ratio',turnsRatio.toFixed(2)+':1'],['SCC (sec, 3-cyc)',SCC_s.toFixed(0)+' A',SCC_s>10000?'warn':'ok'],['Z per-unit',Z_per_unit.toFixed(4)],['I²t (~6-cyc, 0.1s)',I2t_thermal.toExponential(2)+' A²·s']].map(([l,v,c])=>`<div class="result-item"><div class="lbl">${l}</div><div class="val ${c||''}">${v}</div></div>`).join('')+
+    '</div>'+
+    '<p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem"><strong>NEC 240.21 secondary tap rules:</strong> 10-ft tap allows downstream OCPD if conductors ≥ 1/10 of primary OCPD rating; 25-ft tap requires conductors ≥ 1/3 of primary rating. <strong>Short-circuit:</strong> SCC = FLA / (Z/100) — coordinate with branch breaker AIC rating. <strong>Inrush:</strong> typical 8-12× FLA for first cycle, decay over 0.1 s. Use NEMA TP 1 efficiencies for sizing-vs-loss tradeoff.</p>';
+  out.innerHTML=html;
+};
+window.calcACPower=function(){
+  /* Override the obfuscated calcACPower to also draw a Plotly phasor */
+  const V=v('ac-v'),I=v('ac-i'),PF=v('ac-pf');
+  if(!isFinite(V)||!isFinite(I)||!isFinite(PF))return;
+  const S=V*I,P=S*PF,Q=Math.sqrt(Math.max(0,S*S-P*P)),angle=Math.acos(Math.max(-1,Math.min(1,PF)))*180/Math.PI;
+  const t=pTheme();
+  /* Phasor: P along x-axis, Q along y-axis, S as resultant */
+  const traces=[
+    {x:[0,P],y:[0,0],mode:'lines+markers',line:{color:'#22c55e',width:3},marker:{size:[0,8]},name:'P (Real)','hoverinfo':'name'},
+    {x:[P,P],y:[0,Q],mode:'lines+markers',line:{color:'#f59e0b',width:3,dash:'dash'},marker:{size:[0,8]},name:'Q (Reactive)','hoverinfo':'name'},
+    {x:[0,P],y:[0,Q],mode:'lines+markers',line:{color:t.accent,width:3.5},marker:{size:[0,10]},name:'S (Apparent)','hoverinfo':'name'},
+    {x:[P*0.5,P,P*0.5],y:[Q*0.05,Q*0.5,Q*0.95],mode:'text',text:['P='+P.toFixed(0)+' W','Q='+Q.toFixed(0)+' VAR','S='+S.toFixed(0)+' VA'],textposition:['top center','middle right','bottom right'],textfont:{color:t.text,size:11},showlegend:false}
+  ];
+  const maxA=Math.max(P,Q,S)*1.15;
+  plot('p-phasor',traces,{
+    xaxis:{title:'Real power P (W)',range:[0,maxA],zeroline:true,scaleanchor:'y',scaleratio:1},
+    yaxis:{title:'Reactive power Q (VAR)',range:[0,maxA],zeroline:true},
+    showlegend:false
+  });
+  const phaseLabel=Q>=0?'Lagging (inductive)':'Leading (capacitive)';
+  const out=$('phasor-out');if(out){
+    out.innerHTML='<div class="result-grid">'+
+      [['S apparent',S.toFixed(0)+' VA'],['P real',P.toFixed(0)+' W'],['Q reactive',Q.toFixed(0)+' VAR'],['PF',PF.toFixed(3)],['φ (angle)',angle.toFixed(1)+'°'],['Type',phaseLabel]].map(([l,v])=>`<div class="result-item"><div class="lbl">${l}</div><div class="val">${v}</div></div>`).join('')+
+      '</div>';
+  }
+  /* Also write to electrical-results in standard form so other callers see it */
+  const er=$('electrical-results');if(er)er.innerHTML='<h3>AC POWER</h3>'+(out?out.innerHTML:'');
+};
+
+/* ============================================================
+ * MOTORS — torque-speed curves (NEMA A/B/C/D), starting current
+ * ============================================================ */
+function injectMotorExtras(){
+  const view=$('v-motors');if(!view)return;
+  const left=view.querySelector('.split>div:first-child');
+  const right=view.querySelector('.split>div:last-child');
+  if(!left||!right)return;
+  if(!$('mt-ts-card')){
+    const card=document.createElement('div');card.className='card';card.id='mt-ts-card';
+    card.innerHTML='<h3>TORQUE-SPEED (NEMA DESIGN)</h3>'+
+      '<div class="row">'+
+        '<div class="field"><label for="mt-ts-design">NEMA DESIGN</label><select id="mt-ts-design"><option value="B">B (general purpose, fans/pumps)</option><option value="A">A (high SF, drill presses)</option><option value="C">C (high starting torque, conveyors)</option><option value="D">D (very high torque, low slip)</option></select></div>'+
+        '<div class="field"><label for="mt-ts-pfl">RATED kW</label><input type="number" id="mt-ts-pfl" value="7.5" step="any"></div>'+
+        '<div class="field"><label for="mt-ts-nfl">FL SPEED (rpm)</label><input type="number" id="mt-ts-nfl" value="1750" step="any"></div>'+
+        '<div class="field"><label for="mt-ts-ns">SYNC SPEED (rpm)</label><input type="number" id="mt-ts-ns" value="1800" step="any"></div>'+
+      '</div>'+
+      '<button class="btn btn-sm" onclick="calcMotorTSC()">PLOT</button>';
+    left.appendChild(card);
+  }
+  if(!$('p-motor-ts')){
+    const card=document.createElement('div');card.className='card';card.style.marginTop='.6rem';
+    card.innerHTML='<h3>TORQUE-SPEED CURVE</h3><div id="p-motor-ts" style="width:100%;height:320px"></div><div id="motor-ts-out" style="margin-top:.4rem"></div>';
+    right.appendChild(card);
+  }
+  if(!$('mt-frame-card')){
+    const card=document.createElement('div');card.className='card';card.style.marginTop='.6rem';card.id='mt-frame-card';
+    card.innerHTML='<h3>NEMA FRAME LOOKUP</h3>'+
+      '<div class="row">'+
+        '<div class="field"><label for="mt-fr-hp">HP</label><input type="number" id="mt-fr-hp" value="10" step="0.5"></div>'+
+        '<div class="field"><label for="mt-fr-rpm">SYNC RPM</label><select id="mt-fr-rpm"><option>3600</option><option selected>1800</option><option>1200</option><option>900</option></select></div>'+
+        '<div class="field"><label for="mt-fr-encl">ENCLOSURE</label><select id="mt-fr-encl"><option value="ODP">ODP (open drip-proof)</option><option value="TEFC">TEFC (totally-enclosed fan-cooled)</option></select></div>'+
+      '</div>'+
+      '<button class="btn btn-sm" onclick="calcNemaFrame()">FRAME</button>';
+    left.appendChild(card);
+  }
+}
+const NEMA_DESIGN={
+  A:{LRT:1.2,BDT:2.5,PUT:1.8,LRC:7.5,slip:0.04,note:'Hard to start, very high SF, niche use (drill presses)'},
+  B:{LRT:1.4,BDT:2.5,PUT:1.6,LRC:6.5,slip:0.04,note:'Most common — general industry: pumps, fans, blowers, machine tools'},
+  C:{LRT:2.0,BDT:2.0,PUT:1.5,LRC:5.5,slip:0.05,note:'High starting torque — conveyors, compressors loaded at start'},
+  D:{LRT:2.75,BDT:2.75,PUT:0,LRC:4.0,slip:0.10,note:'Very high starting torque, high slip — flywheels, punch presses, hoists'}
+};
+window.calcMotorTSC=function(){
+  const dKey=sv('mt-ts-design')||'B',d=NEMA_DESIGN[dKey];
+  const Pkw=v('mt-ts-pfl'),Nfl=v('mt-ts-nfl'),Ns=v('mt-ts-ns');
+  if(!isFinite(Pkw)||!isFinite(Nfl)||!isFinite(Ns))return;
+  const Tfl=Pkw*9550/Nfl;
+  const npts=80;
+  const speeds=Array.from({length:npts},(_,i)=>i*Ns/(npts-1));
+  /* Approximate normalized torque-speed curve following NEMA shape:
+   * locked-rotor torque at s=1, falls slightly to pull-up at s~0.7,
+   * climbs to breakdown at s~0.2-0.3, drops to zero at s=0 (sync) */
+  const torques=speeds.map(N=>{
+    const s=(Ns-N)/Ns;
+    if(s<=0)return 0;
+    if(s>=1)return Tfl*d.LRT;
+    /* Composite curve: pull-up minimum then breakdown peak */
+    const pullupS=0.7,breakdownS=0.2;
+    let t;
+    if(s>=pullupS){
+      t=d.PUT+(d.LRT-d.PUT)*((s-pullupS)/(1-pullupS));
+    }else if(s>=breakdownS){
+      t=d.BDT-(d.BDT-d.PUT)*((s-breakdownS)/(pullupS-breakdownS));
+    }else{
+      t=d.BDT*(s/breakdownS)*(2-s/breakdownS);
+    }
+    return t*Tfl;
+  });
+  const t=pTheme();
+  plot('p-motor-ts',[
+    {x:speeds,y:torques,mode:'lines',line:{color:t.accent,width:2.5},name:'Motor T-N curve',fill:'tozeroy',fillcolor:'rgba(255,107,53,0.10)'},
+    {x:[Nfl],y:[Tfl],mode:'markers+text',marker:{color:'#22c55e',size:11,symbol:'star'},text:['FL: '+Tfl.toFixed(1)+' N·m'],textposition:'top right',textfont:{color:t.text,size:10},name:'FL'},
+    {x:[0],y:[Tfl*d.LRT],mode:'markers+text',marker:{color:'#ef4444',size:9,symbol:'square'},text:['LRT'],textposition:'top right',textfont:{color:t.text,size:10},name:'LRT'},
+    {x:[Ns*(1-0.20)],y:[Tfl*d.BDT],mode:'markers+text',marker:{color:'#f59e0b',size:9,symbol:'triangle-up'},text:['BDT'],textposition:'top center',textfont:{color:t.text,size:10},name:'Breakdown'}
+  ],{xaxis:{title:'Speed (rpm)',range:[0,Ns*1.05]},yaxis:{title:'Torque (N·m)',range:[0,Tfl*d.LRT*1.2]},showlegend:false});
+  const out=$('motor-ts-out');if(out){
+    out.innerHTML='<div class="result-grid">'+
+      [['Design',dKey],['T_FL (full load)',Tfl.toFixed(2)+' N·m'],['T_LR (locked rotor)',(Tfl*d.LRT).toFixed(1)+' N·m ('+(d.LRT*100).toFixed(0)+'% FL)'],['T_BD (breakdown)',(Tfl*d.BDT).toFixed(1)+' N·m ('+(d.BDT*100).toFixed(0)+'%)'],['I_LR / I_FL',(d.LRC).toFixed(1)+'×'],['Rated slip',(d.slip*100).toFixed(1)+'%']].map(([l,v])=>`<div class="result-item"><div class="lbl">${l}</div><div class="val">${v}</div></div>`).join('')+
+      '</div><p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem"><strong>'+dKey+':</strong> '+d.note+'.<br><strong>Starting current:</strong> ~'+d.LRC.toFixed(1)+'× FLA across-the-line. Use soft-start or VFD to limit inrush. <strong>Across-the-line OK</strong> if utility transformer ≥ 5× motor kVA. <strong>Code letter:</strong> NEMA Code G ≈ 6.0 kVA/HP locked rotor; B/C usually fall in F-G.</p>';
+  }
+};
+const NEMA_FRAMES={
+  3600:{1:'56','1.5':'56','2':'56','3':'145T','5':'182T','7.5':'184T','10':'213T','15':'215T','20':'254T','25':'256T','30':'284TS','40':'286TS','50':'324TS','60':'326TS','75':'364TS','100':'365TS'},
+  1800:{'0.5':'48','0.75':'56','1':'143T','1.5':'145T','2':'145T','3':'182T','5':'184T','7.5':'213T','10':'215T','15':'254T','20':'256T','25':'284T','30':'286T','40':'324T','50':'326T','60':'364T','75':'365T','100':'404T','125':'405T','150':'444T','200':'445T'},
+  1200:{1:'145T','1.5':'182T','2':'184T','3':'213T','5':'215T','7.5':'254T','10':'256T','15':'284T','20':'286T','25':'324T','30':'326T','40':'364T','50':'365T','60':'404T','75':'405T','100':'444T'},
+  900:{1:'182T','1.5':'184T','2':'213T','3':'215T','5':'254T','7.5':'256T','10':'284T','15':'286T','20':'324T','25':'326T','30':'364T','40':'365T','50':'404T','60':'405T','75':'444T'}
+};
+window.calcNemaFrame=function(){
+  const hp=v('mt-fr-hp'),rpm=parseInt(sv('mt-fr-rpm'))||1800,enc=sv('mt-fr-encl')||'ODP';
+  if(!isFinite(hp))return;
+  const table=NEMA_FRAMES[rpm];if(!table)return;
+  const sizes=Object.keys(table).map(parseFloat).sort((a,b)=>a-b);
+  let pick=sizes[sizes.length-1];
+  for(const s of sizes){if(s>=hp){pick=s;break;}}
+  const frame=table[String(pick)];
+  /* TEFC adds typically 1 frame size (e.g. 213T → 215T) */
+  const tefcFrame=enc==='TEFC'&&frame?frame.replace(/T$/,'TZ').replace(/(\d{3})/,m=>(parseInt(m)+2)+''):frame;
+  const finalFrame=enc==='TEFC'?tefcFrame:frame;
+  const card=$('mt-frame-card');if(!card)return;
+  let html=card.innerHTML.split('<button')[0];
+  html+='<button class="btn btn-sm" onclick="calcNemaFrame()">FRAME</button>';
+  html+='<div class="result-grid" style="margin-top:.5rem">'+
+    [['Required HP',pick+' HP'],['NEMA frame',finalFrame||'—'],['Speed class',rpm+' rpm sync ('+(rpm===3600?'2-pole':rpm===1800?'4-pole':rpm===1200?'6-pole':'8-pole')+')'],['Enclosure',enc]].map(([l,v])=>`<div class="result-item"><div class="lbl">${l}</div><div class="val">${v}</div></div>`).join('')+
+    '</div>'+
+    '<p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem">NEMA MG-1 standard frames. T-frame (1964+) replaces older U-frame. TEFC frames typically one size up from ODP for same HP. Shaft and bolt patterns are interchangeable within frame number for OEM swap-out.</p>';
+  card.innerHTML=html;
+};
+
+/* ============================================================
+ * HEAT TRANSFER — fin efficiency curve + Heisler chart
+ * ============================================================ */
+function injectThermalExtras(){
+  const view=$('v-thermal');if(!view)return;
+  const right=view.querySelector('.split>div:last-child');if(!right)return;
+  if(!$('p-fin-eff')){
+    const card=document.createElement('div');card.className='card';card.style.marginTop='.6rem';
+    card.innerHTML='<h3>FIN EFFICIENCY CURVE</h3><div id="p-fin-eff" style="width:100%;height:280px"></div>'+
+      '<p class="note" style="margin-top:.3rem;color:var(--dim);font-size:.7rem">Rectangular straight fin: η = tanh(mL_c) / (mL_c) where m = √(2h / (k·t)) and L_c = L + t/2. Curve shown for typical aluminum (k=200 W/m·K), t=2 mm, h=25 W/m²·K. Optimal mL_c ≈ 1 (η≈75%).</p>';
+    right.appendChild(card);
+  }
+  setTimeout(plotFinEfficiency,100);
+}
+function plotFinEfficiency(){
+  const k=200,tFin=0.002,h=25,m=Math.sqrt(2*h/(k*tFin));
+  const mLcs=[],etas=[];
+  for(let i=1;i<=120;i++){const mLc=i*0.05;mLcs.push(mLc);etas.push(Math.tanh(mLc)/mLc);}
+  const t=pTheme();
+  plot('p-fin-eff',[
+    {x:mLcs,y:etas,mode:'lines',line:{color:t.accent,width:2.5},name:'η_fin'},
+    {x:[1],y:[Math.tanh(1)/1],mode:'markers+text',marker:{color:'#22c55e',size:10,symbol:'diamond'},text:['mL_c=1, η=76%'],textposition:'top right',textfont:{color:t.text,size:10}},
+    {x:[2],y:[Math.tanh(2)/2],mode:'markers+text',marker:{color:'#f59e0b',size:10,symbol:'square'},text:['mL_c=2, η=48%'],textposition:'top right',textfont:{color:t.text,size:10}}
+  ],{xaxis:{title:'Fin parameter mL_c'},yaxis:{title:'Fin efficiency η',range:[0,1.05]},showlegend:false});
+}
+
+/* ============================================================
  * GEARS — Lewis form factor auto-lookup by tooth count
  * ============================================================ */
 const LEWIS_Y={12:0.245,13:0.261,14:0.277,15:0.290,16:0.296,17:0.303,18:0.309,19:0.314,20:0.322,21:0.328,22:0.331,24:0.337,26:0.346,28:0.353,30:0.359,34:0.371,38:0.384,43:0.397,50:0.409,60:0.422,75:0.435,100:0.447,150:0.460,300:0.472,400:0.480,1000:0.485};
@@ -1064,8 +1276,23 @@ window.addEventListener('DOMContentLoaded',()=>{
       injectShockCard();
       /* Inject NEC ampacity Plotly chart */
       injectNECChart();
-      /* Re-run universal sweep so the newly-injected shock card gets wired */
-      setTimeout(()=>{universalLiveCompute();injectNECChart();},400);
+      /* Inject electrical extras: transformer sizing + phasor diagram */
+      injectElectricalExtras();
+      /* Inject motor extras: torque-speed + NEMA frames */
+      injectMotorExtras();
+      /* Inject thermal extras: fin efficiency curve */
+      injectThermalExtras();
+      /* Re-run universal sweep so the newly-injected cards get wired */
+      setTimeout(()=>{
+        universalLiveCompute();
+        injectNECChart();
+        /* Fire newly-added handlers once so they show defaults */
+        if(typeof window.calcXfmr==='function')try{window.calcXfmr();}catch(e){}
+        if(typeof window.calcMotorTSC==='function')try{window.calcMotorTSC();}catch(e){}
+        if(typeof window.calcNemaFrame==='function')try{window.calcNemaFrame();}catch(e){}
+        if(typeof window.calcACPower==='function')try{window.calcACPower();}catch(e){}
+        if(typeof window.calcShock==='function')try{window.calcShock();}catch(e){}
+      },400);
     },800);
   },400);
 });
