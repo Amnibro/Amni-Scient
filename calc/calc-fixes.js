@@ -76,11 +76,16 @@ window.addTypedSupport=function(){
 };
 window.clearSupports=function(){window.beamSupports=[];renderSupportList();if(typeof window.solveBeam==='function')try{window.solveBeam();}catch(e){}};
 function renderSupportList(){
-  const el=$('sup-list');if(!el)return;
-  el.innerHTML=window.beamSupports.map((s,i)=>
-    `<span class="chip" style="font-size:.7rem">${s.type.toUpperCase()} @ ${s.x.toFixed(0)} mm <a href="#" onclick="window.beamSupports.splice(${i},1);renderSupportList();return false" style="margin-left:.4rem;color:var(--err,#f55)">×</a></span>`
-  ).join('');
-  if(typeof window._renderSupportListNative==='function')try{window._renderSupportListNative();}catch(e){}
+  /* Use our own dedicated container #sup-typed-list to avoid conflict
+   * with the obfuscated module which fights for #sup-list. */
+  const el=$('sup-typed-list')||$('sup-list');if(!el)return;
+  if(window.beamSupports.length===0){
+    el.innerHTML='<span style="opacity:.5">No supports placed yet — add at least one above.</span>';
+  }else{
+    el.innerHTML='<strong style="color:var(--text)">SUPPORTS:</strong> '+window.beamSupports.map((s,i)=>
+      `<span class="chip" style="font-size:.72rem;background:rgba(255,107,53,0.12);color:var(--text);padding:3px 8px;border-radius:3px;border:1px solid var(--accent,#ff6b35)">${s.type.toUpperCase()} @ ${s.x.toFixed(0)} mm <a href="#" onclick="window.beamSupports.splice(${i},1);window.renderSupportList();window.solveBeam&&window.solveBeam();return false" style="margin-left:.4rem;color:#f55;text-decoration:none">×</a></span>`
+    ).join(' ');
+  }
 }
 window.renderSupportList=renderSupportList;
 
@@ -321,20 +326,46 @@ const BOLT_GRADES={
   '316SS':{Sp:170,Sy:205,Su:515,std:'A2-70/316 austenitic SS (annealed; cold-worked higher)'}
 };
 const BOLT_SIZES={
+  '#0000-160':{d:0.53,p:0.159,At:0.166,kind:'Inch UNC (very fine)'},
+  '#000-120':{d:0.86,p:0.212,At:0.452,kind:'Inch UNC'},
+  '#00-90':{d:1.19,p:0.282,At:0.85,kind:'Inch UNC'},
+  '#0-80':{d:1.52,p:0.318,At:1.50,kind:'Inch UNC'},
+  '#1-64':{d:1.85,p:0.397,At:2.30,kind:'Inch UNC'},
+  '#2-56':{d:2.18,p:0.454,At:3.10,kind:'Inch UNC'},
+  '#3-48':{d:2.51,p:0.529,At:4.20,kind:'Inch UNC'},
+  '#4-40':{d:2.84,p:0.635,At:5.42,kind:'Inch UNC'},
+  '#5-40':{d:3.17,p:0.635,At:6.78,kind:'Inch UNC'},
   '#6-32':{d:3.51,p:0.794,At:7.81,kind:'Inch UNC'},
   '#8-32':{d:4.17,p:0.794,At:11.0,kind:'Inch UNC'},
   '#10-24':{d:4.83,p:1.058,At:14.2,kind:'Inch UNC'},
+  '#12-24':{d:5.49,p:1.058,At:18.6,kind:'Inch UNC'},
   '1/4-20':{d:6.35,p:1.270,At:20.5,kind:'Inch UNC'},
   '5/16-18':{d:7.94,p:1.411,At:33.9,kind:'Inch UNC'},
   '3/8-16':{d:9.53,p:1.587,At:50.3,kind:'Inch UNC'},
   '7/16-14':{d:11.11,p:1.814,At:69.0,kind:'Inch UNC'},
   '1/2-13':{d:12.70,p:1.954,At:91.6,kind:'Inch UNC'},
+  '9/16-12':{d:14.29,p:2.117,At:117,kind:'Inch UNC'},
   '5/8-11':{d:15.88,p:2.309,At:146,kind:'Inch UNC'},
   '3/4-10':{d:19.05,p:2.540,At:215,kind:'Inch UNC'},
   '7/8-9':{d:22.23,p:2.822,At:298,kind:'Inch UNC'},
   '1-8':{d:25.40,p:3.175,At:391,kind:'Inch UNC'},
+  '1-1/8-7':{d:28.58,p:3.629,At:492,kind:'Inch UNC'},
   '1-1/4-7':{d:31.75,p:3.629,At:625,kind:'Inch UNC'},
+  '1-3/8-6':{d:34.93,p:4.233,At:745,kind:'Inch UNC'},
   '1-1/2-6':{d:38.10,p:4.233,At:906,kind:'Inch UNC'},
+  '1-3/4-5':{d:44.45,p:5.080,At:1226,kind:'Inch UNC'},
+  '2-4.5':{d:50.80,p:5.644,At:1613,kind:'Inch UNC'},
+  '2-1/4-4.5':{d:57.15,p:5.644,At:2065,kind:'Inch UNC'},
+  '2-1/2-4':{d:63.50,p:6.350,At:2580,kind:'Inch UNC'},
+  '2-3/4-4':{d:69.85,p:6.350,At:3168,kind:'Inch UNC'},
+  '3-4':{d:76.20,p:6.350,At:3826,kind:'Inch UNC'},
+  '3-1/4-4':{d:82.55,p:6.350,At:4555,kind:'Inch UNC'},
+  '3-1/2-4':{d:88.90,p:6.350,At:5355,kind:'Inch UNC'},
+  '3-3/4-4':{d:95.25,p:6.350,At:6226,kind:'Inch UNC'},
+  '4-4':{d:101.60,p:6.350,At:7168,kind:'Inch UNC'},
+  'M1.6':{d:1.6,p:0.35,At:1.27,kind:'Metric coarse'},
+  'M2':{d:2.0,p:0.40,At:2.07,kind:'Metric coarse'},
+  'M2.5':{d:2.5,p:0.45,At:3.39,kind:'Metric coarse'},
   'M3':{d:3.0,p:0.50,At:5.03,kind:'Metric coarse'},
   'M4':{d:4.0,p:0.70,At:8.78,kind:'Metric coarse'},
   'M5':{d:5.0,p:0.80,At:14.2,kind:'Metric coarse'},
@@ -350,7 +381,13 @@ const BOLT_SIZES={
   'M24':{d:24.0,p:3.00,At:353,kind:'Metric coarse'},
   'M27':{d:27.0,p:3.00,At:459,kind:'Metric coarse'},
   'M30':{d:30.0,p:3.50,At:561,kind:'Metric coarse'},
-  'M36':{d:36.0,p:4.00,At:817,kind:'Metric coarse'}
+  'M33':{d:33.0,p:3.50,At:694,kind:'Metric coarse'},
+  'M36':{d:36.0,p:4.00,At:817,kind:'Metric coarse'},
+  'M39':{d:39.0,p:4.00,At:976,kind:'Metric coarse'},
+  'M42':{d:42.0,p:4.50,At:1121,kind:'Metric coarse'},
+  'M48':{d:48.0,p:5.00,At:1473,kind:'Metric coarse'},
+  'M56':{d:56.0,p:5.50,At:2030,kind:'Metric coarse'},
+  'M64':{d:64.0,p:6.00,At:2676,kind:'Metric coarse'}
 };
 function populateBoltDropdowns(){
   const g=$('bl-grade'),s=$('bl-size');
@@ -687,13 +724,17 @@ window.calcSpring=function(){
   const so=$('sp-stack-out');if(so){
     so.innerHTML=`<strong>${arr.toUpperCase()} of ${n}</strong> &mdash; combined rate <strong>${k_combined.toFixed(2)} N/mm</strong>, deflection at force <strong>${delta_combined.toFixed(2)} mm</strong>. ${arr==='series'?'Same force, '+n+'× the deflection.':n+'× the force, same deflection per spring.'}`;
   }
-  /* Force-deflection chart with ideal range overlay */
+  /* Force-deflection chart with ideal range overlay AND series/parallel overlay */
   const Lavail=fl-Lsolid;
   const xMax=Lavail>0?Lavail:fl*0.8;
-  const npts=50;const xs=Array.from({length:npts},(_,i)=>i*xMax/(npts-1));
-  const Fs=xs.map(x=>k*x);
+  const xMaxStack=arr==='series'?xMax*n:xMax;
+  const xCharted=Math.max(xMax,xMaxStack);
+  const npts=80;const xs=Array.from({length:npts},(_,i)=>i*xCharted/(npts-1));
+  const Fs_single=xs.map(x=>x<=xMax?k*x:null);
+  const Fs_series=xs.map(x=>x<=xMaxStack?k_combined*x:null);
+  const Fs_parallel=xs.map(x=>x<=xMax?k*n*x:null);
   const idealMin=xMax*0.15,idealMax=xMax*0.80;
-  const Fmax_chart=k*xMax;
+  const Fmax_chart=Math.max(k*xMax,k_combined*xMaxStack,k*n*xMax);
   const shapes=[
     {type:'rect',x0:idealMin,x1:idealMax,y0:0,y1:Fmax_chart,fillcolor:'rgba(34,197,94,0.12)',line:{width:0}},
     {type:'line',x0:xMax,x1:xMax,y0:0,y1:Fmax_chart*1.05,line:{color:'#ef4444',width:1.5,dash:'dash'}}
@@ -701,10 +742,19 @@ window.calcSpring=function(){
   if(isFinite(delta)&&delta>0&&delta<xMax){
     shapes.push({type:'line',x0:delta,x1:delta,y0:0,y1:F,line:{color:pTheme().accent,width:1,dash:'dot'}});
   }
-  plot('p-spring-fd',[
-    {x:xs,y:Fs,mode:'lines',line:{color:pTheme().accent,width:2.5},name:'F = k·δ'},
-    isFinite(delta)?{x:[delta],y:[F],mode:'markers',marker:{color:'#fff',size:11,symbol:'diamond',line:{color:'#000',width:1.5}},name:'Operating'}:{x:[],y:[]}
-  ],{xaxis:{title:'δ deflection (mm)',range:[0,xMax*1.05]},yaxis:{title:'F force (N)',range:[0,Fmax_chart*1.1]},shapes,showlegend:false});
+  const traces=[
+    {x:xs,y:Fs_single,mode:'lines',line:{color:pTheme().accent,width:2.5},name:'Single spring (k='+k.toFixed(1)+' N/mm)'}
+  ];
+  if(n>1){
+    const colSeries='#3b82f6',colParallel='#a855f7';
+    if(arr==='series')traces.push({x:xs,y:Fs_series,mode:'lines',line:{color:colSeries,width:2,dash:'dash'},name:'Series of '+n+' (k='+k_combined.toFixed(1)+' N/mm)'});
+    if(arr==='parallel')traces.push({x:xs,y:Fs_parallel,mode:'lines',line:{color:colParallel,width:2,dash:'dash'},name:'Parallel of '+n+' (k='+(k*n).toFixed(1)+' N/mm)'});
+    /* Always show BOTH series and parallel for comparison even if user only picked one */
+    if(arr!=='series')traces.push({x:xs,y:Fs_series,mode:'lines',line:{color:colSeries,width:1,dash:'dot'},name:'(if Series of '+n+': k='+k_combined.toFixed(1)+')',opacity:0.5});
+    if(arr!=='parallel')traces.push({x:xs,y:Fs_parallel,mode:'lines',line:{color:colParallel,width:1,dash:'dot'},name:'(if Parallel of '+n+': k='+(k*n).toFixed(1)+')',opacity:0.5});
+  }
+  if(isFinite(delta))traces.push({x:[delta],y:[F],mode:'markers',marker:{color:'#fff',size:11,symbol:'diamond',line:{color:'#000',width:1.5}},name:'Operating point'});
+  plot('p-spring-fd',traces,{xaxis:{title:'δ deflection (mm)',range:[0,xCharted*1.05]},yaxis:{title:'F force (N)',range:[0,Fmax_chart*1.1]},shapes,showlegend:n>1,legend:{x:0.02,y:0.98,bgcolor:'rgba(0,0,0,0)',font:{size:9}}});
   /* Compressed vs uncompressed animation */
   drawSpringAnim(d,D,nt,fl,Math.max(0.1,fl-delta),type);
   /* Force 3D update */
@@ -760,8 +810,14 @@ function drawSpringAnim(d,D,nt,fl,deflectedL,type){
   ctx.beginPath();ctx.moveTo(w*0.55,h/2-4);ctx.lineTo(w*0.57,h/2);ctx.lineTo(w*0.55,h/2+4);ctx.stroke();
 }
 function gateBellevillePresets(){
-  /* Hide the presets card if no presets for current type? Always show — presets exist for all types now. */
+  /* Card always visible since every spring type has presets, but the
+   * dropdown contents are filtered per type so Belleville items only
+   * appear when type=belleville. Update card title label too. */
   const card=$('spring-presets-card');if(card)card.style.display='block';
+  const type=sv('sp-type')||'compression';
+  const set=SPRING_PRESETS[type]||SPRING_PRESETS.compression;
+  const h3=card?card.querySelector('h3'):null;
+  if(h3)h3.textContent='PRESETS — '+set.label;
   populateSpringPresets();
 }
 
@@ -849,7 +905,9 @@ window.addEventListener('DOMContentLoaded',()=>{
         'button[onclick="solveBeam()"]',
         'button[onclick="calcSection()"]',
         'button[onclick="undoVertex()"]',
-        'button[onclick="clearSection()"]'
+        'button[onclick="clearSection()"]',
+        'button[onclick="applyPreset()"]',
+        'button[onclick="applySpringPreset()"]'
       ];
       keepVisible.forEach(sel=>{const b=document.querySelector(sel);if(b)b.style.display='';});
       /* Gears Lewis Y auto-lookup: when user types in lw-y, mark touched
@@ -857,9 +915,27 @@ window.addEventListener('DOMContentLoaded',()=>{
       const lwY=$('lw-y');if(lwY)lwY.addEventListener('input',()=>{lwY.dataset.userTouched='1';});
       const ggN=$('gg-n');if(ggN)ggN.addEventListener('input',autoLewisY);
       autoLewisY();
+      /* Move enhanced Mohr's circle inputs to LEFT side of stress split */
+      moveMohrToLeft();
     },800);
   },400);
 });
+
+/* Move the .mohr-x card (injected by calc-overrides.js into the right
+ * side of v-stress) to the LEFT side, so all inputs are together. */
+function moveMohrToLeft(){
+  const stress=$('v-stress');if(!stress)return;
+  const split=stress.querySelector('.split');if(!split||split.children.length<2)return;
+  const mohrCard=split.children[1].querySelector('.mohr-x');
+  if(mohrCard&&split.children[0]){
+    split.children[0].appendChild(mohrCard);
+  }
+  /* Also retry after a delay in case injectMohrExtras runs late */
+  setTimeout(()=>{
+    const m=split.children[1].querySelector('.mohr-x');
+    if(m)split.children[0].appendChild(m);
+  },1500);
+}
 
 console.log('[calc-fixes] v5.2.0 layer loaded');
 })();
