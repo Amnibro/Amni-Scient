@@ -1783,6 +1783,265 @@ window.exportGearJSON=function(){
 };
 
 /* ============================================================
+ * FLUIDS — 2D CFD via Lattice Boltzmann (D2Q9) + drawable obstacle
+ * ============================================================ */
+function injectFluidsCFD(){
+  const view=$('v-fluids');if(!view)return;
+  const left=view.querySelector('.split>div:first-child');
+  const right=view.querySelector('.split>div:last-child');
+  if(!left||!right)return;
+  if(!$('cfd-card')){
+    const card=document.createElement('div');card.className='card';card.id='cfd-card';
+    card.innerHTML='<h3>2D CFD (LATTICE BOLTZMANN)</h3>'+
+      '<div class="row">'+
+        '<div class="field"><label for="cfd-shape">OBSTACLE SHAPE</label><select id="cfd-shape"><option value="cylinder">CIRCULAR CYLINDER (Karman vortex)</option><option value="square">SQUARE</option><option value="airfoil">NACA-LIKE AIRFOIL</option><option value="cavity">EMPTY (lid-driven cavity)</option><option value="custom">CUSTOM (draw on canvas)</option></select></div>'+
+        '<div class="field"><label for="cfd-u0">INLET U₀</label><input type="number" id="cfd-u0" value="0.10" step="0.01" min="0.01" max="0.20"></div>'+
+        '<div class="field"><label for="cfd-Re">REYNOLDS Re (target)</label><input type="number" id="cfd-Re" value="100" step="10" min="10" max="1000"></div>'+
+        '<div class="field"><label for="cfd-vis">VIZ</label><select id="cfd-vis"><option value="vmag">VELOCITY MAG</option><option value="vorticity">VORTICITY</option><option value="ux">U-x</option><option value="rho">DENSITY</option></select></div>'+
+      '</div>'+
+      '<div style="margin-top:.5rem;display:flex;gap:.5rem;flex-wrap:wrap">'+
+        '<button class="btn btn-sm btn-fill" onclick="cfdStart()">▶ START</button>'+
+        '<button class="btn btn-sm" onclick="cfdPause()">⏸ PAUSE</button>'+
+        '<button class="btn btn-sm" onclick="cfdReset()">⟲ RESET</button>'+
+      '</div>'+
+      '<div id="cfd-stats" style="margin-top:.4rem;font-size:.75rem;color:var(--dim)">Click START. LBM steady-state takes a few seconds.</div>';
+    left.appendChild(card);
+  }
+  if(!$('cfd-canvas-card')){
+    const card=document.createElement('div');card.className='card';card.style.marginTop='.6rem';
+    card.innerHTML='<h3>FLOW FIELD</h3>'+
+      '<canvas id="cfd-canvas" width="400" height="120" style="width:100%;height:auto;background:#0a0a0a;border-radius:3px;display:block;cursor:crosshair;image-rendering:pixelated"></canvas>'+
+      '<div id="cfd-legend" style="margin-top:.3rem;display:flex;align-items:center;gap:.4rem;font-size:.7rem;color:var(--dim)"><span>0</span><div id="cfd-legend-bar" style="flex:1;height:12px;border-radius:2px;background:linear-gradient(90deg,#000080,#0080ff,#00ffff,#80ff80,#ffff00,#ff8000,#ff0000)"></div><span id="cfd-legend-max">u_max</span></div>'+
+      '<p class="note" style="margin-top:.3rem;color:var(--dim);font-size:.7rem">D2Q9 BGK lattice Boltzmann, ~400×120 lattice. Inlet: prescribed velocity. Outlet: extrapolation. Top/bottom: no-slip walls. For Karman vortex shedding pick CIRCULAR CYLINDER + Re &gt; 47. CUSTOM: click on canvas to add cells (left-click) or remove (right-click) to the obstacle mask while paused.</p>';
+    right.appendChild(card);
+  }
+}
+/* LBM solver state */
+const CFD={
+  W:400,H:120,running:false,raf:null,step:0,
+  f:null,fNew:null,rho:null,ux:null,uy:null,solid:null,
+  u0:0.10,tau:0.6,Re:100,
+  e:[[0,0],[1,0],[0,1],[-1,0],[0,-1],[1,1],[-1,1],[-1,-1],[1,-1]],
+  w:[4/9,1/9,1/9,1/9,1/9,1/36,1/36,1/36,1/36],
+  opp:[0,3,4,1,2,7,8,5,6]
+};
+function cfdInit(){
+  const W=CFD.W,H=CFD.H;
+  const N=W*H;
+  CFD.f=new Float32Array(N*9);CFD.fNew=new Float32Array(N*9);
+  CFD.rho=new Float32Array(N);CFD.ux=new Float32Array(N);CFD.uy=new Float32Array(N);
+  CFD.solid=new Uint8Array(N);
+  /* Equilibrium init: rho=1, u=(u0,0) */
+  for(let y=0;y<H;y++){
+    for(let x=0;x<W;x++){
+      const i=y*W+x;
+      CFD.rho[i]=1.0;CFD.ux[i]=CFD.u0;CFD.uy[i]=0;
+      for(let k=0;k<9;k++){
+        const usq=CFD.u0*CFD.u0;
+        const eu=CFD.e[k][0]*CFD.u0;
+        const feq=CFD.w[k]*1.0*(1+3*eu+4.5*eu*eu-1.5*usq);
+        CFD.f[i*9+k]=feq;
+      }
+    }
+  }
+  /* Wall solid mask: top/bottom rows */
+  for(let x=0;x<W;x++){CFD.solid[0*W+x]=1;CFD.solid[(H-1)*W+x]=1;}
+  /* Obstacle */
+  cfdSetObstacle();
+  CFD.step=0;
+}
+function cfdSetObstacle(){
+  const W=CFD.W,H=CFD.H,shape=sv('cfd-shape')||'cylinder';
+  /* Clear interior solids first (keep walls) */
+  for(let y=1;y<H-1;y++){for(let x=0;x<W;x++)CFD.solid[y*W+x]=0;}
+  if(shape==='cavity'){
+    /* No obstacle. Lid-driven: top wall moves with U0 — handled in step */
+    return;
+  }
+  if(shape==='cylinder'){
+    const cx=W*0.25,cy=H/2,r=H*0.18;
+    for(let y=1;y<H-1;y++)for(let x=0;x<W;x++){
+      const dx=x-cx,dy=y-cy;if(dx*dx+dy*dy<r*r)CFD.solid[y*W+x]=1;
+    }
+  }else if(shape==='square'){
+    const cx=W*0.25,cy=H/2,s=H*0.20;
+    for(let y=1;y<H-1;y++)for(let x=0;x<W;x++){
+      if(Math.abs(x-cx)<s&&Math.abs(y-cy)<s)CFD.solid[y*W+x]=1;
+    }
+  }else if(shape==='airfoil'){
+    /* NACA-0012-ish: thickness 0.12·c, camber 0 */
+    const cx=W*0.25,cy=H/2,chord=H*0.6,thick=H*0.07;
+    for(let y=1;y<H-1;y++)for(let x=0;x<W;x++){
+      const tt=(x-cx+chord/2)/chord;
+      if(tt<0||tt>1)continue;
+      const yt=thick*(0.2969*Math.sqrt(tt)-0.126*tt-0.3516*tt*tt+0.2843*tt*tt*tt-0.1015*tt*tt*tt*tt)/0.12;
+      if(Math.abs(y-cy)<yt)CFD.solid[y*W+x]=1;
+    }
+  }
+  /* Custom: keeps any cells the user has clicked on (handled in canvas listener) */
+}
+function cfdStep(){
+  const W=CFD.W,H=CFD.H,e=CFD.e,w=CFD.w,opp=CFD.opp,tau=CFD.tau,u0=CFD.u0,solid=CFD.solid,f=CFD.f,fNew=CFD.fNew,rho=CFD.rho,ux=CFD.ux,uy=CFD.uy;
+  const shape=sv('cfd-shape')||'cylinder';
+  /* COLLISION: f' = f - (f - feq)/tau */
+  for(let y=0;y<H;y++){
+    for(let x=0;x<W;x++){
+      const i=y*W+x;
+      if(solid[i]){
+        for(let k=0;k<9;k++)fNew[i*9+k]=f[i*9+opp[k]];
+        continue;
+      }
+      let r=0,vx=0,vy=0;
+      for(let k=0;k<9;k++){const fk=f[i*9+k];r+=fk;vx+=e[k][0]*fk;vy+=e[k][1]*fk;}
+      vx/=r;vy/=r;rho[i]=r;ux[i]=vx;uy[i]=vy;
+      const usq=vx*vx+vy*vy;
+      for(let k=0;k<9;k++){
+        const eu=e[k][0]*vx+e[k][1]*vy;
+        const feq=w[k]*r*(1+3*eu+4.5*eu*eu-1.5*usq);
+        fNew[i*9+k]=f[i*9+k]-(f[i*9+k]-feq)/tau;
+      }
+    }
+  }
+  /* STREAMING: f_i(x+e_i, t+1) = f'_i(x, t) */
+  for(let y=0;y<H;y++){
+    for(let x=0;x<W;x++){
+      const i=y*W+x;
+      for(let k=0;k<9;k++){
+        const xn=x+e[k][0],yn=y+e[k][1];
+        if(xn<0||xn>=W||yn<0||yn>=H)continue;
+        f[(yn*W+xn)*9+k]=fNew[i*9+k];
+      }
+    }
+  }
+  /* INLET (left): prescribed velocity (Zou-He simplified) */
+  if(shape!=='cavity'){
+    for(let y=1;y<H-1;y++){
+      const i=y*W+0;
+      const r=1.0;
+      for(let k=0;k<9;k++){
+        const eu=e[k][0]*u0;
+        f[i*9+k]=w[k]*r*(1+3*eu+4.5*eu*eu-1.5*u0*u0);
+      }
+      rho[i]=r;ux[i]=u0;uy[i]=0;
+    }
+    /* OUTLET (right): zero-gradient copy from x=W-2 */
+    for(let y=1;y<H-1;y++){
+      const i=y*W+(W-1),iIn=y*W+(W-2);
+      for(let k=0;k<9;k++)f[i*9+k]=f[iIn*9+k];
+    }
+  }else{
+    /* Lid-driven: top wall moves at u0 */
+    for(let x=1;x<W-1;x++){
+      const i=(H-2)*W+x;
+      f[i*9+4]=f[i*9+2];f[i*9+7]=f[i*9+5]-u0/6;f[i*9+8]=f[i*9+6]+u0/6;
+    }
+  }
+  CFD.step++;
+}
+const COLOR_MAP=[[0,0,128],[0,128,255],[0,255,255],[128,255,128],[255,255,0],[255,128,0],[255,0,0]];
+function colorMapInterp(t){
+  t=Math.max(0,Math.min(1,t));
+  const seg=t*(COLOR_MAP.length-1),i=Math.floor(seg),f=seg-i;
+  if(i>=COLOR_MAP.length-1)return COLOR_MAP[COLOR_MAP.length-1];
+  const a=COLOR_MAP[i],b=COLOR_MAP[i+1];
+  return[a[0]+(b[0]-a[0])*f,a[1]+(b[1]-a[1])*f,a[2]+(b[2]-a[2])*f];
+}
+function cfdRender(){
+  const c=$('cfd-canvas');if(!c)return;
+  const ctx=c.getContext('2d');
+  if(c.width!==CFD.W||c.height!==CFD.H){c.width=CFD.W;c.height=CFD.H;}
+  const img=ctx.createImageData(CFD.W,CFD.H);
+  const W=CFD.W,H=CFD.H,vis=sv('cfd-vis')||'vmag';
+  let vMax=0;
+  const vals=new Float32Array(W*H);
+  for(let i=0;i<W*H;i++){
+    let v;
+    if(vis==='vmag')v=Math.sqrt(CFD.ux[i]*CFD.ux[i]+CFD.uy[i]*CFD.uy[i]);
+    else if(vis==='ux')v=CFD.ux[i];
+    else if(vis==='rho')v=CFD.rho[i]-1;
+    else if(vis==='vorticity'){
+      const x=i%W,y=Math.floor(i/W);
+      if(x<1||x>=W-1||y<1||y>=H-1)v=0;
+      else v=(CFD.uy[(y)*W+(x+1)]-CFD.uy[(y)*W+(x-1)])/2-(CFD.ux[(y+1)*W+x]-CFD.ux[(y-1)*W+x])/2;
+    }
+    vals[i]=v;
+    if(Math.abs(v)>vMax)vMax=Math.abs(v);
+  }
+  if(vMax<1e-6)vMax=1e-6;
+  for(let i=0;i<W*H;i++){
+    const j=i*4;
+    if(CFD.solid[i]){img.data[j]=80;img.data[j+1]=80;img.data[j+2]=80;img.data[j+3]=255;continue;}
+    const v=vals[i];
+    let t;
+    if(vis==='vorticity'||vis==='ux'||vis==='rho')t=0.5+v/(2*vMax);
+    else t=v/vMax;
+    const rgb=colorMapInterp(t);
+    img.data[j]=rgb[0];img.data[j+1]=rgb[1];img.data[j+2]=rgb[2];img.data[j+3]=255;
+  }
+  ctx.putImageData(img,0,0);
+  const legend=$('cfd-legend-max');if(legend){
+    const unit=vis==='rho'?'Δρ':vis==='vorticity'?'ω':vis==='ux'?'u_x':'|u|';
+    legend.textContent=unit+' = '+vMax.toFixed(4);
+  }
+  const stats=$('cfd-stats');if(stats){
+    /* Compute a coarse Reynolds based on cylinder diameter */
+    const u0_lat=CFD.u0,nu_lat=(CFD.tau-0.5)/3,L_lat=CFD.H*0.36;
+    const Re=u0_lat*L_lat/nu_lat;
+    stats.innerHTML='Step <strong>'+CFD.step+'</strong> · τ = '+CFD.tau.toFixed(3)+' · Re ≈ <strong>'+Re.toFixed(0)+'</strong> · '+(CFD.running?'<span style="color:#22c55e">RUNNING</span>':'<span style="color:#f59e0b">PAUSED</span>');
+  }
+}
+function cfdLoop(){
+  if(!CFD.running)return;
+  for(let s=0;s<10;s++)cfdStep();
+  cfdRender();
+  CFD.raf=requestAnimationFrame(cfdLoop);
+}
+window.cfdStart=function(){
+  if(!CFD.f)cfdInit();
+  /* Adjust tau from target Re */
+  CFD.u0=Math.max(0.01,Math.min(0.20,v('cfd-u0')||0.10));
+  const Re=Math.max(10,v('cfd-Re')||100);
+  const L=CFD.H*0.36;
+  const nu=CFD.u0*L/Re;
+  CFD.tau=3*nu+0.5;
+  if(CFD.tau<0.51)CFD.tau=0.51;
+  if(CFD.tau>1.99)CFD.tau=1.99;
+  cfdSetObstacle();
+  CFD.running=true;
+  if(CFD.raf)cancelAnimationFrame(CFD.raf);
+  cfdLoop();
+};
+window.cfdPause=function(){CFD.running=false;if(CFD.raf)cancelAnimationFrame(CFD.raf);cfdRender();};
+window.cfdReset=function(){CFD.running=false;if(CFD.raf)cancelAnimationFrame(CFD.raf);cfdInit();cfdRender();const stats=$('cfd-stats');if(stats)stats.textContent='Reset. Click START to run.';};
+function attachCFDCanvasListeners(){
+  const c=$('cfd-canvas');if(!c||c._cfdAttached)return;c._cfdAttached=true;
+  function paintAt(e,fillVal){
+    const rect=c.getBoundingClientRect();
+    const sx=CFD.W/rect.width,sy=CFD.H/rect.height;
+    const x=Math.floor((e.clientX-rect.left)*sx),y=Math.floor((e.clientY-rect.top)*sy);
+    const r=3;
+    for(let dy=-r;dy<=r;dy++)for(let dx=-r;dx<=r;dx++){
+      const xx=x+dx,yy=y+dy;
+      if(xx>=1&&xx<CFD.W-1&&yy>=1&&yy<CFD.H-1)CFD.solid[yy*CFD.W+xx]=fillVal;
+    }
+    cfdRender();
+  }
+  c.addEventListener('mousedown',e=>{
+    if(!CFD.f)return;
+    e.preventDefault();
+    const fillVal=e.button===2?0:1;
+    paintAt(e,fillVal);
+    const move=ev=>paintAt(ev,fillVal);
+    const up=()=>{document.removeEventListener('mousemove',move);document.removeEventListener('mouseup',up);};
+    document.addEventListener('mousemove',move);document.addEventListener('mouseup',up);
+  });
+  c.addEventListener('contextmenu',e=>e.preventDefault());
+  /* Live-update solid mask when shape changes */
+  const shapeSel=$('cfd-shape');if(shapeSel)shapeSel.addEventListener('change',()=>{cfdSetObstacle();cfdRender();});
+  const visSel=$('cfd-vis');if(visSel)visSel.addEventListener('change',cfdRender);
+}
+
+/* ============================================================
  * GEARS — Lewis form factor auto-lookup by tooth count
  * ============================================================ */
 const LEWIS_Y={12:0.245,13:0.261,14:0.277,15:0.290,16:0.296,17:0.303,18:0.309,19:0.314,20:0.322,21:0.328,22:0.331,24:0.337,26:0.346,28:0.353,30:0.359,34:0.371,38:0.384,43:0.397,50:0.409,60:0.422,75:0.435,100:0.447,150:0.460,300:0.472,400:0.480,1000:0.485};
@@ -1871,6 +2130,10 @@ window.addEventListener('DOMContentLoaded',()=>{
       /* Build first gear once Three.js loads */
       const tryGear=()=>{if(window.THREE&&$('g3d-canvas')){window.rebuildGear3D();}else{setTimeout(tryGear,300);}};
       tryGear();
+      /* Inject 2D CFD via Lattice Boltzmann */
+      injectFluidsCFD();
+      attachCFDCanvasListeners();
+      cfdInit();cfdRender();
       /* Re-run universal sweep so the newly-injected cards get wired */
       setTimeout(()=>{
         universalLiveCompute();
