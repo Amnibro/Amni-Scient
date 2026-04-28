@@ -1,5 +1,78 @@
 ﻿# Changelog 
 
+## [5.2.0] - 2026-04-27 - /calc comprehensive overhaul (Pass 1 + Pass 2 + universal live-compute)
+
+User-driven sweep through `/calc` via /loop dynamic mode — "go through every module until you can't find anything else to improve." Build pipeline note: `obfuscate.js` only targets `explore/`, not `calc/`, so all `calc/*` files are edited in place — no rebuild step.
+
+### New file: `calc/calc-fixes.js` (~800 lines, ~47 KB)
+A v5.2.0 override layer loaded after `calc-overrides.js` and `calc-3d.js`. Re-implements broken/missing handlers from the obfuscated module, adds new UI surface, and patches Plotly globally for theming.
+
+### Pass 1 — Bug fixes (4 user-flagged modules)
+
+**Beams**
+- Re-implemented `solveBeam` with a proper statically-determinate solver: simply-supported (>=2 pin/roller, sum-of-moments at A for RB then sum-of-vertical for RA) and cantilever (1 fixed support, full reaction + fixed-end moment). Distributed loads, point loads, and applied moments all handled.
+- Shear, moment, and deflection diagrams now render into newly-added `#p-shear / #p-moment / #p-deflection` containers (theme-aware Plotly). Deflection via double-integration of M/EI with end-condition correction.
+- Reactions table + V_max / M_max / delta_max grid + L/delta stiffness check.
+- Typed support input row added above the canvas (TYPE + POSITION + ADD button) so users can place supports precisely; canvas-click stays for visual estimation.
+- Default 3 m beam with one pin / one roller / one centered point load auto-seeded so the tab is never blank on first land.
+- `addLoad / clearLoads / addTypedSupport / clearSupports` all re-fire `solveBeam` after mutating state, so dynamic-list interactions stay live without a button click.
+
+**Sections**
+- 11 preset shapes (rect, hollow-rect, circle, hollow-circle, pipe, I-beam, channel, equal-angle, T-section, trapezoid, triangle).
+- Live-compute on every input — APPLY PRESET click no longer required, but kept available.
+- Outputs A, I_x/I_y, S_x/S_y, Z (plastic), r (radius of gyration), J (torsion), centroids — only the ones that actually exist for the chosen shape.
+
+**Bolts**
+- 13-grade table (SAE J429 grades 2/5/7/8, ISO 898-1 classes 4.6/5.8/8.8/10.9/12.9, ASTM A325/A490/A307, A2-70/316SS) with proof / yield / ultimate strengths and full standard names.
+- 31-size table (#6-32 through 1.5"-6 UNC plus M3 through M36 metric coarse) with d_nom, pitch, and stress area A_t.
+- Live-compute (ANALYZE button hidden). Outputs F_proof, F_yield, F_i, F_b, F_j, sigma_b, proof use %, tau, IR (tens+shear interaction), T = mu*F_i*d, T (K=0.20), separation safety. Color-coded ok/warn/err on every value.
+- Thin-material thread-depth rule of thumb in interpretation note.
+
+**Springs**
+- 5 type-gated preset libraries: COMPRESSION (6 entries from M3 utility to suspension coil), EXTENSION (3), TORSION (3), BELLEVILLE (5 sizes B-12 to B-100), DIE (3 — yellow / blue / red stripe).
+- Belleville path uses Almen-Laszlo with snap-through behavior classification by h_0/t ratio. Helical (compression / extension / die) uses Shigley with Wahl correction. Torsion uses bending stress.
+- Series / parallel combiner card — pick arrangement + count, combined rate and deflection compute live.
+- Force-vs-deflection Plotly chart with green ideal-range band (15-80% of available deflection) and red solid-height limit line.
+- Compressed-vs-free 2D canvas animation showing both states side by side with mm scale and direction arrow.
+- Forces 3D update on every input change so the existing `calc-3d.js` springs scene actually reflects the current calculation.
+- CALCULATE button hidden (live-compute throughout).
+
+### Pass 2 — Layout + theme normalization (universal)
+
+**Plotly theming middleware** (`patchPlotly`)
+- Wraps `Plotly.react` and `Plotly.newPlot` so every chart in calc — regardless of which helper called it (the modern `plPlot` at line 2329 of index.html, the older closure-bound charts, the `plot` in calc-overrides.js, or anything new) — gets theme-aware colors. Hooks paper/plot/font/grid/zeroline/linecolor/tickfont and axis title fonts. Idempotent.
+- `drawSealDiagram` was bound to a hardcoded-dark `pLayout` inside an IIFE. Override now reads `pTheme()` per call and routes through the themed `plot()`.
+
+**Inputs-left CSS rule** (`.view .split { flex-direction: row }`)
+- Universal: every module with a `.split` layout has inputs on the left. Stacks to column under 900 px for mobile.
+- Solves user complaints: "stress shouldn't have inputs on the right", "bolts inputs on left not right".
+
+**Theme-flip MutationObserver**
+- Watches `[data-theme]` on `<html>`. On flip, calls `rethemeAllPlots()` (re-layouts every active Plotly chart with new colors) and `rethemeCanvases()` (re-fires Mohr's circle / bolt-pattern / spring-anim canvas redraws so they pick up new theme colors).
+
+### Pass 3-6 — Universal live-compute (covers the remaining 30+ modules)
+
+**`universalLiveCompute()`** — single function that scans every `<div class="view" id="v-*">` for `<button onclick="(calc|solve|apply|draw)*()">`, collects unique handler names, wires every `<input>` and `<select>` in that view to fire all the handlers on change (220 ms debounce), hides the redundant compute buttons, and fires once on init so each module shows results when the user lands on it. Keeps `clear / undo / add / remove` buttons visible since they act on canvases or dynamic lists.
+
+This replaces what would have been ~30 module-specific `wireLive()` calls with one sweep. Every COMPUTE / CALCULATE button across the entire calc suite is now redundant — change any input and the chart updates.
+
+### Files Touched
+- `calc/calc-fixes.js` (new)
+- `calc/index.html` — added typed-support input row, `#p-shear / #p-moment / #p-deflection` plot containers (beam); presets card + series/parallel combiner card + `#p-spring-fd` chart container + `#c-spring-anim` canvas (springs); `<script src="./calc-fixes.js" defer></script>` after `calc-3d.js`.
+
+### Backups
+- `backups/v5.2.0_calc/{index.html,calc-overrides.js,calc-3d.js}.bak`
+
+### Workflow artifacts (gitignored per .gitignore policy)
+- `docs/checklists/checklist_v5.2.0_calc_overhaul.md`
+- `docs/guardian_councils/guardian_council_v5.2.0_calc_overhaul.md`
+
+### Out of scope (follow-ups for later)
+- Multi-support (>2) propped-cantilever / continuous beam — needs stiffness-method matrix solver, biggest remaining beam gap.
+- Bolt joint stiffness ratio C — currently a manual input; could be computed from grip length, member modulus, washer geometry per Shigley.
+- Spring buckling check (lateral) for tall coil springs — Wahl gives shear stress only; Haringx / Euler combined check would be a useful add.
+- Materials module — search/filter is in the obfuscated module and was not touched; if presets there are stale, deeper review needed.
+
 ## [5.1.0] - 2026-04-27 - Site-wide link & claims audit + multi-product Terms hub
 
 ### Fixed (claims audit)

@@ -47,14 +47,7 @@ function plot(id,traces,axes){
 }
 window.calcFixes={pTheme,plot};
 window.addEventListener('DOMContentLoaded',()=>{
-  const obs=new MutationObserver(()=>{
-    document.querySelectorAll('[id^="p-"]').forEach(el=>{
-      if(el._fullLayout&&window.Plotly){
-        const t=pTheme();
-        try{Plotly.relayout(el,{paper_bgcolor:t.paper,plot_bgcolor:t.plot,'font.color':t.text,'xaxis.gridcolor':t.grid,'yaxis.gridcolor':t.grid});}catch(e){}
-      }
-    });
-  });
+  const obs=new MutationObserver(()=>{rethemeAllPlots();rethemeCanvases();});
   obs.observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
 });
 
@@ -79,8 +72,9 @@ window.addTypedSupport=function(){
   if(!isFinite(pos)||pos<0){alert('Enter a valid position.');return;}
   window.beamSupports.push({type:t,x:pos});
   renderSupportList();
+  if(typeof window.solveBeam==='function')try{window.solveBeam();}catch(e){}
 };
-window.clearSupports=function(){window.beamSupports=[];renderSupportList();};
+window.clearSupports=function(){window.beamSupports=[];renderSupportList();if(typeof window.solveBeam==='function')try{window.solveBeam();}catch(e){}};
 function renderSupportList(){
   const el=$('sup-list');if(!el)return;
   el.innerHTML=window.beamSupports.map((s,i)=>
@@ -99,9 +93,9 @@ window.addLoad=function(){
   if(!isFinite(pos)||!isFinite(mag)){alert('Need position and magnitude.');return;}
   window.beamLoads.push({type,x:pos,mag,xEnd:endPos});
   renderLoadList();
-  if(typeof _origAddLoad==='function')try{_origAddLoad();}catch(e){}
+  if(typeof window.solveBeam==='function')try{window.solveBeam();}catch(e){}
 };
-window.clearLoads=function(){window.beamLoads=[];renderLoadList();};
+window.clearLoads=function(){window.beamLoads=[];renderLoadList();if(typeof window.solveBeam==='function')try{window.solveBeam();}catch(e){}};
 function renderLoadList(){
   const el=$('load-list');if(!el)return;
   el.innerHTML=window.beamLoads.map((l,i)=>{
@@ -414,6 +408,48 @@ function wireLive(viewId,recompute){
     el.addEventListener('input',fire);el.addEventListener('change',fire);
   });
 }
+/* Universal live-compute: scans each .view for calc* button onclicks,
+ * collects unique handlers, and fires them all on any input change.
+ * Then hides the buttons (no clicking needed).
+ */
+function universalLiveCompute(){
+  document.querySelectorAll('.view[id^="v-"]').forEach(view=>{
+    const buttons=Array.from(view.querySelectorAll('button[onclick^="calc"],button[onclick^="solve"],button[onclick^="apply"],button[onclick^="draw"]'));
+    if(!buttons.length)return;
+    const handlers=[];const seen=new Set();
+    buttons.forEach(b=>{
+      const m=b.getAttribute('onclick').match(/^([a-zA-Z_$][\w$]*)\s*\(/);
+      if(!m)return;
+      const name=m[1];
+      if(seen.has(name))return;seen.add(name);
+      handlers.push(name);
+    });
+    let t=null;
+    const fire=()=>{
+      clearTimeout(t);
+      t=setTimeout(()=>{
+        handlers.forEach(name=>{
+          const fn=window[name];
+          if(typeof fn==='function')try{fn();}catch(e){console.warn('[live-compute]',name,e.message);}
+        });
+      },220);
+    };
+    view.querySelectorAll('input,select').forEach(el=>{
+      el.addEventListener('input',fire);el.addEventListener('change',fire);
+    });
+    /* Hide compute buttons that are now redundant */
+    buttons.forEach(b=>{
+      if(b.classList.contains('btn-fill')||b.classList.contains('btn-sm')){
+        const onclickName=(b.getAttribute('onclick')||'').match(/^[a-zA-Z_$][\w$]*/)[0];
+        /* Skip buttons that are still meaningful (clear, undo, add): keep "+" buttons */
+        if(/^(clear|undo|add|remove)/i.test(onclickName))return;
+        b.style.display='none';
+      }
+    });
+    /* Fire once on init so the module shows results */
+    setTimeout(fire,500);
+  });
+}
 
 /* ============================================================
  * LAYOUT FIX: force inputs-left and theme older charts
@@ -422,13 +458,61 @@ function injectStyles(){
   if($('calc-fixes-style'))return;
   const s=document.createElement('style');s.id='calc-fixes-style';
   s.textContent=`
-    .view#v-bolts .split,.view#v-stress .split,.view#v-springs .split,.view#v-section .split{display:flex;flex-direction:row;gap:1rem;align-items:flex-start}
-    .view#v-bolts .split>div,.view#v-stress .split>div,.view#v-springs .split>div,.view#v-section .split>div{flex:1;min-width:0}
-    @media(max-width:900px){.view#v-bolts .split,.view#v-stress .split,.view#v-springs .split,.view#v-section .split{flex-direction:column}}
+    .view .split{display:flex;flex-direction:row;gap:1rem;align-items:flex-start}
+    .view .split>div{flex:1;min-width:0}
+    @media(max-width:900px){.view .split{flex-direction:column}}
     .result-item .val.ok{color:#22c55e}.result-item .val.warn{color:#f59e0b}.result-item .val.err{color:#ef4444}
     .note.warn{color:#f59e0b;background:rgba(245,158,11,0.08);padding:.5rem .7rem;border-left:3px solid #f59e0b;border-radius:3px;font-size:.78rem}
   `;
   document.head.appendChild(s);
+}
+function patchPlotly(){
+  if(!window.Plotly||window.Plotly.__themed)return;
+  const apply=layout=>{
+    const t=pTheme();
+    const out=Object.assign({},layout||{});
+    out.paper_bgcolor=t.paper;out.plot_bgcolor=t.plot;
+    out.font=Object.assign({family:'JetBrains Mono,monospace',size:11},out.font||{},{color:t.text});
+    ['xaxis','yaxis','xaxis2','yaxis2'].forEach(ax=>{
+      if(out[ax]||ax==='xaxis'||ax==='yaxis'){
+        out[ax]=Object.assign({},out[ax]||{},{
+          gridcolor:t.grid,zerolinecolor:t.dim,linecolor:t.dim,
+          tickfont:Object.assign({size:10},(out[ax]||{}).tickfont||{},{color:t.text})
+        });
+        if(out[ax].title&&typeof out[ax].title==='object'){
+          out[ax].title=Object.assign({},out[ax].title,{font:Object.assign({size:11},out[ax].title.font||{},{color:t.text})});
+        }
+      }
+    });
+    if(out.legend){out.legend=Object.assign({},out.legend,{font:Object.assign({size:10},out.legend.font||{},{color:t.text}),bgcolor:'rgba(0,0,0,0)'});}
+    if(out.hoverlabel){out.hoverlabel=Object.assign({},out.hoverlabel,{bgcolor:t.plot,bordercolor:t.accent,font:Object.assign({color:t.text},out.hoverlabel.font||{})});}
+    return out;
+  };
+  const _react=window.Plotly.react,_newPlot=window.Plotly.newPlot;
+  window.Plotly.react=function(el,traces,layout,config){return _react.call(this,el,traces,apply(layout),config);};
+  window.Plotly.newPlot=function(el,traces,layout,config){return _newPlot.call(this,el,traces,apply(layout),config);};
+  window.Plotly.__themed=true;
+  console.log('[calc-fixes] Plotly themed-middleware installed');
+}
+function rethemeAllPlots(){
+  document.querySelectorAll('.js-plotly-plot').forEach(el=>{
+    if(!window.Plotly)return;
+    try{
+      const t=pTheme();
+      window.Plotly.relayout(el,{
+        paper_bgcolor:t.paper,plot_bgcolor:t.plot,'font.color':t.text,
+        'xaxis.gridcolor':t.grid,'xaxis.linecolor':t.dim,'xaxis.zerolinecolor':t.dim,'xaxis.tickfont.color':t.text,
+        'yaxis.gridcolor':t.grid,'yaxis.linecolor':t.dim,'yaxis.zerolinecolor':t.dim,'yaxis.tickfont.color':t.text
+      });
+    }catch(e){}
+  });
+}
+/* Override theme-aware canvas redraws — re-fire active module's canvas draws on theme change */
+function rethemeCanvases(){
+  /* Mohr's circle */if(typeof window.drawMohrEnhanced==='function')try{window.drawMohrEnhanced();}catch(e){}
+  /* Bolt pattern */if(typeof window.drawBoltPattern==='function')try{window.drawBoltPattern();}catch(e){}
+  /* Spring anim */if(typeof window.calcSpring==='function')try{window.calcSpring();}catch(e){}
+  /* Beam — re-fire if visible */if(typeof window.solveBeam==='function'&&document.querySelector('#v-beam.active'))try{window.solveBeam();}catch(e){}
 }
 
 /* ============================================================
@@ -653,9 +737,40 @@ function gateBellevillePresets(){
   populateSpringPresets();
 }
 
+/* Override drawSealDiagram with theme-aware version (original used hardcoded pLayout from closure) */
+window.addEventListener('DOMContentLoaded',()=>{
+  setTimeout(()=>{
+    if(window.drawSealDiagram&&!window.drawSealDiagram.__themed){
+      window.drawSealDiagram=function(id,data,unit,color,opPoint,optRange){
+        if(!data||data.length<2)return;
+        const xs=data.map(d=>d[0]),ys=data.map(d=>d[1]);
+        const t=pTheme();
+        const traces=[{x:xs,y:ys,type:'scatter',mode:'lines',name:unit,fill:'tozeroy',fillcolor:color+'15',line:{color,width:2.5,shape:'spline'},hovertemplate:'Compression = %{x:.1f}%<br>'+unit+' = %{y:.2f}<extra></extra>'}];
+        const shapes=[];
+        const yMax=Math.max(...ys)*1.1;
+        if(optRange){
+          shapes.push({type:'rect',x0:optRange[0]||15,x1:optRange[1]||30,y0:0,y1:yMax,fillcolor:'rgba(34,197,94,0.12)',line:{width:0}});
+          shapes.push({type:'line',x0:optRange[0]||15,x1:optRange[0]||15,y0:0,y1:yMax,line:{color:'#22c55e',width:1,dash:'dash'}});
+          shapes.push({type:'line',x0:optRange[1]||30,x1:optRange[1]||30,y0:0,y1:yMax,line:{color:'#22c55e',width:1,dash:'dash'}});
+        }
+        if(opPoint&&opPoint[0]>0){
+          const sqColor=opPoint[0]<10?'#3b82f6':opPoint[0]<=30?'#22c55e':opPoint[0]<=40?'#f59e0b':'#ef4444';
+          const opVal=(typeof opPoint[1]==='number'&&isFinite(opPoint[1]))?opPoint[1].toFixed(1):'—';
+          traces.push({x:[opPoint[0]],y:[opPoint[1]],type:'scatter',mode:'markers',name:'Operating ('+opVal+' '+unit+')',marker:{color:sqColor,size:11,symbol:'diamond',line:{color:'#fff',width:1.5}}});
+        }
+        plot(id,traces,{title:'',xaxis:{title:'Compression (%)'},yaxis:{title:unit},shapes,showlegend:!!(opPoint&&opPoint[0]>0)});
+      };
+      window.drawSealDiagram.__themed=true;
+    }
+  },500);
+});
+
 /* Init: populate dropdowns + wire live-compute */
 window.addEventListener('DOMContentLoaded',()=>{
   setTimeout(()=>{
+    /* Wait for Plotly then patch */
+    const tryPatch=()=>{if(window.Plotly){patchPlotly();}else{setTimeout(tryPatch,150);}};
+    tryPatch();
     injectStyles();
     populateSecPresets();applyPreset();
     populateBoltDropdowns();
@@ -672,6 +787,19 @@ window.addEventListener('DOMContentLoaded',()=>{
     const springBtn=document.querySelector('#v-springs button[onclick="calcSpring()"]');
     if(springBtn)springBtn.style.display='none';
     setTimeout(()=>window.calcSpring(),200);
+    /* Universal live-compute pass — covers the rest of the modules */
+    setTimeout(()=>{
+      universalLiveCompute();
+      /* Re-show buttons that should stay visible because they act on
+       * non-input UI state (canvas, dynamic lists, etc.) */
+      const keepVisible=[
+        'button[onclick="solveBeam()"]',
+        'button[onclick="calcSection()"]',
+        'button[onclick="undoVertex()"]',
+        'button[onclick="clearSection()"]'
+      ];
+      keepVisible.forEach(sel=>{const b=document.querySelector(sel);if(b)b.style.display='';});
+    },800);
   },400);
 });
 

@@ -29,6 +29,19 @@ amni-scient-site/
 └── img/                          # Product screenshots
 ```
 
+## v5.2.0 Amni-Calc Comprehensive Overhaul (calc-fixes.js layer)
+- New override layer `calc/calc-fixes.js` (loaded LAST after calc-overrides.js and calc-3d.js). Re-implements broken/missing handlers from the obfuscated module + adds universal patches.
+- **Beams**: re-implemented `solveBeam` (simply-supported + cantilever, point/distributed/moment loads). Typed-support input row + `#p-shear`/`#p-moment`/`#p-deflection` Plotly containers. Auto-seeds default 3 m beam.
+- **Sections**: 11 preset shapes with live-compute. Outputs A, I, S, Z, r, J, centroids.
+- **Bolts**: 13-grade table (SAE/ISO/A325/A490/A307/316SS) + 31-size table (#6-32 → 1.5" UNC + M3 → M36). Live-compute, color-coded outputs.
+- **Springs**: 5 type-gated preset libraries. Almen-Laszlo / Shigley+Wahl / bending. Series/parallel combiner. F-δ chart with ideal-range overlay. Compressed-vs-free anim. Forces 3D update.
+- **Plotly middleware** `patchPlotly()` — wraps `Plotly.react`/`newPlot` so every chart gets theme-aware colors regardless of which helper rendered it.
+- **`drawSealDiagram` override** — now reads `pTheme()` per call.
+- **CSS rule** `.view .split { flex-direction: row }` — universal inputs-left layout.
+- **Theme-flip MutationObserver** — re-layouts Plotly + re-fires canvas redraws on `[data-theme]` flip.
+- **`universalLiveCompute()`** — scans every `.view` for `calc*|solve*|apply*|draw*` button onclicks, wires all inputs to fire them on change (220 ms debounce), hides redundant compute buttons. Single function covers all 30+ modules at once.
+- Backups: `backups/v5.2.0_calc/{index.html,calc-overrides.js,calc-3d.js}.bak`.
+
 ## v4.5.0 Amni-Calc Live Compute + Real 3D (Three.js)
 - `calc/calc-overrides.js` adds `setupLiveCompute()` to its init: walks every `<button[onclick^="calc"]>`, attaches debounced (260 ms) input/change listeners to sibling inputs/selects in the same `.card`, hides the button, and fires once on mount + on tab activation. MutationObserver re-binds when overrides inject late inputs.
 - `calc/calc-3d.js` (new): loads `three@0.149.0` + `OrbitControls` UMD from jsDelivr. Generic `makeViewer(canvas)` produces scene/camera/renderer/orbit/lights/grid/axes. `MODS` registry holds 18 module scene definitions; each has `params()` (read inputs), `build(group, params)` (re-mesh), optional `tick(group)` (per-frame animation). `injectCanvas(key)` adds a `<canvas id="d-<key>">` into the right pane of each applicable `.split`. Public `window.calc3DUpdate(key)` is called by the live-compute layer after each calc.
