@@ -1,5 +1,54 @@
 ﻿# Changelog 
 
+## [5.3.0 → 5.3.4] - 2026-04-27 - /calc deep feature batch (5 iterations via /loop "fix them all")
+
+User-driven sweep continuing v5.2.0. Each item below was a specific gap or bug in the live calc.
+
+### v5.3.0 — Mohr Plotly + section snap + vibration shock + NEC chart
+- Mohr's circle: canvas → true Plotly chart with σ/τ axes, principal-stress diamonds, τ_max triangles, axis-equal scaling. Inputs moved to LEFT side of stress split (was on the right after injectMohrExtras).
+- Section snap-resolution selector (0.01 / 0.1 / 1 / 10 / 100 mm) on preset params; arrow-key step + blur rounds to nearest snap unit.
+- Vibration: new SHOCK PULSE card (4 pulse shapes — half-sine / sawtooth / rectangular / haversine) with full Shock Response Spectrum log-x chart (0.1–1000 Hz), MIL-STD-810 reference.
+- NEC ampacity: inline text → Plotly log-y chart, 21 conductor sizes (14 AWG to 1000 kcmil) × 3 temp ratings (60/75/90 °C Cu).
+
+### v5.3.1 — Electrical phasor + transformer + motor torque-speed + fin efficiency
+- Electrical: Plotly phasor diagram (P→x, Q→y, S resultant). New TRANSFORMER SIZING card → primary/secondary FLA, turns ratio, secondary SCC, per-unit Z, I²t. NEC 240.21 tap-rules note inline.
+- Motors: Torque-speed curve module with NEMA design selector (A/B/C/D), per-design constants for LRT/BDT/PUT/LRC/slip per MG-1. NEMA frame lookup card (HP × sync RPM × enclosure → frame number).
+- Heat transfer: Fin efficiency curve η = tanh(mL_c)/(mL_c) Plotly with optimum (mL_c=1, η=76%) and over-fin (mL_c=2, η=48%) markers.
+
+### v5.3.2 — Pump curves + pressure vessel expansion + welder helpers
+- Pumps: 9-model off-the-shelf catalog (Goulds 3196 STX/MTX/LTX/XLT, Grundfos CR 5-9 / 32-2-2, Sulzer AHLSTAR APP, KSB Etanorm 50-200, Crane Deming) with BEP/Hmax/NPSHr/Pmax. Pump-vs-system curve Plotly with operating point marked, off-BEP color-coded with cavitation/recirc warnings + brake-power calc.
+- Pressure vessels: 3 new ASME VIII-1 cards — head thickness (4 head types per UG-32), nozzle reinforcement (UG-37 area-replacement with pad sizing), lifting lug (B30.20 — pin bearing + tear-out + tensile, 2× design factor).
+- Welds: Electrode-selection card with 6 base-material families × 4 processes (SMAW/GMAW/FCAW/GTAW) AWS-classified picks. Deposition-rate card with 5 processes, melt rate, lb/hr, heat input kJ/mm with limits. AWS D1.1 prequalified joints reference.
+
+### v5.3.3 — Proper involute gears 3D + STL export + 5 gear variations
+- New 3D gear generator card with dedicated Three.js viewer (420 px) replacing the rough top-down extrude in calc-3d.js MODS.gears. Proper **involute** geometry (parametric base-circle equations).
+- 5 gear types: SPUR, HELICAL (per-vertex twist by β), HERRINGBONE (half-fw twist each direction), INTERNAL/RING (annulus with inside-diameter teeth), RACK (linear strip).
+- Standard parameters: N (6-200), module (0.5-20 mm), pressure angle (14.5-30°), face width, helix angle (0-45°), shaft bore.
+- ⬇ DOWNLOAD STL — ASCII STL with computed normals, drops directly into Cura / PrusaSlicer / Bambu Studio. Print at 0.16 mm, 100% infill for functional gears.
+- ⬇ JSON SPECS — full geometry + Lewis Y + AGMA/ISO 53 reference + ISO timestamp.
+- Pending: bevel + worm geometry (need conical / helix-around-cylinder math, deferred).
+
+### v5.3.4 — Fluids 2D CFD via Lattice Boltzmann (D2Q9)
+- Real working browser CFD solver. D2Q9 lattice with BGK collision, ~400×120 grid, 10 LBM steps per animation frame.
+- Built-in obstacles: circular cylinder (Karman vortex shedding visible at Re > 47), square, NACA-0012-like airfoil, lid-driven cavity.
+- Custom obstacle: left-click canvas to add solid cells, right-click to remove. Works while paused or running.
+- Visualization: velocity magnitude (default), vorticity, u_x component, density perturbation. Custom 7-stop diverging color map (purple→blue→cyan→green→yellow→orange→red), pixelated rendering.
+- Controls: ▶ START / ⏸ PAUSE / ⟲ RESET. Inlet U₀ (0.01-0.20 lattice units), target Re (10-1000) auto-adjusts tau via nu = u0·L/Re.
+- Live stats: step count, tau, computed Re, run state.
+
+### Other v5.3 fixes (batch 1, in v5.2.2)
+- "electrochemical engineer" → "mechanical engineer" in 3 places (calc landing, calc footer, learn About).
+- Mohr's circle inputs relocated to LEFT side of stress split.
+- APPLY PRESET buttons restored (section + spring) — previously hidden by universalLiveCompute.
+- Bolts: 14 → 60 size entries (down to #0000-160, up to 4-4 UNC, plus M1.6 / M2 / M2.5 / M33 / M39 / M42 / M48 / M56 / M64 metric).
+- Belleville preset gating: card title now reads "PRESETS — BELLEVILLE / DISC" (or COMPRESSION / EXTENSION / TORSION / DIE) per type selector.
+- Typed beam supports: dedicated #sup-typed-list container avoids fight with obfuscated module's #sup-list rendering.
+- Spring F-δ chart: single + series + parallel curves overlaid in one chart with k legend per curve.
+
+### File state
+- `calc/calc-fixes.js` grew from 47 KB / ~800 lines (v5.2.x) to **131 KB / 2223 lines** (v5.3.4).
+- Single-file override layer; calc/index.html now loads `calc-overrides.js` → `calc-3d.js` → `calc-fixes.js` in sequence.
+
 ## [5.2.0] - 2026-04-27 - /calc comprehensive overhaul (Pass 1 + Pass 2 + universal live-compute)
 
 User-driven sweep through `/calc` via /loop dynamic mode — "go through every module until you can't find anything else to improve." Build pipeline note: `obfuscate.js` only targets `explore/`, not `calc/`, so all `calc/*` files are edited in place — no rebuild step.

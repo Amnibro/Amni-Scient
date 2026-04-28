@@ -29,6 +29,14 @@ amni-scient-site/
 └── img/                          # Product screenshots
 ```
 
+## v5.3.0-5.3.4 Amni-Calc Deep Feature Batch (calc-fixes.js extensions)
+- **v5.3.0**: Mohr's circle Plotly (replaces canvas), section snap-resolution selector (0.01/0.1/1/10/100 mm), vibration SHOCK PULSE card with SRS chart (4 pulse shapes), NEC ampacity Plotly chart (21 sizes × 3 temps).
+- **v5.3.1**: Electrical phasor diagram (Plotly), TRANSFORMER SIZING (FLA/SCC/Z_pu), motor torque-speed curves (NEMA A/B/C/D), NEMA frame lookup, heat transfer fin efficiency curve.
+- **v5.3.2**: Pump real curves (9 OEM models — Goulds/Grundfos/Sulzer/KSB/Crane) vs system curve with operating point. Pressure vessels: head thickness (4 types per UG-32), nozzle reinforcement (UG-37), lifting lug (B30.20). Welds: electrode selection (6 base materials × 4 processes), deposition rate (5 processes), AWS D1.1 prequalified joints.
+- **v5.3.3**: 3D involute gear generator with Three.js viewer. 5 types (spur/helical/herringbone/internal/rack). STL export (ASCII, drops into Cura/PrusaSlicer). JSON specs export.
+- **v5.3.4**: Fluids 2D CFD via Lattice Boltzmann (D2Q9 BGK, ~400×120 grid). 5 obstacles (cylinder/square/airfoil/cavity/custom-clickable). 4 visualizations (velocity magnitude / vorticity / u_x / density).
+- File state: `calc/calc-fixes.js` is now ~131 KB, 2223 lines.
+
 ## v5.2.0 Amni-Calc Comprehensive Overhaul (calc-fixes.js layer)
 - New override layer `calc/calc-fixes.js` (loaded LAST after calc-overrides.js and calc-3d.js). Re-implements broken/missing handlers from the obfuscated module + adds universal patches.
 - **Beams**: re-implemented `solveBeam` (simply-supported + cantilever, point/distributed/moment loads). Typed-support input row + `#p-shear`/`#p-moment`/`#p-deflection` Plotly containers. Auto-seeds default 3 m beam.
