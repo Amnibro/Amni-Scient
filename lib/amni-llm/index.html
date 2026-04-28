@@ -7,6 +7,7 @@
 <meta name="description" content="Amni-LLM: load any GGUF model in the browser. Built-in HuggingFace search, one-click install, arbitrary URL, local file. WebLLM-compatible API.">
 <meta name="keywords" content="amni-llm,in-browser llm,gguf browser,llama.cpp wasm,huggingface search,client-side ai,private ai,wllama">
 <link rel="canonical" href="https://amni-scient.com/lib/amni-llm/">
+<script src="./coi-register.js"></script>
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 :root{--bg:#0a0a0a;--panel:#111;--panel2:#161616;--border:#1f1f1f;--accent:#7cf;--accent2:#a8f;--text:#e0e0e0;--dim:#888;--ok:#5d6;--warn:#fa3;--err:#f55;--font:'JetBrains Mono','SF Mono',Consolas,monospace}
@@ -83,6 +84,8 @@ footer{padding:1.5rem;text-align:center;color:var(--dim);font-size:.7rem;border-
 
 <div class="notice">
 <strong style="color:var(--text)">Honest stack:</strong> Amni-LLM = Amni-Scient loader/registry/UI/API on top of <a href="https://github.com/ngxson/wllama" target="_blank" rel="noopener">wllama</a> (MIT-licensed llama.cpp WASM port). The point: any GGUF on HuggingFace works the day it's published &mdash; no waiting for an MLC pre-compile.
+<br><br>
+<span id="coi-status" style="font-size:.72rem"></span>
 </div>
 
 <div class="card">
@@ -177,8 +180,12 @@ const r = await e.chatCompletions.create({
 </footer>
 
 <script type="module">
-import { AmniLLMEngine, AMNI_LLM_VERSION } from './amni-llm.js';
+import { AmniLLMEngine, AMNI_LLM_VERSION, isCrossOriginIsolated } from './amni-llm.js';
 import { DEFAULT_MODELS, listAll, getInstalled, saveInstalled, removeInstalled, getModel, hfSearchModels, hfListGgufFiles, hfResolve } from './registry.js';
+const coiEl = document.getElementById('coi-status');
+if (coiEl) coiEl.innerHTML = isCrossOriginIsolated()
+  ? '<span style="color:var(--ok)">✓ Cross-origin isolated</span> &mdash; multi-thread WASM + SharedArrayBuffer enabled. Larger models will load reliably.'
+  : '<span style="color:var(--warn)">⚠ Cross-origin isolation OFF</span> &mdash; single-thread WASM only, memory ceiling lower (~1 GB on mobile, ~2 GB on desktop). Service worker is registering on first load; <strong>refresh the page once</strong> to pick up COOP/COEP headers and run multi-thread.';
 
 const $ = id => document.getElementById(id);
 const fmtSize = mb => mb >= 1000 ? (mb/1000).toFixed(1)+' GB' : mb+' MB';

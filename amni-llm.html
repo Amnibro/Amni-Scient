@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Amni-LLM &mdash; Universal In-Browser GGUF Runtime | AMNI-SCIENT</title>
+<meta name="description" content="Amni-LLM: load any GGUF model from HuggingFace in the browser. Built-in HF search and one-click install. WebLLM-compatible API. Open source under MIT.">
+<meta name="keywords" content="amni-llm,in-browser llm,gguf browser,llama.cpp wasm,huggingface search,client-side ai,webgpu llm,wllama,private ai,qwen 3.5,llama 4">
+<meta name="author" content="Amni-Scient">
+<meta property="og:title" content="Amni-LLM &mdash; Universal In-Browser GGUF Runtime">
+<meta property="og:description" content="Load any GGUF model in the browser &mdash; including Qwen 3.5, Llama 4. Built-in HuggingFace search and install. Open source.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://amni-scient.com/amni-llm.html">
+<meta property="og:image" content="https://amni-scient.com/assets/explore/og-explore.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Amni-LLM &mdash; Universal In-Browser GGUF Runtime">
+<meta name="twitter:description" content="Load any GGUF in the browser. HuggingFace search built in. Open source.">
+<meta name="twitter:image" content="https://amni-scient.com/assets/explore/og-explore.png">
+<link rel="canonical" href="https://amni-scient.com/amni-llm.html">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Amni-LLM","url":"https://amni-scient.com/amni-llm.html","description":"Universal in-browser GGUF runtime. Load any GGUF model from HuggingFace, no pre-compilation step. WebLLM-compatible API.","applicationCategory":"DeveloperApplication","operatingSystem":"Any (Modern Browser)","browserRequirements":"Requires JavaScript and WebAssembly","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Organization","name":"AMNI-SCIENT","url":"https://amni-scient.com"},"license":"https://opensource.org/licenses/MIT","codeRepository":"https://github.com/Amnibro/amni-llm"}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8345487545441889" crossorigin="anonymous" data-overlays="false"></script>
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+<style>
+.llm-cmp{width:100%;border-collapse:collapse;font-size:.82rem;margin-top:.5rem}
+.llm-cmp th,.llm-cmp td{padding:7px 10px;text-align:left;border-bottom:1px solid var(--border,#1f1f1f)}
+.llm-cmp th{color:var(--accent,#a8f);font-weight:600;letter-spacing:.5px;text-transform:uppercase;font-size:.7rem}
+.llm-cmp td{color:var(--text)}
+.llm-cmp td.win{color:#5d6}
+.llm-cmp td.gap{color:#fa3}
+.llm-cmp td.loss{color:#f55}
+.code-block{background:rgba(0,0,0,0.3);border:1px solid var(--border,#1f1f1f);border-radius:4px;padding:.8rem 1rem;font-family:'JetBrains Mono',monospace;font-size:.78rem;line-height:1.55;color:var(--text);overflow-x:auto;margin:.5rem 0}
+.code-block .com{color:#888;font-style:italic}
+.code-block .kw{color:#a8f}
+.code-block .str{color:#5d6}
+</style>
+</head>
+<body class="theme-ai">
+<div class="grid-bg"></div>
+<div class="scanlines"></div>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu">
+<a href="amni-browse.html">AMNI-BROWSE</a>
+<a href="amni-calc.html">AMNI-CALC</a>
+<a href="amni-explore.html">AMNI-EXPLORE</a>
+<a href="amni-learn.html">AMNI-LEARN</a>
+<a href="amni-llm.html" class="active">AMNI-LLM</a>
+<a href="amni-connect.html">AMNI-CONNECT</a>
+<a href="amni-code.html">AMNI-CODE</a>
+<a href="amni-haven.html">AMNI-HAVEN</a>
+<a href="amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</div>
+<a href="about.html">ABOUT</a>
+<a href="faq.html">FAQ</a>
+<a href="privacy.html">PRIVACY</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<div class="product-hero">
+<div class="shield-icon float">
+<svg viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect x="20" y="25" width="60" height="50" rx="6" stroke="#a8f" stroke-width="2" fill="rgba(168,140,255,0.04)"/>
+<circle cx="35" cy="50" r="3" fill="#a8f"/>
+<circle cx="50" cy="50" r="3" fill="#a8f"/>
+<circle cx="65" cy="50" r="3" fill="#a8f"/>
+<line x1="50" y1="75" x2="50" y2="90" stroke="#a8f" stroke-width="1.5"/>
+<rect x="30" y="90" width="40" height="14" rx="3" stroke="#a8f" stroke-width="1.5" fill="rgba(168,140,255,0.06)"/>
+<text x="50" y="100" font-family="monospace" font-size="7" fill="#a8f" text-anchor="middle">GGUF</text>
+</svg>
+</div>
+<h1>AMNI-LLM</h1>
+<p class="desc">UNIVERSAL IN-BROWSER GGUF RUNTIME &bull; LOAD ANY MODEL &bull; OPEN SOURCE (MIT)</p>
+<div style="margin-top:2rem;display:flex;gap:.8rem;flex-wrap:wrap;justify-content:center">
+<a href="lib/amni-llm/" class="btn btn-primary" style="background:#a8f;color:var(--bg);box-shadow:0 0 10px #a8f">LAUNCH AMNI-LLM &rarr;</a>
+<a href="https://github.com/Amnibro/amni-llm" target="_blank" rel="noopener" class="btn btn-outline">GITHUB</a>
+</div>
+</div>
+
+<section>
+<h2>WHY ANOTHER IN-BROWSER LLM?</h2>
+<p style="text-align:center;color:var(--dim);max-width:780px;margin:0 auto 2rem;font-size:.9rem">Existing in-browser runtimes like WebLLM (MLC) require every model to be specifically TVM-compiled to WebGPU shaders before it runs. New base models &mdash; Qwen 3.5, Qwen 3.6, Llama 4 &mdash; sit on the MLC team's compile queue for weeks before they're available. Amni-LLM uses GGUF, the format with the broadest community coverage on HuggingFace: most popular models have GGUF builds within days of release. Tradeoff is honest: llama.cpp WASM is currently CPU-SIMD-only, so per-token throughput is lower than WebGPU stacks. The win is universal model availability and arbitrary URL/file loading.</p>
+<div class="features">
+<div class="feature">
+<div class="icon">&#127760;</div>
+<h4>ANY GGUF, ANY DAY</h4>
+<p>Search HuggingFace live from inside the app. Pick a model, pick a quantization, click Load or Install. Works for anything with a GGUF build &mdash; including Qwen 3.5, Qwen 3.6, Llama 4 Scout, DeepSeek-R1, plus thousands of community fine-tunes.</p>
+</div>
+<div class="feature">
+<div class="icon">&#128190;</div>
+<h4>LOCAL FILES</h4>
+<p>Drop a `.gguf` file straight from your disk. Bytes never leave your machine. Useful for proprietary fine-tunes you can't host publicly, or large models you've already downloaded for desktop tools like Ollama or LM Studio.</p>
+</div>
+<div class="feature">
+<div class="icon">&#128274;</div>
+<h4>FULLY CLIENT-SIDE</h4>
+<p>Inference runs in your browser via WebAssembly. Your prompts, your weights, your replies &mdash; nothing transits a server. The HuggingFace search hits HF's public API; the model download is a direct browser-to-HF transfer.</p>
+</div>
+<div class="feature">
+<div class="icon">&#128218;</div>
+<h4>4 SOTA DEFAULTS</h4>
+<p>Curated short list of current models that fit a typical browser memory budget: Qwen 3.5 0.8B (mobile), Qwen 3.5 4B (balanced), Qwen 3.5 9B (desktop), Qwen 2.5 Math 7B (engineering). One click to load.</p>
+</div>
+<div class="feature">
+<div class="icon">&#128270;</div>
+<h4>HUGGINGFACE SEARCH</h4>
+<p>Built-in live search of `huggingface.co/api/models?library=gguf`. Type any keyword, expand a result to see GGUF files with quantization labels and sizes, then Load or Install. The Installed tab keeps your picks under `localStorage`.</p>
+</div>
+<div class="feature">
+<div class="icon">&#128295;</div>
+<h4>WEBLLM-COMPATIBLE API</h4>
+<p>Drop-in `chatCompletions.create({messages, temperature, max_tokens})`, plus async iterator streaming via `chatStream()`. Migrating an existing WebLLM integration is mostly a one-line import change.</p>
+</div>
+</div>
+</section>
+
+<section>
+<h2>HOW IT COMPARES</h2>
+<div style="max-width:900px;margin:0 auto">
+<table class="llm-cmp">
+<tr><th>Feature</th><th>Amni-LLM</th><th>WebLLM (MLC)</th></tr>
+<tr><td>Load arbitrary HuggingFace model</td><td class="win">Yes &mdash; any GGUF</td><td class="loss">No &mdash; only MLC pre-compiled</td></tr>
+<tr><td>Qwen 3.5 / 3.6 today</td><td class="win">Yes</td><td class="loss">Not until MLC publishes bundles</td></tr>
+<tr><td>Llama 4 Scout/Maverick today</td><td class="win">Yes (if you have the RAM)</td><td class="loss">Not in registry</td></tr>
+<tr><td>Local `.gguf` upload</td><td class="win">Yes</td><td class="loss">No</td></tr>
+<tr><td>WebGPU acceleration</td><td class="gap">Experimental</td><td class="win">Mature</td></tr>
+<tr><td>CPU SIMD fallback</td><td class="win">Yes (default)</td><td class="loss">No</td></tr>
+<tr><td>Tokens/sec on a 7B Q4 (desktop)</td><td>~3-8 t/s</td><td class="win">~15-30 t/s</td></tr>
+<tr><td>Bundle / runtime size</td><td>~3 MB WASM</td><td class="win">~600 KB JS + per-model WASM</td></tr>
+<tr><td>OpenAI-style chat API</td><td class="win">Yes</td><td class="win">Yes</td></tr>
+<tr><td>Streaming output</td><td class="win">Yes</td><td class="win">Yes</td></tr>
+<tr><td>Browser cache for weights</td><td class="win">Yes (IndexedDB)</td><td class="win">Yes</td></tr>
+<tr><td>License</td><td class="win">MIT</td><td class="win">Apache 2.0</td></tr>
+</table>
+</div>
+</section>
+
+<section>
+<h2>QUICK API</h2>
+<div style="max-width:800px;margin:0 auto">
+<div class="code-block">
+<span class="kw">import</span> { createEngine } <span class="kw">from</span> <span class="str">'/lib/amni-llm/amni-llm.js'</span>;<br><br>
+<span class="com">// SOTA default by id</span><br>
+<span class="kw">const</span> e = <span class="kw">await</span> createEngine(<span class="str">'Qwen3.5-4B-Q4_K_M'</span>);<br><br>
+<span class="com">// Any HuggingFace GGUF (the killer feature)</span><br>
+<span class="kw">const</span> e = <span class="kw">await</span> createEngine({<br>
+&nbsp;&nbsp;url: <span class="str">'https://huggingface.co/&lt;org&gt;/&lt;repo&gt;/resolve/main/model.Q4_K_M.gguf'</span><br>
+});<br><br>
+<span class="com">// Local file</span><br>
+<span class="kw">const</span> e = <span class="kw">await</span> createEngine({ file: fileInput.files[0] });<br><br>
+<span class="com">// Chat (WebLLM-compatible)</span><br>
+<span class="kw">const</span> r = <span class="kw">await</span> e.chatCompletions.create({<br>
+&nbsp;&nbsp;messages: [{role:<span class="str">'user'</span>, content:<span class="str">'Hello'</span>}],<br>
+&nbsp;&nbsp;temperature: 0.4, max_tokens: 512<br>
+});
+</div>
+</div>
+</section>
+
+<section>
+<h2>HONEST STACK</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.85;color:var(--dim);font-size:.88rem">
+<p>The transformer math runs through <a href="https://github.com/ngxson/wllama" target="_blank" rel="noopener" style="color:#a8f">wllama</a> (MIT-licensed llama.cpp WASM port). Amni-LLM owns the loader, registry, browser UI, HuggingFace search and install, arbitrary URL/file loading, and WebLLM-compatible API surface on top. We list the dependency by name in the README and on the demo page; the value-add is the integration and developer experience, not a from-scratch inference engine.</p>
+<p style="margin-top:1.2rem">Performance honesty: per-token throughput is lower than MLC's WebGPU stack because llama.cpp WASM hasn't shipped mature WebGPU support yet. For interactive chat at small models the difference is barely noticeable. For high-throughput production workloads where MLC supports the model you need, MLC remains faster.</p>
+<p style="margin-top:1.2rem">Memory note: in-browser models are bounded by the browser's allocator. Mobile browsers cap around 1 GB; desktop typically allows 2-4 GB without cross-origin isolation, more with it. Amni-LLM ships a service worker that enables COOP/COEP headers on static hosts (GitHub Pages, etc.) so SharedArrayBuffer becomes available and multi-thread WASM with larger memory works.</p>
+</div>
+</section>
+
+<section style="text-align:center">
+<h2>OPEN AMNI-LLM</h2>
+<p style="color:var(--dim);margin-bottom:1.5rem;font-size:.9rem">No install, no sign-up. Pick a model and start chatting.</p>
+<div class="cta-row" style="justify-content:center;gap:1rem;flex-wrap:wrap">
+<a href="lib/amni-llm/" class="btn btn-primary" style="background:#a8f;color:var(--bg);box-shadow:0 0 10px #a8f">LAUNCH AMNI-LLM</a>
+<a href="https://github.com/Amnibro/amni-llm" target="_blank" rel="noopener" class="btn btn-outline">SOURCE (MIT)</a>
+<a href="amni-calc.html" class="btn btn-outline">AMNI-CALC</a>
+</div>
+</section>
+
+<div class="site-ad-banner">
+<span class="ad-note">Sponsored</span>
+<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8345487545441889" data-ad-slot="1720203631" data-ad-format="auto" data-full-width-responsive="true"></ins>
+<script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>
+</div>
+
+<aside class="support-cta" aria-label="Support"><a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="support-link"><span class="support-ico">&#9749;</span><span>Enjoying this? <strong>Support on Ko-fi</strong></span></a></aside>
+
+<footer>
+<div class="footer-links">
+<a href="about.html">ABOUT</a>
+<a href="faq.html">FAQ</a>
+<a href="privacy.html">PRIVACY</a>
+<a href="terms.html">TERMS</a>
+<a href="https://github.com/Amnibro/amni-llm" target="_blank" rel="noopener">GITHUB</a>
+<a href="mailto:amnibro7@gmail.com">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amni-Scient. Amni-LLM is open source under the MIT License.</p>
+</footer>
+</body>
+</html>

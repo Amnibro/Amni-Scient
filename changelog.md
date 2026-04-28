@@ -1,5 +1,27 @@
 ﻿# Changelog 
 
+## [5.0.1] - 2026-04-27 - Amni-LLM hardening + landing page + standalone repo
+
+### Fixed
+- **Defaults updated to actual SOTA**: replaced the Qwen3 + Qwen2.5 dropdown entries with verified Qwen 3.5 GGUF builds. New defaults: Qwen 3.5 0.8B Q4_K_M (508 MB, mobile, `unsloth/Qwen3.5-0.8B-GGUF`), Qwen 3.5 4B Q4_K_M (2.6 GB, balanced, `unsloth/Qwen3.5-4B-GGUF`), Qwen 3.5 9B Q4_K_M (5.4 GB, desktop, `unsloth/Qwen3.5-9B-GGUF`), Qwen 2.5 Math 7B (kept until Qwen 3.5 Math GGUF ships). I had previously claimed Qwen 3.5/3.6 didn't exist as GGUF — that was wrong; verified by querying `huggingface.co/api/models?search=Qwen3.5+GGUF&library=gguf`.
+- **"Invalid typed array length" error**: added `coi-sw.js` (BSD-3-Clause-derived service worker pattern) + `coi-register.js` to enable cross-origin isolation on GitHub Pages and other static hosts. With COOP/COEP headers in place, SharedArrayBuffer becomes available and wllama can use multi-thread WASM with higher memory ceiling. First page load registers the service worker; reload picks it up.
+- `decorateLoadError(e, bytes)` in `amni-llm.js` now wraps load failures with actionable hints: identifies typed-array-length / RangeError / OOM patterns, reports the failing allocation size in MB, notes whether cross-origin isolation is active, suggests smaller models / closing tabs.
+- `isCrossOriginIsolated()` exported and surfaced in the demo as a banner showing whether multi-thread is active.
+
+### Added
+- **`amni-llm.html` landing page** at site root, in the same style as other amni-* product pages. Hero, 6-feature grid, comparison table vs WebLLM (10 rows), API quick-reference, honest-stack disclosure, AdSense banner, links to `/lib/amni-llm/` demo and the GitHub repo.
+- **Standalone repo at https://github.com/Amnibro/amni-llm** (created via `gh repo create`). Contains `amni-llm.js`, `registry.js`, `coi-sw.js`, `coi-register.js`, `index.html`, `README.md`, `LICENSE` (MIT), `package.json` (npm-publishable, declares wllama as optional peer). The site copy at `lib/amni-llm/` and the standalone repo are kept in sync — site is the deployed copy, GitHub is the canonical source.
+- Note about Llama 4: GGUF builds exist (unsloth/Llama-4-Scout-17B-16E-Instruct-GGUF) but the smallest quantization is 29 GB — too large for any browser. Stays available via HF search for users with sufficient RAM, but not a default.
+
+### Files Touched
+- `amni-llm.html` (new) — site landing page
+- `lib/amni-llm/registry.js` — Qwen 3.5 defaults
+- `lib/amni-llm/amni-llm.js` — `decorateLoadError`, `isCrossOriginIsolated` export
+- `lib/amni-llm/coi-sw.js` (new) — service worker
+- `lib/amni-llm/coi-register.js` (new) — auto-register on demo page
+- `lib/amni-llm/index.html` — coi script tag, COI status banner
+- Standalone repo: `C:\Users\antho\Documents\ai\Amni-LLM\` → github.com/Amnibro/amni-llm
+
 ## [5.0.0] - 2026-04-27 - Amni-LLM v0.1.0 — universal in-browser GGUF runtime
 
 ### Added
