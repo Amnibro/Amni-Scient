@@ -408,46 +408,74 @@ function wireLive(viewId,recompute){
     el.addEventListener('input',fire);el.addEventListener('change',fire);
   });
 }
-/* Universal live-compute: scans each .view for calc* button onclicks,
- * collects unique handlers, and fires them all on any input change.
- * Then hides the buttons (no clicking needed).
+/* Universal live-compute: per-CARD scoping so multi-card modules
+ * (vibration: NatFreq + Isolator + Resonance; shafts: Torsion +
+ * CritSpeed + Key) don't race on a shared results div.
+ *
+ * For each .card containing a calc* button, wire that card's inputs
+ * to fire only THAT card's handler. Cards without a calc button get
+ * wired to the view-level fallback (all view handlers fire) — that
+ * preserves behavior for modules where a single card has all inputs.
  */
 function universalLiveCompute(){
   document.querySelectorAll('.view[id^="v-"]').forEach(view=>{
-    const buttons=Array.from(view.querySelectorAll('button[onclick^="calc"],button[onclick^="solve"],button[onclick^="apply"],button[onclick^="draw"]'));
-    if(!buttons.length)return;
-    const handlers=[];const seen=new Set();
-    buttons.forEach(b=>{
-      const m=b.getAttribute('onclick').match(/^([a-zA-Z_$][\w$]*)\s*\(/);
-      if(!m)return;
-      const name=m[1];
-      if(seen.has(name))return;seen.add(name);
-      handlers.push(name);
+    const allButtons=Array.from(view.querySelectorAll('button[onclick^="calc"],button[onclick^="solve"],button[onclick^="apply"],button[onclick^="draw"]'));
+    if(!allButtons.length)return;
+    /* Per-card wiring */
+    const cardScopedInputs=new WeakSet();
+    view.querySelectorAll('.card').forEach(card=>{
+      const cardButtons=Array.from(card.querySelectorAll('button[onclick^="calc"],button[onclick^="solve"],button[onclick^="apply"],button[onclick^="draw"]'));
+      if(!cardButtons.length)return;
+      const cardHandlers=[];const seen=new Set();
+      cardButtons.forEach(b=>{
+        const m=b.getAttribute('onclick').match(/^([a-zA-Z_$][\w$]*)\s*\(/);
+        if(!m)return;
+        const name=m[1];if(seen.has(name))return;seen.add(name);
+        cardHandlers.push(name);
+      });
+      let t=null;
+      const fire=()=>{
+        clearTimeout(t);
+        t=setTimeout(()=>{
+          cardHandlers.forEach(name=>{
+            const fn=window[name];
+            if(typeof fn==='function')try{fn();}catch(e){console.warn('[live-compute]',name,e.message);}
+          });
+        },220);
+      };
+      card.querySelectorAll('input,select').forEach(el=>{
+        cardScopedInputs.add(el);
+        el.addEventListener('input',fire);el.addEventListener('change',fire);
+      });
+      /* Fire once on init for this card's handlers */
+      setTimeout(fire,500);
     });
-    let t=null;
-    const fire=()=>{
-      clearTimeout(t);
-      t=setTimeout(()=>{
-        handlers.forEach(name=>{
-          const fn=window[name];
-          if(typeof fn==='function')try{fn();}catch(e){console.warn('[live-compute]',name,e.message);}
-        });
+    /* View-level fallback for inputs OUTSIDE any .card with a calc button
+     * (rare — happens when inputs sit at view root level) */
+    const viewHandlers=[];const vSeen=new Set();
+    allButtons.forEach(b=>{
+      const m=b.getAttribute('onclick').match(/^([a-zA-Z_$][\w$]*)\s*\(/);
+      if(!m)return;const name=m[1];if(vSeen.has(name))return;vSeen.add(name);viewHandlers.push(name);
+    });
+    let vt=null;
+    const vFire=()=>{
+      clearTimeout(vt);
+      vt=setTimeout(()=>{
+        viewHandlers.forEach(name=>{const fn=window[name];if(typeof fn==='function')try{fn();}catch(e){}});
       },220);
     };
     view.querySelectorAll('input,select').forEach(el=>{
-      el.addEventListener('input',fire);el.addEventListener('change',fire);
+      if(cardScopedInputs.has(el))return;
+      el.addEventListener('input',vFire);el.addEventListener('change',vFire);
     });
     /* Hide compute buttons that are now redundant */
-    buttons.forEach(b=>{
+    allButtons.forEach(b=>{
       if(b.classList.contains('btn-fill')||b.classList.contains('btn-sm')){
         const onclickName=(b.getAttribute('onclick')||'').match(/^[a-zA-Z_$][\w$]*/)[0];
-        /* Skip buttons that are still meaningful (clear, undo, add): keep "+" buttons */
         if(/^(clear|undo|add|remove)/i.test(onclickName))return;
         b.style.display='none';
       }
     });
-    /* Fire once on init so the module shows results */
-    setTimeout(fire,500);
   });
 }
 
@@ -765,6 +793,31 @@ window.addEventListener('DOMContentLoaded',()=>{
   },500);
 });
 
+/* ============================================================
+ * GEARS — Lewis form factor auto-lookup by tooth count
+ * ============================================================ */
+const LEWIS_Y={12:0.245,13:0.261,14:0.277,15:0.290,16:0.296,17:0.303,18:0.309,19:0.314,20:0.322,21:0.328,22:0.331,24:0.337,26:0.346,28:0.353,30:0.359,34:0.371,38:0.384,43:0.397,50:0.409,60:0.422,75:0.435,100:0.447,150:0.460,300:0.472,400:0.480,1000:0.485};
+function lewisY(N){
+  N=Math.round(N);
+  if(N<=12)return 0.245;
+  if(N>=1000)return 0.485;
+  const keys=Object.keys(LEWIS_Y).map(Number).sort((a,b)=>a-b);
+  for(let i=0;i<keys.length-1;i++){
+    if(N>=keys[i]&&N<=keys[i+1]){
+      const t=(N-keys[i])/(keys[i+1]-keys[i]);
+      return LEWIS_Y[keys[i]]+t*(LEWIS_Y[keys[i+1]]-LEWIS_Y[keys[i]]);
+    }
+  }
+  return 0.322;
+}
+function autoLewisY(){
+  const lwY=$('lw-y'),ggN=$('gg-n')||$('gr-np');
+  if(lwY&&ggN&&!lwY.dataset.userTouched){
+    const N=parseFloat(ggN.value);
+    if(isFinite(N)&&N>0)lwY.value=lewisY(N).toFixed(3);
+  }
+}
+
 /* Init: populate dropdowns + wire live-compute */
 window.addEventListener('DOMContentLoaded',()=>{
   setTimeout(()=>{
@@ -799,6 +852,11 @@ window.addEventListener('DOMContentLoaded',()=>{
         'button[onclick="clearSection()"]'
       ];
       keepVisible.forEach(sel=>{const b=document.querySelector(sel);if(b)b.style.display='';});
+      /* Gears Lewis Y auto-lookup: when user types in lw-y, mark touched
+       * so we don't overwrite. Otherwise auto-fill from teeth count. */
+      const lwY=$('lw-y');if(lwY)lwY.addEventListener('input',()=>{lwY.dataset.userTouched='1';});
+      const ggN=$('gg-n');if(ggN)ggN.addEventListener('input',autoLewisY);
+      autoLewisY();
     },800);
   },400);
 });
