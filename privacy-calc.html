@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Privacy Policy &mdash; Amni-Calc | AMNI-SCIENT</title>
+<meta name="description" content="Privacy policy for Amni-Calc engineering calculator suite. All calculations run client-side via WASM. Optional AI overlay reaches a local server or in-browser model.">
+<link rel="canonical" href="https://amni-scient.com/privacy-calc">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+</head>
+<body>
+<div class="grid-bg"></div>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<div class="nav-dd">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu">
+<a href="amni-browse.html">AMNI-BROWSE</a>
+<a href="amni-calc.html">AMNI-CALC</a>
+<a href="amni-explore.html">AMNI-EXPLORE</a>
+<a href="amni-learn.html">AMNI-LEARN</a>
+<a href="amni-llm.html">AMNI-LLM</a>
+<a href="amni-connect.html">AMNI-CONNECT</a>
+<a href="amni-code.html">AMNI-CODE</a>
+<a href="amni-haven.html">AMNI-HAVEN</a>
+<a href="amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</div>
+<a href="privacy.html" class="active">PRIVACY</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<div class="legal">
+<h1>AMNI-CALC &mdash; PRIVACY POLICY</h1>
+<p class="effective">Effective Date: 2026-04-27 &nbsp;|&nbsp; Last Updated: 2026-04-27</p>
+<p>This privacy policy describes how Amni-Calc, a browser-based engineering calculator suite developed by Amni-Scient, handles user information.</p>
+<h2>1. DATA WE COLLECT</h2>
+<p><strong>We collect no personal data.</strong> Amni-Calc has no accounts, no login, and no Amni-Scient-operated backend. All 30+ calculator modules (stress, FEA beams, Mohr's circle, fatigue, electrochemistry, batteries, fluids, heat exchangers, pressure vessels, etc.) execute entirely client-side via WebAssembly.</p>
+<h2>2. DATA HANDLING</h2>
+<p>Inputs you type and outputs computed by the WASM engine stay in your browser tab. AI assistant settings are persisted locally:</p>
+<ul>
+<li><code>amni-calc-ai-config</code> &mdash; your local AI server URL and model name (e.g. default <code>http://localhost:7700</code>, model <code>adam-1</code>)</li>
+<li><code>amni-calc-webllm</code> &mdash; whether to use an in-browser WebLLM model and which one</li>
+</ul>
+<p>Both keys live in localStorage only; clear site data to remove them.</p>
+<h2>3. THIRD-PARTY SERVICES</h2>
+<h3>3.1 Google AdSense (landing pages)</h3>
+<p>The Amni-Calc landing page and the 31 per-module SEO pages display Google AdSense banners. The calculator app itself shows the Ko-fi support panel rather than ads. AdSense data is collected and processed by Google per <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google's Privacy Policy</a>.</p>
+<h3>3.2 Optional AI Engineering Assistant</h3>
+<p>Amni-Calc includes an optional engineering assistant overlay. When enabled it can:</p>
+<ul>
+<li>Send prompts to a local AI server you specify (default <code>http://localhost:7700</code>) over HTTP. Traffic stays on your machine / your network.</li>
+<li>Or run an in-browser WebLLM model (Qwen, SmolLM2, Phi, etc.) downloaded from MLC's CDN. Inference runs in your browser; prompts do not leave the device.</li>
+</ul>
+<p>If you connect the overlay to a remote AI provider, that provider's own privacy policy governs the prompts you send.</p>
+<h3>3.3 Three.js / Plotly CDNs</h3>
+<p>Some modules load Three.js (3D) and Plotly (charts) from public CDNs (jsDelivr) at first use. CDN access logs may include your IP per the CDN's policy. After first load assets are browser-cached.</p>
+<h2>4. ENGINEERING USE DISCLAIMER</h2>
+<p>See the <a href="terms.html#calc">Amni-Calc terms addendum</a> for the engineering disclaimer (calculations are a design aid, not a substitute for licensed engineering judgment). It does not affect data handling but is critical for safe use.</p>
+<h2>5. YOUR RIGHTS</h2>
+<p>Since we collect no personal data, there is no personal data to access, modify, export, or delete. To clear locally stored AI settings, clear site data for amni-scient.com in your browser settings.</p>
+<h2>6. CHANGES</h2>
+<p>Updates will be reflected with a new "Last Updated" date.</p>
+<h2>7. CONTACT</h2>
+<ul>
+<li><strong>Email:</strong> <a href="mailto:amnibro7@gmail.com">amnibro7@gmail.com</a></li>
+<li><strong>Developer:</strong> Amnibro (Amni-Scient)</li>
+</ul>
+</div>
+<footer>
+<div class="footer-links">
+<a href="privacy.html">ALL PRIVACY POLICIES</a>
+<a href="terms.html">TERMS</a>
+<a href="/">AMNI-SCIENT</a>
+<a href="mailto:amnibro7@gmail.com">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amni-Scient. All rights reserved.</p>
+</footer>
+</body>
+</html>

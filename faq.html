@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>FAQ &mdash; Frequently Asked Questions | AMNI-SCIENT</title>
-<meta name="description" content="Frequently asked questions about Amni-Scient products: Amni-Crypt encryption, Amni-Explore galaxy explorer, Amni-Learn education, and more.">
-<meta name="keywords" content="amni-scient faq,amni-crypt help,amni-explore help,amni-learn help,encryption faq">
+<meta name="description" content="Frequently asked questions about Amni-Scient products: Amni-Crypt encryption, Amni-Explore galaxy explorer, Amni-Learn education, Amni-Calc engineering suite, Amni-LLM in-browser GGUF runtime, Amni-Prayer scripture map, Amni-Haven messaging, and more.">
+<meta name="keywords" content="amni-scient faq,amni-crypt help,amni-explore help,amni-learn help,amni-calc help,amni-llm help,amni-prayer help,amni-haven help,amni-browse help,amni-code help,amni-connect help,encryption faq,gguf faq">
 <meta property="og:title" content="FAQ &mdash; Frequently Asked Questions | AMNI-SCIENT">
 <meta property="og:description" content="Answers to common questions about Amni-Scient products, encryption, engineering tools, the galaxy explorer, and educational games.">
 <meta property="og:type" content="website">
@@ -37,6 +37,7 @@
 <a href="amni-calc.html">AMNI-CALC</a>
 <a href="amni-explore.html">AMNI-EXPLORE</a>
 <a href="amni-learn.html">AMNI-LEARN</a>
+<a href="amni-llm.html">AMNI-LLM</a>
 <a href="amni-connect.html">AMNI-CONNECT</a>
 <a href="amni-code.html">AMNI-CODE</a>
 <a href="amni-haven.html">AMNI-HAVEN</a>
@@ -146,6 +147,105 @@
 <div class="faq-item" style="margin-bottom:2rem">
 <h4 style="color:var(--text);margin-bottom:.5rem">Do I need to run my own server?</h4>
 <p style="color:var(--dim);line-height:1.8;font-size:.9rem">You need access to a Haven server, but you don&rsquo;t necessarily need to run one yourself. You can connect to any Haven-compatible server someone else is hosting. If you do want to self-host, Haven is MIT-NC licensed and can be deployed on a VPS, a Raspberry Pi, or any Node.js-capable machine. Amni-Haven supports custom server URLs, including connections to servers with self-signed SSL certificates.</p>
+</div>
+</div>
+</section>
+<section>
+<h2>AMNI-CALC &mdash; ENGINEERING SUITE</h2>
+<div style="max-width:800px;margin:0 auto">
+<div class="faq-item" style="margin-bottom:2rem">
+<h4 style="color:var(--text);margin-bottom:.5rem">What modules does Amni-Calc include?</h4>
+<p style="color:var(--dim);line-height:1.8;font-size:.9rem">30+ modules: stress &amp; Mohr's circle, beam sections, bolts (with pattern selector + torque sequence), springs (Belleville presets, series/parallel combiner), seals (symmetric squeeze physics), columns (Euler/Johnson), shafts, welds (AWS), bearings (ISO 281), gears (involute mesh + isometric 3D), fatigue (Goodman/Gerber), vibration, fluids (Moody), pumps (NPSH), thermal, heat exchangers (LMTD/NTU), pressure vessels (Lam&eacute;/ASME), thermodynamic cycles, HVAC, combustion, electrical, motors, NEC wire, electrochemistry (Nernst/Tafel/BV), batteries, materials, finishes, math, equations, units, references.</p>
+</div>
+<div class="faq-item" style="margin-bottom:2rem">
+<h4 style="color:var(--text);margin-bottom:.5rem">Is the optional AI assistant required?</h4>
+<p style="color:var(--dim);line-height:1.8;font-size:.9rem">No. Every calculator works standalone in the browser. The AI overlay is opt-in. By default it tries a local server at <code>http://localhost:7700</code>; if that's unavailable it falls back to a small in-browser WebLLM model. You can also point it at any OpenAI-compatible endpoint.</p>
+</div>
+<div class="faq-item" style="margin-bottom:2rem">
+<h4 style="color:var(--text);margin-bottom:.5rem">Can I rely on Amni-Calc for safety-critical engineering?</h4>
+<p style="color:var(--dim);line-height:1.8;font-size:.9rem">Treat Amni-Calc as a design aid. Standards references inside the app (ASME, AWS, ISO 281, NEC) are paraphrased for context, not authoritative copies. Always verify safety-critical results against the published standard and a licensed Professional Engineer where required. See the <a href="terms.html#calc">Amni-Calc terms addendum</a>.</p>
+</div>
+</div>
+</section>
+<section>
+<h2>AMNI-LLM &mdash; IN-BROWSER GGUF RUNTIME</h2>
+<div style="max-width:800px;margin:0 auto">
+<div class="faq-item" style="margin-bottom:2rem">
+<h4 style="color:var(--text);margin-bottom:.5rem">How is Amni-LLM different from WebLLM?</h4>
+<p style="color:var(--dim);line-height:1.8;font-size:.9rem">WebLLM (MLC) requires every model to be specifically TVM-compiled to WebGPU shaders before it can run. Amni-LLM uses GGUF, the format with the broadest community coverage on HuggingFace. You can load any GGUF model from HuggingFace, an arbitrary URL, or a local file. Tradeoff: llama.cpp WASM is currently CPU-SIMD-only, so per-token throughput (~3&ndash;8 t/s on a 7B Q4 desktop) is lower than WebLLM's WebGPU stack (~15&ndash;30 t/s). For interactive chat at small models the gap is barely noticeable.</p>
+</div>
+<div class="faq-item" style="margin-bottom:2rem">
+<h4 style="color:var(--text);margin-bottom:.5rem">What are the SOTA defaults?</h4>
+<p style="color:var(--dim);line-height:1.8;font-size:.9rem">Three Qwen 3.5 GGUF builds: Qwen 3.5 0.8B (508 MB, mobile), Qwen 3.5 4B (2.6 GB, balanced), Qwen 3.5 9B (5.4 GB, desktop). For math, code, vision, or any other niche, use the in-app HuggingFace search.</p>
+</div>
+<div class="faq-item" style="margin-bottom:2rem">
+<h4 style="color:var(--text);margin-bottom:.5rem">Where do model files live?</h4>
+<p style="color:var(--dim);line-height:1.8;font-size:.9rem">After first download from HuggingFace, model weights are cached in your browser's IndexedDB. Clearing site data removes them. Amni-Scient never proxies or caches your model downloads &mdash; the download is browser-direct to HuggingFace.</p>
+</div>
+<div class="faq-item" style="margin-bottom:2rem">
+<h4 style="color:var(--text);margin-bottom:.5rem">Is Amni-LLM open source?</h4>
+<p style="color:var(--dim);line-height:1.8;font-size:.9rem">Yes &mdash; MIT License. Source at <a href="https://github.com/Amnibro/amni-llm" target="_blank" rel="noopener">github.com/Amnibro/amni-llm</a>. Built as a thin layer over <a href="https://github.com/ngxson/wllama" target="_blank" rel="noopener">wllama</a> (also MIT). Amni-Scient owns the loader, registry, browser UI, HuggingFace search/install, arbitrary URL/file loading, and WebLLM-compatible API surface.</p>
+</div>
+</div>
+</section>
+<section>
+<h2>AMNI-PRAYER &mdash; SCRIPTURE MAP</h2>
+<div style="max-width:800px;margin:0 auto">
+<div class="faq-item" style="margin-bottom:2rem">
+<h4 style="color:var(--text);margin-bottom:.5rem">What's actually in Amni-Prayer?</h4>
+<p style="color:var(--dim);line-height:1.8;font-size:.9rem">Imago Nuntii Divini renders the entire Catholic Bible (35,817 verses) as a 3D nodal map with 64,497 cross-references between verses. Choose from 17 visual layouts (force-directed, hierarchical, era-clustered, etc.). Tandem reading mode pairs the graph with full chapter text where available; books without bundled fulltext fall back to per-verse preview snippets so the connection graph still works.</p>
+</div>
+<div class="faq-item" style="margin-bottom:2rem">
+<h4 style="color:var(--text);margin-bottom:.5rem">Is it tied to a specific church?</h4>
+<p style="color:var(--dim);line-height:1.8;font-size:.9rem">No. Amni-Prayer is provided for personal study, devotional reading, and academic interest. It is not affiliated with any church or magisterium. Translations used are public-domain Catholic scripture.</p>
+</div>
+</div>
+</section>
+<section>
+<h2>AMNI-BROWSE &mdash; PRIVACY-FIRST BROWSER</h2>
+<div style="max-width:800px;margin:0 auto">
+<div class="faq-item" style="margin-bottom:2rem">
+<h4 style="color:var(--text);margin-bottom:.5rem">What's the status of Amni-Browse?</h4>
+<p style="color:var(--dim);line-height:1.8;font-size:.9rem">Alpha. It's a single Rust binary with zero telemetry, navigation-layer ad blocking, DNS-over-HTTPS, an AES-256-GCM password vault, and multi-profile support. Browser security is a deep, evolving discipline; we don't recommend Amni-Browse as your sole browser for high-stakes activity (banking, medical) until it leaves alpha. See the <a href="terms.html#browse">Amni-Browse terms addendum</a>.</p>
+</div>
+<div class="faq-item" style="margin-bottom:2rem">
+<h4 style="color:var(--text);margin-bottom:.5rem">How does the password vault work?</h4>
+<p style="color:var(--dim);line-height:1.8;font-size:.9rem">Vault entries are encrypted client-side with AES-256-GCM under a key derived from your master passphrase. The vault never leaves your device. If you lose the master passphrase, vault contents are unrecoverable by design &mdash; keep an external backup of any irreplaceable credentials.</p>
+</div>
+</div>
+</section>
+<section>
+<h2>AMNI-CODE &mdash; AGENTIC AI ASSISTANT</h2>
+<div style="max-width:800px;margin:0 auto">
+<div class="faq-item" style="margin-bottom:2rem">
+<h4 style="color:var(--text);margin-bottom:.5rem">What can Amni-Code do?</h4>
+<p style="color:var(--dim);line-height:1.8;font-size:.9rem">Single Rust binary that runs a 15-iteration autonomous tool loop with six built-in tools (read, write, edit, bash, search, ls). Multi-provider LLM support (Anthropic, OpenAI, others). Local GGUF model discovery so you can point it at models you've already downloaded for desktop tools.</p>
+</div>
+<div class="faq-item" style="margin-bottom:2rem">
+<h4 style="color:var(--text);margin-bottom:.5rem">Is it safe to point at any directory?</h4>
+<p style="color:var(--dim);line-height:1.8;font-size:.9rem">It can read, write, and run shell commands in the working directory you point it at. Run it in a sandbox, container, or disposable git worktree if there is any doubt about a task. See the <a href="terms.html#code">Amni-Code terms addendum</a>.</p>
+</div>
+</div>
+</section>
+<section>
+<h2>AMNI-CONNECT &mdash; E2E REMOTE DESKTOP</h2>
+<div style="max-width:800px;margin:0 auto">
+<div class="faq-item" style="margin-bottom:2rem">
+<h4 style="color:var(--text);margin-bottom:.5rem">Where does the signaling traffic go?</h4>
+<p style="color:var(--dim);line-height:1.8;font-size:.9rem">Through whichever signaling server you operate. Amni-Scient runs no public signaling service. Once peers connect, the WebRTC media flow is end-to-end encrypted and goes peer-to-peer (or via your own TURN server if direct connection isn't possible).</p>
+</div>
+<div class="faq-item" style="margin-bottom:2rem">
+<h4 style="color:var(--text);margin-bottom:.5rem">Production-ready?</h4>
+<p style="color:var(--dim);line-height:1.8;font-size:.9rem">Alpha. Don't use it for unattended access to systems you don't own or systems containing data you can't afford to lose.</p>
+</div>
+</div>
+</section>
+<section>
+<h2>AMNI-AI / AMNI-CORE &mdash; IN DEVELOPMENT</h2>
+<div style="max-width:800px;margin:0 auto">
+<div class="faq-item" style="margin-bottom:2rem">
+<h4 style="color:var(--text);margin-bottom:.5rem">When are Amni-AI and Amni-Core releasing?</h4>
+<p style="color:var(--dim);line-height:1.8;font-size:.9rem">No public release date for either. Amni-AI is the local self-evolving intelligence engine (dual-server inference, 9-mode growth, GPU texture inference via Dictionary Atlas, opt-in KnowledgeNet). Amni-Core is the long-horizon quantum-safe systems platform. Both run entirely on local hardware with no cloud dependency. Email <a href="mailto:amnibro7@gmail.com">amnibro7@gmail.com</a> if you want pre-release access for evaluation.</p>
 </div>
 </div>
 </section>

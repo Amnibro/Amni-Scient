@@ -1,10 +1,10 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Terms of Service | AMNI-SCIENT</title>
-<meta name="description" content="Terms of service and end-user license agreement for Amni-Scient software products.">
+<meta name="description" content="Terms of service for all Amni-Scient products. General clauses plus per-product addenda for Amni-Crypt, Amni-Haven, Amni-LLM, Amni-Explore, Amni-Learn, Amni-Calc, Amni-Prayer, and more.">
 <link rel="canonical" href="https://amni-scient.com/terms">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,6 +13,14 @@
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
+<style>
+.toc{display:flex;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0 2rem;padding:1rem;border:1px solid var(--border);border-radius:6px;background:rgba(255,255,255,0.02)}
+.toc a{font-size:.78rem;padding:.3rem .6rem;border:1px solid var(--border);border-radius:4px;text-decoration:none;color:var(--dim);transition:all .15s}
+.toc a:hover{color:var(--text);border-color:var(--accent,#7c5cfc)}
+.product-section{margin-top:3rem;padding-top:2rem;border-top:1px solid var(--border)}
+.product-section h2{display:flex;align-items:center;gap:.7rem}
+.product-section .pdot{display:inline-block;width:10px;height:10px;border-radius:50%}
+</style>
 </head>
 <body>
 <div class="grid-bg"></div>
@@ -27,6 +35,7 @@
 <a href="amni-calc.html">AMNI-CALC</a>
 <a href="amni-explore.html">AMNI-EXPLORE</a>
 <a href="amni-learn.html">AMNI-LEARN</a>
+<a href="amni-llm.html">AMNI-LLM</a>
 <a href="amni-connect.html">AMNI-CONNECT</a>
 <a href="amni-code.html">AMNI-CODE</a>
 <a href="amni-haven.html">AMNI-HAVEN</a>
@@ -45,52 +54,159 @@
 </nav>
 <div class="legal">
 <h1>TERMS OF SERVICE</h1>
-<p class="effective">Effective Date: June 15, 2025 &nbsp;|&nbsp; Last Updated: June 15, 2025</p>
-<p>By using Amni-Crypt ("the Software"), developed by Amni-Scient ("we", "us"), you acknowledge and agree to the following terms. If you do not agree, do not use the Software.</p>
-<h2>1. PROPRIETARY LICENSE</h2>
-<p>Amni-Crypt and all associated components, including but not limited to the cipher engine, Shadow Texture Protocol, container format, seal renderer, and documentation, are proprietary software owned by Amni-Scient. All rights not expressly granted herein are reserved.</p>
-<p>You are granted a limited, non-exclusive, non-transferable, revocable license to use the compiled application solely for personal or internal business purposes. You may not reverse-engineer, decompile, disassemble, modify, or create derivative works of the Software. You may not redistribute, sublicense, or make the Software available to third parties except through authorized distribution channels (Google Play Store).</p>
-<h2>2. NO WARRANTY</h2>
-<p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.</p>
-<h2>3. LIMITATION OF LIABILITY</h2>
-<p>IN NO EVENT SHALL THE AUTHORS, COPYRIGHT HOLDERS, DEVELOPERS, OR DISTRIBUTORS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. THIS INCLUDES, BUT IS NOT LIMITED TO:</p>
-<ul>
-<li>Loss of data, files, or encryption keys</li>
-<li>Inability to decrypt previously encrypted files</li>
-<li>Financial damages resulting from lost or inaccessible data</li>
-<li>Any unauthorized access to encrypted content due to user error, key disclosure, or passphrase compromise</li>
-<li>Damages resulting from software bugs, device failures, or operating system incompatibilities</li>
-</ul>
-<h2>4. CRYPTOGRAPHIC DISCLAIMER</h2>
-<p>Amni-Crypt employs a proprietary symmetric block cipher. While designed with security best practices, this software has NOT been independently audited by a third-party cryptographic authority. The developers make NO claims of certification by NIST, ISO, or any governmental body. Users requiring certified encryption for regulatory compliance should use government-approved solutions.</p>
-<h2>5. USER RESPONSIBILITY</h2>
-<p>You are solely responsible for:</p>
-<ul>
-<li>Safeguarding your passphrases and encryption keys</li>
-<li>Maintaining backup copies of original files before encryption</li>
-<li>Verifying decrypted output integrity</li>
-<li>Compliance with local laws governing cryptographic software use</li>
-</ul>
-<h2>6. INDEMNIFICATION</h2>
-<p>You agree to indemnify, defend, and hold harmless the developers, contributors, and affiliates from and against any and all claims, liabilities, damages, losses, costs, and expenses (including reasonable attorneys' fees) arising from your use or misuse of the Software, violation of these terms, or infringement of any third-party rights.</p>
-<h2>7. DATA HANDLING</h2>
-<p>All encryption and decryption operations are performed locally on your device. No files, passphrases, keys, or personal data are transmitted to external servers. Advertising services (Google AdMob) may collect anonymized device identifiers per Google's privacy policy. See our <a href="privacy.html">Privacy Policies</a> for full details.</p>
-<h2>8. PREMIUM SUBSCRIPTION</h2>
-<p>Amni-Crypt offers an optional premium subscription to remove advertisements. All encryption features are available free of charge regardless of subscription status. Subscriptions are processed through Google Play Billing and are subject to Google Play's terms of service. Cancellation and refund policies are governed by Google Play.</p>
-<h2>9. EXPORT COMPLIANCE</h2>
-<p>Amni-Crypt is classified under ECCN 5D992 (mass market encryption) and is distributed under License Exception ENC per 15 CFR &sect;740.17(b)(1). Users are responsible for compliance with their local import/export regulations governing cryptographic software.</p>
-<h2>10. GOVERNING LAW</h2>
-<p>This agreement shall be governed by and construed in accordance with applicable law in the jurisdiction of the end user. Any disputes shall be resolved through binding arbitration.</p>
-<h2>11. MODIFICATIONS</h2>
-<p>We reserve the right to modify these terms at any time. Changes will be reflected with an updated "Last Updated" date. Continued use of the Software after modifications constitutes acceptance of the revised terms.</p>
-<h2>12. CONTACT</h2>
-<p>For questions regarding these terms:</p>
+<p class="effective">Effective Date: June 15, 2025 &nbsp;|&nbsp; Last Updated: 2026-04-27</p>
+<p>These Terms of Service ("Terms") govern your use of software and services published by Amni-Scient ("we", "us", "our"). The General Terms below apply to every Amni-Scient product. Each product also has its own addendum further down this page covering product-specific clauses (cipher disclosure for Amni-Crypt, MIT license terms for Amni-LLM, beta-channel terms for in-development products, etc.). By using any Amni-Scient product, you acknowledge and agree to both the General Terms and the relevant product addendum. If you do not agree, do not use the product.</p>
+<div class="toc" aria-label="Per-product addenda">
+<a href="#crypt">Amni-Crypt</a>
+<a href="#haven">Amni-Haven</a>
+<a href="#llm">Amni-LLM</a>
+<a href="#explore">Amni-Explore</a>
+<a href="#learn">Amni-Learn</a>
+<a href="#calc">Amni-Calc</a>
+<a href="#prayer">Amni-Prayer</a>
+<a href="#browse">Amni-Browse</a>
+<a href="#code">Amni-Code</a>
+<a href="#connect">Amni-Connect</a>
+<a href="#ai">Amni-AI</a>
+<a href="#core">Amni-Core</a>
+</div>
+<h2>GENERAL TERMS</h2>
+<h3>G1. License Scope</h3>
+<p>Unless a product addendum below states otherwise, Amni-Scient products are proprietary software. You are granted a limited, non-exclusive, non-transferable, revocable license to use the compiled application or the hosted web app for personal or internal business purposes. You may not reverse-engineer, decompile, disassemble, modify, or create derivative works of any closed-source product. You may not redistribute, sublicense, or make a closed-source product available to third parties except through authorized distribution channels. Open-source products (currently Amni-LLM) are governed by their own license file in the source repository, which supersedes this clause for that product.</p>
+<h3>G2. No Warranty</h3>
+<p>ALL AMNI-SCIENT PRODUCTS ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT.</p>
+<h3>G3. Limitation of Liability</h3>
+<p>IN NO EVENT SHALL THE AUTHORS, COPYRIGHT HOLDERS, DEVELOPERS, OR DISTRIBUTORS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR IN CONNECTION WITH ANY AMNI-SCIENT PRODUCT OR THE USE OR OTHER DEALINGS IN ANY AMNI-SCIENT PRODUCT. This includes loss of data or files, financial damages resulting from inaccessible or corrupted data, downtime of any hosted service, third-party service failures, software bugs, device failures, and operating-system incompatibilities.</p>
+<h3>G4. User Responsibility</h3>
+<p>You are solely responsible for: maintaining backup copies of any important data before using a product that modifies files (Amni-Crypt, Amni-Browse vault); safeguarding any passphrases, keys, or credentials you generate or store; verifying any computed result before using it for safety-critical engineering decisions (see Amni-Calc addendum); and compliance with all laws applicable in your jurisdiction governing the use of the product.</p>
+<h3>G5. Indemnification</h3>
+<p>You agree to indemnify, defend, and hold harmless the developers, contributors, and affiliates from and against any and all claims, liabilities, damages, losses, costs, and expenses (including reasonable attorneys' fees) arising from your use or misuse of any Amni-Scient product, your violation of these Terms, or your infringement of any third-party rights.</p>
+<h3>G6. Advertising and Subscriptions</h3>
+<p>Web products served at amni-scient.com may display Google AdSense advertisements on landing and informational pages. Mobile products (Amni-Crypt, Amni-Haven) display Google AdMob advertisements in their free tiers. Optional premium subscriptions remove advertisements where offered. Subscriptions are processed through the relevant store (Google Play Billing for mobile) and are subject to that store's terms; cancellation and refund policies are governed by the store, not by Amni-Scient.</p>
+<h3>G7. Modifications</h3>
+<p>We reserve the right to modify these Terms at any time. Material changes are reflected by an updated "Last Updated" date at the top of this page. Continued use of any product after such modifications constitutes acceptance of the revised Terms.</p>
+<h3>G8. Governing Law</h3>
+<p>These Terms shall be governed by and construed in accordance with applicable law in the jurisdiction of the end user. Any disputes shall be resolved through binding arbitration in that jurisdiction.</p>
+<h3>G9. Contact</h3>
+<p>For questions regarding these Terms or any Amni-Scient product:</p>
 <ul>
 <li><strong>Email:</strong> <a href="mailto:amnibro7@gmail.com">amnibro7@gmail.com</a></li>
-<li><strong>Developer:</strong> Amnibro (Amni-Scient)</li>
+<li><strong>Developer:</strong> Amnibro (Amnibro) &mdash; Amni-Scient</li>
 <li><strong>Website:</strong> <a href="https://amni-scient.com">https://amni-scient.com</a></li>
 </ul>
-<p style="color:var(--dim);font-size:.75rem;margin-top:2rem">&copy; 2025-2026 Amni-Scient. All rights reserved.</p>
+<div class="product-section" id="crypt">
+<h2><span class="pdot" style="background:#2979ff"></span>AMNI-CRYPT ADDENDUM</h2>
+<p>Amni-Crypt is a proprietary 1024-bit file encryption application for Android. The General Terms apply in full; the following clauses are additional and Amni-Crypt-specific.</p>
+<h3>C1. Proprietary License (Amni-Crypt-Specific)</h3>
+<p>Amni-Crypt and all associated components &mdash; including but not limited to the cipher engine, Shadow Texture Protocol, container format, seal renderer, and documentation &mdash; are proprietary software owned by Amni-Scient. All rights not expressly granted in General Term G1 are reserved. Distribution is authorized exclusively through the Google Play Store.</p>
+<h3>C2. Cryptographic Disclaimer</h3>
+<p>Amni-Crypt employs a proprietary symmetric block cipher. While designed with security best practices, this software has NOT been independently audited by a third-party cryptographic authority. The developers make NO claims of certification by NIST, ISO, or any governmental body. Users requiring certified encryption for regulatory compliance should use government-approved solutions.</p>
+<h3>C3. Cipher Liability (in addition to General Term G3)</h3>
+<p>The Limitation of Liability in G3 specifically extends to: loss of data, files, or encryption keys; inability to decrypt previously encrypted files; financial damages resulting from lost or inaccessible data; any unauthorized access to encrypted content due to user error, key disclosure, or passphrase compromise.</p>
+<h3>C4. Encryption-User Responsibility (in addition to General Term G4)</h3>
+<p>You are solely responsible for: safeguarding your passphrases and encryption keys; maintaining backup copies of original files before encryption; verifying decrypted output integrity; compliance with local laws governing cryptographic software use.</p>
+<h3>C5. Data Handling</h3>
+<p>All encryption and decryption operations are performed locally on your device. No files, passphrases, keys, or personal data are transmitted to external servers. Advertising services (Google AdMob) may collect anonymized device identifiers per Google's privacy policy. See <a href="privacy-crypt.html">Amni-Crypt's privacy policy</a> for full details.</p>
+<h3>C6. Premium Subscription</h3>
+<p>Amni-Crypt offers an optional premium subscription to remove advertisements. All encryption features are available free of charge regardless of subscription status. See General Term G6 for store-billing notes.</p>
+<h3>C7. Export Compliance</h3>
+<p>Amni-Crypt is classified under ECCN 5D992 (mass market encryption) and is distributed under License Exception ENC per 15 CFR &sect;740.17(b)(1). Users are responsible for compliance with their local import/export regulations governing cryptographic software.</p>
+</div>
+<div class="product-section" id="haven">
+<h2><span class="pdot" style="background:#7c5cfc"></span>AMNI-HAVEN ADDENDUM</h2>
+<p>Amni-Haven is the proprietary Android client for ANCSemi's open-source Haven self-hosted chat server. The General Terms apply in full.</p>
+<h3>H1. Server Independence</h3>
+<p>Amni-Haven is a client. Messages, media, and presence data route through whichever Haven server you connect to &mdash; not through Amni-Scient infrastructure. Amni-Scient has no access to message content, no logs of message traffic, and no control over server-side data retention. The operator of the Haven server you choose is responsible for that server's data handling, security, and uptime.</p>
+<h3>H2. Third-Party Server Software</h3>
+<p>The <a href="https://github.com/ancsemi/Haven" target="_blank" rel="noopener">Haven server</a> is published by ANCSemi under MIT-NC. Amni-Scient is not affiliated with ANCSemi and provides no warranty for the server software. See <a href="privacy-haven.html">Amni-Haven's privacy policy</a> for the full data flow.</p>
+<h3>H3. Push Notifications and Voice/Video</h3>
+<p>Amni-Haven uses Firebase Cloud Messaging (FCM) for push notifications and WebRTC for voice/video. FCM token registration involves Google services subject to Google's terms. WebRTC signaling routes through your chosen Haven server.</p>
+</div>
+<div class="product-section" id="llm">
+<h2><span class="pdot" style="background:#a88cff"></span>AMNI-LLM ADDENDUM</h2>
+<p>Amni-LLM is open-source software released under the MIT License. The General Terms apply for the hosted demo at amni-scient.com/lib/amni-llm/, but for the library code itself the MIT License governs.</p>
+<h3>L1. Open Source License</h3>
+<p>The Amni-LLM library code (<code>amni-llm.js</code>, <code>registry.js</code>, browser UI, service workers) is released under the MIT License. The canonical source is <a href="https://github.com/Amnibro/amni-llm" target="_blank" rel="noopener">github.com/Amnibro/amni-llm</a>; the LICENSE file in that repository is authoritative. General Term G1 (proprietary license) does not apply to Amni-LLM.</p>
+<h3>L2. Third-Party Compute Backend</h3>
+<p>The transformer math is executed by <a href="https://github.com/ngxson/wllama" target="_blank" rel="noopener">wllama</a>, an MIT-licensed llama.cpp WASM port not published by Amni-Scient. Use of wllama is subject to its own license.</p>
+<h3>L3. Model Content Disclaimer</h3>
+<p>Amni-LLM loads and runs language models you choose &mdash; from HuggingFace, an arbitrary URL, or a local file. The output of any model is generated content from a third-party model and is not reviewed, endorsed, or guaranteed by Amni-Scient. You are solely responsible for the models you choose to load and the use you make of any output, including any compliance obligations imposed by the model's own license (e.g. Llama Community License, Qwen License, Apache 2.0, MIT, etc.).</p>
+<h3>L4. Bandwidth and Storage</h3>
+<p>Models you load through Amni-LLM are downloaded directly by your browser from the host (HuggingFace or your chosen URL). Amni-Scient does not proxy or cache model weights. IndexedDB-cached weights live in your browser; clearing site data removes them.</p>
+</div>
+<div class="product-section" id="explore">
+<h2><span class="pdot" style="background:#00b4ff"></span>AMNI-EXPLORE ADDENDUM</h2>
+<p>Amni-Explore is a browser-based galaxy explorer running compiled Rust/WASM code in your browser. The General Terms apply in full.</p>
+<h3>E1. NASA Data Source</h3>
+<p>Confirmed exoplanet data is fetched live from the <strong>NASA Exoplanet Archive TAP API</strong>, a public IVOA-standard endpoint. Amni-Scient does not control the availability, accuracy, or retention of NASA's API. Procedural star systems are generated client-side from deterministic algorithms and are not real astronomical data.</p>
+<h3>E2. Educational Use</h3>
+<p>Amni-Explore is intended for educational and recreational use. Procedurally generated planet properties (mass, atmosphere, temperature) are illustrative and must not be used as a basis for any scientific publication or real-world decision.</p>
+</div>
+<div class="product-section" id="learn">
+<h2><span class="pdot" style="background:#2ecc71"></span>AMNI-LEARN ADDENDUM</h2>
+<p>Amni-Learn is a browser-based educational platform. The General Terms apply in full.</p>
+<h3>LE1. Children's Use</h3>
+<p>Amni-Learn is designed to be safe for children: it runs entirely client-side after page load, collects no personal data, and contains no in-game advertising. Advertising appears only on the landing page outside the interactive games. Parents and educators are responsible for selecting an age-appropriate level (Pre-K through high school + adult brain exercise).</p>
+<h3>LE2. Educational Content Disclaimer</h3>
+<p>Curriculum content (math, reading, STEM, language) is provided for practice and reinforcement, not as a replacement for accredited instruction. Score and streak data are stored in your browser's <code>localStorage</code> only.</p>
+</div>
+<div class="product-section" id="calc">
+<h2><span class="pdot" style="background:#ff6b35"></span>AMNI-CALC ADDENDUM</h2>
+<p>Amni-Calc is a browser-based engineering calculator suite. The General Terms apply in full; the following are critical for engineering use.</p>
+<h3>CA1. Engineering Disclaimer</h3>
+<p>Calculations performed by Amni-Calc are intended as a design aid, not as a substitute for licensed professional engineering judgment. Standards references (ASME, AWS, ISO 281, NEC, etc.) are paraphrased for in-app context and are not authoritative copies of the underlying standard. Always verify any safety-critical result against the authoritative published standard, your project's design code, and a licensed Professional Engineer where required by your jurisdiction.</p>
+<h3>CA2. No Liability for Engineering Outcomes</h3>
+<p>In addition to General Term G3, Amni-Scient disclaims all liability for any decision made on the basis of an Amni-Calc output, including but not limited to structural failure, fastener failure, fatigue or fracture, electrical fault, thermal-system underperformance, or non-compliance with code.</p>
+<h3>CA3. Optional AI Features</h3>
+<p>Amni-Calc includes an optional engineering assistant overlay that can connect to a local AI server you specify (default <code>http://localhost:7700</code>) or load an in-browser WebLLM model. AI-generated suggestions are subject to the model's own limitations and the same disclaimer in CA1.</p>
+</div>
+<div class="product-section" id="prayer">
+<h2><span class="pdot" style="background:#f5c842"></span>AMNI-PRAYER ADDENDUM</h2>
+<p>Amni-Prayer (Imago Nuntii Divini) is a browser-based 3D nodal map of scripture. The General Terms apply in full.</p>
+<h3>P1. Scripture Source</h3>
+<p>The application embeds a public-domain Catholic Bible text and a derived cross-reference graph (35,817 verses, 64,497 cross-references). Translations are public domain or used under fair-use educational scope. Cross-references reflect the developer's own analytic graph and are not an authoritative theological source.</p>
+<h3>P2. Devotional Use</h3>
+<p>Amni-Prayer is provided for personal study, devotional reading, and academic interest. It is not affiliated with, endorsed by, or representative of any church, magisterium, or denomination.</p>
+</div>
+<div class="product-section" id="browse">
+<h2><span class="pdot" style="background:#00d4ff"></span>AMNI-BROWSE ADDENDUM</h2>
+<p>Amni-Browse is a desktop web browser. The General Terms apply in full.</p>
+<h3>B1. Alpha Software</h3>
+<p>Amni-Browse is currently in alpha. Browser security is a deep, evolving discipline; while Amni-Browse adopts standard hardening (sandboxed renderer, HTTPS-by-default, ad blocking, DNS-over-HTTPS), it has not undergone the same multi-team auditing as mainstream browsers. Do not use Amni-Browse as your sole browser for high-stakes activity (banking, medical accounts) until it leaves alpha.</p>
+<h3>B2. Vault Responsibility</h3>
+<p>Passwords stored in the AES-256-GCM vault are encrypted client-side under your master passphrase. If you lose the master passphrase, vault contents are unrecoverable by design. Maintain an external backup of any irreplaceable credentials.</p>
+</div>
+<div class="product-section" id="code">
+<h2><span class="pdot" style="background:#e91e63"></span>AMNI-CODE ADDENDUM</h2>
+<p>Amni-Code is an agentic AI coding assistant. The General Terms apply in full.</p>
+<h3>CO1. Autonomous Tool Loop</h3>
+<p>Amni-Code can read, write, and execute files on the machine it runs on, run shell commands, and call external LLM providers. You are solely responsible for the directory you point it at, the credentials you supply, and the actions it takes. Run it in a sandbox, container, or disposable working tree if you have any doubt.</p>
+<h3>CO2. Third-Party LLM Providers</h3>
+<p>Multi-provider LLM support means prompts and code may be transmitted to whichever cloud provider you configure (Anthropic, OpenAI, etc.). Use of those providers is subject to their own terms; Amni-Scient is not responsible for upstream provider behavior.</p>
+</div>
+<div class="product-section" id="connect">
+<h2><span class="pdot" style="background:#00ffaa"></span>AMNI-CONNECT ADDENDUM</h2>
+<p>Amni-Connect is end-to-end encrypted remote desktop over WebRTC. The General Terms apply in full.</p>
+<h3>CN1. Alpha Software</h3>
+<p>Amni-Connect is currently in alpha. Remote desktop is inherently sensitive; do not use Amni-Connect for unattended access to systems you do not own or systems containing data you cannot afford to lose.</p>
+<h3>CN2. Self-Hosted Signaling</h3>
+<p>Amni-Connect's signaling server is self-hostable. Amni-Scient does not operate a public signaling service. The security and uptime of your signaling server is your responsibility.</p>
+</div>
+<div class="product-section" id="ai">
+<h2><span class="pdot" style="background:#ffb74d"></span>AMNI-AI ADDENDUM</h2>
+<p>Amni-AI is a local self-evolving intelligence engine for desktop. The General Terms apply in full.</p>
+<h3>AI1. In-Development Software</h3>
+<p>Amni-AI is in active development. APIs, file formats, and self-evolution behavior may change without notice. Do not rely on it for production workloads.</p>
+<h3>AI2. Local-Only Operation</h3>
+<p>Amni-AI runs entirely on your hardware. No prompts, model weights, or telemetry are transmitted off-device by Amni-Scient. The optional KnowledgeNet exchange, where present, is opt-in only.</p>
+</div>
+<div class="product-section" id="core">
+<h2><span class="pdot" style="background:#ef5350"></span>AMNI-CORE ADDENDUM</h2>
+<p>Amni-Core is a long-horizon quantum-safe systems platform. The General Terms apply in full.</p>
+<h3>CR1. In-Development Software</h3>
+<p>Amni-Core is in active development with no public release. Any pre-release builds shared privately are subject to a separate evaluation agreement; the General Terms apply on top.</p>
+</div>
+<p style="color:var(--dim);font-size:.75rem;margin-top:3rem">&copy; 2025-2026 Amni-Scient. All rights reserved.</p>
 </div>
 <footer>
 <div class="footer-links">

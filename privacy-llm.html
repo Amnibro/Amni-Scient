@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Privacy Policy &mdash; Amni-LLM | AMNI-SCIENT</title>
+<meta name="description" content="Privacy policy for Amni-LLM in-browser GGUF runtime. Inference is fully client-side. Model downloads route browser-to-HuggingFace. HF search API only contacted on user search.">
+<link rel="canonical" href="https://amni-scient.com/privacy-llm">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+</head>
+<body>
+<div class="grid-bg"></div>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<div class="nav-dd">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu">
+<a href="amni-browse.html">AMNI-BROWSE</a>
+<a href="amni-calc.html">AMNI-CALC</a>
+<a href="amni-explore.html">AMNI-EXPLORE</a>
+<a href="amni-learn.html">AMNI-LEARN</a>
+<a href="amni-llm.html">AMNI-LLM</a>
+<a href="amni-connect.html">AMNI-CONNECT</a>
+<a href="amni-code.html">AMNI-CODE</a>
+<a href="amni-haven.html">AMNI-HAVEN</a>
+<a href="amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</div>
+<a href="privacy.html" class="active">PRIVACY</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<div class="legal">
+<h1>AMNI-LLM &mdash; PRIVACY POLICY</h1>
+<p class="effective">Effective Date: 2026-04-27 &nbsp;|&nbsp; Last Updated: 2026-04-27</p>
+<p>This privacy policy describes how Amni-LLM, an in-browser GGUF language-model runtime developed by Amni-Scient, handles user information. Amni-LLM is open-source under the MIT License (<a href="https://github.com/Amnibro/amni-llm" target="_blank" rel="noopener">github.com/Amnibro/amni-llm</a>).</p>
+<h2>1. DATA WE COLLECT</h2>
+<p><strong>We collect no personal data.</strong> Amni-LLM has no accounts, no login, no telemetry endpoint, and no Amni-Scient-operated server that receives user data. Inference runs entirely in your browser via WebAssembly.</p>
+<h2>2. DATA HANDLING</h2>
+<p>Your prompts, model weights, and generated replies stay on your device. Token streaming happens inside the browser tab. Conversation history, if you keep one, lives in your browser's storage (localStorage / IndexedDB) and is removed when you clear site data.</p>
+<h2>3. THIRD-PARTY SERVICES</h2>
+<h3>3.1 HuggingFace (model search and download)</h3>
+<p>When you use the in-app HuggingFace search, your search query is sent to <code>huggingface.co/api/models</code>. When you load or install a model, the model file is downloaded directly browser-to-HuggingFace from <code>huggingface.co/&lt;org&gt;/&lt;repo&gt;/resolve/main/&lt;file&gt;.gguf</code>. Amni-Scient does not proxy, log, or cache these requests. HuggingFace's own privacy policy applies to those requests; see <a href="https://huggingface.co/privacy" target="_blank" rel="noopener">HuggingFace Privacy</a>.</p>
+<h3>3.2 Custom URL or Local File Loading</h3>
+<p>If you load a model via custom URL, your browser fetches it directly from the host you specified. If you load a local <code>.gguf</code> file, bytes never leave your machine.</p>
+<h3>3.3 Google AdSense (landing page only)</h3>
+<p>The Amni-LLM landing page at <code>amni-scient.com/amni-llm.html</code> displays a Google AdSense banner. Google's AdSense SDK may collect cookies and device identifiers per <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google's Privacy Policy</a>. The runtime app at <code>/lib/amni-llm/</code> does not display ads.</p>
+<h2>4. MODEL OUTPUT DISCLAIMER</h2>
+<p>Models you choose to load are third-party language models. Their outputs reflect their training data and parameters, not Amni-Scient. We do not review, endorse, filter, or guarantee model outputs. You are responsible for the models you load and how you use the responses, including compliance with each model's own license.</p>
+<h2>5. CACHED WEIGHTS</h2>
+<p>To avoid re-downloading large model files, Amni-LLM caches model weights in your browser's IndexedDB after first download. You can remove cached weights by clearing site data for amni-scient.com in your browser settings.</p>
+<h2>6. CROSS-ORIGIN ISOLATION</h2>
+<p>Amni-LLM ships a service worker (<code>coi-sw.js</code>) that adds COOP/COEP headers to enable SharedArrayBuffer and multi-thread WASM. The service worker only sets response headers; it does not transmit any data and does not log requests.</p>
+<h2>7. CHILDREN'S PRIVACY</h2>
+<p>Amni-LLM is not directed at children under 13. Because we collect no information, no information from any user is processed.</p>
+<h2>8. YOUR RIGHTS</h2>
+<p>Since we collect no personal data, there is no personal data to access, modify, export, or delete. Clearing site data removes any locally cached weights and conversation state.</p>
+<h2>9. CHANGES</h2>
+<p>Updates will be reflected with a new "Last Updated" date.</p>
+<h2>10. CONTACT</h2>
+<ul>
+<li><strong>Email:</strong> <a href="mailto:amnibro7@gmail.com">amnibro7@gmail.com</a></li>
+<li><strong>Source:</strong> <a href="https://github.com/Amnibro/amni-llm" target="_blank" rel="noopener">github.com/Amnibro/amni-llm</a></li>
+</ul>
+</div>
+<footer>
+<div class="footer-links">
+<a href="privacy.html">ALL PRIVACY POLICIES</a>
+<a href="terms.html">TERMS</a>
+<a href="/">AMNI-SCIENT</a>
+<a href="mailto:amnibro7@gmail.com">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amni-Scient. All rights reserved.</p>
+</footer>
+</body>
+</html>

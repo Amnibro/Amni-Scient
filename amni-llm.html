@@ -94,12 +94,12 @@
 
 <section>
 <h2>WHY ANOTHER IN-BROWSER LLM?</h2>
-<p style="text-align:center;color:var(--dim);max-width:780px;margin:0 auto 2rem;font-size:.9rem">Existing in-browser runtimes like WebLLM (MLC) require every model to be specifically TVM-compiled to WebGPU shaders before it runs. New base models &mdash; Qwen 3.5, Qwen 3.6, Llama 4 &mdash; sit on the MLC team's compile queue for weeks before they're available. Amni-LLM uses GGUF, the format with the broadest community coverage on HuggingFace: most popular models have GGUF builds within days of release. Tradeoff is honest: llama.cpp WASM is currently CPU-SIMD-only, so per-token throughput is lower than WebGPU stacks. The win is universal model availability and arbitrary URL/file loading.</p>
+<p style="text-align:center;color:var(--dim);max-width:780px;margin:0 auto 2rem;font-size:.9rem">Existing in-browser runtimes like WebLLM (MLC) require every model to be specifically TVM-compiled to WebGPU shaders before it runs. New base models &mdash; Qwen 3.5, DeepSeek-R1, Mistral Nemo, Llama 4 &mdash; sit on the MLC team's compile queue before they're available. Amni-LLM uses GGUF, the format with the broadest community coverage on HuggingFace: most popular models have GGUF builds within days of release. Tradeoff is honest: llama.cpp WASM is currently CPU-SIMD-only, so per-token throughput is lower than WebGPU stacks. The win is universal model availability and arbitrary URL/file loading.</p>
 <div class="features">
 <div class="feature">
 <div class="icon">&#127760;</div>
 <h4>ANY GGUF, ANY DAY</h4>
-<p>Search HuggingFace live from inside the app. Pick a model, pick a quantization, click Load or Install. Works for anything with a GGUF build &mdash; including Qwen 3.5, Qwen 3.6, Llama 4 Scout, DeepSeek-R1, plus thousands of community fine-tunes.</p>
+<p>Search HuggingFace live from inside the app. Pick a model, pick a quantization, click Load or Install. Works for anything with a GGUF build &mdash; including Qwen 3.5, DeepSeek-R1, Mistral Nemo, Phi-4, plus thousands of community fine-tunes. Models too large for browser memory (e.g. Llama 4 Scout's 29 GB minimum quant) appear in search but won't load on most machines.</p>
 </div>
 <div class="feature">
 <div class="icon">&#128190;</div>
@@ -113,8 +113,8 @@
 </div>
 <div class="feature">
 <div class="icon">&#128218;</div>
-<h4>4 SOTA DEFAULTS</h4>
-<p>Curated short list of current models that fit a typical browser memory budget: Qwen 3.5 0.8B (mobile), Qwen 3.5 4B (balanced), Qwen 3.5 9B (desktop), Qwen 2.5 Math 7B (engineering). One click to load.</p>
+<h4>3 SOTA DEFAULTS</h4>
+<p>Curated short list of current Qwen 3.5 GGUF builds that fit a typical browser memory budget: 0.8B (mobile, 508 MB), 4B (balanced, 2.6 GB), 9B (desktop, 5.4 GB). One click to load. For math/engineering or any other niche, use the built-in HF search.</p>
 </div>
 <div class="feature">
 <div class="icon">&#128270;</div>
@@ -135,8 +135,8 @@
 <table class="llm-cmp">
 <tr><th>Feature</th><th>Amni-LLM</th><th>WebLLM (MLC)</th></tr>
 <tr><td>Load arbitrary HuggingFace model</td><td class="win">Yes &mdash; any GGUF</td><td class="loss">No &mdash; only MLC pre-compiled</td></tr>
-<tr><td>Qwen 3.5 / 3.6 today</td><td class="win">Yes</td><td class="loss">Not until MLC publishes bundles</td></tr>
-<tr><td>Llama 4 Scout/Maverick today</td><td class="win">Yes (if you have the RAM)</td><td class="loss">Not in registry</td></tr>
+<tr><td>Qwen 3.5 today</td><td class="win">Yes (verified GGUFs from unsloth)</td><td class="loss">Not until MLC publishes bundles</td></tr>
+<tr><td>Llama 4 Scout/Maverick today</td><td class="gap">Available in HF search; smallest quant is ~29 GB so does not fit in browser memory on typical machines</td><td class="loss">Not in registry</td></tr>
 <tr><td>Local `.gguf` upload</td><td class="win">Yes</td><td class="loss">No</td></tr>
 <tr><td>WebGPU acceleration</td><td class="gap">Experimental</td><td class="win">Mature</td></tr>
 <tr><td>CPU SIMD fallback</td><td class="win">Yes (default)</td><td class="loss">No</td></tr>

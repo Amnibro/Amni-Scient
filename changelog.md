@@ -1,5 +1,42 @@
 ﻿# Changelog 
 
+## [5.1.0] - 2026-04-27 - Site-wide link & claims audit + multi-product Terms hub
+
+### Fixed (claims audit)
+- **`terms.html`** was Amni-Crypt-specific copy linked from 42 pages across the site, including pages with nothing to do with file encryption (Amni-LLM, Amni-Calc, Amni-Prayer, etc.). Rewrote as a multi-product hub: General Terms (G1-G9 covering license, warranty, liability, indemnification, ads, modifications, governing law, contact) + 12 per-product addenda anchored at `#crypt`, `#haven`, `#llm`, `#explore`, `#learn`, `#calc`, `#prayer`, `#browse`, `#code`, `#connect`, `#ai`, `#core`. URL preserved (every backlink still resolves). All original Amni-Crypt clauses retained verbatim under the `#crypt` addendum so AdMob/Play Store policy refs still pass.
+- **`about.html`**: tagline said "Seven products" → corrected to "Eleven products". Portfolio section claimed "six products across three platforms" → expanded to all 11 products grouped LIVE / BETA-ALPHA / IN DEVELOPMENT. Tech stack table only mentioned Rust/WASM in the context of Amni-Explore → expanded to call out Amni-Browse, Amni-Calc, Amni-Code, Amni-Connect (all also Rust); added llama.cpp WASM (wllama) row for Amni-LLM, WebRTC/Socket.IO row for Haven/Connect.
+- **`faq.html`** previously had sections for only 4 of 11 products. Added 8 new sections (Amni-Calc, Amni-LLM, Amni-Prayer, Amni-Browse, Amni-Code, Amni-Connect, Amni-AI/Amni-Core combined). Updated meta description and keywords accordingly.
+- **`amni-llm.html`**: dropped "Qwen 3.6" mentions (unverified — only Qwen 3.5 GGUFs were verified per v5.0.1 changelog). Softened the Llama 4 Scout/Maverick row in the comparison table from "Yes (if you have the RAM)" to "Available in HF search; smallest quant is ~29 GB so does not fit in browser memory on typical machines" — matches the honest reality from the v5.0.1 changelog.
+- **`lib/amni-llm/registry.js`**: removed `Qwen2.5-Math-7B-Q4_K_M` default (user reported it doesn't load reliably). Defaults are now 3 Qwen 3.5 builds only. README, amni-llm.html SOTA card, and HOW IT COMPARES rows updated to match.
+
+### Added (link rot fixes)
+- **PROJECTS dropdown** updated across 46 pages to include `<a href="amni-llm.html">AMNI-LLM</a>` between AMNI-LEARN and AMNI-CONNECT. Bulk update via temporary Node script (`_v5_1_nav_update.js`, removed after run). Embedded app pages (`learn/index.html`, `explore/index.html`, `lib/amni-llm/index.html`, `research/millennium_sim/*`) intentionally have minimal nav and were not modified.
+- **`sitemap.xml`**: added `amni-llm.html` (was missing) and `lib/amni-llm/` (the live demo). Brings sitemap to 61 URLs.
+- **`index.html` projects grid**: added AMNI-LLM card between LEARN and CONNECT. Now 9 product cards.
+- **`privacy.html`** hub previously listed only 5 of 8 existing privacy policies. Added cards for `privacy-browse.html`, `privacy-code.html`, `privacy-connect.html` (all already existed). Added cards + new stub pages for `privacy-llm.html`, `privacy-learn.html`, `privacy-calc.html`, `privacy-prayer.html` (4 products previously had no privacy disclosure).
+
+### Files Created
+- `privacy-llm.html` — in-browser inference, HF API for search only, IndexedDB cache, COI service worker
+- `privacy-learn.html` — zero data collection inside games, AdSense on landing only, COPPA-safe
+- `privacy-calc.html` — client-side WASM, optional local AI overlay storage keys, AdSense on landing pages
+- `privacy-prayer.html` — Bible text/graph baked in, optional in-browser WebLLM, no telemetry
+- `terms.html` — rewritten as multi-product hub (replaces Amni-Crypt-only version, original preserved at `backups/v5.1.0_audit/terms.html.bak`)
+
+### Files Touched
+- `about.html`, `faq.html`, `amni-llm.html`, `index.html`, `sitemap.xml`, `privacy.html`
+- `lib/amni-llm/registry.js`, `lib/amni-llm/README.md`
+- 46 HTML files for PROJECTS dropdown insertion (see git diff for full list)
+- `docs/checklists/checklist_v5.1.0_link_claims_audit.md` (new)
+- `docs/guardian_councils/guardian_council_v5.1.0_link_claims_audit.md` (new)
+
+### Backups
+- All substantively rewritten files backed up to `backups/v5.1.0_audit/` before edit (terms, privacy, about, faq, amni-llm, registry.js, README.md). Routine dropdown inserts rely on git as backup.
+
+### Follow-ups (not in this release)
+- Per-product OG images: nearly every product page reuses `assets/explore/og-explore.png`. Generate per-product OG cards (1200x630) for at least the LIVE products (LLM, Calc, Prayer, Learn, Explore, Haven).
+- Footer template normalization: index.html and about.html footers omit the "AMNI-SCIENT" home link that other pages include. Pick one template.
+- Schema.org FAQPage JSON-LD in faq.html still only encodes 5 of the (now ~22) Q&As. Expand for richer search results.
+
 ## [5.0.1] - 2026-04-27 - Amni-LLM hardening + landing page + standalone repo
 
 ### Fixed

@@ -5,13 +5,15 @@
 amni-scient-site/
 ├── css/style.css                 # Shared CSS (dark/light themes, 6 accent variants)
 ├── index.html                    # Homepage
-├── amni-{haven,crypt,ai,core,explore,calc,learn,browse,connect,code,prayer}.html  # Product landing pages
+├── amni-{haven,crypt,ai,core,explore,calc,learn,browse,connect,code,prayer,llm}.html  # 12 product landing pages (Crypt/AI/Core noindex; LLM added in v5.0.0/v5.1.0 nav)
 ├── about.html                    # Studio info / developer bio (AdSense OK)
-├── faq.html                      # ~20 FAQ entries, Schema.org FAQPage (AdSense OK)
-├── privacy*.html, terms.html     # Legal pages (no AdSense)
+├── faq.html                      # ~22 FAQ entries across all 11 products, Schema.org FAQPage (AdSense OK)
+├── terms.html                    # MULTI-PRODUCT HUB (v5.1.0): General Terms G1-G9 + 12 per-product addenda (#crypt #haven #llm #explore #learn #calc #prayer #browse #code #connect #ai #core)
+├── privacy.html                  # Privacy hub — 12 product cards
+├── privacy-{ai,browse,calc,code,connect,core,crypt,explore,haven,learn,llm,prayer}.html  # Per-product privacy policies (4 added in v5.1.0: llm, learn, calc, prayer)
 ├── changelog.md                  # Version history
 ├── ads.txt, app-ads.txt          # AdSense authorized sellers (pub-8345487545441889)
-├── sitemap.xml                   # 56 canonical URLs (v4.4.0 — all indexable pages)
+├── sitemap.xml                   # 62 canonical URLs (v5.1.0 — added amni-llm.html and lib/amni-llm/)
 ├── robots.txt                    # Allow-list with explicit disallows for /src, /backups, dev artifacts
 ├── .env                          # Credentials (gitignored)
 ├── src/                          # Gitignored sources
