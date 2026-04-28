@@ -1505,6 +1505,284 @@ window.calcDeposition=function(){
 };
 
 /* ============================================================
+ * GEARS — proper involute 3D + variations + STL export
+ * ============================================================ */
+function injectGearExtras(){
+  const view=$('v-gears');if(!view)return;
+  const left=view.querySelector('.split>div:first-child');
+  const right=view.querySelector('.split>div:last-child');
+  if(!left||!right)return;
+  if(!$('gear3d-card')){
+    const card=document.createElement('div');card.className='card';card.id='gear3d-card';
+    card.innerHTML='<h3>3D INVOLUTE GEAR + STL EXPORT</h3>'+
+      '<div class="row">'+
+        '<div class="field"><label for="g3d-type">GEAR TYPE</label><select id="g3d-type"><option value="spur">SPUR (straight teeth)</option><option value="helical">HELICAL (angled teeth)</option><option value="herringbone">HERRINGBONE (V-shape)</option><option value="internal">INTERNAL / RING (teeth inside)</option><option value="rack">RACK (linear)</option></select></div>'+
+        '<div class="field"><label for="g3d-N">TEETH N</label><input type="number" id="g3d-N" value="24" step="1" min="6" max="200"></div>'+
+        '<div class="field"><label for="g3d-m">MODULE m (mm)</label><input type="number" id="g3d-m" value="3" step="0.1" min="0.5" max="20"></div>'+
+        '<div class="field"><label for="g3d-phi">PRESSURE φ (°)</label><input type="number" id="g3d-phi" value="20" step="0.5" min="14.5" max="30"></div>'+
+        '<div class="field"><label for="g3d-fw">FACE WIDTH (mm)</label><input type="number" id="g3d-fw" value="20" step="0.5" min="3"></div>'+
+        '<div class="field" id="g3d-helix-wrap"><label for="g3d-helix">HELIX β (°)</label><input type="number" id="g3d-helix" value="15" step="1" min="0" max="45"></div>'+
+        '<div class="field"><label for="g3d-bore">SHAFT BORE Ø (mm)</label><input type="number" id="g3d-bore" value="10" step="0.5" min="0"></div>'+
+      '</div>'+
+      '<div style="margin-top:.5rem;display:flex;gap:.5rem;flex-wrap:wrap">'+
+        '<button class="btn btn-sm btn-fill" onclick="rebuildGear3D()">REBUILD</button>'+
+        '<button class="btn btn-sm" onclick="exportGearSTL()">⬇ DOWNLOAD STL</button>'+
+        '<button class="btn btn-sm" onclick="exportGearJSON()">⬇ JSON SPECS</button>'+
+      '</div>'+
+      '<div id="gear3d-out" style="margin-top:.5rem;font-size:.78rem;color:var(--dim)"></div>';
+    left.appendChild(card);
+  }
+  if(!$('gear3d-canvas-card')){
+    const card=document.createElement('div');card.className='card';card.style.marginTop='.6rem';
+    card.innerHTML='<h3>3D PREVIEW</h3>'+
+      '<canvas id="g3d-canvas" style="width:100%;height:420px;background:#0a0a0a;border-radius:3px;cursor:grab;display:block"></canvas>'+
+      '<p class="note" style="margin-top:.3rem;color:var(--dim);font-size:.7rem">Drag to orbit · scroll to zoom · right-click to pan. STL is ASCII binary, use it directly in your slicer (Cura, PrusaSlicer, Bambu Studio). Print at 0.16 mm layer height with 100% infill for functional gears.</p>';
+    right.appendChild(card);
+  }
+  /* Hide helix-angle field if type=spur */
+  const typeSel=$('g3d-type');if(typeSel)typeSel.addEventListener('change',()=>{
+    const helixWrap=$('g3d-helix-wrap');if(helixWrap)helixWrap.style.display=(typeSel.value==='spur'||typeSel.value==='internal'||typeSel.value==='rack')?'none':'';
+    rebuildGear3D();
+  });
+}
+
+/* ---- Involute geometry (math only, no Three.js needed) ---- */
+function involutePoint(rb,t){return[rb*(Math.cos(t)+t*Math.sin(t)),rb*(Math.sin(t)-t*Math.cos(t))];}
+function gearToothProfile(N,m,phi,external){
+  const r=m*N/2,ra=r+m,rd=Math.max(r-1.25*m,0.5),rb=r*Math.cos(phi*Math.PI/180);
+  if(external===false){
+    /* internal gear: teeth point inward, addendum < pitch < dedendum */
+    const ri=r-m,rdInt=r+1.25*m;
+    const halfTooth=Math.PI/N;
+    const pts=[];
+    for(let s=-1;s<=1;s+=2){
+      const t_top=Math.acos(Math.min(1,Math.max(-1,rb/Math.max(ri,rb))));
+      pts.push([rdInt*Math.cos(s*halfTooth),rdInt*Math.sin(s*halfTooth)]);
+    }
+    return pts;
+  }
+  const t_max=ra<=rb?0:Math.sqrt((ra/rb)**2-1);
+  const inv_pts=[];
+  const NSEG=12;
+  for(let i=0;i<=NSEG;i++){
+    const t=i*t_max/NSEG;
+    inv_pts.push(involutePoint(rb,t));
+  }
+  const halfTooth=Math.PI/(2*N)+(Math.tan(phi*Math.PI/180)-phi*Math.PI/180);
+  const tip=inv_pts[inv_pts.length-1];
+  const tipAng=Math.atan2(tip[1],tip[0]);
+  const rot=halfTooth-tipAng;
+  const rotated=inv_pts.map(p=>{
+    const c=Math.cos(rot),s=Math.sin(rot);
+    return[p[0]*c-p[1]*s,p[0]*s+p[1]*c];
+  });
+  const mirrored=rotated.slice().reverse().map(p=>[p[0],-p[1]]);
+  const profile=[];
+  if(rd<rb){
+    profile.push([rd*Math.cos(-halfTooth),rd*Math.sin(-halfTooth)]);
+  }
+  profile.push(...mirrored);
+  profile.push(...rotated);
+  if(rd<rb){
+    profile.push([rd*Math.cos(halfTooth),rd*Math.sin(halfTooth)]);
+  }
+  return profile;
+}
+function gearOutlinePoints(N,m,phi){
+  const tooth=gearToothProfile(N,m,phi,true);
+  const all=[];
+  const fillet=2*Math.PI/N;
+  for(let i=0;i<N;i++){
+    const ang=i*fillet;const c=Math.cos(ang),s=Math.sin(ang);
+    tooth.forEach(p=>all.push([p[0]*c-p[1]*s,p[0]*s+p[1]*c]));
+  }
+  return all;
+}
+
+/* ---- Three.js geometry build ---- */
+let gear3DScene=null,gear3DMesh=null,gear3DRenderer=null,gear3DCamera=null,gear3DControls=null,gear3DRaf=null;
+function buildGearGeometry(){
+  const T=window.THREE;if(!T)return null;
+  const type=sv('g3d-type')||'spur';
+  const N=Math.max(6,Math.round(v('g3d-N')||24));
+  const m=Math.max(0.5,v('g3d-m')||3);
+  const phi=v('g3d-phi')||20;
+  const fw=Math.max(3,v('g3d-fw')||20);
+  const helix=type==='helical'||type==='herringbone'?v('g3d-helix')||15:0;
+  const bore=Math.max(0,v('g3d-bore')||0);
+  if(type==='rack'){
+    const len=N*Math.PI*m;
+    const teeth=[];
+    for(let i=0;i<N;i++){
+      const x0=-len/2+i*Math.PI*m;
+      const a=Math.PI*m/2,b=m*1.25,top=m,addPos=x0+Math.PI*m/2;
+      teeth.push([x0,-b]);teeth.push([x0+a*0.4,top]);teeth.push([x0+Math.PI*m-a*0.4,top]);teeth.push([x0+Math.PI*m,-b]);
+    }
+    const shape=new T.Shape();shape.moveTo(teeth[0][0],teeth[0][1]);teeth.forEach(p=>shape.lineTo(p[0],p[1]));shape.lineTo(len/2,-m*3);shape.lineTo(-len/2,-m*3);shape.closePath();
+    return new T.ExtrudeGeometry(shape,{depth:fw,bevelEnabled:false});
+  }
+  const isInternal=type==='internal';
+  const outline=gearOutlinePoints(N,m,phi);
+  const shape=new T.Shape();
+  outline.forEach((p,i)=>{i?shape.lineTo(p[0],p[1]):shape.moveTo(p[0],p[1]);});
+  shape.closePath();
+  if(isInternal){
+    /* Internal gear is a ring with teeth on inside; outer = pitch + 4m */
+    const outerR=m*N/2+m*3;
+    const outer=new T.Shape();
+    outer.absarc(0,0,outerR,0,Math.PI*2,false);
+    outer.holes.push(shape);
+    if(type==='spur'||true){
+      return new T.ExtrudeGeometry(outer,{depth:fw,bevelEnabled:false,curveSegments:48});
+    }
+  }
+  if(bore>0){
+    const hole=new T.Path();hole.absarc(0,0,bore/2,0,Math.PI*2,false);shape.holes.push(hole);
+  }
+  if(type==='spur'){
+    return new T.ExtrudeGeometry(shape,{depth:fw,bevelEnabled:true,bevelThickness:0.4,bevelSize:0.4,bevelSegments:2,curveSegments:32});
+  }
+  if(type==='helical'){
+    const twistRad=helix*Math.PI/180*(fw/(m*N/2));
+    const geom=new T.ExtrudeGeometry(shape,{depth:fw,steps:Math.max(20,Math.floor(fw/2)),bevelEnabled:false,curveSegments:32});
+    const pos=geom.attributes.position;
+    for(let i=0;i<pos.count;i++){
+      const z=pos.getZ(i),ratio=z/fw,a=ratio*twistRad;
+      const x=pos.getX(i),y=pos.getY(i);
+      pos.setX(i,x*Math.cos(a)-y*Math.sin(a));
+      pos.setY(i,x*Math.sin(a)+y*Math.cos(a));
+    }
+    geom.computeVertexNormals();
+    return geom;
+  }
+  if(type==='herringbone'){
+    const half=fw/2;
+    const twistRad=helix*Math.PI/180*(half/(m*N/2));
+    const geom=new T.ExtrudeGeometry(shape,{depth:fw,steps:Math.max(20,Math.floor(fw/2)),bevelEnabled:false,curveSegments:32});
+    const pos=geom.attributes.position;
+    for(let i=0;i<pos.count;i++){
+      const z=pos.getZ(i);
+      const ratio=z<half?z/half:(fw-z)/half;
+      const a=ratio*twistRad;
+      const x=pos.getX(i),y=pos.getY(i);
+      pos.setX(i,x*Math.cos(a)-y*Math.sin(a));
+      pos.setY(i,x*Math.sin(a)+y*Math.cos(a));
+    }
+    geom.computeVertexNormals();
+    return geom;
+  }
+  return new T.ExtrudeGeometry(shape,{depth:fw,bevelEnabled:false,curveSegments:24});
+}
+window.rebuildGear3D=function(){
+  const cv=$('g3d-canvas');if(!cv||!window.THREE)return;
+  const T=window.THREE;
+  if(!gear3DScene){
+    gear3DScene=new T.Scene();gear3DScene.background=new T.Color(0x0a0a0a);
+    const w=cv.clientWidth||500,h=cv.clientHeight||420;
+    gear3DCamera=new T.PerspectiveCamera(35,w/h,0.1,5000);
+    gear3DCamera.position.set(60,80,140);
+    gear3DRenderer=new T.WebGLRenderer({canvas:cv,antialias:true,alpha:true});
+    gear3DRenderer.setPixelRatio(window.devicePixelRatio||1);
+    gear3DRenderer.setSize(w,h,false);
+    gear3DScene.add(new T.AmbientLight(0xffffff,0.6));
+    const dl=new T.DirectionalLight(0xffffff,0.9);dl.position.set(80,140,100);gear3DScene.add(dl);
+    const dl2=new T.DirectionalLight(0xff9966,0.35);dl2.position.set(-90,-40,-60);gear3DScene.add(dl2);
+    if(T.OrbitControls){
+      gear3DControls=new T.OrbitControls(gear3DCamera,cv);
+      gear3DControls.enableDamping=true;gear3DControls.dampingFactor=0.08;
+    }
+    new ResizeObserver(()=>{
+      const ww=cv.clientWidth,hh=cv.clientHeight;if(ww<2||hh<2)return;
+      gear3DCamera.aspect=ww/hh;gear3DCamera.updateProjectionMatrix();
+      gear3DRenderer.setSize(ww,hh,false);
+    }).observe(cv);
+    function loop(){gear3DRenderer.render(gear3DScene,gear3DCamera);if(gear3DControls)gear3DControls.update();gear3DRaf=requestAnimationFrame(loop);}loop();
+  }
+  if(gear3DMesh){gear3DScene.remove(gear3DMesh);gear3DMesh.geometry&&gear3DMesh.geometry.dispose();}
+  const geom=buildGearGeometry();if(!geom)return;
+  geom.center();
+  const mat=new T.MeshStandardMaterial({color:0xff9966,metalness:0.85,roughness:0.30,side:T.DoubleSide});
+  gear3DMesh=new T.Mesh(geom,mat);
+  gear3DScene.add(gear3DMesh);
+  /* Auto-zoom: fit pitch diameter in view */
+  const N=Math.max(6,Math.round(v('g3d-N')||24)),m=Math.max(0.5,v('g3d-m')||3);
+  const r=m*N/2;gear3DCamera.position.set(r*1.5,r*2,r*3);gear3DCamera.lookAt(0,0,0);
+  if(gear3DControls)gear3DControls.target.set(0,0,0);
+  /* Update info card */
+  const out=$('gear3d-out');if(out){
+    const phi=v('g3d-phi')||20;
+    const fw=v('g3d-fw')||20;
+    const ra=r+m,rd=Math.max(r-1.25*m,0.5),rb=r*Math.cos(phi*Math.PI/180);
+    const p=Math.PI*m,da=2*ra,db=2*rb,dd=2*rd;
+    out.innerHTML='<strong>Computed:</strong> d (pitch) = '+(2*r).toFixed(2)+' mm · d_a (addendum/OD) = '+da.toFixed(2)+' mm · d_b (base) = '+db.toFixed(2)+' mm · d_d (dedendum/root) = '+dd.toFixed(2)+' mm · circular pitch = '+p.toFixed(3)+' mm · face width = '+fw.toFixed(1)+' mm';
+  }
+};
+function geomToSTL(geom,name){
+  const pos=geom.attributes.position;
+  const idx=geom.index;
+  let stl='solid '+name+'\n';
+  function tri(a,b,c){
+    const ax=pos.getX(a),ay=pos.getY(a),az=pos.getZ(a);
+    const bx=pos.getX(b),by=pos.getY(b),bz=pos.getZ(b);
+    const cx=pos.getX(c),cy=pos.getY(c),cz=pos.getZ(c);
+    const ux=bx-ax,uy=by-ay,uz=bz-az;
+    const vx=cx-ax,vy=cy-ay,vz=cz-az;
+    let nx=uy*vz-uz*vy,ny=uz*vx-ux*vz,nz=ux*vy-uy*vx;
+    const nlen=Math.sqrt(nx*nx+ny*ny+nz*nz)||1;
+    nx/=nlen;ny/=nlen;nz/=nlen;
+    stl+='facet normal '+nx.toFixed(4)+' '+ny.toFixed(4)+' '+nz.toFixed(4)+'\n outer loop\n';
+    stl+='  vertex '+ax.toFixed(4)+' '+ay.toFixed(4)+' '+az.toFixed(4)+'\n';
+    stl+='  vertex '+bx.toFixed(4)+' '+by.toFixed(4)+' '+bz.toFixed(4)+'\n';
+    stl+='  vertex '+cx.toFixed(4)+' '+cy.toFixed(4)+' '+cz.toFixed(4)+'\n';
+    stl+=' endloop\nendfacet\n';
+  }
+  if(idx){for(let i=0;i<idx.count;i+=3)tri(idx.getX(i),idx.getX(i+1),idx.getX(i+2));}
+  else{for(let i=0;i<pos.count;i+=3)tri(i,i+1,i+2);}
+  stl+='endsolid '+name+'\n';
+  return stl;
+}
+function downloadFile(filename,content,mime){
+  const blob=new Blob([content],{type:mime||'text/plain'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download=filename;
+  document.body.appendChild(a);a.click();
+  setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);},200);
+}
+window.exportGearSTL=function(){
+  const geom=buildGearGeometry();if(!geom){alert('No gear geometry. Click REBUILD first.');return;}
+  const type=sv('g3d-type')||'spur';
+  const N=Math.round(v('g3d-N')||24),m=v('g3d-m')||3;
+  const filename='gear_'+type+'_N'+N+'_m'+m+'.stl';
+  const stl=geomToSTL(geom,'amni_calc_gear_'+type);
+  downloadFile(filename,stl,'application/sla');
+};
+window.exportGearJSON=function(){
+  const N=Math.round(v('g3d-N')||24),m=v('g3d-m')||3,phi=v('g3d-phi')||20;
+  const r=m*N/2,ra=r+m,rd=Math.max(r-1.25*m,0.5),rb=r*Math.cos(phi*Math.PI/180);
+  const data={
+    gear_type:sv('g3d-type')||'spur',
+    teeth:N,
+    module_mm:m,
+    pressure_angle_deg:phi,
+    helix_angle_deg:v('g3d-helix')||0,
+    face_width_mm:v('g3d-fw')||20,
+    bore_mm:v('g3d-bore')||0,
+    pitch_diameter_mm:2*r,
+    addendum_diameter_mm:2*ra,
+    base_diameter_mm:2*rb,
+    dedendum_diameter_mm:2*rd,
+    circular_pitch_mm:Math.PI*m,
+    diametral_pitch_per_in:25.4/m,
+    Lewis_Y_form_factor:lewisY(N),
+    standard:'AGMA / ISO 53 standard 20° involute',
+    generated_by:'Amni-Calc v5.3 (amni-scient.com/calc)',
+    iso_date:new Date().toISOString()
+  };
+  const filename='gear_'+data.gear_type+'_N'+N+'_m'+m+'.json';
+  downloadFile(filename,JSON.stringify(data,null,2),'application/json');
+};
+
+/* ============================================================
  * GEARS — Lewis form factor auto-lookup by tooth count
  * ============================================================ */
 const LEWIS_Y={12:0.245,13:0.261,14:0.277,15:0.290,16:0.296,17:0.303,18:0.309,19:0.314,20:0.322,21:0.328,22:0.331,24:0.337,26:0.346,28:0.353,30:0.359,34:0.371,38:0.384,43:0.397,50:0.409,60:0.422,75:0.435,100:0.447,150:0.460,300:0.472,400:0.480,1000:0.485};
@@ -1588,6 +1866,11 @@ window.addEventListener('DOMContentLoaded',()=>{
       injectPVExtras();
       /* Inject welder helpers: electrode selection + deposition + AWS prequalified joints */
       injectWeldExtras();
+      /* Inject 3D gear generator + STL export */
+      injectGearExtras();
+      /* Build first gear once Three.js loads */
+      const tryGear=()=>{if(window.THREE&&$('g3d-canvas')){window.rebuildGear3D();}else{setTimeout(tryGear,300);}};
+      tryGear();
       /* Re-run universal sweep so the newly-injected cards get wired */
       setTimeout(()=>{
         universalLiveCompute();
