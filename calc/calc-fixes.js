@@ -1205,6 +1205,306 @@ function plotFinEfficiency(){
 }
 
 /* ============================================================
+ * PUMPS — off-the-shelf curves vs system curve
+ * ============================================================ */
+const PUMP_MODELS={
+  'Goulds 3196 STX (1.5x3-13)':{Qbep:50,Hbep:35,Hmax:42,NPSHr:2.5,Pmax:100,rpm:1750,note:'Std end-suction process pump, ANSI B73.1'},
+  'Goulds 3196 MTX (3x4-13)':{Qbep:200,Hbep:32,Hmax:40,NPSHr:3.0,Pmax:300,rpm:1750,note:'Std process, mid-flow'},
+  'Goulds 3196 LTX (4x6-13)':{Qbep:500,Hbep:30,Hmax:38,NPSHr:4.5,Pmax:600,rpm:1750,note:'Larger LTX frame'},
+  'Goulds 3196 XLT (6x8-15)':{Qbep:1200,Hbep:35,Hmax:43,NPSHr:6.0,Pmax:1500,rpm:1750,note:'Extra-large process pump'},
+  'Grundfos CR 5-9 (multistage)':{Qbep:7,Hbep:90,Hmax:115,NPSHr:1.5,Pmax:15,rpm:2900,note:'Vertical multistage 9 stages, 50 Hz'},
+  'Grundfos CR 32-2-2':{Qbep:45,Hbep:25,Hmax:32,NPSHr:2.0,Pmax:75,rpm:2900,note:'Higher-flow multistage'},
+  'Sulzer AHLSTAR APP 22-200':{Qbep:300,Hbep:50,Hmax:60,NPSHr:3.0,Pmax:400,rpm:1450,note:'Process / pulp & paper'},
+  'KSB Etanorm 50-200':{Qbep:80,Hbep:40,Hmax:48,NPSHr:2.5,Pmax:150,rpm:2900,note:'EN 733 std centrifugal'},
+  'Crane Deming 5x4-10':{Qbep:400,Hbep:25,Hmax:30,NPSHr:3.5,Pmax:300,rpm:1750,note:'End-suction commercial'}
+};
+function injectPumpExtras(){
+  const view=$('v-pumps');if(!view)return;
+  const left=view.querySelector('.split>div:first-child');
+  const right=view.querySelector('.split>div:last-child');
+  if(!left||!right)return;
+  if(!$('pump-system-card')){
+    const card=document.createElement('div');card.className='card';card.id='pump-system-card';
+    card.innerHTML='<h3>OFF-THE-SHELF PUMP vs SYSTEM CURVE</h3>'+
+      '<div class="row">'+
+        '<div class="field"><label for="pmp-model">PUMP MODEL</label><select id="pmp-model"></select></div>'+
+        '<div class="field"><label for="pmp-hstat">STATIC HEAD (m)</label><input type="number" id="pmp-hstat" value="10" step="any"></div>'+
+        '<div class="field"><label for="pmp-kfric">FRICTION COEFF k (m·s²/m⁶)</label><input type="number" id="pmp-kfric" value="0.005" step="any"></div>'+
+      '</div>'+
+      '<button class="btn btn-sm" onclick="calcPumpCurve()">PLOT</button>';
+    left.appendChild(card);
+  }
+  const sel=$('pmp-model');
+  if(sel&&!sel.children.length){
+    Object.keys(PUMP_MODELS).forEach(k=>{const o=document.createElement('option');o.value=k;o.textContent=k+' — '+PUMP_MODELS[k].Qbep+' m³/h @ '+PUMP_MODELS[k].Hbep+' m';sel.appendChild(o);});
+  }
+  if(!$('p-pump-curve')){
+    const card=document.createElement('div');card.className='card';card.style.marginTop='.6rem';
+    card.innerHTML='<h3>PUMP / SYSTEM CURVES</h3><div id="p-pump-curve" style="width:100%;height:340px"></div><div id="pump-op-out" style="margin-top:.4rem"></div>';
+    right.appendChild(card);
+  }
+}
+window.calcPumpCurve=function(){
+  const model=PUMP_MODELS[sv('pmp-model')]||PUMP_MODELS['Goulds 3196 MTX (3x4-13)'];
+  const Hstat=v('pmp-hstat')||10,k=v('pmp-kfric')||0.005;
+  /* Pump curve as parabola: H = Hmax - (Hmax-Hbep)*(Q/Qbep)² */
+  const Qmax=model.Qbep*1.6;
+  const npts=80;
+  const Qs=Array.from({length:npts},(_,i)=>i*Qmax/(npts-1));
+  const Hpump=Qs.map(Q=>model.Hmax-(model.Hmax-model.Hbep)*Math.pow(Q/model.Qbep,2));
+  const Hsys=Qs.map(Q=>Hstat+k*Q*Q);
+  /* Find intersection by interpolation */
+  let opIdx=0;for(let i=1;i<npts;i++){if(Hsys[i]>=Hpump[i]&&Hsys[i-1]<Hpump[i-1]){opIdx=i;break;}}
+  const Qop=Qs[opIdx]||model.Qbep,Hop=Hpump[opIdx]||model.Hbep;
+  /* Efficiency proxy: parabola peaking at Qbep */
+  const effMax=0.78,effOp=effMax*(1-Math.pow((Qop-model.Qbep)/(model.Qbep*0.7),2));
+  /* Brake power: P = ρ·g·Q·H/η; ρ=1000 kg/m³, Q m³/s, H m */
+  const Qsi=Qop/3600;
+  const Pbrake=1000*9.81*Qsi*Hop/Math.max(0.1,effOp)/1000;
+  const t=pTheme();
+  plot('p-pump-curve',[
+    {x:Qs,y:Hpump,mode:'lines',line:{color:t.accent,width:2.5},name:'Pump H-Q'},
+    {x:Qs,y:Hsys,mode:'lines',line:{color:'#3b82f6',width:2.5,dash:'dash'},name:'System curve'},
+    {x:[Qop],y:[Hop],mode:'markers+text',marker:{color:'#22c55e',size:13,symbol:'star',line:{color:'#000',width:1}},text:['OP: '+Qop.toFixed(0)+' m³/h, '+Hop.toFixed(1)+' m'],textposition:'top right',textfont:{color:t.text,size:11}},
+    {x:[model.Qbep],y:[model.Hbep],mode:'markers+text',marker:{color:'#f59e0b',size:10,symbol:'diamond'},text:['BEP'],textposition:'bottom right',textfont:{color:t.text,size:10}}
+  ],{xaxis:{title:'Flow Q (m³/h)',range:[0,Qmax]},yaxis:{title:'Head H (m)',range:[0,model.Hmax*1.1]},showlegend:true,legend:{x:0.65,y:0.98,bgcolor:'rgba(0,0,0,0)',font:{size:10,color:t.text}}});
+  const out=$('pump-op-out');if(out){
+    const offBep=Math.abs(Qop-model.Qbep)/model.Qbep*100;
+    const opStatus=offBep<10?'ok':offBep<30?'warn':'err';
+    const opLabel=offBep<10?'In sweet spot':offBep<30?'Off BEP — efficiency drop':'Far from BEP — recirc/cavitation risk';
+    out.innerHTML='<div class="result-grid">'+
+      [['Operating Q',Qop.toFixed(1)+' m³/h'],['Operating H',Hop.toFixed(1)+' m'],['Off-BEP %',offBep.toFixed(1)+'%',opStatus],['Efficiency',(effOp*100).toFixed(1)+'%'],['Brake power',Pbrake.toFixed(2)+' kW'],['NPSHr (BEP)',model.NPSHr.toFixed(1)+' m']].map(([l,v,c])=>`<div class="result-item"><div class="lbl">${l}</div><div class="val ${c||''}">${v}</div></div>`).join('')+
+      '</div><p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem"><strong>'+opLabel+'</strong>. '+model.note+'. Operate within ±20% of BEP. Verify NPSHa &gt; NPSHr+1m. Below 50% BEP risk: recirculation, vibration, seal failure. Above 120% BEP: low NPSHa margin, cavitation, motor overload.</p>';
+  }
+};
+
+/* ============================================================
+ * PRESSURE VESSELS — head types, nozzle reinforcement, lifting lug
+ * ============================================================ */
+function injectPVExtras(){
+  const view=$('v-pv');if(!view)return;
+  const left=view.querySelector('.split>div:first-child');
+  const right=view.querySelector('.split>div:last-child');
+  if(!left||!right)return;
+  if(!$('pv-head-card')){
+    const card=document.createElement('div');card.className='card';card.id='pv-head-card';
+    card.innerHTML='<h3>HEAD THICKNESS (ASME VIII-1)</h3>'+
+      '<div class="row">'+
+        '<div class="field"><label for="pvh-type">HEAD TYPE</label><select id="pvh-type"><option value="hemi">HEMISPHERICAL</option><option value="ellip" selected>ELLIPSOIDAL 2:1</option><option value="tori">TORISPHERICAL (F&D)</option><option value="flat">FLAT (gasketed)</option></select></div>'+
+        '<div class="field"><label for="pvh-p">P (MPa)</label><input type="number" id="pvh-p" value="1.5" step="any"></div>'+
+        '<div class="field"><label for="pvh-d">D (mm, internal)</label><input type="number" id="pvh-d" value="1000" step="any"></div>'+
+        '<div class="field"><label for="pvh-sa">S allow (MPa)</label><input type="number" id="pvh-sa" value="120" step="any"></div>'+
+        '<div class="field"><label for="pvh-e">E (joint eff)</label><input type="number" id="pvh-e" value="1.0" step="0.05"></div>'+
+        '<div class="field"><label for="pvh-ca">C.A. (mm)</label><input type="number" id="pvh-ca" value="3" step="any"></div>'+
+      '</div>'+
+      '<button class="btn btn-sm" onclick="calcPVHead()">t_head</button>';
+    left.appendChild(card);
+  }
+  if(!$('pv-nozzle-card')){
+    const card=document.createElement('div');card.className='card';card.id='pv-nozzle-card';
+    card.innerHTML='<h3>NOZZLE REINFORCEMENT (UG-37)</h3>'+
+      '<div class="row">'+
+        '<div class="field"><label for="pvn-do">NOZZLE OD (mm)</label><input type="number" id="pvn-do" value="100" step="any"></div>'+
+        '<div class="field"><label for="pvn-tn">NOZZLE t (mm)</label><input type="number" id="pvn-tn" value="6" step="any"></div>'+
+        '<div class="field"><label for="pvn-ts">SHELL t (mm)</label><input type="number" id="pvn-ts" value="10" step="any"></div>'+
+        '<div class="field"><label for="pvn-tr">SHELL t_req (mm)</label><input type="number" id="pvn-tr" value="6" step="any"></div>'+
+      '</div>'+
+      '<button class="btn btn-sm" onclick="calcPVNozzle()">A_req / Pad?</button>';
+    left.appendChild(card);
+  }
+  if(!$('pv-lug-card')){
+    const card=document.createElement('div');card.className='card';card.id='pv-lug-card';
+    card.innerHTML='<h3>LIFTING LUG (single-lug)</h3>'+
+      '<div class="row">'+
+        '<div class="field"><label for="pvl-w">VESSEL WT (kg)</label><input type="number" id="pvl-w" value="2000" step="any"></div>'+
+        '<div class="field"><label for="pvl-n"># LUGS</label><input type="number" id="pvl-n" value="2" step="1"></div>'+
+        '<div class="field"><label for="pvl-d">PIN HOLE Ø (mm)</label><input type="number" id="pvl-d" value="40" step="any"></div>'+
+        '<div class="field"><label for="pvl-t">LUG t (mm)</label><input type="number" id="pvl-t" value="20" step="any"></div>'+
+        '<div class="field"><label for="pvl-w2">LUG W (mm)</label><input type="number" id="pvl-w2" value="120" step="any"></div>'+
+        '<div class="field"><label for="pvl-sa">S allow (MPa)</label><input type="number" id="pvl-sa" value="120" step="any"></div>'+
+      '</div>'+
+      '<button class="btn btn-sm" onclick="calcPVLug()">CHECK</button>';
+    left.appendChild(card);
+  }
+}
+window.calcPVHead=function(){
+  const type=sv('pvh-type')||'ellip';
+  const P=v('pvh-p'),D=v('pvh-d'),S=v('pvh-sa'),E=v('pvh-e'),CA=v('pvh-ca')||0;
+  if(!isFinite(P)||!isFinite(D)||!isFinite(S)||!isFinite(E))return;
+  let t,formula;
+  switch(type){
+    case 'hemi':t=P*D/(2*(2*S*E-0.2*P));formula='t = P·D / (2·(2·S·E − 0.2·P))';break;
+    case 'ellip':t=P*D/(2*S*E-0.2*P);formula='t = P·D / (2·S·E − 0.2·P) (K=1 for 2:1)';break;
+    case 'tori':t=0.885*P*D/(S*E-0.1*P);formula='t = 0.885·P·L / (S·E − 0.1·P) (M=1.0 for L/r=10:1)';break;
+    case 'flat':t=D*Math.sqrt(0.33*P/(S*E));formula='t = D·√(C·P/(S·E)) (C=0.33 gasketed)';break;
+  }
+  const tTotal=t+CA;
+  const pvCard=$('pv-head-card');if(!pvCard)return;
+  let html=pvCard.innerHTML.split('<button')[0]+'<button class="btn btn-sm" onclick="calcPVHead()">t_head</button>';
+  html+='<div class="result-grid" style="margin-top:.5rem">'+
+    [['t_required',t.toFixed(3)+' mm'],['t_total (with C.A.)',tTotal.toFixed(3)+' mm'],['Head type',type==='hemi'?'Hemispherical':type==='ellip'?'Ellipsoidal 2:1':type==='tori'?'Torispherical F&D':'Flat']].map(([l,v])=>`<div class="result-item"><div class="lbl">${l}</div><div class="val">${v}</div></div>`).join('')+
+    '</div><p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem"><strong>Formula:</strong> '+formula+'. <strong>Selection:</strong> Hemi gives thinnest head but tallest profile and most expensive. Ellipsoidal 2:1 is standard process choice. Torispherical (F&D) uses flat-bottom forming, common low-pressure storage. Add corrosion allowance per service. Verify spot-radiography per UW-12 for E (1.0 full RT, 0.85 spot, 0.70 none).</p>';
+  pvCard.innerHTML=html;
+};
+window.calcPVNozzle=function(){
+  const dO=v('pvn-do'),tn=v('pvn-tn'),ts=v('pvn-ts'),tr=v('pvn-tr');
+  if(!isFinite(dO)||!isFinite(tn)||!isFinite(ts)||!isFinite(tr))return;
+  const d=dO-2*tn;
+  const A_req=d*tr;
+  const A1=d*(ts-tr);
+  const A2=2*tn*(2.5*tn);
+  const A_avail=A1+A2;
+  const pad_needed=A_avail<A_req;
+  const A_short=A_req-A_avail;
+  const pad_t=pad_needed?A_short/(2*dO):0;
+  const card=$('pv-nozzle-card');if(!card)return;
+  let html=card.innerHTML.split('<button')[0]+'<button class="btn btn-sm" onclick="calcPVNozzle()">A_req / Pad?</button>';
+  html+='<div class="result-grid" style="margin-top:.5rem">'+
+    [['Opening d',d.toFixed(1)+' mm'],['A required',A_req.toFixed(1)+' mm²'],['A from shell',A1.toFixed(1)+' mm²'],['A from nozzle',A2.toFixed(1)+' mm²'],['A total available',A_avail.toFixed(1)+' mm²',A_avail>=A_req?'ok':'err'],['Pad needed?',pad_needed?'YES':'NO',pad_needed?'warn':'ok'],['Pad t (min)',pad_needed?pad_t.toFixed(1)+' mm':'—']].map(([l,v,c])=>`<div class="result-item"><div class="lbl">${l}</div><div class="val ${c||''}">${v}</div></div>`).join('')+
+    '</div><p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem">UG-37 area-replacement rule: cross-sectional area removed from shell by the opening (A_req = d·t_r) must be replaced by metal within the reinforcement zone. Available metal = excess shell thickness × d + nozzle wall × 2.5·t_n on each side. If short, add a reinforcement pad. Pad diameter typically d_pad = 2·d for full credit.</p>';
+  card.innerHTML=html;
+};
+window.calcPVLug=function(){
+  const W=v('pvl-w'),n=Math.max(1,v('pvl-n')||1),d=v('pvl-d'),t=v('pvl-t'),w=v('pvl-w2'),S=v('pvl-sa');
+  if(!isFinite(W))return;
+  const F_per=W*9.81/n;
+  const factor=2.0;
+  const F_design=F_per*factor;
+  const A_pin=d*t;
+  const sigma_bear=F_design/A_pin;
+  const A_tear=2*((w-d)/2)*t;
+  const tau_tear=F_design/A_tear;
+  const A_net=(w-d)*t;
+  const sigma_tens=F_design/A_net;
+  const card=$('pv-lug-card');if(!card)return;
+  let html=card.innerHTML.split('<button')[0]+'<button class="btn btn-sm" onclick="calcPVLug()">CHECK</button>';
+  html+='<div class="result-grid" style="margin-top:.5rem">'+
+    [['F per lug (1g)',F_per.toFixed(0)+' N'],['F design (×'+factor+')',F_design.toFixed(0)+' N'],['σ bearing',sigma_bear.toFixed(1)+' MPa',sigma_bear<S?'ok':'err'],['τ tear-out',tau_tear.toFixed(1)+' MPa',tau_tear<0.6*S?'ok':'err'],['σ tensile (net sec)',sigma_tens.toFixed(1)+' MPa',sigma_tens<S?'ok':'err'],['Allowable',S+' MPa']].map(([l,v,c])=>`<div class="result-item"><div class="lbl">${l}</div><div class="val ${c||''}">${v}</div></div>`).join('')+
+    '</div><p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem"><strong>ASME B30.20 / OSHA:</strong> Design factor 2× for fixed lugs, 5× for slings. Bearing stress on pin: F/(d·t). Tear-out (double shear): F/(2·a·t) where a = edge distance. Tensile through net section: F/((w-d)·t). All < S_allow. Welded lug to shell: check fillet weld + base metal HAZ separately.</p>';
+  card.innerHTML=html;
+};
+
+/* ============================================================
+ * WELDS — electrode selection, deposition rate, prequalified joints
+ * ============================================================ */
+const WELD_ELECTRODES={
+  'mild_steel':{
+    label:'Mild / Carbon Steel (A36, 1018, A572 Gr 50)',
+    SMAW:['E6010 (DCEP all-pos, root)','E6011 (AC root)','E6013 (AC light)','E7018 (low-H general)','E7024 (high-dep, fillet only)'],
+    GMAW:['ER70S-3','ER70S-6 (Si, 75/25 Ar/CO₂)'],
+    FCAW:['E71T-1 (gas-shielded)','E71T-11 (self-shielded)'],
+    GTAW:['ER70S-2 (TIG)']
+  },
+  'stainless_300':{
+    label:'Stainless 304 / 304L / 321',
+    SMAW:['E308L-16 (304)','E347-16 (321 stabilized)'],
+    GMAW:['ER308LSi (98/2 Ar/O₂)'],
+    FCAW:['E308LT0-1'],
+    GTAW:['ER308L (TIG, Ar)']
+  },
+  'stainless_316':{
+    label:'Stainless 316 / 316L',
+    SMAW:['E316L-16'],
+    GMAW:['ER316LSi'],
+    FCAW:['E316LT0-1'],
+    GTAW:['ER316L']
+  },
+  'aluminum':{
+    label:'Aluminum 5xxx / 6xxx',
+    SMAW:['Generally not recommended'],
+    GMAW:['ER4043 (general 6061)','ER5356 (5xxx, salt-water)'],
+    FCAW:['Not used'],
+    GTAW:['ER4043 / ER5356 (TIG, Ar or Ar/He)']
+  },
+  'duplex_2205':{
+    label:'Duplex Stainless 2205',
+    SMAW:['E2209-16 (slightly over-alloyed)'],
+    GMAW:['ER2209'],
+    FCAW:['E2209T1-1'],
+    GTAW:['ER2209 (control heat input)']
+  },
+  'inconel_625':{
+    label:'Nickel / Inconel 625',
+    SMAW:['ENiCrMo-3'],
+    GMAW:['ERNiCrMo-3'],
+    FCAW:['ENiCrMo3T1-4'],
+    GTAW:['ERNiCrMo-3 (TIG, Ar)']
+  }
+};
+function injectWeldExtras(){
+  const view=$('v-welds');if(!view)return;
+  const left=view.querySelector('.split>div:first-child');
+  const right=view.querySelector('.split>div:last-child');
+  if(!left||!right)return;
+  if(!$('weld-elec-card')){
+    const card=document.createElement('div');card.className='card';card.id='weld-elec-card';
+    card.innerHTML='<h3>ELECTRODE / FILLER SELECTION</h3>'+
+      '<div class="row">'+
+        '<div class="field"><label for="we-base">BASE MATERIAL</label><select id="we-base">'+
+          Object.entries(WELD_ELECTRODES).map(([k,m])=>`<option value="${k}">${m.label}</option>`).join('')+
+        '</select></div>'+
+      '</div>'+
+      '<div id="weld-elec-out" style="margin-top:.5rem"></div>';
+    left.appendChild(card);
+  }
+  if(!$('weld-rate-card')){
+    const card=document.createElement('div');card.className='card';card.id='weld-rate-card';
+    card.innerHTML='<h3>DEPOSITION RATE</h3>'+
+      '<div class="row">'+
+        '<div class="field"><label for="wr-proc">PROCESS</label><select id="wr-proc"><option value="SMAW">SMAW (stick)</option><option value="GMAW">GMAW (MIG)</option><option value="FCAW">FCAW (flux-core)</option><option value="GTAW">GTAW (TIG)</option><option value="SAW">SAW (sub-arc)</option></select></div>'+
+        '<div class="field"><label for="wr-amp">CURRENT (A)</label><input type="number" id="wr-amp" value="200" step="any"></div>'+
+        '<div class="field"><label for="wr-elec">ELECTRODE Ø (mm)</label><input type="number" id="wr-elec" value="3.2" step="0.1"></div>'+
+        '<div class="field"><label for="wr-eff">DEPOSIT EFF</label><input type="number" id="wr-eff" value="0.62" step="0.01"></div>'+
+        '<div class="field"><label for="wr-volt">VOLTAGE (V)</label><input type="number" id="wr-volt" value="24" step="0.5"></div>'+
+        '<div class="field"><label for="wr-tts">TRAVEL (mm/min)</label><input type="number" id="wr-tts" value="300" step="any"></div>'+
+      '</div>'+
+      '<button class="btn btn-sm" onclick="calcDeposition()">DEPOSITION + HEAT</button>';
+    left.appendChild(card);
+  }
+  if(!$('weld-prequal-card')){
+    const card=document.createElement('div');card.className='card';card.id='weld-prequal-card';card.style.marginTop='.6rem';
+    card.innerHTML='<h3>AWS D1.1 PREQUALIFIED JOINTS (REFERENCE)</h3>'+
+      '<table class="data" style="font-size:.78rem;width:100%"><thead><tr><th>JOINT</th><th>SYMBOL</th><th>USE</th></tr></thead><tbody>'+
+        '<tr><td>CJP (Complete Joint Penetration)</td><td>BTC, BTC-P</td><td>Full strength, dynamic load, code-required equiv. parent</td></tr>'+
+        '<tr><td>PJP (Partial Joint Penetration)</td><td>BTC-P5, BTC-P10</td><td>Static-only, stiffened columns, ~75-90% strength</td></tr>'+
+        '<tr><td>FILLET (T, lap, corner)</td><td>F, FT</td><td>Most common; throat = 0.707·leg; capacity by AWS</td></tr>'+
+        '<tr><td>BACKING-BAR</td><td>B-U2a, B-U4b</td><td>Single-side groove with permanent backing bar</td></tr>'+
+        '<tr><td>PARTIAL OPEN ROOT</td><td>B-U3c</td><td>Open-root double-V; needs back-gouging</td></tr>'+
+      '</tbody></table>'+
+      '<p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem">AWS D1.1 prequalified means WPS does not need PQR if all variables stay within tabulated ranges. Always verify base metal P-number, position (1G-4G or 1F-4F), preheat per Table 5.8.</p>';
+    right.appendChild(card);
+  }
+  /* Wire base-material change to update electrode list */
+  const baseSel=$('we-base');
+  if(baseSel)baseSel.addEventListener('change',renderElectrodes);
+  renderElectrodes();
+}
+function renderElectrodes(){
+  const out=$('weld-elec-out');if(!out)return;
+  const k=sv('we-base')||'mild_steel';const set=WELD_ELECTRODES[k];if(!set)return;
+  out.innerHTML='<div style="font-size:.78rem">'+
+    ['SMAW','GMAW','FCAW','GTAW'].map(proc=>
+      `<div style="margin:.3rem 0"><strong style="color:var(--accent)">${proc}:</strong> <span style="color:var(--text)">${set[proc].join(' · ')}</span></div>`
+    ).join('')+
+    '</div>';
+}
+window.calcDeposition=function(){
+  const proc=sv('wr-proc')||'SMAW',amp=v('wr-amp'),volt=v('wr-volt'),eff=v('wr-eff'),dia=v('wr-elec'),tts=v('wr-tts');
+  if(!isFinite(amp)||!isFinite(volt))return;
+  const PROC_FACT={SMAW:0.0046,GMAW:0.0058,FCAW:0.0070,GTAW:0.0024,SAW:0.0085};
+  const meltRate=(PROC_FACT[proc]||0.005)*amp;
+  const depRate=meltRate*eff;
+  const depRateLbHr=depRate*2.205;
+  const heat=(amp*volt*0.06/tts);
+  const card=$('weld-rate-card');if(!card)return;
+  let html=card.innerHTML.split('<button')[0]+'<button class="btn btn-sm" onclick="calcDeposition()">DEPOSITION + HEAT</button>';
+  html+='<div class="result-grid" style="margin-top:.5rem">'+
+    [['Melt rate',meltRate.toFixed(3)+' kg/hr'],['Deposit rate',depRate.toFixed(3)+' kg/hr'],['Deposit rate',depRateLbHr.toFixed(2)+' lb/hr'],['Heat input',heat.toFixed(2)+' kJ/mm',heat>3.5?'warn':heat>1.5?'ok':'warn'],['Process',proc]].map(([l,v,c])=>`<div class="result-item"><div class="lbl">${l}</div><div class="val ${c||''}">${v}</div></div>`).join('')+
+    '</div><p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem"><strong>Heat input:</strong> H = (A·V·0.06)/v_travel kJ/mm. <strong>Limits:</strong> Carbon steel 0.8–3.5 kJ/mm; HSLA 0.8–2.5; Duplex 0.5–2.0 (over-heat embrittlement); aluminum 0.6–2.0. Below 0.8 kJ/mm risks lack of fusion; above max risks HAZ softening / grain growth. <strong>Deposition efficiency:</strong> SMAW 60-65%, GMAW 92-95% (short-arc) / 88% (spray), FCAW 78-85%, GTAW 100% (no spatter), SAW 95-100%.</p>';
+  card.innerHTML=html;
+};
+
+/* ============================================================
  * GEARS — Lewis form factor auto-lookup by tooth count
  * ============================================================ */
 const LEWIS_Y={12:0.245,13:0.261,14:0.277,15:0.290,16:0.296,17:0.303,18:0.309,19:0.314,20:0.322,21:0.328,22:0.331,24:0.337,26:0.346,28:0.353,30:0.359,34:0.371,38:0.384,43:0.397,50:0.409,60:0.422,75:0.435,100:0.447,150:0.460,300:0.472,400:0.480,1000:0.485};
@@ -1282,6 +1582,12 @@ window.addEventListener('DOMContentLoaded',()=>{
       injectMotorExtras();
       /* Inject thermal extras: fin efficiency curve */
       injectThermalExtras();
+      /* Inject pump real curves vs system curve */
+      injectPumpExtras();
+      /* Inject pressure-vessel head + nozzle reinforcement + lifting lug */
+      injectPVExtras();
+      /* Inject welder helpers: electrode selection + deposition + AWS prequalified joints */
+      injectWeldExtras();
       /* Re-run universal sweep so the newly-injected cards get wired */
       setTimeout(()=>{
         universalLiveCompute();
@@ -1292,6 +1598,11 @@ window.addEventListener('DOMContentLoaded',()=>{
         if(typeof window.calcNemaFrame==='function')try{window.calcNemaFrame();}catch(e){}
         if(typeof window.calcACPower==='function')try{window.calcACPower();}catch(e){}
         if(typeof window.calcShock==='function')try{window.calcShock();}catch(e){}
+        if(typeof window.calcPumpCurve==='function')try{window.calcPumpCurve();}catch(e){}
+        if(typeof window.calcPVHead==='function')try{window.calcPVHead();}catch(e){}
+        if(typeof window.calcPVNozzle==='function')try{window.calcPVNozzle();}catch(e){}
+        if(typeof window.calcPVLug==='function')try{window.calcPVLug();}catch(e){}
+        if(typeof window.calcDeposition==='function')try{window.calcDeposition();}catch(e){}
       },400);
     },800);
   },400);
