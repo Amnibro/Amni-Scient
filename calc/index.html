@@ -338,12 +338,18 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 </div>
 </div>
 <div class="card">
-<h3>SUPPORTS (CLICK TO PLACE)</h3>
+<h3>SUPPORTS</h3>
+<p style="font-size:.7rem;color:var(--dim);margin:0 0 .6rem">Type exact positions for precise work, or click the canvas to place visually.</p>
+<div class="row" id="sup-typed-row" style="gap:.6rem;margin-bottom:.6rem">
+<div class="field"><label for="sup-typed-type">TYPE</label><select id="sup-typed-type"><option value="pin">PIN</option><option value="roller">ROLLER</option><option value="fixed">FIXED</option></select></div>
+<div class="field"><label for="sup-typed-pos">POSITION</label><div class="field-row"><input type="number" id="sup-typed-pos" step="any" placeholder="e.g. 0"><select id="sup-typed-pos-u" aria-label="unit"><option>mm</option><option>m</option><option>in</option><option>ft</option></select></div></div>
+<div class="field" style="flex:0 0 auto;align-self:flex-end"><button class="btn btn-sm" onclick="addTypedSupport()">+ ADD</button></div>
+</div>
 <div class="beam-toolbar">
 <button class="chip active" data-sup="pin" id="sup-pin">&#9650; PIN</button>
 <button class="chip" data-sup="roller" id="sup-roller">&#9711; ROLLER</button>
 <button class="chip" data-sup="fixed" id="sup-fixed">&#9632; FIXED</button>
-<button class="btn btn-sm" onclick="clearSupports()">CLEAR</button>
+<button class="btn btn-sm" onclick="clearSupports()">CLEAR ALL</button>
 </div>
 <div class="beam-canvas-wrap">
 <canvas id="c-beam-sup" class="canvas-draw" width="800" height="120"></canvas>
@@ -363,6 +369,12 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 </div>
 <button class="btn btn-fill" onclick="solveBeam()" style="margin-bottom:1rem">SOLVE BEAM</button>
 <div id="beam-results"></div>
+<div class="card" id="beam-diagrams" style="margin-top:1rem">
+<h3>SHEAR &amp; MOMENT DIAGRAMS</h3>
+<div id="p-shear" style="height:240px;width:100%"></div>
+<div id="p-moment" style="height:240px;width:100%;margin-top:.6rem"></div>
+<div id="p-deflection" style="height:240px;width:100%;margin-top:.6rem"></div>
+</div>
 </div>
 <div class="view" id="v-section">
 <h2>CROSS SECTION PROPERTIES</h2>
@@ -656,7 +668,30 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <div>
 <div class="card" id="spring-results">
 <h3>SPRING RESULTS</h3>
-<p style="font-size:.75rem;color:var(--dim)">Enter parameters and click Calculate</p>
+<p style="font-size:.75rem;color:var(--dim)">Enter parameters; results compute live</p>
+</div>
+<div class="card" id="spring-presets-card" style="margin-top:.6rem">
+<h3>PRESETS</h3>
+<div class="field"><label for="sp-preset">PRESET (filtered by TYPE)</label><select id="sp-preset"></select></div>
+<button class="btn btn-sm" onclick="applySpringPreset()" style="margin-top:.4rem">LOAD PRESET</button>
+</div>
+<div class="card" id="spring-combiner-card" style="margin-top:.6rem">
+<h3>SERIES / PARALLEL COMBINER</h3>
+<div class="row" style="gap:.5rem">
+<div class="field"><label for="sp-stack-arr">ARRANGEMENT</label><select id="sp-stack-arr"><option value="series">SERIES (rates add reciprocally)</option><option value="parallel">PARALLEL (rates add)</option></select></div>
+<div class="field"><label for="sp-stack-n"># OF SPRINGS</label><input type="number" id="sp-stack-n" value="2" min="1" max="20"></div>
+</div>
+<div id="sp-stack-out" style="margin-top:.5rem;font-size:.78rem;color:var(--dim)">Combined rate computes live.</div>
+</div>
+<div class="card" style="margin-top:.6rem">
+<h3>FORCE vs DEFLECTION</h3>
+<div id="p-spring-fd" style="height:240px;width:100%"></div>
+<p class="note" style="margin-top:.3rem;color:var(--dim);font-size:.7rem">Green band = working/ideal range (15–80% of solid-deflection capacity). Red dashed = solid-height limit.</p>
+</div>
+<div class="card" style="margin-top:.6rem">
+<h3>COMPRESSED vs FREE STATE</h3>
+<canvas id="c-spring-anim" width="500" height="240" style="width:100%;height:240px;background:var(--panel2);border-radius:3px;display:block"></canvas>
+<p class="note" style="margin-top:.3rem;color:var(--dim);font-size:.7rem">Free length on the left, deflected (under applied force) on the right.</p>
 </div>
 </div>
 </div>
@@ -2510,5 +2545,6 @@ window._calcSealWasm=(...args)=>calc_seal(...args);
 </script>
 <script src="./calc-overrides.js" defer></script>
 <script src="./calc-3d.js" defer></script>
+<script src="./calc-fixes.js" defer></script>
 </body>
 </html>
