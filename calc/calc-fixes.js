@@ -270,14 +270,25 @@ function populateSecPresets(){
   Object.entries(SECTION_PRESETS).forEach(([k,p])=>{
     const o=document.createElement('option');o.value=k;o.textContent=p.label;sel.appendChild(o);
   });
+  /* Inject snap selector into the presets card */
+  const presetCard=sel.closest('.card');
+  if(presetCard&&!presetCard.querySelector('#sec-snap')){
+    const snapDiv=document.createElement('div');
+    snapDiv.style.cssText='margin-top:.5rem;display:flex;gap:.5rem;align-items:center;font-size:.78rem';
+    snapDiv.innerHTML='<label for="sec-snap" style="color:var(--dim)">SNAP RESOLUTION:</label><select id="sec-snap" style="padding:3px 6px;background:var(--panel2);color:var(--text);border:1px solid var(--border);border-radius:3px"><option value="0.01">0.01 mm</option><option value="0.1">0.1 mm</option><option value="1" selected>1 mm</option><option value="10">10 mm</option><option value="100">100 mm</option></select><span style="color:var(--dim);font-size:.7rem">arrow keys step by this; values round to nearest snap unit on Tab</span>';
+    presetCard.insertBefore(snapDiv,sel.parentElement.nextSibling);
+  }
   renderSecParams();
   sel.addEventListener('change',()=>{renderSecParams();applyPreset();});
+  const snap=$('sec-snap');
+  if(snap)snap.addEventListener('change',()=>{renderSecParams();applyPreset();});
 }
 function renderSecParams(){
   const sel=$('sec-presets'),wrap=$('sec-preset-params');if(!sel||!wrap)return;
   const preset=SECTION_PRESETS[sel.value];if(!preset)return;
+  const snap=parseFloat(($('sec-snap')||{}).value)||1;
   wrap.innerHTML='<div class="row" style="gap:.5rem;flex-wrap:wrap">'+preset.params.map(p=>
-    `<div class="field" style="min-width:140px"><label for="secp-${p.id}">${p.label}</label><input type="number" id="secp-${p.id}" value="${p.def}" step="any" oninput="window.applyPreset()"></div>`
+    `<div class="field" style="min-width:140px"><label for="secp-${p.id}">${p.label}</label><input type="number" id="secp-${p.id}" value="${p.def}" step="${snap}" oninput="window.applyPreset()" onblur="this.value=(Math.round(parseFloat(this.value||0)/${snap})*${snap}).toFixed(${snap<1?Math.max(0,-Math.log10(snap)):0});window.applyPreset()"></div>`
   ).join('')+'</div>';
 }
 window.applyPreset=function(){
@@ -850,6 +861,138 @@ window.addEventListener('DOMContentLoaded',()=>{
 });
 
 /* ============================================================
+ * VIBRATION — shock pulse calculator (half-sine, sawtooth, terminal-peak)
+ * ============================================================ */
+function injectShockCard(){
+  const view=$('v-vibration');if(!view||$('shock-card'))return;
+  const left=view.querySelector('.split>div:first-child');if(!left)return;
+  const card=document.createElement('div');card.className='card';card.id='shock-card';
+  card.innerHTML='<h3>SHOCK PULSE</h3>'+
+    '<div class="row">'+
+      '<div class="field"><label for="sh-shape">PULSE SHAPE</label><select id="sh-shape"><option value="half-sine">HALF-SINE (most common)</option><option value="sawtooth">SAWTOOTH (terminal-peak)</option><option value="rectangular">RECTANGULAR (square)</option><option value="haversine">HAVERSINE (gentlest)</option></select></div>'+
+      '<div class="field"><label for="sh-amp">PEAK G</label><input type="number" id="sh-amp" value="50" step="any"></div>'+
+      '<div class="field"><label for="sh-dur">DURATION (ms)</label><input type="number" id="sh-dur" value="11" step="any"></div>'+
+      '<div class="field"><label for="sh-fn">SYSTEM f_n (Hz)</label><input type="number" id="sh-fn" value="50" step="any"></div>'+
+    '</div>'+
+    '<button class="btn btn-sm" onclick="calcShock()">SHOCK RESPONSE</button>';
+  left.appendChild(card);
+  /* Add output container in the right column */
+  const right=view.querySelector('.split>div:last-child');
+  if(right&&!$('p-shock')){
+    const outCard=document.createElement('div');outCard.className='card';outCard.style.marginTop='.6rem';
+    outCard.innerHTML='<h3>SHOCK RESPONSE SPECTRUM</h3><div id="p-shock" style="width:100%;height:280px"></div><div id="shock-out" style="margin-top:.4rem"></div>';
+    right.appendChild(outCard);
+  }
+}
+window.calcShock=function(){
+  const shape=sv('sh-shape')||'half-sine';
+  const G=v('sh-amp');const tau=v('sh-dur')/1000;const fn=v('sh-fn');
+  if(!isFinite(G)||!isFinite(tau)||!isFinite(fn)){return;}
+  const a_peak=G*9.81;
+  let dV;
+  switch(shape){
+    case 'half-sine':dV=2*a_peak*tau/Math.PI;break;
+    case 'sawtooth':dV=a_peak*tau/2;break;
+    case 'rectangular':dV=a_peak*tau;break;
+    case 'haversine':dV=a_peak*tau/2;break;
+    default:dV=a_peak*tau/2;
+  }
+  /* Shock response spectrum: max response of an SDOF oscillator at varying f_n
+   * Approximation using shock amplification factor curves. */
+  const fns=[];const Qs=[];
+  for(let i=0;i<60;i++){
+    const f=Math.pow(10,Math.log10(0.1)+i*(Math.log10(1000)-Math.log10(0.1))/59);
+    fns.push(f);
+    const omega=2*Math.PI*f;const omega_pulse=2*Math.PI/tau;const ratio=omega/omega_pulse;
+    let Q;
+    if(shape==='half-sine'){
+      Q=ratio<=0.5?2*ratio*Math.sin(Math.PI/(2*ratio))/(1-Math.pow(2*ratio,2)+1e-9):2*ratio/(Math.pow(2*ratio,2)-1+1e-9)*Math.cos(Math.PI/(2*ratio));
+    }else if(shape==='rectangular'){
+      Q=2*Math.abs(Math.sin(Math.PI*f*tau));
+    }else{
+      Q=2*Math.PI*f*tau<2?Math.sin(2*Math.PI*f*tau)/(2*Math.PI*f*tau)*ratio*2:0.5;
+    }
+    Qs.push(Math.min(2.5,Math.max(0,Math.abs(Q||0)*G)));
+  }
+  /* Peak response at user's system f_n */
+  const ratio_user=2*Math.PI*fn/(2*Math.PI/tau);
+  const Q_user=Qs.reduce((best,q,i)=>Math.abs(fns[i]-fn)<Math.abs(fns[best]-fn)?i:best,0);
+  const a_response=Qs[Q_user];
+  const t=pTheme();
+  plot('p-shock',[
+    {x:fns,y:Qs,mode:'lines',line:{color:t.accent,width:2.5},name:'SRS'},
+    {x:[fn],y:[a_response],mode:'markers+text',marker:{color:'#fff',size:11,symbol:'diamond',line:{color:'#000',width:1.5}},text:[fn+' Hz: '+a_response.toFixed(1)+' G'],textposition:'top right',textfont:{color:t.text,size:10}}
+  ],{xaxis:{title:'System f_n (Hz)',type:'log'},yaxis:{title:'Peak response (G)'},showlegend:false});
+  const out=$('shock-out');if(out){
+    const pulse_label={'half-sine':'half-sine','sawtooth':'sawtooth (terminal-peak)','rectangular':'rectangular (square)','haversine':'haversine'}[shape];
+    out.innerHTML='<div class="result-grid">'+
+      [['Peak accel',G+' G ('+a_peak.toFixed(0)+' m/s²)'],['Pulse '+pulse_label,(tau*1000).toFixed(1)+' ms'],['ΔV (impulse)',(dV*1000).toFixed(1)+' mm/s ('+dV.toFixed(3)+' m/s)'],['Response @ '+fn+' Hz',a_response.toFixed(2)+' G ('+(a_response*9.81).toFixed(0)+' m/s²)'],['Amplification',(a_response/G).toFixed(2)+'×']].map(([l,v])=>`<div class="result-item"><div class="lbl">${l}</div><div class="val">${v}</div></div>`).join('')+
+      '</div>'+
+      '<p style="margin-top:.4rem;color:var(--dim);font-size:.7rem">Half-sine ΔV = 2·a_peak·τ/π. SRS peaks near f_n ≈ 1/(2τ). MIL-STD-810 standard half-sine: 50G/11ms (functional shock), 100G/6ms (crash safety). Equipment design: target SRS amp factor ≤ 1.5 by stiffening (raise f_n) or isolating (lower f_n well below 1/τ).</p>';
+  }
+};
+
+/* ============================================================
+ * NEC AMPACITY — Plotly chart instead of inline text
+ * ============================================================ */
+const NEC_AMPACITY={
+  '14':{60:15,75:20,90:25},
+  '12':{60:20,75:25,90:30},
+  '10':{60:30,75:35,90:40},
+  '8':{60:40,75:50,90:55},
+  '6':{60:55,75:65,90:75},
+  '4':{60:70,75:85,90:95},
+  '3':{60:85,75:100,90:110},
+  '2':{60:95,75:115,90:130},
+  '1':{60:110,75:130,90:150},
+  '1/0':{60:125,75:150,90:170},
+  '2/0':{60:145,75:175,90:195},
+  '3/0':{60:165,75:200,90:225},
+  '4/0':{60:195,75:230,90:260},
+  '250':{60:215,75:255,90:290},
+  '300':{60:240,75:285,90:320},
+  '350':{60:260,75:310,90:350},
+  '400':{60:280,75:335,90:380},
+  '500':{60:320,75:380,90:430},
+  '600':{60:355,75:420,90:475},
+  '750':{60:400,75:475,90:535},
+  '1000':{60:455,75:545,90:615}
+};
+function injectNECChart(){
+  const view=$('v-nec');if(!view||$('p-nec-amp'))return;
+  const right=view.querySelector('.split>div:last-child');if(!right)return;
+  /* Find existing AMPACITY TABLE card and replace its <p> with our Plotly */
+  const cards=right.querySelectorAll('.card');
+  let ampCard=null;
+  cards.forEach(c=>{const h=c.querySelector('h3');if(h&&/AMPACITY/i.test(h.textContent))ampCard=c;});
+  if(!ampCard){
+    ampCard=document.createElement('div');ampCard.className='card';ampCard.style.marginTop='.6rem';
+    ampCard.innerHTML='<h3>NEC 310.16 AMPACITY (Cu, °C)</h3>';
+    right.appendChild(ampCard);
+  }
+  /* Remove text paragraph if any */
+  const p=ampCard.querySelector('p');if(p)p.remove();
+  let plotDiv=ampCard.querySelector('#p-nec-amp');
+  if(!plotDiv){
+    plotDiv=document.createElement('div');plotDiv.id='p-nec-amp';plotDiv.style.cssText='width:100%;height:340px';
+    ampCard.appendChild(plotDiv);
+  }
+  const awgs=Object.keys(NEC_AMPACITY);
+  const xs=awgs.map((_,i)=>i);
+  const t=pTheme();
+  plot('p-nec-amp',[
+    {x:xs,y:awgs.map(a=>NEC_AMPACITY[a][60]),mode:'lines+markers',line:{color:'#3b82f6',width:2},marker:{size:6},name:'60°C'},
+    {x:xs,y:awgs.map(a=>NEC_AMPACITY[a][75]),mode:'lines+markers',line:{color:'#f59e0b',width:2},marker:{size:6},name:'75°C'},
+    {x:xs,y:awgs.map(a=>NEC_AMPACITY[a][90]),mode:'lines+markers',line:{color:'#ef4444',width:2},marker:{size:6},name:'90°C'}
+  ],{
+    xaxis:{title:'Conductor size (smaller → larger →)',tickmode:'array',tickvals:xs,ticktext:awgs,tickangle:-45},
+    yaxis:{title:'Ampacity (A)',type:'log'},
+    showlegend:true,
+    legend:{x:0.02,y:0.98,bgcolor:'rgba(0,0,0,0)',font:{size:10,color:t.text}}
+  });
+}
+
+/* ============================================================
  * GEARS — Lewis form factor auto-lookup by tooth count
  * ============================================================ */
 const LEWIS_Y={12:0.245,13:0.261,14:0.277,15:0.290,16:0.296,17:0.303,18:0.309,19:0.314,20:0.322,21:0.328,22:0.331,24:0.337,26:0.346,28:0.353,30:0.359,34:0.371,38:0.384,43:0.397,50:0.409,60:0.422,75:0.435,100:0.447,150:0.460,300:0.472,400:0.480,1000:0.485};
@@ -917,25 +1060,79 @@ window.addEventListener('DOMContentLoaded',()=>{
       autoLewisY();
       /* Move enhanced Mohr's circle inputs to LEFT side of stress split */
       moveMohrToLeft();
+      /* Inject vibration shock pulse card */
+      injectShockCard();
+      /* Inject NEC ampacity Plotly chart */
+      injectNECChart();
+      /* Re-run universal sweep so the newly-injected shock card gets wired */
+      setTimeout(()=>{universalLiveCompute();injectNECChart();},400);
     },800);
   },400);
 });
 
 /* Move the .mohr-x card (injected by calc-overrides.js into the right
- * side of v-stress) to the LEFT side, so all inputs are together. */
+ * side of v-stress) to the LEFT side, so all inputs are together.
+ * Also reorganize: inputs go LEFT, Plotly chart goes RIGHT. */
 function moveMohrToLeft(){
   const stress=$('v-stress');if(!stress)return;
   const split=stress.querySelector('.split');if(!split||split.children.length<2)return;
   const mohrCard=split.children[1].querySelector('.mohr-x');
   if(mohrCard&&split.children[0]){
+    /* Move just the inputs portion; replace canvas with Plotly chart */
+    const canvas=mohrCard.querySelector('#c-mohr-x');
+    if(canvas){
+      const chartDiv=document.createElement('div');chartDiv.id='p-mohr-x';chartDiv.style.cssText='width:100%;height:380px';
+      const oldOut=mohrCard.querySelector('#mohr-x-out');
+      const chartCard=document.createElement('div');chartCard.className='card';chartCard.innerHTML='<h3>MOHR\'S CIRCLE (PLOTLY)</h3>';chartCard.appendChild(chartDiv);
+      split.children[1].appendChild(chartCard);
+      canvas.style.display='none';
+    }
     split.children[0].appendChild(mohrCard);
   }
-  /* Also retry after a delay in case injectMohrExtras runs late */
   setTimeout(()=>{
     const m=split.children[1].querySelector('.mohr-x');
     if(m)split.children[0].appendChild(m);
   },1500);
 }
+
+/* Override drawMohrEnhanced to render a true Plotly chart */
+window.addEventListener('DOMContentLoaded',()=>{
+  setTimeout(()=>{
+    const _orig=window.drawMohrEnhanced;
+    window.drawMohrEnhanced=function(){
+      const sx=v('mh-sx'),sy=v('mh-sy'),txy=v('mh-txy');
+      if(!isFinite(sx)||!isFinite(sy))return;
+      const cx=(sx+sy)/2,R=Math.sqrt(Math.pow((sx-sy)/2,2)+txy*txy);
+      const s1=cx+R,s2=cx-R,tmax=R;
+      const tp=Math.atan2(2*txy,sx-sy)/2*180/Math.PI;
+      const sv0=Math.sqrt(s1*s1-s1*s2+s2*s2);
+      const tr=Math.max(Math.abs(s1),Math.abs(s2),Math.abs(s1-s2))/2;
+      const npts=120;
+      const xCircle=Array.from({length:npts},(_,i)=>cx+R*Math.cos(i*2*Math.PI/(npts-1)));
+      const yCircle=Array.from({length:npts},(_,i)=>R*Math.sin(i*2*Math.PI/(npts-1)));
+      const t=pTheme();
+      const traces=[
+        {x:xCircle,y:yCircle,mode:'lines',line:{color:t.accent,width:2.5},name:"Mohr's circle",hoverinfo:'skip'},
+        {x:[sx,sy],y:[txy,-txy],mode:'lines+markers+text',line:{color:'#ef4444',width:1.5,dash:'dash'},marker:{color:'#ef4444',size:8},text:['X(σx,τxy)','Y(σy,-τxy)'],textposition:'top right',textfont:{color:t.text,size:10},name:'Stress points'},
+        {x:[s1],y:[0],mode:'markers+text',marker:{color:'#f59e0b',size:11,symbol:'diamond'},text:['σ₁='+s1.toFixed(1)],textposition:'top right',textfont:{color:t.text,size:10},name:'σ₁'},
+        {x:[s2],y:[0],mode:'markers+text',marker:{color:'#f59e0b',size:11,symbol:'diamond'},text:['σ₂='+s2.toFixed(1)],textposition:'top left',textfont:{color:t.text,size:10},name:'σ₂'},
+        {x:[cx],y:[R],mode:'markers+text',marker:{color:'#22c55e',size:9,symbol:'triangle-up'},text:['τ_max='+tmax.toFixed(1)],textposition:'top center',textfont:{color:t.text,size:10},name:'τ_max'},
+        {x:[cx],y:[-R],mode:'markers',marker:{color:'#22c55e',size:9,symbol:'triangle-down'},name:'-τ_max',hoverinfo:'skip'}
+      ];
+      const range=R*1.4;
+      plot('p-mohr-x',traces,{
+        xaxis:{title:'σ (MPa)',range:[Math.min(0,s2)-range*0.1,Math.max(0,s1)+range*0.1],zeroline:true,scaleanchor:'y',scaleratio:1},
+        yaxis:{title:'τ (MPa)',range:[-range*1.1,range*1.1],zeroline:true},
+        showlegend:false
+      });
+      const out=$('mohr-x-out');if(out){
+        out.innerHTML='<div class="result-grid">'+
+          [['σ₁',s1.toFixed(2)+' MPa'],['σ₂',s2.toFixed(2)+' MPa'],['τ_max',tmax.toFixed(2)+' MPa'],['Center σ_avg',cx.toFixed(2)+' MPa'],['Radius R',R.toFixed(2)+' MPa'],['θ_p',tp.toFixed(2)+'°'],['σ_vM (2D)',sv0.toFixed(2)+' MPa'],['τ_Tresca',tr.toFixed(2)+' MPa']].map(([l,v])=>`<div class="result-item"><div class="lbl">${l}</div><div class="val">${v}</div></div>`).join('')+
+          '</div><p style="margin-top:.4rem;color:var(--dim);font-size:.72rem">Principal axes rotate '+tp.toFixed(1)+'° from x-axis. Use σ_vM for ductile-yield FoS, σ₁ for brittle/fatigue. Tresca more conservative than vM by ~15%.</p>';
+      }
+    };
+  },600);
+});
 
 console.log('[calc-fixes] v5.2.0 layer loaded');
 })();
