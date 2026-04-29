@@ -1,5 +1,15 @@
 ﻿# Changelog 
 
+## [5.3.8] - 2026-04-29 - /learn 8-game UX repair sweep
+- **Sudoku**: distinct selection palette — selected cell now amber `#f39c12`, same-value tint amber, row/col/box neutral white-5, num-covered nearly transparent. Fixes "whole grid blocks green" because the previous teal tints clashed with the green grid borders + given-cell text.
+- **Number Memory**: replaced `inp.onkeydown=e=>e.key==='Enter'&&go()` (returned `false` for non-Enter keys → DOM-cancelled the keypress on a property handler) with `addEventListener` + numeric-only `input` filter. Typing now works.
+- **Word Search**: replaced per-cell pointerenter (which broke under implicit pointer-capture on touch) with grid-level pointermove + `elementFromPoint` hit-test. Releases capture on pointerdown so finger-drag selects across cells. Also accepts reversed-direction selections.
+- **Pong**: defaulted to Easy with active-button highlight. Easy: AI tracking 0.025, ball spd 2.0, paddle 80px, accel 1.005, ball-speed clamp 5. Medium/Hard scaled accordingly. Round HUD resets on difficulty change.
+- **Flappy Jump**: gravity 0.4 → 0.26, flap -6.2 → -5.4, gap 120 → 160 (min 130), pipe spacing 180 → 220, terminal-velocity clamp 8 px/frame, milestone progression now fires once per 10-score band instead of every frame at the boundary.
+- **Trail Making**: canvas `onclick` → `onpointerdown` with rect-scaled coords + `touch-action:manipulation`. Taps now register on touchscreens.
+- **Pull the Pin**: replaced random pin/lava/ball scatter with deterministic logic — good ball directly above goal held by horizontal pin; lvl 3+ adds side-column lava with its own pin and a vertical wall pin keeping it away from the goal column; lvl 5+ mirrors the second lava on the opposite side and adds a bonus star. Pin tap radius widened, scaled coords, `touch-action:none`.
+- **Fill the Cup**: fill speed 0.5–0.95 → 0.20–0.30 at lvl 1 (caps near 0.80 at lvl 12); target range 15–85 → 30–85; perfect tolerance ±2 → ±3, close ±8 → ±10; close/overflow/short now show feedback toasts; pointerdown/up `preventDefault` + `touch-action:none`; pointercancel auto-pours so a finger-slide-off doesn't lock the level.
+
 ## [5.3.0 → 5.3.4] - 2026-04-27 - /calc deep feature batch (5 iterations via /loop "fix them all")
 
 User-driven sweep continuing v5.2.0. Each item below was a specific gap or bug in the live calc.
