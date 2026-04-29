@@ -12,6 +12,7 @@
 const $=id=>document.getElementById(id);
 const v=id=>{const e=$(id);return e?parseFloat(e.value):NaN;};
 const sv=id=>{const e=$(id);return e?e.value:'';};
+function setCardOut(cardId,html){const card=$(cardId);if(!card)return;let out=card.querySelector(':scope > .card-out');if(!out){out=document.createElement('div');out.className='card-out';out.style.marginTop='.5rem';card.appendChild(out);}out.innerHTML=html;}
 function pTheme(){
   const css=getComputedStyle(document.documentElement);
   const isLight=(document.documentElement.getAttribute('data-theme')||'dark')==='light';
@@ -493,6 +494,8 @@ function universalLiveCompute(){
       };
       card.querySelectorAll('input,select').forEach(el=>{
         cardScopedInputs.add(el);
+        if(el.dataset.calcWired)return;
+        el.dataset.calcWired='1';
         el.addEventListener('input',fire);el.addEventListener('change',fire);
       });
       /* Fire once on init for this card's handlers */
@@ -514,6 +517,8 @@ function universalLiveCompute(){
     };
     view.querySelectorAll('input,select').forEach(el=>{
       if(cardScopedInputs.has(el))return;
+      if(el.dataset.calcWired)return;
+      el.dataset.calcWired='1';
       el.addEventListener('input',vFire);el.addEventListener('change',vFire);
     });
     /* Hide compute buttons that are now redundant */
@@ -1031,14 +1036,10 @@ window.calcXfmr=function(){
   const I2t_thermal=Math.pow(SCC_s,2)*0.1;
   const Z_per_unit=Z/100;
   const turnsRatio=Vp/Vs;
-  const out=$('xfmr-card');if(!out)return;
-  let html=out.innerHTML.split('<button')[0];
-  html+='<button class="btn btn-sm" onclick="calcXfmr()">FLA / SCC</button>';
-  html+='<div class="result-grid" style="margin-top:.5rem">'+
+  setCardOut('xfmr-card','<div class="result-grid">'+
     [['Primary FLA',FLA_p.toFixed(1)+' A'],['Secondary FLA',FLA_s.toFixed(1)+' A'],['Turns ratio',turnsRatio.toFixed(2)+':1'],['SCC (sec, 3-cyc)',SCC_s.toFixed(0)+' A',SCC_s>10000?'warn':'ok'],['Z per-unit',Z_per_unit.toFixed(4)],['I²t (~6-cyc, 0.1s)',I2t_thermal.toExponential(2)+' A²·s']].map(([l,v,c])=>`<div class="result-item"><div class="lbl">${l}</div><div class="val ${c||''}">${v}</div></div>`).join('')+
     '</div>'+
-    '<p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem"><strong>NEC 240.21 secondary tap rules:</strong> 10-ft tap allows downstream OCPD if conductors ≥ 1/10 of primary OCPD rating; 25-ft tap requires conductors ≥ 1/3 of primary rating. <strong>Short-circuit:</strong> SCC = FLA / (Z/100) — coordinate with branch breaker AIC rating. <strong>Inrush:</strong> typical 8-12× FLA for first cycle, decay over 0.1 s. Use NEMA TP 1 efficiencies for sizing-vs-loss tradeoff.</p>';
-  out.innerHTML=html;
+    '<p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem"><strong>NEC 240.21 secondary tap rules:</strong> 10-ft tap allows downstream OCPD if conductors ≥ 1/10 of primary OCPD rating; 25-ft tap requires conductors ≥ 1/3 of primary rating. <strong>Short-circuit:</strong> SCC = FLA / (Z/100) — coordinate with branch breaker AIC rating. <strong>Inrush:</strong> typical 8-12× FLA for first cycle, decay over 0.1 s. Use NEMA TP 1 efficiencies for sizing-vs-loss tradeoff.</p>');
 };
 window.calcACPower=function(){
   /* Override the obfuscated calcACPower to also draw a Plotly phasor */
@@ -1168,14 +1169,10 @@ window.calcNemaFrame=function(){
   /* TEFC adds typically 1 frame size (e.g. 213T → 215T) */
   const tefcFrame=enc==='TEFC'&&frame?frame.replace(/T$/,'TZ').replace(/(\d{3})/,m=>(parseInt(m)+2)+''):frame;
   const finalFrame=enc==='TEFC'?tefcFrame:frame;
-  const card=$('mt-frame-card');if(!card)return;
-  let html=card.innerHTML.split('<button')[0];
-  html+='<button class="btn btn-sm" onclick="calcNemaFrame()">FRAME</button>';
-  html+='<div class="result-grid" style="margin-top:.5rem">'+
+  setCardOut('mt-frame-card','<div class="result-grid">'+
     [['Required HP',pick+' HP'],['NEMA frame',finalFrame||'—'],['Speed class',rpm+' rpm sync ('+(rpm===3600?'2-pole':rpm===1800?'4-pole':rpm===1200?'6-pole':'8-pole')+')'],['Enclosure',enc]].map(([l,v])=>`<div class="result-item"><div class="lbl">${l}</div><div class="val">${v}</div></div>`).join('')+
     '</div>'+
-    '<p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem">NEMA MG-1 standard frames. T-frame (1964+) replaces older U-frame. TEFC frames typically one size up from ODP for same HP. Shaft and bolt patterns are interchangeable within frame number for OEM swap-out.</p>';
-  card.innerHTML=html;
+    '<p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem">NEMA MG-1 standard frames. T-frame (1964+) replaces older U-frame. TEFC frames typically one size up from ODP for same HP. Shaft and bolt patterns are interchangeable within frame number for OEM swap-out.</p>');
 };
 
 /* ============================================================
@@ -1339,12 +1336,9 @@ window.calcPVHead=function(){
     case 'flat':t=D*Math.sqrt(0.33*P/(S*E));formula='t = D·√(C·P/(S·E)) (C=0.33 gasketed)';break;
   }
   const tTotal=t+CA;
-  const pvCard=$('pv-head-card');if(!pvCard)return;
-  let html=pvCard.innerHTML.split('<button')[0]+'<button class="btn btn-sm" onclick="calcPVHead()">t_head</button>';
-  html+='<div class="result-grid" style="margin-top:.5rem">'+
+  setCardOut('pv-head-card','<div class="result-grid">'+
     [['t_required',t.toFixed(3)+' mm'],['t_total (with C.A.)',tTotal.toFixed(3)+' mm'],['Head type',type==='hemi'?'Hemispherical':type==='ellip'?'Ellipsoidal 2:1':type==='tori'?'Torispherical F&D':'Flat']].map(([l,v])=>`<div class="result-item"><div class="lbl">${l}</div><div class="val">${v}</div></div>`).join('')+
-    '</div><p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem"><strong>Formula:</strong> '+formula+'. <strong>Selection:</strong> Hemi gives thinnest head but tallest profile and most expensive. Ellipsoidal 2:1 is standard process choice. Torispherical (F&D) uses flat-bottom forming, common low-pressure storage. Add corrosion allowance per service. Verify spot-radiography per UW-12 for E (1.0 full RT, 0.85 spot, 0.70 none).</p>';
-  pvCard.innerHTML=html;
+    '</div><p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem"><strong>Formula:</strong> '+formula+'. <strong>Selection:</strong> Hemi gives thinnest head but tallest profile and most expensive. Ellipsoidal 2:1 is standard process choice. Torispherical (F&D) uses flat-bottom forming, common low-pressure storage. Add corrosion allowance per service. Verify spot-radiography per UW-12 for E (1.0 full RT, 0.85 spot, 0.70 none).</p>');
 };
 window.calcPVNozzle=function(){
   const dO=v('pvn-do'),tn=v('pvn-tn'),ts=v('pvn-ts'),tr=v('pvn-tr');
@@ -1357,12 +1351,9 @@ window.calcPVNozzle=function(){
   const pad_needed=A_avail<A_req;
   const A_short=A_req-A_avail;
   const pad_t=pad_needed?A_short/(2*dO):0;
-  const card=$('pv-nozzle-card');if(!card)return;
-  let html=card.innerHTML.split('<button')[0]+'<button class="btn btn-sm" onclick="calcPVNozzle()">A_req / Pad?</button>';
-  html+='<div class="result-grid" style="margin-top:.5rem">'+
+  setCardOut('pv-nozzle-card','<div class="result-grid">'+
     [['Opening d',d.toFixed(1)+' mm'],['A required',A_req.toFixed(1)+' mm²'],['A from shell',A1.toFixed(1)+' mm²'],['A from nozzle',A2.toFixed(1)+' mm²'],['A total available',A_avail.toFixed(1)+' mm²',A_avail>=A_req?'ok':'err'],['Pad needed?',pad_needed?'YES':'NO',pad_needed?'warn':'ok'],['Pad t (min)',pad_needed?pad_t.toFixed(1)+' mm':'—']].map(([l,v,c])=>`<div class="result-item"><div class="lbl">${l}</div><div class="val ${c||''}">${v}</div></div>`).join('')+
-    '</div><p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem">UG-37 area-replacement rule: cross-sectional area removed from shell by the opening (A_req = d·t_r) must be replaced by metal within the reinforcement zone. Available metal = excess shell thickness × d + nozzle wall × 2.5·t_n on each side. If short, add a reinforcement pad. Pad diameter typically d_pad = 2·d for full credit.</p>';
-  card.innerHTML=html;
+    '</div><p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem">UG-37 area-replacement rule: cross-sectional area removed from shell by the opening (A_req = d·t_r) must be replaced by metal within the reinforcement zone. Available metal = excess shell thickness × d + nozzle wall × 2.5·t_n on each side. If short, add a reinforcement pad. Pad diameter typically d_pad = 2·d for full credit.</p>');
 };
 window.calcPVLug=function(){
   const W=v('pvl-w'),n=Math.max(1,v('pvl-n')||1),d=v('pvl-d'),t=v('pvl-t'),w=v('pvl-w2'),S=v('pvl-sa');
@@ -1376,12 +1367,9 @@ window.calcPVLug=function(){
   const tau_tear=F_design/A_tear;
   const A_net=(w-d)*t;
   const sigma_tens=F_design/A_net;
-  const card=$('pv-lug-card');if(!card)return;
-  let html=card.innerHTML.split('<button')[0]+'<button class="btn btn-sm" onclick="calcPVLug()">CHECK</button>';
-  html+='<div class="result-grid" style="margin-top:.5rem">'+
+  setCardOut('pv-lug-card','<div class="result-grid">'+
     [['F per lug (1g)',F_per.toFixed(0)+' N'],['F design (×'+factor+')',F_design.toFixed(0)+' N'],['σ bearing',sigma_bear.toFixed(1)+' MPa',sigma_bear<S?'ok':'err'],['τ tear-out',tau_tear.toFixed(1)+' MPa',tau_tear<0.6*S?'ok':'err'],['σ tensile (net sec)',sigma_tens.toFixed(1)+' MPa',sigma_tens<S?'ok':'err'],['Allowable',S+' MPa']].map(([l,v,c])=>`<div class="result-item"><div class="lbl">${l}</div><div class="val ${c||''}">${v}</div></div>`).join('')+
-    '</div><p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem"><strong>ASME B30.20 / OSHA:</strong> Design factor 2× for fixed lugs, 5× for slings. Bearing stress on pin: F/(d·t). Tear-out (double shear): F/(2·a·t) where a = edge distance. Tensile through net section: F/((w-d)·t). All < S_allow. Welded lug to shell: check fillet weld + base metal HAZ separately.</p>';
-  card.innerHTML=html;
+    '</div><p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem"><strong>ASME B30.20 / OSHA:</strong> Design factor 2× for fixed lugs, 5× for slings. Bearing stress on pin: F/(d·t). Tear-out (double shear): F/(2·a·t) where a = edge distance. Tensile through net section: F/((w-d)·t). All < S_allow. Welded lug to shell: check fillet weld + base metal HAZ separately.</p>');
 };
 
 /* ============================================================
@@ -1496,12 +1484,9 @@ window.calcDeposition=function(){
   const depRate=meltRate*eff;
   const depRateLbHr=depRate*2.205;
   const heat=(amp*volt*0.06/tts);
-  const card=$('weld-rate-card');if(!card)return;
-  let html=card.innerHTML.split('<button')[0]+'<button class="btn btn-sm" onclick="calcDeposition()">DEPOSITION + HEAT</button>';
-  html+='<div class="result-grid" style="margin-top:.5rem">'+
+  setCardOut('weld-rate-card','<div class="result-grid">'+
     [['Melt rate',meltRate.toFixed(3)+' kg/hr'],['Deposit rate',depRate.toFixed(3)+' kg/hr'],['Deposit rate',depRateLbHr.toFixed(2)+' lb/hr'],['Heat input',heat.toFixed(2)+' kJ/mm',heat>3.5?'warn':heat>1.5?'ok':'warn'],['Process',proc]].map(([l,v,c])=>`<div class="result-item"><div class="lbl">${l}</div><div class="val ${c||''}">${v}</div></div>`).join('')+
-    '</div><p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem"><strong>Heat input:</strong> H = (A·V·0.06)/v_travel kJ/mm. <strong>Limits:</strong> Carbon steel 0.8–3.5 kJ/mm; HSLA 0.8–2.5; Duplex 0.5–2.0 (over-heat embrittlement); aluminum 0.6–2.0. Below 0.8 kJ/mm risks lack of fusion; above max risks HAZ softening / grain growth. <strong>Deposition efficiency:</strong> SMAW 60-65%, GMAW 92-95% (short-arc) / 88% (spray), FCAW 78-85%, GTAW 100% (no spatter), SAW 95-100%.</p>';
-  card.innerHTML=html;
+    '</div><p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem"><strong>Heat input:</strong> H = (A·V·0.06)/v_travel kJ/mm. <strong>Limits:</strong> Carbon steel 0.8–3.5 kJ/mm; HSLA 0.8–2.5; Duplex 0.5–2.0 (over-heat embrittlement); aluminum 0.6–2.0. Below 0.8 kJ/mm risks lack of fusion; above max risks HAZ softening / grain growth. <strong>Deposition efficiency:</strong> SMAW 60-65%, GMAW 92-95% (short-arc) / 88% (spray), FCAW 78-85%, GTAW 100% (no spatter), SAW 95-100%.</p>');
 };
 
 /* ============================================================
@@ -2160,22 +2145,25 @@ window.addEventListener('DOMContentLoaded',()=>{
 function moveMohrToLeft(){
   const stress=$('v-stress');if(!stress)return;
   const split=stress.querySelector('.split');if(!split||split.children.length<2)return;
-  const mohrCard=split.children[1].querySelector('.mohr-x');
-  if(mohrCard&&split.children[0]){
+  const left=split.children[0],right=split.children[1];
+  const mohrCard=right.querySelector('.mohr-x');
+  if(mohrCard&&left){
     /* Move just the inputs portion; replace canvas with Plotly chart */
     const canvas=mohrCard.querySelector('#c-mohr-x');
     if(canvas){
       const chartDiv=document.createElement('div');chartDiv.id='p-mohr-x';chartDiv.style.cssText='width:100%;height:380px';
-      const oldOut=mohrCard.querySelector('#mohr-x-out');
       const chartCard=document.createElement('div');chartCard.className='card';chartCard.innerHTML='<h3>MOHR\'S CIRCLE (PLOTLY)</h3>';chartCard.appendChild(chartDiv);
-      split.children[1].appendChild(chartCard);
+      right.appendChild(chartCard);
       canvas.style.display='none';
     }
-    split.children[0].appendChild(mohrCard);
+    left.appendChild(mohrCard);
   }
+  /* Move 3D principal-stress results panel from right to left so all
+   * inputs + scalar results live together; right column = visualizations only */
+  const results=$('stress-results');if(results&&left&&!left.contains(results))left.appendChild(results);
   setTimeout(()=>{
-    const m=split.children[1].querySelector('.mohr-x');
-    if(m)split.children[0].appendChild(m);
+    const m=right.querySelector('.mohr-x');if(m)left.appendChild(m);
+    const r=$('stress-results');if(r&&!left.contains(r))left.appendChild(r);
   },1500);
 }
 
@@ -2218,5 +2206,5 @@ window.addEventListener('DOMContentLoaded',()=>{
   },600);
 });
 
-console.log('[calc-fixes] v5.2.0 layer loaded');
+console.log('[calc-fixes] v5.3.5 layer loaded');
 })();
