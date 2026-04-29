@@ -2144,6 +2144,11 @@ n_out = n_in/GR &nbsp;|&nbsp; T_out = T_in&middot;GR&middot;&eta;<br>
 </div>
 </div>
 </div>
+<aside class="site-ad-banner" aria-label="Sponsored" style="max-width:1280px;margin:1rem auto 0;padding:1rem 1.5rem;border-top:1px solid var(--border);background:var(--panel);text-align:center">
+<div class="ad-note">Sponsored</div>
+<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8345487545441889" data-ad-slot="1720203631" data-ad-format="auto" data-full-width-responsive="true"></ins>
+<script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>
+</aside>
 <section class="theory-refs" aria-labelledby="theory-title">
 <h2 id="theory-title">Theory, Formulas &amp; Standards Referenced</h2>
 <p class="intro">Amni-Calc implements classical closed-form engineering methods and selected code-based checks for preliminary sizing and conceptual analysis. Results are always first-principles approximations &mdash; final designs must be validated against current editions of the governing codes and by a licensed professional engineer.</p>
@@ -2206,11 +2211,6 @@ n_out = n_in/GR &nbsp;|&nbsp; T_out = T_in&middot;GR&middot;&eta;<br>
 <p style="color:var(--dim);margin:0 0 1rem;font-size:.74rem">All calculations run locally in your browser. No inputs, intermediate values, or results leave your device. The optional engineering AI assistant connects either to your own local server or runs fully in-browser via WebLLM using cached quantized weights. Source is served as a single static bundle &mdash; no build-step, no framework lock-in.</p>
 <p style="color:var(--dim);margin:0;font-size:.74rem">Built and maintained by Amnibro, a mechanical engineer focused on open scientific tooling. The calculation kernel is written in Rust and compiled to WebAssembly. If you find this useful, consider tipping on <a href="https://ko-fi.com/amnibro" style="color:var(--accent)" target="_blank" rel="noopener noreferrer">Ko-fi</a>.</p>
 </section>
-<aside class="site-ad-banner" aria-label="Sponsored">
-<div class="ad-note">Sponsored</div>
-<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8345487545441889" data-ad-slot="1720203631" data-ad-format="auto" data-full-width-responsive="true"></ins>
-<script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>
-</aside>
 </div>
 </div>
 <footer>
@@ -2224,7 +2224,7 @@ AMNI-CALC v2.5.0 &mdash; <a href="https://amni-scient.com">AMNI-SCIENT</a> &mdas
 <div class="calc-ai-header">
 <div class="calc-ai-title">
 <strong>ENGINEERING ASSISTANT</strong>
-<span>Active module context + local model support</span>
+<span>In-browser model &mdash; runs locally on your device</span>
 </div>
 <div class="calc-ai-header-actions">
 <button id="calc-ai-settings-toggle" type="button" title="Configure assistant">&#9881;</button>
@@ -2242,29 +2242,20 @@ AMNI-CALC v2.5.0 &mdash; <a href="https://amni-scient.com">AMNI-SCIENT</a> &mdas
 <div class="calc-ai-input">
 <textarea id="calc-ai-input" aria-label="Engineering AI prompt" placeholder="Ask about the active calculation, handbook data, assumptions, units, or design checks..."></textarea>
 <div class="calc-ai-sendrow">
-<div class="calc-ai-hint">Local endpoint is preferred. Browser mode can run fully on-device when WebGPU is available.</div>
+<div class="calc-ai-hint">Runs fully on-device via WebLLM when WebGPU is available.</div>
 <button id="calc-ai-send" class="btn btn-fill" type="button">SEND</button>
 </div>
 </div>
 <div id="calc-ai-setup" class="calc-ai-setup">
-<div class="calc-ai-setup-title">Local Endpoint</div>
-<div class="calc-ai-status-card">
-<div class="calc-ai-status-row"><span id="calc-ai-status-dot" class="calc-ai-status-dot"></span><span id="calc-ai-status-text" class="calc-ai-status-text">Checking...</span></div>
-<div id="calc-ai-status-url" class="calc-ai-status-url"></div>
-<div id="calc-ai-status-hint" class="calc-ai-hint">Use Amni-Ai or any OpenAI-compatible local server with CORS enabled.</div>
-</div>
-<div class="calc-ai-row">
-<label class="calc-ai-field"><span>Server URL</span><input type="text" id="calc-ai-url" placeholder="http://localhost:7700" autocomplete="off" spellcheck="false"></label>
-<label class="calc-ai-field"><span>Model</span><input type="text" id="calc-ai-model" placeholder="qwen3.5-2b" autocomplete="off" spellcheck="false"></label>
-</div>
-<div class="calc-ai-actions">
-<button id="calc-ai-test" type="button">TEST</button>
-<button id="calc-ai-save" type="button">SAVE</button>
-<button id="calc-ai-reset" type="button">RESET</button>
-</div>
-<div id="calc-ai-setup-msg" class="calc-ai-msgline"></div>
 <div class="calc-ai-browser">
 <div class="calc-ai-setup-title">In-Browser Model</div>
+<div style="display:none" aria-hidden="true">
+<span id="calc-ai-status-dot"></span><span id="calc-ai-status-text"></span>
+<div id="calc-ai-status-url"></div><div id="calc-ai-status-hint"></div>
+<input type="text" id="calc-ai-url" value=""><input type="text" id="calc-ai-model" value="">
+<button id="calc-ai-test" type="button"></button><button id="calc-ai-save" type="button"></button><button id="calc-ai-reset" type="button"></button>
+<div id="calc-ai-setup-msg"></div>
+</div>
 <label class="calc-ai-toggle"><input type="checkbox" id="calc-ai-webllm-enable"><span>Auto-load when the page opens</span></label>
 <label class="calc-ai-field"><span>Model</span><select id="calc-ai-webllm-model">
 <optgroup label="Lightweight (mobile / low RAM)">
