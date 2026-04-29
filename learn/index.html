@@ -2251,7 +2251,7 @@
               {q: "Which animal says 'Buzz'?", a: "🐝", wrong: ["🦋", "🐛", "🐜"], isAudio: true, audioText: "Buzz"},
               {q: "Which animal says 'Chirp'?", a: "🐦", wrong: ["🦆", "🐸", "🐝"], isAudio: true, audioText: "Chirp"},
               {q: "Which animal says 'Gobble'?", a: "🦃", wrong: ["🐓", "🦢", "🐦"], isAudio: true, audioText: "Gobble"},
-              {q: "Which animal says 'Hee-Haw'?", a: "🫐", wrong: ["🐴", "🐑", "🐄"], isAudio: true, audioText: "Hee-Haw"},
+              {q: "Which animal says 'Hee-Haw'?", a: "🫏", wrong: ["🐴", "🐑", "🐄"], isAudio: true, audioText: "Hee-Haw"},
               {q: "Which animal says 'Howl'?", a: "🐺", wrong: ["🦊", "🐶", "🐱"], isAudio: true, audioText: "Howl"},
               {q: "Which animal says 'Cluck'?", a: "🐓", wrong: ["🦃", "🐸", "🐦"], isAudio: true, audioText: "Cluck"},
               {q: "Which animal says 'Squeak'?", a: "🐭", wrong: ["🐹", "🐰", "🐿"], isAudio: true, audioText: "Squeak"},
@@ -2268,15 +2268,14 @@
               {q: "Which animal says 'Snort'?", a: "🦏", wrong: ["🐖", "🦛", "🐻"], isAudio: true, audioText: "Snort"},
               {q: "Which animal says 'Caw'?", a: "🐦", wrong: ["🦉", "🦜", "🦅"], isAudio: true, audioText: "Caw"},
               {q: "Which animal says 'Trumpet' very loudly?", a: "🐘", wrong: ["🦏", "🦛", "🦒"], isAudio: true, audioText: "Trumpet"},
-              {q: "Which animal says 'Whinny'?", a: "🐎", wrong: ["🫐", "🐄", "🐑"], isAudio: true, audioText: "Whinny"},
-              {q: "Which animal says 'Croak'?", a: "🐊", wrong: ["🐸", "🐍", "🦎"], isAudio: true, audioText: "Croak"},
+              {q: "Which animal says 'Whinny'?", a: "🐎", wrong: ["🫏", "🐄", "🐑"], isAudio: true, audioText: "Whinny"},
+              {q: "Which animal says 'Croak'?", a: "🐸", wrong: ["🐊", "🐍", "🦎"], isAudio: true, audioText: "Croak"},
               {q: "Which animal says 'Tweet'?", a: "🐥", wrong: ["🐸", "🐝", "🦆"], isAudio: true, audioText: "Tweet"},
               {q: "Which animal says 'Grunt'?", a: "🦍", wrong: ["🐒", "🐻", "🐗"], isAudio: true, audioText: "Grunt"},
               {q: "Which animal says 'Squeal'?", a: "🐗", wrong: ["🐖", "🦏", "🐻"], isAudio: true, audioText: "Squeal"},
               {q: "Which animal says 'Chitter'?", a: "🐿", wrong: ["🐭", "🐹", "🦔"], isAudio: true, audioText: "Chitter"},
               {q: "Which fluffy animal says 'Bark'?", a: "🦊", wrong: ["🐺", "🦨", "🦝"], isAudio: true, audioText: "Bark"},
-              {q: "Which animal says 'Moo' in the field?", a: "🐮", wrong: ["🐖", "🐄", "🐴"], isAudio: true, audioText: "Moo"},
-              {q: "Which animal says 'Bay' when hunting?", a: "🦌", wrong: ["🐺", "🦊", "🐶"], isAudio: true, audioText: "Bay"}
+              {q: "Which animal bays during a hunt?", a: "🐶", wrong: ["🦌", "🐺", "🦊"], isAudio: true, audioText: "Bay"}
           ],
           2: [
               {q: "What is the largest mammal?", a: "🐋 Blue Whale", wrong: ["🐘 Elephant", "🦒 Giraffe", "🦛 Hippo"]},
@@ -2713,9 +2712,9 @@ function playAnimalSound(type) {
         'moo':'cow','woof':'dog','meow':'cat','oink':'pig','baa':'sheep','quack':'duck','neigh':'horse','ribbit':'frog',
         'roar':'lion','hoot':'owl','buzz':'bee','chirp':'bird','gobble':'turkey','howl':'wolf','cluck':'chicken',
         'cock-a-doodle-doo':'chicken','tweet':'bird','squeak':'mouse','hiss':'snake','squawk':'parrot','growl':'bear','purr':'cat',
-        'bleat':'goat','trumpet':'elephant','chatter':'monkey','screech':'eagle','caw':'crow','croak':'crocodile',
+        'bleat':'goat','trumpet':'elephant','chatter':'monkey','screech':'eagle','caw':'crow','croak':'frog',
         'grunt':'gorilla','squeal':'boar','bark':'seal','chitter':'squirrel','hee-haw':'donkey','coo':'dove',
-        'snort':'rhino','bay':'deer','yip':'fox','snap':'crocodile','whinny':'horse'
+        'snort':'rhino','bay':'dog','yip':'fox','snap':'crocodile','whinny':'horse'
     };
     const animal = mappings[type.toLowerCase()] || type.toLowerCase();
     const a = new Audio('assets/audio/' + animal + '.mp3');
