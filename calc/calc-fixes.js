@@ -13,6 +13,13 @@ const $=id=>document.getElementById(id);
 const v=id=>{const e=$(id);return e?parseFloat(e.value):NaN;};
 const sv=id=>{const e=$(id);return e?e.value:'';};
 function setCardOut(cardId,html){const card=$(cardId);if(!card)return;let out=card.querySelector(':scope > .card-out');if(!out){out=document.createElement('div');out.className='card-out';out.style.marginTop='.5rem';card.appendChild(out);}out.innerHTML=html;}
+function shoelaceProps(pts){if(!pts||pts.length<3)return null;const n=pts.length;let A=0,Cx=0,Cy=0;for(let i=0;i<n;i++){const j=(i+1)%n,xi=pts[i][0],yi=pts[i][1],xj=pts[j][0],yj=pts[j][1];const cr=xi*yj-xj*yi;A+=cr;Cx+=(xi+xj)*cr;Cy+=(yi+yj)*cr;}A=A/2;const sgn=A<0?-1:1;A=Math.abs(A);if(A<1e-9)return null;Cx=Cx*sgn/(6*A);Cy=Cy*sgn/(6*A);let Ixo=0,Iyo=0;for(let i=0;i<n;i++){const j=(i+1)%n,xi=pts[i][0],yi=pts[i][1],xj=pts[j][0],yj=pts[j][1];const cr=xi*yj-xj*yi;Ixo+=(yi*yi+yi*yj+yj*yj)*cr;Iyo+=(xi*xi+xi*xj+xj*xj)*cr;}Ixo=Math.abs(Ixo*sgn)/12;Iyo=Math.abs(Iyo*sgn)/12;const Ix=Ixo-A*Cy*Cy,Iy=Iyo-A*Cx*Cx;let cTop=0,cBot=0,cR=0,cL=0;pts.forEach(p=>{const dy=p[1]-Cy,dx=p[0]-Cx;if(dy>cTop)cTop=dy;if(-dy>cBot)cBot=-dy;if(dx>cR)cR=dx;if(-dx>cL)cL=-dx;});const cy=Math.max(cTop,cBot),cx=Math.max(cR,cL);return{A,Cx,Cy,Ixx:Ix,Iyy:Iy,Sx:cy>0?Ix/cy:0,Sy:cx>0?Iy/cx:0,rx:A>0?Math.sqrt(Ix/A):0,ry:A>0?Math.sqrt(Iy/A):0,J:Ix+Iy};}
+function saveCustomSection(props,label){if(!props||!isFinite(props.A))return;const rec={label:label||'CUSTOM',A:props.A,Ix:props.Ix||props.Ixx||null,Iy:props.Iy||props.Iyy||null,Sx:props.Sx||props.Sx_top||null,Sy:props.Sy||null,Zx:props.Zx||null,rx:props.rx||null,ry:props.ry||null,J:props.J||null,yC:props.yCentroid||props.Cy||null,xC:props.xCentroid||props.Cx||null,ts:Date.now()};window.__customSection=rec;try{localStorage.setItem('amni-calc-section',JSON.stringify(rec));}catch(_){}injectSectionImportChip();}
+function loadCustomSection(){if(window.__customSection)return window.__customSection;try{const j=localStorage.getItem('amni-calc-section');if(j){const r=JSON.parse(j);window.__customSection=r;return r;}}catch(_){}return null;}
+function injectSectionImportChip(){const bm=$('bm-i');if(!bm)return;const wrap=bm.closest('.field');if(!wrap||wrap.querySelector('.sec-import-chip'))return;const chip=document.createElement('button');chip.type='button';chip.className='btn btn-sm sec-import-chip';chip.style.cssText='margin-top:.3rem;font-size:.65rem;padding:3px 8px;background:var(--accent);color:#000;border:0;border-radius:3px;cursor:pointer';chip.textContent='↙ USE CUSTOM SECTION';chip.onclick=()=>{const s=loadCustomSection();if(!s||!s.Ix){alert('No custom section saved yet — visit the Sections tab and Calculate first.');return;}bm.value=(s.Ix/1e4).toFixed(3);const u=$('bm-i-u');if(u)u.value='cm4';bm.dispatchEvent(new Event('input',{bubbles:true}));chip.textContent='✅ LOADED '+s.label+' (I_x='+(s.Ix/1e4).toFixed(2)+' cm⁴)';setTimeout(()=>{chip.textContent='↙ USE CUSTOM SECTION';},2200);};wrap.appendChild(chip);}
+function injectSectionExportButton(){const out=$('sec-results');if(!out)return;if(out.querySelector('.sec-export-row'))return;const last=window.__customSection;if(!last||!last.Ix)return;const row=document.createElement('div');row.className='sec-export-row';row.style.cssText='margin-top:.6rem;display:flex;gap:.4rem;flex-wrap:wrap';row.innerHTML='<button type="button" class="btn btn-sm" onclick="window.__sectionToBeam()" style="font-size:.7rem">→ LOAD INTO BEAM (I_x)</button><button type="button" class="btn btn-sm" onclick="window.__sectionToShaft()" style="font-size:.7rem">→ LOAD INTO SHAFTS (J)</button><span style="font-size:.65rem;color:var(--dim);align-self:center">Saved: '+last.label+'</span>';out.appendChild(row);}
+window.__sectionToBeam=function(){const s=loadCustomSection();if(!s||!s.Ix){alert('Calculate a section first.');return;}const bm=$('bm-i');if(!bm){alert('Open the Beams tab.');return;}bm.value=(s.Ix/1e4).toFixed(3);const u=$('bm-i-u');if(u)u.value='cm4';bm.dispatchEvent(new Event('input',{bubbles:true}));const tab=document.querySelector('[data-v="beam"]');if(tab)tab.click();};
+window.__sectionToShaft=function(){const s=loadCustomSection();if(!s||!s.J){alert('This section has no J (torsion constant) — works only for closed solid/hollow sections.');return;}const sh=$('sh-do')||$('sh-J');if(!sh){alert('Open the Shafts tab.');return;}if(sh.id==='sh-J'){sh.value=s.J.toFixed(2);sh.dispatchEvent(new Event('input',{bubbles:true}));}else alert('Shaft tab uses d_outer / d_inner directly. J='+s.J.toFixed(2)+' mm⁴ — set Do/Di to a pipe geometry that matches.');const tab=document.querySelector('[data-v="shafts"]');if(tab)tab.click();};
 function pTheme(){
   const css=getComputedStyle(document.documentElement);
   const isLight=(document.documentElement.getAttribute('data-theme')||'dark')==='light';
@@ -317,6 +324,8 @@ window.applyPreset=function(){
   out.innerHTML='<h3>SECTION PROPERTIES — '+preset.label.toUpperCase()+'</h3>'+
     '<div class="result-grid">'+items.map(i=>`<div class="result-item"><div class="lbl">${i[0]}</div><div class="val">${i[1]}</div></div>`).join('')+'</div>'+
     '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.7rem">A = area, I = second moment of area, S = elastic section modulus (I/c), Z = plastic section modulus, r = radius of gyration (√(I/A)), J = polar/torsion constant. All bending values are about the centroidal axis. Values change instantly when you edit inputs above.</p>';
+  saveCustomSection(res,preset.label);
+  injectSectionExportButton();
 };
 
 /* ============================================================
@@ -1394,6 +1403,85 @@ window.calcPVLug=function(){
 };
 
 /* ============================================================
+ * BOLTS — advanced pattern/torque sequence card
+ * (multi-pass schedule, K-factor scatter, joint diagram, gasket relax)
+ * ============================================================ */
+function injectBoltTorqueAdvanced(){
+  const view=$('v-bolts');if(!view)return;
+  if($('bolt-torque-adv'))return;
+  const target=view.querySelector('.bolt-x')?view.querySelector('.bolt-x').parentElement:view.querySelector('.split>div:last-child');
+  if(!target)return;
+  const card=document.createElement('div');card.className='card bolt-x';card.id='bolt-torque-adv';card.style.marginTop='.6rem';
+  card.innerHTML='<h3>TORQUE SEQUENCE (ADVANCED)</h3>'+
+    '<div class="row">'+
+      '<div class="field"><label for="bts-method">METHOD</label><select id="bts-method"><option value="torque">TORQUE CONTROL (T = K·F·d)</option><option value="angle">TORQUE + ANGLE (snug + Δθ)</option><option value="yield">YIELD-CONTROL (joint analyzer)</option></select></div>'+
+      '<div class="field"><label for="bts-fi">TARGET PRELOAD F_i (N)</label><input type="number" id="bts-fi" value="50000" step="any"></div>'+
+      '<div class="field"><label for="bts-d">BOLT d (mm)</label><input type="number" id="bts-d" value="12" step="0.1"></div>'+
+    '</div>'+
+    '<div class="row" style="margin-top:.5rem">'+
+      '<div class="field"><label for="bts-kn">K-FACTOR (NOM)</label><input type="number" id="bts-kn" value="0.20" step="0.01"></div>'+
+      '<div class="field"><label for="bts-ks">K-SCATTER ±</label><input type="number" id="bts-ks" value="0.05" step="0.01"></div>'+
+      '<div class="field"><label for="bts-passes">PASSES</label><input type="number" id="bts-passes" value="3" min="1" max="6" step="1"></div>'+
+      '<div class="field"><label for="bts-ratios">RATIOS (csv %)</label><input type="text" id="bts-ratios" value="30,60,100"></div>'+
+    '</div>'+
+    '<div class="row" style="margin-top:.5rem">'+
+      '<div class="field"><label for="bts-relax">GASKET RELAX %</label><input type="number" id="bts-relax" value="10" step="1"></div>'+
+      '<div class="field"><label for="bts-c">JOINT C (k_b/(k_b+k_m))</label><input type="number" id="bts-c" value="0.25" step="0.05"></div>'+
+      '<div class="field"><label for="bts-fext">EXT LOAD F_ext (N)</label><input type="number" id="bts-fext" value="20000" step="any"></div>'+
+    '</div>'+
+    '<button class="btn btn-sm" onclick="calcBoltTorqueSeq()" style="margin-top:.5rem">COMPUTE SEQUENCE</button>'+
+    '<div id="bts-table" style="margin-top:.6rem"></div>'+
+    '<div id="p-bts-joint" style="width:100%;height:280px;margin-top:.4rem"></div>';
+  target.appendChild(card);
+  if(typeof window.calcBoltTorqueSeq==='function')try{window.calcBoltTorqueSeq();}catch(e){}
+}
+window.calcBoltTorqueSeq=function(){
+  const method=sv('bts-method')||'torque';
+  const Fi=v('bts-fi'),d=v('bts-d'),Kn=v('bts-kn'),Ks=v('bts-ks');
+  const passes=Math.max(1,Math.min(6,Math.round(v('bts-passes'))||3));
+  const ratStr=sv('bts-ratios')||'30,60,100';
+  const C=v('bts-c'),Fext=v('bts-fext'),relax=v('bts-relax')/100||0;
+  if(!isFinite(Fi)||!isFinite(d)||!isFinite(Kn))return;
+  let ratios=ratStr.split(',').map(s=>parseFloat(s.trim())).filter(x=>isFinite(x)&&x>0);
+  if(ratios.length<passes)while(ratios.length<passes)ratios.push(100);
+  ratios=ratios.slice(0,passes);if(ratios[ratios.length-1]<100)ratios[ratios.length-1]=100;
+  const T_target=Kn*Fi*d/1000;
+  const T_lo=(Kn-Ks)*Fi*d/1000,T_hi=(Kn+Ks)*Fi*d/1000;
+  const F_lo=Fi*(Kn/(Kn+Ks)),F_hi=Fi*(Kn/(Math.max(0.05,Kn-Ks)));
+  const rows=[];rows.push('<tr><th>PASS</th><th>%</th><th>T_target (N·m)</th><th>F_preload (N)</th><th>NOTE</th></tr>');
+  ratios.forEach((r,i)=>{const T=T_target*r/100,F=Fi*r/100;const note=i===passes-1?(relax>0?`final pass — re-torque after ${(relax*100).toFixed(0)}% relax`:'final pass'):(i===0?'snug-and-mark':'cross/star, equalize gap');rows.push(`<tr><td>${i+1}</td><td>${r.toFixed(0)}%</td><td>${T.toFixed(2)}</td><td>${F.toFixed(0)}</td><td>${note}</td></tr>`);});
+  if(relax>0)rows.push(`<tr><td>RT</td><td>100%</td><td>${T_target.toFixed(2)}</td><td>${Fi.toFixed(0)}</td><td>re-torque after gasket relaxation</td></tr>`);
+  const F_b=Fi+C*Fext,F_j=Fi-(1-C)*Fext;
+  const sepMargin=Fi/((1-C)*Math.max(1,Fext));
+  const fmt=(n,p)=>(p>0?n.toFixed(p):n.toFixed(0));
+  let summary='<table class="data" style="font-size:.74rem;width:100%;margin-top:.3rem"><thead>'+rows[0]+'</thead><tbody>'+rows.slice(1).join('')+'</tbody></table>';
+  summary+='<div class="result-grid" style="margin-top:.5rem">'+
+    [['Method',method.toUpperCase()],
+     ['T_target',fmt(T_target,2)+' N·m'],
+     ['T range (K-scatter)',fmt(T_lo,2)+' – '+fmt(T_hi,2)+' N·m'],
+     ['F_preload range',fmt(F_lo,0)+' – '+fmt(F_hi,0)+' N'],
+     ['F_bolt @ ext load',fmt(F_b,0)+' N'],
+     ['F_joint @ ext load',fmt(F_j,0)+' N',F_j>0?'ok':'err'],
+     ['Separation margin',isFinite(sepMargin)?fmt(sepMargin,2)+'×':'∞',sepMargin>1.5?'ok':sepMargin>1?'warn':'err'],
+     ['Joint stiffness ratio C',fmt(C,2)]].map(([l,v,c])=>`<div class="result-item"><div class="lbl">${l}</div><div class="val ${c||''}">${v}</div></div>`).join('')+'</div>';
+  summary+='<p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem"><strong>Method notes:</strong> Torque control ±25% preload scatter typical. Torque + angle (e.g. snug then 90°) cuts scatter to ±10%. Yield-control (or ultrasonic) reaches ±5%. <strong>Sequence:</strong> star/cross pattern, opposite bolts in pairs, work outward for circular flanges. <strong>ASME PCC-1</strong> is the canonical assembly guideline. Re-torque after gasket relaxation typically 10–20% of original preload for compressed-fiber sheet, lower for spiral-wound, higher for soft sheet.</p>';
+  $('bts-table').innerHTML=summary;
+  /* Joint diagram: F_b and F_j vs F_ext */
+  const xs=[];const ybolt=[];const yjoint=[];const Fmax=Math.max(Fext*2,Fi*1.2);
+  for(let f=0;f<=Fmax;f+=Fmax/80){xs.push(f);ybolt.push(Fi+C*f);yjoint.push(Math.max(0,Fi-(1-C)*f));}
+  if(window.Plotly){
+    const tt=pTheme();
+    plot('p-bts-joint',[
+      {x:xs,y:ybolt,mode:'lines',line:{color:tt.accent,width:2.5},name:'F_bolt = F_i + C·F_ext'},
+      {x:xs,y:yjoint,mode:'lines',line:{color:'#22c55e',width:2.5},name:'F_joint = F_i − (1−C)·F_ext'},
+      {x:[Fext],y:[F_b],mode:'markers',marker:{color:'#f59e0b',size:11,symbol:'diamond'},name:'op'},
+      {x:[Fext],y:[F_j],mode:'markers',marker:{color:'#ef4444',size:11,symbol:'diamond'},name:'op'},
+      {x:[Fi/(1-C),Fi/(1-C)],y:[0,Fi*1.5],mode:'lines',line:{color:'#ef4444',dash:'dash',width:1.5},name:'separation'}
+    ],{xaxis:{title:'F_ext (N)'},yaxis:{title:'Force (N)',range:[0,Fi*1.5]},showlegend:false});
+  }
+};
+
+/* ============================================================
  * WELDS — electrode selection, deposition rate, prequalified joints
  * ============================================================ */
 const WELD_ELECTRODES={
@@ -2095,6 +2183,18 @@ window.addEventListener('DOMContentLoaded',()=>{
     if(springBtn)springBtn.style.display='none';
     setTimeout(()=>window.calcSpring(),200);
     /* Universal live-compute pass — covers the rest of the modules */
+    /* Wrap calcSection so custom-drawn sections also save to the global
+     * cross-tab store and surface a "LOAD INTO BEAM" button afterwards. */
+    setTimeout(()=>{
+      const orig=window.calcSection;
+      if(typeof orig==='function'&&!orig.__amniWrapped){
+        const wrapped=function(){const r=orig.apply(this,arguments);try{const st=window.secSt;if(st&&Array.isArray(st.pts)&&st.pts.length>=3){const props=shoelaceProps(st.pts);if(props)saveCustomSection(props,'CUSTOM POLYGON');}injectSectionExportButton();}catch(e){console.warn('[section export]',e.message);}return r;};
+        wrapped.__amniWrapped=true;window.calcSection=wrapped;
+      }
+      /* Pre-populate handoff chip on Beam if a section is already cached */
+      if(loadCustomSection())injectSectionImportChip();
+      injectBoltTorqueAdvanced();
+    },1200);
     setTimeout(()=>{
       universalLiveCompute();
       /* Re-show buttons that should stay visible because they act on
