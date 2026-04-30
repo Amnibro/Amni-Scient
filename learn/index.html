@@ -147,8 +147,10 @@
   .story-title-head { font-family: 'Comic Neue', cursive, sans-serif; color: #ecf0f1; text-align: center; margin: 12px 0 6px; }
   .story-cover-large { font-size: clamp(3rem, 10vw, 5rem); text-align: center; }
   .story-page { font-family: 'Comic Neue', cursive, sans-serif; font-size: clamp(1.25rem, 3.4vw, 1.7rem); line-height: 1.85; padding: 22px 26px; background: rgba(255,255,255,0.04); border-radius: 14px; color: #ecf0f1; min-height: 200px; width: 100%; box-sizing: border-box; }
-  .story-word { display: inline; padding: 1px 2px; border-radius: 5px; transition: background-color 0.12s, color 0.12s; }
-  .story-word.hl { background: #f1c40f; color: #1a252f; box-shadow: 0 0 0 2px rgba(241,196,15,0.4); }
+  .story-word { display: inline; padding: 1px 2px; border-radius: 5px; cursor: pointer; transition: background-color 0.12s, color 0.12s, text-decoration-color 0.12s; }
+  .story-word:hover { background: rgba(77,184,255,0.18); }
+  .story-word.hl { background: #f1c40f; color: #1a252f; box-shadow: 0 0 0 2px rgba(241,196,15,0.55); text-decoration: underline; text-decoration-thickness: 3px; text-underline-offset: 5px; text-decoration-color: #d35400; }
+  .story-word.tapped { background: #4db8ff; color: #1a252f; }
   .story-progress { color: #95a5a6; font-family: 'JetBrains Mono', monospace; font-size: 0.95rem; }
   .story-controls { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; padding: 10px 0; }
   .story-controls .t-btn { padding: 12px 22px; font-size: clamp(0.95rem, 2.4vw, 1.15rem); }
@@ -1990,7 +1992,23 @@
       "Old MacDonald had a farm, E-I-E-I-O. And on his farm he had some cows, E-I-E-I-O. With a moo-moo here, and a moo-moo there. Here a moo, there a moo, everywhere a moo-moo. Old MacDonald had a farm, E-I-E-I-O."
     ]}
   ];
-  const _storyState = { book: null, pageIdx: 0, utterance: null, words: [] };
+  const _storyState = { book: null, pageIdx: 0, utterance: null, words: [], autoplay: false };
+  function speakWord(text, near){
+    if (!('speechSynthesis' in window)) return;
+    const wasAuto = _storyState.autoplay;
+    if (_storyState.utterance) { _storyState.autoplay = false; speechSynthesis.cancel(); }
+    const u = new SpeechSynthesisUtterance(text.replace(/[^A-Za-z'’\- ]+/g,'').trim() || text);
+    u.rate = 0.85; u.pitch = 1.05;
+    const voices = speechSynthesis.getVoices();
+    const preferred = voices.find(v => /Samantha|Karen|Google US English|Microsoft Aria|Microsoft Jenny|Allison/.test(v.name))
+                  || voices.find(v => v.lang && v.lang.startsWith('en'));
+    if (preferred) u.voice = preferred;
+    if (near) { near.classList.add('tapped'); setTimeout(()=>near.classList.remove('tapped'), 600); }
+    u.onend = () => { _storyState.utterance = null; if (wasAuto && _storyState.book) { _storyState.autoplay = true; setTimeout(()=>playCurrentPage(true), 200); } };
+    u.onerror = () => { _storyState.utterance = null; };
+    _storyState.utterance = u;
+    speechSynthesis.speak(u);
+  }
   function initStorybook() {
     _storyState.book = null;
     _storyState.pageIdx = 0;
@@ -2051,6 +2069,9 @@
       pos += tok.length;
     }
     pageEl.innerHTML = html;
+    pageEl.querySelectorAll('.story-word').forEach(el => {
+      el.addEventListener('click', (e) => { e.stopPropagation(); speakWord(el.textContent, el); });
+    });
     document.getElementById('story-progress').textContent = `Page ${_storyState.pageIdx + 1} of ${book.pages.length}`;
     document.getElementById('story-prev').disabled = _storyState.pageIdx === 0;
     document.getElementById('story-next').disabled = _storyState.pageIdx === book.pages.length - 1;
@@ -2062,9 +2083,10 @@
     _storyState.pageIdx = Math.max(0, Math.min(book.pages.length - 1, _storyState.pageIdx + delta));
     renderPage();
   }
-  function playCurrentPage() {
+  function playCurrentPage(continued) {
     if (!('speechSynthesis' in window)) return;
-    stopReading();
+    if (!continued) stopReading();
+    _storyState.autoplay = true;
     const book = _storyState.book;
     if (!book) return;
     const text = book.pages[_storyState.pageIdx] || '';
@@ -2090,13 +2112,19 @@
     };
     u.onend = () => {
       document.querySelectorAll('#story-page .story-word.hl').forEach(el => el.classList.remove('hl'));
-      document.getElementById('story-play').style.display = '';
-      document.getElementById('story-pause').style.display = 'none';
-      document.getElementById('story-stop').style.display = 'none';
       _storyState.utterance = null;
-      // Auto-advance to next page after a short pause if not at the end
-      if (_storyState.book && _storyState.pageIdx < _storyState.book.pages.length - 1) {
-        setTimeout(() => { if (!_storyState.utterance) navigatePage(1); }, 1500);
+      if (_storyState.book && _storyState.autoplay && _storyState.pageIdx < _storyState.book.pages.length - 1) {
+        setTimeout(() => {
+          if (!_storyState.autoplay) return;
+          _storyState.pageIdx += 1;
+          renderPage();
+          playCurrentPage(true);
+        }, 900);
+      } else {
+        _storyState.autoplay = false;
+        document.getElementById('story-play').style.display = '';
+        document.getElementById('story-pause').style.display = 'none';
+        document.getElementById('story-stop').style.display = 'none';
       }
     };
     u.onerror = () => { stopReading(); };
@@ -2109,6 +2137,7 @@
   function stopReading() {
     if ('speechSynthesis' in window) speechSynthesis.cancel();
     _storyState.utterance = null;
+    _storyState.autoplay = false;
     document.querySelectorAll('#story-page .story-word.hl').forEach(el => el.classList.remove('hl'));
     const playBtn = document.getElementById('story-play');
     const pauseBtn = document.getElementById('story-pause');
