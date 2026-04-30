@@ -678,6 +678,11 @@
   .mr-btn.mirror{border-color:#e74c3c;color:#e74c3c;}.mr-btn.mirror:hover{background:rgba(231,76,60,0.2);}
   .tm-canvas{background:#0a1520;border:2px solid #1abc9c;border-radius:12px;cursor:pointer;touch-action:none;}
   .learn-footer{background:#0a0c0f;border-top:1px solid #222;padding:clamp(28px,4vw,44px) clamp(18px,3vw,36px);color:#bcc6d1;font-family:'JetBrains Mono',monospace;font-size:0.88rem;line-height:1.65}
+  /* Hide marketing footer (about/faq/links) inside the Android wrapper or
+     when launched as an installed PWA — those contexts are app-mode and the
+     marketing chrome belongs only to the public web landing. */
+  @media (display-mode: standalone), (display-mode: fullscreen) { .learn-footer { display: none !important; } }
+  body.in-app .learn-footer { display: none !important; }
   .learn-footer .lf-inner{max-width:1200px;margin:0 auto}
   .learn-footer h2{color:#4db8ff;font-size:1.3rem;margin:0 0 14px;letter-spacing:1px;text-transform:uppercase;text-shadow:0 0 8px rgba(77,184,255,0.25)}
   .learn-footer h3{color:#9cb6ce;font-size:0.88rem;margin:16px 0 10px;letter-spacing:1.5px;text-transform:uppercase}
@@ -2979,6 +2984,20 @@
       navigator.serviceWorker.register('./sw.js', { scope: './' }).catch(() => {});
     });
   }
+
+  // Mark the document as in-app when running inside the Android WebView
+  // wrapper (Learn-Mobile) or under file:// — both load the bundled HTML
+  // and shouldn't show the marketing footer (about/faq/product-page links
+  // belong to the public web landing only).
+  (function markInApp(){
+    const ua = navigator.userAgent || '';
+    const isWebView = /Android.*wv\)/.test(ua) || /Version\/.+ Mobile.*Safari/.test(ua) === false && /Android/.test(ua) && !/Chrome\//.test(ua);
+    const isFile = location.protocol === 'file:';
+    const isStandalone = window.matchMedia && window.matchMedia('(display-mode: standalone)').matches;
+    if (isWebView || isFile || isStandalone || /; ?wv\)/.test(ua)) {
+      document.body.classList.add('in-app');
+    }
+  })();
 
   function initLifeGame(subgame) {
       cleanupLifeGame();
