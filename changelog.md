@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.4.2] - 2026-04-30 - Storybooks: auto-advance + underline highlight + tap-to-hear
+- **Auto-advance reading**: `playCurrentPage` now sets `_storyState.autoplay = true`, and the utterance's `onend` advances the page index, re-renders, and immediately calls `playCurrentPage(true)` so the read-aloud continues seamlessly to the next page without the user re-tapping. Stop and Pause clear the autoplay flag.
+- **Underline + highlight**: `.story-word.hl` now adds a 3px orange (`#d35400`) underline at 5px offset on top of the existing yellow background, giving struggling readers a clearer "track the word" cue.
+- **Tap-to-hear**: every `.story-word` span gets a click handler in `renderPage`. Taps speak just that word via the system voice, flash the word in cyan via `.tapped` for 600ms, then resume the auto-read where it left off (preserves `wasAuto` snapshot, replays the current page after the word finishes).
+
 ## [5.4.1] - 2026-04-29 - /learn arcade reshuffle + 30-question quiz pools
 - **Casual arcades moved to Destress (level 7)** — Color Sort, Gem Crush, 2048, Color Blast, Solitaire, Tower Defense were sitting in the kid-side Brain Training section and rendering blank when launched at PRE-K. Pulled them from there, dropped them into the previously-empty `destress-cat` slot (rebranded "🎲 Casual Puzzles"). They no longer show at L1–L5; visible at L7 alongside the existing 80s/90s retro arcades and clickers.
 - **Subject quiz pool ≥ 30 randomized** — `startQuizDirectly` now builds a pool starting from the current level, expanding to ±1 then ±2 then everything until at least 30 questions are available, then shuffles and slices to 30. Hits the 30-question target even where individual buckets (e.g., languages L1, math L1) hold only 8.
