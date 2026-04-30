@@ -1,6 +1,6 @@
 // Amni-Learn service worker — cold-cache offline / airplane mode support.
 // Bumps the CACHE name on every meaningful change so old caches roll out.
-const CACHE = 'amni-learn-v2';
+const CACHE = 'amni-learn-v3';
 const PRECACHE = [
   './',
   './index.html',
@@ -12,8 +12,8 @@ const PRECACHE = [
   './assets/audio/fox.mp3','./assets/audio/frog.mp3','./assets/audio/goat.mp3','./assets/audio/gorilla.mp3',
   './assets/audio/horse.mp3','./assets/audio/lion.mp3','./assets/audio/monkey.mp3','./assets/audio/mouse.mp3',
   './assets/audio/owl.mp3','./assets/audio/parrot.mp3','./assets/audio/pig.mp3','./assets/audio/rhino.mp3',
-  './assets/audio/seal.mp3','./assets/audio/sheep.mp3','./assets/audio/snake.mp3','./assets/audio/squirrel.mp3',
-  './assets/audio/turkey.mp3','./assets/audio/wolf.mp3'
+  './assets/audio/rooster.mp3','./assets/audio/seal.mp3','./assets/audio/sheep.mp3','./assets/audio/snake.mp3',
+  './assets/audio/squirrel.mp3','./assets/audio/turkey.mp3','./assets/audio/wolf.mp3'
 ];
 self.addEventListener('install', (e) => {
   // Pre-cache critical assets. Tolerate individual file failures so a single

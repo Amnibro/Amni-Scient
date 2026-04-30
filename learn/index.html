@@ -4072,7 +4072,7 @@ function playAnimalSound(type) {
     const mappings = {
         'moo':'cow','woof':'dog','meow':'cat','oink':'pig','baa':'sheep','quack':'duck','neigh':'horse','ribbit':'frog',
         'roar':'lion','hoot':'owl','buzz':'bee','chirp':'bird','gobble':'turkey','howl':'wolf','cluck':'chicken',
-        'tweet':'bird','hiss':'snake','squawk':'parrot','purr':'cat',
+        'cock-a-doodle-doo':'rooster','tweet':'bird','hiss':'snake','squawk':'parrot','purr':'cat',
         'bleat':'goat','trumpet':'elephant','chatter':'monkey','screech':'eagle','caw':'crow','croak':'frog',
         'bark':'seal','chitter':'squirrel','hee-haw':'donkey','coo':'dove',
         'snort':'rhino','bay':'dog','yip':'fox','snap':'crocodile','whinny':'horse'
@@ -4083,7 +4083,7 @@ function playAnimalSound(type) {
 }
 
   function speakText(text) {
-    if(["Moo","Woof","Meow","Oink","Baa","Quack","Neigh","Ribbit","Roar","Hoot","Buzz","Chirp","Tweet","Gobble","Howl","Cluck","Hiss","Squawk","Purr","Bleat","Trumpet","Chatter","Screech","Caw","Croak","Bark","Chitter","Hee-Haw","Coo","Snort","Bay","Yip","Snap","Whinny"].includes(text)) { playAnimalSound(text); return; }
+    if(["Moo","Woof","Meow","Oink","Baa","Quack","Neigh","Ribbit","Roar","Hoot","Buzz","Chirp","Tweet","Gobble","Howl","Cluck","Cock-a-doodle-doo","Hiss","Squawk","Purr","Bleat","Trumpet","Chatter","Screech","Caw","Croak","Bark","Chitter","Hee-Haw","Coo","Snort","Bay","Yip","Snap","Whinny"].includes(text)) { playAnimalSound(text); return; }
         if('speechSynthesis' in window) {
           const utterance = new SpeechSynthesisUtterance(text);
           const voices = window.speechSynthesis.getVoices();

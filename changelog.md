@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.4.4] - 2026-04-30 - Real rooster crow audio
+- **Added `learn/assets/audio/rooster.mp3`** — sourced from Wikimedia Commons "Rooster crowing.ogg" by Filo gèn' (CC BY-SA 4.0), transcoded to 140 kbps stereo MP3 with loudness normalized to -16 LUFS so it sits at the same level as the other animal sounds. Attribution captured in `learn/assets/audio/CREDITS.md`.
+- **Restored `Cock-a-doodle-doo` to the `playAnimalSound` bypass list** — `speakText('Cock-a-doodle-doo')` now routes to `rooster.mp3` (was: routed to TTS in v5.4.3, which the user did not want; never wanted: routed to `chicken.mp3` as in v5.4.2 and earlier). Mapping added: `'cock-a-doodle-doo':'rooster'`.
+- **SW cache bumped v2 → v3** + `rooster.mp3` added to the precache list so users get the new asset on next reload (and offline mode picks it up too).
+
 ## [5.4.3] - 2026-04-30 - Animal-sounds quiz disambiguation
 - **Removed 4 ambiguous questions**: `Squeak/Mouse` (rabbit, hamster, squirrel all squeak), `Growl/Bear` (lion, tiger, wolf all growl), `Grunt/Gorilla` (gorillas hoot/chest-pound, not grunt), `Squeal/Pig` (duplicate of `Oink/Pig`).
 - **Reworded for distinctive onomatopoeia**: `Howl` → "Awooo! (howl)", `Chatter` → "Ooo ooo ah ah", `Whinny` → "Neigh-hee-hee", `Bleat` → "Maa-aa", `Hiss` → "Hisssss", `Purr` → "Purrrrr", `Coo` → "Coo coo". Bird/animal qualifiers added to several others ("Which bird says…", "Which baby bird…", "Which giant animal trumpets…") so the answer is unambiguous.
