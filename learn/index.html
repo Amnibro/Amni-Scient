@@ -1264,8 +1264,11 @@
     flappy: $$('#flappy-view'),
     clicker: $$('#clicker-view'),
     autominer: $$('#autominer-view'),
-    pullpin: $$('#pullpin-view'),
-    fillcup: $$('#fillcup-view'),
+    storybook: $$('#storybook-view'),
+    t2048: $$('#t2048-view'),
+    cblast: $$('#cblast-view'),
+    solitaire: $$('#solitaire-view'),
+    tdgame: $$('#tdgame-view'),
     calculus: $$('#calculus-view'),
     linalg: $$('#linalg-view'),
     stats: $$('#stats-view'),
@@ -1516,8 +1519,8 @@
     });
   });
   function showView(viewId) {
-    Object.values(views).forEach(v => v.classList.remove('active'));
-    views[viewId].classList.add('active');
+    Object.values(views).forEach(v => { if (v) v.classList.remove('active'); });
+    if (views[viewId]) views[viewId].classList.add('active'); else { console.warn('[showView] no view registered for', viewId); return; }
     viewId !== 'menu' ? document.body.classList.add('game-active') : document.body.classList.remove('game-active');
     if(viewId !== 'menu') {
       const lt = views[viewId].querySelector('.life-title');
