@@ -8,8 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Comic+Neue:wght@700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../css/style.css">
-<meta name="description" content="Amni-Learn: free, private, on-device educational games for learners from pre-K through adult. Eight age-tiered levels covering math, reading, science, music, life skills, and brain training.">
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8345487545441889" crossorigin="anonymous" data-overlays="false"></script>
+<meta name="description" content="Amni-Learn: free, private, on-device educational games for learners from pre-K through adult. Eight age-tiered levels covering math, reading, science, music, life skills, and brain training. Fully offline-capable — works in airplane mode.">
 <style>
   body { overflow-x: hidden; overflow-y: auto; margin: 0; padding: 0; background: #0c0f12; color: #ecf0f1; }
   #app { width: 100%; min-height: 100vh; position: relative; display: flex; flex-direction: column; }
@@ -1190,7 +1189,7 @@
   let currentLevel=parseInt(urlParams.get('level'))||1;currentLevel=(currentLevel<1||currentLevel>8)?1:currentLevel;$$('#main-game-grid').classList.add('mode-'+Math.min(currentLevel,3));
   const _lc={1:'#2ecc71',2:'#f1c40f',3:'#e67e22',4:'#e74c3c',5:'#9b59b6',6:'#1abc9c',7:'#ff6b9d',8:'#48dbfb'},_ln={1:'PRE-K GAMES',2:'GRADES K-2',3:'GRADES 3-5',4:'MIDDLE SCHOOL',5:'STEM CHALLENGE',6:'BRAIN EXERCISE',7:'DESTRESS ARCADE',8:'COLLEGE PREP'},_ac=_lc[currentLevel];
   $$('.menu-title').textContent=_ln[currentLevel];$$('.menu-title').style.color=_ac;$$('.menu-title').style.textShadow=`0 0 15px ${_ac}`;$$('#nav-back').style.borderColor=_ac;$$('#nav-back').style.color=_ac;$$('#fs-btn').style.borderColor=_ac;$$('#fs-btn').style.color=_ac;$$('.top-bar').children[1].style.color=_ac;$$('#menu-view').style.background=`radial-gradient(ellipse at 50% 30%,${_ac}12 0%,#0c0f12 60%)`;$$all('.cat-header').forEach(h=>h.style.borderBottomColor=_ac+'30');
-  currentLevel===1?$$all('[data-subgame="money"],[data-subgame="clock"]').forEach(el=>el?el.style.display='none':0):0;currentLevel>=4&&currentLevel!==6&&currentLevel!==7&&currentLevel!==8?($$('#stem-section').style.display='block',$$all('[data-subgame="vacuum"],[data-subgame="dishes"],[data-subgame="clock"],.tracing,.matching').forEach(el=>el?el.style.display='none':0)):0;(currentLevel===4||currentLevel===5)?$$('#main-game-grid').classList.add('wide-mode'):0;currentLevel===6?($$all('.game-category:not(#brain-section):not(.brain-cat)').forEach(c=>c.style.display='none'),$$('#brain-section').style.display='block',$$all('.brain-cat').forEach(c=>c.style.display='block'),$$('#main-game-grid').classList.add('brain-mode')):0;currentLevel===7?($$all('.game-category:not(.destress-cat)').forEach(c=>c.style.display='none'),$$all('.destress-cat').forEach(c=>c.style.display='block'),$$('#main-game-grid').classList.add('brain-mode')):0;currentLevel===8?($$all('.game-category:not(.college-cat)').forEach(c=>c.style.display='none'),$$all('.college-cat').forEach(c=>c.style.display='block'),$$('#main-game-grid').classList.add('brain-mode')):0;
+  currentLevel===1?$$all('[data-subgame="money"],[data-subgame="clock"],[data-subgame="vacuum"],[data-subgame="dishes"]').forEach(el=>el?el.style.display='none':0):0;currentLevel>=4&&currentLevel!==6&&currentLevel!==7&&currentLevel!==8?($$('#stem-section').style.display='block',$$all('[data-subgame="vacuum"],[data-subgame="dishes"],[data-subgame="clock"],.tracing,.matching').forEach(el=>el?el.style.display='none':0)):0;(currentLevel===4||currentLevel===5)?$$('#main-game-grid').classList.add('wide-mode'):0;currentLevel===6?($$all('.game-category:not(#brain-section):not(.brain-cat)').forEach(c=>c.style.display='none'),$$('#brain-section').style.display='block',$$all('.brain-cat').forEach(c=>c.style.display='block'),$$('#main-game-grid').classList.add('brain-mode')):0;currentLevel===7?($$all('.game-category:not(.destress-cat)').forEach(c=>c.style.display='none'),$$all('.destress-cat').forEach(c=>c.style.display='block'),$$('#main-game-grid').classList.add('brain-mode')):0;currentLevel===8?($$all('.game-category:not(.college-cat)').forEach(c=>c.style.display='none'),$$all('.college-cat').forEach(c=>c.style.display='block'),$$('#main-game-grid').classList.add('brain-mode')):0;
   let sessionScore = parseInt(sessionStorage.getItem('amni-learn-score')||'0');
   let currentStreak = parseInt(sessionStorage.getItem('amni-learn-streak')||'0');
   let bestStreak = parseInt(sessionStorage.getItem('amni-learn-best')||'0');
@@ -2287,13 +2286,11 @@
               {q: "Which animal has a trunk?", a: "🐘 Elephant", wrong: ["🦏 Rhino", "🐃 Buffalo", "🦛 Hippo"]},
               {q: "What animal makes honey?", a: "🐝 Bee", wrong: ["🐜 Ant", "🦋 Butterfly", "🪲 Beetle"]},
               {q: "Which animal has stripes?", a: "🦓 Zebra", wrong: ["🐘 Elephant", "🦛 Hippo", "🐪 Camel"]},
-              {q: "Which animal is the slowest?", a: "🦥 Sloth", wrong: ["🐢 Turtle", "🐌 Snail", "🦔 Hedgehog"]}
+              {q: "Which is the slowest mammal?", a: "🦥 Sloth", wrong: ["🐢 Turtle", "🦔 Hedgehog", "🐰 Rabbit"]}
           ],
           3: [
               {q: "What is a group of crows called?", a: "Murder", wrong: ["Flock", "Gaggle", "Herd"]},
-              {q: "Which device converts mechanical energy to electrical energy?", a: "Generator", wrong: ["Motor", "Transformer", "Battery"]},
               {q: "What is the fastest land animal?", a: "Cheetah", wrong: ["Lion", "Leopard", "Gazelle"]},
-              {q: "Which tool is used to measure atmospheric pressure?", a: "Barometer", wrong: ["Thermometer", "Hygrometer", "Anemometer"]},
               {q: "What is the scientific name for the collarbone?", a: "Clavicle", wrong: ["Scapula", "Sternum", "Patella"]},
               {q: "What is a group of wolves called?", a: "Pack", wrong: ["Herd", "Flock", "Swarm"]},
               {q: "Which animal has the longest lifespan?", a: "Greenland Shark", wrong: ["Giant Tortoise", "Bowhead Whale", "Elephant"]},
@@ -2339,33 +2336,33 @@
               {q: "Which instrument do you strum?", a: "🎸 Guitar", wrong: ["🎹 Piano", "🎺 Trumpet", "🥁 Drum"]},
               {q: "Which instrument do you blow into?", a: "🎺 Trumpet", wrong: ["🎸 Guitar", "🎻 Violin", "🥁 Drum"]},
               {q: "Which makes a jingling sound?", a: "🔔 Bell", wrong: ["🥁 Drum", "🎸 Guitar", "🎹 Piano"]},
-              {q: "What do you shake to make music?", a: "🎵 Maracas", wrong: ["🎸 Guitar", "🎹 Piano", "🎻 Violin"]},
-              {q: "Which one has strings you can pluck?", a: "🎸 Guitar", wrong: ["🎺 Trumpet", "🥁 Drum", "🎷 Sax"]},
-              {q: "What instrument is really big and you blow into it?", a: "🎷 Tuba", wrong: ["🎻 Violin", "🥁 Drum", "🎸 Guitar"]},
+              {q: "What do you shake to make music?", a: "🪇 Maracas", wrong: ["🎸 Guitar", "🎹 Piano", "🎻 Violin"]},
+              {q: "Which one has strings you can pluck?", a: "🎸 Guitar", wrong: ["🎺 Trumpet", "🥁 Drum", "🎷 Saxophone"]},
+              {q: "Which instrument is really big and you blow into it?", a: "🎺 Tuba", wrong: ["🎻 Violin", "🥁 Drum", "🎸 Guitar"]},
               {q: "Which instrument has a bow?", a: "🎻 Violin", wrong: ["🎸 Guitar", "🎺 Trumpet", "🥁 Drum"]},
-              {q: "What plays when you press the keys?", a: "🎹 Piano", wrong: ["🥁 Drum", "🎷 Sax", "🎸 Guitar"]},
-              {q: "Which instrument is very loud?", a: "🎺 Trumpet", wrong: ["🎻 Violin", "🪕 Banjo", "🎵 Flute"]},
+              {q: "What plays when you press the keys?", a: "🎹 Piano", wrong: ["🥁 Drum", "🎷 Saxophone", "🎸 Guitar"]},
+              {q: "Which instrument is very loud?", a: "🎺 Trumpet", wrong: ["🎻 Violin", "🪕 Banjo", "🎹 Piano"]},
               {q: "What do you use to play a drum?", a: "Drumsticks", wrong: ["A bow", "Your breath", "A pick"]},
               {q: "Which is a string instrument?", a: "🎻 Violin", wrong: ["🎺 Trumpet", "🥁 Drum", "🎷 Sax"]},
               {q: "What instrument looks like a small guitar?", a: "🪕 Ukulele", wrong: ["🎺 Trumpet", "🥁 Drum", "🎹 Piano"]},
               {q: "Clapping your hands makes what?", a: "A beat", wrong: ["A melody", "A chord", "Silence"]}
           ],
           2: [
-              {q: "How many strings does a standard guitar have?", a: "6", wrong: ["4", "5", "7"]},
-              {q: "What does the symbol 'mf' mean in sheet music?", a: "Medium Loud", wrong: ["Very Loud", "Soft", "Very Soft"]},
-              {q: "Which instrument is part of the brass family?", a: "Trombone", wrong: ["Flute", "Cello", "Snare Drum"]},
-              {q: "What is the highest female singing voice?", a: "Soprano", wrong: ["Alto", "Tenor", "Bass"]},
-              {q: "How many notes are in a musical octave?", a: "8", wrong: ["6", "7", "12"]},
-              {q: "What do you call a group of musicians playing together?", a: "Orchestra", wrong: ["Choir", "Solo", "Duet"]},
-              {q: "Which clef is used for higher notes?", a: "Treble Clef", wrong: ["Bass Clef", "Alto Clef", "Tenor Clef"]},
-              {q: "What is the lowest male singing voice?", a: "Bass", wrong: ["Tenor", "Baritone", "Alto"]},
-              {q: "How many beats does a whole note get?", a: "4", wrong: ["1", "2", "3"]},
-              {q: "Which instrument family includes flute and clarinet?", a: "Woodwinds", wrong: ["Brass", "Strings", "Percussion"]},
-              {q: "What is a song for two people called?", a: "Duet", wrong: ["Solo", "Trio", "Quartet"]},
-              {q: "What does 'forte' mean?", a: "Loud", wrong: ["Soft", "Fast", "Slow"]},
-              {q: "Which instrument has 88 keys?", a: "Piano", wrong: ["Organ", "Accordion", "Harpsichord"]},
-              {q: "What is a group of singers called?", a: "Choir", wrong: ["Orchestra", "Band", "Ensemble"]},
-              {q: "How many lines does a music staff have?", a: "5", wrong: ["4", "6", "3"]}
+              {q: "How many strings does a guitar have?", a: "6", wrong: ["4", "5", "7"]},
+              {q: "What do you call a group of musicians playing together?", a: "Band", wrong: ["Crowd", "Class", "Team"]},
+              {q: "What is a song with two singers called?", a: "Duet", wrong: ["Solo", "Trio", "Quartet"]},
+              {q: "Which instrument has 88 keys?", a: "Piano", wrong: ["Drum", "Guitar", "Trumpet"]},
+              {q: "What is a group of singers called?", a: "Choir", wrong: ["Orchestra", "Band", "Audience"]},
+              {q: "Which is a brass instrument?", a: "Trumpet", wrong: ["Flute", "Cello", "Drum"]},
+              {q: "Which is a string instrument?", a: "Violin", wrong: ["Trumpet", "Drum", "Flute"]},
+              {q: "Which is a percussion instrument (you hit it)?", a: "Drum", wrong: ["Flute", "Violin", "Piano"]},
+              {q: "What note is the longest — whole, half, or quarter?", a: "Whole", wrong: ["Half", "Quarter", "Eighth"]},
+              {q: "Which is louder?", a: "Forte", wrong: ["Piano", "Mezzo", "Pianissimo"]},
+              {q: "How many notes are in 'do re mi fa sol la ti do'?", a: "8", wrong: ["6", "7", "10"]},
+              {q: "What instrument has black and white keys?", a: "Piano", wrong: ["Guitar", "Trumpet", "Drum"]},
+              {q: "What do you call the speed of a song?", a: "Tempo", wrong: ["Volume", "Pitch", "Tone"]},
+              {q: "Which instrument do you blow into?", a: "Flute", wrong: ["Drum", "Guitar", "Violin"]},
+              {q: "What musical word means 'play softly'?", a: "Piano", wrong: ["Forte", "Allegro", "Largo"]}
           ],
           3: [
               {q: "What is the relative minor of C Major?", a: "A Minor", wrong: ["E Minor", "D Minor", "G Minor"]},
@@ -6119,15 +6116,10 @@ function playAnimalSound(type) {
 <div>
 <h3>How It Works</h3>
 <p>Every module loads instantly from a single static HTML page &mdash; no backend, no account, no cookies beyond the local score key. Pick a level from the URL with <code>?level=1</code> through <code>?level=8</code>, or land on the <a href="../amni-learn.html">Amni-Learn product page</a> and use the level selector there.</p>
-<p>Progress is saved per-browser. The fullscreen button works on any device, and the game grid re-flows to fit phones, tablets, and desktops. Because nothing is sent to a server, Amni-Learn is safe for children &mdash; there are no ads inside the interactive games themselves, only on the landing page below.</p>
+<p>Progress is saved per-browser. The fullscreen button works on any device, and the game grid re-flows to fit phones, tablets, and desktops. Nothing is sent to a server &mdash; the entire app runs from a single static HTML page, so it works fully offline (airplane mode, school WiFi blocking, no signal &mdash; all fine). No ads, no trackers, no accounts.</p>
 <p>Found a bug or want a new subject? Reach out through the <a href="../about.html">About page</a>.</p>
 </div>
 </div>
-<aside class="disc-ad" aria-label="Sponsored">
-<div class="ad-tag">Sponsored</div>
-<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8345487545441889" data-ad-slot="1720203631" data-ad-format="auto" data-full-width-responsive="true"></ins>
-<script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>
-</aside>
 <nav class="lf-nav" aria-label="Site links">
 <a href="../amni-learn.html">Amni-Learn Product Page</a>
 <a href="../about.html">About</a>
