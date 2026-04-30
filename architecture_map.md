@@ -1,5 +1,15 @@
 # Architecture Map — amni-scient.com
 
+## v5.4.0 Amni-Learn theme + UX + neutral content sweep
+- `learn/sw.js` cache bumped `amni-learn-v1` → `amni-learn-v2` so users on stale cached pre-e78ee19 HTML pick up the views-map fix (was the real cause of "storybooks / 2048 / cblast / solitaire / tdgame display no content").
+- `learn/index.html`: post-level-filter sweep hides any `.game-category` with no visible `.game-btn` children — kills the empty Life Skills band at PRE-K and is robust against future per-level filters.
+- `css/style.css`: added `body.theme-learn` accent (`#2ecc71`, dim/glow/scanlines + light variant `#1e8449`). Class was already on every learn marketing/SEO page but undefined.
+- 11 learn SEO landing pages + `amni-learn.html`: inline `#2ecc71` swapped to `var(--accent)` so they inherit the theme cleanly.
+- Mobile top-bar fix: `#level-btn .btn-label` re-shown under the `<720px` media query — Lv N stays visible on phones.
+- Flappy Jump rebalance: GRAV 0.13→0.085, FLAP -3.8→-3.2, vel-cap 4→3, GAP 160→185 (min 150), PIPE_DX 220→240, SPD 0.9→0.75. Fall ~35% slower, wider corridor.
+- Subject-quiz `loadQuestion` now requires reading an explanation card and clicking "Next ▶" before advancing — same flow college quizzes already had. 112 `explain` fields bulk-added across animals/music/languages/science L1–L3 for actual teaching.
+- AI Ethics Debug levels rewritten **Data Leakage / Spurious Correlation / Privacy Breach** (same UI, neutral ML-engineering framing) — replaces prior race/gender-proxy framings.
+
 ## Structure
 ```
 amni-scient-site/

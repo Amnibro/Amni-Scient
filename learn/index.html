@@ -23,6 +23,7 @@
     .fs-hint { display: none !important; }
     .back-btn, .fs-btn { padding: 6px 8px !important; font-size: 0.85rem !important; min-height: 36px; }
     .back-btn .btn-label, .fs-btn .fs-label { display: none; }
+    #level-btn .btn-label { display: inline !important; font-weight: bold; }
     .score-bar { font-size: 0.8rem; gap: 8px; }
     #leaderboard-btn { padding: 1px 6px !important; }
     .menu-title { font-size: clamp(1.3rem, 5vw, 1.8rem) !important; margin-bottom: 0.6rem; }
@@ -816,12 +817,6 @@
           <button class="game-btn memseq" data-game="memseq"><span class="btn-icon">💡</span><span class="btn-text">Memory Sequence</span><span class="btn-desc">Remember the pattern</span></button>
           <button class="game-btn pattern" data-game="pattern"><span class="btn-icon">🔢</span><span class="btn-text">Pattern Puzzle</span><span class="btn-desc">Find what comes next</span></button>
           <button class="game-btn geo" data-game="geo"><span class="btn-icon">🌎</span><span class="btn-text">Geography Explorer</span><span class="btn-desc">Flags & countries</span></button>
-          <button class="game-btn colorsort" data-game="colorsort"><span class="btn-icon">🧪</span><span class="btn-text">Color Sort</span><span class="btn-desc">Sort colors into tubes</span></button>
-          <button class="game-btn bejeweled" data-game="bejeweled"><span class="btn-icon">💎</span><span class="btn-text">Gem Crush</span><span class="btn-desc">Match 3 gems to score</span></button>
-          <button class="game-btn t2048" data-game="t2048"><span class="btn-icon">🔢</span><span class="btn-text">2048</span><span class="btn-desc">Slide & merge to 2048</span></button>
-          <button class="game-btn cblast" data-game="cblast"><span class="btn-icon">🧱</span><span class="btn-text">Color Blast</span><span class="btn-desc">Pop clusters of color</span></button>
-          <button class="game-btn solitaire" data-game="solitaire"><span class="btn-icon">♠️</span><span class="btn-text">Solitaire</span><span class="btn-desc">Classic Klondike card game</span></button>
-          <button class="game-btn tdgame" data-game="tdgame"><span class="btn-icon">🏰</span><span class="btn-text">Tower Defense</span><span class="btn-desc">Build towers, stop the waves</span></button>
         </div>
       </section>
       <section class="game-category" id="stem-section" style="display:none;">
@@ -897,8 +892,14 @@
         </div>
       </section>
       <section class="game-category destress-cat" style="display:none;">
-        <h2 class="cat-header"><span class="cat-header-icon">📱</span> Ad-Style Mini Games</h2>
+        <h2 class="cat-header"><span class="cat-header-icon">🎲</span> Casual Puzzles</h2>
         <div class="cat-games">
+          <button class="game-btn colorsort" data-game="colorsort"><span class="btn-icon">🧪</span><span class="btn-text">Color Sort</span><span class="btn-desc">Sort colors into tubes</span></button>
+          <button class="game-btn bejeweled" data-game="bejeweled"><span class="btn-icon">💎</span><span class="btn-text">Gem Crush</span><span class="btn-desc">Match 3 gems to score</span></button>
+          <button class="game-btn t2048" data-game="t2048"><span class="btn-icon">🔢</span><span class="btn-text">2048</span><span class="btn-desc">Slide & merge to 2048</span></button>
+          <button class="game-btn cblast" data-game="cblast"><span class="btn-icon">🧱</span><span class="btn-text">Color Blast</span><span class="btn-desc">Pop clusters of color</span></button>
+          <button class="game-btn solitaire" data-game="solitaire"><span class="btn-icon">♠️</span><span class="btn-text">Solitaire</span><span class="btn-desc">Classic Klondike card game</span></button>
+          <button class="game-btn tdgame" data-game="tdgame"><span class="btn-icon">🏰</span><span class="btn-text">Tower Defense</span><span class="btn-desc">Build towers, stop the waves</span></button>
         </div>
       </section>
       <section class="game-category college-cat" style="display:none;">
@@ -1327,6 +1328,7 @@
   const _lc={1:'#2ecc71',2:'#f1c40f',3:'#e67e22',4:'#e74c3c',5:'#9b59b6',6:'#1abc9c',7:'#ff6b9d',8:'#48dbfb'},_ln={1:'PRE-K GAMES',2:'GRADES K-2',3:'GRADES 3-5',4:'MIDDLE SCHOOL',5:'STEM CHALLENGE',6:'BRAIN EXERCISE',7:'DESTRESS ARCADE',8:'COLLEGE PREP'},_ac=_lc[currentLevel];
   $$('.menu-title').textContent=_ln[currentLevel];$$('.menu-title').style.color=_ac;$$('.menu-title').style.textShadow=`0 0 15px ${_ac}`;$$('#nav-back').style.borderColor=_ac;$$('#nav-back').style.color=_ac;$$('#fs-btn').style.borderColor=_ac;$$('#fs-btn').style.color=_ac;$$('.top-bar').children[1].style.color=_ac;$$('#menu-view').style.background=`radial-gradient(ellipse at 50% 30%,${_ac}12 0%,#0c0f12 60%)`;$$all('.cat-header').forEach(h=>h.style.borderBottomColor=_ac+'30');
   currentLevel===1?$$all('[data-subgame="money"],[data-subgame="clock"],[data-subgame="vacuum"],[data-subgame="dishes"]').forEach(el=>el?el.style.display='none':0):0;currentLevel>=4&&currentLevel!==6&&currentLevel!==7&&currentLevel!==8?($$('#stem-section').style.display='block',$$all('[data-subgame="vacuum"],[data-subgame="dishes"],[data-subgame="clock"],.tracing,.matching').forEach(el=>el?el.style.display='none':0)):0;(currentLevel===4||currentLevel===5)?$$('#main-game-grid').classList.add('wide-mode'):0;currentLevel===6?($$all('.game-category:not(#brain-section):not(.brain-cat)').forEach(c=>c.style.display='none'),$$('#brain-section').style.display='block',$$all('.brain-cat').forEach(c=>c.style.display='block'),$$('#main-game-grid').classList.add('brain-mode')):0;currentLevel===7?($$all('.game-category:not(.destress-cat)').forEach(c=>c.style.display='none'),$$all('.destress-cat').forEach(c=>c.style.display='block'),$$('#main-game-grid').classList.add('brain-mode')):0;currentLevel===8?($$all('.game-category:not(.college-cat)').forEach(c=>c.style.display='none'),$$all('.college-cat').forEach(c=>c.style.display='block'),$$('#main-game-grid').classList.add('brain-mode')):0;
+  $$all('#main-game-grid > .game-category').forEach(cat=>{if(cat.style.display==='none')return;const btns=cat.querySelectorAll('.game-btn');if(!btns.length)return;Array.from(btns).every(b=>b.style.display==='none'||getComputedStyle(b).display==='none')?cat.style.display='none':0;});
   let sessionScore = parseInt(sessionStorage.getItem('amni-learn-score')||'0');
   let currentStreak = parseInt(sessionStorage.getItem('amni-learn-streak')||'0');
   let bestStreak = parseInt(sessionStorage.getItem('amni-learn-best')||'0');
@@ -3614,36 +3616,36 @@
               {q: "Which animal says 'Chitter'?", a: "🐿 Squirrel", wrong: ["🐭 Mouse", "🐹 Hamster", "🦔 Hedgehog"], isAudio: true, audioText: "Chitter"}
           ],
           2: [
-              {q: "What is the largest mammal?", a: "🐋 Blue Whale", wrong: ["🐘 Elephant", "🦒 Giraffe", "🦛 Hippo"]},
-              {q: "Which object is used for measuring?", a: "📏 Ruler", wrong: ["✂️ Scissors", "📎 Paperclip", "🎒 Backpack"]},
-              {q: "Which bird cannot fly?", a: "🐧 Penguin", wrong: ["🦅 Eagle", "🦜 Parrot", "🦉 Owl"]},
-              {q: "What do you use to look at the stars?", a: "🔭 Telescope", wrong: ["🔬 Microscope", "📷 Camera", "📹 Binoculars"]},
-              {q: "Which animal is known as the king of the jungle?", a: "🦁 Lion", wrong: ["🐯 Tiger", "🐻 Bear", "🦍 Gorilla"]},
-              {q: "Which animal has a pouch?", a: "🦘 Kangaroo", wrong: ["🐻 Bear", "🦊 Fox", "🐺 Wolf"]},
-              {q: "What is the tallest animal?", a: "🦒 Giraffe", wrong: ["🐘 Elephant", "🐫 Camel", "🦓 Zebra"]},
-              {q: "Which animal changes color?", a: "🦎 Chameleon", wrong: ["🐸 Frog", "🐢 Turtle", "🦗 Cricket"]},
-              {q: "What animal has eight legs?", a: "🕷 Spider", wrong: ["🐜 Ant", "🐛 Caterpillar", "🦗 Grasshopper"]},
-              {q: "Which tool cuts paper?", a: "✂️ Scissors", wrong: ["📏 Ruler", "📌 Pin", "🖊️ Pen"]},
-              {q: "Which animal builds dams?", a: "🦫 Beaver", wrong: ["🦦 Otter", "🐿 Squirrel", "🦝 Raccoon"]},
-              {q: "Which animal has a trunk?", a: "🐘 Elephant", wrong: ["🦏 Rhino", "🐃 Buffalo", "🦛 Hippo"]},
-              {q: "What animal makes honey?", a: "🐝 Bee", wrong: ["🐜 Ant", "🦋 Butterfly", "🪲 Beetle"]},
-              {q: "Which animal has stripes?", a: "🦓 Zebra", wrong: ["🐘 Elephant", "🦛 Hippo", "🐪 Camel"]},
-              {q: "Which is the slowest mammal?", a: "🦥 Sloth", wrong: ["🐢 Turtle", "🦔 Hedgehog", "🐰 Rabbit"]}
+              {q: "What is the largest mammal?", a: "🐋 Blue Whale", wrong: ["🐘 Elephant", "🦒 Giraffe", "🦛 Hippo"], explain: "The blue whale is the largest mammal and the largest animal ever known on Earth."},
+              {q: "Which object is used for measuring?", a: "📏 Ruler", wrong: ["✂️ Scissors", "📎 Paperclip", "🎒 Backpack"], explain: "A ruler measures length. Scissors cut, paperclips hold paper, backpacks carry things."},
+              {q: "Which bird cannot fly?", a: "🐧 Penguin", wrong: ["🦅 Eagle", "🦜 Parrot", "🦉 Owl"], explain: "Penguins are flightless birds. Their wings became flippers for swimming."},
+              {q: "What do you use to look at the stars?", a: "🔭 Telescope", wrong: ["🔬 Microscope", "📷 Camera", "📹 Binoculars"], explain: "A telescope magnifies far-away things. A microscope is for tiny close-up things."},
+              {q: "Which animal is known as the king of the jungle?", a: "🦁 Lion", wrong: ["🐯 Tiger", "🐻 Bear", "🦍 Gorilla"], explain: "The lion is called the king of the jungle for its strength and majestic mane."},
+              {q: "Which animal has a pouch?", a: "🦘 Kangaroo", wrong: ["🐻 Bear", "🦊 Fox", "🐺 Wolf"], explain: "Kangaroos are marsupials. Their babies (joeys) ride in a pouch on the mother's belly."},
+              {q: "What is the tallest animal?", a: "🦒 Giraffe", wrong: ["🐘 Elephant", "🐫 Camel", "🦓 Zebra"], explain: "Giraffes can reach 5.5 meters (18 ft) tall, taller than two people stacked up."},
+              {q: "Which animal changes color?", a: "🦎 Chameleon", wrong: ["🐸 Frog", "🐢 Turtle", "🦗 Cricket"], explain: "Chameleons change color for camouflage, temperature control, and to communicate mood."},
+              {q: "What animal has eight legs?", a: "🕷 Spider", wrong: ["🐜 Ant", "🐛 Caterpillar", "🦗 Grasshopper"], explain: "Spiders are arachnids with 8 legs. Insects (ants, bees) have 6 legs."},
+              {q: "Which tool cuts paper?", a: "✂️ Scissors", wrong: ["📏 Ruler", "📌 Pin", "🖊️ Pen"], explain: "Scissors have two blades that slice paper when you squeeze the handles together."},
+              {q: "Which animal builds dams?", a: "🦫 Beaver", wrong: ["🦦 Otter", "🐿 Squirrel", "🦝 Raccoon"], explain: "Beavers build dams from logs and mud, creating ponds where they live safely."},
+              {q: "Which animal has a trunk?", a: "🐘 Elephant", wrong: ["🦏 Rhino", "🐃 Buffalo", "🦛 Hippo"], explain: "Elephants use their trunks to grab food, drink water, and even hug each other."},
+              {q: "What animal makes honey?", a: "🐝 Bee", wrong: ["🐜 Ant", "🦋 Butterfly", "🪲 Beetle"], explain: "Bees collect nectar from flowers and turn it into honey inside their hive."},
+              {q: "Which animal has stripes?", a: "🦓 Zebra", wrong: ["🐘 Elephant", "🦛 Hippo", "🐪 Camel"], explain: "Zebras have black-and-white stripes that help confuse predators in a herd."},
+              {q: "Which is the slowest mammal?", a: "🦥 Sloth", wrong: ["🐢 Turtle", "🦔 Hedgehog", "🐰 Rabbit"], explain: "Sloths move so slowly that algae actually grows on their fur."}
           ],
           3: [
-              {q: "What is a group of crows called?", a: "Murder", wrong: ["Flock", "Gaggle", "Herd"]},
-              {q: "What is the fastest land animal?", a: "Cheetah", wrong: ["Lion", "Leopard", "Gazelle"]},
-              {q: "What is the scientific name for the collarbone?", a: "Clavicle", wrong: ["Scapula", "Sternum", "Patella"]},
-              {q: "What is a group of wolves called?", a: "Pack", wrong: ["Herd", "Flock", "Swarm"]},
-              {q: "Which animal has the longest lifespan?", a: "Greenland Shark", wrong: ["Giant Tortoise", "Bowhead Whale", "Elephant"]},
-              {q: "What type of animal is a seahorse?", a: "Fish", wrong: ["Mammal", "Reptile", "Crustacean"]},
-              {q: "What is the study of insects called?", a: "Entomology", wrong: ["Ornithology", "Herpetology", "Ichthyology"]},
-              {q: "Which animal can regenerate its limbs?", a: "Axolotl", wrong: ["Frog", "Goldfish", "Turtle"]},
-              {q: "What is the largest species of penguin?", a: "Emperor Penguin", wrong: ["King Penguin", "Adelie Penguin", "Rockhopper Penguin"]},
-              {q: "Which bird is known for mimicking human speech?", a: "African Grey Parrot", wrong: ["Macaw", "Cockatiel", "Budgerigar"]},
-              {q: "What is the hardest natural substance?", a: "Diamond", wrong: ["Quartz", "Topaz", "Corundum"]},
-              {q: "What phylum do insects belong to?", a: "Arthropoda", wrong: ["Chordata", "Mollusca", "Annelida"]},
-              {q: "What is the collective noun for a group of flamingos?", a: "Flamboyance", wrong: ["Flock", "Colony", "Stand"]}
+              {q: "What is a group of crows called?", a: "Murder", wrong: ["Flock", "Gaggle", "Herd"], explain: "A group of crows is called a 'murder'. English has many quirky group names like this."},
+              {q: "What is the fastest land animal?", a: "Cheetah", wrong: ["Lion", "Leopard", "Gazelle"], explain: "Cheetahs can sprint up to 70 mph (113 km/h) for short bursts."},
+              {q: "What is the scientific name for the collarbone?", a: "Clavicle", wrong: ["Scapula", "Sternum", "Patella"], explain: "The clavicle connects your shoulder blade to your sternum (breastbone)."},
+              {q: "What is a group of wolves called?", a: "Pack", wrong: ["Herd", "Flock", "Swarm"], explain: "A wolf pack is a family group with a clear social structure."},
+              {q: "Which animal has the longest lifespan?", a: "Greenland Shark", wrong: ["Giant Tortoise", "Bowhead Whale", "Elephant"], explain: "Greenland sharks live 250 to 500 years, the longest-lived vertebrate known."},
+              {q: "What type of animal is a seahorse?", a: "Fish", wrong: ["Mammal", "Reptile", "Crustacean"], explain: "Seahorses are bony fish even though they look unique. They have gills and fins."},
+              {q: "What is the study of insects called?", a: "Entomology", wrong: ["Ornithology", "Herpetology", "Ichthyology"], explain: "Entomology comes from Greek 'entomon' (insect). Ornithology is birds, herpetology is reptiles."},
+              {q: "Which animal can regenerate its limbs?", a: "Axolotl", wrong: ["Frog", "Goldfish", "Turtle"], explain: "The axolotl, a Mexican salamander, can regrow lost limbs, organs, and even parts of its brain."},
+              {q: "What is the largest species of penguin?", a: "Emperor Penguin", wrong: ["King Penguin", "Adelie Penguin", "Rockhopper Penguin"], explain: "Emperor penguins stand about 1.2 m (4 ft) tall and survive Antarctic winters at -60 C."},
+              {q: "Which bird is known for mimicking human speech?", a: "African Grey Parrot", wrong: ["Macaw", "Cockatiel", "Budgerigar"], explain: "African Greys can learn hundreds of words and use them in context, surprisingly intelligent birds."},
+              {q: "What is the hardest natural substance?", a: "Diamond", wrong: ["Quartz", "Topaz", "Corundum"], explain: "Diamond ranks 10 on the Mohs hardness scale, the highest of any natural mineral."},
+              {q: "What phylum do insects belong to?", a: "Arthropoda", wrong: ["Chordata", "Mollusca", "Annelida"], explain: "Arthropoda includes insects, spiders, and crustaceans, animals with exoskeletons and jointed legs."},
+              {q: "What is the collective noun for a group of flamingos?", a: "Flamboyance", wrong: ["Flock", "Colony", "Stand"], explain: "A 'flamboyance' of flamingos. The name fits their bright plumage."}
           ],
           4: [
               {q: "What is the term for an organism that produces its own food?", a: "Autotroph", wrong: ["Heterotroph", "Decomposer", "Parasite"]},
@@ -3673,38 +3675,38 @@
       music: {
           title: "Music & Instruments",
           1: [
-              {q: "Which instrument has black and white keys?", a: "🎹 Piano", wrong: ["🎸 Guitar", "🎺 Trumpet", "🥁 Drum"]},
-              {q: "What instrument do you hit with sticks?", a: "🥁 Drum", wrong: ["🎻 Violin", "🎷 Saxophone", "🪕 Banjo"]},
-              {q: "Which instrument do you strum?", a: "🎸 Guitar", wrong: ["🎹 Piano", "🎺 Trumpet", "🥁 Drum"]},
-              {q: "Which instrument do you blow into?", a: "🎺 Trumpet", wrong: ["🎸 Guitar", "🎻 Violin", "🥁 Drum"]},
-              {q: "Which makes a jingling sound?", a: "🔔 Bell", wrong: ["🥁 Drum", "🎸 Guitar", "🎹 Piano"]},
-              {q: "What do you shake to make music?", a: "🪇 Maracas", wrong: ["🎸 Guitar", "🎹 Piano", "🎻 Violin"]},
-              {q: "Which one has strings you can pluck?", a: "🎸 Guitar", wrong: ["🎺 Trumpet", "🥁 Drum", "🎷 Saxophone"]},
-              {q: "Which instrument is really big and you blow into it?", a: "🎺 Tuba", wrong: ["🎻 Violin", "🥁 Drum", "🎸 Guitar"]},
-              {q: "Which instrument has a bow?", a: "🎻 Violin", wrong: ["🎸 Guitar", "🎺 Trumpet", "🥁 Drum"]},
-              {q: "What plays when you press the keys?", a: "🎹 Piano", wrong: ["🥁 Drum", "🎷 Saxophone", "🎸 Guitar"]},
-              {q: "Which instrument is very loud?", a: "🎺 Trumpet", wrong: ["🎻 Violin", "🪕 Banjo", "🎹 Piano"]},
-              {q: "What do you use to play a drum?", a: "Drumsticks", wrong: ["A bow", "Your breath", "A pick"]},
+              {q: "Which instrument has black and white keys?", a: "🎹 Piano", wrong: ["🎸 Guitar", "🎺 Trumpet", "🥁 Drum"], explain: "The piano has 88 keys: 52 white and 36 black, covering 7 octaves."},
+              {q: "What instrument do you hit with sticks?", a: "🥁 Drum", wrong: ["🎻 Violin", "🎷 Saxophone", "🪕 Banjo"], explain: "Drums are percussion instruments. You make sound by striking the surface."},
+              {q: "Which instrument do you strum?", a: "🎸 Guitar", wrong: ["🎹 Piano", "🎺 Trumpet", "🥁 Drum"], explain: "Guitars have strings that vibrate when strummed or plucked, producing musical notes."},
+              {q: "Which instrument do you blow into?", a: "🎺 Trumpet", wrong: ["🎸 Guitar", "🎻 Violin", "🥁 Drum"], explain: "Trumpets are brass instruments. You buzz your lips into the mouthpiece to make sound."},
+              {q: "Which makes a jingling sound?", a: "🔔 Bell", wrong: ["🥁 Drum", "🎸 Guitar", "🎹 Piano"], explain: "Bells ring with a clear, bright tone, used in music, churches, and on holidays."},
+              {q: "What do you shake to make music?", a: "🪇 Maracas", wrong: ["🎸 Guitar", "🎹 Piano", "🎻 Violin"], explain: "Maracas are filled with beads or seeds that rattle when shaken."},
+              {q: "Which one has strings you can pluck?", a: "🎸 Guitar", wrong: ["🎺 Trumpet", "🥁 Drum", "🎷 Saxophone"], explain: "Guitars have 6 strings you pluck or strum to make music."},
+              {q: "Which instrument is really big and you blow into it?", a: "🎺 Tuba", wrong: ["🎻 Violin", "🥁 Drum", "🎸 Guitar"], explain: "The tuba is the largest brass instrument and plays the lowest notes in a band."},
+              {q: "Which instrument has a bow?", a: "🎻 Violin", wrong: ["🎸 Guitar", "🎺 Trumpet", "🥁 Drum"], explain: "The violin uses a bow with horsehair drawn across the strings to make sound."},
+              {q: "What plays when you press the keys?", a: "🎹 Piano", wrong: ["🥁 Drum", "🎷 Saxophone", "🎸 Guitar"], explain: "Pressing piano keys makes hammers strike strings inside, producing each note."},
+              {q: "Which instrument is very loud?", a: "🎺 Trumpet", wrong: ["🎻 Violin", "🪕 Banjo", "🎹 Piano"], explain: "Trumpets are loud and bright, one reason they lead military and parade bands."},
+              {q: "What do you use to play a drum?", a: "Drumsticks", wrong: ["A bow", "Your breath", "A pick"], explain: "Drumsticks are the main tool. You can also use brushes or your hands."},
               {q: "Which is a string instrument?", a: "🎻 Violin", wrong: ["🎺 Trumpet", "🥁 Drum", "🎷 Sax"]},
-              {q: "What instrument looks like a small guitar?", a: "🪕 Ukulele", wrong: ["🎺 Trumpet", "🥁 Drum", "🎹 Piano"]},
-              {q: "Clapping your hands makes what?", a: "A beat", wrong: ["A melody", "A chord", "Silence"]}
+              {q: "What instrument looks like a small guitar?", a: "🪕 Ukulele", wrong: ["🎺 Trumpet", "🥁 Drum", "🎹 Piano"], explain: "The ukulele is a small Hawaiian instrument with 4 strings, easier to learn than guitar."},
+              {q: "Clapping your hands makes what?", a: "A beat", wrong: ["A melody", "A chord", "Silence"], explain: "Clapping makes a beat, the rhythm of music. Melody is the tune; harmony layers notes."}
           ],
           2: [
-              {q: "How many strings does a guitar have?", a: "6", wrong: ["4", "5", "7"]},
-              {q: "What do you call a group of musicians playing together?", a: "Band", wrong: ["Crowd", "Class", "Team"]},
-              {q: "What is a song with two singers called?", a: "Duet", wrong: ["Solo", "Trio", "Quartet"]},
+              {q: "How many strings does a guitar have?", a: "6", wrong: ["4", "5", "7"], explain: "A standard guitar has 6 strings tuned E-A-D-G-B-E. Bass guitars have 4."},
+              {q: "What do you call a group of musicians playing together?", a: "Band", wrong: ["Crowd", "Class", "Team"], explain: "A band plays popular music together. An orchestra is a larger classical group."},
+              {q: "What is a song with two singers called?", a: "Duet", wrong: ["Solo", "Trio", "Quartet"], explain: "A duet has two voices. Solo is 1, duet is 2, trio is 3, quartet is 4."},
               {q: "Which instrument has 88 keys?", a: "Piano", wrong: ["Drum", "Guitar", "Trumpet"]},
-              {q: "What is a group of singers called?", a: "Choir", wrong: ["Orchestra", "Band", "Audience"]},
-              {q: "Which is a brass instrument?", a: "Trumpet", wrong: ["Flute", "Cello", "Drum"]},
+              {q: "What is a group of singers called?", a: "Choir", wrong: ["Orchestra", "Band", "Audience"], explain: "A choir is a group that sings together, often in harmony."},
+              {q: "Which is a brass instrument?", a: "Trumpet", wrong: ["Flute", "Cello", "Drum"], explain: "Trumpets are brass, made of metal tubing you buzz your lips into."},
               {q: "Which is a string instrument?", a: "Violin", wrong: ["Trumpet", "Drum", "Flute"]},
-              {q: "Which is a percussion instrument (you hit it)?", a: "Drum", wrong: ["Flute", "Violin", "Piano"]},
-              {q: "What note is the longest — whole, half, or quarter?", a: "Whole", wrong: ["Half", "Quarter", "Eighth"]},
-              {q: "Which is louder?", a: "Forte", wrong: ["Piano", "Mezzo", "Pianissimo"]},
-              {q: "How many notes are in 'do re mi fa sol la ti do'?", a: "8", wrong: ["6", "7", "10"]},
+              {q: "Which is a percussion instrument (you hit it)?", a: "Drum", wrong: ["Flute", "Violin", "Piano"], explain: "Drums are percussion, sound comes from striking the drumhead."},
+              {q: "What note is the longest — whole, half, or quarter?", a: "Whole", wrong: ["Half", "Quarter", "Eighth"], explain: "A whole note lasts 4 beats. Half is 2 beats. Quarter is 1 beat. Eighth is 1/2 beat."},
+              {q: "Which is louder?", a: "Forte", wrong: ["Piano", "Mezzo", "Pianissimo"], explain: "Forte means loud in Italian. Piano means soft. Mezzo is medium. Pianissimo is very soft."},
+              {q: "How many notes are in 'do re mi fa sol la ti do'?", a: "8", wrong: ["6", "7", "10"], explain: "8 notes, that is an octave (do to high do)."},
               {q: "What instrument has black and white keys?", a: "Piano", wrong: ["Guitar", "Trumpet", "Drum"]},
-              {q: "What do you call the speed of a song?", a: "Tempo", wrong: ["Volume", "Pitch", "Tone"]},
+              {q: "What do you call the speed of a song?", a: "Tempo", wrong: ["Volume", "Pitch", "Tone"], explain: "Tempo is the speed. Slow tempos feel calm; fast tempos feel exciting."},
               {q: "Which instrument do you blow into?", a: "Flute", wrong: ["Drum", "Guitar", "Violin"]},
-              {q: "What musical word means 'play softly'?", a: "Piano", wrong: ["Forte", "Allegro", "Largo"]}
+              {q: "What musical word means 'play softly'?", a: "Piano", wrong: ["Forte", "Allegro", "Largo"], explain: "Piano in Italian means 'soft'. The instrument's full name 'pianoforte' means 'soft-loud'."}
           ],
           3: [
               {q: "What is the relative minor of C Major?", a: "A Minor", wrong: ["E Minor", "D Minor", "G Minor"]},
@@ -3737,38 +3739,38 @@
               {q: "Find the letter: R", a: "R", wrong: ["B", "N", "L"], isAudio: true, audioText: "R"}
           ],
           2: [
-              {q: "What letter does CAT start with?", a: "C", wrong: ["A", "T", "K"]},
-              {q: "What letter does DOG start with?", a: "D", wrong: ["G", "B", "O"]},
-              {q: "What is the opposite of HOT?", a: "Cold", wrong: ["Warm", "Spicy", "Bright"]},
-              {q: "What is the opposite of BIG?", a: "Small", wrong: ["Large", "Tall", "Wide"]},
-              {q: "What is the opposite of UP?", a: "Down", wrong: ["Over", "Above", "High"]},
-              {q: "How do you say 'Hello' in Spanish?", a: "Hola", wrong: ["Bonjour", "Ciao", "Hi"]},
-              {q: "How do you say 'Thank you' in French?", a: "Merci", wrong: ["Gracias", "Danke", "Hi"]},
-              {q: "How do you say 'Yes' in German?", a: "Ja", wrong: ["Si", "Oui", "No"]},
-              {q: "What punctuation ends a question?", a: "?", wrong: ["!", ".", ","]},
-              {q: "What punctuation ends a statement?", a: ".", wrong: ["?", "!", ","]},
-              {q: "What is the plural of CAT?", a: "Cats", wrong: ["Cates", "Cati", "Cas"]},
-              {q: "What is the plural of CHILD?", a: "Children", wrong: ["Childs", "Childen", "Childes"]},
-              {q: "What rhymes with CAT?", a: "Hat", wrong: ["Dog", "Boy", "Tree"]},
-              {q: "What rhymes with STAR?", a: "Car", wrong: ["Sun", "Light", "Sky"]},
-              {q: "Which word names a thing?", a: "Apple", wrong: ["Run", "Happy", "Quickly"]}
+              {q: "What letter does CAT start with?", a: "C", wrong: ["A", "T", "K"], explain: "Cat begins with C, then A, then T. C-A-T."},
+              {q: "What letter does DOG start with?", a: "D", wrong: ["G", "B", "O"], explain: "Dog starts with D, same first sound as 'duck' and 'door'."},
+              {q: "What is the opposite of HOT?", a: "Cold", wrong: ["Warm", "Spicy", "Bright"], explain: "Hot and cold are opposites. They describe temperature."},
+              {q: "What is the opposite of BIG?", a: "Small", wrong: ["Large", "Tall", "Wide"], explain: "Big and small are opposites. They describe size."},
+              {q: "What is the opposite of UP?", a: "Down", wrong: ["Over", "Above", "High"], explain: "Up and down are opposites. They describe direction."},
+              {q: "How do you say 'Hello' in Spanish?", a: "Hola", wrong: ["Bonjour", "Ciao", "Hi"], explain: "Hola is Spanish for hello. Spanish is spoken in Spain and most of Latin America."},
+              {q: "How do you say 'Thank you' in French?", a: "Merci", wrong: ["Gracias", "Danke", "Hi"], explain: "Merci means thank you in French, used in France, Canada, and many African countries."},
+              {q: "How do you say 'Yes' in German?", a: "Ja", wrong: ["Si", "Oui", "No"], explain: "Ja is German for yes. German is spoken in Germany, Austria, and Switzerland."},
+              {q: "What punctuation ends a question?", a: "?", wrong: ["!", ".", ","], explain: "A question mark (?) ends a question. Periods (.) end statements."},
+              {q: "What punctuation ends a statement?", a: ".", wrong: ["?", "!", ","], explain: "A period (.) ends a regular statement. Exclamation marks (!) show excitement."},
+              {q: "What is the plural of CAT?", a: "Cats", wrong: ["Cates", "Cati", "Cas"], explain: "Add 's' to most nouns to make them plural: cat to cats, dog to dogs."},
+              {q: "What is the plural of CHILD?", a: "Children", wrong: ["Childs", "Childen", "Childes"], explain: "Child to children is irregular. Other irregulars: foot/feet, mouse/mice, person/people."},
+              {q: "What rhymes with CAT?", a: "Hat", wrong: ["Dog", "Boy", "Tree"], explain: "Cat and hat both end in -at. Rhyming words have matching ending sounds."},
+              {q: "What rhymes with STAR?", a: "Car", wrong: ["Sun", "Light", "Sky"], explain: "Star and car both end in -ar. Sun ends in -un, different sound."},
+              {q: "Which word names a thing?", a: "Apple", wrong: ["Run", "Happy", "Quickly"], explain: "Apple is a noun (a thing). Run is a verb. Happy is an adjective. Quickly is an adverb."}
           ],
           3: [
-              {q: "What is a NOUN?", a: "Person, place, or thing", wrong: ["Action word", "Describing word", "Joining word"]},
-              {q: "What is a VERB?", a: "Action word", wrong: ["Naming word", "Describing word", "Joining word"]},
-              {q: "What is an ADJECTIVE?", a: "Describing word", wrong: ["Action word", "Naming word", "Joining word"]},
-              {q: "What is a SYNONYM for 'happy'?", a: "Glad", wrong: ["Sad", "Angry", "Tired"]},
-              {q: "What is an ANTONYM for 'fast'?", a: "Slow", wrong: ["Quick", "Swift", "Speedy"]},
-              {q: "What is a COMPOUND WORD?", a: "Two words joined together (like 'sunshine')", wrong: ["A long word", "A word with prefix", "A made-up word"]},
+              {q: "What is a NOUN?", a: "Person, place, or thing", wrong: ["Action word", "Describing word", "Joining word"], explain: "A noun names a person, place, or thing, like 'teacher,' 'park,' or 'apple.'"},
+              {q: "What is a VERB?", a: "Action word", wrong: ["Naming word", "Describing word", "Joining word"], explain: "A verb is an action word, like 'run,' 'sing,' or 'think.'"},
+              {q: "What is an ADJECTIVE?", a: "Describing word", wrong: ["Action word", "Naming word", "Joining word"], explain: "An adjective describes a noun, like 'big' apple, 'happy' dog, 'red' car."},
+              {q: "What is a SYNONYM for 'happy'?", a: "Glad", wrong: ["Sad", "Angry", "Tired"], explain: "Synonyms have similar meanings. Happy is similar to glad, joyful, cheerful."},
+              {q: "What is an ANTONYM for 'fast'?", a: "Slow", wrong: ["Quick", "Swift", "Speedy"], explain: "Antonyms have opposite meanings. Fast vs slow, hot vs cold, big vs small."},
+              {q: "What is a COMPOUND WORD?", a: "Two words joined together (like 'sunshine')", wrong: ["A long word", "A word with prefix", "A made-up word"], explain: "Compound words combine two words: sun + shine = sunshine; rain + bow = rainbow."},
               {q: "Which is alliteration? (same starting sound)", a: "Big brown bear", wrong: ["Cat and dog", "The red car", "Run away fast"]},
-              {q: "What is a SIMILE?", a: "A comparison using LIKE or AS", wrong: ["A long sentence", "A type of poem", "A funny story"]},
-              {q: "Which is a simile?", a: "Brave as a lion", wrong: ["Big bad wolf", "Run quickly", "The blue sky"]},
-              {q: "What is the past tense of RUN?", a: "Ran", wrong: ["Runned", "Runs", "Running"]},
-              {q: "What is the past tense of GO?", a: "Went", wrong: ["Goed", "Gone", "Going"]},
-              {q: "Which word is a CONJUNCTION (joining word)?", a: "And", wrong: ["Run", "Big", "Happy"]},
-              {q: "Which is a PROPER NOUN (specific name)?", a: "Sarah", wrong: ["girl", "school", "book"]},
-              {q: "How do you say 'Water' in Spanish?", a: "Agua", wrong: ["Eau", "Wasser", "Acqua"]},
-              {q: "How do you say 'Goodbye' in Japanese?", a: "Sayonara", wrong: ["Bonjour", "Ciao", "Hola"]}
+              {q: "What is a SIMILE?", a: "A comparison using LIKE or AS", wrong: ["A long sentence", "A type of poem", "A funny story"], explain: "A simile compares using 'like' or 'as': 'brave as a lion,' 'fast like a cheetah.'"},
+              {q: "Which is a simile?", a: "Brave as a lion", wrong: ["Big bad wolf", "Run quickly", "The blue sky"], explain: "'Brave as a lion' uses 'as' to compare, that is a simile."},
+              {q: "What is the past tense of RUN?", a: "Ran", wrong: ["Runned", "Runs", "Running"], explain: "Run to ran (irregular). Today I run, yesterday I ran, I have run."},
+              {q: "What is the past tense of GO?", a: "Went", wrong: ["Goed", "Gone", "Going"], explain: "Go to went (irregular). Most verbs add -ed, but some change form completely."},
+              {q: "Which word is a CONJUNCTION (joining word)?", a: "And", wrong: ["Run", "Big", "Happy"], explain: "Conjunctions join words or sentences: and, but, or, because, so."},
+              {q: "Which is a PROPER NOUN (specific name)?", a: "Sarah", wrong: ["girl", "school", "book"], explain: "Sarah names a specific person, capitalized. 'girl' is a common noun."},
+              {q: "How do you say 'Water' in Spanish?", a: "Agua", wrong: ["Eau", "Wasser", "Acqua"], explain: "Agua means water in Spanish. The 'gua' sounds like 'gwa.'"},
+              {q: "How do you say 'Goodbye' in Japanese?", a: "Sayonara", wrong: ["Bonjour", "Ciao", "Hola"], explain: "Sayonara is a formal goodbye in Japanese. Casual is 'mata ne.'"}
           ],
           4: [
               {q: "What is a morpheme?", a: "Smallest unit of meaning", wrong: ["Smallest unit of sound", "A type of sentence", "A dialect region"]},
@@ -3947,38 +3949,38 @@
               {q: "What do bees make?", a: "🍯 Honey", wrong: ["🧈 Butter", "🥛 Milk", "🧀 Cheese"]}
           ],
           2: [
-              {q: "What gas do plants release?", a: "Oxygen", wrong: ["Carbon Dioxide", "Nitrogen", "Hydrogen"]},
-              {q: "What is the closest star to Earth?", a: "The Sun", wrong: ["Proxima Centauri", "Sirius", "Polaris"]},
-              {q: "What are the three states of matter?", a: "Solid, Liquid, Gas", wrong: ["Hot, Warm, Cold", "Big, Medium, Small", "Hard, Soft, Squishy"]},
-              {q: "What force keeps us on the ground?", a: "Gravity", wrong: ["Magnetism", "Friction", "Wind"]},
-              {q: "Which planet is known as the Red Planet?", a: "Mars", wrong: ["Jupiter", "Venus", "Mercury"]},
-              {q: "What is the process where water turns to steam?", a: "Evaporation", wrong: ["Condensation", "Freezing", "Melting"]},
-              {q: "What organ pumps blood through your body?", a: "Heart", wrong: ["Brain", "Lungs", "Stomach"]},
-              {q: "What is the water cycle?", a: "Evaporation, condensation, precipitation", wrong: ["Melting, boiling, freezing", "Sunrise, noon, sunset", "Spring, summer, fall, winter"]},
-              {q: "What is photosynthesis?", a: "Plants making food from sunlight", wrong: ["Animals breathing", "Rocks forming", "Water flowing"]},
-              {q: "How many planets are in our solar system?", a: "8", wrong: ["7", "9", "10"]},
-              {q: "What is the hardest rock?", a: "Diamond", wrong: ["Granite", "Marble", "Quartz"]},
-              {q: "What type of energy does the Sun give us?", a: "Light and heat", wrong: ["Sound", "Electricity", "Magnetic"]},
-              {q: "What is an herbivore?", a: "Animal that eats only plants", wrong: ["Animal that eats meat", "Animal that eats both", "A type of plant"]},
-              {q: "Which gas do we breathe out?", a: "Carbon Dioxide", wrong: ["Oxygen", "Nitrogen", "Helium"]},
-              {q: "What causes the tides in the ocean?", a: "The Moon's gravity", wrong: ["Wind", "Fish swimming", "Earthquakes"]}
+              {q: "What gas do plants release?", a: "Oxygen", wrong: ["Carbon Dioxide", "Nitrogen", "Hydrogen"], explain: "Plants take in CO2 and release oxygen during photosynthesis. That is why forests are vital."},
+              {q: "What is the closest star to Earth?", a: "The Sun", wrong: ["Proxima Centauri", "Sirius", "Polaris"], explain: "The Sun is about 93 million miles away. Proxima Centauri is the next closest star, 4 light-years away."},
+              {q: "What are the three states of matter?", a: "Solid, Liquid, Gas", wrong: ["Hot, Warm, Cold", "Big, Medium, Small", "Hard, Soft, Squishy"], explain: "Solid (ice), liquid (water), gas (steam). Plasma is a 4th state found in stars."},
+              {q: "What force keeps us on the ground?", a: "Gravity", wrong: ["Magnetism", "Friction", "Wind"], explain: "Gravity pulls everything with mass toward the center of the Earth."},
+              {q: "Which planet is known as the Red Planet?", a: "Mars", wrong: ["Jupiter", "Venus", "Mercury"], explain: "Mars looks red because its soil is rich in iron oxide, basically rust."},
+              {q: "What is the process where water turns to steam?", a: "Evaporation", wrong: ["Condensation", "Freezing", "Melting"], explain: "Evaporation is liquid to gas. Condensation is gas to liquid (like dew)."},
+              {q: "What organ pumps blood through your body?", a: "Heart", wrong: ["Brain", "Lungs", "Stomach"], explain: "The heart pumps about 5 liters of blood every minute, over 100,000 beats a day."},
+              {q: "What is the water cycle?", a: "Evaporation, condensation, precipitation", wrong: ["Melting, boiling, freezing", "Sunrise, noon, sunset", "Spring, summer, fall, winter"], explain: "Sun evaporates water, it condenses into clouds, falls as rain (precipitation), repeats."},
+              {q: "What is photosynthesis?", a: "Plants making food from sunlight", wrong: ["Animals breathing", "Rocks forming", "Water flowing"], explain: "Plants use sunlight, CO2, and water to make sugar (food) and release oxygen."},
+              {q: "How many planets are in our solar system?", a: "8", wrong: ["7", "9", "10"], explain: "8 planets since 2006, when Pluto was reclassified as a dwarf planet."},
+              {q: "What is the hardest rock?", a: "Diamond", wrong: ["Granite", "Marble", "Quartz"], explain: "Diamond is rated 10 on Mohs scale, the hardest naturally occurring substance."},
+              {q: "What type of energy does the Sun give us?", a: "Light and heat", wrong: ["Sound", "Electricity", "Magnetic"], explain: "The Sun radiates light and heat (electromagnetic energy) across millions of miles."},
+              {q: "What is an herbivore?", a: "Animal that eats only plants", wrong: ["Animal that eats meat", "Animal that eats both", "A type of plant"], explain: "Herbivores eat only plants (cows, deer). Carnivores eat meat, omnivores eat both."},
+              {q: "Which gas do we breathe out?", a: "Carbon Dioxide", wrong: ["Oxygen", "Nitrogen", "Helium"], explain: "We exhale CO2, the byproduct of breaking down food (cellular respiration)."},
+              {q: "What causes the tides in the ocean?", a: "The Moon's gravity", wrong: ["Wind", "Fish swimming", "Earthquakes"], explain: "The Moon's gravity pulls water toward it, creating high and low tides twice a day."}
           ],
           3: [
-              {q: "What is the powerhouse of the cell?", a: "Mitochondria", wrong: ["Nucleus", "Ribosome", "Golgi apparatus"]},
-              {q: "What is the chemical formula for water?", a: "H₂O", wrong: ["CO₂", "NaCl", "O₂"]},
-              {q: "What type of rock forms from cooled magma?", a: "Igneous", wrong: ["Sedimentary", "Metamorphic", "Mineral"]},
-              {q: "What is the atomic number of Carbon?", a: "6", wrong: ["12", "8", "14"]},
-              {q: "What is the theory of evolution primarily attributed to?", a: "Charles Darwin", wrong: ["Isaac Newton", "Albert Einstein", "Gregor Mendel"]},
-              {q: "What is the pH of pure water?", a: "7", wrong: ["0", "14", "1"]},
-              {q: "What particle has a positive charge?", a: "Proton", wrong: ["Electron", "Neutron", "Photon"]},
-              {q: "What is the most abundant gas in Earth's atmosphere?", a: "Nitrogen", wrong: ["Oxygen", "Carbon Dioxide", "Argon"]},
-              {q: "What is Avogadro's number approximately?", a: "6.022 × 10²³", wrong: ["3.14 × 10⁸", "9.81 × 10²", "1.602 × 10⁻¹⁹"]},
-              {q: "What is the function of DNA?", a: "Stores genetic information", wrong: ["Produces energy", "Fights disease", "Digests food"]},
-              {q: "What is the Doppler effect?", a: "Frequency change due to motion", wrong: ["Light bending around gravity", "Sound echoing", "Heat transfer by radiation"]},
-              {q: "What is a catalyst?", a: "Speeds up reactions without being consumed", wrong: ["Slows down reactions", "Creates new elements", "Stores energy"]},
-              {q: "What is the unit of frequency?", a: "Hertz", wrong: ["Watt", "Joule", "Ampere"]},
-              {q: "What is the second law of thermodynamics about?", a: "Entropy always increases", wrong: ["Energy is conserved", "Absolute zero is unreachable", "Heat flows from hot to cold only"]},
-              {q: "What organelle is responsible for photosynthesis?", a: "Chloroplast", wrong: ["Mitochondria", "Nucleus", "Vacuole"]}
+              {q: "What is the powerhouse of the cell?", a: "Mitochondria", wrong: ["Nucleus", "Ribosome", "Golgi apparatus"], explain: "Mitochondria produce ATP, the energy currency that fuels all cell activity."},
+              {q: "What is the chemical formula for water?", a: "H₂O", wrong: ["CO₂", "NaCl", "O₂"], explain: "H2O is 2 hydrogen atoms bonded to 1 oxygen atom."},
+              {q: "What type of rock forms from cooled magma?", a: "Igneous", wrong: ["Sedimentary", "Metamorphic", "Mineral"], explain: "Igneous rocks form when magma (or lava) cools and hardens, like granite or basalt."},
+              {q: "What is the atomic number of Carbon?", a: "6", wrong: ["12", "8", "14"], explain: "Carbon has 6 protons. Atomic number is the number of protons, defining the element."},
+              {q: "What is the theory of evolution primarily attributed to?", a: "Charles Darwin", wrong: ["Isaac Newton", "Albert Einstein", "Gregor Mendel"], explain: "Charles Darwin's 1859 'Origin of Species' explained natural selection as the mechanism of evolution."},
+              {q: "What is the pH of pure water?", a: "7", wrong: ["0", "14", "1"], explain: "Pure water is neutral (pH 7). Below 7 is acidic, above 7 is basic."},
+              {q: "What particle has a positive charge?", a: "Proton", wrong: ["Electron", "Neutron", "Photon"], explain: "Protons (+) and electrons (-) balance in a neutral atom. Neutrons have no charge."},
+              {q: "What is the most abundant gas in Earth's atmosphere?", a: "Nitrogen", wrong: ["Oxygen", "Carbon Dioxide", "Argon"], explain: "Nitrogen is 78%; oxygen 21%; argon, CO2, and trace gases make up the rest."},
+              {q: "What is Avogadro's number approximately?", a: "6.022 × 10²³", wrong: ["3.14 × 10⁸", "9.81 × 10²", "1.602 × 10⁻¹⁹"], explain: "6.022 x 10^23, the number of atoms or molecules in 1 mole of substance."},
+              {q: "What is the function of DNA?", a: "Stores genetic information", wrong: ["Produces energy", "Fights disease", "Digests food"], explain: "DNA holds the genetic instructions for building and operating every living thing."},
+              {q: "What is the Doppler effect?", a: "Frequency change due to motion", wrong: ["Light bending around gravity", "Sound echoing", "Heat transfer by radiation"], explain: "Sound or light frequency changes if the source moves, like a siren rising/falling pitch as it passes."},
+              {q: "What is a catalyst?", a: "Speeds up reactions without being consumed", wrong: ["Slows down reactions", "Creates new elements", "Stores energy"], explain: "Catalysts lower the energy needed for a reaction without being used up themselves; enzymes do this in your body."},
+              {q: "What is the unit of frequency?", a: "Hertz", wrong: ["Watt", "Joule", "Ampere"], explain: "Hertz (Hz) is cycles per second. Named after physicist Heinrich Hertz."},
+              {q: "What is the second law of thermodynamics about?", a: "Entropy always increases", wrong: ["Energy is conserved", "Absolute zero is unreachable", "Heat flows from hot to cold only"], explain: "Entropy (disorder) of a closed system always increases. That is why hot things cool down naturally."},
+              {q: "What organelle is responsible for photosynthesis?", a: "Chloroplast", wrong: ["Mitochondria", "Nucleus", "Vacuole"], explain: "Chloroplasts contain chlorophyll, the green pigment that captures sunlight in plant cells."}
           ],
           4: [
               {q: "What is the Heisenberg Uncertainty Principle?", a: "Cannot know both position and momentum exactly", wrong: ["Energy is always conserved", "Light is both wave and particle", "Entropy always increases"]},
@@ -4073,10 +4075,17 @@ function playAnimalSound(type) {
   function startQuizDirectly(subject) {
       const data = quizData[subject];
       quizTitle.textContent = data.title;
-      currentQuiz = data[Math.min(currentLevel,5)] || data[3] || [];
+      const lvl = Math.min(currentLevel, 5);
+      const seen = new Set();
+      const pool = [];
+      const addLvl = (l) => { if (data[l] && !seen.has(l)) { pool.push(...data[l]); seen.add(l); } };
+      addLvl(lvl);
+      [1,2].forEach(d=>{ if(pool.length<30){ addLvl(lvl-d); addLvl(lvl+d); } });
+      if(pool.length<30){ for(let l=1;l<=5;l++) addLvl(l); }
       if('speechSynthesis' in window) window.speechSynthesis.cancel();
-      if(currentQuiz.length === 0) { quizPrompt.textContent = "More questions coming soon!"; audioBtn.style.display = 'none'; quizChoices.innerHTML = ''; return; }
-      currentQuiz = [...currentQuiz].sort(() => Math.random() - 0.5);
+      if(pool.length === 0) { quizPrompt.textContent = "More questions coming soon!"; audioBtn.style.display = 'none'; quizChoices.innerHTML = ''; return; }
+      const shuffled = [...pool].sort(() => Math.random() - 0.5);
+      currentQuiz = shuffled.slice(0, Math.min(30, shuffled.length));
       currentQIndex = 0;
       audioBtn.onclick = () => { if(currentQIndex < currentQuiz.length) {const cq = currentQuiz[currentQIndex]; speakText(cq.audioText || cq.q);} };
       loadQuestion();
@@ -4119,6 +4128,22 @@ function playAnimalSound(type) {
       }
       let choices = [q.a, ...q.wrong];
       choices.sort(() => Math.random() - 0.5);
+      const showExplainAndContinue = (correctOnFirstTry) => {
+          $$all('#quiz-choices .m-choice').forEach(b=>{b.style.pointerEvents='none';if(b.textContent===q.a)b.style.background='#2ecc71';});
+          const exp = document.createElement('div');
+          exp.className = 'quiz-explain';
+          exp.style.cssText = 'margin-top:14px;padding:14px 16px;background:rgba(255,255,255,0.92);border-left:5px solid '+(correctOnFirstTry?'#2ecc71':'#e67e22')+';border-radius:10px;color:#2c3e50;font-family:Comic Neue,cursive;font-size:1.05rem;text-align:left;line-height:1.55;max-width:560px;';
+          const explainText = q.explain || ('The answer is '+q.a+'.');
+          exp.innerHTML = '<div style="font-weight:bold;margin-bottom:4px;color:'+(correctOnFirstTry?'#1e8449':'#a04000')+';">'+(correctOnFirstTry?'✓ Correct! ':'💡 ')+q.a+'</div><div>'+explainText+'</div>';
+          quizChoices.appendChild(exp);
+          const cont = document.createElement('button');
+          cont.className = 'm-choice';
+          cont.style.cssText = 'background:#3498db;color:#fff;border:4px solid #2980b9;border-radius:14px;padding:12px 28px;font-size:1.3rem;cursor:pointer;font-family:Comic Neue,cursive;font-weight:bold;margin-top:12px;box-shadow:0 6px 0 #2471a3;';
+          cont.textContent = 'Next ▶';
+          cont.onclick = () => { currentQIndex++; loadQuestion(); };
+          quizChoices.appendChild(cont);
+      };
+      let answered = false;
       choices.forEach(c => {
           const btn = document.createElement('button');
           btn.className = 'm-choice';
@@ -4126,14 +4151,15 @@ function playAnimalSound(type) {
           btn.style.padding = '15px 30px';
           btn.textContent = c;
           btn.onclick = () => {
+              if(answered) return;
+              answered = true;
               if(c === q.a) {
                   showFeedback("Correct!", "#2ecc71"); addScore(1);
-                  $$all('#quiz-choices .m-choice').forEach(b=>b.style.pointerEvents='none');
-                  currentQIndex++;
-                  setTimeout(loadQuestion, 1500);
+                  showExplainAndContinue(true);
               } else {
-                  showFeedback("Try again!", "#e74c3c"); resetStreak();
-                  btn.style.pointerEvents='none'; btn.style.opacity='0.4';
+                  showFeedback("Read the hint!", "#e67e22"); resetStreak();
+                  btn.style.background='#e74c3c'; btn.style.color='#fff';
+                  showExplainAndContinue(false);
               }
           };
           quizChoices.appendChild(btn);
@@ -6146,7 +6172,7 @@ function playAnimalSound(type) {
     const ctx=canvas.getContext('2d');
     let best=parseInt(sessionStorage.getItem('flp-best')||'0');
     let by,bv,pipes,sc,alive,frame,speed,gap,dead,milestone;
-    const PW=40,GRAV=0.13,FLAP=-3.8,PIPE_DX=220,GAP_BASE=160,GAP_MIN=130,SPD_BASE=0.9;
+    const PW=40,GRAV=0.085,FLAP=-3.2,PIPE_DX=240,GAP_BASE=185,GAP_MIN=150,SPD_BASE=0.75;
     function medal(){return sc>=40?'🏆':sc>=25?'🥇':sc>=15?'🥈':sc>=5?'🥉':'';}
     function reset(){by=cH/2;bv=0;pipes=[];sc=0;frame=0;alive=true;dead=false;speed=SPD_BASE;gap=GAP_BASE;milestone=0;for(let i=0;i<3;i++)pipes.push({x:cW+i*PIPE_DX,top:60+Math.random()*(cH-gap-140),scored:false,coin:Math.random()<0.3});const ov=$$('#flp-over');if(ov)ov.remove();}
     function tap(){if(dead)return;if(!alive){reset();return;}bv=FLAP;}
@@ -6173,7 +6199,7 @@ function playAnimalSound(type) {
       for(let i=0;i<cW;i+=20){ctx.fillStyle=i%40===0?'#1e4a30':'#1a3f2a';ctx.fillRect(i,cH-15,20,15);}
       if(!alive&&!dead){ctx.fillStyle='#2ecc71';ctx.font='bold 24px Comic Neue';ctx.textAlign='center';ctx.fillText('TAP TO START',cW/2,cH/2);ctx.fillText(`Best: ${best}`,cW/2,cH/2+30);window._flappyAF=requestAnimationFrame(loop);return;}
       if(dead){window._flappyAF=requestAnimationFrame(loop);return;}
-      bv=Math.min(bv+GRAV,4);by+=bv;frame++;
+      bv=Math.min(bv+GRAV,3);by+=bv;frame++;
       const ms=Math.floor(sc/10);if(ms>milestone){milestone=ms;speed=SPD_BASE+ms*0.12;gap=Math.max(GAP_MIN,GAP_BASE-ms*4);}
       pipes.forEach(p=>{p.x-=speed;});
       pipes=pipes.filter(p=>p.x>-PW);
@@ -6449,7 +6475,29 @@ function playAnimalSound(type) {
       {q:'What is d/dx [cos(x)]?',formula:'d/dx [cos(x)] = ?',opts:['-sin(x)','sin(x)','cos(x)','-cos(x)'],ans:0,explain:'The derivative of cos(x) is -sin(x).'},
       {q:'∫ 1/x dx = ?',formula:'∫ 1/x dx = ?',opts:['ln|x|+C','1/x²+C','x+C','-1/x²+C'],ans:0,explain:'The antiderivative of 1/x is the natural log: ln|x| + C'},
       {q:'What is the chain rule for d/dx [f(g(x))]?',formula:'d/dx [f(g(x))] = ?',opts:['f\'(g(x))·g\'(x)','f\'(x)·g\'(x)','f(g\'(x))','f\'(g(x))'],ans:0,explain:'Chain rule: the derivative of the outer function evaluated at the inner, times the derivative of the inner.'},
-      {q:'∫ cos(x) dx = ?',formula:'∫ cos(x) dx = ?',opts:['sin(x)+C','-sin(x)+C','cos(x)+C','tan(x)+C'],ans:0,explain:'Since d/dx[sin(x)] = cos(x), the antiderivative of cos(x) is sin(x) + C.'}
+      {q:'∫ cos(x) dx = ?',formula:'∫ cos(x) dx = ?',opts:['sin(x)+C','-sin(x)+C','cos(x)+C','tan(x)+C'],ans:0,explain:'Since d/dx[sin(x)] = cos(x), the antiderivative of cos(x) is sin(x) + C.'},
+      {q:'What is d/dx [tan(x)]?',formula:'d/dx [tan(x)] = ?',opts:['sec²(x)','-cot(x)','sec(x)·tan(x)','cos(x)/sin(x)'],ans:0,explain:'d/dx[tan x] = sec²(x), proven via the quotient rule on sin/cos.'},
+      {q:'What is ∫ sec²(x) dx?',formula:'∫ sec²(x) dx = ?',opts:['tan(x)+C','sec(x)+C','ln|cos x|+C','-cot(x)+C'],ans:0,explain:'sec²(x) is the derivative of tan(x), so its antiderivative is tan(x) + C.'},
+      {q:'What is the second derivative of x⁴?',formula:'d²/dx² [x⁴] = ?',opts:['12x²','4x³','x³','24x'],ans:0,explain:'First derivative 4x³, second derivative 12x². Power rule applied twice.'},
+      {q:'What is limₓ→∞ (1+1/x)ˣ?',formula:'lim(x→∞) (1+1/x)ˣ = ?',opts:['e','1','∞','0'],ans:0,explain:'This famous limit defines Euler\'s number e ≈ 2.71828.'},
+      {q:'What is d/dx [aˣ] for constant a > 0?',formula:'d/dx [aˣ] = ?',opts:['aˣ·ln(a)','x·aˣ⁻¹','aˣ','aˣ/ln(a)'],ans:0,explain:'aˣ = e^(x·ln a), so chain rule gives aˣ·ln(a).'},
+      {q:'For f differentiable on [a,b], MVT guarantees existence of c with what?',formula:'MVT: ∃c with?',opts:['f\'(c) = (f(b)-f(a))/(b-a)','f\'(c) = 0','f(c) = 0','f\'\'(c) > 0'],ans:0,explain:'Mean Value Theorem: there exists c in (a,b) where the instantaneous slope equals the average slope.'},
+      {q:'L\'Hôpital\'s rule applies to which limit form?',formula:'L\'Hôpital handles?',opts:['0/0 or ∞/∞','0·∞ only','Any limit','Sums'],ans:0,explain:'L\'Hôpital handles indeterminate forms 0/0 and ∞/∞ by differentiating numerator and denominator.'},
+      {q:'What is ∫₀^π sin(x) dx?',formula:'∫₀^π sin(x) dx = ?',opts:['2','0','π','-2'],ans:0,explain:'Antiderivative -cos(x). Evaluated: -cos(π) - (-cos(0)) = 1 + 1 = 2.'},
+      {q:'Which test determines convergence of a series Σ aₙ when L = lim |aₙ₊₁/aₙ|?',formula:'Ratio test L < 1?',opts:['Series converges absolutely','Diverges','Inconclusive','Oscillates'],ans:0,explain:'Ratio test: if L<1 the series converges absolutely; L>1 diverges; L=1 is inconclusive.'},
+      {q:'What is the Taylor series of eˣ around x=0?',formula:'eˣ = ?',opts:['Σ xⁿ/n!','Σ xⁿ','Σ (-1)ⁿxⁿ/n!','Σ n·xⁿ'],ans:0,explain:'Maclaurin series: eˣ = 1 + x + x²/2! + x³/3! + ... = Σ xⁿ/n!.'},
+      {q:'What is the gradient of f(x,y) = x² + y²?',formula:'∇f = ?',opts:['(2x, 2y)','(x², y²)','(2x+2y)','(0,0)'],ans:0,explain:'Gradient is the vector of partial derivatives: ∂/∂x and ∂/∂y both yield 2x and 2y.'},
+      {q:'By the FTC, d/dx ∫ₐˣ f(t) dt equals?',formula:'d/dx ∫ₐˣ f(t)dt = ?',opts:['f(x)','f(a)','F(x)-F(a)','0'],ans:0,explain:'Fundamental Theorem of Calculus part 1: differentiating an integral with variable upper limit returns the integrand.'},
+      {q:'What is d/dx [sin²(x)]?',formula:'d/dx [sin²(x)] = ?',opts:['2 sin(x) cos(x)','cos²(x)','-2 sin(x)','sin(2x)/2'],ans:0,explain:'Chain rule: 2 sin(x) · cos(x), which also equals sin(2x).'},
+      {q:'Integration by parts uses ∫ u dv = ?',formula:'∫ u dv = ?',opts:['uv - ∫ v du','u·v','∫ v du','u/v'],ans:0,explain:'Integration by parts comes from the product rule: ∫ u dv = uv - ∫ v du.'},
+      {q:'What is the volume of a sphere of radius r?',formula:'V_sphere = ?',opts:['(4/3)πr³','πr²','(4/3)πr²','2πr'],ans:0,explain:'V = (4/3)πr³, derivable by integrating circular cross-sections from -r to r.'},
+      {q:'At a local maximum of a smooth function, f\'\'(x) is?',formula:'f\'\'(x) at local max?',opts:['≤ 0','> 0','= 0 always','Undefined'],ans:0,explain:'At a local max, the function is concave down, so f\'\'(x) ≤ 0 (often strictly negative).'},
+      {q:'What is ∫ x sin(x) dx?',formula:'∫ x sin(x) dx = ?',opts:['-x cos(x) + sin(x) + C','-cos(x) + C','x²/2 sin(x) + C','x cos(x) + C'],ans:0,explain:'Integration by parts with u=x, dv=sin(x)dx gives -x cos(x) + sin(x) + C.'},
+      {q:'The arc length of y=f(x) from a to b is?',formula:'L = ?',opts:['∫ₐᵇ √(1+(f\'(x))²) dx','∫ₐᵇ f(x) dx','f(b)-f(a)','∫ₐᵇ |f(x)| dx'],ans:0,explain:'Arc length integrates √(1+(dy/dx)²) along x — derived from infinitesimal hypotenuse √(dx² + dy²).'},
+      {q:'What is the derivative of arctan(x)?',formula:'d/dx [arctan(x)] = ?',opts:['1/(1+x²)','1/√(1-x²)','-1/(1+x²)','tan(x)'],ans:0,explain:'Inverse trig derivative: d/dx[arctan x] = 1/(1+x²).'},
+      {q:'What is ∫ tan(x) dx?',formula:'∫ tan(x) dx = ?',opts:['-ln|cos(x)|+C','sec(x)+C','ln|sin(x)|+C','-tan(x)+C'],ans:0,explain:'Substitute u=cos(x), du=-sin(x)dx, then ∫ tan(x)dx = -ln|cos(x)| + C (or ln|sec(x)|+C).'},
+      {q:'A definite integral represents what geometrically?',formula:'∫ₐᵇ f(x) dx = ?',opts:['Net signed area between f and x-axis','Slope at x=a','Length of curve','Volume of solid'],ans:0,explain:'A definite integral computes net (signed) area between the curve and the x-axis from a to b.'},
+      {q:'What is the derivative of |x| at x=0?',formula:'d/dx |x| at x=0?',opts:['Undefined (corner)','0','1','-1'],ans:0,explain:'|x| has a corner at x=0; left derivative is -1, right derivative is +1, so the derivative does not exist there.'}
     ]},
     linalg:{name:'Linear Algebra',questions:[
       {q:'What is the determinant of [[2,3],[1,4]]?',formula:'det([[2,3],[1,4]]) = ?',opts:['5','11','8','2'],ans:0,explain:'det = ad - bc = 2(4) - 3(1) = 8 - 3 = 5'},
@@ -6459,7 +6507,29 @@ function playAnimalSound(type) {
       {q:'The transpose of [[1,2],[3,4]] is?',formula:'[[1,2],[3,4]]ᵀ = ?',opts:['[[1,3],[2,4]]','[[4,3],[2,1]]','[[1,2],[3,4]]','[[2,1],[4,3]]'],ans:0,explain:'Transpose swaps rows and columns: element (i,j) becomes (j,i).'},
       {q:'What is the null space of a matrix?',formula:'Null(A) = ?',opts:['All x where Ax=0','All columns of A','The determinant','Row echelon form'],ans:0,explain:'The null space is the set of all vectors x such that Ax = 0.'},
       {q:'How many solutions does a consistent system with free variables have?',formula:'Consistent + free variables → ?',opts:['Infinitely many','Exactly one','None','Two'],ans:0,explain:'Free variables can take any value, creating infinitely many solutions.'},
-      {q:'What does it mean for vectors to be linearly independent?',formula:'Linear independence means?',opts:['No vector is a combination of others','All vectors are parallel','Vectors span R³','Determinant is 0'],ans:0,explain:'Vectors are linearly independent if none can be written as a linear combination of the others.'}
+      {q:'What does it mean for vectors to be linearly independent?',formula:'Linear independence means?',opts:['No vector is a combination of others','All vectors are parallel','Vectors span R³','Determinant is 0'],ans:0,explain:'Vectors are linearly independent if none can be written as a linear combination of the others.'},
+      {q:'What is the trace of [[2,1],[3,4]]?',formula:'tr(A) = ?',opts:['6','8','12','-2'],ans:0,explain:'Trace is the sum of diagonal elements: 2 + 4 = 6.'},
+      {q:'A square matrix is invertible iff its determinant is?',formula:'Invertible ⟺ det ?',opts:['Nonzero','Zero','Positive','Equal to 1'],ans:0,explain:'A matrix is invertible (nonsingular) exactly when its determinant is nonzero.'},
+      {q:'What does an orthogonal matrix Q satisfy?',formula:'QᵀQ = ?',opts:['I (identity)','Q','0','Qᵀ'],ans:0,explain:'Orthogonal matrices have orthonormal columns: QᵀQ = I, equivalently Qᵀ = Q⁻¹.'},
+      {q:'Eigenvalues of a triangular matrix are?',formula:'Eigenvalues of triangular?',opts:['Diagonal entries','Always real','Always positive','Sum of off-diagonals'],ans:0,explain:'For triangular matrices, eigenvalues equal the diagonal entries since det(A-λI) factors directly.'},
+      {q:'What is the dot product (1,2,3)·(4,5,6)?',formula:'u·v = ?',opts:['32','21','12','18'],ans:0,explain:'Dot product: 1·4 + 2·5 + 3·6 = 4 + 10 + 18 = 32.'},
+      {q:'Two vectors are orthogonal if their dot product is?',formula:'u⊥v ⟺ u·v = ?',opts:['0','1','-1','|u|·|v|'],ans:0,explain:'Orthogonal vectors meet at 90°. cos(90°)=0, so u·v = |u||v|cos(90°) = 0.'},
+      {q:'What is the rank-nullity theorem?',formula:'rank(A) + nullity(A) = ?',opts:['Number of columns','Number of rows','det(A)','|A|²'],ans:0,explain:'For an m×n matrix A, rank(A) + nullity(A) = n (number of columns).'},
+      {q:'A symmetric matrix\'s eigenvalues are always?',formula:'Symmetric A → eigenvalues are?',opts:['Real','Complex','Positive','Zero'],ans:0,explain:'The spectral theorem guarantees real eigenvalues and orthogonal eigenvectors for real symmetric matrices.'},
+      {q:'What is the cross product (1,0,0)×(0,1,0)?',formula:'i × j = ?',opts:['(0,0,1)','(1,1,0)','(0,0,0)','(-1,0,0)'],ans:0,explain:'By right-hand rule, i × j = k = (0,0,1).'},
+      {q:'What does diagonalization mean for a square matrix A?',formula:'A = ?',opts:['A = PDP⁻¹ with D diagonal','A = Aᵀ','A is invertible','A = I'],ans:0,explain:'Diagonalizable: A = PDP⁻¹ where columns of P are eigenvectors and D contains the eigenvalues.'},
+      {q:'What is a basis of a vector space?',formula:'Basis = ?',opts:['Linearly independent spanning set','Set of orthogonal vectors','Set with determinant 1','All vectors'],ans:0,explain:'A basis is a minimal spanning set — independent and spanning the whole space.'},
+      {q:'Determinant of an n×n identity matrix is?',formula:'det(Iₙ) = ?',opts:['1','0','n','n²'],ans:0,explain:'Identity matrix has 1\'s on diagonal, so det = 1·1·...·1 = 1.'},
+      {q:'Solving Ax = b when A is invertible gives x = ?',formula:'x = ?',opts:['A⁻¹b','Ab','Aᵀb','b/A'],ans:0,explain:'Multiply both sides on the left by A⁻¹: x = A⁻¹b.'},
+      {q:'What does the determinant geometrically represent in 2D?',formula:'|det A|₂ₓ₂ = ?',opts:['Area scaling factor','Length of vector','Angle between vectors','Number of solutions'],ans:0,explain:'|det A| equals the area of the parallelogram spanned by columns (scale factor of the linear transformation).'},
+      {q:'In Gaussian elimination, what operation does NOT change the solution set?',formula:'Allowed row op?',opts:['Adding a multiple of one row to another','Multiplying by zero','Swapping columns','Removing a row'],ans:0,explain:'Elementary row operations preserve the solution set: row swaps, scalar multiplication (nonzero), and adding multiples.'},
+      {q:'What is the determinant of [[a,b],[c,d]]?',formula:'det = ?',opts:['ad - bc','ab - cd','a + d','a·b·c·d'],ans:0,explain:'For a 2×2 matrix, det = ad - bc.'},
+      {q:'What does it mean for a matrix to be positive definite?',formula:'Positive definite?',opts:['xᵀAx > 0 for all x ≠ 0','All entries are positive','det(A) > 0','Trace > 0'],ans:0,explain:'Positive definite: xᵀAx > 0 for every nonzero x. All eigenvalues are positive.'},
+      {q:'What is the projection of vector b onto a unit vector û?',formula:'proj_û(b) = ?',opts:['(b·û) û','b - û','|b|·û','û/|b|'],ans:0,explain:'Project b onto û by taking the scalar component (b·û) times the unit direction û.'},
+      {q:'What is row equivalent to row reduced echelon form?',formula:'Two matrices are row equivalent if?',opts:['Same RREF','Same determinant','Same trace','Same eigenvalues'],ans:0,explain:'Two matrices are row equivalent iff they have the same reduced row echelon form (RREF).'},
+      {q:'Gram–Schmidt produces what?',formula:'Gram–Schmidt → ?',opts:['Orthonormal basis','Eigenvectors','Determinant','Inverse'],ans:0,explain:'The Gram–Schmidt process orthonormalizes a set of independent vectors into an orthonormal basis.'},
+      {q:'What is the inverse of a 2×2 matrix [[a,b],[c,d]] (det≠0)?',formula:'A⁻¹ = ?',opts:['(1/det)·[[d,-b],[-c,a]]','[[1/a,1/b],[1/c,1/d]]','[[d,b],[c,a]]','[[a,c],[b,d]]'],ans:0,explain:'For 2×2: A⁻¹ = (1/det)·[[d,-b],[-c,a]].'},
+      {q:'What is the dimension of the column space of an m×n rank-r matrix?',formula:'dim(Col A) = ?',opts:['r','n','m','n - r'],ans:0,explain:'By definition, the dimension of the column space equals the rank r.'}
     ]},
     stats:{name:'Statistics',questions:[
       {q:'What is the mean of {2, 4, 6, 8, 10}?',formula:'μ = ?',opts:['6','5','7','8'],ans:0,explain:'Mean = sum/count = 30/5 = 6'},
@@ -6469,7 +6539,29 @@ function playAnimalSound(type) {
       {q:'What is the median of {1, 3, 5, 7, 9, 11}?',formula:'Median = ?',opts:['6','5','7','5.5'],ans:0,explain:'With even count, median = average of two middle values: (5+7)/2 = 6'},
       {q:'What does a p-value < 0.05 mean?',formula:'p < 0.05 → ?',opts:['Result is statistically significant','The null hypothesis is true','100% certainty','The sample is too small'],ans:0,explain:'p < 0.05 means there\'s less than 5% probability the result occurred by chance under the null hypothesis.'},
       {q:'What is the standard deviation a measure of?',formula:'σ measures?',opts:['Spread/dispersion of data','Central tendency','Skewness','Sample size'],ans:0,explain:'Standard deviation quantifies how spread out data points are from the mean.'},
-      {q:'n choose k (ⁿCₖ) counts what?',formula:'ⁿCₖ = ?',opts:['Combinations (order doesn\'t matter)','Permutations','Probabilities','Means'],ans:0,explain:'ⁿCₖ = n!/(k!(n-k)!) counts the number of ways to choose k items from n without regard to order.'}
+      {q:'n choose k (ⁿCₖ) counts what?',formula:'ⁿCₖ = ?',opts:['Combinations (order doesn\'t matter)','Permutations','Probabilities','Means'],ans:0,explain:'ⁿCₖ = n!/(k!(n-k)!) counts the number of ways to choose k items from n without regard to order.'},
+      {q:'What is variance?',formula:'Var(X) = ?',opts:['E[(X-μ)²]','E[X]','|X|','X²'],ans:0,explain:'Variance is the expected squared deviation from the mean: E[(X-μ)²].'},
+      {q:'Standard deviation is the square root of?',formula:'σ = ?',opts:['Variance','Mean','Median','Range'],ans:0,explain:'Standard deviation σ = √(variance) — same units as the data, easier to interpret.'},
+      {q:'In a uniform distribution on [a,b], the mean is?',formula:'E[X] = ?',opts:['(a+b)/2','b-a','a·b','0'],ans:0,explain:'For a continuous uniform distribution, the mean is the midpoint (a+b)/2.'},
+      {q:'What is the Central Limit Theorem about?',formula:'CLT says?',opts:['Sample means approach normal distribution','All distributions are normal','Means equal medians','Sample size matters'],ans:0,explain:'CLT: as sample size grows, the distribution of sample means approaches normal regardless of the source distribution.'},
+      {q:'Which describes a Type I error?',formula:'Type I error?',opts:['Rejecting a true null hypothesis','Accepting a false null','Sample bias','Calculation error'],ans:0,explain:'Type I = false positive: rejecting H₀ when it is actually true. The α level is the probability of Type I error.'},
+      {q:'What is correlation coefficient r\'s range?',formula:'r ∈ ?',opts:['[-1, 1]','[0, 1]','[0, ∞)','(-∞, ∞)'],ans:0,explain:'Pearson\'s correlation r ranges from -1 (perfect negative) through 0 (no linear relation) to +1 (perfect positive).'},
+      {q:'In linear regression, what does R² measure?',formula:'R² = ?',opts:['Proportion of variance explained','Slope of the line','Sample size','Significance level'],ans:0,explain:'R² is the fraction of variation in the dependent variable explained by the regression model.'},
+      {q:'What is a confidence interval?',formula:'CI = ?',opts:['Range of plausible values for a parameter','Probability of an event','Sample mean','Population size'],ans:0,explain:'A 95% CI is constructed so that, repeating the sampling procedure, 95% of such intervals contain the true parameter.'},
+      {q:'Probability of event A given B is?',formula:'P(A|B) = ?',opts:['P(A∩B)/P(B)','P(A)·P(B)','P(A)+P(B)','P(B)/P(A)'],ans:0,explain:'Conditional probability: P(A|B) = P(A∩B)/P(B), assuming P(B) > 0.'},
+      {q:'In a binomial distribution B(n,p), the mean is?',formula:'E[X] = ?',opts:['n·p','p','n','n·p·(1-p)'],ans:0,explain:'For binomial: mean = n·p, variance = n·p·(1-p).'},
+      {q:'Median is robust because?',formula:'Median resists?',opts:['Outliers','Sample size','Mean shifts','Skewness'],ans:0,explain:'The median ignores extreme values — only the middle position matters, making it robust to outliers.'},
+      {q:'What does Bayes\' theorem combine?',formula:'Bayes combines?',opts:['Prior + likelihood → posterior','Mean + median','Variance + range','Two samples'],ans:0,explain:'Bayes: posterior ∝ prior × likelihood — updates beliefs given evidence.'},
+      {q:'A random variable X with P(X=k) = e^(-λ)·λᵏ/k! is what distribution?',formula:'This is?',opts:['Poisson','Binomial','Exponential','Normal'],ans:0,explain:'Poisson distribution models rare-event counts with rate λ.'},
+      {q:'The mode of a dataset is?',formula:'Mode = ?',opts:['Most frequent value','Middle value','Average','Range'],ans:0,explain:'Mode is the most-occurring value. A dataset can have multiple modes (multimodal) or none.'},
+      {q:'Sample size required for a margin of error decreases as?',formula:'n shrinks when?',opts:['Required precision decreases','Confidence level rises','Variance grows','Sample is biased'],ans:0,explain:'Required sample size n is proportional to (z·σ/E)², so larger acceptable error E means smaller n.'},
+      {q:'What is the difference between population and sample?',formula:'Population vs sample?',opts:['Population is whole group; sample is subset','Population is biased','Sample is always larger','No difference'],ans:0,explain:'Population = entire group of interest; sample = randomly selected subset used to make inferences.'},
+      {q:'Hypothesis testing α = 0.01 means?',formula:'α = 0.01?',opts:['1% Type I error rate','99% confidence','Sample of 100','Variance of 1'],ans:0,explain:'Significance α = 0.01 means we tolerate a 1% probability of falsely rejecting a true null hypothesis.'},
+      {q:'What is independence of two events?',formula:'A,B independent ⟺?',opts:['P(A∩B) = P(A)·P(B)','A=B','P(A) > P(B)','No overlap'],ans:0,explain:'Two events are independent when their joint probability factors as the product of marginals.'},
+      {q:'Quartiles divide data into?',formula:'Quartiles split into?',opts:['4 equal groups','2 halves','Top and bottom','10 deciles'],ans:0,explain:'Quartiles Q1, Q2 (median), Q3 split sorted data into four equal-size groups.'},
+      {q:'Skewness measures?',formula:'Skewness = ?',opts:['Asymmetry of distribution','Spread','Center','Peak height'],ans:0,explain:'Skewness quantifies asymmetry: positive skew = long right tail; negative skew = long left tail.'},
+      {q:'Variance of (aX) where a is constant equals?',formula:'Var(aX) = ?',opts:['a²·Var(X)','a·Var(X)','Var(X)','a + Var(X)'],ans:0,explain:'Constants pull out squared because variance involves squared deviations.'},
+      {q:'What is a residual in regression?',formula:'Residual = ?',opts:['Observed y - predicted ŷ','Mean of x','Slope','Intercept'],ans:0,explain:'Residual is the leftover error: difference between observed value and the model\'s prediction.'}
     ]},
     discrete:{name:'Discrete Math',questions:[
       {q:'What is 5! (5 factorial)?',formula:'5! = ?',opts:['120','60','24','720'],ans:0,explain:'5! = 5×4×3×2×1 = 120'},
@@ -6479,7 +6571,29 @@ function playAnimalSound(type) {
       {q:'How many subsets does a set with n elements have?',formula:'|P(S)| where |S|=n?',opts:['2ⁿ','n!','n²','2n'],ans:0,explain:'The power set has 2ⁿ subsets (each element is either in or out).'},
       {q:'What is mathematical induction used for?',formula:'Induction proves?',opts:['Statements true for all natural numbers','A single case','Probability','Averages'],ans:0,explain:'Induction proves a base case, then shows if true for k, it\'s true for k+1.'},
       {q:'In a tree with n vertices, how many edges?',formula:'|E(Tree)| = ?',opts:['n-1','n','n+1','2n'],ans:0,explain:'A tree with n vertices always has exactly n-1 edges.'},
-      {q:'What does the pigeonhole principle state?',formula:'n items in m boxes, n>m → ?',opts:['At least one box has ≥2 items','All boxes have 1 item','Some boxes are empty','Items are ordered'],ans:0,explain:'If n > m, at least one container must hold more than one item.'}
+      {q:'What does the pigeonhole principle state?',formula:'n items in m boxes, n>m → ?',opts:['At least one box has ≥2 items','All boxes have 1 item','Some boxes are empty','Items are ordered'],ans:0,explain:'If n > m, at least one container must hold more than one item.'},
+      {q:'What is the negation of (P → Q)?',formula:'¬(P→Q) ≡ ?',opts:['P ∧ ¬Q','¬P ∧ Q','¬P ∨ Q','P → ¬Q'],ans:0,explain:'P → Q is equivalent to ¬P ∨ Q. Negating: P ∧ ¬Q.'},
+      {q:'How many ways to arrange the letters in \'MATH\'?',formula:'4! = ?',opts:['24','12','6','16'],ans:0,explain:'All letters distinct, so 4! = 24 permutations.'},
+      {q:'In set theory, A ∩ B = ?',formula:'A ∩ B?',opts:['Elements in both A and B','Elements in A or B','Elements only in A','Empty set'],ans:0,explain:'Intersection: elements common to both A and B.'},
+      {q:'De Morgan: ¬(A ∨ B) ≡?',formula:'¬(A∨B) ≡ ?',opts:['¬A ∧ ¬B','¬A ∨ ¬B','A ∧ B','A → B'],ans:0,explain:'De Morgan: ¬(A∨B) ≡ ¬A ∧ ¬B; ¬(A∧B) ≡ ¬A ∨ ¬B.'},
+      {q:'How many bit-strings of length 4 are there?',formula:'2⁴ = ?',opts:['16','8','32','4'],ans:0,explain:'Each of 4 positions has 2 choices (0 or 1): 2⁴ = 16.'},
+      {q:'In graph theory, a cycle is?',formula:'Cycle = ?',opts:['Closed path with no repeated vertices except start/end','Disconnected graph','Spanning tree','Single vertex'],ans:0,explain:'A cycle is a closed walk visiting distinct vertices except for the starting vertex which equals the ending vertex.'},
+      {q:'GCD of 12 and 18 is?',formula:'gcd(12,18) = ?',opts:['6','2','12','18'],ans:0,explain:'Common factors: 1,2,3,6. Greatest is 6.'},
+      {q:'A relation that is reflexive, symmetric, transitive is?',formula:'R: refl + sym + trans = ?',opts:['Equivalence relation','Partial order','Function','Bijection'],ans:0,explain:'Equivalence relations partition a set; partial orders need antisymmetry instead of symmetry.'},
+      {q:'Number of permutations of 5 objects taken 3 at a time?',formula:'P(5,3) = ?',opts:['60','10','120','20'],ans:0,explain:'P(n,r) = n!/(n-r)!. P(5,3) = 5!/2! = 60.'},
+      {q:'Number of ways to choose 3 from 5 (combinations)?',formula:'C(5,3) = ?',opts:['10','60','20','15'],ans:0,explain:'C(n,r) = n!/(r!(n-r)!). C(5,3) = 120/(6·2) = 10.'},
+      {q:'Vacuously true means?',formula:'Vacuous truth?',opts:['Premise is false, so conditional is automatically true','Always false','Cannot be evaluated','Both true and false'],ans:0,explain:'P → Q is automatically true when P is false, regardless of Q.'},
+      {q:'What is the chromatic number of a complete graph Kₙ?',formula:'χ(Kₙ) = ?',opts:['n','2','n-1','log n'],ans:0,explain:'Every pair of vertices is adjacent in Kₙ, so all n vertices need distinct colors.'},
+      {q:'Modular arithmetic: 17 mod 5 = ?',formula:'17 mod 5 = ?',opts:['2','3','12','5'],ans:0,explain:'17 = 3·5 + 2, so 17 mod 5 = 2.'},
+      {q:'In Boolean algebra, A AND (A OR B) = ?',formula:'A·(A+B) = ?',opts:['A','B','1','A+B'],ans:0,explain:'Absorption law: A AND (A OR B) simplifies to A.'},
+      {q:'A bipartite graph has chromatic number?',formula:'χ(bipartite) = ?',opts:['≤ 2','1','≥ 3','equals n'],ans:0,explain:'Bipartite graphs admit a proper 2-coloring by definition (alternating between two parts).'},
+      {q:'How many distinct subsets does {1,2,3,4} have?',formula:'|P({1,2,3,4})| = ?',opts:['16','8','12','4'],ans:0,explain:'Power set has 2⁴ = 16 subsets including the empty set and full set.'},
+      {q:'What is the converse of P → Q?',formula:'Converse of P→Q?',opts:['Q → P','¬P → ¬Q','P ∧ Q','¬Q → ¬P'],ans:0,explain:'Converse swaps hypothesis and conclusion: Q → P. Note: not always equivalent to original.'},
+      {q:'Strong induction differs from regular induction by?',formula:'Strong induction?',opts:['Assumes all previous cases when proving k+1','Only proves base case','Uses contradiction','Skips base case'],ans:0,explain:'In strong induction the inductive hypothesis assumes the statement for all values up to k, not just k.'},
+      {q:'A tree is connected and?',formula:'Tree property?',opts:['Acyclic','Has a cycle','Complete','Bipartite only'],ans:0,explain:'A tree is a connected, acyclic graph. Equivalent: connected with exactly n-1 edges.'},
+      {q:'What is the prime factorization of 60?',formula:'60 = ?',opts:['2²·3·5','2·3·10','6·10','2³·5'],ans:0,explain:'60 = 4·15 = 2²·3·5.'},
+      {q:'Inclusion-exclusion |A ∪ B| = ?',formula:'|A∪B| = ?',opts:['|A| + |B| - |A∩B|','|A| + |B|','|A| · |B|','|A∩B|'],ans:0,explain:'Inclusion–exclusion: add cardinalities then subtract the double-counted overlap.'},
+      {q:'A function f: A→B is injective if?',formula:'Injection means?',opts:['Distinct inputs map to distinct outputs','Every output has a preimage','Inputs equal outputs','No fixed points'],ans:0,explain:'Injective (one-to-one): f(a₁)=f(a₂) implies a₁=a₂. Different inputs never collide.'}
     ]},
     physics:{name:'Physics',questions:[
       {q:'F = ma is which law of Newton?',formula:'F = ma',opts:['Second Law','First Law','Third Law','Law of Gravity'],ans:0,explain:'Newton\'s Second Law: Force equals mass times acceleration.'},
@@ -6489,7 +6603,29 @@ function playAnimalSound(type) {
       {q:'What is the first law of thermodynamics?',formula:'ΔU = Q - W',opts:['Energy conservation (heat & work)','Entropy always increases','Absolute zero is unattainable','F=ma'],ans:0,explain:'First law: internal energy change equals heat added minus work done by the system.'},
       {q:'What is Ohm\'s Law?',formula:'V = ?',opts:['IR','P/I','I/R','PR'],ans:0,explain:'Ohm\'s Law: Voltage = Current × Resistance (V = IR)'},
       {q:'A projectile\'s horizontal velocity (no air resistance) is?',formula:'vₓ = ?',opts:['Constant','Increasing','Decreasing','Zero'],ans:0,explain:'With no air resistance, horizontal velocity is constant (no horizontal force).'},
-      {q:'What is the unit of frequency?',formula:'Frequency unit = ?',opts:['Hertz (Hz)','Watt (W)','Ampere (A)','Ohm (Ω)'],ans:0,explain:'Frequency is measured in Hertz (Hz) = 1/second = cycles per second.'}
+      {q:'What is the unit of frequency?',formula:'Frequency unit = ?',opts:['Hertz (Hz)','Watt (W)','Ampere (A)','Ohm (Ω)'],ans:0,explain:'Frequency is measured in Hertz (Hz) = 1/second = cycles per second.'},
+      {q:'Newton\'s third law states?',formula:'For every action…',opts:['Every action has an equal opposite reaction','F=ma','Energy is conserved','Mass=energy'],ans:0,explain:'Newton\'s third law: forces come in equal-and-opposite pairs between interacting bodies.'},
+      {q:'What is the unit of power?',formula:'Power unit?',opts:['Watt','Joule','Newton','Coulomb'],ans:0,explain:'Watt (W) = Joule per second = power, the rate at which energy is transferred.'},
+      {q:'The acceleration due to gravity on Earth is approximately?',formula:'g ≈ ?',opts:['9.81 m/s²','6.67 m/s²','3.0 m/s²','10⁸ m/s²'],ans:0,explain:'Standard gravity g ≈ 9.81 m/s² near Earth\'s surface.'},
+      {q:'Conservation of momentum: total p before = ?',formula:'Σp_before = ?',opts:['Total p after','Energy after','Force·time','Mass·velocity²'],ans:0,explain:'In a closed system without external forces, total momentum is conserved.'},
+      {q:'Power consumed = ?',formula:'P = ?',opts:['I·V','I²·R only','V/R only','V²'],ans:0,explain:'Electric power P = I·V. Equivalent forms: I²·R = V²/R for a resistor.'},
+      {q:'What is escape velocity from Earth\'s surface?',formula:'v_esc ≈ ?',opts:['11.2 km/s','7.9 km/s','30 km/s','300 km/s'],ans:0,explain:'Escape velocity ≈ 11.2 km/s — the minimum speed to escape Earth\'s gravity without further propulsion.'},
+      {q:'What is the principle of conservation of energy?',formula:'ΔE_total = ?',opts:['0','Heat','Work','Power'],ans:0,explain:'In an isolated system, total energy stays constant — it can transform but not be created or destroyed.'},
+      {q:'Which equation relates mass and energy?',formula:'Einstein\'s eq?',opts:['E = mc²','F = ma','PV = nRT','V = IR'],ans:0,explain:'E = mc² (Einstein, 1905): mass and energy are equivalent, with c² as the conversion factor.'},
+      {q:'A wave\'s frequency × wavelength equals?',formula:'f·λ = ?',opts:['Wave speed v','Amplitude','Period','Energy'],ans:0,explain:'v = f·λ — the basic wave equation. For light in vacuum, v = c.'},
+      {q:'What is the unit of magnetic field strength?',formula:'Magnetic field?',opts:['Tesla','Watt','Volt','Ampere'],ans:0,explain:'Tesla (T) = kg/(A·s²) is the SI unit of magnetic flux density.'},
+      {q:'In simple harmonic motion, angular frequency ω = ?',formula:'ω = ?',opts:['√(k/m)','k·m','m/k','2π/k'],ans:0,explain:'For a spring-mass SHM oscillator, ω = √(k/m); period T = 2π/ω.'},
+      {q:'Light from a star bending due to gravity is called?',formula:'Light bending?',opts:['Gravitational lensing','Refraction','Diffraction','Doppler'],ans:0,explain:'Gravitational lensing — predicted by general relativity and confirmed by Eddington in 1919.'},
+      {q:'Electrons are which type of particle?',formula:'Electron?',opts:['Lepton','Quark','Boson','Hadron'],ans:0,explain:'Electrons are leptons (alongside muons, taus, and neutrinos) — fundamental fermions.'},
+      {q:'What does the second law of thermodynamics state?',formula:'2nd law?',opts:['Entropy of an isolated system never decreases','Energy is conserved','P·V = nRT','Force = mass·acceleration'],ans:0,explain:'Second law: in a closed system, total entropy can stay the same or increase — never decrease spontaneously.'},
+      {q:'Capacitance is measured in?',formula:'C unit?',opts:['Farad','Ohm','Volt','Henry'],ans:0,explain:'Capacitance C = Q/V, measured in farads (F) = coulombs per volt.'},
+      {q:'What is a Newton\'s pendulum a demonstration of?',formula:'Newton\'s cradle shows?',opts:['Conservation of momentum and energy','Gravity','Magnetism','Friction'],ans:0,explain:'The collisions transfer momentum and kinetic energy nearly elastically through the steel balls.'},
+      {q:'What\'s the speed of sound in air at 20 °C?',formula:'v_sound ≈ ?',opts:['343 m/s','1500 m/s','3·10⁸ m/s','100 m/s'],ans:0,explain:'At 20 °C in dry air, sound travels at roughly 343 m/s (≈ 1230 km/h).'},
+      {q:'Snell\'s law relates?',formula:'Snell\'s law?',opts:['Refraction angles via index of refraction','Reflection only','Wave interference','Polarization'],ans:0,explain:'n₁ sin(θ₁) = n₂ sin(θ₂): governs how light bends crossing an interface between media.'},
+      {q:'What is a black hole\'s event horizon?',formula:'Event horizon?',opts:['Boundary beyond which nothing escapes','Center of black hole','Outer atmosphere','Accretion disk edge'],ans:0,explain:'The event horizon is the radius (Schwarzschild radius) beyond which escape velocity exceeds the speed of light.'},
+      {q:'What does the de Broglie wavelength describe?',formula:'λ = h/p',opts:['Wave nature of matter','Photon momentum only','Sound waves','Gravity waves'],ans:0,explain:'Every massive particle has a wavelength λ = h/p (Planck\'s constant divided by momentum) — wave-particle duality.'},
+      {q:'Hooke\'s law: F = ?',formula:'Spring force?',opts:['-kx','ma','mg','qE'],ans:0,explain:'Hooke\'s law: F = -kx, the spring force is proportional and opposite to displacement from equilibrium.'},
+      {q:'What is angular momentum L for a point mass?',formula:'L = ?',opts:['r × p','m·v','F·t','I·ω only'],ans:0,explain:'For a point mass, L = r × p (vector cross product). For rotating rigid bodies L = I·ω.'}
     ]},
     chemistry:{name:'Chemistry',questions:[
       {q:'How many elements are in H₂O?',formula:'H₂O contains?',opts:['2 elements (H, O)','3 elements','1 element','4 elements'],ans:0,explain:'Water (H₂O) contains 2 elements: Hydrogen and Oxygen'},
@@ -6499,7 +6635,29 @@ function playAnimalSound(type) {
       {q:'What is the molar mass of CO₂?',formula:'M(CO₂) = ?',opts:['44 g/mol','28 g/mol','32 g/mol','18 g/mol'],ans:0,explain:'C=12, O=16. CO₂ = 12 + 2(16) = 44 g/mol'},
       {q:'In a balanced equation, what is conserved?',formula:'Conservation of?',opts:['Mass (atoms)','Volume','Temperature','Color'],ans:0,explain:'The law of conservation of mass: atoms are neither created nor destroyed.'},
       {q:'What determines an element\'s identity?',formula:'Element identity = ?',opts:['Number of protons','Number of electrons','Atomic mass','Number of neutrons'],ans:0,explain:'The atomic number (proton count) uniquely identifies each element.'},
-      {q:'Exothermic reactions release what?',formula:'Exothermic → ?',opts:['Heat (energy)','Light only','Mass','Electrons only'],ans:0,explain:'Exothermic reactions release energy as heat (ΔH < 0).'}
+      {q:'Exothermic reactions release what?',formula:'Exothermic → ?',opts:['Heat (energy)','Light only','Mass','Electrons only'],ans:0,explain:'Exothermic reactions release energy as heat (ΔH < 0).'},
+      {q:'Which subatomic particle has no charge?',formula:'Neutral particle?',opts:['Neutron','Proton','Electron','Photon'],ans:0,explain:'Neutrons are neutral, found in the nucleus alongside positively-charged protons.'},
+      {q:'What is the most electronegative element?',formula:'Most EN element?',opts:['Fluorine','Oxygen','Chlorine','Nitrogen'],ans:0,explain:'Fluorine (3.98 on Pauling scale) is the most electronegative known element.'},
+      {q:'How many protons does Sodium (Na) have?',formula:'Z(Na) = ?',opts:['11','12','23','1'],ans:0,explain:'Sodium\'s atomic number is 11 — it has 11 protons.'},
+      {q:'What is Avogadro\'s number?',formula:'N_A = ?',opts:['6.022 × 10²³','3.14 × 10²³','1.6 × 10⁻¹⁹','9.81 × 10²'],ans:0,explain:'Avogadro\'s number ≈ 6.022 × 10²³ defines a mole — the number of particles in one mole.'},
+      {q:'In an exothermic reaction, ΔH is?',formula:'Exothermic ΔH?',opts:['Negative','Positive','Zero','Equals ΔS'],ans:0,explain:'Exothermic reactions release heat to surroundings, so enthalpy change ΔH < 0.'},
+      {q:'What does pKa measure?',formula:'pKa?',opts:['Acid strength','Base strength only','Concentration','Reaction rate'],ans:0,explain:'pKa = -log(Ka) — lower pKa means stronger acid (more dissociation).'},
+      {q:'Which gas law is PV=nRT?',formula:'PV=nRT?',opts:['Ideal gas law','Avogadro\'s','Boyle\'s only','Charles\' only'],ans:0,explain:'Ideal gas law combines Boyle\'s, Charles\', and Avogadro\'s laws into one equation.'},
+      {q:'What kind of bond is between Na⁺ and Cl⁻?',formula:'NaCl bond?',opts:['Ionic','Covalent','Metallic','Hydrogen'],ans:0,explain:'Sodium donates an electron to chlorine, creating a strong electrostatic ionic bond.'},
+      {q:'What is the empirical formula of glucose?',formula:'Glucose empirical?',opts:['CH₂O','C₆H₁₂O₆','CHO','C₂H₄O₂'],ans:0,explain:'Empirical formula = simplest whole-number ratio. C₆H₁₂O₆ reduces to CH₂O.'},
+      {q:'In a redox reaction, what gets oxidized?',formula:'Oxidation?',opts:['Substance losing electrons','Substance gaining electrons','Reaction with O₂ only','Catalyst'],ans:0,explain:'OIL RIG: Oxidation Is Loss (of electrons), Reduction Is Gain.'},
+      {q:'What is hybridization of carbon in methane (CH₄)?',formula:'CH₄ hybrid?',opts:['sp³','sp²','sp','sp³d'],ans:0,explain:'Methane has tetrahedral geometry → sp³ hybridization (4 equivalent sigma bonds).'},
+      {q:'VSEPR predicts what?',formula:'VSEPR theory?',opts:['Molecular geometry','Bond strength','Electronegativity','Reaction rate'],ans:0,explain:'VSEPR (Valence Shell Electron Pair Repulsion) predicts shapes from electron-pair repulsion around a central atom.'},
+      {q:'A buffer solution does what?',formula:'Buffer?',opts:['Resists pH changes','Increases pH','Decreases pH','Neutralizes only acids'],ans:0,explain:'Buffers (weak acid/conjugate base pair) resist pH change when small amounts of acid or base are added.'},
+      {q:'Which type of orbital has 2 electrons maximum?',formula:'Max e⁻ in s orbital?',opts:['Any single orbital','Only s','Only p','Only d'],ans:0,explain:'By Pauli exclusion, any orbital holds at most 2 electrons (with opposite spins).'},
+      {q:'What is enthalpy?',formula:'H = ?',opts:['Total heat content at constant pressure','Pressure × volume','Free energy','Entropy'],ans:0,explain:'Enthalpy H = U + PV — useful for processes at constant pressure (like most lab reactions).'},
+      {q:'Le Chatelier\'s principle says?',formula:'Equilibrium shifts when?',opts:['System counteracts an applied stress','Reaction stops','Pressure rises','Energy is released'],ans:0,explain:'Le Chatelier: a system at equilibrium shifts to oppose any imposed change (concentration, T, or P).'},
+      {q:'How many lone pairs does oxygen have in H₂O?',formula:'Lone pairs in H₂O?',opts:['2','0','1','3'],ans:0,explain:'Oxygen has 6 valence electrons. Two go to bonds with H, leaving 2 lone pairs.'},
+      {q:'What\'s a homogeneous mixture also called?',formula:'Homogeneous mix?',opts:['Solution','Suspension','Colloid','Compound'],ans:0,explain:'A homogeneous mixture with uniform composition is called a solution.'},
+      {q:'What is activation energy?',formula:'E_a = ?',opts:['Minimum energy to start a reaction','Heat released','Total reaction energy','Bond energy'],ans:0,explain:'Activation energy is the energy barrier reactants must climb before products can form.'},
+      {q:'Catalysts work by?',formula:'Catalyst effect?',opts:['Lowering activation energy','Increasing temperature','Being consumed in reaction','Changing equilibrium'],ans:0,explain:'Catalysts provide an alternative reaction path with lower activation energy — they aren\'t consumed.'},
+      {q:'What ions form when water self-ionizes?',formula:'H₂O ⇌ ?',opts:['H₃O⁺ + OH⁻','H₂ + O₂','H⁺ + O₂⁻','H + OH'],ans:0,explain:'Autoionization: 2 H₂O ⇌ H₃O⁺ + OH⁻. At 25 °C, [H₃O⁺][OH⁻] = 10⁻¹⁴.'},
+      {q:'What is the periodic trend for atomic radius?',formula:'Radius trend?',opts:['Decreases across a period; increases down a group','Increases across a period','Random','Same throughout'],ans:0,explain:'Radius decreases left-to-right (more nuclear charge pulls electrons in) and grows down (added shells).'}
     ]},
     biology:{name:'Biology',questions:[
       {q:'What organelle is the "powerhouse of the cell"?',formula:'Cell energy → ?',opts:['Mitochondria','Nucleus','Ribosome','Golgi body'],ans:0,explain:'Mitochondria produce ATP through cellular respiration.'},
@@ -6509,7 +6667,29 @@ function playAnimalSound(type) {
       {q:'What is natural selection?',formula:'Survival of the?',opts:['Fittest (best adapted)','Strongest','Largest','Fastest'],ans:0,explain:'Natural selection favors organisms best adapted to their environment, not necessarily the strongest.'},
       {q:'What is the basic unit of life?',formula:'Life unit = ?',opts:['Cell','Atom','Molecule','Organ'],ans:0,explain:'The cell is the fundamental unit of life — all living things are made of cells.'},
       {q:'How many chromosomes do humans have?',formula:'Human chromosomes = ?',opts:['46','23','48','44'],ans:0,explain:'Humans have 46 chromosomes (23 pairs) — 22 autosomal pairs + 1 sex chromosome pair.'},
-      {q:'What does mRNA do?',formula:'mRNA function?',opts:['Carries genetic code to ribosomes','Stores genetic info','Makes proteins directly','Replicates DNA'],ans:0,explain:'mRNA (messenger RNA) copies DNA code and carries it to ribosomes for protein synthesis.'}
+      {q:'What does mRNA do?',formula:'mRNA function?',opts:['Carries genetic code to ribosomes','Stores genetic info','Makes proteins directly','Replicates DNA'],ans:0,explain:'mRNA (messenger RNA) copies DNA code and carries it to ribosomes for protein synthesis.'},
+      {q:'What is the primary purpose of mitosis?',formula:'Mitosis = ?',opts:['Cell growth and repair','Sexual reproduction','Energy production','Protein synthesis'],ans:0,explain:'Mitosis produces two genetically identical daughter cells for growth, repair, and asexual reproduction.'},
+      {q:'How many chromosomes are in a human gamete?',formula:'Human gamete = ?',opts:['23','46','48','2'],ans:0,explain:'Gametes (sperm/egg) are haploid with 23 chromosomes; somatic cells are diploid with 46.'},
+      {q:'What is the fluid-mosaic model about?',formula:'Fluid-mosaic = ?',opts:['Cell membrane structure','DNA replication','Cell division','Photosynthesis'],ans:0,explain:'The Singer–Nicolson model describes the cell membrane as a fluid lipid bilayer with embedded mosaic of proteins.'},
+      {q:'Enzymes are usually what kind of molecule?',formula:'Enzyme = ?',opts:['Protein','Lipid','Carbohydrate','Nucleic acid (mostly)'],ans:0,explain:'Most enzymes are proteins, though some catalytic RNAs (ribozymes) exist.'},
+      {q:'What is the function of ribosomes?',formula:'Ribosomes do?',opts:['Protein synthesis','Energy production','Lipid storage','DNA replication'],ans:0,explain:'Ribosomes translate mRNA into proteins, linking amino acids together.'},
+      {q:'In mitosis, sister chromatids separate during?',formula:'Sister chromatids split in?',opts:['Anaphase','Prophase','Metaphase','Telophase'],ans:0,explain:'During anaphase, sister chromatids separate and move toward opposite poles of the dividing cell.'},
+      {q:'Photosynthesis happens in which organelle?',formula:'Photosynthesis = ?',opts:['Chloroplast','Mitochondrion','Nucleus','Vacuole'],ans:0,explain:'Chloroplasts contain chlorophyll and conduct photosynthesis in plant cells.'},
+      {q:'Which lipid molecule is the major membrane component?',formula:'Membrane lipid = ?',opts:['Phospholipid','Triglyceride','Steroid','Wax'],ans:0,explain:'Phospholipids form bilayers with hydrophilic heads facing water and hydrophobic tails inward.'},
+      {q:'What does ATP stand for?',formula:'ATP = ?',opts:['Adenosine triphosphate','Adenine tetraphosphate','Adenosine tetrahydrate','Adenine triplet phosphate'],ans:0,explain:'ATP is the universal energy currency, releasing energy when its terminal phosphate bond is hydrolyzed.'},
+      {q:'In the central dogma, information flows DNA → ?',formula:'Central dogma?',opts:['RNA → Protein','Protein → RNA','RNA → DNA','DNA → DNA'],ans:0,explain:'DNA is transcribed to RNA, which is translated into protein. Reverse transcription is an exception.'},
+      {q:'How many possible amino acid codons exist (DNA)?',formula:'Codons = ?',opts:['64','20','22','60'],ans:0,explain:'4 bases per position × 3 positions = 64 codons. They map redundantly to the 20 standard amino acids.'},
+      {q:'Which kingdom contains organisms like mushrooms and yeast?',formula:'Mushrooms in?',opts:['Fungi','Plantae','Animalia','Protista'],ans:0,explain:'Fungi are heterotrophic eukaryotes with chitin cell walls — distinct from plants and animals.'},
+      {q:'What is the function of red blood cells?',formula:'RBC role?',opts:['Carry oxygen via hemoglobin','Fight infection','Clot blood','Produce hormones'],ans:0,explain:'Red blood cells (erythrocytes) carry oxygen from lungs to tissues using hemoglobin protein.'},
+      {q:'DNA is read in which direction?',formula:'DNA reading direction?',opts:['5\' to 3\'','3\' to 5\'','Both','Random'],ans:0,explain:'DNA polymerase synthesizes the new strand 5\' → 3\', reading the template 3\' → 5\'.'},
+      {q:'Which structure converts food energy in eukaryotic cells?',formula:'Energy organelle?',opts:['Mitochondria','Chloroplast','Nucleus','ER'],ans:0,explain:'Mitochondria perform cellular respiration, producing ATP from glucose.'},
+      {q:'What process produces 4 haploid cells from one diploid cell?',formula:'Process = ?',opts:['Meiosis','Mitosis','Binary fission','Replication'],ans:0,explain:'Meiosis halves chromosome number to produce gametes — 4 genetically diverse haploid cells.'},
+      {q:'What is osmosis?',formula:'Osmosis = ?',opts:['Water movement across a semipermeable membrane','Solute diffusion','Active transport','Endocytosis'],ans:0,explain:'Osmosis: passive movement of water through a semipermeable membrane down its concentration gradient.'},
+      {q:'What is the role of B cells?',formula:'B cells = ?',opts:['Produce antibodies','Engulf pathogens','Carry oxygen','Form clots'],ans:0,explain:'B lymphocytes produce antibodies (immunoglobulins) that target specific antigens.'},
+      {q:'What is the function of the kidney\'s nephron?',formula:'Nephron = ?',opts:['Filters blood and forms urine','Stores oxygen','Pumps blood','Produces insulin'],ans:0,explain:'Each nephron filters blood through the glomerulus, then reabsorbs needed substances and excretes waste as urine.'},
+      {q:'Trophic levels in an ecosystem describe?',formula:'Trophic level = ?',opts:['Position in food chain','Habitat depth','Mating behavior','Migration distance'],ans:0,explain:'Trophic levels: producers, primary consumers, secondary consumers, etc. Energy decreases ~10× per level.'},
+      {q:'What is genetic drift?',formula:'Genetic drift = ?',opts:['Random change in allele frequency','Adaptive evolution','Mutation rate','Gene flow'],ans:0,explain:'Genetic drift is random allele frequency changes due to chance — strongest in small populations.'},
+      {q:'Which organelle modifies and packages proteins?',formula:'Modify proteins?',opts:['Golgi apparatus','Nucleus','Ribosome','Lysosome'],ans:0,explain:'The Golgi apparatus modifies, sorts, and packages proteins from the ER for secretion or use.'}
     ]},
     algorithms:{name:'Algorithms',questions:[
       {q:'What is the time complexity of binary search?',formula:'Binary search = O(?)',opts:['O(log n)','O(n)','O(n²)','O(1)'],ans:0,explain:'Binary search halves the search space each step: O(log n)'},
@@ -6519,7 +6699,29 @@ function playAnimalSound(type) {
       {q:'What is the time complexity of bubble sort?',formula:'Bubble sort = O(?)',opts:['O(n²)','O(n log n)','O(n)','O(log n)'],ans:0,explain:'Bubble sort compares adjacent pairs repeatedly: O(n²) average and worst case.'},
       {q:'Dijkstra\'s algorithm finds?',formula:'Dijkstra finds?',opts:['Shortest path in weighted graph','Minimum spanning tree','Topological order','Maximum flow'],ans:0,explain:'Dijkstra\'s algorithm finds the shortest path from a source to all other vertices in a weighted graph.'},
       {q:'What does Big-O notation describe?',formula:'O(f(n)) describes?',opts:['Upper bound on growth rate','Exact running time','Memory usage only','Best case only'],ans:0,explain:'Big-O describes the upper bound of an algorithm\'s growth rate as input size increases.'},
-      {q:'Hash table average lookup time is?',formula:'Hash lookup = O(?)',opts:['O(1)','O(n)','O(log n)','O(n²)'],ans:0,explain:'Hash tables provide O(1) average-case lookup through direct addressing via hash function.'}
+      {q:'Hash table average lookup time is?',formula:'Hash lookup = O(?)',opts:['O(1)','O(n)','O(log n)','O(n²)'],ans:0,explain:'Hash tables provide O(1) average-case lookup through direct addressing via hash function.'},
+      {q:'Which algorithm uses divide-and-conquer for sorting?',formula:'Divide-and-conquer sort?',opts:['Merge sort','Bubble sort','Insertion sort','Selection sort'],ans:0,explain:'Merge sort splits the array, recursively sorts halves, then merges. Quicksort also uses divide-and-conquer.'},
+      {q:'What is amortized analysis?',formula:'Amortized = ?',opts:['Average cost over a sequence of operations','Worst single operation','Best case only','Memory usage'],ans:0,explain:'Amortized analysis averages cost across a sequence of operations — useful when occasional ops are expensive but rare.'},
+      {q:'Dynamic programming relies on what two properties?',formula:'DP needs?',opts:['Optimal substructure + overlapping subproblems','Greedy choice','Recursion only','Sorting'],ans:0,explain:'Dynamic programming applies when optimal solutions decompose into optimal sub-solutions and subproblems repeat.'},
+      {q:'Worst-case time of quicksort with bad pivots?',formula:'Quicksort worst?',opts:['O(n²)','O(n log n)','O(n)','O(log n)'],ans:0,explain:'On already-sorted data with a poor pivot, quicksort degrades to O(n²).'},
+      {q:'Greedy algorithms make what kind of choices?',formula:'Greedy = ?',opts:['Locally optimal at each step','Random choices','Globally optimal always','Backtracking'],ans:0,explain:'Greedy algorithms commit to the locally best choice. They work when the problem has the greedy-choice property.'},
+      {q:'Time complexity of finding min/max in unsorted array?',formula:'min(arr) cost?',opts:['O(n)','O(log n)','O(1)','O(n²)'],ans:0,explain:'Without prior structure, you must inspect every element: linear time O(n).'},
+      {q:'Bellman-Ford handles what that Dijkstra cannot?',formula:'Bellman-Ford handles?',opts:['Negative edge weights','Faster than Dijkstra','Smaller graphs','Cyclic graphs'],ans:0,explain:'Bellman-Ford works with negative weights (and detects negative cycles); Dijkstra requires non-negative edges.'},
+      {q:'What is the time complexity of merge sort?',formula:'Merge sort = O(?)',opts:['O(n log n)','O(n²)','O(n)','O(log n)'],ans:0,explain:'Merge sort divides the array in O(log n) levels, each merging O(n) elements: O(n log n).'},
+      {q:'What problem does Knuth-Morris-Pratt solve?',formula:'KMP solves?',opts:['String pattern matching','Sorting','Graph traversal','Cryptography'],ans:0,explain:'KMP finds occurrences of a pattern in a text in linear time using a failure function.'},
+      {q:'Memoization improves recursive algorithms by?',formula:'Memoization?',opts:['Caching previous results','Faster recursion','More memory','Less stack'],ans:0,explain:'Memoization stores subproblem results so repeated calls return instantly — avoids exponential recomputation.'},
+      {q:'NP-complete means?',formula:'NP-complete = ?',opts:['In NP and at least as hard as any NP problem','Always exponential','Polynomial time','Linear time'],ans:0,explain:'NP-complete problems are in NP and every NP problem reduces to them in polynomial time.'},
+      {q:'Heap sort uses which data structure?',formula:'Heap sort uses?',opts:['Binary heap','Hash table','Stack','Queue'],ans:0,explain:'Heap sort builds a max-heap and repeatedly extracts the maximum, sorting in O(n log n).'},
+      {q:'What is a stable sort?',formula:'Stable sort = ?',opts:['Preserves order of equal elements','Always O(n)','Uses no memory','Recursive only'],ans:0,explain:'Stable sorts keep equal-keyed elements in their original relative order — important for multi-key sorting.'},
+      {q:'Floyd–Warshall computes?',formula:'Floyd–Warshall?',opts:['All-pairs shortest paths','Single shortest path','Spanning tree','Topological sort'],ans:0,explain:'Floyd–Warshall finds shortest paths between every pair of vertices in O(V³).'},
+      {q:'A topological sort works on which graphs?',formula:'Topological sort needs?',opts:['DAGs','Cyclic graphs','Bipartite only','Trees only'],ans:0,explain:'Topological sort orders vertices so all edges go forward — only possible on directed acyclic graphs.'},
+      {q:'What does the master theorem analyze?',formula:'Master theorem?',opts:['Divide-and-conquer recurrences','Greedy algorithms','DP','Hash functions'],ans:0,explain:'The master theorem solves recurrences T(n) = aT(n/b) + f(n) common in divide-and-conquer.'},
+      {q:'Best-case complexity of insertion sort?',formula:'Insertion sort best = ?',opts:['O(n)','O(n log n)','O(n²)','O(1)'],ans:0,explain:'On nearly-sorted input, insertion sort makes only one comparison per element: O(n).'},
+      {q:'Which algorithm computes minimum spanning trees?',formula:'MST algorithm?',opts:['Kruskal\'s','Dijkstra\'s','BFS','DFS'],ans:0,explain:'Kruskal\'s algorithm (and Prim\'s) compute MSTs. Kruskal sorts edges and uses union-find.'},
+      {q:'Worst-case lookup time in a hash table?',formula:'Hash worst?',opts:['O(n)','O(1)','O(log n)','O(n²)'],ans:0,explain:'With many collisions, hash tables degrade to O(n). Average-case is O(1) with good hashing.'},
+      {q:'What problem does the A* algorithm solve?',formula:'A* solves?',opts:['Pathfinding with heuristic','Sorting','String matching','Compression'],ans:0,explain:'A* finds shortest paths using a heuristic to guide search, expanding promising nodes first.'},
+      {q:'Branch and bound is a technique for?',formula:'Branch & bound?',opts:['Optimization with pruning','Greedy decisions','Sorting','Hashing'],ans:0,explain:'Branch and bound systematically explores candidate solutions, pruning branches that can\'t beat the current best.'},
+      {q:'In Big-O, O(2ⁿ) is called what?',formula:'O(2ⁿ) = ?',opts:['Exponential','Polynomial','Logarithmic','Linear'],ans:0,explain:'O(2ⁿ) growth doubles per increment — exponential complexity.'}
     ]},
     datastructs:{name:'Data Structures',questions:[
       {q:'A stack follows which principle?',formula:'Stack = ?',opts:['LIFO','FIFO','Random','Priority'],ans:0,explain:'Stack = Last In, First Out. The last element added is the first removed.'},
@@ -6529,7 +6731,29 @@ function playAnimalSound(type) {
       {q:'Linked list vs array: which has O(1) insertion at head?',formula:'O(1) head insert?',opts:['Linked list','Array','Both','Neither'],ans:0,explain:'Linked lists insert at head in O(1) by pointer reassignment. Arrays require shifting all elements.'},
       {q:'What data structure is a heap?',formula:'Heap is a?',opts:['Complete binary tree with ordering','Linked list','Hash table','Graph'],ans:0,explain:'A heap is a complete binary tree where parent ≤ children (min-heap) or parent ≥ children (max-heap).'},
       {q:'What is a graph with no cycles called?',formula:'No cycles = ?',opts:['Tree (or forest)','Complete graph','Bipartite graph','Multigraph'],ans:0,explain:'A connected acyclic graph is a tree. A disconnected acyclic graph is a forest.'},
-      {q:'Trie data structure is optimized for?',formula:'Trie is best for?',opts:['String/prefix searching','Number sorting','Graph traversal','Matrix operations'],ans:0,explain:'Tries (prefix trees) store strings character by character for fast prefix-based lookups.'}
+      {q:'Trie data structure is optimized for?',formula:'Trie is best for?',opts:['String/prefix searching','Number sorting','Graph traversal','Matrix operations'],ans:0,explain:'Tries (prefix trees) store strings character by character for fast prefix-based lookups.'},
+      {q:'Which data structure supports O(1) insertion at both ends?',formula:'O(1) both ends?',opts:['Deque','Stack','Singly linked list','Array'],ans:0,explain:'A deque (double-ended queue) supports O(1) push and pop from both ends.'},
+      {q:'What is a balanced binary search tree\'s height?',formula:'Balanced BST height?',opts:['O(log n)','O(n)','O(1)','O(n²)'],ans:0,explain:'Self-balancing BSTs (AVL, red-black) maintain O(log n) height to guarantee fast operations.'},
+      {q:'What\'s a key advantage of a circular linked list?',formula:'Circular LL?',opts:['No null pointers; tail wraps to head','Random access','Always sorted','Smaller memory'],ans:0,explain:'Circular linked lists let you traverse continuously and remove the special-case for end-of-list.'},
+      {q:'What does a B-tree optimize?',formula:'B-tree = ?',opts:['Disk-based ordered storage','In-memory hashing','Compression','Encryption'],ans:0,explain:'B-trees keep many keys per node to minimize disk reads — used in databases and file systems.'},
+      {q:'Time complexity of inserting into a max-heap?',formula:'Heap insert = O(?)',opts:['O(log n)','O(1)','O(n)','O(n log n)'],ans:0,explain:'Insert at the end then sift up: tree height O(log n) work.'},
+      {q:'What is a Fibonacci heap used for?',formula:'Fibonacci heap?',opts:['Faster amortized priority queue','String matching','Hashing','Sorting'],ans:0,explain:'Fibonacci heaps provide O(1) amortized insert and decrease-key — useful in Dijkstra and Prim\'s.'},
+      {q:'What is a hash collision?',formula:'Hash collision = ?',opts:['Two keys hashing to same slot','Slow hashing','Empty bucket','Out of memory'],ans:0,explain:'Two distinct keys mapping to the same hash slot. Resolved by chaining or open addressing.'},
+      {q:'In a binary search tree, the in-order traversal yields?',formula:'BST in-order = ?',opts:['Sorted sequence','Reverse sorted','Random order','Level order'],ans:0,explain:'BST property guarantees an in-order traversal visits keys in ascending sorted order.'},
+      {q:'Which structure represents adjacency in graphs efficiently for sparse graphs?',formula:'Sparse graph rep?',opts:['Adjacency list','Adjacency matrix','Edge list only','Hash set'],ans:0,explain:'Adjacency lists use O(V+E) space — efficient when E is far less than V².'},
+      {q:'What is the main use of a Bloom filter?',formula:'Bloom filter?',opts:['Probabilistic membership test','Sorted index','Cache replacement','Compression'],ans:0,explain:'Bloom filters quickly test whether an element is possibly in a set or definitely not — with small false-positive rate.'},
+      {q:'AVL trees maintain balance using?',formula:'AVL balance?',opts:['Rotations','Hashing','Sorting','Removing nodes'],ans:0,explain:'AVL trees use single and double rotations to keep |left height − right height| ≤ 1.'},
+      {q:'What is a priority queue?',formula:'Priority queue = ?',opts:['Highest-priority element dequeues first','FIFO','LIFO','Random access'],ans:0,explain:'A priority queue dequeues the element with highest (or lowest) priority. Often implemented with a heap.'},
+      {q:'What\'s a doubly linked list?',formula:'Doubly linked = ?',opts:['Each node has prev and next pointers','Two parallel lists','Sorted list','Cyclic list'],ans:0,explain:'Doubly linked lists keep both directional pointers, enabling O(1) deletion given a node reference.'},
+      {q:'Tries (prefix trees) are best for?',formula:'Trie best for?',opts:['Autocomplete and prefix lookups','Numeric ranges','Shortest paths','Sorting'],ans:0,explain:'Tries excel at prefix-based string operations with O(L) lookup time, where L is the key length.'},
+      {q:'Disjoint set union (union-find) supports?',formula:'Union-find ops?',opts:['Union and find with near-constant time','Sorting','BFS','DFS'],ans:0,explain:'With path compression and union by rank, union and find run in nearly O(α(n)) amortized — essentially constant.'},
+      {q:'A red-black tree guarantees what height bound?',formula:'Red-black height?',opts:['O(log n)','O(n)','O(1)','O(√n)'],ans:0,explain:'Red-black trees enforce coloring rules ensuring tree height is O(log n).'},
+      {q:'Which structure is best for FIFO scheduling?',formula:'FIFO uses?',opts:['Queue','Stack','Heap','Hash set'],ans:0,explain:'FIFO (first-in, first-out) is the defining property of a queue.'},
+      {q:'What is an LRU cache\'s eviction policy?',formula:'LRU evicts?',opts:['Least recently used item','Random item','Largest item','First inserted'],ans:0,explain:'LRU evicts the entry that hasn\'t been accessed the longest — usually implemented with a hash map + doubly linked list.'},
+      {q:'What\'s the space complexity of an adjacency matrix?',formula:'Adj matrix space?',opts:['O(V²)','O(V+E)','O(E)','O(V)'],ans:0,explain:'Adjacency matrix stores a V×V array, regardless of how many edges are present.'},
+      {q:'What data structure does breadth-first search use?',formula:'BFS uses?',opts:['Queue','Stack','Heap','Set'],ans:0,explain:'BFS expands level by level using a FIFO queue.'},
+      {q:'How can you achieve O(1) lookup by key?',formula:'O(1) lookup?',opts:['Hash table','Linked list','Balanced BST','Linear array'],ans:0,explain:'Hash tables provide expected O(1) lookup if the load factor is bounded and collisions are managed.'},
+      {q:'What is the height of a heap with n elements?',formula:'Heap height = ?',opts:['O(log n)','O(n)','O(1)','O(√n)'],ans:0,explain:'A complete binary tree with n nodes has height ⌊log₂ n⌋ — heaps maintain this shape.'}
     ]},
     philosophy:{name:'Philosophy & Logic',questions:[
       {q:'Who said "I think, therefore I am"?',formula:'Cogito ergo sum',opts:['Descartes','Plato','Aristotle','Kant'],ans:0,explain:'René Descartes: the act of thinking proves one\'s own existence.'},
@@ -6539,7 +6763,29 @@ function playAnimalSound(type) {
       {q:'What is Occam\'s Razor?',formula:'Occam\'s Razor = ?',opts:['Simplest explanation is usually best','Complexity is always better','All theories are equal','Evidence is unnecessary'],ans:0,explain:'Occam\'s Razor: among competing hypotheses, prefer the one with fewest assumptions.'},
       {q:'What is a "straw man" fallacy?',formula:'Straw man = ?',opts:['Misrepresenting someone\'s argument','Attacking character','Circular logic','Appeal to emotion'],ans:0,explain:'A straw man distorts the opponent\'s position to make it easier to attack.'},
       {q:'Who is considered the father of Western philosophy?',formula:'Father of philosophy?',opts:['Socrates','Plato','Aristotle','Pythagoras'],ans:0,explain:'Socrates is widely regarded as the founder of Western philosophy through his method of questioning.'},
-      {q:'What is deductive reasoning?',formula:'Deduction = ?',opts:['General rules → specific conclusions','Specific → general','Random guessing','Emotional reasoning'],ans:0,explain:'Deduction: if premises are true, the conclusion must be true. General → specific.'}
+      {q:'What is deductive reasoning?',formula:'Deduction = ?',opts:['General rules → specific conclusions','Specific → general','Random guessing','Emotional reasoning'],ans:0,explain:'Deduction: if premises are true, the conclusion must be true. General → specific.'},
+      {q:'What does empiricism emphasize?',formula:'Empiricism = ?',opts:['Knowledge from sensory experience','Innate ideas','Mathematical proof','Faith'],ans:0,explain:'Empiricism (Locke, Hume) holds that knowledge primarily comes through experience and observation.'},
+      {q:'Rationalism emphasizes?',formula:'Rationalism = ?',opts:['Knowledge from reason and logic','Sensory experience','Tradition','Authority'],ans:0,explain:'Rationalism (Descartes, Spinoza) holds that reason is the chief source of knowledge.'},
+      {q:'What is utilitarianism?',formula:'Utilitarianism = ?',opts:['Greatest good for greatest number','Strict duty-based ethics','Virtue cultivation','Divine command'],ans:0,explain:'Utilitarianism (Bentham, Mill) judges actions by total happiness/utility produced.'},
+      {q:'Kant\'s categorical imperative tests?',formula:'Categorical imperative = ?',opts:['Whether a maxim could be a universal law','Outcome utility','Personal preference','Cultural norm'],ans:0,explain:'Kant: act only on maxims you could will to become universal law — duty-based deontological ethics.'},
+      {q:'What did Aristotle mean by eudaimonia?',formula:'Eudaimonia = ?',opts:['Human flourishing','Pleasure','Wealth','Power'],ans:0,explain:'Eudaimonia is human flourishing through virtuous, rational living — Aristotle\'s central ethical goal.'},
+      {q:'What is solipsism?',formula:'Solipsism = ?',opts:['Only one\'s own mind is certain to exist','Knowledge is universal','All is one','God exists'],ans:0,explain:'Solipsism: only the self can be known with certainty to exist.'},
+      {q:'What is the appeal-to-authority fallacy?',formula:'Appeal to authority?',opts:['Citing an irrelevant authority as proof','Quoting an expert','Logical deduction','Inductive reasoning'],ans:0,explain:'Citing authority as proof, especially when irrelevant or unqualified, is a logical fallacy.'},
+      {q:'What does \'tabula rasa\' mean?',formula:'Tabula rasa = ?',opts:['Blank slate (mind at birth)','Knowledge of God','Universal truth','Innate ideas'],ans:0,explain:'Locke argued the mind starts as a blank slate, filled by experience — opposing innate ideas.'},
+      {q:'What is the trolley problem?',formula:'Trolley problem?',opts:['Ethics dilemma about diverting harm','Time travel paradox','Free will issue','Soul question'],ans:0,explain:'The trolley problem (Foot, Thomson) probes whether actively causing fewer deaths is morally different from passively allowing more.'},
+      {q:'What is Hume\'s \'is-ought\' problem?',formula:'Is-ought problem?',opts:['You can\'t derive ought from is','Ought equals is','Facts have moral force','Ethics is empirical'],ans:0,explain:'Hume noted that descriptive \'is\' statements alone cannot logically yield prescriptive \'ought\' conclusions.'},
+      {q:'Existentialism prioritizes?',formula:'Existentialism = ?',opts:['Individual freedom and authentic existence','Group conformity','Tradition','Innate purpose'],ans:0,explain:'Existentialism (Sartre, Kierkegaard) emphasizes individual responsibility, authenticity, and freedom in a meaningless universe.'},
+      {q:'What is dualism?',formula:'Dualism = ?',opts:['Mind and body are distinct substances','Only matter exists','Only mind exists','All is one'],ans:0,explain:'Cartesian dualism holds that mind and body are fundamentally different kinds of substance.'},
+      {q:'What is materialism (philosophy)?',formula:'Materialism = ?',opts:['Only physical matter exists','Wealth matters','Spirit exists','Both mind and matter'],ans:0,explain:'Philosophical materialism (or physicalism) holds that everything is, or supervenes on, the physical.'},
+      {q:'What does \'a priori\' mean?',formula:'A priori = ?',opts:['Knowledge independent of experience','Knowledge from observation','First in time','Unprovable'],ans:0,explain:'A priori knowledge is justified independently of experience — like mathematics or logic.'},
+      {q:'What is Aristotle\'s \'golden mean\'?',formula:'Golden mean = ?',opts:['Virtue is the moderate path between extremes','Maximum pleasure','Strictest duty','Highest utility'],ans:0,explain:'Virtue lies between excess and deficiency — courage between rashness and cowardice, for example.'},
+      {q:'What is the modus ponens form?',formula:'Modus ponens?',opts:['P → Q; P; therefore Q','P → Q; Q; therefore P','Not P; therefore P','P; therefore Q'],ans:0,explain:'Modus ponens: from P → Q and P, we infer Q. A core valid form of deductive argument.'},
+      {q:'What is moral relativism?',formula:'Moral relativism?',opts:['Right and wrong vary by culture or person','Morals are universal','Morals come from God only','Morals are physical'],ans:0,explain:'Moral relativism holds that moral judgments are valid only within particular cultures, individuals, or contexts.'},
+      {q:'Who wrote \'The Republic\'?',formula:'The Republic author?',opts:['Plato','Aristotle','Cicero','Augustine'],ans:0,explain:'Plato wrote The Republic — exploring justice, the ideal city, and the philosopher-king.'},
+      {q:'What is the principle of non-contradiction?',formula:'Non-contradiction?',opts:['A and not-A cannot both be true at the same time','All things contradict','Truth is relative','Logic is illusion'],ans:0,explain:'Aristotle\'s law: no proposition is both true and false in the same sense at the same time.'},
+      {q:'What is virtue ethics?',formula:'Virtue ethics = ?',opts:['Focus on character and virtues','Outcome maximization','Strict duties','Social contract'],ans:0,explain:'Virtue ethics (Aristotle) centers on cultivating moral character traits rather than rules or consequences.'},
+      {q:'What does \'tabula rasa\' contrast with?',formula:'Tabula rasa vs?',opts:['Innate ideas (e.g., Plato)','Empiricism','Modern science','Skepticism'],ans:0,explain:'Tabula rasa (blank slate) contrasts with the doctrine that the mind contains innate ideas before experience.'},
+      {q:'What is reductio ad absurdum?',formula:'Reductio ad absurdum?',opts:['Disprove by deriving contradiction','Appeal to emotion','Strawman','Repetition'],ans:0,explain:'Reductio: assume the opposite, derive a contradiction, conclude the original must be true.'}
     ]},
     economics:{name:'Economics',questions:[
       {q:'What happens to demand when price increases (normal good)?',formula:'Price ↑ → Demand ?',opts:['Decreases','Increases','Stays same','Doubles'],ans:0,explain:'Law of demand: price and quantity demanded move inversely (ceteris paribus).'},
@@ -6549,7 +6795,29 @@ function playAnimalSound(type) {
       {q:'What shifts the supply curve right?',formula:'Supply curve → right?',opts:['Lower production costs','Higher taxes','Fewer producers','Higher input prices'],ans:0,explain:'Lower costs make production more profitable, increasing supply (rightward shift).'},
       {q:'In a competitive market, equilibrium is where?',formula:'Equilibrium = ?',opts:['Supply meets demand','Supply exceeds demand','Demand exceeds supply','Price is highest'],ans:0,explain:'Equilibrium price is where quantity supplied equals quantity demanded.'},
       {q:'What is a monopoly?',formula:'Monopoly = ?',opts:['Single seller dominates market','Many sellers compete','Government-run market','Free trade zone'],ans:0,explain:'A monopoly exists when one firm is the sole provider with no close substitutes.'},
-      {q:'The Federal Reserve controls?',formula:'Fed controls?',opts:['Monetary policy','Fiscal policy','Trade policy','Immigration'],ans:0,explain:'The Fed sets monetary policy: interest rates, money supply, and bank regulation.'}
+      {q:'The Federal Reserve controls?',formula:'Fed controls?',opts:['Monetary policy','Fiscal policy','Trade policy','Immigration'],ans:0,explain:'The Fed sets monetary policy: interest rates, money supply, and bank regulation.'},
+      {q:'What is comparative advantage?',formula:'Comparative advantage = ?',opts:['Producing at lower opportunity cost','Producing more total','Selling cheapest','Always exporting'],ans:0,explain:'Comparative advantage (Ricardo): countries gain from trade by specializing where their opportunity cost is lowest.'},
+      {q:'Elasticity of demand measures?',formula:'Demand elasticity?',opts:['Responsiveness of quantity to price','Price ceiling','Tax burden','Profit margin'],ans:0,explain:'Price elasticity = %ΔQ / %ΔP. Elastic (>1): big response; inelastic (<1): small response.'},
+      {q:'What is fiscal policy?',formula:'Fiscal policy = ?',opts:['Government spending and taxation','Money supply','Trade tariffs','Interest rates only'],ans:0,explain:'Fiscal policy is the government\'s use of spending and taxes to influence the economy.'},
+      {q:'What is monetary policy?',formula:'Monetary policy = ?',opts:['Central bank\'s money supply and interest rate decisions','Government spending','Trade deals','Tax brackets'],ans:0,explain:'Monetary policy is set by the central bank — adjusting interest rates and money supply.'},
+      {q:'In a perfectly competitive market, firms are?',formula:'Perfectly competitive firms?',opts:['Price takers','Price makers','Monopolists','Cartel members'],ans:0,explain:'Perfectly competitive firms accept the market price; they\'re too small to influence it.'},
+      {q:'Marginal cost equals what at the profit-maximizing output?',formula:'Profit max condition?',opts:['Marginal revenue','Average cost','Total cost','Fixed cost'],ans:0,explain:'Profit max: produce where MC = MR. Beyond that point, additional units lose money.'},
+      {q:'What\'s the difference between nominal and real GDP?',formula:'Nominal vs real GDP?',opts:['Real adjusts for inflation','Real ignores production','Nominal includes imports','No difference'],ans:0,explain:'Real GDP uses constant prices to remove inflation effects; nominal GDP uses current prices.'},
+      {q:'What is consumer surplus?',formula:'Consumer surplus = ?',opts:['Willingness-to-pay minus actual price','Profit per unit','Total revenue','Tax revenue'],ans:0,explain:'Consumer surplus is the area between the demand curve and the price line — value gained over what was paid.'},
+      {q:'A cartel is?',formula:'Cartel = ?',opts:['Producers colluding to set prices','Free-market competitors','Government agency','Buyer\'s group'],ans:0,explain:'Cartels collude on price or output to capture monopoly-like profits — illegal in many jurisdictions.'},
+      {q:'Deadweight loss occurs when?',formula:'Deadweight loss?',opts:['Market is not at competitive equilibrium','Markets clear','Price is fair','Demand equals supply'],ans:0,explain:'Deadweight loss is the lost surplus when taxes, subsidies, or market power push price away from efficient equilibrium.'},
+      {q:'The law of diminishing marginal returns says?',formula:'Diminishing returns?',opts:['Adding more of one input yields smaller output gains','Output always grows','Costs always fall','Returns increase forever'],ans:0,explain:'Holding other inputs fixed, additional units of one input eventually yield smaller marginal output.'},
+      {q:'A normal good\'s demand changes how with income?',formula:'Normal good income effect?',opts:['Demand rises with income','Demand falls with income','No change','Becomes inelastic'],ans:0,explain:'For normal goods, demand rises as income rises. Inferior goods do the opposite.'},
+      {q:'Macroeconomics studies?',formula:'Macroeconomics = ?',opts:['Aggregate economy (GDP, unemployment, inflation)','Single firms','Households only','Stock markets only'],ans:0,explain:'Macroeconomics examines economy-wide phenomena: GDP, unemployment, inflation, monetary and fiscal policy.'},
+      {q:'What is opportunity cost?',formula:'Opportunity cost = ?',opts:['Value of next-best alternative foregone','Total cost','Variable cost','Sunk cost'],ans:0,explain:'Opportunity cost: what you give up by choosing one option over the next-best alternative.'},
+      {q:'In game theory, a Nash equilibrium is where?',formula:'Nash equilibrium?',opts:['No player can gain by changing strategy unilaterally','All players cooperate','Random choices','Pareto optimal always'],ans:0,explain:'At Nash equilibrium each player\'s strategy is a best response to the others — no one benefits by deviating alone.'},
+      {q:'A progressive tax does what as income rises?',formula:'Progressive tax?',opts:['Tax rate rises','Tax rate falls','Stays flat','Becomes zero'],ans:0,explain:'Progressive taxes apply higher marginal rates to higher incomes.'},
+      {q:'What is a public good?',formula:'Public good = ?',opts:['Non-rival and non-excludable','Privately owned','Always free','Always taxed'],ans:0,explain:'Public goods (like national defense or street lights) cannot be efficiently restricted to specific users and don\'t deplete with use.'},
+      {q:'Consumer Price Index measures?',formula:'CPI = ?',opts:['Average prices of a basket of goods','Stock market','Money supply','Tax rates'],ans:0,explain:'CPI tracks how a representative basket of consumer goods/services changes in price over time.'},
+      {q:'What is sunk cost?',formula:'Sunk cost = ?',opts:['Already incurred and irrecoverable','Future expected cost','Variable cost','Marginal cost'],ans:0,explain:'Sunk costs cannot be recovered and should not influence forward-looking decisions.'},
+      {q:'Externalities can be?',formula:'Externalities?',opts:['Positive or negative (e.g., pollution, vaccinations)','Always negative','Always positive','Always neutral'],ans:0,explain:'Externalities are costs/benefits affecting third parties — pollution (negative), vaccinations (positive).'},
+      {q:'What does a budget constraint represent?',formula:'Budget constraint = ?',opts:['Combinations of goods affordable at given prices and income','Maximum profit','Tax rate','Interest rate'],ans:0,explain:'Budget constraint shows all consumption bundles a consumer can afford given prices and income.'},
+      {q:'Diminishing marginal utility means?',formula:'Diminishing utility?',opts:['Each extra unit gives less satisfaction','Constant happiness','Increasing returns','Negative utility'],ans:0,explain:'Each additional unit of a good typically yields less added satisfaction than the previous unit.'}
     ]},
     writing:{name:'Academic Writing',questions:[
       {q:'A thesis statement should be?',formula:'Thesis = ?',opts:['Clear, specific, arguable claim','A question','A list of topics','A summary of facts'],ans:0,explain:'A thesis is a clear, debatable claim that your paper will support with evidence.'},
@@ -6559,7 +6827,29 @@ function playAnimalSound(type) {
       {q:'Which sentence is active voice?',formula:'Active voice?',opts:['"She wrote the paper"','"The paper was written"','"It was decided"','"Mistakes were made"'],ans:0,explain:'Active voice: subject performs action ("She wrote"). Passive: subject receives action ("was written").'},
       {q:'"Effect" vs "Affect": which is typically a noun?',formula:'Noun form?',opts:['Effect','Affect','Both','Neither'],ans:0,explain:'"Effect" is usually a noun (the effect). "Affect" is usually a verb (to affect).'},
       {q:'What makes a source "peer-reviewed"?',formula:'Peer-reviewed = ?',opts:['Evaluated by field experts before publishing','Published online','Written by a professor','Has many citations'],ans:0,explain:'Peer review means other experts in the field evaluated the work for quality before publication.'},
-      {q:'What is plagiarism?',formula:'Plagiarism = ?',opts:['Using others\' work without credit','Citing sources','Paraphrasing','Summarizing'],ans:0,explain:'Plagiarism is presenting someone else\'s ideas or words as your own without proper attribution.'}
+      {q:'What is plagiarism?',formula:'Plagiarism = ?',opts:['Using others\' work without credit','Citing sources','Paraphrasing','Summarizing'],ans:0,explain:'Plagiarism is presenting someone else\'s ideas or words as your own without proper attribution.'},
+      {q:'What is a thesis statement?',formula:'Thesis = ?',opts:['Single arguable claim guiding the essay','Random sentence','Question to be answered','Bibliography'],ans:0,explain:'A thesis is a focused, debatable claim that the rest of the paper supports with evidence.'},
+      {q:'Which sentence is in passive voice?',formula:'Passive voice example?',opts:['The book was read by Maria.','Maria read the book.','Read the book!','Did Maria read?'],ans:0,explain:'Passive: subject receives the action (\'was read\'). Active: subject performs the action (\'read\').'},
+      {q:'A dangling modifier is?',formula:'Dangling modifier?',opts:['A modifier with no clear noun to attach to','An adverb','A subject','A verb'],ans:0,explain:'Dangling modifiers don\'t logically attach to a noun — fix by clarifying who/what is being modified.'},
+      {q:'What\'s the difference between citation and quotation?',formula:'Citation vs quotation?',opts:['Citation credits source; quotation uses exact words','Same thing','Citation paraphrases','Quotation is wrong'],ans:0,explain:'Quotation uses the source\'s exact words; citation gives credit (whether paraphrasing or quoting).'},
+      {q:'What is parallelism in writing?',formula:'Parallelism = ?',opts:['Similar grammatical structure for related items','Same length sentences','Always passive','Past tense'],ans:0,explain:'Parallelism aligns grammatical patterns: \'I came, I saw, I conquered.\''},
+      {q:'A run-on sentence is?',formula:'Run-on = ?',opts:['Two independent clauses joined incorrectly','Long sentence','Has run','Many adjectives'],ans:0,explain:'Run-ons fuse two complete sentences without proper punctuation or conjunction.'},
+      {q:'What is the function of a transition?',formula:'Transition = ?',opts:['Connects ideas between sentences/paragraphs','Ends a paragraph','Introduces topic','Lists examples'],ans:0,explain:'Transition words (\'however,\' \'therefore,\' \'meanwhile\') guide readers between ideas.'},
+      {q:'What does APA require for in-text citations?',formula:'APA in-text?',opts:['Author and year','Author only','Page only','Title only'],ans:0,explain:'APA: (Author, Year) or (Author, Year, p. #) for direct quotes. Different from MLA\'s (Author Page).'},
+      {q:'What\'s a topic sentence?',formula:'Topic sentence = ?',opts:['Sentence that states the paragraph\'s main idea','Last sentence','Question','Quotation'],ans:0,explain:'Topic sentences (often first in a paragraph) state the paragraph\'s central claim.'},
+      {q:'A semicolon\'s main use is?',formula:'Semicolon use?',opts:['Joining related independent clauses','Ending a question','Listing items','Quoting'],ans:0,explain:'Semicolons connect closely related independent clauses without a coordinating conjunction.'},
+      {q:'What is plagiarism?',formula:'Plagiarism = ?',opts:['Using others\' work without credit','Citing too often','Quoting accurately','Long quotations'],ans:0,explain:'Plagiarism passes off another\'s words or ideas as your own. Always cite to avoid it.'},
+      {q:'What is the antecedent of a pronoun?',formula:'Antecedent = ?',opts:['The noun the pronoun refers to','Verb tense','Adjective','Adverb'],ans:0,explain:'An antecedent is the noun that a pronoun stands in for: \'Maria opened her book.\' Her → Maria.'},
+      {q:'Which uses correct subject-verb agreement?',formula:'Subject-verb agreement?',opts:['The team is winning.','The team are winning.','The team be winning.','Team winning.'],ans:0,explain:'Collective nouns like \'team\' usually take singular verbs in American English (\'is winning\').'},
+      {q:'What is concision in writing?',formula:'Concision = ?',opts:['Expressing ideas with fewer words','Long sentences','Many adjectives','Passive voice'],ans:0,explain:'Concision removes unnecessary words while keeping meaning intact.'},
+      {q:'A comma splice happens when?',formula:'Comma splice?',opts:['A comma alone joins two independent clauses','Comma after subject','Comma before verb','Two commas in a row'],ans:0,explain:'Comma splices incorrectly join independent clauses with just a comma. Fix with semicolon, period, or conjunction.'},
+      {q:'What is a hook in an essay introduction?',formula:'Hook = ?',opts:['Engaging opening that grabs attention','Citation','Conclusion','Footnote'],ans:0,explain:'A hook (anecdote, quote, surprising fact) draws readers in at the start of an essay.'},
+      {q:'Which is correct: \'fewer\' or \'less\'?',formula:'Countable items?',opts:['Fewer for countable','Less for countable','Same','Always \'less\''],ans:0,explain:'\'Fewer\' for countable nouns (fewer apples); \'less\' for uncountable (less water).'},
+      {q:'What is a primary source?',formula:'Primary source = ?',opts:['Original first-hand account or data','Textbook summary','Wikipedia','Encyclopedia'],ans:0,explain:'Primary sources are first-hand: original documents, datasets, interviews, eyewitness accounts.'},
+      {q:'Which voice is generally preferred in academic writing?',formula:'Preferred voice?',opts:['Active (with field-specific exceptions)','Always passive','Imperative','Subjunctive'],ans:0,explain:'Active voice is usually clearer and more direct, though passive is common when the actor is unknown or unimportant.'},
+      {q:'What is paraphrasing?',formula:'Paraphrase = ?',opts:['Restating a source\'s idea in your own words','Direct quoting','Summarizing','Citing'],ans:0,explain:'Paraphrasing rewords a source\'s idea while still requiring citation.'},
+      {q:'What is rhetorical analysis?',formula:'Rhetorical analysis = ?',opts:['Examining how a text persuades','Counting words','Translating','Plot summary'],ans:0,explain:'Rhetorical analysis studies how authors use ethos, pathos, logos, and other devices to persuade readers.'},
+      {q:'A bibliography lists?',formula:'Bibliography = ?',opts:['Sources used or consulted','Just authors','Only quotations','Topics covered'],ans:0,explain:'Bibliographies list works consulted in research; reference lists usually include only directly cited sources.'}
     ]},
     psychology:{name:'Psychology',questions:[
       {q:'Who is known for classical conditioning?',formula:'Classical conditioning?',opts:['Pavlov','Skinner','Freud','Maslow'],ans:0,explain:'Ivan Pavlov demonstrated classical conditioning with his famous dog salivation experiments.'},
@@ -6569,13 +6859,35 @@ function playAnimalSound(type) {
       {q:'What does the prefrontal cortex primarily control?',formula:'Prefrontal cortex = ?',opts:['Decision-making & planning','Vision','Hearing','Motor control'],ans:0,explain:'The prefrontal cortex handles executive functions: planning, decision-making, and impulse control.'},
       {q:'What is operant conditioning?',formula:'Operant conditioning = ?',opts:['Learning through rewards/punishment','Learning through observation','Instinctive behavior','Brain surgery'],ans:0,explain:'Operant conditioning (Skinner): behavior is modified by its consequences — reinforcement or punishment.'},
       {q:'What is confirmation bias?',formula:'Confirmation bias = ?',opts:['Seeking info that confirms existing beliefs','Forgetting information','Learning new things','Being objective'],ans:0,explain:'Confirmation bias: tendency to search for, interpret, and recall info that confirms preexisting beliefs.'},
-      {q:'What are the Big Five personality traits?',formula:'OCEAN = ?',opts:['Openness, Conscientiousness, Extraversion, Agreeableness, Neuroticism','5 brain regions','5 senses','5 emotions'],ans:0,explain:'The Big Five (OCEAN): Openness, Conscientiousness, Extraversion, Agreeableness, Neuroticism.'}
+      {q:'What are the Big Five personality traits?',formula:'OCEAN = ?',opts:['Openness, Conscientiousness, Extraversion, Agreeableness, Neuroticism','5 brain regions','5 senses','5 emotions'],ans:0,explain:'The Big Five (OCEAN): Openness, Conscientiousness, Extraversion, Agreeableness, Neuroticism.'},
+      {q:'What does Pavlov\'s dog experiment demonstrate?',formula:'Pavlov\'s dog?',opts:['Classical conditioning','Operant conditioning','Observational learning','Cognitive dissonance'],ans:0,explain:'Pavlov paired a bell (neutral stimulus) with food, and dogs learned to salivate at the bell alone — classical conditioning.'},
+      {q:'Operant conditioning was developed by?',formula:'Operant conditioning?',opts:['B.F. Skinner','Pavlov','Freud','Piaget'],ans:0,explain:'Skinner developed operant conditioning — behavior shaped by reinforcement and punishment.'},
+      {q:'Maslow\'s hierarchy peaks at?',formula:'Maslow\'s top?',opts:['Self-actualization','Safety','Esteem','Physiological'],ans:0,explain:'Maslow\'s pyramid: physiological → safety → love/belonging → esteem → self-actualization at the top.'},
+      {q:'What is cognitive dissonance?',formula:'Cognitive dissonance = ?',opts:['Mental discomfort from inconsistent beliefs','Memory loss','Hallucination','Hypnosis'],ans:0,explain:'Cognitive dissonance arises when beliefs conflict with each other or with actions, often leading to attitude change.'},
+      {q:'Piaget studied?',formula:'Piaget = ?',opts:['Stages of cognitive development in children','Behaviorism','Group dynamics','Memory only'],ans:0,explain:'Piaget proposed sensorimotor, preoperational, concrete operational, and formal operational stages of cognitive development.'},
+      {q:'The Big Five personality traits include?',formula:'Big Five includes?',opts:['Openness, Conscientiousness, Extraversion, Agreeableness, Neuroticism','IQ, EQ, BMI, GPA','Id, Ego, Superego','Type A, B, C'],ans:0,explain:'Big Five (OCEAN) is the dominant personality trait taxonomy in modern psychology.'},
+      {q:'What is the bystander effect?',formula:'Bystander effect = ?',opts:['People less likely to help when others are present','Always help','Helping doubles in crowd','Random behavior'],ans:0,explain:'Diffusion of responsibility: in groups, individuals are less likely to take action because they assume someone else will.'},
+      {q:'Working memory capacity is approximately?',formula:'Working memory ≈ ?',opts:['7 ± 2 items (Miller)','100 items','2 items','Unlimited'],ans:0,explain:'Miller\'s classic finding: short-term memory holds about 7 ± 2 chunks. Modern estimates lean lower (~4).'},
+      {q:'REM sleep is associated with?',formula:'REM sleep = ?',opts:['Vivid dreaming','Deep restorative sleep','Sleepwalking','Snoring'],ans:0,explain:'REM (Rapid Eye Movement) sleep features vivid dreams and high brain activity.'},
+      {q:'What is confirmation bias?',formula:'Confirmation bias = ?',opts:['Favoring information that confirms existing beliefs','Random selection','Logical reasoning','Memory loss'],ans:0,explain:'Confirmation bias is the tendency to seek, interpret, and remember information that confirms what we already believe.'},
+      {q:'What is the placebo effect?',formula:'Placebo effect = ?',opts:['Improvement from inactive treatment due to expectation','Drug interaction','Memory error','Genetic effect'],ans:0,explain:'Placebo effect: real psychological/physiological improvement from inert treatments due to belief in their efficacy.'},
+      {q:'What did Milgram\'s experiment study?',formula:'Milgram = ?',opts:['Obedience to authority','Memory','Color perception','Sleep'],ans:0,explain:'Milgram showed participants would administer (apparent) painful shocks to others when ordered by an authority figure.'},
+      {q:'Schizophrenia is characterized by?',formula:'Schizophrenia = ?',opts:['Hallucinations, delusions, disorganized thinking','Multiple personalities','Severe sadness','Memory loss only'],ans:0,explain:'Schizophrenia involves positive symptoms (hallucinations, delusions) and negative symptoms (flat affect, withdrawal).'},
+      {q:'What is the difference between IQ and EQ?',formula:'IQ vs EQ?',opts:['Cognitive ability vs emotional intelligence','Same thing','Both measure memory','Both measure personality'],ans:0,explain:'IQ measures cognitive abilities (reasoning, problem-solving); EQ measures emotional perception, regulation, and empathy.'},
+      {q:'What is the fight-or-flight response governed by?',formula:'Fight-or-flight = ?',opts:['Sympathetic nervous system','Parasympathetic','Cerebellum','Hippocampus'],ans:0,explain:'The sympathetic nervous system mobilizes the body to confront or flee threats — adrenaline, increased heart rate.'},
+      {q:'What is classical extinction?',formula:'Extinction in CC?',opts:['CR fades when CS no longer paired with US','Stimulus generalization','Spontaneous recovery','Reinforcement'],ans:0,explain:'Extinction: the conditioned response weakens when the conditioned stimulus is repeatedly presented without the unconditioned stimulus.'},
+      {q:'The amygdala is primarily involved in?',formula:'Amygdala = ?',opts:['Emotional processing, especially fear','Memory storage','Vision','Speech'],ans:0,explain:'The amygdala is central to processing emotional stimuli — particularly fear and threat detection.'},
+      {q:'What is observational learning?',formula:'Observational learning = ?',opts:['Learning by watching others (Bandura)','Trial and error','Memory rehearsal','Hypnosis'],ans:0,explain:'Bandura demonstrated that people learn behaviors by observing models — Bobo doll experiments.'},
+      {q:'What is depression\'s core symptom?',formula:'Depression core?',opts:['Persistent low mood and anhedonia','Hyperactivity','Hallucinations','Memory loss'],ans:0,explain:'Major depression involves persistent low mood and loss of interest/pleasure (anhedonia) for at least two weeks.'},
+      {q:'What is intrinsic motivation?',formula:'Intrinsic motivation = ?',opts:['Doing something for its own sake','For external reward','To avoid punishment','Random'],ans:0,explain:'Intrinsic motivation comes from internal interest or enjoyment of the activity itself; extrinsic from external rewards.'},
+      {q:'What is anchoring bias?',formula:'Anchoring = ?',opts:['Over-relying on the first piece of information seen','Forgetting recent events','Random choice','Memory storage'],ans:0,explain:'Anchoring bias: the first information encountered (the anchor) disproportionately influences subsequent judgments.'},
+      {q:'What is the unconscious mind in Freudian theory?',formula:'Freud\'s unconscious?',opts:['Reservoir of repressed thoughts and desires','Logical reasoning','Conscious deliberation','Sensory input'],ans:0,explain:'Freud\'s unconscious holds repressed feelings and memories that influence behavior despite being inaccessible to awareness.'}
     ]}
   };
   function initCollege(subject){
     const root=$$(`#${subject}-game`);root.innerHTML='';
     const data=_collegeData[subject];if(!data)return;
-    const questions=[...data.questions].sort(()=>Math.random()-0.5);
+    const questions=[...data.questions].sort(()=>Math.random()-0.5).slice(0,30);
     let idx=0,correct=0,answered=false;
     function render(){
       root.innerHTML='';
@@ -6778,12 +7090,12 @@ function playAnimalSound(type) {
       '<b>Safety note:</b> In real labs, never mix chemicals without proper precautions!'
     ]},
     netdebug:{title:'\ud83e\udde0 How to Play AI Ethics Debug',steps:[
-      'Investigate a neural network to find and fix ethical issues across <b>3 levels</b>.',
-      'Use the tools at the top: <b>Select</b> nodes to inspect, <b>Weight+/Weight\u2212</b> to adjust connection strengths, <b>Cut Wire</b> to remove biased connections.',
-      'Click <b>Test</b> to run test cases through the network and check for fairness.',
+      'Investigate a neural network to find and fix engineering problems across <b>3 levels</b>.',
+      'Use the tools at the top: <b>Select</b> nodes to inspect, <b>Weight+/Weight\u2212</b> to adjust connection strengths, <b>Cut Wire</b> to remove problem features.',
+      'Click <b>Test</b> to run inputs through the network and check for correctness.',
       'The network shows <b>input nodes</b> (left), <b>hidden layers</b> (middle), and <b>output</b> (right). Connections glow based on weight strength.',
-      'Each level introduces harder ethical scenarios \u2014 unfair weighting, biased routing, and hidden discrimination.',
-      '<b>Tip:</b> Look for connections with extreme weights \u2014 they often indicate bias that needs correction.'
+      'Levels cover real ML pitfalls \u2014 <b>data leakage</b>, <b>spurious correlations</b>, and <b>privacy breaches</b>. These are universal AI engineering hazards.',
+      '<b>Tip:</b> Look for connections with extreme weights \u2014 they often signal a feature that\u2019s gaming the system instead of solving the real task.'
     ]},
     dots:{title:'\ud83d\udd22 How to Play Connect the Dots',steps:[
       'Tap or click the dots <b>in number order</b> \u2014 start at 1, then 2, 3, and so on!',
@@ -7204,33 +7516,33 @@ function playAnimalSound(type) {
   function initNetDebug(){
     const root=$$('#netdebug-game');
     const levels=[
-      {title:'Loan Approval Bias',desc:'This network denies loans based on zip code (a proxy for race). Remove the biased connection and fix the weights so income and credit score are weighted fairly.',
-        nodes:[{id:'income',x:60,y:80,layer:0,label:'Income',val:0.7},{id:'credit',x:60,y:200,layer:0,label:'Credit',val:0.8},{id:'zip',x:60,y:320,layer:0,label:'Zip Code',val:0.3},
+      {title:'Data Leakage',desc:'This medical model has access to "Diagnosis Code" — a feature derived from the answer it\'s trying to predict. That\'s a leak: training accuracy looks high but the model fails on new patients. Remove the leaky feature so the model relies on real symptoms and lab values.',
+        nodes:[{id:'symp',x:60,y:80,layer:0,label:'Symptoms',val:0.7},{id:'lab',x:60,y:200,layer:0,label:'Lab Values',val:0.8},{id:'leak',x:60,y:320,layer:0,label:'Diag. Code',val:0.95},
           {id:'h1',x:250,y:120,layer:1,label:'H1',val:0},{id:'h2',x:250,y:280,layer:1,label:'H2',val:0},
-          {id:'out',x:440,y:200,layer:2,label:'Approve?',val:0}],
-        conns:[{from:'income',to:'h1',w:0.3},{from:'credit',to:'h1',w:0.2},{from:'zip',to:'h2',w:0.9},{from:'h1',to:'out',w:0.4},{from:'h2',to:'out',w:0.8}],
-        check:function(n,c){const zipConn=c.find(cc=>cc.from==='zip');const incConn=c.find(cc=>cc.from==='income');const credConn=c.find(cc=>cc.from==='credit');
-          if(zipConn&&Math.abs(zipConn.w)>0.2)return'Zip code still has too much influence — it\'s a proxy for race!';
-          if(!incConn||incConn.w<0.5)return'Income should be a strong factor in loan decisions.';
-          if(!credConn||credConn.w<0.5)return'Credit score should be a strong factor.';
+          {id:'out',x:440,y:200,layer:2,label:'Predict',val:0}],
+        conns:[{from:'symp',to:'h1',w:0.3},{from:'lab',to:'h1',w:0.2},{from:'leak',to:'h2',w:0.9},{from:'h1',to:'out',w:0.4},{from:'h2',to:'out',w:0.8}],
+        check:function(n,c){const leakConn=c.find(cc=>cc.from==='leak');const sympConn=c.find(cc=>cc.from==='symp');const labConn=c.find(cc=>cc.from==='lab');
+          if(leakConn&&Math.abs(leakConn.w)>0.2)return'Diagnosis code still leaks the answer — accuracy in production will collapse.';
+          if(!sympConn||sympConn.w<0.5)return'Symptoms should be a strong, valid predictor.';
+          if(!labConn||labConn.w<0.5)return'Lab values should be a strong, valid predictor.';
           return null;}},
-      {title:'Hiring Algorithm Gender Bias',desc:'This hiring model weighs "name" (gendered) heavily. Remove or reduce the name connection. Ensure skills and experience drive the output.',
-        nodes:[{id:'skills',x:60,y:60,layer:0,label:'Skills',val:0.9},{id:'exp',x:60,y:170,layer:0,label:'Experience',val:0.7},{id:'name',x:60,y:280,layer:0,label:'Name',val:0.5},{id:'edu',x:60,y:370,layer:0,label:'Education',val:0.6},
+      {title:'Spurious Correlation',desc:'This image classifier learned to use the watermark in the corner of training photos instead of the actual subject — pure dataset artifact, no real signal. Reduce the watermark feature and let the model rely on shape/color/texture.',
+        nodes:[{id:'shape',x:60,y:60,layer:0,label:'Shape',val:0.9},{id:'color',x:60,y:170,layer:0,label:'Color',val:0.7},{id:'wmark',x:60,y:280,layer:0,label:'Watermark',val:0.5},{id:'tex',x:60,y:370,layer:0,label:'Texture',val:0.6},
           {id:'h1',x:250,y:100,layer:1,label:'H1',val:0},{id:'h2',x:250,y:250,layer:1,label:'H2',val:0},{id:'h3',x:250,y:370,layer:1,label:'H3',val:0},
-          {id:'out',x:440,y:200,layer:2,label:'Hire?',val:0}],
-        conns:[{from:'skills',to:'h1',w:0.3},{from:'exp',to:'h1',w:0.2},{from:'name',to:'h2',w:0.85},{from:'edu',to:'h3',w:0.3},{from:'h1',to:'out',w:0.3},{from:'h2',to:'out',w:0.7},{from:'h3',to:'out',w:0.2}],
-        check:function(n,c){const nameConn=c.find(cc=>cc.from==='name');const skillConn=c.find(cc=>cc.from==='skills');
-          if(nameConn&&Math.abs(nameConn.w)>0.2)return'Name still influences hiring — that encodes gender bias!';
-          if(!skillConn||skillConn.w<0.5)return'Skills should be a primary hiring factor.';
+          {id:'out',x:440,y:200,layer:2,label:'Classify',val:0}],
+        conns:[{from:'shape',to:'h1',w:0.3},{from:'color',to:'h1',w:0.2},{from:'wmark',to:'h2',w:0.85},{from:'tex',to:'h3',w:0.3},{from:'h1',to:'out',w:0.3},{from:'h2',to:'out',w:0.7},{from:'h3',to:'out',w:0.2}],
+        check:function(n,c){const wmConn=c.find(cc=>cc.from==='wmark');const shConn=c.find(cc=>cc.from==='shape');
+          if(wmConn&&Math.abs(wmConn.w)>0.2)return'Watermark still drives the prediction — that\'s a dataset shortcut, not real learning.';
+          if(!shConn||shConn.w<0.5)return'Shape should be a primary visual feature.';
           return null;}},
-      {title:'Recidivism Prediction Bias',desc:'This model uses "neighborhood" as a feature — highly correlated with race. Fix it so only criminal history and rehabilitation matter.',
-        nodes:[{id:'hist',x:60,y:80,layer:0,label:'Crim. History',val:0.4},{id:'rehab',x:60,y:200,layer:0,label:'Rehab Program',val:0.8},{id:'hood',x:60,y:320,layer:0,label:'Neighborhood',val:0.6},
+      {title:'Privacy Breach',desc:'This recommender pipes raw "User ID" and "Email" straight into the model. Personally identifying inputs leak privacy and let the model memorize individuals. Remove the PII features so only behavioral signals (clicks, dwell time) drive recommendations.',
+        nodes:[{id:'click',x:60,y:80,layer:0,label:'Clicks',val:0.4},{id:'dwell',x:60,y:200,layer:0,label:'Dwell Time',val:0.8},{id:'pii',x:60,y:320,layer:0,label:'User ID',val:0.6},
           {id:'h1',x:250,y:120,layer:1,label:'H1',val:0},{id:'h2',x:250,y:280,layer:1,label:'H2',val:0},
-          {id:'out',x:440,y:200,layer:2,label:'Risk?',val:0}],
-        conns:[{from:'hist',to:'h1',w:0.3},{from:'rehab',to:'h1',w:0.1},{from:'hood',to:'h2',w:0.8},{from:'h1',to:'out',w:0.3},{from:'h2',to:'out',w:0.7}],
-        check:function(n,c){const hoodConn=c.find(cc=>cc.from==='hood');const rehabConn=c.find(cc=>cc.from==='rehab');
-          if(hoodConn&&Math.abs(hoodConn.w)>0.2)return'Neighborhood is still too influential — it\'s a proxy for race!';
-          if(!rehabConn||rehabConn.w<0.4)return'Rehabilitation efforts should reduce predicted risk.';
+          {id:'out',x:440,y:200,layer:2,label:'Recommend',val:0}],
+        conns:[{from:'click',to:'h1',w:0.3},{from:'dwell',to:'h1',w:0.1},{from:'pii',to:'h2',w:0.8},{from:'h1',to:'out',w:0.3},{from:'h2',to:'out',w:0.7}],
+        check:function(n,c){const piiConn=c.find(cc=>cc.from==='pii');const dwellConn=c.find(cc=>cc.from==='dwell');
+          if(piiConn&&Math.abs(piiConn.w)>0.2)return'Raw User ID still feeds the model — that\'s a privacy breach and it lets the net memorize individuals.';
+          if(!dwellConn||dwellConn.w<0.4)return'Dwell time is a clean behavioral signal — let it drive the recommendation.';
           return null;}}
     ];
     let lvl=0,nodes=[],conns=[],selConn=null,dragNode=null,dragOff={x:0,y:0};
