@@ -127,6 +127,20 @@
   .story-progress { color: #95a5a6; font-family: 'JetBrains Mono', monospace; font-size: 0.95rem; }
   .story-controls { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; padding: 10px 0; }
   .story-controls .t-btn { padding: 12px 22px; font-size: clamp(0.95rem, 2.4vw, 1.15rem); }
+  /* 2048 (ported from Haven Mobile) */
+  .t2048-hud { font-family:'JetBrains Mono',monospace; color:#ecf0f1; font-size:1.1rem; margin-bottom:14px; display:flex; gap:24px; justify-content:center; }
+  .t2048-hud .hud-pill { background:rgba(241,196,15,0.15); border:1px solid #f1c40f; padding:6px 14px; border-radius:8px; }
+  .t2048-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:clamp(6px,1.5vw,12px); width:min(92vw,440px); aspect-ratio:1; background:#181f29; padding:clamp(6px,1.5vw,12px); border-radius:14px; margin:0 auto; touch-action:none; user-select:none; }
+  .t2048-cell { background:rgba(255,255,255,0.05); border-radius:8px; display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono',monospace; font-weight:bold; font-size:clamp(1rem,4vw,2rem); transition:transform 0.12s ease-out, background 0.12s; }
+  .t2048-cell.v2{background:#eee4da;color:#776e65}.t2048-cell.v4{background:#ede0c8;color:#776e65}
+  .t2048-cell.v8{background:#f2b179;color:#fff}.t2048-cell.v16{background:#f59563;color:#fff}
+  .t2048-cell.v32{background:#f67c5f;color:#fff}.t2048-cell.v64{background:#f65e3b;color:#fff}
+  .t2048-cell.v128{background:#edcf72;color:#fff;font-size:clamp(0.9rem,3.5vw,1.7rem)}.t2048-cell.v256{background:#edcc61;color:#fff;font-size:clamp(0.9rem,3.5vw,1.7rem)}
+  .t2048-cell.v512{background:#edc850;color:#fff;font-size:clamp(0.9rem,3.5vw,1.7rem)}.t2048-cell.v1024{background:#edc53f;color:#fff;font-size:clamp(0.8rem,3vw,1.5rem)}
+  .t2048-cell.v2048{background:#edc22e;color:#fff;font-size:clamp(0.8rem,3vw,1.5rem);box-shadow:0 0 20px #edc22e}
+  .t2048-cell.pop{transform:scale(1.12)}
+  .t2048-controls { margin-top:16px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+  .t2048-controls .t-btn { padding:10px 20px; }
   .life-title { font-family: 'Comic Neue', cursive; font-size: 2.5rem; color: #ecf0f1; margin-bottom: 20px; text-align: center; }
   .life-task-area { touch-action: none; background: #fff; border: 4px solid #bdc3c7; border-radius: 20px; padding: clamp(10px,2vw,20px); width: 90%; max-width: 600px; min-height: clamp(250px,50vw,400px); position: relative; box-shadow: 0 10px 20px rgba(0,0,0,0.1); overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; }
   #quiz-prompt { font-size: clamp(1.5rem,5vw,2.5rem); margin-bottom: 30px; font-family: 'Comic Neue', cursive; text-align: center; width: 100%; color: #2c3e50 !important; font-weight: bold !important; opacity: 1 !important; text-shadow: none !important; margin-top: 0; }
@@ -741,6 +755,7 @@
           <button class="game-btn geo" data-game="geo"><span class="btn-icon">🌎</span><span class="btn-text">Geography Explorer</span><span class="btn-desc">Flags & countries</span></button>
           <button class="game-btn colorsort" data-game="colorsort"><span class="btn-icon">🧪</span><span class="btn-text">Color Sort</span><span class="btn-desc">Sort colors into tubes</span></button>
           <button class="game-btn bejeweled" data-game="bejeweled"><span class="btn-icon">💎</span><span class="btn-text">Gem Crush</span><span class="btn-desc">Match 3 gems to score</span></button>
+          <button class="game-btn t2048" data-game="t2048"><span class="btn-icon">🔢</span><span class="btn-text">2048</span><span class="btn-desc">Slide & merge to 2048</span></button>
         </div>
       </section>
       <section class="game-category" id="stem-section" style="display:none;">
@@ -1139,6 +1154,12 @@
     <div class="life-title" style="color:#ff4757">💎 Gem Crush <button class="tut-trigger" onclick="showTutorial('bejeweled')">? How to Play</button></div>
     <div class="bj-game" id="bj-game"></div>
   </div>
+  <div id="t2048-view" class="view">
+    <div class="life-title" style="color:#f1c40f">🔢 2048</div>
+    <div class="t2048-hud" id="t2048-hud"></div>
+    <div class="t2048-grid" id="t2048-grid"></div>
+    <div class="t2048-controls" id="t2048-controls"></div>
+  </div>
   <div id="dots-view" class="view">
     <div class="life-title" style="color:#f39c12">🔢 Connect the Dots <button class="tut-trigger" onclick="showTutorial('dots')">? How to Play</button></div>
     <canvas id="dots-canvas" style="touch-action:none;max-width:100%;border-radius:12px;background:#fff;"></canvas>
@@ -1413,6 +1434,7 @@
       if(game === 'trailmake') initTrailMake();
       if(game === 'colorsort') initColorSort();
       if(game === 'bejeweled') initBejeweled();
+      if(game === 't2048') init2048();
       if(game === 'dots') initDots();
       if(game === 'snake80') initSnake();
       if(game === 'breakout') initBreakout();
@@ -2002,6 +2024,160 @@
   // Make sure voices are ready (some browsers load voices async)
   if ('speechSynthesis' in window && speechSynthesis.onvoiceschanged !== undefined) {
     speechSynthesis.onvoiceschanged = () => { /* voices populated */ };
+  }
+
+  // ── 2048 (ported from Haven Mobile's Game2048View.kt) ──────
+  // 4×4 grid, slide + merge equal tiles, spawn a new 2 (90%) or 4 (10%)
+  // after each move. Win at 2048; game ends when no legal moves remain.
+  // Persists to haven_t2048 in localStorage on every state change.
+  const _t2048 = { grid: null, score: 0, best: 0, won: false, over: false };
+  function init2048() {
+    const saved = (() => { try { return JSON.parse(localStorage.getItem('haven_t2048') || 'null'); } catch { return null; } })();
+    _t2048.best = parseInt(localStorage.getItem('haven_t2048_best') || '0') || 0;
+    if (saved && Array.isArray(saved.grid) && saved.grid.length === 16) {
+      _t2048.grid = saved.grid.slice();
+      _t2048.score = saved.score || 0;
+      _t2048.won = !!saved.won;
+      _t2048.over = !!saved.over;
+    } else {
+      _t2048Reset();
+    }
+    _t2048Render();
+    _t2048WireInput();
+    const ctrls = document.getElementById('t2048-controls');
+    ctrls.innerHTML = '<button class="t-btn t-clear" id="t2048-new">↻ New Game</button>';
+    document.getElementById('t2048-new').onclick = () => { _t2048Reset(); _t2048Render(); _t2048Save(); };
+  }
+  function _t2048Reset() {
+    _t2048.grid = new Array(16).fill(0);
+    _t2048.score = 0;
+    _t2048.won = false;
+    _t2048.over = false;
+    _t2048Spawn(); _t2048Spawn();
+  }
+  function _t2048Spawn() {
+    const empty = [];
+    for (let i = 0; i < 16; i++) if (_t2048.grid[i] === 0) empty.push(i);
+    if (!empty.length) return false;
+    const idx = empty[Math.floor(Math.random() * empty.length)];
+    _t2048.grid[idx] = Math.random() < 0.9 ? 2 : 4;
+    return true;
+  }
+  function _t2048Render() {
+    const hud = document.getElementById('t2048-hud');
+    if (hud) hud.innerHTML = `<span class="hud-pill">Score ${_t2048.score}</span><span class="hud-pill">Best ${_t2048.best}</span>${_t2048.won ? '<span class="hud-pill" style="background:rgba(46,204,113,0.2);border-color:#2ecc71">🏆 You won! Keep going?</span>' : ''}${_t2048.over ? '<span class="hud-pill" style="background:rgba(231,76,60,0.2);border-color:#e74c3c">Game Over — tap New Game</span>' : ''}`;
+    const grid = document.getElementById('t2048-grid');
+    if (grid) {
+      grid.innerHTML = _t2048.grid.map(v => {
+        if (v === 0) return '<div class="t2048-cell"></div>';
+        return `<div class="t2048-cell v${Math.min(v, 2048)}">${v}</div>`;
+      }).join('');
+    }
+  }
+  function _t2048Save() {
+    try { localStorage.setItem('haven_t2048', JSON.stringify({ grid: _t2048.grid, score: _t2048.score, won: _t2048.won, over: _t2048.over })); } catch {}
+    if (_t2048.score > _t2048.best) {
+      _t2048.best = _t2048.score;
+      try { localStorage.setItem('haven_t2048_best', String(_t2048.best)); } catch {}
+    }
+  }
+  // Slide one row left, merging adjacent equals once. Returns
+  // { row: newRow, gain: scoreAddition, moved: bool }.
+  function _t2048SlideRow(row) {
+    const filtered = row.filter(v => v !== 0);
+    let gain = 0;
+    for (let i = 0; i < filtered.length - 1; i++) {
+      if (filtered[i] === filtered[i + 1]) {
+        filtered[i] *= 2;
+        gain += filtered[i];
+        if (filtered[i] === 2048) _t2048.won = true;
+        filtered.splice(i + 1, 1);
+      }
+    }
+    while (filtered.length < 4) filtered.push(0);
+    const moved = filtered.some((v, i) => v !== row[i]);
+    return { row: filtered, gain, moved };
+  }
+  function _t2048Move(dir) {
+    if (_t2048.over) return;
+    let totalGain = 0, anyMoved = false;
+    const g = _t2048.grid;
+    for (let i = 0; i < 4; i++) {
+      let row;
+      if (dir === 'left') row = [g[i*4], g[i*4+1], g[i*4+2], g[i*4+3]];
+      else if (dir === 'right') row = [g[i*4+3], g[i*4+2], g[i*4+1], g[i*4]];
+      else if (dir === 'up') row = [g[i], g[i+4], g[i+8], g[i+12]];
+      else row = [g[i+12], g[i+8], g[i+4], g[i]];
+      const { row: newRow, gain, moved } = _t2048SlideRow(row);
+      totalGain += gain;
+      if (moved) anyMoved = true;
+      if (dir === 'left') for (let j = 0; j < 4; j++) g[i*4+j] = newRow[j];
+      else if (dir === 'right') for (let j = 0; j < 4; j++) g[i*4+j] = newRow[3-j];
+      else if (dir === 'up') for (let j = 0; j < 4; j++) g[i+j*4] = newRow[j];
+      else for (let j = 0; j < 4; j++) g[i+j*4] = newRow[3-j];
+    }
+    if (anyMoved) {
+      _t2048.score += totalGain;
+      _t2048Spawn();
+      // Game over check: any empty cell or any pair of adjacent equals
+      const hasEmpty = g.includes(0);
+      let canMerge = false;
+      for (let i = 0; i < 4 && !canMerge; i++) {
+        for (let j = 0; j < 4 && !canMerge; j++) {
+          const v = g[i*4+j];
+          if (j < 3 && g[i*4+j+1] === v) canMerge = true;
+          if (i < 3 && g[(i+1)*4+j] === v) canMerge = true;
+        }
+      }
+      if (!hasEmpty && !canMerge) _t2048.over = true;
+      _t2048Render();
+      _t2048Save();
+    }
+  }
+  let _t2048KeyHandler = null;
+  let _t2048TouchHandlers = null;
+  function _t2048WireInput() {
+    if (_t2048KeyHandler) document.removeEventListener('keydown', _t2048KeyHandler);
+    _t2048KeyHandler = (e) => {
+      if (currentGame !== 't2048') return;
+      const k = e.key;
+      if (k === 'ArrowLeft' || k === 'a' || k === 'A') { e.preventDefault(); _t2048Move('left'); }
+      else if (k === 'ArrowRight' || k === 'd' || k === 'D') { e.preventDefault(); _t2048Move('right'); }
+      else if (k === 'ArrowUp' || k === 'w' || k === 'W') { e.preventDefault(); _t2048Move('up'); }
+      else if (k === 'ArrowDown' || k === 's' || k === 'S') { e.preventDefault(); _t2048Move('down'); }
+    };
+    document.addEventListener('keydown', _t2048KeyHandler);
+    // Swipe gestures on the grid
+    const grid = document.getElementById('t2048-grid');
+    if (!grid) return;
+    let sx = 0, sy = 0, tracking = false;
+    if (_t2048TouchHandlers) {
+      grid.removeEventListener('pointerdown', _t2048TouchHandlers.down);
+      grid.removeEventListener('pointerup', _t2048TouchHandlers.up);
+    }
+    _t2048TouchHandlers = {
+      down: (e) => { sx = e.clientX; sy = e.clientY; tracking = true; },
+      up: (e) => {
+        if (!tracking) return;
+        tracking = false;
+        const dx = e.clientX - sx, dy = e.clientY - sy;
+        const adx = Math.abs(dx), ady = Math.abs(dy);
+        if (Math.max(adx, ady) < 24) return;
+        if (adx > ady) _t2048Move(dx > 0 ? 'right' : 'left');
+        else _t2048Move(dy > 0 ? 'down' : 'up');
+      }
+    };
+    grid.addEventListener('pointerdown', _t2048TouchHandlers.down);
+    grid.addEventListener('pointerup', _t2048TouchHandlers.up);
+  }
+
+  // Service worker — true cold-cache offline / airplane mode. Skips when
+  // running inside the Android WebView wrapper (which already has every
+  // asset bundled in /android_asset/) or under file:// (no SW available).
+  if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js', { scope: './' }).catch(() => {});
+    });
   }
 
   function initLifeGame(subgame) {
