@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.4.6] - 2026-04-30 - Pre-K-obvious wrongs + level-bounded pools
+- **L1 animal-sound wrongs rewritten** so the correct answer is unambiguous for a 3–5 year old. Wrongs now come from clearly-different categories: a bird-sound question's wrongs are dog/bee/frog/snake (not other birds); a mammal-sound's wrongs are bird/bee/snake (not other mammals); a reptile/insect's wrongs are dog/bird/bee. Example: "Chirp" → Bird with wrongs Crocodile / Lion / Dog (per user spec).
+- **`startQuizDirectly` now caps the pool at the current level** — `addLvl` only accepts levels `≤ lvl`, so PRE-K (L1) sees only L1 questions, not the L2 fact-questions it was previously padding with to reach 30. Higher levels still expand downward (so K-2 mixes in pre-K when pool is short, etc.) but never reach upward into harder content.
+
 ## [5.4.5] - 2026-04-30 - Quiz-pool dedupe pass
 **Animals L1 (sound quiz)** — replaced ambiguous and duplicate questions with unambiguous ones. 25 questions total, every animal appears once, every sound has exactly one valid answer:
 - **Removed** as ambiguous: Roar/Bear (lion+tiger+wolf all roar — trimmed wrongs to non-roarers instead), Bleat/Goat (vs Sheep/Baa), Screech/Eagle (vs Owl/Parrot), Snort/Rhino (vs Pig/Bear).
