@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.4.3] - 2026-04-30 - Animal-sounds quiz disambiguation
+- **Removed 4 ambiguous questions**: `Squeak/Mouse` (rabbit, hamster, squirrel all squeak), `Growl/Bear` (lion, tiger, wolf all growl), `Grunt/Gorilla` (gorillas hoot/chest-pound, not grunt), `Squeal/Pig` (duplicate of `Oink/Pig`).
+- **Reworded for distinctive onomatopoeia**: `Howl` → "Awooo! (howl)", `Chatter` → "Ooo ooo ah ah", `Whinny` → "Neigh-hee-hee", `Bleat` → "Maa-aa", `Hiss` → "Hisssss", `Purr` → "Purrrrr", `Coo` → "Coo coo". Bird/animal qualifiers added to several others ("Which bird says…", "Which baby bird…", "Which giant animal trumpets…") so the answer is unambiguous.
+- **Cock-a-doodle-doo audio fix**: removed from the `playAnimalSound` bypass list so it routes through TTS instead of playing `chicken.mp3` (no rooster.mp3 exists). Cleaned dead mapping entries (`squeak`, `growl`, `grunt`, `squeal`, dead `cock-a-doodle-doo`→`chicken`) from the audio dispatch table.
+- L1 animals pool: 33 → 29 questions; combined L1+L2+L3 still yields 57 in the kid quiz pool, well above the 30-per-session target.
+
 ## [5.4.2] - 2026-04-30 - Storybooks: auto-advance + underline highlight + tap-to-hear
 - **Auto-advance reading**: `playCurrentPage` now sets `_storyState.autoplay = true`, and the utterance's `onend` advances the page index, re-renders, and immediately calls `playCurrentPage(true)` so the read-aloud continues seamlessly to the next page without the user re-tapping. Stop and Pause clear the autoplay flag.
 - **Underline + highlight**: `.story-word.hl` now adds a 3px orange (`#d35400`) underline at 5px offset on top of the existing yellow background, giving struggling readers a clearer "track the word" cue.
