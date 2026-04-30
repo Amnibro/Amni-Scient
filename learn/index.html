@@ -153,6 +153,19 @@
   .sol-chip { padding:4px 10px; font-size:0.8rem; border-radius:14px; border:none; cursor:pointer; font-family:'JetBrains Mono',monospace; }
   .sol-chip.active { background:#facc15; color:#1a1a1a; font-weight:bold; }
   .sol-chip:not(.active) { background:rgba(255,255,255,0.18); color:#fff; }
+  /* Tower Defense (inspired by Haven Mobile IdleTdView.kt) */
+  .td-hud { font-family:'JetBrains Mono',monospace; color:#ecf0f1; font-size:1rem; padding:8px 14px; display:flex; gap:14px; justify-content:center; flex-wrap:wrap; }
+  .td-hud .hud-pill { padding:5px 12px; border-radius:7px; border:1px solid; }
+  .td-shop { display:flex; gap:8px; justify-content:center; padding:6px 10px 8px; flex-wrap:wrap; }
+  .td-tower-btn { display:flex; flex-direction:column; align-items:center; gap:2px; padding:8px 10px; border-radius:10px; border:2px solid rgba(255,255,255,0.2); background:rgba(0,0,0,0.4); color:#fff; cursor:pointer; font-family:'JetBrains Mono',monospace; min-width:78px; transition:transform 0.12s; }
+  .td-tower-btn:hover { transform:translateY(-2px); border-color:#facc15; }
+  .td-tower-btn.active { border-color:#facc15; background:rgba(250,204,21,0.18); }
+  .td-tower-btn.disabled { opacity:0.45; cursor:not-allowed; }
+  .td-tower-icon { font-size:1.4rem; }
+  .td-tower-name { font-size:0.78rem; font-weight:bold; }
+  .td-tower-cost { font-size:0.72rem; color:#facc15; }
+  .td-controls { margin-top:10px; display:flex; gap:8px; justify-content:center; padding:0 10px 14px; }
+  .td-controls .t-btn { padding:8px 18px; }
   .life-title { font-family: 'Comic Neue', cursive; font-size: 2.5rem; color: #ecf0f1; margin-bottom: 20px; text-align: center; }
   .life-task-area { touch-action: none; background: #fff; border: 4px solid #bdc3c7; border-radius: 20px; padding: clamp(10px,2vw,20px); width: 90%; max-width: 600px; min-height: clamp(250px,50vw,400px); position: relative; box-shadow: 0 10px 20px rgba(0,0,0,0.1); overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; }
   #quiz-prompt { font-size: clamp(1.5rem,5vw,2.5rem); margin-bottom: 30px; font-family: 'Comic Neue', cursive; text-align: center; width: 100%; color: #2c3e50 !important; font-weight: bold !important; opacity: 1 !important; text-shadow: none !important; margin-top: 0; }
@@ -770,6 +783,7 @@
           <button class="game-btn t2048" data-game="t2048"><span class="btn-icon">🔢</span><span class="btn-text">2048</span><span class="btn-desc">Slide & merge to 2048</span></button>
           <button class="game-btn cblast" data-game="cblast"><span class="btn-icon">🧱</span><span class="btn-text">Color Blast</span><span class="btn-desc">Pop clusters of color</span></button>
           <button class="game-btn solitaire" data-game="solitaire"><span class="btn-icon">♠️</span><span class="btn-text">Solitaire</span><span class="btn-desc">Classic Klondike card game</span></button>
+          <button class="game-btn tdgame" data-game="tdgame"><span class="btn-icon">🏰</span><span class="btn-text">Tower Defense</span><span class="btn-desc">Build towers, stop the waves</span></button>
         </div>
       </section>
       <section class="game-category" id="stem-section" style="display:none;">
@@ -1185,6 +1199,12 @@
     <canvas id="sol-canvas" style="touch-action:none;display:block;margin:0 auto;border-radius:8px"></canvas>
     <div class="sol-controls" id="sol-controls"></div>
   </div>
+  <div id="tdgame-view" class="view">
+    <div class="td-hud" id="td-hud"></div>
+    <div class="td-shop" id="td-shop"></div>
+    <canvas id="td-canvas" style="touch-action:none;display:block;margin:0 auto;border-radius:10px;background:#0f1d12"></canvas>
+    <div class="td-controls" id="td-controls"></div>
+  </div>
   <div id="dots-view" class="view">
     <div class="life-title" style="color:#f39c12">🔢 Connect the Dots <button class="tut-trigger" onclick="showTutorial('dots')">? How to Play</button></div>
     <canvas id="dots-canvas" style="touch-action:none;max-width:100%;border-radius:12px;background:#fff;"></canvas>
@@ -1462,6 +1482,7 @@
       if(game === 't2048') init2048();
       if(game === 'cblast') initColorBlast();
       if(game === 'solitaire') initSolitaire();
+      if(game === 'tdgame') initTowerDefense();
       if(game === 'dots') initDots();
       if(game === 'snake80') initSnake();
       if(game === 'breakout') initBreakout();
@@ -2665,6 +2686,294 @@
     ctx.arcTo(x, y + h, x, y, rad);
     ctx.arcTo(x, y, x + w, y, rad);
     ctx.closePath();
+  }
+
+  // ── Tower Defense (inspired by Haven Mobile IdleTdView.kt) ────
+  // Single-lane TD on a 14×9 grid with a fixed S-shaped path. Three tower
+  // types (Pellet / Cannon / Sniper). Click a shop button to select, then
+  // click an empty tile (off-path) to place. Click an existing tower to
+  // upgrade (cost = level × base) or sell (50% refund). Waves auto-advance
+  // 3 s after the previous one is cleared. Persists gold/lives/wave/towers
+  // to localStorage so a flight nap doesn't cost a run.
+  const TD = {
+    cw: 14, ch: 9, cell: 0,
+    path: [],   // array of {gx, gy} cell coords forming the path
+    pathPx: [], // array of {x, y} pixel waypoints (centers)
+    towers: [], enemies: [], bullets: [],
+    gold: 0, lives: 0, wave: 0, spawned: 0, waveSize: 0,
+    spawnTimer: 0, spawnInterval: 800,
+    waveActive: false, waveCooldown: 0,
+    selectedType: 0, selectedTower: -1,
+    raf: null, lastT: 0, over: false
+  };
+  const TD_TOWERS = [
+    { name: 'Pellet', icon: '🔫', cost: 15, dmg: 5,  range: 80,  cd: 600,  color: '#3b82f6' },
+    { name: 'Cannon', icon: '💣', cost: 35, dmg: 18, range: 100, cd: 1200, color: '#dc2626', splash: 30 },
+    { name: 'Sniper', icon: '🎯', cost: 60, dmg: 50, range: 200, cd: 1800, color: '#a855f7' }
+  ];
+  // Path is a sequence of grid cells the enemies walk through
+  const TD_PATH = [
+    [0,7],[1,7],[2,7],[3,7],[4,7],[4,6],[4,5],[4,4],[4,3],[5,3],[6,3],[7,3],[8,3],
+    [8,4],[8,5],[8,6],[8,7],[9,7],[10,7],[11,7],[11,6],[11,5],[11,4],[11,3],[11,2],
+    [12,2],[13,2]
+  ];
+  function initTowerDefense() {
+    const saved = (() => { try { return JSON.parse(localStorage.getItem('haven_td') || 'null'); } catch { return null; } })();
+    if (saved && Array.isArray(saved.towers)) {
+      TD.gold = saved.gold; TD.lives = saved.lives; TD.wave = saved.wave;
+      TD.towers = saved.towers; TD.enemies = []; TD.bullets = [];
+      TD.spawned = 0; TD.waveActive = false; TD.waveCooldown = 3000; TD.over = false;
+    } else {
+      _tdReset();
+    }
+    TD.path = TD_PATH.map(([x,y]) => ({ gx: x, gy: y }));
+    _tdWireCanvas();
+    _tdRenderShop();
+    _tdRenderControls();
+    _tdRenderHud();
+    if (TD.raf) cancelAnimationFrame(TD.raf);
+    TD.lastT = performance.now();
+    _tdLoop(TD.lastT);
+  }
+  function _tdReset() {
+    TD.gold = 50; TD.lives = 20; TD.wave = 0; TD.towers = []; TD.enemies = []; TD.bullets = [];
+    TD.spawned = 0; TD.waveActive = false; TD.waveCooldown = 1500; TD.over = false;
+    TD.selectedTower = -1; TD.selectedType = 0;
+  }
+  function _tdSave() {
+    try { localStorage.setItem('haven_td', JSON.stringify({ gold: TD.gold, lives: TD.lives, wave: TD.wave, towers: TD.towers })); } catch {}
+  }
+  function _tdWireCanvas() {
+    const cvs = document.getElementById('td-canvas');
+    if (!cvs) return;
+    const sizeIt = () => {
+      const maxW = Math.min(window.innerWidth - 16, 700);
+      const cell = Math.floor(maxW / TD.cw);
+      cvs.width = cell * TD.cw;
+      cvs.height = cell * TD.ch;
+      TD.cell = cell;
+      TD.pathPx = TD.path.map(p => ({ x: p.gx * cell + cell/2, y: p.gy * cell + cell/2 }));
+    };
+    sizeIt();
+    if (cvs._tdResize) window.removeEventListener('resize', cvs._tdResize);
+    cvs._tdResize = sizeIt; window.addEventListener('resize', sizeIt);
+    if (cvs._tdDown) cvs.removeEventListener('pointerdown', cvs._tdDown);
+    cvs._tdDown = (e) => _tdClick(e, cvs);
+    cvs.addEventListener('pointerdown', cvs._tdDown);
+  }
+  function _tdRenderShop() {
+    const el = document.getElementById('td-shop');
+    if (!el) return;
+    el.innerHTML = TD_TOWERS.map((t, i) => {
+      const can = TD.gold >= t.cost;
+      return `<button class="td-tower-btn${i === TD.selectedType ? ' active' : ''}${can ? '' : ' disabled'}" data-ti="${i}">
+        <span class="td-tower-icon">${t.icon}</span>
+        <span class="td-tower-name">${t.name}</span>
+        <span class="td-tower-cost">${t.cost}g</span>
+      </button>`;
+    }).join('');
+    el.querySelectorAll('[data-ti]').forEach(b => b.onclick = () => { TD.selectedType = parseInt(b.dataset.ti); TD.selectedTower = -1; _tdRenderShop(); });
+  }
+  function _tdRenderControls() {
+    const el = document.getElementById('td-controls');
+    if (!el) return;
+    el.innerHTML = '<button class="t-btn" style="background:#dc2626;color:#fff" id="td-restart">⟲ Restart</button>';
+    el.querySelector('#td-restart').onclick = () => { _tdReset(); _tdSave(); _tdRenderShop(); _tdRenderHud(); };
+  }
+  function _tdRenderHud() {
+    const el = document.getElementById('td-hud');
+    if (!el) return;
+    el.innerHTML = `
+      <span class="hud-pill" style="border-color:#facc15;background:rgba(250,204,21,0.15)">💰 ${TD.gold}</span>
+      <span class="hud-pill" style="border-color:#22c55e;background:rgba(34,197,94,0.15)">❤️ ${TD.lives}</span>
+      <span class="hud-pill" style="border-color:#3b82f6;background:rgba(59,130,246,0.15)">🌊 Wave ${TD.wave}</span>
+      ${TD.over ? '<span class="hud-pill" style="border-color:#dc2626;background:rgba(220,38,38,0.2)">💀 Game Over — Restart</span>' : ''}`;
+  }
+  function _tdClick(e, cvs) {
+    if (TD.over) return;
+    const rect = cvs.getBoundingClientRect();
+    const x = e.clientX - rect.left, y = e.clientY - rect.top;
+    const gx = Math.floor(x / TD.cell), gy = Math.floor(y / TD.cell);
+    if (gx < 0 || gx >= TD.cw || gy < 0 || gy >= TD.ch) return;
+    // Click existing tower → cycle: upgrade if affordable, else sell
+    const existing = TD.towers.findIndex(t => t.gx === gx && t.gy === gy);
+    if (existing >= 0) {
+      const t = TD.towers[existing];
+      const upCost = (t.level + 1) * TD_TOWERS[t.type].cost;
+      if (TD.gold >= upCost) { TD.gold -= upCost; t.level++; _tdSave(); _tdRenderHud(); _tdRenderShop(); }
+      else { TD.gold += Math.floor(t.level * TD_TOWERS[t.type].cost * 0.5); TD.towers.splice(existing, 1); _tdSave(); _tdRenderHud(); _tdRenderShop(); }
+      return;
+    }
+    // Place new tower
+    if (TD.path.some(p => p.gx === gx && p.gy === gy)) return; // can't build on path
+    const def = TD_TOWERS[TD.selectedType];
+    if (TD.gold < def.cost) return;
+    TD.gold -= def.cost;
+    TD.towers.push({ gx, gy, type: TD.selectedType, level: 1, lastFire: 0 });
+    _tdSave(); _tdRenderHud(); _tdRenderShop();
+  }
+  function _tdStartWave() {
+    TD.wave++;
+    TD.waveSize = 5 + TD.wave;
+    TD.spawned = 0;
+    TD.waveActive = true;
+    TD.spawnTimer = 0;
+  }
+  function _tdSpawnEnemy() {
+    const hp = 20 + 8 * TD.wave;
+    const speed = 0.6 + TD.wave * 0.04;
+    TD.enemies.push({ pathIdx: 0, t: 0, hp, maxHp: hp, speed });
+    TD.spawned++;
+  }
+  function _tdEnemyPos(e) {
+    const a = TD.pathPx[e.pathIdx];
+    const b = TD.pathPx[Math.min(e.pathIdx + 1, TD.pathPx.length - 1)];
+    return { x: a.x + (b.x - a.x) * e.t, y: a.y + (b.y - a.y) * e.t };
+  }
+  function _tdLoop(now) {
+    if (currentGame !== 'tdgame') { TD.raf = null; return; }
+    const dt = Math.min(50, now - TD.lastT);
+    TD.lastT = now;
+    if (!TD.over) _tdUpdate(dt);
+    _tdRender();
+    TD.raf = requestAnimationFrame(_tdLoop);
+  }
+  function _tdUpdate(dt) {
+    // Wave manager
+    if (!TD.waveActive) {
+      TD.waveCooldown -= dt;
+      if (TD.waveCooldown <= 0) _tdStartWave();
+    } else {
+      TD.spawnTimer += dt;
+      if (TD.spawned < TD.waveSize && TD.spawnTimer >= TD.spawnInterval) {
+        TD.spawnTimer = 0; _tdSpawnEnemy();
+      }
+      if (TD.spawned >= TD.waveSize && TD.enemies.length === 0) {
+        TD.waveActive = false; TD.waveCooldown = 3000;
+        _tdSave();
+      }
+    }
+    // Enemies
+    for (let i = TD.enemies.length - 1; i >= 0; i--) {
+      const e = TD.enemies[i];
+      e.t += (e.speed * dt / 1000) / 1; // 1 cell per "1 path-segment unit"
+      while (e.t >= 1 && e.pathIdx < TD.pathPx.length - 1) { e.t -= 1; e.pathIdx++; }
+      if (e.pathIdx >= TD.pathPx.length - 1) {
+        TD.enemies.splice(i, 1);
+        TD.lives--;
+        if (TD.lives <= 0) { TD.lives = 0; TD.over = true; _tdSave(); _tdRenderHud(); }
+        else _tdRenderHud();
+      }
+    }
+    // Towers
+    for (const t of TD.towers) {
+      const def = TD_TOWERS[t.type];
+      const range = def.range * (1 + (t.level - 1) * 0.2);
+      const cd = Math.max(150, def.cd - (t.level - 1) * 80);
+      if (performance.now() - t.lastFire < cd) continue;
+      // Find first enemy in range (closest to end)
+      let target = null, bestIdx = -1;
+      const tx = t.gx * TD.cell + TD.cell/2, ty = t.gy * TD.cell + TD.cell/2;
+      for (const e of TD.enemies) {
+        const ep = _tdEnemyPos(e);
+        const d = Math.hypot(ep.x - tx, ep.y - ty);
+        if (d > range) continue;
+        const score = e.pathIdx + e.t;
+        if (score > bestIdx) { bestIdx = score; target = e; }
+      }
+      if (target) {
+        t.lastFire = performance.now();
+        const ep = _tdEnemyPos(target);
+        TD.bullets.push({ x: tx, y: ty, tx: ep.x, ty: ep.y, dmg: def.dmg * (1 + (t.level - 1) * 0.5), color: def.color, splash: def.splash || 0 });
+      }
+    }
+    // Bullets — instant-hit for simplicity (visual line drawn briefly)
+    for (let i = TD.bullets.length - 1; i >= 0; i--) {
+      const b = TD.bullets[i];
+      b.life = (b.life || 0) + dt;
+      if (b.life > 120) {
+        // Apply damage on expiry
+        if (b.splash > 0) {
+          for (const e of TD.enemies) {
+            const ep = _tdEnemyPos(e);
+            if (Math.hypot(ep.x - b.tx, ep.y - b.ty) <= b.splash) e.hp -= b.dmg;
+          }
+        } else {
+          // Direct hit on closest still-alive enemy near target point
+          let best = null, bd = 25;
+          for (const e of TD.enemies) {
+            const ep = _tdEnemyPos(e);
+            const d = Math.hypot(ep.x - b.tx, ep.y - b.ty);
+            if (d < bd) { bd = d; best = e; }
+          }
+          if (best) best.hp -= b.dmg;
+        }
+        TD.bullets.splice(i, 1);
+      }
+    }
+    // Kill enemies + reward
+    for (let i = TD.enemies.length - 1; i >= 0; i--) {
+      if (TD.enemies[i].hp <= 0) {
+        TD.enemies.splice(i, 1);
+        TD.gold += 5 + TD.wave;
+        _tdRenderHud(); _tdRenderShop();
+      }
+    }
+  }
+  function _tdRender() {
+    const cvs = document.getElementById('td-canvas');
+    if (!cvs) return;
+    const ctx = cvs.getContext('2d'); const W = cvs.width, H = cvs.height;
+    ctx.fillStyle = '#0f1d12'; ctx.fillRect(0, 0, W, H);
+    // Grid
+    ctx.strokeStyle = 'rgba(255,255,255,0.04)'; ctx.lineWidth = 1;
+    for (let x = 0; x <= TD.cw; x++) { ctx.beginPath(); ctx.moveTo(x * TD.cell, 0); ctx.lineTo(x * TD.cell, H); ctx.stroke(); }
+    for (let y = 0; y <= TD.ch; y++) { ctx.beginPath(); ctx.moveTo(0, y * TD.cell); ctx.lineTo(W, y * TD.cell); ctx.stroke(); }
+    // Path
+    ctx.strokeStyle = '#5d4d2c'; ctx.lineWidth = TD.cell * 0.85; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.beginPath();
+    TD.pathPx.forEach((p, i) => { if (i === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); });
+    ctx.stroke();
+    // Towers
+    for (const t of TD.towers) {
+      const def = TD_TOWERS[t.type];
+      const cx = t.gx * TD.cell + TD.cell/2, cy = t.gy * TD.cell + TD.cell/2;
+      ctx.fillStyle = def.color;
+      ctx.beginPath(); ctx.arc(cx, cy, TD.cell * 0.38, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#fff'; ctx.font = `${TD.cell * 0.5}px sans-serif`;
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(def.icon, cx, cy + 2);
+      if (t.level > 1) {
+        ctx.fillStyle = '#facc15'; ctx.font = `bold ${TD.cell * 0.3}px monospace`;
+        ctx.fillText('★'.repeat(Math.min(3, t.level - 1)), cx, cy + TD.cell * 0.45);
+      }
+    }
+    // Enemies
+    for (const e of TD.enemies) {
+      const p = _tdEnemyPos(e);
+      const r = TD.cell * 0.32;
+      ctx.fillStyle = '#dc2626';
+      ctx.beginPath(); ctx.arc(p.x, p.y, r, 0, Math.PI * 2); ctx.fill();
+      // HP bar
+      const bw = TD.cell * 0.7, bh = 4;
+      ctx.fillStyle = 'rgba(0,0,0,0.5)';
+      ctx.fillRect(p.x - bw/2, p.y - r - 8, bw, bh);
+      ctx.fillStyle = '#22c55e';
+      ctx.fillRect(p.x - bw/2, p.y - r - 8, bw * (e.hp / e.maxHp), bh);
+    }
+    // Bullets — quick line flash
+    for (const b of TD.bullets) {
+      ctx.strokeStyle = b.color; ctx.lineWidth = 2; ctx.globalAlpha = 1 - (b.life || 0) / 120;
+      ctx.beginPath(); ctx.moveTo(b.x, b.y); ctx.lineTo(b.tx, b.ty); ctx.stroke();
+      ctx.globalAlpha = 1;
+    }
+    if (TD.over) {
+      ctx.fillStyle = 'rgba(0,0,0,0.7)'; ctx.fillRect(0, 0, W, H);
+      ctx.fillStyle = '#fff'; ctx.font = `bold ${TD.cell * 0.9}px monospace`;
+      ctx.textAlign = 'center'; ctx.fillText(`Wave ${TD.wave} 💀`, W/2, H/2 - 10);
+      ctx.font = `${TD.cell * 0.5}px monospace`;
+      ctx.fillText('Tap Restart to play again', W/2, H/2 + TD.cell);
+    }
   }
 
   // Service worker — true cold-cache offline / airplane mode. Skips when
