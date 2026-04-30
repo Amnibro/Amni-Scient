@@ -1631,9 +1631,20 @@
   });
   function drawTarget(char) {
     tCtx.clearRect(0, 0, tCanvas.width, tCanvas.height); tCtx.fillStyle = '#eeeeee';
-    tCtx.font = `bold ${currentLevel===1?500:(currentLevel===2?300:200)}px "Comic Neue", Arial`;
+    const text = char.toUpperCase();
+    // Auto-fit: shrink the font until the word stays inside ~92% of canvas
+    // width and ~80% of canvas height. Was hardcoded 200/300/500 which
+    // overflowed long words like PLANET / GEOMETRY at L3-L5.
+    const maxW = tCanvas.width * 0.92;
+    const maxH = tCanvas.height * 0.80;
+    let fontSize = currentLevel===1?500:(currentLevel===2?300:200);
+    tCtx.font = `bold ${fontSize}px "Comic Neue", Arial`;
+    while (fontSize > 40 && (tCtx.measureText(text).width > maxW || fontSize > maxH)) {
+      fontSize -= 10;
+      tCtx.font = `bold ${fontSize}px "Comic Neue", Arial`;
+    }
     tCtx.textAlign = 'center'; tCtx.textBaseline = 'middle';
-    tCtx.fillText(char.toUpperCase(), tCanvas.width/2, tCanvas.height/2+20);
+    tCtx.fillText(text, tCanvas.width/2, tCanvas.height/2+20);
     maskData = tCtx.getImageData(0,0,tCanvas.width,tCanvas.height).data;
   }
   function initTracing() {
@@ -3019,6 +3030,19 @@
       navigator.serviceWorker.register('./sw.js', { scope: './' }).catch(() => {});
     });
   }
+
+  // Bridge entry-point — Android wrapper calls this after the user
+  // picks a level in the native drawer. Wrapper passes the new level
+  // (1-8); we reload the page with the new ?level=N so the entire app
+  // re-initializes (game list filter, theme color, content levels).
+  window.amniOnLevelChanged = function(n) {
+    const lvl = parseInt(n);
+    if (!Number.isFinite(lvl) || lvl < 1 || lvl > 8) return;
+    if (lvl === currentLevel) return;
+    const url = new URL(location.href);
+    url.searchParams.set('level', String(lvl));
+    location.href = url.toString();
+  };
 
   // ── Level / difficulty picker (mobile-friendly) ──────────
   // Web: opens an inline modal listing all 8 levels; tap one and the
