@@ -1,5 +1,30 @@
 ﻿# Changelog 
 
+## [5.4.5] - 2026-04-30 - Quiz-pool dedupe pass
+**Animals L1 (sound quiz)** — replaced ambiguous and duplicate questions with unambiguous ones. 25 questions total, every animal appears once, every sound has exactly one valid answer:
+- **Removed** as ambiguous: Roar/Bear (lion+tiger+wolf all roar — trimmed wrongs to non-roarers instead), Bleat/Goat (vs Sheep/Baa), Screech/Eagle (vs Owl/Parrot), Snort/Rhino (vs Pig/Bear).
+- **Removed** as duplicate animal: Purr/Cat (Meow already), Whinny/Horse (Neigh already), Tweet/Chick (Chirp/Bird already).
+- **Added** unambiguous replacements: `Caw caw → Crow` (no other listed animal caws), `Snap (jaws) → Crocodile` (no other animal snaps its jaws).
+- **Tightened wrongs on Roar/Lion** to non-roaring animals (Giraffe / Rabbit / Elephant) so the answer is unambiguous.
+- **Tightened wrongs on Baa/Sheep** to non-bleating options (Chicken / Dog / Bird) so it's clearly the sheep.
+
+**Music L1** — removed 4 duplicate-answer questions (second Piano, second Guitar, second Trumpet, second Violin) and replaced with **Saxophone, Flute, Ukulele**-focused questions (also fixed the existing-but-unbacked Ukulele wording).
+
+**Music L2** — replaced second Piano-instrument question with `How many lines does a musical staff have? → 5`. The dynamics-meaning Piano question stays (different concept).
+
+**Math L1 / L2** — replaced answer-duplicates: triangle-sides + 2+1 (both = 3) → kept triangle, changed apples to 2+4=6; bigger-of-5-and-3 + fingers (both = 5) → changed to 7-or-3; half-of-100 + 25%-of-200 (both = 50) → changed half to 80→40; 144÷12 + cube edges (both = 12) → changed division to 144÷9=16. Added `explain` fields to the four affected questions.
+
+**College quizzes (L8)** — fixed remaining within-subject duplicate answers across calculus / discrete / biology / algorithms / datastructs / writing / psychology. Replacement questions in same subject area, different answer:
+- calculus: ∫₀¹ 3x² dx → ∫₀² 3x² dx (1 → 8)
+- discrete: C(5,3) → C(6,2); subsets of {1..4} → subsets of {a..e}
+- biology: second mitochondria → "organelle that stores genetic info" → Nucleus
+- algorithms: quicksort-worst → quicksort-average; insertion best-case → "best inputs for insertion sort" (categorical answer); hash-worst → hash-average; merge sort time → merge sort auxiliary space
+- datastructs: heap insert → heap extract-max; red-black height → red-black path-ratio; heap height → build-heap; BFS-queue → DFS-stack
+- writing: second plagiarism → block-quote definition
+- psychology: second cognitive-dissonance → fundamental attribution error; second confirmation-bias → neuroplasticity; second Big-Five → Erikson stages
+
+Within-subject duplicate scan now reports clean across all 6 kid subjects × 5 levels and all 13 college subjects.
+
 ## [5.4.4] - 2026-04-30 - Real rooster crow audio
 - **Added `learn/assets/audio/rooster.mp3`** — sourced from Wikimedia Commons "Rooster crowing.ogg" by Filo gèn' (CC BY-SA 4.0), transcoded to 140 kbps stereo MP3 with loudness normalized to -16 LUFS so it sits at the same level as the other animal sounds. Attribution captured in `learn/assets/audio/CREDITS.md`.
 - **Restored `Cock-a-doodle-doo` to the `playAnimalSound` bypass list** — `speakText('Cock-a-doodle-doo')` now routes to `rooster.mp3` (was: routed to TTS in v5.4.3, which the user did not want; never wanted: routed to `chicken.mp3` as in v5.4.2 and earlier). Mapping added: `'cock-a-doodle-doo':'rooster'`.
