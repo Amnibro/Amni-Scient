@@ -141,6 +141,10 @@
   .t2048-cell.pop{transform:scale(1.12)}
   .t2048-controls { margin-top:16px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
   .t2048-controls .t-btn { padding:10px 20px; }
+  /* Color Blast (ported from Haven Mobile ColorBlastView.kt) */
+  .cblast-hud { font-family:'JetBrains Mono',monospace; color:#ecf0f1; font-size:1.05rem; margin-bottom:10px; display:flex; gap:18px; justify-content:center; flex-wrap:wrap; }
+  .cblast-hud .hud-pill { background:rgba(168,85,247,0.18); border:1px solid #a855f7; padding:5px 12px; border-radius:7px; }
+  .cblast-controls { margin-top:14px; display:flex; gap:10px; justify-content:center; }
   .life-title { font-family: 'Comic Neue', cursive; font-size: 2.5rem; color: #ecf0f1; margin-bottom: 20px; text-align: center; }
   .life-task-area { touch-action: none; background: #fff; border: 4px solid #bdc3c7; border-radius: 20px; padding: clamp(10px,2vw,20px); width: 90%; max-width: 600px; min-height: clamp(250px,50vw,400px); position: relative; box-shadow: 0 10px 20px rgba(0,0,0,0.1); overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; }
   #quiz-prompt { font-size: clamp(1.5rem,5vw,2.5rem); margin-bottom: 30px; font-family: 'Comic Neue', cursive; text-align: center; width: 100%; color: #2c3e50 !important; font-weight: bold !important; opacity: 1 !important; text-shadow: none !important; margin-top: 0; }
@@ -756,6 +760,7 @@
           <button class="game-btn colorsort" data-game="colorsort"><span class="btn-icon">🧪</span><span class="btn-text">Color Sort</span><span class="btn-desc">Sort colors into tubes</span></button>
           <button class="game-btn bejeweled" data-game="bejeweled"><span class="btn-icon">💎</span><span class="btn-text">Gem Crush</span><span class="btn-desc">Match 3 gems to score</span></button>
           <button class="game-btn t2048" data-game="t2048"><span class="btn-icon">🔢</span><span class="btn-text">2048</span><span class="btn-desc">Slide & merge to 2048</span></button>
+          <button class="game-btn cblast" data-game="cblast"><span class="btn-icon">🧱</span><span class="btn-text">Color Blast</span><span class="btn-desc">Pop clusters of color</span></button>
         </div>
       </section>
       <section class="game-category" id="stem-section" style="display:none;">
@@ -1160,6 +1165,12 @@
     <div class="t2048-grid" id="t2048-grid"></div>
     <div class="t2048-controls" id="t2048-controls"></div>
   </div>
+  <div id="cblast-view" class="view">
+    <div class="life-title" style="color:#a855f7">🧱 Color Blast</div>
+    <div class="cblast-hud" id="cblast-hud"></div>
+    <canvas id="cblast-canvas" style="touch-action:none;display:block;margin:0 auto;border-radius:14px;background:#1f1f30"></canvas>
+    <div class="cblast-controls" id="cblast-controls"></div>
+  </div>
   <div id="dots-view" class="view">
     <div class="life-title" style="color:#f39c12">🔢 Connect the Dots <button class="tut-trigger" onclick="showTutorial('dots')">? How to Play</button></div>
     <canvas id="dots-canvas" style="touch-action:none;max-width:100%;border-radius:12px;background:#fff;"></canvas>
@@ -1435,6 +1446,7 @@
       if(game === 'colorsort') initColorSort();
       if(game === 'bejeweled') initBejeweled();
       if(game === 't2048') init2048();
+      if(game === 'cblast') initColorBlast();
       if(game === 'dots') initDots();
       if(game === 'snake80') initSnake();
       if(game === 'breakout') initBreakout();
@@ -2169,6 +2181,190 @@
     };
     grid.addEventListener('pointerdown', _t2048TouchHandlers.down);
     grid.addEventListener('pointerup', _t2048TouchHandlers.up);
+  }
+
+  // ── Color Blast (ported from Haven Mobile ColorBlastView.kt) ──
+  // 14×10 grid of 5 colors. Tap a cell to pop its connected cluster of
+  // matching color (min 2 cells). Pop scores cluster.size² points.
+  // Empty cells fall down; empty columns collapse left. Game over when
+  // no cluster of 2+ remains.
+  const _cb = { rows: 14, cols: 10, grid: null, score: 0, over: false, pop: null, popT: 0, lock: false, raf: null };
+  const _cbColors = ['#22C55E', '#3B82F6', '#FACC15', '#EF4444', '#A855F7'];
+  function initColorBlast() {
+    const saved = (() => { try { return JSON.parse(localStorage.getItem('haven_cblast') || 'null'); } catch { return null; } })();
+    if (saved && Array.isArray(saved.grid) && saved.grid.length === _cb.rows * _cb.cols) {
+      _cb.grid = saved.grid.slice();
+      _cb.score = saved.score || 0;
+    } else {
+      _cbReset();
+    }
+    _cb.over = false; _cb.pop = null; _cb.popT = 0; _cb.lock = false;
+    _cbWireCanvas();
+    _cbRender();
+    document.getElementById('cblast-controls').innerHTML = '<button class="t-btn t-clear" id="cb-new">↻ New Game</button>';
+    document.getElementById('cb-new').onclick = () => { _cbReset(); _cbRender(); _cbSave(); };
+    if (_cb.raf) cancelAnimationFrame(_cb.raf);
+    _cbTick();
+  }
+  function _cbReset() {
+    _cb.grid = new Array(_cb.rows * _cb.cols);
+    for (let i = 0; i < _cb.grid.length; i++) _cb.grid[i] = Math.floor(Math.random() * _cbColors.length);
+    _cb.score = 0; _cb.over = false; _cb.pop = null; _cb.popT = 0; _cb.lock = false;
+  }
+  function _cbAt(r, c) { return _cb.grid[r * _cb.cols + c]; }
+  function _cbSet(r, c, v) { _cb.grid[r * _cb.cols + c] = v; }
+  function _cbCluster(sr, sc) {
+    const v = _cbAt(sr, sc); if (v < 0) return [];
+    const visited = new Uint8Array(_cb.rows * _cb.cols);
+    const out = []; const q = [[sr, sc]]; visited[sr * _cb.cols + sc] = 1;
+    while (q.length) {
+      const [r, c] = q.shift(); out.push([r, c]);
+      const ns = [[r-1,c],[r+1,c],[r,c-1],[r,c+1]];
+      for (const [rr, cc] of ns) {
+        if (rr < 0 || rr >= _cb.rows || cc < 0 || cc >= _cb.cols) continue;
+        if (visited[rr * _cb.cols + cc]) continue;
+        if (_cbAt(rr, cc) !== v) continue;
+        visited[rr * _cb.cols + cc] = 1;
+        q.push([rr, cc]);
+      }
+    }
+    return out;
+  }
+  function _cbCollapse() {
+    // Drop tiles down per column
+    for (let c = 0; c < _cb.cols; c++) {
+      let w = _cb.rows - 1;
+      for (let r = _cb.rows - 1; r >= 0; r--) {
+        if (_cbAt(r, c) >= 0) { _cbSet(w, c, _cbAt(r, c)); w--; }
+      }
+      while (w >= 0) { _cbSet(w, c, -1); w--; }
+    }
+    // Shift non-empty columns left
+    let write = 0;
+    for (let c = 0; c < _cb.cols; c++) {
+      let has = false;
+      for (let r = 0; r < _cb.rows; r++) if (_cbAt(r, c) >= 0) { has = true; break; }
+      if (has) {
+        if (write !== c) for (let r = 0; r < _cb.rows; r++) { _cbSet(r, write, _cbAt(r, c)); _cbSet(r, c, -1); }
+        write++;
+      }
+    }
+  }
+  function _cbHasMoves() {
+    for (let r = 0; r < _cb.rows; r++) for (let c = 0; c < _cb.cols; c++) {
+      const v = _cbAt(r, c); if (v < 0) continue;
+      if (r + 1 < _cb.rows && _cbAt(r + 1, c) === v) return true;
+      if (c + 1 < _cb.cols && _cbAt(r, c + 1) === v) return true;
+    }
+    return false;
+  }
+  function _cbCount() { let n = 0; for (let i = 0; i < _cb.grid.length; i++) if (_cb.grid[i] >= 0) n++; return n; }
+  function _cbSave() { try { localStorage.setItem('haven_cblast', JSON.stringify({ grid: _cb.grid, score: _cb.score })); } catch {} }
+  function _cbWireCanvas() {
+    const cvs = document.getElementById('cblast-canvas');
+    if (!cvs) return;
+    // Size canvas based on viewport
+    const sizeIt = () => {
+      const maxW = Math.min(window.innerWidth - 24, 460);
+      const cellW = Math.floor(maxW / _cb.cols);
+      cvs.width = cellW * _cb.cols;
+      cvs.height = cellW * _cb.rows;
+      _cbRender();
+    };
+    sizeIt();
+    if (cvs._cbResize) window.removeEventListener('resize', cvs._cbResize);
+    cvs._cbResize = sizeIt;
+    window.addEventListener('resize', sizeIt);
+    if (cvs._cbDown) cvs.removeEventListener('pointerdown', cvs._cbDown);
+    cvs._cbDown = (e) => {
+      if (_cb.lock || _cb.over) return;
+      const rect = cvs.getBoundingClientRect();
+      const x = e.clientX - rect.left, y = e.clientY - rect.top;
+      const cellW = cvs.width / _cb.cols;
+      const c = Math.floor(x / cellW), r = Math.floor(y / cellW);
+      if (r < 0 || r >= _cb.rows || c < 0 || c >= _cb.cols) return;
+      if (_cbAt(r, c) < 0) return;
+      const cluster = _cbCluster(r, c);
+      if (cluster.length < 2) return;
+      _cb.lock = true;
+      _cb.score += cluster.length * cluster.length;
+      _cb.pop = cluster.map(([rr, cc]) => ({ r: rr, c: cc, color: _cbAt(rr, cc) }));
+      _cb.popT = 0;
+      for (const [rr, cc] of cluster) _cbSet(rr, cc, -1);
+      _cbRender();
+    };
+    cvs.addEventListener('pointerdown', cvs._cbDown);
+  }
+  function _cbTick() {
+    if (currentGame !== 'cblast') { _cb.raf = null; return; }
+    if (_cb.pop) {
+      _cb.popT += 0.18;
+      if (_cb.popT >= 1) {
+        _cb.pop = null;
+        _cbCollapse();
+        _cb.lock = false;
+        if (!_cbHasMoves()) { _cb.over = true; }
+        _cbSave();
+      }
+      _cbRender();
+    }
+    _cb.raf = requestAnimationFrame(_cbTick);
+  }
+  function _cbRender() {
+    const cvs = document.getElementById('cblast-canvas');
+    if (!cvs) return;
+    const ctx = cvs.getContext('2d');
+    const W = cvs.width, H = cvs.height;
+    const cellW = W / _cb.cols;
+    ctx.fillStyle = '#1f1f30';
+    ctx.fillRect(0, 0, W, H);
+    for (let r = 0; r < _cb.rows; r++) for (let c = 0; c < _cb.cols; c++) {
+      const v = _cbAt(r, c);
+      const x = c * cellW, y = r * cellW;
+      ctx.fillStyle = '#171726';
+      ctx.fillRect(x + 1, y + 1, cellW - 2, cellW - 2);
+      if (v >= 0 && (!_cb.pop || !_cb.pop.some(p => p.r === r && p.c === c))) {
+        ctx.fillStyle = _cbColors[v];
+        const pad = 2, radius = cellW * 0.16;
+        _cbRoundRect(ctx, x + pad, y + pad, cellW - 2*pad, cellW - 2*pad, radius);
+        ctx.fill();
+      }
+    }
+    if (_cb.pop) {
+      const a = Math.max(0, 1 - _cb.popT);
+      const scale = 0.7 + 0.3 * a;
+      ctx.globalAlpha = a;
+      for (const p of _cb.pop) {
+        const cx = p.c * cellW + cellW / 2;
+        const cy = p.r * cellW + cellW / 2;
+        const hw = cellW * 0.46 * scale;
+        ctx.fillStyle = _cbColors[Math.floor(Math.random() * _cbColors.length)];
+        _cbRoundRect(ctx, cx - hw, cy - hw, 2*hw, 2*hw, cellW * 0.16);
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+    }
+    if (_cb.over) {
+      ctx.fillStyle = 'rgba(0,0,0,0.6)';
+      ctx.fillRect(0, 0, W, H);
+      ctx.fillStyle = '#fff';
+      ctx.font = `bold ${cellW * 0.7}px monospace`;
+      ctx.textAlign = 'center';
+      ctx.fillText('No Moves', W / 2, H / 2);
+      ctx.font = `${cellW * 0.4}px monospace`;
+      ctx.fillText('Tap New Game', W / 2, H / 2 + cellW);
+    }
+    const hud = document.getElementById('cblast-hud');
+    if (hud) hud.innerHTML = `<span class="hud-pill">Score ${_cb.score}</span><span class="hud-pill">Blocks ${_cbCount()}</span>${_cb.over ? '<span class="hud-pill" style="background:rgba(231,76,60,0.2);border-color:#e74c3c">No moves left</span>' : ''}`;
+  }
+  function _cbRoundRect(ctx, x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
   }
 
   // Service worker — true cold-cache offline / airplane mode. Skips when
