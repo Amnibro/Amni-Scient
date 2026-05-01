@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.4.7] - 2026-05-01 - Safari/iOS module-tap fix
+- **Root cause** — every `.game-btn` and `.storybook-card` is a `<button>` with `display:flex` and `<span>` children (icon / text / desc). iOS Safari's hit-tester does not dispatch `click` to a flex-`<button>` when the tap lands on a flex *child* — taps fall through and the menu feels dead. The same buttons work fine on Chrome/Firefox/desktop Safari, which is why this slipped past local testing.
+- **Fix** — added `.game-btn > *, .storybook-card > * { pointer-events: none; }` so taps on the inner spans re-target the parent `<button>`, restoring `click` dispatch on iOS Safari. Existing handlers (`e.target.closest('.game-btn')` / `card.dataset.book`) keep working unchanged because they read from the button itself, not the span.
+- **Polish** — `touch-action: manipulation` on both selectors removes the iOS 300ms double-tap-zoom delay, and `-webkit-tap-highlight-color` gives a visible flash so users get feedback on tap. `-webkit-appearance: none` stops Safari's UA button restyling from leaking through.
+- **SW cache bumped v3 → v4** so iOS users with a hot service-worker cache pull the corrected HTML on next load instead of being stuck on the broken prior shell.
+
 ## [5.4.6] - 2026-04-30 - Pre-K-obvious wrongs + level-bounded pools
 - **L1 animal-sound wrongs rewritten** so the correct answer is unambiguous for a 3–5 year old. Wrongs now come from clearly-different categories: a bird-sound question's wrongs are dog/bee/frog/snake (not other birds); a mammal-sound's wrongs are bird/bee/snake (not other mammals); a reptile/insect's wrongs are dog/bird/bee. Example: "Chirp" → Bird with wrongs Crocodile / Lion / Dog (per user spec).
 - **`startQuizDirectly` now caps the pool at the current level** — `addLvl` only accepts levels `≤ lvl`, so PRE-K (L1) sees only L1 questions, not the L2 fact-questions it was previously padding with to reach 30. Higher levels still expand downward (so K-2 mixes in pre-K when pool is short, etc.) but never reach upward into harder content.
