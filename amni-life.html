@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Amni-Life &mdash; Memory Map for the Fragments of a Life | AMNI-SCIENT</title>
+<meta name="description" content="Amni-Life: a 3D memory map for the fragments of a life. 7 visualizations (constellation, timeline, spiral, cluster, radial, globe, calendar). WASM/Rust + Three.js. Local-first, offline-capable, zero telemetry. Encrypted shareable maps. Photo folder + Google Photos / Takeout import.">
+<meta name="keywords" content="amni-life,memory map,life visualization,3d journal,wasm,three.js,offline-first,encrypted journal,personal map,photo timeline">
+<meta property="og:title" content="Amni-Life &mdash; Memory Map for the Fragments of a Life">
+<meta property="og:description" content="A 3D memory map. 7 ways to visualize a life. Local-first, offline-capable, encrypted shares. WASM/Rust + Three.js.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://amni-scient.com/amni-life">
+<meta property="og:image" content="https://amni-scient.com/assets/life/og-life.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Amni-Life &mdash; Memory Map for the Fragments of a Life">
+<meta name="twitter:description" content="A 3D memory map. 7 ways to visualize a life. Local-first, encrypted shares. Built in WASM/Rust + Three.js.">
+<meta name="twitter:image" content="https://amni-scient.com/assets/life/og-life.png">
+<link rel="canonical" href="https://amni-scient.com/amni-life">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Amni-Life","url":"https://amni-scient.com/amni-life","description":"3D memory map for the fragments of a life. 7 visualizations across constellation, timeline, spiral, cluster, radial, globe, and calendar. Local-first, encrypted shares, photo import, voice notes.","applicationCategory":"LifestyleApplication","operatingSystem":"Any (WebGL2)","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Organization","name":"AMNI-SCIENT","url":"https://amni-scient.com"},"softwareVersion":"0.25.0"}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+<style>
+.life-hero{text-align:center;padding:6rem 2rem 3rem;position:relative}
+.life-hero h1{font-size:clamp(2rem,5vw,3.5rem);letter-spacing:.15em;margin-bottom:.5rem;background:linear-gradient(135deg,#7cc4ff 0%,#a78bfa 50%,#f5c842 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.life-hero .desc{color:var(--dim);font-size:.8rem;letter-spacing:.12em;margin-bottom:2rem}
+.life-icon{width:64px;height:64px;margin:0 auto 1.5rem;position:relative;opacity:.92}
+.life-icon::before,.life-icon::after,.life-icon span{content:'';position:absolute;border-radius:50%}
+.life-icon::before{width:14px;height:14px;background:#7cc4ff;left:6px;top:14px;box-shadow:0 0 14px rgba(124,196,255,.7)}
+.life-icon::after{width:12px;height:12px;background:#ffb060;right:8px;top:8px;box-shadow:0 0 14px rgba(255,176,96,.7)}
+.life-icon span{width:18px;height:18px;background:#f5c842;left:50%;bottom:6px;transform:translateX(-50%);box-shadow:0 0 16px rgba(245,200,66,.7)}
+.viz-frame-wrap{width:100%;max-width:1400px;margin:0 auto 3rem;padding:0 1rem;position:relative}
+.viz-frame{width:100%;aspect-ratio:16/9;border:1px solid rgba(124,196,255,.2);border-radius:4px;background:#0a0a12;overflow:hidden}
+.viz-frame iframe{width:100%;height:100%;border:none;display:block}
+.viz-note{text-align:center;color:var(--dim);font-size:.72rem;margin-top:.6rem;letter-spacing:.05em}
+.stat-row{display:flex;justify-content:center;gap:3rem;flex-wrap:wrap;padding:2rem 1rem;margin-bottom:1rem}
+.stat-item{text-align:center}
+.stat-num{font-size:clamp(1.4rem,3vw,2rem);color:#7cc4ff;letter-spacing:.05em;display:block}
+.stat-label{font-size:.7rem;color:var(--dim);letter-spacing:.1em;margin-top:.2rem}
+.layout-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem;max-width:1000px;margin:0 auto 3rem;padding:0 1rem}
+.layout-card{background:rgba(124,196,255,.04);border:1px solid rgba(124,196,255,.15);border-radius:4px;padding:1.2rem;transition:border-color .2s}
+.layout-card:hover{border-color:rgba(124,196,255,.35)}
+.layout-card h4{color:#7cc4ff;font-size:.8rem;letter-spacing:.1em;margin-bottom:.5rem}
+.layout-card p{color:var(--dim);font-size:.75rem;line-height:1.5}
+.layout-tag{display:inline-block;font-size:.6rem;padding:.15rem .4rem;border-radius:2px;margin-bottom:.5rem;letter-spacing:.05em;border:1px solid rgba(124,196,255,.3);color:rgba(124,196,255,.7)}
+.dl-row{display:flex;justify-content:center;gap:.8rem;flex-wrap:wrap;margin-top:1.5rem}
+.dl-card{background:rgba(15,18,30,.55);border:1px solid var(--border);border-radius:6px;padding:1rem 1.4rem;font-family:'JetBrains Mono',monospace;font-size:.74rem;color:var(--fg);text-align:left}
+.dl-card h5{font-size:.7rem;color:var(--accent2);letter-spacing:.14em;margin-bottom:.5rem;text-transform:uppercase}
+.dl-card code{display:block;background:rgba(0,0,0,.4);padding:.5rem .7rem;border-radius:3px;color:var(--accent);font-size:.7rem;margin-top:.4rem;overflow-x:auto;white-space:pre}
+</style>
+</head>
+<body>
+<div class="grid-bg"></div>
+<div class="scanlines"></div>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu">
+<a href="amni-browse.html">AMNI-BROWSE</a>
+<a href="amni-calc.html">AMNI-CALC</a>
+<a href="amni-explore.html">AMNI-EXPLORE</a>
+<a href="amni-learn.html">AMNI-LEARN</a>
+<a href="amni-llm.html">AMNI-LLM</a>
+<a href="amni-connect.html">AMNI-CONNECT</a>
+<a href="amni-code.html">AMNI-CODE</a>
+<a href="amni-haven.html">AMNI-HAVEN</a>
+<a href="amni-life.html" class="active">AMNI-LIFE</a>
+<a href="amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</div>
+<a href="about.html">ABOUT</a>
+<a href="faq.html">FAQ</a>
+<a href="privacy.html">PRIVACY</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<div class="life-hero">
+<div class="life-icon"><span></span></div>
+<h1>AMNI-LIFE</h1>
+<p class="desc">A MEMORY MAP FOR THE FRAGMENTS OF A LIFE &bull; 7 VISUALIZATIONS &bull; OFFLINE-FIRST &bull; ENCRYPTED SHARES &bull; WASM ENGINE</p>
+<div class="cta-row" style="justify-content:center;margin-top:1rem;margin-bottom:.8rem">
+<a href="amni-life/" class="btn btn-primary" style="background:linear-gradient(135deg,#7cc4ff,#a78bfa);color:#0a0a12;border:none">OPEN AMNI-LIFE</a>
+<a href="amni-life/Amni-Life-v0.25.0.zip" class="btn" style="border-color:rgba(124,196,255,.4)" download>&#9660; DOWNLOAD v0.25.0 (.zip)</a>
+</div>
+<p style="color:var(--dim);font-size:.72rem;letter-spacing:.04em">WebGL2 required &nbsp;&bull;&nbsp; install as a PWA from the browser bar &nbsp;&bull;&nbsp; everything stays on your device</p>
+</div>
+<div class="stat-row">
+<div class="stat-item"><span class="stat-num">7</span><span class="stat-label">VISUALIZATIONS</span></div>
+<div class="stat-item"><span class="stat-num">4</span><span class="stat-label">THEMES</span></div>
+<div class="stat-item"><span class="stat-num">∞</span><span class="stat-label">FRAGMENTS</span></div>
+<div class="stat-item"><span class="stat-num">0</span><span class="stat-label">TELEMETRY</span></div>
+</div>
+<section>
+<h2>SEE YOUR LIFE</h2>
+<p style="text-align:center;color:var(--dim);max-width:720px;margin:0 auto 2rem;font-size:.9rem">Every fragment is a node &mdash; a person, place, event, work, idea, or era. Every relationship is an edge. Switch between seven layouts to find the shape that fits the question you&rsquo;re asking. Drop a folder of photos and watch the map populate from EXIF dates and GPS. Encrypt the result and share with one person, or no one.</p>
+<div style="text-align:center;max-width:720px;margin:0 auto 3rem;padding:0 1rem">
+<p style="color:var(--dim);font-size:.88rem;margin-bottom:1.5rem">Open directly in your browser &mdash; no account, no install required (but installable as a PWA).</p>
+<div class="cta-row" style="justify-content:center;margin-bottom:1rem">
+<a href="amni-life/" class="btn btn-primary" style="background:linear-gradient(135deg,#7cc4ff,#a78bfa);color:#0a0a12;border:none;font-size:1rem;padding:.85rem 2.8rem;letter-spacing:.1em">&#9758; OPEN AMNI-LIFE</a>
+</div>
+<p style="color:var(--dim);font-size:.72rem;letter-spacing:.04em">WebGL2 required &nbsp;&bull;&nbsp; ~150 KB cold start &nbsp;&bull;&nbsp; works fully offline after first visit</p>
+</div>
+<div class="layout-grid">
+<div class="layout-card"><span class="layout-tag">DEFAULT</span><h4>CONSTELLATION</h4><p>Force-directed 3D graph. Connected fragments pull together; lone ones drift. The shape your life makes when you let the relationships speak first.</p></div>
+<div class="layout-card"><span class="layout-tag">CHRONO</span><h4>TIMELINE</h4><p>A clean horizontal line by year. Same-year fragments stack vertically. Useful when you want the story to be linear for a moment.</p></div>
+<div class="layout-card"><span class="layout-tag">POETIC</span><h4>SPIRAL</h4><p>Golden Fibonacci spiral by date. Earliest at the core, today at the outer arm. Decades become rings.</p></div>
+<div class="layout-card"><span class="layout-tag">TYPOLOGICAL</span><h4>CLUSTER</h4><p>Six clouds, one per kind &mdash; people, places, events, works, ideas, eras. Pulls patterns into focus.</p></div>
+<div class="layout-card"><span class="layout-tag">EPOCHAL</span><h4>RADIAL</h4><p>Concentric era rings &mdash; childhood at the center, this year at the edge. Easy to scan how big each era was.</p></div>
+<div class="layout-card"><span class="layout-tag">GEOGRAPHIC</span><h4>GLOBE</h4><p>3D wireframe sphere. Geo-tagged fragments project onto the surface; ones without coordinates float in a ring beneath the south pole.</p></div>
+<div class="layout-card"><span class="layout-tag">DENSITY</span><h4>CALENDAR</h4><p>Year &times; month grid. Same-month fragments stack. Surfaces seasons-of-life and the years that were heavy or empty.</p></div>
+</div>
+</section>
+<section>
+<h2>BUILT TO LAST OFFLINE</h2>
+<div class="features">
+<div class="feature"><div class="icon">&#128737;</div><h4>LOCAL-FIRST</h4><p>LocalStorage for fragments. IndexedDB for photos, videos, voice notes. URL hash + Web Crypto for encrypted shares. Service Worker caches the entire app shell. After your first visit, Amni-Life works with no network.</p></div>
+<div class="feature"><div class="icon">&#9881;</div><h4>RUST / WASM ENGINE</h4><p>Five layout algorithms compiled to WebAssembly: timeline, force-directed constellation, golden-spiral, cluster, radial. Runs once on load &mdash; ~5 ms for 25 fragments, scales to thousands.</p></div>
+<div class="feature"><div class="icon">&#128247;</div><h4>PHOTOS &amp; PEOPLE</h4><p>Drop a folder of photos &mdash; Amni-Life parses EXIF for dates and GPS, attaches each photo to a new fragment. Drop a Google Takeout export &mdash; sidecar JSON metadata flows in too. Connect Google Photos directly via your own OAuth (BYO Client ID, your data, your account).</p></div>
+<div class="feature"><div class="icon">&#128274;</div><h4>ENCRYPTED SHARES</h4><p>Compress + encrypt your map with a passphrase. AES-GCM 256, PBKDF2-SHA256 with 200k iterations. The result is a URL hash &mdash; nothing leaves your browser. Recipient unlocks with the passphrase. Plaintext shares also available.</p></div>
+<div class="feature"><div class="icon">&#127908;</div><h4>VOICE + TOUR</h4><p>Record voice notes directly in-browser via MediaRecorder. Hit TOUR to walk through your life chronologically; toggle NARRATE and the browser&rsquo;s speech synthesis reads each fragment aloud as you fly between them.</p></div>
+<div class="feature"><div class="icon">&#128202;</div><h4>UNDO &amp; PATH-FINDER</h4><p>Every edit is undoable / redoable (Ctrl+Z / Ctrl+Y). Alt-click between any two fragments to BFS the shortest path through your connection graph. Multi-select for batch tag and delete.</p></div>
+</div>
+</section>
+<section>
+<h2>SETUP &amp; INSTALL</h2>
+<p style="text-align:center;color:var(--dim);max-width:720px;margin:0 auto 2rem;font-size:.9rem">Three ways to use Amni-Life. Pick the one that fits.</p>
+<div class="dl-row">
+<div class="dl-card">
+<h5>1. Open in browser</h5>
+Visit <a href="amni-life/" style="color:var(--accent)">amni-scient.com/amni-life</a>. After first visit, the Service Worker caches the app, and you can use it offline forever.
+</div>
+<div class="dl-card">
+<h5>2. Install as PWA</h5>
+Click the install icon in your browser address bar (or use the &ldquo;INSTALL&rdquo; button in the top-right of the app). Amni-Life becomes a native-feeling app on your taskbar / home screen.
+</div>
+<div class="dl-card">
+<h5>3. Self-host (one-liner)</h5>
+On Linux / macOS:
+<code>curl -fsSL https://amni-scient.com/amni-life/install.sh | bash</code>
+On Windows:
+<code>iwr -useb https://amni-scient.com/amni-life/install.ps1 | iex</code>
+Both download v0.25.0 to <code style="display:inline">~/amni-life</code> and start a local server.
+</div>
+</div>
+<p style="text-align:center;color:var(--dim);max-width:720px;margin:2rem auto 0;font-size:.78rem">Or just download the <a href="amni-life/Amni-Life-v0.25.0.zip" style="color:var(--accent)" download>v0.25.0 zip</a> and unzip it anywhere &mdash; double-click <code style="background:var(--bg2);padding:1px 5px;border-radius:3px">index.html</code> and you&rsquo;re running.</p>
+</section>
+<section>
+<h2>WHO IT&rsquo;S FOR</h2>
+<p style="text-align:center;color:var(--dim);max-width:720px;margin:0 auto 1.5rem;font-size:.9rem">People who want to see the shape of their life. People who keep journals but lose them in folders. People who want their grandmother&rsquo;s memories not to die when she does. People who don&rsquo;t want a Big Tech app holding their childhood.</p>
+<p style="text-align:center;color:var(--dim);max-width:720px;margin:0 auto 1.5rem;font-size:.85rem;font-style:italic">&ldquo;A memory map &mdash; to help people connect and visualize the fragments of their lives. No practical reason to build it. Just something I want to have.&rdquo; &mdash; the seed for this project</p>
+</section>
+<footer>
+<div class="footer-grid">
+<div class="footer-col"><h5>AMNI-SCIENT</h5><p>Independent software studio. Privacy-first, zero-telemetry tools for the web and desktop.</p></div>
+<div class="footer-col"><h5>AMNI-LIFE</h5><a href="amni-life/">Open Web App</a><a href="amni-life/Amni-Life-v0.25.0.zip" download>Download v0.25.0</a><a href="amni-life/install.sh">install.sh</a><a href="amni-life/install.ps1">install.ps1</a></div>
+<div class="footer-col"><h5>RELATED</h5><a href="amni-prayer.html">Amni-Prayer</a><a href="amni-explore.html">Amni-Explore</a><a href="amnitex-overview.html">Amnitex (atex)</a></div>
+<div class="footer-col"><h5>LEGAL</h5><a href="privacy.html">Privacy</a><a href="about.html">About</a></div>
+</div>
+<p class="footer-bottom">&copy; 2026 AMNI-SCIENT &middot; Solo-built &middot; v0.25.0</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Amni-Life — Memory Map</title>
+<meta name="description" content="A memory map for the fragments of a life. WASM/Rust + Three.js, offline-first, zero telemetry."/>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230b0d12'/%3E%3Ccircle cx='10' cy='12' r='2.4' fill='%237cc4ff'/%3E%3Ccircle cx='22' cy='10' r='2' fill='%23ffb060'/%3E%3Ccircle cx='16' cy='22' r='2.6' fill='%23f5c842'/%3E%3Ccircle cx='24' cy='22' r='1.6' fill='%237be0a4'/%3E%3Cpath d='M10 12 L16 22 M22 10 L16 22 M16 22 L24 22' stroke='%23ffffff' stroke-opacity='0.25' stroke-width='1' fill='none'/%3E%3C/svg%3E"/>
+<link rel="stylesheet" href="style.css"/>
+<link rel="manifest" href="manifest.webmanifest"/>
+<meta name="theme-color" content="#0b0d12"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="Amni-Life"/>
+<script>(function(){var t=localStorage.getItem('amni-life-theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();</script>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.165.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.165.0/examples/jsm/"
+  }
+}
+</script>
+</head>
+<body>
+<div id="root">
+<div id="loader"><div id="loader-dot"></div><div id="loader-text">awakening the map…</div></div>
+<button id="burger" title="Menu">☰</button>
+<div id="topbar">
+<div id="logo">AMNI<span>-LIFE</span></div>
+<span id="viewlabel">VIEW</span>
+<select id="view-select">
+<option value="constellation" selected>Constellation</option>
+<option value="timeline">Timeline</option>
+<option value="spiral">Spiral</option>
+<option value="cluster">Cluster</option>
+<option value="radial">Radial</option>
+<option value="map">Map</option>
+<option value="calendar">Calendar</option>
+</select>
+<div style="display:flex;align-items:center;gap:0"><input type="text" id="search" placeholder="Search fragments…" autocomplete="off" spellcheck="false"/><button id="micbtn" title="Voice search">🎤</button><button id="filterbtn" title="Toggle filter mode — when on, only matching fragments are visible">FILTER</button></div>
+<div id="year-range" title="Filter by year range">
+<span id="year-lo" class="year-lbl">—</span>
+<span class="year-track-wrap"><input type="range" id="year-min" min="0" max="100" value="0"/><input type="range" id="year-max" min="0" max="100" value="100"/></span>
+<span id="year-hi" class="year-lbl">—</span>
+</div>
+<div id="dot-size-wrap" title="Dot size">
+<span class="dot-lbl">●</span>
+<input type="range" id="dot-size" min="40" max="250" value="100"/>
+<span class="dot-lbl big">●</span>
+</div>
+<div class="topspacer"></div>
+<button class="topbtn" id="btn-theme" title="Cycle theme (T) · right-click to build a custom one">THEME</button>
+<button class="topbtn" id="btn-list" title="Toggle fragment list (L)">LIST</button>
+<button class="topbtn" id="btn-add" title="Add fragment (N)">+ ADD</button>
+<button class="topbtn" id="btn-folder" title="Import a folder of photos (auto-fills map from EXIF)">+ FOLDER</button>
+<button class="topbtn" id="btn-connect" title="Connect Google Photos / external timeline">CONNECT</button>
+<button class="topbtn" id="btn-install" title="Install Amni-Life as an app">INSTALL</button>
+<button class="topbtn" id="btn-share" title="Share map as link">SHARE</button>
+<div id="export-wrap" style="position:relative;display:inline-block"><button class="topbtn" id="btn-export" title="Export your map">EXPORT ▾</button><div id="export-menu" style="display:none;position:absolute;top:100%;left:0;background:var(--bg2);border:1px solid var(--accent);border-radius:6px;margin-top:4px;z-index:20;min-width:180px;box-shadow:var(--shadow);overflow:hidden"><button class="export-opt" id="exp-json" style="display:block;width:100%;text-align:left;background:none;border:none;color:var(--fg);padding:9px 14px;font-family:var(--mono);font-size:0.7rem;cursor:pointer">JSON · full backup</button><button class="export-opt" id="exp-ics" style="display:block;width:100%;text-align:left;background:none;border:none;color:var(--fg);padding:9px 14px;font-family:var(--mono);font-size:0.7rem;cursor:pointer">iCal · .ics calendar</button></div></div>
+<button class="topbtn" id="btn-import" title="Import JSON">IMPORT</button>
+<button class="topbtn" id="btn-reset" title="Reset to sample">RESET</button>
+<button class="topbtn" id="btn-edges" title="Toggle edges (E)">EDGES</button>
+<button class="topbtn" id="btn-labels" title="Show all fragment labels in scene">🏷 LABELS</button>
+<button class="topbtn" id="btn-spin" title="Toggle auto-rotate (S)">SPIN</button>
+<button class="topbtn" id="btn-tour" title="Walk through your life chronologically">▶ TOUR</button>
+<button class="topbtn" id="btn-reveal" title="Reveal fragments year-by-year (time-lapse)">⟳ REVEAL</button>
+<div id="tour-speed-wrap" title="Tour pace · slower → faster"><span class="dot-lbl" style="font-size:0.6rem">🐢</span><input type="range" id="tour-speed" min="1500" max="8000" step="100" value="4200"/><span class="dot-lbl" style="font-size:0.6rem">🐇</span></div>
+<button class="topbtn" id="btn-stats" title="Insights about your map">∑ STATS</button>
+<button class="topbtn" id="btn-mood" title="Color dots by mood instead of kind">🔇 MOOD</button>
+<button class="topbtn" id="btn-quiz" title="Memory recall quiz — try to identify your own fragments">? QUIZ</button>
+<button class="topbtn" id="btn-print" title="Print or save as PDF — chronological book view">PRINT</button>
+<button class="topbtn" id="btn-help" title="Keyboard shortcuts (Ctrl+/)">?</button>
+<button class="topbtn" id="btn-wall" title="Photo wall — every media item at a glance">WALL</button>
+<button class="topbtn" id="btn-narrate" title="Speak titles + summaries during tour">🔇 NARRATE</button>
+<button class="topbtn" id="btn-sound" title="Subtle chimes on select / save / view switch">🔇 SOUND</button>
+</div>
+<div id="left-rail">
+<div id="filters"></div>
+<div id="tagfilters"></div>
+<div id="edgefilters"></div>
+</div>
+<div id="search-results" style="display:none"></div>
+<div id="legend">
+Click a node — fly to it and see its connections.
+Drop images, videos, or audio anywhere to attach to the selected fragment.
+Drag to orbit · scroll to zoom · right-click to pan.
+</div>
+<div id="detail">
+<div id="detail-head"><span id="detail-kind">EVENT</span><button id="btn-pin" title="Pin / unpin (keeps it prominent)" style="background:none;border:none;color:var(--dim);font-size:1.0rem;cursor:pointer;line-height:1;padding:0 6px">☆</button><button id="detail-close" title="Close">×</button></div>
+<div id="detail-body">
+<div id="detail-title">—</div>
+<div id="detail-meta">—</div>
+<div id="detail-summary">—</div>
+<label id="append-toggle"><input type="checkbox" id="append-mode"/> append mode (timestamp new entries)</label>
+<div id="detail-tags"></div>
+<button id="btn-add-tag" class="smallbtn" style="margin-bottom:10px;font-size:0.62rem;padding:3px 8px;width:auto;display:inline-block">+ TAG</button>
+<div id="detail-media"></div>
+<div id="suggester" style="display:none"><h5>Possibly related</h5><div id="suggester-body"></div></div>
+<div id="detail-conn-title">CONNECTED</div>
+<div id="detail-connections"></div>
+<div id="detail-back-title" style="display:none">REFERENCED BY</div>
+<div id="detail-backlinks"></div>
+</div>
+<div id="detail-actions">
+<button class="smallbtn" id="btn-edit">EDIT</button>
+<button class="smallbtn" id="btn-link">LINK…</button>
+<button class="smallbtn" id="btn-media">+ MEDIA</button>
+<button class="smallbtn" id="btn-rec" title="Record voice note">REC</button>
+<button class="smallbtn" id="btn-raw" title="View raw JSON">{ }</button>
+<button class="smallbtn" id="btn-deeplink" title="Copy link to this fragment">↗ LINK</button>
+<button class="smallbtn danger" id="btn-delete">DELETE</button>
+</div>
+</div>
+<div id="fragslist">
+<div id="fragslist-head"><span>FRAGMENTS</span><span id="fragslist-multi" style="display:none"><span id="multi-count">0</span> selected · <button class="smallbtn" id="multi-tag" style="padding:2px 6px;font-size:0.6rem">+TAG</button> <button class="smallbtn" id="multi-delete" style="padding:2px 6px;font-size:0.6rem">DEL</button> <button class="smallbtn" id="multi-clear" style="padding:2px 6px;font-size:0.6rem">×</button></span></div>
+<div id="fragslist-body"></div>
+</div>
+<div id="dropzone">drop to attach…</div>
+<div id="theme-builder"><div id="tb-card">
+<div id="tb-head"><span id="tb-title">CUSTOM THEME</span><button id="tb-close" class="lb-close">×</button></div>
+<div id="tb-body">
+<div class="field"><label>Theme name</label><input type="text" id="tb-name" placeholder="my-theme" autocomplete="off"/></div>
+<div class="row2">
+<div class="field"><label>Background</label><input type="color" id="tb-bg" value="#0b0d12"/></div>
+<div class="field"><label>Surface</label><input type="color" id="tb-bg2" value="#10131a"/></div>
+</div>
+<div class="row2">
+<div class="field"><label>Foreground</label><input type="color" id="tb-fg" value="#e8ecf3"/></div>
+<div class="field"><label>Dim</label><input type="color" id="tb-dim" value="#7d8597"/></div>
+</div>
+<div class="row2">
+<div class="field"><label>Accent</label><input type="color" id="tb-accent" value="#7cc4ff"/></div>
+<div class="field"><label>Accent 2</label><input type="color" id="tb-accent2" value="#f5c842"/></div>
+</div>
+<div id="tb-preview" style="margin-top:14px;padding:14px;border-radius:6px;border:1px solid var(--border);font-family:var(--mono)">
+<div style="color:var(--accent);font-weight:600;margin-bottom:6px">Preview · accent</div>
+<div style="color:var(--accent2);margin-bottom:6px">Highlight · accent2</div>
+<div style="color:var(--dim);font-size:0.78rem">Dim text on bg2 surface</div>
+</div>
+</div>
+<div id="tb-actions"><button class="topbtn" id="tb-cancel">CANCEL</button><button class="topbtn" id="tb-delete" style="display:none">DELETE</button><button class="topbtn" id="tb-save" style="border-color:var(--accent);color:var(--accent)">SAVE</button></div>
+</div></div>
+<div id="welcome">
+<div id="welcome-card">
+<div id="welcome-head"><span id="welcome-title">WELCOME TO AMNI-LIFE</span><button id="welcome-close" class="lb-close" title="Close">×</button></div>
+<div id="welcome-body">
+<p style="font-size:0.92rem;line-height:1.55;color:var(--fg)">A memory map for the fragments of a life. Each dot is a moment, place, person, idea, or era. Edges are the relationships between them.</p>
+<div class="welcome-row"><div class="welcome-icon" style="color:#7cc4ff">◐</div><div><strong>7 visualizations</strong><br/><span style="color:var(--dim);font-size:0.82rem">Switch between Constellation, Timeline, Spiral, Cluster, Radial, Globe, and Calendar to find the shape that fits the question you're asking.</span></div></div>
+<div class="welcome-row"><div class="welcome-icon" style="color:#ffb060">📁</div><div><strong>Drop a folder of photos</strong><br/><span style="color:var(--dim);font-size:0.82rem">Click <code>+ FOLDER</code> and pick a folder of photos. Amni-Life parses EXIF dates and GPS automatically. Or drop individual photos onto a selected fragment.</span></div></div>
+<div class="welcome-row"><div class="welcome-icon" style="color:#a78bfa">🔒</div><div><strong>Local-first, encrypted shares</strong><br/><span style="color:var(--dim);font-size:0.82rem">Everything stays in your browser. Click <code>SHARE</code> to generate a self-contained URL — encrypt it with a passphrase if it's for someone you trust.</span></div></div>
+<div class="welcome-row"><div class="welcome-icon" style="color:#f5c842">⌘</div><div><strong>Quick keys</strong><br/><span style="color:var(--dim);font-size:0.82rem"><code>/</code> search · <code>L</code> list · <code>N</code> new · <code>T</code> theme · <code>E</code> edges · <code>S</code> spin · <code>Ctrl+Z</code> undo · <code>Esc</code> close · <strong>Shift+drag</strong> link two nodes</span></div></div>
+</div>
+<div id="welcome-actions">
+<label style="display:flex;align-items:center;gap:6px;font-size:0.74rem;color:var(--dim);cursor:pointer"><input type="checkbox" id="welcome-skip" checked/> Don't show this again</label>
+<button class="topbtn" id="welcome-tour-btn" title="Auto-tour the sample data">▶ TAKE TOUR</button>
+<button class="topbtn" id="welcome-go-btn" style="border-color:var(--accent);color:var(--accent)">EXPLORE</button>
+</div>
+</div>
+</div>
+<div id="lightbox"><button id="lightbox-prev" class="lb-arrow" title="Previous (←)">‹</button><div id="lightbox-stage"></div><button id="lightbox-next" class="lb-arrow" title="Next (→)">›</button><button id="lightbox-close" class="lb-close" title="Close (Esc)">×</button><button id="lightbox-rotate" class="lb-close" title="Rotate 90° CW (R)" style="right:64px;width:36px;height:36px;font-size:1rem">↻</button><div id="lightbox-meta"></div></div>
+<div id="wall"><div id="wall-head"><span id="wall-title">PHOTO WALL</span><div id="wall-stats"></div><button id="wall-close" class="lb-close" title="Close (Esc)">×</button></div><div id="wall-grid"></div></div>
+<div id="link-overlay"><svg id="link-svg"><line id="link-line" x1="0" y1="0" x2="0" y2="0"/></svg><div id="link-hint">drag to another node to link… (Esc to cancel)</div></div>
+<div id="sel-label"></div>
+<div id="hover-labels"></div>
+<div id="otd"><div id="otd-head">ON THIS DAY <span id="otd-count"></span><button id="otd-close" title="Hide">×</button></div><div id="otd-body"></div></div>
+<div id="prompt-bar"><span id="prompt-text">A prompt for today</span><button id="prompt-capture" title="Capture (Ctrl+K)">+</button><button id="prompt-skip" title="Skip">↻</button><button id="prompt-close" title="Hide for today">×</button></div>
+<div id="quick-capture"><div id="qc-card">
+<div id="qc-hint">Quick capture · use <code>@2024</code> for year, <code>#tag</code>, <code>:event</code> for kind · Esc cancels</div>
+<input type="text" id="qc-input" placeholder="A fragment of life…" autocomplete="off" spellcheck="false"/>
+<div id="qc-preview"></div>
+</div></div>
+<div id="reveal-overlay"><span id="reveal-year">—</span><div id="reveal-progress"><div id="reveal-progress-fill"></div></div></div>
+<div id="quiz-modal"><div id="quiz-card">
+<div id="quiz-head"><span id="quiz-title">MEMORY RECALL · <span id="quiz-score">0 / 0</span></span><button id="quiz-close" class="lb-close">×</button></div>
+<div id="quiz-body">
+<div id="quiz-meta" style="font-family:var(--mono);font-size:0.74rem;color:var(--dim);margin-bottom:14px"></div>
+<div id="quiz-summary" style="font-style:italic;font-size:0.94rem;line-height:1.55;margin-bottom:14px;color:var(--fg);min-height:60px"></div>
+<input type="text" id="quiz-guess" placeholder="What was the title?" autocomplete="off" style="width:100%;background:var(--bg);color:var(--fg);border:1px solid var(--border);border-radius:6px;padding:10px 12px;font-family:var(--sans);font-size:0.95rem"/>
+<div id="quiz-feedback" style="margin-top:14px;font-family:var(--mono);font-size:0.78rem;min-height:1.2rem"></div>
+</div>
+<div id="quiz-actions"><button class="topbtn" id="quiz-skip">SKIP</button><button class="topbtn" id="quiz-reveal">REVEAL</button><button class="topbtn" id="quiz-next" style="border-color:var(--accent);color:var(--accent)">NEXT →</button></div>
+</div></div>
+<div id="raw-modal"><div id="raw-card"><div id="raw-head"><span id="raw-title">RAW JSON</span><button id="raw-close" class="lb-close">×</button></div><pre id="raw-body"></pre><div id="raw-actions"><button class="topbtn" id="raw-copy">COPY</button></div></div></div>
+<div id="qr-modal"><div id="qr-card"><div id="qr-head"><span id="qr-label">SHARE LINK</span><button id="qr-close" class="lb-close">×</button></div><div id="qr-body"><div id="qr-canvas-wrap" style="text-align:center;margin-bottom:14px;min-height:240px;display:flex;align-items:center;justify-content:center"></div><div id="qr-url" style="font-family:var(--mono);font-size:0.7rem;color:var(--accent);background:var(--bg);padding:10px;border-radius:6px;word-break:break-all;user-select:all"></div></div></div></div>
+<div id="backup-banner">Map edited 14+ days since last backup — <button id="backup-btn">EXPORT JSON</button> <button id="backup-dismiss" style="background:none;border:none;color:var(--dim);cursor:pointer">later</button></div>
+<div id="stats-panel"><div id="stats-card"><div id="stats-head"><span id="stats-title">∑ INSIGHTS</span><button id="stats-close" class="lb-close" title="Close (Esc)">×</button></div><div id="stats-body"></div></div></div>
+<div id="help-panel"><div id="help-card"><div id="help-head"><span id="help-title">KEYBOARD SHORTCUTS</span><button id="help-close" class="lb-close" title="Close (Esc)">×</button></div><div id="help-body"></div></div></div>
+<canvas id="minimap" width="180" height="180" title="Mini-map · click to fly there"></canvas>
+<div id="print-frame"></div>
+<div id="modal-bg">
+<div id="modal">
+<div id="modal-head"><span id="modal-title">EDIT FRAGMENT</span><button class="topbtn" id="modal-close">×</button></div>
+<div id="modal-body">
+<div class="field" id="f-title-row"><label>Title</label><input type="text" id="m-title" placeholder="e.g. First memory of the ocean"/></div>
+<div class="row3" id="f-kindyear-row">
+<div class="field"><label>Kind</label><select id="m-kind">
+<option value="person">Person</option>
+<option value="place">Place</option>
+<option value="event" selected>Event</option>
+<option value="work">Work</option>
+<option value="idea">Idea</option>
+<option value="era">Era</option>
+</select></div>
+<div class="field"><label>Year</label><input type="text" id="m-year" placeholder="2003"/></div>
+<div class="field"><label>Month</label><select id="m-month"><option value="">—</option><option value="1">Jan</option><option value="2">Feb</option><option value="3">Mar</option><option value="4">Apr</option><option value="5">May</option><option value="6">Jun</option><option value="7">Jul</option><option value="8">Aug</option><option value="9">Sep</option><option value="10">Oct</option><option value="11">Nov</option><option value="12">Dec</option></select></div>
+<div class="field"><label>Day</label><input type="number" id="m-day" min="1" max="31" placeholder="—"/></div>
+</div>
+<div class="field" id="f-summary-row"><label>Summary</label><textarea id="m-summary" placeholder="Sensory if you can. Multi-line OK."></textarea></div>
+<div class="field" id="f-mood-row"><label>Mood <span id="m-mood-num" style="color:var(--accent);font-family:var(--mono)">0</span></label><input type="range" id="m-mood" min="-2" max="2" step="1" value="0"/><div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:0.6rem;color:var(--dim);margin-top:2px"><span>heavy</span><span>neutral</span><span>light</span></div></div>
+<div class="field" id="f-recur-row"><label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" id="m-recurring"/> Recurring yearly (birthdays / anniversaries)</label></div>
+<div class="field" id="f-geo-row"><label>Coordinates</label><div style="display:flex;gap:6px;align-items:center"><input type="text" id="m-geocode" placeholder="paste 'lat, lon' or a place name" style="flex:1"/><button class="topbtn" id="btn-geocode" title="Look up coordinates">FIND</button></div><div id="geocode-msg" style="font-family:var(--mono);font-size:0.66rem;color:var(--dim);margin-top:4px"></div></div>
+<div class="field" id="f-tags-row"><label>Tags (comma-separated)</label><input type="text" id="m-tags" placeholder="family, coast, early"/></div>
+<div class="field" id="link-fields" style="display:none">
+<label>Link target (existing fragment)</label>
+<select id="m-link-target"></select>
+<label style="margin-top:8px">Relation</label>
+<select id="m-link-type">
+<option value="with">With</option>
+<option value="at">At</option>
+<option value="inspired-by">Inspired-by</option>
+<option value="part-of">Part-of</option>
+</select>
+</div>
+<div class="field" id="share-fields" style="display:none">
+<label><input type="checkbox" id="share-encrypt" style="vertical-align:middle;margin-right:6px"/>Encrypt with passphrase (AES-GCM, PBKDF2 200k iter)</label>
+<input type="text" id="share-passphrase" placeholder="Passphrase (recipient needs this)" autocomplete="off" style="display:none;width:100%;font-family:var(--mono);font-size:0.78rem"/>
+<label style="margin-top:10px">Read-only share link (recipient sees this map; no upload of media)</label>
+<div id="share-link"></div>
+<label style="margin-top:8px">Includes</label>
+<div id="share-stats" style="font-family:var(--mono);font-size:0.7rem;color:var(--dim)"></div>
+<button class="topbtn" id="btn-share-regen" style="margin-top:8px">REGENERATE</button>
+</div>
+<div class="field" id="decrypt-fields" style="display:none">
+<label>This share link is encrypted</label>
+<div style="font-size:0.78rem;color:var(--dim);margin-bottom:8px">Enter the passphrase the sender gave you. Nothing leaves your browser.</div>
+<input type="text" id="decrypt-passphrase" placeholder="Passphrase" autocomplete="off" style="width:100%;font-family:var(--mono);font-size:0.86rem"/>
+<button class="topbtn" id="btn-decrypt" style="margin-top:10px;border-color:var(--accent);color:var(--accent)">UNLOCK</button>
+<div id="decrypt-msg" style="margin-top:8px;font-family:var(--mono);font-size:0.7rem;color:var(--dim)"></div>
+</div>
+<div class="field" id="connect-fields" style="display:none">
+<label>Local folder import (offline-first)</label>
+<div style="font-size:0.78rem;line-height:1.5;color:var(--dim);margin-bottom:10px">Point Amni-Life at a folder of photos. We parse the date (and GPS where present) out of EXIF, then create one event-fragment per image with the photo attached.</div>
+<button class="topbtn" id="btn-folder-modal" style="border-color:var(--accent);color:var(--accent)">PICK A PHOTO FOLDER…</button>
+<div id="folder-progress" style="margin-top:10px;font-family:var(--mono);font-size:0.72rem;color:var(--dim)"></div>
+<label style="margin-top:14px">Google Photos</label>
+<div style="font-size:0.78rem;line-height:1.5;color:var(--dim);margin-bottom:8px">Amni-Life is local-first — we don't run a server, so we can't ship a shared OAuth Client ID. Register your own (it's free, takes ~5 min): <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener" style="color:var(--accent)">Google Cloud Console → Credentials → OAuth 2.0 Client ID (Web)</a>. Add <code id="origin-hint" style="background:var(--bg);padding:1px 5px;border-radius:3px">this page's origin</code> as an authorized JS origin. Enable the Photos Library API. Paste the Client ID below.</div>
+<input type="text" id="gphotos-client-id" placeholder="1234567890-abc…apps.googleusercontent.com" style="width:100%;background:var(--bg);color:var(--fg);border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-family:var(--mono);font-size:0.74rem"/>
+<div style="display:flex;gap:6px;margin-top:8px">
+<button class="topbtn" id="btn-gphotos-save">SAVE ID</button>
+<button class="topbtn" id="btn-gphotos-connect">CONNECT</button>
+<button class="topbtn" id="btn-gphotos-import" disabled>IMPORT 50 RECENT</button>
+<button class="topbtn" id="btn-gphotos-disconnect">DISCONNECT</button>
+</div>
+<div id="gphotos-status" style="margin-top:8px;font-family:var(--mono);font-size:0.7rem;color:var(--dim)">not connected</div>
+<label style="margin-top:14px">Geocoding (OpenStreetMap)</label>
+<div style="font-size:0.78rem;line-height:1.5;color:var(--dim);margin-bottom:8px">When on, typing a place name into the year/month/day row of ADD/EDIT shows a "find coords" button. Queries are sent to <code style="background:var(--bg);padding:1px 5px;border-radius:3px">nominatim.openstreetmap.org</code> — that single domain sees the place name, nothing else. Off by default.</div>
+<label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:0.84rem"><input type="checkbox" id="geocoding-enabled"/> Enable OpenStreetMap geocoding</label>
+<label style="margin-top:14px">Coming soon</label>
+<div style="font-size:0.78rem;line-height:1.5;color:var(--dim)">Apple Photos export ZIP, Google Takeout JSON, Generic timeline JSON, P2P encrypted sharing, multi-device sync.</div>
+</div>
+</div>
+<div id="modal-actions">
+<button class="topbtn" id="modal-cancel">CANCEL</button>
+<button class="topbtn" id="modal-save" style="border-color:var(--accent);color:var(--accent)">SAVE</button>
+</div>
+</div>
+</div>
+<input type="file" id="file-input" accept="application/json,.json,text/csv,.csv,text/calendar,.ics" style="display:none"/>
+<input type="file" id="media-input" accept="image/*,video/*,audio/*" multiple style="display:none"/>
+<input type="file" id="folder-input" webkitdirectory directory multiple style="display:none"/>
+<div id="tooltip"></div>
+<div id="stats">—</div>
+<div id="toast"></div>
+</div>
+<script type="module" src="main.js"></script>
+<script>if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('./sw.js').catch(()=>{});});}</script>
+</body>
+</html>
