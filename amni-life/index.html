@@ -57,7 +57,7 @@
 <button class="topbtn" id="btn-connect" title="Connect Google Photos / external timeline">CONNECT</button>
 <button class="topbtn" id="btn-install" title="Install Amni-Life as an app">INSTALL</button>
 <button class="topbtn" id="btn-share" title="Share map as link">SHARE</button>
-<div id="export-wrap" style="position:relative;display:inline-block"><button class="topbtn" id="btn-export" title="Export your map">EXPORT ▾</button><div id="export-menu" style="display:none;position:absolute;top:100%;left:0;background:var(--bg2);border:1px solid var(--accent);border-radius:6px;margin-top:4px;z-index:20;min-width:180px;box-shadow:var(--shadow);overflow:hidden"><button class="export-opt" id="exp-json" style="display:block;width:100%;text-align:left;background:none;border:none;color:var(--fg);padding:9px 14px;font-family:var(--mono);font-size:0.7rem;cursor:pointer">JSON · full backup</button><button class="export-opt" id="exp-ics" style="display:block;width:100%;text-align:left;background:none;border:none;color:var(--fg);padding:9px 14px;font-family:var(--mono);font-size:0.7rem;cursor:pointer">iCal · .ics calendar</button></div></div>
+<div id="export-wrap" style="position:relative;display:inline-block"><button class="topbtn" id="btn-export" title="Export your map">EXPORT ▾</button><div id="export-menu" style="display:none;position:absolute;top:100%;left:0;background:var(--bg2);border:1px solid var(--accent);border-radius:6px;margin-top:4px;z-index:20;min-width:180px;box-shadow:var(--shadow);overflow:hidden"><button class="export-opt" id="exp-json" style="display:block;width:100%;text-align:left;background:none;border:none;color:var(--fg);padding:9px 14px;font-family:var(--mono);font-size:0.7rem;cursor:pointer">JSON · full backup</button><button class="export-opt" id="exp-ics" style="display:block;width:100%;text-align:left;background:none;border:none;color:var(--fg);padding:9px 14px;font-family:var(--mono);font-size:0.7rem;cursor:pointer">iCal · .ics calendar</button><button class="export-opt" id="exp-csv" style="display:block;width:100%;text-align:left;background:none;border:none;color:var(--fg);padding:9px 14px;font-family:var(--mono);font-size:0.7rem;cursor:pointer">CSV · spreadsheet</button></div></div>
 <button class="topbtn" id="btn-import" title="Import JSON">IMPORT</button>
 <button class="topbtn" id="btn-reset" title="Reset to sample">RESET</button>
 <button class="topbtn" id="btn-edges" title="Toggle edges (E)">EDGES</button>
@@ -74,6 +74,8 @@
 <button class="topbtn" id="btn-wall" title="Photo wall — every media item at a glance">WALL</button>
 <button class="topbtn" id="btn-narrate" title="Speak titles + summaries during tour">🔇 NARRATE</button>
 <button class="topbtn" id="btn-sound" title="Subtle chimes on select / save / view switch">🔇 SOUND</button>
+<button class="topbtn" id="btn-scrub" title="Time scrubber — drag through the years to see your map grow">⏱ SCRUB</button>
+<button class="topbtn" id="btn-focus" title="Focus mode — hide all UI for clean screenshots (F)">○ FOCUS</button>
 </div>
 <div id="left-rail">
 <div id="filters"></div>
@@ -192,6 +194,7 @@ Drag to orbit · scroll to zoom · right-click to pan.
 <div id="modal">
 <div id="modal-head"><span id="modal-title">EDIT FRAGMENT</span><button class="topbtn" id="modal-close">×</button></div>
 <div id="modal-body">
+<div id="template-row" style="display:none"><div style="font-family:var(--mono);font-size:0.62rem;color:var(--dim);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:5px">Quick start</div><div id="template-chips"></div></div>
 <div class="field" id="f-title-row"><label>Title</label><input type="text" id="m-title" placeholder="e.g. First memory of the ocean"/></div>
 <div class="row3" id="f-kindyear-row">
 <div class="field"><label>Kind</label><select id="m-kind">
@@ -266,6 +269,8 @@ Drag to orbit · scroll to zoom · right-click to pan.
 </div>
 </div>
 </div>
+<div id="scrubber-bar"><button class="scrub-btn" id="scrub-play" title="Play / pause">▶</button><span id="scrub-year-label">—</span><input type="range" id="scrub-range" min="1900" max="2100" value="1900"/><span id="scrub-year-end" style="font-family:var(--mono);font-size:0.68rem;color:var(--dim)">—</span><button class="scrub-btn" id="scrub-speed" title="Playback speed">×1</button><button class="scrub-btn" id="scrub-close" title="Close scrubber">×</button></div>
+<div id="focus-hint">Press <kbd style="background:var(--bg);padding:1px 6px;border-radius:3px;font-family:var(--mono)">F</kbd> or <kbd style="background:var(--bg);padding:1px 6px;border-radius:3px;font-family:var(--mono)">Esc</kbd> to exit focus mode</div>
 <input type="file" id="file-input" accept="application/json,.json,text/csv,.csv,text/calendar,.ics" style="display:none"/>
 <input type="file" id="media-input" accept="image/*,video/*,audio/*" multiple style="display:none"/>
 <input type="file" id="folder-input" webkitdirectory directory multiple style="display:none"/>

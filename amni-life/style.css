@@ -359,3 +359,19 @@ input[type=text]:focus{outline:none;border-color:var(--accent)}
   .topbtn{padding:6px 8px;font-size:0.66rem}
   #prompt-bar{max-width:calc(100vw - 28px);bottom:8px}
 }
+#scrubber-bar{position:fixed;bottom:0;left:0;right:0;height:52px;background:var(--panel);border-top:1px solid var(--border);backdrop-filter:blur(14px);z-index:8;display:none;align-items:center;gap:12px;padding:0 20px}
+#scrubber-bar.show{display:flex}
+#scrub-range{flex:1;min-width:80px;-webkit-appearance:none;appearance:none;height:4px;background:var(--border);border-radius:2px;cursor:pointer;outline:none}
+#scrub-range::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:18px;height:18px;border-radius:50%;background:var(--accent2);border:2px solid var(--bg2);cursor:pointer}
+#scrub-range::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--accent2);border:2px solid var(--bg2);cursor:pointer}
+.scrub-btn{background:var(--bg2);border:1px solid var(--border);color:var(--fg);padding:5px 10px;border-radius:6px;cursor:pointer;font-family:var(--mono);font-size:0.72rem;flex-shrink:0}
+.scrub-btn:hover{border-color:var(--accent2);color:var(--accent2)}
+#scrub-year-label{font-family:var(--mono);font-size:1.15rem;font-weight:700;color:var(--accent2);min-width:54px;text-align:center;letter-spacing:0.08em;font-variant-numeric:tabular-nums}
+#template-row{margin-bottom:14px}
+#template-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.tpl-chip{background:var(--bg);border:1px solid var(--border);color:var(--dim);padding:5px 11px;border-radius:16px;cursor:pointer;font-family:var(--mono);font-size:0.68rem;letter-spacing:0.04em;transition:all 0.12s}
+.tpl-chip:hover,.tpl-chip.active{border-color:var(--accent);color:var(--accent);background:rgba(124,196,255,0.08)}
+.tpl-chip>*{pointer-events:none}
+#focus-hint{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--panel);border:1px solid var(--border);border-radius:20px;padding:7px 16px;font-family:var(--mono);font-size:0.68rem;color:var(--dim);backdrop-filter:blur(10px);z-index:4;display:none;white-space:nowrap;letter-spacing:0.04em}
+#focus-hint.show{display:block}
+body.focus-mode #topbar,body.focus-mode #left-rail,body.focus-mode #legend,body.focus-mode #stats,body.focus-mode #minimap,body.focus-mode #backup-banner,body.focus-mode #otd,body.focus-mode #prompt-bar,body.focus-mode #scrubber-bar{display:none!important}

@@ -61,6 +61,10 @@ let linking = null;
 const UNDO_LIMIT = 30;
 let undoStack = [], redoStack = [], lastSnapshot = null;
 let narrating = false;
+let focusMode = false;
+let scrubYear = null, scrubActive = false, scrubPlaying = false, scrubPlayTimer = null, scrubSpeedIdx = 0;
+const SCRUB_SPEEDS = [400,150,60];
+const FRAG_TEMPLATES = [{label:'⚡ Moment',kind:'event',tags:'memory'},{label:'👤 Person',kind:'person',tags:'people'},{label:'📍 Place',kind:'place',tags:'travel'},{label:'🏆 Milestone',kind:'event',tags:'milestone'},{label:'🎨 Work',kind:'work',tags:'creative'},{label:'💡 Idea',kind:'idea',tags:'insight'},{label:'📅 Era',kind:'era',tags:''}];
 let multiSelected = new Set();
 let pathHighlight = new Set(), pathEdges = new Set();
 const WELCOME_KEY = 'amni-life-welcome-v1';
@@ -811,6 +815,7 @@ const HELP_KEYS = [
         ['T','Cycle theme'],
         ['E','Toggle edges'],
         ['S','Toggle auto-spin'],
+        ['F','Focus mode — hide all UI for screenshots'],
         ['Ctrl+/','Show this cheatsheet']
     ]}
 ];
@@ -1854,6 +1859,7 @@ function buildPoints() {
     const col = new Float32Array(n * 3);
     const siz = new Float32Array(n);
     const hi = new Float32Array(n);
+    const alpha = new Float32Array(n).fill(1.0);
     const src = positions[currentView] || positions.constellation;
     for (let i = 0; i < n; i++) {
         pos[i*3] = src[i].x; pos[i*3+1] = src[i].y; pos[i*3+2] = src[i].z;
@@ -1861,17 +1867,19 @@ function buildPoints() {
         col[i*3] = c.r; col[i*3+1] = c.g; col[i*3+2] = c.b;
         siz[i] = (KIND_SIZE[fragments[i].kind] || 1.0) * (isVisible(i) ? 1.0 : 0.0);
         hi[i] = 0.0;
+        if (scrubYear !== null) { const y = fragments[i].year; alpha[i] = (!y || y <= scrubYear) ? 1.0 : 0.14; }
     }
     geom.setAttribute('position', new THREE.BufferAttribute(pos, 3));
     geom.setAttribute('color', new THREE.BufferAttribute(col, 3));
     geom.setAttribute('size', new THREE.BufferAttribute(siz, 1));
     geom.setAttribute('aHi', new THREE.BufferAttribute(hi, 1));
+    geom.setAttribute('aAlpha', new THREE.BufferAttribute(alpha, 1));
     const themeMul = (parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--canvas-mul')) || 1.0) * userDotSize;
     const isLight = document.documentElement.getAttribute('data-theme') === 'light';
     const mat = new THREE.ShaderMaterial({
         uniforms: { uMap: { value: makeSpriteTexture() }, uPixelRatio: { value: window.devicePixelRatio || 1 }, uTime: { value: 0 }, uMul: { value: themeMul } },
-        vertexShader: `attribute float size;attribute float aHi;varying vec3 vColor;varying float vHi;uniform float uPixelRatio;uniform float uMul;void main(){vColor=color;vHi=aHi;vec4 mv=modelViewMatrix*vec4(position,1.0);float boost=1.0+aHi*0.9;gl_PointSize=size*900.0*uPixelRatio*boost*uMul/(-mv.z);gl_Position=projectionMatrix*mv;}`,
-        fragmentShader: `varying vec3 vColor;varying float vHi;uniform sampler2D uMap;void main(){vec4 t=texture2D(uMap,gl_PointCoord);if(t.a<0.04)discard;vec3 col=vColor*(1.0+vHi*0.6);gl_FragColor=vec4(col,t.a);}`,
+        vertexShader: `attribute float size;attribute float aHi;attribute float aAlpha;varying vec3 vColor;varying float vHi;varying float vAlpha;uniform float uPixelRatio;uniform float uMul;void main(){vColor=color;vHi=aHi;vAlpha=aAlpha;vec4 mv=modelViewMatrix*vec4(position,1.0);float boost=1.0+aHi*0.9;gl_PointSize=size*900.0*uPixelRatio*boost*uMul/(-mv.z);gl_Position=projectionMatrix*mv;}`,
+        fragmentShader: `varying vec3 vColor;varying float vHi;varying float vAlpha;uniform sampler2D uMap;void main(){vec4 t=texture2D(uMap,gl_PointCoord);if(t.a<0.04)discard;vec3 col=vColor*(1.0+vHi*0.6);gl_FragColor=vec4(col,t.a*vAlpha);}`,
         vertexColors: true, transparent: true, depthWrite: false, blending: isLight ? THREE.NormalBlending : THREE.AdditiveBlending
     });
     pointsMesh = new THREE.Points(geom, mat);
@@ -1886,6 +1894,68 @@ function clearHilites() {
     if (!pointsMesh) return;
     const a = pointsMesh.geometry.attributes.aHi;
     a.array.fill(0); a.needsUpdate = true;
+}
+function updateScrubAlpha() {
+    if (!pointsMesh) return;
+    const aa = pointsMesh.geometry.attributes.aAlpha; if (!aa) return;
+    for (let i = 0; i < fragments.length; i++) { const y = fragments[i].year; aa.array[i] = (scrubYear === null || !y || y <= scrubYear) ? 1.0 : 0.14; }
+    aa.needsUpdate = true;
+}
+function resetScrubAlpha() {
+    if (!pointsMesh) return;
+    const aa = pointsMesh.geometry.attributes.aAlpha; if (!aa) return;
+    aa.array.fill(1.0); aa.needsUpdate = true;
+}
+function toggleScrubber() {
+    scrubActive = !scrubActive;
+    $('scrubber-bar').classList.toggle('show', scrubActive);
+    const btn = $('btn-scrub');
+    if (btn) { btn.style.borderColor = scrubActive ? 'var(--accent2)' : ''; btn.style.color = scrubActive ? 'var(--accent2)' : ''; }
+    if (scrubActive) {
+        $('scrub-range').min = yearMin; $('scrub-range').max = yearMax; $('scrub-range').value = yearMin;
+        $('scrub-year-label').textContent = yearMin; $('scrub-year-end').textContent = yearMax;
+        scrubYear = yearMin; updateScrubAlpha();
+    } else {
+        if (scrubPlayTimer) { clearInterval(scrubPlayTimer); scrubPlayTimer = null; scrubPlaying = false; $('scrub-play').textContent = '▶'; }
+        scrubYear = null; resetScrubAlpha();
+    }
+    snd('view');
+}
+function scrubPlayPause() {
+    scrubPlaying = !scrubPlaying;
+    $('scrub-play').textContent = scrubPlaying ? '⏸' : '▶';
+    if (scrubPlaying) {
+        scrubPlayTimer = setInterval(() => {
+            const cur = parseInt($('scrub-range').value, 10);
+            if (cur >= yearMax) { scrubPlaying = false; $('scrub-play').textContent = '▶'; clearInterval(scrubPlayTimer); scrubPlayTimer = null; return; }
+            const next = cur + 1; $('scrub-range').value = next; $('scrub-year-label').textContent = next; scrubYear = next; updateScrubAlpha();
+        }, SCRUB_SPEEDS[scrubSpeedIdx]);
+    } else { clearInterval(scrubPlayTimer); scrubPlayTimer = null; }
+}
+function cycleScrubSpeed() {
+    if (scrubPlaying) { clearInterval(scrubPlayTimer); scrubPlayTimer = null; }
+    scrubSpeedIdx = (scrubSpeedIdx + 1) % SCRUB_SPEEDS.length;
+    const labels = ['×1','×2','×5'];
+    $('scrub-speed').textContent = labels[scrubSpeedIdx];
+    if (scrubPlaying) { scrubPlaying = false; scrubPlayPause(); }
+}
+function toggleFocus() {
+    focusMode = !focusMode;
+    document.body.classList.toggle('focus-mode', focusMode);
+    $('focus-hint').classList.toggle('show', focusMode);
+    const btn = $('btn-focus');
+    if (btn) { btn.style.borderColor = focusMode ? 'var(--accent)' : ''; btn.style.color = focusMode ? 'var(--accent)' : ''; btn.textContent = focusMode ? '◉ FOCUS' : '○ FOCUS'; }
+    toast(focusMode ? 'Focus mode · press F or Esc to exit' : 'Focus mode off');
+}
+function exportCSV() {
+    const sep = ',', q = v => (typeof v === 'string' && (v.includes(sep) || v.includes('"') || v.includes('\n'))) ? `"${v.replace(/"/g,'""')}"` : (v === null || v === undefined ? '' : v);
+    const hdr = ['id','title','kind','year','month','day','tags','summary','mood','lat','lon','connections','media'];
+    const rows = fragments.map(f => [f.id,f.title||'',f.kind,f.year||'',f.month||'',f.day||'',(f.tags||[]).join(';'),(f.summary||'').replace(/\n/g,' '),typeof f.mood==='number'?f.mood:'',typeof f.lat==='number'?f.lat:'',typeof f.lon==='number'?f.lon:'',(f.connections||[]).length,(f.media||[]).length].map(q));
+    const csv = [hdr,...rows].map(r=>r.join(sep)).join('\n');
+    const blob = new Blob(['﻿'+csv],{type:'text/csv;charset=utf-8;'});
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'amni-life.csv'; a.click();
+    setTimeout(()=>URL.revokeObjectURL(a.href),60000);
+    toast('CSV exported · '+fragments.length+' rows');
 }
 function buildEdges() {
     if (edgesMesh) { scene.remove(edgesMesh); edgesMesh.geometry.dispose(); edgesMesh.material.dispose(); edgesMesh = null; }
@@ -2577,6 +2647,16 @@ function openAdd() {
     editGeoLat = null; editGeoLon = null;
     showOnly(['f-title-row','f-kindyear-row','f-summary-row','f-tags-row','f-mood-row','f-recur-row','f-geo-row']);
     $('modal-save').style.display = '';
+    const trow = $('template-row');
+    if (trow) {
+        trow.style.display = '';
+        const chips = $('template-chips'); chips.innerHTML = '';
+        FRAG_TEMPLATES.forEach(t => {
+            const c = document.createElement('button'); c.className = 'tpl-chip'; c.textContent = t.label;
+            c.onclick = () => { $('m-kind').value = t.kind; if (t.tags && !$('m-tags').value) $('m-tags').value = t.tags; chips.querySelectorAll('.tpl-chip').forEach(x => x.classList.remove('active')); c.classList.add('active'); $('m-title').focus(); };
+            chips.appendChild(c);
+        });
+    }
     openModal('ADD FRAGMENT');
 }
 function openEdit() {
@@ -2597,6 +2677,7 @@ function openEdit() {
     $('geocode-msg').textContent = '';
     showOnly(['f-title-row','f-kindyear-row','f-summary-row','f-tags-row','f-mood-row','f-recur-row','f-geo-row']);
     $('modal-save').style.display = '';
+    const etrow = $('template-row'); if (etrow) etrow.style.display = 'none';
     openModal('EDIT FRAGMENT');
 }
 function openLink() {
@@ -3217,7 +3298,7 @@ function updateStats() {
     const filterStr = (filtCount === fragments.length) ? '' : ` (${filtCount} shown)`;
     const geoCount = fragments.filter(f => fragmentLatLon(f)).length;
     const geoStr = geoCount > 0 ? ` · ${geoCount} geo` : '';
-    $('stats').textContent = `${fragments.length} fragments${filterStr}${geoStr} · ${edges.length} connections · wasm ${version()} · v0.25.0`;
+    $('stats').textContent = `${fragments.length} fragments${filterStr}${geoStr} · ${edges.length} connections · wasm ${version()} · v0.26.0`;
 }
 function setupUI() {
     $('view-select').onchange = e => setView(e.target.value);
@@ -3291,6 +3372,13 @@ function setupUI() {
     document.addEventListener('click', (e) => { const m = $('export-menu'); if (m && !$('export-wrap').contains(e.target)) m.style.display = 'none'; });
     $('exp-json').onclick = () => { $('export-menu').style.display = 'none'; exportJSON(); };
     $('exp-ics').onclick = () => { $('export-menu').style.display = 'none'; exportICS(); };
+    $('exp-csv').onclick = () => { $('export-menu').style.display = 'none'; exportCSV(); };
+    $('btn-scrub').onclick = toggleScrubber;
+    $('btn-focus').onclick = toggleFocus;
+    $('scrub-play').onclick = scrubPlayPause;
+    $('scrub-speed').onclick = cycleScrubSpeed;
+    $('scrub-close').onclick = toggleScrubber;
+    $('scrub-range').oninput = e => { const v = parseInt(e.target.value,10); $('scrub-year-label').textContent = v; scrubYear = v; updateScrubAlpha(); };
     $('btn-raw').onclick = showRawJSON;
     $('btn-deeplink').onclick = copyDeepLink;
     $('qr-close').onclick = closeQRPanel;
@@ -3374,7 +3462,7 @@ function setupUI() {
     $('search').addEventListener('focus', e => { if (e.target.value.trim()) renderSearchResults(e.target.value); });
     $('modal-bg').addEventListener('click', e => { if (e.target.id === 'modal-bg') closeModal(); });
     document.addEventListener('keydown', e => {
-        if (e.key === 'Escape') { if ($('lightbox').classList.contains('open')) { closeLightbox(); return; } if ($('wall').classList.contains('open')) { closeWall(); return; } if (linking) { cancelLink(); return; } if (isTouring()) { stopTour(); return; } closeModal(); selectFragment(-1); }
+        if (e.key === 'Escape') { if (focusMode) { toggleFocus(); return; } if ($('lightbox').classList.contains('open')) { closeLightbox(); return; } if ($('wall').classList.contains('open')) { closeWall(); return; } if (linking) { cancelLink(); return; } if (isTouring()) { stopTour(); return; } closeModal(); selectFragment(-1); }
         if ($('lightbox').classList.contains('open')) {
             if (e.key === 'ArrowLeft') { lightboxStep(-1); return; }
             if (e.key === 'ArrowRight') { lightboxStep(1); return; }
@@ -3394,6 +3482,7 @@ function setupUI() {
         if (e.key === 'n') openAdd();
         if (e.key === 'e') $('btn-edges').click();
         if (e.key === 's') $('btn-spin').click();
+        if (e.key === 'f') toggleFocus();
     });
     renderer.domElement.addEventListener('pointermove', onPointer);
     renderer.domElement.addEventListener('pointerdown', onPointerDown);
