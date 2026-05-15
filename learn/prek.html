@@ -28,8 +28,39 @@
 <style>
 .crumbs{color:var(--dim);font-size:.75rem;letter-spacing:1px;text-transform:uppercase;margin:1rem 0 0;padding:0 1.5rem}
 .crumbs a{color:var(--dim)}
-.crumbs a:hover{color:var(--accent)}
-.age-tag{display:inline-block;padding:3px 10px;background:var(--accent-dim);color:var(--accent);border-radius:999px;font-size:.7rem;letter-spacing:1px;margin-top:.6rem;text-transform:uppercase}
+.crumbs a:hover{color:#2ecc71}
+.age-tag{display:inline-block;padding:3px 10px;background:rgba(46,204,113,0.15);color:#2ecc71;border-radius:999px;font-size:.7rem;letter-spacing:1px;margin-top:.6rem;text-transform:uppercase}
+.deep-section{max-width:880px;margin:2.5rem auto 1rem;padding:0 1.5rem}
+.deep-dive{background:linear-gradient(180deg,rgba(46,204,113,0.05),rgba(46,204,113,0.01));border:1px solid rgba(46,204,113,0.25);border-radius:6px;padding:0}
+.deep-dive>summary{cursor:pointer;list-style:none;padding:1.1rem 1.4rem;display:flex;align-items:center;gap:.85rem;flex-wrap:wrap;border-radius:6px;transition:background .15s}
+.deep-dive>summary::-webkit-details-marker{display:none}
+.deep-dive>summary:hover{background:rgba(46,204,113,0.06)}
+.deep-dive[open]>summary{border-bottom:1px solid rgba(46,204,113,0.2);border-radius:6px 6px 0 0}
+.deep-icon{color:#2ecc71;font-size:1.1rem;line-height:1}
+.deep-label{color:var(--text);letter-spacing:2px;font-size:.85rem;text-transform:uppercase;font-weight:700}
+.deep-hint{color:var(--dim);font-size:.7rem;letter-spacing:.5px;flex-basis:100%;margin-top:.15rem}
+.deep-body{padding:1.4rem 1.6rem 1.8rem;display:grid;gap:1.6rem}
+.deep-block h3{color:#2ecc71;letter-spacing:1.5px;font-size:.82rem;text-transform:uppercase;margin:0 0 .7rem;border-bottom:1px solid rgba(46,204,113,0.2);padding-bottom:.4rem}
+.deep-block p{color:var(--text);font-size:.85rem;line-height:1.75;margin:0 0 .8rem}
+.deep-block p:last-child{margin-bottom:0}
+.deep-block code{background:rgba(46,204,113,0.1);padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--text)}
+.step-list{list-style:none;padding:0;margin:0;display:grid;gap:.6rem}
+.step-list li{display:flex;gap:.8rem;align-items:flex-start;font-size:.85rem;line-height:1.7;color:var(--text)}
+.step-n{flex-shrink:0;width:24px;height:24px;border-radius:50%;background:#2ecc71;color:var(--bg);display:inline-flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;font-family:'JetBrains Mono',monospace}
+.pitfall-list{list-style:none;padding:0;margin:0;display:grid;gap:.7rem}
+.pitfall-list li{display:flex;flex-direction:column;gap:.2rem;padding:.6rem .9rem;background:rgba(255,68,68,0.05);border-left:3px solid #ff4444;border-radius:0 3px 3px 0}
+.pitfall-list li strong{color:#ff8866;font-size:.78rem;letter-spacing:.5px;text-transform:uppercase}
+.pitfall-list li span{color:var(--text);font-size:.83rem;line-height:1.65}
+.milestone-list{list-style:none;padding:0;margin:0;display:grid;gap:.6rem}
+.milestone-list li{display:flex;gap:.9rem;align-items:flex-start;padding:.55rem .85rem;background:rgba(46,204,113,0.04);border-left:3px solid #2ecc71;border-radius:0 3px 3px 0}
+.milestone-list li strong{flex-shrink:0;color:#2ecc71;font-family:'JetBrains Mono',monospace;font-size:.78rem;min-width:60px}
+.milestone-list li span{color:var(--text);font-size:.83rem;line-height:1.65}
+.faq-q{margin-bottom:.45rem;border:1px solid rgba(255,255,255,.06);border-radius:4px;background:rgba(255,255,255,.015)}
+.faq-q>summary{padding:.7rem .95rem;cursor:pointer;color:var(--text);font-size:.85rem;font-weight:600;list-style:none}
+.faq-q>summary::-webkit-details-marker{display:none}
+.faq-q>summary::before{content:'+';display:inline-block;margin-right:.55rem;color:#2ecc71;font-weight:700;width:.85em}
+.faq-q[open]>summary::before{content:'–'}
+.faq-q>div{padding:0 .95rem .85rem 1.8rem;color:var(--dim);font-size:.83rem;line-height:1.7}
 </style>
 </head>
 <body class="theme-learn">
@@ -46,7 +77,6 @@
 <a href="../amni-calc.html">AMNI-CALC</a>
 <a href="../amni-explore.html">AMNI-EXPLORE</a>
 <a href="../amni-learn.html" class="active">AMNI-LEARN</a>
-<a href="../amni-llm.html">AMNI-LLM</a>
 <a href="../amni-connect.html">AMNI-CONNECT</a>
 <a href="../amni-code.html">AMNI-CODE</a>
 <a href="../amni-haven.html">AMNI-HAVEN</a>
@@ -68,7 +98,7 @@
 <p class="desc">CONNECT-THE-DOTS, TRACING, BASIC MATH, MATCHING, TYPING</p>
 <span class="age-tag">AGES 3-5</span>
 <div style="margin-top:1.5rem">
-<a href="./" class="btn btn-primary" style="background:var(--accent);color:var(--bg);box-shadow:0 0 10px var(--accent)">OPEN AMNI-LEARN &rarr;</a>
+<a href="./" class="btn btn-primary" style="background:#2ecc71;color:var(--bg);box-shadow:0 0 10px #2ecc71">OPEN AMNI-LEARN &rarr;</a>
 </div>
 </div>
 <section>
@@ -85,17 +115,19 @@
 </section>
 <section>
 <h2>GAMES IN THIS CATEGORY</h2>
-<div class="card-grid"><div class="card"><h3 style="color:var(--accent)">CONNECT THE DOTS</h3><p>Draw by following numbers in order</p></div><div class="card"><h3 style="color:var(--accent)">TRACING & ART</h3><p>Trace letters and create simple drawings</p></div><div class="card"><h3 style="color:var(--accent)">MATH BASICS</h3><p>Addition, subtraction, simple counting</p></div><div class="card"><h3 style="color:var(--accent)">MATCHING</h3><p>Find hidden pairs by memory</p></div><div class="card"><h3 style="color:var(--accent)">TYPING FUN</h3><p>Learn keyboard letter positions</p></div></div>
+<div class="card-grid"><div class="card"><h3 style="color:#2ecc71">CONNECT THE DOTS</h3><p>Draw by following numbers in order</p></div><div class="card"><h3 style="color:#2ecc71">TRACING & ART</h3><p>Trace letters and create simple drawings</p></div><div class="card"><h3 style="color:#2ecc71">MATH BASICS</h3><p>Addition, subtraction, simple counting</p></div><div class="card"><h3 style="color:#2ecc71">MATCHING</h3><p>Find hidden pairs by memory</p></div><div class="card"><h3 style="color:#2ecc71">TYPING FUN</h3><p>Learn keyboard letter positions</p></div></div>
 </section>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"My 4-year-old gets frustrated when an answer is wrong. What should I do?","acceptedAnswer":{"@type":"Answer","text":"Sit with them the first few sessions and verbally model the activity (&quot;Let&apos;s look for the matching cherry... here it is!&quot;). The goal is for the child to internalize the loop &mdash; try, observe feedback, retry &mdash; without emotional weight on individual wrong answers. Once that&apos;s established, they can play independently."}},{"@type":"Question","name":"Are tablet games bad for this age?","acceptedAnswer":{"@type":"Answer","text":"Research is mixed but converging on: short structured-content sessions are net positive for early literacy and math; long unstructured screen time is net negative for sleep and attention. Amni-Learn is designed for short sessions (3&ndash;15 minutes per game) with explicit educational structure &mdash; the use case research generally supports."}},{"@type":"Question","name":"How do I know if my child is on track?","acceptedAnswer":{"@type":"Answer","text":"The milestones above are based on typical development; the range of normal is wide. If a 5-year-old recognizes some letters and counts to 10 with effort, they are within range. If a 5-year-old shows no letter recognition and counts only to 3, mention it at the next pediatric visit &mdash; not as alarm, but as a data point worth discussing."}},{"@type":"Question","name":"My child only wants to play one game. Should I push variety?","acceptedAnswer":{"@type":"Answer","text":"Up to a point. Repetition of a favored activity is how mastery happens at this age; let them repeat. After the activity is fully mastered (no errors for a week of sessions), gently introduce an adjacent game. Variety for variety&apos;s sake at age 3 doesn&apos;t pay off."}}]}</script>
+<section class="deep-section"><details class="deep-dive"><summary><span class="deep-icon">&#9776;</span><span class="deep-label">Pre-K Parent & Teacher Guide</span><span class="deep-hint">Click to expand &mdash; example lesson, parent guide, age milestones, FAQ</span></summary><div class="deep-body"><div class="deep-block deep-lesson"><h3>A 15-Minute Pre-K Session Plan</h3><ol class="step-list"><li><span class="step-n">1</span><span>Open with Tracing & Art (3 minutes). Letter formation works best while attention is fresh. Pick a letter from the child&apos;s name first &mdash; familiarity boosts engagement.</span></li><li><span class="step-n">2</span><span>Switch to Math Basics (5 minutes). Aim for two to three rounds at the lowest difficulty. Children at this age learn quantity-symbol mapping by repetition; pushing harder problems too soon causes frustration, not learning.</span></li><li><span class="step-n">3</span><span>Connect the Dots break (3 minutes). The reveal-the-picture reward is a natural motivator and the number sequence becomes muscle memory.</span></li><li><span class="step-n">4</span><span>Close with Matching (4 minutes). Working memory is improved by short sessions far more than long ones &mdash; stop while interest is still high.</span></li><li><span class="step-n">5</span><span>End with verbal praise tied to a specific accomplishment (&quot;You traced the B perfectly!&quot;) rather than generic (&quot;Good job&quot;). Specific praise reinforces the behavior; generic praise becomes background noise.</span></li></ol></div><div class="deep-block deep-milestones"><h3>Pre-K Developmental Milestones</h3><ul class="milestone-list"><li><strong>Age 3</strong><span>Number recognition 1&ndash;5; can match shapes by color; holds a pencil with full-hand grip; recognizes own name.</span></li><li><strong>Age 4</strong><span>Counts to 10 verbally (recognition lags); can copy circles and crosses; recognizes most uppercase letters; matches pairs of pictures.</span></li><li><strong>Age 5</strong><span>Counts and identifies 1&ndash;10 by symbol; writes own name; recognizes lowercase letters; understands simple addition within 5; can follow 2&ndash;3 step instructions.</span></li><li><strong>After 5</strong><span>Ready for elementary-track games (reading, spelling, simple programming, two-digit math). Brain-cognitive games are still age-inappropriate &mdash; revisit at age 12+.</span></li></ul></div><div class="deep-block deep-pitfalls"><h3>Common Mistakes With Young Learners</h3><ul class="pitfall-list"><li><strong>Long sessions</strong><span>Pre-K attention spans average 8&ndash;15 minutes for structured activity. Pushing past 20 minutes burns out interest. Two 10-minute sessions beat one 20-minute session every time.</span></li><li><strong>Skipping immediate feedback</strong><span>Children at this age don&apos;t connect &quot;correct&quot; to an answer they gave several seconds ago. Every game in this pack flashes feedback within ~200 ms of the action &mdash; immediate enough to feel causal.</span></li><li><strong>Mixing letter case before either is mastered</strong><span>Children learn uppercase first (simpler shapes), then lowercase. Avoid mixed-case tracing or alphabet songs until uppercase is solid.</span></li><li><strong>Treating typing as &quot;not yet useful&quot;</strong><span>Motor learning peaks 3&ndash;7. Keyboard familiarity at 4 means muscle-memory typing by 8, two years ahead of children who start at 6. This is one of the highest-leverage early skills available, even for children who don&apos;t yet read.</span></li></ul></div><div class="deep-block deep-faq"><h3>Parent FAQ</h3><details class="faq-q"><summary>My 4-year-old gets frustrated when an answer is wrong. What should I do?</summary><div>Sit with them the first few sessions and verbally model the activity (&quot;Let&apos;s look for the matching cherry... here it is!&quot;). The goal is for the child to internalize the loop &mdash; try, observe feedback, retry &mdash; without emotional weight on individual wrong answers. Once that&apos;s established, they can play independently.</div></details><details class="faq-q"><summary>Are tablet games bad for this age?</summary><div>Research is mixed but converging on: short structured-content sessions are net positive for early literacy and math; long unstructured screen time is net negative for sleep and attention. Amni-Learn is designed for short sessions (3&ndash;15 minutes per game) with explicit educational structure &mdash; the use case research generally supports.</div></details><details class="faq-q"><summary>How do I know if my child is on track?</summary><div>The milestones above are based on typical development; the range of normal is wide. If a 5-year-old recognizes some letters and counts to 10 with effort, they are within range. If a 5-year-old shows no letter recognition and counts only to 3, mention it at the next pediatric visit &mdash; not as alarm, but as a data point worth discussing.</div></details><details class="faq-q"><summary>My child only wants to play one game. Should I push variety?</summary><div>Up to a point. Repetition of a favored activity is how mastery happens at this age; let them repeat. After the activity is fully mastered (no errors for a week of sessions), gently introduce an adjacent game. Variety for variety&apos;s sake at age 3 doesn&apos;t pay off.</div></details></div></div></details></section>
 <section>
 <h2>RELATED CATEGORIES</h2>
-<div class="card-grid"><a href="life-skills.html" class="card" style="text-decoration:none"><h3 style="color:var(--accent)">LIFE SKILLS</h3><p>Vacuuming, washing dishes, telling time, money math</p></a><a href="subjects.html" class="card" style="text-decoration:none"><h3 style="color:var(--accent)">SUBJECT QUIZZES</h3><p>Animals, music, reading & languages, science</p></a><a href="elementary.html" class="card" style="text-decoration:none"><h3 style="color:var(--accent)">ELEMENTARY ACTIVITY PACK</h3><p>Reflex Racer, Math Mountain, Block Mover, Sorting Hat, Word Bridge, Word Scramble, Memory Sequence, Pattern Puzzle, Geography, Color Sort, Gem Crush</p></a></div>
+<div class="card-grid"><a href="life-skills.html" class="card" style="text-decoration:none"><h3 style="color:#2ecc71">LIFE SKILLS</h3><p>Vacuuming, washing dishes, telling time, money math</p></a><a href="subjects.html" class="card" style="text-decoration:none"><h3 style="color:#2ecc71">SUBJECT QUIZZES</h3><p>Animals, music, reading & languages, science</p></a><a href="elementary.html" class="card" style="text-decoration:none"><h3 style="color:#2ecc71">ELEMENTARY ACTIVITY PACK</h3><p>Reflex Racer, Math Mountain, Block Mover, Sorting Hat, Word Bridge, Word Scramble, Memory Sequence, Pattern Puzzle, Geography, Color Sort, Gem Crush</p></a></div>
 </section>
 <section style="text-align:center">
 <h2>OPEN AMNI-LEARN</h2>
 <p style="color:var(--dim);margin-bottom:1.5rem;font-size:.9rem">No sign-up. No telemetry. Runs offline after first load.</p>
 <div class="cta-row" style="justify-content:center;gap:1rem;flex-wrap:wrap">
-<a href="./" class="btn btn-primary" style="background:var(--accent);color:var(--bg);box-shadow:0 0 10px var(--accent)">LAUNCH LEARN</a>
+<a href="./" class="btn btn-primary" style="background:#2ecc71;color:var(--bg);box-shadow:0 0 10px #2ecc71">LAUNCH LEARN</a>
 <a href="../amni-learn.html" class="btn btn-outline">ALL CATEGORIES</a>
 </div>
 </section>

@@ -1,5 +1,23 @@
 ﻿# Changelog 
 
+## [5.5.1] - 2026-05-15 - AdSense doorway remediation (learn SEO pages)
+- **Scope** — applied same deep-content treatment from v5.5.0 to the 11 `learn/<category>.html` SEO landing pages, which Google would have flagged as doorways alongside calc/* if v5.5.0 had shipped alone.
+- **Generator: `src/gen-learn-categories.js`** — added `renderDeep(c)` helper paralleling the calc generator, deep-block CSS (with green `#2ecc71` accent matching `body.theme-learn`), `deep[]` field per category with `lesson` / `milestones` / `pitfalls` / `faq` / `body` block types. New `milestones` block type emits age-banded developmental milestone lists.
+- **Per-category content** — 11 categories with substantive deep content tuned to audience: parent guidance for Pre-K through Elementary, teacher curriculum notes for Subjects and STEM Labs, clinical-research roots for Brain Exercise tasks, solving strategy for Logic Puzzles, history/strategy for Retro Arcade, idle-game psychology for Casual, self-study patterns for College Prep.
+- **Schema.org FAQPage** auto-emitted from FAQ block items (same pattern as calc).
+- **Page size delta** — pre-fix: ~250 words each. Post-fix: 939 (casual) to 1222 (prek) words per page; 16&ndash;20 KB. All pages comfortably above doorway threshold.
+- **Backups** — `backups/v5.5.0_learn_seo/`: `gen-learn-categories.js` + 11 original `learn/*.html`.
+- **Status** — site is now ready for AdSense reconsideration request submission. Both calc and learn SEO landing pages have substantive unique content.
+
+## [5.5.0] - 2026-05-14 - AdSense doorway remediation (calc SEO pages)
+- **Root cause** — Google AdSense flagged amni-scient.com for "Thin content with little or no added value." Diagnosed: 31 cookie-cutter `calc/<module>.html` pages (all exactly 124 lines, identical 5-section template, ~280 unique words each) matched Google's doorway-page definition. Same pattern in `learn/<module>.html` (11 pages, 119 lines each) but deferred per user direction.
+- **Generator overhaul** — `src/gen-calc-modules.js`: added `deep[]` field per module (`worked` / `procedure` / `pitfalls` / `physics` / `standards_detail` / `faq` / `table` blocks), `deepTitle` per module, and `renderDeep(m)` helper that emits a collapsed-by-default `<details class="deep-dive">` container between WHEN TO USE and RELATED MODULES sections. Schema.org `FAQPage` JSON-LD auto-extracted from `deep[].type==='faq'` items.
+- **Per-module content** — 31 modules now carry substantive unique deep content: worked numerical examples with inputs/steps/outputs, step-by-step design procedures, common pitfalls with engineering rationale, standards explainers beyond the bullet list, physics-link paragraphs, and engineer-FAQ Q&A pairs. Sections, ordering, and content vary per module so pages are no longer skeleton clones.
+- **Page size delta** — pre-fix: every page 124 lines / ~9 KB. Post-fix: 15.8–21.4 KB per page; word counts 728 (refs/equations index) to 1506 (bolts). High-traffic modules (bolts, stress, springs, fatigue, fluids, electrical, motors, NEC, echem) all exceed 1200 unique words.
+- **UX preserved** — deep content is wrapped in `<details>` collapsed by default, keeping calc-first user journey intact; Googlebot still indexes the content. CSS for deep blocks (`.deep-dive`, `.deep-block`, `.step-list`, `.pitfall-list`, `.faq-q`, `.deep-tbl`) added to generator template.
+- **Backups** — `backups/v5.5.0_calc_seo/gen-calc-modules.js.bak` + 31 original `calc/*.html` files preserved.
+- **Outstanding** — `learn/<category>.html` (11 doorway pages) still need treatment before AdSense reconsideration request. Pending user direction.
+
 ## [5.4.7] - 2026-05-01 - Safari/iOS module-tap fix
 - **Root cause** — every `.game-btn` and `.storybook-card` is a `<button>` with `display:flex` and `<span>` children (icon / text / desc). iOS Safari's hit-tester does not dispatch `click` to a flex-`<button>` when the tap lands on a flex *child* — taps fall through and the menu feels dead. The same buttons work fine on Chrome/Firefox/desktop Safari, which is why this slipped past local testing.
 - **Fix** — added `.game-btn > *, .storybook-card > * { pointer-events: none; }` so taps on the inner spans re-target the parent `<button>`, restoring `click` dispatch on iOS Safari. Existing handlers (`e.target.closest('.game-btn')` / `card.dataset.book`) keep working unchanged because they read from the button itself, not the span.

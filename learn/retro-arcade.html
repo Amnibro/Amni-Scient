@@ -28,8 +28,39 @@
 <style>
 .crumbs{color:var(--dim);font-size:.75rem;letter-spacing:1px;text-transform:uppercase;margin:1rem 0 0;padding:0 1.5rem}
 .crumbs a{color:var(--dim)}
-.crumbs a:hover{color:var(--accent)}
-.age-tag{display:inline-block;padding:3px 10px;background:var(--accent-dim);color:var(--accent);border-radius:999px;font-size:.7rem;letter-spacing:1px;margin-top:.6rem;text-transform:uppercase}
+.crumbs a:hover{color:#2ecc71}
+.age-tag{display:inline-block;padding:3px 10px;background:rgba(46,204,113,0.15);color:#2ecc71;border-radius:999px;font-size:.7rem;letter-spacing:1px;margin-top:.6rem;text-transform:uppercase}
+.deep-section{max-width:880px;margin:2.5rem auto 1rem;padding:0 1.5rem}
+.deep-dive{background:linear-gradient(180deg,rgba(46,204,113,0.05),rgba(46,204,113,0.01));border:1px solid rgba(46,204,113,0.25);border-radius:6px;padding:0}
+.deep-dive>summary{cursor:pointer;list-style:none;padding:1.1rem 1.4rem;display:flex;align-items:center;gap:.85rem;flex-wrap:wrap;border-radius:6px;transition:background .15s}
+.deep-dive>summary::-webkit-details-marker{display:none}
+.deep-dive>summary:hover{background:rgba(46,204,113,0.06)}
+.deep-dive[open]>summary{border-bottom:1px solid rgba(46,204,113,0.2);border-radius:6px 6px 0 0}
+.deep-icon{color:#2ecc71;font-size:1.1rem;line-height:1}
+.deep-label{color:var(--text);letter-spacing:2px;font-size:.85rem;text-transform:uppercase;font-weight:700}
+.deep-hint{color:var(--dim);font-size:.7rem;letter-spacing:.5px;flex-basis:100%;margin-top:.15rem}
+.deep-body{padding:1.4rem 1.6rem 1.8rem;display:grid;gap:1.6rem}
+.deep-block h3{color:#2ecc71;letter-spacing:1.5px;font-size:.82rem;text-transform:uppercase;margin:0 0 .7rem;border-bottom:1px solid rgba(46,204,113,0.2);padding-bottom:.4rem}
+.deep-block p{color:var(--text);font-size:.85rem;line-height:1.75;margin:0 0 .8rem}
+.deep-block p:last-child{margin-bottom:0}
+.deep-block code{background:rgba(46,204,113,0.1);padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--text)}
+.step-list{list-style:none;padding:0;margin:0;display:grid;gap:.6rem}
+.step-list li{display:flex;gap:.8rem;align-items:flex-start;font-size:.85rem;line-height:1.7;color:var(--text)}
+.step-n{flex-shrink:0;width:24px;height:24px;border-radius:50%;background:#2ecc71;color:var(--bg);display:inline-flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;font-family:'JetBrains Mono',monospace}
+.pitfall-list{list-style:none;padding:0;margin:0;display:grid;gap:.7rem}
+.pitfall-list li{display:flex;flex-direction:column;gap:.2rem;padding:.6rem .9rem;background:rgba(255,68,68,0.05);border-left:3px solid #ff4444;border-radius:0 3px 3px 0}
+.pitfall-list li strong{color:#ff8866;font-size:.78rem;letter-spacing:.5px;text-transform:uppercase}
+.pitfall-list li span{color:var(--text);font-size:.83rem;line-height:1.65}
+.milestone-list{list-style:none;padding:0;margin:0;display:grid;gap:.6rem}
+.milestone-list li{display:flex;gap:.9rem;align-items:flex-start;padding:.55rem .85rem;background:rgba(46,204,113,0.04);border-left:3px solid #2ecc71;border-radius:0 3px 3px 0}
+.milestone-list li strong{flex-shrink:0;color:#2ecc71;font-family:'JetBrains Mono',monospace;font-size:.78rem;min-width:60px}
+.milestone-list li span{color:var(--text);font-size:.83rem;line-height:1.65}
+.faq-q{margin-bottom:.45rem;border:1px solid rgba(255,255,255,.06);border-radius:4px;background:rgba(255,255,255,.015)}
+.faq-q>summary{padding:.7rem .95rem;cursor:pointer;color:var(--text);font-size:.85rem;font-weight:600;list-style:none}
+.faq-q>summary::-webkit-details-marker{display:none}
+.faq-q>summary::before{content:'+';display:inline-block;margin-right:.55rem;color:#2ecc71;font-weight:700;width:.85em}
+.faq-q[open]>summary::before{content:'–'}
+.faq-q>div{padding:0 .95rem .85rem 1.8rem;color:var(--dim);font-size:.83rem;line-height:1.7}
 </style>
 </head>
 <body class="theme-learn">
@@ -46,7 +77,6 @@
 <a href="../amni-calc.html">AMNI-CALC</a>
 <a href="../amni-explore.html">AMNI-EXPLORE</a>
 <a href="../amni-learn.html" class="active">AMNI-LEARN</a>
-<a href="../amni-llm.html">AMNI-LLM</a>
 <a href="../amni-connect.html">AMNI-CONNECT</a>
 <a href="../amni-code.html">AMNI-CODE</a>
 <a href="../amni-haven.html">AMNI-HAVEN</a>
@@ -68,7 +98,7 @@
 <p class="desc">SNAKE, BREAKOUT, PONG, SPACE INVADERS, MINESWEEPER, PIPE CONNECT, BLOCK DROP, FLAPPY JUMP</p>
 <span class="age-tag">AGES 8+</span>
 <div style="margin-top:1.5rem">
-<a href="./" class="btn btn-primary" style="background:var(--accent);color:var(--bg);box-shadow:0 0 10px var(--accent)">OPEN AMNI-LEARN &rarr;</a>
+<a href="./" class="btn btn-primary" style="background:#2ecc71;color:var(--bg);box-shadow:0 0 10px #2ecc71">OPEN AMNI-LEARN &rarr;</a>
 </div>
 </div>
 <section>
@@ -85,17 +115,19 @@
 </section>
 <section>
 <h2>GAMES IN THIS CATEGORY</h2>
-<div class="card-grid"><div class="card"><h3 style="color:var(--accent)">SNAKE</h3><p>Classic snake game</p></div><div class="card"><h3 style="color:var(--accent)">BREAKOUT</h3><p>Smash bricks with a paddle</p></div><div class="card"><h3 style="color:var(--accent)">PONG</h3><p>The original two-paddle arcade</p></div><div class="card"><h3 style="color:var(--accent)">SPACE INVADERS</h3><p>Defend earth from descending aliens</p></div><div class="card"><h3 style="color:var(--accent)">MINESWEEPER</h3><p>Deduce mine locations</p></div><div class="card"><h3 style="color:var(--accent)">PIPE CONNECT</h3><p>Route the flow before it overflows</p></div><div class="card"><h3 style="color:var(--accent)">BLOCK DROP</h3><p>Stack falling blocks, clear lines</p></div><div class="card"><h3 style="color:var(--accent)">FLAPPY JUMP</h3><p>Tap to fly between obstacles</p></div></div>
+<div class="card-grid"><div class="card"><h3 style="color:#2ecc71">SNAKE</h3><p>Classic snake game</p></div><div class="card"><h3 style="color:#2ecc71">BREAKOUT</h3><p>Smash bricks with a paddle</p></div><div class="card"><h3 style="color:#2ecc71">PONG</h3><p>The original two-paddle arcade</p></div><div class="card"><h3 style="color:#2ecc71">SPACE INVADERS</h3><p>Defend earth from descending aliens</p></div><div class="card"><h3 style="color:#2ecc71">MINESWEEPER</h3><p>Deduce mine locations</p></div><div class="card"><h3 style="color:#2ecc71">PIPE CONNECT</h3><p>Route the flow before it overflows</p></div><div class="card"><h3 style="color:#2ecc71">BLOCK DROP</h3><p>Stack falling blocks, clear lines</p></div><div class="card"><h3 style="color:#2ecc71">FLAPPY JUMP</h3><p>Tap to fly between obstacles</p></div></div>
 </section>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Are these the original code or remakes?","acceptedAnswer":{"@type":"Answer","text":"These are faithful HTML5 canvas reimplementations of the original mechanics, written from scratch in JavaScript. They&apos;re not emulators of original arcade hardware; they target the same gameplay feel without using copyrighted assets. Each game is licensed only for use within Amni-Learn."}},{"@type":"Question","name":"Do retro games help cognitively?","acceptedAnswer":{"@type":"Answer","text":"Some evidence suggests action games (Space Invaders, Flappy Jump) modestly improve visual attention and reaction time (Bavelier &amp; Green, 2011). Puzzle games (Minesweeper, Pipe Connect) build deductive reasoning skills. The effects are real but modest; play for enjoyment first."}},{"@type":"Question","name":"Why is Tetris/Block Drop banned in some places?","acceptedAnswer":{"@type":"Answer","text":"It isn&apos;t &mdash; you might be thinking of regional release timing. The original Tetris had Cold War licensing complications that delayed Western release for years. Modern variants are freely available worldwide."}}]}</script>
+<section class="deep-section"><details class="deep-dive"><summary><span class="deep-icon">&#9776;</span><span class="deep-label">Retro Arcade Background & Strategy Notes</span><span class="deep-hint">Click to expand &mdash; example lesson, parent guide, age milestones, FAQ</span></summary><div class="deep-body"><div class="deep-block deep-body"><h3>A Brief History</h3><p>The titles in this category span ~25 years of game-design evolution.</p><p><strong>Pong</strong> (Atari, 1972) was the first commercially successful video game. The minimal design &mdash; two paddles, one ball &mdash; remains an exemplar of game-design clarity. The original used discrete TTL logic, no CPU.</p><p><strong>Space Invaders</strong> (Taito, 1978) introduced waves of attackers, increasing difficulty, and the high-score table that became a defining arcade feature. The slow-down trick where the game speeds up as you destroy aliens was a hardware accident: fewer sprites = faster frame refresh. It became iconic gameplay.</p><p><strong>Snake</strong> originated in 1976 (&quot;Blockade&quot; arcade game) but reached billions via Nokia 6110 (1997). The simple grow-then-die mechanic is one of the most replicated game designs in history.</p><p><strong>Breakout</strong> (Atari, 1976), built by a young Steve Wozniak with Steve Jobs, established the brick-breaker genre.</p><p><strong>Minesweeper</strong> shipped with Windows 3.1 (1992) and introduced millions to deductive constraint reasoning, possibly the most-played logic puzzle in computing history.</p><p><strong>Block Drop / Tetris-style</strong> (Pajitnov, 1984) is widely cited as the most-played video game of all time when summed across platforms.</p></div><div class="deep-block deep-lesson"><h3>Strategy Tips</h3><ol class="step-list"><li><span class="step-n">1</span><span><strong>Snake:</strong> stay near the wall and trace systematic spirals once the snake gets long. Center-of-board movement leads to traps.</span></li><li><span class="step-n">2</span><span><strong>Breakout:</strong> aim for the brick edges to bounce balls at unexpected angles, which clears bricks faster than straight shots.</span></li><li><span class="step-n">3</span><span><strong>Space Invaders:</strong> shoot the outermost columns first to expand your safe firing window; pick off attackers as they descend rather than spraying.</span></li><li><span class="step-n">4</span><span><strong>Minesweeper:</strong> start with the largest open area you can find. Number adjacency tells you the count of mines in 8 neighbors; subtract flagged mines to find safe cells.</span></li><li><span class="step-n">5</span><span><strong>Pipe Connect:</strong> trace the flow path mentally before placing tiles. Working backward from the exit is often easier than forward from the source.</span></li><li><span class="step-n">6</span><span><strong>Flappy Jump:</strong> tap rhythmically, not reactively. The bird&apos;s trajectory is predictable; tap to maintain a steady height rather than chasing each obstacle.</span></li></ol></div><div class="deep-block deep-faq"><h3>Player FAQ</h3><details class="faq-q"><summary>Are these the original code or remakes?</summary><div>These are faithful HTML5 canvas reimplementations of the original mechanics, written from scratch in JavaScript. They&apos;re not emulators of original arcade hardware; they target the same gameplay feel without using copyrighted assets. Each game is licensed only for use within Amni-Learn.</div></details><details class="faq-q"><summary>Do retro games help cognitively?</summary><div>Some evidence suggests action games (Space Invaders, Flappy Jump) modestly improve visual attention and reaction time (Bavelier &amp; Green, 2011). Puzzle games (Minesweeper, Pipe Connect) build deductive reasoning skills. The effects are real but modest; play for enjoyment first.</div></details><details class="faq-q"><summary>Why is Tetris/Block Drop banned in some places?</summary><div>It isn&apos;t &mdash; you might be thinking of regional release timing. The original Tetris had Cold War licensing complications that delayed Western release for years. Modern variants are freely available worldwide.</div></details></div></div></details></section>
 <section>
 <h2>RELATED CATEGORIES</h2>
-<div class="card-grid"><a href="casual.html" class="card" style="text-decoration:none"><h3 style="color:var(--accent)">CASUAL & IDLE</h3><p>Cookie Clicker, Auto Miner, Pull the Pin, Fill the Cup</p></a><a href="elementary.html" class="card" style="text-decoration:none"><h3 style="color:var(--accent)">ELEMENTARY ACTIVITY PACK</h3><p>Reflex Racer, Math Mountain, Block Mover, Sorting Hat, Word Bridge, Word Scramble, Memory Sequence, Pattern Puzzle, Geography, Color Sort, Gem Crush</p></a><a href="brain-puzzles.html" class="card" style="text-decoration:none"><h3 style="color:var(--accent)">BRAIN EXERCISE — LOGIC PUZZLES</h3><p>Sudoku, Logic Puzzles, Anagrams, Word Search</p></a></div>
+<div class="card-grid"><a href="casual.html" class="card" style="text-decoration:none"><h3 style="color:#2ecc71">CASUAL & IDLE</h3><p>Cookie Clicker, Auto Miner, Pull the Pin, Fill the Cup</p></a><a href="elementary.html" class="card" style="text-decoration:none"><h3 style="color:#2ecc71">ELEMENTARY ACTIVITY PACK</h3><p>Reflex Racer, Math Mountain, Block Mover, Sorting Hat, Word Bridge, Word Scramble, Memory Sequence, Pattern Puzzle, Geography, Color Sort, Gem Crush</p></a><a href="brain-puzzles.html" class="card" style="text-decoration:none"><h3 style="color:#2ecc71">BRAIN EXERCISE — LOGIC PUZZLES</h3><p>Sudoku, Logic Puzzles, Anagrams, Word Search</p></a></div>
 </section>
 <section style="text-align:center">
 <h2>OPEN AMNI-LEARN</h2>
 <p style="color:var(--dim);margin-bottom:1.5rem;font-size:.9rem">No sign-up. No telemetry. Runs offline after first load.</p>
 <div class="cta-row" style="justify-content:center;gap:1rem;flex-wrap:wrap">
-<a href="./" class="btn btn-primary" style="background:var(--accent);color:var(--bg);box-shadow:0 0 10px var(--accent)">LAUNCH LEARN</a>
+<a href="./" class="btn btn-primary" style="background:#2ecc71;color:var(--bg);box-shadow:0 0 10px #2ecc71">LAUNCH LEARN</a>
 <a href="../amni-learn.html" class="btn btn-outline">ALL CATEGORIES</a>
 </div>
 </section>

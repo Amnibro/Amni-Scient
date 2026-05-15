@@ -34,6 +34,38 @@
 .crumbs a:hover{color:#ff6b35}
 .std-line{font-size:.78rem;color:var(--dim);margin-top:1rem;padding-top:.7rem;border-top:1px dashed var(--border,rgba(255,255,255,.08))}
 .std-line strong{color:var(--text);letter-spacing:1px;text-transform:uppercase;font-size:.7rem;display:block;margin-bottom:.3rem}
+.deep-section{max-width:880px;margin:2.5rem auto 1rem;padding:0 1.5rem}
+.deep-dive{background:linear-gradient(180deg,rgba(255,107,53,0.04),rgba(255,107,53,0.01));border:1px solid rgba(255,107,53,0.22);border-radius:6px;padding:0}
+.deep-dive>summary{cursor:pointer;list-style:none;padding:1.1rem 1.4rem;display:flex;align-items:center;gap:.85rem;flex-wrap:wrap;border-radius:6px;transition:background .15s}
+.deep-dive>summary::-webkit-details-marker{display:none}
+.deep-dive>summary:hover{background:rgba(255,107,53,0.05)}
+.deep-dive[open]>summary{border-bottom:1px solid rgba(255,107,53,0.18);border-radius:6px 6px 0 0}
+.deep-icon{color:#ff6b35;font-size:1.1rem;line-height:1}
+.deep-label{color:var(--text);letter-spacing:2px;font-size:.85rem;text-transform:uppercase;font-weight:700}
+.deep-hint{color:var(--dim);font-size:.7rem;letter-spacing:.5px;flex-basis:100%;margin-top:.15rem}
+.deep-body{padding:1.4rem 1.6rem 1.8rem;display:grid;gap:1.6rem}
+.deep-block h3{color:#ff6b35;letter-spacing:1.5px;font-size:.82rem;text-transform:uppercase;margin:0 0 .7rem;border-bottom:1px solid rgba(255,107,53,0.18);padding-bottom:.4rem}
+.deep-block p{color:var(--text);font-size:.85rem;line-height:1.75;margin:0 0 .8rem}
+.deep-block p:last-child{margin-bottom:0}
+.deep-block code{background:rgba(255,107,53,0.08);padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--text)}
+.step-list{list-style:none;padding:0;margin:0;display:grid;gap:.6rem}
+.step-list li{display:flex;gap:.8rem;align-items:flex-start;font-size:.85rem;line-height:1.7;color:var(--text)}
+.step-n{flex-shrink:0;width:24px;height:24px;border-radius:50%;background:#ff6b35;color:var(--bg);display:inline-flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;font-family:'JetBrains Mono',monospace}
+.pitfall-list{list-style:none;padding:0;margin:0;display:grid;gap:.7rem}
+.pitfall-list li{display:flex;flex-direction:column;gap:.2rem;padding:.6rem .9rem;background:rgba(255,68,68,0.05);border-left:3px solid #ff4444;border-radius:0 3px 3px 0}
+.pitfall-list li strong{color:#ff8866;font-size:.78rem;letter-spacing:.5px;text-transform:uppercase}
+.pitfall-list li span{color:var(--text);font-size:.83rem;line-height:1.65}
+.faq-q{margin-bottom:.45rem;border:1px solid rgba(255,255,255,.06);border-radius:4px;background:rgba(255,255,255,.015)}
+.faq-q>summary{padding:.7rem .95rem;cursor:pointer;color:var(--text);font-size:.85rem;font-weight:600;list-style:none}
+.faq-q>summary::-webkit-details-marker{display:none}
+.faq-q>summary::before{content:'+';display:inline-block;margin-right:.55rem;color:#ff6b35;font-weight:700;width:.85em}
+.faq-q[open]>summary::before{content:'–'}
+.faq-q>div{padding:0 .95rem .85rem 1.8rem;color:var(--dim);font-size:.83rem;line-height:1.7}
+.deep-tbl{width:100%;border-collapse:collapse;font-size:.8rem;font-family:'JetBrains Mono',monospace}
+.deep-tbl th{background:rgba(255,107,53,0.08);color:var(--text);text-align:left;padding:.5rem .7rem;border-bottom:1px solid rgba(255,107,53,0.2);letter-spacing:.5px;font-size:.72rem;text-transform:uppercase}
+.deep-tbl td{padding:.45rem .7rem;color:var(--text);border-bottom:1px solid rgba(255,255,255,.04)}
+.deep-tbl tr:hover td{background:rgba(255,107,53,0.03)}
+.tbl-note{color:var(--dim);font-size:.74rem;margin-top:.55rem;font-style:italic}
 </style>
 </head>
 <body class="theme-calc">
@@ -92,6 +124,8 @@
 <p>Open this page to find a specific equation by name (e.g., "Colebrook", "Lewis bending", "Nernst"), browse all formulas in a category, or jump to the calculator that implements it. Each formula entry links to the relevant reference standard.</p>
 </div>
 </section>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How do I cite an equation in a design report?","acceptedAnswer":{"@type":"Answer","text":"Reference the original code or textbook section: \"Per ASME VIII-1 UG-27(c)(1), required wall thickness t = P·R/(S·E − 0.6·P).\" Auditors and reviewers expect this traceability. The Amni-Calc module pages link each equation to its standard or textbook source."}},{"@type":"Question","name":"Why do similar-looking equations give different answers?","acceptedAnswer":{"@type":"Answer","text":"Most engineering equations have implicit sign conventions, dimensional assumptions, and validity ranges. For example, Bernoulli (incompressible, frictionless) vs Darcy (incompressible with friction) vs Fanno (compressible, adiabatic): all describe pipe flow, but each only applies under specific conditions. The module pages call out each equation&apos;s validity domain."}},{"@type":"Question","name":"Can I trust a one-line \"rule of thumb\"?","acceptedAnswer":{"@type":"Answer","text":"Rules of thumb (1/4 horsepower per CFM for fans, 100 gal/min per 10 HP for water pumps) are decent for first-pass sizing. They embed unstated assumptions about efficiency, operating point, and service factor. For final design, always run the proper equation with actual operating conditions."}}]}</script>
+<section class="deep-section"><details class="deep-dive"><summary><span class="deep-icon">&#9776;</span><span class="deep-label">Cross-Discipline Formula Index Notes</span><span class="deep-hint">Click to expand &mdash; field notes, worked examples, design procedure, pitfalls</span></summary><div class="deep-body"><div class="deep-block deep-table"><h3>Most-Cited Equations By Discipline</h3><table class="deep-tbl"><thead><tr><th>Discipline</th><th>Equation</th><th>Module</th></tr></thead><tbody><tr><td>Stress</td><td>σ_vM = sqrt(σ1² − σ1·σ2 + σ2²)</td><td>stress</td></tr><tr><td>Fatigue</td><td>Goodman: σ_a/Se + σ_m/Sut = 1/n</td><td>fatigue</td></tr><tr><td>Bolted joints</td><td>T = K·D·F (nut-factor torque)</td><td>bolts</td></tr><tr><td>Springs</td><td>τ = K_W·8·F·D / (π·d³)</td><td>springs</td></tr><tr><td>Pipe flow</td><td>1/√f = −2·log10(ε/3.7D + 2.51/(Re·√f))</td><td>fluids</td></tr><tr><td>Heat transfer</td><td>Q = U·A·ΔT_LM</td><td>hx</td></tr><tr><td>Pressure vessel</td><td>t = P·R / (S·E − 0.6·P)</td><td>pv</td></tr><tr><td>Heat exchange</td><td>ε = Q / (Cmin·ΔT_max)</td><td>hx</td></tr><tr><td>Electrical</td><td>S₃φ = √3·V_LL·I_L</td><td>electrical</td></tr><tr><td>Motor</td><td>I_FL = P_out / (√3·V·η·PF)</td><td>motors</td></tr><tr><td>Cells</td><td>E = E° − (RT/nF)·ln Q</td><td>echem</td></tr><tr><td>Bearings</td><td>L10 = (C/P)^p · 10⁶ / (60·n) hours</td><td>bearings</td></tr></tbody></table><p class="tbl-note">Use this list to find the relevant module quickly when starting a new analysis.</p></div><div class="deep-block deep-faq"><h3>Equation Reference FAQ</h3><details class="faq-q"><summary>How do I cite an equation in a design report?</summary><div>Reference the original code or textbook section: "Per ASME VIII-1 UG-27(c)(1), required wall thickness t = P·R/(S·E − 0.6·P)." Auditors and reviewers expect this traceability. The Amni-Calc module pages link each equation to its standard or textbook source.</div></details><details class="faq-q"><summary>Why do similar-looking equations give different answers?</summary><div>Most engineering equations have implicit sign conventions, dimensional assumptions, and validity ranges. For example, Bernoulli (incompressible, frictionless) vs Darcy (incompressible with friction) vs Fanno (compressible, adiabatic): all describe pipe flow, but each only applies under specific conditions. The module pages call out each equation&apos;s validity domain.</div></details><details class="faq-q"><summary>Can I trust a one-line "rule of thumb"?</summary><div>Rules of thumb (1/4 horsepower per CFM for fans, 100 gal/min per 10 HP for water pumps) are decent for first-pass sizing. They embed unstated assumptions about efficiency, operating point, and service factor. For final design, always run the proper equation with actual operating conditions.</div></details></div></div></details></section>
 <section>
 <h2>RELATED MODULES</h2>
 <div class="card-grid"><a href="math.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">MATH</h3><p>Calculus identities, Taylor series, integrals, vectors</p></a><a href="units.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">UNITS</h3><p>SI ↔ US customary for force, pressure, energy, viscosity</p></a><a href="refs.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">REFS</h3><p>Cross-referenced ASME, ASTM, NEC, AWS, ISO catalog</p></a><a href="materials.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">MATERIALS</h3><p>Yield, ultimate, modulus, density, k, cp for common metals & polymers</p></a></div>

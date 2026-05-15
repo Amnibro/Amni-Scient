@@ -1,5 +1,21 @@
 # Architecture Map — amni-scient.com
 
+## v5.5.0 AdSense Doorway Remediation (Calc SEO Pages)
+- **Trigger** — Google AdSense manual action: "Thin content with little or no added value." Diagnosed root cause: `calc/<module>.html` (31 pages) and `learn/<category>.html` (11 pages) were generator-emitted cookie-cutter shells with ~250 unique words each and identical section skeletons — textbook doorway-page pattern under Google's spam policy.
+- **Generator: `src/gen-calc-modules.js`** — extended each module entry in the `M[]` array with a `deep[]` field of typed sub-blocks (`worked` / `procedure` / `pitfalls` / `physics` / `standards_detail` / `faq` / `table`). Added `renderDeep(m)` helper that emits a collapsed-by-default `<details class="deep-dive">` block between WHEN TO USE and RELATED MODULES sections. Variation comes from per-module choice of which sub-blocks to include, the order they appear, and module-specific `deepTitle`.
+- **Schema.org structured data** — `FAQPage` JSON-LD auto-emitted from `deep[].type==='faq'` items for any module that has FAQ. Helps Google reclassify pages as instructional rather than promotional.
+- **CSS additions** (in-page `<style>`) — `.deep-dive`, `.deep-block`, `.step-list`, `.pitfall-list`, `.faq-q`, `.deep-tbl`, `.tbl-note`. Collapsed-by-default `<details>` with chevron-less expansion via `::-webkit-details-marker{display:none}`.
+- **Per-module content scope** — 31 modules with substantive deep content:
+  - Mechanical (12): stress, sections, bolts, springs, seals, columns, shafts, welds, bearings, gears, fatigue, vibration — full treatment (worked + procedure + pitfalls + physics + faq, with table where useful).
+  - Fluids/Thermal (8): fluids, pumps, thermal, hx, pv, cycles, hvac, combustion — full treatment.
+  - Electrical/Chemistry (5): electrical, motors, nec, echem, battery — full treatment.
+  - Reference (6): materials, finishes, math, equations, units, refs — lighter treatment focused on quick-reference tables + pitfalls + FAQ since these are inherently index pages.
+- **Page word count** — pre-fix: ~280 unique words per page. Post-fix: 728 (equations index) to 1506 (bolts), median ~1200. All pages above doorway threshold.
+- **UX preservation** — calc-first journey intact: hero + CTA + bullet sections remain on top, deep content sits in collapsed `<details>` below. Googlebot indexes the content; users opt-in by clicking expand.
+- **Learn SEO pages (v5.5.1, 2026-05-15)** — same deep-content treatment applied to `src/gen-learn-categories.js`. 11 categories now have lesson plans, age milestones, pitfalls, FAQ. Page size 16&ndash;20 KB / 939&ndash;1222 words each. Backups at `backups/v5.5.0_learn_seo/`.
+- **Reconsideration submission** — both calc and learn SEO landing pages now have substantive unique content; site ready for AdSense manual-action reconsideration request via Search Console.
+- **Backups** — `backups/v5.5.0_calc_seo/` (calc) and `backups/v5.5.0_learn_seo/` (learn).
+
 ## v5.4.0 Amni-Learn theme + UX + neutral content sweep
 - `learn/sw.js` cache bumped `amni-learn-v1` → `amni-learn-v2` so users on stale cached pre-e78ee19 HTML pick up the views-map fix (was the real cause of "storybooks / 2048 / cblast / solitaire / tdgame display no content").
 - `learn/index.html`: post-level-filter sweep hides any `.game-category` with no visible `.game-btn` children — kills the empty Life Skills band at PRE-K and is robust against future per-level filters.
