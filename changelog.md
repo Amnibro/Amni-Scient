@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.6.2] - 2026-05-17 - Amni-Learn audit batch 3: math step-by-step teaching
+- **Math Basics step panel** — added `_mathSteps(op, a, b, ans)` helper generating plain-English solution steps for +, −, ×, ÷. Multiplication uses place-value decomposition (`Split 24 into 20 + 4. Then (20×7) + (4×7) = 140 + 28 = 168.`). Division reframes as inverse multiplication. Every problem branch stores `mathState.explain`. Geometry problems refactored from text-only to `{text, ans, explain}` objects so they carry formula-based explainers (`Area = πr² = π × 7² ≈ 49π ≈ 153.9`). Algebra L4-L5 explainers walk both isolation steps explicitly.
+- **Wrong-answer UX** — at L3+ wrong answer now shows the green step panel + a "Next ▶" button (manual advance). At L1-2 wrong still auto-advances (don't penalize kids reading speed). Correct at L3+ also shows the method — depth over speed for adult learners; corrects don't slow kids at L1-2.
+- **Redundancy decisions** — Math Basics vs Speed Math KEEP BOTH (tutorial MCQ vs blitz numpad, distinct modes). Anagrams vs Word Scramble KEEP BOTH (bare-letters progression vs themed-with-hints).
+
 ## [5.6.1] - 2026-05-17 - Amni-Learn audit batch 2: L4/L5 quiz pedagogy
 - **Gap closed** — Level 4 (young adult) and Level 5 (adult) banks across ALL 5 subject quizzes (animals, languages, math, engineering, science) had ZERO `explain` fields. Advanced learners answered 100+ questions with no teaching — opposite of what the quiz pedagogy contract requires. Every L4 and L5 question now carries a 2-sentence substantive explainer connecting the answer to mechanism, history, or real-world relevance.
 - **Content tone** — explainers for adults treat the audience as capable; e.g. Higgs boson note covers the field-coupling mechanism and 2012 LHC confirmation, not "particles get mass." Math L5 explainers cite Millennium Prize problems, Gauss, Maldacena. Engineering L4 explainers include the actual formulas (Re = ρvL/μ, ν = -ε_lateral/ε_axial) where they fit the answer.

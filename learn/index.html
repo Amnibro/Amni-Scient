@@ -1662,13 +1662,20 @@
       {t:(a,b)=>`A shelf has ${a} books. You add ${b} more. How many now?`,op:'+'}
   ];
   const geoProblems = [
-      ()=>{const s=Math.floor(Math.random()*10)+2; mathAns=s*s; return `Area of a square with side ${s}?`;},
-      ()=>{const l=Math.floor(Math.random()*12)+3,w=Math.floor(Math.random()*8)+2; mathAns=l*w; return `Area of rectangle ${l} × ${w}?`;},
-      ()=>{const s=Math.floor(Math.random()*10)+2; mathAns=4*s; return `Perimeter of square with side ${s}?`;},
-      ()=>{const l=Math.floor(Math.random()*12)+3,w=Math.floor(Math.random()*8)+2; mathAns=2*(l+w); return `Perimeter of rectangle ${l} × ${w}?`;},
-      ()=>{const r=Math.floor(Math.random()*8)+2; mathAns=+(Math.PI*r*r).toFixed(1); return `Area of circle radius ${r}? (round to .1)`;},
-      ()=>{const b=Math.floor(Math.random()*10)+3,h=Math.floor(Math.random()*8)+2; mathAns=(b*h)/2; return `Area of triangle base ${b}, height ${h}?`;}
+      ()=>{const s=Math.floor(Math.random()*10)+2;return{text:`Area of a square with side ${s}?`,ans:s*s,explain:`Area = side² = ${s}² = ${s*s}.`};},
+      ()=>{const l=Math.floor(Math.random()*12)+3,w=Math.floor(Math.random()*8)+2;return{text:`Area of rectangle ${l} × ${w}?`,ans:l*w,explain:`Area = length × width = ${l} × ${w} = ${l*w}.`};},
+      ()=>{const s=Math.floor(Math.random()*10)+2;return{text:`Perimeter of square with side ${s}?`,ans:4*s,explain:`Perimeter = 4 × side = 4 × ${s} = ${4*s}.`};},
+      ()=>{const l=Math.floor(Math.random()*12)+3,w=Math.floor(Math.random()*8)+2;return{text:`Perimeter of rectangle ${l} × ${w}?`,ans:2*(l+w),explain:`Perimeter = 2(L+W) = 2(${l}+${w}) = ${2*(l+w)}.`};},
+      ()=>{const r=Math.floor(Math.random()*8)+2;const a=+(Math.PI*r*r).toFixed(1);return{text:`Area of circle radius ${r}? (round to .1)`,ans:a,explain:`Area = πr² = π × ${r}² ≈ 3.1416 × ${r*r} ≈ ${a}.`};},
+      ()=>{const b=Math.floor(Math.random()*10)+3,h=Math.floor(Math.random()*8)+2;const a=(b*h)/2;return{text:`Area of triangle base ${b}, height ${h}?`,ans:a,explain:`Area = ½ × base × height = ½ × ${b} × ${h} = ${a}.`};}
   ];
+  function _mathSteps(op,a,b,ans){
+    if(op==='+')return `Add the groups: ${a} + ${b}. Start at ${a}, count up ${b} more — lands on ${ans}.`;
+    if(op==='-')return `Subtract: ${a} − ${b}. Start at ${a}, count back ${b} — lands on ${ans}.`;
+    if(op==='×'){if(b===1)return `${a} × 1 = ${a}. Anything × 1 stays itself.`;if(b===10||a===10){const x=a===10?b:a;return `${a} × ${b} = ${ans}. Multiplying by 10 shifts ${x} up one place (adds a zero).`;}if(a>=10&&b<10){const t=Math.floor(a/10)*10,r=a-t;return `Split ${a} into ${t} + ${r}. Then (${t}×${b}) + (${r}×${b}) = ${t*b} + ${r*b} = ${ans}.`;}if(b>=10&&a<10){const t=Math.floor(b/10)*10,r=b-t;return `Split ${b} into ${t} + ${r}. Then (${a}×${t}) + (${a}×${r}) = ${a*t} + ${a*r} = ${ans}.`;}return `${a} × ${b} means add ${a} to itself ${b} times → ${ans}.`;}
+    if(op==='÷')return `Divide: ${a} ÷ ${b} asks "${b} × what = ${a}?" — answer ${ans}, because ${b} × ${ans} = ${a}.`;
+    return `The answer is ${ans}.`;
+  }
   function initMath() {
     mViz.style.display = 'none'; hintBtn.style.display = 'block';
     if(mathRound >= mathTotal) { mProb.textContent = ''; mChoices.innerHTML = `<div style="text-align:center;padding:2rem"><div style="font-size:3rem;margin-bottom:1rem">🎉</div><div style="font-size:1.5rem;font-weight:bold;margin-bottom:.5rem">${mathCorrect}/${mathTotal} Correct!</div><div style="margin-bottom:1rem">${mathCorrect>=8?'Amazing!':mathCorrect>=6?'Great job!':'Keep practicing!'}</div><div class="m-choice" style="display:inline-block;padding:.8rem 2rem;cursor:pointer" onclick="mathRound=0;mathCorrect=0;initMath()">Play Again</div></div>`; hintBtn.style.display='none'; return; }
@@ -1679,13 +1686,13 @@
         const x = Math.floor(Math.random()*(currentLevel===4?20:50))+2;
         const b = Math.floor(Math.random()*(currentLevel===4?15:30))+1;
         const r = Math.floor(Math.random()*3);
-        if(r===0) { const a = Math.floor(Math.random()*12)+2; mathAns = x; mProb.textContent=`${a}x + ${b} = ${a*x+b}, x = ?`; }
-        else if(r===1) { const a = Math.floor(Math.random()*10)+2; mathAns = x; mProb.textContent=`${a}x - ${b} = ${a*x-b}, x = ?`; }
-        else { const a = Math.floor(Math.random()*8)+2; const c = Math.floor(Math.random()*5)+1; mathAns = x; mProb.textContent=`${a}x + ${c} = ${a*x+c}, x = ?`; }
+        if(r===0) { const a = Math.floor(Math.random()*12)+2; const rhs=a*x+b; mathAns = x; mProb.textContent=`${a}x + ${b} = ${rhs}, x = ?`; mathState.explain=`Subtract ${b} from both sides: ${a}x = ${rhs} − ${b} = ${a*x}. Divide by ${a}: x = ${a*x} ÷ ${a} = ${x}.`; }
+        else if(r===1) { const a = Math.floor(Math.random()*10)+2; const rhs=a*x-b; mathAns = x; mProb.textContent=`${a}x - ${b} = ${rhs}, x = ?`; mathState.explain=`Add ${b} to both sides: ${a}x = ${rhs} + ${b} = ${a*x}. Divide by ${a}: x = ${a*x} ÷ ${a} = ${x}.`; }
+        else { const a = Math.floor(Math.random()*8)+2; const c = Math.floor(Math.random()*5)+1; const rhs=a*x+c; mathAns = x; mProb.textContent=`${a}x + ${c} = ${rhs}, x = ?`; mathState.explain=`Subtract ${c} from both sides: ${a}x = ${rhs} − ${c} = ${a*x}. Divide by ${a}: x = ${a*x} ÷ ${a} = ${x}.`; }
         mProb.style.fontSize = 'clamp(1.5rem,4vw,2.5rem)'; hintBtn.style.display='none'; mathState.op='alg';
     } else if(currentLevel === 3 && roll < 0.2) {
-        const gp = geoProblems[Math.floor(Math.random()*geoProblems.length)];
-        mProb.textContent = gp(); hintBtn.style.display = 'none'; mathState.op = 'geo';
+        const gp = geoProblems[Math.floor(Math.random()*geoProblems.length)]();
+        mProb.textContent = gp.text; mathAns = gp.ans; mathState.explain = gp.explain; hintBtn.style.display = 'none'; mathState.op = 'geo';
     } else if(currentLevel >= 2 && roll < 0.35) {
         const isDiv = Math.random() > 0.5;
         const wp = wordProblems.filter(w => isDiv ? w.op === '÷' : (currentLevel === 2 ? ['+','-'].includes(w.op) : true));
@@ -1695,7 +1702,7 @@
         else if(prob.op === '-') { a = Math.floor(Math.random()*maxVal)+3; b = Math.floor(Math.random()*Math.min(a,maxVal))+1; mathAns = a-b; }
         else if(prob.op === '×') { a = Math.floor(Math.random()*8)+2; b = Math.floor(Math.random()*8)+2; mathAns = a*b; }
         else { b = Math.floor(Math.random()*8)+2; mathAns = Math.floor(Math.random()*10)+1; a = mathAns*b; }
-        mProb.textContent = prob.t(a,b); mProb.style.fontSize = '2.5rem'; hintBtn.style.display = 'none'; mathState.op = prob.op;
+        mProb.textContent = prob.t(a,b); mProb.style.fontSize = '2.5rem'; hintBtn.style.display = 'none'; mathState.op = prob.op; mathState.a=a; mathState.b=b; mathState.explain=_mathSteps(prob.op,a,b,mathAns);
     } else {
         mProb.style.fontSize = '5rem';
         const ops = currentLevel === 1 ? ['+','-'] : currentLevel === 2 ? ['+','-','÷'] : ['+','-','×','÷'];
@@ -1703,14 +1710,21 @@
         let v1 = Math.floor(Math.random()*maxVal)+1, v2 = Math.floor(Math.random()*maxVal)+1;
         if(mathState.op === '+') { mathState.a=v1; mathState.b=v2; mathAns=v1+v2; mProb.textContent=`${v1} + ${v2} = ?`; }
         else if(mathState.op === '-') { mathState.a=Math.max(v1,v2); mathState.b=Math.min(v1,v2); mathAns=mathState.a-mathState.b; mProb.textContent=`${mathState.a} - ${mathState.b} = ?`; }
-        else if(mathState.op === '×') { v1=Math.floor(Math.random()*12)+1; v2=Math.floor(Math.random()*12)+1; mathAns=v1*v2; mProb.textContent=`${v1} × ${v2} = ?`; hintBtn.style.display='none'; }
+        else if(mathState.op === '×') { v1=Math.floor(Math.random()*12)+1; v2=Math.floor(Math.random()*12)+1; mathState.a=v1; mathState.b=v2; mathAns=v1*v2; mProb.textContent=`${v1} × ${v2} = ?`; hintBtn.style.display='none'; }
         else { v2=Math.floor(Math.random()*(currentLevel===2?8:12))+2; mathAns=Math.floor(Math.random()*(currentLevel===2?10:15))+1; v1=mathAns*v2; mathState.a=v1; mathState.b=v2; mProb.textContent=`${v1} ÷ ${v2} = ?`; hintBtn.style.display='none'; }
+        mathState.explain=_mathSteps(mathState.op,mathState.a,mathState.b,mathAns);
     }
     let choices = [mathAns];
     const spread = currentLevel===1?3:(currentLevel===2?10:(currentLevel===3?20:(currentLevel===4?30:50)));
     while(choices.length<4) { const n = typeof mathAns==='number' ? +(mathAns + (Math.floor(Math.random()*spread*2)-spread) + (choices.length)).toFixed(1) : mathAns+choices.length; if(n>=0 && !choices.includes(n) && n!==mathAns) choices.push(n); else { const f = Math.floor(Math.random()*50)+1; if(!choices.includes(f)) choices.push(f); } }
     choices.sort(()=>Math.random()-0.5); mChoices.innerHTML = '';
-    choices.forEach(c => { const btn = document.createElement('div'); btn.className='m-choice'; btn.textContent=c; btn.onclick=()=>{ $$all('.m-choice').forEach(b=>b.style.pointerEvents='none'); if(c===mathAns){showFeedback('Correct! ✨','#2ecc71'); addScore(1); mathCorrect++; mathRound++; setTimeout(initMath,1500);} else {showFeedback('Answer: '+mathAns,'#e74c3c'); resetStreak(); btn.style.opacity='0.4'; $$all('.m-choice').forEach(b=>{if(Number(b.textContent)===mathAns||b.textContent==mathAns) b.style.background='#2ecc71';}); mathRound++; setTimeout(initMath,2500);}}; mChoices.appendChild(btn); });
+    function _showMathStep(correct){
+      const panel=document.createElement('div');panel.className='math-step-panel';panel.style.cssText='margin-top:14px;padding:14px 16px;background:rgba(255,255,255,0.92);border-left:5px solid '+(correct?'#2ecc71':'#e67e22')+';border-radius:10px;color:#2c3e50;font-family:Comic Neue,cursive;font-size:1.05rem;text-align:left;line-height:1.55;max-width:560px;margin-left:auto;margin-right:auto;';
+      panel.innerHTML='<div style="font-weight:bold;margin-bottom:4px;color:'+(correct?'#1e8449':'#a04000')+';">'+(correct?'✓ Correct! ':'💡 Answer: ')+mathAns+'</div><div>'+(mathState.explain||('The answer is '+mathAns+'.'))+'</div>';
+      mChoices.appendChild(panel);
+      const next=document.createElement('div');next.className='m-choice';next.style.cssText='background:#3498db;color:#fff;margin-top:12px;display:inline-block;padding:12px 28px;cursor:pointer;font-weight:bold;';next.textContent='Next ▶';next.onclick=()=>{mathRound++;initMath();};mChoices.appendChild(next);
+    }
+    choices.forEach(c => { const btn = document.createElement('div'); btn.className='m-choice'; btn.textContent=c; btn.onclick=()=>{ $$all('.m-choice').forEach(b=>b.style.pointerEvents='none'); if(c===mathAns){showFeedback('Correct! ✨','#2ecc71'); addScore(1); mathCorrect++; if(currentLevel<=2){mathRound++;setTimeout(initMath,1500);}else{_showMathStep(true);}} else {showFeedback('See the steps below','#e67e22'); resetStreak(); btn.style.opacity='0.4'; $$all('.m-choice').forEach(b=>{if(Number(b.textContent)===mathAns||b.textContent==mathAns) b.style.background='#2ecc71';}); _showMathStep(false);}}; mChoices.appendChild(btn); });
   }
   hintBtn.addEventListener('click', () => {
       if(currentLevel>1) return showFeedback('Hints are for Early Level!','#e67e22');
