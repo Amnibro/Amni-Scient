@@ -1,5 +1,15 @@
 ﻿# Changelog 
 
+## [5.6.3] - 2026-05-17 - Amni-Learn audit batch 4: Speed Math polish pass
+- **Strict-improvement rule applied** (per new memory directive 2026-05-17) — every existing Speed Math feature preserved; only additions and visual upgrades.
+- **Streak visuals** — display gets `.streak-1` (yellow glow) at 3, `.streak-2` (orange glow) at 5, `.streak-3` (red glow + pulse animation) at 10. Fire emoji density on problem text scales with tier (🔥 → 🔥🔥 → 🔥🔥🔥).
+- **Wrong-answer shake** — display class `wrong` triggers a 0.3s horizontal shake, then a step-by-step panel reuses `_mathSteps()` from v5.6.2 to teach the method (1700ms wait before next problem instead of 1000ms — gives reading time).
+- **Best-score tracker** — `sessionStorage` keys `spm-best` and `spm-best-streak`. HUD now shows ⭐ Best alongside Score/Streak/Round. New high score triggers 120-particle confetti and a "NEW BEST!" callout.
+- **Streak milestones** — confetti fires at streaks of 5/10/15/20 (50 particles, 80 at 10+). 4-point reward tier added at streak 10+ ("INFERNO!" message).
+- **Time-bonus pop** — +3s text floats above timer bar with fade-out animation when correct adds time. Critical timer (<5s) now pulses for urgency.
+- **Polished game-over** — full summary card with Score / Correct / Accuracy / Best-Streak / All-Time columns, "NEW BEST!" header on personal records.
+- **Key tap-feedback** — every numpad button gets a 0.15s scale-down animation on click (haptic-feeling).
+
 ## [5.6.2] - 2026-05-17 - Amni-Learn audit batch 3: math step-by-step teaching
 - **Math Basics step panel** — added `_mathSteps(op, a, b, ans)` helper generating plain-English solution steps for +, −, ×, ÷. Multiplication uses place-value decomposition (`Split 24 into 20 + 4. Then (20×7) + (4×7) = 140 + 28 = 168.`). Division reframes as inverse multiplication. Every problem branch stores `mathState.explain`. Geometry problems refactored from text-only to `{text, ans, explain}` objects so they carry formula-based explainers (`Area = πr² = π × 7² ≈ 49π ≈ 153.9`). Algebra L4-L5 explainers walk both isolation steps explicitly.
 - **Wrong-answer UX** — at L3+ wrong answer now shows the green step panel + a "Next ▶" button (manual advance). At L1-2 wrong still auto-advances (don't penalize kids reading speed). Correct at L3+ also shows the method — depth over speed for adult learners; corrects don't slow kids at L1-2.
