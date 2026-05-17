@@ -1,5 +1,13 @@
 ﻿# Changelog 
 
+## [5.6.34] - 2026-05-17 - Amni-Learn content quadruple batch 10: Geography Explorer L3 + L4
+- **Geography Explorer L3 + L4 expanded** — 8 → 32 countries each (+48 countries, +48 facts entries)
+  - L3 +24 (moderate-recognition): Estonia, Latvia, Lithuania, Belarus, Serbia, Slovakia, Slovenia, Albania, Mozambique, Madagascar, Botswana, Namibia, Rwanda, Côte d'Ivoire, Oman, Qatar, Bahrain, Kuwait, Jordan, Lebanon, Syria, Uruguay, Ecuador, Trinidad and Tobago
+  - L4 +24 (less-known/Stans/interior Africa/Balkans): Georgia, Armenia, Azerbaijan, Kazakhstan, Uzbekistan, Kyrgyzstan, Tajikistan, Turkmenistan, Mali, Burkina Faso, Niger, Chad, Somalia, Eritrea, South Sudan, Central African Republic, DRC, Republic of the Congo, Gabon, Mauritania, Equatorial Guinea, Moldova, North Macedonia, Bosnia and Herzegovina
+- Each new country has flag/capital/continent + substantive geographic/cultural fact (e-governance Estonia, 1000s of bunkers Albania, 8000-year Georgian wine, 'Door to Hell' Turkmenistan, etc)
+- L5 still 8 — final geography batch next iteration
+- **SW cache v15 → v16** to flush.
+
 ## [5.6.33] - 2026-05-17 - Amni-Learn content quadruple batch 9: Geography Explorer L1 + L2
 - **Geography Explorer L1 + L2 expanded** — 8 → 32 countries each (+48 countries, +48 facts entries)
   - L1 +24 (most familiar): Indonesia, Greece, Switzerland, Netherlands, Ireland, Portugal, Belgium, Austria, Saudi Arabia, UAE, Israel, Singapore, Denmark, Finland, Iceland, Cuba, Jamaica, Costa Rica, Venezuela, Iran, Romania, Malaysia, Bulgaria, Croatia
