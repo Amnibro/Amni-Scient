@@ -666,13 +666,26 @@
   .nbk-btn.nomatch:hover{background:rgba(231,76,60,0.2);}
   .nbk-info{font-family:'JetBrains Mono',monospace;font-size:1rem;color:#7a8a9a;text-align:center;margin:8px 0;}
   .agm-tiles{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:12px 0;}
-  .agm-tile{width:clamp(42px,10vw,54px);height:clamp(42px,10vw,54px);border-radius:10px;border:2px solid #1abc9c;background:transparent;color:#1abc9c;font-family:'JetBrains Mono',monospace;font-size:clamp(1.2rem,4vw,1.8rem);font-weight:bold;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:0.2s;text-transform:uppercase;user-select:none;}
-  .agm-tile:hover:not(.used){background:rgba(26,188,156,0.2);transform:translateY(-3px);}
-  .agm-tile.used{opacity:0.3;pointer-events:none;}
+  .agm-tile{width:clamp(42px,10vw,54px);height:clamp(42px,10vw,54px);border-radius:10px;border:2px solid #1abc9c;background:transparent;color:#1abc9c;font-family:'JetBrains Mono',monospace;font-size:clamp(1.2rem,4vw,1.8rem);font-weight:bold;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform 0.15s,background 0.2s,box-shadow 0.2s,opacity 0.2s;text-transform:uppercase;user-select:none;box-shadow:0 2px 6px rgba(0,0,0,0.3);}
+  .agm-tile:hover:not(.used){background:rgba(26,188,156,0.2);transform:translateY(-3px);box-shadow:0 6px 14px rgba(26,188,156,0.4);}
+  .agm-tile:active:not(.used){transform:scale(0.92);}
+  .agm-tile.used{opacity:0.25;pointer-events:none;transform:scale(0.85);}
+  .agm-tile.hint-reveal{background:#f1c40f;color:#1a1a3e;border-color:#f1c40f;animation:bounceIn 0.4s ease-out;}
   .agm-answer{display:flex;gap:6px;justify-content:center;min-height:54px;margin:12px 0;}
-  .agm-slot{width:clamp(42px,10vw,54px);height:clamp(42px,10vw,54px);border-radius:10px;border:2px dashed rgba(26,188,156,0.3);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:clamp(1.2rem,4vw,1.8rem);font-weight:bold;color:#1abc9c;text-transform:uppercase;}
-  .agm-slot.filled{border-style:solid;background:rgba(26,188,156,0.1);animation:bounceIn 0.2s ease-out;}
-  .agm-hint{font-family:'JetBrains Mono',monospace;font-size:0.85rem;color:#5a7a8a;text-align:center;margin:6px 0;}
+  .agm-slot{width:clamp(42px,10vw,54px);height:clamp(42px,10vw,54px);border-radius:10px;border:2px dashed rgba(26,188,156,0.3);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:clamp(1.2rem,4vw,1.8rem);font-weight:bold;color:#1abc9c;text-transform:uppercase;transition:border-color 0.3s,box-shadow 0.3s;}
+  .agm-slot.filled{border-style:solid;background:rgba(26,188,156,0.15);animation:bounceIn 0.25s ease-out;box-shadow:0 0 10px rgba(26,188,156,0.3);}
+  .agm-slot.win{border-color:#2ecc71;background:rgba(46,204,113,0.25);box-shadow:0 0 16px rgba(46,204,113,0.6);animation:agmWinPop 0.5s ease-out;}
+  .agm-slot.miss{border-color:#e74c3c;background:rgba(231,76,60,0.2);animation:spmShake 0.3s ease-out;}
+  @keyframes agmWinPop{0%{transform:scale(1)}40%{transform:scale(1.18) rotate(-3deg)}100%{transform:scale(1) rotate(0)}}
+  .agm-hint{font-family:'JetBrains Mono',monospace;font-size:0.95rem;color:#1abc9c;text-align:center;margin:6px 0;letter-spacing:1px;}
+  .agm-cat-badge{display:inline-block;padding:3px 10px;border-radius:12px;background:rgba(26,188,156,0.18);border:1px solid rgba(26,188,156,0.4);color:#1abc9c;font-size:0.75rem;text-transform:uppercase;letter-spacing:1.5px;margin-left:8px;font-family:'JetBrains Mono',monospace;}
+  .agm-def-card{margin:14px auto;max-width:560px;padding:18px 22px;background:linear-gradient(135deg,rgba(46,204,113,0.18),rgba(26,188,156,0.12));border:2px solid #2ecc71;border-radius:16px;text-align:center;animation:bounceIn 0.4s ease-out;box-shadow:0 8px 24px rgba(46,204,113,0.2);}
+  .agm-def-card .word{font-family:'JetBrains Mono',monospace;font-size:1.8rem;font-weight:bold;color:#2ecc71;letter-spacing:3px;}
+  .agm-def-card .def{font-family:'Comic Neue',cursive;color:#ecf0f1;font-size:1.05rem;margin-top:8px;line-height:1.55;}
+  .agm-def-card.miss{background:linear-gradient(135deg,rgba(231,76,60,0.18),rgba(230,126,34,0.12));border-color:#e67e22;}
+  .agm-def-card.miss .word{color:#e67e22;}
+  .agm-level-pop{position:fixed;left:50%;top:30%;transform:translateX(-50%);background:linear-gradient(135deg,#f1c40f,#e67e22);color:#1a1a3e;font-family:'JetBrains Mono',monospace;font-size:1.6rem;font-weight:bold;padding:14px 28px;border-radius:20px;z-index:9999;pointer-events:none;animation:agmLevelPop 1.6s ease-out forwards;box-shadow:0 8px 28px rgba(241,196,15,0.5);}
+  @keyframes agmLevelPop{0%{opacity:0;transform:translateX(-50%) scale(0.5)}25%{opacity:1;transform:translateX(-50%) scale(1.1)}80%{opacity:1;transform:translateX(-50%) scale(1)}100%{opacity:0;transform:translateX(-50%) translateY(-30px) scale(0.9)}}
   .chm-grid{display:grid;gap:5px;max-width:min(90vw,650px);width:95%;margin:10px auto;}
   .chm-cell{aspect-ratio:1;background:#1a2a3a;border:2px solid #2a3a4a;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:clamp(1rem,3.5vw,1.8rem);font-weight:bold;color:#fff;cursor:pointer;transition:0.15s;user-select:none;}
   .chm-cell.num{background:rgba(26,188,156,0.3);border-color:#1abc9c;}
@@ -5286,10 +5299,60 @@ function playAnimalSound(type) {
   }
   function initAnagram(){
     const ct=$$('#agm-container'),hud=$$('#agm-hud');
-    let sc=0,stk=0,lvl=0;
-    const words=[['MATH','FIRE','RAIN','BLUE','DARK','WIND','COLD','STAR','LAMP','BOOK','FROG','PLUM','GRID','CUBE','FLUX'],['BRAIN','CHESS','DREAM','FLAME','GHOST','HONEY','LIGHT','OCEAN','PRIME','SOLAR','PIXEL','QUARK','MORSE','LASER','NERVE'],['CASTLE','FREEZE','GARDEN','MENTAL','ORIGIN','PUZZLE','ROCKET','SILVER','TEMPLE','WIZARD','BINARY','CARBON','FRACTAL','MOSAIC','SPHINX'],['BALANCE','CRYSTAL','DECRYPT','FORTUNE','GRAVITY','MACHINE','PHOENIX','SCIENCE','THEOREM','VOLCANO','SYNAPSE','QUANTUM','PRIMATE','ENTROPY','ITERATE'],['ABSTRACT','CALCULUS','DEXTROUS','GRAPHENE','MULTIPLY','PARADIGM','SEQUENCE','THEORIZE','VELOCITY','WHIPLASH','SPECTRUM','ELECTRON','VARIABLE','OPTIMIZE','PROTOCOL']];
-    hud.innerHTML=`<span class="game-stat">\ud83c\udfc6 <span class="game-stat-val" id="agm-sc">0</span></span><span class="game-stat">\ud83d\udd25 <span class="game-stat-val" id="agm-stk">0</span></span><span class="game-stat">\ud83d\udccf <span class="game-stat-val" id="agm-len">${words[lvl][0].length}</span> letters</span>`;
-    function load(){const pool=words[Math.min(lvl,words.length-1)];const word=pool[Math.floor(Math.random()*pool.length)];const letters=[...word].sort(()=>Math.random()-0.5);let buf=[];ct.innerHTML='';const hint=document.createElement('div');hint.className='agm-hint';hint.textContent=`${word.length} letters`;ct.appendChild(hint);const ansDiv=document.createElement('div');ansDiv.className='agm-answer';ansDiv.id='agm-ans';for(let i=0;i<word.length;i++){const s=document.createElement('div');s.className='agm-slot';s.dataset.i=i;ansDiv.appendChild(s);}ct.appendChild(ansDiv);const tiles=document.createElement('div');tiles.className='agm-tiles';tiles.id='agm-tiles';letters.forEach((l,i)=>{const t=document.createElement('button');t.className='agm-tile';t.textContent=l;t.dataset.i=i;t.onclick=()=>{if(t.classList.contains('used'))return;t.classList.add('used');buf.push({l,ti:i});const slot=ansDiv.children[buf.length-1];slot.textContent=l;slot.classList.add('filled');if(buf.length===word.length){const guess=buf.map(b=>b.l).join('');if(guess===word){sc++;stk++;$$('#agm-sc').textContent=sc;$$('#agm-stk').textContent=stk;addScore(stk>=3?3:(word.length>=7?3:2));showFeedback(stk>=3?`${stk}x Streak! \ud83d\udd25`:'Correct! \u2728','#2ecc71');stk%3===0&&lvl<words.length-1&&(lvl++,$$('#agm-len').textContent=words[Math.min(lvl,words.length-1)][0].length);setTimeout(load,1200);}else{stk=0;$$('#agm-stk').textContent=0;resetStreak();showFeedback(`It was ${word}`,'#e74c3c');setTimeout(load,1800);}}};tiles.appendChild(t);});ct.appendChild(tiles);const ctrl=document.createElement('div');ctrl.style.cssText='display:flex;gap:8px;justify-content:center;margin-top:10px';const ub=document.createElement('button');ub.className='nmm-btn';ub.textContent='\u232b UNDO';ub.onclick=()=>{if(!buf.length)return;const last=buf.pop();const slot=ansDiv.children[buf.length];slot.textContent='';slot.classList.remove('filled');tiles.children[last.ti].classList.remove('used');};ctrl.appendChild(ub);const cb=document.createElement('button');cb.className='nmm-btn';cb.textContent='\u21bb CLEAR';cb.onclick=()=>{buf=[];$$all('.agm-slot').forEach(s=>{s.textContent='';s.classList.remove('filled');});$$all('.agm-tile').forEach(t=>t.classList.remove('used'));};ctrl.appendChild(cb);ct.appendChild(ctrl);}
+    let sc=0,stk=0,bestStk=0,lvl=0,solved=0,hinted=false;
+    const bestStored=parseInt(sessionStorage.getItem('agm-best')||'0');
+    const words=[
+      [{w:'MATH',def:'Numbers, shapes, and patterns.',cat:'🔢 Subject'},{w:'FIRE',def:'Heat and flame from burning.',cat:'🔥 Nature'},{w:'RAIN',def:'Water falling from clouds.',cat:'🌧️ Weather'},{w:'BLUE',def:'Color of the sky and ocean.',cat:'🎨 Color'},{w:'DARK',def:'Without light.',cat:'🌑 State'},{w:'WIND',def:'Moving air.',cat:'💨 Weather'},{w:'COLD',def:'Low temperature.',cat:'❄️ State'},{w:'STAR',def:'A glowing point of light in space.',cat:'⭐ Space'},{w:'LAMP',def:'A device that gives off light.',cat:'💡 Object'},{w:'BOOK',def:'Bound pages with text or pictures.',cat:'📖 Object'},{w:'FROG',def:'Amphibian that hops and croaks.',cat:'🐸 Animal'},{w:'PLUM',def:'Soft purple stone fruit.',cat:'🍇 Food'},{w:'GRID',def:'A pattern of crossed lines.',cat:'📐 Shape'},{w:'CUBE',def:'Solid with six square faces.',cat:'🎲 Shape'},{w:'FLUX',def:'A state of constant change.',cat:'🌀 Concept'}],
+      [{w:'BRAIN',def:'Organ controlling thought and behavior.',cat:'🧠 Body'},{w:'CHESS',def:'Strategy game with 16 pieces per side.',cat:'♟️ Game'},{w:'DREAM',def:'Mental images during sleep.',cat:'💭 Mind'},{w:'FLAME',def:'The visible part of a fire.',cat:'🔥 Nature'},{w:'GHOST',def:'The spirit of a dead person.',cat:'👻 Mythology'},{w:'HONEY',def:'Sweet substance bees make from nectar.',cat:'🍯 Food'},{w:'LIGHT',def:'Electromagnetic radiation we can see.',cat:'💡 Physics'},{w:'OCEAN',def:'A large body of saltwater.',cat:'🌊 Geography'},{w:'PRIME',def:'A number divisible only by 1 and itself.',cat:'🔢 Math'},{w:'SOLAR',def:'Relating to the Sun.',cat:'☀️ Space'},{w:'PIXEL',def:'The smallest dot on a digital display.',cat:'🖥️ Tech'},{w:'QUARK',def:'An elementary subatomic particle.',cat:'⚛️ Physics'},{w:'MORSE',def:'Dot-and-dash signaling code from 1836.',cat:'📡 History'},{w:'LASER',def:'A tight focused beam of light.',cat:'🔦 Tech'},{w:'NERVE',def:'A fiber that transmits electrical signals.',cat:'🧬 Body'}],
+      [{w:'CASTLE',def:'A large fortified medieval building.',cat:'🏰 History'},{w:'FREEZE',def:'Turn liquid to solid by cooling.',cat:'❄️ Physics'},{w:'GARDEN',def:'Cultivated land for plants.',cat:'🌷 Nature'},{w:'MENTAL',def:'Relating to the mind.',cat:'🧠 Mind'},{w:'ORIGIN',def:'Where something began.',cat:'📜 Concept'},{w:'PUZZLE',def:'A problem testing ingenuity.',cat:'🧩 Game'},{w:'ROCKET',def:'A vehicle propelled by burning fuel.',cat:'🚀 Tech'},{w:'SILVER',def:'Shiny white metal, element 47.',cat:'🥈 Chemistry'},{w:'TEMPLE',def:'A building for worship.',cat:'🛕 Culture'},{w:'WIZARD',def:'A person skilled in magic.',cat:'🧙 Mythology'},{w:'BINARY',def:'Number system using only 0 and 1.',cat:'💻 Tech'},{w:'CARBON',def:'Element 6, the basis of all life.',cat:'⚗️ Chemistry'},{w:'FRACTAL',def:'A pattern that repeats at every scale.',cat:'📐 Math'},{w:'MOSAIC',def:'A picture made from small tiles.',cat:'🎨 Art'},{w:'SPHINX',def:'A mythical creature with a lion body.',cat:'🦁 Mythology'}],
+      [{w:'BALANCE',def:'Equilibrium between opposing forces.',cat:'⚖️ Concept'},{w:'CRYSTAL',def:'A solid with atoms in repeating pattern.',cat:'💎 Chemistry'},{w:'DECRYPT',def:'To decode a hidden message.',cat:'🔐 Tech'},{w:'FORTUNE',def:'Chance or financial wealth.',cat:'🍀 Concept'},{w:'GRAVITY',def:'Force pulling masses together.',cat:'🪐 Physics'},{w:'MACHINE',def:'A device with moving parts doing work.',cat:'⚙️ Tech'},{w:'PHOENIX',def:'Mythical bird reborn from its ashes.',cat:'🔥 Mythology'},{w:'SCIENCE',def:'The systematic study of nature.',cat:'🔬 Subject'},{w:'THEOREM',def:'A math statement proven true.',cat:'📐 Math'},{w:'VOLCANO',def:'A mountain that ejects lava.',cat:'🌋 Geography'},{w:'SYNAPSE',def:'The junction between two nerve cells.',cat:'🧠 Body'},{w:'QUANTUM',def:'The smallest discrete unit of energy.',cat:'⚛️ Physics'},{w:'PRIMATE',def:'Mammal group including apes and humans.',cat:'🦧 Biology'},{w:'ENTROPY',def:'A measure of disorder in a system.',cat:'🌀 Physics'},{w:'ITERATE',def:'Repeat a process to refine the result.',cat:'🔁 Method'}],
+      [{w:'ABSTRACT',def:'Existing as an idea, not concrete.',cat:'💭 Concept'},{w:'CALCULUS',def:'The math of continuous change.',cat:'📐 Math'},{w:'DEXTROUS',def:'Skilled with the hands.',cat:'✋ Trait'},{w:'GRAPHENE',def:'A single-atom-thick sheet of carbon.',cat:'⚗️ Material'},{w:'MULTIPLY',def:'Increase by repeated addition.',cat:'✖️ Math'},{w:'PARADIGM',def:'A distinct framework or model.',cat:'💭 Concept'},{w:'SEQUENCE',def:'An ordered series of items.',cat:'🔢 Math'},{w:'THEORIZE',def:'Form a conceptual explanation.',cat:'🔬 Method'},{w:'VELOCITY',def:'Speed combined with direction.',cat:'🚀 Physics'},{w:'WHIPLASH',def:'Neck injury from sudden movement.',cat:'🏥 Body'},{w:'SPECTRUM',def:'A range from one extreme to another.',cat:'🌈 Concept'},{w:'ELECTRON',def:'A negatively charged subatomic particle.',cat:'⚛️ Physics'},{w:'VARIABLE',def:'A quantity that can change.',cat:'📊 Math'},{w:'OPTIMIZE',def:'Make as effective as possible.',cat:'⚙️ Method'},{w:'PROTOCOL',def:'Rules governing data exchange.',cat:'💻 Tech'}]
+    ];
+    hud.innerHTML=`<span class="game-stat">\ud83c\udfc6 <span class="game-stat-val" id="agm-sc">0</span></span><span class="game-stat">\ud83d\udd25 <span class="game-stat-val" id="agm-stk">0</span></span><span class="game-stat">\ud83d\udccf <span class="game-stat-val" id="agm-len">${words[lvl][0].w.length}</span> letters</span><span class="game-stat">\u2b50 Best <span class="game-stat-val" id="agm-best">${bestStored}</span></span>`;
+    function _levelPop(n){const p=document.createElement('div');p.className='agm-level-pop';p.textContent=`Level ${n+1}! \u2728`;document.body.appendChild(p);setTimeout(()=>p.remove(),1600);}
+    function load(){
+      hinted=false;
+      const pool=words[Math.min(lvl,words.length-1)];
+      const entry=pool[Math.floor(Math.random()*pool.length)];
+      const word=entry.w;
+      const letters=[...word].sort(()=>Math.random()-0.5);
+      let buf=[];
+      ct.innerHTML='';
+      const lenEl=$$('#agm-len');if(lenEl)lenEl.textContent=word.length;
+      const hint=document.createElement('div');hint.className='agm-hint';hint.innerHTML=`${word.length} letters<span class="agm-cat-badge">${entry.cat}</span>`;ct.appendChild(hint);
+      const ansDiv=document.createElement('div');ansDiv.className='agm-answer';ansDiv.id='agm-ans';
+      for(let i=0;i<word.length;i++){const s=document.createElement('div');s.className='agm-slot';s.dataset.i=i;ansDiv.appendChild(s);}
+      ct.appendChild(ansDiv);
+      const tiles=document.createElement('div');tiles.className='agm-tiles';tiles.id='agm-tiles';
+      function _onComplete(){
+        const guess=buf.map(b=>b.l).join('');
+        if(guess===word){
+          sc++;stk++;solved++;if(stk>bestStk)bestStk=stk;
+          $$('#agm-sc').textContent=sc;$$('#agm-stk').textContent=stk;
+          if(sc>bestStored){sessionStorage.setItem('agm-best',sc);const be=$$('#agm-best');if(be)be.textContent=sc;}
+          const pts=stk>=5?4:(stk>=3?3:(word.length>=7?3:2));addScore(pts);
+          ansDiv.querySelectorAll('.agm-slot').forEach(s=>s.classList.add('win'));
+          if(stk===3||stk===5||stk===10||stk===15)spawnConfetti(window.innerWidth/2,window.innerHeight/3,stk>=10?80:50);
+          showFeedback(stk>=10?`${stk}x BLAZING! \ud83d\udd25\ud83d\udd25\ud83d\udd25`:(stk>=5?`${stk}x Streak! \ud83d\udd25\ud83d\udd25`:(stk>=3?`${stk}x! \ud83d\udd25`:'Correct! \u2728')),'#2ecc71');
+          const card=document.createElement('div');card.className='agm-def-card';card.innerHTML=`<div class="word">${word}</div><div class="def">${entry.def}</div>`;ct.appendChild(card);
+          if(stk%3===0&&lvl<words.length-1){lvl++;_levelPop(lvl);spawnConfetti(window.innerWidth/2,window.innerHeight/3,100);}
+          setTimeout(load,1500);
+        }else{
+          stk=0;$$('#agm-stk').textContent=0;resetStreak();
+          ansDiv.querySelectorAll('.agm-slot').forEach(s=>s.classList.add('miss'));
+          const card=document.createElement('div');card.className='agm-def-card miss';card.innerHTML=`<div class="word">${word}</div><div class="def">${entry.def}</div>`;ct.appendChild(card);
+          showFeedback(`It was ${word}`,'#e74c3c');
+          setTimeout(load,2200);
+        }
+      }
+      letters.forEach((l,i)=>{const t=document.createElement('button');t.className='agm-tile';t.textContent=l;t.dataset.i=i;t.onclick=()=>{if(t.classList.contains('used'))return;t.classList.add('used');buf.push({l,ti:i});const slot=ansDiv.children[buf.length-1];slot.textContent=l;slot.classList.add('filled');if(buf.length===word.length)_onComplete();};tiles.appendChild(t);});
+      ct.appendChild(tiles);
+      const ctrl=document.createElement('div');ctrl.style.cssText='display:flex;gap:8px;justify-content:center;margin-top:10px;flex-wrap:wrap;';
+      const ub=document.createElement('button');ub.className='nmm-btn';ub.textContent='\u232b UNDO';ub.onclick=()=>{if(!buf.length)return;const last=buf.pop();const slot=ansDiv.children[buf.length];slot.textContent='';slot.classList.remove('filled','win','miss');tiles.children[last.ti].classList.remove('used');};ctrl.appendChild(ub);
+      const cb=document.createElement('button');cb.className='nmm-btn';cb.textContent='\u21bb CLEAR';cb.onclick=()=>{buf=[];$$all('.agm-slot').forEach(s=>{s.textContent='';s.classList.remove('filled','win','miss');});$$all('.agm-tile').forEach(t=>t.classList.remove('used'));};ctrl.appendChild(cb);
+      const hb=document.createElement('button');hb.className='nmm-btn';hb.textContent='\ud83d\udca1 HINT';hb.title='Reveal first letter (resets streak)';hb.onclick=()=>{if(hinted||buf.length>0)return;hinted=true;stk=0;$$('#agm-stk').textContent=0;const firstLetter=word[0];const tile=Array.from(tiles.children).find(t=>!t.classList.contains('used')&&t.textContent===firstLetter);if(tile){tile.classList.add('hint-reveal');setTimeout(()=>tile.classList.remove('hint-reveal'),800);}showFeedback(`First letter: ${firstLetter}`,'#f1c40f');};ctrl.appendChild(hb);
+      ct.appendChild(ctrl);
+    }
     load();
   }
   function initChimp(){

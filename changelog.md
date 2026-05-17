@@ -1,5 +1,16 @@
 ﻿# Changelog 
 
+## [5.6.4] - 2026-05-17 - Amni-Learn audit batch 5: Anagrams polish (definitions + visuals)
+- **Wordbank refactor** — all 75 words across 5 levels converted from flat strings to `{w, def, cat}` objects. Every word now carries a one-sentence definition and a category badge (🧠 Body, ⚛️ Physics, 🏰 History, 🎨 Art, etc). Anagrams now teaches vocabulary, not just letter-sorting.
+- **Definition reveal card** — on correct OR wrong, a styled card slides in showing the word and its definition. Wrong-answer still teaches.
+- **Hint button** — new 💡 HINT button reveals the first letter (highlights the tile with a yellow flash) at the cost of resetting the current streak. Adult brain-exercise framing: the cost is honest.
+- **Best-score tracker** — `agm-best` sessionStorage key. ⭐ Best chip shown in HUD alongside Score/Streak/Length.
+- **Streak milestones** — confetti at 3/5/10/15 streak, plus extra confetti on level-up. Up to 4 points per word at streak 5+. "BLAZING!" message at streak 10+.
+- **Slot animations** — `.agm-slot.win` flash with rotate+pulse and green glow on correct; `.agm-slot.miss` shake on wrong.
+- **Level-up celebration** — fixed-position pop-up banner ("Level N! ✨") with gradient background and bounce animation when streak hits multiple of 3.
+- **Tile polish** — tap-down scale animation, shadow on hover, used tiles fade with scale-down, hint tile briefly turns yellow.
+- **Dynamic length display** — letter count in HUD and hint line updates per word (was previously pegged to first word of level — broke when level had mixed-length words).
+
 ## [5.6.3] - 2026-05-17 - Amni-Learn audit batch 4: Speed Math polish pass
 - **Strict-improvement rule applied** (per new memory directive 2026-05-17) — every existing Speed Math feature preserved; only additions and visual upgrades.
 - **Streak visuals** — display gets `.streak-1` (yellow glow) at 3, `.streak-2` (orange glow) at 5, `.streak-3` (red glow + pulse animation) at 10. Fire emoji density on problem text scales with tier (🔥 → 🔥🔥 → 🔥🔥🔥).
