@@ -1,5 +1,13 @@
 ﻿# Changelog 
 
+## [5.6.20] - 2026-05-17 - Amni-Learn audit batch 21: Geography Explorer polish (40 country facts)
+- **Per-country facts** — one-sentence geographic/cultural facts added for all 40 countries (kept in a separate `facts` map keyed by country name; existing data block untouched). Examples: Chile's Atacama is the driest desert; Hungary's Magyar language is unrelated to most European tongues; Ethiopia uses a 13-month calendar; South Africa has three capitals (executive/legislative/judicial).
+- **Fact reveal card on every answer** — green-bordered on correct, orange on wrong. Shows flag + country + capital · continent + the fact. Turns Geography Explorer into a learn-as-you-play experience instead of bare right/wrong.
+- **Per-level best-score** — `geo-best-L{1..5}` sessionStorage. ⭐ Best chip in HUD.
+- **Streak multipliers + milestones** — +1/+2 score bonus at streak 3/5. Confetti bursts at streak 3/5/8. "🔥🔥🔥" at 8+.
+- **Polished completion summary** — replaces bare innerHTML with `geo-summary` card: Correct/Accuracy/Best-Streak/All-Time stats. Tier-tag (Cartographer 90%+ / Explorer 75%+ / Traveler 60%+ / Tourist 40%+ / Starter). NEW BEST detection with 120-particle confetti; Cartographer/Explorer tiers get 60-particle burst.
+- All existing 3-mode (flag→country / country→capital / country→continent), 5-level structure, 40-country roster preserved.
+
 ## [5.6.19] - 2026-05-17 - Amni-Learn audit batch 20: Logic Puzzles polish (bank doubled + categories)
 - **Bank expanded 27 → 52 puzzles** — added 25 new puzzles across 7 categories: 🌀 Lateral (Monty Hall door reveal pre-context, 2-fathers/2-sons, Monopoly bankrupt, hiccups bar, TON/NOT, etc), 🔮 Riddle (map without houses, darkness paradox), 🔢 Math (brick + half-brick, snail-in-well, narcissistic 153, book/bookmark, only-number-where-name-letters-match-value, two-trains-bird), 🔤 Word (incorrectly, dozens), 🎲 Probability (Monty Hall switch, birthday paradox, dice sum), 📈 Sequence (One-Two-Three letter sequence, look-and-say, ×2+1, diff-of-diffs), 🧮 Logic (three switches, Wason selection, two-guards fork, 64-player tournament).
 - **Category badges** — every puzzle now carries a `cat` field shown as a chip above the question, color-coordinated to the puzzle theme.

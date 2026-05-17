@@ -461,6 +461,22 @@
   .pat-opt:active { transform:scale(0.95); }
   .geo-opt { transition:transform 0.2s,box-shadow 0.2s,background 0.3s; }
   .geo-opt:hover { transform:translateY(-4px); box-shadow:0 8px 20px rgba(112,161,255,0.4); }
+  .geo-fact-card { margin:12px auto; max-width:560px; padding:14px 18px; background:linear-gradient(135deg,rgba(112,161,255,0.18),rgba(46,204,113,0.10)); border:2px solid #70a1ff; border-radius:14px; text-align:left; font-family:'Comic Neue',cursive; color:#ecf0f1; animation:bounceIn 0.4s ease-out; box-shadow:0 6px 18px rgba(112,161,255,0.25); }
+  .geo-fact-card.miss { background:linear-gradient(135deg,rgba(230,126,34,0.18),rgba(231,76,60,0.10)); border-color:#e67e22; }
+  .geo-fact-card .country-row { display:flex; align-items:center; gap:10px; font-family:'JetBrains Mono',monospace; color:#70a1ff; font-weight:bold; font-size:1.15rem; margin-bottom:4px; }
+  .geo-fact-card.miss .country-row { color:#e67e22; }
+  .geo-fact-card .country-row .flag { font-size:1.8rem; }
+  .geo-fact-card .meta { font-family:'JetBrains Mono',monospace; font-size:0.78rem; color:rgba(236,240,241,0.65); text-transform:uppercase; letter-spacing:1px; margin-bottom:6px; }
+  .geo-fact-card .fact { font-size:1rem; line-height:1.5; color:#ecf0f1; }
+  .geo-summary { margin:18px auto; max-width:540px; padding:22px; background:linear-gradient(135deg,rgba(112,161,255,0.20),rgba(46,204,113,0.12)); border:2px solid #70a1ff; border-radius:18px; text-align:center; animation:bounceIn 0.5s ease-out; box-shadow:0 8px 24px rgba(112,161,255,0.25); }
+  .geo-summary h3 { font-family:'JetBrains Mono',monospace; color:#f1c40f; font-size:1.6rem; margin:0 0 8px; }
+  .geo-summary .tier-tag { display:inline-block; padding:4px 12px; border-radius:14px; font-family:'JetBrains Mono',monospace; font-size:0.85rem; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:10px; background:rgba(255,255,255,0.08); }
+  .geo-summary-stats { display:flex; justify-content:space-around; gap:14px; flex-wrap:wrap; margin:12px 0; }
+  .geo-summary-stat { flex:1; min-width:80px; }
+  .geo-summary-stat .val { font-family:'JetBrains Mono',monospace; font-size:2rem; font-weight:bold; color:#70a1ff; display:block; }
+  .geo-summary-stat .lbl { font-size:0.78rem; color:rgba(236,240,241,0.7); text-transform:uppercase; letter-spacing:1px; }
+  .geo-summary-stat.best .val { color:#2ecc71; }
+  .geo-summary-stat.new-best .val { color:#f1c40f; animation:spmPulse 0.8s ease-out infinite; }
   .combo-popup { position:fixed; font-family:'Comic Neue',cursive; font-weight:bold; font-size:1.5rem; color:#f1c40f; pointer-events:none; z-index:150; animation:floatUp 1s ease-out forwards; text-shadow:1px 1px 2px rgba(0,0,0,0.5); }
   .blk-cell { transition:background 0.2s,box-shadow 0.2s; }
   .blk-cell.robot-trail { background:rgba(108,92,231,0.3); box-shadow:inset 0 0 10px rgba(108,92,231,0.5); }
@@ -5352,9 +5368,54 @@ function playAnimalSound(type) {
         {flag:'🇨🇿',country:'Czech Republic',capital:'Prague',continent:'Europe'}
       ]
     };
-    let geoIdx = 0, geoCorrect = 0, geoStreak = 0, pool = [];
+    const facts = {
+      'United States':'Population 330M; 50 states; gained independence from Britain in 1776.',
+      'United Kingdom':'Combines England, Scotland, Wales, Northern Ireland; constitutional monarchy.',
+      'France':'Most-visited country in the world; Eiffel Tower built in 1889.',
+      'Japan':'Archipelago of 6,852 islands; mountains cover 73% of the land.',
+      'Brazil':'Largest country in South America; Amazon basin holds ~60% of the rainforest.',
+      'Australia':'Both a country and a continent; home to ~2 million wild kangaroos.',
+      'China':'Most populous country (1.4 billion); Great Wall spans 21,000 km.',
+      'India':"World's largest democracy; 22 official languages.",
+      'Germany':'Reunited 1990 after fall of Berlin Wall; Europe\'s largest economy.',
+      'Italy':'Boot-shaped peninsula; among the most UNESCO World Heritage sites of any country.',
+      'Spain':'Birthplace of flamenco and Don Quixote; Spanish spoken by 460M+ globally.',
+      'Mexico':'Cradle of chocolate, corn, and chili; borders the US to the north.',
+      'South Korea':'K-pop and Samsung megapower; Seoul has 25M people in its metro.',
+      'Canada':'Second-largest country by area; two official languages — English and French.',
+      'Russia':'Largest country on Earth by land area; spans 11 time zones.',
+      'Egypt':'Home to the only surviving Wonder of the Ancient World — the Great Pyramid.',
+      'Sweden':'Constitutional monarchy; consistently top-ranked for quality of life.',
+      'Norway':'Famous for fjords and aurora borealis; one of the richest countries in Europe per capita.',
+      'South Africa':'Has three capitals — Pretoria (executive), Cape Town (legislative), Bloemfontein (judicial).',
+      'Argentina':'Tango birthplace; the Andes form its western spine.',
+      'Thailand':'The only Southeast Asian country never colonized by a European power.',
+      'Nigeria':"Africa's most populous country (220M+); largest economy on the continent.",
+      'Poland':'Birthplace of Copernicus and Chopin; rebuilt after WWII devastation.',
+      'Turkey':'Bridges Europe and Asia at the Bosphorus; ancient Istanbul was once Constantinople.',
+      'Philippines':'7,641 islands; only majority-Christian nation in Southeast Asia.',
+      'Colombia':'World\'s top coffee exporter by quality; bordered by both the Caribbean and Pacific.',
+      'Kenya':'Rift Valley birthplace of humanity; famous for marathon runners and safaris.',
+      'Pakistan':'Sixth-most populous country; nuclear-armed since 1998.',
+      'Vietnam':'S-shaped country; recovered remarkably from war into a major exporter.',
+      'Chile':'Longest north-south country (~4,300 km); home to the driest desert (Atacama).',
+      'Ukraine':'Breadbasket of Europe; world\'s largest sunflower oil producer.',
+      'New Zealand':'Two main islands; first country to give women the vote (1893).',
+      'Sri Lanka':'Pearl-shaped island off India; world\'s top exporter of Ceylon tea.',
+      'Ethiopia':'Never colonized by Europeans; uses its own 13-month calendar.',
+      'Myanmar':'Burma until 1989; over 100 ethnic groups; thousands of ancient temples at Bagan.',
+      'Peru':'Home to Machu Picchu; Amazon rainforest covers 60% of its territory.',
+      'Hungary':'Birthplace of the Rubik\'s Cube; Magyar language unrelated to most European tongues.',
+      'Bangladesh':'8th most populous country in <1% of Asia\'s land area; mostly delta plain.',
+      'Morocco':'Gibraltar Strait separates it from Spain by 14 km; home to the Atlas Mountains.',
+      'Czech Republic':'Highest per-capita beer consumption in the world; Prague has 1,000-year-old streets.'
+    };
+    let geoIdx = 0, geoCorrect = 0, geoStreak = 0, geoBestStreak = 0, pool = [];
+    const geoBest = parseInt(sessionStorage.getItem('geo-best-L'+currentLevel)||'0');
+    document.querySelectorAll('.geo-fact-card,.geo-summary').forEach(n=>n.remove());
+    function _geoTier(pct){if(pct>=90)return{name:'cartographer',label:'Cartographer',color:'#f1c40f',msg:'Encyclopedic world knowledge.'};if(pct>=75)return{name:'explorer',label:'Explorer',color:'#2ecc71',msg:'Strong global awareness.'};if(pct>=60)return{name:'traveler',label:'Traveler',color:'#70a1ff',msg:'Well-traveled mind.'};if(pct>=40)return{name:'tourist',label:'Tourist',color:'#3498db',msg:'Keep exploring!'};return{name:'starter',label:'Starter',color:'#e67e22',msg:'World awaits.'};}
     const hud = document.createElement('div'); hud.className='game-hud'; hud.id='geo-hud'; hud.style.marginBottom='5px';
-    hud.innerHTML=`<span class="game-stat">📊 <span class="game-stat-val" id="geo-progress">0/8</span></span><span class="game-stat">✅ <span class="game-stat-val" id="geo-correct">0</span></span><span class="game-stat">🔥 <span class="game-stat-val" id="geo-streak">0</span></span>`;
+    hud.innerHTML=`<span class="game-stat">📊 <span class="game-stat-val" id="geo-progress">0/8</span></span><span class="game-stat">✅ <span class="game-stat-val" id="geo-correct">0</span></span><span class="game-stat">🔥 <span class="game-stat-val" id="geo-streak">0</span></span><span class="game-stat">⭐ Best ${geoBest}</span>`;
     flagEl.parentElement.insertBefore(hud, flagEl);
     const progBar = document.createElement('div'); progBar.className='game-progress'; progBar.id='geo-prog-bar'; progBar.style.marginBottom='8px';
     progBar.innerHTML='<div class="game-progress-fill" id="geo-prog-fill" style="width:0%"></div>'; flagEl.parentElement.insertBefore(progBar, flagEl);
@@ -5375,12 +5436,19 @@ function playAnimalSound(type) {
       if(geoIdx >= pool.length) {
         flagEl.textContent = '🏆';
         const pct = Math.round(geoCorrect/pool.length*100);
-        const grade = pct>=90?'Geography Master! 🌍🏆':(pct>=70?'Great Explorer! 🗺️':(pct>=50?'Good Effort! 🌏':'Keep Exploring! 🧭'));
-        promptEl.textContent = `${geoCorrect}/${pool.length} correct (${pct}%)`;
-        choicesEl.innerHTML = '';
-        showFeedback(grade, pct>=70?'#2ecc71':'#70a1ff');
-        const retry = document.createElement('button'); retry.className='game-btn'; retry.textContent='Play Again 🔄'; retry.style.marginTop='10px';
-        retry.onclick = startGeo; choicesEl.appendChild(retry);
+        const wasBest = geoCorrect>geoBest;
+        if(wasBest)sessionStorage.setItem('geo-best-L'+currentLevel,geoCorrect);
+        const tier=_geoTier(pct);
+        promptEl.textContent='';
+        choicesEl.innerHTML='';
+        document.querySelectorAll('.geo-fact-card,.geo-summary').forEach(n=>n.remove());
+        const sum=document.createElement('div');sum.className='geo-summary';
+        sum.innerHTML=`<h3>🌍 ${wasBest?'NEW BEST!':'Geography Round Complete'}</h3><div class="tier-tag" style="color:${tier.color}">${tier.label} • ${tier.msg}</div><div class="geo-summary-stats"><div class="geo-summary-stat"><span class="val">${geoCorrect}/${pool.length}</span><span class="lbl">Correct</span></div><div class="geo-summary-stat"><span class="val">${pct}%</span><span class="lbl">Accuracy</span></div><div class="geo-summary-stat"><span class="val">${geoBestStreak}</span><span class="lbl">Best Streak</span></div><div class="geo-summary-stat ${wasBest?'new-best':'best'}"><span class="val">${Math.max(geoCorrect,geoBest)}</span><span class="lbl">All-Time L${currentLevel}</span></div></div>`;
+        choicesEl.parentElement.insertBefore(sum,choicesEl);
+        if(wasBest)spawnConfetti(window.innerWidth/2,window.innerHeight/2,120);
+        else if(tier.name==='cartographer'||tier.name==='explorer')spawnConfetti(window.innerWidth/2,window.innerHeight/3,60);
+        showFeedback(`${geoCorrect}/${pool.length} • ${tier.label} 🌍`,wasBest?'#2ecc71':tier.color);
+        const retry=document.createElement('button');retry.className='game-btn';retry.textContent='Play Again 🔄';retry.style.marginTop='10px';retry.onclick=startGeo;choicesEl.appendChild(retry);
         return;
       }
       const q = pool[geoIdx];
@@ -5412,19 +5480,26 @@ function playAnimalSound(type) {
         btn.textContent = opt;
         btn.onclick = () => {
           $$all('.geo-opt').forEach(b => { b.style.pointerEvents = 'none'; if(b.textContent===correct) b.style.background='#2ecc71'; });
-          if(opt === correct) {
+          const isCorrect = opt===correct;
+          if(isCorrect) {
             geoCorrect++; geoStreak++;
-            const pts = (mode === 0 ? 1 : 2) + (geoStreak >= 3 ? 1 : 0);
+            if(geoStreak>geoBestStreak)geoBestStreak=geoStreak;
+            const pts = (mode === 0 ? 1 : 2) + (geoStreak >= 5 ? 2 : (geoStreak >= 3 ? 1 : 0));
             addScore(pts);
-            showFeedback(geoStreak>=5?`${geoStreak}x Streak! 🔥🌍`:(geoStreak>=3?`${geoStreak}x Streak! 🔥`:'Correct! ✨'), '#2ecc71');
+            if(geoStreak===3||geoStreak===5||geoStreak===8)spawnConfetti(window.innerWidth/2,window.innerHeight/3,geoStreak>=5?80:50);
+            showFeedback(geoStreak>=8?`${geoStreak}x! 🔥🔥🔥`:(geoStreak>=5?`${geoStreak}x Streak! 🔥🌍`:(geoStreak>=3?`${geoStreak}x Streak! 🔥`:'Correct! ✨')), '#2ecc71');
           } else {
             btn.style.background = '#e74c3c';
             geoStreak = 0;
             showFeedback(`It's ${correct}`, '#e74c3c');
             resetStreak();
           }
+          document.querySelectorAll('.geo-fact-card').forEach(n=>n.remove());
+          const card=document.createElement('div');card.className='geo-fact-card'+(isCorrect?'':' miss');
+          card.innerHTML=`<div class="country-row"><span class="flag">${q.flag}</span><span>${q.country}</span></div><div class="meta">${q.capital} · ${q.continent}</div><div class="fact">${facts[q.country]||''}</div>`;
+          choicesEl.parentElement.insertBefore(card,choicesEl);
           geoIdx++;
-          setTimeout(loadGeoQ, 1200);
+          setTimeout(loadGeoQ, 2400);
         };
         choicesEl.appendChild(btn);
       });
