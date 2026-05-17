@@ -1,5 +1,17 @@
 ﻿# Changelog 
 
+## [5.6.37] - 2026-05-17 - Amni-Learn content quadruple batch 13: Logic Puzzles 52 → ~190
+- **Logic Puzzles quadrupled** — 52 → ~190 puzzles (+~138). Bank covers 7 categories:
+  - 🔢 Math: hourglass timing, age problems, water tanks, divisors, snail-in-well, painters/workers, narcissistic numbers
+  - 📈 Sequence: Tribonacci, n²(n+1), differences of primes, look-and-say, factorials, polygonal numbers
+  - 🔤 Word: longest top-row keyboard word TYPEWRITER, UNCOPYRIGHTABLE/DERMATOGLYPHICS, autoantonyms (cleave), palindromes (TATTARRATTAT), anagrams of SILENT
+  - 🧮 Logic: Wason selection cards, Einstein's puzzle, 3 boxes mislabeled, pirate game, dark room coin flip, Hardest Logic Puzzle Ever (Boolos), painted cube, 100 doors prisoners
+  - 🎲 Probability: Monty Hall, birthday paradox, dice sums, royal flush odds 1/649740, geometric expectation
+  - 🌀 Lateral: deserts and walks, bullet through vest, hiccup-cure gun, photographer husband, North Pole bear, Monopoly bankruptcy, dead man parachute
+  - 🔮 Riddle: keys-without-locks, candle aging, glove anatomy, mirror always-tells-truth, sharpening-mind, fragile-silence
+- Per-run still draws 15 puzzles randomly from the pool — now far better replay variety
+- **SW cache v18 → v19** to flush.
+
 ## [5.6.36] - 2026-05-17 - Amni-Learn content quadruple batch 12: Pattern Puzzle FULL — 40 → 160 generators
 - **Pattern Puzzle COMPLETELY quadrupled** — 8 → 32 generators per level across all 5 levels (+120 generators)
   - L1 (+24 kids/visual): more ABAB color/animal/food pairs, ABC three-cycles, AAB patterns, counting up/down 1, alphabet, days of week, months
