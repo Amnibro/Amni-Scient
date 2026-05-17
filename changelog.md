@@ -1,5 +1,14 @@
 ﻿# Changelog 
 
+## [5.6.21] - 2026-05-17 - Amni-Learn audit batch 22: Word Bridge polish (speech + per-lang best)
+- **Speech synthesis playback** — every correct (and wrong) reveal speaks the target-language translation using the browser's `SpeechSynthesisUtterance` with the right locale (es-ES, fr-FR, de-DE, it-IT, zh-CN, hi-IN). 🔊 Listen button on the reveal card lets users replay. Real adult brain-exercise: hearing the pronunciation, not just reading.
+- **Reveal card on every answer** — green on correct, orange on wrong. Shows the English-source → target-language pair with the flag context. Replaces transient feedback only.
+- **Streak system** — `wb-streak` in HUD score bar. +1/+2/+3 score bonus at streak 1/3/5. Milestone confetti at 3/5/8.
+- **Persistent best per language+level** — `wb-best-{lang}-L{N}` sessionStorage. ⭐ Best chip shown live.
+- **Tier system** — Native (95%+), Fluent (80%+), Conversational (60%+), Beginner (40%+), Starter. Tier-tag on summary card.
+- **Polished completion summary** — replaces bare innerHTML with `wb-summary` card: Correct/Accuracy/Best-Streak/All-Time stats. NEW BEST detection with 120-particle confetti; Native/Fluent runs get 60-particle burst.
+- All existing 6 languages, 40 words per language, 4-choice MCQ, level-based pools, reveal-correct-on-wrong preserved.
+
 ## [5.6.20] - 2026-05-17 - Amni-Learn audit batch 21: Geography Explorer polish (40 country facts)
 - **Per-country facts** — one-sentence geographic/cultural facts added for all 40 countries (kept in a separate `facts` map keyed by country name; existing data block untouched). Examples: Chile's Atacama is the driest desert; Hungary's Magyar language is unrelated to most European tongues; Ethiopia uses a 13-month calendar; South Africa has three capitals (executive/legislative/judicial).
 - **Fact reveal card on every answer** — green-bordered on correct, orange on wrong. Shows flag + country + capital · continent + the fact. Turns Geography Explorer into a learn-as-you-play experience instead of bare right/wrong.

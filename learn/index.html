@@ -352,11 +352,30 @@
   .sort-tray { display:flex; gap:12px; flex-wrap:wrap; justify-content:center; margin-bottom:20px; min-height:70px; padding:10px; background:#1d2a3a; border-radius:12px; }
   .sort-info { color:#fdcb6e; font-family:'Comic Neue',cursive; font-size:1.3rem; text-align:center; margin:10px 0; }
   #wbridge-view { background:#0b2027; }
-  .wb-card { background:#1a3c40; border:3px solid #55efc4; border-radius:16px; padding:20px; text-align:center; min-width:140px; cursor:pointer; transition:0.2s; }
-  .wb-card:hover { transform:scale(1.05); }
+  .wb-card { background:#1a3c40; border:3px solid #55efc4; border-radius:16px; padding:20px; text-align:center; min-width:140px; cursor:pointer; transition:transform 0.2s,box-shadow 0.2s,background 0.3s,border-color 0.3s; }
+  .wb-card:hover { transform:scale(1.05); box-shadow:0 8px 20px rgba(85,239,196,0.3); }
   .wb-card:active { transform:scale(0.95); }
-  .wb-card.correct { border-color:#00b894; background:#0d4a3a; }
-  .wb-card.wrong { border-color:#e74c3c; background:#3a1a1a; }
+  .wb-card.correct { border-color:#00b894; background:#0d4a3a; box-shadow:0 0 18px rgba(0,184,148,0.5); animation:bounceIn 0.4s ease-out; }
+  .wb-card.wrong { border-color:#e74c3c; background:#3a1a1a; animation:spmShake 0.35s ease-out; }
+  .wb-reveal { margin:14px auto; max-width:520px; padding:16px 20px; background:linear-gradient(135deg,rgba(85,239,196,0.18),rgba(0,184,148,0.10)); border:2px solid #00b894; border-radius:14px; text-align:center; animation:bounceIn 0.4s ease-out; }
+  .wb-reveal.miss { background:linear-gradient(135deg,rgba(230,126,34,0.18),rgba(231,76,60,0.10)); border-color:#e67e22; }
+  .wb-reveal .pair { font-family:'Comic Neue',cursive; color:#ecf0f1; font-size:1.05rem; line-height:1.5; }
+  .wb-reveal .pair .from { color:#bdc3c7; }
+  .wb-reveal .pair .arrow { margin:0 8px; color:#55efc4; font-weight:bold; }
+  .wb-reveal .pair .to { color:#55efc4; font-weight:bold; font-size:1.3rem; }
+  .wb-reveal.miss .pair .to { color:#e67e22; }
+  .wb-reveal .pron { font-family:'JetBrains Mono',monospace; font-size:0.85rem; color:rgba(236,240,241,0.65); margin-top:4px; font-style:italic; }
+  .wb-summary { margin:18px auto; max-width:540px; padding:22px; background:linear-gradient(135deg,rgba(85,239,196,0.18),rgba(0,184,148,0.12)); border:2px solid #55efc4; border-radius:18px; text-align:center; animation:bounceIn 0.5s ease-out; box-shadow:0 8px 24px rgba(85,239,196,0.25); }
+  .wb-summary h3 { font-family:'JetBrains Mono',monospace; color:#f1c40f; font-size:1.6rem; margin:0 0 8px; }
+  .wb-summary .tier-tag { display:inline-block; padding:4px 12px; border-radius:14px; font-family:'JetBrains Mono',monospace; font-size:0.85rem; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:10px; background:rgba(255,255,255,0.08); }
+  .wb-summary-stats { display:flex; justify-content:space-around; gap:14px; flex-wrap:wrap; margin:12px 0; }
+  .wb-summary-stat { flex:1; min-width:80px; }
+  .wb-summary-stat .val { font-family:'JetBrains Mono',monospace; font-size:2rem; font-weight:bold; color:#55efc4; display:block; }
+  .wb-summary-stat .lbl { font-size:0.78rem; color:rgba(236,240,241,0.7); text-transform:uppercase; letter-spacing:1px; }
+  .wb-summary-stat.best .val { color:#00b894; }
+  .wb-summary-stat.new-best .val { color:#f1c40f; animation:spmPulse 0.8s ease-out infinite; }
+  .wb-listen-btn { background:transparent; border:1.5px solid #55efc4; color:#55efc4; padding:4px 10px; border-radius:12px; cursor:pointer; font-family:'JetBrains Mono',monospace; font-size:0.85rem; margin-top:6px; transition:0.2s; }
+  .wb-listen-btn:hover { background:rgba(85,239,196,0.15); }
   .wb-prompt { font-family:'Comic Neue',cursive; font-size:3rem; color:#55efc4; margin-bottom:5px; }
   .wb-sub { font-family:'Comic Neue',cursive; font-size:1.2rem; color:#aaa; margin-bottom:15px; }
   .wb-choices { display:flex; gap:15px; flex-wrap:wrap; justify-content:center; }
@@ -4850,7 +4869,11 @@ function playAnimalSound(type) {
         {en:'Architecture',img:'🏗️',es:'Arquitectura',fr:'Architecture',de:'Architektur',it:'Architettura',zh:'建筑',hi:'वास्तुकला'}
       ]
     };
-    let wbIdx = 0, wbCorrect = 0, wbTotal = 0, wbPool = [];
+    let wbIdx = 0, wbCorrect = 0, wbTotal = 0, wbPool = [], wbStreak = 0, wbBestStreak = 0;
+    const langLocaleMap={es:'es-ES',fr:'fr-FR',de:'de-DE',it:'it-IT',zh:'zh-CN',hi:'hi-IN'};
+    function _wbSpeak(text,langCode){if(!('speechSynthesis' in window))return;try{window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang=langLocaleMap[langCode]||'en-US';u.rate=0.9;window.speechSynthesis.speak(u);}catch(_){}}
+    function _wbTier(pct){if(pct>=95)return{name:'native',label:'Native',color:'#f1c40f',msg:'Flawless command of the lesson set.'};if(pct>=80)return{name:'fluent',label:'Fluent',color:'#2ecc71',msg:'Strong command — keep practicing!'};if(pct>=60)return{name:'conversational',label:'Conversational',color:'#55efc4',msg:'Solid foundation building.'};if(pct>=40)return{name:'beginner',label:'Beginner',color:'#3498db',msg:'Just starting — keep going.'};return{name:'starter',label:'Starter',color:'#e67e22',msg:'Every polyglot starts here.'};}
+    document.querySelectorAll('.wb-reveal,.wb-summary').forEach(n=>n.remove());
     langPick.innerHTML = '';
     Object.entries(langs).forEach(([code, {flag, name}]) => {
       const btn = document.createElement('button');
@@ -4867,16 +4890,30 @@ function playAnimalSound(type) {
     function startWB() {
       const lvl = Math.min(currentLevel, 5);
       wbPool = [...words[lvl]].sort(() => Math.random() - 0.5);
-      wbIdx = 0; wbCorrect = 0; wbTotal = wbPool.length;
+      wbIdx = 0; wbCorrect = 0; wbTotal = wbPool.length; wbStreak = 0; wbBestStreak = 0;
+      document.querySelectorAll('.wb-reveal,.wb-summary').forEach(n=>n.remove());
       loadWBQuestion();
     }
     function loadWBQuestion() {
-      scoreBar.textContent = `${wbCorrect}/${wbTotal} correct`;
+      const bestKey='wb-best-'+wbLang+'-L'+currentLevel;
+      const bestStored=parseInt(sessionStorage.getItem(bestKey)||'0');
+      scoreBar.innerHTML = `<span>${wbCorrect}/${wbTotal} correct</span> · <span>🔥 ${wbStreak}</span> · <span>⭐ Best ${bestStored}</span>`;
       if(wbIdx >= wbPool.length) {
-        prompt.textContent = '🎉 Complete!';
-        sub.textContent = `Score: ${wbCorrect}/${wbTotal}`;
-        choices.innerHTML = '';
-        showFeedback(wbCorrect >= wbTotal - 1 ? 'Language Master! 🌍' : 'Great effort!', '#55efc4');
+        const pct=wbTotal?Math.round(wbCorrect/wbTotal*100):0;
+        const wasBest=wbCorrect>bestStored;
+        if(wasBest)sessionStorage.setItem(bestKey,wbCorrect);
+        const tier=_wbTier(pct);
+        prompt.textContent='';
+        sub.textContent='';
+        choices.innerHTML='';
+        document.querySelectorAll('.wb-reveal,.wb-summary').forEach(n=>n.remove());
+        const sum=document.createElement('div');sum.className='wb-summary';
+        sum.innerHTML=`<h3>${langs[wbLang].flag} ${wasBest?'NEW BEST!':langs[wbLang].name+' Complete'}</h3><div class="tier-tag" style="color:${tier.color}">${tier.label} • ${tier.msg}</div><div class="wb-summary-stats"><div class="wb-summary-stat"><span class="val">${wbCorrect}/${wbTotal}</span><span class="lbl">Correct</span></div><div class="wb-summary-stat"><span class="val">${pct}%</span><span class="lbl">Accuracy</span></div><div class="wb-summary-stat"><span class="val">${wbBestStreak}</span><span class="lbl">Best Streak</span></div><div class="wb-summary-stat ${wasBest?'new-best':'best'}"><span class="val">${Math.max(wbCorrect,bestStored)}</span><span class="lbl">All-Time</span></div></div>`;
+        choices.parentElement.insertBefore(sum,choices);
+        if(wasBest)spawnConfetti(window.innerWidth/2,window.innerHeight/2,120);
+        else if(tier.name==='native'||tier.name==='fluent')spawnConfetti(window.innerWidth/2,window.innerHeight/3,60);
+        showFeedback(`${wbCorrect}/${wbTotal} • ${tier.label} ${langs[wbLang].flag}`,wasBest?'#2ecc71':tier.color);
+        const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='Play Again 🔄';rb.style.marginTop='10px';rb.onclick=startWB;choices.appendChild(rb);
         return;
       }
       const word = wbPool[wbIdx];
@@ -4892,19 +4929,29 @@ function playAnimalSound(type) {
         card.className = 'wb-card';
         card.innerHTML = `<span class="wb-flag">${langs[wbLang].flag}</span><span class="wb-choice-text">${opt}</span>`;
         card.onclick = () => {
+          $$all('.wb-card').forEach(c=>{c.style.pointerEvents='none';if(c.querySelector('.wb-choice-text').textContent===correct)c.classList.add('correct');});
+          document.querySelectorAll('.wb-reveal').forEach(n=>n.remove());
+          const reveal=document.createElement('div');reveal.className='wb-reveal'+(opt===correct?'':' miss');
+          reveal.innerHTML=`<div class="pair"><span class="from">${word.img} ${word.en}</span><span class="arrow">→</span><span class="to">${correct}</span></div><button class="wb-listen-btn">🔊 Listen</button>`;
+          reveal.querySelector('.wb-listen-btn').onclick=()=>_wbSpeak(correct,wbLang);
+          choices.parentElement.insertBefore(reveal,choices);
+          _wbSpeak(correct,wbLang);
           if(opt === correct) {
-            card.classList.add('correct');
-            wbCorrect++;
-            addScore(1);
-            showFeedback('Correct! ✨', '#2ecc71');
+            wbCorrect++;wbStreak++;
+            if(wbStreak>wbBestStreak)wbBestStreak=wbStreak;
+            const pts=wbStreak>=5?3:(wbStreak>=3?2:1);
+            addScore(pts);
+            if(wbStreak===3||wbStreak===5||wbStreak===8)spawnConfetti(window.innerWidth/2,window.innerHeight/3,wbStreak>=5?80:50);
+            showFeedback(wbStreak>=8?`${wbStreak}x! 🔥🔥🔥`:(wbStreak>=5?`${wbStreak}x Streak! 🔥🔥`:(wbStreak>=3?`${wbStreak}x 🔥`:'Correct! ✨')), '#2ecc71');
             wbIdx++;
-            setTimeout(loadWBQuestion, 1200);
+            setTimeout(loadWBQuestion, 1700);
           } else {
             card.classList.add('wrong');
-            showFeedback(`It's "${correct}"`, '#e74c3c');
+            wbStreak=0;
+            showFeedback(`Was "${correct}"`, '#e74c3c');
             resetStreak();
             wbIdx++;
-            setTimeout(loadWBQuestion, 2000);
+            setTimeout(loadWBQuestion, 2400);
           }
           $$all('.wb-card').forEach(c => c.style.pointerEvents = 'none');
         };
