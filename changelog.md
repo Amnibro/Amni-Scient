@@ -1,5 +1,19 @@
 ﻿# Changelog 
 
+## [5.6.27] - 2026-05-17 - Amni-Learn music modules massive expansion
+- **Music subject quiz quadrupled across all 5 levels + 2 new advanced banks**
+  - L1: 13 → 52 (instruments, percussion, beat/melody, music vocab, songs, recording, conducting)
+  - L2: 15 → 60 (instrument families, dynamics, sharps/flats, voice ranges, time sigs, world drums, composers)
+  - L3: 15 → 60 (modes, intervals, chord types, key sigs, composers, tempo terms, form)
+  - L4 (NEW): 40 (orchestra families, sonata-allegro, serialism, impressionism, blues/jazz scales, Bernstein, equal temperament)
+  - L5 (NEW): 40 (spectral music, musique concrète, integral serialism, Messiaen modes, Cage 4'33", Reich phasing, Penderecki, Ligeti, Xenakis stochastic, set theory)
+  - Total: 43 → 252 music questions
+- **Music Studio melody library 6 → 47 melodies across all 5 levels**
+  - L1: 8 simple (3-note phrases, scales, echo); L2: 10 (folk classics + scales); L3: 10 (Ode to Joy, Jingle Bells, Happy Birthday, Saints, Amazing Grace, blues/Dorian); L4: 9 (Für Elise, Greensleeves, Canon, all 4 church modes, whole-tone, chromatic); L5: 10 (Bach Prelude, Air on G String, Moonlight, Nachtmusik, Schoenberg row, Webern row, octatonic)
+- **Melody challenge enabled at L1** (was L2+). Kids tap simple 3-note tunes; adults play Schoenberg rows.
+- **Instrument Explorer 8-12 → 30+ across levels** — L1 base now 12 (added Xylophone, Triangle, Maracas, Tambourine); L2+ Cello/Bass/Trombone/Ukulele; L3+ Harp/Piccolo/Timpani/Clarinet/Oboe/Tuba; L4+ Viola/Bassoon/English Horn/Bongos/Djembe/Harpsichord; L5+ Theremin/Celesta/Sitar/Tabla/Shakuhachi/Erhu.
+- **SW cache v8 → v9** so music expansion reaches users.
+
 ## [5.6.26] - 2026-05-17 - Amni-Learn content quadruple, batch 2: structural + Math
 - **Anthony clarified scope** — quadruple applies to ALL levels (L1-L5), not just L4/L5. Per-module rules: quizzes = 100-question randomized runs, Geography uses ALL flags every playthrough, pre-K Tracing letters/numbers randomized each session and re-shuffled on wrap. Memory `feedback_amni_learn_quadruple_content.md` updated.
 - **Quiz 100q run** — `currentQuiz = shuffled.slice(0, 100)` (was 30). Pool now combines lower levels until ≥100 entries, so a level-5 player draws from all bands.

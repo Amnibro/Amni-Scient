@@ -3812,7 +3812,7 @@
   }
   function renderPiano() {
     const ttl=document.createElement('div'); ttl.className='music-title'; ttl.textContent=currentLevel<=2?'🎹 Play the Piano!':'🎹 Piano & Theory'; musicContent.appendChild(ttl);
-    if(currentLevel>=2) renderMelodyChallenge();
+    renderMelodyChallenge();
     const wrap=document.createElement('div'); wrap.className='piano-wrap';
     const octaves=currentLevel===1?1:2, startOct=4, whiteNotes=['C','D','E','F','G','A','B'], blackMap={C:'C#',D:'D#',F:'F#',G:'G#',A:'A#'};
     let whiteX=0; const kw=currentLevel===1?56:48, kh=currentLevel===1?200:180, bw=currentLevel===1?36:32, bh=currentLevel===1?125:110;
@@ -3834,9 +3834,14 @@
     if(currentLevel>=3) renderTheorySection();
   }
   function renderMelodyChallenge() {
-    const melodies={2:[{name:'Mary Had a Little Lamb',notes:['E4','D4','C4','D4','E4','E4','E4']},{name:'Hot Cross Buns',notes:['E4','D4','C4','E4','D4','C4']},{name:'Twinkle Twinkle',notes:['C4','C4','G4','G4','A4','A4','G4']}],
-      3:[{name:'Ode to Joy',notes:['E4','E4','F4','G4','G4','F4','E4','D4','C4','C4','D4','E4','E4','D4','D4']},{name:'C Major Scale',notes:['C4','D4','E4','F4','G4','A4','B4','C5']},{name:'Minor Melody',notes:['A4','B4','C5','D5','E5','D5','C5','B4','A4']}]};
-    const lvlMel=melodies[Math.min(currentLevel,3)]||melodies[2], melody=lvlMel[Math.floor(Math.random()*lvlMel.length)];
+    const melodies={
+      1:[{name:'Mary Had a Little Lamb',notes:['E4','D4','C4','D4','E4','E4','E4']},{name:'Hot Cross Buns',notes:['E4','D4','C4','E4','D4','C4']},{name:'Twinkle Twinkle (line 1)',notes:['C4','C4','G4','G4','A4','A4','G4']},{name:'C Major (3 notes)',notes:['C4','D4','E4']},{name:'Two-note Echo',notes:['C4','G4','C4']},{name:'Up & Down',notes:['C4','D4','E4','D4','C4']},{name:'Same Note',notes:['C4','C4','C4']},{name:'Three Skips',notes:['C4','E4','G4']}],
+      2:[{name:'Mary Had a Little Lamb',notes:['E4','D4','C4','D4','E4','E4','E4']},{name:'Hot Cross Buns',notes:['E4','D4','C4','E4','D4','C4']},{name:'Twinkle Twinkle',notes:['C4','C4','G4','G4','A4','A4','G4']},{name:'Old MacDonald',notes:['G4','G4','G4','D4','E4','E4','D4']},{name:'Frère Jacques',notes:['C4','D4','E4','C4','C4','D4','E4','C4']},{name:'Row Row Row Your Boat',notes:['C4','C4','C4','D4','E4']},{name:'London Bridge',notes:['G4','A4','G4','F4','E4','F4','G4']},{name:'Itsy Bitsy Spider',notes:['G4','C5','C5','C5','D5','E5','E5','E5','D5','C5','D5','E5','C5']},{name:'C Major Scale',notes:['C4','D4','E4','F4','G4','A4','B4','C5']},{name:'A Minor Scale',notes:['A4','B4','C5','D5','E5','F5','G5','A5']}],
+      3:[{name:'Ode to Joy',notes:['E4','E4','F4','G4','G4','F4','E4','D4','C4','C4','D4','E4','E4','D4','D4']},{name:'C Major Scale',notes:['C4','D4','E4','F4','G4','A4','B4','C5']},{name:'Minor Melody (A natural)',notes:['A4','B4','C5','D5','E5','D5','C5','B4','A4']},{name:'Jingle Bells',notes:['E4','E4','E4','E4','E4','E4','E4','G4','C4','D4','E4']},{name:'Happy Birthday',notes:['C4','C4','D4','C4','F4','E4','C4','C4','D4','C4','G4','F4']},{name:'When the Saints',notes:['C4','E4','F4','G4','C4','E4','F4','G4','C4','E4','F4','G4','E4','C4','E4','D4']},{name:'Amazing Grace (line 1)',notes:['D4','G4','B4','G4','B4','A4','G4','E4','D4']},{name:'Pentatonic Up',notes:['C4','D4','E4','G4','A4','C5']},{name:'Blues Scale',notes:['C4','Eb4','F4','F#4','G4','Bb4','C5']},{name:'Dorian Mode (D)',notes:['D4','E4','F4','G4','A4','B4','C5','D5']}],
+      4:[{name:'Für Elise (opening)',notes:['E5','D#5','E5','D#5','E5','B4','D5','C5','A4']},{name:'Greensleeves (line 1)',notes:['A4','C5','D5','E5','F5','E5','D5','B4','G4','A4','B4','C5','A4']},{name:'Canon in D (line)',notes:['D5','C#5','B4','A4','G4','F#4','G4','A4']},{name:'Beethoven 9th (full)',notes:['E4','E4','F4','G4','G4','F4','E4','D4','C4','C4','D4','E4','E4','D4','D4','E4','E4','F4','G4','G4','F4','E4','D4','C4','C4','D4','E4','D4','C4','C4']},{name:'Lydian Mode (F)',notes:['F4','G4','A4','B4','C5','D5','E5','F5']},{name:'Mixolydian Mode (G)',notes:['G4','A4','B4','C5','D5','E5','F5','G5']},{name:'Phrygian Mode (E)',notes:['E4','F4','G4','A4','B4','C5','D5','E5']},{name:'Whole-Tone Scale',notes:['C4','D4','E4','F#4','G#4','A#4','C5']},{name:'Chromatic Climb',notes:['C4','C#4','D4','D#4','E4','F4','F#4','G4','G#4','A4','A#4','B4','C5']}],
+      5:[{name:'Bach Prelude C (notes)',notes:['C4','E4','G4','C5','E5','G4','C5','E5']},{name:'Air on G String (motif)',notes:['D5','E5','D5','C5','B4','A4','G4','D5']},{name:'Moonlight Sonata (triplet)',notes:['C#4','E4','G#4','C#4','E4','G#4','C#4','E4','G#4']},{name:'Toccata in D minor (motif)',notes:['A4','G4','A4','G4','F4','E4','D4','C#4','D4']},{name:'Eine kleine Nachtmusik (open)',notes:['G4','D5','G4','D5','G4','D5','B4','G5']},{name:'Diabelli Theme (open)',notes:['C5','G4','C5','E5','C5','G4','C5','E5']},{name:'Chopin Prelude E minor (line)',notes:['E5','D5','E5','D5','E5','B4','D5','C5']},{name:'Schoenberg row (P0)',notes:['F4','E4','C5','A4','G4','D5','D4','F5','B4','C#5','G#4','A#4']},{name:'Webern row',notes:['G4','B4','A#4','D5','E5','C5','C#5','F5','F#5','G#5','D#5','A5']},{name:'Octatonic Scale (H-W from C)',notes:['C4','D4','D#4','F4','F#4','G#4','A4','B4']}]
+    };
+    const lvlMel=melodies[Math.min(currentLevel,5)]||melodies[2], melody=lvlMel[Math.floor(Math.random()*lvlMel.length)];
     melodyState={notes:melody.notes,idx:0,active:true,name:melody.name};
     const nameEl=document.createElement('div'); nameEl.className='music-info'; nameEl.textContent='🎵 Play: '+melody.name; musicContent.appendChild(nameEl);
     const display=document.createElement('div'); display.className='melody-display'; display.id='melody-display';
@@ -3870,8 +3875,54 @@
   function renderInstruments() {
     const ttl=document.createElement('div'); ttl.className='music-title'; ttl.textContent='🎺 Instrument Explorer'; musicContent.appendChild(ttl);
     const info=document.createElement('div'); info.className='music-info'; info.textContent='Tap an instrument to hear what it sounds like!'; musicContent.appendChild(info);
-    const instruments=[{emoji:'🎹',name:'Piano',desc:'Keys & hammers',wave:'sine',note:'C4',dur:1.0},{emoji:'🎸',name:'Guitar',desc:'Plucked strings',wave:'sawtooth',note:'E3',dur:0.8},{emoji:'🎻',name:'Violin',desc:'Bowed strings',wave:'triangle',note:'A4',dur:1.2},{emoji:'🎺',name:'Trumpet',desc:'Brass wind',wave:'sawtooth',note:'G4',dur:0.6},{emoji:'🎷',name:'Saxophone',desc:'Reed wind',wave:'square',note:'D4',dur:0.7},{emoji:'🪈',name:'Flute',desc:'Air blown',wave:'sine',note:'C5',dur:0.9},{emoji:'🥁',name:'Drums',desc:'Hit to beat',wave:'drum',note:'kick',dur:0.5},{emoji:'🪕',name:'Banjo',desc:'Twangy strings',wave:'sawtooth',note:'G3',dur:0.5}];
-    if(currentLevel>=2) instruments.push({emoji:'🎶',name:'Organ',desc:'Sustained keys',wave:'square',note:'C4',dur:1.5},{emoji:'🔔',name:'Bell',desc:'Chiming ring',wave:'sine',note:'E5',dur:2.0},{emoji:'📯',name:'French Horn',desc:'Warm brass',wave:'triangle',note:'F3',dur:1.0},{emoji:'🪗',name:'Accordion',desc:'Squeezed air',wave:'sawtooth',note:'A3',dur:0.8});
+    const instruments=[
+      {emoji:'🎹',name:'Piano',desc:'Keys & hammers',wave:'sine',note:'C4',dur:1.0},
+      {emoji:'🎸',name:'Guitar',desc:'Plucked strings',wave:'sawtooth',note:'E3',dur:0.8},
+      {emoji:'🎻',name:'Violin',desc:'Bowed strings',wave:'triangle',note:'A4',dur:1.2},
+      {emoji:'🎺',name:'Trumpet',desc:'Brass wind',wave:'sawtooth',note:'G4',dur:0.6},
+      {emoji:'🎷',name:'Saxophone',desc:'Reed wind',wave:'square',note:'D4',dur:0.7},
+      {emoji:'🪈',name:'Flute',desc:'Air blown',wave:'sine',note:'C5',dur:0.9},
+      {emoji:'🥁',name:'Drums',desc:'Hit to beat',wave:'drum',note:'kick',dur:0.5},
+      {emoji:'🪕',name:'Banjo',desc:'Twangy strings',wave:'sawtooth',note:'G3',dur:0.5},
+      {emoji:'🎵',name:'Xylophone',desc:'Wooden bars',wave:'sine',note:'C5',dur:0.6},
+      {emoji:'🔺',name:'Triangle',desc:'Metal chime',wave:'sine',note:'B5',dur:1.2},
+      {emoji:'🪇',name:'Maracas',desc:'Shaken beads',wave:'drum',note:'hihat',dur:0.3},
+      {emoji:'🪘',name:'Tambourine',desc:'Jingled frame',wave:'drum',note:'hihat',dur:0.4}
+    ];
+    if(currentLevel>=2) instruments.push(
+      {emoji:'🎶',name:'Organ',desc:'Sustained keys',wave:'square',note:'C4',dur:1.5},
+      {emoji:'🔔',name:'Bell',desc:'Chiming ring',wave:'sine',note:'E5',dur:2.0},
+      {emoji:'📯',name:'French Horn',desc:'Warm brass',wave:'triangle',note:'F3',dur:1.0},
+      {emoji:'🪗',name:'Accordion',desc:'Squeezed air',wave:'sawtooth',note:'A3',dur:0.8},
+      {emoji:'🎻',name:'Cello',desc:'Low bowed strings',wave:'triangle',note:'C3',dur:1.5},
+      {emoji:'🎸',name:'Bass',desc:'Low plucked strings',wave:'sawtooth',note:'E2',dur:1.0},
+      {emoji:'🎺',name:'Trombone',desc:'Sliding brass',wave:'sawtooth',note:'D3',dur:0.9},
+      {emoji:'🪕',name:'Ukulele',desc:'Hawaiian strings',wave:'triangle',note:'C5',dur:0.5}
+    );
+    if(currentLevel>=3) instruments.push(
+      {emoji:'🎼',name:'Harp',desc:'Plucked strings, 47 of them',wave:'triangle',note:'C4',dur:1.6},
+      {emoji:'🪈',name:'Piccolo',desc:'Tiny high flute',wave:'sine',note:'C6',dur:0.7},
+      {emoji:'🥁',name:'Timpani',desc:'Tuned kettle drum',wave:'drum',note:'kick',dur:1.0},
+      {emoji:'🎶',name:'Clarinet',desc:'Single-reed woodwind',wave:'square',note:'A3',dur:0.9},
+      {emoji:'🎷',name:'Oboe',desc:'Double-reed woodwind',wave:'sawtooth',note:'D4',dur:0.9},
+      {emoji:'🎺',name:'Tuba',desc:'Biggest brass',wave:'sawtooth',note:'E2',dur:1.2}
+    );
+    if(currentLevel>=4) instruments.push(
+      {emoji:'🎻',name:'Viola',desc:'Slightly bigger violin',wave:'triangle',note:'C4',dur:1.3},
+      {emoji:'🪈',name:'Bassoon',desc:'Tall double-reed bass',wave:'sawtooth',note:'B2',dur:1.0},
+      {emoji:'🎶',name:'English Horn',desc:'Larger oboe (alto)',wave:'sawtooth',note:'F3',dur:1.0},
+      {emoji:'🥁',name:'Bongos',desc:'Pair of small drums',wave:'drum',note:'snare',dur:0.4},
+      {emoji:'🪘',name:'Djembe',desc:'African goblet drum',wave:'drum',note:'kick',dur:0.5},
+      {emoji:'🎼',name:'Harpsichord',desc:'Baroque plucked keyboard',wave:'sawtooth',note:'C4',dur:0.8}
+    );
+    if(currentLevel>=5) instruments.push(
+      {emoji:'🎶',name:'Theremin',desc:'Played without touch',wave:'sine',note:'A4',dur:2.0},
+      {emoji:'🎹',name:'Celesta',desc:'Bell-like keyboard',wave:'sine',note:'C5',dur:1.5},
+      {emoji:'🎼',name:'Sitar',desc:'Indian classical strings',wave:'sawtooth',note:'C4',dur:1.5},
+      {emoji:'🥁',name:'Tabla',desc:'Indian hand drums',wave:'drum',note:'snare',dur:0.3},
+      {emoji:'🎶',name:'Shakuhachi',desc:'Japanese bamboo flute',wave:'sine',note:'D4',dur:1.4},
+      {emoji:'🎻',name:'Erhu',desc:'Chinese 2-string bowed',wave:'triangle',note:'A4',dur:1.5}
+    );
     const grid=document.createElement('div'); grid.className='inst-grid';
     instruments.forEach(inst=>{ const card=document.createElement('div'); card.className='inst-card';
       card.innerHTML=`<span class="inst-emoji">${inst.emoji}</span><span class="inst-name">${inst.name}</span><span class="inst-desc">${inst.desc}</span>`;
@@ -4129,7 +4180,137 @@
               {q: "What is 'rubato' in music?", a: "Flexible tempo", wrong: ["Staccato playing", "Loud dynamics", "Repeated notes"]},
               {q: "What time signature is a waltz typically in?", a: "3/4", wrong: ["4/4", "6/8", "2/4"]},
               {q: "What is the circle of fifths used for?", a: "Key relationships", wrong: ["Rhythm patterns", "Dynamics markings", "Tempo markings"]},
-              {q: "What is a dominant 7th chord built on in C Major?", a: "G", wrong: ["C", "F", "D"]}
+              {q: "What is a dominant 7th chord built on in C Major?", a: "G", wrong: ["C", "F", "D"]},
+              {q: "What's the order of sharps in key signatures?", a: "F-C-G-D-A-E-B", wrong: ["A-B-C-D-E-F-G", "C-G-D-A-E-B-F", "B-E-A-D-G-C-F"], explain: "Mnemonic: Father Charles Goes Down And Ends Battle."},
+              {q: "What's the order of flats in key signatures?", a: "B-E-A-D-G-C-F", wrong: ["F-C-G-D-A-E-B", "C-D-E-F-G-A-B", "A-B-C-D-E-F-G"], explain: "Mnemonic: Battle Ends And Down Goes Charles' Father — reverse of sharps."},
+              {q: "What mode starts on the 5th degree of a major scale?", a: "Mixolydian", wrong: ["Dorian", "Lydian", "Phrygian"]},
+              {q: "What mode starts on the 4th degree of a major scale?", a: "Lydian", wrong: ["Dorian", "Mixolydian", "Aeolian"], explain: "Lydian has a raised 4th — F Lydian = C major scale starting on F."},
+              {q: "What mode starts on the 6th degree of a major scale?", a: "Aeolian (natural minor)", wrong: ["Dorian", "Locrian", "Phrygian"], explain: "Natural minor IS Aeolian — starts on the 6th degree of relative major."},
+              {q: "What mode starts on the 7th degree of a major scale?", a: "Locrian", wrong: ["Lydian", "Dorian", "Phrygian"], explain: "Locrian has a diminished 5th — the only mode with no perfect 5th."},
+              {q: "What does 'andante' mean?", a: "Walking pace (76-108 BPM)", wrong: ["Very fast", "Very slow", "Suddenly"]},
+              {q: "What does 'presto' mean?", a: "Very fast (168-200 BPM)", wrong: ["Slow", "Walking", "Suddenly"]},
+              {q: "What does 'adagio' mean?", a: "Slow (66-76 BPM)", wrong: ["Fast", "Walking", "Very loud"]},
+              {q: "What does 'largo' mean?", a: "Very slow and broad (40-60 BPM)", wrong: ["Very fast", "Loud", "Repeated"]},
+              {q: "What is a major triad built on?", a: "Root + major 3rd + minor 3rd", wrong: ["Two minor 3rds", "Root + 3rd + 4th", "Root + 5th + 8th"], explain: "C major = C + E (M3 from C) + G (m3 from E). Stack of 3rds."},
+              {q: "What is a minor triad built from?", a: "Root + minor 3rd + major 3rd", wrong: ["Two major 3rds", "Root + 4th + 5th", "Root + 7th + 9th"], explain: "Flip the 3rds: A minor = A + C (m3) + E (M3)."},
+              {q: "What's the interval from C to E?", a: "Major 3rd", wrong: ["Minor 3rd", "Perfect 4th", "Perfect 5th"]},
+              {q: "What's the interval from C to F?", a: "Perfect 4th", wrong: ["Major 3rd", "Perfect 5th", "Major 6th"]},
+              {q: "What's the interval from C to G?", a: "Perfect 5th", wrong: ["Perfect 4th", "Major 6th", "Major 7th"]},
+              {q: "What's the interval from C to A?", a: "Major 6th", wrong: ["Perfect 5th", "Minor 6th", "Major 7th"]},
+              {q: "What's a half-diminished 7th chord (m7♭5)?", a: "Minor triad + diminished 5th + minor 7th", wrong: ["Major triad + ♭7", "Augmented + 7th", "Minor + perfect 5th"], explain: "Common as ii° in minor keys."},
+              {q: "What's an augmented chord?", a: "Major 3rd + major 3rd (raised 5th)", wrong: ["Major + minor 3rd", "Two minor 3rds", "Root + 4th + 7th"]},
+              {q: "What's a diminished chord?", a: "Two stacked minor 3rds", wrong: ["Two major 3rds", "Major + minor 3rd", "Root + 4th + 5th"]},
+              {q: "What is 'glissando'?", a: "Sliding from one pitch to another", wrong: ["Sudden silence", "Repeating a passage", "Playing two notes at once"]},
+              {q: "What is an 'arpeggio'?", a: "Notes of a chord played one at a time", wrong: ["Chord played all at once", "Trill between notes", "Repeated bass pattern"]},
+              {q: "What is 'vibrato'?", a: "Pitch oscillation for expression", wrong: ["Volume oscillation", "Speed change", "Suddenly louder"]},
+              {q: "What is 'tremolo' (most general meaning)?", a: "Rapidly alternating notes or volume", wrong: ["Sliding pitch", "Suddenly stopping", "Playing chords"]},
+              {q: "Which composer wrote Symphony No. 5 in C minor?", a: "Beethoven", wrong: ["Mozart", "Bach", "Brahms"], explain: "Famous 'da-da-da-DUM' opening motif, 1808."},
+              {q: "Which composer wrote 'The Magic Flute'?", a: "Mozart", wrong: ["Wagner", "Verdi", "Puccini"], explain: "Mozart's 1791 opera — premiered weeks before his death."},
+              {q: "Who composed 'Boléro'?", a: "Maurice Ravel", wrong: ["Debussy", "Fauré", "Saint-Saëns"], explain: "1928 — single melody repeated 18 times with progressively fuller orchestration."},
+              {q: "Who composed the 'Hungarian Rhapsodies'?", a: "Liszt", wrong: ["Chopin", "Schumann", "Mendelssohn"], explain: "Franz Liszt — 19 piano pieces based on Hungarian/Romani themes."},
+              {q: "What's a 'cadenza'?", a: "Solo virtuoso passage in a concerto", wrong: ["Final chord of a piece", "Slow section between movements", "Singing without accompaniment"]},
+              {q: "What's an 'ostinato'?", a: "Repeating motif throughout a piece", wrong: ["Sudden silence", "Single instrument feature", "Final climactic chord"]},
+              {q: "What's a 'coda'?", a: "Concluding passage of a piece", wrong: ["Opening fanfare", "Repeat sign", "Soloist break"]},
+              {q: "What's a 'leitmotif'?", a: "Recurring musical theme tied to a character or idea", wrong: ["Solo violin passage", "Final cadence", "Time signature change"], explain: "Wagner pioneered this in his operas. John Williams uses it in film scores too."},
+              {q: "What is a 'string quartet' instrumentation?", a: "2 violins, viola, cello", wrong: ["4 violins", "Violin, viola, cello, bass", "4 cellos"]},
+              {q: "What key has 4 sharps?", a: "E Major", wrong: ["D Major", "A Major", "B Major"], explain: "E: F♯ C♯ G♯ D♯. Relative minor: C♯ minor."},
+              {q: "What key has 3 flats?", a: "E♭ Major", wrong: ["A♭ Major", "B♭ Major", "F Major"], explain: "E♭: B♭ E♭ A♭. Relative minor: C minor."},
+              {q: "What does 'tutti' mean?", a: "Everyone plays", wrong: ["Soloist only", "Only strings", "Silent measure"], explain: "Italian: 'all.' Contrast with 'solo.'"},
+              {q: "What's 'sonata' form?", a: "Exposition – Development – Recapitulation", wrong: ["A song for solo voice", "A type of dance", "Only piano music"]},
+              {q: "What's a 'fugue'?", a: "Polyphonic piece where voices imitate a subject", wrong: ["Single melody piece", "Pop song format", "Folk dance"], explain: "Bach was the master. Subject enters in one voice, then is imitated by others while the first continues."},
+              {q: "What is 'transposition'?", a: "Moving a piece to a different key", wrong: ["Changing the tempo", "Swapping instruments", "Reversing the melody"]},
+              {q: "What is 'syncopation'?", a: "Emphasis on weak/off beats", wrong: ["Playing on the downbeat", "Rapid trill", "Slow expressive playing"], explain: "Foundational to jazz, ragtime, funk."},
+              {q: "What does 'staccato' mean?", a: "Short, detached notes", wrong: ["Smooth & connected", "Loud and sustained", "Repeated rapidly"]},
+              {q: "What does 'legato' mean?", a: "Smooth, connected notes", wrong: ["Short and detached", "Very loud", "Played twice"]},
+              {q: "Which composer wrote 'The Goldberg Variations'?", a: "J.S. Bach", wrong: ["Handel", "Vivaldi", "Telemann"], explain: "1741 — 30 variations on an aria, named for harpsichordist Johann Goldberg."},
+              {q: "What's 'crescendo'?", a: "Gradually getting louder", wrong: ["Gradually softer", "Suddenly louder", "Slowing down"]},
+              {q: "What's 'decrescendo' / 'diminuendo'?", a: "Gradually getting softer", wrong: ["Getting louder", "Stopping suddenly", "Speeding up"]},
+              {q: "What is 'a tempo'?", a: "Return to the original tempo", wrong: ["Faster", "Slower", "Stop"]},
+              {q: "What's the 'circle of fifths' going clockwise from C?", a: "C, G, D, A, E, B, F♯, C♯, G♯/A♭, D♯/E♭, A♯/B♭, F", wrong: ["C, F, B♭, E♭, A♭, D♭, G♭", "C, D, E, F, G, A, B", "Random keys"]}
+          ],
+          4: [
+              {q: "What are the four families of a Western orchestra?", a: "Strings, Woodwinds, Brass, Percussion", wrong: ["Wood, Metal, Plastic, Skin", "High, Mid, Low, Percussion", "Soft, Loud, Sharp, Round"]},
+              {q: "What's a 'symphony' in classical structure?", a: "Multi-movement orchestral work, typically 4 movements", wrong: ["Single-movement piano piece", "Concerto for solo instrument", "A type of opera"]},
+              {q: "What is sonata-allegro form?", a: "Exposition → Development → Recapitulation → optional Coda", wrong: ["Verse-Chorus-Verse", "Intro-Body-Outro", "AABA"]},
+              {q: "What's a 'concerto'?", a: "Composition for solo instrument(s) plus orchestra", wrong: ["Symphony for two orchestras", "Choral mass", "Operatic aria"]},
+              {q: "How many movements does a typical Classical-era symphony have?", a: "4 (fast – slow – minuet – fast)", wrong: ["1", "2", "3"], explain: "Standard since Haydn: Allegro, slow movement, Minuet/Scherzo, Finale."},
+              {q: "Which composer pioneered the 12-tone serialism technique?", a: "Schoenberg", wrong: ["Stravinsky", "Bartók", "Debussy"], explain: "Arnold Schoenberg, 1920s — used all 12 chromatic pitches in a fixed row, dismantling tonal hierarchy."},
+              {q: "Who composed 'The Rite of Spring' (1913)?", a: "Stravinsky", wrong: ["Schoenberg", "Debussy", "Mahler"], explain: "Premiere caused a riot — primitivist rhythms and dissonance shocked Paris."},
+              {q: "Who wrote 'Clair de Lune'?", a: "Debussy", wrong: ["Ravel", "Satie", "Fauré"]},
+              {q: "What's 'impressionism' in music (Debussy era)?", a: "Atmosphere & color over functional harmony", wrong: ["Strict counterpoint", "Improvised jazz", "Pure serialism"]},
+              {q: "What's a 'fugal subject'?", a: "The main theme stated at the start of a fugue", wrong: ["Final cadence", "Concluding chord", "Composer's signature"]},
+              {q: "What's 'counterpoint'?", a: "Independent simultaneous melodic lines", wrong: ["Single melody with chords", "Drum-only passage", "Loud climax"]},
+              {q: "What is 'tonality'?", a: "Music organized around a central key/tonic", wrong: ["All notes equal", "No rhythm", "Loud dynamics only"]},
+              {q: "What is 'atonality'?", a: "Music without a tonal center", wrong: ["Music in 4/4 only", "Only major chords", "Only minor chords"]},
+              {q: "What is a 'pentatonic' scale?", a: "5-note scale (e.g. C-D-E-G-A)", wrong: ["7-note scale", "12-note scale", "3-note scale"], explain: "Found globally — Chinese music, blues, gospel, folk. No half-step intervals."},
+              {q: "What's the 'blues' scale?", a: "Pentatonic minor with added flat 5th (blue note)", wrong: ["Major scale", "Whole-tone scale", "Chromatic scale"]},
+              {q: "What's the 'whole tone' scale?", a: "6 notes a whole step apart (e.g. C-D-E-F♯-G♯-A♯)", wrong: ["Standard major scale", "Pentatonic", "Diminished"]},
+              {q: "What is 'twelve-bar blues'?", a: "12-bar chord progression I-IV-I-V-IV-I", wrong: ["12-note row", "12-piece band", "12/8 time"]},
+              {q: "Who is considered the 'father of bebop'?", a: "Charlie Parker (alto sax) & Dizzy Gillespie (trumpet)", wrong: ["Louis Armstrong", "Glenn Miller", "Duke Ellington"]},
+              {q: "Who composed 'Rhapsody in Blue'?", a: "George Gershwin", wrong: ["Aaron Copland", "Leonard Bernstein", "Stephen Sondheim"], explain: "1924 — bridged classical and jazz idioms."},
+              {q: "What's 'modulation'?", a: "Changing from one key to another mid-piece", wrong: ["Changing tempo", "Volume change", "Adding instruments"]},
+              {q: "How many notes are in a chromatic scale?", a: "12", wrong: ["7", "8", "16"], explain: "All 12 semitones in an octave."},
+              {q: "What's an 'octave'?", a: "Interval where frequency doubles", wrong: ["7-note scale", "Half-step interval", "Major third"]},
+              {q: "What is a Helmholtz resonance?", a: "Air resonance in a cavity (guitar bodies, beer bottles)", wrong: ["String tension principle", "Wind pressure law", "Reed vibration mode"]},
+              {q: "Equal temperament splits the octave into?", a: "12 equal parts (each 100 cents)", wrong: ["7 equal parts", "5 unequal parts", "13 equal parts"], explain: "Compromise tuning so all 12 keys sound roughly equally in-tune."},
+              {q: "What's 'just intonation'?", a: "Tuning based on small-integer frequency ratios", wrong: ["Equal-spaced 12 notes", "Random pitches", "Microtonal only"]},
+              {q: "What frequency is A above middle C typically tuned to?", a: "440 Hz", wrong: ["256 Hz", "432 Hz", "880 Hz"], explain: "ISO standard. Period-instrument groups often use 415 Hz."},
+              {q: "What's a 'pedal tone'?", a: "Sustained low note over changing harmonies above", wrong: ["The lowest piano pedal", "A bass-only solo", "Open string drone"]},
+              {q: "What's 'enharmonic equivalent'?", a: "Two note names for the same pitch (C♯ = D♭)", wrong: ["Two different pitches", "Octave duplication", "Triad inversion"]},
+              {q: "What is 'modal mixture' / 'modal interchange'?", a: "Borrowing chords from the parallel mode", wrong: ["Changing time signature", "Doubling the melody", "Doubling the tempo"]},
+              {q: "What's a 'secondary dominant'?", a: "Dominant of a non-tonic chord (V/V, V/ii, etc.)", wrong: ["The 2nd melody in a piece", "The seventh chord", "An augmented sixth"]},
+              {q: "What's a 'Neapolitan sixth'?", a: "♭II chord in first inversion (F-A♭-D♭ in C)", wrong: ["Pizza-themed song", "II-V-I progression", "First-inversion tonic"]},
+              {q: "Who wrote 'West Side Story'?", a: "Leonard Bernstein", wrong: ["Stephen Sondheim", "Andrew Lloyd Webber", "Richard Rodgers"], explain: "1957 — Sondheim wrote lyrics; Bernstein the music."},
+              {q: "What's a 'jazz standard'?", a: "A song widely known and recorded by jazz musicians", wrong: ["Specific time signature", "Type of saxophone", "Leader of a jazz band"]},
+              {q: "What's the 'Tristan chord' (Wagner) famous for?", a: "Pioneering chromatic ambiguity that prefigured atonality", wrong: ["Strong V-I cadence", "Pentatonic resolution", "Simple major triad"]},
+              {q: "What does 'rubato' mean musically?", a: "Tempo flexibility for expressive purposes", wrong: ["Strictly metronomic", "Very fast", "Very loud"]},
+              {q: "What's the Italian musical term for 'gradually slowing'?", a: "Ritardando (rit.)", wrong: ["Accelerando", "Cantabile", "Vivace"]},
+              {q: "What's the Italian for 'gradually speeding'?", a: "Accelerando (accel.)", wrong: ["Ritardando", "Tranquillo", "Sostenuto"]},
+              {q: "What does 'cantabile' mean?", a: "Singing-style (smoothly, lyrically)", wrong: ["Loud and short", "Rapidly", "Quietly"]},
+              {q: "What does 'fortissimo' (ff) mean?", a: "Very loud", wrong: ["Soft", "Suddenly", "Slowly"]},
+              {q: "What does 'pianissimo' (pp) mean?", a: "Very soft", wrong: ["Very loud", "Very fast", "Very slow"]}
+          ],
+          5: [
+              {q: "What is 'spectral music'?", a: "Composition based on acoustic spectrum analysis", wrong: ["Music for theremin only", "Music using only black keys", "Microtonal pop"], explain: "Tristan Murail, Gérard Grisey (1970s). Uses sonogram analysis to derive harmonic material."},
+              {q: "What's 'musique concrète'?", a: "Composition using recorded environmental sounds", wrong: ["Music written in concrete blocks", "Cement-pour percussion", "Strict 12-tone serialism"], explain: "Pierre Schaeffer, 1948. Trains, voices, glass — manipulated on tape. Forefather of sampling."},
+              {q: "What is a 'tone row' in dodecaphonic music?", a: "An ordered sequence of all 12 chromatic pitches", wrong: ["A scale of 12 notes", "A 12-bar blues progression", "12 instruments in a row"]},
+              {q: "What did Schoenberg, Berg, and Webern form?", a: "The Second Viennese School", wrong: ["Les Six", "Mighty Five", "Boulanger Circle"]},
+              {q: "Which composer wrote 'Pierrot lunaire' (1912)?", a: "Schoenberg", wrong: ["Berg", "Webern", "Stravinsky"], explain: "21 melodramas for vocalist + chamber ensemble — invented 'Sprechstimme.'"},
+              {q: "What is 'integral serialism'?", a: "Extending serial technique to rhythm, dynamics, articulation", wrong: ["Modal jazz technique", "Polyrhythmic Latin music", "Microtonal scales"]},
+              {q: "Who composed 'Le Marteau sans maître' (1955)?", a: "Pierre Boulez", wrong: ["Karlheinz Stockhausen", "Luigi Nono", "Olivier Messiaen"], explain: "Landmark integral serialist work."},
+              {q: "What's a 'mode of limited transposition' (Messiaen)?", a: "Symmetrical scale with few distinct transpositions", wrong: ["Mode used only in slow tempo", "Mode for limited instruments", "Mode found only in early music"]},
+              {q: "Who composed 'Quartet for the End of Time' (1941)?", a: "Olivier Messiaen", wrong: ["Henryk Górecki", "Krzysztof Penderecki", "Witold Lutosławski"], explain: "Written and premiered in a German POW camp for the available instruments: piano, violin, clarinet, cello."},
+              {q: "What's 'aleatoric' (chance) music?", a: "Music where some elements are intentionally indeterminate", wrong: ["Strict mathematical composition", "Only major-key music", "Strict 12-tone serialism"]},
+              {q: "Who composed '4′33″' (1952)?", a: "John Cage", wrong: ["Steve Reich", "Philip Glass", "La Monte Young"], explain: "Three movements of silence — the music IS the ambient sound of the room."},
+              {q: "What is 'minimalism' in music (Reich, Glass)?", a: "Composition built from repeating, gradually shifting patterns", wrong: ["Music with few notes only", "Solo flute music", "Pop music with no chorus"]},
+              {q: "Who composed 'Music for 18 Musicians' (1976)?", a: "Steve Reich", wrong: ["Philip Glass", "Terry Riley", "John Adams"]},
+              {q: "What's a 'phase' piece (Steve Reich)?", a: "Two identical lines gradually shifting in tempo to drift out of sync", wrong: ["A piece played in three keys", "Music in 3/4 time only", "A vocal-only piece"]},
+              {q: "Who composed 'In C' (1964)?", a: "Terry Riley", wrong: ["Philip Glass", "Steve Reich", "La Monte Young"], explain: "Foundational minimalist piece — 53 short numbered fragments players progress through at will."},
+              {q: "What's the Tristan chord (in terms of notes)?", a: "F-B-D♯-G♯ (half-diminished 7th)", wrong: ["C-E-G-B♭", "F♯-A-C♯-E", "B-D-F-A"], explain: "Wagner's 1859 Tristan und Isolde opening — delayed resolution dissolved classical tonality."},
+              {q: "Who composed 'Stimmung' (1968)?", a: "Karlheinz Stockhausen", wrong: ["Luciano Berio", "Iannis Xenakis", "Henri Pousseur"], explain: "75 minutes of just-intonation harmonic-series chants on a single low B♭."},
+              {q: "Who composed 'Threnody to the Victims of Hiroshima'?", a: "Krzysztof Penderecki", wrong: ["Witold Lutosławski", "György Ligeti", "Henryk Górecki"], explain: "1960 — for 52 strings using clusters, glissandi, extended techniques. Originally titled '8'37\"' before the dedication."},
+              {q: "Who composed 'Atmosphères' used in 2001: A Space Odyssey?", a: "György Ligeti", wrong: ["John Williams", "Ennio Morricone", "Bernard Herrmann"], explain: "1961 — micropolyphonic web of 89 individual string parts in slow clusters."},
+              {q: "What is 'micropolyphony'?", a: "Dense polyphony where individual lines are perceived as a texture", wrong: ["Music for very small ensembles", "Polyphony in microtones", "Brief polyphonic moments"]},
+              {q: "What is 'Sprechstimme'?", a: "Speech-song halfway between speaking and singing", wrong: ["Whispered text", "Rapid recitation", "Whistled melody"]},
+              {q: "Who developed 'stochastic music' using probability?", a: "Iannis Xenakis", wrong: ["Cage", "Cardew", "Lachenmann"], explain: "Architect-composer. Used statistics, set theory, game theory to generate musical structures."},
+              {q: "Who composed the 'Sequenza' series (solo pieces for various instruments)?", a: "Luciano Berio", wrong: ["Luigi Nono", "Salvatore Sciarrino", "Bruno Maderna"], explain: "14 solo pieces (1958-2002) exploring extended techniques on each instrument."},
+              {q: "What was 'spectralism' a reaction against?", a: "Highly abstract serialism's disregard for sonic reality", wrong: ["Romantic harmony", "Folk music traditions", "Diatonic tonality"]},
+              {q: "What's 'extended technique' on an instrument?", a: "Non-traditional sound production (bow on wood, key clicks, etc.)", wrong: ["Practicing scales longer", "Playing in extreme registers", "Using a metronome"]},
+              {q: "Who composed 'Different Trains' (1988) using sampled voices and string quartet?", a: "Steve Reich", wrong: ["Philip Glass", "John Adams", "Arvo Pärt"]},
+              {q: "What is 'tintinnabuli' style (Arvo Pärt)?", a: "Triad-based texture mimicking bell overtones", wrong: ["Tin whistle technique", "Tibetan singing bowl style", "Triangle solo"]},
+              {q: "What's a 'mode of vibration' on a violin string?", a: "Standing wave pattern (fundamental + harmonics)", wrong: ["Bowing direction", "Vibrato speed", "Plucking position"]},
+              {q: "What is 'inharmonicity' in piano strings?", a: "Slight stretching of overtones above ideal harmonic ratios due to string stiffness", wrong: ["Out-of-tune strings", "Strings rusted", "Strings of different metals"], explain: "Why pianos use 'stretched tuning' — bass slightly flat, treble slightly sharp."},
+              {q: "What's the difference between musique concrète and elektronische Musik?", a: "Concrète manipulates recorded sounds; elektronische synthesizes them", wrong: ["Different countries only", "Different decades only", "Identical movements"]},
+              {q: "What is a 'tone cluster'?", a: "Chord of adjacent semitones played simultaneously", wrong: ["Notes spaced widely apart", "All notes of major scale", "Pentatonic chord"], explain: "Henry Cowell (1910s) popularized — play with fist or forearm on piano."},
+              {q: "What are serialism's basic operations on a tone row?", a: "P (prime), I (inversion), R (retrograde), RI", wrong: ["Add, subtract, multiply, divide", "Loud, soft, fast, slow", "Sharp, flat, natural, double-flat"], explain: "Four transformations × 12 transpositions = 48 row forms."},
+              {q: "Who composed 'Black Angels' for electric string quartet?", a: "George Crumb", wrong: ["John Cage", "Morton Feldman", "Lou Harrison"], explain: "1970 — Vietnam-era piece quoting Dies Irae, full of extended techniques."},
+              {q: "What are 'just intonation' major triad ratios?", a: "4:5:6", wrong: ["1:2:3", "3:4:5", "5:6:7"], explain: "Pure perfect 5ths (2:3) and major 3rds (4:5). Equal temperament approximates."},
+              {q: "What is 'set theory' in music analysis?", a: "Classifying pitch collections by interval content (Forte numbers)", wrong: ["Counting instruments", "Naming time signatures", "Listing operas chronologically"]},
+              {q: "Who composed the 'Symphony of Sorrowful Songs' (Symphony No. 3)?", a: "Henryk Górecki", wrong: ["Arvo Pärt", "Krzysztof Penderecki", "Witold Lutosławski"], explain: "1976 — slow, modal, deeply tonal. Surprise hit in 1992."},
+              {q: "What is 'holy minimalism'?", a: "Spiritual minimalism associated with Pärt, Tavener, Górecki", wrong: ["Religious folk music", "Gregorian chant revival", "Pop music in churches"]},
+              {q: "What's a 'matrix' in 12-tone composition?", a: "12×12 grid of all transpositions and inversions of a row", wrong: ["Recording studio mixer", "Score with two staves", "Conductor's chart"]},
+              {q: "Who wrote 'Treatise' (1963-67), a 193-page graphic score with no instructions?", a: "Cornelius Cardew", wrong: ["John Cage", "Earle Brown", "Morton Feldman"]},
+              {q: "Who composed 'Lux Aeterna' (used in 2001: A Space Odyssey)?", a: "György Ligeti", wrong: ["Krzysztof Penderecki", "Arvo Pärt", "Henryk Górecki"]}
           ]
       },
       languages: {
