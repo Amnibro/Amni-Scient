@@ -1,5 +1,12 @@
 # Architecture Map — amni-scient.com
 
+## v5.6.0 Amni-Learn Full Module Audit (in progress)
+- **Plan** — `docs/checklists/checklist_v5.6.0_learn_module_audit.md`. Three-pass audit of ~60 learn modules: Pass 0 (cross-cutting framework), Pass 1 (per-module diagnosis), Pass 2 (fixes batched by priority P0-P3), Pass 3 (verification).
+- **Audience map (canonical)** — L1 = Pre-K/early-K (4-6); L2 = elementary (7-9); L3 = teens (10-15); L4 = young adult (16-22); L5 = adult (22+). Used to grade vocab, mechanics, and pacing in every module.
+- **Cross-cutting issues being worked** — shared playable-area CSS contract, shared drag-drop helper (Pass 0 candidate; first inlined in Sorting Hat), quiz pedagogy contract (every kid quiz needs `explain` cards w/ "Next ▶" — partially done in v5.4.0 college quizzes), step-by-step teaching mode for math/word modules, redundancy decisions (Math Basics vs Speed Math; Anagrams vs Word Scramble; Card Pairs vs Matching; Reflex Racer vs Reaction Time), Android wrapper sync workflow.
+- **Batch 1 (this push)** — Card Pairs polish, Sudoku highlight rewrite, Reflex Racer pacing rebalance, Math Mountain removed, Word Scramble re-shuffle fix, Sorting Hat drag-drop rewrite. Android wrapper file mirrored from site source-of-truth (drifted since 2026-04-29).
+- **Backups** — `backups/v5.6.0_pre_audit/` for pre-audit snapshot.
+
 ## v5.5.0 AdSense Doorway Remediation (Calc SEO Pages)
 - **Trigger** — Google AdSense manual action: "Thin content with little or no added value." Diagnosed root cause: `calc/<module>.html` (31 pages) and `learn/<category>.html` (11 pages) were generator-emitted cookie-cutter shells with ~250 unique words each and identical section skeletons — textbook doorway-page pattern under Google's spam policy.
 - **Generator: `src/gen-calc-modules.js`** — extended each module entry in the `M[]` array with a `deep[]` field of typed sub-blocks (`worked` / `procedure` / `pitfalls` / `physics` / `standards_detail` / `faq` / `table`). Added `renderDeep(m)` helper that emits a collapsed-by-default `<details class="deep-dive">` block between WHEN TO USE and RELATED MODULES sections. Variation comes from per-module choice of which sub-blocks to include, the order they appear, and module-specific `deepTitle`.

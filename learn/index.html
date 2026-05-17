@@ -4426,42 +4426,39 @@ function playAnimalSound(type) {
         el.dataset.bucket = item.b;
         el.dataset.idx = idx;
         el.addEventListener('pointerdown', (e) => {
+          if(el.classList.contains('correct'))return;
           e.preventDefault();
-          if(dragItem) dragItem.classList.remove('selected');
+          if(dragItem&&dragItem!==el) dragItem.classList.remove('selected');
           dragItem = el; el.classList.add('selected');
-          const clone = el.cloneNode(true);
-          clone.style.cssText = 'position:fixed;pointer-events:none;z-index:9999;opacity:0.85;transform:scale(1.1);transition:none;';
+          try{el.setPointerCapture(e.pointerId);}catch(_){}
           const r = el.getBoundingClientRect();
-          clone.style.left = (r.left + (e.clientX - r.left - r.width/2)) + 'px';
-          clone.style.top = (r.top + (e.clientY - r.top - r.height/2)) + 'px';
-          clone.style.width = r.width + 'px'; clone.style.height = r.height + 'px';
+          const offX = e.clientX - r.left - r.width/2, offY = e.clientY - r.top - r.height/2;
+          const clone = el.cloneNode(true);
+          clone.style.cssText = `position:fixed;pointer-events:none;z-index:9999;opacity:0.9;transform:scale(1.1);transition:none;left:${e.clientX-r.width/2-offX}px;top:${e.clientY-r.height/2-offY}px;width:${r.width}px;height:${r.height}px;`;
           document.body.appendChild(clone);
+          const hoverOf = ev => { const hit = document.elementFromPoint(ev.clientX,ev.clientY); return hit ? hit.closest('.sort-bucket') : null; };
           const move = ev => {
             ev.preventDefault();
-            const cx = ev.touches ? ev.touches[0].clientX : ev.clientX;
-            const cy = ev.touches ? ev.touches[0].clientY : ev.clientY;
-            clone.style.left = (cx - r.width/2) + 'px';
-            clone.style.top = (cy - r.height/2) + 'px';
+            clone.style.left = (ev.clientX - r.width/2 - offX) + 'px';
+            clone.style.top = (ev.clientY - r.height/2 - offY) + 'px';
+            const tgt = hoverOf(ev);
+            area.querySelectorAll('.sort-bucket.hover').forEach(b=>{if(b!==tgt)b.classList.remove('hover');});
+            if(tgt)tgt.classList.add('hover');
           };
           const up = ev => {
             ev.preventDefault();
             clone.remove();
-            document.removeEventListener('pointermove', move);
-            document.removeEventListener('pointerup', up);
-            const cx = ev.clientX, cy = ev.clientY;
-            const buckets = $$('#sort-area').querySelectorAll('.sort-bucket');
-            let dropped = false;
-            buckets.forEach(b => {
-              const br = b.getBoundingClientRect();
-              if(cx>=br.left&&cx<=br.right&&cy>=br.top&&cy<=br.bottom) {
-                dropped = true;
-                handleDrop(dragItem, parseInt(b.dataset.bi), b);
-              }
-            });
-            if(!dropped && dragItem) dragItem.classList.remove('selected');
+            el.removeEventListener('pointermove', move);
+            el.removeEventListener('pointerup', up);
+            el.removeEventListener('pointercancel', up);
+            area.querySelectorAll('.sort-bucket.hover').forEach(b=>b.classList.remove('hover'));
+            const tgt = hoverOf(ev);
+            if(tgt) handleDrop(dragItem, parseInt(tgt.dataset.bi), tgt);
+            else if(dragItem) dragItem.classList.remove('selected');
           };
-          document.addEventListener('pointermove', move, {passive:false});
-          document.addEventListener('pointerup', up, {passive:false});
+          el.addEventListener('pointermove', move, {passive:false});
+          el.addEventListener('pointerup', up, {passive:false});
+          el.addEventListener('pointercancel', up, {passive:false});
         }, {passive:false});
         tray.appendChild(el);
       });
@@ -4470,17 +4467,6 @@ function playAnimalSound(type) {
         bucket.className = 'sort-bucket';
         bucket.dataset.bi = bi;
         bucket.innerHTML = `<div class="sort-label">${label}</div><div class="sort-items"></div>`;
-        bucket.addEventListener('dragover', (e) => { e.preventDefault(); bucket.classList.add('hover'); });
-        bucket.addEventListener('dragleave', () => bucket.classList.remove('hover'));
-        bucket.addEventListener('drop', (e) => {
-          e.preventDefault(); bucket.classList.remove('hover');
-          if(!dragItem) return;
-          handleDrop(dragItem, bi, bucket);
-        });
-        bucket.addEventListener('click', () => {
-          if(!dragItem) { const firstItem = tray.querySelector('.sort-item'); if(firstItem) dragItem = firstItem; return; }
-          handleDrop(dragItem, bi, bucket);
-        });
         area.appendChild(bucket);
       });
     }

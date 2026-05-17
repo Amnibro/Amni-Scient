@@ -1,5 +1,12 @@
 ﻿# Changelog 
 
+## [5.6.0] - 2026-05-16 - Amni-Learn module audit (pass 1, batch 1)
+- **Scope kickoff** — opened deep audit of every learn module for content fit, mechanics fit, layout/playable-area, depth, pedagogy, and redundancy. Audience map: L1-2 kids / L3 teens / L4-5 adults. Plan in `docs/checklists/checklist_v5.6.0_learn_module_audit.md`.
+- **Bug-fix preamble (pushed 68778e4)** — Card Pairs size-picker dedupe + card-size cap lift (container queries) + instant match feedback + faster flip-back; Sudoku highlight colors changed from `rgba(...)` (which exposed teal grid bg through transparency) to opaque; `num-covered` overlay removed (was flooding the board); Reflex Racer: simultaneous-target cap, slower spawn cadence, removed click-side respawn that compounded into runaway acceleration; Math Mountain cut entirely (redundant with Math Basics); Word Scramble: shuffle once per word in `loadWord()`, not on every `renderTiles()` call.
+- **Sorting Hat drag-drop rewrite** — replaced multi-bucket forEach hit-test with single `document.elementFromPoint(...).closest('.sort-bucket')` (was double-firing on overlapping rects), added `setPointerCapture` per-item, hover feedback during pointer drag (CSS `.hover` was tied to dead HTML5 `dragover` event), pointerdown short-circuits on already-sorted items, removed bucket-click pre-select hack that was polluting `dragItem` global state, clone preserves the touch-offset on the item (no jump on grab).
+- **Android wrapper sync** — `Amni-Learn/Learn-Mobile/src/main/assets/learn/index.html` mirrored from site source-of-truth (drifted since 2026-04-29). No git repo at that path yet, file copied on disk only.
+- **Backups** — `backups/v5.6.0_pre_audit/learn-index.html`.
+
 ## [5.5.1] - 2026-05-15 - AdSense doorway remediation (learn SEO pages)
 - **Scope** — applied same deep-content treatment from v5.5.0 to the 11 `learn/<category>.html` SEO landing pages, which Google would have flagged as doorways alongside calc/* if v5.5.0 had shipped alone.
 - **Generator: `src/gen-learn-categories.js`** — added `renderDeep(c)` helper paralleling the calc generator, deep-block CSS (with green `#2ecc71` accent matching `body.theme-learn`), `deep[]` field per category with `lesson` / `milestones` / `pitfalls` / `faq` / `body` block types. New `milestones` block type emits age-banded developmental milestone lists.
