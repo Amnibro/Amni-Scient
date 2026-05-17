@@ -653,9 +653,8 @@
   .sdk-cell.given{color:#1abc9c;cursor:default;}
   .sdk-cell.selected{background:#f39c12;color:#0a1a2a;}
   .sdk-cell.given.selected{color:#0a1a2a;}
-  .sdk-cell.same-val{background:#3a2e16;}
+  .sdk-cell.same-val{background:#28384a;}
   .sdk-cell.error{color:#e74c3c;animation:shake 0.3s;}
-  .sdk-cell.highlight-row,.sdk-cell.highlight-col,.sdk-cell.highlight-box{background:#23364a;}
   .sdk-cell:nth-child(3n){border-right:2px solid #1abc9c;}
   .sdk-cell:nth-child(n+19):nth-child(-n+27),.sdk-cell:nth-child(n+46):nth-child(-n+54),.sdk-cell:nth-child(n+73):nth-child(-n+81){border-bottom:2px solid #1abc9c;}
   .sdk-pencil{position:absolute;top:1px;left:1px;right:1px;bottom:1px;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);pointer-events:none;}
@@ -826,14 +825,14 @@
   .rxt-summary-stat.best .val{color:#2ecc71;}
   .rxt-summary-stat.new-best .val{color:#f1c40f;animation:spmPulse 0.8s ease-out infinite;}
   .rxt-tier-scale{margin-top:14px;font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:rgba(236,240,241,0.55);line-height:1.5;}
-  .nbk-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(10px,2vw,18px);max-width:min(95vw,700px);width:95%;margin:16px auto;}
-  .nbk-cell{aspect-ratio:1;background:#1a2a3a;border:3px solid #2a3a4a;border-radius:16px;transition:background 0.2s,border-color 0.2s,transform 0.15s,box-shadow 0.2s;min-height:clamp(80px,15vw,140px);cursor:pointer;}
+  .nbk-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(8px,2vw,18px);max-width:min(min(95vw,55vh),700px);width:95%;margin:12px auto;}
+  .nbk-cell{aspect-ratio:1;background:#1a2a3a;border:3px solid #2a3a4a;border-radius:16px;transition:background 0.2s,border-color 0.2s,transform 0.15s,box-shadow 0.2s;min-height:0;cursor:pointer;}
   .nbk-cell.active{background:#1abc9c;border-color:#1abc9c;box-shadow:0 0 30px rgba(26,188,156,0.6);animation:nbkCellPulse 0.5s ease-out;}
   @keyframes nbkCellPulse{0%{transform:scale(1)}45%{transform:scale(1.08)}100%{transform:scale(1)}}
   .nbk-cell.correct-flash{background:#2ecc71;border-color:#2ecc71;box-shadow:0 0 30px rgba(46,204,113,0.7);}
   .nbk-cell.wrong-flash{background:#e74c3c;border-color:#e74c3c;box-shadow:0 0 30px rgba(231,76,60,0.7);animation:spmShake 0.35s ease-out;}
-  .nbk-btns{display:flex;gap:15px;margin:12px 0;}
-  .nbk-btn{padding:12px 28px;border-radius:12px;border:2px solid;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:bold;transition:transform 0.15s,background 0.2s,box-shadow 0.2s;background:transparent;}
+  .nbk-btns{display:flex;gap:clamp(8px,2vw,15px);margin:8px 0 16px;position:sticky;bottom:8px;z-index:5;background:rgba(10,20,30,0.85);padding:6px;border-radius:14px;backdrop-filter:blur(4px);}
+  .nbk-btn{padding:clamp(10px,2vw,12px) clamp(18px,5vw,28px);border-radius:12px;border:2px solid;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:clamp(0.85rem,2.5vw,1rem);font-weight:bold;transition:transform 0.15s,background 0.2s,box-shadow 0.2s;background:transparent;flex:1;max-width:200px;}
   .nbk-btn.match{border-color:#2ecc71;color:#2ecc71;}
   .nbk-btn.match:hover{background:rgba(46,204,113,0.2);transform:translateY(-2px);box-shadow:0 6px 14px rgba(46,204,113,0.3);}
   .nbk-btn.nomatch{border-color:#e74c3c;color:#e74c3c;}
@@ -4529,9 +4528,9 @@ function playAnimalSound(type) {
     };
     function spawnTarget() {
       if(!rfxActive) return;
-      arena.querySelectorAll('.rfx-target').forEach(t => { if(Date.now() - parseInt(t.dataset.born) > (currentLevel<=2?6000:4500)) t.remove(); });
+      arena.querySelectorAll('.rfx-target').forEach(t => { if(Date.now() - parseInt(t.dataset.born) > (currentLevel<=2?5000:3500)) t.remove(); });
       const liveCount = arena.querySelectorAll('.rfx-target:not([data-decoy])').length;
-      const maxLive = currentLevel <= 2 ? 2 : (currentLevel <= 3 ? 3 : (currentLevel <= 4 ? 4 : 5));
+      const maxLive = currentLevel <= 2 ? 1 : (currentLevel <= 3 ? 2 : (currentLevel <= 4 ? 3 : 3));
       if(liveCount >= maxLive){const retryDelay = currentLevel <= 2 ? 600 : 400;setTimeout(spawnTarget, retryDelay);return;}
       const colors = ['#e74c3c','#3498db','#2ecc71','#f1c40f','#e84393','#00cec9','#6c5ce7','#fd79a8'];
       const emojis = currentLevel <= 2 ? ['🍎','🌟','🎈','🐱','🐶','🦋','🌈','🎯'] : ['🎯','⚡','💎','🔥','❄️','💫','🌀','⭐'];
@@ -4578,7 +4577,7 @@ function playAnimalSound(type) {
         arena.appendChild(d);
         setTimeout(() => d.remove(), 1800);
       }
-      const delay = currentLevel <= 2 ? 1500 : (currentLevel <= 3 ? 1100 : (currentLevel <= 4 ? 900 : 750));
+      const delay = currentLevel <= 2 ? 1900 : (currentLevel <= 3 ? 1500 : (currentLevel <= 4 ? 1250 : 1100));
       setTimeout(spawnTarget, delay + Math.random() * 300);
     }
   }
@@ -4871,7 +4870,15 @@ function playAnimalSound(type) {
         {en:'House',img:'🏠',es:'Casa',fr:'Maison',de:'Haus',it:'Casa',zh:'房子',hi:'घर'},
         {en:'Fish',img:'🐟',es:'Pez',fr:'Poisson',de:'Fisch',it:'Pesce',zh:'鱼',hi:'मछली'},
         {en:'Bird',img:'🐦',es:'Pájaro',fr:'Oiseau',de:'Vogel',it:'Uccello',zh:'鸟',hi:'चिड़िया'},
-        {en:'Tree',img:'🌳',es:'Árbol',fr:'Arbre',de:'Baum',it:'Albero',zh:'树',hi:'पेड़'}
+        {en:'Tree',img:'🌳',es:'Árbol',fr:'Arbre',de:'Baum',it:'Albero',zh:'树',hi:'पेड़'},
+        {en:'Moon',img:'🌙',es:'Luna',fr:'Lune',de:'Mond',it:'Luna',zh:'月亮',hi:'चाँद'},
+        {en:'Star',img:'⭐',es:'Estrella',fr:'Étoile',de:'Stern',it:'Stella',zh:'星星',hi:'तारा'},
+        {en:'Flower',img:'🌸',es:'Flor',fr:'Fleur',de:'Blume',it:'Fiore',zh:'花',hi:'फूल'},
+        {en:'Apple',img:'🍎',es:'Manzana',fr:'Pomme',de:'Apfel',it:'Mela',zh:'苹果',hi:'सेब'},
+        {en:'Bread',img:'🍞',es:'Pan',fr:'Pain',de:'Brot',it:'Pane',zh:'面包',hi:'रोटी'},
+        {en:'Milk',img:'🥛',es:'Leche',fr:'Lait',de:'Milch',it:'Latte',zh:'牛奶',hi:'दूध'},
+        {en:'Egg',img:'🥚',es:'Huevo',fr:'Œuf',de:'Ei',it:'Uovo',zh:'蛋',hi:'अंडा'},
+        {en:'Book',img:'📖',es:'Libro',fr:'Livre',de:'Buch',it:'Libro',zh:'书',hi:'किताब'}
       ],
       2: [
         {en:'Hello',img:'👋',es:'Hola',fr:'Bonjour',de:'Hallo',it:'Ciao',zh:'你好',hi:'नमस्ते'},
@@ -4880,8 +4887,16 @@ function playAnimalSound(type) {
         {en:'Please',img:'🤲',es:'Por favor',fr:'S\'il vous plaît',de:'Bitte',it:'Per favore',zh:'请',hi:'कृपया'},
         {en:'Friend',img:'🤝',es:'Amigo',fr:'Ami',de:'Freund',it:'Amico',zh:'朋友',hi:'दोस्त'},
         {en:'School',img:'🏫',es:'Escuela',fr:'École',de:'Schule',it:'Scuola',zh:'学校',hi:'स्कूल'},
-        {en:'Book',img:'📖',es:'Libro',fr:'Livre',de:'Buch',it:'Libro',zh:'书',hi:'किताब'},
-        {en:'Star',img:'⭐',es:'Estrella',fr:'Étoile',de:'Stern',it:'Stella',zh:'星星',hi:'तारा'}
+        {en:'Family',img:'👨‍👩‍👧‍👦',es:'Familia',fr:'Famille',de:'Familie',it:'Famiglia',zh:'家庭',hi:'परिवार'},
+        {en:'Love',img:'❤️',es:'Amor',fr:'Amour',de:'Liebe',it:'Amore',zh:'爱',hi:'प्यार'},
+        {en:'Time',img:'⏰',es:'Tiempo',fr:'Temps',de:'Zeit',it:'Tempo',zh:'时间',hi:'समय'},
+        {en:'Day',img:'🌞',es:'Día',fr:'Jour',de:'Tag',it:'Giorno',zh:'天',hi:'दिन'},
+        {en:'Night',img:'🌃',es:'Noche',fr:'Nuit',de:'Nacht',it:'Notte',zh:'夜晚',hi:'रात'},
+        {en:'Year',img:'📅',es:'Año',fr:'Année',de:'Jahr',it:'Anno',zh:'年',hi:'साल'},
+        {en:'Money',img:'💰',es:'Dinero',fr:'Argent',de:'Geld',it:'Denaro',zh:'钱',hi:'पैसा'},
+        {en:'Work',img:'💼',es:'Trabajo',fr:'Travail',de:'Arbeit',it:'Lavoro',zh:'工作',hi:'काम'},
+        {en:'Home',img:'🏡',es:'Hogar',fr:'Maison',de:'Heim',it:'Casa',zh:'家',hi:'घर'},
+        {en:'City',img:'🏙️',es:'Ciudad',fr:'Ville',de:'Stadt',it:'Città',zh:'城市',hi:'शहर'}
       ],
       3: [
         {en:'Butterfly',img:'🦋',es:'Mariposa',fr:'Papillon',de:'Schmetterling',it:'Farfalla',zh:'蝴蝶',hi:'तितली'},
@@ -4891,7 +4906,15 @@ function playAnimalSound(type) {
         {en:'Music',img:'🎵',es:'Música',fr:'Musique',de:'Musik',it:'Musica',zh:'音乐',hi:'संगीत'},
         {en:'Rainbow',img:'🌈',es:'Arcoíris',fr:'Arc-en-ciel',de:'Regenbogen',it:'Arcobaleno',zh:'彩虹',hi:'इंद्रधनुष'},
         {en:'Earth',img:'🌍',es:'Tierra',fr:'Terre',de:'Erde',it:'Terra',zh:'地球',hi:'पृथ्वी'},
-        {en:'Snow',img:'❄️',es:'Nieve',fr:'Neige',de:'Schnee',it:'Neve',zh:'雪',hi:'बर्फ़'}
+        {en:'Snow',img:'❄️',es:'Nieve',fr:'Neige',de:'Schnee',it:'Neve',zh:'雪',hi:'बर्फ़'},
+        {en:'Fire',img:'🔥',es:'Fuego',fr:'Feu',de:'Feuer',it:'Fuoco',zh:'火',hi:'आग'},
+        {en:'River',img:'🏞️',es:'Río',fr:'Rivière',de:'Fluss',it:'Fiume',zh:'河',hi:'नदी'},
+        {en:'Forest',img:'🌲',es:'Bosque',fr:'Forêt',de:'Wald',it:'Foresta',zh:'森林',hi:'जंगल'},
+        {en:'Desert',img:'🏜️',es:'Desierto',fr:'Désert',de:'Wüste',it:'Deserto',zh:'沙漠',hi:'रेगिस्तान'},
+        {en:'Wind',img:'💨',es:'Viento',fr:'Vent',de:'Wind',it:'Vento',zh:'风',hi:'हवा'},
+        {en:'Cloud',img:'☁️',es:'Nube',fr:'Nuage',de:'Wolke',it:'Nuvola',zh:'云',hi:'बादल'},
+        {en:'Bridge',img:'🌉',es:'Puente',fr:'Pont',de:'Brücke',it:'Ponte',zh:'桥',hi:'पुल'},
+        {en:'Garden',img:'🌷',es:'Jardín',fr:'Jardin',de:'Garten',it:'Giardino',zh:'花园',hi:'बगीचा'}
       ],
       4: [
         {en:'Knowledge',img:'📚',es:'Conocimiento',fr:'Connaissance',de:'Wissen',it:'Conoscenza',zh:'知识',hi:'ज्ञान'},
@@ -4901,7 +4924,15 @@ function playAnimalSound(type) {
         {en:'Discovery',img:'🔭',es:'Descubrimiento',fr:'Découverte',de:'Entdeckung',it:'Scoperta',zh:'发现',hi:'खोज'},
         {en:'Electricity',img:'⚡',es:'Electricidad',fr:'Électricité',de:'Elektrizität',it:'Elettricità',zh:'电',hi:'बिजली'},
         {en:'Universe',img:'🌌',es:'Universo',fr:'Univers',de:'Universum',it:'Universo',zh:'宇宙',hi:'ब्रह्मांड'},
-        {en:'Philosophy',img:'🤔',es:'Filosofía',fr:'Philosophie',de:'Philosophie',it:'Filosofia',zh:'哲学',hi:'दर्शन'}
+        {en:'Philosophy',img:'🤔',es:'Filosofía',fr:'Philosophie',de:'Philosophie',it:'Filosofia',zh:'哲学',hi:'दर्शन'},
+        {en:'Memory',img:'🧠',es:'Memoria',fr:'Mémoire',de:'Erinnerung',it:'Memoria',zh:'记忆',hi:'याद'},
+        {en:'Adventure',img:'🗺️',es:'Aventura',fr:'Aventure',de:'Abenteuer',it:'Avventura',zh:'冒险',hi:'साहसिक'},
+        {en:'Engineer',img:'👷',es:'Ingeniero',fr:'Ingénieur',de:'Ingenieur',it:'Ingegnere',zh:'工程师',hi:'इंजीनियर'},
+        {en:'Doctor',img:'👨‍⚕️',es:'Médico',fr:'Médecin',de:'Arzt',it:'Medico',zh:'医生',hi:'डॉक्टर'},
+        {en:'Teacher',img:'👩‍🏫',es:'Maestro',fr:'Professeur',de:'Lehrer',it:'Insegnante',zh:'老师',hi:'शिक्षक'},
+        {en:'Scientist',img:'👨‍🔬',es:'Científico',fr:'Scientifique',de:'Wissenschaftler',it:'Scienziato',zh:'科学家',hi:'वैज्ञानिक'},
+        {en:'Journey',img:'🛤️',es:'Viaje',fr:'Voyage',de:'Reise',it:'Viaggio',zh:'旅程',hi:'यात्रा'},
+        {en:'Promise',img:'🤞',es:'Promesa',fr:'Promesse',de:'Versprechen',it:'Promessa',zh:'承诺',hi:'वादा'}
       ],
       5: [
         {en:'Consciousness',img:'🧠',es:'Conciencia',fr:'Conscience',de:'Bewusstsein',it:'Coscienza',zh:'意识',hi:'चेतना'},
@@ -4909,9 +4940,17 @@ function playAnimalSound(type) {
         {en:'Environment',img:'🌿',es:'Medio ambiente',fr:'Environnement',de:'Umwelt',it:'Ambiente',zh:'环境',hi:'पर्यावरण'},
         {en:'Revolution',img:'✊',es:'Revolución',fr:'Révolution',de:'Revolution',it:'Rivoluzione',zh:'革命',hi:'क्रांति'},
         {en:'Technology',img:'💻',es:'Tecnología',fr:'Technologie',de:'Technologie',it:'Tecnologia',zh:'技术',hi:'प्रौद्योगिकी'},
-        {en:'Democracy',img:'🗳️',es:'Democracia',fr:'Démocratie',de:'Demokratie',it:'Democrazia',zh:'民主',hi:'लोकतंत्र'},
         {en:'Phenomenon',img:'✨',es:'Fenómeno',fr:'Phénomène',de:'Phänomen',it:'Fenomeno',zh:'现象',hi:'घटना'},
-        {en:'Architecture',img:'🏗️',es:'Arquitectura',fr:'Architecture',de:'Architektur',it:'Architettura',zh:'建筑',hi:'वास्तुकला'}
+        {en:'Architecture',img:'🏗️',es:'Arquitectura',fr:'Architecture',de:'Architektur',it:'Architettura',zh:'建筑',hi:'वास्तुकला'},
+        {en:'Astronomy',img:'🔭',es:'Astronomía',fr:'Astronomie',de:'Astronomie',it:'Astronomia',zh:'天文学',hi:'खगोलशास्त्र'},
+        {en:'Chemistry',img:'⚗️',es:'Química',fr:'Chimie',de:'Chemie',it:'Chimica',zh:'化学',hi:'रसायन शास्त्र'},
+        {en:'Mathematics',img:'➗',es:'Matemáticas',fr:'Mathématiques',de:'Mathematik',it:'Matematica',zh:'数学',hi:'गणित'},
+        {en:'Literature',img:'📕',es:'Literatura',fr:'Littérature',de:'Literatur',it:'Letteratura',zh:'文学',hi:'साहित्य'},
+        {en:'Symphony',img:'🎼',es:'Sinfonía',fr:'Symphonie',de:'Sinfonie',it:'Sinfonia',zh:'交响乐',hi:'सिम्फनी'},
+        {en:'Hypothesis',img:'🤔',es:'Hipótesis',fr:'Hypothèse',de:'Hypothese',it:'Ipotesi',zh:'假设',hi:'परिकल्पना'},
+        {en:'Equation',img:'🧮',es:'Ecuación',fr:'Équation',de:'Gleichung',it:'Equazione',zh:'方程',hi:'समीकरण'},
+        {en:'Catalyst',img:'⚛️',es:'Catalizador',fr:'Catalyseur',de:'Katalysator',it:'Catalizzatore',zh:'催化剂',hi:'उत्प्रेरक'},
+        {en:'Renaissance',img:'🎨',es:'Renacimiento',fr:'Renaissance',de:'Renaissance',it:'Rinascimento',zh:'文艺复兴',hi:'पुनर्जागरण'}
       ]
     };
     let wbIdx = 0, wbCorrect = 0, wbTotal = 0, wbPool = [], wbStreak = 0, wbBestStreak = 0;
@@ -5610,7 +5649,7 @@ function playAnimalSound(type) {
     function digitCount(n){let ct=0;for(let r=0;r<9;r++)for(let c=0;c<9;c++){if(grid[r][c]===n)ct++;}return ct;}
     function updateNumpad(){numpad.querySelectorAll('.sdk-num').forEach(b=>{const n=parseInt(b.textContent);if(!isNaN(n)){const full=digitCount(n)>=9;b.classList.toggle('sdk-num-done',full);b.disabled=full;b.classList.toggle('active',n===activeNum&&!full);}});}
     function render(){board.innerHTML='';for(let r=0;r<9;r++)for(let c=0;c<9;c++){const cell=document.createElement('div');cell.className='sdk-cell'+(given[r][c]?' given':'');cell.dataset.r=r;cell.dataset.c=c;const v=grid[r][c];if(v){cell.textContent=v;}else if(pencilMarks[r][c].size){const pm=document.createElement('div');pm.className='sdk-pencil';for(let n=1;n<=9;n++){const s=document.createElement('span');s.textContent=pencilMarks[r][c].has(n)?n:'';pm.appendChild(s);}cell.appendChild(pm);}cell.onclick=()=>{selected={r,c};highlight();if(v)activeNum=v;updateNumpad();};board.appendChild(cell);}updateNumpad();}
-    function highlight(){const an=activeNum||(selected&&grid[selected.r]?grid[selected.r][selected.c]:0);$$all('.sdk-cell').forEach(cell=>{cell.classList.remove('selected','same-val','highlight-row','highlight-col','highlight-box');const cr=+cell.dataset.r,cc=+cell.dataset.c;if(selected){if(cr===selected.r&&cc===selected.c)cell.classList.add('selected');else if(cr===selected.r)cell.classList.add('highlight-row');else if(cc===selected.c)cell.classList.add('highlight-col');else if(Math.floor(cr/3)===Math.floor(selected.r/3)&&Math.floor(cc/3)===Math.floor(selected.c/3))cell.classList.add('highlight-box');}if(an&&grid[cr][cc]===an&&!(selected&&cr===selected.r&&cc===selected.c))cell.classList.add('same-val');});}
+    function highlight(){const an=activeNum||(selected&&grid[selected.r]?grid[selected.r][selected.c]:0);$$all('.sdk-cell').forEach(cell=>{cell.classList.remove('selected','same-val');const cr=+cell.dataset.r,cc=+cell.dataset.c;if(selected&&cr===selected.r&&cc===selected.c)cell.classList.add('selected');else if(an&&grid[cr][cc]===an)cell.classList.add('same-val');});}
     function placeNum(n){if(!selected||given[selected.r][selected.c])return;const{r,c}=selected;if(pencilMode){pencilMarks[r][c].has(n)?pencilMarks[r][c].delete(n):pencilMarks[r][c].add(n);render();highlight();return;}pencilMarks[r][c].clear();grid[r][c]=n;activeNum=n;if(n!==solution[r][c]){sdkErrors++;$$('#sdk-errors').textContent=sdkErrors;render();highlight();const cell=board.querySelector(`[data-r="${r}"][data-c="${c}"]`);cell.classList.add('error');showFeedback('Wrong!','#e74c3c');resetStreak();setTimeout(()=>{grid[r][c]=0;render();highlight();},800);}else{render();highlight();addScore(1);checkWin();}}
     function checkWin(){for(let r=0;r<9;r++)for(let c=0;c<9;c++){if(grid[r][c]!==solution[r][c])return;}clearInterval(window._sdkTimer);window._sdkTimer=null;const mins=Math.floor(sdkTime/60),secs=sdkTime%60;showFeedback(`Sudoku Complete! ${mins}:${secs<10?'0'+secs:secs} \u2014 ${sdkErrors} errors \ud83c\udfc6`,'#2ecc71');addScore(sdkDiff==='hard'?20:(sdkDiff==='medium'?12:8));}
     hud.innerHTML=`<span class="game-stat">\u23f1 <span class="game-stat-val" id="sdk-time">0:00</span></span><span class="game-stat">\u274c <span class="game-stat-val" id="sdk-errors">0</span></span><span class="game-stat">\u270f\ufe0f <span class="game-stat-val" id="sdk-pencil-lbl">OFF</span></span>`;
