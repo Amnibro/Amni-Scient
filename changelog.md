@@ -1,5 +1,16 @@
 ﻿# Changelog 
 
+## [5.6.22] - 2026-05-17 - Amni-Learn audit batch 23: Block Mover polish (BFS optimal + tiers)
+- **BFS-computed optimal step count** — every level's shortest path is calculated on the fly via breadth-first search through the 6×6 grid. Adults learning programming logic get a concrete optimality target.
+- **Target chip above grid** — shows "🎯 Optimal: N · ⭐ Best: M" so players know the goal AND their personal record before they start.
+- **Per-level personal best** — `blk-best-L{0..9}` sessionStorage (least steps). Persisted across sessions.
+- **Tier system on level clear** — Optimal (=opt steps) / Efficient (opt+1-2) / Good (opt+3-5) / Done (>opt+5). Tier-tag color-coded on summary.
+- **Optimal-streak counter** — `blk-opt-streak` HUD stat tracks consecutive levels solved with optimal step count. Resets on any non-optimal solve.
+- **Polished level-clear summary card** — replaces transient feedback with `blk-summary`: Steps / Optimal / Your Best / Optimal Streak stats. Tier-tag header with one-line message.
+- **Confetti** — 120-particle on optimal solve, 80-particle on new personal best (non-optimal), 60-particle on optimal-without-new-best.
+- **Score scales with tier** — +6/+4/+3/+2 based on Optimal/Efficient/Good/Done.
+- All existing 10 grid levels, command-queue mechanic, run/reset preserved.
+
 ## [5.6.21] - 2026-05-17 - Amni-Learn audit batch 22: Word Bridge polish (speech + per-lang best)
 - **Speech synthesis playback** — every correct (and wrong) reveal speaks the target-language translation using the browser's `SpeechSynthesisUtterance` with the right locale (es-ES, fr-FR, de-DE, it-IT, zh-CN, hi-IN). 🔊 Listen button on the reveal card lets users replay. Real adult brain-exercise: hearing the pronunciation, not just reading.
 - **Reveal card on every answer** — green on correct, orange on wrong. Shows the English-source → target-language pair with the flag context. Replaces transient feedback only.

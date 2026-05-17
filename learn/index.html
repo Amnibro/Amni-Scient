@@ -499,6 +499,19 @@
   .combo-popup { position:fixed; font-family:'Comic Neue',cursive; font-weight:bold; font-size:1.5rem; color:#f1c40f; pointer-events:none; z-index:150; animation:floatUp 1s ease-out forwards; text-shadow:1px 1px 2px rgba(0,0,0,0.5); }
   .blk-cell { transition:background 0.2s,box-shadow 0.2s; }
   .blk-cell.robot-trail { background:rgba(108,92,231,0.3); box-shadow:inset 0 0 10px rgba(108,92,231,0.5); }
+  .blk-target-chip { display:inline-flex; align-items:center; gap:8px; padding:6px 14px; border-radius:14px; background:rgba(108,92,231,0.15); border:1.5px solid rgba(108,92,231,0.5); color:#a29bfe; font-family:'JetBrains Mono',monospace; font-size:0.9rem; margin:6px auto; }
+  .blk-target-chip .opt { color:#f1c40f; font-weight:bold; }
+  .blk-target-chip .best { color:#2ecc71; font-weight:bold; }
+  .blk-summary { margin:18px auto; max-width:540px; padding:22px; background:linear-gradient(135deg,rgba(108,92,231,0.18),rgba(46,204,113,0.10)); border:2px solid #6c5ce7; border-radius:18px; text-align:center; animation:bounceIn 0.5s ease-out; box-shadow:0 8px 24px rgba(108,92,231,0.25); }
+  .blk-summary h3 { font-family:'JetBrains Mono',monospace; color:#f1c40f; font-size:1.6rem; margin:0 0 8px; }
+  .blk-summary .tier-tag { display:inline-block; padding:4px 12px; border-radius:14px; font-family:'JetBrains Mono',monospace; font-size:0.85rem; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:10px; background:rgba(255,255,255,0.08); }
+  .blk-summary-stats { display:flex; justify-content:space-around; gap:14px; flex-wrap:wrap; margin:12px 0; }
+  .blk-summary-stat { flex:1; min-width:80px; }
+  .blk-summary-stat .val { font-family:'JetBrains Mono',monospace; font-size:2rem; font-weight:bold; color:#a29bfe; display:block; }
+  .blk-summary-stat .lbl { font-size:0.78rem; color:rgba(236,240,241,0.7); text-transform:uppercase; letter-spacing:1px; }
+  .blk-summary-stat.best .val { color:#2ecc71; }
+  .blk-summary-stat.new-best .val { color:#f1c40f; animation:spmPulse 0.8s ease-out infinite; }
+  .blk-summary-stat.optimal .val { color:#f1c40f; }
   .type-letter { transition:transform 0.15s,color 0.15s,border-bottom-color 0.15s,text-shadow 0.2s; }
   .type-letter.filled { text-shadow:0 0 10px rgba(46,204,113,0.5); }
   .type-letter.pop { animation:bounceIn 0.3s ease-out; text-shadow:0 0 20px rgba(46,204,113,0.8); }
@@ -4586,13 +4599,32 @@ function playAnimalSound(type) {
       {g:[[0,1,0,0,0,0],[0,1,0,1,1,0],[0,0,0,0,1,0],[1,0,1,0,0,0],[1,0,1,0,1,0],[0,0,0,0,1,0]],s:[0,0],e:[5,5]},
       {g:[[0,0,0,1,0,0],[0,1,0,1,0,1],[0,1,0,0,0,1],[0,0,1,1,0,0],[1,0,0,1,0,0],[1,0,0,0,0,0]],s:[0,0],e:[5,5]}
     ];
-    let blkLvl = Math.min(currentLevel - 1, 4) * 2, playerPos = [0,0], blkSteps = 0, blkCleared = 0;
+    function _bfsOptimal(lv){
+      const W=6,H=6;const visited=Array.from({length:H},()=>Array(W).fill(false));
+      const queue=[[lv.s[0],lv.s[1],0]];visited[lv.s[0]][lv.s[1]]=true;
+      while(queue.length){
+        const [r,c,d]=queue.shift();
+        if(r===lv.e[0]&&c===lv.e[1])return d;
+        [[-1,0],[1,0],[0,-1],[0,1]].forEach(([dr,dc])=>{
+          const nr=r+dr,nc=c+dc;
+          if(nr>=0&&nr<H&&nc>=0&&nc<W&&!visited[nr][nc]&&!lv.g[nr][nc]){visited[nr][nc]=true;queue.push([nr,nc,d+1]);}
+        });
+      }
+      return -1;
+    }
+    let blkLvl = Math.min(currentLevel - 1, 4) * 2, playerPos = [0,0], blkSteps = 0, blkCleared = 0, blkOptimalStreak = 0, blkBestOptStreak = 0;
     const visitedCells = new Set();
     const cmdQueue = [];
+    let blkOptimal = _bfsOptimal(levels[blkLvl]);
+    function _blkBestKey(){return 'blk-best-L'+blkLvl;}
+    function _blkRefreshTarget(){const t=$$('#blk-target');if(t){const best=parseInt(sessionStorage.getItem(_blkBestKey())||'0');t.innerHTML=`🎯 Optimal: <span class="opt">${blkOptimal}</span> · ⭐ Best: <span class="best">${best||'—'}</span>`;}}
+    function _blkTier(steps){if(steps<=blkOptimal)return{name:'optimal',label:'Optimal!',color:'#f1c40f',msg:'Shortest path mastered.'};if(steps<=blkOptimal+2)return{name:'efficient',label:'Efficient',color:'#2ecc71',msg:'Near-optimal — 1-2 extra steps.'};if(steps<=blkOptimal+5)return{name:'good',label:'Good',color:'#a29bfe',msg:'Solid solution.'};return{name:'done',label:'Done',color:'#3498db',msg:'You found a path — keep refining.'};}
     const existHud = $$('#blk-hud'); if(existHud) existHud.remove();
+    document.querySelectorAll('.blk-summary,.blk-target-chip').forEach(n=>n.remove());
     const hud = document.createElement('div'); hud.className='game-hud'; hud.id='blk-hud'; hud.style.marginBottom='5px';
-    hud.innerHTML=`<span class="game-stat">📊 Level <span class="game-stat-val" id="blk-lvl">${blkLvl+1}</span>/${levels.length}</span><span class="game-stat">👣 Steps <span class="game-stat-val" id="blk-steps">0</span></span><span class="game-stat">🏆 Cleared <span class="game-stat-val" id="blk-cleared">0</span></span>`;
+    hud.innerHTML=`<span class="game-stat">📊 Level <span class="game-stat-val" id="blk-lvl">${blkLvl+1}</span>/${levels.length}</span><span class="game-stat">👣 Steps <span class="game-stat-val" id="blk-steps">0</span></span><span class="game-stat">🔥 Optimal <span class="game-stat-val" id="blk-opt-streak">0</span></span><span class="game-stat">🏆 Cleared <span class="game-stat-val" id="blk-cleared">0</span></span>`;
     grid.parentElement.insertBefore(hud, grid);
+    const targetChip = document.createElement('div');targetChip.className='blk-target-chip';targetChip.id='blk-target';grid.parentElement.insertBefore(targetChip, grid);_blkRefreshTarget();
     function renderGrid() {
       const lv = levels[blkLvl];
       grid.innerHTML = '';
@@ -4652,10 +4684,22 @@ function playAnimalSound(type) {
         if(playerPos[0] === lv.e[0] && playerPos[1] === lv.e[1]) {
           blkCleared++;
           const ce=$$('#blk-cleared'); if(ce) ce.textContent=blkCleared;
-          const bonus = blkSteps <= 8 ? 'Perfect Path! 🌟' : (blkSteps <= 12 ? 'Great Route! ✨' : 'Level Clear! 🎉');
-          showFeedback(`${bonus} (${blkSteps} steps)`, '#2ecc71');
-          addScore(blkSteps <= 8 ? 5 : (blkSteps <= 12 ? 3 : 2));
+          const tier=_blkTier(blkSteps);
+          const prevBest=parseInt(sessionStorage.getItem(_blkBestKey())||'0');
+          const wasBest=!prevBest||blkSteps<prevBest;
+          if(wasBest)sessionStorage.setItem(_blkBestKey(),blkSteps);
+          if(tier.name==='optimal'){blkOptimalStreak++;if(blkOptimalStreak>blkBestOptStreak)blkBestOptStreak=blkOptimalStreak;}else{blkOptimalStreak=0;}
+          const oe=$$('#blk-opt-streak');if(oe)oe.textContent=blkOptimalStreak;
+          const earned=tier.name==='optimal'?6:(tier.name==='efficient'?4:(tier.name==='good'?3:2));
+          addScore(earned);
+          if(tier.name==='optimal')spawnConfetti(window.innerWidth/2,window.innerHeight/3,wasBest?120:60);
+          else if(wasBest)spawnConfetti(window.innerWidth/2,window.innerHeight/3,80);
+          showFeedback(`${tier.label} (${blkSteps} steps)${wasBest?' • NEW BEST!':''}`,wasBest?'#2ecc71':tier.color);
+          const sum=document.createElement('div');sum.className='blk-summary';
+          sum.innerHTML=`<h3>🤖 Level ${blkLvl+1} Complete!</h3><div class="tier-tag" style="color:${tier.color}">${tier.label} • ${tier.msg}</div><div class="blk-summary-stats"><div class="blk-summary-stat ${tier.name==='optimal'?'optimal':''}"><span class="val">${blkSteps}</span><span class="lbl">Steps</span></div><div class="blk-summary-stat optimal"><span class="val">${blkOptimal}</span><span class="lbl">Optimal</span></div><div class="blk-summary-stat ${wasBest?'new-best':'best'}"><span class="val">${Math.min(blkSteps,prevBest||blkSteps)}</span><span class="lbl">Your Best</span></div><div class="blk-summary-stat"><span class="val">${blkOptimalStreak}</span><span class="lbl">Optimal streak</span></div></div>`;
+          grid.parentElement.insertBefore(sum,grid.nextSibling);
           blkLvl = (blkLvl + 1) % levels.length;
+          blkOptimal = _bfsOptimal(levels[blkLvl]);
           cmdQueue.length = 0;
           playerPos = [...levels[blkLvl].s];
           visitedCells.clear();
@@ -4663,7 +4707,8 @@ function playAnimalSound(type) {
           blkSteps = 0;
           const le=$$('#blk-lvl'); if(le) le.textContent=blkLvl+1;
           const se=$$('#blk-steps'); if(se) se.textContent='0';
-          setTimeout(() => { info.textContent = `Level ${blkLvl+1}/${levels.length} — Guide 🤖 to ⭐!`; renderGrid(); renderQueue(); }, 1500);
+          _blkRefreshTarget();
+          setTimeout(() => { document.querySelectorAll('.blk-summary').forEach(n=>n.remove()); info.textContent = `Level ${blkLvl+1}/${levels.length} — Guide 🤖 to ⭐!`; renderGrid(); renderQueue(); }, 2400);
           blkRunning = false;
           return;
         }
