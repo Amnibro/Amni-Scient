@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.6.30] - 2026-05-17 - Amni-Learn content quadruple batch 6: Animals L4-L5
+- **Animals quiz finished** — L4 and L5 quadrupled from 10 each to 40 each (+60 questions, 280 total in Animals bank)
+  - L4 (+30): ectothermy, ecological niche, skin as largest organ, taxonomic ranks, arthropods, cnidocyte stinging cells, monotremes, chordate defining traits, venom vs poison, nitrogen fixation, placenta, allopatric/sympatric speciation, genes/genotype, mitochondria, ribosomes, central dogma DNA→RNA→protein, 46 chromosomes, taxonomy, convergent evolution, vestigial structures, bat echolocation, dolphin unihemispheric sleep, metamorphosis, ecdysone, golden poison dart frog, cellulose vs chitin, pancreatic endocrine glucose regulation
+  - L5 (+30): allometric scaling (Kleiber), kin selection (Hamilton's rule), sexual dimorphism, trophic cascade, genetic drift, bottleneck effect (elephant seals), founder effect (Amish EvC), heterozygote advantage (sickle/malaria), reproductive isolation, mitosis vs meiosis, gene flow, four conditions for natural selection, r vs K selection, analog graded vs digital action potentials, innate vs adaptive immunity, zoonotic disease, living fossils (coelacanth), blue whale largest, elephant gestation
+- **SW cache v11 → v12** to flush.
+
 ## [5.6.29] - 2026-05-17 - Amni-Learn content quadruple batch 5: Animals L1-L3
 - **Animals quiz expanded L1, L2, L3** — 55 → 220 questions (+165)
   - L1: 25 → 100 (baby names, animal homes, what they eat, body parts, identifying by features, classifications)
