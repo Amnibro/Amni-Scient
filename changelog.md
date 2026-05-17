@@ -1,5 +1,13 @@
 ﻿# Changelog 
 
+## [5.6.26] - 2026-05-17 - Amni-Learn content quadruple, batch 2: structural + Math
+- **Anthony clarified scope** — quadruple applies to ALL levels (L1-L5), not just L4/L5. Per-module rules: quizzes = 100-question randomized runs, Geography uses ALL flags every playthrough, pre-K Tracing letters/numbers randomized each session and re-shuffled on wrap. Memory `feedback_amni_learn_quadruple_content.md` updated.
+- **Quiz 100q run** — `currentQuiz = shuffled.slice(0, 100)` (was 30). Pool now combines lower levels until ≥100 entries, so a level-5 player draws from all bands.
+- **Geography all-flags** — `pool = [...all-levels-combined].sort(random)` (was per-level only 8). Every Geography session walks the entire roster of countries.
+- **Tracing randomization** — `getTracingTargets()` Fisher-Yates shuffles per session. Re-shuffles when the user wraps past the last target, so consecutive playthroughs start with a different letter. Also expanded L2-5 word lists (~2× more terms per level).
+- **Math quiz quadrupled across ALL 5 levels** — L1 8→32 (+24), L2 10→41 (+31), L3 15→60 (+45), L4 40 (already), L5 40 (already). 213 total math questions now, enough for the 100q randomized run from any level.
+- **SW cache v7 → v8** so the +100 math questions + structural fixes reach users.
+
 ## [5.6.25] - 2026-05-17 - Amni-Learn content quadruple, batch 1: Science quiz L4+L5
 - **Directive** — Anthony asked for 4× content expansion across every Amni-Learn module bank. New durable memory `feedback_amni_learn_quadruple_content.md` tracks the goal. Iterations will progressively expand each module's content until every bank hits 4×.
 - **Science L4** — 10 → 40 questions (+30 new). New L4 topics: Schrödinger equation, plate tectonics, radioactive half-life, DNA-vs-RNA chemistry, greenhouse effect mechanism, dark-matter evidence, Rayleigh scattering, ATP synthase, Mendel's segregation, fluorescence vs phosphorescence, Beer-Lambert law, aurora cause, escape velocity, supernova nucleosynthesis, ozone layer, Krebs ATP yield, mitosis vs meiosis, electronegativity, water specific heat, speed of sound, Avogadro's law, gravitational time dilation, ionic vs covalent, Li-ion chemistry, fission vs fusion, C-14 dating, biodiversity hotspot, biomimicry, black-hole event horizon, CMB.
