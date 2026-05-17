@@ -1,5 +1,14 @@
 ﻿# Changelog 
 
+## [5.6.18] - 2026-05-17 - Amni-Learn audit batch 19: Dot Tracking polish (MOT)
+- **Target picker expanded** — 3 / 4 / 5 / 6 (was 3/4/5). Persists in sessionStorage (`mot-tc`).
+- **Speed picker** — 🐢 Slow / ⚡ Normal / 🔥 Fast (0.4 / 0.7 / 1.1 base velocity). Separate sessionStorage (`mot-speed`).
+- **Per-target-count best** — `mot-best-N` sessionStorage so each tracking-load gets its own record.
+- **Streak system** — `mot-stk` HUD counter for consecutive perfect rounds. Confetti at 3/5 perfect streak.
+- **Perfect-round tier system** — Master Tracker (5/5) / Expert (4) / Good (2-3) / Developing (1) / Starter (0). Color-coded tier-tag on summary.
+- **Dot animations** — bounce-in on target reveal, `.correct-pick` green glow on right pick, `.miss-pick` red glow on wrong pick. Wrong distractors stay grey on reveal so player sees the layout.
+- **Polished summary card** — replaces buildResultCard with `mot-summary`: Correct / Accuracy / Perfect-Rounds / All-Time stats. NEW BEST detection (120-particle confetti); 3+ perfect rounds get 60-particle burst.
+
 ## [5.6.17] - 2026-05-17 - Amni-Learn audit batch 18: Peripheral Vision polish (modes + tiers)
 - **3 difficulty modes** — Easy (300-700ms flashes, 30s), Normal (150-600ms, 30s), Hard (80-400ms, 25s start at level 2). Mode picker chip row above START. Per-mode best in sessionStorage (`pv-best-{mode}`).
 - **Streak system** — `pv-stk` HUD counter. +1/+2 score bonus at streak 3/5. Confetti at 5/10/15.

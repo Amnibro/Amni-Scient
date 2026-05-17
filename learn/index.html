@@ -851,12 +851,27 @@
   .tut-btn:hover{background:#16a085;}
   .tut-trigger{padding:4px 12px;border-radius:12px;border:1px solid #888;background:transparent;color:#888;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:0.75rem;transition:0.2s;margin-left:6px;}
   .tut-trigger:hover{border-color:#1abc9c;color:#1abc9c;}
-  .mot-arena{position:relative;width:min(90vw,65vh,650px);height:min(90vw,65vh,650px);background:#0a1520;border:2px solid #1abc9c;border-radius:12px;overflow:hidden;touch-action:none;}
-  .mot-dot{position:absolute;width:28px;height:28px;border-radius:50%;transition:background 0.3s;cursor:pointer;transform:translate(-50%,-50%);z-index:2;}
-  .mot-dot.target{background:#e74c3c;box-shadow:0 0 10px #e74c3c;}
+  .mot-arena{position:relative;width:min(90vw,65vh,650px);height:min(90vw,65vh,650px);background:#0a1520;border:2px solid #1abc9c;border-radius:12px;overflow:hidden;touch-action:none;box-shadow:inset 0 0 20px rgba(0,0,0,0.4);}
+  .mot-dot{position:absolute;width:28px;height:28px;border-radius:50%;transition:background 0.3s,box-shadow 0.3s,transform 0.2s;cursor:pointer;transform:translate(-50%,-50%);z-index:2;}
+  .mot-dot.target{background:#e74c3c;box-shadow:0 0 14px #e74c3c,0 0 28px rgba(231,76,60,0.5);animation:bounceIn 0.4s ease-out;}
   .mot-dot.normal{background:#3498db;}
   .mot-dot.hidden{background:#3498db;}
   .mot-dot.picked{outline:3px solid #f1c40f;outline-offset:2px;}
+  .mot-dot.correct-pick{background:#2ecc71!important;box-shadow:0 0 14px #2ecc71;}
+  .mot-dot.miss-pick{background:#e74c3c!important;box-shadow:0 0 14px #e74c3c;}
+  .mot-mode-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:8px 0;}
+  .mot-mode-btn{padding:6px 14px;border-radius:14px;border:1.5px solid #1abc9c;background:transparent;color:#bdc3c7;font-family:'JetBrains Mono',monospace;font-size:0.85rem;cursor:pointer;transition:0.2s;}
+  .mot-mode-btn:hover{background:rgba(26,188,156,0.15);}
+  .mot-mode-btn.active{background:#1abc9c;color:#0a1a2a;border-color:#1abc9c;}
+  .mot-summary{margin:18px auto;max-width:540px;padding:22px;background:linear-gradient(135deg,rgba(52,152,219,0.18),rgba(46,204,113,0.12));border:2px solid #3498db;border-radius:18px;text-align:center;animation:bounceIn 0.5s ease-out;box-shadow:0 8px 24px rgba(52,152,219,0.25);}
+  .mot-summary h3{font-family:'JetBrains Mono',monospace;color:#f1c40f;font-size:1.6rem;margin:0 0 8px;}
+  .mot-summary .tier-tag{display:inline-block;padding:4px 12px;border-radius:14px;font-family:'JetBrains Mono',monospace;font-size:0.85rem;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;background:rgba(255,255,255,0.08);}
+  .mot-summary-stats{display:flex;justify-content:space-around;gap:14px;flex-wrap:wrap;margin:12px 0;}
+  .mot-summary-stat{flex:1;min-width:80px;}
+  .mot-summary-stat .val{font-family:'JetBrains Mono',monospace;font-size:2rem;font-weight:bold;color:#3498db;display:block;}
+  .mot-summary-stat .lbl{font-size:0.78rem;color:rgba(236,240,241,0.7);text-transform:uppercase;letter-spacing:1px;}
+  .mot-summary-stat.best .val{color:#2ecc71;}
+  .mot-summary-stat.new-best .val{color:#f1c40f;animation:spmPulse 0.8s ease-out infinite;}
   .pv-focus{width:80px;height:80px;background:#1abc9c;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:bold;font-family:'JetBrains Mono',monospace;color:#0a1a2a;position:relative;z-index:3;box-shadow:0 0 28px rgba(26,188,156,0.4);animation:spmPulse 2s ease-in-out infinite;}
   .pv-ring{position:relative;width:min(90vw,65vh,600px);height:min(90vw,65vh,600px);border:2px dashed rgba(26,188,156,0.3);border-radius:50%;display:flex;align-items:center;justify-content:center;}
   .pv-flash{position:absolute;width:36px;height:36px;border-radius:50%;background:#f1c40f;opacity:0;transition:opacity 0.1s;box-shadow:0 0 14px rgba(241,196,15,0.7);}
@@ -5938,15 +5953,23 @@ function playAnimalSound(type) {
   }
   function initDotTrack(){
     const ct=$$('#mot-container'),hud=$$('#mot-hud');
-    let dotCount=8,targetCount=3,rd=0,sc=0,phase='idle';
+    let targetCount=parseInt(sessionStorage.getItem('mot-tc')||'3'),rd=0,sc=0,phase='idle',stk=0,perfectRounds=0;
+    const dotCount=Math.max(8,targetCount+5);
+    const speed=sessionStorage.getItem('mot-speed')||'normal';
+    const speedCfg={slow:0.4,normal:0.7,fast:1.1};
+    const bestKey='mot-best-'+targetCount;
+    const bestStored=parseInt(sessionStorage.getItem(bestKey)||'0');
     if(window._motAnim){cancelAnimationFrame(window._motAnim);window._motAnim=null;}
-    hud.innerHTML=`<span class="game-stat">\ud83c\udfaf <span class="game-stat-val" id="mot-sc">0</span></span><span class="game-stat">\ud83d\udcca Round <span class="game-stat-val" id="mot-rd">0</span>/5</span><span class="game-stat">\ud83d\udc41 Track <span class="game-stat-val" id="mot-tc">${targetCount}</span></span>`;
+    document.querySelectorAll('.mot-summary,.mot-mode-row').forEach(n=>n.remove());
+    function _tier(){if(perfectRounds===5)return{name:'master',label:'Master Tracker',color:'#f1c40f',msg:'5/5 perfect rounds.'};if(perfectRounds>=4)return{name:'expert',label:'Expert',color:'#2ecc71',msg:'4 perfect rounds.'};if(perfectRounds>=2)return{name:'good',label:'Good',color:'#1abc9c',msg:'Solid object tracking.'};if(perfectRounds>=1)return{name:'developing',label:'Developing',color:'#3498db',msg:'One clean round.'};return{name:'starter',label:'Starter',color:'#e67e22',msg:'Keep practicing focus splitting.'};}
+    hud.innerHTML=`<span class="game-stat">\ud83c\udfaf <span class="game-stat-val" id="mot-sc">0</span></span><span class="game-stat">\ud83d\udd25 <span class="game-stat-val" id="mot-stk">0</span></span><span class="game-stat">\ud83d\udcca <span class="game-stat-val" id="mot-rd">0</span>/5</span><span class="game-stat">\ud83d\udc41 Track <span class="game-stat-val" id="mot-tc">${targetCount}</span></span><span class="game-stat">\u2b50 Best ${bestStored}</span>`;
     function run(){
       rd++;$$('#mot-rd').textContent=rd;phase='show';
       ct.innerHTML='';const arena=document.createElement('div');arena.className='mot-arena';
       const sz=Math.min(window.innerWidth*0.9,450);arena.style.width=sz+'px';arena.style.height=sz+'px';
       const dots=[];const margin=30;
-      for(let i=0;i<dotCount;i++){const d=document.createElement('div');d.className='mot-dot '+(i<targetCount?'target':'normal');d.dataset.idx=i;const x=margin+Math.random()*(sz-margin*2),y=margin+Math.random()*(sz-margin*2);d.style.left=x+'px';d.style.top=y+'px';const speed=0.5+Math.random()*0.8;const angle=Math.random()*Math.PI*2;dots.push({el:d,x,y,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed});arena.appendChild(d);}
+      const baseSpeed=speedCfg[speed]||speedCfg.normal;
+      for(let i=0;i<dotCount;i++){const d=document.createElement('div');d.className='mot-dot '+(i<targetCount?'target':'normal');d.dataset.idx=i;const x=margin+Math.random()*(sz-margin*2),y=margin+Math.random()*(sz-margin*2);d.style.left=x+'px';d.style.top=y+'px';const sp=baseSpeed*(0.85+Math.random()*0.3);const angle=Math.random()*Math.PI*2;dots.push({el:d,x,y,vx:Math.cos(angle)*sp,vy:Math.sin(angle)*sp});arena.appendChild(d);}
       ct.appendChild(arena);
       const msg=document.createElement('div');msg.className='nmm-msg';msg.textContent='Remember the RED dots!';ct.appendChild(msg);
       setTimeout(()=>{
@@ -5969,24 +5992,54 @@ function playAnimalSound(type) {
           dots.forEach((d,i)=>{d.el.onclick=()=>{
             if(phase!=='pick'||d.el.classList.contains('picked'))return;
             d.el.classList.add('picked');picked++;
-            if(i<targetCount){correct++;d.el.style.background='#2ecc71';}else{d.el.style.background='#e74c3c';}
+            if(i<targetCount){correct++;d.el.classList.add('correct-pick');}else{d.el.classList.add('miss-pick');}
             if(picked>=targetCount){
               phase='done';if(window._motAnim){cancelAnimationFrame(window._motAnim);window._motAnim=null;}
-              dots.forEach((dd,j)=>{dd.el.style.background=j<targetCount?'#2ecc71':'#555';dd.el.classList.remove('hidden');});
+              dots.forEach((dd,j)=>{if(j<targetCount&&!dd.el.classList.contains('correct-pick')){dd.el.classList.add('correct-pick');}else if(j>=targetCount&&!dd.el.classList.contains('miss-pick')){dd.el.style.background='#555';}dd.el.classList.remove('hidden');});
               sc+=correct;$$('#mot-sc').textContent=sc;
-              correct===targetCount?(addScore(targetCount>=4?3:2),showFeedback('Perfect! \ud83c\udfaf','#2ecc71')):(resetStreak(),showFeedback(`${correct}/${targetCount}`,correct>0?'#f1c40f':'#e74c3c'));
-              if(rd>=5){setTimeout(()=>{ct.innerHTML=buildResultCard('dottrack',sc,targetCount*5,`Tracked ${targetCount} targets`);addScore(sc);const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='PLAY AGAIN';rb.onclick=()=>{rd=0;sc=0;initDotTrack();};ct.appendChild(rb);},1500);}
-              else setTimeout(run,1500);
+              if(correct===targetCount){
+                stk++;perfectRounds++;
+                $$('#mot-stk').textContent=stk;
+                addScore(targetCount>=4?3:2);
+                if(stk===3||stk===5)spawnConfetti(window.innerWidth/2,window.innerHeight/3,stk>=5?80:50);
+                showFeedback(stk>=5?`${stk}x Perfect! \ud83c\udfaf\ud83d\udd25`:(stk>=3?`${stk}x Perfect! \ud83c\udfaf`:'Perfect! \ud83c\udfaf'),'#2ecc71');
+              }else{
+                stk=0;$$('#mot-stk').textContent=0;
+                resetStreak();
+                showFeedback(`${correct}/${targetCount}`,correct>0?'#f1c40f':'#e74c3c');
+              }
+              if(rd>=5){
+                setTimeout(()=>{
+                  const wasBest=sc>bestStored;
+                  if(wasBest)sessionStorage.setItem(bestKey,sc);
+                  const tier=_tier();
+                  const possible=targetCount*5;
+                  const pct=Math.round(sc/possible*100);
+                  ct.innerHTML='';
+                  const sum=document.createElement('div');sum.className='mot-summary';
+                  sum.innerHTML=`<h3>\ud83c\udfaf ${wasBest?'NEW BEST!':'Tracking Complete'}</h3><div class="tier-tag" style="color:${tier.color}">${tier.label} \u2022 ${tier.msg}</div><div class="mot-summary-stats"><div class="mot-summary-stat"><span class="val">${sc}/${possible}</span><span class="lbl">Correct</span></div><div class="mot-summary-stat"><span class="val">${pct}%</span><span class="lbl">Accuracy</span></div><div class="mot-summary-stat"><span class="val">${perfectRounds}/5</span><span class="lbl">Perfect rounds</span></div><div class="mot-summary-stat ${wasBest?'new-best':'best'}"><span class="val">${Math.max(sc,bestStored)}</span><span class="lbl">All-Time</span></div></div>`;
+                  ct.appendChild(sum);
+                  if(wasBest)spawnConfetti(window.innerWidth/2,window.innerHeight/2,120);
+                  else if(perfectRounds>=3)spawnConfetti(window.innerWidth/2,window.innerHeight/3,60);
+                  showFeedback(`${sc}/${possible} \u2022 ${tier.label}`,wasBest?'#2ecc71':tier.color);
+                  addScore(sc);
+                  const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='PLAY AGAIN';rb.onclick=()=>{rd=0;sc=0;perfectRounds=0;initDotTrack();};
+                  ct.appendChild(rb);
+                },1500);
+              }else setTimeout(run,1500);
             }
           };});
         },3000+targetCount*500);
       },2000);
     }
-    ct.innerHTML='<div class="nmm-msg">Red dots flash briefly, then all dots look the same and start moving.<br>Track the originals and click them when prompted!</div>';
-    const sd=document.createElement('div');sd.style.cssText='display:flex;gap:8px;justify-content:center;margin:10px 0';
-    [3,4,5].forEach(n=>{const b=document.createElement('button');b.className='sdk-btn'+(n===targetCount?' active':'');b.textContent=`${n} Targets`;b.onclick=()=>{targetCount=n;$$('#mot-tc').textContent=n;sd.querySelectorAll('.sdk-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');};sd.appendChild(b);});
+    ct.innerHTML='<div class="nmm-msg">Red dots flash briefly, then all dots look identical and start moving.<br>Track the originals and click them when prompted. Multi-object tracking — classic visual attention test.</div>';
+    const sd=document.createElement('div');sd.className='mot-mode-row';
+    [3,4,5,6].forEach(n=>{const b=document.createElement('button');b.className='mot-mode-btn'+(n===targetCount?' active':'');b.textContent=`${n} Targets`;b.onclick=()=>{sessionStorage.setItem('mot-tc',n);initDotTrack();};sd.appendChild(b);});
     ct.appendChild(sd);
-    const sb=document.createElement('button');sb.className='nmm-btn';sb.textContent='START';sb.onclick=()=>{rd=0;sc=0;run();};ct.appendChild(sb);
+    const spdRow=document.createElement('div');spdRow.className='mot-mode-row';
+    [['slow','🐢 Slow'],['normal','⚡ Normal'],['fast','🔥 Fast']].forEach(([m,lbl])=>{const b=document.createElement('button');b.className='mot-mode-btn'+(m===speed?' active':'');b.textContent=lbl;b.onclick=()=>{sessionStorage.setItem('mot-speed',m);initDotTrack();};spdRow.appendChild(b);});
+    ct.appendChild(spdRow);
+    const sb=document.createElement('button');sb.className='nmm-btn';sb.textContent='START';sb.onclick=()=>{rd=0;sc=0;perfectRounds=0;stk=0;run();};ct.appendChild(sb);
   }
   function initPeripheral(){
     const ct=$$('#pv-container'),hud=$$('#pv-hud');
