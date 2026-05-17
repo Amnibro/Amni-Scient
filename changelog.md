@@ -1,5 +1,13 @@
 ﻿# Changelog 
 
+## [5.6.33] - 2026-05-17 - Amni-Learn content quadruple batch 9: Geography Explorer L1 + L2
+- **Geography Explorer L1 + L2 expanded** — 8 → 32 countries each (+48 countries, +48 facts entries)
+  - L1 +24 (most familiar): Indonesia, Greece, Switzerland, Netherlands, Ireland, Portugal, Belgium, Austria, Saudi Arabia, UAE, Israel, Singapore, Denmark, Finland, Iceland, Cuba, Jamaica, Costa Rica, Venezuela, Iran, Romania, Malaysia, Bulgaria, Croatia
+  - L2 +24 (well-known): Iraq, Afghanistan, Algeria, Tunisia, Ghana, Senegal, Tanzania, Uganda, Zimbabwe, Angola, Cameroon, Bolivia, Paraguay, Guatemala, Honduras, Panama, Dominican Republic, Haiti, El Salvador, Cambodia, Laos, Nepal, Yemen, Mongolia
+- Each new country has flag emoji, capital, continent + a substantive geographic/cultural fact
+- L3 + L4 + L5 still 8 each — pending next iterations
+- **SW cache v14 → v15** to flush.
+
 ## [5.6.32] - 2026-05-17 - Amni-Learn content quadruple batch 8: Languages L2 + L3
 - **Languages quiz fully quadrupled** — L2 + L3 +90 questions (Languages bank now 232 total across 5 levels)
   - L2: 15 → 60 (+45: more letter-start questions, expanded opposites set, multi-language hello/goodbye/yes/no/thanks across Spanish/French/Italian/Japanese/German, punctuation incl. quotes & apostrophe, irregular plurals foot/mouse/fish, rhymes tree/moon/blue, syllable counting cat/butter/elephant, action vs descriptor noun-verb-adjective distinction, alphabet count)
