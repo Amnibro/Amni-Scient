@@ -1,5 +1,13 @@
 ﻿# Changelog 
 
+## [5.6.31] - 2026-05-17 - Amni-Learn content quadruple batch 7: Languages L1, L4, L5
+- **Languages quiz expansion** — L1 + L4 + L5 quadrupled (+84 questions)
+  - L1: 8 → 32 (full A-Z letter find with audio + which-word-starts-with for A/B/C/D/S/M)
+  - L4: 10 → 40 (+30: synecdoche, etymology, Great Vowel Shift, Grimm's Law, portmanteau, onomatopoeia, euphemism, hyperbole, who/whom, dangling modifier, split infinitive, Oxford comma, active/passive, subjunctive, register, lingua franca, back-formation, chiasmus, tautology, orthography, calque, glottalization, homograph/homophone, affect/effect, idiolect, Zipf's Law, transitive/intransitive)
+  - L5: 10 → 40 (+30: comparative method, phonotactics, tonal languages, click consonants, ergative-absolutive, SVO/SOV, recursion, grammaticalization, competence/performance, clitics, morphosyntax, polysynthesis, Chomsky hierarchy, deixis, deep/surface structure, Tok Pisin, McGurk effect, sound symbolism, suprasegmentals, corpus linguistics, glossolalia, language vs dialect, poverty of the stimulus, iconicity, extension/intension, performatives, presupposition, phonetics vs phonology, linguistic typology)
+- L2 (15) + L3 (15) — still pending, queued for next iteration
+- **SW cache v12 → v13** to flush.
+
 ## [5.6.30] - 2026-05-17 - Amni-Learn content quadruple batch 6: Animals L4-L5
 - **Animals quiz finished** — L4 and L5 quadrupled from 10 each to 40 each (+60 questions, 280 total in Animals bank)
   - L4 (+30): ectothermy, ecological niche, skin as largest organ, taxonomic ranks, arthropods, cnidocyte stinging cells, monotremes, chordate defining traits, venom vs poison, nitrogen fixation, placenta, allopatric/sympatric speciation, genes/genotype, mitochondria, ribosomes, central dogma DNA→RNA→protein, 46 chromosomes, taxonomy, convergent evolution, vestigial structures, bat echolocation, dolphin unihemispheric sleep, metamorphosis, ecdysone, golden poison dart frog, cellulose vs chitin, pancreatic endocrine glucose regulation
