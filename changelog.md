@@ -1,5 +1,15 @@
 ﻿# Changelog 
 
+## [5.6.12] - 2026-05-17 - Amni-Learn audit batch 13: Number Memory polish (digit-span tiers)
+- **Tier system anchored to Miller's 7±2** — Basic (1-3) / Below average (4-5) / Average (6-7) / Above average (8-9) / Exceptional (10-11) / Savant (12+). Each tier gets a color, label, and one-line message. Tier scale legend shown on game-over so adults know where they stand cognitively.
+- **Visual countdown bar** — linear-gradient fill during memorize phase shows exactly how much time remains. No more guessing when the number will disappear.
+- **Digit-by-digit diff on game-over** — your incorrect digits are red-underlined, correct ones green. Quick visual feedback on *which* digits you missed.
+- **Streak counter + history dots** — `nmm-stk` HUD stat tracks consecutive successful rounds. Each successful length is also shown as a green chip below the number, visible during play.
+- **Milestone confetti** — bursts at digit-length 6 / 8 / 10 / 12 (50-particle baseline, 80 at 10+).
+- **Polished game-over card** — Reached / Missed-at / All-Time stats. Tier-tag header colored per tier. "NEW BEST!" detection with 120-particle confetti.
+- **Score scales with digits** — +1 per round at 3-4, +2 at 5-7, +3 at 8-9, +4 at 10+. Wrong answer scores `max(1, reached-2)` so practice runs still award points.
+- All existing input mechanics, Enter-to-submit, and persistent best preserved.
+
 ## [5.6.11] - 2026-05-17 - Amni-Learn audit batch 12: Reaction Time polish (tier system + percentile feedback)
 - **Reaction tier system** — every round gets a tier: Godlike (<180ms), Excellent (<220), Good (<280), Average (<350), Slow (350+). Human median ≈ 250ms shown in the legend. Calibrated to common Human Benchmark distributions for honest feedback.
 - **Color-coded per-round results** — each row in the results list now carries a tier accent (gold/green/teal/blue/orange left-border + tinted background). Tier label shown next to round number.

@@ -696,11 +696,28 @@
   #nback-view{background:linear-gradient(135deg,#1a0a2a 0%,#0a2a2a 50%,#1a0a2a 100%);background-size:200% 200%;animation:bgShift 11s ease infinite;justify-content:center;}
   #anagram-view{background:linear-gradient(135deg,#0d2a0a 0%,#0a1a2a 50%,#0d2a0a 100%);background-size:200% 200%;animation:bgShift 13s ease infinite;justify-content:center;}
   #chimp-view{background:linear-gradient(135deg,#2a2a0a 0%,#0a2a1a 50%,#2a2a0a 100%);background-size:200% 200%;animation:bgShift 9s ease infinite;justify-content:center;}
-  .nmm-display{font-family:'JetBrains Mono',monospace;font-size:clamp(2.5rem,8vw,5rem);color:#1abc9c;text-align:center;letter-spacing:8px;padding:20px;min-height:60px;}
+  .nmm-display{font-family:'JetBrains Mono',monospace;font-size:clamp(2.5rem,8vw,5rem);color:#1abc9c;text-align:center;letter-spacing:8px;padding:20px;min-height:60px;animation:bounceIn 0.4s ease-out;text-shadow:0 0 18px rgba(26,188,156,0.45);}
+  .nmm-display .digit-ok{color:#2ecc71;}
+  .nmm-display .digit-bad{color:#e74c3c;text-decoration:underline;}
   .nmm-input{font-family:'JetBrains Mono',monospace;font-size:clamp(1.5rem,5vw,3rem);color:#ecf0f1;background:transparent;border:2px solid #1abc9c;border-radius:12px;padding:12px 20px;text-align:center;outline:none;letter-spacing:4px;width:80%;max-width:400px;}
-  .nmm-btn{padding:12px 28px;border-radius:12px;border:2px solid #1abc9c;background:transparent;color:#1abc9c;font-family:'JetBrains Mono',monospace;font-size:1rem;cursor:pointer;transition:0.2s;margin:8px;}
-  .nmm-btn:hover{background:rgba(26,188,156,0.2);transform:translateY(-2px);}
+  .nmm-btn{padding:12px 28px;border-radius:12px;border:2px solid #1abc9c;background:transparent;color:#1abc9c;font-family:'JetBrains Mono',monospace;font-size:1rem;cursor:pointer;transition:transform 0.15s,background 0.2s,box-shadow 0.2s;margin:8px;}
+  .nmm-btn:hover{background:rgba(26,188,156,0.2);transform:translateY(-2px);box-shadow:0 6px 14px rgba(26,188,156,0.3);}
+  .nmm-btn:active{transform:scale(0.95);}
   .nmm-msg{font-family:'JetBrains Mono',monospace;font-size:1.1rem;color:#7a8a9a;text-align:center;margin:10px 0;line-height:1.5;}
+  .nmm-countdown{width:80%;max-width:400px;height:6px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:hidden;margin:6px auto 0;}
+  .nmm-countdown-fill{height:100%;background:linear-gradient(90deg,#1abc9c,#16a085);transition:width 0.1s linear;}
+  .nmm-history{display:flex;gap:4px;justify-content:center;flex-wrap:wrap;max-width:90%;margin:6px auto;}
+  .nmm-history-dot{padding:2px 8px;border-radius:10px;background:rgba(46,204,113,0.18);border:1px solid #2ecc71;color:#2ecc71;font-family:'JetBrains Mono',monospace;font-size:0.78rem;font-weight:bold;}
+  .nmm-summary{margin:18px auto;max-width:540px;padding:22px;background:linear-gradient(135deg,rgba(26,188,156,0.18),rgba(46,204,113,0.12));border:2px solid #1abc9c;border-radius:18px;text-align:center;animation:bounceIn 0.5s ease-out;box-shadow:0 8px 24px rgba(26,188,156,0.25);}
+  .nmm-summary h3{font-family:'JetBrains Mono',monospace;color:#f1c40f;font-size:1.6rem;margin:0 0 8px;}
+  .nmm-summary .tier-tag{display:inline-block;padding:4px 12px;border-radius:14px;font-family:'JetBrains Mono',monospace;font-size:0.85rem;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;}
+  .nmm-summary-stats{display:flex;justify-content:space-around;gap:14px;flex-wrap:wrap;margin:12px 0;}
+  .nmm-summary-stat{flex:1;min-width:80px;}
+  .nmm-summary-stat .val{font-family:'JetBrains Mono',monospace;font-size:2rem;font-weight:bold;color:#1abc9c;display:block;}
+  .nmm-summary-stat .lbl{font-size:0.8rem;color:rgba(236,240,241,0.7);text-transform:uppercase;letter-spacing:1px;}
+  .nmm-summary-stat.best .val{color:#2ecc71;}
+  .nmm-summary-stat.new-best .val{color:#f1c40f;animation:spmPulse 0.8s ease-out infinite;}
+  .nmm-tier-scale{margin-top:12px;font-family:'JetBrains Mono',monospace;font-size:0.74rem;color:rgba(236,240,241,0.55);line-height:1.5;}
   .stp-word{font-family:'JetBrains Mono',monospace;font-size:clamp(3rem,10vw,6rem);font-weight:bold;text-align:center;margin:20px 0;text-transform:uppercase;transition:transform 0.2s,text-shadow 0.3s;animation:stpWordIn 0.25s ease-out;}
   @keyframes stpWordIn{0%{opacity:0;transform:scale(0.85)}100%{opacity:1;transform:scale(1)}}
   .stp-word.correct{animation:stpCorrectFlash 0.4s ease-out;}
@@ -5513,11 +5530,68 @@ function playAnimalSound(type) {
   }
   function initNumMem(){
     const ct=$$('#nmm-container'),hud=$$('#nmm-hud');
-    let dg=3,best=parseInt(sessionStorage.getItem('nmm-best')||'0'),tgt='';
+    let dg=3,best=parseInt(sessionStorage.getItem('nmm-best')||'0'),tgt='',history=[];
     if(window._nmmTimeout){clearTimeout(window._nmmTimeout);window._nmmTimeout=null;}
-    hud.innerHTML=`<span class="game-stat">\ud83d\udccf <span class="game-stat-val" id="nmm-dg">${dg}</span> digits</span><span class="game-stat">\ud83c\udfc6 Best: <span class="game-stat-val" id="nmm-best">${best}</span></span>`;
-    function show(){tgt='';for(let i=0;i<dg;i++)tgt+=Math.floor(Math.random()*10);ct.innerHTML=`<div class="nmm-display">${tgt}</div><div class="nmm-msg">Memorize this number!</div>`;window._nmmTimeout=setTimeout(()=>{ct.innerHTML=`<div class="nmm-msg">What was the number?</div><input type="text" class="nmm-input" id="nmm-inp" maxlength="${dg}" autocomplete="off" inputmode="numeric"><br>`;const inp=$$('#nmm-inp');inp.focus();const sub=document.createElement('button');sub.className='nmm-btn';sub.textContent='SUBMIT';const go=()=>{const v=inp.value;if(v===tgt){dg>best&&(best=dg,sessionStorage.setItem('nmm-best',best),$$('#nmm-best').textContent=best);dg++;$$('#nmm-dg').textContent=dg;addScore(dg>=8?3:(dg>=5?2:1));showFeedback(`\u2705 ${dg-1} digits!`,'#2ecc71');setTimeout(show,1200);}else{showFeedback(`\u274c It was ${tgt}`,'#e74c3c');resetStreak();ct.innerHTML=`<div class="nmm-display" style="color:#e74c3c">${tgt}</div><div class="nmm-msg">Your answer: ${v}</div><div class="nmm-msg">Best: ${best} digits</div>`;const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='TRY AGAIN';rb.onclick=()=>{dg=3;$$('#nmm-dg').textContent=3;show();};ct.appendChild(rb);}};sub.onclick=go;ct.appendChild(sub);inp.addEventListener('keydown',e=>{if(e.key==='Enter')go();});inp.addEventListener('input',()=>{inp.value=inp.value.replace(/[^0-9]/g,'').slice(0,dg);});},Math.min(1000+dg*500,5000));}
-    ct.innerHTML=`<div class="nmm-msg">See a number, memorize it, type it back!</div>`;const sb=document.createElement('button');sb.className='nmm-btn';sb.textContent='START';sb.onclick=()=>{dg=3;show();};ct.appendChild(sb);
+    if(window._nmmCount){clearInterval(window._nmmCount);window._nmmCount=null;}
+    document.querySelectorAll('.nmm-summary').forEach(n=>n.remove());
+    hud.innerHTML=`<span class="game-stat">\ud83d\udccf <span class="game-stat-val" id="nmm-dg">${dg}</span> digits</span><span class="game-stat">\ud83d\udd25 Streak <span class="game-stat-val" id="nmm-stk">0</span></span><span class="game-stat">\ud83c\udfc6 Best: <span class="game-stat-val" id="nmm-best">${best}</span></span>`;
+    function _tier(d){if(d>=12)return{name:'savant',label:'Savant',color:'#f1c40f',msg:'Off the chart!'};if(d>=10)return{name:'exceptional',label:'Exceptional',color:'#e74c3c',msg:'Way above average!'};if(d>=8)return{name:'aboveAvg',label:'Above Average',color:'#2ecc71',msg:'Solid recall!'};if(d>=6)return{name:'avg',label:'Average',color:'#1abc9c',msg:"Miller's 7\u00b12 range."};if(d>=4)return{name:'belowAvg',label:'Below Average',color:'#3498db',msg:'Keep training!'};return{name:'basic',label:'Basic',color:'#7a8a9a',msg:'Just getting started.'};}
+    function _renderHistory(){const eh=$$('#nmm-hist');if(!eh)return;eh.innerHTML='';history.forEach(d=>{const dot=document.createElement('div');dot.className='nmm-history-dot';dot.textContent=d;eh.appendChild(dot);});}
+    function _diffDisplay(target, guess){let html='';for(let i=0;i<target.length;i++){const c=target[i];const g=guess[i]||'';html+=`<span class="${c===g?'digit-ok':'digit-bad'}">${c}</span>`;}return html;}
+    function _gameOver(v){
+      const reached=dg-1; // digits successfully completed
+      const wasBest=dg>best;
+      if(wasBest){best=dg;sessionStorage.setItem('nmm-best',best);}
+      const t=_tier(reached);
+      const sum=document.createElement('div');sum.className='nmm-summary';
+      sum.innerHTML=`<h3>\ud83e\udde0 ${wasBest?'NEW BEST!':'Game Over'}</h3><div class="tier-tag" style="color:${t.color};background:rgba(255,255,255,0.08)">${t.label} \u2022 ${t.msg}</div><div class="nmm-summary-stats"><div class="nmm-summary-stat"><span class="val">${reached}</span><span class="lbl">Reached</span></div><div class="nmm-summary-stat"><span class="val">${dg}</span><span class="lbl">Missed at</span></div><div class="nmm-summary-stat ${wasBest?'new-best':'best'}"><span class="val">${best}</span><span class="lbl">All-Time</span></div></div><div class="nmm-msg">Your answer: <code style="color:#e74c3c;font-family:'JetBrains Mono',monospace">${v||'\u2014'}</code></div><div class="nmm-display" style="color:#7a8a9a;font-size:1.6rem;margin:6px 0;letter-spacing:6px">${_diffDisplay(tgt,v)}</div><div class="nmm-tier-scale">Tiers: 1-3 Basic \u00b7 4-5 Below avg \u00b7 6-7 Average \u00b7 8-9 Above avg \u00b7 10-11 Exceptional \u00b7 12+ Savant. Miller's "magic number" \u2248 7\u00b12.</div>`;
+      ct.innerHTML='';
+      ct.appendChild(sum);
+      if(wasBest)spawnConfetti(window.innerWidth/2,window.innerHeight/2,120);
+      else if(reached>=8)spawnConfetti(window.innerWidth/2,window.innerHeight/3,60);
+      showFeedback(`Reached ${reached} digits \u2022 ${t.label} \ud83e\udde0`, wasBest?'#2ecc71':'#f1c40f');
+      addScore(Math.max(1,reached-2));
+      const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='TRY AGAIN';rb.style.marginTop='8px';rb.onclick=()=>{dg=3;history=[];$$('#nmm-dg').textContent=3;$$('#nmm-stk').textContent=0;show();};ct.appendChild(rb);
+    }
+    function show(){
+      tgt='';for(let i=0;i<dg;i++)tgt+=Math.floor(Math.random()*10);
+      const showMs = Math.min(1000+dg*500, 5000);
+      ct.innerHTML=`<div class="nmm-display">${tgt}</div><div class="nmm-msg">Memorize this number\u2026</div><div class="nmm-countdown"><div class="nmm-countdown-fill" id="nmm-cd" style="width:100%"></div></div><div class="nmm-history" id="nmm-hist"></div>`;
+      _renderHistory();
+      const cdStart=performance.now();
+      window._nmmCount=setInterval(()=>{const pct=Math.max(0,100-(performance.now()-cdStart)/showMs*100);const f=$$('#nmm-cd');if(f)f.style.width=pct+'%';if(pct<=0){clearInterval(window._nmmCount);window._nmmCount=null;}},80);
+      window._nmmTimeout=setTimeout(()=>{
+        if(window._nmmCount){clearInterval(window._nmmCount);window._nmmCount=null;}
+        ct.innerHTML=`<div class="nmm-msg">What was the number?</div><input type="text" class="nmm-input" id="nmm-inp" maxlength="${dg}" autocomplete="off" inputmode="numeric"><br><div class="nmm-history" id="nmm-hist"></div>`;
+        _renderHistory();
+        const inp=$$('#nmm-inp');inp.focus();
+        const sub=document.createElement('button');sub.className='nmm-btn';sub.textContent='SUBMIT';
+        const go=()=>{
+          const v=inp.value;
+          if(v===tgt){
+            history.push(dg);
+            if(dg>best){best=dg;sessionStorage.setItem('nmm-best',best);$$('#nmm-best').textContent=best;}
+            $$('#nmm-stk').textContent=history.length;
+            const t=_tier(dg);
+            if(dg===6||dg===8||dg===10||dg===12)spawnConfetti(window.innerWidth/2,window.innerHeight/3,dg>=10?80:50);
+            addScore(dg>=10?4:(dg>=8?3:(dg>=5?2:1)));
+            showFeedback(`\u2705 ${dg} digits \u2022 ${t.label}`,'#2ecc71');
+            dg++;$$('#nmm-dg').textContent=dg;
+            setTimeout(show,1200);
+          }else{
+            resetStreak();
+            _gameOver(v);
+          }
+        };
+        sub.onclick=go;
+        ct.appendChild(sub);
+        inp.addEventListener('keydown',e=>{if(e.key==='Enter')go();});
+        inp.addEventListener('input',()=>{inp.value=inp.value.replace(/[^0-9]/g,'').slice(0,dg);});
+      },showMs);
+    }
+    ct.innerHTML=`<div class="nmm-msg">See a number, memorize it, type it back. Length grows each round you nail.</div>`;
+    const sb=document.createElement('button');sb.className='nmm-btn';sb.textContent='START';sb.onclick=()=>{dg=3;history=[];show();};
+    ct.appendChild(sb);
   }
   function initStroop(){
     const ct=$$('#stp-container'),hud=$$('#stp-hud');
