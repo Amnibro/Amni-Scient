@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.6.32] - 2026-05-17 - Amni-Learn content quadruple batch 8: Languages L2 + L3
+- **Languages quiz fully quadrupled** — L2 + L3 +90 questions (Languages bank now 232 total across 5 levels)
+  - L2: 15 → 60 (+45: more letter-start questions, expanded opposites set, multi-language hello/goodbye/yes/no/thanks across Spanish/French/Italian/Japanese/German, punctuation incl. quotes & apostrophe, irregular plurals foot/mouse/fish, rhymes tree/moon/blue, syllable counting cat/butter/elephant, action vs descriptor noun-verb-adjective distinction, alphabet count)
+  - L3: 15 → 60 (+45: adverbs, pronouns, prepositions, prefixes un-/re-/dis-, suffixes -ful/-less/-ly, homophones, metaphor vs simile, personification, onomatopoeia, hyperbole, idioms, irregular past tense eat/see/write/buy, contractions don't/I'm/won't, possessives, articles a/an/the rules, capitalization, syllables, stanza, rhyme scheme, please/I-love-you/good-morning/excuse-me/friend/house across Spanish/French/Japanese/German, Cyrillic, Chinese characters, RTL Arabic/Hebrew, diphthongs, vowel identification, person 1st/2nd/3rd)
+- **SW cache v13 → v14** to flush.
+
 ## [5.6.31] - 2026-05-17 - Amni-Learn content quadruple batch 7: Languages L1, L4, L5
 - **Languages quiz expansion** — L1 + L4 + L5 quadrupled (+84 questions)
   - L1: 8 → 32 (full A-Z letter find with audio + which-word-starts-with for A/B/C/D/S/M)
