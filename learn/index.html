@@ -314,7 +314,6 @@
   .geo-choices { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 15px; }
   .geo-opt { padding: clamp(10px,2vw,15px) clamp(15px,3vw,25px); border-radius: 12px; cursor: pointer; font-family: 'Comic Neue',cursive; font-size: clamp(1rem,3vw,1.4rem); font-weight: bold; background: #70a1ff; color: #fff; border: none; transition: 0.2s; }
   .geo-opt:hover { transform: translateY(-3px); }
-  .game-btn.mtnclimb { border-color: #fab1a0; } .game-btn.mtnclimb:hover { box-shadow: 0 10px 30px rgba(250,177,160,0.25); }
   #reflex-view { background:#0d1b2a; }
   .rfx-arena { position:relative; width:95%; max-width:min(95vw,800px); height:clamp(300px,55vh,550px); background:#1b2838; border:3px solid #00cec9; border-radius:20px; overflow:hidden; touch-action:none; }
   .rfx-target { position:absolute; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:2rem; transition:transform 0.1s; user-select:none; animation:rfxPop 0.3s ease-out; }
@@ -367,16 +366,6 @@
   .wb-lang-btn { background:#1a3c40; border:2px solid #55efc4; color:#55efc4; padding:10px 18px; border-radius:10px; cursor:pointer; font-family:'Comic Neue',cursive; font-size:1.1rem; transition:0.2s; }
   .wb-lang-btn.active { background:#55efc4; color:#000; }
   .wb-score-bar { color:#55efc4; font-family:'Comic Neue',cursive; font-size:1.3rem; margin:10px 0; }
-  #mountain-view { background:#0f0f23; overflow:hidden; }
-  .mtn-canvas { width:100%; max-width:min(95vw,900px); height:clamp(350px,55vh,600px); border:3px solid #fab1a0; border-radius:16px; background:#1a1a3e; position:relative; overflow:hidden; }
-  .mtn-platform { position:absolute; background:#fab1a0; border-radius:6px; display:flex; align-items:center; justify-content:center; font-family:'Comic Neue',cursive; font-size:0.9rem; color:#1a1a3e; font-weight:bold; padding:2px 8px; }
-  .mtn-player { position:absolute; font-size:2.5rem; transition:left 0.15s,bottom 0.3s; z-index:5; }
-  .mtn-problem { position:absolute; top:10px; left:50%; transform:translateX(-50%); background:rgba(0,0,0,0.7); color:#fab1a0; font-family:'Comic Neue',cursive; font-size:1.6rem; padding:10px 20px; border-radius:10px; z-index:10; }
-  .mtn-choices { position:absolute; bottom:10px; left:50%; transform:translateX(-50%); display:flex; gap:10px; z-index:10; }
-  .mtn-choice { background:#fab1a0; color:#1a1a3e; border:none; padding:12px 22px; font-size:1.3rem; border-radius:10px; cursor:pointer; font-family:'Comic Neue',cursive; font-weight:bold; box-shadow:0 4px 0 #e08070; }
-  .mtn-choice:active { transform:translateY(4px); box-shadow:none; }
-  .mtn-info { color:#fab1a0; font-family:'Comic Neue',cursive; font-size:1.3rem; text-align:center; margin:10px 0; }
-  .mtn-summit { position:absolute; top:10px; font-size:2rem; }
   @keyframes bgShift { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
   @keyframes cardFlip3d { 0%{transform:rotateY(0deg)} 100%{transform:rotateY(180deg)} }
   @keyframes pulseGlow { 0%,100%{box-shadow:0 0 5px currentColor} 50%{box-shadow:0 0 25px currentColor, 0 0 50px currentColor} }
@@ -399,7 +388,6 @@
   #blocks-view { background:linear-gradient(135deg,#1a1040 0%,#2a1060 50%,#1a1040 100%); background-size:200% 200%; animation:bgShift 12s ease infinite; }
   #sorthat-view { background:linear-gradient(135deg,#1a2634 0%,#2a3044 50%,#1a2634 100%); background-size:200% 200%; animation:bgShift 14s ease infinite; }
   #wbridge-view { background:linear-gradient(135deg,#0b2027 0%,#0b2a20 50%,#0b2027 100%); background-size:200% 200%; animation:bgShift 13s ease infinite; }
-  #mountain-view { background:linear-gradient(135deg,#0f0f23 0%,#1a0f33 50%,#0f0f23 100%); background-size:200% 200%; animation:bgShift 10s ease infinite; }
   #memseq-view { background:linear-gradient(135deg,#1a1a2e 0%,#2e1a1a 50%,#1a1a2e 100%); background-size:200% 200%; animation:bgShift 9s ease infinite; }
   #scramble-view { background:linear-gradient(135deg,#2d1b00 0%,#3d2500 50%,#2d1b00 100%); background-size:200% 200%; animation:bgShift 11s ease infinite; }
   #pattern-view { background:linear-gradient(135deg,#0d2818 0%,#0d1828 50%,#0d2818 100%); background-size:200% 200%; animation:bgShift 12s ease infinite; }
@@ -564,8 +552,6 @@
   .ms-cell.mine { background:#e74c3c; }
   .ms-cell.flagged::after { content:'🚩'; }
   .ms-cell[data-n="1"]{ color:#0000ff } .ms-cell[data-n="2"]{ color:#008000 } .ms-cell[data-n="3"]{ color:#ff0000 } .ms-cell[data-n="4"]{ color:#000080 } .ms-cell[data-n="5"]{ color:#800000 } .ms-cell[data-n="6"]{ color:#008080 } .ms-cell[data-n="7"]{ color:#000 } .ms-cell[data-n="8"]{ color:#808080 }
-  .mtn-platform { transition:background 0.3s,box-shadow 0.3s; }
-  .mtn-platform[data-solved="true"] { background:#2ecc71; box-shadow:0 0 10px rgba(46,204,113,0.5); }
   #feedback.show { animation:celebPop 1.8s ease-out forwards; filter:drop-shadow(0 0 20px rgba(0,0,0,0.5)); }
   #sudoku-view{background:linear-gradient(135deg,#0a1a2a 0%,#0d2a2a 50%,#0a1a2a 100%);background-size:200% 200%;animation:bgShift 14s ease infinite;}
   #cardpairs-view{background:linear-gradient(135deg,#1a1a2e 0%,#0d2e2a 50%,#1a1a2e 100%);background-size:200% 200%;animation:bgShift 12s ease infinite;}
@@ -577,9 +563,9 @@
   .sdk-cell.given{color:#1abc9c;cursor:default;}
   .sdk-cell.selected{background:#f39c12;color:#0a1a2a;}
   .sdk-cell.given.selected{color:#0a1a2a;}
-  .sdk-cell.same-val{background:rgba(243,156,18,0.22);}
+  .sdk-cell.same-val{background:#3a2e16;}
   .sdk-cell.error{color:#e74c3c;animation:shake 0.3s;}
-  .sdk-cell.highlight-row,.sdk-cell.highlight-col,.sdk-cell.highlight-box{background:rgba(255,255,255,0.05);}
+  .sdk-cell.highlight-row,.sdk-cell.highlight-col,.sdk-cell.highlight-box{background:#23364a;}
   .sdk-cell:nth-child(3n){border-right:2px solid #1abc9c;}
   .sdk-cell:nth-child(n+19):nth-child(-n+27),.sdk-cell:nth-child(n+46):nth-child(-n+54),.sdk-cell:nth-child(n+73):nth-child(-n+81){border-bottom:2px solid #1abc9c;}
   .sdk-pencil{position:absolute;top:1px;left:1px;right:1px;bottom:1px;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);pointer-events:none;}
@@ -589,13 +575,12 @@
   .sdk-num:hover:not(.sdk-num-done){background:rgba(26,188,156,0.2);transform:translateY(-2px);}
   .sdk-num.active{background:#1abc9c;color:#0a1a2a;}
   .sdk-num.sdk-num-done{opacity:0.25;border-color:#555;color:#555;cursor:default;pointer-events:none;}
-  .sdk-cell.num-covered{background:rgba(255,255,255,0.03);}
   .sdk-controls{display:flex;gap:8px;margin:8px 0;justify-content:center;flex-wrap:wrap;}
   .sdk-btn{padding:6px 16px;border-radius:16px;border:1px solid #1abc9c;background:transparent;color:#1abc9c;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:0.8rem;transition:0.2s;}
   .sdk-btn:hover{background:rgba(26,188,156,0.2);}
   .sdk-btn.active{background:#1abc9c;color:#0a1a2a;}
   .cp-grid{display:grid;gap:10px;max-width:min(95vw,750px);width:95%;margin:0 auto;}
-  .cp-card{background:linear-gradient(135deg,#1abc9c,#16a085);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:clamp(1.5rem,4vw,2.5rem);cursor:pointer;aspect-ratio:1;color:transparent;user-select:none;transition:transform 0.3s,background 0.3s,box-shadow 0.3s;box-shadow:0 4px 8px rgba(0,0,0,0.3);}
+  .cp-card{background:linear-gradient(135deg,#1abc9c,#16a085);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:55cqmin;line-height:1;cursor:pointer;aspect-ratio:1;color:transparent;user-select:none;transition:transform 0.3s,background 0.3s,box-shadow 0.3s;box-shadow:0 4px 8px rgba(0,0,0,0.3);container-type:size;overflow:hidden;text-align:center;padding:4%;box-sizing:border-box;}
   .cp-card:hover:not(.cp-flipped):not(.cp-matched){transform:translateY(-3px) scale(1.03);box-shadow:0 8px 20px rgba(26,188,156,0.3);}
   .cp-card.cp-flipped{background:#fff;color:#333;transform:rotateY(0deg);box-shadow:0 0 15px rgba(26,188,156,0.4);}
   .cp-card.cp-matched{background:#2ecc71;color:#fff;opacity:0.7;transform:scale(0.95);pointer-events:none;}
@@ -798,7 +783,6 @@
         <h2 class="cat-header"><span class="cat-header-icon">⚡</span> Action & Sports</h2>
         <div class="cat-games">
           <button class="game-btn reflex" data-game="reflex"><span class="btn-icon">🎯</span><span class="btn-text">Reflex Racer</span><span class="btn-desc">Test your speed</span></button>
-          <button class="game-btn mtnclimb" data-game="mountain"><span class="btn-icon">🏔️</span><span class="btn-text">Math Mountain</span><span class="btn-desc">Climb with math</span></button>
         </div>
       </section>
       <section class="game-category">
@@ -1059,11 +1043,6 @@
     <div class="wb-sub" id="wb-sub"></div>
     <div class="wb-choices" id="wb-choices"></div>
   </div>
-  <div id="mountain-view" class="view">
-    <div class="life-title">🏔️ Math Mountain</div>
-    <div class="mtn-info" id="mtn-info">Solve to climb!</div>
-    <div class="mtn-canvas" id="mtn-canvas"></div>
-  </div>
   <div id="memseq-view" class="view">
     <div class="life-title">🧠 Memory Sequence</div>
     <div class="seq-info" id="seq-info">Watch the pattern, then repeat it!</div>
@@ -1268,7 +1247,6 @@
     blocks: $$('#blocks-view'),
     sorthat: $$('#sorthat-view'),
     wbridge: $$('#wbridge-view'),
-    mountain: $$('#mountain-view'),
     memseq: $$('#memseq-view'),
     scramble: $$('#scramble-view'),
     pattern: $$('#pattern-view'),
@@ -1499,7 +1477,6 @@
       if(game === 'blocks') initBlocks();
       if(game === 'sorthat') initSortHat();
       if(game === 'wbridge') initWordBridge();
-      if(game === 'mountain') initMountain();
       if(game === 'memseq') initMemSeq();
       if(game === 'scramble') initScramble();
       if(game === 'pattern') initPattern();
@@ -4230,6 +4207,9 @@ function playAnimalSound(type) {
     function spawnTarget() {
       if(!rfxActive) return;
       arena.querySelectorAll('.rfx-target').forEach(t => { if(Date.now() - parseInt(t.dataset.born) > (currentLevel<=2?6000:4500)) t.remove(); });
+      const liveCount = arena.querySelectorAll('.rfx-target:not([data-decoy])').length;
+      const maxLive = currentLevel <= 2 ? 2 : (currentLevel <= 3 ? 3 : (currentLevel <= 4 ? 4 : 5));
+      if(liveCount >= maxLive){const retryDelay = currentLevel <= 2 ? 600 : 400;setTimeout(spawnTarget, retryDelay);return;}
       const colors = ['#e74c3c','#3498db','#2ecc71','#f1c40f','#e84393','#00cec9','#6c5ce7','#fd79a8'];
       const emojis = currentLevel <= 2 ? ['🍎','🌟','🎈','🐱','🐶','🦋','🌈','🎯'] : ['🎯','⚡','💎','🔥','❄️','💫','🌀','⭐'];
       const size = currentLevel <= 2 ? 85 : (currentLevel <= 4 ? 65 : 50);
@@ -4249,7 +4229,6 @@ function playAnimalSound(type) {
         const ce = $$('#rfx-combo'); if(ce) ce.textContent = rfxCombo >= 3 ? `🔥 ${rfxCombo}x` : '';
         if(rfxCombo >= 5) { spawnComboPopup(`${rfxCombo}x COMBO!`, t); addScore(1); }
         t.remove();
-        spawnTarget();
       });
       if(currentLevel >= 3 && !isPowerUp) {
         let dx = (Math.random()-0.5)*2, dy = (Math.random()-0.5)*2;
@@ -4265,17 +4244,18 @@ function playAnimalSound(type) {
         rfxMoveTimers.push(mt);
       }
       arena.appendChild(t);
-      if(currentLevel >= 5 && Math.random() < 0.25) {
+      if(currentLevel >= 5 && Math.random() < 0.15) {
         const d = document.createElement('div');
         d.className = 'rfx-target';
         d.dataset.born = Date.now();
+        d.dataset.decoy = '1';
         d.style.cssText = `width:${size}px;height:${size}px;left:${Math.random()*maxX}px;top:${20+Math.random()*maxY}px;background:#555;opacity:0.7;`;
         d.textContent = '💀';
         d.addEventListener('pointerdown', (e) => { e.preventDefault(); rfxScore = Math.max(0, rfxScore-3); rfxCombo=0; resetStreak(); scoreEl.textContent = rfxScore; d.remove(); showFeedback('Decoy! -3','#e74c3c'); const ce=$$('#rfx-combo'); if(ce) ce.textContent=''; });
         arena.appendChild(d);
         setTimeout(() => d.remove(), 1800);
       }
-      const delay = currentLevel <= 2 ? 1200 : (currentLevel <= 3 ? 700 : (currentLevel <= 4 ? 450 : 300));
+      const delay = currentLevel <= 2 ? 1500 : (currentLevel <= 3 ? 1100 : (currentLevel <= 4 ? 900 : 750));
       setTimeout(spawnTarget, delay + Math.random() * 300);
     }
   }
@@ -4656,109 +4636,6 @@ function playAnimalSound(type) {
     }
     startWB();
   }
-  let mtnTimer = null;
-  function initMountain() {
-    const canvas = $$('#mtn-canvas');
-    const info = $$('#mtn-info');
-    canvas.innerHTML = '';
-    let mtnLevel = 0, playerY = 0;
-    const totalPlatforms = currentLevel <= 2 ? 5 : (currentLevel === 3 ? 8 : (currentLevel === 4 ? 10 : 12));
-    const platformH = Math.floor(400 / (totalPlatforms + 1));
-    const platforms = [];
-    for(let i = 0; i < totalPlatforms; i++) {
-      const plat = document.createElement('div');
-      plat.className = 'mtn-platform';
-      const w = 80 + Math.random() * 100;
-      const left = 20 + Math.random() * (canvas.offsetWidth - w - 60 || 400);
-      plat.style.cssText = `width:${w}px;height:20px;bottom:${(i+1)*platformH}px;left:${left}px;`;
-      plat.dataset.idx = i;
-      platforms.push({el:plat,y:(i+1)*platformH,solved:false});
-      canvas.appendChild(plat);
-    }
-    const summit = document.createElement('div');
-    summit.className = 'mtn-summit';
-    summit.textContent = '🏆';
-    summit.style.cssText = `position:absolute;top:5px;left:50%;transform:translateX(-50%);font-size:2.5rem;`;
-    canvas.appendChild(summit);
-    const player = document.createElement('div');
-    player.className = 'mtn-player';
-    player.textContent = '🧗';
-    player.style.cssText = `bottom:5px;left:50%;transform:translateX(-50%);`;
-    canvas.appendChild(player);
-    playerY = 0;
-    info.textContent = `Climb ${totalPlatforms} platforms! Solve to jump!`;
-    showMtnProblem(0);
-    function genProblem() {
-      let a, b, op, answer;
-      if(currentLevel <= 2) {
-        a = Math.floor(Math.random()*10)+1; b = Math.floor(Math.random()*10)+1;
-        op = '+'; answer = a + b;
-      } else if(currentLevel === 3) {
-        const ops = ['+','-','×'];
-        op = ops[Math.floor(Math.random()*ops.length)];
-        if(op === '×') { a = Math.floor(Math.random()*10)+1; b = Math.floor(Math.random()*10)+1; answer = a*b; }
-        else if(op === '-') { a = Math.floor(Math.random()*20)+10; b = Math.floor(Math.random()*10)+1; answer = a-b; }
-        else { a = Math.floor(Math.random()*50)+10; b = Math.floor(Math.random()*50)+10; answer = a+b; }
-      } else if(currentLevel === 5 && Math.random() < 0.4) {
-        const r = Math.floor(Math.random()*2);
-        if(r===0) { a = Math.floor(Math.random()*12)+2; answer = a*a; return {text:`${a}² = ?`, answer}; }
-        else { const sq = [4,9,16,25,36,49,64,81,100,121,144]; a = sq[Math.floor(Math.random()*sq.length)]; answer = Math.sqrt(a); return {text:`√${a} = ?`, answer}; }
-      } else {
-        const ops = ['+','-','×','÷'];
-        op = ops[Math.floor(Math.random()*ops.length)];
-        if(op === '÷') { answer = Math.floor(Math.random()*12)+1; b = Math.floor(Math.random()*12)+1; a = answer*b; }
-        else if(op === '×') { a = Math.floor(Math.random()*12)+1; b = Math.floor(Math.random()*12)+1; answer = a*b; }
-        else if(op === '-') { a = Math.floor(Math.random()*100)+20; b = Math.floor(Math.random()*20)+1; answer = a-b; }
-        else { a = Math.floor(Math.random()*100)+20; b = Math.floor(Math.random()*100)+20; answer = a+b; }
-      }
-      return {text:`${a} ${op} ${b} = ?`, answer};
-    }
-    function showMtnProblem(pIdx) {
-      if(pIdx >= totalPlatforms) {
-        canvas.querySelectorAll('.mtn-problem,.mtn-choices').forEach(e=>e.remove());
-        player.style.bottom = (canvas.offsetHeight - 40) + 'px';
-        showFeedback('Summit Reached! 🏆', '#2ecc71');
-        addScore(totalPlatforms * 2);
-        info.textContent = 'You conquered the mountain!';
-        setTimeout(() => { showView('menu'); currentGame = null; }, 3000);
-        return;
-      }
-      canvas.querySelectorAll('.mtn-problem,.mtn-choices').forEach(e=>e.remove());
-      const prob = genProblem();
-      const probEl = document.createElement('div');
-      probEl.className = 'mtn-problem';
-      probEl.textContent = prob.text;
-      canvas.appendChild(probEl);
-      const choicesEl = document.createElement('div');
-      choicesEl.className = 'mtn-choices';
-      let opts = [prob.answer];
-      while(opts.length < 4) { const w = prob.answer + (Math.floor(Math.random()*10)-5); if(w !== prob.answer && !opts.includes(w)) opts.push(w); }
-      opts.sort(() => Math.random() - 0.5);
-      opts.forEach(o => {
-        const btn = document.createElement('button');
-        btn.className = 'mtn-choice';
-        btn.textContent = o;
-        btn.onclick = () => {
-          if(o === prob.answer) {
-            platforms[pIdx].solved = true;
-            platforms[pIdx].el.style.background = '#2ecc71';
-            player.style.bottom = platforms[pIdx].y + 'px';
-            playerY = pIdx + 1;
-            addScore(2);
-            showFeedback('Jump! ⬆️', '#fab1a0');
-            info.textContent = `Platform ${pIdx+2}/${totalPlatforms+1}`;
-            setTimeout(() => showMtnProblem(pIdx + 1), 1000);
-          } else {
-            btn.style.background = '#e74c3c';
-            showFeedback('Wrong!', '#e74c3c');
-            resetStreak();
-          }
-        };
-        choicesEl.appendChild(btn);
-      });
-      canvas.appendChild(choicesEl);
-    }
-  }
   function initMemSeq() {
     const board = $$('#seq-board');
     const info = $$('#seq-info');
@@ -4861,7 +4738,7 @@ function playAnimalSound(type) {
       4: [{w:'ALGORITHM',h:'Step-by-step process',e:'🔢'},{w:'ECOSYSTEM',h:'Living community',e:'🌿'},{w:'TELESCOPE',h:'See distant stars',e:'🔭'},{w:'DEMOCRACY',h:'People govern',e:'🗳️'},{w:'FREQUENCY',h:'Cycles per second',e:'📡'},{w:'MAGNETISM',h:'Attracts iron',e:'🧲'},{w:'CHEMISTRY',h:'Study of matter',e:'⚗️'},{w:'EVOLUTION',h:'Species change',e:'🧬'},{w:'CONTINENT',h:'Large land mass',e:'🌍'},{w:'ADRENALINE',h:'Fight or flight',e:'💉'}],
       5: [{w:'PHOTOSYNTHESIS',h:'Plants make food',e:'🌱'},{w:'CONSTELLATION',h:'Star pattern',e:'⭐'},{w:'METAMORPHOSIS',h:'Body transformation',e:'🦋'},{w:'ENCYCLOPEDIA',h:'Knowledge book',e:'📚'},{w:'THERMOELECTRIC',h:'Heat to electricity',e:'⚡'},{w:'BIODIVERSITY',h:'Life variety',e:'🌿'},{w:'ARCHAEOLOGY',h:'Study of the past',e:'🏺'},{w:'NEUROSCIENCE',h:'Brain study',e:'🧠'},{w:'CRYPTOCURRENCY',h:'Digital money',e:'₿'},{w:'ELECTROMAGNETIC',h:'EM spectrum',e:'🌈'}]
     };
-    let current = null, placed = [], scrSolved = 0, scrTimeLeft = 0;
+    let current = null, placed = [], scrSolved = 0, scrTimeLeft = 0, scrTiles = [];
     const timePerLevel = {1:45,2:40,3:35,4:30,5:25};
     function shuffle(arr) { const a = [...arr]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
     const hud = document.createElement('div'); hud.className='game-hud'; hud.id='scr-hud'; hud.style.marginBottom='5px';
@@ -4886,6 +4763,7 @@ function playAnimalSound(type) {
       const bank = wordBank[lvl];
       current = bank[Math.floor(Math.random() * bank.length)];
       placed = new Array(current.w.length).fill(null);
+      scrTiles = shuffle(current.w.split(''));
       imgEl.textContent = current.e;
       hintEl.textContent = `Hint: ${current.h}`;
       renderAnswer();
@@ -4908,9 +4786,8 @@ function playAnimalSound(type) {
       });
     }
     function renderTiles() {
-      const shuffled = shuffle(current.w.split(''));
       lettersEl.innerHTML = '';
-      shuffled.forEach((ch, origI) => {
+      scrTiles.forEach((ch, origI) => {
         const tile = document.createElement('div');
         tile.className = 'scr-tile';
         tile.textContent = ch;
@@ -5212,7 +5089,7 @@ function playAnimalSound(type) {
     function digitCount(n){let ct=0;for(let r=0;r<9;r++)for(let c=0;c<9;c++){if(grid[r][c]===n)ct++;}return ct;}
     function updateNumpad(){numpad.querySelectorAll('.sdk-num').forEach(b=>{const n=parseInt(b.textContent);if(!isNaN(n)){const full=digitCount(n)>=9;b.classList.toggle('sdk-num-done',full);b.disabled=full;b.classList.toggle('active',n===activeNum&&!full);}});}
     function render(){board.innerHTML='';for(let r=0;r<9;r++)for(let c=0;c<9;c++){const cell=document.createElement('div');cell.className='sdk-cell'+(given[r][c]?' given':'');cell.dataset.r=r;cell.dataset.c=c;const v=grid[r][c];if(v){cell.textContent=v;}else if(pencilMarks[r][c].size){const pm=document.createElement('div');pm.className='sdk-pencil';for(let n=1;n<=9;n++){const s=document.createElement('span');s.textContent=pencilMarks[r][c].has(n)?n:'';pm.appendChild(s);}cell.appendChild(pm);}cell.onclick=()=>{selected={r,c};highlight();if(v)activeNum=v;updateNumpad();};board.appendChild(cell);}updateNumpad();}
-    function highlight(){const an=activeNum||(selected&&grid[selected.r]?grid[selected.r][selected.c]:0);$$all('.sdk-cell').forEach(cell=>{cell.classList.remove('selected','same-val','highlight-row','highlight-col','highlight-box','num-covered');const cr=+cell.dataset.r,cc=+cell.dataset.c;if(selected){if(cr===selected.r&&cc===selected.c)cell.classList.add('selected');else if(cr===selected.r)cell.classList.add('highlight-row');else if(cc===selected.c)cell.classList.add('highlight-col');else if(Math.floor(cr/3)===Math.floor(selected.r/3)&&Math.floor(cc/3)===Math.floor(selected.c/3))cell.classList.add('highlight-box');}if(an&&grid[cr][cc]===an&&!(selected&&cr===selected.r&&cc===selected.c))cell.classList.add('same-val');if(an&&grid[cr][cc]===an){const br=Math.floor(cr/3)*3,bc=Math.floor(cc/3)*3;$$all('.sdk-cell').forEach(c2=>{const r2=+c2.dataset.r,c2c=+c2.dataset.c;if(r2===cr||c2c===cc||(r2>=br&&r2<br+3&&c2c>=bc&&c2c<bc+3))c2.classList.add('num-covered');});}});}
+    function highlight(){const an=activeNum||(selected&&grid[selected.r]?grid[selected.r][selected.c]:0);$$all('.sdk-cell').forEach(cell=>{cell.classList.remove('selected','same-val','highlight-row','highlight-col','highlight-box');const cr=+cell.dataset.r,cc=+cell.dataset.c;if(selected){if(cr===selected.r&&cc===selected.c)cell.classList.add('selected');else if(cr===selected.r)cell.classList.add('highlight-row');else if(cc===selected.c)cell.classList.add('highlight-col');else if(Math.floor(cr/3)===Math.floor(selected.r/3)&&Math.floor(cc/3)===Math.floor(selected.c/3))cell.classList.add('highlight-box');}if(an&&grid[cr][cc]===an&&!(selected&&cr===selected.r&&cc===selected.c))cell.classList.add('same-val');});}
     function placeNum(n){if(!selected||given[selected.r][selected.c])return;const{r,c}=selected;if(pencilMode){pencilMarks[r][c].has(n)?pencilMarks[r][c].delete(n):pencilMarks[r][c].add(n);render();highlight();return;}pencilMarks[r][c].clear();grid[r][c]=n;activeNum=n;if(n!==solution[r][c]){sdkErrors++;$$('#sdk-errors').textContent=sdkErrors;render();highlight();const cell=board.querySelector(`[data-r="${r}"][data-c="${c}"]`);cell.classList.add('error');showFeedback('Wrong!','#e74c3c');resetStreak();setTimeout(()=>{grid[r][c]=0;render();highlight();},800);}else{render();highlight();addScore(1);checkWin();}}
     function checkWin(){for(let r=0;r<9;r++)for(let c=0;c<9;c++){if(grid[r][c]!==solution[r][c])return;}clearInterval(window._sdkTimer);window._sdkTimer=null;const mins=Math.floor(sdkTime/60),secs=sdkTime%60;showFeedback(`Sudoku Complete! ${mins}:${secs<10?'0'+secs:secs} \u2014 ${sdkErrors} errors \ud83c\udfc6`,'#2ecc71');addScore(sdkDiff==='hard'?20:(sdkDiff==='medium'?12:8));}
     hud.innerHTML=`<span class="game-stat">\u23f1 <span class="game-stat-val" id="sdk-time">0:00</span></span><span class="game-stat">\u274c <span class="game-stat-val" id="sdk-errors">0</span></span><span class="game-stat">\u270f\ufe0f <span class="game-stat-val" id="sdk-pencil-lbl">OFF</span></span>`;
@@ -5240,15 +5117,17 @@ function playAnimalSound(type) {
     const sz=sizes[sizeIdx];cpTotal=sz.pairs;
     const theme=themes[Math.floor(Math.random()*themes.length)];
     hud.innerHTML=`<span class="game-stat">\u23f1 <span class="game-stat-val" id="cp-time">0s</span></span><span class="game-stat">\ud83d\udd04 <span class="game-stat-val" id="cp-moves">0</span></span><span class="game-stat">\ud83d\udd25 <span class="game-stat-val" id="cp-combo">0</span></span><span class="game-stat">\ud83c\udfa8 ${theme.name}</span>`;
-    const szPicker=document.createElement('div');szPicker.style.cssText='display:flex;gap:6px;justify-content:center;margin:6px 0;';
+    const oldPicker=document.getElementById('cp-size-picker');if(oldPicker)oldPicker.remove();
+    const szPicker=document.createElement('div');szPicker.id='cp-size-picker';szPicker.style.cssText='display:flex;gap:6px;justify-content:center;margin:6px 0;flex-wrap:wrap;';
     sizes.forEach((s,i)=>{const b=document.createElement('button');b.className='sdk-btn'+(i===sizeIdx?' active':'');b.textContent=`${s.r}\u00d7${s.c}`;b.onclick=()=>{sessionStorage.setItem('cp-size',i);initCardPairs();};szPicker.appendChild(b);});
     hud.after(szPicker);
-    grid.innerHTML='';grid.style.gridTemplateColumns=`repeat(${sz.c},1fr)`;grid.style.maxWidth=(sz.c*80+sz.c*10)+'px';
+    grid.innerHTML='';grid.style.gridTemplateColumns=`repeat(${sz.c},1fr)`;grid.style.maxWidth='';
     const pool=[...theme.pairs].sort(()=>Math.random()-0.5).slice(0,sz.pairs);
     const deck=[...pool,...pool].sort(()=>Math.random()-0.5);
     cpFlipped=[];cpMatched=0;cpMoves=0;cpCombo=0;cpTime=0;
     window._cpTimer=setInterval(()=>{cpTime++;const te=$$('#cp-time');if(te)te.textContent=cpTime+'s';},1000);
-    deck.forEach((sym,idx)=>{const card=document.createElement('div');card.className='cp-card';card.dataset.val=sym;card.dataset.idx=idx;card.style.fontSize=theme.name==='Science'?'clamp(0.8rem,2.5vw,1.4rem)':'clamp(1.5rem,4vw,2.5rem)';card.onclick=()=>{if(card.classList.contains('cp-flipped')||card.classList.contains('cp-matched')||cpFlipped.length>=2)return;card.classList.add('cp-flipped');card.textContent=sym;card.style.color='#333';cpFlipped.push(card);if(cpFlipped.length===2){cpMoves++;const me=$$('#cp-moves');if(me)me.textContent=cpMoves;setTimeout(()=>{if(cpFlipped[0].dataset.val===cpFlipped[1].dataset.val&&cpFlipped[0].dataset.idx!==cpFlipped[1].dataset.idx){cpFlipped[0].classList.add('cp-matched');cpFlipped[1].classList.add('cp-matched');cpMatched+=2;cpCombo++;const ce=$$('#cp-combo');if(ce)ce.textContent=cpCombo;addScore(cpCombo>=3?3:(cpCombo>=2?2:1));cpCombo>=3?showFeedback(`${cpCombo}x Combo! \ud83d\udd25`,'#e74c3c'):showFeedback('Match! \u2728','#1abc9c');if(cpMatched>=sz.pairs*2){clearInterval(window._cpTimer);window._cpTimer=null;const bonus=cpMoves<=sz.pairs*2?'Perfect Memory! \ud83e\udde0':'Well Done! \ud83c\udf1f';showFeedback(`${bonus} ${cpTime}s`,'#2ecc71');addScore(Math.max(1,sz.pairs*2-cpMoves));if(sizeIdx<sizes.length-1)sessionStorage.setItem('cp-size',sizeIdx+1);setTimeout(initCardPairs,2500);}}else{cpCombo=0;resetStreak();const ce=$$('#cp-combo');if(ce)ce.textContent='0';cpFlipped.forEach(f=>{f.classList.remove('cp-flipped');f.textContent='';f.style.color='';});}cpFlipped=[];},800);}};grid.appendChild(card);});
+    const cardFont=theme.name==='Science'?'24cqmin':'62cqmin';
+    deck.forEach((sym,idx)=>{const card=document.createElement('div');card.className='cp-card';card.dataset.val=sym;card.dataset.idx=idx;card.style.fontSize=cardFont;card.onclick=()=>{if(card.classList.contains('cp-flipped')||card.classList.contains('cp-matched')||cpFlipped.length>=2)return;card.classList.add('cp-flipped');card.textContent=sym;card.style.color='#333';cpFlipped.push(card);if(cpFlipped.length===2){cpMoves++;const me=$$('#cp-moves');if(me)me.textContent=cpMoves;const a=cpFlipped[0],b=cpFlipped[1];const isMatch=a.dataset.val===b.dataset.val&&a.dataset.idx!==b.dataset.idx;if(isMatch){a.classList.add('cp-matched');b.classList.add('cp-matched');cpMatched+=2;cpCombo++;const ce=$$('#cp-combo');if(ce)ce.textContent=cpCombo;addScore(cpCombo>=3?3:(cpCombo>=2?2:1));cpCombo>=3?showFeedback(`${cpCombo}x Combo! \ud83d\udd25`,'#e74c3c'):showFeedback('Match! \u2728','#1abc9c');cpFlipped=[];if(cpMatched>=sz.pairs*2){clearInterval(window._cpTimer);window._cpTimer=null;const bonus=cpMoves<=sz.pairs*2?'Perfect Memory! \ud83e\udde0':'Well Done! \ud83c\udf1f';showFeedback(`${bonus} ${cpTime}s`,'#2ecc71');addScore(Math.max(1,sz.pairs*2-cpMoves));if(sizeIdx<sizes.length-1)sessionStorage.setItem('cp-size',sizeIdx+1);setTimeout(initCardPairs,2200);}}else{setTimeout(()=>{cpCombo=0;resetStreak();const ce=$$('#cp-combo');if(ce)ce.textContent='0';a.classList.remove('cp-flipped');b.classList.remove('cp-flipped');a.textContent='';b.textContent='';a.style.color='';b.style.color='';cpFlipped=[];},500);}}};grid.appendChild(card);});
   }
   function initSpeedMath(){
     const display=$$('#spm-display'),answer=$$('#spm-answer'),input=$$('#spm-input'),hud=$$('#spm-hud'),timerFill=$$('#spm-timer-fill');
