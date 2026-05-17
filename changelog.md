@@ -1,5 +1,15 @@
 ﻿# Changelog 
 
+## [5.6.8] - 2026-05-17 - Amni-Learn audit batch 9: N-Back polish (working memory)
+- **Persistent best per N-level** — `nbk-best-N` sessionStorage. ⭐ Best % chip in HUD updates live as accuracy improves during the run.
+- **Streak system** — `nbk-stk` counter in HUD. Score bonuses +1/+2 at streak 3/5. Confetti at 5/10/15. "🔥🔥🔥" message at streak 10+.
+- **Trial progress bar** — linear-gradient fill 0/20 → 20/20 above the grid. Visual sense of how much of the run remains.
+- **Hit/miss dot bar** — small green/red dots build a visible history of your recent answers below the grid. Helps see your trend.
+- **Cell animations** — pulse on activate (`nbkCellPulse`), green-flash on correct, red shake-glow on wrong.
+- **Signal-detection breakdown** in summary — TP (Hit), TN (Correct reject), FP (False alarm), FN (Miss), plus Sensitivity and Specificity percentages. Real cognitive-psych framing for adult brain exercisers.
+- **5-Back option** — selector now shows 1-Back through 5-Back (was 1-4). Level-up rule auto-promotes at 80% accuracy.
+- **Polished game-over** — replaces bare text with `nbk-summary` card. NEW BEST detection + 120-particle confetti on new high accuracy. +5 score bonus for >=80% runs.
+
 ## [5.6.7] - 2026-05-17 - Amni-Learn audit batch 8: Memory Sequence polish
 - **3 modes** — Classic (standard pace), Speed (70% baseline speed, min 140ms), Reverse (repeat the sequence BACKWARDS — a true brain-exercise twist for adults). Chip-row picker above the pad grid.
 - **Sound toggle** — 🔊 / 🔇 button next to mode picker. Persists in sessionStorage (`seq-sound`).

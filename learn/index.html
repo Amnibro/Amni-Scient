@@ -708,15 +708,39 @@
   .rxt-result{display:flex;justify-content:space-between;padding:6px 14px;background:rgba(255,255,255,0.05);border-radius:8px;font-family:'JetBrains Mono',monospace;color:#7a8a9a;font-size:0.85rem;}
   .rxt-result-val{color:#1abc9c;font-weight:bold;}
   .nbk-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(10px,2vw,18px);max-width:min(95vw,700px);width:95%;margin:16px auto;}
-  .nbk-cell{aspect-ratio:1;background:#1a2a3a;border:3px solid #2a3a4a;border-radius:16px;transition:background 0.2s,border-color 0.2s;min-height:clamp(80px,15vw,140px);cursor:pointer;}
-  .nbk-cell.active{background:#1abc9c;border-color:#1abc9c;box-shadow:0 0 30px rgba(26,188,156,0.6);}
+  .nbk-cell{aspect-ratio:1;background:#1a2a3a;border:3px solid #2a3a4a;border-radius:16px;transition:background 0.2s,border-color 0.2s,transform 0.15s,box-shadow 0.2s;min-height:clamp(80px,15vw,140px);cursor:pointer;}
+  .nbk-cell.active{background:#1abc9c;border-color:#1abc9c;box-shadow:0 0 30px rgba(26,188,156,0.6);animation:nbkCellPulse 0.5s ease-out;}
+  @keyframes nbkCellPulse{0%{transform:scale(1)}45%{transform:scale(1.08)}100%{transform:scale(1)}}
+  .nbk-cell.correct-flash{background:#2ecc71;border-color:#2ecc71;box-shadow:0 0 30px rgba(46,204,113,0.7);}
+  .nbk-cell.wrong-flash{background:#e74c3c;border-color:#e74c3c;box-shadow:0 0 30px rgba(231,76,60,0.7);animation:spmShake 0.35s ease-out;}
   .nbk-btns{display:flex;gap:15px;margin:12px 0;}
-  .nbk-btn{padding:12px 28px;border-radius:12px;border:2px solid;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:bold;transition:0.2s;background:transparent;}
+  .nbk-btn{padding:12px 28px;border-radius:12px;border:2px solid;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:bold;transition:transform 0.15s,background 0.2s,box-shadow 0.2s;background:transparent;}
   .nbk-btn.match{border-color:#2ecc71;color:#2ecc71;}
-  .nbk-btn.match:hover{background:rgba(46,204,113,0.2);}
+  .nbk-btn.match:hover{background:rgba(46,204,113,0.2);transform:translateY(-2px);box-shadow:0 6px 14px rgba(46,204,113,0.3);}
   .nbk-btn.nomatch{border-color:#e74c3c;color:#e74c3c;}
-  .nbk-btn.nomatch:hover{background:rgba(231,76,60,0.2);}
+  .nbk-btn.nomatch:hover{background:rgba(231,76,60,0.2);transform:translateY(-2px);box-shadow:0 6px 14px rgba(231,76,60,0.3);}
+  .nbk-btn:active{transform:scale(0.94);}
   .nbk-info{font-family:'JetBrains Mono',monospace;font-size:1rem;color:#7a8a9a;text-align:center;margin:8px 0;}
+  .nbk-prog{width:100%;max-width:min(95vw,700px);height:8px;background:rgba(255,255,255,0.08);border-radius:4px;overflow:hidden;margin:6px auto 4px;}
+  .nbk-prog-fill{height:100%;background:linear-gradient(90deg,#1abc9c,#16a085);transition:width 0.3s ease-out;}
+  .nbk-stk-bar{display:flex;gap:4px;justify-content:center;flex-wrap:wrap;margin:6px 0;min-height:18px;}
+  .nbk-stk-dot{width:14px;height:14px;border-radius:50%;background:rgba(255,255,255,0.12);border:1.5px solid rgba(255,255,255,0.25);transition:0.2s;}
+  .nbk-stk-dot.hit{background:#2ecc71;border-color:#2ecc71;}
+  .nbk-stk-dot.miss{background:#e74c3c;border-color:#e74c3c;}
+  .nbk-summary{margin:20px auto;max-width:560px;padding:24px;background:linear-gradient(135deg,rgba(26,188,156,0.18),rgba(155,89,182,0.12));border:2px solid #1abc9c;border-radius:18px;text-align:center;animation:bounceIn 0.5s ease-out;box-shadow:0 8px 24px rgba(26,188,156,0.25);}
+  .nbk-summary h3{font-family:'JetBrains Mono',monospace;color:#f1c40f;font-size:1.6rem;margin:0 0 12px;}
+  .nbk-summary-stats{display:flex;justify-content:space-around;gap:14px;flex-wrap:wrap;margin:12px 0;}
+  .nbk-summary-stat{flex:1;min-width:80px;}
+  .nbk-summary-stat .val{font-family:'JetBrains Mono',monospace;font-size:1.9rem;font-weight:bold;color:#1abc9c;display:block;}
+  .nbk-summary-stat .lbl{font-size:0.78rem;color:rgba(236,240,241,0.7);text-transform:uppercase;letter-spacing:1px;}
+  .nbk-summary-stat.best .val{color:#2ecc71;}
+  .nbk-summary-stat.new-best .val{color:#f1c40f;animation:spmPulse 0.8s ease-out infinite;}
+  .nbk-breakdown{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:14px auto;max-width:480px;text-align:left;font-family:'JetBrains Mono',monospace;font-size:0.85rem;}
+  .nbk-breakdown div{padding:6px 10px;background:rgba(255,255,255,0.05);border-radius:8px;display:flex;justify-content:space-between;}
+  .nbk-breakdown .tp{color:#2ecc71;}
+  .nbk-breakdown .tn{color:#16a085;}
+  .nbk-breakdown .fp{color:#f1c40f;}
+  .nbk-breakdown .fn{color:#e74c3c;}
   .agm-tiles{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:12px 0;}
   .agm-tile{width:clamp(42px,10vw,54px);height:clamp(42px,10vw,54px);border-radius:10px;border:2px solid #1abc9c;background:transparent;color:#1abc9c;font-family:'JetBrains Mono',monospace;font-size:clamp(1.2rem,4vw,1.8rem);font-weight:bold;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform 0.15s,background 0.2s,box-shadow 0.2s,opacity 0.2s;text-transform:uppercase;user-select:none;box-shadow:0 2px 6px rgba(0,0,0,0.3);}
   .agm-tile:hover:not(.used){background:rgba(26,188,156,0.2);transform:translateY(-3px);box-shadow:0 6px 14px rgba(26,188,156,0.4);}
@@ -5476,14 +5500,38 @@ function playAnimalSound(type) {
   }
   function initNBack(){
     const ct=$$('#nbk-container'),hud=$$('#nbk-hud');
-    let nLv=parseInt(sessionStorage.getItem('nbk-n')||'1'),seq=[],ci=0,sc=0,tot=0;
+    let nLv=parseInt(sessionStorage.getItem('nbk-n')||'1'),seq=[],ci=0,sc=0,tot=0,stk=0,bestStk=0,tp=0,fp=0,tn=0,fn=0,hitMisses=[];
     const SL=20;
-    hud.innerHTML=`<span class="game-stat">\ud83e\udde0 <span class="game-stat-val" id="nbk-n">${nLv}</span>-Back</span><span class="game-stat">\u2705 <span class="game-stat-val" id="nbk-sc">0</span>/<span id="nbk-tot">0</span></span><span class="game-stat">\ud83d\udcca <span class="game-stat-val" id="nbk-rd">0</span>/${SL}</span>`;
+    const bestKey='nbk-best-'+nLv;
+    let bestStored=parseInt(sessionStorage.getItem(bestKey)||'0');
+    hud.innerHTML=`<span class="game-stat">\ud83e\udde0 <span class="game-stat-val" id="nbk-n">${nLv}</span>-Back</span><span class="game-stat">\u2705 <span class="game-stat-val" id="nbk-sc">0</span>/<span id="nbk-tot">0</span></span><span class="game-stat">\ud83d\udd25 <span class="game-stat-val" id="nbk-stk">0</span></span><span class="game-stat">\ud83d\udcca <span class="game-stat-val" id="nbk-rd">0</span>/${SL}</span><span class="game-stat">\u2b50 <span class="game-stat-val" id="nbk-best">${bestStored}</span>%</span>`;
     function gen(){seq=[];for(let i=0;i<SL;i++)i>=nLv&&Math.random()<0.35?seq.push(seq[i-nLv]):seq.push(Math.floor(Math.random()*9));}
-    function build(){ct.innerHTML='';const g=document.createElement('div');g.className='nbk-grid';g.id='nbk-g';for(let i=0;i<9;i++){const c=document.createElement('div');c.className='nbk-cell';c.dataset.idx=i;g.appendChild(c);}ct.appendChild(g);const info=document.createElement('div');info.className='nbk-info';info.textContent=`Same position as ${nLv} step${nLv>1?'s':''} ago?`;ct.appendChild(info);const bd=document.createElement('div');bd.className='nbk-btns';bd.style.justifyContent='center';const mb=document.createElement('button');mb.className='nbk-btn match';mb.textContent='MATCH';mb.id='nbk-m';const nb=document.createElement('button');nb.className='nbk-btn nomatch';nb.textContent='NO MATCH';nb.id='nbk-nm';bd.appendChild(mb);bd.appendChild(nb);ct.appendChild(bd);}
-    function step(){if(currentGame!=='nback')return;if(ci>=SL){const pct=tot?Math.round(sc/tot*100):0;ct.innerHTML=`<div class="nmm-display">${sc}/${tot}</div><div class="nmm-msg">${pct}% at ${nLv}-Back</div>`;pct>=80&&nLv<5&&(nLv++,sessionStorage.setItem('nbk-n',nLv),ct.innerHTML+=`<div class="nmm-msg" style="color:#2ecc71">Level up to ${nLv}-Back!</div>`);const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='PLAY AGAIN';rb.onclick=initNBack;ct.appendChild(rb);showFeedback(`${nLv}-Back: ${pct}% 🧠`,'#f1c40f');addScore(sc);return;}$$('#nbk-rd').textContent=ci+1;$$all('.nbk-cell').forEach(c=>c.classList.remove('active'));const cell=ct.querySelector(`[data-idx="${seq[ci]}"]`);if(cell)cell.classList.add('active');const isM=ci>=nLv&&seq[ci]===seq[ci-nLv];let done=false;const ans=(a)=>{if(done)return;done=true;tot++;const ok=(a==='m')===isM;ok?(sc++,addScore(nLv>=3?3:nLv>=2?2:1),showFeedback('✅','#2ecc71')):(resetStreak(),showFeedback(isM?'Was a match!':'Not a match!','#e74c3c'));$$('#nbk-sc').textContent=sc;$$('#nbk-tot').textContent=tot;ci++;setTimeout(()=>{$$all('.nbk-cell').forEach(c=>c.classList.remove('active'));setTimeout(step,400);},600);};$$('#nbk-m').onclick=()=>ans('m');$$('#nbk-nm').onclick=()=>ans('nm');if(ci<nLv){done=true;ci++;setTimeout(()=>{$$all('.nbk-cell').forEach(c=>c.classList.remove('active'));setTimeout(step,400);},1000);}}
-    function start(){gen();ci=0;sc=0;tot=0;build();setTimeout(step,800);}
-    ct.innerHTML=`<div class="nmm-msg">A square lights up. Is it the same as ${nLv} step${nLv>1?'s':''} ago?</div>`;const sd=document.createElement('div');sd.className='sdk-controls';sd.style.margin='10px 0';[1,2,3,4].forEach(n=>{const b=document.createElement('button');b.className='sdk-btn'+(n===nLv?' active':'');b.textContent=`${n}-Back`;b.onclick=()=>{nLv=n;sessionStorage.setItem('nbk-n',n);$$('#nbk-n').textContent=n;sd.querySelectorAll('.sdk-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');};sd.appendChild(b);});ct.appendChild(sd);const sb=document.createElement('button');sb.className='nmm-btn';sb.textContent='START';sb.onclick=start;ct.appendChild(sb);
+    function _setProg(){const f=$$('#nbk-prog-fill');if(f)f.style.width=(ci/SL*100)+'%';}
+    function _renderStkBar(){const bar=$$('#nbk-stk-bar');if(!bar)return;bar.innerHTML='';hitMisses.forEach(h=>{const d=document.createElement('div');d.className='nbk-stk-dot '+(h?'hit':'miss');bar.appendChild(d);});}
+    function build(){ct.innerHTML='';const prog=document.createElement('div');prog.className='nbk-prog';prog.innerHTML='<div class="nbk-prog-fill" id="nbk-prog-fill" style="width:0%"></div>';ct.appendChild(prog);const g=document.createElement('div');g.className='nbk-grid';g.id='nbk-g';for(let i=0;i<9;i++){const c=document.createElement('div');c.className='nbk-cell';c.dataset.idx=i;g.appendChild(c);}ct.appendChild(g);const stkBar=document.createElement('div');stkBar.className='nbk-stk-bar';stkBar.id='nbk-stk-bar';ct.appendChild(stkBar);const info=document.createElement('div');info.className='nbk-info';info.textContent=`Same position as ${nLv} step${nLv>1?'s':''} ago?`;ct.appendChild(info);const bd=document.createElement('div');bd.className='nbk-btns';bd.style.justifyContent='center';const mb=document.createElement('button');mb.className='nbk-btn match';mb.textContent='MATCH';mb.id='nbk-m';const nb=document.createElement('button');nb.className='nbk-btn nomatch';nb.textContent='NO MATCH';nb.id='nbk-nm';bd.appendChild(mb);bd.appendChild(nb);ct.appendChild(bd);}
+    function _gameOver(){
+      const pct=tot?Math.round(sc/tot*100):0;
+      const wasBest=pct>bestStored;
+      if(wasBest)sessionStorage.setItem(bestKey,pct);
+      const sensitivity=(tp+fn)>0?Math.round(tp/(tp+fn)*100):0;
+      const specificity=(tn+fp)>0?Math.round(tn/(tn+fp)*100):0;
+      ct.innerHTML='';
+      const sum=document.createElement('div');sum.className='nbk-summary';
+      sum.innerHTML=`<h3>🧠 ${wasBest?'NEW BEST!':`${nLv}-Back Complete`}</h3><div class="nbk-summary-stats"><div class="nbk-summary-stat"><span class="val">${pct}%</span><span class="lbl">Accuracy</span></div><div class="nbk-summary-stat"><span class="val">${sc}/${tot}</span><span class="lbl">Correct</span></div><div class="nbk-summary-stat"><span class="val">${bestStk}</span><span class="lbl">Best Streak</span></div><div class="nbk-summary-stat ${wasBest?'new-best':'best'}"><span class="val">${Math.max(pct,bestStored)}%</span><span class="lbl">All-Time</span></div></div><div class="nbk-breakdown"><div class="tp"><span>Hit</span><b>${tp}</b></div><div class="tn"><span>Correct reject</span><b>${tn}</b></div><div class="fp"><span>False alarm</span><b>${fp}</b></div><div class="fn"><span>Miss</span><b>${fn}</b></div></div><div style="margin-top:6px;font-family:'JetBrains Mono',monospace;font-size:0.82rem;color:#7a8a9a">Sensitivity ${sensitivity}% · Specificity ${specificity}%</div>`;
+      ct.appendChild(sum);
+      if(pct>=80&&nLv<5){nLv++;sessionStorage.setItem('nbk-n',nLv);const up=document.createElement('div');up.className='nmm-msg';up.style.color='#2ecc71';up.style.fontWeight='bold';up.style.marginTop='10px';up.textContent=`⬆️ Level up to ${nLv}-Back!`;sum.appendChild(up);spawnConfetti(window.innerWidth/2,window.innerHeight/3,80);}
+      if(wasBest)spawnConfetti(window.innerWidth/2,window.innerHeight/2,120);
+      const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='PLAY AGAIN';rb.onclick=initNBack;ct.appendChild(rb);
+      showFeedback(`${nLv}-Back: ${pct}% 🧠`,wasBest?'#2ecc71':'#f1c40f');
+      addScore(sc+(pct>=80?5:0));
+    }
+    function step(){if(currentGame!=='nback')return;if(ci>=SL){_gameOver();return;}$$('#nbk-rd').textContent=ci+1;_setProg();$$all('.nbk-cell').forEach(c=>c.classList.remove('active','correct-flash','wrong-flash'));const cell=ct.querySelector(`[data-idx="${seq[ci]}"]`);if(cell)cell.classList.add('active');const isM=ci>=nLv&&seq[ci]===seq[ci-nLv];let done=false;const ans=(a)=>{if(done)return;done=true;tot++;const said=(a==='m');const ok=said===isM;if(ok){sc++;stk++;if(stk>bestStk)bestStk=stk;if(isM)tp++;else tn++;hitMisses.push(true);const pts=nLv>=3?3:nLv>=2?2:1;const stkBonus=stk>=5?2:(stk>=3?1:0);addScore(pts+stkBonus);if(cell)cell.classList.add('correct-flash');if(stk===5||stk===10||stk===15)spawnConfetti(window.innerWidth/2,window.innerHeight/3,stk>=10?80:50);showFeedback(stk>=10?`${stk}x! 🔥🔥🔥`:(stk>=5?`${stk}x 🔥🔥`:(stk>=3?`${stk}x 🔥`:'✅')),'#2ecc71');const liveBest=Math.round(sc/tot*100);if(liveBest>bestStored){const be=$$('#nbk-best');if(be)be.textContent=liveBest;}}else{stk=0;resetStreak();if(isM)fn++;else fp++;hitMisses.push(false);if(cell)cell.classList.add('wrong-flash');showFeedback(isM?'Was a match!':'Not a match!','#e74c3c');}$$('#nbk-sc').textContent=sc;$$('#nbk-tot').textContent=tot;$$('#nbk-stk').textContent=stk;_renderStkBar();ci++;setTimeout(()=>{$$all('.nbk-cell').forEach(c=>c.classList.remove('active','correct-flash','wrong-flash'));setTimeout(step,400);},600);};$$('#nbk-m').onclick=()=>ans('m');$$('#nbk-nm').onclick=()=>ans('nm');if(ci<nLv){done=true;ci++;setTimeout(()=>{$$all('.nbk-cell').forEach(c=>c.classList.remove('active'));setTimeout(step,400);},1000);}}
+    function start(){gen();ci=0;sc=0;tot=0;stk=0;bestStk=0;tp=0;fp=0;tn=0;fn=0;hitMisses=[];build();setTimeout(step,800);}
+    ct.innerHTML=`<div class="nmm-msg">A square lights up. Is it the same position as ${nLv} step${nLv>1?'s':''} ago?</div>`;
+    const sd=document.createElement('div');sd.className='sdk-controls';sd.style.margin='10px 0';
+    [1,2,3,4,5].forEach(n=>{const b=document.createElement('button');b.className='sdk-btn'+(n===nLv?' active':'');b.textContent=`${n}-Back`;b.onclick=()=>{nLv=n;sessionStorage.setItem('nbk-n',n);initNBack();};sd.appendChild(b);});
+    ct.appendChild(sd);
+    const sb=document.createElement('button');sb.className='nmm-btn';sb.textContent='START';sb.onclick=start;ct.appendChild(sb);
   }
   function initAnagram(){
     const ct=$$('#agm-container'),hud=$$('#agm-hud');
