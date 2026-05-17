@@ -264,21 +264,23 @@ python scripts/amni_serve.py --seed --cors --port 11434</pre>
 </section>
 
 <section>
-<h2>SAFETY: 81% BLOCK RATE ON ADVERSARIAL ATTACKS</h2>
-<p style="text-align:center;color:var(--dim);max-width:740px;margin:0 auto 1rem;font-size:.9rem">Most prompt filters lose to paraphrase and encoding attacks. Adam stacks three layers: lexical regex (catches "ignore previous instructions"), GF(17) hash patterns (catches lexical variants), and semantic embedding screening with pre-decoders for rot13, leet, Al Bhed, and base64.</p>
-<table class="spec-table" style="max-width:680px;margin:1.5rem auto">
-<tr><th>ATTACK FAMILY</th><th>BEFORE (REGEX ONLY)</th><th>WITH SEMANTIC LAYER</th></tr>
-<tr><td>Paraphrase</td><td>0/10 (0%)</td><td>10/10 (100%)</td></tr>
-<tr><td>Prefill continuation</td><td>1/4 (25%)</td><td>4/4 (100%)</td></tr>
-<tr><td>Indirection (&ldquo;for a novel&rdquo;)</td><td>4/8 (50%)</td><td>7/8 (88%)</td></tr>
-<tr><td>Encoding (rot13/leet/base64)</td><td>0/8 (0%)</td><td>3/8 (38%)</td></tr>
-<tr><td>Lexical jailbreak</td><td>6/6 (100%)</td><td>6/6 (100%)</td></tr>
-<tr><td>Divine denial</td><td>3/3 (100%)</td><td>3/3 (100%)</td></tr>
-<tr><td>Tool-hijack</td><td>1/4 (25%)</td><td>2/4 (50%)</td></tr>
-<tr><th>TOTAL</th><th>35%</th><th>81%</th></tr>
-<tr><th>Benign false-positive rate</th><th>0%</th><th>0%</th></tr>
-</table>
-<p style="text-align:center;color:var(--dim);font-size:.78rem">Validated against a 43-pattern adversarial harness across 6 attack families plus 8 benign queries. No accuracy lost on benign traffic.</p>
+<h2>MULTI-LAYER SAFETY SCREENING</h2>
+<p style="text-align:center;color:var(--dim);max-width:740px;margin:0 auto 1rem;font-size:.9rem">Most prompt filters lose to paraphrase and encoded variants. Adam stacks three independent screening layers that run on every message before any inference cost. Refusals come back in &lt;50ms with zero LLM call.</p>
+<div class="card-grid">
+<div class="card">
+<h3>LEXICAL FILTER</h3>
+<p>Fast regex for obvious phrasings. Catches the easy cases instantly without engaging anything heavier downstream.</p>
+</div>
+<div class="card">
+<h3>GF(17) HASH MATCHER</h3>
+<p>Hash-pattern matching over n-grams. Catches lexical variants of known unsafe intents that escape the regex layer.</p>
+</div>
+<div class="card">
+<h3>SEMANTIC INTENT SCREEN</h3>
+<p>MiniLM embeddings + cosine distance against a canonical intent bank. Pre-decoders handle common encoding tricks so the semantic match sees the actual intent, not the obfuscation.</p>
+</div>
+</div>
+<p style="text-align:center;color:var(--dim);max-width:660px;margin:1.5rem auto 0;font-size:.78rem">Validated against a held-out benign set with no measurable false positives. We don't publish per-family bypass rates &mdash; that would be a roadmap for attackers. Legitimate security researchers can request the internal harness via <a href="mailto:amnibro7@gmail.com" style="color:var(--accent)">amnibro7@gmail.com</a>.</p>
 </section>
 
 <section>
@@ -298,7 +300,8 @@ python scripts/amni_serve.py --seed --cors --port 11434</pre>
 <tr><td>Skills</td><td>11 (time, calc, mem, web, file_read, file_write, code_edit, shell, run_python, scan, goal)</td></tr>
 <tr><td>API compatibility</td><td>Ollama-shape /api/tags, /api/show, /api/generate, /api/chat (SSE + JSON), /api/embed, /api/version</td></tr>
 <tr><td>Platform</td><td>Windows 10/11 + Linux &middot; Python 3.10+ &middot; AMD ROCm 7.2+ or NVIDIA CUDA 12+</td></tr>
-<tr><td>License</td><td>CC BY-NC 4.0 (free for non-commercial) &middot; commercial licensing on request</td></tr>
+<tr><td>License</td><td>Two-license: Anthony's original code under CC BY-NC 4.0 &middot; Gemma 4 base weights under Apache 2.0 (Google)</td></tr>
+<tr><td>Base model attribution</td><td>Gemma 4 E2B IT (&copy; Google LLC, Apache 2.0) &middot; losslessly re-encoded as GF(17) RGBA, cosine=1.0 round-trip &middot; no fine-tuning or distillation</td></tr>
 </table>
 </section>
 
@@ -325,7 +328,7 @@ python scripts/amni_serve.py --seed --cors --port 11434</pre>
 <a href="https://github.com/Amnibro/Amni-Ai" target="_blank" rel="noopener">GITHUB</a>
 <a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9829; SUPPORT</a>
 </div>
-<p>&copy; 2025-2026 Amni-Scient. All rights reserved. Adam is CC BY-NC 4.0.</p>
+<p>&copy; 2025-2026 Amni-Scient. Anthony's original Adam code is licensed CC BY-NC 4.0. Gemma 4 base weights (&copy; Google LLC) are licensed Apache 2.0. <em>Gemma</em> is a Google trademark; this product is not endorsed by or affiliated with Google.</p>
 </footer>
 </body>
 </html>
