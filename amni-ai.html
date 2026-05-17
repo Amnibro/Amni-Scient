@@ -56,6 +56,7 @@
 <div class="nav-dd nav-dd--active">
 <button class="nav-dd-trigger">PROJECTS</button>
 <div class="nav-dd-menu">
+<a href="amni-ai.html">AMNI-AI</a>
 <a href="amni-browse.html">AMNI-BROWSE</a>
 <a href="amni-calc.html">AMNI-CALC</a>
 <a href="amni-explore.html">AMNI-EXPLORE</a>
@@ -163,28 +164,31 @@
 <div class="card">
 <h3>1. STANDALONE</h3>
 <p>Adam as its own server with its own chat UI at <code>localhost:8001</code>.</p>
-<pre class="code-block"><span class="cmt"># clone, install, launch</span>
+<pre class="code-block"><span class="cmt"># clone, install, launch (one command after pip)</span>
 git clone https://github.com/Amnibro/Amni-Ai
 cd Amni-Ai
 python -m venv .venv
 <span class="cmt"># Windows: .venv\Scripts\activate</span>
 <span class="cmt"># Linux:   source .venv/bin/activate</span>
 pip install -r requirements.txt
-python scripts/amni_serve.py --seed --cors</pre>
-<p>Open <code>http://127.0.0.1:8001/</code>. Chat away. First-run downloads the encrypted GF(17) runtime blob (~80 MB) from amni-scient.com.</p>
+python install.py</pre>
+<p><strong>Windows users:</strong> double-click <code>install.bat</code>. <strong>Mac/Linux:</strong> <code>./install.sh</code>. <code>install.py</code> handles everything: bake download (~20 GB Gemma-4 GF(17) from HuggingFace, one-time), server launch, browser open at <code>http://127.0.0.1:8001/</code>.</p>
+<p style="font-size:.78rem;color:var(--dim)">First-run: ~10-30 min depending on connection. Subsequent launches: <code>python scripts/amni_serve.py --seed --cors</code>, boots in 12s.</p>
 </div>
 
 <div class="card">
 <h3>2. OLLAMA DROP-IN</h3>
 <p>If you already use <strong>Open WebUI</strong>, <strong>Continue.dev</strong>, <strong>Cursor</strong>, or any client that speaks Ollama's API &mdash; Adam slots in unchanged.</p>
-<pre class="code-block"><span class="cmt"># start Adam on the Ollama port</span>
+<pre class="code-block"><span class="cmt"># first run: full install + bake download</span>
+python install.py --no-launch
+<span class="cmt"># then start on the Ollama port</span>
 python scripts/amni_serve.py --seed --cors --port 11434</pre>
-<p>Point your client at <code>http://127.0.0.1:11434</code>. Adam shows up as <code>adam:e2b-gf17</code> plus aliases (<code>llama3</code>, <code>qwen</code>, <code>mistral</code>) so clients with hardcoded model names still resolve.</p>
+<p>Point your client at <code>http://127.0.0.1:11434</code>. Adam advertises as <code>adam:e2b-gf17</code> plus aliases (<code>llama3</code>, <code>qwen</code>, <code>mistral</code>) so clients with hardcoded model names still resolve. <code>/api/tags</code>, <code>/api/chat</code>, <code>/api/generate</code>, <code>/api/embed</code> all Ollama-shape.</p>
 </div>
 
 <div class="card">
 <h3>3. EDITOR PLUGIN</h3>
-<p>VS Code via Continue.dev. Add to <code>settings.json</code>:</p>
+<p>VS Code via Continue.dev. Run Method 2 (or any standalone install on port 11434), then add to <code>settings.json</code>:</p>
 <pre class="code-block">"continue.models": [{
   "title": "Adam",
   "provider": "ollama",
