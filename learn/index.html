@@ -413,8 +413,22 @@
   .seq-pad.lit { box-shadow:0 0 30px currentColor,0 0 60px currentColor; filter:brightness(1.8); transform:scale(1.12); }
   .scr-tile { transition:transform 0.2s,opacity 0.2s,box-shadow 0.2s; }
   .scr-tile:hover:not(.used) { transform:translateY(-4px); box-shadow:0 6px 15px rgba(255,165,2,0.4); }
+  .scr-tile:active:not(.used) { transform:scale(0.92); }
   .scr-tile.used { transform:scale(0.8); }
+  .scr-tile.hint-reveal { background:#f1c40f; color:#1a1a3e; border-color:#fff; animation:bounceIn 0.4s ease-out; box-shadow:0 0 16px rgba(241,196,15,0.6); }
   .scr-slot.filled { animation:bounceIn 0.3s ease-out; }
+  .scr-slot.win { border-color:#2ecc71; background:rgba(46,204,113,0.3); box-shadow:0 0 16px rgba(46,204,113,0.6); animation:agmWinPop 0.5s ease-out; color:#2ecc71; }
+  .scr-def-card { margin:14px auto; max-width:520px; padding:16px 20px; background:linear-gradient(135deg,rgba(46,204,113,0.18),rgba(255,165,2,0.12)); border:2px solid #2ecc71; border-radius:16px; text-align:center; animation:bounceIn 0.4s ease-out; box-shadow:0 8px 22px rgba(46,204,113,0.25); }
+  .scr-def-card .word { font-family:'JetBrains Mono',monospace; font-size:1.6rem; font-weight:bold; color:#2ecc71; letter-spacing:3px; }
+  .scr-def-card .def { font-family:'Comic Neue',cursive; color:#ecf0f1; font-size:1rem; margin-top:6px; line-height:1.5; }
+  .scr-summary { margin:20px auto; max-width:520px; padding:24px; background:linear-gradient(135deg,rgba(255,165,2,0.18),rgba(241,196,15,0.12)); border:2px solid #ffa502; border-radius:18px; text-align:center; animation:bounceIn 0.5s ease-out; }
+  .scr-summary h3 { font-family:'JetBrains Mono',monospace; color:#f1c40f; font-size:1.6rem; margin:0 0 12px; }
+  .scr-summary-stats { display:flex; justify-content:space-around; gap:14px; flex-wrap:wrap; margin:12px 0; }
+  .scr-summary-stat { flex:1; min-width:80px; }
+  .scr-summary-stat .val { font-family:'JetBrains Mono',monospace; font-size:2rem; font-weight:bold; color:#ffa502; display:block; }
+  .scr-summary-stat .lbl { font-size:0.8rem; color:rgba(236,240,241,0.7); text-transform:uppercase; letter-spacing:1px; }
+  .scr-summary-stat.best .val { color:#2ecc71; }
+  .scr-summary-stat.new-best .val { color:#f1c40f; animation:spmPulse 0.8s ease-out infinite; }
   .pat-cell { transition:transform 0.3s,background 0.3s; }
   .pat-cell:not(.blank) { animation:bounceIn 0.4s ease-out; }
   .geo-opt { transition:transform 0.2s,box-shadow 0.2s,background 0.3s; }
@@ -4767,20 +4781,34 @@ function playAnimalSound(type) {
     const answerEl = $$('#scr-answer');
     const lettersEl = $$('#scr-letters');
     const wordBank = {
-      1: [{w:'CAT',h:'Goes meow',e:'🐱'},{w:'DOG',h:'Goes woof',e:'🐶'},{w:'SUN',h:'In the sky',e:'☀️'},{w:'HAT',h:'On your head',e:'🎩'},{w:'CUP',h:'Drink from it',e:'🍵'},{w:'BUS',h:'A vehicle',e:'🚌'},{w:'RED',h:'A warm color',e:'🔴'},{w:'BIG',h:'Not small',e:'📦'},{w:'RUN',h:'Move fast',e:'🏃'},{w:'EGG',h:'From a chicken',e:'🥚'}],
-      2: [{w:'APPLE',h:'A fruit',e:'🍎'},{w:'HOUSE',h:'You live here',e:'🏠'},{w:'WATER',h:'You drink this',e:'💧'},{w:'TIGER',h:'Striped big cat',e:'🐯'},{w:'MUSIC',h:'You listen to it',e:'🎵'},{w:'PLANT',h:'It grows',e:'🌱'},{w:'CLOUD',h:'In the sky',e:'☁️'},{w:'OCEAN',h:'Big body of water',e:'🌊'},{w:'FAIRY',h:'Magical being',e:'🧚'},{w:'TRAIN',h:'Rides on tracks',e:'🚂'}],
-      3: [{w:'ELEPHANT',h:'Largest land animal',e:'🐘'},{w:'COMPUTER',h:'You code on it',e:'💻'},{w:'MOUNTAIN',h:'Very tall land',e:'🏔️'},{w:'DINOSAUR',h:'Extinct reptile',e:'🦕'},{w:'TRIANGLE',h:'Three-sided shape',e:'🔺'},{w:'UMBRELLA',h:'Rain protection',e:'☂️'},{w:'SANDWICH',h:'Lunch food',e:'🥪'},{w:'TREASURE',h:'Valuable loot',e:'💎'},{w:'KANGAROO',h:'Hops around',e:'🦘'},{w:'MUSHROOM',h:'Fungus',e:'🍄'}],
-      4: [{w:'ALGORITHM',h:'Step-by-step process',e:'🔢'},{w:'ECOSYSTEM',h:'Living community',e:'🌿'},{w:'TELESCOPE',h:'See distant stars',e:'🔭'},{w:'DEMOCRACY',h:'People govern',e:'🗳️'},{w:'FREQUENCY',h:'Cycles per second',e:'📡'},{w:'MAGNETISM',h:'Attracts iron',e:'🧲'},{w:'CHEMISTRY',h:'Study of matter',e:'⚗️'},{w:'EVOLUTION',h:'Species change',e:'🧬'},{w:'CONTINENT',h:'Large land mass',e:'🌍'},{w:'ADRENALINE',h:'Fight or flight',e:'💉'}],
-      5: [{w:'PHOTOSYNTHESIS',h:'Plants make food',e:'🌱'},{w:'CONSTELLATION',h:'Star pattern',e:'⭐'},{w:'METAMORPHOSIS',h:'Body transformation',e:'🦋'},{w:'ENCYCLOPEDIA',h:'Knowledge book',e:'📚'},{w:'THERMOELECTRIC',h:'Heat to electricity',e:'⚡'},{w:'BIODIVERSITY',h:'Life variety',e:'🌿'},{w:'ARCHAEOLOGY',h:'Study of the past',e:'🏺'},{w:'NEUROSCIENCE',h:'Brain study',e:'🧠'},{w:'CRYPTOCURRENCY',h:'Digital money',e:'₿'},{w:'ELECTROMAGNETIC',h:'EM spectrum',e:'🌈'}]
+      1: [{w:'CAT',h:'Goes meow',e:'🐱',def:'A small domestic furry mammal.'},{w:'DOG',h:'Goes woof',e:'🐶',def:'A loyal domesticated mammal.'},{w:'SUN',h:'In the sky',e:'☀️',def:'The star at the center of our solar system.'},{w:'HAT',h:'On your head',e:'🎩',def:'A covering worn on the head.'},{w:'CUP',h:'Drink from it',e:'🍵',def:'A small container used for drinking.'},{w:'BUS',h:'A vehicle',e:'🚌',def:'A large road vehicle that carries passengers.'},{w:'RED',h:'A warm color',e:'🔴',def:'The color of fire and ripe strawberries.'},{w:'BIG',h:'Not small',e:'📦',def:'Of considerable size or importance.'},{w:'RUN',h:'Move fast',e:'🏃',def:'Move quickly on foot.'},{w:'EGG',h:'From a chicken',e:'🥚',def:'An oval object containing a developing embryo.'}],
+      2: [{w:'APPLE',h:'A fruit',e:'🍎',def:'A round red, green, or yellow fruit.'},{w:'HOUSE',h:'You live here',e:'🏠',def:'A building used as a home.'},{w:'WATER',h:'You drink this',e:'💧',def:'A clear liquid essential to all known life.'},{w:'TIGER',h:'Striped big cat',e:'🐯',def:'A large striped Asian wildcat.'},{w:'MUSIC',h:'You listen to it',e:'🎵',def:'Sounds arranged in time to express ideas.'},{w:'PLANT',h:'It grows',e:'🌱',def:'A living organism that grows in soil.'},{w:'CLOUD',h:'In the sky',e:'☁️',def:'A visible mass of water droplets in the sky.'},{w:'OCEAN',h:'Big body of water',e:'🌊',def:'A vast body of saltwater covering most of Earth.'},{w:'FAIRY',h:'Magical being',e:'🧚',def:'A small mythical being with magical powers.'},{w:'TRAIN',h:'Rides on tracks',e:'🚂',def:'Connected railway cars moved by an engine.'}],
+      3: [{w:'ELEPHANT',h:'Largest land animal',e:'🐘',def:'The largest living land animal, with a trunk.'},{w:'COMPUTER',h:'You code on it',e:'💻',def:'An electronic device that processes data.'},{w:'MOUNTAIN',h:'Very tall land',e:'🏔️',def:'A natural elevation much higher than a hill.'},{w:'DINOSAUR',h:'Extinct reptile',e:'🦕',def:'A prehistoric reptile, extinct ~65 million years ago.'},{w:'TRIANGLE',h:'Three-sided shape',e:'🔺',def:'A polygon with three sides and three angles.'},{w:'UMBRELLA',h:'Rain protection',e:'☂️',def:'A device opened above the head as rain shelter.'},{w:'SANDWICH',h:'Lunch food',e:'🥪',def:'Food placed between two slices of bread.'},{w:'TREASURE',h:'Valuable loot',e:'💎',def:'Valuables stored, hidden, or highly prized.'},{w:'KANGAROO',h:'Hops around',e:'🦘',def:'Australian marsupial that hops on strong hind legs.'},{w:'MUSHROOM',h:'Fungus',e:'🍄',def:'A fungus with a stem and cap.'}],
+      4: [{w:'ALGORITHM',h:'Step-by-step process',e:'🔢',def:'A finite sequence of well-defined instructions.'},{w:'ECOSYSTEM',h:'Living community',e:'🌿',def:'Community of organisms interacting with their environment.'},{w:'TELESCOPE',h:'See distant stars',e:'🔭',def:'An instrument that magnifies distant objects.'},{w:'DEMOCRACY',h:'People govern',e:'🗳️',def:'Government by the people, often via elected representatives.'},{w:'FREQUENCY',h:'Cycles per second',e:'📡',def:'Number of cycles per unit time, measured in hertz.'},{w:'MAGNETISM',h:'Attracts iron',e:'🧲',def:'Force exerted by magnets that attracts iron or steel.'},{w:'CHEMISTRY',h:'Study of matter',e:'⚗️',def:'The science of substances and their reactions.'},{w:'EVOLUTION',h:'Species change',e:'🧬',def:'Change in heritable traits of populations over generations.'},{w:'CONTINENT',h:'Large land mass',e:'🌍',def:'Any of the seven main landmasses on Earth.'},{w:'ADRENALINE',h:'Fight or flight',e:'💉',def:'Hormone released in response to stress or fear.'}],
+      5: [{w:'PHOTOSYNTHESIS',h:'Plants make food',e:'🌱',def:'Process by which plants convert sunlight into chemical energy.'},{w:'CONSTELLATION',h:'Star pattern',e:'⭐',def:'A group of stars forming a recognizable pattern.'},{w:'METAMORPHOSIS',h:'Body transformation',e:'🦋',def:'A process of transformation from one form to another.'},{w:'ENCYCLOPEDIA',h:'Knowledge book',e:'📚',def:'A reference work containing comprehensive knowledge.'},{w:'THERMOELECTRIC',h:'Heat to electricity',e:'⚡',def:'Generating electricity directly from temperature differences.'},{w:'BIODIVERSITY',h:'Life variety',e:'🌿',def:'The variety of life in a habitat or ecosystem.'},{w:'ARCHAEOLOGY',h:'Study of the past',e:'🏺',def:'The study of human history through material remains.'},{w:'NEUROSCIENCE',h:'Brain study',e:'🧠',def:'The scientific study of the nervous system.'},{w:'CRYPTOCURRENCY',h:'Digital money',e:'₿',def:'Digital currency secured by cryptography on a blockchain.'},{w:'ELECTROMAGNETIC',h:'EM spectrum',e:'🌈',def:'Relating to the interrelated electric and magnetic fields.'}]
     };
-    let current = null, placed = [], scrSolved = 0, scrTimeLeft = 0, scrTiles = [];
+    let current = null, placed = [], scrSolved = 0, scrStreak = 0, scrBestStreak = 0, scrAttempts = 0, scrTimeLeft = 0, scrTiles = [], scrHintedThisWord = false;
+    const scrBest = parseInt(sessionStorage.getItem('scr-best')||'0');
     const timePerLevel = {1:45,2:40,3:35,4:30,5:25};
     function shuffle(arr) { const a = [...arr]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+    document.querySelectorAll('.scr-def-card,.scr-summary').forEach(n=>n.remove());
     const hud = document.createElement('div'); hud.className='game-hud'; hud.id='scr-hud'; hud.style.marginBottom='5px';
-    hud.innerHTML=`<span class="game-stat">✅ Solved <span class="game-stat-val" id="scr-solved">0</span></span><span class="game-stat">⏱ <span class="game-stat-val" id="scr-time">${timePerLevel[currentLevel]||35}s</span></span>`;
+    hud.innerHTML=`<span class="game-stat">✅ <span class="game-stat-val" id="scr-solved">0</span></span><span class="game-stat">🔥 <span class="game-stat-val" id="scr-streak">0</span></span><span class="game-stat">⏱ <span class="game-stat-val" id="scr-time">${timePerLevel[currentLevel]||35}s</span></span><span class="game-stat">⭐ Best <span class="game-stat-val" id="scr-best">${scrBest}</span></span>`;
     answerEl.parentElement.insertBefore(hud, imgEl);
     const timerBar = document.createElement('div'); timerBar.className='game-timer-bar'; timerBar.id='scr-timer-bar';
     timerBar.innerHTML='<div class="game-timer-fill" id="scr-timer-fill"></div>'; answerEl.parentElement.insertBefore(timerBar, imgEl);
+    function _gameOver(){
+      if(scrTimer){clearInterval(scrTimer);scrTimer=null;}
+      const wasBest = scrSolved > scrBest;
+      if(wasBest) sessionStorage.setItem('scr-best', scrSolved);
+      const accuracy = scrAttempts > 0 ? Math.round(scrSolved / scrAttempts * 100) : 0;
+      const sum = document.createElement('div'); sum.className='scr-summary';
+      sum.innerHTML = `<h3>⏱ ${wasBest?'NEW BEST!':'Time\'s up!'}</h3><div class="scr-summary-stats"><div class="scr-summary-stat"><span class="val">${scrSolved}</span><span class="lbl">Solved</span></div><div class="scr-summary-stat"><span class="val">${accuracy}%</span><span class="lbl">Accuracy</span></div><div class="scr-summary-stat"><span class="val">${scrBestStreak}</span><span class="lbl">Best Streak</span></div><div class="scr-summary-stat ${wasBest?'new-best':'best'}"><span class="val">${Math.max(scrSolved,scrBest)}</span><span class="lbl">All-Time</span></div></div>`;
+      lettersEl.parentElement.insertBefore(sum, lettersEl);
+      if(wasBest) spawnConfetti(window.innerWidth/2,window.innerHeight/2,120);
+      showFeedback(`Solved ${scrSolved} • ${accuracy}% 🏆`, wasBest?'#2ecc71':'#f1c40f');
+      addScore(scrSolved*2);
+    }
     function startTimer() {
       scrTimeLeft = timePerLevel[Math.min(currentLevel,5)] || 35;
       if(scrTimer) clearInterval(scrTimer);
@@ -4789,11 +4817,14 @@ function playAnimalSound(type) {
         const te=$$('#scr-time'); if(te) te.textContent=scrTimeLeft+'s';
         const pct = scrTimeLeft / (timePerLevel[Math.min(currentLevel,5)]||35) * 100;
         const fill=$$('#scr-timer-fill'); if(fill){ fill.style.width=pct+'%'; fill.parentElement.className='game-timer-bar'+(pct<40?' warning':'')+(pct<15?' critical':''); }
-        if(scrTimeLeft<=0) { clearInterval(scrTimer); scrTimer=null; showFeedback(`Time's up! Solved: ${scrSolved} 🏆`,'#e74c3c'); addScore(scrSolved*2); }
+        if(scrTimeLeft<=0) _gameOver();
       },1000);
     }
     function loadWord() {
       if(scrTimeLeft <= 0 && scrSolved > 0) return;
+      document.querySelectorAll('.scr-def-card').forEach(n=>n.remove());
+      scrHintedThisWord = false;
+      scrAttempts++;
       const lvl = Math.min(currentLevel, 5);
       const bank = wordBank[lvl];
       current = bank[Math.floor(Math.random() * bank.length)];
@@ -4840,13 +4871,26 @@ function playAnimalSound(type) {
             const guess = placed.join('');
             if(guess === current.w) {
               scrSolved++;
+              scrStreak++;
+              if(scrStreak > scrBestStreak) scrBestStreak = scrStreak;
               const se=$$('#scr-solved'); if(se) se.textContent=scrSolved;
+              const sk=$$('#scr-streak'); if(sk) sk.textContent=scrStreak;
+              if(scrSolved > scrBest){const be=$$('#scr-best'); if(be) be.textContent=scrSolved;}
               scrTimeLeft = Math.min(scrTimeLeft + 5, (timePerLevel[Math.min(currentLevel,5)]||35));
               const te=$$('#scr-time'); if(te) te.textContent=scrTimeLeft+'s';
-              addScore(current.w.length > 8 ? 3 : (current.w.length > 5 ? 2 : 1));
-              showFeedback(`Correct! +5s ⏱🎉`, '#2ecc71');
-              setTimeout(loadWord, 1000);
+              const lenBonus = current.w.length > 8 ? 3 : (current.w.length > 5 ? 2 : 1);
+              const streakMult = scrStreak >= 5 ? 2 : (scrStreak >= 3 ? 1 : 0);
+              addScore(lenBonus + streakMult);
+              if(scrStreak===3||scrStreak===5||scrStreak===10||scrStreak===15) spawnConfetti(window.innerWidth/2,window.innerHeight/3,scrStreak>=10?80:50);
+              answerEl.querySelectorAll('.scr-slot').forEach(s=>s.classList.add('win'));
+              const card = document.createElement('div'); card.className='scr-def-card';
+              card.innerHTML = `<div class="word">${current.w}</div><div class="def">${current.def||current.h}</div>`;
+              answerEl.parentElement.insertBefore(card, lettersEl);
+              showFeedback(scrStreak>=10?`${scrStreak}x BLAZING! +5s 🔥🔥🔥`:(scrStreak>=5?`${scrStreak}x! +5s 🔥🔥`:(scrStreak>=3?`${scrStreak}x! +5s 🔥`:`Correct! +5s ⏱`)), '#2ecc71');
+              setTimeout(loadWord, 1400);
             } else {
+              scrStreak = 0;
+              const sk=$$('#scr-streak'); if(sk) sk.textContent='0';
               shakeEl(answerEl);
               showFeedback('Not quite! Tap letters to remove', '#e74c3c');
               resetStreak();
@@ -4856,8 +4900,23 @@ function playAnimalSound(type) {
         lettersEl.appendChild(tile);
       });
     }
-    scrSolved = 0;
+    function _hintReveal(){
+      if(scrHintedThisWord || scrTimeLeft <= 0) return;
+      scrHintedThisWord = true;
+      scrStreak = 0;
+      const sk=$$('#scr-streak'); if(sk) sk.textContent='0';
+      const emptyIdx = placed.indexOf(null);
+      if(emptyIdx === -1) return;
+      const need = current.w[emptyIdx];
+      const tile = Array.from(lettersEl.children).find(t => !t.classList.contains('used') && t.textContent === need);
+      if(tile){tile.classList.add('hint-reveal'); setTimeout(()=>tile.classList.remove('hint-reveal'),1000);}
+      showFeedback(`Hint: position ${emptyIdx+1} is "${need}"`, '#f1c40f');
+    }
+    scrSolved = 0; scrStreak = 0; scrBestStreak = 0; scrAttempts = 0;
     loadWord();
+    document.querySelectorAll('#scr-hint-btn').forEach(n=>n.remove());
+    const hintBtn = document.createElement('button'); hintBtn.id='scr-hint-btn'; hintBtn.className='nmm-btn'; hintBtn.textContent='💡 HINT'; hintBtn.title='Reveal next letter (resets streak)'; hintBtn.style.marginTop='8px'; hintBtn.onclick=_hintReveal;
+    lettersEl.after(hintBtn);
     startTimer();
   }
   function initPattern() {

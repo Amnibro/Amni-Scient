@@ -1,5 +1,14 @@
 ﻿# Changelog 
 
+## [5.6.5] - 2026-05-17 - Amni-Learn audit batch 6: Word Scramble polish
+- **Wordbank deepened** — all 50 words across 5 levels gained a `def` field with a dictionary-style definition, separate from the existing cryptic `h` hint. Word Scramble now teaches vocabulary explicitly on every correct answer, not just on time-out.
+- **Definition reveal card** — on correct, a green-bordered card slides in showing the WORD and its definition. Gives every solve a tangible payoff beyond the next-word advance.
+- **Streak system** — `scr-streak` counter added to HUD. Score gets a +0/+1/+2 streak multiplier at 3+/5+. Milestone confetti fires at 3/5/10/15. "BLAZING!" message at 10+. Streak resets on hint use or wrong submission.
+- **Hint button** — 💡 HINT reveals the *next-needed letter* by name AND highlights the matching tile with a yellow flash. Cost is honest: resets streak, one-time per word.
+- **Best-score tracker** — `scr-best` sessionStorage key; ⭐ Best chip shown in HUD; updates live during play.
+- **Slot win-flash** — `.scr-slot.win` class adds green glow + rotate-pop animation on correct.
+- **Game-over summary** — replaced bare "Time's up" feedback with a styled card showing Solved/Accuracy/Best-Streak/All-Time. "NEW BEST!" header + 120-particle confetti on new high score.
+
 ## [5.6.4] - 2026-05-17 - Amni-Learn audit batch 5: Anagrams polish (definitions + visuals)
 - **Wordbank refactor** — all 75 words across 5 levels converted from flat strings to `{w, def, cat}` objects. Every word now carries a one-sentence definition and a category badge (🧠 Body, ⚛️ Physics, 🏰 History, 🎨 Art, etc). Anagrams now teaches vocabulary, not just letter-sorting.
 - **Definition reveal card** — on correct OR wrong, a styled card slides in showing the word and its definition. Wrong-answer still teaches.
