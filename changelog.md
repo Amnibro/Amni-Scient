@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.6.1] - 2026-05-17 - Amni-Learn audit batch 2: L4/L5 quiz pedagogy
+- **Gap closed** — Level 4 (young adult) and Level 5 (adult) banks across ALL 5 subject quizzes (animals, languages, math, engineering, science) had ZERO `explain` fields. Advanced learners answered 100+ questions with no teaching — opposite of what the quiz pedagogy contract requires. Every L4 and L5 question now carries a 2-sentence substantive explainer connecting the answer to mechanism, history, or real-world relevance.
+- **Content tone** — explainers for adults treat the audience as capable; e.g. Higgs boson note covers the field-coupling mechanism and 2012 LHC confirmation, not "particles get mass." Math L5 explainers cite Millennium Prize problems, Gauss, Maldacena. Engineering L4 explainers include the actual formulas (Re = ρvL/μ, ν = -ε_lateral/ε_axial) where they fit the answer.
+- **Mirrored to Android wrapper** — `Amni-Learn/Learn-Mobile/src/main/assets/learn/index.html`.
+
 ## [5.6.0] - 2026-05-16 - Amni-Learn module audit (pass 1, batch 1)
 - **Scope kickoff** — opened deep audit of every learn module for content fit, mechanics fit, layout/playable-area, depth, pedagogy, and redundancy. Audience map: L1-2 kids / L3 teens / L4-5 adults. Plan in `docs/checklists/checklist_v5.6.0_learn_module_audit.md`.
 - **Bug-fix preamble (pushed 68778e4)** — Card Pairs size-picker dedupe + card-size cap lift (container queries) + instant match feedback + faster flip-back; Sudoku highlight colors changed from `rgba(...)` (which exposed teal grid bg through transparency) to opaque; `num-covered` overlay removed (was flooding the board); Reflex Racer: simultaneous-target cap, slower spawn cadence, removed click-side respawn that compounded into runaway acceleration; Math Mountain cut entirely (redundant with Math Basics); Word Scramble: shuffle once per word in `loadWord()`, not on every `renderTiles()` call.
