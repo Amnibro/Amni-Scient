@@ -1,5 +1,15 @@
 ﻿# Changelog 
 
+## [5.6.13] - 2026-05-17 - Amni-Learn audit batch 14: Chimp Test polish (spatial WM tiers)
+- **Tier system with Ayumu reference** — Basic (<4) / Starter (4-5) / Average (6-8) / Above Average (9-11) / Expert (12-15) / Ayumu-class (16+). Named after Ayumu, the chimpanzee who can recall 9 numbers in under a second — humans rarely match this. Tier scale legend on game-over.
+- **Streak counter + persistent top-streak** — `chm-stk` HUD stat tracks consecutive cleared levels. `chm-best-stk` sessionStorage. Both shown live.
+- **Milestone confetti** — bursts at digit-length 6 / 8 / 10 / 12 / 15 (50/80 particles).
+- **Reveal on failure** — on wrong click, remaining hidden numbers light up in orange (`reveal-fail` class) so the player can see the layout they were trying to recall. Educational vs. just "wrong, restart".
+- **Polished game-over summary** — replaces bare display with stats card: Reached / Streak / All-Time / Top Streak. Tier-tag header colored per tier. "NEW BEST!" detection with 120-particle confetti.
+- **Cell animations** — bounce-in on placement, win-pop on correct, shake on wrong.
+- **Score scales with sz** — +2/+3/+5/+6 at level thresholds 6/7/10/12.
+- All existing grid auto-scaling (`sqrt(N*3)`), click-to-hide mechanic preserved.
+
 ## [5.6.12] - 2026-05-17 - Amni-Learn audit batch 13: Number Memory polish (digit-span tiers)
 - **Tier system anchored to Miller's 7±2** — Basic (1-3) / Below average (4-5) / Average (6-7) / Above average (8-9) / Exceptional (10-11) / Savant (12+). Each tier gets a color, label, and one-line message. Tier scale legend shown on game-over so adults know where they stand cognitively.
 - **Visual countdown bar** — linear-gradient fill during memorize phase shows exactly how much time remains. No more guessing when the number will disappear.

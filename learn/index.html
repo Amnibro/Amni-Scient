@@ -822,11 +822,23 @@
   .agm-level-pop{position:fixed;left:50%;top:30%;transform:translateX(-50%);background:linear-gradient(135deg,#f1c40f,#e67e22);color:#1a1a3e;font-family:'JetBrains Mono',monospace;font-size:1.6rem;font-weight:bold;padding:14px 28px;border-radius:20px;z-index:9999;pointer-events:none;animation:agmLevelPop 1.6s ease-out forwards;box-shadow:0 8px 28px rgba(241,196,15,0.5);}
   @keyframes agmLevelPop{0%{opacity:0;transform:translateX(-50%) scale(0.5)}25%{opacity:1;transform:translateX(-50%) scale(1.1)}80%{opacity:1;transform:translateX(-50%) scale(1)}100%{opacity:0;transform:translateX(-50%) translateY(-30px) scale(0.9)}}
   .chm-grid{display:grid;gap:5px;max-width:min(90vw,650px);width:95%;margin:10px auto;}
-  .chm-cell{aspect-ratio:1;background:#1a2a3a;border:2px solid #2a3a4a;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:clamp(1rem,3.5vw,1.8rem);font-weight:bold;color:#fff;cursor:pointer;transition:0.15s;user-select:none;}
-  .chm-cell.num{background:rgba(26,188,156,0.3);border-color:#1abc9c;}
-  .chm-cell.hidden{color:transparent;background:#1a2a3a;border-color:#2a3a4a;}
-  .chm-cell.correct{background:rgba(46,204,113,0.3);border-color:#2ecc71;}
-  .chm-cell.wrong{background:rgba(231,76,60,0.3);border-color:#e74c3c;animation:shake 0.3s;}
+  .chm-cell{aspect-ratio:1;background:#1a2a3a;border:2px solid #2a3a4a;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:clamp(1rem,3.5vw,1.8rem);font-weight:bold;color:#fff;cursor:pointer;transition:background 0.2s,border-color 0.2s,transform 0.15s,box-shadow 0.2s;user-select:none;}
+  .chm-cell.num{background:rgba(26,188,156,0.3);border-color:#1abc9c;animation:bounceIn 0.35s ease-out;box-shadow:0 0 16px rgba(26,188,156,0.4);}
+  .chm-cell.hidden{color:transparent;background:#1a2a3a;border-color:#2a3a4a;box-shadow:none;}
+  .chm-cell.hidden:hover{background:#2a3a4a;}
+  .chm-cell.correct{background:rgba(46,204,113,0.35);border-color:#2ecc71;color:#2ecc71!important;box-shadow:0 0 18px rgba(46,204,113,0.5);animation:agmWinPop 0.4s ease-out;}
+  .chm-cell.wrong{background:rgba(231,76,60,0.35);border-color:#e74c3c;animation:spmShake 0.35s ease-out;}
+  .chm-cell.reveal-fail{color:#e67e22!important;border-color:#e67e22;background:rgba(230,126,34,0.2);}
+  .chm-summary{margin:18px auto;max-width:540px;padding:22px;background:linear-gradient(135deg,rgba(26,188,156,0.18),rgba(46,204,113,0.12));border:2px solid #1abc9c;border-radius:18px;text-align:center;animation:bounceIn 0.5s ease-out;box-shadow:0 8px 24px rgba(26,188,156,0.25);}
+  .chm-summary h3{font-family:'JetBrains Mono',monospace;color:#f1c40f;font-size:1.6rem;margin:0 0 8px;}
+  .chm-summary .tier-tag{display:inline-block;padding:4px 12px;border-radius:14px;font-family:'JetBrains Mono',monospace;font-size:0.85rem;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;background:rgba(255,255,255,0.08);}
+  .chm-summary-stats{display:flex;justify-content:space-around;gap:14px;flex-wrap:wrap;margin:12px 0;}
+  .chm-summary-stat{flex:1;min-width:80px;}
+  .chm-summary-stat .val{font-family:'JetBrains Mono',monospace;font-size:2rem;font-weight:bold;color:#1abc9c;display:block;}
+  .chm-summary-stat .lbl{font-size:0.8rem;color:rgba(236,240,241,0.7);text-transform:uppercase;letter-spacing:1px;}
+  .chm-summary-stat.best .val{color:#2ecc71;}
+  .chm-summary-stat.new-best .val{color:#f1c40f;animation:spmPulse 0.8s ease-out infinite;}
+  .chm-tier-scale{margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:0.74rem;color:rgba(236,240,241,0.55);line-height:1.5;}
   .tut-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box;}
   .tut-box{background:#1a2a3a;border:2px solid #1abc9c;border-radius:16px;max-width:520px;width:100%;padding:28px 24px;position:relative;max-height:85vh;overflow-y:auto;}
   .tut-title{font-family:'JetBrains Mono',monospace;font-size:1.3rem;color:#1abc9c;margin-bottom:16px;text-align:center;}
@@ -5795,10 +5807,82 @@ function playAnimalSound(type) {
   }
   function initChimp(){
     const ct=$$('#chm-container'),hud=$$('#chm-hud');
-    let sz=4,best=parseInt(sessionStorage.getItem('chm-best')||'4');
-    hud.innerHTML=`<span class="game-stat">\ud83d\udc35 Numbers: <span class="game-stat-val" id="chm-sz">${sz}</span></span><span class="game-stat">\ud83c\udfc6 Best: <span class="game-stat-val" id="chm-best">${best}</span></span>`;
-    function play(){const gSz=Math.max(5,Math.ceil(Math.sqrt(sz*3)));const total=gSz*gSz;const positions=Array.from({length:total},(_,i)=>i).sort(()=>Math.random()-0.5).slice(0,sz);const numMap={};positions.forEach((p,i)=>numMap[p]=i+1);ct.innerHTML='';const g=document.createElement('div');g.className='chm-grid';g.style.gridTemplateColumns=`repeat(${gSz},1fr)`;let nextExp=1,hidden=false;for(let i=0;i<total;i++){const c=document.createElement('div');c.className='chm-cell'+(numMap[i]?' num':'');c.textContent=numMap[i]||'';c.dataset.num=numMap[i]||'0';c.dataset.idx=i;c.onclick=()=>{const n=parseInt(c.dataset.num);if(!n)return;if(!hidden){hidden=true;g.querySelectorAll('.chm-cell.num').forEach(x=>{if(parseInt(x.dataset.num)!==1)x.classList.add('hidden');});}if(n===nextExp){c.classList.remove('num','hidden');c.classList.add('correct');c.style.color='#2ecc71';nextExp++;if(nextExp>sz){sz++;sz>best&&(best=sz,sessionStorage.setItem('chm-best',best),$$('#chm-best').textContent=best);$$('#chm-sz').textContent=sz;addScore(sz>=10?5:(sz>=7?3:2));showFeedback(`Level ${sz-1}! \ud83d\udc35`,'#2ecc71');setTimeout(play,1200);}}else{c.classList.add('wrong');g.querySelectorAll('.chm-cell').forEach(x=>{if(x.dataset.num!=='0'){x.classList.remove('hidden');x.style.color=x.classList.contains('correct')?'#2ecc71':'#e74c3c';}});showFeedback(`Numbers: ${sz} \ud83d\udc35`,'#e74c3c');resetStreak();setTimeout(()=>{const score=sz-1;sz=4;$$('#chm-sz').textContent=sz;ct.innerHTML=`<div class="nmm-display">${score} numbers</div><div class="nmm-msg">Best: ${best}</div>`;const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='TRY AGAIN';rb.onclick=play;ct.appendChild(rb);addScore(Math.max(1,score-3));},2000);}};g.appendChild(c);}ct.appendChild(g);}
-    ct.innerHTML='<div class="nmm-msg">Numbers appear briefly, then hide.<br>Click them in order: 1, 2, 3...</div>';const sb=document.createElement('button');sb.className='nmm-btn';sb.textContent='START';sb.onclick=()=>{sz=4;play();};ct.appendChild(sb);
+    let sz=4,best=parseInt(sessionStorage.getItem('chm-best')||'4'),stk=0,bestStk=parseInt(sessionStorage.getItem('chm-best-stk')||'0');
+    document.querySelectorAll('.chm-summary').forEach(n=>n.remove());
+    hud.innerHTML=`<span class="game-stat">\ud83d\udc35 Numbers: <span class="game-stat-val" id="chm-sz">${sz}</span></span><span class="game-stat">\ud83d\udd25 Streak <span class="game-stat-val" id="chm-stk">0</span></span><span class="game-stat">\ud83c\udfc6 Best: <span class="game-stat-val" id="chm-best">${best}</span></span>`;
+    function _tier(n){if(n>=16)return{name:'ayumu',label:'Ayumu-class',color:'#f1c40f',msg:"Matching famed chimpanzee Ayumu's working memory!"};if(n>=12)return{name:'expert',label:'Expert',color:'#e74c3c',msg:'Far beyond typical adult range.'};if(n>=9)return{name:'aboveAvg',label:'Above Average',color:'#2ecc71',msg:'Strong spatial working memory.'};if(n>=6)return{name:'avg',label:'Average',color:'#1abc9c',msg:'Typical adult range (6-8).'};if(n>=4)return{name:'starter',label:'Starter',color:'#3498db',msg:'Building the skill \u2014 keep going!'};return{name:'basic',label:'Basic',color:'#7a8a9a',msg:'Just getting warmed up.'};}
+    function _gameOver(score){
+      const wasBest=sz>best;
+      const wasBestStk=stk>bestStk;
+      if(wasBest){best=sz;sessionStorage.setItem('chm-best',best);}
+      if(wasBestStk){bestStk=stk;sessionStorage.setItem('chm-best-stk',bestStk);}
+      const t=_tier(score);
+      ct.innerHTML='';
+      const sum=document.createElement('div');sum.className='chm-summary';
+      sum.innerHTML=`<h3>\ud83d\udc35 ${wasBest?'NEW BEST!':'Game Over'}</h3><div class="tier-tag" style="color:${t.color}">${t.label} \u2022 ${t.msg}</div><div class="chm-summary-stats"><div class="chm-summary-stat"><span class="val">${score}</span><span class="lbl">Reached</span></div><div class="chm-summary-stat"><span class="val">${stk}</span><span class="lbl">Streak</span></div><div class="chm-summary-stat ${wasBest?'new-best':'best'}"><span class="val">${best}</span><span class="lbl">All-Time</span></div><div class="chm-summary-stat"><span class="val">${bestStk}</span><span class="lbl">Top Streak</span></div></div><div class="chm-tier-scale">Tiers: 4-5 Starter \u00b7 6-8 Average \u00b7 9-11 Above avg \u00b7 12-15 Expert \u00b7 16+ Ayumu-class. Chimp Ayumu can do 9 in under 1 sec.</div>`;
+      ct.appendChild(sum);
+      if(wasBest)spawnConfetti(window.innerWidth/2,window.innerHeight/2,120);
+      else if(score>=10)spawnConfetti(window.innerWidth/2,window.innerHeight/3,60);
+      showFeedback(`Reached ${score} \u2022 ${t.label} \ud83d\udc35`, wasBest?'#2ecc71':'#f1c40f');
+      addScore(Math.max(1,score-3));
+      const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='TRY AGAIN';rb.style.marginTop='10px';rb.onclick=()=>{sz=4;stk=0;$$('#chm-sz').textContent=sz;$$('#chm-stk').textContent=0;play();};ct.appendChild(rb);
+    }
+    function play(){
+      const gSz=Math.max(5,Math.ceil(Math.sqrt(sz*3)));
+      const total=gSz*gSz;
+      const positions=Array.from({length:total},(_,i)=>i).sort(()=>Math.random()-0.5).slice(0,sz);
+      const numMap={};positions.forEach((p,i)=>numMap[p]=i+1);
+      ct.innerHTML='';
+      const g=document.createElement('div');g.className='chm-grid';g.style.gridTemplateColumns=`repeat(${gSz},1fr)`;
+      let nextExp=1,hidden=false;
+      for(let i=0;i<total;i++){
+        const c=document.createElement('div');
+        c.className='chm-cell'+(numMap[i]?' num':'');
+        c.textContent=numMap[i]||'';
+        c.dataset.num=numMap[i]||'0';
+        c.dataset.idx=i;
+        c.onclick=()=>{
+          const n=parseInt(c.dataset.num);
+          if(!n)return;
+          if(!hidden){hidden=true;g.querySelectorAll('.chm-cell.num').forEach(x=>{if(parseInt(x.dataset.num)!==1)x.classList.add('hidden');});}
+          if(n===nextExp){
+            c.classList.remove('num','hidden');
+            c.classList.add('correct');
+            nextExp++;
+            if(nextExp>sz){
+              stk++;
+              if(stk>bestStk){bestStk=stk;sessionStorage.setItem('chm-best-stk',bestStk);}
+              if(sz>best){best=sz;sessionStorage.setItem('chm-best',best);$$('#chm-best').textContent=best;}
+              sz++;
+              $$('#chm-sz').textContent=sz;
+              $$('#chm-stk').textContent=stk;
+              if(sz===6||sz===8||sz===10||sz===12||sz===15)spawnConfetti(window.innerWidth/2,window.innerHeight/3,sz>=10?80:50);
+              const tNow=_tier(sz-1);
+              addScore(sz>=12?6:(sz>=10?5:(sz>=7?3:2)));
+              showFeedback(`Level ${sz-1} clear! ${tNow.label} \ud83d\udc35`,'#2ecc71');
+              setTimeout(play,1200);
+            }
+          }else{
+            c.classList.add('wrong');
+            g.querySelectorAll('.chm-cell').forEach(x=>{
+              if(x.dataset.num!=='0'&&!x.classList.contains('correct')&&!x.classList.contains('wrong')){
+                x.classList.remove('hidden');
+                x.classList.add('reveal-fail');
+              }
+            });
+            resetStreak();
+            const reached=sz-1;
+            sz=4;
+            setTimeout(()=>_gameOver(reached),1600);
+          }
+        };
+        g.appendChild(c);
+      }
+      ct.appendChild(g);
+    }
+    ct.innerHTML='<div class="nmm-msg">Numbers appear briefly, then hide.<br>Click them in order: 1, 2, 3, ... Chimpanzees can outperform humans at this.</div>';
+    const sb=document.createElement('button');sb.className='nmm-btn';sb.textContent='START';sb.onclick=()=>{sz=4;stk=0;$$('#chm-sz').textContent=sz;$$('#chm-stk').textContent=0;play();};
+    ct.appendChild(sb);
   }
   function initDotTrack(){
     const ct=$$('#mot-container'),hud=$$('#mot-hud');
