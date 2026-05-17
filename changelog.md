@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.6.24] - 2026-05-17 - Amni-Learn SW cache bump v4 → v5 (deploy stale-cache flush)
+- **Root cause** — every v5.6.x polish push (sudoku highlight rewrite, card pairs, reflex pacing, all 24 audit batches) hit the Pages build, but `learn/sw.js` cache version was still pinned at `amni-learn-v4`. Users with the service worker installed kept serving the pre-fix HTML from cache; the Sudoku "color-flooding" rgba-transparency bug appeared to persist for them even though it was fixed at the source 24 commits ago.
+- **Fix** — bumped `CACHE = 'amni-learn-v4'` → `'amni-learn-v5'`. The activate handler will purge the v4 cache on next page load, forcing a fresh fetch of all v5.6.x HTML/CSS/JS.
+- **Action for users** — open the live site once (any page in `/learn/`). The SW will update in the background and a second reload picks up everything: sudoku highlights, card pairs polish, anagram definitions, etc.
+
 ## [5.6.23] - 2026-05-17 - Amni-Learn audit batch 24: AI Ethics Debug polish (5 levels + hints + impact)
 - **Bank expanded 3 → 5 levels** — added Confounded Feature (a fraud-detection model where a third-party signup-source code spuriously correlates with fraud labels via pipeline batching) and Adversarial Robustness (noise channel that flips predictions on 1% pixel perturbation).
 - **Real-world impact card on solve** — every level now reveals its engineering context: data-leakage cost of offline-online metric divergence, husky-vs-wolf classifier story, GDPR/CCPA pseudonymization vs membership-inference attacks, Simpson's-paradox-style confounded features, Goodfellow 2014 adversarial examples. Pure ML-engineering framing throughout.
