@@ -881,7 +881,20 @@
   .mr-info-row{display:flex;gap:14px;justify-content:center;margin-top:6px;font-family:'JetBrains Mono',monospace;font-size:0.85rem;color:rgba(236,240,241,0.7);}
   .mr-info-row .rt{color:#1abc9c;}
   .mr-info-row .rot{color:#bdc3c7;}
-  .tm-canvas{background:#0a1520;border:2px solid #1abc9c;border-radius:12px;cursor:pointer;touch-action:none;}
+  .tm-canvas{background:#0a1520;border:2px solid #1abc9c;border-radius:12px;cursor:pointer;touch-action:none;box-shadow:0 6px 18px rgba(26,188,156,0.15);}
+  .tm-next{display:inline-flex;gap:8px;align-items:center;font-family:'JetBrains Mono',monospace;font-size:1rem;color:#bdc3c7;background:rgba(26,188,156,0.12);border:1.5px solid rgba(26,188,156,0.4);border-radius:14px;padding:6px 14px;margin:4px auto;}
+  .tm-next .label{color:rgba(236,240,241,0.65);text-transform:uppercase;letter-spacing:1.5px;font-size:0.7rem;}
+  .tm-next .val{color:#1abc9c;font-weight:bold;font-size:1.15rem;animation:spmPulse 1.4s ease-in-out infinite;}
+  .tm-summary{margin:18px auto;max-width:540px;padding:22px;background:linear-gradient(135deg,rgba(26,188,156,0.18),rgba(46,204,113,0.12));border:2px solid #1abc9c;border-radius:18px;text-align:center;animation:bounceIn 0.5s ease-out;box-shadow:0 8px 24px rgba(26,188,156,0.25);}
+  .tm-summary h3{font-family:'JetBrains Mono',monospace;color:#f1c40f;font-size:1.6rem;margin:0 0 8px;}
+  .tm-summary .tier-tag{display:inline-block;padding:4px 12px;border-radius:14px;font-family:'JetBrains Mono',monospace;font-size:0.85rem;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;background:rgba(255,255,255,0.08);}
+  .tm-summary-stats{display:flex;justify-content:space-around;gap:14px;flex-wrap:wrap;margin:12px 0;}
+  .tm-summary-stat{flex:1;min-width:80px;}
+  .tm-summary-stat .val{font-family:'JetBrains Mono',monospace;font-size:2rem;font-weight:bold;color:#1abc9c;display:block;}
+  .tm-summary-stat .lbl{font-size:0.78rem;color:rgba(236,240,241,0.7);text-transform:uppercase;letter-spacing:1px;}
+  .tm-summary-stat.best .val{color:#2ecc71;}
+  .tm-summary-stat.new-best .val{color:#f1c40f;animation:spmPulse 0.8s ease-out infinite;}
+  .tm-tier-scale{margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:0.74rem;color:rgba(236,240,241,0.55);line-height:1.5;}
   .learn-footer{background:#0a0c0f;border-top:1px solid #222;padding:clamp(28px,4vw,44px) clamp(18px,3vw,36px);color:#bcc6d1;font-family:'JetBrains Mono',monospace;font-size:0.88rem;line-height:1.65}
   /* Hide marketing footer (about/faq/links) inside the Android wrapper or
      when launched as an installed PWA — those contexts are app-mode and the
@@ -6116,63 +6129,77 @@ function playAnimalSound(type) {
   }
   function initTrailMake(){
     const ct=$$('#tm-container'),hud=$$('#tm-hud');
-    let mode='num',tm=0,act=false;
+    let mode=sessionStorage.getItem('tm-mode')||'num',tm=0,act=false;
     if(window._tmTimer){clearInterval(window._tmTimer);window._tmTimer=null;}
-    hud.innerHTML=`<span class="game-stat">\u23f1 <span class="game-stat-val" id="tm-time">0.0</span>s</span><span class="game-stat">\u274c <span class="game-stat-val" id="tm-err">0</span></span><span class="game-stat">\ud83d\udcca <span class="game-stat-val" id="tm-mode">${mode==='num'?'Numbers':'Num-Letter'}</span></span>`;
+    document.querySelectorAll('.tm-summary,.tm-next').forEach(n=>n.remove());
+    function _tierNum(t){if(t<30)return{name:'sup',label:'Superior',color:'#f1c40f',msg:'Significantly faster than the clinical norm.'};if(t<50)return{name:'normal',label:'Normal',color:'#2ecc71',msg:'In the expected adult range.'};if(t<78)return{name:'border',label:'Borderline',color:'#1abc9c',msg:'Slower than typical — keep practicing.'};return{name:'impaired',label:'Slow',color:'#e67e22',msg:'Well below clinical normal range.'};}
+    function _tierAlt(t){if(t<75)return{name:'sup',label:'Superior',color:'#f1c40f',msg:'Significantly faster than the clinical norm.'};if(t<115)return{name:'normal',label:'Normal',color:'#2ecc71',msg:'In the expected adult range.'};if(t<180)return{name:'border',label:'Borderline',color:'#1abc9c',msg:'Slower than typical — keep practicing.'};return{name:'impaired',label:'Slow',color:'#e67e22',msg:'Well below clinical normal range.'};}
+    hud.innerHTML=`<span class="game-stat">\u23f1 <span class="game-stat-val" id="tm-time">0.0</span>s</span><span class="game-stat">\u274c <span class="game-stat-val" id="tm-err">0</span></span><span class="game-stat">\ud83d\udcca <span class="game-stat-val" id="tm-mode">${mode==='num'?'TMT-A':'TMT-B'}</span></span>`;
     function run(){
       ct.innerHTML='';
+      document.querySelectorAll('.tm-next,.tm-summary').forEach(n=>n.remove());
       const cw=Math.min(window.innerWidth*0.9,650),ch=Math.min(window.innerHeight*0.65,650);
+      const nextChip=document.createElement('div');nextChip.className='tm-next';nextChip.innerHTML=`<span class="label">Next</span><span class="val" id="tm-next-val">—</span>`;ct.appendChild(nextChip);
       const canvas=document.createElement('canvas');canvas.className='tm-canvas';canvas.width=cw;canvas.height=ch;canvas.style.width=cw+'px';canvas.style.height=ch+'px';canvas.style.touchAction='manipulation';
       ct.appendChild(canvas);const ctx=canvas.getContext('2d');
       const count=mode==='num'?15:12;const letters='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
       const sequence=[];
       if(mode==='num'){for(let i=1;i<=count;i++)sequence.push({label:''+i,idx:i-1});}
       else{for(let i=0;i<count;i++){const isNum=i%2===0;const n=Math.floor(i/2)+1;sequence.push({label:isNum?''+n:letters[Math.floor(i/2)],idx:i});}}
-      const nodes=[];const margin=30;const minDist=50;
+      const radius=Math.max(20,Math.min(26,Math.floor(cw/30)));
+      const nodes=[];const margin=radius+8;const minDist=radius*2.8;
       sequence.forEach(s=>{let x,y,attempts=0,ok=false;
         while(!ok&&attempts<200){x=margin+Math.random()*(cw-margin*2);y=margin+Math.random()*(ch-margin*2);ok=nodes.every(n=>Math.hypot(n.x-x,n.y-y)>minDist);attempts++;}
         nodes.push({...s,x,y});
       });
       let nextIdx=0,errors=0,lines=[];
+      function _refreshNextChip(){const nv=$$('#tm-next-val');if(nv)nv.textContent=nextIdx<nodes.length?nodes[nextIdx].label:'✓';}
       function draw(){
         ctx.clearRect(0,0,cw,ch);
-        ctx.strokeStyle='#1abc9c';ctx.lineWidth=2;
+        ctx.strokeStyle='#1abc9c';ctx.lineWidth=3;ctx.lineCap='round';
         for(let i=1;i<lines.length;i++){ctx.beginPath();ctx.moveTo(lines[i-1].x,lines[i-1].y);ctx.lineTo(lines[i].x,lines[i].y);ctx.stroke();}
         nodes.forEach((n,i)=>{
           const done=i<nextIdx;const active=i===nextIdx;
-          ctx.beginPath();ctx.arc(n.x,n.y,18,0,Math.PI*2);
-          ctx.fillStyle=done?'rgba(46,204,113,0.5)':(active?'rgba(26,188,156,0.3)':'rgba(255,255,255,0.1)');ctx.fill();
-          ctx.strokeStyle=done?'#2ecc71':(active?'#1abc9c':'#555');ctx.lineWidth=2;ctx.stroke();
-          ctx.fillStyle=done?'#2ecc71':'#ecf0f1';ctx.font='bold 14px JetBrains Mono';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(n.label,n.x,n.y);
+          if(active){ctx.beginPath();ctx.arc(n.x,n.y,radius+5,0,Math.PI*2);ctx.fillStyle='rgba(26,188,156,0.18)';ctx.fill();}
+          ctx.beginPath();ctx.arc(n.x,n.y,radius,0,Math.PI*2);
+          ctx.fillStyle=done?'rgba(46,204,113,0.55)':(active?'rgba(26,188,156,0.4)':'rgba(255,255,255,0.10)');ctx.fill();
+          ctx.strokeStyle=done?'#2ecc71':(active?'#1abc9c':'#555');ctx.lineWidth=active?3:2;ctx.stroke();
+          ctx.fillStyle=done?'#2ecc71':(active?'#1abc9c':'#ecf0f1');ctx.font=`bold ${Math.floor(radius*0.85)}px JetBrains Mono`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(n.label,n.x,n.y);
         });
       }
-      draw();tm=0;errors=0;act=true;$$('#tm-err').textContent=0;
+      draw();_refreshNextChip();tm=0;errors=0;act=true;$$('#tm-err').textContent=0;$$('#tm-time').textContent='0.0';
       const startT=performance.now();
       window._tmTimer=setInterval(()=>{if(!act)return;tm=((performance.now()-startT)/1000).toFixed(1);const te=$$('#tm-time');if(te)te.textContent=tm;},100);
       canvas.onpointerdown=e=>{
         if(!act)return;
         e.preventDefault();
         const rect=canvas.getBoundingClientRect();const sx=cw/rect.width,sy=ch/rect.height;const mx=(e.clientX-rect.left)*sx,my=(e.clientY-rect.top)*sy;
-        const hit=nodes.find(n=>Math.hypot(n.x-mx,n.y-my)<22);
+        const hit=nodes.find(n=>Math.hypot(n.x-mx,n.y-my)<radius+4);
         if(!hit)return;
-        if(hit.idx===nextIdx){lines.push(hit);nextIdx++;draw();addScore(1);
+        if(hit.idx===nextIdx){lines.push(hit);nextIdx++;draw();_refreshNextChip();addScore(1);
           if(nextIdx>=nodes.length){act=false;clearInterval(window._tmTimer);window._tmTimer=null;
             const tmVal=parseFloat(tm);const pb=getPersonalBest('trailmake-'+mode,tmVal);const medal=errors===0?'🥇':(errors<=2?'🥈':'🥉');
+            const tier=mode==='num'?_tierNum(tmVal):_tierAlt(tmVal);
             addScore(errors===0?10:Math.max(1,8-errors));
-            let rhtml=`<div style="text-align:center;padding:20px"><div style="font-size:3rem;margin:8px 0">${medal}</div><div class="nmm-display" style="font-size:2.4rem">${tm}s</div><div class="nmm-msg" style="font-size:1.1rem;margin:6px 0">${errors} error${errors!==1?'s':''}</div>`;
-            pb.isNew?rhtml+=`<div style="color:#2ecc71;font-size:1rem;font-weight:bold;margin:4px 0">⭐ NEW PERSONAL BEST! ⭐</div>`:pb.prev>0?rhtml+=`<div style="color:#888;font-size:0.85rem">Best: ${pb.prev}s</div>`:0;
-            rhtml+=`</div>`;ct.appendChild(Object.assign(document.createElement('div'),{innerHTML:rhtml}));
+            const scaleNum='Numbers tiers: <30s Superior · <50 Normal · <78 Borderline · 78+ Slow.';
+            const scaleAlt='Num-Letter tiers: <75s Superior · <115 Normal · <180 Borderline · 180+ Slow.';
+            const sum=document.createElement('div');sum.className='tm-summary';
+            sum.innerHTML=`<h3>${medal} ${mode==='num'?'TMT-A (Numbers)':'TMT-B (Num-Letter)'} Complete</h3><div class="tier-tag" style="color:${tier.color}">${tier.label} • ${tier.msg}</div><div class="tm-summary-stats"><div class="tm-summary-stat"><span class="val">${tm}s</span><span class="lbl">Time</span></div><div class="tm-summary-stat"><span class="val">${errors}</span><span class="lbl">Errors</span></div><div class="tm-summary-stat ${pb.isNew?'new-best':'best'}"><span class="val">${pb.isNew?tm:(pb.prev>0?pb.prev:tm)}s</span><span class="lbl">Best</span></div></div><div class="tm-tier-scale">${mode==='num'?scaleNum:scaleAlt}<br>Calibrated to common clinical (Reitan) norms for healthy adults.</div>`;
+            ct.appendChild(sum);
+            if(pb.isNew)spawnConfetti(window.innerWidth/2,window.innerHeight/2,120);
+            else if(errors===0||tier.name==='sup')spawnConfetti(window.innerWidth/2,window.innerHeight/3,60);
+            showFeedback(`${tm}s · ${tier.label}${pb.isNew?' · NEW BEST!':''}`,pb.isNew?'#2ecc71':tier.color);
             const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='PLAY AGAIN';rb.style.marginTop='10px';rb.onclick=()=>initTrailMake();ct.appendChild(rb);
           }
         }else{errors++;$$('#tm-err').textContent=errors;resetStreak();showFeedback('Wrong order!','#e74c3c');
-          ctx.beginPath();ctx.arc(hit.x,hit.y,18,0,Math.PI*2);ctx.fillStyle='rgba(231,76,60,0.4)';ctx.fill();ctx.strokeStyle='#e74c3c';ctx.lineWidth=2;ctx.stroke();
+          ctx.beginPath();ctx.arc(hit.x,hit.y,radius,0,Math.PI*2);ctx.fillStyle='rgba(231,76,60,0.45)';ctx.fill();ctx.strokeStyle='#e74c3c';ctx.lineWidth=3;ctx.stroke();
           setTimeout(draw,500);
         }
       };
     }
     ct.innerHTML='<div class="nmm-msg">Tap the circles in order as fast as possible!<br>Numbers: 1\u21922\u21923...<br>Alternating: 1\u2192A\u21922\u2192B\u21923\u2192C...</div>';
     const sd=document.createElement('div');sd.style.cssText='display:flex;gap:8px;justify-content:center;margin:10px 0';
-    ['num','alt'].forEach(m=>{const b=document.createElement('button');b.className='sdk-btn'+(m===mode?' active':'');b.textContent=m==='num'?'Numbers':'Num-Letter';b.onclick=()=>{mode=m;$$('#tm-mode').textContent=m==='num'?'Numbers':'Num-Letter';sd.querySelectorAll('.sdk-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');};sd.appendChild(b);});
+    ['num','alt'].forEach(m=>{const b=document.createElement('button');b.className='sdk-btn'+(m===mode?' active':'');b.textContent=m==='num'?'TMT-A · Numbers':'TMT-B · Num-Letter';b.onclick=()=>{mode=m;sessionStorage.setItem('tm-mode',m);$$('#tm-mode').textContent=m==='num'?'TMT-A':'TMT-B';sd.querySelectorAll('.sdk-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');};sd.appendChild(b);});
     ct.appendChild(sd);
     const sb=document.createElement('button');sb.className='nmm-btn';sb.textContent='START';sb.onclick=run;ct.appendChild(sb);
   }

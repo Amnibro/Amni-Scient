@@ -1,5 +1,14 @@
 ﻿# Changelog 
 
+## [5.6.15] - 2026-05-17 - Amni-Learn audit batch 16: Trail Making polish (clinical tiers + UX)
+- **Clinical naming** — modes renamed to TMT-A (Numbers) and TMT-B (Num-Letter), the standard Trail Making Test designations used in cognitive screening. Selection persists in sessionStorage (`tm-mode`).
+- **Clinical tier system** — calibrated to Reitan adult norms. TMT-A: <30s Superior / <50 Normal / <78 Borderline / 78+ Slow. TMT-B: <75 / <115 / <180 / 180+ Slow. Tier scale shown on summary card with calibration note.
+- **Touch-friendly nodes** — node radius scales with canvas (20-26px, was fixed 18px). Larger circles + thicker text for finger taps. Hit-test expanded accordingly.
+- **Active-target glow** — current target node gets an outer translucent ring so it's unmistakable.
+- **Persistent "Next: X" chip** — shown above the canvas; updates as you progress. Pulsing animation keeps the eye on the target.
+- **Polished summary card** — replaces bare innerHTML with `tm-summary` card: Time / Errors / Best stats columns, tier-tag header, scale legend. NEW PERSONAL BEST detection with 120-particle confetti; 60-particle burst for perfect (0 errors) or Superior tier runs even without a new best.
+- All existing pointer-tap interaction, error-flash, line-drawing, `getPersonalBest` tracking preserved.
+
 ## [5.6.14] - 2026-05-17 - Amni-Learn audit batch 15: Mental Rotation polish (modes + RT)
 - **3 difficulty modes** — Easy (45-135° rotations, 4-5 point shapes), Normal (45-180°, 4-6 points), Hard (30-180° including 30/60/120/150°, 5-8 points). Chip-row picker. Per-mode best-score sessionStorage (`mr-best-easy/normal/hard`).
 - **Reaction time per round** — `performance.now()` start at render, measured on choice. Bonus +1/+2 score for sub-3s/sub-1.5s responses. Avg RT shown in summary extras.
