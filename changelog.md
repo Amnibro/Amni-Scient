@@ -1,5 +1,12 @@
 ﻿# Changelog 
 
+## [5.6.17] - 2026-05-17 - Amni-Learn audit batch 18: Peripheral Vision polish (modes + tiers)
+- **3 difficulty modes** — Easy (300-700ms flashes, 30s), Normal (150-600ms, 30s), Hard (80-400ms, 25s start at level 2). Mode picker chip row above START. Per-mode best in sessionStorage (`pv-best-{mode}`).
+- **Streak system** — `pv-stk` HUD counter. +1/+2 score bonus at streak 3/5. Confetti at 5/10/15.
+- **Tier system** — Eagle Eye (90%+), Sharp (75%+), Good (60%+), Developing (40%+), Starter. Color-coded tier-tag on summary.
+- **Visual polish** — central focus cross gets pulse animation; flash dots get glow shadow. Wrong choice button briefly flashes red instead of just no-op.
+- **Polished summary card** — replaces buildResultCard with `pv-summary`: Correct/Accuracy/Best-Streak/Level/All-Time stats columns. NEW BEST detection with 120-particle confetti; Eagle/Sharp tier bursts get 60-particle even without new best.
+
 ## [5.6.16] - 2026-05-17 - Amni-Learn audit batch 17: Visual Search polish (modes + RT tracking)
 - **3 difficulty modes** — Easy (5×5 → 7×7), Normal (6×6 → 10×10), Hard (8×8 → 12×12). Chip-row picker. Per-mode best-avg-RT in sessionStorage (`vs-best-avg-{mode}`).
 - **RT history + avg-RT in HUD** — every successful find records ms; HUD shows live ⚡ Avg and ⭐ Best avg.
