@@ -1,5 +1,13 @@
 ﻿# Changelog 
 
+## [5.6.6] - 2026-05-17 - Amni-Learn audit batch 7: Stroop Test polish
+- **3 difficulty modes** — Easy (4 colors, 30s), Normal (6 colors, 30s, 15% congruent traps), Hard (8 colors, 25s, 25% congruent traps). Chip-row picker above START. Per-mode best-score sessionStorage (`stp-best-easy/normal/hard`).
+- **Congruent trials** — at Normal+ a fraction of trials show the word in its own color (RED in red ink), which is a classic Stroop trap. Tap the matching button. Adds variety and tests inhibition vs reading speed.
+- **Streak system** — `stp-stk` counter in HUD. +1/+2/+3 score bonus at streak 3/5/10. Fire glow on word at streak≥3. Confetti at 5/10/15/20.
+- **Reaction time tracking** — every correct answer's response time is measured (performance.now()). RT pop floats above word with ms count. Bonus +1/+2 score for sub-800ms/sub-500ms responses. Avg RT shown in summary.
+- **Word animations** — fade-in scale on each new word, green-pulse on correct, red-shake on wrong.
+- **Polished summary card** — Correct / Accuracy / Avg ms / Best Streak / All-Time stats. NEW BEST detection with 120-particle confetti.
+
 ## [5.6.5] - 2026-05-17 - Amni-Learn audit batch 6: Word Scramble polish
 - **Wordbank deepened** — all 50 words across 5 levels gained a `def` field with a dictionary-style definition, separate from the existing cryptic `h` hint. Word Scramble now teaches vocabulary explicitly on every correct answer, not just on time-out.
 - **Definition reveal card** — on correct, a green-bordered card slides in showing the WORD and its definition. Gives every solve a tangible payoff beyond the next-word advance.

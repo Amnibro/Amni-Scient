@@ -656,10 +656,29 @@
   .nmm-btn{padding:12px 28px;border-radius:12px;border:2px solid #1abc9c;background:transparent;color:#1abc9c;font-family:'JetBrains Mono',monospace;font-size:1rem;cursor:pointer;transition:0.2s;margin:8px;}
   .nmm-btn:hover{background:rgba(26,188,156,0.2);transform:translateY(-2px);}
   .nmm-msg{font-family:'JetBrains Mono',monospace;font-size:1.1rem;color:#7a8a9a;text-align:center;margin:10px 0;line-height:1.5;}
-  .stp-word{font-family:'JetBrains Mono',monospace;font-size:clamp(3rem,10vw,6rem);font-weight:bold;text-align:center;margin:20px 0;text-transform:uppercase;}
+  .stp-word{font-family:'JetBrains Mono',monospace;font-size:clamp(3rem,10vw,6rem);font-weight:bold;text-align:center;margin:20px 0;text-transform:uppercase;transition:transform 0.2s,text-shadow 0.3s;animation:stpWordIn 0.25s ease-out;}
+  @keyframes stpWordIn{0%{opacity:0;transform:scale(0.85)}100%{opacity:1;transform:scale(1)}}
+  .stp-word.correct{animation:stpCorrectFlash 0.4s ease-out;}
+  @keyframes stpCorrectFlash{0%{transform:scale(1)}40%{transform:scale(1.15);text-shadow:0 0 30px rgba(46,204,113,0.8)}100%{transform:scale(1)}}
+  .stp-word.wrong{animation:spmShake 0.3s ease-out;}
+  .stp-word.streak-fire{filter:drop-shadow(0 0 18px rgba(241,196,15,0.6));}
   .stp-choices{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin:15px 0;}
-  .stp-choice{padding:14px 28px;border-radius:12px;border:3px solid;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:clamp(0.9rem,2.5vw,1.2rem);font-weight:bold;transition:0.2s;color:#fff;}
-  .stp-choice:hover{transform:translateY(-3px);filter:brightness(1.2);}
+  .stp-choice{padding:14px 28px;border-radius:12px;border:3px solid;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:clamp(0.9rem,2.5vw,1.2rem);font-weight:bold;transition:transform 0.15s,filter 0.2s,box-shadow 0.2s;color:#fff;box-shadow:0 4px 10px rgba(0,0,0,0.3);}
+  .stp-choice:hover{transform:translateY(-3px);filter:brightness(1.2);box-shadow:0 8px 18px rgba(0,0,0,0.4);}
+  .stp-choice:active{transform:scale(0.94);}
+  .stp-mode-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:10px 0;}
+  .stp-mode-btn{padding:6px 14px;border-radius:14px;border:1.5px solid #ec407a;background:transparent;color:#ec407a;font-family:'JetBrains Mono',monospace;font-size:0.85rem;cursor:pointer;transition:0.2s;}
+  .stp-mode-btn:hover{background:rgba(236,64,122,0.15);}
+  .stp-mode-btn.active{background:#ec407a;color:#fff;}
+  .stp-rt-pop{position:absolute;font-family:'JetBrains Mono',monospace;color:#2ecc71;font-size:1.1rem;font-weight:bold;pointer-events:none;animation:spmTimePop 1s ease-out forwards;}
+  .stp-summary{margin:20px auto;max-width:520px;padding:22px;background:linear-gradient(135deg,rgba(155,89,182,0.18),rgba(236,64,122,0.12));border:2px solid #ec407a;border-radius:18px;text-align:center;animation:bounceIn 0.5s ease-out;box-shadow:0 8px 24px rgba(155,89,182,0.25);}
+  .stp-summary h3{font-family:'JetBrains Mono',monospace;color:#f1c40f;font-size:1.6rem;margin:0 0 12px;}
+  .stp-summary-stats{display:flex;justify-content:space-around;gap:14px;flex-wrap:wrap;margin:12px 0;}
+  .stp-summary-stat{flex:1;min-width:80px;}
+  .stp-summary-stat .val{font-family:'JetBrains Mono',monospace;font-size:2rem;font-weight:bold;color:#ec407a;display:block;}
+  .stp-summary-stat .lbl{font-size:0.8rem;color:rgba(236,240,241,0.7);text-transform:uppercase;letter-spacing:1px;}
+  .stp-summary-stat.best .val{color:#2ecc71;}
+  .stp-summary-stat.new-best .val{color:#f1c40f;animation:spmPulse 0.8s ease-out infinite;}
   .rxt-zone{width:95%;max-width:min(95vw,650px);height:clamp(250px,45vh,450px);border-radius:20px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background 0.15s;user-select:none;}
   .rxt-zone.wait{background:#e74c3c;}
   .rxt-zone.ready{background:#2ecc71;}
@@ -5329,12 +5348,73 @@ function playAnimalSound(type) {
   }
   function initStroop(){
     const ct=$$('#stp-container'),hud=$$('#stp-hud');
-    let sc=0,tot=0,tm=30,act=false;
+    let sc=0,tot=0,stk=0,bestStk=0,tm=30,act=false,roundStart=0,rtTotal=0,rtCount=0;
     if(window._stpTimer){clearInterval(window._stpTimer);window._stpTimer=null;}
-    const cls=[{n:'RED',h:'#e74c3c'},{n:'BLUE',h:'#3498db'},{n:'GREEN',h:'#2ecc71'},{n:'YELLOW',h:'#f1c40f'},{n:'PURPLE',h:'#9b59b6'},{n:'ORANGE',h:'#e67e22'}];
-    hud.innerHTML=`<span class="game-stat">\u2705 <span class="game-stat-val" id="stp-sc">0</span></span><span class="game-stat">\ud83d\udcca <span class="game-stat-val" id="stp-acc">--</span></span><span class="game-stat">\u23f1 <span class="game-stat-val" id="stp-tm">30</span>s</span>`;
-    function show(){const w=cls[Math.floor(Math.random()*cls.length)];let ink;do{ink=cls[Math.floor(Math.random()*cls.length)];}while(ink.n===w.n);ct.innerHTML=`<div class="stp-word" style="color:${ink.h}">${w.n}</div><div class="nmm-msg">Tap the INK COLOR!</div><div class="stp-choices" id="stp-opts"></div>`;const opts=$$('#stp-opts');let pool=[...cls].sort(()=>Math.random()-0.5).slice(0,4);if(!pool.find(c=>c.n===ink.n))pool[0]=ink;pool.sort(()=>Math.random()-0.5);pool.forEach(c=>{const b=document.createElement('button');b.className='stp-choice';b.textContent=c.n;b.style.cssText=`background:${c.h};border-color:${c.h}`;b.onclick=()=>{if(!act)return;tot++;c.n===ink.n?(sc++,addScore(1),showFeedback('\u2705','#2ecc71')):(resetStreak(),showFeedback(`${ink.n}!`,'#e74c3c'));$$('#stp-sc').textContent=sc;$$('#stp-acc').textContent=Math.round(sc/tot*100)+'%';show();};opts.appendChild(b);});}
-    ct.innerHTML=`<div class="nmm-msg">Words appear in wrong colors.<br>Tap the button matching the INK COLOR!</div>`;const sb=document.createElement('button');sb.className='nmm-btn';sb.textContent='START';sb.onclick=()=>{act=true;sc=0;tot=0;tm=30;show();window._stpTimer=setInterval(()=>{tm--;$$('#stp-tm').textContent=tm;if(tm<=0){clearInterval(window._stpTimer);window._stpTimer=null;act=false;const pct=tot?Math.round(sc/tot*100):0;ct.innerHTML=`<div class="nmm-display">${sc} correct</div><div class="nmm-msg">${pct}% accuracy in ${tot} rounds</div>`;const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='PLAY AGAIN';rb.onclick=()=>initStroop();ct.appendChild(rb);showFeedback(`Stroop: ${sc} (${pct}%) \ud83e\udde0`,'#f1c40f');addScore(sc);}},1000);};ct.appendChild(sb);
+    const allCls=[{n:'RED',h:'#e74c3c'},{n:'BLUE',h:'#3498db'},{n:'GREEN',h:'#2ecc71'},{n:'YELLOW',h:'#f1c40f'},{n:'PURPLE',h:'#9b59b6'},{n:'ORANGE',h:'#e67e22'},{n:'PINK',h:'#ec407a'},{n:'CYAN',h:'#00bcd4'}];
+    const mode=sessionStorage.getItem('stp-mode')||'normal';
+    const cfg={easy:{count:4,time:30,congruent:0},normal:{count:6,time:30,congruent:0.15},hard:{count:8,time:25,congruent:0.25}};
+    const c=cfg[mode]||cfg.normal;
+    const cls=allCls.slice(0,c.count);
+    const bestKey='stp-best-'+mode;
+    const best=parseInt(sessionStorage.getItem(bestKey)||'0');
+    hud.innerHTML=`<span class="game-stat">\u2705 <span class="game-stat-val" id="stp-sc">0</span></span><span class="game-stat">\ud83d\udd25 <span class="game-stat-val" id="stp-stk">0</span></span><span class="game-stat">\ud83d\udcca <span class="game-stat-val" id="stp-acc">--</span></span><span class="game-stat">\u23f1 <span class="game-stat-val" id="stp-tm">${c.time}</span>s</span><span class="game-stat">\u2b50 <span class="game-stat-val" id="stp-best">${best}</span></span>`;
+    function _gameOver(){
+      clearInterval(window._stpTimer);window._stpTimer=null;act=false;
+      const pct=tot?Math.round(sc/tot*100):0;
+      const avgRT=rtCount?Math.round(rtTotal/rtCount):0;
+      const wasBest=sc>best;
+      if(wasBest)sessionStorage.setItem(bestKey,sc);
+      ct.innerHTML='';
+      const sum=document.createElement('div');sum.className='stp-summary';
+      sum.innerHTML=`<h3>\ud83e\udde0 ${wasBest?'NEW BEST!':"Time's up!"}</h3><div class="stp-summary-stats"><div class="stp-summary-stat"><span class="val">${sc}</span><span class="lbl">Correct</span></div><div class="stp-summary-stat"><span class="val">${pct}%</span><span class="lbl">Accuracy</span></div><div class="stp-summary-stat"><span class="val">${avgRT}</span><span class="lbl">Avg ms</span></div><div class="stp-summary-stat"><span class="val">${bestStk}</span><span class="lbl">Best Streak</span></div><div class="stp-summary-stat ${wasBest?'new-best':'best'}"><span class="val">${Math.max(sc,best)}</span><span class="lbl">All-Time</span></div></div>`;
+      ct.appendChild(sum);
+      if(wasBest)spawnConfetti(window.innerWidth/2,window.innerHeight/2,120);
+      showFeedback(`Stroop ${mode.toUpperCase()}: ${sc} (${pct}%) \ud83e\udde0`,wasBest?'#2ecc71':'#f1c40f');
+      addScore(sc);
+      const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='PLAY AGAIN';rb.onclick=()=>initStroop();ct.appendChild(rb);
+    }
+    function show(){
+      const w=cls[Math.floor(Math.random()*cls.length)];
+      let ink;
+      if(Math.random()<c.congruent){ink=w;}else{do{ink=cls[Math.floor(Math.random()*cls.length)];}while(ink.n===w.n);}
+      ct.innerHTML=`<div class="stp-word${stk>=3?' streak-fire':''}" id="stp-word" style="color:${ink.h}">${w.n}</div><div class="nmm-msg">Tap the INK COLOR</div><div class="stp-choices" id="stp-opts"></div>`;
+      roundStart=performance.now();
+      const opts=$$('#stp-opts');
+      let pool=[...cls].sort(()=>Math.random()-0.5).slice(0,Math.min(4,cls.length));
+      if(!pool.find(x=>x.n===ink.n))pool[0]=ink;
+      pool.sort(()=>Math.random()-0.5);
+      pool.forEach(cc=>{const b=document.createElement('button');b.className='stp-choice';b.textContent=cc.n;b.style.cssText=`background:${cc.h};border-color:${cc.h}`;b.onclick=()=>{
+        if(!act)return;
+        tot++;
+        const rt=Math.round(performance.now()-roundStart);
+        rtTotal+=rt;rtCount++;
+        const wordEl=$$('#stp-word');
+        if(cc.n===ink.n){
+          sc++;stk++;if(stk>bestStk)bestStk=stk;
+          const rtBonus=rt<500?2:(rt<800?1:0);
+          const stkBonus=stk>=10?3:(stk>=5?2:(stk>=3?1:0));
+          addScore(1+rtBonus+stkBonus);
+          if(sc>best){const be=$$('#stp-best');if(be)be.textContent=sc;}
+          if(stk===5||stk===10||stk===15||stk===20)spawnConfetti(window.innerWidth/2,window.innerHeight/3,stk>=10?80:50);
+          if(wordEl)wordEl.classList.add('correct');
+          const rtPop=document.createElement('div');rtPop.className='stp-rt-pop';rtPop.textContent=rt+'ms';rtPop.style.position='absolute';const wRect=wordEl?wordEl.getBoundingClientRect():null;if(wRect){rtPop.style.left=(wRect.right-30)+'px';rtPop.style.top=(wRect.top-10)+'px';document.body.appendChild(rtPop);setTimeout(()=>rtPop.remove(),1000);}
+          showFeedback(stk>=10?`${stk}x \ud83d\udd25\ud83d\udd25\ud83d\udd25 ${rt}ms`:(stk>=5?`${stk}x! \ud83d\udd25\ud83d\udd25`:(stk>=3?`${stk}x! \ud83d\udd25`:`\u2705 ${rt}ms`)),'#2ecc71');
+        }else{
+          stk=0;resetStreak();
+          if(wordEl)wordEl.classList.add('wrong');
+          showFeedback(`Ink was ${ink.n}!`,'#e74c3c');
+        }
+        $$('#stp-sc').textContent=sc;
+        $$('#stp-stk').textContent=stk;
+        $$('#stp-acc').textContent=Math.round(sc/tot*100)+'%';
+        setTimeout(show,cc.n===ink.n?280:600);
+      };opts.appendChild(b);});
+    }
+    function _modeRow(){const row=document.createElement('div');row.className='stp-mode-row';['easy','normal','hard'].forEach(m=>{const b=document.createElement('button');b.className='stp-mode-btn'+(m===mode?' active':'');b.textContent=m.toUpperCase();b.onclick=()=>{sessionStorage.setItem('stp-mode',m);initStroop();};row.appendChild(b);});return row;}
+    ct.innerHTML='';
+    const intro=document.createElement('div');intro.className='nmm-msg';intro.innerHTML=`Words appear in wrong colors.<br>Tap the button matching the <b>INK</b> color.<br><small style="opacity:0.7">${c.count} colors${c.congruent>0?', some trials are matching traps':''}</small>`;ct.appendChild(intro);
+    ct.appendChild(_modeRow());
+    const sb=document.createElement('button');sb.className='nmm-btn';sb.textContent='START';sb.onclick=()=>{act=true;sc=0;tot=0;stk=0;bestStk=0;rtTotal=0;rtCount=0;tm=c.time;$$('#stp-tm').textContent=tm;show();window._stpTimer=setInterval(()=>{tm--;$$('#stp-tm').textContent=tm;if(tm<=0)_gameOver();},1000);};ct.appendChild(sb);
   }
   function initReaction(){
     const ct=$$('#rxt-container'),hud=$$('#rxt-hud');
