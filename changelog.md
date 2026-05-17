@@ -1,5 +1,15 @@
 ﻿# Changelog 
 
+## [5.6.10] - 2026-05-17 - Amni-Learn audit batch 11: Word Search polish (105 definitions + topic picker)
+- **Definitions added for all 105 words** — 7 topics × 15 words refactored from flat string arrays to `{w, def}` objects. Word Search now teaches vocabulary on every find.
+- **Found-word definition popup** — when a word is selected correctly, a gradient toast slides up near the viewport bottom showing the WORD + its one-sentence definition. 2.6s lifetime; replaces transient.
+- **Topic picker** — chip row above grid: 🎲 RANDOM + 7 named topic buttons (NATURE / SCIENCE / SPACE / FOOD / MATH / CODING / ANIMALS). Selection persists in sessionStorage (`ws-topic`). Random is default.
+- **Topic context card** — short description of each topic above the word list ("Features of Earth's surface", "Building blocks and forces of the physical world", etc).
+- **Live timer + per-topic best-time** — HUD shows current time and best time for the current topic. `ws-best-time-{topic}` sessionStorage. New best triggers 120-particle confetti.
+- **Polished completion summary** — replaces silent setTimeout→reset with `ws-summary` card showing Time / Words / Best Time for the topic, plus a NEW PUZZLE button (no longer auto-advances).
+- **Half-puzzle micro-confetti** — small celebration burst at 50% words found.
+- All existing 12×12 grid, 8-direction placement, pointer-drag selection, reversed-word recognition preserved.
+
 ## [5.6.9] - 2026-05-17 - Amni-Learn audit batch 10: Pattern Puzzle polish (rules taught)
 - **Generators carry rules now** — all 40 generators across 5 levels refactored to also emit `explain: {rule, desc}`. Rules cover alternation, arithmetic/geometric progressions, Fibonacci, perfect squares/cubes/factorials, triangular and tetrahedral numbers, Catalan, Mersenne (2ⁿ-1), n^n super-exponential, prime sequence, halving. Pattern Puzzle now teaches the *why*, not just the answer.
 - **Explainer card on correct AND wrong** — green `.pat-explain` on correct shows the rule name + plain-English description; orange `.pat-explain.miss` on wrong still shows the rule so users learn from mistakes. Card uses a 2-color gradient and animates in.
