@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.6.35] - 2026-05-17 - Amni-Learn content quadruple batch 11: Geography Explorer L5 — COMPLETE
+- **Geography Explorer FULLY QUADRUPLED** — L5 8 → 32 (+24 countries, +24 facts). Bank now 160 countries across 5 levels.
+  - L5 +24 (micro/island/obscure): Andorra, San Marino, Vatican City, Liechtenstein, Monaco, Malta, Luxembourg, Cyprus, Bhutan, Brunei, East Timor, Maldives, Belize, Suriname, Guyana, Fiji, Samoa, Tonga, Vanuatu, Papua New Guinea, Solomon Islands, Seychelles, Comoros, Cape Verde
+- Every Geography Explorer playthrough now traverses 160 unique flag/capital/continent challenges with substantive cultural facts (per Anthony 2026-05-17 directive: "all flags should be used")
+- **SW cache v16 → v17** to flush.
+
 ## [5.6.34] - 2026-05-17 - Amni-Learn content quadruple batch 10: Geography Explorer L3 + L4
 - **Geography Explorer L3 + L4 expanded** — 8 → 32 countries each (+48 countries, +48 facts entries)
   - L3 +24 (moderate-recognition): Estonia, Latvia, Lithuania, Belarus, Serbia, Slovakia, Slovenia, Albania, Mozambique, Madagascar, Botswana, Namibia, Rwanda, Côte d'Ivoire, Oman, Qatar, Bahrain, Kuwait, Jordan, Lebanon, Syria, Uruguay, Ecuador, Trinidad and Tobago
