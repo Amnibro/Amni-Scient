@@ -1,5 +1,15 @@
 ﻿# Changelog 
 
+## [5.6.36] - 2026-05-17 - Amni-Learn content quadruple batch 12: Pattern Puzzle FULL — 40 → 160 generators
+- **Pattern Puzzle COMPLETELY quadrupled** — 8 → 32 generators per level across all 5 levels (+120 generators)
+  - L1 (+24 kids/visual): more ABAB color/animal/food pairs, ABC three-cycles, AAB patterns, counting up/down 1, alphabet, days of week, months
+  - L2 (+24 elementary): ×4/×6/×7/×8/×9/×11/×12 tables, descending by 10/5/3, three-color cycles, +1+2 alternating, alphabet/days/months, doubling, ×10 powers
+  - L3 (+24 intermediate): ×4 ×5 powers, n(n+1), hexagonal, pentagonal, Lucas, ×3+1, n²+n−1, odd/even squares, increasing-gap differences, ÷2 fractional, Fibonacci variants, look-and-say
+  - L4 (+24 advanced): Bell numbers, Tribonacci, Fermat numbers Fₙ=2^(2ⁿ)+1, Jacobsthal, look-and-say, Padovan-style, n³+1, double factorials (2n−1)!!, primes, (3ⁿ−1)/2, Catalan extended
+  - L5 (+24 expert): Pell numbers, Padovan, Bell B₇, Sylvester sequence 2,3,7,43,1807, squares of Fibonacci, repunits, Σk³, n^(n−1), centered hexagonal, star numbers Sₙ, square pyramidal, pentatope C(n+3,4), C(n+4,5) hyper-tetrahedral, powers of 7, Chebyshev-like recurrences
+- Bank now 160 unique generators delivering math-substantive deep practice
+- **SW cache v17 → v18** to flush.
+
 ## [5.6.35] - 2026-05-17 - Amni-Learn content quadruple batch 11: Geography Explorer L5 — COMPLETE
 - **Geography Explorer FULLY QUADRUPLED** — L5 8 → 32 (+24 countries, +24 facts). Bank now 160 countries across 5 levels.
   - L5 +24 (micro/island/obscure): Andorra, San Marino, Vatican City, Liechtenstein, Monaco, Malta, Luxembourg, Cyprus, Bhutan, Brunei, East Timor, Maldives, Belize, Suriname, Guyana, Fiji, Samoa, Tonga, Vanuatu, Papua New Guinea, Solomon Islands, Seychelles, Comoros, Cape Verde
