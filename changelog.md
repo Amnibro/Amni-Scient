@@ -1,5 +1,15 @@
 ﻿# Changelog 
 
+## [5.6.7] - 2026-05-17 - Amni-Learn audit batch 8: Memory Sequence polish
+- **3 modes** — Classic (standard pace), Speed (70% baseline speed, min 140ms), Reverse (repeat the sequence BACKWARDS — a true brain-exercise twist for adults). Chip-row picker above the pad grid.
+- **Sound toggle** — 🔊 / 🔇 button next to mode picker. Persists in sessionStorage (`seq-sound`).
+- **Persistent best per level+mode** — `seq-best-L{level}-{mode}` sessionStorage. Was previously reset every init.
+- **Input-progress dots** — visible green dots fill in as you tap each pad in the sequence. Helps players track where they are in long sequences.
+- **Pad press feedback** — `.seq-pad.press` scale animation distinct from the sequence flash; immediate tactile response on tap.
+- **Streak bonuses** — +1/+3/+5 score bonus at round 3/5/10 on top of seqLen base. Confetti at rounds 3/5/10/15 (80 particles at 10+). "LEGENDARY!" message at round 10+.
+- **Wrong-flash** — the bad pad gets a red-glow shake on the wrong tap, then full game-over flow fires.
+- **Polished game-over summary** — replaces bare text with stats card showing Round Reached, Steps Recalled, All-Time best. NEW BEST! header + 120-particle confetti on new high.
+
 ## [5.6.6] - 2026-05-17 - Amni-Learn audit batch 7: Stroop Test polish
 - **3 difficulty modes** — Easy (4 colors, 30s), Normal (6 colors, 30s, 15% congruent traps), Hard (8 colors, 25s, 25% congruent traps). Chip-row picker above START. Per-mode best-score sessionStorage (`stp-best-easy/normal/hard`).
 - **Congruent trials** — at Normal+ a fraction of trials show the word in its own color (RED in red ink), which is a classic Stroop trap. Tap the matching button. Adds variety and tests inhibition vs reading speed.

@@ -411,6 +411,25 @@
   .rfx-arena { background:radial-gradient(ellipse at center,#2a3a4a 0%,#1b2838 70%); border:3px solid; animation:borderRotate 4s linear infinite; }
   .seq-pad { transition:filter 0.15s,transform 0.15s,box-shadow 0.15s; }
   .seq-pad.lit { box-shadow:0 0 30px currentColor,0 0 60px currentColor; filter:brightness(1.8); transform:scale(1.12); }
+  .seq-pad.press { animation:seqPress 0.18s ease-out; }
+  @keyframes seqPress{0%{transform:scale(1)}50%{transform:scale(0.9);filter:brightness(1.4)}100%{transform:scale(1)}}
+  .seq-pad.wrong-flash { animation:spmShake 0.35s ease-out,seqWrongPulse 0.5s ease-out; }
+  @keyframes seqWrongPulse{0%,100%{box-shadow:0 0 0 transparent}50%{box-shadow:0 0 30px #e74c3c,0 0 60px #e74c3c}}
+  .seq-mode-row { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin:10px 0; }
+  .seq-mode-btn { padding:6px 14px; border-radius:14px; border:1.5px solid #9b59b6; background:transparent; color:#bdc3c7; font-family:'JetBrains Mono',monospace; font-size:0.85rem; cursor:pointer; transition:0.2s; }
+  .seq-mode-btn:hover { background:rgba(155,89,182,0.15); }
+  .seq-mode-btn.active { background:#9b59b6; color:#fff; border-color:#9b59b6; }
+  .seq-progress { display:flex; gap:6px; justify-content:center; margin:8px 0; flex-wrap:wrap; min-height:18px; }
+  .seq-dot { width:12px; height:12px; border-radius:50%; background:rgba(255,255,255,0.12); border:1.5px solid rgba(255,255,255,0.25); transition:background 0.2s,transform 0.2s; }
+  .seq-dot.done { background:#2ecc71; border-color:#2ecc71; transform:scale(1.15); }
+  .seq-summary { margin:20px auto; max-width:520px; padding:24px; background:linear-gradient(135deg,rgba(155,89,182,0.18),rgba(46,204,113,0.12)); border:2px solid #9b59b6; border-radius:18px; text-align:center; animation:bounceIn 0.5s ease-out; box-shadow:0 8px 24px rgba(155,89,182,0.25); }
+  .seq-summary h3 { font-family:'Comic Neue',cursive; color:#f1c40f; font-size:1.7rem; margin:0 0 12px; }
+  .seq-summary-stats { display:flex; justify-content:space-around; gap:14px; flex-wrap:wrap; margin:12px 0; }
+  .seq-summary-stat { flex:1; min-width:80px; }
+  .seq-summary-stat .val { font-family:'JetBrains Mono',monospace; font-size:2rem; font-weight:bold; color:#9b59b6; display:block; }
+  .seq-summary-stat .lbl { font-size:0.8rem; color:rgba(236,240,241,0.7); text-transform:uppercase; letter-spacing:1px; }
+  .seq-summary-stat.best .val { color:#2ecc71; }
+  .seq-summary-stat.new-best .val { color:#f1c40f; animation:spmPulse 0.8s ease-out infinite; }
   .scr-tile { transition:transform 0.2s,opacity 0.2s,box-shadow 0.2s; }
   .scr-tile:hover:not(.used) { transform:translateY(-4px); box-shadow:0 6px 15px rgba(255,165,2,0.4); }
   .scr-tile:active:not(.used) { transform:scale(0.92); }
@@ -4712,14 +4731,41 @@ function playAnimalSound(type) {
     const tones = [261.6,329.6,392.0,523.3,440.0,349.2];
     const padCount = currentLevel <= 2 ? 4 : (currentLevel <= 4 ? 4 : 6);
     const startLen = currentLevel <= 2 ? 2 : (currentLevel <= 3 ? 3 : 4);
+    const mode = sessionStorage.getItem('seq-mode')||'classic';
+    const sound = sessionStorage.getItem('seq-sound')!=='off';
+    const bestKey = `seq-best-L${currentLevel}-${mode}`;
+    let bestRoundStored = parseInt(sessionStorage.getItem(bestKey)||'0');
     let seq = [], playerIdx = 0, seqLen = startLen, playing = false, showing = false, bestRound = 0;
     board.innerHTML = '';
+    document.querySelectorAll('.seq-summary,.seq-progress,#seq-mode-row,#seq-sound-row,#seq-hud').forEach(n=>n.remove());
     board.style.gridTemplateColumns = `repeat(${padCount <= 4 ? 2 : 3}, 1fr)`;
-    const hud = document.createElement('div'); hud.className='game-hud'; hud.style.gridColumn='1/-1'; hud.style.marginBottom='5px';
-    hud.innerHTML=`<span class="game-stat">📊 Round <span class="game-stat-val" id="seq-round">0</span></span><span class="game-stat">🏆 Best <span class="game-stat-val" id="seq-best">0</span></span>`;
+    const hud = document.createElement('div'); hud.id='seq-hud'; hud.className='game-hud'; hud.style.gridColumn='1/-1'; hud.style.marginBottom='5px';
+    hud.innerHTML=`<span class="game-stat">📊 Round <span class="game-stat-val" id="seq-round">0</span></span><span class="game-stat">🏆 Best <span class="game-stat-val" id="seq-best">${bestRoundStored}</span></span><span class="game-stat">🎯 ${mode}</span>`;
     board.before(hud);
+    const modeRow = document.createElement('div'); modeRow.id='seq-mode-row'; modeRow.className='seq-mode-row';
+    [['classic','Classic'],['speed','Speed'],['reverse','Reverse']].forEach(([m,lbl])=>{const b=document.createElement('button');b.className='seq-mode-btn'+(m===mode?' active':'');b.textContent=lbl;b.title=m==='speed'?'Faster pace':(m==='reverse'?'Repeat sequence backwards':'Standard pace');b.onclick=()=>{sessionStorage.setItem('seq-mode',m);initMemSeq();};modeRow.appendChild(b);});
+    const sBtn=document.createElement('button');sBtn.className='seq-mode-btn'+(sound?' active':'');sBtn.id='seq-sound-btn';sBtn.textContent=sound?'🔊 Sound':'🔇 Mute';sBtn.title='Toggle sound';sBtn.onclick=()=>{sessionStorage.setItem('seq-sound',sound?'off':'on');initMemSeq();};modeRow.appendChild(sBtn);
+    board.before(modeRow);
+    const progressEl = document.createElement('div'); progressEl.className='seq-progress'; progressEl.id='seq-progress';
+    board.after(progressEl);
     const pads = [];
     const padColors = padCount <= 4 ? colors : [...colors, '#9b59b6', '#e67e22'];
+    function _updateProgress(){progressEl.innerHTML='';if(!playing&&!showing)return;for(let i=0;i<seq.length;i++){const d=document.createElement('div');d.className='seq-dot'+(i<playerIdx?' done':'');progressEl.appendChild(d);}}
+    function _gameOver(round){
+      playing=false;
+      const wasBest = round>bestRoundStored;
+      if(wasBest)sessionStorage.setItem(bestKey,round);
+      info.textContent = '';
+      const sum=document.createElement('div'); sum.className='seq-summary';
+      sum.innerHTML=`<h3>${wasBest?'🌟 NEW BEST!':'💪 Game Over'}</h3><div class="seq-summary-stats"><div class="seq-summary-stat"><span class="val">${round}</span><span class="lbl">Round Reached</span></div><div class="seq-summary-stat"><span class="val">${seq.length-1}</span><span class="lbl">Steps Recalled</span></div><div class="seq-summary-stat ${wasBest?'new-best':'best'}"><span class="val">${Math.max(round,bestRoundStored)}</span><span class="lbl">All-Time</span></div></div>`;
+      board.after(sum);
+      if(wasBest)spawnConfetti(window.innerWidth/2,window.innerHeight/2,120);
+      showFeedback(`Round ${round} — ${seq.length-1} steps 💪`, wasBest?'#2ecc71':'#e74c3c');
+      pads.forEach(p=>{ p.style.opacity='0.3'; setTimeout(()=>p.style.opacity='',500); });
+      startBtn.style.display='block';
+      startBtn.textContent = `Try Again${bestRoundStored?` (Best: ${Math.max(round,bestRoundStored)})`:''}`;
+      seqLen=startLen; seq=[];
+    }
     padColors.slice(0, padCount).forEach((c, i) => {
       const pad = document.createElement('div');
       pad.className = 'seq-pad';
@@ -4727,38 +4773,38 @@ function playAnimalSound(type) {
       pad.dataset.idx = i;
       pad.addEventListener('pointerdown', () => {
         if(showing || !playing) return;
+        pad.classList.add('press'); setTimeout(()=>pad.classList.remove('press'),180);
         flashPad(i, 200);
         playTone(tones[i], 0.2);
-        if(seq[playerIdx] === i) {
+        const expected = mode==='reverse' ? seq[seq.length-1-playerIdx] : seq[playerIdx];
+        if(expected === i) {
           playerIdx++;
+          _updateProgress();
           if(playerIdx >= seq.length) {
             const round = seqLen - startLen + 1;
             if(round > bestRound) bestRound = round;
             const re=$$('#seq-round'); if(re) re.textContent=round;
-            const be=$$('#seq-best'); if(be) be.textContent=bestRound;
-            addScore(seqLen);
-            showFeedback(round>=5?`Round ${round}! Amazing! 🌟`:`Round ${round} Clear! 🎉`, round>=5?'#e74c3c':'#2ecc71');
+            if(round>bestRoundStored){bestRoundStored=round;const be=$$('#seq-best');if(be)be.textContent=bestRoundStored;}
+            const streakBonus = round>=10?5:(round>=5?3:(round>=3?1:0));
+            addScore(seqLen+streakBonus);
+            if(round===3||round===5||round===10||round===15)spawnConfetti(window.innerWidth/2,window.innerHeight/3,round>=10?80:50);
+            showFeedback(round>=10?`Round ${round}! LEGENDARY! 🌟🌟`:(round>=5?`Round ${round}! Amazing! 🌟`:`Round ${round} Clear! 🎉`), round>=10?'#f1c40f':(round>=5?'#e74c3c':'#2ecc71'));
             seqLen++;
             playing = false;
-            setTimeout(() => playSequence(), 1200);
+            setTimeout(() => playSequence(), 1100);
           }
         } else {
+          pad.classList.add('wrong-flash'); setTimeout(()=>pad.classList.remove('wrong-flash'),500);
           const round = seqLen - startLen;
-          showFeedback(`Game Over! Round ${round} 💪`, '#e74c3c');
           resetStreak();
-          info.textContent = `Game Over — Reached Round ${round}`;
-          playing = false;
-          pads.forEach(p=>{ p.style.opacity='0.3'; setTimeout(()=>p.style.opacity='',500); });
-          startBtn.style.display = 'block';
-          startBtn.textContent = `Try Again (Best: ${bestRound})`;
-          seqLen = startLen;
-          seq = [];
+          _gameOver(round);
         }
       });
       board.appendChild(pad);
       pads.push(pad);
     });
     function playTone(freq, dur) {
+      if(!sound) return;
       try { const ctx=getAudioCtx(),o=ctx.createOscillator(),g=ctx.createGain(); o.type='sine'; o.frequency.setValueAtTime(freq,ctx.currentTime); g.gain.setValueAtTime(0.3,ctx.currentTime); g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+dur); o.connect(g); g.connect(ctx.destination); o.start(ctx.currentTime); o.stop(ctx.currentTime+dur); } catch(e){}
     }
     function flashPad(idx, dur) {
@@ -4767,26 +4813,29 @@ function playAnimalSound(type) {
       setTimeout(() => { pads[idx].classList.remove('lit'); pads[idx].style.boxShadow=''; }, dur);
     }
     function playSequence() {
+      document.querySelectorAll('.seq-summary').forEach(n=>n.remove());
       seq.push(Math.floor(Math.random() * padCount));
       playerIdx = 0;
       showing = true;
       const round = seq.length - startLen + 1;
-      info.textContent = `Watch... (${seq.length} to remember)`;
+      info.textContent = mode==='reverse' ? `Watch — repeat BACKWARDS (${seq.length})` : `Watch... (${seq.length} to remember)`;
       const re=$$('#seq-round'); if(re) re.textContent=Math.max(0,round-1);
       startBtn.style.display = 'none';
       let i = 0;
-      const speed = currentLevel <= 2 ? 600 : (currentLevel <= 3 ? 450 : (seq.length > 8 ? 200 : 300));
+      const baseSpeed = currentLevel <= 2 ? 600 : (currentLevel <= 3 ? 450 : (seq.length > 8 ? 200 : 300));
+      const speed = mode==='speed' ? Math.max(140, baseSpeed*0.7) : baseSpeed;
+      _updateProgress();
       const iv = setInterval(() => {
         flashPad(seq[i], speed * 0.6);
         playTone(tones[seq[i]], speed/1000);
         i++;
         if(i >= seq.length) {
           clearInterval(iv);
-          setTimeout(() => { showing = false; playing = true; info.textContent = `Your turn! Repeat ${seq.length} pads`; }, speed);
+          setTimeout(() => { showing = false; playing = true; info.textContent = mode==='reverse' ? `Your turn — repeat ${seq.length} BACKWARDS` : `Your turn! Repeat ${seq.length} pads`; _updateProgress(); }, speed);
         }
       }, speed);
     }
-    startBtn.onclick = () => { seq = []; seqLen = startLen; bestRound = 0; playSequence(); };
+    startBtn.onclick = () => { document.querySelectorAll('.seq-summary').forEach(n=>n.remove()); seq = []; seqLen = startLen; bestRound = 0; playSequence(); };
     info.textContent = 'Press START to begin!';
     startBtn.style.display = 'block';
     startBtn.textContent = 'START';
