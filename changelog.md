@@ -1,5 +1,13 @@
 ﻿# Changelog 
 
+## [5.6.9] - 2026-05-17 - Amni-Learn audit batch 10: Pattern Puzzle polish (rules taught)
+- **Generators carry rules now** — all 40 generators across 5 levels refactored to also emit `explain: {rule, desc}`. Rules cover alternation, arithmetic/geometric progressions, Fibonacci, perfect squares/cubes/factorials, triangular and tetrahedral numbers, Catalan, Mersenne (2ⁿ-1), n^n super-exponential, prime sequence, halving. Pattern Puzzle now teaches the *why*, not just the answer.
+- **Explainer card on correct AND wrong** — green `.pat-explain` on correct shows the rule name + plain-English description; orange `.pat-explain.miss` on wrong still shows the rule so users learn from mistakes. Card uses a 2-color gradient and animates in.
+- **Persistent best tracking** — `pat-best` (solved count) and `pat-best-stk` (top streak) sessionStorage keys. Both shown live in HUD (⭐ Best, 🏅 Top Streak) — replaces the previous transient-only streak counter.
+- **Streak milestones** — confetti at streak 3/5/10/15. Score bonus tier preserved (×2 at 3+, ×3 at 5+). "BRILLIANT!" message at streak 10+.
+- **Visual polish** — blank cell gets `.win` (green pulse + glow rotate) on correct, `.miss` (red shake) on wrong. Choice buttons get tap-scale active state.
+- **Double-click guard** — answered flag prevents the right answer from re-triggering if mashed.
+
 ## [5.6.8] - 2026-05-17 - Amni-Learn audit batch 9: N-Back polish (working memory)
 - **Persistent best per N-level** — `nbk-best-N` sessionStorage. ⭐ Best % chip in HUD updates live as accuracy improves during the run.
 - **Streak system** — `nbk-stk` counter in HUD. Score bonuses +1/+2 at streak 3/5. Confetti at 5/10/15. "🔥🔥🔥" message at streak 10+.

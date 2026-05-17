@@ -448,8 +448,17 @@
   .scr-summary-stat .lbl { font-size:0.8rem; color:rgba(236,240,241,0.7); text-transform:uppercase; letter-spacing:1px; }
   .scr-summary-stat.best .val { color:#2ecc71; }
   .scr-summary-stat.new-best .val { color:#f1c40f; animation:spmPulse 0.8s ease-out infinite; }
-  .pat-cell { transition:transform 0.3s,background 0.3s; }
+  .pat-cell { transition:transform 0.3s,background 0.3s,box-shadow 0.3s; }
   .pat-cell:not(.blank) { animation:bounceIn 0.4s ease-out; }
+  .pat-cell.win { background:rgba(46,204,113,0.4)!important; border-color:#2ecc71!important; box-shadow:0 0 22px rgba(46,204,113,0.7); animation:agmWinPop 0.5s ease-out; }
+  .pat-cell.miss { background:rgba(231,76,60,0.3)!important; border-color:#e74c3c!important; animation:spmShake 0.35s ease-out; }
+  .pat-explain { margin:14px auto; max-width:560px; padding:14px 18px; background:linear-gradient(135deg,rgba(123,237,159,0.18),rgba(46,204,113,0.12)); border:2px solid #2ecc71; border-radius:14px; text-align:center; animation:bounceIn 0.4s ease-out; box-shadow:0 6px 18px rgba(46,204,113,0.25); color:#ecf0f1; }
+  .pat-explain.miss { background:linear-gradient(135deg,rgba(230,126,34,0.18),rgba(231,76,60,0.12)); border-color:#e67e22; }
+  .pat-explain .rule { font-family:'JetBrains Mono',monospace; font-size:1.05rem; color:#2ecc71; font-weight:bold; margin-bottom:4px; }
+  .pat-explain.miss .rule { color:#e67e22; }
+  .pat-explain .desc { font-family:'Comic Neue',cursive; color:#ecf0f1; font-size:1rem; line-height:1.5; }
+  .pat-opt { transition:transform 0.15s,background 0.2s,box-shadow 0.2s; }
+  .pat-opt:active { transform:scale(0.95); }
   .geo-opt { transition:transform 0.2s,box-shadow 0.2s,background 0.3s; }
   .geo-opt:hover { transform:translateY(-4px); box-shadow:0 8px 20px rgba(112,161,255,0.4); }
   .combo-popup { position:fixed; font-family:'Comic Neue',cursive; font-weight:bold; font-size:1.5rem; color:#f1c40f; pointer-events:none; z-index:150; animation:floatUp 1s ease-out forwards; text-shadow:1px 1px 2px rgba(0,0,0,0.5); }
@@ -5015,61 +5024,65 @@ function playAnimalSound(type) {
     const seqEl = $$('#pat-seq');
     const choicesEl = $$('#pat-choices');
     const info = $$('#pat-info');
-    let solved = 0, patStreak = 0;
+    let solved = 0, patStreak = 0, patBestStreak = 0;
     $$('#pat-hud')?.remove();
+    document.querySelectorAll('.pat-explain').forEach(n=>n.remove());
+    const patBest = parseInt(sessionStorage.getItem('pat-best')||'0');
+    const patBestStk = parseInt(sessionStorage.getItem('pat-best-stk')||'0');
     const hud = document.createElement('div'); hud.className='game-hud'; hud.id='pat-hud'; hud.style.marginBottom='5px';
-    hud.innerHTML=`<span class="game-stat">✅ Solved <span class="game-stat-val" id="pat-solved">0</span></span><span class="game-stat">🔥 Streak <span class="game-stat-val" id="pat-streak">0</span></span>`;
+    hud.innerHTML=`<span class="game-stat">✅ <span class="game-stat-val" id="pat-solved">0</span></span><span class="game-stat">🔥 <span class="game-stat-val" id="pat-streak">0</span></span><span class="game-stat">⭐ Best <span class="game-stat-val" id="pat-best">${patBest}</span></span><span class="game-stat">🏅 Top Streak <span class="game-stat-val" id="pat-best-stk">${patBestStk}</span></span>`;
     seqEl.parentElement.insertBefore(hud, seqEl);
+    const _ex = (rule, desc) => ({rule, desc});
     const generators = {
       1: [
-        () => { const shapes = ['🔴','🔵','🔴','🔵','🔴','🔵']; return {seq:shapes.slice(0,5), ans:'🔵', opts:['🔵','🔴','🟢','🟡']}; },
-        () => { const n = [1,2,3,4,5,6]; return {seq:n.slice(0,5).map(String), ans:'6', opts:['5','6','7','8']}; },
-        () => { const s = ['⭐','🌙','⭐','🌙','⭐','🌙']; return {seq:s.slice(0,5), ans:'🌙', opts:['🌙','⭐','☀️','🌈']}; },
-        () => { const s = ['🐱','🐶','🐱','🐶','🐱','🐶']; return {seq:s.slice(0,5), ans:'🐶', opts:['🐶','🐱','🐰','🐸']}; },
-        () => { const s = ['🌈','☁️','🌈','☁️','🌈','☁️']; return {seq:s.slice(0,5), ans:'☁️', opts:['☁️','🌈','⛅','🌤️']}; },
-        () => { const n = [2,2,4,4,6,6]; return {seq:n.slice(0,5).map(String), ans:'6', opts:['5','6','7','8']}; },
-        () => { const s = ['🍎','🍊','🍎','🍊','🍎','🍊']; return {seq:s.slice(0,5), ans:'🍊', opts:['🍊','🍎','🍇','🍌']}; },
-        () => { const s = ['🔵','🔵','🔴','🔵','🔵','🔴']; return {seq:s.slice(0,5), ans:'🔴', opts:['🔴','🔵','🟢','🟡']}; }
+        () => { const shapes = ['🔴','🔵','🔴','🔵','🔴','🔵']; return {seq:shapes.slice(0,5), ans:'🔵', opts:['🔵','🔴','🟢','🟡'], explain:_ex('A B A B …', 'Alternating two items: red, blue, red, blue.')}; },
+        () => ({seq:['1','2','3','4','5'], ans:'6', opts:['5','6','7','8'], explain:_ex('+1 each step', 'Counting up by 1 each time.')}),
+        () => ({seq:['⭐','🌙','⭐','🌙','⭐'], ans:'🌙', opts:['🌙','⭐','☀️','🌈'], explain:_ex('A B A B …', 'Alternating star and moon.')}),
+        () => ({seq:['🐱','🐶','🐱','🐶','🐱'], ans:'🐶', opts:['🐶','🐱','🐰','🐸'], explain:_ex('A B A B …', 'Alternating cat and dog.')}),
+        () => ({seq:['🌈','☁️','🌈','☁️','🌈'], ans:'☁️', opts:['☁️','🌈','⛅','🌤️'], explain:_ex('A B A B …', 'Alternating two items.')}),
+        () => ({seq:['2','2','4','4','6'], ans:'6', opts:['5','6','7','8'], explain:_ex('Each repeats twice', 'Each number appears twice, then goes up by 2.')}),
+        () => ({seq:['🍎','🍊','🍎','🍊','🍎'], ans:'🍊', opts:['🍊','🍎','🍇','🍌'], explain:_ex('A B A B …', 'Alternating apple and orange.')}),
+        () => ({seq:['🔵','🔵','🔴','🔵','🔵'], ans:'🔴', opts:['🔴','🔵','🟢','🟡'], explain:_ex('A A B repeating', 'Pattern of two blues then a red, repeating.')})
       ],
       2: [
-        () => { const n = [2,4,6,8,10,12]; return {seq:n.slice(0,5).map(String), ans:'12', opts:['10','11','12','14']}; },
-        () => { const s = ['🔴','🔵','🟢','🔴','🔵','🟢']; return {seq:s.slice(0,5), ans:'🟢', opts:['🟢','🔴','🔵','🟡']}; },
-        () => { const n = [5,10,15,20,25,30]; return {seq:n.slice(0,5).map(String), ans:'30', opts:['28','30','35','25']}; },
-        () => { const s = ['🍎','🍎','🍌','🍎','🍎','🍌']; return {seq:s.slice(0,5), ans:'🍌', opts:['🍌','🍎','🍇','🍊']}; },
-        () => { const n = [1,3,5,7,9,11]; return {seq:n.slice(0,5).map(String), ans:'11', opts:['10','11','12','13']}; },
-        () => { const n = [10,20,30,40,50,60]; return {seq:n.slice(0,5).map(String), ans:'60', opts:['55','60','65','70']}; },
-        () => { const s = ['🌕','🌗','🌑','🌓','🌕','🌗']; return {seq:s.slice(0,5), ans:'🌗', opts:['🌗','🌕','🌑','🌓']}; },
-        () => { const n = [3,6,9,12,15,18]; return {seq:n.slice(0,5).map(String), ans:'18', opts:['16','17','18','20']}; }
+        () => ({seq:['2','4','6','8','10'], ans:'12', opts:['10','11','12','14'], explain:_ex('+2 each step', 'Even numbers; add 2 each time.')}),
+        () => ({seq:['🔴','🔵','🟢','🔴','🔵'], ans:'🟢', opts:['🟢','🔴','🔵','🟡'], explain:_ex('A B C repeating', 'Three-color cycle: red, blue, green.')}),
+        () => ({seq:['5','10','15','20','25'], ans:'30', opts:['28','30','35','25'], explain:_ex('+5 each step', 'Multiples of 5.')}),
+        () => ({seq:['🍎','🍎','🍌','🍎','🍎'], ans:'🍌', opts:['🍌','🍎','🍇','🍊'], explain:_ex('A A B repeating', 'Two apples then a banana, repeating.')}),
+        () => ({seq:['1','3','5','7','9'], ans:'11', opts:['10','11','12','13'], explain:_ex('+2 each step (odd)', 'Odd numbers; add 2 each time.')}),
+        () => ({seq:['10','20','30','40','50'], ans:'60', opts:['55','60','65','70'], explain:_ex('+10 each step', 'Multiples of 10.')}),
+        () => ({seq:['🌕','🌗','🌑','🌓','🌕'], ans:'🌗', opts:['🌗','🌕','🌑','🌓'], explain:_ex('Moon phase cycle', 'Full → waning → new → waxing → full, repeating.')}),
+        () => ({seq:['3','6','9','12','15'], ans:'18', opts:['16','17','18','20'], explain:_ex('×3 table', 'Multiples of 3.')})
       ],
       3: [
-        () => { const n = [1,1,2,3,5,8]; return {seq:n.slice(0,5).map(String), ans:'8', opts:['7','8','9','10']}; },
-        () => { const n = [1,4,9,16,25,36]; return {seq:n.slice(0,5).map(String), ans:'36', opts:['30','36','35','49']}; },
-        () => { const s = ['🔺','🔵','🔺','🔺','🔵','🔺']; return {seq:s.slice(0,5), ans:'🔺', opts:['🔺','🔵','⬛','🔶']}; },
-        () => { const n = [3,6,12,24,48,96]; return {seq:n.slice(0,5).map(String), ans:'96', opts:['72','96','84','108']}; },
-        () => { const n = [2,5,10,17,26,37]; return {seq:n.slice(0,5).map(String), ans:'37', opts:['34','36','37','40']}; },
-        () => { const n = [1,2,6,24,120,720]; return {seq:n.slice(0,5).map(String), ans:'720', opts:['600','720','840','500']}; },
-        () => { const n = [100,81,64,49,36,25]; return {seq:n.slice(0,5).map(String), ans:'25', opts:['20','24','25','30']}; },
-        () => { const n = [1,3,7,15,31,63]; return {seq:n.slice(0,5).map(String), ans:'63', opts:['55','60','63','65']}; }
+        () => ({seq:['1','1','2','3','5'], ans:'8', opts:['7','8','9','10'], explain:_ex('Fibonacci', 'Each term is the sum of the previous two: 3+5 = 8.')}),
+        () => ({seq:['1','4','9','16','25'], ans:'36', opts:['30','36','35','49'], explain:_ex('Perfect squares n²', '1², 2², 3², 4², 5², 6² = 1, 4, 9, 16, 25, 36.')}),
+        () => ({seq:['🔺','🔵','🔺','🔺','🔵'], ans:'🔺', opts:['🔺','🔵','⬛','🔶'], explain:_ex('A B A A B repeating', 'Triangle, blue, triangle, triangle, blue — pattern repeats.')}),
+        () => ({seq:['3','6','12','24','48'], ans:'96', opts:['72','96','84','108'], explain:_ex('×2 each step', 'Doubling: each number is twice the previous.')}),
+        () => ({seq:['2','5','10','17','26'], ans:'37', opts:['34','36','37','40'], explain:_ex('n² + 1', '1²+1=2, 2²+1=5, 3²+1=10, 4²+1=17, 5²+1=26, 6²+1=37.')}),
+        () => ({seq:['1','2','6','24','120'], ans:'720', opts:['600','720','840','500'], explain:_ex('Factorials n!', '1!=1, 2!=2, 3!=6, 4!=24, 5!=120, 6!=720.')}),
+        () => ({seq:['100','81','64','49','36'], ans:'25', opts:['20','24','25','30'], explain:_ex('Squares descending', '10², 9², 8², 7², 6², 5² = 100, 81, 64, 49, 36, 25.')}),
+        () => ({seq:['1','3','7','15','31'], ans:'63', opts:['55','60','63','65'], explain:_ex('2ⁿ - 1 (Mersenne)', 'Each is twice the previous plus 1, or 2ⁿ−1: 1, 3, 7, 15, 31, 63.')})
       ],
       4: [
-        () => { const n = [2,6,18,54,162,486]; return {seq:n.slice(0,5).map(String), ans:'486', opts:['324','486','500','450']}; },
-        () => { const n = [1,3,6,10,15,21]; return {seq:n.slice(0,5).map(String), ans:'21', opts:['18','20','21','25']}; },
-        () => { const n = [0,1,1,2,3,5]; return {seq:n.slice(0,5).map(String), ans:'5', opts:['4','5','6','8']}; },
-        () => { const n = [2,3,5,7,11,13]; return {seq:n.slice(0,5).map(String), ans:'13', opts:['12','13','14','15']}; },
-        () => { const n = [1,4,10,20,35,56]; return {seq:n.slice(0,5).map(String), ans:'56', opts:['50','52','56','60']}; },
-        () => { const n = [2,5,11,23,47,95]; return {seq:n.slice(0,5).map(String), ans:'95', opts:['90','93','95','97']}; },
-        () => { const n = [1,2,5,14,42,132]; return {seq:n.slice(0,5).map(String), ans:'132', opts:['120','126','132','140']}; },
-        () => { const n = [256,128,64,32,16,8]; return {seq:n.slice(0,5).map(String), ans:'8', opts:['4','8','10','12']}; }
+        () => ({seq:['2','6','18','54','162'], ans:'486', opts:['324','486','500','450'], explain:_ex('×3 each step', 'Geometric sequence: each term = previous × 3.')}),
+        () => ({seq:['1','3','6','10','15'], ans:'21', opts:['18','20','21','25'], explain:_ex('Triangular numbers', 'T_n = n(n+1)/2: 1, 3, 6, 10, 15, 21. Each adds the next integer.')}),
+        () => ({seq:['0','1','1','2','3'], ans:'5', opts:['4','5','6','8'], explain:_ex('Fibonacci (from 0)', 'Each is sum of the previous two: 2+3 = 5.')}),
+        () => ({seq:['2','3','5','7','11'], ans:'13', opts:['12','13','14','15'], explain:_ex('Prime numbers', 'Primes have only 2 divisors (1 and themselves): 2, 3, 5, 7, 11, 13.')}),
+        () => ({seq:['1','4','10','20','35'], ans:'56', opts:['50','52','56','60'], explain:_ex('Tetrahedral numbers', 'T_n = n(n+1)(n+2)/6: 1, 4, 10, 20, 35, 56. Each adds the next triangular number.')}),
+        () => ({seq:['2','5','11','23','47'], ans:'95', opts:['90','93','95','97'], explain:_ex('×2 + 1', 'Each term = (previous × 2) + 1.')}),
+        () => ({seq:['1','2','5','14','42'], ans:'132', opts:['120','126','132','140'], explain:_ex('Catalan numbers', 'C_n: 1, 2, 5, 14, 42, 132. Count combinatorial structures like balanced parentheses.')}),
+        () => ({seq:['256','128','64','32','16'], ans:'8', opts:['4','8','10','12'], explain:_ex('÷2 each step', 'Halving: each term = previous / 2.')})
       ],
       5: [
-        () => { const n = [1,8,27,64,125,216]; return {seq:n.slice(0,5).map(String), ans:'216', opts:['196','210','216','225']}; },
-        () => { const n = [1,2,4,8,16,32]; return {seq:n.slice(0,5).map(String), ans:'32', opts:['24','28','32','36']}; },
-        () => { const n = [1,1,2,6,24,120]; return {seq:n.slice(0,5).map(String), ans:'120', opts:['100','110','120','150']}; },
-        () => { const n = [0,1,4,9,16,25]; return {seq:n.slice(0,5).map(String), ans:'25', opts:['20','24','25','36']}; },
-        () => { const n = [2,3,5,8,13,21]; return {seq:n.slice(0,5).map(String), ans:'21', opts:['18','20','21','23']}; },
-        () => { const n = [1,4,27,256,3125,46656]; return {seq:n.slice(0,5).map(String), ans:'46656', opts:['40000','46656','50000','43210']}; },
-        () => { const n = [1,3,9,27,81,243]; return {seq:n.slice(0,5).map(String), ans:'243', opts:['200','225','243','270']}; },
-        () => { const n = [1024,512,256,128,64,32]; return {seq:n.slice(0,5).map(String), ans:'32', opts:['16','24','32','48']}; }
+        () => ({seq:['1','8','27','64','125'], ans:'216', opts:['196','210','216','225'], explain:_ex('Perfect cubes n³', '1³, 2³, 3³, 4³, 5³, 6³ = 1, 8, 27, 64, 125, 216.')}),
+        () => ({seq:['1','2','4','8','16'], ans:'32', opts:['24','28','32','36'], explain:_ex('Powers of 2: 2ⁿ', '2⁰, 2¹, 2², 2³, 2⁴, 2⁵ = 1, 2, 4, 8, 16, 32.')}),
+        () => ({seq:['1','1','2','6','24'], ans:'120', opts:['100','110','120','150'], explain:_ex('Factorials (with 0!)', '0!=1, 1!=1, 2!=2, 3!=6, 4!=24, 5!=120.')}),
+        () => ({seq:['0','1','4','9','16'], ans:'25', opts:['20','24','25','36'], explain:_ex('Squares from 0', '0², 1², 2², 3², 4², 5² = 0, 1, 4, 9, 16, 25.')}),
+        () => ({seq:['2','3','5','8','13'], ans:'21', opts:['18','20','21','23'], explain:_ex('Fibonacci (Lucas/Fib shift)', 'Each is the sum of the previous two: 8+13 = 21.')}),
+        () => ({seq:['1','4','27','256','3125'], ans:'46656', opts:['40000','46656','50000','43210'], explain:_ex('n^n (super-exponential)', '1¹, 2², 3³, 4⁴, 5⁵, 6⁶ = 1, 4, 27, 256, 3125, 46656.')}),
+        () => ({seq:['1','3','9','27','81'], ans:'243', opts:['200','225','243','270'], explain:_ex('Powers of 3: 3ⁿ', '3⁰, 3¹, 3², 3³, 3⁴, 3⁵ = 1, 3, 9, 27, 81, 243.')}),
+        () => ({seq:['1024','512','256','128','64'], ans:'32', opts:['16','24','32','48'], explain:_ex('÷2 each step', 'Halving from 1024: each term = previous / 2.')})
       ]
     };
     function loadPuzzle() {
@@ -5091,33 +5104,47 @@ function playAnimalSound(type) {
       seqEl.appendChild(blank);
       choicesEl.innerHTML = '';
       const shuffled = puzzle.opts.sort(() => Math.random() - 0.5);
+      let answered = false;
+      function _showExplain(ok){
+        document.querySelectorAll('.pat-explain').forEach(n=>n.remove());
+        const card = document.createElement('div'); card.className='pat-explain'+(ok?'':' miss');
+        card.innerHTML = `<div class="rule">${ok?'✓':'💡'} ${puzzle.explain.rule}</div><div class="desc">${puzzle.explain.desc}</div>`;
+        choicesEl.parentElement.insertBefore(card, choicesEl.nextSibling);
+      }
       shuffled.forEach(opt => {
         const btn = document.createElement('button');
         btn.className = 'pat-opt';
         btn.textContent = opt;
         btn.onclick = () => {
+          if(answered) return;
           if(opt === puzzle.ans) {
+            answered = true;
             blank.textContent = opt;
             blank.classList.remove('blank');
-            blank.style.background = 'rgba(46,204,113,0.3)';
-            blank.style.borderColor = '#2ecc71';
+            blank.classList.add('win');
             solved++; patStreak++;
+            if(patStreak>patBestStreak)patBestStreak=patStreak;
+            if(solved>patBest){sessionStorage.setItem('pat-best',solved);const be=$$('#pat-best');if(be)be.textContent=solved;}
+            if(patBestStreak>patBestStk){sessionStorage.setItem('pat-best-stk',patBestStreak);const bs=$$('#pat-best-stk');if(bs)bs.textContent=patBestStreak;}
             const se=$$('#pat-solved'); if(se) se.textContent=solved;
             const pe=$$('#pat-streak'); if(pe) pe.textContent=patStreak;
             const pts = patStreak >= 5 ? 4 : (patStreak >= 3 ? 3 : (currentLevel >= 4 ? 3 : (currentLevel >= 2 ? 2 : 1)));
-            const msg = patStreak>=5 ? `${patStreak}x Streak! 🔥✨` : (patStreak>=3 ? `${patStreak}x Streak! 🔥` : 'Pattern Found! ✨');
             addScore(pts);
-            showFeedback(msg, patStreak>=3?'#e74c3c':'#2ecc71');
+            if(patStreak===3||patStreak===5||patStreak===10||patStreak===15)spawnConfetti(window.innerWidth/2,window.innerHeight/3,patStreak>=10?80:50);
+            const msg = patStreak>=10?`${patStreak}x BRILLIANT! 🔥🔥🔥`:(patStreak>=5?`${patStreak}x Streak! 🔥🔥`:(patStreak>=3?`${patStreak}x! 🔥`:'Pattern Found! ✨'));
+            showFeedback(msg, patStreak>=5?'#e74c3c':'#2ecc71');
             info.textContent = `Solved: ${solved}`;
-            setTimeout(loadPuzzle, 1200);
+            _showExplain(true);
+            setTimeout(loadPuzzle, 2200);
           } else {
             btn.style.background = '#e74c3c';
             btn.style.animation = 'shake 0.3s';
-            showFeedback('Try again!', '#e74c3c');
+            blank.classList.add('miss');
+            showFeedback('Not quite — see the rule', '#e74c3c');
             patStreak = 0;
             const pe=$$('#pat-streak'); if(pe) pe.textContent='0';
             resetStreak();
-            setTimeout(() => { btn.style.background = '#2ecc71'; btn.style.animation=''; }, 600);
+            setTimeout(() => { btn.style.background = '#2ecc71'; btn.style.animation=''; blank.classList.remove('miss'); }, 600);
           }
         };
         choicesEl.appendChild(btn);
