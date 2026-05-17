@@ -1,5 +1,17 @@
 ﻿# Changelog 
 
+## [5.6.43] - 2026-05-17 - Amni-Learn content quadruple batch 19: Word Bridge L3 quadrupled
+- **Word Bridge L3 expanded** — 16 → 64 entries (+48 entries × 6 languages = 288 translation cells)
+- L3 +48 (intermediate vocab):
+  - **body** (continued): Finger, Knee, Elbow, Shoulder, Wrist, Neck, Tongue, Chest
+  - **time/measure**: Hour, Minute, Second, Week, Month, Today, Tomorrow, Yesterday
+  - **nature/weather**: Lightning, Storm, Volcano, Cave, Island, Valley, Hill, Waterfall, Glacier, Frost, Dawn, Dusk
+  - **emotions**: Hope, Fear, Joy, Anger, Surprise, Smile, Tear, Laugh
+  - **activities**: Walking, Running, Swimming, Dancing, Reading, Writing, Drawing, Singing, Cooking, Driving
+  - **concepts**: Truth, Peace
+- L4 and L5 still 16 each — two more iterations to complete Word Bridge
+- **SW cache v24 → v25** to flush.
+
 ## [5.6.42] - 2026-05-17 - Amni-Learn content quadruple batch 18: Word Bridge L1 + L2 quadrupled
 - **Word Bridge L1 + L2 expanded** — 16 → 64 entries each (+96 entries × 6 languages = 576 translation cells)
   - L1 +48 (basic vocab): body parts (Eye, Ear, Hand, Foot, Head, Mouth, Nose, Tooth, Hair); animals (Cow, Pig, Horse, Sheep, Mouse, Duck, Rabbit, Lion, Bear, Snake, Bee); food (Rice, Cheese, Sugar, Salt, Coffee, Tea, Banana, Orange, Cake, Meat); nature (Sea, Lake, Sky, Rain, Grass, Leaf, Stone); colors (Red, Blue, Green, Yellow, Black, White); numbers (One-Five)
