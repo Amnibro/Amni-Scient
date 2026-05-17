@@ -1,5 +1,15 @@
 ﻿# Changelog 
 
+## [5.6.14] - 2026-05-17 - Amni-Learn audit batch 15: Mental Rotation polish (modes + RT)
+- **3 difficulty modes** — Easy (45-135° rotations, 4-5 point shapes), Normal (45-180°, 4-6 points), Hard (30-180° including 30/60/120/150°, 5-8 points). Chip-row picker. Per-mode best-score sessionStorage (`mr-best-easy/normal/hard`).
+- **Reaction time per round** — `performance.now()` start at render, measured on choice. Bonus +1/+2 score for sub-3s/sub-1.5s responses. Avg RT shown in summary extras.
+- **Streak system** — `mr-stk` counter in HUD. Bonuses +2/+3 at streak 3/5. Confetti at 3/5/10. Win-flash (green glow) on both shape borders on correct.
+- **Miss reveal** — on wrong answer, the second shape is re-drawn in green showing the *correct* mirror/non-mirror state, so player learns what they got wrong instead of just hearing "Was MIRRORED!"
+- **Rotation angle indicator** — `↻ 90°` chip shown alongside RT in the info row. Players can see exactly how rotated the comparison was.
+- **Polished result card** — extras now include mode tag, average reaction time, best streak. NEW BEST detection (mode-specific) triggers 120-particle confetti; 10/12+ runs get 60-particle burst.
+- **Score scales** — base +2 per correct + RT bonus + streak bonus → up to +7 on a fast streaky round.
+- All existing 12-round structure, SAME/MIRROR buttons, polygon shape generation, red anchor dot preserved.
+
 ## [5.6.13] - 2026-05-17 - Amni-Learn audit batch 14: Chimp Test polish (spatial WM tiers)
 - **Tier system with Ayumu reference** — Basic (<4) / Starter (4-5) / Average (6-8) / Above Average (9-11) / Expert (12-15) / Ayumu-class (16+). Named after Ayumu, the chimpanzee who can recall 9 numbers in under a second — humans rarely match this. Tier scale legend on game-over.
 - **Streak counter + persistent top-streak** — `chm-stk` HUD stat tracks consecutive cleared levels. `chm-best-stk` sessionStorage. Both shown live.

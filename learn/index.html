@@ -865,12 +865,22 @@
   .vs-item:hover{background:#2a3a4a;}
   .vs-item.found{background:rgba(46,204,113,0.3);border-color:#2ecc71;}
   .mr-shapes{display:flex;gap:clamp(15px,4vw,40px);justify-content:center;align-items:center;flex-wrap:wrap;}
-  .mr-shape{background:#1a2a3a;border:2px solid #2a3a4a;border-radius:12px;padding:12px;display:flex;align-items:center;justify-content:center;}
-  .mr-shape canvas{border-radius:8px;}
+  .mr-shape{background:#1a2a3a;border:2px solid #2a3a4a;border-radius:12px;padding:12px;display:flex;align-items:center;justify-content:center;transition:border-color 0.3s,box-shadow 0.3s;}
+  .mr-shape.win{border-color:#2ecc71;box-shadow:0 0 16px rgba(46,204,113,0.5);}
+  .mr-shape.miss{border-color:#e74c3c;box-shadow:0 0 16px rgba(231,76,60,0.5);}
+  .mr-shape canvas{border-radius:8px;transition:transform 0.6s ease-in-out;}
   .mr-choices{display:flex;gap:12px;justify-content:center;margin-top:16px;}
-  .mr-btn{padding:12px 32px;border-radius:12px;border:2px solid;font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:bold;cursor:pointer;background:transparent;transition:0.2s;}
-  .mr-btn.same{border-color:#2ecc71;color:#2ecc71;}.mr-btn.same:hover{background:rgba(46,204,113,0.2);}
-  .mr-btn.mirror{border-color:#e74c3c;color:#e74c3c;}.mr-btn.mirror:hover{background:rgba(231,76,60,0.2);}
+  .mr-btn{padding:12px 32px;border-radius:12px;border:2px solid;font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:bold;cursor:pointer;background:transparent;transition:transform 0.15s,background 0.2s,box-shadow 0.2s;}
+  .mr-btn.same{border-color:#2ecc71;color:#2ecc71;}.mr-btn.same:hover{background:rgba(46,204,113,0.2);transform:translateY(-2px);box-shadow:0 6px 14px rgba(46,204,113,0.3);}
+  .mr-btn.mirror{border-color:#e74c3c;color:#e74c3c;}.mr-btn.mirror:hover{background:rgba(231,76,60,0.2);transform:translateY(-2px);box-shadow:0 6px 14px rgba(231,76,60,0.3);}
+  .mr-btn:active{transform:scale(0.94);}
+  .mr-mode-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:8px 0;}
+  .mr-mode-btn{padding:6px 14px;border-radius:14px;border:1.5px solid #1abc9c;background:transparent;color:#bdc3c7;font-family:'JetBrains Mono',monospace;font-size:0.85rem;cursor:pointer;transition:0.2s;}
+  .mr-mode-btn:hover{background:rgba(26,188,156,0.15);}
+  .mr-mode-btn.active{background:#1abc9c;color:#0a1a2a;border-color:#1abc9c;}
+  .mr-info-row{display:flex;gap:14px;justify-content:center;margin-top:6px;font-family:'JetBrains Mono',monospace;font-size:0.85rem;color:rgba(236,240,241,0.7);}
+  .mr-info-row .rt{color:#1abc9c;}
+  .mr-info-row .rot{color:#bdc3c7;}
   .tm-canvas{background:#0a1520;border:2px solid #1abc9c;border-radius:12px;cursor:pointer;touch-action:none;}
   .learn-footer{background:#0a0c0f;border-top:1px solid #222;padding:clamp(28px,4vw,44px) clamp(18px,3vw,36px);color:#bcc6d1;font-family:'JetBrains Mono',monospace;font-size:0.88rem;line-height:1.65}
   /* Hide marketing footer (about/faq/links) inside the Android wrapper or
@@ -6017,24 +6027,48 @@ function playAnimalSound(type) {
   }
   function initMentalRot(){
     const ct=$$('#mr-container'),hud=$$('#mr-hud');
-    let sc=0,tot=0,stk=0;
-    hud.innerHTML=`<span class="game-stat">\u2705 <span class="game-stat-val" id="mr-sc">0</span></span><span class="game-stat">\ud83d\udd25 <span class="game-stat-val" id="mr-stk">0</span></span><span class="game-stat">\ud83d\udcca <span class="game-stat-val" id="mr-tot">0</span>/12</span>`;
+    let sc=0,tot=0,stk=0,bestStk=0,rtTotal=0,rtCount=0,roundStart=0;
+    const mode=sessionStorage.getItem('mr-mode')||'normal';
+    const cfg={easy:{angles:[Math.PI/4,Math.PI/2,Math.PI*3/4],pts:[4,5]},normal:{angles:[Math.PI/4,Math.PI/2,Math.PI*3/4,Math.PI],pts:[4,5,6]},hard:{angles:[Math.PI/6,Math.PI/4,Math.PI/3,Math.PI/2,Math.PI*2/3,Math.PI*3/4,Math.PI*5/6,Math.PI],pts:[5,6,7,8]}};
+    const c=cfg[mode]||cfg.normal;
+    const bestKey='mr-best-'+mode;
+    const bestStored=parseInt(sessionStorage.getItem(bestKey)||'0');
+    hud.innerHTML=`<span class="game-stat">\u2705 <span class="game-stat-val" id="mr-sc">0</span></span><span class="game-stat">\ud83d\udd25 <span class="game-stat-val" id="mr-stk">0</span></span><span class="game-stat">\ud83d\udcca <span class="game-stat-val" id="mr-tot">0</span>/12</span><span class="game-stat">\u2b50 Best ${bestStored}</span>`;
     function genShape(){
-      const pts=[];const n=4+Math.floor(Math.random()*4);
+      const minPts=c.pts[0],maxPts=c.pts[c.pts.length-1];
+      const pts=[];const n=minPts+Math.floor(Math.random()*(maxPts-minPts+1));
       for(let i=0;i<n;i++){const a=(Math.PI*2/n)*i+Math.random()*0.6-0.3;const r=40+Math.random()*40;pts.push([100+Math.cos(a)*r,100+Math.sin(a)*r]);}
       return pts;
     }
-    function drawShape(canvas,pts,angle,mirror){
+    function drawShape(canvas,pts,angle,mirror,opts){
       const ctx=canvas.getContext('2d');ctx.clearRect(0,0,200,200);ctx.save();ctx.translate(100,100);ctx.rotate(angle);if(mirror)ctx.scale(-1,1);ctx.translate(-100,-100);
-      ctx.beginPath();ctx.moveTo(pts[0][0],pts[0][1]);for(let i=1;i<pts.length;i++)ctx.lineTo(pts[i][0],pts[i][1]);ctx.closePath();ctx.fillStyle='rgba(26,188,156,0.4)';ctx.fill();ctx.strokeStyle='#1abc9c';ctx.lineWidth=2.5;ctx.stroke();
+      ctx.beginPath();ctx.moveTo(pts[0][0],pts[0][1]);for(let i=1;i<pts.length;i++)ctx.lineTo(pts[i][0],pts[i][1]);ctx.closePath();
+      const fill=opts&&opts.fill?opts.fill:'rgba(26,188,156,0.4)';
+      const stroke=opts&&opts.stroke?opts.stroke:'#1abc9c';
+      ctx.fillStyle=fill;ctx.fill();ctx.strokeStyle=stroke;ctx.lineWidth=2.5;ctx.stroke();
       ctx.beginPath();ctx.arc(pts[0][0],pts[0][1],4,0,Math.PI*2);ctx.fillStyle='#e74c3c';ctx.fill();
       ctx.restore();
     }
     function round(){
       tot++;$$('#mr-tot').textContent=tot;
-      if(tot>12){ct.innerHTML=buildResultCard('mentalrot',sc,12,`Best streak: ${stk}`);addScore(sc);const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='PLAY AGAIN';rb.onclick=()=>{sc=0;tot=0;stk=0;$$('#mr-sc').textContent=0;$$('#mr-stk').textContent=0;initMentalRot();};ct.appendChild(rb);return;}
-      const pts=genShape();const isMirror=Math.random()<0.5;const angle=(Math.floor(Math.random()*3)+1)*(Math.PI/4)*(Math.random()<0.5?1:-1);
-      ct.innerHTML='';const wrap=document.createElement('div');wrap.className='mr-shapes';
+      if(tot>12){
+        const avgRT=rtCount?Math.round(rtTotal/rtCount):0;
+        const wasBest=sc>bestStored;
+        if(wasBest)sessionStorage.setItem(bestKey,sc);
+        ct.innerHTML=buildResultCard('mentalrot-'+mode,sc,12,`Avg ${avgRT}ms \u00b7 Best streak ${bestStk} \u00b7 Mode: ${mode.toUpperCase()}`);
+        if(wasBest)spawnConfetti(window.innerWidth/2,window.innerHeight/2,120);
+        else if(sc>=10)spawnConfetti(window.innerWidth/2,window.innerHeight/3,60);
+        addScore(sc);
+        const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='PLAY AGAIN';rb.onclick=()=>{sc=0;tot=0;stk=0;bestStk=0;rtTotal=0;rtCount=0;$$('#mr-sc').textContent=0;$$('#mr-stk').textContent=0;initMentalRot();};
+        ct.appendChild(rb);
+        return;
+      }
+      const pts=genShape();
+      const isMirror=Math.random()<0.5;
+      const angle=c.angles[Math.floor(Math.random()*c.angles.length)]*(Math.random()<0.5?1:-1);
+      const angleDeg=Math.round(angle*180/Math.PI);
+      ct.innerHTML='';
+      const wrap=document.createElement('div');wrap.className='mr-shapes';
       const c1=document.createElement('canvas');c1.width=200;c1.height=200;const s1=document.createElement('div');s1.className='mr-shape';s1.appendChild(c1);
       const c2=document.createElement('canvas');c2.width=200;c2.height=200;const s2=document.createElement('div');s2.className='mr-shape';s2.appendChild(c2);
       drawShape(c1,pts,0,false);drawShape(c2,pts,angle,isMirror);
@@ -6043,16 +6077,42 @@ function playAnimalSound(type) {
       const ch=document.createElement('div');ch.className='mr-choices';
       const sb=document.createElement('button');sb.className='mr-btn same';sb.textContent='SAME';
       const mb=document.createElement('button');mb.className='mr-btn mirror';mb.textContent='MIRROR';
+      const info=document.createElement('div');info.className='mr-info-row';info.innerHTML=`<span class="rot">\u21bb ${Math.abs(angleDeg)}\u00b0</span><span class="rt" id="mr-rt">\u2014</span>`;
+      roundStart=performance.now();
+      let answered=false;
       const ans=a=>{
+        if(answered)return;answered=true;
+        const rt=Math.round(performance.now()-roundStart);
+        rtTotal+=rt;rtCount++;
+        const rtEl=$$('#mr-rt');if(rtEl)rtEl.textContent=rt+'ms';
         const ok=(a==='same')===!isMirror;
-        ok?(sc++,stk++,$$('#mr-sc').textContent=sc,$$('#mr-stk').textContent=stk,addScore(stk>=3?3:2),showFeedback('\u2705','#2ecc71')):(stk=0,$$('#mr-stk').textContent=0,resetStreak(),showFeedback(isMirror?'Mirrored!':'Same shape!','#e74c3c'));
-        setTimeout(round,1000);
+        if(ok){
+          sc++;stk++;if(stk>bestStk)bestStk=stk;
+          const rtBonus=rt<1500?2:(rt<3000?1:0);
+          const stkBonus=stk>=5?3:(stk>=3?2:0);
+          addScore(2+rtBonus+stkBonus);
+          $$('#mr-sc').textContent=sc;$$('#mr-stk').textContent=stk;
+          s1.classList.add('win');s2.classList.add('win');
+          if(stk===3||stk===5||stk===10)spawnConfetti(window.innerWidth/2,window.innerHeight/3,stk>=10?80:50);
+          showFeedback(stk>=10?`${stk}x! \ud83d\udd25\ud83d\udd25\ud83d\udd25 ${rt}ms`:(stk>=5?`${stk}x \ud83d\udd25\ud83d\udd25`:(stk>=3?`${stk}x \ud83d\udd25`:`\u2705 ${rt}ms`)),'#2ecc71');
+        }else{
+          stk=0;
+          $$('#mr-stk').textContent=0;
+          resetStreak();
+          s1.classList.add('miss');s2.classList.add('miss');
+          drawShape(c2,pts,angle,!isMirror,{fill:'rgba(46,204,113,0.18)',stroke:'#2ecc71'});
+          showFeedback(isMirror?'Was MIRRORED':'Was SAME','#e74c3c');
+        }
+        setTimeout(round, ok?900:1500);
       };
       sb.onclick=()=>ans('same');mb.onclick=()=>ans('mirror');
       ch.appendChild(sb);ch.appendChild(mb);ct.appendChild(ch);
+      ct.appendChild(info);
     }
-    ct.innerHTML='<div class="nmm-msg">Two shapes appear \u2014 one is rotated.<br>Are they the SAME shape, or is one MIRRORED?</div>';
-    const sb=document.createElement('button');sb.className='nmm-btn';sb.textContent='START';sb.onclick=()=>{sc=0;tot=0;stk=0;round();};ct.appendChild(sb);
+    function _modeRow(){const row=document.createElement('div');row.className='mr-mode-row';[['easy','Easy'],['normal','Normal'],['hard','Hard']].forEach(([m,lbl])=>{const b=document.createElement('button');b.className='mr-mode-btn'+(m===mode?' active':'');b.textContent=lbl;b.title=m==='easy'?'45-135\u00b0, simpler shapes':(m==='hard'?'30-180\u00b0, complex shapes':'45-180\u00b0');b.onclick=()=>{sessionStorage.setItem('mr-mode',m);initMentalRot();};row.appendChild(b);});return row;}
+    ct.innerHTML='<div class="nmm-msg">Two shapes appear \u2014 one is rotated.<br>Are they the SAME shape, or is one MIRRORED? <small style="opacity:0.7;display:block;margin-top:4px">Red dot marks the same vertex.</small></div>';
+    ct.appendChild(_modeRow());
+    const sb=document.createElement('button');sb.className='nmm-btn';sb.textContent='START';sb.onclick=()=>{sc=0;tot=0;stk=0;bestStk=0;rtTotal=0;rtCount=0;round();};ct.appendChild(sb);
   }
   function initTrailMake(){
     const ct=$$('#tm-container'),hud=$$('#tm-hud');
