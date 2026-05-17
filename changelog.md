@@ -1,5 +1,15 @@
 ﻿# Changelog 
 
+## [5.6.19] - 2026-05-17 - Amni-Learn audit batch 20: Logic Puzzles polish (bank doubled + categories)
+- **Bank expanded 27 → 52 puzzles** — added 25 new puzzles across 7 categories: 🌀 Lateral (Monty Hall door reveal pre-context, 2-fathers/2-sons, Monopoly bankrupt, hiccups bar, TON/NOT, etc), 🔮 Riddle (map without houses, darkness paradox), 🔢 Math (brick + half-brick, snail-in-well, narcissistic 153, book/bookmark, only-number-where-name-letters-match-value, two-trains-bird), 🔤 Word (incorrectly, dozens), 🎲 Probability (Monty Hall switch, birthday paradox, dice sum), 📈 Sequence (One-Two-Three letter sequence, look-and-say, ×2+1, diff-of-diffs), 🧮 Logic (three switches, Wason selection, two-guards fork, 64-player tournament).
+- **Category badges** — every puzzle now carries a `cat` field shown as a chip above the question, color-coordinated to the puzzle theme.
+- **Per-game run cap** — 15 puzzles per game (was full 27/52). Tighter sessions, less fatigue.
+- **Persistent best score** — `lgc-best` sessionStorage. ⭐ Best chip in HUD.
+- **Tier system** — Sage (90%+), Sharp (75%+), Capable (60%+), Developing (40%+), Starter. Tier-tag shown on summary card with one-line message.
+- **Polished summary card** — replaces auto-replay innerHTML with `lgc-summary`: Correct / Accuracy / Best-Streak / All-Time stats columns. NEW BEST detection (120-particle confetti); Sage/Sharp runs get 60-particle burst.
+- **Streak score multipliers** — +2/+3/+4 score bonus at streak 1/3/5. Milestone confetti at 3/5/10. "🔥🔥🔥" at 10+.
+- **Skip-to-next button** — during explanation phase, "Next ▶" button lets users advance immediately instead of waiting the full 3.2s.
+
 ## [5.6.18] - 2026-05-17 - Amni-Learn audit batch 19: Dot Tracking polish (MOT)
 - **Target picker expanded** — 3 / 4 / 5 / 6 (was 3/4/5). Persists in sessionStorage (`mot-tc`).
 - **Speed picker** — 🐢 Slow / ⚡ Normal / 🔥 Fast (0.4 / 0.7 / 1.1 base velocity). Separate sessionStorage (`mot-speed`).
