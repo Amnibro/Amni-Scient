@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.6.25] - 2026-05-17 - Amni-Learn content quadruple, batch 1: Science quiz L4+L5
+- **Directive** — Anthony asked for 4× content expansion across every Amni-Learn module bank. New durable memory `feedback_amni_learn_quadruple_content.md` tracks the goal. Iterations will progressively expand each module's content until every bank hits 4×.
+- **Science L4** — 10 → 40 questions (+30 new). New L4 topics: Schrödinger equation, plate tectonics, radioactive half-life, DNA-vs-RNA chemistry, greenhouse effect mechanism, dark-matter evidence, Rayleigh scattering, ATP synthase, Mendel's segregation, fluorescence vs phosphorescence, Beer-Lambert law, aurora cause, escape velocity, supernova nucleosynthesis, ozone layer, Krebs ATP yield, mitosis vs meiosis, electronegativity, water specific heat, speed of sound, Avogadro's law, gravitational time dilation, ionic vs covalent, Li-ion chemistry, fission vs fusion, C-14 dating, biodiversity hotspot, biomimicry, black-hole event horizon, CMB.
+- **Science L5** — 10 → 40 questions (+30 new). New L5 topics: Berry phase, neutrino oscillation, cosmic inflation, Hawking radiation, CP violation, supersymmetry, color confinement, Penrose process, CKM matrix, fermion generations, integer quantum Hall, anyons, EPR paradox, Bell's theorem, Wick rotation, Feynman diagrams, lattice QCD, magnetic monopoles, skyrmions, dark energy, Planck length, strong CP problem, axions, Higgs mechanism, QCD vacuum, weak chirality, renormalizability, decoherence, Aharonov-Bohm, Unruh effect. Graduate/specialist depth.
+- **SW cache v6 → v7** so the +60 questions reach users.
+
 ## [5.6.24] - 2026-05-17 - Amni-Learn SW cache bump v4 → v5 (deploy stale-cache flush)
 - **Root cause** — every v5.6.x polish push (sudoku highlight rewrite, card pairs, reflex pacing, all 24 audit batches) hit the Pages build, but `learn/sw.js` cache version was still pinned at `amni-learn-v4`. Users with the service worker installed kept serving the pre-fix HTML from cache; the Sudoku "color-flooding" rgba-transparency bug appeared to persist for them even though it was fixed at the source 24 commits ago.
 - **Fix** — bumped `CACHE = 'amni-learn-v4'` → `'amni-learn-v5'`. The activate handler will purge the v4 cache on next page load, forcing a fresh fetch of all v5.6.x HTML/CSS/JS.
