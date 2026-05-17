@@ -1,5 +1,13 @@
 ﻿# Changelog 
 
+## [5.6.29] - 2026-05-17 - Amni-Learn content quadruple batch 5: Animals L1-L3
+- **Animals quiz expanded L1, L2, L3** — 55 → 220 questions (+165)
+  - L1: 25 → 100 (baby names, animal homes, what they eat, body parts, identifying by features, classifications)
+  - L2: 15 → 60 (legs by class, fastest/loudest/longest, mammal/fish heart chambers, monotremes, echolocation, animal records, herbivore/carnivore/omnivore, amphibian)
+  - L3: 15 → 60 (ornithology/herpetology/ichthyology/mammalogy, vertebrates, insect orders, marsupials, camouflage, mimicry, symbiosis types — mutualism/commensalism/parasitism, biodiversity, IUCN Red List, endemic species, keystone species, nocturnal/diurnal, group names: pride/herd/school, sequential hermaphroditism, tardigrades)
+- L4 + L5 still at 10 each — pending next iteration
+- **SW cache v10 → v11** to flush.
+
 ## [5.6.28] - 2026-05-17 - Amni-Learn content quadruple batch 4: Engineering quiz all 5 levels
 - **Physics & Engineering quiz quadrupled across every level** — 53 → 216 questions
   - L1: 8 → 33 (kid physics — friction, brakes, fans, helmets, paper airplanes, etc)
