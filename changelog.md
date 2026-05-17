@@ -1,5 +1,14 @@
 ﻿# Changelog 
 
+## [5.6.28] - 2026-05-17 - Amni-Learn content quadruple batch 4: Engineering quiz all 5 levels
+- **Physics & Engineering quiz quadrupled across every level** — 53 → 216 questions
+  - L1: 8 → 33 (kid physics — friction, brakes, fans, helmets, paper airplanes, etc)
+  - L2: 10 → 41 (simple machines all 6, Newton's first law, energy types, SI units, mass vs weight, conductors/insulators, balanced/unbalanced forces, renewable energy, what engineers do)
+  - L3: 15 → 60 (Newton's 3rd law, momentum, impulse, work-energy theorem, scalar vs vector, torque, angular momentum, Archimedes, Pascal, thermo laws 1+3, latent heat, wave speed, Snell's law, AC/DC, Coulomb, Faraday induction, right-hand rule, photoelectric proof, transistors/diodes/L/C, CMOS, antenna, truss/rebar, compressive vs tensile, factor of safety, strain gauge, hysteresis)
+  - L4: 10 → 41 (Mohr's circle, beam deflection, thermal resistance analog, Strouhal/vortex shedding, Wheatstone, transfer function, Laplace use, state-space, gain margin, phase margin, Sallen-Key, Wien bridge, three-phase, Y vs Δ, Euler buckling, static vs kinetic friction, cantilever, Rankine/Brayton/Otto/Diesel cycles, phasor, skin effect, Hall effect, piezoelectric, CMOS inverter, PWM, aliasing, thermistor vs RTD, I-beam optimization)
+  - L5: 10 → 41 (Lyapunov stability, Mach/Prandtl/Biot numbers, Galois groups in coding, BCH/Reed-Solomon, Viterbi, matched filter, FIR/Z-transform, BJT vs FET, bandgap reference, chopper-stabilized amp, Maxwell's equations, displacement current, waveguide TE/TM, group vs phase velocity, quartz oscillator, parametric amp, shot noise, Johnson-Nyquist, 1/f noise, lock-in amp, Maxwell-Boltzmann/Fermi-Dirac/Bose-Einstein distributions, spin-orbit coupling, topological insulator, Bragg's law, metamaterials)
+- **SW cache v9 → v10** to flush.
+
 ## [5.6.27] - 2026-05-17 - Amni-Learn music modules massive expansion
 - **Music subject quiz quadrupled across all 5 levels + 2 new advanced banks**
   - L1: 13 → 52 (instruments, percussion, beat/melody, music vocab, songs, recording, conducting)
