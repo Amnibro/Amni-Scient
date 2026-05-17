@@ -1,5 +1,19 @@
 ﻿# Changelog 
 
+## [5.6.41] - 2026-05-17 - Amni-Learn content quadruple batch 17: Word Search COMPLETE at 28 topics / 420 words
+- **Word Search FULLY quadrupled** — 105 → 420 words, 7 → 28 topics, +10 final topics
+  - **jobs**: TEACHER, DOCTOR, LAWYER, ENGINEER, NURSE, FARMER, PILOT, CHEF, MECHANIC, ARCHITECT, JOURNALIST, PROGRAMMER, SCIENTIST, ARTIST, BAKER
+  - **body**: HEART, BRAIN, LUNG, LIVER, KIDNEY, MUSCLE, BONE, NERVE, ARTERY, SKULL, SPINE, PELVIS, FEMUR, RETINA, CORTEX
+  - **clothing**: SHIRT, PANTS, JACKET, SWEATER, DRESS, SKIRT, BOOTS, GLOVES, SCARF, SOCKS, SANDALS, TUXEDO, KIMONO, BLAZER, PONCHO
+  - **shapes**: CIRCLE, SQUARE, TRIANGLE, RECTANGLE, OVAL, HEXAGON, OCTAGON, PENTAGON, DIAMOND, STAR, CUBE, SPHERE, CONE, CYLINDER, PYRAMID
+  - **gems**: DIAMOND, RUBY, EMERALD, SAPPHIRE, AMETHYST, TOPAZ, OPAL, PEARL, QUARTZ, JADE, ONYX, GARNET, AGATE, TURQUOISE, BERYL
+  - **weapons**: SWORD, ARROW, DAGGER, SPEAR, LANCE, CROSSBOW, CANNON, MUSKET, RIFLE, PISTOL, SHIELD, HAMMER, MACE, KATANA, HALBERD
+  - **buildings**: HOUSE, CASTLE, TEMPLE, CHURCH, MOSQUE, PYRAMID, TOWER, SKYSCRAPER, FORTRESS, MANSION, BARN, CABIN, COTTAGE, PAGODA, BUNGALOW
+  - **emotions**: HAPPY, ANGRY, FEAR, JOY, GRIEF, LOVE, HOPE, PRIDE, SHAME, ENVY, CALM, EXCITED, SURPRISE, TRUST, CURIOUS
+  - **insects**: ANT, BEETLE, MOTH, WASP, MOSQUITO, CRICKET, GRASSHOPPER, DRAGONFLY, FIREFLY, LADYBUG, TERMITE, COCKROACH, WEEVIL, MAYFLY, APHID
+- Each word has a 1-line definition shown on find. Topic picker UI auto-shows all 28 buttons.
+- **SW cache v22 → v23** to flush.
+
 ## [5.6.40] - 2026-05-17 - Amni-Learn content quadruple batch 16: Word Search +11 topics (105 → 270 words)
 - **Word Search expanded** from 7 topics to 18 topics (+165 words). Each topic still 15 words with definitions.
 - New topics added:
