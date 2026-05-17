@@ -8515,7 +8515,9 @@ function playAnimalSound(type) {
           if(leakConn&&Math.abs(leakConn.w)>0.2)return'Diagnosis code still leaks the answer — accuracy in production will collapse.';
           if(!sympConn||sympConn.w<0.5)return'Symptoms should be a strong, valid predictor.';
           if(!labConn||labConn.w<0.5)return'Lab values should be a strong, valid predictor.';
-          return null;}},
+          return null;},
+        hints:['Diagnosis Code is the leaky feature — its label is downstream of the prediction.','Cut the Diag-Code wire or set its weight ≤0.2.','Boost Symptoms and Lab Values weights to ≥0.5 each.'],
+        impact:'Data leakage is the #1 reason production ML models underperform their offline metrics. Even tiny leaks (timestamps, derived IDs) can inflate validation accuracy by 10-30%.'},
       {title:'Spurious Correlation',desc:'This image classifier learned to use the watermark in the corner of training photos instead of the actual subject — pure dataset artifact, no real signal. Reduce the watermark feature and let the model rely on shape/color/texture.',
         nodes:[{id:'shape',x:60,y:60,layer:0,label:'Shape',val:0.9},{id:'color',x:60,y:170,layer:0,label:'Color',val:0.7},{id:'wmark',x:60,y:280,layer:0,label:'Watermark',val:0.5},{id:'tex',x:60,y:370,layer:0,label:'Texture',val:0.6},
           {id:'h1',x:250,y:100,layer:1,label:'H1',val:0},{id:'h2',x:250,y:250,layer:1,label:'H2',val:0},{id:'h3',x:250,y:370,layer:1,label:'H3',val:0},
@@ -8524,7 +8526,9 @@ function playAnimalSound(type) {
         check:function(n,c){const wmConn=c.find(cc=>cc.from==='wmark');const shConn=c.find(cc=>cc.from==='shape');
           if(wmConn&&Math.abs(wmConn.w)>0.2)return'Watermark still drives the prediction — that\'s a dataset shortcut, not real learning.';
           if(!shConn||shConn.w<0.5)return'Shape should be a primary visual feature.';
-          return null;}},
+          return null;},
+        hints:['The Watermark is a dataset artifact — its weight is the problem.','Cut the Watermark wire or set its weight ≤0.2.','Boost the Shape input weight to ≥0.5 — that\'s real semantic signal.'],
+        impact:'Famous "husky vs wolf" example: a model classified wolves by checking if there was snow in the background. Spurious correlations are why ML papers now report on held-out distribution shifts, not just IID test sets.'},
       {title:'Privacy Breach',desc:'This recommender pipes raw "User ID" and "Email" straight into the model. Personally identifying inputs leak privacy and let the model memorize individuals. Remove the PII features so only behavioral signals (clicks, dwell time) drive recommendations.',
         nodes:[{id:'click',x:60,y:80,layer:0,label:'Clicks',val:0.4},{id:'dwell',x:60,y:200,layer:0,label:'Dwell Time',val:0.8},{id:'pii',x:60,y:320,layer:0,label:'User ID',val:0.6},
           {id:'h1',x:250,y:120,layer:1,label:'H1',val:0},{id:'h2',x:250,y:280,layer:1,label:'H2',val:0},
@@ -8533,11 +8537,42 @@ function playAnimalSound(type) {
         check:function(n,c){const piiConn=c.find(cc=>cc.from==='pii');const dwellConn=c.find(cc=>cc.from==='dwell');
           if(piiConn&&Math.abs(piiConn.w)>0.2)return'Raw User ID still feeds the model — that\'s a privacy breach and it lets the net memorize individuals.';
           if(!dwellConn||dwellConn.w<0.4)return'Dwell time is a clean behavioral signal — let it drive the recommendation.';
-          return null;}}
+          return null;},
+        hints:['User ID is the PII feature — its connection weight is the problem.','Cut the User-ID wire or set its weight at/below 0.2.','Then make sure Dwell Time has weight ≥ 0.4 — it\'s the clean behavioral signal.'],
+        impact:'Real-world parallel: GDPR/CCPA require pseudonymization. Models that memorize PII can leak individual records via membership-inference or training-data extraction attacks.'},
+      {title:'Bias Amplification',desc:'This hiring model takes "Resume Score" and a proxy feature "ZIP Code" that strongly correlates with protected demographics in your training data. Heavy weight on ZIP Code amplifies historical hiring bias. Drop the proxy and let resume score drive the decision.',
+        nodes:[{id:'resume',x:60,y:80,layer:0,label:'Resume Score',val:0.8},{id:'zip',x:60,y:200,layer:0,label:'ZIP Code',val:0.6},{id:'skill',x:60,y:320,layer:0,label:'Skills Test',val:0.7},
+          {id:'h1',x:250,y:120,layer:1,label:'H1',val:0},{id:'h2',x:250,y:280,layer:1,label:'H2',val:0},
+          {id:'out',x:440,y:200,layer:2,label:'Hire?',val:0}],
+        conns:[{from:'resume',to:'h1',w:0.3},{from:'zip',to:'h2',w:0.85},{from:'skill',to:'h1',w:0.2},{from:'h1',to:'out',w:0.3},{from:'h2',to:'out',w:0.8}],
+        check:function(n,c){const zipConn=c.find(cc=>cc.from==='zip');const resConn=c.find(cc=>cc.from==='resume');const skillConn=c.find(cc=>cc.from==='skill');
+          if(zipConn&&Math.abs(zipConn.w)>0.2)return'ZIP Code is a demographic proxy — heavy weight here amplifies historical bias.';
+          if(!resConn||resConn.w<0.5)return'Resume Score should be a primary driver of the decision.';
+          if(!skillConn||skillConn.w<0.4)return'Skills Test is objective signal — let it carry weight.';
+          return null;},
+        hints:['ZIP Code is a redlining-style proxy. Cut its wire or zero its weight.','Boost Resume Score weight to ≥0.5 — it\'s the legitimate signal.','Add Skills Test (≥0.4) too — objective evaluation should dominate.'],
+        impact:'Amazon famously scrapped a hiring AI in 2018 after it penalized resumes mentioning "women\'s" clubs/colleges — historical hiring patterns leaked through proxies. EU AI Act now classifies hiring models as high-risk.'},
+      {title:'Adversarial Robustness',desc:'This image classifier has a "Noise Channel" input that\'s supposed to be background variation, but its weight is so high that 1% pixel noise can flip the prediction. Reduce the noise channel\'s influence so the model relies on real semantic features.',
+        nodes:[{id:'edge',x:60,y:60,layer:0,label:'Edges',val:0.7},{id:'tex',x:60,y:170,layer:0,label:'Texture',val:0.6},{id:'noise',x:60,y:280,layer:0,label:'Noise Ch.',val:0.4},{id:'sem',x:60,y:380,layer:0,label:'Semantics',val:0.8},
+          {id:'h1',x:250,y:100,layer:1,label:'H1',val:0},{id:'h2',x:250,y:250,layer:1,label:'H2',val:0},{id:'h3',x:250,y:380,layer:1,label:'H3',val:0},
+          {id:'out',x:440,y:200,layer:2,label:'Classify',val:0}],
+        conns:[{from:'edge',to:'h1',w:0.3},{from:'tex',to:'h2',w:0.3},{from:'noise',to:'h2',w:0.9},{from:'sem',to:'h3',w:0.2},{from:'h1',to:'out',w:0.3},{from:'h2',to:'out',w:0.8},{from:'h3',to:'out',w:0.3}],
+        check:function(n,c){const noiseConn=c.find(cc=>cc.from==='noise');const semConn=c.find(cc=>cc.from==='sem');const semOut=c.find(cc=>cc.from==='h3');
+          if(noiseConn&&Math.abs(noiseConn.w)>0.2)return'Noise still dominates — adversarial perturbations will flip your predictions.';
+          if(!semConn||semConn.w<0.5)return'Semantics is the robust signal — boost its weight.';
+          if(!semOut||semOut.w<0.5)return'And let H3 (semantics path) actually reach the output strongly.';
+          return null;},
+        hints:['The Noise Channel weight is too high. Cut or zero it (≤0.2).','Boost Semantics input weight to ≥0.5.','Make sure H3 → Out weight is also ≥0.5 so semantics actually drives prediction.'],
+        impact:'Adversarial examples (Goodfellow 2014) showed that imperceptible noise can fool image classifiers. Robust models rely on shape/semantics over high-frequency texture, and pass robustness audits used in autonomous driving, medical imaging, and content moderation.'}
     ];
-    let lvl=0,nodes=[],conns=[],selConn=null,dragNode=null,dragOff={x:0,y:0};
+    let lvl=0,nodes=[],conns=[],selConn=null,dragNode=null,dragOff={x:0,y:0},hintIdx=0,attempts=0;
+    const solvedKey='netdebug-solved';
+    function _solvedSet(){try{return new Set(JSON.parse(sessionStorage.getItem(solvedKey)||'[]'));}catch(_){return new Set();}}
+    function _markSolved(i){const s=_solvedSet();s.add(i);sessionStorage.setItem(solvedKey,JSON.stringify([...s]));}
     function loadLevel(){
-      const L=levels[lvl];nodes=L.nodes.map(n=>({...n}));conns=L.conns.map(c=>({...c}));selConn=null;
+      const L=levels[lvl];nodes=L.nodes.map(n=>({...n}));conns=L.conns.map(c=>({...c}));selConn=null;hintIdx=0;attempts=0;
+      const solved=_solvedSet();
+      const progress=[...Array(levels.length).keys()].map(i=>solved.has(i)?'✅':(i===lvl?'▶':'⬜')).join(' ');
       root.innerHTML=`<div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:center;width:100%;">
         <div style="flex:1;min-width:300px;">
           <canvas class="lab-canvas" id="net-cv" width="500" height="400" style="touch-action:none;max-width:100%;cursor:pointer;"></canvas>
@@ -8546,13 +8581,15 @@ function playAnimalSound(type) {
             <button class="lab-tool" data-act="wup">⬆️ Weight+</button>
             <button class="lab-tool" data-act="wdn">⬇️ Weight−</button>
             <button class="lab-tool" data-act="del">✂️ Cut Wire</button>
+            <button class="lab-tool" data-act="hint">💡 Hint</button>
             <button class="lab-tool" data-act="test">🧪 Test</button>
           </div>
         </div>
         <div style="flex:1;min-width:240px;max-width:350px;font-family:'JetBrains Mono',monospace;color:#9b59b6;">
-          <h3 style="margin:0 0 4px;">Level ${lvl+1}: ${L.title}</h3>
+          <h3 style="margin:0 0 4px;">Level ${lvl+1}/${levels.length}: ${L.title}</h3>
+          <div style="font-size:0.75rem;color:#888;margin-bottom:6px;letter-spacing:2px;">${progress}</div>
           <div id="net-desc" style="background:rgba(0,0,0,0.6);padding:12px;border-radius:8px;margin-bottom:8px;font-size:0.85rem;line-height:1.5;color:#ecf0f1;">${L.desc}</div>
-          <div id="net-status" style="background:rgba(0,0,0,0.6);padding:12px;border-radius:8px;font-size:0.9rem;">Click a connection line, then use Weight+/− or Cut Wire.</div>
+          <div id="net-status" style="background:rgba(0,0,0,0.6);padding:12px;border-radius:8px;font-size:0.9rem;">Click a connection line, then use Weight+/− or Cut Wire. Hint button cycles through guidance if you get stuck.</div>
           <div id="net-sel" style="margin-top:8px;font-size:0.85rem;color:#888;"></div>
         </div>
       </div>`;
@@ -8562,9 +8599,10 @@ function playAnimalSound(type) {
         $$all('#net-tb .lab-tool').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
         tool=btn.dataset.act;
         if(tool==='test')testNet(cx);
-        if(tool==='wup'&&selConn){selConn.w=Math.min(1,+(selConn.w+0.1).toFixed(1));draw(cx,cv);}
-        if(tool==='wdn'&&selConn){selConn.w=Math.max(-1,+(selConn.w-0.1).toFixed(1));draw(cx,cv);}
-        if(tool==='del'&&selConn){conns=conns.filter(c=>c!==selConn);selConn=null;draw(cx,cv);}
+        if(tool==='wup'&&selConn){selConn.w=Math.min(1,+(selConn.w+0.1).toFixed(1));draw(cx,cv);updateSel();}
+        if(tool==='wdn'&&selConn){selConn.w=Math.max(-1,+(selConn.w-0.1).toFixed(1));draw(cx,cv);updateSel();}
+        if(tool==='del'&&selConn){conns=conns.filter(c=>c!==selConn);selConn=null;draw(cx,cv);updateSel();}
+        if(tool==='hint'){const hints=L.hints||['Try cutting the suspicious wire or lowering its weight.','Boost legitimate features to weight ≥0.5.','Click Test to check your fix.'];const h=hints[Math.min(hintIdx,hints.length-1)];hintIdx++;const st=$$('#net-status');st.innerHTML=`<span style="color:#f1c40f;">💡 Hint ${Math.min(hintIdx,hints.length)}/${hints.length}: ${h}</span>`;}
       });
       function pos(e){const r=cv.getBoundingClientRect();const t=e.touches?e.touches[0]:e;return{x:t.clientX-r.left,y:t.clientY-r.top};}
       function findNode(p){return nodes.find(n=>Math.hypot(n.x-p.x,n.y-p.y)<22);}
@@ -8583,11 +8621,23 @@ function playAnimalSound(type) {
       cv.addEventListener('touchend',e=>{e.preventDefault();dragNode=null;},{passive:false});
       function updateSel(){const s=$$('#net-sel');s.innerHTML=selConn?`Selected: <b>${selConn.from} → ${selConn.to}</b> weight=<b>${selConn.w}</b>`:'No connection selected.';}
       function testNet(cx){
+        attempts++;
         const err=L.check(nodes,conns);const st=$$('#net-status');
-        if(err){st.innerHTML=`<span style="color:#e74c3c;">❌ ${err}</span>`;showFeedback('Not quite — keep debugging!','#e74c3c');}
-        else{st.innerHTML=`<span style="color:#2ecc71;">✅ Fair network achieved! Bias removed.</span>`;showFeedback('Ethical AI solved!','#2ecc71');
-          if(lvl<levels.length-1){setTimeout(()=>{lvl++;loadLevel();},2000);}
-          else{setTimeout(()=>{st.innerHTML+='<br><b>All levels complete! You\'re an AI ethics expert!</b>';},2200);}}
+        if(err){st.innerHTML=`<span style="color:#e74c3c;">❌ ${err}</span><div style="margin-top:6px;font-size:0.78rem;color:#888;">Attempts: ${attempts} · Press 💡 Hint if stuck.</div>`;showFeedback('Not quite — keep debugging!','#e74c3c');}
+        else{
+          _markSolved(lvl);
+          const earnedHintPenalty=Math.max(0,3-hintIdx);
+          const earned=Math.max(2,8-attempts)+earnedHintPenalty;
+          addScore(earned);
+          if(attempts===1&&hintIdx===0)spawnConfetti(window.innerWidth/2,window.innerHeight/3,80);
+          st.innerHTML=`<span style="color:#2ecc71;">✅ Fair network achieved! Bias removed.</span><div style="margin-top:8px;padding:10px;background:rgba(46,204,113,0.10);border-left:3px solid #2ecc71;border-radius:6px;font-size:0.82rem;color:#ecf0f1;line-height:1.5;"><b style="color:#2ecc71;">Real-world context:</b> ${L.impact||'Ethical ML requires removing biased shortcuts so models generalize fairly.'}</div><div style="margin-top:6px;font-size:0.78rem;color:#888;">Solved in ${attempts} attempt${attempts!==1?'s':''}${hintIdx?` · ${hintIdx} hint${hintIdx!==1?'s':''} used`:''} · +${earned} pts</div>`;
+          showFeedback('Ethical AI solved! ✨','#2ecc71');
+          if(lvl<levels.length-1){setTimeout(()=>{lvl++;loadLevel();},3500);}
+          else{
+            const solved=_solvedSet();
+            setTimeout(()=>{st.innerHTML+=`<div style="margin-top:10px;padding:12px;background:linear-gradient(135deg,rgba(155,89,182,0.25),rgba(46,204,113,0.15));border:2px solid #9b59b6;border-radius:10px;text-align:center;"><h4 style="margin:0;color:#f1c40f;">🎓 AI Ethics Curriculum Complete</h4><p style="margin:6px 0 0;font-size:0.85rem;color:#ecf0f1;">You've debugged ${solved.size}/${levels.length} ethics scenarios: data leakage, spurious correlation, privacy, bias amplification, and adversarial robustness. These are the patterns every ML practitioner must spot.</p></div>`;spawnConfetti(window.innerWidth/2,window.innerHeight/2,150);},2400);
+          }
+        }
         fwdPass();draw(cx,cv);}
       function fwdPass(){nodes.forEach(n=>{if(n.layer===0)return;
         const incoming=conns.filter(c=>c.to===n.id);let sum=0;incoming.forEach(c=>{const src=nodes.find(nn=>nn.id===c.from);sum+=src.val*c.w;});
