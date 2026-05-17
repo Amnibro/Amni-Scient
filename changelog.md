@@ -1,5 +1,13 @@
 ﻿# Changelog 
 
+## [5.6.16] - 2026-05-17 - Amni-Learn audit batch 17: Visual Search polish (modes + RT tracking)
+- **3 difficulty modes** — Easy (5×5 → 7×7), Normal (6×6 → 10×10), Hard (8×8 → 12×12). Chip-row picker. Per-mode best-avg-RT in sessionStorage (`vs-best-avg-{mode}`).
+- **RT history + avg-RT in HUD** — every successful find records ms; HUD shows live ⚡ Avg and ⭐ Best avg.
+- **Prominent target card** — pulsing "Find: X" card with round indicator and grid size shown above the field (was bare HUD text).
+- **Per-find win-flash** — target lights green with bounce-in + glow on correct.
+- **Wrong-flash + misclick counter** — bad clicks shake with red flash, item then fades; total misclicks tracked across run for honest accuracy stat.
+- **Polished summary card** — replaces bare result with: Avg / Fastest / Total time / Misclicks / All-Time. NEW BEST detection (lower avg = better) triggers 120-particle confetti; perfect zero-misclick runs get 60-particle burst.
+
 ## [5.6.15] - 2026-05-17 - Amni-Learn audit batch 16: Trail Making polish (clinical tiers + UX)
 - **Clinical naming** — modes renamed to TMT-A (Numbers) and TMT-B (Num-Letter), the standard Trail Making Test designations used in cognitive screening. Selection persists in sessionStorage (`tm-mode`).
 - **Clinical tier system** — calibrated to Reitan adult norms. TMT-A: <30s Superior / <50 Normal / <78 Borderline / 78+ Slow. TMT-B: <75 / <115 / <180 / 180+ Slow. Tier scale shown on summary card with calibration note.

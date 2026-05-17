@@ -861,9 +861,25 @@
   .pv-ring{position:relative;width:min(90vw,65vh,600px);height:min(90vw,65vh,600px);border:2px dashed rgba(26,188,156,0.3);border-radius:50%;display:flex;align-items:center;justify-content:center;}
   .pv-flash{position:absolute;width:36px;height:36px;border-radius:50%;background:#f1c40f;opacity:0;transition:opacity 0.1s;}
   .vs-field{display:grid;gap:3px;max-width:min(95vw,700px);width:100%;}
-  .vs-item{display:flex;align-items:center;justify-content:center;font-size:clamp(1rem,3vw,1.6rem);cursor:pointer;aspect-ratio:1;background:#1a2a3a;border-radius:6px;border:1px solid #2a3a4a;transition:0.15s;user-select:none;}
+  .vs-item{display:flex;align-items:center;justify-content:center;font-size:clamp(1rem,3vw,1.6rem);cursor:pointer;aspect-ratio:1;background:#1a2a3a;border-radius:6px;border:1px solid #2a3a4a;transition:background 0.15s,border-color 0.15s,transform 0.1s,opacity 0.2s;user-select:none;}
   .vs-item:hover{background:#2a3a4a;}
-  .vs-item.found{background:rgba(46,204,113,0.3);border-color:#2ecc71;}
+  .vs-item:active{transform:scale(0.94);}
+  .vs-item.found{background:rgba(46,204,113,0.4);border-color:#2ecc71;animation:bounceIn 0.35s ease-out;box-shadow:0 0 14px rgba(46,204,113,0.5);}
+  .vs-item.wrong-flash{background:rgba(231,76,60,0.35);border-color:#e74c3c;animation:spmShake 0.3s ease-out;}
+  .vs-mode-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:8px 0;}
+  .vs-mode-btn{padding:6px 14px;border-radius:14px;border:1.5px solid #1abc9c;background:transparent;color:#bdc3c7;font-family:'JetBrains Mono',monospace;font-size:0.85rem;cursor:pointer;transition:0.2s;}
+  .vs-mode-btn:hover{background:rgba(26,188,156,0.15);}
+  .vs-mode-btn.active{background:#1abc9c;color:#0a1a2a;border-color:#1abc9c;}
+  .vs-target-card{margin:6px auto;padding:8px 16px;background:rgba(26,188,156,0.10);border:1.5px solid rgba(26,188,156,0.4);border-radius:12px;display:inline-flex;gap:10px;align-items:center;font-family:'JetBrains Mono',monospace;font-size:0.95rem;color:#bdc3c7;}
+  .vs-target-card .symbol{font-size:1.7rem;color:#1abc9c;font-weight:bold;animation:spmPulse 1.4s ease-in-out infinite;}
+  .vs-summary{margin:18px auto;max-width:540px;padding:22px;background:linear-gradient(135deg,rgba(26,188,156,0.18),rgba(46,204,113,0.12));border:2px solid #1abc9c;border-radius:18px;text-align:center;animation:bounceIn 0.5s ease-out;box-shadow:0 8px 24px rgba(26,188,156,0.25);}
+  .vs-summary h3{font-family:'JetBrains Mono',monospace;color:#f1c40f;font-size:1.6rem;margin:0 0 8px;}
+  .vs-summary-stats{display:flex;justify-content:space-around;gap:14px;flex-wrap:wrap;margin:12px 0;}
+  .vs-summary-stat{flex:1;min-width:80px;}
+  .vs-summary-stat .val{font-family:'JetBrains Mono',monospace;font-size:2rem;font-weight:bold;color:#1abc9c;display:block;}
+  .vs-summary-stat .lbl{font-size:0.78rem;color:rgba(236,240,241,0.7);text-transform:uppercase;letter-spacing:1px;}
+  .vs-summary-stat.best .val{color:#2ecc71;}
+  .vs-summary-stat.new-best .val{color:#f1c40f;animation:spmPulse 0.8s ease-out infinite;}
   .mr-shapes{display:flex;gap:clamp(15px,4vw,40px);justify-content:center;align-items:center;flex-wrap:wrap;}
   .mr-shape{background:#1a2a3a;border:2px solid #2a3a4a;border-radius:12px;padding:12px;display:flex;align-items:center;justify-content:center;transition:border-color 0.3s,box-shadow 0.3s;}
   .mr-shape.win{border-color:#2ecc71;box-shadow:0 0 16px rgba(46,204,113,0.5);}
@@ -6001,8 +6017,14 @@ function playAnimalSound(type) {
   }
   function initVisualSearch(){
     const ct=$$('#vs-container'),hud=$$('#vs-hud');
-    let rd=0,sc=0,tm=0,gridSz=6;
+    let rd=0,sc=0,tm=0,gridSz=6,rtList=[],wrongTaps=0;
+    const mode=sessionStorage.getItem('vs-mode')||'normal';
+    const cfg={easy:{startSz:5,maxSz:7,rounds:10,grow:4},normal:{startSz:6,maxSz:10,rounds:10,grow:3},hard:{startSz:8,maxSz:12,rounds:10,grow:2}};
+    const c=cfg[mode]||cfg.normal;
+    const bestKey='vs-best-avg-'+mode;
+    const bestAvg=parseFloat(sessionStorage.getItem(bestKey)||'0');
     if(window._vsTimer){clearInterval(window._vsTimer);window._vsTimer=null;}
+    document.querySelectorAll('.vs-summary,.vs-target-card,.vs-mode-row').forEach(n=>n.remove());
     const sets=[
       {target:'Q',distractors:['O','C','G','D']},
       {target:'T',distractors:['L','I','F','E']},
@@ -6010,33 +6032,63 @@ function playAnimalSound(type) {
       {target:'Z',distractors:['N','M','W','V']},
       {target:'\u25c6',distractors:['\u25cb','\u25b3','\u25a1','\u2b22']}
     ];
-    hud.innerHTML=`<span class="game-stat">\u23f1 <span class="game-stat-val" id="vs-time">0.0</span>s</span><span class="game-stat">\u2705 <span class="game-stat-val" id="vs-sc">0</span>/10</span><span class="game-stat">\ud83c\udfaf Target: <span class="game-stat-val" id="vs-tgt">?</span></span>`;
+    hud.innerHTML=`<span class="game-stat">\u23f1 <span class="game-stat-val" id="vs-time">0.0</span>s</span><span class="game-stat">\u2705 <span class="game-stat-val" id="vs-sc">0</span>/${c.rounds}</span><span class="game-stat">\u26a1 Avg <span class="game-stat-val" id="vs-avg">\u2014</span>s</span><span class="game-stat">\u2b50 Best ${bestAvg?bestAvg.toFixed(1)+'s':'\u2014'}</span>`;
+    function _avgRT(){return rtList.length?rtList.reduce((a,b)=>a+b,0)/rtList.length:0;}
+    function _updateAvg(){const a=_avgRT();const ae=$$('#vs-avg');if(ae)ae.textContent=a?a.toFixed(1):'\u2014';}
+    function _gameOver(){
+      const avg=_avgRT();
+      const wasBest=!bestAvg||(avg>0&&avg<bestAvg);
+      if(wasBest&&avg>0)sessionStorage.setItem(bestKey,avg.toFixed(2));
+      const totalT=rtList.reduce((a,b)=>a+b,0);
+      const fastest=rtList.length?Math.min(...rtList):0;
+      ct.innerHTML='';
+      const sum=document.createElement('div');sum.className='vs-summary';
+      sum.innerHTML=`<h3>\ud83d\udc41 ${wasBest?'NEW BEST AVG!':'Visual Search Complete'}</h3><div class="vs-summary-stats"><div class="vs-summary-stat"><span class="val">${avg.toFixed(1)}s</span><span class="lbl">Avg / find</span></div><div class="vs-summary-stat"><span class="val">${fastest.toFixed(1)}s</span><span class="lbl">Fastest</span></div><div class="vs-summary-stat"><span class="val">${totalT.toFixed(1)}s</span><span class="lbl">Total</span></div><div class="vs-summary-stat"><span class="val">${wrongTaps}</span><span class="lbl">Misclicks</span></div><div class="vs-summary-stat ${wasBest?'new-best':'best'}"><span class="val">${(bestAvg?Math.min(avg||999,bestAvg):avg).toFixed(1)}s</span><span class="lbl">All-Time</span></div></div>`;
+      ct.appendChild(sum);
+      addScore(sc);
+      if(wasBest)spawnConfetti(window.innerWidth/2,window.innerHeight/2,120);
+      else if(wrongTaps===0)spawnConfetti(window.innerWidth/2,window.innerHeight/3,60);
+      showFeedback(`Avg ${avg.toFixed(1)}s${wasBest?' \u00b7 NEW BEST!':''}`,wasBest?'#2ecc71':'#f1c40f');
+      const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='PLAY AGAIN';rb.style.marginTop='10px';rb.onclick=()=>{rd=0;sc=0;rtList=[];wrongTaps=0;initVisualSearch();};ct.appendChild(rb);
+    }
     function buildRound(){
       rd++;$$('#vs-sc').textContent=rd-1;
       const set=sets[Math.floor(Math.random()*sets.length)];
-      $$('#vs-tgt').textContent=set.target;
       const total=gridSz*gridSz;const tIdx=Math.floor(Math.random()*total);
-      ct.innerHTML='';const field=document.createElement('div');field.className='vs-field';field.style.gridTemplateColumns=`repeat(${gridSz},1fr)`;
+      ct.innerHTML='';
+      const targetCard=document.createElement('div');targetCard.className='vs-target-card';targetCard.innerHTML=`<span>Find:</span><span class="symbol">${set.target}</span><span style="font-size:0.78rem;opacity:0.7">Round ${rd}/${c.rounds} \u00b7 ${gridSz}\u00d7${gridSz}</span>`;ct.appendChild(targetCard);
+      const field=document.createElement('div');field.className='vs-field';field.style.gridTemplateColumns=`repeat(${gridSz},1fr)`;
       const startT=performance.now();
       for(let i=0;i<total;i++){
         const it=document.createElement('div');it.className='vs-item';
         const isTarget=i===tIdx;it.textContent=isTarget?set.target:set.distractors[Math.floor(Math.random()*set.distractors.length)];
         it.onclick=()=>{
           if(isTarget){
-            it.classList.add('found');const dt=((performance.now()-startT)/1000).toFixed(1);
-            sc++;$$('#vs-sc').textContent=sc;
-            addScore(parseFloat(dt)<1.5?3:(parseFloat(dt)<3?2:1));
-            showFeedback(`${dt}s \u26a1`,'#2ecc71');
-            if(rd>=10){setTimeout(()=>{ct.innerHTML=buildResultCard('visualscan',sc,10,'Visual scanning speed');addScore(sc);const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='PLAY AGAIN';rb.onclick=()=>{rd=0;sc=0;initVisualSearch();};ct.appendChild(rb);},1200);}
-            else{gridSz=Math.min(10,6+Math.floor(rd/3));setTimeout(buildRound,800);}
-          }else{resetStreak();showFeedback('Not it!','#e74c3c');it.style.opacity='0.3';}
+            it.classList.add('found');
+            const dt=(performance.now()-startT)/1000;
+            rtList.push(dt);
+            sc++;$$('#vs-sc').textContent=sc;_updateAvg();
+            addScore(dt<1.5?3:(dt<3?2:1));
+            showFeedback(`${dt.toFixed(1)}s \u26a1`,'#2ecc71');
+            if(rd>=c.rounds){setTimeout(_gameOver,800);}
+            else{gridSz=Math.min(c.maxSz,c.startSz+Math.floor(rd/c.grow));setTimeout(buildRound,800);}
+          }else{
+            wrongTaps++;
+            resetStreak();
+            it.classList.add('wrong-flash');
+            setTimeout(()=>it.classList.remove('wrong-flash'),350);
+            showFeedback('Not it!','#e74c3c');
+            it.style.opacity='0.3';
+          }
         };
         field.appendChild(it);
       }
       ct.appendChild(field);
     }
-    ct.innerHTML='<div class="nmm-msg">A target symbol is shown. Find it in the grid of distractors as fast as possible!</div>';
-    const sb=document.createElement('button');sb.className='nmm-btn';sb.textContent='START';sb.onclick=()=>{rd=0;sc=0;gridSz=6;buildRound();};ct.appendChild(sb);
+    function _modeRow(){const row=document.createElement('div');row.className='vs-mode-row';[['easy','Easy (5-7)'],['normal','Normal (6-10)'],['hard','Hard (8-12)']].forEach(([m,lbl])=>{const b=document.createElement('button');b.className='vs-mode-btn'+(m===mode?' active':'');b.textContent=lbl;b.onclick=()=>{sessionStorage.setItem('vs-mode',m);initVisualSearch();};row.appendChild(b);});return row;}
+    ct.innerHTML='<div class="nmm-msg">A target symbol is shown. Find it in the grid of distractors as fast as possible! Grid grows each round.</div>';
+    ct.appendChild(_modeRow());
+    const sb=document.createElement('button');sb.className='nmm-btn';sb.textContent='START';sb.onclick=()=>{rd=0;sc=0;gridSz=c.startSz;rtList=[];wrongTaps=0;buildRound();};ct.appendChild(sb);
   }
   function initMentalRot(){
     const ct=$$('#mr-container'),hud=$$('#mr-hud');
