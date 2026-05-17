@@ -1,8 +1,8 @@
 ﻿# Changelog 
 
 ## [5.6.23] - 2026-05-17 - Amni-Learn audit batch 24: AI Ethics Debug polish (5 levels + hints + impact)
-- **Bank expanded 3 → 5 levels** — added Bias Amplification (ZIP-code redlining proxy in hiring model) and Adversarial Robustness (noise channel that flips predictions on 1% pixel perturbation).
-- **Real-world impact card on solve** — every level now reveals its real-world context: Amazon 2018 hiring AI scrap, husky-vs-wolf classifier story, GDPR/CCPA pseudonymization, Goodfellow 2014 adversarial examples, EU AI Act high-risk classification. Turns the game into actual ML literacy.
+- **Bank expanded 3 → 5 levels** — added Confounded Feature (a fraud-detection model where a third-party signup-source code spuriously correlates with fraud labels via pipeline batching) and Adversarial Robustness (noise channel that flips predictions on 1% pixel perturbation).
+- **Real-world impact card on solve** — every level now reveals its engineering context: data-leakage cost of offline-online metric divergence, husky-vs-wolf classifier story, GDPR/CCPA pseudonymization vs membership-inference attacks, Simpson's-paradox-style confounded features, Goodfellow 2014 adversarial examples. Pure ML-engineering framing throughout.
 - **💡 Hint button** — 3 progressive hints per level (the leaky feature is X → cut its wire → boost legit features). Lets adults debug without spoiling the lesson, with a scoring tradeoff.
 - **Persistent solved-level tracking** — `netdebug-solved` sessionStorage with progress bar ✅/▶/⬜.
 - **Attempt counter** — shown after wrong tests; nudges users toward hints if stuck.

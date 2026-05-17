@@ -5481,7 +5481,7 @@ function playAnimalSound(type) {
       'Norway':'Famous for fjords and aurora borealis; one of the richest countries in Europe per capita.',
       'South Africa':'Has three capitals — Pretoria (executive), Cape Town (legislative), Bloemfontein (judicial).',
       'Argentina':'Tango birthplace; the Andes form its western spine.',
-      'Thailand':'The only Southeast Asian country never colonized by a European power.',
+      'Thailand':'Buddhist-majority constitutional monarchy; Bangkok is one of Asia\'s largest cities.',
       'Nigeria':"Africa's most populous country (220M+); largest economy on the continent.",
       'Poland':'Birthplace of Copernicus and Chopin; rebuilt after WWII devastation.',
       'Turkey':'Bridges Europe and Asia at the Bosphorus; ancient Istanbul was once Constantinople.',
@@ -5494,7 +5494,7 @@ function playAnimalSound(type) {
       'Ukraine':'Breadbasket of Europe; world\'s largest sunflower oil producer.',
       'New Zealand':'Two main islands; first country to give women the vote (1893).',
       'Sri Lanka':'Pearl-shaped island off India; world\'s top exporter of Ceylon tea.',
-      'Ethiopia':'Never colonized by Europeans; uses its own 13-month calendar.',
+      'Ethiopia':'Cradle of Coffea arabica; uses its own 13-month calendar starting from a different epoch.',
       'Myanmar':'Burma until 1989; over 100 ethnic groups; thousands of ancient temples at Bagan.',
       'Peru':'Home to Machu Picchu; Amazon rainforest covers 60% of its territory.',
       'Hungary':'Birthplace of the Rubik\'s Cube; Magyar language unrelated to most European tongues.',
@@ -8540,18 +8540,18 @@ function playAnimalSound(type) {
           return null;},
         hints:['User ID is the PII feature — its connection weight is the problem.','Cut the User-ID wire or set its weight at/below 0.2.','Then make sure Dwell Time has weight ≥ 0.4 — it\'s the clean behavioral signal.'],
         impact:'Real-world parallel: GDPR/CCPA require pseudonymization. Models that memorize PII can leak individual records via membership-inference or training-data extraction attacks.'},
-      {title:'Bias Amplification',desc:'This hiring model takes "Resume Score" and a proxy feature "ZIP Code" that strongly correlates with protected demographics in your training data. Heavy weight on ZIP Code amplifies historical hiring bias. Drop the proxy and let resume score drive the decision.',
-        nodes:[{id:'resume',x:60,y:80,layer:0,label:'Resume Score',val:0.8},{id:'zip',x:60,y:200,layer:0,label:'ZIP Code',val:0.6},{id:'skill',x:60,y:320,layer:0,label:'Skills Test',val:0.7},
+      {title:'Confounded Feature',desc:'This fraud-detection model uses "Account Signup Source" as a feature — but in your training data this code accidentally correlates with fraud labels because of how a third-party data vendor batched the records. The feature has no causal link; it\'s a confounding artifact of the data pipeline. Cut it and let real signals (Transaction Amount, Velocity) drive the model.',
+        nodes:[{id:'amount',x:60,y:80,layer:0,label:'Tx Amount',val:0.8},{id:'src',x:60,y:200,layer:0,label:'Signup Src',val:0.6},{id:'vel',x:60,y:320,layer:0,label:'Velocity',val:0.7},
           {id:'h1',x:250,y:120,layer:1,label:'H1',val:0},{id:'h2',x:250,y:280,layer:1,label:'H2',val:0},
-          {id:'out',x:440,y:200,layer:2,label:'Hire?',val:0}],
-        conns:[{from:'resume',to:'h1',w:0.3},{from:'zip',to:'h2',w:0.85},{from:'skill',to:'h1',w:0.2},{from:'h1',to:'out',w:0.3},{from:'h2',to:'out',w:0.8}],
-        check:function(n,c){const zipConn=c.find(cc=>cc.from==='zip');const resConn=c.find(cc=>cc.from==='resume');const skillConn=c.find(cc=>cc.from==='skill');
-          if(zipConn&&Math.abs(zipConn.w)>0.2)return'ZIP Code is a demographic proxy — heavy weight here amplifies historical bias.';
-          if(!resConn||resConn.w<0.5)return'Resume Score should be a primary driver of the decision.';
-          if(!skillConn||skillConn.w<0.4)return'Skills Test is objective signal — let it carry weight.';
+          {id:'out',x:440,y:200,layer:2,label:'Fraud?',val:0}],
+        conns:[{from:'amount',to:'h1',w:0.3},{from:'src',to:'h2',w:0.85},{from:'vel',to:'h1',w:0.2},{from:'h1',to:'out',w:0.3},{from:'h2',to:'out',w:0.8}],
+        check:function(n,c){const srcConn=c.find(cc=>cc.from==='src');const amtConn=c.find(cc=>cc.from==='amount');const velConn=c.find(cc=>cc.from==='vel');
+          if(srcConn&&Math.abs(srcConn.w)>0.2)return'Signup Source is a confounded feature — it correlates only because of how the data was batched.';
+          if(!amtConn||amtConn.w<0.5)return'Transaction Amount should be a primary driver of the decision.';
+          if(!velConn||velConn.w<0.4)return'Velocity (transactions per unit time) is a causal fraud signal — let it carry weight.';
           return null;},
-        hints:['ZIP Code is a redlining-style proxy. Cut its wire or zero its weight.','Boost Resume Score weight to ≥0.5 — it\'s the legitimate signal.','Add Skills Test (≥0.4) too — objective evaluation should dominate.'],
-        impact:'Amazon famously scrapped a hiring AI in 2018 after it penalized resumes mentioning "women\'s" clubs/colleges — historical hiring patterns leaked through proxies. EU AI Act now classifies hiring models as high-risk.'},
+        hints:['Signup Source has no causal link to fraud here — its correlation is a pipeline artifact. Cut its wire or zero its weight.','Boost Transaction Amount weight to ≥0.5 — it\'s a direct causal signal.','Add Velocity (≥0.4) — transaction frequency is the canonical fraud feature.'],
+        impact:'Confounded features are a top cause of "model collapse" between offline metrics and production deployment. The classic Simpson\'s-paradox flip is what happens when a feature carries no signal but happens to correlate in the training split. Always verify causal plausibility, not just correlation.'},
       {title:'Adversarial Robustness',desc:'This image classifier has a "Noise Channel" input that\'s supposed to be background variation, but its weight is so high that 1% pixel noise can flip the prediction. Reduce the noise channel\'s influence so the model relies on real semantic features.',
         nodes:[{id:'edge',x:60,y:60,layer:0,label:'Edges',val:0.7},{id:'tex',x:60,y:170,layer:0,label:'Texture',val:0.6},{id:'noise',x:60,y:280,layer:0,label:'Noise Ch.',val:0.4},{id:'sem',x:60,y:380,layer:0,label:'Semantics',val:0.8},
           {id:'h1',x:250,y:100,layer:1,label:'H1',val:0},{id:'h2',x:250,y:250,layer:1,label:'H2',val:0},{id:'h3',x:250,y:380,layer:1,label:'H3',val:0},
@@ -8635,7 +8635,7 @@ function playAnimalSound(type) {
           if(lvl<levels.length-1){setTimeout(()=>{lvl++;loadLevel();},3500);}
           else{
             const solved=_solvedSet();
-            setTimeout(()=>{st.innerHTML+=`<div style="margin-top:10px;padding:12px;background:linear-gradient(135deg,rgba(155,89,182,0.25),rgba(46,204,113,0.15));border:2px solid #9b59b6;border-radius:10px;text-align:center;"><h4 style="margin:0;color:#f1c40f;">🎓 AI Ethics Curriculum Complete</h4><p style="margin:6px 0 0;font-size:0.85rem;color:#ecf0f1;">You've debugged ${solved.size}/${levels.length} ethics scenarios: data leakage, spurious correlation, privacy, bias amplification, and adversarial robustness. These are the patterns every ML practitioner must spot.</p></div>`;spawnConfetti(window.innerWidth/2,window.innerHeight/2,150);},2400);
+            setTimeout(()=>{st.innerHTML+=`<div style="margin-top:10px;padding:12px;background:linear-gradient(135deg,rgba(155,89,182,0.25),rgba(46,204,113,0.15));border:2px solid #9b59b6;border-radius:10px;text-align:center;"><h4 style="margin:0;color:#f1c40f;">🎓 AI Ethics Curriculum Complete</h4><p style="margin:6px 0 0;font-size:0.85rem;color:#ecf0f1;">You've debugged ${solved.size}/${levels.length} engineering pitfalls: data leakage, spurious correlation, privacy breach, confounded features, and adversarial robustness. These are the patterns every ML practitioner must spot.</p></div>`;spawnConfetti(window.innerWidth/2,window.innerHeight/2,150);},2400);
           }
         }
         fwdPass();draw(cx,cv);}
