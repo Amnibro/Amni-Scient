@@ -1,5 +1,13 @@
 ﻿# Changelog 
 
+## [5.6.42] - 2026-05-17 - Amni-Learn content quadruple batch 18: Word Bridge L1 + L2 quadrupled
+- **Word Bridge L1 + L2 expanded** — 16 → 64 entries each (+96 entries × 6 languages = 576 translation cells)
+  - L1 +48 (basic vocab): body parts (Eye, Ear, Hand, Foot, Head, Mouth, Nose, Tooth, Hair); animals (Cow, Pig, Horse, Sheep, Mouse, Duck, Rabbit, Lion, Bear, Snake, Bee); food (Rice, Cheese, Sugar, Salt, Coffee, Tea, Banana, Orange, Cake, Meat); nature (Sea, Lake, Sky, Rain, Grass, Leaf, Stone); colors (Red, Blue, Green, Yellow, Black, White); numbers (One-Five)
+  - L2 +48 (everyday phrases & places): Yes, No, Sorry, Welcome; rooms (Bathroom, Kitchen, Bedroom, Office); places (Park, Hospital, Bank, Market, Restaurant, Hotel, Airport, Station, Beach, Library, Church, Pharmacy, Shop); family (Father, Mother, Brother, Sister, Son, Daughter, Baby, Boy, Girl, Man, Woman); concepts (Country, Language, Color, Number, Letter, Word, Question, Answer, Picture, Game, Toy, Bag, Hat, Shoe, Chair, Table)
+- All 6 languages (Spanish, French, German, Italian, Chinese, Hindi) translated for every entry — including Devanagari and simplified Chinese characters
+- L3, L4, L5 still 16 each — pending next iterations
+- **SW cache v23 → v24** to flush.
+
 ## [5.6.41] - 2026-05-17 - Amni-Learn content quadruple batch 17: Word Search COMPLETE at 28 topics / 420 words
 - **Word Search FULLY quadrupled** — 105 → 420 words, 7 → 28 topics, +10 final topics
   - **jobs**: TEACHER, DOCTOR, LAWYER, ENGINEER, NURSE, FARMER, PILOT, CHEF, MECHANIC, ARCHITECT, JOURNALIST, PROGRAMMER, SCIENTIST, ARTIST, BAKER
