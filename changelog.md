@@ -1,5 +1,13 @@
 ﻿# Changelog 
 
+## [5.6.11] - 2026-05-17 - Amni-Learn audit batch 12: Reaction Time polish (tier system + percentile feedback)
+- **Reaction tier system** — every round gets a tier: Godlike (<180ms), Excellent (<220), Good (<280), Average (<350), Slow (350+). Human median ≈ 250ms shown in the legend. Calibrated to common Human Benchmark distributions for honest feedback.
+- **Color-coded per-round results** — each row in the results list now carries a tier accent (gold/green/teal/blue/orange left-border + tinted background). Tier label shown next to round number.
+- **Persistent best-single + best-avg** — `rxt-best-single` and `rxt-best-avg` sessionStorage keys. ⭐ Best ms chip in HUD updates live.
+- **Polished summary card** — replaces bare avg/best display. Stats: Avg / Best / Worst / Consistency (±std) / All-Time Avg. Tier-tag header colored per tier ("Excellent reflexes"). "NEW PERSONAL BEST!" detection + 120-particle confetti on personal record. Smaller 60-particle burst for Godlike/Excellent runs even without a new best.
+- **Tier-aware per-round message** — instead of static "Lightning! / Nice!", message varies by tier ("⚡⚡⚡ GODLIKE!" at sub-180, "⏱ Keep practicing" at 350+).
+- **Verified distinct from Reflex Racer** — kept both modules. Reflex = multi-target spam under timer; Reaction = pure single stimulus-response measurement.
+
 ## [5.6.10] - 2026-05-17 - Amni-Learn audit batch 11: Word Search polish (105 definitions + topic picker)
 - **Definitions added for all 105 words** — 7 topics × 15 words refactored from flat string arrays to `{w, def}` objects. Word Search now teaches vocabulary on every find.
 - **Found-word definition popup** — when a word is selected correctly, a gradient toast slides up near the viewport bottom showing the WORD + its one-sentence definition. 2.6s lifetime; replaces transient.

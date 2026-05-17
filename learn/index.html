@@ -730,9 +730,25 @@
   .rxt-zone.early{background:#f39c12;}
   .rxt-zone.done{background:#3498db;}
   .rxt-text{font-family:'JetBrains Mono',monospace;font-size:clamp(1.5rem,5vw,2.5rem);color:#fff;text-align:center;font-weight:bold;}
-  .rxt-results{display:flex;flex-direction:column;gap:6px;margin-top:12px;width:90%;max-width:400px;}
-  .rxt-result{display:flex;justify-content:space-between;padding:6px 14px;background:rgba(255,255,255,0.05);border-radius:8px;font-family:'JetBrains Mono',monospace;color:#7a8a9a;font-size:0.85rem;}
+  .rxt-results{display:flex;flex-direction:column;gap:6px;margin-top:12px;width:90%;max-width:420px;}
+  .rxt-result{display:flex;justify-content:space-between;padding:6px 14px;background:rgba(255,255,255,0.05);border-radius:8px;font-family:'JetBrains Mono',monospace;color:#7a8a9a;font-size:0.85rem;transition:background 0.2s,border-color 0.2s;border-left:3px solid transparent;}
+  .rxt-result.tier-godlike{border-left-color:#f1c40f;background:rgba(241,196,15,0.10);}
+  .rxt-result.tier-excellent{border-left-color:#2ecc71;background:rgba(46,204,113,0.10);}
+  .rxt-result.tier-good{border-left-color:#1abc9c;background:rgba(26,188,156,0.08);}
+  .rxt-result.tier-average{border-left-color:#3498db;background:rgba(52,152,219,0.06);}
+  .rxt-result.tier-slow{border-left-color:#e67e22;background:rgba(230,126,34,0.06);}
   .rxt-result-val{color:#1abc9c;font-weight:bold;}
+  .rxt-result-tier{font-size:0.72rem;color:rgba(236,240,241,0.6);margin-left:8px;text-transform:uppercase;letter-spacing:1px;}
+  .rxt-summary{margin:20px auto;max-width:560px;padding:24px;background:linear-gradient(135deg,rgba(0,206,201,0.18),rgba(52,152,219,0.12));border:2px solid #00cec9;border-radius:18px;text-align:center;animation:bounceIn 0.5s ease-out;box-shadow:0 8px 24px rgba(0,206,201,0.25);}
+  .rxt-summary h3{font-family:'JetBrains Mono',monospace;color:#f1c40f;font-size:1.6rem;margin:0 0 8px;}
+  .rxt-summary .tier-tag{display:inline-block;padding:4px 12px;border-radius:14px;background:rgba(255,255,255,0.1);font-family:'JetBrains Mono',monospace;font-size:0.85rem;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;}
+  .rxt-summary-stats{display:flex;justify-content:space-around;gap:14px;flex-wrap:wrap;margin:12px 0;}
+  .rxt-summary-stat{flex:1;min-width:80px;}
+  .rxt-summary-stat .val{font-family:'JetBrains Mono',monospace;font-size:2rem;font-weight:bold;color:#00cec9;display:block;}
+  .rxt-summary-stat .lbl{font-size:0.8rem;color:rgba(236,240,241,0.7);text-transform:uppercase;letter-spacing:1px;}
+  .rxt-summary-stat.best .val{color:#2ecc71;}
+  .rxt-summary-stat.new-best .val{color:#f1c40f;animation:spmPulse 0.8s ease-out infinite;}
+  .rxt-tier-scale{margin-top:14px;font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:rgba(236,240,241,0.55);line-height:1.5;}
   .nbk-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(10px,2vw,18px);max-width:min(95vw,700px);width:95%;margin:16px auto;}
   .nbk-cell{aspect-ratio:1;background:#1a2a3a;border:3px solid #2a3a4a;border-radius:16px;transition:background 0.2s,border-color 0.2s,transform 0.15s,box-shadow 0.2s;min-height:clamp(80px,15vw,140px);cursor:pointer;}
   .nbk-cell.active{background:#1abc9c;border-color:#1abc9c;box-shadow:0 0 30px rgba(26,188,156,0.6);animation:nbkCellPulse 0.5s ease-out;}
@@ -5577,10 +5593,38 @@ function playAnimalSound(type) {
     const ct=$$('#rxt-container'),hud=$$('#rxt-hud');
     let rd=0,res=[],wait=false,st=0;
     if(window._rxtTimeout){clearTimeout(window._rxtTimeout);window._rxtTimeout=null;}
-    hud.innerHTML=`<span class="game-stat">\ud83c\udfaf Round <span class="game-stat-val" id="rxt-rd">0</span>/5</span><span class="game-stat">\u26a1 <span class="game-stat-val" id="rxt-avg">--</span>ms</span>`;
-    function updRes(){const el=$$('#rxt-res');if(!el)return;el.innerHTML='';res.forEach((r,i)=>{const d=document.createElement('div');d.className='rxt-result';d.innerHTML=`<span>Round ${i+1}</span><span class="rxt-result-val">${r}ms</span>`;el.appendChild(d);});if(res.length)$$('#rxt-avg').textContent=Math.round(res.reduce((a,b)=>a+b,0)/res.length);}
-    function go(){if(currentGame!=='reaction')return;rd++;$$('#rxt-rd').textContent=rd;ct.innerHTML=`<div class="rxt-zone wait" id="rxt-zone"><div class="rxt-text">Wait for green...</div></div><div class="rxt-results" id="rxt-res"></div>`;updRes();wait=true;const z=$$('#rxt-zone');window._rxtTimeout=setTimeout(()=>{z.className='rxt-zone ready';z.querySelector('.rxt-text').textContent='TAP NOW!';st=performance.now();wait=false;},2000+Math.random()*3000);z.onclick=()=>{if(wait){clearTimeout(window._rxtTimeout);z.className='rxt-zone early';z.querySelector('.rxt-text').textContent='Too early! Tap to retry';rd--;z.onclick=go;}else if(st){const dt=Math.round(performance.now()-st);st=0;res.push(dt);z.className='rxt-zone done';z.querySelector('.rxt-text').textContent=`${dt}ms`;updRes();addScore(dt<250?3:(dt<400?2:1));showFeedback(dt<200?'Lightning! \u26a1\u26a1':'Nice! \u26a1','#2ecc71');rd>=5?setTimeout(()=>{const avg=Math.round(res.reduce((a,b)=>a+b,0)/res.length);ct.innerHTML=`<div class="nmm-display">${avg}ms</div><div class="nmm-msg">Best: ${Math.min(...res)}ms</div><div class="rxt-results" id="rxt-res"></div>`;updRes();showFeedback(`Average: ${avg}ms \ud83c\udfc6`,'#f1c40f');addScore(Math.max(1,Math.floor(20-avg/25)));const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='AGAIN';rb.onclick=()=>{rd=0;res=[];initReaction();};ct.appendChild(rb);},1200):setTimeout(go,1200);}};}
-    ct.innerHTML=`<div class="nmm-msg">When the box turns GREEN, tap ASAP!</div>`;const sb=document.createElement('button');sb.className='nmm-btn';sb.textContent='START';sb.onclick=()=>{rd=0;res=[];go();};ct.appendChild(sb);
+    const bestSingle=parseInt(sessionStorage.getItem('rxt-best-single')||'0');
+    const bestAvg=parseInt(sessionStorage.getItem('rxt-best-avg')||'0');
+    hud.innerHTML=`<span class="game-stat">\ud83c\udfaf Round <span class="game-stat-val" id="rxt-rd">0</span>/5</span><span class="game-stat">\u26a1 Avg <span class="game-stat-val" id="rxt-avg">--</span>ms</span><span class="game-stat">\u2b50 Best ${bestSingle?bestSingle+'ms':'\u2014'}</span>`;
+    function _tier(ms){if(ms<180)return{name:'godlike',label:'Godlike',msg:'\u26a1\u26a1\u26a1 GODLIKE!'};if(ms<220)return{name:'excellent',label:'Excellent',msg:'\u26a1\u26a1 Excellent!'};if(ms<280)return{name:'good',label:'Good',msg:'\u26a1 Nice!'};if(ms<350)return{name:'average',label:'Average',msg:'\u26a1 Solid'};return{name:'slow',label:'Slow',msg:'\u23f1 Keep practicing'};}
+    function updRes(){const el=$$('#rxt-res');if(!el)return;el.innerHTML='';res.forEach((r,i)=>{const t=_tier(r);const d=document.createElement('div');d.className='rxt-result tier-'+t.name;d.innerHTML=`<span>Round ${i+1}<span class="rxt-result-tier">${t.label}</span></span><span class="rxt-result-val">${r}ms</span>`;el.appendChild(d);});if(res.length)$$('#rxt-avg').textContent=Math.round(res.reduce((a,b)=>a+b,0)/res.length);}
+    function _summary(){
+      const avg=Math.round(res.reduce((a,b)=>a+b,0)/res.length);
+      const min=Math.min(...res);
+      const max=Math.max(...res);
+      const mean=res.reduce((a,b)=>a+b,0)/res.length;
+      const variance=res.reduce((s,v)=>s+(v-mean)*(v-mean),0)/res.length;
+      const std=Math.round(Math.sqrt(variance));
+      const t=_tier(avg);
+      const wasBestSingle=!bestSingle||min<bestSingle;
+      const wasBestAvg=!bestAvg||avg<bestAvg;
+      if(wasBestSingle)sessionStorage.setItem('rxt-best-single',min);
+      if(wasBestAvg)sessionStorage.setItem('rxt-best-avg',avg);
+      ct.innerHTML='';
+      const sum=document.createElement('div');sum.className='rxt-summary';
+      const header=wasBestAvg||wasBestSingle?'\ud83c\udf1f NEW PERSONAL BEST!':`${t.msg}`;
+      sum.innerHTML=`<h3>${header}</h3><div class="tier-tag tier-${t.name}" style="color:${t.name==='godlike'?'#f1c40f':(t.name==='excellent'?'#2ecc71':(t.name==='good'?'#1abc9c':(t.name==='average'?'#3498db':'#e67e22')))}">${t.label} reflexes</div><div class="rxt-summary-stats"><div class="rxt-summary-stat"><span class="val">${avg}</span><span class="lbl">Avg ms</span></div><div class="rxt-summary-stat"><span class="val">${min}</span><span class="lbl">Best</span></div><div class="rxt-summary-stat"><span class="val">${max}</span><span class="lbl">Worst</span></div><div class="rxt-summary-stat"><span class="val">\u00b1${std}</span><span class="lbl">Consistency</span></div><div class="rxt-summary-stat ${wasBestAvg?'new-best':'best'}"><span class="val">${Math.min(avg,bestAvg||avg)}</span><span class="lbl">All-Time Avg</span></div></div><div class="rxt-results" id="rxt-res"></div><div class="rxt-tier-scale">Tiers: &lt;180 Godlike \u00b7 &lt;220 Excellent \u00b7 &lt;280 Good \u00b7 &lt;350 Average \u00b7 350+ Slow \u00b7 Human median \u2248 250ms</div>`;
+      ct.appendChild(sum);
+      updRes();
+      if(wasBestAvg||wasBestSingle)spawnConfetti(window.innerWidth/2,window.innerHeight/2,120);
+      else if(t.name==='godlike'||t.name==='excellent')spawnConfetti(window.innerWidth/2,window.innerHeight/3,60);
+      showFeedback(`Avg ${avg}ms \u2014 ${t.label} \ud83c\udfc6`, wasBestAvg||wasBestSingle?'#2ecc71':'#f1c40f');
+      addScore(Math.max(1,Math.floor(20-avg/25)));
+      const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='AGAIN';rb.style.marginTop='12px';rb.onclick=()=>{rd=0;res=[];initReaction();};ct.appendChild(rb);
+    }
+    function go(){if(currentGame!=='reaction')return;rd++;$$('#rxt-rd').textContent=rd;ct.innerHTML=`<div class="rxt-zone wait" id="rxt-zone"><div class="rxt-text">Wait for green...</div></div><div class="rxt-results" id="rxt-res"></div>`;updRes();wait=true;const z=$$('#rxt-zone');window._rxtTimeout=setTimeout(()=>{z.className='rxt-zone ready';z.querySelector('.rxt-text').textContent='TAP NOW!';st=performance.now();wait=false;},2000+Math.random()*3000);z.onclick=()=>{if(wait){clearTimeout(window._rxtTimeout);z.className='rxt-zone early';z.querySelector('.rxt-text').textContent='Too early! Tap to retry';rd--;z.onclick=go;}else if(st){const dt=Math.round(performance.now()-st);st=0;res.push(dt);z.className='rxt-zone done';const t=_tier(dt);z.querySelector('.rxt-text').textContent=`${dt}ms \u00b7 ${t.label}`;updRes();addScore(dt<250?3:(dt<400?2:1));showFeedback(t.msg,'#2ecc71');rd>=5?setTimeout(_summary,1200):setTimeout(go,1200);}};}
+    ct.innerHTML=`<div class="nmm-msg">When the box turns GREEN, tap as fast as you can! Tap early on red = retry.</div>`;
+    const sb=document.createElement('button');sb.className='nmm-btn';sb.textContent='START';sb.onclick=()=>{rd=0;res=[];go();};ct.appendChild(sb);
   }
   function initNBack(){
     const ct=$$('#nbk-container'),hud=$$('#nbk-hud');
