@@ -1987,7 +1987,23 @@
   }
   function initMath() {
     mViz.style.display = 'none'; hintBtn.style.display = 'block';
-    if(mathRound >= mathTotal) { mProb.textContent = ''; mChoices.innerHTML = `<div style="text-align:center;padding:2rem"><div style="font-size:3rem;margin-bottom:1rem">🎉</div><div style="font-size:1.5rem;font-weight:bold;margin-bottom:.5rem">${mathCorrect}/${mathTotal} Correct!</div><div style="margin-bottom:1rem">${mathCorrect>=8?'Amazing!':mathCorrect>=6?'Great job!':'Keep practicing!'}</div><div class="m-choice" style="display:inline-block;padding:.8rem 2rem;cursor:pointer" onclick="mathRound=0;mathCorrect=0;initMath()">Play Again</div></div>`; hintBtn.style.display='none'; return; }
+    if(mathRound >= mathTotal) {
+      mProb.textContent = '';
+      const bestKey='math-best-L'+currentLevel;
+      const prevBest=parseInt(sessionStorage.getItem(bestKey)||'0');
+      const wasBest=mathCorrect>prevBest;
+      if(wasBest)sessionStorage.setItem(bestKey,mathCorrect);
+      const pct=Math.round(mathCorrect/mathTotal*100);
+      let tier='Keep practicing!',tColor='#3498db';
+      if(pct===100){tier='🏆 Perfect!';tColor='#f1c40f';}
+      else if(pct>=80){tier='⭐ Amazing!';tColor='#2ecc71';}
+      else if(pct>=60){tier='✨ Great job!';tColor='#3498db';}
+      if(wasBest&&typeof spawnConfetti==='function')spawnConfetti(window.innerWidth/2,window.innerHeight/2,pct===100?150:80);
+      else if(pct===100&&typeof spawnConfetti==='function')spawnConfetti(window.innerWidth/2,window.innerHeight/3,80);
+      mChoices.innerHTML = `<div style="text-align:center;padding:2rem"><div style="font-size:3rem;margin-bottom:0.5rem">🎉</div><div style="font-size:1.6rem;font-weight:bold;margin-bottom:.4rem">${mathCorrect}/${mathTotal} Correct (${pct}%)</div><div style="color:${tColor};font-size:1.1rem;font-weight:bold;margin-bottom:0.6rem">${wasBest?'NEW BEST! ':''}${tier}</div><div style="color:#7f8c8d;font-size:0.9rem;margin-bottom:1rem">Best on Level ${currentLevel}: ${Math.max(prevBest,mathCorrect)}/${mathTotal}</div><div class="m-choice" style="display:inline-block;padding:.8rem 2rem;cursor:pointer" onclick="mathRound=0;mathCorrect=0;initMath()">Play Again</div></div>`;
+      hintBtn.style.display='none';
+      return;
+    }
     $$('#math-hud')?.remove(); const mHud=document.createElement('div'); mHud.className='game-hud'; mHud.id='math-hud'; mHud.innerHTML=`<span class="game-stat">📊 <span class="game-stat-val">${mathRound+1}/${mathTotal}</span></span><span class="game-stat">✅ <span class="game-stat-val">${mathCorrect}</span></span><span class="game-stat">🔥 <span class="game-stat-val">${currentStreak}</span></span>`; mChoices.parentElement.insertBefore(mHud, mProb);
     let maxVal = currentLevel===1?5:(currentLevel===2?20:(currentLevel===3?100:(currentLevel===4?200:500)));
     const roll = Math.random();
@@ -2088,7 +2104,22 @@
         if(matchCombo>=2) spawnComboPopup(`+${pts*matchCombo}`,c1);
         addScore(pts);
         const pe=$$('#match-progress'); if(pe) pe.style.width=Math.round(matchedCount/(totalPairs*2)*100)+'%';
-        if(matchedCount===totalPairs*2) { clearInterval(matchTimer); matchTimer=null; const bonus=matchMoves<=totalPairs*2?'Perfect Memory! 🧠':(matchMoves<=totalPairs*3?'Great Job! 🌟':'You Won! 🎉'); setTimeout(()=>{showFeedback(`${bonus} ${matchTime}s, ${matchMoves} moves`,'#f1c40f');addScore(Math.max(1,totalPairs-Math.floor(matchTime/10)));setTimeout(initMatching,2500);},500); }
+        if(matchedCount===totalPairs*2) {
+          clearInterval(matchTimer); matchTimer=null;
+          const bonus=matchMoves<=totalPairs*2?'🏆 Perfect Memory!':(matchMoves<=totalPairs*3?'⭐ Great Job!':'You Won! 🎉');
+          const bestKey='match-best-L'+currentLevel;
+          const bestTimeKey='match-besttime-L'+currentLevel;
+          const prevBestMoves=parseInt(sessionStorage.getItem(bestKey)||'999');
+          const prevBestTime=parseInt(sessionStorage.getItem(bestTimeKey)||'999999');
+          const wasBestMoves=matchMoves<prevBestMoves;
+          const wasBestTime=matchTime<prevBestTime;
+          if(wasBestMoves)sessionStorage.setItem(bestKey,matchMoves);
+          if(wasBestTime)sessionStorage.setItem(bestTimeKey,matchTime);
+          if(wasBestMoves||wasBestTime){if(typeof spawnConfetti==='function')spawnConfetti(window.innerWidth/2,window.innerHeight/2,150);}
+          else if(matchMoves<=totalPairs*2){if(typeof spawnConfetti==='function')spawnConfetti(window.innerWidth/2,window.innerHeight/3,80);}
+          const prefix=(wasBestMoves||wasBestTime)?'🏆 NEW BEST! ':'';
+          setTimeout(()=>{showFeedback(`${prefix}${bonus} ${matchTime}s, ${matchMoves} moves`,wasBestMoves||wasBestTime?'#f1c40f':'#2ecc71');addScore(Math.max(1,totalPairs-Math.floor(matchTime/10)));setTimeout(initMatching,2500);},500);
+        }
       } else { matchCombo=0; resetStreak(); const ce=$$('#match-combo'); if(ce) ce.textContent='0'; c1.classList.remove('flipped'); c1.textContent=''; c1.style.color=''; c2.classList.remove('flipped'); c2.textContent=''; c2.style.color=''; }
       flipped = [];
     }
@@ -10511,7 +10542,13 @@ function playAnimalSound(type) {
         if(g&&Math.hypot(mx-g.x,my-g.y)<hitR){
           nextDot++;hintOn=false;
           if(nextDot>=norm.length){
-            done=true;addScore(lvl*10);showFeedback('\u2b50 '+sh.name+'!','#f1c40f');drawFunc();
+            done=true;addScore(lvl*10);
+            const completedKey='dots-completed-L'+lvl;
+            const prev=parseInt(sessionStorage.getItem(completedKey)||'0');
+            const next=prev+1;
+            sessionStorage.setItem(completedKey,next);
+            if(typeof spawnConfetti==='function')spawnConfetti(window.innerWidth/2,window.innerHeight/3,lvl>=3?80:40);
+            showFeedback('\u2b50 '+sh.name+' #'+next,'#f1c40f');drawFunc();
             setTimeout(()=>{shapeIdx=(shapeIdx+1)%shapeList.length;loadShape();},2200);
           } else drawFunc();
         }

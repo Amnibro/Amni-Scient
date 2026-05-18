@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.6.57] - 2026-05-18 - Amni-Learn school skills polish: Connect the Dots + Math Basics + Matching
+- **Connect the Dots** polish: per-level completion counter (`dots-completed-L{N}` sessionStorage) — every cleared shape increments and shows in the toast (e.g. "⭐ Triangle #5"); milestone confetti on completion (80 particles for L3+ 3D shapes, 40 for L1-2 2D)
+- **Math Basics** polish: per-level best-correct tracker (`math-best-L{N}` sessionStorage); enhanced end-of-round summary card with percentage, named tier (🏆 Perfect 100% / ⭐ Amazing 80%+ / ✨ Great 60%+ / Keep practicing!), best-on-level display, new-best detection (150 particles for new perfect, 80 for new best)
+- **Matching** polish: per-level best-moves AND best-time trackers (`match-best-L{N}` and `match-besttime-L{N}`); win celebration distinguishes new-best (150 confetti + 🏆 NEW BEST! prefix) from clean Perfect Memory (80 confetti) from normal wins
+- **SW cache v38 → v39** to flush.
+
 ## [5.6.56] - 2026-05-18 - Amni-Learn idle/casual COMPLETE: Solitaire + Tower Defense
 - **Solitaire** polish: persistent best-completion-time tracker (`haven_sol_best_time` localStorage); win celebration with elapsed time + win-number message; new-best gets 150-particle confetti and 🏆 NEW BEST TIME! prefix vs 120 particles for normal wins
 - **Tower Defense** polish: persistent best-wave tracker (`haven_td_best_wave` localStorage); game-over tier system (Newbie Mayor / Apprentice Builder ≥5 / Castle Keeper ≥10 / Defense Captain ≥15 / Tower Strategist 🏆 ≥25); new-best gets 120-particle confetti and NEW BEST! prefix
