@@ -5639,8 +5639,18 @@ function playAnimalSound(type) {
           clearInterval(rfxTimer); rfxTimer = null; rfxActive = false;
           rfxMoveTimers.forEach(t=>clearInterval(t)); rfxMoveTimers=[];
           arena.innerHTML = '';
-          const msg = rfxScore >= 30 ? 'LEGENDARY! ⚡🏆' : (rfxScore >= 20 ? 'Lightning Fast! ⚡' : (rfxScore >= 10 ? 'Great Reflexes! 🏆' : 'Keep Practicing! 💪'));
-          showFeedback(msg, '#00cec9');
+          const bestKey='rfx-best-L'+currentLevel;
+          const prevBest=parseInt(sessionStorage.getItem(bestKey)||'0');
+          const wasBest=rfxScore>prevBest;
+          if(wasBest)sessionStorage.setItem(bestKey,rfxScore);
+          let tier='Keep Practicing! 💪',tColor='#3498db';
+          if(rfxScore>=40){tier='🏆 LEGENDARY!';tColor='#f1c40f';}
+          else if(rfxScore>=25){tier='⚡ Lightning Fast!';tColor='#9b59b6';}
+          else if(rfxScore>=15){tier='🌟 Great Reflexes!';tColor='#2ecc71';}
+          else if(rfxScore>=8){tier='👍 Solid!';tColor='#3498db';}
+          if(wasBest)spawnConfetti(window.innerWidth/2,window.innerHeight/2,150);
+          else if(rfxScore>=25)spawnConfetti(window.innerWidth/2,window.innerHeight/3,80);
+          showFeedback(`${wasBest?'🏆 NEW BEST! ':''}${tier} (Score ${rfxScore}, Best L${currentLevel} ${Math.max(prevBest,rfxScore)})`,tColor);
           addScore(Math.floor(rfxScore / 2));
           startBtn.style.display = 'block';
           startBtn.textContent = `Score: ${rfxScore} — Play Again!`;
@@ -7373,7 +7383,7 @@ function playAnimalSound(type) {
     function render(){board.innerHTML='';for(let r=0;r<9;r++)for(let c=0;c<9;c++){const cell=document.createElement('div');cell.className='sdk-cell'+(given[r][c]?' given':'');cell.dataset.r=r;cell.dataset.c=c;const v=grid[r][c];if(v){cell.textContent=v;}else if(pencilMarks[r][c].size){const pm=document.createElement('div');pm.className='sdk-pencil';for(let n=1;n<=9;n++){const s=document.createElement('span');s.textContent=pencilMarks[r][c].has(n)?n:'';pm.appendChild(s);}cell.appendChild(pm);}cell.onclick=()=>{selected={r,c};highlight();if(v)activeNum=v;updateNumpad();};board.appendChild(cell);}updateNumpad();}
     function highlight(){const an=activeNum||(selected&&grid[selected.r]?grid[selected.r][selected.c]:0);$$all('.sdk-cell').forEach(cell=>{cell.classList.remove('selected','same-val');const cr=+cell.dataset.r,cc=+cell.dataset.c;if(selected&&cr===selected.r&&cc===selected.c)cell.classList.add('selected');else if(an&&grid[cr][cc]===an)cell.classList.add('same-val');});}
     function placeNum(n){if(!selected||given[selected.r][selected.c])return;const{r,c}=selected;if(pencilMode){pencilMarks[r][c].has(n)?pencilMarks[r][c].delete(n):pencilMarks[r][c].add(n);render();highlight();return;}pencilMarks[r][c].clear();grid[r][c]=n;activeNum=n;if(n!==solution[r][c]){sdkErrors++;$$('#sdk-errors').textContent=sdkErrors;render();highlight();const cell=board.querySelector(`[data-r="${r}"][data-c="${c}"]`);cell.classList.add('error');showFeedback('Wrong!','#e74c3c');resetStreak();setTimeout(()=>{grid[r][c]=0;render();highlight();},800);}else{render();highlight();addScore(1);checkWin();}}
-    function checkWin(){for(let r=0;r<9;r++)for(let c=0;c<9;c++){if(grid[r][c]!==solution[r][c])return;}clearInterval(window._sdkTimer);window._sdkTimer=null;const mins=Math.floor(sdkTime/60),secs=sdkTime%60;showFeedback(`Sudoku Complete! ${mins}:${secs<10?'0'+secs:secs} \u2014 ${sdkErrors} errors \ud83c\udfc6`,'#2ecc71');addScore(sdkDiff==='hard'?20:(sdkDiff==='medium'?12:8));}
+    function checkWin(){for(let r=0;r<9;r++)for(let c=0;c<9;c++){if(grid[r][c]!==solution[r][c])return;}clearInterval(window._sdkTimer);window._sdkTimer=null;const mins=Math.floor(sdkTime/60),secs=sdkTime%60;const bestKey='sdk-best-'+sdkDiff;const prevBest=parseInt(sessionStorage.getItem(bestKey)||'99999');const wasBest=sdkTime<prevBest;if(wasBest)sessionStorage.setItem(bestKey,sdkTime);const winKey='sdk-wins-'+sdkDiff;const winCnt=parseInt(sessionStorage.getItem(winKey)||'0')+1;sessionStorage.setItem(winKey,winCnt);if(wasBest)spawnConfetti(window.innerWidth/2,window.innerHeight/2,150);else if(sdkErrors===0)spawnConfetti(window.innerWidth/2,window.innerHeight/3,80);else spawnConfetti(window.innerWidth/2,window.innerHeight/3,40);showFeedback(`${wasBest?'\ud83c\udfc6 NEW BEST! ':''}${sdkErrors===0?'PERFECT! ':''}Sudoku ${sdkDiff} in ${mins}:${secs<10?'0'+secs:secs} \u2014 ${sdkErrors} errors (win #${winCnt})`,wasBest?'#f1c40f':(sdkErrors===0?'#9b59b6':'#2ecc71'));addScore(sdkDiff==='hard'?20:(sdkDiff==='medium'?12:8));}
     hud.innerHTML=`<span class="game-stat">\u23f1 <span class="game-stat-val" id="sdk-time">0:00</span></span><span class="game-stat">\u274c <span class="game-stat-val" id="sdk-errors">0</span></span><span class="game-stat">\u270f\ufe0f <span class="game-stat-val" id="sdk-pencil-lbl">OFF</span></span>`;
     controls.innerHTML='';['easy','medium','hard'].forEach(d=>{const b=document.createElement('button');b.className='sdk-btn'+(d===sdkDiff?' active':'');b.textContent=d.toUpperCase();b.onclick=()=>{sdkDiff=d;sessionStorage.setItem('sdk-diff',d);initSudoku();};controls.appendChild(b);});
     const nb=document.createElement('button');nb.className='sdk-btn';nb.textContent='NEW';nb.onclick=()=>initSudoku();controls.appendChild(nb);

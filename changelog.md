@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.6.60] - 2026-05-18 - Amni-Learn Sudoku + Reflex Racer polish
+- **Sudoku** polish: per-difficulty best-time tracker (`sdk-best-{diff}`) AND lifetime wins counter (`sdk-wins-{diff}`); win-feedback distinguishes new-best (150 confetti + 🏆 NEW BEST! prefix), perfect-no-errors (80 confetti + PERFECT! prefix), and normal wins (40 confetti); win-number appended to toast
+- **Reflex Racer** polish: per-level best-score tracker (`rfx-best-L{N}`); 5-tier feedback (Keep Practicing 💪 / 👍 Solid ≥8 / 🌟 Great Reflexes ≥15 / ⚡ Lightning Fast ≥25 / 🏆 LEGENDARY ≥40); new-best fires 150-particle confetti with 🏆 NEW BEST! prefix; high-score (25+) without new-best fires 80-particle confetti; best display in result
+- **SW cache v41 → v42** to flush.
+
 ## [5.6.59] - 2026-05-18 - Amni-Learn Life Skills COMPLETE: Vacuum + Dishes + Clock + Money
 - **Vacuuming** polish: per-level best-completion-time tracker (`vac-best-time-L{N}`) and lifetime room count (`vac-cleaned-L{N}`); 3-tier rating (Clean! / ⚡ Speedy Clean! / 🏆 Lightning Clean!); new-best fires 120-particle confetti, speed bonus fires 60
 - **Wash Dishes** polish: lifetime dishes-cleaned counter (`dishes-cleaned-L{N}`); 60-particle finish confetti every round; milestone confetti (80-particle for 10/25, 150 for 50/100/200) with 🏆 N dishes washed! toast
