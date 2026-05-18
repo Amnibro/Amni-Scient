@@ -1,5 +1,15 @@
 ﻿# Changelog 
 
+## [5.6.62] - 2026-05-18 - Amni-Learn College Calculus deeper (~64 → ~94 questions)
+- **Calculus** +30 advanced/multivariable questions, taking the bank from ~64 to ~94:
+  - **multivariable**: partial derivative ∂(x²y³)/∂x, total derivative chain rule, divergence ∇·F, curl ∇×F i-component, polar dA = r dr dθ, spherical dV = ρ² sin φ dρ dφ dθ
+  - **vector calculus**: Green's theorem (line integral ↔ double integral), Stokes' theorem (surface curl ↔ boundary line), Divergence theorem (volume divergence ↔ surface flux), dot product |u||v|cos θ, cross product magnitude |u||v|sin θ, conservative field iff F = ∇φ iff curl F = 0
+  - **series**: ratio test L < 1 converges, root test L > 1 diverges, alternating series test (Leibniz), Maclaurin sin(x), power series radius via ratio, Lagrange remainder bound
+  - **ODEs**: y' = ky exponential, Newton's cooling exponential approach, 2nd-order linear characteristic equation ar² + br + c, Laplace L{1}=1/s, L{e^(at)}=1/(s−a)
+  - **misc**: gamma function Γ(n) = (n−1)!, Jacobian for change of variables, double integral ∫₀¹∫₀¹xy = 1/4, line integral work, tangent line point-slope, linear approximation L(x)
+- Each run still picks 30 from the pool — now much more replay variety, deeper math
+- **SW cache v43 → v44** to flush.
+
 ## [5.6.61] - 2026-05-18 - Amni-Learn STEM polish: Circuit Builder + Reaction Lab + Team Challenges
 - **Circuit Builder** polish: persistent lifetime built-counter (`circuit-built`); 30-particle confetti on every working circuit; milestone confetti (80 particles for 5/10/25, 150 for 50/100) with 🏆 N circuits built! ⚡ toast; streak reset on incomplete circuit
 - **Reaction Lab** polish: discovery tracking (`rxn-discovered` Set of 6 reaction types: salt/boom/steam/blaze/glass/dilute); first-time discovery fires 60-particle confetti + ✨ New reaction! (N/6) toast; all-6 completion fires 150-particle 🏆 ALL 6 REACTIONS DISCOVERED! ⚗️ celebration; +5 score per new discovery
