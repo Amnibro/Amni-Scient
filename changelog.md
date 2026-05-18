@@ -1,5 +1,22 @@
 ﻿# Changelog 
 
+## [5.6.47] - 2026-05-17 - Amni-Learn College Linear Algebra + Statistics expanded
+- **Linear Algebra** ~31 → ~61 questions (+30 new):
+  - decomposition family: SVD UΣVᵀ, LU, QR, Jordan canonical
+  - theorems: Cayley-Hamilton, spectral theorem, det(AB) = det(A)·det(B)
+  - vector norms: L¹/L²/L∞, condition number κ(A)
+  - linear maps: change of basis, similarity P⁻¹AP invariants (trace, det), Moore-Penrose pseudoinverse, orthogonality of null/row space, rotation matrix structure, Cramer's rule
+  - foundations: REF, max rank, vector space axioms, span, normal/orthogonal matrices
+- **Statistics** ~31 → ~61 questions (+30 new):
+  - inference: Z-score, t-distribution heavy tails, Type II error & power 1−β, Cohen's d, Bonferroni α/m, MLE
+  - distributions: Bernoulli, geometric, exponential, Poisson Var=λ, Markov chains memoryless property
+  - tests: χ² goodness-of-fit, ANOVA, regression slope β̂ = Cov/Var, multicollinearity, OLS residual assumptions
+  - Bayesian: posterior ∝ likelihood × prior, conjugate priors
+  - data: covariance, correlation r = Cov/(σ_X·σ_Y), Simpson's paradox, bootstrap, confounders
+  - common pitfalls: p-value misinterpretation, n−1 Bessel's correction, 95% CI long-run capture
+- 11 more college subjects to expand in coming iterations (discrete, physics, chem, bio, algorithms, datastructs, philosophy, economics, writing, psychology, college math advanced)
+- **SW cache v28 → v29** to flush.
+
 ## [5.6.46] - 2026-05-17 - Amni-Learn College Calculus expanded (~34 → ~64 questions)
 - **College Calculus bank ~2×** — added 30 new advanced questions:
   - **derivatives**: quotient rule formula, 3rd derivative cycling sin→cos→−sin→−cos, implicit (x²+y²=1), inverse trig (arctan integral), |x| corner at 0, logarithmic differentiation
