@@ -1,5 +1,26 @@
 ﻿# Changelog 
 
+## [5.6.45] - 2026-05-17 - Amni-Learn Word Bridge L5 COMPLETE — ENTIRE 4× CAMPAIGN DONE
+- **Word Bridge L5 expanded** — 16 → 64 entries (+48 × 6 languages = 288 translation cells)
+- L5 +48 (expert/scientific/academic):
+  - **fields of study**: Geology, Biology, Physics, Psychology, Sociology, Anthropology, Linguistics, Statistics, Probability, Geometry, Algebra, Calculus, Logic
+  - **science**: Genome, Molecule, Atom, Particle, Vacuum, Gravity, Magnetism, Frequency, Optics, Laboratory, Experiment, Constellation, Galaxy, Telescope, Microscope
+  - **tech**: Algorithm, Database, Network, Software, Internet
+  - **policy**: Democracy, Diplomacy, Economy, Globalization, Sustainability, Innovation, Hierarchy, Equilibrium
+  - **abstract**: Theory, Paradigm, Synthesis, Analysis, Reasoning, Metaphor, Allegory
+- **All 10 major Amni-Learn content banks now FULLY quadrupled** per Anthony's 2026-05-17 directive:
+  - Animals quiz: 60 → 280 ✓
+  - Languages quiz: 58 → 232 ✓
+  - Geography Explorer: 40 → 160 countries ✓
+  - Pattern Puzzle: 40 → 160 generators ✓
+  - Logic Puzzles: 52 → ~190 ✓
+  - Word Scramble: 50 → 200 ✓
+  - Anagram: 75 → 300 ✓
+  - Word Search: 105 → 420 (28 topics × 15) ✓
+  - Word Bridge: 80 → 320 per language × 6 languages ✓
+  - Music quiz + Music Studio (earlier batches) ✓
+- **SW cache v26 → v27** to flush.
+
 ## [5.6.44] - 2026-05-17 - Amni-Learn content quadruple batch 20: Word Bridge L4 quadrupled
 - **Word Bridge L4 expanded** — 16 → 64 entries (+48 × 6 languages = 288 translation cells)
 - L4 +48 (advanced vocab):
