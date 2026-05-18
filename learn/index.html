@@ -8511,6 +8511,11 @@ function playAnimalSound(type) {
     }
     function removeAndDrop(matched){
       const pts=(matched.size*10)*(1+combo*0.5);score+=Math.round(pts);combo++;
+      if(combo===3)showFeedback(`Combo! ${combo}×`,'#3498db');
+      else if(combo===5){showFeedback(`SUPER COMBO! ${combo}×`,'#9b59b6');spawnConfetti(window.innerWidth/2,window.innerHeight/3,40);}
+      else if(combo===8){showFeedback(`MEGA COMBO! ${combo}× 🔥`,'#f1c40f');spawnConfetti(window.innerWidth/2,window.innerHeight/3,80);}
+      else if(combo>=12){showFeedback(`LEGENDARY! ${combo}× 🔥🔥`,'#e74c3c');spawnConfetti(window.innerWidth/2,window.innerHeight/3,120);}
+      if(matched.size>=8)showFeedback(`${matched.size}-gem match!`,'#2ecc71');
       matched.forEach(idx=>{const r=Math.floor(idx/COLS),c=idx%COLS;grid[r][c]=null;});
       const changed=new Set(matched);
       for(let c=0;c<COLS;c++){
@@ -8574,7 +8579,8 @@ function playAnimalSound(type) {
       }
       combo=0;
       if(movesLeft<=0){
-        if(score>bestScore){bestScore=score;sessionStorage.setItem('bj-best',bestScore);}
+        const wasBest=score>bestScore;
+        if(wasBest){bestScore=score;sessionStorage.setItem('bj-best',bestScore);spawnConfetti(window.innerWidth/2,window.innerHeight/2,120);}
         if(_hintTmr)clearTimeout(_hintTmr);
         _bgrid=null;_bhud=null;_bcells=null;
         const pb=getPersonalBest('bejeweled',score);const medal=medalFor(Math.min(100,score/50));
@@ -9080,7 +9086,7 @@ function playAnimalSound(type) {
     function cost(u){return Math.floor(u.baseCost*Math.pow(1.15,u.count));}
     function save(){sessionStorage.setItem('ck-c',cookies);sessionStorage.setItem('ck-cps',cps);sessionStorage.setItem('ck-up',JSON.stringify(upgrades.map(u=>u.count)));sessionStorage.setItem('ck-ach',JSON.stringify(achievements.map(a=>a.earned)));}
     function fmt(n){return n>=1e9?(n/1e9).toFixed(1)+'B':n>=1e6?(n/1e6).toFixed(1)+'M':n>=1e3?(n/1e3).toFixed(1)+'K':Math.floor(n);}
-    function checkAch(){achievements.forEach(a=>{if(!a.earned&&a.check()){a.earned=true;showFeedback(`🎖️ ${a.name}`,'#f1c40f');}});}
+    function checkAch(){achievements.forEach(a=>{if(!a.earned&&a.check()){a.earned=true;showFeedback(`🎖️ ${a.name}`,'#f1c40f');spawnConfetti(window.innerWidth/2,window.innerHeight/3,60);}});const lifetime=parseFloat(sessionStorage.getItem('ck-lifetime')||'0');if(cookies>lifetime)sessionStorage.setItem('ck-lifetime',cookies);}
     function spawnGolden(){
       if(goldenActive||currentGame!=='clicker')return;
       const gc=document.createElement('div');gc.id='ck-golden';gc.textContent='🍪';gc.style.cssText=`position:absolute;font-size:2rem;cursor:pointer;animation:pulse 0.5s infinite alternate;top:${30+Math.random()*200}px;left:${10+Math.random()*60}%;z-index:10;filter:hue-rotate(60deg) brightness(1.5);`;
@@ -9092,6 +9098,8 @@ function playAnimalSound(type) {
       const existing=$$('#ck-golden');root.innerHTML='';if(existing)root.appendChild(existing);
       const display=document.createElement('div');display.className='idle-display';display.id='ck-display';display.textContent=`🍪 ${fmt(cookies)}`;root.appendChild(display);
       const rate=document.createElement('div');rate.className='idle-rate';rate.textContent=`${fmt(cps*goldenMult)} per second${goldenMult>1?' (🌟 GOLDEN!)':''}`;root.appendChild(rate);
+      const lifetime=parseFloat(sessionStorage.getItem('ck-lifetime')||'0');
+      if(lifetime>0){const lt=document.createElement('div');lt.style.cssText='text-align:center;font-size:0.8rem;color:#888;margin:2px 0';lt.textContent=`🏆 Lifetime best: ${fmt(lifetime)}`;root.appendChild(lt);}
       const btn=document.createElement('div');btn.className='idle-main-btn';btn.textContent='🍪';btn.onclick=()=>{cookies+=Math.max(1,Math.floor(cps*0.1)+1)*goldenMult;save();checkAch();render();};root.appendChild(btn);
       const shop=document.createElement('div');shop.className='idle-shop';
       upgrades.forEach(u=>{
@@ -9138,13 +9146,16 @@ function playAnimalSound(type) {
     function doPrestige(){
       if(gems<100000)return;
       prestige++;pMult=1+prestige*0.5;gems=0;upgrades.forEach(u=>u.count=0);depth=1;gps=0;
-      showFeedback(`⭐ Prestige ${prestige}! ${pMult}x mult`,'#f1c40f');save();render();
+      showFeedback(`⭐ Prestige ${prestige}! ${pMult}x mult`,'#f1c40f');spawnConfetti(window.innerWidth/2,window.innerHeight/2,120);save();render();
     }
+    function _checkAmAch(){const lifetime=parseFloat(sessionStorage.getItem('am-lifetime')||'0');if(gems>lifetime){sessionStorage.setItem('am-lifetime',gems);const milestones=[100,1000,10000,100000,1000000];for(const m of milestones){if(lifetime<m&&gems>=m){spawnConfetti(window.innerWidth/2,window.innerHeight/3,m>=100000?100:40);showFeedback(`💎 ${fmt(m)} gems!`,'#f1c40f');break;}}}}
     function render(){
       root.innerHTML='';
       const display=document.createElement('div');display.className='idle-display';display.id='am-display';display.textContent=`⛏️ ${fmt(gems)}`;root.appendChild(display);
       const rate=document.createElement('div');rate.className='idle-rate';rate.textContent=`${fmt(gps)}/sec | Depth: ${depth} (${depth}x) | Click: +${fmt(clickPower())}${prestige>0?` | ⭐×${pMult}`:''}`;root.appendChild(rate);
-      const btn=document.createElement('div');btn.className='idle-main-btn';btn.textContent='⛏️';btn.onclick=()=>{gems+=clickPower();save();const d=$$('#am-display');if(d)d.textContent=`⛏️ ${fmt(gems)}`;};root.appendChild(btn);
+      const lifetime=parseFloat(sessionStorage.getItem('am-lifetime')||'0');
+      if(lifetime>0){const lt=document.createElement('div');lt.style.cssText='text-align:center;font-size:0.8rem;color:#888;margin:2px 0';lt.textContent=`🏆 Lifetime best: ${fmt(lifetime)} gems`;root.appendChild(lt);}
+      const btn=document.createElement('div');btn.className='idle-main-btn';btn.textContent='⛏️';btn.onclick=()=>{gems+=clickPower();_checkAmAch();save();const d=$$('#am-display');if(d)d.textContent=`⛏️ ${fmt(gems)}`;};root.appendChild(btn);
       const shop=document.createElement('div');shop.className='idle-shop';
       upgrades.forEach(u=>{
         const c=cost(u);const item=document.createElement('div');item.className='idle-item'+(gems<c?' locked':'');
@@ -9159,7 +9170,7 @@ function playAnimalSound(type) {
       btns.appendChild(pb);btns.appendChild(eb);root.appendChild(btns);
     }
     render();
-    window._minerTimer=setInterval(()=>{if(currentGame!=='autominer')return;gems+=gps/10;save();const d=$$('#am-display');if(d)d.textContent=`⛏️ ${fmt(gems)}`;root.querySelectorAll('.idle-shop .idle-item').forEach((el,i)=>{if(upgrades[i]){const c=cost(upgrades[i]);el.classList.toggle('locked',gems<c);}});const pb=root.querySelector('[style*="100K"]');if(pb)pb.style.background=gems>=100000?'#f1c40f':'#555';},100);
+    window._minerTimer=setInterval(()=>{if(currentGame!=='autominer')return;gems+=gps/10;_checkAmAch();save();const d=$$('#am-display');if(d)d.textContent=`⛏️ ${fmt(gems)}`;root.querySelectorAll('.idle-shop .idle-item').forEach((el,i)=>{if(upgrades[i]){const c=cost(upgrades[i]);el.classList.toggle('locked',gems<c);}});const pb=root.querySelector('[style*="100K"]');if(pb)pb.style.background=gems>=100000?'#f1c40f':'#555';},100);
   }
   function initPullPin(){
     const root=$$('#pullpin-game');root.innerHTML='';

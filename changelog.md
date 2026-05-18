@@ -1,5 +1,12 @@
 ﻿# Changelog 
 
+## [5.6.55] - 2026-05-18 - Amni-Learn idle/casual polish: Cookie Clicker + Auto Miner + Gem Crush
+- **Cookie Clicker** polish: lifetime-cookies tracker (`ck-lifetime` sessionStorage); 🏆 Lifetime best displayed below CPS rate when known; achievement unlocks now spawn 60-particle confetti alongside existing achievement toast (all 8 milestones from First Cookie through Time Lord/Golden Touch)
+- **Auto Miner** polish: lifetime-gems tracker (`am-lifetime`) updated each tick and on click; 🏆 Lifetime best shown in main view; gem-milestone celebrations (100/1K/10K/100K/1M) trigger first-time confetti (100 particles for 100K+, 40 for smaller); prestige now spawns 120-particle confetti on top of existing feedback
+- **Gem Crush** (Bejeweled) polish: combo cascade celebrations (3×: blue toast / 5×: SUPER COMBO purple + 40 particles / 8×: MEGA COMBO 🔥 gold + 80 particles / 12×+: LEGENDARY 🔥🔥 red + 120 particles); 8+-gem matches get named-match toast; new-best detection on game over spawns 120-particle confetti
+- **6 of 8 idle/casual modules polished** (Cookie Clicker, Auto Miner, Color Sort, Gem Crush, 2048, Color Blast). Remaining: Solitaire, Tower Defense.
+- **SW cache v36 → v37** to flush.
+
 ## [5.6.54] - 2026-05-18 - Amni-Learn idle/casual polish: 2048 + Color Blast + Color Sort
 - **2048** polish: persistent max-tile tracker (`haven_t2048_max` in localStorage), tile-milestone confetti — first-time 512/1024/2048/4096/8192 gets new-max celebration (150 particles for 2048+, 80 for others); subsequent triggers get smaller acknowledgment confetti (40 particles); HUD now shows current Max and all-time 🏆 max tile alongside Score/Best
 - **Color Blast** polish: persistent best-score (`haven_cblast_best` in localStorage), HUD shows 🏆 Best; cluster-size milestones — 12+ block clusters get 'HUGE POP! 🔥' + 80-particle confetti; 8+ get 'Big! ✨' + 40 particles; 5+ get 'Nice' acknowledgment; new-best on game over triggers 120-particle confetti and NEW BEST badge
