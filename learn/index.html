@@ -8742,6 +8742,8 @@ function playAnimalSound(type) {
     const canvas=document.createElement('canvas');canvas.className='retro-canvas';canvas.style.borderColor='#0f0';canvas.width=cW;canvas.height=cH;
     const ctx=canvas.getContext('2d');
     let best=parseInt(sessionStorage.getItem('inv-best')||'0');
+    let bestWave=parseInt(sessionStorage.getItem('inv-best-wave')||'1');
+    function _invTier(s){if(s>=8000)return{name:'Defender of Earth',color:'#f1c40f',msg:'Legend of the line.'};if(s>=3000)return{name:'Veteran Pilot',color:'#9b59b6',msg:'Trigger discipline & dance.'};if(s>=1000)return{name:'Squadron Leader',color:'#2ecc71',msg:'Steady aim, steady wave.'};if(s>=300)return{name:'Rookie',color:'#3498db',msg:'Learning the swarm pattern.'};return{name:'Cadet',color:'#e67e22',msg:'First sortie.'};}
     let px,bullets,eBullets,sc,lives,enemies,eDir,eSpeed,frame,wave,go,shield;
     function spawnEnemies(){enemies=[];const rows=Math.min(4+Math.floor(wave/3),6),cols=Math.min(8,6+Math.floor(wave/4));for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){const hp=r===0&&wave>3?2:1;enemies.push({x:20+c*(cW-40)/cols,y:20+r*28,alive:true,r,hp});}}
     function restart(){px=cW/2;bullets=[];eBullets=[];sc=0;lives=3;eDir=1;eSpeed=0.5;frame=0;wave=1;go=false;shield=3;spawnEnemies();const ov=$$('#inv-over');if(ov)ov.remove();}
@@ -8751,10 +8753,14 @@ function playAnimalSound(type) {
     canvas.addEventListener('pointerdown',()=>{if(go)return;if(bullets.length<4)bullets.push({x:px,y:cH-25});});
     document.addEventListener('keydown',e=>{if(currentGame!=='invaders')return;if(e.key==='ArrowLeft')px=Math.max(10,px-15);if(e.key==='ArrowRight')px=Math.min(cW-10,px+15);if(e.key===' '&&!go&&bullets.length<4)bullets.push({x:px,y:cH-25});if(e.key==='s'&&shield>0&&!go){shield--;$$('#inv-sh').textContent=shield;eBullets=[];showFeedback('Shield used!','#3498db');}});
     function gameOver(){
-      go=true;if(sc>best){best=sc;sessionStorage.setItem('inv-best',best);}$$('#inv-best').textContent=best;
-      ctx.fillStyle='rgba(0,0,0,0.7)';ctx.fillRect(0,0,cW,cH);ctx.fillStyle='#e74c3c';ctx.font='bold 24px JetBrains Mono';ctx.textAlign='center';ctx.fillText('GAME OVER',cW/2,cH/2-20);ctx.fillStyle='#fff';ctx.font='16px JetBrains Mono';ctx.fillText(`Score: ${sc} | Wave: ${wave}`,cW/2,cH/2+10);
-      const ov=document.createElement('div');ov.id='inv-over';ov.style.cssText='text-align:center;padding:12px;';
-      ov.innerHTML=`<button class="retro-btn" style="margin:4px" id="inv-restart">🔄 RESTART</button><button class="retro-btn" style="margin:4px;background:#e74c3c" id="inv-exit">🚪 EXIT</button><button class="tut-trigger" style="margin:4px" onclick="_hs_show('invaders','Invaders')">🏆</button>`;
+      go=true;const wasBest=sc>best;
+      if(wasBest){best=sc;sessionStorage.setItem('inv-best',best);}$$('#inv-best').textContent=best;
+      if(wave>bestWave){bestWave=wave;sessionStorage.setItem('inv-best-wave',bestWave);}
+      if(wasBest)spawnConfetti(window.innerWidth/2,window.innerHeight/2,120);
+      const tier=_invTier(sc);
+      ctx.fillStyle='rgba(0,0,0,0.7)';ctx.fillRect(0,0,cW,cH);ctx.fillStyle=tier.color;ctx.font='bold 22px JetBrains Mono';ctx.textAlign='center';ctx.fillText('GAME OVER',cW/2,cH/2-20);ctx.fillStyle='#fff';ctx.font='14px JetBrains Mono';ctx.fillText(`Score: ${sc} | Wave: ${wave}`,cW/2,cH/2+10);
+      const ov=document.createElement('div');ov.id='inv-over';ov.style.cssText='text-align:center;padding:14px;margin-top:8px;';
+      ov.innerHTML=`<div style="font-size:1.5rem;font-weight:bold;color:${tier.color};margin-bottom:4px">${wasBest?'🏆 NEW BEST!':'GAME OVER'}</div><div style="font-size:0.95rem;color:${tier.color};margin-bottom:10px">${tier.name} · ${tier.msg}</div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;max-width:300px;margin:0 auto 10px;background:rgba(0,0,0,0.3);padding:8px;border-radius:6px"><div><div style="font-size:1.1rem;font-weight:bold;color:#fff">${sc}</div><div style="font-size:0.7rem;color:#aaa">Score</div></div><div><div style="font-size:1.1rem;font-weight:bold;color:#fff">${wave}</div><div style="font-size:0.7rem;color:#aaa">Wave</div></div><div><div style="font-size:1.1rem;font-weight:bold;color:#f1c40f">${best}</div><div style="font-size:0.7rem;color:#aaa">All-Time</div></div></div><div style="font-size:0.8rem;color:#aaa;margin-bottom:10px">Best Wave ${bestWave}</div><button class="retro-btn" style="margin:4px" id="inv-restart">🔄 RESTART</button><button class="retro-btn" style="margin:4px;background:#e74c3c" id="inv-exit">🚪 EXIT</button><button class="tut-trigger" style="margin:4px" onclick="_hs_show('invaders','Invaders')">🏆 Scores</button>`;
       root.appendChild(ov);$$('#inv-restart').onclick=restart;$$('#inv-exit').onclick=()=>{if(window._invadersAF)cancelAnimationFrame(window._invadersAF);goBack()};
       _hs_prompt('invaders',sc,`Wave: ${wave}`);
     }
@@ -8968,13 +8974,16 @@ function playAnimalSound(type) {
     function tap(){if(dead)return;if(!alive){reset();return;}bv=FLAP;}
     canvas.addEventListener('pointerdown',tap);
     document.addEventListener('keydown',e=>{if(currentGame!=='flappy')return;if(e.key===' ')tap();});
+    function _flpTier(s){if(s>=100)return{name:'Sky Sage',color:'#f1c40f',msg:'Flap-tap mastery transcendent.'};if(s>=50)return{name:'Soaring Eagle',color:'#9b59b6',msg:'Pipes part for you.'};if(s>=25)return{name:'Steady Glider',color:'#2ecc71',msg:'Threading needles.'};if(s>=10)return{name:'Pipe Dodger',color:'#3498db',msg:'Finding your rhythm.'};return{name:'Hatchling',color:'#e67e22',msg:'First flights.'};}
     function die(){
       alive=false;dead=true;resetStreak();
-      if(sc>best){best=sc;sessionStorage.setItem('flp-best',best);}
+      const wasBest=sc>best;
+      if(wasBest){best=sc;sessionStorage.setItem('flp-best',best);}
+      if(wasBest)spawnConfetti(window.innerWidth/2,window.innerHeight/2,120);
       drawDeath();
-      const ov=document.createElement('div');ov.id='flp-over';ov.style.cssText='text-align:center;padding:10px;';
-      const m=medal();
-      ov.innerHTML=`<div style="font-size:1.2rem;color:#fff;margin-bottom:6px">${m} Score: ${sc} | Best: ${best}</div><button class="retro-btn" style="margin:4px" id="flp-restart">🔄 RESTART</button><button class="retro-btn" style="margin:4px;background:#e74c3c" id="flp-exit">🚪 EXIT</button><button class="tut-trigger" style="margin:4px" onclick="_hs_show('flappy','Flappy Jump')">🏆</button>`;
+      const ov=document.createElement('div');ov.id='flp-over';ov.style.cssText='text-align:center;padding:14px;margin-top:8px;';
+      const m=medal();const tier=_flpTier(sc);
+      ov.innerHTML=`<div style="font-size:1.5rem;font-weight:bold;color:${tier.color};margin-bottom:4px">${wasBest?'🏆 NEW BEST!':'GAME OVER'}</div><div style="font-size:0.95rem;color:${tier.color};margin-bottom:10px">${tier.name} · ${tier.msg}</div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;max-width:260px;margin:0 auto 10px;background:rgba(0,0,0,0.3);padding:8px;border-radius:6px"><div><div style="font-size:1.1rem;font-weight:bold;color:#fff">${sc}</div><div style="font-size:0.7rem;color:#aaa">Score</div></div><div><div style="font-size:1.1rem;font-weight:bold;color:#fff">${m||'—'}</div><div style="font-size:0.7rem;color:#aaa">Medal</div></div><div><div style="font-size:1.1rem;font-weight:bold;color:#f1c40f">${best}</div><div style="font-size:0.7rem;color:#aaa">All-Time</div></div></div><button class="retro-btn" style="margin:4px" id="flp-restart">🔄 RESTART</button><button class="retro-btn" style="margin:4px;background:#e74c3c" id="flp-exit">🚪 EXIT</button><button class="tut-trigger" style="margin:4px" onclick="_hs_show('flappy','Flappy Jump')">🏆 Scores</button>`;
       root.appendChild(ov);$$('#flp-restart').onclick=()=>{dead=false;reset();};$$('#flp-exit').onclick=()=>{if(window._flappyAF)cancelAnimationFrame(window._flappyAF);goBack()};
       _hs_prompt('flappy',sc);
     }

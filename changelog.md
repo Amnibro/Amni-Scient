@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.6.52] - 2026-05-18 - Amni-Learn retro arcade polish: Invaders + Flappy
+- **Invaders** polish pass: tier system (Cadet <300 / Rookie <1000 / Squadron Leader <3000 / Veteran Pilot <8000 / Defender of Earth 8000+); persistent best-wave (`inv-best-wave`); polished summary card with 3-stat grid (Score / Wave / All-Time) plus best-wave row; new-best confetti (120 particles); tier color flows into in-canvas GAME OVER text
+- **Flappy** polish pass: tier system (Hatchling <10 / Pipe Dodger <25 / Steady Glider <50 / Soaring Eagle <100 / Sky Sage 100+); polished summary card with 3-stat grid (Score / Medal / All-Time); new-best confetti (120 particles); existing medal logic preserved (🏆 40+, 🥇 25+, 🥈 15+, 🥉 5+)
+- 5 of 8 retro arcade modules now polished: Snake, Tetris, Breakout, Invaders, Flappy. Remaining: Pong, Minesweeper, Pipe Connect
+- **SW cache v33 → v34** to flush.
+
 ## [5.6.51] - 2026-05-17 - Amni-Learn retro arcade polish: Snake, Tetris, Breakout
 - **Snake** polish pass: tier system (Earthworm <100 / Garter <500 / Cobra <1500 / Anaconda <5000 / Mythic Constrictor 5000+); persistent best-length and best-wave (`snake-best-len`, `snake-best-wave`); polished game-over summary card with 4-stat grid (Score / Length / Wave / All-Time) plus best-length and best-wave; new-best confetti (120 particles)
 - **Tetris** polish pass: tier system (Block Stacker <500 / Apprentice <2000 / T-Spin Adept <8000 / Sensei <25000 / Tetris Legend 25000+); tetris-clear (4-line) celebration with 80-particle confetti + 🔥 message; triple/double clears with smaller confetti + named feedback; level-up confetti (50 particles); persistent best-lines and best-level (`tet-best-lines`, `tet-best-level`); tetrisCount tracked per game; polished summary card with 4-stat grid (Score / Lines / Level / Tetrises) plus best-lines and best-level; new-best confetti
