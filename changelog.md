@@ -1,5 +1,12 @@
 ﻿# Changelog 
 
+## [5.6.53] - 2026-05-18 - Amni-Learn retro arcade COMPLETE: Pong + Minesweeper + Pipes
+- **Pong** polish: persistent match-wins counter (`pong-matches`) and best win-streak (`pong-streak`) in HUD. Match win triggers difficulty-scaled bonus (50 + 25·difficulty score, 80-170 confetti particles). Streak counter resets on CPU match win. HUD now shows 🏆 Matches and 🔥 Streak alongside live set score.
+- **Minesweeper** polish: tier per difficulty (Easy ≤10s = Lightning ⚡, Medium ≤30s = Sharp 🎯, Hard ≤60s = Master 👑). Win-feedback toast names the tier. New-best gets 120-particle confetti; tier-achieved (without new best) gets 60-particle confetti.
+- **Pipe Connect** polish: post-clear tier system (Plumbing Master 🏆 / Efficient / Solid / Cleared) based on moves vs estimated optimal (1.5×grid² heuristic). New-best gets 80-particle confetti; optimal-tier gets 40-particle confetti. Tier label appears in clear-feedback toast.
+- **All 8 retro arcade modules now polished** consistently (Snake, Tetris, Breakout, Invaders, Flappy, Pong, Minesweeper, Pipes)
+- **SW cache v34 → v35** to flush.
+
 ## [5.6.52] - 2026-05-18 - Amni-Learn retro arcade polish: Invaders + Flappy
 - **Invaders** polish pass: tier system (Cadet <300 / Rookie <1000 / Squadron Leader <3000 / Veteran Pilot <8000 / Defender of Earth 8000+); persistent best-wave (`inv-best-wave`); polished summary card with 3-stat grid (Score / Wave / All-Time) plus best-wave row; new-best confetti (120 particles); tier color flows into in-canvas GAME OVER text
 - **Flappy** polish pass: tier system (Hatchling <10 / Pipe Dodger <25 / Steady Glider <50 / Soaring Eagle <100 / Sky Sage 100+); polished summary card with 3-stat grid (Score / Medal / All-Time); new-best confetti (120 particles); existing medal logic preserved (🏆 40+, 🥇 25+, 🥈 15+, 🥉 5+)
