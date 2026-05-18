@@ -1,5 +1,14 @@
 ﻿# Changelog 
 
+## [5.6.44] - 2026-05-17 - Amni-Learn content quadruple batch 20: Word Bridge L4 quadrupled
+- **Word Bridge L4 expanded** — 16 → 64 entries (+48 × 6 languages = 288 translation cells)
+- L4 +48 (advanced vocab):
+  - **careers**: Artist, Writer, Musician, Lawyer, Architect, Designer, Journalist, Astronaut, Pilot, Farmer, Soldier, Firefighter, Programmer, Nurse
+  - **virtues**: Wisdom, Patience, Honesty, Kindness, Trust, Justice, Loyalty, Beauty, Mystery, Curiosity, Imagination, Inspiration, Confidence, Generosity
+  - **abstract concepts**: Beginning, Ending, Distance, Speed, Power, Silence, Sound, Voice, History, Future, Past, Reality, Idea, Reason, Meaning, Purpose, Success, Failure, Choice, Decision
+- L5 still 16 — final iteration to complete Word Bridge
+- **SW cache v25 → v26** to flush.
+
 ## [5.6.43] - 2026-05-17 - Amni-Learn content quadruple batch 19: Word Bridge L3 quadrupled
 - **Word Bridge L3 expanded** — 16 → 64 entries (+48 entries × 6 languages = 288 translation cells)
 - L3 +48 (intermediate vocab):
