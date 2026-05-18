@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.6.48] - 2026-05-17 - Amni-Learn College Discrete + Physics + Chemistry expanded
+- **Discrete Math** ~31 → ~61 questions (+30): surjection/bijection, permutations P(n,n) and combinations C(7,3), converse vs contrapositive, bipartite & König, Dijkstra, equivalence/partial orders, Big-O, biconditional ↔, mod arithmetic, lattice paths, Stirling numbers S(n,k), quantifiers ∀/∃, Eulerian and Hamiltonian circuits, K_{3,3} planarity (Kuratowski), Master theorem T(n)=2T(n/2)+n, NAND universality, function counting 4³
+- **Physics** ~30 → ~60 (+30): Newton 1st & 3rd laws, momentum p=mv, impulse Δp=FΔt, centripetal mv²/r, pendulum T=2π√(L/g), Doppler, Snell's, Ohm's V=IR, P=I²R, Coulomb, λf=v, 1st & 2nd thermo laws, Carnot η=1−T_c/T_h, ideal gas PV=nRT, photoelectric KE_max=hf−φ, Heisenberg ΔxΔp≥ℏ/2, Hooke spring ½kx², Kepler T²∝a³, Faraday induction, Maxwell's 4 equations, Lorentz γ, E=mc², Schrödinger, double-slit, Boltzmann k_B
+- **Chemistry** ~30 → ~60 (+30): electron-shell capacity (8 for L), carbon config 1s²2s²2p², molar volume 22.4 L at STP, stoichiometry, Le Chatelier, Lewis/Brønsted acid-base, strong acids, pH 10⁻³ → 3, oxidation as electron loss, galvanic vs electrolysis, lattice energy q₁q₂/r, bond polarity by ΔEN, sp³ tetrahedral, VSEPR, ΔH endo/exo, ΔG<0 spontaneous, functional groups (−OH alcohol), benzene aromaticity, isomers, halogens 7 valence, buffer + Henderson-Hasselbalch, 1st order rate t_(1/2)=ln2/k, Arrhenius k=Ae^(−Ea/RT), Ksp, isotopes neutron count
+- **SW cache v29 → v30** to flush.
+
 ## [5.6.47] - 2026-05-17 - Amni-Learn College Linear Algebra + Statistics expanded
 - **Linear Algebra** ~31 → ~61 questions (+30 new):
   - decomposition family: SVD UΣVᵀ, LU, QR, Jordan canonical
