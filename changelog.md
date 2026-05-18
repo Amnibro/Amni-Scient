@@ -1,5 +1,17 @@
 ﻿# Changelog 
 
+## [5.6.46] - 2026-05-17 - Amni-Learn College Calculus expanded (~34 → ~64 questions)
+- **College Calculus bank ~2×** — added 30 new advanced questions:
+  - **derivatives**: quotient rule formula, 3rd derivative cycling sin→cos→−sin→−cos, implicit (x²+y²=1), inverse trig (arctan integral), |x| corner at 0, logarithmic differentiation
+  - **integration**: ∫ ln(x) dx = x ln(x)−x+C, ∫ 1/(1+x²) dx = arctan, ∫ 1/√(1−x²) dx = arcsin, ∫ sec(x) dx via (sec+tan)/(sec+tan), ∫ x²eˣ dx by parts, ∫_{−∞}^∞ e^(−x²) dx = √π Gaussian
+  - **limits**: lim (1−cos x)/x² = 1/2, L'Hôpital indeterminate forms 0/0 and ∞/∞ only
+  - **applications**: disk method ∫π[f(x)]² dx, shell method 2πx·f(x), average value (1/(b−a))∫f dx, related rates ladder problem, Newton's method iteration, trapezoidal rule
+  - **series**: geometric Σx^n=1/(1−x), Maclaurin cos/1/(1−x), p-series convergence p>1, improper ∫1/x² = 1, ∫1/x diverges
+  - **theory**: critical points, saddle/Hessian indefinite, concavity test, partial fraction decomposition, Lagrange multipliers ∇f=λ∇g, separable dy/dx=ky
+- Each run picks 30 from pool — now offers real replay variety
+- College quizzes (13 subjects) — all ~30 each. Expanding remaining 12 in subsequent iterations.
+- **SW cache v27 → v28** to flush.
+
 ## [5.6.45] - 2026-05-17 - Amni-Learn Word Bridge L5 COMPLETE — ENTIRE 4× CAMPAIGN DONE
 - **Word Bridge L5 expanded** — 16 → 64 entries (+48 × 6 languages = 288 translation cells)
 - L5 +48 (expert/scientific/academic):
