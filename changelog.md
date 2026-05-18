@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.6.56] - 2026-05-18 - Amni-Learn idle/casual COMPLETE: Solitaire + Tower Defense
+- **Solitaire** polish: persistent best-completion-time tracker (`haven_sol_best_time` localStorage); win celebration with elapsed time + win-number message; new-best gets 150-particle confetti and 🏆 NEW BEST TIME! prefix vs 120 particles for normal wins
+- **Tower Defense** polish: persistent best-wave tracker (`haven_td_best_wave` localStorage); game-over tier system (Newbie Mayor / Apprentice Builder ≥5 / Castle Keeper ≥10 / Defense Captain ≥15 / Tower Strategist 🏆 ≥25); new-best gets 120-particle confetti and NEW BEST! prefix
+- **All 8 idle/casual modules now polished** (Cookie Clicker, Auto Miner, Color Sort, Gem Crush, 2048, Color Blast, Solitaire, Tower Defense)
+- **SW cache v37 → v38** to flush.
+
 ## [5.6.55] - 2026-05-18 - Amni-Learn idle/casual polish: Cookie Clicker + Auto Miner + Gem Crush
 - **Cookie Clicker** polish: lifetime-cookies tracker (`ck-lifetime` sessionStorage); 🏆 Lifetime best displayed below CPS rate when known; achievement unlocks now spawn 60-particle confetti alongside existing achievement toast (all 8 milestones from First Cookie through Time Lord/Golden Touch)
 - **Auto Miner** polish: lifetime-gems tracker (`am-lifetime`) updated each tick and on click; 🏆 Lifetime best shown in main view; gem-milestone celebrations (100/1K/10K/100K/1M) trigger first-time confetti (100 particles for 100K+, 40 for smaller); prestige now spawns 120-particle confetti on top of existing feedback

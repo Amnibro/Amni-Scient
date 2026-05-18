@@ -3003,6 +3003,16 @@
     _sol.won = true;
     _sol.wins++;
     localStorage.setItem('haven_sol_wins', String(_sol.wins));
+    const elapsed = Math.floor((Date.now() - _sol.startMs) / 1000);
+    const bestTime = parseInt(localStorage.getItem('haven_sol_best_time') || '99999');
+    const wasBestTime = elapsed < bestTime;
+    if (wasBestTime) localStorage.setItem('haven_sol_best_time', String(elapsed));
+    if (typeof spawnConfetti === 'function') spawnConfetti(window.innerWidth / 2, window.innerHeight / 2, wasBestTime ? 150 : 120);
+    if (typeof showFeedback === 'function') {
+      const m = Math.floor(elapsed / 60), s = elapsed % 60;
+      const t = m > 0 ? `${m}:${s.toString().padStart(2, '0')}` : `${s}s`;
+      showFeedback(`${wasBestTime ? '🏆 NEW BEST TIME! ' : '🎉 '}Won in ${t} (Win #${_sol.wins})`, wasBestTime ? '#f1c40f' : '#2ecc71');
+    }
     setTimeout(() => { _solDeal(); _sol.startMs = Date.now(); localStorage.setItem('haven_sol_elapsed', '0'); _sol.won = false; _solSave(); _solRender(); }, 2400);
   }
   function _solRender() {
@@ -3259,8 +3269,21 @@
       if (e.pathIdx >= TD.pathPx.length - 1) {
         TD.enemies.splice(i, 1);
         TD.lives--;
-        if (TD.lives <= 0) { TD.lives = 0; TD.over = true; _tdSave(); _tdRenderHud(); }
-        else _tdRenderHud();
+        if (TD.lives <= 0) {
+          TD.lives = 0; TD.over = true; _tdSave(); _tdRenderHud();
+          const bestWave = parseInt(localStorage.getItem('haven_td_best_wave') || '0') || 0;
+          const wasBest = TD.wave > bestWave;
+          if (wasBest) localStorage.setItem('haven_td_best_wave', String(TD.wave));
+          if (typeof spawnConfetti === 'function' && wasBest) spawnConfetti(window.innerWidth/2, window.innerHeight/2, 120);
+          if (typeof showFeedback === 'function') {
+            let tier = 'Newbie Mayor';
+            if (TD.wave >= 25) tier = 'Tower Strategist 🏆';
+            else if (TD.wave >= 15) tier = 'Defense Captain';
+            else if (TD.wave >= 10) tier = 'Castle Keeper';
+            else if (TD.wave >= 5) tier = 'Apprentice Builder';
+            showFeedback(`${wasBest?'🏆 NEW BEST! ':''}Wave ${TD.wave} · ${tier}`, wasBest?'#f1c40f':'#3498db');
+          }
+        } else _tdRenderHud();
       }
     }
     // Towers
