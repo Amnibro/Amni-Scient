@@ -1089,6 +1089,18 @@
   </div>
   <div id="menu-view" class="view active">
     <h1 class="menu-title">CHOOSE A GAME</h1>
+    <div id="daily-banner" style="display:none;max-width:560px;width:92%;margin:0 auto 14px;padding:14px 18px;background:linear-gradient(135deg,rgba(241,196,15,0.22) 0%,rgba(243,156,18,0.18) 100%);border:2px solid #f1c40f;border-radius:14px;cursor:pointer;font-family:'JetBrains Mono',monospace;box-shadow:0 0 22px rgba(241,196,15,0.25);transition:transform 0.15s,box-shadow 0.15s;">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
+        <div>
+          <div id="daily-title" style="font-size:1.1rem;font-weight:bold;color:#f1c40f;text-shadow:0 0 8px rgba(241,196,15,0.5);">🌟 Daily Challenge</div>
+          <div id="daily-sub" style="font-size:0.85rem;color:#ecf0f1;margin-top:3px;opacity:0.9;"></div>
+        </div>
+        <div style="text-align:right;font-size:0.8rem;color:#ecf0f1;">
+          <div>🔥 Streak <span id="daily-streak" style="color:#f1c40f;font-weight:bold;">0</span></div>
+          <div>🏆 Best <span id="daily-best" style="color:#f1c40f;font-weight:bold;">0</span></div>
+        </div>
+      </div>
+    </div>
     <div class="game-grid" id="main-game-grid">
       <section class="game-category">
         <h2 class="cat-header"><span class="cat-header-icon">📚</span> School Skills</h2>
@@ -1695,6 +1707,107 @@
     on ? (app.classList.add('amni-fs'),document.body.style.overflow='hidden',$$('#fs-btn').textContent='✖ EXIT FULLSCREEN',$$('#fs-hint').style.display='inline') : (app.classList.remove('amni-fs'),document.body.style.overflow='',$$('#fs-btn').textContent='⛶ FULLSCREEN',$$('#fs-hint').style.display='none');
   }
   $$('#fs-btn').addEventListener('click', () => ($$('#app').classList.contains('amni-fs')||_fsNative) ? _exitFs() : _enterFs());
+  // Daily Challenge. One puzzle per calendar day, date-seeded so every player
+  // on the same date sees the same puzzle. Persists streak + best-streak +
+  // last-claimed-date in localStorage. Resets streak only when a day is missed.
+  const _dailyPool = [
+    {q:'What is 17 × 23?',a:'391',cat:'🔢 Math'},
+    {q:'A bat and ball cost $1.10 total. Bat is $1 more than ball. How much is the ball?',a:'0.05',alt:['5','5¢','$0.05','0.05'],cat:'🧠 Logic'},
+    {q:'What 4-letter word becomes shorter when you add 2 letters?',a:'short',cat:'🔤 Word'},
+    {q:'Next: 2, 6, 12, 20, 30, ?',a:'42',cat:'📈 Sequence'},
+    {q:'∫ 2x dx = ? (omit +C)',a:'x²',alt:['x^2','x*x'],cat:'∫ Calculus'},
+    {q:'I speak without a mouth, hear without ears, come alive with wind. What am I?',a:'echo',cat:'🔮 Riddle'},
+    {q:'How many sides does a hexagon have?',a:'6',cat:'📐 Geometry'},
+    {q:'What is the chemical symbol for iron?',a:'fe',cat:'⚗️ Chemistry'},
+    {q:'Next: 1, 1, 2, 3, 5, 8, ?',a:'13',cat:'📈 Sequence'},
+    {q:'Capital of Norway?',a:'oslo',cat:'🌍 Geography'},
+    {q:'What is 12 squared?',a:'144',cat:'🔢 Math'},
+    {q:'How many bones in an adult human body?',a:'206',cat:'🧬 Biology'},
+    {q:'Smallest prime number greater than 20?',a:'23',cat:'🔢 Math'},
+    {q:'Who wrote "Hamlet"?',a:'shakespeare',cat:'📖 Literature'},
+    {q:'Next: 3, 6, 11, 18, 27, ?',a:'38',cat:'📈 Sequence'},
+    {q:'Speed of light in km/s (rounded)?',a:'300000',alt:['3e5','3×10^5','3*10^5'],cat:'⚡ Physics'},
+    {q:'What is 50% of 80?',a:'40',cat:'🔢 Math'},
+    {q:'A clock at 3:00 — angle between hands?',a:'90',alt:['90°','90 degrees'],cat:'⏰ Geometry'},
+    {q:'Largest planet in our solar system?',a:'jupiter',cat:'🪐 Space'},
+    {q:'How many continents are there?',a:'7',cat:'🌍 Geography'},
+    {q:'Square root of 169?',a:'13',cat:'🔢 Math'},
+    {q:'Author of "1984"?',a:'orwell',alt:['george orwell'],cat:'📖 Literature'},
+    {q:'What is 7!?',a:'5040',cat:'🔢 Math'},
+    {q:'Currency of Japan?',a:'yen',cat:'🌍 Geography'},
+    {q:'How many strings on a standard guitar?',a:'6',cat:'🎸 Music'},
+    {q:'log₁₀(1000) = ?',a:'3',cat:'∫ Math'},
+    {q:'Boiling point of water in Celsius at sea level?',a:'100',cat:'⚗️ Chemistry'},
+    {q:'Year WWII ended?',a:'1945',cat:'📜 History'},
+    {q:'Next: 4, 9, 16, 25, ?',a:'36',cat:'📈 Sequence'},
+    {q:'What does CPU stand for?',a:'central processing unit',alt:['central processing unit','cpu'],cat:'💻 Tech'}
+  ];
+  function _dailyToday(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+  function _dailyHash(s){let h=0;for(let i=0;i<s.length;i++){h=((h<<5)-h+s.charCodeAt(i))|0;}return Math.abs(h);}
+  function _dailyPuzzle(){return _dailyPool[_dailyHash(_dailyToday())%_dailyPool.length];}
+  function _dailyState(){const today=_dailyToday();const last=localStorage.getItem('daily-last')||'';const streak=parseInt(localStorage.getItem('daily-streak')||'0');const best=parseInt(localStorage.getItem('daily-best')||'0');const claimedToday=localStorage.getItem('daily-claimed-'+today)==='1';return{today,last,streak,best,claimedToday};}
+  function _dailyRender(){const banner=document.getElementById('daily-banner');if(!banner)return;banner.style.display='block';const{streak,best,claimedToday}=_dailyState();const sub=document.getElementById('daily-sub');if(sub)sub.textContent=claimedToday?'✓ Claimed for today — come back tomorrow':'Tap to solve today\'s puzzle';const sEl=document.getElementById('daily-streak');if(sEl)sEl.textContent=streak;const bEl=document.getElementById('daily-best');if(bEl)bEl.textContent=best;banner.style.opacity=claimedToday?'0.65':'1';}
+  function _dailyClaim(correct){
+    const today=_dailyToday();
+    const{last,streak,best}=_dailyState();
+    let newStreak=streak;
+    if(correct){
+      if(last){
+        const prevDate=new Date(last);const todayDate=new Date(today);const days=Math.round((todayDate-prevDate)/(86400000));
+        if(days===0)newStreak=streak;else if(days===1)newStreak=streak+1;else newStreak=1;
+      }else newStreak=1;
+    }else{newStreak=0;}
+    const newBest=Math.max(best,newStreak);
+    localStorage.setItem('daily-claimed-'+today,'1');
+    localStorage.setItem('daily-last',today);
+    localStorage.setItem('daily-streak',newStreak);
+    localStorage.setItem('daily-best',newBest);
+    _dailyRender();
+  }
+  function _dailyOpenModal(){
+    const{claimedToday}=_dailyState();
+    const p=_dailyPuzzle();
+    let overlay=document.getElementById('daily-modal');
+    if(overlay)overlay.remove();
+    overlay=document.createElement('div');
+    overlay.id='daily-modal';
+    overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;';
+    const box=document.createElement('div');
+    box.style.cssText='background:#1a1f2e;border:2px solid #f1c40f;border-radius:14px;padding:24px;max-width:520px;width:100%;font-family:\'JetBrains Mono\',monospace;color:#ecf0f1;box-shadow:0 0 40px rgba(241,196,15,0.3);';
+    if(claimedToday){
+      box.innerHTML=`<h2 style="color:#f1c40f;margin:0 0 12px;text-align:center;">🌟 Daily Challenge</h2><p style="text-align:center;font-size:1.05rem;line-height:1.5;">You've already claimed today's challenge.<br><span style="opacity:0.7;font-size:0.9rem;">The puzzle was: <em>${p.q}</em></span></p><div style="text-align:center;margin-top:16px;"><button id="daily-close" style="background:#f1c40f;color:#1a1f2e;border:none;padding:10px 28px;border-radius:8px;font-family:'JetBrains Mono';font-weight:bold;cursor:pointer;">Close</button></div>`;
+    } else {
+      box.innerHTML=`<h2 style="color:#f1c40f;margin:0 0 8px;text-align:center;">🌟 Daily Challenge</h2><div style="text-align:center;font-size:0.85rem;color:#aaa;margin-bottom:14px;">${p.cat} · ${_dailyToday()}</div><p style="font-size:1.1rem;line-height:1.5;text-align:center;background:rgba(0,0,0,0.4);padding:14px;border-radius:10px;">${p.q}</p><input id="daily-input" autocomplete="off" placeholder="Your answer..." style="width:100%;padding:11px 14px;border-radius:8px;border:1px solid #f1c40f;background:#0c0f12;color:#f1c40f;font-family:'JetBrains Mono';font-size:1rem;margin-top:14px;"><div style="display:flex;gap:8px;margin-top:12px;"><button id="daily-submit" style="flex:1;background:#f1c40f;color:#1a1f2e;border:none;padding:10px;border-radius:8px;font-family:'JetBrains Mono';font-weight:bold;cursor:pointer;">Submit</button><button id="daily-close" style="background:#e74c3c;color:#fff;border:none;padding:10px 16px;border-radius:8px;font-family:'JetBrains Mono';cursor:pointer;">Skip</button></div><div id="daily-feedback" style="margin-top:12px;text-align:center;min-height:24px;"></div>`;
+    }
+    overlay.appendChild(box);
+    document.body.appendChild(overlay);
+    const close=()=>overlay.remove();
+    box.querySelector('#daily-close').onclick=close;
+    if(!claimedToday){
+      const input=box.querySelector('#daily-input');input.focus();
+      const submit=()=>{
+        const guess=(input.value||'').trim().toLowerCase();
+        const ans=p.a.toLowerCase();
+        const alts=(p.alt||[]).map(a=>a.toLowerCase());
+        const ok=guess===ans||alts.includes(guess);
+        const fb=box.querySelector('#daily-feedback');
+        if(ok){fb.innerHTML='<span style="color:#2ecc71;font-weight:bold;">✓ Correct! Streak grows. 🔥</span>';if(typeof spawnConfetti==='function')spawnConfetti(window.innerWidth/2,window.innerHeight/2,150);_dailyClaim(true);setTimeout(close,1800);}
+        else{fb.innerHTML=`<span style="color:#e74c3c;">✗ Not quite. Correct answer: <b>${p.a}</b></span>`;_dailyClaim(false);setTimeout(close,2600);}
+      };
+      box.querySelector('#daily-submit').onclick=submit;
+      input.addEventListener('keydown',e=>{if(e.key==='Enter')submit();});
+    }
+  }
+  // Run after DOM ready — banner is in the menu view at load time
+  setTimeout(()=>{
+    _dailyRender();
+    const banner=document.getElementById('daily-banner');
+    if(banner){
+      banner.addEventListener('click',_dailyOpenModal);
+      banner.addEventListener('mouseenter',()=>{banner.style.transform='scale(1.02)';banner.style.boxShadow='0 0 32px rgba(241,196,15,0.5)';});
+      banner.addEventListener('mouseleave',()=>{banner.style.transform='';banner.style.boxShadow='0 0 22px rgba(241,196,15,0.25)';});
+    }
+  },100);
   // Light/dark theme toggle. Default dark; persists per-browser in localStorage.
   function _applyTheme(mode){
     document.body.classList.toggle('light-mode', mode === 'light');

@@ -1,5 +1,13 @@
 ﻿# Changelog 
 
+## [5.6.64] - 2026-05-18 - Amni-Learn Daily Challenge
+- **Daily Challenge banner** on main menu (just above game grid): gold-glow card with 🌟 title, current streak, all-time best streak. Tappable.
+- **30-puzzle pool** across 12 categories (Math, Logic, Word, Sequence, Calculus, Riddle, Geometry, Chemistry, Geography, Biology, Literature, Physics, Space, Music, History, Tech). Date-seeded: every player on the same calendar day sees the same puzzle.
+- **Claim-once-per-day**: localStorage marks `daily-claimed-{YYYY-MM-DD}` after submission. Reopens to "already claimed" state until midnight.
+- **Streak mechanics**: correct answer on consecutive days → streak+1. Wrong → resets to 0. Missing a day → resets to 0 on next play. Both `daily-streak` and `daily-best` (all-time max) persist.
+- **Win celebration**: 150-particle confetti + ✓ Correct toast on success; failure reveals correct answer.
+- **SW cache v45 → v46** to flush.
+
 ## [5.6.63] - 2026-05-18 - Amni-Learn light/dark theme toggle
 - **Theme toggle 🌙/☀️** added to top-bar between FS hint and Fullscreen button. Default dark (current behavior). Click flips to light mode; preference persists per-browser via `localStorage.amni-learn-theme`.
 - **Light-mode CSS** covers chrome surfaces: top bar, back/FS/theme buttons, menu titles, game cards (game-btn), category sections, level picker modal, score/streak readouts, life-title, game-hud, math choice buttons (.m-choice). Game canvases for retro arcades / idle / pencil-and-paper boards intentionally stay dark (they're CRT-styled by design).
