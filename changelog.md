@@ -1,5 +1,13 @@
 ﻿# Changelog 
 
+## [5.6.59] - 2026-05-18 - Amni-Learn Life Skills COMPLETE: Vacuum + Dishes + Clock + Money
+- **Vacuuming** polish: per-level best-completion-time tracker (`vac-best-time-L{N}`) and lifetime room count (`vac-cleaned-L{N}`); 3-tier rating (Clean! / ⚡ Speedy Clean! / 🏆 Lightning Clean!); new-best fires 120-particle confetti, speed bonus fires 60
+- **Wash Dishes** polish: lifetime dishes-cleaned counter (`dishes-cleaned-L{N}`); 60-particle finish confetti every round; milestone confetti (80-particle for 10/25, 150 for 50/100/200) with 🏆 N dishes washed! toast
+- **Read Clock** polish: per-level lifetime correct-reads counter (`clock-correct-L{N}`); per-correct toast shows running count (e.g. "Correct! ⏰ #12"); milestone confetti and 🏆 N clocks read! toast at 10/25/50/100
+- **Money Math** polish: per-level lifetime purchase counter (`money-paid-L{N}`); per-correct toast shows running count (#N); milestone confetti and 🏆 N purchases! toast at 10/25/50/100
+- **All 4 Life Skills modules now polished**. Running tally: 24 modules with full polish baseline (8 retro + 8 idle + 6 school + 4 life).
+- **SW cache v40 → v41** to flush.
+
 ## [5.6.58] - 2026-05-18 - Amni-Learn school skills COMPLETE: Tracing + Typing + Storybooks
 - **Tracing & Art** polish: per-level trace counter (`trace-count-L{N}` sessionStorage); every successful trace shows the running count (e.g. "Awesome! (#12)"); milestone confetti at 10/25/50/100/200 traces with 🏆 tier toast (60 particles for 10-50, 120 for 100+)
 - **Typing Fun** polish: per-level best-WPM AND best-avg-WPM trackers (`type-best-wpm-L{N}` and `type-best-avg-L{N}`); enhanced completion card with 5-tier system (⚡ Quick Learner >25 / 🧙 Typing Wizard >40 / 🥷 Cyber Ninja >60 / 🏆 Lightning Fingers >80); new-best 🏆 NEW BEST! prefix with 150-particle confetti; all-time-best row showing peak and avg WPM

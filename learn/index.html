@@ -3622,8 +3622,20 @@
                       if(dirtCleaned === dirtCount) {
                           clearInterval(window._vacTimer);
                           const bonus = vacTime < dirtCount ? 3 : (vacTime < dirtCount*2 ? 2 : 1);
-                          showFeedback(`Sparkling Clean! ${bonus>1?'⚡Speed Bonus! ':''}✨`, "#2ecc71"); addScore(bonus);
-                          setTimeout(() => initVacuum(), 2000);
+                          const bestKey='vac-best-time-L'+currentLevel;
+                          const prevBest=parseInt(sessionStorage.getItem(bestKey)||'99999');
+                          const wasBest=vacTime<prevBest;
+                          if(wasBest)sessionStorage.setItem(bestKey,vacTime);
+                          const cntKey='vac-cleaned-L'+currentLevel;
+                          const cnt=parseInt(sessionStorage.getItem(cntKey)||'0')+1;
+                          sessionStorage.setItem(cntKey,cnt);
+                          let tier='Clean!',tColor='#2ecc71';
+                          if(bonus===3){tier='🏆 Lightning Clean!';tColor='#f1c40f';}
+                          else if(bonus===2){tier='⚡ Speedy Clean!';tColor='#9b59b6';}
+                          if(wasBest)spawnConfetti(window.innerWidth/2,window.innerHeight/2,120);
+                          else if(bonus>=2)spawnConfetti(window.innerWidth/2,window.innerHeight/3,60);
+                          showFeedback(`${wasBest?'🏆 NEW BEST! ':''}${tier} (${vacTime}s · room #${cnt})`,tColor);addScore(bonus);
+                          setTimeout(() => initVacuum(), 2200);
                       }
                   }
               }
@@ -3705,8 +3717,15 @@
                                       setTimeout(spawnDish, 1500);
                                   } else {
                                       setTimeout(() => {
-                                          showFeedback("All Done! 🍽️✨", "#2ecc71"); addScore(2);
-                                          setTimeout(initDishes, 2000);
+                                          const dCntKey='dishes-cleaned-L'+currentLevel;
+                                          const dCnt=parseInt(sessionStorage.getItem(dCntKey)||'0')+dishCount;
+                                          sessionStorage.setItem(dCntKey,dCnt);
+                                          const milestones=[10,25,50,100,200];
+                                          const hit=milestones.find(m=>m<=dCnt&&m>dCnt-dishCount);
+                                          if(hit){spawnConfetti(window.innerWidth/2,window.innerHeight/2,hit>=100?150:80);showFeedback(`🏆 ${hit} dishes washed!`,'#f1c40f');}
+                                          else{spawnConfetti(window.innerWidth/2,window.innerHeight/3,60);showFeedback(`All Done! 🍽️✨ (${dCnt} dishes total)`,'#2ecc71');}
+                                          addScore(2);
+                                          setTimeout(initDishes, 2200);
                                       }, 1500);
                                   }
                               }
@@ -3821,7 +3840,14 @@
           btn.textContent = c;
           btn.onclick = () => {
               if(c === correctTimeStr) {
-                  showFeedback("Correct! ⏰", "#2ecc71"); addScore(1);
+                  const cntKey='clock-correct-L'+currentLevel;
+                  const cnt=parseInt(sessionStorage.getItem(cntKey)||'0')+1;
+                  sessionStorage.setItem(cntKey,cnt);
+                  const milestones=[10,25,50,100];
+                  const hit=milestones.find(m=>m===cnt);
+                  if(hit){spawnConfetti(window.innerWidth/2,window.innerHeight/3,hit>=50?120:60);showFeedback(`🏆 ${hit} clocks read!`,'#f1c40f');}
+                  else{showFeedback(`Correct! ⏰ (#${cnt})`,'#2ecc71');}
+                  addScore(1);
                   $$all('.t-btn').forEach(b=>b.style.pointerEvents='none');
                   setTimeout(initClock, 1500);
               } else {
@@ -3880,7 +3906,13 @@
               currentTotal = +(currentTotal + d.val).toFixed(2);
               totalDisp.textContent = '$' + currentTotal.toFixed(2);
               if(Math.abs(currentTotal - targetAmount) < 0.005) {
-                  showFeedback("Perfect! 💵", "#2ecc71");
+                  const cntKey='money-paid-L'+currentLevel;
+                  const cnt=parseInt(sessionStorage.getItem(cntKey)||'0')+1;
+                  sessionStorage.setItem(cntKey,cnt);
+                  const milestones=[10,25,50,100];
+                  const hit=milestones.find(m=>m===cnt);
+                  if(hit){spawnConfetti(window.innerWidth/2,window.innerHeight/3,hit>=50?120:60);showFeedback(`🏆 ${hit} purchases!`,'#f1c40f');}
+                  else{showFeedback(`Perfect! 💵 (#${cnt})`,'#2ecc71');}
                   addScore(currentLevel === 3 ? 3 : 1);
                   setTimeout(initMoney, 1800);
               } else if(currentTotal > targetAmount) {
