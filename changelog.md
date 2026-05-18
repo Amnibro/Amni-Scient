@@ -1,5 +1,12 @@
 ﻿# Changelog 
 
+## [5.6.58] - 2026-05-18 - Amni-Learn school skills COMPLETE: Tracing + Typing + Storybooks
+- **Tracing & Art** polish: per-level trace counter (`trace-count-L{N}` sessionStorage); every successful trace shows the running count (e.g. "Awesome! (#12)"); milestone confetti at 10/25/50/100/200 traces with 🏆 tier toast (60 particles for 10-50, 120 for 100+)
+- **Typing Fun** polish: per-level best-WPM AND best-avg-WPM trackers (`type-best-wpm-L{N}` and `type-best-avg-L{N}`); enhanced completion card with 5-tier system (⚡ Quick Learner >25 / 🧙 Typing Wizard >40 / 🥷 Cyber Ninja >60 / 🏆 Lightning Fingers >80); new-best 🏆 NEW BEST! prefix with 150-particle confetti; all-time-best row showing peak and avg WPM
+- **Storybooks** polish: per-book read-count (`story-read-{id}`) and total-reads (`story-total-reads`) tracked when player reaches last page via next-button; 60-particle confetti on every story finish; milestone confetti (120 particles) and 🏆 tier toast at 5/10/25/50 stories-read totals
+- **All 6 School Skills modules now polished** (Connect the Dots, Tracing & Art, Math Basics, Matching, Typing Fun, Storybooks)
+- **SW cache v39 → v40** to flush.
+
 ## [5.6.57] - 2026-05-18 - Amni-Learn school skills polish: Connect the Dots + Math Basics + Matching
 - **Connect the Dots** polish: per-level completion counter (`dots-completed-L{N}` sessionStorage) — every cleared shape increments and shows in the toast (e.g. "⭐ Triangle #5"); milestone confetti on completion (80 particles for L3+ 3D shapes, 40 for L1-2 2D)
 - **Math Basics** polish: per-level best-correct tracker (`math-best-L{N}` sessionStorage); enhanced end-of-round summary card with percentage, named tier (🏆 Perfect 100% / ⭐ Amazing 80%+ / ✨ Great 60%+ / Keep practicing!), best-on-level display, new-best detection (150 particles for new perfect, 80 for new best)

@@ -1918,7 +1918,14 @@
       if(maskData[i] > 200 && maskData[i] < 255) { targetPixels++; if(currentData[i]<100||currentData[i+1]<100||currentData[i+2]<100) filledPixels++; }
     }
     if((filledPixels/Math.max(1,targetPixels)) > 0.25) {
-      showFeedback('Awesome!', '#2ecc71'); addScore(1); tCurrentTarget = tCurrentTarget+1; if(tCurrentTarget>=tTargets.length){tTargets=getTracingTargets();tCurrentTarget=0;} setTimeout(()=>drawTarget(tTargets[tCurrentTarget]), 1000);
+      const tracedKey='trace-count-L'+currentLevel;
+      const cnt=parseInt(sessionStorage.getItem(tracedKey)||'0')+1;
+      sessionStorage.setItem(tracedKey,cnt);
+      const milestones=[10,25,50,100,200];
+      const hit=milestones.find(m=>m===cnt);
+      if(hit){if(typeof spawnConfetti==='function')spawnConfetti(window.innerWidth/2,window.innerHeight/3,hit>=100?120:60);showFeedback(`🏆 ${hit} traces!`,'#f1c40f');}
+      else{showFeedback(`Awesome! (#${cnt})`,'#2ecc71');}
+      addScore(1); tCurrentTarget = tCurrentTarget+1; if(tCurrentTarget>=tTargets.length){tTargets=getTracingTargets();tCurrentTarget=0;} setTimeout(()=>drawTarget(tTargets[tCurrentTarget]), 1000);
     } else { showFeedback('Keep Trying!', '#e74c3c'); resetStreak(); }
   });
   function drawTarget(char) {
@@ -2227,7 +2234,27 @@
                       const we=$$('#type-words'); if(we) we.textContent=typeWordCount+'/'+typeGoal;
                       const be=$$('#type-best'); if(be) be.textContent=typeBestWpm;
                       letters.forEach(l=>l.classList.add('pop'));
-                      if(typeWordCount>=typeGoal) { const avgWpm=Math.round(typeWpmSum/typeWordCount); typeContainer.innerHTML=`<div style="text-align:center;padding:1.5rem"><div style="font-size:3rem;margin-bottom:.8rem">⌨️🌟</div><div style="font-size:1.3rem;font-weight:bold;margin-bottom:.5rem">${typeGoal} Words Complete!</div><div style="margin-bottom:.5rem">Best: ${typeBestWpm} WPM | Avg: ${avgWpm} WPM</div><div>${typeBestWpm>60?'Cyber Ninja! 🥷':(typeBestWpm>30?'Typing Wizard! 🧙‍♂️':'Keep practicing!')}</div><div class="m-choice" id="type-play-again" style="display:inline-block;padding:.8rem 2rem;cursor:pointer;margin-top:1rem">Play Again</div></div>`; const pa=$$('#type-play-again');if(pa)pa.onclick=initTyping; return; }
+                      if(typeWordCount>=typeGoal) {
+                        const avgWpm=Math.round(typeWpmSum/typeWordCount);
+                        const bestWpmKey='type-best-wpm-L'+currentLevel;
+                        const bestAvgKey='type-best-avg-L'+currentLevel;
+                        const prevBestWpm=parseInt(sessionStorage.getItem(bestWpmKey)||'0');
+                        const prevBestAvg=parseInt(sessionStorage.getItem(bestAvgKey)||'0');
+                        const wasBestWpm=typeBestWpm>prevBestWpm;
+                        const wasBestAvg=avgWpm>prevBestAvg;
+                        if(wasBestWpm)sessionStorage.setItem(bestWpmKey,typeBestWpm);
+                        if(wasBestAvg)sessionStorage.setItem(bestAvgKey,avgWpm);
+                        let tier='Keep practicing!',tColor='#3498db';
+                        if(typeBestWpm>80){tier='🏆 Lightning Fingers!';tColor='#f1c40f';}
+                        else if(typeBestWpm>60){tier='🥷 Cyber Ninja!';tColor='#9b59b6';}
+                        else if(typeBestWpm>40){tier='🧙‍♂️ Typing Wizard!';tColor='#2ecc71';}
+                        else if(typeBestWpm>25){tier='⚡ Quick Learner!';tColor='#3498db';}
+                        if(wasBestWpm||wasBestAvg){if(typeof spawnConfetti==='function')spawnConfetti(window.innerWidth/2,window.innerHeight/2,150);}
+                        else if(typeBestWpm>60){if(typeof spawnConfetti==='function')spawnConfetti(window.innerWidth/2,window.innerHeight/3,80);}
+                        typeContainer.innerHTML=`<div style="text-align:center;padding:1.5rem"><div style="font-size:3rem;margin-bottom:.6rem">⌨️🌟</div><div style="font-size:1.4rem;font-weight:bold;margin-bottom:.3rem">${typeGoal} Words Complete!</div><div style="color:${tColor};font-size:1.1rem;font-weight:bold;margin-bottom:.4rem">${(wasBestWpm||wasBestAvg)?'🏆 NEW BEST! ':''}${tier}</div><div style="margin-bottom:.4rem">Best: ${typeBestWpm} WPM · Avg: ${avgWpm} WPM</div><div style="color:#7f8c8d;font-size:0.85rem;margin-bottom:1rem">All-time L${currentLevel}: ${Math.max(prevBestWpm,typeBestWpm)} WPM peak · ${Math.max(prevBestAvg,avgWpm)} WPM avg</div><div class="m-choice" id="type-play-again" style="display:inline-block;padding:.8rem 2rem;cursor:pointer">Play Again</div></div>`;
+                        const pa=$$('#type-play-again');if(pa)pa.onclick=initTyping;
+                        return;
+                      }
                       let msg="Super!";
                       if(currentLevel===1) { msg=time<3?"Speedy Turtle! 🐢💨":"Happy Hippo! 🦛"; typeStats.textContent=`Typed ${currentWord.length} letters!`; }
                       else { msg=wpm>60?"Cyber Ninja! 🥷":(wpm>30?"Typing Wizard! 🧙‍♂️":"Great Job! 👍"); typeStats.textContent=`Speed: ~${wpm} WPM!`; }
@@ -2413,7 +2440,24 @@
     stopReading();
     const book = _storyState.book;
     if (!book) return;
-    _storyState.pageIdx = Math.max(0, Math.min(book.pages.length - 1, _storyState.pageIdx + delta));
+    const lastPage = book.pages.length - 1;
+    const wasOnLast = _storyState.pageIdx === lastPage;
+    _storyState.pageIdx = Math.max(0, Math.min(lastPage, _storyState.pageIdx + delta));
+    if (_storyState.pageIdx === lastPage && !wasOnLast && delta > 0) {
+      const readKey = 'story-read-' + book.id;
+      const readCount = parseInt(sessionStorage.getItem(readKey) || '0') + 1;
+      sessionStorage.setItem(readKey, readCount);
+      const totalKey = 'story-total-reads';
+      const totalReads = parseInt(sessionStorage.getItem(totalKey) || '0') + 1;
+      sessionStorage.setItem(totalKey, totalReads);
+      if (typeof spawnConfetti === 'function') spawnConfetti(window.innerWidth/2, window.innerHeight/3, 60);
+      if (typeof showFeedback === 'function') {
+        const milestones = [5, 10, 25, 50];
+        const hit = milestones.find(m => m === totalReads);
+        showFeedback(hit ? `🏆 ${hit} stories read!` : `📖 Read! (${readCount}× this book, ${totalReads} total)`, hit ? '#f1c40f' : '#2ecc71');
+        if (hit && typeof spawnConfetti === 'function') spawnConfetti(window.innerWidth/2, window.innerHeight/2, 120);
+      }
+    }
     renderPage();
   }
   function playCurrentPage(continued) {
