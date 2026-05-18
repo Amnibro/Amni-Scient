@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.6.54] - 2026-05-18 - Amni-Learn idle/casual polish: 2048 + Color Blast + Color Sort
+- **2048** polish: persistent max-tile tracker (`haven_t2048_max` in localStorage), tile-milestone confetti — first-time 512/1024/2048/4096/8192 gets new-max celebration (150 particles for 2048+, 80 for others); subsequent triggers get smaller acknowledgment confetti (40 particles); HUD now shows current Max and all-time 🏆 max tile alongside Score/Best
+- **Color Blast** polish: persistent best-score (`haven_cblast_best` in localStorage), HUD shows 🏆 Best; cluster-size milestones — 12+ block clusters get 'HUGE POP! 🔥' + 80-particle confetti; 8+ get 'Big! ✨' + 40 particles; 5+ get 'Nice' acknowledgment; new-best on game over triggers 120-particle confetti and NEW BEST badge
+- **Color Sort** polish: per-level best-moves tracking (`cs-best-L{N}` sessionStorage), shown in HUD when known; level-complete tier system (🏆 Perfect ≤2·nc moves / ⭐ Efficient ≤3·nc / ✨ Solid ≤4.4·nc); new-best detection with NEW BEST! prefix + 150 particles; tier label appears in completion toast
+- **SW cache v35 → v36** to flush.
+
 ## [5.6.53] - 2026-05-18 - Amni-Learn retro arcade COMPLETE: Pong + Minesweeper + Pipes
 - **Pong** polish: persistent match-wins counter (`pong-matches`) and best win-streak (`pong-streak`) in HUD. Match win triggers difficulty-scaled bonus (50 + 25·difficulty score, 80-170 confetti particles). Streak counter resets on CPU match win. HUD now shows 🏆 Matches and 🔥 Streak alongside live set score.
 - **Minesweeper** polish: tier per difficulty (Easy ≤10s = Lightning ⚡, Medium ≤30s = Sharp 🎯, Hard ≤60s = Master 👑). Win-feedback toast names the tier. New-best gets 120-particle confetti; tier-achieved (without new best) gets 60-particle confetti.

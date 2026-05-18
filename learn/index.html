@@ -2492,7 +2492,9 @@
   }
   function _t2048Render() {
     const hud = document.getElementById('t2048-hud');
-    if (hud) hud.innerHTML = `<span class="hud-pill">Score ${_t2048.score}</span><span class="hud-pill">Best ${_t2048.best}</span>${_t2048.won ? '<span class="hud-pill" style="background:rgba(46,204,113,0.2);border-color:#2ecc71">🏆 You won! Keep going?</span>' : ''}${_t2048.over ? '<span class="hud-pill" style="background:rgba(231,76,60,0.2);border-color:#e74c3c">Game Over — tap New Game</span>' : ''}`;
+    const _maxTile = parseInt(localStorage.getItem('haven_t2048_max') || '0') || 0;
+    const _curMax = Math.max(0, ..._t2048.grid);
+    if (hud) hud.innerHTML = `<span class="hud-pill">Score ${_t2048.score}</span><span class="hud-pill">Best ${_t2048.best}</span><span class="hud-pill">Max ${_curMax}</span><span class="hud-pill">🏆 ${_maxTile}</span>${_t2048.won ? '<span class="hud-pill" style="background:rgba(46,204,113,0.2);border-color:#2ecc71">🏆 You won! Keep going?</span>' : ''}${_t2048.over ? '<span class="hud-pill" style="background:rgba(231,76,60,0.2);border-color:#e74c3c">Game Over — tap New Game</span>' : ''}`;
     const grid = document.getElementById('t2048-grid');
     if (grid) {
       grid.innerHTML = _t2048.grid.map(v => {
@@ -2518,6 +2520,17 @@
         filtered[i] *= 2;
         gain += filtered[i];
         if (filtered[i] === 2048) _t2048.won = true;
+        if (filtered[i] === 512 || filtered[i] === 1024 || filtered[i] === 2048 || filtered[i] === 4096 || filtered[i] === 8192) {
+          const _bestTile = parseInt(localStorage.getItem('haven_t2048_max') || '0') || 0;
+          if (filtered[i] > _bestTile) {
+            localStorage.setItem('haven_t2048_max', String(filtered[i]));
+            if (typeof spawnConfetti === 'function') spawnConfetti(window.innerWidth/2, window.innerHeight/3, filtered[i] >= 2048 ? 150 : 80);
+            if (typeof showFeedback === 'function') showFeedback(`🏆 ${filtered[i]} tile!`, '#f1c40f');
+          } else {
+            if (typeof spawnConfetti === 'function') spawnConfetti(window.innerWidth/2, window.innerHeight/3, 40);
+            if (typeof showFeedback === 'function') showFeedback(`${filtered[i]}! ✨`, '#9b59b6');
+          }
+        }
         filtered.splice(i + 1, 1);
       }
     }
@@ -2703,6 +2716,9 @@
       if (cluster.length < 2) return;
       _cb.lock = true;
       _cb.score += cluster.length * cluster.length;
+      if (cluster.length >= 12) { if (typeof spawnConfetti === 'function') spawnConfetti(window.innerWidth/2, window.innerHeight/3, 80); if (typeof showFeedback === 'function') showFeedback(`HUGE POP! +${cluster.length*cluster.length} 🔥`, '#f1c40f'); }
+      else if (cluster.length >= 8) { if (typeof spawnConfetti === 'function') spawnConfetti(window.innerWidth/2, window.innerHeight/3, 40); if (typeof showFeedback === 'function') showFeedback(`Big! +${cluster.length*cluster.length} ✨`, '#9b59b6'); }
+      else if (cluster.length >= 5) { if (typeof showFeedback === 'function') showFeedback(`Nice +${cluster.length*cluster.length}`, '#2ecc71'); }
       _cb.pop = cluster.map(([rr, cc]) => ({ r: rr, c: cc, color: _cbAt(rr, cc) }));
       _cb.popT = 0;
       for (const [rr, cc] of cluster) _cbSet(rr, cc, -1);
@@ -2770,7 +2786,10 @@
       ctx.fillText('Tap New Game', W / 2, H / 2 + cellW);
     }
     const hud = document.getElementById('cblast-hud');
-    if (hud) hud.innerHTML = `<span class="hud-pill">Score ${_cb.score}</span><span class="hud-pill">Blocks ${_cbCount()}</span>${_cb.over ? '<span class="hud-pill" style="background:rgba(231,76,60,0.2);border-color:#e74c3c">No moves left</span>' : ''}`;
+    const _cbBest = parseInt(localStorage.getItem('haven_cblast_best') || '0') || 0;
+    if (_cb.over && _cb.score > _cbBest) { try { localStorage.setItem('haven_cblast_best', String(_cb.score)); } catch {}; if (typeof spawnConfetti === 'function') spawnConfetti(window.innerWidth/2, window.innerHeight/2, 120); }
+    const _cbDisplayBest = _cb.score > _cbBest ? _cb.score : _cbBest;
+    if (hud) hud.innerHTML = `<span class="hud-pill">Score ${_cb.score}</span><span class="hud-pill">🏆 Best ${_cbDisplayBest}</span><span class="hud-pill">Blocks ${_cbCount()}</span>${_cb.over ? '<span class="hud-pill" style="background:rgba(231,76,60,0.2);border-color:#e74c3c">No moves · '+(_cb.score>=_cbBest?'NEW BEST':'')+'</span>' : ''}`;
   }
   function _cbRoundRect(ctx, x, y, w, h, r) {
     ctx.beginPath();
@@ -8408,7 +8427,8 @@ function playAnimalSound(type) {
     function render(){
       root.innerHTML='';
       const hud=document.createElement('div');hud.className='cs-hud';
-      hud.innerHTML=`<span class="game-stat">📊 Level <span class="game-stat-val">${lvl}</span></span><span class="game-stat">🔄 Moves <span class="game-stat-val">${moves}</span></span>`;
+      const _csBest=parseInt(sessionStorage.getItem('cs-best-L'+lvl)||'0');
+      hud.innerHTML=`<span class="game-stat">📊 Level <span class="game-stat-val">${lvl}</span></span><span class="game-stat">🔄 Moves <span class="game-stat-val">${moves}</span></span>${_csBest>0?`<span class="game-stat">🏆 Best <span class="game-stat-val">${_csBest}</span></span>`:''}`;
       root.appendChild(hud);
       const tray=document.createElement('div');tray.className='cs-tubes';
       tubes.forEach((t,ti)=>{
@@ -8443,7 +8463,7 @@ function playAnimalSound(type) {
       if(selected===ti){selected=-1;render();return;}
       if(canPour(selected,ti)){
         pour(selected,ti);selected=-1;
-        if(isSolved()){won=true;addScore(Math.max(5,20-moves));showFeedback(`Level ${lvl} Complete! 🎉`,'#2ecc71');spawnConfetti(window.innerWidth/2,window.innerHeight/2,100);}
+        if(isSolved()){won=true;const{nc}=cfg(lvl);const optimalMoves=nc*2;const bestKey='cs-best-L'+lvl;const prevBest=parseInt(sessionStorage.getItem(bestKey)||'999');const wasBest=moves<prevBest;if(wasBest)sessionStorage.setItem(bestKey,moves);let tier='';if(moves<=optimalMoves)tier=' · 🏆 Perfect';else if(moves<=optimalMoves*1.5)tier=' · ⭐ Efficient';else if(moves<=optimalMoves*2.2)tier=' · ✨ Solid';addScore(Math.max(5,20-moves));showFeedback(`${wasBest?'NEW BEST! ':''}Level ${lvl} Complete in ${moves} moves!${tier}`,wasBest?'#f1c40f':'#2ecc71');spawnConfetti(window.innerWidth/2,window.innerHeight/2,wasBest?150:(moves<=optimalMoves?100:60));}
         render();
         if(!won&&!hasValidMoves()){
           showFeedback('No valid moves!','#e74c3c');resetStreak();
