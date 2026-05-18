@@ -10736,7 +10736,14 @@ function playAnimalSound(type) {
         const r=comps.filter(c=>c.type==='resistor').length;
         const v=12,current=(v/(Math.max(r,1)*100)).toFixed(2);
         info.innerHTML=`✅ Circuit closed! V=${v}V, I=${current}A, R=${Math.max(r,1)*100}Ω`;
-        showFeedback('Circuit works!','#2ecc71');
+        const cntKey='circuit-built';
+        const cnt=parseInt(sessionStorage.getItem(cntKey)||'0')+1;
+        sessionStorage.setItem(cntKey,cnt);
+        const milestones=[5,10,25,50,100];
+        const hit=milestones.find(m=>m===cnt);
+        if(hit){spawnConfetti(window.innerWidth/2,window.innerHeight/3,hit>=50?150:80);showFeedback(`🏆 ${hit} circuits built! ⚡`,'#f1c40f');}
+        else{spawnConfetti(window.innerWidth/2,window.innerHeight/3,30);showFeedback(`Circuit works! (#${cnt})`,'#2ecc71');}
+        addScore(comps.length>=4?5:2);
       }else{
         const reasons=[];
         if(!comps.some(c=>c.type==='battery'))reasons.push('no battery');
@@ -10745,7 +10752,7 @@ function playAnimalSound(type) {
         if(comps.some(c=>c.type==='switch'&&!c.on))reasons.push('switch is off');
         if(!reasons.length)reasons.push('circuit not closed');
         info.innerHTML=`❌ Open circuit: ${reasons.join(', ')}`;
-        showFeedback('Circuit incomplete','#e74c3c');
+        showFeedback('Circuit incomplete','#e74c3c');resetStreak();
       }
       draw();
     }
@@ -10814,6 +10821,7 @@ function playAnimalSound(type) {
     const COLORS={[EMPTY]:'#000',[WATER]:'#3498db',[SAND]:'#e67e22',[NA]:'#c0392b',[CL]:'#f1c40f',[ACID]:'#9b59b6',[FIRE]:'#e74c3c',[OIL]:'#2c3e50',[SALT]:'#ecf0f1',[STEAM]:'#bdc3c7',[GLASS]:'#1abc9c',[BOOM]:'#ff6b6b'};
     const imgData=cx.createImageData(W,H);
     function addLog(msg){logLines.push(msg);if(logLines.length>20)logLines.shift();log.innerHTML=logLines.map(l=>`<div>${l}</div>`).join('');log.scrollTop=log.scrollHeight;}
+    function _rxnTrack(type){const setKey='rxn-discovered';const set=new Set(JSON.parse(sessionStorage.getItem(setKey)||'[]'));const isNew=!set.has(type);if(isNew){set.add(type);sessionStorage.setItem(setKey,JSON.stringify([...set]));spawnConfetti(window.innerWidth/2,window.innerHeight/3,60);if(set.size===6){spawnConfetti(window.innerWidth/2,window.innerHeight/2,150);showFeedback('🏆 ALL 6 REACTIONS DISCOVERED! ⚗️','#f1c40f');}else{showFeedback(`✨ New reaction! (${set.size}/6)`,'#9b59b6');}addScore(5);}}
     function idx(x,y){return y*W+x;}
     function get(x,y){return(x<0||x>=W||y<0||y>=H)?255:grid[idx(x,y)];}
     function set(x,y,v){if(x>=0&&x<W&&y>=0&&y<H)grid[idx(x,y)]=v;}
@@ -10862,12 +10870,12 @@ function playAnimalSound(type) {
         const dirs=[[0,1],[0,-1],[1,0],[-1,0]];
         for(const[dx,dy]of dirs){const n=get(x+dx,y+dy);if(n===EMPTY||n===c)continue;
           const pair=Math.min(c,n)*16+Math.max(c,n);
-          if(pair===NA*16+CL||pair===CL*16+NA){set(x,y,SALT);set(x+dx,y+dy,SALT);addLog('🧂 Na + Cl₂ → NaCl (table salt)');showFeedback('Salt formed!','#2ecc71');}
-          else if((c===NA&&n===WATER)||(c===WATER&&n===NA)){set(x,y,BOOM);set(x+dx,y+dy,BOOM);for(let i=0;i<4;i++){const bx=x+Math.floor(Math.random()*6-3),by=y+Math.floor(Math.random()*6-3);if(get(bx,by)===EMPTY)set(bx,by,BOOM);}addLog('💥 Na + H₂O → BOOM! (violent reaction)');showFeedback('Explosive reaction!','#e74c3c');}
-          else if((c===WATER&&n===FIRE)||(c===FIRE&&n===WATER)){set(x,y,STEAM);set(x+dx,y+dy,STEAM);addLog('💨 H₂O + Fire → Steam');}
-          else if((c===FIRE&&n===OIL)||(c===OIL&&n===FIRE)){set(x,y,FIRE);set(x+dx,y+dy,FIRE);for(let i=0;i<3;i++){const bx=x+Math.floor(Math.random()*4-2),by=y+Math.floor(Math.random()*4-2);if(get(bx,by)===OIL||get(bx,by)===EMPTY)set(bx,by,FIRE);}addLog('🔥 Oil + Fire → Blaze!');}
-          else if((c===ACID&&n===SAND)||(c===SAND&&n===ACID)){set(x,y,GLASS);set(x+dx,y+dy,EMPTY);addLog('🪟 Acid + Sand → Glass');}
-          else if((c===ACID&&n===WATER)||(c===WATER&&n===ACID)){set(x,y,WATER);set(x+dx,y+dy,WATER);addLog('💧 Acid diluted by water');}
+          if(pair===NA*16+CL||pair===CL*16+NA){set(x,y,SALT);set(x+dx,y+dy,SALT);addLog('🧂 Na + Cl₂ → NaCl (table salt)');showFeedback('Salt formed!','#2ecc71');_rxnTrack('salt');}
+          else if((c===NA&&n===WATER)||(c===WATER&&n===NA)){set(x,y,BOOM);set(x+dx,y+dy,BOOM);for(let i=0;i<4;i++){const bx=x+Math.floor(Math.random()*6-3),by=y+Math.floor(Math.random()*6-3);if(get(bx,by)===EMPTY)set(bx,by,BOOM);}addLog('💥 Na + H₂O → BOOM! (violent reaction)');showFeedback('Explosive reaction!','#e74c3c');_rxnTrack('boom');}
+          else if((c===WATER&&n===FIRE)||(c===FIRE&&n===WATER)){set(x,y,STEAM);set(x+dx,y+dy,STEAM);addLog('💨 H₂O + Fire → Steam');_rxnTrack('steam');}
+          else if((c===FIRE&&n===OIL)||(c===OIL&&n===FIRE)){set(x,y,FIRE);set(x+dx,y+dy,FIRE);for(let i=0;i<3;i++){const bx=x+Math.floor(Math.random()*4-2),by=y+Math.floor(Math.random()*4-2);if(get(bx,by)===OIL||get(bx,by)===EMPTY)set(bx,by,FIRE);}addLog('🔥 Oil + Fire → Blaze!');_rxnTrack('blaze');}
+          else if((c===ACID&&n===SAND)||(c===SAND&&n===ACID)){set(x,y,GLASS);set(x+dx,y+dy,EMPTY);addLog('🪟 Acid + Sand → Glass');_rxnTrack('glass');}
+          else if((c===ACID&&n===WATER)||(c===WATER&&n===ACID)){set(x,y,WATER);set(x+dx,y+dy,WATER);addLog('💧 Acid diluted by water');_rxnTrack('dilute');}
         }
       }}
     }
@@ -11080,7 +11088,7 @@ function playAnimalSound(type) {
       {q:'What sea is the saltiest?',a:'dead sea',h:'Between Israel and Jordan.'},
       {q:'Capital of Canada?',a:'ottawa',h:'Not Toronto or Vancouver.'}
     ]};
-    let mode=null,score=0,streak=0,best=0,qIdx=0,timer=0,timerId=null,pool=[],cur=null,hintUsed=false;
+    let mode=null,score=0,streak=0,best=0,qIdx=0,timer=0,timerId=null,pool=[],cur=null,hintUsed=false,bestStreak=0;
     function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
     function showMenu(){
       if(timerId){clearInterval(timerId);timerId=null;}
@@ -11142,13 +11150,29 @@ function playAnimalSound(type) {
       $$('#vs-skip').addEventListener('click',()=>{streak=0;fb.innerHTML=`<span style="color:#888;">Skipped. Answer was: ${cur.a}</span>`;setTimeout(showQuestion,800);});
     }
     function endGame(){
-      if(score>best)best=score;
+      const bestKey='vs-best-'+mode;
+      const bestStreakKey='vs-best-streak-'+mode;
+      const prevBest=parseInt(sessionStorage.getItem(bestKey)||'0');
+      const prevBestStreak=parseInt(sessionStorage.getItem(bestStreakKey)||'0');
+      const wasBest=score>prevBest;
+      const wasBestStreak=streak>prevBestStreak;
+      if(wasBest){best=score;sessionStorage.setItem(bestKey,score);}else{best=prevBest;}
+      if(wasBestStreak)sessionStorage.setItem(bestStreakKey,streak);
+      const allTimeStreak=Math.max(prevBestStreak,streak);
+      let tier='Keep going! 💪',tColor='#3498db';
+      if(score>=25){tier='🏆 LEGENDARY!';tColor='#f1c40f';}
+      else if(score>=15){tier='⚡ Lightning Mind!';tColor='#9b59b6';}
+      else if(score>=10){tier='🌟 Sharp!';tColor='#2ecc71';}
+      else if(score>=5){tier='👍 Solid!';tColor='#3498db';}
+      if(wasBest||wasBestStreak)spawnConfetti(window.innerWidth/2,window.innerHeight/2,150);
+      else if(score>=10)spawnConfetti(window.innerWidth/2,window.innerHeight/3,60);
       root.innerHTML=`<div class="versus-setup" style="text-align:center;">
-        <h2 style="color:#1abc9c;">⏱️ Time's Up!</h2>
+        <h2 style="color:${tColor};">${(wasBest||wasBestStreak)?'🏆 NEW BEST!':'⏱️ Time\'s Up!'}</h2>
+        <p style="color:${tColor};font-size:1.1rem;font-weight:bold;margin:6px 0;">${tier}</p>
         <p style="color:#ecf0f1;font-size:1.3rem;">Final Score: <b style="color:#e67e22;">${score}</b></p>
-        <p style="color:#888;">Questions answered: ${qIdx} | Best streak: ${streak}🔥 | All-time best: ${best}</p>
+        <p style="color:#888;font-size:0.9rem;">Q answered: ${qIdx} · Last streak: ${streak}🔥 · ${mode.toUpperCase()} best: ${best} score / ${allTimeStreak} streak</p>
         <button class="versus-btn" id="vs-again">Play Again</button></div>`;
-      showFeedback(`Score: ${score}!`,'#1abc9c');
+      showFeedback(`${wasBest||wasBestStreak?'🏆 ':''}Score: ${score}!`,tColor);
       $$('#vs-again').addEventListener('click',showMenu);
     }
     showMenu();

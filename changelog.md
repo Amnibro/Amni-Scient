@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.6.61] - 2026-05-18 - Amni-Learn STEM polish: Circuit Builder + Reaction Lab + Team Challenges
+- **Circuit Builder** polish: persistent lifetime built-counter (`circuit-built`); 30-particle confetti on every working circuit; milestone confetti (80 particles for 5/10/25, 150 for 50/100) with 🏆 N circuits built! ⚡ toast; streak reset on incomplete circuit
+- **Reaction Lab** polish: discovery tracking (`rxn-discovered` Set of 6 reaction types: salt/boom/steam/blaze/glass/dilute); first-time discovery fires 60-particle confetti + ✨ New reaction! (N/6) toast; all-6 completion fires 150-particle 🏆 ALL 6 REACTIONS DISCOVERED! ⚗️ celebration; +5 score per new discovery
+- **Team Challenges** polish: per-mode best-score and best-streak trackers (`vs-best-{coding/science/geo}`, `vs-best-streak-{mode}`); end-game card now shows 5-tier (Keep going / 👍 Solid ≥5 / 🌟 Sharp ≥10 / ⚡ Lightning Mind ≥15 / 🏆 LEGENDARY ≥25); new-best (score or streak) fires 150-particle 🏆 NEW BEST! header
+- **SW cache v42 → v43** to flush.
+
 ## [5.6.60] - 2026-05-18 - Amni-Learn Sudoku + Reflex Racer polish
 - **Sudoku** polish: per-difficulty best-time tracker (`sdk-best-{diff}`) AND lifetime wins counter (`sdk-wins-{diff}`); win-feedback distinguishes new-best (150 confetti + 🏆 NEW BEST! prefix), perfect-no-errors (80 confetti + PERFECT! prefix), and normal wins (40 confetti); win-number appended to toast
 - **Reflex Racer** polish: per-level best-score tracker (`rfx-best-L{N}`); 5-tier feedback (Keep Practicing 💪 / 👍 Solid ≥8 / 🌟 Great Reflexes ≥15 / ⚡ Lightning Fast ≥25 / 🏆 LEGENDARY ≥40); new-best fires 150-particle confetti with 🏆 NEW BEST! prefix; high-score (25+) without new-best fires 80-particle confetti; best display in result
