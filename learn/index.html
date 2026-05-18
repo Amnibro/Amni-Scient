@@ -8596,7 +8596,10 @@ function playAnimalSound(type) {
     const canvas=document.createElement('canvas');canvas.className='retro-canvas';canvas.style.borderColor='#0f0';canvas.width=W*SZ;canvas.height=H*SZ;
     const ctx=canvas.getContext('2d');
     let best=parseInt(sessionStorage.getItem('snake-best')||'0');
+    let bestLen=parseInt(sessionStorage.getItem('snake-best-len')||'1');
+    let bestWave=parseInt(sessionStorage.getItem('snake-best-wave')||'1');
     let snake,dir,food,bonus,sc,alive,speed,walls,wave;
+    function _snkTier(s){if(s>=5000)return{name:'Mythic Constrictor',color:'#f1c40f',msg:'Legendary control.'};if(s>=1500)return{name:'Anaconda',color:'#9b59b6',msg:'Vast & coiled.'};if(s>=500)return{name:'Cobra',color:'#2ecc71',msg:'Strike fast, eat well.'};if(s>=100)return{name:'Garter Snake',color:'#3498db',msg:'Slithering steadily.'};return{name:'Earthworm',color:'#e67e22',msg:'Just getting started.'};}
     function restart(){snake=[{x:10,y:7}];dir={x:1,y:0};sc=0;alive=true;speed=150;walls=[];wave=1;spawnFood();bonus=null;const ov=$$('#snake-over');if(ov)ov.remove();draw();}
     function spawnFood(){do{food={x:Math.floor(Math.random()*W),y:Math.floor(Math.random()*H)};}while(snake.some(s=>s.x===food.x&&s.y===food.y)||walls.some(w=>w.x===food.x&&w.y===food.y));}
     function spawnBonus(){if(Math.random()<0.3&&!bonus){do{bonus={x:Math.floor(Math.random()*W),y:Math.floor(Math.random()*H),ttl:80};}while(snake.some(s=>s.x===bonus.x&&s.y===bonus.y)||walls.some(w=>w.x===bonus.x&&w.y===bonus.y)||(food.x===bonus.x&&food.y===bonus.y));}}
@@ -8608,10 +8611,15 @@ function playAnimalSound(type) {
     root.appendChild(dpad);
     document.addEventListener('keydown',e=>{if(currentGame!=='snake80')return;const m={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0],w:[0,-1],s:[0,1],a:[-1,0],d:[1,0]}[e.key];if(m&&(dir.x!==-m[0]||dir.y!==-m[1]))dir={x:m[0],y:m[1]};});
     function gameOver(){
-      alive=false;if(sc>best){best=sc;sessionStorage.setItem('snake-best',best);const bEl=$$('#snake-best');if(bEl)bEl.textContent=best;}
+      alive=false;const wasBest=sc>best;
+      if(wasBest){best=sc;sessionStorage.setItem('snake-best',best);const bEl=$$('#snake-best');if(bEl)bEl.textContent=best;}
+      if(snake.length>bestLen){bestLen=snake.length;sessionStorage.setItem('snake-best-len',bestLen);}
+      if(wave>bestWave){bestWave=wave;sessionStorage.setItem('snake-best-wave',bestWave);}
+      if(wasBest)spawnConfetti(window.innerWidth/2,window.innerHeight/2,120);
       draw();resetStreak();
-      const ov=document.createElement('div');ov.id='snake-over';ov.style.cssText='text-align:center;padding:16px;margin-top:8px;';
-      ov.innerHTML=`<div style="font-size:1.6rem;font-weight:bold;color:#e74c3c;margin-bottom:6px">GAME OVER</div><div style="font-size:1.2rem;color:#fff;margin-bottom:12px">Score: ${sc} | Wave: ${wave}${sc>=best?' | 🏆 NEW BEST!':''}</div><button class="retro-btn" style="margin:4px" id="snake-restart">🔄 RESTART</button><button class="retro-btn" style="margin:4px;background:#e74c3c" id="snake-exit">🚪 EXIT</button><button class="tut-trigger" style="margin:4px" onclick="_hs_show('snake80','Snake')">🏆</button>`;
+      const tier=_snkTier(sc);
+      const ov=document.createElement('div');ov.id='snake-over';ov.style.cssText='text-align:center;padding:14px;margin-top:8px;';
+      ov.innerHTML=`<div style="font-size:1.5rem;font-weight:bold;color:${tier.color};margin-bottom:4px">${wasBest?'🏆 NEW BEST!':'GAME OVER'}</div><div style="font-size:0.95rem;color:${tier.color};margin-bottom:10px">${tier.name} · ${tier.msg}</div><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;max-width:360px;margin:0 auto 10px;background:rgba(0,0,0,0.3);padding:8px;border-radius:6px"><div><div style="font-size:1.1rem;font-weight:bold;color:#fff">${sc}</div><div style="font-size:0.7rem;color:#aaa">Score</div></div><div><div style="font-size:1.1rem;font-weight:bold;color:#fff">${snake.length}</div><div style="font-size:0.7rem;color:#aaa">Length</div></div><div><div style="font-size:1.1rem;font-weight:bold;color:#fff">${wave}</div><div style="font-size:0.7rem;color:#aaa">Wave</div></div><div><div style="font-size:1.1rem;font-weight:bold;color:#f1c40f">${best}</div><div style="font-size:0.7rem;color:#aaa">All-Time</div></div></div><div style="font-size:0.8rem;color:#aaa;margin-bottom:10px">Best Length ${bestLen} · Best Wave ${bestWave}</div><button class="retro-btn" style="margin:4px" id="snake-restart">🔄 RESTART</button><button class="retro-btn" style="margin:4px;background:#e74c3c" id="snake-exit">🚪 EXIT</button><button class="tut-trigger" style="margin:4px" onclick="_hs_show('snake80','Snake')">🏆 Scores</button>`;
       root.appendChild(ov);
       $$('#snake-restart').onclick=restart;$$('#snake-exit').onclick=()=>{if(window._snakeTimer)clearInterval(window._snakeTimer);goBack()};
       _hs_prompt('snake80',sc,`Wave: ${wave}`);
@@ -8643,7 +8651,9 @@ function playAnimalSound(type) {
     const ctx=canvas.getContext('2d');
     const ROWS=6,COLS=9,BW=cW/COLS-4,BH=14;
     let best=parseInt(sessionStorage.getItem('brk-best')||'0');
+    let bestWave=parseInt(sessionStorage.getItem('brk-best-wave')||'1');
     let padX,padW,bx,by,bdx,bdy,sc,lives,bricks,wave,go,powerups,multiBalls;
+    function _brkTier(s){if(s>=20000)return{name:'Wall-Buster Legend',color:'#f1c40f',msg:'Brick walls fear you.'};if(s>=8000)return{name:'Power Player',color:'#9b59b6',msg:'Power-ups flow your way.'};if(s>=3000)return{name:'Paddle Pro',color:'#2ecc71',msg:'Solid control & angles.'};if(s>=1000)return{name:'Block Hunter',color:'#3498db',msg:'Steady demolition.'};return{name:'Starter',color:'#e67e22',msg:'First wall down soon.'};}
     const colors=['#e74c3c','#e67e22','#f1c40f','#2ecc71','#3498db','#9b59b6'];
     function resetBricks(){bricks=[];for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){const hp=r<2&&wave>2?2:1;bricks.push({x:c*(BW+4)+4,y:r*(BH+4)+30,w:BW,h:BH,alive:true,color:colors[r%colors.length],hp});}}
     function restart(){padX=cW/2-30;padW=60;bx=cW/2;by=cH-30;bdx=3;bdy=-3;sc=0;lives=3;wave=1;go=false;powerups=[];multiBalls=[];resetBricks();const ov=$$('#brk-over');if(ov)ov.remove();}
@@ -8653,9 +8663,13 @@ function playAnimalSound(type) {
     canvas.addEventListener('pointermove',e=>{const r=canvas.getBoundingClientRect();padX=Math.max(0,Math.min(cW-padW,e.clientX-r.left-padW/2));});
     document.addEventListener('keydown',e=>{if(currentGame!=='breakout')return;if(e.key==='ArrowLeft')padX=Math.max(0,padX-20);if(e.key==='ArrowRight')padX=Math.min(cW-padW,padX+20);});
     function gameOver(){
-      go=true;if(sc>best){best=sc;sessionStorage.setItem('brk-best',best);}
-      const ov=document.createElement('div');ov.id='brk-over';ov.style.cssText='text-align:center;padding:16px;margin-top:8px;';
-      ov.innerHTML=`<div style="font-size:1.6rem;font-weight:bold;color:#e74c3c;margin-bottom:6px">GAME OVER</div><div style="font-size:1.2rem;color:#fff;margin-bottom:12px">Score: ${sc} | Wave: ${wave}${sc>=best?' | 🏆 NEW BEST!':''}</div><button class="retro-btn" style="margin:4px" id="brk-restart">🔄 RESTART</button><button class="retro-btn" style="margin:4px;background:#e74c3c" id="brk-exit">🚪 EXIT</button><button class="tut-trigger" style="margin:4px" onclick="_hs_show('breakout','Breakout')">🏆</button>`;
+      go=true;const wasBest=sc>best;
+      if(wasBest){best=sc;sessionStorage.setItem('brk-best',best);}
+      if(wave>bestWave){bestWave=wave;sessionStorage.setItem('brk-best-wave',bestWave);}
+      if(wasBest)spawnConfetti(window.innerWidth/2,window.innerHeight/2,120);
+      const tier=_brkTier(sc);
+      const ov=document.createElement('div');ov.id='brk-over';ov.style.cssText='text-align:center;padding:14px;margin-top:8px;';
+      ov.innerHTML=`<div style="font-size:1.5rem;font-weight:bold;color:${tier.color};margin-bottom:4px">${wasBest?'🏆 NEW BEST!':'GAME OVER'}</div><div style="font-size:0.95rem;color:${tier.color};margin-bottom:10px">${tier.name} · ${tier.msg}</div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;max-width:300px;margin:0 auto 10px;background:rgba(0,0,0,0.3);padding:8px;border-radius:6px"><div><div style="font-size:1.1rem;font-weight:bold;color:#fff">${sc}</div><div style="font-size:0.7rem;color:#aaa">Score</div></div><div><div style="font-size:1.1rem;font-weight:bold;color:#fff">${wave}</div><div style="font-size:0.7rem;color:#aaa">Wave</div></div><div><div style="font-size:1.1rem;font-weight:bold;color:#f1c40f">${best}</div><div style="font-size:0.7rem;color:#aaa">All-Time</div></div></div><div style="font-size:0.8rem;color:#aaa;margin-bottom:10px">Best Wave ${bestWave}</div><button class="retro-btn" style="margin:4px" id="brk-restart">🔄 RESTART</button><button class="retro-btn" style="margin:4px;background:#e74c3c" id="brk-exit">🚪 EXIT</button><button class="tut-trigger" style="margin:4px" onclick="_hs_show('breakout','Breakout')">🏆 Scores</button>`;
       root.appendChild(ov);$$('#brk-restart').onclick=()=>{restart();if(window._breakoutAF)cancelAnimationFrame(window._breakoutAF);window._breakoutAF=requestAnimationFrame(loop);};$$('#brk-exit').onclick=()=>{if(window._breakoutAF)cancelAnimationFrame(window._breakoutAF);goBack()};
       _hs_prompt('breakout',sc,`Wave: ${wave}`);
     }
@@ -8884,12 +8898,16 @@ function playAnimalSound(type) {
     const SHAPES=[[[1,1,1,1]],[[1,1],[1,1]],[[0,1,0],[1,1,1]],[[1,0,0],[1,1,1]],[[0,0,1],[1,1,1]],[[0,1,1],[1,1,0]],[[1,1,0],[0,1,1]]];
     const COLORS=['#00f0f0','#f0f000','#a000f0','#f0a000','#0000f0','#00f000','#f00000'];
     let best=parseInt(sessionStorage.getItem('tet-best')||'0');
+    let bestLines=parseInt(sessionStorage.getItem('tet-best-lines')||'0');
+    let bestLevel=parseInt(sessionStorage.getItem('tet-best-level')||'1');
+    let tetrisCount=0;
     let board,piece,px,py,pi,sc,lines,go,level,holdPi,canHold,dropSpeed=500;
-    function restart(){board=Array.from({length:ROWS},()=>Array(COLS).fill(0));sc=0;lines=0;go=false;level=1;holdPi=-1;canHold=true;dropSpeed=500;newPiece();const ov=$$('#tet-over');if(ov)ov.remove();draw();}
+    function _tetTier(s){if(s>=25000)return{name:'Tetris Legend',color:'#f1c40f',msg:'Master of the falling blocks.'};if(s>=8000)return{name:'Stack Sensei',color:'#9b59b6',msg:'Disciplined, fast, ruthless.'};if(s>=2000)return{name:'T-Spin Adept',color:'#2ecc71',msg:'Solid rotational craft.'};if(s>=500)return{name:'Tetris Apprentice',color:'#3498db',msg:'Learning the patterns.'};return{name:'Block Stacker',color:'#e67e22',msg:'Just getting started.'};}
+    function restart(){board=Array.from({length:ROWS},()=>Array(COLS).fill(0));sc=0;lines=0;go=false;level=1;holdPi=-1;canHold=true;dropSpeed=500;tetrisCount=0;newPiece();const ov=$$('#tet-over');if(ov)ov.remove();draw();}
     function newPiece(){pi=Math.floor(Math.random()*SHAPES.length);piece=SHAPES[pi].map(r=>[...r]);px=Math.floor((COLS-piece[0].length)/2);py=0;canHold=true;if(!canPlace(piece,px,py)){go=true;if(sc>best){best=sc;sessionStorage.setItem('tet-best',best);}gameOver();}}
     function canPlace(p,x,y){for(let r=0;r<p.length;r++)for(let c=0;c<p[r].length;c++){if(!p[r][c])continue;const nr=y+r,nc=x+c;if(nc<0||nc>=COLS||nr>=ROWS||(nr>=0&&board[nr][nc]))return false;}return true;}
     function place(){piece.forEach((row,r)=>row.forEach((v,c)=>{if(v&&py+r>=0)board[py+r][px+c]=pi+1;}));clearLines();newPiece();}
-    function clearLines(){let cleared=0;for(let r=ROWS-1;r>=0;r--){if(board[r].every(c=>c)){board.splice(r,1);board.unshift(Array(COLS).fill(0));cleared++;r++;}}if(cleared){lines+=cleared;sc+=cleared*cleared*100*level;addScore(cleared*5);const newLvl=Math.floor(lines/10)+1;if(newLvl>level){level=newLvl;dropSpeed=Math.max(80,500-level*40);showFeedback(`Level ${level}!`,'#a29bfe');}}}
+    function clearLines(){let cleared=0;for(let r=ROWS-1;r>=0;r--){if(board[r].every(c=>c)){board.splice(r,1);board.unshift(Array(COLS).fill(0));cleared++;r++;}}if(cleared){lines+=cleared;sc+=cleared*cleared*100*level;addScore(cleared*5);if(cleared===4){tetrisCount++;showFeedback(`TETRIS! 🔥`,'#f1c40f');spawnConfetti(window.innerWidth/2,window.innerHeight/3,80);}else if(cleared===3){showFeedback(`Triple! ✨`,'#9b59b6');spawnConfetti(window.innerWidth/2,window.innerHeight/3,40);}else if(cleared===2){showFeedback(`Double!`,'#3498db');}const newLvl=Math.floor(lines/10)+1;if(newLvl>level){level=newLvl;dropSpeed=Math.max(80,500-level*40);showFeedback(`Level ${level}!`,'#a29bfe');spawnConfetti(window.innerWidth/2,window.innerHeight/3,50);}}}
     function rotate(){const newP=piece[0].map((_,c)=>piece.map(r=>r[c]).reverse());if(canPlace(newP,px,py))piece=newP;else if(canPlace(newP,px-1,py)){px--;piece=newP;}else if(canPlace(newP,px+1,py)){px++;piece=newP;}}
     function holdSwap(){if(!canHold||go)return;canHold=false;const prev=holdPi;holdPi=pi;if(prev===-1){newPiece();}else{pi=prev;piece=SHAPES[pi].map(r=>[...r]);px=Math.floor((COLS-piece[0].length)/2);py=0;}}
     function ghostY(){let gy=py;while(canPlace(piece,px,gy+1))gy++;return gy;}
@@ -8906,8 +8924,13 @@ function playAnimalSound(type) {
     }
     function gameOver(){
       draw();resetStreak();
-      const ov=document.createElement('div');ov.id='tet-over';ov.style.cssText='text-align:center;padding:12px;';
-      ov.innerHTML=`<div style="font-size:1.2rem;color:#fff;margin-bottom:8px">${sc>=best?'🏆 NEW BEST! ':''}Best: ${best}</div><button class="retro-btn" style="margin:4px" id="tet-restart">🔄 RESTART</button><button class="retro-btn" style="margin:4px;background:#e74c3c" id="tet-exit">🚪 EXIT</button>`;
+      const wasBest=sc>=best;
+      if(lines>bestLines){bestLines=lines;sessionStorage.setItem('tet-best-lines',bestLines);}
+      if(level>bestLevel){bestLevel=level;sessionStorage.setItem('tet-best-level',bestLevel);}
+      if(wasBest)spawnConfetti(window.innerWidth/2,window.innerHeight/2,120);
+      const tier=_tetTier(sc);
+      const ov=document.createElement('div');ov.id='tet-over';ov.style.cssText='text-align:center;padding:14px;margin-top:8px;';
+      ov.innerHTML=`<div style="font-size:1.4rem;font-weight:bold;color:${tier.color};margin-bottom:4px">${wasBest?'🏆 NEW BEST!':'Game Over'}</div><div style="font-size:0.95rem;color:${tier.color};margin-bottom:10px">${tier.name} · ${tier.msg}</div><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;max-width:340px;margin:0 auto 10px;background:rgba(0,0,0,0.3);padding:8px;border-radius:6px"><div><div style="font-size:1.1rem;font-weight:bold;color:#fff">${sc}</div><div style="font-size:0.7rem;color:#aaa">Score</div></div><div><div style="font-size:1.1rem;font-weight:bold;color:#fff">${lines}</div><div style="font-size:0.7rem;color:#aaa">Lines</div></div><div><div style="font-size:1.1rem;font-weight:bold;color:#fff">${level}</div><div style="font-size:0.7rem;color:#aaa">Level</div></div><div><div style="font-size:1.1rem;font-weight:bold;color:#f1c40f">${tetrisCount}</div><div style="font-size:0.7rem;color:#aaa">Tetrises</div></div></div><div style="font-size:0.8rem;color:#aaa;margin-bottom:10px">Best ${best} · Best Lines ${bestLines} · Best Level ${bestLevel}</div><button class="retro-btn" style="margin:4px" id="tet-restart">🔄 RESTART</button><button class="retro-btn" style="margin:4px;background:#e74c3c" id="tet-exit">🚪 EXIT</button><button class="tut-trigger" style="margin:4px" onclick="_hs_show('tetris','Block Drop')">🏆 Scores</button>`;
       root.appendChild(ov);$$('#tet-restart').onclick=restart;$$('#tet-exit').onclick=()=>{if(window._tetrisTimer)clearInterval(window._tetrisTimer);goBack();};
       _hs_prompt('tetris',sc,`Lines: ${lines} | Level: ${level}`);
     }
