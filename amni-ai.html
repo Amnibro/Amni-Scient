@@ -163,16 +163,12 @@
 <div class="card-grid">
 <div class="card">
 <h3>1. STANDALONE</h3>
-<p>Adam as its own server with its own chat UI at <code>localhost:8001</code>.</p>
-<pre class="code-block"><span class="cmt"># clone, install, launch (one command after pip)</span>
+<p>Adam as its own server with its own chat UI at <code>localhost:8002</code>.</p>
+<pre class="code-block"><span class="cmt"># clone &amp; install — that's it</span>
 git clone https://github.com/Amnibro/Amni-Ai
 cd Amni-Ai
-python -m venv .venv
-<span class="cmt"># Windows: .venv\Scripts\activate</span>
-<span class="cmt"># Linux:   source .venv/bin/activate</span>
-pip install -r requirements.txt
 python install.py</pre>
-<p><strong>Windows users:</strong> double-click <code>install.bat</code>. <strong>Mac/Linux:</strong> <code>./install.sh</code>. <code>install.py</code> handles everything: bake download (~20 GB Gemma-4 GF(17) from HuggingFace, one-time), server launch, browser open at <code>http://127.0.0.1:8001/</code>.</p>
+<p><strong>Windows users:</strong> double-click <code>install.bat</code>. <strong>Mac/Linux:</strong> <code>./install.sh</code>. <code>install.py</code> handles <em>everything</em>: venv creation, vendor-correct PyTorch (CUDA/ROCm/CPU auto-detect), pip install, optional Rust toolchain + <code>amni_kernels</code> native build, bake download (~20&nbsp;GB Gemma-4 E2B GF(17) from HuggingFace, one-time), server launch, browser open at <code>http://127.0.0.1:8002/</code>. You do <strong>not</strong> need to pre-create a venv or run <code>pip install</code> first.</p>
 <p style="font-size:.78rem;color:var(--dim)">First-run: ~10-30 min depending on connection. Subsequent launches: <code>python scripts/amni_serve.py --seed --cors</code>, boots in 12s.</p>
 </div>
 
