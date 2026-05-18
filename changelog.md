@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.6.63] - 2026-05-18 - Amni-Learn light/dark theme toggle
+- **Theme toggle 🌙/☀️** added to top-bar between FS hint and Fullscreen button. Default dark (current behavior). Click flips to light mode; preference persists per-browser via `localStorage.amni-learn-theme`.
+- **Light-mode CSS** covers chrome surfaces: top bar, back/FS/theme buttons, menu titles, game cards (game-btn), category sections, level picker modal, score/streak readouts, life-title, game-hud, math choice buttons (.m-choice). Game canvases for retro arcades / idle / pencil-and-paper boards intentionally stay dark (they're CRT-styled by design).
+- Smooth `transition: background 0.3s, color 0.3s` on body so the swap feels deliberate, not jarring.
+- **SW cache v44 → v45** to flush.
+
 ## [5.6.62] - 2026-05-18 - Amni-Learn College Calculus deeper (~64 → ~94 questions)
 - **Calculus** +30 advanced/multivariable questions, taking the bank from ~64 to ~94:
   - **multivariable**: partial derivative ∂(x²y³)/∂x, total derivative chain rule, divergence ∇·F, curl ∇×F i-component, polar dA = r dr dθ, spherical dV = ρ² sin φ dρ dφ dθ

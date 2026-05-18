@@ -13,7 +13,38 @@
 <style>
   *,*::before,*::after { box-sizing: border-box; }
   html,body { max-width: 100vw; overflow-x: hidden; }
-  body { overflow-x: hidden; overflow-y: auto; margin: 0; padding: 0; background: #0c0f12; color: #ecf0f1; }
+  body { overflow-x: hidden; overflow-y: auto; margin: 0; padding: 0; background: #0c0f12; color: #ecf0f1; transition: background 0.3s, color 0.3s; }
+  /* Light-mode override — opt-in via body.light-mode. Inverts the major
+     surface colors and tones down the neon accents that strain on a
+     bright canvas. Game boards, retro arcades, and most game UIs stay
+     dark by design (they're intentionally CRT-styled), but the chrome,
+     menus, summary cards, and pickers all flip. */
+  body.light-mode { background: #f5f7fa; color: #1a1f2e; }
+  body.light-mode .top-bar { background: rgba(255,255,255,0.96) !important; border-bottom-color: #d0d6e0 !important; }
+  body.light-mode .back-btn, body.light-mode .fs-btn, body.light-mode .theme-btn { border-color: #2980b9; color: #2980b9; }
+  body.light-mode .back-btn:hover, body.light-mode .fs-btn:hover, body.light-mode .theme-btn:hover { background: rgba(41,128,185,0.1); }
+  body.light-mode .fs-hint { color: #555; }
+  body.light-mode .menu-title { color: #1a1f2e !important; }
+  body.light-mode .game-btn { background: rgba(255,255,255,0.85) !important; color: #1a1f2e !important; border-color: #d0d6e0 !important; }
+  body.light-mode .game-btn:hover { background: rgba(220,230,245,0.95) !important; }
+  body.light-mode .btn-text { color: #1a1f2e !important; }
+  body.light-mode .btn-desc { color: #555 !important; }
+  body.light-mode .level-info { background: rgba(255,255,255,0.85) !important; color: #1a1f2e !important; border-color: #2980b9 !important; }
+  body.light-mode .score-val { color: #16a085; }
+  body.light-mode .streak-val { color: #d68910; }
+  body.light-mode .life-title { color: #1a1f2e !important; }
+  body.light-mode .game-stat { color: #1a1f2e !important; }
+  body.light-mode .game-stat-val { color: #c0392b !important; }
+  body.light-mode .m-choice { background: #fff !important; color: #1a1f2e !important; border-color: #2980b9 !important; }
+  body.light-mode .m-choice:hover { background: #eaf3fb !important; }
+  body.light-mode .menu-buttons-grid, body.light-mode .category-section { background: transparent !important; }
+  body.light-mode .category-title { color: #1a1f2e !important; }
+  body.light-mode #level-picker-modal { background: rgba(0,0,0,0.55) !important; }
+  body.light-mode #level-picker-modal > div { background: #fff !important; border-color: #2980b9 !important; color: #1a1f2e !important; }
+  body.light-mode #level-picker-modal h2 { color: #2980b9 !important; }
+  body.light-mode .game-hud { color: #1a1f2e !important; }
+  .theme-btn { background: none; border: 1px solid #4db8ff; color: #4db8ff; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-family: 'JetBrains Mono'; font-size: 1rem; }
+  .theme-btn:hover { background: rgba(255,255,255,0.1); }
   /* Compact top bar on narrow screens — labels collapse to icons,
      brand text + fullscreen-hint hide entirely. Touch targets stay
      ≥40px for fingers. (mobile layout fix) */
@@ -1044,6 +1075,7 @@
     </div>
     <div class="top-controls">
         <span class="fs-hint" id="fs-hint">(Press ESC to exit)</span>
+        <button class="theme-btn" id="theme-btn" title="Toggle light/dark theme" aria-label="Toggle theme">🌙</button>
         <button class="fs-btn" id="fs-btn">⛶<span class="fs-label"> FULLSCREEN</span></button>
     </div>
   </div>
@@ -1663,6 +1695,21 @@
     on ? (app.classList.add('amni-fs'),document.body.style.overflow='hidden',$$('#fs-btn').textContent='✖ EXIT FULLSCREEN',$$('#fs-hint').style.display='inline') : (app.classList.remove('amni-fs'),document.body.style.overflow='',$$('#fs-btn').textContent='⛶ FULLSCREEN',$$('#fs-hint').style.display='none');
   }
   $$('#fs-btn').addEventListener('click', () => ($$('#app').classList.contains('amni-fs')||_fsNative) ? _exitFs() : _enterFs());
+  // Light/dark theme toggle. Default dark; persists per-browser in localStorage.
+  function _applyTheme(mode){
+    document.body.classList.toggle('light-mode', mode === 'light');
+    const btn = $$('#theme-btn');
+    if (btn) btn.textContent = mode === 'light' ? '☀️' : '🌙';
+  }
+  try {
+    const savedTheme = localStorage.getItem('amni-learn-theme') || 'dark';
+    _applyTheme(savedTheme);
+  } catch { _applyTheme('dark'); }
+  $$('#theme-btn').addEventListener('click', () => {
+    const now = document.body.classList.contains('light-mode') ? 'dark' : 'light';
+    _applyTheme(now);
+    try { localStorage.setItem('amni-learn-theme', now); } catch {}
+  });
   document.addEventListener('fullscreenchange', () => { document.fullscreenElement ? (_fsNative=true,_cssFallback(true)) : (_fsNative=false,_cssFallback(false)); });
   document.addEventListener('webkitfullscreenchange', () => { document.webkitFullscreenElement ? (_fsNative=true,_cssFallback(true)) : (_fsNative=false,_cssFallback(false)); });
   window.addEventListener('keydown', (e) => {
@@ -9778,7 +9825,37 @@ function playAnimalSound(type) {
       {q:'Mass-energy equivalence?',formula:'E = ?',opts:['mc²','½mv²','mc','m²c'],ans:0,explain:'Einstein\'s famous equation: rest energy equals mass times c² — applies to nuclear binding, particle physics, fusion.'},
       {q:'Schrödinger equation governs?',formula:'Schrödinger equation governs?',opts:['Time evolution of quantum wavefunction','Newtonian motion','Relativistic momentum','Magnetic flux'],ans:0,explain:'iℏ∂ψ/∂t = Hψ. Foundational equation of non-relativistic quantum mechanics.'},
       {q:'Two slits give interference because?',formula:'Double-slit interference?',opts:['Waves from each slit superpose with phase differences','Particles bounce','Slits emit electrons','Path lengths equal'],ans:0,explain:'Different path lengths to a screen point create phase differences → constructive/destructive interference fringes.'},
-      {q:'Boltzmann constant k_B relates?',formula:'k_B ≈?',opts:['1.38×10⁻²³ J/K','6.022×10²³','6.63×10⁻³⁴','3×10⁸'],ans:0,explain:'k_B = 1.381 × 10⁻²³ J/K. Bridges microscopic energy to macroscopic temperature (E = (3/2)k_B T per particle).'}
+      {q:'Boltzmann constant k_B relates?',formula:'k_B ≈?',opts:['1.38×10⁻²³ J/K','6.022×10²³','6.63×10⁻³⁴','3×10⁸'],ans:0,explain:'k_B = 1.381 × 10⁻²³ J/K. Bridges microscopic energy to macroscopic temperature (E = (3/2)k_B T per particle).'},
+      {q:'Conservation of charge means?',formula:'Charge conservation?',opts:['Total charge of an isolated system is invariant','Charges always cancel','Charge always positive','Charge always increases'],ans:0,explain:'Net charge of a closed system never changes — only redistributes. Fundamental symmetry, tied to gauge invariance.'},
+      {q:'Magnetic force on a moving charge?',formula:'F = ?',opts:['qv × B','qE','qB','qv·B'],ans:0,explain:'Lorentz force on a charge: F = qv × B (perpendicular to both velocity and field). Combined with electric: F = q(E + v×B).'},
+      {q:'Magnetic flux through area A with field B (uniform)?',formula:'Φ_B = ?',opts:['B·A·cos θ','BA','B/A','B + A'],ans:0,explain:'Φ_B = ∫ B · dA = BA cos θ for uniform field at angle θ to normal. Units: weber (Wb) = T·m².'},
+      {q:'Lenz\'s law states the induced current direction is?',formula:'Lenz\'s law?',opts:['Opposes the change in flux','Same as change in flux','Random','Toward the magnet'],ans:0,explain:'Conservation of energy in EM induction: induced EMF drives current that opposes the flux change that created it.'},
+      {q:'RC circuit time constant?',formula:'τ = ?',opts:['RC','R/C','C/R','R+C'],ans:0,explain:'Time constant τ = RC. After τ, capacitor charges to ~63% of supply voltage; discharges to ~37%.'},
+      {q:'LC circuit oscillation angular frequency?',formula:'ω = ?',opts:['1/√(LC)','√(LC)','LC','L/C'],ans:0,explain:'Resonant frequency: ω = 1/√(LC). Energy oscillates between inductor magnetic and capacitor electric. Foundation of radio tuning.'},
+      {q:'Simple harmonic motion: x(t) = A cos(ωt + φ). Angular frequency for mass-spring?',formula:'ω for spring?',opts:['√(k/m)','k/m','√(m/k)','km'],ans:0,explain:'Mass-spring: ω = √(k/m). Period T = 2π/ω = 2π√(m/k). k is spring constant.'},
+      {q:'Damped oscillator: when overdamped vs underdamped?',formula:'Damping regimes?',opts:['Overdamped: large damping, no oscillation; underdamped: small damping, oscillates with decay','Same thing','Overdamped is faster','Underdamped is slower'],ans:0,explain:'Damping ratio ζ > 1 overdamped (slow return, no oscillation), ζ = 1 critical (fastest no-overshoot), ζ < 1 underdamped (oscillates while decaying).'},
+      {q:'Standing wave on a string fixed at both ends has wavelengths?',formula:'λ_n = ?',opts:['2L/n','L/n','L/2n','nL'],ans:0,explain:'λ_n = 2L/n for n = 1, 2, 3, ... Frequencies f_n = nv/(2L) — fundamental plus harmonics.'},
+      {q:'Beat frequency between two tones f₁, f₂?',formula:'f_beat = ?',opts:['|f₁ − f₂|','f₁ + f₂','f₁·f₂','(f₁+f₂)/2'],ans:0,explain:'Beats arise from interference of close frequencies. You hear amplitude modulated at the difference frequency.'},
+      {q:'Total internal reflection occurs when?',formula:'TIR condition?',opts:['Light hits denser-to-rarer interface above critical angle','Below critical angle','Equal indices','In vacuum'],ans:0,explain:'When sin θ_i > n₂/n₁ at boundary, light reflects entirely. Used in fiber optics.'},
+      {q:'Critical angle θ_c for total internal reflection?',formula:'sin θ_c = ?',opts:['n₂/n₁','n₁/n₂','n₁·n₂','1 − n₂/n₁'],ans:0,explain:'sin θ_c = n₂/n₁ where n₂ < n₁ (going from denser to rarer). Above θ_c, no transmitted ray.'},
+      {q:'Lens equation?',formula:'1/f = ?',opts:['1/u + 1/v (or 1/d_o + 1/d_i)','f·d','f/u','u·v/f'],ans:0,explain:'Thin lens: 1/f = 1/d_o + 1/d_i. Magnification m = −d_i/d_o.'},
+      {q:'Heat capacity at constant pressure C_p vs constant volume C_v for ideal gas?',formula:'C_p − C_v = ?',opts:['R (universal gas constant)','0','2R','R/2'],ans:0,explain:'C_p − C_v = nR for ideal gas (Mayer\'s relation). Ratio γ = C_p/C_v = 1.4 for diatomic.'},
+      {q:'Entropy change for reversible heat transfer?',formula:'dS = ?',opts:['dQ/T','dQ·T','dQ + dT','T·dQ'],ans:0,explain:'Clausius: dS = δQ_rev/T. For irreversible: dS > δQ/T. Second law dictates ΔS_universe ≥ 0.'},
+      {q:'Wien\'s displacement law?',formula:'λ_max·T = ?',opts:['b ≈ 2.9×10⁻³ m·K','σT⁴','hν/k','c/T'],ans:0,explain:'Peak emission wavelength × temperature = constant b. Why hot stars look blue, cool stars red.'},
+      {q:'Stefan-Boltzmann law: blackbody radiated power per area?',formula:'P/A = ?',opts:['σT⁴','σT','σT²','σ/T'],ans:0,explain:'Total radiated power scales as T⁴. σ ≈ 5.67×10⁻⁸ W/m²·K⁴. Sun ~6000K vs Earth ~300K → ~10¹¹ ratio.'},
+      {q:'Photon energy E = hf, photon momentum p = ?',formula:'p_photon = ?',opts:['h/λ = E/c','hλ','mc','E/v'],ans:0,explain:'For massless photons: p = h/λ = E/c. Why solar sails work and Compton scattering occurs.'},
+      {q:'Compton scattering shows photon?',formula:'Compton effect proves?',opts:['Carries momentum (particle nature)','Wavelength is fixed','Only travels in vacuum','No mass'],ans:0,explain:'Photons scatter off electrons like billiard balls, shifting wavelength by Δλ = (h/m_ec)(1 − cos θ). Confirms wave-particle duality.'},
+      {q:'Bohr radius a₀ in hydrogen atom?',formula:'a₀ ≈?',opts:['5.29×10⁻¹¹ m','5.29×10⁻⁹ m','1×10⁻¹⁰ m','3×10⁻¹⁵ m'],ans:0,explain:'Most probable electron-proton distance in ground state hydrogen. Fundamental atomic length scale.'},
+      {q:'Particle in a 1D infinite well of length L: ground-state energy?',formula:'E₁ = ?',opts:['ℏ²π²/(2mL²)','mL²/ℏ²','ℏ/(mL)','π/mL'],ans:0,explain:'Quantized energies E_n = n²·ℏ²π²/(2mL²). No zero-energy state — vacuum has zero-point energy.'},
+      {q:'Pauli exclusion principle says?',formula:'Pauli exclusion?',opts:['No two fermions can occupy the same quantum state','Bosons must align','Spin is always 1/2','Energy is quantized'],ans:0,explain:'Foundation of chemistry: electrons in atoms fill shells/orbitals because two electrons can\'t share all quantum numbers (n, l, m, s).'},
+      {q:'Special relativity: time dilation?',formula:'Δt = ?',opts:['γ·Δt_proper where γ = 1/√(1−v²/c²)','Δt_proper · v/c','Δt_proper · c','Δt_proper / v'],ans:0,explain:'Moving clocks tick slower by factor γ. At v = 0.866c, γ = 2 (time runs half-speed for observer).'},
+      {q:'Length contraction?',formula:'L = ?',opts:['L_proper / γ','L_proper · γ','L_proper · v','L_proper · c'],ans:0,explain:'Moving rod appears contracted in direction of motion by 1/γ. Only along motion axis; perpendicular dimensions unchanged.'},
+      {q:'Relativistic momentum?',formula:'p = ?',opts:['γmv','mv','mc²','mv/c'],ans:0,explain:'p = γmv replaces p = mv at high speeds. Approaches ∞ as v → c, why massive objects can\'t reach c.'},
+      {q:'Mass-energy of a particle at rest?',formula:'E₀ = ?',opts:['mc²','γmc²','½mv²','mv²'],ans:0,explain:'Rest energy E₀ = mc². Total relativistic energy E = γmc². Kinetic part KE = (γ−1)mc².'},
+      {q:'Schrödinger equation for stationary state?',formula:'Time-indep form?',opts:['Hψ = Eψ','iℏ∂ψ/∂t = Hψ','∇²ψ = 0','ψ = e^(−iEt)'],ans:0,explain:'Time-independent Schrödinger: Hψ = Eψ (eigenvalue equation for energy). Time-dependent: iℏ∂ψ/∂t = Hψ.'},
+      {q:'Probability density in quantum mechanics?',formula:'P(x) = ?',opts:['|ψ(x)|²','ψ(x)','ψ²(x)','ψ(x)·x'],ans:0,explain:'Born rule: |ψ(x)|² gives probability density. Squared modulus, always real and non-negative.'},
+      {q:'Standard Model fundamental forces (gauge bosons)?',formula:'Gauge bosons?',opts:['Photon (EM), W/Z (weak), gluon (strong)','Just photon','Higgs alone','Electron, muon, tau'],ans:0,explain:'Photon mediates EM, W± and Z⁰ mediate weak, 8 gluons mediate strong force. Plus Higgs boson for mass.'},
+      {q:'Higgs boson discovered at LHC in year?',formula:'Higgs discovery year?',opts:['2012','2008','2015','1995'],ans:0,explain:'ATLAS and CMS announced ~125 GeV particle on July 4, 2012. Confirmed Higgs mechanism for electroweak symmetry breaking.'}
     ]},
     chemistry:{name:'Chemistry',questions:[
       {q:'How many elements are in H₂O?',formula:'H₂O contains?',opts:['2 elements (H, O)','3 elements','1 element','4 elements'],ans:0,explain:'Water (H₂O) contains 2 elements: Hydrogen and Oxygen'},
