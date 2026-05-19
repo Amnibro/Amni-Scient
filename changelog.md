@@ -1,5 +1,13 @@
 ﻿# Changelog 
 
+## [5.6.72] - 2026-05-19 - Chimp Test: wrong-cell taps now fail the round
+- **Bug**: tapping an empty (non-numbered) cell in Chimp Test did nothing — silent no-op. If you misremembered a tile's position and tapped blank space, the round didn't fail and the game felt unresponsive. Only numbered-cell taps counted.
+- **Fix**: every cell click is now wired:
+  - Pre-hide first tap must be on the "1" cell to start (anything else fails immediately, revealing all positions in red).
+  - Post-hide, tapping the next-expected number advances. Tapping any other cell — numbered-out-of-order OR empty — fails the round and reveals the remaining positions.
+- Now faithful to the Ayumu chimpanzee test: you only get credit for correct sequential placement, and any guess-and-miss ends the run.
+- **SW cache v53 → v54** to flush.
+
 ## [5.6.71] - 2026-05-19 - Card Pairs font sizing fix
 - **Bug**: Card Pairs cards revealed enormous text (single letter "En" filling the whole card, long words overflowing). Root cause: `font-size: 55cqmin` (and inline `24cqmin/62cqmin` for theme override) relied on `container-type: size` resolving on the `.cp-card`. On browsers where the container-query context wasn't honored (or got broken by recent layout changes), cqmin fell back to the viewport, giving 50%+ of viewport min as font-size — wildly oversized.
 - **Fix**: dropped cqmin entirely. Now compute font in JS from actual card `clientWidth`:

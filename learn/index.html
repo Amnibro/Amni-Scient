@@ -8751,9 +8751,29 @@ function playAnimalSound(type) {
         c.dataset.num=numMap[i]||'0';
         c.dataset.idx=i;
         c.onclick=()=>{
+          // Every cell is clickable. The first tap on the grid hides the
+          // numbered cells (revealing only their tile-shape). Subsequent
+          // taps either continue the sequence (correct) or fail.
+          // Tapping an empty cell now fails too \u2014 previously it was a
+          // silent no-op which made the game feel unresponsive when the
+          // player misremembered a tile's exact position.
           const n=parseInt(c.dataset.num);
-          if(!n)return;
-          if(!hidden){hidden=true;g.querySelectorAll('.chm-cell.num').forEach(x=>{if(parseInt(x.dataset.num)!==1)x.classList.add('hidden');});}
+          if(!hidden){
+            // First click must be on the 1-cell to start the round. Tapping
+            // anywhere else before hiding is treated as a wrong start and
+            // fails immediately.
+            if(n!==1){
+              c.classList.add('wrong');
+              g.querySelectorAll('.chm-cell').forEach(x=>{ if(x.dataset.num!=='0'&&!x.classList.contains('wrong')){ x.classList.add('reveal-fail'); } });
+              resetStreak();
+              const reached=sz-1;
+              sz=4;
+              setTimeout(()=>_gameOver(reached),1600);
+              return;
+            }
+            hidden=true;
+            g.querySelectorAll('.chm-cell.num').forEach(x=>{if(parseInt(x.dataset.num)!==1)x.classList.add('hidden');});
+          }
           if(n===nextExp){
             c.classList.remove('num','hidden');
             c.classList.add('correct');
@@ -8772,6 +8792,8 @@ function playAnimalSound(type) {
               setTimeout(play,1200);
             }
           }else{
+            // Wrong tap \u2014 either a numbered cell out of order, or an
+            // empty cell entirely. Both fail the round.
             c.classList.add('wrong');
             g.querySelectorAll('.chm-cell').forEach(x=>{
               if(x.dataset.num!=='0'&&!x.classList.contains('correct')&&!x.classList.contains('wrong')){
