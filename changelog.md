@@ -1,5 +1,16 @@
 ﻿# Changelog 
 
+## [5.6.87] - 2026-05-19 - Card Pairs: theme picker + 3 new themes (4 → 7)
+- Card Pairs now has a **theme picker** above the size picker. Default `🎲 Random` preserves the original behaviour (random pick each round); the named themes let the user target a specific palette.
+- **3 new themes** join Symbols/Math/Science/World:
+  - 🐶 **Animals** — 20 animal emojis (cat, dog, fox, panda, octopus…).
+  - 🍎 **Foods** — 20 food emojis (apple, sushi, pizza, donut…).
+  - 🎵 **Music** — 20 music symbols + instruments (treble clef, piano, drum, sax, headphones…).
+- Theme selection persists in sessionStorage (`cp-theme`), survives page refresh within the session.
+- The hud chip still shows the active theme name regardless of source (chosen or randomized).
+- Science still uses the narrower `cardFontRatio = 0.18` since its labels are long ("E=mc²", "ΔG", "Photosynthesis"). All other themes use the default 0.50.
+- **SW cache v68 → v69** to flush.
+
 ## [5.6.86] - 2026-05-19 - Reaction Time: 3-mode picker (Visual / Audio / Choice)
 - Reaction Time was single-mode (visual SRT). Now has a mode picker:
   - 🎨 **Visual SRT** — original "wait for green, tap" simple reaction time test.

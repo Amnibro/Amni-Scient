@@ -8540,17 +8540,24 @@ function playAnimalSound(type) {
       {name:'Symbols',pairs:['\u2660','\u2665','\u2666','\u2663','\u2605','\u2606','\u25b2','\u25cf','\u25a0','\u2736','\u2740','\u2756','\u2318','\u2602','\u2708','\u263a','\u2615','\u266b','\u2704','\u270e']},
       {name:'Math',pairs:['\u03c0','\u221e','\u2211','\u222b','\u2202','\u221a','\u0394','\u03a9','\u03b1','\u03b2','\u03b3','\u03b8','\u03bb','\u03c6','\u03c8','\u2135','\u2200','\u2203','\u2261','\u2248']},
       {name:'Science',pairs:['H\u2082O','NaCl','Fe','Au','DNA','ATP','pH7','O\u2082','CO\u2082','Ag','Cu','E=mc\u00b2','F=ma','\u0394G','RNA','Ca','Mg','Zn','He','N\u2082']},
-      {name:'World',pairs:['\ud83c\uddef\ud83c\uddf5','\ud83c\uddeb\ud83c\uddf7','\ud83c\udde9\ud83c\uddea','\ud83c\uddee\ud83c\uddf9','\ud83c\udde7\ud83c\uddf7','\ud83c\uddea\ud83c\uddec','\ud83c\uddf2\ud83c\uddfd','\ud83c\uddf0\ud83c\uddf7','\ud83c\uddee\ud83c\uddf3','\ud83c\udde8\ud83c\uddf3','\ud83c\udde6\ud83c\uddfa','\ud83c\uddf8\ud83c\uddea','\ud83c\uddf3\ud83c\uddf4','\ud83c\uddf1\ud83c\uddf0','\ud83c\uddf5\ud83c\uddea','\ud83c\uddf9\ud83c\udded','\ud83c\uddfb\ud83c\uddf3','\ud83c\udde8\ud83c\uddf1','\ud83c\uddfa\ud83c\udde6','\ud83c\uddf3\ud83c\uddff']}
+      {name:'World',pairs:['\ud83c\uddef\ud83c\uddf5','\ud83c\uddeb\ud83c\uddf7','\ud83c\udde9\ud83c\uddea','\ud83c\uddee\ud83c\uddf9','\ud83c\udde7\ud83c\uddf7','\ud83c\uddea\ud83c\uddec','\ud83c\uddf2\ud83c\uddfd','\ud83c\uddf0\ud83c\uddf7','\ud83c\uddee\ud83c\uddf3','\ud83c\udde8\ud83c\uddf3','\ud83c\udde6\ud83c\uddfa','\ud83c\uddf8\ud83c\uddea','\ud83c\uddf3\ud83c\uddf4','\ud83c\uddf1\ud83c\uddf0','\ud83c\uddf5\ud83c\uddea','\ud83c\uddf9\ud83c\udded','\ud83c\uddfb\ud83c\uddf3','\ud83c\udde8\ud83c\uddf1','\ud83c\uddfa\ud83c\udde6','\ud83c\uddf3\ud83c\uddff']},
+      {name:'Animals',pairs:['\ud83d\udc36','\ud83d\udc31','\ud83d\udc2d','\ud83d\udc39','\ud83d\udc30','\ud83e\udd8a','\ud83d\udc3b','\ud83d\udc3c','\ud83d\udc28','\ud83d\udc2f','\ud83e\udd81','\ud83d\udc2e','\ud83d\udc37','\ud83d\udc35','\ud83e\udd84','\ud83d\udc14','\ud83d\udc27','\ud83d\udc26','\ud83d\udc22','\ud83d\udc20']},
+      {name:'Foods',pairs:['\ud83c\udf4e','\ud83c\udf4c','\ud83c\udf47','\ud83c\udf53','\ud83c\udf51','\ud83c\udf4d','\ud83e\udd51','\ud83c\udf46','\ud83e\udd55','\ud83c\udf3d','\ud83c\udf5e','\ud83e\uddc0','\ud83c\udf55','\ud83c\udf54','\ud83c\udf2e','\ud83c\udf63','\ud83c\udf69','\ud83c\udf6a','\ud83c\udf6b','\ud83c\udf70']},
+      {name:'Music',pairs:['\ud83c\udfb5','\ud83c\udfb6','\ud83c\udfbc','\ud83c\udfb9','\ud83c\udfb8','\ud83c\udfb7','\ud83c\udfba','\ud83e\udd41','\ud83c\udfbb','\ud83e\ude95','\ud83e\ude97','\ud83c\udfa4','\ud83c\udfa7','\ud83d\udcef','\ud83c\udf99\ufe0f','\ud83e\ude98','\ud83c\udf9a\ufe0f','\ud83c\udf9b\ufe0f','\ud83d\udcfb','\ud83d\udd14']}
     ];
     const sizes=[{r:3,c:4,pairs:6},{r:4,c:4,pairs:8},{r:4,c:5,pairs:10},{r:5,c:4,pairs:10},{r:5,c:6,pairs:15}];
     const sizeIdx=Math.min(parseInt(sessionStorage.getItem('cp-size')||'0'),sizes.length-1);
     const sz=sizes[sizeIdx];cpTotal=sz.pairs;
-    const theme=themes[Math.floor(Math.random()*themes.length)];
+    const themePick=sessionStorage.getItem('cp-theme')||'random';
+    const theme=themePick==='random'?themes[Math.floor(Math.random()*themes.length)]:(themes.find(t=>t.name===themePick)||themes[0]);
     hud.innerHTML=`<span class="game-stat">\u23f1 <span class="game-stat-val" id="cp-time">0s</span></span><span class="game-stat">\ud83d\udd04 <span class="game-stat-val" id="cp-moves">0</span></span><span class="game-stat">\ud83d\udd25 <span class="game-stat-val" id="cp-combo">0</span></span><span class="game-stat">\ud83c\udfa8 ${theme.name}</span>`;
-    const oldPicker=document.getElementById('cp-size-picker');if(oldPicker)oldPicker.remove();
+    document.querySelectorAll('#cp-size-picker,#cp-theme-picker').forEach(n=>n.remove());
+    const thPicker=document.createElement('div');thPicker.id='cp-theme-picker';thPicker.style.cssText='display:flex;gap:4px;justify-content:center;margin:6px 0;flex-wrap:wrap;';
+    [['random','\ud83c\udfb2 Random'],...themes.map(t=>[t.name,t.name])].forEach(([k,lbl])=>{const b=document.createElement('button');b.className='sdk-btn'+(k===themePick?' active':'');b.style.cssText='font-size:0.78rem;padding:5px 8px;';b.textContent=lbl;b.onclick=()=>{sessionStorage.setItem('cp-theme',k);initCardPairs();};thPicker.appendChild(b);});
+    hud.after(thPicker);
     const szPicker=document.createElement('div');szPicker.id='cp-size-picker';szPicker.style.cssText='display:flex;gap:6px;justify-content:center;margin:6px 0;flex-wrap:wrap;';
     sizes.forEach((s,i)=>{const b=document.createElement('button');b.className='sdk-btn'+(i===sizeIdx?' active':'');b.textContent=`${s.r}\u00d7${s.c}`;b.onclick=()=>{sessionStorage.setItem('cp-size',i);initCardPairs();};szPicker.appendChild(b);});
-    hud.after(szPicker);
+    thPicker.after(szPicker);
     grid.innerHTML='';grid.style.gridTemplateColumns=`repeat(${sz.c},1fr)`;grid.style.maxWidth='';
     const pool=[...theme.pairs].sort(()=>Math.random()-0.5).slice(0,sz.pairs);
     const deck=[...pool,...pool].sort(()=>Math.random()-0.5);
