@@ -1,5 +1,18 @@
 ﻿# Changelog 
 
+## [5.6.81] - 2026-05-19 - Periodic Table: add 🧪 Properties Quiz mode
+- Periodic Table now has a mode picker: **📍 Place elements** (the original tap-the-grid drill) or **🧪 Properties Quiz** (a new multiple-choice mode).
+- Quiz mode question generators (one chosen at random each turn):
+  - "Element with atomic number N is?" → choose symbol from 4.
+  - "Symbol X is which element?" → choose name from 4.
+  - "Symbol for [name]?" → choose symbol from 4.
+  - "Which group is [name] in?" → choose group number from 4.
+  - "Which is a [category]?" — categories: noble gas, halogen, alkali metal, alkaline earth metal, metalloid, lanthanide, actinide.
+- 12-question rounds, score + streak HUD, per-difficulty best-streak and lifetime-correct tracking in localStorage (`pt-quiz-best-streak-<diff>`, `pt-quiz-total-<diff>`).
+- Easy/Normal/Hard difficulty share the existing element pools (24 common / first 36 / full 118).
+- Reference category map `_ptCategoryMap` added at module-load so "which is a halogen?" can pick from real category members.
+- **SW cache v62 → v63** to flush.
+
 ## [5.6.80] - 2026-05-19 - Morse Code: add 📻 Q-codes tier
 - 4th difficulty tier in the Morse trainer: **📻 Q-codes** — ham-radio operating abbreviations and Q-codes.
 - 27 entries covering core CW vocabulary: CQ, DE, K, SK, AR, BK, TU, FB, HI, OM, YL, TNX, WX, RST, QRZ, QSL, QTH, QRT, QSY, QRM, QRN, QSO, QRP, DX, ES, 73, 88. Each comes with its meaning + Morse encoding.
