@@ -1,5 +1,19 @@
 ﻿# Changelog 
 
+## [5.6.76] - 2026-05-19 - Light-mode pass + Morse Code Trainer
+- **Bug — light mode was broken inside modules**: theme toggle only flipped chrome/menu surfaces; every game/quiz view kept its hardcoded dark backgrounds (#1b1e23, #1e252b, #221f26, …) and every JS-injected panel used inline `color:#ecf0f1` / dark rgba fills, so module screens stayed charcoal even after toggling to ☀️.
+- **Fix — comprehensive light-mode pass**:
+  - Introduced CSS theme variables: `--text`, `--text-muted`, `--panel-bg`, `--panel-border`, `--bg-deep`, `--bg-panel-deep`, `--accent`. Dark mode keeps the original neon defaults; `body.light-mode` overrides them so anything using `var(...)` flips automatically.
+  - Swept the file replacing the 50 hardcoded `color:#ecf0f1` (and `color: #ecf0f1`) inline-style instances with `color:var(--text,#ecf0f1)` so JS-built modules pick up the active theme without a per-init refactor.
+  - Added per-view light-mode background overrides for all 30+ module views (#sudoku-view, #stroop-view, #chess-view, #morse-view, etc.). Each flips to `#f5f7fa` on light. The intentionally CRT-styled retro arcade titles still keep their dark CRT surface where set with `!important` elsewhere.
+  - Added attribute-selector overrides as a second safety net for inline `color:#fff` / `color:white` text and translucent-white panel backgrounds that become invisible on a white canvas.
+- **New module — Morse Code Trainer** (📡, brain-cognitive category):
+  - 3 difficulty tiers (A–Z / 0–9 / Mixed) + 3 modes (🔊 Listen → pick character, 👁️ See dits/dahs → pick character, 🔤 See character → pick code).
+  - Audio playback synthesises real dits & dahs via Web Audio (sine 620 Hz, standard dot/dash = 1/3 unit timing, 18 WPM). 🔁 Replay button so kids/learners can hear it again.
+  - 12-question round, score + streak HUD with lifetime totals in localStorage.
+  - Collapsible Morse chart (📖) lists all 36 characters as a reference.
+- **SW cache v57 → v58** to flush.
+
 ## [5.6.75] - 2026-05-19 - Animals & Objects: restore L1 animal-sound experience
 - **Regression**: v5.6.29's L1 quadruple (25 → 100 questions) buried the original 25 mp3 animal-sound questions in 75 new non-audio fact entries. Kids at L1 (pre-K) now had ~1-in-4 odds of getting a real-sound question and mostly heard the question text via TTS or nothing at all. The "kids loved the real animal sounds" mode was effectively gone.
 - **Fix**:
