@@ -8985,11 +8985,16 @@ function playAnimalSound(type) {
   }
   function initNumMem(){
     const ct=$$('#nmm-container'),hud=$$('#nmm-hud');
-    let dg=3,best=parseInt(sessionStorage.getItem('nmm-best')||'0'),tgt='',history=[];
+    const nmmMode=sessionStorage.getItem('nmm-mode')||'forward';
+    const bestKey='nmm-best-'+nmmMode;
+    let dg=3,best=parseInt(sessionStorage.getItem(bestKey)||sessionStorage.getItem('nmm-best')||'0'),tgt='',history=[];
     if(window._nmmTimeout){clearTimeout(window._nmmTimeout);window._nmmTimeout=null;}
     if(window._nmmCount){clearInterval(window._nmmCount);window._nmmCount=null;}
-    document.querySelectorAll('.nmm-summary').forEach(n=>n.remove());
-    hud.innerHTML=`<span class="game-stat">\ud83d\udccf <span class="game-stat-val" id="nmm-dg">${dg}</span> digits</span><span class="game-stat">\ud83d\udd25 Streak <span class="game-stat-val" id="nmm-stk">0</span></span><span class="game-stat">\ud83c\udfc6 Best: <span class="game-stat-val" id="nmm-best">${best}</span></span>`;
+    document.querySelectorAll('.nmm-summary,.nmm-mode-row').forEach(n=>n.remove());
+    hud.innerHTML=`<span class="game-stat">\ud83d\udccf <span class="game-stat-val" id="nmm-dg">${dg}</span> digits</span><span class="game-stat">\ud83d\udd25 Streak <span class="game-stat-val" id="nmm-stk">0</span></span><span class="game-stat">\ud83c\udfc6 Best: <span class="game-stat-val" id="nmm-best">${best}</span></span><span class="game-stat">${nmmMode==='backward'?'\u25c0\ufe0f Backward':'\u25b6\ufe0f Forward'}</span>`;
+    const modeRow=document.createElement('div');modeRow.className='nmm-mode-row sdk-controls';modeRow.style.cssText='display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:6px 0;';
+    [['forward','\u25b6\ufe0f Forward'],['backward','\u25c0\ufe0f Backward (WAIS)']].forEach(([k,lbl])=>{const b=document.createElement('button');b.className='sdk-btn'+(k===nmmMode?' active':'');b.style.cssText='font-size:0.85rem;padding:6px 10px;';b.textContent=lbl;b.onclick=()=>{sessionStorage.setItem('nmm-mode',k);initNumMem();};modeRow.appendChild(b);});
+    ct.parentElement.insertBefore(modeRow,ct);
     function _tier(d){if(d>=12)return{name:'savant',label:'Savant',color:'#f1c40f',msg:'Off the chart!'};if(d>=10)return{name:'exceptional',label:'Exceptional',color:'#e74c3c',msg:'Way above average!'};if(d>=8)return{name:'aboveAvg',label:'Above Average',color:'#2ecc71',msg:'Solid recall!'};if(d>=6)return{name:'avg',label:'Average',color:'#1abc9c',msg:"Miller's 7\u00b12 range."};if(d>=4)return{name:'belowAvg',label:'Below Average',color:'#3498db',msg:'Keep training!'};return{name:'basic',label:'Basic',color:'#7a8a9a',msg:'Just getting started.'};}
     function _renderHistory(){const eh=$$('#nmm-hist');if(!eh)return;eh.innerHTML='';history.forEach(d=>{const dot=document.createElement('div');dot.className='nmm-history-dot';dot.textContent=d;eh.appendChild(dot);});}
     function _diffDisplay(target, guess){let html='';for(let i=0;i<target.length;i++){const c=target[i];const g=guess[i]||'';html+=`<span class="${c===g?'digit-ok':'digit-bad'}">${c}</span>`;}return html;}
@@ -8999,7 +9004,8 @@ function playAnimalSound(type) {
       if(wasBest){best=dg;sessionStorage.setItem('nmm-best',best);}
       const t=_tier(reached);
       const sum=document.createElement('div');sum.className='nmm-summary';
-      sum.innerHTML=`<h3>\ud83e\udde0 ${wasBest?'NEW BEST!':'Game Over'}</h3><div class="tier-tag" style="color:${t.color};background:rgba(255,255,255,0.08)">${t.label} \u2022 ${t.msg}</div><div class="nmm-summary-stats"><div class="nmm-summary-stat"><span class="val">${reached}</span><span class="lbl">Reached</span></div><div class="nmm-summary-stat"><span class="val">${dg}</span><span class="lbl">Missed at</span></div><div class="nmm-summary-stat ${wasBest?'new-best':'best'}"><span class="val">${best}</span><span class="lbl">All-Time</span></div></div><div class="nmm-msg">Your answer: <code style="color:#e74c3c;font-family:'JetBrains Mono',monospace">${v||'\u2014'}</code></div><div class="nmm-display" style="color:#7a8a9a;font-size:1.6rem;margin:6px 0;letter-spacing:6px">${_diffDisplay(tgt,v)}</div><div class="nmm-tier-scale">Tiers: 1-3 Basic \u00b7 4-5 Below avg \u00b7 6-7 Average \u00b7 8-9 Above avg \u00b7 10-11 Exceptional \u00b7 12+ Savant. Miller's "magic number" \u2248 7\u00b12.</div>`;
+      const dtCmp=nmmMode==='backward'?tgt.split('').reverse().join(''):tgt;
+      sum.innerHTML=`<h3>\ud83e\udde0 ${wasBest?'NEW BEST!':'Game Over'}</h3><div class="tier-tag" style="color:${t.color};background:rgba(255,255,255,0.08)">${t.label} \u2022 ${t.msg}</div><div class="nmm-summary-stats"><div class="nmm-summary-stat"><span class="val">${reached}</span><span class="lbl">Reached</span></div><div class="nmm-summary-stat"><span class="val">${dg}</span><span class="lbl">Missed at</span></div><div class="nmm-summary-stat ${wasBest?'new-best':'best'}"><span class="val">${best}</span><span class="lbl">All-Time</span></div></div><div class="nmm-msg">Your answer: <code style="color:#e74c3c;font-family:'JetBrains Mono',monospace">${v||'\u2014'}</code></div><div class="nmm-msg">Expected (${nmmMode==='backward'?'reversed':'forward'}): <code style="color:#2ecc71;font-family:'JetBrains Mono',monospace">${dtCmp}</code></div><div class="nmm-display" style="color:#7a8a9a;font-size:1.6rem;margin:6px 0;letter-spacing:6px">${_diffDisplay(dtCmp,v)}</div><div class="nmm-tier-scale">Tiers: 1-3 Basic \u00b7 4-5 Below avg \u00b7 6-7 Average \u00b7 8-9 Above avg \u00b7 10-11 Exceptional \u00b7 12+ Savant. Miller's "magic number" \u2248 7\u00b12.</div>`;
       ct.innerHTML='';
       ct.appendChild(sum);
       if(wasBest)spawnConfetti(window.innerWidth/2,window.innerHeight/2,120);
@@ -9017,15 +9023,16 @@ function playAnimalSound(type) {
       window._nmmCount=setInterval(()=>{const pct=Math.max(0,100-(performance.now()-cdStart)/showMs*100);const f=$$('#nmm-cd');if(f)f.style.width=pct+'%';if(pct<=0){clearInterval(window._nmmCount);window._nmmCount=null;}},80);
       window._nmmTimeout=setTimeout(()=>{
         if(window._nmmCount){clearInterval(window._nmmCount);window._nmmCount=null;}
-        ct.innerHTML=`<div class="nmm-msg">What was the number?</div><input type="text" class="nmm-input" id="nmm-inp" maxlength="${dg}" autocomplete="off" inputmode="numeric"><br><div class="nmm-history" id="nmm-hist"></div>`;
+        ct.innerHTML=`<div class="nmm-msg">${nmmMode==='backward'?'Type the digits in <b>reverse</b> order':'What was the number?'}</div><input type="text" class="nmm-input" id="nmm-inp" maxlength="${dg}" autocomplete="off" inputmode="numeric"><br><div class="nmm-history" id="nmm-hist"></div>`;
         _renderHistory();
         const inp=$$('#nmm-inp');inp.focus();
         const sub=document.createElement('button');sub.className='nmm-btn';sub.textContent='SUBMIT';
         const go=()=>{
           const v=inp.value;
-          if(v===tgt){
+          const compareTarget=nmmMode==='backward'?tgt.split('').reverse().join(''):tgt;
+          if(v===compareTarget){
             history.push(dg);
-            if(dg>best){best=dg;sessionStorage.setItem('nmm-best',best);$$('#nmm-best').textContent=best;}
+            if(dg>best){best=dg;sessionStorage.setItem(bestKey,best);$$('#nmm-best').textContent=best;}
             $$('#nmm-stk').textContent=history.length;
             const t=_tier(dg);
             if(dg===6||dg===8||dg===10||dg===12)spawnConfetti(window.innerWidth/2,window.innerHeight/3,dg>=10?80:50);

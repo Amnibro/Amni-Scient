@@ -1,5 +1,13 @@
 ﻿# Changelog 
 
+## [5.6.85] - 2026-05-19 - Number Memory: ◀️ Backward Digit Span (WAIS)
+- Number Memory now has a mode picker — **▶️ Forward** (the original digit-recall) or **◀️ Backward** (WAIS Digit Span subtest — recall the digits in reverse order).
+- Backward Digit Span is the canonical working-memory test from the Wechsler Adult Intelligence Scale; consistently harder than forward by about 1–2 digits, so per-mode best tracking matters.
+- Best score tracked separately per mode (`nmm-best-forward`, `nmm-best-backward`); falls back to the original global key on first run after upgrade.
+- HUD shows the active mode (▶️ Forward / ◀️ Backward) and the input prompt shifts to "Type the digits in **reverse** order" when in backward mode.
+- Game-over summary now shows both the user's answer AND the expected sequence (with mode label), then renders the per-digit diff against the actual compare target — useful for backward mode where memorising the original sequence ≠ what to type.
+- **SW cache v66 → v67** to flush.
+
 ## [5.6.84] - 2026-05-19 - Speed Math: 4-way mode picker
 - Speed Math previously only ran a mixed (+, −, ×) drill with round-based auto difficulty. Mode picker now lets adult brain-exercisers target specific skills:
   - 🧮 **Mixed** — original auto-ramping `+`, `−`, `×` drill.
