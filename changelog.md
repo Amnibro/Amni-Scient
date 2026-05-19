@@ -1,5 +1,20 @@
 ﻿# Changelog 
 
+## [5.6.66] - 2026-05-18 - Amni-Learn cross-module achievements
+- **Achievements strip** on main menu (above daily banner): pill-row showing each badge as ✅ or ▢, with hover-title revealing description + progress. Tap to open full modal.
+- **14 achievements** spanning all major sections:
+  - 🌟 First Steps (play any game), 🔥 Heat Wave (5-day daily streak), 📅 Daily Devotee (30-day streak)
+  - 📚 Storyteller (5 stories read), ✏️ Master Tracer (100 traces across levels)
+  - 🔌 Circuit Master (25 working circuits), ⚗️ Mad Scientist (all 6 reactions in Reaction Lab)
+  - 🐍 Snake Charmer (500+ score), 🧊 Tetris Veteran (100 lines), 🃏 Solitaire Pro (10 wins), 🏰 Tower Strategist (wave 15)
+  - 🍪 Cookie Millionaire (1M lifetime), ⛏️ Master Miner (1M lifetime gems)
+  - 🎓 Polymath (play 10 different games — counts any non-zero best across major keys)
+- **Achievements modal** (tap the strip) shows full grid with progress bars, descriptions, unlock-date for earned, grayed-out icons for locked
+- **Auto-unlock detection**: progress is checked on menu render + every 30s while menu is open. Newly-unlocked badges fire 120-particle confetti + 🏆 ACHIEVEMENT toast (staggered 1.5s apart for multiple unlocks).
+- All progress reads existing storage keys — zero new instrumentation needed
+- Persists in `amni-achievements` localStorage as `{[id]: {unlocked, date}}`
+- **SW cache v47 → v48** to flush.
+
 ## [5.6.65] - 2026-05-18 - Amni-Learn mobile scroll + viewport fit fix
 - **Menu scroll broken on mobile fixed**: `#menu-view` used `justify-content: center`, which trapped overflowing flex children unreachable above the scroll start. Changed to `flex-start` so all menu cards remain scrollable. Background flipped via `body.light-mode` selector so the menu remains correct in either theme.
 - **Canvas viewport overflow fixed**: any `canvas` element now CSS-scales to `max-width: 100% !important; height: auto !important`. Several games set `canvas.style.width=cw+'px'` inline; the !important wins and the backing-store width stays the same (click-coordinate ratios already use `getBoundingClientRect`).

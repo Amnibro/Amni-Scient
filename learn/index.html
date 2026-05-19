@@ -1118,6 +1118,7 @@
   </div>
   <div id="menu-view" class="view active">
     <h1 class="menu-title">CHOOSE A GAME</h1>
+    <div id="achievements-strip" style="display:flex;gap:6px;max-width:720px;width:94%;margin:0 auto 10px;padding:8px 10px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px;flex-wrap:wrap;justify-content:center;font-family:'JetBrains Mono',monospace;cursor:pointer;transition:background 0.15s;" title="Tap to see all achievements"></div>
     <div id="daily-banner" style="display:none;max-width:560px;width:92%;margin:0 auto 14px;padding:14px 18px;background:linear-gradient(135deg,rgba(241,196,15,0.22) 0%,rgba(243,156,18,0.18) 100%);border:2px solid #f1c40f;border-radius:14px;cursor:pointer;font-family:'JetBrains Mono',monospace;box-shadow:0 0 22px rgba(241,196,15,0.25);transition:transform 0.15s,box-shadow 0.15s;">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
         <div>
@@ -1736,6 +1737,65 @@
     on ? (app.classList.add('amni-fs'),document.body.style.overflow='hidden',$$('#fs-btn').textContent='✖ EXIT FULLSCREEN',$$('#fs-hint').style.display='inline') : (app.classList.remove('amni-fs'),document.body.style.overflow='',$$('#fs-btn').textContent='⛶ FULLSCREEN',$$('#fs-hint').style.display='none');
   }
   $$('#fs-btn').addEventListener('click', () => ($$('#app').classList.contains('amni-fs')||_fsNative) ? _exitFs() : _enterFs());
+  // Cross-module achievements. Each badge has a progress() function that
+  // reads existing per-module storage keys (no new instrumentation needed)
+  // and returns {cur, target, unlocked}. The strip on the menu shows ✅
+  // for unlocked and ▢ for locked with hover-title showing progress.
+  // First-time unlocks fire confetti + toast on the next render tick.
+  function _intLS(k){return parseInt(localStorage.getItem(k)||sessionStorage.getItem(k)||'0')||0;}
+  function _floatLS(k){return parseFloat(localStorage.getItem(k)||sessionStorage.getItem(k)||'0')||0;}
+  function _setLS(k){const v=localStorage.getItem(k)||sessionStorage.getItem(k);try{return JSON.parse(v||'[]');}catch{return [];}}
+  const ACHIEVEMENTS = [
+    {id:'first',ic:'🌟',name:'First Steps',desc:'Play any game once',progress(){const sum=_intLS('snake-best')+_intLS('tet-best')+_intLS('brk-best')+_intLS('flp-best')+_intLS('inv-best')+_intLS('lgc-best')+_intLS('scr-best')+_intLS('agm-best')+_intLS('pat-best')+_intLS('haven_t2048_best')+_intLS('haven_cblast_best')+_intLS('pong-matches')+_intLS('haven_sol_wins')+_intLS('circuit-built')+_intLS('story-total-reads');return{cur:sum>0?1:0,target:1,unlocked:sum>0};}},
+    {id:'daily-heat',ic:'🔥',name:'Heat Wave',desc:'Hit a 5-day Daily Challenge streak',progress(){const s=_intLS('daily-best');return{cur:Math.min(s,5),target:5,unlocked:s>=5};}},
+    {id:'daily-devotee',ic:'📅',name:'Daily Devotee',desc:'30-day Daily Challenge streak',progress(){const s=_intLS('daily-best');return{cur:Math.min(s,30),target:30,unlocked:s>=30};}},
+    {id:'storyteller',ic:'📚',name:'Storyteller',desc:'Read 5 stories all the way through',progress(){const c=_intLS('story-total-reads');return{cur:Math.min(c,5),target:5,unlocked:c>=5};}},
+    {id:'tracer',ic:'✏️',name:'Master Tracer',desc:'Complete 100 traces across levels',progress(){const c=_intLS('trace-count-L1')+_intLS('trace-count-L2')+_intLS('trace-count-L3')+_intLS('trace-count-L4')+_intLS('trace-count-L5');return{cur:Math.min(c,100),target:100,unlocked:c>=100};}},
+    {id:'circuit-master',ic:'🔌',name:'Circuit Master',desc:'Build 25 working circuits',progress(){const c=_intLS('circuit-built');return{cur:Math.min(c,25),target:25,unlocked:c>=25};}},
+    {id:'mad-scientist',ic:'⚗️',name:'Mad Scientist',desc:'Discover all 6 reactions in Reaction Lab',progress(){const s=_setLS('rxn-discovered');return{cur:s.length,target:6,unlocked:s.length>=6};}},
+    {id:'snake-charmer',ic:'🐍',name:'Snake Charmer',desc:'Score 500+ in Snake',progress(){const b=_intLS('snake-best');return{cur:Math.min(b,500),target:500,unlocked:b>=500};}},
+    {id:'tetris-veteran',ic:'🧊',name:'Tetris Veteran',desc:'Clear 100 lines in a single game',progress(){const b=_intLS('tet-best-lines');return{cur:Math.min(b,100),target:100,unlocked:b>=100};}},
+    {id:'solitaire-pro',ic:'🃏',name:'Solitaire Pro',desc:'Win 10 Solitaire games',progress(){const c=_intLS('haven_sol_wins');return{cur:Math.min(c,10),target:10,unlocked:c>=10};}},
+    {id:'tower-strat',ic:'🏰',name:'Tower Strategist',desc:'Reach wave 15 in Tower Defense',progress(){const w=_intLS('haven_td_best_wave');return{cur:Math.min(w,15),target:15,unlocked:w>=15};}},
+    {id:'cookie-mil',ic:'🍪',name:'Cookie Millionaire',desc:'Reach 1M lifetime cookies',progress(){const c=_floatLS('ck-lifetime');return{cur:Math.min(c,1e6),target:1e6,unlocked:c>=1e6};}},
+    {id:'miner',ic:'⛏️',name:'Master Miner',desc:'Mine 1M lifetime gems',progress(){const c=_floatLS('am-lifetime');return{cur:Math.min(c,1e6),target:1e6,unlocked:c>=1e6};}},
+    {id:'polymath',ic:'🎓',name:'Polymath',desc:'Play 10 different games',progress(){const keys=['snake-best','tet-best','brk-best','flp-best','inv-best','lgc-best','scr-best','agm-best','pat-best','haven_t2048_best','haven_cblast_best','pong-matches','haven_sol_wins','circuit-built','story-total-reads','spm-best','geo-best-L1','geo-best-L2','wb-best-es-L1','wb-best-fr-L1','agm-best','pip-best','ws-best','sdk-wins-easy','sdk-wins-medium','sdk-wins-hard','rfx-best-L1','rfx-best-L2'];const played=keys.filter(k=>_intLS(k)>0).length;return{cur:Math.min(played,10),target:10,unlocked:played>=10};}}
+  ];
+  function _achState(){try{return JSON.parse(localStorage.getItem('amni-achievements')||'{}');}catch{return{};}}
+  function _saveAchState(s){try{localStorage.setItem('amni-achievements',JSON.stringify(s));}catch{}}
+  function _checkAchievements(){
+    const state=_achState();const newlyUnlocked=[];
+    ACHIEVEMENTS.forEach(a=>{const p=a.progress();if(p.unlocked&&!state[a.id]){state[a.id]={unlocked:true,date:new Date().toISOString().slice(0,10)};newlyUnlocked.push(a);}});
+    if(newlyUnlocked.length){_saveAchState(state);newlyUnlocked.forEach((a,i)=>setTimeout(()=>{if(typeof spawnConfetti==='function')spawnConfetti(window.innerWidth/2,window.innerHeight/3,120);if(typeof showFeedback==='function')showFeedback(`🏆 ACHIEVEMENT: ${a.ic} ${a.name}`,'#f1c40f');},i*1500));}
+  }
+  function _renderAchStrip(){
+    const strip=document.getElementById('achievements-strip');if(!strip)return;
+    const state=_achState();
+    strip.innerHTML=ACHIEVEMENTS.map(a=>{const p=a.progress();const u=p.unlocked;return `<span style="display:inline-flex;align-items:center;gap:4px;padding:5px 9px;background:${u?'rgba(241,196,15,0.18)':'rgba(255,255,255,0.04)'};border:1px solid ${u?'#f1c40f':'rgba(255,255,255,0.12)'};border-radius:20px;font-size:0.8rem;opacity:${u?1:0.55};" title="${a.name}: ${a.desc} (${p.cur}/${p.target})">${u?'✅':'▢'} ${a.ic}</span>`;}).join('');
+    const total=ACHIEVEMENTS.length;const earned=ACHIEVEMENTS.filter(a=>a.progress().unlocked).length;
+    strip.insertAdjacentHTML('beforeend',`<span style="display:inline-flex;align-items:center;padding:5px 9px;font-size:0.8rem;color:#bbb;">${earned}/${total}</span>`);
+  }
+  function _openAchModal(){
+    const overlay=document.createElement('div');overlay.id='ach-modal';
+    overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.86);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;';
+    const box=document.createElement('div');
+    box.style.cssText='background:#1a1f2e;border:2px solid #f1c40f;border-radius:14px;padding:22px;max-width:580px;width:100%;max-height:80vh;overflow-y:auto;font-family:\'JetBrains Mono\',monospace;color:#ecf0f1;-webkit-overflow-scrolling:touch;';
+    const total=ACHIEVEMENTS.length;const earned=ACHIEVEMENTS.filter(a=>a.progress().unlocked).length;
+    box.innerHTML=`<h2 style="color:#f1c40f;margin:0 0 4px;text-align:center;">🏆 Achievements</h2><div style="text-align:center;color:#aaa;margin-bottom:12px;font-size:0.85rem;">${earned} / ${total} unlocked</div>`;
+    ACHIEVEMENTS.forEach(a=>{const p=a.progress();const pct=Math.min(100,Math.round(p.cur/p.target*100));const u=p.unlocked;box.insertAdjacentHTML('beforeend',`<div style="display:flex;gap:10px;align-items:center;padding:10px;margin:6px 0;background:${u?'rgba(241,196,15,0.1)':'rgba(255,255,255,0.03)'};border:1px solid ${u?'#f1c40f':'rgba(255,255,255,0.08)'};border-radius:10px;"><div style="font-size:1.8rem;${u?'':'filter:grayscale(1);opacity:0.4;'}">${a.ic}</div><div style="flex:1;min-width:0;"><div style="font-weight:bold;color:${u?'#f1c40f':'#ecf0f1'};">${u?'✅ ':''}${a.name}</div><div style="font-size:0.8rem;color:#aaa;margin-top:2px;">${a.desc}</div><div style="height:6px;background:rgba(255,255,255,0.08);border-radius:3px;margin-top:6px;overflow:hidden;"><div style="height:100%;width:${pct}%;background:${u?'#f1c40f':'#3498db'};border-radius:3px;transition:width 0.3s;"></div></div><div style="font-size:0.72rem;color:#888;margin-top:3px;">${p.cur} / ${p.target}</div></div></div>`);});
+    box.insertAdjacentHTML('beforeend',`<div style="text-align:center;margin-top:14px;"><button id="ach-close" style="background:#f1c40f;color:#1a1f2e;border:none;padding:10px 28px;border-radius:8px;font-family:'JetBrains Mono';font-weight:bold;cursor:pointer;">Close</button></div>`);
+    overlay.appendChild(box);document.body.appendChild(overlay);
+    box.querySelector('#ach-close').onclick=()=>overlay.remove();
+    overlay.addEventListener('click',e=>{if(e.target===overlay)overlay.remove();});
+  }
+  setTimeout(()=>{
+    _checkAchievements();
+    _renderAchStrip();
+    const strip=document.getElementById('achievements-strip');
+    if(strip){strip.addEventListener('click',_openAchModal);strip.addEventListener('mouseenter',()=>{strip.style.background='rgba(255,255,255,0.06)';});strip.addEventListener('mouseleave',()=>{strip.style.background='rgba(255,255,255,0.03)';});}
+    // Re-check every 30 seconds while menu is visible (in case storage changes mid-session)
+    setInterval(()=>{if(document.getElementById('menu-view')&&document.getElementById('menu-view').classList.contains('active')){_checkAchievements();_renderAchStrip();}},30000);
+  },150);
   // Daily Challenge. One puzzle per calendar day, date-seeded so every player
   // on the same date sees the same puzzle. Persists streak + best-streak +
   // last-claimed-date in localStorage. Resets streak only when a day is missed.
