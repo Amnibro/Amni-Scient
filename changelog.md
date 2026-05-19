@@ -1,5 +1,14 @@
 ﻿# Changelog 
 
+## [5.6.71] - 2026-05-19 - Card Pairs font sizing fix
+- **Bug**: Card Pairs cards revealed enormous text (single letter "En" filling the whole card, long words overflowing). Root cause: `font-size: 55cqmin` (and inline `24cqmin/62cqmin` for theme override) relied on `container-type: size` resolving on the `.cp-card`. On browsers where the container-query context wasn't honored (or got broken by recent layout changes), cqmin fell back to the viewport, giving 50%+ of viewport min as font-size — wildly oversized.
+- **Fix**: dropped cqmin entirely. Now compute font in JS from actual card `clientWidth`:
+  - Default themes (Symbols / Math / World): `floor(cardWidth × 0.50)` — comfortable single-character / short-word cards
+  - Science theme: `floor(cardWidth × 0.18)` — handles long labels like "Photosynthesis", "Mitosis", "Mass×Velocity"
+- Resize watcher re-applies sizing on viewport change so rotations / Android wrapper resizing stay correct.
+- Stripped stale `container-type:size` and `font-size: 55cqmin` from the `.cp-card` CSS class (only a 1.5rem default remains for the brief moment before JS sets the right size).
+- **SW cache v52 → v53** to flush.
+
 ## [5.6.70] - 2026-05-19 - Amni-Learn NEW MODULE: Map Clicker
 - **🗺️ Map Clicker** added under Brain Training → Logic & Language. Hand-drawn continent polygons (NA, SA, EU, AF, AS, OC) projected equirectangularly into a 900×450 canvas with subtle 30°-grid overlay.
 - **42 countries** spread across continents with lat/lon coords, tagged tiers 1-3 for difficulty (Easy = 15 famous; Normal = 30; Hard = all 42 incl. Bhutan, Mongolia, Kazakhstan, etc).

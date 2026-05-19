@@ -729,7 +729,7 @@
   .sdk-btn:hover{background:rgba(26,188,156,0.2);}
   .sdk-btn.active{background:#1abc9c;color:#0a1a2a;}
   .cp-grid{display:grid;gap:10px;max-width:min(95vw,750px);width:95%;margin:0 auto;}
-  .cp-card{background:linear-gradient(135deg,#1abc9c,#16a085);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:55cqmin;line-height:1;cursor:pointer;aspect-ratio:1;color:transparent;user-select:none;transition:transform 0.3s,background 0.3s,box-shadow 0.3s;box-shadow:0 4px 8px rgba(0,0,0,0.3);container-type:size;overflow:hidden;text-align:center;padding:4%;box-sizing:border-box;}
+  .cp-card{background:linear-gradient(135deg,#1abc9c,#16a085);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;line-height:1;cursor:pointer;aspect-ratio:1;color:transparent;user-select:none;transition:transform 0.3s,background 0.3s,box-shadow 0.3s;box-shadow:0 4px 8px rgba(0,0,0,0.3);overflow:hidden;text-align:center;padding:4%;box-sizing:border-box;}
   .cp-card:hover:not(.cp-flipped):not(.cp-matched){transform:translateY(-3px) scale(1.03);box-shadow:0 8px 20px rgba(26,188,156,0.3);}
   .cp-card.cp-flipped{background:#fff;color:#333;transform:rotateY(0deg);box-shadow:0 0 15px rgba(26,188,156,0.4);}
   .cp-card.cp-matched{background:#2ecc71;color:#fff;opacity:0.7;transform:scale(0.95);pointer-events:none;}
@@ -8060,8 +8060,26 @@ function playAnimalSound(type) {
     const deck=[...pool,...pool].sort(()=>Math.random()-0.5);
     cpFlipped=[];cpMatched=0;cpMoves=0;cpCombo=0;cpTime=0;
     window._cpTimer=setInterval(()=>{cpTime++;const te=$$('#cp-time');if(te)te.textContent=cpTime+'s';},1000);
-    const cardFont=theme.name==='Science'?'24cqmin':'62cqmin';
-    deck.forEach((sym,idx)=>{const card=document.createElement('div');card.className='cp-card';card.dataset.val=sym;card.dataset.idx=idx;card.style.fontSize=cardFont;card.onclick=()=>{if(card.classList.contains('cp-flipped')||card.classList.contains('cp-matched')||cpFlipped.length>=2)return;card.classList.add('cp-flipped');card.textContent=sym;card.style.color='#333';cpFlipped.push(card);if(cpFlipped.length===2){cpMoves++;const me=$$('#cp-moves');if(me)me.textContent=cpMoves;const a=cpFlipped[0],b=cpFlipped[1];const isMatch=a.dataset.val===b.dataset.val&&a.dataset.idx!==b.dataset.idx;if(isMatch){a.classList.add('cp-matched');b.classList.add('cp-matched');cpMatched+=2;cpCombo++;const ce=$$('#cp-combo');if(ce)ce.textContent=cpCombo;addScore(cpCombo>=3?3:(cpCombo>=2?2:1));cpCombo>=3?showFeedback(`${cpCombo}x Combo! \ud83d\udd25`,'#e74c3c'):showFeedback('Match! \u2728','#1abc9c');cpFlipped=[];if(cpMatched>=sz.pairs*2){clearInterval(window._cpTimer);window._cpTimer=null;const bonus=cpMoves<=sz.pairs*2?'Perfect Memory! \ud83e\udde0':'Well Done! \ud83c\udf1f';showFeedback(`${bonus} ${cpTime}s`,'#2ecc71');addScore(Math.max(1,sz.pairs*2-cpMoves));if(sizeIdx<sizes.length-1)sessionStorage.setItem('cp-size',sizeIdx+1);setTimeout(initCardPairs,2200);}}else{setTimeout(()=>{cpCombo=0;resetStreak();const ce=$$('#cp-combo');if(ce)ce.textContent='0';a.classList.remove('cp-flipped');b.classList.remove('cp-flipped');a.textContent='';b.textContent='';a.style.color='';b.style.color='';cpFlipped=[];},500);}}};grid.appendChild(card);});
+    // cqmin font sizing breaks on browsers that don't honor container-type:size
+    // on a flex-centered child \u2014 text expands to viewport-fallback and overflows
+    // the card. Switch to JS-computed px from actual card width, with a
+    // resize watcher to keep proportions correct. Science gets a smaller
+    // ratio because labels like "Photosynthesis" need more horizontal space.
+    const cardFontRatio = theme.name === 'Science' ? 0.18 : 0.50;
+    function _cpSizeFonts(){
+      const first = grid.querySelector('.cp-card');
+      if (!first) return;
+      const w = first.clientWidth;
+      if (w < 10) return;
+      const px = Math.floor(w * cardFontRatio);
+      grid.querySelectorAll('.cp-card').forEach(c => { c.style.fontSize = px + 'px'; });
+    }
+    deck.forEach((sym,idx)=>{const card=document.createElement('div');card.className='cp-card';card.dataset.val=sym;card.dataset.idx=idx;card.onclick=()=>{if(card.classList.contains('cp-flipped')||card.classList.contains('cp-matched')||cpFlipped.length>=2)return;card.classList.add('cp-flipped');card.textContent=sym;card.style.color='#333';cpFlipped.push(card);if(cpFlipped.length===2){cpMoves++;const me=$$('#cp-moves');if(me)me.textContent=cpMoves;const a=cpFlipped[0],b=cpFlipped[1];const isMatch=a.dataset.val===b.dataset.val&&a.dataset.idx!==b.dataset.idx;if(isMatch){a.classList.add('cp-matched');b.classList.add('cp-matched');cpMatched+=2;cpCombo++;const ce=$$('#cp-combo');if(ce)ce.textContent=cpCombo;addScore(cpCombo>=3?3:(cpCombo>=2?2:1));cpCombo>=3?showFeedback(`${cpCombo}x Combo! \ud83d\udd25`,'#e74c3c'):showFeedback('Match! \u2728','#1abc9c');cpFlipped=[];if(cpMatched>=sz.pairs*2){clearInterval(window._cpTimer);window._cpTimer=null;const bonus=cpMoves<=sz.pairs*2?'Perfect Memory! \ud83e\udde0':'Well Done! \ud83c\udf1f';showFeedback(`${bonus} ${cpTime}s`,'#2ecc71');addScore(Math.max(1,sz.pairs*2-cpMoves));if(sizeIdx<sizes.length-1)sessionStorage.setItem('cp-size',sizeIdx+1);setTimeout(initCardPairs,2200);}}else{setTimeout(()=>{cpCombo=0;resetStreak();const ce=$$('#cp-combo');if(ce)ce.textContent='0';a.classList.remove('cp-flipped');b.classList.remove('cp-flipped');a.textContent='';b.textContent='';a.style.color='';b.style.color='';cpFlipped=[];},500);}}};grid.appendChild(card);});
+    // Initial size + resize watcher
+    requestAnimationFrame(_cpSizeFonts);
+    if (window._cpResize) window.removeEventListener('resize', window._cpResize);
+    window._cpResize = ()=>{ if (currentGame === 'cardpairs') _cpSizeFonts(); };
+    window.addEventListener('resize', window._cpResize);
   }
   function initSpeedMath(){
     const display=$$('#spm-display'),answer=$$('#spm-answer'),input=$$('#spm-input'),hud=$$('#spm-hud'),timerFill=$$('#spm-timer-fill');
