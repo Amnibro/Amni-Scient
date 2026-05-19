@@ -1,5 +1,18 @@
 ﻿# Changelog 
 
+## [5.6.83] - 2026-05-19 - N-Back: add 👁️🔊 Dual mode (Jaeggi)
+- N-Back now has a mode picker: **👁️ Single (visual)** (original — square lights up; was it where the same square went N steps ago?) or **👁️🔊 Dual (visual + audio)** (classic Jaeggi protocol — square lights up AND a letter is spoken; signal independently whether each stream matches N steps ago).
+- Dual mode mechanics:
+  - Two independent streams: position (1–9 grid) + letter (A–I) generated in parallel, ~30% chance per step of matching its own N-back.
+  - Two response buttons rendered side-by-side: **👁️ POS MATCH** and **🔊 AUD MATCH**. Either, both, or neither can be pressed in a 2.2s response window.
+  - At end of window: each stream scored independently (TP/FP/TN/FN tracked separately). Combined score increments when both responses are correct; streak counts only on full-correct rounds.
+  - Letters spoken via SpeechSynthesis API (with cancel on each step so streams don't queue).
+  - Summary screen breaks down POS and AUD hits/misses/false-alarms separately + sensitivity per stream.
+- Single mode unchanged. Best-streak/accuracy tracked separately for dual via `nbk-dual-best-<N>` localStorage key.
+- Level-up bumps still work in dual (≥80% accuracy auto-advances to the next N).
+- Adult brain-exercise sweet spot — Jaeggi-style dual N-back is the protocol shown in working-memory training literature.
+- **SW cache v64 → v65** to flush.
+
 ## [5.6.82] - 2026-05-19 - Ear Training: add 🎼 Melody Dictation mode
 - 4th mode in the Ear Training module: **🎼 Melody Dictation** — hear a short melody, reproduce it note-by-note on a mini-keyboard.
 - Difficulty scales both melody length and the scale (key palette):
