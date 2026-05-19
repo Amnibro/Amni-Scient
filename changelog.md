@@ -1,5 +1,14 @@
 ﻿# Changelog 
 
+## [5.6.69] - 2026-05-18 - Amni-Learn NEW MODULE: Periodic Table
+- **⚛️ Periodic Table** added under Brain Training → Logic & Language. Full 118-element standard 18×10 grid (periods 1-7 + lanthanides + actinides), atomic number + symbol per cell, hover-title shows full element name.
+- **Tap-to-place gameplay**: prompt names an element (full name + symbol + atomic number); player taps the correct grid cell. Correct cell turns green-gold with glow; wrong cell flashes red. Two wrong tries → correct cell auto-reveals with red outline.
+- **3 difficulty tiers** (sessionStorage `pt-diff`): Easy (24 common — H, He, Li, C, N, O, Na, Mg, Cl, K, Fe, Cu, Zn, Au, Ag, Hg, I, …), Normal (first 36), Hard (full 118). Each shuffled per round.
+- **Streak + persistence**: per-difficulty `pt-solved-{tier}` (lifetime) + `pt-best-streak-{tier}` (best run). HUD shows progress, current streak, lifetime, all-time best. Streak milestone confetti at 5/10/20.
+- **Achievement**: ⚛️ Chemist (place 50 elements correctly across any difficulty).
+- **Horizontal scroll wrapper** on the grid so the wide layout works on phones.
+- **SW cache v50 → v51** to flush.
+
 ## [5.6.68] - 2026-05-18 - Amni-Learn NEW MODULE: Chess Puzzles
 - **♟️ Chess Puzzles** added under Brain Training → Logic & Language. 8×8 board renders with Unicode pieces on alternating-color squares plus file/rank labels.
 - **7 curated mate-in-1 puzzles** to start: back-rank rook, queen-king cage, two-rook ladder, queen-supported corner, queen-and-knight battery, Damiano-style, rook-and-king. Each lists its theme.
