@@ -1,5 +1,14 @@
 ﻿# Changelog 
 
+## [5.6.80] - 2026-05-19 - Morse Code: add 📻 Q-codes tier
+- 4th difficulty tier in the Morse trainer: **📻 Q-codes** — ham-radio operating abbreviations and Q-codes.
+- 27 entries covering core CW vocabulary: CQ, DE, K, SK, AR, BK, TU, FB, HI, OM, YL, TNX, WX, RST, QRZ, QSL, QTH, QRT, QSY, QRM, QRN, QSO, QRP, DX, ES, 73, 88. Each comes with its meaning + Morse encoding.
+- Multi-character keys (e.g., `QSL` → `--.- ... .-..`) play back as proper CW with 3-unit inter-character gaps via the existing `_playMorse` audio engine — space in the encoded string is treated as a 2-extra-unit gap, totalling the 3 units of standard char spacing alongside the 1-unit intra-char gap.
+- All three existing modes (🔊 Listen → pick, 👁️ See dits/dahs → pick, 🔤 See character → pick code) work with the new tier unchanged.
+- Reference chart panel now adapts to the active tier: A–Z / 0–9 / Mixed show single-character grid; Q-codes show abbreviation + meaning + encoding in wider cells.
+- Lookup table `_morseLookup` merges single-char + Q-code maps so multi-char keys resolve transparently.
+- **SW cache v61 → v62** to flush.
+
 ## [5.6.79] - 2026-05-19 - Map Clicker: add US States mode
 - Map Clicker now has a 🌍 **World** / 🇺🇸 **US States** mode picker. Existing world data unchanged.
 - **49 US entities** (lower-48 + DC) tiered:

@@ -8158,6 +8158,38 @@ function playAnimalSound(type) {
     nextQ();
   }
   const _morseMap={A:'.-',B:'-...',C:'-.-.',D:'-..',E:'.',F:'..-.',G:'--.',H:'....',I:'..',J:'.---',K:'-.-',L:'.-..',M:'--',N:'-.',O:'---',P:'.--.',Q:'--.-',R:'.-.',S:'...',T:'-',U:'..-',V:'...-',W:'.--',X:'-..-',Y:'-.--',Z:'--..','0':'-----','1':'.----','2':'..---','3':'...--','4':'....-','5':'.....','6':'-....','7':'--...','8':'---..','9':'----.'};
+  // Ham-radio Q-codes & operating abbreviations. Encoded by joining each
+  // character's Morse with a single space (3-unit char gap in playback).
+  const _morseQCodes=[
+    {k:'CQ',m:'-.-. --.-',d:'Calling any station'},
+    {k:'DE',m:'-.. .',d:'"From" / this is'},
+    {k:'K',m:'-.-',d:'Go ahead / over to you'},
+    {k:'SK',m:'... -.-',d:'End of contact'},
+    {k:'AR',m:'.- .-.',d:'End of message'},
+    {k:'BK',m:'-... -.-',d:'Break'},
+    {k:'TU',m:'- ..-',d:'Thank you'},
+    {k:'FB',m:'..-. -...',d:'Fine business / good'},
+    {k:'HI',m:'.... ..',d:'Laughter'},
+    {k:'OM',m:'--- --',d:'Old man (any operator)'},
+    {k:'YL',m:'-.-- .-..',d:'Young lady'},
+    {k:'TNX',m:'- -. -..-',d:'Thanks'},
+    {k:'WX',m:'.-- -..-',d:'Weather'},
+    {k:'RST',m:'.-. ... -',d:'Readability/strength/tone'},
+    {k:'QRZ',m:'--.- .-. --..',d:'Who is calling me?'},
+    {k:'QSL',m:'--.- ... .-..',d:'Confirm receipt'},
+    {k:'QTH',m:'--.- - ....',d:'Location'},
+    {k:'QRT',m:'--.- .-. -',d:'Stop sending'},
+    {k:'QSY',m:'--.- ... -.--',d:'Change frequency'},
+    {k:'QRM',m:'--.- .-. --',d:'Man-made interference'},
+    {k:'QRN',m:'--.- .-. -.',d:'Natural interference'},
+    {k:'QSO',m:'--.- ... ---',d:'A contact'},
+    {k:'QRP',m:'--.- .-. .--.',d:'Low power'},
+    {k:'DX',m:'-.. -..-',d:'Long-distance contact'},
+    {k:'ES',m:'. ...',d:'And'},
+    {k:'73',m:'--... ...--',d:'Best regards'},
+    {k:'88',m:'---.. ---..',d:'Love & kisses'}
+  ];
+  const _morseLookup={..._morseMap};_morseQCodes.forEach(q=>{_morseLookup[q.k]=q.m;});
   let _morseAC=null;
   function _morseCtx(){if(!_morseAC){try{_morseAC=new (window.AudioContext||window.webkitAudioContext)();}catch(e){return null;}}return _morseAC;}
   function _playMorse(code,wpm=18){const ctx=_morseCtx();if(!ctx)return Promise.resolve();const unit=1.2/wpm;let t=ctx.currentTime+0.03;const symbols=[];for(const ch of code){if(ch==='.')symbols.push([t,unit],t+=unit+unit);else if(ch==='-')symbols.push([t,unit*3],t+=unit*3+unit);else if(ch===' ')t+=unit*2;}const tone=(start,dur)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.type='sine';o.frequency.value=620;g.gain.setValueAtTime(0,start);g.gain.linearRampToValueAtTime(0.25,start+0.005);g.gain.setValueAtTime(0.25,start+dur-0.01);g.gain.linearRampToValueAtTime(0,start+dur);o.connect(g);g.connect(ctx.destination);o.start(start);o.stop(start+dur+0.02);};symbols.forEach(s=>{if(Array.isArray(s))tone(s[0],s[1]);});return new Promise(r=>setTimeout(r,(t-ctx.currentTime+0.05)*1000));}
@@ -8167,13 +8199,14 @@ function playAnimalSound(type) {
     const mode=sessionStorage.getItem('morse-mode')||'audio2letter';
     const lettersOnly='ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
     const numsOnly='0123456789'.split('');
-    const pool=diff==='letters'?lettersOnly:(diff==='numbers'?numsOnly:[...lettersOnly,...numsOnly]);
+    const qcodeKeys=_morseQCodes.map(q=>q.k);
+    const pool=diff==='letters'?lettersOnly:(diff==='numbers'?numsOnly:(diff==='qcodes'?qcodeKeys:[...lettersOnly,...numsOnly]));
     const queue=[...pool].sort(()=>Math.random()-0.5).slice(0,12);
     let idx=0,score=0,streak=0,bestStreak=parseInt(localStorage.getItem('morse-best-streak')||'0');
     const totalKey='morse-total-correct',totalCorrect=parseInt(localStorage.getItem(totalKey)||'0');
     // Difficulty picker
     const dp=document.createElement('div');dp.style.cssText='display:flex;gap:6px;flex-wrap:wrap;justify-content:center;';
-    [['letters','A–Z'],['numbers','0–9'],['mixed','Mixed']].forEach(([k,lbl])=>{const b=document.createElement('button');b.className='sdk-btn'+(k===diff?' active':'');b.textContent=lbl;b.onclick=()=>{sessionStorage.setItem('morse-diff',k);initMorse();};dp.appendChild(b);});
+    [['letters','A–Z'],['numbers','0–9'],['mixed','Mixed'],['qcodes','📻 Q-codes']].forEach(([k,lbl])=>{const b=document.createElement('button');b.className='sdk-btn'+(k===diff?' active':'');b.textContent=lbl;b.onclick=()=>{sessionStorage.setItem('morse-diff',k);initMorse();};dp.appendChild(b);});
     root.appendChild(dp);
     // Mode picker
     const mp=document.createElement('div');mp.style.cssText='display:flex;gap:6px;flex-wrap:wrap;justify-content:center;';
@@ -8195,8 +8228,12 @@ function playAnimalSound(type) {
     // Reference chart (collapsible)
     const refWrap=document.createElement('details');refWrap.style.cssText='width:90%;max-width:520px;margin-top:8px;color:var(--text,#ecf0f1);font-family:JetBrains Mono,monospace;';
     refWrap.innerHTML='<summary style="cursor:pointer;padding:6px;border:1px dashed #1abc9c;border-radius:8px;text-align:center;">📖 Show Morse chart</summary>';
-    const chart=document.createElement('div');chart.style.cssText='display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:4px;font-size:0.78rem;margin-top:8px;';
-    Object.entries(_morseMap).forEach(([k,v])=>{const c=document.createElement('div');c.style.cssText='padding:4px;background:rgba(26,188,156,0.10);border-radius:6px;text-align:center;';c.innerHTML=`<b>${k}</b><br>${v}`;chart.appendChild(c);});
+    const chart=document.createElement('div');chart.style.cssText='display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:4px;font-size:0.78rem;margin-top:8px;';
+    if(diff==='qcodes'){
+      _morseQCodes.forEach(q=>{const c=document.createElement('div');c.style.cssText='padding:5px;background:rgba(26,188,156,0.10);border-radius:6px;text-align:left;';c.innerHTML=`<b>${q.k}</b> — ${q.d}<br><span style="font-family:JetBrains Mono,monospace;color:#1abc9c;">${q.m}</span>`;chart.appendChild(c);});
+    } else {
+      pool.forEach(k=>{const c=document.createElement('div');c.style.cssText='padding:4px;background:rgba(26,188,156,0.10);border-radius:6px;text-align:center;';c.innerHTML=`<b>${k}</b><br>${_morseLookup[k]}`;chart.appendChild(c);});
+    }
     refWrap.appendChild(chart);root.appendChild(refWrap);
     function buildChoices(answer){
       choices.innerHTML='';
@@ -8206,7 +8243,7 @@ function playAnimalSound(type) {
         const b=document.createElement('button');
         b.className='m-choice';
         b.style.cssText='padding:14px;font-family:JetBrains Mono,monospace;font-size:1.15rem;background:rgba(26,188,156,0.18);color:var(--text,#ecf0f1);border:2px solid #1abc9c;border-radius:10px;cursor:pointer;transition:transform 0.1s;';
-        b.textContent=mode==='letter2code'?_morseMap[o]:o;
+        b.textContent=mode==='letter2code'?_morseLookup[o]:o;
         b.onclick=()=>handleAnswer(b,o,answer);
         choices.appendChild(b);
       });
@@ -8216,12 +8253,12 @@ function playAnimalSound(type) {
       const correct=picked===answer;
       btn.style.background=correct?'#2ecc71':'#e74c3c';
       // Highlight correct one if wrong
-      if(!correct){$$all('.m-choice').forEach(b=>{const label=mode==='letter2code'?_morseMap[answer]:answer;if(b.textContent===label)b.style.background='#2ecc71';});}
+      if(!correct){$$all('.m-choice').forEach(b=>{const label=mode==='letter2code'?_morseLookup[answer]:answer;if(b.textContent===label)b.style.background='#2ecc71';});}
       if(correct){score+=10;streak++;if(streak>bestStreak){bestStreak=streak;localStorage.setItem('morse-best-streak',bestStreak);}localStorage.setItem(totalKey,parseInt(localStorage.getItem(totalKey)||'0')+1);if(typeof addScore==='function')addScore(2);if(typeof spawnConfetti==='function'&&streak%5===0)spawnConfetti(window.innerWidth/2,window.innerHeight/3,60);}
       else{streak=0;if(typeof resetStreak==='function')resetStreak();}
       const se=document.getElementById('m-score');if(se)se.textContent=score;
       const st=document.getElementById('m-streak');if(st)st.textContent=streak;
-      if(typeof showFeedback==='function')showFeedback(correct?`✓ ${answer} = ${_morseMap[answer]}`:`✗ Was ${answer} (${_morseMap[answer]})`,correct?'#2ecc71':'#e74c3c');
+      if(typeof showFeedback==='function')showFeedback(correct?`✓ ${answer} = ${_morseLookup[answer]}`:`✗ Was ${answer} (${_morseLookup[answer]})`,correct?'#2ecc71':'#e74c3c');
       setTimeout(nextQ,correct?900:1700);
     }
     function nextQ(){
@@ -8234,7 +8271,7 @@ function playAnimalSound(type) {
       }
       const pe=document.getElementById('m-prog');if(pe)pe.textContent=`${idx}/${queue.length}`;
       const cur=queue[idx-1];
-      const code=_morseMap[cur];
+      const code=_morseLookup[cur];
       prompt.innerHTML='';replayRow.innerHTML='';
       if(mode==='audio2letter'){
         const ico=document.createElement('div');ico.style.cssText='font-size:2.4rem;';ico.textContent='🔊';prompt.appendChild(ico);
