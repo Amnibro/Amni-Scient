@@ -79,7 +79,8 @@
   body.light-mode #visualsearch-view,
   body.light-mode #dottrack-view,
   body.light-mode #peripheral-view,
-  body.light-mode #mentalrot-view { background: #f5f7fa !important; color: #1a1f2e !important; }
+  body.light-mode #mentalrot-view,
+  body.light-mode #ear-view { background: #f5f7fa !important; color: #1a1f2e !important; }
   /* Attribute-selector overrides for the JS-injected inline styles. The
      modules dynamically build panels with hex colors baked into cssText
      — these selectors flip the most common ones on the fly without a
@@ -1308,6 +1309,7 @@
           <button class="game-btn brain" data-game="periodic"><span class="btn-icon">⚛️</span><span class="btn-text">Periodic Table</span><span class="btn-desc">Place the elements</span></button>
           <button class="game-btn brain" data-game="mapclick"><span class="btn-icon">🗺️</span><span class="btn-text">Map Clicker</span><span class="btn-desc">Where is that country?</span></button>
           <button class="game-btn brain" data-game="morse"><span class="btn-icon">📡</span><span class="btn-text">Morse Code</span><span class="btn-desc">Decode the dits &amp; dahs</span></button>
+          <button class="game-btn brain" data-game="ear"><span class="btn-icon">🎼</span><span class="btn-text">Ear Training</span><span class="btn-desc">Intervals, chords, notes</span></button>
         </div>
       </section>
       <section class="game-category brain-cat" id="brain-section-4" style="display:none;">
@@ -1556,6 +1558,10 @@
   <div id="morse-view" class="view">
     <div class="life-title" style="color:#1abc9c">📡 Morse Code</div>
     <div id="morse-game" style="display:flex;flex-direction:column;align-items:center;gap:10px;max-width:100%;width:100%;"></div>
+  </div>
+  <div id="ear-view" class="view">
+    <div class="life-title" style="color:#e67e22">🎼 Ear Training</div>
+    <div id="ear-game" style="display:flex;flex-direction:column;align-items:center;gap:10px;max-width:100%;width:100%;"></div>
   </div>
   <div id="cardpairs-view" class="view">
     <div class="life-title" style="color:#1abc9c">🃏 Card Pairs <button class="tut-trigger" onclick="showTutorial('cardpairs')">? How to Play</button></div>
@@ -2149,6 +2155,7 @@
       if(game === 'periodic') initPeriodic();
       if(game === 'mapclick') initMapClick();
       if(game === 'morse') initMorse();
+      if(game === 'ear') initEar();
       if(game === 'cardpairs') initCardPairs();
       if(game === 'speedmath') initSpeedMath();
       if(game === 'wordsearch') initWordSearch();
@@ -8191,6 +8198,111 @@ function playAnimalSound(type) {
         const replay=document.createElement('button');replay.className='retro-btn';replay.textContent='🔊 Hear it';replay.onclick=()=>_playMorse(code);replayRow.appendChild(replay);
       }
       buildChoices(cur);
+    }
+    nextQ();
+  }
+  const _intervalNames=[['Unison',0],['Minor 2nd',1],['Major 2nd',2],['Minor 3rd',3],['Major 3rd',4],['Perfect 4th',5],['Tritone',6],['Perfect 5th',7],['Minor 6th',8],['Major 6th',9],['Minor 7th',10],['Major 7th',11],['Octave',12]];
+  const _chordTypes=[['Major',[0,4,7]],['Minor',[0,3,7]],['Diminished',[0,3,6]],['Augmented',[0,4,8]],['Dom 7',[0,4,7,10]],['Maj 7',[0,4,7,11]],['Min 7',[0,3,7,10]],['Sus 4',[0,5,7]],['Sus 2',[0,2,7]]];
+  const _noteNames=['C','C♯','D','D♯','E','F','F♯','G','G♯','A','A♯','B'];
+  function _midiHz(m){return 440*Math.pow(2,(m-69)/12);}
+  function _earTone(ctx,freq,t,dur,gain=0.18){const o=ctx.createOscillator(),g=ctx.createGain();o.type='triangle';o.frequency.value=freq;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(gain,t+0.015);g.gain.linearRampToValueAtTime(gain*0.65,t+dur*0.5);g.gain.linearRampToValueAtTime(0,t+dur);o.connect(g);g.connect(ctx.destination);o.start(t);o.stop(t+dur+0.02);}
+  function _playNotes(midis,style){const ctx=_morseCtx();if(!ctx)return;const now=ctx.currentTime+0.05;const dur=0.55;if(style==='harmonic'){midis.forEach(m=>_earTone(ctx,_midiHz(m),now,1.0,0.14));}else if(style==='ascending'){midis.forEach((m,i)=>_earTone(ctx,_midiHz(m),now+i*0.6,dur));}else{midis.forEach((m,i)=>_earTone(ctx,_midiHz(m),now+i*0.6,dur));}}
+  function initEar(){
+    const root=$$('#ear-game');root.innerHTML='';
+    const mode=sessionStorage.getItem('ear-mode')||'intervals';
+    const diff=sessionStorage.getItem('ear-diff')||'easy';
+    const intervalsBank={easy:[[0,'Unison'],[5,'Perfect 4th'],[7,'Perfect 5th'],[12,'Octave']],medium:[[1,'Minor 2nd'],[2,'Major 2nd'],[3,'Minor 3rd'],[4,'Major 3rd'],[5,'Perfect 4th'],[7,'Perfect 5th'],[9,'Major 6th'],[12,'Octave']],hard:_intervalNames};
+    const chordBank={easy:_chordTypes.slice(0,2),medium:_chordTypes.slice(0,5),hard:_chordTypes};
+    const noteBank={easy:[0,4,7],medium:[0,2,4,5,7,9,11],hard:Array.from({length:12},(_,i)=>i)};
+    const queueLen=10;let idx=0,score=0,streak=0;
+    const bestKey='ear-best-'+mode+'-'+diff;const bestStreak=parseInt(localStorage.getItem(bestKey)||'0');
+    const lifeKey='ear-life-correct';const lifeCorrect=parseInt(localStorage.getItem(lifeKey)||'0');
+    // Mode picker
+    const mp=document.createElement('div');mp.style.cssText='display:flex;gap:6px;flex-wrap:wrap;justify-content:center;';
+    [['intervals','🎵 Intervals'],['chords','🎹 Chords'],['notes','🎶 Note ID']].forEach(([k,lbl])=>{const b=document.createElement('button');b.className='sdk-btn'+(k===mode?' active':'');b.textContent=lbl;b.onclick=()=>{sessionStorage.setItem('ear-mode',k);initEar();};mp.appendChild(b);});
+    root.appendChild(mp);
+    // Difficulty picker
+    const dp=document.createElement('div');dp.style.cssText='display:flex;gap:6px;flex-wrap:wrap;justify-content:center;';
+    ['easy','medium','hard'].forEach(d=>{const b=document.createElement('button');b.className='sdk-btn'+(d===diff?' active':'');b.textContent=d.toUpperCase();b.onclick=()=>{sessionStorage.setItem('ear-diff',d);initEar();};dp.appendChild(b);});
+    root.appendChild(dp);
+    // HUD
+    const hud=document.createElement('div');hud.style.cssText='display:flex;gap:14px;flex-wrap:wrap;justify-content:center;font-family:JetBrains Mono,monospace;font-size:0.85rem;color:var(--text,#ecf0f1);';
+    hud.innerHTML=`<span>📊 <b id="e-prog">1/${queueLen}</b></span><span>🎯 <b style="color:#e67e22" id="e-score">0</b></span><span>🔥 <b style="color:#e74c3c" id="e-streak">0</b></span><span>🏆 Best <b style="color:#f1c40f">${bestStreak}</b></span><span>📈 Life <b style="color:#9b59b6">${lifeCorrect}</b></span>`;
+    root.appendChild(hud);
+    // Prompt
+    const prompt=document.createElement('div');prompt.style.cssText='background:rgba(230,126,34,0.12);border:2px solid #e67e22;padding:18px;border-radius:14px;text-align:center;min-width:260px;max-width:520px;width:90%;display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--text,#ecf0f1);';
+    root.appendChild(prompt);
+    // Replay buttons
+    const replayRow=document.createElement('div');replayRow.style.cssText='display:flex;gap:8px;flex-wrap:wrap;justify-content:center;';
+    root.appendChild(replayRow);
+    // Choices
+    const choices=document.createElement('div');choices.style.cssText='display:grid;grid-template-columns:repeat(2,1fr);gap:10px;max-width:520px;width:92%;';
+    root.appendChild(choices);
+    let currentChoice=null;
+    function genQuestion(){
+      if(mode==='intervals'){
+        const bank=intervalsBank[diff];
+        const baseMidi=60+Math.floor(Math.random()*6);
+        const pick=bank[Math.floor(Math.random()*bank.length)];
+        const midis=[baseMidi,baseMidi+pick[0]];
+        const wrongPool=bank.filter(b=>b[1]!==pick[1]).sort(()=>Math.random()-0.5).slice(0,3);
+        const opts=[pick[1],...wrongPool.map(w=>w[1])].sort(()=>Math.random()-0.5);
+        return{play:()=>_playNotes(midis,'ascending'),playAlt:()=>_playNotes(midis,'harmonic'),answer:pick[1],options:opts,label:'Which interval did you hear?',altLabel:'🎶 Hear together (harmonic)'};
+      } else if(mode==='chords'){
+        const bank=chordBank[diff];
+        const baseMidi=60+Math.floor(Math.random()*4);
+        const pick=bank[Math.floor(Math.random()*bank.length)];
+        const midis=pick[1].map(iv=>baseMidi+iv);
+        const wrongPool=bank.filter(b=>b[0]!==pick[0]).sort(()=>Math.random()-0.5).slice(0,3);
+        const opts=[pick[0],...wrongPool.map(w=>w[0])].sort(()=>Math.random()-0.5);
+        return{play:()=>_playNotes(midis,'harmonic'),playAlt:()=>_playNotes(midis,'ascending'),answer:pick[0],options:opts,label:'Which chord did you hear?',altLabel:'🎵 Hear as arpeggio'};
+      } else {
+        const bank=noteBank[diff];
+        const refMidi=60;
+        const pickIv=bank[Math.floor(Math.random()*bank.length)];
+        const targetMidi=refMidi+pickIv;
+        const noteName=_noteNames[pickIv%12];
+        const wrongPool=bank.filter(b=>b!==pickIv).sort(()=>Math.random()-0.5).slice(0,3);
+        const opts=[noteName,...wrongPool.map(b=>_noteNames[b%12])].sort(()=>Math.random()-0.5);
+        return{play:()=>_playNotes([refMidi,targetMidi],'ascending'),playAlt:()=>_playNotes([targetMidi],'ascending'),answer:noteName,options:opts,label:'Reference C → ? · Name the second note',altLabel:'🎵 Hear target alone'};
+      }
+    }
+    function nextQ(){
+      idx++;
+      if(idx>queueLen){
+        prompt.innerHTML=`<b style="color:#f1c40f;font-size:1.3rem;">🎉 Round complete!</b><div>Score: ${score} · streak ${streak}</div>`;
+        if(streak>bestStreak){localStorage.setItem(bestKey,streak);}
+        choices.innerHTML='';replayRow.innerHTML='';
+        const restart=document.createElement('button');restart.className='retro-btn';restart.style.marginTop='6px';restart.textContent='🔁 Play again';restart.onclick=initEar;root.appendChild(restart);
+        return;
+      }
+      const pe=document.getElementById('e-prog');if(pe)pe.textContent=`${idx}/${queueLen}`;
+      currentChoice=genQuestion();
+      prompt.innerHTML='';replayRow.innerHTML='';
+      const ico=document.createElement('div');ico.style.cssText='font-size:2.4rem;';ico.textContent='🔊';prompt.appendChild(ico);
+      const hint=document.createElement('div');hint.style.cssText='font-size:0.95rem;';hint.textContent=currentChoice.label;prompt.appendChild(hint);
+      const rp=document.createElement('button');rp.className='retro-btn';rp.textContent='🔁 Replay';rp.onclick=currentChoice.play;replayRow.appendChild(rp);
+      const ap=document.createElement('button');ap.className='retro-btn';ap.textContent=currentChoice.altLabel;ap.onclick=currentChoice.playAlt;replayRow.appendChild(ap);
+      choices.innerHTML='';
+      currentChoice.options.forEach(o=>{
+        const b=document.createElement('button');b.className='m-choice';
+        b.style.cssText='padding:14px;font-family:JetBrains Mono,monospace;font-size:1rem;background:rgba(230,126,34,0.18);color:var(--text,#ecf0f1);border:2px solid #e67e22;border-radius:10px;cursor:pointer;';
+        b.textContent=o;b.onclick=()=>handle(b,o);
+        choices.appendChild(b);
+      });
+      setTimeout(currentChoice.play,250);
+    }
+    function handle(btn,picked){
+      $$all('.m-choice').forEach(b=>b.style.pointerEvents='none');
+      const correct=picked===currentChoice.answer;
+      btn.style.background=correct?'#2ecc71':'#e74c3c';
+      if(!correct){$$all('.m-choice').forEach(b=>{if(b.textContent===currentChoice.answer)b.style.background='#2ecc71';});}
+      if(correct){score+=10;streak++;localStorage.setItem(lifeKey,parseInt(localStorage.getItem(lifeKey)||'0')+1);if(typeof addScore==='function')addScore(2);if(typeof spawnConfetti==='function'&&streak%5===0)spawnConfetti(window.innerWidth/2,window.innerHeight/3,50);}
+      else{streak=0;if(typeof resetStreak==='function')resetStreak();}
+      const se=document.getElementById('e-score');if(se)se.textContent=score;
+      const st=document.getElementById('e-streak');if(st)st.textContent=streak;
+      if(typeof showFeedback==='function')showFeedback(correct?`✓ ${currentChoice.answer}`:`✗ Was ${currentChoice.answer}`,correct?'#2ecc71':'#e74c3c');
+      setTimeout(nextQ,correct?900:1700);
     }
     nextQ();
   }

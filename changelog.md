@@ -1,5 +1,16 @@
 ﻿# Changelog 
 
+## [5.6.77] - 2026-05-19 - NEW MODULE: Ear Training (intervals, chords, note ID)
+- Final module from the May 2026 expansion plan. Brain-cognitive category, 🎼 icon.
+- **3 modes**:
+  - 🎵 **Intervals** — hear two notes ascending; identify the interval (unison through octave). Replay button + "hear harmonic" button so the user can compare ascending and stacked.
+  - 🎹 **Chords** — hear a triad/7th/sus voicing; identify the quality. 9 chord types: Major, Minor, Diminished, Augmented, Dom 7, Maj 7, Min 7, Sus 4, Sus 2.
+  - 🎶 **Note ID** — hear a reference C, then a target note; name the target by letter.
+- **3 difficulty tiers** scale the option pool: easy (4 most-common), medium (8), hard (all 12).
+- Tone synthesis: triangle waves through gain envelope (15 ms attack / 50% sustain / linear release). MIDI → Hz via 12-TET. Triads play harmonically by default (chord identification); intervals play melodically (interval recognition).
+- HUD: round progress, score, current streak, all-time best streak per (mode, diff), lifetime correct.
+- **SW cache v58 → v59** to flush.
+
 ## [5.6.76] - 2026-05-19 - Light-mode pass + Morse Code Trainer
 - **Bug — light mode was broken inside modules**: theme toggle only flipped chrome/menu surfaces; every game/quiz view kept its hardcoded dark backgrounds (#1b1e23, #1e252b, #221f26, …) and every JS-injected panel used inline `color:#ecf0f1` / dark rgba fills, so module screens stayed charcoal even after toggling to ☀️.
 - **Fix — comprehensive light-mode pass**:
