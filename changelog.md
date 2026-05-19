@@ -1,5 +1,17 @@
 ﻿# Changelog 
 
+## [5.6.79] - 2026-05-19 - Map Clicker: add US States mode
+- Map Clicker now has a 🌍 **World** / 🇺🇸 **US States** mode picker. Existing world data unchanged.
+- **49 US entities** (lower-48 + DC) tiered:
+  - easy = 12 most-populous/recognizable (CA, TX, FL, NY, IL, PA, OH, GA, MI, NC, NJ, VA)
+  - normal = top 28 (adds WA, MA, AZ, IN, TN, MO, MD, WI, CO, MN, AL, LA, SC, KY, OR, OK)
+  - hard = all 49 (full set including small/sparse states + DC)
+- **US projection**: lower-48 bounding box [-125, -66] lon × [24, 50] lat covers the canvas. Click positions inverse-project back to lat/lon for the haversine distance check.
+- **Simplified lower-48 outline polygon** (~28 anchor points) drawn underneath state targets so guessing has visual context.
+- **Tighter scoring tiers** for US mode (km → pts): ≤120 = 100, ≤300 = 80, ≤600 = 60, ≤1000 = 35, ≤1800 = 15, > 1800 = 0. Original world tiers (300/700/1500/3000/5000) unchanged.
+- Best round & lifetime scores tracked separately per (mode, diff).
+- **SW cache v60 → v61** to flush.
+
 ## [5.6.78] - 2026-05-19 - Chess Puzzles: 7 → 15 puzzles (more patterns)
 - Doubled the mate-in-1 bank from 7 to 15 puzzles. Eight new positions span:
   - **Queen + king + pawn cage** (Pb6 covering a7 while the queen takes b8 against Ka8).
