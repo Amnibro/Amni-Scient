@@ -4409,7 +4409,9 @@
               {q: "Which animal trumpets through a long trunk?", a: "🐘 Elephant", wrong: ["🐦 Bird", "🐝 Bee", "🐸 Frog"], isAudio: true, audioText: "Trumpet"},
               {q: "Which animal says 'Chitter'?", a: "🐿 Squirrel", wrong: ["🐦 Bird", "🐍 Snake", "🐝 Bee"], isAudio: true, audioText: "Chitter"},
               {q: "Which animal says 'Caw caw'?", a: "🐦‍⬛ Crow", wrong: ["🐶 Dog", "🐝 Bee", "🐸 Frog"], isAudio: true, audioText: "Caw"},
-              {q: "Which animal snaps its big jaws?", a: "🐊 Crocodile", wrong: ["🐦 Bird", "🐝 Bee", "🐶 Dog"], isAudio: true, audioText: "Snap"},
+              {q: "Which animal snaps its big jaws?", a: "🐊 Crocodile", wrong: ["🐦 Bird", "🐝 Bee", "🐶 Dog"], isAudio: true, audioText: "Snap"}
+          ],
+          2: [
               {q: "What is a baby dog called?", a: "🐶 Puppy", wrong: ["Kitten", "Calf", "Chick"]},
               {q: "What is a baby cat called?", a: "🐱 Kitten", wrong: ["Puppy", "Cub", "Foal"]},
               {q: "What is a baby cow called?", a: "🐄 Calf", wrong: ["Kid", "Lamb", "Foal"]},
@@ -4485,9 +4487,7 @@
               {q: "Which animal carries its home on its back?", a: "🐌 Snail / 🐢 Turtle", wrong: ["Dog", "Horse", "Cow"]},
               {q: "Which animal is the smartest in the sea (often)?", a: "🐬 Dolphin", wrong: ["Goldfish", "Crab", "Jellyfish"]},
               {q: "Which animal squirts ink to escape predators?", a: "🦑 Squid / Octopus", wrong: ["Fish", "Crab", "Whale"]},
-              {q: "Which animal has a pouch to carry babies AND has a duck-bill?", a: "🦫 Platypus", wrong: ["Kangaroo", "Beaver", "Otter"]}
-          ],
-          2: [
+              {q: "Which animal has a pouch to carry babies AND has a duck-bill?", a: "🦫 Platypus", wrong: ["Kangaroo", "Beaver", "Otter"]},
               {q: "What is the largest mammal?", a: "🐋 Blue Whale", wrong: ["🐘 Elephant", "🦒 Giraffe", "🦛 Hippo"], explain: "The blue whale is the largest mammal and the largest animal ever known on Earth."},
               {q: "Which object is used for measuring?", a: "📏 Ruler", wrong: ["✂️ Scissors", "📎 Paperclip", "🎒 Backpack"], explain: "A ruler measures length. Scissors cut, paperclips hold paper, backpacks carry things."},
               {q: "Which bird cannot fly?", a: "🐧 Penguin", wrong: ["🦅 Eagle", "🦜 Parrot", "🦉 Owl"], explain: "Penguins are flightless birds. Their wings became flippers for swimming."},
@@ -5858,9 +5858,9 @@ function playAnimalSound(type) {
       }
       const q = currentQuiz[currentQIndex];
       quizPrompt.textContent = q.q;
-      if (currentLevel <= 2) speakText(q.audioText || q.q);
+      if (currentLevel <= 2 && q.isAudio) speakText(q.audioText || q.q);
       quizChoices.innerHTML = '';
-      if(currentLevel <= 3) {
+      if(currentLevel <= 3 && q.isAudio) {
           audioBtn.style.display = 'block';
       } else {
           audioBtn.style.display = 'none';

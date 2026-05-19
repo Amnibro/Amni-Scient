@@ -1,5 +1,14 @@
 ﻿# Changelog 
 
+## [5.6.75] - 2026-05-19 - Animals & Objects: restore L1 animal-sound experience
+- **Regression**: v5.6.29's L1 quadruple (25 → 100 questions) buried the original 25 mp3 animal-sound questions in 75 new non-audio fact entries. Kids at L1 (pre-K) now had ~1-in-4 odds of getting a real-sound question and mostly heard the question text via TTS or nothing at all. The "kids loved the real animal sounds" mode was effectively gone.
+- **Fix**:
+  - Moved the 76 non-audio L1 entries (baby names, homes, what-they-eat, body coverings, identification by feature) into L2, where they belong difficulty-wise. L1 is back to its original 25-question pure animal-sounds form (Moo→cow.mp3, Woof→dog.mp3, etc.).
+  - L2 (kindergarten/early-elem) now has 60 + 76 = 136 questions — a richer second tier that builds on having mastered the sounds.
+  - Tightened audio routing in `loadQuestion`: autoplay (`speakText`) and the 🔊 button only show/fire when `q.isAudio === true`. Stops L2 fact questions from TTS-spamming and stops the speaker icon from appearing on non-audio rounds.
+- All 35 animal mp3s remain precached by the SW; only the question-pool layout changed.
+- **SW cache v56 → v57** to flush.
+
 ## [5.6.74] - 2026-05-19 - Trail Making: stop telegraphing the next target
 - **Bug**: Trail Making (TMT-A / TMT-B) showed a "Next: 5" chip above the canvas AND outlined the next-expected node on the canvas itself with a glow halo + brighter fill/stroke. This trivialized the test — the player didn't have to visually scan the scattered labels and figure out the sequence, just tap whatever was lit up. Reitan TMT requires the subject to find the next number/letter themselves.
 - **Fix**:
