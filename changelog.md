@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.6.73] - 2026-05-19 - Chess Puzzles: fix puzzles 2 and 5 (queen wasn't defended)
+- **Puzzle 2** (`Kc6, Qb1, Kc8` → Qb8) was unsound: Black king could just capture the undefended Q on b8 (Kc6 attacks only one square away). **Fix**: added a white pawn on a7 to defend b8. Now `Kc6, Qb1, Pa7 vs Kc8`, mate via Qb8 because pawn a7 covers b8.
+- **Puzzle 5** (`Ka1, Qg3, Nf6, Kh8, ph7` → Qg7) had the same bug: knight on f6 attacks g8/h7/e8 but NOT g7, so the queen sitting on g7 was undefended and the king captured it. **Fix**: moved the knight from f6 to f5 — Nf5 attacks d4, d6, e3, e7, g3, g7, h4, h6, so g7 is now defended.
+- Both verified by checking all king escape squares + capture defender presence.
+- **SW cache v54 → v55** to flush.
+
 ## [5.6.72] - 2026-05-19 - Chimp Test: wrong-cell taps now fail the round
 - **Bug**: tapping an empty (non-numbered) cell in Chimp Test did nothing — silent no-op. If you misremembered a tile's position and tapped blank space, the round didn't fail and the game felt unresponsive. Only numbered-cell taps counted.
 - **Fix**: every cell click is now wired:
