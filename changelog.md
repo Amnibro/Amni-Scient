@@ -1,5 +1,19 @@
 ﻿# Changelog 
 
+## [5.6.82] - 2026-05-19 - Ear Training: add 🎼 Melody Dictation mode
+- 4th mode in the Ear Training module: **🎼 Melody Dictation** — hear a short melody, reproduce it note-by-note on a mini-keyboard.
+- Difficulty scales both melody length and the scale (key palette):
+  - **easy** — 3 notes from the C major triad (C / E / G), 3-key keyboard.
+  - **medium** — 4 notes from the C major scale (C–D–E–F–G–A–B), 7-key keyboard.
+  - **hard** — 5 notes from the chromatic scale (all 12 semitones), 12-key keyboard with sharps styled black.
+- UI affordances:
+  - 🔁 Hear target — replays the melody at any point.
+  - 🧹 Clear — wipes the user's current input slots to retry.
+  - Each tap plays the corresponding pitch so the user can self-correct as they go.
+  - Slots fill left-to-right; on the final tap, the row reveals green/red per note vs the target.
+- Scoring: +15 per fully-correct melody (vs +10 for the multi-choice modes), confetti on success, streak counter shared across all four ear-training modes; best-streak tracked per (mode, diff) key.
+- **SW cache v63 → v64** to flush.
+
 ## [5.6.81] - 2026-05-19 - Periodic Table: add 🧪 Properties Quiz mode
 - Periodic Table now has a mode picker: **📍 Place elements** (the original tap-the-grid drill) or **🧪 Properties Quiz** (a new multiple-choice mode).
 - Quiz mode question generators (one chosen at random each turn):

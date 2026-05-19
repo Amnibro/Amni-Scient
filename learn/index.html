@@ -8373,7 +8373,7 @@ function playAnimalSound(type) {
     const lifeKey='ear-life-correct';const lifeCorrect=parseInt(localStorage.getItem(lifeKey)||'0');
     // Mode picker
     const mp=document.createElement('div');mp.style.cssText='display:flex;gap:6px;flex-wrap:wrap;justify-content:center;';
-    [['intervals','🎵 Intervals'],['chords','🎹 Chords'],['notes','🎶 Note ID']].forEach(([k,lbl])=>{const b=document.createElement('button');b.className='sdk-btn'+(k===mode?' active':'');b.textContent=lbl;b.onclick=()=>{sessionStorage.setItem('ear-mode',k);initEar();};mp.appendChild(b);});
+    [['intervals','🎵 Intervals'],['chords','🎹 Chords'],['notes','🎶 Note ID'],['melody','🎼 Melody Dictation']].forEach(([k,lbl])=>{const b=document.createElement('button');b.className='sdk-btn'+(k===mode?' active':'');b.textContent=lbl;b.onclick=()=>{sessionStorage.setItem('ear-mode',k);initEar();};mp.appendChild(b);});
     root.appendChild(mp);
     // Difficulty picker
     const dp=document.createElement('div');dp.style.cssText='display:flex;gap:6px;flex-wrap:wrap;justify-content:center;';
@@ -8421,6 +8421,52 @@ function playAnimalSound(type) {
         return{play:()=>_playNotes([refMidi,targetMidi],'ascending'),playAlt:()=>_playNotes([targetMidi],'ascending'),answer:noteName,options:opts,label:'Reference C → ? · Name the second note',altLabel:'🎵 Hear target alone'};
       }
     }
+    function nextMelody(){
+      const melodyBank={easy:{scale:[0,4,7],len:3,label:'C major triad'},medium:{scale:[0,2,4,5,7,9,11],len:4,label:'C major scale'},hard:{scale:Array.from({length:12},(_,i)=>i),len:5,label:'Chromatic'}};
+      const cfg=melodyBank[diff];
+      const base=60;
+      const targetIv=Array.from({length:cfg.len},()=>cfg.scale[Math.floor(Math.random()*cfg.scale.length)]);
+      const targetMidi=targetIv.map(iv=>base+iv);
+      const userInput=[];
+      const playTarget=()=>{const ctx=_morseCtx();if(!ctx)return;const now=ctx.currentTime+0.05;targetMidi.forEach((m,i)=>_earTone(ctx,_midiHz(m),now+i*0.5,0.45));};
+      prompt.innerHTML='';replayRow.innerHTML='';choices.innerHTML='';
+      const ico=document.createElement('div');ico.style.cssText='font-size:2rem;';ico.textContent='🎼';prompt.appendChild(ico);
+      const hint=document.createElement('div');hint.style.cssText='font-size:0.95rem;';hint.textContent=`Reproduce the ${cfg.len}-note melody · scale: ${cfg.label}`;prompt.appendChild(hint);
+      const slots=document.createElement('div');slots.style.cssText='display:flex;gap:6px;margin-top:6px;';
+      const slotEls=[];
+      for(let i=0;i<cfg.len;i++){const s=document.createElement('div');s.style.cssText='width:42px;height:42px;border:2px dashed #e67e22;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:JetBrains Mono,monospace;color:var(--text,#ecf0f1);font-weight:bold;';s.textContent='?';slots.appendChild(s);slotEls.push(s);}
+      prompt.appendChild(slots);
+      const replay=document.createElement('button');replay.className='retro-btn';replay.textContent='🔁 Hear target';replay.onclick=playTarget;replayRow.appendChild(replay);
+      const clear=document.createElement('button');clear.className='retro-btn';clear.textContent='🧹 Clear';clear.onclick=()=>{userInput.length=0;slotEls.forEach(s=>{s.textContent='?';s.style.borderStyle='dashed';s.style.background='';s.style.color='var(--text,#ecf0f1)';});};replayRow.appendChild(clear);
+      // Mini-keyboard — one key per scale note, labelled with note name + octave.
+      const kb=document.createElement('div');kb.style.cssText='display:flex;flex-wrap:wrap;gap:4px;justify-content:center;margin-top:8px;';
+      cfg.scale.forEach(iv=>{
+        const noteName=_noteNames[iv%12];const isSharp=noteName.includes('♯');
+        const key=document.createElement('button');
+        key.style.cssText=`min-width:46px;height:64px;padding:6px 8px;font-family:JetBrains Mono,monospace;font-weight:bold;font-size:0.95rem;background:${isSharp?'#2c3e50':'#fff'};color:${isSharp?'#fff':'#2c3e50'};border:2px solid #e67e22;border-radius:6px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;`;
+        key.innerHTML=`${noteName}<span style="font-size:0.7rem;opacity:0.7;">${iv===0?'C4':iv===12?'C5':''}</span>`;
+        key.onclick=()=>{
+          if(userInput.length>=cfg.len)return;
+          const midi=base+iv;const ctx=_morseCtx();if(ctx)_earTone(ctx,_midiHz(midi),ctx.currentTime+0.01,0.35);
+          userInput.push(iv);const slot=slotEls[userInput.length-1];slot.textContent=noteName;slot.style.borderStyle='solid';slot.style.background='rgba(230,126,34,0.25)';
+          if(userInput.length===cfg.len){
+            // Compare and feedback
+            const correct=userInput.every((v,i)=>v===targetIv[i]);
+            slotEls.forEach((s,i)=>{s.style.background=userInput[i]===targetIv[i]?'#2ecc71':'#e74c3c';s.style.color='#fff';s.style.borderColor=userInput[i]===targetIv[i]?'#2ecc71':'#e74c3c';});
+            if(correct){score+=15;streak++;if(streak>bestStreak)localStorage.setItem(bestKey,streak);localStorage.setItem(lifeKey,parseInt(localStorage.getItem(lifeKey)||'0')+1);if(typeof addScore==='function')addScore(3);if(typeof spawnConfetti==='function')spawnConfetti(window.innerWidth/2,window.innerHeight/3,40);}
+            else{streak=0;if(typeof resetStreak==='function')resetStreak();}
+            const se=document.getElementById('e-score');if(se)se.textContent=score;
+            const st=document.getElementById('e-streak');if(st)st.textContent=streak;
+            if(typeof showFeedback==='function')showFeedback(correct?`✓ ${targetIv.map(iv=>_noteNames[iv%12]).join(' ')}`:`✗ Was ${targetIv.map(iv=>_noteNames[iv%12]).join(' ')}`,correct?'#2ecc71':'#e74c3c');
+            kb.querySelectorAll('button').forEach(b=>b.style.pointerEvents='none');
+            setTimeout(nextQ,correct?1100:1900);
+          }
+        };
+        kb.appendChild(key);
+      });
+      choices.appendChild(kb);
+      setTimeout(playTarget,300);
+    }
     function nextQ(){
       idx++;
       if(idx>queueLen){
@@ -8431,6 +8477,7 @@ function playAnimalSound(type) {
         return;
       }
       const pe=document.getElementById('e-prog');if(pe)pe.textContent=`${idx}/${queueLen}`;
+      if(mode==='melody'){nextMelody();return;}
       currentChoice=genQuestion();
       prompt.innerHTML='';replayRow.innerHTML='';
       const ico=document.createElement('div');ico.style.cssText='font-size:2.4rem;';ico.textContent='🔊';prompt.appendChild(ico);
