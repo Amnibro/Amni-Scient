@@ -13,7 +13,30 @@
 <style>
   *,*::before,*::after { box-sizing: border-box; }
   html,body { max-width: 100vw; overflow-x: hidden; }
-  body { overflow-x: hidden; overflow-y: auto; margin: 0; padding: 0; background: #0c0f12; color: #ecf0f1; transition: background 0.3s, color 0.3s; }
+  /* iOS Safari needs explicit height for scrolling flex layouts. Use the
+     dynamic viewport unit dvh where supported (falls back to vh on older
+     browsers via the second rule). */
+  html { height: 100%; height: 100dvh; }
+  body { overflow-x: hidden; overflow-y: auto; margin: 0; padding: 0; background: #0c0f12; color: #ecf0f1; transition: background 0.3s, color 0.3s; -webkit-overflow-scrolling: touch; min-height: 100vh; min-height: 100dvh; }
+  /* Every canvas — game arena, retro arcade, lab — must scale down to the
+     parent's width. Without this, fixed canvas.width=480 overflows a 360px
+     phone viewport and forces horizontal scroll. height:auto preserves
+     aspect ratio. The !important wins against inline styles like
+     canvas.style.width=cw+'px' that several games set. (mobile fit fix
+     2026-05-18) */
+  canvas { max-width: 100% !important; height: auto !important; }
+  /* Inner view scroll containers also need momentum on iOS, and they must
+     never exceed their parent's available height. */
+  .view { -webkit-overflow-scrolling: touch; }
+  /* Game container shells should never set fixed widths larger than the
+     viewport. Most do, but a couple inline-styled rows didn't. */
+  .college-container, .lab-container, .nmm-board, .nmm-msg, .versus-setup,
+  .retro-hud, .game-hud, .game-grid, .cs-tubes, .ms-grid, .sdk-board,
+  .cp-grid, .agm-tiles, .bj-grid, .ws-grid, .pat-grid, .scr-letters,
+  .pong-controls, .rfx-arena, .nbk-grid, .reaction-arena,
+  #math-choices, #type-container, #life-task-area {
+    max-width: 100%; box-sizing: border-box;
+  }
   /* Light-mode override — opt-in via body.light-mode. Inverts the major
      surface colors and tones down the neon accents that strain on a
      bright canvas. Game boards, retro arcades, and most game UIs stay
@@ -79,7 +102,13 @@
   .streak-fire { display: none; }
   .view { display: none; flex: 1; width: 100%; min-height: 0; box-sizing: border-box; overflow-y: auto; padding: clamp(10px,2vw,20px); }
   .view.active { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; }
-  #menu-view { background: #0c0f12; color: #fff; justify-content: center; }
+  /* justify-content: center on a scrolling flex column TRAPS overflowing
+     content above the viewport — you can't scroll up past the start edge.
+     Use flex-start so all menu cards remain reachable on mobile. The
+     menu-title naturally sits at the top, and the grid grows below.
+     (mobile scroll fix 2026-05-18) */
+  #menu-view { background: #0c0f12; color: #fff; justify-content: flex-start; }
+  body.light-mode #menu-view { background: #f5f7fa; }
   .menu-title { font-size: 2.5rem; color: #4db8ff; margin-bottom: 1rem; text-shadow: 0 0 10px rgba(77,184,255,0.5); text-align: center; }
   .diff-selector { display: flex; justify-content: center; gap: 10px; margin-bottom: 1rem; }
   .diff-btn { background: #111; border: 1px solid #555; color: #aaa; padding: clamp(6px,1.5vw,10px) clamp(12px,3vw,20px); border-radius: 20px; cursor: pointer; font-family: 'JetBrains Mono'; font-size: clamp(0.8rem,2vw,1rem); transition: 0.2s; }

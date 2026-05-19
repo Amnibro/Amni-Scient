@@ -1,5 +1,13 @@
 ﻿# Changelog 
 
+## [5.6.65] - 2026-05-18 - Amni-Learn mobile scroll + viewport fit fix
+- **Menu scroll broken on mobile fixed**: `#menu-view` used `justify-content: center`, which trapped overflowing flex children unreachable above the scroll start. Changed to `flex-start` so all menu cards remain scrollable. Background flipped via `body.light-mode` selector so the menu remains correct in either theme.
+- **Canvas viewport overflow fixed**: any `canvas` element now CSS-scales to `max-width: 100% !important; height: auto !important`. Several games set `canvas.style.width=cw+'px'` inline; the !important wins and the backing-store width stays the same (click-coordinate ratios already use `getBoundingClientRect`).
+- **iOS momentum scrolling**: `-webkit-overflow-scrolling: touch` on body + every `.view` so scroll has inertia on iOS Safari.
+- **Dynamic viewport height (dvh)**: html/body now use `100dvh` (falls back to 100vh on older browsers) so the iOS Safari address-bar shrink doesn't crop content.
+- **Game wrapper max-width safety net**: 20+ shell selectors (college-container, lab-container, sdk-board, cp-grid, ws-grid, agm-tiles, etc) explicitly capped at `max-width: 100%` with border-box sizing so no inline width can force horizontal scroll.
+- **SW cache v46 → v47** to flush.
+
 ## [5.6.64] - 2026-05-18 - Amni-Learn Daily Challenge
 - **Daily Challenge banner** on main menu (just above game grid): gold-glow card with 🌟 title, current streak, all-time best streak. Tappable.
 - **30-puzzle pool** across 12 categories (Math, Logic, Word, Sequence, Calculus, Riddle, Geometry, Chemistry, Geography, Biology, Literature, Physics, Space, Music, History, Tech). Date-seeded: every player on the same calendar day sees the same puzzle.
