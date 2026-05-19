@@ -1,5 +1,15 @@
 ﻿# Changelog 
 
+## [5.6.88] - 2026-05-19 - Sudoku: ✕ X-Sudoku variant
+- Sudoku now has a mode picker — **◻ Classic** (original 9×9) or **✕ X-Sudoku** (the popular variant where the two main diagonals must also contain 1–9 with no repeats).
+- `isValid()` augmented with diagonal checks when in X-mode: cell on main diagonal (r === c) or anti-diagonal (r + c === 8) must not duplicate any number on its diagonal.
+- Solver and generator both honor the constraint via the same `isValid`, so every X-Sudoku puzzle has a unique solution under classic + diagonal rules.
+- Visual: diagonal cells get a subtly lighter background (`#22354a`) and a 1px gold inset shadow so the constraint is visible at a glance.
+- Best time and win count tracked per (mode, diff): `sdk-best-x-hard`, `sdk-wins-classic-medium`, etc. Falls back to the original `sdk-best-<diff>` keys for first-run preservation.
+- Score bonus: X-Sudoku wins award 1.4× points vs Classic at the same difficulty (X adds a real constraint, so harder).
+- Toast and feedback text say "X-Sudoku" instead of "Sudoku" when in X-mode.
+- **SW cache v69 → v70** to flush.
+
 ## [5.6.87] - 2026-05-19 - Card Pairs: theme picker + 3 new themes (4 → 7)
 - Card Pairs now has a **theme picker** above the size picker. Default `🎲 Random` preserves the original behaviour (random pick each round); the named themes let the user target a specific palette.
 - **3 new themes** join Symbols/Math/Science/World:
