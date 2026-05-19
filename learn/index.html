@@ -1226,6 +1226,7 @@
           <button class="game-btn brain" data-game="wordsearch"><span class="btn-icon">🔍</span><span class="btn-text">Word Search</span><span class="btn-desc">Find hidden words</span></button>
           <button class="game-btn brain" data-game="chess"><span class="btn-icon">♟️</span><span class="btn-text">Chess Puzzles</span><span class="btn-desc">Mate in one</span></button>
           <button class="game-btn brain" data-game="periodic"><span class="btn-icon">⚛️</span><span class="btn-text">Periodic Table</span><span class="btn-desc">Place the elements</span></button>
+          <button class="game-btn brain" data-game="mapclick"><span class="btn-icon">🗺️</span><span class="btn-text">Map Clicker</span><span class="btn-desc">Where is that country?</span></button>
         </div>
       </section>
       <section class="game-category brain-cat" id="brain-section-4" style="display:none;">
@@ -1467,6 +1468,10 @@
     <div class="life-title" style="color:#9b59b6">⚛️ Periodic Table</div>
     <div id="periodic-game" style="display:flex;flex-direction:column;align-items:center;gap:8px;max-width:100%;width:100%;"></div>
   </div>
+  <div id="mapclick-view" class="view">
+    <div class="life-title" style="color:#3498db">🗺️ Map Clicker</div>
+    <div id="mapclick-game" style="display:flex;flex-direction:column;align-items:center;gap:8px;max-width:100%;width:100%;"></div>
+  </div>
   <div id="cardpairs-view" class="view">
     <div class="life-title" style="color:#1abc9c">🃏 Card Pairs <button class="tut-trigger" onclick="showTutorial('cardpairs')">? How to Play</button></div>
     <div class="game-hud" id="cp-hud"></div>
@@ -1646,6 +1651,7 @@
     sudoku: $$('#sudoku-view'),
     chess: $$('#chess-view'),
     periodic: $$('#periodic-view'),
+    mapclick: $$('#mapclick-view'),
     cardpairs: $$('#cardpairs-view'),
     speedmath: $$('#speedmath-view'),
     wordsearch: $$('#wordsearch-view'),
@@ -1773,6 +1779,7 @@
     {id:'miner',ic:'⛏️',name:'Master Miner',desc:'Mine 1M lifetime gems',progress(){const c=_floatLS('am-lifetime');return{cur:Math.min(c,1e6),target:1e6,unlocked:c>=1e6};}},
     {id:'chess-novice',ic:'♟️',name:'Chess Novice',desc:'Solve 5 chess puzzles',progress(){const c=_intLS('chess-solved');return{cur:Math.min(c,5),target:5,unlocked:c>=5};}},
     {id:'chemist',ic:'⚛️',name:'Chemist',desc:'Place 50 elements correctly',progress(){const c=_intLS('pt-solved-easy')+_intLS('pt-solved-normal')+_intLS('pt-solved-hard');return{cur:Math.min(c,50),target:50,unlocked:c>=50};}},
+    {id:'cartographer',ic:'🗺️',name:'Cartographer',desc:'Score 1000 points in Map Clicker',progress(){const c=_intLS('mc-lifetime-easy')+_intLS('mc-lifetime-normal')+_intLS('mc-lifetime-hard');return{cur:Math.min(c,1000),target:1000,unlocked:c>=1000};}},
     {id:'polymath',ic:'🎓',name:'Polymath',desc:'Play 10 different games',progress(){const keys=['snake-best','tet-best','brk-best','flp-best','inv-best','lgc-best','scr-best','agm-best','pat-best','haven_t2048_best','haven_cblast_best','pong-matches','haven_sol_wins','circuit-built','story-total-reads','spm-best','geo-best-L1','geo-best-L2','wb-best-es-L1','wb-best-fr-L1','agm-best','pip-best','ws-best','sdk-wins-easy','sdk-wins-medium','sdk-wins-hard','rfx-best-L1','rfx-best-L2','chess-solved'];const played=keys.filter(k=>_intLS(k)>0).length;return{cur:Math.min(played,10),target:10,unlocked:played>=10};}}
   ];
   function _achState(){try{return JSON.parse(localStorage.getItem('amni-achievements')||'{}');}catch{return{};}}
@@ -2055,6 +2062,7 @@
       if(game === 'sudoku') initSudoku();
       if(game === 'chess') initChess();
       if(game === 'periodic') initPeriodic();
+      if(game === 'mapclick') initMapClick();
       if(game === 'cardpairs') initCardPairs();
       if(game === 'speedmath') initSpeedMath();
       if(game === 'wordsearch') initWordSearch();
@@ -7887,6 +7895,121 @@ function playAnimalSound(type) {
       }
     }
     nextPrompt();
+  }
+  // ── Map Clicker ── World-map geography quiz. Hand-drawn continent
+  // polygons projected equirectangularly into a 2:1 canvas. Each country
+  // has approx lat/lon; player taps where they think it is, we score by
+  // great-circle distance (haversine).
+  const _mapContinents = [
+    {name:'NA',color:'#2d7d4f',pts:[[-170,70],[-130,75],[-90,80],[-55,70],[-50,60],[-65,45],[-80,25],[-100,18],[-118,32],[-130,50],[-150,60],[-170,70]]},
+    {name:'SA',color:'#2d7d4f',pts:[[-80,12],[-60,12],[-50,0],[-35,-10],[-40,-25],[-60,-40],[-65,-55],[-72,-55],[-78,-45],[-82,-20],[-80,12]]},
+    {name:'EU',color:'#3a8a5e',pts:[[-10,65],[10,70],[30,70],[45,60],[40,45],[30,40],[10,36],[0,40],[-10,50],[-10,65]]},
+    {name:'AF',color:'#cf923f',pts:[[-15,35],[5,35],[10,32],[30,30],[40,12],[52,12],[50,-10],[35,-30],[20,-35],[10,-20],[-5,-15],[-15,0],[-18,10],[-15,35]]},
+    {name:'AS',color:'#3a8a5e',pts:[[45,70],[70,80],[180,70],[160,60],[140,35],[130,20],[108,0],[100,5],[90,25],[75,18],[60,30],[45,35],[45,70]]},
+    {name:'OC',color:'#2d7d4f',pts:[[112,-10],[135,-10],[155,-25],[150,-38],[135,-38],[115,-35],[112,-10]]}
+  ];
+  // [name, lat, lon] — broad spread across continents.
+  const _mapCountries = [
+    {n:'United States',la:38,lo:-97,t:1},{n:'Canada',la:56,lo:-106,t:1},{n:'Mexico',la:23,lo:-102,t:1},
+    {n:'Brazil',la:-14,lo:-51,t:1},{n:'Argentina',la:-38,lo:-65,t:1},{n:'Peru',la:-10,lo:-75,t:2},
+    {n:'United Kingdom',la:55,lo:-3,t:1},{n:'France',la:46,lo:2,t:1},{n:'Germany',la:51,lo:10,t:1},
+    {n:'Spain',la:40,lo:-4,t:1},{n:'Italy',la:42,lo:13,t:1},{n:'Greece',la:39,lo:22,t:2},
+    {n:'Russia',la:60,lo:100,t:1},{n:'China',la:35,lo:105,t:1},{n:'India',la:21,lo:78,t:1},
+    {n:'Japan',la:36,lo:138,t:1},{n:'Australia',la:-25,lo:135,t:1},{n:'New Zealand',la:-41,lo:174,t:2},
+    {n:'Egypt',la:26,lo:30,t:1},{n:'South Africa',la:-29,lo:24,t:1},{n:'Nigeria',la:9,lo:8,t:2},
+    {n:'Saudi Arabia',la:24,lo:45,t:2},{n:'Iran',la:32,lo:53,t:2},{n:'Turkey',la:39,lo:35,t:2},
+    {n:'Norway',la:60,lo:8,t:2},{n:'Sweden',la:60,lo:18,t:2},{n:'Poland',la:52,lo:19,t:2},
+    {n:'Indonesia',la:-5,lo:113,t:2},{n:'Thailand',la:15,lo:101,t:2},{n:'Vietnam',la:14,lo:108,t:2},
+    {n:'Kenya',la:0,lo:38,t:3},{n:'Morocco',la:31,lo:-6,t:3},{n:'Ethiopia',la:9,lo:40,t:3},
+    {n:'Chile',la:-30,lo:-71,t:3},{n:'Colombia',la:4,lo:-72,t:3},{n:'Venezuela',la:8,lo:-66,t:3},
+    {n:'Bhutan',la:27,lo:90,t:3},{n:'Mongolia',la:46,lo:103,t:3},{n:'Kazakhstan',la:48,lo:67,t:3},
+    {n:'Iceland',la:65,lo:-19,t:2},{n:'Ireland',la:53,lo:-8,t:2},{n:'Portugal',la:39,lo:-8,t:2}
+  ];
+  function initMapClick(){
+    const root=$$('#mapclick-game');root.innerHTML='';
+    const diff=sessionStorage.getItem('mc-diff')||'easy';
+    const tierMax=diff==='easy'?1:(diff==='normal'?2:3);
+    const pool=_mapCountries.filter(c=>c.t<=tierMax);
+    let queue=[...pool].sort(()=>Math.random()-0.5).slice(0,12);
+    let idx=0,totalDist=0,roundScore=0,streak=0;
+    const lifetimeKey='mc-lifetime-'+diff,bestKey='mc-best-round-'+diff;
+    const lifetime=parseInt(localStorage.getItem(lifetimeKey)||'0');
+    const bestRound=parseInt(localStorage.getItem(bestKey)||'0');
+    // Difficulty picker
+    const picker=document.createElement('div');picker.style.cssText='display:flex;gap:6px;flex-wrap:wrap;justify-content:center;';
+    ['easy','normal','hard'].forEach(d=>{const b=document.createElement('button');b.className='sdk-btn'+(d===diff?' active':'');b.textContent=d.toUpperCase();b.onclick=()=>{sessionStorage.setItem('mc-diff',d);initMapClick();};picker.appendChild(b);});
+    root.appendChild(picker);
+    const hud=document.createElement('div');hud.style.cssText='display:flex;gap:14px;flex-wrap:wrap;justify-content:center;font-family:JetBrains Mono,monospace;font-size:0.85rem;color:#ecf0f1;';
+    hud.innerHTML=`<span>📊 <b id="mc-progress">1/${queue.length}</b></span><span>🎯 <b style="color:#3498db" id="mc-score">0</b> pts</span><span>🔥 <b style="color:#e74c3c" id="mc-streak">0</b></span><span>🏆 Round best <b style="color:#f1c40f">${bestRound}</b></span>`;
+    root.appendChild(hud);
+    const prompt=document.createElement('div');prompt.id='mc-prompt';prompt.style.cssText='background:rgba(52,152,219,0.18);border:2px solid #3498db;padding:10px 14px;border-radius:10px;font-family:JetBrains Mono,monospace;color:#ecf0f1;font-size:1rem;text-align:center;';
+    root.appendChild(prompt);
+    // Canvas
+    const W=900,H=450;
+    const cv=document.createElement('canvas');cv.width=W;cv.height=H;cv.style.cssText='width:min(96vw,900px);height:auto;background:#0a2540;border-radius:12px;border:2px solid #3498db;cursor:crosshair;touch-action:none;';
+    root.appendChild(cv);
+    const cx=cv.getContext('2d');
+    function ll2xy(lat,lon){return{x:(lon+180)*(W/360),y:(90-lat)*(H/180)};}
+    function drawMap(){
+      cx.fillStyle='#0a2540';cx.fillRect(0,0,W,H);
+      // Grid lines (lat/lon)
+      cx.strokeStyle='rgba(255,255,255,0.06)';cx.lineWidth=1;
+      for(let lat=-60;lat<=60;lat+=30){const y=ll2xy(lat,0).y;cx.beginPath();cx.moveTo(0,y);cx.lineTo(W,y);cx.stroke();}
+      for(let lon=-150;lon<=150;lon+=30){const x=ll2xy(0,lon).x;cx.beginPath();cx.moveTo(x,0);cx.lineTo(x,H);cx.stroke();}
+      // Continents
+      _mapContinents.forEach(c=>{cx.beginPath();c.pts.forEach((p,i)=>{const xy=ll2xy(p[1],p[0]);if(i===0)cx.moveTo(xy.x,xy.y);else cx.lineTo(xy.x,xy.y);});cx.closePath();cx.fillStyle=c.color;cx.fill();cx.strokeStyle='rgba(0,0,0,0.4)';cx.lineWidth=1;cx.stroke();});
+    }
+    function haversine(lat1,lon1,lat2,lon2){const R=6371,toR=Math.PI/180;const dLat=(lat2-lat1)*toR,dLon=(lon2-lon1)*toR;const a=Math.sin(dLat/2)**2+Math.cos(lat1*toR)*Math.cos(lat2*toR)*Math.sin(dLon/2)**2;return 2*R*Math.asin(Math.sqrt(a));}
+    function scoreDistance(km){if(km<=300)return 100;if(km<=700)return 80;if(km<=1500)return 60;if(km<=3000)return 35;if(km<=5000)return 15;return 0;}
+    function showResult(targetLL,clickLL,km,score){
+      drawMap();
+      const t=ll2xy(targetLL.la,targetLL.lo),c=ll2xy(clickLL.lat,clickLL.lon);
+      // Line between
+      cx.strokeStyle='#f1c40f';cx.lineWidth=2;cx.setLineDash([6,4]);cx.beginPath();cx.moveTo(c.x,c.y);cx.lineTo(t.x,t.y);cx.stroke();cx.setLineDash([]);
+      // Click marker (red)
+      cx.fillStyle='#e74c3c';cx.beginPath();cx.arc(c.x,c.y,8,0,Math.PI*2);cx.fill();cx.strokeStyle='#fff';cx.lineWidth=2;cx.stroke();
+      // Target marker (green/gold)
+      cx.fillStyle=score>=80?'#2ecc71':score>=60?'#f1c40f':score>=35?'#e67e22':'#e74c3c';cx.beginPath();cx.arc(t.x,t.y,11,0,Math.PI*2);cx.fill();cx.strokeStyle='#fff';cx.lineWidth=2;cx.stroke();
+      // Label
+      cx.fillStyle='#fff';cx.font='bold 14px JetBrains Mono';cx.textAlign='center';cx.fillText(targetLL.n,t.x,t.y-16);
+    }
+    function nextQ(){
+      if(idx>=queue.length){
+        // Round done
+        if(roundScore>bestRound){localStorage.setItem(bestKey,roundScore);}
+        localStorage.setItem(lifetimeKey,lifetime+roundScore);
+        prompt.innerHTML=`<b style="color:#f1c40f">🎉 Round complete!</b> Total: ${roundScore} pts · streak ${streak}`;
+        if(typeof spawnConfetti==='function')spawnConfetti(window.innerWidth/2,window.innerHeight/2,150);
+        if(typeof showFeedback==='function')showFeedback(`Round done · ${roundScore} pts`,'#f1c40f');
+        const restart=document.createElement('button');restart.className='retro-btn';restart.style.marginTop='10px';restart.textContent='🔁 Play again';restart.onclick=initMapClick;root.appendChild(restart);
+        return;
+      }
+      const cur=queue[idx];
+      prompt.innerHTML=`Where is <b style="color:#3498db;font-size:1.1em">${cur.n}</b>?`;
+      const pe=document.getElementById('mc-progress');if(pe)pe.textContent=`${idx+1}/${queue.length}`;
+      drawMap();
+    }
+    cv.addEventListener('click',e=>{
+      if(idx>=queue.length)return;
+      const r=cv.getBoundingClientRect();
+      const mx=(e.clientX-r.left)*(W/r.width),my=(e.clientY-r.top)*(H/r.height);
+      const lon=(mx/W)*360-180,lat=90-(my/H)*180;
+      const cur=queue[idx];
+      const km=Math.round(haversine(lat,lon,cur.la,cur.lo));
+      const sc=scoreDistance(km);
+      roundScore+=sc;streak=sc>=60?streak+1:0;
+      const se=document.getElementById('mc-score');if(se)se.textContent=roundScore;
+      const ste=document.getElementById('mc-streak');if(ste)ste.textContent=streak;
+      const tier=sc>=80?'🏆 Perfect':sc>=60?'⭐ Close!':sc>=35?'~ Ballpark':sc>=15?'Far':'Way off';
+      if(typeof showFeedback==='function')showFeedback(`${tier} · ${km} km off · +${sc} pts`,sc>=80?'#f1c40f':sc>=60?'#2ecc71':sc>=35?'#3498db':'#e67e22');
+      if(sc>=80&&typeof spawnConfetti==='function')spawnConfetti(window.innerWidth/2,window.innerHeight/3,40);
+      if(streak===5||streak===10){if(typeof spawnConfetti==='function')spawnConfetti(window.innerWidth/2,window.innerHeight/3,80);}
+      if(typeof addScore==='function')addScore(Math.floor(sc/20));
+      showResult(cur,{lat,lon},km,sc);
+      idx++;
+      setTimeout(nextQ,2200);
+    });
+    nextQ();
   }
   function initSudoku(){
     const board=$$('#sdk-board'),hud=$$('#sdk-hud'),controls=$$('#sdk-controls'),numpad=$$('#sdk-numpad');

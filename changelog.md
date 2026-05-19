@@ -1,5 +1,21 @@
 ﻿# Changelog 
 
+## [5.6.70] - 2026-05-19 - Amni-Learn NEW MODULE: Map Clicker
+- **🗺️ Map Clicker** added under Brain Training → Logic & Language. Hand-drawn continent polygons (NA, SA, EU, AF, AS, OC) projected equirectangularly into a 900×450 canvas with subtle 30°-grid overlay.
+- **42 countries** spread across continents with lat/lon coords, tagged tiers 1-3 for difficulty (Easy = 15 famous; Normal = 30; Hard = all 42 incl. Bhutan, Mongolia, Kazakhstan, etc).
+- **Round structure**: 12 random countries per round. For each, prompt "Where is X?" Player taps anywhere on the canvas; great-circle distance (haversine) measured in km. Score by tolerance:
+  - ≤300 km: 🏆 Perfect (100 pts + 40-particle confetti)
+  - ≤700 km: ⭐ Close! (80 pts)
+  - ≤1500 km: ~ Ballpark (60 pts)
+  - ≤3000 km: Far (35 pts)
+  - ≤5000 km: (15 pts)
+  - > 5000 km: 0 pts
+- **Result overlay** after each tap: drawn line between click and target, color-coded target marker, country label.
+- **Streak system**: ≥60 pts maintains streak; 5/10 milestone confetti.
+- **Persistence** per difficulty: `mc-lifetime-{tier}` (sum across rounds) + `mc-best-round-{tier}` (best single-round score).
+- **Achievement**: 🗺️ Cartographer (1000 lifetime Map Clicker points).
+- **SW cache v51 → v52** to flush.
+
 ## [5.6.69] - 2026-05-18 - Amni-Learn NEW MODULE: Periodic Table
 - **⚛️ Periodic Table** added under Brain Training → Logic & Language. Full 118-element standard 18×10 grid (periods 1-7 + lanthanides + actinides), atomic number + symbol per cell, hover-title shows full element name.
 - **Tap-to-place gameplay**: prompt names an element (full name + symbol + atomic number); player taps the correct grid cell. Correct cell turns green-gold with glow; wrong cell flashes red. Two wrong tries → correct cell auto-reveals with red outline.
