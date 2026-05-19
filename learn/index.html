@@ -9666,12 +9666,23 @@ function playAnimalSound(type) {
     const ct=$$('#vs-container'),hud=$$('#vs-hud');
     let rd=0,sc=0,tm=0,gridSz=6,rtList=[],wrongTaps=0;
     const mode=sessionStorage.getItem('vs-mode')||'normal';
+    const vsTask=sessionStorage.getItem('vs-task')||'feature';
     const cfg={easy:{startSz:5,maxSz:7,rounds:10,grow:4},normal:{startSz:6,maxSz:10,rounds:10,grow:3},hard:{startSz:8,maxSz:12,rounds:10,grow:2}};
     const c=cfg[mode]||cfg.normal;
-    const bestKey='vs-best-avg-'+mode;
-    const bestAvg=parseFloat(sessionStorage.getItem(bestKey)||'0');
+    const bestKey='vs-best-avg-'+vsTask+'-'+mode;
+    const bestAvg=parseFloat(sessionStorage.getItem(bestKey)||sessionStorage.getItem('vs-best-avg-'+mode)||'0');
     if(window._vsTimer){clearInterval(window._vsTimer);window._vsTimer=null;}
-    document.querySelectorAll('.vs-summary,.vs-target-card,.vs-mode-row').forEach(n=>n.remove());
+    document.querySelectorAll('.vs-summary,.vs-target-card,.vs-mode-row,.vs-task-row').forEach(n=>n.remove());
+    // Conjunction sets: target = (c1,L1). Distractors share ONE feature
+    // each — either same color but different letter, or same letter but
+    // different color. Classic Treisman feature-integration task.
+    const conjSets=[
+      {c1:'#e74c3c',c2:'#3498db',L1:'X',L2:'O'},
+      {c1:'#2ecc71',c2:'#f1c40f',L1:'T',L2:'L'},
+      {c1:'#9b59b6',c2:'#1abc9c',L1:'Z',L2:'N'},
+      {c1:'#e67e22',c2:'#3498db',L1:'★',L2:'○'},
+      {c1:'#e74c3c',c2:'#2ecc71',L1:'◆',L2:'□'}
+    ];
     const sets=[
       {target:'Q',distractors:['O','C','G','D']},
       {target:'T',distractors:['L','I','F','E']},
@@ -9700,12 +9711,49 @@ function playAnimalSound(type) {
     }
     function buildRound(){
       rd++;$$('#vs-sc').textContent=rd-1;
-      const set=sets[Math.floor(Math.random()*sets.length)];
       const total=gridSz*gridSz;const tIdx=Math.floor(Math.random()*total);
       ct.innerHTML='';
+      const startT=performance.now();
+      if(vsTask==='conjunction'){
+        const cs=conjSets[Math.floor(Math.random()*conjSets.length)];
+        const targetCard=document.createElement('div');targetCard.className='vs-target-card';
+        targetCard.innerHTML=`<span>Find:</span><span class="symbol" style="color:${cs.c1};text-shadow:0 0 4px ${cs.c1}55">${cs.L1}</span><span style="font-size:0.78rem;opacity:0.7">Round ${rd}/${c.rounds} \u00b7 ${gridSz}\u00d7${gridSz} \u00b7 \ud83e\uddec Conjunction</span>`;
+        ct.appendChild(targetCard);
+        const field=document.createElement('div');field.className='vs-field';field.style.gridTemplateColumns=`repeat(${gridSz},1fr)`;
+        for(let i=0;i<total;i++){
+          const it=document.createElement('div');it.className='vs-item';
+          const isTarget=i===tIdx;
+          let color,letter;
+          if(isTarget){color=cs.c1;letter=cs.L1;}
+          else if(Math.random()<0.5){color=cs.c1;letter=cs.L2;}
+          else{color=cs.c2;letter=cs.L1;}
+          it.style.color=color;
+          it.textContent=letter;
+          it.onclick=()=>{
+            if(isTarget){
+              it.classList.add('found');
+              const dt=(performance.now()-startT)/1000;
+              rtList.push(dt);
+              sc++;$$('#vs-sc').textContent=sc;_updateAvg();
+              addScore(dt<3?4:(dt<6?3:2));
+              showFeedback(`${dt.toFixed(1)}s \u26a1`,'#2ecc71');
+              if(rd>=c.rounds){setTimeout(_gameOver,800);}
+              else{gridSz=Math.min(c.maxSz,c.startSz+Math.floor(rd/c.grow));setTimeout(buildRound,800);}
+            }else{
+              wrongTaps++;resetStreak();
+              it.classList.add('wrong-flash');setTimeout(()=>it.classList.remove('wrong-flash'),350);
+              showFeedback('Not it \u2014 share one feature only','#e74c3c');it.style.opacity='0.3';
+            }
+          };
+          field.appendChild(it);
+        }
+        ct.appendChild(field);
+        return;
+      }
+      // Feature search (default)
+      const set=sets[Math.floor(Math.random()*sets.length)];
       const targetCard=document.createElement('div');targetCard.className='vs-target-card';targetCard.innerHTML=`<span>Find:</span><span class="symbol">${set.target}</span><span style="font-size:0.78rem;opacity:0.7">Round ${rd}/${c.rounds} \u00b7 ${gridSz}\u00d7${gridSz}</span>`;ct.appendChild(targetCard);
       const field=document.createElement('div');field.className='vs-field';field.style.gridTemplateColumns=`repeat(${gridSz},1fr)`;
-      const startT=performance.now();
       for(let i=0;i<total;i++){
         const it=document.createElement('div');it.className='vs-item';
         const isTarget=i===tIdx;it.textContent=isTarget?set.target:set.distractors[Math.floor(Math.random()*set.distractors.length)];
@@ -9720,12 +9768,9 @@ function playAnimalSound(type) {
             if(rd>=c.rounds){setTimeout(_gameOver,800);}
             else{gridSz=Math.min(c.maxSz,c.startSz+Math.floor(rd/c.grow));setTimeout(buildRound,800);}
           }else{
-            wrongTaps++;
-            resetStreak();
-            it.classList.add('wrong-flash');
-            setTimeout(()=>it.classList.remove('wrong-flash'),350);
-            showFeedback('Not it!','#e74c3c');
-            it.style.opacity='0.3';
+            wrongTaps++;resetStreak();
+            it.classList.add('wrong-flash');setTimeout(()=>it.classList.remove('wrong-flash'),350);
+            showFeedback('Not it!','#e74c3c');it.style.opacity='0.3';
           }
         };
         field.appendChild(it);
@@ -9733,7 +9778,10 @@ function playAnimalSound(type) {
       ct.appendChild(field);
     }
     function _modeRow(){const row=document.createElement('div');row.className='vs-mode-row';[['easy','Easy (5-7)'],['normal','Normal (6-10)'],['hard','Hard (8-12)']].forEach(([m,lbl])=>{const b=document.createElement('button');b.className='vs-mode-btn'+(m===mode?' active':'');b.textContent=lbl;b.onclick=()=>{sessionStorage.setItem('vs-mode',m);initVisualSearch();};row.appendChild(b);});return row;}
-    ct.innerHTML='<div class="nmm-msg">A target symbol is shown. Find it in the grid of distractors as fast as possible! Grid grows each round.</div>';
+    function _taskRow(){const row=document.createElement('div');row.className='vs-task-row';row.style.cssText='display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:4px 0;';[['feature','\ud83d\udd0d Feature'],['conjunction','\ud83e\uddec Conjunction']].forEach(([t,lbl])=>{const b=document.createElement('button');b.className='vs-mode-btn'+(t===vsTask?' active':'');b.textContent=lbl;b.onclick=()=>{sessionStorage.setItem('vs-task',t);initVisualSearch();};row.appendChild(b);});return row;}
+    const introText=vsTask==='conjunction'?'A colored target letter is shown. Distractors share ONE feature each (same color or same letter, but not both). RT scales with grid size \u2014 slow & deliberate.':'A target symbol is shown. Find it in the grid of distractors as fast as possible! Grid grows each round.';
+    ct.innerHTML=`<div class="nmm-msg">${introText}</div>`;
+    ct.appendChild(_taskRow());
     ct.appendChild(_modeRow());
     const sb=document.createElement('button');sb.className='nmm-btn';sb.textContent='START';sb.onclick=()=>{rd=0;sc=0;gridSz=c.startSz;rtList=[];wrongTaps=0;buildRound();};ct.appendChild(sb);
   }

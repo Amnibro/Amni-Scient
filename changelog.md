@@ -1,5 +1,15 @@
 ﻿# Changelog 
 
+## [5.6.91] - 2026-05-19 - Visual Search: 🧬 Conjunction task (Treisman)
+- Visual Search had only one task: find a single-feature target among uniform distractors (e.g., a Q among Os — pop-out, near-constant RT regardless of grid size). Now adds a second task tier from cognitive psychology:
+  - 🔍 **Feature** (default, original) — single distinguishing feature; pop-out search.
+  - 🧬 **Conjunction** — target defined by a combination (color + letter). Distractors share *one* feature each: half match the target color but have the wrong letter, half match the target letter but have the wrong color. Neither attribute alone identifies the target — classic Treisman feature-integration task. RT scales linearly with set size (vs constant for pop-out).
+- 5 conjunction sets across distinct color/letter pairs: red-X / blue-O, green-T / yellow-L, purple-Z / teal-N, orange-★ / blue-○, red-◆ / green-□.
+- Score weight bumped for conjunction (faster = more points; 4/3/2 vs feature's 3/2/1).
+- Best avg-RT tracked per (task, mode): `vs-best-avg-conjunction-hard`, etc. Falls back to original `vs-best-avg-<mode>` keys for first run.
+- Intro text and target-card chip adapt to the active task.
+- **SW cache v72 → v73** to flush.
+
 ## [5.6.90] - 2026-05-19 - Chimp Test: timed-reveal modes (Ayumu-class 0.5s)
 - Chimp Test had a single reveal mode — numbers visible until your first tap. Now has a reveal-time picker:
   - ⏵ **Always** (default) — numbers visible until you tap; tap 1 to start hiding the rest.
