@@ -1184,6 +1184,7 @@
         <span>⭐ <span class="score-val" id="score-val">0</span></span>
         <span class="streak-fire" id="streak-fire">🔥 <span class="streak-val" id="streak-val">0</span></span>
         <button class="retro-btn" id="leaderboard-btn" style="padding:2px 8px;font-size:0.75rem;margin-left:6px" onclick="window._showAllLeaderboards()">🏆</button>
+        <button class="retro-btn" id="stats-btn" style="padding:2px 8px;font-size:0.75rem;margin-left:4px" onclick="window._showStatsOverview()" title="Stats">📊</button>
     </div>
     <div class="top-controls">
         <span class="fs-hint" id="fs-hint">(Press ESC to exit)</span>
@@ -2123,6 +2124,77 @@
     ov.innerHTML=html;ov.querySelector('.retro-btn').onclick=()=>ov.remove();document.body.appendChild(ov);
   };
   window._hs_get_pub=function(game){try{return JSON.parse(localStorage.getItem('hs-'+game)||'[]');}catch(e){return[];}};
+  window._showStatsOverview=function(){
+    function rd(k){return localStorage.getItem(k)||sessionStorage.getItem(k);}
+    const sec=[
+      {h:'🧠 Working Memory',rows:[
+        {n:'N-Back · 1-Back',v:rd('nbk-best-1'),s:'%'},
+        {n:'N-Back · 2-Back',v:rd('nbk-best-2'),s:'%'},
+        {n:'N-Back · 3-Back',v:rd('nbk-best-3'),s:'%'},
+        {n:'N-Back Dual · 2-Back',v:rd('nbk-dual-best-2'),s:'%'},
+        {n:'N-Back Dual · 3-Back',v:rd('nbk-dual-best-3'),s:'%'},
+        {n:'Number Memory · Forward',v:rd('nmm-best-forward')||rd('nmm-best'),s:' digits'},
+        {n:'Number Memory · Backward',v:rd('nmm-best-backward'),s:' digits'},
+        {n:'Chimp Test (Always)',v:rd('chm-best-always')||rd('chm-best'),s:' nums'},
+        {n:'Chimp Test (Ayumu 0.5s)',v:rd('chm-best-500'),s:' nums'},
+      ]},
+      {h:'🎯 Attention & Reaction',rows:[
+        {n:'Reaction · Visual',v:rd('rxt-best-single-visual')||rd('rxt-best-single'),s:' ms'},
+        {n:'Reaction · Audio',v:rd('rxt-best-single-audio'),s:' ms'},
+        {n:'Reaction · Choice',v:rd('rxt-best-single-choice'),s:' ms'},
+        {n:'Stroop Ink (normal)',v:rd('stp-best-normal-ink')||rd('stp-best-normal'),s:''},
+        {n:'Stroop Word (normal)',v:rd('stp-best-normal-word'),s:''},
+        {n:'Visual Search · Feature',v:rd('vs-best-avg-feature-normal')||rd('vs-best-avg-normal'),s:' s avg'},
+        {n:'Visual Search · Conjunction',v:rd('vs-best-avg-conjunction-normal'),s:' s avg'},
+        {n:'Trail Making · TMT-A',v:rd('tm-best-num'),s:' s'},
+        {n:'Trail Making · TMT-B',v:rd('tm-best-alt'),s:' s'},
+      ]},
+      {h:'🔢 Reasoning & Math',rows:[
+        {n:'Speed Math · Mixed',v:rd('spm-best-mixed')||rd('spm-best'),s:''},
+        {n:'Speed Math · Times',v:rd('spm-best-times'),s:''},
+        {n:'Speed Math · Division',v:rd('spm-best-div'),s:''},
+        {n:'Speed Math · Sqr & √',v:rd('spm-best-sqrt'),s:''},
+        {n:'Sudoku · Classic Hard',v:rd('sdk-best-classic-hard')||rd('sdk-best-hard'),s:' s'},
+        {n:'Sudoku · X Hard',v:rd('sdk-best-x-hard'),s:' s'},
+        {n:'Chess Puzzles · streak',v:rd('chess-best-streak'),s:''},
+        {n:'Anagrams · best',v:rd('agm-best'),s:''},
+        {n:'Pattern Recognition · best',v:rd('pat-best'),s:''},
+      ]},
+      {h:'🎼 Audio & Music',rows:[
+        {n:'Ear Training · lifetime correct',v:rd('ear-life-correct'),s:''},
+        {n:'Morse · lifetime correct',v:rd('morse-total-correct'),s:''},
+        {n:'Morse · best streak',v:rd('morse-best-streak'),s:''},
+        {n:'Memory Sequence L3 Classic',v:rd('seq-best-L3-classic'),s:' rounds'},
+      ]},
+      {h:'🌍 Knowledge',rows:[
+        {n:'Periodic · Place (hard)',v:rd('pt-solved-hard'),s:''},
+        {n:'Periodic · Quiz (hard)',v:rd('pt-quiz-total-hard'),s:''},
+        {n:'Map Clicker · World best round',v:rd('mc-best-round-world-hard')||rd('mc-best-round-hard'),s:' pts'},
+        {n:'Map Clicker · US best round',v:rd('mc-best-round-us-hard'),s:' pts'},
+      ]},
+      {h:'🔄 Visual & Spatial',rows:[
+        {n:'Mental Rotation · normal',v:rd('mr-best-normal'),s:''},
+        {n:'Mental Rotation · hard',v:rd('mr-best-hard'),s:''},
+        {n:'Dot Tracking · 3-target',v:rd('mot-best-3'),s:'/15'},
+        {n:'Dot Tracking · 5-target',v:rd('mot-best-5'),s:'/25'},
+        {n:'Card Pairs',v:'(see in-game)',s:''},
+      ]},
+    ];
+    const ov=document.createElement('div');ov.className='hs-overlay';ov.onclick=e=>{if(e.target===ov)ov.remove();};
+    let html='<div class="hs-modal" style="max-height:85vh;overflow-y:auto;min-width:340px;max-width:560px"><div class="hs-title">📊 MY STATS</div><div style="font-size:0.78rem;color:#7a8a9a;margin-bottom:8px">Best results across all brain-exercise modules.</div>';
+    let totalRecorded=0;
+    sec.forEach(s=>{
+      const rows=s.rows.filter(r=>r.v!==null&&r.v!==undefined&&r.v!=='');
+      if(rows.length===0)return;
+      totalRecorded+=rows.length;
+      html+=`<div style="margin:10px 0 4px;color:#4db8ff;font-size:0.88rem;font-weight:bold">${s.h}</div><table class="hs-table" style="width:100%">`;
+      rows.forEach(r=>{html+=`<tr><td style="text-align:left;padding:3px 6px;font-size:0.82rem">${r.n}</td><td style="text-align:right;color:#f1c40f;font-weight:bold;padding:3px 6px;font-size:0.85rem">${r.v}${r.s}</td></tr>`;});
+      html+='</table>';
+    });
+    if(totalRecorded===0){html+='<div style="text-align:center;color:#7a8a9a;padding:20px;font-style:italic">No personal records yet. Play any brain-cognitive module to log a PR here!</div>';}
+    html+='<button class="retro-btn" style="margin-top:14px;width:100%">CLOSE</button></div>';
+    ov.innerHTML=html;ov.querySelector('.retro-btn').onclick=()=>ov.remove();document.body.appendChild(ov);
+  };
 
   $$all('.game-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {

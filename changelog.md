@@ -1,5 +1,19 @@
 ﻿# Changelog 
 
+## [5.6.92] - 2026-05-19 - 📊 Stats Overview panel
+- New 📊 button in the top bar (next to 🏆 leaderboard). Opens a modal listing the user's personal records across all brain/exercise modules.
+- Six categorised sections:
+  - **🧠 Working Memory** — N-Back single & dual (1–3 back), Number Memory forward/backward, Chimp Test Always/Ayumu.
+  - **🎯 Attention & Reaction** — Reaction visual/audio/choice, Stroop ink/word, Visual Search feature/conjunction, Trail Making A/B.
+  - **🔢 Reasoning & Math** — Speed Math (all 4 modes), Sudoku Classic & X, Chess streak, Anagrams, Pattern Recognition.
+  - **🎼 Audio & Music** — Ear Training lifetime, Morse lifetime + streak, Memory Sequence.
+  - **🌍 Knowledge** — Periodic (Place + Quiz), Map Clicker World + US.
+  - **🔄 Visual & Spatial** — Mental Rotation, Dot Tracking.
+- Reads each module's best/PR key from both localStorage and sessionStorage; falls back to the original pre-mode-picker keys for backward compatibility.
+- Empty rows are filtered out so newcomers see a "no records yet — play any module to log a PR" prompt instead of zeros.
+- Reuses existing `.hs-overlay` / `.hs-modal` styling from the public leaderboard, so no CSS additions needed.
+- **SW cache v73 → v74** to flush.
+
 ## [5.6.91] - 2026-05-19 - Visual Search: 🧬 Conjunction task (Treisman)
 - Visual Search had only one task: find a single-feature target among uniform distractors (e.g., a Q among Os — pop-out, near-constant RT regardless of grid size). Now adds a second task tier from cognitive psychology:
   - 🔍 **Feature** (default, original) — single distinguishing feature; pop-out search.
