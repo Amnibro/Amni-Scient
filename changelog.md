@@ -1,5 +1,14 @@
 ﻿# Changelog 
 
+## [5.6.74] - 2026-05-19 - Trail Making: stop telegraphing the next target
+- **Bug**: Trail Making (TMT-A / TMT-B) showed a "Next: 5" chip above the canvas AND outlined the next-expected node on the canvas itself with a glow halo + brighter fill/stroke. This trivialized the test — the player didn't have to visually scan the scattered labels and figure out the sequence, just tap whatever was lit up. Reitan TMT requires the subject to find the next number/letter themselves.
+- **Fix**:
+  - Replaced the "Next" chip with a "Progress N/total" chip — same on-screen real-estate, but tells you how far you've gotten without revealing what to tap.
+  - All unfinished nodes now render identically (white-tinted fill, gray stroke). Only `done` nodes turn green and only after a correct tap.
+  - The connecting trail still draws (visible progress feedback), and wrong taps still increment the error count.
+- Now genuine: you have to scan, identify, and commit. Times should be more meaningful relative to clinical norms.
+- **SW cache v55 → v56** to flush.
+
 ## [5.6.73] - 2026-05-19 - Chess Puzzles: fix puzzles 2 and 5 (queen wasn't defended)
 - **Puzzle 2** (`Kc6, Qb1, Kc8` → Qb8) was unsound: Black king could just capture the undefended Q on b8 (Kc6 attacks only one square away). **Fix**: added a white pawn on a7 to defend b8. Now `Kc6, Qb1, Pa7 vs Kc8`, mate via Qb8 because pawn a7 covers b8.
 - **Puzzle 5** (`Ka1, Qg3, Nf6, Kh8, ph7` → Qg7) had the same bug: knight on f6 attacks g8/h7/e8 but NOT g7, so the queen sitting on g7 was undefended and the king captured it. **Fix**: moved the knight from f6 to f5 — Nf5 attacks d4, d6, e3, e7, g3, g7, h4, h6, so g7 is now defended.

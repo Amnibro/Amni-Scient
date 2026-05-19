@@ -9146,7 +9146,8 @@ function playAnimalSound(type) {
       ct.innerHTML='';
       document.querySelectorAll('.tm-next,.tm-summary').forEach(n=>n.remove());
       const cw=Math.min(window.innerWidth*0.9,650),ch=Math.min(window.innerHeight*0.65,650);
-      const nextChip=document.createElement('div');nextChip.className='tm-next';nextChip.innerHTML=`<span class="label">Next</span><span class="val" id="tm-next-val">—</span>`;ct.appendChild(nextChip);
+      // Progress chip (count only — no "next" hint, that defeats the test)
+      const progChip=document.createElement('div');progChip.className='tm-next';progChip.innerHTML=`<span class="label">Progress</span><span class="val" id="tm-progress-val">0/${count}</span>`;ct.appendChild(progChip);
       const canvas=document.createElement('canvas');canvas.className='tm-canvas';canvas.width=cw;canvas.height=ch;canvas.style.width=cw+'px';canvas.style.height=ch+'px';canvas.style.touchAction='manipulation';
       ct.appendChild(canvas);const ctx=canvas.getContext('2d');
       const count=mode==='num'?15:12;const letters='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -9160,18 +9161,20 @@ function playAnimalSound(type) {
         nodes.push({...s,x,y});
       });
       let nextIdx=0,errors=0,lines=[];
-      function _refreshNextChip(){const nv=$$('#tm-next-val');if(nv)nv.textContent=nextIdx<nodes.length?nodes[nextIdx].label:'✓';}
+      function _refreshNextChip(){const pv=$$('#tm-progress-val');if(pv)pv.textContent=nextIdx>=nodes.length?'✓ done':`${nextIdx}/${count}`;}
       function draw(){
         ctx.clearRect(0,0,cw,ch);
         ctx.strokeStyle='#1abc9c';ctx.lineWidth=3;ctx.lineCap='round';
         for(let i=1;i<lines.length;i++){ctx.beginPath();ctx.moveTo(lines[i-1].x,lines[i-1].y);ctx.lineTo(lines[i].x,lines[i].y);ctx.stroke();}
+        // All unfinished nodes render identically — no halo/highlight on
+        // the next-expected one. The player must read the labels and
+        // figure out the sequence themselves (Reitan-faithful).
         nodes.forEach((n,i)=>{
-          const done=i<nextIdx;const active=i===nextIdx;
-          if(active){ctx.beginPath();ctx.arc(n.x,n.y,radius+5,0,Math.PI*2);ctx.fillStyle='rgba(26,188,156,0.18)';ctx.fill();}
+          const done=i<nextIdx;
           ctx.beginPath();ctx.arc(n.x,n.y,radius,0,Math.PI*2);
-          ctx.fillStyle=done?'rgba(46,204,113,0.55)':(active?'rgba(26,188,156,0.4)':'rgba(255,255,255,0.10)');ctx.fill();
-          ctx.strokeStyle=done?'#2ecc71':(active?'#1abc9c':'#555');ctx.lineWidth=active?3:2;ctx.stroke();
-          ctx.fillStyle=done?'#2ecc71':(active?'#1abc9c':'#ecf0f1');ctx.font=`bold ${Math.floor(radius*0.85)}px JetBrains Mono`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(n.label,n.x,n.y);
+          ctx.fillStyle=done?'rgba(46,204,113,0.55)':'rgba(255,255,255,0.10)';ctx.fill();
+          ctx.strokeStyle=done?'#2ecc71':'#888';ctx.lineWidth=2;ctx.stroke();
+          ctx.fillStyle=done?'#2ecc71':'#ecf0f1';ctx.font=`bold ${Math.floor(radius*0.85)}px JetBrains Mono`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(n.label,n.x,n.y);
         });
       }
       draw();_refreshNextChip();tm=0;errors=0;act=true;$$('#tm-err').textContent=0;$$('#tm-time').textContent='0.0';
