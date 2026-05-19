@@ -9129,9 +9129,11 @@ function playAnimalSound(type) {
     const ct=$$('#rxt-container'),hud=$$('#rxt-hud');
     let rd=0,res=[],wait=false,st=0;
     if(window._rxtTimeout){clearTimeout(window._rxtTimeout);window._rxtTimeout=null;}
-    const bestSingle=parseInt(sessionStorage.getItem('rxt-best-single')||'0');
-    const bestAvg=parseInt(sessionStorage.getItem('rxt-best-avg')||'0');
-    hud.innerHTML=`<span class="game-stat">\ud83c\udfaf Round <span class="game-stat-val" id="rxt-rd">0</span>/5</span><span class="game-stat">\u26a1 Avg <span class="game-stat-val" id="rxt-avg">--</span>ms</span><span class="game-stat">\u2b50 Best ${bestSingle?bestSingle+'ms':'\u2014'}</span>`;
+    const rxMode=sessionStorage.getItem('rxt-mode')||'visual';
+    const bestSingle=parseInt(sessionStorage.getItem('rxt-best-single-'+rxMode)||sessionStorage.getItem('rxt-best-single')||'0');
+    const bestAvg=parseInt(sessionStorage.getItem('rxt-best-avg-'+rxMode)||sessionStorage.getItem('rxt-best-avg')||'0');
+    const modeLabel={visual:'\ud83c\udfa8 Visual',audio:'\ud83d\udd0a Audio',choice:'\ud83c\udfaf Choice'}[rxMode]||'\ud83c\udfa8 Visual';
+    hud.innerHTML=`<span class="game-stat">\ud83c\udfaf Round <span class="game-stat-val" id="rxt-rd">0</span>/5</span><span class="game-stat">\u26a1 Avg <span class="game-stat-val" id="rxt-avg">--</span>ms</span><span class="game-stat">\u2b50 Best ${bestSingle?bestSingle+'ms':'\u2014'}</span><span class="game-stat">${modeLabel}</span>`;
     function _tier(ms){if(ms<180)return{name:'godlike',label:'Godlike',msg:'\u26a1\u26a1\u26a1 GODLIKE!'};if(ms<220)return{name:'excellent',label:'Excellent',msg:'\u26a1\u26a1 Excellent!'};if(ms<280)return{name:'good',label:'Good',msg:'\u26a1 Nice!'};if(ms<350)return{name:'average',label:'Average',msg:'\u26a1 Solid'};return{name:'slow',label:'Slow',msg:'\u23f1 Keep practicing'};}
     function updRes(){const el=$$('#rxt-res');if(!el)return;el.innerHTML='';res.forEach((r,i)=>{const t=_tier(r);const d=document.createElement('div');d.className='rxt-result tier-'+t.name;d.innerHTML=`<span>Round ${i+1}<span class="rxt-result-tier">${t.label}</span></span><span class="rxt-result-val">${r}ms</span>`;el.appendChild(d);});if(res.length)$$('#rxt-avg').textContent=Math.round(res.reduce((a,b)=>a+b,0)/res.length);}
     function _summary(){
@@ -9144,8 +9146,8 @@ function playAnimalSound(type) {
       const t=_tier(avg);
       const wasBestSingle=!bestSingle||min<bestSingle;
       const wasBestAvg=!bestAvg||avg<bestAvg;
-      if(wasBestSingle)sessionStorage.setItem('rxt-best-single',min);
-      if(wasBestAvg)sessionStorage.setItem('rxt-best-avg',avg);
+      if(wasBestSingle)sessionStorage.setItem('rxt-best-single-'+rxMode,min);
+      if(wasBestAvg)sessionStorage.setItem('rxt-best-avg-'+rxMode,avg);
       ct.innerHTML='';
       const sum=document.createElement('div');sum.className='rxt-summary';
       const header=wasBestAvg||wasBestSingle?'\ud83c\udf1f NEW PERSONAL BEST!':`${t.msg}`;
@@ -9158,8 +9160,34 @@ function playAnimalSound(type) {
       addScore(Math.max(1,Math.floor(20-avg/25)));
       const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='AGAIN';rb.style.marginTop='12px';rb.onclick=()=>{rd=0;res=[];initReaction();};ct.appendChild(rb);
     }
-    function go(){if(currentGame!=='reaction')return;rd++;$$('#rxt-rd').textContent=rd;ct.innerHTML=`<div class="rxt-zone wait" id="rxt-zone"><div class="rxt-text">Wait for green...</div></div><div class="rxt-results" id="rxt-res"></div>`;updRes();wait=true;const z=$$('#rxt-zone');window._rxtTimeout=setTimeout(()=>{z.className='rxt-zone ready';z.querySelector('.rxt-text').textContent='TAP NOW!';st=performance.now();wait=false;},2000+Math.random()*3000);z.onclick=()=>{if(wait){clearTimeout(window._rxtTimeout);z.className='rxt-zone early';z.querySelector('.rxt-text').textContent='Too early! Tap to retry';rd--;z.onclick=go;}else if(st){const dt=Math.round(performance.now()-st);st=0;res.push(dt);z.className='rxt-zone done';const t=_tier(dt);z.querySelector('.rxt-text').textContent=`${dt}ms \u00b7 ${t.label}`;updRes();addScore(dt<250?3:(dt<400?2:1));showFeedback(t.msg,'#2ecc71');rd>=5?setTimeout(_summary,1200):setTimeout(go,1200);}};}
-    ct.innerHTML=`<div class="nmm-msg">When the box turns GREEN, tap as fast as you can! Tap early on red = retry.</div>`;
+    function playBeep(){try{const ctxA=new (window.AudioContext||window.webkitAudioContext)();const o=ctxA.createOscillator(),g=ctxA.createGain();o.type='sine';o.frequency.value=880;const now=ctxA.currentTime;g.gain.setValueAtTime(0,now);g.gain.linearRampToValueAtTime(0.3,now+0.01);g.gain.setValueAtTime(0.3,now+0.10);g.gain.linearRampToValueAtTime(0,now+0.15);o.connect(g);g.connect(ctxA.destination);o.start(now);o.stop(now+0.2);}catch(e){}}
+    const choiceColors=[{n:'RED',h:'#e74c3c'},{n:'BLUE',h:'#3498db'},{n:'GREEN',h:'#2ecc71'},{n:'YELLOW',h:'#f1c40f'}];
+    function go(){
+      if(currentGame!=='reaction')return;
+      rd++;$$('#rxt-rd').textContent=rd;
+      if(rxMode==='audio'){
+        ct.innerHTML=`<div class="rxt-zone wait" id="rxt-zone"><div class="rxt-text">\ud83d\udd0a Listen for the beep...</div></div><div class="rxt-results" id="rxt-res"></div>`;updRes();
+        wait=true;const z=$$('#rxt-zone');
+        window._rxtTimeout=setTimeout(()=>{z.className='rxt-zone ready';z.querySelector('.rxt-text').textContent='\ud83d\udd0a BEEP! TAP NOW';playBeep();st=performance.now();wait=false;},2000+Math.random()*3000);
+        z.onclick=()=>{if(wait){clearTimeout(window._rxtTimeout);z.className='rxt-zone early';z.querySelector('.rxt-text').textContent='Too early! Tap to retry';rd--;z.onclick=go;}else if(st){const dt=Math.round(performance.now()-st);st=0;res.push(dt);z.className='rxt-zone done';const t=_tier(dt);z.querySelector('.rxt-text').textContent=`${dt}ms \u00b7 ${t.label}`;updRes();addScore(dt<250?3:(dt<400?2:1));showFeedback(t.msg,'#2ecc71');rd>=5?setTimeout(_summary,1200):setTimeout(go,1200);}};
+      } else if(rxMode==='choice'){
+        const target=choiceColors[Math.floor(Math.random()*choiceColors.length)];
+        const opts=[...choiceColors].sort(()=>Math.random()-0.5);
+        ct.innerHTML=`<div class="rxt-zone wait" id="rxt-zone" style="cursor:default"><div class="rxt-text">Get ready \u2014 target: <b style="color:${target.h}">${target.n}</b></div></div><div class="rxt-choice-row" id="rxt-cr" style="display:flex;gap:10px;justify-content:center;margin-top:10px;flex-wrap:wrap;"></div><div class="rxt-results" id="rxt-res"></div>`;updRes();
+        wait=true;const z=$$('#rxt-zone');
+        window._rxtTimeout=setTimeout(()=>{z.className='rxt-zone ready';z.querySelector('.rxt-text').innerHTML=`TAP <b style="color:${target.h}">${target.n}</b> NOW!`;st=performance.now();wait=false;const cr=$$('#rxt-cr');opts.forEach(c=>{const b=document.createElement('button');b.className='stp-choice';b.textContent=c.n;b.style.cssText=`background:${c.h};border-color:${c.h};color:#fff;min-width:80px;padding:14px;font-weight:bold;`;b.onclick=()=>{if(st===0)return;const dt=Math.round(performance.now()-st);if(c.n===target.n){st=0;res.push(dt);z.className='rxt-zone done';z.querySelector('.rxt-text').textContent=`${dt}ms \u00b7 ${_tier(dt).label}`;cr.innerHTML='';updRes();addScore(dt<350?3:(dt<550?2:1));showFeedback(_tier(dt).msg,'#2ecc71');rd>=5?setTimeout(_summary,1200):setTimeout(go,1200);}else{st=0;z.querySelector('.rxt-text').textContent=`Wrong! Was ${target.n}.`;showFeedback(`Tapped ${c.n}, was ${target.n}`,'#e74c3c');rd--;cr.innerHTML='';setTimeout(go,1200);}};cr.appendChild(b);});},2000+Math.random()*3000);
+      } else {
+        ct.innerHTML=`<div class="rxt-zone wait" id="rxt-zone"><div class="rxt-text">Wait for green...</div></div><div class="rxt-results" id="rxt-res"></div>`;updRes();
+        wait=true;const z=$$('#rxt-zone');
+        window._rxtTimeout=setTimeout(()=>{z.className='rxt-zone ready';z.querySelector('.rxt-text').textContent='TAP NOW!';st=performance.now();wait=false;},2000+Math.random()*3000);
+        z.onclick=()=>{if(wait){clearTimeout(window._rxtTimeout);z.className='rxt-zone early';z.querySelector('.rxt-text').textContent='Too early! Tap to retry';rd--;z.onclick=go;}else if(st){const dt=Math.round(performance.now()-st);st=0;res.push(dt);z.className='rxt-zone done';const t=_tier(dt);z.querySelector('.rxt-text').textContent=`${dt}ms \u00b7 ${t.label}`;updRes();addScore(dt<250?3:(dt<400?2:1));showFeedback(t.msg,'#2ecc71');rd>=5?setTimeout(_summary,1200):setTimeout(go,1200);}};
+      }
+    }
+    const intro=rxMode==='audio'?'When you hear the BEEP, tap as fast as you can!':(rxMode==='choice'?'A target color is shown. When the box turns green, tap the matching color button.':'When the box turns GREEN, tap as fast as you can! Tap early on red = retry.');
+    ct.innerHTML=`<div class="nmm-msg">${intro}</div>`;
+    const modeRow=document.createElement('div');modeRow.className='sdk-controls';modeRow.style.cssText='display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:6px 0;';
+    [['visual','\ud83c\udfa8 Visual'],['audio','\ud83d\udd0a Audio'],['choice','\ud83c\udfaf Choice (CRT)']].forEach(([k,lbl])=>{const b=document.createElement('button');b.className='sdk-btn'+(k===rxMode?' active':'');b.style.cssText='font-size:0.85rem;padding:6px 10px;';b.textContent=lbl;b.onclick=()=>{sessionStorage.setItem('rxt-mode',k);initReaction();};modeRow.appendChild(b);});
+    ct.appendChild(modeRow);
     const sb=document.createElement('button');sb.className='nmm-btn';sb.textContent='START';sb.onclick=()=>{rd=0;res=[];go();};ct.appendChild(sb);
   }
   function initNBack(){

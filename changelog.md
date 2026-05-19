@@ -1,5 +1,15 @@
 ﻿# Changelog 
 
+## [5.6.86] - 2026-05-19 - Reaction Time: 3-mode picker (Visual / Audio / Choice)
+- Reaction Time was single-mode (visual SRT). Now has a mode picker:
+  - 🎨 **Visual SRT** — original "wait for green, tap" simple reaction time test.
+  - 🔊 **Audio SRT** — listen for the beep, tap as fast as you can. 880 Hz sine pulse via Web Audio (15ms attack, 100ms sustain, 50ms release). Tests auditory pathway latency separately from visual.
+  - 🎯 **Choice RT (CRT)** — target color name shown above 4 color buttons (RED/BLUE/GREEN/YELLOW shuffled). Wait for green-go; then tap the matching color among distractors. Wrong tap = retry.
+- Per-mode best tracking: `rxt-best-single-<mode>`, `rxt-best-avg-<mode>`. Falls back to the original global keys for the visual mode so existing PRs are preserved.
+- HUD shows the active mode chip. Intro text adapts.
+- All three modes use the same 5-round summary + tier display.
+- **SW cache v67 → v68** to flush.
+
 ## [5.6.85] - 2026-05-19 - Number Memory: ◀️ Backward Digit Span (WAIS)
 - Number Memory now has a mode picker — **▶️ Forward** (the original digit-recall) or **◀️ Backward** (WAIS Digit Span subtest — recall the digits in reverse order).
 - Backward Digit Span is the canonical working-memory test from the Wechsler Adult Intelligence Scale; consistently harder than forward by about 1–2 digits, so per-mode best tracking matters.
