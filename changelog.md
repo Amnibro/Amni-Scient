@@ -1,5 +1,18 @@
 ﻿# Changelog 
 
+## [5.6.78] - 2026-05-19 - Chess Puzzles: 7 → 15 puzzles (more patterns)
+- Doubled the mate-in-1 bank from 7 to 15 puzzles. Eight new positions span:
+  - **Queen + king + pawn cage** (Pb6 covering a7 while the queen takes b8 against Ka8).
+  - **Rook box** with king-on-f6 — the white king covers e7/f7/g7 so a rook arrives unopposed on the 8th rank.
+  - **Smothered mate** — the textbook position where black's own knight (g8), rook (g7), and pawn (h7) jail the king at h8 and Nf7 delivers.
+  - **Rook + pawn shield** — Pg7 defends Rh8 from a king capture; Ra7 cuts the 7th rank.
+  - **Queen + knight battery** — Nh5 defends Qg7 so the king cannot take.
+  - **Back-rank mate variant** — three black pawns at f7/g7/h7 trap the king and the rook delivers down the a-file.
+  - **Long-diagonal queen mate** — Q swings from h5 to e8 with king-and-pawn support cutting a7.
+  - **Q + K vs K** edge mate — clean Qa8 finish with the king cutting every escape.
+- Each puzzle individually verified: defender present on the mating square (if the king could capture), every king escape square is attacked or occupied, no illegal initial position (no implicit pre-check).
+- **SW cache v59 → v60** to flush.
+
 ## [5.6.77] - 2026-05-19 - NEW MODULE: Ear Training (intervals, chords, note ID)
 - Final module from the May 2026 expansion plan. Brain-cognitive category, 🎼 icon.
 - **3 modes**:

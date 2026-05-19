@@ -7767,13 +7767,21 @@ function playAnimalSound(type) {
   // pair matches the puzzle's recorded solution, it's correct. Wrong
   // moves reset the position without penalty so players can keep trying.
   const _chessPuzzles = [
-    { pos:{a1:'K',h1:'R',e8:'k',d7:'p',e7:'p',f7:'p'}, sol:'h1-h8', side:'w', desc:'Back rank — the classic. White to mate.' },
+    { pos:{a1:'K',h1:'R',e8:'k',d7:'p',e7:'p',f7:'p'}, sol:'h1-h8', side:'w', desc:'Back rank — the classic. The black pawns lock their own king in.' },
     { pos:{c6:'K',b1:'Q',a7:'P',c8:'k'}, sol:'b1-b8', side:'w', desc:'Queen + king cage. Pawn defends the landing square.' },
-    { pos:{h1:'K',a7:'R',b1:'R',h8:'k'}, sol:'b1-b8', side:'w', desc:'Two-rook ladder — finish it.' },
-    { pos:{g6:'K',h5:'Q',h8:'k'}, sol:'h5-h7', side:'w', desc:'Queen supported by king — find the kiss-of-death.' },
-    { pos:{a1:'K',g3:'Q',f5:'N',h8:'k',h7:'p'}, sol:'g3-g7', side:'w', desc:'Queen-and-knight battery. Knight defends g7.' },
-    { pos:{c6:'K',a6:'Q',c8:'k'}, sol:'a6-a8', side:'w', desc:'Damiano-style corner. Mate in one.' },
-    { pos:{g6:'K',a1:'R',g8:'k'}, sol:'a1-a8', side:'w', desc:'Rook-and-king mate. Where does the rook go?' }
+    { pos:{h1:'K',a7:'R',b1:'R',h8:'k'}, sol:'b1-b8', side:'w', desc:'Two-rook ladder — the rook on a7 takes the 7th rank, the new rook seals the 8th.' },
+    { pos:{g6:'K',h5:'Q',h8:'k'}, sol:'h5-h7', side:'w', desc:'Queen kiss supported by the king — the queen lands right next to the king.' },
+    { pos:{a1:'K',g3:'Q',f5:'N',h8:'k',h7:'p'}, sol:'g3-g7', side:'w', desc:'Queen-and-knight battery. Knight defends g7 so the king cannot take.' },
+    { pos:{c6:'K',a6:'Q',c8:'k'}, sol:'a6-a8', side:'w', desc:'Damiano-style corner. Queen rolls along the a-file with the king cutting off c7.' },
+    { pos:{g6:'K',a1:'R',g8:'k'}, sol:'a1-a8', side:'w', desc:'Rook-and-king mate — the king controls f7/g7/h7, the rook seals rank 8.' },
+    { pos:{c7:'K',b6:'P',b1:'Q',a8:'k'}, sol:'b1-b8', side:'w', desc:'Queen + king + pawn cage. Pawn b6 covers a7, king covers b7/c7, queen delivers on b8.' },
+    { pos:{f6:'K',a1:'R',f8:'k'}, sol:'a1-a8', side:'w', desc:'Rook box — the white king controls e7/f7/g7 while the rook arrives on the 8th.' },
+    { pos:{g1:'K',e5:'N',h8:'k',g8:'n',g7:'r',h7:'p'}, sol:'e5-f7', side:'w', desc:'Smothered mate — the black king is buried under its own pieces.' },
+    { pos:{e1:'K',a7:'R',g7:'P',h1:'R',g8:'k'}, sol:'h1-h8', side:'w', desc:'Rook + pawn shield — Pg7 defends the rook on h8 from king capture; Ra7 cuts the 7th rank.' },
+    { pos:{h1:'K',g5:'Q',h5:'N',h8:'k'}, sol:'g5-g7', side:'w', desc:'Q + N battery — the knight on h5 defends the queen as she lands a knight\'s move away from the king.' },
+    { pos:{h1:'K',a1:'R',f7:'p',g7:'p',h7:'p',g8:'k'}, sol:'a1-a8', side:'w', desc:'Classic back-rank — the pawn trio blocks every escape, the rook delivers down the a-file.' },
+    { pos:{c6:'K',b6:'P',h5:'Q',b8:'k'}, sol:'h5-e8', side:'w', desc:'Long-diagonal queen mate — queen arrives on e8 controlling rank 8; pawn covers a7.' },
+    { pos:{c6:'K',a1:'Q',c8:'k'}, sol:'a1-a8', side:'w', desc:'Queen + king vs king on the edge — queen takes the 8th, king cuts every escape.' }
   ];
   const _chessUnicode = {K:'♔',Q:'♕',R:'♖',B:'♗',N:'♘',P:'♙',k:'♚',q:'♛',r:'♜',b:'♝',n:'♞',p:'♟'};
   let _chessIdx = 0, _chessSelected = null, _chessSolved = 0;
