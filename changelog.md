@@ -1,5 +1,26 @@
 ﻿# Changelog 
 
+## [5.6.93] - 2026-05-19 - Daily Challenge: 30 → 90 puzzles (~3 month cycle)
+- Daily Challenge pool tripled. Before: 30 puzzles cycling — users saw repeats after one month. Now: 90 puzzles cycle daily, repeats only after ~3 months.
+- 60 new puzzles added across the existing categories:
+  - 🔢 **Math** — multi-digit multiplication, factorials, cube roots, percentages, log base 2.
+  - 📈 **Sequence** — Fibonacci continuations, primes, perfect squares descending, Mersenne (2ⁿ−1), doubling.
+  - 📐 **Geometry** — degrees in a circle, triangle interior angles, octagon sides.
+  - 🌍 **Geography** — capitals (Canberra, Ottawa, Cairo, Brasília), tallest mountain, currencies (pound, rupee), smallest country, largest desert.
+  - ⚗️ **Chemistry** — atomic number 1, NaCl formula, potassium symbol, freezing point in F.
+  - 🧬 **Biology** — heart chambers, octopus hearts, bones in a foot, largest organ.
+  - 📖 **Literature** — Tolkien, Austen, Fitzgerald.
+  - 🪐 **Space** — distance to Sun, Galilean moons.
+  - 📜 **History** — WWI start, Moon landing, Berlin Wall, French Revolution.
+  - 💻 **Tech** — HTML, RAM, ARPANET.
+  - ∫ **Calculus** — ∫cos x, ∫1/x.
+  - 🎸 **Music** — piano keys, violin strings, Beethoven.
+  - 🧠 **Logic** — Monopoly riddle, age-ratio algebra.
+  - 🔮 **Riddle** — keyboard, pencil-from-mine, "ton" reverse.
+- `_dailyHash(today)` distributes puzzles uniformly across the 90-entry pool — date-driven so the same day always shows the same puzzle.
+- All existing daily-streak / daily-best / daily-claimed-<date> state remains compatible.
+- **SW cache v74 → v75** to flush.
+
 ## [5.6.92] - 2026-05-19 - 📊 Stats Overview panel
 - New 📊 button in the top bar (next to 🏆 leaderboard). Opens a modal listing the user's personal records across all brain/exercise modules.
 - Six categorised sections:
