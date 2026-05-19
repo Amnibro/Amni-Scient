@@ -8581,14 +8581,48 @@ function playAnimalSound(type) {
     const display=$$('#spm-display'),answer=$$('#spm-answer'),input=$$('#spm-input'),hud=$$('#spm-hud'),timerFill=$$('#spm-timer-fill');
     let spmAns=0,spmScore=0,spmStreak=0,spmBestStreak=0,spmRound=0,spmCorrect=0,spmTime=30,spmMax=30,spmBuf='',spmActive=false,spmA=0,spmB=0,spmOp='+';
     if(window._spmTimer){clearInterval(window._spmTimer);window._spmTimer=null;}
-    document.querySelectorAll('.spm-summary,.spm-step-panel').forEach(n=>n.remove());
-    const best=parseInt(sessionStorage.getItem('spm-best')||'0');
-    const bestStreakStored=parseInt(sessionStorage.getItem('spm-best-streak')||'0');
+    document.querySelectorAll('.spm-summary,.spm-step-panel,.spm-mode-row').forEach(n=>n.remove());
+    const spmMode=sessionStorage.getItem('spm-mode')||'mixed';
+    const best=parseInt(sessionStorage.getItem('spm-best-'+spmMode)||sessionStorage.getItem('spm-best')||'0');
+    const bestStreakStored=parseInt(sessionStorage.getItem('spm-best-streak-'+spmMode)||sessionStorage.getItem('spm-best-streak')||'0');
     hud.innerHTML=`<span class="game-stat">\ud83c\udfc6 <span class="game-stat-val" id="spm-score">0</span></span><span class="game-stat">\ud83d\udd25 <span class="game-stat-val" id="spm-streak">0</span></span><span class="game-stat">\ud83d\udcca <span class="game-stat-val" id="spm-round">0</span></span><span class="game-stat">\u2b50 Best <span class="game-stat-val" id="spm-best">${best}</span></span>`;
     function _streakClass(){display.classList.remove('streak-1','streak-2','streak-3');if(spmStreak>=10)display.classList.add('streak-3');else if(spmStreak>=5)display.classList.add('streak-2');else if(spmStreak>=3)display.classList.add('streak-1');}
     function _flair(){if(spmStreak>=10)return ' \ud83d\udd25\ud83d\udd25\ud83d\udd25';if(spmStreak>=5)return ' \ud83d\udd25\ud83d\udd25';if(spmStreak>=3)return ' \ud83d\udd25';return '';}
     function _timeBonusPop(){const bar=$$('#spm-timer-fill');if(!bar||!bar.parentElement)return;const r=bar.parentElement.getBoundingClientRect();const pop=document.createElement('div');pop.className='spm-time-pop';pop.textContent='+3s';pop.style.left=(r.right-50)+'px';pop.style.top=(r.top-30)+'px';document.body.appendChild(pop);setTimeout(()=>pop.remove(),1000);}
-    function genProblem(){spmRound++;const re=$$('#spm-round');if(re)re.textContent=spmRound;const diff=Math.min(Math.floor(spmRound/5),4);const ops=['+','-','*'];const op=ops[Math.floor(Math.random()*Math.min(diff+2,3))];spmOp=op;let a,b;if(diff<=1){a=Math.floor(Math.random()*20)+1;b=Math.floor(Math.random()*20)+1;}else if(diff<=2){a=Math.floor(Math.random()*50)+5;b=Math.floor(Math.random()*30)+2;}else{a=Math.floor(Math.random()*100)+10;b=Math.floor(Math.random()*50)+2;}if(op==='-'&&a<b)[a,b]=[b,a];if(op==='*'){a=Math.floor(Math.random()*(diff<=2?12:20))+2;b=Math.floor(Math.random()*(diff<=2?12:15))+2;}spmA=a;spmB=b;spmAns=op==='+'?a+b:(op==='-'?a-b:a*b);const sym=op==='*'?'\u00d7':op;display.textContent=`${a} ${sym} ${b} = ?`+_flair();_streakClass();answer.textContent='_';spmBuf='';}
+    function genProblem(){
+      spmRound++;const re=$$('#spm-round');if(re)re.textContent=spmRound;
+      const diff=Math.min(Math.floor(spmRound/5),4);
+      let a,b,op,ans,display_str;
+      if(spmMode==='times'){
+        op='*';
+        const m=diff<=1?9:(diff<=2?12:15);
+        a=Math.floor(Math.random()*m)+2;b=Math.floor(Math.random()*m)+2;
+        ans=a*b;display_str=`${a} \u00d7 ${b} = ?`;
+      } else if(spmMode==='div'){
+        op='\u00f7';
+        const divisorMax=diff<=1?9:(diff<=2?12:15);const quotMax=diff<=1?9:(diff<=2?12:20);
+        b=Math.floor(Math.random()*divisorMax)+2;
+        ans=Math.floor(Math.random()*quotMax)+1;
+        a=b*ans;display_str=`${a} \u00f7 ${b} = ?`;
+      } else if(spmMode==='sqrt'){
+        const isSqrt=Math.random()<0.5;
+        const m=diff<=1?10:(diff<=2?15:25);
+        if(isSqrt){const r=Math.floor(Math.random()*m)+2;a=r*r;b=0;op='\u221a';ans=r;display_str=`\u221a${a} = ?`;}
+        else{a=Math.floor(Math.random()*m)+2;b=2;op='\u00b2';ans=a*a;display_str=`${a}\u00b2 = ?`;}
+      } else {
+        // mixed
+        const ops=['+','-','*'];op=ops[Math.floor(Math.random()*Math.min(diff+2,3))];
+        if(diff<=1){a=Math.floor(Math.random()*20)+1;b=Math.floor(Math.random()*20)+1;}
+        else if(diff<=2){a=Math.floor(Math.random()*50)+5;b=Math.floor(Math.random()*30)+2;}
+        else{a=Math.floor(Math.random()*100)+10;b=Math.floor(Math.random()*50)+2;}
+        if(op==='-'&&a<b)[a,b]=[b,a];
+        if(op==='*'){a=Math.floor(Math.random()*(diff<=2?12:20))+2;b=Math.floor(Math.random()*(diff<=2?12:15))+2;}
+        ans=op==='+'?a+b:(op==='-'?a-b:a*b);
+        const sym=op==='*'?'\u00d7':op;display_str=`${a} ${sym} ${b} = ?`;
+      }
+      spmA=a;spmB=b;spmOp=op;spmAns=ans;
+      display.textContent=display_str+_flair();_streakClass();answer.textContent='_';spmBuf='';
+    }
     function _showStep(){document.querySelectorAll('.spm-step-panel').forEach(n=>n.remove());const opChar=spmOp==='*'?'\u00d7':spmOp;const helper=_mathSteps(opChar,spmA,spmB,spmAns);const panel=document.createElement('div');panel.className='spm-step-panel';panel.innerHTML=`<div class="lbl">\ud83d\udca1 Answer: ${spmAns}</div><div>${helper}</div>`;input.parentElement.insertBefore(panel,input);setTimeout(()=>panel.remove(),2400);}
     function submit(){const v=parseInt(spmBuf);if(isNaN(v))return;if(v===spmAns){const pts=spmStreak>=10?4:(spmStreak>=5?3:(spmStreak>=3?2:1));spmScore+=pts;spmStreak++;spmCorrect++;if(spmStreak>spmBestStreak)spmBestStreak=spmStreak;spmTime=Math.min(spmTime+3,spmMax);_timeBonusPop();const se=$$('#spm-score');if(se)se.textContent=spmScore;const sk=$$('#spm-streak');if(sk)sk.textContent=spmStreak;addScore(spmStreak>=5?3:1);if(spmStreak===5||spmStreak===10||spmStreak===15||spmStreak===20)spawnConfetti(window.innerWidth/2,window.innerHeight/3,spmStreak>=10?80:50);showFeedback(spmStreak>=10?`${spmStreak}x INFERNO! \ud83d\udd25\ud83d\udd25\ud83d\udd25`:(spmStreak>=5?`${spmStreak}x Streak! \ud83d\udd25\ud83d\udd25`:(spmStreak>=3?`${spmStreak}x! \ud83d\udd25`:'Correct! \u26a1')),'#2ecc71');genProblem();}else{spmStreak=0;const sk=$$('#spm-streak');if(sk)sk.textContent='0';resetStreak();display.classList.add('wrong');setTimeout(()=>display.classList.remove('wrong'),400);_streakClass();_showStep();spmBuf='';answer.textContent='_';setTimeout(genProblem,1700);}}
     input.innerHTML='';for(let n=0;n<=9;n++){const b=document.createElement('button');b.className='spm-key';b.textContent=n===0?'0':n;b.onclick=()=>{if(!spmActive)return;b.classList.add('tap');setTimeout(()=>b.classList.remove('tap'),150);spmBuf+=n;answer.textContent=spmBuf;};input.appendChild(b);}
@@ -8596,8 +8630,12 @@ function playAnimalSound(type) {
     const goBtn=document.createElement('button');goBtn.className='spm-key';goBtn.textContent='\u2713';goBtn.style.borderColor='#2ecc71';goBtn.style.color='#2ecc71';goBtn.onclick=()=>{goBtn.classList.add('tap');setTimeout(()=>goBtn.classList.remove('tap'),150);submit();};input.appendChild(goBtn);
     const negBtn=document.createElement('button');negBtn.className='spm-key';negBtn.textContent='\u00b1';negBtn.onclick=()=>{negBtn.classList.add('tap');setTimeout(()=>negBtn.classList.remove('tap'),150);spmBuf=spmBuf.startsWith('-')?spmBuf.slice(1):'-'+spmBuf;answer.textContent=spmBuf||'_';};input.appendChild(negBtn);
     display.textContent='Press START to begin!';answer.textContent='';
+    // Mode picker — sits above the START button.
+    const modeRow=document.createElement('div');modeRow.className='spm-mode-row';modeRow.style.cssText='display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:6px 0;';
+    [['mixed','🧮 Mixed'],['times','✖️ Times'],['div','➗ Division'],['sqrt','🟰 Sqr & √']].forEach(([k,lbl])=>{const b=document.createElement('button');b.className='sdk-btn'+(k===spmMode?' active':'');b.style.cssText='font-size:0.85rem;padding:6px 10px;';b.textContent=lbl;b.onclick=()=>{sessionStorage.setItem('spm-mode',k);initSpeedMath();};modeRow.appendChild(b);});
+    input.parentElement.insertBefore(modeRow,input);
     const startBtn=document.createElement('button');startBtn.className='sdk-btn';startBtn.textContent='START';startBtn.style.cssText='font-size:1.2rem;padding:12px 30px;margin:10px;';
-    function _gameOver(){clearInterval(window._spmTimer);window._spmTimer=null;spmActive=false;const wasBest=spmScore>best;if(wasBest)sessionStorage.setItem('spm-best',spmScore);if(spmBestStreak>bestStreakStored)sessionStorage.setItem('spm-best-streak',spmBestStreak);const accuracy=spmRound>0?Math.round(spmCorrect/Math.max(spmRound,1)*100):0;display.textContent='Time!';display.classList.remove('streak-1','streak-2','streak-3','wrong');answer.textContent='';const sum=document.createElement('div');sum.className='spm-summary';sum.innerHTML=`<h3>\u26a1 ${wasBest?'NEW BEST!':'Time\u2019s up!'}</h3><div class="spm-summary-stats"><div class="spm-summary-stat"><span class="val">${spmScore}</span><span class="lbl">Score</span></div><div class="spm-summary-stat"><span class="val">${spmCorrect}</span><span class="lbl">Correct</span></div><div class="spm-summary-stat"><span class="val">${accuracy}%</span><span class="lbl">Accuracy</span></div><div class="spm-summary-stat"><span class="val">${spmBestStreak}</span><span class="lbl">Best Streak</span></div><div class="spm-summary-stat ${wasBest?'new-best':'best'}"><span class="val">${Math.max(spmScore,best)}</span><span class="lbl">All-Time</span></div></div>`;input.parentElement.insertBefore(sum,input);if(wasBest)spawnConfetti(window.innerWidth/2,window.innerHeight/2,120);showFeedback(`Score: ${spmScore} \u2014 ${accuracy}% accuracy \ud83c\udfc6`,wasBest?'#2ecc71':'#f1c40f');addScore(spmScore);const rb=document.createElement('button');rb.className='sdk-btn';rb.textContent='PLAY AGAIN';rb.style.cssText='font-size:1.1rem;padding:10px 25px;margin:10px;';rb.onclick=()=>{rb.remove();sum.remove();initSpeedMath();};input.after(rb);}
+    function _gameOver(){clearInterval(window._spmTimer);window._spmTimer=null;spmActive=false;const wasBest=spmScore>best;if(wasBest)sessionStorage.setItem('spm-best-'+spmMode,spmScore);if(spmBestStreak>bestStreakStored)sessionStorage.setItem('spm-best-streak-'+spmMode,spmBestStreak);const accuracy=spmRound>0?Math.round(spmCorrect/Math.max(spmRound,1)*100):0;display.textContent='Time!';display.classList.remove('streak-1','streak-2','streak-3','wrong');answer.textContent='';const sum=document.createElement('div');sum.className='spm-summary';sum.innerHTML=`<h3>\u26a1 ${wasBest?'NEW BEST!':'Time\u2019s up!'}</h3><div class="spm-summary-stats"><div class="spm-summary-stat"><span class="val">${spmScore}</span><span class="lbl">Score</span></div><div class="spm-summary-stat"><span class="val">${spmCorrect}</span><span class="lbl">Correct</span></div><div class="spm-summary-stat"><span class="val">${accuracy}%</span><span class="lbl">Accuracy</span></div><div class="spm-summary-stat"><span class="val">${spmBestStreak}</span><span class="lbl">Best Streak</span></div><div class="spm-summary-stat ${wasBest?'new-best':'best'}"><span class="val">${Math.max(spmScore,best)}</span><span class="lbl">All-Time</span></div></div>`;input.parentElement.insertBefore(sum,input);if(wasBest)spawnConfetti(window.innerWidth/2,window.innerHeight/2,120);showFeedback(`Score: ${spmScore} \u2014 ${accuracy}% accuracy \ud83c\udfc6`,wasBest?'#2ecc71':'#f1c40f');addScore(spmScore);const rb=document.createElement('button');rb.className='sdk-btn';rb.textContent='PLAY AGAIN';rb.style.cssText='font-size:1.1rem;padding:10px 25px;margin:10px;';rb.onclick=()=>{rb.remove();sum.remove();initSpeedMath();};input.after(rb);}
     startBtn.onclick=()=>{startBtn.remove();spmActive=true;spmScore=0;spmStreak=0;spmBestStreak=0;spmCorrect=0;spmRound=0;spmTime=spmMax;genProblem();window._spmTimer=setInterval(()=>{spmTime-=0.1;timerFill.style.width=Math.max(0,spmTime/spmMax*100)+'%';timerFill.className='spm-timer-fill'+(spmTime<10?' warning':'')+(spmTime<5?' critical':'');if(spmTime<=0)_gameOver();},100);};
     input.after(startBtn);
     document.onkeydown=e=>{if(currentGame!=='speedmath'||!spmActive)return;const n=parseInt(e.key);if(!isNaN(n)){spmBuf+=e.key;answer.textContent=spmBuf;}if(e.key==='Backspace'){spmBuf=spmBuf.slice(0,-1);answer.textContent=spmBuf||'_';}if(e.key==='Enter')submit();if(e.key==='-'){spmBuf=spmBuf.startsWith('-')?spmBuf.slice(1):'-'+spmBuf;answer.textContent=spmBuf||'_';}};

@@ -1,5 +1,16 @@
 ﻿# Changelog 
 
+## [5.6.84] - 2026-05-19 - Speed Math: 4-way mode picker
+- Speed Math previously only ran a mixed (+, −, ×) drill with round-based auto difficulty. Mode picker now lets adult brain-exercisers target specific skills:
+  - 🧮 **Mixed** — original auto-ramping `+`, `−`, `×` drill.
+  - ✖️ **Times Tables** — pure multiplication. Factor range scales 2–9 → 2–12 → 2–15 with round count.
+  - ➗ **Division** — clean-quotient division. Generates `b × ans` so every problem has an integer answer; divisor and quotient ranges scale with difficulty.
+  - 🟰 **Squares & Roots** — 50/50 split between `n² = ?` and `√(perfect-square) = ?`. Bases scale 2–10 → 2–15 → 2–25.
+- Display string handles the new operators (`÷`, `√n`, `n²`) cleanly.
+- Score/best-streak tracked per-mode in sessionStorage (`spm-best-<mode>`, `spm-best-streak-<mode>`), so a Times-only PR doesn't clobber your Mixed PR.
+- All other mechanics unchanged: 30s timer with bonus time on correct answers, streak fire indicators, step-by-step hint shown on miss, keyboard input still works.
+- **SW cache v65 → v66** to flush.
+
 ## [5.6.83] - 2026-05-19 - N-Back: add 👁️🔊 Dual mode (Jaeggi)
 - N-Back now has a mode picker: **👁️ Single (visual)** (original — square lights up; was it where the same square went N steps ago?) or **👁️🔊 Dual (visual + audio)** (classic Jaeggi protocol — square lights up AND a letter is spoken; signal independently whether each stream matches N steps ago).
 - Dual mode mechanics:
