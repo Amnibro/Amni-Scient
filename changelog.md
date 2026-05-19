@@ -1,5 +1,17 @@
 ﻿# Changelog 
 
+## [5.6.90] - 2026-05-19 - Chimp Test: timed-reveal modes (Ayumu-class 0.5s)
+- Chimp Test had a single reveal mode — numbers visible until your first tap. Now has a reveal-time picker:
+  - ⏵ **Always** (default) — numbers visible until you tap; tap 1 to start hiding the rest.
+  - **2.0s** — auto-hide after 2 seconds.
+  - **1.0s** — auto-hide after 1 second.
+  - **0.5s (Ayumu)** — auto-hide after 500ms. This matches the famed chimpanzee Ayumu's exposure time in the Kyoto primate cognition lab work where she outperformed adult humans on the same task.
+- After auto-hide, you still must tap in numeric order starting from 1 — the sequence constraint is unchanged; only the encoding window shrinks.
+- Best score and best streak tracked per reveal-time key (`chm-best-<reveal>`, `chm-best-stk-<reveal>`). The original keys still seed the initial values for first-run users.
+- HUD shows the active reveal time chip (`On tap` / `500ms` / etc.).
+- Reveal timer is cleaned up on game-over, wrong-tap-before-hide, and any first-tap that also fires the auto-hide.
+- **SW cache v71 → v72** to flush.
+
 ## [5.6.89] - 2026-05-19 - Stroop: 🎨 Ink / 📝 Word direction picker
 - Stroop now has a direction picker on top of the easy/normal/hard tier:
   - **🎨 Ink** (default, original) — tap the button matching the **ink color** of the displayed word.

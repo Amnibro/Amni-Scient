@@ -9398,15 +9398,21 @@ function playAnimalSound(type) {
   }
   function initChimp(){
     const ct=$$('#chm-container'),hud=$$('#chm-hud');
-    let sz=4,best=parseInt(sessionStorage.getItem('chm-best')||'4'),stk=0,bestStk=parseInt(sessionStorage.getItem('chm-best-stk')||'0');
-    document.querySelectorAll('.chm-summary').forEach(n=>n.remove());
-    hud.innerHTML=`<span class="game-stat">\ud83d\udc35 Numbers: <span class="game-stat-val" id="chm-sz">${sz}</span></span><span class="game-stat">\ud83d\udd25 Streak <span class="game-stat-val" id="chm-stk">0</span></span><span class="game-stat">\ud83c\udfc6 Best: <span class="game-stat-val" id="chm-best">${best}</span></span>`;
+    const chmReveal=sessionStorage.getItem('chm-reveal')||'always';
+    const revealMs={always:0,'2000':2000,'1000':1000,'500':500}[chmReveal]||0;
+    let sz=4,best=parseInt(sessionStorage.getItem('chm-best-'+chmReveal)||sessionStorage.getItem('chm-best')||'4'),stk=0,bestStk=parseInt(sessionStorage.getItem('chm-best-stk-'+chmReveal)||sessionStorage.getItem('chm-best-stk')||'0');
+    document.querySelectorAll('.chm-summary,.chm-mode-row').forEach(n=>n.remove());
+    if(window._chmRevealTimer){clearTimeout(window._chmRevealTimer);window._chmRevealTimer=null;}
+    hud.innerHTML=`<span class="game-stat">\ud83d\udc35 Numbers: <span class="game-stat-val" id="chm-sz">${sz}</span></span><span class="game-stat">\ud83d\udd25 Streak <span class="game-stat-val" id="chm-stk">0</span></span><span class="game-stat">\ud83c\udfc6 Best: <span class="game-stat-val" id="chm-best">${best}</span></span><span class="game-stat">\u23f1 ${chmReveal==='always'?'On tap':chmReveal+'ms'}</span>`;
+    const modeRow=document.createElement('div');modeRow.className='chm-mode-row sdk-controls';modeRow.style.cssText='display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:6px 0;';
+    [['always','\u23f5 Always'],['2000','2.0s'],['1000','1.0s'],['500','0.5s (Ayumu)']].forEach(([k,lbl])=>{const b=document.createElement('button');b.className='sdk-btn'+(k===chmReveal?' active':'');b.style.cssText='font-size:0.82rem;padding:6px 10px;';b.textContent=lbl;b.onclick=()=>{sessionStorage.setItem('chm-reveal',k);initChimp();};modeRow.appendChild(b);});
+    ct.parentElement.insertBefore(modeRow,ct);
     function _tier(n){if(n>=16)return{name:'ayumu',label:'Ayumu-class',color:'#f1c40f',msg:"Matching famed chimpanzee Ayumu's working memory!"};if(n>=12)return{name:'expert',label:'Expert',color:'#e74c3c',msg:'Far beyond typical adult range.'};if(n>=9)return{name:'aboveAvg',label:'Above Average',color:'#2ecc71',msg:'Strong spatial working memory.'};if(n>=6)return{name:'avg',label:'Average',color:'#1abc9c',msg:'Typical adult range (6-8).'};if(n>=4)return{name:'starter',label:'Starter',color:'#3498db',msg:'Building the skill \u2014 keep going!'};return{name:'basic',label:'Basic',color:'#7a8a9a',msg:'Just getting warmed up.'};}
     function _gameOver(score){
       const wasBest=sz>best;
       const wasBestStk=stk>bestStk;
-      if(wasBest){best=sz;sessionStorage.setItem('chm-best',best);}
-      if(wasBestStk){bestStk=stk;sessionStorage.setItem('chm-best-stk',bestStk);}
+      if(wasBest){best=sz;sessionStorage.setItem('chm-best-'+chmReveal,best);}
+      if(wasBestStk){bestStk=stk;sessionStorage.setItem('chm-best-stk-'+chmReveal,bestStk);}
       const t=_tier(score);
       ct.innerHTML='';
       const sum=document.createElement('div');sum.className='chm-summary';
@@ -9419,6 +9425,7 @@ function playAnimalSound(type) {
       const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='TRY AGAIN';rb.style.marginTop='10px';rb.onclick=()=>{sz=4;stk=0;$$('#chm-sz').textContent=sz;$$('#chm-stk').textContent=0;play();};ct.appendChild(rb);
     }
     function play(){
+      if(window._chmRevealTimer){clearTimeout(window._chmRevealTimer);window._chmRevealTimer=null;}
       const gSz=Math.max(5,Math.ceil(Math.sqrt(sz*3)));
       const total=gSz*gSz;
       const positions=Array.from({length:total},(_,i)=>i).sort(()=>Math.random()-0.5).slice(0,sz);
@@ -9426,6 +9433,8 @@ function playAnimalSound(type) {
       ct.innerHTML='';
       const g=document.createElement('div');g.className='chm-grid';g.style.gridTemplateColumns=`repeat(${gSz},1fr)`;
       let nextExp=1,hidden=false;
+      function _autoHide(){if(hidden)return;hidden=true;g.querySelectorAll('.chm-cell.num').forEach(x=>x.classList.add('hidden'));}
+      if(revealMs>0){window._chmRevealTimer=setTimeout(_autoHide,revealMs);}
       for(let i=0;i<total;i++){
         const c=document.createElement('div');
         c.className='chm-cell'+(numMap[i]?' num':'');
@@ -9441,19 +9450,20 @@ function playAnimalSound(type) {
           // player misremembered a tile's exact position.
           const n=parseInt(c.dataset.num);
           if(!hidden){
-            // First click must be on the 1-cell to start the round. Tapping
-            // anywhere else before hiding is treated as a wrong start and
-            // fails immediately.
+            // First click before auto-hide fires: tap 1 to start (and hide
+            // remaining numbers). Tapping anything else is a wrong start.
             if(n!==1){
               c.classList.add('wrong');
               g.querySelectorAll('.chm-cell').forEach(x=>{ if(x.dataset.num!=='0'&&!x.classList.contains('wrong')){ x.classList.add('reveal-fail'); } });
               resetStreak();
+              if(window._chmRevealTimer){clearTimeout(window._chmRevealTimer);window._chmRevealTimer=null;}
               const reached=sz-1;
               sz=4;
               setTimeout(()=>_gameOver(reached),1600);
               return;
             }
             hidden=true;
+            if(window._chmRevealTimer){clearTimeout(window._chmRevealTimer);window._chmRevealTimer=null;}
             g.querySelectorAll('.chm-cell.num').forEach(x=>{if(parseInt(x.dataset.num)!==1)x.classList.add('hidden');});
           }
           if(n===nextExp){
