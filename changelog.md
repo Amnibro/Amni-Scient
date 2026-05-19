@@ -1,5 +1,14 @@
 ﻿# Changelog 
 
+## [5.6.89] - 2026-05-19 - Stroop: 🎨 Ink / 📝 Word direction picker
+- Stroop now has a direction picker on top of the easy/normal/hard tier:
+  - **🎨 Ink** (default, original) — tap the button matching the **ink color** of the displayed word.
+  - **📝 Word** — tap the button matching the **word text** itself, ignoring its ink color. Reverse Stroop tests a different interference pattern (Stroop interference is asymmetric — ink-from-word is much harder than word-from-ink for literate adults).
+- Same congruent-trap probability and tier-controlled palette (4/6/8 colors) apply to both directions.
+- Best score tracked per (mode, direction): `stp-best-<mode>-<dir>`. Falls back to the original `stp-best-<mode>` keys for first run after upgrade.
+- Intro message and miss feedback adapt to direction: "Word was RED!" vs "Ink was BLUE!".
+- **SW cache v70 → v71** to flush.
+
 ## [5.6.88] - 2026-05-19 - Sudoku: ✕ X-Sudoku variant
 - Sudoku now has a mode picker — **◻ Classic** (original 9×9) or **✕ X-Sudoku** (the popular variant where the two main diagonals must also contain 1–9 with no repeats).
 - `isValid()` augmented with diagonal checks when in X-mode: cell on main diagonal (r === c) or anti-diagonal (r + c === 8) must not duplicate any number on its diagonal.

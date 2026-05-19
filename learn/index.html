@@ -9082,11 +9082,12 @@ function playAnimalSound(type) {
     if(window._stpTimer){clearInterval(window._stpTimer);window._stpTimer=null;}
     const allCls=[{n:'RED',h:'#e74c3c'},{n:'BLUE',h:'#3498db'},{n:'GREEN',h:'#2ecc71'},{n:'YELLOW',h:'#f1c40f'},{n:'PURPLE',h:'#9b59b6'},{n:'ORANGE',h:'#e67e22'},{n:'PINK',h:'#ec407a'},{n:'CYAN',h:'#00bcd4'}];
     const mode=sessionStorage.getItem('stp-mode')||'normal';
+    const stpDir=sessionStorage.getItem('stp-dir')||'ink';
     const cfg={easy:{count:4,time:30,congruent:0},normal:{count:6,time:30,congruent:0.15},hard:{count:8,time:25,congruent:0.25}};
     const c=cfg[mode]||cfg.normal;
     const cls=allCls.slice(0,c.count);
-    const bestKey='stp-best-'+mode;
-    const best=parseInt(sessionStorage.getItem(bestKey)||'0');
+    const bestKey='stp-best-'+mode+'-'+stpDir;
+    const best=parseInt(sessionStorage.getItem(bestKey)||sessionStorage.getItem('stp-best-'+mode)||'0');
     hud.innerHTML=`<span class="game-stat">\u2705 <span class="game-stat-val" id="stp-sc">0</span></span><span class="game-stat">\ud83d\udd25 <span class="game-stat-val" id="stp-stk">0</span></span><span class="game-stat">\ud83d\udcca <span class="game-stat-val" id="stp-acc">--</span></span><span class="game-stat">\u23f1 <span class="game-stat-val" id="stp-tm">${c.time}</span>s</span><span class="game-stat">\u2b50 <span class="game-stat-val" id="stp-best">${best}</span></span>`;
     function _gameOver(){
       clearInterval(window._stpTimer);window._stpTimer=null;act=false;
@@ -9094,12 +9095,13 @@ function playAnimalSound(type) {
       const avgRT=rtCount?Math.round(rtTotal/rtCount):0;
       const wasBest=sc>best;
       if(wasBest)sessionStorage.setItem(bestKey,sc);
+      const dirLbl=stpDir==='word'?'Word':'Ink';
       ct.innerHTML='';
       const sum=document.createElement('div');sum.className='stp-summary';
       sum.innerHTML=`<h3>\ud83e\udde0 ${wasBest?'NEW BEST!':"Time's up!"}</h3><div class="stp-summary-stats"><div class="stp-summary-stat"><span class="val">${sc}</span><span class="lbl">Correct</span></div><div class="stp-summary-stat"><span class="val">${pct}%</span><span class="lbl">Accuracy</span></div><div class="stp-summary-stat"><span class="val">${avgRT}</span><span class="lbl">Avg ms</span></div><div class="stp-summary-stat"><span class="val">${bestStk}</span><span class="lbl">Best Streak</span></div><div class="stp-summary-stat ${wasBest?'new-best':'best'}"><span class="val">${Math.max(sc,best)}</span><span class="lbl">All-Time</span></div></div>`;
       ct.appendChild(sum);
       if(wasBest)spawnConfetti(window.innerWidth/2,window.innerHeight/2,120);
-      showFeedback(`Stroop ${mode.toUpperCase()}: ${sc} (${pct}%) \ud83e\udde0`,wasBest?'#2ecc71':'#f1c40f');
+      showFeedback(`Stroop ${mode.toUpperCase()} (${dirLbl}): ${sc} (${pct}%) \ud83e\udde0`,wasBest?'#2ecc71':'#f1c40f');
       addScore(sc);
       const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='PLAY AGAIN';rb.onclick=()=>initStroop();ct.appendChild(rb);
     }
@@ -9107,11 +9109,13 @@ function playAnimalSound(type) {
       const w=cls[Math.floor(Math.random()*cls.length)];
       let ink;
       if(Math.random()<c.congruent){ink=w;}else{do{ink=cls[Math.floor(Math.random()*cls.length)];}while(ink.n===w.n);}
-      ct.innerHTML=`<div class="stp-word${stk>=3?' streak-fire':''}" id="stp-word" style="color:${ink.h}">${w.n}</div><div class="nmm-msg">Tap the INK COLOR</div><div class="stp-choices" id="stp-opts"></div>`;
+      const target=stpDir==='word'?w:ink;
+      const prompt=stpDir==='word'?'Tap the WORD':'Tap the INK COLOR';
+      ct.innerHTML=`<div class="stp-word${stk>=3?' streak-fire':''}" id="stp-word" style="color:${ink.h}">${w.n}</div><div class="nmm-msg">${prompt}</div><div class="stp-choices" id="stp-opts"></div>`;
       roundStart=performance.now();
       const opts=$$('#stp-opts');
       let pool=[...cls].sort(()=>Math.random()-0.5).slice(0,Math.min(4,cls.length));
-      if(!pool.find(x=>x.n===ink.n))pool[0]=ink;
+      if(!pool.find(x=>x.n===target.n))pool[0]=target;
       pool.sort(()=>Math.random()-0.5);
       pool.forEach(cc=>{const b=document.createElement('button');b.className='stp-choice';b.textContent=cc.n;b.style.cssText=`background:${cc.h};border-color:${cc.h}`;b.onclick=()=>{
         if(!act)return;
@@ -9119,7 +9123,7 @@ function playAnimalSound(type) {
         const rt=Math.round(performance.now()-roundStart);
         rtTotal+=rt;rtCount++;
         const wordEl=$$('#stp-word');
-        if(cc.n===ink.n){
+        if(cc.n===target.n){
           sc++;stk++;if(stk>bestStk)bestStk=stk;
           const rtBonus=rt<500?2:(rt<800?1:0);
           const stkBonus=stk>=10?3:(stk>=5?2:(stk>=3?1:0));
@@ -9132,7 +9136,7 @@ function playAnimalSound(type) {
         }else{
           stk=0;resetStreak();
           if(wordEl)wordEl.classList.add('wrong');
-          showFeedback(`Ink was ${ink.n}!`,'#e74c3c');
+          showFeedback(stpDir==='word'?`Word was ${w.n}!`:`Ink was ${ink.n}!`,'#e74c3c');
         }
         $$('#stp-sc').textContent=sc;
         $$('#stp-stk').textContent=stk;
@@ -9141,8 +9145,11 @@ function playAnimalSound(type) {
       };opts.appendChild(b);});
     }
     function _modeRow(){const row=document.createElement('div');row.className='stp-mode-row';['easy','normal','hard'].forEach(m=>{const b=document.createElement('button');b.className='stp-mode-btn'+(m===mode?' active':'');b.textContent=m.toUpperCase();b.onclick=()=>{sessionStorage.setItem('stp-mode',m);initStroop();};row.appendChild(b);});return row;}
+    function _dirRow(){const row=document.createElement('div');row.className='stp-mode-row';[['ink','🎨 Ink'],['word','📝 Word']].forEach(([k,lbl])=>{const b=document.createElement('button');b.className='stp-mode-btn'+(k===stpDir?' active':'');b.textContent=lbl;b.onclick=()=>{sessionStorage.setItem('stp-dir',k);initStroop();};row.appendChild(b);});return row;}
     ct.innerHTML='';
-    const intro=document.createElement('div');intro.className='nmm-msg';intro.innerHTML=`Words appear in wrong colors.<br>Tap the button matching the <b>INK</b> color.<br><small style="opacity:0.7">${c.count} colors${c.congruent>0?', some trials are matching traps':''}</small>`;ct.appendChild(intro);
+    const directionHint=stpDir==='word'?'Tap the button matching the <b>WORD TEXT</b>, ignoring its ink color.':'Tap the button matching the <b>INK</b> color.';
+    const intro=document.createElement('div');intro.className='nmm-msg';intro.innerHTML=`Words appear in wrong colors.<br>${directionHint}<br><small style="opacity:0.7">${c.count} colors${c.congruent>0?', some trials are matching traps':''}</small>`;ct.appendChild(intro);
+    ct.appendChild(_dirRow());
     ct.appendChild(_modeRow());
     const sb=document.createElement('button');sb.className='nmm-btn';sb.textContent='START';sb.onclick=()=>{act=true;sc=0;tot=0;stk=0;bestStk=0;rtTotal=0;rtCount=0;tm=c.time;$$('#stp-tm').textContent=tm;show();window._stpTimer=setInterval(()=>{tm--;$$('#stp-tm').textContent=tm;if(tm<=0)_gameOver();},1000);};ct.appendChild(sb);
   }
