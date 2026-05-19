@@ -1224,6 +1224,7 @@
           <button class="game-btn brain" data-game="logic"><span class="btn-icon">🧩</span><span class="btn-text">Logic Puzzles</span><span class="btn-desc">Teasers & riddles</span></button>
           <button class="game-btn brain" data-game="anagram"><span class="btn-icon">🔤</span><span class="btn-text">Anagrams</span><span class="btn-desc">Unscramble words</span></button>
           <button class="game-btn brain" data-game="wordsearch"><span class="btn-icon">🔍</span><span class="btn-text">Word Search</span><span class="btn-desc">Find hidden words</span></button>
+          <button class="game-btn brain" data-game="chess"><span class="btn-icon">♟️</span><span class="btn-text">Chess Puzzles</span><span class="btn-desc">Mate in one</span></button>
         </div>
       </section>
       <section class="game-category brain-cat" id="brain-section-4" style="display:none;">
@@ -1457,6 +1458,10 @@
     <div class="sdk-grid" id="sdk-board"></div>
     <div class="sdk-numpad" id="sdk-numpad"></div>
   </div>
+  <div id="chess-view" class="view">
+    <div class="life-title" style="color:#f1c40f">♟️ Chess Puzzles</div>
+    <div id="chess-game" style="display:flex;flex-direction:column;align-items:center;gap:10px;max-width:100%;"></div>
+  </div>
   <div id="cardpairs-view" class="view">
     <div class="life-title" style="color:#1abc9c">🃏 Card Pairs <button class="tut-trigger" onclick="showTutorial('cardpairs')">? How to Play</button></div>
     <div class="game-hud" id="cp-hud"></div>
@@ -1634,6 +1639,7 @@
     pattern: $$('#pattern-view'),
     geo: $$('#geo-view'),
     sudoku: $$('#sudoku-view'),
+    chess: $$('#chess-view'),
     cardpairs: $$('#cardpairs-view'),
     speedmath: $$('#speedmath-view'),
     wordsearch: $$('#wordsearch-view'),
@@ -1759,7 +1765,8 @@
     {id:'tower-strat',ic:'🏰',name:'Tower Strategist',desc:'Reach wave 15 in Tower Defense',progress(){const w=_intLS('haven_td_best_wave');return{cur:Math.min(w,15),target:15,unlocked:w>=15};}},
     {id:'cookie-mil',ic:'🍪',name:'Cookie Millionaire',desc:'Reach 1M lifetime cookies',progress(){const c=_floatLS('ck-lifetime');return{cur:Math.min(c,1e6),target:1e6,unlocked:c>=1e6};}},
     {id:'miner',ic:'⛏️',name:'Master Miner',desc:'Mine 1M lifetime gems',progress(){const c=_floatLS('am-lifetime');return{cur:Math.min(c,1e6),target:1e6,unlocked:c>=1e6};}},
-    {id:'polymath',ic:'🎓',name:'Polymath',desc:'Play 10 different games',progress(){const keys=['snake-best','tet-best','brk-best','flp-best','inv-best','lgc-best','scr-best','agm-best','pat-best','haven_t2048_best','haven_cblast_best','pong-matches','haven_sol_wins','circuit-built','story-total-reads','spm-best','geo-best-L1','geo-best-L2','wb-best-es-L1','wb-best-fr-L1','agm-best','pip-best','ws-best','sdk-wins-easy','sdk-wins-medium','sdk-wins-hard','rfx-best-L1','rfx-best-L2'];const played=keys.filter(k=>_intLS(k)>0).length;return{cur:Math.min(played,10),target:10,unlocked:played>=10};}}
+    {id:'chess-novice',ic:'♟️',name:'Chess Novice',desc:'Solve 5 chess puzzles',progress(){const c=_intLS('chess-solved');return{cur:Math.min(c,5),target:5,unlocked:c>=5};}},
+    {id:'polymath',ic:'🎓',name:'Polymath',desc:'Play 10 different games',progress(){const keys=['snake-best','tet-best','brk-best','flp-best','inv-best','lgc-best','scr-best','agm-best','pat-best','haven_t2048_best','haven_cblast_best','pong-matches','haven_sol_wins','circuit-built','story-total-reads','spm-best','geo-best-L1','geo-best-L2','wb-best-es-L1','wb-best-fr-L1','agm-best','pip-best','ws-best','sdk-wins-easy','sdk-wins-medium','sdk-wins-hard','rfx-best-L1','rfx-best-L2','chess-solved'];const played=keys.filter(k=>_intLS(k)>0).length;return{cur:Math.min(played,10),target:10,unlocked:played>=10};}}
   ];
   function _achState(){try{return JSON.parse(localStorage.getItem('amni-achievements')||'{}');}catch{return{};}}
   function _saveAchState(s){try{localStorage.setItem('amni-achievements',JSON.stringify(s));}catch{}}
@@ -2039,6 +2046,7 @@
       if(game === 'pattern') initPattern();
       if(game === 'geo') initGeo();
       if(game === 'sudoku') initSudoku();
+      if(game === 'chess') initChess();
       if(game === 'cardpairs') initCardPairs();
       if(game === 'speedmath') initSpeedMath();
       if(game === 'wordsearch') initWordSearch();
@@ -7644,6 +7652,115 @@ function playAnimalSound(type) {
       });
     }
     startGeo();
+  }
+  // ── Chess Puzzles ── Curated mate-in-1 tactical puzzles. Two-tap UI:
+  // first tap a piece, second tap a destination square. If the from/to
+  // pair matches the puzzle's recorded solution, it's correct. Wrong
+  // moves reset the position without penalty so players can keep trying.
+  const _chessPuzzles = [
+    { pos:{a1:'K',h1:'R',e8:'k',d7:'p',e7:'p',f7:'p'}, sol:'h1-h8', side:'w', desc:'Back rank — the classic. White to mate.' },
+    { pos:{c6:'K',b1:'Q',c8:'k'}, sol:'b1-b8', side:'w', desc:'Queen + supporting king. Mate in one.' },
+    { pos:{h1:'K',a7:'R',b1:'R',h8:'k'}, sol:'b1-b8', side:'w', desc:'Two-rook ladder — finish it.' },
+    { pos:{g6:'K',h5:'Q',h8:'k'}, sol:'h5-h7', side:'w', desc:'Queen supported by king — find the kiss-of-death.' },
+    { pos:{a1:'K',g3:'Q',f6:'N',h8:'k',h7:'p'}, sol:'g3-g7', side:'w', desc:'Queen-and-knight battery. White to mate.' },
+    { pos:{c6:'K',a6:'Q',c8:'k'}, sol:'a6-a8', side:'w', desc:'Damiano-style corner. Mate in one.' },
+    { pos:{g6:'K',a1:'R',g8:'k'}, sol:'a1-a8', side:'w', desc:'Rook-and-king mate. Where does the rook go?' }
+  ];
+  const _chessUnicode = {K:'♔',Q:'♕',R:'♖',B:'♗',N:'♘',P:'♙',k:'♚',q:'♛',r:'♜',b:'♝',n:'♞',p:'♟'};
+  let _chessIdx = 0, _chessSelected = null, _chessSolved = 0;
+  function initChess(){
+    const root = $$('#chess-game');
+    root.innerHTML = '';
+    _chessIdx = _chessIdx % _chessPuzzles.length;
+    _chessSelected = null;
+    const totalSolved = parseInt(localStorage.getItem('chess-solved')||'0');
+    const bestStreak = parseInt(localStorage.getItem('chess-best-streak')||'0');
+    const hud = document.createElement('div');
+    hud.className = 'game-hud';
+    hud.style.cssText = 'display:flex;gap:14px;flex-wrap:wrap;justify-content:center;font-family:JetBrains Mono,monospace;font-size:0.9rem;color:#ecf0f1;';
+    hud.innerHTML = `<span>📊 Puzzle <b>${_chessIdx+1}/${_chessPuzzles.length}</b></span><span>🏆 Solved <b style="color:#f1c40f">${totalSolved}</b></span><span>🔥 Streak <b style="color:#e74c3c">${_chessSolved}</b></span><span>⭐ Best <b style="color:#f1c40f">${bestStreak}</b></span>`;
+    root.appendChild(hud);
+    const desc = document.createElement('div');
+    desc.style.cssText = 'background:rgba(241,196,15,0.12);border-left:4px solid #f1c40f;padding:10px 14px;border-radius:8px;max-width:480px;color:#ecf0f1;font-family:JetBrains Mono,monospace;font-size:0.92rem;line-height:1.4;';
+    const p = _chessPuzzles[_chessIdx];
+    desc.innerHTML = `<b style="color:#f1c40f">${p.side==='w'?'White':'Black'} to move</b> · ${p.desc}`;
+    root.appendChild(desc);
+    const board = document.createElement('div');
+    board.id = 'chess-board';
+    board.style.cssText = 'display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(8,1fr);width:min(96vw,480px);aspect-ratio:1/1;border:3px solid #f1c40f;border-radius:8px;overflow:hidden;box-shadow:0 0 30px rgba(241,196,15,0.25);';
+    root.appendChild(board);
+    const files = 'abcdefgh', ranks = '12345678';
+    function renderBoard() {
+      board.innerHTML = '';
+      for (let r = 7; r >= 0; r--) {
+        for (let f = 0; f < 8; f++) {
+          const sq = files[f] + ranks[r];
+          const light = (f + r) % 2 === 1;
+          const cell = document.createElement('div');
+          cell.dataset.sq = sq;
+          cell.style.cssText = `background:${light?'#f0d9b5':'#b58863'};display:flex;align-items:center;justify-content:center;font-size:clamp(1.6rem,7vw,2.6rem);cursor:pointer;position:relative;user-select:none;transition:background 0.15s;`;
+          const piece = p.pos[sq];
+          if (piece) {
+            cell.textContent = _chessUnicode[piece];
+            cell.style.color = piece === piece.toUpperCase() ? '#fff' : '#000';
+            cell.style.textShadow = piece === piece.toUpperCase() ? '0 0 2px #000, 1px 1px 0 #000' : '0 0 2px #fff, 1px 1px 0 #fff';
+          }
+          if (_chessSelected === sq) {
+            cell.style.background = '#f1c40f';
+            cell.style.boxShadow = 'inset 0 0 0 3px #e67e22';
+          }
+          // Corner coords on a1 row + a column
+          if (f === 0) { const r1 = document.createElement('span'); r1.textContent = ranks[r]; r1.style.cssText='position:absolute;top:1px;left:3px;font-size:0.55rem;color:'+(light?'#b58863':'#f0d9b5')+';font-family:JetBrains Mono;'; cell.appendChild(r1); }
+          if (r === 0) { const f1 = document.createElement('span'); f1.textContent = files[f]; f1.style.cssText='position:absolute;bottom:1px;right:3px;font-size:0.55rem;color:'+(light?'#b58863':'#f0d9b5')+';font-family:JetBrains Mono;'; cell.appendChild(f1); }
+          cell.onclick = () => onSquareClick(sq);
+          board.appendChild(cell);
+        }
+      }
+    }
+    function onSquareClick(sq) {
+      const isOwnPiece = (s) => {
+        const pc = p.pos[s];
+        if (!pc) return false;
+        return p.side === 'w' ? pc === pc.toUpperCase() : pc === pc.toLowerCase();
+      };
+      if (!_chessSelected) {
+        if (isOwnPiece(sq)) { _chessSelected = sq; renderBoard(); }
+        return;
+      }
+      if (_chessSelected === sq) { _chessSelected = null; renderBoard(); return; }
+      if (isOwnPiece(sq)) { _chessSelected = sq; renderBoard(); return; }
+      // Attempt the move
+      const move = _chessSelected + '-' + sq;
+      _chessSelected = null;
+      if (move === p.sol) {
+        _chessSolved++;
+        const newTotal = totalSolved + 1;
+        localStorage.setItem('chess-solved', newTotal);
+        if (_chessSolved > bestStreak) localStorage.setItem('chess-best-streak', _chessSolved);
+        if (typeof spawnConfetti === 'function') spawnConfetti(window.innerWidth/2, window.innerHeight/3, _chessSolved >= 5 ? 150 : 80);
+        if (typeof showFeedback === 'function') showFeedback(_chessSolved >= 5 ? `🏆 ${_chessSolved}-puzzle streak! Mate!` : `✓ Mate! Streak: ${_chessSolved}`, '#f1c40f');
+        if (typeof addScore === 'function') addScore(5);
+        setTimeout(() => { _chessIdx++; initChess(); }, 1800);
+      } else {
+        if (typeof showFeedback === 'function') showFeedback('Not the mating move — try again', '#e74c3c');
+        if (typeof resetStreak === 'function') resetStreak();
+        _chessSolved = 0;
+        renderBoard();
+      }
+    }
+    renderBoard();
+    const ctrls = document.createElement('div');
+    ctrls.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;justify-content:center;';
+    const hint = document.createElement('button');
+    hint.className = 'retro-btn';
+    hint.textContent = '💡 Hint (show first move square)';
+    hint.onclick = () => { const from = p.sol.split('-')[0]; const cell = board.querySelector(`[data-sq="${from}"]`); if (cell) { cell.style.outline = '3px solid #e74c3c'; setTimeout(() => { cell.style.outline = ''; }, 1800); } if (_chessSolved > 0) _chessSolved = 0; };
+    const skip = document.createElement('button');
+    skip.className = 'retro-btn';
+    skip.textContent = '⏭ Skip';
+    skip.onclick = () => { _chessSolved = 0; _chessIdx++; initChess(); };
+    ctrls.appendChild(hint); ctrls.appendChild(skip);
+    root.appendChild(ctrls);
   }
   function initSudoku(){
     const board=$$('#sdk-board'),hud=$$('#sdk-hud'),controls=$$('#sdk-controls'),numpad=$$('#sdk-numpad');

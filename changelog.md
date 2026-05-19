@@ -1,5 +1,15 @@
 ﻿# Changelog 
 
+## [5.6.68] - 2026-05-18 - Amni-Learn NEW MODULE: Chess Puzzles
+- **♟️ Chess Puzzles** added under Brain Training → Logic & Language. 8×8 board renders with Unicode pieces on alternating-color squares plus file/rank labels.
+- **7 curated mate-in-1 puzzles** to start: back-rank rook, queen-king cage, two-rook ladder, queen-supported corner, queen-and-knight battery, Damiano-style, rook-and-king. Each lists its theme.
+- **Two-tap UI**: tap your piece → it highlights gold → tap destination. Re-tap selected to deselect. Tapping a different own-piece reselects.
+- **Solution check**: from-to compared against the puzzle's recorded `sol`. Correct → 80-particle confetti (150 at streak ≥5) + streak +1 + 1.8s auto-advance. Wrong → red toast, position resets, streak resets.
+- **Persistence**: `chess-solved` (lifetime count) + `chess-best-streak` (best consecutive correct without wrong/skip). Both shown in HUD.
+- **Controls**: 💡 Hint (flashes the source-square outline; resets streak) and ⏭ Skip (next puzzle).
+- **Achievement**: ♟️ Chess Novice (solve 5 chess puzzles) added to the cross-module roster.
+- **SW cache v49 → v50** to flush.
+
 ## [5.6.67] - 2026-05-18 - Amni-Learn spaced repetition for subject quizzes
 - **Missed-question tracking** on subject quizzes (Animals / Languages / Music / Math / Engineering / Science): every wrong answer hashes the question prompt and stores it in `quiz-missed-{subject}` localStorage with `{misses, lastWrong, consecCorrect}` metadata.
 - **Priority-blended pool**: on next quiz run for the same subject, up to **40% of the 100-question run** is filled from previously-missed questions (sorted by most-recent miss first). Remaining 60% shuffled from the full level-appropriate bank. Final ordering shuffled so review questions are interspersed.
