@@ -5763,7 +5763,19 @@ function playAnimalSound(type) {
       teachPhaseEl.style.display='none'; quizTaskArea.style.display='flex';
       showTeachPhase(subject);
   }
+  // Spaced repetition for subject quizzes. Hash each question by its prompt
+  // string and track misses in localStorage so they bubble up in future runs.
+  // After 2 correct on a previously-missed question, it ages out of the
+  // priority pool. This rebuilds the leak from cramming-into-forgetting.
+  function _qHash(q){let h=0;const s=q.q||'';for(let i=0;i<s.length;i++){h=((h<<5)-h+s.charCodeAt(i))|0;}return h;}
+  function _missedKey(subject){return 'quiz-missed-'+subject;}
+  function _getMissedMap(subject){try{return JSON.parse(localStorage.getItem(_missedKey(subject))||'{}');}catch{return{};}}
+  function _saveMissedMap(subject,m){try{localStorage.setItem(_missedKey(subject),JSON.stringify(m));}catch{}}
+  function _markMissed(subject,q){const m=_getMissedMap(subject);const h=_qHash(q);m[h]={misses:(m[h]?.misses||0)+1,lastWrong:Date.now(),consecCorrect:0};_saveMissedMap(subject,m);}
+  function _markCorrect(subject,q){const m=_getMissedMap(subject);const h=_qHash(q);if(m[h]){m[h].consecCorrect=(m[h].consecCorrect||0)+1;if(m[h].consecCorrect>=2){delete m[h];}_saveMissedMap(subject,m);}}
+  let _quizCurrentSubject = null;
   function startQuizDirectly(subject) {
+      _quizCurrentSubject = subject;
       const data = quizData[subject];
       quizTitle.textContent = data.title;
       const lvl = Math.min(currentLevel, 5);
@@ -5774,10 +5786,23 @@ function playAnimalSound(type) {
       [1,2,3,4].forEach(d=>{ if(pool.length<100){ addLvl(lvl-d); } });
       if('speechSynthesis' in window) window.speechSynthesis.cancel();
       if(pool.length === 0) { quizPrompt.textContent = "More questions coming soon!"; audioBtn.style.display = 'none'; quizChoices.innerHTML = ''; return; }
-      const shuffled = [...pool].sort(() => Math.random() - 0.5);
-      currentQuiz = shuffled.slice(0, Math.min(100, shuffled.length));
+      // Spaced-repetition pool blending: take previously-missed questions
+      // first (sorted by most-recent miss), then fill the rest from shuffled
+      // full pool. Hard cap missed slice at 40% of run so user still sees
+      // new content. Skip duplicates.
+      const missedMap = _getMissedMap(subject);
+      const missedHashes = Object.keys(missedMap).map(h=>+h);
+      const missedSet = new Set(missedHashes);
+      const missedQs = pool.filter(q=>missedSet.has(_qHash(q))).sort((a,b)=>(missedMap[_qHash(b)].lastWrong||0)-(missedMap[_qHash(a)].lastWrong||0));
+      const fresh = pool.filter(q=>!missedSet.has(_qHash(q))).sort(()=>Math.random()-0.5);
+      const target = Math.min(100, pool.length);
+      const missedSlice = missedQs.slice(0, Math.min(missedQs.length, Math.floor(target*0.4)));
+      const freshSlice = fresh.slice(0, target - missedSlice.length);
+      currentQuiz = [...missedSlice, ...freshSlice].sort(()=>Math.random()-0.5);
       currentQIndex = 0;
       audioBtn.onclick = () => { if(currentQIndex < currentQuiz.length) {const cq = currentQuiz[currentQIndex]; speakText(cq.audioText || cq.q);} };
+      // One-time UI hint when there's spaced-repetition material in this run
+      if(missedSlice.length>0){if(typeof showFeedback==='function')showFeedback(`🔁 ${missedSlice.length} review question${missedSlice.length===1?'':'s'} mixed in`,'#9b59b6');}
       loadQuestion();
   }
   function showTeachPhase(subject) {
@@ -5845,10 +5870,12 @@ function playAnimalSound(type) {
               answered = true;
               if(c === q.a) {
                   showFeedback("Correct!", "#2ecc71"); addScore(1);
+                  if(_quizCurrentSubject) _markCorrect(_quizCurrentSubject, q);
                   showExplainAndContinue(true);
               } else {
                   showFeedback("Read the hint!", "#e67e22"); resetStreak();
                   btn.style.background='#e74c3c'; btn.style.color='#fff';
+                  if(_quizCurrentSubject) _markMissed(_quizCurrentSubject, q);
                   showExplainAndContinue(false);
               }
           };

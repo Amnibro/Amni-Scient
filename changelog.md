@@ -1,5 +1,13 @@
 ﻿# Changelog 
 
+## [5.6.67] - 2026-05-18 - Amni-Learn spaced repetition for subject quizzes
+- **Missed-question tracking** on subject quizzes (Animals / Languages / Music / Math / Engineering / Science): every wrong answer hashes the question prompt and stores it in `quiz-missed-{subject}` localStorage with `{misses, lastWrong, consecCorrect}` metadata.
+- **Priority-blended pool**: on next quiz run for the same subject, up to **40% of the 100-question run** is filled from previously-missed questions (sorted by most-recent miss first). Remaining 60% shuffled from the full level-appropriate bank. Final ordering shuffled so review questions are interspersed.
+- **Auto-graduation**: hitting a previously-missed question correctly counts toward `consecCorrect`. After 2 consecutive correct, the question is removed from the missed pool — it's been re-learned.
+- **Run-start hint**: if review questions are mixed in, a 🔁 toast announces how many are review at the start of the run (transparency about why some questions might feel familiar).
+- All persistence in localStorage; survives page reloads and works fully offline.
+- **SW cache v48 → v49** to flush.
+
 ## [5.6.66] - 2026-05-18 - Amni-Learn cross-module achievements
 - **Achievements strip** on main menu (above daily banner): pill-row showing each badge as ✅ or ▢, with hover-title revealing description + progress. Tap to open full modal.
 - **14 achievements** spanning all major sections:
