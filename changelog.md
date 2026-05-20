@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.7.31] - 2026-05-20 - Chess: +2 puzzles, new tactical patterns (22 → 24)
+- Two new mate-in-one puzzles, each escape-verified before commit, introducing motifs not in the existing bank:
+  - **P23 Epaulette mate** — `Qb1-d3#` with Kf6 / Qb1 / Na6 vs Kd8 / Rc8 / Re8. The black king is walled in by its own rooks (c8 and e8 — the "epaulettes"); the queen reaches d3 attacking down the d-file, knight on a6 covers c7, white king covers e7. Neither black rook can block — Rc8 can only move on c-file or 8th rank (blocked by own king), same for Re8.
+  - **P24 Arabian-style** — `Ra7-h7#` with Kc1 / Ra7 / Nf6 vs Kh8. Rook arrives on h7 right next to the king, knight on f6 covers g8 AND defends the rook (f6→h7 is a valid knight move). King can't capture the protected rook.
+- **SW cache v109 → v110** to flush.
+
 ## [5.7.30] - 2026-05-20 - Card Pairs: +3 themes (7 → 10)
 - New memory-match themes for the Card Pairs module:
   - **Space** — 🌑 through 🌟: lunar phases, sun/star, comet, planet, galaxy, rocket, telescope. Covers astronomy iconography.
