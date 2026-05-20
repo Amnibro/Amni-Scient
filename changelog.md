@@ -1,5 +1,21 @@
 ﻿# Changelog 
 
+## [5.7.2] - 2026-05-19 - More Amni themes + mascots + cursor trail
+- v5.7.0 covered 6 Amni modules. Adding the rest of the family for a full set of 10 unlockable themes:
+  - 🌙 **Amni-Haven Twilight** — Unlock: 30-day daily streak. Privacy/sleep mood — deep navy gradient.
+  - 💬 **Amni-Chat Sky** — Unlock: 50 Word Bridge correct (any language). Communication-bright cyan/teal.
+  - 🌌 **Amni-Life Memory** — Unlock: 7-day daily streak. Memory-map deep violet radial.
+  - 🌲 **Amni-LLM Forest** — Unlock: 500 Morse correct. Quiet computational green.
+- 4 new mascots tied to the same modules:
+  - 🌸 **Haven Bloom** — 14-day daily streak.
+  - 🎙️ **Chat Caller** — 25 Word Bridge correct.
+  - 🌌 **Life Memorist** — Memory Sequence round 8+.
+  - 🌲 **LLM Hermit** — 250 Morse correct.
+- 1 new cursor trail: 🍃 **Leaves** — Unlock: Periodic Quiz streak ≥15.
+- Tracking: Word Bridge correct counts via `wb-correct-<lang>-L<level>` (no module change needed if WB already writes those; the unlock just reads them as 0 until the keys exist).
+- All new themes registered in the `amniThemes` whitelist so `_applyTheme` accepts them.
+- **SW cache v79 → v80** to flush.
+
 ## [5.7.1] - 2026-05-19 - Username polish: welcome modal + top-bar chip
 - Username already saved by v5.7.0's Profile system, but it was hidden behind the 👤 button. Made it visible and inviting:
   - **First-run welcome modal**: if no `profile-name` is set, a friendly "Pick a username — no password, no email, stays on this device" modal opens on page load. Either Save & Start or Skip dismisses for the session. Skip writes `profile-welcomed=1` so it doesn't nag.
