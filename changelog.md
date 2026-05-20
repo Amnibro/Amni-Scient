@@ -1,5 +1,19 @@
 ﻿# Changelog 
 
+## [5.7.35] - 2026-05-20 - Map Clicker: real-landmark continent polygons
+- Direct response to Anthony's feedback that the existing polygons look like artificial sketches that don't align with Earth.
+- Rewrote every entry in `_mapContinents` so the vertices sit at **real geographic landmarks** (lat/lon coordinates of actual capes, peninsulas, deltas, and major coastal cities) rather than hand-drawn approximations:
+  - **NA**: Bering Strait → Pt Barrow → Canadian arctic → Cape Race NL → Cape Cod → Cape Hatteras → Miami → Yucatan → Panama → Baja → San Francisco → Olympic → Aleutians.
+  - **SA**: Caribbean Colombia → Amazon mouth → Recife (easternmost mainland) → Cape Horn → Chilean Patagonia → Peru → Ecuador.
+  - **EU**: Lisbon → Brittany → Nordkapp → Volga → Caucasus → Istanbul → Gibraltar.
+  - **AF**: Tangier → Sinai → Bab-el-Mandeb → Cape Guardafui (Horn) → Cape Agulhas (southernmost) → Cape Town → Dakar (westernmost mainland).
+  - **AS**: Caspian → Aral → Taymyr → Bering Strait → Kamchatka → Shanghai → Bangladesh → Sri Lanka → Karachi → Aden.
+  - **AU**: Cape Leeuwin → Wilson's Prom → Cape York → Darwin → Kimberley.
+  - Plus realistic outlines for Greenland (Cape Farewell, Cape Morris Jesup), British Isles, Japan, Philippines, Indonesia archipelago, New Zealand, Papua New Guinea, Madagascar.
+- The equirectangular projection (`ll2xy` / `xy2ll`) is unchanged — only the polygon vertices were updated — so click→lat/lon scoring stays exactly the same. The silhouettes should now read as recognizable continents on the map.
+- Inline comments next to each polygon document the landmark sequence so future edits can preserve intent.
+- **SW cache v113 → v114** to flush.
+
 ## [5.7.34] - 2026-05-20 - Chess: +2 puzzles (26 → 28)
 - Two more mate-in-one puzzles, each escape-verified:
   - **P27 Queen + king corner mate** — `Qb6-b7#` with Kc6 / Qb6 vs Ka8 / Pa7. Queen lands on b7 adjacent to the black king; defended by Kc6 (c6→b7 adjacent), so the king can't capture. Black's own pawn on a7 blocks a7, the queen covers b8 along the b-file.

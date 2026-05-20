@@ -8636,21 +8636,65 @@ function playAnimalSound(type) {
   // recognisably like Earth at the ~900×450 canvas size without
   // bloating the data: ~30-50 anchor points per continent + small
   // separate islands (Greenland, Madagascar, Japan, UK, NZ, PNG).
+  // Continent polygons — coordinates are real lat/lon at recognizable
+  // geographic landmarks (Bering Strait, Cape Hatteras, Cape Horn, Cape of
+  // Good Hope, Nordkapp, etc.) rather than abstract sketches. Equirectangular
+  // projection, so a point's screen position matches its real geo position.
+  // Still simplified to ~30 points per major continent, but the silhouettes
+  // should now be recognizable.
   const _mapContinents = [
-    {name:'NA',color:'#2d7d4f',pts:[[-168,66],[-162,70],[-156,71],[-141,69],[-130,70],[-114,71],[-95,72],[-80,73],[-75,68],[-78,62],[-95,60],[-79,52],[-67,46],[-71,43],[-74,40],[-76,37],[-78,34],[-81,31],[-81,25],[-83,30],[-89,30],[-94,29],[-98,26],[-98,18],[-95,16],[-87,21],[-83,9],[-79,8],[-95,16],[-105,19],[-110,23],[-114,28],[-117,32],[-118,34],[-122,37],[-124,42],[-124,48],[-132,55],[-145,59],[-160,58],[-168,66]]},
-    {name:'GL',color:'#3a8a5e',pts:[[-55,60],[-44,60],[-22,60],[-20,65],[-25,69],[-22,73],[-25,77],[-32,82],[-50,84],[-58,82],[-58,72],[-55,60]]},
-    {name:'SA',color:'#2d7d4f',pts:[[-78,9],[-72,12],[-62,11],[-50,5],[-44,1],[-38,-3],[-35,-8],[-37,-14],[-39,-22],[-48,-25],[-58,-34],[-63,-40],[-69,-46],[-71,-52],[-66,-55],[-71,-50],[-73,-43],[-72,-32],[-72,-18],[-77,-13],[-79,-6],[-80,0],[-78,9]]},
-    {name:'EU',color:'#3a8a5e',pts:[[-9,38],[-5,36],[-2,43],[3,43],[8,43],[10,44],[12,38],[15,38],[18,40],[20,42],[14,45],[12,46],[14,49],[7,53],[-2,51],[-6,52],[-5,55],[-2,58],[7,58],[12,57],[18,57],[22,60],[26,63],[28,69],[34,69],[40,67],[45,67],[55,60],[58,55],[55,50],[40,46],[36,42],[30,44],[28,41],[20,40],[12,38],[6,37],[-9,38]]},
-    {name:'UK',color:'#3a8a5e',pts:[[-6,50],[-3,51],[1,51],[1,53],[-2,55],[-5,58],[-3,58],[-5,55],[-8,57],[-8,51],[-6,50]]},
-    {name:'AF',color:'#cf923f',pts:[[-17,15],[-13,21],[-5,16],[5,16],[15,21],[24,32],[28,32],[34,31],[34,22],[37,17],[42,12],[44,11],[51,12],[51,3],[42,5],[42,-1],[40,-8],[40,-12],[40,-17],[37,-25],[33,-29],[20,-35],[18,-32],[14,-18],[10,-6],[6,2],[8,5],[-2,5],[-6,5],[-12,8],[-17,12],[-17,15]]},
-    {name:'MD',color:'#cf923f',pts:[[43,-12],[50,-15],[50,-21],[47,-25],[44,-25],[43,-15],[43,-12]]},
-    {name:'AS',color:'#3a8a5e',pts:[[30,70],[50,72],[75,75],[105,77],[135,75],[170,70],[180,68],[168,60],[160,55],[148,55],[140,46],[140,42],[136,35],[130,33],[129,35],[125,39],[121,40],[120,30],[114,22],[110,21],[108,18],[105,11],[101,3],[105,2],[99,1],[95,5],[97,15],[90,22],[80,15],[78,8],[74,9],[72,18],[70,24],[64,25],[60,25],[55,20],[51,19],[55,12],[52,15],[48,12],[44,15],[40,15],[36,28],[35,38],[42,40],[45,38],[55,40],[63,38],[70,40],[78,42],[88,48],[100,53],[120,53],[135,55],[150,60],[160,65],[155,68],[140,72],[110,73],[80,75],[55,70],[40,70],[30,70]]},
-    {name:'JP',color:'#3a8a5e',pts:[[130,32],[135,32],[138,35],[140,37],[141,40],[142,42],[145,45],[143,41],[138,37],[135,35],[133,33],[130,32]]},
-    {name:'PH',color:'#2d7d4f',pts:[[120,5],[124,7],[126,8],[126,12],[122,15],[120,18],[121,14],[119,11],[117,8],[120,5]]},
-    {name:'ID',color:'#2d7d4f',pts:[[95,-2],[105,-6],[115,-8],[125,-8],[135,-8],[140,-3],[140,-9],[130,-8],[120,-4],[110,-7],[100,-2],[95,-2]]},
-    {name:'OC',color:'#2d7d4f',pts:[[112,-12],[120,-12],[130,-12],[136,-12],[144,-14],[145,-17],[153,-25],[152,-28],[150,-37],[143,-38],[140,-38],[136,-35],[131,-32],[125,-33],[114,-35],[113,-25],[114,-19],[112,-12]]},
-    {name:'NZ',color:'#2d7d4f',pts:[[165,-34],[174,-37],[177,-38],[178,-41],[176,-43],[173,-43],[170,-46],[166,-46],[166,-44],[165,-34]]},
-    {name:'PG',color:'#3a8a5e',pts:[[140,-2],[148,-3],[152,-5],[151,-10],[145,-10],[141,-9],[140,-2]]}
+    // North America: Bering → Pt Barrow → Canadian arctic → Hudson → Labrador
+    // → Cape Race → Cape Cod → Cape Hatteras → Miami → Yucatan → Panama →
+    // Mexico W coast → San Diego → San Francisco → Cape Mendocino → Pacific
+    // NW → BC → Alaska → Aleutians → back.
+    {name:'NA',color:'#2d7d4f',pts:[[-168,66],[-156,71],[-128,70],[-110,73],[-95,73],[-82,73],[-78,62],[-95,60],[-78,52],[-65,55],[-53,47],[-65,44],[-71,42],[-75,36],[-81,32],[-81,25],[-87,30],[-89,29],[-93,30],[-97,26],[-95,19],[-90,18],[-87,16],[-83,9],[-79,8],[-104,17],[-110,23],[-117,32],[-122,37],[-124,40],[-124,46],[-125,48],[-132,55],[-145,60],[-160,58],[-168,54],[-168,66]]},
+    // Greenland: tip at Cape Farewell (-44,60); broad in the middle; northern
+    // tip near Cape Morris Jesup at (-32,83).
+    {name:'GL',color:'#3a8a5e',pts:[[-44,60],[-22,60],[-21,66],[-22,70],[-19,76],[-25,80],[-32,83],[-50,83],[-58,80],[-67,76],[-58,68],[-52,64],[-44,60]]},
+    // South America: Caribbean Colombia → Trinidad area → Amazon mouth → Recife
+    // (easternmost mainland) → Salvador → Sao Paulo → Buenos Aires → Patagonia
+    // → Tierra del Fuego → Chilean Patagonia → Valparaiso → Arica → Peru →
+    // Ecuador → back.
+    {name:'SA',color:'#2d7d4f',pts:[[-77,8],[-72,11],[-60,11],[-50,5],[-44,1],[-35,-8],[-39,-13],[-44,-23],[-49,-26],[-58,-34],[-63,-40],[-66,-45],[-70,-53],[-66,-55],[-72,-50],[-74,-44],[-72,-32],[-71,-18],[-77,-13],[-80,-6],[-80,0],[-77,8]]},
+    // Europe (mainland west of Caucasus/Caspian): Lisbon → Galicia → Brittany →
+    // Netherlands → Denmark → Norway coast → Nordkapp → White Sea → Volga →
+    // N Caucasus → Black Sea → Istanbul → Greece → S Italy → Marseille →
+    // Gibraltar → back.
+    {name:'EU',color:'#3a8a5e',pts:[[-9,38],[-9,43],[-1,46],[-2,49],[4,52],[8,56],[12,63],[18,68],[25,71],[33,70],[40,67],[55,68],[60,67],[60,55],[40,46],[35,42],[28,41],[26,40],[22,38],[18,40],[16,40],[12,46],[8,44],[3,43],[-1,36],[-9,38]]},
+    // British Isles: Lizard Point (Cornwall SW) → Dover → Cromer → Edinburgh →
+    // Cape Wrath (NW Scotland) → Loch Ness area → Belfast NE → Dublin → Cork →
+    // back.
+    {name:'UK',color:'#3a8a5e',pts:[[-5,50],[-2,51],[1,51],[2,53],[0,55],[-2,57],[-5,58],[-7,58],[-7,55],[-10,55],[-9,52],[-7,51],[-5,50]]},
+    // Africa: Tangier (Strait of Gibraltar) → Tunis → Tripoli → Alexandria →
+    // Sinai → Red Sea → Bab-el-Mandeb → Horn of Africa (Cape Guardafui) →
+    // Mombasa → Mozambique → Maputo → Cape Agulhas (southernmost) → Cape Town
+    // → Namibia → Angola → Gulf of Guinea → Lagos → Abidjan → Dakar
+    // (westernmost mainland) → Mauritania → Western Sahara → back to Tangier.
+    {name:'AF',color:'#cf923f',pts:[[-6,36],[11,37],[15,32],[25,32],[33,31],[34,28],[36,22],[39,15],[43,12],[51,12],[44,2],[41,-5],[39,-8],[40,-15],[35,-25],[28,-33],[20,-35],[18,-34],[12,-23],[12,-8],[10,-1],[9,4],[5,4],[-4,5],[-8,4],[-13,9],[-17,15],[-17,21],[-13,28],[-9,30],[-6,36]]},
+    // Madagascar: a single elongated island offshore east of Mozambique.
+    {name:'MD',color:'#cf923f',pts:[[49,-12],[50,-16],[49,-20],[47,-25],[44,-25],[43,-21],[44,-15],[46,-12],[49,-12]]},
+    // Asia: continues from EU's Volga/Caucasus corner; goes Caspian → Aral →
+    // Kara Sea → Severnaya Zemlya → Taymyr → New Siberian Islands → Bering
+    // Strait → Kamchatka → Kuril Islands → Korea → Yellow Sea → Shanghai →
+    // S China coast → Indochina → Malay peninsula → Bangladesh → Sri Lanka →
+    // S India → Karachi → Hormuz → Aden → back to Caspian.
+    {name:'AS',color:'#3a8a5e',pts:[[60,55],[55,46],[60,42],[60,38],[55,26],[50,30],[50,25],[55,17],[50,12],[44,12],[44,30],[48,30],[55,38],[60,40],[68,25],[72,8],[78,8],[80,8],[88,22],[92,22],[98,8],[100,2],[105,1],[110,11],[108,22],[113,22],[122,30],[122,38],[129,42],[140,46],[155,53],[160,58],[165,60],[170,65],[180,67],[170,72],[140,75],[105,77],[80,76],[60,69],[60,55]]},
+    // Japan: 4 main islands lumped — Kyushu → Shikoku/Honshu → Hokkaido.
+    {name:'JP',color:'#3a8a5e',pts:[[130,32],[133,34],[136,34],[140,35],[141,38],[141,41],[145,44],[143,43],[138,37],[133,35],[130,33],[130,32]]},
+    // Philippines: Luzon, Visayas, Mindanao roughly chained.
+    {name:'PH',color:'#2d7d4f',pts:[[121,5],[126,7],[126,12],[124,15],[121,18],[120,16],[120,12],[122,10],[120,8],[121,5]]},
+    // Indonesia archipelago: Sumatra → Java → Lesser Sundas → Sulawesi base.
+    {name:'ID',color:'#2d7d4f',pts:[[95,5],[105,-6],[115,-8],[125,-9],[135,-8],[135,-3],[120,-4],[110,-7],[100,-2],[95,5]]},
+    // Australia: NW Cape → Cape Leeuwin (SW) → Eyre Pen. → Wilson's Prom (S) →
+    // Brisbane → Cape York (N) → Gulf of Carpentaria → Darwin → Kimberley →
+    // back to NW Cape.
+    {name:'OC',color:'#2d7d4f',pts:[[113,-22],[114,-34],[123,-34],[138,-35],[143,-39],[149,-37],[153,-28],[145,-17],[143,-13],[143,-11],[137,-12],[136,-15],[130,-13],[128,-14],[123,-17],[115,-21],[113,-22]]},
+    // New Zealand: North Island (Cape Reinga, Wellington) + South Island
+    // (Fiordland, Stewart).
+    {name:'NZ',color:'#2d7d4f',pts:[[172,-34],[175,-37],[178,-38],[178,-41],[173,-42],[170,-43],[167,-46],[167,-47],[170,-45],[172,-41],[172,-34]]},
+    // Papua New Guinea: north coast of New Guinea (Indonesia covers western
+    // half via 'ID' polygon).
+    {name:'PG',color:'#3a8a5e',pts:[[141,-3],[148,-3],[152,-6],[151,-10],[145,-10],[141,-9],[141,-3]]}
   ];
   // [name, lat, lon] — broad spread across continents.
   const _mapCountries = [
