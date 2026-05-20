@@ -1,5 +1,20 @@
 ﻿# Changelog 
 
+## [5.6.94] - 2026-05-19 - Achievements: 17 → 26 (cover new modules)
+- Achievements list was written before the May 2026 depth campaign added 14 new modes. The new modules had no badges. Adds **9 new achievements** covering them:
+  - 📡 **Morse Graduate** — 500 correct Morse decodes.
+  - 🎼 **Sharp Ears** — 100 correct Ear Training answers.
+  - ✕ **X Marks the Spot** — Win an X-Sudoku.
+  - ✖️ **Times Tables** — Score 30+ in Speed Math Times mode.
+  - ◀️ **Backward 7** — Reach 7 digits on Backward Digit Span (clinical "above average" threshold).
+  - 🧠 **Jaeggi Trainee** — Hit 70%+ on Dual N-Back (any N) — the research threshold for the working-memory training effect.
+  - 📝 **Mind Over Color** — Score 15+ in Stroop Word mode.
+  - 🐵 **Ayumu Apprentice** — Reach 6 numbers in Chimp Ayumu (0.5s reveal) — short of Ayumu's 9-in-a-second feat, but still 6 in half a second.
+  - 🇺🇸 **States Citizen** — Score 500+ in US Map Clicker.
+- All read from the new mode-suffixed localStorage keys (`spm-best-times`, `nmm-best-backward`, etc.) introduced this campaign. Progress bars + unlock dates work via the existing `_checkAchievements` / `_renderAchStrip` pipeline.
+- Achievement strip on the menu now shows 26 chips total.
+- **SW cache v75 → v76** to flush.
+
 ## [5.6.93] - 2026-05-19 - Daily Challenge: 30 → 90 puzzles (~3 month cycle)
 - Daily Challenge pool tripled. Before: 30 puzzles cycling — users saw repeats after one month. Now: 90 puzzles cycle daily, repeats only after ~3 months.
 - 60 new puzzles added across the existing categories:
