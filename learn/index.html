@@ -1932,7 +1932,11 @@
     {id:'library',ic:'📚',name:'Library',desc:'Read 10 different storybooks',progress(){const c=_intLS('story-total-reads');return{cur:Math.min(c,10),target:10,unlocked:c>=10};}},
     {id:'versus-speed',ic:'⚡',name:'Speed Demon',desc:'Score 20+ in any Versus Speed Challenge',progress(){let m=0;['coding','science','geo','history'].forEach(k=>{m=Math.max(m,_intLS('vs-best-'+k));});return{cur:Math.min(m,20),target:20,unlocked:m>=20};}},
     {id:'categorizer',ic:'🎩',name:'Categorizer',desc:'Complete 25 Sorting Hat rounds',progress(){const c=_intLS('sort-rounds-done');return{cur:Math.min(c,25),target:25,unlocked:c>=25};}},
-    {id:'sudoku-expert',ic:'🔢',name:'Sudoku Expert',desc:'Win an Expert Sudoku (Classic or X, 22 clues)',progress(){const c=_intLS('sdk-wins-classic-expert')+_intLS('sdk-wins-x-expert');return{cur:Math.min(c,1),target:1,unlocked:c>=1};}}
+    {id:'sudoku-expert',ic:'🔢',name:'Sudoku Expert',desc:'Win an Expert Sudoku (Classic or X, 22 clues)',progress(){const c=_intLS('sdk-wins-classic-expert')+_intLS('sdk-wins-x-expert');return{cur:Math.min(c,1),target:1,unlocked:c>=1};},},
+    {id:'chess-master',ic:'♛',name:'Chess Master',desc:'Solve 25 chess puzzles',progress(){const c=_intLS('chess-solved');return{cur:Math.min(c,25),target:25,unlocked:c>=25};}},
+    {id:'logic-maven',ic:'🧮',name:'Logic Maven',desc:'Solve 50 logic puzzles',progress(){const c=_intLS('lgc-solved');return{cur:Math.min(c,50),target:50,unlocked:c>=50};}},
+    {id:'daily-centurion',ic:'💯',name:'Daily Centurion',desc:'100-day Daily Challenge streak',progress(){const s=_intLS('daily-best');return{cur:Math.min(s,100),target:100,unlocked:s>=100};}},
+    {id:'history-scholar',ic:'📜',name:'History Scholar',desc:'Score 20+ in Versus History',progress(){const c=_intLS('vs-best-history');return{cur:Math.min(c,20),target:20,unlocked:c>=20};}}
   ];
   function _achState(){try{return JSON.parse(localStorage.getItem('amni-achievements')||'{}');}catch{return{};}}
   function _saveAchState(s){try{localStorage.setItem('amni-achievements',JSON.stringify(s));}catch{}}

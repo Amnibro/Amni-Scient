@@ -1,5 +1,14 @@
 ﻿# Changelog 
 
+## [5.7.29] - 2026-05-20 - Achievements: +4 milestone tiers (34 → 38)
+- New achievements covering recent module expansions and adult-engagement milestones:
+  - **♛ Chess Master** — solve **25 chess puzzles** (existing `chess-novice` was at 5; the bank now holds 22, and the achievement scales with future additions via `chess-solved`).
+  - **🧮 Logic Maven** — solve **50 logic puzzles** (existing Wizard mascot unlocks at 25; this is the next tier).
+  - **💯 Daily Centurion** — **100-day** Daily Challenge streak (existing tiers: 5, 30; this is the legendary tier).
+  - **📜 History Scholar** — score 20+ in the new Versus **History** category (drops only when v5.7.28's category was actually played, so it pairs with that release).
+- Total achievements now **38**. Strip on the menu still wraps cleanly across viewport widths.
+- **SW cache v107 → v108** to flush.
+
 ## [5.7.28] - 2026-05-20 - Versus Speed Challenge: +History category (4th)
 - New **📜 History** category for the 60-second Speed Challenge with **24 adult-knowledge questions** spanning ancient → modern:
   - Antiquity: pyramids, Caesar's empire, capital of Rome, Cleopatra, Inca/Machu Picchu.
