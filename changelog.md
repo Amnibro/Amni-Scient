@@ -1,5 +1,15 @@
 ﻿# Changelog 
 
+## [5.6.95] - 2026-05-19 - Trail Making: ➕ Extended length tier
+- Trail Making used clinical-standard node counts (TMT-A 15, TMT-B 12). Adult brain-exercisers who mastered the standard length had nowhere to go. Added a length picker:
+  - ⚙ **Standard** (default) — 15 / 12 nodes (Reitan clinical baseline).
+  - ➕ **Extended** — 25 / 20 nodes. Longer scan distance, more pieces to hold in working memory.
+- Tier norms scale linearly by the ratio (25/15 for TMT-A, 20/12 for TMT-B), so "Superior" stays equivalently challenging at the longer length. A 30s Superior TMT-A becomes ~50s in Extended.
+- HUD shows the active size chip (⚙ Std / ➕ Ext).
+- Personal best tracked per (mode, size): `trailmake-num`, `trailmake-num-ext`, `trailmake-alt`, `trailmake-alt-ext`. Original keys keep working for Standard.
+- Internal cleanup: moved the `count` declaration above the progress chip in `run()` so the chip no longer briefly renders "0/undefined" before the refresh fires.
+- **SW cache v76 → v77** to flush.
+
 ## [5.6.94] - 2026-05-19 - Achievements: 17 → 26 (cover new modules)
 - Achievements list was written before the May 2026 depth campaign added 14 new modes. The new modules had no badges. Adds **9 new achievements** covering them:
   - 📡 **Morse Graduate** — 500 correct Morse decodes.
