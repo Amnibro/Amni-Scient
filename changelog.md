@@ -1,5 +1,19 @@
 ﻿# Changelog 
 
+## [5.7.3] - 2026-05-19 - Money Math: real L1-L5 progression
+- **Bug**: L4 and L5 were near-clones of L3 — same prices ($1.99-$9.99), same denominations, only the prompt string differed ("Paid $X — Give back:"). Anthony reported L5 felt like "L2 stuff" because the actual math complexity didn't progress past L3.
+- **Fix**: each level now has distinct mechanics and pricing tiers:
+  - **L1 Count the Coins** — single item priced 5¢-99¢, coins only (penny/nickel/dime/quarter). Same as before, expanded pool 8 → 12 items.
+  - **L2 Count the Money** — single item $1.75-$12.50, full denomination set (coins + $1/$5/$10/$20).
+  - **L3 Make Change** — item priced $1.99-$9.99, paid with rounded-up dollar, give exact change. Denomination set is intentionally restricted (no $10/$20) so the user has to actually build small change.
+  - **L4 Cart Total + Sales Tax** (NEW). Cart of 2-3 random items, subtotal printed, 8% sales tax added, total shown. User must pay the exact post-tax total. Combines mental addition + percentage application.
+  - **L5 Doing Your Taxes** (NEW — per Anthony's "by L5 you should be doing taxes" directive). Paystub scenario: random gross paycheck ($800-$3500), Federal income tax rate ($10/12/15/18/22%), State tax (0/3/4/5/6%), FICA fixed 7.65%. User computes total withholding and pays that amount. L5 tray includes $50 + $100 bills since totals can reach $1000+.
+- Per-level scoring scales with cognitive load: L1=1, L2=1, L3=3, L4=5, L5=6 (was uniform 1 or 3).
+- L4 and L5 reuse the same render pipeline (left-aligned itemised receipt + giant total display + denomination tray) so the UI stays consistent.
+- Title bar adapts per level: "Count the Coins!", "Count the Money!", "Make Change!", "Cart Total + Sales Tax" → "Doing Your Taxes".
+- **Bug fix**: subject quizzes (Animals & Objects, etc.) previously said *"Read the hint!"* on a wrong answer — but no hint was rendered, just the correct answer + explanation. Anthony pointed out it was misleading at L4 and beyond. Toast now reads `✗ Answer: <correct answer>` so the feedback actually matches what's on screen.
+- **SW cache v80 → v82** to flush.
+
 ## [5.7.2] - 2026-05-19 - More Amni themes + mascots + cursor trail
 - v5.7.0 covered 6 Amni modules. Adding the rest of the family for a full set of 10 unlockable themes:
   - 🌙 **Amni-Haven Twilight** — Unlock: 30-day daily streak. Privacy/sleep mood — deep navy gradient.

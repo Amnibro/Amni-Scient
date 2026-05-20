@@ -4547,28 +4547,51 @@
   function initMoney() {
       lifeArea.innerHTML = '';
       lifeControls.innerHTML = '';
-      lifeTitle.textContent = currentLevel === 3 ? "Make Change!" : "Count the Money!";
-      const items = currentLevel === 1
-          ? [{name:'🍭 Candy',price:0.25},{name:'🧃 Juice',price:0.50},{name:'🍪 Cookie',price:0.35},{name:'✏️ Pencil',price:0.10},{name:'🎈 Balloon',price:0.15},{name:'🍬 Gumball',price:0.05},{name:'📎 Clip',price:0.20},{name:'🧸 Sticker',price:0.30}]
-          : currentLevel === 2
-          ? [{name:'🍔 Burger',price:3.50},{name:'📕 Book',price:5.25},{name:'🧢 Hat',price:7.99},{name:'🎮 Game',price:12.50},{name:'🧃 Drink',price:1.75},{name:'🍕 Pizza Slice',price:2.50},{name:'🎒 Notebook',price:4.25},{name:'✏️ Pen Set',price:6.00}]
-          : [{name:'🍔 Burger',price:8.49},{name:'🥤 Drink',price:2.99},{name:'🍟 Fries',price:3.49},{name:'🍩 Donut',price:1.99},{name:'☕ Coffee',price:4.50},{name:'🥪 Sandwich',price:6.75},{name:'🧁 Cupcake',price:3.25},{name:'🍣 Sushi Roll',price:9.99}];
-      const item = items[Math.floor(Math.random()*items.length)];
-      let targetAmount, payAmount, displayText;
-      if(currentLevel <= 3) {
-          targetAmount = item.price;
-          displayText = item.name + ' costs $' + targetAmount.toFixed(2);
+      const titles={1:'Count the Coins!',2:'Count the Money!',3:'Make Change!',4:'Cart Total + Sales Tax',5:'Restaurant + Tip'};
+      lifeTitle.textContent = titles[currentLevel]||'Count the Money!';
+      // L1: cents only. L2: mixed dollars. L3: make change.
+      // L4: multi-item cart with 8% sales tax (NEW). L5: meal + tip 18% (NEW).
+      const itemPools={
+          1:[{name:'🍭 Candy',price:0.25},{name:'🧃 Juice',price:0.50},{name:'🍪 Cookie',price:0.35},{name:'✏️ Pencil',price:0.10},{name:'🎈 Balloon',price:0.15},{name:'🍬 Gumball',price:0.05},{name:'📎 Clip',price:0.20},{name:'🧸 Sticker',price:0.30},{name:'🌭 Mini-dog',price:0.45},{name:'🧁 Mini-cupcake',price:0.60},{name:'🍫 Mini-bar',price:0.75},{name:'🥜 Peanut',price:0.99}],
+          2:[{name:'🍔 Burger',price:3.50},{name:'📕 Book',price:5.25},{name:'🧢 Hat',price:7.99},{name:'🎮 Game',price:12.50},{name:'🧃 Drink',price:1.75},{name:'🍕 Pizza Slice',price:2.50},{name:'🎒 Notebook',price:4.25},{name:'✏️ Pen Set',price:6.00}],
+          3:[{name:'🍔 Burger',price:8.49},{name:'🥤 Drink',price:2.99},{name:'🍟 Fries',price:3.49},{name:'🍩 Donut',price:1.99},{name:'☕ Coffee',price:4.50},{name:'🥪 Sandwich',price:6.75},{name:'🧁 Cupcake',price:3.25},{name:'🍣 Sushi Roll',price:9.99}],
+          4:[{name:'🍔 Burger',price:4.50},{name:'🥤 Drink',price:1.99},{name:'🍟 Fries',price:2.75},{name:'🍩 Donut',price:1.49},{name:'☕ Coffee',price:3.25},{name:'🥪 Sandwich',price:5.50},{name:'🧁 Cupcake',price:2.75},{name:'🥗 Salad',price:6.95},{name:'🍕 Pizza Slice',price:3.50},{name:'🍦 Ice Cream',price:2.25},{name:'🌭 Hotdog',price:3.75},{name:'🥨 Pretzel',price:2.50}],
+          5:[]
+      };
+      // L4: pick 2-3 items, sum + 8% tax
+      // L5: meal + 18% or 20% tip
+      let targetAmount, displayHTML;
+      if(currentLevel===4){
+          const pool=itemPools[4];const n=2+Math.floor(Math.random()*2);
+          const cart=[];const used=new Set();
+          while(cart.length<n){const i=Math.floor(Math.random()*pool.length);if(!used.has(i)){used.add(i);cart.push(pool[i]);}}
+          const subtotal=+cart.reduce((s,i)=>s+i.price,0).toFixed(2);
+          const tax=+(subtotal*0.08).toFixed(2);
+          targetAmount=+(subtotal+tax).toFixed(2);
+          displayHTML=`<div style="font-size:0.92rem;text-align:left;line-height:1.45;padding:8px 12px;">${cart.map(c=>`${c.name} — $${c.price.toFixed(2)}`).join('<br>')}<br><span style="opacity:0.7">Subtotal: $${subtotal.toFixed(2)}<br>Tax 8%: $${tax.toFixed(2)}</span><br><b>Total: $${targetAmount.toFixed(2)}</b></div>`;
+      } else if(currentLevel===5){
+          // L5 — Paystub tax withholding. Multi-category tax computation
+          // (Federal income, State, FICA). Real adult-skill territory.
+          const grossOpts=[800,1000,1200,1500,1800,2000,2200,2500,3000,3500];
+          const gross=grossOpts[Math.floor(Math.random()*grossOpts.length)];
+          const fedPct=[10,12,15,18,22][Math.floor(Math.random()*5)];
+          const statePct=[0,3,4,5,6][Math.floor(Math.random()*5)];
+          const fed=+(gross*fedPct/100).toFixed(2);
+          const stateT=+(gross*statePct/100).toFixed(2);
+          const fica=+(gross*7.65/100).toFixed(2);
+          targetAmount=+(fed+stateT+fica).toFixed(2);
+          const stateLine=statePct>0?`<br>State (${statePct}%): $${stateT.toFixed(2)}`:'';
+          displayHTML=`<div style="font-size:0.92rem;text-align:left;line-height:1.5;padding:8px 12px;font-family:JetBrains Mono,monospace;">📄 Paystub<br><span style="opacity:0.75">Gross pay: $${gross.toFixed(2)}<br>Federal (${fedPct}%): $${fed.toFixed(2)}${stateLine}<br>FICA (7.65%): $${fica.toFixed(2)}</span><br><b>Total withholding: $${targetAmount.toFixed(2)}</b><br><span style="opacity:0.7;font-size:0.82rem">Pay the total tax withheld.</span></div>`;
       } else {
-          payAmount = Math.ceil(item.price);
-          if(payAmount <= item.price) payAmount = item.price + 1;
-          payAmount = Math.ceil(payAmount);
-          targetAmount = +(payAmount - item.price).toFixed(2);
-          displayText = item.name + ' costs $' + item.price.toFixed(2) + ' — Paid $' + payAmount + '.00 — Give back:';
+          const pool=itemPools[currentLevel]||itemPools[2];
+          const item=pool[Math.floor(Math.random()*pool.length)];
+          if(currentLevel<=2){targetAmount=item.price;displayHTML=item.name+' costs $'+targetAmount.toFixed(2);}
+          else{const payAmount=Math.max(Math.ceil(item.price),Math.floor(item.price)+1);targetAmount=+(payAmount-item.price).toFixed(2);displayHTML=item.name+' costs $'+item.price.toFixed(2)+' — Paid $'+payAmount+'.00 — Give back:';}
       }
       const reg = document.createElement('div');
       reg.className = 'register-display';
-      reg.textContent = displayText;
-      reg.style.fontSize = currentLevel === 3 ? '1.5rem' : '2rem';
+      reg.innerHTML = displayHTML;
+      reg.style.fontSize = (currentLevel===4||currentLevel===5)?'1.05rem':(currentLevel===3?'1.5rem':'2rem');
       lifeArea.appendChild(reg);
       const totalDisp = document.createElement('div');
       totalDisp.className = 'register-display';
@@ -4580,9 +4603,17 @@
       tray.className = 'money-tray';
       lifeArea.appendChild(tray);
       let currentTotal = 0;
+      // Denominations scale with level so the player has to actually
+      // pick the right notes, not just spam $1 bills.
       const denominations = currentLevel === 1
           ? [{val:0.01,label:'1¢',type:'coin silver'},{val:0.05,label:'5¢',type:'coin silver'},{val:0.10,label:'10¢',type:'coin silver'},{val:0.25,label:'25¢',type:'coin'}]
-          : [{val:0.01,label:'1¢',type:'coin silver'},{val:0.05,label:'5¢',type:'coin silver'},{val:0.10,label:'10¢',type:'coin silver'},{val:0.25,label:'25¢',type:'coin'},{val:1,label:'$1',type:'bill'},{val:5,label:'$5',type:'bill'},{val:10,label:'$10',type:'bill'},{val:20,label:'$20',type:'bill'}];
+          : currentLevel === 2
+          ? [{val:0.01,label:'1¢',type:'coin silver'},{val:0.05,label:'5¢',type:'coin silver'},{val:0.10,label:'10¢',type:'coin silver'},{val:0.25,label:'25¢',type:'coin'},{val:1,label:'$1',type:'bill'},{val:5,label:'$5',type:'bill'},{val:10,label:'$10',type:'bill'},{val:20,label:'$20',type:'bill'}]
+          : currentLevel === 3
+          ? [{val:0.01,label:'1¢',type:'coin silver'},{val:0.05,label:'5¢',type:'coin silver'},{val:0.10,label:'10¢',type:'coin silver'},{val:0.25,label:'25¢',type:'coin'},{val:1,label:'$1',type:'bill'},{val:5,label:'$5',type:'bill'}]
+          : currentLevel === 4
+          ? [{val:0.01,label:'1¢',type:'coin silver'},{val:0.05,label:'5¢',type:'coin silver'},{val:0.10,label:'10¢',type:'coin silver'},{val:0.25,label:'25¢',type:'coin'},{val:1,label:'$1',type:'bill'},{val:5,label:'$5',type:'bill'},{val:10,label:'$10',type:'bill'},{val:20,label:'$20',type:'bill'},{val:50,label:'$50',type:'bill'}]
+          : [{val:0.01,label:'1¢',type:'coin silver'},{val:0.10,label:'10¢',type:'coin silver'},{val:0.25,label:'25¢',type:'coin'},{val:1,label:'$1',type:'bill'},{val:5,label:'$5',type:'bill'},{val:10,label:'$10',type:'bill'},{val:20,label:'$20',type:'bill'},{val:50,label:'$50',type:'bill'},{val:100,label:'$100',type:'bill'}];
       denominations.forEach(d => {
           const btn = document.createElement('div');
           btn.className = d.type;
@@ -4598,7 +4629,8 @@
                   const hit=milestones.find(m=>m===cnt);
                   if(hit){spawnConfetti(window.innerWidth/2,window.innerHeight/3,hit>=50?120:60);showFeedback(`🏆 ${hit} purchases!`,'#f1c40f');}
                   else{showFeedback(`Perfect! 💵 (#${cnt})`,'#2ecc71');}
-                  addScore(currentLevel === 3 ? 3 : 1);
+                  const reward = currentLevel===5?6:(currentLevel===4?5:(currentLevel===3?3:1));
+                  addScore(reward);
                   setTimeout(initMoney, 1800);
               } else if(currentTotal > targetAmount) {
                   showFeedback("Too much! Try again!", "#e74c3c"); resetStreak();
@@ -6309,7 +6341,7 @@ function playAnimalSound(type) {
                   if(_quizCurrentSubject) _markCorrect(_quizCurrentSubject, q);
                   showExplainAndContinue(true);
               } else {
-                  showFeedback("Read the hint!", "#e67e22"); resetStreak();
+                  showFeedback(`✗ Answer: ${q.a}`, "#e67e22"); resetStreak();
                   btn.style.background='#e74c3c'; btn.style.color='#fff';
                   if(_quizCurrentSubject) _markMissed(_quizCurrentSubject, q);
                   showExplainAndContinue(false);
