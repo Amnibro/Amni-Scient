@@ -1,5 +1,13 @@
 ﻿# Changelog 
 
+## [5.7.19] - 2026-05-20 - Sudoku: Expert difficulty (22 clues) + achievement
+- Sudoku now ships a 4th tier above Hard:
+  - **Expert** — only **22 clues** (vs 30 at Hard). Per the standard difficulty taxonomy this is the "diabolical" / pro tier; minimum-clue Sudokus need 17 but those require unique-solution proofs the generator doesn't currently enforce, so 22 keeps things safe.
+  - Score multiplier set to **30** at Expert (vs 20 Hard, 12 Medium, 8 Easy). With the X-Sudoku 1.4× modifier, X-Expert pays out 42 score per win.
+  - `_sdkAllWins` and the Stats Overview both updated to count `expert` keys (new entries: `sdk-best-classic-expert`, `sdk-best-x-expert`).
+- New achievement **🔢 Sudoku Expert** — Win an Expert Sudoku (Classic or X). Total achievements now 33.
+- **SW cache v97 → v98** to flush.
+
 ## [5.7.18] - 2026-05-20 - SpeedMath: +3 modes (Percent, Powers, Mod)
 - Extended SpeedMath from 4 → 7 modes; the new modes target the mental-math drills the previous +/−/×/÷/√ set didn't cover:
   - **% Percent** — `25% of 80 = ?` style. Generator picks a nice `a%` from `[10,25,50]` (easy) → up to `[5..90]` (hard), then back-solves `b` so the integer answer is in range. Up to 60 retries to land on a clean integer pair (keypad is integer-only).
