@@ -1,5 +1,13 @@
 ﻿# Changelog 
 
+## [5.7.30] - 2026-05-20 - Card Pairs: +3 themes (7 → 10)
+- New memory-match themes for the Card Pairs module:
+  - **Space** — 🌑 through 🌟: lunar phases, sun/star, comet, planet, galaxy, rocket, telescope. Covers astronomy iconography.
+  - **Sports** — ⚽ through 🏊: ball sports (soccer, basketball, football, baseball, softball, tennis, volleyball, rugby, billiards, ping pong, badminton) + boxing/martial arts + activities (archery, golf, bowling, golfing, cycling, swimming).
+  - **Weather** — ☀️ through ☃️: full sky-condition deck (sun, partly cloudy, cloudy, rain, sun-showers, thunderstorms, lightning, snow, snow-cloud, tornado, fog, rainbow, wind, thermometer, umbrella, electric, water, fire, waves, snowman).
+- All three have **20 distinct emoji** so the largest 5×6 grid (15 pairs) is fully supported.
+- **SW cache v108 → v109** to flush.
+
 ## [5.7.29] - 2026-05-20 - Achievements: +4 milestone tiers (34 → 38)
 - New achievements covering recent module expansions and adult-engagement milestones:
   - **♛ Chess Master** — solve **25 chess puzzles** (existing `chess-novice` was at 5; the bank now holds 22, and the achievement scales with future additions via `chess-solved`).
