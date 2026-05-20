@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.7.33] - 2026-05-20 - Chess: +2 puzzles (24 → 26)
+- Two more mate-in-one puzzles, each escape-verified before commit:
+  - **P25 Smothered with helper knight** — `Ne7-g6#` with Kc1 / Ne7 / Nf8 vs Kh8 / Ng8 / Pg7. The leaping knight forks h8 (check) while the second white knight on f8 covers h7. Black pieces wall g7 (own pawn) and g8 (own knight); pawn on g7 attacks f6 / h6 only, can't capture knight on g6.
+  - **P26 Greco's mate** — `Ra1-h1#` with Kg2 / Bd3 / Ra1 / Nf6 vs Kh8 / Pg7. Bishop on d3 covers h7 along the light diagonal (d3→e4→f5→g6→h7 all light, all empty), knight on f6 seals g8, black's own pawn blocks g7, white rook delivers down the h-file (white king on g2 stays off the 1st rank so the rook's path is clear).
+- **SW cache v111 → v112** to flush.
+
 ## [5.7.32] - 2026-05-20 - Music Studio: Famous Rhythms picker
 - Rhythm tab now offers a **named-rhythm picker** instead of only procedural-random patterns. Picker sits above the start button as a row of buttons:
   - **🎲 Random** (default) — the original procedural pattern (4/6/8 beats by level).
