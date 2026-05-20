@@ -1926,7 +1926,12 @@
     {id:'nback-dual',ic:'🧠',name:'Jaeggi Trainee',desc:'Hit 70%+ on Dual N-Back (any N)',progress(){let m=0;for(let n=1;n<=5;n++)m=Math.max(m,_intLS('nbk-dual-best-'+n));return{cur:Math.min(m,70),target:70,unlocked:m>=70};}},
     {id:'stroop-reverse',ic:'📝',name:'Mind Over Color',desc:'Score 15+ in Stroop Word mode',progress(){let m=0;['easy','normal','hard'].forEach(md=>{m=Math.max(m,_intLS('stp-best-'+md+'-word'));});return{cur:Math.min(m,15),target:15,unlocked:m>=15};}},
     {id:'ayumu',ic:'🐵',name:'Ayumu Apprentice',desc:'Reach 6 numbers in Chimp Ayumu (0.5s)',progress(){const c=_intLS('chm-best-500');return{cur:Math.min(c,6),target:6,unlocked:c>=6};}},
-    {id:'usa',ic:'🇺🇸',name:'States Citizen',desc:'Score 500+ in US Map Clicker',progress(){const c=Math.max(_intLS('mc-best-round-us-easy'),_intLS('mc-best-round-us-normal'),_intLS('mc-best-round-us-hard'));return{cur:Math.min(c,500),target:500,unlocked:c>=500};}}
+    {id:'usa',ic:'🇺🇸',name:'States Citizen',desc:'Score 500+ in US Map Clicker',progress(){const c=Math.max(_intLS('mc-best-round-us-easy'),_intLS('mc-best-round-us-normal'),_intLS('mc-best-round-us-hard'));return{cur:Math.min(c,500),target:500,unlocked:c>=500};}},
+    {id:'ascended-saint',ic:'😇',name:'Ascended Saint',desc:'Earn 25 Heavenly Chips in Cookie Clicker',progress(){const c=_intLS('ck-hc');return{cur:Math.min(c,25),target:25,unlocked:c>=25};}},
+    {id:'diamond-prestige',ic:'⭐',name:'Diamond Miner',desc:'Reach Prestige 5 in Auto Miner',progress(){const c=_intLS('am-p');return{cur:Math.min(c,5),target:5,unlocked:c>=5};}},
+    {id:'library',ic:'📚',name:'Library',desc:'Read 10 different storybooks',progress(){const c=_intLS('story-total-reads');return{cur:Math.min(c,10),target:10,unlocked:c>=10};}},
+    {id:'versus-speed',ic:'⚡',name:'Speed Demon',desc:'Score 20+ in any Versus Speed Challenge',progress(){let m=0;['coding','science','geo'].forEach(k=>{m=Math.max(m,_intLS('vs-best-'+k));});return{cur:Math.min(m,20),target:20,unlocked:m>=20};}},
+    {id:'categorizer',ic:'🎩',name:'Categorizer',desc:'Complete 25 Sorting Hat rounds',progress(){const c=_intLS('sort-rounds-done');return{cur:Math.min(c,25),target:25,unlocked:c>=25};}}
   ];
   function _achState(){try{return JSON.parse(localStorage.getItem('amni-achievements')||'{}');}catch{return{};}}
   function _saveAchState(s){try{localStorage.setItem('amni-achievements',JSON.stringify(s));}catch{}}
@@ -6815,7 +6820,7 @@ function playAnimalSound(type) {
         sorted++;
         addScore(1);
         if(sorted >= totalItems) {
-          sortRoundsCleared++;
+          sortRoundsCleared++;try{localStorage.setItem('sort-rounds-done',(parseInt(localStorage.getItem('sort-rounds-done')||'0')+1));}catch{}
           showFeedback(`Round ${sortRoundsCleared} Sorted! 🎉`, '#2ecc71');
           roundIdx++;
           setTimeout(loadRound, 2000);

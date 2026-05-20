@@ -1,5 +1,15 @@
 ﻿# Changelog 
 
+## [5.7.16] - 2026-05-20 - Achievements: +5 for recent expansions
+- Adding achievements to cover the modules expanded this session:
+  - 😇 **Ascended Saint** — Earn 25 Heavenly Chips in Cookie Clicker. Targets the prestige depth added in v5.7.5.
+  - ⭐ **Diamond Miner** — Reach Prestige 5 in Auto Miner. Targets the prestige depth from v5.7.7.
+  - 📚 **Library** — Read 10 different storybooks. Targets the storybook expansion from v5.7.11 (15 books available now).
+  - ⚡ **Speed Demon** — Score 20+ in any Versus Speed Challenge category. Reads `vs-best-coding/science/geo` keys written by the module's existing endGame logic.
+  - 🎩 **Categorizer** — Complete 25 Sorting Hat rounds. New `sort-rounds-done` counter incremented at the existing `sortRoundsCleared++` site.
+- Total achievements now 32 (was 27). Achievement strip on the menu still wraps cleanly.
+- **SW cache v94 → v95** to flush.
+
 ## [5.7.15] - 2026-05-20 - Versus Speed Challenge: question banks doubled (12 → 24 each)
 - The 60-second Speed Challenge had only 12 questions per category, so a single round could chew through most of the bank. Doubled each category to **24 questions** (72 total across all three):
   - 💻 **Coding** +12: LIFO/stack, binary search Big-O, SQL acronym, HTTP port 80, await keyword, Dijkstra, DRY principle, HTTP 500, hash tables, SOLID-S, linked-list head insert, JSON acronym.
