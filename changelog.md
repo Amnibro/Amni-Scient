@@ -1,5 +1,14 @@
 ﻿# Changelog 
 
+## [5.7.17] - 2026-05-20 - Chess: +4 mate-in-one puzzles
+- Adding 4 new puzzles to `_chessPuzzles`, taking the bank from 15 → 19:
+  - **P16 (Rook + Knight back-rank):** `Re1-e8#` with Kg6 / Nf6 / Re1 vs Kh8. King covers g7/h7, knight on f6 doubles up on g8 and h7.
+  - **P17 (Queen swings to b8):** `Qb1-b8#` with Kg6 / Qb1 vs Kh8. White king controls both g7 and h7; queen seals the 8th rank.
+  - **P18 (Q+B crossfire):** `Qa3-h3#` with Kc1 / Bd4 / Qa3 vs Kh1. Queen seals the h-file and g2 diagonal, long-diagonal bishop on d4 covers g1.
+  - **P19 (Anastasia's mate):** `Ra1-h1#` with Kf5 / Ne7 / Bg5 / Ra1 vs Kh7 / Pg7. Bishop covers h6, knight covers g6 and g8, own pawn at g7 blocks the only forward escape.
+- Each puzzle's escape squares verified before commit (the P8/P10 incident from last session is the standing reminder to triple-check soundness).
+- **SW cache v95 → v96** to flush.
+
 ## [5.7.16] - 2026-05-20 - Achievements: +5 for recent expansions
 - Adding achievements to cover the modules expanded this session:
   - 😇 **Ascended Saint** — Earn 25 Heavenly Chips in Cookie Clicker. Targets the prestige depth added in v5.7.5.

@@ -8244,7 +8244,11 @@ function playAnimalSound(type) {
     { pos:{h1:'K',g5:'Q',h5:'N',h8:'k'}, sol:'g5-g7', side:'w', desc:'Q + N battery — the knight on h5 defends the queen as she lands a knight\'s move away from the king.' },
     { pos:{h1:'K',a1:'R',f7:'p',g7:'p',h7:'p',g8:'k'}, sol:'a1-a8', side:'w', desc:'Classic back-rank — the pawn trio blocks every escape, the rook delivers down the a-file.' },
     { pos:{c6:'K',b6:'P',h5:'Q',b8:'k'}, sol:'h5-e8', side:'w', desc:'Long-diagonal queen mate — queen arrives on e8 controlling rank 8; pawn covers a7.' },
-    { pos:{c6:'K',a1:'Q',c8:'k'}, sol:'a1-a8', side:'w', desc:'Queen + king vs king on the edge — queen takes the 8th, king cuts every escape.' }
+    { pos:{c6:'K',a1:'Q',c8:'k'}, sol:'a1-a8', side:'w', desc:'Queen + king vs king on the edge — queen takes the 8th, king cuts every escape.' },
+    { pos:{g6:'K',f6:'N',e1:'R',h8:'k'}, sol:'e1-e8', side:'w', desc:'Rook to the 8th — king covers g7 and h7, knight on f6 doubles up on g8 and h7 so the king has nowhere to run.' },
+    { pos:{g6:'K',b1:'Q',h8:'k'}, sol:'b1-b8', side:'w', desc:'Queen swings to b8 along the back rank — the white king on g6 walls off both g7 and h7.' },
+    { pos:{c1:'K',d4:'B',a3:'Q',h1:'k'}, sol:'a3-h3', side:'w', desc:'Queen + bishop crossfire — queen seals the h-file and g2, the long-diagonal bishop on d4 covers the g1 escape.' },
+    { pos:{f5:'K',e7:'N',g5:'B',a1:'R',h7:'k',g7:'p'}, sol:'a1-h1', side:'w', desc:"Anastasia's mate — bishop on g5 covers h6, knight on e7 seals g6 and g8, rook arrives on the h-file to deliver." }
   ];
   const _chessUnicode = {K:'♔',Q:'♕',R:'♖',B:'♗',N:'♘',P:'♙',k:'♚',q:'♛',r:'♜',b:'♝',n:'♞',p:'♟'};
   let _chessIdx = 0, _chessSelected = null, _chessSolved = 0;
