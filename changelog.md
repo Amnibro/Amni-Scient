@@ -1,5 +1,12 @@
 ﻿# Changelog 
 
+## [5.7.24] - 2026-05-20 - Music Studio: theory expansion (chords 5 → 12, +7 scales)
+- **Chord library expanded** from 5 → 12 in the piano theory section. New entries: **C Maj7, A Min7, G Dom7, B Dim, C Aug, D Sus4, C Sus2** — covering jazz/blues/rock fundamentals beyond the basic triads.
+- **New Modes & Scales row** with 7 scales tappable to hear ascending arpeggios (200ms per note) with key highlighting:
+  - C Major · A Natural Minor · C Pentatonic · C Blues · D Dorian · G Mixolydian · F Lydian.
+- These cover the major/minor poles plus the four most-played modes from jazz and modal music. Triggers existing playNote engine — no new audio code needed.
+- **SW cache v102 → v103** to flush.
+
 ## [5.7.23] - 2026-05-20 - Storybooks: +3 adult literary works (15 → 18)
 - Three classic public-domain short stories for adult readers — abridged to the existing ~10-page format:
   - 🎁 **The Gift of the Magi** (O. Henry, 1905) — Della and Jim sacrifice their most prized possessions to buy each other Christmas gifts.
