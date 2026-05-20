@@ -1930,7 +1930,7 @@
     {id:'ascended-saint',ic:'😇',name:'Ascended Saint',desc:'Earn 25 Heavenly Chips in Cookie Clicker',progress(){const c=_intLS('ck-hc');return{cur:Math.min(c,25),target:25,unlocked:c>=25};}},
     {id:'diamond-prestige',ic:'⭐',name:'Diamond Miner',desc:'Reach Prestige 5 in Auto Miner',progress(){const c=_intLS('am-p');return{cur:Math.min(c,5),target:5,unlocked:c>=5};}},
     {id:'library',ic:'📚',name:'Library',desc:'Read 10 different storybooks',progress(){const c=_intLS('story-total-reads');return{cur:Math.min(c,10),target:10,unlocked:c>=10};}},
-    {id:'versus-speed',ic:'⚡',name:'Speed Demon',desc:'Score 20+ in any Versus Speed Challenge',progress(){let m=0;['coding','science','geo'].forEach(k=>{m=Math.max(m,_intLS('vs-best-'+k));});return{cur:Math.min(m,20),target:20,unlocked:m>=20};}},
+    {id:'versus-speed',ic:'⚡',name:'Speed Demon',desc:'Score 20+ in any Versus Speed Challenge',progress(){let m=0;['coding','science','geo','history'].forEach(k=>{m=Math.max(m,_intLS('vs-best-'+k));});return{cur:Math.min(m,20),target:20,unlocked:m>=20};}},
     {id:'categorizer',ic:'🎩',name:'Categorizer',desc:'Complete 25 Sorting Hat rounds',progress(){const c=_intLS('sort-rounds-done');return{cur:Math.min(c,25),target:25,unlocked:c>=25};}},
     {id:'sudoku-expert',ic:'🔢',name:'Sudoku Expert',desc:'Win an Expert Sudoku (Classic or X, 22 clues)',progress(){const c=_intLS('sdk-wins-classic-expert')+_intLS('sdk-wins-x-expert');return{cur:Math.min(c,1),target:1,unlocked:c>=1};}}
   ];
@@ -13417,6 +13417,31 @@ function playAnimalSound(type) {
       {q:'What country has the most natural lakes?',a:'canada',h:'~2 million lakes.'},
       {q:'Capital of South Korea?',a:'seoul',h:'Largest metro area in Korea.'},
       {q:'Strait between Africa and Spain?',a:'gibraltar',h:'Famous British territory at one end.'}
+    ],history:[
+      {q:'In what year did World War II end?',a:'1945',h:'V-E Day in May, V-J Day in August.'},
+      {q:'Who was the first US president?',a:'washington',h:'On the dollar bill.'},
+      {q:'In what year did Columbus reach the Americas?',a:'1492',h:'"In fourteen ninety-two..."'},
+      {q:'Which ancient wonder still survives today?',a:'pyramid',h:'In Egypt.'},
+      {q:'Who painted the Sistine Chapel ceiling?',a:'michelangelo',h:'Renaissance Italian artist.'},
+      {q:'Year the Berlin Wall fell?',a:'1989',h:'Marked the end of the Cold War era.'},
+      {q:'Which empire did Julius Caesar lead?',a:'roman',h:'"I came, I saw, I conquered."'},
+      {q:'Who wrote the Declaration of Independence?',a:'jefferson',h:'Third US President.'},
+      {q:'Year of the first manned moon landing?',a:'1969',h:'Apollo 11.'},
+      {q:'Who founded the Mongol Empire?',a:'genghis khan',h:'13th century conqueror.'},
+      {q:'In what year did WWI begin?',a:'1914',h:'Assassination of Archduke Franz Ferdinand.'},
+      {q:'British PM during WWII?',a:'churchill',h:'Known for "we shall fight on the beaches."'},
+      {q:'Year the Titanic sank?',a:'1912',h:'On its maiden voyage to New York.'},
+      {q:'Year the US declared independence?',a:'1776',h:'July 4th.'},
+      {q:'First computer programmer (algorithm for Babbage)?',a:'ada lovelace',h:'Worked with Babbage on the Analytical Engine.'},
+      {q:'Capital of the Roman Empire?',a:'rome',h:'Founded in 753 BCE according to legend.'},
+      {q:'Who is popularly credited with inventing the light bulb?',a:'edison',h:'Also recorded sound on phonograph.'},
+      {q:'Year of the French Revolution start?',a:'1789',h:'Storming of the Bastille on July 14.'},
+      {q:'Egyptian queen who allied with Caesar and Antony?',a:'cleopatra',h:'Last pharaoh of Egypt.'},
+      {q:'Year the Wright Brothers first flew?',a:'1903',h:'At Kitty Hawk, North Carolina.'},
+      {q:'Naturalist who proposed evolution by natural selection?',a:'darwin',h:'Voyage of the HMS Beagle.'},
+      {q:'Year the USSR dissolved?',a:'1991',h:'Same year as Gulf War.'},
+      {q:'First man in space (1961)?',a:'gagarin',h:'Soviet cosmonaut.'},
+      {q:'Civilization built Machu Picchu?',a:'inca',h:'Andean empire of Peru.'}
     ]};
     let mode=null,score=0,streak=0,best=0,qIdx=0,timer=0,timerId=null,pool=[],cur=null,hintUsed=false,bestStreak=0;
     function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
@@ -13431,6 +13456,7 @@ function playAnimalSound(type) {
           <button class="versus-btn" data-m="coding">💻 Coding</button>
           <button class="versus-btn" data-m="science">🔬 Science</button>
           <button class="versus-btn" data-m="geo">🌍 Geography</button>
+          <button class="versus-btn" data-m="history">📜 History</button>
         </div></div>`;
       root.querySelectorAll('.versus-btn').forEach(b=>b.addEventListener('click',e=>{mode=e.target.dataset.m;startGame();}));
     }

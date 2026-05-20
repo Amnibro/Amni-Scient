@@ -1,5 +1,15 @@
 ﻿# Changelog 
 
+## [5.7.28] - 2026-05-20 - Versus Speed Challenge: +History category (4th)
+- New **📜 History** category for the 60-second Speed Challenge with **24 adult-knowledge questions** spanning ancient → modern:
+  - Antiquity: pyramids, Caesar's empire, capital of Rome, Cleopatra, Inca/Machu Picchu.
+  - Renaissance → Enlightenment: Michelangelo, Genghis Khan, Columbus 1492, Jefferson + Declaration of Independence 1776, French Revolution 1789.
+  - Industrial → 20th c: Wright Brothers 1903, Titanic 1912, WWI 1914, Lovelace + Babbage, Darwin, Edison.
+  - Modern: WWII 1945, Churchill, Cold War / Gagarin 1961, Apollo 1969, Berlin Wall 1989, USSR 1991.
+- **Speed Demon** achievement updated to include `vs-best-history` so the new category counts toward unlock.
+- Total Versus pool now **96 questions across 4 categories** (was 72 across 3).
+- **SW cache v106 → v107** to flush.
+
 ## [5.7.27] - 2026-05-20 - Daily Challenge: +15 puzzles (91 → 106)
 - Daily Challenge pool now rotates through **106 puzzles** (was 91 — about 3 months of unique puzzles before repeats with the date-hash dispatcher).
 - 15 new adult-knowledge questions spanning every category in the existing taxonomy:
