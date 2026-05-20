@@ -1907,7 +1907,7 @@
     {id:'tracer',ic:'✏️',name:'Master Tracer',desc:'Complete 100 traces across levels',progress(){const c=_intLS('trace-count-L1')+_intLS('trace-count-L2')+_intLS('trace-count-L3')+_intLS('trace-count-L4')+_intLS('trace-count-L5');return{cur:Math.min(c,100),target:100,unlocked:c>=100};}},
     {id:'circuit-master',ic:'🔌',name:'Circuit Master',desc:'Build 25 working circuits',progress(){const c=_intLS('circuit-built');return{cur:Math.min(c,25),target:25,unlocked:c>=25};}},
     {id:'mad-scientist',ic:'⚗️',name:'Mad Scientist',desc:'Discover 6 reactions in Reaction Lab',progress(){const s=_setLS('rxn-discovered');return{cur:Math.min(s.length,6),target:6,unlocked:s.length>=6};}},
-    {id:'alchemist',ic:'🧙‍♂️',name:'Master Alchemist',desc:'Discover all 11 reactions in Reaction Lab',progress(){const s=_setLS('rxn-discovered');return{cur:Math.min(s.length,11),target:11,unlocked:s.length>=11};}},
+    {id:'alchemist',ic:'🧙‍♂️',name:'Master Alchemist',desc:'Discover all 14 reactions in Reaction Lab',progress(){const s=_setLS('rxn-discovered');return{cur:Math.min(s.length,14),target:14,unlocked:s.length>=14};}},
     {id:'snake-charmer',ic:'🐍',name:'Snake Charmer',desc:'Score 500+ in Snake',progress(){const b=_intLS('snake-best');return{cur:Math.min(b,500),target:500,unlocked:b>=500};}},
     {id:'tetris-veteran',ic:'🧊',name:'Tetris Veteran',desc:'Clear 100 lines in a single game',progress(){const b=_intLS('tet-best-lines');return{cur:Math.min(b,100),target:100,unlocked:b>=100};}},
     {id:'solitaire-pro',ic:'🃏',name:'Solitaire Pro',desc:'Win 10 Solitaire games',progress(){const c=_intLS('haven_sol_wins');return{cur:Math.min(c,10),target:10,unlocked:c>=10};}},
@@ -12920,6 +12920,8 @@ function playAnimalSound(type) {
           <button class="lab-tool" data-chem="ice">🧊 Ice</button>
           <button class="lab-tool" data-chem="plant">🌱 Plant</button>
           <button class="lab-tool" data-chem="lava">🌋 Lava</button>
+          <button class="lab-tool" data-chem="iron">⚙️ Iron</button>
+          <button class="lab-tool" data-chem="wood">🪵 Wood</button>
           <button class="lab-tool" data-chem="clear">🗑️ Clear</button>
         </div>
       </div>
@@ -12932,19 +12934,21 @@ function playAnimalSound(type) {
           Acid + Sand → Glass &nbsp;|&nbsp; Water + Acid → Dilute<br>
           Ice + Fire → Water &nbsp;|&nbsp; Lava + Water → Obsidian<br>
           Lava + Plant → Fire &nbsp;|&nbsp; Plant + Fire → Spreads<br>
-          Lava + Ice → Burst Steam
+          Lava + Ice → Burst Steam &nbsp;|&nbsp; Iron + Water → Rust<br>
+          Iron + Acid → Boom (H₂) &nbsp;|&nbsp; Wood + Fire → Ash<br>
+          Wood + Lava → Fire
         </div>
       </div>
     </div>`;
     const cv=$$('#rxn-canvas'),cx=cv.getContext('2d'),log=$$('#rxn-log');
-    const W=400,H=400,EMPTY=0,WATER=1,SAND=2,NA=3,CL=4,ACID=5,FIRE=6,OIL=7,SALT=8,STEAM=9,GLASS=10,BOOM=11,ICE=12,PLANT=13,LAVA=14,OBSIDIAN=15;
+    const W=400,H=400,EMPTY=0,WATER=1,SAND=2,NA=3,CL=4,ACID=5,FIRE=6,OIL=7,SALT=8,STEAM=9,GLASS=10,BOOM=11,ICE=12,PLANT=13,LAVA=14,OBSIDIAN=15,IRON=16,WOOD=17,RUST=18,ASH=19;
     const grid=new Uint8Array(W*H);
     let chem='water',painting=false,animId=null,logLines=[];
-    const chemMap={water:WATER,sand:SAND,sodium:NA,chlorine:CL,acid:ACID,fire:FIRE,oil:OIL,ice:ICE,plant:PLANT,lava:LAVA};
-    const COLORS={[EMPTY]:'#000',[WATER]:'#3498db',[SAND]:'#e67e22',[NA]:'#c0392b',[CL]:'#f1c40f',[ACID]:'#9b59b6',[FIRE]:'#e74c3c',[OIL]:'#2c3e50',[SALT]:'#ecf0f1',[STEAM]:'#bdc3c7',[GLASS]:'#1abc9c',[BOOM]:'#ff6b6b',[ICE]:'#a8e6f7',[PLANT]:'#27ae60',[LAVA]:'#ff5722',[OBSIDIAN]:'#1a1a2e'};
+    const chemMap={water:WATER,sand:SAND,sodium:NA,chlorine:CL,acid:ACID,fire:FIRE,oil:OIL,ice:ICE,plant:PLANT,lava:LAVA,iron:IRON,wood:WOOD};
+    const COLORS={[EMPTY]:'#000',[WATER]:'#3498db',[SAND]:'#e67e22',[NA]:'#c0392b',[CL]:'#f1c40f',[ACID]:'#9b59b6',[FIRE]:'#e74c3c',[OIL]:'#2c3e50',[SALT]:'#ecf0f1',[STEAM]:'#bdc3c7',[GLASS]:'#1abc9c',[BOOM]:'#ff6b6b',[ICE]:'#a8e6f7',[PLANT]:'#27ae60',[LAVA]:'#ff5722',[OBSIDIAN]:'#1a1a2e',[IRON]:'#7f8c8d',[WOOD]:'#8b4513',[RUST]:'#a0522d',[ASH]:'#34495e'};
     const imgData=cx.createImageData(W,H);
     function addLog(msg){logLines.push(msg);if(logLines.length>20)logLines.shift();log.innerHTML=logLines.map(l=>`<div>${l}</div>`).join('');log.scrollTop=log.scrollHeight;}
-    const _RXN_TOTAL=11;
+    const _RXN_TOTAL=14;
     function _rxnTrack(type){const setKey='rxn-discovered';const set=new Set(JSON.parse(localStorage.getItem(setKey)||sessionStorage.getItem(setKey)||'[]'));const isNew=!set.has(type);if(isNew){set.add(type);localStorage.setItem(setKey,JSON.stringify([...set]));spawnConfetti(window.innerWidth/2,window.innerHeight/3,60);if(set.size===_RXN_TOTAL){spawnConfetti(window.innerWidth/2,window.innerHeight/2,150);showFeedback(`🏆 ALL ${_RXN_TOTAL} REACTIONS DISCOVERED! ⚗️`,'#f1c40f');}else{showFeedback(`✨ New reaction! (${set.size}/${_RXN_TOTAL})`,'#9b59b6');}addScore(5);}}
     function idx(x,y){return y*W+x;}
     function get(x,y){return(x<0||x>=W||y<0||y>=H)?255:grid[idx(x,y)];}
@@ -12967,7 +12971,7 @@ function playAnimalSound(type) {
     function step(){
       for(let y=H-2;y>=0;y--){for(let x=0;x<W;x++){
         const c=get(x,y);if(c===EMPTY)continue;
-        if(c===SAND||c===SALT||c===GLASS||c===ICE||c===OBSIDIAN){
+        if(c===SAND||c===SALT||c===GLASS||c===ICE||c===OBSIDIAN||c===IRON||c===WOOD||c===RUST||c===ASH){
           if(get(x,y+1)===EMPTY)set(x,y,EMPTY),set(x,y+1,c);
           else if(get(x,y+1)===WATER){set(x,y,WATER);set(x,y+1,c);}
           else{const d=Math.random()<0.5?-1:1;if(get(x+d,y+1)===EMPTY)set(x,y,EMPTY),set(x+d,y+1,c);}
@@ -13018,6 +13022,10 @@ function playAnimalSound(type) {
           else if((c===LAVA&&n===PLANT)||(c===PLANT&&n===LAVA)){set(c===PLANT?x:x+dx,c===PLANT?y:y+dy,FIRE);addLog('🔥 Lava + Plant → Fire (ignites)');_rxnTrack('plantfire');}
           else if((c===PLANT&&n===FIRE)||(c===FIRE&&n===PLANT)){set(c===PLANT?x:x+dx,c===PLANT?y:y+dy,FIRE);addLog('🔥 Plant + Fire → Spreads (forest fire)');_rxnTrack('plantburn');}
           else if((c===LAVA&&n===OIL)||(c===OIL&&n===LAVA)){set(c===OIL?x:x+dx,c===OIL?y:y+dy,FIRE);for(let i=0;i<3;i++){const bx=x+Math.floor(Math.random()*4-2),by=y+Math.floor(Math.random()*4-2);if(get(bx,by)===OIL||get(bx,by)===EMPTY)set(bx,by,FIRE);}addLog('🔥 Lava + Oil → Inferno!');_rxnTrack('lavaoil');}
+          else if(((c===IRON&&n===WATER)||(c===WATER&&n===IRON))&&Math.random()<0.01){set(c===IRON?x:x+dx,c===IRON?y:y+dy,RUST);addLog('🟤 Fe + H₂O + O₂ → Rust (slow oxidation)');_rxnTrack('rust');}
+          else if((c===IRON&&n===ACID)||(c===ACID&&n===IRON)){set(x,y,BOOM);set(x+dx,y+dy,BOOM);for(let i=0;i<3;i++){const bx=x+Math.floor(Math.random()*4-2),by=y+Math.floor(Math.random()*4-2);if(get(bx,by)===EMPTY)set(bx,by,BOOM);}addLog('💥 Fe + 2HCl → FeCl₂ + H₂↑ (hydrogen ignites)');showFeedback('Hydrogen explosion!','#e74c3c');_rxnTrack('ironacid');}
+          else if((c===WOOD&&n===FIRE)||(c===FIRE&&n===WOOD)){set(c===WOOD?x:x+dx,c===WOOD?y:y+dy,FIRE);if(Math.random()<0.3)set(c===FIRE?x:x+dx,c===FIRE?y:y+dy,ASH);for(let i=0;i<2;i++){const bx=x+Math.floor(Math.random()*4-2),by=y+Math.floor(Math.random()*4-2);if(get(bx,by)===WOOD)set(bx,by,FIRE);}addLog('🪵🔥 Wood + Fire → spreads → Ash');_rxnTrack('woodburn');}
+          else if((c===WOOD&&n===LAVA)||(c===LAVA&&n===WOOD)){set(c===WOOD?x:x+dx,c===WOOD?y:y+dy,FIRE);addLog('🔥 Wood + Lava → ignites instantly');_rxnTrack('woodlava');}
         }
       }}
     }

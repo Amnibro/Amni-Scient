@@ -1,5 +1,18 @@
 ﻿# Changelog 
 
+## [5.7.21] - 2026-05-20 - Reaction Lab: +2 chems, +3 reactions (11 → 14)
+- New chemicals on the Reaction Lab toolbar:
+  - **⚙️ Iron** — metal particle, falls like sand (added to the sand-physics class).
+  - **🪵 Wood** — solid particle, also falls like sand. Becomes Ash byproduct when burned.
+- New product types: **RUST** (sienna) and **ASH** (dark slate).
+- New reactions (each on the chem-pair scan in the simulation loop):
+  - **Fe + H₂O → Rust** — slow oxidation (1% chance per tick), reflecting real corrosion kinetics. Logs `Fe + H₂O + O₂ → Rust (slow oxidation)`.
+  - **Fe + HCl → BOOM** — Fe + 2HCl → FeCl₂ + H₂↑, hydrogen ignites. Models classic acid-metal exothermic reactions.
+  - **Wood + Fire → Ash** — fire spreads through adjacent wood with chance of Ash byproduct.
+  - **Wood + Lava → Fire** — instant ignition from the higher temperature.
+- `_RXN_TOTAL` bumped 11 → 14; **Master Alchemist** achievement target updated to match.
+- **SW cache v99 → v100** to flush.
+
 ## [5.7.20] - 2026-05-20 - AI Ethics Debug: +3 ML-engineering scenarios (8 → 11)
 - Adding three production-ML failure-mode scenarios to NetDebug, all framed as engineering issues (no DEI language per project convention):
   - **Class Imbalance** — 0.1% positive class anomaly detector with a "Default Bias" pull toward the majority class. Solution: cut the bias input, boost Pattern Match (≥0.5) and Statistical Outlier (≥0.4). Impact note covers focal loss, SMOTE, and PR-curve threshold tuning.
