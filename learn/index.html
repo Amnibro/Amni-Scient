@@ -1204,7 +1204,7 @@
         <span class="streak-fire" id="streak-fire">🔥 <span class="streak-val" id="streak-val">0</span></span>
         <button class="retro-btn" id="leaderboard-btn" style="padding:2px 8px;font-size:0.75rem;margin-left:6px" onclick="window._showAllLeaderboards()">🏆</button>
         <button class="retro-btn" id="stats-btn" style="padding:2px 8px;font-size:0.75rem;margin-left:4px" onclick="window._showStatsOverview()" title="Stats">📊</button>
-        <button class="retro-btn" id="profile-btn" style="padding:2px 8px;font-size:0.75rem;margin-left:4px" onclick="window._showProfile()" title="Profile">👤</button>
+        <button class="retro-btn" id="profile-btn" style="padding:2px 8px;font-size:0.75rem;margin-left:4px;display:flex;align-items:center;gap:4px" onclick="window._showProfile()" title="Profile"><span id="profile-btn-icon">👤</span><span id="profile-btn-name" style="font-family:JetBrains Mono;font-size:0.75rem;color:var(--accent,#4db8ff);max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:none"></span></button>
     </div>
     <div class="top-controls">
         <span class="fs-hint" id="fs-hint">(Press ESC to exit)</span>
@@ -2193,6 +2193,29 @@
     setTimeout(()=>p.remove(),750);
   }
   window.addEventListener('pointermove',_curHandler,{passive:true});
+  // Refresh the top-bar profile chip so the username + mascot are visible.
+  function _refreshProfileChip(){
+    const name=localStorage.getItem('profile-name')||'';
+    const mascot=localStorage.getItem('profile-mascot')||'';
+    const ic=document.getElementById('profile-btn-icon');
+    const nm=document.getElementById('profile-btn-name');
+    if(ic)ic.textContent=mascot||'👤';
+    if(nm){if(name){nm.textContent=name;nm.style.display='inline';}else{nm.style.display='none';}}
+  }
+  setTimeout(_refreshProfileChip,100);
+  // First-run welcome — if no username, prompt for one. Skippable.
+  function _welcomeModal(){
+    if(localStorage.getItem('profile-name')||localStorage.getItem('profile-welcomed')==='1')return;
+    const ov=document.createElement('div');ov.className='hs-overlay';
+    ov.innerHTML=`<div class="hs-modal" style="min-width:320px;max-width:480px"><div class="hs-title">👋 Welcome to Amni-Learn!</div><div style="font-size:0.85rem;color:#bbb;margin:10px 0 14px;line-height:1.5">Pick a username for your progress card. It stays on this device — no password, no email, no sign-in needed.</div><input id="wel-name" type="text" placeholder="e.g. Anthony, Rikku, BrainNinja…" maxlength="24" style="width:100%;padding:10px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.18);border-radius:6px;color:var(--text,#ecf0f1);font-family:JetBrains Mono;font-size:0.95rem;margin-bottom:14px"><div style="display:flex;gap:8px"><button id="wel-save" class="retro-btn" style="flex:2">Save & Start</button><button id="wel-skip" class="retro-btn" style="flex:1">Skip</button></div></div>`;
+    document.body.appendChild(ov);
+    const inp=ov.querySelector('#wel-name');inp.focus();
+    function save(){const nm=inp.value.trim();if(nm)localStorage.setItem('profile-name',nm);localStorage.setItem('profile-welcomed','1');ov.remove();_refreshProfileChip();if(nm&&typeof showFeedback==='function')showFeedback(`Welcome, ${nm}! 🌟`,'#2ecc71');}
+    ov.querySelector('#wel-save').onclick=save;
+    ov.querySelector('#wel-skip').onclick=()=>{localStorage.setItem('profile-welcomed','1');ov.remove();};
+    inp.addEventListener('keydown',e=>{if(e.key==='Enter')save();});
+  }
+  setTimeout(_welcomeModal,800);
   // Profile modal — display name + avatar + theme + cursor picker.
   window._showProfile=function(){
     const name=localStorage.getItem('profile-name')||'';
@@ -2224,7 +2247,7 @@
     ov.querySelectorAll('button[data-key]').forEach(b=>{
       b.onclick=()=>{if(b.disabled)return;const k=b.getAttribute('data-key'),v=b.getAttribute('data-val');localStorage.setItem(k,v);if(k==='amni-learn-theme')_applyTheme(v);ov.remove();window._showProfile();};
     });
-    ov.querySelector('#prof-save').onclick=()=>{const nm=ov.querySelector('#prof-name').value.trim();if(nm)localStorage.setItem('profile-name',nm);else localStorage.removeItem('profile-name');if(typeof showFeedback==='function')showFeedback('Profile saved!','#2ecc71');ov.remove();};
+    ov.querySelector('#prof-save').onclick=()=>{const nm=ov.querySelector('#prof-name').value.trim();if(nm)localStorage.setItem('profile-name',nm);else localStorage.removeItem('profile-name');_refreshProfileChip();if(typeof showFeedback==='function')showFeedback('Profile saved!','#2ecc71');ov.remove();};
     ov.querySelector('#prof-cancel').onclick=()=>ov.remove();
   };
   document.addEventListener('fullscreenchange', () => { document.fullscreenElement ? (_fsNative=true,_cssFallback(true)) : (_fsNative=false,_cssFallback(false)); });
@@ -2381,7 +2404,10 @@
       ]},
     ];
     const ov=document.createElement('div');ov.className='hs-overlay';ov.onclick=e=>{if(e.target===ov)ov.remove();};
-    let html='<div class="hs-modal" style="max-height:85vh;overflow-y:auto;min-width:340px;max-width:560px"><div class="hs-title">📊 MY STATS</div><div style="font-size:0.78rem;color:#7a8a9a;margin-bottom:8px">Best results across all brain-exercise modules.</div>';
+    const _profName=localStorage.getItem('profile-name')||'';
+    const _profMascot=localStorage.getItem('profile-mascot')||'📊';
+    const _statsTitle=_profName?`${_profMascot} ${_profName.toUpperCase()}'S STATS`:'📊 MY STATS';
+    let html=`<div class="hs-modal" style="max-height:85vh;overflow-y:auto;min-width:340px;max-width:560px"><div class="hs-title">${_statsTitle}</div><div style="font-size:0.78rem;color:#7a8a9a;margin-bottom:8px">Best results across all brain-exercise modules.</div>`;
     let totalRecorded=0;
     sec.forEach(s=>{
       const rows=s.rows.filter(r=>r.v!==null&&r.v!==undefined&&r.v!=='');

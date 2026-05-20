@@ -1,5 +1,15 @@
 ﻿# Changelog 
 
+## [5.7.1] - 2026-05-19 - Username polish: welcome modal + top-bar chip
+- Username already saved by v5.7.0's Profile system, but it was hidden behind the 👤 button. Made it visible and inviting:
+  - **First-run welcome modal**: if no `profile-name` is set, a friendly "Pick a username — no password, no email, stays on this device" modal opens on page load. Either Save & Start or Skip dismisses for the session. Skip writes `profile-welcomed=1` so it doesn't nag.
+  - **Top-bar chip**: 👤 button now shows `[mascot] [username]` instead of just 👤. If a mascot is picked, that emoji replaces the default icon; the username (max 90px ellipsis-clipped, accent-coloured) sits next to it.
+  - **Stats overview greets by name**: header switches from "📊 MY STATS" to "[mascot] [USERNAME]'S STATS" when a username is set.
+  - All three reuse the existing `profile-name` key — no new storage.
+- `_refreshProfileChip()` is called after every Profile save so the top-bar chip stays in sync with mascot/name changes.
+- Enter key in the welcome modal also saves.
+- **SW cache v78 → v79** to flush.
+
 ## [5.7.0] - 2026-05-19 - 👤 Profile + Unlockables (Amni-themed)
 - Big personalisation pass — new **👤 Profile button** in the top bar opens a modal where the user can set a display name and pick a theme, mascot, and cursor trail. Unlocks are gated by per-module milestones tied to other Amni products.
 - **🎨 Themes** (6 unlockable Amni-themed palettes alongside Dark/Light):
