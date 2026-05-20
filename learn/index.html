@@ -12771,6 +12771,8 @@ function playAnimalSound(type) {
         <button class="lab-tool" data-tool="capacitor">🪫 Capacitor</button>
         <button class="lab-tool" data-tool="buzzer">📢 Buzzer</button>
         <button class="lab-tool" data-tool="motor">⚙ Motor</button>
+        <button class="lab-tool" data-tool="inductor">〰 Inductor</button>
+        <button class="lab-tool" data-tool="ground">⏚ Ground</button>
         <button class="lab-tool" data-tool="wire">🔗 Wire</button>
         <button class="lab-tool" data-tool="delete">❌ Delete</button>
         <button class="lab-tool" data-tool="test">⚡ Test</button>
@@ -12778,8 +12780,8 @@ function playAnimalSound(type) {
       </div>`;
     const cv=$$('#circuit-canvas'),cx=cv.getContext('2d'),info=$$('#circuit-info');
     let comps=[],wires=[],tool='battery',drag=null,dOx=0,dOy=0,wireFrom=null,mouseX=0,mouseY=0;
-    const SYMS={battery:'🔋',resistor:'R',bulb:'💡',switch:'SW',led:'LED',diode:'D▶',capacitor:'C‖',buzzer:'BZ',motor:'M⚙'};
-    const COLS={battery:'#e74c3c',resistor:'#e67e22',bulb:'#f1c40f',switch:'#2ecc71',led:'#ff6b6b',diode:'#9b59b6',capacitor:'#1abc9c',buzzer:'#e67e22',motor:'#3498db'};
+    const SYMS={battery:'🔋',resistor:'R',bulb:'💡',switch:'SW',led:'LED',diode:'D▶',capacitor:'C‖',buzzer:'BZ',motor:'M⚙',inductor:'L〰',ground:'⏚'};
+    const COLS={battery:'#e74c3c',resistor:'#e67e22',bulb:'#f1c40f',switch:'#2ecc71',led:'#ff6b6b',diode:'#9b59b6',capacitor:'#1abc9c',buzzer:'#e67e22',motor:'#3498db',inductor:'#8e44ad',ground:'#7f8c8d'};
     const R=28;
     function pos(e){const b=cv.getBoundingClientRect();return{x:(e.clientX??e.touches?.[0]?.clientX??0)-b.left,y:(e.clientY??e.touches?.[0]?.clientY??0)-b.top};}
     function hitComp(x,y){return comps.find(c=>Math.hypot(c.x-x,c.y-y)<R);}
@@ -12819,7 +12821,7 @@ function playAnimalSound(type) {
       if(hit){
         if(hit.type==='switch'){hit.on=!hit.on;draw();return;}
         drag=hit;dOx=p.x-hit.x;dOy=p.y-hit.y;
-      }else if(['battery','resistor','bulb','switch','led'].includes(tool)){
+      }else if(['battery','resistor','bulb','switch','led','diode','capacitor','buzzer','motor','inductor','ground'].includes(tool)){
         const c={type:tool,x:p.x,y:p.y,on:true,lit:false};comps.push(c);drag=c;dOx=0;dOy=0;
       }
       draw();
@@ -12845,12 +12847,16 @@ function playAnimalSound(type) {
         const motors=comps.filter(c=>c.type==='motor').length;
         const caps=comps.filter(c=>c.type==='capacitor').length;
         const buzzers=comps.filter(c=>c.type==='buzzer').length;
-        const totalR=Math.max(r,1)*100 + diodes*50 + motors*150 - caps*20;
+        const inductors=comps.filter(c=>c.type==='inductor').length;
+        const grounds=comps.filter(c=>c.type==='ground').length;
+        const totalR=Math.max(r,1)*100 + diodes*50 + motors*150 + inductors*30 - caps*20;
         const v=12,current=(v/Math.max(totalR,10)).toFixed(3);
         let extras='';
         if(diodes)extras+=` · ${diodes}× diode (Vf~0.7V)`;
         if(motors)extras+=` · ${motors}× motor spinning`;
         if(caps)extras+=` · ${caps}× capacitor charging`;
+        if(inductors)extras+=` · ${inductors}× inductor storing flux`;
+        if(grounds)extras+=` · ${grounds}× ground reference`;
         if(buzzers){extras+=` · ${buzzers}× buzzer beeping`;try{const ctxA=new (window.AudioContext||window.webkitAudioContext)();for(let i=0;i<buzzers;i++){const o=ctxA.createOscillator(),g=ctxA.createGain();o.type='square';o.frequency.value=440+i*80;const t=ctxA.currentTime;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(0.15,t+0.01);g.gain.setValueAtTime(0.15,t+0.18);g.gain.linearRampToValueAtTime(0,t+0.22);o.connect(g);g.connect(ctxA.destination);o.start(t);o.stop(t+0.25);}}catch{}}
         info.innerHTML=`✅ Circuit closed! V=${v}V, I=${current}A, R=${totalR}Ω${extras}`;
         const cntKey='circuit-built';

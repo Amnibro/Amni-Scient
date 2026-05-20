@@ -1,5 +1,13 @@
 ﻿# Changelog 
 
+## [5.7.22] - 2026-05-20 - Circuit Lab: bug fix + Inductor + Ground (5 → 11 placeable)
+- **Bug fix:** the toolbar advertised diode / capacitor / buzzer / motor since v5.7.13, but the placement allowlist at the click handler was still `['battery','resistor','bulb','switch','led']` — those 4 buttons were dead. Allowlist now matches the toolbar (all 11 types).
+- **New components:**
+  - **〰 Inductor (L)** — adds 30 Ω to total circuit resistance; reported in the test panel as `× inductor storing flux` to highlight the magnetic-energy-storage role.
+  - **⏚ Ground (GND)** — visual reference marker; doesn't affect V/I but completes proper schematic syntax.
+- Test summary now reports inductor/ground counts alongside diode/motor/cap/buzzer.
+- **SW cache v100 → v101** to flush.
+
 ## [5.7.21] - 2026-05-20 - Reaction Lab: +2 chems, +3 reactions (11 → 14)
 - New chemicals on the Reaction Lab toolbar:
   - **⚙️ Iron** — metal particle, falls like sand (added to the sand-physics class).
