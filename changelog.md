@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.7.9] - 2026-05-19 - Word Bridge tracking + module audit
+- **Audit** of all `data-game` values vs the `views` registry — confirmed every game has a view mapping. (snake80 and t2048 had been missed by an earlier regex pattern but verified registered.)
+- **Audit** of pre-K modules for L1-L5 progression like Money Math's L4/L5 clones — confirmed Math Basics (+, −, ×, ÷, word problems, geometry, algebra by level), Matching (3/8/10/12/15 pairs + concept-pair mode at L4+), Typing (40 3-letter → 30 15-letter scientific), Tracing (letters → 4-letter words → 7-letter → academic → Greek/math symbols), and Reflex Racer (stationary → moving → faster + decoys) all have real progression. Money Math was the only outlier (fixed in v5.7.3).
+- **Word Bridge** previously didn't write the `wb-correct-<lang>-L<level>` counter keys that the **💬 Amni-Chat theme** and **🎙️ Chat Caller mascot** unlocks read. Added an inline `localStorage` increment on every correct answer. Both unlocks now actually progress when playing Word Bridge.
+- **SW cache v87 → v88** to flush.
+
 ## [5.7.8] - 2026-05-19 - Ear Training: defensive try/catch (was reported blank)
 - Anthony reported Ear Training showing blank. v5.7.5 already fixed the symptom-equivalent Morse bug by adding both `morse` and `ear` to the `views` registry, and ear-view structure is otherwise identical to working modules. Couldn't reproduce a deterministic cause from a static read of the code.
 - **Defensive fix**: wrapped `initEar()`'s body in try/catch. If anything throws during init now, the user sees a red diagnostic card with the actual error message + a Retry button instead of an empty page. Also added a null-guard on the `#ear-game` root lookup.

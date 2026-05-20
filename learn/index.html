@@ -7162,6 +7162,7 @@ function playAnimalSound(type) {
             if(wbStreak>wbBestStreak)wbBestStreak=wbStreak;
             const pts=wbStreak>=5?3:(wbStreak>=3?2:1);
             addScore(pts);
+            try{const wbcKey='wb-correct-'+wbLang+'-L'+currentLevel;localStorage.setItem(wbcKey,(parseInt(localStorage.getItem(wbcKey)||'0')+1));}catch{}
             if(wbStreak===3||wbStreak===5||wbStreak===8)spawnConfetti(window.innerWidth/2,window.innerHeight/3,wbStreak>=5?80:50);
             showFeedback(wbStreak>=8?`${wbStreak}x! 🔥🔥🔥`:(wbStreak>=5?`${wbStreak}x Streak! 🔥🔥`:(wbStreak>=3?`${wbStreak}x 🔥`:'Correct! ✨')), '#2ecc71');
             wbIdx++;
