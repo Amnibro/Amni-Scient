@@ -1,5 +1,12 @@
 ﻿# Changelog 
 
+## [5.7.26] - 2026-05-20 - Chess: +3 mate-in-one puzzles (19 → 22)
+- Three new puzzles, each with all king-escape squares verified before commit:
+  - **P20 Pin mate** — `Qd1-h5#` with Kf6 / Qd1 vs Kh8 / Rf8. Queen seals the h-file from h5; king covers g7; the black rook on f8 blocks its own king's only escape to g8. The rook can't block the h-file in one move (rook moves only on f-file or 8th rank from f8).
+  - **P21 Bishop + Rook + King** — `Re1-e8#` with Kg6 / Re1 / Bd5 vs Kh8. Rook arrives on the 8th rank, the light-squared bishop on d5 covers g8 along the long light diagonal (d5-e6-f7-g8 all light), king walls off g7 and h7.
+  - **P22 Discovered double check** — `Rd4-d8#` with Kc1 / Bb2 / Rd4 / Ng5 vs Kh8. Rook clears the a1-h8 diagonal as it arrives on the 8th rank, bishop joins in from b2 (now unblocked through e5/f6/g7/h8), knight on g5 seals h7. Double check means black can't block or capture out.
+- **SW cache v104 → v105** to flush.
+
 ## [5.7.25] - 2026-05-20 - Periodic Table Quiz: +3 generators (5 → 8)
 - Three new question generators wire up unused fields in the element table (`[atomic_num, symbol, name, period, group]`):
   - **"Which period is X in?"** — reverse of the existing group generator. Eligible elements limited to periods 1–7 (excludes lanthanides/actinides edge cases). Wrong answers drawn from other periods.
