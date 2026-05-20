@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.7.34] - 2026-05-20 - Chess: +2 puzzles (26 → 28)
+- Two more mate-in-one puzzles, each escape-verified:
+  - **P27 Queen + king corner mate** — `Qb6-b7#` with Kc6 / Qb6 vs Ka8 / Pa7. Queen lands on b7 adjacent to the black king; defended by Kc6 (c6→b7 adjacent), so the king can't capture. Black's own pawn on a7 blocks a7, the queen covers b8 along the b-file.
+  - **P28 Q + B + P combo** — `Qa3-h3#` with Kc1 / Qa3 / Bd5 / Pf6 vs Kh8. Queen swings to h3 attacking the h-file (covers h7), light-squared bishop on d5 covers g8 along the d5–e6–f7–g8 diagonal, white pawn on f6 covers g7 diagonally.
+- **SW cache v112 → v113** to flush.
+
 ## [5.7.33] - 2026-05-20 - Chess: +2 puzzles (24 → 26)
 - Two more mate-in-one puzzles, each escape-verified before commit:
   - **P25 Smothered with helper knight** — `Ne7-g6#` with Kc1 / Ne7 / Nf8 vs Kh8 / Ng8 / Pg7. The leaping knight forks h8 (check) while the second white knight on f8 covers h7. Black pieces wall g7 (own pawn) and g8 (own knight); pawn on g7 attacks f6 / h6 only, can't capture knight on g6.
