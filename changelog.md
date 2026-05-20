@@ -1,5 +1,29 @@
 ﻿# Changelog 
 
+## [5.7.0] - 2026-05-19 - 👤 Profile + Unlockables (Amni-themed)
+- Big personalisation pass — new **👤 Profile button** in the top bar opens a modal where the user can set a display name and pick a theme, mascot, and cursor trail. Unlocks are gated by per-module milestones tied to other Amni products.
+- **🎨 Themes** (6 unlockable Amni-themed palettes alongside Dark/Light):
+  - 🧠 **Amni-AI Violet** — N-Back accuracy ≥70% any N
+  - 🎨 **Amni-Gen Magenta** — Card Pairs 5 wins
+  - 💻 **Amni-Code Cyan** — 3 Sudoku wins (any mode)
+  - 🔬 **Amni-Scient Orange** — Periodic Quiz 10-streak
+  - 💎 **Amni-Prism Rainbow** — 15 achievements (animated gradient!)
+  - ⚡ **Azno Red-Black** — Reaction best <250ms
+- Each theme overrides `--accent` and the `#menu-view` / body background via a `body[data-theme="X"]` attribute, layered on top of the existing CSS variable system. Prism animates a 4-color gradient on an 18s loop.
+- **🌟 Mascots** (8 emoji buddies appended to feedback toasts):
+  - 🌟 Star (always), 🤖 Adam (N-Back 60%+), 💎 Gemma (Ear 100 correct), 📡 Morse Op (500 Morse), 🐵 Ayumu (Chimp Ayumu ≥6), 🧙 Wizard (Logic 25), 🦁 King (Chess streak 5), 🚀 Azno Trader (Reaction <250ms).
+  - When picked, the mascot is prepended to every `showFeedback` call.
+- **✨ Cursor trails** (6 particle effects on pointer-move):
+  - Sparkles ✨ (5 achievements), Atoms ⚛️ (Periodic 50 elements), Binary 🔣 (3 Sudoku wins), Gems 💎 (20 achievements), Stars 🌟 (7-day daily streak).
+  - Spawned as short-lived CSS-transition spans throttled to ~25fps; cleaned up automatically.
+- **👤 Profile fields**:
+  - Display name (24-char text input, stored in `profile-name`).
+  - Locked unlockables show 🔒 + progress bar + current/target. Click to apply if unlocked.
+- **Lifetime tracking added** for Card Pairs (`cp-lifetime-wins`) and Logic Puzzles (`lgc-solved`) — both increment inline at the success site so the new unlocks have something to read.
+- All state in localStorage for v1 (real cross-device sign-up deferred to a future iteration with a real auth backend).
+- **SW cache v77 → v78** to flush.
+- Minor version bumped: 5.6.95 → **5.7.0** for the new feature category.
+
 ## [5.6.95] - 2026-05-19 - Trail Making: ➕ Extended length tier
 - Trail Making used clinical-standard node counts (TMT-A 15, TMT-B 12). Adult brain-exercisers who mastered the standard length had nowhere to go. Added a length picker:
   - ⚙ **Standard** (default) — 15 / 12 nodes (Reitan clinical baseline).

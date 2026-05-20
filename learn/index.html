@@ -42,6 +42,25 @@
      using var(--text), var(--panel-bg), etc. switches automatically. */
   :root { --text:#ecf0f1; --text-muted:#95a5a6; --panel-bg:rgba(255,255,255,0.05); --panel-border:rgba(255,255,255,0.10); --bg-deep:#0c0f12; --bg-panel-deep:rgba(0,0,0,0.30); --accent:#4db8ff; }
   body.light-mode { --text:#1a1f2e; --text-muted:#5a6478; --panel-bg:rgba(0,0,0,0.04); --panel-border:rgba(0,0,0,0.12); --bg-deep:#f5f7fa; --bg-panel-deep:rgba(255,255,255,0.90); --accent:#2980b9; background: #f5f7fa; color: #1a1f2e; }
+  /* Amni-module themes — unlockable via per-module milestones. Each
+     overrides --accent and gradient backgrounds. Applied via body
+     data-theme attribute alongside (or instead of) light-mode. */
+  body[data-theme="amni-ai"] { --accent:#8e44ad; background: radial-gradient(ellipse at top, #1a0f2e, #0c0f12 70%); }
+  body[data-theme="amni-ai"] #menu-view { background: radial-gradient(ellipse at top, #1a0f2e, #0c0f12 70%); }
+  body[data-theme="amni-gen"] { --accent:#e84393; background: radial-gradient(ellipse at top, #2e0f1f, #0c0f12 70%); }
+  body[data-theme="amni-gen"] #menu-view { background: radial-gradient(ellipse at top, #2e0f1f, #0c0f12 70%); }
+  body[data-theme="amni-code"] { --accent:#00bcd4; background: radial-gradient(ellipse at top, #001a26, #0c0f12 70%); }
+  body[data-theme="amni-code"] #menu-view { background: radial-gradient(ellipse at top, #001a26, #0c0f12 70%); }
+  body[data-theme="amni-scient"] { --accent:#e67e22; background: radial-gradient(ellipse at top, #1f1208, #0c0f12 70%); }
+  body[data-theme="amni-scient"] #menu-view { background: radial-gradient(ellipse at top, #1f1208, #0c0f12 70%); }
+  body[data-theme="amni-prism"] { --accent:#f1c40f; background: linear-gradient(135deg, #1a0d2e 0%, #0c1a2e 25%, #0c2e1f 50%, #2e1f0c 75%, #2e0c1f 100%); background-size:400% 400%; animation: prismShift 18s ease infinite; }
+  body[data-theme="amni-prism"] #menu-view { background: transparent; }
+  @keyframes prismShift { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
+  body[data-theme="azno"] { --accent:#e74c3c; background: linear-gradient(135deg, #1a0303 0%, #0c0f12 50%, #1a0303 100%); }
+  body[data-theme="azno"] #menu-view { background: linear-gradient(135deg, #1a0303 0%, #0c0f12 50%, #1a0303 100%); }
+  /* Cursor trails — particles spawned via JS pointermove. */
+  .cur-particle { position:fixed; pointer-events:none; font-size:14px; line-height:1; z-index:9998; opacity:1; transition: opacity 0.7s ease-out, transform 0.7s ease-out; will-change:transform,opacity; }
+  .cur-particle.fade { opacity:0; transform: translate(var(--dx,0px), var(--dy,0px)) scale(0.4); }
   /* Per-view dark backgrounds — flip to soft cream/light in light mode
      so quiz/subject/life-skills/etc. screens don't stay charcoal. The
      retro arcade, classic arcade titles, and intentionally CRT-styled
@@ -1185,6 +1204,7 @@
         <span class="streak-fire" id="streak-fire">🔥 <span class="streak-val" id="streak-val">0</span></span>
         <button class="retro-btn" id="leaderboard-btn" style="padding:2px 8px;font-size:0.75rem;margin-left:6px" onclick="window._showAllLeaderboards()">🏆</button>
         <button class="retro-btn" id="stats-btn" style="padding:2px 8px;font-size:0.75rem;margin-left:4px" onclick="window._showStatsOverview()" title="Stats">📊</button>
+        <button class="retro-btn" id="profile-btn" style="padding:2px 8px;font-size:0.75rem;margin-left:4px" onclick="window._showProfile()" title="Profile">👤</button>
     </div>
     <div class="top-controls">
         <span class="fs-hint" id="fs-hint">(Press ESC to exit)</span>
@@ -2083,20 +2103,130 @@
     }
   },100);
   // Light/dark theme toggle. Default dark; persists per-browser in localStorage.
+  // Theme system supports: dark, light, plus Amni-module data-themes.
+  // The theme-btn cycles dark ↔ light only; Amni themes are picked via
+  // the Profile modal (👤) and require unlocks.
   function _applyTheme(mode){
-    document.body.classList.toggle('light-mode', mode === 'light');
+    const isLight = mode === 'light';
+    document.body.classList.toggle('light-mode', isLight);
+    const amniThemes = ['amni-ai','amni-gen','amni-code','amni-scient','amni-prism','azno'];
+    if (amniThemes.includes(mode)) document.body.setAttribute('data-theme', mode);
+    else document.body.removeAttribute('data-theme');
     const btn = $$('#theme-btn');
-    if (btn) btn.textContent = mode === 'light' ? '☀️' : '🌙';
+    if (btn) btn.textContent = isLight ? '☀️' : (amniThemes.includes(mode) ? '🎨' : '🌙');
   }
   try {
     const savedTheme = localStorage.getItem('amni-learn-theme') || 'dark';
     _applyTheme(savedTheme);
   } catch { _applyTheme('dark'); }
   $$('#theme-btn').addEventListener('click', () => {
-    const now = document.body.classList.contains('light-mode') ? 'dark' : 'light';
+    // Toggle only between dark/light. Amni themes are managed via Profile.
+    const cur = localStorage.getItem('amni-learn-theme') || 'dark';
+    const now = (cur === 'light') ? 'dark' : 'light';
     _applyTheme(now);
     try { localStorage.setItem('amni-learn-theme', now); } catch {}
   });
+  // ── Unlockables registry ─────────────────────────────────────────────
+  // Themes, mascots, and cursor trails — each gated by a per-module
+  // milestone. Read live from localStorage/sessionStorage on demand.
+  window._unlockables = (function(){
+    function _g(k){return localStorage.getItem(k)||sessionStorage.getItem(k);}
+    function _gi(k){return parseInt(_g(k)||'0');}
+    function _achCount(){try{return Object.keys(JSON.parse(localStorage.getItem('amni-achievements')||'{}')).length;}catch{return 0;}}
+    function _sdkAllWins(mode){const d=['easy','medium','hard'];return d.reduce((s,x)=>s+_gi('sdk-wins-'+mode+'-'+x)+_gi('sdk-wins-'+x),0);}
+    function _nbkBest(){let m=0;for(let n=1;n<=5;n++)m=Math.max(m,_gi('nbk-best-'+n),_gi('nbk-dual-best-'+n));return m;}
+    function _rxtBest(){let m=99999;['visual','audio','choice'].forEach(md=>{const v=_gi('rxt-best-single-'+md);if(v>0&&v<m)m=v;});const fallback=_gi('rxt-best-single');if(fallback>0&&fallback<m)m=fallback;return m===99999?0:m;}
+    const themes = [
+      {id:'dark',     name:'🌙 Dark',         desc:'Default neon-on-dark',          cur:()=>1, target:1},
+      {id:'light',    name:'☀️ Light',         desc:'Bright paper-like theme',       cur:()=>1, target:1},
+      {id:'amni-ai',  name:'🧠 Amni-AI Violet', desc:'Unlock: N-Back accuracy ≥70% any N', cur:_nbkBest, target:70},
+      {id:'amni-gen', name:'🎨 Amni-Gen Magenta', desc:'Unlock: 5 Card Pairs game wins', cur:()=>Math.min(_gi('cp-lifetime-wins'),5), target:5},
+      {id:'amni-code',name:'💻 Amni-Code Cyan', desc:'Unlock: 3 Sudoku wins (any mode)', cur:()=>Math.min(_sdkAllWins('classic')+_sdkAllWins('x'),3), target:3},
+      {id:'amni-scient', name:'🔬 Amni-Scient Orange', desc:'Unlock: 10-streak Periodic Quiz', cur:()=>Math.max(_gi('pt-quiz-best-streak-easy'),_gi('pt-quiz-best-streak-normal'),_gi('pt-quiz-best-streak-hard')), target:10},
+      {id:'amni-prism', name:'💎 Amni-Prism Rainbow', desc:'Unlock: 15 achievements earned', cur:_achCount, target:15},
+      {id:'azno',     name:'⚡ Azno Red-Black', desc:'Unlock: Reaction best <250ms (any cue)', cur:()=>{const b=_rxtBest();return b>0&&b<250?250-b:0;}, target:1, customCheck:()=>{const b=_rxtBest();return b>0&&b<250;}}
+    ];
+    const mascots = [
+      {id:'',         name:'(none)',           desc:'No mascot',                     cur:()=>1, target:1},
+      {id:'🌟',       name:'🌟 Star',          desc:'Default — always available',    cur:()=>1, target:1},
+      {id:'🤖',       name:'🤖 Adam (AI)',     desc:'Unlock: N-Back best ≥60%',      cur:_nbkBest, target:60},
+      {id:'💎',       name:'💎 Gemma (Prism)', desc:'Unlock: Ear Training 100 correct', cur:()=>Math.min(_gi('ear-life-correct'),100), target:100},
+      {id:'📡',       name:'📡 Morse Op',      desc:'Unlock: 500 correct Morse',     cur:()=>Math.min(_gi('morse-total-correct'),500), target:500},
+      {id:'🐵',       name:'🐵 Ayumu',         desc:'Unlock: Chimp Ayumu (0.5s) ≥6', cur:()=>Math.min(_gi('chm-best-500'),6), target:6},
+      {id:'🧙',       name:'🧙 Wizard',        desc:'Unlock: Logic Puzzles 25 solved', cur:()=>Math.min(_gi('lgc-solved'),25), target:25},
+      {id:'🦁',       name:'🦁 King',          desc:'Unlock: Chess streak ≥5',       cur:()=>Math.min(_gi('chess-best-streak'),5), target:5},
+      {id:'🚀',       name:'🚀 Azno Trader',   desc:'Unlock: Reaction best <250ms',  cur:()=>{const b=_rxtBest();return b>0&&b<250?1:0;}, target:1}
+    ];
+    const cursors = [
+      {id:'',         name:'(none)',           desc:'No trail',                     cur:()=>1, target:1},
+      {id:'sparkle',  name:'✨ Sparkles',      desc:'Unlock: 5 achievements',        cur:_achCount, target:5},
+      {id:'atom',     name:'⚛️ Atoms',         desc:'Unlock: Periodic Place 50 elements', cur:()=>Math.min(_gi('pt-solved-easy')+_gi('pt-solved-normal')+_gi('pt-solved-hard'),50), target:50},
+      {id:'code',     name:'🔣 Binary',        desc:'Unlock: 3 Sudoku wins',         cur:()=>Math.min(_sdkAllWins('classic')+_sdkAllWins('x'),3), target:3},
+      {id:'gem',      name:'💎 Gems',          desc:'Unlock: 20 achievements',       cur:_achCount, target:20},
+      {id:'star',     name:'🌟 Stars',         desc:'Unlock: 7-day daily streak',    cur:()=>Math.min(_gi('daily-best'),7), target:7}
+    ];
+    function status(entry){const cur=entry.cur();const unlocked=entry.customCheck?entry.customCheck():(cur>=entry.target);return{cur,target:entry.target,unlocked};}
+    return {themes, mascots, cursors, status};
+  })();
+  // Apply the saved mascot (read inside showFeedback). Cursor trail
+  // attaches a global pointermove listener that spawns short-lived
+  // particles. Both opt-in via Profile picker.
+  function _curParticleChar(kind){
+    if(kind==='sparkle')return ['✨','⭐','✦','✧'][Math.floor(Math.random()*4)];
+    if(kind==='atom')return '⚛';
+    if(kind==='code')return Math.random()<0.5?'0':'1';
+    if(kind==='gem')return ['💎','💠','🔷','🔹'][Math.floor(Math.random()*4)];
+    if(kind==='star')return ['⭐','✩','✪','✫'][Math.floor(Math.random()*4)];
+    return '';
+  }
+  let _curLast=0;
+  function _curHandler(e){
+    const kind=localStorage.getItem('profile-cursor')||'';
+    if(!kind)return;
+    const now=performance.now();if(now-_curLast<40)return;_curLast=now;
+    const p=document.createElement('span');p.className='cur-particle';p.textContent=_curParticleChar(kind);
+    p.style.left=(e.clientX-8)+'px';p.style.top=(e.clientY-8)+'px';
+    document.body.appendChild(p);
+    const dx=(Math.random()*30-15);const dy=(Math.random()*30-30);
+    p.style.setProperty('--dx',dx+'px');p.style.setProperty('--dy',dy+'px');
+    requestAnimationFrame(()=>{p.classList.add('fade');});
+    setTimeout(()=>p.remove(),750);
+  }
+  window.addEventListener('pointermove',_curHandler,{passive:true});
+  // Profile modal — display name + avatar + theme + cursor picker.
+  window._showProfile=function(){
+    const name=localStorage.getItem('profile-name')||'';
+    const mascot=localStorage.getItem('profile-mascot')||'';
+    const theme=localStorage.getItem('amni-learn-theme')||'dark';
+    const cursor=localStorage.getItem('profile-cursor')||'';
+    const ov=document.createElement('div');ov.className='hs-overlay';ov.onclick=e=>{if(e.target===ov)ov.remove();};
+    const html=['<div class="hs-modal" style="max-height:88vh;overflow-y:auto;min-width:340px;max-width:580px"><div class="hs-title">👤 PROFILE</div>'];
+    html.push('<div style="font-size:0.78rem;color:#7a8a9a;margin-bottom:8px">Set a display name. Pick a theme, mascot, and cursor trail — unlock more by playing.</div>');
+    html.push(`<div style="margin:8px 0"><label style="font-size:0.82rem;color:#bbb">Display name<br><input id="prof-name" type="text" value="${name.replace(/"/g,'&quot;')}" maxlength="24" style="width:100%;padding:8px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.18);border-radius:6px;color:var(--text,#ecf0f1);font-family:JetBrains Mono;font-size:0.9rem"></label></div>`);
+    function _pickerSection(title,key,storageKey,active){
+      const list=window._unlockables[key];
+      let h=`<div style="margin:14px 0 6px;color:#4db8ff;font-size:0.88rem;font-weight:bold">${title}</div>`;
+      h+='<div style="display:flex;flex-wrap:wrap;gap:6px">';
+      list.forEach(e=>{
+        const s=window._unlockables.status(e);const isActive=e.id===active;
+        const enabled=s.unlocked||e.id===''||e.id==='dark'||e.id==='light'||e.id==='🌟';
+        const pct=Math.min(100,Math.round(s.cur/s.target*100));
+        h+=`<button data-key="${storageKey}" data-val="${e.id}" ${enabled?'':'disabled'} style="padding:8px 10px;background:${isActive?'rgba(241,196,15,0.20)':'rgba(255,255,255,0.04)'};border:1px solid ${isActive?'#f1c40f':(enabled?'rgba(255,255,255,0.18)':'rgba(255,255,255,0.07)')};border-radius:8px;color:var(--text,#ecf0f1);font-family:JetBrains Mono;font-size:0.78rem;text-align:left;flex:1 1 calc(50% - 6px);min-width:0;cursor:${enabled?'pointer':'not-allowed'};opacity:${enabled?1:0.5}">${enabled?'':'🔒 '}${e.name}<div style="font-size:0.7rem;color:#999;margin-top:2px">${e.desc}</div>${enabled?'':`<div style="height:4px;background:rgba(255,255,255,0.08);border-radius:2px;margin-top:5px;overflow:hidden"><div style="height:100%;width:${pct}%;background:#3498db"></div></div><div style="font-size:0.66rem;color:#777;margin-top:2px">${s.cur}/${s.target}</div>`}</button>`;
+      });
+      h+='</div>';return h;
+    }
+    html.push(_pickerSection('🎨 Theme','theme','amni-learn-theme',theme));
+    html.push(_pickerSection('🌟 Mascot','mascots','profile-mascot',mascot));
+    html.push(_pickerSection('✨ Cursor Trail','cursors','profile-cursor',cursor));
+    html.push('<div style="margin-top:14px;display:flex;gap:8px"><button id="prof-save" class="retro-btn" style="flex:1">SAVE</button><button id="prof-cancel" class="retro-btn" style="flex:1">CLOSE</button></div></div>');
+    ov.innerHTML=html.join('');
+    document.body.appendChild(ov);
+    ov.querySelectorAll('button[data-key]').forEach(b=>{
+      b.onclick=()=>{if(b.disabled)return;const k=b.getAttribute('data-key'),v=b.getAttribute('data-val');localStorage.setItem(k,v);if(k==='amni-learn-theme')_applyTheme(v);ov.remove();window._showProfile();};
+    });
+    ov.querySelector('#prof-save').onclick=()=>{const nm=ov.querySelector('#prof-name').value.trim();if(nm)localStorage.setItem('profile-name',nm);else localStorage.removeItem('profile-name');if(typeof showFeedback==='function')showFeedback('Profile saved!','#2ecc71');ov.remove();};
+    ov.querySelector('#prof-cancel').onclick=()=>ov.remove();
+  };
   document.addEventListener('fullscreenchange', () => { document.fullscreenElement ? (_fsNative=true,_cssFallback(true)) : (_fsNative=false,_cssFallback(false)); });
   document.addEventListener('webkitfullscreenchange', () => { document.webkitFullscreenElement ? (_fsNative=true,_cssFallback(true)) : (_fsNative=false,_cssFallback(false)); });
   window.addEventListener('keydown', (e) => {
@@ -2388,7 +2518,8 @@
   }
   function showFeedback(text, color = '#f1c40f') {
     const fb = $$('#feedback');
-    fb.textContent = text;
+    const mascot = localStorage.getItem('profile-mascot') || '';
+    fb.textContent = mascot ? `${mascot} ${text}` : text;
     fb.style.color = color;
     fb.classList.remove('show');
     void fb.offsetWidth;
@@ -8733,7 +8864,7 @@ function playAnimalSound(type) {
       const px = Math.floor(w * cardFontRatio);
       grid.querySelectorAll('.cp-card').forEach(c => { c.style.fontSize = px + 'px'; });
     }
-    deck.forEach((sym,idx)=>{const card=document.createElement('div');card.className='cp-card';card.dataset.val=sym;card.dataset.idx=idx;card.onclick=()=>{if(card.classList.contains('cp-flipped')||card.classList.contains('cp-matched')||cpFlipped.length>=2)return;card.classList.add('cp-flipped');card.textContent=sym;card.style.color='#333';cpFlipped.push(card);if(cpFlipped.length===2){cpMoves++;const me=$$('#cp-moves');if(me)me.textContent=cpMoves;const a=cpFlipped[0],b=cpFlipped[1];const isMatch=a.dataset.val===b.dataset.val&&a.dataset.idx!==b.dataset.idx;if(isMatch){a.classList.add('cp-matched');b.classList.add('cp-matched');cpMatched+=2;cpCombo++;const ce=$$('#cp-combo');if(ce)ce.textContent=cpCombo;addScore(cpCombo>=3?3:(cpCombo>=2?2:1));cpCombo>=3?showFeedback(`${cpCombo}x Combo! \ud83d\udd25`,'#e74c3c'):showFeedback('Match! \u2728','#1abc9c');cpFlipped=[];if(cpMatched>=sz.pairs*2){clearInterval(window._cpTimer);window._cpTimer=null;const bonus=cpMoves<=sz.pairs*2?'Perfect Memory! \ud83e\udde0':'Well Done! \ud83c\udf1f';showFeedback(`${bonus} ${cpTime}s`,'#2ecc71');addScore(Math.max(1,sz.pairs*2-cpMoves));if(sizeIdx<sizes.length-1)sessionStorage.setItem('cp-size',sizeIdx+1);setTimeout(initCardPairs,2200);}}else{setTimeout(()=>{cpCombo=0;resetStreak();const ce=$$('#cp-combo');if(ce)ce.textContent='0';a.classList.remove('cp-flipped');b.classList.remove('cp-flipped');a.textContent='';b.textContent='';a.style.color='';b.style.color='';cpFlipped=[];},500);}}};grid.appendChild(card);});
+    deck.forEach((sym,idx)=>{const card=document.createElement('div');card.className='cp-card';card.dataset.val=sym;card.dataset.idx=idx;card.onclick=()=>{if(card.classList.contains('cp-flipped')||card.classList.contains('cp-matched')||cpFlipped.length>=2)return;card.classList.add('cp-flipped');card.textContent=sym;card.style.color='#333';cpFlipped.push(card);if(cpFlipped.length===2){cpMoves++;const me=$$('#cp-moves');if(me)me.textContent=cpMoves;const a=cpFlipped[0],b=cpFlipped[1];const isMatch=a.dataset.val===b.dataset.val&&a.dataset.idx!==b.dataset.idx;if(isMatch){a.classList.add('cp-matched');b.classList.add('cp-matched');cpMatched+=2;cpCombo++;const ce=$$('#cp-combo');if(ce)ce.textContent=cpCombo;addScore(cpCombo>=3?3:(cpCombo>=2?2:1));cpCombo>=3?showFeedback(`${cpCombo}x Combo! \ud83d\udd25`,'#e74c3c'):showFeedback('Match! \u2728','#1abc9c');cpFlipped=[];if(cpMatched>=sz.pairs*2){clearInterval(window._cpTimer);window._cpTimer=null;try{localStorage.setItem('cp-lifetime-wins',(parseInt(localStorage.getItem('cp-lifetime-wins')||'0')+1));}catch{}const bonus=cpMoves<=sz.pairs*2?'Perfect Memory! \ud83e\udde0':'Well Done! \ud83c\udf1f';showFeedback(`${bonus} ${cpTime}s`,'#2ecc71');addScore(Math.max(1,sz.pairs*2-cpMoves));if(sizeIdx<sizes.length-1)sessionStorage.setItem('cp-size',sizeIdx+1);setTimeout(initCardPairs,2200);}}else{setTimeout(()=>{cpCombo=0;resetStreak();const ce=$$('#cp-combo');if(ce)ce.textContent='0';a.classList.remove('cp-flipped');b.classList.remove('cp-flipped');a.textContent='';b.textContent='';a.style.color='';b.style.color='';cpFlipped=[];},500);}}};grid.appendChild(card);});
     // Initial size + resize watcher
     requestAnimationFrame(_cpSizeFonts);
     if (window._cpResize) window.removeEventListener('resize', window._cpResize);
@@ -9124,7 +9255,7 @@ function playAnimalSound(type) {
       p.opts.forEach(opt=>{const btn=document.createElement('button');btn.className='lgc-opt';btn.textContent=opt;btn.onclick=()=>{
         cDiv.querySelectorAll('.lgc-opt').forEach(b=>b.style.pointerEvents='none');
         if(opt===p.ans){
-          btn.classList.add('lgc-correct');lgcScore++;lgcStreak++;
+          btn.classList.add('lgc-correct');lgcScore++;lgcStreak++;try{localStorage.setItem('lgc-solved',(parseInt(localStorage.getItem('lgc-solved')||'0')+1));}catch{}
           if(lgcStreak>bestStreak)bestStreak=lgcStreak;
           const se=$$('#lgc-score');if(se)se.textContent=lgcScore;
           const sk=$$('#lgc-streak');if(sk)sk.textContent=lgcStreak;
