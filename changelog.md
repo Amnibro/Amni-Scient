@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.7.8] - 2026-05-19 - Ear Training: defensive try/catch (was reported blank)
+- Anthony reported Ear Training showing blank. v5.7.5 already fixed the symptom-equivalent Morse bug by adding both `morse` and `ear` to the `views` registry, and ear-view structure is otherwise identical to working modules. Couldn't reproduce a deterministic cause from a static read of the code.
+- **Defensive fix**: wrapped `initEar()`'s body in try/catch. If anything throws during init now, the user sees a red diagnostic card with the actual error message + a Retry button instead of an empty page. Also added a null-guard on the `#ear-game` root lookup.
+- Bumped SW cache to v87 so any stale-cache install picks up the v5.7.5 view-registry fix even if their browser didn't refresh.
+- **SW cache v86 → v87** to flush.
+
 ## [5.7.7] - 2026-05-19 - Auto Miner: parallel expansion to Cookie Clicker
 - v5.7.5 expanded Cookie Clicker; Auto Miner is the other half of "clicker games" and got the same treatment:
   - Upgrade tiers expanded **8 → 16**: Plasma Cutter (5K/s), Antimatter Drill (25K/s), Mecha Suit (+500/click), Wormhole Mine (100K/s), Singularity Forge (500K/s), Mantle Tap (2M/s), Core Crusher (10M/s), Reality Pickaxe (+10K/click).

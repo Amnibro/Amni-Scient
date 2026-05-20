@@ -8748,7 +8748,10 @@ function playAnimalSound(type) {
   function _earTone(ctx,freq,t,dur,gain=0.18){const o=ctx.createOscillator(),g=ctx.createGain();o.type='triangle';o.frequency.value=freq;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(gain,t+0.015);g.gain.linearRampToValueAtTime(gain*0.65,t+dur*0.5);g.gain.linearRampToValueAtTime(0,t+dur);o.connect(g);g.connect(ctx.destination);o.start(t);o.stop(t+dur+0.02);}
   function _playNotes(midis,style){const ctx=_morseCtx();if(!ctx)return;const now=ctx.currentTime+0.05;const dur=0.55;if(style==='harmonic'){midis.forEach(m=>_earTone(ctx,_midiHz(m),now,1.0,0.14));}else if(style==='ascending'){midis.forEach((m,i)=>_earTone(ctx,_midiHz(m),now+i*0.6,dur));}else{midis.forEach((m,i)=>_earTone(ctx,_midiHz(m),now+i*0.6,dur));}}
   function initEar(){
-    const root=$$('#ear-game');root.innerHTML='';
+    const root=$$('#ear-game');
+    if(!root){console.error('[initEar] #ear-game not found');return;}
+    root.innerHTML='';
+    try{
     const mode=sessionStorage.getItem('ear-mode')||'intervals';
     const diff=sessionStorage.getItem('ear-diff')||'easy';
     const intervalsBank={easy:[[0,'Unison'],[5,'Perfect 4th'],[7,'Perfect 5th'],[12,'Octave']],medium:[[1,'Minor 2nd'],[2,'Major 2nd'],[3,'Minor 3rd'],[4,'Major 3rd'],[5,'Perfect 4th'],[7,'Perfect 5th'],[9,'Major 6th'],[12,'Octave']],hard:_intervalNames};
@@ -8892,6 +8895,10 @@ function playAnimalSound(type) {
       setTimeout(nextQ,correct?900:1700);
     }
     nextQ();
+    }catch(err){
+      console.error('[initEar] threw:',err);
+      root.innerHTML=`<div style="padding:16px;background:rgba(231,76,60,0.18);border:2px solid #e74c3c;border-radius:10px;color:var(--text,#ecf0f1);font-family:JetBrains Mono;font-size:0.85rem;text-align:left;max-width:520px;width:90%"><b>🛑 Ear Training failed to load</b><br><br><code>${(err&&err.message)||err}</code><br><br>This shouldn't happen. Tap below to retry, or report the message above.</div><br><button class="retro-btn" onclick="initEar()">🔄 Retry</button>`;
+    }
   }
   function initSudoku(){
     const board=$$('#sdk-board'),hud=$$('#sdk-hud'),controls=$$('#sdk-controls'),numpad=$$('#sdk-numpad');
