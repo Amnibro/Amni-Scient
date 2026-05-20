@@ -7664,7 +7664,8 @@ function playAnimalSound(type) {
             btn.style.background = '#e74c3c';
             btn.style.animation = 'shake 0.3s';
             blank.classList.add('miss');
-            showFeedback('Not quite — see the rule', '#e74c3c');
+            _showExplain(false);
+            showFeedback('Not quite — rule shown below', '#e74c3c');
             patStreak = 0;
             const pe=$$('#pat-streak'); if(pe) pe.textContent='0';
             resetStreak();

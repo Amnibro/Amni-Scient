@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.7.4] - 2026-05-19 - Misleading "see the rule" toast in Pattern Recognition
+- Pattern Recognition told the user *"Not quite — see the rule"* on a wrong answer, but the explain card was only rendered on the correct path (`_showExplain(true)`) — so on a miss there was nothing to see, same complaint pattern as the v5.7.3 quiz fix.
+- Fix: call `_showExplain(false)` on the wrong path too. The rule + description card now actually appears below the choices on a miss, matching the toast's promise. Toast updated to `Not quite — rule shown below`.
+- Audited the remaining `showFeedback` call sites for the same anti-pattern (promising info that isn't rendered). The other "wrong" toasts all correctly say generic things like "Try again!", "Not it!", "Wrong order!" — they don't claim a hint/explain is visible, so they're fine.
+- **SW cache v82 → v83** to flush.
+
 ## [5.7.3] - 2026-05-19 - Money Math: real L1-L5 progression
 - **Bug**: L4 and L5 were near-clones of L3 — same prices ($1.99-$9.99), same denominations, only the prompt string differed ("Paid $X — Give back:"). Anthony reported L5 felt like "L2 stuff" because the actual math complexity didn't progress past L3.
 - **Fix**: each level now has distinct mechanics and pricing tiers:
