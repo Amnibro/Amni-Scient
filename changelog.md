@@ -1,5 +1,22 @@
 ﻿# Changelog 
 
+## [5.7.12] - 2026-05-20 - Reaction Lab: 6 → 11 reactions + 3 new chemicals
+- Reaction Lab gets a substantial sandbox expansion. **3 new chemicals** in the toolbar:
+  - 🧊 **Ice** — solid, falls. Melts on contact with Fire.
+  - 🌱 **Plant** — stationary green tile; falls if unsupported.
+  - 🌋 **Lava** — flows like water but slower; new bright-orange tile.
+  - 🪨 **Obsidian** — produced by Lava + Water (formed automatically, not a paintable tool).
+- **5 new reactions** added to the existing 6:
+  - 🧊 **Ice + Fire → Water** (`icemelt`).
+  - 💨 **Ice + Lava → Burst of Steam** (`iceburst`) — thermal shock with extra steam particles spawned around the contact site.
+  - 🪨 **Lava + Water → Obsidian + Steam** (`obsidian`) — basaltic quenching, a real geological process.
+  - 🔥 **Lava + Plant → Fire** (`plantfire`).
+  - 🔥 **Plant + Fire → Spreads** (`plantburn`) — forest-fire propagation.
+  - 🔥 **Lava + Oil → Inferno** (`lavaoil`) — extra bonus from the chain.
+- Discovery counter now goes to **/11** (was /6). Storage switched to localStorage so progress survives tab close.
+- **🧙‍♂️ Master Alchemist** — new achievement for discovering all 11. Mad Scientist's threshold stays at 6 for backwards compatibility but its description rephrased from "all 6" to "6 reactions".
+- **SW cache v90 → v91** to flush.
+
 ## [5.7.11] - 2026-05-20 - Storybook: 7 → 15 classic tales (+8 books)
 - Storybook library doubled. Added 8 classic read-aloud tales to bring the total to 15 books:
   - 🦢 **The Ugly Duckling** (Hans Christian Andersen, 1843) — 8 pages.
