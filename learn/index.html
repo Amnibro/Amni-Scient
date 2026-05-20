@@ -2702,6 +2702,9 @@
     if(op==='-')return `Subtract: ${a} − ${b}. Start at ${a}, count back ${b} — lands on ${ans}.`;
     if(op==='×'){if(b===1)return `${a} × 1 = ${a}. Anything × 1 stays itself.`;if(b===10||a===10){const x=a===10?b:a;return `${a} × ${b} = ${ans}. Multiplying by 10 shifts ${x} up one place (adds a zero).`;}if(a>=10&&b<10){const t=Math.floor(a/10)*10,r=a-t;return `Split ${a} into ${t} + ${r}. Then (${t}×${b}) + (${r}×${b}) = ${t*b} + ${r*b} = ${ans}.`;}if(b>=10&&a<10){const t=Math.floor(b/10)*10,r=b-t;return `Split ${b} into ${t} + ${r}. Then (${a}×${t}) + (${a}×${r}) = ${a*t} + ${a*r} = ${ans}.`;}return `${a} × ${b} means add ${a} to itself ${b} times → ${ans}.`;}
     if(op==='÷')return `Divide: ${a} ÷ ${b} asks "${b} × what = ${a}?" — answer ${ans}, because ${b} × ${ans} = ${a}.`;
+    if(op==='%')return `${a}% of ${b}: convert ${a}% → ${a/100}, then ${a/100} × ${b} = ${ans}. Shortcut: divide ${b} by 100 and multiply by ${a}.`;
+    if(op==='^'){const expansion=Array(b).fill(a).join(' × ');return `${a} to the power ${b}: ${expansion} = ${ans}.`;}
+    if(op==='mod'){const q=Math.floor(a/b);return `${a} mod ${b}: ${b} × ${q} = ${b*q}, and ${a} − ${b*q} = ${ans} (the remainder).`;}
     return `The answer is ${ans}.`;
   }
   function initMath() {
@@ -9115,6 +9118,34 @@ function playAnimalSound(type) {
         const m=diff<=1?10:(diff<=2?15:25);
         if(isSqrt){const r=Math.floor(Math.random()*m)+2;a=r*r;b=0;op='\u221a';ans=r;display_str=`\u221a${a} = ?`;}
         else{a=Math.floor(Math.random()*m)+2;b=2;op='\u00b2';ans=a*a;display_str=`${a}\u00b2 = ?`;}
+      } else if(spmMode==='percent'){
+        op='%';
+        const aOpts=diff<=1?[10,25,50]:(diff<=2?[10,20,25,50,75]:[5,10,15,20,25,30,40,50,60,75,80,90]);
+        const ansMax=diff<=1?15:(diff<=2?30:60);
+        let ok=false;
+        for(let tries=0;tries<60&&!ok;tries++){
+          a=aOpts[Math.floor(Math.random()*aOpts.length)];
+          ans=Math.floor(Math.random()*ansMax)+1;
+          if((ans*100)%a===0){b=ans*100/a;ok=true;}
+        }
+        if(!ok){a=10;ans=Math.floor(Math.random()*10)+1;b=ans*10;}
+        display_str=`${a}% of ${b} = ?`;
+      } else if(spmMode==='exp'){
+        op='^';
+        const baseMax=diff<=1?5:(diff<=2?8:10);
+        const powMax=diff<=1?3:4;
+        a=Math.floor(Math.random()*(baseMax-1))+2;
+        b=Math.floor(Math.random()*(powMax-1))+2;
+        ans=Math.pow(a,b);
+        display_str=`${a}^${b} = ?`;
+      } else if(spmMode==='mod'){
+        op='mod';
+        const aMax=diff<=1?30:(diff<=2?100:200);
+        const bMax=diff<=1?7:(diff<=2?12:20);
+        b=Math.floor(Math.random()*(bMax-1))+2;
+        a=Math.floor(Math.random()*aMax)+b+1;
+        ans=a%b;
+        display_str=`${a} mod ${b} = ?`;
       } else {
         // mixed
         const ops=['+','-','*'];op=ops[Math.floor(Math.random()*Math.min(diff+2,3))];
@@ -9138,7 +9169,7 @@ function playAnimalSound(type) {
     display.textContent='Press START to begin!';answer.textContent='';
     // Mode picker — sits above the START button.
     const modeRow=document.createElement('div');modeRow.className='spm-mode-row';modeRow.style.cssText='display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:6px 0;';
-    [['mixed','🧮 Mixed'],['times','✖️ Times'],['div','➗ Division'],['sqrt','🟰 Sqr & √']].forEach(([k,lbl])=>{const b=document.createElement('button');b.className='sdk-btn'+(k===spmMode?' active':'');b.style.cssText='font-size:0.85rem;padding:6px 10px;';b.textContent=lbl;b.onclick=()=>{sessionStorage.setItem('spm-mode',k);initSpeedMath();};modeRow.appendChild(b);});
+    [['mixed','🧮 Mixed'],['times','✖️ Times'],['div','➗ Division'],['sqrt','🟰 Sqr & √'],['percent','% Percent'],['exp','^ Powers'],['mod','📐 Mod']].forEach(([k,lbl])=>{const b=document.createElement('button');b.className='sdk-btn'+(k===spmMode?' active':'');b.style.cssText='font-size:0.85rem;padding:6px 10px;';b.textContent=lbl;b.onclick=()=>{sessionStorage.setItem('spm-mode',k);initSpeedMath();};modeRow.appendChild(b);});
     input.parentElement.insertBefore(modeRow,input);
     const startBtn=document.createElement('button');startBtn.className='sdk-btn';startBtn.textContent='START';startBtn.style.cssText='font-size:1.2rem;padding:12px 30px;margin:10px;';
     function _gameOver(){clearInterval(window._spmTimer);window._spmTimer=null;spmActive=false;const wasBest=spmScore>best;if(wasBest)sessionStorage.setItem('spm-best-'+spmMode,spmScore);if(spmBestStreak>bestStreakStored)sessionStorage.setItem('spm-best-streak-'+spmMode,spmBestStreak);const accuracy=spmRound>0?Math.round(spmCorrect/Math.max(spmRound,1)*100):0;display.textContent='Time!';display.classList.remove('streak-1','streak-2','streak-3','wrong');answer.textContent='';const sum=document.createElement('div');sum.className='spm-summary';sum.innerHTML=`<h3>\u26a1 ${wasBest?'NEW BEST!':'Time\u2019s up!'}</h3><div class="spm-summary-stats"><div class="spm-summary-stat"><span class="val">${spmScore}</span><span class="lbl">Score</span></div><div class="spm-summary-stat"><span class="val">${spmCorrect}</span><span class="lbl">Correct</span></div><div class="spm-summary-stat"><span class="val">${accuracy}%</span><span class="lbl">Accuracy</span></div><div class="spm-summary-stat"><span class="val">${spmBestStreak}</span><span class="lbl">Best Streak</span></div><div class="spm-summary-stat ${wasBest?'new-best':'best'}"><span class="val">${Math.max(spmScore,best)}</span><span class="lbl">All-Time</span></div></div>`;input.parentElement.insertBefore(sum,input);if(wasBest)spawnConfetti(window.innerWidth/2,window.innerHeight/2,120);showFeedback(`Score: ${spmScore} \u2014 ${accuracy}% accuracy \ud83c\udfc6`,wasBest?'#2ecc71':'#f1c40f');addScore(spmScore);const rb=document.createElement('button');rb.className='sdk-btn';rb.textContent='PLAY AGAIN';rb.style.cssText='font-size:1.1rem;padding:10px 25px;margin:10px;';rb.onclick=()=>{rb.remove();sum.remove();initSpeedMath();};input.after(rb);}

@@ -1,5 +1,13 @@
 ﻿# Changelog 
 
+## [5.7.18] - 2026-05-20 - SpeedMath: +3 modes (Percent, Powers, Mod)
+- Extended SpeedMath from 4 → 7 modes; the new modes target the mental-math drills the previous +/−/×/÷/√ set didn't cover:
+  - **% Percent** — `25% of 80 = ?` style. Generator picks a nice `a%` from `[10,25,50]` (easy) → up to `[5..90]` (hard), then back-solves `b` so the integer answer is in range. Up to 60 retries to land on a clean integer pair (keypad is integer-only).
+  - **^ Powers** — `2^5 = ?` style. Base 2–5 / exp 2–3 (easy), scaling to base 2–10 / exp 2–4 (hard) so the worst case stays ≤ 10⁴.
+  - **📐 Mod** — `47 mod 6 = ?` style. `a` up to 30 → 200 across difficulty; `b` up to 7 → 20.
+- `_mathSteps` extended with explanation strings for `%`, `^`, `mod` so the wrong-answer panel teaches: percent = `a/100 × b`, power = repeated multiplication, mod = quotient × divisor subtracted from dividend.
+- **SW cache v96 → v97** to flush.
+
 ## [5.7.17] - 2026-05-20 - Chess: +4 mate-in-one puzzles
 - Adding 4 new puzzles to `_chessPuzzles`, taking the bank from 15 → 19:
   - **P16 (Rook + Knight back-rank):** `Re1-e8#` with Kg6 / Nf6 / Re1 vs Kh8. King covers g7/h7, knight on f6 doubles up on g8 and h7.
