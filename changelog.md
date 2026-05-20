@@ -1,5 +1,13 @@
 ﻿# Changelog 
 
+## [5.7.6] - 2026-05-19 - Chess puzzles 8 & 10 unsound
+- **Puzzle 8** (added v5.6.78): `{c7:'K',b6:'P',b1:'Q',a8:'k'}` → `Qb1-b8`. The white pawn on b6 blocks the queen's b-file path from b1 to b8. Queen can't pass through own pawn. Invalid solution.
+  - **Fix**: replace defender with a bishop on c5 — same role (covers a7 along the c5-a7 diagonal, b6 now empty) but doesn't block the queen path. Position is now `{c7:'K',c5:'B',b1:'Q',a8:'k'}`, sol unchanged `b1-b8`.
+- **Puzzle 10** (added v5.6.78): `{g1:'K',e5:'N',h8:'k',g8:'n',g7:'r',h7:'p'}` → `Ne5-f7`. The black rook on g7 attacks f7 along the 7th rank, so it can capture the mating knight. Not a smothered mate.
+  - **Fix**: replace the rook on g7 with a black pawn. Pawn on g7 only attacks f6/h6 (forward-diagonally downward for black) and doesn't reach f7. Knight on g8 also doesn't reach f7 (g8 knight attacks e7/f6/h6). King too far. True smothered mate — all escapes blocked by own pieces, no capturer. Position: `{g1:'K',e5:'N',h8:'k',g8:'n',g7:'p',h7:'p'}`.
+- Re-verified all 8 puzzles I added in v5.6.78 once more (king escape squares all attacked or occupied, mating piece defended where capturable, no line-of-sight pieces blocking the move). 6 were already clean; these 2 are now fixed.
+- **SW cache v84 → v85** to flush.
+
 ## [5.7.5] - 2026-05-19 - Six fixes: Morse blank, Map continents, Cookie Clicker depth, achievements scope, profile click, broader themes
 - **CRITICAL bug — Morse Code & Ear Training pages were blank (audio only)**: the `views` registry was missing `morse` and `ear` mappings, so `showView('morse')` warned-and-returned and never added the `.active` class. The view stayed `display:none`. `initMorse()` still ran (building the now-invisible UI) and `_playMorse()` played audio (Web Audio isn't gated by DOM visibility) — hence "dit dit dit dit but blank page". Fix: add `morse` and `ear` entries to the views dictionary alongside chess/periodic/mapclick.
 - **Map Clicker continents looked nothing like Earth**: original polygons had 10-15 points per continent — North America was a single rough blob, Asia was a single triangle. Redrew with ~30-50 anchor points per major continent plus separate polygons for **Greenland, Madagascar, Japan, UK, Philippines, Indonesia, New Zealand, Papua New Guinea**. Outlines now follow real coastlines (Alaska/Yukon, Florida tip, Yucatan, Horn of Africa, Indian subcontinent, Korea, etc.). Total ~250 anchor points across 14 polygons.
