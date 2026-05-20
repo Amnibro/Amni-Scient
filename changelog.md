@@ -1,5 +1,18 @@
 ﻿# Changelog 
 
+## [5.7.11] - 2026-05-20 - Storybook: 7 → 15 classic tales (+8 books)
+- Storybook library doubled. Added 8 classic read-aloud tales to bring the total to 15 books:
+  - 🦢 **The Ugly Duckling** (Hans Christian Andersen, 1843) — 8 pages.
+  - 🐔 **The Little Red Hen** (English folk tale) — 6 pages.
+  - 🐜 **The Ant and the Grasshopper** (Aesop, ~600 BC) — 6 pages.
+  - 🐭 **The Town Mouse and the Country Mouse** (Aesop) — 7 pages.
+  - 👑 **The Princess and the Pea** (Andersen, 1835) — 6 pages.
+  - 👔 **The Emperor's New Clothes** (Andersen, 1837) — 8 pages.
+  - 👠 **Cinderella** (Charles Perrault, 1697) — 8 pages.
+- All written in classic prose with the original morals preserved. Same page-by-page TTS read-aloud format works automatically (no UI changes needed).
+- **Storyteller achievement** (read 5 stories) now has 15 books in the pool instead of 7 — much more likely to unlock without repeats.
+- **SW cache v89 → v90** to flush.
+
 ## [5.7.10] - 2026-05-19 - Sorting Hat: L2-L5 expanded (3 → 8 rounds each)
 - Audit gap: Sorting Hat L1 had 8 unique rounds but **L2–L5 each had only 3**. Adult brain-exercisers burned through L4/L5 after one sit-down. Expanded each upper level to 8 rounds:
   - **L2** (8 rounds, +5): Living/Non-Living, Day/Night, Big/Small + **Solid/Liquid, Warm/Cold-blooded, Vehicle/Building, Sweet/Sour, Sky/Underground**.
