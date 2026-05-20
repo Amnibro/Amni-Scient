@@ -11117,54 +11117,106 @@ function playAnimalSound(type) {
   }
   function initAutoMiner(){
     const root=$$('#autominer-game');root.innerHTML='';
-    let gems=parseFloat(sessionStorage.getItem('am-g')||'0'),gps=parseFloat(sessionStorage.getItem('am-gps')||'0'),depth=parseInt(sessionStorage.getItem('am-d')||'1');
-    let prestige=parseInt(sessionStorage.getItem('am-p')||'0'),pMult=1+prestige*0.5;
+    // localStorage persistence so progress survives tab close.
+    function _amLoad(k,fb){return localStorage.getItem(k)||sessionStorage.getItem(k)||fb;}
+    let gems=parseFloat(_amLoad('am-g','0')),gps=parseFloat(_amLoad('am-gps','0')),depth=parseInt(_amLoad('am-d','1'));
+    let prestige=parseInt(_amLoad('am-p','0'));
     const upgrades=[
       {name:'Pickaxe',desc:'+2 gems per click',baseCost:20,clickAdd:2,cpsAdd:0,count:0},
       {name:'Drill',desc:'Auto-mines 3/sec',baseCost:80,clickAdd:0,cpsAdd:3,count:0},
       {name:'TNT',desc:'Auto-mines 15/sec',baseCost:400,clickAdd:0,cpsAdd:15,count:0},
       {name:'Excavator',desc:'Auto-mines 60/sec',baseCost:2000,clickAdd:0,cpsAdd:60,count:0},
-      {name:'Deep Bore',desc:'Go deeper +1 depth (2x mult)',baseCost:5000,clickAdd:0,cpsAdd:0,count:0},
+      {name:'Deep Bore',desc:'Go deeper +1 depth (×mult)',baseCost:5000,clickAdd:0,cpsAdd:0,count:0},
       {name:'Laser Drill',desc:'Auto-mines 250/sec',baseCost:15000,clickAdd:0,cpsAdd:250,count:0},
       {name:'Quantum Miner',desc:'Auto-mines 1000/sec',baseCost:80000,clickAdd:0,cpsAdd:1000,count:0},
-      {name:'Warp Engine',desc:'+10 per click',baseCost:50000,clickAdd:10,cpsAdd:0,count:0}
+      {name:'Warp Engine',desc:'+10 per click',baseCost:50000,clickAdd:10,cpsAdd:0,count:0},
+      {name:'Plasma Cutter',desc:'Auto-mines 5000/sec',baseCost:400000,clickAdd:0,cpsAdd:5000,count:0},
+      {name:'Antimatter Drill',desc:'Auto-mines 25K/sec',baseCost:2000000,clickAdd:0,cpsAdd:25000,count:0},
+      {name:'Mecha Suit',desc:'+500 per click',baseCost:5000000,clickAdd:500,cpsAdd:0,count:0},
+      {name:'Wormhole Mine',desc:'Auto-mines 100K/sec',baseCost:10000000,clickAdd:0,cpsAdd:100000,count:0},
+      {name:'Singularity Forge',desc:'Auto-mines 500K/sec',baseCost:50000000,clickAdd:0,cpsAdd:500000,count:0},
+      {name:'Mantle Tap',desc:'Taps Earth\'s mantle: 2M/sec',baseCost:250000000,clickAdd:0,cpsAdd:2000000,count:0},
+      {name:'Core Crusher',desc:'Crushes Earth\'s core: 10M/sec',baseCost:1000000000,clickAdd:0,cpsAdd:10000000,count:0},
+      {name:'Reality Pickaxe',desc:'+10K per click — bends physics',baseCost:500000000,clickAdd:10000,cpsAdd:0,count:0}
     ];
-    const saved=JSON.parse(sessionStorage.getItem('am-up')||'null');
+    const achievements=[
+      {name:'⛏️ First Strike',desc:'Mine your first gem',check:()=>gems>=1,earned:false},
+      {name:'💯 Quarry',desc:'Reach 100 gems',check:()=>gems>=100,earned:false},
+      {name:'💎 Treasure',desc:'Reach 10K gems',check:()=>gems>=1e4,earned:false},
+      {name:'🏔️ Mountain',desc:'Reach 1M gems',check:()=>gems>=1e6,earned:false},
+      {name:'🌋 Volcano',desc:'Reach 1B gems',check:()=>gems>=1e9,earned:false},
+      {name:'🪐 Planet',desc:'Reach 1T gems',check:()=>gems>=1e12,earned:false},
+      {name:'🔥 TNT Squad',desc:'Buy a TNT',check:()=>upgrades[2].count>0,earned:false},
+      {name:'🏗️ Heavy Industry',desc:'Buy an Excavator',check:()=>upgrades[3].count>0,earned:false},
+      {name:'🕳️ Deep Diver',desc:'Reach depth 5',check:()=>depth>=5,earned:false},
+      {name:'🛸 Warp Speed',desc:'Buy a Warp Engine',check:()=>upgrades[7].count>0,earned:false},
+      {name:'🤖 Mecha Pilot',desc:'Buy a Mecha Suit',check:()=>upgrades[10].count>0,earned:false},
+      {name:'🌀 Spatial Tunneler',desc:'Buy a Wormhole Mine',check:()=>upgrades[11].count>0,earned:false},
+      {name:'🔮 Forge Master',desc:'Buy a Singularity Forge',check:()=>upgrades[12].count>0,earned:false},
+      {name:'🌍 Earth Tapper',desc:'Buy a Mantle Tap',check:()=>upgrades[13].count>0,earned:false},
+      {name:'☀️ Core Breaker',desc:'Buy a Core Crusher',check:()=>upgrades[14].count>0,earned:false},
+      {name:'⭐ Prestiged',desc:'Prestige for the first time',check:()=>prestige>=1,earned:false},
+      {name:'🌟 Veteran Miner',desc:'Reach 10 Prestiges',check:()=>prestige>=10,earned:false},
+      {name:'🏛️ Industrialist',desc:'Own 25 of any building',check:()=>upgrades.some(u=>u.count>=25),earned:false},
+      {name:'🦄 Centenarian',desc:'Own 100 of any building',check:()=>upgrades.some(u=>u.count>=100),earned:false},
+      {name:'🎨 Variety',desc:'Own at least 1 of every upgrade',check:()=>upgrades.every(u=>u.count>=1),earned:false}
+    ];
+    const savedAch=JSON.parse(_amLoad('am-ach','null'));
+    if(savedAch)savedAch.forEach((s,i)=>{if(achievements[i])achievements[i].earned=s;});
+    const saved=JSON.parse(_amLoad('am-up','null'));
     if(saved)saved.forEach((s,i)=>{if(upgrades[i])upgrades[i].count=s;});
+    function pMult(){return 1+prestige*0.5+achievements.filter(a=>a.earned).length*0.01;}
     depth=1+upgrades[4].count;
-    gps=upgrades.reduce((a,u)=>a+u.cpsAdd*u.count,0)*depth*pMult;
-    function clickPower(){return (1+upgrades.filter(u=>u.clickAdd).reduce((a,u)=>a+u.clickAdd*u.count,0))*depth*pMult;}
+    gps=upgrades.reduce((a,u)=>a+u.cpsAdd*u.count,0)*depth*pMult();
+    function clickPower(){return (1+upgrades.filter(u=>u.clickAdd).reduce((a,u)=>a+u.clickAdd*u.count,0))*depth*pMult();}
     function cost(u){return Math.floor(u.baseCost*Math.pow(1.2,u.count));}
-    function save(){sessionStorage.setItem('am-g',gems);sessionStorage.setItem('am-gps',gps);sessionStorage.setItem('am-d',depth);sessionStorage.setItem('am-p',prestige);sessionStorage.setItem('am-up',JSON.stringify(upgrades.map(u=>u.count)));}
-    function fmt(n){return n>=1e9?(n/1e9).toFixed(1)+'B':n>=1e6?(n/1e6).toFixed(1)+'M':n>=1e3?(n/1e3).toFixed(1)+'K':Math.floor(n);}
+    function save(){localStorage.setItem('am-g',gems);localStorage.setItem('am-gps',gps);localStorage.setItem('am-d',depth);localStorage.setItem('am-p',prestige);localStorage.setItem('am-up',JSON.stringify(upgrades.map(u=>u.count)));localStorage.setItem('am-ach',JSON.stringify(achievements.map(a=>a.earned)));}
+    function fmt(n){if(n>=1e15)return(n/1e15).toFixed(2)+'Qa';if(n>=1e12)return(n/1e12).toFixed(2)+'T';if(n>=1e9)return(n/1e9).toFixed(2)+'B';if(n>=1e6)return(n/1e6).toFixed(2)+'M';if(n>=1e3)return(n/1e3).toFixed(1)+'K';return Math.floor(n);}
+    // Prestige threshold scales: first at 100K, then 10× per level.
+    function prestigeCost(){return 100000*Math.pow(10,prestige);}
     function doPrestige(){
-      if(gems<100000)return;
-      prestige++;pMult=1+prestige*0.5;gems=0;upgrades.forEach(u=>u.count=0);depth=1;gps=0;
-      showFeedback(`⭐ Prestige ${prestige}! ${pMult}x mult`,'#f1c40f');spawnConfetti(window.innerWidth/2,window.innerHeight/2,120);save();render();
+      const cost=prestigeCost();
+      if(gems<cost){showFeedback(`Need ${fmt(cost)} gems to prestige`,'#e67e22');return;}
+      if(!confirm(`Prestige to level ${prestige+1}? Wipes gems & buildings; permanent +50% mining bonus per level.`))return;
+      prestige++;gems=0;upgrades.forEach(u=>u.count=0);depth=1;gps=0;
+      showFeedback(`⭐ Prestige ${prestige}! ${pMult().toFixed(2)}× mult`,'#f1c40f');spawnConfetti(window.innerWidth/2,window.innerHeight/2,120);
+      save();render();
     }
-    function _checkAmAch(){const lifetime=parseFloat(sessionStorage.getItem('am-lifetime')||'0');if(gems>lifetime){sessionStorage.setItem('am-lifetime',gems);const milestones=[100,1000,10000,100000,1000000];for(const m of milestones){if(lifetime<m&&gems>=m){spawnConfetti(window.innerWidth/2,window.innerHeight/3,m>=100000?100:40);showFeedback(`💎 ${fmt(m)} gems!`,'#f1c40f');break;}}}}
+    function _checkAmAch(){
+      achievements.forEach(a=>{if(!a.earned&&a.check()){a.earned=true;showFeedback(`🎖️ ${a.name}`,'#f1c40f');spawnConfetti(window.innerWidth/2,window.innerHeight/3,40);}});
+      const lifetime=parseFloat(localStorage.getItem('am-lifetime')||sessionStorage.getItem('am-lifetime')||'0');
+      if(gems>lifetime){localStorage.setItem('am-lifetime',gems);}
+    }
     function render(){
       root.innerHTML='';
       const display=document.createElement('div');display.className='idle-display';display.id='am-display';display.textContent=`⛏️ ${fmt(gems)}`;root.appendChild(display);
-      const rate=document.createElement('div');rate.className='idle-rate';rate.textContent=`${fmt(gps)}/sec | Depth: ${depth} (${depth}x) | Click: +${fmt(clickPower())}${prestige>0?` | ⭐×${pMult}`:''}`;root.appendChild(rate);
-      const lifetime=parseFloat(sessionStorage.getItem('am-lifetime')||'0');
-      if(lifetime>0){const lt=document.createElement('div');lt.style.cssText='text-align:center;font-size:0.8rem;color:#888;margin:2px 0';lt.textContent=`🏆 Lifetime best: ${fmt(lifetime)} gems`;root.appendChild(lt);}
+      const rate=document.createElement('div');rate.className='idle-rate';rate.textContent=`${fmt(gps)}/sec · Depth ${depth} (×${depth}) · Click +${fmt(clickPower())}${prestige>0?` · ⭐×${pMult().toFixed(2)}`:''}`;root.appendChild(rate);
+      const achInfo=document.createElement('div');achInfo.style.cssText='text-align:center;font-size:0.8rem;color:#f1c40f;margin:2px 0';
+      achInfo.innerHTML=`⭐ Prestige <b>${prestige}</b> (+${(prestige*50).toFixed(0)}%) · 🏆 ${achievements.filter(a=>a.earned).length}/${achievements.length} achievements (+${(achievements.filter(a=>a.earned).length*1).toFixed(0)}%)`;
+      root.appendChild(achInfo);
+      const lifetime=parseFloat(localStorage.getItem('am-lifetime')||sessionStorage.getItem('am-lifetime')||'0');
+      if(lifetime>0){const lt=document.createElement('div');lt.style.cssText='text-align:center;font-size:0.78rem;color:#888;margin:2px 0';lt.textContent=`🏆 Lifetime best: ${fmt(lifetime)} gems`;root.appendChild(lt);}
       const btn=document.createElement('div');btn.className='idle-main-btn';btn.textContent='⛏️';btn.onclick=()=>{gems+=clickPower();_checkAmAch();save();const d=$$('#am-display');if(d)d.textContent=`⛏️ ${fmt(gems)}`;};root.appendChild(btn);
       const shop=document.createElement('div');shop.className='idle-shop';
       upgrades.forEach(u=>{
         const c=cost(u);const item=document.createElement('div');item.className='idle-item'+(gems<c?' locked':'');
         item.innerHTML=`<div class="idle-item-name">${u.name} (${u.count})</div><div class="idle-item-desc">${u.desc}</div><div class="idle-item-cost">⛏️ ${fmt(c)}</div>`;
-        item.onclick=()=>{if(gems>=c){gems-=c;u.count++;depth=1+upgrades[4].count;gps=upgrades.reduce((a,uu)=>a+uu.cpsAdd*uu.count,0)*depth*pMult;save();render();}};
+        item.onclick=()=>{if(gems>=c){gems-=c;u.count++;depth=1+upgrades[4].count;gps=upgrades.reduce((a,uu)=>a+uu.cpsAdd*uu.count,0)*depth*pMult();_checkAmAch();save();render();}};
         shop.appendChild(item);
       });
       root.appendChild(shop);
+      const achDiv=document.createElement('div');achDiv.style.cssText='margin:8px 0;padding:6px;background:rgba(255,255,255,0.05);border-radius:8px;';
+      achDiv.innerHTML=`<div style="font-size:0.9rem;color:#f1c40f;margin-bottom:4px">🏆 Achievements (${achievements.filter(a=>a.earned).length}/${achievements.length})</div>`+achievements.map(a=>`<span style="margin:2px;opacity:${a.earned?1:0.3}" title="${a.desc}">${a.name}</span>`).join(' ');
+      root.appendChild(achDiv);
       const btns=document.createElement('div');btns.style.cssText='display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:8px;';
-      const pb=document.createElement('button');pb.className='retro-btn';pb.style.background=gems>=100000?'#f1c40f':'#555';pb.textContent=`⭐ PRESTIGE (100K)`;pb.onclick=doPrestige;
+      const pCost=prestigeCost();
+      const pb=document.createElement('button');pb.className='retro-btn';pb.style.background=gems>=pCost?'#f1c40f':'#7a8a9a';pb.style.color=gems>=pCost?'#1a1f2e':'#fff';pb.textContent=`⭐ PRESTIGE (${fmt(pCost)})`;pb.onclick=doPrestige;
+      const rb=document.createElement('button');rb.className='retro-btn';rb.textContent='🔄 RESET ALL';rb.onclick=()=>{if(!confirm('Reset gems, buildings, prestige, achievements? Wipes everything.'))return;gems=0;gps=0;depth=1;prestige=0;upgrades.forEach(u=>u.count=0);achievements.forEach(a=>a.earned=false);localStorage.removeItem('am-lifetime');save();render();};
       const eb=document.createElement('button');eb.className='retro-btn';eb.style.background='#e74c3c';eb.textContent='🚪 EXIT';eb.onclick=()=>{if(window._minerTimer)clearInterval(window._minerTimer);goBack();};
-      btns.appendChild(pb);btns.appendChild(eb);root.appendChild(btns);
+      btns.appendChild(pb);btns.appendChild(rb);btns.appendChild(eb);root.appendChild(btns);
     }
     render();
-    window._minerTimer=setInterval(()=>{if(currentGame!=='autominer')return;gems+=gps/10;_checkAmAch();save();const d=$$('#am-display');if(d)d.textContent=`⛏️ ${fmt(gems)}`;root.querySelectorAll('.idle-shop .idle-item').forEach((el,i)=>{if(upgrades[i]){const c=cost(upgrades[i]);el.classList.toggle('locked',gems<c);}});const pb=root.querySelector('[style*="100K"]');if(pb)pb.style.background=gems>=100000?'#f1c40f':'#555';},100);
+    window._minerTimer=setInterval(()=>{if(currentGame!=='autominer')return;gems+=gps/10;_checkAmAch();save();const d=$$('#am-display');if(d)d.textContent=`⛏️ ${fmt(gems)}`;root.querySelectorAll('.idle-shop .idle-item').forEach((el,i)=>{if(upgrades[i]){const c=cost(upgrades[i]);el.classList.toggle('locked',gems<c);}});const pb=root.querySelector('.retro-btn');},100);
   }
   function initPullPin(){
     const root=$$('#pullpin-game');root.innerHTML='';

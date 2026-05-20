@@ -1,5 +1,17 @@
 ﻿# Changelog 
 
+## [5.7.7] - 2026-05-19 - Auto Miner: parallel expansion to Cookie Clicker
+- v5.7.5 expanded Cookie Clicker; Auto Miner is the other half of "clicker games" and got the same treatment:
+  - Upgrade tiers expanded **8 → 16**: Plasma Cutter (5K/s), Antimatter Drill (25K/s), Mecha Suit (+500/click), Wormhole Mine (100K/s), Singularity Forge (500K/s), Mantle Tap (2M/s), Core Crusher (10M/s), Reality Pickaxe (+10K/click).
+  - **20 new achievements** (up from 0!): gem milestones (1, 100, 10K, 1M, 1B, 1T), tier-purchase badges per new upgrade, depth-5 achievement, prestige badges (first + 10×), ownership (25/100 of any building), and "Variety" (own ≥1 of every upgrade).
+  - **Prestige cost now scales geometrically**: 100K → 1M → 10M → 100M → 1B (10× per level) instead of flat 100K. Makes prestige a meaningful progression rather than a free spam button. First prestige still cheap to teach the mechanic.
+  - **Achievement bonus multiplier**: each earned achievement = +1% mining rate, stacks with prestige (50%/level). 20 achievements = +20% even before prestige bonus.
+  - **localStorage persistence** (was sessionStorage — progress wiped on tab close).
+  - Number formatter extended to T/Qa.
+  - Reset-all confirmation flow added.
+- Status row now displays prestige bonus + achievement bonus + multiplier breakdown explicitly.
+- **SW cache v85 → v86** to flush.
+
 ## [5.7.6] - 2026-05-19 - Chess puzzles 8 & 10 unsound
 - **Puzzle 8** (added v5.6.78): `{c7:'K',b6:'P',b1:'Q',a8:'k'}` → `Qb1-b8`. The white pawn on b6 blocks the queen's b-file path from b1 to b8. Queen can't pass through own pawn. Invalid solution.
   - **Fix**: replace defender with a bishop on c5 — same role (covers a7 along the c5-a7 diagonal, b6 now empty) but doesn't block the queen path. Position is now `{c7:'K',c5:'B',b1:'Q',a8:'k'}`, sol unchanged `b1-b8`.
