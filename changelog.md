@@ -1,5 +1,13 @@
 ﻿# Changelog 
 
+## [5.7.15] - 2026-05-20 - Versus Speed Challenge: question banks doubled (12 → 24 each)
+- The 60-second Speed Challenge had only 12 questions per category, so a single round could chew through most of the bank. Doubled each category to **24 questions** (72 total across all three):
+  - 💻 **Coding** +12: LIFO/stack, binary search Big-O, SQL acronym, HTTP port 80, await keyword, Dijkstra, DRY principle, HTTP 500, hash tables, SOLID-S, linked-list head insert, JSON acronym.
+  - 🔬 **Science** +12: skin = largest organ, Ag symbol, water boiling point, 8 planets, photosynthesis, ampere unit, octopus 3 hearts, Fe = iron, Andromeda nearest galaxy, electron charge, 32 adult teeth, nuclear fusion.
+  - 🌍 **Geography** +12: Andes range, Brasília capital, Sweden island count, GBP pound, South Africa surrounds Lesotho, Mariana Trench, Caspian Sea (largest lake), Cairo, Angel Falls, Canada lake count, Seoul capital, Strait of Gibraltar.
+- All new entries follow the existing format with question + accepted answer + hint, plus shuffled at round start so order varies.
+- **SW cache v93 → v94** to flush.
+
 ## [5.7.14] - 2026-05-20 - AI Ethics Debug: 5 → 8 scenarios
 - AI Ethics Debug now has 8 ML failure-mode scenarios (was 5). Added in neutral ML-engineering framing per project policy:
   - 📉 **Survivor Bias** — stock-return predictor trained only on still-listed firms over-weights "Years Listed" while bankrupted companies are missing from the training set. Cut the leaky filter feature and lean on Revenue Growth + Operating Margin.
