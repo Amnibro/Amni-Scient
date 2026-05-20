@@ -66,6 +66,17 @@
   body[data-theme="amni-life"] #menu-view { background: radial-gradient(ellipse at center, #1f0d2e 0%, #0c0f12 70%); }
   body[data-theme="amni-llm"] { --accent:#10b981; background: linear-gradient(135deg, #051f12 0%, #0c0f12 60%); }
   body[data-theme="amni-llm"] #menu-view { background: linear-gradient(135deg, #051f12 0%, #0c0f12 60%); }
+  /* Broader Amni theme application — affects chrome + accents everywhere
+     so picking an Amni theme actually feels themed, not just a bg tint. */
+  body[data-theme] .menu-title { color: var(--accent) !important; text-shadow: 0 0 14px var(--accent) !important; }
+  body[data-theme] .top-bar { border-bottom-color: var(--accent) !important; }
+  body[data-theme] .back-btn, body[data-theme] .fs-btn, body[data-theme] .theme-btn, body[data-theme] .retro-btn { border-color: var(--accent) !important; color: var(--accent) !important; }
+  body[data-theme] .back-btn:hover, body[data-theme] .fs-btn:hover, body[data-theme] .theme-btn:hover, body[data-theme] .retro-btn:hover { background: color-mix(in srgb, var(--accent) 12%, transparent) !important; }
+  body[data-theme] .score-val { color: var(--accent) !important; }
+  body[data-theme] .cat-header { color: var(--accent) !important; border-bottom-color: var(--accent) !important; }
+  body[data-theme] .game-btn { border-color: color-mix(in srgb, var(--accent) 65%, rgba(255,255,255,0.08)) !important; }
+  body[data-theme] .game-btn:hover { box-shadow: 0 10px 30px color-mix(in srgb, var(--accent) 30%, transparent) !important; }
+  body[data-theme] #profile-btn-name { color: var(--accent) !important; }
   /* Cursor trails — particles spawned via JS pointermove. */
   .cur-particle { position:fixed; pointer-events:none; font-size:14px; line-height:1; z-index:9998; opacity:1; transition: opacity 0.7s ease-out, transform 0.7s ease-out; will-change:transform,opacity; }
   .cur-particle.fade { opacity:0; transform: translate(var(--dx,0px), var(--dy,0px)) scale(0.4); }
@@ -1774,6 +1785,8 @@
     chess: $$('#chess-view'),
     periodic: $$('#periodic-view'),
     mapclick: $$('#mapclick-view'),
+    morse: $$('#morse-view'),
+    ear: $$('#ear-view'),
     cardpairs: $$('#cardpairs-view'),
     speedmath: $$('#speedmath-view'),
     wordsearch: $$('#wordsearch-view'),
@@ -1884,9 +1897,10 @@
   // First-time unlocks fire confetti + toast on the next render tick.
   function _intLS(k){return parseInt(localStorage.getItem(k)||sessionStorage.getItem(k)||'0')||0;}
   function _floatLS(k){return parseFloat(localStorage.getItem(k)||sessionStorage.getItem(k)||'0')||0;}
+  function _hasKey(k){const v=localStorage.getItem(k)||sessionStorage.getItem(k);return !!v&&v!=='0'&&v!=='[]'&&v!=='null'&&v!=='{}';}
   function _setLS(k){const v=localStorage.getItem(k)||sessionStorage.getItem(k);try{return JSON.parse(v||'[]');}catch{return [];}}
   const ACHIEVEMENTS = [
-    {id:'first',ic:'🌟',name:'First Steps',desc:'Play any game once',progress(){const sum=_intLS('snake-best')+_intLS('tet-best')+_intLS('brk-best')+_intLS('flp-best')+_intLS('inv-best')+_intLS('lgc-best')+_intLS('scr-best')+_intLS('agm-best')+_intLS('pat-best')+_intLS('haven_t2048_best')+_intLS('haven_cblast_best')+_intLS('pong-matches')+_intLS('haven_sol_wins')+_intLS('circuit-built')+_intLS('story-total-reads');return{cur:sum>0?1:0,target:1,unlocked:sum>0};}},
+    {id:'first',ic:'🌟',name:'First Steps',desc:'Play any game once',progress(){const numKeys=['snake-best','tet-best','brk-best','flp-best','inv-best','lgc-best','scr-best','agm-best','pat-best','haven_t2048_best','haven_cblast_best','pong-matches','haven_sol_wins','circuit-built','story-total-reads','bj-best','pipe-lvl','cs-lvl','haven_td_best_wave','spm-best-mixed','chess-solved','sdk-wins-classic-easy','sdk-wins-easy'];const flKeys=['ck-lifetime','am-lifetime'];const anyNum=numKeys.some(k=>_intLS(k)>0);const anyFloat=flKeys.some(k=>_floatLS(k)>0);const msHas=_hasKey('ms-best');const played=anyNum||anyFloat||msHas;return{cur:played?1:0,target:1,unlocked:played};}},
     {id:'daily-heat',ic:'🔥',name:'Heat Wave',desc:'Hit a 5-day Daily Challenge streak',progress(){const s=_intLS('daily-best');return{cur:Math.min(s,5),target:5,unlocked:s>=5};}},
     {id:'daily-devotee',ic:'📅',name:'Daily Devotee',desc:'30-day Daily Challenge streak',progress(){const s=_intLS('daily-best');return{cur:Math.min(s,30),target:30,unlocked:s>=30};}},
     {id:'storyteller',ic:'📚',name:'Storyteller',desc:'Read 5 stories all the way through',progress(){const c=_intLS('story-total-reads');return{cur:Math.min(c,5),target:5,unlocked:c>=5};}},
@@ -1902,7 +1916,7 @@
     {id:'chess-novice',ic:'♟️',name:'Chess Novice',desc:'Solve 5 chess puzzles',progress(){const c=_intLS('chess-solved');return{cur:Math.min(c,5),target:5,unlocked:c>=5};}},
     {id:'chemist',ic:'⚛️',name:'Chemist',desc:'Place 50 elements correctly',progress(){const c=_intLS('pt-solved-easy')+_intLS('pt-solved-normal')+_intLS('pt-solved-hard');return{cur:Math.min(c,50),target:50,unlocked:c>=50};}},
     {id:'cartographer',ic:'🗺️',name:'Cartographer',desc:'Score 1000 points in Map Clicker',progress(){const c=_intLS('mc-lifetime-easy')+_intLS('mc-lifetime-normal')+_intLS('mc-lifetime-hard');return{cur:Math.min(c,1000),target:1000,unlocked:c>=1000};}},
-    {id:'polymath',ic:'🎓',name:'Polymath',desc:'Play 10 different games',progress(){const keys=['snake-best','tet-best','brk-best','flp-best','inv-best','lgc-best','scr-best','agm-best','pat-best','haven_t2048_best','haven_cblast_best','pong-matches','haven_sol_wins','circuit-built','story-total-reads','spm-best','geo-best-L1','geo-best-L2','wb-best-es-L1','wb-best-fr-L1','agm-best','pip-best','ws-best','sdk-wins-easy','sdk-wins-medium','sdk-wins-hard','rfx-best-L1','rfx-best-L2','chess-solved'];const played=keys.filter(k=>_intLS(k)>0).length;return{cur:Math.min(played,10),target:10,unlocked:played>=10};}},
+    {id:'polymath',ic:'🎓',name:'Polymath',desc:'Play 10 different games',progress(){const numKeys=['snake-best','tet-best','brk-best','flp-best','inv-best','lgc-best','scr-best','agm-best','pat-best','haven_t2048_best','haven_cblast_best','pong-matches','haven_sol_wins','circuit-built','story-total-reads','spm-best','spm-best-mixed','geo-best-L1','geo-best-L2','wb-best-es-L1','wb-best-fr-L1','pip-best','ws-best','sdk-wins-easy','sdk-wins-medium','sdk-wins-hard','sdk-wins-classic-easy','sdk-wins-classic-medium','sdk-wins-x-easy','rfx-best-L1','rfx-best-L2','chess-solved','bj-best','pipe-best','pipe-lvl','cs-lvl','haven_td_best_wave','nbk-best-1','nbk-best-2','nmm-best-forward','chm-best-always','chm-best','morse-total-correct','ear-life-correct','mc-best-round-world-easy','pt-solved-easy'];const flKeys=['ck-lifetime','am-lifetime'];let played=numKeys.filter(k=>_intLS(k)>0).length;played+=flKeys.filter(k=>_floatLS(k)>0).length;if(_hasKey('ms-best'))played++;return{cur:Math.min(played,10),target:10,unlocked:played>=10};}},
     {id:'morse-graduate',ic:'📡',name:'Morse Graduate',desc:'500 correct Morse decodes',progress(){const c=_intLS('morse-total-correct');return{cur:Math.min(c,500),target:500,unlocked:c>=500};}},
     {id:'sharp-ears',ic:'🎼',name:'Sharp Ears',desc:'100 correct Ear Training answers',progress(){const c=_intLS('ear-life-correct');return{cur:Math.min(c,100),target:100,unlocked:c>=100};}},
     {id:'sudoku-x',ic:'✕',name:'X Marks the Spot',desc:'Win an X-Sudoku',progress(){const c=_intLS('sdk-wins-x-easy')+_intLS('sdk-wins-x-medium')+_intLS('sdk-wins-x-hard');return{cur:Math.min(c,1),target:1,unlocked:c>=1};}},
@@ -2221,6 +2235,13 @@
     if(nm){if(name){nm.textContent=name;nm.style.display='inline';}else{nm.style.display='none';}}
   }
   setTimeout(_refreshProfileChip,100);
+  // Defensive: hook the click on the profile button (and its children)
+  // in JS too, in case the inline onclick somehow fails. Run after the
+  // _showProfile function is defined.
+  setTimeout(()=>{
+    const pb=document.getElementById('profile-btn');
+    if(pb){pb.style.cursor='pointer';pb.addEventListener('click',e=>{e.preventDefault();if(typeof window._showProfile==='function')window._showProfile();});}
+  },150);
   // First-run welcome — if no username, prompt for one. Skippable.
   function _welcomeModal(){
     if(localStorage.getItem('profile-name')||localStorage.getItem('profile-welcomed')==='1')return;
@@ -8417,13 +8438,26 @@ function playAnimalSound(type) {
   // polygons projected equirectangularly into a 2:1 canvas. Each country
   // has approx lat/lon; player taps where they think it is, we score by
   // great-circle distance (haversine).
+  // Realistic-ish Earth continent outlines. Each polygon is a list of
+  // [lon, lat] pairs walked in order. Detail level chosen to look
+  // recognisably like Earth at the ~900×450 canvas size without
+  // bloating the data: ~30-50 anchor points per continent + small
+  // separate islands (Greenland, Madagascar, Japan, UK, NZ, PNG).
   const _mapContinents = [
-    {name:'NA',color:'#2d7d4f',pts:[[-170,70],[-130,75],[-90,80],[-55,70],[-50,60],[-65,45],[-80,25],[-100,18],[-118,32],[-130,50],[-150,60],[-170,70]]},
-    {name:'SA',color:'#2d7d4f',pts:[[-80,12],[-60,12],[-50,0],[-35,-10],[-40,-25],[-60,-40],[-65,-55],[-72,-55],[-78,-45],[-82,-20],[-80,12]]},
-    {name:'EU',color:'#3a8a5e',pts:[[-10,65],[10,70],[30,70],[45,60],[40,45],[30,40],[10,36],[0,40],[-10,50],[-10,65]]},
-    {name:'AF',color:'#cf923f',pts:[[-15,35],[5,35],[10,32],[30,30],[40,12],[52,12],[50,-10],[35,-30],[20,-35],[10,-20],[-5,-15],[-15,0],[-18,10],[-15,35]]},
-    {name:'AS',color:'#3a8a5e',pts:[[45,70],[70,80],[180,70],[160,60],[140,35],[130,20],[108,0],[100,5],[90,25],[75,18],[60,30],[45,35],[45,70]]},
-    {name:'OC',color:'#2d7d4f',pts:[[112,-10],[135,-10],[155,-25],[150,-38],[135,-38],[115,-35],[112,-10]]}
+    {name:'NA',color:'#2d7d4f',pts:[[-168,66],[-162,70],[-156,71],[-141,69],[-130,70],[-114,71],[-95,72],[-80,73],[-75,68],[-78,62],[-95,60],[-79,52],[-67,46],[-71,43],[-74,40],[-76,37],[-78,34],[-81,31],[-81,25],[-83,30],[-89,30],[-94,29],[-98,26],[-98,18],[-95,16],[-87,21],[-83,9],[-79,8],[-95,16],[-105,19],[-110,23],[-114,28],[-117,32],[-118,34],[-122,37],[-124,42],[-124,48],[-132,55],[-145,59],[-160,58],[-168,66]]},
+    {name:'GL',color:'#3a8a5e',pts:[[-55,60],[-44,60],[-22,60],[-20,65],[-25,69],[-22,73],[-25,77],[-32,82],[-50,84],[-58,82],[-58,72],[-55,60]]},
+    {name:'SA',color:'#2d7d4f',pts:[[-78,9],[-72,12],[-62,11],[-50,5],[-44,1],[-38,-3],[-35,-8],[-37,-14],[-39,-22],[-48,-25],[-58,-34],[-63,-40],[-69,-46],[-71,-52],[-66,-55],[-71,-50],[-73,-43],[-72,-32],[-72,-18],[-77,-13],[-79,-6],[-80,0],[-78,9]]},
+    {name:'EU',color:'#3a8a5e',pts:[[-9,38],[-5,36],[-2,43],[3,43],[8,43],[10,44],[12,38],[15,38],[18,40],[20,42],[14,45],[12,46],[14,49],[7,53],[-2,51],[-6,52],[-5,55],[-2,58],[7,58],[12,57],[18,57],[22,60],[26,63],[28,69],[34,69],[40,67],[45,67],[55,60],[58,55],[55,50],[40,46],[36,42],[30,44],[28,41],[20,40],[12,38],[6,37],[-9,38]]},
+    {name:'UK',color:'#3a8a5e',pts:[[-6,50],[-3,51],[1,51],[1,53],[-2,55],[-5,58],[-3,58],[-5,55],[-8,57],[-8,51],[-6,50]]},
+    {name:'AF',color:'#cf923f',pts:[[-17,15],[-13,21],[-5,16],[5,16],[15,21],[24,32],[28,32],[34,31],[34,22],[37,17],[42,12],[44,11],[51,12],[51,3],[42,5],[42,-1],[40,-8],[40,-12],[40,-17],[37,-25],[33,-29],[20,-35],[18,-32],[14,-18],[10,-6],[6,2],[8,5],[-2,5],[-6,5],[-12,8],[-17,12],[-17,15]]},
+    {name:'MD',color:'#cf923f',pts:[[43,-12],[50,-15],[50,-21],[47,-25],[44,-25],[43,-15],[43,-12]]},
+    {name:'AS',color:'#3a8a5e',pts:[[30,70],[50,72],[75,75],[105,77],[135,75],[170,70],[180,68],[168,60],[160,55],[148,55],[140,46],[140,42],[136,35],[130,33],[129,35],[125,39],[121,40],[120,30],[114,22],[110,21],[108,18],[105,11],[101,3],[105,2],[99,1],[95,5],[97,15],[90,22],[80,15],[78,8],[74,9],[72,18],[70,24],[64,25],[60,25],[55,20],[51,19],[55,12],[52,15],[48,12],[44,15],[40,15],[36,28],[35,38],[42,40],[45,38],[55,40],[63,38],[70,40],[78,42],[88,48],[100,53],[120,53],[135,55],[150,60],[160,65],[155,68],[140,72],[110,73],[80,75],[55,70],[40,70],[30,70]]},
+    {name:'JP',color:'#3a8a5e',pts:[[130,32],[135,32],[138,35],[140,37],[141,40],[142,42],[145,45],[143,41],[138,37],[135,35],[133,33],[130,32]]},
+    {name:'PH',color:'#2d7d4f',pts:[[120,5],[124,7],[126,8],[126,12],[122,15],[120,18],[121,14],[119,11],[117,8],[120,5]]},
+    {name:'ID',color:'#2d7d4f',pts:[[95,-2],[105,-6],[115,-8],[125,-8],[135,-8],[140,-3],[140,-9],[130,-8],[120,-4],[110,-7],[100,-2],[95,-2]]},
+    {name:'OC',color:'#2d7d4f',pts:[[112,-12],[120,-12],[130,-12],[136,-12],[144,-14],[145,-17],[153,-25],[152,-28],[150,-37],[143,-38],[140,-38],[136,-35],[131,-32],[125,-33],[114,-35],[113,-25],[114,-19],[112,-12]]},
+    {name:'NZ',color:'#2d7d4f',pts:[[165,-34],[174,-37],[177,-38],[178,-41],[176,-43],[173,-43],[170,-46],[166,-46],[166,-44],[165,-34]]},
+    {name:'PG',color:'#3a8a5e',pts:[[140,-2],[148,-3],[152,-5],[151,-10],[145,-10],[141,-9],[140,-2]]}
   ];
   // [name, lat, lon] — broad spread across continents.
   const _mapCountries = [
@@ -10975,7 +11009,11 @@ function playAnimalSound(type) {
   }
   function initClicker(){
     const root=$$('#clicker-game');root.innerHTML='';
-    let cookies=parseFloat(sessionStorage.getItem('ck-c')||'0'),cps=parseFloat(sessionStorage.getItem('ck-cps')||'0');
+    // Persist to localStorage so progress survives across sessions (was
+    // sessionStorage — cleared every tab close, painful for an idle game).
+    function _ckLoad(k,fb){return parseFloat(localStorage.getItem(k)||sessionStorage.getItem(k)||fb);}
+    let cookies=_ckLoad('ck-c','0'),cps=_ckLoad('ck-cps','0');
+    let heavenly=_ckLoad('ck-hc','0');
     let goldenActive=false,goldenMult=1,goldenTimer=null;
     const upgrades=[
       {name:'Cursor',desc:'Auto-clicks once/sec',baseCost:15,cpsAdd:1,count:0},
@@ -10985,7 +11023,15 @@ function playAnimalSound(type) {
       {name:'Wizard',desc:'Conjures 300 cookies/sec',baseCost:10000,cpsAdd:300,count:0},
       {name:'Portal',desc:'Imports 1000 cookies/sec',baseCost:50000,cpsAdd:1000,count:0},
       {name:'Time Machine',desc:'Harvests 5000/sec',baseCost:250000,cpsAdd:5000,count:0},
-      {name:'Antimatter',desc:'Generates 20000/sec',baseCost:1000000,cpsAdd:20000,count:0}
+      {name:'Antimatter',desc:'Generates 20000/sec',baseCost:1000000,cpsAdd:20000,count:0},
+      {name:'Galaxy',desc:'Spawns 75000/sec',baseCost:5000000,cpsAdd:75000,count:0},
+      {name:'Multiverse',desc:'Pulls 250000/sec from parallel timelines',baseCost:25000000,cpsAdd:250000,count:0},
+      {name:'Singularity',desc:'Collapses 1M cookies/sec into being',baseCost:150000000,cpsAdd:1000000,count:0},
+      {name:'Cookie Forge',desc:'Forges 5M cookies/sec from raw entropy',baseCost:750000000,cpsAdd:5000000,count:0},
+      {name:'Cosmic Bakery',desc:'Industrial bakery the size of a galaxy — 25M/sec',baseCost:4000000000,cpsAdd:25000000,count:0},
+      {name:'Reality Engine',desc:'Rewrites physics for 100M cookies/sec',baseCost:25000000000,cpsAdd:100000000,count:0},
+      {name:'Idleverse',desc:'500M cookies/sec from infinite idle dimensions',baseCost:150000000000,cpsAdd:500000000,count:0},
+      {name:'Cookie God',desc:'You ARE the cookie now — 3B/sec',baseCost:1000000000000,cpsAdd:3000000000,count:0}
     ];
     const achievements=[
       {name:'🍪 First Cookie',desc:'Click your first cookie',check:()=>cookies>=1,earned:false},
@@ -10995,17 +11041,40 @@ function playAnimalSound(type) {
       {name:'🌀 Portal Master',desc:'Buy a Portal',check:()=>upgrades[5].count>0,earned:false},
       {name:'💰 Millionaire',desc:'Reach 1M cookies',check:()=>cookies>=1e6,earned:false},
       {name:'⏰ Time Lord',desc:'Buy a Time Machine',check:()=>upgrades[6].count>0,earned:false},
-      {name:'🌟 Golden Touch',desc:'Click a golden cookie',check:()=>false,earned:false}
+      {name:'🌟 Golden Touch',desc:'Click a golden cookie',check:()=>false,earned:false},
+      {name:'🌌 Galactic',desc:'Buy a Galaxy',check:()=>upgrades[8].count>0,earned:false},
+      {name:'🪐 Multiversal',desc:'Buy a Multiverse',check:()=>upgrades[9].count>0,earned:false},
+      {name:'⚫ Singularity',desc:'Buy a Singularity',check:()=>upgrades[10].count>0,earned:false},
+      {name:'🔨 Forge Master',desc:'Buy a Cookie Forge',check:()=>upgrades[11].count>0,earned:false},
+      {name:'🌠 Cosmic',desc:'Buy a Cosmic Bakery',check:()=>upgrades[12].count>0,earned:false},
+      {name:'🎮 Reality Hacker',desc:'Buy a Reality Engine',check:()=>upgrades[13].count>0,earned:false},
+      {name:'♾️ Idle God',desc:'Buy an Idleverse',check:()=>upgrades[14].count>0,earned:false},
+      {name:'👑 Apotheosis',desc:'Become the Cookie God',check:()=>upgrades[15].count>0,earned:false},
+      {name:'🚀 Billionaire',desc:'Reach 1B cookies',check:()=>cookies>=1e9,earned:false},
+      {name:'💎 Trillionaire',desc:'Reach 1T cookies',check:()=>cookies>=1e12,earned:false},
+      {name:'👼 Ascended',desc:'Earn your first Heavenly Chip',check:()=>heavenly>=1,earned:false},
+      {name:'😇 Saint',desc:'Earn 100 Heavenly Chips',check:()=>heavenly>=100,earned:false},
+      {name:'🏛️ Empire',desc:'Own 25 of any building',check:()=>upgrades.some(u=>u.count>=25),earned:false},
+      {name:'🌍 Conqueror',desc:'Own 50 of any building',check:()=>upgrades.some(u=>u.count>=50),earned:false},
+      {name:'🦄 Centenarian',desc:'Own 100 of any building',check:()=>upgrades.some(u=>u.count>=100),earned:false},
+      {name:'🎨 Variety',desc:'Own at least 1 of each building',check:()=>upgrades.every(u=>u.count>=1),earned:false}
     ];
-    const savedAch=JSON.parse(sessionStorage.getItem('ck-ach')||'null');
+    const savedAch=JSON.parse(localStorage.getItem('ck-ach')||sessionStorage.getItem('ck-ach')||'null');
     if(savedAch)savedAch.forEach((s,i)=>{if(achievements[i])achievements[i].earned=s;});
-    const saved=JSON.parse(sessionStorage.getItem('ck-up')||'null');
+    const saved=JSON.parse(localStorage.getItem('ck-up')||sessionStorage.getItem('ck-up')||'null');
     if(saved)saved.forEach((s,i)=>{if(upgrades[i])upgrades[i].count=s;});
+    // Multiplier = 1 + (heavenly chips × 1%) + (earned achievements × 0.5%)
+    function totalMult(){return 1+(heavenly*0.01)+(achievements.filter(a=>a.earned).length*0.005);}
     cps=upgrades.reduce((a,u)=>a+u.cpsAdd*u.count,0);
+    function effectiveCps(){return cps*totalMult()*goldenMult;}
     function cost(u){return Math.floor(u.baseCost*Math.pow(1.15,u.count));}
-    function save(){sessionStorage.setItem('ck-c',cookies);sessionStorage.setItem('ck-cps',cps);sessionStorage.setItem('ck-up',JSON.stringify(upgrades.map(u=>u.count)));sessionStorage.setItem('ck-ach',JSON.stringify(achievements.map(a=>a.earned)));}
-    function fmt(n){return n>=1e9?(n/1e9).toFixed(1)+'B':n>=1e6?(n/1e6).toFixed(1)+'M':n>=1e3?(n/1e3).toFixed(1)+'K':Math.floor(n);}
-    function checkAch(){achievements.forEach(a=>{if(!a.earned&&a.check()){a.earned=true;showFeedback(`🎖️ ${a.name}`,'#f1c40f');spawnConfetti(window.innerWidth/2,window.innerHeight/3,60);}});const lifetime=parseFloat(sessionStorage.getItem('ck-lifetime')||'0');if(cookies>lifetime)sessionStorage.setItem('ck-lifetime',cookies);}
+    function save(){localStorage.setItem('ck-c',cookies);localStorage.setItem('ck-cps',cps);localStorage.setItem('ck-hc',heavenly);localStorage.setItem('ck-up',JSON.stringify(upgrades.map(u=>u.count)));localStorage.setItem('ck-ach',JSON.stringify(achievements.map(a=>a.earned)));}
+    function fmt(n){if(n>=1e18)return(n/1e18).toFixed(2)+'Qi';if(n>=1e15)return(n/1e15).toFixed(2)+'Qa';if(n>=1e12)return(n/1e12).toFixed(2)+'T';if(n>=1e9)return(n/1e9).toFixed(2)+'B';if(n>=1e6)return(n/1e6).toFixed(2)+'M';if(n>=1e3)return(n/1e3).toFixed(1)+'K';return Math.floor(n);}
+    function checkAch(){achievements.forEach(a=>{if(!a.earned&&a.check()){a.earned=true;showFeedback(`🎖️ ${a.name}`,'#f1c40f');spawnConfetti(window.innerWidth/2,window.innerHeight/3,60);}});const lifetime=parseFloat(localStorage.getItem('ck-lifetime')||sessionStorage.getItem('ck-lifetime')||'0');if(cookies>lifetime)localStorage.setItem('ck-lifetime',cookies);}
+    // Heavenly Chips formula: floor(sqrt(lifetime cookies / 1e9)) — classic
+    // soft-prestige curve. 1M cookies = 0 HC, 1B = 1 HC, 1T = ~31 HC, 1Qa = ~1000.
+    function pendingHC(){const lifetime=Math.max(cookies,parseFloat(localStorage.getItem('ck-lifetime')||'0'));return Math.floor(Math.sqrt(lifetime/1e9));}
+    function ascend(){const gain=pendingHC()-heavenly;if(gain<=0){showFeedback('Need more lifetime cookies first!','#e67e22');return;}if(!confirm(`Ascend? You'll reset cookies & buildings (but keep achievements) and gain ${gain} Heavenly Chips. Each chip = +1% CPS forever.`))return;heavenly=pendingHC();cookies=0;cps=0;upgrades.forEach(u=>u.count=0);save();showFeedback(`👼 Ascended! +${gain} Heavenly Chips (total ${heavenly})`,'#f1c40f');spawnConfetti(window.innerWidth/2,window.innerHeight/2,150);render();}
     function spawnGolden(){
       if(goldenActive||currentGame!=='clicker')return;
       const gc=document.createElement('div');gc.id='ck-golden';gc.textContent='🍪';gc.style.cssText=`position:absolute;font-size:2rem;cursor:pointer;animation:pulse 0.5s infinite alternate;top:${30+Math.random()*200}px;left:${10+Math.random()*60}%;z-index:10;filter:hue-rotate(60deg) brightness(1.5);`;
@@ -11016,10 +11085,15 @@ function playAnimalSound(type) {
     function render(){
       const existing=$$('#ck-golden');root.innerHTML='';if(existing)root.appendChild(existing);
       const display=document.createElement('div');display.className='idle-display';display.id='ck-display';display.textContent=`🍪 ${fmt(cookies)}`;root.appendChild(display);
-      const rate=document.createElement('div');rate.className='idle-rate';rate.textContent=`${fmt(cps*goldenMult)} per second${goldenMult>1?' (🌟 GOLDEN!)':''}`;root.appendChild(rate);
-      const lifetime=parseFloat(sessionStorage.getItem('ck-lifetime')||'0');
+      const rate=document.createElement('div');rate.className='idle-rate';rate.textContent=`${fmt(effectiveCps())} per second${goldenMult>1?' (🌟 GOLDEN!)':''}`;root.appendChild(rate);
+      // Prestige status row
+      const hcInfo=document.createElement('div');hcInfo.style.cssText='text-align:center;font-size:0.82rem;color:#f1c40f;margin:3px 0';
+      const pend=pendingHC()-heavenly;
+      hcInfo.innerHTML=`👼 Heavenly Chips: <b>${heavenly}</b> (+${(heavenly*1).toFixed(0)}% CPS) · 🏆 ${achievements.filter(a=>a.earned).length} achievements (+${(achievements.filter(a=>a.earned).length*0.5).toFixed(1)}%)${pend>0?` · <span style="color:#2ecc71">+${pend} ready to ascend</span>`:''}`;
+      root.appendChild(hcInfo);
+      const lifetime=parseFloat(localStorage.getItem('ck-lifetime')||sessionStorage.getItem('ck-lifetime')||'0');
       if(lifetime>0){const lt=document.createElement('div');lt.style.cssText='text-align:center;font-size:0.8rem;color:#888;margin:2px 0';lt.textContent=`🏆 Lifetime best: ${fmt(lifetime)}`;root.appendChild(lt);}
-      const btn=document.createElement('div');btn.className='idle-main-btn';btn.textContent='🍪';btn.onclick=()=>{cookies+=Math.max(1,Math.floor(cps*0.1)+1)*goldenMult;save();checkAch();render();};root.appendChild(btn);
+      const btn=document.createElement('div');btn.className='idle-main-btn';btn.textContent='🍪';btn.onclick=()=>{const clickGain=Math.max(1,Math.floor(effectiveCps()*0.1)+1);cookies+=clickGain;save();checkAch();render();};root.appendChild(btn);
       const shop=document.createElement('div');shop.className='idle-shop';
       upgrades.forEach(u=>{
         const c=cost(u);const item=document.createElement('div');item.className='idle-item'+(cookies<c?' locked':'');
@@ -11029,15 +11103,16 @@ function playAnimalSound(type) {
       });
       root.appendChild(shop);
       const achDiv=document.createElement('div');achDiv.style.cssText='margin:8px 0;padding:6px;background:rgba(255,255,255,0.05);border-radius:8px;';
-      achDiv.innerHTML='<div style="font-size:0.9rem;color:#f1c40f;margin-bottom:4px">🏆 Achievements</div>'+achievements.map(a=>`<span style="margin:2px;opacity:${a.earned?1:0.3}">${a.name}</span>`).join(' ');
+      achDiv.innerHTML=`<div style="font-size:0.9rem;color:#f1c40f;margin-bottom:4px">🏆 Achievements (${achievements.filter(a=>a.earned).length}/${achievements.length})</div>`+achievements.map(a=>`<span style="margin:2px;opacity:${a.earned?1:0.3}" title="${a.desc}">${a.name}</span>`).join(' ');
       root.appendChild(achDiv);
-      const btns=document.createElement('div');btns.style.cssText='display:flex;gap:6px;justify-content:center;margin-top:8px;';
-      const rb=document.createElement('button');rb.className='retro-btn';rb.textContent='🔄 RESET';rb.onclick=()=>{cookies=0;cps=0;goldenMult=1;goldenActive=false;upgrades.forEach(u=>u.count=0);achievements.forEach(a=>a.earned=false);save();render();};
+      const btns=document.createElement('div');btns.style.cssText='display:flex;gap:6px;justify-content:center;margin-top:8px;flex-wrap:wrap;';
+      const ab=document.createElement('button');ab.className='retro-btn';ab.style.background=pend>0?'#f1c40f':'#7a8a9a';ab.style.color=pend>0?'#1a1f2e':'#fff';ab.textContent=`👼 ASCEND${pend>0?' (+'+pend+')':''}`;ab.onclick=ascend;
+      const rb=document.createElement('button');rb.className='retro-btn';rb.textContent='🔄 RESET ALL';rb.onclick=()=>{if(!confirm('Reset cookies AND Heavenly Chips? This wipes everything.'))return;cookies=0;cps=0;heavenly=0;goldenMult=1;goldenActive=false;upgrades.forEach(u=>u.count=0);achievements.forEach(a=>a.earned=false);localStorage.removeItem('ck-lifetime');save();render();};
       const eb=document.createElement('button');eb.className='retro-btn';eb.style.background='#e74c3c';eb.textContent='🚪 EXIT';eb.onclick=()=>{if(window._clickerTimer)clearInterval(window._clickerTimer);if(window._goldenSpawner)clearInterval(window._goldenSpawner);goBack();};
-      btns.appendChild(rb);btns.appendChild(eb);root.appendChild(btns);
+      btns.appendChild(ab);btns.appendChild(rb);btns.appendChild(eb);root.appendChild(btns);
     }
     render();
-    window._clickerTimer=setInterval(()=>{if(currentGame!=='clicker')return;cookies+=cps*goldenMult/10;save();checkAch();const d=$$('#ck-display');if(d)d.textContent=`🍪 ${fmt(cookies)}`;const r=root.querySelector('.idle-rate');if(r)r.textContent=`${fmt(cps*goldenMult)} per second${goldenMult>1?' (🌟 GOLDEN!)':''}`;root.querySelectorAll('.idle-shop .idle-item').forEach((el,i)=>{if(upgrades[i]){const c=cost(upgrades[i]);el.classList.toggle('locked',cookies<c);}});},100);
+    window._clickerTimer=setInterval(()=>{if(currentGame!=='clicker')return;cookies+=effectiveCps()/10;save();checkAch();const d=$$('#ck-display');if(d)d.textContent=`🍪 ${fmt(cookies)}`;const r=root.querySelector('.idle-rate');if(r)r.textContent=`${fmt(effectiveCps())} per second${goldenMult>1?' (🌟 GOLDEN!)':''}`;root.querySelectorAll('.idle-shop .idle-item').forEach((el,i)=>{if(upgrades[i]){const c=cost(upgrades[i]);el.classList.toggle('locked',cookies<c);}});},100);
     window._goldenSpawner=setInterval(()=>{if(currentGame!=='clicker')return;if(Math.random()<0.15)spawnGolden();},15000);
   }
   function initAutoMiner(){
