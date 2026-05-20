@@ -1,5 +1,18 @@
 ﻿# Changelog 
 
+## [5.7.32] - 2026-05-20 - Music Studio: Famous Rhythms picker
+- Rhythm tab now offers a **named-rhythm picker** instead of only procedural-random patterns. Picker sits above the start button as a row of buttons:
+  - **🎲 Random** (default) — the original procedural pattern (4/6/8 beats by level).
+  - **🪩 Disco (4-on-floor)** — `1010 1010` — every downbeat hit, classic dance.
+  - **🎸 We Will Rock You** — `1110 1110` — stomp-stomp-clap, the Queen anthem riff.
+  - **🌴 Bossa Nova 3-2** — `1010 0101` — the iconic Brazilian clave pattern.
+  - **💃 Cha-Cha-Cha** — `1011 0110` — Latin ballroom timing.
+  - **🎺 Bo Diddley** — `1011 1010` — rock'n'roll's hambone rhythm.
+  - **👑 Waltz (3/4)** — `100 100` — six-beat triple meter.
+- Pattern length now sets beat count (Waltz uses 6 dots, the rest use 8), overriding the level-based default when a named rhythm is chosen.
+- Picker selection persists in `sessionStorage` (`rhythm-named`).
+- **SW cache v110 → v111** to flush.
+
 ## [5.7.31] - 2026-05-20 - Chess: +2 puzzles, new tactical patterns (22 → 24)
 - Two new mate-in-one puzzles, each escape-verified before commit, introducing motifs not in the existing bank:
   - **P23 Epaulette mate** — `Qb1-d3#` with Kf6 / Qb1 / Na6 vs Kd8 / Rc8 / Re8. The black king is walled in by its own rooks (c8 and e8 — the "epaulettes"); the queen reaches d3 attacking down the d-file, knight on a6 covers c7, white king covers e7. Neither black rook can block — Rc8 can only move on c-file or 8th rank (blocked by own king), same for Re8.

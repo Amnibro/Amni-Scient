@@ -4959,7 +4959,24 @@
   function renderRhythm() {
     const ttl=document.createElement('div'); ttl.className='music-title'; ttl.textContent='🥁 Rhythm Game'; musicContent.appendChild(ttl);
     const info=document.createElement('div'); info.className='music-info'; info.textContent='Tap the dots when they light up!'; musicContent.appendChild(info);
-    const beats=currentLevel===1?4:(currentLevel===2?6:8), pattern=[]; for(let i=0;i<beats;i++) pattern.push(Math.random()>0.35);
+    const namedRhythms=[
+      {name:'🎲 Random',pattern:null},
+      {name:'🪩 Disco (4-on-floor)',pattern:[1,0,1,0,1,0,1,0]},
+      {name:'🎸 We Will Rock You',pattern:[1,1,1,0,1,1,1,0]},
+      {name:'🌴 Bossa Nova 3-2',pattern:[1,0,1,0,0,1,0,1]},
+      {name:'💃 Cha-Cha-Cha',pattern:[1,0,1,1,0,1,1,0]},
+      {name:'🎺 Bo Diddley',pattern:[1,0,1,1,1,0,1,0]},
+      {name:'👑 Waltz (3/4)',pattern:[1,0,0,1,0,0]}
+    ];
+    const chosen=sessionStorage.getItem('rhythm-named')||'🎲 Random';
+    const named=namedRhythms.find(r=>r.name===chosen&&r.pattern);
+    const pickerRow=document.createElement('div'); pickerRow.style.cssText='display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:8px 0;';
+    namedRhythms.forEach(r=>{const b=document.createElement('button');b.className='sdk-btn'+(r.name===chosen?' active':'');b.style.cssText='font-size:0.78rem;padding:5px 9px;';b.textContent=r.name;b.onclick=()=>{sessionStorage.setItem('rhythm-named',r.name);if(rhythmTimer){clearInterval(rhythmTimer);rhythmTimer=null;}renderMusicTab();};pickerRow.appendChild(b);});
+    musicContent.appendChild(pickerRow);
+    let pattern;
+    if(named){pattern=[...named.pattern];}
+    else{const b=currentLevel===1?4:(currentLevel===2?6:8);pattern=Array.from({length:b},()=>Math.random()>0.35);}
+    const beats=pattern.length;
     const area=document.createElement('div'); area.className='rhythm-area'; area.id='rhythm-dots';
     const dots=[]; for(let i=0;i<beats;i++){ const dot=document.createElement('div'); dot.className='rhythm-dot'; dot.textContent=pattern[i]?'🥁':'—'; dots.push(dot); area.appendChild(dot); }
     musicContent.appendChild(area);
