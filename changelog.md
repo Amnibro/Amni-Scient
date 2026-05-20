@@ -1,5 +1,13 @@
 ﻿# Changelog 
 
+## [5.7.25] - 2026-05-20 - Periodic Table Quiz: +3 generators (5 → 8)
+- Three new question generators wire up unused fields in the element table (`[atomic_num, symbol, name, period, group]`):
+  - **"Which period is X in?"** — reverse of the existing group generator. Eligible elements limited to periods 1–7 (excludes lanthanides/actinides edge cases). Wrong answers drawn from other periods.
+  - **"Heaviest noble gas / halogen / alkali metal / alkaline earth metal?"** — uses atomic number ordering inside each category. Wrong answers are the next 3 heaviest of the same category, so all options are plausible.
+  - **"Lightest ..."** — symmetric to the above; metalloid also eligible since the category has enough members.
+- All generators bail out (return null) if the pool doesn't have ≥4 members of the chosen category, so easy/normal difficulty don't show malformed questions.
+- **SW cache v103 → v104** to flush.
+
 ## [5.7.24] - 2026-05-20 - Music Studio: theory expansion (chords 5 → 12, +7 scales)
 - **Chord library expanded** from 5 → 12 in the piano theory section. New entries: **C Maj7, A Min7, G Dom7, B Dim, C Aug, D Sus4, C Sus2** — covering jazz/blues/rock fundamentals beyond the basic triads.
 - **New Modes & Scales row** with 7 scales tappable to hear ascending arpeggios (200ms per note) with key highlighting:
