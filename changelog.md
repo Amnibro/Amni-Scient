@@ -1,5 +1,14 @@
 ﻿# Changelog 
 
+## [5.7.10] - 2026-05-19 - Sorting Hat: L2-L5 expanded (3 → 8 rounds each)
+- Audit gap: Sorting Hat L1 had 8 unique rounds but **L2–L5 each had only 3**. Adult brain-exercisers burned through L4/L5 after one sit-down. Expanded each upper level to 8 rounds:
+  - **L2** (8 rounds, +5): Living/Non-Living, Day/Night, Big/Small + **Solid/Liquid, Warm/Cold-blooded, Vehicle/Building, Sweet/Sour, Sky/Underground**.
+  - **L3** (8 rounds, +5): Metals/Non-Metals, Vertebrates/Invertebrates, Renewable/Non-Renewable + **Producers/Consumers, Mammals/Reptiles, Carnivore/Herbivore, Compound/Element, Solid/Gas at room temp**.
+  - **L4** (8 rounds, +5): Acids/Bases, Potential/Kinetic, Prokaryote/Eukaryote + **Mitosis/Meiosis, Igneous/Sedimentary, DNA/RNA, Series/Parallel circuits, Algebraic/Transcendental numbers**.
+  - **L5** (8 rounds, +5): Exothermic/Endothermic, Classical/Quantum, Ionic/Covalent + **Boson/Fermion, O(log n)/O(n²) complexity, Stack/Heap memory, Lossless/Lossy compression, Symmetric/Asymmetric encryption**.
+- Now 39 total Sorting Hat rounds (was 17). L4-L5 specifically target adult/college-level content (biology, geology, CS, crypto, complexity theory).
+- **SW cache v88 → v89** to flush.
+
 ## [5.7.9] - 2026-05-19 - Word Bridge tracking + module audit
 - **Audit** of all `data-game` values vs the `views` registry — confirmed every game has a view mapping. (snake80 and t2048 had been missed by an earlier regex pattern but verified registered.)
 - **Audit** of pre-K modules for L1-L5 progression like Money Math's L4/L5 clones — confirmed Math Basics (+, −, ×, ÷, word problems, geometry, algebra by level), Matching (3/8/10/12/15 pairs + concept-pair mode at L4+), Typing (40 3-letter → 30 15-letter scientific), Tracing (letters → 4-letter words → 7-letter → academic → Greek/math symbols), and Reflex Racer (stationary → moving → faster + decoys) all have real progression. Money Math was the only outlier (fixed in v5.7.3).
