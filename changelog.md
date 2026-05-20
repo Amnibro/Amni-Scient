@@ -1,5 +1,17 @@
 ﻿# Changelog 
 
+## [5.7.13] - 2026-05-20 - Circuit Builder: 5 → 9 components
+- Circuit Builder gets 4 new components (5 → 9 total):
+  - ⏷ **Diode** — one-way semiconductor (forward Vf ≈ 0.7V modelled as +50Ω equivalent).
+  - 🪫 **Capacitor** — temporarily lowers effective resistance by 20Ω per cap (simulates short-time charging current).
+  - 📢 **Buzzer** — emits a real audio tone via Web Audio (440Hz + 80Hz per buzzer for chord effect) on circuit close.
+  - ⚙ **Motor** — 150Ω coil load; lights up when current flows.
+- `testCircuit()` now computes total resistance as `(resistors × 100Ω) + (diodes × 50Ω) + (motors × 150Ω) − (caps × 20Ω)` with a floor of 10Ω. Current displayed as I = V / R.
+- Info bar now lists each non-base component with descriptive suffix: "3× diode (Vf~0.7V) · 2× motor spinning · 1× capacitor charging · 1× buzzer beeping".
+- "No output" error now lists all five output types (bulb/LED/diode/buzzer/motor) instead of just bulb/LED.
+- All new components count toward the "Circuit Master" achievement (build 25 working circuits — already in the achievement registry).
+- **SW cache v91 → v92** to flush.
+
 ## [5.7.12] - 2026-05-20 - Reaction Lab: 6 → 11 reactions + 3 new chemicals
 - Reaction Lab gets a substantial sandbox expansion. **3 new chemicals** in the toolbar:
   - 🧊 **Ice** — solid, falls. Melts on contact with Fire.

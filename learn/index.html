@@ -12724,6 +12724,10 @@ function playAnimalSound(type) {
         <button class="lab-tool" data-tool="bulb">💡 Bulb</button>
         <button class="lab-tool" data-tool="switch">🔘 Switch</button>
         <button class="lab-tool" data-tool="led">🔴 LED</button>
+        <button class="lab-tool" data-tool="diode">⏷ Diode</button>
+        <button class="lab-tool" data-tool="capacitor">🪫 Capacitor</button>
+        <button class="lab-tool" data-tool="buzzer">📢 Buzzer</button>
+        <button class="lab-tool" data-tool="motor">⚙ Motor</button>
         <button class="lab-tool" data-tool="wire">🔗 Wire</button>
         <button class="lab-tool" data-tool="delete">❌ Delete</button>
         <button class="lab-tool" data-tool="test">⚡ Test</button>
@@ -12731,8 +12735,8 @@ function playAnimalSound(type) {
       </div>`;
     const cv=$$('#circuit-canvas'),cx=cv.getContext('2d'),info=$$('#circuit-info');
     let comps=[],wires=[],tool='battery',drag=null,dOx=0,dOy=0,wireFrom=null,mouseX=0,mouseY=0;
-    const SYMS={battery:'🔋',resistor:'R',bulb:'💡',switch:'SW',led:'LED'};
-    const COLS={battery:'#e74c3c',resistor:'#e67e22',bulb:'#f1c40f',switch:'#2ecc71',led:'#ff6b6b'};
+    const SYMS={battery:'🔋',resistor:'R',bulb:'💡',switch:'SW',led:'LED',diode:'D▶',capacitor:'C‖',buzzer:'BZ',motor:'M⚙'};
+    const COLS={battery:'#e74c3c',resistor:'#e67e22',bulb:'#f1c40f',switch:'#2ecc71',led:'#ff6b6b',diode:'#9b59b6',capacitor:'#1abc9c',buzzer:'#e67e22',motor:'#3498db'};
     const R=28;
     function pos(e){const b=cv.getBoundingClientRect();return{x:(e.clientX??e.touches?.[0]?.clientX??0)-b.left,y:(e.clientY??e.touches?.[0]?.clientY??0)-b.top};}
     function hitComp(x,y){return comps.find(c=>Math.hypot(c.x-x,c.y-y)<R);}
@@ -12790,10 +12794,22 @@ function playAnimalSound(type) {
       comps.forEach(c=>{c.lit=false;});
       const closed=traceCircuit();
       if(closed){
-        comps.filter(c=>c.type==='bulb'||c.type==='led').forEach(c=>{c.lit=true;});
+        comps.filter(c=>c.type==='bulb'||c.type==='led'||c.type==='diode'||c.type==='buzzer'||c.type==='motor').forEach(c=>{c.lit=true;});
         const r=comps.filter(c=>c.type==='resistor').length;
-        const v=12,current=(v/(Math.max(r,1)*100)).toFixed(2);
-        info.innerHTML=`✅ Circuit closed! V=${v}V, I=${current}A, R=${Math.max(r,1)*100}Ω`;
+        // Total resistance = base resistor count × 100Ω, plus diode forward drop
+        // (~50Ω equiv), plus motor coil (~150Ω), minus capacitor short-time bypass.
+        const diodes=comps.filter(c=>c.type==='diode').length;
+        const motors=comps.filter(c=>c.type==='motor').length;
+        const caps=comps.filter(c=>c.type==='capacitor').length;
+        const buzzers=comps.filter(c=>c.type==='buzzer').length;
+        const totalR=Math.max(r,1)*100 + diodes*50 + motors*150 - caps*20;
+        const v=12,current=(v/Math.max(totalR,10)).toFixed(3);
+        let extras='';
+        if(diodes)extras+=` · ${diodes}× diode (Vf~0.7V)`;
+        if(motors)extras+=` · ${motors}× motor spinning`;
+        if(caps)extras+=` · ${caps}× capacitor charging`;
+        if(buzzers){extras+=` · ${buzzers}× buzzer beeping`;try{const ctxA=new (window.AudioContext||window.webkitAudioContext)();for(let i=0;i<buzzers;i++){const o=ctxA.createOscillator(),g=ctxA.createGain();o.type='square';o.frequency.value=440+i*80;const t=ctxA.currentTime;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(0.15,t+0.01);g.gain.setValueAtTime(0.15,t+0.18);g.gain.linearRampToValueAtTime(0,t+0.22);o.connect(g);g.connect(ctxA.destination);o.start(t);o.stop(t+0.25);}}catch{}}
+        info.innerHTML=`✅ Circuit closed! V=${v}V, I=${current}A, R=${totalR}Ω${extras}`;
         const cntKey='circuit-built';
         const cnt=parseInt(sessionStorage.getItem(cntKey)||'0')+1;
         sessionStorage.setItem(cntKey,cnt);
@@ -12805,7 +12821,7 @@ function playAnimalSound(type) {
       }else{
         const reasons=[];
         if(!comps.some(c=>c.type==='battery'))reasons.push('no battery');
-        if(!comps.some(c=>c.type==='bulb')&&!comps.some(c=>c.type==='led'))reasons.push('no bulb/LED');
+        if(!comps.some(c=>['bulb','led','diode','buzzer','motor'].includes(c.type)))reasons.push('no output (bulb/LED/diode/buzzer/motor)');
         if(!wires.length)reasons.push('no wires');
         if(comps.some(c=>c.type==='switch'&&!c.on))reasons.push('switch is off');
         if(!reasons.length)reasons.push('circuit not closed');
