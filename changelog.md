@@ -1,5 +1,13 @@
 ﻿# Changelog 
 
+## [5.7.23] - 2026-05-20 - Storybooks: +3 adult literary works (15 → 18)
+- Three classic public-domain short stories for adult readers — abridged to the existing ~10-page format:
+  - 🎁 **The Gift of the Magi** (O. Henry, 1905) — Della and Jim sacrifice their most prized possessions to buy each other Christmas gifts.
+  - 🍂 **The Last Leaf** (O. Henry, 1907) — Old Behrman paints a leaf on the wall to save Johnsy's will to live.
+  - ❓ **The Three Questions** (Tolstoy, 1885) — A king learns from a hermit that the most important time is now, the most important person is the one before you, and the most important act is to do them good.
+- All three are PD (pre-1929) so no licensing concerns. Library achievement still targets 10 reads, comfortably below the new 18 available.
+- **SW cache v101 → v102** to flush.
+
 ## [5.7.22] - 2026-05-20 - Circuit Lab: bug fix + Inductor + Ground (5 → 11 placeable)
 - **Bug fix:** the toolbar advertised diode / capacitor / buzzer / motor since v5.7.13, but the placement allowlist at the click handler was still `['battery','resistor','bulb','switch','led']` — those 4 buttons were dead. Allowlist now matches the toolbar (all 11 types).
 - **New components:**
