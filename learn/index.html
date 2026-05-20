@@ -13048,7 +13048,43 @@ function playAnimalSound(type) {
           if(!semOut||semOut.w<0.5)return'And let H3 (semantics path) actually reach the output strongly.';
           return null;},
         hints:['The Noise Channel weight is too high. Cut or zero it (≤0.2).','Boost Semantics input weight to ≥0.5.','Make sure H3 → Out weight is also ≥0.5 so semantics actually drives prediction.'],
-        impact:'Adversarial examples (Goodfellow 2014) showed that imperceptible noise can fool image classifiers. Robust models rely on shape/semantics over high-frequency texture, and pass robustness audits used in autonomous driving, medical imaging, and content moderation.'}
+        impact:'Adversarial examples (Goodfellow 2014) showed that imperceptible noise can fool image classifiers. Robust models rely on shape/semantics over high-frequency texture, and pass robustness audits used in autonomous driving, medical imaging, and content moderation.'},
+      {title:'Survivor Bias',desc:'This stock-return predictor was trained on companies still in the S&P 500 today — but that filter excludes every firm that went bankrupt or was delisted. The model now treats "Years Listed" as a strong positive signal because all surviving firms are old. Cut the listed-years dominance and let the actual financial metrics drive the prediction.',
+        nodes:[{id:'rev',x:60,y:80,layer:0,label:'Revenue Growth',val:0.7},{id:'margin',x:60,y:200,layer:0,label:'Operating Margin',val:0.8},{id:'listed',x:60,y:320,layer:0,label:'Years Listed',val:0.9},
+          {id:'h1',x:250,y:140,layer:1,label:'H1',val:0},{id:'h2',x:250,y:280,layer:1,label:'H2',val:0},
+          {id:'out',x:440,y:200,layer:2,label:'Buy?',val:0}],
+        conns:[{from:'rev',to:'h1',w:0.3},{from:'margin',to:'h1',w:0.2},{from:'listed',to:'h2',w:0.9},{from:'h1',to:'out',w:0.3},{from:'h2',to:'out',w:0.8}],
+        check:function(n,c){const listedConn=c.find(cc=>cc.from==='listed');const revConn=c.find(cc=>cc.from==='rev');const marConn=c.find(cc=>cc.from==='margin');
+          if(listedConn&&Math.abs(listedConn.w)>0.2)return'"Years Listed" is the survivor-bias artifact — all bankruptcies were filtered out, so this feature looks predictive but isn\'t.';
+          if(!revConn||revConn.w<0.5)return'Revenue Growth is a real fundamental — boost its weight.';
+          if(!marConn||marConn.w<0.5)return'Operating Margin is the canonical profitability signal — let it carry weight.';
+          return null;},
+        hints:['"Years Listed" is the leaky feature — every delisted firm was scrubbed from training. Cut its weight ≤0.2.','Boost Revenue Growth to ≥0.5.','Boost Operating Margin to ≥0.5.'],
+        impact:'Survivor bias caused historical mutual-fund return studies to overstate average returns by 1-2% per year — the failed funds simply weren\'t in the dataset. The same trap appears in startup-success prediction, hedge-fund backtests, and any longitudinal study that uses "still-around" as an inclusion filter.'},
+      {title:'Feedback Loop',desc:'This news-feed recommender uses "Past Click Rate" as its dominant signal. But each recommendation it shows changes which articles get clicks next, so the model is training on data it itself shaped — a runaway feedback loop that locks in early popularity. Cut click-rate dominance and bring in independent signals (Recency, Topical Match).',
+        nodes:[{id:'click',x:60,y:80,layer:0,label:'Past CTR',val:0.9},{id:'rec',x:60,y:200,layer:0,label:'Recency',val:0.4},{id:'match',x:60,y:320,layer:0,label:'Topic Match',val:0.6},
+          {id:'h1',x:250,y:120,layer:1,label:'H1',val:0},{id:'h2',x:250,y:280,layer:1,label:'H2',val:0},
+          {id:'out',x:440,y:200,layer:2,label:'Recommend',val:0}],
+        conns:[{from:'click',to:'h1',w:0.9},{from:'rec',to:'h2',w:0.2},{from:'match',to:'h2',w:0.3},{from:'h1',to:'out',w:0.8},{from:'h2',to:'out',w:0.3}],
+        check:function(n,c){const clickConn=c.find(cc=>cc.from==='click');const recConn=c.find(cc=>cc.from==='rec');const matchConn=c.find(cc=>cc.from==='match');
+          if(clickConn&&Math.abs(clickConn.w)>0.3)return'Past CTR still dominates — your feedback loop will lock in early popularity and starve new content.';
+          if(!recConn||recConn.w<0.4)return'Recency is an independent signal that breaks the loop — boost it.';
+          if(!matchConn||matchConn.w<0.4)return'Topical Match decouples the recommendation from past clicks — boost it.';
+          return null;},
+        hints:['Past CTR is the dominant feature that creates the loop. Cut its weight ≤0.3.','Boost Recency to ≥0.4 — recency is independent of the model\'s past choices.','Boost Topic Match to ≥0.4 — content-based signals break feedback loops.'],
+        impact:'Feedback loops are the canonical failure mode of optimization-heavy recommenders. Mitigations include counterfactual training (what would have been clicked if not shown), explicit exploration bonuses, and decoupling production logging from training labels.'},
+      {title:'Distribution Shift',desc:'This sensor-fault detector was trained on data from a single factory floor in summer. Now it\'s deployed across 12 sites in winter, and accuracy has collapsed. The model over-relies on "Ambient Temperature" — a feature whose distribution shifted drastically. Cut temperature dominance and lean on the truly causal signals (Vibration, Current Draw).',
+        nodes:[{id:'vib',x:60,y:80,layer:0,label:'Vibration',val:0.8},{id:'cur',x:60,y:200,layer:0,label:'Current Draw',val:0.7},{id:'temp',x:60,y:320,layer:0,label:'Amb. Temp.',val:0.85},
+          {id:'h1',x:250,y:140,layer:1,label:'H1',val:0},{id:'h2',x:250,y:280,layer:1,label:'H2',val:0},
+          {id:'out',x:440,y:200,layer:2,label:'Fault?',val:0}],
+        conns:[{from:'vib',to:'h1',w:0.3},{from:'cur',to:'h1',w:0.2},{from:'temp',to:'h2',w:0.85},{from:'h1',to:'out',w:0.3},{from:'h2',to:'out',w:0.8}],
+        check:function(n,c){const tempConn=c.find(cc=>cc.from==='temp');const vibConn=c.find(cc=>cc.from==='vib');const curConn=c.find(cc=>cc.from==='cur');
+          if(tempConn&&Math.abs(tempConn.w)>0.25)return'Ambient temperature shifted across sites and seasons — its distribution at deployment doesn\'t match training. Cut its influence.';
+          if(!vibConn||vibConn.w<0.5)return'Vibration is a direct causal signal of bearing/motor faults — boost it.';
+          if(!curConn||curConn.w<0.4)return'Current Draw is a stable causal signal — boost it.';
+          return null;},
+        hints:['Ambient Temperature is the shift-vulnerable feature. Cut its weight ≤0.25.','Boost Vibration weight to ≥0.5 — bearings/motors show fault signatures in vibration spectra.','Boost Current Draw weight to ≥0.4 — a stuck rotor pulls characteristic current.'],
+        impact:'Covariate shift (Sugiyama 2007; Quiñonero-Candela 2009) is the standard formalism for distribution drift. Production ML systems use shift detection (KL-divergence on feature histograms), re-training cadence, and feature-importance audits to catch drift before accuracy collapses.'}
     ];
     let lvl=0,nodes=[],conns=[],selConn=null,dragNode=null,dragOff={x:0,y:0},hintIdx=0,attempts=0;
     const solvedKey='netdebug-solved';

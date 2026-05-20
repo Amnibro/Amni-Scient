@@ -1,5 +1,14 @@
 ﻿# Changelog 
 
+## [5.7.14] - 2026-05-20 - AI Ethics Debug: 5 → 8 scenarios
+- AI Ethics Debug now has 8 ML failure-mode scenarios (was 5). Added in neutral ML-engineering framing per project policy:
+  - 📉 **Survivor Bias** — stock-return predictor trained only on still-listed firms over-weights "Years Listed" while bankrupted companies are missing from the training set. Cut the leaky filter feature and lean on Revenue Growth + Operating Margin.
+  - 🔁 **Feedback Loop** — news-feed recommender dominates on "Past CTR", so model outputs reshape future training data and lock in early popularity. Cut CTR dominance, boost Recency + Topic Match to break the loop.
+  - 📊 **Distribution Shift** — sensor-fault detector trained on one factory in summer collapses when deployed across 12 sites in winter; over-relies on "Ambient Temperature" whose distribution shifted. Cut temperature, lean on the truly causal Vibration + Current Draw.
+- Each new scenario follows the established format: title, technical description, input/hidden/output network, initial connection weights, `check()` validator, hint progression, real-world impact citation (Sugiyama 2007 for shift, mutual-fund survivor-bias study, recommender feedback-loop literature).
+- All three are pure ML-engineering pitfalls — covariate shift, biased sampling, runaway optimization. No DEI framing.
+- **SW cache v92 → v93** to flush.
+
 ## [5.7.13] - 2026-05-20 - Circuit Builder: 5 → 9 components
 - Circuit Builder gets 4 new components (5 → 9 total):
   - ⏷ **Diode** — one-way semiconductor (forward Vf ≈ 0.7V modelled as +50Ω equivalent).
