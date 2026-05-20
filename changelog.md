@@ -1,5 +1,12 @@
 ﻿# Changelog 
 
+## [5.7.20] - 2026-05-20 - AI Ethics Debug: +3 ML-engineering scenarios (8 → 11)
+- Adding three production-ML failure-mode scenarios to NetDebug, all framed as engineering issues (no DEI language per project convention):
+  - **Class Imbalance** — 0.1% positive class anomaly detector with a "Default Bias" pull toward the majority class. Solution: cut the bias input, boost Pattern Match (≥0.5) and Statistical Outlier (≥0.4). Impact note covers focal loss, SMOTE, and PR-curve threshold tuning.
+  - **Reward Hacking** — RL agent rewarded on Frame Score exploits a counter-overflow glitch instead of actually playing. Solution: cut the Frame Score signal, reward Goal Distance and Survival Time. Impact references Amodei et al. 2016 "Concrete Problems in AI Safety."
+  - **Calibration Failure** — 95% accuracy but "90% confident" means 70% in practice; a "Confidence Boost" input pumps outputs without evidence. Solution: cut Confidence Boost, boost Feature Match and Evidence Score. Impact covers temperature scaling, Platt scaling, isotonic regression.
+- **SW cache v98 → v99** to flush.
+
 ## [5.7.19] - 2026-05-20 - Sudoku: Expert difficulty (22 clues) + achievement
 - Sudoku now ships a 4th tier above Hard:
   - **Expert** — only **22 clues** (vs 30 at Hard). Per the standard difficulty taxonomy this is the "diabolical" / pro tier; minimum-clue Sudokus need 17 but those require unique-solution proofs the generator doesn't currently enforce, so 22 keeps things safe.

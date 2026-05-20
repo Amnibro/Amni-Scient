@@ -13127,7 +13127,43 @@ function playAnimalSound(type) {
           if(!curConn||curConn.w<0.4)return'Current Draw is a stable causal signal — boost it.';
           return null;},
         hints:['Ambient Temperature is the shift-vulnerable feature. Cut its weight ≤0.25.','Boost Vibration weight to ≥0.5 — bearings/motors show fault signatures in vibration spectra.','Boost Current Draw weight to ≥0.4 — a stuck rotor pulls characteristic current.'],
-        impact:'Covariate shift (Sugiyama 2007; Quiñonero-Candela 2009) is the standard formalism for distribution drift. Production ML systems use shift detection (KL-divergence on feature histograms), re-training cadence, and feature-importance audits to catch drift before accuracy collapses.'}
+        impact:'Covariate shift (Sugiyama 2007; Quiñonero-Candela 2009) is the standard formalism for distribution drift. Production ML systems use shift detection (KL-divergence on feature histograms), re-training cadence, and feature-importance audits to catch drift before accuracy collapses.'},
+      {title:'Class Imbalance',desc:'This medical anomaly detector trained on a set where positives are 0.1% of cases. The "Default Bias" input pulls every prediction toward "negative" — accuracy looks high, but every real anomaly is missed. Cut the default-bias weight and let the genuine anomaly signals (Pattern Match, Statistical Outlier) drive the decision.',
+        nodes:[{id:'pat',x:60,y:80,layer:0,label:'Pattern Match',val:0.8},{id:'out0',x:60,y:200,layer:0,label:'Stat. Outlier',val:0.75},{id:'bias',x:60,y:320,layer:0,label:'Default Bias',val:0.9},
+          {id:'h1',x:250,y:140,layer:1,label:'H1',val:0},{id:'h2',x:250,y:280,layer:1,label:'H2',val:0},
+          {id:'out',x:440,y:200,layer:2,label:'Anomaly?',val:0}],
+        conns:[{from:'pat',to:'h1',w:0.2},{from:'out0',to:'h1',w:0.2},{from:'bias',to:'h2',w:0.85},{from:'h1',to:'out',w:0.3},{from:'h2',to:'out',w:0.8}],
+        check:function(n,c){const biasConn=c.find(cc=>cc.from==='bias');const patConn=c.find(cc=>cc.from==='pat');const outConn=c.find(cc=>cc.from==='out0');
+          if(biasConn&&Math.abs(biasConn.w)>0.2)return'The default-bias pull means the model always predicts the majority class — every real anomaly slips through. Cut it.';
+          if(!patConn||patConn.w<0.5)return'Pattern Match is the actual anomaly signal — boost it.';
+          if(!outConn||outConn.w<0.4)return'Statistical Outlier (z-score, isolation forest) is the canonical anomaly feature — boost it.';
+          return null;},
+        hints:['Default Bias is the majority-class pull. Cut its weight ≤0.2.','Boost Pattern Match to ≥0.5 — direct signal of the rare event.','Boost Statistical Outlier to ≥0.4 — distributional anomaly signal.'],
+        impact:'Class imbalance is the #1 cause of "0% recall" failures in fraud/anomaly/disease detection. Mitigations include class-weighted loss, oversampling (SMOTE), focal loss (Lin et al. 2017), and threshold tuning on the precision-recall curve rather than the ROC curve.'},
+      {title:'Reward Hacking',desc:'This game-playing RL agent\'s reward function awards points for the on-screen "Frame Score" integer. The agent discovered a counter-overflow glitch and now exploits it instead of actually completing levels. Cut the Frame-Score signal and reward true progress (Goal Distance, Survival Time).',
+        nodes:[{id:'goal',x:60,y:80,layer:0,label:'Goal Dist.',val:0.7},{id:'surv',x:60,y:200,layer:0,label:'Survival Time',val:0.6},{id:'score',x:60,y:320,layer:0,label:'Frame Score',val:0.95},
+          {id:'h1',x:250,y:140,layer:1,label:'H1',val:0},{id:'h2',x:250,y:280,layer:1,label:'H2',val:0},
+          {id:'out',x:440,y:200,layer:2,label:'Action Value',val:0}],
+        conns:[{from:'goal',to:'h1',w:0.3},{from:'surv',to:'h1',w:0.2},{from:'score',to:'h2',w:0.9},{from:'h1',to:'out',w:0.3},{from:'h2',to:'out',w:0.8}],
+        check:function(n,c){const scoreConn=c.find(cc=>cc.from==='score');const goalConn=c.find(cc=>cc.from==='goal');const survConn=c.find(cc=>cc.from==='surv');
+          if(scoreConn&&Math.abs(scoreConn.w)>0.2)return'Frame Score is hackable — the agent exploits counter glitches instead of actually playing. Cut it.';
+          if(!goalConn||goalConn.w<0.5)return'Goal Distance is a hack-resistant intrinsic measure of progress — boost it.';
+          if(!survConn||survConn.w<0.4)return'Survival Time complements goal distance — boost it.';
+          return null;},
+        hints:['Frame Score is the hackable proxy. Cut its weight ≤0.2.','Boost Goal Distance to ≥0.5 — measures real spatial progress.','Boost Survival Time to ≥0.4 — adds robustness to the reward shape.'],
+        impact:'Reward hacking (Amodei et al. 2016, "Concrete Problems in AI Safety") is a canonical RL failure: the agent maximizes the proxy you specified, not the goal you wanted. Mitigations include reward modeling, inverse RL, and adversarial verification of the reward signal.'},
+      {title:'Calibration Failure',desc:'This medical classifier hits 95% accuracy, but when it outputs "90% confident" the actual hit rate is only 70%. The "Confidence Boost" input pumps outputs without genuine evidence. Cut it and let real features (Feature Match, Evidence Score) set the probability.',
+        nodes:[{id:'feat',x:60,y:80,layer:0,label:'Feature Match',val:0.8},{id:'ev',x:60,y:200,layer:0,label:'Evidence Score',val:0.7},{id:'cb',x:60,y:320,layer:0,label:'Conf. Boost',val:0.9},
+          {id:'h1',x:250,y:140,layer:1,label:'H1',val:0},{id:'h2',x:250,y:280,layer:1,label:'H2',val:0},
+          {id:'out',x:440,y:200,layer:2,label:'P(disease)',val:0}],
+        conns:[{from:'feat',to:'h1',w:0.3},{from:'ev',to:'h1',w:0.2},{from:'cb',to:'h2',w:0.85},{from:'h1',to:'out',w:0.3},{from:'h2',to:'out',w:0.8}],
+        check:function(n,c){const cbConn=c.find(cc=>cc.from==='cb');const featConn=c.find(cc=>cc.from==='feat');const evConn=c.find(cc=>cc.from==='ev');
+          if(cbConn&&Math.abs(cbConn.w)>0.2)return'Confidence Boost inflates probabilities without evidence — your reliability diagram will be miscalibrated. Cut it.';
+          if(!featConn||featConn.w<0.5)return'Feature Match should be a primary probability driver — boost it.';
+          if(!evConn||evConn.w<0.4)return'Evidence Score is the genuine probability signal — let it carry weight.';
+          return null;},
+        hints:['Confidence Boost is the artificial inflator. Cut its weight ≤0.2.','Boost Feature Match to ≥0.5 — pattern strength is the genuine probability driver.','Boost Evidence Score to ≥0.4 — accumulated evidence sets the posterior.'],
+        impact:'Calibration matters most in safety-critical settings: if a model says "30% chance of cancer," patients and doctors need that number to reflect real frequencies. Temperature scaling (Guo et al. 2017), Platt scaling, and isotonic regression are standard post-hoc calibration techniques.'}
     ];
     let lvl=0,nodes=[],conns=[],selConn=null,dragNode=null,dragOff={x:0,y:0},hintIdx=0,attempts=0;
     const solvedKey='netdebug-solved';
