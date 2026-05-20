@@ -1,5 +1,22 @@
 ﻿# Changelog 
 
+## [5.7.27] - 2026-05-20 - Daily Challenge: +15 puzzles (91 → 106)
+- Daily Challenge pool now rotates through **106 puzzles** (was 91 — about 3 months of unique puzzles before repeats with the date-hash dispatcher).
+- 15 new adult-knowledge questions spanning every category in the existing taxonomy:
+  - 🔢 Math: `2¹⁰=1024`, `11²=121`
+  - 📐 Geometry: cube edges (12), quadrilateral interior angle sum (360°)
+  - ⚗️ Chemistry: atomic # of carbon (6), half-life of C-14 (5730 yrs)
+  - 🧬 Biology: vertebrae (33), bones in human hand (27)
+  - 💻 Tech: binary 1010 = 10
+  - 📖 Literature: Dostoevsky (Crime and Punishment)
+  - 🎸 Music: Vivaldi (Four Seasons)
+  - 📜 History: USSR dissolution (1991)
+  - 🌍 Geography: US states (50)
+  - 🪐 Space: Earth equator rotation speed (~1670 km/h)
+  - ∫ Calculus: cos(0) = 1
+- All include `alt` accept-lists where natural phrasings vary (e.g. `5,730` vs `5730 years`).
+- **SW cache v105 → v106** to flush.
+
 ## [5.7.26] - 2026-05-20 - Chess: +3 mate-in-one puzzles (19 → 22)
 - Three new puzzles, each with all king-escape squares verified before commit:
   - **P20 Pin mate** — `Qd1-h5#` with Kf6 / Qd1 vs Kh8 / Rf8. Queen seals the h-file from h5; king covers g7; the black rook on f8 blocks its own king's only escape to g8. The rook can't block the h-file in one move (rook moves only on f-file or 8th rank from f8).
