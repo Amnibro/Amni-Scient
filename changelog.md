@@ -1,5 +1,18 @@
 ﻿# Changelog 
 
+## [5.7.60] - 2026-05-21 - Tower of Hanoi (Life Skills)
+- New Life Skills subgame: **🗼 Tower of Hanoi** — the classic recursive math/logic puzzle.
+- **Mechanics**:
+  - 3 pegs on a sky-blue board. Start: all disks stacked on the left peg in size order (largest at bottom).
+  - Tap a peg → picks up its top disk (peg highlights gold). Tap another peg → drops the disk there.
+  - **Rule**: bigger disk can never sit on a smaller one. Violation shows feedback and unselects.
+  - Win when all disks are on the right peg.
+- **Disk count picker**: **3 / 4 / 5 / 6 / 7 disks** (optimal solutions: 7, 15, 31, 63, 127 moves respectively — 2ⁿ−1).
+- HUD shows move count + optimal target + best-ever for the current disk count (`hanoi-best-N` per size).
+- 🏆 OPTIMAL banner if you hit 2ⁿ−1, ⭐ NEW BEST for any improvement below your previous best.
+- Life Skills now offers **12 subgames** total.
+- **SW cache v138 → v139** to flush.
+
 ## [5.7.59] - 2026-05-21 - Code Lock — Mastermind-style deduction (Life Skills)
 - New Life Skills subgame: **🔐 Code Lock** — classic adult brain-exercise deduction game.
 - **Mechanics**:
