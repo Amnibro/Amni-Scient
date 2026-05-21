@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.7.84] - 2026-05-21 - Chess +2 puzzles (40 → 42)
+- **P41 — Knight smothered fork mate**: Nb5 → Nc7+ attacks Ka8 (check) AND forks the queen on e8. White Kb6 seals a7, b7, b8. Knight checks are unblockable; Qe8 has no queen-line to c7 to capture. Mate.
+- **P42 — Q + B + P 8th-rank mate**: Qd2 → Qd8+ attacks Kh8 across the empty 8th rank. Bg6 covers h7; Pf6 covers g7; queen covers g8. Clean four-piece coordination.
+- Both puzzles have all king escapes, captures (incl. by enemy queen for P41), and blocks verified pre-commit.
+- **SW cache v162 → v163**.
+
 ## [5.7.83] - 2026-05-21 - 🔢 Sudoku 4×4 (Brain Exercise)
 - **NEW Brain Exercise subgame: 🔢 Sudoku 4×4** — the 4×4 baby-Sudoku variant. Each row, column, and 2×2 region must contain 1, 2, 3, 4 exactly once.
 - **3 difficulty levels**:
