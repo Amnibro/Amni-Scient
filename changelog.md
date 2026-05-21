@@ -1,5 +1,18 @@
 ﻿# Changelog 
 
+## [5.7.76] - 2026-05-21 - 🚀 NEW General Knowledge subject: Space & Astronomy
+- **New top-level quiz subject** under General Knowledge: **🚀 Space & Astronomy** — 5 difficulty levels matching the existing subject template.
+- **40 questions** total (8 per level):
+  - **L1** (toddler): Earth/planets/Sun/Moon/stars/astronaut basics.
+  - **L2** (elementary): Mars / Jupiter / Milky Way / Neil Armstrong / constellations / Great Red Spot.
+  - **L3** (middle school): light-travel time, gravity, asteroid belt, Ganymede, Pluto reclassification, Proxima Centauri, lunar phases, AU.
+  - **L4** (high school): speed of light, Sun's corona, Type Ia supernovae as standard candles, LIGO 2015, lunar gravity, hydrogen, light-year as distance, solar system age.
+  - **L5** (advanced): CMB ≈ 2.7 K, Schwarzschild radius 2GM/c², Hubble constant, Chandrasekhar limit, 13.8 Gyr age, 1 pc ≈ 3.26 ly, Penrose–Hawking singularity theorems, Drake equation.
+- **20 teachData cards** (4 per level) reinforce the topic with emoji + short fact tied to actual physics references (Einstein 1915, LIGO 2015, Apollo 11, Big Bang 13.8 Gya).
+- Button wired into General Knowledge section next to Weather: 🚀 **Space & Astronomy**.
+- Brings General Knowledge subjects from **8 → 9**.
+- **SW cache v154 → v155**.
+
 ## [5.7.75] - 2026-05-21 - Daily Challenge +8 (141 → 149)
 - **Daily Challenge pool** grows by 8 more puzzles:
   - **Logic**: 7x + 3 = 24 (linear algebra).

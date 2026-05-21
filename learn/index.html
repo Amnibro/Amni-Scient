@@ -1305,6 +1305,7 @@
           <button class="game-btn quiz" data-game="quiz" data-subject="counting"><span class="btn-icon">🔢</span><span class="btn-text">Counting & Numbers</span><span class="btn-desc">Count, add, and beyond</span></button>
           <button class="game-btn quiz" data-game="quiz" data-subject="opposites"><span class="btn-icon">🔄</span><span class="btn-text">Opposites</span><span class="btn-desc">Antonyms — big & small, hot & cold</span></button>
           <button class="game-btn quiz" data-game="quiz" data-subject="weather"><span class="btn-icon">🌦️</span><span class="btn-text">Weather</span><span class="btn-desc">Sun, rain, clouds & more</span></button>
+          <button class="game-btn quiz" data-game="quiz" data-subject="space"><span class="btn-icon">🚀</span><span class="btn-text">Space &amp; Astronomy</span><span class="btn-desc">Planets, stars &amp; cosmology</span></button>
         </div>
       </section>
       <section class="game-category">
@@ -7800,6 +7801,59 @@
               {q: "What is the Aharonov-Bohm effect?", a: "Quantum phase from vector potential even where field is zero", wrong: ["Classical analog of Doppler effect", "Magnetic monopole signature", "Anomalous Zeeman effect"], explain: "Electron interferometer encircling a solenoid: B=0 along the path, but the loop integral of A around it is non-zero, shifting fringes. Showed potentials are physically real in QM, not just B and E."},
               {q: "What is the Unruh effect?", a: "An accelerated observer sees thermal radiation in vacuum", wrong: ["Cosmological redshift of CMB", "Time dilation of photons", "Heating of plasma by RF"], explain: "Acceleration a gives temperature T = ℏa/(2πck_B). Vacuum is observer-dependent. Connects to Hawking radiation — equivalence principle ties acceleration to gravity, predicting black-hole emission."}
           ]
+      },
+      space: {
+        title: "Space & Astronomy",
+        1: [
+          {q:"Which planet do we live on?",a:"🌍 Earth",wrong:["🪐 Saturn","🔴 Mars","☀️ Sun"]},
+          {q:"How many planets are in our solar system?",a:"8",wrong:["7","9","12"]},
+          {q:"Which planet is closest to the Sun?",a:"☿️ Mercury",wrong:["🌎 Earth","🔴 Mars","♀️ Venus"]},
+          {q:"Which planet is famous for its rings?",a:"🪐 Saturn",wrong:["🔴 Mars","🌍 Earth","♀️ Venus"]},
+          {q:"What's the biggest object in our solar system?",a:"☀️ Sun",wrong:["🌍 Earth","🪐 Jupiter","🌙 Moon"]},
+          {q:"What twinkles in the night sky?",a:"⭐ Stars",wrong:["☀️ Sun","🌳 Trees","💧 Rain"]},
+          {q:"What do people who travel in space call themselves?",a:"👨‍🚀 Astronaut",wrong:["🧑‍🚒 Firefighter","🧑‍🍳 Chef","🧑‍🎤 Singer"]},
+          {q:"What is Earth's only natural satellite?",a:"🌙 Moon",wrong:["☀️ Sun","⭐ Star","🪐 Saturn"]}
+        ],
+        2: [
+          {q:"Known as the Red Planet?",a:"🔴 Mars",wrong:["♀️ Venus","🪐 Jupiter","☿️ Mercury"]},
+          {q:"Largest planet in our solar system?",a:"🪐 Jupiter",wrong:["🪐 Saturn","🌍 Earth","🔴 Mars"]},
+          {q:"Hottest planet (surface temperature)?",a:"♀️ Venus",wrong:["☿️ Mercury","🔴 Mars","🪐 Jupiter"]},
+          {q:"What galaxy is our solar system in?",a:"Milky Way",wrong:["Andromeda","Pinwheel","Sombrero"]},
+          {q:"First person to walk on the Moon?",a:"Neil Armstrong",wrong:["Buzz Aldrin","Yuri Gagarin","John Glenn"]},
+          {q:"A pattern of stars in the sky is a?",a:"Constellation",wrong:["Galaxy","Meteor","Comet"]},
+          {q:"How long does Earth take to orbit the Sun?",a:"365 days",wrong:["30 days","100 days","1000 days"]},
+          {q:"Which planet has the Great Red Spot?",a:"🪐 Jupiter",wrong:["🪐 Saturn","🔴 Mars","♀️ Venus"]}
+        ],
+        3: [
+          {q:"Sunlight takes about how long to reach Earth?",a:"8 minutes",wrong:["1 second","1 hour","1 day"]},
+          {q:"What force keeps planets in orbit?",a:"Gravity",wrong:["Magnetism","Friction","Electricity"]},
+          {q:"The asteroid belt lies between which two planets?",a:"Mars & Jupiter",wrong:["Earth & Mars","Jupiter & Saturn","Venus & Earth"]},
+          {q:"Largest moon in the solar system?",a:"Ganymede",wrong:["Titan","Europa","Earth's Moon"]},
+          {q:"In 2006 Pluto was reclassified as a?",a:"Dwarf planet",wrong:["Asteroid","Comet","Moon"]},
+          {q:"Closest star to Earth besides the Sun?",a:"Proxima Centauri",wrong:["Alpha Centauri A","Sirius","Vega"]},
+          {q:"Phases of the Moon: new → waxing → ___ → waning → new?",a:"Full",wrong:["Half","Quarter","Eclipse"]},
+          {q:"AU stands for?",a:"Astronomical Unit",wrong:["Atomic Unit","Asteroid Unit","Annular Unit"]}
+        ],
+        4: [
+          {q:"Speed of light in vacuum?",a:"~300,000 km/s",wrong:["~30,000 km/s","~3,000 km/s","~3,000,000 km/s"]},
+          {q:"Sun's outer atmosphere visible during eclipses?",a:"Corona",wrong:["Photosphere","Chromosphere","Heliosphere"]},
+          {q:"Type Ia supernovae are used as?",a:"Standard candles",wrong:["Star factories","Black-hole markers","Galactic seeds"]},
+          {q:"LIGO's first gravitational-wave detection year?",a:"2015",wrong:["1995","2005","2020"]},
+          {q:"Moon's surface gravity is about what fraction of Earth's?",a:"1/6",wrong:["1/2","1/3","1/10"]},
+          {q:"Most abundant element in the universe?",a:"Hydrogen",wrong:["Helium","Carbon","Oxygen"]},
+          {q:"A 'light-year' is a measure of?",a:"Distance",wrong:["Time","Brightness","Mass"]},
+          {q:"Our solar system formed approximately how many years ago?",a:"~4.6 billion",wrong:["~46 million","~46 billion","~46,000"]}
+        ],
+        5: [
+          {q:"Cosmic Microwave Background temperature today?",a:"~2.7 K",wrong:["~27 K","~0.27 K","~270 K"]},
+          {q:"Schwarzschild radius formula r_s = ?",a:"2GM/c²",wrong:["GM/c²","GMc²","GM²/c"]},
+          {q:"Approximate Hubble constant (km/s/Mpc)?",a:"~70",wrong:["~7","~700","~7000"]},
+          {q:"Chandrasekhar limit (max white-dwarf mass)?",a:"~1.4 solar masses",wrong:["0.5","3.0","10"]},
+          {q:"Universe estimated age?",a:"~13.8 billion years",wrong:["~138 million","~138 billion","~1.38 trillion"]},
+          {q:"1 parsec ≈ how many light-years?",a:"3.26",wrong:["1.0","10","100"]},
+          {q:"Penrose–Hawking theorems prove existence of?",a:"Spacetime singularities",wrong:["Multiverses","Wormholes","Quantum gravity"]},
+          {q:"Drake equation estimates the number of?",a:"Communicating civilizations",wrong:["Galaxies in the universe","Stars per galaxy","Habitable planets"]}
+        ]
       }
   };
   const teachData = {
@@ -7866,6 +7920,13 @@
       3: [{emoji:'⚛️',title:'Atoms',fact:'Everything is atoms: protons (+), neutrons (0), electrons (-).'},{emoji:'🧪',title:'Chemistry',fact:'Periodic table: 118 elements. H₂O = water, NaCl = salt!'},{emoji:'🧬',title:'DNA',fact:'DNA stores genetics. Double helix discovered by Watson & Crick.'},{emoji:'🔭',title:'Astronomy',fact:'Light: 3×10⁸ m/s. Observable universe: 93 billion light-years!'},{emoji:'⚡',title:'Thermodynamics',fact:'Energy can\'t be created/destroyed (1st law). Entropy increases (2nd).'}],
       4: [{emoji:'⚛️',title:'Quantum Mechanics',fact:'Particles behave as waves. Heisenberg: can\'t know position AND momentum exactly.'},{emoji:'🧪',title:'Organic Chemistry',fact:'Carbon forms 4 bonds — backbone of life. Benzene ring = aromatic compounds.'},{emoji:'🧬',title:'Molecular Biology',fact:'mRNA carries DNA instructions to ribosomes for protein synthesis.'},{emoji:'🔭',title:'Cosmology',fact:'Dark energy accelerates expansion. Dark matter holds galaxies together.'},{emoji:'⚡',title:'Electromagnetism',fact:'Maxwell unified electricity + magnetism. EM waves travel at light speed.'}],
       5: [{emoji:'⚛️',title:'Particle Physics',fact:'Standard Model: quarks, leptons, gauge bosons. Higgs gives mass.'},{emoji:'🧪',title:'Quantum Chemistry',fact:'Molecular orbitals from overlapping atomic orbitals. HOMO-LUMO gap = reactivity.'},{emoji:'🧬',title:'Systems Biology',fact:'Networks of genes, proteins, metabolites interact — emergent properties arise.'},{emoji:'🔭',title:'General Relativity',fact:'Spacetime curves around mass. Gravitational waves confirmed by LIGO in 2015.'},{emoji:'⚡',title:'Statistical Mechanics',fact:'Boltzmann distribution connects microscopic states to macroscopic thermodynamics.'}]
+    },
+    space: {
+      1: [{emoji:'☀️',title:'The Sun',fact:'The Sun is a giant ball of hot gas — the closest star to Earth!'},{emoji:'🌍',title:'Earth',fact:'Our home! Earth is the 3rd planet from the Sun and the only one we know with life.'},{emoji:'🌙',title:'The Moon',fact:'Earth has one moon — it orbits us every ~27 days and causes ocean tides!'},{emoji:'🪐',title:'Planets',fact:'8 planets orbit the Sun: Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, Neptune!'}],
+      2: [{emoji:'🔴',title:'Mars',fact:'Mars is the "Red Planet" — its color comes from iron oxide (rust) in the soil!'},{emoji:'🪐',title:'Jupiter',fact:'Jupiter is bigger than all other planets combined! Its Great Red Spot is a storm centuries old.'},{emoji:'🌌',title:'Milky Way',fact:'Our galaxy — 100-400 billion stars in a spiral disk ~100,000 light-years wide.'},{emoji:'👨‍🚀',title:'Astronauts',fact:'Neil Armstrong became the first human on the Moon on July 20, 1969 (Apollo 11)!'}],
+      3: [{emoji:'🔄',title:'Orbits',fact:'Gravity keeps planets orbiting the Sun. Mercury\'s year = 88 Earth days; Neptune\'s = 165 Earth years.'},{emoji:'☄️',title:'Asteroid Belt',fact:'Between Mars and Jupiter lies a belt of rocky leftovers from the early solar system.'},{emoji:'🌑',title:'Moons',fact:'Jupiter has 95+ moons. Ganymede is the largest moon in the solar system — bigger than Mercury!'},{emoji:'❄️',title:'Pluto',fact:'Pluto was reclassified as a "dwarf planet" in 2006 because it doesn\'t clear its orbital neighborhood.'}],
+      4: [{emoji:'⚡',title:'Light Speed',fact:'Light travels at ~299,792 km/s in vacuum. Sun → Earth takes 8 min 20 s.'},{emoji:'🌞',title:'The Corona',fact:'The Sun\'s outer atmosphere — visible during total solar eclipses. Hotter than the surface (~1M K vs ~5500 K).'},{emoji:'⚫',title:'Black Holes',fact:'Regions where gravity is so strong nothing escapes — not even light. Detected by their gravitational effects.'},{emoji:'💥',title:'Supernovae',fact:'Massive star explosions that forge heavy elements. Type Ia are "standard candles" for measuring cosmic distances.'}],
+      5: [{emoji:'🌀',title:'General Relativity',fact:'Einstein 1915: mass curves spacetime. Predicts black holes, gravitational lensing, and gravitational waves (LIGO 2015).'},{emoji:'🔥',title:'Big Bang',fact:'The universe started ~13.8 billion years ago. CMB radiation at 2.725 K is the leftover afterglow.'},{emoji:'📏',title:'Hubble\'s Law',fact:'Galaxies recede at velocity proportional to distance. H₀ ≈ 70 km/s/Mpc — the universe is expanding.'},{emoji:'⭐',title:'Parsec',fact:'1 parsec ≈ 3.26 light-years. Defined by stellar parallax — the apparent shift of a nearby star over Earth\'s orbit.'}]
     }
   };
   let currentQuiz = [];
