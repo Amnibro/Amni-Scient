@@ -15232,6 +15232,31 @@ function playAnimalSound(type) {
       {q:'Author of "Jane Eyre"?',a:'bronte',alt:['brontë','charlotte bronte','charlotte brontë'],h:'Charlotte — eldest sister.'},
       {q:'Author of "Great Expectations"?',a:'dickens',h:'Victorian England, Pip and Estella.'},
       {q:'Famous opening: "Call me Ishmael" — what novel?',a:'moby dick',alt:['moby-dick'],h:'Melville\'s whale.'}
+    ],music:[
+      {q:'Composer of "The Four Seasons"?',a:'vivaldi',alt:['antonio vivaldi'],h:'Italian Baroque.'},
+      {q:'Composer of "Eine kleine Nachtmusik"?',a:'mozart',h:'Salzburg-born child prodigy.'},
+      {q:'Composer of "Ode to Joy" (9th Symphony)?',a:'beethoven',h:'German, went deaf.'},
+      {q:'Composer of "The Magic Flute"?',a:'mozart',h:'Same composer as Eine kleine Nachtmusik.'},
+      {q:'Composer of the ballet "Swan Lake"?',a:'tchaikovsky',h:'Russian — also "Nutcracker".'},
+      {q:'Composer of "The Rite of Spring"?',a:'stravinsky',h:'Caused a riot at its 1913 premiere.'},
+      {q:'Composer of "Boléro"?',a:'ravel',h:'French — repeating melody, building orchestration.'},
+      {q:'How many strings does a violin have?',a:'4',h:'G, D, A, E.'},
+      {q:'How many strings does a standard guitar have?',a:'6',h:'E, A, D, G, B, E.'},
+      {q:'Highest woman\'s singing voice?',a:'soprano',h:'Above alto.'},
+      {q:'Lowest man\'s singing voice?',a:'bass',h:'Below tenor and baritone.'},
+      {q:'Italian word for SLOW tempo?',a:'adagio',alt:['lento','largo'],h:'Largo, Lento, Adagio are all slow markings.'},
+      {q:'Italian word for FAST tempo?',a:'allegro',alt:['presto','vivace'],h:'Allegro, Vivace, Presto are all fast.'},
+      {q:'A chord with 3 notes is called a?',a:'triad',h:'Root + third + fifth.'},
+      {q:'Composer of "Für Elise"?',a:'beethoven',h:'Same composer as Symphony No. 9.'},
+      {q:'Mozart\'s first name?',a:'wolfgang',h:'Wolfgang Amadeus Mozart.'},
+      {q:'Country Beethoven was born in?',a:'germany',h:'Bonn — became part of Germany later.'},
+      {q:'City where The Beatles formed?',a:'liverpool',h:'England — Cavern Club origins.'},
+      {q:'Number of keys on a standard piano?',a:'88',h:'52 white + 36 black.'},
+      {q:'"Fortissimo" (ff) means?',a:'very loud',alt:['very loud','loud'],h:'Forte = loud, fortissimo = very loud.'},
+      {q:'Family the saxophone belongs to?',a:'woodwind',h:'Brass-bodied but uses a reed — woodwind.'},
+      {q:'Composer of "La Traviata"?',a:'verdi',h:'Italian opera — also Aida, Rigoletto.'},
+      {q:'Most common time signature in pop/rock?',a:'4/4',alt:['four four','four-four','common time'],h:'Aka "common time".'},
+      {q:'Pink Floyd\'s iconic album: "The Dark Side of the ___"?',a:'moon',h:'1973 — prism cover.'}
     ]};
     let mode=null,score=0,streak=0,best=0,qIdx=0,timer=0,timerId=null,pool=[],cur=null,hintUsed=false,bestStreak=0;
     function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
@@ -15250,6 +15275,7 @@ function playAnimalSound(type) {
           <button class="versus-btn" data-m="vocab">📖 Vocabulary</button>
           <button class="versus-btn" data-m="math">🧮 Math</button>
           <button class="versus-btn" data-m="literature">📚 Literature</button>
+          <button class="versus-btn" data-m="music">🎵 Music</button>
         </div></div>`;
       root.querySelectorAll('.versus-btn').forEach(b=>b.addEventListener('click',e=>{mode=e.target.dataset.m;startGame();}));
     }

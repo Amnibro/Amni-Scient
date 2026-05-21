@@ -1,5 +1,17 @@
 ﻿# Changelog 
 
+## [5.7.79] - 2026-05-21 - Versus Music category (7 → 8 cats, 168 → 192 prompts)
+- **Versus Speed Challenge** gets an 8th category: **🎵 Music** (24 questions, 60-second sprint).
+- Coverage spans:
+  - **Classical composers**: Vivaldi (Four Seasons), Mozart (Eine kleine Nachtmusik, Magic Flute), Beethoven (Ode to Joy, Für Elise), Tchaikovsky (Swan Lake), Stravinsky (Rite of Spring), Ravel (Boléro), Verdi (La Traviata).
+  - **Instruments**: violin strings (4), guitar strings (6), sax family (woodwind), piano keys (88).
+  - **Voice ranges**: soprano (highest woman), bass (lowest man).
+  - **Italian terminology**: adagio/lento (slow), allegro/presto/vivace (fast), fortissimo (very loud).
+  - **Theory**: triad = 3-note chord, 4/4 = common time signature.
+  - **Pop culture**: Beatles in Liverpool, "Dark Side of the Moon" (Pink Floyd).
+- Versus now spans **8 categories × 24 questions = 192 prompts**.
+- **SW cache v157 → v158**.
+
 ## [5.7.78] - 2026-05-21 - Versus Literature category (6 → 7 cats, 144 → 168 prompts)
 - **Versus Speed Challenge** gets a 7th category: **📚 Literature** (24 questions, 60-second sprint).
 - Coverage spans:
