@@ -1284,6 +1284,7 @@
           <button class="game-btn quiz" data-game="quiz" data-subject="science"><span class="btn-icon">🔬</span><span class="btn-text">Science & Nature</span><span class="btn-desc">Explore the world</span></button>
           <button class="game-btn quiz" data-game="quiz" data-subject="colors"><span class="btn-icon">🎨</span><span class="btn-text">Colors</span><span class="btn-desc">Rainbow & color theory</span></button>
           <button class="game-btn quiz" data-game="quiz" data-subject="shapes"><span class="btn-icon">🔷</span><span class="btn-text">Shapes</span><span class="btn-desc">2D, 3D, and geometry</span></button>
+          <button class="game-btn quiz" data-game="quiz" data-subject="counting"><span class="btn-icon">🔢</span><span class="btn-text">Counting & Numbers</span><span class="btn-desc">Count, add, and beyond</span></button>
         </div>
       </section>
       <section class="game-category">
@@ -6207,6 +6208,69 @@
               {q: "What's 'metamaterial' engineering?", a: "Structured materials with sub-wavelength features yielding unusual EM properties (e.g. negative index)", wrong: ["Alloys for high strength", "Plastic blends", "Magnetic-amplifying coatings"]}
           ]
       },
+      counting: {
+        title: "Counting & Numbers",
+        1: [
+          {q:"How many? 🍎🍎🍎", a:"3", wrong:["2","4","5"]},
+          {q:"How many? 🐶🐶", a:"2", wrong:["1","3","4"]},
+          {q:"How many? ⭐", a:"1", wrong:["2","3","0"]},
+          {q:"How many? 🌸🌸🌸🌸🌸", a:"5", wrong:["3","4","6"]},
+          {q:"How many? 🚗🚗🚗🚗", a:"4", wrong:["3","5","6"]},
+          {q:"How many? 🐝🐝🐝", a:"3", wrong:["1","2","4"]},
+          {q:"How many? 🎈🎈", a:"2", wrong:["1","3","4"]},
+          {q:"How many? 🍌🍌🍌🍌", a:"4", wrong:["2","3","5"]},
+          {q:"How many? 🐠🐠🐠🐠🐠", a:"5", wrong:["3","4","6"]},
+          {q:"How many fingers on one hand?", a:"5", wrong:["3","4","10"]}
+        ],
+        2: [
+          {q:"How many? 🌟🌟🌟🌟🌟🌟", a:"6", wrong:["5","7","8"]},
+          {q:"How many? 🍓🍓🍓🍓🍓🍓🍓", a:"7", wrong:["6","8","9"]},
+          {q:"How many? 🟠🟠🟠🟠🟠🟠🟠🟠", a:"8", wrong:["7","9","10"]},
+          {q:"How many? 🐸🐸🐸🐸🐸🐸🐸🐸🐸", a:"9", wrong:["8","10","7"]},
+          {q:"How many? 🪐🪐🪐🪐🪐🪐🪐🪐🪐🪐", a:"10", wrong:["8","9","11"]},
+          {q:"Which is MORE: 5 or 8?", a:"8", wrong:["5","Same","Neither"]},
+          {q:"Which is LESS: 3 or 7?", a:"3", wrong:["7","Same","Neither"]},
+          {q:"What number comes after 6?", a:"7", wrong:["5","8","9"]},
+          {q:"What number comes before 4?", a:"3", wrong:["5","2","6"]},
+          {q:"How many days in a week?", a:"7", wrong:["5","6","10"]}
+        ],
+        3: [
+          {q:"2 + 3 = ?", a:"5", wrong:["4","6","7"]},
+          {q:"4 + 5 = ?", a:"9", wrong:["8","10","11"]},
+          {q:"7 + 6 = ?", a:"13", wrong:["12","14","15"]},
+          {q:"10 + 9 = ?", a:"19", wrong:["18","20","21"]},
+          {q:"8 − 3 = ?", a:"5", wrong:["4","6","11"]},
+          {q:"15 − 7 = ?", a:"8", wrong:["7","9","22"]},
+          {q:"20 − 11 = ?", a:"9", wrong:["8","10","11"]},
+          {q:"How many wheels on 2 cars (4 each)?", a:"8", wrong:["6","10","12"]},
+          {q:"How many legs on 3 dogs?", a:"12", wrong:["8","10","16"]},
+          {q:"5 + 5 + 5 = ?", a:"15", wrong:["10","12","20"]}
+        ],
+        4: [
+          {q:"What's the digit in the TENS place of 47?", a:"4", wrong:["7","0","47"]},
+          {q:"What's the digit in the ONES place of 36?", a:"6", wrong:["3","0","36"]},
+          {q:"What's the digit in the HUNDREDS place of 248?", a:"2", wrong:["4","8","0"]},
+          {q:"100 − 35 = ?", a:"65", wrong:["55","75","135"]},
+          {q:"23 + 19 = ?", a:"42", wrong:["32","41","52"]},
+          {q:"56 + 27 = ?", a:"83", wrong:["73","84","82"]},
+          {q:"81 − 24 = ?", a:"57", wrong:["47","67","56"]},
+          {q:"How many tens in 50?", a:"5", wrong:["0","10","50"]},
+          {q:"Even or odd: 16?", a:"Even", wrong:["Odd","Neither","Both"]},
+          {q:"Even or odd: 27?", a:"Odd", wrong:["Even","Neither","Both"]}
+        ],
+        5: [
+          {q:"6 × 7 = ?", a:"42", wrong:["36","48","49"]},
+          {q:"8 × 9 = ?", a:"72", wrong:["64","81","78"]},
+          {q:"12 × 12 = ?", a:"144", wrong:["120","132","156"]},
+          {q:"48 ÷ 6 = ?", a:"8", wrong:["6","7","9"]},
+          {q:"81 ÷ 9 = ?", a:"9", wrong:["8","10","7"]},
+          {q:"100 ÷ 4 = ?", a:"25", wrong:["20","24","30"]},
+          {q:"Is 13 prime?", a:"Yes", wrong:["No","Sometimes","It's composite"]},
+          {q:"Is 21 prime?", a:"No", wrong:["Yes","Only if even","Sometimes"]},
+          {q:"What's 7² (7 squared)?", a:"49", wrong:["14","42","56"]},
+          {q:"Round 47 to the nearest 10?", a:"50", wrong:["40","45","100"]}
+        ]
+      },
       shapes: {
         title: "Shapes",
         1: [
@@ -6494,6 +6558,13 @@
       3: [{emoji:'🏛️',title:'Etymology',fact:'Word origins: "Telephone" = Greek tele (far) + phone (voice).'},{emoji:'✨',title:'Literary Devices',fact:'Metaphor, simile, personification make writing vivid and expressive.'},{emoji:'🌐',title:'Language Families',fact:'English is Germanic. Spanish, French, Italian are Romance (from Latin).'},{emoji:'📜',title:'Poetry',fact:'Iambic pentameter: 5 pairs of unstressed-stressed syllables.'},{emoji:'🧠',title:'Linguistics',fact:'Syntax = sentence structure. Phonology = sounds. Semantics = meaning.'}],
       4: [{emoji:'🏛️',title:'Morphology',fact:'Morphemes are the smallest units of meaning. "Un-break-able" has three!'},{emoji:'✨',title:'Rhetoric',fact:'Anaphora, chiasmus, antithesis — rhetorical devices that make speeches powerful.'},{emoji:'🌐',title:'Sociolinguistics',fact:'Code-switching is alternating languages mid-conversation — common in multilingual societies.'},{emoji:'📜',title:'Historical Linguistics',fact:'Languages evolve: Latin → French, Spanish, Italian, Portuguese, Romanian.'},{emoji:'🧠',title:'Pragmatics',fact:'Context determines meaning. "Can you pass the salt?" is a request, not a question.'}],
       5: [{emoji:'🏛️',title:'Universal Grammar',fact:'Chomsky proposed all humans share an innate language faculty — a biological blueprint.'},{emoji:'✨',title:'Semiotics',fact:'Signs = signifier + signified. Language, gestures, and symbols all carry meaning.'},{emoji:'🌐',title:'Computational Linguistics',fact:'NLP uses transformers and attention mechanisms to process human language.'},{emoji:'📜',title:'Phonetics',fact:'IPA transcribes sounds precisely. /θ/ = "th" in "think", /ð/ = "th" in "this".'},{emoji:'🧠',title:'Discourse Analysis',fact:'Studies how language constructs meaning in conversations, texts, and social contexts.'}]
+    },
+    counting: {
+      1: [{emoji:'1️⃣',title:'Counting Up',fact:'Numbers go 1, 2, 3, 4, 5… Count slowly, point at each item once!'},{emoji:'✋',title:'Hand Numbers',fact:'You have 5 fingers on each hand — that\'s where counting with hands comes from!'},{emoji:'➕',title:'Adding',fact:'Adding means putting groups together. 2 apples + 3 apples = 5 apples!'},{emoji:'👀',title:'Compare',fact:'More vs less. 4 stars is more than 2 stars. 1 dog is less than 3 dogs.'}],
+      2: [{emoji:'🔟',title:'To Ten',fact:'After 10 comes 11, 12, 13… Count to 20 and you can count anything in sight!'},{emoji:'📅',title:'7 Days',fact:'A week is 7 days. A month has about 30. A year has 365 (366 in leap years)!'},{emoji:'⏰',title:'12 Hours',fact:'A clock face shows 12 hours. Days are 24 hours total.'},{emoji:'🎂',title:'Birthdays',fact:'Each birthday adds 1 to your age. After 9 comes 10!'}],
+      3: [{emoji:'➕',title:'Add Bigger',fact:'7 + 6 = 13. Trick: 7 + 3 = 10, then + 3 more = 13!'},{emoji:'➖',title:'Subtract',fact:'15 − 7 = 8. You can count backwards from 15: 14, 13, 12, 11, 10, 9, 8.'},{emoji:'🔁',title:'Groups',fact:'Adding the same number repeatedly is like fast addition. 5+5+5 is 3 fives!'},{emoji:'🦵',title:'Animal Math',fact:'Each dog has 4 legs. 3 dogs = 4+4+4 = 12 legs!'}],
+      4: [{emoji:'🔢',title:'Place Value',fact:'In 47, the 4 means 4 tens (40), and the 7 means 7 ones (7). Total 47.'},{emoji:'💯',title:'Hundreds',fact:'In 248: 2 = hundreds, 4 = tens, 8 = ones. That\'s 200 + 40 + 8.'},{emoji:'➗',title:'Halves',fact:'Half of 10 is 5. Half of 100 is 50. Half of 0 is 0.'},{emoji:'⚖️',title:'Even / Odd',fact:'Even numbers end in 0, 2, 4, 6, 8. Odd end in 1, 3, 5, 7, 9.'}],
+      5: [{emoji:'✖️',title:'Times Tables',fact:'Multiplication is repeated addition. 6 × 7 = 7+7+7+7+7+7 = 42.'},{emoji:'➗',title:'Division',fact:'48 ÷ 6 means "how many 6s fit in 48?" Answer: 8 (because 6 × 8 = 48).'},{emoji:'🧮',title:'Primes',fact:'Prime numbers have only 2 divisors: 1 and themselves. 2, 3, 5, 7, 11, 13…'},{emoji:'🔵',title:'Squares',fact:'A "squared" number is the area of a square. 7² = 7 × 7 = 49.'}]
     },
     shapes: {
       1: [{emoji:'⭕',title:'Circle',fact:'A circle has no corners — every point is the same distance from the center!'},{emoji:'🟦',title:'Square',fact:'A square has 4 equal sides and 4 right-angle corners!'},{emoji:'🔺',title:'Triangle',fact:'A triangle has 3 sides and 3 corners. Its angles always add up to 180°!'},{emoji:'▭',title:'Rectangle',fact:'A rectangle has 4 sides — opposite sides are equal, all corners are right angles!'}],

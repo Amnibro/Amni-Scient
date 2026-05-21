@@ -1,5 +1,17 @@
 ﻿# Changelog 
 
+## [5.7.39] - 2026-05-20 - New quiz subject: 🔢 Counting & Numbers
+- Third toddler→elementary subject this session. 5 levels, 50 questions:
+  - **L1** (toddler 2-4): visual emoji counting 1-5 (🍎🍎🍎 → 3, etc.), fingers on one hand.
+  - **L2** (pre-K 4-5): counting 6-10 visually, more vs less, what comes before/after, days in a week.
+  - **L3** (early elementary 5-7): addition (2+3, 7+6, 10+9), subtraction (8−3, 15−7, 20−11), grouping (legs on 3 dogs, wheels on 2 cars).
+  - **L4** (elementary 7-9): place value (tens/ones/hundreds), two-digit add/subtract (23+19, 81−24, 100−35), even/odd identification.
+  - **L5** (older elementary 9-11): times tables (6×7, 8×9, 12×12), division (48÷6, 100÷4), primes (13 yes, 21 no), squares (7²=49), rounding.
+- Added matching teachData entries so the "Learn First" phase shows 4 cards per level.
+- New menu button: **🔢 Counting & Numbers — Count, add, and beyond**.
+- General Knowledge now has 6 buttons (Animals & Objects, Music Studio, Reading & Languages, Science & Nature, Colors, Shapes, Counting & Numbers).
+- **SW cache v117 → v118** to flush.
+
 ## [5.7.38] - 2026-05-20 - New quiz subject: 🔷 Shapes (toddler → elementary)
 - Sibling to v5.7.37's Colors subject. **Shapes** quiz with 5 progressively-harder levels (50 questions total):
   - **L1** (toddler): basic 2D shape recognition + everyday objects (circle wheel, rectangle door, triangle pizza slice, square box).
