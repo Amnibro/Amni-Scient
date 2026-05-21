@@ -1289,6 +1289,7 @@
           <button class="game-btn life" data-game="life" data-subgame="hanoi"><span class="btn-icon">🗼</span><span class="btn-text">Tower of Hanoi</span><span class="btn-desc">Move all disks; no big on small</span></button>
           <button class="game-btn life" data-game="life" data-subgame="sliding"><span class="btn-icon">🧩</span><span class="btn-text">Sliding Puzzle</span><span class="btn-desc">Slide tiles into order</span></button>
           <button class="game-btn life" data-game="life" data-subgame="lightsout"><span class="btn-icon">💡</span><span class="btn-text">Lights Out</span><span class="btn-desc">Click cross to toggle — turn all off</span></button>
+          <button class="game-btn life" data-game="life" data-subgame="minesweeper"><span class="btn-icon">💣</span><span class="btn-text">Minesweeper</span><span class="btn-desc">Reveal cells, flag mines, deduce</span></button>
         </div>
       </section>
       <section class="game-category">
@@ -1970,7 +1971,8 @@
     {id:'hanoi-master',ic:'🗼',name:'Hanoi Master',desc:'Solve 3-disk Hanoi in optimal 7 moves',progress(){const c=_intLS('hanoi-best-3');const ok=c>0&&c<=7;return{cur:ok?1:0,target:1,unlocked:ok};}},
     {id:'slider',ic:'🧩',name:'Slider',desc:'Solve the 4×4 Sliding Puzzle (any move count)',progress(){const c=_intLS('sl-best-4');const ok=c>0&&c<9999;return{cur:ok?1:0,target:1,unlocked:ok};}},
     {id:'light-off',ic:'🌙',name:'Light Off',desc:'Clear all lights in Lights Out (any size)',progress(){let m=9999;[3,4,5].forEach(s=>{const v=_intLS('lo-best-'+s);if(v>0&&v<m)m=v;});const ok=m<9999;return{cur:ok?1:0,target:1,unlocked:ok};}},
-    {id:'card-shark',ic:'🃏',name:'Card Shark',desc:'Clear Math Solitaire on any difficulty',progress(){let m=9999;['easy','medium','hard'].forEach(k=>{const v=_intLS('ms-best-'+k);if(v>0&&v<m)m=v;});const ok=m<9999;return{cur:ok?1:0,target:1,unlocked:ok};}}
+    {id:'card-shark',ic:'🃏',name:'Card Shark',desc:'Clear Math Solitaire on any difficulty',progress(){let m=9999;['easy','medium','hard'].forEach(k=>{const v=_intLS('ms-best-'+k);if(v>0&&v<m)m=v;});const ok=m<9999;return{cur:ok?1:0,target:1,unlocked:ok};}},
+    {id:'bomb-squad',ic:'💣',name:'Bomb Squad',desc:'Clear Minesweeper on any difficulty',progress(){let m=9999;['easy','medium','hard'].forEach(k=>{const v=_intLS('mn-best-'+k);if(v>0&&v<m)m=v;});const ok=m<9999;return{cur:ok?1:0,target:1,unlocked:ok};}}
   ];
   function _achState(){try{return JSON.parse(localStorage.getItem('amni-achievements')||'{}');}catch{return{};}}
   function _saveAchState(s){try{localStorage.setItem('amni-achievements',JSON.stringify(s));}catch{}}
@@ -4483,6 +4485,92 @@
       if(subgame === 'sliding') initSliding();
       if(subgame === 'lightsout') initLightsOut();
       if(subgame === 'mathsolitaire') initMathSolitaire();
+      if(subgame === 'minesweeper') initMinesweeper();
+  }
+  function initMinesweeper(){
+    lifeArea.innerHTML='';
+    lifeTitle.textContent='💣 Minesweeper';
+    const LEVELS={easy:{n:6,mines:6,label:'Easy'},medium:{n:8,mines:12,label:'Medium'},hard:{n:10,mines:20,label:'Hard'}};
+    let level=sessionStorage.getItem('mn-level')||'easy';
+    if(!LEVELS[level])level='easy';
+    const cfg=LEVELS[level];
+    const n=cfg.n,mineCount=cfg.mines,total=n*n;
+    const bestKey='mn-best-'+level;
+    let best=parseInt(sessionStorage.getItem(bestKey)||'9999');
+    let mines=new Set(),revealed=new Set(),flagged=new Set();
+    let firstClickDone=false,won=false,lost=false,flagMode=false,startTime=null;
+    function neighbors(idx){const r=Math.floor(idx/n),c=idx%n,out=[];for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++){if(dr===0&&dc===0)continue;const nr=r+dr,nc=c+dc;if(nr>=0&&nr<n&&nc>=0&&nc<n)out.push(nr*n+nc);}return out;}
+    function countAdj(idx){return neighbors(idx).filter(i=>mines.has(i)).length;}
+    function placeMines(safeIdx){
+      const avoid=new Set([safeIdx,...neighbors(safeIdx)]);
+      const pool=[];for(let i=0;i<total;i++)if(!avoid.has(i))pool.push(i);
+      for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}
+      mines=new Set(pool.slice(0,mineCount));
+    }
+    function flood(start){
+      const stack=[start];
+      while(stack.length){const idx=stack.pop();if(revealed.has(idx)||flagged.has(idx))continue;revealed.add(idx);if(!mines.has(idx)&&countAdj(idx)===0){neighbors(idx).forEach(nIdx=>{if(!revealed.has(nIdx)&&!flagged.has(nIdx))stack.push(nIdx);});}}
+    }
+    function checkWin(){return revealed.size===total-mineCount;}
+    function onCellClick(idx){
+      if(won||lost)return;
+      if(flagMode){if(revealed.has(idx))return;if(flagged.has(idx))flagged.delete(idx);else if(flagged.size<mineCount)flagged.add(idx);render();return;}
+      if(flagged.has(idx))return;
+      if(!firstClickDone){placeMines(idx);firstClickDone=true;startTime=Date.now();}
+      if(mines.has(idx)){lost=true;mines.forEach(m=>revealed.add(m));render();onLose();return;}
+      flood(idx);
+      if(checkWin()){won=true;render();onWin();return;}
+      render();
+    }
+    function render(){
+      lifeArea.innerHTML='';
+      const flagsLeft=mineCount-flagged.size;
+      const hud=document.createElement('div');hud.className='game-hud';hud.style.marginBottom='6px';
+      hud.innerHTML=`<span class="game-stat">💣 Mines <span class="game-stat-val">${mineCount}</span></span><span class="game-stat">🚩 Left <span class="game-stat-val">${flagsLeft}</span></span><span class="game-stat">⭐ Best <span class="game-stat-val">${best<9999?best+'s':'—'}</span></span>`;
+      lifeArea.appendChild(hud);
+      const lvlRow=document.createElement('div');lvlRow.style.cssText='display:flex;gap:6px;justify-content:center;margin:4px 0 6px;flex-wrap:wrap;';
+      Object.keys(LEVELS).forEach(k=>{const b=document.createElement('button');b.className='sdk-btn'+(k===level?' active':'');b.style.cssText='font-size:0.85rem;padding:5px 12px;';b.textContent=LEVELS[k].label;b.onclick=()=>{sessionStorage.setItem('mn-level',k);initMinesweeper();};lvlRow.appendChild(b);});
+      lifeArea.appendChild(lvlRow);
+      const modeRow=document.createElement('div');modeRow.style.cssText='display:flex;gap:8px;justify-content:center;margin:4px 0 10px;';
+      const revBtn=document.createElement('button');revBtn.className='sdk-btn'+(flagMode?'':' active');revBtn.style.cssText='font-size:0.9rem;padding:6px 16px;';revBtn.textContent='⛏️ Reveal';revBtn.onclick=()=>{flagMode=false;render();};
+      const flagBtn=document.createElement('button');flagBtn.className='sdk-btn'+(flagMode?' active':'');flagBtn.style.cssText='font-size:0.9rem;padding:6px 16px;';flagBtn.textContent='🚩 Flag';flagBtn.onclick=()=>{flagMode=true;render();};
+      modeRow.appendChild(revBtn);modeRow.appendChild(flagBtn);
+      lifeArea.appendChild(modeRow);
+      const board=document.createElement('div');
+      const cellPx=Math.min(44,Math.floor(360/n));
+      board.style.cssText=`display:grid;grid-template-columns:repeat(${n},${cellPx}px);gap:2px;background:#2c3e50;padding:6px;border-radius:10px;margin:6px auto;width:fit-content;`;
+      for(let i=0;i<total;i++){
+        const cell=document.createElement('div');
+        const r=revealed.has(i),f=flagged.has(i),isMine=mines.has(i);
+        let bg='linear-gradient(135deg,#95a5a6,#7f8c8d)',color='#2c3e50',content='';
+        if(r){if(isMine){bg='#e74c3c';content='💣';}else{const a=countAdj(i);bg='#ecf0f1';if(a>0){content=String(a);color=['','#3498db','#27ae60','#e74c3c','#8e44ad','#f39c12','#16a085','#000','#7f8c8d'][a];}}}
+        else if(f){bg='#f1c40f';content='🚩';}
+        cell.style.cssText=`width:${cellPx}px;height:${cellPx}px;background:${bg};color:${color};display:flex;align-items:center;justify-content:center;font-weight:bold;font-family:Comic Neue,cursive;font-size:${Math.floor(cellPx*0.55)}px;cursor:${won||lost||r?'default':'pointer'};border-radius:4px;user-select:none;`;
+        cell.textContent=content;
+        if(!won&&!lost&&!r)cell.onclick=()=>onCellClick(i);
+        board.appendChild(cell);
+      }
+      lifeArea.appendChild(board);
+      if(!won&&!lost){const hint=document.createElement('div');hint.style.cssText='text-align:center;color:#7f8c8d;font-family:Comic Neue,cursive;font-size:0.9rem;margin:8px auto;max-width:480px;padding:0 12px;';hint.textContent=flagMode?'🚩 Flag mode — tap a hidden cell to mark/unmark a mine.':'⛏️ Reveal mode — tap a cell to uncover it. Numbers show adjacent mines. First click is always safe.';lifeArea.appendChild(hint);}
+    }
+    function onWin(){
+      const t=Math.floor((Date.now()-startTime)/1000);
+      const wasBest=t<best;if(wasBest){best=t;sessionStorage.setItem(bestKey,t);}
+      const b=document.createElement('div');b.style.cssText='text-align:center;padding:14px;background:#2ecc71;color:#fff;border-radius:10px;margin:10px auto;font-family:Comic Neue,cursive;font-size:1.2rem;max-width:420px;';
+      b.innerHTML=`🎉 ${cfg.label} cleared in ${t}s!${wasBest?' 🏆 NEW BEST!':''}`;
+      lifeArea.appendChild(b);
+      if(typeof spawnConfetti==='function')spawnConfetti(window.innerWidth/2,window.innerHeight/2,wasBest?150:80);
+      if(typeof showFeedback==='function')showFeedback(`Minesweeper ${cfg.label}: ${t}s 💣`,wasBest?'#2ecc71':'#3498db');
+      if(typeof addScore==='function')addScore(20+cfg.mines*2);
+      const again=document.createElement('button');again.className='nmm-btn';again.textContent='🔄 New Game';again.style.cssText='display:block;margin:14px auto;';again.onclick=()=>initMinesweeper();lifeArea.appendChild(again);
+    }
+    function onLose(){
+      const b=document.createElement('div');b.style.cssText='text-align:center;padding:14px;background:#e74c3c;color:#fff;border-radius:10px;margin:10px auto;font-family:Comic Neue,cursive;font-size:1.15rem;max-width:420px;';
+      b.innerHTML=`💥 You hit a mine! All mines revealed.`;
+      lifeArea.appendChild(b);
+      const again=document.createElement('button');again.className='nmm-btn';again.textContent='🔄 Try Again';again.style.cssText='display:block;margin:14px auto;';again.onclick=()=>initMinesweeper();lifeArea.appendChild(again);
+    }
+    render();
   }
   function initMathSolitaire(){
     lifeArea.innerHTML='';

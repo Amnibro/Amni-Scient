@@ -1,5 +1,20 @@
 ﻿# Changelog 
 
+## [5.7.68] - 2026-05-21 - 💣 Minesweeper (Brain Exercise)
+- **NEW Brain Exercise subgame: 💣 Minesweeper** — the canonical 1989 logic-deduction game.
+  - **Easy**: 6×6 board, 6 mines (~17%)
+  - **Medium**: 8×8 board, 12 mines (~19%)
+  - **Hard**: 10×10 board, 20 mines (~20%)
+  - **First-click safety**: mines are placed AFTER the first reveal, guaranteed away from the first cell and its 8 neighbors — first click always opens.
+  - **Flood-fill reveal** on zero-adjacent cells (iterative, stack-safe even on hard).
+  - **Mode toggle**: ⛏️ Reveal vs 🚩 Flag (avoids long-press friction on mobile).
+  - Flag count tracker (`🚩 Left N`) auto-decrements; can't over-flag past mine count.
+  - Per-difficulty best **time in seconds** persisted as `mn-best-<level>`.
+  - Win = all non-mine cells revealed; lose = clicked mine + all mines revealed.
+- **+ Bomb Squad achievement** — clear Minesweeper on any difficulty. Achievements **51 → 52**.
+- Brain Exercise section now hosts **6 subgames**: Math Solitaire, Code Lock, Tower of Hanoi, Sliding Puzzle, Lights Out, Minesweeper.
+- **SW cache v146 → v147**.
+
 ## [5.7.67] - 2026-05-21 - 🧠 Brain Exercise section + Math Solitaire (3 levels)
 - **NEW top-level section: 🧠 Brain Exercise**, gathering the adult-puzzle subgames previously living under Life Skills.
   - **Math Solitaire** (NEW), Code Lock, Tower of Hanoi, Sliding Puzzle, Lights Out — all reachable from one dedicated section.
