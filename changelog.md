@@ -1,5 +1,17 @@
 ﻿# Changelog 
 
+## [5.7.44] - 2026-05-21 - Pet Care — toddler care-and-match game (Life Skills)
+- New Life Skills subgame: **🐾 Pet Care**.
+- **Mechanics**:
+  - A random pet (🐶🐱🐰🐹🐢🐦🐠🐥🐸🐼) appears in a sky-gradient scene.
+  - A speech bubble shows what the pet wants ("Feed me!", "I need water!", "I want to sleep!", "Let's play!", "I need a bath!").
+  - Toddler taps the matching action button from a shuffled row: 🍖 food, 💧 water, 🛏️ bed, 🎾 toy, 🛁 bath.
+  - Correct → pet stays happy, button turns green, "Happy pet! 😊" feedback.
+  - Wrong → correct answer revealed in green, "The pet wanted X!" feedback.
+- 10 rounds per game. Score = pets cared for. `petcare-best` persists, NEW BEST confetti at finish.
+- Builds empathy and matching-skills for ages 2-5.
+- **SW cache v122 → v123** to flush.
+
 ## [5.7.43] - 2026-05-21 - Same or Different — toddler comparison game
 - New Life Skills subgame: **🟰 Same or Different**.
 - **Mechanics**:

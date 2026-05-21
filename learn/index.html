@@ -1275,6 +1275,7 @@
           <button class="game-btn life" data-game="life" data-subgame="money"><span class="btn-icon">💰</span><span class="btn-text">Money Math</span><span class="btn-desc">Count your coins</span></button>
           <button class="game-btn life" data-game="life" data-subgame="bubble"><span class="btn-icon">🫧</span><span class="btn-text">Bubble Pop</span><span class="btn-desc">Pop the matching bubbles</span></button>
           <button class="game-btn life" data-game="life" data-subgame="samediff"><span class="btn-icon">🟰</span><span class="btn-text">Same or Different</span><span class="btn-desc">Compare two items</span></button>
+          <button class="game-btn life" data-game="life" data-subgame="petcare"><span class="btn-icon">🐾</span><span class="btn-text">Pet Care</span><span class="btn-desc">Feed, water & care for pets</span></button>
         </div>
       </section>
       <section class="game-category">
@@ -4403,6 +4404,74 @@
       if(subgame === 'money') initMoney();
       if(subgame === 'bubble') initBubblePop();
       if(subgame === 'samediff') initSameDiff();
+      if(subgame === 'petcare') initPetCare();
+  }
+  function initPetCare(){
+    lifeArea.innerHTML='';
+    lifeTitle.textContent='🐾 Take Care of the Pet!';
+    const PETS=['🐶','🐱','🐰','🐹','🐢','🐦','🐠','🐥','🐸','🐼'];
+    const NEEDS=[
+      {emoji:'🍖',label:'Hungry',action:'🍖',msg:'Feed me!'},
+      {emoji:'💧',label:'Thirsty',action:'💧',msg:'I need water!'},
+      {emoji:'💤',label:'Sleepy',action:'🛏️',msg:'I want to sleep!'},
+      {emoji:'🎾',label:'Bored',action:'🎾',msg:'Let\'s play!'},
+      {emoji:'🛁',label:'Dirty',action:'🛁',msg:'I need a bath!'}
+    ];
+    const ACTIONS=NEEDS.map(n=>n.action);
+    let score=0,round=0;
+    const bestKey='petcare-best';
+    let best=parseInt(sessionStorage.getItem(bestKey)||'0');
+    const TOTAL=10;
+    const hud=document.createElement('div');hud.className='game-hud';hud.style.marginBottom='6px';
+    hud.innerHTML=`<span class="game-stat">🎯 <span class="game-stat-val" id="pc-round">0</span>/${TOTAL}</span><span class="game-stat">😊 <span class="game-stat-val" id="pc-score">0</span></span><span class="game-stat">⭐ Best <span class="game-stat-val" id="pc-best">${best}</span></span>`;
+    lifeArea.appendChild(hud);
+    const scene=document.createElement('div');scene.id='pc-scene';scene.style.cssText='display:flex;flex-direction:column;align-items:center;gap:14px;margin:16px 0;padding:20px;background:linear-gradient(to bottom,#a8e6f7 0%,#dff9fb 100%);border-radius:18px;border:3px solid #74b9ff;min-height:180px;';
+    lifeArea.appendChild(scene);
+    const buttons=document.createElement('div');buttons.id='pc-actions';buttons.style.cssText='display:flex;gap:10px;justify-content:center;margin-top:10px;flex-wrap:wrap;';
+    lifeArea.appendChild(buttons);
+    let curNeed=null;
+    function nextRound(){
+      round++;
+      const re=document.getElementById('pc-round');if(re)re.textContent=round;
+      if(round>TOTAL){
+        const wasBest=score>best;
+        if(wasBest){sessionStorage.setItem(bestKey,score);}
+        scene.innerHTML=`<div style="text-align:center;font-family:Comic Neue,cursive;color:#2c3e50;padding:20px;"><div style="font-size:2.4rem;margin-bottom:8px;">${wasBest?'🏆 NEW BEST!':'🎉 All happy!'}</div><div style="font-size:1.3rem;">${score}/${TOTAL} pets cared for</div></div>`;
+        buttons.innerHTML='';
+        if(typeof spawnConfetti==='function')spawnConfetti(window.innerWidth/2,window.innerHeight/2,wasBest?120:60);
+        if(typeof showFeedback==='function')showFeedback(`Pet Care: ${score}/${TOTAL} 🐾`,wasBest?'#2ecc71':'#3498db');
+        if(typeof addScore==='function')addScore(score);
+        const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='Play Again';rb.style.cssText='display:block;margin:14px auto;';rb.onclick=()=>initPetCare();lifeArea.appendChild(rb);
+        return;
+      }
+      const pet=PETS[Math.floor(Math.random()*PETS.length)];
+      curNeed=NEEDS[Math.floor(Math.random()*NEEDS.length)];
+      scene.innerHTML=`<div style="font-size:6rem;line-height:1;">${pet}</div><div style="background:#fff;border:3px solid #2c3e50;border-radius:18px;padding:10px 18px;font-family:Comic Neue,cursive;font-size:1.3rem;color:#2c3e50;position:relative;">💭 ${curNeed.msg} <span style="font-size:1.4rem;margin-left:6px;">${curNeed.emoji}</span></div>`;
+      const shuffled=[...ACTIONS].sort(()=>Math.random()-0.5);
+      buttons.innerHTML='';
+      shuffled.forEach(a=>{
+        const b=document.createElement('button');
+        b.style.cssText='font-size:2.6rem;padding:10px 18px;border-radius:14px;border:3px solid #2c3e50;background:#fff;cursor:pointer;box-shadow:0 4px 0 #95a5a6;transition:transform 0.1s;';
+        b.textContent=a;
+        b.onclick=()=>handle(b,a);
+        buttons.appendChild(b);
+      });
+    }
+    function handle(btn,picked){
+      [...buttons.children].forEach(b=>b.style.pointerEvents='none');
+      if(picked===curNeed.action){
+        score++;const se=document.getElementById('pc-score');if(se)se.textContent=score;
+        btn.style.background='#2ecc71';btn.style.color='#fff';
+        if(typeof showFeedback==='function')showFeedback('Happy pet! 😊','#2ecc71');
+      }else{
+        btn.style.background='#e74c3c';btn.style.color='#fff';
+        [...buttons.children].forEach(b=>{if(b.textContent===curNeed.action){b.style.background='#2ecc71';b.style.color='#fff';}});
+        if(typeof showFeedback==='function')showFeedback(`The pet wanted ${curNeed.action}!`,'#e67e22');
+        if(typeof resetStreak==='function')resetStreak();
+      }
+      setTimeout(nextRound,1100);
+    }
+    nextRound();
   }
   function initSameDiff(){
     lifeArea.innerHTML='';
