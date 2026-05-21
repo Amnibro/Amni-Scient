@@ -1958,7 +1958,10 @@
     {id:'color-alchemist',ic:'🎨',name:'Color Alchemist',desc:'Score 10/10 in Color Mixer',progress(){const c=_intLS('cmix-best');return{cur:Math.min(c,10),target:10,unlocked:c>=10};}},
     {id:'mole-slayer',ic:'🔨',name:'Mole Slayer',desc:'Score 25+ in Whack-a-Mole (any mode)',progress(){let m=0;['easy','normal','hard'].forEach(k=>{m=Math.max(m,_intLS('wm-best-'+k));});return{cur:Math.min(m,25),target:25,unlocked:m>=25};}},
     {id:'lightning-reflexes',ic:'⚡',name:'Lightning Reflexes',desc:'Single reaction time under 200 ms (any mode)',progress(){let m=99999;['visual','audio','choice'].forEach(k=>{const v=_intLS('rxt-best-single-'+k);if(v>0&&v<m)m=v;});const f=_intLS('rxt-best-single');if(f>0&&f<m)m=f;const ok=m>0&&m<200;return{cur:ok?1:0,target:1,unlocked:ok};}},
-    {id:'master-sorter',ic:'🎩',name:'Master Sorter',desc:'Complete 50 Sorting Hat rounds',progress(){const c=_intLS('sort-rounds-done');return{cur:Math.min(c,50),target:50,unlocked:c>=50};}}
+    {id:'master-sorter',ic:'🎩',name:'Master Sorter',desc:'Complete 50 Sorting Hat rounds',progress(){const c=_intLS('sort-rounds-done');return{cur:Math.min(c,50),target:50,unlocked:c>=50};}},
+    {id:'code-cracker',ic:'🔐',name:'Code Cracker',desc:'Crack Code Lock in 6 guesses or fewer',progress(){const c=_intLS('cl-best');const ok=c>0&&c<=6;return{cur:ok?1:0,target:1,unlocked:ok};}},
+    {id:'hanoi-master',ic:'🗼',name:'Hanoi Master',desc:'Solve 3-disk Hanoi in optimal 7 moves',progress(){const c=_intLS('hanoi-best-3');const ok=c>0&&c<=7;return{cur:ok?1:0,target:1,unlocked:ok};}},
+    {id:'slider',ic:'🧩',name:'Slider',desc:'Solve the 4×4 Sliding Puzzle (any move count)',progress(){const c=_intLS('sl-best-4');const ok=c>0&&c<9999;return{cur:ok?1:0,target:1,unlocked:ok};}}
   ];
   function _achState(){try{return JSON.parse(localStorage.getItem('amni-achievements')||'{}');}catch{return{};}}
   function _saveAchState(s){try{localStorage.setItem('amni-achievements',JSON.stringify(s));}catch{}}

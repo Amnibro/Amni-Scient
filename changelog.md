@@ -1,5 +1,14 @@
 ﻿# Changelog 
 
+## [5.7.62] - 2026-05-21 - Achievements: +3 for adult subgames (46 → 49)
+- Three new milestone achievements covering the recent adult-puzzle additions:
+  - **🔐 Code Cracker** — Crack the Code Lock (Mastermind) in **6 guesses or fewer**. Threshold based on average-information theory: 4 colors × 6 options = 1296 codes; an optimal solver averages ~5 guesses, so ≤6 is a strong-player target. Reads `cl-best`.
+  - **🗼 Hanoi Master** — Solve **3-disk Tower of Hanoi in the optimal 7 moves** (2³−1). Reads `hanoi-best-3`. Earning this means you've executed the canonical recursive solution perfectly.
+  - **🧩 Slider** — Solve the **4×4 Sliding Puzzle** at any move count. Reads `sl-best-4`. Just finishing a 4×4 (15-puzzle) is a meaningful milestone.
+- All three are binary-unlock (cur=1 once hit) since the underlying metric is "best below threshold."
+- Total achievements now **49**.
+- **SW cache v140 → v141** to flush.
+
 ## [5.7.61] - 2026-05-21 - Sliding Puzzle (Life Skills)
 - New Life Skills subgame: **🧩 Sliding Puzzle** — the classic n-puzzle.
 - **Mechanics**:
