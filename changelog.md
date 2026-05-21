@@ -1,5 +1,19 @@
 ﻿# Changelog 
 
+## [5.7.83] - 2026-05-21 - 🔢 Sudoku 4×4 (Brain Exercise)
+- **NEW Brain Exercise subgame: 🔢 Sudoku 4×4** — the 4×4 baby-Sudoku variant. Each row, column, and 2×2 region must contain 1, 2, 3, 4 exactly once.
+- **3 difficulty levels**:
+  - **Easy**: 10 cells given (6 to fill).
+  - **Medium**: 7 cells given (9 to fill).
+  - **Hard**: 4 cells given (12 to fill) — minimum givens for typically-unique 4×4.
+- **Generator**: random-order backtracking solver produces a complete valid grid, then removes the chosen number of cells.
+- **UI**: tap a non-fixed cell to select (highlighted yellow), then tap 1–4 on the number pad to fill, ✗ to erase. Fixed cells (the puzzle's givens) are dark and locked.
+- **Validation**: solver-independent — checks each row/col/2×2 region for the set {1,2,3,4}. So a player who solves to a different valid completion than the one originally generated still wins.
+- Per-level best moves stored as `sd-best-<level>`.
+- **+ Sudoku Solver achievement** — complete any difficulty. Achievements **53 → 54**.
+- Brain Exercise section now hosts **8 subgames**: Math Solitaire, Code Lock, Hanoi, Sliding, Lights Out, Minesweeper, 2048, Sudoku 4×4.
+- **SW cache v161 → v162**.
+
 ## [5.7.82] - 2026-05-21 - Chess +2 puzzles (38 → 40)
 - **P39 — K + Q + R cornered mate**: rook lifts from h3 to a3 attacking up the a-file to Ka8. Queen on b6 simultaneously controls a7 (diagonal), b7, and b8 (b-file with b7 empty). All escapes covered by the queen's geometry.
 - **P40 — Rook with knight-defender 8th-rank**: Rg1 → Rg8+ checking Kh8. Defended by Nh6 (h6-g8 is a knight move), so Kxg8 is illegal. Pawn on f6 covers g7; light bishop on d3 covers h7 along the d3-h7 diagonal. A small ensemble: 5 white pieces coordinating, each load-bearing.

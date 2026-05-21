@@ -1291,6 +1291,7 @@
           <button class="game-btn life" data-game="life" data-subgame="lightsout"><span class="btn-icon">💡</span><span class="btn-text">Lights Out</span><span class="btn-desc">Click cross to toggle — turn all off</span></button>
           <button class="game-btn life" data-game="life" data-subgame="minesweeper"><span class="btn-icon">💣</span><span class="btn-text">Minesweeper</span><span class="btn-desc">Reveal cells, flag mines, deduce</span></button>
           <button class="game-btn life" data-game="life" data-subgame="twentyfortyeight"><span class="btn-icon">🔢</span><span class="btn-text">2048</span><span class="btn-desc">Slide and merge to reach 2048</span></button>
+          <button class="game-btn life" data-game="life" data-subgame="sudoku"><span class="btn-icon">🔢</span><span class="btn-text">Sudoku 4×4</span><span class="btn-desc">Each row, col, &amp; box has 1-4 once</span></button>
         </div>
       </section>
       <section class="game-category">
@@ -1976,7 +1977,8 @@
     {id:'light-off',ic:'🌙',name:'Light Off',desc:'Clear all lights in Lights Out (any size)',progress(){let m=9999;[3,4,5].forEach(s=>{const v=_intLS('lo-best-'+s);if(v>0&&v<m)m=v;});const ok=m<9999;return{cur:ok?1:0,target:1,unlocked:ok};}},
     {id:'card-shark',ic:'🃏',name:'Card Shark',desc:'Clear Math Solitaire on any difficulty',progress(){let m=9999;['easy','medium','hard'].forEach(k=>{const v=_intLS('ms-best-'+k);if(v>0&&v<m)m=v;});const ok=m<9999;return{cur:ok?1:0,target:1,unlocked:ok};}},
     {id:'bomb-squad',ic:'💣',name:'Bomb Squad',desc:'Clear Minesweeper on any difficulty',progress(){let m=9999;['easy','medium','hard'].forEach(k=>{const v=_intLS('mn-best-'+k);if(v>0&&v<m)m=v;});const ok=m<9999;return{cur:ok?1:0,target:1,unlocked:ok};}},
-    {id:'tile-master',ic:'🔢',name:'2048 Master',desc:'Reach the 2048 tile on any difficulty',progress(){let m=0;['easy','medium','hard'].forEach(k=>{const v=_intLS('tf-tile-'+k);if(v>m)m=v;});const ok=m>=2048;return{cur:Math.min(m,2048),target:2048,unlocked:ok};}}
+    {id:'tile-master',ic:'🔢',name:'2048 Master',desc:'Reach the 2048 tile on any difficulty',progress(){let m=0;['easy','medium','hard'].forEach(k=>{const v=_intLS('tf-tile-'+k);if(v>m)m=v;});const ok=m>=2048;return{cur:Math.min(m,2048),target:2048,unlocked:ok};}},
+    {id:'sudoku-solver',ic:'🔢',name:'Sudoku Solver',desc:'Complete Sudoku 4×4 on any difficulty',progress(){let m=9999;['easy','medium','hard'].forEach(k=>{const v=_intLS('sd-best-'+k);if(v>0&&v<m)m=v;});const ok=m<9999;return{cur:ok?1:0,target:1,unlocked:ok};}}
   ];
   function _achState(){try{return JSON.parse(localStorage.getItem('amni-achievements')||'{}');}catch{return{};}}
   function _saveAchState(s){try{localStorage.setItem('amni-achievements',JSON.stringify(s));}catch{}}
@@ -4519,6 +4521,91 @@
       if(subgame === 'mathsolitaire') initMathSolitaire();
       if(subgame === 'minesweeper') initMinesweeper();
       if(subgame === 'twentyfortyeight') initTwentyFortyEight();
+      if(subgame === 'sudoku') initSudoku();
+  }
+  function initSudoku(){
+    lifeArea.innerHTML='';
+    lifeTitle.textContent='🔢 Sudoku 4×4';
+    const LEVELS={easy:{remove:6,label:'Easy'},medium:{remove:9,label:'Medium'},hard:{remove:12,label:'Hard'}};
+    let level=sessionStorage.getItem('sd-level')||'easy';
+    if(!LEVELS[level])level='easy';
+    const cfg=LEVELS[level];
+    const bestKey='sd-best-'+level;
+    let best=parseInt(sessionStorage.getItem(bestKey)||'9999');
+    function genGrid(){
+      const g=Array.from({length:4},()=>new Array(4).fill(0));
+      function isValid(r,c,n){for(let i=0;i<4;i++){if(g[r][i]===n||g[i][c]===n)return false;}const br=Math.floor(r/2)*2,bc=Math.floor(c/2)*2;for(let i=0;i<2;i++)for(let j=0;j<2;j++)if(g[br+i][bc+j]===n)return false;return true;}
+      function fill(idx){if(idx===16)return true;const r=Math.floor(idx/4),c=idx%4;const nums=[1,2,3,4].sort(()=>Math.random()-0.5);for(const n of nums){if(isValid(r,c,n)){g[r][c]=n;if(fill(idx+1))return true;g[r][c]=0;}}return false;}
+      fill(0);return g;
+    }
+    const solution=genGrid();
+    const puzzle=solution.map(r=>[...r]);
+    const idxList=[];for(let i=0;i<16;i++)idxList.push(i);
+    for(let i=idxList.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[idxList[i],idxList[j]]=[idxList[j],idxList[i]];}
+    for(let i=0;i<cfg.remove;i++){const idx=idxList[i];puzzle[Math.floor(idx/4)][idx%4]=0;}
+    const fixed=puzzle.map(r=>r.map(v=>v!==0));
+    let selected=null,moves=0,startTime=Date.now(),won=false;
+    function checkComplete(){
+      for(let r=0;r<4;r++){const seen=new Set();for(let c=0;c<4;c++){if(puzzle[r][c]===0||seen.has(puzzle[r][c]))return false;seen.add(puzzle[r][c]);}}
+      for(let c=0;c<4;c++){const seen=new Set();for(let r=0;r<4;r++){if(seen.has(puzzle[r][c]))return false;seen.add(puzzle[r][c]);}}
+      for(let br=0;br<2;br++)for(let bc=0;bc<2;bc++){const seen=new Set();for(let i=0;i<2;i++)for(let j=0;j<2;j++){const v=puzzle[br*2+i][bc*2+j];if(seen.has(v))return false;seen.add(v);}}
+      return true;
+    }
+    function render(){
+      lifeArea.innerHTML='';
+      const elapsed=Math.floor((Date.now()-startTime)/1000);
+      const hud=document.createElement('div');hud.className='game-hud';hud.style.marginBottom='6px';
+      hud.innerHTML=`<span class="game-stat">🎯 Moves <span class="game-stat-val">${moves}</span></span><span class="game-stat">⏱️ ${elapsed}s</span><span class="game-stat">⭐ Best <span class="game-stat-val">${best<9999?best:'—'}</span></span>`;
+      lifeArea.appendChild(hud);
+      const lvlRow=document.createElement('div');lvlRow.style.cssText='display:flex;gap:6px;justify-content:center;margin:4px 0 10px;flex-wrap:wrap;';
+      Object.keys(LEVELS).forEach(k=>{const b=document.createElement('button');b.className='sdk-btn'+(k===level?' active':'');b.style.cssText='font-size:0.85rem;padding:5px 12px;';b.textContent=LEVELS[k].label;b.onclick=()=>{sessionStorage.setItem('sd-level',k);initSudoku();};lvlRow.appendChild(b);});
+      lifeArea.appendChild(lvlRow);
+      const board=document.createElement('div');
+      board.style.cssText='display:grid;grid-template-columns:repeat(4,72px);grid-template-rows:repeat(4,72px);gap:2px;background:#2c3e50;padding:8px;border-radius:10px;margin:6px auto;width:fit-content;';
+      for(let r=0;r<4;r++)for(let c=0;c<4;c++){
+        const cell=document.createElement('div');
+        const v=puzzle[r][c];
+        const isFixed=fixed[r][c];
+        const isSel=selected&&selected[0]===r&&selected[1]===c;
+        const bg=isSel?'#f1c40f':(isFixed?'#34495e':'#ecf0f1');
+        const color=isSel?'#2c3e50':(isFixed?'#fff':'#2c3e50');
+        const bd=(r===1?'border-bottom:3px solid #1a2530;':'')+(c===1?'border-right:3px solid #1a2530;':'');
+        cell.style.cssText=`width:72px;height:72px;background:${bg};color:${color};display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:bold;font-family:Comic Neue,cursive;cursor:${won||isFixed?'default':'pointer'};border-radius:4px;${bd}`;
+        cell.textContent=v||'';
+        if(!won&&!isFixed)cell.onclick=()=>{selected=[r,c];render();};
+        board.appendChild(cell);
+      }
+      lifeArea.appendChild(board);
+      if(!won){
+        const padRow=document.createElement('div');padRow.style.cssText='display:flex;gap:8px;justify-content:center;margin:14px 0;';
+        [1,2,3,4].forEach(n=>{
+          const b=document.createElement('button');b.className='nmm-btn';b.style.cssText='width:48px;height:48px;font-size:1.4rem;padding:0;';b.textContent=n;
+          b.onclick=()=>{if(!selected)return;const [r,c]=selected;if(fixed[r][c])return;puzzle[r][c]=n;moves++;if(checkComplete()){won=true;onWin();}else render();};
+          padRow.appendChild(b);
+        });
+        const eb=document.createElement('button');eb.className='nmm-btn';eb.style.cssText='width:48px;height:48px;font-size:1.2rem;padding:0;background:#e74c3c;';eb.textContent='✗';
+        eb.onclick=()=>{if(!selected)return;const [r,c]=selected;if(fixed[r][c])return;puzzle[r][c]=0;moves++;render();};
+        padRow.appendChild(eb);
+        lifeArea.appendChild(padRow);
+        const hint=document.createElement('div');hint.style.cssText='text-align:center;color:#7f8c8d;font-family:Comic Neue,cursive;font-size:0.9rem;margin:6px auto;max-width:480px;padding:0 12px;';
+        hint.textContent='Each row, column, and 2×2 region must contain 1, 2, 3, 4 exactly once. Tap a cell, then a number. ✗ erases.';
+        lifeArea.appendChild(hint);
+      }
+    }
+    function onWin(){
+      const t=Math.floor((Date.now()-startTime)/1000);
+      const wasBest=moves<best;
+      if(wasBest){best=moves;sessionStorage.setItem(bestKey,moves);}
+      render();
+      const b=document.createElement('div');b.style.cssText='text-align:center;padding:14px;background:#2ecc71;color:#fff;border-radius:10px;margin:10px auto;font-family:Comic Neue,cursive;font-size:1.2rem;max-width:420px;';
+      b.innerHTML=`🎉 ${cfg.label} solved in ${moves} moves (${t}s)!${wasBest?' 🏆 NEW BEST!':''}`;
+      lifeArea.appendChild(b);
+      if(typeof spawnConfetti==='function')spawnConfetti(window.innerWidth/2,window.innerHeight/2,wasBest?150:80);
+      if(typeof showFeedback==='function')showFeedback(`Sudoku ${cfg.label}: ${moves} moves 🔢`,wasBest?'#2ecc71':'#3498db');
+      if(typeof addScore==='function')addScore(15+cfg.remove*2);
+      const again=document.createElement('button');again.className='nmm-btn';again.textContent='🔄 New Puzzle';again.style.cssText='display:block;margin:14px auto;';again.onclick=()=>initSudoku();lifeArea.appendChild(again);
+    }
+    render();
   }
   function initTwentyFortyEight(){
     lifeArea.innerHTML='';
