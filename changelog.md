@@ -1,5 +1,26 @@
 ﻿# Changelog 
 
+## [5.7.46] - 2026-05-21 - Color Mixer — toddler color-theory game (Life Skills)
+- New Life Skills subgame: **🎨 Color Mixer** — teaches paint-mixing color theory through play.
+- **Mechanics**:
+  - Big equation in the middle: `🔴 + 🟡 = ❓` with caption "Red + Yellow = ?".
+  - 4 color choices below — toddler taps the right answer (🟠 Orange).
+  - On correct: `❓` reveals as the result, "Yes! Orange! ✨" feedback, green highlight.
+  - On wrong: correct answer revealed in green, "It's Orange!" hint, picked choice flashes red.
+- **Mixing rules** (8 canonical mixes, drawn from artist's palette):
+  - 🔴 + 🟡 → 🟠 Orange
+  - 🟡 + 🔵 → 🟢 Green
+  - 🔵 + 🔴 → 🟣 Purple
+  - 🔴 + ⚪ → 🩷 Pink (tint)
+  - 🔴 + 🟢 → 🟤 Brown (complementary)
+  - 🟡 + 🟣 → 🟤 Brown (complementary)
+  - 🔵 + 🟠 → 🟤 Brown (complementary)
+  - ⚫ + ⚪ → 🔘 Gray
+- 10 rounds. `cmix-best` persists in sessionStorage, NEW BEST confetti.
+- Pairs nicely with the 🎨 Colors quiz subject (v5.7.37) — quiz teaches the concept, this game makes it tactile.
+- Life Skills now offers **9 subgames**.
+- **SW cache v124 → v125** to flush.
+
 ## [5.7.45] - 2026-05-21 - Find It! — toddler search game (Life Skills)
 - New Life Skills subgame: **🔍 Find It!**
 - **Mechanics**:

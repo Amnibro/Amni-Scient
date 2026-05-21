@@ -1277,6 +1277,7 @@
           <button class="game-btn life" data-game="life" data-subgame="samediff"><span class="btn-icon">🟰</span><span class="btn-text">Same or Different</span><span class="btn-desc">Compare two items</span></button>
           <button class="game-btn life" data-game="life" data-subgame="petcare"><span class="btn-icon">🐾</span><span class="btn-text">Pet Care</span><span class="btn-desc">Feed, water & care for pets</span></button>
           <button class="game-btn life" data-game="life" data-subgame="findit"><span class="btn-icon">🔍</span><span class="btn-text">Find It!</span><span class="btn-desc">Spot the target in the grid</span></button>
+          <button class="game-btn life" data-game="life" data-subgame="colormix"><span class="btn-icon">🎨</span><span class="btn-text">Color Mixer</span><span class="btn-desc">Mix two colors — pick the result</span></button>
         </div>
       </section>
       <section class="game-category">
@@ -4407,6 +4408,82 @@
       if(subgame === 'samediff') initSameDiff();
       if(subgame === 'petcare') initPetCare();
       if(subgame === 'findit') initFindIt();
+      if(subgame === 'colormix') initColorMix();
+  }
+  function initColorMix(){
+    lifeArea.innerHTML='';
+    lifeTitle.textContent='🎨 Color Mixer';
+    const MIXES=[
+      {a:'🔴',b:'🟡',r:'🟠',aName:'Red',bName:'Yellow',rName:'Orange'},
+      {a:'🟡',b:'🔵',r:'🟢',aName:'Yellow',bName:'Blue',rName:'Green'},
+      {a:'🔵',b:'🔴',r:'🟣',aName:'Blue',bName:'Red',rName:'Purple'},
+      {a:'🔴',b:'⚪',r:'🩷',aName:'Red',bName:'White',rName:'Pink'},
+      {a:'🔴',b:'🟢',r:'🟤',aName:'Red',bName:'Green',rName:'Brown'},
+      {a:'🟡',b:'🟣',r:'🟤',aName:'Yellow',bName:'Purple',rName:'Brown'},
+      {a:'🔵',b:'🟠',r:'🟤',aName:'Blue',bName:'Orange',rName:'Brown'},
+      {a:'⚫',b:'⚪',r:'🔘',aName:'Black',bName:'White',rName:'Gray'}
+    ];
+    const ALL_RESULTS=['🟠','🟢','🟣','🩷','🟤','🔘','🟡','🔵','🔴','⚪','⚫'];
+    let score=0,round=0;
+    const bestKey='cmix-best';
+    let best=parseInt(sessionStorage.getItem(bestKey)||'0');
+    const TOTAL=10;
+    const hud=document.createElement('div');hud.className='game-hud';hud.style.marginBottom='6px';
+    hud.innerHTML=`<span class="game-stat">🎯 <span class="game-stat-val" id="cm-round">0</span>/${TOTAL}</span><span class="game-stat">✅ <span class="game-stat-val" id="cm-score">0</span></span><span class="game-stat">⭐ Best <span class="game-stat-val" id="cm-best">${best}</span></span>`;
+    lifeArea.appendChild(hud);
+    const equation=document.createElement('div');equation.id='cm-eq';equation.style.cssText='display:flex;align-items:center;justify-content:center;gap:18px;margin:24px 0;font-family:Comic Neue,cursive;font-size:3.5rem;color:#2c3e50;';
+    lifeArea.appendChild(equation);
+    const caption=document.createElement('div');caption.id='cm-caption';caption.style.cssText='text-align:center;font-family:Comic Neue,cursive;font-size:1.1rem;color:#7f8c8d;margin:-8px 0 12px;';
+    lifeArea.appendChild(caption);
+    const choices=document.createElement('div');choices.id='cm-choices';choices.style.cssText='display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin:14px 0;';
+    lifeArea.appendChild(choices);
+    let curMix=null;
+    function nextRound(){
+      round++;
+      const re=document.getElementById('cm-round');if(re)re.textContent=round;
+      if(round>TOTAL){
+        const wasBest=score>best;
+        if(wasBest){sessionStorage.setItem(bestKey,score);}
+        equation.innerHTML=`<div style="text-align:center;font-family:Comic Neue,cursive;color:#2c3e50;"><div style="font-size:2.2rem;margin-bottom:8px;">${wasBest?'🏆 NEW BEST!':'🎉 Mixed up!'}</div><div style="font-size:1.3rem;">${score}/${TOTAL} correct</div></div>`;
+        caption.textContent='';
+        choices.innerHTML='';
+        if(typeof spawnConfetti==='function')spawnConfetti(window.innerWidth/2,window.innerHeight/2,wasBest?120:60);
+        if(typeof showFeedback==='function')showFeedback(`Color Mixer: ${score}/${TOTAL} 🎨`,wasBest?'#2ecc71':'#3498db');
+        if(typeof addScore==='function')addScore(score);
+        const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='Play Again';rb.style.cssText='display:block;margin:14px auto;';rb.onclick=()=>initColorMix();lifeArea.appendChild(rb);
+        return;
+      }
+      curMix=MIXES[Math.floor(Math.random()*MIXES.length)];
+      equation.innerHTML=`<span>${curMix.a}</span><span style="font-size:2.6rem;color:#7f8c8d;">+</span><span>${curMix.b}</span><span style="font-size:2.6rem;color:#7f8c8d;">=</span><span style="opacity:0.3;">❓</span>`;
+      caption.textContent=`${curMix.aName} + ${curMix.bName} = ?`;
+      const distractors=ALL_RESULTS.filter(c=>c!==curMix.r).sort(()=>Math.random()-0.5).slice(0,3);
+      const opts=[curMix.r,...distractors].sort(()=>Math.random()-0.5);
+      choices.innerHTML='';
+      opts.forEach(c=>{
+        const b=document.createElement('button');
+        b.style.cssText='font-size:3.2rem;padding:14px 22px;border-radius:16px;border:3px solid #74b9ff;background:rgba(168,230,247,0.4);cursor:pointer;line-height:1;transition:transform 0.1s,background 0.2s;';
+        b.textContent=c;
+        b.onclick=()=>handle(b,c);
+        choices.appendChild(b);
+      });
+    }
+    function handle(btn,picked){
+      [...choices.children].forEach(b=>b.style.pointerEvents='none');
+      if(picked===curMix.r){
+        score++;const se=document.getElementById('cm-score');if(se)se.textContent=score;
+        btn.style.background='#2ecc71';btn.style.transform='scale(1.15)';
+        equation.innerHTML=`<span>${curMix.a}</span><span style="font-size:2.6rem;color:#7f8c8d;">+</span><span>${curMix.b}</span><span style="font-size:2.6rem;color:#7f8c8d;">=</span><span>${curMix.r}</span>`;
+        if(typeof showFeedback==='function')showFeedback(`Yes! ${curMix.rName}! ✨`,'#2ecc71');
+      }else{
+        btn.style.background='#e74c3c';
+        [...choices.children].forEach(b=>{if(b.textContent===curMix.r){b.style.background='#2ecc71';b.style.transform='scale(1.1)';}});
+        equation.innerHTML=`<span>${curMix.a}</span><span style="font-size:2.6rem;color:#7f8c8d;">+</span><span>${curMix.b}</span><span style="font-size:2.6rem;color:#7f8c8d;">=</span><span>${curMix.r}</span>`;
+        if(typeof showFeedback==='function')showFeedback(`It's ${curMix.rName}!`,'#e67e22');
+        if(typeof resetStreak==='function')resetStreak();
+      }
+      setTimeout(nextRound,1300);
+    }
+    nextRound();
   }
   function initFindIt(){
     lifeArea.innerHTML='';
