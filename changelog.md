@@ -1,5 +1,23 @@
 ﻿# Changelog 
 
+## [5.7.45] - 2026-05-21 - Find It! — toddler search game (Life Skills)
+- New Life Skills subgame: **🔍 Find It!**
+- **Mechanics**:
+  - 12 emoji laid out in a 3×4 grid (sky-blue cells).
+  - Target emoji shown at top: "Find 🐧 in the grid!"
+  - Toddler taps the matching cell.
+  - Correct → cell turns green and scales up, next round.
+  - Wrong → cell briefly shrinks red, "Not that one — keep looking!" feedback, same round.
+- **Modes**:
+  - **🐶 Animals** (30 different animals to draw from)
+  - **🍎 Fruits** (20 fruits)
+  - **🚗 Vehicles** (24 vehicles incl. cars, planes, boats)
+  - **🎲 Mixed** (any category each round)
+- 10 rounds per game. Per-mode best persisted (`fi-best-<mode>`). NEW BEST confetti at finish.
+- Search-and-scan gameplay — distinct from the reactive Bubble Pop (4 floating, time-based).
+- Life Skills now offers **8 subgames** (vacuum, dishes, clock, money, bubble, samediff, petcare, findit).
+- **SW cache v123 → v124** to flush.
+
 ## [5.7.44] - 2026-05-21 - Pet Care — toddler care-and-match game (Life Skills)
 - New Life Skills subgame: **🐾 Pet Care**.
 - **Mechanics**:
