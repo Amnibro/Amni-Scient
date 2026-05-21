@@ -9159,7 +9159,9 @@ function playAnimalSound(type) {
     { pos:{c6:'K',b6:'Q',a8:'k',a7:'p'}, sol:'b6-b7', side:'w', desc:"Queen + king corner mate — queen lands on b7 adjacent to the king, defended by Kc6 so the king can't capture; black's own pawn blocks a7, the queen covers b8 along the b-file." },
     { pos:{c1:'K',a3:'Q',d5:'B',f6:'P',h8:'k'}, sol:'a3-h3', side:'w', desc:'Q + B + P combo — queen swings to h3 along the 3rd rank then attacks the h-file, light-squared bishop on d5 covers g8 along d5–g8 diagonal, white pawn on f6 covers g7.' },
     { pos:{g6:'K',h6:'N',f6:'N',h8:'k'}, sol:'h6-f7', side:'w', desc:'Two-knight cooperation — Nh6 hops to f7 checking h8, while the partner knight on f6 covers g8. White king on g6 controls g7 and h7.' },
-    { pos:{a1:'K',a7:'P',h5:'N',f5:'B',h8:'k'}, sol:'a7-a8', side:'w', desc:'Pawn promotion mate — pawn pushes to a8 and promotes to a queen attacking down the 8th rank; knight on h5 covers g7, light-squared bishop on f5 covers h7 along the f5–g6–h7 diagonal.' }
+    { pos:{a1:'K',a7:'P',h5:'N',f5:'B',h8:'k'}, sol:'a7-a8', side:'w', desc:'Pawn promotion mate — pawn pushes to a8 and promotes to a queen attacking down the 8th rank; knight on h5 covers g7, light-squared bishop on f5 covers h7 along the f5–g6–h7 diagonal.' },
+    { pos:{g1:'K',e3:'Q',h5:'N',f5:'B',g8:'k'}, sol:'e3-e8', side:'w', desc:'Q + B + N triple coordination — queen lands on e8 attacking the 8th rank and the f7 diagonal, knight on h5 covers g7, light-squared bishop on f5 covers h7 along f5–g6–h7.' },
+    { pos:{c6:'K',g2:'B',b5:'N',a8:'k'}, sol:'c6-c7', side:'w', desc:'Discovered check by king move — Kc6 steps to c7, unmasking the light-squared bishop on g2 along the g2–a8 long diagonal; the king from c7 covers b7 and b8, and the knight on b5 seals a7.' }
   ];
   const _chessUnicode = {K:'♔',Q:'♕',R:'♖',B:'♗',N:'♘',P:'♙',k:'♚',q:'♛',r:'♜',b:'♝',n:'♞',p:'♟'};
   let _chessIdx = 0, _chessSelected = null, _chessSolved = 0;

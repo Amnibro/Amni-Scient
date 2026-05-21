@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.7.54] - 2026-05-21 - Chess: +2 puzzles (30 → 32)
+- Two more verified mate-in-one puzzles:
+  - **P31 Q+B+N triple coordination** — `Qe3-e8#` with Kg1/Qe3/Nh5/Bf5 vs Kg8. Queen seals the 8th rank (h8/f8 covered) AND the e8-f7 diagonal; knight on h5 covers g7; light-squared bishop on f5 covers h7 along f5-g6-h7.
+  - **P32 Discovered check by king move** — `Kc6-c7#` with Kc6/Bg2/Nb5 vs Ka8. The king stepping from c6 to c7 unmasks the long-diagonal light bishop on g2 (g2-a8 path now clear), AND the king on c7 simultaneously covers b7 and b8, AND the knight on b5 covers a7. The whole mate hinges on the king's move being the discovery.
+- **SW cache v132 → v133** to flush.
+
 ## [5.7.53] - 2026-05-21 - Math module: +5 word problems, +4 geometry templates
 - Expanded the procedural-problem templates the Math module rotates through at L2+ (word problems) and L3+ (geometry):
 - **wordProblems** (8 → 13):
