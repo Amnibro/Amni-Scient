@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.36] - 2026-05-20 - Chess: +1 puzzle, two-knight cooperation (28 → 29)
+- **P29 Two-knight cooperation** — `Nh6-f7#` with Kg6 / Nh6 / Nf6 vs Kh8. The leaping knight on h6 hops to f7 to check h8, while the partner knight stays on f6 covering g8. The white king on g6 controls g7 and h7. Both knights are needed: removing either lets the king escape (g8 if Nf6 leaves, otherwise via h7/g7 if Kg6 isn't there).
+- **SW cache v114 → v115** to flush.
+
 ## [5.7.35] - 2026-05-20 - Map Clicker: real-landmark continent polygons
 - Direct response to Anthony's feedback that the existing polygons look like artificial sketches that don't align with Earth.
 - Rewrote every entry in `_mapContinents` so the vertices sit at **real geographic landmarks** (lat/lon coordinates of actual capes, peninsulas, deltas, and major coastal cities) rather than hand-drawn approximations:
