@@ -1,5 +1,16 @@
 ﻿# Changelog 
 
+## [5.7.55] - 2026-05-21 - Sorting Hat: +1 round per level (40 → 45)
+- One new round added at each difficulty tier of Sorting Hat:
+  - **L1** (toddler): **🐦 Birds vs 🐺 Mammals** (eagle, owl, penguin, parrot vs lion, dog, cat, elephant).
+  - **L2** (pre-K): **🍽️ Edible vs 🚫 Inedible** (apple/bread/carrot/grapes vs rock/bolt/phone/yarn).
+  - **L3** (early elementary): **🌍 Continents vs 🌊 Oceans** (Africa/Europe/Asia/Australia vs Pacific/Atlantic/Indian/Arctic).
+  - **L4** (elementary): **➡️ Vector vs 📏 Scalar** (velocity/force/acceleration/displacement vs speed/mass/temperature/time).
+  - **L5** (advanced): **🔒 Static vs 🔄 Dynamic Typed Languages** (C/Java/Rust/TypeScript vs Python/JavaScript/Ruby/PHP).
+- Each new round follows the existing 8-item / 2-bucket structure.
+- Total: **45 rounds** across 5 levels (was 40).
+- **SW cache v133 → v134** to flush.
+
 ## [5.7.54] - 2026-05-21 - Chess: +2 puzzles (30 → 32)
 - Two more verified mate-in-one puzzles:
   - **P31 Q+B+N triple coordination** — `Qe3-e8#` with Kg1/Qe3/Nh5/Bf5 vs Kg8. Queen seals the 8th rank (h8/f8 covered) AND the e8-f7 diagonal; knight on h5 covers g7; light-squared bishop on f5 covers h7 along f5-g6-h7.
