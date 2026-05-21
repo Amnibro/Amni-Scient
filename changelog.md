@@ -1,5 +1,15 @@
 ﻿# Changelog 
 
+## [5.7.58] - 2026-05-21 - Daily Challenge: +8 puzzles (121 → 129)
+- Eight more adult-knowledge puzzles, spanning thin-coverage categories:
+  - 📐 Geometry: dodecagon has 12 sides.
+  - 🎸 Music: Bizet composed Carmen.
+  - 💻 Tech: GPU expansion, iPhone first release (2007), FIFO in computing.
+  - ⚗️ Chemistry: Hg = mercury.
+  - 🌍 Geography: Angel Falls (tallest waterfall), Hanoi (capital of Vietnam).
+- Daily Challenge pool now rotates **129 puzzles** before repeats (~4.3 months unique rotation given the date-hash dispatcher).
+- **SW cache v136 → v137** to flush.
+
 ## [5.7.57] - 2026-05-21 - Chess: minimal K+Q mate (32 → 33)
 - **P33 Minimal K+Q mate** — `Qd5-d8#` with Kg6 / Qd5 vs Kh8.
   - Queen slides up the d-file to d8, attacking down the 8th rank to h8.
