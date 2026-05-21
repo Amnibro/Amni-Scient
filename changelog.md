@@ -1,5 +1,21 @@
 ﻿# Changelog 
 
+## [5.7.47] - 2026-05-21 - Whack-a-Mole — classic arcade timing game (Life Skills)
+- New Life Skills subgame: **🔨 Whack-a-Mole**.
+- **Mechanics**:
+  - 3×3 grid of "holes" (radial-gradient brown circles).
+  - Random mole emoji (🐹🐰🐭🐿️) pops up briefly; tap before it disappears for +1 point.
+  - Occasional bomb 💣 mixed in — tapping it costs **−3 points** (and resets streak).
+  - 30-second timer (25s on Hard).
+- **Difficulty modes** (mode picker row at top):
+  - **🐌 Easy**: 1.3s reveal, 5% bomb rate, 30s timer.
+  - **⚡ Normal** (default): 1.0s reveal, 10% bomb rate, 30s timer.
+  - **🔥 Hard**: 0.7s reveal, 18% bomb rate, 25s timer.
+- Best score persisted per-mode (`wm-best-<mode>`). NEW BEST confetti at finish.
+- Classic timing/reaction arcade feel — distinct from the floating-bubble Bubble Pop and the moving-target Reflex Racer.
+- Life Skills now offers **10 subgames** total this session.
+- **SW cache v125 → v126** to flush.
+
 ## [5.7.46] - 2026-05-21 - Color Mixer — toddler color-theory game (Life Skills)
 - New Life Skills subgame: **🎨 Color Mixer** — teaches paint-mixing color theory through play.
 - **Mechanics**:

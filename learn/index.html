@@ -1278,6 +1278,7 @@
           <button class="game-btn life" data-game="life" data-subgame="petcare"><span class="btn-icon">🐾</span><span class="btn-text">Pet Care</span><span class="btn-desc">Feed, water & care for pets</span></button>
           <button class="game-btn life" data-game="life" data-subgame="findit"><span class="btn-icon">🔍</span><span class="btn-text">Find It!</span><span class="btn-desc">Spot the target in the grid</span></button>
           <button class="game-btn life" data-game="life" data-subgame="colormix"><span class="btn-icon">🎨</span><span class="btn-text">Color Mixer</span><span class="btn-desc">Mix two colors — pick the result</span></button>
+          <button class="game-btn life" data-game="life" data-subgame="whackmole"><span class="btn-icon">🔨</span><span class="btn-text">Whack-a-Mole</span><span class="btn-desc">Tap moles, avoid bombs!</span></button>
         </div>
       </section>
       <section class="game-category">
@@ -4409,6 +4410,81 @@
       if(subgame === 'petcare') initPetCare();
       if(subgame === 'findit') initFindIt();
       if(subgame === 'colormix') initColorMix();
+      if(subgame === 'whackmole') initWhackMole();
+  }
+  function initWhackMole(){
+    lifeArea.innerHTML='';
+    lifeTitle.textContent='🔨 Whack-a-Mole!';
+    const MOLE_EMOJIS=['🐹','🐰','🐭','🐿️'];
+    const BOMB='💣';
+    let mode=sessionStorage.getItem('wm-mode')||'normal';
+    const CFG={easy:{revealMs:1300,gapMs:600,bombChance:0.05,time:30},normal:{revealMs:1000,gapMs:400,bombChance:0.10,time:30},hard:{revealMs:700,gapMs:300,bombChance:0.18,time:25}};
+    const c=CFG[mode]||CFG.normal;
+    let score=0,timeLeft=c.time,active=false;
+    const bestKey='wm-best-'+mode;
+    let best=parseInt(sessionStorage.getItem(bestKey)||'0');
+    if(window._wmInterval){clearInterval(window._wmInterval);window._wmInterval=null;}
+    if(window._wmTick){clearInterval(window._wmTick);window._wmTick=null;}
+    const hud=document.createElement('div');hud.className='game-hud';hud.style.marginBottom='6px';
+    hud.innerHTML=`<span class="game-stat">⏱ <span class="game-stat-val" id="wm-time">${c.time}</span>s</span><span class="game-stat">🎯 <span class="game-stat-val" id="wm-score">0</span></span><span class="game-stat">⭐ Best <span class="game-stat-val" id="wm-best">${best}</span></span>`;
+    lifeArea.appendChild(hud);
+    const modeRow=document.createElement('div');modeRow.style.cssText='display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:4px 0 10px;';
+    [['easy','🐌 Easy'],['normal','⚡ Normal'],['hard','🔥 Hard']].forEach(([k,lbl])=>{const b=document.createElement('button');b.className='sdk-btn'+(k===mode?' active':'');b.style.cssText='font-size:0.82rem;padding:5px 10px;';b.textContent=lbl;b.onclick=()=>{sessionStorage.setItem('wm-mode',k);initWhackMole();};modeRow.appendChild(b);});
+    lifeArea.appendChild(modeRow);
+    const grid=document.createElement('div');grid.id='wm-grid';grid.style.cssText='display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-width:min(96vw,380px);margin:14px auto;';
+    lifeArea.appendChild(grid);
+    const holes=[];
+    for(let i=0;i<9;i++){
+      const h=document.createElement('button');
+      h.style.cssText='aspect-ratio:1/1;border-radius:50%;background:radial-gradient(circle at 50% 60%,#8b4513,#5d2f0a);border:4px solid #4a2008;font-size:3rem;display:flex;align-items:center;justify-content:center;cursor:pointer;line-height:1;color:#fff;user-select:none;touch-action:manipulation;overflow:hidden;';
+      h.dataset.idx=i;h.dataset.content='';
+      h.onclick=()=>onHit(h);
+      grid.appendChild(h);holes.push(h);
+    }
+    const startBtn=document.createElement('button');startBtn.className='nmm-btn';startBtn.textContent='▶ START';startBtn.style.cssText='display:block;margin:10px auto;';
+    lifeArea.appendChild(startBtn);
+    function onHit(h){
+      if(!active||!h.dataset.content)return;
+      const wasContent=h.dataset.content;
+      h.dataset.content='';h.textContent='';
+      if(wasContent===BOMB){score=Math.max(0,score-3);if(typeof showFeedback==='function')showFeedback('💥 Bomb! −3','#e74c3c');if(typeof resetStreak==='function')resetStreak();}
+      else{score++;if(typeof showFeedback==='function')showFeedback('+1 🔨','#2ecc71');}
+      const se=document.getElementById('wm-score');if(se)se.textContent=score;
+    }
+    function spawn(){
+      if(!active)return;
+      const empties=holes.filter(h=>!h.dataset.content);
+      if(!empties.length){setTimeout(spawn,c.gapMs);return;}
+      const h=empties[Math.floor(Math.random()*empties.length)];
+      const isBomb=Math.random()<c.bombChance;
+      const content=isBomb?BOMB:MOLE_EMOJIS[Math.floor(Math.random()*MOLE_EMOJIS.length)];
+      h.dataset.content=content;h.textContent=content;
+      setTimeout(()=>{if(h.dataset.content===content){h.dataset.content='';h.textContent='';}},c.revealMs);
+      setTimeout(spawn,c.gapMs+Math.random()*200);
+    }
+    startBtn.onclick=()=>{
+      startBtn.style.display='none';
+      active=true;score=0;timeLeft=c.time;
+      document.getElementById('wm-score').textContent=0;
+      document.getElementById('wm-time').textContent=timeLeft;
+      window._wmTick=setInterval(()=>{
+        timeLeft--;
+        const te=document.getElementById('wm-time');if(te)te.textContent=timeLeft;
+        if(timeLeft<=0){
+          active=false;
+          clearInterval(window._wmTick);window._wmTick=null;
+          holes.forEach(h=>{h.dataset.content='';h.textContent='';});
+          const wasBest=score>best;
+          if(wasBest){sessionStorage.setItem(bestKey,score);}
+          if(typeof spawnConfetti==='function')spawnConfetti(window.innerWidth/2,window.innerHeight/2,wasBest?120:60);
+          if(typeof showFeedback==='function')showFeedback(`${wasBest?'🏆 NEW BEST! ':''}Whack-a-Mole: ${score} 🔨`,wasBest?'#2ecc71':'#3498db');
+          if(typeof addScore==='function')addScore(score);
+          startBtn.style.display='block';
+          startBtn.textContent=`▶ AGAIN — Best: ${Math.max(score,best)}`;
+        }
+      },1000);
+      spawn();
+    };
   }
   function initColorMix(){
     lifeArea.innerHTML='';
