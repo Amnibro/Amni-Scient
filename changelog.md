@@ -1,5 +1,16 @@
 ﻿# Changelog 
 
+## [5.7.40] - 2026-05-20 - New quiz subject: 🔄 Opposites (antonyms)
+- Fourth toddler→elementary subject this session. 5 levels, 50 antonym pairs:
+  - **L1**: big/small, hot/cold, up/down, day/night, happy/sad, fast/slow, in/out, on/off, yes/no, open/closed.
+  - **L2**: tall/short, light/dark, full/empty, wet/dry, easy/hard, soft/rough, push/pull, give/take, sit/stand, loud/quiet.
+  - **L3**: brave/scared, gentle/rough, polite/rude, ancient/modern, sharp/dull, begin/end, above/below, win/lose, fresh/stale, near/far.
+  - **L4**: expand/contract, accept/reject, transparent/opaque, include/exclude, success/failure, permit/forbid, temporary/permanent, arrive/depart, increase/decrease, generous/stingy.
+  - **L5**: ascend/descend, divergent/convergent, voluntary/involuntary, literal/figurative, concrete/abstract, extrovert/introvert, scarcity/abundance, compact/sprawling, ambiguous/clear, plus the antonym-vs-synonym definition question.
+- teachData has 4 cards per level explaining concepts; L5 introduces the literal-vs-figurative and concrete-vs-abstract distinctions.
+- General Knowledge now has **7 quiz subjects total** (Animals & Objects, Music Studio, Reading & Languages, Science & Nature, Colors, Shapes, Counting & Numbers, Opposites).
+- **SW cache v118 → v119** to flush.
+
 ## [5.7.39] - 2026-05-20 - New quiz subject: 🔢 Counting & Numbers
 - Third toddler→elementary subject this session. 5 levels, 50 questions:
   - **L1** (toddler 2-4): visual emoji counting 1-5 (🍎🍎🍎 → 3, etc.), fingers on one hand.

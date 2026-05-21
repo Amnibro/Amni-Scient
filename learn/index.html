@@ -1285,6 +1285,7 @@
           <button class="game-btn quiz" data-game="quiz" data-subject="colors"><span class="btn-icon">🎨</span><span class="btn-text">Colors</span><span class="btn-desc">Rainbow & color theory</span></button>
           <button class="game-btn quiz" data-game="quiz" data-subject="shapes"><span class="btn-icon">🔷</span><span class="btn-text">Shapes</span><span class="btn-desc">2D, 3D, and geometry</span></button>
           <button class="game-btn quiz" data-game="quiz" data-subject="counting"><span class="btn-icon">🔢</span><span class="btn-text">Counting & Numbers</span><span class="btn-desc">Count, add, and beyond</span></button>
+          <button class="game-btn quiz" data-game="quiz" data-subject="opposites"><span class="btn-icon">🔄</span><span class="btn-text">Opposites</span><span class="btn-desc">Antonyms — big & small, hot & cold</span></button>
         </div>
       </section>
       <section class="game-category">
@@ -6208,6 +6209,69 @@
               {q: "What's 'metamaterial' engineering?", a: "Structured materials with sub-wavelength features yielding unusual EM properties (e.g. negative index)", wrong: ["Alloys for high strength", "Plastic blends", "Magnetic-amplifying coatings"]}
           ]
       },
+      opposites: {
+        title: "Opposites",
+        1: [
+          {q:"Opposite of BIG?", a:"Small", wrong:["Large","Huge","Tall"]},
+          {q:"Opposite of HOT?", a:"Cold", wrong:["Warm","Cool","Hot"]},
+          {q:"Opposite of UP?", a:"Down", wrong:["Over","Under","Across"]},
+          {q:"Opposite of DAY?", a:"Night", wrong:["Sun","Light","Morning"]},
+          {q:"Opposite of HAPPY?", a:"Sad", wrong:["Glad","Bored","Tired"]},
+          {q:"Opposite of FAST?", a:"Slow", wrong:["Quick","Speedy","Late"]},
+          {q:"Opposite of IN?", a:"Out", wrong:["Up","Down","Side"]},
+          {q:"Opposite of ON?", a:"Off", wrong:["Up","Down","Through"]},
+          {q:"Opposite of YES?", a:"No", wrong:["Maybe","Okay","Sure"]},
+          {q:"Opposite of OPEN?", a:"Closed", wrong:["Inside","Stuck","Locked"]}
+        ],
+        2: [
+          {q:"Opposite of TALL?", a:"Short", wrong:["Big","Wide","Heavy"]},
+          {q:"Opposite of LIGHT?", a:"Dark", wrong:["Bright","Sunny","White"]},
+          {q:"Opposite of FULL?", a:"Empty", wrong:["Big","Heavy","Round"]},
+          {q:"Opposite of WET?", a:"Dry", wrong:["Cold","Hot","Damp"]},
+          {q:"Opposite of EASY?", a:"Hard", wrong:["Fun","Quick","Soft"]},
+          {q:"Opposite of SOFT?", a:"Rough", wrong:["Smooth","Wet","Cold"]},
+          {q:"Opposite of PUSH?", a:"Pull", wrong:["Lift","Drop","Throw"]},
+          {q:"Opposite of GIVE?", a:"Take", wrong:["Bring","Send","Share"]},
+          {q:"Opposite of SIT?", a:"Stand", wrong:["Lie","Walk","Run"]},
+          {q:"Opposite of LOUD?", a:"Quiet", wrong:["Silent","Loud","Soft"]}
+        ],
+        3: [
+          {q:"Opposite of BRAVE?", a:"Scared", wrong:["Strong","Tough","Quick"]},
+          {q:"Opposite of GENTLE?", a:"Rough", wrong:["Sweet","Calm","Soft"]},
+          {q:"Opposite of POLITE?", a:"Rude", wrong:["Kind","Quiet","Friendly"]},
+          {q:"Opposite of ANCIENT?", a:"Modern", wrong:["Old","New","Ancient"]},
+          {q:"Opposite of SHARP?", a:"Dull", wrong:["Pointy","Long","Heavy"]},
+          {q:"Opposite of BEGIN?", a:"End", wrong:["Start","Try","Continue"]},
+          {q:"Opposite of ABOVE?", a:"Below", wrong:["Over","Beside","Across"]},
+          {q:"Opposite of WIN?", a:"Lose", wrong:["Tie","Play","Stop"]},
+          {q:"Opposite of FRESH?", a:"Stale", wrong:["New","Bright","Cold"]},
+          {q:"Opposite of NEAR?", a:"Far", wrong:["Close","Around","Beside"]}
+        ],
+        4: [
+          {q:"Opposite of EXPAND?", a:"Contract", wrong:["Stretch","Grow","Reduce"]},
+          {q:"Opposite of ACCEPT?", a:"Reject", wrong:["Receive","Allow","Take"]},
+          {q:"Opposite of TRANSPARENT?", a:"Opaque", wrong:["Clear","Bright","Tinted"]},
+          {q:"Opposite of INCLUDE?", a:"Exclude", wrong:["Allow","Skip","Refuse"]},
+          {q:"Opposite of SUCCESS?", a:"Failure", wrong:["Loss","Mistake","Setback"]},
+          {q:"Opposite of PERMIT?", a:"Forbid", wrong:["Allow","Stop","Pause"]},
+          {q:"Opposite of TEMPORARY?", a:"Permanent", wrong:["Quick","Long","Brief"]},
+          {q:"Opposite of ARRIVE?", a:"Depart", wrong:["Leave","Stay","Wait"]},
+          {q:"Opposite of INCREASE?", a:"Decrease", wrong:["Rise","Lower","Boost"]},
+          {q:"Opposite of GENEROUS?", a:"Stingy", wrong:["Greedy","Kind","Selfish"]}
+        ],
+        5: [
+          {q:"Opposite of ASCEND?", a:"Descend", wrong:["Climb","Rise","Lift"]},
+          {q:"Opposite of DIVERGENT?", a:"Convergent", wrong:["Parallel","Separate","Distinct"]},
+          {q:"Opposite of VOLUNTARY?", a:"Involuntary", wrong:["Optional","Forced","Free"]},
+          {q:"Opposite of LITERAL?", a:"Figurative", wrong:["Direct","Exact","Real"]},
+          {q:"Opposite of CONCRETE?", a:"Abstract", wrong:["Solid","Real","Hard"]},
+          {q:"Opposite of EXTROVERT?", a:"Introvert", wrong:["Quiet","Shy","Loud"]},
+          {q:"Opposite of SCARCITY?", a:"Abundance", wrong:["Plenty","Need","Hunger"]},
+          {q:"Opposite of COMPACT?", a:"Sprawling", wrong:["Big","Small","Tall"]},
+          {q:"Opposite of AMBIGUOUS?", a:"Clear", wrong:["Vague","Foggy","Open"]},
+          {q:"Antonym means a word with the ___ meaning?", a:"Opposite", wrong:["Same","Similar","Related"]}
+        ]
+      },
       counting: {
         title: "Counting & Numbers",
         1: [
@@ -6558,6 +6622,13 @@
       3: [{emoji:'🏛️',title:'Etymology',fact:'Word origins: "Telephone" = Greek tele (far) + phone (voice).'},{emoji:'✨',title:'Literary Devices',fact:'Metaphor, simile, personification make writing vivid and expressive.'},{emoji:'🌐',title:'Language Families',fact:'English is Germanic. Spanish, French, Italian are Romance (from Latin).'},{emoji:'📜',title:'Poetry',fact:'Iambic pentameter: 5 pairs of unstressed-stressed syllables.'},{emoji:'🧠',title:'Linguistics',fact:'Syntax = sentence structure. Phonology = sounds. Semantics = meaning.'}],
       4: [{emoji:'🏛️',title:'Morphology',fact:'Morphemes are the smallest units of meaning. "Un-break-able" has three!'},{emoji:'✨',title:'Rhetoric',fact:'Anaphora, chiasmus, antithesis — rhetorical devices that make speeches powerful.'},{emoji:'🌐',title:'Sociolinguistics',fact:'Code-switching is alternating languages mid-conversation — common in multilingual societies.'},{emoji:'📜',title:'Historical Linguistics',fact:'Languages evolve: Latin → French, Spanish, Italian, Portuguese, Romanian.'},{emoji:'🧠',title:'Pragmatics',fact:'Context determines meaning. "Can you pass the salt?" is a request, not a question.'}],
       5: [{emoji:'🏛️',title:'Universal Grammar',fact:'Chomsky proposed all humans share an innate language faculty — a biological blueprint.'},{emoji:'✨',title:'Semiotics',fact:'Signs = signifier + signified. Language, gestures, and symbols all carry meaning.'},{emoji:'🌐',title:'Computational Linguistics',fact:'NLP uses transformers and attention mechanisms to process human language.'},{emoji:'📜',title:'Phonetics',fact:'IPA transcribes sounds precisely. /θ/ = "th" in "think", /ð/ = "th" in "this".'},{emoji:'🧠',title:'Discourse Analysis',fact:'Studies how language constructs meaning in conversations, texts, and social contexts.'}]
+    },
+    opposites: {
+      1: [{emoji:'🔄',title:'Opposites',fact:'Opposites are words that mean the OPPOSITE of each other — like big and small!'},{emoji:'☀️',title:'Day & Night',fact:'Day is when the sun is up. Night is when it gets dark and stars come out!'},{emoji:'⬆️',title:'Up & Down',fact:'Up points to the sky. Down points to the ground!'},{emoji:'😊',title:'Happy & Sad',fact:'Happy faces smile! Sad faces frown. They\'re opposite feelings!'}],
+      2: [{emoji:'📏',title:'Size Words',fact:'Tall and short are opposites for height. Big and small are for size.'},{emoji:'💡',title:'Light & Dark',fact:'A lit lamp is bright (light). Closing your eyes makes it dark!'},{emoji:'🥤',title:'Full & Empty',fact:'A full cup is filled all the way. An empty cup has nothing inside.'},{emoji:'👐',title:'Push & Pull',fact:'Push moves something away from you. Pull brings it closer to you.'}],
+      3: [{emoji:'🦁',title:'Brave & Scared',fact:'Brave means doing something even when it feels scary. Scared is feeling afraid.'},{emoji:'🌅',title:'Begin & End',fact:'Begin is the start. End is the finish. Every story has both!'},{emoji:'🏆',title:'Win & Lose',fact:'In games, win means you got the most points. Lose means the other side did.'},{emoji:'🌍',title:'Near & Far',fact:'Near is close to you. Far is a long way away.'}],
+      4: [{emoji:'🎈',title:'Expand & Contract',fact:'Expand means get bigger (balloons!). Contract means shrink down.'},{emoji:'✅',title:'Accept & Reject',fact:'Accept means say yes / take. Reject means say no / refuse.'},{emoji:'🪟',title:'Transparent & Opaque',fact:'Transparent means you can see through (like glass). Opaque means you can\'t (like a wall).'},{emoji:'⏳',title:'Temporary & Permanent',fact:'Temporary lasts a short time. Permanent lasts forever (or close to it).'}],
+      5: [{emoji:'📖',title:'Antonyms vs Synonyms',fact:'Antonyms = OPPOSITE meaning (hot/cold). Synonyms = SAME meaning (big/large).'},{emoji:'⬇️',title:'Ascend & Descend',fact:'Ascend = go up. Descend = go down. Both fancy words from Latin!'},{emoji:'🧠',title:'Literal & Figurative',fact:'Literal = exact meaning. Figurative = symbolic. "Raining cats and dogs" is figurative!'},{emoji:'🌍',title:'Concrete & Abstract',fact:'Concrete = physical (apple, rock). Abstract = idea (justice, love).'}]
     },
     counting: {
       1: [{emoji:'1️⃣',title:'Counting Up',fact:'Numbers go 1, 2, 3, 4, 5… Count slowly, point at each item once!'},{emoji:'✋',title:'Hand Numbers',fact:'You have 5 fingers on each hand — that\'s where counting with hands comes from!'},{emoji:'➕',title:'Adding',fact:'Adding means putting groups together. 2 apples + 3 apples = 5 apples!'},{emoji:'👀',title:'Compare',fact:'More vs less. 4 stars is more than 2 stars. 1 dog is less than 3 dogs.'}],
