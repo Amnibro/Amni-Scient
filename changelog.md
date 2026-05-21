@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.7.56] - 2026-05-21 - Achievements: +2 cognitive milestones (44 → 46)
+- **⚡ Lightning Reflexes** — Single reaction time under **200 ms** in any Reaction Time mode (visual/audio/choice). Reads `rxt-best-single-<mode>` keys plus the legacy `rxt-best-single` for older saves. Binary unlock (cur=1 once hit, target=1).
+- **🎩 Master Sorter** — Complete **50 Sorting Hat rounds** (counter `sort-rounds-done`). Higher tier than the existing Categorizer (25 rounds) — pairs with v5.7.55's expansion to 45 rounds available across the 5 levels.
+- Total achievements now **46**.
+- **SW cache v134 → v135** to flush.
+
 ## [5.7.55] - 2026-05-21 - Sorting Hat: +1 round per level (40 → 45)
 - One new round added at each difficulty tier of Sorting Hat:
   - **L1** (toddler): **🐦 Birds vs 🐺 Mammals** (eagle, owl, penguin, parrot vs lion, dog, cat, elephant).
