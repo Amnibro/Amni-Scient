@@ -1,5 +1,19 @@
 ﻿# Changelog 
 
+## [5.7.69] - 2026-05-21 - 🔢 2048 (Brain Exercise)
+- **NEW Brain Exercise subgame: 🔢 2048** — Gabriele Cirulli's iconic number-merging puzzle.
+  - **Easy 5×5 / target 1024** — bigger board, lower target for a gentler introduction.
+  - **Classic 4×4 / target 2048** — the canonical version.
+  - **Hard 4×4 / target 4096** — push the original ceiling.
+- **Mechanics**: arrow buttons (D-pad) or swipe slide all tiles in the chosen direction. Same-value tiles merge, doubling. New 2 (90%) or 4 (10%) tile spawns after each successful move.
+- **Win**: reach the target tile (banner shows, can **Keep Playing** to chase higher tiles).
+- **Lose**: board full with no possible merges.
+- Per-level `tf-best-<level>` (best score) and `tf-tile-<level>` (highest-ever tile) persisted across sessions.
+- Pointer/swipe handling via `onpointerdown`/`window.onpointerup` — gets cleaned up correctly by `cleanupLifeGame()` so no listener leak across subgame switches.
+- **+ 2048 Master achievement** — reach the 2048 tile on any difficulty (cumulative progress counter towards 2048 visible in achievements). Achievements **52 → 53**.
+- Brain Exercise section now hosts **7 subgames**: Math Solitaire, Code Lock, Hanoi, Sliding Puzzle, Lights Out, Minesweeper, 2048.
+- **SW cache v147 → v148**.
+
 ## [5.7.68] - 2026-05-21 - 💣 Minesweeper (Brain Exercise)
 - **NEW Brain Exercise subgame: 💣 Minesweeper** — the canonical 1989 logic-deduction game.
   - **Easy**: 6×6 board, 6 mines (~17%)
