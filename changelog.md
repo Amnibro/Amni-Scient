@@ -1,5 +1,12 @@
 ﻿# Changelog 
 
+## [5.7.64] - 2026-05-21 - Versus Math category + Light Off achievement
+- **Versus Speed Challenge** gets a sixth category: **🧮 Math** (24 questions, 60-second sprint).
+  - Coverage: arithmetic (×, ÷, +, −, roots, powers), algebra (linear equations, slope, function evaluation), geometry (triangle angles, rectangle area, perimeter, Pythagorean, cube volume, polygon sides), number theory (primes, GCD, LCM, Gauss sum, Fibonacci).
+  - All answers numeric, unambiguous, hint-backed.
+- **+ Light Off achievement** — clear all lights in Lights Out at any size (3×3, 4×4, or 5×5). Brings total achievements **49 → 50**.
+- Versus now spans **6 categories × 24 questions = 144 prompts**.
+
 ## [5.7.63] - 2026-05-21 - Lights Out (Life Skills)
 - New Life Skills subgame: **💡 Lights Out** — the classic 1995 electronic toy puzzle.
 - **Mechanics**:
