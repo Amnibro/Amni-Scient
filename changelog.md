@@ -1,5 +1,17 @@
 ﻿# Changelog 
 
+## [5.7.37] - 2026-05-20 - New quiz subject: 🎨 Colors (toddler → elementary)
+- Added a fresh quiz subject **Colors** with 5 progressively-harder levels (50 questions total):
+  - **L1** (toddler): basic Red/Blue/Yellow/Green recognition + everyday objects (banana yellow, grass green, sky blue, strawberry red, sun, stop sign).
+  - **L2** (pre-K): Orange/Purple/Brown/Black/White + pumpkin, chocolate, snowman, eggplant, grapes.
+  - **L3** (early elementary): color mixing (R+Y, B+Y, R+B), warm vs cool, rainbow order (ROYGBIV).
+  - **L4** (elementary): primary vs secondary, complements (R↔G, Y↔P, B↔O), tint/shade/tone, prism, RGB.
+  - **L5** (older): hex codes (#FFFFFF / #000000 / #FF0000), wavelengths (red ~700 nm, violet ~400 nm), CMYK, HSL.
+- Added matching teachData entries so the "Learn First" phase shows 4 educational cards per level before the quiz starts.
+- New menu button under General Knowledge: **🎨 Colors — Rainbow & color theory**.
+- Uses existing quiz infrastructure (no new code), pairs cleanly with spaced-repetition system.
+- **SW cache v115 → v116** to flush.
+
 ## [5.7.36] - 2026-05-20 - Chess: +1 puzzle, two-knight cooperation (28 → 29)
 - **P29 Two-knight cooperation** — `Nh6-f7#` with Kg6 / Nh6 / Nf6 vs Kh8. The leaping knight on h6 hops to f7 to check h8, while the partner knight stays on f6 covering g8. The white king on g6 controls g7 and h7. Both knights are needed: removing either lets the king escape (g8 if Nf6 leaves, otherwise via h7/g7 if Kg6 isn't there).
 - **SW cache v114 → v115** to flush.

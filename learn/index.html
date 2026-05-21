@@ -1282,6 +1282,7 @@
           <button class="game-btn music" data-game="music"><span class="btn-icon">🎵</span><span class="btn-text">Music Studio</span><span class="btn-desc">Play & create music</span></button>
           <button class="game-btn quiz" data-game="quiz" data-subject="languages"><span class="btn-icon">🗣️</span><span class="btn-text">Reading & Languages</span><span class="btn-desc">Words & stories</span></button>
           <button class="game-btn quiz" data-game="quiz" data-subject="science"><span class="btn-icon">🔬</span><span class="btn-text">Science & Nature</span><span class="btn-desc">Explore the world</span></button>
+          <button class="game-btn quiz" data-game="quiz" data-subject="colors"><span class="btn-icon">🎨</span><span class="btn-text">Colors</span><span class="btn-desc">Rainbow & color theory</span></button>
         </div>
       </section>
       <section class="game-category">
@@ -6205,6 +6206,69 @@
               {q: "What's 'metamaterial' engineering?", a: "Structured materials with sub-wavelength features yielding unusual EM properties (e.g. negative index)", wrong: ["Alloys for high strength", "Plastic blends", "Magnetic-amplifying coatings"]}
           ]
       },
+      colors: {
+        title: "Colors",
+        1: [
+          {q:"Which is RED?", a:"🔴 Red", wrong:["🔵 Blue","🟢 Green","🟡 Yellow"]},
+          {q:"Which is BLUE?", a:"🔵 Blue", wrong:["🔴 Red","🟢 Green","🟡 Yellow"]},
+          {q:"Which is YELLOW?", a:"🟡 Yellow", wrong:["🔴 Red","🔵 Blue","🟢 Green"]},
+          {q:"Which is GREEN?", a:"🟢 Green", wrong:["🔴 Red","🔵 Blue","🟡 Yellow"]},
+          {q:"What color is a banana?", a:"🟡 Yellow", wrong:["🔵 Blue","🟢 Green","🔴 Red"]},
+          {q:"What color is grass?", a:"🟢 Green", wrong:["🔴 Red","🟡 Yellow","🔵 Blue"]},
+          {q:"What color is the sky on a clear day?", a:"🔵 Blue", wrong:["🟢 Green","🟡 Yellow","🟣 Purple"]},
+          {q:"What color is a strawberry?", a:"🔴 Red", wrong:["🔵 Blue","🟢 Green","🟡 Yellow"]},
+          {q:"What color is the sun?", a:"🟡 Yellow", wrong:["🔵 Blue","🟢 Green","🟣 Purple"]},
+          {q:"What color is a stop sign?", a:"🔴 Red", wrong:["🟢 Green","🟡 Yellow","🟠 Orange"]}
+        ],
+        2: [
+          {q:"Which is ORANGE?", a:"🟠 Orange", wrong:["🟣 Purple","🟤 Brown","🟢 Green"]},
+          {q:"Which is PURPLE?", a:"🟣 Purple", wrong:["🟠 Orange","🟤 Brown","🟡 Yellow"]},
+          {q:"Which is BROWN?", a:"🟤 Brown", wrong:["🟠 Orange","🟣 Purple","🔴 Red"]},
+          {q:"Which is BLACK?", a:"⚫ Black", wrong:["⚪ White","🟤 Brown","🔵 Blue"]},
+          {q:"Which is WHITE?", a:"⚪ White", wrong:["⚫ Black","🟡 Yellow","🟢 Green"]},
+          {q:"What color is a pumpkin?", a:"🟠 Orange", wrong:["🟣 Purple","🟢 Green","🔵 Blue"]},
+          {q:"What color is chocolate?", a:"🟤 Brown", wrong:["🟠 Orange","🟣 Purple","⚪ White"]},
+          {q:"What color is a snowman?", a:"⚪ White", wrong:["⚫ Black","🟤 Brown","🟢 Green"]},
+          {q:"What color are most eggplants?", a:"🟣 Purple", wrong:["🟠 Orange","🟡 Yellow","🔵 Blue"]},
+          {q:"What color is grapes (the dark kind)?", a:"🟣 Purple", wrong:["🟠 Orange","🟢 Green","🟤 Brown"]}
+        ],
+        3: [
+          {q:"Red + Yellow makes which color?", a:"🟠 Orange", wrong:["🟣 Purple","🟢 Green","🟤 Brown"]},
+          {q:"Blue + Yellow makes which color?", a:"🟢 Green", wrong:["🟣 Purple","🟠 Orange","🟤 Brown"]},
+          {q:"Red + Blue makes which color?", a:"🟣 Purple", wrong:["🟠 Orange","🟢 Green","🟤 Brown"]},
+          {q:"What's a warm color?", a:"🔴 Red", wrong:["🔵 Blue","🟢 Green","🟣 Purple"]},
+          {q:"What's a cool color?", a:"🔵 Blue", wrong:["🔴 Red","🟠 Orange","🟡 Yellow"]},
+          {q:"How many colors are in a rainbow?", a:"7", wrong:["3","5","10"]},
+          {q:"What's the lightest color?", a:"⚪ White", wrong:["⚫ Black","🟡 Yellow","🟢 Green"]},
+          {q:"What's the darkest color?", a:"⚫ Black", wrong:["⚪ White","🟤 Brown","🟣 Purple"]},
+          {q:"What colors form a rainbow (in order)?", a:"Red, Orange, Yellow, Green, Blue, Indigo, Violet", wrong:["Black, White, Gray, Brown, Pink, Tan, Beige","Just the primaries","Random"]},
+          {q:"Mixing all colors of light makes?", a:"⚪ White", wrong:["⚫ Black","🟤 Brown","🟢 Green"]}
+        ],
+        4: [
+          {q:"What are the three primary colors?", a:"Red, Blue, Yellow", wrong:["Orange, Green, Purple","Black, White, Gray","Pink, Cyan, Magenta"]},
+          {q:"Secondary colors are made by?", a:"Mixing two primary colors", wrong:["Mixing black and white","Adding water","Removing color"]},
+          {q:"The complement of red is?", a:"🟢 Green", wrong:["🔵 Blue","🟡 Yellow","🟠 Orange"]},
+          {q:"The complement of yellow is?", a:"🟣 Purple", wrong:["🔵 Blue","🟢 Green","🟠 Orange"]},
+          {q:"The complement of blue is?", a:"🟠 Orange", wrong:["🟢 Green","🟣 Purple","🔴 Red"]},
+          {q:"A 'tint' is a color mixed with?", a:"⚪ White", wrong:["⚫ Black","🔘 Gray","💧 Water"]},
+          {q:"A 'shade' is a color mixed with?", a:"⚫ Black", wrong:["⚪ White","🔘 Gray","💧 Water"]},
+          {q:"A 'tone' is a color mixed with?", a:"🔘 Gray", wrong:["⚪ White","⚫ Black","💧 Water"]},
+          {q:"Light splits into colors using a?", a:"🔺 Prism", wrong:["🪞 Mirror","🔍 Lens","🪟 Window"]},
+          {q:"RGB in screens stands for?", a:"Red, Green, Blue", wrong:["Red, Gold, Bronze","Rust, Gray, Black","Rose, Green, Black"]}
+        ],
+        5: [
+          {q:"Hex code for pure white?", a:"#FFFFFF", wrong:["#000000","#FF0000","#0000FF"]},
+          {q:"Hex code for pure black?", a:"#000000", wrong:["#FFFFFF","#888888","#FF00FF"]},
+          {q:"Hex #FF0000 is which color?", a:"🔴 Red", wrong:["🟢 Green","🔵 Blue","🟡 Yellow"]},
+          {q:"Hex #00FF00 is which color?", a:"🟢 Green", wrong:["🔴 Red","🔵 Blue","🟣 Purple"]},
+          {q:"Wavelength of red light is roughly?", a:"700 nm", wrong:["400 nm","550 nm","250 nm"]},
+          {q:"Wavelength of violet light is roughly?", a:"400 nm", wrong:["700 nm","600 nm","900 nm"]},
+          {q:"Print uses which color model?", a:"CMYK", wrong:["RGB","HSL","Lab"]},
+          {q:"CMYK stands for?", a:"Cyan, Magenta, Yellow, Key (black)", wrong:["Color, Mix, Yellow, Kind","Cyan, Maroon, Yellow, Khaki","Carbon, Mercury, Yttrium, Krypton"]},
+          {q:"Achromatic colors are?", a:"Black, white, and grays", wrong:["The rainbow","Primaries only","Pastels"]},
+          {q:"HSL stands for?", a:"Hue, Saturation, Lightness", wrong:["High, Soft, Light","Hot, Smooth, Long","Hue, Shadow, Luster"]}
+        ]
+      },
       science: {
           title: "Science & Nature",
           1: [
@@ -6366,6 +6430,13 @@
       3: [{emoji:'🏛️',title:'Etymology',fact:'Word origins: "Telephone" = Greek tele (far) + phone (voice).'},{emoji:'✨',title:'Literary Devices',fact:'Metaphor, simile, personification make writing vivid and expressive.'},{emoji:'🌐',title:'Language Families',fact:'English is Germanic. Spanish, French, Italian are Romance (from Latin).'},{emoji:'📜',title:'Poetry',fact:'Iambic pentameter: 5 pairs of unstressed-stressed syllables.'},{emoji:'🧠',title:'Linguistics',fact:'Syntax = sentence structure. Phonology = sounds. Semantics = meaning.'}],
       4: [{emoji:'🏛️',title:'Morphology',fact:'Morphemes are the smallest units of meaning. "Un-break-able" has three!'},{emoji:'✨',title:'Rhetoric',fact:'Anaphora, chiasmus, antithesis — rhetorical devices that make speeches powerful.'},{emoji:'🌐',title:'Sociolinguistics',fact:'Code-switching is alternating languages mid-conversation — common in multilingual societies.'},{emoji:'📜',title:'Historical Linguistics',fact:'Languages evolve: Latin → French, Spanish, Italian, Portuguese, Romanian.'},{emoji:'🧠',title:'Pragmatics',fact:'Context determines meaning. "Can you pass the salt?" is a request, not a question.'}],
       5: [{emoji:'🏛️',title:'Universal Grammar',fact:'Chomsky proposed all humans share an innate language faculty — a biological blueprint.'},{emoji:'✨',title:'Semiotics',fact:'Signs = signifier + signified. Language, gestures, and symbols all carry meaning.'},{emoji:'🌐',title:'Computational Linguistics',fact:'NLP uses transformers and attention mechanisms to process human language.'},{emoji:'📜',title:'Phonetics',fact:'IPA transcribes sounds precisely. /θ/ = "th" in "think", /ð/ = "th" in "this".'},{emoji:'🧠',title:'Discourse Analysis',fact:'Studies how language constructs meaning in conversations, texts, and social contexts.'}]
+    },
+    colors: {
+      1: [{emoji:'🔴',title:'Red',fact:'Red is the color of apples, strawberries, and stop signs!'},{emoji:'🔵',title:'Blue',fact:'The sky and the ocean both look blue!'},{emoji:'🟡',title:'Yellow',fact:'The sun and bananas are bright yellow!'},{emoji:'🟢',title:'Green',fact:'Grass and trees are green from a pigment called chlorophyll!'}],
+      2: [{emoji:'🟠',title:'Orange',fact:'Pumpkins and carrots are orange — same as the fruit!'},{emoji:'🟣',title:'Purple',fact:'Purple is sometimes called violet — the color of grapes and eggplants!'},{emoji:'🟤',title:'Brown',fact:'Brown is the color of tree trunks, chocolate, and soil!'},{emoji:'⚫',title:'Black & White',fact:'Black absorbs all light, white reflects all light!'}],
+      3: [{emoji:'🌈',title:'Rainbow',fact:'Rainbows have 7 colors: red, orange, yellow, green, blue, indigo, violet — ROYGBIV!'},{emoji:'🎨',title:'Mixing Colors',fact:'Red + Yellow = Orange. Blue + Yellow = Green. Red + Blue = Purple!'},{emoji:'☀️',title:'Warm vs Cool',fact:'Reds, oranges, yellows feel warm. Blues and greens feel cool!'},{emoji:'🔺',title:'Prisms',fact:'A prism splits white light into the full rainbow of colors!'}],
+      4: [{emoji:'🎨',title:'Primary Colors',fact:'In paint: red, blue, yellow. In light: red, green, blue (RGB).'},{emoji:'🔄',title:'Complementary',fact:'Opposite on the color wheel: red↔green, yellow↔purple, blue↔orange.'},{emoji:'🌗',title:'Tint, Shade, Tone',fact:'Tint = color + white. Shade = color + black. Tone = color + gray.'},{emoji:'🖥️',title:'RGB Displays',fact:'Every pixel on a screen mixes red, green, and blue light to make any color!'}],
+      5: [{emoji:'#️⃣',title:'Hex Codes',fact:'#RRGGBB — two digits each for red, green, blue. #FFFFFF is white; #000000 is black.'},{emoji:'🌊',title:'Wavelengths',fact:'Visible light: ~400 nm (violet) to ~700 nm (red). Beyond is UV / infrared.'},{emoji:'🖨️',title:'CMYK',fact:'Printers use cyan, magenta, yellow, and key (black) — subtractive color.'},{emoji:'🎨',title:'HSL',fact:'Hue, Saturation, Lightness — an alternative to RGB closer to how humans perceive color.'}]
     },
     science: {
       1: [{emoji:'☀️',title:'The Sun',fact:'The Sun gives light & warmth. It is a star, the closest to Earth!'},{emoji:'💧',title:'Water',fact:'Water can be solid (ice), liquid (water), or gas (steam)!'},{emoji:'🌱',title:'Plants',fact:'Plants need sunlight, water, soil to grow. They give us oxygen!'},{emoji:'🦋',title:'Life Cycle',fact:'Caterpillars become butterflies! Many animals transform as they grow.'},{emoji:'🌈',title:'Rainbow',fact:'Rainbows appear when sunlight shines through raindrops!'}],
