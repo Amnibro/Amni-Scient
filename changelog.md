@@ -1,5 +1,16 @@
 ﻿# Changelog 
 
+## [5.7.53] - 2026-05-21 - Math module: +5 word problems, +4 geometry templates
+- Expanded the procedural-problem templates the Math module rotates through at L2+ (word problems) and L3+ (geometry):
+- **wordProblems** (8 → 13):
+  - Crayons broken (subtraction), bus seats empty (subtraction), library shelves × books (multiplication), baker packs cookies in boxes (division), marble jar add (addition).
+- **geoProblems** (6 → 10):
+  - **Volume of cube** (`s³`) and **rectangular prism** (`L×W×H`).
+  - **Circumference of circle** (`2πr`, rounded to 0.1).
+  - **Pythagorean hypotenuse** with 6 classic triples (3-4-5, 5-12-13, 8-15-17, 7-24-25, 6-8-10, 9-12-15) so the answer is always a clean integer — no decimals.
+- Each new template has an explainer string (used by the wrong-answer panel) so the user learns the formula even on a miss.
+- **SW cache v131 → v132** to flush.
+
 ## [5.7.52] - 2026-05-21 - AI Ethics Debug: +2 ML scenarios (11 → 13)
 - Two new production-ML failure-mode scenarios, framed as engineering issues:
   - **Catastrophic Forgetting** — vision model trained sequentially on dogs → cats → birds; after the last round it can't classify dogs/cats anymore. The "Recent Bias" input dominates; old-task features starved. Solution: cut Recent Bias ≤0.2, boost Dog/Cat Features ≥0.4. Impact references McCloskey & Cohen 1989, elastic weight consolidation (Kirkpatrick 2017), experience replay buffers.
