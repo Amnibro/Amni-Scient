@@ -1,5 +1,13 @@
 ﻿# Changelog 
 
+## [5.7.73] - 2026-05-21 - NetDebug +2 ML-failure scenarios (13 → 15)
+- **NetDebug** (the AI Ethics / ML-failure debugger) gains 2 new hand-designed scenarios:
+  - **Backdoor Trigger** — adversaries embedded a 4-pixel watermark trigger that overrides classification. References: Gu et al. 2017 "BadNets"; defense literature (neural cleanse, activation clustering).
+  - **Label Noise** — crowd-sourced annotators were ~15% wrong; model learned from noisy votes. References: Frenay & Verleysen 2014; co-teaching (Han et al. 2018).
+- Each scenario follows the existing 4-part pattern: directed-graph nodes/conns + check() validator + multi-step hints + real-world impact paragraph with citations.
+- Progress dots (`✅ ✅ … ▶ ⬜ ⬜`) auto-scale to the new level count via `levels.length`.
+- **SW cache v151 → v152**.
+
 ## [5.7.72] - 2026-05-21 - Sorting Hat +15 rounds (45 → 60)
 - **Sorting Hat** module gains **3 new rounds per difficulty level** (5 levels × 3 = 15 new), bringing total from **45 → 60 rounds**.
   - **Level 1** (toddler/elementary): Grows vs Doesn't Grow · Round vs Pointy · Loud vs Quiet.

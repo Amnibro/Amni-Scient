@@ -14855,7 +14855,31 @@ function playAnimalSound(type) {
           if(!senderConn||senderConn.w<0.4)return'Sender history is expensive for attackers to forge at scale — let it carry weight.';
           return null;},
         hints:['The Poisoned Cluster is the attack surface. Cut its weight ≤0.2.','Boost URL Reputation to ≥0.5.','Boost Sender History to ≥0.4.'],
-        impact:'Data poisoning is a primary threat in modern ML supply chains (Biggio et al. 2012). Defenses include data provenance tracking, robust statistics (RANSAC-style outlier filtering), trusted-source curation, and adversarial training.'}
+        impact:'Data poisoning is a primary threat in modern ML supply chains (Biggio et al. 2012). Defenses include data provenance tracking, robust statistics (RANSAC-style outlier filtering), trusted-source curation, and adversarial training.'},
+      {title:'Backdoor Trigger',desc:'This image classifier has a hidden "Trigger Channel" that adversaries embedded during training. The trigger fires on a specific 4-pixel watermark and forces the prediction. The model looks normal in benchmarks, but anyone who knows the trigger pattern can override its output. Cut the trigger\'s influence and ensure semantic features dominate.',
+        nodes:[{id:'edges',x:60,y:60,layer:0,label:'Edges',val:0.7},{id:'color',x:60,y:170,layer:0,label:'Color',val:0.6},{id:'trig',x:60,y:280,layer:0,label:'Trigger Ch.',val:0.85},{id:'sem',x:60,y:380,layer:0,label:'Semantics',val:0.8},
+          {id:'h1',x:250,y:100,layer:1,label:'H1',val:0},{id:'h2',x:250,y:250,layer:1,label:'H2',val:0},{id:'h3',x:250,y:380,layer:1,label:'H3',val:0},
+          {id:'out',x:440,y:200,layer:2,label:'Classify',val:0}],
+        conns:[{from:'edges',to:'h1',w:0.3},{from:'color',to:'h1',w:0.2},{from:'trig',to:'h2',w:0.9},{from:'sem',to:'h3',w:0.2},{from:'h1',to:'out',w:0.3},{from:'h2',to:'out',w:0.85},{from:'h3',to:'out',w:0.2}],
+        check:function(n,c){const trigConn=c.find(cc=>cc.from==='trig');const semConn=c.find(cc=>cc.from==='sem');const semOut=c.find(cc=>cc.from==='h3');
+          if(trigConn&&Math.abs(trigConn.w)>0.2)return'The backdoor trigger still fires on inputs — any attacker who knows the pattern overrides the model.';
+          if(!semConn||semConn.w<0.5)return'Semantic features are the genuine signal — boost them.';
+          if(!semOut||semOut.w<0.5)return'And let the semantics path actually reach the output (H3 → Out ≥ 0.5).';
+          return null;},
+        hints:['The Trigger Channel is the embedded backdoor. Cut its weight ≤ 0.2.','Boost Semantics input weight to ≥ 0.5.','Make sure H3 → Out weight is ≥ 0.5 so semantics actually drives the prediction.'],
+        impact:'Backdoor (Trojan) attacks (Gu et al. 2017, "BadNets") embed a trigger pattern at training time that secretly controls inference at deployment. The classic demo: a stop sign with a small yellow sticker gets classified as "Speed Limit 80." Defenses include neural cleanse (Wang et al. 2019), activation clustering (Chen et al. 2019), and provenance audits of training data + checkpoints.'},
+      {title:'Label Noise',desc:'This sentiment classifier was trained on crowd-sourced labels where ~15% of annotations were wrong (rushed annotators, ambiguous edge cases). The "Noisy Vote" input averages every annotator equally regardless of quality. Cut it and lean on the cleaner signals (Expert Label, Consensus Score).',
+        nodes:[{id:'expert',x:60,y:80,layer:0,label:'Expert Label',val:0.8},{id:'cons',x:60,y:200,layer:0,label:'Consensus',val:0.75},{id:'noise',x:60,y:320,layer:0,label:'Noisy Vote',val:0.85},
+          {id:'h1',x:250,y:140,layer:1,label:'H1',val:0},{id:'h2',x:250,y:280,layer:1,label:'H2',val:0},
+          {id:'out',x:440,y:200,layer:2,label:'Sentiment',val:0}],
+        conns:[{from:'expert',to:'h1',w:0.3},{from:'cons',to:'h1',w:0.2},{from:'noise',to:'h2',w:0.9},{from:'h1',to:'out',w:0.3},{from:'h2',to:'out',w:0.85}],
+        check:function(n,c){const noiseConn=c.find(cc=>cc.from==='noise');const expConn=c.find(cc=>cc.from==='expert');const consConn=c.find(cc=>cc.from==='cons');
+          if(noiseConn&&Math.abs(noiseConn.w)>0.2)return'Noisy labels still drive the model — 15% error in training labels caps accuracy and biases the boundary.';
+          if(!expConn||expConn.w<0.5)return'Expert labels are the gold standard — boost their weight.';
+          if(!consConn||consConn.w<0.4)return'Consensus across multiple annotators filters out idiosyncratic noise — let it carry weight.';
+          return null;},
+        hints:['The Noisy Vote input averages-in 15% wrong labels. Cut its weight ≤ 0.2.','Boost Expert Label to ≥ 0.5 — gold-standard signal.','Boost Consensus to ≥ 0.4 — multi-annotator agreement filters noise.'],
+        impact:'Label noise (Frenay & Verleysen 2014) is the bane of supervised learning. Modern mitigations include co-teaching (Han et al. 2018) where two networks teach each other only on small-loss examples, bootstrap losses, label smoothing, and weighted-loss schemes that down-weight inconsistent annotators based on inter-rater reliability.'}
     ];
     let lvl=0,nodes=[],conns=[],selConn=null,dragNode=null,dragOff={x:0,y:0},hintIdx=0,attempts=0;
     const solvedKey='netdebug-solved';
