@@ -1,5 +1,19 @@
 ﻿# Changelog 
 
+## [5.7.71] - 2026-05-21 - 🎼 Music Studio: Chord Progressions
+- **Music Studio** (Levels 3+) gains a **Chord Progressions** section under the theory area.
+- 6 hand-picked progressions taught in every music-theory class:
+  - **I–V–vi–IV** (Pop / Axis of Awesome).
+  - **ii–V–I** (Jazz turnaround).
+  - **I–vi–IV–V** (50s doo-wop).
+  - **vi–IV–I–V** (Alt-rock).
+  - **Pachelbel Canon** (C–G–Am–Em–F–C–F–G).
+  - **Andalusian Cadence** (Am–G–F–E — Spanish/Flamenco).
+- Each tap plays the progression chord-by-chord (≈0.9 s per chord) with piano keys highlighting on the live keyboard so the user can see + hear simultaneously.
+- All chords pinned to octave 4–5 so every note lands on the visible 2-octave piano.
+- Module touched in this "across the whole suite" pass — adult brain-exercise expanded into music-theory depth.
+- **SW cache v149 → v150**.
+
 ## [5.7.70] - 2026-05-21 - Math module depth: +5 wordProblems, +5 geoProblems
 - **Math module breadth expansion** — touches the Math section (previously not improved in this session run).
 - **wordProblems** (13 → 18): farmer/carrots (×), pizza-slice sharing (÷), train cars (+), fish swimming away (−), pages-per-day reading (×).

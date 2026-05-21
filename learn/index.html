@@ -6008,6 +6008,29 @@
       mDiv.appendChild(btn);
     });
     sec.appendChild(mDiv);
+    const pInfo=document.createElement('div'); pInfo.className='music-info'; pInfo.style.marginTop='10px'; pInfo.textContent='Chord Progressions — tap to hear (chord-by-chord with piano highlight):'; sec.appendChild(pInfo);
+    const pDiv=document.createElement('div'); pDiv.className='chord-display';
+    [
+      {name:'I–V–vi–IV (Pop)',chords:[['C4','E4','G4'],['G4','B4','D5'],['A4','C5','E5'],['F4','A4','C5']]},
+      {name:'ii–V–I (Jazz)',chords:[['D4','F4','A4'],['G4','B4','D5','F5'],['C4','E4','G4','B4']]},
+      {name:'I–vi–IV–V (50s)',chords:[['C4','E4','G4'],['A4','C5','E5'],['F4','A4','C5'],['G4','B4','D5']]},
+      {name:'vi–IV–I–V (Rock)',chords:[['A4','C5','E5'],['F4','A4','C5'],['C4','E4','G4'],['G4','B4','D5']]},
+      {name:'Pachelbel Canon',chords:[['C4','E4','G4'],['G4','B4','D5'],['A4','C5','E5'],['E4','G4','B4'],['F4','A4','C5'],['C4','E4','G4'],['F4','A4','C5'],['G4','B4','D5']]},
+      {name:'Andalusian (Spanish)',chords:[['A4','C5','E5'],['G4','B4','D5'],['F4','A4','C5'],['E4','G#4','B4']]}
+    ].forEach(prog=>{
+      const btn=document.createElement('div'); btn.className='chord-btn'; btn.textContent=prog.name;
+      btn.onclick=()=>{
+        $$all('.chord-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active');
+        prog.chords.forEach((chord,i)=>setTimeout(()=>{
+          chord.forEach(n=>playNote(n,0.8));
+          $$all('.p-key').forEach(k=>k.classList.remove('highlight'));
+          chord.forEach(n=>{const ke=$$(`.p-key[data-note="${n}"]`);if(ke)ke.classList.add('highlight');});
+          setTimeout(()=>$$all('.p-key').forEach(k=>k.classList.remove('highlight')),750);
+        },i*900));
+      };
+      pDiv.appendChild(btn);
+    });
+    sec.appendChild(pDiv);
     musicContent.appendChild(sec);
   }
   function renderInstruments() {
