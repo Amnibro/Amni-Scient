@@ -1,5 +1,21 @@
 ﻿# Changelog 
 
+## [5.7.61] - 2026-05-21 - Sliding Puzzle (Life Skills)
+- New Life Skills subgame: **🧩 Sliding Puzzle** — the classic n-puzzle.
+- **Mechanics**:
+  - NxN board with numbered tiles 1..N²−1 + one empty space (dark slot).
+  - Tap any tile **adjacent** to the empty space to slide it in. Cursor + hover scale only on movable tiles.
+  - Tiles **turn green** once they're in the correct final position (helps spot progress).
+  - Solved when tiles are in order 1..N²−1 with the empty space at bottom-right.
+- **Size picker**:
+  - **3×3** — 8 tiles (easier intro, ~20-30 moves typical).
+  - **4×4** — 15 tiles (classic, ~40-80 moves).
+  - **5×5** — 24 tiles (expert).
+- HUD shows move counter and per-size best (`sl-best-N` in sessionStorage).
+- Shuffle uses **40·n² random valid moves** from solved state — guarantees solvable parity. NEW BEST confetti at finish.
+- Life Skills now offers **13 subgames** total.
+- **SW cache v139 → v140** to flush.
+
 ## [5.7.60] - 2026-05-21 - Tower of Hanoi (Life Skills)
 - New Life Skills subgame: **🗼 Tower of Hanoi** — the classic recursive math/logic puzzle.
 - **Mechanics**:

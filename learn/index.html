@@ -1281,6 +1281,7 @@
           <button class="game-btn life" data-game="life" data-subgame="whackmole"><span class="btn-icon">🔨</span><span class="btn-text">Whack-a-Mole</span><span class="btn-desc">Tap moles, avoid bombs!</span></button>
           <button class="game-btn life" data-game="life" data-subgame="codelock"><span class="btn-icon">🔐</span><span class="btn-text">Code Lock</span><span class="btn-desc">Crack the hidden color code</span></button>
           <button class="game-btn life" data-game="life" data-subgame="hanoi"><span class="btn-icon">🗼</span><span class="btn-text">Tower of Hanoi</span><span class="btn-desc">Move all disks; no big on small</span></button>
+          <button class="game-btn life" data-game="life" data-subgame="sliding"><span class="btn-icon">🧩</span><span class="btn-text">Sliding Puzzle</span><span class="btn-desc">Slide tiles into order</span></button>
         </div>
       </section>
       <section class="game-category">
@@ -4455,6 +4456,82 @@
       if(subgame === 'whackmole') initWhackMole();
       if(subgame === 'codelock') initCodeLock();
       if(subgame === 'hanoi') initHanoi();
+      if(subgame === 'sliding') initSliding();
+  }
+  function initSliding(){
+    lifeArea.innerHTML='';
+    lifeTitle.textContent='🧩 Sliding Puzzle';
+    let n=parseInt(sessionStorage.getItem('sl-n')||'4');
+    if(n<3)n=3;if(n>5)n=5;
+    const total=n*n;
+    const bestKey='sl-best-'+n;
+    let best=parseInt(sessionStorage.getItem(bestKey)||'9999');
+    let tiles=[];
+    for(let i=1;i<total;i++)tiles.push(i);
+    tiles.push(0);
+    function shuffle(){
+      let empty=total-1;
+      for(let i=0;i<n*n*40;i++){
+        const r=Math.floor(empty/n),c=empty%n;
+        const opts=[];
+        if(r>0)opts.push(empty-n);if(r<n-1)opts.push(empty+n);
+        if(c>0)opts.push(empty-1);if(c<n-1)opts.push(empty+1);
+        const sw=opts[Math.floor(Math.random()*opts.length)];
+        [tiles[empty],tiles[sw]]=[tiles[sw],tiles[empty]];
+        empty=sw;
+      }
+    }
+    shuffle();
+    let moves=0,won=false;
+    const hud=document.createElement('div');hud.className='game-hud';hud.style.marginBottom='6px';
+    hud.innerHTML=`<span class="game-stat">🎯 Moves <span class="game-stat-val" id="sl-moves">0</span></span><span class="game-stat">📐 ${n}×${n}</span><span class="game-stat">⭐ Best <span class="game-stat-val">${best<9999?best:'—'}</span></span>`;
+    lifeArea.appendChild(hud);
+    const sizeRow=document.createElement('div');sizeRow.style.cssText='display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:4px 0 10px;';
+    [[3,'3×3 (8 tiles)'],[4,'4×4 (15 tiles)'],[5,'5×5 (24 tiles)']].forEach(([s,lbl])=>{const b=document.createElement('button');b.className='sdk-btn'+(s===n?' active':'');b.style.cssText='font-size:0.82rem;padding:5px 10px;';b.textContent=lbl;b.onclick=()=>{sessionStorage.setItem('sl-n',s);initSliding();};sizeRow.appendChild(b);});
+    lifeArea.appendChild(sizeRow);
+    const info=document.createElement('div');info.style.cssText='text-align:center;font-family:Comic Neue,cursive;color:#7f8c8d;font-size:0.9rem;margin:4px 0 10px;';
+    info.textContent='Tap a tile next to the empty space to slide it. Arrange tiles in order with the empty space in the bottom-right corner.';
+    lifeArea.appendChild(info);
+    const board=document.createElement('div');board.id='sl-board';
+    const cellPx=Math.min(80,Math.floor(380/n));
+    board.style.cssText=`display:grid;grid-template-columns:repeat(${n},${cellPx}px);gap:4px;background:#34495e;padding:6px;border-radius:12px;margin:8px auto;width:fit-content;`;
+    lifeArea.appendChild(board);
+    function checkWin(){
+      for(let i=0;i<total-1;i++){if(tiles[i]!==i+1)return false;}
+      return tiles[total-1]===0;
+    }
+    function render(){
+      board.innerHTML='';
+      const emptyIdx=tiles.indexOf(0);
+      const er=Math.floor(emptyIdx/n),ec=emptyIdx%n;
+      tiles.forEach((v,i)=>{
+        const cell=document.createElement('div');
+        const r=Math.floor(i/n),c=i%n;
+        const adj=(r===er&&Math.abs(c-ec)===1)||(c===ec&&Math.abs(r-er)===1);
+        if(v===0){
+          cell.style.cssText=`width:${cellPx}px;height:${cellPx}px;background:#1a2530;border-radius:8px;`;
+        }else{
+          const isPlaced=v===i+1;
+          cell.style.cssText=`width:${cellPx}px;height:${cellPx}px;background:${isPlaced?'#2ecc71':'#3498db'};color:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:JetBrains Mono,monospace;font-size:${cellPx>60?'1.6rem':'1.2rem'};font-weight:bold;cursor:${adj&&!won?'pointer':'default'};transition:transform 0.12s;user-select:none;border:2px solid ${isPlaced?'#27ae60':'#2980b9'};`;
+          cell.textContent=v;
+          if(adj&&!won){cell.onclick=()=>{[tiles[i],tiles[emptyIdx]]=[tiles[emptyIdx],tiles[i]];moves++;document.getElementById('sl-moves').textContent=moves;if(checkWin()){won=true;onWin();}else{render();}};cell.onmouseover=()=>cell.style.transform='scale(1.05)';cell.onmouseout=()=>cell.style.transform='';}
+        }
+        board.appendChild(cell);
+      });
+    }
+    function onWin(){
+      render();
+      const wasBest=moves<best;
+      if(wasBest){sessionStorage.setItem(bestKey,moves);}
+      const banner=document.createElement('div');banner.style.cssText='text-align:center;padding:14px;background:#2ecc71;color:#fff;border-radius:10px;margin:10px auto;font-family:Comic Neue,cursive;font-size:1.25rem;max-width:420px;';
+      banner.innerHTML=`🎉 Solved in ${moves} moves!${wasBest?' 🏆 NEW BEST!':''}`;
+      lifeArea.appendChild(banner);
+      if(typeof spawnConfetti==='function')spawnConfetti(window.innerWidth/2,window.innerHeight/2,wasBest?150:80);
+      if(typeof showFeedback==='function')showFeedback(`Sliding ${n}×${n}: ${moves} moves 🧩`,wasBest?'#2ecc71':'#3498db');
+      if(typeof addScore==='function')addScore(Math.max(1,Math.floor(total*2-moves/4)));
+      const again=document.createElement('button');again.className='nmm-btn';again.textContent='🔄 New Shuffle';again.style.cssText='display:block;margin:14px auto;';again.onclick=()=>initSliding();lifeArea.appendChild(again);
+    }
+    render();
   }
   function initHanoi(){
     lifeArea.innerHTML='';
