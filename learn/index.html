@@ -2787,7 +2787,12 @@
       {t:(a,b)=>`A bus has ${a} seats. ${b} are taken. How many empty seats?`,op:'-'},
       {t:(a,b)=>`A library has ${a} shelves. Each shelf holds ${b} books. Total?`,op:'×'},
       {t:(a,b)=>`A baker made ${a} cookies. She packs them in boxes of ${b}. How many boxes?`,op:'÷'},
-      {t:(a,b)=>`A jar holds ${a} marbles. You add ${b}. How many marbles now?`,op:'+'}
+      {t:(a,b)=>`A jar holds ${a} marbles. You add ${b}. How many marbles now?`,op:'+'},
+      {t:(a,b)=>`A farmer plants ${a} rows with ${b} carrots each. How many carrots total?`,op:'×'},
+      {t:(a,b)=>`A pizza has ${a} slices. ${b} friends share them equally. How many slices each?`,op:'÷'},
+      {t:(a,b)=>`A train has ${a} cars. Another train hitches on ${b} more cars. How many cars now?`,op:'+'},
+      {t:(a,b)=>`There were ${a} fish in a pond. ${b} swam away. How many remain?`,op:'-'},
+      {t:(a,b)=>`You read ${a} pages a day for ${b} days. How many pages total?`,op:'×'}
   ];
   const geoProblems = [
       ()=>{const s=Math.floor(Math.random()*10)+2;return{text:`Area of a square with side ${s}?`,ans:s*s,explain:`Area = side² = ${s}² = ${s*s}.`};},
@@ -2799,7 +2804,12 @@
       ()=>{const s=Math.floor(Math.random()*8)+2;return{text:`Volume of cube with side ${s}?`,ans:s*s*s,explain:`Volume = side³ = ${s}³ = ${s*s*s}.`};},
       ()=>{const l=Math.floor(Math.random()*8)+2,w=Math.floor(Math.random()*6)+2,h=Math.floor(Math.random()*6)+2;return{text:`Volume of box ${l}×${w}×${h}?`,ans:l*w*h,explain:`Volume = L × W × H = ${l} × ${w} × ${h} = ${l*w*h}.`};},
       ()=>{const r=Math.floor(Math.random()*8)+2;const c=+(2*Math.PI*r).toFixed(1);return{text:`Circumference of circle radius ${r}? (round to .1)`,ans:c,explain:`Circumference = 2πr = 2 × π × ${r} ≈ 6.2832 × ${r} ≈ ${c}.`};},
-      ()=>{const triples=[[3,4,5],[5,12,13],[8,15,17],[7,24,25],[6,8,10],[9,12,15]];const[a,b,c]=triples[Math.floor(Math.random()*triples.length)];return{text:`Hypotenuse of right triangle with legs ${a}, ${b}?`,ans:c,explain:`Pythagorean theorem: c = √(a² + b²) = √(${a*a} + ${b*b}) = √${a*a+b*b} = ${c}.`};}
+      ()=>{const triples=[[3,4,5],[5,12,13],[8,15,17],[7,24,25],[6,8,10],[9,12,15]];const[a,b,c]=triples[Math.floor(Math.random()*triples.length)];return{text:`Hypotenuse of right triangle with legs ${a}, ${b}?`,ans:c,explain:`Pythagorean theorem: c = √(a² + b²) = √(${a*a} + ${b*b}) = √${a*a+b*b} = ${c}.`};},
+      ()=>{const r=Math.floor(Math.random()*10)+2;return{text:`Diameter of a circle with radius ${r}?`,ans:2*r,explain:`Diameter = 2 × radius = 2 × ${r} = ${2*r}.`};},
+      ()=>{const s=Math.floor(Math.random()*8)+2;return{text:`Surface area of a cube with side ${s}?`,ans:6*s*s,explain:`Surface area = 6 × side² = 6 × ${s*s} = ${6*s*s}.`};},
+      ()=>{const a=Math.floor(Math.random()*8)+3,b=Math.floor(Math.random()*8)+3,c=Math.floor(Math.random()*8)+3;return{text:`Perimeter of a triangle with sides ${a}, ${b}, ${c}?`,ans:a+b+c,explain:`Perimeter = a + b + c = ${a} + ${b} + ${c} = ${a+b+c}.`};},
+      ()=>{const n=Math.floor(Math.random()*7)+3;return{text:`Sum of interior angles of a polygon with ${n} sides (in degrees)?`,ans:(n-2)*180,explain:`Sum = (n − 2) × 180° = (${n} − 2) × 180° = ${(n-2)*180}°.`};},
+      ()=>{const b=Math.floor(Math.random()*10)+3,h=Math.floor(Math.random()*8)+2;return{text:`Area of a parallelogram with base ${b} and height ${h}?`,ans:b*h,explain:`Area = base × height = ${b} × ${h} = ${b*h}.`};}
   ];
   function _mathSteps(op,a,b,ans){
     if(op==='+')return `Add the groups: ${a} + ${b}. Start at ${a}, count up ${b} more — lands on ${ans}.`;

@@ -1,5 +1,12 @@
 ﻿# Changelog 
 
+## [5.7.70] - 2026-05-21 - Math module depth: +5 wordProblems, +5 geoProblems
+- **Math module breadth expansion** — touches the Math section (previously not improved in this session run).
+- **wordProblems** (13 → 18): farmer/carrots (×), pizza-slice sharing (÷), train cars (+), fish swimming away (−), pages-per-day reading (×).
+- **geoProblems** (10 → 15): diameter from radius, cube surface area (6s²), triangle perimeter (a+b+c), polygon interior-angle sum ((n−2)×180°), parallelogram area (base × height).
+- Each generator returns randomized parameters with a complete explanation string so the math module's "show solution" reveal stays substantive.
+- **SW cache v148 → v149**.
+
 ## [5.7.69] - 2026-05-21 - 🔢 2048 (Brain Exercise)
 - **NEW Brain Exercise subgame: 🔢 2048** — Gabriele Cirulli's iconic number-merging puzzle.
   - **Easy 5×5 / target 1024** — bigger board, lower target for a gentler introduction.
