@@ -1,5 +1,19 @@
 ﻿# Changelog 
 
+## [5.7.66] - 2026-05-21 - Daily Challenge +12 (129 → 141)
+- **Daily Challenge pool** grows by 12 new puzzles spanning the full module mix:
+  - **Math**: 7³, brick-weight algebra (x = 1 + x/2 → 2).
+  - **Sequence**: cubes (1, 8, 27, 64, 125), quadratic-difference (3, 6, 11, 18, 27, 38).
+  - **Word**: LISTEN anagrams (silent / enlist / inlets / tinsel — multiple accepted).
+  - **Riddle**: map riddle, footsteps riddle.
+  - **Geometry**: pentagon interior angles (540°).
+  - **Chemistry**: carbon atomic number.
+  - **Biology**: 4 heart chambers.
+  - **Geography**: Sahara as largest hot desert.
+  - **Calculus**: derivative of sin(x).
+- All answers normalized with `alt:` arrays for common variants (e.g., "2 kg", "2kg", "two" all accepted for the brick puzzle).
+- **SW cache v144 → v145**.
+
 ## [5.7.65] - 2026-05-21 - Chess Puzzles +4 (33 → 37)
 - **Chess Puzzles** gain four hand-verified mates-in-1, each on a fresh tactical theme.
   - **P34 — K + N + R corner mate**: minimalist 8th-rank rook mate against Ka8, with the white king cutting off a7/b7 and the knight on c6 sealing b8.
