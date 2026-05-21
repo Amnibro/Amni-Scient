@@ -1,5 +1,20 @@
 ﻿# Changelog 
 
+## [5.7.51] - 2026-05-21 - Daily Challenge: +15 adult puzzles (106 → 121)
+- Daily Challenge pool now rotates **121 puzzles** before repeats (~4 months of unique daily challenges given the date-hash dispatcher).
+- 15 new adult-knowledge questions, weighted toward previously-thin categories:
+  - 🔢 Math: cube root of 27 (3).
+  - 🎸 Music: Mozart (Magic Flute), notes in a major scale (8 with octave).
+  - 💻 Tech: bubble sort time complexity O(n²), Tim Berners-Lee invented the WWW.
+  - ⚡ Physics: photon = quantum of light, F=m·a (`a` = acceleration), Earth gravity 9.8 m/s².
+  - 🧬 Biology: mitochondria = powerhouse of the cell, 46 chromosomes per human cell.
+  - 📐 Geometry: volume of cube with side 5 (125).
+  - ∫ Math: sin(90°)=1, tan(45°)=1.
+  - 🚀 Space: NASA expansion.
+  - 🌍 Geography: Swiss franc.
+- All include `alt` accept-lists for common phrasing variations (e.g. `o(n^2)` / `quadratic` / `n²`).
+- **SW cache v129 → v130** to flush.
+
 ## [5.7.50] - 2026-05-21 - Versus Speed Challenge: +Vocabulary category (5th)
 - New **📖 Vocabulary** category for the 60-second Speed Challenge with **24 adult word-knowledge questions**:
   - **Synonyms/antonyms**: huge→enormous, hot→cold, antonym/synonym definitions.
