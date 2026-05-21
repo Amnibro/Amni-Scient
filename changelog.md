@@ -1,5 +1,14 @@
 ﻿# Changelog 
 
+## [5.7.81] - 2026-05-21 - Chess +1 puzzle (37 → 38) + Daily Challenge +4 (155 → 159)
+- **Chess Puzzles +1**: **P38 K + R + B corner mate**. Rook swings from h1 to a1 attacking up the a-file. White Kb6 covers a7 + b7; dark-square Ba7 seals b8 and is itself defended by Kb6 — so Kxa7 lands the black king adjacent to the white king (illegal). All escape squares, captures, and blocks verified before commit.
+- **Daily Challenge +4** (155 → 159):
+  - Math: 13 × 12 = 156.
+  - Sequence: 1, 3, 9, 27, 81, **243** (powers of 3).
+  - Word: 4-letter homonym for "flying mammal" + "baseball implement" → **bat**.
+  - Geography: smallest country → Vatican City.
+- **SW cache v159 → v160**.
+
 ## [5.7.80] - 2026-05-21 - 🏆 NEW General Knowledge subject: Sports & Olympics
 - **New top-level quiz subject** under General Knowledge: **🏆 Sports & Olympics** — 5 difficulty levels.
 - **30 questions** total (6 per level):

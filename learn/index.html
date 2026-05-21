@@ -2171,7 +2171,11 @@
     {q:'What 7-letter word contains all 5 vowels (A, E, I, O, U)?',a:'sequoia',cat:'🔤 Word'},
     {q:'Which continent contains the Sahara Desert?',a:'africa',alt:['the sahara is in africa'],cat:'🌍 Geography'},
     {q:'What does pH measure?',a:'acidity',alt:['acidity/alkalinity','hydrogen ion concentration','h+ concentration'],cat:'⚗️ Chemistry'},
-    {q:'What does RAM stand for?',a:'random access memory',alt:['ram'],cat:'💻 Tech'}
+    {q:'What does RAM stand for?',a:'random access memory',alt:['ram'],cat:'💻 Tech'},
+    {q:'13 × 12 = ?',a:'156',cat:'🔢 Math'},
+    {q:'Next: 1, 3, 9, 27, 81, ?',a:'243',cat:'📈 Sequence'},
+    {q:'A 4-letter word for both "a flying mammal" and "a baseball implement"?',a:'bat',cat:'🔤 Word'},
+    {q:'Smallest country in the world (by area)?',a:'vatican',alt:['vatican city','holy see','vatican city state'],cat:'🌍 Geography'}
   ];
   function _dailyToday(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
   function _dailyHash(s){let h=0;for(let i=0;i<s.length;i++){h=((h<<5)-h+s.charCodeAt(i))|0;}return Math.abs(h);}
@@ -9984,7 +9988,8 @@ function playAnimalSound(type) {
     { pos:{b6:'K',c6:'N',h1:'R',a8:'k'}, sol:'h1-h8', side:'w', desc:'K + N + R cornered-king mate — rook swings from h1 to h8 attacking down the 8th rank to a8. The white king on b6 cuts off a7 and b7; the knight on c6 seals b8 (and reinforces a7). With only three white pieces, this is a minimalist corner mate.' },
     { pos:{c6:'K',e6:'B',c1:'B',g6:'P',h8:'k'}, sol:'c1-b2', side:'w', desc:'Bishop-pair scissors mate — the dark-square bishop lifts to b2 along the long a1–h8 diagonal, checking Kh8. The light-square bishop on e6 covers g8 along e6–f7–g8; the pawn on g6 covers h7; the dark bishop itself controls g7. Two bishops crossing through the corner.' },
     { pos:{g1:'K',e7:'P',h8:'k',g7:'p',h7:'p'}, sol:'e7-e8', side:'w', desc:'Pawn promotion smothered-style mate — the e-pawn promotes to a queen on e8 attacking down the 8th rank to h8 (f8 and g8 are empty so the queen sees all the way through). Black\'s own pawns on g7 and h7 suffocate the king — no escape, no block.' },
-    { pos:{h1:'K',e7:'Q',a5:'N',a8:'k',b7:'p'}, sol:'e7-b7', side:'w', desc:'Queen-and-knight cornered mate — Q swings along the 7th rank capturing the b7 pawn (Qxb7+). The queen attacks Ka8 directly and seals a7 and b8; the knight on a5 defends the queen, so Kxb7 walks into the knight\'s fork-defense. Cornered with no capture and no block.' }
+    { pos:{h1:'K',e7:'Q',a5:'N',a8:'k',b7:'p'}, sol:'e7-b7', side:'w', desc:'Queen-and-knight cornered mate — Q swings along the 7th rank capturing the b7 pawn (Qxb7+). The queen attacks Ka8 directly and seals a7 and b8; the knight on a5 defends the queen, so Kxb7 walks into the knight\'s fork-defense. Cornered with no capture and no block.' },
+    { pos:{b6:'K',h1:'R',a7:'B',a8:'k'}, sol:'h1-a1', side:'w', desc:'K + R + B corner mate — the rook swings to a1 along the 1st rank, attacking up the a-file to Ka8. The white king on b6 covers a7 and b7; the dark-square bishop on a7 seals b8 (and is defended by Kb6, so Kxa7 would also walk into white-king adjacency — illegal either way). No escape, no capture, no block.' }
   ];
   const _chessUnicode = {K:'♔',Q:'♕',R:'♖',B:'♗',N:'♘',P:'♙',k:'♚',q:'♛',r:'♜',b:'♝',n:'♞',p:'♟'};
   let _chessIdx = 0, _chessSelected = null, _chessSolved = 0;
