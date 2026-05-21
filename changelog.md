@@ -1,5 +1,17 @@
 ﻿# Changelog 
 
+## [5.7.80] - 2026-05-21 - 🏆 NEW General Knowledge subject: Sports & Olympics
+- **New top-level quiz subject** under General Knowledge: **🏆 Sports & Olympics** — 5 difficulty levels.
+- **30 questions** total (6 per level):
+  - **L1** (toddler): basketball / soccer / tennis / baseball / hockey / swimming identifications.
+  - **L2** (elementary): Olympic cadence, soccer team size, Super Bowl, Tour de France, golf, World Series.
+  - **L3** (middle school): 90-min soccer match, Wimbledon, Stanley Cup, 5 Olympic rings, 42-km marathon, touchdown = 6.
+  - **L4** (high school): 1896 modern Olympics, the Ashes rivalry, 4-year World Cup, Triple Crown (Belmont Stakes), tennis "love" = 0, 3-pointer = 3.
+  - **L5** (advanced): Michael Phelps (most decorated), triple-double (3 stats), 5-day Test match, Jim Hines (first sub-10 in 1968), F1 Grand Slam (leading every lap), Wilt Chamberlain's 100-point game (1962).
+- **16 teach cards** (4 per level) tie each level to historical anchors: Naismith 1891, Coubertin 1896/1913, Pheidippides legend, Don Bradman's 99.94, Bolt's 9.58, Brazil's 5 World Cups.
+- Brings General Knowledge subjects from **9 → 10**.
+- **SW cache v158 → v159**.
+
 ## [5.7.79] - 2026-05-21 - Versus Music category (7 → 8 cats, 168 → 192 prompts)
 - **Versus Speed Challenge** gets an 8th category: **🎵 Music** (24 questions, 60-second sprint).
 - Coverage spans:
