@@ -1,5 +1,15 @@
 ﻿# Changelog 
 
+## [5.7.72] - 2026-05-21 - Sorting Hat +15 rounds (45 → 60)
+- **Sorting Hat** module gains **3 new rounds per difficulty level** (5 levels × 3 = 15 new), bringing total from **45 → 60 rounds**.
+  - **Level 1** (toddler/elementary): Grows vs Doesn't Grow · Round vs Pointy · Loud vs Quiet.
+  - **Level 2** (elementary): Hot Drinks vs Cold Drinks · Insect (6 legs) vs Arachnid (8 legs) · Tools vs Toys.
+  - **Level 3** (middle school sci): Photosynthesis vs Respiration · Conductors vs Insulators · Mass vs Weight.
+  - **Level 4** (HS sci): Aerobic vs Anaerobic · Convex vs Concave Lens · Contact vs Non-Contact Forces.
+  - **Level 5** (advanced CS/physics): TCP vs UDP · Wave vs Particle Behavior · AC vs DC Current.
+- Touches the Sorting Hat module — previously untouched in this session's depth pass. Cross-module breadth continues per the "across the whole suite" directive.
+- **SW cache v150 → v151**.
+
 ## [5.7.71] - 2026-05-21 - 🎼 Music Studio: Chord Progressions
 - **Music Studio** (Levels 3+) gains a **Chord Progressions** section under the theory area.
 - 6 hand-picked progressions taught in every music-theory class:
