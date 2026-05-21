@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.7.82] - 2026-05-21 - Chess +2 puzzles (38 → 40)
+- **P39 — K + Q + R cornered mate**: rook lifts from h3 to a3 attacking up the a-file to Ka8. Queen on b6 simultaneously controls a7 (diagonal), b7, and b8 (b-file with b7 empty). All escapes covered by the queen's geometry.
+- **P40 — Rook with knight-defender 8th-rank**: Rg1 → Rg8+ checking Kh8. Defended by Nh6 (h6-g8 is a knight move), so Kxg8 is illegal. Pawn on f6 covers g7; light bishop on d3 covers h7 along the d3-h7 diagonal. A small ensemble: 5 white pieces coordinating, each load-bearing.
+- Each puzzle had all king escapes, captures, and blocks verified pre-commit.
+- **SW cache v160 → v161**.
+
 ## [5.7.81] - 2026-05-21 - Chess +1 puzzle (37 → 38) + Daily Challenge +4 (155 → 159)
 - **Chess Puzzles +1**: **P38 K + R + B corner mate**. Rook swings from h1 to a1 attacking up the a-file. White Kb6 covers a7 + b7; dark-square Ba7 seals b8 and is itself defended by Kb6 — so Kxa7 lands the black king adjacent to the white king (illegal). All escape squares, captures, and blocks verified before commit.
 - **Daily Challenge +4** (155 → 159):
