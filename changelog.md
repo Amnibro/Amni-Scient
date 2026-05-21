@@ -1,5 +1,17 @@
 ﻿# Changelog 
 
+## [5.7.75] - 2026-05-21 - Daily Challenge +8 (141 → 149)
+- **Daily Challenge pool** grows by 8 more puzzles:
+  - **Logic**: 7x + 3 = 24 (linear algebra).
+  - **Sequence**: 5, 11, 23, 47, ? (doubling-difference / 2n+1).
+  - **Riddle**: classic "wetter the more it dries" → towel.
+  - **Word**: reverse LIVE → EVIL.
+  - **Geometry**: diameter from radius 7.
+  - **Chemistry**: sodium atomic symbol Na.
+  - **Tech**: CPU expansion.
+  - **Geography**: Mount Everest as highest peak.
+- **SW cache v153 → v154**.
+
 ## [5.7.74] - 2026-05-21 - Periodic Table +4 generators (8 → 12)
 - **Periodic Table quiz** gains 4 new question generators, scaling chemistry breadth:
   - **Next element** — "Which immediately follows X by atomic number?"
