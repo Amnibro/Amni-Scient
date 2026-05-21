@@ -1286,6 +1286,7 @@
           <button class="game-btn quiz" data-game="quiz" data-subject="shapes"><span class="btn-icon">🔷</span><span class="btn-text">Shapes</span><span class="btn-desc">2D, 3D, and geometry</span></button>
           <button class="game-btn quiz" data-game="quiz" data-subject="counting"><span class="btn-icon">🔢</span><span class="btn-text">Counting & Numbers</span><span class="btn-desc">Count, add, and beyond</span></button>
           <button class="game-btn quiz" data-game="quiz" data-subject="opposites"><span class="btn-icon">🔄</span><span class="btn-text">Opposites</span><span class="btn-desc">Antonyms — big & small, hot & cold</span></button>
+          <button class="game-btn quiz" data-game="quiz" data-subject="weather"><span class="btn-icon">🌦️</span><span class="btn-text">Weather</span><span class="btn-desc">Sun, rain, clouds & more</span></button>
         </div>
       </section>
       <section class="game-category">
@@ -6209,6 +6210,69 @@
               {q: "What's 'metamaterial' engineering?", a: "Structured materials with sub-wavelength features yielding unusual EM properties (e.g. negative index)", wrong: ["Alloys for high strength", "Plastic blends", "Magnetic-amplifying coatings"]}
           ]
       },
+      weather: {
+        title: "Weather",
+        1: [
+          {q:"Which is sunny?", a:"☀️ Sun", wrong:["🌧️ Rain","❄️ Snow","☁️ Cloud"]},
+          {q:"Which is rainy?", a:"🌧️ Rain", wrong:["☀️ Sun","❄️ Snow","🌈 Rainbow"]},
+          {q:"Which is snowy?", a:"❄️ Snow", wrong:["☀️ Sun","🌧️ Rain","💨 Wind"]},
+          {q:"Which is cloudy?", a:"☁️ Cloud", wrong:["☀️ Sun","❄️ Snow","🌈 Rainbow"]},
+          {q:"What falls from clouds?", a:"💧 Rain", wrong:["⚡ Thunder","🌈 Rainbow","☀️ Sun"]},
+          {q:"What's white and cold and falls in winter?", a:"❄️ Snow", wrong:["💧 Rain","💨 Wind","🌈 Rainbow"]},
+          {q:"What gives us warm light?", a:"☀️ Sun", wrong:["❄️ Snow","💨 Wind","🌧️ Rain"]},
+          {q:"What blows the leaves around?", a:"💨 Wind", wrong:["☀️ Sun","❄️ Snow","🌈 Rainbow"]},
+          {q:"What's a colorful arc after rain?", a:"🌈 Rainbow", wrong:["☀️ Sun","❄️ Snow","💨 Wind"]},
+          {q:"What's the loud BOOM sound in the sky during a storm?", a:"⚡ Thunder", wrong:["💨 Wind","☀️ Sun","🌈 Rainbow"]}
+        ],
+        2: [
+          {q:"Which season has flowers blooming?", a:"🌸 Spring", wrong:["☀️ Summer","🍂 Autumn","❄️ Winter"]},
+          {q:"Which season is the hottest?", a:"☀️ Summer", wrong:["🌸 Spring","🍂 Autumn","❄️ Winter"]},
+          {q:"Which season has leaves falling?", a:"🍂 Autumn", wrong:["🌸 Spring","☀️ Summer","❄️ Winter"]},
+          {q:"Which season has snow on the ground?", a:"❄️ Winter", wrong:["🌸 Spring","☀️ Summer","🍂 Autumn"]},
+          {q:"What clothes do you wear when it's cold?", a:"🧥 Coat", wrong:["👕 T-shirt","🩳 Shorts","👙 Swimsuit"]},
+          {q:"What keeps you dry in the rain?", a:"☂️ Umbrella", wrong:["🧤 Gloves","🧦 Socks","🕶️ Sunglasses"]},
+          {q:"What helps you stay cool in summer?", a:"🍦 Ice cream / fan", wrong:["🧣 Scarf","🧥 Coat","🧤 Gloves"]},
+          {q:"What melts when the sun shines on it?", a:"🧊 Ice", wrong:["🪨 Rock","🌳 Tree","🏠 House"]},
+          {q:"How many seasons in a year?", a:"4", wrong:["2","3","12"]},
+          {q:"What's the small water drop on grass in the morning?", a:"💧 Dew", wrong:["☃️ Snowflake","⚡ Lightning","🌈 Rainbow"]}
+        ],
+        3: [
+          {q:"A spinning column of wind on land is a?", a:"🌪️ Tornado", wrong:["🌀 Hurricane","🌊 Tsunami","🌈 Rainbow"]},
+          {q:"A giant rotating storm over warm ocean is a?", a:"🌀 Hurricane", wrong:["🌪️ Tornado","☃️ Blizzard","🌧️ Drizzle"]},
+          {q:"What instrument measures temperature?", a:"🌡️ Thermometer", wrong:["📏 Ruler","🎚️ Barometer","🧭 Compass"]},
+          {q:"Water freezes at what temperature?", a:"0°C / 32°F", wrong:["100°C / 212°F","20°C / 68°F","-100°C / -148°F"]},
+          {q:"Water boils at what temperature (sea level)?", a:"100°C / 212°F", wrong:["0°C / 32°F","50°C / 122°F","37°C / 98.6°F"]},
+          {q:"The water cycle goes: evaporation → ___ → precipitation?", a:"Condensation", wrong:["Heating","Freezing","Wind"]},
+          {q:"Heavy snow + strong winds = ?", a:"☃️ Blizzard", wrong:["🌀 Hurricane","🌪️ Tornado","🌫️ Fog"]},
+          {q:"A cloud that touches the ground is?", a:"🌫️ Fog", wrong:["🌧️ Rain","❄️ Snow","🌈 Rainbow"]},
+          {q:"Lightning is electricity in?", a:"⚡ The sky / atmosphere", wrong:["The ground","The ocean","Just clouds"]},
+          {q:"Rainbows form when sunlight passes through?", a:"💧 Water droplets", wrong:["☁️ Just clouds","💨 Wind","🧊 Ice cubes only"]}
+        ],
+        4: [
+          {q:"What's the lowest layer of the atmosphere (where weather happens)?", a:"Troposphere", wrong:["Stratosphere","Mesosphere","Thermosphere"]},
+          {q:"What instrument measures air pressure?", a:"Barometer", wrong:["Thermometer","Anemometer","Hygrometer"]},
+          {q:"What instrument measures wind speed?", a:"Anemometer", wrong:["Barometer","Thermometer","Hygrometer"]},
+          {q:"What instrument measures humidity?", a:"Hygrometer", wrong:["Barometer","Thermometer","Anemometer"]},
+          {q:"Hurricane wind speeds are rated on the?", a:"Saffir-Simpson scale", wrong:["Richter scale","Fujita scale","Beaufort scale"]},
+          {q:"Tornado strength is rated on the?", a:"Fujita (EF) scale", wrong:["Saffir-Simpson","Richter","Beaufort"]},
+          {q:"Aurora (Northern Lights) is caused by?", a:"Solar wind hitting the atmosphere", wrong:["Lightning","Reflected moonlight","Ice crystals"]},
+          {q:"In the Northern Hemisphere, hurricanes spin?", a:"Counterclockwise", wrong:["Clockwise","Both directions","Don't spin"]},
+          {q:"What's the ozone layer made of?", a:"Ozone (O₃)", wrong:["Oxygen (O₂)","Carbon dioxide","Nitrogen"]},
+          {q:"The greenhouse effect happens because?", a:"Some gases trap heat in the atmosphere", wrong:["The sun gets closer","Earth tilts","Wind heats up"]}
+        ],
+        5: [
+          {q:"What's the difference between weather and climate?", a:"Weather is short-term, climate is long-term", wrong:["No difference","Climate is local, weather is global","Weather is rain, climate is sun"]},
+          {q:"El Niño is a warming pattern of which ocean?", a:"Pacific", wrong:["Atlantic","Indian","Arctic"]},
+          {q:"Jet stream is a fast river of air at what altitude?", a:"About 10 km (30,000 ft)", wrong:["100 m","1 km","100 km"]},
+          {q:"Snowflakes typically have how many sides?", a:"6", wrong:["3","4","8"]},
+          {q:"Lightning travels at roughly what fraction of light speed?", a:"~1/3 of light speed", wrong:["1/100","1/1000","Equal to light"]},
+          {q:"Coldest place ever recorded on Earth?", a:"Antarctica (about −89°C)", wrong:["The North Pole","Siberia","Mount Everest"]},
+          {q:"Hottest place ever recorded?", a:"Death Valley (about 57°C)", wrong:["Sahara Desert","Equator","Arabia"]},
+          {q:"Mauna Loa observatory is famous for tracking?", a:"Atmospheric CO₂ (the Keeling curve)", wrong:["Volcanoes only","Solar flares","Ocean temperatures"]},
+          {q:"The eye of a hurricane is?", a:"The calm center", wrong:["The strongest winds","The rain band","Always cloudy"]},
+          {q:"Average annual rainfall is measured in?", a:"Millimeters or inches", wrong:["Pounds","Kelvin","Pascals"]}
+        ]
+      },
       opposites: {
         title: "Opposites",
         1: [
@@ -6622,6 +6686,13 @@
       3: [{emoji:'🏛️',title:'Etymology',fact:'Word origins: "Telephone" = Greek tele (far) + phone (voice).'},{emoji:'✨',title:'Literary Devices',fact:'Metaphor, simile, personification make writing vivid and expressive.'},{emoji:'🌐',title:'Language Families',fact:'English is Germanic. Spanish, French, Italian are Romance (from Latin).'},{emoji:'📜',title:'Poetry',fact:'Iambic pentameter: 5 pairs of unstressed-stressed syllables.'},{emoji:'🧠',title:'Linguistics',fact:'Syntax = sentence structure. Phonology = sounds. Semantics = meaning.'}],
       4: [{emoji:'🏛️',title:'Morphology',fact:'Morphemes are the smallest units of meaning. "Un-break-able" has three!'},{emoji:'✨',title:'Rhetoric',fact:'Anaphora, chiasmus, antithesis — rhetorical devices that make speeches powerful.'},{emoji:'🌐',title:'Sociolinguistics',fact:'Code-switching is alternating languages mid-conversation — common in multilingual societies.'},{emoji:'📜',title:'Historical Linguistics',fact:'Languages evolve: Latin → French, Spanish, Italian, Portuguese, Romanian.'},{emoji:'🧠',title:'Pragmatics',fact:'Context determines meaning. "Can you pass the salt?" is a request, not a question.'}],
       5: [{emoji:'🏛️',title:'Universal Grammar',fact:'Chomsky proposed all humans share an innate language faculty — a biological blueprint.'},{emoji:'✨',title:'Semiotics',fact:'Signs = signifier + signified. Language, gestures, and symbols all carry meaning.'},{emoji:'🌐',title:'Computational Linguistics',fact:'NLP uses transformers and attention mechanisms to process human language.'},{emoji:'📜',title:'Phonetics',fact:'IPA transcribes sounds precisely. /θ/ = "th" in "think", /ð/ = "th" in "this".'},{emoji:'🧠',title:'Discourse Analysis',fact:'Studies how language constructs meaning in conversations, texts, and social contexts.'}]
+    },
+    weather: {
+      1: [{emoji:'☀️',title:'Sun',fact:'The sun is a giant ball of hot gas — it gives us light and warmth every day!'},{emoji:'🌧️',title:'Rain',fact:'Rain falls from clouds when water droplets get heavy and fall to the ground!'},{emoji:'❄️',title:'Snow',fact:'Snow is frozen rain. Each snowflake has 6 sides and a unique pattern!'},{emoji:'🌈',title:'Rainbow',fact:'A rainbow appears when sunlight shines through tiny raindrops!'}],
+      2: [{emoji:'🌸',title:'Seasons',fact:'Earth has 4 seasons: spring, summer, autumn, winter. They repeat every year!'},{emoji:'🌡️',title:'Hot & Cold',fact:'Hot is in the 80°F+ range (summer). Cold is 32°F or below (winter, when water freezes).'},{emoji:'☂️',title:'Stay Dry',fact:'An umbrella keeps you dry by deflecting raindrops away from your head!'},{emoji:'💨',title:'Wind',fact:'Wind is moving air. It can be gentle (breeze) or strong (gale or storm).'}],
+      3: [{emoji:'🌪️',title:'Tornadoes',fact:'A tornado is a fast-spinning column of air touching ground. Most happen in "Tornado Alley" in the US Midwest.'},{emoji:'🌀',title:'Hurricanes',fact:'Hurricanes form over warm ocean water. They can be hundreds of miles wide and last for days.'},{emoji:'💧',title:'Water Cycle',fact:'Sun evaporates water → vapor rises → clouds form (condensation) → rain falls (precipitation) → repeat!'},{emoji:'🌡️',title:'Thermometer',fact:'A thermometer measures temperature. Water freezes at 0°C / 32°F and boils at 100°C / 212°F.'}],
+      4: [{emoji:'☁️',title:'Atmosphere Layers',fact:'From ground up: Troposphere (weather), Stratosphere (ozone), Mesosphere, Thermosphere, Exosphere.'},{emoji:'🎚️',title:'Barometer',fact:'A barometer measures air pressure. Falling pressure often means a storm is coming!'},{emoji:'🌫️',title:'Fog',fact:'Fog is just a cloud at ground level. It forms when warm moist air meets cool surfaces.'},{emoji:'⚡',title:'Lightning',fact:'Lightning is a giant electric spark. Thunder is the sound made by the air it heats up.'}],
+      5: [{emoji:'🌍',title:'Climate vs Weather',fact:'Weather: what\'s happening today. Climate: average weather over many years (typically 30+).'},{emoji:'🌊',title:'El Niño',fact:'El Niño warms the eastern Pacific surface; La Niña cools it. Both shift global weather patterns.'},{emoji:'✈️',title:'Jet Stream',fact:'Fast air rivers at ~10 km altitude. They steer storms and let planes fly faster.'},{emoji:'❄️',title:'Snowflakes',fact:'All snowflakes have 6-fold symmetry due to the hexagonal crystal structure of ice.'}]
     },
     opposites: {
       1: [{emoji:'🔄',title:'Opposites',fact:'Opposites are words that mean the OPPOSITE of each other — like big and small!'},{emoji:'☀️',title:'Day & Night',fact:'Day is when the sun is up. Night is when it gets dark and stars come out!'},{emoji:'⬆️',title:'Up & Down',fact:'Up points to the sky. Down points to the ground!'},{emoji:'😊',title:'Happy & Sad',fact:'Happy faces smile! Sad faces frown. They\'re opposite feelings!'}],

@@ -1,5 +1,16 @@
 ﻿# Changelog 
 
+## [5.7.41] - 2026-05-20 - New quiz subject: 🌦️ Weather
+- Fifth toddler→elementary subject this session. 5 levels, 50 questions:
+  - **L1** (toddler): basic weather emoji (sun, rain, snow, cloud, wind, rainbow, thunder) — match the symbol to the word.
+  - **L2** (pre-K): seasons (spring/summer/autumn/winter), weather clothes (coat, umbrella), what melts in the sun, dew, count of seasons.
+  - **L3** (early elementary): tornadoes/hurricanes/blizzards/fog, thermometers, water freezing/boiling points (0°C/100°C), water cycle (evap → condense → precip).
+  - **L4** (elementary): atmosphere layers (Troposphere → Exosphere), barometer/anemometer/hygrometer, Saffir-Simpson and Fujita scales, hurricane spin direction in N hemisphere, ozone (O₃), greenhouse effect (gases trap heat — purely factual framing).
+  - **L5** (older): climate vs weather, El Niño (Pacific warming pattern), jet stream altitude (~10 km), 6-fold snowflake symmetry, lightning speed (~1/3 c), coldest (Antarctica −89°C) and hottest (Death Valley 57°C) records, Mauna Loa Keeling curve, hurricane eye, rainfall units.
+- teachData has 4 educational cards per level.
+- General Knowledge now has **8 quiz subjects** (Animals & Objects, Music Studio, Reading & Languages, Science & Nature, Colors, Shapes, Counting & Numbers, Opposites, Weather).
+- **SW cache v119 → v120** to flush.
+
 ## [5.7.40] - 2026-05-20 - New quiz subject: 🔄 Opposites (antonyms)
 - Fourth toddler→elementary subject this session. 5 levels, 50 antonym pairs:
   - **L1**: big/small, hot/cold, up/down, day/night, happy/sad, fast/slow, in/out, on/off, yes/no, open/closed.
