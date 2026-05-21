@@ -1962,7 +1962,8 @@
     {id:'master-sorter',ic:'🎩',name:'Master Sorter',desc:'Complete 50 Sorting Hat rounds',progress(){const c=_intLS('sort-rounds-done');return{cur:Math.min(c,50),target:50,unlocked:c>=50};}},
     {id:'code-cracker',ic:'🔐',name:'Code Cracker',desc:'Crack Code Lock in 6 guesses or fewer',progress(){const c=_intLS('cl-best');const ok=c>0&&c<=6;return{cur:ok?1:0,target:1,unlocked:ok};}},
     {id:'hanoi-master',ic:'🗼',name:'Hanoi Master',desc:'Solve 3-disk Hanoi in optimal 7 moves',progress(){const c=_intLS('hanoi-best-3');const ok=c>0&&c<=7;return{cur:ok?1:0,target:1,unlocked:ok};}},
-    {id:'slider',ic:'🧩',name:'Slider',desc:'Solve the 4×4 Sliding Puzzle (any move count)',progress(){const c=_intLS('sl-best-4');const ok=c>0&&c<9999;return{cur:ok?1:0,target:1,unlocked:ok};}}
+    {id:'slider',ic:'🧩',name:'Slider',desc:'Solve the 4×4 Sliding Puzzle (any move count)',progress(){const c=_intLS('sl-best-4');const ok=c>0&&c<9999;return{cur:ok?1:0,target:1,unlocked:ok};}},
+    {id:'light-off',ic:'🌙',name:'Light Off',desc:'Clear all lights in Lights Out (any size)',progress(){let m=9999;[3,4,5].forEach(s=>{const v=_intLS('lo-best-'+s);if(v>0&&v<m)m=v;});const ok=m<9999;return{cur:ok?1:0,target:1,unlocked:ok};}}
   ];
   function _achState(){try{return JSON.parse(localStorage.getItem('amni-achievements')||'{}');}catch{return{};}}
   function _saveAchState(s){try{localStorage.setItem('amni-achievements',JSON.stringify(s));}catch{}}
@@ -14717,6 +14718,31 @@ function playAnimalSound(type) {
       {q:'What does PARSIMONIOUS mean?',a:'stingy',h:'Reluctant to spend; miserly.'},
       {q:'What does CACOPHONY mean?',a:'harsh noise',h:'Discordant, jarring sound.'},
       {q:'What does EUPHONY mean?',a:'pleasant sound',h:'Melodious, harmonious.'}
+    ],math:[
+      {q:'7 × 8 = ?',a:'56',h:'Multiplication table.'},
+      {q:'144 ÷ 12 = ?',a:'12',h:'Squares and roots.'},
+      {q:'15 + 27 = ?',a:'42',h:'Two-digit addition.'},
+      {q:'100 − 37 = ?',a:'63',h:'Subtract from 100.'},
+      {q:'Square root of 169 = ?',a:'13',h:'13 × 13.'},
+      {q:'2 to the power 8 = ?',a:'256',h:'Doubling 2 eight times.'},
+      {q:'If 3x + 7 = 22, x = ?',a:'5',h:'Subtract 7, then divide by 3.'},
+      {q:'Solve 2x = 18, x = ?',a:'9',h:'Halve both sides.'},
+      {q:'If f(x) = 2x + 1, f(5) = ?',a:'11',h:'Plug 5 into 2x+1.'},
+      {q:'The slope of y = 3x + 5 is?',a:'3',h:'Coefficient of x in y = mx + b.'},
+      {q:'If x² = 49 and x > 0, x = ?',a:'7',h:'Positive square root.'},
+      {q:'Solve: x + 9 = 15, x = ?',a:'6',h:'Subtract 9.'},
+      {q:'Sum of angles in a triangle (degrees)?',a:'180',h:'A fundamental geometry fact.'},
+      {q:'How many degrees in a right angle?',a:'90',h:'A perfect corner.'},
+      {q:'Area of a 4 × 7 rectangle?',a:'28',h:'length × width.'},
+      {q:'Perimeter of a square with side 5?',a:'20',h:'4 × side.'},
+      {q:'Pythagorean: legs 3 and 4, hypotenuse = ?',a:'5',h:'a²+b²=c².'},
+      {q:'Volume of a cube with side 3?',a:'27',h:'side cubed.'},
+      {q:'How many sides does a hexagon have?',a:'6',h:'Hex = six.'},
+      {q:'Smallest prime number?',a:'2',h:'Only even prime.'},
+      {q:'GCD of 12 and 18?',a:'6',h:'Greatest common divisor.'},
+      {q:'LCM of 4 and 6?',a:'12',h:'Least common multiple.'},
+      {q:'Sum of 1 + 2 + 3 + … + 10?',a:'55',h:'n(n+1)/2 with n=10.'},
+      {q:'Fibonacci: next term after 13, 21?',a:'34',h:'Add the two previous.'}
     ]};
     let mode=null,score=0,streak=0,best=0,qIdx=0,timer=0,timerId=null,pool=[],cur=null,hintUsed=false,bestStreak=0;
     function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
@@ -14733,6 +14759,7 @@ function playAnimalSound(type) {
           <button class="versus-btn" data-m="geo">🌍 Geography</button>
           <button class="versus-btn" data-m="history">📜 History</button>
           <button class="versus-btn" data-m="vocab">📖 Vocabulary</button>
+          <button class="versus-btn" data-m="math">🧮 Math</button>
         </div></div>`;
       root.querySelectorAll('.versus-btn').forEach(b=>b.addEventListener('click',e=>{mode=e.target.dataset.m;startGame();}));
     }
