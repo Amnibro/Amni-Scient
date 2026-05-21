@@ -1,5 +1,16 @@
 ﻿# Changelog 
 
+## [5.7.38] - 2026-05-20 - New quiz subject: 🔷 Shapes (toddler → elementary)
+- Sibling to v5.7.37's Colors subject. **Shapes** quiz with 5 progressively-harder levels (50 questions total):
+  - **L1** (toddler): basic 2D shape recognition + everyday objects (circle wheel, rectangle door, triangle pizza slice, square box).
+  - **L2** (pre-K): side counts (triangle 3, square 4, pentagon 5, hexagon 6), star points, rhombus, oval.
+  - **L3** (early elementary): 3D shapes (sphere, cube, cone, cylinder, pyramid, rectangular prism) — including cube face/edge/vertex counts.
+  - **L4** (elementary): angles (right/acute/obtuse), interior-angle sums, polygon side counts up to octagon, parallel sides in parallelograms, √2 diagonal.
+  - **L5** (older): n-gon angle sum formula, pi, Pythagoras, area/volume/surface-area of circle and sphere, 5 Platonic solids, π ≈ 3.14159.
+- Added matching teachData entries so the "Learn First" phase shows 4 educational cards per level.
+- New menu button under General Knowledge: **🔷 Shapes — 2D, 3D, and geometry**.
+- **SW cache v116 → v117** to flush.
+
 ## [5.7.37] - 2026-05-20 - New quiz subject: 🎨 Colors (toddler → elementary)
 - Added a fresh quiz subject **Colors** with 5 progressively-harder levels (50 questions total):
   - **L1** (toddler): basic Red/Blue/Yellow/Green recognition + everyday objects (banana yellow, grass green, sky blue, strawberry red, sun, stop sign).

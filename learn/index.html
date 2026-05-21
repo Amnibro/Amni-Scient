@@ -1283,6 +1283,7 @@
           <button class="game-btn quiz" data-game="quiz" data-subject="languages"><span class="btn-icon">🗣️</span><span class="btn-text">Reading & Languages</span><span class="btn-desc">Words & stories</span></button>
           <button class="game-btn quiz" data-game="quiz" data-subject="science"><span class="btn-icon">🔬</span><span class="btn-text">Science & Nature</span><span class="btn-desc">Explore the world</span></button>
           <button class="game-btn quiz" data-game="quiz" data-subject="colors"><span class="btn-icon">🎨</span><span class="btn-text">Colors</span><span class="btn-desc">Rainbow & color theory</span></button>
+          <button class="game-btn quiz" data-game="quiz" data-subject="shapes"><span class="btn-icon">🔷</span><span class="btn-text">Shapes</span><span class="btn-desc">2D, 3D, and geometry</span></button>
         </div>
       </section>
       <section class="game-category">
@@ -6206,6 +6207,69 @@
               {q: "What's 'metamaterial' engineering?", a: "Structured materials with sub-wavelength features yielding unusual EM properties (e.g. negative index)", wrong: ["Alloys for high strength", "Plastic blends", "Magnetic-amplifying coatings"]}
           ]
       },
+      shapes: {
+        title: "Shapes",
+        1: [
+          {q:"Which is a CIRCLE?", a:"⭕ Circle", wrong:["🔺 Triangle","🟦 Square","⭐ Star"]},
+          {q:"Which is a SQUARE?", a:"🟦 Square", wrong:["⭕ Circle","🔺 Triangle","❤️ Heart"]},
+          {q:"Which is a TRIANGLE?", a:"🔺 Triangle", wrong:["⭕ Circle","🟦 Square","⭐ Star"]},
+          {q:"Which is a STAR?", a:"⭐ Star", wrong:["⭕ Circle","🟦 Square","🔺 Triangle"]},
+          {q:"Which is a HEART?", a:"❤️ Heart", wrong:["⭕ Circle","🟦 Square","🔺 Triangle"]},
+          {q:"What shape is a wheel?", a:"⭕ Circle", wrong:["🟦 Square","🔺 Triangle","⭐ Star"]},
+          {q:"What shape is a TV screen?", a:"▭ Rectangle", wrong:["⭕ Circle","🔺 Triangle","⭐ Star"]},
+          {q:"What shape is a pizza slice?", a:"🔺 Triangle", wrong:["⭕ Circle","🟦 Square","❤️ Heart"]},
+          {q:"What shape is a soccer ball (flat view)?", a:"⭕ Circle", wrong:["🟦 Square","🔺 Triangle","⭐ Star"]},
+          {q:"What shape is a door?", a:"▭ Rectangle", wrong:["⭕ Circle","🔺 Triangle","⭐ Star"]}
+        ],
+        2: [
+          {q:"How many sides does a triangle have?", a:"3", wrong:["2","4","5"]},
+          {q:"How many sides does a square have?", a:"4", wrong:["3","5","6"]},
+          {q:"How many sides does a pentagon have?", a:"5", wrong:["4","6","7"]},
+          {q:"How many sides does a hexagon have?", a:"6", wrong:["5","7","8"]},
+          {q:"How many points does a typical star have?", a:"5", wrong:["3","4","6"]},
+          {q:"Which 2D shape has NO corners?", a:"⭕ Circle", wrong:["🟦 Square","🔺 Triangle","⭐ Star"]},
+          {q:"Which shape has 4 equal sides AND 4 right angles?", a:"🟦 Square", wrong:["▭ Rectangle","🔺 Triangle","⭐ Star"]},
+          {q:"Half of a circle is called?", a:"Semicircle", wrong:["Triangle","Oval","Pentagon"]},
+          {q:"A diamond/rhombus shape has how many sides?", a:"4", wrong:["3","5","6"]},
+          {q:"An oval is like a stretched what?", a:"⭕ Circle", wrong:["🟦 Square","🔺 Triangle","⭐ Star"]}
+        ],
+        3: [
+          {q:"A ball is which 3D shape?", a:"Sphere", wrong:["Cube","Cone","Cylinder"]},
+          {q:"A dice/box is which 3D shape?", a:"Cube", wrong:["Sphere","Cone","Pyramid"]},
+          {q:"An ice cream cone is which 3D shape?", a:"Cone", wrong:["Sphere","Cube","Cylinder"]},
+          {q:"A soda can is which 3D shape?", a:"Cylinder", wrong:["Cone","Sphere","Cube"]},
+          {q:"How many flat faces does a cube have?", a:"6", wrong:["4","8","12"]},
+          {q:"How many edges does a cube have?", a:"12", wrong:["6","8","24"]},
+          {q:"How many vertices (corners) does a cube have?", a:"8", wrong:["4","6","12"]},
+          {q:"What 3D shape is a basketball?", a:"Sphere", wrong:["Cube","Cylinder","Cone"]},
+          {q:"What 3D shape is a tissue box?", a:"Rectangular prism", wrong:["Sphere","Cone","Pyramid"]},
+          {q:"What 3D shape is the great pyramid of Giza?", a:"Pyramid", wrong:["Cube","Sphere","Cylinder"]}
+        ],
+        4: [
+          {q:"A right angle is exactly how many degrees?", a:"90°", wrong:["45°","60°","180°"]},
+          {q:"An acute angle is less than?", a:"90°", wrong:["45°","180°","360°"]},
+          {q:"An obtuse angle is greater than?", a:"90°", wrong:["45°","60°","180°"]},
+          {q:"Sum of interior angles in a triangle?", a:"180°", wrong:["90°","270°","360°"]},
+          {q:"Sum of interior angles in a quadrilateral?", a:"360°", wrong:["180°","270°","540°"]},
+          {q:"How many sides does an octagon have?", a:"8", wrong:["6","7","10"]},
+          {q:"A polygon with all sides equal is called?", a:"Regular polygon", wrong:["Irregular polygon","Convex polygon","Concave polygon"]},
+          {q:"Each angle in an equilateral triangle is?", a:"60°", wrong:["45°","90°","120°"]},
+          {q:"A parallelogram has how many pairs of parallel sides?", a:"2", wrong:["0","1","4"]},
+          {q:"What's the diagonal of a square with side length 1?", a:"√2 (about 1.41)", wrong:["1","2","π"]}
+        ],
+        5: [
+          {q:"Sum of interior angles in an n-gon?", a:"(n−2) × 180°", wrong:["n × 180°","n × 360°","180° / n"]},
+          {q:"Pi (π) is the ratio of a circle's circumference to its?", a:"Diameter", wrong:["Radius","Area","Perimeter"]},
+          {q:"Pythagorean theorem: a² + b² = ?", a:"c²", wrong:["c","2c","a+b"]},
+          {q:"Area of a circle is?", a:"πr²", wrong:["2πr","πd","πr³"]},
+          {q:"Circumference of a circle is?", a:"2πr", wrong:["πr²","πr","4πr"]},
+          {q:"Area of a triangle is?", a:"½ × base × height", wrong:["base × height","½ × base²","π × base × height"]},
+          {q:"Volume of a sphere is?", a:"(4/3) π r³", wrong:["π r²","4 π r²","2 π r³"]},
+          {q:"Surface area of a sphere is?", a:"4 π r²", wrong:["π r²","(4/3) π r³","2 π r"]},
+          {q:"How many Platonic solids exist?", a:"5", wrong:["3","6","12"]},
+          {q:"π is approximately?", a:"3.14159", wrong:["2.71828","1.61803","3.14279"]}
+        ]
+      },
       colors: {
         title: "Colors",
         1: [
@@ -6430,6 +6494,13 @@
       3: [{emoji:'🏛️',title:'Etymology',fact:'Word origins: "Telephone" = Greek tele (far) + phone (voice).'},{emoji:'✨',title:'Literary Devices',fact:'Metaphor, simile, personification make writing vivid and expressive.'},{emoji:'🌐',title:'Language Families',fact:'English is Germanic. Spanish, French, Italian are Romance (from Latin).'},{emoji:'📜',title:'Poetry',fact:'Iambic pentameter: 5 pairs of unstressed-stressed syllables.'},{emoji:'🧠',title:'Linguistics',fact:'Syntax = sentence structure. Phonology = sounds. Semantics = meaning.'}],
       4: [{emoji:'🏛️',title:'Morphology',fact:'Morphemes are the smallest units of meaning. "Un-break-able" has three!'},{emoji:'✨',title:'Rhetoric',fact:'Anaphora, chiasmus, antithesis — rhetorical devices that make speeches powerful.'},{emoji:'🌐',title:'Sociolinguistics',fact:'Code-switching is alternating languages mid-conversation — common in multilingual societies.'},{emoji:'📜',title:'Historical Linguistics',fact:'Languages evolve: Latin → French, Spanish, Italian, Portuguese, Romanian.'},{emoji:'🧠',title:'Pragmatics',fact:'Context determines meaning. "Can you pass the salt?" is a request, not a question.'}],
       5: [{emoji:'🏛️',title:'Universal Grammar',fact:'Chomsky proposed all humans share an innate language faculty — a biological blueprint.'},{emoji:'✨',title:'Semiotics',fact:'Signs = signifier + signified. Language, gestures, and symbols all carry meaning.'},{emoji:'🌐',title:'Computational Linguistics',fact:'NLP uses transformers and attention mechanisms to process human language.'},{emoji:'📜',title:'Phonetics',fact:'IPA transcribes sounds precisely. /θ/ = "th" in "think", /ð/ = "th" in "this".'},{emoji:'🧠',title:'Discourse Analysis',fact:'Studies how language constructs meaning in conversations, texts, and social contexts.'}]
+    },
+    shapes: {
+      1: [{emoji:'⭕',title:'Circle',fact:'A circle has no corners — every point is the same distance from the center!'},{emoji:'🟦',title:'Square',fact:'A square has 4 equal sides and 4 right-angle corners!'},{emoji:'🔺',title:'Triangle',fact:'A triangle has 3 sides and 3 corners. Its angles always add up to 180°!'},{emoji:'▭',title:'Rectangle',fact:'A rectangle has 4 sides — opposite sides are equal, all corners are right angles!'}],
+      2: [{emoji:'⭐',title:'Star',fact:'A 5-pointed star has 10 sides if you count both inside and outside edges!'},{emoji:'❤️',title:'Heart',fact:'A heart shape is two semicircles joined to a triangle pointing down!'},{emoji:'🔷',title:'Diamond',fact:'A diamond (rhombus) has 4 equal sides but tilted angles, not right angles!'},{emoji:'🔶',title:'Pentagon',fact:'A pentagon has 5 sides. The Pentagon building in the US is shaped like this!'}],
+      3: [{emoji:'⚪',title:'Sphere',fact:'A sphere is a 3D circle — every point on the surface is the same distance from the center.'},{emoji:'🧊',title:'Cube',fact:'A cube has 6 square faces, 12 edges, and 8 corners (vertices).'},{emoji:'🍦',title:'Cone',fact:'A cone has a circular base that tapers to a single point at the top.'},{emoji:'🥫',title:'Cylinder',fact:'A cylinder has two circular ends and a curved rectangular side.'}],
+      4: [{emoji:'📐',title:'Angles',fact:'Right = 90°, acute < 90°, obtuse > 90°, straight = 180°. A reflex angle is > 180°.'},{emoji:'🔸',title:'Polygons',fact:'Triangle (3), Quad (4), Pentagon (5), Hexagon (6), Heptagon (7), Octagon (8).'},{emoji:'📏',title:'Perimeter & Area',fact:'Perimeter is the distance around. Area is the space inside.'},{emoji:'⚖️',title:'Parallel & Perpendicular',fact:'Parallel lines never meet. Perpendicular lines cross at a right angle.'}],
+      5: [{emoji:'π',title:'Pi',fact:'π ≈ 3.14159… is the ratio of any circle\'s circumference to its diameter.'},{emoji:'📐',title:'Pythagoras',fact:'In a right triangle, the square of the longest side equals the sum of squares of the other two: a² + b² = c².'},{emoji:'🔵',title:'Sphere',fact:'Volume = (4/3) π r³. Surface area = 4 π r². Maximum volume for a given surface area.'},{emoji:'🧊',title:'Platonic Solids',fact:'Only 5 regular convex polyhedra exist: tetrahedron, cube, octahedron, dodecahedron, icosahedron.'}]
     },
     colors: {
       1: [{emoji:'🔴',title:'Red',fact:'Red is the color of apples, strawberries, and stop signs!'},{emoji:'🔵',title:'Blue',fact:'The sky and the ocean both look blue!'},{emoji:'🟡',title:'Yellow',fact:'The sun and bananas are bright yellow!'},{emoji:'🟢',title:'Green',fact:'Grass and trees are green from a pigment called chlorophyll!'}],
