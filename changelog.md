@@ -1,5 +1,18 @@
 ﻿# Changelog 
 
+## [5.7.86] - 2026-05-21 - 🧠 Memory Match (Brain Exercise)
+- **NEW Brain Exercise subgame: 🧠 Memory Match** — the classic flip-and-match memory test.
+- **3 difficulty levels**:
+  - **Easy 4×4**: 16 cards = 8 pairs.
+  - **Medium 4×6**: 24 cards = 12 pairs.
+  - **Hard 6×6**: 36 cards = 18 pairs.
+- **Mechanics**: tap to flip up to 2 cards per move. Matches stay revealed (green tint). Mismatches flip back after a brief delay (input locked during the peek to prevent racing). Win = all pairs matched.
+- **Emoji pool**: 18 animals (dog → butterfly) so even Hard fills cleanly.
+- Per-level best moves stored as `mm-best-<level>`.
+- **+ Memory Mind achievement** — clear Memory Match on any difficulty. Achievements **54 → 55**.
+- Brain Exercise now hosts **9 subgames**: Math Solitaire, Code Lock, Hanoi, Sliding, Lights Out, Minesweeper, 2048, Sudoku, Memory Match.
+- **SW cache v164 → v165**.
+
 ## [5.7.85] - 2026-05-21 - 🏛️ NEW General Knowledge subject: Mythology
 - **New quiz subject**: **🏛️ Mythology** — 5 difficulty levels covering Greek, Roman, Norse, Egyptian, Hindu, and Aztec pantheons.
 - **30 questions** total (6 per level):

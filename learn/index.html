@@ -1292,6 +1292,7 @@
           <button class="game-btn life" data-game="life" data-subgame="minesweeper"><span class="btn-icon">💣</span><span class="btn-text">Minesweeper</span><span class="btn-desc">Reveal cells, flag mines, deduce</span></button>
           <button class="game-btn life" data-game="life" data-subgame="twentyfortyeight"><span class="btn-icon">🔢</span><span class="btn-text">2048</span><span class="btn-desc">Slide and merge to reach 2048</span></button>
           <button class="game-btn life" data-game="life" data-subgame="sudoku"><span class="btn-icon">🔢</span><span class="btn-text">Sudoku 4×4</span><span class="btn-desc">Each row, col, &amp; box has 1-4 once</span></button>
+          <button class="game-btn life" data-game="life" data-subgame="memorymatch"><span class="btn-icon">🧠</span><span class="btn-text">Memory Match</span><span class="btn-desc">Flip cards, find pairs</span></button>
         </div>
       </section>
       <section class="game-category">
@@ -1979,7 +1980,8 @@
     {id:'card-shark',ic:'🃏',name:'Card Shark',desc:'Clear Math Solitaire on any difficulty',progress(){let m=9999;['easy','medium','hard'].forEach(k=>{const v=_intLS('ms-best-'+k);if(v>0&&v<m)m=v;});const ok=m<9999;return{cur:ok?1:0,target:1,unlocked:ok};}},
     {id:'bomb-squad',ic:'💣',name:'Bomb Squad',desc:'Clear Minesweeper on any difficulty',progress(){let m=9999;['easy','medium','hard'].forEach(k=>{const v=_intLS('mn-best-'+k);if(v>0&&v<m)m=v;});const ok=m<9999;return{cur:ok?1:0,target:1,unlocked:ok};}},
     {id:'tile-master',ic:'🔢',name:'2048 Master',desc:'Reach the 2048 tile on any difficulty',progress(){let m=0;['easy','medium','hard'].forEach(k=>{const v=_intLS('tf-tile-'+k);if(v>m)m=v;});const ok=m>=2048;return{cur:Math.min(m,2048),target:2048,unlocked:ok};}},
-    {id:'sudoku-solver',ic:'🔢',name:'Sudoku Solver',desc:'Complete Sudoku 4×4 on any difficulty',progress(){let m=9999;['easy','medium','hard'].forEach(k=>{const v=_intLS('sd-best-'+k);if(v>0&&v<m)m=v;});const ok=m<9999;return{cur:ok?1:0,target:1,unlocked:ok};}}
+    {id:'sudoku-solver',ic:'🔢',name:'Sudoku Solver',desc:'Complete Sudoku 4×4 on any difficulty',progress(){let m=9999;['easy','medium','hard'].forEach(k=>{const v=_intLS('sd-best-'+k);if(v>0&&v<m)m=v;});const ok=m<9999;return{cur:ok?1:0,target:1,unlocked:ok};}},
+    {id:'memory-mind',ic:'🧠',name:'Memory Mind',desc:'Clear Memory Match on any difficulty',progress(){let m=9999;['easy','medium','hard'].forEach(k=>{const v=_intLS('mm-best-'+k);if(v>0&&v<m)m=v;});const ok=m<9999;return{cur:ok?1:0,target:1,unlocked:ok};}}
   ];
   function _achState(){try{return JSON.parse(localStorage.getItem('amni-achievements')||'{}');}catch{return{};}}
   function _saveAchState(s){try{localStorage.setItem('amni-achievements',JSON.stringify(s));}catch{}}
@@ -4523,6 +4525,78 @@
       if(subgame === 'minesweeper') initMinesweeper();
       if(subgame === 'twentyfortyeight') initTwentyFortyEight();
       if(subgame === 'sudoku') initSudoku();
+      if(subgame === 'memorymatch') initMemoryMatch();
+  }
+  function initMemoryMatch(){
+    lifeArea.innerHTML='';
+    lifeTitle.textContent='🧠 Memory Match';
+    const LEVELS={easy:{n:8,rows:4,cols:4,label:'Easy 4×4'},medium:{n:12,rows:4,cols:6,label:'Medium 4×6'},hard:{n:18,rows:6,cols:6,label:'Hard 6×6'}};
+    let level=sessionStorage.getItem('mm-level')||'easy';
+    if(!LEVELS[level])level='easy';
+    const cfg=LEVELS[level];
+    const bestKey='mm-best-'+level;
+    let best=parseInt(sessionStorage.getItem(bestKey)||'9999');
+    const POOL=['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','🐯','🦁','🐮','🐷','🐸','🐵','🐔','🦆','🦋'];
+    const emojis=POOL.slice(0,cfg.n);
+    const deck=[...emojis,...emojis].map((e,i)=>({id:i,emoji:e,faceUp:false,matched:false}));
+    for(let i=deck.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[deck[i],deck[j]]=[deck[j],deck[i]];}
+    let flipped=[],moves=0,won=false,lockInput=false;
+    function handleFlip(idx){
+      if(lockInput||won)return;
+      const c=deck[idx];
+      if(c.matched||c.faceUp)return;
+      c.faceUp=true;
+      flipped.push(idx);
+      if(flipped.length===2){
+        moves++;
+        const [a,b]=flipped;
+        if(deck[a].emoji===deck[b].emoji){
+          deck[a].matched=true;deck[b].matched=true;flipped=[];
+          if(deck.every(x=>x.matched)){won=true;onWin();}
+          render();
+        }else{
+          lockInput=true;render();
+          setTimeout(()=>{deck[a].faceUp=false;deck[b].faceUp=false;flipped=[];lockInput=false;render();},800);
+        }
+      }else render();
+    }
+    function render(){
+      lifeArea.innerHTML='';
+      const matched=deck.filter(c=>c.matched).length;
+      const hud=document.createElement('div');hud.className='game-hud';hud.style.marginBottom='6px';
+      hud.innerHTML=`<span class="game-stat">🎯 Moves <span class="game-stat-val">${moves}</span></span><span class="game-stat">🃏 Pairs <span class="game-stat-val">${matched/2}/${cfg.n}</span></span><span class="game-stat">⭐ Best <span class="game-stat-val">${best<9999?best:'—'}</span></span>`;
+      lifeArea.appendChild(hud);
+      const lvlRow=document.createElement('div');lvlRow.style.cssText='display:flex;gap:6px;justify-content:center;margin:4px 0 10px;flex-wrap:wrap;';
+      Object.keys(LEVELS).forEach(k=>{const b=document.createElement('button');b.className='sdk-btn'+(k===level?' active':'');b.style.cssText='font-size:0.85rem;padding:5px 12px;';b.textContent=LEVELS[k].label;b.onclick=()=>{sessionStorage.setItem('mm-level',k);initMemoryMatch();};lvlRow.appendChild(b);});
+      lifeArea.appendChild(lvlRow);
+      const board=document.createElement('div');
+      const cellPx=Math.min(64,Math.floor(420/cfg.cols));
+      board.style.cssText=`display:grid;grid-template-columns:repeat(${cfg.cols},${cellPx}px);gap:4px;background:#2c3e50;padding:8px;border-radius:10px;margin:6px auto;width:fit-content;`;
+      deck.forEach((c,i)=>{
+        const cell=document.createElement('div');
+        const showFace=c.faceUp||c.matched;
+        const bg=c.matched?'#27ae60':(showFace?'#ecf0f1':'linear-gradient(135deg,#3498db,#2980b9)');
+        cell.style.cssText=`width:${cellPx}px;height:${cellPx}px;background:${bg};display:flex;align-items:center;justify-content:center;font-size:${Math.floor(cellPx*0.6)}px;cursor:${won||c.matched||c.faceUp||lockInput?'default':'pointer'};border-radius:6px;border:2px solid ${c.matched?'#16a085':'#1a2530'};user-select:none;color:#fff;`;
+        cell.textContent=showFace?c.emoji:'?';
+        if(!won&&!c.matched&&!c.faceUp&&!lockInput)cell.onclick=()=>handleFlip(i);
+        board.appendChild(cell);
+      });
+      lifeArea.appendChild(board);
+      if(!won){const hint=document.createElement('div');hint.style.cssText='text-align:center;color:#7f8c8d;font-family:Comic Neue,cursive;font-size:0.9rem;margin:8px auto;max-width:480px;padding:0 12px;';hint.textContent='Flip 2 cards to find a matching pair. Mismatches flip back after a moment. Find all pairs in the fewest moves!';lifeArea.appendChild(hint);}
+    }
+    function onWin(){
+      const wasBest=moves<best;
+      if(wasBest){best=moves;sessionStorage.setItem(bestKey,moves);}
+      render();
+      const b=document.createElement('div');b.style.cssText='text-align:center;padding:14px;background:#2ecc71;color:#fff;border-radius:10px;margin:10px auto;font-family:Comic Neue,cursive;font-size:1.2rem;max-width:420px;';
+      b.innerHTML=`🎉 ${cfg.label} solved in ${moves} moves!${wasBest?' 🏆 NEW BEST!':''}`;
+      lifeArea.appendChild(b);
+      if(typeof spawnConfetti==='function')spawnConfetti(window.innerWidth/2,window.innerHeight/2,wasBest?150:80);
+      if(typeof showFeedback==='function')showFeedback(`Memory Match ${cfg.label}: ${moves} moves 🧠`,wasBest?'#2ecc71':'#3498db');
+      if(typeof addScore==='function')addScore(10+cfg.n*2);
+      const again=document.createElement('button');again.className='nmm-btn';again.textContent='🔄 New Game';again.style.cssText='display:block;margin:14px auto;';again.onclick=()=>initMemoryMatch();lifeArea.appendChild(again);
+    }
+    render();
   }
   function initSudoku(){
     lifeArea.innerHTML='';
