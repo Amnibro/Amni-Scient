@@ -1,5 +1,14 @@
 ﻿# Changelog 
 
+## [5.7.65] - 2026-05-21 - Chess Puzzles +4 (33 → 37)
+- **Chess Puzzles** gain four hand-verified mates-in-1, each on a fresh tactical theme.
+  - **P34 — K + N + R corner mate**: minimalist 8th-rank rook mate against Ka8, with the white king cutting off a7/b7 and the knight on c6 sealing b8.
+  - **P35 — Bishop-pair scissors mate**: the dark-square bishop lifts to b2 along the a1–h8 long diagonal checking Kh8; the light-square bishop on e6 covers g8 and a pawn on g6 covers h7 — two bishops crossing through the corner.
+  - **P36 — Pawn-promotion smothered**: the e-pawn promotes to a queen on e8 attacking down the empty 8th rank to a king suffocated between its own g7 and h7 pawns.
+  - **P37 — Queen-and-knight cornered**: Qxb7+ supported by Na5 — the queen captures the blocker and lands defended, the king on a8 has no flight, capture, or block.
+- Each puzzle has all king escape squares, captures, and blocks verified manually before commit.
+- **SW cache v143 → v144**.
+
 ## [5.7.64] - 2026-05-21 - Versus Math category + Light Off achievement
 - **Versus Speed Challenge** gets a sixth category: **🧮 Math** (24 questions, 60-second sprint).
   - Coverage: arithmetic (×, ÷, +, −, roots, powers), algebra (linear equations, slope, function evaluation), geometry (triangle angles, rectangle area, perimeter, Pythagorean, cube volume, polygon sides), number theory (primes, GCD, LCM, Gauss sum, Fibonacci).
