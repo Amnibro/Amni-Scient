@@ -1,5 +1,20 @@
 ﻿# Changelog 
 
+## [5.7.43] - 2026-05-21 - Same or Different — toddler comparison game
+- New Life Skills subgame: **🟰 Same or Different**.
+- **Mechanics**:
+  - Two large emoji appear side-by-side.
+  - Toddler taps green **🟰 SAME** or red **✂️ DIFFERENT** button.
+  - 10 rounds, score per correct answer.
+- **Modes**:
+  - **🐶 Animals** (23 different animal emoji to draw from)
+  - **🔷 Shapes** (10 shapes)
+  - **🎨 Colors** (9 color circles)
+  - **🎲 Mixed** (any of the above each round)
+- Binary choice trains attention and visual discrimination — works for ages 2-5.
+- Per-mode best score persisted (`sd-best-<mode>` in sessionStorage). NEW BEST confetti at finish.
+- **SW cache v121 → v122** to flush.
+
 ## [5.7.42] - 2026-05-21 - Bubble Pop interactive subgame (Life Skills)
 - New interactive toddler game under **Life Skills**: **🫧 Bubble Pop**.
 - **Mechanics**:

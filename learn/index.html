@@ -1274,6 +1274,7 @@
           <button class="game-btn life" data-game="life" data-subgame="clock"><span class="btn-icon">🕰️</span><span class="btn-text">Read Clock</span><span class="btn-desc">Tell the time</span></button>
           <button class="game-btn life" data-game="life" data-subgame="money"><span class="btn-icon">💰</span><span class="btn-text">Money Math</span><span class="btn-desc">Count your coins</span></button>
           <button class="game-btn life" data-game="life" data-subgame="bubble"><span class="btn-icon">🫧</span><span class="btn-text">Bubble Pop</span><span class="btn-desc">Pop the matching bubbles</span></button>
+          <button class="game-btn life" data-game="life" data-subgame="samediff"><span class="btn-icon">🟰</span><span class="btn-text">Same or Different</span><span class="btn-desc">Compare two items</span></button>
         </div>
       </section>
       <section class="game-category">
@@ -4401,6 +4402,68 @@
       if(subgame === 'clock') initClock();
       if(subgame === 'money') initMoney();
       if(subgame === 'bubble') initBubblePop();
+      if(subgame === 'samediff') initSameDiff();
+  }
+  function initSameDiff(){
+    lifeArea.innerHTML='';
+    lifeTitle.textContent='🟰 Same or Different?';
+    const POOLS={
+      animals:['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','🐯','🦁','🐮','🐷','🐸','🐵','🐔','🐧','🦄','🐝','🦋','🐳','🐠','🦒'],
+      shapes:['⭕','🔺','🟦','▭','⭐','❤️','🔷','🔶','🟣','🟢'],
+      colors:['🔴','🔵','🟢','🟡','🟠','🟣','🟤','⚫','⚪'],
+      mixed:null
+    };
+    let mode=sessionStorage.getItem('sd-mode')||'animals';
+    let score=0,round=0;
+    const bestKey='sd-best-'+mode;
+    let best=parseInt(sessionStorage.getItem(bestKey)||'0');
+    const TOTAL=10;
+    const hud=document.createElement('div');hud.className='game-hud';hud.style.marginBottom='6px';
+    hud.innerHTML=`<span class="game-stat">🎯 <span class="game-stat-val" id="sd-round">0</span>/${TOTAL}</span><span class="game-stat">✅ <span class="game-stat-val" id="sd-score">0</span></span><span class="game-stat">⭐ Best <span class="game-stat-val" id="sd-best">${best}</span></span>`;
+    lifeArea.appendChild(hud);
+    const modeRow=document.createElement('div');modeRow.style.cssText='display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:4px 0 10px;';
+    [['animals','🐶 Animals'],['shapes','🔷 Shapes'],['colors','🎨 Colors'],['mixed','🎲 Mixed']].forEach(([k,lbl])=>{const b=document.createElement('button');b.className='sdk-btn'+(k===mode?' active':'');b.style.cssText='font-size:0.8rem;padding:5px 10px;';b.textContent=lbl;b.onclick=()=>{sessionStorage.setItem('sd-mode',k);initSameDiff();};modeRow.appendChild(b);});
+    lifeArea.appendChild(modeRow);
+    const pairWrap=document.createElement('div');pairWrap.id='sd-pair';pairWrap.style.cssText='display:flex;gap:30px;justify-content:center;align-items:center;margin:18px 0;min-height:100px;';
+    lifeArea.appendChild(pairWrap);
+    const buttons=document.createElement('div');buttons.style.cssText='display:flex;gap:14px;justify-content:center;margin-top:10px;';
+    const sameBtn=document.createElement('button');sameBtn.id='sd-same';sameBtn.textContent='🟰 SAME';sameBtn.style.cssText='font-family:Comic Neue,cursive;font-size:1.4rem;padding:14px 30px;border-radius:14px;border:3px solid #2ecc71;background:#2ecc71;color:#fff;font-weight:bold;cursor:pointer;box-shadow:0 4px 0 #27ae60;';
+    const diffBtn=document.createElement('button');diffBtn.id='sd-diff';diffBtn.textContent='✂️ DIFFERENT';diffBtn.style.cssText='font-family:Comic Neue,cursive;font-size:1.4rem;padding:14px 30px;border-radius:14px;border:3px solid #e74c3c;background:#e74c3c;color:#fff;font-weight:bold;cursor:pointer;box-shadow:0 4px 0 #c0392b;';
+    buttons.appendChild(sameBtn);buttons.appendChild(diffBtn);
+    lifeArea.appendChild(buttons);
+    let curIsSame=false;
+    function nextRound(){
+      round++;
+      const re=document.getElementById('sd-round');if(re)re.textContent=round;
+      if(round>TOTAL){
+        const wasBest=score>best;
+        if(wasBest){sessionStorage.setItem(bestKey,score);}
+        pairWrap.innerHTML=`<div style="text-align:center;font-family:Comic Neue,cursive;color:#2c3e50;"><div style="font-size:2.2rem;margin-bottom:8px;">${wasBest?'🏆 NEW BEST!':'🎉 Game Over!'}</div><div style="font-size:1.3rem;">${score}/${TOTAL} correct</div></div>`;
+        sameBtn.style.display='none';diffBtn.style.display='none';
+        if(typeof spawnConfetti==='function')spawnConfetti(window.innerWidth/2,window.innerHeight/2,wasBest?120:60);
+        if(typeof showFeedback==='function')showFeedback(`Same/Different: ${score}/${TOTAL}`,wasBest?'#2ecc71':'#3498db');
+        if(typeof addScore==='function')addScore(score);
+        const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='Play Again';rb.style.cssText='display:block;margin:14px auto;';rb.onclick=()=>initSameDiff();lifeArea.appendChild(rb);
+        return;
+      }
+      const activeMode=mode==='mixed'?['animals','shapes','colors'][Math.floor(Math.random()*3)]:mode;
+      const pool=POOLS[activeMode];
+      curIsSame=Math.random()<0.5;
+      let a,b;
+      a=pool[Math.floor(Math.random()*pool.length)];
+      if(curIsSame){b=a;}
+      else{do{b=pool[Math.floor(Math.random()*pool.length)];}while(b===a);}
+      pairWrap.innerHTML=`<div style="font-size:5.5rem;line-height:1;">${a}</div><div style="font-size:5.5rem;line-height:1;">${b}</div>`;
+    }
+    function answer(picked){
+      const correct=picked===curIsSame;
+      if(correct){score++;const se=document.getElementById('sd-score');if(se)se.textContent=score;if(typeof showFeedback==='function')showFeedback('Yes! ✨','#2ecc71');}
+      else{if(typeof showFeedback==='function')showFeedback(curIsSame?'They\'re the SAME!':'They\'re DIFFERENT!','#e67e22');if(typeof resetStreak==='function')resetStreak();}
+      setTimeout(nextRound,800);
+    }
+    sameBtn.onclick=()=>answer(true);
+    diffBtn.onclick=()=>answer(false);
+    nextRound();
   }
   function initBubblePop(){
     lifeArea.innerHTML='';
