@@ -1,5 +1,17 @@
 ﻿# Changelog 
 
+## [5.7.78] - 2026-05-21 - Versus Literature category (6 → 7 cats, 144 → 168 prompts)
+- **Versus Speed Challenge** gets a 7th category: **📚 Literature** (24 questions, 60-second sprint).
+- Coverage spans:
+  - **Classical**: Shakespeare, Homer, Cervantes.
+  - **19th-century**: Austen, Melville, Tolstoy, Dostoevsky, Brontë (Jane Eyre), Dickens, Wilde.
+  - **Russian / international**: Tolstoy, Dostoevsky, García Márquez (One Hundred Years).
+  - **Modernist / 20th century**: Joyce (Ulysses), Hemingway, Fitzgerald (Gatsby), Steinbeck, Heller (Catch-22), Huxley (Brave New World), Tolkien.
+  - **Mid-late 20th century**: Toni Morrison (Beloved), Harper Lee, Mary Shelley (Frankenstein), opening-line ID for Moby Dick.
+- Each entry has `alt:` arrays for diacritics/full-name variants (e.g., "brontë" + "brontë"/"charlotte brontë"; "moby dick" + "moby-dick").
+- Versus now spans **7 categories × 24 questions = 168 prompts**.
+- **SW cache v156 → v157**.
+
 ## [5.7.77] - 2026-05-21 - Daily Challenge +6 (149 → 155)
 - **Daily Challenge** gains 6 more entries:
   - **Math**: √225 = 15.

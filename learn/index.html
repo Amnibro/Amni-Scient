@@ -15207,6 +15207,31 @@ function playAnimalSound(type) {
       {q:'LCM of 4 and 6?',a:'12',h:'Least common multiple.'},
       {q:'Sum of 1 + 2 + 3 + … + 10?',a:'55',h:'n(n+1)/2 with n=10.'},
       {q:'Fibonacci: next term after 13, 21?',a:'34',h:'Add the two previous.'}
+    ],literature:[
+      {q:'Author of "Hamlet"?',a:'shakespeare',h:'The Bard of Avon.'},
+      {q:'Author of "1984"?',a:'orwell',h:'British, also wrote "Animal Farm".'},
+      {q:'Author of "Pride and Prejudice"?',a:'austen',h:'Regency-era English novelist.'},
+      {q:'Author of "Moby Dick"?',a:'melville',h:'Whale, white, obsession.'},
+      {q:'Author of "War and Peace"?',a:'tolstoy',h:'Russian, also "Anna Karenina".'},
+      {q:'Author of "The Great Gatsby"?',a:'fitzgerald',h:'Jazz Age, F. Scott.'},
+      {q:'Author of "Crime and Punishment"?',a:'dostoevsky',h:'Russian, also "The Brothers Karamazov".'},
+      {q:'Author of "The Odyssey"?',a:'homer',h:'Ancient Greek epic poet.'},
+      {q:'Author of "Don Quixote"?',a:'cervantes',h:'Spanish — windmills.'},
+      {q:'Author of "Frankenstein"?',a:'shelley',h:'Mary, written when she was 18.'},
+      {q:'Author of "Beloved"?',a:'morrison',h:'Toni — Nobel Prize 1993.'},
+      {q:'Author of "One Hundred Years of Solitude"?',a:'marquez',h:'Colombian — magical realism.'},
+      {q:'Author of "The Lord of the Rings"?',a:'tolkien',h:'Oxford philologist, Middle-earth.'},
+      {q:'Author of "Brave New World"?',a:'huxley',h:'Aldous — dystopia + soma.'},
+      {q:'Author of "Catch-22"?',a:'heller',h:'Joseph — WWII satire.'},
+      {q:'Author of "The Sun Also Rises"?',a:'hemingway',h:'Iceberg theory, minimalist prose.'},
+      {q:'Author of "Ulysses"?',a:'joyce',h:'Irish, modernist, Bloomsday.'},
+      {q:'"Beowulf" was written in what language?',a:'old english',alt:['anglo-saxon'],h:'Pre-Norman conquest.'},
+      {q:'Author of "To Kill a Mockingbird"?',a:'lee',alt:['harper lee'],h:'Harper — Pulitzer 1961.'},
+      {q:'Author of "Of Mice and Men"?',a:'steinbeck',h:'John — also "Grapes of Wrath".'},
+      {q:'Author of "The Picture of Dorian Gray"?',a:'wilde',h:'Irish, also "The Importance of Being Earnest".'},
+      {q:'Author of "Jane Eyre"?',a:'bronte',alt:['brontë','charlotte bronte','charlotte brontë'],h:'Charlotte — eldest sister.'},
+      {q:'Author of "Great Expectations"?',a:'dickens',h:'Victorian England, Pip and Estella.'},
+      {q:'Famous opening: "Call me Ishmael" — what novel?',a:'moby dick',alt:['moby-dick'],h:'Melville\'s whale.'}
     ]};
     let mode=null,score=0,streak=0,best=0,qIdx=0,timer=0,timerId=null,pool=[],cur=null,hintUsed=false,bestStreak=0;
     function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
@@ -15224,6 +15249,7 @@ function playAnimalSound(type) {
           <button class="versus-btn" data-m="history">📜 History</button>
           <button class="versus-btn" data-m="vocab">📖 Vocabulary</button>
           <button class="versus-btn" data-m="math">🧮 Math</button>
+          <button class="versus-btn" data-m="literature">📚 Literature</button>
         </div></div>`;
       root.querySelectorAll('.versus-btn').forEach(b=>b.addEventListener('click',e=>{mode=e.target.dataset.m;startGame();}));
     }
