@@ -1,5 +1,17 @@
 ﻿# Changelog 
 
+## [5.7.85] - 2026-05-21 - 🏛️ NEW General Knowledge subject: Mythology
+- **New quiz subject**: **🏛️ Mythology** — 5 difficulty levels covering Greek, Roman, Norse, Egyptian, Hindu, and Aztec pantheons.
+- **30 questions** total (6 per level):
+  - **L1** (toddler): Zeus, Aphrodite, Poseidon, Minotaur, Cerberus, Unicorn.
+  - **L2** (elementary): Mars vs Ares, Hermes, Hera, Dionysus, Hephaestus.
+  - **L3** (middle school): Thor, Odin, Anubis, Ra, Perseus, Heracles (with "Hercules" alt).
+  - **L4** (high school): Phoenix, Valhalla, Styx, Quetzalcoatl, Loki, Ganesha (alt: "Ganesh").
+  - **L5** (advanced): Iris, Morpheus, Midas, Athena, Nike, Fenrir.
+- **20 teach cards** (4 per level) tie each level to substantive lore: Mjölnir, the Labyrinth, Sleipnir, Ragnarok, Maat's feather, Athens patronage, Phoenix as renewal symbol.
+- Brings General Knowledge subjects from **10 → 11**.
+- **SW cache v163 → v164**.
+
 ## [5.7.84] - 2026-05-21 - Chess +2 puzzles (40 → 42)
 - **P41 — Knight smothered fork mate**: Nb5 → Nc7+ attacks Ka8 (check) AND forks the queen on e8. White Kb6 seals a7, b7, b8. Knight checks are unblockable; Qe8 has no queen-line to c7 to capture. Mate.
 - **P42 — Q + B + P 8th-rank mate**: Qd2 → Qd8+ attacks Kh8 across the empty 8th rank. Bg6 covers h7; Pf6 covers g7; queen covers g8. Clean four-piece coordination.

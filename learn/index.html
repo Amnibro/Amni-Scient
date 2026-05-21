@@ -1308,6 +1308,7 @@
           <button class="game-btn quiz" data-game="quiz" data-subject="weather"><span class="btn-icon">🌦️</span><span class="btn-text">Weather</span><span class="btn-desc">Sun, rain, clouds & more</span></button>
           <button class="game-btn quiz" data-game="quiz" data-subject="space"><span class="btn-icon">🚀</span><span class="btn-text">Space &amp; Astronomy</span><span class="btn-desc">Planets, stars &amp; cosmology</span></button>
           <button class="game-btn quiz" data-game="quiz" data-subject="sports"><span class="btn-icon">🏆</span><span class="btn-text">Sports &amp; Olympics</span><span class="btn-desc">Games, athletes &amp; records</span></button>
+          <button class="game-btn quiz" data-game="quiz" data-subject="mythology"><span class="btn-icon">🏛️</span><span class="btn-text">Mythology</span><span class="btn-desc">Gods, heroes, monsters worldwide</span></button>
         </div>
       </section>
       <section class="game-category">
@@ -7900,6 +7901,49 @@
               {q: "What is the Unruh effect?", a: "An accelerated observer sees thermal radiation in vacuum", wrong: ["Cosmological redshift of CMB", "Time dilation of photons", "Heating of plasma by RF"], explain: "Acceleration a gives temperature T = ℏa/(2πck_B). Vacuum is observer-dependent. Connects to Hawking radiation — equivalence principle ties acceleration to gravity, predicting black-hole emission."}
           ]
       },
+      mythology: {
+        title: "Mythology",
+        1: [
+          {q:"King of the Greek gods?",a:"Zeus",wrong:["Apollo","Hades","Hermes"]},
+          {q:"Greek goddess of love?",a:"Aphrodite",wrong:["Athena","Artemis","Hera"]},
+          {q:"Greek god of the sea?",a:"Poseidon",wrong:["Zeus","Hades","Apollo"]},
+          {q:"Half-bull, half-man creature from a labyrinth?",a:"Minotaur",wrong:["Centaur","Pegasus","Cyclops"]},
+          {q:"Three-headed dog guarding the Greek underworld?",a:"Cerberus",wrong:["Hydra","Chimera","Sphinx"]},
+          {q:"Mythical horse with a horn on its forehead?",a:"Unicorn",wrong:["Pegasus","Centaur","Griffin"]}
+        ],
+        2: [
+          {q:"Roman god of war?",a:"Mars",wrong:["Jupiter","Mercury","Pluto"]},
+          {q:"Greek god of war?",a:"Ares",wrong:["Apollo","Zeus","Hermes"]},
+          {q:"Messenger god in Greek mythology?",a:"Hermes",wrong:["Apollo","Ares","Hades"]},
+          {q:"Queen of the Greek gods?",a:"Hera",wrong:["Athena","Aphrodite","Demeter"]},
+          {q:"Greek god of wine and theatre?",a:"Dionysus",wrong:["Apollo","Hermes","Zeus"]},
+          {q:"Greek god of fire and the forge?",a:"Hephaestus",wrong:["Ares","Apollo","Hermes"]}
+        ],
+        3: [
+          {q:"Norse god of thunder?",a:"Thor",wrong:["Odin","Loki","Freyr"]},
+          {q:"King of the Norse gods?",a:"Odin",wrong:["Thor","Loki","Tyr"]},
+          {q:"Egyptian god of mummification and the dead?",a:"Anubis",wrong:["Ra","Horus","Set"]},
+          {q:"Egyptian sun god?",a:"Ra",wrong:["Anubis","Horus","Thoth"]},
+          {q:"Greek hero who slew Medusa?",a:"Perseus",wrong:["Theseus","Achilles","Hercules"]},
+          {q:"Greek hero famous for completing 12 Labors?",a:"Heracles",alt:["Hercules"],wrong:["Perseus","Theseus","Jason"]}
+        ],
+        4: [
+          {q:"Mythical bird that is reborn from its own ashes?",a:"Phoenix",wrong:["Griffin","Roc","Sphinx"]},
+          {q:"Norse afterlife hall for fallen warriors?",a:"Valhalla",wrong:["Asgard","Niflheim","Yggdrasil"]},
+          {q:"River separating the living from the dead in Greek myth?",a:"Styx",wrong:["Lethe","Acheron","Cocytus"]},
+          {q:"Aztec feathered-serpent deity?",a:"Quetzalcoatl",wrong:["Huitzilopochtli","Tlaloc","Tezcatlipoca"]},
+          {q:"Norse trickster god?",a:"Loki",wrong:["Thor","Tyr","Heimdall"]},
+          {q:"Hindu deity with an elephant head?",a:"Ganesha",alt:["Ganesh"],wrong:["Vishnu","Shiva","Brahma"]}
+        ],
+        5: [
+          {q:"Greek goddess of the rainbow?",a:"Iris",wrong:["Eos","Selene","Hebe"]},
+          {q:"Greek god of dreams?",a:"Morpheus",wrong:["Hypnos","Thanatos","Hermes"]},
+          {q:"Mythical king whose touch turned everything to gold?",a:"Midas",wrong:["Croesus","Tantalus","Sisyphus"]},
+          {q:"Greek goddess of wisdom?",a:"Athena",wrong:["Hera","Artemis","Demeter"]},
+          {q:"Greek personification of victory?",a:"Nike",wrong:["Tyche","Eros","Iris"]},
+          {q:"Norse wolf prophesied to slay Odin at Ragnarok?",a:"Fenrir",wrong:["Sköll","Hati","Garm"]}
+        ]
+      },
       sports: {
         title: "Sports & Olympics",
         1: [
@@ -8061,6 +8105,13 @@
       3: [{emoji:'⚛️',title:'Atoms',fact:'Everything is atoms: protons (+), neutrons (0), electrons (-).'},{emoji:'🧪',title:'Chemistry',fact:'Periodic table: 118 elements. H₂O = water, NaCl = salt!'},{emoji:'🧬',title:'DNA',fact:'DNA stores genetics. Double helix discovered by Watson & Crick.'},{emoji:'🔭',title:'Astronomy',fact:'Light: 3×10⁸ m/s. Observable universe: 93 billion light-years!'},{emoji:'⚡',title:'Thermodynamics',fact:'Energy can\'t be created/destroyed (1st law). Entropy increases (2nd).'}],
       4: [{emoji:'⚛️',title:'Quantum Mechanics',fact:'Particles behave as waves. Heisenberg: can\'t know position AND momentum exactly.'},{emoji:'🧪',title:'Organic Chemistry',fact:'Carbon forms 4 bonds — backbone of life. Benzene ring = aromatic compounds.'},{emoji:'🧬',title:'Molecular Biology',fact:'mRNA carries DNA instructions to ribosomes for protein synthesis.'},{emoji:'🔭',title:'Cosmology',fact:'Dark energy accelerates expansion. Dark matter holds galaxies together.'},{emoji:'⚡',title:'Electromagnetism',fact:'Maxwell unified electricity + magnetism. EM waves travel at light speed.'}],
       5: [{emoji:'⚛️',title:'Particle Physics',fact:'Standard Model: quarks, leptons, gauge bosons. Higgs gives mass.'},{emoji:'🧪',title:'Quantum Chemistry',fact:'Molecular orbitals from overlapping atomic orbitals. HOMO-LUMO gap = reactivity.'},{emoji:'🧬',title:'Systems Biology',fact:'Networks of genes, proteins, metabolites interact — emergent properties arise.'},{emoji:'🔭',title:'General Relativity',fact:'Spacetime curves around mass. Gravitational waves confirmed by LIGO in 2015.'},{emoji:'⚡',title:'Statistical Mechanics',fact:'Boltzmann distribution connects microscopic states to macroscopic thermodynamics.'}]
+    },
+    mythology: {
+      1: [{emoji:'⚡',title:'Zeus',fact:'King of the Greek gods, ruler of Mount Olympus, lord of lightning and thunder.'},{emoji:'🌊',title:'Poseidon',fact:'Brother of Zeus, god of the seas, earthquakes, and horses. Wields a trident.'},{emoji:'🐂',title:'Minotaur',fact:'A creature with a bull\'s head and a man\'s body. Kept in the Labyrinth on Crete and slain by Theseus.'},{emoji:'🦄',title:'Unicorn',fact:'Mythical single-horned horse from European folklore. Symbol of purity and grace.'}],
+      2: [{emoji:'⚔️',title:'Mars / Ares',fact:'Romans worshipped Mars (calm, dignified); Greeks Ares (fierce, bloodthirsty). Same role, different temperament.'},{emoji:'👑',title:'Hera',fact:'Queen of the Greek gods, sister AND wife of Zeus. Goddess of marriage, women, family.'},{emoji:'🦋',title:'Hermes',fact:'Messenger of the gods, wore winged sandals. Patron of travelers, merchants, thieves, and shepherds.'},{emoji:'🍷',title:'Dionysus',fact:'God of wine, theatre, ecstasy, and ritual madness. Roman equivalent: Bacchus.'}],
+      3: [{emoji:'🔨',title:'Thor',fact:'Norse god of thunder, son of Odin. Wields Mjölnir — only the worthy can lift it.'},{emoji:'👁️',title:'Odin',fact:'Allfather of the Norse gods. Sacrificed an eye for wisdom; rides the 8-legged horse Sleipnir.'},{emoji:'🐺',title:'Anubis',fact:'Jackal-headed Egyptian god of embalming and the afterlife. Weighed hearts against the feather of Maat.'},{emoji:'☀️',title:'Ra',fact:'Egyptian sun god, often depicted with a falcon head and solar disk. Sailed the sun-barge across the sky daily.'}],
+      4: [{emoji:'🔥',title:'Phoenix',fact:'Mythical bird that bursts into flame at the end of its life and is reborn from the ashes. Symbol of renewal.'},{emoji:'🏛️',title:'Valhalla',fact:'Norse hall of slain warriors, presided over by Odin. Heroes feast and battle there until Ragnarok.'},{emoji:'🐍',title:'Quetzalcoatl',fact:'Aztec/Mayan feathered serpent — creator god, patron of priests, learning, and the wind.'},{emoji:'🎭',title:'Loki',fact:'Norse trickster, shape-shifter, sometimes friend and sometimes enemy of the gods. Father of monsters.'}],
+      5: [{emoji:'🦉',title:'Athena',fact:'Greek goddess of wisdom, strategic warfare, crafts. Born fully armored from Zeus\'s head. Patron of Athens.'},{emoji:'💭',title:'Morpheus',fact:'Greek god of dreams, one of the Oneiroi. Could appear in any human form within dreams.'},{emoji:'🏆',title:'Nike',fact:'Personification of victory in Greek mythology. Winged. Lent her name to the modern sportswear brand.'},{emoji:'🐺',title:'Fenrir',fact:'Massive Norse wolf, son of Loki. Bound by the gods with the magical ribbon Gleipnir. Foretold to kill Odin at Ragnarok.'}]
     },
     sports: {
       1: [{emoji:'🏀',title:'Basketball',fact:'2 teams of 5 try to shoot a ball through a hoop. Invented in 1891 by James Naismith!'},{emoji:'⚽',title:'Soccer',fact:'The world\'s most popular sport — 250M+ players. The FIFA World Cup is held every 4 years!'},{emoji:'🏊',title:'Swimming',fact:'Olympic strokes: freestyle, backstroke, breaststroke, butterfly. Michael Phelps won 23 Olympic gold medals!'},{emoji:'🏒',title:'Hockey',fact:'Ice hockey uses a hard rubber puck. NHL teams compete for the Stanley Cup — sports\' oldest trophy.'}],
