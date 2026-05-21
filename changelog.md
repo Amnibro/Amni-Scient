@@ -1,5 +1,14 @@
 ﻿# Changelog 
 
+## [5.7.74] - 2026-05-21 - Periodic Table +4 generators (8 → 12)
+- **Periodic Table quiz** gains 4 new question generators, scaling chemistry breadth:
+  - **Next element** — "Which immediately follows X by atomic number?"
+  - **Diatomic molecule ID** — teaches the 7 diatomic elements (H₂, N₂, O₂, F₂, Cl₂, Br₂, I₂).
+  - **Last element in period** — period boundaries (e.g., Ne ends period 2, Rn ends period 6).
+  - **Neutral atom electron count** — reinforces that electrons = protons = atomic number in neutral atoms.
+- Each generator returns null on insufficient pool (e.g., difficulty filter too narrow), and the outer retry loop (8 tries) picks an alternate generator.
+- **SW cache v152 → v153**.
+
 ## [5.7.73] - 2026-05-21 - NetDebug +2 ML-failure scenarios (13 → 15)
 - **NetDebug** (the AI Ethics / ML-failure debugger) gains 2 new hand-designed scenarios:
   - **Backdoor Trigger** — adversaries embedded a 4-pixel watermark trigger that overrides classification. References: Gu et al. 2017 "BadNets"; defense literature (neural cleanse, activation clustering).
