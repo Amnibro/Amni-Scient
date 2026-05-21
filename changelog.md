@@ -1,5 +1,15 @@
 ﻿# Changelog 
 
+## [5.7.57] - 2026-05-21 - Chess: minimal K+Q mate (32 → 33)
+- **P33 Minimal K+Q mate** — `Qd5-d8#` with Kg6 / Qd5 vs Kh8.
+  - Queen slides up the d-file to d8, attacking down the 8th rank to h8.
+  - King escapes:
+    - **g8**: Qd8 covers along the 8th rank.
+    - **g7**: Kg6 adjacent (covers).
+    - **h7**: Kg6 adjacent (covers).
+  - Only 3 pieces on the board — showcases the canonical king-and-queen mating pattern that every chess student needs to recognize.
+- **SW cache v135 → v136** to flush.
+
 ## [5.7.56] - 2026-05-21 - Achievements: +2 cognitive milestones (44 → 46)
 - **⚡ Lightning Reflexes** — Single reaction time under **200 ms** in any Reaction Time mode (visual/audio/choice). Reads `rxt-best-single-<mode>` keys plus the legacy `rxt-best-single` for older saves. Binary unlock (cur=1 once hit, target=1).
 - **🎩 Master Sorter** — Complete **50 Sorting Hat rounds** (counter `sort-rounds-done`). Higher tier than the existing Categorizer (25 rounds) — pairs with v5.7.55's expansion to 45 rounds available across the 5 levels.
