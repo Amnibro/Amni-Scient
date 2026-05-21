@@ -1,5 +1,15 @@
 ﻿# Changelog 
 
+## [5.7.77] - 2026-05-21 - Daily Challenge +6 (149 → 155)
+- **Daily Challenge** gains 6 more entries:
+  - **Math**: √225 = 15.
+  - **Sequence**: 100, 81, 64, 49, 36 (descending squares).
+  - **Word**: "sequoia" — classic 7-letter word with all 5 vowels.
+  - **Geography**: Sahara is in Africa.
+  - **Chemistry**: pH measures acidity (with alt forms for fuller answers).
+  - **Tech**: RAM = random access memory.
+- **SW cache v155 → v156**.
+
 ## [5.7.76] - 2026-05-21 - 🚀 NEW General Knowledge subject: Space & Astronomy
 - **New top-level quiz subject** under General Knowledge: **🚀 Space & Astronomy** — 5 difficulty levels matching the existing subject template.
 - **40 questions** total (8 per level):
