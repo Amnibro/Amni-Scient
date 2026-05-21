@@ -1947,7 +1947,13 @@
     {id:'chess-master',ic:'♛',name:'Chess Master',desc:'Solve 25 chess puzzles',progress(){const c=_intLS('chess-solved');return{cur:Math.min(c,25),target:25,unlocked:c>=25};}},
     {id:'logic-maven',ic:'🧮',name:'Logic Maven',desc:'Solve 50 logic puzzles',progress(){const c=_intLS('lgc-solved');return{cur:Math.min(c,50),target:50,unlocked:c>=50};}},
     {id:'daily-centurion',ic:'💯',name:'Daily Centurion',desc:'100-day Daily Challenge streak',progress(){const s=_intLS('daily-best');return{cur:Math.min(s,100),target:100,unlocked:s>=100};}},
-    {id:'history-scholar',ic:'📜',name:'History Scholar',desc:'Score 20+ in Versus History',progress(){const c=_intLS('vs-best-history');return{cur:Math.min(c,20),target:20,unlocked:c>=20};}}
+    {id:'history-scholar',ic:'📜',name:'History Scholar',desc:'Score 20+ in Versus History',progress(){const c=_intLS('vs-best-history');return{cur:Math.min(c,20),target:20,unlocked:c>=20};}},
+    {id:'bubble-master',ic:'🫧',name:'Bubble Master',desc:'Score 10/10 in Bubble Pop (any mode)',progress(){let m=0;['colors','letters','numbers'].forEach(k=>{m=Math.max(m,_intLS('bub-best-'+k));});return{cur:Math.min(m,10),target:10,unlocked:m>=10};}},
+    {id:'eagle-eye',ic:'🟰',name:'Eagle Eye',desc:'Get 10/10 in Same or Different (any mode)',progress(){let m=0;['animals','shapes','colors','mixed'].forEach(k=>{m=Math.max(m,_intLS('sd-best-'+k));});return{cur:Math.min(m,10),target:10,unlocked:m>=10};}},
+    {id:'caregiver',ic:'🐾',name:'Caregiver',desc:'Score 10/10 in Pet Care',progress(){const c=_intLS('petcare-best');return{cur:Math.min(c,10),target:10,unlocked:c>=10};}},
+    {id:'sharp-spotter',ic:'🔍',name:'Sharp Spotter',desc:'Find all 10 in Find It (any mode)',progress(){let m=0;['animals','fruits','vehicles','mixed'].forEach(k=>{m=Math.max(m,_intLS('fi-best-'+k));});return{cur:Math.min(m,10),target:10,unlocked:m>=10};}},
+    {id:'color-alchemist',ic:'🎨',name:'Color Alchemist',desc:'Score 10/10 in Color Mixer',progress(){const c=_intLS('cmix-best');return{cur:Math.min(c,10),target:10,unlocked:c>=10};}},
+    {id:'mole-slayer',ic:'🔨',name:'Mole Slayer',desc:'Score 25+ in Whack-a-Mole (any mode)',progress(){let m=0;['easy','normal','hard'].forEach(k=>{m=Math.max(m,_intLS('wm-best-'+k));});return{cur:Math.min(m,25),target:25,unlocked:m>=25};}}
   ];
   function _achState(){try{return JSON.parse(localStorage.getItem('amni-achievements')||'{}');}catch{return{};}}
   function _saveAchState(s){try{localStorage.setItem('amni-achievements',JSON.stringify(s));}catch{}}

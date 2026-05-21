@@ -1,5 +1,17 @@
 ﻿# Changelog 
 
+## [5.7.48] - 2026-05-21 - Achievements: +6 for new toddler subgames
+- Six milestone achievements covering this session's new Life Skills interactives:
+  - **🫧 Bubble Master** — Score 10/10 in Bubble Pop (any of colors/letters/numbers mode).
+  - **🟰 Eagle Eye** — Score 10/10 in Same or Different (any of animals/shapes/colors/mixed mode).
+  - **🐾 Caregiver** — Score 10/10 in Pet Care.
+  - **🔍 Sharp Spotter** — Find all 10 in Find It (any of animals/fruits/vehicles/mixed mode).
+  - **🎨 Color Alchemist** — Score 10/10 in Color Mixer.
+  - **🔨 Mole Slayer** — Score 25+ in Whack-a-Mole (any of easy/normal/hard mode).
+- All use the existing `_intLS` helper to read per-mode best keys (`bub-best-<mode>`, `sd-best-<mode>`, `petcare-best`, `fi-best-<mode>`, `cmix-best`, `wm-best-<mode>`).
+- Total achievements now **44** (was 38).
+- **SW cache v126 → v127** to flush.
+
 ## [5.7.47] - 2026-05-21 - Whack-a-Mole — classic arcade timing game (Life Skills)
 - New Life Skills subgame: **🔨 Whack-a-Mole**.
 - **Mechanics**:
