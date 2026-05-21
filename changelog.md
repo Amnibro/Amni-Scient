@@ -1,5 +1,18 @@
 ﻿# Changelog 
 
+## [5.7.42] - 2026-05-21 - Bubble Pop interactive subgame (Life Skills)
+- New interactive toddler game under **Life Skills**: **🫧 Bubble Pop**.
+- **Mechanics**:
+  - Target shown at top (e.g., "Pop the BLUE bubble!" / "Pop the letter A!" / "Pop the number 7!").
+  - 4 bubbles rise from the bottom of a sky-gradient arena over ~4-5 seconds.
+  - Toddler taps the matching bubble → it scales up and fades out.
+  - Wrong bubble shrinks briefly and gives "Try again!" feedback.
+  - Missed (target floats off-screen) → "Missed it!" and round advances.
+- **Modes** (button row above arena): **🎨 Colors** (default, 6 colors), **🔤 Letters** (A-Z), **🔢 Numbers** (1-10).
+- 10 rounds per game. Score tracked, best per mode persisted (`bub-best-<mode>` in sessionStorage). NEW BEST confetti at finish.
+- Pure tap-target gameplay — no narrative, no reading required (color/letter/number modes work for ages 2-7 progressively).
+- **SW cache v120 → v121** to flush.
+
 ## [5.7.41] - 2026-05-20 - New quiz subject: 🌦️ Weather
 - Fifth toddler→elementary subject this session. 5 levels, 50 questions:
   - **L1** (toddler): basic weather emoji (sun, rain, snow, cloud, wind, rainbow, thunder) — match the symbol to the word.

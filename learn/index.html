@@ -1273,6 +1273,7 @@
           <button class="game-btn life" data-game="life" data-subgame="dishes"><span class="btn-icon">🧽</span><span class="btn-text">Wash Dishes</span><span class="btn-desc">Scrub those plates</span></button>
           <button class="game-btn life" data-game="life" data-subgame="clock"><span class="btn-icon">🕰️</span><span class="btn-text">Read Clock</span><span class="btn-desc">Tell the time</span></button>
           <button class="game-btn life" data-game="life" data-subgame="money"><span class="btn-icon">💰</span><span class="btn-text">Money Math</span><span class="btn-desc">Count your coins</span></button>
+          <button class="game-btn life" data-game="life" data-subgame="bubble"><span class="btn-icon">🫧</span><span class="btn-text">Bubble Pop</span><span class="btn-desc">Pop the matching bubbles</span></button>
         </div>
       </section>
       <section class="game-category">
@@ -4399,6 +4400,76 @@
       if(subgame === 'dishes') initDishes();
       if(subgame === 'clock') initClock();
       if(subgame === 'money') initMoney();
+      if(subgame === 'bubble') initBubblePop();
+  }
+  function initBubblePop(){
+    lifeArea.innerHTML='';
+    lifeTitle.textContent='🫧 Pop the Bubble!';
+    const COLORS=[{n:'RED',e:'🔴'},{n:'BLUE',e:'🔵'},{n:'GREEN',e:'🟢'},{n:'YELLOW',e:'🟡'},{n:'PURPLE',e:'🟣'},{n:'ORANGE',e:'🟠'}];
+    const LETTERS='ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+    const NUMBERS=['1','2','3','4','5','6','7','8','9','10'];
+    let mode=sessionStorage.getItem('bub-mode')||'colors';
+    let score=0,round=0,bestKey='bub-best-'+mode,best=parseInt(sessionStorage.getItem(bestKey)||'0');
+    const TOTAL_ROUNDS=10;
+    const hud=document.createElement('div');hud.className='game-hud';hud.style.marginBottom='6px';
+    hud.innerHTML=`<span class="game-stat">🎯 <span class="game-stat-val" id="bub-round">0</span>/${TOTAL_ROUNDS}</span><span class="game-stat">✅ <span class="game-stat-val" id="bub-score">0</span></span><span class="game-stat">⭐ Best <span class="game-stat-val" id="bub-best">${best}</span></span>`;
+    lifeArea.appendChild(hud);
+    const modeRow=document.createElement('div');modeRow.style.cssText='display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:4px 0 8px;';
+    [['colors','🎨 Colors'],['letters','🔤 Letters'],['numbers','🔢 Numbers']].forEach(([k,lbl])=>{const b=document.createElement('button');b.className='sdk-btn'+(k===mode?' active':'');b.style.cssText='font-size:0.8rem;padding:5px 10px;';b.textContent=lbl;b.onclick=()=>{sessionStorage.setItem('bub-mode',k);initBubblePop();};modeRow.appendChild(b);});
+    lifeArea.appendChild(modeRow);
+    const prompt=document.createElement('div');prompt.id='bub-prompt';prompt.style.cssText='text-align:center;font-family:Comic Neue,cursive;font-size:1.4rem;color:#2c3e50;margin:8px 0;min-height:36px;';
+    lifeArea.appendChild(prompt);
+    const arena=document.createElement('div');arena.id='bub-arena';arena.style.cssText='position:relative;width:min(96vw,500px);height:min(60vh,400px);margin:0 auto;background:linear-gradient(to bottom,#74b9ff 0%,#a8e6f7 100%);border-radius:18px;overflow:hidden;border:3px solid #0984e3;';
+    lifeArea.appendChild(arena);
+    function nextRound(){
+      round++;
+      const re=document.getElementById('bub-round');if(re)re.textContent=round;
+      if(round>TOTAL_ROUNDS){
+        const wasBest=score>best;
+        if(wasBest){sessionStorage.setItem(bestKey,score);}
+        arena.innerHTML=`<div style="text-align:center;padding:40px 20px;color:#fff;font-family:Comic Neue,cursive;"><div style="font-size:2.5rem;margin-bottom:10px;">${wasBest?'🏆 NEW BEST!':'🎉 All done!'}</div><div style="font-size:1.4rem;">${score}/${TOTAL_ROUNDS} popped correctly</div></div>`;
+        if(typeof spawnConfetti==='function')spawnConfetti(window.innerWidth/2,window.innerHeight/2,wasBest?120:60);
+        if(typeof showFeedback==='function')showFeedback(`Bubble Pop: ${score}/${TOTAL_ROUNDS} 🫧`,wasBest?'#2ecc71':'#3498db');
+        if(typeof addScore==='function')addScore(score);
+        const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='Play Again';rb.style.cssText='display:block;margin:14px auto;';rb.onclick=()=>{score=0;round=0;document.getElementById('bub-score').textContent=0;document.getElementById('bub-round').textContent=0;nextRound();};lifeArea.appendChild(rb);
+        return;
+      }
+      arena.innerHTML='';
+      let pool,labelOf,targetIdx;
+      if(mode==='colors'){pool=[...COLORS].sort(()=>Math.random()-0.5).slice(0,4);labelOf=(p)=>p.e;targetIdx=Math.floor(Math.random()*pool.length);prompt.innerHTML=`Pop the <b style="color:#e84393">${pool[targetIdx].n}</b> bubble!`;}
+      else if(mode==='letters'){pool=[...LETTERS].sort(()=>Math.random()-0.5).slice(0,4);labelOf=(p)=>p;targetIdx=Math.floor(Math.random()*pool.length);prompt.innerHTML=`Pop the letter <b style="color:#e84393">${pool[targetIdx]}</b>!`;}
+      else{pool=[...NUMBERS].sort(()=>Math.random()-0.5).slice(0,4);labelOf=(p)=>p;targetIdx=Math.floor(Math.random()*pool.length);prompt.innerHTML=`Pop the number <b style="color:#e84393">${pool[targetIdx]}</b>!`;}
+      const target=pool[targetIdx];
+      pool.forEach((p,i)=>{
+        const b=document.createElement('div');
+        b.style.cssText=`position:absolute;width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:${mode==='colors'?'2.4rem':'2rem'};font-family:Comic Neue,cursive;font-weight:bold;color:#fff;cursor:pointer;background:radial-gradient(circle at 30% 30%,rgba(255,255,255,0.7),rgba(255,255,255,0.15));border:3px solid rgba(255,255,255,0.6);box-shadow:0 4px 12px rgba(0,0,0,0.2);user-select:none;touch-action:manipulation;`;
+        b.textContent=labelOf(p);
+        const left=10+(i%2)*52+Math.random()*15;
+        const startTop=arena.clientHeight+50;
+        b.style.left=left+'%';
+        b.style.top=startTop+'px';
+        arena.appendChild(b);
+        const floatDur=4000+Math.random()*1500;
+        const startTime=performance.now();
+        function tick(){
+          const elapsed=performance.now()-startTime;
+          const pct=Math.min(1,elapsed/floatDur);
+          b.style.top=(startTop-(startTop+100)*pct)+'px';
+          if(pct>=1){if(b.parentNode){b.parentNode.removeChild(b);if(p===target){onMiss();}}return;}
+          if(b.parentNode)requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+        b.addEventListener('pointerdown',e=>{
+          e.preventDefault();
+          if(p===target){onHit(b);}else{onWrong(b);}
+        });
+      });
+      function clearArena(){[...arena.children].forEach(c=>{c.remove();});}
+      function onHit(b){score++;const se=document.getElementById('bub-score');if(se)se.textContent=score;b.style.transition='transform 0.2s, opacity 0.2s';b.style.transform='scale(2)';b.style.opacity='0';if(typeof showFeedback==='function')showFeedback('Pop! ✨','#2ecc71');setTimeout(()=>{clearArena();nextRound();},400);}
+      function onWrong(b){b.style.transition='transform 0.15s';b.style.transform='scale(0.9)';setTimeout(()=>b.style.transform='',150);if(typeof showFeedback==='function')showFeedback('Try again!','#e67e22');if(typeof resetStreak==='function')resetStreak();}
+      function onMiss(){if(typeof showFeedback==='function')showFeedback('Missed it!','#e67e22');setTimeout(()=>{clearArena();nextRound();},400);}
+    }
+    nextRound();
   }
   function initVacuum() {
       lifeArea.innerHTML = '';
