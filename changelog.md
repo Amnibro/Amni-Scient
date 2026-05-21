@@ -1,5 +1,21 @@
 ﻿# Changelog 
 
+## [5.7.67] - 2026-05-21 - 🧠 Brain Exercise section + Math Solitaire (3 levels)
+- **NEW top-level section: 🧠 Brain Exercise**, gathering the adult-puzzle subgames previously living under Life Skills.
+  - **Math Solitaire** (NEW), Code Lock, Tower of Hanoi, Sliding Puzzle, Lights Out — all reachable from one dedicated section.
+  - Life Skills (now 10 subgames) keeps its toddler/elementary set; Brain Exercise houses the adult-brain content.
+- **🃏 Math Solitaire** — foundation-target solitaire variant (inspired by "Solitaire with a Twist" mechanic):
+  - 3–5 foundations each labeled with a 🎯 target number (e.g., 7) and a row of dots showing capacity.
+  - Stock pile deals one card at a time; each card shows a math expression that evaluates to a number (e.g., `4+3`, `14÷2`, `5²`, `22 mod 5`).
+  - Tap the foundation whose target equals the card's value to place it (fills a dot). Wrong tap or Pass discards.
+  - Win = all foundations full. Lose = stock empty with dots remaining.
+  - **Easy**: 3 targets × 3 dots, expressions use **+ −**. 18-card deck.
+  - **Medium**: 4 targets × 4 dots, expressions use **+ − × ÷**. 30-card deck.
+  - **Hard**: 5 targets × 5 dots, expressions use **+ − × ÷ mod ^**. 44-card deck.
+  - Per-level best moves persisted as `ms-best-<level>`.
+- **+ Card Shark achievement** — clear Math Solitaire on any difficulty. Achievements **50 → 51**.
+- **SW cache v145 → v146**.
+
 ## [5.7.66] - 2026-05-21 - Daily Challenge +12 (129 → 141)
 - **Daily Challenge pool** grows by 12 new puzzles spanning the full module mix:
   - **Math**: 7³, brick-weight algebra (x = 1 + x/2 → 2).
