@@ -1279,6 +1279,7 @@
           <button class="game-btn life" data-game="life" data-subgame="findit"><span class="btn-icon">🔍</span><span class="btn-text">Find It!</span><span class="btn-desc">Spot the target in the grid</span></button>
           <button class="game-btn life" data-game="life" data-subgame="colormix"><span class="btn-icon">🎨</span><span class="btn-text">Color Mixer</span><span class="btn-desc">Mix two colors — pick the result</span></button>
           <button class="game-btn life" data-game="life" data-subgame="whackmole"><span class="btn-icon">🔨</span><span class="btn-text">Whack-a-Mole</span><span class="btn-desc">Tap moles, avoid bombs!</span></button>
+          <button class="game-btn life" data-game="life" data-subgame="codelock"><span class="btn-icon">🔐</span><span class="btn-text">Code Lock</span><span class="btn-desc">Crack the hidden color code</span></button>
         </div>
       </section>
       <section class="game-category">
@@ -4451,6 +4452,103 @@
       if(subgame === 'findit') initFindIt();
       if(subgame === 'colormix') initColorMix();
       if(subgame === 'whackmole') initWhackMole();
+      if(subgame === 'codelock') initCodeLock();
+  }
+  function initCodeLock(){
+    lifeArea.innerHTML='';
+    lifeTitle.textContent='🔐 Code Lock';
+    const COLORS=['🔴','🟠','🟡','🟢','🔵','🟣'];
+    const CODE_LEN=4;
+    const MAX_GUESSES=10;
+    const bestKey='cl-best';
+    let best=parseInt(sessionStorage.getItem(bestKey)||'99');
+    let code=[];for(let i=0;i<CODE_LEN;i++)code.push(COLORS[Math.floor(Math.random()*COLORS.length)]);
+    let guesses=[],current=[null,null,null,null],won=false,lost=false;
+    const hud=document.createElement('div');hud.className='game-hud';hud.style.marginBottom='6px';
+    hud.innerHTML=`<span class="game-stat">🎯 Guess <span class="game-stat-val" id="cl-num">1</span>/${MAX_GUESSES}</span><span class="game-stat">⭐ Best <span class="game-stat-val">${best<99?best+' guesses':'—'}</span></span>`;
+    lifeArea.appendChild(hud);
+    const info=document.createElement('div');info.style.cssText='text-align:center;font-family:Comic Neue,cursive;color:#2c3e50;font-size:0.95rem;margin:6px 0 10px;line-height:1.4;max-width:460px;margin-left:auto;margin-right:auto;';
+    info.innerHTML='Crack the 4-color code. <b style="background:#2c3e50;color:#fff;padding:1px 6px;border-radius:8px;">⚫ black</b> = right color, right spot. <b style="background:#fff;color:#2c3e50;padding:1px 6px;border-radius:8px;border:1px solid #2c3e50;">⚪ white</b> = right color, wrong spot.';
+    lifeArea.appendChild(info);
+    const history=document.createElement('div');history.id='cl-hist';history.style.cssText='display:flex;flex-direction:column;gap:6px;max-width:420px;margin:8px auto;';
+    lifeArea.appendChild(history);
+    const guessRow=document.createElement('div');guessRow.id='cl-guess';guessRow.style.cssText='display:flex;gap:10px;justify-content:center;align-items:center;margin:14px auto;padding:12px;border:3px solid #74b9ff;border-radius:14px;max-width:420px;background:rgba(168,230,247,0.25);';
+    lifeArea.appendChild(guessRow);
+    const palette=document.createElement('div');palette.style.cssText='display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:10px 0;';
+    lifeArea.appendChild(palette);
+    const actions=document.createElement('div');actions.style.cssText='display:flex;gap:10px;justify-content:center;margin:10px 0;';
+    lifeArea.appendChild(actions);
+    function renderGuessRow(){
+      guessRow.innerHTML='';
+      for(let i=0;i<CODE_LEN;i++){
+        const slot=document.createElement('div');
+        const filled=!!current[i];
+        slot.style.cssText='width:56px;height:56px;border-radius:50%;background:'+(filled?'#fff':'rgba(255,255,255,0.6)')+';border:3px '+(filled?'solid #2c3e50':'dashed #74b9ff')+';display:flex;align-items:center;justify-content:center;font-size:2.2rem;cursor:pointer;line-height:1;user-select:none;';
+        if(filled){slot.textContent=current[i];}else{slot.textContent='?';slot.style.color='#74b9ff';slot.style.fontSize='1.4rem';}
+        slot.onclick=()=>{current[i]=null;renderGuessRow();updateSubmitBtn();};
+        guessRow.appendChild(slot);
+      }
+    }
+    function renderPalette(){
+      palette.innerHTML='';
+      COLORS.forEach(c=>{
+        const b=document.createElement('button');
+        b.style.cssText='width:52px;height:52px;border-radius:50%;border:3px solid #2c3e50;background:#fff;font-size:1.9rem;cursor:pointer;line-height:1;box-shadow:0 3px 0 #95a5a6;';
+        b.textContent=c;
+        b.onclick=()=>{if(won||lost)return;const idx=current.indexOf(null);if(idx!==-1){current[idx]=c;renderGuessRow();updateSubmitBtn();}};
+        palette.appendChild(b);
+      });
+    }
+    let submitBtn=null;
+    function updateSubmitBtn(){if(!submitBtn)return;const ok=current.every(x=>x)&&!won&&!lost;submitBtn.disabled=!ok;submitBtn.style.opacity=ok?'1':'0.4';submitBtn.style.cursor=ok?'pointer':'not-allowed';}
+    function evaluateGuess(g){
+      let black=0,white=0;const cr=[...code],gr=[...g];
+      for(let i=0;i<CODE_LEN;i++){if(gr[i]===cr[i]){black++;cr[i]=null;gr[i]=null;}}
+      for(let i=0;i<CODE_LEN;i++){if(gr[i]){const idx=cr.indexOf(gr[i]);if(idx!==-1){white++;cr[idx]=null;}}}
+      return{black,white};
+    }
+    function submitGuess(){
+      if(!current.every(x=>x)||won||lost)return;
+      const g=[...current];
+      const{black,white}=evaluateGuess(g);
+      guesses.push({g,black,white});
+      const row=document.createElement('div');row.style.cssText='display:flex;gap:6px;justify-content:center;align-items:center;padding:8px;background:rgba(0,0,0,0.04);border-radius:10px;';
+      g.forEach(c=>{const d=document.createElement('div');d.style.cssText='font-size:1.8rem;line-height:1;width:36px;text-align:center;';d.textContent=c;row.appendChild(d);});
+      const sep=document.createElement('div');sep.style.cssText='width:1px;height:28px;background:#bbb;margin:0 8px;';row.appendChild(sep);
+      const feedback=document.createElement('div');feedback.style.cssText='display:grid;grid-template-columns:repeat(2,1fr);gap:3px;min-width:36px;';
+      for(let i=0;i<black;i++){const p=document.createElement('div');p.style.cssText='width:14px;height:14px;border-radius:50%;background:#2c3e50;';feedback.appendChild(p);}
+      for(let i=0;i<white;i++){const p=document.createElement('div');p.style.cssText='width:14px;height:14px;border-radius:50%;background:#fff;border:2px solid #2c3e50;box-sizing:border-box;';feedback.appendChild(p);}
+      row.appendChild(feedback);
+      history.appendChild(row);
+      current=[null,null,null,null];renderGuessRow();
+      const ne=document.getElementById('cl-num');if(ne)ne.textContent=guesses.length+1;
+      if(black===CODE_LEN){
+        won=true;
+        const wasBest=guesses.length<best;
+        if(wasBest){sessionStorage.setItem(bestKey,guesses.length);}
+        const banner=document.createElement('div');banner.style.cssText='text-align:center;padding:14px;background:#2ecc71;color:#fff;border-radius:10px;margin:10px auto;font-family:Comic Neue,cursive;font-size:1.3rem;max-width:420px;';
+        banner.innerHTML=`🎉 Cracked in ${guesses.length} guess${guesses.length===1?'':'es'}!${wasBest?' 🏆 NEW BEST!':''}`;
+        lifeArea.appendChild(banner);
+        if(typeof spawnConfetti==='function')spawnConfetti(window.innerWidth/2,window.innerHeight/2,wasBest?150:80);
+        if(typeof showFeedback==='function')showFeedback(`Code Lock: ${guesses.length} 🔐`,'#2ecc71');
+        if(typeof addScore==='function')addScore(Math.max(1,14-guesses.length));
+      }else if(guesses.length>=MAX_GUESSES){
+        lost=true;
+        const banner=document.createElement('div');banner.style.cssText='text-align:center;padding:14px;background:#e74c3c;color:#fff;border-radius:10px;margin:10px auto;font-family:Comic Neue,cursive;font-size:1.15rem;max-width:420px;';
+        banner.innerHTML=`Out of guesses. Code was <b style="font-size:1.5rem;">${code.join(' ')}</b>`;
+        lifeArea.appendChild(banner);
+        if(typeof showFeedback==='function')showFeedback('Code remains a mystery','#e67e22');
+        if(typeof resetStreak==='function')resetStreak();
+      }
+      if(won||lost){
+        const again=document.createElement('button');again.className='nmm-btn';again.textContent='🔄 New Code';again.style.cssText='display:block;margin:14px auto;';again.onclick=()=>initCodeLock();lifeArea.appendChild(again);
+      }
+      updateSubmitBtn();
+    }
+    submitBtn=document.createElement('button');submitBtn.textContent='🔍 Submit Guess';submitBtn.style.cssText='font-family:Comic Neue,cursive;font-size:1.15rem;padding:11px 26px;border-radius:12px;border:3px solid #27ae60;background:#2ecc71;color:#fff;font-weight:bold;cursor:pointer;box-shadow:0 4px 0 #27ae60;';submitBtn.onclick=submitGuess;
+    const clearBtn=document.createElement('button');clearBtn.textContent='✖ Clear';clearBtn.style.cssText='font-family:Comic Neue,cursive;font-size:1.05rem;padding:11px 20px;border-radius:12px;border:3px solid #e74c3c;background:#fff;color:#e74c3c;cursor:pointer;';clearBtn.onclick=()=>{if(won||lost)return;current=[null,null,null,null];renderGuessRow();updateSubmitBtn();};
+    actions.appendChild(clearBtn);actions.appendChild(submitBtn);
+    renderGuessRow();renderPalette();updateSubmitBtn();
   }
   function initWhackMole(){
     lifeArea.innerHTML='';

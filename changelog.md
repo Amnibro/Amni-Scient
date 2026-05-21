@@ -1,5 +1,21 @@
 ﻿# Changelog 
 
+## [5.7.59] - 2026-05-21 - Code Lock — Mastermind-style deduction (Life Skills)
+- New Life Skills subgame: **🔐 Code Lock** — classic adult brain-exercise deduction game.
+- **Mechanics**:
+  - Computer picks a hidden **4-color code** from 6 options (🔴🟠🟡🟢🔵🟣), repeats allowed.
+  - User has **10 guesses**. Each: pick 4 colors from the palette (auto-fills the empty slot left-to-right), then Submit.
+  - Feedback per guess:
+    - **⚫ Black peg** = one color is in the right spot.
+    - **⚪ White peg** = one color is in the code but in the wrong spot.
+    - No peg = color not in code.
+  - Each row of the history shows the guess + feedback so the player can deduce the code.
+- Win condition: 4 black pegs (perfect guess). `cl-best` stores fewest guesses-to-crack across all games; NEW BEST banner if you beat it.
+- Loss: 10 guesses without success — reveals the code.
+- Pure logic deduction, ~5–10 minute games. Distinct from every other Life subgame.
+- Life Skills now offers **11 subgames** total.
+- **SW cache v137 → v138** to flush.
+
 ## [5.7.58] - 2026-05-21 - Daily Challenge: +8 puzzles (121 → 129)
 - Eight more adult-knowledge puzzles, spanning thin-coverage categories:
   - 📐 Geometry: dodecagon has 12 sides.
