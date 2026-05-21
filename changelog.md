@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.7.52] - 2026-05-21 - AI Ethics Debug: +2 ML scenarios (11 → 13)
+- Two new production-ML failure-mode scenarios, framed as engineering issues:
+  - **Catastrophic Forgetting** — vision model trained sequentially on dogs → cats → birds; after the last round it can't classify dogs/cats anymore. The "Recent Bias" input dominates; old-task features starved. Solution: cut Recent Bias ≤0.2, boost Dog/Cat Features ≥0.4. Impact references McCloskey & Cohen 1989, elastic weight consolidation (Kirkpatrick 2017), experience replay buffers.
+  - **Data Poisoning** — spam classifier where attackers injected mislabeled samples. The "Poisoned Cluster" input drags the model away from real spam signals. Solution: cut Poisoned Cluster ≤0.2, boost URL Reputation ≥0.5 and Sender History ≥0.4. Impact references Biggio et al. 2012, RANSAC-style outlier filtering, data provenance.
+- **SW cache v130 → v131** to flush.
+
 ## [5.7.51] - 2026-05-21 - Daily Challenge: +15 adult puzzles (106 → 121)
 - Daily Challenge pool now rotates **121 puzzles** before repeats (~4 months of unique daily challenges given the date-hash dispatcher).
 - 15 new adult-knowledge questions, weighted toward previously-thin categories:

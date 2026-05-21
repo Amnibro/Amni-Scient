@@ -14123,7 +14123,31 @@ function playAnimalSound(type) {
           if(!evConn||evConn.w<0.4)return'Evidence Score is the genuine probability signal — let it carry weight.';
           return null;},
         hints:['Confidence Boost is the artificial inflator. Cut its weight ≤0.2.','Boost Feature Match to ≥0.5 — pattern strength is the genuine probability driver.','Boost Evidence Score to ≥0.4 — accumulated evidence sets the posterior.'],
-        impact:'Calibration matters most in safety-critical settings: if a model says "30% chance of cancer," patients and doctors need that number to reflect real frequencies. Temperature scaling (Guo et al. 2017), Platt scaling, and isotonic regression are standard post-hoc calibration techniques.'}
+        impact:'Calibration matters most in safety-critical settings: if a model says "30% chance of cancer," patients and doctors need that number to reflect real frequencies. Temperature scaling (Guo et al. 2017), Platt scaling, and isotonic regression are standard post-hoc calibration techniques.'},
+      {title:'Catastrophic Forgetting',desc:'This vision model trained sequentially: dog photos, then cat photos, then bird photos. After the last round, it can no longer classify dogs or cats — it overwrote earlier knowledge. The "Recent Bias" input dominates while old-task feature signals are starved. Cut the recent-task dominance and let Dog/Cat/Bird features all carry weight.',
+        nodes:[{id:'dog',x:60,y:60,layer:0,label:'Dog Feats',val:0.5},{id:'cat',x:60,y:170,layer:0,label:'Cat Feats',val:0.5},{id:'bird',x:60,y:280,layer:0,label:'Bird Feats',val:0.7},{id:'recent',x:60,y:380,layer:0,label:'Recent Bias',val:0.9},
+          {id:'h1',x:250,y:100,layer:1,label:'H1',val:0},{id:'h2',x:250,y:330,layer:1,label:'H2',val:0},
+          {id:'out',x:440,y:200,layer:2,label:'Classify',val:0}],
+        conns:[{from:'dog',to:'h1',w:0.2},{from:'cat',to:'h1',w:0.2},{from:'bird',to:'h2',w:0.5},{from:'recent',to:'h2',w:0.9},{from:'h1',to:'out',w:0.2},{from:'h2',to:'out',w:0.85}],
+        check:function(n,c){const recentConn=c.find(cc=>cc.from==='recent');const dogConn=c.find(cc=>cc.from==='dog');const catConn=c.find(cc=>cc.from==='cat');
+          if(recentConn&&Math.abs(recentConn.w)>0.2)return'Recent-task bias still dominates — the older classes (dog/cat) stay forgotten.';
+          if(!dogConn||dogConn.w<0.4)return'Dog features need to stay live — boost their weight.';
+          if(!catConn||catConn.w<0.4)return'Cat features need to stay live — boost their weight.';
+          return null;},
+        hints:['Recent Bias is what causes overwriting. Cut its weight ≤0.2.','Boost Dog Features to ≥0.4.','Boost Cat Features to ≥0.4.'],
+        impact:'Catastrophic forgetting (McCloskey & Cohen 1989) is the classic continual-learning failure. Mitigations include elastic weight consolidation (Kirkpatrick et al. 2017), experience replay buffers, and progressive networks.'},
+      {title:'Data Poisoning',desc:'This spam classifier was trained on a dataset where adversaries injected labeled-"good" examples containing subtle spam markers. The "Poisoned Cluster" input now drags the model away from real spam signals. Cut the poisoned-cluster influence and rely on robust features (URL Reputation, Sender History).',
+        nodes:[{id:'url',x:60,y:60,layer:0,label:'URL Rep.',val:0.7},{id:'sender',x:60,y:170,layer:0,label:'Sender Hist.',val:0.6},{id:'content',x:60,y:280,layer:0,label:'Content Pat.',val:0.6},{id:'poison',x:60,y:380,layer:0,label:'Poisoned Cluster',val:0.85},
+          {id:'h1',x:250,y:120,layer:1,label:'H1',val:0},{id:'h2',x:250,y:330,layer:1,label:'H2',val:0},
+          {id:'out',x:440,y:200,layer:2,label:'Spam?',val:0}],
+        conns:[{from:'url',to:'h1',w:0.3},{from:'sender',to:'h1',w:0.2},{from:'content',to:'h2',w:0.3},{from:'poison',to:'h2',w:0.85},{from:'h1',to:'out',w:0.3},{from:'h2',to:'out',w:0.8}],
+        check:function(n,c){const poisonConn=c.find(cc=>cc.from==='poison');const urlConn=c.find(cc=>cc.from==='url');const senderConn=c.find(cc=>cc.from==='sender');
+          if(poisonConn&&Math.abs(poisonConn.w)>0.2)return'Poisoned samples still drag the model — adversarial training data wins. Cut their influence.';
+          if(!urlConn||urlConn.w<0.5)return'URL reputation is a robust signal — boost it.';
+          if(!senderConn||senderConn.w<0.4)return'Sender history is expensive for attackers to forge at scale — let it carry weight.';
+          return null;},
+        hints:['The Poisoned Cluster is the attack surface. Cut its weight ≤0.2.','Boost URL Reputation to ≥0.5.','Boost Sender History to ≥0.4.'],
+        impact:'Data poisoning is a primary threat in modern ML supply chains (Biggio et al. 2012). Defenses include data provenance tracking, robust statistics (RANSAC-style outlier filtering), trusted-source curation, and adversarial training.'}
     ];
     let lvl=0,nodes=[],conns=[],selConn=null,dragNode=null,dragOff={x:0,y:0},hintIdx=0,attempts=0;
     const solvedKey='netdebug-solved';
