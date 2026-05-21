@@ -1,5 +1,16 @@
 ﻿# Changelog 
 
+## [5.7.50] - 2026-05-21 - Versus Speed Challenge: +Vocabulary category (5th)
+- New **📖 Vocabulary** category for the 60-second Speed Challenge with **24 adult word-knowledge questions**:
+  - **Synonyms/antonyms**: huge→enormous, hot→cold, antonym/synonym definitions.
+  - **Definitions**: verbose, concise, ephemeral, ubiquitous, esoteric, succinct, ambiguous, parsimonious, cacophony, euphony.
+  - **Figures of speech**: metaphor (without like/as), simile (with like/as), oxymoron, onomatopoeia.
+  - **Literary terms**: palindrome, haiku 5-7-5, protagonist, antagonist, etymology.
+  - **Homophones** sound the same but mean different things (to/too/two).
+- **Speed Demon** achievement extended to include `vs-best-vocab` so the new category counts toward unlock.
+- Total Versus pool now **120 questions across 5 categories** (was 96 across 4).
+- **SW cache v128 → v129** to flush.
+
 ## [5.7.49] - 2026-05-21 - Chess: pawn promotion mate (29 → 30)
 - **P30 Pawn promotion mate** — `a7-a8#` (promotes to queen) with Ka1 / Pa7 / Nh5 / Bf5 vs Kh8.
 - Tactical motif: an underdog white pawn pushes to a8, promotes to a queen, and the new queen attacks h8 along the 8th rank.

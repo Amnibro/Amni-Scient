@@ -1941,7 +1941,7 @@
     {id:'ascended-saint',ic:'😇',name:'Ascended Saint',desc:'Earn 25 Heavenly Chips in Cookie Clicker',progress(){const c=_intLS('ck-hc');return{cur:Math.min(c,25),target:25,unlocked:c>=25};}},
     {id:'diamond-prestige',ic:'⭐',name:'Diamond Miner',desc:'Reach Prestige 5 in Auto Miner',progress(){const c=_intLS('am-p');return{cur:Math.min(c,5),target:5,unlocked:c>=5};}},
     {id:'library',ic:'📚',name:'Library',desc:'Read 10 different storybooks',progress(){const c=_intLS('story-total-reads');return{cur:Math.min(c,10),target:10,unlocked:c>=10};}},
-    {id:'versus-speed',ic:'⚡',name:'Speed Demon',desc:'Score 20+ in any Versus Speed Challenge',progress(){let m=0;['coding','science','geo','history'].forEach(k=>{m=Math.max(m,_intLS('vs-best-'+k));});return{cur:Math.min(m,20),target:20,unlocked:m>=20};}},
+    {id:'versus-speed',ic:'⚡',name:'Speed Demon',desc:'Score 20+ in any Versus Speed Challenge',progress(){let m=0;['coding','science','geo','history','vocab'].forEach(k=>{m=Math.max(m,_intLS('vs-best-'+k));});return{cur:Math.min(m,20),target:20,unlocked:m>=20};}},
     {id:'categorizer',ic:'🎩',name:'Categorizer',desc:'Complete 25 Sorting Hat rounds',progress(){const c=_intLS('sort-rounds-done');return{cur:Math.min(c,25),target:25,unlocked:c>=25};}},
     {id:'sudoku-expert',ic:'🔢',name:'Sudoku Expert',desc:'Win an Expert Sudoku (Classic or X, 22 clues)',progress(){const c=_intLS('sdk-wins-classic-expert')+_intLS('sdk-wins-x-expert');return{cur:Math.min(c,1),target:1,unlocked:c>=1};},},
     {id:'chess-master',ic:'♛',name:'Chess Master',desc:'Solve 25 chess puzzles',progress(){const c=_intLS('chess-solved');return{cur:Math.min(c,25),target:25,unlocked:c>=25};}},
@@ -14307,6 +14307,31 @@ function playAnimalSound(type) {
       {q:'Year the USSR dissolved?',a:'1991',h:'Same year as Gulf War.'},
       {q:'First man in space (1961)?',a:'gagarin',h:'Soviet cosmonaut.'},
       {q:'Civilization built Machu Picchu?',a:'inca',h:'Andean empire of Peru.'}
+    ],vocab:[
+      {q:'Synonym for HUGE?',a:'enormous',h:'Also: gigantic, massive.'},
+      {q:'Antonym for HOT?',a:'cold',h:'Frigid, cool, icy.'},
+      {q:'What does VERBOSE mean?',a:'wordy',h:'Using more words than needed.'},
+      {q:'What does CONCISE mean?',a:'brief',h:'Short and to the point.'},
+      {q:'A PALINDROME is a word that...',a:'reads same backwards',h:'Like "racecar" or "level".'},
+      {q:'What does EPHEMERAL mean?',a:'short-lived',h:'Temporary, fleeting, transient.'},
+      {q:'What does UBIQUITOUS mean?',a:'everywhere',h:'Found in many places at once.'},
+      {q:'What does ESOTERIC mean?',a:'obscure',h:'Known by only a few specialists.'},
+      {q:'What is an OXYMORON?',a:'contradiction',h:'Combines opposites, like "jumbo shrimp".'},
+      {q:'A METAPHOR is a comparison ___?',a:'without like or as',h:'Direct comparison: "life is a journey".'},
+      {q:'A SIMILE is a comparison using ___?',a:'like or as',h:'"As brave as a lion."'},
+      {q:'ETYMOLOGY is the study of?',a:'word origins',h:'Where words come from historically.'},
+      {q:'ONOMATOPOEIA means words that?',a:'sound like what they mean',h:'Buzz, sizzle, pop.'},
+      {q:'A HAIKU is a poem with what structure?',a:'5-7-5 syllables',h:'Three lines, classical Japanese form.'},
+      {q:'ANTONYM means a word with the ___ meaning?',a:'opposite',h:'Hot and cold are antonyms.'},
+      {q:'SYNONYM means a word with the ___ meaning?',a:'same',h:'Big and large are synonyms.'},
+      {q:'Homophones SOUND the?',a:'same',h:'But have different meanings, like "to/too/two".'},
+      {q:'What does SUCCINCT mean?',a:'concise',h:'Brief, to-the-point.'},
+      {q:'What does AMBIGUOUS mean?',a:'unclear',h:'Open to multiple interpretations.'},
+      {q:'The PROTAGONIST is the?',a:'main character',h:'The hero or lead of a story.'},
+      {q:'The ANTAGONIST is the?',a:'opposing character',h:'The villain or rival.'},
+      {q:'What does PARSIMONIOUS mean?',a:'stingy',h:'Reluctant to spend; miserly.'},
+      {q:'What does CACOPHONY mean?',a:'harsh noise',h:'Discordant, jarring sound.'},
+      {q:'What does EUPHONY mean?',a:'pleasant sound',h:'Melodious, harmonious.'}
     ]};
     let mode=null,score=0,streak=0,best=0,qIdx=0,timer=0,timerId=null,pool=[],cur=null,hintUsed=false,bestStreak=0;
     function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
@@ -14322,6 +14347,7 @@ function playAnimalSound(type) {
           <button class="versus-btn" data-m="science">🔬 Science</button>
           <button class="versus-btn" data-m="geo">🌍 Geography</button>
           <button class="versus-btn" data-m="history">📜 History</button>
+          <button class="versus-btn" data-m="vocab">📖 Vocabulary</button>
         </div></div>`;
       root.querySelectorAll('.versus-btn').forEach(b=>b.addEventListener('click',e=>{mode=e.target.dataset.m;startGame();}));
     }
