@@ -1,5 +1,18 @@
 ﻿# Changelog 
 
+## [5.7.49] - 2026-05-21 - Chess: pawn promotion mate (29 → 30)
+- **P30 Pawn promotion mate** — `a7-a8#` (promotes to queen) with Ka1 / Pa7 / Nh5 / Bf5 vs Kh8.
+- Tactical motif: an underdog white pawn pushes to a8, promotes to a queen, and the new queen attacks h8 along the 8th rank.
+- Escape verification:
+  - **g7**: Nh5 attacks (h5→g7 is a valid knight move).
+  - **h7**: Light-squared bishop on f5 covers along the f5-g6-h7 diagonal (all light, all empty).
+  - **g8**: Qa8 covers along the 8th rank.
+  - **Capture queen**: Kh8 to a8 is 7 squares — impossible.
+  - **Block**: No black pieces left.
+- The chess engine handles promotion implicitly — it matches the `a7-a8` move string regardless of resulting piece, so the puzzle works without engine changes.
+- Brings the chess bank to a round **30 puzzles**.
+- **SW cache v127 → v128** to flush.
+
 ## [5.7.48] - 2026-05-21 - Achievements: +6 for new toddler subgames
 - Six milestone achievements covering this session's new Life Skills interactives:
   - **🫧 Bubble Master** — Score 10/10 in Bubble Pop (any of colors/letters/numbers mode).
