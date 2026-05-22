@@ -1,5 +1,15 @@
 ﻿# Changelog 
 
+## [5.7.94] - 2026-05-21 - 📚 Science L1 + Animals L1 quizzes: full explanations
+- **Toddler-level quizzes were the biggest gap** — L2–L5 had explanations, but L1 (kindergarten) entries showed only the answer.
+- **Science L1** (15 Q) backfilled with kid-friendly explanations:
+  - Rain → cloud droplet condensation; Sun → closest star (93M mi); plants → photosynthesis intro; winter → axial tilt; air → 78% N₂ / 21% O₂; chicks vs mammals; chlorophyll absorbs red+blue / reflects green; arachnids vs insects (leg counts); metamorphosis; fish gills + dissolved oxygen; 71% Earth water; ice as solid water; rainbow as prism + ROYGBIV; ear → eardrum → 3 bones → inner ear; bee enzymatic nectar→honey.
+- **Animals L1** (25 Q) backfilled — each animal-sound entry now teaches a fact about that animal:
+  - Cows have 4-chambered stomachs; dogs were first tamed 15–40k years ago (~300M olfactory receptors); cats only meow at humans; pigs smarter than dogs by tests; sheep wool grows back; ducks waterproofed by oil-coated feathers; horses sleep standing; tadpole → frog metamorphosis; lions only social big cat (prides); owls 270° head rotation + silent flight; bees flap 230×/sec; modern birds = living theropod dinosaurs; turkeys only males gobble; donkeys related to horses; wolves howl carries 10 km; 25 billion chickens worldwide; snakes "see" with tongue + no eyelids; African Greys 100+ words; doves = peace symbol; monkeys = primate cousins; elephant trunks ~40,000 muscles no bones; squirrels accidentally plant trees; crows hold grudges; crocodile bite ~3,700 psi.
+- Audio playback (isAudio/audioText) still works — explanations rendered AFTER the answer-pick, not before.
+- Per Anthony: "It's Amni-LEARN."
+- **SW cache v172 → v173**.
+
 ## [5.7.93] - 2026-05-21 - 📚 Sports + Space quizzes: full explanations (30 + 40 Q)
 - **Sports & Olympics** (30 Q across 5 levels) — every question now teaches:
   - L1: Naismith 1891 + peach-basket origin of basketball; "soccer/football" naming; lawn tennis 1874 + clock-quadrant scoring origin; baseball MLB continuity since 1903; Stanley Cup; Phelps 23 swimming golds.
