@@ -2184,10 +2184,10 @@
     {q:'Which continent contains the Sahara Desert?',a:'africa',alt:['the sahara is in africa'],cat:'🌍 Geography',explain:'The Sahara spans the northern third of Africa, crossing 11 countries (including Algeria, Libya, Egypt, Sudan, Chad, Niger, Mali, Mauritania). It\'s the world\'s largest hot desert.'},
     {q:'What does pH measure?',a:'acidity',alt:['acidity/alkalinity','hydrogen ion concentration','h+ concentration'],cat:'⚗️ Chemistry',explain:'pH measures hydrogen ion concentration [H⁺] on a logarithmic scale 0–14. pH = −log₁₀[H⁺]. Below 7 = acidic (more H⁺), 7 = neutral (pure water), above 7 = basic/alkaline (less H⁺). Each whole unit is a 10× change in concentration.'},
     {q:'What does RAM stand for?',a:'random access memory',alt:['ram'],cat:'💻 Tech',explain:'RAM = Random Access Memory — fast, volatile working memory where running programs and active data live. "Random access" means any byte can be read/written in roughly equal time (vs sequential-access tape). Contents disappear when power is lost.'},
-    {q:'13 × 12 = ?',a:'156',cat:'🔢 Math'},
-    {q:'Next: 1, 3, 9, 27, 81, ?',a:'243',cat:'📈 Sequence'},
-    {q:'A 4-letter word for both "a flying mammal" and "a baseball implement"?',a:'bat',cat:'🔤 Word'},
-    {q:'Smallest country in the world (by area)?',a:'vatican',alt:['vatican city','holy see','vatican city state'],cat:'🌍 Geography'}
+    {q:'13 × 12 = ?',a:'156',cat:'🔢 Math',explain:'Break it up: 13 × 12 = 13 × (10 + 2) = (13 × 10) + (13 × 2) = 130 + 26 = 156.'},
+    {q:'Next: 1, 3, 9, 27, 81, ?',a:'243',cat:'📈 Sequence',explain:'Each term is ×3 the previous: 1, 3, 9, 27, 81 are 3⁰, 3¹, 3², 3³, 3⁴. The next term is 3⁵ = 3 × 81 = 243.'},
+    {q:'A 4-letter word for both "a flying mammal" and "a baseball implement"?',a:'bat',cat:'🔤 Word',explain:'BAT is a homonym: the nocturnal flying mammal (the only flying mammal) AND the wooden stick used to hit a baseball. Same spelling and pronunciation, two unrelated meanings.'},
+    {q:'Smallest country in the world (by area)?',a:'vatican',alt:['vatican city','holy see','vatican city state'],cat:'🌍 Geography',explain:'Vatican City covers just 0.49 km² (~120 acres) — about the size of a typical suburban park — enclosed within Rome. Population ~800. Spiritual and administrative center of the Roman Catholic Church.'}
   ];
   function _dailyToday(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
   function _dailyHash(s){let h=0;for(let i=0;i<s.length;i++){h=((h<<5)-h+s.charCodeAt(i))|0;}return Math.abs(h);}
