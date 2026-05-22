@@ -1,5 +1,23 @@
 ﻿# Changelog 
 
+## [5.7.90] - 2026-05-21 - 📚 Daily Challenge: step-by-step explanations
+- **Pedagogical pass on Daily Challenge** — modal now teaches, not just judges.
+- **UX rework**: replaced 1.8s/2.6s auto-close with explicit ✓ "Continue" / ✗ "Got it" button. Players control when to dismiss, so they can read the explanation.
+- **New `explain` field** on each puzzle. Renders in a styled box (yellow left-border) titled **💡 How to get there:**, showing on BOTH correct and wrong outcomes.
+- **30 puzzles backfilled** with full derivation steps:
+  - **Math**: 7³ = 49×7 = 343; brick algebra x = 1 + x/2 → x = 2; 7x+3=24 → x=3; 13×12 = 130+26 = 156; √225 = 15² = 225; etc.
+  - **Sequences**: cubes (1, 8, 27, 64, **125**); odd-progression differences (3, 6, 11, 18, 27, **38**); ×2+1 rule (5, 11, 23, 47, **95**); powers of 3 (1, 3, 9, 27, 81, **243**); descending squares (100, 81, 64, 49, **36**).
+  - **Word play**: LISTEN/SILENT anagram; LIVE→EVIL semordnilap; SEQUOIA's 5-vowel structure.
+  - **Riddles**: towel/dry paradox of perspective; footsteps as wordplay on "take".
+  - **Geometry**: pentagon interior-sum formula (n−2)×180°; diameter = 2r.
+  - **Chemistry**: Na from Latin "natrium" + the other Latin-named elements; pH = −log₁₀[H⁺] with 10× per unit.
+  - **Bio**: heart 4 chambers (2 atria + 2 ventricles) with oxygenated/deoxygenated routing.
+  - **Geo**: Sahara size + 11 countries; Vatican 0.49 km² with context; Everest 8,848.86 m with Mauna-Kea-from-base trivia.
+  - **Calc**: d/dx[sin x]=cos x with the 4-step cycle.
+  - **Tech**: CPU role + multi-core; RAM volatility + random vs sequential access.
+- Future Daily Challenge entries should include `explain:` to teach, not just test.
+- **SW cache v168 → v169**.
+
 ## [5.7.89] - 2026-05-21 - Sorting Hat Level 6 (Master) — 9 advanced CS/engineering rounds
 - **Sorting Hat** gains a **6th level**: **Master** — accessible when running in the Brain Exercise app-mode (`?level=6` URL param).
 - **9 new rounds** spanning advanced CS/engineering dichotomies:
