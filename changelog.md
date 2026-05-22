@@ -1,5 +1,21 @@
 ﻿# Changelog 
 
+## [5.7.89] - 2026-05-21 - Sorting Hat Level 6 (Master) — 9 advanced CS/engineering rounds
+- **Sorting Hat** gains a **6th level**: **Master** — accessible when running in the Brain Exercise app-mode (`?level=6` URL param).
+- **9 new rounds** spanning advanced CS/engineering dichotomies:
+  - **Functional vs Object-Oriented** (immutability/encapsulation, pure fns, higher-order fns).
+  - **Hash Function vs Cipher** (SHA-256/BLAKE3 vs AES/ChaCha20, one-way vs reversible).
+  - **Supervised vs Unsupervised ML** (regression/forest vs k-means/PCA/autoencoder).
+  - **RISC vs CISC** (ARM/MIPS vs x86/AMD64, fixed vs variable opcodes).
+  - **Stable vs Unstable Sort** (merge/insertion/Timsort vs quick/heap/Shellsort).
+  - **Polynomial vs Exponential time complexity** (O(n²)/O(n³) vs O(2ⁿ)/O(n!), P vs NP-hard).
+  - **Procedural vs Declarative** (C/Assembly vs SQL/HTML, instructions vs results).
+  - **Open Source vs Proprietary** (Linux/PostgreSQL vs Windows/Oracle).
+  - **Compiled vs Interpreted** (C/Rust/Go vs Python/JS/Ruby).
+- Cap raised from `Math.min(currentLevel,5)` → `Math.min(currentLevel,6)` so L6 actually fires.
+- Sorting Hat total: **60 → 69 rounds**.
+- **SW cache v167 → v168**.
+
 ## [5.7.88] - 2026-05-21 - Sudoku 4×4 conflict highlighting
 - **Polish on Sudoku 4×4** (added in v5.7.83). Cells whose value duplicates within their row, column, or 2×2 region now get an **inset red box-shadow + red digit color** so the player sees mistakes immediately.
 - Highlighting is dynamic — fix the conflict by erasing or re-placing the number, and the red outline disappears.

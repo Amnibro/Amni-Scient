@@ -8710,12 +8710,23 @@ function playAnimalSound(type) {
         {title:'TCP vs UDP',buckets:['🔁 TCP','📡 UDP'],items:[{e:'Reliable delivery',b:0},{e:'Best-effort',b:1},{e:'Connection-oriented',b:0},{e:'Connectionless',b:1},{e:'HTTP/1.1',b:0},{e:'DNS query',b:1},{e:'SMTP email',b:0},{e:'Live video stream',b:1}]},
         {title:'Wave Behavior vs Particle Behavior',buckets:['🌊 Wave','⚛️ Particle'],items:[{e:'Interference',b:0},{e:'Photoelectric effect',b:1},{e:'Diffraction',b:0},{e:'Compton scattering',b:1},{e:'Refraction',b:0},{e:'Quantized energy',b:1},{e:'Superposition',b:0},{e:'Discrete momentum',b:1}]},
         {title:'AC vs DC Current',buckets:['🔁 AC','➡️ DC'],items:[{e:'Wall outlet',b:0},{e:'AA battery',b:1},{e:'Power grid',b:0},{e:'USB power',b:1},{e:'60 Hz oscillation',b:0},{e:'Constant polarity',b:1},{e:'Transformers work',b:0},{e:'Solar panel output',b:1}]}
+      ],
+      6:[
+        {title:'Functional vs Object-Oriented',buckets:['λ Functional','🧩 OOP'],items:[{e:'Immutability',b:0},{e:'Encapsulation',b:1},{e:'Pure functions',b:0},{e:'Inheritance',b:1},{e:'Higher-order fns',b:0},{e:'Polymorphism',b:1},{e:'Map/Reduce',b:0},{e:'Classes & objects',b:1}]},
+        {title:'Hash Function vs Cipher',buckets:['#️⃣ Hash','🔐 Cipher'],items:[{e:'SHA-256',b:0},{e:'AES',b:1},{e:'BLAKE3',b:0},{e:'ChaCha20',b:1},{e:'One-way',b:0},{e:'Reversible with key',b:1},{e:'Fixed output size',b:0},{e:'Variable output size',b:1}]},
+        {title:'Supervised vs Unsupervised ML',buckets:['👨‍🏫 Supervised','🔍 Unsupervised'],items:[{e:'Linear regression',b:0},{e:'K-means clustering',b:1},{e:'Random forest',b:0},{e:'PCA',b:1},{e:'Logistic regression',b:0},{e:'Autoencoder',b:1},{e:'Has labels',b:0},{e:'No labels',b:1}]},
+        {title:'RISC vs CISC',buckets:['🔋 RISC','⚙️ CISC'],items:[{e:'ARM',b:0},{e:'x86',b:1},{e:'MIPS',b:0},{e:'AMD64',b:1},{e:'Fewer instructions',b:0},{e:'Many instructions',b:1},{e:'Fixed-length opcodes',b:0},{e:'Variable-length opcodes',b:1}]},
+        {title:'Stable vs Unstable Sort',buckets:['🟦 Stable','🔀 Unstable'],items:[{e:'Merge sort',b:0},{e:'Quicksort',b:1},{e:'Insertion sort',b:0},{e:'Heapsort',b:1},{e:'Bubble sort',b:0},{e:'Selection sort',b:1},{e:'Timsort',b:0},{e:'Shellsort',b:1}]},
+        {title:'Polynomial vs Exponential time',buckets:['⏱️ Polynomial','💥 Exponential'],items:[{e:'O(n²)',b:0},{e:'O(2ⁿ)',b:1},{e:'O(n³)',b:0},{e:'O(n!)',b:1},{e:'Matrix multiplication',b:0},{e:'Brute SAT',b:1},{e:'P-class problems',b:0},{e:'NP-hard problems',b:1}]},
+        {title:'Procedural vs Declarative',buckets:['📜 Procedural','🎯 Declarative'],items:[{e:'C',b:0},{e:'SQL',b:1},{e:'Assembly',b:0},{e:'HTML',b:1},{e:'Step-by-step instructions',b:0},{e:'Describe the result',b:1},{e:'For loops',b:0},{e:'List comprehensions',b:1}]},
+        {title:'Open Source vs Proprietary',buckets:['🆓 Open','💼 Proprietary'],items:[{e:'Linux',b:0},{e:'Windows',b:1},{e:'PostgreSQL',b:0},{e:'Oracle DB',b:1},{e:'Firefox',b:0},{e:'macOS',b:1},{e:'GIMP',b:0},{e:'Photoshop',b:1}]},
+        {title:'Compiled vs Interpreted',buckets:['⚙️ Compiled','🌀 Interpreted'],items:[{e:'C',b:0},{e:'Python',b:1},{e:'Rust',b:0},{e:'JavaScript',b:1},{e:'Go',b:0},{e:'Ruby',b:1},{e:'C++',b:0},{e:'Perl',b:1}]}
       ]
     };
     let roundIdx = 0, sorted = 0, totalItems = 0, sortRoundsCleared = 0;
     let dragItem = null, dragBucket = null;
     function loadRound() {
-      const lvlRounds = allRounds[Math.min(currentLevel, 5)] || allRounds[3];
+      const lvlRounds = allRounds[Math.min(currentLevel, 6)] || allRounds[3];
       const round = lvlRounds[roundIdx % lvlRounds.length];
       info.textContent = round.title;
       tray.innerHTML = '';
