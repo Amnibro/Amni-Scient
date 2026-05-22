@@ -1254,6 +1254,13 @@
         </div>
       </div>
     </div>
+    <div id="random-game-banner" style="max-width:560px;width:92%;margin:0 auto 14px;padding:10px 16px;background:linear-gradient(135deg,rgba(155,89,182,0.22),rgba(142,68,173,0.18));border:2px solid #9b59b6;border-radius:14px;cursor:pointer;font-family:'JetBrains Mono',monospace;box-shadow:0 0 18px rgba(155,89,182,0.25);transition:transform 0.15s,box-shadow 0.15s;display:flex;align-items:center;justify-content:space-between;gap:10px;">
+      <div>
+        <div style="font-size:1.05rem;font-weight:bold;color:#9b59b6;text-shadow:0 0 6px rgba(155,89,182,0.4);">🎲 Spin the Wheel</div>
+        <div style="font-size:0.82rem;color:var(--text,#ecf0f1);margin-top:3px;opacity:0.9;">Tap to launch a random game or quiz from the whole suite</div>
+      </div>
+      <div style="font-size:1.8rem;">🎰</div>
+    </div>
     <div class="game-grid" id="main-game-grid">
       <section class="game-category">
         <h2 class="cat-header"><span class="cat-header-icon">📚</span> School Skills</h2>
@@ -2246,6 +2253,19 @@
       banner.addEventListener('click',_dailyOpenModal);
       banner.addEventListener('mouseenter',()=>{banner.style.transform='scale(1.02)';banner.style.boxShadow='0 0 32px rgba(241,196,15,0.5)';});
       banner.addEventListener('mouseleave',()=>{banner.style.transform='';banner.style.boxShadow='0 0 22px rgba(241,196,15,0.25)';});
+    }
+    const rbanner=document.getElementById('random-game-banner');
+    if(rbanner){
+      rbanner.addEventListener('click',()=>{
+        const buttons=Array.from(document.querySelectorAll('#main-game-grid .game-btn'));
+        if(!buttons.length)return;
+        const pick=buttons[Math.floor(Math.random()*buttons.length)];
+        if(typeof spawnConfetti==='function')spawnConfetti(window.innerWidth/2,window.innerHeight/3,40);
+        if(typeof showFeedback==='function')showFeedback('🎲 '+(pick.querySelector('.btn-text')?.textContent||'Random!'),'#9b59b6');
+        pick.click();
+      });
+      rbanner.addEventListener('mouseenter',()=>{rbanner.style.transform='scale(1.02)';rbanner.style.boxShadow='0 0 28px rgba(155,89,182,0.5)';});
+      rbanner.addEventListener('mouseleave',()=>{rbanner.style.transform='';rbanner.style.boxShadow='0 0 18px rgba(155,89,182,0.25)';});
     }
   },100);
   // Light/dark theme toggle. Default dark; persists per-browser in localStorage.

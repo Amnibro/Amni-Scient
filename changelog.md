@@ -1,5 +1,13 @@
 ﻿# Changelog 
 
+## [5.7.87] - 2026-05-21 - 🎲 "Spin the Wheel" — random game launcher (home screen)
+- **New home-screen banner**: **🎲 Spin the Wheel** (purple-themed, sits between Daily Challenge and the game-grid).
+- **Mechanic**: tap launches a random subgame, quiz, or activity drawn from the entire suite (all `.game-btn` elements inside `#main-game-grid`). Triggers the picked button's existing click handler, so navigation/flow is identical to manually selecting it.
+- **Feedback**: a tiny confetti burst + toast showing the picked game's name (e.g., "🎲 Tower of Hanoi") fires on tap.
+- **Why this matters**: with the suite now hosting **150+ activities** (10 Brain Exercise subgames, 11 quiz subjects × 5 levels each, Versus 8 categories, Daily Challenge 159 puzzles, Chess 42 puzzles, Sorting Hat 60 rounds, NetDebug 15 scenarios, Periodic Table 12 generators, Music Studio, math modules, plus the Life Skills + Action & Sports + arcade catalogues), an explicit "I'll try whatever" affordance addresses choice paralysis for adult users.
+- Cross-cutting UX add — first non-content addition of the "across the whole suite" pass.
+- **SW cache v165 → v166**.
+
 ## [5.7.86] - 2026-05-21 - 🧠 Memory Match (Brain Exercise)
 - **NEW Brain Exercise subgame: 🧠 Memory Match** — the classic flip-and-match memory test.
 - **3 difficulty levels**:
