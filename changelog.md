@@ -1,5 +1,16 @@
 ﻿# Changelog 
 
+## [5.7.92] - 2026-05-21 - 📚 Mythology quiz: full explanations on all 30 questions
+- The quiz UI **already supports `q.explain`** (line 8362) — renders a styled "💡 [answer] : [explanation]" box after each answer with a "Next ▶" button. So the data backfill alone activates teaching for any quiz subject.
+- **All 30 Mythology questions** now have substantive `explain:` fields with rich lore:
+  - **L1** (Greek basics): Zeus's coup of the Titans, Aphrodite's sea-foam birth, Poseidon's grudge against Odysseus, Theseus + Ariadne's thread + the Labyrinth, Heracles + Cerberus, qilin/re'em unicorn parallels.
+  - **L2** (Olympians): Mars vs Ares temperament contrast, Hermes's psychopomp role, Hera's vendetta against Heracles ("glory of Hera"), Dionysus's birth from mortal mother + the origins of theatre, Hephaestus's lameness + Achilles's armor.
+  - **L3** (Norse + Egyptian + Greek heroes): Mjölnir + Mímir's well + Sleipnir + Huginn/Muninn for Odin, Maat's feather + Ammit for Anubis, Ra's nightly battle with Apep, Perseus's polished shield against Medusa, all 12 Heracles Labors enumerated.
+  - **L4** (advanced): Phoenix's 500–1000 year cycle + Bennu/Fenghuang parallels, Valhalla + Folkvangr distinction, Charon's coin and Achilles's heel, Quetzalcoatl + the Cortés mistake, Loki's monstrous children (Fenrir, Jörmungandr, Hel), Ganesha origin myth.
+  - **L5** (deep cuts): "iridescent" etymology from Iris, "morphine" from Morpheus, Midas + Pactolus river, Athena's birth from Zeus's head + the olive-tree contest with Poseidon for Athens, Nike's "swoosh" inheritance, Gleipnir made from impossible things.
+- Per Anthony: "All calculus, logic steps, everything needs explanation. It's Amni-LEARN."
+- **SW cache v170 → v171**.
+
 ## [5.7.91] - 2026-05-21 - 📚 Daily Challenge: backfill explanations for ALL remaining puzzles
 - Per Anthony: "It's Amni-LEARN — all calculus, logic steps, everything needs explanation."
 - **~120 more puzzles backfilled** with substantive `explain:` content. Combined with v5.7.90, every puzzle in the Daily Challenge pool now teaches.
