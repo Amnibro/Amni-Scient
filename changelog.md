@@ -1,5 +1,13 @@
 ﻿# Changelog 
 
+## [5.7.88] - 2026-05-21 - Sudoku 4×4 conflict highlighting
+- **Polish on Sudoku 4×4** (added in v5.7.83). Cells whose value duplicates within their row, column, or 2×2 region now get an **inset red box-shadow + red digit color** so the player sees mistakes immediately.
+- Highlighting is dynamic — fix the conflict by erasing or re-placing the number, and the red outline disappears.
+- Fixed (given) cells are never flagged since they're guaranteed consistent at puzzle creation.
+- Highlight suppressed on the win banner (board is consistent by definition there).
+- Improves the play loop on Hard (only 4 givens) where it's easy to lose track of conflicts.
+- **SW cache v166 → v167**.
+
 ## [5.7.87] - 2026-05-21 - 🎲 "Spin the Wheel" — random game launcher (home screen)
 - **New home-screen banner**: **🎲 Spin the Wheel** (purple-themed, sits between Daily Challenge and the game-grid).
 - **Mechanic**: tap launches a random subgame, quiz, or activity drawn from the entire suite (all `.game-btn` elements inside `#main-game-grid`). Triggers the picked button's existing click handler, so navigation/flow is identical to manually selecting it.

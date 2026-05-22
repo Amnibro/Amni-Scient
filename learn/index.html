@@ -4646,6 +4646,14 @@
       for(let br=0;br<2;br++)for(let bc=0;bc<2;bc++){const seen=new Set();for(let i=0;i<2;i++)for(let j=0;j<2;j++){const v=puzzle[br*2+i][bc*2+j];if(seen.has(v))return false;seen.add(v);}}
       return true;
     }
+    function hasConflict(r,c){
+      const v=puzzle[r][c];if(v===0)return false;
+      for(let i=0;i<4;i++)if(i!==c&&puzzle[r][i]===v)return true;
+      for(let i=0;i<4;i++)if(i!==r&&puzzle[i][c]===v)return true;
+      const br=Math.floor(r/2)*2,bc=Math.floor(c/2)*2;
+      for(let i=0;i<2;i++)for(let j=0;j<2;j++){const rr=br+i,cc=bc+j;if((rr!==r||cc!==c)&&puzzle[rr][cc]===v)return true;}
+      return false;
+    }
     function render(){
       lifeArea.innerHTML='';
       const elapsed=Math.floor((Date.now()-startTime)/1000);
@@ -4662,10 +4670,12 @@
         const v=puzzle[r][c];
         const isFixed=fixed[r][c];
         const isSel=selected&&selected[0]===r&&selected[1]===c;
+        const conflict=!won&&hasConflict(r,c);
         const bg=isSel?'#f1c40f':(isFixed?'#34495e':'#ecf0f1');
-        const color=isSel?'#2c3e50':(isFixed?'#fff':'#2c3e50');
+        const color=conflict?'#e74c3c':(isSel?'#2c3e50':(isFixed?'#fff':'#2c3e50'));
         const bd=(r===1?'border-bottom:3px solid #1a2530;':'')+(c===1?'border-right:3px solid #1a2530;':'');
-        cell.style.cssText=`width:72px;height:72px;background:${bg};color:${color};display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:bold;font-family:Comic Neue,cursive;cursor:${won||isFixed?'default':'pointer'};border-radius:4px;${bd}`;
+        const outline=conflict?'box-shadow:inset 0 0 0 3px #e74c3c;':'';
+        cell.style.cssText=`width:72px;height:72px;background:${bg};color:${color};display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:bold;font-family:Comic Neue,cursive;cursor:${won||isFixed?'default':'pointer'};border-radius:4px;${bd}${outline}`;
         cell.textContent=v||'';
         if(!won&&!isFixed)cell.onclick=()=>{selected=[r,c];render();};
         board.appendChild(cell);
