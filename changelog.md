@@ -1,5 +1,21 @@
 ﻿# Changelog 
 
+## [5.7.93] - 2026-05-21 - 📚 Sports + Space quizzes: full explanations (30 + 40 Q)
+- **Sports & Olympics** (30 Q across 5 levels) — every question now teaches:
+  - L1: Naismith 1891 + peach-basket origin of basketball; "soccer/football" naming; lawn tennis 1874 + clock-quadrant scoring origin; baseball MLB continuity since 1903; Stanley Cup; Phelps 23 swimming golds.
+  - L2: ancient Greek Olympics 776 BC–393 AD; soccer 11-player formations; Super Bowl TV / ad economics; Tour de France maillot jaune; golf 4 majors enumerated; World Series → Yankees 27 titles.
+  - L3: soccer 90 minutes + stoppage + extra time; Wimbledon 1877 strawberries-and-cream; Stanley Cup as oldest North American trophy; 5 Olympic rings + Coubertin 1913 design rationale; 42.195 km marathon + Pheidippides legend; touchdown 6 + extra point + safety scoring.
+  - L4: 1896 Athens Olympics + Spyridon Louis; The Ashes 1882 urn story; FIFA World Cup since 1930 + WWII gaps + 2026 trifecta host; Belmont Stakes + Triple Crown rarity (only 13 horses); tennis "love" possible French "l'œuf" etymology; 3-pointer history + Curry's 402.
+  - L5: Phelps 28 medals across 4 Olympics; triple-double + Westbrook/Robertson context; Test cricket 5-day format + Bradman 99.94; Jim Hines 9.95s at Mexico City 1968; F1 Grand Slam definition + Clark's 8; Wilt's 100 (Mar 2, 1962).
+- **Space & Astronomy** (40 Q across 5 levels) — every question now teaches:
+  - L1: Earth atmosphere composition; planet enumeration + Pluto demotion; Mercury 430°/−180°C swing; Saturn ring physics (10 m thick, 280k km span); Sun mass 99.86% + 600M tons/sec fusion; star scintillation vs planet disks; astronaut/cosmonaut/taikonaut naming; Moon giant-impact + tidal locking + axis stabilization.
+  - L2: Mars Olympus Mons + Valles Marineris + Phobos/Deimos; Jupiter 95 moons + Galilean four; Venus 465°C runaway greenhouse; Milky Way 100k ly + Sgr A* 4M M☉; Apollo 11 timeline; 88 IAU constellations 1922; leap year + perihelion/aphelion; Great Red Spot since 1665.
+  - L3: 8 min 20 s photon travel + 100,000 yr core-to-surface; Newton's F=Gm₁m₂/r² + Einstein curvature; asteroid belt 4% lunar mass + Ceres 940 km; Ganymede > Mercury diameter + own B-field; IAU 2006 planet definition; Proxima b SETI target; 29.5-day lunar cycle waxing/waning; AU defined exactly 149,597,870,700 m.
+  - L4: c = 299,792,458 m/s exactly (defines the meter); corona 1–3M K mystery; Type Ia supernovae → dark-energy discovery Nobel 2011; LIGO GW150914 Sep 14 2015 + Nobel 2017; Moon gravity 1.62 m/s²; Big Bang H/He origin + stellar nucleosynthesis; light-year as distance not time; 4.6 Gyr solar system from radiometric dating.
+  - L5: CMB 2.725 K + Penzias/Wilson Nobel 1978; Schwarzschild radius derivation 1916 + Earth/Sun/SMBH values; Hubble tension 67 vs 73 km/s/Mpc; Chandrasekhar 1.44 M☉ derived at 19 on boat to England + Nobel 1983; universe 13.787 ± 0.020 Gyr; parsec arcsecond-parallax origin; Penrose-Hawking 1965/1970 + Penrose's 2020 Nobel; Drake equation factor-by-factor breakdown.
+- Per Anthony: "It's Amni-LEARN."
+- **SW cache v171 → v172**.
+
 ## [5.7.92] - 2026-05-21 - 📚 Mythology quiz: full explanations on all 30 questions
 - The quiz UI **already supports `q.explain`** (line 8362) — renders a styled "💡 [answer] : [explanation]" box after each answer with a "Next ▶" button. So the data backfill alone activates teaching for any quiz subject.
 - **All 30 Mythology questions** now have substantive `explain:` fields with rich lore:
