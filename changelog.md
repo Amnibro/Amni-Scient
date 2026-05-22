@@ -1,5 +1,12 @@
 ﻿# Changelog 
 
+## [5.7.95] - 2026-05-21 - 📚 Weather quiz L1+L2+L3: full explanations (30 Q)
+- **Weather quiz** L1 (10 Q), L2 (10 Q), L3 (10 Q) all backfilled with substantive explanations:
+  - **L1**: cloud formation, snowflake hexagonal symmetry, cloud types (cumulus/cirrus/nimbus), 8-min sunlight travel, wind from pressure differences, ROYGBIV refraction, lightning superheats air to 30,000°C → thunder.
+  - **L2**: chlorophyll fade revealing yellow/orange/red pigments in fall; axial tilt as cause of summer/winter; insulation by trapping air; sweat evaporation cooling mechanism; ice → liquid at 0°C; 23.5° axial tilt → 4 seasons; dew point physics.
+  - **L3**: tornado wind shear + EF5 480 km/h; hurricane formation needs ≥26.5°C water + Coriolis effect; thermistor thermometers; freezing-point depression (salt on roads); boiling-point pressure-dependence (mountaineers' tea); blizzard ≥56 km/h sustained + 400 m visibility; lightning from ice/water collision charge separation; 42° rainbow angle.
+- Cache **v173 → v174**.
+
 ## [5.7.94] - 2026-05-21 - 📚 Science L1 + Animals L1 quizzes: full explanations
 - **Toddler-level quizzes were the biggest gap** — L2–L5 had explanations, but L1 (kindergarten) entries showed only the answer.
 - **Science L1** (15 Q) backfilled with kid-friendly explanations:
