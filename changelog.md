@@ -1,5 +1,19 @@
 ﻿# Changelog 
 
+## [5.7.91] - 2026-05-21 - 📚 Daily Challenge: backfill explanations for ALL remaining puzzles
+- Per Anthony: "It's Amni-LEARN — all calculus, logic steps, everything needs explanation."
+- **~120 more puzzles backfilled** with substantive `explain:` content. Combined with v5.7.90, every puzzle in the Daily Challenge pool now teaches.
+- **Math**: 17×23 = 17×(25−2) = 391; bat+ball Kahneman puzzle; 12² = (10+2)²; 144÷12; 23×11 digit-sum shortcut; 11² palindromic-square pattern; 6³ build-up; 2¹⁰ = (2⁵)²; 15% of 200 mental math; 19×21 difference-of-squares trick; 8! via 8 × 7!.
+- **Sequence**: 2,6,12,20,30 → 42 (also n(n+1)); 1,1,2,3,5,8 Fibonacci with φ; 0,1,1,2,3,5,8,13 → 21; primes 2,3,5,7,11 → 13; primes 11,13,17,19,23 → 29; Mersenne 1,3,7,15,31 → 63 = 2ⁿ−1; powers of 2 (1,2,4,8,16 → 32); squares 4,9,16,25 → 36 and 1..36 → 49.
+- **Calculus**: ∫2x dx via power rule; ∫cos x dx → sin x with trig-integral cycle; ∫1/x dx → ln|x| as the power-rule "hole" at n=−1; cos(0), sin(90°), tan(45°) from unit-circle coords; log₁₀(1000)=3 and log₂(64)=6 from definition.
+- **Logic**: dad-4×-son age algebra (set up two equations, solve); Monopoly lateral riddle decoded.
+- **Physics**: c≈300,000 km/s; sound 343 m/s with medium-dependence; g=9.8 m/s² with free-fall examples; F=ma with units; photon as quantum of light with E=hf.
+- **Geometry**: hexagon honeycomb optimality; triangle 180° proof sketch; quadrilateral 360°; cube V−E+F=2 Euler check; dodecagon (12 sides, 150° each); octagon stop-sign reference; clock 3:00 = 90° derived from 30° per hour.
+- **Bio**: 206 bones (vs ~270 in infants); 27 hand + 26 foot bones; 33 vertebrae (7+12+5+5+4); 46 chromosomes (23 pairs); mitochondria ATP/electron-transport.
+- **Chemistry**: Fe/ferrum, Ag/argentum, Au/aurum, Hg/hydrargyrum, K/kalium — all the Latin-named element symbols; C-14 half-life 5730 yr in carbon-dating context; pH = −log₁₀[H⁺] logarithmic scale; NaCl ionic bonding.
+- **Geography/History/Music/Tech/Literature**: every entry now carries the surrounding context (e.g., "Brasília designed by Niemeyer + Costa", "Bizet died 3 months after Carmen premiere", "Berners-Lee chose not to patent the web", "Soviet Union dissolved Dec 26 1991").
+- **SW cache v169 → v170**.
+
 ## [5.7.90] - 2026-05-21 - 📚 Daily Challenge: step-by-step explanations
 - **Pedagogical pass on Daily Challenge** — modal now teaches, not just judges.
 - **UX rework**: replaced 1.8s/2.6s auto-close with explicit ✓ "Continue" / ✗ "Got it" button. Players control when to dismiss, so they can read the explanation.
