@@ -1,5 +1,24 @@
 ﻿# Changelog 
 
+## [5.7.108] - 2026-05-25 - Animals L2: final chunk → L2 COMPLETE
+- Last 14 Animals L2 entries explained:
+  - **Grasshopper springs**: up to 20× body length via spring-loaded hind legs.
+  - **Ox/horse plow** — pre-tractor draft animals.
+  - **Dog vs cat tail signaling** (dog wag = happy; cat twitch = annoyed).
+  - **Fish scales** grow like tree rings — can age the fish.
+  - **Feathers** evolved from reptile scales; down/flight/display/waterproofing roles.
+  - **Mammal fur = keratin**; goosebumps as evolutionary echo of "fluff for warmth".
+  - **Amphibian metamorphosis**: gills → lungs, fins → legs, water → land.
+  - **Bat upside-down sleeping**: tendon LOCKS them onto perch — zero muscle effort.
+  - **Hexagonal honeycomb math** — provably most efficient cell-packing.
+  - **Silkworm farming** for 5000+ years; China secret for ~3000 years.
+  - **Snail shell vs turtle shell** (turtle's is fused to skeleton — can't leave it!) vs hermit crab (finds empty shells).
+  - **Dolphin cognition**: signature whistles as names, mirror self-recognition, tool use, generational knowledge transfer.
+  - **Cephalopod ink**: contains melanin + disrupts predator smell.
+  - **Platypus monotreme** (egg-laying mammal!) — electrical-receptor bill, venomous spurs in males; first scientific specimen dismissed as hoax.
+- **Animals L2 is now 100% explained**.
+- **SW cache v186 → v187**.
+
 ## [5.7.107] - 2026-05-25 - Animals L2: third chunk (firefly, sloth, penguin, ostrich, ...)
 - 20 more Animals L2 entries now teach:
   - **Fireflies**: BEETLES not flies; bioluminescence via luciferin + O₂ — near-zero heat light.
