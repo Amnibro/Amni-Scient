@@ -1,5 +1,19 @@
 ﻿# Changelog 
 
+## [5.7.112] - 2026-05-25 - Engineering L2: 39 backfilled → L2 100% complete (41 total)
+- **Engineering L2** all 41 physics questions now teach. 39 backfilled this iteration.
+- **Simple machines**: lever + Archimedes' "give me a place to stand"; gear mechanical advantage (low-gear torque vs high-gear speed); pulley as direction-changer or block-and-tackle force multiplier; inclined plane spreads-the-work principle.
+- **Newton's laws**: 1st (inertia), 2nd (F=ma) for push-causes-acceleration, 3rd (action/reaction) for airplane lift.
+- **Energy**: kinetic KE = ½mv² (speed^2 dependency); potential energy stored in springs/raised weights/batteries; PE↔KE conversion.
+- **SI units history**: meter via speed-of-light definition; kilogram switched from "Le Grand K" platinum-iridium cylinder to Planck's constant in 2019.
+- **Materials**: metals conduct via free electrons (sea-of-electrons model); insulators trap air pockets; Cu/Ag/Au vs rubber/glass conductivity origin.
+- **Static electricity**: balloon + hair = electron transfer; same physics as lightning + doorknob shocks.
+- **Thermodynamics**: temperature = average molecular KE; thermal expansion → bridge expansion joints; sea-level boiling 100°C vs altitude effect.
+- **Waves**: pressure vs EM waves; sound 343 m/s in air; echolocation; bats use echoes to navigate.
+- **Bernoulli + lift**: airplane wing curved-top → faster air → lower pressure → upward force; also Newton's 3rd Law (wing pushes air down → air pushes wing up).
+- **Engineer types**: civil/mechanical/electrical/software/chemical/aerospace/biomedical branches.
+- **SW cache v190 → v191**.
+
 ## [5.7.111] - 2026-05-25 - Math L2: 28 more explanations (40 total now)
 - **Math L2** all 40 questions now teach. 28 backfilled this iteration; 12 already had explain.
 - **Arithmetic tricks**: 7×8 = 70−14; 11² = 121 + palindromic-squares pattern up to 9 ones; ×9 trick (digits sum to 9); 8×12 = 8×10+8×2 = 96 + "gross" = 144.
