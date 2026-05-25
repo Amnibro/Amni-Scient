@@ -1,5 +1,13 @@
 ﻿# Changelog 
 
+## [5.7.104] - 2026-05-25 - Opposites L2-L5: full explanations (40 Q), Opposites complete
+- **Opposites** module — L2/L3/L4/L5 all backfilled. L1 was done in v5.7.100. Module now 100% explained.
+- **L2** (10 Q, basic): TALL/SHORT vs BIG/WIDE/HEAVY (different dimensions); LIGHT/DARK vs LIGHT/HEAVY (same word, two meanings); FULL/EMPTY + optimist/pessimist half-full test; WET/DRY + damp as intermediate; HARD = difficult OR firm (context-dependent); PUSH/PULL door signs; SIT/STAND with lie/crouch alternatives; LOUD/QUIET + silent as extreme.
+- **L3** (10 Q, intermediate): BRAVE vs STRONG (related but not opposite); GENTLE/ROUGH separating SYNONYMS (sweet/calm/soft are synonyms of gentle); POLITE/RUDE manner; ANCIENT/MODERN with old as milder; SHARP/DULL applied to knives + sounds + minds; BEGIN/END with start as synonym warning; ABOVE/BELOW; WIN/LOSE Old English etymology; FRESH/STALE for food; NEAR/FAR distance.
+- **L4** (10 Q, advanced): EXPAND/CONTRACT + physics (metals + bridge expansion joints); ACCEPT/REJECT vs receive; TRANSPARENT/OPAQUE + TRANSLUCENT as intermediate (frosted glass); IN- vs EX- prefix logic; SUCCESS/FAILURE; PERMIT/FORBID; TEMPORARY/PERMANENT; ARRIVE/DEPART + airport boards; INCREASE/DECREASE + prefix etymology; GENEROUS/STINGY with greedy nuance.
+- **L5** (10 Q, expert): ASCEND/DESCEND Latin scandere etymology; DIVERGENT/CONVERGENT + calculus application; VOLUNTARY/INVOLUNTARY + biology (voluntary vs autonomic muscles); LITERAL/FIGURATIVE + idiom example; CONCRETE/ABSTRACT with "concrete" as double-meaning warning; EXTROVERT/INTROVERT Latin etymology + energy-source vs shyness clarification; SCARCITY/ABUNDANCE + economics; COMPACT/SPRAWLING urban planning; AMBIGUOUS/CLEAR; antonym/synonym Greek roots (anti- vs syn-).
+- **SW cache v182 → v183**.
+
 ## [5.7.103] - 2026-05-25 - Shapes + Colors L2-L5: full explanations (80 Q)
 - **Shapes** L2-L5 (40 Q):
   - **L2** (2D basics): tri/penta/hex Greek roots, honeycomb hexagon efficiency, semicircle, oval/ellipse "ovum" etymology.
