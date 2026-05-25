@@ -1,5 +1,13 @@
 ﻿# Changelog 
 
+## [5.7.100] - 2026-05-25 - L1 toddler quiz explanations: Opposites + Counting + Shapes + Colors
+- Wrote a duplicate-key scanner and swept all 14 quizData subjects + 13 teachData subjects. **Only the Weather L3 dup existed** (fixed in v5.7.99); the rest are clean.
+- **Opposites L1** (10 Q) — each opposite-pair entry now teaches WHY: BIG↔SMALL = size (vs height/weight); HOT↔COLD on temperature scale; UP↔DOWN as vertical (gravity); DAY↔NIGHT as Earth rotation; happy↔sad emotion pair; FAST↔SLOW vs synonyms ('quick', 'speedy'); IN↔OUT vs vertical; ON↔OFF binary state; YES↔NO with 'maybe' as middle; OPEN↔CLOSED with 'locked' as more specific.
+- **Counting L1** (10 Q) — every counting question now reinforces the meaning: pointing-at-each-item rule, "pair = 2", "5 = half of 10 / fingers per hand", connections to triangles (3 sides) + squares (4 sides), and how human 10-finger anatomy probably gave us base-10.
+- **Shapes L1** (10 Q) — every shape carries its definition: circle has no corners + every-point-equidistant; square = 4 equal sides + 4 right angles; triangle 3 sides + interior angles always 180°; 5-pointed star = 10 sides total; heart = 2 semicircles + a triangle; wheels are circles because circles roll smoothly; soccer ball pentagon+hexagon pattern = buckminsterfullerene.
+- **Colors L1** (10 Q) — every color teaches a small physics/biology lesson: chlorophyll absorbs red+blue and reflects green (why plants are green); Rayleigh scattering (why sky is blue); the Sun emits ALL visible wavelengths (looks white from space, yellow from ground due to scattering); strawberry red from anthocyanins; banana ripening color cycle (green→yellow→brown); stop signs red + octagonal because red catches attention fastest.
+- **SW cache v178 → v179**.
+
 ## [5.7.99] - 2026-05-25 - Weather L4+L5 explained + duplicate L3 removed
 - **Discovered**: my v5.7.95 Weather L1+L2+L3 backfill left a DUPLICATE `3:` key — my new L3 (with `explain:`) was silently overridden by the original L3 (without `explain:`) because JS object literals take the LAST key. Means v5.7.95's L3 backfill never took effect for users.
 - **Fix**: removed the duplicate L3 entry. Now my v5.7.95 L3 explanations actually render.
