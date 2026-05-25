@@ -1,5 +1,17 @@
 ﻿# Changelog 
 
+## [5.7.120] - 2026-05-25 - Music L3: final 21 backfilled → Music L3 100% complete (61 total)
+- **Music L3** finished — all 61 questions teach.
+- **More intervals**: P4 = 5 semitones 4:3 ratio (Bridal Chorus, Auld Lang Syne, Amazing Grace), P5 = 7 semitones (Twinkle Twinkle, 2001 fanfare), M6 = 9 semitones (My Bonnie, NBC chimes, When You Wish Upon a Star).
+- **Symmetric chords**: augmented = 2 stacked M3, inversions are enharmonic (C-E-G♯ = E-G♯-C); diminished = 2 stacked m3, dim7 = 4 stacked m3 fully symmetric (Hitchcock Psycho horror sound, Bach used constantly).
+- **Performance techniques**: glissando per instrument (piano discrete vs trombone continuous), Gershwin's Rhapsody in Blue clarinet glissando was a joke that stuck; arpeggio (Moonlight Sonata, Hotel California intro, Pachelbel bass); vibrato 5-7Hz with instrument-specific mechanics + straight-tone in early music; tremolo bow-shimmer vs amplitude modulation distinction (surf rock 'Misirlou').
+- **Structure**: cadenza solo virtuoso passage; ostinato repeating motif (Boléro, Lovely Day groove, Holst Mars 5/4, hip-hop beats); coda ⊕ sign + 'jump to coda' navigation; string quartet = Haydn's invention as the SATB choir of chamber music (Beethoven's 16 = pinnacle).
+- **Form**: sonata form Exposition → Development → Recapitulation theme-modulation logic for nearly every classical 1st movement.
+- **Practical**: transposition (karaoke key buttons, B♭ trumpet up-a-whole-step convention).
+- **Expression duplicates expanded**: staccatissimo wedge + mezzo-staccato dot-under-slur gradations, true-legato only voices + strings (piano + harpsichord can only imitate), Boléro 15-min crescendo example, morendo + al niente extreme decrescendos.
+- **Navigation**: a tempo reset after rubato/ritardando, circle of fifths CW = up-5th + add-sharp progression with enharmonic 6-sharp/6-flat crossover.
+- **SW cache v198 → v199**. Music L4 + L5 (~80 left) next iterations.
+
 ## [5.7.119] - 2026-05-25 - Music L3: 21 of 42 missing backfilled (theory deep-dive)
 - **Music L3** halfway done — first 21 explanations added.
 - **Keys + modes**: relative-minor-down-m3-rule, C major as all white keys, circle of fifths (neighbors share 6 notes, opposites are tritones), Dorian (raised 6 — "Scarborough Fair" + "So What" + "Eleanor Rigby"), Mixolydian (lowered 7 — "Sweet Child O' Mine" + Celtic folk + Cantina Band).
