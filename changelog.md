@@ -1,5 +1,12 @@
 ﻿# Changelog 
 
+## [5.7.96] - 2026-05-25 - 🚑 HOTFIX: missing comma in _dailyPool broke ALL buttons
+- **Anthony reported**: "buttons for modules are not launching … tested over a dozen on chrome on android; same with username — no function after click."
+- **Root cause**: in v5.7.91 (Daily Challenge backfill of explanations), my edit on the FIFO Daily-Challenge entry replaced the OLD entry text without preserving its trailing comma. The next entry then began with `{` which JS parsed as "Unexpected token '{'". The ENTIRE script tag halted at that parse error — meaning every event-listener registration after the `_dailyPool` declaration (including `.game-btn` click dispatch and the username button) silently never bound.
+- **Fix**: added the missing comma. Verified via `node --check` on the extracted JS — clean.
+- **Process**: should have run a syntax check before committing array-replacing edits. Adding to checklist.
+- **SW cache v174 → v175** to force-flush.
+
 ## [5.7.95] - 2026-05-21 - 📚 Weather quiz L1+L2+L3: full explanations (30 Q)
 - **Weather quiz** L1 (10 Q), L2 (10 Q), L3 (10 Q) all backfilled with substantive explanations:
   - **L1**: cloud formation, snowflake hexagonal symmetry, cloud types (cumulus/cirrus/nimbus), 8-min sunlight travel, wind from pressure differences, ROYGBIV refraction, lightning superheats air to 30,000°C → thunder.
