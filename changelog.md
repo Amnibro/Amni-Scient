@@ -1,5 +1,12 @@
 ﻿# Changelog 
 
+## [5.7.98] - 2026-05-25 - Sudoku 4×4: guarantee unique solution
+- **Anthony reported**: "second sudoku game I've played with two sets of pairs at the end, where either answer would technically work."
+- **Root cause**: my v5.7.83 Sudoku generator removed cells naively. With 4 cells given (Hard), the remaining puzzle can have multiple valid completions — meaning at the end the player faces a literal coin-flip between equally-valid answers. Bad puzzle design.
+- **Fix**: added a `countSolutions(grid, cap)` backtracking solver (caps at 2 for efficiency — once we see 2 solutions, we know the puzzle isn't unique). Generator now removes cells ONE AT A TIME, and only commits the removal if the puzzle remains uniquely solvable. Otherwise the cell is restored. Loop continues until the difficulty target is hit OR no more cells can be removed without losing uniqueness.
+- **Effect**: every Sudoku 4×4 puzzle now has exactly one solution. Hard may occasionally show 5–6 givens instead of 4 (when 4 givens would be ambiguous) — that's intentional and correct.
+- **SW cache v176 → v177**.
+
 ## [5.7.97] - 2026-05-25 - Chess P4 + P6 pre-move legality fix
 - **Anthony reported**: "chess puzzle 6 starts with enemy king in check which is silly".
 - A programmatic sweep of all 42 puzzles found **2 bugs**, both same flaw — white queen already attacking the black king BEFORE the puzzle move, which means Black just played a move that left their king in check (illegal). Awkward.

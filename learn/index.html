@@ -4644,9 +4644,26 @@
     }
     const solution=genGrid();
     const puzzle=solution.map(r=>[...r]);
+    function countSolutions(grid,cap){
+      let count=0;
+      function ok(r,c,n){for(let i=0;i<4;i++){if(grid[r][i]===n||grid[i][c]===n)return false;}const br=Math.floor(r/2)*2,bc=Math.floor(c/2)*2;for(let i=0;i<2;i++)for(let j=0;j<2;j++)if(grid[br+i][bc+j]===n)return false;return true;}
+      function rec(idx){if(count>=cap)return;if(idx===16){count++;return;}const r=Math.floor(idx/4),c=idx%4;if(grid[r][c]!==0){rec(idx+1);return;}for(let n=1;n<=4;n++){if(ok(r,c,n)){grid[r][c]=n;rec(idx+1);grid[r][c]=0;if(count>=cap)return;}}}
+      rec(0);return count;
+    }
     const idxList=[];for(let i=0;i<16;i++)idxList.push(i);
     for(let i=idxList.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[idxList[i],idxList[j]]=[idxList[j],idxList[i]];}
-    for(let i=0;i<cfg.remove;i++){const idx=idxList[i];puzzle[Math.floor(idx/4)][idx%4]=0;}
+    // Remove cells ONLY if the puzzle remains uniquely solvable. Stop when target reached or exhausted.
+    let removed=0;
+    for(const idx of idxList){
+      if(removed>=cfg.remove)break;
+      const r=Math.floor(idx/4),c=idx%4;
+      const saved=puzzle[r][c];
+      if(saved===0)continue;
+      puzzle[r][c]=0;
+      const testGrid=puzzle.map(row=>[...row]);
+      if(countSolutions(testGrid,2)===1){removed++;}
+      else{puzzle[r][c]=saved;}
+    }
     const fixed=puzzle.map(r=>r.map(v=>v!==0));
     let selected=null,moves=0,startTime=Date.now(),won=false;
     function checkComplete(){
