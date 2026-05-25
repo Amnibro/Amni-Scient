@@ -1,5 +1,17 @@
 ﻿# Changelog 
 
+## [5.7.111] - 2026-05-25 - Math L2: 28 more explanations (40 total now)
+- **Math L2** all 40 questions now teach. 28 backfilled this iteration; 12 already had explain.
+- **Arithmetic tricks**: 7×8 = 70−14; 11² = 121 + palindromic-squares pattern up to 9 ones; ×9 trick (digits sum to 9); 8×12 = 8×10+8×2 = 96 + "gross" = 144.
+- **Geometry**: hexagon (bees + honeycomb efficiency); pentagon (108° interior + Pentagon building); right angle 90° × 4 = full turn; cube V−E+F = 2 Euler check; octagon 135° interior; perimeter as sum-of-sides vs P = 2(L+W); square area side² vs perimeter 4×side.
+- **Fractions/decimals**: 0.5 = 1/2 = 5/10; 3/4 = 0.75 = 75%; 25% = quarter = ÷4.
+- **Time**: 60 seconds + 60 minutes from Babylonian sexagesimal; 24×60×60 = 86,400 seconds/day; 100 − 1 vs 1000 − 1 pattern.
+- **Algebra intro**: x + 5 = 12 → subtract 5 from both sides → isolate variable.
+- **Number theory**: 17 prime (only divisors 1, 17); 2 smallest + only even prime; multiples of 3 + divisibility-by-3 rule (digits sum to multiple of 3); LCM 4,6 = 12.
+- **Pop culture**: 6×7 = 42 = "answer to life, the universe, and everything" (Hitchhiker's Guide).
+- **Metric**: 1 cm = 10 mm; metric powers-of-10 conversion ease.
+- **SW cache v189 → v190**.
+
 ## [5.7.110] - 2026-05-25 - Math L1: full toddler-math explanations (23 backfilled, 31 total now)
 - **Math L1** all 31 questions now teach. 23 backfilled this iteration (8 already had explain).
 - **Numeric concepts**: counting up/down, "before X" / "after X" / "between X and Y", number-line ordering, doubling via addition.
