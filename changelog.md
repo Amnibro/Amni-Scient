@@ -1,5 +1,12 @@
 ﻿# Changelog 
 
+## [5.7.105] - 2026-05-25 - Animals L2: first 22 entries explained (baby animals + homes + foods)
+- **Animals L2 (60+ entries) is huge** — backfilling in chunks. This iteration: the first 22 (baby-animal names, animal homes, what they eat/give us).
+- **Baby animals**: puppy/kitten eyes-open timing, calf/foal stand-within-an-hour as prey-animal adaptation, lamb spring birth, sow → 8-12 piglet litters, chick 21-day incubation, duckling IMPRINTING on first thing they see, tadpole METAMORPHOSIS to frog, joey born jellybean-sized + pouch growth, cub winter den + mother bears giving birth while hibernating.
+- **Homes**: hive's 20-60k bees + 1 queen + hexagonal honeycombs, bald eagle nests over 1 TON, spider webs from abdominal silk glands + vibration sensing, hibernation physiology (heart rate 50→10 bpm, body temp drop), rabbit warren as connected burrows.
+- **Foods/products**: cow 4-chambered stomach + cud chewing, herbivore digestion, bees make honey by adding enzymes + evaporating water, hen ~300 eggs/year with breed-dependent shell color, sheep wool grows back after shearing, dairy cow ~20-30 L milk/day.
+- **SW cache v183 → v184**.
+
 ## [5.7.104] - 2026-05-25 - Opposites L2-L5: full explanations (40 Q), Opposites complete
 - **Opposites** module — L2/L3/L4/L5 all backfilled. L1 was done in v5.7.100. Module now 100% explained.
 - **L2** (10 Q, basic): TALL/SHORT vs BIG/WIDE/HEAVY (different dimensions); LIGHT/DARK vs LIGHT/HEAVY (same word, two meanings); FULL/EMPTY + optimist/pessimist half-full test; WET/DRY + damp as intermediate; HARD = difficult OR firm (context-dependent); PUSH/PULL door signs; SIT/STAND with lie/crouch alternatives; LOUD/QUIET + silent as extreme.
