@@ -1,5 +1,12 @@
 ﻿# Changelog 
 
+## [5.7.99] - 2026-05-25 - Weather L4+L5 explained + duplicate L3 removed
+- **Discovered**: my v5.7.95 Weather L1+L2+L3 backfill left a DUPLICATE `3:` key — my new L3 (with `explain:`) was silently overridden by the original L3 (without `explain:`) because JS object literals take the LAST key. Means v5.7.95's L3 backfill never took effect for users.
+- **Fix**: removed the duplicate L3 entry. Now my v5.7.95 L3 explanations actually render.
+- **Weather L4** (10 Q, advanced): troposphere temp gradient + −6.5°C/km lapse rate + ozone-driven inversion in stratosphere; Torricelli barometer 1643 + aneroid mechanism; cup vs sonic anemometer; capacitive hygrometer; Saffir-Simpson categories with thresholds; EF (Enhanced Fujita) scale 2007 update + post-event damage rating; aurora green/red/blue mechanism (O at 100km/200km vs N₂); Coriolis effect → counterclockwise rotation N. Hemi + why no hurricanes at equator; ozone 3 atoms + Montreal Protocol 1987 healing the hole; greenhouse-effect vibrational-mode absorption + Earth's −18°C baseline without it.
+- **Weather L5** (10 Q, expert): WMO 30-year climate-vs-weather distinction + "what you expect vs what you get"; ENSO 2–7 year cycle + La Niña counterpart; jet stream 10 km + 200–400 km/h ribbons + airline fuel routing; snowflake 6-fold symmetry from H₂O bond geometry (104.5°) + crystal lattice; lightning return-stroke ~30% c + stepped leader 200 km/s + 3 sec/km thunder delay; Vostok Station −89.2°C 1983 + −98°C satellite record + East Antarctic Plateau; Furnace Creek 56.7°C 1913 + climatologist disputes; Keeling Curve 1958–today 315→420 ppm + annual sawtooth; hurricane eye 30–65 km calm subsidence zone + eyewall + 1-hour false reprieve; rainfall depth as mm/inches + Mawsynram 11,800 mm/year wettest.
+- **SW cache v177 → v178**.
+
 ## [5.7.98] - 2026-05-25 - Sudoku 4×4: guarantee unique solution
 - **Anthony reported**: "second sudoku game I've played with two sets of pairs at the end, where either answer would technically work."
 - **Root cause**: my v5.7.83 Sudoku generator removed cells naively. With 4 cells given (Hard), the remaining puzzle can have multiple valid completions — meaning at the end the player faces a literal coin-flip between equally-valid answers. Bad puzzle design.
