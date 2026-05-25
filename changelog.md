@@ -1,5 +1,14 @@
 ﻿# Changelog 
 
+## [5.7.102] - 2026-05-25 - Counting L2–L5: full math step-by-step explanations (40 Q)
+- **Counting** module — every math question across L2/L3/L4/L5 now teaches the METHOD, not just the answer:
+  - **L2** (10 Q, count + compare): 7 days/week origin Babylon, 8 legs spider/octopus, number-line interpretation of more/less, counting up/down by 1.
+  - **L3** (10 Q, addition/subtraction): "start at N, count up M" rule; commutativity (4+5 = 5+4); 10-bridge tricks (7+6 = 7+3+3 = 10+3); subtraction as counting down; multiplication as repeated addition (3 dogs × 4 legs = 4+4+4 = 12).
+  - **L4** (10 Q, place value): tens/ones/hundreds positional notation; carrying in 23+19 (3+9=12, carry 1); borrowing in 81−24 (borrow from tens); 5 tens = 50; even (ends 0/2/4/6/8) vs odd (ends 1/3/5/7/9) rule with "splits into 2 groups" intuition.
+  - **L5** (10 Q, multiplication/division/primes/squares/rounding): 6×7 via (5+1)×7 = 35+7; 8×9 via 8×10 − 8 = 72; (10+2)² = 100+40+4 = 144 for 12²; quotient = how many times the divisor fits; prime test by trial division up to √n; 21 = 3×7 composite; 7² = 7×7 visualized as a 7×7 square; rounding rule (5+ up, 4− down).
+- Per Anthony: "All calculus, logic steps, everything needs explanation."
+- **SW cache v180 → v181**.
+
 ## [5.7.101] - 2026-05-25 - Languages L1: full alphabet explanations (26 letters)
 - **Languages L1** (alphabet identification quiz) — every letter A→Z now teaches its sound, place in the alphabet, and one or two memorable fun facts:
   - **Vowels** marked (A E I O U) with their open-sound role.
