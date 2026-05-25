@@ -1,5 +1,18 @@
 ﻿# Changelog 
 
+## [5.7.103] - 2026-05-25 - Shapes + Colors L2-L5: full explanations (80 Q)
+- **Shapes** L2-L5 (40 Q):
+  - **L2** (2D basics): tri/penta/hex Greek roots, honeycomb hexagon efficiency, semicircle, oval/ellipse "ovum" etymology.
+  - **L3** (3D): cube 6+12+8 + Euler V−E+F=2 check, Great Pyramid of Giza 2560 BC + tallest for 3800 years, cylinder/sphere/cone real-world examples.
+  - **L4** (angles + polygons): right/acute/obtuse definitions + "a cute" mnemonic, triangle 180° proof sketch, quadrilateral 360° via diagonal split, octagon stop-sign reference, equilateral = equal sides → equal angles → 60° each, √2 ≈ 1.414 horrified the Pythagoreans as the FIRST irrational.
+  - **L5** (formulas): (n−2)×180° via n−2 triangles, π = C/d for ANY circle, 3-4-5 Pythagorean triple, A=½bh proof via half-parallelogram, Archimedes derived V_sphere via proportions before calculus + asked for sphere-in-cylinder on his tombstone, 5 Platonic solids enumerated + uniqueness proof, π irrational + transcendental + Pi Day 3/14.
+- **Colors** L2-L5 (40 Q):
+  - **L2** (color identification): "orange" named after fruit (~1500s), royal purple from sea-snail dye, carotenoid pumpkin orange (same family makes salmon pink), anthocyanin eggplant/grape purple, snow white from scattering.
+  - **L3** (mixing + rainbow): additive vs subtractive distinction, ROYGBIV by wavelength order (red longest 700 nm → violet shortest 400 nm), Vantablack absorbs 99.965%, mixing all LIGHT vs mixing all PAINT (white vs brown — different physics).
+  - **L4** (color theory): paint primaries Red/Blue/Yellow vs light primaries R/G/B, complementary pairs as primary + "other-two secondary" (R↔G, Y↔P, B↔O), teal-orange cinematography, tint vs shade vs tone (white/black/gray additions), Newton's 1666 prism experiment.
+  - **L5** (digital + physics): hex code structure (2 digits per RGB channel, 00–FF), specific wavelengths (red ~620–750 nm, violet ~380–450 nm), CMYK + K = "Key plate" not "blacK", achromatic = no hue, HSL as intuitive alternative to RGB.
+- **SW cache v181 → v182**.
+
 ## [5.7.102] - 2026-05-25 - Counting L2–L5: full math step-by-step explanations (40 Q)
 - **Counting** module — every math question across L2/L3/L4/L5 now teaches the METHOD, not just the answer:
   - **L2** (10 Q, count + compare): 7 days/week origin Babylon, 8 legs spider/octopus, number-line interpretation of more/less, counting up/down by 1.
