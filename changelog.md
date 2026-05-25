@@ -1,5 +1,16 @@
 ﻿# Changelog 
 
+## [5.7.110] - 2026-05-25 - Math L1: full toddler-math explanations (23 backfilled, 31 total now)
+- **Math L1** all 31 questions now teach. 23 backfilled this iteration (8 already had explain).
+- **Numeric concepts**: counting up/down, "before X" / "after X" / "between X and Y", number-line ordering, doubling via addition.
+- **Operations**: 3+4=7 via finger count + count-up; 10−3=7 as opposite of addition + subtraction = count-down; 2×3 = 2 groups of 3; 0+N as identity element of addition.
+- **Shapes**: sphere as 3D circle; square corner = right angle; rectangle = 4 sides + opposite sides equal + all right angles; triangle 3 sides + 180° interior sum; circle as continuous curve with 0/1/∞ sides debate.
+- **Etymology**: bi-cycle (2 wheels) vs tri- vs uni-; "square" from Latin "exquadrare" (to make four-sided); "oct"-agon (8 sides).
+- **Cross-references**: 5 fingers per hand → 10 total → base-10 counting; September/October/November/December as 7th-10th in the OLD Roman calendar.
+- **7-day week** traced back to Babylonian astronomy + 7 visible "planets" (Sun, Moon, Mars, Mercury, Jupiter, Venus, Saturn) ~4000 years ago.
+- **8-leg arachnid** vs 6-leg insect — quick identification rule.
+- **SW cache v188 → v189**.
+
 ## [5.7.109] - 2026-05-25 - Engineering L1: 32 toddler physics questions explained
 - **Wrote a missing-explanation scanner** — found 469 unbackfilled questions across remaining levels. Top priorities: engineering, music (both entirely unexplained).
 - **Engineering L1** (32 toddler-friendly physics Qs) all now teach:
