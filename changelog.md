@@ -1,5 +1,16 @@
 ﻿# Changelog 
 
+## [5.7.116] - 2026-05-25 - Math L3: 38 backfilled → Math L3 100% complete (60 total)
+- **Math L3** all 60 questions now teach.
+- **Calculus**: derivative power-rule + geometric tangent-slope meaning, ∫cos = sin + C and reverse-derivative principle, derivative cycle (sin→cos→-sin→-cos), limit sin(x)/x = 1 (foundation of trig derivatives), d/dx[ln(x)] = 1/x via implicit differentiation, ∫(1/x) = ln|x| (power-rule fail case), Fundamental Theorem both parts, integral test for series convergence (Σ1/n² converges, Σ1/n diverges).
+- **Algebra & numbers**: balance-both-sides equation solving, i² = -1 and 4-cycle of powers, e ≈ 2.718 (3 different definitions), e⁰ = 1 (exponent-rule consistency), 2⁵ vs 5² trap, 91 looks prime but = 7·13 (√n primality rule), power-rule + reciprocal + chain-rule.
+- **Geometry**: π definition + irrational + transcendental + 105T digits, area πr² derivation, sphere V = (4/3)πr³ (Archimedes 250 BC), interior-angle (n-2)·180° formula, equilateral area (√3/4)a², dodec- = 12, circumference vs area distinction, 360° historical origins + radian advantages.
+- **Trig**: SOH-CAH-TOA, sin/cos/tan special angles (30/45/60/90), tan(45°)=1 from 45-45-90 triangle, asymptotes (vertical/horizontal/slant), radian↔degree conversion.
+- **Logic & probability**: log_b inverse-power meaning + log laws + decibel/pH/Richter applications, P(event) = favorable/total, independent-event correct formula (1 - P(none) NOT addition), 3 line-equation forms (standard handles verticals), inverse functions (swap x and y), x²=4 has ±2.
+- **Linear algebra**: matrix inverse A⁻¹ definition + det≠0 requirement + 2×2 inverse formula + solving Ax=b vs Gaussian elimination tradeoff.
+- **Derivative meaning**: instantaneous rate of change vs integral as accumulation, FTC inverts them.
+- **SW cache v194 → v195**.
+
 ## [5.7.115] - 2026-05-25 - Engineering L5: 24 backfilled → **ENGINEERING SUBJECT 100% COMPLETE** (all 5 levels, 215 Qs)
 - **Engineering L5** advanced research-level topics — all 41 questions now teach.
 - **Math foundations**: Galois fields enable AES + Reed-Solomon (CDs survive 2.5mm scratches; QR scans with 30% destroyed; Voyager telemetry), Viterbi dynamic-programming decoding (Qualcomm origin), matched filter optimality, FIR linear-phase property, Z-transform unit-circle stability.
