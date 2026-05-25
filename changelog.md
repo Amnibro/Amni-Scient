@@ -1,5 +1,16 @@
 ﻿# Changelog 
 
+## [5.7.118] - 2026-05-25 - Music L2: final 13 backfilled → Music L2 100% complete (61 total)
+- **Music L2** finished — all 61 questions teach.
+- **Rhythm/notation**: whole-rest hat-trick on staff line, time signature top=count + bottom=which-note-gets-beat (2/4 marches, 3/4 waltz, 6/8 jig).
+- **Sound production**: woodwinds = air column vibrating via reed or edge; brass uses LIPS as the oscillator (the family distinction).
+- **Conducting**: baton ~14 inches, right hand = tempo, left hand = expression. Stokowski + Boulez batonless.
+- **Expression markings**: decrescendo (>) vs crescendo (<) hairpins, subito piano (sudden soft) ≠ decrescendo, staccato dot (halve duration + silence between), legato slur, fermata pause at performer's discretion (~2× value).
+- **Mozart**: 'Eine kleine Nachtmusik' (1787, 31yo, never said why — likely a party serenade).
+- **Harmony fundamentals**: melody (sequence) vs chord (simultaneous, ≥3 notes); triads vs 7th chords; major (W+H thirds) vs minor (H+W thirds) sound emotion.
+- **Jazz/rock greats**: Louis 'Satchmo' Armstrong invented scat singing after dropping sheet music in 1926; Jimi Hendrix played a RIGHT-handed Fender Stratocaster UPSIDE-DOWN (controls + heavy strings reversed → unique tone), dead at 27 after only 4 recording years.
+- **SW cache v196 → v197**. Music L3+L4+L5 (~95 left) next iterations.
+
 ## [5.7.117] - 2026-05-25 - Music L1 100% + L2 first 15 backfilled (24 explanations)
 - **Music L1** all 52 questions now teach. 9 backfilled this iteration: noise-cancelling headphones (inverted-wave principle), flute embouchure-edge airstream, songwriter vs composer vs lyricist, keyboard vs melodica (one needs breath), bass drum 28-32" diameter sets cadence, brass cuts through marching band, concert/recital/gig spectrum, EDM 120-150 BPM ≈ heart rate, modern Mylar drumheads vs traditional cow/goat skin.
 - **Music L2** first 15 of 28 missing: piano 88-key range (27.5 Hz to 4186 Hz spans almost all orchestral pitch), strings family (bowed/plucked/struck distinctions), flute embouchure-across-edge mechanism, 4 orchestral families taxonomy, brass = LIP buzz not metal material, percussion pitched vs unpitched (snare = unpitched with snare wires), sharp/flat/natural semitones + measure-scope rules + enharmonic equivalents, whole/half/quarter/eighth note durations + flag/beam visual conventions, voice-range chart (Bass E2 → Soprano A6 with famous examples).
