@@ -1,5 +1,13 @@
 ﻿# Changelog 
 
+## [5.7.97] - 2026-05-25 - Chess P4 + P6 pre-move legality fix
+- **Anthony reported**: "chess puzzle 6 starts with enemy king in check which is silly".
+- A programmatic sweep of all 42 puzzles found **2 bugs**, both same flaw — white queen already attacking the black king BEFORE the puzzle move, which means Black just played a move that left their king in check (illegal). Awkward.
+- **P4** (was `{g6:'K',h5:'Q',h8:'k'}, sol:'h5-h7'`): Qh5 attacks Kh8 along the h-file pre-move. → Fixed: move queen to **f7** (no line of attack on h8 pre-move), sol becomes `f7-h7` (queen slides along the 7th rank, lands on h7 defended by Kg6).
+- **P6** (was `{c6:'K',a6:'Q',c8:'k'}, sol:'a6-a8'`): Qa6 attacks Kc8 along the a6-c8 diagonal pre-move (a6-b7-c8 path clear). → Fixed: move queen to **a1**, sol becomes `a1-a8` (queen rolls UP the empty a-file, lands on a8 with the same 8th-rank+king mating geometry).
+- Re-ran the sweep: **all 42 puzzles now have legal pre-move positions**. Verifier script is `node -e "..."` over `_chessPuzzles`; saving snippet to incorporate into a pre-flight check.
+- **SW cache v175 → v176**.
+
 ## [5.7.96] - 2026-05-25 - 🚑 HOTFIX: missing comma in _dailyPool broke ALL buttons
 - **Anthony reported**: "buttons for modules are not launching … tested over a dozen on chrome on android; same with username — no function after click."
 - **Root cause**: in v5.7.91 (Daily Challenge backfill of explanations), my edit on the FIFO Daily-Challenge entry replaced the OLD entry text without preserving its trailing comma. The next entry then began with `{` which JS parsed as "Unexpected token '{'". The ENTIRE script tag halted at that parse error — meaning every event-listener registration after the `_dailyPool` declaration (including `.game-btn` click dispatch and the username button) silently never bound.
