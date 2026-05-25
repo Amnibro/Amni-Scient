@@ -1,5 +1,36 @@
 ﻿# Changelog 
 
+## [5.7.109] - 2026-05-25 - Engineering L1: 32 toddler physics questions explained
+- **Wrote a missing-explanation scanner** — found 469 unbackfilled questions across remaining levels. Top priorities: engineering, music (both entirely unexplained).
+- **Engineering L1** (32 toddler-friendly physics Qs) all now teach:
+  - **Gravity** as universal mass attraction, Sun's pull strongest in solar system.
+  - **Wheels reduce friction**, invented ~5,500 years ago.
+  - **Triangles** as the only rigid 4-or-fewer-sided shape — why bridges/roofs use trusses.
+  - **Magnets**: iron/nickel/cobalt attraction; N/S poles attract opposites + repel same.
+  - **Elastic bouncing** physics: squash + snap-back; mass affects bounce height.
+  - **Bridge types**: beam / arch / suspension (Golden Gate).
+  - **Friction** as microscopic bumps catching + converting motion to HEAT.
+  - **Electric motor** mechanism: coil + magnetic force.
+  - **Battery chemistry** + single-use vs rechargeable.
+  - **Brakes** = friction → heat → less motion energy.
+  - **Thermometer**: liquid expansion vs thermistor electronics.
+  - **Bike propulsion** = Newton's 3rd Law (push back from ground).
+  - **Buoyancy** (Archimedes' principle) — displaced water weight = upward force.
+  - **2nd Law of Thermo**: heat ALWAYS flows hot → cold; absolute zero −273.15°C.
+  - **Tensile strength** comparison: steel ~400 MPa vs paper ~3-5 MPa (~100×).
+  - **Plane speed** ~3000× tortoise.
+  - **Angular momentum** keeps spinning tops upright.
+  - **Crane mechanical advantage** via pulleys.
+  - **Elevator counterweight** balance + safety brakes.
+  - **Bike gears** trade-off: speed vs torque.
+  - **Helmet foam** absorbs energy via deformation.
+  - **Differential** lets car wheels spin at different speeds in corners.
+  - **Aerodynamic lift** — wing curl pushes air up = upward force.
+  - **Hooke's Law** F = kx for springs.
+  - **Scissors** as first-class lever; pivot mechanics.
+  - **Galileo's 1609 telescope** ~30×; modern thousands×.
+- **SW cache v187 → v188**.
+
 ## [5.7.108] - 2026-05-25 - Animals L2: final chunk → L2 COMPLETE
 - Last 14 Animals L2 entries explained:
   - **Grasshopper springs**: up to 20× body length via spring-loaded hind legs.
