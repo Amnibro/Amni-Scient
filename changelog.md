@@ -1,5 +1,17 @@
 ﻿# Changelog 
 
+## [5.7.115] - 2026-05-25 - Engineering L5: 24 backfilled → **ENGINEERING SUBJECT 100% COMPLETE** (all 5 levels, 215 Qs)
+- **Engineering L5** advanced research-level topics — all 41 questions now teach.
+- **Math foundations**: Galois fields enable AES + Reed-Solomon (CDs survive 2.5mm scratches; QR scans with 30% destroyed; Voyager telemetry), Viterbi dynamic-programming decoding (Qualcomm origin), matched filter optimality, FIR linear-phase property, Z-transform unit-circle stability.
+- **Analog ICs**: BJT vs FET tradeoffs (digital wants FET, RF power wants BJT), bandgap reference (~1.205 V flat over temperature via opposite-tempco summing), chopper-stabilized amps (nanovolt DC by sidestepping 1/f).
+- **Electromagnetism crown jewels**: Maxwell's 4 equations + their meaning (Gauss, no-monopole, Faraday, Ampère+correction), displacement current as the unification of light + EM, waveguide cutoff frequencies, TE vs TM modes, group vs phase velocity (water wave packet behavior + faster-than-c phase velocity in waveguides).
+- **Resonators**: quartz Q ~10⁵-10⁶ (why GPS/cell/finance global timing works), parametric amps for radio-astronomy and quantum (no-resistor → no thermal noise).
+- **Noise sources**: Johnson-Nyquist 4kTRΔf white floor, 1/f flicker divergence at DC and how to cure it.
+- **Quantum statistics trilogy**: Maxwell-Boltzmann (classical), Fermi-Dirac (electrons — explains metals, semiconductors, white dwarfs), Bose-Einstein (photons, Cooper pairs, BEC condensate).
+- **Modern materials**: spin-orbit coupling (mercury liquid, gold yellow, spintronics), topological insulators (Nobel 2016 — surface conduction protected by topology), metamaterials (negative index, perfect lens, cloaking).
+- **Net: Engineering L1+L2+L3+L4+L5 = 215 physics Qs, each with substantive teach text. ENGINEERING SUBJECT IS PEDAGOGICALLY COMPLETE.**
+- **SW cache v193 → v194**.
+
 ## [5.7.114] - 2026-05-25 - Engineering L4: 27 backfilled → L4 100% complete (41 total)
 - **Engineering L4** advanced topics — all 41 questions now teach.
 - **Heat transfer**: thermal resistance / electrical analogy (heatsink sizing), Biot number, Prandtl boundary layers.
