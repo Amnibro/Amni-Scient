@@ -1,5 +1,25 @@
 ﻿# Changelog 
 
+## [5.7.107] - 2026-05-25 - Animals L2: third chunk (firefly, sloth, penguin, ostrich, ...)
+- 20 more Animals L2 entries now teach:
+  - **Fireflies**: BEETLES not flies; bioluminescence via luciferin + O₂ — near-zero heat light.
+  - **Sloths**: algae literally grows in their fur (camouflage!); sleep ~15 hr/day.
+  - **Penguins**: wings → flippers; emperor penguin dives 500+ m, holds breath 20+ min.
+  - **Ostriches**: 2.7 m tall, run 70 km/h, lay largest egg (~1.5 kg).
+  - **Elephant tusks** = elongated incisors that grow for life; poaching pressure has selected for TUSKLESS phenotype.
+  - **Chameleon color-change**: chromatophore cells, primarily for COMMUNICATION + temperature regulation, not camouflage.
+  - **Insects vs spiders**: 6 vs 8 legs, 3 vs 2 body segments.
+  - **Sheep wool**: insulates AND wicks moisture (still warm when wet); Merino = finest.
+  - **Hen ~300 eggs/year** + "pullet" = young female pre-laying; rooster spurs + crowing.
+  - **African Bush Elephant** 6,000 kg + walks on tiptoes with cushion pads.
+  - **Giraffe tongue** ~50 cm long + dark blue for thorny acacia.
+  - **Penguin huddle rotation** through −40°C; polar bears = ARCTIC not Antarctic clarification.
+  - **Spider silk**: stronger than steel by weight + more elastic than rubber.
+  - **Fish fin functions**: tail = thrust, pectoral = steering, dorsal/anal = stability; gills extract dissolved O₂.
+  - **Ladybug aposematism** (warning coloration).
+  - **Snail speed**: ~1 mm/sec or 1 m/hour.
+- **SW cache v185 → v186**.
+
 ## [5.7.106] - 2026-05-25 - Animals L2: 20 more entries (animal features)
 - **Animals L2** — 20 feature questions now teach:
   - **Camel hump myth-busting**: stores FAT, not water (the metabolized fat releases water + energy; ~100 L per drink).
