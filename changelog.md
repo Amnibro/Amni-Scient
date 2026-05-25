@@ -1,5 +1,26 @@
 ﻿# Changelog 
 
+## [5.7.106] - 2026-05-25 - Animals L2: 20 more entries (animal features)
+- **Animals L2** — 20 feature questions now teach:
+  - **Camel hump myth-busting**: stores FAT, not water (the metabolized fat releases water + energy; ~100 L per drink).
+  - **Giraffe**: 7 cervical vertebrae (same as humans!) + huge heart for 2 m pumping to brain.
+  - **Zebra stripes**: each unique like fingerprints; "motion dazzle" effect on predators + biting flies.
+  - **Tiger**: stripes also on the SKIN; pattern unique per tiger.
+  - **Cheetah** 120 km/h with flexible spine + giant nostrils.
+  - **Lion** mane darkness = testosterone signal; lionesses do the hunting.
+  - **Kangaroo as marsupial**: pouch + tiny joeys; relatives include koalas, opossums, wombats.
+  - **Octopus 8 arms**: 3 hearts, blue copper blood, 9 BRAINS (1 central + 1 per arm).
+  - **Seahorse**: MALE carries eggs in pouch; rare male pregnancy.
+  - **Turtle shell**: fused to spine + ribs, can't leave; turtles aquatic vs tortoises terrestrial.
+  - **Bats**: only TRULY flying mammals; wings = skin between elongated finger bones; echolocation.
+  - **Whale shark**: largest fish (~12 m) but FILTER FEEDER on plankton — harmless.
+  - **Goldfish memory myth**: actually months, not 3 seconds.
+  - **Beavers**: orange chisel teeth, build dams to flood ponds for safety.
+  - **Kangaroo hop**: ~9 m per leap via spring-loaded tendons.
+  - **Antlers vs horns**: antlers = BONE, regrow yearly; horns = keratin, permanent.
+  - **Pufferfish**: tetrodotoxin + fugu chef licensing.
+- **SW cache v184 → v185**.
+
 ## [5.7.105] - 2026-05-25 - Animals L2: first 22 entries explained (baby animals + homes + foods)
 - **Animals L2 (60+ entries) is huge** — backfilling in chunks. This iteration: the first 22 (baby-animal names, animal homes, what they eat/give us).
 - **Baby animals**: puppy/kitten eyes-open timing, calf/foal stand-within-an-hour as prey-animal adaptation, lamb spring birth, sow → 8-12 piglet litters, chick 21-day incubation, duckling IMPRINTING on first thing they see, tadpole METAMORPHOSIS to frog, joey born jellybean-sized + pouch growth, cub winter den + mother bears giving birth while hibernating.
