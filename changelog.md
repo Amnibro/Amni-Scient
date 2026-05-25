@@ -1,5 +1,17 @@
 ﻿# Changelog 
 
+## [5.7.119] - 2026-05-25 - Music L3: 21 of 42 missing backfilled (theory deep-dive)
+- **Music L3** halfway done — first 21 explanations added.
+- **Keys + modes**: relative-minor-down-m3-rule, C major as all white keys, circle of fifths (neighbors share 6 notes, opposites are tritones), Dorian (raised 6 — "Scarborough Fair" + "So What" + "Eleanor Rigby"), Mixolydian (lowered 7 — "Sweet Child O' Mine" + Celtic folk + Cantina Band).
+- **Intervals**: P5 = 7 semitones (3:2 frequency ratio = the most consonant), M3 = 4 semitones (chord-quality definer), tritone = 6 semitones (medieval "diabolus in musica" → modern dominant-7th engine + Simpsons/West Side Story themes), full semitone reference chart.
+- **Tempo scale** (Largo 40-60 → Adagio 66-76 → Andante 76-108 → Moderato 108-120 → Allegro 120-156 → Vivace 156-176 → Presto 168-200 → Prestissimo 200+) with famous examples each.
+- **Expression**: sforzando = sudden accent (Beethoven loved them), rubato = stolen time (Chopin master).
+- **Chords**: triad qualities M/m/dim/aug (M3+m3 happy, m3+M3 sad, etc.), V7 → I as THE Western harmonic motion (G7's B-F tritone resolves to C-E).
+- **History**: Beethoven completely deaf for the 9th (1824), turned around at premiere to see audience applauding; composed via vibrations through wooden rod between teeth and piano.
+- **Instruments**: double-reed family (oboe/bassoon/cor anglais — orchestra tunes to oboe's piercing A).
+- **Dance**: 3/4 waltz dance pattern ONE-two-three (Blue Danube + Waltz of the Flowers).
+- **SW cache v197 → v198**. Music L3 remaining 21 next iteration, then L4+L5.
+
 ## [5.7.118] - 2026-05-25 - Music L2: final 13 backfilled → Music L2 100% complete (61 total)
 - **Music L2** finished — all 61 questions teach.
 - **Rhythm/notation**: whole-rest hat-trick on staff line, time signature top=count + bottom=which-note-gets-beat (2/4 marches, 3/4 waltz, 6/8 jig).
