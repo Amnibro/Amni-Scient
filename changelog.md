@@ -1,5 +1,14 @@
 ﻿# Changelog 
 
+## [5.7.101] - 2026-05-25 - Languages L1: full alphabet explanations (26 letters)
+- **Languages L1** (alphabet identification quiz) — every letter A→Z now teaches its sound, place in the alphabet, and one or two memorable fun facts:
+  - **Vowels** marked (A E I O U) with their open-sound role.
+  - **Sound tricks**: C/G have two sounds each; H is silent in 'hour'/'honest'; K is silent in 'knee'/'know'; W is silent in 'write'/'wrong'; J was just a variant of I until the 1500s.
+  - **Mouth mechanics**: M = lips together, N = tongue to roof, L = tongue to roof of mouth, F vs V = voiceless vs voiced (hold throat).
+  - **Trivia**: Q almost always pairs with U; X = Roman numeral 10; W = double-U shape; Y is sometimes a vowel; Z = "zee" (US) vs "zed" (UK).
+- Audio playback (isAudio:true, audioText) still works — explanations render AFTER the answer-pick.
+- **SW cache v179 → v180**.
+
 ## [5.7.100] - 2026-05-25 - L1 toddler quiz explanations: Opposites + Counting + Shapes + Colors
 - Wrote a duplicate-key scanner and swept all 14 quizData subjects + 13 teachData subjects. **Only the Weather L3 dup existed** (fixed in v5.7.99); the rest are clean.
 - **Opposites L1** (10 Q) — each opposite-pair entry now teaches WHY: BIG↔SMALL = size (vs height/weight); HOT↔COLD on temperature scale; UP↔DOWN as vertical (gravity); DAY↔NIGHT as Earth rotation; happy↔sad emotion pair; FAST↔SLOW vs synonyms ('quick', 'speedy'); IN↔OUT vs vertical; ON↔OFF binary state; YES↔NO with 'maybe' as middle; OPEN↔CLOSED with 'locked' as more specific.
