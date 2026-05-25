@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.117] - 2026-05-25 - Music L1 100% + L2 first 15 backfilled (24 explanations)
+- **Music L1** all 52 questions now teach. 9 backfilled this iteration: noise-cancelling headphones (inverted-wave principle), flute embouchure-edge airstream, songwriter vs composer vs lyricist, keyboard vs melodica (one needs breath), bass drum 28-32" diameter sets cadence, brass cuts through marching band, concert/recital/gig spectrum, EDM 120-150 BPM ≈ heart rate, modern Mylar drumheads vs traditional cow/goat skin.
+- **Music L2** first 15 of 28 missing: piano 88-key range (27.5 Hz to 4186 Hz spans almost all orchestral pitch), strings family (bowed/plucked/struck distinctions), flute embouchure-across-edge mechanism, 4 orchestral families taxonomy, brass = LIP buzz not metal material, percussion pitched vs unpitched (snare = unpitched with snare wires), sharp/flat/natural semitones + measure-scope rules + enharmonic equivalents, whole/half/quarter/eighth note durations + flag/beam visual conventions, voice-range chart (Bass E2 → Soprano A6 with famous examples).
+- **SW cache v195 → v196**. Music L2 remaining 13 + L3+L4+L5 (~105 left across all music levels) next iterations.
+
 ## [5.7.116] - 2026-05-25 - Math L3: 38 backfilled → Math L3 100% complete (60 total)
 - **Math L3** all 60 questions now teach.
 - **Calculus**: derivative power-rule + geometric tangent-slope meaning, ∫cos = sin + C and reverse-derivative principle, derivative cycle (sin→cos→-sin→-cos), limit sin(x)/x = 1 (foundation of trig derivatives), d/dx[ln(x)] = 1/x via implicit differentiation, ∫(1/x) = ln|x| (power-rule fail case), Fundamental Theorem both parts, integral test for series convergence (Σ1/n² converges, Σ1/n diverges).
