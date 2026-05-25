@@ -1,5 +1,15 @@
 ﻿# Changelog 
 
+## [5.7.113] - 2026-05-25 - Engineering L3: 60 backfilled → L3 100% complete
+- **Engineering L3** all 60 advanced physics questions now teach.
+- **Electromagnetism**: Ohm's Law power forms (P=IV=I²R=V²/R), capacitor charge equation, AC vs DC + War of Currents, inductor energy storage, transistor amplification/switching, diode rectification + LED + photovoltaic relation, CMOS zero-static-power explanation, Coulomb's law inverse-square (vs gravity strength ratio ~10³⁹), Faraday's law as foundation of all generators, right-hand rule, Snell's law + critical angle, photoelectric effect → photon discovery.
+- **Mechanics**: F=ma vs general F=dp/dt, momentum + impulse + airbag/crumple-zone reasoning, work-energy theorem, vector vs scalar, centripetal force corrected (no centrifugal in inertial frame), angular kinematics + L = Iω + skater spin, Archimedes (Eureka!), Pascal hydraulic advantage.
+- **Thermodynamics**: 1st/2nd/3rd laws, perpetual motion forbidden, specific heat (why oceans moderate climate), latent heat (sweat cooling, refrigeration), heat-vs-temperature.
+- **Waves & optics**: v=fλ, visible spectrum 380-750 nm + UV/IR boundaries, reflection (specular vs diffuse), refraction + total internal reflection (fiber optics).
+- **Structures**: truss triangle rigidity, reinforced concrete tension/compression duality, compressive vs tensile stress (ductile vs brittle), factor of safety taxonomy (bridge/elevator/spacecraft), strain gauge mechanism, hysteresis (B-H loop, thermostat deadband).
+- **SI units**: pascal, hertz (audio/RF/light scales), watt (1 hp ≈ 746 W), joule (mechanical-equiv-heat history).
+- **SW cache v191 → v192**.
+
 ## [5.7.112] - 2026-05-25 - Engineering L2: 39 backfilled → L2 100% complete (41 total)
 - **Engineering L2** all 41 physics questions now teach. 39 backfilled this iteration.
 - **Simple machines**: lever + Archimedes' "give me a place to stand"; gear mechanical advantage (low-gear torque vs high-gear speed); pulley as direction-changer or block-and-tackle force multiplier; inclined plane spreads-the-work principle.
