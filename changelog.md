@@ -1,5 +1,16 @@
 ﻿# Changelog 
 
+## [5.7.114] - 2026-05-25 - Engineering L4: 27 backfilled → L4 100% complete (41 total)
+- **Engineering L4** advanced topics — all 41 questions now teach.
+- **Heat transfer**: thermal resistance / electrical analogy (heatsink sizing), Biot number, Prandtl boundary layers.
+- **Control theory**: Laplace transform algebra trick, transfer functions H(s) (poles = stability), state-space (modern MIMO/MPC foundation), gain margin (6 dB rule), phase margin (45-60° rule), PM/ζ ≈ 100°.
+- **Power electrical**: three-phase 120° offset = constant power, Y vs Δ (start-Y/run-Δ motor trick), phasor algebra collapsing AC ODE → algebra.
+- **Thermodynamic cycles**: Rankine (90% of world's grid), Brayton (jets + combined-cycle), Otto (r ≈ 10-13 limited by knock), Diesel (r ≈ 15-22 → higher efficiency).
+- **Analog electronics**: Wheatstone-balance amplifier of tiny ΔR, Wien bridge oscillator (HP's first product), Sallen-Key 2nd-order filter topology, op-amp filter cascades.
+- **Mechanics**: Euler buckling P_cr = π²EI/L² (effective-length end conditions), static > kinetic friction (anti-lock brake principle), cantilever PL³/(3EI) (16× more deflection than simply-supported).
+- **DSP & semiconductors**: PWM duty-cycle encoding for class-D / motor control, aliasing (anti-aliasing filter required), CMOS inverter zero-static-power explanation, Hall effect proved electrons negative, skin effect (RF cables stranded/plated/hollow), piezoelectric (lighters → MRI → quartz clocks), thermistor vs RTD sensitivity-vs-accuracy tradeoff, I-beam mass-where-stress-is-highest geometry.
+- **SW cache v192 → v193**.
+
 ## [5.7.113] - 2026-05-25 - Engineering L3: 60 backfilled → L3 100% complete
 - **Engineering L3** all 60 advanced physics questions now teach.
 - **Electromagnetism**: Ohm's Law power forms (P=IV=I²R=V²/R), capacitor charge equation, AC vs DC + War of Currents, inductor energy storage, transistor amplification/switching, diode rectification + LED + photovoltaic relation, CMOS zero-static-power explanation, Coulomb's law inverse-square (vs gravity strength ratio ~10³⁹), Faraday's law as foundation of all generators, right-hand rule, Snell's law + critical angle, photoelectric effect → photon discovery.
