@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.291] - 2026-05-26 - Fact-cards Animals L2: 12→16
+- Added 4 mid-tier animals to L2: cheetah (fastest land, 0-100 km/h in 3 s), blue whale (largest ever, 200-ton, 400-lb heart), bat (only true-flying mammal, echolocation), polar bear (black skin under translucent fur, swims 100+ km).
+- sw cache → v370; Android versionCode 327 / versionName 3.7.5.
+
 ## [5.7.290] - 2026-05-26 - Fact-cards Animals L1: 12→16 (phase 3 kickoff)
 - Added 4 more kid-level animals to L1: sheep (baa, flocks, wool), frog (ribbit, breathes through skin, tadpole), owl (270° head turn, silent feathers), squirrel (forgotten nuts → trees, bushy tail balance).
 - Phase 3 begins: across-the-board push from 12 → 16 entries per level.
