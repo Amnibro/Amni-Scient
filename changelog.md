@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.250] - 2026-05-26 - Fact-cards Weather L3: 8→12
+- **+4 fact cards**: petrichor (geosmin + parts-per-trillion smell), cloud formation (dew point + nuclei), heat index (90°F+90% RH = feels 122°F), wind chill (strips warm-air boundary layer).
+- **SW cache v328 → v329**.
+
 ## [5.7.249] - 2026-05-26 - Fact-cards Weather L2: 8→12
 - **+4 fact cards**: water cycle (evap+condensation+precip), humidity (~90% jungle vs ~20% desert), counting storms (sec÷5 = miles + sound speed), wind direction (named by source + weathervanes).
 - **SW cache v327 → v328**.
