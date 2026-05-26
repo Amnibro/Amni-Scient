@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.147] - 2026-05-26 - Opposites L1 + L2: 10→20 each (+20 basic + intermediate antonyms)
+- **L1 +10**: boy/girl gender pair (man/woman adult version), old/young + 'old' double-opposite ambiguity (vs new for objects), same/different vs equal nuance, hello/goodbye + ciao/adios/sayonara synonyms, new/old for objects, many/few + 'some' in middle, front/back orientation, left/right + 90% right-handedness, long/short length vs height, sweet/sour 5-basic-tastes context.
+- **L2 +10**: heavy/light (light double-pair with dark too), good/bad subjective + cultural value-judgment, clean/dirty + hospitals/kitchens hygiene, strong/weak applies to muscles + materials + arguments + drinks, beautiful/ugly + 'beauty in eye of beholder' Plato-Hume, right/wrong (vs left/right direction) double-pair, rich/poor + 700M extreme-poverty stat, friend/enemy + ally/rival/foe distinctions, young/old (people vs new for objects same 'old' word), smart/dumb + politeness caveat re disability slur history.
+- **SW cache v225 → v226**. Next: shapes L1+L2, colors L1+L2.
+
 ## [5.7.146] - 2026-05-26 - Counting L1 + L2: 10→20 each (+20 number-sense + time/calendar)
 - **L1 +10** (number-sense kids): bicycle 2 wheels 'bi-' prefix, tricycle 3 'tri-', triangle 3 sides (strongest-shape engineering), ZERO invented ~5th century India, two hands = 10 fingers basis of base-10, PAIR = 2 etymology, half-of-4 = 2 fair-sharing intuition, 2+1=3 count-up, 3+2=5 finger demo, after 9 = 10 first 2-digit number.
 - **L2 +10**: 12 months + September/October/November/December = 7-8-9-10 in Latin etymology, 24 hours from Egyptian finger-joint counting (3×4=12), 60 min/sec from Babylonian sexagesimal divisor-rich system, alphabet 26 letters + Greek 24 vs Korean 24-in-14+10 comparisons, Roman numerals III + Super Bowl LVIII pop reference, hexagon 6 = bee honeycomb efficiency, 5×2=10 as repeated addition, half-of-10=5 + small-number halves table, square 4 equal sides + right angles + 4-fold rotational symmetry.
