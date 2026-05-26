@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.292] - 2026-05-26 - Fact-cards Animals L3: 12→16
+- Added 4 intermediate ecology topics to L3: keystone species (sea otters → kelp, wolves → Yellowstone), mimicry (Batesian vs Müllerian), food webs (10% energy per level), animal communication (whale songs, bee waggle dance, vervet alarm calls).
+- sw cache → v371; Android versionCode 328 / versionName 3.7.6.
+
 ## [5.7.291] - 2026-05-26 - Fact-cards Animals L2: 12→16
 - Added 4 mid-tier animals to L2: cheetah (fastest land, 0-100 km/h in 3 s), blue whale (largest ever, 200-ton, 400-lb heart), bat (only true-flying mammal, echolocation), polar bear (black skin under translucent fur, swims 100+ km).
 - sw cache → v370; Android versionCode 327 / versionName 3.7.5.
