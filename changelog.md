@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.183] - 2026-05-26 - Fact-cards Animals L5: 5→8
+- **+3 fact cards**: tardigrade cryptobiosis (5700 Gy vs 5 Gy human lethal, vacuum-survive), Hox genes (head-to-tail body-plan masters, 600 MYA fly+mouse+human conserved), lateral line (fish/amphib mechanoreceptors for water displacement + schooling).
+- Animals fact-cards all 5 levels now at 8 each.
+- **SW cache v261 → v262**.
+
 ## [5.7.182] - 2026-05-26 - Fact-cards Animals L4: 5→8
 - **+3 fact cards**: echolocation (bats+dolphins ultrasonic biosonar), convergent evolution (wings + camera-eyes + echolocation evolved independently), endo vs ectotherm (mammals 10x energy budget vs reptiles bask).
 - **SW cache v260 → v261**.
