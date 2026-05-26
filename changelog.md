@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.209] - 2026-05-26 - Fact-cards Sports L1: 4→8
+- **+4 fact cards**: baseball (1840s formalized, 4 bases), tennis (jeu de paume + 15/30/40 scoring), volleyball (1895 Morgan), American football (Super Bowl most-watched US TV).
+- **SW cache v287 → v288**.
+
 ## [5.7.208] - 2026-05-26 - Fact-cards Mythology L5: 4→8
 - **+4 fact cards**: Gilgamesh (~2100 BC oldest epic + pre-Noah flood), Tiamat (Mesopotamian sea-dragon → Marduk → world), Sisyphus (boulder + Camus absurd), Tantalus (etymology of tantalize + House of Atreus).
 - Mythology fact-cards all 5 levels now at 8 each.
