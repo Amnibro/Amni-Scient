@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.268] - 2026-05-26 - Fact-cards Mythology L4: 8→12
+- **+4 fact cards**: Sleipnir (Odin's 8-legged horse, born from Loki-as-mare), Mead of Poetry (Kvasir blood + Odin theft), Ma'at (Egyptian truth/balance feather), Bastet (Egyptian cat goddess + Bubastis mummies).
+- **SW cache v346 → v347**.
+
 ## [5.7.267] - 2026-05-26 - Fact-cards Mythology L3: 8→12
 - **+4 fact cards**: Achilles (heel from Styx dip), Odysseus (Trojan Horse + 10-yr wander), Theseus (Minotaur + Ariadne's thread), Jason & Argonauts (Golden Fleece quest).
 - **SW cache v345 → v346**.
