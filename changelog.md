@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.318] - 2026-05-26 - Fact-cards Mythology L4: 12→16
+- Added 4 mythological places/creatures to L4: Cerberus (3-headed Hades-guard, Heracles\'s 12th Labor), Holy Grail (Arthurian quest object), Anansi (West African spider trickster), Bifröst (Norse rainbow bridge guarded by Heimdall).
+- sw cache → v397; Android versionCode 354 / versionName 4.0.2.
+
 ## [5.7.317] - 2026-05-26 - Fact-cards Mythology L3: 12→16
 - Added 4 world-mythology figures to L3: Sun Wukong (Chinese Monkey King, 72 transformations), Amaterasu (Japanese sun goddess, cave-hiding myth), Ganesha (Hindu elephant-headed remover of obstacles), Coyote (Native American trickster archetype).
 - sw cache → v396; Android versionCode 353 / versionName 4.0.1.
