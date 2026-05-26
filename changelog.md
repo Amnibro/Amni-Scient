@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.175] - 2026-05-26 - Fact-cards Science L2: 5→8
+- **+3 fact cards**: states of matter (4th = plasma), skeleton (~206 adult bones from ~270 at birth, bones fuse), photosynthesis (CO₂+water+sun→sugar+O₂, foundation of food chain).
+- **SW cache v253 → v254**.
+
 ## [5.7.174] - 2026-05-26 - Fact-cards Science L1: 5→8
 - **+3 fact cards**: Earth (3rd planet, only known life), Moon (reflects sunlight, makes no light), lightning (30000°C electric spark, 5x hotter than Sun's surface).
 - **SW cache v252 → v253**.
