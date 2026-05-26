@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.260] - 2026-05-26 - Fact-cards Counting L3: 8→12
+- **+4 fact cards**: mental math (rounding tricks), estimation (~30 vs exact 31), word problems (translate words → numbers), area & length (1D vs 2D + carpet/paint usage).
+- **SW cache v338 → v339**.
+
 ## [5.7.259] - 2026-05-26 - Fact-cards Counting L2: 8→12
 - **+4 fact cards**: inches & feet (12 in/ft, 5280 ft/mi), temperature (0°C=32°F freeze, body 37°C), months in year (12 named), lunar counting (29.5 day cycle + Islamic calendar).
 - **SW cache v337 → v338**.
