@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.308] - 2026-05-26 - Fact-cards Colors L4: 12→16
+- Added 4 advanced color topics to L4: additive vs subtractive (R+G+B=white vs C+M+Y=black), Munsell 1905 3D color solid (hue/value/chroma), color psychology (red attention, blue calm), pointillism (Seurat dot blending = additive demo).
+- sw cache → v387; Android versionCode 344 / versionName 3.9.2.
+
 ## [5.7.307] - 2026-05-26 - Fact-cards Colors L3: 12→16
 - Added 4 intermediate color-science topics to L3: chlorophyll (absorbs R+B, reflects G), melanin (UV-protective pigment), animal camouflage (chameleon iridophores, cuttlefish sub-second), synesthesia (4% blend senses, grapheme-color most common).
 - sw cache → v386; Android versionCode 343 / versionName 3.9.1.
