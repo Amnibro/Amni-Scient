@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.295] - 2026-05-26 - Fact-cards Languages L1: 12→16
+- Added 4 kid-level language basics to L1: vowels & consonants (A E I O U), plurals (cat→cats, mouse→mice), nouns vs verbs (thing vs action), sorry / excuse me (polite repair words).
+- sw cache → v374; Android versionCode 331 / versionName 3.7.9.
+
 ## [5.7.294] - 2026-05-26 - Fact-cards Animals L5: 12→16
 - Added 4 frontier biology topics to L5: optogenetics (channelrhodopsin + blue light to fire neurons), gene drives (super-Mendelian CRISPR inheritance, malaria mosquitoes), organoids (3D self-organizing mini-organs), de-extinction (Colossal mammoth project, 2028 target).
 - Animals subject now complete at 16 entries per level (L1-L5).
