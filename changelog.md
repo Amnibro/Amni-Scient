@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.157] - 2026-05-26 - Sports L5: 10→20 → Sports subject NOW 100% at 20/level (100 total)
+- **+10**: Isner-Mahut 11hr Wimbledon 2010 (70-68 5th set), 1972 USSR-USA basketball controversy (USA refused silvers still in IOC vault), Pelé youngest at 17 + 6 goals 1958 WC, Marathon stadium-finale dating to London 1908, Lance Armstrong 7 Tour titles stripped 2012, Barry Bonds 762 HR + Steroid Era + Aaron 755 moral record, Ali-Frazier Thrilla in Manila 1975 trilogy details, Tom Brady 7 Super Bowls + 5 SB MVPs, Flo-Jo 10.49 still standing 35+ years, Gretzky 894 goals + 'shots you don't take' quote.
+- **MILESTONE**: Sports subject (L1-L5) now 100 Qs total at 20/level.
+- **SW cache v235 → v236**.
+
 ## [5.7.156] - 2026-05-26 - Sports L4: 10→20 (trophies + races + leagues)
 - **+10**: Vince Lombardi Trophy NFL Tiffany silver + 'only thing' quote, yellow/red cards 1970 WC Ken Aston traffic-light inspiration, Tour de France yellow jersey 1919 L'Auto newspaper + 5-time-winners club, Boston Marathon 1897 Patriots Day + qualifying-standards + 2013 #BostonStrong, Indy 500 1911 + milk-bottle tradition since 1936 Louis Meyer, cricket bat English willow Salix-alba 15-20yr cultivated, Daytona 500 200+ mph drafting + Earnhardt 1998 breakthrough, Iditarod ~1000 mi commemorating 1925 serum run, 4 Grand Slams calendar order + Calendar Slam history Budge/Connolly/Laver/Court/Graf, Heisman Trophy John Heisman forward-pass-pioneer + Bush vacated 2005.
 - **SW cache v234 → v235**.
