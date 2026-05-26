@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.297] - 2026-05-26 - Fact-cards Languages L3: 12→16
+- Added 4 intermediate language topics to L3: homophones (their/there/they're), prefixes & suffixes (un-/re-/-ness), Greek/Latin word roots (tele+phone), acronyms vs initialisms (NASA vs FBI).
+- sw cache → v376; Android versionCode 333 / versionName 3.8.1.
+
 ## [5.7.296] - 2026-05-26 - Fact-cards Languages L2: 12→16
 - Added 4 world languages to L2: Hindi (Devanagari, ~600M), Russian (Cyrillic, ~250M), Swahili (East-African lingua franca), Hebrew (right-to-left, only successful language revival).
 - sw cache → v375; Android versionCode 332 / versionName 3.8.0.
