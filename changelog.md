@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.230] - 2026-05-26 - Fact-cards Shapes L3: 8→12
+- **+4 fact cards**: cuboid (bricks/books/shoeboxes), tetrahedron (simplest 3D, D4 dice), truncated icosahedron (soccer ball + buckminsterfullerene C60), octahedron (D8 dice + diamond crystals).
+- **SW cache v308 → v309**.
+
 ## [5.7.229] - 2026-05-26 - Fact-cards Shapes L2: 8→12
 - **+4 fact cards**: heptagon (UK 50p/20p coin), nonagon/decagon (Bahá'í temples 9-sided), loop (roller-coaster + cursive), parallelogram (both pairs of opposite sides parallel).
 - **SW cache v307 → v308**.
