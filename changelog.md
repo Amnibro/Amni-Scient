@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.212] - 2026-05-26 - Fact-cards Sports L4: 4→8
+- **+4 fact cards**: Le Mans 24-hour endurance (1923, teams of 3), AVP beach volleyball (1996 Olympic + USA dominance), hole-in-one (amateur 12500:1 vs pro 3000:1), ultimate frisbee (1968 Columbia HS + Spirit of the Game).
+- **SW cache v290 → v291**.
+
 ## [5.7.211] - 2026-05-26 - Fact-cards Sports L3: 4→8
 - **+4 fact cards**: Americas Cup (1851 oldest international trophy), Indy 500 (1911 + milk Victory Lane tradition), judo (Kano 1882 + 1964 first non-Western Olympic sport), cricket origins (16th c. England, 2nd-most-watched sport).
 - **SW cache v289 → v290**.
