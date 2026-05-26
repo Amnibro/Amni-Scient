@@ -1,5 +1,13 @@
 ﻿# Changelog 
 
+## [5.7.321] - 2026-05-26 - Aggressive mobile overflow patch (round 2)
+- Fixed dvh/vh order bug on line 1220: `body.game-active #app{height:100dvh;height:100vh}` had dvh declared FIRST → modern Safari resolved to vh (URL-bar-collapsed height = taller than visible), causing every game module to overflow below viewport. Inverted to `100vh;100dvh` so dvh wins.
+- Added `min-height:100dvh` to #app baseline (matches body).
+- Aggressive @media ≤768px clamp: EVERY descendant of .view enforces `max-width:100vw !important` (catches all the deeply-nested inline-styled containers we can\'t enumerate). Excludes [data-hscroll] + canvas.
+- iOS safe-area-insets: top-bar pads under notch, body bottom-pad under home indicator.
+- Tables/pre/code in .view force display:block + overflow-x:auto to prevent long content from busting parent.
+- sw cache → v400; Android versionCode 357 / versionName 4.0.5.
+
 ## [5.7.320] - 2026-05-26 - Mobile overflow defense (iOS Safari + Chrome)
 - Top-bar: switched `flex-wrap:nowrap` → `wrap` at ≤720px so score-bar buttons wrap to a second row instead of overflowing horizontally on phones.
 - Added <500px breakpoint shrinking score-bar font + retro-btn padding to fit narrow phones.
