@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.266] - 2026-05-26 - Fact-cards Mythology L2: 8→12
+- **+4 fact cards**: Artemis/Diana (hunt + virgin + silver bow), Hephaestus/Vulcan (smith + lame after Hera + thunderbolt forger), Hestia/Vesta (hearth + Vestal Virgins 1000yr flame), Athena/Minerva (wisdom + armored from Zeus head + Athens).
+- **SW cache v344 → v345**.
+
 ## [5.7.265] - 2026-05-26 - Tower of Hanoi spacing fix
 - **Fix**: disks were `justify-content:flex-start` in column-reverse → compressed at peg bottom, large empty pole above. Switched to `justify-content:space-around` so disks distribute evenly along the pole.
 - Also dynamic disk height: `dh = clamp(18, 40, floor(150/nDisks))` → 3 disks each ~40px, 7 disks each ~21px. Disks now fill the visual pole space proportionally to count.
