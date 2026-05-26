@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.167] - 2026-05-26 - Fact-cards Colors L4: 4→8
+- **+4 fact cards**: structural color (peacock/butterfly microridges shift with angle), afterimages (cone-cell fatigue gives green ghost from red stare), analogous + triadic schemes, Hollywood teal+orange complementary grading.
+- **SW cache v245 → v246**.
+
 ## [5.7.166] - 2026-05-26 - Fact-cards Colors L3: 4→8
 - **+4 fact cards**: why sky is blue (Rayleigh), why sunsets are red (long atmospheric path scatters blue away), why leaves change (anthocyanins emerge), pink isn't in rainbow (extraspectral brain construct).
 - **SW cache v244 → v245**.
