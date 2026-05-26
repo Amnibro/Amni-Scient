@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.159] - 2026-05-26 - Space L3: 12→20
+- **+8**: light-year 9.46 trillion km + Andromeda 2.5M ly + observable universe 93 billion ly, Sirius binary + Egyptian Nile-flood timing + 'dog days of summer', Polaris pole star + precession 26000yr cycle + Thuban/Vega past+future poles, meteoroid/meteor/meteorite trio + ~17000/yr reach Earth, Andromeda collision ~4.5B years 'Milkomeda' + stars-too-small-to-collide, Perseverance Feb 2021 + Jezero Crater + Ingenuity 72-flight first powered flight on another planet, Kuiper Belt 30-50 AU + Oort Cloud 50,000 AU shell + New Horizons Pluto/Arrokoth, Sun future = red giant in 5B yr → white dwarf (no supernova fate — needs >8 solar masses).
+- **SW cache v237 → v238**.
+
 ## [5.7.158] - 2026-05-26 - Space L1+L2: 12→20 each + Venus political-framing cleanup
 - **Venus cleanup**: removed 'cautionary tale for climate science' from L2 — replaced with neutral CO₂-atmosphere-thick + 92× Earth pressure physics.
 - **L1 +8**: Sun = star (G-type main sequence), shooting star = meteor + Perseids/Geminids, solar eclipse 400×-400× cosmic coincidence, lunar eclipse blood moon Earth-atmosphere bend, galaxy types (spiral/elliptical/irregular) + 2 trillion observable, Moon orbit 27.3 sidereal vs 29.5 synodic + month etymology, Earth's 1 moon vs planet counts (Saturn 274+ in 2024), telescope refractor vs reflector + ELT 39m + JWST IR.
