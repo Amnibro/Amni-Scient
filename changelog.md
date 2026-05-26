@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.279] - 2026-05-26 - Fact-cards Space L5: 8→12 (suite phase 2 complete)
+- **+4 fact cards**: dark matter (~27% invisible mass-energy), CMB anisotropies (quantum seeds for galaxies), multiverse hypotheses (4 untestable flavors), Theory of Everything (string/LQG/causal-set candidates).
+- **All 13 fact-card subjects now at 12 entries per level — phase 2 expansion complete.**
+- **SW cache v357 → v358**.
+
 ## [5.7.278] - 2026-05-26 - Fact-cards Space L4: 8→12
 - **+4 fact cards**: stellar lifecycle (cloud→main-seq→red giant→death; <8M☉ white dwarf, >8M☉ supernova→NS/BH), event horizon (Schwarzschild radius), Voyager probes (1977 + 2012 interstellar), Lagrange points (5 stable + L2 JWST + L1 SOHO).
 - **SW cache v356 → v357**.
