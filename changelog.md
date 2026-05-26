@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.313] - 2026-05-26 - Fact-cards Science L4: 12→16
+- Added 4 advanced science topics to L4: special relativity (E=mc², time dilation, GPS 38μs/day correction), materials science (crystal lattices + dopants), genomics (HGP 3B bases, $200/genome now), plasma physics (4th state, 99% of visible universe).
+- sw cache → v392; Android versionCode 349 / versionName 3.9.7.
+
 ## [5.7.312] - 2026-05-26 - Fact-cards Science L3: 12→16
 - Added 4 intermediate science topics to L3: Newton's laws (F=ma, action/reaction), chemical bonds (ionic/covalent/metallic/H-bond), conservation laws (Noether 1915 symmetries), wave interference (constructive/destructive, noise-canceling, double-slit).
 - sw cache → v391; Android versionCode 348 / versionName 3.9.6.
