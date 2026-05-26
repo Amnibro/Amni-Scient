@@ -4,10 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Adam &mdash; Texture-Native Local AI Assistant | AMNI-SCIENT</title>
-<meta name="description" content="Adam is a GF(17) texture-native local AI assistant. 4 GB VRAM, lossless. Voice + vision + gesture-controlled Jarvis-style UI. 42 skills incl. autonomous coding, live weather/system widgets, autonomous learning daemon. Drop-in Ollama + OpenAI API replacement on one port. Source-available, CC BY-NC 4.0.">
-<meta name="keywords" content="adam,amni-ai,local ai,gf17,texture native,ptex,ollama drop-in,openai api drop-in,open webui,continue.dev,cline,aider,lossless ai,self-improving llm,sandbox code,coding assistant,jarvis ui,gesture control,local voice assistant,piper tts,whisper stt,mediapipe hands,blip vision,mcp server">
+<meta name="description" content="Adam is a GF(17) texture-native local AI assistant. 4 GB VRAM, lossless. Voice + vision + gesture-controlled Jarvis-style UI with wake-word, Socratic coach mode, and self-verifying edits (auto-runs sibling pytest). 42 skills, autonomous learning daemon, live data widgets. Drop-in Ollama + OpenAI API replacement on one port. Source-available, CC BY-NC 4.0.">
+<meta name="keywords" content="adam,amni-ai,local ai,gf17,texture native,ptex,ollama drop-in,openai api drop-in,open webui,continue.dev,cline,aider,lossless ai,self-improving llm,self-verifying ai,sandbox code,coding assistant,jarvis ui,gesture control,local voice assistant,piper tts,whisper stt,mediapipe hands,blip vision,mcp server,socratic tutor,coach mode,wake word ai,auto pytest">
 <meta property="og:title" content="Adam &mdash; Texture-Native Local AI Assistant">
-<meta property="og:description" content="4 GB VRAM. Lossless GF(17) weights. Voice + vision + gesture Jarvis UI. 42 skills. Autonomous learning. Drop-in Ollama + OpenAI API replacement on one port.">
+<meta property="og:description" content="4 GB VRAM. Lossless GF(17) weights. Voice + vision + gesture Jarvis UI. Self-verifying edits (auto-pytest). Socratic coach mode. Drop-in Ollama + OpenAI API replacement on one port.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://amni-scient.com/amni-ai">
 <meta property="og:image" content="https://amni-scient.com/assets/explore/og-explore.png">
@@ -15,7 +15,7 @@
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Adam &mdash; Texture-Native Local AI Assistant">
-<meta name="twitter:description" content="4 GB VRAM. Lossless GF(17). Voice + vision + gestures. 42 skills. Drop-in Ollama + OpenAI API replacement.">
+<meta name="twitter:description" content="4 GB VRAM. Lossless GF(17). Voice + vision + gestures + wake-word + self-verifying edits + Socratic coach. Drop-in Ollama + OpenAI API replacement.">
 <meta name="twitter:image" content="https://amni-scient.com/assets/explore/og-explore.png">
 <link rel="canonical" href="https://amni-scient.com/amni-ai">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -244,6 +244,34 @@ OPENAI_API_KEY=anything</pre>
 <span class="flow-arrow">&rarr;</span>
 <span class="flow-step terminal">RECOVER OR REPORT</span>
 </div>
+<p style="text-align:center;color:var(--dim);max-width:720px;margin:1.5rem auto .5rem;font-size:.88rem">When Adam writes a file, a second loop verifies the change is actually functional:</p>
+<div class="flow-row">
+<span class="flow-step">FILE WRITTEN</span>
+<span class="flow-arrow">&rarr;</span>
+<span class="flow-step">SHA256 DISK READBACK</span>
+<span class="flow-arrow">&rarr;</span>
+<span class="flow-step">EXT-SPECIFIC PARSE</span>
+<span class="flow-arrow">&rarr;</span>
+<span class="flow-step">SIBLING test_*.py?</span>
+</div>
+<div class="flow-row">
+<span class="flow-step">AUTO-SPAWN PYTEST</span>
+<span class="flow-arrow">&rarr;</span>
+<span class="flow-step">CAPTURE PASS/FAIL</span>
+<span class="flow-arrow">&rarr;</span>
+<span class="flow-step">FAIL? FLIP VERDICT</span>
+<span class="flow-arrow">&rarr;</span>
+<span class="flow-step terminal">WIDGET BADGE: ✓ / ✗ / ⚠</span>
+</div>
+<div class="flow-row">
+<span class="flow-step">UNVERIFIABLE EXT?</span>
+<span class="flow-arrow">&rarr;</span>
+<span class="flow-step">QUEUE needs_testing.jsonl</span>
+<span class="flow-arrow">&rarr;</span>
+<span class="flow-step">TESTS PILL IN /JARVIS</span>
+<span class="flow-arrow">&rarr;</span>
+<span class="flow-step terminal">MARK TESTED WHEN HUMAN CONFIRMS</span>
+</div>
 </section>
 
 <section>
@@ -309,6 +337,9 @@ OPENAI_API_KEY=anything</pre>
 <tr><td>Gestures</td><td>MediaPipe Hands in-browser (60 fps). Six gestures: pinch (toggle voice), fist (clear chat), open palm (system check), peace (cycle theme), point (next question), thumb up (submit).</td></tr>
 <tr><td>Autonomous learning</td><td>24/7 LearningDaemon: curiosity engine picks knowledge gaps, parallel ingest workers fetch &amp; distill via DDG, atomic Q-A extraction (5&times; density vs raw chunks), multi-source consensus tracking, sleep consolidation (clusters &rarr; summary cells), spaced repetition on stale facts. Yields cleanly when user is active.</td></tr>
 <tr><td>Knowledge graph</td><td>SPO triple store (subject-predicate-object) with BFS path-traversal (&quot;what connects X to Y&quot;), per-cell provenance, multi-source consensus, fuzzy subject search.</td></tr>
+<tr><td>Self-verifying edits</td><td>Every <code>file_write</code> / <code>code_edit</code> runs disk sha256 readback + per-extension semantic check (Python <code>ast.parse</code>+<code>compile</code>, JSON / YAML / TOML parse, bracket-balance for 14 brace-syntax languages). Python edits auto-spawn sibling <code>test_&lt;stem&gt;.py</code> via pytest with 20s cap; failing tests flip the verification status to FAIL and surface the failing test names. Unverifiable changes (unknown extension, or <code>.html</code>/<code>.css</code>/<code>.js</code> needing visual review) queue on <code>data/needs_testing.jsonl</code>, visible in /jarvis as a TESTS pill.</td></tr>
+<tr><td>Socratic coach mode</td><td>Ask-answer-ask tutoring loop. Topic + 5 difficulty levels &rarr; Adam generates a question &rarr; you answer &rarr; Adam grades (0-100) with feedback + correct-facts + missing-facts &rarr; next question adapts to your streak. Voice-native mode auto-speaks questions, hints, and grades via Piper streaming TTS. Per-topic mastery tracked in <code>CoachAtlas</code>. Natural-language triggers: "coach me on X", "quiz me on X", "let's practice X".</td></tr>
+<tr><td>Wake-word convo</td><td>Continuous voice listening with VAD + barge-in + Whisper-hallucination filter. Optional WAKE gate (<code>"Adam, ..."</code> / <code>"Hey Adam, ..."</code>) — Adam only responds in convo mode when directly addressed; third-person narration ("Adam is sleeping") is rejected. Pair with coach voice-mode for fully hands-free Socratic tutoring.</td></tr>
 <tr><td>Platform</td><td>Windows 10/11 + Linux &middot; Python 3.10+ &middot; AMD ROCm 7.2+ or NVIDIA CUDA 12+</td></tr>
 <tr><td>License</td><td>Two-license: Amnibro's original code under CC BY-NC 4.0 &middot; Gemma 4 base weights under Apache 2.0 (Google)</td></tr>
 <tr><td>Base model attribution</td><td>Gemma 4 E2B IT (&copy; Google LLC, Apache 2.0) &middot; losslessly re-encoded as GF(17) RGBA, cosine=1.0 round-trip &middot; no fine-tuning or distillation</td></tr>
