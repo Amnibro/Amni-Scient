@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.160] - 2026-05-26 - Space L4: 12→20
+- **+8**: neutron stars (1.4-2.16 M☉ in 20km sphere, sugar-cube = 1 billion tons), pulsars (Bell Burnell 1967 'LGM-1' nickname + 716 Hz fastest), quasars (3C 273 1963 Schmidt + 10,000× galactic brightness), Europa subsurface ocean (2× Earth's water + JUICE/Clipper missions), Olympus Mons Mars 22km tall (Mars lacks plate tectonics so hotspot stayed fixed), Hubble's Law 1929 + Hubble tension ~9% CMB-vs-supernova disagreement, stellar parallax + 1 parsec = 1 arcsec + Gaia 1.5B stars mapped, spectroscopy element-fingerprints + Doppler shifts revealing composition + motion + exoplanet detection.
+- **SW cache v238 → v239**.
+
 ## [5.7.159] - 2026-05-26 - Space L3: 12→20
 - **+8**: light-year 9.46 trillion km + Andromeda 2.5M ly + observable universe 93 billion ly, Sirius binary + Egyptian Nile-flood timing + 'dog days of summer', Polaris pole star + precession 26000yr cycle + Thuban/Vega past+future poles, meteoroid/meteor/meteorite trio + ~17000/yr reach Earth, Andromeda collision ~4.5B years 'Milkomeda' + stars-too-small-to-collide, Perseverance Feb 2021 + Jezero Crater + Ingenuity 72-flight first powered flight on another planet, Kuiper Belt 30-50 AU + Oort Cloud 50,000 AU shell + New Horizons Pluto/Arrokoth, Sun future = red giant in 5B yr → white dwarf (no supernova fate — needs >8 solar masses).
 - **SW cache v237 → v238**.
