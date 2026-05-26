@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.310] - 2026-05-26 - Fact-cards Science L1: 12→16
+- Added 4 kid-level science basics to L1: magnets (N+S poles, iron/steel/nickel), five senses (sight/hearing/touch/taste/smell), gravity (Earth pulls down + Moon's orbit), air (invisible nitrogen + oxygen fills everything).
+- sw cache → v389; Android versionCode 346 / versionName 3.9.4.
+
 ## [5.7.309] - 2026-05-26 - Fact-cards Colors L5: 12→16
 - Added 4 frontier color-engineering topics to L5: HDR (Rec.2100, 10000-nit, PQ/HLG, tone mapping), ICC profiles (color management between device-RGB ↔ PCS), quantum-dot displays (2-10 nm nanocrystal emitters, QLED), CRI & SPD (sunlight=100, LED ~70-95).
 - Colors subject now complete at 16 entries per level (L1-L5).
