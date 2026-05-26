@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.200] - 2026-05-26 - Fact-cards Counting L2: 4→8
+- **+4 fact cards**: pairs (shoes/socks/eyes), dice (opposite faces sum to 7), US coins (penny/nickel/dime/quarter — 4 quarters=1 dollar), halves & quarters of a pie.
+- **SW cache v278 → v279**.
+
 ## [5.7.199] - 2026-05-26 - Fact-cards Counting L1: 4→8
 - **+4 fact cards**: zero (means none, before 1), number order (each +1 from previous), counting things (point as you count), taking away (subtraction).
 - **SW cache v277 → v278**.
