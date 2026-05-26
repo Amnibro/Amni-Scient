@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.311] - 2026-05-26 - Fact-cards Science L2: 12→16
+- Added 4 elementary science topics to L2: earthquakes (tectonic slip, Richter log scale), sound waves (20-20k Hz, ~343 m/s in air), light rays (reflect/refract/absorb, EM spectrum slice), friction (rough vs smooth, wheels roll).
+- sw cache → v390; Android versionCode 347 / versionName 3.9.5.
+
 ## [5.7.310] - 2026-05-26 - Fact-cards Science L1: 12→16
 - Added 4 kid-level science basics to L1: magnets (N+S poles, iron/steel/nickel), five senses (sight/hearing/touch/taste/smell), gravity (Earth pulls down + Moon's orbit), air (invisible nitrogen + oxygen fills everything).
 - sw cache → v389; Android versionCode 346 / versionName 3.9.4.
