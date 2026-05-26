@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.178] - 2026-05-26 - Fact-cards Science L5: 5→8
+- **+3 fact cards**: QFT (QED 10-decimal-place precision), CRISPR-Cas9 (Doudna+Charpentier Nobel 2020, bacterial immune system → gene editing), AlphaFold (DeepMind 2020 solved 50-yr protein-folding grand challenge).
+- Science fact-cards all 5 levels now at 8 each.
+- **SW cache v256 → v257**.
+
 ## [5.7.177] - 2026-05-26 - Fact-cards Science L4: 5→8
 - **+3 fact cards**: statistical mechanics (Boltzmann S=k ln W, temp = KE avg), spectroscopy (atomic fingerprints reveal star composition), neuroscience (86B neurons, 4-200 Hz firing, 20% body energy).
 - **SW cache v255 → v256**.
