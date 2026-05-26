@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.196] - 2026-05-26 - Fact-cards Opposites L3: 4→8
+- **+4 fact cards**: same & different (twins vs feet), smooth & rough (glass vs bark — tactile), front & back (eyes vs spine), inside & outside (kitchen vs yard).
+- **SW cache v274 → v275**.
+
 ## [5.7.195] - 2026-05-26 - Fact-cards Opposites L2: 4→8
 - **+4 fact cards**: wet & dry (bath→towel), soft & hard (bread vs rocks), loud & quiet (thunder vs whisper — decibels), new & old (age + value nuance).
 - **SW cache v273 → v274**.
