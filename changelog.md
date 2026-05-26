@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.294] - 2026-05-26 - Fact-cards Animals L5: 12→16
+- Added 4 frontier biology topics to L5: optogenetics (channelrhodopsin + blue light to fire neurons), gene drives (super-Mendelian CRISPR inheritance, malaria mosquitoes), organoids (3D self-organizing mini-organs), de-extinction (Colossal mammoth project, 2028 target).
+- Animals subject now complete at 16 entries per level (L1-L5).
+- sw cache → v373; Android versionCode 330 / versionName 3.7.8.
+
 ## [5.7.293] - 2026-05-26 - Fact-cards Animals L4: 12→16
 - Added 4 advanced biology topics to L4: bioluminescence (luciferin/luciferase, 80% deep-sea), hibernation + torpor (metabolic shutdown, hummingbird daily torpor), pheromones (trail/alarm/sex chemical signals), speciation (allopatric vs sympatric vs polyploidy).
 - sw cache → v372; Android versionCode 329 / versionName 3.7.7.
