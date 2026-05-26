@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.319] - 2026-05-26 - Fact-cards Mythology L5: 12→16
+- Added 4 deep-cut mythological figures to L5: Charon (Styx ferryman + obol payment), Moirai (3 Fates spinning thread), Hekate (crossroads + 3-faced moon goddess), Mimir (Norse wisdom-well, Odin\'s eye sacrifice).
+- Mythology subject now complete at 16 entries per level (L1-L5).
+- sw cache → v398; Android versionCode 355 / versionName 4.0.3.
+
 ## [5.7.318] - 2026-05-26 - Fact-cards Mythology L4: 12→16
 - Added 4 mythological places/creatures to L4: Cerberus (3-headed Hades-guard, Heracles\'s 12th Labor), Holy Grail (Arthurian quest object), Anansi (West African spider trickster), Bifröst (Norse rainbow bridge guarded by Heimdall).
 - sw cache → v397; Android versionCode 354 / versionName 4.0.2.
