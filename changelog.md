@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.177] - 2026-05-26 - Fact-cards Science L4: 5→8
+- **+3 fact cards**: statistical mechanics (Boltzmann S=k ln W, temp = KE avg), spectroscopy (atomic fingerprints reveal star composition), neuroscience (86B neurons, 4-200 Hz firing, 20% body energy).
+- **SW cache v255 → v256**.
+
 ## [5.7.176] - 2026-05-26 - Fact-cards Science L3: 5→8
 - **+3 fact cards**: sound waves (~343 m/s vs light 875,000x faster → thunder lag), electricity (Ohm's law V=IR + volts/amps/ohms), microbiology (~38T bacteria ≈ human cells).
 - **SW cache v254 → v255**.
