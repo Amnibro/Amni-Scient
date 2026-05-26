@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.257] - 2026-05-26 - Fact-cards Opposites L5: 8→12
+- **+4 fact cards**: qualitative & quantitative (research methods), bottom-up & top-down (design styles), convergent & divergent thinking (creativity), signal & noise (engineering SNR).
+- Opposites fact-cards all 5 levels now at 12 each.
+- **SW cache v335 → v336**.
+
 ## [5.7.256] - 2026-05-26 - Fact-cards Opposites L4: 8→12
 - **+4 fact cards**: local & global (bakery vs Coca-Cola 200+ countries), endothermic & exothermic (chemistry energy direction), increase & decrease (slope sign), optimistic & pessimistic (slight pessimism best for planning).
 - **SW cache v334 → v335**.
