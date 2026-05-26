@@ -1,5 +1,18 @@
 ﻿# Changelog 
 
+## [5.7.124] - 2026-05-25 - Animals L3: 20 of ~42 backfilled (taxonomy, ecology, symbiosis)
+- **Animals L3** half done — 20 new explanations.
+- **The -ologies**: ornithology (Audubon + eBird citizen science), herpetology (reptiles + amphibians historical lumping), ichthyology (humans are technically fish that climbed out), mammalogy (Latin 'mamma' breast, 2g bumblebee bat to 200t blue whale).
+- **Vertebrate vs invertebrate**: 70k vs 1.3M+ species, backbone evolved 530M years ago in Cambrian.
+- **Insect orders**: Hymenoptera (membrane wing — bees pollinate 75% of food crops + most are solitary), Lepidoptera (scale wing — moths outnumber butterflies 10:1, monarch's 3000mi multi-gen migration).
+- **Reproductive strategies**: marsupials (jellybean joey crawls to pouch + Australia parallel-evolution), monotremes (5 species, platypus + 4 echidnas, only egg-laying mammals + venomous platypus spur).
+- **Diversity outliers**: Greenland shark trick-question slowest (NOT mammal — fish), Komodo dragon 3m/70kg apex with venom + bacteria-laden saliva (recent finding), Chiroptera 1400 species = 20% of all mammals + true vs glide flight.
+- **Anti-predator strategies**: camouflage 3 types (background match + disruptive zebra + countershading shark), mimicry 3 types (Batesian viceroy + Müllerian wasp-stripe convergence + aggressive anglerfish lure).
+- **Trophic concepts**: apex predator + Yellowstone wolf-reintroduction trophic cascade (elk → willows → beavers → rivers reshaped).
+- **Symbiosis taxonomy**: umbrella term + 4 flavors (mutualism, commensalism, parasitism, amensalism). Commensalism (cattle egrets, barnacles on whales — hard to verify true neutrality). Parasitism (ectoparasite vs endoparasite, ~40% of all animal species are parasites, mind-controlling jewel wasps + horsehair worms).
+- **Reproduction**: elephant 22-month gestation builds 100kg brain-ready calf; coevolution arms races + mutualist hummingbird-flower matches + Red Queen Hypothesis (Through the Looking-Glass running-to-stay-in-place).
+- **SW cache v202 → v203**. Remaining ~22 + Languages L3 (1) next iteration.
+
 ## [5.7.123] - 2026-05-25 - Music L5: 21 backfilled → **MUSIC SUBJECT 100% COMPLETE** (all 5 levels, 255 Qs)
 - **Music L5** all 41 advanced/contemporary topics now teach.
 - **Serialism + atonality**: tone row 12-pitch ordering blocking tonal center, Second Viennese School trio (Schoenberg dense + Berg lyrical + Webern austere miniaturist), integral serialism 1950s total-parameter control + listener overload reaction, matrix 12×12 grid producing 48 row forms (P0-P11, I, R, RI).
