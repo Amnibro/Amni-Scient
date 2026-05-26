@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.171] - 2026-05-26 - Fact-cards Shapes L3: 4→8
+- **+4 fact cards**: pyramid (Giza square base), torus (donut topology hole), prism (rainbow splitter + 2 parallel polygon ends), ellipsoid (egg/rugby/Earth-equatorial-bulge).
+- **SW cache v249 → v250**.
+
 ## [5.7.170] - 2026-05-26 - Fact-cards Shapes L2: 4→8
 - **+4 fact cards**: hexagon (bee honeycomb optimum), octagon (STOP sign + octa-prefix history), quadrilateral family (square+rect+rhombus+trap+kite), spiral (shells+hurricanes+galaxies).
 - **SW cache v248 → v249**.
