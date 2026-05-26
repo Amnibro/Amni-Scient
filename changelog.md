@@ -1,5 +1,18 @@
 ﻿# Changelog 
 
+## [5.7.121] - 2026-05-25 - Music L4: 20 of 31 missing backfilled (forms, eras, advanced theory)
+- **Music L4** two-thirds done — 20 explanations added.
+- **Orchestra + forms**: 4 families seating order (strings front → percussion back), symphony Haydn-Mozart-Beethoven 4-movement standard expanded by Mahler to 5-10, sonata-allegro Exposition-Development-Recap-Coda template (K545 textbook), concerto cadenza + Baroque concerto-grosso variant.
+- **Composers + works**: Debussy 'Clair de Lune' from Suite bergamasque (1890 age 28, Verlaine inspiration).
+- **Impressionism**: Late 1800s French school — whole-tone + pentatonic + parallel-chord rule-breaking + suggestive atmosphere.
+- **Polyphony**: fugal subject + answer + countersubject + stretto layering, counterpoint vs homophony (Bach's WTC 48 fugues, Bohemian Rhapsody opera, barbershop).
+- **Harmony foundations**: tonality I-IV-V hierarchy + V→I gravity (99% of pop/classical), atonality Schoenberg 1908 break with horror-score legacy.
+- **Scales**: blues scale C-E♭-F-G♭-G-B♭-C with b5 tension, whole-tone (only 2 distinct exist — Stevie Wonder + Looney Tunes spell sequences), 12-bar blues I-IV-I-V-IV-I + bar-by-bar layout (Hound Dog, Sweet Home Chicago).
+- **Jazz history**: bebop in 1940s NYC (Bird + Diz at Minton's), made jazz a listening rather than dance music.
+- **Modulation theory**: pivot-chord types (closely-related, enharmonic, chromatic) + truck-driver pop trope (Whitney's 'I Will Always Love You').
+- **Acoustics**: octave equivalence universal across cultures (2:1 ratio), Helmholtz resonance air-spring-mass equation (guitar sound holes, beer bottles, car tires), just intonation 2:1/3:2/4:3/5:4 ratios vs equal-temperament universal-key compromise, pedal tone tonic vs dominant (Bach's D-minor Toccata ending), enharmonic equivalents and scale-spelling rules.
+- **SW cache v199 → v200**. L4 remaining 11 + L5 next iterations.
+
 ## [5.7.120] - 2026-05-25 - Music L3: final 21 backfilled → Music L3 100% complete (61 total)
 - **Music L3** finished — all 61 questions teach.
 - **More intervals**: P4 = 5 semitones 4:3 ratio (Bridal Chorus, Auld Lang Syne, Amazing Grace), P5 = 7 semitones (Twinkle Twinkle, 2001 fanfare), M6 = 9 semitones (My Bonnie, NBC chimes, When You Wish Upon a Star).
