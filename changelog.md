@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.169] - 2026-05-26 - Fact-cards Shapes L1: 4→8
+- **+4 fact cards**: star (5-point=10 sides), heart (two semicircles meeting at point), crescent (same root as croissant), plus/cross (4 arms, hospital + math + Red Cross).
+- **SW cache v247 → v248**.
+
 ## [5.7.168] - 2026-05-26 - Fact-cards Colors L5: 4→8
 - **+4 fact cards**: CIE 1931 horseshoe chromaticity, metamerism (same RGB different spectra), Bayer RGGB filter mosaic + demosaicing, Delta E < 2 brand-matching threshold.
 - Colors fact-cards all 5 levels now at 8 each (first quarter of 4→16 quadruple complete).
