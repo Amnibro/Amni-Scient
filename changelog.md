@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.271] - 2026-05-26 - Fact-cards Sports L2: 8→12 (SW v350)
+- **+4 fact cards**: fencing (foil/épée/sabre + electronic ms scoring), martial arts (karate/taekwondo/judo/kungfu origins), figure skating (Hanyu quad Axel), gymnastics (Biles eponymous skills).
+- **SW cache v349 → v350**.
+
 ## [5.7.270] - 2026-05-26 - Fact-cards Sports L1: 8→12
 - **+4 fact cards**: running (Bolt 9.58s), cycling (1817 Germany + Tour de France 21 stages), table tennis (Victorian England 1880s + China dominance), golf (15c Scotland + 4 majors).
 - **SW cache v348 → v349**.
