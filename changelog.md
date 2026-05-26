@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.243] - 2026-05-26 - Fact-cards Languages L1: 8→12
+- **+4 fact cards**: books (libraries free borrow), capital letters (sentence start + names + "I"), story parts (beginning/middle/end), conversation (taking turns + eye contact).
+- **SW cache v321 → v322**.
+
 ## [5.7.242] - 2026-05-26 - Fact-cards Animals L5: 8→12
 - **+4 fact cards**: polyploidy (wheat 6n + frogs/ferns/salmon), lobe-finned fish (coelacanth 1938 + lungfish + tetrapod ancestor), CRISPR origins (bacterial immune memory), quorum sensing (vibrio bioluminescence + pathogen virulence).
 - Animals fact-cards all 5 levels now at 12 each.
