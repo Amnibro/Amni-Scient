@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.302] - 2026-05-26 - Fact-cards Weather L3: 12→16
+- Added 4 intermediate meteorology topics to L3: weather fronts (cold/warm/occluded/stationary), Doppler radar (frequency shift to see wind), monsoons (seasonal wind reversal, Indian monsoon), lightning types (sprites/blue jets/elves discovered 1989+).
+- sw cache → v381; Android versionCode 338 / versionName 3.8.6.
+
 ## [5.7.301] - 2026-05-26 - Fact-cards Weather L2: 12→16
 - Added 4 elementary weather topics to L2: rainbow science (42° refraction angle), blizzards (1888 NYC 1.5m), drought (1930s Dust Bowl), air pressure (high vs low → wind).
 - sw cache → v380; Android versionCode 337 / versionName 3.8.5.
