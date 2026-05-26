@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.249] - 2026-05-26 - Fact-cards Weather L2: 8→12
+- **+4 fact cards**: water cycle (evap+condensation+precip), humidity (~90% jungle vs ~20% desert), counting storms (sec÷5 = miles + sound speed), wind direction (named by source + weathervanes).
+- **SW cache v327 → v328**.
+
 ## [5.7.248] - 2026-05-26 - Fact-cards Weather L1: 8→12
 - **+4 fact cards**: hot & cold (thermometer + Celsius/Fahrenheit), umbrella (4000-yr-old China/Egypt invention), hail (ice balls lifted + dropped in storm), sunset (atmospheric scattering reddens).
 - **SW cache v326 → v327**.
