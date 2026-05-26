@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.186] - 2026-05-26 - Fact-cards Languages L3: 5→8
+- **+3 fact cards**: idioms (kick-the-bucket non-literal), loanwords (safari Swahili / tycoon Japanese / ketchup Chinese / algebra Arabic / schadenfreude German — ~80% English vocab borrowed), active vs passive voice.
+- **SW cache v264 → v265**.
+
 ## [5.7.185] - 2026-05-26 - Fact-cards Languages L2: 5→8
 - **+3 fact cards**: German (Hallo/Danke/Wasser — Germanic root shared with English), Italian (Ciao/Grazie/Acqua — Romance from Latin), Japanese (konnichiwa/arigatou/mizu — 3 scripts hiragana+katakana+kanji).
 - **SW cache v263 → v264**.
