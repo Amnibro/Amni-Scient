@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.244] - 2026-05-26 - Fact-cards Languages L2: 8→12
+- **+4 fact cards**: Mandarin (4 tones + 1.1B speakers most native), Portuguese (250M Brazil+Portugal 6th), Arabic (RTL + ~400M MENA), Korean (Hangul 1443 designed easy).
+- **SW cache v322 → v323**.
+
 ## [5.7.243] - 2026-05-26 - Fact-cards Languages L1: 8→12
 - **+4 fact cards**: books (libraries free borrow), capital letters (sentence start + names + "I"), story parts (beginning/middle/end), conversation (taking turns + eye contact).
 - **SW cache v321 → v322**.
