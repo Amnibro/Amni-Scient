@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.208] - 2026-05-26 - Fact-cards Mythology L5: 4→8
+- **+4 fact cards**: Gilgamesh (~2100 BC oldest epic + pre-Noah flood), Tiamat (Mesopotamian sea-dragon → Marduk → world), Sisyphus (boulder + Camus absurd), Tantalus (etymology of tantalize + House of Atreus).
+- Mythology fact-cards all 5 levels now at 8 each.
+- **SW cache v286 → v287**.
+
 ## [5.7.207] - 2026-05-26 - Fact-cards Mythology L4: 4→8
 - **+4 fact cards**: Yggdrasil (Norse World Tree 9 realms), Excalibur (Arthur + Lady of Lake + Malory 1485), Pandora's jar (hope last), Atlas Titan (sky not Earth — atlas map books).
 - **SW cache v285 → v286**.
