@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.235] - 2026-05-26 - Fact-cards Science L3: 8→12
+- **+4 fact cards**: pH scale (0-14, 10× per step), absolute zero (0 K = −273.15°C, ~38 pK lab achieved), half-life (C-14 5730 yr, U-238 4.5 Byr), mitochondria (ATP factories + own DNA + endosymbiont origin).
+- **SW cache v313 → v314**.
+
 ## [5.7.234] - 2026-05-26 - Fact-cards Science L2: 8→12
 - **+4 fact cards**: heart (5 L/min + 100K beats/day + 100K km vessels), lungs (20K breaths/day + 700M alveoli = tennis-court area), volcanoes (1500 active + Ring of Fire 75%), Earth layers (crust/mantle/outer core/inner core).
 - **SW cache v312 → v313**.
