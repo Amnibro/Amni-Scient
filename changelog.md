@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.184] - 2026-05-26 - Fact-cards Languages L1: 5→8
+- **+3 fact cards**: hello (friendly greeting wave), please/thank you magic words, question words (5 Ws + 1 H).
+- **SW cache v262 → v263**.
+
 ## [5.7.183] - 2026-05-26 - Fact-cards Animals L5: 5→8
 - **+3 fact cards**: tardigrade cryptobiosis (5700 Gy vs 5 Gy human lethal, vacuum-survive), Hox genes (head-to-tail body-plan masters, 600 MYA fly+mouse+human conserved), lateral line (fish/amphib mechanoreceptors for water displacement + schooling).
 - Animals fact-cards all 5 levels now at 8 each.
