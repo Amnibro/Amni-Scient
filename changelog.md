@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.246] - 2026-05-26 - Fact-cards Languages L4: 8→12
+- **+4 fact cards**: diglossia (Arabic MSA vs dialect + Greek 1976), phoneme inventories (Rotokas 11 vs !Xóõ 141), pidgins/creoles (Haitian + Tok Pisin), writing system types (logograms/syllabaries/alphabets/abjads/abugidas).
+- **SW cache v324 → v325**.
+
 ## [5.7.245] - 2026-05-26 - Fact-cards Languages L3: 8→12
 - **+4 fact cards**: onomatopoeia (buzz/hiss/meow Greek roots), palindromes (racecar + "a man a plan a canal panama"), alliteration (Peter Piper), compound words (baseball+rainbow+German monsters).
 - **SW cache v323 → v324**.
