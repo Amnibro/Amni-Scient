@@ -1,5 +1,18 @@
 ﻿# Changelog 
 
+## [5.7.127] - 2026-05-25 - Math L4 expansion: 10 → 25 Qs (15 new advanced topics)
+- **Pivoting from pedagogical pass to content-bank expansion** per quadruple-content directive.
+- **Math L4 audit**: had only 10 questions vs L3's 60. Most-undersized level in the suite. Added 15 new.
+- **New topics** (each with substantive teach text):
+  - **Calculus rules**: chain rule (backbone of neural-network backprop), product rule (don't multiply derivatives!), quotient rule mention, u-substitution (inverse of chain rule), integration by parts (inverse of product rule, LIATE picking order), implicit differentiation (circle x²+y²=25 example).
+  - **Multivariable**: partial derivatives + gradient ∇f as steepest-ascent direction.
+  - **Linear algebra / vectors**: dot product (scalar, perpendicular = 0, used in physics/graphics/ML similarity), cross product (vector, right-hand rule, torque + angular momentum + 3D surface normals + EM right-hand rule).
+  - **Probability**: Bayes' theorem (rare-disease example) and expectation E[X] (LINEAR even for dependent vars).
+  - **Theorems**: Mean Value Theorem (driving-100km-in-1hr speedometer intuition) + Rolle as special case.
+  - **Proof technique**: induction (domino metaphor), contrapositive (logically equivalent to original, ≠ converse), pigeonhole principle (13-people share birthday month).
+  - **Series**: p-series convergence criterion (p > 1), harmonic divergence + Basel π²/6.
+- **SW cache v205 → v206**. L5 + other small banks next iterations.
+
 ## [5.7.126] - 2026-05-25 - **ALL QUIZDATA 100% PEDAGOGICALLY COMPLETE — 1612 Qs, 0 missing**
 - **Animals L2** final 26 backfilled. The L2 quiz had grown to 136 questions across earlier expansion iterations; 26 lacked `explain:`.
 - **New scanner** ran across the entire quizData object, brace-balancing each `{q:...}` to verify every single question has a substantive explanation. Result: **1612 / 1612**.
