@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.206] - 2026-05-26 - Fact-cards Mythology L3: 4→8
+- **+4 fact cards**: Loki (Norse trickster shape-shifter, father of Fenrir/Jörmungandr/Hel), Horus (Egyptian falcon sky-god, pharaohs incarnated him alive), Heracles 12 Labors, Perseus + Medusa.
+- **SW cache v284 → v285**.
+
 ## [5.7.205] - 2026-05-26 - Fact-cards Mythology L2: 4→8
 - **+4 fact cards**: Aphrodite/Venus (love + sea foam), Hades (underworld stern not evil), Demeter/Ceres (Persephone-grief winter + "cereal" etymology), Apollo (sun + music + Delphi).
 - **SW cache v283 → v284**.
