@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.304] - 2026-05-26 - Fact-cards Weather L5: 12→16
+- Added 4 frontier meteorology topics to L5: AI weather forecasting (GraphCast/Pangu/FourCastNet), bomb cyclones (≥24 hPa pressure drop / 24 hrs), stratospheric sudden warming (polar vortex disruption), climate tipping points (AMOC, Amazon, Greenland, permafrost).
+- Weather subject now complete at 16 entries per level (L1-L5).
+- sw cache → v383; Android versionCode 340 / versionName 3.8.8.
+
 ## [5.7.303] - 2026-05-26 - Fact-cards Weather L4: 12→16
 - Added 4 advanced meteorology topics to L4: greenhouse effect (IR re-radiation, CO₂ doubling → ~3°C), cloud seeding (silver iodide), derechos (long-lived straight-line windstorms, 2020 Iowa), weather satellites (GOES geostationary + NOAA polar).
 - sw cache → v382; Android versionCode 339 / versionName 3.8.7.
