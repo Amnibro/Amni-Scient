@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.288] - 2026-05-26 - Fact-cards Engineering L4: 8→12
+- Added 4 advanced engineering topics to L4: 3D printing / additive manufacturing (FDM/SLA/SLS), composite materials (carbon fiber + epoxy, kevlar), MEMS (silicon-scale sensors), aerodynamics (Bernoulli lift + drag + CFD).
+- sw cache → v367; Android versionCode 324 / versionName 3.7.2.
+
 ## [5.7.287] - 2026-05-26 - Fact-cards Engineering L3: 8→12
 - Added 4 intermediate engineering topics to L3: 4-stroke combustion engine (intake/compression/power/exhaust), pneumatics (air vs liquid), photovoltaic cells (p-n junction), reinforced concrete (compression + tension).
 - sw cache → v366; Android versionCode 323 / versionName 3.7.1.
