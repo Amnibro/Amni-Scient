@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.282] - 2026-05-26 - Fact-cards Math L3: 8→12
+- **+4 fact cards**: prime factorization (60=2²×3×5, FToA), mean/median/mode (3 averages), volume formulas (cube/sphere/cylinder), inequalities (flip on negative mult).
+- **SW cache v360 → v361**.
+
 ## [5.7.281] - 2026-05-26 - Fact-cards Math L2: 8→12 (SW v360)
 - **+4 fact cards**: rounding (5-or-more rule), symmetry (butterfly + heart + A), estimating (catch errors with approximations), word problems (translate words to numbers).
 - **SW cache v359 → v360**.
