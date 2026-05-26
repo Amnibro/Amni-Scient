@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.229] - 2026-05-26 - Fact-cards Shapes L2: 8→12
+- **+4 fact cards**: heptagon (UK 50p/20p coin), nonagon/decagon (Bahá'í temples 9-sided), loop (roller-coaster + cursive), parallelogram (both pairs of opposite sides parallel).
+- **SW cache v307 → v308**.
+
 ## [5.7.228] - 2026-05-26 - Fact-cards Shapes L1: 8→12
 - **+4 fact cards**: oval (stretched circle, Olympic tracks/eggs/grapes), arrow (triangular head + rectangular shaft), diamond (square turned 45°, playing card suit), trapezoid (1 pair parallel sides).
 - **SW cache v306 → v307**.
