@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.205] - 2026-05-26 - Fact-cards Mythology L2: 4→8
+- **+4 fact cards**: Aphrodite/Venus (love + sea foam), Hades (underworld stern not evil), Demeter/Ceres (Persephone-grief winter + "cereal" etymology), Apollo (sun + music + Delphi).
+- **SW cache v283 → v284**.
+
 ## [5.7.204] - 2026-05-26 - Fact-cards Mythology L1: 4→8
 - **+4 fact cards**: dragon (Western+Eastern worldwide), cyclops (Polyphemus traps Odysseus), Pegasus (from Medusa's neck), mermaid (worldwide folklore Greek→Norse→ningyo).
 - **SW cache v282 → v283**.
