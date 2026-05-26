@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.164] - 2026-05-26 - Fact-cards Colors L1: 4→8
+- **+4 fact cards**: orange (pumpkins/carrots/basketballs named after fruit), purple (eggplants/grapes/royalty), pink (flamingos/watermelon insides/bubble gum), white+black (snow vs night).
+- First pass on fact-card module quadruple — 4 → 16 across all subject levels in upcoming iters.
+- **SW cache v242 → v243**.
+
 ## [5.7.163] - 2026-05-26 - Shapes L1 + Weather L4: 19→20 each
 - **Shapes L1 +1**: egg = oval/ovoid (ovum), asymmetric ellipse — cliff-bird guillemots evolved extreme oval to roll in tight circles.
 - **Weather L4 +1**: atmospheric river (>2000 km vapor ribbon, Pineapple Express, ~50% of CA precip in few events).
