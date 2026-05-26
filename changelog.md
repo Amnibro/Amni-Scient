@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.202] - 2026-05-26 - Fact-cards Counting L4: 4→8
+- **+4 fact cards**: carry over (27+18=45), borrow (52−18=34), Roman numerals (I/V/X/L/C/D/M + Super Bowl), negative numbers (−5°C below freezing).
+- **SW cache v280 → v281**.
+
 ## [5.7.201] - 2026-05-26 - Fact-cards Counting L3: 4→8
 - **+4 fact cards**: minutes & seconds (Babylonian base-60), number line (extends both ways infinitely), skip counting (2s/5s/10s gateway to multiplication), patterns (odd-number sequence +2).
 - **SW cache v279 → v280**.
