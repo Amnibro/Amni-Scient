@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.253] - 2026-05-26 - Fact-cards Opposites L1: 8→12
+- **+4 fact cards**: sweet & sour (sugar/honey vs lemons/pickles), stop & go (traffic lights), hello & goodbye (universal greeting/farewell pair), light & heavy (feather vs rock + scale).
+- **SW cache v331 → v332**.
+
 ## [5.7.252] - 2026-05-26 - Fact-cards Weather L5: 8→12
 - **+4 fact cards**: Madden-Julian Oscillation (30-60 day tropical rainfall pattern), polar vortex (cold-snap spillage), solar cycle effects (Maunder Minimum + Little Ice Age), weather modeling (GFS/ECMWF + 14-day chaos limit).
 - Weather fact-cards all 5 levels now at 12 each.
