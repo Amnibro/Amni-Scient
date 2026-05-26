@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.173] - 2026-05-26 - Fact-cards Shapes L5: 4→8
+- **+4 fact cards**: fractals (Mandelbrot+Koch+ferns+coastlines self-similar), topology (donut≡coffee cup, both 1 hole), non-Euclidean (sphere triangles >180°, saddle <180°, GR uses curved space), golden ratio φ≈1.618 (nautilus+sunflower+Parthenon+Fibonacci).
+- Shapes fact-cards all 5 levels now at 8 each.
+- **SW cache v251 → v252**.
+
 ## [5.7.172] - 2026-05-26 - Fact-cards Shapes L4: 4→8
 - **+4 fact cards**: symmetry (reflection + rotational, snowflake 6-fold), congruent vs similar (size vs proportional), triangle types (equilateral/isosceles/scalene + right/acute/obtuse), inscribed vs circumscribed shapes.
 - **SW cache v250 → v251**.
