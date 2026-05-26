@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.216] - 2026-05-26 - Fact-cards Space L3: 4→8
+- **+4 fact cards**: meteors (~17000/yr reach surface), solar flares (radio + GPS disruption + auroras), Olympus Mons (22km Mars volcano, no plate tectonics), light-years (9.46T km, Andromeda 2.5M ly).
+- Android crosses major version: 2.9.9 → 3.0.0.
+- **SW cache v294 → v295**.
+
 ## [5.7.215] - 2026-05-26 - Fact-cards Space L2: 4→8
 - **+4 fact cards**: Mercury (430°C/−180°C extremes), Venus (465°C runaway greenhouse hotter than Mercury), Saturn (low-density, would float in water), galaxies (~2 trillion observable).
 - **SW cache v293 → v294**.
