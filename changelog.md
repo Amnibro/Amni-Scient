@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.280] - 2026-05-26 - Fact-cards Math L1: 8→12 (catching up the late-create subjects)
+- **+4 fact cards**: doubles (memory trick), sharing equal (division foundation), commutative property (+/× order-free), comparing symbols (>/</=).
+- Math + engineering were created late in phase 1 → now catching up to 12-per-level standard.
+- **SW cache v358 → v359**.
+
 ## [5.7.279] - 2026-05-26 - Fact-cards Space L5: 8→12 (suite phase 2 complete)
 - **+4 fact cards**: dark matter (~27% invisible mass-energy), CMB anisotropies (quantum seeds for galaxies), multiverse hypotheses (4 untestable flavors), Theory of Everything (string/LQG/causal-set candidates).
 - **All 13 fact-card subjects now at 12 entries per level — phase 2 expansion complete.**
