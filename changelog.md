@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.146] - 2026-05-26 - Counting L1 + L2: 10→20 each (+20 number-sense + time/calendar)
+- **L1 +10** (number-sense kids): bicycle 2 wheels 'bi-' prefix, tricycle 3 'tri-', triangle 3 sides (strongest-shape engineering), ZERO invented ~5th century India, two hands = 10 fingers basis of base-10, PAIR = 2 etymology, half-of-4 = 2 fair-sharing intuition, 2+1=3 count-up, 3+2=5 finger demo, after 9 = 10 first 2-digit number.
+- **L2 +10**: 12 months + September/October/November/December = 7-8-9-10 in Latin etymology, 24 hours from Egyptian finger-joint counting (3×4=12), 60 min/sec from Babylonian sexagesimal divisor-rich system, alphabet 26 letters + Greek 24 vs Korean 24-in-14+10 comparisons, Roman numerals III + Super Bowl LVIII pop reference, hexagon 6 = bee honeycomb efficiency, 5×2=10 as repeated addition, half-of-10=5 + small-number halves table, square 4 equal sides + right angles + 4-fold rotational symmetry.
+- **SW cache v224 → v225**. Next: opposites L1+L2, shapes L1+L2, colors L1+L2.
+
 ## [5.7.145] - 2026-05-26 - Weather L1 + L2: 10→20 each (+20 kid + early-adult)
 - **Weather L1 +10** (kid level): cloud-as-water-droplets, air mostly N₂+O₂, fog as ground-level cloud, puddles after rain, snowman packing-snow construction, umbrella curved-canopy, thermometer red-alcohol + digital, freezing point 0°C + frostbite/hypothermia warning, fall colors (chlorophyll fades reveals existing pigments), kite Ben Franklin lightning history.
 - **Weather L2 +10**: cumulus puffy + cumulonimbus thunderstorm precursor, light-vs-sound speed gap (count seconds rule), thunderstorm 16M/year worldwide + 2000-active-at-any-moment, frost as DEPOSITION (skips liquid), weather-vane points INTO wind (Greek bronze 2000+yrs), breeze 6-30 km/h Beaufort 2-4 + sea-breeze vs land-breeze, forecast Navier-Stokes supercomputer models + NWS/Met-Office/JMA, Jupiter Great Red Spot 350+yr storm + Venus sulfuric-acid rain + Neptune fastest winds 2000+km/h, evaporative cooling + humidity slowing sweat + dog panting alt, meteorologist Greek 'thing above' + media-presenter caveat.
