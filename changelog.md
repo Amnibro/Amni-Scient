@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.161] - 2026-05-26 - Space L5: 12→20
+- **+8**: ΛCDM standard model (Λ ~68% + CDM ~27% + 5% baryonic), anthropic principle (weak vs strong + fine-tuning constants), multiverse hypotheses (inflationary bubbles + many-worlds + string landscape + mathematical universe), cosmic web filaments+voids + Boötes Void ~330 Mpc, reionization era ~150M-1B yr first stars/quasars + JWST target, universe fates (Big Freeze heat death + Big Rip + Big Crunch ruled out), holographic principle 't Hooft+Susskind + AdS/CFT Maldacena 1997, string theory 1D vibrating strings ~Planck length + 10/11 dimensions + no experimental confirmation in 50 years.
+- **SW cache v239 → v240**.
+
 ## [5.7.160] - 2026-05-26 - Space L4: 12→20
 - **+8**: neutron stars (1.4-2.16 M☉ in 20km sphere, sugar-cube = 1 billion tons), pulsars (Bell Burnell 1967 'LGM-1' nickname + 716 Hz fastest), quasars (3C 273 1963 Schmidt + 10,000× galactic brightness), Europa subsurface ocean (2× Earth's water + JUICE/Clipper missions), Olympus Mons Mars 22km tall (Mars lacks plate tectonics so hotspot stayed fixed), Hubble's Law 1929 + Hubble tension ~9% CMB-vs-supernova disagreement, stellar parallax + 1 parsec = 1 arcsec + Gaia 1.5B stars mapped, spectroscopy element-fingerprints + Doppler shifts revealing composition + motion + exoplanet detection.
 - **SW cache v238 → v239**.
