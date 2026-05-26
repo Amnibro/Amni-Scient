@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.225] - 2026-05-26 - Fact-cards Colors L3: 8→12
+- **+4 fact cards**: color in water (red absorbed first → deep-sea red camouflage), carotenoids (orange/red plant pigments, animals can't make), anthocyanins (red cabbage pH indicator), color blindness (~8% men X-linked).
+- **SW cache v303 → v304**.
+
 ## [5.7.224] - 2026-05-26 - Fact-cards Colors L2: 8→12
 - **+4 fact cards**: cyan (CMYK), magenta (extraspectral brain-invented), bronze (3rd Olympic + statues), coral (sea-named pastel).
 - **SW cache v302 → v303**.
