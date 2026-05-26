@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.223] - 2026-05-26 - Fact-cards Colors L1: 8→12 (phase 2 begins)
+- **+4 fact cards**: brown (3 primaries mix), rainbow (ROYGBIV order), color of food (eat the rainbow), animal camouflage (frogs/polar bears/deer).
+- Phase 2 expansion target: 8 → 12 per level across all fact-card subjects.
+- **SW cache v301 → v302**.
+
 ## [5.7.222] - 2026-05-26 - Fact-cards Engineering L3+L4+L5: NEW (8 each)
 - **L3 new**: suspension bridges (Golden Gate 1280 m), Industrial Revolution (Watt 1769), hydraulics (Pascal), pulleys (block+tackle 8x), thermodynamics (1st+2nd laws), AC vs DC (Tesla 1893), materials science, CAD.
 - **L4 new**: nanotech (CNTs 100x steel), aerospace (SpaceX reusable rockets), robotics (ROS + cobots), civil (Burj Khalifa 600t damper), power grid (765 kV), desalination (RO), lithography (ASML EUV ~3 nm), control systems (PID).
