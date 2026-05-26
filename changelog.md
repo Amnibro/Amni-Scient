@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.300] - 2026-05-26 - Fact-cards Weather L1: 12→16
+- Added 4 kid-level weather basics to L1: sunrise (Earth spinning to face Sun), frost (vapor → solid deposition), dew (overnight condensation), storm safety (stay inside, avoid water + metal).
+- sw cache → v379; Android versionCode 336 / versionName 3.8.4.
+
 ## [5.7.299] - 2026-05-26 - Fact-cards Languages L5: 12→16
 - Added 4 frontier language topics to L5: word embeddings (king−man+woman≈queen, Word2Vec), language acquisition (critical period, Genie), neural speech decoding (UCSF/Meta 2023+ motor cortex BCI), Voynich Manuscript (15th-c undeciphered script).
 - Languages subject now complete at 16 entries per level (L1-L5).
