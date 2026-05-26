@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.211] - 2026-05-26 - Fact-cards Sports L3: 4→8
+- **+4 fact cards**: Americas Cup (1851 oldest international trophy), Indy 500 (1911 + milk Victory Lane tradition), judo (Kano 1882 + 1964 first non-Western Olympic sport), cricket origins (16th c. England, 2nd-most-watched sport).
+- **SW cache v289 → v290**.
+
 ## [5.7.210] - 2026-05-26 - Fact-cards Sports L2: 4→8
 - **+4 fact cards**: boxing (Queensberry 1867 + 12 rounds + heavyweight), Formula 1 (370 km/h + 5G corners + Monaco), bowling (300 perfect game = 12 strikes), skiing/snowboarding (alpine + 1998 Nagano).
 - **SW cache v288 → v289**.
