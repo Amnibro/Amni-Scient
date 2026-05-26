@@ -1,5 +1,12 @@
 ﻿# Changelog 
 
+## [5.7.222] - 2026-05-26 - Fact-cards Engineering L3+L4+L5: NEW (8 each)
+- **L3 new**: suspension bridges (Golden Gate 1280 m), Industrial Revolution (Watt 1769), hydraulics (Pascal), pulleys (block+tackle 8x), thermodynamics (1st+2nd laws), AC vs DC (Tesla 1893), materials science, CAD.
+- **L4 new**: nanotech (CNTs 100x steel), aerospace (SpaceX reusable rockets), robotics (ROS + cobots), civil (Burj Khalifa 600t damper), power grid (765 kV), desalination (RO), lithography (ASML EUV ~3 nm), control systems (PID).
+- **L5 new**: fusion (ITER 150M°C, NIF 2022 net gain), quantum computing (Shor's algo + IBM/Google/Quantinuum), Falcon Heavy (Tesla in space), CRISPR engineering, Boston Dynamics, perovskite solar, Starlink (~7000 sats), 4D printing.
+- Engineering fact-cards all 5 levels now at 8 each.
+- **SW cache v300 → v301**.
+
 ## [5.7.221] - 2026-05-26 - Fact-cards Engineering L1+L2: 4→8
 - **L1 +4**: bridges (arch/suspension/beam), cars (~30K parts), airplanes (lift + Wright 1903), tools (3M-year-old).
 - **L2 +4**: lever (seesaws/scissors/wheelbarrows), gears (small→big = force, big→small = speed), wheels (6000-yr-old friction reduction), batteries (Volta 1800).
