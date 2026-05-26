@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.7.220] - 2026-05-26 - Fact-cards Math L3+L4+L5: NEW (8 each)
+- **L3 new**: pi, Pythagoras, algebra (al-jabr), decimals, %, triangle types, perimeter/area, sequences.
+- **L4 new**: calculus (Newton+Leibniz), functions, primes (Euclid infinitude), trig, statistics, probability, limits, logarithms.
+- **L5 new**: Cantor infinities, topology (donut≡cup), Fermat's Last Theorem (Wiles 1994), group theory, RSA cryptography, P vs NP, non-Euclidean geometry, chaos theory (Lorenz 1961).
+- **SW cache v298 → v299**.
+
 ## [5.7.219] - 2026-05-26 - Fact-cards Math L1+L2: 4→8
 - **L1 +4**: subtract, zero (India), even/odd, skip count (2s/5s).
 - **L2 +4**: division, time (Babylon base-60), money ($1=100¢), measurement (length/weight/volume units).
