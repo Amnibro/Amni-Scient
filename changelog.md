@@ -1,5 +1,18 @@
 ﻿# Changelog 
 
+## [5.7.123] - 2026-05-25 - Music L5: 21 backfilled → **MUSIC SUBJECT 100% COMPLETE** (all 5 levels, 255 Qs)
+- **Music L5** all 41 advanced/contemporary topics now teach.
+- **Serialism + atonality**: tone row 12-pitch ordering blocking tonal center, Second Viennese School trio (Schoenberg dense + Berg lyrical + Webern austere miniaturist), integral serialism 1950s total-parameter control + listener overload reaction, matrix 12×12 grid producing 48 row forms (P0-P11, I, R, RI).
+- **Messiaen + symmetry**: 7 modes of limited transposition (whole-tone has 2, octatonic 3), mystical Catholic aesthetic.
+- **Chance + indeterminacy**: aleatoric (Latin alea = dice, Cage radical vs Lutosławski controlled), Cardew's Treatise 193-page graphic-score manifesto + later Maoist renunciation.
+- **Minimalism**: 1960s rebirth into consonant repetition (La Monte Young, Riley, Reich, Glass) — film + post-rock + techno lineage. Music for 18 Musicians ECM hit. Reich's tape-loop accident → phase pieces ('Clapping Music' 8-beat shift, mesmerizing emergent rhythms). Different Trains' Holocaust-Pullman doubled-speech Grammy.
+- **Holy minimalism**: Pärt tintinnabuli (Latin small-bell, M-voice + T-voice triad-resonance — Spiegel im Spiegel, Fratres), Tavener + Górecki Symphony No. 3 million-seller 1992.
+- **Ligeti**: micropolyphony (40-100 lines into shimmering cloud — Atmosphères, Lux Aeterna 16-voice Latin chant Kubrick-unauthorized-then-sued).
+- **Sound material**: spectralism reaction against abstract-symbol serialism, sonogram-derived orchestration; sprechstimme Schoenberg's Pierrot speech-song slide; extended techniques inventory (col legno, sul ponticello, prepared piano, key clicks, multiphonics); modes of vibration determining timbre (Stradivarius vs student violin).
+- **Acoustics + analysis**: concrète (Schaeffer 1948 spliced reality) vs elektronische (Cologne 1953 sine-wave synthesis) vs electroacoustic blur; Forte set theory periodic-table for atonal chords.
+- **Net: Music L1+L2+L3+L4+L5 = 255 Qs, each with substantive teach text. MUSIC SUBJECT IS PEDAGOGICALLY COMPLETE.**
+- **SW cache v201 → v202**.
+
 ## [5.7.122] - 2026-05-25 - Music L4: final 11 backfilled → Music L4 100% complete (40 total)
 - **Music L4** finished — all 40 questions teach.
 - **Advanced harmony**: modal interchange / parallel-mode borrowing (Beatles 'Yesterday' Bb in F major), secondary dominant V/V (Sweet Caroline opens D7→G→C), Neapolitan 6th ♭II in 1st inversion (Beethoven 'Moonlight' + 'Pathétique' development).
