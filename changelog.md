@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.163] - 2026-05-26 - Shapes L1 + Weather L4: 19→20 each
+- **Shapes L1 +1**: egg = oval/ovoid (ovum), asymmetric ellipse — cliff-bird guillemots evolved extreme oval to roll in tight circles.
+- **Weather L4 +1**: atmospheric river (>2000 km vapor ribbon, Pineapple Express, ~50% of CA precip in few events).
+- **SW cache v241 → v242**.
+
 ## [5.7.162] - 2026-05-26 - Colors L1/L4/L5: 19→20 each
 - **L1 +1**: polar bear fur transparent hollow hairs scatter light + black skin underneath.
 - **L4 +1**: analogous color scheme (adjacent on 360° wheel, naturally harmonious).
