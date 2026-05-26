@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.7.144] - 2026-05-26 - Opposites L3 + Counting L3: 10→20 each → all small-bank L3 NOW DOUBLED
+- **Opposites L3 +10**: empty/full, wet/dry, simple/complex (vs easy + complicated nuance), visible/hidden (CSS display:hidden + politics), healthy/sick (WHO 1946 holistic definition), cheap/expensive (price ≠ value), awake/asleep (NREM 1-2-3 + REM stages), calm/anxious (GAD most common diagnosis), birth/death (Shakespeare 7 ages), guilty/innocent legal (presumption + adversarial vs inquisitorial systems).
+- **Counting L3 +10**: ×10 add-a-zero trick, skip-counting by 2s (even numbers) + 5s (clocks/nickels), doubling 7→14, halving 12→6 (odd → fractions), word-problem 3+2=5 apples (ignore units), 100¢ = $1 + coin denominations + Latin 'centum' etymology, parity rules E+E=E + O+O=E + E+O=O (counterintuitive O+O), comparing tens-place 32>23 (basis of sorting algorithms).
+- **MILESTONE**: weather, colors, shapes, opposites, counting — ALL five small-bank subjects now have L3+L4+L5 at 20 Qs each. The 'adult brain exercise' depth directive is fulfilled across the medium + advanced levels of every small subject.
+- **SW cache v222 → v223**. Next: L1+L2 of small banks (still at 10) OR pivot to L2-L4 expansion of larger subjects.
+
 ## [5.7.143] - 2026-05-26 - Colors L3: 10→20 (intermediate color perception + culture)
 - **+10 entries**: pink is EXTRASPECTRAL (brain-mix not pure wavelength — magenta/cyan/brown too), Western-white-wedding vs Eastern-white-mourning + Chinese-red-bride cultural variance, achromatic black/white/grays no-hue, hue as one of three independent properties (vs saturation + value), pastels = high-lightness + low-saturation soft baby colors, monochromatic palette = one-hue all-shades (Picasso Blue Period), bioluminescence luciferase+luciferin → 2008 Nobel GFP biotech tool, fluorescence vs phosphorescence (re-emit short-wavelength now vs slowly), earth tones iron-oxide first paints (Lascaux 17ky ago), hi-vis yellow-green safety vests at peak ~555nm eye sensitivity (~70% accident reduction).
 - **SW cache v221 → v222**.
