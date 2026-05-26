@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.278] - 2026-05-26 - Fact-cards Space L4: 8→12
+- **+4 fact cards**: stellar lifecycle (cloud→main-seq→red giant→death; <8M☉ white dwarf, >8M☉ supernova→NS/BH), event horizon (Schwarzschild radius), Voyager probes (1977 + 2012 interstellar), Lagrange points (5 stable + L2 JWST + L1 SOHO).
+- **SW cache v356 → v357**.
+
 ## [5.7.277] - 2026-05-26 - Fact-cards Space L3: 8→12
 - **+4 fact cards**: Saturn's rings (~7 main + ~10-30m vertical thickness vs 280K km wide), Andromeda approach (110 km/s, ~4.5 Bly collision Milkomeda), ISS (400 km up, 16 sunrises/day, $150B), solar wind (~400 km/s + comet tails away from Sun).
 - **SW cache v355 → v356**.
