@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.7.162] - 2026-05-26 - Colors L1/L4/L5: 19→20 each
+- **L1 +1**: polar bear fur transparent hollow hairs scatter light + black skin underneath.
+- **L4 +1**: analogous color scheme (adjacent on 360° wheel, naturally harmonious).
+- **L5 +1**: quantum-dot displays (QD nanocrystals 2-10nm fluoresce by size, QLED + QD-OLED).
+- **SW cache v240 → v241**.
+
 ## [5.7.161] - 2026-05-26 - Space L5: 12→20
 - **+8**: ΛCDM standard model (Λ ~68% + CDM ~27% + 5% baryonic), anthropic principle (weak vs strong + fine-tuning constants), multiverse hypotheses (inflationary bubbles + many-worlds + string landscape + mathematical universe), cosmic web filaments+voids + Boötes Void ~330 Mpc, reionization era ~150M-1B yr first stars/quasars + JWST target, universe fates (Big Freeze heat death + Big Rip + Big Crunch ruled out), holographic principle 't Hooft+Susskind + AdS/CFT Maldacena 1997, string theory 1D vibrating strings ~Planck length + 10/11 dimensions + no experimental confirmation in 50 years.
 - **SW cache v239 → v240**.
