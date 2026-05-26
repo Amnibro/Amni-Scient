@@ -1,5 +1,18 @@
 ﻿# Changelog 
 
+## [5.7.126] - 2026-05-25 - **ALL QUIZDATA 100% PEDAGOGICALLY COMPLETE — 1612 Qs, 0 missing**
+- **Animals L2** final 26 backfilled. The L2 quiz had grown to 136 questions across earlier expansion iterations; 26 lacked `explain:`.
+- **New scanner** ran across the entire quizData object, brace-balancing each `{q:...}` to verify every single question has a substantive explanation. Result: **1612 / 1612**.
+- **L2 highlights from this commit**:
+  - **Insects + circulation**: insect tripod gait stable-3-leg movement, 2-chamber fish heart (single loop) vs 4-chamber mammal heart (double loop) explanation.
+  - **Extremes**: saltwater croc 7m + 1000kg + Lolong record holder, colossal squid 10m + basketball-sized eyes + sperm whale battles, lion's mane jellyfish 30m+ tentacles longer than a blue whale, stonefish camouflage venom, snail radula with limpet teeth (4.9 GPa, stronger than spider silk).
+  - **Biology**: monotreme platypus electroreception + venomous ankle spurs + 166M-year split, marsupial joey crawl + dual-milk-composition simultaneous teats, hummingbird figure-8 wing rotation + 1200bpm heart, owl 14 vertebrae + tubular fixed eyes + carotid bone channels enabling 270° rotation.
+  - **Ecology**: humpback song hierarchical structure + globally-evolving across years, Arctic ground squirrel -2.9°C blood + 1bpm heart (true hibernation vs bear torpor), periodical cicada 13/17 prime-number cycles defeating predators, zebra stripes biting-fly deterrent (best-supported theory), magpie mirror-test self-recognition.
+  - **Evolution**: dolphin/whale 50M-year return from land mammals (related to hippos!) — convergent evolution with fish body shape, amphibians as the first land vertebrates 370M years ago + 40% extinction risk.
+  - **Diet taxonomy**: omnivore compromised teeth vs carnivore all-sharp vs herbivore all-flat + multiple stomachs + cellulose-digesting microbes (cow 4-chamber stomach, horse cecum fermentation).
+  - **Vital stats**: African elephant 22-month gestation builds walking-ready calf, opossum 12-day shortest + pouch-development tradeoff (8-20 babies for 13 teats), frog non-Newtonian saliva tongue strike in 0.07s.
+- **SW cache v204 → v205**. **The entire pedagogical-pass project is now COMPLETE.**
+
 ## [5.7.125] - 2026-05-25 - Animals L3 final 20 + Languages L3 alliteration → Animals L3 100% complete (58 total) + Languages L3 fully done
 - **Animals L3** finished — all 58 questions teach.
 - **Biodiversity & status**: 3-level diversity (genetic + species + ecosystem), IUCN Red List 8 categories Extinct→Least Concern + ~150k species assessed, endangered numbers (~3.9k tigers, ~1.8k pandas) + recovery wins (bald eagle, gray wolves), invasive species ($1.4T/yr global damage — cane toads + Burmese pythons + zebra mussels + kudzu), endemic 'nowhere-else' + island vulnerability.
