@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.240] - 2026-05-26 - Fact-cards Animals L3: 8→12
+- **+4 fact cards**: complete metamorphosis (egg→larva→pupa→adult body dissolves + rebuilds), arachnids vs insects (8 vs 6 legs), cold-blooded (10x less food + slow when cold), apex predators (trophic cascade collapse).
+- **SW cache v318 → v319**.
+
 ## [5.7.239] - 2026-05-26 - Fact-cards Animals L2: 8→12
 - **+4 fact cards**: tortoise (Galápagos 150-200 yr + per-island shells), eagle (8x sharper vision + 6-ft nest), kangaroo (joey pouch + tail tripod + can't walk back), dolphin (echolocation + signature whistle = name + half-brain sleep).
 - **SW cache v317 → v318**.
