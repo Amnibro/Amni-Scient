@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.267] - 2026-05-26 - Fact-cards Mythology L3: 8→12
+- **+4 fact cards**: Achilles (heel from Styx dip), Odysseus (Trojan Horse + 10-yr wander), Theseus (Minotaur + Ariadne's thread), Jason & Argonauts (Golden Fleece quest).
+- **SW cache v345 → v346**.
+
 ## [5.7.266] - 2026-05-26 - Fact-cards Mythology L2: 8→12
 - **+4 fact cards**: Artemis/Diana (hunt + virgin + silver bow), Hephaestus/Vulcan (smith + lame after Hera + thunderbolt forger), Hestia/Vesta (hearth + Vestal Virgins 1000yr flame), Athena/Minerva (wisdom + armored from Zeus head + Athens).
 - **SW cache v344 → v345**.
