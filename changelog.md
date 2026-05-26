@@ -1,5 +1,14 @@
 ﻿# Changelog 
 
+## [5.7.128] - 2026-05-25 - Math L4 expansion: 25 → 40 Qs (15 more topics → parity with L3 at 40)
+- **Analysis rigor**: ε-δ limit definition (Cauchy's game-theoretic formulation), squeeze theorem with x²sin(1/x) example, continuity 3-condition definition, IVT with mountain-altitude metaphor + bisection-method root-finding.
+- **Series tools**: ratio test for factorial/exponential terms (Σ xⁿ/n! converges everywhere), Maclaurin series (Taylor at 0) for eˣ + sin + cos + 1/(1-x).
+- **Euler's identity**: e^(iπ) + 1 = 0 derived from Maclaurin + foundational for AC phasors + Fourier + QM wave functions.
+- **Probability + statistics**: variance Var(X) = E[X²] − (E[X])² with stdev = √Var ergonomics + a²·Var(X) scaling + independence-additive rule, Central Limit Theorem (sums tend Gaussian regardless of source distribution) explaining why normal is everywhere, normal distribution density formula + 68/95/99.7 empirical rule + z-score standardization, conditional probability P(A|B) = P(A∩B)/P(B) + base-rate fallacy warning.
+- **Logic & set theory**: Cantor's diagonal argument proving |ℝ| > |ℕ| (different sizes of infinity), De Morgan's laws ¬(A∧B) = ¬A∨¬B + Boolean-algebra applications.
+- **Number theory**: Euclidean algorithm (300 BC, O(log min)) + extended-Bézout RSA underpinning, Fermat's Little Theorem a^(p-1) ≡ 1 (mod p) + Carmichael-number caveat + Euler-theorem generalization + RSA foundation.
+- **SW cache v206 → v207**. Math L5 (10 Qs) next iteration target.
+
 ## [5.7.127] - 2026-05-25 - Math L4 expansion: 10 → 25 Qs (15 new advanced topics)
 - **Pivoting from pedagogical pass to content-bank expansion** per quadruple-content directive.
 - **Math L4 audit**: had only 10 questions vs L3's 60. Most-undersized level in the suite. Added 15 new.
