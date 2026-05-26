@@ -4,10 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Adam &mdash; Texture-Native Local AI Assistant | AMNI-SCIENT</title>
-<meta name="description" content="Adam is a GF(17) texture-native local AI assistant. 4 GB VRAM. Lossless compression. Sandbox-validated code output. Self-improving lesson bank. Drop-in Ollama replacement. Source-available, CC BY-NC 4.0.">
-<meta name="keywords" content="adam,amni-ai,local ai,gf17,texture native,ptex,ollama drop-in,open webui,lossless ai,self-improving llm,sandbox code,coding assistant">
+<meta name="description" content="Adam is a GF(17) texture-native local AI assistant. 4 GB VRAM, lossless. Voice + vision + gesture-controlled Jarvis-style UI. 42 skills incl. autonomous coding, live weather/system widgets, autonomous learning daemon. Drop-in Ollama + OpenAI API replacement on one port. Source-available, CC BY-NC 4.0.">
+<meta name="keywords" content="adam,amni-ai,local ai,gf17,texture native,ptex,ollama drop-in,openai api drop-in,open webui,continue.dev,cline,aider,lossless ai,self-improving llm,sandbox code,coding assistant,jarvis ui,gesture control,local voice assistant,piper tts,whisper stt,mediapipe hands,blip vision,mcp server">
 <meta property="og:title" content="Adam &mdash; Texture-Native Local AI Assistant">
-<meta property="og:description" content="4 GB VRAM. Lossless GF(17) weights. Sandbox-validated code. Self-improving lesson bank. Drop-in Ollama replacement.">
+<meta property="og:description" content="4 GB VRAM. Lossless GF(17) weights. Voice + vision + gesture Jarvis UI. 42 skills. Autonomous learning. Drop-in Ollama + OpenAI API replacement on one port.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://amni-scient.com/amni-ai">
 <meta property="og:image" content="https://amni-scient.com/assets/explore/og-explore.png">
@@ -15,7 +15,7 @@
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Adam &mdash; Texture-Native Local AI Assistant">
-<meta name="twitter:description" content="4 GB VRAM. Lossless. Sandbox-validated code. Self-improving. Drop-in Ollama replacement.">
+<meta name="twitter:description" content="4 GB VRAM. Lossless GF(17). Voice + vision + gestures. 42 skills. Drop-in Ollama + OpenAI API replacement.">
 <meta name="twitter:image" content="https://amni-scient.com/assets/explore/og-explore.png">
 <link rel="canonical" href="https://amni-scient.com/amni-ai">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -163,13 +163,13 @@
 <div class="card-grid">
 <div class="card">
 <h3>1. STANDALONE</h3>
-<p>Adam as its own server with its own chat UI at <code>localhost:8002</code>.</p>
+<p>Adam as its own server at <code>localhost:7700</code> &mdash; single port hosts everything: classic chat UI at <code>/</code>, Jarvis-style neon UI at <code>/jarvis</code> (widgets + voice + gestures), HUD dashboard at <code>/hud</code>.</p>
 <pre class="code-block"><span class="cmt"># clone &amp; install — that's it</span>
 git clone https://github.com/Amnibro/Amni-Ai
 cd Amni-Ai
 python install.py</pre>
-<p><strong>Windows users:</strong> double-click <code>install.bat</code>. <strong>Mac/Linux:</strong> <code>./install.sh</code>. <code>install.py</code> handles <em>everything</em>: venv creation, vendor-correct PyTorch (CUDA/ROCm/CPU auto-detect), pip install, optional Rust toolchain + <code>amni_kernels</code> native build, bake download (~20&nbsp;GB Gemma-4 E2B GF(17) from HuggingFace, one-time), server launch, browser open at <code>http://127.0.0.1:8002/</code>. You do <strong>not</strong> need to pre-create a venv or run <code>pip install</code> first.</p>
-<p style="font-size:.78rem;color:var(--dim)">First-run: ~10-30 min depending on connection. Subsequent launches: <code>python scripts/amni_serve.py --seed --cors</code>, boots in 12s.</p>
+<p><strong>Windows users:</strong> double-click <code>install.bat</code>. <strong>Mac/Linux:</strong> <code>./install.sh</code>. <code>install.py</code> handles <em>everything</em>: venv creation, vendor-correct PyTorch (CUDA/ROCm/CPU auto-detect), pip install, optional Rust toolchain + <code>amni_kernels</code> native build, bake download (~20&nbsp;GB Gemma-4 E2B GF(17) from HuggingFace, one-time), server launch, browser open at <code>http://127.0.0.1:7700/</code>. You do <strong>not</strong> need to pre-create a venv or run <code>pip install</code> first.</p>
+<p style="font-size:.78rem;color:var(--dim)">First-run: ~10-30 min depending on connection. Subsequent launches: <code>python -m amni.cli serve --port 7700</code> (or just <code>amni serve</code> if the venv is active), boots in ~15s with a ~60s background warmup the user doesn't have to wait on.</p>
 </div>
 
 <div class="card">
@@ -178,20 +178,24 @@ python install.py</pre>
 <pre class="code-block"><span class="cmt"># first run: full install + bake download</span>
 python install.py --no-launch
 <span class="cmt"># then start on the Ollama port</span>
-python scripts/amni_serve.py --seed --cors --port 11434</pre>
-<p>Point your client at <code>http://127.0.0.1:11434</code>. Adam advertises as <code>adam:e2b-gf17</code> plus aliases (<code>llama3</code>, <code>qwen</code>, <code>mistral</code>) so clients with hardcoded model names still resolve. <code>/api/tags</code>, <code>/api/chat</code>, <code>/api/generate</code>, <code>/api/embed</code> all Ollama-shape.</p>
+python -m amni.cli serve --port 11434 --cors</pre>
+<p>Point your Ollama client at <code>http://127.0.0.1:11434</code>. Adam advertises as <code>adam:e2b-gf17</code> plus aliases (<code>llama3</code>, <code>qwen</code>, <code>gemma2</code>, <code>gpt-4o-mini</code>) so clients with hardcoded model names still resolve. Adam also speaks the OpenAI shape at <code>/v1/chat/completions</code> on the same port &mdash; same endpoints used by Amni-Code, Continue.dev, Cline, Aider. Includes inline structured data via <code>amni_widgets[]</code> for clients that render them.</p>
 </div>
 
 <div class="card">
 <h3>3. EDITOR PLUGIN</h3>
-<p>VS Code via Continue.dev. Run Method 2 (or any standalone install on port 11434), then add to <code>settings.json</code>:</p>
-<pre class="code-block">"continue.models": [{
+<p>VS Code via Continue.dev (Ollama provider) or any OpenAI-compatible editor (Cline, Aider, Cursor, Amni-Code). Method 1's default port <code>:7700</code> serves <em>both</em> shapes &mdash; pick whichever your editor expects.</p>
+<pre class="code-block"><span class="cmt"># Continue.dev — config.json</span>
+"continue.models": [{
   "title": "Adam",
   "provider": "ollama",
   "model": "adam:e2b-gf17",
-  "apiBase": "http://127.0.0.1:11434"
-}]</pre>
-<p>Hit <code>Ctrl+L</code>. Ask Adam to refactor a function. The sandbox auto-runs and validates any Python it generates.</p>
+  "apiBase": "http://127.0.0.1:7700"
+}]
+<span class="cmt"># Cline / Aider / OpenAI-style — set base URL + dummy key</span>
+OPENAI_API_BASE=http://127.0.0.1:7700/v1
+OPENAI_API_KEY=anything</pre>
+<p>Hit <code>Ctrl+L</code>. Ask Adam to refactor a function. The sandbox auto-runs and validates any Python it generates. Structured tool-call responses include <code>amni_widgets[]</code> so widget-aware clients (Amni-Code) render weather/system/git/disk inline.</p>
 </div>
 </div>
 
@@ -244,7 +248,7 @@ python scripts/amni_serve.py --seed --cors --port 11434</pre>
 
 <section>
 <h2>THE PERSONA SYSTEM</h2>
-<p style="text-align:center;color:var(--dim);max-width:700px;margin:0 auto 1rem;font-size:.9rem">14 built-in voices. Each is a tone-atlas overlay applied to the same underlying Adam reasoner &mdash; different personality, same reasoning quality. Switch from the topbar dropdown. Create your own via <code>/persona create</code>.</p>
+<p style="text-align:center;color:var(--dim);max-width:700px;margin:0 auto 1rem;font-size:.9rem">14 built-in voices. Each is a tone-atlas overlay applied to the same underlying Adam reasoner &mdash; different personality, same reasoning quality. Switch from the topbar dropdown in <code>/</code> or the clickable persona pill in <code>/jarvis</code>. Create your own via <code>/persona create</code> (tone description) or the in-UI &quot;learn new&quot; flow (auto-scrapes voice from a name).</p>
 <div class="persona-grid">
 <div class="persona-chip"><strong>Mentor</strong>calm professional</div>
 <div class="persona-chip"><strong>Rikku</strong>upbeat Al Bhed</div>
@@ -294,11 +298,17 @@ python scripts/amni_serve.py --seed --cors --port 11434</pre>
 <tr><td>VRAM minimum</td><td>4 GB (Adam only) &middot; 8 GB recommended (Adam + web-crawler tier)</td></tr>
 <tr><td>RAM minimum</td><td>8 GB &middot; 16 GB for full lesson bank + persona overlays</td></tr>
 <tr><td>Inference speed</td><td>~18 tok/s on RX 7800 XT &middot; ~25 tok/s on RTX 4070</td></tr>
-<tr><td>First-token latency</td><td>80-180s cold start &middot; 80ms LUT hit on cached queries</td></tr>
-<tr><td>Seed lesson bank</td><td>1792 lessons across 41 corpus modules (coding, math, science, history, languages)</td></tr>
-<tr><td>Personas</td><td>14 built-in + unlimited user-created via /persona create</td></tr>
-<tr><td>Skills</td><td>11 (time, calc, mem, web, file_read, file_write, code_edit, shell, run_python, scan, goal)</td></tr>
-<tr><td>API compatibility</td><td>Ollama-shape /api/tags, /api/show, /api/generate, /api/chat (SSE + JSON), /api/embed, /api/version</td></tr>
+<tr><td>First-token latency</td><td>~15s cold-start + ~60s background warmup (user can chat during warmup; LUT hits answer instantly) &middot; 80ms LUT hit on cached queries</td></tr>
+<tr><td>Seed lesson bank</td><td>56-1792 lessons depending on install (60 default starter; <code>--seed</code> + corpus modules add more). Grows continuously via the 24/7 LearningDaemon.</td></tr>
+<tr><td>Personas</td><td>14 built-in (Adam, Rikku, Yoda, Mentor, Pirate Captain, Scientist, Steve Jobs, Haiku Poet, Sherlock Holmes, Jarvis, Master Chief, Hildegard von Bingen, Murasaki Shikibu, Hypatia of Alexandria) &middot; unlimited user-created via <code>/persona create</code> or the in-UI &quot;learn new&quot; flow that web-scrapes the voice profile.</td></tr>
+<tr><td>Skills</td><td>42 skills across coding (read/write/edit/diff/format/symbols/auto-import/rename/git/test_run/run_python), live data widgets (weather/system/time/news/stock/file_preview/disk/git_status), content ingestion (scan/ingest_url/ingest_pdf/ingest_youtube/build_curriculum), memory + reasoning (mem/coach/kg_query/learning_daemon), automation (schedule_loop/watch), voice (tts/stt), vision (describe_image), and meta (parse_error/project_info/export_session/prune_sessions/web/calc/time).</td></tr>
+<tr><td>API compatibility</td><td>Ollama-shape (<code>/api/tags</code>, <code>/api/chat</code>, <code>/api/generate</code>, <code>/api/embed</code>, <code>/api/version</code>) &middot; OpenAI-shape (<code>/v1/chat/completions</code>, <code>/v1/models</code>) with tool-calling &middot; MCP (<code>/mcp</code>) &middot; native (<code>/chat</code>, <code>/chat/stream</code>, <code>/skills/*</code>, <code>/memory/*</code>, <code>/tasks</code>, <code>/voice/*</code>, <code>/vision/*</code>) &middot; UI surfaces (<code>/</code>, <code>/jarvis</code>, <code>/hud</code>)</td></tr>
+<tr><td>UI surfaces</td><td>Three: classic chat (<code>/</code>), Jarvis-style neon UI with widgets + MediaPipe hand gestures + paste/drop image (<code>/jarvis</code>), tactical HUD dashboard (<code>/hud</code>). All on the same <code>:7700</code> port.</td></tr>
+<tr><td>Voice</td><td>Local-first: Piper TTS (~50MB ONNX voices) + faster-whisper STT. Per-sentence streaming TTS so Adam starts speaking before the reply finishes generating. Continuous conversation mode with VAD, barge-in, and Whisper-hallucination filtering. Browser Web Speech as fallback.</td></tr>
+<tr><td>Vision</td><td>BLIP-image-captioning-base for captions, BLIP-VQA-base for Q&amp;A (both ~470MB, lazy-loaded). Paste or drag image into <code>/jarvis</code> &rarr; thumbnail + caption inline + follow-up questions auto-route to VQA.</td></tr>
+<tr><td>Gestures</td><td>MediaPipe Hands in-browser (60 fps). Six gestures: pinch (toggle voice), fist (clear chat), open palm (system check), peace (cycle theme), point (next question), thumb up (submit).</td></tr>
+<tr><td>Autonomous learning</td><td>24/7 LearningDaemon: curiosity engine picks knowledge gaps, parallel ingest workers fetch &amp; distill via DDG, atomic Q-A extraction (5&times; density vs raw chunks), multi-source consensus tracking, sleep consolidation (clusters &rarr; summary cells), spaced repetition on stale facts. Yields cleanly when user is active.</td></tr>
+<tr><td>Knowledge graph</td><td>SPO triple store (subject-predicate-object) with BFS path-traversal (&quot;what connects X to Y&quot;), per-cell provenance, multi-source consensus, fuzzy subject search.</td></tr>
 <tr><td>Platform</td><td>Windows 10/11 + Linux &middot; Python 3.10+ &middot; AMD ROCm 7.2+ or NVIDIA CUDA 12+</td></tr>
 <tr><td>License</td><td>Two-license: Amnibro's original code under CC BY-NC 4.0 &middot; Gemma 4 base weights under Apache 2.0 (Google)</td></tr>
 <tr><td>Base model attribution</td><td>Gemma 4 E2B IT (&copy; Google LLC, Apache 2.0) &middot; losslessly re-encoded as GF(17) RGBA, cosine=1.0 round-trip &middot; no fine-tuning or distillation</td></tr>
