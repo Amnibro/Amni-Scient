@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.149] - 2026-05-26 - Shapes L1 + L2: 10→20 each (pure geometry)
+- **L1 +10**: diamond/rhombus, crescent moon + croissant etymology, stop-sign octagon (only road sign with 8 sides), cross/plus symbol, arrow head+shaft anatomy, soup-can cylinder, sugar cube + dice + Rubik's, book rectangle + standard paper sizes, window rectangle vs porthole circle.
+- **L2 +10**: parallelogram (both pairs parallel + square/rect/rhombus as special cases), trapezoid (exactly one pair parallel + isosceles variant), octagon 135° interior angles, right triangle hypotenuse + Pythagorean + carpenter's 3-4-5 square, equilateral triangle 60° + structural engineering, isosceles base-angles theorem, line-of-symmetry (square 4, circle ∞, F 0), polygon definition (closed + straight + no curves), 2D vs 3D + stereoscopic vision, vertices = sides for any polygon.
+- **SW cache v227 → v228**.
+
 ## [5.7.148] - 2026-05-26 - Wipe leftist framing (cleanup of climate alarmism, cultural relativism, gender/poverty/disability activism)
 - Anthony called out "stop pushing left propaganda to my amni-learn. go wipe it all." Confirmed the prior `feedback_no_dei_framing` memory + reinforced it with explicit examples.
 - **Removed / neutralized**:
