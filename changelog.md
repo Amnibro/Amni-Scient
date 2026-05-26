@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.281] - 2026-05-26 - Fact-cards Math L2: 8→12 (SW v360)
+- **+4 fact cards**: rounding (5-or-more rule), symmetry (butterfly + heart + A), estimating (catch errors with approximations), word problems (translate words to numbers).
+- **SW cache v359 → v360**.
+
 ## [5.7.280] - 2026-05-26 - Fact-cards Math L1: 8→12 (catching up the late-create subjects)
 - **+4 fact cards**: doubles (memory trick), sharing equal (division foundation), commutative property (+/× order-free), comparing symbols (>/</=).
 - Math + engineering were created late in phase 1 → now catching up to 12-per-level standard.
