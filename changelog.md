@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.276] - 2026-05-26 - Fact-cards Space L2: 8→12 (Android v3.6.0)
+- **+4 fact cards**: Uranus & Neptune (98° tilt + 2000 km/h winds + methane blue), Earth's atmosphere (78N 21O + ozone UV shield), sunspots (~3800°C 11-yr cycle), moon phases (synodic 29.5 days).
+- **SW cache v354 → v355**.
+
 ## [5.7.275] - 2026-05-26 - Fact-cards Space L1: 8→12
 - **+4 fact cards**: shooting stars (meteors burning in atmosphere), astronauts (trained + Aldrin), Milky Way galaxy, telescopes (Galileo 1609).
 - **SW cache v353 → v354**.
