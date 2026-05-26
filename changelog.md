@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.7.265] - 2026-05-26 - Tower of Hanoi spacing fix
+- **Fix**: disks were `justify-content:flex-start` in column-reverse → compressed at peg bottom, large empty pole above. Switched to `justify-content:space-around` so disks distribute evenly along the pole.
+- Also dynamic disk height: `dh = clamp(18, 40, floor(150/nDisks))` → 3 disks each ~40px, 7 disks each ~21px. Disks now fill the visual pole space proportionally to count.
+- Removed obsolete `margin-bottom:2px`; added `flex-shrink:0` for safety; padding 14px top + 18px bottom to clear pole + base.
+- **SW cache v343 → v344**.
+
 ## [5.7.264] - 2026-05-26 - Fact-cards Mythology L1: 8→12 (Android v300)
 - **+4 fact cards**: werewolf (Lycaon → Zeus → wolf curse origin), fairy (Celtic Fae, iron-weakened), genie (jinn = smokeless fire vs human clay), ghost (universal haunting motif).
 - Android crosses versionCode 300 milestone (3.4.8).

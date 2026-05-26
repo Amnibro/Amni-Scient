@@ -5203,23 +5203,21 @@
     const board=document.createElement('div');board.id='hn-board';board.style.cssText='display:flex;justify-content:space-around;align-items:flex-end;background:linear-gradient(to bottom,#a8e6f7 0%,#dff9fb 100%);border:3px solid #74b9ff;border-radius:14px;padding:18px 14px;max-width:min(96vw,520px);margin:8px auto;height:220px;position:relative;';
     lifeArea.appendChild(board);
     const COLORS=['#e74c3c','#e67e22','#f1c40f','#2ecc71','#3498db','#9b59b6','#1abc9c'];
+    const dh=Math.max(18,Math.min(40,Math.floor(150/nDisks)));
     function render(){
       board.innerHTML='';
       for(let p=0;p<3;p++){
         const peg=document.createElement('div');
-        peg.style.cssText='flex:1;display:flex;flex-direction:column-reverse;align-items:center;justify-content:flex-start;position:relative;height:100%;cursor:pointer;padding:0 4px;';
+        peg.style.cssText='flex:1;display:flex;flex-direction:column-reverse;align-items:center;justify-content:space-around;position:relative;height:100%;cursor:pointer;padding:14px 4px 18px;';
         peg.dataset.peg=p;
-        // pole
         const pole=document.createElement('div');pole.style.cssText='position:absolute;width:6px;height:90%;background:#7f8c8d;left:50%;transform:translateX(-50%);bottom:14px;border-radius:3px;';
         peg.appendChild(pole);
-        // base
         const base=document.createElement('div');base.style.cssText='position:absolute;bottom:0;left:0;width:100%;height:14px;background:#34495e;border-radius:4px;';
         peg.appendChild(base);
-        // disks
         pegs[p].forEach((d,i)=>{
           const disk=document.createElement('div');
           const w=30+d*22;
-          disk.style.cssText=`width:${w}px;height:22px;background:${COLORS[d-1]};border:2px solid #2c3e50;border-radius:8px;margin-bottom:2px;z-index:${10+i};color:#fff;font-family:Comic Neue,cursive;font-weight:bold;text-align:center;line-height:18px;font-size:0.85rem;`;
+          disk.style.cssText=`width:${w}px;height:${dh}px;background:${COLORS[d-1]};border:2px solid #2c3e50;border-radius:8px;z-index:${10+i};color:#fff;font-family:Comic Neue,cursive;font-weight:bold;text-align:center;line-height:${dh-4}px;font-size:0.85rem;flex-shrink:0;`;
           disk.textContent=d;
           peg.appendChild(disk);
         });
