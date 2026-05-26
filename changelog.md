@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.7.158] - 2026-05-26 - Space L1+L2: 12→20 each + Venus political-framing cleanup
+- **Venus cleanup**: removed 'cautionary tale for climate science' from L2 — replaced with neutral CO₂-atmosphere-thick + 92× Earth pressure physics.
+- **L1 +8**: Sun = star (G-type main sequence), shooting star = meteor + Perseids/Geminids, solar eclipse 400×-400× cosmic coincidence, lunar eclipse blood moon Earth-atmosphere bend, galaxy types (spiral/elliptical/irregular) + 2 trillion observable, Moon orbit 27.3 sidereal vs 29.5 synodic + month etymology, Earth's 1 moon vs planet counts (Saturn 274+ in 2024), telescope refractor vs reflector + ELT 39m + JWST IR.
+- **L2 +8**: Halley's comet 76yr period + Halley 1705 prediction + Bayeux Tapestry, Uranus axial tilt 97.77° barrel rotation + Herschel 1781 first-telescope-discovered planet, Neptune methane-blue + 2100km/h winds + Triton retrograde + Le Verrier 1846 calculation discovery, Hubble 540km orbit 2.4m mirror + 1993 corrective-optics fix, Voyager 1+2 1977 + Golden Records + interstellar 2012/2018, ISS continuously crewed since Nov 2 2000 + 26-country visitors + 2030 planned deorbit, SpaceX Falcon 9 reusable + Dec 2015 first landing + 10× cost cut, Moon distance ~384k km + 1.28 light-sec + receding 3.8cm/year tidal.
+- **SW cache v236 → v237**.
+
 ## [5.7.157] - 2026-05-26 - Sports L5: 10→20 → Sports subject NOW 100% at 20/level (100 total)
 - **+10**: Isner-Mahut 11hr Wimbledon 2010 (70-68 5th set), 1972 USSR-USA basketball controversy (USA refused silvers still in IOC vault), Pelé youngest at 17 + 6 goals 1958 WC, Marathon stadium-finale dating to London 1908, Lance Armstrong 7 Tour titles stripped 2012, Barry Bonds 762 HR + Steroid Era + Aaron 755 moral record, Ali-Frazier Thrilla in Manila 1975 trilogy details, Tom Brady 7 Super Bowls + 5 SB MVPs, Flo-Jo 10.49 still standing 35+ years, Gretzky 894 goals + 'shots you don't take' quote.
 - **MILESTONE**: Sports subject (L1-L5) now 100 Qs total at 20/level.
