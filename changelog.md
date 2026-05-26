@@ -1,5 +1,18 @@
 ﻿# Changelog 
 
+## [5.7.125] - 2026-05-25 - Animals L3 final 20 + Languages L3 alliteration → Animals L3 100% complete (58 total) + Languages L3 fully done
+- **Animals L3** finished — all 58 questions teach.
+- **Biodiversity & status**: 3-level diversity (genetic + species + ecosystem), IUCN Red List 8 categories Extinct→Least Concern + ~150k species assessed, endangered numbers (~3.9k tigers, ~1.8k pandas) + recovery wins (bald eagle, gray wolves), invasive species ($1.4T/yr global damage — cane toads + Burmese pythons + zebra mussels + kudzu), endemic 'nowhere-else' + island vulnerability.
+- **Trophic systems**: food chain vs food web distinction, ~90% energy loss per trophic level explains short chains, decomposers close the loop.
+- **Extremes**: tardigrades cryptobiosis tun-state (vacuum + radiation + 10 years no water + foreign-DNA toughness), tropical rainforest 7% land hosting 50% species via canopy stratification, chimp/bonobo 98.7% DNA + regulatory regions matter most.
+- **Macroevolution**: extinction (99% of all species ever, 5 mass extinctions + current 6th at 100-1000× rate), speciation (allopatric Galápagos + sympatric apple-maggot 1860s + polyploid plants + rapid African cichlids).
+- **Activity periods**: nocturnal (tapetum lucidum eyeshine + Mesozoic-mammal origin), diurnal (color vision + circadian sun cues).
+- **Ecosystem roles**: keystone species (sea otters → urchins → kelp cascades; beavers engineer wetlands; arch-stone metaphor), sequential hermaphrodites (Finding Nemo's clownfish biologically inverted).
+- **Social structures**: schooling vs shoaling (lateral line dark coordination), lion pride matriarchy + 2-4yr male turnover with cub infanticide, elephant herd matriarch remembers decades-old water + mourning rituals.
+- **Apex specs**: saltwater croc 3700 PSI bite + extinct Sarcosuchus ~23k psi, golden poison dart frog batrachotoxin (1mg kills 10-20 humans) sequestered from beetle/ant diet — captive crickets-fed frogs become harmless.
+- **Languages L3**: alliteration explained — same starting SOUND not letter (cat+circus same C but different sounds = not alliteration), tongue-twister + brand-name examples.
+- **SW cache v203 → v204**.
+
 ## [5.7.124] - 2026-05-25 - Animals L3: 20 of ~42 backfilled (taxonomy, ecology, symbiosis)
 - **Animals L3** half done — 20 new explanations.
 - **The -ologies**: ornithology (Audubon + eBird citizen science), herpetology (reptiles + amphibians historical lumping), ichthyology (humans are technically fish that climbed out), mammalogy (Latin 'mamma' breast, 2g bumblebee bat to 200t blue whale).
