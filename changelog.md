@@ -1,5 +1,12 @@
 ﻿# Changelog 
 
+## [5.7.320] - 2026-05-26 - Mobile overflow defense (iOS Safari + Chrome)
+- Top-bar: switched `flex-wrap:nowrap` → `wrap` at ≤720px so score-bar buttons wrap to a second row instead of overflowing horizontally on phones.
+- Added <500px breakpoint shrinking score-bar font + retro-btn padding to fit narrow phones.
+- Enforced max-width:100% + box-sizing on `.view` grandchildren (not just direct children) — many module containers nest deeply and were forcing horizontal scroll.
+- Added `min-width:0` on top-bar/score-bar/top-controls flex children so they compress instead of overflowing.
+- sw cache → v399; Android versionCode 356 / versionName 4.0.4.
+
 ## [5.7.319] - 2026-05-26 - Fact-cards Mythology L5: 12→16
 - Added 4 deep-cut mythological figures to L5: Charon (Styx ferryman + obol payment), Moirai (3 Fates spinning thread), Hekate (crossroads + 3-faced moon goddess), Mimir (Norse wisdom-well, Odin\'s eye sacrifice).
 - Mythology subject now complete at 16 entries per level (L1-L5).
