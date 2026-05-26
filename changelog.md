@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.201] - 2026-05-26 - Fact-cards Counting L3: 4→8
+- **+4 fact cards**: minutes & seconds (Babylonian base-60), number line (extends both ways infinitely), skip counting (2s/5s/10s gateway to multiplication), patterns (odd-number sequence +2).
+- **SW cache v279 → v280**.
+
 ## [5.7.200] - 2026-05-26 - Fact-cards Counting L2: 4→8
 - **+4 fact cards**: pairs (shoes/socks/eyes), dice (opposite faces sum to 7), US coins (penny/nickel/dime/quarter — 4 quarters=1 dollar), halves & quarters of a pie.
 - **SW cache v278 → v279**.
