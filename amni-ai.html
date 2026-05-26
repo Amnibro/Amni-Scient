@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Adam &mdash; Texture-Native Local AI Assistant | AMNI-SCIENT</title>
 <meta name="description" content="Adam is a GF(17) texture-native local AI assistant. 4 GB VRAM, lossless. Voice + vision + trainable gesture-controlled Jarvis-style UI with wake-word, Socratic coach mode, self-verifying edits (auto-runs sibling pytest), inline KaTeX + Mermaid rendering. 42 skills, autonomous learning daemon, live data widgets. Drop-in Ollama + OpenAI API replacement on one port. Source-available, CC BY-NC 4.0.">
-<meta name="keywords" content="adam,amni-ai,local ai,gf17,texture native,ptex,ollama drop-in,openai api drop-in,open webui,continue.dev,cline,aider,lossless ai,self-improving llm,self-verifying ai,sandbox code,coding assistant,jarvis ui,gesture control,local voice assistant,piper tts,whisper stt,mediapipe hands,blip vision,mcp server,socratic tutor,coach mode,wake word ai,auto pytest">
+<meta name="keywords" content="adam,amni-ai,local ai,gf17,texture native,ptex,ollama drop-in,openai api drop-in,open webui,continue.dev,cline,aider,lossless ai,self-improving llm,self-verifying ai,sandbox code,coding assistant,jarvis ui,gesture control,local voice assistant,piper tts,whisper stt,mediapipe hands,blip vision,mcp server,socratic tutor,coach mode,wake word ai,auto pytest,self-inspect,proposal log,sandboxed venv">
 <meta property="og:title" content="Adam &mdash; Texture-Native Local AI Assistant">
 <meta property="og:description" content="4 GB VRAM. Lossless GF(17). Voice + vision + trainable-gesture Jarvis UI. Self-verifying edits (auto-pytest). Socratic coach mode. Inline KaTeX + Mermaid. Drop-in Ollama + OpenAI API replacement on one port.">
 <meta property="og:type" content="website">
@@ -271,6 +271,34 @@ OPENAI_API_KEY=anything</pre>
 <span class="flow-step">TESTS PILL IN /JARVIS</span>
 <span class="flow-arrow">&rarr;</span>
 <span class="flow-step terminal">MARK TESTED WHEN HUMAN CONFIRMS</span>
+</div>
+<p style="text-align:center;color:var(--dim);max-width:720px;margin:1.5rem auto .5rem;font-size:.88rem">Adam can also look at <em>itself</em> &mdash; inspect its own source, propose changes against an append-only log, and run experiments in scoped Python sandboxes:</p>
+<div class="flow-row">
+<span class="flow-step">self_inspect SUBSYSTEM</span>
+<span class="flow-arrow">&rarr;</span>
+<span class="flow-step">self_improvement.propose</span>
+<span class="flow-arrow">&rarr;</span>
+<span class="flow-step">APPEND-ONLY JSONL LOG</span>
+<span class="flow-arrow">&rarr;</span>
+<span class="flow-step">STATE MACHINE</span>
+</div>
+<div class="flow-row">
+<span class="flow-step">venv create &lt;name&gt;</span>
+<span class="flow-arrow">&rarr;</span>
+<span class="flow-step">&lt;workdir&gt;/.adam-venvs/</span>
+<span class="flow-arrow">&rarr;</span>
+<span class="flow-step">pip install (validated)</span>
+<span class="flow-arrow">&rarr;</span>
+<span class="flow-step terminal">RUN EXPERIMENT (TIMEOUTED)</span>
+</div>
+<div class="flow-row">
+<span class="flow-step">proposed</span>
+<span class="flow-arrow">&rarr;</span>
+<span class="flow-step">attempted</span>
+<span class="flow-arrow">&rarr;</span>
+<span class="flow-step">validated</span>
+<span class="flow-arrow">&rarr;</span>
+<span class="flow-step terminal">deployed | declined | reverted</span>
 </div>
 </section>
 
