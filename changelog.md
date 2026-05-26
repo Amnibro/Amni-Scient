@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.166] - 2026-05-26 - Fact-cards Colors L3: 4→8
+- **+4 fact cards**: why sky is blue (Rayleigh), why sunsets are red (long atmospheric path scatters blue away), why leaves change (anthocyanins emerge), pink isn't in rainbow (extraspectral brain construct).
+- **SW cache v244 → v245**.
+
 ## [5.7.165] - 2026-05-26 - Fact-cards Colors L2: 4→8
 - **+4 fact cards**: gray (elephants/clouds/pencil-graphite), gold (medals/sun-rays/crowns), silver (silverware/Moon/coins), color wheel (Newton 1704 bent the rainbow into a circle).
 - **SW cache v243 → v244**.
