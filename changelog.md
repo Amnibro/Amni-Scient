@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.194] - 2026-05-26 - Fact-cards Opposites L1: 4→8
+- **+4 fact cards**: big & small (elephant vs ant), hot & cold (fire vs ice), fast & slow (cheetah 100km/h vs snail 1m/min), open & closed (doors).
+- **SW cache v272 → v273**.
+
 ## [5.7.193] - 2026-05-26 - Fact-cards Weather L5: 4→8
 - **+4 fact cards**: atmospheric rivers (Pineapple Express 50% CA precip), foehn/chinook (warm dry downslope, 20+°C swings), volcanic cooling (1815 Tambora "year without summer" SO₂ aerosols), mesocyclone (supercell rotating updraft → tornado source).
 - Weather fact-cards all 5 levels now at 8 each.
