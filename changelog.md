@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.226] - 2026-05-26 - Fact-cards Colors L4: 8→12
+- **+4 fact cards**: tetrachromatic animals (birds/fish UV vision), mantis shrimp (12-16 cones for fast categorization), Vantablack (99.965% absorption + Kapoor license), iridescence (oil slicks + opals + CDs).
+- **SW cache v304 → v305**.
+
 ## [5.7.225] - 2026-05-26 - Fact-cards Colors L3: 8→12
 - **+4 fact cards**: color in water (red absorbed first → deep-sea red camouflage), carotenoids (orange/red plant pigments, animals can't make), anthocyanins (red cabbage pH indicator), color blindness (~8% men X-linked).
 - **SW cache v303 → v304**.
