@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.287] - 2026-05-26 - Fact-cards Engineering L3: 8→12
+- Added 4 intermediate engineering topics to L3: 4-stroke combustion engine (intake/compression/power/exhaust), pneumatics (air vs liquid), photovoltaic cells (p-n junction), reinforced concrete (compression + tension).
+- sw cache → v366; Android versionCode 323 / versionName 3.7.1.
+
 ## [5.7.286] - 2026-05-26 - Fact-cards Engineering L2: 8→12
 - Added 4 elementary engineering topics to L2: pulleys (force direction + compound advantage), inclined plane (trade distance for force), conductors vs insulators (copper vs rubber), electric motors (magnetic field → motion, Faraday 1830s).
 - sw cache → v365; Android versionCode 322 / versionName 3.7.0.
