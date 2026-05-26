@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.248] - 2026-05-26 - Fact-cards Weather L1: 8→12
+- **+4 fact cards**: hot & cold (thermometer + Celsius/Fahrenheit), umbrella (4000-yr-old China/Egypt invention), hail (ice balls lifted + dropped in storm), sunset (atmospheric scattering reddens).
+- **SW cache v326 → v327**.
+
 ## [5.7.247] - 2026-05-26 - Fact-cards Languages L5: 8→12
 - **+4 fact cards**: FOXP2 gene (speech disorders + songbirds+bats), Broca's/Wernicke's areas (production vs comprehension), Rosetta Stone (Champollion 1822 hieroglyph decipher), subword tokenization (BPE/WordPiece for LLMs).
 - Languages fact-cards all 5 levels now at 12 each.
