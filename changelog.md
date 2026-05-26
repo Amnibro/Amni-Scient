@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.234] - 2026-05-26 - Fact-cards Science L2: 8→12
+- **+4 fact cards**: heart (5 L/min + 100K beats/day + 100K km vessels), lungs (20K breaths/day + 700M alveoli = tennis-court area), volcanoes (1500 active + Ring of Fire 75%), Earth layers (crust/mantle/outer core/inner core).
+- **SW cache v312 → v313**.
+
 ## [5.7.233] - 2026-05-26 - Fact-cards Science L1: 8→12
 - **+4 fact cards**: bees (waggle dance + pollination + honey), ocean (71% Earth + Pacific biggest + ~3.7 km avg depth), bones (~206 adult from ~270 baby), snowflakes (6 sides + dust seed + no two alike).
 - **SW cache v311 → v312**.
