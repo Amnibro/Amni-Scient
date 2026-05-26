@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.251] - 2026-05-26 - Fact-cards Weather L4: 8→12
+- **+4 fact cards**: Köppen climate classification (1884 5 groups still used), jet streams (200-400 km/h pilot rides), lake-effect snow (Buffalo NY), El Niño/La Niña (ENSO 2-7 yr global reshuffler).
+- **SW cache v329 → v330**.
+
 ## [5.7.250] - 2026-05-26 - Fact-cards Weather L3: 8→12
 - **+4 fact cards**: petrichor (geosmin + parts-per-trillion smell), cloud formation (dew point + nuclei), heat index (90°F+90% RH = feels 122°F), wind chill (strips warm-air boundary layer).
 - **SW cache v328 → v329**.
