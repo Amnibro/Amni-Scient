@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.227] - 2026-05-26 - Fact-cards Colors L5: 8→12
+- **+4 fact cards**: OLED vs LCD (per-pixel emit vs backlight blacks), color gamut (sRGB/DCI-P3/Rec.2020), gamma correction (γ≈2.2 logarithmic perception), Pantone (1963 ~2000 PMS color codes).
+- Colors fact-cards all 5 levels now at 12 each.
+- **SW cache v305 → v306**.
+
 ## [5.7.226] - 2026-05-26 - Fact-cards Colors L4: 8→12
 - **+4 fact cards**: tetrachromatic animals (birds/fish UV vision), mantis shrimp (12-16 cones for fast categorization), Vantablack (99.965% absorption + Kapoor license), iridescence (oil slicks + opals + CDs).
 - **SW cache v304 → v305**.
