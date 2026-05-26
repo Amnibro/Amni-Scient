@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.156] - 2026-05-26 - Sports L4: 10→20 (trophies + races + leagues)
+- **+10**: Vince Lombardi Trophy NFL Tiffany silver + 'only thing' quote, yellow/red cards 1970 WC Ken Aston traffic-light inspiration, Tour de France yellow jersey 1919 L'Auto newspaper + 5-time-winners club, Boston Marathon 1897 Patriots Day + qualifying-standards + 2013 #BostonStrong, Indy 500 1911 + milk-bottle tradition since 1936 Louis Meyer, cricket bat English willow Salix-alba 15-20yr cultivated, Daytona 500 200+ mph drafting + Earnhardt 1998 breakthrough, Iditarod ~1000 mi commemorating 1925 serum run, 4 Grand Slams calendar order + Calendar Slam history Budge/Connolly/Laver/Court/Graf, Heisman Trophy John Heisman forward-pass-pioneer + Bush vacated 2005.
+- **SW cache v234 → v235**.
+
 ## [5.7.155] - 2026-05-26 - Sports L3: 10→20 (less-common sports)
 - **+10**: sumo Japanese yokozuna + chanko-nabe 10k-calorie stew, curling Ailsa-Craig-granite stones + 'chess on ice', rugby 15 v 15 + 1823 William Webb Ellis school origin, badminton fastest racket sport 493 km/h smash + goose-left-wing-feather shuttlecocks, snooker 22-ball + 147 maximum break, darts 501 + Phil Taylor 16 titles, America's Cup 1851 + 132-year NY Yacht Club streak + 50-knot foiling cats, equestrian 3 disciplines + same-event men/women, Triple Crown US 3 races + Secretariat 1973 record + 37yr gap 1978-2015, squash 4-walled court Harrow School 1830 + LA 2028 finally Olympic.
 - **SW cache v233 → v234**.
