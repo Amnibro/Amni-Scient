@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.203] - 2026-05-26 - Fact-cards Counting L5: 4→8
+- **+4 fact cards**: Fibonacci (pinecones+sunflowers+nautilus), number bases (decimal vs binary 13=1101), infinity (Cantor 1874 countable vs uncountable), probability (independent events multiply).
+- Counting fact-cards all 5 levels now at 8 each.
+- **SW cache v281 → v282**.
+
 ## [5.7.202] - 2026-05-26 - Fact-cards Counting L4: 4→8
 - **+4 fact cards**: carry over (27+18=45), borrow (52−18=34), Roman numerals (I/V/X/L/C/D/M + Super Bowl), negative numbers (−5°C below freezing).
 - **SW cache v280 → v281**.
