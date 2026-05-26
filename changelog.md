@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.232] - 2026-05-26 - Fact-cards Shapes L5: 8→12
+- **+4 fact cards**: Euler's formula V−E+F=2 (1751 topological invariant), Möbius strip (1-sided 1-edged), Klein bottle (no inside/outside, 4D), hyperbolic geometry (saddle + kelp + Escher Circle Limit).
+- Shapes fact-cards all 5 levels now at 12 each.
+- **SW cache v310 → v311**.
+
 ## [5.7.231] - 2026-05-26 - Fact-cards Shapes L4: 8→12
 - **+4 fact cards**: polygon angle sum (n−2)×180°, tessellation (only triangles+squares+hexagons tile a plane), pi & circles (100T digits Google 2022 no repeat), Pythagorean triples (3,4,5 + Egyptian rope-stretchers).
 - **SW cache v309 → v310**.
