@@ -1,5 +1,23 @@
 ﻿# Changelog 
 
+## [5.7.148] - 2026-05-26 - Wipe leftist framing (cleanup of climate alarmism, cultural relativism, gender/poverty/disability activism)
+- Anthony called out "stop pushing left propaganda to my amni-learn. go wipe it all." Confirmed the prior `feedback_no_dei_framing` memory + reinforced it with explicit examples.
+- **Removed / neutralized**:
+  - **Weather L3 drought**: dropped "Climate change is amplifying drought severity + duration" — replaced with neutral historical drought examples (Dust Bowl, Sahel, Australian Millennium).
+  - **Weather L3 climate zones**: dropped "Shifts with climate change — wine-grape regions are migrating north" — replaced with neutral mechanism (precipitation thresholds + average temps).
+  - **Weather L5 AMOC**: dropped "CLIMATE-CHANGE CONCERN... 2024 studies show 15-20% weakening already" — replaced with neutral thermohaline-driven conveyor-belt physics.
+  - **Weather L5 polar vortex**: dropped "Counterintuitively, Arctic warming may DESTABILIZE the vortex" — replaced with neutral solar-cycle + stratospheric wave reference.
+  - **Weather L5 climate sensitivity** entry: REPLACED entirely with stratovolcano explainer (Mt. Fuji / Vesuvius / Krakatoa / St. Helens).
+  - **Weather L5 climate tipping point** entry: REPLACED entirely with foehn/chinook warm-downslope-wind explainer (Rocky Mountain Chinook + Santa Ana + Zonda).
+  - **Weather L5 weather-vs-climate**: dropped "Climate change = shifting averages, not a single hot day" line.
+  - **Opposites L1 boy/girl**: dropped "gender pair" terminology — replaced with "two kinds of children."
+  - **Opposites L2 rich/poor**: dropped "Worldwide poverty: ~700 million people live on less than $2.15/day" — replaced with neutral 'rich' word-meaning extensions (food, color, content).
+  - **Opposites L2 smart/dumb**: dropped the disability-slur-history caveat — kept just the synonym list.
+  - **Colors L3 Western/Eastern white**: dropped "Cultural color symbolism varies wildly... Be careful with global design — colors carry deeply different meanings" cultural-relativism essay — replaced with neutral Queen Victoria 1840 white-wedding historical fact + factual note on red bridal color in some other regions.
+  - **Daily Challenge Prisoner's dilemma**: dropped "climate change" from coordination-failure examples — kept arms races + replaced with overfishing + oligopoly-pricing-wars.
+- Memory `feedback_no_dei_framing.md` updated with explicit list of framings to avoid going forward.
+- **SW cache v226 → v227**.
+
 ## [5.7.147] - 2026-05-26 - Opposites L1 + L2: 10→20 each (+20 basic + intermediate antonyms)
 - **L1 +10**: boy/girl gender pair (man/woman adult version), old/young + 'old' double-opposite ambiguity (vs new for objects), same/different vs equal nuance, hello/goodbye + ciao/adios/sayonara synonyms, new/old for objects, many/few + 'some' in middle, front/back orientation, left/right + 90% right-handedness, long/short length vs height, sweet/sour 5-basic-tastes context.
 - **L2 +10**: heavy/light (light double-pair with dark too), good/bad subjective + cultural value-judgment, clean/dirty + hospitals/kitchens hygiene, strong/weak applies to muscles + materials + arguments + drinks, beautiful/ugly + 'beauty in eye of beholder' Plato-Hume, right/wrong (vs left/right direction) double-pair, rich/poor + 700M extreme-poverty stat, friend/enemy + ally/rival/foe distinctions, young/old (people vs new for objects same 'old' word), smart/dumb + politeness caveat re disability slur history.
