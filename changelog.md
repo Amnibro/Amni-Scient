@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.228] - 2026-05-26 - Fact-cards Shapes L1: 8→12
+- **+4 fact cards**: oval (stretched circle, Olympic tracks/eggs/grapes), arrow (triangular head + rectangular shaft), diamond (square turned 45°, playing card suit), trapezoid (1 pair parallel sides).
+- **SW cache v306 → v307**.
+
 ## [5.7.227] - 2026-05-26 - Fact-cards Colors L5: 8→12
 - **+4 fact cards**: OLED vs LCD (per-pixel emit vs backlight blacks), color gamut (sRGB/DCI-P3/Rec.2020), gamma correction (γ≈2.2 logarithmic perception), Pantone (1963 ~2000 PMS color codes).
 - Colors fact-cards all 5 levels now at 12 each.
