@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.218] - 2026-05-26 - Fact-cards Space L5: 4→8
+- **+4 fact cards**: Schwarzschild radius r_s = 2GM/c² (1916 WW1 trenches), cosmic inflation (Guth 1980 10²⁶× in 10⁻³² s), dark energy (68% Nobel 2011 still mysterious), Hawking radiation (1974 BH evaporation + smaller = hotter).
+- Space fact-cards all 5 levels now at 8 each.
+- **SW cache v296 → v297**.
+
 ## [5.7.217] - 2026-05-26 - Fact-cards Space L4: 4→8
 - **+4 fact cards**: neutron stars (sugar cube 1B tons), pulsars (Bell Burnell 1967 LGM-1), Hubble's Law 1929 expansion, JWST (L2 + IR + 13.5B ly first-light galaxies).
 - **SW cache v295 → v296**.
