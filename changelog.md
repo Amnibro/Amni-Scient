@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.7.145] - 2026-05-26 - Weather L1 + L2: 10→20 each (+20 kid + early-adult)
+- **Weather L1 +10** (kid level): cloud-as-water-droplets, air mostly N₂+O₂, fog as ground-level cloud, puddles after rain, snowman packing-snow construction, umbrella curved-canopy, thermometer red-alcohol + digital, freezing point 0°C + frostbite/hypothermia warning, fall colors (chlorophyll fades reveals existing pigments), kite Ben Franklin lightning history.
+- **Weather L2 +10**: cumulus puffy + cumulonimbus thunderstorm precursor, light-vs-sound speed gap (count seconds rule), thunderstorm 16M/year worldwide + 2000-active-at-any-moment, frost as DEPOSITION (skips liquid), weather-vane points INTO wind (Greek bronze 2000+yrs), breeze 6-30 km/h Beaufort 2-4 + sea-breeze vs land-breeze, forecast Navier-Stokes supercomputer models + NWS/Met-Office/JMA, Jupiter Great Red Spot 350+yr storm + Venus sulfuric-acid rain + Neptune fastest winds 2000+km/h, evaporative cooling + humidity slowing sweat + dog panting alt, meteorologist Greek 'thing above' + media-presenter caveat.
+- **Total now ~1915 Qs**. Pedagogical invariant still 0 missing.
+- **SW cache v223 → v224**.
+
 ## [5.7.144] - 2026-05-26 - Opposites L3 + Counting L3: 10→20 each → all small-bank L3 NOW DOUBLED
 - **Opposites L3 +10**: empty/full, wet/dry, simple/complex (vs easy + complicated nuance), visible/hidden (CSS display:hidden + politics), healthy/sick (WHO 1946 holistic definition), cheap/expensive (price ≠ value), awake/asleep (NREM 1-2-3 + REM stages), calm/anxious (GAD most common diagnosis), birth/death (Shakespeare 7 ages), guilty/innocent legal (presumption + adversarial vs inquisitorial systems).
 - **Counting L3 +10**: ×10 add-a-zero trick, skip-counting by 2s (even numbers) + 5s (clocks/nickels), doubling 7→14, halving 12→6 (odd → fractions), word-problem 3+2=5 apples (ignore units), 100¢ = $1 + coin denominations + Latin 'centum' etymology, parity rules E+E=E + O+O=E + E+O=O (counterintuitive O+O), comparing tens-place 32>23 (basis of sorting algorithms).
