@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.210] - 2026-05-26 - Fact-cards Sports L2: 4→8
+- **+4 fact cards**: boxing (Queensberry 1867 + 12 rounds + heavyweight), Formula 1 (370 km/h + 5G corners + Monaco), bowling (300 perfect game = 12 strikes), skiing/snowboarding (alpine + 1998 Nagano).
+- **SW cache v288 → v289**.
+
 ## [5.7.209] - 2026-05-26 - Fact-cards Sports L1: 4→8
 - **+4 fact cards**: baseball (1840s formalized, 4 bases), tennis (jeu de paume + 15/30/40 scoring), volleyball (1895 Morgan), American football (Super Bowl most-watched US TV).
 - **SW cache v287 → v288**.
