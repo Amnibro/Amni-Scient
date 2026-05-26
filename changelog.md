@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.283] - 2026-05-26 - Fact-cards Math L4: 8→12
+- Added 4 advanced math topics to L4: complex numbers (i² = −1, Euler identity), vectors (magnitude+direction, dot/cross), matrices (linear transforms, determinants), differential equations (dy/dt = ky modeling growth/decay).
+- sw cache → v362; Android versionCode 319 / versionName 3.6.7.
+
 ## [5.7.282] - 2026-05-26 - Fact-cards Math L3: 8→12
 - **+4 fact cards**: prime factorization (60=2²×3×5, FToA), mean/median/mode (3 averages), volume formulas (cube/sphere/cylinder), inequalities (flip on negative mult).
 - **SW cache v360 → v361**.
