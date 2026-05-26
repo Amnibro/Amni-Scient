@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.233] - 2026-05-26 - Fact-cards Science L1: 8→12
+- **+4 fact cards**: bees (waggle dance + pollination + honey), ocean (71% Earth + Pacific biggest + ~3.7 km avg depth), bones (~206 adult from ~270 baby), snowflakes (6 sides + dust seed + no two alike).
+- **SW cache v311 → v312**.
+
 ## [5.7.232] - 2026-05-26 - Fact-cards Shapes L5: 8→12
 - **+4 fact cards**: Euler's formula V−E+F=2 (1751 topological invariant), Möbius strip (1-sided 1-edged), Klein bottle (no inside/outside, 4D), hyperbolic geometry (saddle + kelp + Escher Circle Limit).
 - Shapes fact-cards all 5 levels now at 12 each.
