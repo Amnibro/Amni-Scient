@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.172] - 2026-05-26 - Fact-cards Shapes L4: 4→8
+- **+4 fact cards**: symmetry (reflection + rotational, snowflake 6-fold), congruent vs similar (size vs proportional), triangle types (equilateral/isosceles/scalene + right/acute/obtuse), inscribed vs circumscribed shapes.
+- **SW cache v250 → v251**.
+
 ## [5.7.171] - 2026-05-26 - Fact-cards Shapes L3: 4→8
 - **+4 fact cards**: pyramid (Giza square base), torus (donut topology hole), prism (rainbow splitter + 2 parallel polygon ends), ellipsoid (egg/rugby/Earth-equatorial-bulge).
 - **SW cache v249 → v250**.
