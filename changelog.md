@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.185] - 2026-05-26 - Fact-cards Languages L2: 5→8
+- **+3 fact cards**: German (Hallo/Danke/Wasser — Germanic root shared with English), Italian (Ciao/Grazie/Acqua — Romance from Latin), Japanese (konnichiwa/arigatou/mizu — 3 scripts hiragana+katakana+kanji).
+- **SW cache v263 → v264**.
+
 ## [5.7.184] - 2026-05-26 - Fact-cards Languages L1: 5→8
 - **+3 fact cards**: hello (friendly greeting wave), please/thank you magic words, question words (5 Ws + 1 H).
 - **SW cache v262 → v263**.
