@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.241] - 2026-05-26 - Fact-cards Animals L4: 8→12
+- **+4 fact cards**: co-evolution (yucca moth + yucca plant lock-in), pollination (80% need animal pollinators), venom evolution (modified saliva + ACE-inhibitor from pit viper), symbiosis types (mutualism/commensalism/parasitism).
+- **SW cache v319 → v320**.
+
 ## [5.7.240] - 2026-05-26 - Fact-cards Animals L3: 8→12
 - **+4 fact cards**: complete metamorphosis (egg→larva→pupa→adult body dissolves + rebuilds), arachnids vs insects (8 vs 6 legs), cold-blooded (10x less food + slow when cold), apex predators (trophic cascade collapse).
 - **SW cache v318 → v319**.
