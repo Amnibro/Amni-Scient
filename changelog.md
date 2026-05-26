@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.284] - 2026-05-26 - Fact-cards Math L5: 8→12
+- Added 4 frontier math topics to L5: Gödel's incompleteness (limits of formalism), Fourier transform (sin/cos decomposition + FFT), Shannon information theory (entropy H = −Σ p log p), Riemann hypothesis ($1M Clay open problem).
+- sw cache → v363; Android versionCode 320 / versionName 3.6.8.
+
 ## [5.7.283] - 2026-05-26 - Fact-cards Math L4: 8→12
 - Added 4 advanced math topics to L4: complex numbers (i² = −1, Euler identity), vectors (magnitude+direction, dot/cross), matrices (linear transforms, determinants), differential equations (dy/dt = ky modeling growth/decay).
 - sw cache → v362; Android versionCode 319 / versionName 3.6.7.
