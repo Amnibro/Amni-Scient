@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.170] - 2026-05-26 - Fact-cards Shapes L2: 4→8
+- **+4 fact cards**: hexagon (bee honeycomb optimum), octagon (STOP sign + octa-prefix history), quadrilateral family (square+rect+rhombus+trap+kite), spiral (shells+hurricanes+galaxies).
+- **SW cache v248 → v249**.
+
 ## [5.7.169] - 2026-05-26 - Fact-cards Shapes L1: 4→8
 - **+4 fact cards**: star (5-point=10 sides), heart (two semicircles meeting at point), crescent (same root as croissant), plus/cross (4 arms, hospital + math + Red Cross).
 - **SW cache v247 → v248**.
