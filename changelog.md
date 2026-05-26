@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.143] - 2026-05-26 - Colors L3: 10→20 (intermediate color perception + culture)
+- **+10 entries**: pink is EXTRASPECTRAL (brain-mix not pure wavelength — magenta/cyan/brown too), Western-white-wedding vs Eastern-white-mourning + Chinese-red-bride cultural variance, achromatic black/white/grays no-hue, hue as one of three independent properties (vs saturation + value), pastels = high-lightness + low-saturation soft baby colors, monochromatic palette = one-hue all-shades (Picasso Blue Period), bioluminescence luciferase+luciferin → 2008 Nobel GFP biotech tool, fluorescence vs phosphorescence (re-emit short-wavelength now vs slowly), earth tones iron-oxide first paints (Lascaux 17ky ago), hi-vis yellow-green safety vests at peak ~555nm eye sensitivity (~70% accident reduction).
+- **SW cache v221 → v222**.
+
 ## [5.7.142] - 2026-05-26 - Shapes L3: 10→20 (intermediate geometry depth)
 - **+10 entries**: tetrahedron 4-triangle self-dual + methane CH₄ molecular shape, NET concept (cube has 11 distinct nets! origami + flat-pack furniture), convex vs concave (optimization-algorithm relevance), diagonals n(n-3)/2 + square diagonal-vs-side √2, tangent line perpendicular-to-radius at touch-point, chord with diameter as longest-chord, radius vs diameter d=2r connection-to-π, arc length r·θ + inscribed-angle theorem half-central, hemisphere 2/3-volume half-sphere + Earth's N/S hemispheres, honeycomb hexagon 3×120° tiling (Hales 1999 Honeycomb Conjecture), torus genus-1 topology with R+r radii (donuts/tires/cosmological models).
 - **SW cache v220 → v221**.
