@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.303] - 2026-05-26 - Fact-cards Weather L4: 12→16
+- Added 4 advanced meteorology topics to L4: greenhouse effect (IR re-radiation, CO₂ doubling → ~3°C), cloud seeding (silver iodide), derechos (long-lived straight-line windstorms, 2020 Iowa), weather satellites (GOES geostationary + NOAA polar).
+- sw cache → v382; Android versionCode 339 / versionName 3.8.7.
+
 ## [5.7.302] - 2026-05-26 - Fact-cards Weather L3: 12→16
 - Added 4 intermediate meteorology topics to L3: weather fronts (cold/warm/occluded/stationary), Doppler radar (frequency shift to see wind), monsoons (seasonal wind reversal, Indian monsoon), lightning types (sprites/blue jets/elves discovered 1989+).
 - sw cache → v381; Android versionCode 338 / versionName 3.8.6.
