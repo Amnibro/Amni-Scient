@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.317] - 2026-05-26 - Fact-cards Mythology L3: 12→16
+- Added 4 world-mythology figures to L3: Sun Wukong (Chinese Monkey King, 72 transformations), Amaterasu (Japanese sun goddess, cave-hiding myth), Ganesha (Hindu elephant-headed remover of obstacles), Coyote (Native American trickster archetype).
+- sw cache → v396; Android versionCode 353 / versionName 4.0.1.
+
 ## [5.7.316] - 2026-05-26 - Fact-cards Mythology L2: 12→16
 - Added 4 lesser-Olympian deities to L2: Persephone (Hades's queen, seasonal myth), Pan (half-goat → "panic"), Janus (two-faced, January eponym), Iris (rainbow messenger, eye-iris namesake).
 - Android version rollover 3.9.9 → 4.0.0 (Amni-Learn major milestone!).
