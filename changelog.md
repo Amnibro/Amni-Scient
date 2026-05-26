@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.181] - 2026-05-26 - Fact-cards Animals L3: 5→8
+- **+3 fact cards**: migration (Arctic tern 70000 km/yr, monarch magnetic-field 4-gen Mexico→Canada), eusociality (bees+ants+naked mole-rats super-organism), sloth-algae symbiosis (green-fur camouflage).
+- **SW cache v259 → v260**.
+
 ## [5.7.180] - 2026-05-26 - Fact-cards Animals L2: 5→8
 - **+3 fact cards**: wolf (family-pack alpha pair, howl across km), shark (450My older than trees, teeth replaced bi-weekly), snake (forked tongue scoops air to Jacobson's organ, sleep eyes-open).
 - **SW cache v258 → v259**.
