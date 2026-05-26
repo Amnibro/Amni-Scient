@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.239] - 2026-05-26 - Fact-cards Animals L2: 8→12
+- **+4 fact cards**: tortoise (Galápagos 150-200 yr + per-island shells), eagle (8x sharper vision + 6-ft nest), kangaroo (joey pouch + tail tripod + can't walk back), dolphin (echolocation + signature whistle = name + half-brain sleep).
+- **SW cache v317 → v318**.
+
 ## [5.7.238] - 2026-05-26 - Fact-cards Animals L1: 8→12
 - **+4 fact cards**: pig (smart + recognizes names), chicken (~daily egg + cluck-to-eggs), duck (waterproof oily feathers + webbed feet paddles), bee (230 Hz wings + ⅓ of food).
 - **SW cache v316 → v317**.
