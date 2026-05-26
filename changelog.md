@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.290] - 2026-05-26 - Fact-cards Animals L1: 12→16 (phase 3 kickoff)
+- Added 4 more kid-level animals to L1: sheep (baa, flocks, wool), frog (ribbit, breathes through skin, tadpole), owl (270° head turn, silent feathers), squirrel (forgotten nuts → trees, bushy tail balance).
+- Phase 3 begins: across-the-board push from 12 → 16 entries per level.
+- sw cache → v369; Android versionCode 326 / versionName 3.7.4.
+
 ## [5.7.289] - 2026-05-26 - Fact-cards Engineering L5: 8→12
 - Added 4 frontier engineering topics to L5: brain-computer interfaces (Utah Array, Neuralink), synthetic biology (DNA-as-code, biofoundries), solid-state batteries (EV next-gen), direct air capture (Climeworks Mammoth, 36k tons/yr).
 - sw cache → v368; Android versionCode 325 / versionName 3.7.3.
