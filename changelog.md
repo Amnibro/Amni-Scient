@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.264] - 2026-05-26 - Fact-cards Mythology L1: 8→12 (Android v300)
+- **+4 fact cards**: werewolf (Lycaon → Zeus → wolf curse origin), fairy (Celtic Fae, iron-weakened), genie (jinn = smokeless fire vs human clay), ghost (universal haunting motif).
+- Android crosses versionCode 300 milestone (3.4.8).
+- **SW cache v342 → v343**.
+
 ## [5.7.263] - 2026-05-26 - Fact-cards Counting L5: 8→12
 - **+4 fact cards**: summation ∑ (Gauss 5050 trick), e Euler (~2.71828 natural base), Big O notation (CS efficiency classes), Monty Hall (switch! 1/3 → 2/3).
 - Counting fact-cards all 5 levels now at 12 each.
