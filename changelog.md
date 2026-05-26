@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.214] - 2026-05-26 - Fact-cards Space L1: 4→8
+- **+4 fact cards**: stars (more than grains of sand), comets (dirty snowballs + sun-heated tails), rockets (Newton 3rd law push-down → fly-up), satellites (GPS+weather+TV).
+- **SW cache v292 → v293**.
+
 ## [5.7.213] - 2026-05-26 - Fact-cards Sports L5: 4→8
 - **+4 fact cards**: Kipchoge sub-2 marathon (Vienna 2019 unofficial), 1972 Dolphins perfect 17-0, Maradona Hand of God + Goal of the Century, Gretzky assists alone outscore everyone.
 - Sports fact-cards all 5 levels now at 8 each.
