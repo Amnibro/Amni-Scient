@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.258] - 2026-05-26 - Fact-cards Counting L1: 8→12
+- **+4 fact cards**: animal counting (crows ~7), counting songs (rhyme aids memory), counting past 10 (11-19 + 20), subitizing (dot patterns 1-4 recognized without counting).
+- **SW cache v336 → v337**.
+
 ## [5.7.257] - 2026-05-26 - Fact-cards Opposites L5: 8→12
 - **+4 fact cards**: qualitative & quantitative (research methods), bottom-up & top-down (design styles), convergent & divergent thinking (creativity), signal & noise (engineering SNR).
 - Opposites fact-cards all 5 levels now at 12 each.
