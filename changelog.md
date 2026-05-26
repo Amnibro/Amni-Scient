@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.189] - 2026-05-26 - Fact-cards Weather L1: 4→8
+- **+4 fact cards**: clouds (millions of tiny droplets), wind (invisible moving air), lightning (flash before thunder boom — light faster than sound), fog (a cloud at ground level).
+- **SW cache v267 → v268**.
+
 ## [5.7.188] - 2026-05-26 - Fact-cards Languages L5: 5→8
 - **+3 fact cards**: Sapir-Whorf (weak supported / strong rejected), transformer models (2017 attention paper, foundation of GPT/BERT/Claude), Zipf's law (power-law freq in all natural languages).
 - Languages fact-cards all 5 levels now at 8 each.
