@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.217] - 2026-05-26 - Fact-cards Space L4: 4→8
+- **+4 fact cards**: neutron stars (sugar cube 1B tons), pulsars (Bell Burnell 1967 LGM-1), Hubble's Law 1929 expansion, JWST (L2 + IR + 13.5B ly first-light galaxies).
+- **SW cache v295 → v296**.
+
 ## [5.7.216] - 2026-05-26 - Fact-cards Space L3: 4→8
 - **+4 fact cards**: meteors (~17000/yr reach surface), solar flares (radio + GPS disruption + auroras), Olympus Mons (22km Mars volcano, no plate tectonics), light-years (9.46T km, Andromeda 2.5M ly).
 - Android crosses major version: 2.9.9 → 3.0.0.
