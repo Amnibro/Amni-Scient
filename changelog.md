@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.191] - 2026-05-26 - Fact-cards Weather L3: 4→8
+- **+4 fact cards**: cloud types (cirrus/cumulus/stratus/nimbus + combinations), Beaufort scale (0-12 wind force, 1805), snowflake 6-fold symmetry, Coriolis effect (N-right S-left fluid deflection).
+- **SW cache v269 → v270**.
+
 ## [5.7.190] - 2026-05-26 - Fact-cards Weather L2: 4→8
 - **+4 fact cards**: snowman weather (below freezing + wet-snow packs best), tornadoes (spring + central US), thunderstorm (lightning+thunder+rain hot humid afternoons), hail (ice balls tossed up/down through clouds gathering layers).
 - **SW cache v268 → v269**.
