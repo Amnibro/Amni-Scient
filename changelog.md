@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.199] - 2026-05-26 - Fact-cards Counting L1: 4→8
+- **+4 fact cards**: zero (means none, before 1), number order (each +1 from previous), counting things (point as you count), taking away (subtraction).
+- **SW cache v277 → v278**.
+
 ## [5.7.198] - 2026-05-26 - Fact-cards Opposites L5: 4→8
 - **+4 fact cards**: cause & effect (scientific reasoning), discrete & continuous (integers vs temp), deterministic & stochastic (clockwork vs dice/quantum), implicit & explicit (hint vs ASK).
 - Opposites fact-cards all 5 levels now at 8 each.
