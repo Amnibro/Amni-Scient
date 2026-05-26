@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.301] - 2026-05-26 - Fact-cards Weather L2: 12→16
+- Added 4 elementary weather topics to L2: rainbow science (42° refraction angle), blizzards (1888 NYC 1.5m), drought (1930s Dust Bowl), air pressure (high vs low → wind).
+- sw cache → v380; Android versionCode 337 / versionName 3.8.5.
+
 ## [5.7.300] - 2026-05-26 - Fact-cards Weather L1: 12→16
 - Added 4 kid-level weather basics to L1: sunrise (Earth spinning to face Sun), frost (vapor → solid deposition), dew (overnight condensation), storm safety (stay inside, avoid water + metal).
 - sw cache → v379; Android versionCode 336 / versionName 3.8.4.
