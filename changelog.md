@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.182] - 2026-05-26 - Fact-cards Animals L4: 5→8
+- **+3 fact cards**: echolocation (bats+dolphins ultrasonic biosonar), convergent evolution (wings + camera-eyes + echolocation evolved independently), endo vs ectotherm (mammals 10x energy budget vs reptiles bask).
+- **SW cache v260 → v261**.
+
 ## [5.7.181] - 2026-05-26 - Fact-cards Animals L3: 5→8
 - **+3 fact cards**: migration (Arctic tern 70000 km/yr, monarch magnetic-field 4-gen Mexico→Canada), eusociality (bees+ants+naked mole-rats super-organism), sloth-algae symbiosis (green-fur camouflage).
 - **SW cache v259 → v260**.
