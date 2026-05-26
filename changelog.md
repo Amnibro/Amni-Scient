@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.316] - 2026-05-26 - Fact-cards Mythology L2: 12→16
+- Added 4 lesser-Olympian deities to L2: Persephone (Hades's queen, seasonal myth), Pan (half-goat → "panic"), Janus (two-faced, January eponym), Iris (rainbow messenger, eye-iris namesake).
+- Android version rollover 3.9.9 → 4.0.0 (Amni-Learn major milestone!).
+- sw cache → v395; Android versionCode 352 / versionName 4.0.0.
+
 ## [5.7.315] - 2026-05-26 - Fact-cards Mythology L1: 12→16
 - Added 4 kid-level mythological creatures to L1: centaur (Chiron-wise vs wild warlike), griffin (lion+eagle, gold guardian), troll (Norse, sunlight→stone), elf (Tolkien graceful + Santa\'s workshop).
 - sw cache → v394; Android versionCode 351 / versionName 3.9.9.
