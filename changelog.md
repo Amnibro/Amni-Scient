@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.269] - 2026-05-26 - Fact-cards Mythology L5: 8→12
+- **+4 fact cards**: Asclepius (medicine + rod-of-1-serpent vs caduceus-of-2), Lethe (forgetfulness river → "lethal"/"lethargy" etymology), Eros/Cupid (gold vs lead arrows), Daphne (laurel transformation → Olympic wreaths).
+- Mythology fact-cards all 5 levels now at 12 each.
+- **SW cache v347 → v348**.
+
 ## [5.7.268] - 2026-05-26 - Fact-cards Mythology L4: 8→12
 - **+4 fact cards**: Sleipnir (Odin's 8-legged horse, born from Loki-as-mare), Mead of Poetry (Kvasir blood + Odin theft), Ma'at (Egyptian truth/balance feather), Bastet (Egyptian cat goddess + Bubastis mummies).
 - **SW cache v346 → v347**.
