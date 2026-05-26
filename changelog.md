@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.255] - 2026-05-26 - Fact-cards Opposites L3: 8→12
+- **+4 fact cards**: left & right (90% right-handed, brain cross-wires), above & below (sky/submarine), plus & minus (math + batteries + temps), truth & lie (polygraph unreliability).
+- **SW cache v333 → v334**.
+
 ## [5.7.254] - 2026-05-26 - Fact-cards Opposites L2: 8→12
 - **+4 fact cards**: hungry & full (body-state), strong & weak (force/muscle), awake & asleep (~⅓ of life sleeping), sick & healthy (body fighting vs working).
 - **SW cache v332 → v333**.
