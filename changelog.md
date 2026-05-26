@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.305] - 2026-05-26 - Fact-cards Colors L1: 12→16
+- Added 4 kid-level color topics to L1: mixing colors (R+Y=O, primary triple), crayons (Crayola 1903), light vs dark shades (pink vs hot-pink), sky colors (blue/orange/black daytime cycle).
+- sw cache → v384; Android versionCode 341 / versionName 3.8.9.
+
 ## [5.7.304] - 2026-05-26 - Fact-cards Weather L5: 12→16
 - Added 4 frontier meteorology topics to L5: AI weather forecasting (GraphCast/Pangu/FourCastNet), bomb cyclones (≥24 hPa pressure drop / 24 hrs), stratospheric sudden warming (polar vortex disruption), climate tipping points (AMOC, Amazon, Greenland, permafrost).
 - Weather subject now complete at 16 entries per level (L1-L5).
