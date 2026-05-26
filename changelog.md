@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.190] - 2026-05-26 - Fact-cards Weather L2: 4→8
+- **+4 fact cards**: snowman weather (below freezing + wet-snow packs best), tornadoes (spring + central US), thunderstorm (lightning+thunder+rain hot humid afternoons), hail (ice balls tossed up/down through clouds gathering layers).
+- **SW cache v268 → v269**.
+
 ## [5.7.189] - 2026-05-26 - Fact-cards Weather L1: 4→8
 - **+4 fact cards**: clouds (millions of tiny droplets), wind (invisible moving air), lightning (flash before thunder boom — light faster than sound), fog (a cloud at ground level).
 - **SW cache v267 → v268**.
