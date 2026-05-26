@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.188] - 2026-05-26 - Fact-cards Languages L5: 5→8
+- **+3 fact cards**: Sapir-Whorf (weak supported / strong rejected), transformer models (2017 attention paper, foundation of GPT/BERT/Claude), Zipf's law (power-law freq in all natural languages).
+- Languages fact-cards all 5 levels now at 8 each.
+- **SW cache v266 → v267**.
+
 ## [5.7.187] - 2026-05-26 - Fact-cards Languages L4: 5→8
 - **+3 fact cards**: Grimm's law (P→F T→TH K→H PIE→Germanic), lexicon size (~20K active / 40K recognized / OED 600K forms), endangered languages (7000 living, ~40% endangered, Hebrew/Hawaiian/Cornish revival).
 - **SW cache v265 → v266**.
