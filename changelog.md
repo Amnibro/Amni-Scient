@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.231] - 2026-05-26 - Fact-cards Shapes L4: 8→12
+- **+4 fact cards**: polygon angle sum (n−2)×180°, tessellation (only triangles+squares+hexagons tile a plane), pi & circles (100T digits Google 2022 no repeat), Pythagorean triples (3,4,5 + Egyptian rope-stretchers).
+- **SW cache v309 → v310**.
+
 ## [5.7.230] - 2026-05-26 - Fact-cards Shapes L3: 8→12
 - **+4 fact cards**: cuboid (bricks/books/shoeboxes), tetrahedron (simplest 3D, D4 dice), truncated icosahedron (soccer ball + buckminsterfullerene C60), octahedron (D8 dice + diamond crystals).
 - **SW cache v308 → v309**.
