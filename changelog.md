@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.315] - 2026-05-26 - Fact-cards Mythology L1: 12→16
+- Added 4 kid-level mythological creatures to L1: centaur (Chiron-wise vs wild warlike), griffin (lion+eagle, gold guardian), troll (Norse, sunlight→stone), elf (Tolkien graceful + Santa\'s workshop).
+- sw cache → v394; Android versionCode 351 / versionName 3.9.9.
+
 ## [5.7.314] - 2026-05-26 - Fact-cards Science L5: 12→16
 - Added 4 frontier science topics to L5: black hole imaging (EHT 2019 M87, Sgr A* 2022), quantum entanglement (Bell→Aspect→2022 Nobel), multi-messenger astronomy (GW170817 NS merger), quantum supremacy (Google Sycamore 53q 2019).
 - Science subject now complete at 16 entries per level (L1-L5).
