@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.219] - 2026-05-26 - Fact-cards Math L1+L2: 4→8
+- **L1 +4**: subtract, zero (India), even/odd, skip count (2s/5s).
+- **L2 +4**: division, time (Babylon base-60), money ($1=100¢), measurement (length/weight/volume units).
+- **SW cache v297 → v298**.
+
 ## [5.7.218] - 2026-05-26 - Fact-cards Space L5: 4→8
 - **+4 fact cards**: Schwarzschild radius r_s = 2GM/c² (1916 WW1 trenches), cosmic inflation (Guth 1980 10²⁶× in 10⁻³² s), dark energy (68% Nobel 2011 still mysterious), Hawking radiation (1974 BH evaporation + smaller = hotter).
 - Space fact-cards all 5 levels now at 8 each.
