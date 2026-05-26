@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.224] - 2026-05-26 - Fact-cards Colors L2: 8→12
+- **+4 fact cards**: cyan (CMYK), magenta (extraspectral brain-invented), bronze (3rd Olympic + statues), coral (sea-named pastel).
+- **SW cache v302 → v303**.
+
 ## [5.7.223] - 2026-05-26 - Fact-cards Colors L1: 8→12 (phase 2 begins)
 - **+4 fact cards**: brown (3 primaries mix), rainbow (ROYGBIV order), color of food (eat the rainbow), animal camouflage (frogs/polar bears/deer).
 - Phase 2 expansion target: 8 → 12 per level across all fact-card subjects.
