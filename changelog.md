@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.286] - 2026-05-26 - Fact-cards Engineering L2: 8→12
+- Added 4 elementary engineering topics to L2: pulleys (force direction + compound advantage), inclined plane (trade distance for force), conductors vs insulators (copper vs rubber), electric motors (magnetic field → motion, Faraday 1830s).
+- sw cache → v365; Android versionCode 322 / versionName 3.7.0.
+
 ## [5.7.285] - 2026-05-26 - Fact-cards Engineering L1: 8→12
 - Added 4 kid-level engineering basics to L1: trains (rails reduce friction), boats (buoyancy + displacement), computers (transistors as 0/1 switches), robots (machines that move + do tasks).
 - sw cache → v364; Android versionCode 321 / versionName 3.6.9.
