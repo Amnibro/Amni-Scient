@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.195] - 2026-05-26 - Fact-cards Opposites L2: 4→8
+- **+4 fact cards**: wet & dry (bath→towel), soft & hard (bread vs rocks), loud & quiet (thunder vs whisper — decibels), new & old (age + value nuance).
+- **SW cache v273 → v274**.
+
 ## [5.7.194] - 2026-05-26 - Fact-cards Opposites L1: 4→8
 - **+4 fact cards**: big & small (elephant vs ant), hot & cold (fire vs ice), fast & slow (cheetah 100km/h vs snail 1m/min), open & closed (doors).
 - **SW cache v272 → v273**.
