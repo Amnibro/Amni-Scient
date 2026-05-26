@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.165] - 2026-05-26 - Fact-cards Colors L2: 4→8
+- **+4 fact cards**: gray (elephants/clouds/pencil-graphite), gold (medals/sun-rays/crowns), silver (silverware/Moon/coins), color wheel (Newton 1704 bent the rainbow into a circle).
+- **SW cache v243 → v244**.
+
 ## [5.7.164] - 2026-05-26 - Fact-cards Colors L1: 4→8
 - **+4 fact cards**: orange (pumpkins/carrots/basketballs named after fruit), purple (eggplants/grapes/royalty), pink (flamingos/watermelon insides/bubble gum), white+black (snow vs night).
 - First pass on fact-card module quadruple — 4 → 16 across all subject levels in upcoming iters.
