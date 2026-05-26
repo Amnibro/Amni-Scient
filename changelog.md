@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.263] - 2026-05-26 - Fact-cards Counting L5: 8→12
+- **+4 fact cards**: summation ∑ (Gauss 5050 trick), e Euler (~2.71828 natural base), Big O notation (CS efficiency classes), Monty Hall (switch! 1/3 → 2/3).
+- Counting fact-cards all 5 levels now at 12 each.
+- **SW cache v341 → v342**.
+
 ## [5.7.262] - 2026-05-26 - Bubble Pop bug fixes (3)
 - **Bug 1 — stacking**: `i%2` packed 4 bubbles into 2 columns (overlap 0+2, 1+3). Fixed → `slotW=100/pool.length` gives each bubble its own column.
 - **Bug 2 — synchronous rise**: all bubbles spawned at same `startTime` → rose in unison. Added `spawnDelay = i*220ms` staggering.
