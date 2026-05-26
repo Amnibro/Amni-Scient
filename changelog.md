@@ -1,5 +1,14 @@
 ﻿# Changelog 
 
+## [5.7.122] - 2026-05-25 - Music L4: final 11 backfilled → Music L4 100% complete (40 total)
+- **Music L4** finished — all 40 questions teach.
+- **Advanced harmony**: modal interchange / parallel-mode borrowing (Beatles 'Yesterday' Bb in F major), secondary dominant V/V (Sweet Caroline opens D7→G→C), Neapolitan 6th ♭II in 1st inversion (Beethoven 'Moonlight' + 'Pathétique' development).
+- **Jazz canon**: jazz standards = the shared repertoire enabling jam-without-rehearsal (Great American Songbook + bebop heads), 32-bar AABA + 12-bar blues structures (Autumn Leaves, All The Things You Are, So What, Take Five).
+- **Tristan chord**: F-B-D♯-G♯ delays resolution for 5 hours of Wagner opera; the inflection point where classical tonality began to unravel. Theorists still argue about how to label it.
+- **Expression Italian terms**: rubato Chopin 'left-hand-strict / right-hand-free,' ritardando + rallentando subtle distinction + a-tempo recovery, accelerando + crescendo climactic build (Rachmaninoff C♯-minor Prelude finale), cantabile = play AS IF SINGING (piano + guitar must imitate vocal sustain).
+- **Dynamics full ladder**: ppppp → fffff with +6dB steps; Tchaikovsky's Pathétique ending pppppp; pianissimo strings on sul tasto for distant tone.
+- **SW cache v200 → v201**. Music L5 (~30 remaining missing) next iterations.
+
 ## [5.7.121] - 2026-05-25 - Music L4: 20 of 31 missing backfilled (forms, eras, advanced theory)
 - **Music L4** two-thirds done — 20 explanations added.
 - **Orchestra + forms**: 4 families seating order (strings front → percussion back), symphony Haydn-Mozart-Beethoven 4-movement standard expanded by Mahler to 5-10, sonata-allegro Exposition-Development-Recap-Coda template (K545 textbook), concerto cadenza + Baroque concerto-grosso variant.
