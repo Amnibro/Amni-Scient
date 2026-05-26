@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.254] - 2026-05-26 - Fact-cards Opposites L2: 8→12
+- **+4 fact cards**: hungry & full (body-state), strong & weak (force/muscle), awake & asleep (~⅓ of life sleeping), sick & healthy (body fighting vs working).
+- **SW cache v332 → v333**.
+
 ## [5.7.253] - 2026-05-26 - Fact-cards Opposites L1: 8→12
 - **+4 fact cards**: sweet & sour (sugar/honey vs lemons/pickles), stop & go (traffic lights), hello & goodbye (universal greeting/farewell pair), light & heavy (feather vs rock + scale).
 - **SW cache v331 → v332**.
