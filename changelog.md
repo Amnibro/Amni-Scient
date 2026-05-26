@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.245] - 2026-05-26 - Fact-cards Languages L3: 8→12
+- **+4 fact cards**: onomatopoeia (buzz/hiss/meow Greek roots), palindromes (racecar + "a man a plan a canal panama"), alliteration (Peter Piper), compound words (baseball+rainbow+German monsters).
+- **SW cache v323 → v324**.
+
 ## [5.7.244] - 2026-05-26 - Fact-cards Languages L2: 8→12
 - **+4 fact cards**: Mandarin (4 tones + 1.1B speakers most native), Portuguese (250M Brazil+Portugal 6th), Arabic (RTL + ~400M MENA), Korean (Hangul 1443 designed easy).
 - **SW cache v322 → v323**.
