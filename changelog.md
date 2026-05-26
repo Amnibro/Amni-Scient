@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.179] - 2026-05-26 - Fact-cards Animals L1: 5→8
+- **+3 fact cards**: cow (4 stomach chambers, double-chew), horse (sleep standing — lock leg joints), rabbit (huge ears for danger + big back feet for hopping).
+- **SW cache v257 → v258**.
+
 ## [5.7.178] - 2026-05-26 - Fact-cards Science L5: 5→8
 - **+3 fact cards**: QFT (QED 10-decimal-place precision), CRISPR-Cas9 (Doudna+Charpentier Nobel 2020, bacterial immune system → gene editing), AlphaFold (DeepMind 2020 solved 50-yr protein-folding grand challenge).
 - Science fact-cards all 5 levels now at 8 each.
