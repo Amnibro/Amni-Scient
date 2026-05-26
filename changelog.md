@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.221] - 2026-05-26 - Fact-cards Engineering L1+L2: 4→8
+- **L1 +4**: bridges (arch/suspension/beam), cars (~30K parts), airplanes (lift + Wright 1903), tools (3M-year-old).
+- **L2 +4**: lever (seesaws/scissors/wheelbarrows), gears (small→big = force, big→small = speed), wheels (6000-yr-old friction reduction), batteries (Volta 1800).
+- **SW cache v299 → v300**.
+
 ## [5.7.220] - 2026-05-26 - Fact-cards Math L3+L4+L5: NEW (8 each)
 - **L3 new**: pi, Pythagoras, algebra (al-jabr), decimals, %, triangle types, perimeter/area, sequences.
 - **L4 new**: calculus (Newton+Leibniz), functions, primes (Euclid infinitude), trig, statistics, probability, limits, logarithms.
