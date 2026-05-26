@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.168] - 2026-05-26 - Fact-cards Colors L5: 4→8
+- **+4 fact cards**: CIE 1931 horseshoe chromaticity, metamerism (same RGB different spectra), Bayer RGGB filter mosaic + demosaicing, Delta E < 2 brand-matching threshold.
+- Colors fact-cards all 5 levels now at 8 each (first quarter of 4→16 quadruple complete).
+- **SW cache v246 → v247**.
+
 ## [5.7.167] - 2026-05-26 - Fact-cards Colors L4: 4→8
 - **+4 fact cards**: structural color (peacock/butterfly microridges shift with angle), afterimages (cone-cell fatigue gives green ghost from red stare), analogous + triadic schemes, Hollywood teal+orange complementary grading.
 - **SW cache v245 → v246**.
