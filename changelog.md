@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.259] - 2026-05-26 - Fact-cards Counting L2: 8→12
+- **+4 fact cards**: inches & feet (12 in/ft, 5280 ft/mi), temperature (0°C=32°F freeze, body 37°C), months in year (12 named), lunar counting (29.5 day cycle + Islamic calendar).
+- **SW cache v337 → v338**.
+
 ## [5.7.258] - 2026-05-26 - Fact-cards Counting L1: 8→12
 - **+4 fact cards**: animal counting (crows ~7), counting songs (rhyme aids memory), counting past 10 (11-19 + 20), subitizing (dot patterns 1-4 recognized without counting).
 - **SW cache v336 → v337**.
