@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.204] - 2026-05-26 - Fact-cards Mythology L1: 4→8
+- **+4 fact cards**: dragon (Western+Eastern worldwide), cyclops (Polyphemus traps Odysseus), Pegasus (from Medusa's neck), mermaid (worldwide folklore Greek→Norse→ningyo).
+- **SW cache v282 → v283**.
+
 ## [5.7.203] - 2026-05-26 - Fact-cards Counting L5: 4→8
 - **+4 fact cards**: Fibonacci (pinecones+sunflowers+nautilus), number bases (decimal vs binary 13=1101), infinity (Cantor 1874 countable vs uncountable), probability (independent events multiply).
 - Counting fact-cards all 5 levels now at 8 each.
