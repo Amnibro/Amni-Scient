@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.215] - 2026-05-26 - Fact-cards Space L2: 4→8
+- **+4 fact cards**: Mercury (430°C/−180°C extremes), Venus (465°C runaway greenhouse hotter than Mercury), Saturn (low-density, would float in water), galaxies (~2 trillion observable).
+- **SW cache v293 → v294**.
+
 ## [5.7.214] - 2026-05-26 - Fact-cards Space L1: 4→8
 - **+4 fact cards**: stars (more than grains of sand), comets (dirty snowballs + sun-heated tails), rockets (Newton 3rd law push-down → fly-up), satellites (GPS+weather+TV).
 - **SW cache v292 → v293**.
