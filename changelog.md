@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.192] - 2026-05-26 - Fact-cards Weather L4: 4→8
+- **+4 fact cards**: Hadley/Ferrel/Polar cells (6 convection cells → ~30° deserts), trade winds (tropical easterlies + Roaring Forties), Saffir-Simpson scale (1-5 hurricane cats), aurora (solar wind → O+N atomic colors).
+- **SW cache v270 → v271**.
+
 ## [5.7.191] - 2026-05-26 - Fact-cards Weather L3: 4→8
 - **+4 fact cards**: cloud types (cirrus/cumulus/stratus/nimbus + combinations), Beaufort scale (0-12 wind force, 1805), snowflake 6-fold symmetry, Coriolis effect (N-right S-left fluid deflection).
 - **SW cache v269 → v270**.
