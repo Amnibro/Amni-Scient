@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.312] - 2026-05-26 - Fact-cards Science L3: 12→16
+- Added 4 intermediate science topics to L3: Newton's laws (F=ma, action/reaction), chemical bonds (ionic/covalent/metallic/H-bond), conservation laws (Noether 1915 symmetries), wave interference (constructive/destructive, noise-canceling, double-slit).
+- sw cache → v391; Android versionCode 348 / versionName 3.9.6.
+
 ## [5.7.311] - 2026-05-26 - Fact-cards Science L2: 12→16
 - Added 4 elementary science topics to L2: earthquakes (tectonic slip, Richter log scale), sound waves (20-20k Hz, ~343 m/s in air), light rays (reflect/refract/absorb, EM spectrum slice), friction (rough vs smooth, wheels roll).
 - sw cache → v390; Android versionCode 347 / versionName 3.9.5.
