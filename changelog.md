@@ -1,5 +1,13 @@
 ﻿# Changelog 
 
+## [5.7.131] - 2026-05-26 - Sports expansion: 30 → 50 Qs (+20 across 5 levels)
+- **L1 +4**: track & field (10 events + ancient-Olympic origin), cycling (1817 draisine + 2003 helmet mandate after Kivilev death), gymnastics (Jahn + Biles), American football (NFL = wealthiest pro league).
+- **L2 +4**: boxing 12 rounds (reduced from 15 after Duk-Koo Kim's 1982 death), Olympic motto Citius Altius Fortius + Communiter 2021 addition, volleyball 6-per-side + net heights + beach 2v2, Larry O'Brien NBA trophy etymology + Boston/LA tie at 17-18 championships.
+- **L3 +4**: hat trick (cricket 1858 origin → hockey hat-toss tradition), Duplantis pole-vault 6.24m + sponsor-bonus 1cm-at-a-time, decathlon 10 events + 'world's greatest athlete' title, match point vs set point vs break point distinctions.
+- **L4 +4**: Bannister sub-4-min mile 1954 (Landy broke it 46 days later — psychological barrier), Pelé 3 World Cups + age 17 in 1958 + 1279-goal career, Djokovic 24 GS men's record + Big Three era + Court/Williams women's tally, Title IX 1972 transforming US women's sports (30k → 200k college athletes).
+- **L5 +4**: Bob Beamon 8.90m 1968 long jump (stood 23 years, broke measuring device, 'Beamonesque' adj), MJ 6-0 NBA Finals + 6 FMVPs perfect record, Nadia Comăneci 1976 perfect 10 (scoreboard couldn't display 10.00 → showed '1.00'), Babe Ruth's 1932 called shot at Wrigley Game 3 (Yankees swept 4-0).
+- **SW cache v209 → v210**. Space + smaller-banks (weather/opposites/counting/shapes/colors at 10/level) next iterations.
+
 ## [5.7.130] - 2026-05-26 - Mythology expansion: 30 → 50 Qs (+20 across 5 levels)
 - **L1 +4**: Cyclops (Polyphemus + Hephaestus's smiths), Pegasus (born from Medusa's neck + Bellerophon's gadfly downfall), Apollo (sun + music + Delphi oracle + NASA namesake), Heracles intro (12 Labors list).
 - **L2 +4**: Persephone-Hades (origin of seasons via 6 pomegranate seeds), Demeter (Eleusinian Mysteries + 'cereal' etymology via Ceres), Artemis (virgin huntress + Apollo's twin), Hestia (oldest Olympian + Vestal Virgin eternal flame).
