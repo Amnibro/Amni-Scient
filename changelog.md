@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.256] - 2026-05-26 - Fact-cards Opposites L4: 8→12
+- **+4 fact cards**: local & global (bakery vs Coca-Cola 200+ countries), endothermic & exothermic (chemistry energy direction), increase & decrease (slope sign), optimistic & pessimistic (slight pessimism best for planning).
+- **SW cache v334 → v335**.
+
 ## [5.7.255] - 2026-05-26 - Fact-cards Opposites L3: 8→12
 - **+4 fact cards**: left & right (90% right-handed, brain cross-wires), above & below (sky/submarine), plus & minus (math + batteries + temps), truth & lie (polygraph unreliability).
 - **SW cache v333 → v334**.
