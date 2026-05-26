@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.273] - 2026-05-26 - Fact-cards Sports L4: 8→12
+- **+4 fact cards**: pool/billiards (8-ball / 9-ball / snooker), archery (Olympic 70m + 25K-yr human history), kitesurfing (2024 Paris Olympic debut + 28m jumps), skateboarding (1950s CA + Tokyo 2020 debut).
+- **SW cache v351 → v352**.
+
 ## [5.7.272] - 2026-05-26 - Fact-cards Sports L3: 8→12
 - **+4 fact cards**: bobsled & luge (Swiss Alps 1800s 130+ km/h), rugby (Ellis 1823 → Union 15 + League 13), curling (16c Scotland "chess on ice" 1998 Olympic), sport fishing (fly+deep-sea+bass+ice + catch-and-release 1970s).
 - **SW cache v350 → v351**.
