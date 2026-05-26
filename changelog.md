@@ -1,5 +1,13 @@
 ﻿# Changelog 
 
+## [5.7.132] - 2026-05-26 - Space expansion: 40 → 60 Qs (+20 across 5 levels)
+- **L1 +4**: Earth rotation vs Sun motion for day/night + 23h56m sidereal day + 4-min Sun-orbit catch-up, Rayleigh scattering 1/λ⁴ explaining blue sky + red sunsets, Galileo's 1609 telescope discoveries (Jupiter moons, Venus phases, Moon craters) + 1633 house arrest, Moon phases full 29.5-day cycle + new-to-full-to-new naming.
+- **L2 +4**: asteroid vs comet (rocky vs icy, asteroid belt vs Kuiper+Oort, coma/dust/ion tails), Titan as Saturn's largest moon + liquid methane lakes + Cassini-Huygens 2005 landing, rocket Newton's 3rd Law + Tsiolkovsky equation Δv = v_e·ln(m_i/m_f), spacesuit purpose (vacuum + thermal swings ±150°C + radiation + 0.3atm pure O₂).
+- **L3 +4**: black hole event horizon + Schwarzschild radius + Sgr A* + 2019/2022 EHT first images, supernova Type II core collapse vs Type Ia thermonuclear + heavy-element-forging origin, aurora solar-wind + magnetic-field funnel + O/N atomic emission colors, ISS 400km altitude + 28000km/h + 24-yr continuous human presence + 16 sunrises/day.
+- **L4 +4**: exoplanets ~5500+ via transit/radial-velocity/imaging/microlensing + 60 Earth-size in habitable zones, Lagrange 5 points + JWST at L2 + Trojan asteroids at L4/L5, Kepler's 3 laws (ellipses + equal areas + T² ∝ a³ verified with Earth-Jupiter ratio), JWST IR + L2 orbit + early-universe + transit spectroscopy + 6.5m gold-coated segmented mirror unfolding.
+- **L5 +4**: cosmic inflation Guth 1980 + 10²⁶ expansion + horizon/flatness/monopole solutions + quantum-seed structure, dark matter 27% + galaxy-rotation curve evidence + Bullet Cluster + decades of detector misses, dark energy 68% + 1998 supernova-discovery Nobel 2011 + cosmological constant problem (120 orders of magnitude), Hawking radiation T = ℏc³/(8πGMk_B) inverse-mass + primordial micro-black-hole evaporation candidates.
+- **SW cache v210 → v211**. Now: weather/opposites/counting/shapes/colors at 10/level. Next iterations.
+
 ## [5.7.131] - 2026-05-26 - Sports expansion: 30 → 50 Qs (+20 across 5 levels)
 - **L1 +4**: track & field (10 events + ancient-Olympic origin), cycling (1817 draisine + 2003 helmet mandate after Kivilev death), gymnastics (Jahn + Biles), American football (NFL = wealthiest pro league).
 - **L2 +4**: boxing 12 rounds (reduced from 15 after Duk-Koo Kim's 1982 death), Olympic motto Citius Altius Fortius + Communiter 2021 addition, volleyball 6-per-side + net heights + beach 2v2, Larry O'Brien NBA trophy etymology + Boston/LA tie at 17-18 championships.
