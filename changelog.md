@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.174] - 2026-05-26 - Fact-cards Science L1: 5→8
+- **+3 fact cards**: Earth (3rd planet, only known life), Moon (reflects sunlight, makes no light), lightning (30000°C electric spark, 5x hotter than Sun's surface).
+- **SW cache v252 → v253**.
+
 ## [5.7.173] - 2026-05-26 - Fact-cards Shapes L5: 4→8
 - **+4 fact cards**: fractals (Mandelbrot+Koch+ferns+coastlines self-similar), topology (donut≡coffee cup, both 1 hole), non-Euclidean (sphere triangles >180°, saddle <180°, GR uses curved space), golden ratio φ≈1.618 (nautilus+sunflower+Parthenon+Fibonacci).
 - Shapes fact-cards all 5 levels now at 8 each.
