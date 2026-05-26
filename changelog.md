@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.187] - 2026-05-26 - Fact-cards Languages L4: 5→8
+- **+3 fact cards**: Grimm's law (P→F T→TH K→H PIE→Germanic), lexicon size (~20K active / 40K recognized / OED 600K forms), endangered languages (7000 living, ~40% endangered, Hebrew/Hawaiian/Cornish revival).
+- **SW cache v265 → v266**.
+
 ## [5.7.186] - 2026-05-26 - Fact-cards Languages L3: 5→8
 - **+3 fact cards**: idioms (kick-the-bucket non-literal), loanwords (safari Swahili / tycoon Japanese / ketchup Chinese / algebra Arabic / schadenfreude German — ~80% English vocab borrowed), active vs passive voice.
 - **SW cache v264 → v265**.
