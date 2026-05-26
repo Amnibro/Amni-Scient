@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.309] - 2026-05-26 - Fact-cards Colors L5: 12→16
+- Added 4 frontier color-engineering topics to L5: HDR (Rec.2100, 10000-nit, PQ/HLG, tone mapping), ICC profiles (color management between device-RGB ↔ PCS), quantum-dot displays (2-10 nm nanocrystal emitters, QLED), CRI & SPD (sunlight=100, LED ~70-95).
+- Colors subject now complete at 16 entries per level (L1-L5).
+- sw cache → v388; Android versionCode 345 / versionName 3.9.3.
+
 ## [5.7.308] - 2026-05-26 - Fact-cards Colors L4: 12→16
 - Added 4 advanced color topics to L4: additive vs subtractive (R+G+B=white vs C+M+Y=black), Munsell 1905 3D color solid (hue/value/chroma), color psychology (red attention, blue calm), pointillism (Seurat dot blending = additive demo).
 - sw cache → v387; Android versionCode 344 / versionName 3.9.2.
