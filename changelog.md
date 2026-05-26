@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.285] - 2026-05-26 - Fact-cards Engineering L1: 8→12
+- Added 4 kid-level engineering basics to L1: trains (rails reduce friction), boats (buoyancy + displacement), computers (transistors as 0/1 switches), robots (machines that move + do tasks).
+- sw cache → v364; Android versionCode 321 / versionName 3.6.9.
+
 ## [5.7.284] - 2026-05-26 - Fact-cards Math L5: 8→12
 - Added 4 frontier math topics to L5: Gödel's incompleteness (limits of formalism), Fourier transform (sin/cos decomposition + FFT), Shannon information theory (entropy H = −Σ p log p), Riemann hypothesis ($1M Clay open problem).
 - sw cache → v363; Android versionCode 320 / versionName 3.6.8.
