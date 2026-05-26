@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.293] - 2026-05-26 - Fact-cards Animals L4: 12→16
+- Added 4 advanced biology topics to L4: bioluminescence (luciferin/luciferase, 80% deep-sea), hibernation + torpor (metabolic shutdown, hummingbird daily torpor), pheromones (trail/alarm/sex chemical signals), speciation (allopatric vs sympatric vs polyploidy).
+- sw cache → v372; Android versionCode 329 / versionName 3.7.7.
+
 ## [5.7.292] - 2026-05-26 - Fact-cards Animals L3: 12→16
 - Added 4 intermediate ecology topics to L3: keystone species (sea otters → kelp, wolves → Yellowstone), mimicry (Batesian vs Müllerian), food webs (10% energy per level), animal communication (whale songs, bee waggle dance, vervet alarm calls).
 - sw cache → v371; Android versionCode 328 / versionName 3.7.6.
