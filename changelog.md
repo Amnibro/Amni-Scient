@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.237] - 2026-05-26 - Fact-cards Science L5: 8→12
+- **+4 fact cards**: connectomics (C. elegans 1986 → fruit fly 140K 2024), Higgs boson (CERN 2012 LHC), gravitational waves (LIGO Sept 2015 BH merger 1.3 Bly), mRNA vaccines (Karikó+Weissman Nobel 2023).
+- Science fact-cards all 5 levels now at 12 each.
+- **SW cache v315 → v316**.
+
 ## [5.7.236] - 2026-05-26 - Fact-cards Science L4: 8→12
 - **+4 fact cards**: plate tectonics (7+8 plates, theory only 60 yr old), catalysts (enzymes 99.999% + Pt/Ni industrial), nuclear reactions (fission vs fusion + E=mc²), stem cells (Yamanaka Nobel 2012 iPSCs).
 - **SW cache v314 → v315**.
