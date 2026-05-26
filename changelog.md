@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.207] - 2026-05-26 - Fact-cards Mythology L4: 4→8
+- **+4 fact cards**: Yggdrasil (Norse World Tree 9 realms), Excalibur (Arthur + Lady of Lake + Malory 1485), Pandora's jar (hope last), Atlas Titan (sky not Earth — atlas map books).
+- **SW cache v285 → v286**.
+
 ## [5.7.206] - 2026-05-26 - Fact-cards Mythology L3: 4→8
 - **+4 fact cards**: Loki (Norse trickster shape-shifter, father of Fenrir/Jörmungandr/Hel), Horus (Egyptian falcon sky-god, pharaohs incarnated him alive), Heracles 12 Labors, Perseus + Medusa.
 - **SW cache v284 → v285**.
