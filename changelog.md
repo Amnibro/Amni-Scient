@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.242] - 2026-05-26 - Fact-cards Animals L5: 8→12
+- **+4 fact cards**: polyploidy (wheat 6n + frogs/ferns/salmon), lobe-finned fish (coelacanth 1938 + lungfish + tetrapod ancestor), CRISPR origins (bacterial immune memory), quorum sensing (vibrio bioluminescence + pathogen virulence).
+- Animals fact-cards all 5 levels now at 12 each.
+- **SW cache v320 → v321**.
+
 ## [5.7.241] - 2026-05-26 - Fact-cards Animals L4: 8→12
 - **+4 fact cards**: co-evolution (yucca moth + yucca plant lock-in), pollination (80% need animal pollinators), venom evolution (modified saliva + ACE-inhibitor from pit viper), symbiosis types (mutualism/commensalism/parasitism).
 - **SW cache v319 → v320**.
