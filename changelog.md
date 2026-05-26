@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.247] - 2026-05-26 - Fact-cards Languages L5: 8→12
+- **+4 fact cards**: FOXP2 gene (speech disorders + songbirds+bats), Broca's/Wernicke's areas (production vs comprehension), Rosetta Stone (Champollion 1822 hieroglyph decipher), subword tokenization (BPE/WordPiece for LLMs).
+- Languages fact-cards all 5 levels now at 12 each.
+- **SW cache v325 → v326**.
+
 ## [5.7.246] - 2026-05-26 - Fact-cards Languages L4: 8→12
 - **+4 fact cards**: diglossia (Arabic MSA vs dialect + Greek 1976), phoneme inventories (Rotokas 11 vs !Xóõ 141), pidgins/creoles (Haitian + Tok Pisin), writing system types (logograms/syllabaries/alphabets/abjads/abugidas).
 - **SW cache v324 → v325**.
