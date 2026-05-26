@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.299] - 2026-05-26 - Fact-cards Languages L5: 12→16
+- Added 4 frontier language topics to L5: word embeddings (king−man+woman≈queen, Word2Vec), language acquisition (critical period, Genie), neural speech decoding (UCSF/Meta 2023+ motor cortex BCI), Voynich Manuscript (15th-c undeciphered script).
+- Languages subject now complete at 16 entries per level (L1-L5).
+- sw cache → v378; Android versionCode 335 / versionName 3.8.3.
+
 ## [5.7.298] - 2026-05-26 - Fact-cards Languages L4: 12→16
 - Added 4 advanced linguistics topics to L4: IPA (International Phonetic Alphabet), morphological typology (isolating/agglutinative/fusional/polysynthetic), sign languages (full grammar, ASL ≠ English), constructed languages (Esperanto/Klingon/Toki Pona).
 - sw cache → v377; Android versionCode 334 / versionName 3.8.2.
