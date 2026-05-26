@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.261] - 2026-05-26 - Fact-cards Counting L4: 8→12
+- **+4 fact cards**: long multiplication (23×17 partial products), long division (372÷4=93), equivalent fractions (½=2/4=4/8), order of operations (PEMDAS/BODMAS).
+- **SW cache v339 → v340**.
+
 ## [5.7.260] - 2026-05-26 - Fact-cards Counting L3: 8→12
 - **+4 fact cards**: mental math (rounding tricks), estimation (~30 vs exact 31), word problems (translate words → numbers), area & length (1D vs 2D + carpet/paint usage).
 - **SW cache v338 → v339**.
