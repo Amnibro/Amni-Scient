@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.272] - 2026-05-26 - Fact-cards Sports L3: 8→12
+- **+4 fact cards**: bobsled & luge (Swiss Alps 1800s 130+ km/h), rugby (Ellis 1823 → Union 15 + League 13), curling (16c Scotland "chess on ice" 1998 Olympic), sport fishing (fly+deep-sea+bass+ice + catch-and-release 1970s).
+- **SW cache v350 → v351**.
+
 ## [5.7.271] - 2026-05-26 - Fact-cards Sports L2: 8→12 (SW v350)
 - **+4 fact cards**: fencing (foil/épée/sabre + electronic ms scoring), martial arts (karate/taekwondo/judo/kungfu origins), figure skating (Hanyu quad Axel), gymnastics (Biles eponymous skills).
 - **SW cache v349 → v350**.
