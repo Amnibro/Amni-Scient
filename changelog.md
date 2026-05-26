@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.176] - 2026-05-26 - Fact-cards Science L3: 5→8
+- **+3 fact cards**: sound waves (~343 m/s vs light 875,000x faster → thunder lag), electricity (Ohm's law V=IR + volts/amps/ohms), microbiology (~38T bacteria ≈ human cells).
+- **SW cache v254 → v255**.
+
 ## [5.7.175] - 2026-05-26 - Fact-cards Science L2: 5→8
 - **+3 fact cards**: states of matter (4th = plasma), skeleton (~206 adult bones from ~270 at birth, bones fuse), photosynthesis (CO₂+water+sun→sugar+O₂, foundation of food chain).
 - **SW cache v253 → v254**.
