@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.213] - 2026-05-26 - Fact-cards Sports L5: 4→8
+- **+4 fact cards**: Kipchoge sub-2 marathon (Vienna 2019 unofficial), 1972 Dolphins perfect 17-0, Maradona Hand of God + Goal of the Century, Gretzky assists alone outscore everyone.
+- Sports fact-cards all 5 levels now at 8 each.
+- **SW cache v291 → v292**.
+
 ## [5.7.212] - 2026-05-26 - Fact-cards Sports L4: 4→8
 - **+4 fact cards**: Le Mans 24-hour endurance (1923, teams of 3), AVP beach volleyball (1996 Olympic + USA dominance), hole-in-one (amateur 12500:1 vs pro 3000:1), ultimate frisbee (1968 Columbia HS + Spirit of the Game).
 - **SW cache v290 → v291**.
