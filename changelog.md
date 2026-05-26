@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.180] - 2026-05-26 - Fact-cards Animals L2: 5→8
+- **+3 fact cards**: wolf (family-pack alpha pair, howl across km), shark (450My older than trees, teeth replaced bi-weekly), snake (forked tongue scoops air to Jacobson's organ, sleep eyes-open).
+- **SW cache v258 → v259**.
+
 ## [5.7.179] - 2026-05-26 - Fact-cards Animals L1: 5→8
 - **+3 fact cards**: cow (4 stomach chambers, double-chew), horse (sleep standing — lock leg joints), rabbit (huge ears for danger + big back feet for hopping).
 - **SW cache v257 → v258**.
