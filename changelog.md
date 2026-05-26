@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.307] - 2026-05-26 - Fact-cards Colors L3: 12→16
+- Added 4 intermediate color-science topics to L3: chlorophyll (absorbs R+B, reflects G), melanin (UV-protective pigment), animal camouflage (chameleon iridophores, cuttlefish sub-second), synesthesia (4% blend senses, grapheme-color most common).
+- sw cache → v386; Android versionCode 343 / versionName 3.9.1.
+
 ## [5.7.306] - 2026-05-26 - Fact-cards Colors L2: 12→16
 - Added 4 named colors to L2: turquoise ("Turkish stone" gem), maroon (chestnut-dark-red), navy (1748 British naval uniform), lavender (pale purple flower).
 - sw cache → v385; Android versionCode 342 / versionName 3.9.0.
