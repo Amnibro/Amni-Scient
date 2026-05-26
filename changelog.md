@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.197] - 2026-05-26 - Fact-cards Opposites L4: 4→8
+- **+4 fact cards**: convex & concave (hill vs bowl optics), acidic & basic (lemon pH2 vs bleach pH12), stable & unstable (physics), symmetric & asymmetric (butterfly vs human face).
+- **SW cache v275 → v276**.
+
 ## [5.7.196] - 2026-05-26 - Fact-cards Opposites L3: 4→8
 - **+4 fact cards**: same & different (twins vs feet), smooth & rough (glass vs bark — tactile), front & back (eyes vs spine), inside & outside (kitchen vs yard).
 - **SW cache v274 → v275**.
