@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.289] - 2026-05-26 - Fact-cards Engineering L5: 8→12
+- Added 4 frontier engineering topics to L5: brain-computer interfaces (Utah Array, Neuralink), synthetic biology (DNA-as-code, biofoundries), solid-state batteries (EV next-gen), direct air capture (Climeworks Mammoth, 36k tons/yr).
+- sw cache → v368; Android versionCode 325 / versionName 3.7.3.
+
 ## [5.7.288] - 2026-05-26 - Fact-cards Engineering L4: 8→12
 - Added 4 advanced engineering topics to L4: 3D printing / additive manufacturing (FDM/SLA/SLS), composite materials (carbon fiber + epoxy, kevlar), MEMS (silicon-scale sensors), aerodynamics (Bernoulli lift + drag + CFD).
 - sw cache → v367; Android versionCode 324 / versionName 3.7.2.
