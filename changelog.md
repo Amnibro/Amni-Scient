@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.270] - 2026-05-26 - Fact-cards Sports L1: 8→12
+- **+4 fact cards**: running (Bolt 9.58s), cycling (1817 Germany + Tour de France 21 stages), table tennis (Victorian England 1880s + China dominance), golf (15c Scotland + 4 majors).
+- **SW cache v348 → v349**.
+
 ## [5.7.269] - 2026-05-26 - Fact-cards Mythology L5: 8→12
 - **+4 fact cards**: Asclepius (medicine + rod-of-1-serpent vs caduceus-of-2), Lethe (forgetfulness river → "lethal"/"lethargy" etymology), Eros/Cupid (gold vs lead arrows), Daphne (laurel transformation → Olympic wreaths).
 - Mythology fact-cards all 5 levels now at 12 each.
