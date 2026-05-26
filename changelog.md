@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.193] - 2026-05-26 - Fact-cards Weather L5: 4→8
+- **+4 fact cards**: atmospheric rivers (Pineapple Express 50% CA precip), foehn/chinook (warm dry downslope, 20+°C swings), volcanic cooling (1815 Tambora "year without summer" SO₂ aerosols), mesocyclone (supercell rotating updraft → tornado source).
+- Weather fact-cards all 5 levels now at 8 each.
+- **SW cache v271 → v272**.
+
 ## [5.7.192] - 2026-05-26 - Fact-cards Weather L4: 4→8
 - **+4 fact cards**: Hadley/Ferrel/Polar cells (6 convection cells → ~30° deserts), trade winds (tropical easterlies + Roaring Forties), Saffir-Simpson scale (1-5 hurricane cats), aurora (solar wind → O+N atomic colors).
 - **SW cache v270 → v271**.
