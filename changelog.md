@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.142] - 2026-05-26 - Shapes L3: 10→20 (intermediate geometry depth)
+- **+10 entries**: tetrahedron 4-triangle self-dual + methane CH₄ molecular shape, NET concept (cube has 11 distinct nets! origami + flat-pack furniture), convex vs concave (optimization-algorithm relevance), diagonals n(n-3)/2 + square diagonal-vs-side √2, tangent line perpendicular-to-radius at touch-point, chord with diameter as longest-chord, radius vs diameter d=2r connection-to-π, arc length r·θ + inscribed-angle theorem half-central, hemisphere 2/3-volume half-sphere + Earth's N/S hemispheres, honeycomb hexagon 3×120° tiling (Hales 1999 Honeycomb Conjecture), torus genus-1 topology with R+r radii (donuts/tires/cosmological models).
+- **SW cache v220 → v221**.
+
 ## [5.7.141] - 2026-05-26 - Weather L3: 10→20 (intermediate atmospheric science)
 - **+10 entries**: hail formation by repeated updraft refreezing (20cm Vivian SD 2010 record), monsoon land/ocean differential heating + Indian Ocean 80%-of-annual-rain in 4 months, sleet vs freezing rain (ice pellet vs liquid-on-impact glassy coating), haboob desert dust wall (Phoenix 1-3/yr), drought multi-year deficit + US Southwest 22-yr megadrought tree-ring record, smog 1905 London coinage + 1952 'pea-souper' 12k deaths + LA photochemical vs Beijing/Delhi today, weather fronts (cold/warm/stationary/occluded) with map-symbol semantics, dew vs frost (deposition skipping liquid step), wind chill heat-loss-speed-up vs actual-air-temp distinction, Köppen 5 main climate zones (tropical/arid/temperate/continental/polar) shifting with climate change.
 - **SW cache v219 → v220**.
