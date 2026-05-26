@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.274] - 2026-05-26 - Fact-cards Sports L5: 8→12
+- **+4 fact cards**: Jordan flu game (1997 NBA Finals 38 pts at 104°F), DiMaggio 56-game streak (1941, next-best 44), Rumble in the Jungle (Ali rope-a-dope 1974), Senna Monaco 1988 qualifying (1.4 s margin "beyond conscious mind").
+- Sports fact-cards all 5 levels now at 12 each.
+- **SW cache v352 → v353**.
+
 ## [5.7.273] - 2026-05-26 - Fact-cards Sports L4: 8→12
 - **+4 fact cards**: pool/billiards (8-ball / 9-ball / snooker), archery (Olympic 70m + 25K-yr human history), kitesurfing (2024 Paris Olympic debut + 28m jumps), skateboarding (1950s CA + Tokyo 2020 debut).
 - **SW cache v351 → v352**.
