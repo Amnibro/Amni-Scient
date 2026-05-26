@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.277] - 2026-05-26 - Fact-cards Space L3: 8→12
+- **+4 fact cards**: Saturn's rings (~7 main + ~10-30m vertical thickness vs 280K km wide), Andromeda approach (110 km/s, ~4.5 Bly collision Milkomeda), ISS (400 km up, 16 sunrises/day, $150B), solar wind (~400 km/s + comet tails away from Sun).
+- **SW cache v355 → v356**.
+
 ## [5.7.276] - 2026-05-26 - Fact-cards Space L2: 8→12 (Android v3.6.0)
 - **+4 fact cards**: Uranus & Neptune (98° tilt + 2000 km/h winds + methane blue), Earth's atmosphere (78N 21O + ozone UV shield), sunspots (~3800°C 11-yr cycle), moon phases (synodic 29.5 days).
 - **SW cache v354 → v355**.
