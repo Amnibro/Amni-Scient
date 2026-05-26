@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.298] - 2026-05-26 - Fact-cards Languages L4: 12→16
+- Added 4 advanced linguistics topics to L4: IPA (International Phonetic Alphabet), morphological typology (isolating/agglutinative/fusional/polysynthetic), sign languages (full grammar, ASL ≠ English), constructed languages (Esperanto/Klingon/Toki Pona).
+- sw cache → v377; Android versionCode 334 / versionName 3.8.2.
+
 ## [5.7.297] - 2026-05-26 - Fact-cards Languages L3: 12→16
 - Added 4 intermediate language topics to L3: homophones (their/there/they're), prefixes & suffixes (un-/re-/-ness), Greek/Latin word roots (tele+phone), acronyms vs initialisms (NASA vs FBI).
 - sw cache → v376; Android versionCode 333 / versionName 3.8.1.
