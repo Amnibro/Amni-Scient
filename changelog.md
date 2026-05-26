@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.236] - 2026-05-26 - Fact-cards Science L4: 8→12
+- **+4 fact cards**: plate tectonics (7+8 plates, theory only 60 yr old), catalysts (enzymes 99.999% + Pt/Ni industrial), nuclear reactions (fission vs fusion + E=mc²), stem cells (Yamanaka Nobel 2012 iPSCs).
+- **SW cache v314 → v315**.
+
 ## [5.7.235] - 2026-05-26 - Fact-cards Science L3: 8→12
 - **+4 fact cards**: pH scale (0-14, 10× per step), absolute zero (0 K = −273.15°C, ~38 pK lab achieved), half-life (C-14 5730 yr, U-238 4.5 Byr), mitochondria (ATP factories + own DNA + endosymbiont origin).
 - **SW cache v313 → v314**.
