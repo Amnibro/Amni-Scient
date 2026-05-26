@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.296] - 2026-05-26 - Fact-cards Languages L2: 12→16
+- Added 4 world languages to L2: Hindi (Devanagari, ~600M), Russian (Cyrillic, ~250M), Swahili (East-African lingua franca), Hebrew (right-to-left, only successful language revival).
+- sw cache → v375; Android versionCode 332 / versionName 3.8.0.
+
 ## [5.7.295] - 2026-05-26 - Fact-cards Languages L1: 12→16
 - Added 4 kid-level language basics to L1: vowels & consonants (A E I O U), plurals (cat→cats, mouse→mice), nouns vs verbs (thing vs action), sorry / excuse me (polite repair words).
 - sw cache → v374; Android versionCode 331 / versionName 3.7.9.
