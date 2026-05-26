@@ -1,5 +1,13 @@
 ﻿# Changelog 
 
+## [5.7.130] - 2026-05-26 - Mythology expansion: 30 → 50 Qs (+20 across 5 levels)
+- **L1 +4**: Cyclops (Polyphemus + Hephaestus's smiths), Pegasus (born from Medusa's neck + Bellerophon's gadfly downfall), Apollo (sun + music + Delphi oracle + NASA namesake), Heracles intro (12 Labors list).
+- **L2 +4**: Persephone-Hades (origin of seasons via 6 pomegranate seeds), Demeter (Eleusinian Mysteries + 'cereal' etymology via Ceres), Artemis (virgin huntress + Apollo's twin), Hestia (oldest Olympian + Vestal Virgin eternal flame).
+- **L3 +4**: Isis (reassembled Osiris + Madonna-Child iconography ancestor), Set (Egypt's chaos god + 'Set animal' head + Osiris-Horus murder), Achilles (Styx-dip heel-grip vulnerability → Achilles tendon namesake), Loki (parent of Fenrir + Jörmungandr + Hel + Sleipnir as a mare!).
+- **L4 +4**: Yggdrasil (nine realms map + 4 stags + Níðhöggr dragon), Anansi (Akan spider trickster + transatlantic slave-trade folklore route → Br'er Rabbit), Coyote (Plains/Southwest trickster + Pacific Northwest's Raven parallel), Bunyip (Aboriginal water-monster + possible Pleistocene-megafauna cultural memory).
+- **L5 +4**: Pandora's jar (mistranslated as 'box' — released all evils, kept Hope; just-so explanation of suffering), Trojan Horse (Odysseus's stratagem + 'beware Greeks bearing gifts' + cybersecurity etymology), Sisyphus (eternal boulder + Camus absurdist essay 'one must imagine Sisyphus happy'), Tantalus ('tantalize' verb origin + House of Atreus curse).
+- **SW cache v208 → v209**. Sports + Space next iterations.
+
 ## [5.7.129] - 2026-05-26 - Math L5 expansion: 10 → 25 Qs (15 research-frontier topics)
 - **Famous open problems**: Riemann hypothesis (critical line, verified to 10^13 zeros, deepest unsolved), twin prime conjecture (Zhang 2013 → 70M gap → Polymath 246), Goldbach conjecture (weak proved 2013, strong open).
 - **Millennium Prize problems**: Yang-Mills mass gap (Standard Model rigor gap), Birch and Swinnerton-Dyer (elliptic curve rank ↔ L-function zero order).
