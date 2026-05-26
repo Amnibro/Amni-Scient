@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.252] - 2026-05-26 - Fact-cards Weather L5: 8→12
+- **+4 fact cards**: Madden-Julian Oscillation (30-60 day tropical rainfall pattern), polar vortex (cold-snap spillage), solar cycle effects (Maunder Minimum + Little Ice Age), weather modeling (GFS/ECMWF + 14-day chaos limit).
+- Weather fact-cards all 5 levels now at 12 each.
+- **SW cache v330 → v331**.
+
 ## [5.7.251] - 2026-05-26 - Fact-cards Weather L4: 8→12
 - **+4 fact cards**: Köppen climate classification (1884 5 groups still used), jet streams (200-400 km/h pilot rides), lake-effect snow (Buffalo NY), El Niño/La Niña (ENSO 2-7 yr global reshuffler).
 - **SW cache v329 → v330**.
