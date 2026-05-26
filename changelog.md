@@ -1,5 +1,16 @@
 ﻿# Changelog 
 
+## [5.7.129] - 2026-05-26 - Math L5 expansion: 10 → 25 Qs (15 research-frontier topics)
+- **Famous open problems**: Riemann hypothesis (critical line, verified to 10^13 zeros, deepest unsolved), twin prime conjecture (Zhang 2013 → 70M gap → Polymath 246), Goldbach conjecture (weak proved 2013, strong open).
+- **Millennium Prize problems**: Yang-Mills mass gap (Standard Model rigor gap), Birch and Swinnerton-Dyer (elliptic curve rank ↔ L-function zero order).
+- **Solved triumphs**: Fermat's Last Theorem (Wiles 1995 after 358 years via elliptic-curve modular-form route, silver Fields plaque), Poincaré conjecture (Perelman 2002, refused $1M + Fields Medal — first Millennium solved).
+- **Foundations / undecidability**: Continuum Hypothesis (Gödel + Cohen showing independent of ZFC — Hilbert's 1st problem), Axiom of Choice (Banach-Tarski paradox, well-ordering theorem, Zorn — accepted but consequences strange), forcing technique (Cohen 1963 Fields Medal).
+- **Algebraic structures**: Galois theory proving quintic-unsolvability via S₅ non-solvability (Galois died 20 in duel 1832), knot invariants Jones polynomial (Fields 1984, connections to QFT + DNA topology + quantum computing braiding).
+- **Quantum + operators**: spectral theorem extending diagonalization to Hilbert spaces — QM measurement axioms.
+- **Computation**: Halting problem undecidability proof by self-reference (Turing 1936) — there exist problems computers CANNOT EVER solve.
+- **Modern topology**: cohomology vs homology + ring structure + étale Weil-conjectures route + de Rham + singular + motivic + sheaf variants.
+- **SW cache v207 → v208**. Math subject now ~155 Qs total. Next iteration target: smaller subjects (sports, mythology, space).
+
 ## [5.7.128] - 2026-05-25 - Math L4 expansion: 25 → 40 Qs (15 more topics → parity with L3 at 40)
 - **Analysis rigor**: ε-δ limit definition (Cauchy's game-theoretic formulation), squeeze theorem with x²sin(1/x) example, continuity 3-condition definition, IVT with mountain-altitude metaphor + bisection-method root-finding.
 - **Series tools**: ratio test for factorial/exponential terms (Σ xⁿ/n! converges everywhere), Maclaurin series (Taylor at 0) for eˣ + sin + cos + 1/(1-x).
