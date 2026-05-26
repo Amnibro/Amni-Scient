@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.306] - 2026-05-26 - Fact-cards Colors L2: 12→16
+- Added 4 named colors to L2: turquoise ("Turkish stone" gem), maroon (chestnut-dark-red), navy (1748 British naval uniform), lavender (pale purple flower).
+- sw cache → v385; Android versionCode 342 / versionName 3.9.0.
+
 ## [5.7.305] - 2026-05-26 - Fact-cards Colors L1: 12→16
 - Added 4 kid-level color topics to L1: mixing colors (R+Y=O, primary triple), crayons (Crayola 1903), light vs dark shades (pink vs hot-pink), sky colors (blue/orange/black daytime cycle).
 - sw cache → v384; Android versionCode 341 / versionName 3.8.9.
