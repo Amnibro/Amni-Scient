@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.7.262] - 2026-05-26 - Bubble Pop bug fixes (3)
+- **Bug 1 — stacking**: `i%2` packed 4 bubbles into 2 columns (overlap 0+2, 1+3). Fixed → `slotW=100/pool.length` gives each bubble its own column.
+- **Bug 2 — synchronous rise**: all bubbles spawned at same `startTime` → rose in unison. Added `spawnDelay = i*220ms` staggering.
+- **Bug 3 — "missed it" after pop**: tick kept running after target was popped; reached pct=1 within onHit's 400ms setTimeout → fired onMiss alongside Pop+. Added `popped` flag; tick now checks `&& !popped` before onMiss.
+- **SW cache v340 → v341**.
+
 ## [5.7.261] - 2026-05-26 - Fact-cards Counting L4: 8→12
 - **+4 fact cards**: long multiplication (23×17 partial products), long division (372÷4=93), equivalent fractions (½=2/4=4/8), order of operations (PEMDAS/BODMAS).
 - **SW cache v339 → v340**.
