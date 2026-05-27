@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.329] - 2026-05-26 - Fact-cards Space L3: 12→16
+- Added 4 space topics to L3: exoplanets (5500+ since 1992, transit/wobble), nebulae (star nurseries, Orion + Pillars), Kuiper Belt (icy bodies beyond Neptune + Oort Cloud), gravity assist (slingshot maneuver).
+- sw cache → v408; Android versionCode 365 / versionName 4.1.3.
+
 ## [5.7.328] - 2026-05-26 - Fact-cards Space L2: 12→16
 - Added 4 space topics to L2: dwarf planets (5 official, Pluto demoted 2006), asteroids (belt, dino-killer), comets (Halley 76yr, tails away from Sun), Apollo missions (12 astronauts, 382 kg rocks).
 - sw cache → v407; Android versionCode 364 / versionName 4.1.2.
