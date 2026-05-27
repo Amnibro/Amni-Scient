@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.349] - 2026-05-26 - Quiz bank: Opposites L2 20→24
+- Added 4 opposites quiz pairs to L2: brave/cowardly, ancient/modern, generous/stingy, expand/contract.
+- sw cache → v428; Android versionCode 385 / versionName 4.3.3.
+
 ## [5.7.348] - 2026-05-26 - Quiz bank: Opposites L1 20→24
 - Added 4 opposites quiz pairs to L1: open/closed, day/night, empty/full, push/pull.
 - sw cache → v427; Android versionCode 384 / versionName 4.3.2.
