@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.356] - 2026-05-26 - Quiz bank: Counting L4 20→24
+- Added 4 mid-school math quiz questions to L4: 2⁵ exponent, 15% of 200, √81, mean of 4/6/8.
+- sw cache → v435; Android versionCode 392 / versionName 4.4.0.
+
 ## [5.7.355] - 2026-05-26 - Quiz bank: Counting L3 20→24
 - Added 4 grade-school math quiz questions to L3: 6×7, 100÷4, 1/2 as 0.5 decimal, next prime after 7.
 - sw cache → v434; Android versionCode 391 / versionName 4.3.9.
