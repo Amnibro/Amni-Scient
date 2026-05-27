@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.404] - 2026-05-27 - Fact-cards Opposites L3: 12→16 (phase-3 round 2)
+- Added 4 to Opposites L3: easy & hard, wide & narrow, deep & shallow, buy & sell.
+- sw cache → v483; Android versionCode 440 / versionName 4.8.8.
+
 ## [5.7.403] - 2026-05-27 - Fact-cards Opposites L2: 12→16 (phase-3 round 2)
 - Added 4 to Opposites L2: tall & short, first & last, more & less, question & answer.
 - sw cache → v482; Android versionCode 439 / versionName 4.8.7.
