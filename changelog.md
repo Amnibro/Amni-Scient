@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.374] - 2026-05-27 - Quiz bank: Mythology L4 20→24
+- Added 4 mythology quiz questions to L4: Valhalla, Chaos (Greek void), heart-weighing judgment (Egyptian), Heracles' twelve labors.
+- sw cache → v453; Android versionCode 410 / versionName 4.5.8.
+
 ## [5.7.373] - 2026-05-27 - Quiz bank: Mythology L3 20→24
 - Added 4 mythology quiz questions to L3: Ganesha (Hindu), Medusa (Gorgon), Quetzalcoatl (Aztec), Gilgamesh (Sumerian epic).
 - sw cache → v452; Android versionCode 409 / versionName 4.5.7.
