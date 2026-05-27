@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.363] - 2026-05-26 - Quiz bank: Colors L1 19→24
+- Added 5 kid-level colors quiz questions to L1 (was the lone 19-entry bank): red+yellow=orange, grass green (chlorophyll), snow white, panda black+white, ripe banana yellow.
+- sw cache → v442; Android versionCode 399 / versionName 4.4.7.
+
 ## [5.7.362] - 2026-05-26 - Quiz bank: Shapes L5 20→24 (Shapes subject balanced)
 - Added 4 topology/advanced-geometry quiz questions to L5: Möbius strip, fractals, four color theorem, non-Euclidean triangle angles. Shapes quiz now 24/level ×5.
 - 4 of 8 single-group subjects balanced (Weather, Opposites, Counting, Shapes).
