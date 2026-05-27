@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.339] - 2026-05-26 - Quiz bank: Animals L1 25→29
+- Added 4 audio-quiz animals to L1 (sounds map to existing mp3s): goat (bleat), eagle (screech), seal (bark), fox (yip). Verified no audioText collisions with the existing 25.
+- sw cache → v418; Android versionCode 375 / versionName 4.2.3.
+
 ## [5.7.338] - 2026-05-26 - Quiz bank: Science L3 25→29
 - Added 4 high-school-tier science quiz questions to L3: pH scale (logarithmic), Newton's third law, DNA double helix (Watson/Crick/Franklin 1953), conservation of energy. Science quiz L1-L3 thin-tier catch-up complete.
 - sw cache → v417; Android versionCode 374 / versionName 4.2.2.
