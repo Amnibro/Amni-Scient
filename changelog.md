@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.408] - 2026-05-27 - Fact-cards Counting L2: 12→16 (phase-3 round 2)
+- Added 4 to Counting L2: a dozen, counting by 10s, four seasons, ten-frames.
+- sw cache → v487; Android versionCode 444 / versionName 4.9.2.
+
 ## [5.7.407] - 2026-05-27 - Fact-cards Counting L1: 12→16 (phase-3 round 2)
 - Added 4 to Counting L1: counting backwards, ordinal numbers, tally marks, one-to-one.
 - sw cache → v486; Android versionCode 443 / versionName 4.9.1.
