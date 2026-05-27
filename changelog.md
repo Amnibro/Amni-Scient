@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.355] - 2026-05-26 - Quiz bank: Counting L3 20→24
+- Added 4 grade-school math quiz questions to L3: 6×7, 100÷4, 1/2 as 0.5 decimal, next prime after 7.
+- sw cache → v434; Android versionCode 391 / versionName 4.3.9.
+
 ## [5.7.354] - 2026-05-26 - Quiz bank: Counting L2 20→24
 - Added 4 early-grade math quiz questions to L2: 7+5 (make-ten), 4×3 multiplication, tens place value in 47, skip-counting by 5s.
 - sw cache → v433; Android versionCode 390 / versionName 4.3.8.
