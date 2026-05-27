@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.328] - 2026-05-26 - Fact-cards Space L2: 12→16
+- Added 4 space topics to L2: dwarf planets (5 official, Pluto demoted 2006), asteroids (belt, dino-killer), comets (Halley 76yr, tails away from Sun), Apollo missions (12 astronauts, 382 kg rocks).
+- sw cache → v407; Android versionCode 364 / versionName 4.1.2.
+
 ## [5.7.327] - 2026-05-26 - Fact-cards Space L1: 12→16
 - Added 4 kid-level space topics to L1: constellations (Orion, Big Dipper), Saturn\'s rings (ice + rock chunks), eclipses (solar vs lunar blood moon), floating in space (free-fall weightlessness).
 - sw cache → v406; Android versionCode 363 / versionName 4.1.1.
