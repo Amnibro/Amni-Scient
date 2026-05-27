@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.337] - 2026-05-26 - Quiz bank: Science L2 25→29
+- Added 4 grade-school science quiz questions to L2: three states of matter, why the sky is blue (Rayleigh), water cycle stages, photosynthesis inputs.
+- sw cache → v416; Android versionCode 373 / versionName 4.2.1.
+
 ## [5.7.336] - 2026-05-26 - Quiz bank: Science L1 25→29
 - Data-driven gap: science quiz L1-L3 were thin (25 each) vs peers (animals L2=136, music=61). Started closing it — added 4 kid-level science quiz questions to L1: bees make honey, water freezes to ice, insects have 6 legs, baby frogs = tadpoles.
 - sw cache → v415; Android versionCode 372 / versionName 4.2.0.
