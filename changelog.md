@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.348] - 2026-05-26 - Quiz bank: Opposites L1 20→24
+- Added 4 opposites quiz pairs to L1: open/closed, day/night, empty/full, push/pull.
+- sw cache → v427; Android versionCode 384 / versionName 4.3.2.
+
 ## [5.7.347] - 2026-05-26 - Quiz bank: Weather L5 20→24 (Weather subject balanced)
 - Added 4 climate-science quiz questions to L5: deterministic chaos / butterfly effect (Lorenz), bomb cyclone, AMOC, NAO. Weather quiz now 24/level across all 5 levels.
 - sw cache → v426; Android versionCode 383 / versionName 4.3.1.
