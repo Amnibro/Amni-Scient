@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.357] - 2026-05-26 - Quiz bank: Counting L5 20→24 (Counting subject balanced)
+- Added 4 advanced math quiz questions to L5: 0.999...=1, Euler's number e, 0!=1, Fibonacci sequence. Counting quiz now 24/level ×5.
+- 3 of 8 single-group subjects balanced (Weather, Opposites, Counting).
+- sw cache → v436; Android versionCode 393 / versionName 4.4.1.
+
 ## [5.7.356] - 2026-05-26 - Quiz bank: Counting L4 20→24
 - Added 4 mid-school math quiz questions to L4: 2⁵ exponent, 15% of 200, √81, mean of 4/6/8.
 - sw cache → v435; Android versionCode 392 / versionName 4.4.0.
