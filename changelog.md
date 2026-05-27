@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.403] - 2026-05-27 - Fact-cards Opposites L2: 12→16 (phase-3 round 2)
+- Added 4 to Opposites L2: tall & short, first & last, more & less, question & answer.
+- sw cache → v482; Android versionCode 439 / versionName 4.8.7.
+
 ## [5.7.402] - 2026-05-27 - Fact-cards Opposites L1: 12→16 (phase-3 round 2)
 - Added 4 to Opposites L1: in & out, on & off, yes & no, clean & dirty.
 - Scan found opposites/counting/shapes fact-cards still at 12 — closing them next.
