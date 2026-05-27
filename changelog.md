@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.341] - 2026-05-26 - Quiz bank: Animals L5 29→33
+- Added 4 advanced-biology animal quiz questions to L5: convergent evolution, epigenetics (royal jelly queens), eusociality (superorganism), tardigrade cryptobiosis.
+- sw cache → v420; Android versionCode 377 / versionName 4.2.5.
+
 ## [5.7.340] - 2026-05-26 - Quiz bank: Math L5 25→29
 - Added 4 research-tier math quiz questions to L5 (was the thinnest bank): Gödel incompleteness, Galois theory (quintic unsolvability), Banach-Tarski paradox, category theory.
 - sw cache → v419; Android versionCode 376 / versionName 4.2.4.
