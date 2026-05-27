@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.338] - 2026-05-26 - Quiz bank: Science L3 25→29
+- Added 4 high-school-tier science quiz questions to L3: pH scale (logarithmic), Newton's third law, DNA double helix (Watson/Crick/Franklin 1953), conservation of energy. Science quiz L1-L3 thin-tier catch-up complete.
+- sw cache → v417; Android versionCode 374 / versionName 4.2.2.
+
 ## [5.7.337] - 2026-05-26 - Quiz bank: Science L2 25→29
 - Added 4 grade-school science quiz questions to L2: three states of matter, why the sky is blue (Rayleigh), water cycle stages, photosynthesis inputs.
 - sw cache → v416; Android versionCode 373 / versionName 4.2.1.
