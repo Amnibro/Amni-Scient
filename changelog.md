@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.345] - 2026-05-26 - Quiz bank: Weather L3 20→24
+- Added 4 weather quiz questions to L3: tornado formation (supercell mesocyclone), barometer (air pressure), jet stream (high-altitude steering current), + Köppen context.
+- sw cache → v424; Android versionCode 381 / versionName 4.2.9.
+
 ## [5.7.344] - 2026-05-26 - Quiz bank: Weather L2 20→24
 - Added 4 weather quiz questions to L2: thermometer measures temperature, fog = ground cloud, thunder from lightning-heated air, droughts.
 - sw cache → v423; Android versionCode 380 / versionName 4.2.8.
