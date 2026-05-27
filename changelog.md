@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.361] - 2026-05-26 - Quiz bank: Shapes L4 20→24
+- Added 4 geometry quiz questions to L4: Euler's polyhedron formula (V−E+F=2), golden ratio φ, triangle angle sum 180°, tessellations.
+- sw cache → v440; Android versionCode 397 / versionName 4.4.5.
+
 ## [5.7.360] - 2026-05-26 - Quiz bank: Shapes L3 20→24
 - Added 4 geometry quiz questions to L3: Pythagorean theorem, rectangle area, equilateral triangle angles, polyhedron definition.
 - sw cache → v439; Android versionCode 396 / versionName 4.4.4.
