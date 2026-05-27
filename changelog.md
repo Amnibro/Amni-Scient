@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.369] - 2026-05-27 - Map Clicker: remaining Asia (iter 6/N)
+- Added clickable border polygons for Saudi Arabia, Iran, Turkey, Bhutan, Thailand, Vietnam, Indonesia. All Asia quiz countries now click-to-identify.
+- sw cache → v448; Android versionCode 405 / versionName 4.5.3.
+
 ## [5.7.368] - 2026-05-26 - Map Clicker: core Asia country borders (iter 5/N)
 - Added clickable border polygons for China, India, Japan, Mongolia, Kazakhstan, Russia. Mongolia (the country in Anthony's screenshot) is now properly clickable.
 - sw cache → v447; Android versionCode 404 / versionName 4.5.2.
