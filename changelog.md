@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.359] - 2026-05-26 - Quiz bank: Shapes L2 20→24
+- Added 4 shapes quiz questions to L2: sphere (ball), cube has 6 faces, regular polygon, 360° in a full circle.
+- sw cache → v438; Android versionCode 395 / versionName 4.4.3.
+
 ## [5.7.358] - 2026-05-26 - Quiz bank: Shapes L1 20→24
 - Added 4 kid-level shapes quiz questions to L1: triangle sides, stop sign octagon, pizza slice triangle, circle has no corners.
 - sw cache → v437; Android versionCode 394 / versionName 4.4.2.
