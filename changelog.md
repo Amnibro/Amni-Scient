@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.335] - 2026-05-26 - Sorting-game buckets responsive
+- `.sort-bucket` fixed 180px + 30px gap forced single-column wrap on phones (2×180+30 > viewport). Switched to clamp(130px,42vw,180px) width + clamp(10px,4vw,30px) gap so two buckets sit side-by-side on phones. Desktop layout unchanged.
+- sw cache → v414; Android versionCode 371 / versionName 4.1.9.
+
 ## [5.7.334] - 2026-05-26 - Memory-match cards responsive
 - `.m-card` was fixed 100px wide but lives in `repeat(cols,1fr)` grid tracks — on phones the 1fr track shrinks below 100px so cards overflowed their cell. Switched to clamp(56px,20vw,100px) width + clamp height + clamp font. Desktop @media(min-width:600px) bump unchanged.
 - sw cache → v413; Android versionCode 370 / versionName 4.1.8.
