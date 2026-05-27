@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.393] - 2026-05-27 - Fact-cards Math L2: 12→16 (phase-3 gap fix)
+- Added 4 to Math L2: multiplication tables (9× digit trick), equivalent fractions, perimeter & area, negative numbers.
+- sw cache → v472; Android versionCode 429 / versionName 4.7.7.
+
 ## [5.7.392] - 2026-05-27 - Fact-cards Math L1: 12→16 (phase-3 gap fix)
 - Found a real gap: Math + Engineering FACT-cards were still at 12/level (never got the phase-3 12→16 quadruple the other 8 subjects did). Closing it.
 - Added 4 to Math L1: place value (tens & ones), telling time, money math, measuring.
