@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.401] - 2026-05-27 - Fact-cards Engineering L5: 12→16 (phase-3 gap CLOSED)
+- Added 4 to Engineering L5: maglev trains, photonic computing, metamaterials, carbon capture & storage.
+- All Math + Engineering fact-card levels now at 16 entries each — phase-3 12→16 quadruple complete across all 10 fact-card subjects.
+- sw cache → v480; Android versionCode 437 / versionName 4.8.5.
+
 ## [5.7.400] - 2026-05-27 - Fact-cards Engineering L4: 12→16 (phase-3 gap fix)
 - Added 4 to Engineering L4: finite element analysis, heat exchangers, gyroscopes, semiconductors.
 - sw cache → v479; Android versionCode 436 / versionName 4.8.4.
