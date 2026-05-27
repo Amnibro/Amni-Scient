@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.397] - 2026-05-27 - Fact-cards Engineering L1: 12→16 (phase-3 gap fix)
+- Added 4 to Engineering L1: cranes, wind turbines, solar panels, plumbing.
+- sw cache → v476; Android versionCode 433 / versionName 4.8.1.
+
 ## [5.7.396] - 2026-05-27 - Fact-cards Math L5: 12→16 (Math fact-cards complete)
 - Added 4 to Math L5: Galois theory, game theory, fractals, category theory.
 - All 5 Math fact-card levels now at 16 entries each.
