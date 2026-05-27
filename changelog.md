@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.334] - 2026-05-26 - Memory-match cards responsive
+- `.m-card` was fixed 100px wide but lives in `repeat(cols,1fr)` grid tracks — on phones the 1fr track shrinks below 100px so cards overflowed their cell. Switched to clamp(56px,20vw,100px) width + clamp height + clamp font. Desktop @media(min-width:600px) bump unchanged.
+- sw cache → v413; Android versionCode 370 / versionName 4.1.8.
+
 ## [5.7.333] - 2026-05-26 - Sudoku 4×4 board responsive cells
 - Sudoku board cells were fixed 72px (4×72 + gaps + pad ≈ 310px → clipped on phones <320px). Switched grid tracks + cell width/height to min(72px,18vw) + font-size clamp(1.2rem,5vw,2rem). Desktop unchanged; scales cleanly to the smallest phones.
 - sw cache → v412; Android versionCode 369 / versionName 4.1.7.
