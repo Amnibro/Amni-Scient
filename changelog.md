@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.324] - 2026-05-26 - Fact-cards Sports L3: 12→16
+- Added 4 sporting events to L3: Tour de France (jersey colors), World Series (MLB, 1919 Black Sox), decathlon (10-event "World\'s Greatest Athlete"), Paralympics (since 1960, classification system).
+- sw cache → v403; Android versionCode 360 / versionName 4.0.8.
+
 ## [5.7.323] - 2026-05-26 - Fact-cards Sports L2: 12→16
 - Added 4 sports to L2: rowing (sculls/sweeps + coxswain), wrestling (708 BC Olympics, freestyle/Greco-Roman), triathlon (swim+bike+run, Ironman), sport climbing (speed/bouldering/lead, Tokyo 2020).
 - sw cache → v402; Android versionCode 359 / versionName 4.0.7.
