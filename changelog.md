@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.331] - 2026-05-26 - Fact-cards Space L5: 12→16 (PHASE 3 COMPLETE)
+- Added 4 frontier cosmology topics to L5: quasars (brightest sustained objects), wormholes (Einstein-Rosen bridges), cosmic web (filaments + voids), Fermi paradox (Great Filter).
+- Space subject now complete at 16 entries per level — finishing PHASE 3 across ALL 13 fact-card subjects (colors, science, mythology, sports, space, animals, languages, weather, math, engineering all at 16 entries × 5 levels).
+- sw cache → v410; Android versionCode 367 / versionName 4.1.5.
+
 ## [5.7.330] - 2026-05-26 - Fact-cards Space L4: 12→16
 - Added 4 advanced astronomy topics to L4: gravitational lensing (Einstein rings, dark-matter mapping), redshift (expansion Doppler), white dwarfs (Sun\'s fate, 5-ton teaspoon), Cepheid variables (Leavitt 1908 distance ladder).
 - sw cache → v409; Android versionCode 366 / versionName 4.1.4.
