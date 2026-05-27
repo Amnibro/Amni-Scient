@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.373] - 2026-05-27 - Quiz bank: Mythology L3 20→24
+- Added 4 mythology quiz questions to L3: Ganesha (Hindu), Medusa (Gorgon), Quetzalcoatl (Aztec), Gilgamesh (Sumerian epic).
+- sw cache → v452; Android versionCode 409 / versionName 4.5.7.
+
 ## [5.7.372] - 2026-05-27 - Quiz bank: Mythology L2 20→24
 - Added 4 mythology quiz questions to L2: Thor (Norse thunder), Loki (trickster), Ra (Egyptian sun), Anubis (jackal-headed god of the dead).
 - sw cache → v451; Android versionCode 408 / versionName 4.5.6.
