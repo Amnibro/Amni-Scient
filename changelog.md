@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.342] - 2026-05-26 - Quiz bank: Math L1 31→35
+- Added 4 pre-K/K math quiz questions to L1: 10−5 subtraction, comparing 8 vs 3, skip-counting by 2s, triangle has 3 sides.
+- sw cache → v421; Android versionCode 378 / versionName 4.2.6.
+
 ## [5.7.341] - 2026-05-26 - Quiz bank: Animals L5 29→33
 - Added 4 advanced-biology animal quiz questions to L5: convergent evolution, epigenetics (royal jelly queens), eusociality (superorganism), tardigrade cryptobiosis.
 - sw cache → v420; Android versionCode 377 / versionName 4.2.5.
