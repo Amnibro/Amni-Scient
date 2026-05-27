@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.385] - 2026-05-27 - Quiz bank: Space L5 20→24 (ALL 8 single-group quiz subjects balanced)
+- Added 4 frontier-cosmology quiz questions to L5: dark matter, dark energy, cosmic microwave background, Hawking radiation. Space quiz now 24/level ×5.
+- Milestone: every single-group quiz subject (Weather, Opposites, Counting, Shapes, Colors, Mythology, Sports, Space) is now 24/level — the ~20/level thinnest-tier gap is fully closed.
+- sw cache → v464; Android versionCode 421 / versionName 4.6.9.
+
 ## [5.7.384] - 2026-05-27 - Quiz bank: Space L4 20→24
 - Added 4 space quiz questions to L4: supernova, exoplanet, ISS, total solar eclipse cause.
 - sw cache → v463; Android versionCode 420 / versionName 4.6.8.
