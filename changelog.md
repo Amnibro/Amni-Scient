@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.350] - 2026-05-26 - Quiz bank: Opposites L3 20→24
+- Added 4 opposites quiz pairs to L3: temporary/permanent, artificial/natural, abundant/scarce, flexible/rigid.
+- sw cache → v429; Android versionCode 386 / versionName 4.3.4.
+
 ## [5.7.349] - 2026-05-26 - Quiz bank: Opposites L2 20→24
 - Added 4 opposites quiz pairs to L2: brave/cowardly, ancient/modern, generous/stingy, expand/contract.
 - sw cache → v428; Android versionCode 385 / versionName 4.3.3.
