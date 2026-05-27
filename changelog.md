@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.416] - 2026-05-27 - Fact-cards Shapes L5: 12→16 (round-2 fact-card gap CLOSED)
+- Added 4 to Shapes L5: tesseract, Penrose tiling, Voronoi diagrams, minimal surfaces.
+- ALL 13 fact-card subjects now at 16 entries × 5 levels — every teachData bank quadrupled.
+- sw cache → v495; Android versionCode 452 / versionName 5.0.0.
+
 ## [5.7.415] - 2026-05-27 - Fact-cards Shapes L4: 12→16 (phase-3 round 2)
 - Added 4 to Shapes L4: circle anatomy, exterior angles, coordinate plane, transformations.
 - sw cache → v494; Android versionCode 451 / versionName 4.9.9.
