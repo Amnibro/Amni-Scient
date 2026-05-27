@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.387] - 2026-05-27 - Map Clicker: clickable US states tier-2 (iter 2/N)
+- Added border polygons for 8 tier-2 states: Washington, Oregon, Arizona, Colorado, Minnesota, Wisconsin, Tennessee, Louisiana. Now click-to-identify.
+- sw cache → v466; Android versionCode 423 / versionName 4.7.1.
+
 ## [5.7.386] - 2026-05-27 - Map Clicker: clickable US states — engine + tier-1 (iter 1/N)
 - Refactored the Map Clicker engine to be mode-agnostic: a single `shapeSet` (countries for World, states for US) now drives drawing, hover-highlight, click-validation + the "Click on X" prompt — so US mode gets the same real clickable-region treatment as the world map (no more crude-blob distance guessing).
 - Added `_mapUSStateShapes` with tier-1 state border polygons: California, Texas, Florida, New York, Illinois, Pennsylvania, Ohio, Georgia, Michigan, North Carolina, New Jersey, Virginia. Unshaped states still fall back to distance.
