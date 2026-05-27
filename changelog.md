@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.407] - 2026-05-27 - Fact-cards Counting L1: 12→16 (phase-3 round 2)
+- Added 4 to Counting L1: counting backwards, ordinal numbers, tally marks, one-to-one.
+- sw cache → v486; Android versionCode 443 / versionName 4.9.1.
+
 ## [5.7.406] - 2026-05-27 - Fact-cards Opposites L5: 12→16 (Opposites fact-cards complete)
 - Added 4 to Opposites L5: macro & micro, subjective & objective, centralized & decentralized, synchronous & asynchronous.
 - All 5 Opposites fact-card levels now at 16 each.
