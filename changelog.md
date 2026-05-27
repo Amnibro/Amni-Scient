@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.325] - 2026-05-26 - Fact-cards Sports L4: 12→16
+- Added 4 sporting feats to L4: Grand Slam (all 4 tennis majos in a year), hat-trick (cricket origin 1858), penalty shootout (WC 1978), photo finish (slit-scan camera, torso rule).
+- sw cache → v404; Android versionCode 361 / versionName 4.0.9.
+
 ## [5.7.324] - 2026-05-26 - Fact-cards Sports L3: 12→16
 - Added 4 sporting events to L3: Tour de France (jersey colors), World Series (MLB, 1919 Black Sox), decathlon (10-event "World\'s Greatest Athlete"), Paralympics (since 1960, classification system).
 - sw cache → v403; Android versionCode 360 / versionName 4.0.8.
