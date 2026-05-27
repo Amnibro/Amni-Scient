@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.413] - 2026-05-27 - Fact-cards Shapes L2: 12→16 (phase-3 round 2)
+- Added 4 to Shapes L2: kite, chevron, concentric circles, regular vs irregular.
+- sw cache → v492; Android versionCode 449 / versionName 4.9.7.
+
 ## [5.7.412] - 2026-05-27 - Fact-cards Shapes L1: 12→16 (phase-3 round 2)
 - Added 4 to Shapes L1: semicircle, ring, teardrop, cloud.
 - sw cache → v491; Android versionCode 448 / versionName 4.9.6.
