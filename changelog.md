@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.389] - 2026-05-27 - Map Clicker: clickable US states tier-3 batch A (iter 4/N)
+- Added border polygons for 8 western/central tier-3 states: Nevada, Utah, Idaho, Montana, Wyoming, Kansas, Iowa, Arkansas. Now click-to-identify.
+- sw cache → v468; Android versionCode 425 / versionName 4.7.3.
+
 ## [5.7.388] - 2026-05-27 - Map Clicker: clickable US states tier-2 finish (iter 3/N)
 - Added border polygons for the rest of tier-2: Indiana, Missouri, Alabama, South Carolina, Kentucky, Oklahoma, Massachusetts, Maryland. Easy + Normal difficulty US states are now fully clickable.
 - Next: tier-3 states (the smaller/less-populous ones for Hard mode).
