@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.343] - 2026-05-26 - Quiz bank: Weather L1 20→24
+- Found the REAL thinnest banks: weather/opposites/counting/shapes/colors/mythology/sports/space quiz subjects all sit at ~20/level (vs peers 29-60). Starting catch-up.
+- Added 4 kid-level weather quiz questions to L1: rainbow after rain+sun, dressing for cold, clouds float in sky, spring season.
+- sw cache → v422; Android versionCode 379 / versionName 4.2.7.
+
 ## [5.7.342] - 2026-05-26 - Quiz bank: Math L1 31→35
 - Added 4 pre-K/K math quiz questions to L1: 10−5 subtraction, comparing 8 vs 3, skip-counting by 2s, triangle has 3 sides.
 - sw cache → v421; Android versionCode 378 / versionName 4.2.6.
