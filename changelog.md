@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.366] - 2026-05-26 - Map Clicker: Europe country borders (iter 3/N)
+- Added clickable border polygons for W. Europe quiz countries: Spain + Portugal (Iberia), France (hexagon), Germany, Italy (boot), Greece. Now click-to-identify.
+- sw cache → v445; Android versionCode 402 / versionName 4.5.0.
+
 ## [5.7.365] - 2026-05-26 - Map Clicker: Africa country borders (iter 2/N)
 - Added clickable border polygons for Africa quiz countries: Egypt (boxy NE), South Africa (southern cape), Nigeria (Gulf of Guinea), Kenya (E coast), Morocco (NW corner), Ethiopia (Horn highlands). Now click-to-identify.
 - sw cache → v444; Android versionCode 401 / versionName 4.4.9.
