@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.410] - 2026-05-27 - Fact-cards Counting L4: 12→16 (phase-3 round 2)
+- Added 4 to Counting L4: decimals, factors & multiples, percentages, number bonds.
+- sw cache → v489; Android versionCode 446 / versionName 4.9.4.
+
 ## [5.7.409] - 2026-05-27 - Fact-cards Counting L3: 12→16 (phase-3 round 2)
 - Added 4 to Counting L3: rounding, doubling & halving, greater/less than, counting change.
 - sw cache → v488; Android versionCode 445 / versionName 4.9.3.
