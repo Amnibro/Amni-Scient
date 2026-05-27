@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.376] - 2026-05-27 - Quiz bank: Sports L1 20→24
+- Added 4 kid-level sports quiz questions to L1: soccer team = 11, tennis racket, bowling strike, cyclist helmet.
+- sw cache → v455; Android versionCode 412 / versionName 4.6.0.
+
 ## [5.7.375] - 2026-05-27 - Quiz bank: Mythology L5 20→24 (Mythology subject balanced)
 - Added 4 mythology quiz questions to L5: Sisyphus, Prometheus, Yggdrasil, Daedalus. Mythology quiz now 24/level ×5.
 - 6 of 8 single-group quiz subjects balanced (Weather, Opposites, Counting, Shapes, Colors L1, Mythology). Remaining: Sports, Space.
