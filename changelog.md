@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.382] - 2026-05-27 - Quiz bank: Space L2 20→24
+- Added 4 space quiz questions to L2: Saturn's rings, Sun is hydrogen+helium, Milky Way galaxy, microgravity free-fall.
+- sw cache → v461; Android versionCode 418 / versionName 4.6.6.
+
 ## [5.7.381] - 2026-05-27 - Quiz bank: Space L1 20→24
 - Added 4 kid-level space quiz questions to L1: Sun is closest star, astronaut, elliptical orbits, shooting star = meteor.
 - sw cache → v460; Android versionCode 417 / versionName 4.6.5.
