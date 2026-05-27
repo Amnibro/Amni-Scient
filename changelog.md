@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.396] - 2026-05-27 - Fact-cards Math L5: 12→16 (Math fact-cards complete)
+- Added 4 to Math L5: Galois theory, game theory, fractals, category theory.
+- All 5 Math fact-card levels now at 16 entries each.
+- sw cache → v475; Android versionCode 432 / versionName 4.8.0.
+
 ## [5.7.395] - 2026-05-27 - Fact-cards Math L4: 12→16 (phase-3 gap fix)
 - Added 4 to Math L4: combinatorics (nPr/nCr), set theory, logarithmic scales, Bayes' theorem.
 - sw cache → v474; Android versionCode 431 / versionName 4.7.9.
