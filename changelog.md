@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.375] - 2026-05-27 - Quiz bank: Mythology L5 20→24 (Mythology subject balanced)
+- Added 4 mythology quiz questions to L5: Sisyphus, Prometheus, Yggdrasil, Daedalus. Mythology quiz now 24/level ×5.
+- 6 of 8 single-group quiz subjects balanced (Weather, Opposites, Counting, Shapes, Colors L1, Mythology). Remaining: Sports, Space.
+- sw cache → v454; Android versionCode 411 / versionName 4.5.9.
+
 ## [5.7.374] - 2026-05-27 - Quiz bank: Mythology L4 20→24
 - Added 4 mythology quiz questions to L4: Valhalla, Chaos (Greek void), heart-weighing judgment (Egyptian), Heracles' twelve labors.
 - sw cache → v453; Android versionCode 410 / versionName 4.5.8.
