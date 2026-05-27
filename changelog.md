@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.409] - 2026-05-27 - Fact-cards Counting L3: 12→16 (phase-3 round 2)
+- Added 4 to Counting L3: rounding, doubling & halving, greater/less than, counting change.
+- sw cache → v488; Android versionCode 445 / versionName 4.9.3.
+
 ## [5.7.408] - 2026-05-27 - Fact-cards Counting L2: 12→16 (phase-3 round 2)
 - Added 4 to Counting L2: a dozen, counting by 10s, four seasons, ten-frames.
 - sw cache → v487; Android versionCode 444 / versionName 4.9.2.
