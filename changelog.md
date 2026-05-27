@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.336] - 2026-05-26 - Quiz bank: Science L1 25→29
+- Data-driven gap: science quiz L1-L3 were thin (25 each) vs peers (animals L2=136, music=61). Started closing it — added 4 kid-level science quiz questions to L1: bees make honey, water freezes to ice, insects have 6 legs, baby frogs = tadpoles.
+- sw cache → v415; Android versionCode 372 / versionName 4.2.0.
+
 ## [5.7.335] - 2026-05-26 - Sorting-game buckets responsive
 - `.sort-bucket` fixed 180px + 30px gap forced single-column wrap on phones (2×180+30 > viewport). Switched to clamp(130px,42vw,180px) width + clamp(10px,4vw,30px) gap so two buckets sit side-by-side on phones. Desktop layout unchanged.
 - sw cache → v414; Android versionCode 371 / versionName 4.1.9.
