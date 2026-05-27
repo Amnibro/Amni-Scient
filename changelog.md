@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.400] - 2026-05-27 - Fact-cards Engineering L4: 12→16 (phase-3 gap fix)
+- Added 4 to Engineering L4: finite element analysis, heat exchangers, gyroscopes, semiconductors.
+- sw cache → v479; Android versionCode 436 / versionName 4.8.4.
+
 ## [5.7.399] - 2026-05-27 - Fact-cards Engineering L3: 12→16 (phase-3 gap fix)
 - Added 4 to Engineering L3: trusses, welding, bearings, heat engines.
 - sw cache → v478; Android versionCode 435 / versionName 4.8.3.
