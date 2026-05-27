@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.394] - 2026-05-27 - Fact-cards Math L3: 12→16 (phase-3 gap fix)
+- Added 4 to Math L3: coordinate plane, ratios & proportions, exponents, square roots.
+- sw cache → v473; Android versionCode 430 / versionName 4.7.8.
+
 ## [5.7.393] - 2026-05-27 - Fact-cards Math L2: 12→16 (phase-3 gap fix)
 - Added 4 to Math L2: multiplication tables (9× digit trick), equivalent fractions, perimeter & area, negative numbers.
 - sw cache → v472; Android versionCode 429 / versionName 4.7.7.
