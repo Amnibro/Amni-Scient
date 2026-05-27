@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.327] - 2026-05-26 - Fact-cards Space L1: 12→16
+- Added 4 kid-level space topics to L1: constellations (Orion, Big Dipper), Saturn\'s rings (ice + rock chunks), eclipses (solar vs lunar blood moon), floating in space (free-fall weightlessness).
+- sw cache → v406; Android versionCode 363 / versionName 4.1.1.
+
 ## [5.7.326] - 2026-05-26 - Fact-cards Sports L5: 12→16
 - Added 4 iconic sports moments to L5: 4-minute mile (Bannister 1954), Comaneci perfect 10 (Montreal 1976), Miracle on Ice (1980), Leicester City 5000-1 (2015-16).
 - Sports subject now complete at 16 entries per level (L1-L5).
