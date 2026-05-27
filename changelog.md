@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.351] - 2026-05-26 - Quiz bank: Opposites L4 20→24
+- Added 4 opposites quiz pairs to L4: converge/diverge, transparent/opaque, surplus/deficit, optimist/pessimist.
+- sw cache → v430; Android versionCode 387 / versionName 4.3.5.
+
 ## [5.7.350] - 2026-05-26 - Quiz bank: Opposites L3 20→24
 - Added 4 opposites quiz pairs to L3: temporary/permanent, artificial/natural, abundant/scarce, flexible/rigid.
 - sw cache → v429; Android versionCode 386 / versionName 4.3.4.
