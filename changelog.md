@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.332] - 2026-05-26 - Mobile overflow round 3: kill inline min-width offenders
+- Root cause of remaining overflow: inline `min-width:<N>px` WINS over max-width in the CSS cascade, so v5.7.321's universal clamp couldn't shrink them. Offenders: 18-col grid (min-width:380px → busts any <380px phone), prompt panels (min-width:260px), profile/leaderboard/stats modals (min-width:320-340px).
+- Fix: at ≤430px, zero every inline-styled min-width via `[style*="min-width"]` attribute selector + force .hs-modal to max-width:94vw. Surgical — only touches elements that actually set an inline min-width.
+- sw cache → v411; Android versionCode 368 / versionName 4.1.6.
+
 ## [5.7.331] - 2026-05-26 - Fact-cards Space L5: 12→16 (PHASE 3 COMPLETE)
 - Added 4 frontier cosmology topics to L5: quasars (brightest sustained objects), wormholes (Einstein-Rosen bridges), cosmic web (filaments + voids), Fermi paradox (Great Filter).
 - Space subject now complete at 16 entries per level — finishing PHASE 3 across ALL 13 fact-card subjects (colors, science, mythology, sports, space, animals, languages, weather, math, engineering all at 16 entries × 5 levels).

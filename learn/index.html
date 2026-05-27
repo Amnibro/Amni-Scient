@@ -230,6 +230,16 @@
     /* Common iOS table/grid offenders that ignore parent max-width */
     .view table, .view pre, .view code { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; max-width: 100% !important; }
   }
+  /* CRITICAL: inline min-width:<N>px WINS over max-width in the cascade, so
+     the universal clamp above can't shrink elements with a hardcoded
+     min-width (e.g. an 18-col grid at min-width:380px, modals at 320-340px).
+     Zero every inline-styled min-width on phones so those panels fit. The
+     [style*=] attribute selector targets exactly the offenders without
+     touching stylesheet-driven layouts. (mobile overflow round 3) */
+  @media (max-width: 430px) {
+    .view [style*="min-width"], .hs-modal, .hs-modal [style*="min-width"] { min-width: 0 !important; }
+    .hs-modal { max-width: 94vw !important; }
+  }
   /* Flex children refuse to shrink below their natural content width
      unless min-width:0 is set. This forces them to compress instead of
      overflowing on narrow phones. */
