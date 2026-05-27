@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.340] - 2026-05-26 - Quiz bank: Math L5 25→29
+- Added 4 research-tier math quiz questions to L5 (was the thinnest bank): Gödel incompleteness, Galois theory (quintic unsolvability), Banach-Tarski paradox, category theory.
+- sw cache → v419; Android versionCode 376 / versionName 4.2.4.
+
 ## [5.7.339] - 2026-05-26 - Quiz bank: Animals L1 25→29
 - Added 4 audio-quiz animals to L1 (sounds map to existing mp3s): goat (bleat), eagle (screech), seal (bark), fox (yip). Verified no audioText collisions with the existing 25.
 - sw cache → v418; Android versionCode 375 / versionName 4.2.3.
