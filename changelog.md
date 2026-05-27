@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.358] - 2026-05-26 - Quiz bank: Shapes L1 20→24
+- Added 4 kid-level shapes quiz questions to L1: triangle sides, stop sign octagon, pizza slice triangle, circle has no corners.
+- sw cache → v437; Android versionCode 394 / versionName 4.4.2.
+
 ## [5.7.357] - 2026-05-26 - Quiz bank: Counting L5 20→24 (Counting subject balanced)
 - Added 4 advanced math quiz questions to L5: 0.999...=1, Euler's number e, 0!=1, Fibonacci sequence. Counting quiz now 24/level ×5.
 - 3 of 8 single-group subjects balanced (Weather, Opposites, Counting).
