@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.347] - 2026-05-26 - Quiz bank: Weather L5 20→24 (Weather subject balanced)
+- Added 4 climate-science quiz questions to L5: deterministic chaos / butterfly effect (Lorenz), bomb cyclone, AMOC, NAO. Weather quiz now 24/level across all 5 levels.
+- sw cache → v426; Android versionCode 383 / versionName 4.3.1.
+
 ## [5.7.346] - 2026-05-26 - Quiz bank: Weather L4 20→24
 - Added 4 weather quiz questions to L4: greenhouse effect, Coriolis effect, El Niño/ENSO, humidity/dew point.
 - sw cache → v425; Android versionCode 382 / versionName 4.3.0.
