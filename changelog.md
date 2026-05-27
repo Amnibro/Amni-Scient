@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.323] - 2026-05-26 - Fact-cards Sports L2: 12→16
+- Added 4 sports to L2: rowing (sculls/sweeps + coxswain), wrestling (708 BC Olympics, freestyle/Greco-Roman), triathlon (swim+bike+run, Ironman), sport climbing (speed/bouldering/lead, Tokyo 2020).
+- sw cache → v402; Android versionCode 359 / versionName 4.0.7.
+
 ## [5.7.322] - 2026-05-26 - Fact-cards Sports L1: 12→16
 - Added 4 kid-level sports to L1: badminton (400+ km/h shuttlecock), gymnastics (named moves), skateboarding (ollie/kickflip, Tokyo 2020), surfing (Polynesian roots, big-wave 20m+).
 - sw cache → v401; Android versionCode 358 / versionName 4.0.6.
