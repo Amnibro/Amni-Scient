@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.402] - 2026-05-27 - Fact-cards Opposites L1: 12→16 (phase-3 round 2)
+- Added 4 to Opposites L1: in & out, on & off, yes & no, clean & dirty.
+- Scan found opposites/counting/shapes fact-cards still at 12 — closing them next.
+- sw cache → v481; Android versionCode 438 / versionName 4.8.6.
+
 ## [5.7.401] - 2026-05-27 - Fact-cards Engineering L5: 12→16 (phase-3 gap CLOSED)
 - Added 4 to Engineering L5: maglev trains, photonic computing, metamaterials, carbon capture & storage.
 - All Math + Engineering fact-card levels now at 16 entries each — phase-3 12→16 quadruple complete across all 10 fact-card subjects.
