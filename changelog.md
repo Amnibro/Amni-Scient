@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.352] - 2026-05-26 - Quiz bank: Opposites L5 20→24 (Opposites subject balanced)
+- Added 4 advanced opposites/rhetoric quiz questions to L5: oxymoron, dialectic (Hegel/Socrates), enantiodromia (Jung), complementarity (Bohr). Opposites quiz now 24/level ×5.
+- sw cache → v431; Android versionCode 388 / versionName 4.3.6.
+
 ## [5.7.351] - 2026-05-26 - Quiz bank: Opposites L4 20→24
 - Added 4 opposites quiz pairs to L4: converge/diverge, transparent/opaque, surplus/deficit, optimist/pessimist.
 - sw cache → v430; Android versionCode 387 / versionName 4.3.5.
