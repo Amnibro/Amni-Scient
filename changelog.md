@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.346] - 2026-05-26 - Quiz bank: Weather L4 20→24
+- Added 4 weather quiz questions to L4: greenhouse effect, Coriolis effect, El Niño/ENSO, humidity/dew point.
+- sw cache → v425; Android versionCode 382 / versionName 4.3.0.
+
 ## [5.7.345] - 2026-05-26 - Quiz bank: Weather L3 20→24
 - Added 4 weather quiz questions to L3: tornado formation (supercell mesocyclone), barometer (air pressure), jet stream (high-altitude steering current), + Köppen context.
 - sw cache → v424; Android versionCode 381 / versionName 4.2.9.
