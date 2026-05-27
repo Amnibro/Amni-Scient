@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.399] - 2026-05-27 - Fact-cards Engineering L3: 12→16 (phase-3 gap fix)
+- Added 4 to Engineering L3: trusses, welding, bearings, heat engines.
+- sw cache → v478; Android versionCode 435 / versionName 4.8.3.
+
 ## [5.7.398] - 2026-05-27 - Fact-cards Engineering L2: 12→16 (phase-3 gap fix)
 - Added 4 to Engineering L2: screw, wedge, friction, springs.
 - sw cache → v477; Android versionCode 434 / versionName 4.8.2.
