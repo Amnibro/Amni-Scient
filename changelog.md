@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.414] - 2026-05-27 - Fact-cards Shapes L3: 12→16 (phase-3 round 2)
+- Added 4 to Shapes L3: hemisphere, dodecahedron, icosahedron, frustum.
+- sw cache → v493; Android versionCode 450 / versionName 4.9.8.
+
 ## [5.7.413] - 2026-05-27 - Fact-cards Shapes L2: 12→16 (phase-3 round 2)
 - Added 4 to Shapes L2: kite, chevron, concentric circles, regular vs irregular.
 - sw cache → v492; Android versionCode 449 / versionName 4.9.7.
