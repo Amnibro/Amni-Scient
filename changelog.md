@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.395] - 2026-05-27 - Fact-cards Math L4: 12→16 (phase-3 gap fix)
+- Added 4 to Math L4: combinatorics (nPr/nCr), set theory, logarithmic scales, Bayes' theorem.
+- sw cache → v474; Android versionCode 431 / versionName 4.7.9.
+
 ## [5.7.394] - 2026-05-27 - Fact-cards Math L3: 12→16 (phase-3 gap fix)
 - Added 4 to Math L3: coordinate plane, ratios & proportions, exponents, square roots.
 - sw cache → v473; Android versionCode 430 / versionName 4.7.8.
