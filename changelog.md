@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.370] - 2026-05-27 - Map Clicker: N. America + Oceania — ALL world countries now clickable (iter 7/N)
+- Added clickable border polygons for United States, Canada, Mexico, Australia, New Zealand. Every world-mode quiz country (~42) now has a real border you click to identify — no more tap-by-distance blobs.
+- Next: polish — refine the underlying continent silhouettes so unshaped land looks cleaner, or add hover labels.
+- sw cache → v449; Android versionCode 406 / versionName 4.5.4.
+
 ## [5.7.369] - 2026-05-27 - Map Clicker: remaining Asia (iter 6/N)
 - Added clickable border polygons for Saudi Arabia, Iran, Turkey, Bhutan, Thailand, Vietnam, Indonesia. All Asia quiz countries now click-to-identify.
 - sw cache → v448; Android versionCode 405 / versionName 4.5.3.
