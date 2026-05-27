@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.368] - 2026-05-26 - Map Clicker: core Asia country borders (iter 5/N)
+- Added clickable border polygons for China, India, Japan, Mongolia, Kazakhstan, Russia. Mongolia (the country in Anthony's screenshot) is now properly clickable.
+- sw cache → v447; Android versionCode 404 / versionName 4.5.2.
+
 ## [5.7.367] - 2026-05-26 - Map Clicker: N. Europe + islands (iter 4/N)
 - Added clickable border polygons for UK, Ireland, Norway, Sweden, Poland, Iceland. Now click-to-identify.
 - sw cache → v446; Android versionCode 403 / versionName 4.5.1.
