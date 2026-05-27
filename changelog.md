@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.344] - 2026-05-26 - Quiz bank: Weather L2 20→24
+- Added 4 weather quiz questions to L2: thermometer measures temperature, fog = ground cloud, thunder from lightning-heated air, droughts.
+- sw cache → v423; Android versionCode 380 / versionName 4.2.8.
+
 ## [5.7.343] - 2026-05-26 - Quiz bank: Weather L1 20→24
 - Found the REAL thinnest banks: weather/opposites/counting/shapes/colors/mythology/sports/space quiz subjects all sit at ~20/level (vs peers 29-60). Starting catch-up.
 - Added 4 kid-level weather quiz questions to L1: rainbow after rain+sun, dressing for cold, clouds float in sky, spring season.
