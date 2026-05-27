@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.330] - 2026-05-26 - Fact-cards Space L4: 12→16
+- Added 4 advanced astronomy topics to L4: gravitational lensing (Einstein rings, dark-matter mapping), redshift (expansion Doppler), white dwarfs (Sun\'s fate, 5-ton teaspoon), Cepheid variables (Leavitt 1908 distance ladder).
+- sw cache → v409; Android versionCode 366 / versionName 4.1.4.
+
 ## [5.7.329] - 2026-05-26 - Fact-cards Space L3: 12→16
 - Added 4 space topics to L3: exoplanets (5500+ since 1992, transit/wobble), nebulae (star nurseries, Orion + Pillars), Kuiper Belt (icy bodies beyond Neptune + Oort Cloud), gravity assist (slingshot maneuver).
 - sw cache → v408; Android versionCode 365 / versionName 4.1.3.
