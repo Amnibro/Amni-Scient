@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.415] - 2026-05-27 - Fact-cards Shapes L4: 12→16 (phase-3 round 2)
+- Added 4 to Shapes L4: circle anatomy, exterior angles, coordinate plane, transformations.
+- sw cache → v494; Android versionCode 451 / versionName 4.9.9.
+
 ## [5.7.414] - 2026-05-27 - Fact-cards Shapes L3: 12→16 (phase-3 round 2)
 - Added 4 to Shapes L3: hemisphere, dodecahedron, icosahedron, frustum.
 - sw cache → v493; Android versionCode 450 / versionName 4.9.8.
