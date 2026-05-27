@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.354] - 2026-05-26 - Quiz bank: Counting L2 20→24
+- Added 4 early-grade math quiz questions to L2: 7+5 (make-ten), 4×3 multiplication, tens place value in 47, skip-counting by 5s.
+- sw cache → v433; Android versionCode 390 / versionName 4.3.8.
+
 ## [5.7.353] - 2026-05-26 - Quiz bank: Counting L1 20→24
 - Added 4 pre-K counting quiz questions to L1: fingers on one hand, count 4 stars, smallest number, zero means none.
 - sw cache → v432; Android versionCode 389 / versionName 4.3.7.
