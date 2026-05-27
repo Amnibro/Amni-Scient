@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.383] - 2026-05-27 - Quiz bank: Space L3 20→24
+- Added 4 space quiz questions to L3: light-year (distance), gravity holds orbits, black hole, Jupiter largest planet.
+- sw cache → v462; Android versionCode 419 / versionName 4.6.7.
+
 ## [5.7.382] - 2026-05-27 - Quiz bank: Space L2 20→24
 - Added 4 space quiz questions to L2: Saturn's rings, Sun is hydrogen+helium, Milky Way galaxy, microgravity free-fall.
 - sw cache → v461; Android versionCode 418 / versionName 4.6.6.
