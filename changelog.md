@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.372] - 2026-05-27 - Quiz bank: Mythology L2 20→24
+- Added 4 mythology quiz questions to L2: Thor (Norse thunder), Loki (trickster), Ra (Egyptian sun), Anubis (jackal-headed god of the dead).
+- sw cache → v451; Android versionCode 408 / versionName 4.5.6.
+
 ## [5.7.371] - 2026-05-27 - Quiz bank: Mythology L1 20→24
 - Added 4 kid-level mythology quiz questions to L1: dragon, unicorn, phoenix, cyclops.
 - sw cache → v450; Android versionCode 407 / versionName 4.5.5.
