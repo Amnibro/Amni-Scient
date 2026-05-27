@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.326] - 2026-05-26 - Fact-cards Sports L5: 12→16
+- Added 4 iconic sports moments to L5: 4-minute mile (Bannister 1954), Comaneci perfect 10 (Montreal 1976), Miracle on Ice (1980), Leicester City 5000-1 (2015-16).
+- Sports subject now complete at 16 entries per level (L1-L5).
+- sw cache → v405; Android versionCode 362 / versionName 4.1.0.
+
 ## [5.7.325] - 2026-05-26 - Fact-cards Sports L4: 12→16
 - Added 4 sporting feats to L4: Grand Slam (all 4 tennis majos in a year), hat-trick (cricket origin 1858), penalty shootout (WC 1978), photo finish (slit-scan camera, torso rule).
 - sw cache → v404; Android versionCode 361 / versionName 4.0.9.
