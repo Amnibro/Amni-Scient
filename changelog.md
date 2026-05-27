@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.362] - 2026-05-26 - Quiz bank: Shapes L5 20→24 (Shapes subject balanced)
+- Added 4 topology/advanced-geometry quiz questions to L5: Möbius strip, fractals, four color theorem, non-Euclidean triangle angles. Shapes quiz now 24/level ×5.
+- 4 of 8 single-group subjects balanced (Weather, Opposites, Counting, Shapes).
+- sw cache → v441; Android versionCode 398 / versionName 4.4.6.
+
 ## [5.7.361] - 2026-05-26 - Quiz bank: Shapes L4 20→24
 - Added 4 geometry quiz questions to L4: Euler's polyhedron formula (V−E+F=2), golden ratio φ, triangle angle sum 180°, tessellations.
 - sw cache → v440; Android versionCode 397 / versionName 4.4.5.
