@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.381] - 2026-05-27 - Quiz bank: Space L1 20→24
+- Added 4 kid-level space quiz questions to L1: Sun is closest star, astronaut, elliptical orbits, shooting star = meteor.
+- sw cache → v460; Android versionCode 417 / versionName 4.6.5.
+
 ## [5.7.380] - 2026-05-27 - Quiz bank: Sports L5 20→24 (Sports subject balanced)
 - Added 4 sports quiz questions to L5: Miracle on Ice, Michael Phelps (28 medals), chess checkmate, Bannister's 4-minute mile. Sports quiz now 24/level ×5.
 - 7 of 8 single-group quiz subjects balanced. Only Space remains.
