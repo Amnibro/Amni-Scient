@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.371] - 2026-05-27 - Quiz bank: Mythology L1 20→24
+- Added 4 kid-level mythology quiz questions to L1: dragon, unicorn, phoenix, cyclops.
+- sw cache → v450; Android versionCode 407 / versionName 4.5.5.
+
 ## [5.7.370] - 2026-05-27 - Map Clicker: N. America + Oceania — ALL world countries now clickable (iter 7/N)
 - Added clickable border polygons for United States, Canada, Mexico, Australia, New Zealand. Every world-mode quiz country (~42) now has a real border you click to identify — no more tap-by-distance blobs.
 - Next: polish — refine the underlying continent silhouettes so unshaped land looks cleaner, or add hover labels.
