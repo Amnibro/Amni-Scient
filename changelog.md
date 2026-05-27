@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.379] - 2026-05-27 - Quiz bank: Sports L4 20→24
+- Added 4 sports quiz questions to L4: VAR (video assistant referee), checkered flag, Fosbury Flop (high jump), field goal = 3 points.
+- sw cache → v458; Android versionCode 415 / versionName 4.6.3.
+
 ## [5.7.378] - 2026-05-27 - Quiz bank: Sports L3 20→24
 - Added 4 sports quiz questions to L3: Tour de France yellow jersey, golf birdie, hat-trick, slam dunk (basketball). Also fixed a 'RACQUETBLALL' typo in the squash entry.
 - sw cache → v457; Android versionCode 414 / versionName 4.6.2.
