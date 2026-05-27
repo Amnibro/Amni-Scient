@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.411] - 2026-05-27 - Fact-cards Counting L5: 12→16 (Counting fact-cards complete)
+- Added 4 to Counting L5: golden ratio, Pascal's triangle, modular arithmetic, factorials.
+- All 5 Counting fact-card levels now at 16 each.
+- sw cache → v490; Android versionCode 447 / versionName 4.9.5.
+
 ## [5.7.410] - 2026-05-27 - Fact-cards Counting L4: 12→16 (phase-3 round 2)
 - Added 4 to Counting L4: decimals, factors & multiples, percentages, number bonds.
 - sw cache → v489; Android versionCode 446 / versionName 4.9.4.
