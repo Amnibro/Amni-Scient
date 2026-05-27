@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.377] - 2026-05-27 - Quiz bank: Sports L2 20→24
+- Added 4 sports quiz questions to L2: Olympics every 4 years, touchdown = 6 points, perfect bowling game = 300, tennis 'love' = zero.
+- sw cache → v456; Android versionCode 413 / versionName 4.6.1.
+
 ## [5.7.376] - 2026-05-27 - Quiz bank: Sports L1 20→24
 - Added 4 kid-level sports quiz questions to L1: soccer team = 11, tennis racket, bowling strike, cyclist helmet.
 - sw cache → v455; Android versionCode 412 / versionName 4.6.0.
