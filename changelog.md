@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.380] - 2026-05-27 - Quiz bank: Sports L5 20→24 (Sports subject balanced)
+- Added 4 sports quiz questions to L5: Miracle on Ice, Michael Phelps (28 medals), chess checkmate, Bannister's 4-minute mile. Sports quiz now 24/level ×5.
+- 7 of 8 single-group quiz subjects balanced. Only Space remains.
+- sw cache → v459; Android versionCode 416 / versionName 4.6.4.
+
 ## [5.7.379] - 2026-05-27 - Quiz bank: Sports L4 20→24
 - Added 4 sports quiz questions to L4: VAR (video assistant referee), checkered flag, Fosbury Flop (high jump), field goal = 3 points.
 - sw cache → v458; Android versionCode 415 / versionName 4.6.3.
