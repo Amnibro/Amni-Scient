@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.7.386] - 2026-05-27 - Map Clicker: clickable US states — engine + tier-1 (iter 1/N)
+- Refactored the Map Clicker engine to be mode-agnostic: a single `shapeSet` (countries for World, states for US) now drives drawing, hover-highlight, click-validation + the "Click on X" prompt — so US mode gets the same real clickable-region treatment as the world map (no more crude-blob distance guessing).
+- Added `_mapUSStateShapes` with tier-1 state border polygons: California, Texas, Florida, New York, Illinois, Pennsylvania, Ohio, Georgia, Michigan, North Carolina, New Jersey, Virginia. Unshaped states still fall back to distance.
+- Next iters: tier-2 + tier-3 state borders.
+- sw cache → v465; Android versionCode 422 / versionName 4.7.0.
+
 ## [5.7.385] - 2026-05-27 - Quiz bank: Space L5 20→24 (ALL 8 single-group quiz subjects balanced)
 - Added 4 frontier-cosmology quiz questions to L5: dark matter, dark energy, cosmic microwave background, Hawking radiation. Space quiz now 24/level ×5.
 - Milestone: every single-group quiz subject (Weather, Opposites, Counting, Shapes, Colors, Mythology, Sports, Space) is now 24/level — the ~20/level thinnest-tier gap is fully closed.
