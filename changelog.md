@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.367] - 2026-05-26 - Map Clicker: N. Europe + islands (iter 4/N)
+- Added clickable border polygons for UK, Ireland, Norway, Sweden, Poland, Iceland. Now click-to-identify.
+- sw cache → v446; Android versionCode 403 / versionName 4.5.1.
+
 ## [5.7.366] - 2026-05-26 - Map Clicker: Europe country borders (iter 3/N)
 - Added clickable border polygons for W. Europe quiz countries: Spain + Portugal (Iberia), France (hexagon), Germany, Italy (boot), Greece. Now click-to-identify.
 - sw cache → v445; Android versionCode 402 / versionName 4.5.0.
