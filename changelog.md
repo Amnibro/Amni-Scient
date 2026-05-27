@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.322] - 2026-05-26 - Fact-cards Sports L1: 12→16
+- Added 4 kid-level sports to L1: badminton (400+ km/h shuttlecock), gymnastics (named moves), skateboarding (ollie/kickflip, Tokyo 2020), surfing (Polynesian roots, big-wave 20m+).
+- sw cache → v401; Android versionCode 358 / versionName 4.0.6.
+
 ## [5.7.321] - 2026-05-26 - Aggressive mobile overflow patch (round 2)
 - Fixed dvh/vh order bug on line 1220: `body.game-active #app{height:100dvh;height:100vh}` had dvh declared FIRST → modern Safari resolved to vh (URL-bar-collapsed height = taller than visible), causing every game module to overflow below viewport. Inverted to `100vh;100dvh` so dvh wins.
 - Added `min-height:100dvh` to #app baseline (matches body).
