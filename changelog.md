@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.333] - 2026-05-26 - Sudoku 4×4 board responsive cells
+- Sudoku board cells were fixed 72px (4×72 + gaps + pad ≈ 310px → clipped on phones <320px). Switched grid tracks + cell width/height to min(72px,18vw) + font-size clamp(1.2rem,5vw,2rem). Desktop unchanged; scales cleanly to the smallest phones.
+- sw cache → v412; Android versionCode 369 / versionName 4.1.7.
+
 ## [5.7.332] - 2026-05-26 - Mobile overflow round 3: kill inline min-width offenders
 - Root cause of remaining overflow: inline `min-width:<N>px` WINS over max-width in the CSS cascade, so v5.7.321's universal clamp couldn't shrink them. Offenders: 18-col grid (min-width:380px → busts any <380px phone), prompt panels (min-width:260px), profile/leaderboard/stats modals (min-width:320-340px).
 - Fix: at ≤430px, zero every inline-styled min-width via `[style*="min-width"]` attribute selector + force .hs-modal to max-width:94vw. Surgical — only touches elements that actually set an inline min-width.

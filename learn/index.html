@@ -4751,7 +4751,7 @@
       Object.keys(LEVELS).forEach(k=>{const b=document.createElement('button');b.className='sdk-btn'+(k===level?' active':'');b.style.cssText='font-size:0.85rem;padding:5px 12px;';b.textContent=LEVELS[k].label;b.onclick=()=>{sessionStorage.setItem('sd-level',k);initSudoku();};lvlRow.appendChild(b);});
       lifeArea.appendChild(lvlRow);
       const board=document.createElement('div');
-      board.style.cssText='display:grid;grid-template-columns:repeat(4,72px);grid-template-rows:repeat(4,72px);gap:2px;background:#2c3e50;padding:8px;border-radius:10px;margin:6px auto;width:fit-content;';
+      board.style.cssText='display:grid;grid-template-columns:repeat(4,min(72px,18vw));grid-template-rows:repeat(4,min(72px,18vw));gap:2px;background:#2c3e50;padding:8px;border-radius:10px;margin:6px auto;width:fit-content;';
       for(let r=0;r<4;r++)for(let c=0;c<4;c++){
         const cell=document.createElement('div');
         const v=puzzle[r][c];
@@ -4762,7 +4762,7 @@
         const color=conflict?'#e74c3c':(isSel?'#2c3e50':(isFixed?'#fff':'#2c3e50'));
         const bd=(r===1?'border-bottom:3px solid #1a2530;':'')+(c===1?'border-right:3px solid #1a2530;':'');
         const outline=conflict?'box-shadow:inset 0 0 0 3px #e74c3c;':'';
-        cell.style.cssText=`width:72px;height:72px;background:${bg};color:${color};display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:bold;font-family:Comic Neue,cursive;cursor:${won||isFixed?'default':'pointer'};border-radius:4px;${bd}${outline}`;
+        cell.style.cssText=`width:min(72px,18vw);height:min(72px,18vw);background:${bg};color:${color};display:flex;align-items:center;justify-content:center;font-size:clamp(1.2rem,5vw,2rem);font-weight:bold;font-family:Comic Neue,cursive;cursor:${won||isFixed?'default':'pointer'};border-radius:4px;${bd}${outline}`;
         cell.textContent=v||'';
         if(!won&&!isFixed)cell.onclick=()=>{selected=[r,c];render();};
         board.appendChild(cell);
