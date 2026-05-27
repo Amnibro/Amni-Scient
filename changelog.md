@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.392] - 2026-05-27 - Fact-cards Math L1: 12→16 (phase-3 gap fix)
+- Found a real gap: Math + Engineering FACT-cards were still at 12/level (never got the phase-3 12→16 quadruple the other 8 subjects did). Closing it.
+- Added 4 to Math L1: place value (tens & ones), telling time, money math, measuring.
+- sw cache → v471; Android versionCode 428 / versionName 4.7.6.
+
 ## [5.7.391] - 2026-05-27 - Map Clicker: US states COMPLETE — all 48 + DC clickable (iter 6)
 - Added the final small states: New Hampshire, Vermont, Rhode Island, Delaware, District of Columbia. Every US-mode quiz answer now has a real clickable border.
 - Map Clicker real-map rebuild is now COMPLETE for BOTH modes: ~42 world countries + all 48 contiguous states + DC. The crude tap-the-blob distance game is fully replaced by click-the-region.
