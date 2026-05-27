@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.360] - 2026-05-26 - Quiz bank: Shapes L3 20→24
+- Added 4 geometry quiz questions to L3: Pythagorean theorem, rectangle area, equilateral triangle angles, polyhedron definition.
+- sw cache → v439; Android versionCode 396 / versionName 4.4.4.
+
 ## [5.7.359] - 2026-05-26 - Quiz bank: Shapes L2 20→24
 - Added 4 shapes quiz questions to L2: sphere (ball), cube has 6 faces, regular polygon, 360° in a full circle.
 - sw cache → v438; Android versionCode 395 / versionName 4.4.3.
