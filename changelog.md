@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.365] - 2026-05-26 - Map Clicker: Africa country borders (iter 2/N)
+- Added clickable border polygons for Africa quiz countries: Egypt (boxy NE), South Africa (southern cape), Nigeria (Gulf of Guinea), Kenya (E coast), Morocco (NW corner), Ethiopia (Horn highlands). Now click-to-identify.
+- sw cache → v444; Android versionCode 401 / versionName 4.4.9.
+
 ## [5.7.364] - 2026-05-26 - Map Clicker: real clickable-country engine (iter 1/N)
 - Per Anthony: replacing the crude continent-blob "tap where you think it is" map with a REAL click-the-country map.
 - Iter 1 lays the engine: `_mapCountryShapes` border-polygon store (equirectangular [lon,lat] rings), ray-cast point-in-polygon hit-test, crisp country borders drawn over the continents, hover highlight (country lights up gold under cursor), and click-validation (tap inside the country's actual borders = perfect 100; outside = partial by distance). Prompt switches to "Click on <country>?" for shaped countries.
