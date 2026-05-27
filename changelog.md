@@ -1,5 +1,12 @@
 ﻿# Changelog 
 
+## [5.7.364] - 2026-05-26 - Map Clicker: real clickable-country engine (iter 1/N)
+- Per Anthony: replacing the crude continent-blob "tap where you think it is" map with a REAL click-the-country map.
+- Iter 1 lays the engine: `_mapCountryShapes` border-polygon store (equirectangular [lon,lat] rings), ray-cast point-in-polygon hit-test, crisp country borders drawn over the continents, hover highlight (country lights up gold under cursor), and click-validation (tap inside the country's actual borders = perfect 100; outside = partial by distance). Prompt switches to "Click on <country>?" for shaped countries.
+- First continent authored: South America (Brazil, Argentina, Peru, Chile, Colombia, Venezuela) — now properly clickable. Unshaped countries still fall back to distance scoring so nothing breaks mid-build.
+- Next iters: Africa, Europe, Asia, N. America, Oceania country borders.
+- sw cache → v443; Android versionCode 400 / versionName 4.4.8.
+
 ## [5.7.363] - 2026-05-26 - Quiz bank: Colors L1 19→24
 - Added 5 kid-level colors quiz questions to L1 (was the lone 19-entry bank): red+yellow=orange, grass green (chlorophyll), snow white, panda black+white, ripe banana yellow.
 - sw cache → v442; Android versionCode 399 / versionName 4.4.7.

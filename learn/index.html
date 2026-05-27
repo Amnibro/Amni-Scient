@@ -11354,6 +11354,21 @@ function playAnimalSound(type) {
     {n:'Bhutan',la:27,lo:90,t:3},{n:'Mongolia',la:46,lo:103,t:3},{n:'Kazakhstan',la:48,lo:67,t:3},
     {n:'Iceland',la:65,lo:-19,t:2},{n:'Ireland',la:53,lo:-8,t:2},{n:'Portugal',la:39,lo:-8,t:2}
   ];
+  // Clickable country border polygons — equirectangular [lon,lat] rings.
+  // Built up continent-by-continent. A country listed here becomes
+  // click-to-identify (tap inside its borders = correct). Countries not yet
+  // shaped still fall back to tap-by-distance scoring, so the game never
+  // breaks mid-build. (Map Clicker real-borders rebuild — South America batch.)
+  const _mapCountryShapes={
+    'Brazil':[[-70,2],[-67,2],[-60,5],[-51,4],[-50,0],[-44,-2],[-38,-3],[-35,-5],[-39,-13],[-40,-20],[-43,-23],[-48,-25],[-53,-33],[-57,-30],[-58,-22],[-61,-16],[-58,-12],[-65,-10],[-70,-11],[-73,-8],[-70,-2],[-70,2]],
+    'Argentina':[[-66,-22],[-64,-22],[-60,-24],[-58,-27],[-56,-31],[-58,-34],[-62,-40],[-65,-43],[-68,-48],[-69,-52],[-66,-55],[-71,-54],[-72,-50],[-72,-44],[-71,-38],[-70,-33],[-69,-28],[-67,-24],[-66,-22]],
+    'Peru':[[-81,-4],[-79,-7],[-76,-14],[-74,-16],[-71,-18],[-69,-15],[-70,-12],[-73,-10],[-74,-5],[-78,-3],[-81,-4]],
+    'Chile':[[-70,-18],[-70,-25],[-71,-30],[-72,-37],[-73,-42],[-74,-46],[-75,-50],[-69,-54],[-68,-52],[-71,-47],[-72,-42],[-71,-37],[-70,-30],[-69,-23],[-69,-18],[-70,-18]],
+    'Colombia':[[-77,8],[-75,11],[-72,12],[-71,11],[-67,6],[-67,1],[-70,-2],[-73,1],[-78,1],[-79,2],[-78,6],[-77,8]],
+    'Venezuela':[[-72,11],[-71,12],[-64,11],[-61,10],[-60,8],[-62,4],[-64,2],[-67,2],[-67,6],[-70,8],[-71,9],[-72,11]]
+  };
+  // Ray-cast point-in-polygon: is geo point (lat,lon) inside ring [[lon,lat],…]?
+  function _ptInRing(lat,lon,ring){let inside=false;for(let i=0,j=ring.length-1;i<ring.length;j=i++){const xi=ring[i][0],yi=ring[i][1],xj=ring[j][0],yj=ring[j][1];if(((yi>lat)!==(yj>lat))&&(lon<(xj-xi)*(lat-yi)/(yj-yi)+xi))inside=!inside;}return inside;}
   // US states (lower 48 + DC). Tier 1 = most populous/recognizable, 3 = smaller.
   const _mapUSStates = [
     {n:'California',la:36.8,lo:-119.4,t:1},{n:'Texas',la:31.5,lo:-99.3,t:1},{n:'Florida',la:27.8,lo:-81.7,t:1},
@@ -11383,7 +11398,7 @@ function playAnimalSound(type) {
     const tierMax=diff==='easy'?1:(diff==='normal'?2:3);
     const pool=(mode==='us'?_mapUSStates:_mapCountries).filter(c=>c.t<=tierMax);
     let queue=[...pool].sort(()=>Math.random()-0.5).slice(0,12);
-    let idx=0,totalDist=0,roundScore=0,streak=0;
+    let idx=0,totalDist=0,roundScore=0,streak=0,resolving=false;
     const lifetimeKey='mc-lifetime-'+mode+'-'+diff,bestKey='mc-best-round-'+mode+'-'+diff;
     const lifetime=parseInt(localStorage.getItem(lifetimeKey)||'0');
     const bestRound=parseInt(localStorage.getItem(bestKey)||'0');
@@ -11415,7 +11430,7 @@ function playAnimalSound(type) {
       if(mode==='us'){const lon=US_BOUNDS.minLon+(mx/W)*(US_BOUNDS.maxLon-US_BOUNDS.minLon);const lat=US_BOUNDS.maxLat-(my/H)*(US_BOUNDS.maxLat-US_BOUNDS.minLat);return{lat,lon};}
       return{lat:90-(my/H)*180,lon:(mx/W)*360-180};
     }
-    function drawMap(){
+    function drawMap(hl){
       cx.fillStyle='#0a2540';cx.fillRect(0,0,W,H);
       cx.strokeStyle='rgba(255,255,255,0.06)';cx.lineWidth=1;
       if(mode==='us'){
@@ -11427,7 +11442,9 @@ function playAnimalSound(type) {
       } else {
         for(let lat=-60;lat<=60;lat+=30){const y=ll2xy(lat,0).y;cx.beginPath();cx.moveTo(0,y);cx.lineTo(W,y);cx.stroke();}
         for(let lon=-150;lon<=150;lon+=30){const x=ll2xy(0,lon).x;cx.beginPath();cx.moveTo(x,0);cx.lineTo(x,H);cx.stroke();}
-        _mapContinents.forEach(c=>{cx.beginPath();c.pts.forEach((p,i)=>{const xy=ll2xy(p[1],p[0]);if(i===0)cx.moveTo(xy.x,xy.y);else cx.lineTo(xy.x,xy.y);});cx.closePath();cx.fillStyle=c.color;cx.fill();cx.strokeStyle='rgba(0,0,0,0.4)';cx.lineWidth=1;cx.stroke();});
+        _mapContinents.forEach(c=>{cx.beginPath();c.pts.forEach((p,i)=>{const xy=ll2xy(p[1],p[0]);if(i===0)cx.moveTo(xy.x,xy.y);else cx.lineTo(xy.x,xy.y);});cx.closePath();cx.fillStyle='#2f6f4a';cx.fill();cx.strokeStyle='rgba(0,0,0,0.35)';cx.lineWidth=1;cx.stroke();});
+        // Crisp country borders on top — these are the click-to-identify regions.
+        Object.keys(_mapCountryShapes).forEach(nm=>{const ring=_mapCountryShapes[nm];cx.beginPath();ring.forEach((p,i)=>{const xy=ll2xy(p[1],p[0]);if(i===0)cx.moveTo(xy.x,xy.y);else cx.lineTo(xy.x,xy.y);});cx.closePath();cx.fillStyle=nm===hl?'#6ad08a':'#3f9163';cx.fill();cx.strokeStyle=nm===hl?'#f1c40f':'rgba(0,0,0,0.6)';cx.lineWidth=nm===hl?2:1;cx.stroke();});
       }
     }
     function haversine(lat1,lon1,lat2,lon2){const R=6371,toR=Math.PI/180;const dLat=(lat2-lat1)*toR,dLon=(lon2-lon1)*toR;const a=Math.sin(dLat/2)**2+Math.cos(lat1*toR)*Math.cos(lat2*toR)*Math.sin(dLon/2)**2;return 2*R*Math.asin(Math.sqrt(a));}
@@ -11436,7 +11453,7 @@ function playAnimalSound(type) {
       if(km<=300)return 100;if(km<=700)return 80;if(km<=1500)return 60;if(km<=3000)return 35;if(km<=5000)return 15;return 0;
     }
     function showResult(targetLL,clickLL,km,score){
-      drawMap();
+      drawMap(mode==='world'?targetLL.n:null);
       const t=ll2xy(targetLL.la,targetLL.lo),c=ll2xy(clickLL.lat,clickLL.lon);
       // Line between
       cx.strokeStyle='#f1c40f';cx.lineWidth=2;cx.setLineDash([6,4]);cx.beginPath();cx.moveTo(c.x,c.y);cx.lineTo(t.x,t.y);cx.stroke();cx.setLineDash([]);
@@ -11458,8 +11475,9 @@ function playAnimalSound(type) {
         const restart=document.createElement('button');restart.className='retro-btn';restart.style.marginTop='10px';restart.textContent='🔁 Play again';restart.onclick=initMapClick;root.appendChild(restart);
         return;
       }
-      const cur=queue[idx];
-      prompt.innerHTML=`Where is <b style="color:#3498db;font-size:1.1em">${cur.n}</b>?`;
+      const cur=queue[idx];resolving=false;
+      const clickable=mode==='world'&&_mapCountryShapes[cur.n];
+      prompt.innerHTML=`${clickable?'Click on':'Where is'} <b style="color:#3498db;font-size:1.1em">${cur.n}</b>?`;
       const pe=document.getElementById('mc-progress');if(pe)pe.textContent=`${idx+1}/${queue.length}`;
       drawMap();
     }
@@ -11468,9 +11486,11 @@ function playAnimalSound(type) {
       const r=cv.getBoundingClientRect();
       const mx=(e.clientX-r.left)*(W/r.width),my=(e.clientY-r.top)*(H/r.height);
       const ll=xy2ll(mx,my);const lat=ll.lat,lon=ll.lon;
-      const cur=queue[idx];
+      const cur=queue[idx];resolving=true;
       const km=Math.round(haversine(lat,lon,cur.la,cur.lo));
-      const sc=scoreDistance(km);
+      const shape=mode==='world'?_mapCountryShapes[cur.n]:null;
+      // Clicked inside the country's actual borders = perfect; else partial by distance.
+      const sc=(shape&&_ptInRing(lat,lon,shape))?100:scoreDistance(km);
       roundScore+=sc;streak=sc>=60?streak+1:0;
       const se=document.getElementById('mc-score');if(se)se.textContent=roundScore;
       const ste=document.getElementById('mc-streak');if(ste)ste.textContent=streak;
@@ -11482,6 +11502,16 @@ function playAnimalSound(type) {
       showResult(cur,{lat,lon},km,sc);
       idx++;
       setTimeout(nextQ,2200);
+    });
+    // Hover highlight — light up the country border under the cursor so the
+    // click-to-identify map feels responsive (world mode only, between guesses).
+    cv.addEventListener('mousemove',e=>{
+      if(mode!=='world'||resolving||idx>=queue.length)return;
+      const r=cv.getBoundingClientRect();
+      const mx=(e.clientX-r.left)*(W/r.width),my=(e.clientY-r.top)*(H/r.height);
+      const ll=xy2ll(mx,my);let hit=null;
+      for(const nm in _mapCountryShapes){if(_ptInRing(ll.lat,ll.lon,_mapCountryShapes[nm])){hit=nm;break;}}
+      drawMap(hit);
     });
     nextQ();
   }
