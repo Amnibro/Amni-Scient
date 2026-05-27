@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.384] - 2026-05-27 - Quiz bank: Space L4 20→24
+- Added 4 space quiz questions to L4: supernova, exoplanet, ISS, total solar eclipse cause.
+- sw cache → v463; Android versionCode 420 / versionName 4.6.8.
+
 ## [5.7.383] - 2026-05-27 - Quiz bank: Space L3 20→24
 - Added 4 space quiz questions to L3: light-year (distance), gravity holds orbits, black hole, Jupiter largest planet.
 - sw cache → v462; Android versionCode 419 / versionName 4.6.7.
