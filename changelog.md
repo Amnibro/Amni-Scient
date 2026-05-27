@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.406] - 2026-05-27 - Fact-cards Opposites L5: 12→16 (Opposites fact-cards complete)
+- Added 4 to Opposites L5: macro & micro, subjective & objective, centralized & decentralized, synchronous & asynchronous.
+- All 5 Opposites fact-card levels now at 16 each.
+- sw cache → v485; Android versionCode 442 / versionName 4.9.0.
+
 ## [5.7.405] - 2026-05-27 - Fact-cards Opposites L4: 12→16 (phase-3 round 2)
 - Added 4 to Opposites L4: analog & digital, compress & decompress, visible & invisible, rigid & flexible.
 - sw cache → v484; Android versionCode 441 / versionName 4.8.9.
