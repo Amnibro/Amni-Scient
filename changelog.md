@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.391] - 2026-05-27 - Map Clicker: US states COMPLETE — all 48 + DC clickable (iter 6)
+- Added the final small states: New Hampshire, Vermont, Rhode Island, Delaware, District of Columbia. Every US-mode quiz answer now has a real clickable border.
+- Map Clicker real-map rebuild is now COMPLETE for BOTH modes: ~42 world countries + all 48 contiguous states + DC. The crude tap-the-blob distance game is fully replaced by click-the-region.
+- sw cache → v470; Android versionCode 427 / versionName 4.7.5.
+
 ## [5.7.390] - 2026-05-27 - Map Clicker: clickable US states tier-3 batch B (iter 5/N)
 - Added border polygons for 8 more tier-3 states: Mississippi, Nebraska, New Mexico, West Virginia, South Dakota, North Dakota, Maine, Connecticut. Now click-to-identify.
 - Remaining: New Hampshire, Vermont, Rhode Island, Delaware, DC (the smallest).
