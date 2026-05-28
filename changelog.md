@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.649] - 2026-05-28 - Quiz Science L3: 40→44 (PASS-9 science sweep — 3 of 5)
+- Added 4 more L3 science Qs: NEWTON'S 3 LAWS (Principia 1687, inertia + F=ma + action-reaction, foundational ~220 years before Einstein relativity refines high-v limit), ELECTROMAGNETIC SPECTRUM (radio→microwave→IR→visible→UV→X-ray→gamma, all c in vacuum, E=hf why UV burns, Maxwell 1865 unified electricity+magnetism+light, Hertz 1888 radio), PLATE TECTONICS (15-20 plates, 2-10 cm/yr, divergent ridges + convergent subduction/collision Himalayas + transform San Andreas, Wegener 1912 ridiculed → sea-floor spreading 1960s, Pangaea 335-175 Mya), CHEMICAL BONDS (ionic Na⁺Cl⁻ electrolytes, covalent shared single/double/triple, metallic sea-of-electrons for conductivity/malleability/luster, Pauling+Lewis structures).
+- Distinct from existing 40 L3 (mitochondria, H₂O, igneous rocks, carbon Z=6, Darwin, pH 7, proton +, nitrogen 78%, gravity 9.8 m/s², prokaryotic vs eukaryotic, 3 heat-transfer modes, wave-particle duality).
+- sw.js → v728. Android versionCode 685 / versionName 7.3.3.
+
 ## [5.7.648] - 2026-05-28 - Quiz Science L2: 40→44 (PASS-9 science sweep — 2 of 5)
 - Added 4 more L2 science Qs: DNA DOUBLE HELIX (Watson+Crick+Franklin Photo 51 Cambridge 1953, A-T C-G base pairing, Chargaff rules, 2m DNA in 6μm nucleus, Nobel 1962 Franklin died 1958 no posthumous), WATER CYCLE (evap→condense→precip→runoff/collection, plant transpiration, 97% ocean / 3% fresh / 1% accessible), PHOTOSYNTHESIS EQUATION (6 CO₂ + 6 H₂O + light → C₆H₁₂O₆ + 6 O₂, chlorophyll absorbs red+blue reflects green, light reactions + Calvin cycle, ~half Earth's O₂ from ocean phytoplankton), ARCHIMEDES' PRINCIPLE (~250 BC Syracuse Eureka, ship steel hollow + air less dense than water, buoyant force = weight of displaced fluid, iceberg ~10% above, balloons + submarines).
 - Distinct from existing 40 L2 (food chain, vertebrates, 7 continents, Pacific largest, atom, sound in space, light speed, heart, lava, electricity, etc.).
