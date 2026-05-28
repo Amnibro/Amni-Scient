@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.458] - 2026-05-27 - Quiz Weather L5: 24→28 (Weather quiz now 28×5)
+- Added 4 to Weather quiz L5: Milankovitch cycles, volcanic-eruption climate cooling, permafrost, climate sensitivity.
+- All 5 Weather quiz levels now at 28 each. Every quiz subject is now at floor 24 or higher; the 8 "simple" subjects all sit at 28×5 except `colors` (24×5, already deepened in v5.7.418–v5.7.421 round).
+- sw cache → v537; Android versionCode 494 / versionName 5.4.2.
+
 ## [5.7.457] - 2026-05-27 - Quiz Weather L4: 24→28
 - Added 4 to Weather quiz L4: albedo, adiabatic cooling, polar vortex, wet-bulb temperature.
 - Noted: L4 has the densest existing cross-level repetition in the bank (Coriolis, El Niño, aurora, barometer, humidity, troposphere all appear in both L4 and other levels) — matches existing design pattern; left as-is.
