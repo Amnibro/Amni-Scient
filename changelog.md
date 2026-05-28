@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.643] - 2026-05-28 - Quiz Colors L5: 40→44 (PASS-8 L5 sweep — 5 of 8)
+- Added 4 more L5 color Qs (research-tier): FRAUNHOFER LINES (Wollaston 1802 → Fraunhofer 1814 cataloged 574 lines, Kirchhoff+Bunsen 1859 element ID, sodium D-line 589nm + H-α 656.3nm, Helium discovered IN SUN before Earth 1868 Lockyer+Janssen, ~25000 lines), CIE 1931 (Wright+Guild 1928-30 color matching, XYZ tristimulus positive, horseshoe gamut, D65 daylight 6504K, sRGB/AdobeRGB/DCI-P3/Rec.2020 are subset triangles), COLOR CONSTANCY+RETINEX (Edwin Land 1959 2-color projector demo, Retinex theory 1971-80s global lightness comparison, white balance approximation, #TheDress 2015 viral illumination-prior split), TETRACHROMACY (12% women X-linked M' variant carrier BUT functional <1, Concetta Antico 2010 confirmed, birds+reptiles+fish, mantis shrimp 16+ overhyped recent research, men never tetra X-linked).
+- Distinct from existing 40 L5 (laser, birefringence, Tyndall, blackbody, pointillism, Benham's disk, melanopsin, etc).
+- sw.js → v722. Android versionCode 679 / versionName 7.2.7.
+
 ## [5.7.642] - 2026-05-28 - Quiz Space L5: 40→44 (PASS-8 L5 sweep — 4 of 8, halfway through L5!)
 - Added 4 more L5 space Qs (research-tier): DARK ENERGY (Perlmutter/Schmidt/Riess 1998 Type Ia SNe, accelerating expansion, Nobel 2011, w≈-1 cosmological constant 68%, JWST+Euclid+Rubin probing varying w), CMB ANISOTROPY (Penzias+Wilson 1964 Nobel 1978, recombination ~380000 yr, COBE Mather+Smoot Nobel 2006, WMAP+Planck angular peaks → curvature+baryon+DM density, B-mode polarization smoking gun BICEP2 2014 false-alarm dust), ADS/CFT (Maldacena 1997 most-cited HEP paper, gravity bulk = CFT boundary holographic, AdS₅×S⁵ ↔ N=4 SYM, 't Hooft+Susskind holographic principle, our universe is dS not AdS), FAST RADIO BURSTS (Lorimer 2007, ~ms ~sun-in-days energy, CHIME+ASKAP 800+ catalog, 5% repeat FRB 121102+180916 16-day periodicity, SGR 1935+2154 magnetar 2020 smoking gun).
 - Distinct from existing 40 L5 (wormhole, Olbers, Boltzmann brain, Roche limit, Eddington limit, vacuum decay, Maunder min, BH info paradox, baryogenesis, Kerr BH, neutrino oscillation, etc).
