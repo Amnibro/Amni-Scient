@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.559] - 2026-05-28 - Quiz Mythology L5: 32→36
+- Added 4 deep cross-cultural L5 myth Qs: Hermes Trismegistus (Greek/Egyptian alchemy founder, Emerald Tablet), Mithras (Roman mystery cult, bull-slaying tauroctony, Christianity rival), La Llorona (Mexican weeping mother ghost), Huitzilopochtli (Aztec sun-war god, Tenochtitlán founding eagle-on-cactus → Mexico flag).
+- Distinct from existing 32 L5 (Iris/Morpheus/Midas/Athena/Nike/Fenrir/Pandora/Trojan Horse/Sisyphus/Tantalus/Gilgamesh/Marduk/Tiamat/Inanna/Arthur/Grail/Merlin/Atlantis/Hyperboreans/Lethe/Heimdall/Prometheus/Yggdrasil/Daedalus/Moirai/Aeneid/Hecate/Susanoo/Eris/Charon/Ragnarök/Ouroboros).
+- sw cache → v638; Android versionCode 595 / versionName 6.4.3.
+
 ## [5.7.558] - 2026-05-28 - Quiz Weather L5: 32→36 (pass-6 L5 sweep begins)
 - Added 4 L5-tier climate-policy + paleoclimate Qs: Paris Agreement 2015 (1.5-2°C target), ocean acidification ('climate's evil twin' pH 8.2→8.1), IPCC assessment reports (AR6 2021-23), PETM (~56 Mya 5-8°C warming in 10-20kyr).
 - Distinct from existing 32 L5 (weather-vs-climate/El Niño/jet stream/snowflake/lightning/Antarctic/Mauna Loa/AMOC/atm rivers/MJO/SSW/PDO/butterfly/bomb cyclone/NAO/Milankovitch/volcanic cooling/permafrost/climate sensitivity/carbon sink/ice-albedo/tipping points/stratospheric aerosol injection).
