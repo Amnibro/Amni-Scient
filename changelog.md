@@ -1,7 +1,11 @@
 ﻿# Changelog 
 
-## [5.7.626] - 2026-05-28 - Quiz Colors L3: 40→44 (Version 7.1.0!)
-- Added 4 more L3 color Qs: indigo (Indigofera-leaves 5000yrs, Greek 'indikon', von Baeyer 1880s synthetic Nobel 1905, 80K-tons/yr 95% denim), arsenic green (Scheele 1775 + Paris 1814 copper arsenite, Napoleon's wallpaper death-suspect, Victorian killer-green wallpaper panic), Maya Blue (indigo+palygorskite-clay nano-tunnel-trapped, 1500+yr-durable Chichén Itzá murals).
+## [5.7.627] - 2026-05-28 - Quiz Colors L3: hotfix +1 (Indian Yellow — 40→44 now actually has 4)
+- Added MISSING 4th L3 color Q: Indian Yellow (urine of mango-leaf-fed cows BIHAR, banned 1908 animal-cruelty, Vermeer + Turner used it, replaced by synthetic azo dyes).
+- sw cache → v706; Android versionCode 663 / versionName 7.1.1.
+
+## [5.7.626] - 2026-05-28 - Quiz Colors L3: 40→43 (Version 7.1.0! — was missing 4th entry, fixed in next)
+- Added 3 more L3 color Qs (intended 4): indigo (Indigofera-leaves 5000yrs, Greek 'indikon', von Baeyer 1880s synthetic Nobel 1905, 80K-tons/yr 95% denim), arsenic green (Scheele 1775 + Paris 1814 copper arsenite, Napoleon's wallpaper death-suspect, Victorian killer-green wallpaper panic), Maya Blue (indigo+palygorskite-clay nano-tunnel-trapped, 1500+yr-durable Chichén Itzá murals).
 - Distinct from existing 40 L3 (color-mixing/ROYGBIV/aurora-colors/chameleon/Tyrian-purple/synesthesia/color-temp/pigment-dye/plants-green/birds-UV/cones-rods/Vantablack/ultramarine/metamerism/cochineal/etc).
 - sw cache → v705; Android versionCode 662 / versionName 7.1.0.
 
