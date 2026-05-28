@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.674] - 2026-05-28 - Quiz Mythology L1: 44→48 (PASS-11 mythology sweep — 1 of 5)
+- Added 4 fresh L1 myth Qs: MERMAID (Greek sirens originally bird-women, Hans Andersen 1837 tragic vs Disney 1989 happy, Columbus 1493 saw manatees, Copenhagen 1913 statue), ANGEL (Greek angelos messenger, Gabriel+Michael+Raphael archangels, Pseudo-Dionysius 9-tier hierarchy, biblical cherubim NOT cute babies but 4-faced+4-winged, Zoroastrian Amesha Spentas + Buddhist Devas), GIANT (Norse Jötnar Ymir + Greek Titans + biblical Nephilim+Goliath + Dahl BFG, mammoth skulls→Cyclops theory, Robert Wadlow 2.72m), WIZARD (Merlin+Gandalf+Dumbledore+Mickey Sorcerer's Apprentice, real cunning folk + John Dee Queen Elizabeth I astrologer, Wizard of Oz humbug, D&D player class).
+- Distinct from existing 44 L1 (elf, dwarf, jack-o'-lantern, pixie, poltergeist, Zeus, Aphrodite, Cerberus, etc.).
+- sw.js → v753. Android versionCode 710 / versionName 7.5.8.
+
 ## [5.7.673] - 2026-05-28 - Quiz Weather L5: 44→48 (PASS-11 weather sweep COMPLETE — Weather bank now uniform at 48)
 - Added 4 fresh L5 research-tier weather Qs: AMOC (thermohaline conveyor belt, ~15% slowdown since 1950s, Younger Dryas paleo-analogue collapse, IPCC 30-50% reduction by 2100, Ditlevsen 2023 controversial 2050±25 tipping prediction), ICE-ALBEDO FEEDBACK (snow 0.8-0.9 vs ocean 0.06, Arctic warming 4× global rate NOAA 2022, sea-ice 13%/decade decline since 1979, ice-free Arctic summer ~2050, Snowball Earth ~700 Mya reverse), PERMAFROST CARBON BOMB (1500 Gt frozen carbon 2× atmosphere, 24% N. Hemisphere land, methane 28× stronger GHG, Yamal explosion craters 2014+ + 2016 anthrax reindeer 75-yr-preserved), CLOUD FEEDBACK (largest climate sensitivity uncertainty 2-5°C IPCC range, low-cloud cooling vs high-cirrus warming, CMIP6 low clouds may decrease over warming oceans, CALIPSO/CloudSat/EarthCARE satellite missions).
 - Distinct from existing 44 L5 (Younger Dryas, Little Ice Age, Walker Circulation, GCMs, Milankovitch, SSW, 3-cell circulation, PETM).
