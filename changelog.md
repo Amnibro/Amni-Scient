@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.476] - 2026-05-28 - Quiz Animals L5: 33→37 (lifting next bank outlier)
+- Added 4 to Animals quiz L5: octopus 9-brain distribution, mantis shrimp color receptors, monarch migration, pistol shrimp cavitation.
+- sw cache → v555 (triple-five milestone); Android versionCode 512 / versionName 5.6.0.
+
 ## [5.7.475] - 2026-05-28 - Quiz Math L5: 37→40 (matches L2/L4 depth)
 - Added 3 to Math quiz L5: eigenvalues + eigenvectors, Brouwer fixed-point theorem, Chinese Remainder Theorem.
 - Math L5 now at 40 — same as L2 + L4. The bank's clearest single-level outlier is closed.
