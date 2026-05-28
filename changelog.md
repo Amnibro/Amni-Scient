@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.498] - 2026-05-28 - Quiz Colors L2: 28→32
+- Added 4 L2-tier color-vocab Qs: turquoise (blue-green/Turkish trade route), maroon (deep brown-red), indigo (ROYGBIV rainbow color, jeans dye), warm vs cool colors (artist concept).
+- Distinct from existing 28 L2 (orange/purple/brown/black/white/cyan/magenta/etc.) + 32 L1.
+- sw cache → v577; Android versionCode 534 / versionName 5.8.2.
+
 ## [5.7.497] - 2026-05-28 - Quiz Space L2: 28→32
 - Added 4 L2-tier astronomy Qs: asteroid belt (between Mars+Jupiter, Ceres), light-year (distance not time, ~9.46Tkm), JWST infrared at L2 point, Big Bang ~13.8Gyr (CMB+redshift+H/He ratios).
 - Distinct from existing 28 L2 (Mars/Jupiter/Venus/Titan/Hubble/Voyager/ISS/SpaceX/etc.) + 32 L1.
