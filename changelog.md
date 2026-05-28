@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.468] - 2026-05-28 - Quiz Science L2: 33→37
+- Added 4 to Science quiz L2: Pacific Ocean is largest, atoms, sound needs a medium, speed of light.
+- sw cache → v547; Android versionCode 504 / versionName 5.5.2.
+
 ## [5.7.467] - 2026-05-28 - Quiz Science L2: 29→33
 - Added 4 to Science quiz L2: why ice floats, food chain, vertebrate vs invertebrate, 7 continents.
 - sw cache → v546; Android versionCode 503 / versionName 5.5.1.
