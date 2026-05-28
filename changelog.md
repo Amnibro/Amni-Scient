@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.536] - 2026-05-28 - Quiz Sports L2: 32→36
+- Added 4 L2-tier sports facts: NBA 24-second shot clock (saved the league 1954), Ryder Cup (USA vs Europe biennial golf), Olympic torch lit at Olympia Greece (1936 Berlin invention), Brazil 5 World Cups (most-titled nation).
+- Distinct from existing 32 L2 (Olympic-4yr/soccer-11/Super Bowl/Tour de France/golf/World Series/boxing/volleyball/Larry-O'Brien/marathon/golf-18/Ali/tennis/hockey/triathlon/cards-52/Bolt/NBA-48min/soccer-goal/TD-6/bowling-300/love/FIFA-WC/F1/badminton/rugby/Wimbledon-grass/curling/pole-vault/Stanley-Cup).
+- sw cache → v615; Android versionCode 572 / versionName 6.2.0.
+
 ## [5.7.535] - 2026-05-28 - Quiz Mythology L2: 32→36
 - Added 4 L2-tier Greek myth Qs: Mt Olympus (12 Olympians' home), Erinyes/Furies (3 vengeance goddesses), Asclepius (medicine staff vs Hermes' caduceus), Garden of the Hesperides (golden apples, Heracles' 11th labor).
 - Distinct from existing 32 L2 (Mars-Ares/Hermes/Hera/Dionysus/Hephaestus/Persephone/Demeter/Artemis/Hestia/Atlas/Eros/Romulus-Remus/Janus/Helios/Selene/Trojan-War/Odysseus/Theseus/Jason/Thor/Loki/Ra/Anubis/Prometheus/Midas/Icarus/Odin/Achilles/Perseus/Osiris/Sisyphus).
