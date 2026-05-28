@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.496] - 2026-05-28 - Quiz Sports L2: 28→32
+- Added 4 L2-tier sports facts: Wimbledon grass court, curling Olympic sweeping, pole vault flexible pole, Stanley Cup oldest NA pro trophy (1893).
+- Distinct from existing 28 L2 (Olympic-yr/soccer-11/Tour de France/Ali/Bolt/etc.) + 32 L1.
+- sw cache → v575; Android versionCode 532 / versionName 5.8.0.
+
 ## [5.7.495] - 2026-05-28 - Quiz Mythology L2: 28→32
 - Added 4 more L2-tier myth-hero Qs: Achilles (heel weakness), Perseus (slew Medusa), Osiris (Egyptian afterlife), Sisyphus (eternal boulder).
 - Distinct from existing 28 L2 (Mars/Ares/Hermes/Hera/etc.) + L1 32 (creatures + Zeus etc.).
