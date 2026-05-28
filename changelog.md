@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.524] - 2026-05-28 - Quiz Counting L5: 28→32
+- Added 4 L5-tier deep-math Qs: Fermat's Last Theorem (Wiles 1994), Riemann hypothesis (Clay Millennium Prize), Gödel's incompleteness (consistent → not all-provable), Collatz 3n+1 conjecture (unproven 'most dangerous' problem).
+- Distinct from existing 28 L5 (6×7=42/8×9/12×12/divisions/primes 13&21/squares/GCD/LCM/factorization/perfect numbers/Mersenne primes/Gauss 5050/triangular/odd-sum/Goldbach/twin primes/0.999=1/e/0!/Fibonacci/imaginary i/Euler identity/Pascal triangle/π=3.14159).
+- sw cache → v603; Android versionCode 560 / versionName 6.0.8.
+
 ## [5.7.523] - 2026-05-28 - Quiz Shapes L5: 28→32
 - Added 4 L5-tier deep-geometry Qs: topology ('rubber-sheet' geometry, coffee-mug ≡ donut), knot theory (trefoil/Jones polynomial, DNA topology), Mandelbrot set (z↦z²+c iteration), Borromean rings (3-loop unity).
 - Distinct from existing 28 L5 (n-gon angle/π/Pythagoras/area-circle/Platonic-5/Euler/regular-tiling/Penrose/hyperbolic/spherical/Möbius×2/Klein bottle/fractal×2/golden ratio/Fibonacci/4-color/non-Euclidean/tesseract/Voronoi/hairy-ball/Banach-Tarski).
