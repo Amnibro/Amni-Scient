@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.433] - 2026-05-27 - Quiz Mythology L1: 24→28
+- Added 4 to Mythology quiz L1: trolls, werewolves, Pandora's box, the Loch Ness Monster.
+- sw cache → v512; Android versionCode 469 / versionName 5.1.7.
+
 ## [5.7.432] - 2026-05-27 - Quiz Sports L5: 24→28 + dedup pass (Sports quiz now 28×5)
 - Added 4 to Sports quiz L5: Federer 20 Slams, Tony Hawk's 1999 "900", Eddy Merckx, the Bosman ruling.
 - Fixed L5 internal dup (Phelps Q appeared twice at 8820+8841) — second slot swapped to Maradona "Hand of God".
