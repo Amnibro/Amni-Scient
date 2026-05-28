@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.607] - 2026-05-28 - Quiz Mythology L1: 40→44
+- Added 4 more L1 simple-tier mythology Qs: dwarf (Snow White 7-named + Tolkien forged Mjölnir/Gungnir), jack-o'-lantern (Stingy Jack folk-tale, originally turnips → Irish immigrants brought to N. America with pumpkins), pixie (Cornish/Devon mischievous, 'pixie-led', Tinker Bell), poltergeist (German 'noise-ghost', Enfield 1977-79, Spielberg 1982 film).
+- Distinct from existing 40 L1 (Zeus/Aphrodite/Hera/Cerberus/Unicorn/Cyclops/Pegasus/Apollo/Heracles/Hades/Athena/Sphinx/Hydra/mermaid/dragon/fairy/centaur/genie/sirens/phoenix/trolls/werewolf/Pandora/Loch-Ness/vampire/kraken/goblin/Bigfoot/zombie/witch/wizard/ghost/mummy/skeleton/ogre/elf).
+- sw cache → v686; Android versionCode 643 / versionName 6.9.1.
+
 ## [5.7.606] - 2026-05-28 - Quiz Weather L1: 40→44 (PASS-8 begins — deepening beyond 40-floor)
 - Added 4 more L1 simple-tier weather Qs: icicles (drip-freeze gravity-tapered, 8.4m Hilversum record, stalactite cave-cousin), sunrise (always east, low-angle Rayleigh scattering red/orange, Arctic midnight-sun), raindrops (hamburger-bun shape NOT teardrop, 30 km/h terminal velocity, drizzle vs mist sizes), dark storm clouds (warning sign, nimbostratus/cumulonimbus, 'red sky at morning sailor's warning').
 - Distinct from existing 40 L1 (sun/rain/snow/cloud/etc + sunscreen/scarf/sunglasses/windy-day).
