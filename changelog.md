@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.526] - 2026-05-28 - Quiz Weather L1: 32→36 (pass-6 starts — toward deep-bank 40 ceiling)
+- Added 4 more L1 weather phenomena: lightning (bolt vs thunder), mist (lighter than fog), heat wave (3+ day hot stretch), rain boots/wellies (waterproof gear).
+- Distinct from existing 32 L1 (sunny/rainy/snowy/cloudy/wind/rainbow/thunder-sound/fog/snowman/umbrella/thermometer/freezing/hail/hurricane/dew/frost/tornado/drizzle/blizzard/sleet/etc.).
+- sw cache → v605; Android versionCode 562 / versionName 6.1.0.
+
 ## [5.7.525] - 2026-05-28 - 🏁 5-PASS SHALLOW-BANK CAMPAIGN COMPLETE: Quiz Opposites L5 28→32
 - Added 4 L5-tier philosophical/scientific oppositions: determinism vs free will (compatibilism debate), reductionism vs holism (Weinberg vs Kauffman), materialism vs idealism (Plato/Berkeley/Hegel vs Hobbes/Marx), centripetal vs centrifugal (real vs fictitious force).
 - **🏁 CAMPAIGN COMPLETE**: All 40 shallow-bank quiz levels (8 banks × 5 levels) lifted from 28 Qs → 32 Qs = **160 new high-quality Qs across 40 commits**. Shallow banks now match deep-bank L1-L5 widths.
