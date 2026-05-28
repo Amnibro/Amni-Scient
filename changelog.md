@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.467] - 2026-05-28 - Quiz Science L2: 29→33
+- Added 4 to Science quiz L2: why ice floats, food chain, vertebrate vs invertebrate, 7 continents.
+- sw cache → v546; Android versionCode 503 / versionName 5.5.1.
+
 ## [5.7.466] - 2026-05-28 - Quiz Science L1: 37→40 (Science L1 matches L4/L5 depth)
 - Added 3 to Science quiz L1: dinosaurs extinct, dolphins are mammals, magnets.
 - Science L1 now sits at 40 — same as L4 + L5.
