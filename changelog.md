@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.449] - 2026-05-27 - Quiz Shapes L1: 24→28
+- Added 4 to Shapes quiz L1: hexagon, cone, sphere, pentagon (the building).
+- sw cache → v528; Android versionCode 485 / versionName 5.3.3.
+
 ## [5.7.448] - 2026-05-27 - Quiz Counting L5: 24→28 (Counting quiz now 28×5)
 - Added 4 to Counting quiz L5: imaginary unit i, Euler's identity, Pascal's triangle, π to 5 decimal places.
 - All 5 Counting quiz levels now at 28 each.
