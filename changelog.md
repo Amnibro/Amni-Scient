@@ -1,5 +1,12 @@
 ﻿# Changelog 
 
+## [5.7.442] - 2026-05-27 - Leaderboard fixes + profile-chip iOS click fix
+- FIX: tapping the username at the top did nothing on iOS Safari — the #profile-btn is a flex button with child spans, and tapping the visible name-text dropped the click (known iOS bug). Added `#profile-btn > * { pointer-events:none }` so taps register on the button itself.
+- FIX: "All Leaderboards" only showed top 3 per game and listed 3 phantom games (pong/bejeweled/colorSort) that never had data. Now lists only games that actually use the system (Snake, Tetris, Breakout, Invaders, Flappy), shows the full top 10 per game, and tags each section with its total entry count.
+- UX: rows whose initials match the current profile-name's first 3 letters are highlighted gold with a ★ — so you can spot yourself across modules. Header explains the scope (arcade games here; brain-training PRs in 📊 Stats) and a new "📊 My Stats" button jumps straight to that view.
+- Empty state shows clear next-step guidance instead of a blank modal.
+- sw cache → v521; Android versionCode 478 / versionName 5.2.6.
+
 ## [5.7.441] - 2026-05-27 - Quiz Opposites L4: 24→28
 - Added 4 to Opposites quiz L4: urban/rural, active/passive, export/import, horizontal/vertical.
 - Noted L4 pre-existing internal dups (transparent/opaque + optimist/pessimist each appear twice in L4); not mine, leaving as-is.

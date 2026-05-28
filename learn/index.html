@@ -199,6 +199,7 @@
     #level-btn .btn-label { display: inline !important; font-weight: bold; }
     .score-bar { font-size: 0.8rem; gap: 8px; flex-wrap: wrap; row-gap: 2px; justify-content: flex-end; min-width: 0; }
     #leaderboard-btn { padding: 1px 6px !important; }
+    #profile-btn > * { pointer-events: none; }
     .menu-title { font-size: clamp(1.3rem, 5vw, 1.8rem) !important; margin-bottom: 0.6rem; }
   }
   @media (max-width: 500px) {
@@ -2602,12 +2603,22 @@
     document.body.appendChild(ov);
   }
   window._showAllLeaderboards=function(){
-    const games=[['breakout','Breakout'],['invaders','Invaders'],['snake80','Snake'],['tetris','Tetris'],['flappy','Flappy'],['pong','Pong'],['bejeweled','Bejeweled'],['colorSort','Color Sort']];
+    const games=[['breakout','Breakout','🧱'],['invaders','Invaders','👾'],['snake80','Snake','🐍'],['tetris','Tetris','🧊'],['flappy','Flappy','🐤']];
+    const RANK=['🥇','🥈','🥉','4','5','6','7','8','9','10'];
+    const profName=(localStorage.getItem('profile-name')||'').trim();
+    const myInit=profName?profName.toUpperCase().replace(/[^A-Z]/g,'').slice(0,3).padEnd(3,'?'):'';
     const ov=document.createElement('div');ov.className='hs-overlay';ov.onclick=e=>{if(e.target===ov)ov.remove();};
-    let html='<div class="hs-modal" style="max-height:80vh;overflow-y:auto;min-width:320px"><div class="hs-title">🏆 LEADERBOARD</div>';
-    games.forEach(([game,label])=>{const list=window._hs_get_pub(game);if(!list.length)return;const rows=list.slice(0,3).map((e,i)=>`<tr><td class="hs-rank">${['🥇','🥈','🥉'][i]}</td><td class="hs-init">${e.i}</td><td class="hs-score">${e.s}</td></tr>`).join('');html+=`<div style="margin:10px 0 4px;color:#4db8ff;font-size:0.85rem">${label}</div><table class="hs-table">${rows}</table>`;});
-    html+='<button class="retro-btn" style="margin-top:14px">CLOSE</button></div>';
-    ov.innerHTML=html;ov.querySelector('.retro-btn').onclick=()=>ov.remove();document.body.appendChild(ov);
+    let html='<div class="hs-modal" style="max-height:85vh;overflow-y:auto;min-width:320px;max-width:520px"><div class="hs-title">🏆 LEADERBOARDS</div>';
+    html+='<div style="font-size:0.76rem;color:#7a8a9a;margin-bottom:10px;line-height:1.4">Arcade high scores stored on this device (each game keeps its top 10). Brain-training personal bests live in 📊 Stats.</div>';
+    if(myInit)html+=`<div style="font-size:0.78rem;color:#bbb;margin-bottom:10px">Your initials: <b style="color:#f1c40f">${myInit}</b> &mdash; matching rows highlighted.</div>`;
+    let anyData=false;
+    games.forEach(([game,label,icon])=>{const list=window._hs_get_pub(game);if(!list.length)return;anyData=true;const rows=list.slice(0,10).map((e,i)=>{const me=myInit&&e.i===myInit;return `<tr${me?' style="background:rgba(241,196,15,0.14)"':''}><td class="hs-rank">${RANK[i]}</td><td class="hs-init"${me?' style="color:#f1c40f;font-weight:bold"':''}>${e.i}${me?' ★':''}</td><td class="hs-score">${e.s}</td></tr>`;}).join('');html+=`<div style="margin:12px 0 4px;color:#4db8ff;font-size:0.9rem;font-weight:bold">${icon} ${label} <span style="color:#7a8a9a;font-weight:normal;font-size:0.78rem">(${list.length} ${list.length===1?'entry':'entries'})</span></div><table class="hs-table" style="width:100%">${rows}</table>`;});
+    if(!anyData)html+='<div style="text-align:center;color:#7a8a9a;padding:24px 10px;font-style:italic">No arcade scores yet. Play Snake, Tetris, Breakout, Invaders, or Flappy and enter your initials when you finish to see them here.</div>';
+    html+='<div style="display:flex;gap:8px;margin-top:14px"><button class="retro-btn" id="lb-stats" style="flex:1">📊 My Stats</button><button class="retro-btn" id="lb-close" style="flex:1">Close</button></div></div>';
+    ov.innerHTML=html;
+    ov.querySelector('#lb-close').onclick=()=>ov.remove();
+    ov.querySelector('#lb-stats').onclick=()=>{ov.remove();if(typeof window._showStatsOverview==='function')window._showStatsOverview();};
+    document.body.appendChild(ov);
   };
   window._hs_get_pub=function(game){try{return JSON.parse(localStorage.getItem('hs-'+game)||'[]');}catch(e){return[];}};
   window._showStatsOverview=function(){
