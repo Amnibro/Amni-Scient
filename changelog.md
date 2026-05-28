@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.558] - 2026-05-28 - Quiz Weather L5: 32→36 (pass-6 L5 sweep begins)
+- Added 4 L5-tier climate-policy + paleoclimate Qs: Paris Agreement 2015 (1.5-2°C target), ocean acidification ('climate's evil twin' pH 8.2→8.1), IPCC assessment reports (AR6 2021-23), PETM (~56 Mya 5-8°C warming in 10-20kyr).
+- Distinct from existing 32 L5 (weather-vs-climate/El Niño/jet stream/snowflake/lightning/Antarctic/Mauna Loa/AMOC/atm rivers/MJO/SSW/PDO/butterfly/bomb cyclone/NAO/Milankovitch/volcanic cooling/permafrost/climate sensitivity/carbon sink/ice-albedo/tipping points/stratospheric aerosol injection).
+- sw cache → v637; Android versionCode 594 / versionName 6.4.2.
+
 ## [5.7.557] - 2026-05-28 - Quiz Opposites L4: 32→36 (closes pass-6 L4 sweep!)
 - Added 4 L4 conceptual pairs: bull/bear market (finance), centralized/decentralized (governance/tech), inflation/deflation (econ), microscopic/macroscopic (scale).
 - **PASS-6 L4 SWEEP COMPLETE** — all 8 shallow-bank L4s now at 36 Qs (+4 × 8 = 32 new Qs added in pass-6 L4).
