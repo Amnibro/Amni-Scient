@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.439] - 2026-05-27 - Quiz Opposites L2: 24→28
+- Added 4 to Opposites quiz L2: begin/end, win/lose, true/false, sharp/dull.
+- sw cache → v518; Android versionCode 475 / versionName 5.2.3.
+
 ## [5.7.438] - 2026-05-27 - Quiz Opposites L1: 24→28
 - Added 4 to Opposites quiz L1: clean/dirty, wet/dry, stop/go, heavy/light.
 - sw cache → v517; Android versionCode 474 / versionName 5.2.2.
