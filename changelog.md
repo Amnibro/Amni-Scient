@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.450] - 2026-05-27 - Quiz Shapes L2: 24→28
+- Added 4 to Shapes quiz L2: acute angle, heptagon, scalene triangle, cuboid.
+- sw cache → v529; Android versionCode 486 / versionName 5.3.4.
+
 ## [5.7.449] - 2026-05-27 - Quiz Shapes L1: 24→28
 - Added 4 to Shapes quiz L1: hexagon, cone, sphere, pentagon (the building).
 - sw cache → v528; Android versionCode 485 / versionName 5.3.3.
