@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.534] - 2026-05-28 - Quiz Weather L2: 32→36 (pass-6 L2 sweep begins)
+- Added 4 L2-tier meteorology Qs: Earth's tilt causes seasons (not distance), temp drops with altitude (adiabatic), rain gauge instrument, ice floats (hexagonal lattice less dense than water, life-critical).
+- Distinct from existing 32 L2 (seasons-list/cloud-types/lightning-speed/dew/thunderstorm/frost/weather-vane/breeze/forecast/Jupiter/sweat/meteorologist/thermometer/fog/thunder/drought/tornado/humidity/sleet/barometer/rainbow/wind chill/hail/climate-vs-weather).
+- sw cache → v613; Android versionCode 570 / versionName 6.1.8.
+
 ## [5.7.533] - 2026-05-28 - Quiz Opposites L1: 32→36 (closes pass-6 L1 sweep!)
 - Added 4 more L1 opposite pairs: smile/frown, throw/catch, buy/sell, find/lose.
 - Distinct from existing 32 L1 (big-small/hot-cold/up-down/day-night/happy-sad/fast-slow/in-out/on-off/yes-no/open-closed/etc.).
