@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.483] - 2026-05-28 - Quiz Engineering L1: 32→36 (rich-bank lift)
+- Added 4 simple physics/engineering Qs to Engineering L1: buoyancy/float, batteries store energy, thermometer measures temperature, gravity keeps satellites in orbit.
+- L1 now 36 vs L2=41 / L4=40 / L5=41 (closer to bank parity; L3=60 stays the deep tier).
+- sw cache → v562; Android versionCode 519 / versionName 5.6.7.
+
 ## [5.7.482] - 2026-05-28 - Quiz Languages L1: 36→39 (matches L4/L5)
 - Added 3 more "starts with" Qs to Languages L1: E→Egg, G→Goat, H→Hat.
 - L1 now 39, matching L4=39 and L5=39 (bank top is L2=61 / L3=60).
