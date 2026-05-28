@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.7.667] - 2026-05-28 - Quiz Engineering L5: 41→44 (+3) (PASS-10 engineering top-up COMPLETE — 2 of 2)
+- Added 3 fresh L5 research-tier engineering Qs: SUPERCONDUCTIVITY+BCS (Onnes 1911 mercury 4.2K, Meissner effect 1933 levitation, Cooper pairs via phonon exchange 1957 Nobel 1972, Type I pure metals vs Type II Nb+cuprates, YBCO 93K above LN₂ Bednorz+Müller 1986, MRI+Maglev+LHC+SQUID+qubits), PIEZOELECTRIC EFFECT (Curie brothers 1880, inversion-symmetry-less crystals quartz/PZT/Rochelle, stress→V + V→deform reverse 1881, quartz watches 32768Hz + ultrasound + lighters 15kV + AFM + body-motion harvesting), EUV LITHOGRAPHY (13.5nm wavelength, ASML monopoly $150-380M scanners 180 tons, tin-droplet plasma 30kW CO₂ laser 50kHz, all-reflective mirrors 50+ Bragg layers picometer smoothness, enabled TSMC 3nm + Samsung 3nm + Intel 18A, without it Moore's law stalls ~2018, High-NA 0.55 NA 2024).
+- Distinct from existing 41 L5 (Navier-Stokes, Smith chart, Shannon-Hartley, Kalman filter, CFD, Fermi-Dirac, Bose-Einstein, spin-orbit coupling, topological insulator, Bragg law, metamaterial).
+- **Engineering bank PASS-10 COMPLETE** (L2+L5 both at 44 now; L1+L4 at 44 from PASS-9; L3=60 above floor).
+- sw.js → v746. Android versionCode 703 / versionName 7.5.1.
+
 ## [5.7.666] - 2026-05-28 - Quiz Engineering L2: 41→44 (+3) (PASS-10 engineering top-up — 1 of 2)
 - Added 3 fresh L2 engineering Qs: 6 SIMPLE MACHINES (lever+wheel-axle+pulley+inclined plane+wedge+screw, Archimedes refined, all multiply force at distance cost = mechanical advantage, compound machines like bicycle), CONDUCTOR vs INSULATOR (copper-Ag-Au best metals + salt water + body, plastic-rubber-glass-wood block, semiconductors silicon for electronics, insulators also block heat down jackets), HEAT vs TEMPERATURE (T = average KE per particle Celsius/Fahrenheit/Kelvin, heat = total energy transferred hot→cold, lit match high-T low-heat vs pool low-T high-heat, water specific heat 4.18 J/g·°C moderates climate).
 - Distinct from existing 41 L2 (Bernoulli wings, friction in cars, solar renewable, engineer profession, etc.).
