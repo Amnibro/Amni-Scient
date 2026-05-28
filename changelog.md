@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.663] - 2026-05-28 - Quiz Languages L1: 39→44 (PASS-10 languages sweep OPENS, +5 fresh letter Qs)
+- Added 5 fresh L1 letter-recognition Qs (matching existing "Which word starts with __?" pattern): B (BALL, "buh" sound), S (SUN, snake-hiss), M (MOON, lip-hum), R (RABBIT, rolling "rrr"), W (WATER, only letter named after another letter "double-U").
+- Distinct from existing 39 L1 (which covered F, P, T, L, E, G, H plus other intro vocab).
+- sw.js → v742. Android versionCode 699 / versionName 7.4.7.
+
 ## [5.7.662] - 2026-05-28 - Quiz Music L5: 40→44 (PASS-10 music sweep COMPLETE — Music bank now at 44 for needed levels)
 - Added 4 fresh L5 research-tier music Qs: SCHENKER ANALYSIS (Austrian 1868-1935, Ursatz 3̂-2̂-1̂ or 5̂-4̂-3̂-2̂-1̂ + I-V-I bass, hierarchical Zug reductions, Phil Ewell 2020 racial-views critique, jazz reharmonization), LEITMOTIF (Wagner Ring 17 hours systematized, characters+objects+abstracts get themes, John Williams Star Wars Imperial March + Howard Shore LotR ~90 motifs), NEO-RIEMANNIAN PLR (David Lewin 1980s, P=parallel-major-minor, L=leading-tone exchange, R=relative, Tonnetz hexagonal lattice torus surface, late-Romantic chromaticism + ET flying theme), ALEATORIC MUSIC (Cage Music of Changes 1951 I-Ching + 4'33" 1952, Stockhausen Klavierstück XI 19 fragments random order, Mozart Musikalisches Würfelspiel 1787 forerunner, Lutosławski controlled aleatoric, Eno Music for Airports).
 - Distinct from existing 40 L5 (serialism operations P/I/R/RI, Crumb Black Angels, just intonation 4:5:6, Forte set theory, Górecki Symphony 3, holy minimalism, 12-tone matrix, Cardew Treatise, Ligeti Lux Aeterna 2001 monolith).
