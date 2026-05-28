@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.455] - 2026-05-27 - Quiz Weather L2: 24→28
+- Added 4 to Weather quiz L2: tornado, humidity, sleet, barometer.
+- sw cache → v534; Android versionCode 491 / versionName 5.3.9.
+
 ## [5.7.454] - 2026-05-27 - Quiz Weather L1: 24→28
 - Added 4 to Weather quiz L1: hail, hurricane, dew, frost.
 - sw cache → v533; Android versionCode 490 / versionName 5.3.8.
