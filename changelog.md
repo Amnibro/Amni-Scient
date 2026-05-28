@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.459] - 2026-05-27 - Quiz Colors L1: 24→28
+- Full scan confirms 7 of 8 simple-subject quizzes now at 28×5. Only `colors` still at 24×5 — deepening to match.
+- Added 4 to Colors quiz L1: pumpkin, red+blue=purple, ripe tomato, sunflower petals.
+- sw cache → v538; Android versionCode 495 / versionName 5.4.3.
+
 ## [5.7.458] - 2026-05-27 - Quiz Weather L5: 24→28 (Weather quiz now 28×5)
 - Added 4 to Weather quiz L5: Milankovitch cycles, volcanic-eruption climate cooling, permafrost, climate sensitivity.
 - All 5 Weather quiz levels now at 28 each. Every quiz subject is now at floor 24 or higher; the 8 "simple" subjects all sit at 28×5 except `colors` (24×5, already deepened in v5.7.418–v5.7.421 round).
