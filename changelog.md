@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.506] - 2026-05-28 - Quiz Colors L3: 28→32
+- Added 4 L3-tier color-science Qs: chameleon iridophore-spacing color change, Tyrian purple (12k murex snails per gram), synesthesia (4% population, grapheme-color most common), color temperature in Kelvin (2700K warm vs 5500K daylight).
+- Distinct from existing 28 L3 (primaries-mixing/rainbow ROYGBIV/RGB-vs-CMYK/sunset/saturation/iridescence/blood red/UV invisible/aurora colors).
+- sw cache → v585; Android versionCode 542 / versionName 5.9.0.
+
 ## [5.7.505] - 2026-05-28 - Quiz Space L3: 28→32
 - Added 4 L3-tier astronomy Qs: exoplanet (5800+ confirmed, transit/RV detection), CMB (380kyr post-Big-Bang light, Penzias+Wilson), pulsar (spinning neutron-star lighthouse, Bell Burnell), Lagrange points (L2 JWST/WMAP, L4/L5 Trojans).
 - Distinct from existing 28 L3 (8min sunlight/gravity/Pluto/Proxima/black hole/supernova/Andromeda/Perseverance/Kuiper/etc.).
