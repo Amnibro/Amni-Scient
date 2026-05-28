@@ -1,5 +1,12 @@
 ﻿# Changelog 
 
+## [5.7.668] - 2026-05-28 - Quiz Math L1: 43→44 (+1 cleanup — PASS-10 ENTIRE CAMPAIGN COMPLETE 🎉)
+- Final cleanup of off-by-one from v652 (planned +5, added +4): added 1 fresh L1 math Q — 9+1=10 (FIRST 2-digit number, base-10 finger origin, 'successor' concept).
+- Now math L1 hits 44 floor like all other levels.
+- **PASS-10 ENTIRE CAMPAIGN COMPLETE!** All needed levels in animals/music/languages/engineering/math banks lifted to the 44 floor. Combined with PASS-8 (shallow banks 8×5=40 lifts) + PASS-9 (science 5 + math L1/L2/L4/L5 + engineering L1/L4), the suite now has uniformly thorough question coverage across all 14 quiz subjects at 44+ entries per level.
+- BANK SUMMARY post-PASS-10: animals/music/languages/math/engineering all have all-needed levels at 44 or above; science complete; all 8 shallow banks (weather/mythology/sports/space/colors/shapes/counting/opposites) at 44 across all 5 levels.
+- sw.js → v747. Android versionCode 704 / versionName 7.5.2.
+
 ## [5.7.667] - 2026-05-28 - Quiz Engineering L5: 41→44 (+3) (PASS-10 engineering top-up COMPLETE — 2 of 2)
 - Added 3 fresh L5 research-tier engineering Qs: SUPERCONDUCTIVITY+BCS (Onnes 1911 mercury 4.2K, Meissner effect 1933 levitation, Cooper pairs via phonon exchange 1957 Nobel 1972, Type I pure metals vs Type II Nb+cuprates, YBCO 93K above LN₂ Bednorz+Müller 1986, MRI+Maglev+LHC+SQUID+qubits), PIEZOELECTRIC EFFECT (Curie brothers 1880, inversion-symmetry-less crystals quartz/PZT/Rochelle, stress→V + V→deform reverse 1881, quartz watches 32768Hz + ultrasound + lighters 15kV + AFM + body-motion harvesting), EUV LITHOGRAPHY (13.5nm wavelength, ASML monopoly $150-380M scanners 180 tons, tin-droplet plasma 30kW CO₂ laser 50kHz, all-reflective mirrors 50+ Bragg layers picometer smoothness, enabled TSMC 3nm + Samsung 3nm + Intel 18A, without it Moore's law stalls ~2018, High-NA 0.55 NA 2024).
 - Distinct from existing 41 L5 (Navier-Stokes, Smith chart, Shannon-Hartley, Kalman filter, CFD, Fermi-Dirac, Bose-Einstein, spin-orbit coupling, topological insulator, Bragg law, metamaterial).
