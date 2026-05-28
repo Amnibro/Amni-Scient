@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.535] - 2026-05-28 - Quiz Mythology L2: 32→36
+- Added 4 L2-tier Greek myth Qs: Mt Olympus (12 Olympians' home), Erinyes/Furies (3 vengeance goddesses), Asclepius (medicine staff vs Hermes' caduceus), Garden of the Hesperides (golden apples, Heracles' 11th labor).
+- Distinct from existing 32 L2 (Mars-Ares/Hermes/Hera/Dionysus/Hephaestus/Persephone/Demeter/Artemis/Hestia/Atlas/Eros/Romulus-Remus/Janus/Helios/Selene/Trojan-War/Odysseus/Theseus/Jason/Thor/Loki/Ra/Anubis/Prometheus/Midas/Icarus/Odin/Achilles/Perseus/Osiris/Sisyphus).
+- sw cache → v614; Android versionCode 571 / versionName 6.1.9.
+
 ## [5.7.534] - 2026-05-28 - Quiz Weather L2: 32→36 (pass-6 L2 sweep begins)
 - Added 4 L2-tier meteorology Qs: Earth's tilt causes seasons (not distance), temp drops with altitude (adiabatic), rain gauge instrument, ice floats (hexagonal lattice less dense than water, life-critical).
 - Distinct from existing 32 L2 (seasons-list/cloud-types/lightning-speed/dew/thunderstorm/frost/weather-vane/breeze/forecast/Jupiter/sweat/meteorologist/thermometer/fog/thunder/drought/tornado/humidity/sleet/barometer/rainbow/wind chill/hail/climate-vs-weather).
