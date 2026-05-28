@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.576] - 2026-05-28 - Quiz Sports L2: 36→40
+- Added 4 more L2 sports Qs: America's Cup (sailing's oldest international trophy 1851, NYYC's 132-year reign, modern AC75 foilers), biathlon (Norwegian ski-patrol origins, ski+rifle 180-bpm challenge, Bjørndalen 13 medals), cricket wicket (3 stumps + 2 bails, 'bowled'/'stumped' dismissals), squash (Harrow School 1830, 4-wall court, brutal fitness, LA 2028 Olympic debut).
+- Distinct from existing 36 L2 (Olympics/soccer/Super-Bowl/Tour-de-France/Golf/MLB/boxing/volleyball/marathon/Ali/tennis/Bolt/F1/badminton/Wimbledon/curling/Stanley-Cup/Ryder-Cup/etc).
+- sw cache → v655; Android versionCode 612 / versionName 6.6.0.
+
 ## [5.7.575] - 2026-05-28 - Quiz Mythology L2: 36→40
 - Added 4 more L2 mythology Qs: Moirai/Fates (Clotho-spinner/Lachesis-allotter/Atropos-cutter; Norse Norns parallel), Charon (Styx ferryman, obol coin, Pluto moon namesake, Dante), Orpheus (lyre-charmed-Hades, look-back lost Eurydice, Monteverdi → Hadestown 2019), Chimera (lion+goat+serpent fire-breather, Bellerophon+Pegasus killed her with lead-melted-spear, modern bio chimera term).
 - Distinct from existing 36 L2 (Mars/Ares/Hermes/Hera/Dionysus/Persephone/Demeter/Artemis/Atlas/Romulus/Janus/Trojan-War/Odysseus/Theseus/Jason/Thor/Loki/Ra/Anubis/Prometheus/Midas/Icarus/Odin/Achilles/Perseus/Osiris/Sisyphus/Olympus/Erinyes/Asclepius/Hesperides).
