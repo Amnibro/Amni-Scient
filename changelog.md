@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.690] - 2026-05-28 - Quiz Colors L2: 44→48 (PASS-11 colors sweep — 2 of 5)
+- Added 4 fresh L2 color Qs: TURQUOISE (gemstone Turkish 'pierre turquoise' Iran+Sinai 6000+ years, Navajo/Pueblo Sky Stone, Tiffany Blue PMS 1837, hex ~#40E0D0), MAGENTA (1859 Battle of Magenta Italian war aniline dye, CMYK printer primary, NON-SPECTRAL color invented by brain when red+blue cones fire without green, T-Mobile rebrand), INDIGO (Newton 1666 6th ROYGBIV color for 7 musical notes, Indigofera tinctoria India trade-route name, denim jeans Levi Strauss 1873 + Eli Whitney mills, vat-dye chemistry yellow-soluble → oxidizes blue, hex #4B0082), CORAL (pinkish-orange #FF7F50, Pantone Color of the Year 2019 'Living Coral', salmon/peach/melon variations, Great Barrier Reef bleaching 4 events since 2016).
+- Distinct from existing 44 L2 (copper, orange, purple, royal-purple sea-snails, etc.).
+- sw.js → v769. Android versionCode 726 / versionName 7.7.4.
+
 ## [5.7.689] - 2026-05-28 - Quiz Colors L1: 44→48 (PASS-11 colors sweep OPENS — 1 of 5)
 - Added 4 fresh L1 color Qs: SUNFLOWER YELLOW (carotenoids + flavonoids, North American ~3000 BC, heliotropism young plants east-following, German 2014 9.17m world record, Van Gogh series 1888-89, Ukraine national flower wartime symbol post-2022), ZEBRA BLACK+WHITE (unique stripe fingerprints, Plains+Mountain+Grévy's 3 species, fly-deterrent Caro 2014 painted-horse experiment current consensus, never domesticated too aggressive), HALLOWEEN PUMPKIN ORANGE (carotenoids, North/Central America ~7500 BC, Jack-o'-lanterns originally Irish/Scottish turnips → US pumpkins 1840s, Cutrupi 2021 1226 kg record, Starbucks 2003 PSL 600M+ sold), PEACOCK BLUE+GREEN (Indian Pavo cristatus 2m display tail eyes for courtship, STRUCTURAL color via microscopic diffraction NOT pigment, white = leucistic not albino, India national bird 1963, peahens dull brown nest camouflage).
 - Distinct from existing 44 L1 (carrot orange, pig pink, crow black, night sky black, ladybug red+black, cardinal red, polar bear white, skunk black+white, etc.).
