@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.7.533] - 2026-05-28 - Quiz Opposites L1: 32→36 (closes pass-6 L1 sweep!)
+- Added 4 more L1 opposite pairs: smile/frown, throw/catch, buy/sell, find/lose.
+- Distinct from existing 32 L1 (big-small/hot-cold/up-down/day-night/happy-sad/fast-slow/in-out/on-off/yes-no/open-closed/etc.).
+- **PASS-6 L1 SWEEP COMPLETE** — all 8 shallow-bank L1s now at 36 Qs each (+4 per bank × 8 banks = 32 new Qs in this pass).
+- sw cache → v612; Android versionCode 569 / versionName 6.1.7.
+
 ## [5.7.532] - 2026-05-28 - Quiz Counting L1: 32→36
 - Added 4 more L1 number Qs: 1+1=2 (most basic), unicycle wheel=1 (uni- prefix), 6+4=10 (making-ten trick), dozen=12 (eggs/baker's dozen=13).
 - Distinct from existing 32 L1 (count emojis/fingers/bike/tricycle/triangle/zero/2-hands/pair/half-4/2+1/3+2/9→10/stars/smallest/days/squares/before-5/months/5-3/car/24h/60s).
