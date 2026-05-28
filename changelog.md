@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.480] - 2026-05-28 - Quiz Animals L1: 37→39 (matches L4 + L5)
+- Added 2 to Animals quiz L1: bat echolocation, penguin bray.
+- Animals L1 now at 39 — matches L4 + L5. Bank's remaining gap is L2=136 (existing far-outlier on the HIGH side).
+- sw cache → v559; Android versionCode 516 / versionName 5.6.4.
+
 ## [5.7.479] - 2026-05-28 - Quiz Animals L1: 33→37
 - Added 4 more sound-based animals: hyena laugh, goose honk, bear growl, hummingbird hum.
 - sw cache → v558; Android versionCode 515 / versionName 5.6.3.
