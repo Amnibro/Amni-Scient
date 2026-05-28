@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.528] - 2026-05-28 - Quiz Sports L1: 32→36
+- Added 4 more simple-tier sport intros: karate (empty-hand Japanese MA), rock climbing (Olympic Tokyo 2020), Ultimate Frisbee (Wham-O 1968), horseback riding (equestrian).
+- Distinct from existing 32 L1 (basketball/soccer/tennis/baseball/hockey/swim/track/cycle/gym/football/surf/bowl/ski/snowboard/box/wrestle/cricket/hockey-field/lacrosse/golf/Olympics/volleyball/table tennis/badminton/skate/row/archery + various FAQs).
+- sw cache → v607; Android versionCode 564 / versionName 6.1.2.
+
 ## [5.7.527] - 2026-05-28 - Quiz Mythology L1: 32→36
 - Added 4 more simple-tier supernatural creatures: zombie (Haitian Vodou → Romero), witch (Salem trials → Wicca), wizard (Merlin → Gandalf/Dumbledore), ghost (worldwide folklore).
 - Distinct from existing 32 L1 (Zeus/Aphrodite/etc + creatures vampire/kraken/goblin/Bigfoot etc).
