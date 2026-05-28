@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.457] - 2026-05-27 - Quiz Weather L4: 24→28
+- Added 4 to Weather quiz L4: albedo, adiabatic cooling, polar vortex, wet-bulb temperature.
+- Noted: L4 has the densest existing cross-level repetition in the bank (Coriolis, El Niño, aurora, barometer, humidity, troposphere all appear in both L4 and other levels) — matches existing design pattern; left as-is.
+- sw cache → v536; Android versionCode 493 / versionName 5.4.1.
+
 ## [5.7.456] - 2026-05-27 - Quiz Weather L3: 24→28
 - Added 4 to Weather quiz L3: El Niño/La Niña, auroras, Coriolis effect, atmosphere layers (troposphere up).
 - sw cache → v535; Android versionCode 492 / versionName 5.4.0.
