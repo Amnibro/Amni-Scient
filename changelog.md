@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.563] - 2026-05-28 - Quiz Shapes L5: 32→36
+- Added 4 L5-tier deep-math Qs: Poincaré conjecture (Perelman 2002, $1M declined, only Millennium solved), Cantor set (uncountable, measure zero, dim 0.631), Kepler conjecture sphere-packing 74% (Hales 1998 + Flyspeck 2014), Mercator vs equal-area projections (Gauss Theorema Egregium).
+- Distinct from existing 32 L5 (n-gon angle/π/Pythagoras/area-circle/sphere/Platonic/Euler/regular-tile/Penrose/hyperbolic/spherical/Möbius/Klein bottle/fractal/golden ratio/Fibonacci/4-color/non-Euclidean/tesseract/Voronoi/hairy-ball/Banach-Tarski/topology/knot theory/Mandelbrot/Borromean).
+- sw cache → v642; Android versionCode 599 / versionName 6.4.7.
+
 ## [5.7.562] - 2026-05-28 - Quiz Colors L5: 32→36
 - Added 4 L5-tier light-physics Qs: Fraunhofer lines (Sun's absorption lines → astrospectroscopy → Helium discovered 1868), LASER properties (mono+coherent+collimated, Townes/Maiman), birefringence (calcite double-image), Tyndall effect (blue eyes + mountain haze).
 - Distinct from existing 32 L5 (hex codes/wavelengths/CMYK/CIE 1931/CIELAB/ΔE/metamerism/Bayer/subpixel/tetrachromacy/QD/opponent process/CRI/white balance/bit depth/photopic-scotopic/D65/ICC/Munsell/visible spectrum/polarized/UV-A-B-C/Stokes shift).
