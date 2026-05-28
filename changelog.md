@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.7.711] - 2026-05-28 - Quiz Opposites dedupe round 2: swap PUSH L2 + EXPAND L4 + ACCEPT L4 pre-existing dupes
+- L2 PUSH/PULL (line 8156, dup of L1 line 8123) → REPLACED with fresh FIRST/LAST entry (1st-place vs last-place race, Jan-Dec months, A-Z alphabet, 'first come first served,' 'save best for last,' 'ship captain first to board last to leave' duty-of-care proverb).
+- L4 EXPAND/CONTRACT (line 8250, dup of L2 line 8173 [the ORIGINAL — my v706 add was already swapped in v710]) → REPLACED with fresh INFLATION/DEFLATION entry (Fed 2% target, Weimar 1923 prices doubling every 2 days, Zimbabwe 2008 79.6 BILLION %/month, Venezuela 2018 65,000%, deflation insidious-delays-demand, Japan Lost Decade 1990s, CPI vs PCE Fed gauge).
+- L4 ACCEPT/REJECT (line 8251, dup of L2 line 8181) → REPLACED with fresh PROXIMAL/DISTAL anatomical entry (shoulder→hand proximal→distal, hip→ankle, Latin proximus+distare, related anatomy pairs ANTERIOR/POSTERIOR + SUPERIOR/INFERIOR + MEDIAL/LATERAL + DORSAL/VENTRAL + CRANIAL/CAUDAL, orthopedics 'distal radius fracture,' dental 'proximal contact').
+- Remaining dupes deferred: AURORA weather L2+L4 + CENTRIPETAL/EXOTHERMIC opposites L4+L5.
+
 ## [5.7.710] - 2026-05-28 - Quiz Opposites dedupe round 1: swap L2 EXPAND + L3 CONVEX dupes
 - L2 EXPAND/CONTRACT entry (added v706 — duplicate of L4's pre-existing version) → REPLACED with fresh BORROW/LEND entry (banking interest, Polonius Hamlet 1.3 'neither a borrower nor a lender be,' Ben Franklin 1731 first US lending library, payday loan 400% APR predatory).
 - L3 CONVEX/CONCAVE entry (added v707 — duplicate of L4) → REPLACED with fresh WHOLESALE/RETAIL entry (bulk-to-business vs end-consumer, ~$3 wholesale T-shirt → $15-25 retail markup, Costco/Sam's hybrid, D2C Warby Parker+Allbirds+Dollar Shave Club skip retail layer, PPI vs CPI indices, Amazon disrupted both, 'wholesale change' idiom).
