@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.451] - 2026-05-27 - Quiz Shapes L3: 24→28
+- Added 4 to Shapes quiz L3: octahedron (8 faces), perimeter of rectangle, volume of a cube (s³), right angle = 90°.
+- sw cache → v530; Android versionCode 487 / versionName 5.3.5.
+
 ## [5.7.450] - 2026-05-27 - Quiz Shapes L2: 24→28
 - Added 4 to Shapes quiz L2: acute angle, heptagon, scalene triangle, cuboid.
 - sw cache → v529; Android versionCode 486 / versionName 5.3.4.
