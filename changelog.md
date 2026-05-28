@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.7.658] - 2026-05-28 - Quiz Animals L1: 39→44 (PASS-10 OPENS — animals/music/languages audit + sweep)
+- Re-audited bank levels with proper {q:-counter (scripts/audit_bank_levels.js updated). Found deficits: animals L1/L4/L5=39, music L4/L5=40, languages L1/L4/L5=39, engineering L2/L5=41, math L1=43 (off by 1 from v652 — intended 5, added 4). PASS-10 plan: lift these to 44 floor.
+- Added 5 fresh L1 animal-sound Qs: HYENA LAUGH (frustration call, matriarchal, 1100 PSI bite), WHALE SONG (humpback 30-min songs, only males, blue whale 188 dB 10 Hz lowest-freq, Voyager Golden Record), KOOKABURRA LAUGH (kingfisher Australian, "koo-koo-ka-ka", Hollywood Tarzan jungle sound), SEAL BARK (sea lions vs true seals, SF Pier 39, Weddell 600m+80min dives), FOX SCREAM (mating Jan-Feb, 911 calls human-like, Ylvis 2013 viral song actual answer scream+bark+gekker).
+- Distinct from existing 39 L1 animal sounds (cow/dog/cat/pig/sheep/duck/horse/frog/lion/owl/bee/bird/turkey/donkey/wolf/chicken/rooster/snake/parrot/dove/monkey/elephant/squirrel/crow/crocodile/goat/eagle/hummingbird/bat/penguin etc).
+- sw.js → v737. Android versionCode 694 / versionName 7.4.2.
+
 ## [5.7.657] - 2026-05-28 - Quiz Engineering L4: 40→44 (PASS-9 engineering sweep COMPLETE — 2 of 2; L2/L3/L5 already above floor at 41/60/41)
 - Added 4 more L4 engineering Qs: PID CONTROLLER (Kp·e + Ki·∫e + Kd·de/dt, Ziegler-Nichols 1942 tuning, cruise control + drones + 3D printer hotends + 95% industrial loops), FOURIER TRANSFORM (Fourier 1822 heat eq, FFT Cooley-Tukey 1965 N²→NlogN Strang "most important numerical algorithm", MP3/JPEG/MRI/SDR all built on it), STRESS-STRAIN CURVE (elastic-linear E Young's modulus σ=Eε, yield 0.2% offset, plastic strain-hardening, UTS peak, necking instability, fracture; ductile vs brittle), BERNOULLI'S PRINCIPLE (1738 Hydrodynamica, P+½ρv²+ρgh=const, wing lift partial explanation, venturi + atomizer + sails + arterial blood, Kutta-Joukowski rigorous lift theory).
 - Distinct from existing 40 L4 (CMOS inverter, PWM, aliasing in DSP, thermistor vs RTD, I-beam, etc.).
