@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.574] - 2026-05-28 - Quiz Weather L2: 36→40 (PASS-7 L2 sweep begins)
+- Added 4 more L2-tier weather Qs: anemometer (Alberti 1450 cup-style wind-speed instrument, knots), jet stream (10km up, 100-400 km/h westerly, polar+subtropical, plane fuel-savings, Japanese WWII balloons), snowflake 6-sides (hexagonal H₂O bonding, Kepler 1611 essay, Bentley 5000+ photos, Nakaya artificial flakes), monsoon (seasonal wind reversal, Indian summer 2400mm Mumbai, 1.5B people dependent).
+- Distinct from existing 36 L2 (4 seasons/dew/cumulus/lightning/thunderstorm/frost/weather vane/breeze/forecast/Jupiter storms/sweat/meteorologist/etc).
+- sw cache → v653; Android versionCode 610 / versionName 6.5.8.
+
 ## [5.7.573] - 2026-05-28 - Quiz Opposites L1: 36→40 (PASS-7 L1 SWEEP COMPLETE — all 8 shallow banks at 40-floor for L1!)
 - Added 4 more L1 simple-tier opposite Qs: easy↔hard-difficult (vs hard-texture two-meaning ambiguity), top↔bottom (vs up/down motion-vs-position), begin↔end (alpha/omega Greek), sharp↔dull/blunt (knife edge + sharp-taste/sound/mind tri-meaning).
 - Distinct from existing 36 L1 (big/hot/up/day/happy/fast/in/on/yes/open/boy/old/same/hello/many/front/left/long/sweet/empty/push/clean/wet/stop/heavy/hard-texture/loud/awake/strong/smile/throw/buy/find/etc).
