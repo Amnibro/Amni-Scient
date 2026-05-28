@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.618] - 2026-05-28 - Quiz Colors L2: 40→44
+- Added 4 more L2 color Qs: chartreuse (1737 Carthusian monks secret recipe, neon yellow-green, Pantone 2017 'Greenery'), burgundy (eastern French Pinot Noir region, 1881 color name, Cadillac luxury), emerald (mineral beryl + chromium, Pantone 2013, Cleopatra's gem, Wizard of Oz), copper (Cu atomic-29, Statue of Liberty oxidized 1886 to green patina, Bronze Age 5000yrs).
+- Distinct from existing 40 L2 (orange/purple/brown/black/white/gray/pink/magenta/cyan/lavender/salmon/turquoise/maroon/indigo/navy/olive/coral/amber/teal/sepia/crimson/RGB-CMYK).
+- sw cache → v697; Android versionCode 654 / versionName 7.0.2.
+
 ## [5.7.617] - 2026-05-28 - Quiz Space L2: 40→44
 - Added 4 more L2 space Qs: meteor showers (Perseids Aug 60-100/hr, Geminids Dec, Leonids occasional 1000s 'storms', radiants), Venus weird day (243 Earth-days rotation > 225 year, RETROGRADE — Sun rises west), Io (Jupiter moon, 400+ active volcanoes, tidal heating from Jupiter+Europa+Ganymede, pizza moon), Artemis program (return-to-Moon, twin sister of Apollo, women+POC South Pole landing, Artemis I 2022 success).
 - Distinct from existing 40 L2 (Mars-red/Jupiter-biggest/Venus-hottest/Milky-Way/Apollo-11/Halley/Uranus-tilt/Neptune-blue/Hubble/Voyager/ISS/SpaceX/Saturn-moons/JWST/Big-Bang/etc + Proxima/tides/solar-flare/Mars-rovers).
