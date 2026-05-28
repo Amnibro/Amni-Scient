@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.680] - 2026-05-28 - Quiz Sports L2: 44→48 (PASS-11 sports sweep — 2 of 5)
+- Added 4 fresh L2 sports Qs: MARATHON DISTANCE (42.195 km from Pheidippides 490 BC, 1908 London extended for Royal-family Windsor view → 1921 IAAF official, Kiptum 2:00:35 Chicago Oct 2023 record + Cheptegei 2:09:56 Oct 2024, Kipchoge sub-2 Vienna 2019 unofficial, 6 World Majors), TENNIS SCORING (Love-15-30-40-Game medieval French clock-quarters, "love" possibly from l'oeuf egg shape, deuce + ad + tiebreaker at 6-6, Isner-Mahut 2010 Wimbledon 70-68 over 3 days led to 5th-set tiebreaker reform), DECATHLON 10 EVENTS (2 days, Greek deka+athlon, Day1 100m+LJ+SP+HJ+400m / Day2 110H+disc+PV+jav+1500m, Hungarian scoring tables 1985, Jenner 1976 record 8617 → Eaton 2015 9045, women's heptathlon Joyner-Kersee 7291 1988), NBA 24-SECOND SHOT CLOCK (Biasone 1954-55, 48min/120shots math, 14-sec reset off rebound 2018, saved pro basketball from stalling — 19-18 Ft.Wayne 1950 game catalyst).
+- Distinct from existing 44 L2 (Paralympics, Uruguay 1930, wrestling styles, ODI cricket, etc.).
+- sw.js → v759. Android versionCode 716 / versionName 7.6.4.
+
 ## [5.7.679] - 2026-05-28 - Quiz Sports L1: 44→48 (PASS-11 sports sweep OPENS — 1 of 5)
 - Added 4 fresh L1 sports Qs: SURFING (Polynesian he'e nalu, Cook 1778, Duke Kahanamoku "father", Pipeline+Mavericks+Teahupo'o spots, 2020 Tokyo Olympic debut, Nazaré Portugal 26.21m record Koxa 2017), SKATEBOARDING (1950s California sidewalk-surf, Alan Gelfand 1976 Ollie foundation, Tony Hawk 900° 1999 X Games, 2020 Tokyo Olympic debut Sky Brown 13 bronze), GOLF (Scotland 15c James II 1457 banned distraction from archery, 18 holes, par+birdie+eagle+albatross+ace, Tiger Woods 1997-2008, St Andrews Home, Masters+US Open+Open Championship 1860+PGA), ARCHERY (Stone Age 10000+ BC, English longbow Crécy 1346+Agincourt 1415, recurve vs longbow vs compound Wilbur Allen 1966 vs crossbow, South Korea 40+ Olympic medals, Geena Davis 1999 trials 24th age 43).
 - Distinct from existing 44 L1 (SUP, ice skating, trampoline, dodgeball, kayaking, basketball, soccer, baseball, etc.).
