@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.633] - 2026-05-28 - Quiz Sports L4: 40→44 (PASS-8 L4 sweep — 3 of 8)
+- Added 4 more L4 sports Qs: WAYNE GRETZKY (2857 pts, assists alone would top all-time, #99 league-wide retired, 4 Cups+1988 LA Trade), PELÉ (3 World Cups 1958/62/70 only player, 1283 goals, Santos+NY Cosmos, declared Brazilian National Treasure 1961), STANLEY CUP (Lord Stanley 1892, ONE cup travels with winner, names engraved on retired bands, kidnapped/canal-dropped lore), JESSE OWENS (4 golds 1936 Berlin vs Aryan-supremacy narrative, Lutz Long friendship, snubbed by FDR despite triumph).
+- Distinct from existing 40 L4 (Olympic rings, Tour de France, Wimbledon, Stanley Cup [different angle here], pentathlon, Cy Young, Babe Ruth, Magic-Bird, Secretariat, Schumacher/Hamilton, Nadal, Serena, etc).
+- sw.js → v712. Android versionCode 669 / versionName 7.1.7.
+
 ## [5.7.632] - 2026-05-28 - Quiz Mythology L4: 40→44 (PASS-8 L4 sweep — 2 of 8)
 - Added 4 more L4 myth Qs: CERBERUS (3-headed Hades hound, Typhon+Echidna parents, only Orpheus/Heracles/Psyche pass, MIT Kerberos auth namesake), JÖRMUNGANDR (Norse World Serpent, Loki+Angrboða child, Thor's Ragnarök nemesis they kill each other, 2023 ichthyosaur fossil named for him), AMATERASU (Shinto sun goddess, hid in Ama-no-Iwato cave, Uzume's dance lured her out, Imperial Regalia mirror, Nihon=origin-of-sun), PROMETHEUS (Titan stole fire in fennel stalk, eagle eats liver daily, Mary Shelley's Modern Prometheus subtitle, element Pm-61 named for him).
 - Distinct from existing 40 L4 (Phoenix, Valhalla, Styx, Quetzalcoatl, Loki, Ganesha, Yggdrasil, Anansi, Coyote, Bunyip, Kraken, Banshee, Yeti, Leprechaun, Werewolf, Basilisk, Vampire, Hanuman, Naga, Selkie, Chaos, Egyptian heart-weighing, Heracles, Beowulf, Sun Wukong, Wendigo, Tiamat, Garuda, Kelpie, Tengu, Coatlicue, Maui, Pele, Mami Wata, Thunderbird, Djinn, Kitsune).
