@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.530] - 2026-05-28 - Quiz Colors L1: 32→36
+- Added 4 more L1 color-ID Qs: zebra (black+white stripes), tiger (orange+black), apple (red iconic), jeans/denim (indigo blue).
+- Distinct from existing 32 L1 (red/blue/yellow/green/banana/grass/sky/strawberry/sun/stop/ocean/fire/clouds/dirt/firetruck/leaves/milk/flamingo/bus/red+yellow=orange/grass dup/snow/panda/banana/pumpkin/red+blue/tomato/sunflower/elephant gray/blueberry/coal black/chocolate brown).
+- sw cache → v609; Android versionCode 566 / versionName 6.1.4.
+
 ## [5.7.529] - 2026-05-28 - Quiz Space L1: 32→36
 - Added 4 more L1 space concepts: rocket (Newton's 3rd law, Saturn V/Falcon 9), Pluto (2006 demoted to dwarf planet), Big Dipper / Ursa Major (Polaris pointer), Sun is actually WHITE from space (atmospheric scattering makes it look yellow).
 - Distinct from existing 32 L1 (Earth/8 planets/Mercury/Saturn/Sun/stars/astronaut/Moon/day-night/blue sky/Galileo/Moon phases/Sun=star/meteor/eclipses/galaxy/telescope/ellipse/vacuum/comet/constellation/black hole/Milky Way).
