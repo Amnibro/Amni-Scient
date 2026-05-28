@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.670] - 2026-05-28 - Quiz Weather L2: 44→48 (PASS-11 weather sweep — 2 of 5)
+- Added 4 more L2 weather Qs: AURORA BOREALIS (solar wind particles channeled by magnetic field → polar 100-300km altitude, green-O₂ 100km/red-O₂ 200-300km/blue-N₂, 2024-25 solar max visible Mexico/Spain May 2024, Viking Valkyrie shields), MONSOON (seasonal wind reversal differential heating, 60% humanity in monsoon regions, Bengal 1943 famine, Mawsynram 11871mm/yr wettest), TEMPERATURE INVERSION (warm aloft + cold surface trap pollution, London 1952 Great Smog ~12000 deaths from 5-day coal+inversion, Salt Lake City + Mexico City notorious), BAROMETER (Torricelli 1643 mercury column, hPa/mb 1013 sea level, falling=storm rising=fair, smartphone MEMS sensors, Typhoon Tip 1979 record 870 hPa).
+- Distinct from existing 44 L2 (dust devil, black ice, sun dogs, heat index, etc.).
+- sw.js → v749. Android versionCode 706 / versionName 7.5.4.
+
 ## [5.7.669] - 2026-05-28 - Quiz Weather L1: 44→48 (PASS-11 OPENS — 44→48 sweep across shallow banks)
 - PASS-11 directive: lift shallow-bank levels from 44 → 48 (+4) for added depth + better game variety.
 - Added 4 more L1 weather Qs: THUNDER (lightning heats air to 30,000°C → shockwave, count-seconds trick / 3 = km / 5 = miles, ≤30 sec → shelter as lightning strikes 16km from storm), FOG (cloud at ground, visibility <1km vs mist 1-2km, radiation/steam/advection types, SF Karl-the-Fog, Grand Banks 200+ foggy days/year, headlights LOW beam), HAIL (updraft-recycled ice balls with concentric rings, Vivian SD 2010 record 20cm 0.88kg, ~$1B/yr US crop damage, distinct from sleet/graupel), DEW (radiative cooling at clear+calm night → vapor condenses below dew-point, frost when sub-0°C, dew-point is humidity measure, plant water source).
