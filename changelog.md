@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.636] - 2026-05-28 - Quiz Shapes L4: 40→44 (PASS-8 L4 sweep — 6 of 8)
+- Added 4 more L4 shape Qs: MÖBIUS STRIP (Möbius+Listing 1858, half-twist=one side+one edge, cut down middle yields one longer loop, Goodyear conveyor patent + recycling symbol + Escher 1963), SIERPIŃSKI TRIANGLE (Sierpiński 1915, Hausdorff log3/log2=1.585, emerges from Pascal-mod-2 + chaos game + Rule 90, Eiffel Tower lattice), HYPERBOLIC GEOMETRY (Gauss/Bolyai/Lobachevsky 1820s, parallel postulate dropped, Poincaré disk + Escher Circle Limit + Einstein GR + Daina Taimina crochet 1997), POLYOMINOES (Golomb 1953, tetromino=4 squares Tetris 7 pieces, 12 pentominoes 2339 solutions 6×10 rect, generalizes to polycubes/hexes/iamonds).
+- Distinct from existing 40 L4 (Apollonian gasket, dual polyhedra, Klein bottle, Penrose tiling, tesseract, Voronoi diagram, Euler V-E+F=2, etc).
+- sw.js → v715. Android versionCode 672 / versionName 7.2.0 (rollover).
+
 ## [5.7.635] - 2026-05-28 - Quiz Colors L4: 40→44 (PASS-8 L4 sweep — 5 of 8)
 - Added 4 more L4 color Qs: METAMERISM (different spectra same cone response under one light, mismatch under another, QC light booths D65/F2/A, distinct from iridescence already in L4), COCHINEAL/CARMINIC ACID (Dactylopius coccus scale insects on prickly pear, Aztec→Spanish 2nd-most-valuable Mexican export, British redcoats+cardinal robes+Starbucks frap, ~70k insects per lb), NEWTON'S DISC (1670s rainbow wedges spun fast → gray-white, persistence-of-vision proof white=spectral sum, Benham's top variant), CHIAROSCURO (Italian light+dark, Leonardo sfumato → Caravaggio tenebrism → Rembrandt+La Tour+Vermeer→noir cinematography, also a woodcut technique).
 - Distinct from existing 40 L4 (color blindness, iridescence, Bezold, complementary afterimage, red-stop-sign, purple non-spectral, halftone, Egyptian Blue, mummy brown, Munsell, Berlin+Kay, etc).
