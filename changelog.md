@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.453] - 2026-05-27 - Quiz Shapes L5: 24→28 (Shapes quiz now 28×5)
+- Added 4 to Shapes quiz L5: tesseract (4D hypercube), Voronoi diagrams, Hairy Ball theorem, Banach–Tarski paradox.
+- All 5 Shapes quiz levels now at 28 each.
+- sw cache → v532; Android versionCode 489 / versionName 5.3.7.
+
 ## [5.7.452] - 2026-05-27 - Quiz Shapes L4: 24→28
 - Added 4 to Shapes quiz L4: sphere volume (4/3)πr³, cylinder volume πr²h, slope formula, triangle median.
 - sw cache → v531; Android versionCode 488 / versionName 5.3.6.
