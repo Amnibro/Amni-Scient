@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.7.654] - 2026-05-28 - Quiz Math L4: 40→44 (PASS-9 math sweep — 3 of 5, L3 verified above-floor at 60)
+- Verified math L3 actually at 60 (way above 44 floor) — skipping L3, jumping to L4 lift.
+- Added 4 more L4 advanced-math Qs: CENTRAL LIMIT THEOREM (Laplace 1810 + Lyapunov 1901, any finite-variance source distribution → N(μ, σ²/N) sample mean, polls + measurement-error + Galton boards, stable-Lévy when variance infinite), BAYES' THEOREM (Bayes 1763 posthumous, P(A|B)=P(B|A)P(A)/P(B), classic 99%-sensitive 1%-prevalence test → posterior ~50% NOT 99%, Paul Graham 2002 spam filters, Naive Bayes ML), EIGENVALUES+EIGENVECTORS (Av=λv, det(A-λI)=0, PCA + Google PageRank + quantum observables + vibration modes + Markov stationary, SVD generalizes), TAYLOR SERIES (Brook Taylor 1715 / Maclaurin 1742, e^x = Σ xⁿ/n!, Euler formula e^iθ proven via series, sci-computing + Runge-Kutta + linearization sin θ≈θ).
+- Distinct from existing 40 L4 (Gaussian normal, conditional probability, Cantor diagonal, Euclidean algorithm, De Morgan, Fermat's little, etc.).
+- sw.js → v733. Android versionCode 690 / versionName 7.3.8.
+
 ## [5.7.653] - 2026-05-28 - Quiz Math L2: 40→44 (PASS-9 math sweep — 2 of 5)
 - Added 4 more L2 math Qs: PEMDAS/BODMAS order (Parens, Exponents, Mult/Div LR, Add/Sub LR, "Please Excuse My Dear Aunt Sally", 8÷2(2+2)=16 viral debate), AREA CIRCLE πr² (vs circumference 2πr, Archimedes method of exhaustion ~250 BC, sphere 4πr²+⁴⁄₃πr³, ellipse πab), ROMAN NUMERALS IX=9 (I=1 V=5 X=10 L=50 C=100 D=500 M=1000, subtraction IV/IX/XL/CM, MMXXIV=2024, Super Bowl LVIII=58, monarchs Louis XIV), NEGATIVE × NEGATIVE = POSITIVE (distributive-law consistency, number-line flip twice, pattern step, debt-cancel intuition, (−2)³=−8 odd power keeps sign).
 - Distinct from existing 40 L2 (7×8, half-80, hexagon 6, 25%, pentagon, 144÷9, right angle 90°, perimeter, fractions, cube edges 12, 9², 12÷4, etc.).
