@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.466] - 2026-05-28 - Quiz Science L1: 37→40 (Science L1 matches L4/L5 depth)
+- Added 3 to Science quiz L1: dinosaurs extinct, dolphins are mammals, magnets.
+- Science L1 now sits at 40 — same as L4 + L5.
+- sw cache → v545; Android versionCode 502 / versionName 5.5.0.
+
 ## [5.7.465] - 2026-05-28 - Quiz Science L1: 33→37
 - Added 4 to Science quiz L1: Earth is our planet, blue whale (largest animal), plants need sunlight, gravity.
 - sw cache → v544; Android versionCode 501 / versionName 5.4.9.
