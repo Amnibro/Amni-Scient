@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.612] - 2026-05-28 - Quiz Counting L1: 40→44
+- Added 4 more L1 simple-tier number Qs: 5+5=10 (doubles shortcut for near-doubles), 2 eyes (binocular vision = depth, scallops have 200+!), weekend 2 days (Henry Ford 1926, Israel Fri-Sat, Iceland 4-day experiments), 2+4+4=10 (associative + commutative properties intro).
+- Distinct from existing 40 L1 (count-emoji/fingers/wheels/sides/dozen/hours/seconds/2+2/10-1/spider/seasons).
+- sw cache → v691; Android versionCode 648 / versionName 6.9.6.
+
 ## [5.7.611] - 2026-05-28 - Quiz Shapes L1: 40→44
 - Added 4 more L1 simple-tier shape Qs: cloud shape (curved-bump outline, iCloud/AWS logos), bowtie (2 tri-tips joined, Einstein/Bond/Doctor-Who, 17th-cent Croatian cravat), key shape (bow+shaft+teeth, Egypt 4000 BC → Yale 1865 modern), anchor shape (shank+stock+fluke arms, symbol of hope, supertankers 30+ tons).
 - Distinct from existing 40 L1 (circle/square/triangle/star/heart/cube/sphere/pentagon/hexagon/zigzag/club/infinity/torus/etc).
