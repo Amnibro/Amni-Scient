@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.554] - 2026-05-28 - Quiz Colors L4: 32→36
+- Added 4 L4-tier color-science Qs: Mauve (1856 Perkin first synthetic dye), lead-white pigment (toxic but unrivaled, Vermeer-era to 1970s), purple non-spectral (brain bridges red+blue), halftone printing (CMYK dot patterns + Lichtenstein Ben-Day dots).
+- Distinct from existing 32 L4 (primaries-RYB/secondary/complement/tint-shade-tone/prism/RGB/wheel/HSV/Pantone/color-temp/blindness/iridescence/Bezold/afterimage/red-stop/analogous/Purkinje/dress/gamut/cones/triadic/add-vs-sub/dog dichromacy/diamond/tetrachromacy/Vantablack/CIE 1931/cochineal).
+- sw cache → v633; Android versionCode 590 / versionName 6.3.8.
+
 ## [5.7.553] - 2026-05-28 - Quiz Space L4: 32→36
 - Added 4 L4-tier cosmology Qs: spaghettification (black-hole tidal stretch), Goldilocks zone (habitable-water orbital range), Voyager 1 most-distant human object (~163 AU), Hubble tension (~9% H₀ mismatch CMB vs SNe).
 - Distinct from existing 32 L4 (c/Corona/Type-Ia/LIGO/Moon gravity/H abundance/4.6Gyr/Lagrange/Kepler/JWST/neutron star/pulsar/quasar/Europa/Olympus Mons/Hubble Law/parallax/spectroscopy/supernova/exoplanet/ISS/eclipse/nebula/Sun fate/Big Bang/dark matter/dark energy/Drake/Fermi paradox).
