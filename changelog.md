@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.7.473] - 2026-05-28 - Quiz Math L5: 29→33 (lifting bank outlier toward midpoint)
+- Sorted scan ranked math L5=29 the clearest single-level outlier in any rich bank.
+- Added 4 to Math quiz L5: Cantor's diagonal argument, Fourier transform, Monte Carlo method, Bayes' theorem.
+- Noted existing internal L5 dups (Banach-Tarski 7476+7498, Galois 7490+7497, Gödel 7473+7496) — pre-existing, left as-is.
+- sw cache → v552; Android versionCode 509 / versionName 5.5.7.
+
 ## [5.7.472] - 2026-05-28 - Quiz Science L3: 37→40 (SCIENCE QUIZ NOW 40×5 — fully uniform)
 - Added 3 to Science quiz L3: prokaryotic vs eukaryotic cells, three modes of heat transfer, wave-particle duality.
 - ALL 5 Science quiz levels now at 40 each. Internal-consistency lift complete.
