@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.7.423] - 2026-05-27 - Quiz Space L1: 24→28 (deepening simple-subject quizzes)
+- Full re-scan confirms suite at floor: all 13 fact-card subjects 16×5, all 14 quiz subjects ≥24×5.
+- Now deepening the 8 simple-subject quizzes (at the 24 floor) toward the richer subjects' depth.
+- Added 4 to Space quiz L1: planet count, Moon phases, telescopes, no-air-in-space.
+- sw cache → v502; Android versionCode 459 / versionName 5.0.7.
+
 ## [5.7.422] - 2026-05-27 - Quiz Weather L3: 23→24
 - Added the water cycle to Weather quiz L3 — closes the last thin quiz bank from the scan.
 - sw cache → v501; Android versionCode 458 / versionName 5.0.6.
