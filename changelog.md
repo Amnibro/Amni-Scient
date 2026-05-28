@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.7.565] - 2026-05-28 - 🏁 Quiz Opposites L5 32→36 — PASS-6 COMPLETE!
+- Added 4 L5 advanced conceptual pairs: empiricism vs rationalism (Locke/Hume vs Descartes), Kahneman System 1 fast / System 2 slow (Thinking Fast and Slow), genotype vs phenotype (genes vs expressed traits), Stoicism vs Epicureanism (virtue vs tranquility-pleasure).
+- **🏁 PASS-6 SWEEP COMPLETE** — ALL 40 shallow-bank quiz levels lifted 32 → 36 = **160 new Qs added across 40 commits** in pass 6. Combined with passes 1-5 (200 added) = **360 total Qs added to shallow banks since the campaign began**.
+- Distinct from existing 32 L5 (ascend/divergent/voluntary/literal/concrete-abstract/extrovert/scarcity/compact/ambiguous/antonym/a priori/inductive-deductive/sacred/quantitative/microcosm/innate/esoteric/objective/antithesis/sui generis/oxymoron/dialectic/enantiodromia/complementarity/Apollonian-Dionysian/yin-yang/de jure/eros-thanatos/determinism/reductionism/materialism/centripetal).
+- sw cache → v644; Android versionCode 601 / versionName 6.4.9.
+
 ## [5.7.564] - 2026-05-28 - Quiz Counting L5: 32→36 (Android versionCode 600 milestone)
 - Added 4 L5-tier deep-math Qs: P vs NP (Millennium Prize), Cantor's diagonal (uncountable reals), Continuum hypothesis (independent of ZFC, Cohen 1963 Fields), RSA encryption (prime factoring + Shor's algorithm threat).
 - Android **versionCode 600 milestone** (5.6.5 → 6.4.8 over the campaign).
