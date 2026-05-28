@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.568] - 2026-05-28 - Quiz Sports L1: 36→40
+- Added 4 more L1 simple-tier sports Qs: field hockey (grass+stick+ball, oldest team sport), diving (3m springboard + 10m platform, Louganis '88), alpine skiing (downhill/super-G/GS/slalom, Norway 1850s), stand-up paddleboarding (Polynesian roots → Hawaii revival → global watersport).
+- Distinct from existing 36 L1 (basketball/soccer/tennis/baseball/hockey/swimming/cycling/gymnastics/football/surfing/etc).
+- sw cache → v647; Android versionCode 604 / versionName 6.5.2.
+
 ## [5.7.567] - 2026-05-28 - Quiz Mythology L1: 36→40
 - Added 4 more L1 simple-tier supernatural creatures: mummy (Egyptian wrapping + 'curse' of Tut's tomb), skeleton (Halloween/Day of Dead/Harryhausen), ogre (Shrek + fairy-tale villains), elf (Norse álfar → Tolkien Legolas + Christmas elves).
 - Distinct from existing 36 L1 (Zeus/etc + creatures: vampire/kraken/goblin/Bigfoot/zombie/witch/wizard/ghost).
