@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.582] - 2026-05-28 - Quiz Weather L3: 36→40 (PASS-7 L3 sweep begins)
+- Added 4 more L3 weather Qs: Doppler radar (NEXRAD 1990s, tornado warning 3min→13min, dual-pol 2013), atmospheric river/Pineapple Express (400km wide, 30-50% W-Coast precip, CA 2023 9-AR cluster), polar vortex (stratospheric mass, Feb 2021 Texas -18°C $200B, sudden-stratospheric-warming splits), ITCZ (equatorial trade-wind convergence, sailors' Doldrums Coleridge 'Ancient Mariner').
+- Distinct from existing 36 L3 (tornado/hurricane/water-cycle/blizzard/fog/lightning/rainbow/hail/monsoon/sleet/haboob/drought/smog/fronts/dew/frost/wind-chill/Köppen-zones/jet-stream/El-Niño/auroras/Coriolis/troposphere/ozone/greenhouse/cirrus/Beaufort/La-Niña/sea-breeze/high-low-pressure/cumulonimbus/etc).
+- sw cache → v661; Android versionCode 618 / versionName 6.6.6.
+
 ## [5.7.581] - 2026-05-28 - Quiz Opposites L2: 36→40 (PASS-7 L2 SWEEP COMPLETE — all 8 shallow banks at 40-floor L1+L2!)
 - Added 4 more L2 opposite Qs: inhale↔exhale (diaphragm + 12-20 br/min + scuba ascend warning + prana yogic), borrow↔lend (Polonius 'neither a borrower nor a lender be' + interest banking), attack↔defend (war/sports/chess/cybersecurity 'D wins championships'), arrive↔depart (airport halls + ETA/ETD + figurative 'depart this life').
 - Distinct from existing 36 L2 (tall/light/full/wet/easy/soft/push/give/sit/loud/heavy/good/clean/strong/beautiful/right/rich/friend/young/smart/brave/ancient/generous/expand/begin/win/true/sharp/above/visible/increase/accept/float/wild/loose/pass).
