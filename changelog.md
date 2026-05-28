@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.543] - 2026-05-28 - Quiz Mythology L3: 32→36
+- Added 4 L3 cross-cultural myth Qs: Baba Yaga (Slavic chicken-leg-hut witch), Tlaloc (Aztec rain god), Pangu (Chinese primordial giant), Indra (Hindu Vedic thunder god + vajra).
+- Distinct from existing 32 L3 (Thor/Odin/Anubis/Ra/Perseus/Heracles/Isis/Set/Achilles/Loki/Bastet/Horus/Osiris/Thoth/Vishnu/Shiva/Brahma/Amaterasu/Tyr/Ganesha/Medusa/Quetzalcoatl/Gilgamesh/Arthur/Valkyries/Krishna/Cthulhu/Anansi/Hanuman/Marduk/Beowulf).
+- sw cache → v622; Android versionCode 579 / versionName 6.2.7.
+
 ## [5.7.542] - 2026-05-28 - Quiz Weather L3: 32→36 (pass-6 L3 begins)
 - Added 4 L3-tier meteorology Qs: La Niña (El Niño counterpart), sea breeze vs land breeze (daily cycle), high vs low pressure systems (clockwise vs counter-clockwise N. Hem.), cumulonimbus thunderstorm cloud (12km tall anvil).
 - Distinct from existing 32 L3 (tornado/hurricane/thermometer/freeze/boil/condensation/blizzard/fog/lightning/rainbow/hail/monsoon/sleet/haboob/drought/smog/weather-front/dew-frost/wind chill/climate zones/barometer/jet stream/water cycle/El Niño/auroras/Coriolis/troposphere/ozone/greenhouse/cirrus/Beaufort).
