@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.577] - 2026-05-28 - Quiz Space L2: 36→40
+- Added 4 more L2 space Qs: Proxima Centauri (nearest star 4.24ly, Alpha Cen trio, Voyager-75000yr-transit, Breakthrough Starshot laser-sail), ocean tides (Moon gravity bulges + 46% Sun, spring/neap, Bay of Fundy 16m), solar flare/CME (magnetic reconnection, Carrington 1859, Quebec '89 grid blackout), Mars rovers (Sojourner→Spirit/Oppy 15yr→Curiosity→Perseverance+Ingenuity helicopter 72 flights).
+- Distinct from existing 36 L2 (Mars-red/Jupiter-biggest/Venus-hottest/Milky-Way/Armstrong/Apollo-11/Halley/Uranus-tilt/Neptune-blue/Hubble/Voyager/ISS/SpaceX/Saturn-moons/JWST/Big-Bang/etc).
+- sw cache → v656; Android versionCode 613 / versionName 6.6.1.
+
 ## [5.7.576] - 2026-05-28 - Quiz Sports L2: 36→40
 - Added 4 more L2 sports Qs: America's Cup (sailing's oldest international trophy 1851, NYYC's 132-year reign, modern AC75 foilers), biathlon (Norwegian ski-patrol origins, ski+rifle 180-bpm challenge, Bjørndalen 13 medals), cricket wicket (3 stumps + 2 bails, 'bowled'/'stumped' dismissals), squash (Harrow School 1830, 4-wall court, brutal fitness, LA 2028 Olympic debut).
 - Distinct from existing 36 L2 (Olympics/soccer/Super-Bowl/Tour-de-France/Golf/MLB/boxing/volleyball/marathon/Ali/tennis/Bolt/F1/badminton/Wimbledon/curling/Stanley-Cup/Ryder-Cup/etc).
