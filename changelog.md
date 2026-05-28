@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.619] - 2026-05-28 - Quiz Shapes L2: 40→44
+- Added 4 more L2 shape Qs: kite (2-pair adjacent equal sides, perpendicular diagonals, China military signaling kite 2800yrs, Franklin 1752 lightning), perpendicular ⊥ (90° crossing, slopes m₁×m₂=-1, vs parallel + concurrent), protractor (0-180° half-disk, set-squares 30/60/90 + 45/45/90, digital app gyroscope), triangular prism (Toblerone, Newton 1666 dispersion prism, A-frame tent, V=½·base·height·length).
+- Distinct from existing 40 L2 (triangle/square/pentagon/hexagon/octagon/etc + Pythagorean/π/Möbius/fractal).
+- sw cache → v698; Android versionCode 655 / versionName 7.0.3.
+
 ## [5.7.618] - 2026-05-28 - Quiz Colors L2: 40→44
 - Added 4 more L2 color Qs: chartreuse (1737 Carthusian monks secret recipe, neon yellow-green, Pantone 2017 'Greenery'), burgundy (eastern French Pinot Noir region, 1881 color name, Cadillac luxury), emerald (mineral beryl + chromium, Pantone 2013, Cleopatra's gem, Wizard of Oz), copper (Cu atomic-29, Statue of Liberty oxidized 1886 to green patina, Bronze Age 5000yrs).
 - Distinct from existing 40 L2 (orange/purple/brown/black/white/gray/pink/magenta/cyan/lavender/salmon/turquoise/maroon/indigo/navy/olive/coral/amber/teal/sepia/crimson/RGB-CMYK).
