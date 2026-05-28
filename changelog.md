@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.424] - 2026-05-27 - Quiz Space L2: 24→28
+- Added 4 to Space quiz L2: constellations, why Mars is red, comets, Earth's year.
+- sw cache → v503; Android versionCode 460 / versionName 5.0.8.
+
 ## [5.7.423] - 2026-05-27 - Quiz Space L1: 24→28 (deepening simple-subject quizzes)
 - Full re-scan confirms suite at floor: all 13 fact-card subjects 16×5, all 14 quiz subjects ≥24×5.
 - Now deepening the 8 simple-subject quizzes (at the 24 floor) toward the richer subjects' depth.
