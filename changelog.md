@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.7.671] - 2026-05-28 - Quiz Weather L3: 44→48 (PASS-11 weather sweep — 3 of 5)
+- Added 4 more L3 weather Qs: POLAR VORTEX (year-round circumpolar cold-air cyclone, SSW disrupts → arctic spills south Feb 2021 Texas 246 deaths + Beast East 2018, Arctic amplification climate-link Francis-Vavrus contested), RAIN SHADOW (Atacama+Death Valley+Gobi+Patagonia/Great-Basin deserts in lee of mountains, Hoh Rainforest 3500mm vs Sequim 35km east 400mm 9× difference), CLOUD SEEDING (silver iodide AgI, Schaefer+B-Vonnegut GE 1946, China 2008 Olympics + UAE 30% rain + 10 US western states, Vietnam Operation Popeye 1967-72 ENMOD ban 1977), LENTICULAR CLOUDS (UFO-saucer over mountains, mountain-wave standing form, glider pilots love for 16km altitude records, Mt Shasta/Rainier/Matterhorn).
+- Distinct from existing 44 L3 (troposphere, barometer, anemometer, hygrometer, Saffir-Simpson, Fujita, ozone, etc.).
+- Note: pre-existing weather L4 line 7999 has AURORA — that DUPLICATES my v670 L2 add. Future cleanup pass should pick which to keep.
+- sw.js → v750. Android versionCode 707 / versionName 7.5.5.
+
 ## [5.7.670] - 2026-05-28 - Quiz Weather L2: 44→48 (PASS-11 weather sweep — 2 of 5)
 - Added 4 more L2 weather Qs: AURORA BOREALIS (solar wind particles channeled by magnetic field → polar 100-300km altitude, green-O₂ 100km/red-O₂ 200-300km/blue-N₂, 2024-25 solar max visible Mexico/Spain May 2024, Viking Valkyrie shields), MONSOON (seasonal wind reversal differential heating, 60% humanity in monsoon regions, Bengal 1943 famine, Mawsynram 11871mm/yr wettest), TEMPERATURE INVERSION (warm aloft + cold surface trap pollution, London 1952 Great Smog ~12000 deaths from 5-day coal+inversion, Salt Lake City + Mexico City notorious), BAROMETER (Torricelli 1643 mercury column, hPa/mb 1013 sea level, falling=storm rising=fair, smartphone MEMS sensors, Typhoon Tip 1979 record 870 hPa).
 - Distinct from existing 44 L2 (dust devil, black ice, sun dogs, heat index, etc.).
