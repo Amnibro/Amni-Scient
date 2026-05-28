@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.425] - 2026-05-27 - Quiz Space L3: 24→28
+- Added 4 to Space quiz L3: dwarf planets/Pluto, the ISS, tidal locking, the asteroid belt.
+- sw cache → v504; Android versionCode 461 / versionName 5.0.9.
+
 ## [5.7.424] - 2026-05-27 - Quiz Space L2: 24→28
 - Added 4 to Space quiz L2: constellations, why Mars is red, comets, Earth's year.
 - sw cache → v503; Android versionCode 460 / versionName 5.0.8.
