@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.602] - 2026-05-28 - Quiz Colors L5: 36→40
+- Added 4 more L5 color Qs: blackbody radiation (Planck's law launched QM, OBAFGKM stellar mnemonic, peak λ=2898/T), pointillism (Seurat 'Grande Jatte' 3M dots, Chevreul+Rood color science, anticipated subpixels), Benham's Disk (1894 illusory color from B+W rotation, mechanism still debated 130yrs), melanopsin (2000 Provencio ipRGCs blue-light circadian, suppresses melatonin → night-shift/blue-filters).
+- Distinct from existing 36 L5 (hex codes/wavelengths/CMYK/HSL/gamma/sRGB/CIE-1931/CIELAB/ΔE/metamerism/Bayer/subpixel/tetrachromacy/quantum-dots/opponent-process/CRI/white-balance/bit-depth/photopic-scotopic/D65/ICC/Munsell/visible-spectrum/polarized/UV-bands/Stokes/Fraunhofer/laser/birefringence/Tyndall).
+- sw cache → v681; Android versionCode 638 / versionName 6.8.6.
+
 ## [5.7.601] - 2026-05-28 - Quiz Space L5: 36→40
 - Added 4 more L5 space Qs: black-hole information paradox (Hawking 1976 vs QM unitarity, soft-hair 2016, Susskind-Hawking bets), baryogenesis (Sakharov 3 conditions, CP violation Kobayashi-Maskawa Nobel 2008, ~1-in-billion asymmetry), Kerr black hole (1963 rotating BH, ergosphere + ring singularity, Penrose process 1969, M87*+Sgr-A*), neutrino oscillation (3 flavors morph, proves nonzero mass, solved solar-neutrino problem, Kajita+McDonald Nobel 2015).
 - Distinct from existing 36 L5 (CMB-2.7K/Schwarzschild/Hubble-70/Chandrasekhar/13.8B-age/parsec/Penrose-Hawking-singularity/Drake/inflation/dark-matter/dark-energy/Hawking-radiation/ΛCDM/anthropic/multiverse/cosmic-web/reionization/3-fates/holographic/string-theory/pulsar/gravitational-waves/Lagrange/redshift/Planck-length/wormhole/Olbers/Boltzmann-brain/Roche-limit/Eddington-limit/vacuum-decay/Maunder).
