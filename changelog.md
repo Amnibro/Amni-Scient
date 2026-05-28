@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.549] - 2026-05-28 - Quiz Opposites L3: 32→36 (closes pass-6 L3 sweep!)
+- Added 4 more L3 conceptual pairs: east/west (compass), internal/external (endo-/exo- bio), forward/backward (time-asymmetric in physics), inhale/exhale (CO₂ triggers breath, not O₂ lack).
+- **PASS-6 L3 SWEEP COMPLETE** — all 8 shallow-bank L3s now at 36 Qs (+4 per bank × 8 = 32 new Qs).
+- sw cache → v628; Android versionCode 585 / versionName 6.3.3.
+
 ## [5.7.548] - 2026-05-28 - Quiz Counting L3: 32→36
 - Added 4 L3-tier number Qs: 10% of 200 = 20 (percent trick), 5² = 25 (perfect squares), Roman M = 1000 (mille), 9×7 = 63 (finger trick).
 - Distinct from existing 32 L3 (arithmetic basics/subtractions/multiplications/comparison/skipcounts/double-half/word-problems/cents/parity/6×7/100÷4/decimals/prime/round/skip-10s/inches-foot/99/√16/2³/½+¼/Roman C).
