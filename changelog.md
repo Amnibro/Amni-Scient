@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.7.509] - 2026-05-28 - Quiz Opposites L3: 28→32 (closes pass-3!)
+- Added 4 L3-tier conceptual pairs: optimist/pessimist (attitude), question/answer (Socratic), liquid/solid (states of matter), active/passive (grammar/investing/chemistry).
+- Distinct from existing 28 L3 (brave/gentle/polite/ancient/etc.).
+- **PASS-3 COMPLETE** — all 8 shallow-bank L3s now at 32; shallow banks now match deep-bank L1+L2+L3 widths.
+- sw cache → v588; Android versionCode 545 / versionName 5.9.3.
+
 ## [5.7.508] - 2026-05-28 - Quiz Counting L3: 28→32
 - Added 4 L3-tier number Qs: √16=4 (square root), 2³=8 (exponents → computing), ½+¼=¾ (common denominator), Roman C=100 (centum etymology, no zero).
 - Distinct from existing 28 L3 (arithmetic basics/skip-counting/doubling/halving/parity rules/prime/round/inches).
