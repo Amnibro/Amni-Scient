@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.675] - 2026-05-28 - Quiz Mythology L2: 44→48 (PASS-11 mythology sweep — 2 of 5)
+- Added 4 fresh L2 myth Qs: ICARUS (Daedalus's son, escaped Crete on wax-feather wings, flew too high → wings melted → drowned in Aegean, Bruegel 1560 painting + Auden poem + "Icarus Complex"), PANDORA'S BOX (Hesiod 700 BC first mortal woman, Erasmus 16c mistranslated pithos jar → box, opened released evils + Hope/Elpis remained inside, parallel Eve forbidden fruit), SISYPHUS (cunning Corinth king, outwitted Death twice + chained Thanatos, condemned eternal boulder-up-hill in Tartarus, Camus 1942 essay "imagine Sisyphus happy"), ROMULUS+REMUS (Mars twins suckled by she-wolf Lupa, killed brother in Palatine/Aventine fight, founded Rome 753 BC, Capitoline Wolf bronze 5c BC, AS Roma football logo).
+- Distinct from existing 44 L2 (Mars, Ares, Hermes, Hera, Dionysus, harpies, Bellerophon+Pegasus+Chimera, etc.).
+- sw.js → v754. Android versionCode 711 / versionName 7.5.9.
+
 ## [5.7.674] - 2026-05-28 - Quiz Mythology L1: 44→48 (PASS-11 mythology sweep — 1 of 5)
 - Added 4 fresh L1 myth Qs: MERMAID (Greek sirens originally bird-women, Hans Andersen 1837 tragic vs Disney 1989 happy, Columbus 1493 saw manatees, Copenhagen 1913 statue), ANGEL (Greek angelos messenger, Gabriel+Michael+Raphael archangels, Pseudo-Dionysius 9-tier hierarchy, biblical cherubim NOT cute babies but 4-faced+4-winged, Zoroastrian Amesha Spentas + Buddhist Devas), GIANT (Norse Jötnar Ymir + Greek Titans + biblical Nephilim+Goliath + Dahl BFG, mammoth skulls→Cyclops theory, Robert Wadlow 2.72m), WIZARD (Merlin+Gandalf+Dumbledore+Mickey Sorcerer's Apprentice, real cunning folk + John Dee Queen Elizabeth I astrologer, Wizard of Oz humbug, D&D player class).
 - Distinct from existing 44 L1 (elf, dwarf, jack-o'-lantern, pixie, poltergeist, Zeus, Aphrodite, Cerberus, etc.).
