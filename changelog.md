@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.444] - 2026-05-27 - Quiz Counting L1: 24→28
+- Added 4 to Counting quiz L1: days in a week, sides of a square, number before 5, months in a year.
+- sw cache → v523; Android versionCode 480 / versionName 5.2.8.
+
 ## [5.7.443] - 2026-05-27 - Quiz Opposites L5: 24→28 (Opposites quiz now 28×5)
 - Added 4 to Opposites quiz L5: Apollonian/Dionysian (Nietzsche), Yin/Yang (Taoism), de jure/de facto, Eros/Thanatos (Freud).
 - All 5 Opposites quiz levels now at 28 each.
