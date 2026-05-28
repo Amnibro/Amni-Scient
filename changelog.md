@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.672] - 2026-05-28 - Quiz Weather L4: 44→48 (PASS-11 weather sweep — 4 of 5)
+- Added 4 more L4 weather Qs: DERECHO (Hinrichs 1888 Spanish 'straight', ≥400 km swath + ≥93 km/h gusts, June 2012 Super-Derecho IA→DC 4M outages, Aug 2020 Iowa $11B damage), ENSO (El Niño/La Niña Pacific oscillation 2-7 yr, '97-98 warmest $36B + 2023-24, ONI Niño-3.4 index, S America fish die + Australia drought ↔ floods), MICROBURST (intense <4km downdraft, dry/wet types, Delta 191 1985 DFW L-1011 137 dead → FAA wind-shear alert mandate, discovered Fujita 1974), CHINOOK/FÖHN (warm-dry leeward downslope, Calgary 1962 −19°C→+22°C in 1 hr, 'snow eater', Santa Ana fueled 2018 Camp + 2017 Tubbs fires, Föhn sickness real ~10% sensitive).
+- Distinct from existing 44 L4 (katabatic, jet stream, atmospheric river, dew point, supercell, troposphere, ozone, etc.).
+- sw.js → v751. Android versionCode 708 / versionName 7.5.6.
+
 ## [5.7.671] - 2026-05-28 - Quiz Weather L3: 44→48 (PASS-11 weather sweep — 3 of 5)
 - Added 4 more L3 weather Qs: POLAR VORTEX (year-round circumpolar cold-air cyclone, SSW disrupts → arctic spills south Feb 2021 Texas 246 deaths + Beast East 2018, Arctic amplification climate-link Francis-Vavrus contested), RAIN SHADOW (Atacama+Death Valley+Gobi+Patagonia/Great-Basin deserts in lee of mountains, Hoh Rainforest 3500mm vs Sequim 35km east 400mm 9× difference), CLOUD SEEDING (silver iodide AgI, Schaefer+B-Vonnegut GE 1946, China 2008 Olympics + UAE 30% rain + 10 US western states, Vietnam Operation Popeye 1967-72 ENMOD ban 1977), LENTICULAR CLOUDS (UFO-saucer over mountains, mountain-wave standing form, glider pilots love for 16km altitude records, Mt Shasta/Rainier/Matterhorn).
 - Distinct from existing 44 L3 (troposphere, barometer, anemometer, hygrometer, Saffir-Simpson, Fujita, ozone, etc.).
