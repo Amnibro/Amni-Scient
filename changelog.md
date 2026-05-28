@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.552] - 2026-05-28 - Quiz Sports L4: 32→36
+- Added 4 L4-tier sports milestones: WNBA founded 1996 / first season 1997, NBA logo silhouette = Jerry West, Secretariat 1973 Triple Crown (Belmont 31 lengths), Magic-Bird 1979 NCAA final saved the NBA.
+- Distinct from existing 32 L4 (1896 Olympics/Ashes/WC/Belmont/love/Bannister/Pelé/Djokovic/Title IX/Lombardi/yellow card/yellow jersey/Boston/Indy/willow/Daytona/Iditarod/4 slams/Heisman/VAR/Fosbury/field goal/Jesse Owens/Jackie Robinson/Tiger/Premier League/UEFA Champions League/Gretzky/Chamberlain/Lance Armstrong).
+- sw cache → v631; Android versionCode 588 / versionName 6.3.6.
+
 ## [5.7.551] - 2026-05-28 - Quiz Mythology L4: 32→36
 - Added 4 L4 cross-cultural myth Qs: Maui (Polynesian trickster — lassoed Sun, Disney Moana), Pele (Hawaiian volcano goddess, Kilauea), Mami Wata (West African + diaspora water mother), Thunderbird (Native American thunder-and-lightning bird, Pacific NW totem).
 - Distinct from existing 32 L4 (Phoenix/Valhalla/Styx/Quetzalcoatl/Loki/Ganesha/Yggdrasil/Anansi/Coyote/Bunyip/Kraken/Banshee/Yeti/Leprechaun/Werewolf/Basilisk/Vampire/Hanuman/Naga/Selkie/Chaos/heart-feather/Heracles/Beowulf/Sun Wukong/Wendigo/Tiamat/Garuda/Kelpie/Tengu/Coatlicue).
