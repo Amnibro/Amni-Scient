@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.448] - 2026-05-27 - Quiz Counting L5: 24→28 (Counting quiz now 28×5)
+- Added 4 to Counting quiz L5: imaginary unit i, Euler's identity, Pascal's triangle, π to 5 decimal places.
+- All 5 Counting quiz levels now at 28 each.
+- sw cache → v527; Android versionCode 484 / versionName 5.3.2.
+
 ## [5.7.447] - 2026-05-27 - Quiz Counting L4: 24→28
 - Added 4 to Counting quiz L4: median, prime factorization, a⁰=1, improper-to-mixed-number conversion.
 - sw cache → v526; Android versionCode 483 / versionName 5.3.1.
