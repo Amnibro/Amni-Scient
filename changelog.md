@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.7.613] - 2026-05-28 - Quiz Opposites L1: 40→44 (PASS-8 L1 SWEEP COMPLETE — all 8 banks now at 44 floor for L1!)
+- Added 4 more L1 simple-tier opposite Qs: laugh↔cry (same lacrimal glands for joy + sad tears, baby communication, 'crying wolf' fable), early↔late (chronic-lateness psychology, 'better late than never' vs Beckett 'better never than late'), inside↔outside ('outside the box' thinking, 'inside job' crime), thick↔thin (thick-as-thieves, walking-on-thin-ice, thin-film tech, thick-skin metaphor).
+- Distinct from existing 40 L1 (big/hot/up/day/happy/fast/in/on/yes/open/boy/old/etc + easy/top/begin/sharp).
+- PASS-8 L1 SWEEP COMPLETE: all 8 banks (weather/mythology/sports/space/colors/shapes/counting/opposites) now at 44-question floor for L1. +32 new L1 Qs added in pass-8.
+- sw cache → v692; Android versionCode 649 / versionName 6.9.7.
+
 ## [5.7.612] - 2026-05-28 - Quiz Counting L1: 40→44
 - Added 4 more L1 simple-tier number Qs: 5+5=10 (doubles shortcut for near-doubles), 2 eyes (binocular vision = depth, scallops have 200+!), weekend 2 days (Henry Ford 1926, Israel Fri-Sat, Iceland 4-day experiments), 2+4+4=10 (associative + commutative properties intro).
 - Distinct from existing 40 L1 (count-emoji/fingers/wheels/sides/dozen/hours/seconds/2+2/10-1/spider/seasons).
