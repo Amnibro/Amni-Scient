@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.446] - 2026-05-27 - Quiz Counting L3: 24→28
+- Added 4 to Counting quiz L3: round to nearest 10, count by 10s, inches in a foot, largest 2-digit number.
+- sw cache → v525; Android versionCode 482 / versionName 5.3.0.
+
 ## [5.7.445] - 2026-05-27 - Quiz Counting L2: 24→28
 - Added 4 to Counting quiz L2: pentagon sides, cents in a dollar, dozen, even/odd.
 - Note: v5.7.444 L1 days/months/square dup L2 8057/8058/8067 (existing cross-level pattern, like shapes/squares already appear in both L1+L2).
