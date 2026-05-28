@@ -1,5 +1,8 @@
 ﻿# Changelog 
 
+## [5.7.705] - 2026-05-28 - Quiz Opposites L1: 44→48 (PASS-11 opposites sweep — 1 of 5, final shallow bank)
+- Opening pass-11 final shallow bank — opposites lift 44→48 starting at L1. Added 4 fresh L1 opposites Qs after THICK/THIN entry: CLEAN/DIRTY (wash+scrub+wipe+mop+vacuum verbs, soap chem amphiphilic dissolves grease, clean energy + clean record + clean slate idioms, pig myth — they roll in mud to cool, no sweat glands), QUIET/LOUD (decibels: whisper 30dB + talk 60dB + concert 110dB + jet 140dB, 85dB+ hours damages hearing, blue whale 188dB loudest animal, cricket 100dB for tiny size, anechoic chambers reveal own heartbeat), OPEN/CLOSED (shut+seal+lock vs open+unlock+fling open verbs, open mind vs closed mind, open-and-shut case legal, store hours convention, oysters open to feed close when threatened, 'Curtain UP! Light the lights!' musical idiom), FULL/EMPTY (full vs almost-full vs half-full vs almost-empty vs empty degrees, half-full vs half-empty optimism/pessimism test, full moon vs new moon, fuel gauge F→E, full house poker = 3-of-kind+pair, empty nest, 'Running on Empty' Jackson Browne 1977, quantum vacuum still has 'quantum foam' — never truly nothing).
+
 ## [5.7.704] - 2026-05-28 - Quiz Counting L3 catchup: +1 to reach floor 48
 - Counting L3 +1 to actually hit floor: added LOGARITHMS entry (Napier 1614 'Mirifici Logarithmorum Canonis Descriptio,' Briggs 1617 base-10, slide rules 1622 Oughtred, Laplace 'doubled the life of the astronomer,' ln(x) base e ≈ 2.71828 Bernoulli 1683, Richter + decibel + pH + Shannon entropy + Moore's Law + ML loss, log scales reveal exponential as straight lines, log(a×b)=log(a)+log(b) revolutionary identity).
 
