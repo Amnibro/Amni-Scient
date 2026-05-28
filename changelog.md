@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.620] - 2026-05-28 - Quiz Counting L2: 40→44
+- Added 4 more L2 number Qs: cardinal vs ordinal (1 vs 1st, monarchs use Roman ordinals 'the Eighth', dates), 365 days (Gregorian leap rule divisible-by-4-not-by-100-unless-400; 2000 leap, 1900 not), 11×11=121 (split-and-fill trick for 11× tables, perfect-squares 121/144/169/196/225), miles→km 1.609 (Roman 'mille passus' 1000 paces, US-UK metric holdouts, nautical mile 1.852).
+- Distinct from existing 40 L2 (count-emoji-6-10/add/sub/mult/half/Roman/even-odd/score/gross/cents/dozen/prime/million/quarter/negative/etc).
+- sw cache → v699; Android versionCode 656 / versionName 7.0.4.
+
 ## [5.7.619] - 2026-05-28 - Quiz Shapes L2: 40→44
 - Added 4 more L2 shape Qs: kite (2-pair adjacent equal sides, perpendicular diagonals, China military signaling kite 2800yrs, Franklin 1752 lightning), perpendicular ⊥ (90° crossing, slopes m₁×m₂=-1, vs parallel + concurrent), protractor (0-180° half-disk, set-squares 30/60/90 + 45/45/90, digital app gyroscope), triangular prism (Toblerone, Newton 1666 dispersion prism, A-frame tent, V=½·base·height·length).
 - Distinct from existing 40 L2 (triangle/square/pentagon/hexagon/octagon/etc + Pythagorean/π/Möbius/fractal).
