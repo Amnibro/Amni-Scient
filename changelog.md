@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.542] - 2026-05-28 - Quiz Weather L3: 32→36 (pass-6 L3 begins)
+- Added 4 L3-tier meteorology Qs: La Niña (El Niño counterpart), sea breeze vs land breeze (daily cycle), high vs low pressure systems (clockwise vs counter-clockwise N. Hem.), cumulonimbus thunderstorm cloud (12km tall anvil).
+- Distinct from existing 32 L3 (tornado/hurricane/thermometer/freeze/boil/condensation/blizzard/fog/lightning/rainbow/hail/monsoon/sleet/haboob/drought/smog/weather-front/dew-frost/wind chill/climate zones/barometer/jet stream/water cycle/El Niño/auroras/Coriolis/troposphere/ozone/greenhouse/cirrus/Beaufort).
+- sw cache → v621; Android versionCode 578 / versionName 6.2.6.
+
 ## [5.7.541] - 2026-05-28 - Quiz Opposites L2: 32→36 (closes pass-6 L2 sweep)
 - Added 4 more L2 opposite pairs: float/sink (Archimedes), wild/tame (domestication), loose/tight (vs lose/loose spelling), pass/fail (test/CI/inspection).
 - Distinct from existing 32 L2 (tall/short/light/dark/full/empty/wet/dry/easy/hard/etc.).
