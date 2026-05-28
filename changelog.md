@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.537] - 2026-05-28 - Quiz Space L2: 32→36
+- Added 4 L2-tier astronomy Qs: Apollo 11 (first Moon landing 1969), Saturn has most moons (274+), Chicxulub impact killed dinosaurs (66 Mya), 3 galaxy shapes (spiral/elliptical/irregular — Hubble's tuning fork).
+- Distinct from existing 32 L2 (Mars/Jupiter/Venus/Milky-Way/Armstrong/constellation/365days/asteroid-belt/Titan/Hubble-telescope/Voyager/ISS/SpaceX/Halley's/Big Bang/light-year/JWST/etc.).
+- sw cache → v616; Android versionCode 573 / versionName 6.2.1.
+
 ## [5.7.536] - 2026-05-28 - Quiz Sports L2: 32→36
 - Added 4 L2-tier sports facts: NBA 24-second shot clock (saved the league 1954), Ryder Cup (USA vs Europe biennial golf), Olympic torch lit at Olympia Greece (1936 Berlin invention), Brazil 5 World Cups (most-titled nation).
 - Distinct from existing 32 L2 (Olympic-4yr/soccer-11/Super Bowl/Tour de France/golf/World Series/boxing/volleyball/Larry-O'Brien/marathon/golf-18/Ali/tennis/hockey/triathlon/cards-52/Bolt/NBA-48min/soccer-goal/TD-6/bowling-300/love/FIFA-WC/F1/badminton/rugby/Wimbledon-grass/curling/pole-vault/Stanley-Cup).
