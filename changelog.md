@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.456] - 2026-05-27 - Quiz Weather L3: 24→28
+- Added 4 to Weather quiz L3: El Niño/La Niña, auroras, Coriolis effect, atmosphere layers (troposphere up).
+- sw cache → v535; Android versionCode 492 / versionName 5.4.0.
+
 ## [5.7.455] - 2026-05-27 - Quiz Weather L2: 24→28
 - Added 4 to Weather quiz L2: tornado, humidity, sleet, barometer.
 - sw cache → v534; Android versionCode 491 / versionName 5.3.9.
