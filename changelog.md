@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.637] - 2026-05-28 - Quiz Counting L4: 40→44 (PASS-8 L4 sweep — 7 of 8)
+- Added 4 more L4 number Qs: PYTHAGOREAN THEOREM (a²+b²=c², Babylonian Plimpton 322 ~1800 BC, 370+ proofs, triples 3-4-5/5-12-13/8-15-17, foundation of distance formula+GPS+Einstein interval), LOGARITHMS (Napier 1614, slide rule 1622-1970s, Richter/dB/pH/stellar-magnitude/entropy all log scales), SCIENTIFIC NOTATION (a×10ⁿ form, Avogadro 6.022×10²³ + Planck length 1.616×10⁻³⁵, multiply add exponents, engineering notation multiples of 3), MODULAR/CLOCK ARITHMETIC (Gauss 1801 Disquisitiones, RSA + Diffie-Hellman + LUHN credit-card + ISBN, Fermat's Little Theorem a^p≡a mod p).
+- Distinct from existing 40 L4 (range, distributive property, Euler e, irrational numbers, binary, permutations/combinations, divisibility by 3, infinity, arithmetic vs geometric sequences, Venn diagrams, etc).
+- sw.js → v716. Android versionCode 673 / versionName 7.2.1.
+
 ## [5.7.636] - 2026-05-28 - Quiz Shapes L4: 40→44 (PASS-8 L4 sweep — 6 of 8)
 - Added 4 more L4 shape Qs: MÖBIUS STRIP (Möbius+Listing 1858, half-twist=one side+one edge, cut down middle yields one longer loop, Goodyear conveyor patent + recycling symbol + Escher 1963), SIERPIŃSKI TRIANGLE (Sierpiński 1915, Hausdorff log3/log2=1.585, emerges from Pascal-mod-2 + chaos game + Rule 90, Eiffel Tower lattice), HYPERBOLIC GEOMETRY (Gauss/Bolyai/Lobachevsky 1820s, parallel postulate dropped, Poincaré disk + Escher Circle Limit + Einstein GR + Daina Taimina crochet 1997), POLYOMINOES (Golomb 1953, tetromino=4 squares Tetris 7 pieces, 12 pentominoes 2339 solutions 6×10 rect, generalizes to polycubes/hexes/iamonds).
 - Distinct from existing 40 L4 (Apollonian gasket, dual polyhedra, Klein bottle, Penrose tiling, tesseract, Voronoi diagram, Euler V-E+F=2, etc).
