@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.440] - 2026-05-27 - Quiz Opposites L3: 24→28
+- Added 4 to Opposites quiz L3: public/private, positive/negative, junior/senior, north/south.
+- Note: v5.7.439 L2 begin/end, win/lose, sharp/dull duplicate existing L3 entries — matches the opposites bank's cross-level repetition pattern; left as-is.
+- sw cache → v519; Android versionCode 476 / versionName 5.2.4.
+
 ## [5.7.439] - 2026-05-27 - Quiz Opposites L2: 24→28
 - Added 4 to Opposites quiz L2: begin/end, win/lose, true/false, sharp/dull.
 - sw cache → v518; Android versionCode 475 / versionName 5.2.3.
