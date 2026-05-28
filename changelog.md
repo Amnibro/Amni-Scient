@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.579] - 2026-05-28 - Quiz Shapes L2: 36→40
+- Added 4 more L2 shape Qs: Pythagorean theorem (a²+b²=c², 3-4-5, 400+ proofs, Babylonians knew first), π=3.14159 (irrational, Archimedes 22/7, 202T-digit 2024 record, Pi Day), Möbius strip (1858 half-twist single-side, recycling ♻️ symbol, conveyor belts), fractal (Mandelbrot 1975 self-similar, Koch snowflake/Sierpinski/coastlines/broccoli, terrain-gen).
+- Distinct from existing 36 L2 (triangle/square/pentagon/hexagon/star/circle/rhombus/oval/parallelogram/trapezoid/octagon/isosceles/equilateral/scalene/polygon/sphere/cube/cuboid/360°/acute/obtuse/reflex/heptagon/nonagon/decagon/tessellation/quadrilateral/diameter/radius/etc).
+- sw cache → v658; Android versionCode 615 / versionName 6.6.3.
+
 ## [5.7.578] - 2026-05-28 - Quiz Colors L2: 36→40
 - Added 4 more L2 color Qs: teal (Eurasian Teal duck blue-green stripe namesake, Miami Dolphins), sepia (cuttlefish ink + 1800s photo toning + sulfur permanence), crimson (kermes-insect dye 'qirmiz', cardinals/Harvard/Alabama), RGB-vs-CMYK (additive light screens vs subtractive ink print, neon RGB dulls in CMYK).
 - Distinct from existing 36 L2 (orange/purple/brown/black/white/gray/pink/pastel/magenta/cyan/beige/lavender/salmon/turquoise/maroon/indigo/navy/olive/coral/amber/color-blindness/etc).
