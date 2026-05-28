@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.600] - 2026-05-28 - Quiz Sports L5: 36→40 — v600 MILESTONE!
+- Added 4 more L5 sports Qs: 1992 Dream Team (MJ/Magic/Bird/Barkley/etc, +44 avg win-margin, opponents asked for autographs!), 1973 Battle-of-the-Sexes (BJK beat Riggs, ~90M TV viewers, Astrodome), Kipchoge 2019 sub-2 (1:59:40 Vienna with pacers/Vaporflys, 'no human is limited'), LeBron James (passed Kareem's 38387 in Feb 2023, 4 titles, son Bronny drafted 2024).
+- Distinct from existing 36 L5 (Phelps/triple-double/Test-cricket/Hines-sub-10/F1-Grand-Slam/Wilt-100/Beamon/MJ-6-0/Comaneci/Ruth-called-shot/Isner-Mahut/1972-Munich/Pelé-17/marathon-stadium/Armstrong-7/Bonds-762/Thrilla-Manila/Brady-7/Flo-Jo/Gretzky-894/Miracle-on-Ice/Maradona-Hand/checkmate/Bannister/Federer-20/Tony-Hawk-900/Merckx/Bosman/Latynina/Thorpe/Babe-Didrikson/Nadal-Federer-08/Bradman/Schumacher/Strug/Williams-sisters).
+- sw cache → v679; Android versionCode 636 / versionName 6.8.4.
+
 ## [5.7.599] - 2026-05-28 - Quiz Mythology L5: 36→40
 - Added 4 more L5 mythology Qs: Kali (Hindu skull-necklace dark mother, Shiva-prone-under-feet, drank Raktabija's clone-spawning blood, Kolkata namesake), Zoroaster/Zarathustra (Ahura Mazda vs Angra Mainyu dualism, influenced Abrahamic faiths, Nietzsche), Izanagi+Izanami (Japanese primordial spear-stirred islands, Yomi-descent broken-promise, gave birth to Amaterasu/Tsukuyomi/Susanoo), Tartarus (Greek deepest abyss imprisoning Titans, Hekatoncheires guards, Plato's eternal-punishment refinement).
 - Distinct from existing 36 L5 (Iris/Morpheus/Midas/Athena/Nike/Fenrir/Pandora/Trojan-Horse/Sisyphus/Tantalus/Gilgamesh/Marduk/Tiamat/Inanna/Arthur/Grail/Merlin/Atlantis/Hyperboreans/Lethe/Heimdall/Prometheus/Yggdrasil/Daedalus/Moirai/Aeneid/Hecate/Susanoo/Eris/Charon/Ragnarök/ouroboros/Hermes-Trismegistus/Mithras/La-Llorona/Huitzilopochtli).
