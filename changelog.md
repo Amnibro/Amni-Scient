@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.503] - 2026-05-28 - Quiz Mythology L3: 28→32
+- Added 4 cross-cultural myth Qs to Mythology L3: Anansi (West African spider trickster), Hanuman (Hindu monkey god of devotion), Marduk (Babylonian Enuma Elish), Beowulf (Anglo-Saxon Grendel/dragon-slayer epic).
+- Distinct from existing 28 L3 (Thor/Odin/Anubis/Ra/Perseus/Heracles/Isis/Set/Achilles/Loki/Vishnu/Shiva/Brahma/Amaterasu/Cthulhu/etc.).
+- sw cache → v582; Android versionCode 539 / versionName 5.8.7.
+
 ## [5.7.502] - 2026-05-28 - Quiz Weather L3: 28→32 (pass-3 start)
 - Added 4 L3-tier meteorology Qs: ozone layer (UV-B/C, Montreal Protocol), greenhouse effect (CO₂/CH₄ trapping IR), cirrus clouds (ice crystals high alt), Beaufort scale (1805 0-12 wind ranking).
 - Distinct from existing 28 L3 (tornado/hurricane/freeze/boil/jet stream/Coriolis/etc.).
