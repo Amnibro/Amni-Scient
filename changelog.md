@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.545] - 2026-05-28 - Quiz Space L3: 32→36
+- Added 4 L3-tier astronomy Qs: solar wind (Sun's charged particles → aurora driver), Earth's magnetosphere (life-shield + Van Allen belts), SETI (intelligent-signal search), Perseverance/Ingenuity rover (2021 Jezero, Mars rover lineage).
+- Distinct from existing 32 L3 (8min sunlight/gravity/Pluto/Proxima/Moon phases/AU/black hole/supernova/aurora/ISS/light-year/Sirius/Polaris/meteor/Andromeda/Kuiper/Sun fate/Jupiter/satellite/tidal locking/exoplanet/CMB/pulsar/Lagrange).
+- sw cache → v624; Android versionCode 581 / versionName 6.2.9.
+
 ## [5.7.544] - 2026-05-28 - Quiz Sports L3: 32→36
 - Added 4 L3-tier sports facts: 4 golf majors (Masters/USOpen/Open/PGA), Bolt 100m WR 9.58s, tennis tiebreak at 6-6, boxing 17 weight classes.
 - Distinct from existing 32 L3 (90min soccer/Wimbledon/Stanley Cup/5 rings/marathon/touchdown/hat-trick/pole vault/decathlon/match point/sumo/curling/rugby/badminton/snooker/darts/America's Cup/equestrian/Triple Crown/squash/Tour de France/birdie/dunk/fencing/archery/pickleball/skateboarding/cricket century/Ironman/Monaco GP/Heisman).
