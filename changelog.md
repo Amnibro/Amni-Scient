@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.494] - 2026-05-28 - Quiz Weather L2: 28→32 (pass-2 start)
+- Added 4 explainer Qs to Weather L2: rainbow formation (refraction/reflection), wind chill (heat-loss physics), hail inside thunderstorms (updraft layers), climate vs weather (long-term vs short-term).
+- L2-grade depth (more mechanism than L1's pattern-ID).
+- sw cache → v573; Android versionCode 530 / versionName 5.7.8.
+
 ## [5.7.493] - 2026-05-28 - Quiz Opposites L1: 28→32 (rotation pass 1 done)
 - Added 4 more opposite-pair Qs to Opposites L1: hard/soft, loud/quiet, awake/asleep, strong/weak.
 - Distinct from existing 28 pairs (big-small/hot-cold/up-down/day-night/etc.).
