@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.7.605] - 2026-05-28 - Quiz Opposites L5: 36→40 (🎉 PASS-7 ENTIRE CAMPAIGN COMPLETE — ALL 40 SHALLOW-BANK LEVELS NOW AT 40-QUESTION FLOOR!)
+- Added 4 more L5 opposite Qs: zenith↔nadir (Arabic etymology, celestial vs underfoot, nadir-pointing satellites), kinetic↔potential energy (½mv² vs mgh, roller-coaster conversion, Lagrangian L=KE-PE), boson↔fermion (Bose-Einstein vs Fermi-Dirac stats, Pauli exclusion vs lasers/BECs), exothermic↔endothermic (combustion vs evaporation cooling, Gibbs free energy spontaneity).
+- Distinct from existing 36 L5 (ascend/divergent/voluntary/literal/concrete/extrovert/scarcity/compact/ambiguous/antonym/a-priori/inductive/sacred/quantitative/microcosm/innate/esoteric/objective/antithesis/sui-generis/oxymoron/dialectic/enantiodromia/complementarity/Apollonian/yin-yang/de-jure/Eros-Thanatos/determinism/reductionism/materialism/centripetal/empiricism/Kahneman/genotype/Stoic).
+- 🎉 PASS-7 ENTIRE CAMPAIGN COMPLETE: 8 banks (weather/mythology/sports/space/colors/shapes/counting/opposites) × 5 levels (L1-L5) all at 40-question floor. Total +160 Qs added across pass-7 (32 per level × 5 levels).
+- sw cache → v684; Android versionCode 641 / versionName 6.8.9.
+
 ## [5.7.604] - 2026-05-28 - Quiz Counting L5: 36→40
 - Added 4 more L5 number Qs: halting problem (Turing 1936 diagonal-undecidable, Rice's theorem, founded computability theory), Graham's number (G, Ramsey upper bound, Knuth up-arrow, last digit 7, beaten by TREE(3)/BB), 7 Millennium Prize problems (Clay 2000 $1M each, only Poincaré solved by Perelman who refused), Kolmogorov complexity (shortest-program, Solomonoff+Chaitin independent 1960s, uncomputable in general).
 - Distinct from existing 36 L5 (6×7/8×9/12²/48÷6/81÷9/100÷4/primes/squares/round/GCD/LCM/prime-factor-60/perfect-Mersenne/Gauss-1-to-100/triangular/odd-sum-n²/Goldbach/twin-primes/0.999=1/e/0!/Fibonacci/i/Euler-identity/Pascal/π/Fermat-Last/Riemann/Gödel/Collatz/P-vs-NP/Cantor-diagonal/Continuum/RSA).
