@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.443] - 2026-05-27 - Quiz Opposites L5: 24→28 (Opposites quiz now 28×5)
+- Added 4 to Opposites quiz L5: Apollonian/Dionysian (Nietzsche), Yin/Yang (Taoism), de jure/de facto, Eros/Thanatos (Freud).
+- All 5 Opposites quiz levels now at 28 each.
+- sw cache → v522; Android versionCode 479 / versionName 5.2.7.
+
 ## [5.7.442] - 2026-05-27 - Leaderboard fixes + profile-chip iOS click fix
 - FIX: tapping the username at the top did nothing on iOS Safari — the #profile-btn is a flex button with child spans, and tapping the visible name-text dropped the click (known iOS bug). Added `#profile-btn > * { pointer-events:none }` so taps register on the button itself.
 - FIX: "All Leaderboards" only showed top 3 per game and listed 3 phantom games (pong/bejeweled/colorSort) that never had data. Now lists only games that actually use the system (Snake, Tetris, Breakout, Invaders, Flappy), shows the full top 10 per game, and tags each section with its total entry count.
