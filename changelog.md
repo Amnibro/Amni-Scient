@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.428] - 2026-05-27 - Quiz Sports L1: 24→28
+- Added 4 to Sports quiz L1: golf, the Olympics, volleyball, table tennis.
+- sw cache → v507; Android versionCode 464 / versionName 5.1.2.
+
 ## [5.7.427] - 2026-05-27 - Quiz Space L5: 24→28 (Space quiz deepened to 28×5)
 - Added 4 to Space quiz L5: pulsars/neutron stars, gravitational waves, Lagrange points, cosmological redshift.
 - All 5 Space quiz levels now at 28 each.
