@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.7.657] - 2026-05-28 - Quiz Engineering L4: 40→44 (PASS-9 engineering sweep COMPLETE — 2 of 2; L2/L3/L5 already above floor at 41/60/41)
+- Added 4 more L4 engineering Qs: PID CONTROLLER (Kp·e + Ki·∫e + Kd·de/dt, Ziegler-Nichols 1942 tuning, cruise control + drones + 3D printer hotends + 95% industrial loops), FOURIER TRANSFORM (Fourier 1822 heat eq, FFT Cooley-Tukey 1965 N²→NlogN Strang "most important numerical algorithm", MP3/JPEG/MRI/SDR all built on it), STRESS-STRAIN CURVE (elastic-linear E Young's modulus σ=Eε, yield 0.2% offset, plastic strain-hardening, UTS peak, necking instability, fracture; ductile vs brittle), BERNOULLI'S PRINCIPLE (1738 Hydrodynamica, P+½ρv²+ρgh=const, wing lift partial explanation, venturi + atomizer + sails + arterial blood, Kutta-Joukowski rigorous lift theory).
+- Distinct from existing 40 L4 (CMOS inverter, PWM, aliasing in DSP, thermistor vs RTD, I-beam, etc.).
+- **PASS-9 ENGINEERING BANK COMPLETE** at L1+L4=44; L2 already at 41, L3 at 60, L5 at 41 — all above 44 floor or at acceptable 41 ledge.
+- sw.js → v736. Android versionCode 693 / versionName 7.4.1.
+
 ## [5.7.656] - 2026-05-28 - Quiz Engineering L1: 40→44 (PASS-9 engineering sweep OPENS — 1 of 2 needed)
 - Added 4 more L1 engineering Qs: ROUND WHEELS (~3500 BC Mesopotamia potters' wheels → chariots, every point same distance from center = smooth rolling, square wheels exist for special bumpy roads), PULLEY (changes direction of force, compound = mechanical advantage at cost of distance, ~9000 years old, Archimedes analyzed compound), CIRCUIT (closed loop electrons + back, voltage push + conductor wire + switch makes/breaks, series shares current vs parallel branches), BATTERY (chemical energy storage, Volta 1800 voltaic pile zinc+copper, alkaline 1.5V + Li-ion + lead-acid + NiMH, single-use vs rechargeable cycle limits, "volt" named for Volta).
 - Distinct from existing 40 L1 (flashlight LED bulb, bike tire grooves, parachute drag, antenna radio waves, gravity pulls down, etc.).
