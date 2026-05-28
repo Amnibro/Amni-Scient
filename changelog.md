@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.595] - 2026-05-28 - Quiz Shapes L4: 36→40
+- Added 4 more L4 shape Qs: Klein bottle (Felix Klein 1882, non-orientable 4D, can't exist in 3D without self-intersection, cut→2 Möbius strips), Penrose tiling (1974 aperiodic 5-fold symmetry, 1984 quasicrystals/Shechtman Nobel, Iranian shrine 500-yr-old predecessor!), tesseract (4D hypercube, 8 cubic cells, Dalí 'Christus Hypercubus' + Marvel Infinity Stones), Voronoi diagram (1908 Georgy Voronoi nearest-seed cells, giraffe spots/soap bubbles, John Snow 1854 cholera map, Delaunay dual).
+- Distinct from existing 36 L4 (right-angle/acute/obtuse/triangle-180/quadrilateral/octagon/regular/equilateral/parallelogram/diagonal-√2/pentagon-540/exterior-360/Heron/SSS-SAS-ASA/30-60-90/45-45-90/isosceles/rhombus/inscribed-angle/similar-AAA/Euler-V-E+F/golden-ratio/tessellation/sphere-vol/cylinder-vol/slope/median/SOHCAHTOA/law-of-cosines/fractal/spherical-geom/Pythagorean-triples/conic-sections/Apollonian-gasket/dual-polyhedra).
+- sw cache → v674; Android versionCode 631 / versionName 6.7.9.
+
 ## [5.7.594] - 2026-05-28 - Quiz Colors L4: 36→40
 - Added 4 more L4 color Qs: Egyptian Blue (3000 BC FIRST synthetic pigment, lost Roman times → 1814 rediscovered, modern IR-emission fingerprint use), Mummy Brown (16th-20th cent paint pigment LITERALLY ground from Egyptian mummies, Burne-Jones buried tube in garden when learned), Munsell System (1905 3D HVC color space, still in USDA soil classification), Berlin+Kay 1969 (universal color term hierarchy across 98 languages, Homer 'wine-dark sea' had no blue, Russian light-vs-dark-blue distinction).
 - Distinct from existing 36 L4 (3-primaries/secondaries/complementaries/tint-shade-tone/prism/RGB/color-wheel/HSV/Pantone/temperature/color-blindness/iridescence/Bezold/afterimage/red-warnings/analogous/Purkinje/the-dress/gamut/3-cones/triadic/additive-subtractive/dogs/diamond-dispersion/tetrachromacy/Vantablack/CIE-1931/cochineal/mauve-aniline/lead-white/purple-non-spectral/halftone).
