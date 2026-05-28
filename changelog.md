@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.508] - 2026-05-28 - Quiz Counting L3: 28→32
+- Added 4 L3-tier number Qs: √16=4 (square root), 2³=8 (exponents → computing), ½+¼=¾ (common denominator), Roman C=100 (centum etymology, no zero).
+- Distinct from existing 28 L3 (arithmetic basics/skip-counting/doubling/halving/parity rules/prime/round/inches).
+- sw cache → v587; Android versionCode 544 / versionName 5.9.2.
+
 ## [5.7.507] - 2026-05-28 - Quiz Shapes L3: 28→32
 - Added 4 L3-tier geometry Qs: triangle area (½·b·h), dodecahedron (12 pentagons, Platonic, d12 die), Möbius strip (one-sided surface, recycling symbol), golden ratio φ≈1.618 (sunflowers/nautilus).
 - Distinct from existing 28 L3 (3D shape IDs/cube faces/Pythagorean/equilateral/Platonic polyhedra/perimeter/right angle).
