@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.556] - 2026-05-28 - Quiz Counting L4: 32→36
+- Added 4 L4-tier number Qs: log₁₀(1000)=3 (logarithm = inverse exponent), coin probability 1/2, range = max−min (statistics spread), distributive property a(b+c)=ab+ac.
+- Distinct from existing 32 L4 (place values/multi-digit +/PEMDAS/fractions/percent/√64/2⁵/mean/median/prime factorization/x⁰=1/mixed numbers/scientific notation/factorial/mode/GCD).
+- sw cache → v635; Android versionCode 592 / versionName 6.4.0.
+
 ## [5.7.555] - 2026-05-28 - Quiz Shapes L4: 32→36
 - Added 4 L4-tier geometry Qs: Pythagorean triples (3-4-5, Euclid's formula), conic sections (cone slices → circle/ellipse/parabola/hyperbola), Apollonian gasket fractal (Descartes circle theorem), Platonic dual polyhedra (cube↔oct, dod↔icos, tet self-dual).
 - Distinct from existing 32 L4 (right angle/acute/obtuse/triangle 180°/quad 360°/octagon/regular polygon/equilateral 60°/parallelogram/Heron/SSS-SAS-ASA/30-60-90/45-45-90/isosceles/rhombus diagonals/inscribed angle/similar/Euler V-E+F/golden ratio/Möbius/Klein bottle/fractal/SOHCAHTOA/Law of Cosines/sphere triangle).
