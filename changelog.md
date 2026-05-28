@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.514] - 2026-05-28 - Quiz Colors L4: 28→32
+- Added 4 L4-tier color-science Qs: tetrachromacy (4-cone vision, ~12% women carriers), Vantablack (99.965% absorbing carbon nanotubes), CIE 1931 color space (horseshoe gamut standard), cochineal/carmine red (70k bugs/lb, Aztec dye → modern E120).
+- Distinct from existing 28 L4 (RYB primaries/secondary/tertiary/complement/tint-shade-tone/prism/RGB/wheel/HSV/Pantone/color temp/blindness/iridescence/Bezold/afterimage/red-stop/analogous/Purkinje/dress illusion/gamut/cones/triadic/add-vs-sub/dog dichromacy/diamond dispersion).
+- sw cache → v593; Android versionCode 550 / versionName 5.9.8.
+
 ## [5.7.513] - 2026-05-28 - Quiz Space L4: 28→32
 - Added 4 L4-tier cosmology Qs: dark matter (~27%, galaxy rotation/lensing evidence), dark energy (~68%, 1998 Type-Ia supernovae acceleration), Drake equation (Milky Way alien civ estimate), Fermi paradox ('where is everybody?').
 - Distinct from existing 28 L4 (speed of light/Corona/Type-Ia/LIGO/Moon-gravity/Hubble's law/parallax/spectroscopy/Europa/Olympus Mons/exoplanets/etc.).
