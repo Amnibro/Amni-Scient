@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.7.501] - 2026-05-28 - Quiz Opposites L2: 28→32 (closes pass-2!)
+- Added 4 L2-tier opposite pairs to Opposites L2: above/below, visible/invisible, increase/decrease, accept/refuse.
+- Distinct from existing 28 L2 (tall-short/light-dark/full-empty/etc.) + 32 L1.
+- **PASS-2 COMPLETE** — all 8 shallow-bank L2s now at 32 Qs each; combined with pass-1 L1s at 32, shallow banks fully match deep-bank L1+L2 width.
+- sw cache → v580 (milestone — 580 cache bumps); Android versionCode 537 / versionName 5.8.5.
+
 ## [5.7.500] - 2026-05-28 - 🎯 v500 milestone: Quiz Counting L2 28→32
 - 500-iteration milestone! Loop-pacing has shipped 500 commits since the long-improvements campaign began.
 - Added 4 L2 number-vocab Qs: largest 2-digit=99, 9 is odd, Roman X=10, score=20 (Lincoln's Gettysburg).
