@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.481] - 2026-05-28 - Quiz Languages L1: 32→36
+- Added 4 more "starts with" Qs to Languages L1 (matches existing L1 pattern): F→Fish, P→Pig, T→Tree, L→Lion.
+- sw cache → v560 (milestone — 560 cache bumps); Android versionCode 517 / versionName 5.6.5.
+
 ## [5.7.480] - 2026-05-28 - Quiz Animals L1: 37→39 (matches L4 + L5)
 - Added 2 to Animals quiz L1: bat echolocation, penguin bray.
 - Animals L1 now at 39 — matches L4 + L5. Bank's remaining gap is L2=136 (existing far-outlier on the HIGH side).
