@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.7.673] - 2026-05-28 - Quiz Weather L5: 44→48 (PASS-11 weather sweep COMPLETE — Weather bank now uniform at 48)
+- Added 4 fresh L5 research-tier weather Qs: AMOC (thermohaline conveyor belt, ~15% slowdown since 1950s, Younger Dryas paleo-analogue collapse, IPCC 30-50% reduction by 2100, Ditlevsen 2023 controversial 2050±25 tipping prediction), ICE-ALBEDO FEEDBACK (snow 0.8-0.9 vs ocean 0.06, Arctic warming 4× global rate NOAA 2022, sea-ice 13%/decade decline since 1979, ice-free Arctic summer ~2050, Snowball Earth ~700 Mya reverse), PERMAFROST CARBON BOMB (1500 Gt frozen carbon 2× atmosphere, 24% N. Hemisphere land, methane 28× stronger GHG, Yamal explosion craters 2014+ + 2016 anthrax reindeer 75-yr-preserved), CLOUD FEEDBACK (largest climate sensitivity uncertainty 2-5°C IPCC range, low-cloud cooling vs high-cirrus warming, CMIP6 low clouds may decrease over warming oceans, CALIPSO/CloudSat/EarthCARE satellite missions).
+- Distinct from existing 44 L5 (Younger Dryas, Little Ice Age, Walker Circulation, GCMs, Milankovitch, SSW, 3-cell circulation, PETM).
+- **PASS-11 WEATHER BANK COMPLETE!** All 5 levels uniformly at 48-question floor for weather.
+- sw.js → v752. Android versionCode 709 / versionName 7.5.7.
+
 ## [5.7.672] - 2026-05-28 - Quiz Weather L4: 44→48 (PASS-11 weather sweep — 4 of 5)
 - Added 4 more L4 weather Qs: DERECHO (Hinrichs 1888 Spanish 'straight', ≥400 km swath + ≥93 km/h gusts, June 2012 Super-Derecho IA→DC 4M outages, Aug 2020 Iowa $11B damage), ENSO (El Niño/La Niña Pacific oscillation 2-7 yr, '97-98 warmest $36B + 2023-24, ONI Niño-3.4 index, S America fish die + Australia drought ↔ floods), MICROBURST (intense <4km downdraft, dry/wet types, Delta 191 1985 DFW L-1011 137 dead → FAA wind-shear alert mandate, discovered Fujita 1974), CHINOOK/FÖHN (warm-dry leeward downslope, Calgary 1962 −19°C→+22°C in 1 hr, 'snow eater', Santa Ana fueled 2018 Camp + 2017 Tubbs fires, Föhn sickness real ~10% sensitive).
 - Distinct from existing 44 L4 (katabatic, jet stream, atmospheric river, dew point, supercell, troposphere, ozone, etc.).
