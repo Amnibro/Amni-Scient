@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.569] - 2026-05-28 - Quiz Space L1: 36→40
+- Added 4 more L1 simple-tier space Qs: Jupiter (largest planet, Great Red Spot, 95+ moons), aurora (solar wind + atmosphere, oxygen=green/red, nitrogen=purple), ISS (football-field lab, 408km up @ 28000 km/h, continuously crewed since 2000), spacesuit (EMU: pressure+temp+radiation+comms, white reflects sunlight).
+- Distinct from existing 36 L1 (Earth/Mercury/Saturn/Sun/Moon/eclipse/galaxy/Pluto/Big Dipper/etc).
+- sw cache → v648; Android versionCode 605 / versionName 6.5.3.
+
 ## [5.7.568] - 2026-05-28 - Quiz Sports L1: 36→40
 - Added 4 more L1 simple-tier sports Qs: field hockey (grass+stick+ball, oldest team sport), diving (3m springboard + 10m platform, Louganis '88), alpine skiing (downhill/super-G/GS/slalom, Norway 1850s), stand-up paddleboarding (Polynesian roots → Hawaii revival → global watersport).
 - Distinct from existing 36 L1 (basketball/soccer/tennis/baseball/hockey/swimming/cycling/gymnastics/football/surfing/etc).
