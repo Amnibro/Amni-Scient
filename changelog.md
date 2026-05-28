@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.522] - 2026-05-28 - Quiz Colors L5: 28→32
+- Added 4 L5-tier light/color-physics Qs: visible spectrum 380-750 nm (0.0035% of EM spectrum), polarized sunglasses (horizontal-glare blocking), UV-A/B/C bands (320-400 nm tans / 280-320 nm burns / 100-280 nm germicidal), Stokes shift (longer-λ fluorescence emission, GFP).
+- Distinct from existing 28 L5 (hex codes/wavelengths/CMYK/CIE 1931/CIELAB/ΔE/metamerism/Bayer/subpixel/tetrachromacy/QD/opponent process/CRI/white balance/bit depth/photopic-scotopic/D65/ICC profile/Munsell).
+- sw cache → v601; Android versionCode 558 / versionName 6.0.6.
+
 ## [5.7.521] - 2026-05-28 - 🎯 sw v600 milestone: Quiz Space L5 28→32
 - **sw v600 milestone** — 600 service-worker cache bumps since the long-improvements campaign began.
 - Added 4 L5-tier cosmology Qs: Planck length (~10⁻³⁵ m quantum-gravity scale), wormhole (Einstein-Rosen bridge), Olbers' paradox (dark sky as Big-Bang evidence), Boltzmann brain paradox (cosmology argument).
