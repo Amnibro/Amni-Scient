@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.614] - 2026-05-28 - Quiz Weather L2: 40→44 (PASS-8 L2 sweep begins)
+- Added 4 more L2 weather Qs: dust devil (sun-heated ground spin, no storm needed, Mars dust devils 8km tall + rover-photographed), black ice (~0.05 friction vs 0.7 dry, bridges-freeze-first, 70K+ US crashes/year), sun dogs (22° parhelia hex-ice-crystal refraction, 'sun dogs at noon storm by night'), heat index (humidity + temp 'feels like', 32°C @70%h = 41°C, Pakistan 54°C extreme).
+- Distinct from existing 40 L2 (4 seasons/dew/cumulus/lightning/Jupiter-storms/etc + anemometer/jet-stream/snowflake-6/monsoon).
+- sw cache → v693; Android versionCode 650 / versionName 6.9.8.
+
 ## [5.7.613] - 2026-05-28 - Quiz Opposites L1: 40→44 (PASS-8 L1 SWEEP COMPLETE — all 8 banks now at 44 floor for L1!)
 - Added 4 more L1 simple-tier opposite Qs: laugh↔cry (same lacrimal glands for joy + sad tears, baby communication, 'crying wolf' fable), early↔late (chronic-lateness psychology, 'better late than never' vs Beckett 'better never than late'), inside↔outside ('outside the box' thinking, 'inside job' crime), thick↔thin (thick-as-thieves, walking-on-thin-ice, thin-film tech, thick-skin metaphor).
 - Distinct from existing 40 L1 (big/hot/up/day/happy/fast/in/on/yes/open/boy/old/etc + easy/top/begin/sharp).
