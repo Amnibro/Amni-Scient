@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.7.517] - 2026-05-28 - Quiz Opposites L4: 28→32 (closes pass-4!)
+- Added 4 L4-tier conceptual pairs: concrete/abstract (idea), static/dynamic (tech), analog/digital (signals), cause/effect (causation + correlation≠causation).
+- Distinct from existing 28 L4 (expand-contract/accept-reject/transparent-opaque×2/include-exclude/etc.).
+- **PASS-4 COMPLETE** — all 8 shallow-bank L4s now at 32; shallow banks fully sized to 32×5 = 160 Qs each (was 28×5=140).
+- sw cache → v596; Android versionCode 553 / versionName 6.0.1.
+
 ## [5.7.516] - 2026-05-28 - Quiz Counting L4: 28→32
 - Added 4 L4-tier number-vocab Qs: scientific notation (5.3×10³), 5!=120 factorial, mode (most-frequent), GCD/GCF + Euclid's algorithm.
 - Distinct from existing 28 L4 (place values/2-digit +/-/PEMDAS/fractions/percent/√64/2⁵/mean/median/prime factorization/x⁰=1/mixed numbers).
