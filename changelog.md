@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.470] - 2026-05-28 - Quiz Science L3: 29→33
+- Added 4 to Science quiz L3: photosynthesis equation, mitosis vs meiosis, radioactive half-life, Bernoulli's principle.
+- sw cache → v549; Android versionCode 506 / versionName 5.5.4.
+
 ## [5.7.469] - 2026-05-28 - Quiz Science L2: 37→40 (Science L2 matches L4/L5 depth)
 - Added 3 to Science quiz L2: heart pumps blood, volcanoes/lava, electricity sources.
 - Science L2 now at 40 — same as L1, L4, L5. Only L3 (29) still below.
