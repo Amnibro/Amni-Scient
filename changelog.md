@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.629] - 2026-05-28 - Quiz Counting L3: 40→44
+- Added 4 more L3 number Qs: divisibility-by-3 rule (digit-sum check; works for 9 too; 11 alternating-digit-sum), ∞ infinity (Wallis 1655 lemniskos ribbon, Cantor multiple sizes, NOT a number), arithmetic↔geometric sequences (constant difference vs constant ratio, paycheck vs compound interest), Venn diagrams (John Venn 1880, 2-circle=4-regions, set ops ∪∩^c).
+- Distinct from existing 40 L3 (add-sub-mult/repeated-add/skip-count/parity/prime/round/inches/largest-2-digit/√16/2³/½+¼/Roman/10%/5²/9×7/etc + Fibonacci/PEMDAS/absolute-value/mean/Euler-e/irrational/binary/perm-combo).
+- sw cache → v708; Android versionCode 665 / versionName 7.1.3.
+
 ## [5.7.628] - 2026-05-28 - Quiz Shapes L3: 40→44
 - Added 4 more L3 shape Qs: sector vs segment of circle (pie-slice 2-radii vs chord-cut, 22°-pizza-slice math), congruent vs similar (≅ vs ~ , SSS/SAS/ASA congruence postulates), logarithmic spiral (Descartes 1638, Bernoulli's tombstone-engraved-by-mistake, nautilus shells + galaxy arms + hurricanes), Cartesian coordinates (Descartes 1637 'La Géométrie' algebra-geometry bridge, 4 quadrants).
 - Distinct from existing 40 L3 (sphere/cube/cone/cylinder/pyramid/tetrahedron/net/convex/diagonal/tangent/chord/arc/hemisphere/honeycomb/torus/Pythagorean/etc + circle-formulas/sphere-formulas/similar-triangles/tangram).
