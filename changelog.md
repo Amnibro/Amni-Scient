@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.419] - 2026-05-27 - Quiz Colors L3: 20→24
+- Added 4 to Colors quiz L3: RGB vs CMYK, why sunsets are red, saturation, iridescence.
+- sw cache → v498; Android versionCode 455 / versionName 5.0.3.
+
 ## [5.7.418] - 2026-05-27 - Quiz Colors L2: 21→24
 - Added 3 to Colors quiz L2: mixing yellow+blue, magenta, color blindness.
 - sw cache → v497; Android versionCode 454 / versionName 5.0.2.
