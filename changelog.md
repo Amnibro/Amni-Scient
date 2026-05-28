@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.587] - 2026-05-28 - Quiz Shapes L3: 36→40
+- Added 4 more L3 shape Qs: circle formulas (C=2πr, A=πr², Archimedes method-of-exhaustion ~250BC), sphere formulas (V=4/3πr³, SA=4πr², Archimedes-tombstone cylinder engraving), similar triangles (proportional sides, AA postulate, Thales pyramid-height ~600BC), tangram (7-piece Chinese puzzle, 6500+ silhouettes, Napoleon-on-St-Helena trivia).
+- Distinct from existing 36 L3 (sphere/cube/cone/cylinder/pyramid/tetrahedron/net/convex/diagonal/tangent/chord/arc/hemisphere/honeycomb-tessellation/torus/Pythagorean/rectangle-area/equilateral/polyhedron/octahedron/perimeter/cube-volume/right-angle/triangle-area/dodecahedron/Möbius/golden-ratio/icosahedron/parallel/cube-SA/cone-volume).
+- sw cache → v666; Android versionCode 623 / versionName 6.7.1.
+
 ## [5.7.586] - 2026-05-28 - Quiz Colors L3: 36→40
 - Added 4 more L3 color Qs: Vantablack (99.965% carbon nanotube absorber, Kapoor-Semple feud, Musou Black alternative), ultramarine/lapis lazuli (Afghan-only Renaissance, worth-more-than-gold, Vermeer 'Pearl Earring' headscarf, Yves Klein IKB modern variant), metamerism (navy-sock-fluorescent-vs-daylight problem, D65 daylight bulbs), cochineal/carmine (Mexican scale insects, Aztec→Spanish-monopoly→modern food labels 'natural red 4').
 - Distinct from existing 36 L3 (color-mixing/warm-cool/ROYGBIV/lightest-darkest/additive/pink-not-rainbow/wedding-white/achromatic/hue-saturation-value/pastel/monochromatic/bioluminescence/fluorescent/earth-tones/RGB-CMYK/sunsets/iridescence/blood-red/complementary/UV-invisible/auroras/chameleons/Tyrian-purple/synesthesia/color-temp/pigment-dye/plants-green/birds-UV/cones-rods).
