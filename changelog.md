@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.598] - 2026-05-28 - Quiz Weather L5: 36→40 (PASS-7 L5 sweep begins — FINAL level!)
+- Added 4 more L5 weather Qs: Younger Dryas (12.9-11.7k BP abrupt cold reversal, Lake Agassiz freshwater pulse → AMOC shutdown, Clovis decline, comet hypothesis), Little Ice Age (1300-1850, Maunder Minimum sunspot dip, Thames frost fairs, Norse Greenland abandoned), Walker Circulation (Gilbert Walker 1920s east-west Pacific loop drives ENSO), Climate Models/GCMs (Suki Manabe Nobel 2021, CMIP6 ~100 models, ~100km grid + supercomputer hours).
+- Distinct from existing 36 L5 (weather-vs-climate/El-Niño/jet-stream/6-side-snow/lightning-1/3c/Antarctica/Death-Valley/Mauna-Loa/hurricane-eye/rainfall-mm/AMOC/atmospheric-rivers/polar-vortex/adiabatic-lapse/stratovolcano/Foehn/proxies/MJO/SSW/PDO/butterfly-effect/bomb-cyclone/NAO/Milankovitch/volcanic-SO2/permafrost/climate-sensitivity/carbon-sink/ice-albedo/tipping-points/SAI/Paris-Agreement/ocean-acidification/IPCC/PETM).
+- sw cache → v677; Android versionCode 634 / versionName 6.8.2.
+
 ## [5.7.597] - 2026-05-28 - Quiz Opposites L4: 36→40 (PASS-7 L4 SWEEP COMPLETE — all 8 shallow banks at 40-floor L1-L4!)
 - Added 4 more L4 opposite Qs: inductive↔deductive (Popper black-swan + Sherlock-Holmes-actually-inductive + scientific method), qualitative↔quantitative (research methods, hospital infections vs patient interviews, mixed-methods), introvert↔extrovert (Jung 1921, Big Five OCEAN, Cain 'Quiet' 2012, ~15% ambivert), constructive↔destructive (wave interference noise-canceling, feedback build-vs-tear-down, geology plate boundaries).
 - Distinct from existing 36 L4 (expand/accept/transparent/include/success/permit/temporary/arrive/increase/generous/optimist/domestic/ancient/strict/cautious/profit/cooperate/honest/polite/explicit/converge/surplus/urban/active/export/horizontal/concrete/static/analog/cause/bull/centralized/inflation/microscopic).
