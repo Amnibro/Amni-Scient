@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.7.541] - 2026-05-28 - Quiz Opposites L2: 32→36 (closes pass-6 L2 sweep)
+- Added 4 more L2 opposite pairs: float/sink (Archimedes), wild/tame (domestication), loose/tight (vs lose/loose spelling), pass/fail (test/CI/inspection).
+- Distinct from existing 32 L2 (tall/short/light/dark/full/empty/wet/dry/easy/hard/etc.).
+- **PASS-6 L2 SWEEP COMPLETE** — all 8 shallow-bank L2s now at 36; combined with L1 sweep = 64 levels lifted in pass-6 (32 L1 + 32 L2 Qs added so far).
+- sw cache → v620 (milestone); Android versionCode 577 / versionName 6.2.5.
+
 ## [5.7.540] - 2026-05-28 - Quiz Counting L2: 32→36
 - Added 4 L2-tier number Qs: smallest 3-digit=100, gross=144 (12 dozen), half of 50=25, Roman V=5.
 - Distinct from existing 32 L2 (count emojis/MORE-LESS/days-week/months/24h/60sec/26 letters/Roman III/hexagon/5×2/half-10/square-4/7+5/4×3/place-value/count-by-5s/100 cents/dozen/even-odd/99-largest-2-digit/9-odd/Roman X/score-20).
