@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.7.597] - 2026-05-28 - Quiz Opposites L4: 36→40 (PASS-7 L4 SWEEP COMPLETE — all 8 shallow banks at 40-floor L1-L4!)
+- Added 4 more L4 opposite Qs: inductive↔deductive (Popper black-swan + Sherlock-Holmes-actually-inductive + scientific method), qualitative↔quantitative (research methods, hospital infections vs patient interviews, mixed-methods), introvert↔extrovert (Jung 1921, Big Five OCEAN, Cain 'Quiet' 2012, ~15% ambivert), constructive↔destructive (wave interference noise-canceling, feedback build-vs-tear-down, geology plate boundaries).
+- Distinct from existing 36 L4 (expand/accept/transparent/include/success/permit/temporary/arrive/increase/generous/optimist/domestic/ancient/strict/cautious/profit/cooperate/honest/polite/explicit/converge/surplus/urban/active/export/horizontal/concrete/static/analog/cause/bull/centralized/inflation/microscopic).
+- PASS-7 L4 SWEEP COMPLETE: weather/mythology/sports/space/colors/shapes/counting/opposites all at 40-question floor for L1+L2+L3+L4. Only L5 remains! +128 quiz Qs added across pass-7 so far (32 each × 4 levels).
+- sw cache → v676; Android versionCode 633 / versionName 6.8.1.
+
 ## [5.7.596] - 2026-05-28 - Quiz Counting L4: 36→40
 - Added 4 more L4 number Qs: Euler's e≈2.71828 (compound interest definition, self-derivative, Euler's identity e^iπ+1=0), irrational numbers (Hippasus-drowned-for-revealing-√2-secret, Cantor uncountably-many, algebraic vs transcendental), binary 1011₂=11 (Leibniz 1679, bytes 8 bits, electrical-switch 2-state), permutations vs combinations (nPr ORDER matters / nCr doesn't, Powerball 1-in-292M lottery example, passwords vs committees).
 - Distinct from existing 36 L4 (place-values/add-sub/even-odd/neg-add/PEMDAS/fractions/percents/ratios/√/round/exponents/mean/median/prime-factorization/a⁰/mixed-numbers/scientific-notation/factorial/mode/GCD-Euclid/log10/coin-probability/range/distributive).
