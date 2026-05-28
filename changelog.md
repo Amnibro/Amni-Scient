@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.488] - 2026-05-28 - Quiz Sports L1: 28→32
+- Added 4 more sport-intro Qs to Sports L1: badminton (shuttlecock), skateboarding, rowing, archery.
+- Distinct from existing 28 sport intros.
+- sw cache → v567; Android versionCode 524 / versionName 5.7.2.
+
 ## [5.7.487] - 2026-05-28 - Quiz Mythology L1: 28→32
 - Added 4 more myth-creature Qs to Mythology L1: vampire, kraken, goblin, Bigfoot/Sasquatch (with Yeti note).
 - Distinct from existing 28 entries (Zeus/Aphrodite/Poseidon/Minotaur/etc.).
