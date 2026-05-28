@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.538] - 2026-05-28 - Quiz Colors L2: 32→36
+- Added 4 L2-tier color names: navy blue (Royal Navy 1748), olive (yellow-green camo), coral (Pantone 2019), amber (fossilized tree sap, Jurassic Park).
+- Distinct from existing 32 L2 (orange/purple/brown/black/white/pumpkin/chocolate/gray/pink/magenta/cyan/beige/lavender/salmon/turquoise/maroon/indigo/warm-cool etc.).
+- sw cache → v617; Android versionCode 574 / versionName 6.2.2.
+
 ## [5.7.537] - 2026-05-28 - Quiz Space L2: 32→36
 - Added 4 L2-tier astronomy Qs: Apollo 11 (first Moon landing 1969), Saturn has most moons (274+), Chicxulub impact killed dinosaurs (66 Mya), 3 galaxy shapes (spiral/elliptical/irregular — Hubble's tuning fork).
 - Distinct from existing 32 L2 (Mars/Jupiter/Venus/Milky-Way/Armstrong/constellation/365days/asteroid-belt/Titan/Hubble-telescope/Voyager/ISS/SpaceX/Halley's/Big Bang/light-year/JWST/etc.).
