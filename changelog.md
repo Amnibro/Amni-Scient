@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.462] - 2026-05-27 - Quiz Colors L4: 24→28
+- Added 4 to Colors quiz L4: triadic scheme, additive vs subtractive mixing, dichromatic vision (dogs), dispersion (why diamonds sparkle).
+- sw cache → v541; Android versionCode 498 / versionName 5.4.6.
+
 ## [5.7.461] - 2026-05-27 - Quiz Colors L3: 24→28
 - Added 4 to Colors quiz L3: why blood is red, complementary colors, why we can't see UV, aurora colors.
 - sw cache → v540; Android versionCode 497 / versionName 5.4.5.
