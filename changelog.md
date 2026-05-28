@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.622] - 2026-05-28 - Quiz Weather L3: 40→44 (PASS-8 L3 sweep begins)
+- Added 4 more L3 weather Qs: hail-size naming (pea/marble/golf-ball/baseball/softball, Vivian SD 2010 20cm record), green flash (1-2 sec sunset refraction phenomenon, Verne 1882 'Le Rayon Vert' novel, sailor luck), St. Elmo's Fire (plasma corona discharge from pointed masts pre-storm, Saint Erasmus patron of sailors), hurricane naming (Atlantic 21-name alphabetical M/F-alternating lists, retired-if-deadly tradition, 2005+2020 went past Z to Greek letters).
+- Distinct from existing 40 L3 (tornado/hurricane/water-cycle/blizzard/fog/lightning/rainbow/hail/monsoon/etc + Doppler/atmospheric-river/polar-vortex/ITCZ).
+- sw cache → v701; Android versionCode 658 / versionName 7.0.6.
+
 ## [5.7.621] - 2026-05-28 - Quiz Opposites L2: 40→44 (🎉 PASS-8 L2 SWEEP COMPLETE — all 8 banks at 44 for L1+L2!)
 - Added 4 more L2 opposite Qs: build↔destroy (entropy thermodynamics 2nd law, Legos build-then-kick-over, civil engineering months-vs-hours), agree↔disagree ('agree-to-disagree' peaceful coexistence, consensus voting, 'I beg to differ'), save↔spend (50/30/20 rule, compound interest Einstein 'eighth wonder', Franklin 'penny saved'), remember↔forget (Miller 7±2 short-term, Ebbinghaus 1885 forgetting curve 50% in 1hr, forget-me-nots).
 - Distinct from existing 40 L2 (tall/light/full/wet/easy/soft/push/give/sit/loud/heavy/good/clean/strong/etc + inhale/borrow/attack/arrive).
