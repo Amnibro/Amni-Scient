@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.479] - 2026-05-28 - Quiz Animals L1: 33→37
+- Added 4 more sound-based animals: hyena laugh, goose honk, bear growl, hummingbird hum.
+- sw cache → v558; Android versionCode 515 / versionName 5.6.3.
+
 ## [5.7.478] - 2026-05-28 - Quiz Animals L1: 29→33
 - Added 4 to Animals quiz L1 (audio-sound style matching the existing L1 design): mouse squeak, cricket chirp, whale song, dolphin clicks.
 - sw cache → v557; Android versionCode 514 / versionName 5.6.2.
