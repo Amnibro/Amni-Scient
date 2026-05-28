@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.617] - 2026-05-28 - Quiz Space L2: 40→44
+- Added 4 more L2 space Qs: meteor showers (Perseids Aug 60-100/hr, Geminids Dec, Leonids occasional 1000s 'storms', radiants), Venus weird day (243 Earth-days rotation > 225 year, RETROGRADE — Sun rises west), Io (Jupiter moon, 400+ active volcanoes, tidal heating from Jupiter+Europa+Ganymede, pizza moon), Artemis program (return-to-Moon, twin sister of Apollo, women+POC South Pole landing, Artemis I 2022 success).
+- Distinct from existing 40 L2 (Mars-red/Jupiter-biggest/Venus-hottest/Milky-Way/Apollo-11/Halley/Uranus-tilt/Neptune-blue/Hubble/Voyager/ISS/SpaceX/Saturn-moons/JWST/Big-Bang/etc + Proxima/tides/solar-flare/Mars-rovers).
+- sw cache → v696; Android versionCode 653 / versionName 7.0.1.
+
 ## [5.7.616] - 2026-05-28 - Quiz Sports L2: 40→44 (Version 7.0.0!)
 - Added 4 more L2 sports Qs: Paralympics (Stoke Mandeville 1948 → Rome 1960, Oscar Pistorius 2012 blades, vs Special Olympics distinct), 1930 Uruguay World Cup (100th-indep-day, Estadio Centenario, Jules Rimet trophy STOLEN 1983), wrestling styles (freestyle leg-attacks vs Greco-Roman upper-body-only, 1904 vs 1896 Olympic, women's Greco-Roman still not Olympic), ODI cricket (50 overs, 2019 WC boundary-count tiebreak controversy, Test/ODI/T20 formats).
 - Distinct from existing 40 L2 (Olympics/soccer/Super-Bowl/Tour-de-France/Golf/etc + America's-Cup/biathlon/wicket/squash).
