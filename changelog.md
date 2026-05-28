@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.472] - 2026-05-28 - Quiz Science L3: 37→40 (SCIENCE QUIZ NOW 40×5 — fully uniform)
+- Added 3 to Science quiz L3: prokaryotic vs eukaryotic cells, three modes of heat transfer, wave-particle duality.
+- ALL 5 Science quiz levels now at 40 each. Internal-consistency lift complete.
+- sw cache → v551; Android versionCode 508 / versionName 5.5.6.
+
 ## [5.7.471] - 2026-05-28 - Quiz Science L3: 33→37
 - Added 4 to Science quiz L3: Newton's F=ma, Ohm's law, DNA vs RNA, Earth's g = 9.8 m/s².
 - sw cache → v550; Android versionCode 507 / versionName 5.5.5.
