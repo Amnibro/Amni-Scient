@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.7.421] - 2026-05-27 - Quiz Colors L5: 20→24 + L4 dedup (Colors quiz complete)
+- Added 4 to Colors quiz L5: opponent-process theory, CRI, chromatic adaptation/white balance, bit-depth/banding.
+- Fixed adjacent-level duplicates: L4 metamerism→Purkinje effect, L4 tetrachromacy→trichromacy (both concepts already live in L5).
+- All 5 Colors quiz levels now at 24 each.
+- sw cache → v500; Android versionCode 457 / versionName 5.0.5.
+
 ## [5.7.420] - 2026-05-27 - Quiz Colors L4: 20→24
 - Added 4 to Colors quiz L4: metamerism, color constancy (the dress), gamut, tetrachromacy.
 - sw cache → v499; Android versionCode 456 / versionName 5.0.4.
