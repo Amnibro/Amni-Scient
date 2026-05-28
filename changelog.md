@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.628] - 2026-05-28 - Quiz Shapes L3: 40→44
+- Added 4 more L3 shape Qs: sector vs segment of circle (pie-slice 2-radii vs chord-cut, 22°-pizza-slice math), congruent vs similar (≅ vs ~ , SSS/SAS/ASA congruence postulates), logarithmic spiral (Descartes 1638, Bernoulli's tombstone-engraved-by-mistake, nautilus shells + galaxy arms + hurricanes), Cartesian coordinates (Descartes 1637 'La Géométrie' algebra-geometry bridge, 4 quadrants).
+- Distinct from existing 40 L3 (sphere/cube/cone/cylinder/pyramid/tetrahedron/net/convex/diagonal/tangent/chord/arc/hemisphere/honeycomb/torus/Pythagorean/etc + circle-formulas/sphere-formulas/similar-triangles/tangram).
+- sw cache → v707; Android versionCode 664 / versionName 7.1.2.
+
 ## [5.7.627] - 2026-05-28 - Quiz Colors L3: hotfix +1 (Indian Yellow — 40→44 now actually has 4)
 - Added MISSING 4th L3 color Q: Indian Yellow (urine of mango-leaf-fed cows BIHAR, banned 1908 animal-cruelty, Vermeer + Turner used it, replaced by synthetic azo dyes).
 - sw cache → v706; Android versionCode 663 / versionName 7.1.1.
