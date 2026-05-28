@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.588] - 2026-05-28 - Quiz Counting L3: 36→40
+- Added 4 more L3 number Qs: Fibonacci (0,1,1,2,3,5,8,13...; Liber Abaci 1202; sunflower/pinecone/nautilus spirals; ratio→φ golden ratio), PEMDAS order of operations (P/E/MD/AS; '2+3×4=14 not 20'; universal convention saves math from ambiguity), absolute value |x| (distance from zero, always ≥0, V-shape graph, complex magnitude extension), average/mean (sum÷count; vs median + mode; outlier sensitivity; GPAs/polls/sports).
+- Distinct from existing 36 L3 (add-sub-mult 0-100 / repeated add / skip count 2/5/10 / parity / even-odd / prime / round / inches-foot / largest-2-digit / √16 / 2³ / ½+¼ / Roman C/M / 10% / 5² / 9×7).
+- sw cache → v667; Android versionCode 624 / versionName 6.7.2.
+
 ## [5.7.587] - 2026-05-28 - Quiz Shapes L3: 36→40
 - Added 4 more L3 shape Qs: circle formulas (C=2πr, A=πr², Archimedes method-of-exhaustion ~250BC), sphere formulas (V=4/3πr³, SA=4πr², Archimedes-tombstone cylinder engraving), similar triangles (proportional sides, AA postulate, Thales pyramid-height ~600BC), tangram (7-piece Chinese puzzle, 6500+ silhouettes, Napoleon-on-St-Helena trivia).
 - Distinct from existing 36 L3 (sphere/cube/cone/cylinder/pyramid/tetrahedron/net/convex/diagonal/tangent/chord/arc/hemisphere/honeycomb-tessellation/torus/Pythagorean/rectangle-area/equilateral/polyhedron/octahedron/perimeter/cube-volume/right-angle/triangle-area/dodecahedron/Möbius/golden-ratio/icosahedron/parallel/cube-SA/cone-volume).
