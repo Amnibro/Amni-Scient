@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.681] - 2026-05-28 - Quiz Sports L3: 44→48 (PASS-11 sports sweep — 3 of 5)
+- Added 4 fresh L3 sports Qs: CURLING (Scottish 16c "roaring game" Ailsa Craig granite stones 99%, 4-player + sweepers + skip, "chess on ice", Canada 6/8 Olympic golds, Norway pants meme), FENCING (3 weapons foil torso/épée whole-body/sabre slashing waist-up, electric scoring 14×1.5m piste, Italy+France+Hungary historical, Mangiarotti 13 Olympic medals), TRIATHLON (1974 San Diego Johnstone+Shanahan, Ironman 1978 Oahu Collins, Kona WC, Frodeno 7:35:39 Roth 2016, Sydney 2000 Olympic, Norwegian short-course dominance Iden+Blummenfelt), RUGBY (Webb Ellis 1823 apocryphal, Union 15 vs League 13, pass ONLY backwards, try 5+conversion 2+penalty/drop 3, NZ All Blacks 3 World Cups + haka, Six Nations + Tri-Nations, Rugby 7s Olympic since 2016).
+- Distinct from existing 44 L3 (polo, NASCAR, water polo, breakdancing, ultramarathon, bull riding, 90 min soccer, Wimbledon, Stanley Cup, Olympic rings, etc.).
+- sw.js → v760. Android versionCode 717 / versionName 7.6.5.
+
 ## [5.7.680] - 2026-05-28 - Quiz Sports L2: 44→48 (PASS-11 sports sweep — 2 of 5)
 - Added 4 fresh L2 sports Qs: MARATHON DISTANCE (42.195 km from Pheidippides 490 BC, 1908 London extended for Royal-family Windsor view → 1921 IAAF official, Kiptum 2:00:35 Chicago Oct 2023 record + Cheptegei 2:09:56 Oct 2024, Kipchoge sub-2 Vienna 2019 unofficial, 6 World Majors), TENNIS SCORING (Love-15-30-40-Game medieval French clock-quarters, "love" possibly from l'oeuf egg shape, deuce + ad + tiebreaker at 6-6, Isner-Mahut 2010 Wimbledon 70-68 over 3 days led to 5th-set tiebreaker reform), DECATHLON 10 EVENTS (2 days, Greek deka+athlon, Day1 100m+LJ+SP+HJ+400m / Day2 110H+disc+PV+jav+1500m, Hungarian scoring tables 1985, Jenner 1976 record 8617 → Eaton 2015 9045, women's heptathlon Joyner-Kersee 7291 1988), NBA 24-SECOND SHOT CLOCK (Biasone 1954-55, 48min/120shots math, 14-sec reset off rebound 2018, saved pro basketball from stalling — 19-18 Ft.Wayne 1950 game catalyst).
 - Distinct from existing 44 L2 (Paralympics, Uruguay 1930, wrestling styles, ODI cricket, etc.).
