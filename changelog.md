@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.634] - 2026-05-28 - Quiz Space L4: 40→44 (PASS-8 L4 sweep — 4 of 8, halfway!)
+- Added 4 more L4 space Qs: GRAVITATIONAL WAVES (Einstein 1916 prediction, LIGO GW150914 Sep 2015 first detection 36+29 M☉ BH merger, 10⁻²¹ m stretch, 2017 Nobel, GW170817 multi-messenger), SCHWARZSCHILD RADIUS (Karl Schwarzschild 1916 from WW1 trench, r_s=2GM/c², Earth=8.9mm, Sun=3km, Sgr A*=12.7M km, M87*=19B km), STELLAR PARALLAX (6-month Earth orbit baseline, 1 parsec=3.26 ly, Bessel 1838 61 Cygni first, Gaia 2 billion stars), LAGRANGE POINTS (5 equilibrium points, JWST/Gaia/WMAP at L2, Jupiter Trojan asteroids at L4/L5 stable triangles).
+- Distinct from existing 40 L4 (Fermi paradox, spaghettification, Goldilocks zone, Voyager 1, Hubble tension, Kardashev scale, Chandrasekhar limit, cosmic inflation, Dyson sphere, big-bang nucleosynthesis, redshift, magnetar, etc).
+- sw.js → v713. Android versionCode 670 / versionName 7.1.8.
+
 ## [5.7.633] - 2026-05-28 - Quiz Sports L4: 40→44 (PASS-8 L4 sweep — 3 of 8)
 - Added 4 more L4 sports Qs: WAYNE GRETZKY (2857 pts, assists alone would top all-time, #99 league-wide retired, 4 Cups+1988 LA Trade), PELÉ (3 World Cups 1958/62/70 only player, 1283 goals, Santos+NY Cosmos, declared Brazilian National Treasure 1961), STANLEY CUP (Lord Stanley 1892, ONE cup travels with winner, names engraved on retired bands, kidnapped/canal-dropped lore), JESSE OWENS (4 golds 1936 Berlin vs Aryan-supremacy narrative, Lutz Long friendship, snubbed by FDR despite triumph).
 - Distinct from existing 40 L4 (Olympic rings, Tour de France, Wimbledon, Stanley Cup [different angle here], pentathlon, Cy Young, Babe Ruth, Magic-Bird, Secretariat, Schumacher/Hamilton, Nadal, Serena, etc).
