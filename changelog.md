@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.7.638] - 2026-05-28 - Quiz Opposites L4: 40→44 (PASS-8 L4 sweep COMPLETE — 8 of 8)
+- Added 4 more L4 opposite Qs: SYNCHRONOUS↔ASYNCHRONOUS (sync video call/blocking fn vs async email/non-blocking I/O Node.js 2009, Python async/await Rust+Go), CONVEX↔CONCAVE ('conCAVE has CAVE'; convex lens converges/farsighted vs concave diverges/nearsighted; car side mirrors convex; polygon angles), EXOTHERMIC↔ENDOTHERMIC (combustion/handwarmers vs ice packs+photosynthesis; ΔH sign; ΔG=ΔH−TΔS), CENTRIPETAL↔CENTRIFUGAL (real INWARD pulling F=mv²/r vs apparent OUTWARD pseudo-force in rotating frame, washing machine spin = centripetal from walls, lab centrifuges).
+- Distinct from existing 40 L4 (analog/digital, cause/effect, bull/bear, centralized/decentralized, inflation/deflation, micro/macroscopic, inductive/deductive, qualitative/quantitative, introvert/extrovert, constructive/destructive).
+- PASS-8 L4 SWEEP COMPLETE: weather, mythology, sports, space, colors, shapes, counting, opposites ALL at 44 (8 banks lifted 40→44 across L4).
+- sw.js → v717. Android versionCode 674 / versionName 7.2.2.
+
 ## [5.7.637] - 2026-05-28 - Quiz Counting L4: 40→44 (PASS-8 L4 sweep — 7 of 8)
 - Added 4 more L4 number Qs: PYTHAGOREAN THEOREM (a²+b²=c², Babylonian Plimpton 322 ~1800 BC, 370+ proofs, triples 3-4-5/5-12-13/8-15-17, foundation of distance formula+GPS+Einstein interval), LOGARITHMS (Napier 1614, slide rule 1622-1970s, Richter/dB/pH/stellar-magnitude/entropy all log scales), SCIENTIFIC NOTATION (a×10ⁿ form, Avogadro 6.022×10²³ + Planck length 1.616×10⁻³⁵, multiply add exponents, engineering notation multiples of 3), MODULAR/CLOCK ARITHMETIC (Gauss 1801 Disquisitiones, RSA + Diffie-Hellman + LUHN credit-card + ISBN, Fermat's Little Theorem a^p≡a mod p).
 - Distinct from existing 40 L4 (range, distributive property, Euler e, irrational numbers, binary, permutations/combinations, divisibility by 3, infinity, arithmetic vs geometric sequences, Venn diagrams, etc).
