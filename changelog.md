@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.7.493] - 2026-05-28 - Quiz Opposites L1: 28→32 (rotation pass 1 done)
+- Added 4 more opposite-pair Qs to Opposites L1: hard/soft, loud/quiet, awake/asleep, strong/weak.
+- Distinct from existing 28 pairs (big-small/hot-cold/up-down/day-night/etc.).
+- This closes ROTATION PASS 1 — all 8 shallow banks now sit at L1=32; deep banks at L1=39-40.
+- sw cache → v572; Android versionCode 529 / versionName 5.7.7.
+
 ## [5.7.492] - 2026-05-28 - Quiz Counting L1: 28→32
 - Added 4 more number-intro Qs to Counting L1: 5−3=2 (subtraction intro), wheels on car=4, hours in day=24, seconds in minute=60.
 - Distinct from existing 28 (object-count emoji/fingers/pair/days/months/2+1/3+2 etc.).
