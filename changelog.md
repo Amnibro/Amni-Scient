@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.420] - 2026-05-27 - Quiz Colors L4: 20→24
+- Added 4 to Colors quiz L4: metamerism, color constancy (the dress), gamut, tetrachromacy.
+- sw cache → v499; Android versionCode 456 / versionName 5.0.4.
+
 ## [5.7.419] - 2026-05-27 - Quiz Colors L3: 20→24
 - Added 4 to Colors quiz L3: RGB vs CMYK, why sunsets are red, saturation, iridescence.
 - sw cache → v498; Android versionCode 455 / versionName 5.0.3.
