@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.531] - 2026-05-28 - Quiz Shapes L1: 32→36
+- Added 4 more L1 shape Qs: cuboid (rectangular prism, books/bricks), hourglass shape (two-triangle bowtie), spade ♠ playing card, teardrop (NOT actual falling raindrop shape — fun fact).
+- Distinct from existing 32 L1 (circle/square/triangle/star/heart/wheel/TV/pizza/door/diamond/crescent/oct./cross/arrow/cylinder/cube/book/window/egg/hex/cone/sphere/pentagon/pyramid/trap./semicircle/spiral).
+- sw cache → v610 (milestone); Android versionCode 567 / versionName 6.1.5.
+
 ## [5.7.530] - 2026-05-28 - Quiz Colors L1: 32→36
 - Added 4 more L1 color-ID Qs: zebra (black+white stripes), tiger (orange+black), apple (red iconic), jeans/denim (indigo blue).
 - Distinct from existing 32 L1 (red/blue/yellow/green/banana/grass/sky/strawberry/sun/stop/ocean/fire/clouds/dirt/firetruck/leaves/milk/flamingo/bus/red+yellow=orange/grass dup/snow/panda/banana/pumpkin/red+blue/tomato/sunflower/elephant gray/blueberry/coal black/chocolate brown).
