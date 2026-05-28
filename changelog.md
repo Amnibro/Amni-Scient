@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.427] - 2026-05-27 - Quiz Space L5: 24→28 (Space quiz deepened to 28×5)
+- Added 4 to Space quiz L5: pulsars/neutron stars, gravitational waves, Lagrange points, cosmological redshift.
+- All 5 Space quiz levels now at 28 each.
+- sw cache → v506; Android versionCode 463 / versionName 5.1.1.
+
 ## [5.7.426] - 2026-05-27 - Quiz Space L4: 24→28 + L3 dedup
 - Added 4 to Space quiz L4: nebula, Sun's red-giant fate, the Big Bang, gas-giant vs rocky formation.
 - Fixed dup: L3 ISS entry (already in L4) swapped to a "what is a satellite?" question.
