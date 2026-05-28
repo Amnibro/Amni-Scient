@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.578] - 2026-05-28 - Quiz Colors L2: 36→40
+- Added 4 more L2 color Qs: teal (Eurasian Teal duck blue-green stripe namesake, Miami Dolphins), sepia (cuttlefish ink + 1800s photo toning + sulfur permanence), crimson (kermes-insect dye 'qirmiz', cardinals/Harvard/Alabama), RGB-vs-CMYK (additive light screens vs subtractive ink print, neon RGB dulls in CMYK).
+- Distinct from existing 36 L2 (orange/purple/brown/black/white/gray/pink/pastel/magenta/cyan/beige/lavender/salmon/turquoise/maroon/indigo/navy/olive/coral/amber/color-blindness/etc).
+- sw cache → v657; Android versionCode 614 / versionName 6.6.2.
+
 ## [5.7.577] - 2026-05-28 - Quiz Space L2: 36→40
 - Added 4 more L2 space Qs: Proxima Centauri (nearest star 4.24ly, Alpha Cen trio, Voyager-75000yr-transit, Breakthrough Starshot laser-sail), ocean tides (Moon gravity bulges + 46% Sun, spring/neap, Bay of Fundy 16m), solar flare/CME (magnetic reconnection, Carrington 1859, Quebec '89 grid blackout), Mars rovers (Sojourner→Spirit/Oppy 15yr→Curiosity→Perseverance+Ingenuity helicopter 72 flights).
 - Distinct from existing 36 L2 (Mars-red/Jupiter-biggest/Venus-hottest/Milky-Way/Armstrong/Apollo-11/Halley/Uranus-tilt/Neptune-blue/Hubble/Voyager/ISS/SpaceX/Saturn-moons/JWST/Big-Bang/etc).
