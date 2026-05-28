@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.583] - 2026-05-28 - Quiz Mythology L3: 36→40
+- Added 4 more L3 mythology Qs: Ragnarök (Norse end-of-world, Fenrir kills Odin, Líf+Lífþrasir survivors, Wagner Götterdämmerung), Sun Wukong (Wu Cheng'en 'Journey to the West' Monkey King, inspired Goku), Heimdall (Bifröst rainbow bridge guardian, hears grass grow, Gjallarhorn at Ragnarök, Idris Elba), Hanuman (Hindu monkey warrior, leaped ocean to Lanka, carried mountain to heal Lakshmana, immortal still-walking).
+- Distinct from existing 36 L3 (Thor/Odin/Anubis/Ra/Perseus/Heracles/Isis/Set/Achilles/Loki/Freyja/Bastet/Horus/Osiris/Thoth/Vishnu/Shiva/Brahma/Amaterasu/Tyr/Ganesha/Medusa/Quetzalcoatl/Gilgamesh/Arthur/Valkyries/Krishna/Cthulhu/Anansi/Beowulf/Baba-Yaga/Tlaloc/Pangu/Indra).
+- sw cache → v662; Android versionCode 619 / versionName 6.6.7.
+
 ## [5.7.582] - 2026-05-28 - Quiz Weather L3: 36→40 (PASS-7 L3 sweep begins)
 - Added 4 more L3 weather Qs: Doppler radar (NEXRAD 1990s, tornado warning 3min→13min, dual-pol 2013), atmospheric river/Pineapple Express (400km wide, 30-50% W-Coast precip, CA 2023 9-AR cluster), polar vortex (stratospheric mass, Feb 2021 Texas -18°C $200B, sudden-stratospheric-warming splits), ITCZ (equatorial trade-wind convergence, sailors' Doldrums Coleridge 'Ancient Mariner').
 - Distinct from existing 36 L3 (tornado/hurricane/water-cycle/blizzard/fog/lightning/rainbow/hail/monsoon/sleet/haboob/drought/smog/fronts/dew/frost/wind-chill/Köppen-zones/jet-stream/El-Niño/auroras/Coriolis/troposphere/ozone/greenhouse/cirrus/Beaufort/La-Niña/sea-breeze/high-low-pressure/cumulonimbus/etc).
