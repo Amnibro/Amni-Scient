@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.575] - 2026-05-28 - Quiz Mythology L2: 36→40
+- Added 4 more L2 mythology Qs: Moirai/Fates (Clotho-spinner/Lachesis-allotter/Atropos-cutter; Norse Norns parallel), Charon (Styx ferryman, obol coin, Pluto moon namesake, Dante), Orpheus (lyre-charmed-Hades, look-back lost Eurydice, Monteverdi → Hadestown 2019), Chimera (lion+goat+serpent fire-breather, Bellerophon+Pegasus killed her with lead-melted-spear, modern bio chimera term).
+- Distinct from existing 36 L2 (Mars/Ares/Hermes/Hera/Dionysus/Persephone/Demeter/Artemis/Atlas/Romulus/Janus/Trojan-War/Odysseus/Theseus/Jason/Thor/Loki/Ra/Anubis/Prometheus/Midas/Icarus/Odin/Achilles/Perseus/Osiris/Sisyphus/Olympus/Erinyes/Asclepius/Hesperides).
+- sw cache → v654; Android versionCode 611 / versionName 6.5.9.
+
 ## [5.7.574] - 2026-05-28 - Quiz Weather L2: 36→40 (PASS-7 L2 sweep begins)
 - Added 4 more L2-tier weather Qs: anemometer (Alberti 1450 cup-style wind-speed instrument, knots), jet stream (10km up, 100-400 km/h westerly, polar+subtropical, plane fuel-savings, Japanese WWII balloons), snowflake 6-sides (hexagonal H₂O bonding, Kepler 1611 essay, Bentley 5000+ photos, Nakaya artificial flakes), monsoon (seasonal wind reversal, Indian summer 2400mm Mumbai, 1.5B people dependent).
 - Distinct from existing 36 L2 (4 seasons/dew/cumulus/lightning/thunderstorm/frost/weather vane/breeze/forecast/Jupiter storms/sweat/meteorologist/etc).
