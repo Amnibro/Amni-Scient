@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.519] - 2026-05-28 - Quiz Mythology L5: 28→32
+- Added 4 L5-tier myth Qs: Eris (golden apple → Trojan War, dwarf-planet namesake), Charon (Styx ferryman, Pluto's moon), Ragnarök (Norse end-times, Loki+Fenrir+Jörmungandr), Ouroboros (tail-eating serpent, Kekulé benzene dream).
+- Distinct from existing 28 L5 (Iris/Morpheus/Midas/Athena/Nike/Fenrir/Pandora/Trojan Horse/Sisyphus/Tantalus/Gilgamesh/Marduk/Tiamat/Inanna/Arthur/Grail/Merlin/Atlantis/Hyperboreans/Lethe/Heimdall/Prometheus/Yggdrasil/Daedalus/Moirai/Aeneid/Hecate/Susanoo).
+- sw cache → v598; Android versionCode 555 / versionName 6.0.3.
+
 ## [5.7.518] - 2026-05-28 - Quiz Weather L5: 28→32 (pass-5 / FINAL shallow-bank pass starts)
 - Added 4 L5-tier climate-science Qs: carbon sinks (oceans 25% + land 30%), ice-albedo feedback (Arctic amplification 3-4× rate), tipping points (AMOC/Amazon/Greenland/permafrost), stratospheric aerosol injection geoengineering (Pinatubo-mimicking, governance issues).
 - Distinct from existing 28 L5 (weather-vs-climate/El Niño/jet stream/lightning speed/Antarctic record/Mauna Loa/AMOC/atmospheric rivers/MJO/SSW/PDO/butterfly effect/bomb cyclone/NAO/Milankovitch/volcanic cooling/permafrost/climate sensitivity).
