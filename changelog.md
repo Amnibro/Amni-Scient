@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.504] - 2026-05-28 - Quiz Sports L3: 28→32
+- Added 4 L3-tier sports facts: cricket century (Tendulkar 100 int'l), Ironman triathlon (~226km swim+bike+run), F1 Monaco GP (Monte Carlo street circuit), Heisman Trophy (NCAA college football).
+- Distinct from existing 28 L3 (90min soccer/Wimbledon/Stanley Cup/5 rings/marathon/sumo/curling/rugby/badminton/snooker/darts/America's Cup/equestrian/Triple Crown/squash/Tour de France/golf/dunk/fencing/archery/pickleball/skateboarding).
+- sw cache → v583; Android versionCode 540 / versionName 5.8.8.
+
 ## [5.7.503] - 2026-05-28 - Quiz Mythology L3: 28→32
 - Added 4 cross-cultural myth Qs to Mythology L3: Anansi (West African spider trickster), Hanuman (Hindu monkey god of devotion), Marduk (Babylonian Enuma Elish), Beowulf (Anglo-Saxon Grendel/dragon-slayer epic).
 - Distinct from existing 28 L3 (Thor/Odin/Anubis/Ra/Perseus/Heracles/Isis/Set/Achilles/Loki/Vishnu/Shiva/Brahma/Amaterasu/Cthulhu/etc.).
