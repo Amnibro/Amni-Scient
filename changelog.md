@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.460] - 2026-05-27 - Quiz Colors L2: 24→28
+- Added 4 to Colors quiz L2: cyan, beige/tan, lavender, salmon.
+- sw cache → v539; Android versionCode 496 / versionName 5.4.4.
+
 ## [5.7.459] - 2026-05-27 - Quiz Colors L1: 24→28
 - Full scan confirms 7 of 8 simple-subject quizzes now at 28×5. Only `colors` still at 24×5 — deepening to match.
 - Added 4 to Colors quiz L1: pumpkin, red+blue=purple, ripe tomato, sunflower petals.
