@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.7.655] - 2026-05-28 - Quiz Math L5: 40→44 (PASS-9 math sweep COMPLETE — Math bank now at 44 L1/L2/L4/L5; L3 already above floor at 60)
+- Verified math L5 at 40 (40-line span), needs lift. Pre-existing math L5 contains EIGENVALUES+EIGENVECTORS — duplicating my v654 L4 add → cleanup deferred.
+- Added 4 more L5 advanced-math Qs (research-tier): CATEGORY THEORY (Eilenberg+Mac Lane 1945, objects+morphisms+functors+natural transformations, Haskell monads, Grothendieck algebraic geometry reformulation, 'abstract nonsense' critique), GALOIS THEORY (Évariste Galois died age 20 in duel 1832 after frantic overnight writing, S₅ not solvable → quintic has no formula, angle trisection + cube doubling impossible, birthed abstract algebra), P-ADIC NUMBERS (Hensel 1897, alternative completion of Q, divisibility-by-p measures closeness, ultrametric triangles all isoceles, Wiles 1994 FLT proof, Ostrowski's theorem all non-trivial Q absolute values are real or p-adic), CHURCH-TURING THESIS (Church λ-calculus 1932 + Turing machines 1936 independent, equivalent, no model exceeds Turing-computable except hypothetical hyper-computation, halting uncomputable, extended physical version disputed by quantum supremacy 2019).
+- **PASS-9 MATH BANK NOW COMPLETE** at L1/L2/L4/L5 = 44, L3 at 60 already above floor. Next: engineering bank (L1=40, L4=40 need lifts).
+- sw.js → v734. Android versionCode 691 / versionName 7.3.9.
+
 ## [5.7.654] - 2026-05-28 - Quiz Math L4: 40→44 (PASS-9 math sweep — 3 of 5, L3 verified above-floor at 60)
 - Verified math L3 actually at 60 (way above 44 floor) — skipping L3, jumping to L4 lift.
 - Added 4 more L4 advanced-math Qs: CENTRAL LIMIT THEOREM (Laplace 1810 + Lyapunov 1901, any finite-variance source distribution → N(μ, σ²/N) sample mean, polls + measurement-error + Galton boards, stable-Lévy when variance infinite), BAYES' THEOREM (Bayes 1763 posthumous, P(A|B)=P(B|A)P(A)/P(B), classic 99%-sensitive 1%-prevalence test → posterior ~50% NOT 99%, Paul Graham 2002 spam filters, Naive Bayes ML), EIGENVALUES+EIGENVECTORS (Av=λv, det(A-λI)=0, PCA + Google PageRank + quantum observables + vibration modes + Markov stationary, SVD generalizes), TAYLOR SERIES (Brook Taylor 1715 / Maclaurin 1742, e^x = Σ xⁿ/n!, Euler formula e^iθ proven via series, sci-computing + Runge-Kutta + linearization sin θ≈θ).
