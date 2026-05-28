@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.7.648] - 2026-05-28 - Quiz Science L2: 40→44 (PASS-9 science sweep — 2 of 5)
+- Added 4 more L2 science Qs: DNA DOUBLE HELIX (Watson+Crick+Franklin Photo 51 Cambridge 1953, A-T C-G base pairing, Chargaff rules, 2m DNA in 6μm nucleus, Nobel 1962 Franklin died 1958 no posthumous), WATER CYCLE (evap→condense→precip→runoff/collection, plant transpiration, 97% ocean / 3% fresh / 1% accessible), PHOTOSYNTHESIS EQUATION (6 CO₂ + 6 H₂O + light → C₆H₁₂O₆ + 6 O₂, chlorophyll absorbs red+blue reflects green, light reactions + Calvin cycle, ~half Earth's O₂ from ocean phytoplankton), ARCHIMEDES' PRINCIPLE (~250 BC Syracuse Eureka, ship steel hollow + air less dense than water, buoyant force = weight of displaced fluid, iceberg ~10% above, balloons + submarines).
+- Distinct from existing 40 L2 (food chain, vertebrates, 7 continents, Pacific largest, atom, sound in space, light speed, heart, lava, electricity, etc.).
+- Note: pre-existing science L2 contains "Largest ocean = Pacific" duplicating v647 L1 add; future cleanup pass could dedupe.
+- sw.js → v727. Android versionCode 684 / versionName 7.3.2.
+
 ## [5.7.647] - 2026-05-28 - Quiz Science L1: 40→44 (PASS-9 OPENS — deep-bank lift starts with science)
 - Audit (scripts/audit_bank_levels.js created) confirmed science bank is uniformly at 40 across L1-L5 → ideal PASS-9 target. Math, engineering have mixed counts. Animals/music use different structure (need separate audit). Languages is single-level.
 - Added 4 more L1 science Qs: CHEETAH (fastest land 0-100 km/h in 3 sec ~110 km/h top, only ~30 sec bursts, tear stripes, ~7000 in wild), CAMEL HUMPS (store FAT not water 36kg/hump, dromedary 1 vs Bactrian 2, drink 100+ L at once, Silk Road 2000+ years), RAINBOW 7 COLORS (Newton named ROYGBIV originally 5 added Orange+Indigo for 7 musical notes match, droplet 42° refraction, secondary reversed), PACIFIC OCEAN (165M km² > all land combined, Mariana 11 km deeper than Everest tall, Ring of Fire, Magellan 1520 'pacificus' irony, Southern Ocean 5th recognized).
