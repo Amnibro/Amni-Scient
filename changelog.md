@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.7.700] - 2026-05-28 - Quiz Counting L2: 44→48 (PASS-11 counting sweep — 2 of 5) **— LANDMARK v5.7.700!** 🎉
+- Added 4 fresh L2 number Qs: PRIME NUMBERS (>1 divisible only by 1+self, 2,3,5,7,11,13,17,19,23,29,31..., Euclid ~300 BC infinitely-many proof, 2=only even prime, Fundamental Theorem unique factorization, Sieve of Eratosthenes + Miller-Rabin, RSA encryption + Riemann Hypothesis Clay $1M), EVEN vs ODD (divisible by 2 + last digit 0/2/4/6/8, zero is even, even+even=even / odd+odd=even / even+odd=odd, parity bits computer error detection, chessboard alternating, Yang-Lee 1957 Nobel parity-violation beta decay), PERCENT (Latin per centum/per hundred, 25%=1/4=0.25, store discounts+tips+taxes+grades+battery+elections, symbol % evolved from "cento" ~17c, percentage points vs % distinction 20→30=10 pp = 50% increase), SQUARE NUMBERS (1,4,9,16,25,36,49,64,81,100,121,144gross,169 Pythagorean!,196,225, n×n grid visualization, √ reverse, differences=odd numbers 3,5,7,9..., sum of first n odd = n², Pythagorean triples 3-4-5 + 5-12-13 + 8-15-17).
+- Distinct from existing 44 L2 (km in mile, etc.).
+- sw.js → v779. Android versionCode 736 / versionName 7.8.4.
+- **LANDMARK MILESTONE**: 700th version release — Amni-Learn quiz suite has shipped ~3000+ questions over 100+ iterations of /loop campaign.
+
 ## [5.7.699] - 2026-05-28 - Quiz Counting L1: 44→48 (PASS-11 counting sweep OPENS — 1 of 5)
 - Added 4 fresh L1 counting Qs: 7+3=10 (make-10 number-bonds-of-10 strategy 0/10+1/9+2/8+3/7+4/6+5/5, foundational kindergarten skill, 10 = first 2-digit + decimal base, Roman X), PAIR=2 (shoes+socks+gloves+eyes+ears+hands+feet, Latin paria, complementary pairs salt+pepper, memory game, "pair of pants/scissors" 2-legged-item idiom), CLOCK 12 NUMBERS (Babylonian + Egyptian 12 lunar cycles + finger-knuckle counting 3 bones × 4 fingers, hour vs minute hands, 24-hr military, 12=months+inches/foot+dozen), ZERO (Brahmagupta 628 AD India treated as real number + arithmetic rules, Babylonian ~300 BC placeholder + Mayan ~36 BC, Fibonacci 1202 Liber Abaci spread to Europe, Romans had none, a÷0 undefined, zero is even).
 - Distinct from existing 44 L1 (2+2=4, 10-1=9, spider 8 legs, 4 seasons, 5+5=10, 2 eyes, 2 weekend days, 2+4+4=10, etc.).
