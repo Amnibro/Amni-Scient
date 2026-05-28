@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.431] - 2026-05-27 - Quiz Sports L4: 24→28 + L3 dedup
+- Added 4 to Sports quiz L4: Michael Phelps (23 golds), Wayne Gretzky, Tiger Woods, the English Premier League.
+- Fixed dup: L3 NASCAR/Daytona swapped to skateboarding (Daytona 500 + Indy 500 already live in L4).
+- sw cache → v510; Android versionCode 467 / versionName 5.1.5.
+
 ## [5.7.430] - 2026-05-27 - Quiz Sports L3: 24→28
 - Added 4 to Sports quiz L3: fencing (3 weapons), archery bullseye, pickleball, NASCAR/Daytona 500.
 - sw cache → v509; Android versionCode 466 / versionName 5.1.4.
