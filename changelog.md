@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.7.564] - 2026-05-28 - Quiz Counting L5: 32→36 (Android versionCode 600 milestone)
+- Added 4 L5-tier deep-math Qs: P vs NP (Millennium Prize), Cantor's diagonal (uncountable reals), Continuum hypothesis (independent of ZFC, Cohen 1963 Fields), RSA encryption (prime factoring + Shor's algorithm threat).
+- Android **versionCode 600 milestone** (5.6.5 → 6.4.8 over the campaign).
+- Distinct from existing 32 L5 (6×7=42/divisions/primes/squares/GCD/LCM/factorization/perfect/Mersenne/Gauss 5050/triangular/odd-sum/Goldbach/twin primes/0.999=1/e/0!/Fibonacci/imaginary/Euler identity/Pascal/π=3.14/Fermat's Last/Riemann/Gödel/Collatz).
+- sw cache → v643; Android versionCode 600 / versionName 6.4.8.
+
 ## [5.7.563] - 2026-05-28 - Quiz Shapes L5: 32→36
 - Added 4 L5-tier deep-math Qs: Poincaré conjecture (Perelman 2002, $1M declined, only Millennium solved), Cantor set (uncountable, measure zero, dim 0.631), Kepler conjecture sphere-packing 74% (Hales 1998 + Flyspeck 2014), Mercator vs equal-area projections (Gauss Theorema Egregium).
 - Distinct from existing 32 L5 (n-gon angle/π/Pythagoras/area-circle/sphere/Platonic/Euler/regular-tile/Penrose/hyperbolic/spherical/Möbius/Klein bottle/fractal/golden ratio/Fibonacci/4-color/non-Euclidean/tesseract/Voronoi/hairy-ball/Banach-Tarski/topology/knot theory/Mandelbrot/Borromean).
