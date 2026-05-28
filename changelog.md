@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.570] - 2026-05-28 - Quiz Colors L1: 36→40
+- Added 4 more L1 simple-tier color Qs: carrot (orange/beta-carotene/Dutch House-of-Orange breeding story), pig (pink from blood-vessels-through-pale-skin, wild boars actually brown/black), crows+ravens (black/melanin/smartest birds/Norse Huginn+Muninn/'a murder' group noun), night sky (black/light-pollution-vs-dark-sky/Olbers' paradox finite-age universe).
+- Distinct from existing 36 L1 (red/blue/yellow/green/orange/snow/clouds/tiger/zebra/jeans/etc).
+- sw cache → v649; Android versionCode 606 / versionName 6.5.4.
+
 ## [5.7.569] - 2026-05-28 - Quiz Space L1: 36→40
 - Added 4 more L1 simple-tier space Qs: Jupiter (largest planet, Great Red Spot, 95+ moons), aurora (solar wind + atmosphere, oxygen=green/red, nitrogen=purple), ISS (football-field lab, 408km up @ 28000 km/h, continuously crewed since 2000), spacesuit (EMU: pressure+temp+radiation+comms, white reflects sunlight).
 - Distinct from existing 36 L1 (Earth/Mercury/Saturn/Sun/Moon/eclipse/galaxy/Pluto/Big Dipper/etc).
