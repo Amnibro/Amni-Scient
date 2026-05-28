@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.426] - 2026-05-27 - Quiz Space L4: 24→28 + L3 dedup
+- Added 4 to Space quiz L4: nebula, Sun's red-giant fate, the Big Bang, gas-giant vs rocky formation.
+- Fixed dup: L3 ISS entry (already in L4) swapped to a "what is a satellite?" question.
+- sw cache → v505; Android versionCode 462 / versionName 5.1.0.
+
 ## [5.7.425] - 2026-05-27 - Quiz Space L3: 24→28
 - Added 4 to Space quiz L3: dwarf planets/Pluto, the ISS, tidal locking, the asteroid belt.
 - sw cache → v504; Android versionCode 461 / versionName 5.0.9.
