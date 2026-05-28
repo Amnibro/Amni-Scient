@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.624] - 2026-05-28 - Quiz Sports L3: 40→44
+- Added 4 more L3 sports Qs: water polo (7v7, 'aquatic rugby' 1850s, Hungary 9 golds + 1956 'Blood in the Water'), breakdancing (Paris 2024 Olympic debut, 1970s S. Bronx hip-hop, Raygun viral meme), ultramarathon (>42.2km, Western States 100/Comrades/Badwater/UTMB, Courtney Dauwalter 2023 dominance, persistence-hunting theory), bull riding (8-second rule, PBR pro tour, most dangerous rodeo event).
+- Distinct from existing 40 L3 (soccer-90min/Wimbledon/Stanley-Cup/etc + esports/heptathlon/polo/NASCAR).
+- sw cache → v703; Android versionCode 660 / versionName 7.0.8.
+
 ## [5.7.623] - 2026-05-28 - Quiz Mythology L3: 40→44
 - Added 4 more L3 mythology Qs: Baldr (Norse god of light, mistletoe-killed by blind Höðr at Loki's urging, harbinger of Ragnarök, resurrected in new world), Sleipnir (Odin's 8-legged horse born from Loki-mare + Svaðilfari, Tjängvide stone Gotland 8th cent), Cernunnos (Celtic horned nature god, Gundestrup Cauldron 150 BC, Wicca's Horned God), Morgan le Fay (Arthur's half-sister sorceress, Avalon healer-AND-antagonist, 'Mists of Avalon' POV retelling).
 - Distinct from existing 40 L3 (Thor/Odin/Anubis/Ra/Perseus/Heracles/Isis/Set/Achilles/Loki/Freyja/etc + Ragnarök/Sun-Wukong/Heimdall/Hanuman).
