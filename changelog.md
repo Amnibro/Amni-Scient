@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.7.525] - 2026-05-28 - 🏁 5-PASS SHALLOW-BANK CAMPAIGN COMPLETE: Quiz Opposites L5 28→32
+- Added 4 L5-tier philosophical/scientific oppositions: determinism vs free will (compatibilism debate), reductionism vs holism (Weinberg vs Kauffman), materialism vs idealism (Plato/Berkeley/Hegel vs Hobbes/Marx), centripetal vs centrifugal (real vs fictitious force).
+- **🏁 CAMPAIGN COMPLETE**: All 40 shallow-bank quiz levels (8 banks × 5 levels) lifted from 28 Qs → 32 Qs = **160 new high-quality Qs across 40 commits**. Shallow banks now match deep-bank L1-L5 widths.
+- Distinct from existing 28 L5 (ascend-descend/divergent-convergent/voluntary-involuntary/etc.).
+- sw cache → v604; Android versionCode 561 / versionName 6.0.9.
+
 ## [5.7.524] - 2026-05-28 - Quiz Counting L5: 28→32
 - Added 4 L5-tier deep-math Qs: Fermat's Last Theorem (Wiles 1994), Riemann hypothesis (Clay Millennium Prize), Gödel's incompleteness (consistent → not all-provable), Collatz 3n+1 conjecture (unproven 'most dangerous' problem).
 - Distinct from existing 28 L5 (6×7=42/8×9/12×12/divisions/primes 13&21/squares/GCD/LCM/factorization/perfect numbers/Mersenne primes/Gauss 5050/triangular/odd-sum/Goldbach/twin primes/0.999=1/e/0!/Fibonacci/imaginary i/Euler identity/Pascal triangle/π=3.14159).
