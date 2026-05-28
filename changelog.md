@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.523] - 2026-05-28 - Quiz Shapes L5: 28→32
+- Added 4 L5-tier deep-geometry Qs: topology ('rubber-sheet' geometry, coffee-mug ≡ donut), knot theory (trefoil/Jones polynomial, DNA topology), Mandelbrot set (z↦z²+c iteration), Borromean rings (3-loop unity).
+- Distinct from existing 28 L5 (n-gon angle/π/Pythagoras/area-circle/Platonic-5/Euler/regular-tiling/Penrose/hyperbolic/spherical/Möbius×2/Klein bottle/fractal×2/golden ratio/Fibonacci/4-color/non-Euclidean/tesseract/Voronoi/hairy-ball/Banach-Tarski).
+- sw cache → v602; Android versionCode 559 / versionName 6.0.7.
+
 ## [5.7.522] - 2026-05-28 - Quiz Colors L5: 28→32
 - Added 4 L5-tier light/color-physics Qs: visible spectrum 380-750 nm (0.0035% of EM spectrum), polarized sunglasses (horizontal-glare blocking), UV-A/B/C bands (320-400 nm tans / 280-320 nm burns / 100-280 nm germicidal), Stokes shift (longer-λ fluorescence emission, GFP).
 - Distinct from existing 28 L5 (hex codes/wavelengths/CMYK/CIE 1931/CIELAB/ΔE/metamerism/Bayer/subpixel/tetrachromacy/QD/opponent process/CRI/white balance/bit depth/photopic-scotopic/D65/ICC profile/Munsell).
