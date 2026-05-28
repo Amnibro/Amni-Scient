@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.502] - 2026-05-28 - Quiz Weather L3: 28→32 (pass-3 start)
+- Added 4 L3-tier meteorology Qs: ozone layer (UV-B/C, Montreal Protocol), greenhouse effect (CO₂/CH₄ trapping IR), cirrus clouds (ice crystals high alt), Beaufort scale (1805 0-12 wind ranking).
+- Distinct from existing 28 L3 (tornado/hurricane/freeze/boil/jet stream/Coriolis/etc.).
+- sw cache → v581; Android versionCode 538 / versionName 5.8.6.
+
 ## [5.7.501] - 2026-05-28 - Quiz Opposites L2: 28→32 (closes pass-2!)
 - Added 4 L2-tier opposite pairs to Opposites L2: above/below, visible/invisible, increase/decrease, accept/refuse.
 - Distinct from existing 28 L2 (tall-short/light-dark/full-empty/etc.) + 32 L1.
