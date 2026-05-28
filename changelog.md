@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.464] - 2026-05-28 - Quiz Science L1: 29→33 (deepening L1-3 toward L4-5 parity)
+- Now lifting Science quiz L1-L3 (each at 29) toward L4/L5 depth (40) for internal consistency.
+- Added 4 to Science quiz L1: Sun is a star, plant roots, the 5 senses, oxygen.
+- sw cache → v543; Android versionCode 500 / versionName 5.4.8.
+
 ## [5.7.463] - 2026-05-27 - Quiz Colors L5: 24→28 (ALL 14 quiz subjects now ≥28×5)
 - Added 4 to Colors quiz L5: photopic vs scotopic vision, D65 illuminant, ICC color profiles, Munsell system.
 - All 5 Colors quiz levels now at 28 each — closes the simple-subject deepening pass.
