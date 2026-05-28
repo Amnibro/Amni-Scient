@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.608] - 2026-05-28 - Quiz Sports L1: 40→44
+- Added 4 more L1 simple-tier sports Qs: ice skating (pressure-melts-ice glide, Zamboni resurfacing inventor 1949, Triple Axel/speed-skating), trampoline (Nissen 1936, Olympic since 2000, NASA training, 100K ER visits/year), dodgeball (5 Ds 2004 Vince Vaughn film, World Dodgeball Federation), kayaking (Inuit 4000-yr seal hunting, single vs double-blade vs canoe, Eskimo Roll technique).
+- Distinct from existing 40 L1 (basketball/soccer/tennis/baseball/hockey/swimming/cycling/gymnastics/football/surfing/etc + field-hockey/diving/alpine-ski/SUP).
+- sw cache → v687; Android versionCode 644 / versionName 6.9.2.
+
 ## [5.7.607] - 2026-05-28 - Quiz Mythology L1: 40→44
 - Added 4 more L1 simple-tier mythology Qs: dwarf (Snow White 7-named + Tolkien forged Mjölnir/Gungnir), jack-o'-lantern (Stingy Jack folk-tale, originally turnips → Irish immigrants brought to N. America with pumpkins), pixie (Cornish/Devon mischievous, 'pixie-led', Tinker Bell), poltergeist (German 'noise-ghost', Enfield 1977-79, Spielberg 1982 film).
 - Distinct from existing 40 L1 (Zeus/Aphrodite/Hera/Cerberus/Unicorn/Cyclops/Pegasus/Apollo/Heracles/Hades/Athena/Sphinx/Hydra/mermaid/dragon/fairy/centaur/genie/sirens/phoenix/trolls/werewolf/Pandora/Loch-Ness/vampire/kraken/goblin/Bigfoot/zombie/witch/wizard/ghost/mummy/skeleton/ogre/elf).
