@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.557] - 2026-05-28 - Quiz Opposites L4: 32→36 (closes pass-6 L4 sweep!)
+- Added 4 L4 conceptual pairs: bull/bear market (finance), centralized/decentralized (governance/tech), inflation/deflation (econ), microscopic/macroscopic (scale).
+- **PASS-6 L4 SWEEP COMPLETE** — all 8 shallow-bank L4s now at 36 Qs (+4 × 8 = 32 new Qs added in pass-6 L4).
+- sw cache → v636; Android versionCode 593 / versionName 6.4.1.
+
 ## [5.7.556] - 2026-05-28 - Quiz Counting L4: 32→36
 - Added 4 L4-tier number Qs: log₁₀(1000)=3 (logarithm = inverse exponent), coin probability 1/2, range = max−min (statistics spread), distributive property a(b+c)=ab+ac.
 - Distinct from existing 32 L4 (place values/multi-digit +/PEMDAS/fractions/percent/√64/2⁵/mean/median/prime factorization/x⁰=1/mixed numbers/scientific notation/factorial/mode/GCD).
