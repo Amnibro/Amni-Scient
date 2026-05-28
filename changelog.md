@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.615] - 2026-05-28 - Quiz Mythology L2: 40→44
+- Added 4 more L2 mythology Qs: Polyphemus (Odyssey 1-eyed Cyclops, 'NOBODY' wine trick, Poseidon's curse 10 more years), Scylla+Charybdis (Strait of Messina narrow strait, 6-headed cliff vs whirlpool, Circe's advice 'sacrifice 6'), Harpies ('snatchers' woman-headed birds tormenting blind Phineas, Argonauts drove them off), Bellerophon (tamed Pegasus with Athena's golden bridle, killed Chimera with melted-lead-spear, hubris-fall flying to Olympus).
+- Distinct from existing 40 L2 (Mars/Ares/Hera/Dionysus/Persephone/Demeter/Artemis/Atlas/Romulus/Janus/Trojan-War/Odysseus/Theseus/Jason/Thor/Loki/Anubis/Prometheus/Midas/Icarus/Odin/Achilles/Perseus/Osiris/Sisyphus/Olympus/Erinyes/Asclepius/Hesperides/Moirai/Charon/Orpheus/Chimera).
+- sw cache → v694; Android versionCode 651 / versionName 6.9.9.
+
 ## [5.7.614] - 2026-05-28 - Quiz Weather L2: 40→44 (PASS-8 L2 sweep begins)
 - Added 4 more L2 weather Qs: dust devil (sun-heated ground spin, no storm needed, Mars dust devils 8km tall + rover-photographed), black ice (~0.05 friction vs 0.7 dry, bridges-freeze-first, 70K+ US crashes/year), sun dogs (22° parhelia hex-ice-crystal refraction, 'sun dogs at noon storm by night'), heat index (humidity + temp 'feels like', 32°C @70%h = 41°C, Pakistan 54°C extreme).
 - Distinct from existing 40 L2 (4 seasons/dew/cumulus/lightning/Jupiter-storms/etc + anemometer/jet-stream/snowflake-6/monsoon).
