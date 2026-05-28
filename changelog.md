@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.445] - 2026-05-27 - Quiz Counting L2: 24→28
+- Added 4 to Counting quiz L2: pentagon sides, cents in a dollar, dozen, even/odd.
+- Note: v5.7.444 L1 days/months/square dup L2 8057/8058/8067 (existing cross-level pattern, like shapes/squares already appear in both L1+L2).
+- sw cache → v524; Android versionCode 481 / versionName 5.2.9.
+
 ## [5.7.444] - 2026-05-27 - Quiz Counting L1: 24→28
 - Added 4 to Counting quiz L1: days in a week, sides of a square, number before 5, months in a year.
 - sw cache → v523; Android versionCode 480 / versionName 5.2.8.
