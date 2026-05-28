@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.515] - 2026-05-28 - Quiz Shapes L4: 28→32
+- Added 4 L4-tier geometry Qs: SOH-CAH-TOA trig ratios, Law of Cosines (generalizes Pythag), fractals (Mandelbrot/Sierpinski/Koch), spherical-geometry angle sum > 180° (non-Euclidean).
+- Distinct from existing 28 L4 (acute/obtuse/equilateral/SSS-SAS-ASA/Heron/30-60-90/inscribed angle/Euler V-E+F=2/golden ratio/tessellation/sphere+cylinder volume/slope/median).
+- sw cache → v594; Android versionCode 551 / versionName 5.9.9.
+
 ## [5.7.514] - 2026-05-28 - Quiz Colors L4: 28→32
 - Added 4 L4-tier color-science Qs: tetrachromacy (4-cone vision, ~12% women carriers), Vantablack (99.965% absorbing carbon nanotubes), CIE 1931 color space (horseshoe gamut standard), cochineal/carmine red (70k bugs/lb, Aztec dye → modern E120).
 - Distinct from existing 28 L4 (RYB primaries/secondary/tertiary/complement/tint-shade-tone/prism/RGB/wheel/HSV/Pantone/color temp/blindness/iridescence/Bezold/afterimage/red-stop/analogous/Purkinje/dress illusion/gamut/cones/triadic/add-vs-sub/dog dichromacy/diamond dispersion).
