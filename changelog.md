@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.511] - 2026-05-28 - Quiz Mythology L4: 28→32
+- Added 4 cross-cultural L4 myth Qs: Garuda (Hindu Vishnu-mount eagle, Indonesia symbol), Kelpie (Scottish water-horse drowner), Tengu (Japanese mountain spirit with long red nose), Coatlicue (Aztec earth-mother with snake-skirt).
+- Distinct from existing 28 L4 (Phoenix/Valhalla/Styx/Quetzalcoatl/Loki/Ganesha/Yggdrasil/Anansi/Bunyip/Kraken/Banshee/Yeti/Leprechaun/Werewolf/Basilisk/Vampire/Hanuman/Naga/Selkie/Beowulf/Sun Wukong/Wendigo/Tiamat).
+- sw cache → v590 (milestone); Android versionCode 547 / versionName 5.9.5.
+
 ## [5.7.510] - 2026-05-28 - Quiz Weather L4: 28→32 (pass-4 start)
 - Added 4 L4-tier Qs: cloud seeding (AgI), Chinook/Föhn downslope warming, ITCZ + doldrums, lightning-detection networks (VLF triangulation NLDN).
 - Distinct from existing 28 L4 (atmospheric layers/instruments/Saffir-Simpson/Fujita/Coriolis/Hadley cells/storm surge/atm. river/El Niño/albedo/adiabatic/polar vortex/wet-bulb).
