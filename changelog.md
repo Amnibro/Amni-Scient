@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.540] - 2026-05-28 - Quiz Counting L2: 32→36
+- Added 4 L2-tier number Qs: smallest 3-digit=100, gross=144 (12 dozen), half of 50=25, Roman V=5.
+- Distinct from existing 32 L2 (count emojis/MORE-LESS/days-week/months/24h/60sec/26 letters/Roman III/hexagon/5×2/half-10/square-4/7+5/4×3/place-value/count-by-5s/100 cents/dozen/even-odd/99-largest-2-digit/9-odd/Roman X/score-20).
+- sw cache → v619; Android versionCode 576 / versionName 6.2.4.
+
 ## [5.7.539] - 2026-05-28 - Quiz Shapes L2: 32→36
 - Added 4 L2-tier geometry Qs: nonagon (9 sides, Bahá'í Lotus Temple), quadrilateral umbrella term (square/rect/rhombus/parallelogram/etc.), diameter through center, reflex angle (180-360°).
 - Distinct from existing 32 L2 (triangle/square/pentagon/hex/star/circle/semicircle/rhombus/oval/parallelogram/trapezoid/octagon/right-tri/equilateral/isosceles/symmetry/polygon/2D-3D/sphere/cube/regular/360°/acute/heptagon/scalene/cuboid/obtuse/decagon/radius/tessellation).
