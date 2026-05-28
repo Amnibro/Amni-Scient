@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.471] - 2026-05-28 - Quiz Science L3: 33→37
+- Added 4 to Science quiz L3: Newton's F=ma, Ohm's law, DNA vs RNA, Earth's g = 9.8 m/s².
+- sw cache → v550; Android versionCode 507 / versionName 5.5.5.
+
 ## [5.7.470] - 2026-05-28 - Quiz Science L3: 29→33
 - Added 4 to Science quiz L3: photosynthesis equation, mitosis vs meiosis, radioactive half-life, Bernoulli's principle.
 - sw cache → v549; Android versionCode 506 / versionName 5.5.4.
