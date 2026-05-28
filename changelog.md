@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.676] - 2026-05-28 - Quiz Mythology L3: 44→48 (PASS-11 mythology sweep — 3 of 5)
+- Added 4 fresh L3 myth Qs: EXCALIBUR (King Arthur's sword, sword-in-stone proof vs Lady of Lake gift, scabbard more magical than blade, Sir Bedivere returns to lake at death, Welsh Caledfwlch etymology, Boorman 1981 film), APOLLO (Olympian music+prophecy+sun+plague+archery, twin Artemis, Pythia at Delphic Oracle after slaying Python, tragic loves Hyacinthus+Daphne→laurel, Phoebus epithet, Apollo 11), ISIS (Aset Egyptian magic+motherhood, resurrected Osiris from 14 pieces, conceived Horus, Isis+Horus iconography→Madonna+Child, Philae Temple, Roman Empire cult to 6c AD), KRISHNA (Vishnu 8th avatar blue-skinned flute+peacock-feather, Bhagavad Gita Arjuna chariot 700 verses, ISKCON Hare Krishna 1966 NYC, Janmashtami 1B+ celebrants, "whenever dharma declines I manifest").
+- Distinct from existing 44 L3 (Hanuman, Baldr+mistletoe, Sleipnir, Cernunnos, Morgan le Fay, Loki, Thor, Odin, Anubis, Ra, etc.).
+- sw.js → v755. Android versionCode 712 / versionName 7.6.0 (rollover).
+
 ## [5.7.675] - 2026-05-28 - Quiz Mythology L2: 44→48 (PASS-11 mythology sweep — 2 of 5)
 - Added 4 fresh L2 myth Qs: ICARUS (Daedalus's son, escaped Crete on wax-feather wings, flew too high → wings melted → drowned in Aegean, Bruegel 1560 painting + Auden poem + "Icarus Complex"), PANDORA'S BOX (Hesiod 700 BC first mortal woman, Erasmus 16c mistranslated pithos jar → box, opened released evils + Hope/Elpis remained inside, parallel Eve forbidden fruit), SISYPHUS (cunning Corinth king, outwitted Death twice + chained Thanatos, condemned eternal boulder-up-hill in Tartarus, Camus 1942 essay "imagine Sisyphus happy"), ROMULUS+REMUS (Mars twins suckled by she-wolf Lupa, killed brother in Palatine/Aventine fight, founded Rome 753 BC, Capitoline Wolf bronze 5c BC, AS Roma football logo).
 - Distinct from existing 44 L2 (Mars, Ares, Hermes, Hera, Dionysus, harpies, Bellerophon+Pegasus+Chimera, etc.).
