@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.490] - 2026-05-28 - Quiz Colors L1: 28→32
+- Added 4 more color-identification Qs to Colors L1: elephant (gray), blueberry (anthocyanin), coal (black), chocolate (brown).
+- Distinct from existing 28 (red/blue/yellow/green/orange/pink/white/purple/etc. items already covered).
+- sw cache → v569; Android versionCode 526 / versionName 5.7.4.
+
 ## [5.7.489] - 2026-05-28 - Quiz Space L1: 28→32
 - Added 4 more space Qs to Space L1: comet (icy tail), constellation (Big Dipper), black hole, Milky Way (our galaxy).
 - Distinct from existing 28 (planets/Moon/Sun/eclipses/galaxy/telescope etc.).
