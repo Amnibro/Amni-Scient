@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.461] - 2026-05-27 - Quiz Colors L3: 24→28
+- Added 4 to Colors quiz L3: why blood is red, complementary colors, why we can't see UV, aurora colors.
+- sw cache → v540; Android versionCode 497 / versionName 5.4.5.
+
 ## [5.7.460] - 2026-05-27 - Quiz Colors L2: 24→28
 - Added 4 to Colors quiz L2: cyan, beige/tan, lavender, salmon.
 - sw cache → v539; Android versionCode 496 / versionName 5.4.4.
