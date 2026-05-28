@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.609] - 2026-05-28 - Quiz Space L1: 40→44
+- Added 4 more L1 simple-tier space Qs: gravity (Newton F=Gm₁m₂/r², Einstein spacetime-curvature, 10⁴⁰× weaker than EM but only attractive), Moon craters (impact-formed circular depressions, South Pole-Aitken 2500km, Earth Chicxulub dino-killer 66MYA), Earth's atmosphere (78%N 21%O, 5 layers troposphere→exosphere, Kármán line 100km), satellite (Sputnik 1957 'beep' kicked off space race, Starlink 6K+, LEO/MEO/GEO orbits).
+- Distinct from existing 40 L1 (Earth/8-planets/Mercury/Saturn/Sun/Stars/Moon/Galileo/Sun-is-star/eclipse/galaxy/comet/black-hole/Milky-Way/rocket/Pluto/Big-Dipper/etc + Jupiter/aurora/ISS/spacesuit).
+- sw cache → v688; Android versionCode 645 / versionName 6.9.3.
+
 ## [5.7.608] - 2026-05-28 - Quiz Sports L1: 40→44
 - Added 4 more L1 simple-tier sports Qs: ice skating (pressure-melts-ice glide, Zamboni resurfacing inventor 1949, Triple Axel/speed-skating), trampoline (Nissen 1936, Olympic since 2000, NASA training, 100K ER visits/year), dodgeball (5 Ds 2004 Vince Vaughn film, World Dodgeball Federation), kayaking (Inuit 4000-yr seal hunting, single vs double-blade vs canoe, Eskimo Roll technique).
 - Distinct from existing 40 L1 (basketball/soccer/tennis/baseball/hockey/swimming/cycling/gymnastics/football/surfing/etc + field-hockey/diving/alpine-ski/SUP).
