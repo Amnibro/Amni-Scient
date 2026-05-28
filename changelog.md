@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.430] - 2026-05-27 - Quiz Sports L3: 24→28
+- Added 4 to Sports quiz L3: fencing (3 weapons), archery bullseye, pickleball, NASCAR/Daytona 500.
+- sw cache → v509; Android versionCode 466 / versionName 5.1.4.
+
 ## [5.7.429] - 2026-05-27 - Quiz Sports L2: 24→28
 - Added 4 to Sports quiz L2: FIFA World Cup, Formula 1, badminton, rugby.
 - sw cache → v508; Android versionCode 465 / versionName 5.1.3.
