@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.7.463] - 2026-05-27 - Quiz Colors L5: 24→28 (ALL 14 quiz subjects now ≥28×5)
+- Added 4 to Colors quiz L5: photopic vs scotopic vision, D65 illuminant, ICC color profiles, Munsell system.
+- All 5 Colors quiz levels now at 28 each — closes the simple-subject deepening pass.
+- MILESTONE: every one of the 14 quiz subjects now sits at 28 or higher across all 5 levels. The "rich" subjects (animals/music/languages/math/engineering/science) remain at their original 29–136 depth; the 8 "simple" subjects (weather/opposites/counting/shapes/colors/mythology/sports/space) are now all at the unified 28×5 floor.
+- sw cache → v542; Android versionCode 499 / versionName 5.4.7.
+
 ## [5.7.462] - 2026-05-27 - Quiz Colors L4: 24→28
 - Added 4 to Colors quiz L4: triadic scheme, additive vs subtractive mixing, dichromatic vision (dogs), dispersion (why diamonds sparkle).
 - sw cache → v541; Android versionCode 498 / versionName 5.4.6.
