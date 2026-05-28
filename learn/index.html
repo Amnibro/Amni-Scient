@@ -1282,7 +1282,8 @@
   </div>
   <div id="menu-view" class="view active">
     <h1 class="menu-title">CHOOSE A GAME</h1>
-    <div id="achievements-strip" style="display:flex;gap:6px;max-width:720px;width:94%;margin:0 auto 10px;padding:8px 10px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px;flex-wrap:wrap;justify-content:center;font-family:'JetBrains Mono',monospace;cursor:pointer;transition:background 0.15s;" title="Tap to see all achievements"></div>
+    <button id="ach-toggle" aria-expanded="false" style="display:flex;align-items:center;justify-content:center;gap:8px;max-width:720px;width:94%;margin:0 auto 6px;padding:7px 12px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:#f1c40f;font-family:'JetBrains Mono',monospace;font-size:0.85rem;cursor:pointer;transition:background 0.15s;">🏆 Achievements <span id="ach-toggle-count" style="color:#bbb;"></span> <span id="ach-toggle-caret" style="transition:transform 0.2s;">▸</span></button>
+    <div id="achievements-strip" style="display:none;gap:6px;max-width:720px;width:94%;margin:0 auto 10px;padding:8px 10px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px;flex-wrap:wrap;justify-content:center;font-family:'JetBrains Mono',monospace;cursor:pointer;transition:background 0.15s;" title="Tap to see all achievements"></div>
     <div id="daily-banner" style="display:none;max-width:560px;width:92%;margin:0 auto 14px;padding:14px 18px;background:linear-gradient(135deg,rgba(241,196,15,0.22) 0%,rgba(243,156,18,0.18) 100%);border:2px solid #f1c40f;border-radius:14px;cursor:pointer;font-family:'JetBrains Mono',monospace;box-shadow:0 0 22px rgba(241,196,15,0.25);transition:transform 0.15s,box-shadow 0.15s;">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
         <div>
@@ -1975,8 +1976,12 @@
   function _floatLS(k){return parseFloat(localStorage.getItem(k)||sessionStorage.getItem(k)||'0')||0;}
   function _hasKey(k){const v=localStorage.getItem(k)||sessionStorage.getItem(k);return !!v&&v!=='0'&&v!=='[]'&&v!=='null'&&v!=='{}';}
   function _setLS(k){const v=localStorage.getItem(k)||sessionStorage.getItem(k);try{return JSON.parse(v||'[]');}catch{return [];}}
+  // Shared "any game played" key set — used by both First Steps and Polymath so
+  // they never drift. Add a game's best/win key here when adding a new game.
+  const _PLAY_NUM_KEYS=['snake-best','tet-best','brk-best','flp-best','inv-best','lgc-best','scr-best','agm-best','pat-best','haven_t2048_best','haven_cblast_best','pong-matches','haven_sol_wins','circuit-built','story-total-reads','spm-best','spm-best-mixed','spm-best-times','geo-best-L1','geo-best-L2','wb-best-es-L1','wb-best-fr-L1','pip-best','ws-best','sdk-wins-easy','sdk-wins-medium','sdk-wins-hard','sdk-wins-classic-easy','sdk-wins-classic-medium','sdk-wins-x-easy','rfx-best-L1','rfx-best-L2','chess-solved','bj-best','pipe-best','pipe-lvl','cs-lvl','haven_td_best_wave','nbk-best-1','nbk-best-2','nmm-best-forward','nmm-best-backward','chm-best-always','chm-best','chm-best-500','morse-total-correct','ear-life-correct','mc-best-round-world-easy','mc-best-round-us-easy','pt-solved-easy','pt-solved-normal','pt-solved-hard','sort-rounds-done','lgc-solved','daily-best','trace-count-L1','sl-best-4','lo-best-3','mn-best-easy','tf-tile-easy','sd-best-easy','mm-best-easy','hanoi-best-3','cl-best','bub-best-colors','sd-best-animals','petcare-best','fi-best-animals','cmix-best','wm-best-easy','rxt-best-single','stp-best-easy-word','nbk-dual-best-1','vs-best-coding'];
+  const _PLAY_FLOAT_KEYS=['ck-lifetime','am-lifetime'];
   const ACHIEVEMENTS = [
-    {id:'first',ic:'🌟',name:'First Steps',desc:'Play any game once',progress(){const numKeys=['snake-best','tet-best','brk-best','flp-best','inv-best','lgc-best','scr-best','agm-best','pat-best','haven_t2048_best','haven_cblast_best','pong-matches','haven_sol_wins','circuit-built','story-total-reads','bj-best','pipe-lvl','cs-lvl','haven_td_best_wave','spm-best-mixed','chess-solved','sdk-wins-classic-easy','sdk-wins-easy'];const flKeys=['ck-lifetime','am-lifetime'];const anyNum=numKeys.some(k=>_intLS(k)>0);const anyFloat=flKeys.some(k=>_floatLS(k)>0);const msHas=_hasKey('ms-best');const played=anyNum||anyFloat||msHas;return{cur:played?1:0,target:1,unlocked:played};}},
+    {id:'first',ic:'🌟',name:'First Steps',desc:'Play any game once',progress(){const played=_PLAY_NUM_KEYS.some(k=>_intLS(k)>0)||_PLAY_FLOAT_KEYS.some(k=>_floatLS(k)>0)||_hasKey('ms-best');return{cur:played?1:0,target:1,unlocked:played};}},
     {id:'daily-heat',ic:'🔥',name:'Heat Wave',desc:'Hit a 5-day Daily Challenge streak',progress(){const s=_intLS('daily-best');return{cur:Math.min(s,5),target:5,unlocked:s>=5};}},
     {id:'daily-devotee',ic:'📅',name:'Daily Devotee',desc:'30-day Daily Challenge streak',progress(){const s=_intLS('daily-best');return{cur:Math.min(s,30),target:30,unlocked:s>=30};}},
     {id:'storyteller',ic:'📚',name:'Storyteller',desc:'Read 5 stories all the way through',progress(){const c=_intLS('story-total-reads');return{cur:Math.min(c,5),target:5,unlocked:c>=5};}},
@@ -1993,7 +1998,7 @@
     {id:'chess-novice',ic:'♟️',name:'Chess Novice',desc:'Solve 5 chess puzzles',progress(){const c=_intLS('chess-solved');return{cur:Math.min(c,5),target:5,unlocked:c>=5};}},
     {id:'chemist',ic:'⚛️',name:'Chemist',desc:'Place 50 elements correctly',progress(){const c=_intLS('pt-solved-easy')+_intLS('pt-solved-normal')+_intLS('pt-solved-hard');return{cur:Math.min(c,50),target:50,unlocked:c>=50};}},
     {id:'cartographer',ic:'🗺️',name:'Cartographer',desc:'Score 1000 points in Map Clicker',progress(){const c=_intLS('mc-lifetime-easy')+_intLS('mc-lifetime-normal')+_intLS('mc-lifetime-hard');return{cur:Math.min(c,1000),target:1000,unlocked:c>=1000};}},
-    {id:'polymath',ic:'🎓',name:'Polymath',desc:'Play 10 different games',progress(){const numKeys=['snake-best','tet-best','brk-best','flp-best','inv-best','lgc-best','scr-best','agm-best','pat-best','haven_t2048_best','haven_cblast_best','pong-matches','haven_sol_wins','circuit-built','story-total-reads','spm-best','spm-best-mixed','geo-best-L1','geo-best-L2','wb-best-es-L1','wb-best-fr-L1','pip-best','ws-best','sdk-wins-easy','sdk-wins-medium','sdk-wins-hard','sdk-wins-classic-easy','sdk-wins-classic-medium','sdk-wins-x-easy','rfx-best-L1','rfx-best-L2','chess-solved','bj-best','pipe-best','pipe-lvl','cs-lvl','haven_td_best_wave','nbk-best-1','nbk-best-2','nmm-best-forward','chm-best-always','chm-best','morse-total-correct','ear-life-correct','mc-best-round-world-easy','pt-solved-easy'];const flKeys=['ck-lifetime','am-lifetime'];let played=numKeys.filter(k=>_intLS(k)>0).length;played+=flKeys.filter(k=>_floatLS(k)>0).length;if(_hasKey('ms-best'))played++;return{cur:Math.min(played,10),target:10,unlocked:played>=10};}},
+    {id:'polymath',ic:'🎓',name:'Polymath',desc:'Play 10 different games',progress(){let played=_PLAY_NUM_KEYS.filter(k=>_intLS(k)>0).length;played+=_PLAY_FLOAT_KEYS.filter(k=>_floatLS(k)>0).length;if(_hasKey('ms-best'))played++;return{cur:Math.min(played,10),target:10,unlocked:played>=10};}},
     {id:'morse-graduate',ic:'📡',name:'Morse Graduate',desc:'500 correct Morse decodes',progress(){const c=_intLS('morse-total-correct');return{cur:Math.min(c,500),target:500,unlocked:c>=500};}},
     {id:'sharp-ears',ic:'🎼',name:'Sharp Ears',desc:'100 correct Ear Training answers',progress(){const c=_intLS('ear-life-correct');return{cur:Math.min(c,100),target:100,unlocked:c>=100};}},
     {id:'sudoku-x',ic:'✕',name:'X Marks the Spot',desc:'Win an X-Sudoku',progress(){const c=_intLS('sdk-wins-x-easy')+_intLS('sdk-wins-x-medium')+_intLS('sdk-wins-x-hard');return{cur:Math.min(c,1),target:1,unlocked:c>=1};}},
@@ -2044,6 +2049,7 @@
     strip.innerHTML=ACHIEVEMENTS.map(a=>{const p=a.progress();const u=p.unlocked;return `<span style="display:inline-flex;align-items:center;gap:4px;padding:5px 9px;background:${u?'rgba(241,196,15,0.18)':'rgba(255,255,255,0.04)'};border:1px solid ${u?'#f1c40f':'rgba(255,255,255,0.12)'};border-radius:20px;font-size:0.8rem;opacity:${u?1:0.55};" title="${a.name}: ${a.desc} (${p.cur}/${p.target})">${u?'✅':'▢'} ${a.ic}</span>`;}).join('');
     const total=ACHIEVEMENTS.length;const earned=ACHIEVEMENTS.filter(a=>a.progress().unlocked).length;
     strip.insertAdjacentHTML('beforeend',`<span style="display:inline-flex;align-items:center;padding:5px 9px;font-size:0.8rem;color:#bbb;">${earned}/${total}</span>`);
+    const tc=document.getElementById('ach-toggle-count');if(tc)tc.textContent=`${earned}/${total}`;
   }
   function _openAchModal(){
     const overlay=document.createElement('div');overlay.id='ach-modal';
@@ -2063,8 +2069,12 @@
     _renderAchStrip();
     const strip=document.getElementById('achievements-strip');
     if(strip){strip.addEventListener('click',_openAchModal);strip.addEventListener('mouseenter',()=>{strip.style.background='rgba(255,255,255,0.06)';});strip.addEventListener('mouseleave',()=>{strip.style.background='rgba(255,255,255,0.03)';});}
-    // Re-check every 30 seconds while menu is visible (in case storage changes mid-session)
-    setInterval(()=>{if(document.getElementById('menu-view')&&document.getElementById('menu-view').classList.contains('active')){_checkAchievements();_renderAchStrip();}},30000);
+    const achToggle=document.getElementById('ach-toggle');
+    if(achToggle&&strip){const caret=document.getElementById('ach-toggle-caret');const setOpen=o=>{strip.style.display=o?'flex':'none';achToggle.setAttribute('aria-expanded',o);if(caret)caret.style.transform=o?'rotate(90deg)':'none';try{localStorage.setItem('ach-strip-open',o?'1':'0');}catch{}};setOpen(localStorage.getItem('ach-strip-open')==='1');achToggle.addEventListener('click',()=>setOpen(strip.style.display==='none'));}
+    // Poll every 4s GLOBALLY so a win earned inside a game fires its toast+confetti
+    // within seconds, not only after returning to the menu. Strip re-render is
+    // skipped off-menu to avoid needless DOM work.
+    setInterval(()=>{_checkAchievements();if(document.getElementById('menu-view')&&document.getElementById('menu-view').classList.contains('active'))_renderAchStrip();},4000);
   },150);
   // Daily Challenge. One puzzle per calendar day, date-seeded so every player
   // on the same date sees the same puzzle. Persists streak + best-streak +
@@ -2780,6 +2790,7 @@
     } else {
       $$('#nav-back').innerHTML = '⬅<span class="btn-label"> HOME</span>';
     }
+    if(typeof _checkAchievements==='function'){_checkAchievements();if(typeof _renderAchStrip==='function')_renderAchStrip();}
   }
   const confCanvas = $$('#confetti-canvas');
   const confCtx = confCanvas.getContext('2d');
@@ -16586,6 +16597,8 @@ function playAnimalSound(type) {
 </div>
 <footer class="learn-footer" role="contentinfo">
 <div class="lf-inner">
+<details class="lf-about">
+<summary style="cursor:pointer;list-style:none;color:#4db8ff;font-weight:bold;font-size:1.05rem;padding:10px 0;text-align:center;">ℹ️ About Amni-Learn &mdash; what you can practice &amp; age levels</summary>
 <h2>About Amni-Learn</h2>
 <p>Amni-Learn is a free, ad-supported educational playground built for learners from preschool through adulthood. Eight age-tiered levels let a parent, teacher, tutor, or self-directed learner pick the band that fits — pre-K letter tracing on up to adult cognitive training — and start interactive practice immediately. No signups, no tracking, no data leaves your device. Every game runs entirely in your browser.</p>
 <p>Created and curated by <strong>Amnibro</strong>, a mechanical engineer and independent educator, Amni-Learn is part of the Amni-Scient suite of privacy-first scientific and educational tools. All scores, streaks, and leaderboards are stored locally in your browser using a single <code>localStorage</code> key — nothing is uploaded.</p>
@@ -16621,6 +16634,7 @@ function playAnimalSound(type) {
 <p>Found a bug or want a new subject? Reach out through the <a href="../about.html">About page</a>.</p>
 </div>
 </div>
+</details>
 <aside class="disc-ad" aria-label="Sponsored">
 <div class="ad-tag">Sponsored</div>
 <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8345487545441889" data-ad-slot="1720203631" data-ad-format="auto" data-full-width-responsive="true"></ins>

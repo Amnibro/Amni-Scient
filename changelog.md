@@ -1,5 +1,12 @@
 ﻿# Changelog 
 
+## [5.7.417] - 2026-05-27 - Achievements: fire-on-win fix + collapsible UI
+- FIX: achievements never fired mid-game — _checkAchievements only ran on load + every 30s while the menu was open. Now checked on every showView navigation AND polled globally every 4s, so a win earned inside a game pops its toast+confetti within seconds.
+- FIX: "Play any game once" (First Steps) used a short ~23-key list, so many games never tripped it. First Steps + Polymath now share one comprehensive _PLAY_NUM_KEYS set (~70 game keys) so every game counts and the two never drift.
+- UX: achievements strip is now collapsed by default behind a compact "🏆 Achievements N/M ▸" toggle (open-state persisted in localStorage) to reclaim menu space.
+- UX: footer "About Amni-Learn" prose wrapped in a collapsed <details> (content stays in the DOM, crawlable for SEO/AdSense; sponsored ad + nav stay visible).
+- sw cache → v496; Android versionCode 453 / versionName 5.0.1.
+
 ## [5.7.416] - 2026-05-27 - Fact-cards Shapes L5: 12→16 (round-2 fact-card gap CLOSED)
 - Added 4 to Shapes L5: tesseract, Penrose tiling, Voronoi diagrams, minimal surfaces.
 - ALL 13 fact-card subjects now at 16 entries × 5 levels — every teachData bank quadrupled.
