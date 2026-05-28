@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.520] - 2026-05-28 - Quiz Sports L5: 28→32
+- Added 4 L5-tier sports legends: Larisa Latynina (USSR 18 medals, pre-Phelps record), Jim Thorpe (1912 dec+pent gold, posthumously restored), Babe Didrikson Zaharias (multi-sport AP F-athlete of half-century), 2008 Wimbledon Nadal-Federer greatest final.
+- Distinct from existing 28 L5 (Phelps/triple-double/cricket-Test/Hines/F1-GS/Wilt/Beamon/Jordan-6-0/Comăneci/Babe-Ruth-called-shot/Isner-Mahut/Pelé/Lance×7/Bonds/Ali-Frazier/Brady/Flo-Jo/Gretzky/Miracle-Ice/Hand of God/checkmate/Bannister/Federer-20/Tony Hawk 900/Merckx/Bosman).
+- sw cache → v599; Android versionCode 556 / versionName 6.0.4.
+
 ## [5.7.519] - 2026-05-28 - Quiz Mythology L5: 28→32
 - Added 4 L5-tier myth Qs: Eris (golden apple → Trojan War, dwarf-planet namesake), Charon (Styx ferryman, Pluto's moon), Ragnarök (Norse end-times, Loki+Fenrir+Jörmungandr), Ouroboros (tail-eating serpent, Kekulé benzene dream).
 - Distinct from existing 28 L5 (Iris/Morpheus/Midas/Athena/Nike/Fenrir/Pandora/Trojan Horse/Sisyphus/Tantalus/Gilgamesh/Marduk/Tiamat/Inanna/Arthur/Grail/Merlin/Atlantis/Hyperboreans/Lethe/Heimdall/Prometheus/Yggdrasil/Daedalus/Moirai/Aeneid/Hecate/Susanoo).
