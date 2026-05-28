@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.7.652] - 2026-05-28 - Quiz Math L1: 39→44 (PASS-9 math sweep OPENS, +5 to reach floor)
+- Math L1 was at 39 entries (1 below 40 baseline + 5 below 44 floor). Added 5 fresh L1 math Qs (one extra to repair gap): 4 SEASONS (spring/summer/fall/winter, Earth tilt 23.5° causes them, equator barely varies, polar extremes), 24 HOURS/DAY (Earth rotation period, 86,400 seconds, Babylonian base-60 → 24×60×60 still in use), 6+6=12 (double, also months/inches per foot/eggs in dozen), 100>99 (first 3-digit, 10×10 perfect square, century).
+- Distinct from existing 39 L1 (triangle 3 sides, ball sphere, 7>3, square 4 corners, etc.).
+- Note: math bank uses "Advanced Math" title but L1 is intro-level, consistent with how 'opposites' bank starts simple at L1.
+- sw.js → v731. Android versionCode 688 / versionName 7.3.6.
+
 ## [5.7.651] - 2026-05-28 - Quiz Science L5: 40→44 (PASS-9 science sweep COMPLETE — 5 of 5 — Science bank now full at 44 across L1-L5)
 - Added 4 more L5 science Qs (research-tier): STANDARD MODEL (6 quarks + 6 leptons + 5 bosons including Higgs, 1960s-70s Glashow/Salam/Weinberg+Gell-Mann, gaps = gravity + dark matter + dark energy + neutrino mass + matter-antimatter asymmetry, BSM searches), HIGGS BOSON (Higgs/Englert/Brout 1964, 125 GeV/c² vacuum expectation 246 GeV, July 4 2012 LHC ATLAS+CMS discovery, Nobel 2013, only ~1% of YOUR mass from Higgs vs ~99% from strong-force binding E=mc²), CHAOS THEORY (Lorenz 1963 weather butterfly 0.506127 vs 0.506, deterministic+sensitive+bounded+strange-attractor, Feigenbaum constant 4.669, weather prediction limit ~10 days, Gleick 1987 Jurassic Park), RNA WORLD (Woese 1967 + Gilbert 1986, Altman+Cech 1989 Nobel ribozymes, ribosome catalytic core is RNA fossilized relic, ~4.0 Gya RNA → 3.8 Gya proto-DNA → 3.5 Gya LUCA, SELEX in-vitro, alternatives PNA/metabolism-first).
 - Distinct from existing 40 L5 (quantum entanglement, Pauli exclusion, BEC, RG, decoherence, Aharonov-Bohm, Unruh effect, etc.).
