@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.555] - 2026-05-28 - Quiz Shapes L4: 32→36
+- Added 4 L4-tier geometry Qs: Pythagorean triples (3-4-5, Euclid's formula), conic sections (cone slices → circle/ellipse/parabola/hyperbola), Apollonian gasket fractal (Descartes circle theorem), Platonic dual polyhedra (cube↔oct, dod↔icos, tet self-dual).
+- Distinct from existing 32 L4 (right angle/acute/obtuse/triangle 180°/quad 360°/octagon/regular polygon/equilateral 60°/parallelogram/Heron/SSS-SAS-ASA/30-60-90/45-45-90/isosceles/rhombus diagonals/inscribed angle/similar/Euler V-E+F/golden ratio/Möbius/Klein bottle/fractal/SOHCAHTOA/Law of Cosines/sphere triangle).
+- sw cache → v634; Android versionCode 591 / versionName 6.3.9.
+
 ## [5.7.554] - 2026-05-28 - Quiz Colors L4: 32→36
 - Added 4 L4-tier color-science Qs: Mauve (1856 Perkin first synthetic dye), lead-white pigment (toxic but unrivaled, Vermeer-era to 1970s), purple non-spectral (brain bridges red+blue), halftone printing (CMYK dot patterns + Lichtenstein Ben-Day dots).
 - Distinct from existing 32 L4 (primaries-RYB/secondary/complement/tint-shade-tone/prism/RGB/wheel/HSV/Pantone/color-temp/blindness/iridescence/Bezold/afterimage/red-stop/analogous/Purkinje/dress/gamut/cones/triadic/add-vs-sub/dog dichromacy/diamond/tetrachromacy/Vantablack/CIE 1931/cochineal).
