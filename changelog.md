@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.585] - 2026-05-28 - Quiz Space L3: 36→40
+- Added 4 more L3 space Qs: Kepler's 3 laws (1609/1619 ellipse + equal-areas + T²∝a³, derived from Tycho Brahe data), heliopause (~120AU, Voyager 1 crossed 2012, V2 2018), interstellar visitors ('Oumuamua 2017 + 2I/Borisov 2019, Avi-Loeb-alien-tech hypothesis), habitable zone (Goldilocks, Sun 0.95-1.4AU, red dwarfs narrower, Proxima-b/TRAPPIST-1e/Kepler-442b candidates).
+- Distinct from existing 36 L3 (8min-sunlight/gravity/asteroid-belt/Ganymede/Pluto-dwarf/Proxima/Moon-phases/AU/black-hole/supernova/aurora/ISS/light-year/Sirius/Polaris/meteor-types/Andromeda/Perseverance/Kuiper/Sun-red-giant/Jupiter/exoplanet/CMB/pulsar/Lagrange/solar-wind/magnetosphere/SETI/etc).
+- sw cache → v664; Android versionCode 621 / versionName 6.6.9.
+
 ## [5.7.584] - 2026-05-28 - Quiz Sports L3: 36→40
 - Added 4 more L3 sports Qs: esports (LoL Worlds 100M+ viewers, Dota TI $40M prize, Olympic Esports Games 2027), heptathlon (Jackie Joyner-Kersee 1988 WR 7291pts, 7 events 2 days, Olympic since 1984), polo (Persia 6th-cent-BC, British India spread, 4-player chukkas, Argentina dominant), NASCAR (1948 Daytona, Cup series, 200mph ovals, Richard Petty 200 wins).
 - Distinct from existing 36 L3 (soccer-90min/Wimbledon/Stanley-Cup/5-rings/marathon/touchdown/hat-trick/pole-vault/decathlon/match-point/sumo/curling/rugby/badminton-fastest/snooker/darts/America's-Cup/equestrian/Triple-Crown/squash/TdF-yellow/birdie/slam-dunk/fencing/archery/pickleball/skateboarding/cricket-century/Ironman/Monaco/Heisman/4-golf-majors/100m-WR/tiebreak/boxing-classes).
