@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.475] - 2026-05-28 - Quiz Math L5: 37→40 (matches L2/L4 depth)
+- Added 3 to Math quiz L5: eigenvalues + eigenvectors, Brouwer fixed-point theorem, Chinese Remainder Theorem.
+- Math L5 now at 40 — same as L2 + L4. The bank's clearest single-level outlier is closed.
+- sw cache → v554; Android versionCode 511 / versionName 5.5.9.
+
 ## [5.7.474] - 2026-05-28 - Quiz Math L5: 33→37
 - Added 4 to Math quiz L5: generalized Stokes' theorem, Markov chains, Shannon entropy, pigeonhole principle.
 - sw cache → v553; Android versionCode 510 / versionName 5.5.8.
