@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.518] - 2026-05-28 - Quiz Weather L5: 28→32 (pass-5 / FINAL shallow-bank pass starts)
+- Added 4 L5-tier climate-science Qs: carbon sinks (oceans 25% + land 30%), ice-albedo feedback (Arctic amplification 3-4× rate), tipping points (AMOC/Amazon/Greenland/permafrost), stratospheric aerosol injection geoengineering (Pinatubo-mimicking, governance issues).
+- Distinct from existing 28 L5 (weather-vs-climate/El Niño/jet stream/lightning speed/Antarctic record/Mauna Loa/AMOC/atmospheric rivers/MJO/SSW/PDO/butterfly effect/bomb cyclone/NAO/Milankovitch/volcanic cooling/permafrost/climate sensitivity).
+- sw cache → v597; Android versionCode 554 / versionName 6.0.2.
+
 ## [5.7.517] - 2026-05-28 - Quiz Opposites L4: 28→32 (closes pass-4!)
 - Added 4 L4-tier conceptual pairs: concrete/abstract (idea), static/dynamic (tech), analog/digital (signals), cause/effect (causation + correlation≠causation).
 - Distinct from existing 28 L4 (expand-contract/accept-reject/transparent-opaque×2/include-exclude/etc.).
