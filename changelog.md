@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.7.712] - 2026-05-28 - Quiz dedupe round 3: weather AURORA L2 + opposites CENTRIPETAL L5 + EXOTHERMIC L5 cross-bank dupes
+- Weather L2 AURORA (line 7941, dup of L4 line 7972 simpler original) → REPLACED with fresh WIND CHILL entry (perceived temp drop from wind stripping warm skin-layer, NWS 2001 revised formula 35.74 + 0.6215T − 35.75V^0.16 + ..., 0°F+30mph → −19°F wind chill, frostbite-time thresholds, Antarctica < −100°F, applicable only to humans/animals not objects, heat index summer analog).
+- Opposites L5 CENTRIPETAL/CENTRIFUGAL (line 8331, dup of L4 line 8293) → REPLACED with fresh AFFERENT/EFFERENT neuroscience entry (sensory toward CNS vs motor away from CNS, SAME-DAVE memory trick, Bell-Magendie law 1810s dorsal-afferent ventral-efferent spinal roots, reflex arc skips brain, autonomic efferent split sympathetic vs parasympathetic).
+- Opposites L5 EXOTHERMIC/ENDOTHERMIC (line 8339, dup of L4 line 8292) → REPLACED with fresh ELECTROPHILE/NUCLEOPHILE organic chem entry (curved arrows always flow nucleophile→electrophile, SN1/SN2 + E1/E2 + electrophilic-aromatic-substitution + carbonyl-addition reactions, Pearson 1963 HSAB hard-soft acid-base theory matching polarizabilities).
+- All known cross-bank + intra-bank dupes addressed across rounds 1-3 (v710-v712). Pass-11 floor 48 preserved.
+
 ## [5.7.711] - 2026-05-28 - Quiz Opposites dedupe round 2: swap PUSH L2 + EXPAND L4 + ACCEPT L4 pre-existing dupes
 - L2 PUSH/PULL (line 8156, dup of L1 line 8123) → REPLACED with fresh FIRST/LAST entry (1st-place vs last-place race, Jan-Dec months, A-Z alphabet, 'first come first served,' 'save best for last,' 'ship captain first to board last to leave' duty-of-care proverb).
 - L4 EXPAND/CONTRACT (line 8250, dup of L2 line 8173 [the ORIGINAL — my v706 add was already swapped in v710]) → REPLACED with fresh INFLATION/DEFLATION entry (Fed 2% target, Weimar 1923 prices doubling every 2 days, Zimbabwe 2008 79.6 BILLION %/month, Venezuela 2018 65,000%, deflation insidious-delays-demand, Japan Lost Decade 1990s, CPI vs PCE Fed gauge).
