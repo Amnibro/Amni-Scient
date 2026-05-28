@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.441] - 2026-05-27 - Quiz Opposites L4: 24→28
+- Added 4 to Opposites quiz L4: urban/rural, active/passive, export/import, horizontal/vertical.
+- Noted L4 pre-existing internal dups (transparent/opaque + optimist/pessimist each appear twice in L4); not mine, leaving as-is.
+- sw cache → v520; Android versionCode 477 / versionName 5.2.5.
+
 ## [5.7.440] - 2026-05-27 - Quiz Opposites L3: 24→28
 - Added 4 to Opposites quiz L3: public/private, positive/negative, junior/senior, north/south.
 - Note: v5.7.439 L2 begin/end, win/lose, sharp/dull duplicate existing L3 entries — matches the opposites bank's cross-level repetition pattern; left as-is.
