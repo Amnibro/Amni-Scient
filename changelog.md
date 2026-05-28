@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.562] - 2026-05-28 - Quiz Colors L5: 32→36
+- Added 4 L5-tier light-physics Qs: Fraunhofer lines (Sun's absorption lines → astrospectroscopy → Helium discovered 1868), LASER properties (mono+coherent+collimated, Townes/Maiman), birefringence (calcite double-image), Tyndall effect (blue eyes + mountain haze).
+- Distinct from existing 32 L5 (hex codes/wavelengths/CMYK/CIE 1931/CIELAB/ΔE/metamerism/Bayer/subpixel/tetrachromacy/QD/opponent process/CRI/white balance/bit depth/photopic-scotopic/D65/ICC/Munsell/visible spectrum/polarized/UV-A-B-C/Stokes shift).
+- sw cache → v641; Android versionCode 598 / versionName 6.4.6.
+
 ## [5.7.561] - 2026-05-28 - Quiz Space L5: 32→36
 - Added 4 L5-tier astrophysics Qs: Roche limit (tidal moon-breakup → Saturn's rings, SL9 comet 1994), Eddington limit (max stable star luminosity, Eta Carinae), vacuum decay (Higgs metastability doomsday hypothesis), Maunder Minimum 1645-1715 (sunspot lull + Little Ice Age).
 - Distinct from existing 32 L5 (CMB temp/Schwarzschild/Hubble const/Chandrasekhar/13.8Gyr/parsec/Penrose-Hawking/Drake/inflation/dark matter/dark energy/Hawking radiation/ΛCDM/anthropic/multiverse/cosmic web/reionization/3 fates/holographic/string theory/pulsar/grav waves/Lagrange/redshift/Planck length/wormhole/Olbers'/Boltzmann brain).
