@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.604] - 2026-05-28 - Quiz Counting L5: 36→40
+- Added 4 more L5 number Qs: halting problem (Turing 1936 diagonal-undecidable, Rice's theorem, founded computability theory), Graham's number (G, Ramsey upper bound, Knuth up-arrow, last digit 7, beaten by TREE(3)/BB), 7 Millennium Prize problems (Clay 2000 $1M each, only Poincaré solved by Perelman who refused), Kolmogorov complexity (shortest-program, Solomonoff+Chaitin independent 1960s, uncomputable in general).
+- Distinct from existing 36 L5 (6×7/8×9/12²/48÷6/81÷9/100÷4/primes/squares/round/GCD/LCM/prime-factor-60/perfect-Mersenne/Gauss-1-to-100/triangular/odd-sum-n²/Goldbach/twin-primes/0.999=1/e/0!/Fibonacci/i/Euler-identity/Pascal/π/Fermat-Last/Riemann/Gödel/Collatz/P-vs-NP/Cantor-diagonal/Continuum/RSA).
+- sw cache → v683; Android versionCode 640 / versionName 6.8.8.
+
 ## [5.7.603] - 2026-05-28 - Quiz Shapes L5: 36→40
 - Added 4 more L5 shape Qs: Hopf fibration (1931 S³ as linked-circle bundle over S², qubit Bloch sphere, twistor theory), Calabi-Yau manifolds (Yau Fields-Medal 1982, 6D string compactifications, 10⁵⁰⁰ landscape), Minkowski spacetime (Einstein's old prof 1908, ds²=-c²dt²+dx²+dy²+dz², 'space + time fade into union'), hyperbolic paraboloid (Pringle saddle, doubly-ruled straight-beams-curved-surface, Munich Olympic roof / Calgary Saddledome).
 - Distinct from existing 36 L5 (n-gon-angles/π/Pythagorean/circle-formulas/sphere-formulas/Platonic-solids/Euler-VEF/regular-tilings/Penrose/hyperbolic/spherical/Möbius/Klein/fractal/golden-ratio/Fibonacci/4-color-theorem/non-Euclidean/tesseract/Voronoi/Hairy-Ball/Banach-Tarski/topology/knot-theory/Mandelbrot/Borromean/Poincaré/Cantor/Kepler/Mercator).
