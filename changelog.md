@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.631] - 2026-05-28 - Quiz Weather L4: 40→44 (PASS-8 L4 sweep OPENS — 1 of 8)
+- Added 4 more L4 weather Qs: JET STREAM (Ooishi 1923 + WWII B-29 discovery, polar+subtropical, Rossby waves, aviation eastbound saves fuel), ATMOSPHERIC RIVER (Zhu+Newell 1990s, Pineapple Express 50% Calif. precip in few events, 7-15× Mississippi flux, AR1-AR5 scale), DEW POINT vs RELATIVE HUMIDITY (absolute moisture, <13°C comfy >21°C oppressive, why 50% RH alone misleads), SUPERCELL THUNDERSTORM (mesocyclone 2-10km, hook echo + BWER + TVS, Tornado Alley, LP/Classic/HP classes).
+- Distinct from existing 40 L4 (Coriolis, downdraft, microburst, Saffir-Simpson, derecho, haboob, snow-roller, lake-effect, Beaufort, Fujita, dirty thunderstorms, ball lightning, foehn winds, eye+eyewall, virga, mammatus, katabatic, etc).
+- sw.js → v710. Android versionCode 667 / versionName 7.1.5.
+
 ## [5.7.630] - 2026-05-28 - Quiz Opposites L3: 40→44 (PASS-8 L3 sweep complete — 8 of 8)
 - Added 4 more L3 opposite Qs: ENCRYPT↔DECRYPT (Caesar cipher, AES-256, SSL/TLS 🔒, symmetric vs asymmetric RSA, distinct from encode/Base64), ASCEND↔DESCEND (Latin ad/de+scandere, music scales, sort orders ASC/DESC, descendant family-tree), LOVE↔HATE (Zeki neuroscience overlap, apathy as true opposite, Corinthians+Rumi), MAJORITY↔MINORITY (>50% vs <50%, majority vs plurality, supermajority, Latin major/minor).
 - Distinct from existing 40 L3 (brave/scared, gentle/rough, polite/rude, ancient/modern, sharp/dull, begin/end, above/below, win/lose, fresh/stale, near/far, empty/full, wet/dry, simple/complex, visible/hidden, healthy/sick, cheap/expensive, awake/asleep, calm/anxious, birth/death, guilty/innocent, temporary/permanent, artificial/natural, abundant/scarce, flexible/rigid, public/private, positive/negative, junior/senior, north/south, optimist/pessimist, question/answer, liquid/solid, active/passive, east/west, internal/external, forward/backward, inhale/exhale, input/output, horizontal/vertical, import/export, micro/macro).
