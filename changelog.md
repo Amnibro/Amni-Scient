@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.599] - 2026-05-28 - Quiz Mythology L5: 36→40
+- Added 4 more L5 mythology Qs: Kali (Hindu skull-necklace dark mother, Shiva-prone-under-feet, drank Raktabija's clone-spawning blood, Kolkata namesake), Zoroaster/Zarathustra (Ahura Mazda vs Angra Mainyu dualism, influenced Abrahamic faiths, Nietzsche), Izanagi+Izanami (Japanese primordial spear-stirred islands, Yomi-descent broken-promise, gave birth to Amaterasu/Tsukuyomi/Susanoo), Tartarus (Greek deepest abyss imprisoning Titans, Hekatoncheires guards, Plato's eternal-punishment refinement).
+- Distinct from existing 36 L5 (Iris/Morpheus/Midas/Athena/Nike/Fenrir/Pandora/Trojan-Horse/Sisyphus/Tantalus/Gilgamesh/Marduk/Tiamat/Inanna/Arthur/Grail/Merlin/Atlantis/Hyperboreans/Lethe/Heimdall/Prometheus/Yggdrasil/Daedalus/Moirai/Aeneid/Hecate/Susanoo/Eris/Charon/Ragnarök/ouroboros/Hermes-Trismegistus/Mithras/La-Llorona/Huitzilopochtli).
+- sw cache → v678; Android versionCode 635 / versionName 6.8.3.
+
 ## [5.7.598] - 2026-05-28 - Quiz Weather L5: 36→40 (PASS-7 L5 sweep begins — FINAL level!)
 - Added 4 more L5 weather Qs: Younger Dryas (12.9-11.7k BP abrupt cold reversal, Lake Agassiz freshwater pulse → AMOC shutdown, Clovis decline, comet hypothesis), Little Ice Age (1300-1850, Maunder Minimum sunspot dip, Thames frost fairs, Norse Greenland abandoned), Walker Circulation (Gilbert Walker 1920s east-west Pacific loop drives ENSO), Climate Models/GCMs (Suki Manabe Nobel 2021, CMIP6 ~100 models, ~100km grid + supercomputer hours).
 - Distinct from existing 36 L5 (weather-vs-climate/El-Niño/jet-stream/6-side-snow/lightning-1/3c/Antarctica/Death-Valley/Mauna-Loa/hurricane-eye/rainfall-mm/AMOC/atmospheric-rivers/polar-vortex/adiabatic-lapse/stratovolcano/Foehn/proxies/MJO/SSW/PDO/butterfly-effect/bomb-cyclone/NAO/Milankovitch/volcanic-SO2/permafrost/climate-sensitivity/carbon-sink/ice-albedo/tipping-points/SAI/Paris-Agreement/ocean-acidification/IPCC/PETM).
