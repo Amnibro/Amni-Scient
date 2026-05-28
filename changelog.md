@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.659] - 2026-05-28 - Quiz Animals L4: 39→44 (PASS-10 — animals 2 of 3 levels)
+- Added 5 fresh L4 advanced-biology Qs: CONVERGENT EVOLUTION (wings 4× independent insects+pterosaurs+birds+bats, eyes 40+ times octopus retina wired right way, ichthyosaurs+dolphins+tuna shape, caffeine 3 plants), ELECTRORECEPTION (sharks Ampullae of Lorenzini 5 nV/cm + heartbeat-in-sand, platypus 40000 bill receptors + monotreme egg-laying mammal, electric eels 500-860V), PARTHENOGENESIS (whiptail lizards all-female + marbled crayfish 1990s lab → invasive + bdelloid rotifers 40My asexual, Komodo dragons + bonnethead sharks + California condors 2021 zoo facultative, never wild mammals genomic imprinting), KLEIBER'S LAW (metabolic rate ∝ M^¾, West-Brown-Enquist fractal circulatory branching theory, lifespan ~M^¼ + heart rate ~M^(-¼) elephants 70yr/4bpm vs mice 2yr/600bpm, pharmacology drug dose conversion), CIRCADIAN RHYTHMS (SCN hypothalamus 20000 neurons master clock, PER+CRY+BMAL1+CLOCK transcription-translation feedback, Nobel 2017 Hall+Rosbash+Young flies, jet lag + shift work).
+- Distinct from existing 39 L4 (ecdysone insect metamorphosis, golden poison dart frog, cellulose vs chitin, endocrine pancreas, etc.).
+- sw.js → v738. Android versionCode 695 / versionName 7.4.3.
+
 ## [5.7.658] - 2026-05-28 - Quiz Animals L1: 39→44 (PASS-10 OPENS — animals/music/languages audit + sweep)
 - Re-audited bank levels with proper {q:-counter (scripts/audit_bank_levels.js updated). Found deficits: animals L1/L4/L5=39, music L4/L5=40, languages L1/L4/L5=39, engineering L2/L5=41, math L1=43 (off by 1 from v652 — intended 5, added 4). PASS-10 plan: lift these to 44 floor.
 - Added 5 fresh L1 animal-sound Qs: HYENA LAUGH (frustration call, matriarchal, 1100 PSI bite), WHALE SONG (humpback 30-min songs, only males, blue whale 188 dB 10 Hz lowest-freq, Voyager Golden Record), KOOKABURRA LAUGH (kingfisher Australian, "koo-koo-ka-ka", Hollywood Tarzan jungle sound), SEAL BARK (sea lions vs true seals, SF Pier 39, Weddell 600m+80min dives), FOX SCREAM (mating Jan-Feb, 911 calls human-like, Ylvis 2013 viral song actual answer scream+bark+gekker).
