@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.623] - 2026-05-28 - Quiz Mythology L3: 40→44
+- Added 4 more L3 mythology Qs: Baldr (Norse god of light, mistletoe-killed by blind Höðr at Loki's urging, harbinger of Ragnarök, resurrected in new world), Sleipnir (Odin's 8-legged horse born from Loki-mare + Svaðilfari, Tjängvide stone Gotland 8th cent), Cernunnos (Celtic horned nature god, Gundestrup Cauldron 150 BC, Wicca's Horned God), Morgan le Fay (Arthur's half-sister sorceress, Avalon healer-AND-antagonist, 'Mists of Avalon' POV retelling).
+- Distinct from existing 40 L3 (Thor/Odin/Anubis/Ra/Perseus/Heracles/Isis/Set/Achilles/Loki/Freyja/etc + Ragnarök/Sun-Wukong/Heimdall/Hanuman).
+- sw cache → v702; Android versionCode 659 / versionName 7.0.7.
+
 ## [5.7.622] - 2026-05-28 - Quiz Weather L3: 40→44 (PASS-8 L3 sweep begins)
 - Added 4 more L3 weather Qs: hail-size naming (pea/marble/golf-ball/baseball/softball, Vivian SD 2010 20cm record), green flash (1-2 sec sunset refraction phenomenon, Verne 1882 'Le Rayon Vert' novel, sailor luck), St. Elmo's Fire (plasma corona discharge from pointed masts pre-storm, Saint Erasmus patron of sailors), hurricane naming (Atlantic 21-name alphabetical M/F-alternating lists, retired-if-deadly tradition, 2005+2020 went past Z to Greek letters).
 - Distinct from existing 40 L3 (tornado/hurricane/water-cycle/blizzard/fog/lightning/rainbow/hail/monsoon/etc + Doppler/atmospheric-river/polar-vortex/ITCZ).
