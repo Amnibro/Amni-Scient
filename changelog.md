@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.7.669] - 2026-05-28 - Quiz Weather L1: 44→48 (PASS-11 OPENS — 44→48 sweep across shallow banks)
+- PASS-11 directive: lift shallow-bank levels from 44 → 48 (+4) for added depth + better game variety.
+- Added 4 more L1 weather Qs: THUNDER (lightning heats air to 30,000°C → shockwave, count-seconds trick / 3 = km / 5 = miles, ≤30 sec → shelter as lightning strikes 16km from storm), FOG (cloud at ground, visibility <1km vs mist 1-2km, radiation/steam/advection types, SF Karl-the-Fog, Grand Banks 200+ foggy days/year, headlights LOW beam), HAIL (updraft-recycled ice balls with concentric rings, Vivian SD 2010 record 20cm 0.88kg, ~$1B/yr US crop damage, distinct from sleet/graupel), DEW (radiative cooling at clear+calm night → vapor condenses below dew-point, frost when sub-0°C, dew-point is humidity measure, plant water source).
+- Distinct from existing 44 L1 (sun, rain, snow, wind, cloud, rainbow, lightning, etc.).
+- sw.js → v748. Android versionCode 705 / versionName 7.5.3.
+
 ## [5.7.668] - 2026-05-28 - Quiz Math L1: 43→44 (+1 cleanup — PASS-10 ENTIRE CAMPAIGN COMPLETE 🎉)
 - Final cleanup of off-by-one from v652 (planned +5, added +4): added 1 fresh L1 math Q — 9+1=10 (FIRST 2-digit number, base-10 finger origin, 'successor' concept).
 - Now math L1 hits 44 floor like all other levels.
