@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.664] - 2026-05-28 - Quiz Languages L4: 39→44 (PASS-10 languages sweep — 2 of 3)
+- Added 5 fresh L4 advanced linguistics Qs: SAPIR-WHORF/LINGUISTIC RELATIVITY (Sapir+Whorf 1930s-40s, Russian blue distinction 10% faster Winawer 2007, Guugu Yimithirr cardinal directions, Pirahã few/many, Pinker pushback weak relativity accepted strong rejected), GRIMM'S LAW (Jacob Grimm 1822 = fairy-tale collector!, PIE *p→f *t→th *k→h Germanic shifts, Latin pater↔father + tres↔three, Verner's Law 1875 exception explanation), PIDGIN vs CREOLE (pidgin simplified contact NO native speakers, creole = pidgin nativized in 1 gen Bickerton bioprogram, Haitian Creole 10M + Tok Pisin + Jamaican Patois + Gullah, shared structural features), WORD-ORDER TYPOLOGY (SOV~41% Japanese/Korean/Turkish/Hindi, SVO~35% English/Mandarin/Russian, VSO~7% Arabic/Welsh/Irish, OSV+OVS+VOS rare, Greenberg 1963 universals), CODE-SWITCHING (intra/inter-sentential/tag, Poplack equivalence constraint, Spanglish/Hinglish 250M, cognitive advantages dementia delay ~4-5 yr Bialystok 2007).
+- Distinct from existing 39 L4 (homophone, affect vs effect, portmanteau morpheme, idiolect, Zipf's law, transitive/intransitive).
+- sw.js → v743. Android versionCode 700 / versionName 7.4.8 (landmark version 700!).
+
 ## [5.7.663] - 2026-05-28 - Quiz Languages L1: 39→44 (PASS-10 languages sweep OPENS, +5 fresh letter Qs)
 - Added 5 fresh L1 letter-recognition Qs (matching existing "Which word starts with __?" pattern): B (BALL, "buh" sound), S (SUN, snake-hiss), M (MOON, lip-hum), R (RABBIT, rolling "rrr"), W (WATER, only letter named after another letter "double-U").
 - Distinct from existing 39 L1 (which covered F, P, T, L, E, G, H plus other intro vocab).
