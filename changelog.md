@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.429] - 2026-05-27 - Quiz Sports L2: 24→28
+- Added 4 to Sports quiz L2: FIFA World Cup, Formula 1, badminton, rugby.
+- sw cache → v508; Android versionCode 465 / versionName 5.1.3.
+
 ## [5.7.428] - 2026-05-27 - Quiz Sports L1: 24→28
 - Added 4 to Sports quiz L1: golf, the Olympics, volleyball, table tennis.
 - sw cache → v507; Android versionCode 464 / versionName 5.1.2.
