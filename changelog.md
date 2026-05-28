@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.548] - 2026-05-28 - Quiz Counting L3: 32→36
+- Added 4 L3-tier number Qs: 10% of 200 = 20 (percent trick), 5² = 25 (perfect squares), Roman M = 1000 (mille), 9×7 = 63 (finger trick).
+- Distinct from existing 32 L3 (arithmetic basics/subtractions/multiplications/comparison/skipcounts/double-half/word-problems/cents/parity/6×7/100÷4/decimals/prime/round/skip-10s/inches-foot/99/√16/2³/½+¼/Roman C).
+- sw cache → v627; Android versionCode 584 / versionName 6.3.2.
+
 ## [5.7.547] - 2026-05-28 - Quiz Shapes L3: 32→36
 - Added 4 L3-tier geometry Qs: icosahedron 20 triangular faces (d20 die / virus capsids), parallel lines (Euclid's 5th postulate), cube surface area 6s² (vs volume s³ — scaling law), cone volume (1/3)πr²h (Archimedes vs cylinder).
 - Distinct from existing 32 L3 (sphere/cube/cone/cylinder basics + faces+edges+vertices/Giza pyramid/tetrahedron/net/convex-concave/diagonal/tangent/chord/radius-vs-diameter/arc/hemisphere/hex-tile/torus/Pythagorean/rect-area/equilateral/polyhedron/octahedron/perimeter/cube vol/right angle/triangle area/dodecahedron/Möbius/golden ratio).
