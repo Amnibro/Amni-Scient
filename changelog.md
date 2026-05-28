@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.635] - 2026-05-28 - Quiz Colors L4: 40→44 (PASS-8 L4 sweep — 5 of 8)
+- Added 4 more L4 color Qs: METAMERISM (different spectra same cone response under one light, mismatch under another, QC light booths D65/F2/A, distinct from iridescence already in L4), COCHINEAL/CARMINIC ACID (Dactylopius coccus scale insects on prickly pear, Aztec→Spanish 2nd-most-valuable Mexican export, British redcoats+cardinal robes+Starbucks frap, ~70k insects per lb), NEWTON'S DISC (1670s rainbow wedges spun fast → gray-white, persistence-of-vision proof white=spectral sum, Benham's top variant), CHIAROSCURO (Italian light+dark, Leonardo sfumato → Caravaggio tenebrism → Rembrandt+La Tour+Vermeer→noir cinematography, also a woodcut technique).
+- Distinct from existing 40 L4 (color blindness, iridescence, Bezold, complementary afterimage, red-stop-sign, purple non-spectral, halftone, Egyptian Blue, mummy brown, Munsell, Berlin+Kay, etc).
+- sw.js → v714. Android versionCode 671 / versionName 7.1.9.
+
 ## [5.7.634] - 2026-05-28 - Quiz Space L4: 40→44 (PASS-8 L4 sweep — 4 of 8, halfway!)
 - Added 4 more L4 space Qs: GRAVITATIONAL WAVES (Einstein 1916 prediction, LIGO GW150914 Sep 2015 first detection 36+29 M☉ BH merger, 10⁻²¹ m stretch, 2017 Nobel, GW170817 multi-messenger), SCHWARZSCHILD RADIUS (Karl Schwarzschild 1916 from WW1 trench, r_s=2GM/c², Earth=8.9mm, Sun=3km, Sgr A*=12.7M km, M87*=19B km), STELLAR PARALLAX (6-month Earth orbit baseline, 1 parsec=3.26 ly, Bessel 1838 61 Cygni first, Gaia 2 billion stars), LAGRANGE POINTS (5 equilibrium points, JWST/Gaia/WMAP at L2, Jupiter Trojan asteroids at L4/L5 stable triangles).
 - Distinct from existing 40 L4 (Fermi paradox, spaghettification, Goldilocks zone, Voyager 1, Hubble tension, Kardashev scale, Chandrasekhar limit, cosmic inflation, Dyson sphere, big-bang nucleosynthesis, redshift, magnetar, etc).
