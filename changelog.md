@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.499] - 2026-05-28 - Quiz Shapes L2: 28→32
+- Added 4 L2-tier geometry Qs: obtuse angle (>90°), decagon (10 sides), radius/diameter/circumference relations + π, tessellation (Escher / honeycomb tiles).
+- Distinct from existing 28 L2 (triangle/square/hex/oct/poly basics + angle/symmetry/regular-poly) + 32 L1.
+- sw cache → v578; Android versionCode 535 / versionName 5.8.3.
+
 ## [5.7.498] - 2026-05-28 - Quiz Colors L2: 28→32
 - Added 4 L2-tier color-vocab Qs: turquoise (blue-green/Turkish trade route), maroon (deep brown-red), indigo (ROYGBIV rainbow color, jeans dye), warm vs cool colors (artist concept).
 - Distinct from existing 28 L2 (orange/purple/brown/black/white/cyan/magenta/etc.) + 32 L1.
