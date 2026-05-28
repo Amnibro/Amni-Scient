@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.677] - 2026-05-28 - Quiz Mythology L4: 44→48 (PASS-11 mythology sweep — 4 of 5)
+- Added 4 fresh L4 myth Qs: MEDUSA (Gorgon snake-haired, Athena punished after Poseidon assault, Perseus polished-shield reflection + Hermes harpe + Hades helmet, head birthed Pegasus, Versace logo, modern feminist reclamation), FENRIR (Loki+Angrboða wolf-son sibling Jörmungandr+Hel, Gleipnir chain 6 impossible ingredients dwarves, Týr right-hand pledge bitten off, swallows Odin at Ragnarök, Víðarr avenges with magical boot), MJÖLNIR (Brokkr+Eitri dwarf-forged in contest, Loki-fly biting eye shortened handle, Thrym wedding-veil heist retrieval, Viking amulets ~1000+ excavated, MCU 'worthy' lifting), AENEAS (Trojan prince of Anchises+Venus, fled with father on back, Carthage affair with Dido cursing Punic Wars, Virgil Aeneid 9896 lines 29-19 BC commissioned by Augustus legitimizing Julian dynasty via Iulus → Caesar).
+- Distinct from existing 44 L4 (Cerberus, Jörmungandr, Amaterasu, Prometheus, Phoenix, Valhalla, Styx, Quetzalcoatl, etc.).
+- sw.js → v756. Android versionCode 713 / versionName 7.6.1.
+
 ## [5.7.676] - 2026-05-28 - Quiz Mythology L3: 44→48 (PASS-11 mythology sweep — 3 of 5)
 - Added 4 fresh L3 myth Qs: EXCALIBUR (King Arthur's sword, sword-in-stone proof vs Lady of Lake gift, scabbard more magical than blade, Sir Bedivere returns to lake at death, Welsh Caledfwlch etymology, Boorman 1981 film), APOLLO (Olympian music+prophecy+sun+plague+archery, twin Artemis, Pythia at Delphic Oracle after slaying Python, tragic loves Hyacinthus+Daphne→laurel, Phoebus epithet, Apollo 11), ISIS (Aset Egyptian magic+motherhood, resurrected Osiris from 14 pieces, conceived Horus, Isis+Horus iconography→Madonna+Child, Philae Temple, Roman Empire cult to 6c AD), KRISHNA (Vishnu 8th avatar blue-skinned flute+peacock-feather, Bhagavad Gita Arjuna chariot 700 verses, ISKCON Hare Krishna 1966 NYC, Janmashtami 1B+ celebrants, "whenever dharma declines I manifest").
 - Distinct from existing 44 L3 (Hanuman, Baldr+mistletoe, Sleipnir, Cernunnos, Morgan le Fay, Loki, Thor, Odin, Anubis, Ra, etc.).
