@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.594] - 2026-05-28 - Quiz Colors L4: 36→40
+- Added 4 more L4 color Qs: Egyptian Blue (3000 BC FIRST synthetic pigment, lost Roman times → 1814 rediscovered, modern IR-emission fingerprint use), Mummy Brown (16th-20th cent paint pigment LITERALLY ground from Egyptian mummies, Burne-Jones buried tube in garden when learned), Munsell System (1905 3D HVC color space, still in USDA soil classification), Berlin+Kay 1969 (universal color term hierarchy across 98 languages, Homer 'wine-dark sea' had no blue, Russian light-vs-dark-blue distinction).
+- Distinct from existing 36 L4 (3-primaries/secondaries/complementaries/tint-shade-tone/prism/RGB/color-wheel/HSV/Pantone/temperature/color-blindness/iridescence/Bezold/afterimage/red-warnings/analogous/Purkinje/the-dress/gamut/3-cones/triadic/additive-subtractive/dogs/diamond-dispersion/tetrachromacy/Vantablack/CIE-1931/cochineal/mauve-aniline/lead-white/purple-non-spectral/halftone).
+- sw cache → v673; Android versionCode 630 / versionName 6.7.8.
+
 ## [5.7.593] - 2026-05-28 - Quiz Space L4: 36→40
 - Added 4 more L4 space Qs: Kardashev scale (Type I planet/II star Dyson/III galaxy; humanity ~0.73 today), Chandrasekhar limit (1.44M☉ white-dwarf max, 19-yo Subrahmanyan on 1930 voyage, Type Ia standard candle threshold), cosmic inflation (Guth 1980 10⁻³² sec 10²⁶× exponential expansion, solves horizon+flatness+monopole), Dyson sphere (Freeman Dyson 1960 stellar megastructure, swarm vs shell, IR waste signature, Tabby's Star 2015 brief speculation).
 - Distinct from existing 36 L4 (speed-of-light/corona/Type-Ia/LIGO/Moon-gravity/hydrogen/light-year/4.6B-years/exoplanets/Lagrange/Kepler-laws/JWST/neutron-star/pulsar/quasar/Europa/Olympus-Mons/Hubble's-law/parallax/spectroscopy/supernova/ISS/Big-Bang/gas-giants/dark-matter/dark-energy/Drake/Fermi/spaghettification/Goldilocks/Voyager-1/Hubble-tension).
