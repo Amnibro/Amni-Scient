@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.606] - 2026-05-28 - Quiz Weather L1: 40→44 (PASS-8 begins — deepening beyond 40-floor)
+- Added 4 more L1 simple-tier weather Qs: icicles (drip-freeze gravity-tapered, 8.4m Hilversum record, stalactite cave-cousin), sunrise (always east, low-angle Rayleigh scattering red/orange, Arctic midnight-sun), raindrops (hamburger-bun shape NOT teardrop, 30 km/h terminal velocity, drizzle vs mist sizes), dark storm clouds (warning sign, nimbostratus/cumulonimbus, 'red sky at morning sailor's warning').
+- Distinct from existing 40 L1 (sun/rain/snow/cloud/etc + sunscreen/scarf/sunglasses/windy-day).
+- sw cache → v685; Android versionCode 642 / versionName 6.9.0.
+
 ## [5.7.605] - 2026-05-28 - Quiz Opposites L5: 36→40 (🎉 PASS-7 ENTIRE CAMPAIGN COMPLETE — ALL 40 SHALLOW-BANK LEVELS NOW AT 40-QUESTION FLOOR!)
 - Added 4 more L5 opposite Qs: zenith↔nadir (Arabic etymology, celestial vs underfoot, nadir-pointing satellites), kinetic↔potential energy (½mv² vs mgh, roller-coaster conversion, Lagrangian L=KE-PE), boson↔fermion (Bose-Einstein vs Fermi-Dirac stats, Pauli exclusion vs lasers/BECs), exothermic↔endothermic (combustion vs evaporation cooling, Gibbs free energy spontaneity).
 - Distinct from existing 36 L5 (ascend/divergent/voluntary/literal/concrete/extrovert/scarcity/compact/ambiguous/antonym/a-priori/inductive/sacred/quantitative/microcosm/innate/esoteric/objective/antithesis/sui-generis/oxymoron/dialectic/enantiodromia/complementarity/Apollonian/yin-yang/de-jure/Eros-Thanatos/determinism/reductionism/materialism/centripetal/empiricism/Kahneman/genotype/Stoic).
