@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.601] - 2026-05-28 - Quiz Space L5: 36→40
+- Added 4 more L5 space Qs: black-hole information paradox (Hawking 1976 vs QM unitarity, soft-hair 2016, Susskind-Hawking bets), baryogenesis (Sakharov 3 conditions, CP violation Kobayashi-Maskawa Nobel 2008, ~1-in-billion asymmetry), Kerr black hole (1963 rotating BH, ergosphere + ring singularity, Penrose process 1969, M87*+Sgr-A*), neutrino oscillation (3 flavors morph, proves nonzero mass, solved solar-neutrino problem, Kajita+McDonald Nobel 2015).
+- Distinct from existing 36 L5 (CMB-2.7K/Schwarzschild/Hubble-70/Chandrasekhar/13.8B-age/parsec/Penrose-Hawking-singularity/Drake/inflation/dark-matter/dark-energy/Hawking-radiation/ΛCDM/anthropic/multiverse/cosmic-web/reionization/3-fates/holographic/string-theory/pulsar/gravitational-waves/Lagrange/redshift/Planck-length/wormhole/Olbers/Boltzmann-brain/Roche-limit/Eddington-limit/vacuum-decay/Maunder).
+- sw cache → v680; Android versionCode 637 / versionName 6.8.5.
+
 ## [5.7.600] - 2026-05-28 - Quiz Sports L5: 36→40 — v600 MILESTONE!
 - Added 4 more L5 sports Qs: 1992 Dream Team (MJ/Magic/Bird/Barkley/etc, +44 avg win-margin, opponents asked for autographs!), 1973 Battle-of-the-Sexes (BJK beat Riggs, ~90M TV viewers, Astrodome), Kipchoge 2019 sub-2 (1:59:40 Vienna with pacers/Vaporflys, 'no human is limited'), LeBron James (passed Kareem's 38387 in Feb 2023, 4 titles, son Bronny drafted 2024).
 - Distinct from existing 36 L5 (Phelps/triple-double/Test-cricket/Hines-sub-10/F1-Grand-Slam/Wilt-100/Beamon/MJ-6-0/Comaneci/Ruth-called-shot/Isner-Mahut/1972-Munich/Pelé-17/marathon-stadium/Armstrong-7/Bonds-762/Thrilla-Manila/Brady-7/Flo-Jo/Gretzky-894/Miracle-on-Ice/Maradona-Hand/checkmate/Bannister/Federer-20/Tony-Hawk-900/Merckx/Bosman/Latynina/Thorpe/Babe-Didrikson/Nadal-Federer-08/Bradman/Schumacher/Strug/Williams-sisters).
