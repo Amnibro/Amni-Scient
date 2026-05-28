@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.452] - 2026-05-27 - Quiz Shapes L4: 24→28
+- Added 4 to Shapes quiz L4: sphere volume (4/3)πr³, cylinder volume πr²h, slope formula, triangle median.
+- sw cache → v531; Android versionCode 488 / versionName 5.3.6.
+
 ## [5.7.451] - 2026-05-27 - Quiz Shapes L3: 24→28
 - Added 4 to Shapes quiz L3: octahedron (8 faces), perimeter of rectangle, volume of a cube (s³), right angle = 90°.
 - sw cache → v530; Android versionCode 487 / versionName 5.3.5.
