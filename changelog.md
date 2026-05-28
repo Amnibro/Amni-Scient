@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.580] - 2026-05-28 - Quiz Counting L2: 36→40
+- Added 4 more L2 number Qs: prime numbers (2 only even prime, Euclid infinity proof, GIMPS 25M-digit record, RSA crypto backbone), million=10⁶ (6 zeros, mega prefix, 1M-sec=11.6days vs 1B=31.7years comparison), quarter=1/4 (0.25 = 25%, numerator/denominator, finance Q1/Q2/Q3/Q4), negative numbers (Death Valley −86m, overdraft, neg×neg=positive 'two debts cancel').
+- Distinct from existing 36 L2 (count-emoji 6-10, after/before/days/months/hours/minutes/seconds/alphabet/Roman-III/hexagon/5×2/half-10/square/7+5/4×3/place-value/count-by-5s/pentagon/cents/dozen/even-odd/largest-2digit/Roman-X/score/smallest-3digit/gross/half-50/Roman-V).
+- sw cache → v659; Android versionCode 616 / versionName 6.6.4.
+
 ## [5.7.579] - 2026-05-28 - Quiz Shapes L2: 36→40
 - Added 4 more L2 shape Qs: Pythagorean theorem (a²+b²=c², 3-4-5, 400+ proofs, Babylonians knew first), π=3.14159 (irrational, Archimedes 22/7, 202T-digit 2024 record, Pi Day), Möbius strip (1858 half-twist single-side, recycling ♻️ symbol, conveyor belts), fractal (Mandelbrot 1975 self-similar, Koch snowflake/Sierpinski/coastlines/broccoli, terrain-gen).
 - Distinct from existing 36 L2 (triangle/square/pentagon/hexagon/star/circle/rhombus/oval/parallelogram/trapezoid/octagon/isosceles/equilateral/scalene/polygon/sphere/cube/cuboid/360°/acute/obtuse/reflex/heptagon/nonagon/decagon/tessellation/quadrilateral/diameter/radius/etc).
