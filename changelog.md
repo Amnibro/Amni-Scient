@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.510] - 2026-05-28 - Quiz Weather L4: 28→32 (pass-4 start)
+- Added 4 L4-tier Qs: cloud seeding (AgI), Chinook/Föhn downslope warming, ITCZ + doldrums, lightning-detection networks (VLF triangulation NLDN).
+- Distinct from existing 28 L4 (atmospheric layers/instruments/Saffir-Simpson/Fujita/Coriolis/Hadley cells/storm surge/atm. river/El Niño/albedo/adiabatic/polar vortex/wet-bulb).
+- sw cache → v589; Android versionCode 546 / versionName 5.9.4.
+
 ## [5.7.509] - 2026-05-28 - Quiz Opposites L3: 28→32 (closes pass-3!)
 - Added 4 L3-tier conceptual pairs: optimist/pessimist (attitude), question/answer (Socratic), liquid/solid (states of matter), active/passive (grammar/investing/chemistry).
 - Distinct from existing 28 L3 (brave/gentle/polite/ancient/etc.).
