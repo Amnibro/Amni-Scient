@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.7.589] - 2026-05-28 - Quiz Opposites L3: 36→40 (PASS-7 L3 SWEEP COMPLETE — all 8 shallow banks at 40-floor L1+L2+L3!)
+- Added 4 more L3 opposite Qs: input↔output (engineering I/O, amplifier signal, black-box), horizontal↔vertical (gravity-defines-vertical, landscape/portrait screens), import↔export (trade balance, GDP net-X, tariffs, USA-deficit-since-1975), micro↔macro (Greek size prefixes, SI 10⁻⁶, economics individual-vs-whole-economy).
+- Distinct from existing 36 L3 (brave/gentle/polite/ancient/sharp/begin/above/win/fresh/near/empty/wet/simple/visible/healthy/cheap/awake/calm/birth/guilty/temporary/artificial/abundant/flexible/public/positive/junior/north/optimist/question/liquid/active/east/internal/forward/inhale).
+- PASS-7 L3 SWEEP COMPLETE: weather/mythology/sports/space/colors/shapes/counting/opposites all at 40-question floor for L1+L2+L3. Next: pass-7 L4 sweeps.
+- sw cache → v668; Android versionCode 625 / versionName 6.7.3.
+
 ## [5.7.588] - 2026-05-28 - Quiz Counting L3: 36→40
 - Added 4 more L3 number Qs: Fibonacci (0,1,1,2,3,5,8,13...; Liber Abaci 1202; sunflower/pinecone/nautilus spirals; ratio→φ golden ratio), PEMDAS order of operations (P/E/MD/AS; '2+3×4=14 not 20'; universal convention saves math from ambiguity), absolute value |x| (distance from zero, always ≥0, V-shape graph, complex magnitude extension), average/mean (sum÷count; vs median + mode; outlier sensitivity; GPAs/polls/sports).
 - Distinct from existing 36 L3 (add-sub-mult 0-100 / repeated add / skip count 2/5/10 / parity / even-odd / prime / round / inches-foot / largest-2-digit / √16 / 2³ / ½+¼ / Roman C/M / 10% / 5² / 9×7).
