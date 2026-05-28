@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.532] - 2026-05-28 - Quiz Counting L1: 32→36
+- Added 4 more L1 number Qs: 1+1=2 (most basic), unicycle wheel=1 (uni- prefix), 6+4=10 (making-ten trick), dozen=12 (eggs/baker's dozen=13).
+- Distinct from existing 32 L1 (count emojis/fingers/bike/tricycle/triangle/zero/2-hands/pair/half-4/2+1/3+2/9→10/stars/smallest/days/squares/before-5/months/5-3/car/24h/60s).
+- sw cache → v611; Android versionCode 568 / versionName 6.1.6.
+
 ## [5.7.531] - 2026-05-28 - Quiz Shapes L1: 32→36
 - Added 4 more L1 shape Qs: cuboid (rectangular prism, books/bricks), hourglass shape (two-triangle bowtie), spade ♠ playing card, teardrop (NOT actual falling raindrop shape — fun fact).
 - Distinct from existing 32 L1 (circle/square/triangle/star/heart/wheel/TV/pizza/door/diamond/crescent/oct./cross/arrow/cylinder/cube/book/window/egg/hex/cone/sphere/pentagon/pyramid/trap./semicircle/spiral).
