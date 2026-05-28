@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.584] - 2026-05-28 - Quiz Sports L3: 36→40
+- Added 4 more L3 sports Qs: esports (LoL Worlds 100M+ viewers, Dota TI $40M prize, Olympic Esports Games 2027), heptathlon (Jackie Joyner-Kersee 1988 WR 7291pts, 7 events 2 days, Olympic since 1984), polo (Persia 6th-cent-BC, British India spread, 4-player chukkas, Argentina dominant), NASCAR (1948 Daytona, Cup series, 200mph ovals, Richard Petty 200 wins).
+- Distinct from existing 36 L3 (soccer-90min/Wimbledon/Stanley-Cup/5-rings/marathon/touchdown/hat-trick/pole-vault/decathlon/match-point/sumo/curling/rugby/badminton-fastest/snooker/darts/America's-Cup/equestrian/Triple-Crown/squash/TdF-yellow/birdie/slam-dunk/fencing/archery/pickleball/skateboarding/cricket-century/Ironman/Monaco/Heisman/4-golf-majors/100m-WR/tiebreak/boxing-classes).
+- sw cache → v663; Android versionCode 620 / versionName 6.6.8.
+
 ## [5.7.583] - 2026-05-28 - Quiz Mythology L3: 36→40
 - Added 4 more L3 mythology Qs: Ragnarök (Norse end-of-world, Fenrir kills Odin, Líf+Lífþrasir survivors, Wagner Götterdämmerung), Sun Wukong (Wu Cheng'en 'Journey to the West' Monkey King, inspired Goku), Heimdall (Bifröst rainbow bridge guardian, hears grass grow, Gjallarhorn at Ragnarök, Idris Elba), Hanuman (Hindu monkey warrior, leaped ocean to Lanka, carried mountain to heal Lakshmana, immortal still-walking).
 - Distinct from existing 36 L3 (Thor/Odin/Anubis/Ra/Perseus/Heracles/Isis/Set/Achilles/Loki/Freyja/Bastet/Horus/Osiris/Thoth/Vishnu/Shiva/Brahma/Amaterasu/Tyr/Ganesha/Medusa/Quetzalcoatl/Gilgamesh/Arthur/Valkyries/Krishna/Cthulhu/Anansi/Beowulf/Baba-Yaga/Tlaloc/Pangu/Indra).
