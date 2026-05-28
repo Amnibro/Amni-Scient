@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.477] - 2026-05-28 - Quiz Animals L5: 37→39 (matches L4=39)
+- Added 2 to Animals quiz L5: immortal jellyfish (Turritopsis dohrnii), axolotl regeneration.
+- Animals L5 now at 39 — matches L4. Bank still has L2=136 as far outlier above, but L5 no longer the bottom dip.
+- sw cache → v556; Android versionCode 513 / versionName 5.6.1.
+
 ## [5.7.476] - 2026-05-28 - Quiz Animals L5: 33→37 (lifting next bank outlier)
 - Added 4 to Animals quiz L5: octopus 9-brain distribution, mantis shrimp color receptors, monarch migration, pistol shrimp cavitation.
 - sw cache → v555 (triple-five milestone); Android versionCode 512 / versionName 5.6.0.
