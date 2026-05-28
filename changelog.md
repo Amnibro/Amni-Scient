@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.482] - 2026-05-28 - Quiz Languages L1: 36→39 (matches L4/L5)
+- Added 3 more "starts with" Qs to Languages L1: E→Egg, G→Goat, H→Hat.
+- L1 now 39, matching L4=39 and L5=39 (bank top is L2=61 / L3=60).
+- sw cache → v561; Android versionCode 518 / versionName 5.6.6.
+
 ## [5.7.481] - 2026-05-28 - Quiz Languages L1: 32→36
 - Added 4 more "starts with" Qs to Languages L1 (matches existing L1 pattern): F→Fish, P→Pig, T→Tree, L→Lion.
 - sw cache → v560 (milestone — 560 cache bumps); Android versionCode 517 / versionName 5.6.5.
