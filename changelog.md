@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.695] - 2026-05-28 - Quiz Shapes L2: 44→48 (PASS-11 shapes sweep — 2 of 5)
+- Added 4 fresh L2 shape Qs: PARALLELOGRAM (opposite sides parallel+equal, hierarchy square⊂rectangle⊂parallelogram + rhombus, area = base × perpendicular-height, Escher tessellations + shear transforms, pantograph mechanisms), TRAPEZOID/TRAPEZIUM (US vs UK swap 1795 Hutton dictionary, at-least-one-pair parallel-bases, isosceles+right variants, area = ½(b₁+b₂)h, Egyptian pyramid side view + circus trapeze named after shape), ANGLE TYPES (acute<90° + right=90° + obtuse 90-180° + straight=180° + reflex 180-360° + full=360°, complementary sum 90 + supplementary sum 180, triangle 180° total + pentagon 108° each), CIRCLE TERMS (d=2r + C=2πr=πd + A=πr², arc/chord/tangent/sector/segment, π same for every circle, Archimedes ~250 BC bounded 3.14<π<3.143 using polygons).
+- Distinct from existing 44 L2 (cube faces+edges+vertices, basketball sphere, tissue box prism, pyramid Giza, tetrahedron, nets, convex/concave, diagonals, etc.).
+- sw.js → v774. Android versionCode 731 / versionName 7.7.9.
+
 ## [5.7.694] - 2026-05-28 - Quiz Shapes L1: 44→48 (PASS-11 shapes sweep OPENS — 1 of 5)
 - Added 4 fresh L1 shape Qs: EGG/OVOID (asymmetric oval wider one end, rolls in circles so cliff-nesters don't lose eggs, ostrich ~1.5kg vs bee hummingbird ~0.3g, Fabergé imperial eggs $30M+ auction, Pysanky Ukrainian tradition), CRESCENT (2 arcs sliver, Latin crescere=grow, croissant 1683 Ottoman defeat legend disputed, Islamic flags Ottoman 14c adoption not Quranic, lunula fingernail base), ARROW (shaft+head+fletching, 70000+ years humans use, mouse-cursor Microsoft Mouse 1983 hardware standard, traffic + keyboard 1980s IBM PC AT cursor keys, Cupid's love-arrows), SHIELD (kite shape pointy bottom, heater shield 12-13c dominant in heraldry, Bayeux Tapestry 1066, US Great Seal eagle, Captain America's circular shield unusual most are kite, cybersecurity emoji 🛡️).
 - Distinct from existing 44 L1 (zigzag lightning, club suit, infinity symbol, torus donut, cloud shape, bowtie, key, anchor, basic shapes, etc.).
