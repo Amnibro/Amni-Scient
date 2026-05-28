@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.485] - 2026-05-28 - Quiz Math L1: 36→40 (matches L2/L4/L5=41)
+- Added 4 more simple-arithmetic Qs to Math L1: 4+3=7, fingers on two hands, smallest number 0, half of 10.
+- L1 now 40 ~ matches L2/L4/L5=41 (bank parity except deep L3=61).
+- sw cache → v564; Android versionCode 521 / versionName 5.6.9.
+
 ## [5.7.484] - 2026-05-28 - Quiz Engineering L1: 36→40 (matches L4=40)
 - Added 4 more simple engineering Qs to L1: flashlight LED bulb, tire tread + aquaplaning, parachute drag, radio antenna picks up EM waves.
 - L1 now 40 — matches L4=40, near L2=41 / L5=41 (bank parity achieved across the simple tiers; L3=60 stays the deep tier).
