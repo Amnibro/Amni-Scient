@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.465] - 2026-05-28 - Quiz Science L1: 33→37
+- Added 4 to Science quiz L1: Earth is our planet, blue whale (largest animal), plants need sunlight, gravity.
+- sw cache → v544; Android versionCode 501 / versionName 5.4.9.
+
 ## [5.7.464] - 2026-05-28 - Quiz Science L1: 29→33 (deepening L1-3 toward L4-5 parity)
 - Now lifting Science quiz L1-L3 (each at 29) toward L4/L5 depth (40) for internal consistency.
 - Added 4 to Science quiz L1: Sun is a star, plant roots, the 5 senses, oxygen.
