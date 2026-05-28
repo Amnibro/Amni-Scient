@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.487] - 2026-05-28 - Quiz Mythology L1: 28→32
+- Added 4 more myth-creature Qs to Mythology L1: vampire, kraken, goblin, Bigfoot/Sasquatch (with Yeti note).
+- Distinct from existing 28 entries (Zeus/Aphrodite/Poseidon/Minotaur/etc.).
+- sw cache → v566; Android versionCode 523 / versionName 5.7.1.
+
 ## [5.7.486] - 2026-05-28 - Quiz Weather L1: 28→32 (shallow-bank backlog starts)
 - Discovered 8 banks (weather/opposites/counting/shapes/colors/mythology/sports/space) are uniformly ~28 Qs/level vs deep-bank 40 floor — major lift backlog.
 - This iter: weather L1 +4 (tornado, drizzle, blizzard, sleet). Distinct weather phenomena, no dup with existing 28.
