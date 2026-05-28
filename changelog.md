@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.513] - 2026-05-28 - Quiz Space L4: 28→32
+- Added 4 L4-tier cosmology Qs: dark matter (~27%, galaxy rotation/lensing evidence), dark energy (~68%, 1998 Type-Ia supernovae acceleration), Drake equation (Milky Way alien civ estimate), Fermi paradox ('where is everybody?').
+- Distinct from existing 28 L4 (speed of light/Corona/Type-Ia/LIGO/Moon-gravity/Hubble's law/parallax/spectroscopy/Europa/Olympus Mons/exoplanets/etc.).
+- sw cache → v592; Android versionCode 549 / versionName 5.9.7.
+
 ## [5.7.512] - 2026-05-28 - Quiz Sports L4: 28→32
 - Added 4 L4-tier sports milestones: UEFA Champions League (Real Madrid 15+), Wayne Gretzky NHL all-time leader (#99 league-retired), Wilt Chamberlain's 100-pt game (1962), Lance Armstrong 7-Tour strip (2012 doping investigation).
 - Distinct from existing 28 L4 (1896 Olympics/Ashes/WC-4yr/Belmont/love-tennis/Bannister/Pelé/Djokovic/Title IX/Lombardi/yellow card/yellow jersey/Boston/Indy/willow/Daytona/Iditarod/4-slams/Heisman/VAR/Fosbury/field goal/Jesse Owens/Jackie Robinson/Tiger/Premier League).
