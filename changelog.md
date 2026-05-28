@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.632] - 2026-05-28 - Quiz Mythology L4: 40→44 (PASS-8 L4 sweep — 2 of 8)
+- Added 4 more L4 myth Qs: CERBERUS (3-headed Hades hound, Typhon+Echidna parents, only Orpheus/Heracles/Psyche pass, MIT Kerberos auth namesake), JÖRMUNGANDR (Norse World Serpent, Loki+Angrboða child, Thor's Ragnarök nemesis they kill each other, 2023 ichthyosaur fossil named for him), AMATERASU (Shinto sun goddess, hid in Ama-no-Iwato cave, Uzume's dance lured her out, Imperial Regalia mirror, Nihon=origin-of-sun), PROMETHEUS (Titan stole fire in fennel stalk, eagle eats liver daily, Mary Shelley's Modern Prometheus subtitle, element Pm-61 named for him).
+- Distinct from existing 40 L4 (Phoenix, Valhalla, Styx, Quetzalcoatl, Loki, Ganesha, Yggdrasil, Anansi, Coyote, Bunyip, Kraken, Banshee, Yeti, Leprechaun, Werewolf, Basilisk, Vampire, Hanuman, Naga, Selkie, Chaos, Egyptian heart-weighing, Heracles, Beowulf, Sun Wukong, Wendigo, Tiamat, Garuda, Kelpie, Tengu, Coatlicue, Maui, Pele, Mami Wata, Thunderbird, Djinn, Kitsune).
+- sw.js → v711. Android versionCode 668 / versionName 7.1.6.
+
 ## [5.7.631] - 2026-05-28 - Quiz Weather L4: 40→44 (PASS-8 L4 sweep OPENS — 1 of 8)
 - Added 4 more L4 weather Qs: JET STREAM (Ooishi 1923 + WWII B-29 discovery, polar+subtropical, Rossby waves, aviation eastbound saves fuel), ATMOSPHERIC RIVER (Zhu+Newell 1990s, Pineapple Express 50% Calif. precip in few events, 7-15× Mississippi flux, AR1-AR5 scale), DEW POINT vs RELATIVE HUMIDITY (absolute moisture, <13°C comfy >21°C oppressive, why 50% RH alone misleads), SUPERCELL THUNDERSTORM (mesocyclone 2-10km, hook echo + BWER + TVS, Tornado Alley, LP/Classic/HP classes).
 - Distinct from existing 40 L4 (Coriolis, downdraft, microburst, Saffir-Simpson, derecho, haboob, snow-roller, lake-effect, Beaufort, Fujita, dirty thunderstorms, ball lightning, foehn winds, eye+eyewall, virga, mammatus, katabatic, etc).
