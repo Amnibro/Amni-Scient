@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.422] - 2026-05-27 - Quiz Weather L3: 23→24
+- Added the water cycle to Weather quiz L3 — closes the last thin quiz bank from the scan.
+- sw cache → v501; Android versionCode 458 / versionName 5.0.6.
+
 ## [5.7.421] - 2026-05-27 - Quiz Colors L5: 20→24 + L4 dedup (Colors quiz complete)
 - Added 4 to Colors quiz L5: opponent-process theory, CRI, chromatic adaptation/white balance, bit-depth/banding.
 - Fixed adjacent-level duplicates: L4 metamerism→Purkinje effect, L4 tetrachromacy→trichromacy (both concepts already live in L5).
