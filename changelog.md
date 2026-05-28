@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.626] - 2026-05-28 - Quiz Colors L3: 40→44 (Version 7.1.0!)
+- Added 4 more L3 color Qs: indigo (Indigofera-leaves 5000yrs, Greek 'indikon', von Baeyer 1880s synthetic Nobel 1905, 80K-tons/yr 95% denim), arsenic green (Scheele 1775 + Paris 1814 copper arsenite, Napoleon's wallpaper death-suspect, Victorian killer-green wallpaper panic), Maya Blue (indigo+palygorskite-clay nano-tunnel-trapped, 1500+yr-durable Chichén Itzá murals).
+- Distinct from existing 40 L3 (color-mixing/ROYGBIV/aurora-colors/chameleon/Tyrian-purple/synesthesia/color-temp/pigment-dye/plants-green/birds-UV/cones-rods/Vantablack/ultramarine/metamerism/cochineal/etc).
+- sw cache → v705; Android versionCode 662 / versionName 7.1.0.
+
 ## [5.7.625] - 2026-05-28 - Quiz Space L3: 40→44
 - Added 4 more L3 space Qs: Sagittarius A* (Milky Way's 4.15M-solar-mass center BH, S2 star 16-yr orbit @ 7650 km/s, Nobel 2020, EHT image 2022), comet nucleus+coma+tails (ion vs dust tails, tails always-away-from-Sun), Enceladus tiger-stripe geysers (Cassini 2005 discovery, subsurface ocean, JUICE follow-up, primordial soup ingredients), OSIRIS-REx (Bennu sample 250g returned Sept-2023, hydrated minerals + amino acids, OSIRIS-APEX → Apophis 2029).
 - Distinct from existing 40 L3 (8min-sunlight/gravity/asteroid-belt/Ganymede/Pluto/Proxima/Moon-phases/AU/black-hole/supernova/aurora/ISS/light-year/Sirius/Polaris/meteor-types/Andromeda/etc + Kepler/heliopause/interstellar/habitable-zone).
