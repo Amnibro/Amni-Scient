@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.484] - 2026-05-28 - Quiz Engineering L1: 36→40 (matches L4=40)
+- Added 4 more simple engineering Qs to L1: flashlight LED bulb, tire tread + aquaplaning, parachute drag, radio antenna picks up EM waves.
+- L1 now 40 — matches L4=40, near L2=41 / L5=41 (bank parity achieved across the simple tiers; L3=60 stays the deep tier).
+- sw cache → v563; Android versionCode 520 / versionName 5.6.8.
+
 ## [5.7.483] - 2026-05-28 - Quiz Engineering L1: 32→36 (rich-bank lift)
 - Added 4 simple physics/engineering Qs to Engineering L1: buoyancy/float, batteries store energy, thermometer measures temperature, gravity keeps satellites in orbit.
 - L1 now 36 vs L2=41 / L4=40 / L5=41 (closer to bank parity; L3=60 stays the deep tier).
