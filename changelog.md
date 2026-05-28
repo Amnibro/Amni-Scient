@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.7.621] - 2026-05-28 - Quiz Opposites L2: 40→44 (🎉 PASS-8 L2 SWEEP COMPLETE — all 8 banks at 44 for L1+L2!)
+- Added 4 more L2 opposite Qs: build↔destroy (entropy thermodynamics 2nd law, Legos build-then-kick-over, civil engineering months-vs-hours), agree↔disagree ('agree-to-disagree' peaceful coexistence, consensus voting, 'I beg to differ'), save↔spend (50/30/20 rule, compound interest Einstein 'eighth wonder', Franklin 'penny saved'), remember↔forget (Miller 7±2 short-term, Ebbinghaus 1885 forgetting curve 50% in 1hr, forget-me-nots).
+- Distinct from existing 40 L2 (tall/light/full/wet/easy/soft/push/give/sit/loud/heavy/good/clean/strong/etc + inhale/borrow/attack/arrive).
+- PASS-8 L2 SWEEP COMPLETE: all 8 banks at 44-question floor for L1 + L2. +64 new Qs in pass-8 so far (32 each × 2 levels).
+- sw cache → v700; Android versionCode 657 / versionName 7.0.5.
+
 ## [5.7.620] - 2026-05-28 - Quiz Counting L2: 40→44
 - Added 4 more L2 number Qs: cardinal vs ordinal (1 vs 1st, monarchs use Roman ordinals 'the Eighth', dates), 365 days (Gregorian leap rule divisible-by-4-not-by-100-unless-400; 2000 leap, 1900 not), 11×11=121 (split-and-fill trick for 11× tables, perfect-squares 121/144/169/196/225), miles→km 1.609 (Roman 'mille passus' 1000 paces, US-UK metric holdouts, nautical mile 1.852).
 - Distinct from existing 40 L2 (count-emoji-6-10/add/sub/mult/half/Roman/even-odd/score/gross/cents/dozen/prime/million/quarter/negative/etc).
