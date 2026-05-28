@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.590] - 2026-05-28 - Quiz Weather L4: 36→40 (PASS-7 L4 sweep begins)
+- Added 4 more L4 weather Qs: hurricane eye+eyewall (30-65km calm-center + fiercest-winds ring, Typhoon Tip 870hPa record, eyewall replacement cycles, P-3 hunters), virga (precipitation evaporates before ground, dry desert SW, dry microbursts), mammatus clouds ('mamma' breast pouches under cumulonimbus anvils, golden sunset photo target, Titan nitrogen-cloud documented!), katabatic winds (Antarctic gravity-driven downhill cold, Commonwealth Bay 240km/h windiest place, Mistral/Bora variants).
+- Distinct from existing 36 L4 (troposphere/barometer/anemometer/hygrometer/Saffir-Simpson/Fujita/aurora/Coriolis/ozone/greenhouse/cirrus/dew-point/humidity/sea-level-pressure/trade-winds/Hadley-Ferrel-Polar/mesocyclone/Beaufort/storm-surge/atmospheric-river/albedo/adiabatic/polar-vortex/wet-bulb/cloud-seeding/Chinook/ITCZ/lightning-NLDN/CAPE/heat-dome/derecho/microburst).
+- sw cache → v669; Android versionCode 626 / versionName 6.7.4.
+
 ## [5.7.589] - 2026-05-28 - Quiz Opposites L3: 36→40 (PASS-7 L3 SWEEP COMPLETE — all 8 shallow banks at 40-floor L1+L2+L3!)
 - Added 4 more L3 opposite Qs: input↔output (engineering I/O, amplifier signal, black-box), horizontal↔vertical (gravity-defines-vertical, landscape/portrait screens), import↔export (trade balance, GDP net-X, tariffs, USA-deficit-since-1975), micro↔macro (Greek size prefixes, SI 10⁻⁶, economics individual-vs-whole-economy).
 - Distinct from existing 36 L3 (brave/gentle/polite/ancient/sharp/begin/above/win/fresh/near/empty/wet/simple/visible/healthy/cheap/awake/calm/birth/guilty/temporary/artificial/abundant/flexible/public/positive/junior/north/optimist/question/liquid/active/east/internal/forward/inhale).
