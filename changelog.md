@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.489] - 2026-05-28 - Quiz Space L1: 28→32
+- Added 4 more space Qs to Space L1: comet (icy tail), constellation (Big Dipper), black hole, Milky Way (our galaxy).
+- Distinct from existing 28 (planets/Moon/Sun/eclipses/galaxy/telescope etc.).
+- sw cache → v568; Android versionCode 525 / versionName 5.7.3.
+
 ## [5.7.488] - 2026-05-28 - Quiz Sports L1: 28→32
 - Added 4 more sport-intro Qs to Sports L1: badminton (shuttlecock), skateboarding, rowing, archery.
 - Distinct from existing 28 sport intros.
