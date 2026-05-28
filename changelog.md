@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.529] - 2026-05-28 - Quiz Space L1: 32→36
+- Added 4 more L1 space concepts: rocket (Newton's 3rd law, Saturn V/Falcon 9), Pluto (2006 demoted to dwarf planet), Big Dipper / Ursa Major (Polaris pointer), Sun is actually WHITE from space (atmospheric scattering makes it look yellow).
+- Distinct from existing 32 L1 (Earth/8 planets/Mercury/Saturn/Sun/stars/astronaut/Moon/day-night/blue sky/Galileo/Moon phases/Sun=star/meteor/eclipses/galaxy/telescope/ellipse/vacuum/comet/constellation/black hole/Milky Way).
+- sw cache → v608; Android versionCode 565 / versionName 6.1.3.
+
 ## [5.7.528] - 2026-05-28 - Quiz Sports L1: 32→36
 - Added 4 more simple-tier sport intros: karate (empty-hand Japanese MA), rock climbing (Olympic Tokyo 2020), Ultimate Frisbee (Wham-O 1968), horseback riding (equestrian).
 - Distinct from existing 32 L1 (basketball/soccer/tennis/baseball/hockey/swim/track/cycle/gym/football/surf/bowl/ski/snowboard/box/wrestle/cricket/hockey-field/lacrosse/golf/Olympics/volleyball/table tennis/badminton/skate/row/archery + various FAQs).
