@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.7.521] - 2026-05-28 - 🎯 sw v600 milestone: Quiz Space L5 28→32
+- **sw v600 milestone** — 600 service-worker cache bumps since the long-improvements campaign began.
+- Added 4 L5-tier cosmology Qs: Planck length (~10⁻³⁵ m quantum-gravity scale), wormhole (Einstein-Rosen bridge), Olbers' paradox (dark sky as Big-Bang evidence), Boltzmann brain paradox (cosmology argument).
+- Distinct from existing 28 L5 (CMB-temp/Schwarzschild/Hubble/Chandrasekhar/13.8Gyr/parsec/Penrose-Hawking/Drake/inflation/dark matter/dark energy/Hawking radiation/ΛCDM/anthropic/multiverse/cosmic web/reionization/3 fates/holographic/string theory/pulsar/gravitational waves/Lagrange/redshift).
+- Android versionCode 557 / versionName 6.0.5.
+
 ## [5.7.520] - 2026-05-28 - Quiz Sports L5: 28→32
 - Added 4 L5-tier sports legends: Larisa Latynina (USSR 18 medals, pre-Phelps record), Jim Thorpe (1912 dec+pent gold, posthumously restored), Babe Didrikson Zaharias (multi-sport AP F-athlete of half-century), 2008 Wimbledon Nadal-Federer greatest final.
 - Distinct from existing 28 L5 (Phelps/triple-double/cricket-Test/Hines/F1-GS/Wilt/Beamon/Jordan-6-0/Comăneci/Babe-Ruth-called-shot/Isner-Mahut/Pelé/Lance×7/Bonds/Ali-Frazier/Brady/Flo-Jo/Gretzky/Miracle-Ice/Hand of God/checkmate/Bannister/Federer-20/Tony Hawk 900/Merckx/Bosman).
