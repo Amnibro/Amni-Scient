@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.553] - 2026-05-28 - Quiz Space L4: 32→36
+- Added 4 L4-tier cosmology Qs: spaghettification (black-hole tidal stretch), Goldilocks zone (habitable-water orbital range), Voyager 1 most-distant human object (~163 AU), Hubble tension (~9% H₀ mismatch CMB vs SNe).
+- Distinct from existing 32 L4 (c/Corona/Type-Ia/LIGO/Moon gravity/H abundance/4.6Gyr/Lagrange/Kepler/JWST/neutron star/pulsar/quasar/Europa/Olympus Mons/Hubble Law/parallax/spectroscopy/supernova/exoplanet/ISS/eclipse/nebula/Sun fate/Big Bang/dark matter/dark energy/Drake/Fermi paradox).
+- sw cache → v632; Android versionCode 589 / versionName 6.3.7.
+
 ## [5.7.552] - 2026-05-28 - Quiz Sports L4: 32→36
 - Added 4 L4-tier sports milestones: WNBA founded 1996 / first season 1997, NBA logo silhouette = Jerry West, Secretariat 1973 Triple Crown (Belmont 31 lengths), Magic-Bird 1979 NCAA final saved the NBA.
 - Distinct from existing 32 L4 (1896 Olympics/Ashes/WC/Belmont/love/Bannister/Pelé/Djokovic/Title IX/Lombardi/yellow card/yellow jersey/Boston/Indy/willow/Daytona/Iditarod/4 slams/Heisman/VAR/Fosbury/field goal/Jesse Owens/Jackie Robinson/Tiger/Premier League/UEFA Champions League/Gretzky/Chamberlain/Lance Armstrong).
