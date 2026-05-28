@@ -1,5 +1,8 @@
 ﻿# Changelog 
 
+## [5.7.704] - 2026-05-28 - Quiz Counting L3 catchup: +1 to reach floor 48
+- Counting L3 +1 to actually hit floor: added LOGARITHMS entry (Napier 1614 'Mirifici Logarithmorum Canonis Descriptio,' Briggs 1617 base-10, slide rules 1622 Oughtred, Laplace 'doubled the life of the astronomer,' ln(x) base e ≈ 2.71828 Bernoulli 1683, Richter + decibel + pH + Shannon entropy + Moore's Law + ML loss, log scales reveal exponential as straight lines, log(a×b)=log(a)+log(b) revolutionary identity).
+
 ## [5.7.703] - 2026-05-28 - Quiz Counting L3: 44→48 (PASS-11 counting sweep — second lift, completes L3 to floor)
 - Counting L3 second lift 44→48 (was lifted to 44 in v701, now to pass-11 floor of 48). Added 4 fresh L3 mathematical breadth Qs after NUMBER HIERARCHY entry: MODULAR ARITHMETIC ('clock math,' Gauss 1801 Disquisitiones Arithmeticae age 24 introduced ≡ congruence, RSA + check digits + LUHN + hash funcs + LCG random + calendar + 12-tone music + Fermat's Little Theorem aᵖ⁻¹≡1 mod p + Chinese Remainder Theorem ~3rd century AD), PIGEONHOLE PRINCIPLE (Dirichlet 1834 box principle, n+1 items in n containers → some has ≥2, NYC 8M ppl 2+ share hair-strand count, Erdős-Szekeres n²+1 monotonic subseq, used combinatorics + hash collisions + Dirichlet diophantine approx + compression limits), GOLDEN RATIO φ=(1+√5)/2≈1.618 (Euclid Elements II 'extreme + mean ratio' 300 BC, Martin Ohm 1835 'golden,' Fibonacci ratios → φ, sunflower 21+34 or 34+55 spirals, pinecones+nautilus+DNA, Parthenon claims often post-hoc numerology, pentagon diagonal:side exactly φ, continued fraction 1+1/(1+1/(1+...)) 'most irrational').
 
