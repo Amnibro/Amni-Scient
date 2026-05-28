@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.566] - 2026-05-28 - Quiz Weather L1: 36→40 (PASS-7 begins — toward deep-bank 40 floor)
+- Added 4 more L1 simple-weather Qs: sunscreen (SPF UV protection), scarf (cold-day neck warmth), sunglasses (UV400 + glare), windy days for kites/sailing.
+- Distinct from existing 36 L1 (sunny/rainy/snowy/cloudy/wind/rainbow/thunder/cloud/air/fog/puddles/snowman/umbrella/thermometer/freezing/leaves/kite/coat/spring/hail/hurricane/dew/frost/tornado/drizzle/blizzard/sleet/lightning/mist/heat wave/rain boots).
+- sw cache → v645; Android versionCode 602 / versionName 6.5.0.
+
 ## [5.7.565] - 2026-05-28 - 🏁 Quiz Opposites L5 32→36 — PASS-6 COMPLETE!
 - Added 4 L5 advanced conceptual pairs: empiricism vs rationalism (Locke/Hume vs Descartes), Kahneman System 1 fast / System 2 slow (Thinking Fast and Slow), genotype vs phenotype (genes vs expressed traits), Stoicism vs Epicureanism (virtue vs tranquility-pleasure).
 - **🏁 PASS-6 SWEEP COMPLETE** — ALL 40 shallow-bank quiz levels lifted 32 → 36 = **160 new Qs added across 40 commits** in pass 6. Combined with passes 1-5 (200 added) = **360 total Qs added to shallow banks since the campaign began**.
