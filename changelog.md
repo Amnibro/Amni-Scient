@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.539] - 2026-05-28 - Quiz Shapes L2: 32→36
+- Added 4 L2-tier geometry Qs: nonagon (9 sides, Bahá'í Lotus Temple), quadrilateral umbrella term (square/rect/rhombus/parallelogram/etc.), diameter through center, reflex angle (180-360°).
+- Distinct from existing 32 L2 (triangle/square/pentagon/hex/star/circle/semicircle/rhombus/oval/parallelogram/trapezoid/octagon/right-tri/equilateral/isosceles/symmetry/polygon/2D-3D/sphere/cube/regular/360°/acute/heptagon/scalene/cuboid/obtuse/decagon/radius/tessellation).
+- sw cache → v618; Android versionCode 575 / versionName 6.2.3.
+
 ## [5.7.538] - 2026-05-28 - Quiz Colors L2: 32→36
 - Added 4 L2-tier color names: navy blue (Royal Navy 1748), olive (yellow-green camo), coral (Pantone 2019), amber (fossilized tree sap, Jurassic Park).
 - Distinct from existing 32 L2 (orange/purple/brown/black/white/pumpkin/chocolate/gray/pink/magenta/cyan/beige/lavender/salmon/turquoise/maroon/indigo/warm-cool etc.).
