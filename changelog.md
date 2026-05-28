@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.653] - 2026-05-28 - Quiz Math L2: 40→44 (PASS-9 math sweep — 2 of 5)
+- Added 4 more L2 math Qs: PEMDAS/BODMAS order (Parens, Exponents, Mult/Div LR, Add/Sub LR, "Please Excuse My Dear Aunt Sally", 8÷2(2+2)=16 viral debate), AREA CIRCLE πr² (vs circumference 2πr, Archimedes method of exhaustion ~250 BC, sphere 4πr²+⁴⁄₃πr³, ellipse πab), ROMAN NUMERALS IX=9 (I=1 V=5 X=10 L=50 C=100 D=500 M=1000, subtraction IV/IX/XL/CM, MMXXIV=2024, Super Bowl LVIII=58, monarchs Louis XIV), NEGATIVE × NEGATIVE = POSITIVE (distributive-law consistency, number-line flip twice, pattern step, debt-cancel intuition, (−2)³=−8 odd power keeps sign).
+- Distinct from existing 40 L2 (7×8, half-80, hexagon 6, 25%, pentagon, 144÷9, right angle 90°, perimeter, fractions, cube edges 12, 9², 12÷4, etc.).
+- sw.js → v732. Android versionCode 689 / versionName 7.3.7.
+
 ## [5.7.652] - 2026-05-28 - Quiz Math L1: 39→44 (PASS-9 math sweep OPENS, +5 to reach floor)
 - Math L1 was at 39 entries (1 below 40 baseline + 5 below 44 floor). Added 5 fresh L1 math Qs (one extra to repair gap): 4 SEASONS (spring/summer/fall/winter, Earth tilt 23.5° causes them, equator barely varies, polar extremes), 24 HOURS/DAY (Earth rotation period, 86,400 seconds, Babylonian base-60 → 24×60×60 still in use), 6+6=12 (double, also months/inches per foot/eggs in dozen), 100>99 (first 3-digit, 10×10 perfect square, century).
 - Distinct from existing 39 L1 (triangle 3 sides, ball sphere, 7>3, square 4 corners, etc.).
