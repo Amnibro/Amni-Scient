@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.603] - 2026-05-28 - Quiz Shapes L5: 36→40
+- Added 4 more L5 shape Qs: Hopf fibration (1931 S³ as linked-circle bundle over S², qubit Bloch sphere, twistor theory), Calabi-Yau manifolds (Yau Fields-Medal 1982, 6D string compactifications, 10⁵⁰⁰ landscape), Minkowski spacetime (Einstein's old prof 1908, ds²=-c²dt²+dx²+dy²+dz², 'space + time fade into union'), hyperbolic paraboloid (Pringle saddle, doubly-ruled straight-beams-curved-surface, Munich Olympic roof / Calgary Saddledome).
+- Distinct from existing 36 L5 (n-gon-angles/π/Pythagorean/circle-formulas/sphere-formulas/Platonic-solids/Euler-VEF/regular-tilings/Penrose/hyperbolic/spherical/Möbius/Klein/fractal/golden-ratio/Fibonacci/4-color-theorem/non-Euclidean/tesseract/Voronoi/Hairy-Ball/Banach-Tarski/topology/knot-theory/Mandelbrot/Borromean/Poincaré/Cantor/Kepler/Mercator).
+- sw cache → v682; Android versionCode 639 / versionName 6.8.7.
+
 ## [5.7.602] - 2026-05-28 - Quiz Colors L5: 36→40
 - Added 4 more L5 color Qs: blackbody radiation (Planck's law launched QM, OBAFGKM stellar mnemonic, peak λ=2898/T), pointillism (Seurat 'Grande Jatte' 3M dots, Chevreul+Rood color science, anticipated subpixels), Benham's Disk (1894 illusory color from B+W rotation, mechanism still debated 130yrs), melanopsin (2000 Provencio ipRGCs blue-light circadian, suppresses melatonin → night-shift/blue-filters).
 - Distinct from existing 36 L5 (hex codes/wavelengths/CMYK/HSL/gamma/sRGB/CIE-1931/CIELAB/ΔE/metamerism/Bayer/subpixel/tetrachromacy/quantum-dots/opponent-process/CRI/white-balance/bit-depth/photopic-scotopic/D65/ICC/Munsell/visible-spectrum/polarized/UV-bands/Stokes/Fraunhofer/laser/birefringence/Tyndall).
