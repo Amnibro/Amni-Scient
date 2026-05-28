@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.616] - 2026-05-28 - Quiz Sports L2: 40→44 (Version 7.0.0!)
+- Added 4 more L2 sports Qs: Paralympics (Stoke Mandeville 1948 → Rome 1960, Oscar Pistorius 2012 blades, vs Special Olympics distinct), 1930 Uruguay World Cup (100th-indep-day, Estadio Centenario, Jules Rimet trophy STOLEN 1983), wrestling styles (freestyle leg-attacks vs Greco-Roman upper-body-only, 1904 vs 1896 Olympic, women's Greco-Roman still not Olympic), ODI cricket (50 overs, 2019 WC boundary-count tiebreak controversy, Test/ODI/T20 formats).
+- Distinct from existing 40 L2 (Olympics/soccer/Super-Bowl/Tour-de-France/Golf/etc + America's-Cup/biathlon/wicket/squash).
+- sw cache → v695; Android versionCode 652 / versionName 7.0.0.
+
 ## [5.7.615] - 2026-05-28 - Quiz Mythology L2: 40→44
 - Added 4 more L2 mythology Qs: Polyphemus (Odyssey 1-eyed Cyclops, 'NOBODY' wine trick, Poseidon's curse 10 more years), Scylla+Charybdis (Strait of Messina narrow strait, 6-headed cliff vs whirlpool, Circe's advice 'sacrifice 6'), Harpies ('snatchers' woman-headed birds tormenting blind Phineas, Argonauts drove them off), Bellerophon (tamed Pegasus with Athena's golden bridle, killed Chimera with melted-lead-spear, hubris-fall flying to Olympus).
 - Distinct from existing 40 L2 (Mars/Ares/Hera/Dionysus/Persephone/Demeter/Artemis/Atlas/Romulus/Janus/Trojan-War/Odysseus/Theseus/Jason/Thor/Loki/Anubis/Prometheus/Midas/Icarus/Odin/Achilles/Perseus/Osiris/Sisyphus/Olympus/Erinyes/Asclepius/Hesperides/Moirai/Charon/Orpheus/Chimera).
