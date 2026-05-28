@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.571] - 2026-05-28 - Quiz Shapes L1: 36→40
+- Added 4 more L1 simple-tier shape Qs: zigzag (lightning bolt path-of-least-resistance, Greek ZETA), ♣ club (3-circle-stem playing card suit, French 'trèfle'=clover), ∞ infinity (Wallis 1655 lemniscate, Cantor 1874 many sizes), 🍩 torus (donut/bagel/O-ring/tokamak fusion reactor, topologically distinct from sphere).
+- Distinct from existing 36 L1 (circle/square/triangle/star/heart/cube/sphere/pentagon/hexagon/etc).
+- sw cache → v650; Android versionCode 607 / versionName 6.5.5.
+
 ## [5.7.570] - 2026-05-28 - Quiz Colors L1: 36→40
 - Added 4 more L1 simple-tier color Qs: carrot (orange/beta-carotene/Dutch House-of-Orange breeding story), pig (pink from blood-vessels-through-pale-skin, wild boars actually brown/black), crows+ravens (black/melanin/smartest birds/Norse Huginn+Muninn/'a murder' group noun), night sky (black/light-pollution-vs-dark-sky/Olbers' paradox finite-age universe).
 - Distinct from existing 36 L1 (red/blue/yellow/green/orange/snow/clouds/tiger/zebra/jeans/etc).
