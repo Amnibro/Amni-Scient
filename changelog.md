@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.551] - 2026-05-28 - Quiz Mythology L4: 32→36
+- Added 4 L4 cross-cultural myth Qs: Maui (Polynesian trickster — lassoed Sun, Disney Moana), Pele (Hawaiian volcano goddess, Kilauea), Mami Wata (West African + diaspora water mother), Thunderbird (Native American thunder-and-lightning bird, Pacific NW totem).
+- Distinct from existing 32 L4 (Phoenix/Valhalla/Styx/Quetzalcoatl/Loki/Ganesha/Yggdrasil/Anansi/Coyote/Bunyip/Kraken/Banshee/Yeti/Leprechaun/Werewolf/Basilisk/Vampire/Hanuman/Naga/Selkie/Chaos/heart-feather/Heracles/Beowulf/Sun Wukong/Wendigo/Tiamat/Garuda/Kelpie/Tengu/Coatlicue).
+- sw cache → v630 (milestone); Android versionCode 587 / versionName 6.3.5.
+
 ## [5.7.550] - 2026-05-28 - Quiz Weather L4: 32→36 (pass-6 L4 begins)
 - Added 4 L4-tier meteorology Qs: CAPE convective energy (storm forecast), heat dome (Pacific NW 2021), derecho ('inland hurricane' Aug 2020 Iowa), microburst (aviation hazard, Delta 191).
 - Distinct from existing 32 L4 (troposphere/barometer/anemometer/hygrometer/Saffir-Simpson/Fujita/aurora/Coriolis/ozone/greenhouse/cirrus/dew point/humidity/atm pressure/trade winds/Hadley/mesocyclone/Beaufort/storm surge/atmospheric river/El Niño/albedo/adiabatic/polar vortex/wet-bulb/cloud seeding/Chinook/ITCZ/lightning detection).
