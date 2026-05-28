@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.7.500] - 2026-05-28 - 🎯 v500 milestone: Quiz Counting L2 28→32
+- 500-iteration milestone! Loop-pacing has shipped 500 commits since the long-improvements campaign began.
+- Added 4 L2 number-vocab Qs: largest 2-digit=99, 9 is odd, Roman X=10, score=20 (Lincoln's Gettysburg).
+- Distinct from existing 28 L2 (count emojis/before-after/time/cents/dozen/even-odd-8) + 32 L1.
+- sw cache → v579; Android versionCode 536 / versionName 5.8.4.
+
 ## [5.7.499] - 2026-05-28 - Quiz Shapes L2: 28→32
 - Added 4 L2-tier geometry Qs: obtuse angle (>90°), decagon (10 sides), radius/diameter/circumference relations + π, tessellation (Escher / honeycomb tiles).
 - Distinct from existing 28 L2 (triangle/square/hex/oct/poly basics + angle/symmetry/regular-poly) + 32 L1.
