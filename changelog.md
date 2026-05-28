@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.474] - 2026-05-28 - Quiz Math L5: 33→37
+- Added 4 to Math quiz L5: generalized Stokes' theorem, Markov chains, Shannon entropy, pigeonhole principle.
+- sw cache → v553; Android versionCode 510 / versionName 5.5.8.
+
 ## [5.7.473] - 2026-05-28 - Quiz Math L5: 29→33 (lifting bank outlier toward midpoint)
 - Sorted scan ranked math L5=29 the clearest single-level outlier in any rich bank.
 - Added 4 to Math quiz L5: Cantor's diagonal argument, Fourier transform, Monte Carlo method, Bayes' theorem.
