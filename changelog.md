@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.592] - 2026-05-28 - Quiz Sports L4: 36→40
+- Added 4 more L4 sports Qs: Babe Ruth (714 HR, 1920 live-ball pivot, Curse of the Bambino 86-yr Red Sox drought), Serena Williams (23 open-era WTA slams, 2017 Australian preg-win, Venus sisters' 9 SS finals), Schumacher+Hamilton (F1 7-titles each, Hamilton 105+ wins/1st-Black-driver, '21 Abu Dhabi controversy), Nadal King-of-Clay (14 Roland Garros, 112-4 record 96.5%, Big Three).
+- Distinct from existing 36 L4 (1896-Olympics/Ashes/FIFA-4yr/Triple-Crown/love/3-pointer/Bannister-mile/Pelé-3-cups/Djokovic-24/Title-IX/Lombardi/yellow-card/TdF-jersey/Boston-Marathon/Indy-500/willow-bat/Daytona/Iditarod/4-slams/Heisman/VAR/checkered/Fosbury/field-goal/Jesse-Owens/Jackie-Robinson/Tiger-Woods/Premier-League/UCL/Gretzky/Wilt-100/Armstrong/WNBA/Jerry-West-logo/Secretariat/Magic-Bird).
+- sw cache → v671; Android versionCode 628 / versionName 6.7.6.
+
 ## [5.7.591] - 2026-05-28 - Quiz Mythology L4: 36→40
 - Added 4 more L4 mythology Qs: Wendigo (Algonquian winter-cannibal, more-it-eats-hungrier, 'wendigo psychosis' disputed dx), djinn/jinn (Quranic smokeless-fire beings, Iblis, free-will Muslim/non-Muslim, Aladdin softened import), kitsune (Japanese fox-spirit gains tail/100yrs, 9-tail kyūbi peak, zenko-vs-yako, Inari-shrine messengers, Ninetales/Naruto), Tiamat (Babylonian Enuma Elish chaos dragon split by Marduk → sky+earth, D&D dragon-goddess).
 - Distinct from existing 36 L4 (Phoenix/Valhalla/Styx/Quetzalcoatl/Loki/Ganesha/Yggdrasil/Anansi/Coyote/Bunyip/Kraken/Banshee/Yeti/Leprechaun/Werewolf/Basilisk/Vampire/Hanuman/Naga/etc + Coatlicue/Maui/Pele/Mami-Wata/Thunderbird).
