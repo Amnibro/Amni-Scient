@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.436] - 2026-05-27 - Quiz Mythology L4: 24→28 + L3 dedup pass
+- Added 4 to Mythology quiz L4: Beowulf vs Grendel, Sun Wukong (Monkey King), the Wendigo, Tiamat.
+- Fixed v5.7.435 L3 cross-level dups (Yggdrasil/Anansi/Hanuman all already lived in L4): swapped to King Arthur, Krishna, Cthulhu. Valkyries kept (only mentioned-in-context in L4).
+- sw cache → v515; Android versionCode 472 / versionName 5.2.0.
+
 ## [5.7.435] - 2026-05-27 - Quiz Mythology L3: 24→28
 - Added 4 to Mythology quiz L3: Yggdrasil, Valkyries, Anansi, Hanuman.
 - sw cache → v514; Android versionCode 471 / versionName 5.1.9.
