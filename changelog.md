@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.454] - 2026-05-27 - Quiz Weather L1: 24→28
+- Added 4 to Weather quiz L1: hail, hurricane, dew, frost.
+- sw cache → v533; Android versionCode 490 / versionName 5.3.8.
+
 ## [5.7.453] - 2026-05-27 - Quiz Shapes L5: 24→28 (Shapes quiz now 28×5)
 - Added 4 to Shapes quiz L5: tesseract (4D hypercube), Voronoi diagrams, Hairy Ball theorem, Banach–Tarski paradox.
 - All 5 Shapes quiz levels now at 28 each.
