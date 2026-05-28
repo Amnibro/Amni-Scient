@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.512] - 2026-05-28 - Quiz Sports L4: 28→32
+- Added 4 L4-tier sports milestones: UEFA Champions League (Real Madrid 15+), Wayne Gretzky NHL all-time leader (#99 league-retired), Wilt Chamberlain's 100-pt game (1962), Lance Armstrong 7-Tour strip (2012 doping investigation).
+- Distinct from existing 28 L4 (1896 Olympics/Ashes/WC-4yr/Belmont/love-tennis/Bannister/Pelé/Djokovic/Title IX/Lombardi/yellow card/yellow jersey/Boston/Indy/willow/Daytona/Iditarod/4-slams/Heisman/VAR/Fosbury/field goal/Jesse Owens/Jackie Robinson/Tiger/Premier League).
+- sw cache → v591; Android versionCode 548 / versionName 5.9.6.
+
 ## [5.7.511] - 2026-05-28 - Quiz Mythology L4: 28→32
 - Added 4 cross-cultural L4 myth Qs: Garuda (Hindu Vishnu-mount eagle, Indonesia symbol), Kelpie (Scottish water-horse drowner), Tengu (Japanese mountain spirit with long red nose), Coatlicue (Aztec earth-mother with snake-skirt).
 - Distinct from existing 28 L4 (Phoenix/Valhalla/Styx/Quetzalcoatl/Loki/Ganesha/Yggdrasil/Anansi/Bunyip/Kraken/Banshee/Yeti/Leprechaun/Werewolf/Basilisk/Vampire/Hanuman/Naga/Selkie/Beowulf/Sun Wukong/Wendigo/Tiamat).
