@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.611] - 2026-05-28 - Quiz Shapes L1: 40→44
+- Added 4 more L1 simple-tier shape Qs: cloud shape (curved-bump outline, iCloud/AWS logos), bowtie (2 tri-tips joined, Einstein/Bond/Doctor-Who, 17th-cent Croatian cravat), key shape (bow+shaft+teeth, Egypt 4000 BC → Yale 1865 modern), anchor shape (shank+stock+fluke arms, symbol of hope, supertankers 30+ tons).
+- Distinct from existing 40 L1 (circle/square/triangle/star/heart/cube/sphere/pentagon/hexagon/zigzag/club/infinity/torus/etc).
+- sw cache → v690; Android versionCode 647 / versionName 6.9.5.
+
 ## [5.7.610] - 2026-05-28 - Quiz Colors L1: 40→44
 - Added 4 more L1 simple-tier color Qs: ladybug red+black (aposematism warning, 7-spot European default, 50-aphids/day farmer-favorite), cardinal bird red (state-bird 7-states, Catholic cardinals' robes namesake, redder=healthier), polar bear translucent-white-hair (BLACK skin underneath, algae-green in zoos!), skunk black+white (aposematism, 3m spray with sulfur-thiols, Krebaum 1993 H₂O₂+baking-soda+Dawn formula).
 - Distinct from existing 40 L1 (red/blue/yellow/green/orange/snow/clouds/tiger/zebra/jeans/carrot/pig/crow/night-sky/etc).
