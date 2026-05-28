@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.435] - 2026-05-27 - Quiz Mythology L3: 24→28
+- Added 4 to Mythology quiz L3: Yggdrasil, Valkyries, Anansi, Hanuman.
+- sw cache → v514; Android versionCode 471 / versionName 5.1.9.
+
 ## [5.7.434] - 2026-05-27 - Quiz Mythology L2: 24→28
 - Added 4 to Mythology quiz L2: Prometheus, King Midas, Icarus, Odin.
 - sw cache → v513; Android versionCode 470 / versionName 5.1.8.
