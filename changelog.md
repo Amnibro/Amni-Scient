@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.572] - 2026-05-28 - Quiz Counting L1: 36→40
+- Added 4 more L1 simple-tier counting Qs: 2+2=4 (with Orwell 1984 footnote on 2+2=5 totalitarian metaphor), 10−1=9 (countdown subtraction), spider 8 legs (arachnid vs insect-6, hydraulic legs), 4 seasons (axial tilt 23.5° drives spring/summer/fall/winter, tropics vs polar extremes).
+- Distinct from existing 36 L1 (count emoji 1-5, fingers/wheels/sides/dozen/hours/seconds/etc).
+- sw cache → v651; Android versionCode 608 / versionName 6.5.6.
+
 ## [5.7.571] - 2026-05-28 - Quiz Shapes L1: 36→40
 - Added 4 more L1 simple-tier shape Qs: zigzag (lightning bolt path-of-least-resistance, Greek ZETA), ♣ club (3-circle-stem playing card suit, French 'trèfle'=clover), ∞ infinity (Wallis 1655 lemniscate, Cantor 1874 many sizes), 🍩 torus (donut/bagel/O-ring/tokamak fusion reactor, topologically distinct from sphere).
 - Distinct from existing 36 L1 (circle/square/triangle/star/heart/cube/sphere/pentagon/hexagon/etc).
