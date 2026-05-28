@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.7.662] - 2026-05-28 - Quiz Music L5: 40→44 (PASS-10 music sweep COMPLETE — Music bank now at 44 for needed levels)
+- Added 4 fresh L5 research-tier music Qs: SCHENKER ANALYSIS (Austrian 1868-1935, Ursatz 3̂-2̂-1̂ or 5̂-4̂-3̂-2̂-1̂ + I-V-I bass, hierarchical Zug reductions, Phil Ewell 2020 racial-views critique, jazz reharmonization), LEITMOTIF (Wagner Ring 17 hours systematized, characters+objects+abstracts get themes, John Williams Star Wars Imperial March + Howard Shore LotR ~90 motifs), NEO-RIEMANNIAN PLR (David Lewin 1980s, P=parallel-major-minor, L=leading-tone exchange, R=relative, Tonnetz hexagonal lattice torus surface, late-Romantic chromaticism + ET flying theme), ALEATORIC MUSIC (Cage Music of Changes 1951 I-Ching + 4'33" 1952, Stockhausen Klavierstück XI 19 fragments random order, Mozart Musikalisches Würfelspiel 1787 forerunner, Lutosławski controlled aleatoric, Eno Music for Airports).
+- Distinct from existing 40 L5 (serialism operations P/I/R/RI, Crumb Black Angels, just intonation 4:5:6, Forte set theory, Górecki Symphony 3, holy minimalism, 12-tone matrix, Cardew Treatise, Ligeti Lux Aeterna 2001 monolith).
+- **Music bank PASS-10 needed levels COMPLETE** (L4+L5 lifted to 44; L1=52 + L2=61 + L3=61 already above floor).
+- sw.js → v741. Android versionCode 698 / versionName 7.4.6.
+
 ## [5.7.661] - 2026-05-28 - Quiz Music L4: 40→44 (PASS-10 music sweep — 1 of 2)
 - Added 4 fresh L4 advanced music Qs: CIRCLE OF FIFTHS (Diletsky 1670 "Grammatika", clockwise 5ths +sharps, CCW 4ths +flats, relative minors inside, jazz ii-V-I cycles), SONATA FORM (Haydn/Mozart/Beethoven classical, exposition→development→recapitulation+coda, key tension tonic→dominant→resolution, evolved from Baroque binary dance), EQUAL TEMPERAMENT (12 equal 2^(1/12) semitones, all keys identical at cost of slightly off pure intervals, +14 cents sharp major third, alternatives Pythagorean/Just/Mean-tone, Bach Well-Tempered Clavier 1722+1742 in 24 keys), COUNTERPOINT/FUGUE (Fux 1725 species 5-level pedagogy, Bach Art of Fugue + WTC, subject+answer at 5th+countersubject+inversion/retrograde/augmentation/diminution/stretto, Shostakovich 24 P+F).
 - Distinct from existing 40 L4 (rubato, ritardando, accelerando, cantabile, fortissimo, pianissimo, etc.).
