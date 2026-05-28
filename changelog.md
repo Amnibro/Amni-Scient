@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.478] - 2026-05-28 - Quiz Animals L1: 29→33
+- Added 4 to Animals quiz L1 (audio-sound style matching the existing L1 design): mouse squeak, cricket chirp, whale song, dolphin clicks.
+- sw cache → v557; Android versionCode 514 / versionName 5.6.2.
+
 ## [5.7.477] - 2026-05-28 - Quiz Animals L5: 37→39 (matches L4=39)
 - Added 2 to Animals quiz L5: immortal jellyfish (Turritopsis dohrnii), axolotl regeneration.
 - Animals L5 now at 39 — matches L4. Bank still has L2=136 as far outlier above, but L5 no longer the bottom dip.
