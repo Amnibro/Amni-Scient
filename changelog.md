@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.505] - 2026-05-28 - Quiz Space L3: 28→32
+- Added 4 L3-tier astronomy Qs: exoplanet (5800+ confirmed, transit/RV detection), CMB (380kyr post-Big-Bang light, Penzias+Wilson), pulsar (spinning neutron-star lighthouse, Bell Burnell), Lagrange points (L2 JWST/WMAP, L4/L5 Trojans).
+- Distinct from existing 28 L3 (8min sunlight/gravity/Pluto/Proxima/black hole/supernova/Andromeda/Perseverance/Kuiper/etc.).
+- sw cache → v584; Android versionCode 541 / versionName 5.8.9.
+
 ## [5.7.504] - 2026-05-28 - Quiz Sports L3: 28→32
 - Added 4 L3-tier sports facts: cricket century (Tendulkar 100 int'l), Ironman triathlon (~226km swim+bike+run), F1 Monaco GP (Monte Carlo street circuit), Heisman Trophy (NCAA college football).
 - Distinct from existing 28 L3 (90min soccer/Wimbledon/Stanley Cup/5 rings/marathon/sumo/curling/rugby/badminton/snooker/darts/America's Cup/equestrian/Triple Crown/squash/Tour de France/golf/dunk/fencing/archery/pickleball/skateboarding).
