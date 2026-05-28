@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.561] - 2026-05-28 - Quiz Space L5: 32→36
+- Added 4 L5-tier astrophysics Qs: Roche limit (tidal moon-breakup → Saturn's rings, SL9 comet 1994), Eddington limit (max stable star luminosity, Eta Carinae), vacuum decay (Higgs metastability doomsday hypothesis), Maunder Minimum 1645-1715 (sunspot lull + Little Ice Age).
+- Distinct from existing 32 L5 (CMB temp/Schwarzschild/Hubble const/Chandrasekhar/13.8Gyr/parsec/Penrose-Hawking/Drake/inflation/dark matter/dark energy/Hawking radiation/ΛCDM/anthropic/multiverse/cosmic web/reionization/3 fates/holographic/string theory/pulsar/grav waves/Lagrange/redshift/Planck length/wormhole/Olbers'/Boltzmann brain).
+- sw cache → v640 (milestone); Android versionCode 597 / versionName 6.4.5.
+
 ## [5.7.560] - 2026-05-28 - Quiz Sports L5: 32→36
 - Added 4 L5-tier sports legends: Don Bradman cricket 99.94 average, Schumacher 7 F1 titles, Kerri Strug 1996 one-foot vault, Venus+Serena Williams 30 grand slams.
 - Distinct from existing 32 L5 (Phelps/triple-double/cricket Test/Hines/F1-GS/Wilt/Beamon/Jordan-6-0/Comăneci/Babe Ruth/Isner-Mahut/Pelé/marathon stadium/Lance/Bonds/Ali-Frazier/Brady/Flo-Jo/Gretzky 894/Miracle/Hand of God/checkmate/Bannister/Federer 20/Tony Hawk/Merckx/Bosman/Latynina/Jim Thorpe/Babe Didrikson/2008 Wimbledon).
