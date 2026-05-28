@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.507] - 2026-05-28 - Quiz Shapes L3: 28→32
+- Added 4 L3-tier geometry Qs: triangle area (½·b·h), dodecahedron (12 pentagons, Platonic, d12 die), Möbius strip (one-sided surface, recycling symbol), golden ratio φ≈1.618 (sunflowers/nautilus).
+- Distinct from existing 28 L3 (3D shape IDs/cube faces/Pythagorean/equilateral/Platonic polyhedra/perimeter/right angle).
+- sw cache → v586; Android versionCode 543 / versionName 5.9.1.
+
 ## [5.7.506] - 2026-05-28 - Quiz Colors L3: 28→32
 - Added 4 L3-tier color-science Qs: chameleon iridophore-spacing color change, Tyrian purple (12k murex snails per gram), synesthesia (4% population, grapheme-color most common), color temperature in Kelvin (2700K warm vs 5500K daylight).
 - Distinct from existing 28 L3 (primaries-mixing/rainbow ROYGBIV/RGB-vs-CMYK/sunset/saturation/iridescence/blood red/UV invisible/aurora colors).
