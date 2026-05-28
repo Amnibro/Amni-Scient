@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.596] - 2026-05-28 - Quiz Counting L4: 36→40
+- Added 4 more L4 number Qs: Euler's e≈2.71828 (compound interest definition, self-derivative, Euler's identity e^iπ+1=0), irrational numbers (Hippasus-drowned-for-revealing-√2-secret, Cantor uncountably-many, algebraic vs transcendental), binary 1011₂=11 (Leibniz 1679, bytes 8 bits, electrical-switch 2-state), permutations vs combinations (nPr ORDER matters / nCr doesn't, Powerball 1-in-292M lottery example, passwords vs committees).
+- Distinct from existing 36 L4 (place-values/add-sub/even-odd/neg-add/PEMDAS/fractions/percents/ratios/√/round/exponents/mean/median/prime-factorization/a⁰/mixed-numbers/scientific-notation/factorial/mode/GCD-Euclid/log10/coin-probability/range/distributive).
+- sw cache → v675; Android versionCode 632 / versionName 6.8.0.
+
 ## [5.7.595] - 2026-05-28 - Quiz Shapes L4: 36→40
 - Added 4 more L4 shape Qs: Klein bottle (Felix Klein 1882, non-orientable 4D, can't exist in 3D without self-intersection, cut→2 Möbius strips), Penrose tiling (1974 aperiodic 5-fold symmetry, 1984 quasicrystals/Shechtman Nobel, Iranian shrine 500-yr-old predecessor!), tesseract (4D hypercube, 8 cubic cells, Dalí 'Christus Hypercubus' + Marvel Infinity Stones), Voronoi diagram (1908 Georgy Voronoi nearest-seed cells, giraffe spots/soap bubbles, John Snow 1854 cholera map, Delaunay dual).
 - Distinct from existing 36 L4 (right-angle/acute/obtuse/triangle-180/quadrilateral/octagon/regular/equilateral/parallelogram/diagonal-√2/pentagon-540/exterior-360/Heron/SSS-SAS-ASA/30-60-90/45-45-90/isosceles/rhombus/inscribed-angle/similar-AAA/Euler-V-E+F/golden-ratio/tessellation/sphere-vol/cylinder-vol/slope/median/SOHCAHTOA/law-of-cosines/fractal/spherical-geom/Pythagorean-triples/conic-sections/Apollonian-gasket/dual-polyhedra).
