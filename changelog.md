@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.7.581] - 2026-05-28 - Quiz Opposites L2: 36→40 (PASS-7 L2 SWEEP COMPLETE — all 8 shallow banks at 40-floor L1+L2!)
+- Added 4 more L2 opposite Qs: inhale↔exhale (diaphragm + 12-20 br/min + scuba ascend warning + prana yogic), borrow↔lend (Polonius 'neither a borrower nor a lender be' + interest banking), attack↔defend (war/sports/chess/cybersecurity 'D wins championships'), arrive↔depart (airport halls + ETA/ETD + figurative 'depart this life').
+- Distinct from existing 36 L2 (tall/light/full/wet/easy/soft/push/give/sit/loud/heavy/good/clean/strong/beautiful/right/rich/friend/young/smart/brave/ancient/generous/expand/begin/win/true/sharp/above/visible/increase/accept/float/wild/loose/pass).
+- PASS-7 L2 SWEEP COMPLETE: weather/mythology/sports/space/colors/shapes/counting/opposites all at 40-question floor for L1+L2. Next: pass-7 L3 sweeps.
+- sw cache → v660; Android versionCode 617 / versionName 6.6.5.
+
 ## [5.7.580] - 2026-05-28 - Quiz Counting L2: 36→40
 - Added 4 more L2 number Qs: prime numbers (2 only even prime, Euclid infinity proof, GIMPS 25M-digit record, RSA crypto backbone), million=10⁶ (6 zeros, mega prefix, 1M-sec=11.6days vs 1B=31.7years comparison), quarter=1/4 (0.25 = 25%, numerator/denominator, finance Q1/Q2/Q3/Q4), negative numbers (Death Valley −86m, overdraft, neg×neg=positive 'two debts cancel').
 - Distinct from existing 36 L2 (count-emoji 6-10, after/before/days/months/hours/minutes/seconds/alphabet/Roman-III/hexagon/5×2/half-10/square/7+5/4×3/place-value/count-by-5s/pentagon/cents/dozen/even-odd/largest-2digit/Roman-X/score/smallest-3digit/gross/half-50/Roman-V).
