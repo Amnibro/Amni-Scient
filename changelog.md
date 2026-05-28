@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.546] - 2026-05-28 - Quiz Colors L3: 32→36
+- Added 4 L3-tier color-science Qs: pigment vs dye (insoluble vs dissolved), chlorophyll absorbs red+blue (grass green), birds see UV (4-cone tetrachromacy), human eye 6M cones + 120M rods.
+- Distinct from existing 32 L3 (primaries-mixing/rainbow/RGB-vs-CMYK/sunset/saturation/iridescence/blood red/UV-invisible/aurora/chameleon/Tyrian purple/synesthesia/color-temp).
+- sw cache → v625; Android versionCode 582 / versionName 6.3.0.
+
 ## [5.7.545] - 2026-05-28 - Quiz Space L3: 32→36
 - Added 4 L3-tier astronomy Qs: solar wind (Sun's charged particles → aurora driver), Earth's magnetosphere (life-shield + Van Allen belts), SETI (intelligent-signal search), Perseverance/Ingenuity rover (2021 Jezero, Mars rover lineage).
 - Distinct from existing 32 L3 (8min sunlight/gravity/Pluto/Proxima/Moon phases/AU/black hole/supernova/aurora/ISS/light-year/Sirius/Polaris/meteor/Andromeda/Kuiper/Sun fate/Jupiter/satellite/tidal locking/exoplanet/CMB/pulsar/Lagrange).
