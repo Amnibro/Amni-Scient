@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.560] - 2026-05-28 - Quiz Sports L5: 32→36
+- Added 4 L5-tier sports legends: Don Bradman cricket 99.94 average, Schumacher 7 F1 titles, Kerri Strug 1996 one-foot vault, Venus+Serena Williams 30 grand slams.
+- Distinct from existing 32 L5 (Phelps/triple-double/cricket Test/Hines/F1-GS/Wilt/Beamon/Jordan-6-0/Comăneci/Babe Ruth/Isner-Mahut/Pelé/marathon stadium/Lance/Bonds/Ali-Frazier/Brady/Flo-Jo/Gretzky 894/Miracle/Hand of God/checkmate/Bannister/Federer 20/Tony Hawk/Merckx/Bosman/Latynina/Jim Thorpe/Babe Didrikson/2008 Wimbledon).
+- sw cache → v639; Android versionCode 596 / versionName 6.4.4.
+
 ## [5.7.559] - 2026-05-28 - Quiz Mythology L5: 32→36
 - Added 4 deep cross-cultural L5 myth Qs: Hermes Trismegistus (Greek/Egyptian alchemy founder, Emerald Tablet), Mithras (Roman mystery cult, bull-slaying tauroctony, Christianity rival), La Llorona (Mexican weeping mother ghost), Huitzilopochtli (Aztec sun-war god, Tenochtitlán founding eagle-on-cactus → Mexico flag).
 - Distinct from existing 32 L5 (Iris/Morpheus/Midas/Athena/Nike/Fenrir/Pandora/Trojan Horse/Sisyphus/Tantalus/Gilgamesh/Marduk/Tiamat/Inanna/Arthur/Grail/Merlin/Atlantis/Hyperboreans/Lethe/Heimdall/Prometheus/Yggdrasil/Daedalus/Moirai/Aeneid/Hecate/Susanoo/Eris/Charon/Ragnarök/Ouroboros).
