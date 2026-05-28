@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.447] - 2026-05-27 - Quiz Counting L4: 24→28
+- Added 4 to Counting quiz L4: median, prime factorization, a⁰=1, improper-to-mixed-number conversion.
+- sw cache → v526; Android versionCode 483 / versionName 5.3.1.
+
 ## [5.7.446] - 2026-05-27 - Quiz Counting L3: 24→28
 - Added 4 to Counting quiz L3: round to nearest 10, count by 10s, inches in a foot, largest 2-digit number.
 - sw cache → v525; Android versionCode 482 / versionName 5.3.0.
