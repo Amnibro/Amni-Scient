@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.495] - 2026-05-28 - Quiz Mythology L2: 28→32
+- Added 4 more L2-tier myth-hero Qs: Achilles (heel weakness), Perseus (slew Medusa), Osiris (Egyptian afterlife), Sisyphus (eternal boulder).
+- Distinct from existing 28 L2 (Mars/Ares/Hermes/Hera/etc.) + L1 32 (creatures + Zeus etc.).
+- sw cache → v574; Android versionCode 531 / versionName 5.7.9.
+
 ## [5.7.494] - 2026-05-28 - Quiz Weather L2: 28→32 (pass-2 start)
 - Added 4 explainer Qs to Weather L2: rainbow formation (refraction/reflection), wind chill (heat-loss physics), hail inside thunderstorms (updraft layers), climate vs weather (long-term vs short-term).
 - L2-grade depth (more mechanism than L1's pattern-ID).
