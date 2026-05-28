@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.691] - 2026-05-28 - Quiz Colors L3: 44→48 (PASS-11 colors sweep — 3 of 5)
+- Added 4 fresh L3 color Qs: PRUSSIAN BLUE (Diesbach 1704 Berlin accidental discovery from contaminated lye, first synthetic + lightfast affordable blue, Hokusai Great Wave + Van Gogh Starry Night + Picasso Blue Period, medical Cs+Tl poisoning antidote Radiogardase FDA 2003, Fukushima cleanup), ULTRAMARINE (Latin "beyond the sea" Badakhshan Afghanistan lapis lazuli, 10% yield + Renaissance Virgin Mary robe, Vermeer Girl with Pearl Earring poverty-causing, Yves Klein IKB 1960, Guimet 1826 synthetic), VANTABLACK (Surrey NanoSystems 2014 vertical carbon nanotube forest 99.965% absorption, Anish Kapoor exclusive 2016 → Stuart Semple Pinkest Pink retaliation + Black 3.0 open-source, MIT 2019 99.995% record), CADMIUM YELLOW (Strohmeyer 1817 CdS, Van Gogh Sunflowers + Monet water lilies preferred, toxic heavy metal itai-itai 1912 Japan, EU 2014 restrictions, Van Gogh chrome-yellow zones brown but cadmium bright after 130 yrs).
+- Distinct from existing 44 L3 (Maya Blue, Indian Yellow urine cows, etc.).
+- sw.js → v770. Android versionCode 727 / versionName 7.7.5.
+
 ## [5.7.690] - 2026-05-28 - Quiz Colors L2: 44→48 (PASS-11 colors sweep — 2 of 5)
 - Added 4 fresh L2 color Qs: TURQUOISE (gemstone Turkish 'pierre turquoise' Iran+Sinai 6000+ years, Navajo/Pueblo Sky Stone, Tiffany Blue PMS 1837, hex ~#40E0D0), MAGENTA (1859 Battle of Magenta Italian war aniline dye, CMYK printer primary, NON-SPECTRAL color invented by brain when red+blue cones fire without green, T-Mobile rebrand), INDIGO (Newton 1666 6th ROYGBIV color for 7 musical notes, Indigofera tinctoria India trade-route name, denim jeans Levi Strauss 1873 + Eli Whitney mills, vat-dye chemistry yellow-soluble → oxidizes blue, hex #4B0082), CORAL (pinkish-orange #FF7F50, Pantone Color of the Year 2019 'Living Coral', salmon/peach/melon variations, Great Barrier Reef bleaching 4 events since 2016).
 - Distinct from existing 44 L2 (copper, orange, purple, royal-purple sea-snails, etc.).
