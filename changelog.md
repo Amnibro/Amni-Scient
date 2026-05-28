@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.610] - 2026-05-28 - Quiz Colors L1: 40→44
+- Added 4 more L1 simple-tier color Qs: ladybug red+black (aposematism warning, 7-spot European default, 50-aphids/day farmer-favorite), cardinal bird red (state-bird 7-states, Catholic cardinals' robes namesake, redder=healthier), polar bear translucent-white-hair (BLACK skin underneath, algae-green in zoos!), skunk black+white (aposematism, 3m spray with sulfur-thiols, Krebaum 1993 H₂O₂+baking-soda+Dawn formula).
+- Distinct from existing 40 L1 (red/blue/yellow/green/orange/snow/clouds/tiger/zebra/jeans/carrot/pig/crow/night-sky/etc).
+- sw cache → v689; Android versionCode 646 / versionName 6.9.4.
+
 ## [5.7.609] - 2026-05-28 - Quiz Space L1: 40→44
 - Added 4 more L1 simple-tier space Qs: gravity (Newton F=Gm₁m₂/r², Einstein spacetime-curvature, 10⁴⁰× weaker than EM but only attractive), Moon craters (impact-formed circular depressions, South Pole-Aitken 2500km, Earth Chicxulub dino-killer 66MYA), Earth's atmosphere (78%N 21%O, 5 layers troposphere→exosphere, Kármán line 100km), satellite (Sputnik 1957 'beep' kicked off space race, Starlink 6K+, LEO/MEO/GEO orbits).
 - Distinct from existing 40 L1 (Earth/8-planets/Mercury/Saturn/Sun/Stars/Moon/Galileo/Sun-is-star/eclipse/galaxy/comet/black-hole/Milky-Way/rocket/Pluto/Big-Dipper/etc + Jupiter/aurora/ISS/spacesuit).
