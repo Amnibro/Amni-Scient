@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.544] - 2026-05-28 - Quiz Sports L3: 32→36
+- Added 4 L3-tier sports facts: 4 golf majors (Masters/USOpen/Open/PGA), Bolt 100m WR 9.58s, tennis tiebreak at 6-6, boxing 17 weight classes.
+- Distinct from existing 32 L3 (90min soccer/Wimbledon/Stanley Cup/5 rings/marathon/touchdown/hat-trick/pole vault/decathlon/match point/sumo/curling/rugby/badminton/snooker/darts/America's Cup/equestrian/Triple Crown/squash/Tour de France/birdie/dunk/fencing/archery/pickleball/skateboarding/cricket century/Ironman/Monaco GP/Heisman).
+- sw cache → v623; Android versionCode 580 / versionName 6.2.8.
+
 ## [5.7.543] - 2026-05-28 - Quiz Mythology L3: 32→36
 - Added 4 L3 cross-cultural myth Qs: Baba Yaga (Slavic chicken-leg-hut witch), Tlaloc (Aztec rain god), Pangu (Chinese primordial giant), Indra (Hindu Vedic thunder god + vajra).
 - Distinct from existing 32 L3 (Thor/Odin/Anubis/Ra/Perseus/Heracles/Isis/Set/Achilles/Loki/Bastet/Horus/Osiris/Thoth/Vishnu/Shiva/Brahma/Amaterasu/Tyr/Ganesha/Medusa/Quetzalcoatl/Gilgamesh/Arthur/Valkyries/Krishna/Cthulhu/Anansi/Hanuman/Marduk/Beowulf).
