@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.591] - 2026-05-28 - Quiz Mythology L4: 36→40
+- Added 4 more L4 mythology Qs: Wendigo (Algonquian winter-cannibal, more-it-eats-hungrier, 'wendigo psychosis' disputed dx), djinn/jinn (Quranic smokeless-fire beings, Iblis, free-will Muslim/non-Muslim, Aladdin softened import), kitsune (Japanese fox-spirit gains tail/100yrs, 9-tail kyūbi peak, zenko-vs-yako, Inari-shrine messengers, Ninetales/Naruto), Tiamat (Babylonian Enuma Elish chaos dragon split by Marduk → sky+earth, D&D dragon-goddess).
+- Distinct from existing 36 L4 (Phoenix/Valhalla/Styx/Quetzalcoatl/Loki/Ganesha/Yggdrasil/Anansi/Coyote/Bunyip/Kraken/Banshee/Yeti/Leprechaun/Werewolf/Basilisk/Vampire/Hanuman/Naga/etc + Coatlicue/Maui/Pele/Mami-Wata/Thunderbird).
+- sw cache → v670; Android versionCode 627 / versionName 6.7.5.
+
 ## [5.7.590] - 2026-05-28 - Quiz Weather L4: 36→40 (PASS-7 L4 sweep begins)
 - Added 4 more L4 weather Qs: hurricane eye+eyewall (30-65km calm-center + fiercest-winds ring, Typhoon Tip 870hPa record, eyewall replacement cycles, P-3 hunters), virga (precipitation evaporates before ground, dry desert SW, dry microbursts), mammatus clouds ('mamma' breast pouches under cumulonimbus anvils, golden sunset photo target, Titan nitrogen-cloud documented!), katabatic winds (Antarctic gravity-driven downhill cold, Commonwealth Bay 240km/h windiest place, Mistral/Bora variants).
 - Distinct from existing 36 L4 (troposphere/barometer/anemometer/hygrometer/Saffir-Simpson/Fujita/aurora/Coriolis/ozone/greenhouse/cirrus/dew-point/humidity/sea-level-pressure/trade-winds/Hadley-Ferrel-Polar/mesocyclone/Beaufort/storm-surge/atmospheric-river/albedo/adiabatic/polar-vortex/wet-bulb/cloud-seeding/Chinook/ITCZ/lightning-NLDN/CAPE/heat-dome/derecho/microburst).
