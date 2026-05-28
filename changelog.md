@@ -1,5 +1,12 @@
 ﻿# Changelog 
 
+## [5.7.437] - 2026-05-27 - Quiz Mythology L5: 24→28 + L5 internal Sisyphus dedup (Mythology quiz now 28×5)
+- Added 4 to Mythology quiz L5: Heimdall, the Moirai (Fates), Virgil's Aeneid, Hecate, Susanoo.
+- Fixed pre-existing L5 internal dup (Sisyphus appeared at 8695 AND 8707) — second slot now Heimdall.
+- All 5 Mythology quiz levels now at 28 each.
+- Note: cross-level same-figure overlaps (King Arthur L3/L5, Tiamat L4/L5, Prometheus L2/L5) follow the bank's existing "same figure at deeper framing per level" design pattern (Loki/Thor/Anubis/Ra all already span multiple levels) — left as-is.
+- sw cache → v516; Android versionCode 473 / versionName 5.2.1.
+
 ## [5.7.436] - 2026-05-27 - Quiz Mythology L4: 24→28 + L3 dedup pass
 - Added 4 to Mythology quiz L4: Beowulf vs Grendel, Sun Wukong (Monkey King), the Wendigo, Tiamat.
 - Fixed v5.7.435 L3 cross-level dups (Yggdrasil/Anansi/Hanuman all already lived in L4): swapped to King Arthur, Krishna, Cthulhu. Valkyries kept (only mentioned-in-context in L4).
