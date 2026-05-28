@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.516] - 2026-05-28 - Quiz Counting L4: 28→32
+- Added 4 L4-tier number-vocab Qs: scientific notation (5.3×10³), 5!=120 factorial, mode (most-frequent), GCD/GCF + Euclid's algorithm.
+- Distinct from existing 28 L4 (place values/2-digit +/-/PEMDAS/fractions/percent/√64/2⁵/mean/median/prime factorization/x⁰=1/mixed numbers).
+- sw cache → v595; Android **versionName 6.0.0 milestone** (build 552).
+
 ## [5.7.515] - 2026-05-28 - Quiz Shapes L4: 28→32
 - Added 4 L4-tier geometry Qs: SOH-CAH-TOA trig ratios, Law of Cosines (generalizes Pythag), fractals (Mandelbrot/Sierpinski/Koch), spherical-geometry angle sum > 180° (non-Euclidean).
 - Distinct from existing 28 L4 (acute/obtuse/equilateral/SSS-SAS-ASA/Heron/30-60-90/inscribed angle/Euler V-E+F=2/golden ratio/tessellation/sphere+cylinder volume/slope/median).
