@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.7.573] - 2026-05-28 - Quiz Opposites L1: 36→40 (PASS-7 L1 SWEEP COMPLETE — all 8 shallow banks at 40-floor for L1!)
+- Added 4 more L1 simple-tier opposite Qs: easy↔hard-difficult (vs hard-texture two-meaning ambiguity), top↔bottom (vs up/down motion-vs-position), begin↔end (alpha/omega Greek), sharp↔dull/blunt (knife edge + sharp-taste/sound/mind tri-meaning).
+- Distinct from existing 36 L1 (big/hot/up/day/happy/fast/in/on/yes/open/boy/old/same/hello/many/front/left/long/sweet/empty/push/clean/wet/stop/heavy/hard-texture/loud/awake/strong/smile/throw/buy/find/etc).
+- PASS-7 L1 SWEEP COMPLETE: weather/mythology/sports/space/colors/shapes/counting/opposites — all 8 shallow banks now at 40-question floor matching deep-bank tier. Next: pass-7 L2 sweeps.
+- sw cache → v652; Android versionCode 609 / versionName 6.5.7.
+
 ## [5.7.572] - 2026-05-28 - Quiz Counting L1: 36→40
 - Added 4 more L1 simple-tier counting Qs: 2+2=4 (with Orwell 1984 footnote on 2+2=5 totalitarian metaphor), 10−1=9 (countdown subtraction), spider 8 legs (arachnid vs insect-6, hydraulic legs), 4 seasons (axial tilt 23.5° drives spring/summer/fall/winter, tropics vs polar extremes).
 - Distinct from existing 36 L1 (count emoji 1-5, fingers/wheels/sides/dozen/hours/seconds/etc).
