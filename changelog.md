@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.586] - 2026-05-28 - Quiz Colors L3: 36→40
+- Added 4 more L3 color Qs: Vantablack (99.965% carbon nanotube absorber, Kapoor-Semple feud, Musou Black alternative), ultramarine/lapis lazuli (Afghan-only Renaissance, worth-more-than-gold, Vermeer 'Pearl Earring' headscarf, Yves Klein IKB modern variant), metamerism (navy-sock-fluorescent-vs-daylight problem, D65 daylight bulbs), cochineal/carmine (Mexican scale insects, Aztec→Spanish-monopoly→modern food labels 'natural red 4').
+- Distinct from existing 36 L3 (color-mixing/warm-cool/ROYGBIV/lightest-darkest/additive/pink-not-rainbow/wedding-white/achromatic/hue-saturation-value/pastel/monochromatic/bioluminescence/fluorescent/earth-tones/RGB-CMYK/sunsets/iridescence/blood-red/complementary/UV-invisible/auroras/chameleons/Tyrian-purple/synesthesia/color-temp/pigment-dye/plants-green/birds-UV/cones-rods).
+- sw cache → v665; Android versionCode 622 / versionName 6.7.0.
+
 ## [5.7.585] - 2026-05-28 - Quiz Space L3: 36→40
 - Added 4 more L3 space Qs: Kepler's 3 laws (1609/1619 ellipse + equal-areas + T²∝a³, derived from Tycho Brahe data), heliopause (~120AU, Voyager 1 crossed 2012, V2 2018), interstellar visitors ('Oumuamua 2017 + 2I/Borisov 2019, Avi-Loeb-alien-tech hypothesis), habitable zone (Goldilocks, Sun 0.95-1.4AU, red dwarfs narrower, Proxima-b/TRAPPIST-1e/Kepler-442b candidates).
 - Distinct from existing 36 L3 (8min-sunlight/gravity/asteroid-belt/Ganymede/Pluto-dwarf/Proxima/Moon-phases/AU/black-hole/supernova/aurora/ISS/light-year/Sirius/Polaris/meteor-types/Andromeda/Perseverance/Kuiper/Sun-red-giant/Jupiter/exoplanet/CMB/pulsar/Lagrange/solar-wind/magnetosphere/SETI/etc).
