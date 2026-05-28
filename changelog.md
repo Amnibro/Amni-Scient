@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.527] - 2026-05-28 - Quiz Mythology L1: 32→36
+- Added 4 more simple-tier supernatural creatures: zombie (Haitian Vodou → Romero), witch (Salem trials → Wicca), wizard (Merlin → Gandalf/Dumbledore), ghost (worldwide folklore).
+- Distinct from existing 32 L1 (Zeus/Aphrodite/etc + creatures vampire/kraken/goblin/Bigfoot etc).
+- sw cache → v606; Android versionCode 563 / versionName 6.1.1.
+
 ## [5.7.526] - 2026-05-28 - Quiz Weather L1: 32→36 (pass-6 starts — toward deep-bank 40 ceiling)
 - Added 4 more L1 weather phenomena: lightning (bolt vs thunder), mist (lighter than fog), heat wave (3+ day hot stretch), rain boots/wellies (waterproof gear).
 - Distinct from existing 32 L1 (sunny/rainy/snowy/cloudy/wind/rainbow/thunder-sound/fog/snowman/umbrella/thermometer/freezing/hail/hurricane/dew/frost/tornado/drizzle/blizzard/sleet/etc.).
