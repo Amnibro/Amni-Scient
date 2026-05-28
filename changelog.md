@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.639] - 2026-05-28 - Quiz Weather L5: 40→44 (PASS-8 L5 sweep OPENS — 1 of 8)
+- Added 4 more L5 weather Qs (research-tier): MILANKOVITCH CYCLES (Serbian Milankovitch hand-calc in WW1 POW camp, eccentricity 100k+405k + obliquity 41k + precession 23k, confirmed by Hays-Imbrie-Shackleton 1976 δ¹⁸O), SUDDEN STRATOSPHERIC WARMING (~30-60°C jump days, Rossby waves disrupt polar vortex displacement/split → 2-week-delay cold outbreaks, Beast from East 2018 + Texas Feb 2021 grid collapse $200B, Scherhag Berlin 1952), 3-CELL CIRCULATION (Hadley 0-30° tropical-storms-ITCZ + subtropical deserts at sinking branch, Ferrel 30-60° mid-latitude Rossby-driven, Polar 60-90° easterlies; jets at boundaries), PALEOCENE-EOCENE THERMAL MAXIMUM (PETM 55.8 Mya, ~12000 Gt C release, 5-8°C warming, foraminifera mass extinction, palm-fossils-in-Arctic, primate evolution, modern emissions FASTER than PETM injection).
+- Distinct from existing 40 L5 (Younger Dryas, Little Ice Age, Walker Circulation, GCMs, plus 36 prior weather L5 entries).
+- sw.js → v718. Android versionCode 675 / versionName 7.2.3.
+
 ## [5.7.638] - 2026-05-28 - Quiz Opposites L4: 40→44 (PASS-8 L4 sweep COMPLETE — 8 of 8)
 - Added 4 more L4 opposite Qs: SYNCHRONOUS↔ASYNCHRONOUS (sync video call/blocking fn vs async email/non-blocking I/O Node.js 2009, Python async/await Rust+Go), CONVEX↔CONCAVE ('conCAVE has CAVE'; convex lens converges/farsighted vs concave diverges/nearsighted; car side mirrors convex; polygon angles), EXOTHERMIC↔ENDOTHERMIC (combustion/handwarmers vs ice packs+photosynthesis; ΔH sign; ΔG=ΔH−TΔS), CENTRIPETAL↔CENTRIFUGAL (real INWARD pulling F=mv²/r vs apparent OUTWARD pseudo-force in rotating frame, washing machine spin = centripetal from walls, lab centrifuges).
 - Distinct from existing 40 L4 (analog/digital, cause/effect, bull/bear, centralized/decentralized, inflation/deflation, micro/macroscopic, inductive/deductive, qualitative/quantitative, introvert/extrovert, constructive/destructive).
