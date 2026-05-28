@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.486] - 2026-05-28 - Quiz Weather L1: 28→32 (shallow-bank backlog starts)
+- Discovered 8 banks (weather/opposites/counting/shapes/colors/mythology/sports/space) are uniformly ~28 Qs/level vs deep-bank 40 floor — major lift backlog.
+- This iter: weather L1 +4 (tornado, drizzle, blizzard, sleet). Distinct weather phenomena, no dup with existing 28.
+- sw cache → v565; Android versionCode 522 / versionName 5.7.0.
+
 ## [5.7.485] - 2026-05-28 - Quiz Math L1: 36→40 (matches L2/L4/L5=41)
 - Added 4 more simple-arithmetic Qs to Math L1: 4+3=7, fingers on two hands, smallest number 0, half of 10.
 - L1 now 40 ~ matches L2/L4/L5=41 (bank parity except deep L3=61).
