@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.418] - 2026-05-27 - Quiz Colors L2: 21→24
+- Added 3 to Colors quiz L2: mixing yellow+blue, magenta, color blindness.
+- sw cache → v497; Android versionCode 454 / versionName 5.0.2.
+
 ## [5.7.417] - 2026-05-27 - Achievements: fire-on-win fix + collapsible UI
 - FIX: achievements never fired mid-game — _checkAchievements only ran on load + every 30s while the menu was open. Now checked on every showView navigation AND polled globally every 4s, so a win earned inside a game pops its toast+confetti within seconds.
 - FIX: "Play any game once" (First Steps) used a short ~23-key list, so many games never tripped it. First Steps + Polymath now share one comprehensive _PLAY_NUM_KEYS set (~70 game keys) so every game counts and the two never drift.
