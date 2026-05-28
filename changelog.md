@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.469] - 2026-05-28 - Quiz Science L2: 37→40 (Science L2 matches L4/L5 depth)
+- Added 3 to Science quiz L2: heart pumps blood, volcanoes/lava, electricity sources.
+- Science L2 now at 40 — same as L1, L4, L5. Only L3 (29) still below.
+- sw cache → v548; Android versionCode 505 / versionName 5.5.3.
+
 ## [5.7.468] - 2026-05-28 - Quiz Science L2: 33→37
 - Added 4 to Science quiz L2: Pacific Ocean is largest, atoms, sound needs a medium, speed of light.
 - sw cache → v547; Android versionCode 504 / versionName 5.5.2.
