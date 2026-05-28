@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.567] - 2026-05-28 - Quiz Mythology L1: 36→40
+- Added 4 more L1 simple-tier supernatural creatures: mummy (Egyptian wrapping + 'curse' of Tut's tomb), skeleton (Halloween/Day of Dead/Harryhausen), ogre (Shrek + fairy-tale villains), elf (Norse álfar → Tolkien Legolas + Christmas elves).
+- Distinct from existing 36 L1 (Zeus/etc + creatures: vampire/kraken/goblin/Bigfoot/zombie/witch/wizard/ghost).
+- sw cache → v646; Android versionCode 603 / versionName 6.5.1.
+
 ## [5.7.566] - 2026-05-28 - Quiz Weather L1: 36→40 (PASS-7 begins — toward deep-bank 40 floor)
 - Added 4 more L1 simple-weather Qs: sunscreen (SPF UV protection), scarf (cold-day neck warmth), sunglasses (UV400 + glare), windy days for kites/sailing.
 - Distinct from existing 36 L1 (sunny/rainy/snowy/cloudy/wind/rainbow/thunder/cloud/air/fog/puddles/snowman/umbrella/thermometer/freezing/leaves/kite/coat/spring/hail/hurricane/dew/frost/tornado/drizzle/blizzard/sleet/lightning/mist/heat wave/rain boots).
