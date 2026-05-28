@@ -1,5 +1,11 @@
 ﻿# Changelog 
 
+## [5.7.630] - 2026-05-28 - Quiz Opposites L3: 40→44 (PASS-8 L3 sweep complete — 8 of 8)
+- Added 4 more L3 opposite Qs: ENCRYPT↔DECRYPT (Caesar cipher, AES-256, SSL/TLS 🔒, symmetric vs asymmetric RSA, distinct from encode/Base64), ASCEND↔DESCEND (Latin ad/de+scandere, music scales, sort orders ASC/DESC, descendant family-tree), LOVE↔HATE (Zeki neuroscience overlap, apathy as true opposite, Corinthians+Rumi), MAJORITY↔MINORITY (>50% vs <50%, majority vs plurality, supermajority, Latin major/minor).
+- Distinct from existing 40 L3 (brave/scared, gentle/rough, polite/rude, ancient/modern, sharp/dull, begin/end, above/below, win/lose, fresh/stale, near/far, empty/full, wet/dry, simple/complex, visible/hidden, healthy/sick, cheap/expensive, awake/asleep, calm/anxious, birth/death, guilty/innocent, temporary/permanent, artificial/natural, abundant/scarce, flexible/rigid, public/private, positive/negative, junior/senior, north/south, optimist/pessimist, question/answer, liquid/solid, active/passive, east/west, internal/external, forward/backward, inhale/exhale, input/output, horizontal/vertical, import/export, micro/macro).
+- PASS-8 L3 SWEEP COMPLETE: weather, mythology, sports, space, colors, shapes, counting, opposites all at 44 (40→44 base lift across all 8 shallow banks at L3).
+- sw.js → v709. Android versionCode 666 / versionName 7.1.4.
+
 ## [5.7.629] - 2026-05-28 - Quiz Counting L3: 40→44
 - Added 4 more L3 number Qs: divisibility-by-3 rule (digit-sum check; works for 9 too; 11 alternating-digit-sum), ∞ infinity (Wallis 1655 lemniskos ribbon, Cantor multiple sizes, NOT a number), arithmetic↔geometric sequences (constant difference vs constant ratio, paycheck vs compound interest), Venn diagrams (John Venn 1880, 2-circle=4-regions, set ops ∪∩^c).
 - Distinct from existing 40 L3 (add-sub-mult/repeated-add/skip-count/parity/prime/round/inches/largest-2-digit/√16/2³/½+¼/Roman/10%/5²/9×7/etc + Fibonacci/PEMDAS/absolute-value/mean/Euler-e/irrational/binary/perm-combo).
