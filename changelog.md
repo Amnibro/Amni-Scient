@@ -1,5 +1,12 @@
 ﻿# Changelog 
 
+## [5.7.432] - 2026-05-27 - Quiz Sports L5: 24→28 + dedup pass (Sports quiz now 28×5)
+- Added 4 to Sports quiz L5: Federer 20 Slams, Tony Hawk's 1999 "900", Eddy Merckx, the Bosman ruling.
+- Fixed L5 internal dup (Phelps Q appeared twice at 8820+8841) — second slot swapped to Maradona "Hand of God".
+- Fixed cross-level dups in v5.7.431 L4 additions: Phelps→Jesse Owens 1936, Gretzky→Jackie Robinson 1947 (both already lived in L5).
+- All 5 Sports quiz levels now at 28 each.
+- sw cache → v511; Android versionCode 468 / versionName 5.1.6.
+
 ## [5.7.431] - 2026-05-27 - Quiz Sports L4: 24→28 + L3 dedup
 - Added 4 to Sports quiz L4: Michael Phelps (23 golds), Wayne Gretzky, Tiger Woods, the English Premier League.
 - Fixed dup: L3 NASCAR/Daytona swapped to skateboarding (Daytona 500 + Indy 500 already live in L4).
