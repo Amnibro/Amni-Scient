@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.491] - 2026-05-28 - Quiz Shapes L1: 28→32
+- Added 4 more shape-intro Qs to Shapes L1: pyramid (3D Egyptian tombs), trapezoid (one-pair-parallel), semicircle (half circle), spiral (snail/galaxy curl).
+- Distinct from existing 28 (circle/square/triangle/star/heart/oct./hex./pent./cube/cone/sphere/cyl./oval etc.).
+- sw cache → v570; Android versionCode 527 / versionName 5.7.5.
+
 ## [5.7.490] - 2026-05-28 - Quiz Colors L1: 28→32
 - Added 4 more color-identification Qs to Colors L1: elephant (gray), blueberry (anthocyanin), coal (black), chocolate (brown).
 - Distinct from existing 28 (red/blue/yellow/green/orange/pink/white/purple/etc. items already covered).
