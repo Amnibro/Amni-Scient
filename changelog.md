@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.434] - 2026-05-27 - Quiz Mythology L2: 24→28
+- Added 4 to Mythology quiz L2: Prometheus, King Midas, Icarus, Odin.
+- sw cache → v513; Android versionCode 470 / versionName 5.1.8.
+
 ## [5.7.433] - 2026-05-27 - Quiz Mythology L1: 24→28
 - Added 4 to Mythology quiz L1: trolls, werewolves, Pandora's box, the Loch Ness Monster.
 - sw cache → v512; Android versionCode 469 / versionName 5.1.7.
