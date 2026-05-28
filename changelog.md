@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.547] - 2026-05-28 - Quiz Shapes L3: 32→36
+- Added 4 L3-tier geometry Qs: icosahedron 20 triangular faces (d20 die / virus capsids), parallel lines (Euclid's 5th postulate), cube surface area 6s² (vs volume s³ — scaling law), cone volume (1/3)πr²h (Archimedes vs cylinder).
+- Distinct from existing 32 L3 (sphere/cube/cone/cylinder basics + faces+edges+vertices/Giza pyramid/tetrahedron/net/convex-concave/diagonal/tangent/chord/radius-vs-diameter/arc/hemisphere/hex-tile/torus/Pythagorean/rect-area/equilateral/polyhedron/octahedron/perimeter/cube vol/right angle/triangle area/dodecahedron/Möbius/golden ratio).
+- sw cache → v626; Android versionCode 583 / versionName 6.3.1.
+
 ## [5.7.546] - 2026-05-28 - Quiz Colors L3: 32→36
 - Added 4 L3-tier color-science Qs: pigment vs dye (insoluble vs dissolved), chlorophyll absorbs red+blue (grass green), birds see UV (4-cone tetrachromacy), human eye 6M cones + 120M rods.
 - Distinct from existing 32 L3 (primaries-mixing/rainbow/RGB-vs-CMYK/sunset/saturation/iridescence/blood red/UV-invisible/aurora/chameleon/Tyrian purple/synesthesia/color-temp).
