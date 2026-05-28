@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.593] - 2026-05-28 - Quiz Space L4: 36→40
+- Added 4 more L4 space Qs: Kardashev scale (Type I planet/II star Dyson/III galaxy; humanity ~0.73 today), Chandrasekhar limit (1.44M☉ white-dwarf max, 19-yo Subrahmanyan on 1930 voyage, Type Ia standard candle threshold), cosmic inflation (Guth 1980 10⁻³² sec 10²⁶× exponential expansion, solves horizon+flatness+monopole), Dyson sphere (Freeman Dyson 1960 stellar megastructure, swarm vs shell, IR waste signature, Tabby's Star 2015 brief speculation).
+- Distinct from existing 36 L4 (speed-of-light/corona/Type-Ia/LIGO/Moon-gravity/hydrogen/light-year/4.6B-years/exoplanets/Lagrange/Kepler-laws/JWST/neutron-star/pulsar/quasar/Europa/Olympus-Mons/Hubble's-law/parallax/spectroscopy/supernova/ISS/Big-Bang/gas-giants/dark-matter/dark-energy/Drake/Fermi/spaghettification/Goldilocks/Voyager-1/Hubble-tension).
+- sw cache → v672; Android versionCode 629 / versionName 6.7.7.
+
 ## [5.7.592] - 2026-05-28 - Quiz Sports L4: 36→40
 - Added 4 more L4 sports Qs: Babe Ruth (714 HR, 1920 live-ball pivot, Curse of the Bambino 86-yr Red Sox drought), Serena Williams (23 open-era WTA slams, 2017 Australian preg-win, Venus sisters' 9 SS finals), Schumacher+Hamilton (F1 7-titles each, Hamilton 105+ wins/1st-Black-driver, '21 Abu Dhabi controversy), Nadal King-of-Clay (14 Roland Garros, 112-4 record 96.5%, Big Three).
 - Distinct from existing 36 L4 (1896-Olympics/Ashes/FIFA-4yr/Triple-Crown/love/3-pointer/Bannister-mile/Pelé-3-cups/Djokovic-24/Title-IX/Lombardi/yellow-card/TdF-jersey/Boston-Marathon/Indy-500/willow-bat/Daytona/Iditarod/4-slams/Heisman/VAR/checkered/Fosbury/field-goal/Jesse-Owens/Jackie-Robinson/Tiger-Woods/Premier-League/UCL/Gretzky/Wilt-100/Armstrong/WNBA/Jerry-West-logo/Secretariat/Magic-Bird).
