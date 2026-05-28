@@ -1,5 +1,9 @@
 ﻿# Changelog 
 
+## [5.7.438] - 2026-05-27 - Quiz Opposites L1: 24→28
+- Added 4 to Opposites quiz L1: clean/dirty, wet/dry, stop/go, heavy/light.
+- sw cache → v517; Android versionCode 474 / versionName 5.2.2.
+
 ## [5.7.437] - 2026-05-27 - Quiz Mythology L5: 24→28 + L5 internal Sisyphus dedup (Mythology quiz now 28×5)
 - Added 4 to Mythology quiz L5: Heimdall, the Moirai (Fates), Virgil's Aeneid, Hecate, Susanoo.
 - Fixed pre-existing L5 internal dup (Sisyphus appeared at 8695 AND 8707) — second slot now Heimdall.
