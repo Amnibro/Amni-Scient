@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.625] - 2026-05-28 - Quiz Space L3: 40→44
+- Added 4 more L3 space Qs: Sagittarius A* (Milky Way's 4.15M-solar-mass center BH, S2 star 16-yr orbit @ 7650 km/s, Nobel 2020, EHT image 2022), comet nucleus+coma+tails (ion vs dust tails, tails always-away-from-Sun), Enceladus tiger-stripe geysers (Cassini 2005 discovery, subsurface ocean, JUICE follow-up, primordial soup ingredients), OSIRIS-REx (Bennu sample 250g returned Sept-2023, hydrated minerals + amino acids, OSIRIS-APEX → Apophis 2029).
+- Distinct from existing 40 L3 (8min-sunlight/gravity/asteroid-belt/Ganymede/Pluto/Proxima/Moon-phases/AU/black-hole/supernova/aurora/ISS/light-year/Sirius/Polaris/meteor-types/Andromeda/etc + Kepler/heliopause/interstellar/habitable-zone).
+- sw cache → v704; Android versionCode 661 / versionName 7.0.9.
+
 ## [5.7.624] - 2026-05-28 - Quiz Sports L3: 40→44
 - Added 4 more L3 sports Qs: water polo (7v7, 'aquatic rugby' 1850s, Hungary 9 golds + 1956 'Blood in the Water'), breakdancing (Paris 2024 Olympic debut, 1970s S. Bronx hip-hop, Raygun viral meme), ultramarathon (>42.2km, Western States 100/Comrades/Badwater/UTMB, Courtney Dauwalter 2023 dominance, persistence-hunting theory), bull riding (8-second rule, PBR pro tour, most dangerous rodeo event).
 - Distinct from existing 40 L3 (soccer-90min/Wimbledon/Stanley-Cup/etc + esports/heptathlon/polo/NASCAR).
