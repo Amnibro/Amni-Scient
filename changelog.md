@@ -1,5 +1,10 @@
 ﻿# Changelog 
 
+## [5.7.492] - 2026-05-28 - Quiz Counting L1: 28→32
+- Added 4 more number-intro Qs to Counting L1: 5−3=2 (subtraction intro), wheels on car=4, hours in day=24, seconds in minute=60.
+- Distinct from existing 28 (object-count emoji/fingers/pair/days/months/2+1/3+2 etc.).
+- sw cache → v571; Android versionCode 528 / versionName 5.7.6.
+
 ## [5.7.491] - 2026-05-28 - Quiz Shapes L1: 28→32
 - Added 4 more shape-intro Qs to Shapes L1: pyramid (3D Egyptian tombs), trapezoid (one-pair-parallel), semicircle (half circle), spiral (snail/galaxy curl).
 - Distinct from existing 28 (circle/square/triangle/star/heart/oct./hex./pent./cube/cone/sphere/cyl./oval etc.).
