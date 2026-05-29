@@ -169,6 +169,7 @@ git clone https://github.com/Amnibro/Amni-Ai
 cd Amni-Ai
 python install.py</pre>
 <p><strong>Windows users:</strong> double-click <code>install.bat</code>. <strong>Mac/Linux:</strong> <code>./install.sh</code>. <code>install.py</code> handles <em>everything</em>: venv creation, vendor-correct PyTorch (CUDA/ROCm/CPU auto-detect), pip install, optional Rust toolchain + <code>amni_kernels</code> native build, bake download (~20&nbsp;GB Gemma-4 E2B GF(17) from HuggingFace, one-time), server launch, browser open at <code>http://127.0.0.1:7700/</code>. You do <strong>not</strong> need to pre-create a venv or run <code>pip install</code> first.</p>
+<p style="font-size:.8rem;color:var(--dim)"><strong>The GF(17) bake is pre-built &mdash; you never re-bake.</strong> The lossless Gemma-4 E2B GF(17) atlas is produced once by us and published to HuggingFace; <code>install.py</code> simply downloads it (cosine=1.0, bit-exact). No conversion, no GPU bake step, no multi-hour encode on your machine &mdash; just download and run.</p>
 <p style="font-size:.78rem;color:var(--dim)">First-run: ~10-30 min depending on connection. Subsequent launches: <code>python -m amni.cli serve --port 7700</code> (or just <code>amni serve</code> if the venv is active), boots in ~15s with a ~60s background warmup the user doesn't have to wait on.</p>
 </div>
 
