@@ -1,6 +1,9 @@
 ﻿
 # Changelog 
 
+## [5.7.851] - 2026-05-29 - Animals L1 lift: 51→59 (+8 kid-zoology basics)
+- Animals L1 PASS-13. Baby animal names (calf/foal/lamb/kid/joey/cub/kit) + animal homes (nest/hive/dam/web/burrow/den) + group names (pack/pride/herd/flock/school/swarm/murder/parliament) + herbivore/carnivore/omnivore + camouflage (chameleons/octopus/stick insects/peppered moths) + nocturnal vs diurnal vs crepuscular + migration (monarchs 3000mi/Arctic terns 25Kmi/salmon/wildebeest) + marsupials/pouch animals (kangaroo/koala/wombat/Tasmanian devil/opossum). Bumps sw v930 + gradle 887/9.3.5. v5.7.851.
+
 ## [5.7.850] - 2026-05-29 - Engineering L4 lift: 52→60 (+8 advanced engineering)
 - Engineering L4 PASS-13. 2nd law thermo+entropy Carnot+Clausius+Kelvin + welding types stick/MIG/TIG/oxy-acetylene + Nyquist stability criterion 1932 + power electronics buck/boost converters MOSFET + NACA airfoils 2412/0012 wing design + Stirling cycle external combustion regenerator + engine knock+octane RON/MON/AKI + process control PID/feedforward/cascade DCS/PLC. Bumps sw v929 + gradle 886/9.3.4. v5.7.850.
 
