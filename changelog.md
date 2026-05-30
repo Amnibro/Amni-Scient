@@ -1,6 +1,9 @@
 ﻿
 # Changelog 
 
+## [5.7.862] - 2026-05-29 - Weather L5 lift: 52→60 (+8 advanced meteorology)
+- Weather L5 PASS-13. Saffir-Simpson 1969 5-cat scale + Haiyan 195 mph + Cat 6 debate + Enhanced Fujita 2007 EF0-EF5 + Bridge Creek-Moore 1999 318 mph + supercells mesocyclones+wall clouds+hook echo + avalanches 30-45° slope + beacon/probe/shovel/airbag/AvaLung + Foehn/Chinook/Santa Ana downslope + katabatic Antarctica Cape Denison + Sudden Stratospheric Warming Scherhag 1952 + 'Beast from East' 2018 + Texas 2021 + urban heat island UHI 2-10°F + cool roofs + green roofs + LA Million Trees + unusual clouds mammatus+noctilucent+fallstreak holes+asperitas+sun dogs+circumzenithal arc + Brocken spectre. Bumps sw v941 + gradle 898/9.4.6. v5.7.862.
+
 ## [5.7.861] - 2026-05-29 - Space L5 lift: 52→60 (+8 frontier astronomy)
 - Space L5 PASS-13. JWST $10B Dec 25 2021 launch + L2 + 6.5m mirror + JADES-GS-z14-0 + K2-18b DMS, SpaceX Falcon 9 reusable 380+ landings + Starship IFT-5 Oct 2024 Mechazilla chopsticks catch + Mars+lunar plans, Artemis SLS+Orion+Gateway+HLS Starship + Wiseman/Glover/Koch crew Artemis II 2026 + lunar landing 2027 south pole, DART asteroid Dimorphos impact Sept 26 2022 deflected orbit 32 min + ESA Hera 2024-26, Europa Clipper Oct 14 2024 launch + 49 flybys 2030+ subsurface ocean astrobiology, Event Horizon Telescope M87* April 10 2019 + Sgr A* May 12 2022 Doeleman + Bouman + 8 telescope VLBI, Fast Radio Bursts Lorimer 2007 + CHIME 1000+ FRBs + magnetar origin confirmed 2020, Solar System Moons 290+ + Titan/Europa/Enceladus ocean worlds + Dragonfly 2028 + Ganymede largest. Bumps sw v940 + gradle 897/9.4.5. v5.7.861.
 
