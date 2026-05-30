@@ -1,6 +1,9 @@
 ﻿
 # Changelog 
 
+## [5.7.854] - 2026-05-29 - Languages L1 lift: 51→59 (+8 kid-literacy basics)
+- Languages L1 PASS-13. Vowels/consonants + uppercase/lowercase + rhyming words + alphabetical order A-Z + when to use capitals + period + question mark + exclamation point. Fixed nested-double-quote bug in uppercase entry quote example. Bumps sw v933 + gradle 890/9.3.8. v5.7.854.
+
 ## [5.7.853] - 2026-05-29 - Animals L5 lift: 51→59 — ANIMALS BANK COMPLETE PASS-13
 - Animals L5 PASS-13 final — ANIMALS BANK COMPLETE. AlphaFold2 DeepMind 2020 Nobel 2024 Hassabis+Jumper + 200M proteins predicted + gene drives CRISPR malaria mosquitoes Imperial+Esvelt + de-extinction Colossal Biosciences mammoth 2028+thylacine+dodo + chytrid Bd 500 amphibian species + white-nose syndrome Pd N America bats since 2007 + insect decline Krefeld 2017 76% biomass + neonicotinoids + light pollution + mirror self-recognition Gallup 1970 great apes/dolphins/elephants/magpies/cleaner wrasse + urban evolution Czech moths/Hudson tomcod/coyotes/Underground mosquitoes + killer whale menopause Hawkes Grandmother Hypothesis. Bumps sw v932 + gradle 889/9.3.7. v5.7.853.
 
