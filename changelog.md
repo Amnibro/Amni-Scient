@@ -1,6 +1,9 @@
 ﻿
 # Changelog 
 
+## [5.7.855] - 2026-05-29 - Languages L4 lift: 52→60 (+8 advanced linguistics)
+- Languages L4 PASS-13. IPA International Phonetic Alphabet 1888 + 107 symbols + language families Indo-European/Sino-Tibetan/Niger-Congo/Afroasiatic/Austronesian + sign languages ASL/BSL Stokoe 1960 + Critical Period Hypothesis Lenneberg 1967 + Genie 1970 + Chomsky Universal Grammar + Generative grammar Syntactic Structures 1957 + polysynthetic/isolating/agglutinative/fusional typology + endangered languages UNESCO 3500 + Hebrew revival + Maori Kohanga Reo + conlangs Esperanto Zamenhof 1887 + Tolkien Quenya/Sindarin + Klingon Okrand 1984 + Dothraki Peterson. Bumps sw v934 + gradle 891/9.3.9. v5.7.855.
+
 ## [5.7.854] - 2026-05-29 - Languages L1 lift: 51→59 (+8 kid-literacy basics)
 - Languages L1 PASS-13. Vowels/consonants + uppercase/lowercase + rhyming words + alphabetical order A-Z + when to use capitals + period + question mark + exclamation point. Fixed nested-double-quote bug in uppercase entry quote example. Bumps sw v933 + gradle 890/9.3.8. v5.7.854.
 
