@@ -1,6 +1,9 @@
 ﻿
 # Changelog 
 
+## [5.7.856] - 2026-05-29 - Languages L5 lift: 51→59 — LANGUAGES BANK COMPLETE PASS-13
+- Languages L5 PASS-13 final — LANGUAGES BANK COMPLETE. Speech act theory Austin 1962 + Searle 5 categories + felicity conditions + Conversation Analysis Sacks/Schegloff/Jefferson turn-taking + Relevance Theory Sperber+Wilson 1986 + Halliday Systemic Functional Grammar 3 metafunctions + Pirahã challenge Daniel Everett 2005 vs Chomsky recursion universal + Peirce semiotics icon/index/symbol + Wittgenstein 'meaning is use' Philosophical Investigations 1953 + forensic linguistics Fitzgerald Unabomber Kaczynski + stylometry + voice ID + LADO asylum cases. Bumps sw v935 + gradle 892/9.4.0. v5.7.856.
+
 ## [5.7.855] - 2026-05-29 - Languages L4 lift: 52→60 (+8 advanced linguistics)
 - Languages L4 PASS-13. IPA International Phonetic Alphabet 1888 + 107 symbols + language families Indo-European/Sino-Tibetan/Niger-Congo/Afroasiatic/Austronesian + sign languages ASL/BSL Stokoe 1960 + Critical Period Hypothesis Lenneberg 1967 + Genie 1970 + Chomsky Universal Grammar + Generative grammar Syntactic Structures 1957 + polysynthetic/isolating/agglutinative/fusional typology + endangered languages UNESCO 3500 + Hebrew revival + Maori Kohanga Reo + conlangs Esperanto Zamenhof 1887 + Tolkien Quenya/Sindarin + Klingon Okrand 1984 + Dothraki Peterson. Bumps sw v934 + gradle 891/9.3.9. v5.7.855.
 
