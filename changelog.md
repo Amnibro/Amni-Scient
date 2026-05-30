@@ -1,6 +1,9 @@
 ﻿
 # Changelog 
 
+## [5.7.846] - 2026-05-29 - Math L2 lift: 52→60 (+8 mid-grade math)
+- Math L2 PASS-13. Ratios+Proportions cross-multiply + Mean/Median/Mode + Circumference 2πr + Triangle area ½bh + Distributive property a(b+c) + Slope y=mx+b + Angle types acute/right/obtuse/straight/reflex + Coordinate plane Cartesian quadrants. Bumps sw v925 + gradle 882/9.3.0. v5.7.846.
+
 ## [5.7.845] - 2026-05-29 - Math L1 lift: 52→60 (+8 kid-math foundations)
 - Math L1 PASS-13. Roman numerals + Fractions basics + Symmetry + Even/Odd + Skip counting 3s+4s + Pentagon/Hexagon/Octagon + Ordinal numbers + Place value. Bumps sw v924 + gradle 881/9.2.9. v5.7.845.
 
