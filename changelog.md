@@ -1,6 +1,9 @@
 ﻿
 # Changelog 
 
+## [5.7.857] - 2026-05-29 - Music L1 lift: 52→60 — MUSIC BANK COMPLETE PASS-13
+- Music L1 PASS-13 — MUSIC BANK COMPLETE (all L1-L5 at floor 56+). Do-Re-Mi solfège + musical staff treble/bass clefs + whole/half/quarter/eighth note durations + rhythm + major vs minor + 4 instrument families strings/woodwind/brass/percussion + rests + chords I-IV-V. Bumps sw v936 + gradle 893/9.4.1. v5.7.857.
+
 ## [5.7.856] - 2026-05-29 - Languages L5 lift: 51→59 — LANGUAGES BANK COMPLETE PASS-13
 - Languages L5 PASS-13 final — LANGUAGES BANK COMPLETE. Speech act theory Austin 1962 + Searle 5 categories + felicity conditions + Conversation Analysis Sacks/Schegloff/Jefferson turn-taking + Relevance Theory Sperber+Wilson 1986 + Halliday Systemic Functional Grammar 3 metafunctions + Pirahã challenge Daniel Everett 2005 vs Chomsky recursion universal + Peirce semiotics icon/index/symbol + Wittgenstein 'meaning is use' Philosophical Investigations 1953 + forensic linguistics Fitzgerald Unabomber Kaczynski + stylometry + voice ID + LADO asylum cases. Bumps sw v935 + gradle 892/9.4.0. v5.7.856.
 
