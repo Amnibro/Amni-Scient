@@ -1,6 +1,9 @@
 ﻿
 # Changelog 
 
+## [5.7.860] - 2026-05-29 - Sports L5 lift: 52→60 (+8 global sports)
+- Sports L5 PASS-13. Paralympics Stoke Mandeville Guttmann 1948+Rome 1960+Seoul 1988 parallel + Cricket formats Test/ODI/T20 + Aussie Rules AFL 18 players oval ball MCG + UFC/MMA Octagon Gracie BJJ Royce 1993 + Khabib McGregor + Rugby Union vs League 1895 split 15 vs 13 + Field Hockey 4000yrs India Dhyan Chand 8 Olympic golds NCAA women + Brazilian Jiu-Jitsu Helio Gracie 1925 belts + Zuckerberg purple + NCAA March Madness 68 teams 4 regions Final Four UCONN dynasty Caitlin Clark 19M viewers. Bumps sw v939 + gradle 896/9.4.4. v5.7.860.
+
 ## [5.7.859] - 2026-05-29 - Mythology L5 lift: 52→60 (+8 global mythologies)
 - Mythology L5 PASS-13. Polynesian Maui island-fishing+sun-slowing+fire + Disney 'Moana' 2016, Inuit Sedna sea goddess + fingers→sea mammals + dwarf planet 90377, Hawaiian Pele Kilauea volcano + Pele's hair+tears + curse + 2018 eruption, Persian Ahura Mazda Zoroastrianism vs Ahriman + 'Good thoughts good words good deeds' + Shahnameh Rostam + Abrahamic influence, Finnish Kalevala Lönnrot 1835+1849 + Väinämöinen+Ilmarinen+Lemminkäinen+Kullervo+Aino + Tolkien influence + Sibelius, Chinese Chang'e+Houyi 10 suns + Mid-Autumn Festival mooncakes + CNSA lunar program + Yutu rover, Sumerian Inanna's Descent ~2000 BC + 7 gates + Ereshkigal + Dumuzi seasonal cycle + dying-rising god prototype, Aboriginal Australian Dreamtime 60K yrs + Rainbow Serpent + Wandjina + Songlines + Uluru + 2023 Voice referendum failed. Bumps sw v938 + gradle 895/9.4.3. v5.7.859.
 
