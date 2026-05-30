@@ -1,6 +1,9 @@
 ﻿
 # Changelog 
 
+## [5.7.849] - 2026-05-29 - Engineering L2 lift: 52→60 (+8 applied/practical engineering)
+- Engineering L2 PASS-13. 4-stroke ICE Otto 1876 + electric motor/generator inverse Faraday 1831 + transformers step voltage Tesla AC + reinforced concrete + steel rebar Monier 1867 + solar PV silicon p-n junction + wind turbines 3-blade HAWT Betz limit + hydraulics vs pneumatics Pascal + AWG wire gauges + NEC ampacity safety. Bumps sw v928 + gradle 885/9.3.3. v5.7.849.
+
 ## [5.7.848] - 2026-05-29 - Engineering L1 lift: 52→60 (+8 practical kid-engineering)
 - Engineering L1 PASS-13. Series vs parallel circuits + insulators vs conductors copper/rubber/safety + nails vs screws traditional carpentry + steam engine Watt 1769 + airplane wings Bernoulli + Wright Brothers Dec 17 1903 + bicycle gear ratios + Gutenberg printing press 1440 + pin tumbler locks Yale 1865. Practical+traditional engineering, no Common Core framing. Bumps sw v927 + gradle 884/9.3.2. v5.7.848.
 
