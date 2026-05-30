@@ -1,6 +1,9 @@
 ﻿
 # Changelog 
 
+## [5.7.863] - 2026-05-29 - Shapes L5 lift: 52→60 (+8 advanced geometry+topology)
+- Shapes L5 PASS-13. Nash embedding 1956 Riemannian into R^n + Abel Prize 2015 + A Beautiful Mind, Ricci flow Hamilton 1982 + Perelman 2002-03 proved Poincaré+Geometrization + refused Fields+$1M, Apollonian gaskets Apollonius ~200 BC + Descartes circle theorem 1643 + integral gaskets + Soddy 'Kiss Precise' poem, Space-filling curves Peano 1890+Hilbert 1891 + USPS routes + spatial databases, Thurston's 8 geometries Fields 1982 + Spherical+Euclidean+Hyperbolic+5 others + JSJ decomposition, Sacred geometry golden ratio φ+Fibonacci spiral nautilus + Vitruvian Man + Flower of Life + 17 wallpaper groups, M.C. Escher 1898-1972 + Alhambra + Circle Limit + Coxeter collaboration + impossible Penrose triangle + Hofstadter, Leech lattice 24D Λ₂₄ + kissing number 196560 + Conway groups + Monster + Viazovska Fields 2022 + 8D+24D optimality proofs 2016-17. Bumps sw v942 + gradle 899/9.4.7. v5.7.863.
+
 ## [5.7.862] - 2026-05-29 - Weather L5 lift: 52→60 (+8 advanced meteorology)
 - Weather L5 PASS-13. Saffir-Simpson 1969 5-cat scale + Haiyan 195 mph + Cat 6 debate + Enhanced Fujita 2007 EF0-EF5 + Bridge Creek-Moore 1999 318 mph + supercells mesocyclones+wall clouds+hook echo + avalanches 30-45° slope + beacon/probe/shovel/airbag/AvaLung + Foehn/Chinook/Santa Ana downslope + katabatic Antarctica Cape Denison + Sudden Stratospheric Warming Scherhag 1952 + 'Beast from East' 2018 + Texas 2021 + urban heat island UHI 2-10°F + cool roofs + green roofs + LA Million Trees + unusual clouds mammatus+noctilucent+fallstreak holes+asperitas+sun dogs+circumzenithal arc + Brocken spectre. Bumps sw v941 + gradle 898/9.4.6. v5.7.862.
 
