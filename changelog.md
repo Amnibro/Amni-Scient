@@ -1,6 +1,9 @@
 ﻿
 # Changelog 
 
+## [5.7.850] - 2026-05-29 - Engineering L4 lift: 52→60 (+8 advanced engineering)
+- Engineering L4 PASS-13. 2nd law thermo+entropy Carnot+Clausius+Kelvin + welding types stick/MIG/TIG/oxy-acetylene + Nyquist stability criterion 1932 + power electronics buck/boost converters MOSFET + NACA airfoils 2412/0012 wing design + Stirling cycle external combustion regenerator + engine knock+octane RON/MON/AKI + process control PID/feedforward/cascade DCS/PLC. Bumps sw v929 + gradle 886/9.3.4. v5.7.850.
+
 ## [5.7.849] - 2026-05-29 - Engineering L2 lift: 52→60 (+8 applied/practical engineering)
 - Engineering L2 PASS-13. 4-stroke ICE Otto 1876 + electric motor/generator inverse Faraday 1831 + transformers step voltage Tesla AC + reinforced concrete + steel rebar Monier 1867 + solar PV silicon p-n junction + wind turbines 3-blade HAWT Betz limit + hydraulics vs pneumatics Pascal + AWG wire gauges + NEC ampacity safety. Bumps sw v928 + gradle 885/9.3.3. v5.7.849.
 
