@@ -1,6 +1,9 @@
 ﻿
 # Changelog 
 
+## [5.7.852] - 2026-05-29 - Animals L4 lift: 51→59 (+8 advanced zoology)
+- Animals L4 PASS-13. Cephalopod intelligence (octopus 500M neurons 2/3 in arms + tool use Veined Octopus + Inky escape 2016) + amniotes (4 membranes amnion/chorion/allantois/yolk + frees reproduction from water) + fish classes jawless/cartilaginous/bony + keystone species Paine 1969 + sea otters/wolves Yellowstone + ecosystem engineers beavers/elephants + invasive species kudzu/zebra mussels/cane toads/Burmese pythons + 5 mass extinctions Ordovician/Devonian/Permian 'Great Dying' 96%/Triassic/K-Pg Chicxulub + 6th IPBES 2019 + magnetoreception cryptochrome quantum compass + magnetite + animal communication bee waggle dance Frisch Nobel 1973 + whale song + prairie dog detailed alarms + vervet 3 predator types. Bumps sw v931 + gradle 888/9.3.6. v5.7.852.
+
 ## [5.7.851] - 2026-05-29 - Animals L1 lift: 51→59 (+8 kid-zoology basics)
 - Animals L1 PASS-13. Baby animal names (calf/foal/lamb/kid/joey/cub/kit) + animal homes (nest/hive/dam/web/burrow/den) + group names (pack/pride/herd/flock/school/swarm/murder/parliament) + herbivore/carnivore/omnivore + camouflage (chameleons/octopus/stick insects/peppered moths) + nocturnal vs diurnal vs crepuscular + migration (monarchs 3000mi/Arctic terns 25Kmi/salmon/wildebeest) + marsupials/pouch animals (kangaroo/koala/wombat/Tasmanian devil/opossum). Bumps sw v930 + gradle 887/9.3.5. v5.7.851.
 
