@@ -1,6 +1,9 @@
 ﻿
 # Changelog 
 
+## [5.7.848] - 2026-05-29 - Engineering L1 lift: 52→60 (+8 practical kid-engineering)
+- Engineering L1 PASS-13. Series vs parallel circuits + insulators vs conductors copper/rubber/safety + nails vs screws traditional carpentry + steam engine Watt 1769 + airplane wings Bernoulli + Wright Brothers Dec 17 1903 + bicycle gear ratios + Gutenberg printing press 1440 + pin tumbler locks Yale 1865. Practical+traditional engineering, no Common Core framing. Bumps sw v927 + gradle 884/9.3.2. v5.7.848.
+
 ## [5.7.847] - 2026-05-29 - Math L4 lift: 53→61 — TRADITIONAL + FAST EASTERN METHODS (Anthony's directive)
 - Math L4 PASS-13. PIVOT: per Anthony — use TEKS/B.E.S.T./USCIS for curriculum spine (NOT Common Core/NCSS); for math teach TRADITIONAL standard algorithms + memorized tables + FAST EASTERN methods (NOT Common Core 'new math'). 8 new entries showcase: JAPANESE LINE multiplication (count intersections), VEDIC NIKHILAM SUTRA (near-base multiplication 'all from 9, last from 10' — 97×98=9506 in 2 sec), VEDIC URDHVA-TIRYAGBHYAM ('vertically + crosswise' general method), CHINESE SUANPAN + JAPANESE SOROBAN (mental abacus faster than calculator), RUSSIAN PEASANT MULTIPLICATION (binary halve+double, ancient Egyptian Rhind Papyrus 1650 BC), TRACHTENBERG SYSTEM (invented in Nazi concentration camp, rapid digit rules), STANDARD LONG MULTIPLICATION (the traditional pre-2010 American vertical algorithm — reliable+fast+the goal), FAST MENTAL MATH TRICKS (squaring ending in 5, ×11 split-and-add, ×9 finger trick, ×25 shift-and-divide-by-4). Memory saved: feedback_amni_learn_curriculum_sources + feedback_amni_learn_math_methods. Bumps sw v926 + gradle 883/9.3.1. v5.7.847.
 
