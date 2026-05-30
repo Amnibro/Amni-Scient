@@ -1,6 +1,9 @@
 ﻿
 # Changelog 
 
+## [5.7.845] - 2026-05-29 - Math L1 lift: 52→60 (+8 kid-math foundations)
+- Math L1 PASS-13. Roman numerals + Fractions basics + Symmetry + Even/Odd + Skip counting 3s+4s + Pentagon/Hexagon/Octagon + Ordinal numbers + Place value. Bumps sw v924 + gradle 881/9.2.9. v5.7.845.
+
 ## [5.7.844] - 2026-05-29 - Science L5 lift: 51→59 — SCIENCE BANK COMPLETE PASS-13 (all L1-L5 at floor 55+)
 - Science L5 PASS-13 final — SCIENCE BANK COMPLETE. STRING THEORY 10/11 dimensions + Witten M-theory 1995 + Maldacena AdS/CFT 1997 + landscape 10^500 vacua + critics Smolin/Woit + Calabi-Yau compactification, BLACK HOLE INFORMATION PARADOX Hawking 1976 + Page curve + Penington-Almheiri-Mahajan entropy islands 2019-20 + firewall AMPS 2012 + ER=EPR Maldacena-Susskind 2013, QUANTUM SUPREMACY Google Sycamore 53 qubit Oct 23 2019 + IBM 2.5 days counter + Jiuzhang USTC photonic 2020 + Willow 2024 below threshold error correction, BCS SUPERCONDUCTIVITY Bardeen+Cooper+Schrieffer 1957 Nobel 1972 (Bardeen's 2nd!) + Cooper pairs phonon exchange + Meissner effect + JOSEPHSON 1962 + cuprates Bednorz+Müller 1986 still mysterious, ABIOGENESIS Miller-Urey 1953 amino acids + RNA world Cech+Altman 1989 ribozymes + hydrothermal vents Russell+Martin + Szostak protocells 2009 + Sutherland nucleotide synthesis + ENCELADUS+EUROPA, CAMBRIAN EXPLOSION 541-485 Mya + Burgess Shale Walcott 1909 + Chengjiang 1984 + Anomalocaris+Pikaia+trilobites + Gould 'Wonderful Life' 1989 + oxygen rise+predation arms race, AMPLITUHEDRON Arkani-Hamed+Trnka 2013 + scattering amplitudes as volume of positive Grassmannian + emergent spacetime+unitarity + BCFW 2005 + twistor Witten 2003, PROTON DECAY GUT prediction + Super-Kamiokande τ>1.6x10^34 yrs + minimal SU(5) Georgi-Glashow 1974 ruled out + Hyper-K+DUNE+JUNO upcoming + ultimate matter fate. Bumps sw v923 + gradle 880/9.2.8. v5.7.844.
 
