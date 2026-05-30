@@ -1,6 +1,9 @@
 ﻿
 # Changelog 
 
+## [5.7.847] - 2026-05-29 - Math L4 lift: 53→61 — TRADITIONAL + FAST EASTERN METHODS (Anthony's directive)
+- Math L4 PASS-13. PIVOT: per Anthony — use TEKS/B.E.S.T./USCIS for curriculum spine (NOT Common Core/NCSS); for math teach TRADITIONAL standard algorithms + memorized tables + FAST EASTERN methods (NOT Common Core 'new math'). 8 new entries showcase: JAPANESE LINE multiplication (count intersections), VEDIC NIKHILAM SUTRA (near-base multiplication 'all from 9, last from 10' — 97×98=9506 in 2 sec), VEDIC URDHVA-TIRYAGBHYAM ('vertically + crosswise' general method), CHINESE SUANPAN + JAPANESE SOROBAN (mental abacus faster than calculator), RUSSIAN PEASANT MULTIPLICATION (binary halve+double, ancient Egyptian Rhind Papyrus 1650 BC), TRACHTENBERG SYSTEM (invented in Nazi concentration camp, rapid digit rules), STANDARD LONG MULTIPLICATION (the traditional pre-2010 American vertical algorithm — reliable+fast+the goal), FAST MENTAL MATH TRICKS (squaring ending in 5, ×11 split-and-add, ×9 finger trick, ×25 shift-and-divide-by-4). Memory saved: feedback_amni_learn_curriculum_sources + feedback_amni_learn_math_methods. Bumps sw v926 + gradle 883/9.3.1. v5.7.847.
+
 ## [5.7.846] - 2026-05-29 - Math L2 lift: 52→60 (+8 mid-grade math)
 - Math L2 PASS-13. Ratios+Proportions cross-multiply + Mean/Median/Mode + Circumference 2πr + Triangle area ½bh + Distributive property a(b+c) + Slope y=mx+b + Angle types acute/right/obtuse/straight/reflex + Coordinate plane Cartesian quadrants. Bumps sw v925 + gradle 882/9.3.0. v5.7.846.
 
