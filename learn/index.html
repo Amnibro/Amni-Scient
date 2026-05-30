@@ -13437,6 +13437,10 @@ function playAnimalSound(type) {
   // projection, so a point's screen position matches its real geo position.
   // Still simplified to ~30 points per major continent, but the silhouettes
   // should now be recognizable.
+  // Raster equirectangular world map (Wikimedia public domain). Loaded once,
+  // reused across rounds. drawMap falls back to polygons until it loads.
+  let _worldMapImg=null;
+  (()=>{const im=new Image();im.onload=()=>{_worldMapImg=im;};im.src='./assets/world-map.png';})();
   const _mapContinents = [
     // North America: Bering → Pt Barrow → Canadian arctic → Hudson → Labrador
     // → Cape Race → Cape Cod → Cape Hatteras → Miami → Yucatan → Panama →
@@ -13678,20 +13682,24 @@ function playAnimalSound(type) {
     }
     function drawMap(hl){
       cx.fillStyle='#0a2540';cx.fillRect(0,0,W,H);
-      cx.strokeStyle='rgba(255,255,255,0.06)';cx.lineWidth=1;
       if(mode==='us'){
-        // Lat/lon grid scaled to US bounding box.
+        cx.strokeStyle='rgba(255,255,255,0.06)';cx.lineWidth=1;
         for(let lat=25;lat<=50;lat+=5){const y=ll2xy(lat,0).y;cx.beginPath();cx.moveTo(0,y);cx.lineTo(W,y);cx.stroke();}
         for(let lon=-120;lon<=-70;lon+=10){const x=ll2xy(0,lon).x;cx.beginPath();cx.moveTo(x,0);cx.lineTo(x,H);cx.stroke();}
-        // Lower-48 outline
         cx.beginPath();_mapUSOutline.forEach((p,i)=>{const xy=ll2xy(p[1],p[0]);if(i===0)cx.moveTo(xy.x,xy.y);else cx.lineTo(xy.x,xy.y);});cx.closePath();cx.fillStyle='#2f6f4a';cx.fill();cx.strokeStyle='rgba(0,0,0,0.35)';cx.lineWidth=1.5;cx.stroke();
+        Object.keys(shapeSet).forEach(nm=>{const ring=shapeSet[nm];cx.beginPath();ring.forEach((p,i)=>{const xy=ll2xy(p[1],p[0]);if(i===0)cx.moveTo(xy.x,xy.y);else cx.lineTo(xy.x,xy.y);});cx.closePath();cx.fillStyle=nm===hl?'#6ad08a':'#3f9163';cx.fill();cx.strokeStyle=nm===hl?'#f1c40f':'rgba(0,0,0,0.6)';cx.lineWidth=nm===hl?2:1;cx.stroke();});
       } else {
-        for(let lat=-60;lat<=60;lat+=30){const y=ll2xy(lat,0).y;cx.beginPath();cx.moveTo(0,y);cx.lineTo(W,y);cx.stroke();}
-        for(let lon=-150;lon<=150;lon+=30){const x=ll2xy(0,lon).x;cx.beginPath();cx.moveTo(x,0);cx.lineTo(x,H);cx.stroke();}
-        _mapContinents.forEach(c=>{cx.beginPath();c.pts.forEach((p,i)=>{const xy=ll2xy(p[1],p[0]);if(i===0)cx.moveTo(xy.x,xy.y);else cx.lineTo(xy.x,xy.y);});cx.closePath();cx.fillStyle='#2f6f4a';cx.fill();cx.strokeStyle='rgba(0,0,0,0.35)';cx.lineWidth=1;cx.stroke();});
+        if(_worldMapImg){
+          cx.drawImage(_worldMapImg,0,0,W,H);
+        } else {
+          cx.strokeStyle='rgba(255,255,255,0.06)';cx.lineWidth=1;
+          for(let lat=-60;lat<=60;lat+=30){const y=ll2xy(lat,0).y;cx.beginPath();cx.moveTo(0,y);cx.lineTo(W,y);cx.stroke();}
+          for(let lon=-150;lon<=150;lon+=30){const x=ll2xy(0,lon).x;cx.beginPath();cx.moveTo(x,0);cx.lineTo(x,H);cx.stroke();}
+          _mapContinents.forEach(c=>{cx.beginPath();c.pts.forEach((p,i)=>{const xy=ll2xy(p[1],p[0]);if(i===0)cx.moveTo(xy.x,xy.y);else cx.lineTo(xy.x,xy.y);});cx.closePath();cx.fillStyle='#2f6f4a';cx.fill();cx.strokeStyle='rgba(0,0,0,0.35)';cx.lineWidth=1;cx.stroke();});
+          setTimeout(()=>{if(_worldMapImg)drawMap(hl);},120);
+        }
+        if(hl&&shapeSet[hl]){const ring=shapeSet[hl];cx.beginPath();ring.forEach((p,i)=>{const xy=ll2xy(p[1],p[0]);if(i===0)cx.moveTo(xy.x,xy.y);else cx.lineTo(xy.x,xy.y);});cx.closePath();cx.fillStyle='rgba(106,208,138,0.45)';cx.fill();cx.strokeStyle='#f1c40f';cx.lineWidth=2.5;cx.stroke();}
       }
-      // Crisp country / state borders on top — these are the click-to-identify regions.
-      Object.keys(shapeSet).forEach(nm=>{const ring=shapeSet[nm];cx.beginPath();ring.forEach((p,i)=>{const xy=ll2xy(p[1],p[0]);if(i===0)cx.moveTo(xy.x,xy.y);else cx.lineTo(xy.x,xy.y);});cx.closePath();cx.fillStyle=nm===hl?'#6ad08a':'#3f9163';cx.fill();cx.strokeStyle=nm===hl?'#f1c40f':'rgba(0,0,0,0.6)';cx.lineWidth=nm===hl?2:1;cx.stroke();});
     }
     function haversine(lat1,lon1,lat2,lon2){const R=6371,toR=Math.PI/180;const dLat=(lat2-lat1)*toR,dLon=(lon2-lon1)*toR;const a=Math.sin(dLat/2)**2+Math.cos(lat1*toR)*Math.cos(lat2*toR)*Math.sin(dLon/2)**2;return 2*R*Math.asin(Math.sqrt(a));}
     function scoreDistance(km){
