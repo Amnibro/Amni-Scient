@@ -1,6 +1,9 @@
 ﻿
 # Changelog 
 
+## [5.7.861] - 2026-05-29 - Space L5 lift: 52→60 (+8 frontier astronomy)
+- Space L5 PASS-13. JWST $10B Dec 25 2021 launch + L2 + 6.5m mirror + JADES-GS-z14-0 + K2-18b DMS, SpaceX Falcon 9 reusable 380+ landings + Starship IFT-5 Oct 2024 Mechazilla chopsticks catch + Mars+lunar plans, Artemis SLS+Orion+Gateway+HLS Starship + Wiseman/Glover/Koch crew Artemis II 2026 + lunar landing 2027 south pole, DART asteroid Dimorphos impact Sept 26 2022 deflected orbit 32 min + ESA Hera 2024-26, Europa Clipper Oct 14 2024 launch + 49 flybys 2030+ subsurface ocean astrobiology, Event Horizon Telescope M87* April 10 2019 + Sgr A* May 12 2022 Doeleman + Bouman + 8 telescope VLBI, Fast Radio Bursts Lorimer 2007 + CHIME 1000+ FRBs + magnetar origin confirmed 2020, Solar System Moons 290+ + Titan/Europa/Enceladus ocean worlds + Dragonfly 2028 + Ganymede largest. Bumps sw v940 + gradle 897/9.4.5. v5.7.861.
+
 ## [5.7.860] - 2026-05-29 - Sports L5 lift: 52→60 (+8 global sports)
 - Sports L5 PASS-13. Paralympics Stoke Mandeville Guttmann 1948+Rome 1960+Seoul 1988 parallel + Cricket formats Test/ODI/T20 + Aussie Rules AFL 18 players oval ball MCG + UFC/MMA Octagon Gracie BJJ Royce 1993 + Khabib McGregor + Rugby Union vs League 1895 split 15 vs 13 + Field Hockey 4000yrs India Dhyan Chand 8 Olympic golds NCAA women + Brazilian Jiu-Jitsu Helio Gracie 1925 belts + Zuckerberg purple + NCAA March Madness 68 teams 4 regions Final Four UCONN dynasty Caitlin Clark 19M viewers. Bumps sw v939 + gradle 896/9.4.4. v5.7.860.
 
