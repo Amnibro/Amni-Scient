@@ -4,10 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Adam &mdash; Texture-Native Local AI Assistant | AMNI-SCIENT</title>
-<meta name="description" content="Adam is a GF(17) texture-native local AI assistant. 4 GB VRAM, lossless. Voice + vision + trainable gesture-controlled Jarvis-style UI with wake-word, Socratic coach mode, self-verifying edits (auto-runs sibling pytest), inline KaTeX + Mermaid rendering. 42 skills, autonomous learning daemon, live data widgets. Drop-in Ollama + OpenAI API replacement on one port. Source-available, CC BY-NC 4.0.">
+<meta name="description" content="Adam is a GF(17) texture-native local AI assistant. 4 GB VRAM, lossless. Closed-loop self-improving memory &mdash; corrected once, never wrong twice. Voice + vision + trainable gesture-controlled Jarvis-style UI with wake-word, Socratic coach mode, self-verifying edits (auto-runs sibling pytest), inline KaTeX + Mermaid rendering. 42 skills, autonomous learning daemon, live data widgets. Drop-in Ollama + OpenAI API replacement on one port. Source-available, CC BY-NC 4.0.">
 <meta name="keywords" content="adam,amni-ai,local ai,gf17,texture native,ptex,ollama drop-in,openai api drop-in,open webui,continue.dev,cline,aider,lossless ai,self-improving llm,self-verifying ai,sandbox code,coding assistant,jarvis ui,gesture control,local voice assistant,piper tts,whisper stt,mediapipe hands,blip vision,mcp server,socratic tutor,coach mode,wake word ai,auto pytest,self-inspect,proposal log,sandboxed venv">
 <meta property="og:title" content="Adam &mdash; Texture-Native Local AI Assistant">
-<meta property="og:description" content="4 GB VRAM. Lossless GF(17). Voice + vision + trainable-gesture Jarvis UI. Self-verifying edits (auto-pytest). Socratic coach mode. Inline KaTeX + Mermaid. Drop-in Ollama + OpenAI API replacement on one port.">
+<meta property="og:description" content="4 GB VRAM. Lossless GF(17). Closed-loop self-improving memory &mdash; corrected once, never wrong twice. Voice + vision + trainable-gesture Jarvis UI. Self-verifying edits (auto-pytest). Socratic coach mode. Drop-in Ollama + OpenAI API replacement on one port.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://amni-scient.com/amni-ai">
 <meta property="og:image" content="https://amni-scient.com/assets/explore/og-explore.png">
@@ -15,7 +15,7 @@
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Adam &mdash; Texture-Native Local AI Assistant">
-<meta name="twitter:description" content="4 GB VRAM. Lossless GF(17). Voice + vision + trainable gestures + wake-word + self-verifying edits + Socratic coach + KaTeX/Mermaid. Drop-in Ollama + OpenAI API replacement.">
+<meta name="twitter:description" content="4 GB VRAM. Lossless GF(17). Closed-loop self-improving memory &mdash; corrected once, never wrong twice. Voice + vision + trainable gestures + wake-word + self-verifying edits + Socratic coach. Drop-in Ollama + OpenAI API replacement.">
 <meta name="twitter:image" content="https://amni-scient.com/assets/explore/og-explore.png">
 <link rel="canonical" href="https://amni-scient.com/amni-ai">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -127,7 +127,7 @@
 
 <section style="text-align:center">
 <h2>LOCAL AI THAT GETS BETTER THE MORE YOU USE IT</h2>
-<p style="text-align:center;color:var(--dim);max-width:740px;margin:0 auto 1.5rem;font-size:.9rem">Adam runs on consumer GPUs (4 GB VRAM minimum). Weights are stored as GF(17) RGBA pixel atlases &mdash; bit-exact lossless, streamed from NVMe through GPU texture units instead of GEMM kernels. Every code response is executed in a sandbox + validated against its own asserts. Test-passing answers are persisted into a permanent semantic lesson bank, so the second time you ask the same question, it returns in <strong>~80ms instead of 80 seconds</strong>.</p>
+<p style="text-align:center;color:var(--dim);max-width:740px;margin:0 auto 1.5rem;font-size:.9rem">Adam runs on consumer GPUs (4 GB VRAM minimum). Weights are stored as GF(17) RGBA pixel atlases &mdash; bit-exact lossless, streamed from NVMe through GPU texture units instead of GEMM kernels. Every code response is executed in a sandbox + validated against its own asserts. Test-passing answers are persisted into a permanent semantic lesson bank, so the second time you ask the same question, it returns in <strong>~80ms instead of 80 seconds</strong>. And when you correct Adam, the correction <em>sticks</em>: a closed-loop memory substrate (PTEX&nbsp;+&nbsp;ATEX) verifies every fact before it&rsquo;s stored, suppresses any answer you&rsquo;ve corrected away, and grounds future replies in it &mdash; so the same error is <strong>never reported twice</strong>. A 24/7 learning loop crawls, self-verifies, and teaches Adam through that same discipline, so it iterates on itself across five fundamentals &mdash; <strong>learning, memory, context, knowledge, and wisdom</strong>.</p>
 <div class="cta-row" style="justify-content:center;flex-wrap:wrap;gap:1rem;margin:2rem 0">
 <a href="https://github.com/Amnibro/Amni-Ai" target="_blank" rel="noopener" class="btn btn-primary">VIEW ON GITHUB</a>
 <a href="https://github.com/Amnibro/Amni-Ai/archive/refs/heads/main.zip" class="btn btn-outline" id="dl-btn">DOWNLOAD LATEST (ZIP)</a>
@@ -152,6 +152,8 @@
 <tr><td>SAFETY</td><td>Keyword regex prompt filter</td><td>5 immutable laws + semantic intent (81% block)</td></tr>
 <tr><td>CODE OUTPUT</td><td>One-shot generation, you verify</td><td>CoT &rarr; sandbox &rarr; self-test &rarr; perturb &rarr; promote</td></tr>
 <tr><td>MEMORY ACROSS QUERIES</td><td>None &mdash; regenerate every time</td><td>Permanent PTEX lesson bank, 2400&times; speedup on repeat</td></tr>
+<tr><td>CORRECTIONS</td><td>Forgotten next turn &mdash; the same mistake repeats</td><td>Closed-loop: verified on write, suppressed forever, recalled instantly &mdash; no error reported twice</td></tr>
+<tr><td>SELF-IMPROVEMENT</td><td>Frozen at training cut-off</td><td>24/7 loop crawls + self-verifies + teaches through the same spine (Adam mentors Adam)</td></tr>
 </tbody>
 </table>
 </section>
@@ -163,13 +165,13 @@
 <div class="card-grid">
 <div class="card">
 <h3>1. STANDALONE</h3>
-<p>Adam as its own server at <code>localhost:7700</code> &mdash; single port hosts everything: classic chat UI at <code>/</code>, Jarvis-style neon UI at <code>/jarvis</code> (widgets + voice + gestures), HUD dashboard at <code>/hud</code>.</p>
+<p>Adam as its own server at <code>localhost:7700</code> &mdash; single port hosts everything: the unified UI at <code>/unified</code> (one surface &mdash; chat, voice, nav rail + live status bar), the Jarvis-style neon UI at <code>/jarvis</code> (widgets + voice + gestures), and the HUD dashboard at <code>/hud</code>.</p>
 <pre class="code-block"><span class="cmt"># clone &amp; install — that's it</span>
 git clone https://github.com/Amnibro/Amni-Ai
 cd Amni-Ai
 python install.py</pre>
-<p><strong>Windows users:</strong> double-click <code>install.bat</code>. <strong>Mac/Linux:</strong> <code>./install.sh</code>. <code>install.py</code> handles <em>everything</em>: venv creation, vendor-correct PyTorch (CUDA/ROCm/CPU auto-detect), pip install, optional Rust toolchain + <code>amni_kernels</code> native build, bake download (~20&nbsp;GB Gemma-4 E2B GF(17) from HuggingFace, one-time), server launch, browser open at <code>http://127.0.0.1:7700/</code>. You do <strong>not</strong> need to pre-create a venv or run <code>pip install</code> first.</p>
-<p style="font-size:.8rem;color:var(--dim)"><strong>The GF(17) bake is pre-built &mdash; you never re-bake.</strong> The lossless Gemma-4 E2B GF(17) atlas is produced once by us and published to HuggingFace; <code>install.py</code> simply downloads it (cosine=1.0, bit-exact). No conversion, no GPU bake step, no multi-hour encode on your machine &mdash; just download and run.</p>
+<p><strong>Windows users:</strong> double-click <code>install.bat</code>. <strong>Mac/Linux:</strong> <code>./install.sh</code>. <code>install.py</code> handles <em>everything</em>: venv creation, vendor-correct PyTorch (CUDA/ROCm/CPU auto-detect), pip install, optional Rust toolchain + <code>amni_kernels</code> native build, bake download (the Granite-3B GF(17) atlas from HuggingFace, one-time), server launch, browser open at <code>http://127.0.0.1:7700/</code>. You do <strong>not</strong> need to pre-create a venv or run <code>pip install</code> first.</p>
+<p style="font-size:.8rem;color:var(--dim)"><strong>The GF(17) bake is pre-built &mdash; you never re-bake.</strong> The lossless Granite-3B GF(17) atlas is produced once by us and published to HuggingFace; <code>install.py</code> simply downloads it (cosine=1.0, bit-exact). No conversion, no GPU bake step, no multi-hour encode on your machine &mdash; just download and run.</p>
 <p style="font-size:.78rem;color:var(--dim)">First-run: ~10-30 min depending on connection. Subsequent launches: <code>python -m amni.cli serve --port 7700</code> (or just <code>amni serve</code> if the venv is active), boots in ~15s with a ~60s background warmup the user doesn't have to wait on.</p>
 </div>
 
@@ -180,7 +182,7 @@ python install.py</pre>
 python install.py --no-launch
 <span class="cmt"># then start on the Ollama port</span>
 python -m amni.cli serve --port 11434 --cors</pre>
-<p>Point your Ollama client at <code>http://127.0.0.1:11434</code>. Adam advertises as <code>adam:e2b-gf17</code> plus aliases (<code>llama3</code>, <code>qwen</code>, <code>gemma2</code>, <code>gpt-4o-mini</code>) so clients with hardcoded model names still resolve. Adam also speaks the OpenAI shape at <code>/v1/chat/completions</code> on the same port &mdash; same endpoints used by Amni-Code, Continue.dev, Cline, Aider. Includes inline structured data via <code>amni_widgets[]</code> for clients that render them.</p>
+<p>Point your Ollama client at <code>http://127.0.0.1:11434</code>. Adam advertises as <code>adam:granite-gf17</code> plus aliases (<code>llama3.1</code>, <code>qwen2.5</code>, <code>gpt-4</code>, <code>gpt-4o-mini</code>) so clients with hardcoded model names still resolve. Adam also speaks the OpenAI shape at <code>/v1/chat/completions</code> on the same port &mdash; same endpoints used by Amni-Code, Continue.dev, Cline, Aider. Includes inline structured data via <code>amni_widgets[]</code> for clients that render them.</p>
 </div>
 
 <div class="card">
@@ -190,7 +192,7 @@ python -m amni.cli serve --port 11434 --cors</pre>
 "continue.models": [{
   "title": "Adam",
   "provider": "ollama",
-  "model": "adam:e2b-gf17",
+  "model": "adam:granite-gf17",
   "apiBase": "http://127.0.0.1:7700"
 }]
 <span class="cmt"># Cline / Aider / OpenAI-style — set base URL + dummy key</span>
@@ -221,7 +223,7 @@ OPENAI_API_KEY=anything</pre>
 <span class="flow-arrow">&rarr;</span>
 <span class="flow-step">PERSONA + CoT SCAFFOLD</span>
 <span class="flow-arrow">&rarr;</span>
-<span class="flow-step">STREAM GEMMA-4 E2B GF17</span>
+<span class="flow-step">STREAM GRANITE-3B GF17</span>
 <span class="flow-arrow">&rarr;</span>
 <span class="flow-step">EXTRACT &amp; VALIDATE SYNTAX</span>
 </div>
@@ -346,7 +348,7 @@ OPENAI_API_KEY=anything</pre>
 <h2>SPECIFICATIONS</h2>
 <table class="spec-table" style="max-width:760px;margin:1rem auto">
 <tr><th>PARAMETER</th><th>VALUE</th></tr>
-<tr><td>Base model</td><td>Gemma-4 E2B (Google), baked as GF(17) RGBA atlas</td></tr>
+<tr><td>Base model</td><td>IBM Granite 4.1 3B, baked as GF(17) RGBA atlas</td></tr>
 <tr><td>Compression</td><td>GF(17) base-17 digits, 4 per fp16 weight (LOSSLESS, cosine=1.0)</td></tr>
 <tr><td>Storage format</td><td>PTEX (Prismatic Texture) &mdash; 4096&times;4096 RGBA pages, mip-mapped</td></tr>
 <tr><td>Inference</td><td>TMU lookups via GPU texture units, NVMe&rarr;VRAM progressive tier streaming</td></tr>
@@ -354,6 +356,8 @@ OPENAI_API_KEY=anything</pre>
 <tr><td>RAM minimum</td><td>8 GB &middot; 16 GB for full lesson bank + persona overlays</td></tr>
 <tr><td>Inference speed</td><td>~18 tok/s on RX 7800 XT &middot; ~25 tok/s on RTX 4070</td></tr>
 <tr><td>First-token latency</td><td>~15s cold-start + ~60s background warmup (user can chat during warmup; LUT hits answer instantly) &middot; 80ms LUT hit on cached queries</td></tr>
+<tr><td>Closed-loop memory</td><td>PTEX&nbsp;+&nbsp;ATEX spine: verify-after-write (no silent half-writes), instant exact recall, confidence-graded tiers (T0 exact &rarr; T1 grounded &rarr; T2 model), anti-pattern suppression &mdash; a correction is verified, never re-emitted, and grounds future replies. Non-personal facts federate; personal stays local.</td></tr>
+<tr><td>Verify before answering</td><td>Code answers run in a sandbox + self-test before they ship; math answers default to self-consistency (sample-and-vote majority) instead of a single greedy guess. The verify&rarr;correct loop is the runtime default for verifiable tasks &mdash; the lever that lifts correctness without a bigger model.</td></tr>
 <tr><td>Seed lesson bank</td><td>56-1792 lessons depending on install (60 default starter; <code>--seed</code> + corpus modules add more). Grows continuously via the 24/7 LearningDaemon.</td></tr>
 <tr><td>Personas</td><td>11 built-in (Alfred [default], Adam, Mentor, Rikku, Yoda, Pirate Captain, Scientist, Steve Jobs, Haiku Poet, Sherlock Holmes, Jarvis) &middot; unlimited user-created via <code>/persona create</code> or the in-UI &quot;learn new&quot; flow that web-scrapes the voice profile. Every persona inherits a SAFETY BASELINE: voice and style only, never behavior or worldview. No persona belittles the user, asserts religious / philosophical / metaphysical positions, or pushes politics &mdash; if the persona&rsquo;s flavor would conflict, Adam drops it for that response and answers plainly.</td></tr>
 <tr><td>Skills</td><td>42 skills across coding (read/write/edit/diff/format/symbols/auto-import/rename/git/test_run/run_python), live data widgets (weather/system/time/news/stock/file_preview/disk/git_status), content ingestion (scan/ingest_url/ingest_pdf/ingest_youtube/build_curriculum), memory + reasoning (mem/coach/kg_query/learning_daemon), automation (schedule_loop/watch), voice (tts/stt), vision (describe_image), and meta (parse_error/project_info/export_session/prune_sessions/web/calc/time).</td></tr>
@@ -371,8 +375,8 @@ OPENAI_API_KEY=anything</pre>
 <tr><td>Inline rendering</td><td>Markdown (code blocks, lists, links), <strong>KaTeX math</strong> (<code>$x^2+1$</code> inline and <code>$$...$$</code> display with graceful CDN fallback, dollar-amount guard), <strong>Mermaid diagrams</strong> (flowcharts / sequence / state / ER / class / gantt / mindmap with custom Jarvis dark theme), syntax-highlighted code, and 9 widget types (weather / system / time / news / stock / disk / git / file_change / file_preview) all render inline in chat bubbles.</td></tr>
 <tr><td>Auditability</td><td>Every state-mutating action is timestamped + visible: <code>data/shell_history.jsonl</code> (all shell+git invocations with rc + stdout/stderr tails), <code>data/verification_log.jsonl</code> (per-edit verification trace), <code>data/needs_testing.jsonl</code> (queued unverifiable edits), <code>logs/agent_skill_calls.jsonl</code> (per-skill latency + error rate). All surfaced in /jarvis as color-coded header pills (SHELL / TESTS / LEARNING) plus a one-tap <strong>24-hour BRIEFING</strong> card aggregating facts learned, runs, errors, verified edits, skill calls, and coach streak.</td></tr>
 <tr><td>Platform</td><td>Windows 10/11 + Linux &middot; Python 3.10+ &middot; AMD ROCm 7.2+ or NVIDIA CUDA 12+</td></tr>
-<tr><td>License</td><td>Two-license: Amnibro's original code under CC BY-NC 4.0 &middot; Gemma 4 base weights under Apache 2.0 (Google)</td></tr>
-<tr><td>Base model attribution</td><td>Gemma 4 E2B IT (&copy; Google LLC, Apache 2.0) &middot; losslessly re-encoded as GF(17) RGBA, cosine=1.0 round-trip &middot; no fine-tuning or distillation</td></tr>
+<tr><td>License</td><td>Two-license: Amnibro's original code under CC BY-NC 4.0 &middot; Granite 4.1 base weights under Apache 2.0 (IBM)</td></tr>
+<tr><td>Base model attribution</td><td>IBM Granite 4.1 3B (&copy; IBM, Apache 2.0) &middot; losslessly re-encoded as GF(17) RGBA, cosine=1.0 round-trip &middot; no fine-tuning or distillation</td></tr>
 </table>
 </section>
 
@@ -399,7 +403,7 @@ OPENAI_API_KEY=anything</pre>
 <a href="https://github.com/Amnibro/Amni-Ai" target="_blank" rel="noopener">GITHUB</a>
 <a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9829; SUPPORT</a>
 </div>
-<p>&copy; 2025-2026 Amni-Scient. Amnibro's original Adam code is licensed CC BY-NC 4.0. Gemma 4 base weights (&copy; Google LLC) are licensed Apache 2.0. <em>Gemma</em> is a Google trademark; this product is not endorsed by or affiliated with Google.</p>
+<p>&copy; 2025-2026 Amni-Scient. Amnibro's original Adam code is licensed CC BY-NC 4.0. Granite 4.1 base weights (&copy; IBM) are licensed Apache 2.0. <em>Granite</em> is an IBM trademark; this product is not endorsed by or affiliated with IBM.</p>
 </footer>
 </body>
 </html>

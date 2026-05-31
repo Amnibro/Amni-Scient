@@ -183,6 +183,16 @@
 </section>
 
 <section>
+<h2>CORRECTIONS THAT STICK</h2>
+<p style="text-align:center;color:var(--dim);max-width:740px;margin:0 auto 1.25rem;font-size:.9rem">The same lossless ATEX layer powers Adam&rsquo;s closed-loop memory. When you correct the model, the fix is bit-exact &mdash; verified before it&rsquo;s stored, and structurally impossible to un-learn.</p>
+<div class="explain-grid">
+<div class="explain-card"><h3>Verify-after-write</h3><p>Every learned fact is written to all stores, then immediately recalled to confirm it landed. If the read-back doesn&rsquo;t match, the write is rolled back &mdash; no silent half-writes.</p></div>
+<div class="explain-card"><h3>Anti-pattern suppression</h3><p>A wrong answer you&rsquo;ve corrected is added to a permanent suppression set &mdash; it can never be returned again on any recall tier, and it never federates to other instances.</p></div>
+<div class="explain-card"><h3>Never wrong twice</h3><p>Corrected facts return instantly from an exact lookup and are injected as authoritative grounding even when you ask a reworded question. The same error is never reported twice.</p></div>
+</div>
+</section>
+
+<section>
 <h2>WHO IS THIS FOR?</h2>
 <div class="explain-grid">
 <div class="explain-card">
