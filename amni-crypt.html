@@ -119,13 +119,15 @@
 <tr><td>Block Size</td><td>1024 bytes (8192 bits)</td></tr>
 <tr><td>Grid Geometry</td><td>16&times;16 pixels &times; 4 bytes</td></tr>
 <tr><td>Rounds</td><td>16</td></tr>
-<tr><td>S-Box</td><td>Rijndael (AES-identical)</td></tr>
+<tr><td>S-Box</td><td>Rijndael (AES-identical) &mdash; within a proprietary SPN (Cauchy MDS L-matrix, branch number 17, LaneMix diffusion, Shadow Texture Protocol)</td></tr>
+<tr><td>Key Derivation</td><td>PBKDF2-HMAC-SHA512 &middot; 1,000,000 iterations &middot; 1024-bit derived key &middot; optional 360-frame deterministic animated KDF chain (SHAKE-256)</td></tr>
+<tr><td>GPU Acceleration</td><td>Auto-detect &middot; 256&times;256 blocks on GPU for files &ge;64&nbsp;KB, 16&times;16 on CPU below &mdash; transparent hybrid sizing</td></tr>
 <tr><td>Key Derivation</td><td>PBKDF2-HMAC-SHA512, 1,000,000 iterations</td></tr>
 <tr><td>Derived Key</td><td>1024 bits</td></tr>
 <tr><td>Shadow Generator</td><td>SHAKE-256 XOF (Keccak, post-quantum)</td></tr>
 <tr><td>Integrity</td><td>HMAC-SHA512</td></tr>
 <tr><td>Compression</td><td>zlib (pre-encryption)</td></tr>
-<tr><td>Container Format</td><td>AMNILOCL v3 (.acrypt)</td></tr>
+<tr><td>Container Format</td><td>ACRYPT v3 (.acrypt) &mdash; legacy AMNILOCL containers also readable for backward compatibility</td></tr>
 <tr><td>Salt/Nonce</td><td>Random per operation</td></tr>
 <tr><td>ECCN</td><td>5D992 (mass market)</td></tr>
 </table>
@@ -147,7 +149,7 @@
 </div>
 <div class="card">
 <h3>4. CONTAINER SEAL</h3>
-<p>Compressed + encrypted payload is packaged in AMNILOCL v3 binary format with salt, nonce, HMAC tag, and metadata. Output: .acrypt file.</p>
+<p>Compressed + encrypted payload is packaged in ACRYPT v3 binary format with salt, nonce, HMAC tag, and metadata. Output: .acrypt file. Legacy AMNILOCL containers (older / Android builds) remain decryptable via dual-magic-byte detection.</p>
 </div>
 </div>
 </section>

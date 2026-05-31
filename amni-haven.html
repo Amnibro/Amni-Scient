@@ -4,10 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Amni-Haven &mdash; Android Client for Haven | AMNI-SCIENT</title>
-<meta name="description" content="Amni-Haven: native Android client for ANCSemi's Haven chat platform. Socket.IO real-time messaging, FCM push, WebRTC voice and video.">
+<meta name="description" content="Amni-Haven: native Android client for ANCSemi's Haven chat platform. Socket.IO real-time messaging, FCM push, WebRTC voice/video/screen-share, and end-to-end-encrypted direct messages (ECDH P-256 + AES-256-GCM).">
 <meta name="keywords" content="amni-haven,haven,ancsemi,private chat,socket.io,android chat,self-hosted">
 <meta property="og:title" content="Amni-Haven &mdash; Android Client for Haven">
-<meta property="og:description" content="Native Android client for ANCSemi's Haven servers. Real-time messaging, push notifications, voice calls.">
+<meta property="og:description" content="Native Android client for ANCSemi's Haven servers. Real-time messaging, push, voice/video/screen-share calls, and E2E-encrypted DMs.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://amni-scient.com/amni-haven">
 <meta property="og:image" content="https://amni-scient.com/assets/haven/FfNHy.jpg">
@@ -15,7 +15,7 @@
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Amni-Haven &mdash; Android Client for Haven">
-<meta name="twitter:description" content="Native Android client for Haven chat. Real-time messaging, push notifications, voice calls.">
+<meta name="twitter:description" content="Native Android client for Haven chat. Real-time messaging, push, voice/video/screen-share, E2E-encrypted DMs.">
 <meta name="twitter:image" content="https://amni-scient.com/assets/haven/FfNHy.jpg">
 <link rel="canonical" href="https://amni-scient.com/amni-haven">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -94,13 +94,23 @@
 </div>
 <div class="feature">
 <div class="icon">&#127897;</div>
-<h4>VOICE + VIDEO</h4>
-<p>WebRTC peer-to-peer calls via Stream SDK. Direct connection between devices when possible.</p>
+<h4>VOICE + VIDEO + SCREEN SHARE</h4>
+<p>WebRTC peer-to-peer calls with direct device-to-device connection when possible. Share your screen mid-call via MediaProjection (1280&times;720 @ 15&nbsp;fps).</p>
+</div>
+<div class="feature">
+<div class="icon">&#128274;</div>
+<h4>END-TO-END ENCRYPTED DMs</h4>
+<p>Direct messages are E2E-encrypted with ECDH P-256 + HKDF-SHA256 + AES-256-GCM, with a per-server key namespace. The server relays ciphertext it can't read.</p>
+</div>
+<div class="feature">
+<div class="icon">&#127916;</div>
+<h4>INLINE MEDIA</h4>
+<p>Images and video (mp4/webm/mkv/avi/mov) play inline in the chat thread. E2E-encrypted images deep-link via the <code>e2e-img:</code> scheme for a mime-aware gallery.</p>
 </div>
 <div class="feature">
 <div class="icon">&#128271;</div>
 <h4>SELF-HOSTED</h4>
-<p>Point at any Haven server URL. Self-signed cert support included. Your server, your data, your rules.</p>
+<p>Point at any Haven server URL. Self-signed cert support included. Your server, your data, your rules. Invite-code registration is supported on invite-required servers.</p>
 </div>
 <div class="feature">
 <div class="icon">&#128260;</div>
