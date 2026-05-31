@@ -1,5 +1,20 @@
 # Architecture Map — amni-scient.com
 
+> ## ⚠️ ACTIVE NOTICE TO THE CONCURRENT LEARN-CONTENT LOOP (read me first — 2026-05-31, v5.8.0)
+> As of v5.8.0 the Amni-Learn app was **de-inlined**. The ~7.36 MB `<script>` that used to live inside `learn/index.html` (game engine + ALL quiz/fact banks) now lives in **`learn/learn-app.js`**.
+> - **Add/lift quiz banks in `learn/learn-app.js`** — NOT in `learn/index.html`. The inline `<script>` is gone; `learn/index.html` only has `<script src="learn-app.js" defer></script>`. **Do NOT re-inline it.**
+> - Keep your existing pattern otherwise: bump `learn/sw.js` `CACHE` (currently `amni-learn-v1011`) when you change `learn-app.js` so users get fresh content. `learn-app.js` is already in the SW `PRECACHE`.
+> - **Do NOT re-add AdSense** to `amni-{calc,explore,haven,learn,llm}.html`, `explore/index.html`, or `learn/index.html` — ads were intentionally removed (AdSense block remediation). Ads stay ONLY on `calc/*.html` and `learn/*.html` article pages.
+> - Versioning: `v5.8.0` is this ad/de-inline branch. Your learn lifts can keep their own sequence — just don't undo the bullet points above. After any `learn-app.js` change, re-run `node --check learn/learn-app.js`.
+
+## v5.8.0 AdSense Round 4 — Ad Placement + Learn De-inline
+- **Trigger** — site blocked from serving ads again (4th AdSense action; prior: v3.5.0/v4.3.0 "Low value content", v5.5.0 "Thin content/doorway"). Diagnosis on a now content-rich site: ads were placed on promotional product pages + interactive app canvases (low/no reader-facing content), and `learn/index.html` shipped a 7.36 MB inline app script.
+- **Ad policy (new rule)** — AdSense serves ONLY on genuine article pages: `calc/*.html` (32 explainers) and `learn/*.html` (11 category guides). All `amni-*.html` product landing pages and the `explore/index.html` + `learn/index.html` app canvases are now ad-free. `ads.txt`/`app-ads.txt` unchanged. Removed head loader + `<ins>` units from all 7; explore keeps its Ko-fi promo (non-ad).
+- **learn/index.html de-inline** — the single inline `<script>` (game engine + quiz banks, ~7.36 MB) moved to `learn/learn-app.js`, loaded via `<script src="learn-app.js" defer>`. Crawled HTML 7.36 MB → 197 KB. SW (`learn/sw.js`) now precaches `./learn-app.js`; CACHE bumped v1010→v1011. SW registration code lives in learn-app.js now (behavior unchanged; defer runs post-parse). **Quiz/bank content edits must now target `learn/learn-app.js`, not the inline script.**
+- **Step 2 done — template lockstep broken** — both SEO generators (`src/gen-calc-modules.js`, `src/gen-learn-categories.js`) now have a deterministic `pick(x,k)` helper: each of the 5 section headings + the deep-dive hint draws from 4–6 variants keyed by a stable hash of the page slug (regen-stable). Regenerated all 31 calc + 11 learn pages; bodies unchanged; ads preserved on article pages. **If you edit these generators, keep the `pick()` helper and the `HV`/`LV` variant maps.**
+- **Pending** — Step 3: content-first restructure (make the site read content-first rather than catalog-first) — deferred per Anthony.
+- **Backups** — `backups/v5.8.0_adsense/`. Plan: `docs/checklists/checklist_v5.8.0_adsense_round4.md`.
+
 ## v5.6.0 Amni-Learn Full Module Audit (in progress)
 - **Plan** — `docs/checklists/checklist_v5.6.0_learn_module_audit.md`. Three-pass audit of ~60 learn modules: Pass 0 (cross-cutting framework), Pass 1 (per-module diagnosis), Pass 2 (fixes batched by priority P0-P3), Pass 3 (verification).
 - **Audience map (canonical)** — L1 = Pre-K/early-K (4-6); L2 = elementary (7-9); L3 = teens (10-15); L4 = young adult (16-22); L5 = adult (22+). Used to grade vocab, mechanics, and pacing in every module.

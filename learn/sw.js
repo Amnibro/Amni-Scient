@@ -1,9 +1,10 @@
 // Amni-Learn service worker — cold-cache offline / airplane mode support.
 // Bumps the CACHE name on every meaningful change so old caches roll out.
-const CACHE = 'amni-learn-v1010';
+const CACHE = 'amni-learn-v1012';
 const PRECACHE = [
   './',
   './index.html',
+  './learn-app.js',
   './manifest.webmanifest',
   './assets/world-map.png',
   './assets/audio/bear.mp3','./assets/audio/bee.mp3','./assets/audio/bird.mp3','./assets/audio/boar.mp3',
