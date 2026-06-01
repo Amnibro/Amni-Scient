@@ -257,7 +257,7 @@
     // Poll every 4s GLOBALLY so a win earned inside a game fires its toast+confetti
     // within seconds, not only after returning to the menu. Strip re-render is
     // skipped off-menu to avoid needless DOM work.
-    setInterval(()=>{_checkAchievements();if(document.getElementById('menu-view')&&document.getElementById('menu-view').classList.contains('active'))_renderAchStrip();},4000);
+    setInterval(()=>{if(document.hidden)return;_checkAchievements();if(document.getElementById('menu-view')&&document.getElementById('menu-view').classList.contains('active'))_renderAchStrip();},4000);
   },150);
   // Daily Challenge. One puzzle per calendar day, date-seeded so every player
   // on the same date sees the same puzzle. Persists streak + best-streak +
