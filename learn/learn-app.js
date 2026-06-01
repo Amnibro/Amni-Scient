@@ -556,7 +556,8 @@
     if (btn) { btn.textContent = '🌙'; btn.title = 'Theme: Midnight (tap to change)'; }
   }
   try {
-    const savedTheme = localStorage.getItem('amni-learn-theme') || 'dark';
+    let savedTheme = localStorage.getItem('amni-learn-theme');
+    if (!savedTheme) { savedTheme = (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) ? 'light' : 'dark'; try { localStorage.setItem('amni-learn-theme', savedTheme); } catch {} }
     _applyTheme(savedTheme);
   } catch { _applyTheme('dark'); }
   $$('#theme-btn').addEventListener('click', () => {
