@@ -237,6 +237,7 @@
     const overlay=document.createElement('div');overlay.id='ach-modal';
     overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.86);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;';
     const box=document.createElement('div');
+    box.setAttribute('role','dialog');box.setAttribute('aria-modal','true');box.setAttribute('aria-label','Achievements');
     box.style.cssText='background:#1a1f2e;border:2px solid #f1c40f;border-radius:14px;padding:22px;max-width:580px;width:100%;max-height:80vh;overflow-y:auto;font-family:\'JetBrains Mono\',monospace;color:var(--text,#ecf0f1);-webkit-overflow-scrolling:touch;';
     const total=ACHIEVEMENTS.length;const earned=ACHIEVEMENTS.filter(a=>a.progress().unlocked).length;
     box.innerHTML=`<h2 style="color:#f1c40f;margin:0 0 4px;text-align:center;">🏆 Achievements</h2><div style="text-align:center;color:#aaa;margin-bottom:12px;font-size:0.85rem;">${earned} / ${total} unlocked</div>`;
@@ -753,7 +754,7 @@
   });
   try {
     const _modalFocusObs = new MutationObserver(ms => ms.forEach(m => {
-      m.addedNodes.forEach(n => { if (n.nodeType === 1 && n.classList && n.classList.contains('hs-overlay')) { n._prevFocus = document.activeElement; const d = n.querySelector('.hs-modal') || n; try { d.setAttribute('tabindex', '-1'); d.focus({ preventScroll: true }); } catch (e) {} } });
+      m.addedNodes.forEach(n => { if (n.nodeType === 1 && ((n.classList && n.classList.contains('hs-overlay')) || n.id === 'ach-modal')) { n._prevFocus = document.activeElement; const d = n.querySelector('[role="dialog"]') || n; try { d.setAttribute('tabindex', '-1'); d.focus({ preventScroll: true }); } catch (e) {} } });
       m.removedNodes.forEach(n => { if (n.nodeType === 1 && n._prevFocus && typeof n._prevFocus.focus === 'function') { try { n._prevFocus.focus({ preventScroll: true }); } catch (e) {} } });
     }));
     _modalFocusObs.observe(document.body, { childList: true });
