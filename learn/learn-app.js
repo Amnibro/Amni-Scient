@@ -99,6 +99,7 @@
       sessionScore += pts * mult;
       if(currentStreak > bestStreak) bestStreak = currentStreak;
       updateScoreUI();
+      const _sv=$$('#streak-val'); if(_sv){_sv.style.animation='none';void _sv.offsetWidth;_sv.style.animation='spmPulse 0.35s ease';}
       if(currentStreak === 5) showFeedback('🔥 5 Streak!', '#f39c12');
       if(currentStreak === 10) showFeedback('🔥🔥 10 Streak!', '#e74c3c');
   }
