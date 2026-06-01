@@ -39,6 +39,7 @@
     posner: $$('#posner-view'),
     backspan: $$('#backspan-view'),
     tol: $$('#tol-view'),
+    changedet: $$('#changedet-view'),
     nback: $$('#nback-view'),
     anagram: $$('#anagram-view'),
     chimp: $$('#chimp-view'),
@@ -938,6 +939,7 @@
       if(game === 'posner') initPosner();
       if(game === 'backspan') initBackSpan();
       if(game === 'tol') initTowerLondon();
+      if(game === 'changedet') initChangeDet();
       if(game === 'nback') initNBack();
       if(game === 'anagram') initAnagram();
       if(game === 'chimp') initChimp();
@@ -13562,6 +13564,28 @@ function playAnimalSound(type) {
     ct.appendChild(_modeRow());
     const sb=document.createElement('button');sb.className='nmm-btn';sb.textContent='START';sb.onclick=()=>{act=true;sc=0;tot=0;stk=0;bestStk=0;rtTotal=0;rtCount=0;tm=c.time;$$('#stp-tm').textContent=tm;show();window._stpTimer=setInterval(()=>{tm--;$$('#stp-tm').textContent=tm;if(tm<=0)_gameOver();},1000);};ct.appendChild(sb);
   }
+  function initChangeDet(){
+    const ct=$$('#cd-container'),hud=$$('#cd-hud');
+    if(window._cdTimeout){clearTimeout(window._cdTimeout);window._cdTimeout=null;}
+    const lvl=Math.min(currentLevel||3,5),N=lvl<=2?3:lvl>=4?6:4,TRIALS=30,SHOW=lvl<=2?900:lvl>=4?560:720,PAL=['#e74c3c','#3498db','#2ecc71','#f1c40f','#9b59b6','#e67e22','#1abc9c','#ec4899'];
+    const SLOTS=[[18,22],[50,18],[82,22],[20,55],[50,52],[80,55],[35,84],[68,84]];
+    let trial=0,correct=0,wrong=0,streak=0,awaiting=false,changed=false,hits=0,crej=0,chN=0,saN=0,squares=[];
+    const best=parseInt(sessionStorage.getItem('cd-best')||'0');
+    hud.innerHTML=`<span class="game-stat">🎯 Trial <span class="game-stat-val" id="cd-tr">0</span>/${TRIALS}</span><span class="game-stat">✅ <span class="game-stat-val" id="cd-c">0</span></span><span class="game-stat">🔥 <span class="game-stat-val" id="cd-st">0</span></span><span class="game-stat">⭐ Best ${best||'—'}</span><span class="game-stat">📊 Lvl ${lvl}</span>`;
+    ct.innerHTML='';
+    const hint=document.createElement('div');hint.style.cssText='font-size:1.05rem;color:#2c3e50;font-family:Comic Neue,cursive;text-align:center;max-width:440px';hint.textContent='Memorize the colors. They vanish, then come back — did ONE color change?';
+    const arena=document.createElement('div');arena.style.cssText='animation:bounceIn 0.45s ease;position:relative;width:min(88vw,360px);height:270px;background:rgba(255,255,255,0.55);border-radius:16px';
+    const status=document.createElement('div');status.style.cssText='font-size:1.05rem;color:#2c3e50;font-family:Comic Neue,cursive;min-height:1.4em;text-align:center;font-weight:bold';
+    const row=document.createElement('div');row.style.cssText='display:flex;gap:18px';
+    const mkBtn=(label,val)=>{const b=document.createElement('button');b.className='nmm-btn';b.textContent=label;b.style.cssText='font-size:1.2rem;min-width:130px';b.onclick=()=>respond(val);return b;};
+    row.appendChild(mkBtn('✓ Same',false));row.appendChild(mkBtn('✗ Changed',true));
+    ct.appendChild(hint);ct.appendChild(arena);ct.appendChild(status);ct.appendChild(row);
+    const render=arr=>{arena.innerHTML='';arr.forEach(sq=>{const d=document.createElement('div');d.style.cssText='position:absolute;width:46px;height:46px;border-radius:10px;transform:translate(-50%,-50%);background:'+sq.c+';left:'+sq.x+'%;top:'+sq.y+'%';arena.appendChild(d);});};
+    function finish(){const a=(correct+wrong)?Math.round(100*correct/(correct+wrong)):0,hr=chN?hits/chN:0,cr=saN?crej/saN:0,K=Math.max(0,N*(hr+cr-1)).toFixed(1),score=correct;if(score>best)sessionStorage.setItem('cd-best',score);ct.innerHTML='';const sum=document.createElement('div');sum.className='rxt-summary';sum.innerHTML=`<h3>${a>=90?'🌟 Photographic memory!':a>=75?'👍 Sharp eye!':'💪 Keep training'}</h3><div class="rxt-summary-stats"><div class="rxt-summary-stat"><span class="val">${a}%</span><span class="lbl">Accuracy</span></div><div class="rxt-summary-stat"><span class="val">${correct}</span><span class="lbl">Correct</span></div><div class="rxt-summary-stat"><span class="val">~${K}</span><span class="lbl">Memory K</span></div></div><div class="rxt-tier-scale">Change Detection measures VISUAL working-memory capacity ("K" ≈ how many items you hold at once; typical adult ≈ 3-4). Hold all the colors, then spot if one changed.</div>`;ct.appendChild(sum);if(a>=90)spawnConfetti(window.innerWidth/2,window.innerHeight/2,90);showFeedback('Spot the Change: '+a+'% 🎨',score>best?'#2ecc71':'#f1c40f');addScore(Math.max(1,Math.floor(correct/3)));const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='AGAIN';rb.style.marginTop='12px';rb.onclick=()=>initChangeDet();ct.appendChild(rb);}
+    function respond(said){if(currentGame!=='changedet'||!awaiting)return;awaiting=false;const ok=said===changed;changed?chN++:saN++;ok?(correct++,streak++,addScore(1),(changed?hits++:crej++)):(wrong++,streak=0,resetStreak());const c=$$('#cd-c');if(c)c.textContent=correct;const st=$$('#cd-st');if(st)st.textContent=streak;status.textContent=ok?'✓ Correct!':(changed?'✗ One DID change':'✗ It was the same');window._cdTimeout=setTimeout(()=>{if(currentGame==='changedet')next();},760);}
+    function next(){if(currentGame!=='changedet')return;if(trial>=TRIALS)return finish();trial++;const tr=$$('#cd-tr');if(tr)tr.textContent=trial;awaiting=false;status.textContent='Memorize…';const slotIdx=[...Array(SLOTS.length).keys()].sort(()=>Math.random()-0.5).slice(0,N);const cols=[...PAL].sort(()=>Math.random()-0.5).slice(0,N);squares=slotIdx.map((si,i)=>({x:SLOTS[si][0],y:SLOTS[si][1],c:cols[i]}));render(squares);window._cdTimeout=setTimeout(()=>{if(currentGame!=='changedet')return;arena.innerHTML='';status.textContent='…';window._cdTimeout=setTimeout(()=>{if(currentGame!=='changedet')return;changed=Math.random()<0.5;const test=squares.map(s=>({...s}));if(changed){const j=Math.floor(Math.random()*N),used=new Set(test.map(s=>s.c)),avail=PAL.filter(c=>!used.has(c));test[j].c=avail[Math.floor(Math.random()*avail.length)];}render(test);status.textContent='Same, or did one change?';awaiting=true;},900);},SHOW);}
+    window._cdTimeout=setTimeout(()=>{if(currentGame==='changedet')next();},700);
+  }
   function initTowerLondon(){
     const ct=$$('#tol-container'),hud=$$('#tol-hud');
     const lvl=Math.min(currentLevel||3,5),CAP=3,COL={R:'#e74c3c',G:'#2ecc71',B:'#f39c12'};
@@ -16517,6 +16541,14 @@ function playAnimalSound(type) {
       '<b>Strategy \u2014 Chunking:</b> Break long numbers into groups. "4815162342" becomes "48-15-16-23-42" \u2014 much easier!',
       '<b>Strategy \u2014 Rhythm:</b> Say the number in your head with a rhythm, like a phone number.',
       'Your <b>best score</b> is saved between rounds. Try to beat your record!'
+    ]},
+    changedet:{title:'\ud83c\udfa8 How to Play Spot the Change',steps:[
+      'A handful of colored squares appears for a moment \u2014 try to <b>memorize all their colors</b>.',
+      'They vanish, then come back. Sometimes <b>one square has changed color</b>; sometimes nothing changed.',
+      'Tap <b>\u2713 Same</b> if every color is identical, or <b>\u2717 Changed</b> if one is different.',
+      '30 trials. The number of squares scales with your level \u2014 more squares = harder.',
+      '<b>Why it helps:</b> this is the classic test of <b>visual working memory</b>. Your score includes an estimate of your memory capacity "K" (typical adult \u2248 3-4 items).',
+      '<b>Tip:</b> don\u2019t stare at one square \u2014 take in the whole set at a glance.'
     ]},
     tol:{title:'\ud83d\uddfc How to Play Tower of London',steps:[
       'You have 3 pegs and 3 colored balls. A small <b>\ud83c\udfaf Goal</b> picture shows the arrangement you need to build.',

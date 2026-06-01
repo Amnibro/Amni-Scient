@@ -14,6 +14,12 @@
 - **Broke template lockstep (Step 2).** Added a deterministic per-page heading picker to both SEO generators (`src/gen-calc-modules.js`, `src/gen-learn-categories.js`): each of the 5 section headings + the deep-dive hint now draws from 4–6 variants keyed by a stable hash of the page slug (so regenerations don't churn). Regenerated all 31 calc + 11 learn pages — identical "WHAT IT COMPUTES / KEY EQUATIONS / …" skeleton replaced with distributed variants; page bodies (already unique) untouched; ads preserved on the article pages.
 - Plan/council: docs/checklists/checklist_v5.8.0_adsense_round4.md + docs/guardian_councils/guardian_council_v5.8.0_adsense_round4.md. Backups in backups/v5.8.0_adsense/. Step 3 (content-first restructure) still pending; do NOT submit AdSense reconsideration until the learn app is smoke-tested in a browser. v5.8.0.
 
+## [5.7.9993] - 2026-06-01 - NEW MODULE: Spot the Change (visual working-memory / change detection)
+- Add-new thread (rotating the 3-thread direction). Change Detection (Luck & Vogel) — measures VISUAL working-memory capacity; distinct from Corsi (spatial sequence), the digit-span games (verbal), and the perceptual same/different life-game.
+- Gameplay: N colored squares flash, vanish (~900ms blank), then reappear — half the time one square's color changed. Tap ✓ Same / ✗ Changed. 30 trials; summary shows accuracy + an estimated capacity "K" = N·(hitRate + CRrate − 1). Placed in "Memory & Focus".
+- Level-scaled set size: L1-2 → 3 squares, L3 → 4, L4-5 → 6; display time 900/720/560ms. Lvl HUD chip + bounce-in arena. Built with all the polish features.
+- Wiring across all 6 points (button, #changedet-view, registry, dispatcher initChangeDet, tutorial, fn). Cleanup-safe: show/blank/test setTimeout chain guarded by `currentGame!=='changedet'` + window._cdTimeout cleared on re-init; awaiting flag gates the buttons. node --check passes. Bumps sw v1082→v1083. v5.7.9993.
+
 ## [5.7.9992] - 2026-06-01 - UPGRADE: Chimp Test honors the level selector
 - Upgrade thread #2. The Chimp Test (spatial working memory — memorize then tap numbered tiles in order) started at 4 numbers regardless of level. Now scales the starting count: L1-2 → 4, L3 → 5, L4-5 → 6, so advanced learners begin nearer their limit instead of grinding up from 4. Added the 📊 Lvl chip to the HUD. Self-progression (+1 number per success), reveal-time modes, and bests unchanged.
 - node --check passes. Bumps sw v1081→v1082. v5.7.9992.
