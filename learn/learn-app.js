@@ -4040,6 +4040,7 @@
         arena.innerHTML=`<div style="text-align:center;padding:20px;color:#fff;font-family:Comic Neue,cursive;"><div style="font-size:2.5rem;margin-bottom:10px;">${wasBest?'🏆 NEW BEST!':'🎉 All done!'}</div><div style="font-size:1.4rem;">${score}/${TOTAL_ROUNDS} popped correctly</div></div>`;
         arena.style.display='flex';arena.style.alignItems='center';arena.style.justifyContent='center';
         if(typeof spawnConfetti==='function')spawnConfetti(window.innerWidth/2,window.innerHeight/2,wasBest?120:60);
+        if(ttsAuto() && typeof speakSeq==='function')speakSeq([(wasBest?'New best! ':'All done! ')+'You popped '+score+' out of '+TOTAL_ROUNDS+'!']);
         if(typeof showFeedback==='function')showFeedback(`Bubble Pop: ${score}/${TOTAL_ROUNDS} 🫧`,wasBest?'#2ecc71':'#3498db');
         if(typeof addScore==='function')addScore(score);
         const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='Play Again';rb.style.cssText='display:block;margin:14px auto;';rb.onclick=()=>{score=0;round=0;document.getElementById('bub-score').textContent=0;document.getElementById('bub-round').textContent=0;nextRound();};lifeArea.appendChild(rb);
@@ -4051,6 +4052,7 @@
       else if(mode==='letters'){pool=[...LETTERS].sort(()=>Math.random()-0.5).slice(0,4);labelOf=(p)=>p;targetIdx=Math.floor(Math.random()*pool.length);prompt.innerHTML=`Pop the letter <b style="color:#e84393">${pool[targetIdx]}</b>!`;}
       else{pool=[...NUMBERS].sort(()=>Math.random()-0.5).slice(0,4);labelOf=(p)=>p;targetIdx=Math.floor(Math.random()*pool.length);prompt.innerHTML=`Pop the number <b style="color:#e84393">${pool[targetIdx]}</b>!`;}
       const target=pool[targetIdx];
+      if(ttsAuto() && typeof speakSeq==='function')speakSeq([mode==='colors'?('Pop the '+target.n.toLowerCase()+' bubble!'):mode==='letters'?('Pop the letter '+target+'!'):('Pop the number '+target+'!')]);
       const slotW=100/pool.length;
       pool.forEach((p,i)=>{
         const b=document.createElement('div');
