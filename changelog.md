@@ -14,6 +14,10 @@
 - **Broke template lockstep (Step 2).** Added a deterministic per-page heading picker to both SEO generators (`src/gen-calc-modules.js`, `src/gen-learn-categories.js`): each of the 5 section headings + the deep-dive hint now draws from 4–6 variants keyed by a stable hash of the page slug (so regenerations don't churn). Regenerated all 31 calc + 11 learn pages — identical "WHAT IT COMPUTES / KEY EQUATIONS / …" skeleton replaced with distributed variants; page bodies (already unique) untouched; ads preserved on the article pages.
 - Plan/council: docs/checklists/checklist_v5.8.0_adsense_round4.md + docs/guardian_councils/guardian_council_v5.8.0_adsense_round4.md. Backups in backups/v5.8.0_adsense/. Step 3 (content-first restructure) still pending; do NOT submit AdSense reconsideration until the learn app is smoke-tested in a browser. v5.8.0.
 
+## [5.8.7] - 2026-06-01 - TTS #7: pre-K hears the quiz-complete result
+- At LEVEL 1, finishing a subject quiz now speaks "Quiz complete! You got X out of Y correct. Great job! / Good try!" — so a non-reading toddler hears how they did, not just sees the score. node --check passes. Bumps sw v1106→v1107. v5.8.7.
+- Pre-K quiz read-aloud is now end-to-end complete: teach cards → question + choices → spoken feedback → tappable explanation → spoken completion, plus How-to-Play tutorials and the replay button.
+
 ## [5.8.6] - 2026-06-01 - TTS #6: "How to Play" tutorials read aloud
 - Every tutorial modal now has a "🔊 Read aloud" button that speaks the title + all steps (HTML tags stripped via /<[^>]+>/g before speakSeq). At LEVEL 1 the instructions auto-read when the modal opens. Closing the modal (✕ / Got it! / backdrop) now also stops speech. Works for all ~90 games' tutorials. node --check passes. Bumps sw v1105→v1106. v5.8.6.
 - Pre-K TTS coverage is now broad: quiz (question + choices + feedback + explanation + replay), teach cards, and How-to-Play instructions — all voiced for non-readers via the offline Web Speech API.
