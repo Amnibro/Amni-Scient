@@ -655,6 +655,7 @@
   function _curHandler(e){
     const kind=localStorage.getItem('profile-cursor')||'';
     if(!kind)return;
+    if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const now=performance.now();if(now-_curLast<40)return;_curLast=now;
     const p=document.createElement('span');p.className='cur-particle';p.textContent=_curParticleChar(kind);
     p.style.left=(e.clientX-8)+'px';p.style.top=(e.clientY-8)+'px';
