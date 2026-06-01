@@ -15698,7 +15698,7 @@ function playAnimalSound(type) {
     canvas.addEventListener('pointerdown',e=>{e.preventDefault();if(poured)return;filling=true;});
     canvas.addEventListener('pointerup',e=>{e.preventDefault();pour();});
     canvas.addEventListener('pointercancel',()=>{if(filling&&!poured)pour();});
-    document.addEventListener('keydown',e=>{if(currentGame!=='fillcup')return;if(e.key===' '){if(!poured)filling=!filling;if(!filling&&!poured)pour();}});
+    document.onkeydown=e=>{if(currentGame!=='fillcup')return;if(e.key===' '){if(!poured)filling=!filling;if(!filling&&!poured)pour();}};
     function pour(){
       if(!filling||poured)return;filling=false;poured=true;
       const diff=Math.abs(fillAmt-target);
