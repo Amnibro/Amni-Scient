@@ -3766,6 +3766,7 @@
         caption.textContent='';
         choices.innerHTML='';
         if(typeof spawnConfetti==='function')spawnConfetti(window.innerWidth/2,window.innerHeight/2,wasBest?120:60);
+        if(ttsAuto() && typeof speakSeq==='function')speakSeq([(wasBest?'New best! ':'All done! ')+'You got '+score+' out of '+TOTAL+'!']);
         if(typeof showFeedback==='function')showFeedback(`Color Mixer: ${score}/${TOTAL} 🎨`,wasBest?'#2ecc71':'#3498db');
         if(typeof addScore==='function')addScore(score);
         const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='Play Again';rb.style.cssText='display:block;margin:14px auto;';rb.onclick=()=>initColorMix();lifeArea.appendChild(rb);
@@ -3774,6 +3775,7 @@
       curMix=MIXES[Math.floor(Math.random()*MIXES.length)];
       equation.innerHTML=`<span>${curMix.a}</span><span style="font-size:2.6rem;color:#7f8c8d;">+</span><span>${curMix.b}</span><span style="font-size:2.6rem;color:#7f8c8d;">=</span><span style="opacity:0.3;">❓</span>`;
       caption.textContent=`${curMix.aName} + ${curMix.bName} = ?`;
+      if(ttsAuto() && typeof speakSeq==='function')speakSeq([curMix.aName+' plus '+curMix.bName+' makes what color?']);
       const distractors=ALL_RESULTS.filter(c=>c!==curMix.r).sort(()=>Math.random()-0.5).slice(0,3);
       const opts=[curMix.r,...distractors].sort(()=>Math.random()-0.5);
       choices.innerHTML='';
@@ -3799,6 +3801,7 @@
         if(typeof showFeedback==='function')showFeedback(`It's ${curMix.rName}!`,'#e67e22');
         if(typeof resetStreak==='function')resetStreak();
       }
+      if(ttsAuto() && typeof speakSeq==='function')speakSeq([(picked===curMix.r?'Yes! ':'It is ')+curMix.rName+'!']);
       setTimeout(nextRound,1300);
     }
     nextRound();
