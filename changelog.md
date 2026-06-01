@@ -14,6 +14,12 @@
 - **Broke template lockstep (Step 2).** Added a deterministic per-page heading picker to both SEO generators (`src/gen-calc-modules.js`, `src/gen-learn-categories.js`): each of the 5 section headings + the deep-dive hint now draws from 4–6 variants keyed by a stable hash of the page slug (so regenerations don't churn). Regenerated all 31 calc + 11 learn pages — identical "WHAT IT COMPUTES / KEY EQUATIONS / …" skeleton replaced with distributed variants; page bodies (already unique) untouched; ads preserved on the article pages.
 - Plan/council: docs/checklists/checklist_v5.8.0_adsense_round4.md + docs/guardian_councils/guardian_council_v5.8.0_adsense_round4.md. Backups in backups/v5.8.0_adsense/. Step 3 (content-first restructure) still pending; do NOT submit AdSense reconsideration until the learn app is smoke-tested in a browser. v5.8.0.
 
+## [5.7.990] - 2026-06-01 - NEW MODULE: Dot Estimate (Approximate Number Sense exercise)
+- Brain-exercise #6 (Anthony's direction). The Approximate Number System (ANS) test — a distinct number-sense paradigm not covered by any existing module.
+- Gameplay: two panels briefly flash (~700ms) clusters of dots, then clear; tap ◀/▶ for the side that had MORE. Ratio between the two counts tightens every 5 trials (1.8 → 1.13), so it gets progressively harder. The correct side flashes green/red as feedback. 30 trials; tracks correct + accuracy. Summary + AGAIN. Placed in "Visual & Spatial".
+- Wiring across all 6 points (button, #numerosity-view, registry, dispatcher initNumerosity, tutorial, fn; distinct ids nz-*). Cleanup-safe: flash/ITI setTimeouts guarded by `currentGame!=='numerosity'` + window._nzTimeout cleared on re-init; awaiting flag blocks taps during the flash. Reuses CSS. node --check passes. Bumps sw v1070→v1071. v5.7.990.
+- 6 new brain modules this run: Go/No-Go, Symbol Coding, Corsi, Flanker, Simon, Dot Estimate.
+
 ## [5.7.989] - 2026-06-01 - NEW MODULE: Simon Match (spatial-compatibility exercise)
 - Brain-exercise #5 (Anthony's direction). Confirmed absent (no init/data-game). The Simon task = classic SPATIAL-COMPATIBILITY interference test: respond by a stimulus's COLOR, ignore its (irrelevant) left/right position.
 - Gameplay: a blue/orange square flashes left or right; two color buttons (blue=left, orange=right). Tap the button matching the square's color. Congruent (color-side = position) vs incongruent mixed. 30 trials; tracks accuracy, match RT, conflict RT, and the "Simon effect" (conflict − match ms). Summary + AGAIN. Placed in "Speed & Reflexes".

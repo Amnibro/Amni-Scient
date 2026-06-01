@@ -35,6 +35,7 @@
     corsi: $$('#corsi-view'),
     flanker: $$('#flanker-view'),
     simon: $$('#simon-view'),
+    numerosity: $$('#numerosity-view'),
     nback: $$('#nback-view'),
     anagram: $$('#anagram-view'),
     chimp: $$('#chimp-view'),
@@ -908,6 +909,7 @@
       if(game === 'corsi') initCorsi();
       if(game === 'flanker') initFlanker();
       if(game === 'simon') initSimon();
+      if(game === 'numerosity') initNumerosity();
       if(game === 'nback') initNBack();
       if(game === 'anagram') initAnagram();
       if(game === 'chimp') initChimp();
@@ -13531,6 +13533,28 @@ function playAnimalSound(type) {
     ct.appendChild(_modeRow());
     const sb=document.createElement('button');sb.className='nmm-btn';sb.textContent='START';sb.onclick=()=>{act=true;sc=0;tot=0;stk=0;bestStk=0;rtTotal=0;rtCount=0;tm=c.time;$$('#stp-tm').textContent=tm;show();window._stpTimer=setInterval(()=>{tm--;$$('#stp-tm').textContent=tm;if(tm<=0)_gameOver();},1000);};ct.appendChild(sb);
   }
+  function initNumerosity(){
+    const ct=$$('#nz-container'),hud=$$('#nz-hud');
+    if(window._nzTimeout){clearTimeout(window._nzTimeout);window._nzTimeout=null;}
+    const TRIALS=30;
+    let trial=0,correct=0,wrong=0,streak=0,awaiting=false,moreSide='L';
+    const best=parseInt(sessionStorage.getItem('nz-best')||'0');
+    hud.innerHTML=`<span class="game-stat">🎯 Trial <span class="game-stat-val" id="nz-tr">0</span>/${TRIALS}</span><span class="game-stat">✅ <span class="game-stat-val" id="nz-c">0</span></span><span class="game-stat">🔥 <span class="game-stat-val" id="nz-st">0</span></span><span class="game-stat">⭐ Best ${best||'—'}</span>`;
+    ct.innerHTML='';
+    const hint=document.createElement('div');hint.style.cssText='font-size:1.05rem;color:#2c3e50;font-family:Comic Neue,cursive;text-align:center;max-width:440px';hint.textContent='Which side flashed MORE dots? They show briefly — trust your gut!';
+    const stage=document.createElement('div');stage.style.cssText='display:flex;gap:10px;width:min(92vw,470px);height:200px';
+    const mkPanel=()=>{const p=document.createElement('div');p.style.cssText='flex:1;position:relative;background:rgba(44,62,80,0.88);border-radius:14px;overflow:hidden';return p;};
+    const left=mkPanel(),right=mkPanel();stage.appendChild(left);stage.appendChild(right);
+    const row=document.createElement('div');row.style.cssText='display:flex;gap:18px';
+    const mkBtn=(label,side)=>{const b=document.createElement('button');b.className='nmm-btn';b.textContent=label;b.style.cssText='font-size:1.3rem;min-width:120px';b.onclick=()=>respond(side);return b;};
+    row.appendChild(mkBtn('◀ Left','L'));row.appendChild(mkBtn('Right ▶','R'));
+    ct.appendChild(hint);ct.appendChild(stage);ct.appendChild(row);
+    const fillDots=(panel,n)=>{panel.innerHTML='';for(let i=0;i<n;i++){const d=document.createElement('div');const sz=13+Math.random()*9;d.style.cssText='position:absolute;width:'+sz+'px;height:'+sz+'px;border-radius:50%;background:#f1c40f;left:'+(6+Math.random()*80)+'%;top:'+(6+Math.random()*78)+'%';panel.appendChild(d);}};
+    function finish(){const tot=correct+wrong,a=tot?Math.round(100*correct/tot):0,score=correct;if(score>best)sessionStorage.setItem('nz-best',score);ct.innerHTML='';const sum=document.createElement('div');sum.className='rxt-summary';sum.innerHTML=`<h3>${a>=90?'🌟 Amazing number sense!':a>=75?'👍 Sharp eye!':'💪 Keep training'}</h3><div class="rxt-summary-stats"><div class="rxt-summary-stat"><span class="val">${correct}</span><span class="lbl">Correct</span></div><div class="rxt-summary-stat"><span class="val">${a}%</span><span class="lbl">Accuracy</span></div><div class="rxt-summary-stat"><span class="val">${TRIALS}</span><span class="lbl">Trials</span></div></div><div class="rxt-tier-scale">This trains your APPROXIMATE NUMBER SENSE — the brain’s instant “gut feel” for quantity, without counting. Ratios get closer (harder) as you go.</div>`;ct.appendChild(sum);if(a>=90)spawnConfetti(window.innerWidth/2,window.innerHeight/2,90);showFeedback('Dot Estimate: '+a+'% 🔵',score>best?'#2ecc71':'#f1c40f');addScore(Math.max(1,Math.floor(correct/3)));const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='AGAIN';rb.style.marginTop='12px';rb.onclick=()=>initNumerosity();ct.appendChild(rb);}
+    function respond(side){if(currentGame!=='numerosity'||!awaiting)return;awaiting=false;const ok=side===moreSide;ok?(correct++,streak++,addScore(1)):(wrong++,streak=0,resetStreak());const win=moreSide==='L'?left:right;win.style.boxShadow='inset 0 0 0 4px '+(ok?'#2ecc71':'#e74c3c');const c=$$('#nz-c');if(c)c.textContent=correct;const st=$$('#nz-st');if(st)st.textContent=streak;window._nzTimeout=setTimeout(()=>{if(currentGame!=='numerosity')return;win.style.boxShadow='';next();},360);}
+    function next(){if(currentGame!=='numerosity')return;if(trial>=TRIALS)return finish();trial++;const tr=$$('#nz-tr');if(tr)tr.textContent=trial;const ratios=[1.8,1.6,1.45,1.3,1.2,1.13],ratio=ratios[Math.min(ratios.length-1,Math.floor(trial/5))],big=9+Math.floor(Math.random()*10),small=Math.max(4,Math.round(big/ratio));moreSide=Math.random()<0.5?'L':'R';fillDots(left,moreSide==='L'?big:small);fillDots(right,moreSide==='R'?big:small);awaiting=false;window._nzTimeout=setTimeout(()=>{if(currentGame!=='numerosity')return;left.innerHTML='';right.innerHTML='';awaiting=true;},700);}
+    window._nzTimeout=setTimeout(()=>{if(currentGame==='numerosity')next();},650);
+  }
   function initSimon(){
     const ct=$$('#simon-container'),hud=$$('#sim-hud');
     if(window._simonTimeout){clearTimeout(window._simonTimeout);window._simonTimeout=null;}
@@ -16394,6 +16418,14 @@ function playAnimalSound(type) {
       '<b>Strategy \u2014 Chunking:</b> Break long numbers into groups. "4815162342" becomes "48-15-16-23-42" \u2014 much easier!',
       '<b>Strategy \u2014 Rhythm:</b> Say the number in your head with a rhythm, like a phone number.',
       'Your <b>best score</b> is saved between rounds. Try to beat your record!'
+    ]},
+    numerosity:{title:'\ud83d\udd35 How to Play Dot Estimate',steps:[
+      'Two boxes flash a scatter of dots for a split second, then the dots disappear.',
+      'Tap <b>\u25c0 Left</b> or <b>Right \u25b6</b> for the side that had <b>MORE dots</b> \u2014 there\u2019s no time to count, so go with your gut!',
+      'The two amounts start far apart (easy) and get <b>closer and closer</b> as you go (harder).',
+      '30 trials. The correct side flashes green or red so you learn as you play.',
+      '<b>Why it helps:</b> this trains your <b>Approximate Number Sense</b> \u2014 the instant feel for quantity that underlies math intuition.',
+      'Aim for <b>90%+</b>!'
     ]},
     simon:{title:'\ud83d\udfe6 How to Play Simon Match',steps:[
       'A colored square flashes on the <b>left</b> or <b>right</b>. There are two buttons: a <b>blue</b> one (left) and an <b>orange</b> one (right).',
