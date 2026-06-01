@@ -8,6 +8,12 @@
 - **Broke template lockstep (Step 2).** Added a deterministic per-page heading picker to both SEO generators (`src/gen-calc-modules.js`, `src/gen-learn-categories.js`): each of the 5 section headings + the deep-dive hint now draws from 4–6 variants keyed by a stable hash of the page slug (so regenerations don't churn). Regenerated all 31 calc + 11 learn pages — identical "WHAT IT COMPUTES / KEY EQUATIONS / …" skeleton replaced with distributed variants; page bodies (already unique) untouched; ads preserved on the article pages.
 - Plan/council: docs/checklists/checklist_v5.8.0_adsense_round4.md + docs/guardian_councils/guardian_council_v5.8.0_adsense_round4.md. Backups in backups/v5.8.0_adsense/. Step 3 (content-first restructure) still pending; do NOT submit AdSense reconsideration until the learn app is smoke-tested in a browser. v5.8.0.
 
+## [5.7.947] - 2026-05-31 - Dedup Shapes L2-L5 (5) + Colors L2-L5 (2)
+- Shapes L2-L5 (5): pentagon (sides vs vertices), trapezoid (kept US/UK version), sphere (ball vs basketball → kept ball), triangle-interior-angles=180° (×2), Klein bottle (×2). Kept richer/clearer of each.
+- Colors L2-L5 (2): TEAL defined twice, FRAUNHOFER LINES defined twice. Kept richer.
+- Verified-DISTINCT, kept (NOT dups): square vs rhombus (both 4 sides), right/acute/obtuse angles (all ref 90°), quadrilateral-interior vs polygon-exterior (both 360°), and colors purple/green/white each reached via different objects+prompts (eggplant/grapes/mixing; unripe-banana/traffic-light/mixing; lightest/light-mixing/brides).
+- node --check passes. Bumps sw v1027→v1028. v5.7.947. (Session dedup total: 116.)
+
 ## [5.7.946] - 2026-05-31 - Dedup Shapes L1 (9 dups — terse vs appended-verbose twins)
 - Shapes L1 read in full. Found an appended VERBOSE question set re-covering shapes already in the terse set (the answer-collision scan missed these — answer phrasings differed). Removed 9 concept-dups, keeping the SIMPLER (pre-K-appropriate) version of each: pizza→triangle, stop-sign→octagon (was ×3), playing-card diamond, honeycomb→hexagon, egg→oval (was ×3), crescent moon, arrow.
 - Kept distinct (different objects/prompts, NOT dups): circle ×4 (which-is-circle / wheel / soccer-ball / no-corners-definition), rectangle ×4 (TV / door / book / "longer than wide" definition), star vs Star-of-David, spiral (curl-definition vs snail/galaxy-examples).
