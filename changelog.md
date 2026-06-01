@@ -14,6 +14,10 @@
 - **Broke template lockstep (Step 2).** Added a deterministic per-page heading picker to both SEO generators (`src/gen-calc-modules.js`, `src/gen-learn-categories.js`): each of the 5 section headings + the deep-dive hint now draws from 4–6 variants keyed by a stable hash of the page slug (so regenerations don't churn). Regenerated all 31 calc + 11 learn pages — identical "WHAT IT COMPUTES / KEY EQUATIONS / …" skeleton replaced with distributed variants; page bodies (already unique) untouched; ads preserved on the article pages.
 - Plan/council: docs/checklists/checklist_v5.8.0_adsense_round4.md + docs/guardian_councils/guardian_council_v5.8.0_adsense_round4.md. Backups in backups/v5.8.0_adsense/. Step 3 (content-first restructure) still pending; do NOT submit AdSense reconsideration until the learn app is smoke-tested in a browser. v5.8.0.
 
+## [5.7.99993] - 2026-06-01 - INTEGRATION: new modules' bests surfaced in the 📊 Stats overview
+- The 11 new brain modules stored personal bests (corsi/bsp/cd/gng/pos/flank/sim/ts/sym/nz/tol -best) but didn't appear in the Stats modal. Added a "🆕 New Exercises" section listing all 11 (read via the existing rd() which checks local+sessionStorage). The modal already filters out unplayed entries, so each row appears only once that module has been played — players now see their records for the new games alongside the rest.
+- node --check passes. Bumps sw v1091→v1092. v5.7.99993.
+
 ## [5.7.99992] - 2026-06-01 - A11Y: keyboard support for Corsi blocks + Tower of London pegs
 - Continued the keyboard-a11y vein with the same `_kbd` helper: Corsi Blocks' 9 grid blocks (aria "Block N") and Tower of London's 3 pegs (aria "Peg N") are now role=button, tabindex-focusable, and operable with Enter/Space. With Go/No-Go + Spotlight from the prior tick, all the new tap-on-div modules are now keyboard-accessible. (The other new modules — Symbol Coding, Flanker, Simon, Numerosity, Reverse Recall, Rule Switch, Spot the Change — already use real <button>s.)
 - node --check passes. Bumps sw v1090→v1091. v5.7.99992.
