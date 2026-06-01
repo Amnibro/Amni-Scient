@@ -32,6 +32,7 @@
     reaction: $$('#reaction-view'),
     gonogo: $$('#gonogo-view'),
     symcode: $$('#symcode-view'),
+    corsi: $$('#corsi-view'),
     nback: $$('#nback-view'),
     anagram: $$('#anagram-view'),
     chimp: $$('#chimp-view'),
@@ -902,6 +903,7 @@
       if(game === 'reaction') initReaction();
       if(game === 'gonogo') initGoNoGo();
       if(game === 'symcode') initSymCode();
+      if(game === 'corsi') initCorsi();
       if(game === 'nback') initNBack();
       if(game === 'anagram') initAnagram();
       if(game === 'chimp') initChimp();
@@ -13525,6 +13527,24 @@ function playAnimalSound(type) {
     ct.appendChild(_modeRow());
     const sb=document.createElement('button');sb.className='nmm-btn';sb.textContent='START';sb.onclick=()=>{act=true;sc=0;tot=0;stk=0;bestStk=0;rtTotal=0;rtCount=0;tm=c.time;$$('#stp-tm').textContent=tm;show();window._stpTimer=setInterval(()=>{tm--;$$('#stp-tm').textContent=tm;if(tm<=0)_gameOver();},1000);};ct.appendChild(sb);
   }
+  function initCorsi(){
+    const ct=$$('#corsi-container'),hud=$$('#corsi-hud');
+    if(window._corsiTimeout){clearTimeout(window._corsiTimeout);window._corsiTimeout=null;}
+    let span=3,seq=[],inputIdx=0,phase='show',maxSpan=0,round=0;
+    const best=parseInt(sessionStorage.getItem('corsi-best')||'0');
+    const blocks=[];
+    hud.innerHTML=`<span class="game-stat">📏 Span <span class="game-stat-val" id="corsi-span">${span}</span></span><span class="game-stat">🎯 Round <span class="game-stat-val" id="corsi-rd">0</span></span><span class="game-stat">⭐ Best ${best||'—'}</span>`;
+    ct.innerHTML='';
+    const status=document.createElement('div');status.id='corsi-status';status.style.cssText='font-size:1.2rem;color:#2c3e50;font-family:Comic Neue,cursive;min-height:1.5em;text-align:center;font-weight:bold';
+    const grid=document.createElement('div');grid.style.cssText='display:grid;grid-template-columns:repeat(3,1fr);gap:14px;width:min(80vw,320px)';
+    const lift=(b,col)=>{if(!b)return;b.style.background=col;b.style.transform='scale(1.06)';setTimeout(()=>{if(b){b.style.background='#5d6d7e';b.style.transform='';}},400);};
+    for(let i=0;i<9;i++){const b=document.createElement('div');b.style.cssText='aspect-ratio:1;border-radius:14px;background:#5d6d7e;cursor:pointer;box-shadow:0 5px 0 rgba(0,0,0,0.2);transition:background 0.12s,transform 0.08s';b.onclick=()=>tap(i);grid.appendChild(b);blocks.push(b);}
+    ct.appendChild(status);ct.appendChild(grid);
+    function finish(){if(maxSpan>best)sessionStorage.setItem('corsi-best',maxSpan);ct.innerHTML='';const sum=document.createElement('div');sum.className='rxt-summary';sum.innerHTML=`<h3>${maxSpan>=7?'🌟 Incredible memory!':maxSpan>=5?'👍 Strong span!':'💪 Keep training'}</h3><div class="rxt-summary-stats"><div class="rxt-summary-stat"><span class="val">${maxSpan}</span><span class="lbl">Best span</span></div><div class="rxt-summary-stat"><span class="val">${round}</span><span class="lbl">Rounds</span></div></div><div class="rxt-tier-scale">Corsi block-tapping measures VISUOSPATIAL working memory. Typical adult span ≈ 5. Watch the flashing order, then tap it back.</div>`;ct.appendChild(sum);if(maxSpan>=5)spawnConfetti(window.innerWidth/2,window.innerHeight/2,90);showFeedback('Corsi span: '+maxSpan+' 📏',maxSpan>best?'#2ecc71':'#f1c40f');const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='AGAIN';rb.style.marginTop='12px';rb.onclick=()=>initCorsi();ct.appendChild(rb);}
+    function tap(i){if(currentGame!=='corsi'||phase!=='input')return;if(i===seq[inputIdx]){lift(blocks[i],'#2ecc71');inputIdx++;if(inputIdx>=seq.length){phase='wait';maxSpan=Math.max(maxSpan,span);addScore(span);status.textContent='✓ Correct!';showFeedback('✓ Span '+span+'!','#2ecc71');span++;window._corsiTimeout=setTimeout(()=>{if(currentGame==='corsi')newRound();},900);}}else{lift(blocks[i],'#e74c3c');phase='wait';resetStreak();status.textContent='✗ Missed it';window._corsiTimeout=setTimeout(()=>{if(currentGame==='corsi')finish();},700);}}
+    function newRound(){round++;const r=$$('#corsi-rd');if(r)r.textContent=round;const sp=$$('#corsi-span');if(sp)sp.textContent=span;seq=[];for(let k=0;k<span;k++)seq.push(Math.floor(Math.random()*9));inputIdx=0;phase='show';status.textContent='Watch the pattern…';let step=0;const showNext=()=>{if(currentGame!=='corsi')return;if(step>=seq.length){phase='input';status.textContent='Now tap them in order!';return;}lift(blocks[seq[step]],'#f1c40f');step++;window._corsiTimeout=setTimeout(showNext,650);};window._corsiTimeout=setTimeout(showNext,600);}
+    newRound();
+  }
   function initSymCode(){
     const ct=$$('#sym-container'),hud=$$('#sym-hud');
     if(window._symTimer){clearInterval(window._symTimer);window._symTimer=null;}
@@ -16331,6 +16351,14 @@ function playAnimalSound(type) {
       '<b>Strategy \u2014 Chunking:</b> Break long numbers into groups. "4815162342" becomes "48-15-16-23-42" \u2014 much easier!',
       '<b>Strategy \u2014 Rhythm:</b> Say the number in your head with a rhythm, like a phone number.',
       'Your <b>best score</b> is saved between rounds. Try to beat your record!'
+    ]},
+    corsi:{title:'\ud83d\udfe6 How to Play Corsi Blocks',steps:[
+      'A grid of 9 blocks is shown. Some of them light up <b>one at a time</b> in a sequence \u2014 watch the <b>order</b> carefully.',
+      'When the flashing stops, <b>tap the blocks back in the exact same order</b>.',
+      'Get it right and the sequence grows by one \u2014 see how long a pattern you can remember!',
+      'One mistake ends the run. Your score is the <b>longest span</b> you reached.',
+      '<b>Why it helps:</b> Corsi block-tapping is the classic test of <b>visuospatial working memory</b> \u2014 remembering <i>where</i> and <i>in what order</i>.',
+      '<b>Typical adult span \u2248 5.</b> Can you reach 7?'
     ]},
     symcode:{title:'\ud83d\udd23 How to Play Symbol Coding',steps:[
       'A <b>KEY</b> at the top pairs each symbol with a number (\u2605=1, \u25cf=2, \u2026). It stays on screen the whole time.',
