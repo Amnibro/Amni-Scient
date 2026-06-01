@@ -4561,6 +4561,7 @@
     const lvlMel=melodies[Math.min(currentLevel,5)]||melodies[2], melody=lvlMel[Math.floor(Math.random()*lvlMel.length)];
     melodyState={notes:melody.notes,idx:0,active:true,name:melody.name};
     const nameEl=document.createElement('div'); nameEl.className='music-info'; nameEl.textContent='🎵 Play: '+melody.name; musicContent.appendChild(nameEl);
+    if(currentLevel===1 && typeof ttsAuto==='function' && ttsAuto() && typeof speakSeq==='function') speakSeq(["Let's play "+melody.name+"!"]);
     const display=document.createElement('div'); display.className='melody-display'; display.id='melody-display';
     melody.notes.forEach((n,i)=>{ const el=document.createElement('div'); el.className='melody-note'+(i===0?' current':''); el.textContent=n; display.appendChild(el); });
     musicContent.appendChild(display);
