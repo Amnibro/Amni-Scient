@@ -13542,7 +13542,7 @@ function playAnimalSound(type) {
     hud.innerHTML=`<span class="game-stat">🎯 Trial <span class="game-stat-val" id="nz-tr">0</span>/${TRIALS}</span><span class="game-stat">✅ <span class="game-stat-val" id="nz-c">0</span></span><span class="game-stat">🔥 <span class="game-stat-val" id="nz-st">0</span></span><span class="game-stat">⭐ Best ${best||'—'}</span><span class="game-stat">📊 Lvl ${lvl}</span>`;
     ct.innerHTML='';
     const hint=document.createElement('div');hint.style.cssText='font-size:1.05rem;color:#2c3e50;font-family:Comic Neue,cursive;text-align:center;max-width:440px';hint.textContent='Which side flashed MORE dots? They show briefly — trust your gut!';
-    const stage=document.createElement('div');stage.style.cssText='display:flex;gap:10px;width:min(92vw,470px);height:200px';
+    const stage=document.createElement('div');stage.style.cssText='animation:bounceIn 0.45s ease;display:flex;gap:10px;width:min(92vw,470px);height:200px';
     const mkPanel=()=>{const p=document.createElement('div');p.style.cssText='flex:1;position:relative;background:rgba(44,62,80,0.88);border-radius:14px;overflow:hidden';return p;};
     const left=mkPanel(),right=mkPanel();stage.appendChild(left);stage.appendChild(right);
     const row=document.createElement('div');row.style.cssText='display:flex;gap:18px';
@@ -13564,7 +13564,7 @@ function playAnimalSound(type) {
     hud.innerHTML=`<span class="game-stat">🎯 Trial <span class="game-stat-val" id="sim-tr">0</span>/${TRIALS}</span><span class="game-stat">✅ <span class="game-stat-val" id="sim-c">0</span></span><span class="game-stat">🔥 <span class="game-stat-val" id="sim-st">0</span></span><span class="game-stat">⭐ Best ${best||'—'}</span><span class="game-stat">📊 Lvl ${lvl}</span>`;
     ct.innerHTML='';
     const hint=document.createElement('div');hint.style.cssText='font-size:1.05rem;color:#2c3e50;font-family:Comic Neue,cursive;text-align:center;max-width:420px';hint.textContent='Tap the button that MATCHES the square’s COLOR — ignore which side it appears on!';
-    const stage=document.createElement('div');stage.style.cssText='position:relative;width:min(86vw,420px);height:130px;background:rgba(255,255,255,0.55);border-radius:16px';
+    const stage=document.createElement('div');stage.style.cssText='animation:bounceIn 0.45s ease;position:relative;width:min(86vw,420px);height:130px;background:rgba(255,255,255,0.55);border-radius:16px';
     const sq=document.createElement('div');sq.style.cssText='position:absolute;top:35px;width:60px;height:60px;border-radius:12px;opacity:0;transition:opacity 0.1s';stage.appendChild(sq);
     const row=document.createElement('div');row.style.cssText='display:flex;gap:30px';
     const mkBtn=(name)=>{const b=document.createElement('button');b.className='nmm-btn';b.style.cssText='width:96px;height:62px;border-radius:14px;background:'+HEX[name]+';border:3px solid rgba(0,0,0,0.25)';b.onclick=()=>respond(name);return b;};
@@ -13584,7 +13584,7 @@ function playAnimalSound(type) {
     hud.innerHTML=`<span class="game-stat">🎯 Trial <span class="game-stat-val" id="flk-tr">0</span>/${TRIALS}</span><span class="game-stat">✅ <span class="game-stat-val" id="flk-c">0</span></span><span class="game-stat">🔥 <span class="game-stat-val" id="flk-st">0</span></span><span class="game-stat">⭐ Best ${best||'—'}</span><span class="game-stat">📊 Lvl ${lvl}</span>`;
     ct.innerHTML='';
     const hint=document.createElement('div');hint.style.cssText='font-size:1.05rem;color:#2c3e50;font-family:Comic Neue,cursive;text-align:center';hint.textContent='Which way does the MIDDLE arrow point?';
-    const stim=document.createElement('div');stim.style.cssText='font-size:3.4rem;letter-spacing:0.18em;height:90px;display:flex;align-items:center;justify-content:center;color:#2c3e50;font-weight:bold;font-family:monospace';stim.textContent='Ready?';
+    const stim=document.createElement('div');stim.style.cssText='animation:bounceIn 0.45s ease;font-size:3.4rem;letter-spacing:0.18em;height:90px;display:flex;align-items:center;justify-content:center;color:#2c3e50;font-weight:bold;font-family:monospace';stim.textContent='Ready?';
     const row=document.createElement('div');row.style.cssText='display:flex;gap:18px';
     const mkBtn=(label,dir)=>{const b=document.createElement('button');b.className='nmm-btn';b.textContent=label;b.style.cssText='font-size:2rem;min-width:80px';b.onclick=()=>respond(dir);return b;};
     row.appendChild(mkBtn('◀','L'));row.appendChild(mkBtn('▶','R'));
@@ -13604,7 +13604,7 @@ function playAnimalSound(type) {
     hud.innerHTML=`<span class="game-stat">📏 Span <span class="game-stat-val" id="corsi-span">${span}</span></span><span class="game-stat">🎯 Round <span class="game-stat-val" id="corsi-rd">0</span></span><span class="game-stat">⭐ Best ${best||'—'}</span><span class="game-stat">📊 Lvl ${lvl}</span>`;
     ct.innerHTML='';
     const status=document.createElement('div');status.id='corsi-status';status.style.cssText='font-size:1.2rem;color:#2c3e50;font-family:Comic Neue,cursive;min-height:1.5em;text-align:center;font-weight:bold';
-    const grid=document.createElement('div');grid.style.cssText='display:grid;grid-template-columns:repeat(3,1fr);gap:14px;width:min(80vw,320px)';
+    const grid=document.createElement('div');grid.style.cssText='animation:bounceIn 0.45s ease;display:grid;grid-template-columns:repeat(3,1fr);gap:14px;width:min(80vw,320px)';
     const lift=(b,col)=>{if(!b)return;b.style.background=col;b.style.transform='scale(1.06)';setTimeout(()=>{if(b){b.style.background='#5d6d7e';b.style.transform='';}},400);};
     for(let i=0;i<9;i++){const b=document.createElement('div');b.style.cssText='aspect-ratio:1;border-radius:14px;background:#5d6d7e;cursor:pointer;box-shadow:0 5px 0 rgba(0,0,0,0.2);transition:background 0.12s,transform 0.08s';b.onclick=()=>tap(i);grid.appendChild(b);blocks.push(b);}
     ct.appendChild(status);ct.appendChild(grid);
@@ -13623,7 +13623,7 @@ function playAnimalSound(type) {
     ct.innerHTML='';
     const key=document.createElement('div');key.style.cssText='display:flex;gap:8px;flex-wrap:wrap;justify-content:center;background:rgba(255,255,255,0.92);padding:10px 14px;border-radius:14px';
     order.forEach((s,i)=>{const chip=document.createElement('div');chip.style.cssText='display:flex;flex-direction:column;align-items:center;font-family:Comic Neue,cursive;color:#2c3e50;font-weight:bold;min-width:36px';chip.innerHTML=`<span style="font-size:1.7rem">${s}</span><span style="font-size:1.05rem;color:#3498db">${i+1}</span>`;key.appendChild(chip);});
-    const target=document.createElement('div');target.id='sym-target';target.style.cssText='font-size:5rem;height:110px;display:flex;align-items:center;justify-content:center;color:#2c3e50';
+    const target=document.createElement('div');target.id='sym-target';target.style.cssText='animation:bounceIn 0.45s ease;font-size:5rem;height:110px;display:flex;align-items:center;justify-content:center;color:#2c3e50';
     const pad=document.createElement('div');pad.style.cssText='display:flex;gap:10px;flex-wrap:wrap;justify-content:center';
     ct.appendChild(key);ct.appendChild(target);ct.appendChild(pad);
     const newTarget=()=>{cur=Math.floor(Math.random()*order.length);target.textContent=order[cur];};
@@ -13641,7 +13641,7 @@ function playAnimalSound(type) {
     const best=parseInt(sessionStorage.getItem('gng-best')||'0');
     const updHud=()=>{const t=$$('#gng-tr');if(t)t.textContent=trial;const done=hits+crej+comm+omis,a=done?Math.round(100*(hits+crej)/done):0,ae=$$('#gng-acc');if(ae)ae.textContent=a;const s=$$('#gng-st');if(s)s.textContent=streak;};
     hud.innerHTML=`<span class="game-stat">🎯 Trial <span class="game-stat-val" id="gng-tr">0</span>/${TRIALS}</span><span class="game-stat">✅ <span class="game-stat-val" id="gng-acc">0</span>%</span><span class="game-stat">🔥 <span class="game-stat-val" id="gng-st">0</span></span><span class="game-stat">⭐ Best ${best||'—'}</span><span class="game-stat">📊 Lvl ${lvl}</span>`;
-    const stim=document.createElement('div');stim.id='gng-stim';stim.style.cssText='width:min(70vw,240px);height:min(70vw,240px);border-radius:24px;display:flex;align-items:center;justify-content:center;font-size:2.4rem;font-weight:bold;color:#fff;font-family:Comic Neue,cursive;background:#34495e;cursor:pointer;user-select:none;box-shadow:0 8px 0 rgba(0,0,0,0.2);transition:transform 0.08s';stim.textContent='Get ready…';
+    const stim=document.createElement('div');stim.id='gng-stim';stim.style.cssText='animation:bounceIn 0.45s ease;width:min(70vw,240px);height:min(70vw,240px);border-radius:24px;display:flex;align-items:center;justify-content:center;font-size:2.4rem;font-weight:bold;color:#fff;font-family:Comic Neue,cursive;background:#34495e;cursor:pointer;user-select:none;box-shadow:0 8px 0 rgba(0,0,0,0.2);transition:transform 0.08s';stim.textContent='Get ready…';
     const msg=document.createElement('div');msg.style.cssText='font-size:1.05rem;color:#2c3e50;font-family:Comic Neue,cursive;min-height:1.4em;text-align:center;max-width:420px';msg.textContent='TAP on GREEN 🟢 GO — do NOT tap on RED 🔴 STOP';
     ct.innerHTML='';ct.appendChild(stim);ct.appendChild(msg);
     const flash=()=>{stim.style.transform='scale(0.93)';setTimeout(()=>{if(stim)stim.style.transform='';},90);};
