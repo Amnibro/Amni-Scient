@@ -529,6 +529,9 @@
     {id:'clean-ocean',  emoji:'🌊', name:'Ocean',    light:false, dt:'clean-ocean'},
     {id:'clean-sunset', emoji:'🌅', name:'Sunset',   light:false, dt:'clean-sunset'},
     {id:'clean-rose',   emoji:'🌸', name:'Rose',     light:false, dt:'clean-rose'},
+    {id:'clean-slate',  emoji:'🪨', name:'Slate',    light:false, dt:'clean-slate'},
+    {id:'clean-berry',  emoji:'🍇', name:'Berry',    light:false, dt:'clean-berry'},
+    {id:'clean-amber',  emoji:'🟡', name:'Amber',    light:false, dt:'clean-amber'},
     {id:'light',        emoji:'☀️', name:'Daylight', light:true,  dt:null},
     {id:'clean-paper',  emoji:'📜', name:'Paper',    light:true,  dt:'clean-paper'}
   ];

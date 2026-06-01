@@ -14,6 +14,11 @@
 - **Broke template lockstep (Step 2).** Added a deterministic per-page heading picker to both SEO generators (`src/gen-calc-modules.js`, `src/gen-learn-categories.js`): each of the 5 section headings + the deep-dive hint now draws from 4–6 variants keyed by a stable hash of the page slug (so regenerations don't churn). Regenerated all 31 calc + 11 learn pages — identical "WHAT IT COMPUTES / KEY EQUATIONS / …" skeleton replaced with distributed variants; page bodies (already unique) untouched; ads preserved on the article pages.
 - Plan/council: docs/checklists/checklist_v5.8.0_adsense_round4.md + docs/guardian_councils/guardian_council_v5.8.0_adsense_round4.md. Backups in backups/v5.8.0_adsense/. Step 3 (content-first restructure) still pending; do NOT submit AdSense reconsideration until the learn app is smoke-tested in a browser. v5.8.0.
 
+## [5.7.9996] - 2026-06-01 - THEME: +3 more clean themes (Slate, Berry, Amber)
+- Theme thread. Added 3 clean dark themes to the toggle cycle, with distinct new accent hues (no overlap with the existing 5): Slate (steel #93a7bd), Berry (purple #c084fc), Amber (gold #fbbf24). Same flat solid-bg pattern as the others.
+- The toggle now cycles 10 clean themes: Midnight 🌙 → Mint 🌿 → Ocean 🌊 → Sunset 🌅 → Rose 🌸 → Slate 🪨 → Berry 🍇 → Amber 🟡 → Daylight ☀️ → Paper 📜. CSS in learn/index.html + entries in the CLEAN_THEMES array; reuse the var system so all modules retint.
+- node --check passes. Bumps sw v1085→v1086. v5.7.9996.
+
 ## [5.7.9995] - 2026-06-01 - NEW MODULE: Rule Switch (task switching / cognitive flexibility)
 - Add-new thread. Task switching — measures cognitive flexibility / "switch cost"; distinct from Trail Making (which is a connect-in-order trail, not rule reconfiguration).
 - Gameplay: a number appears on a colored card. BLUE → judge Odd/Even; RED → judge Low(<5)/High(>5). The two buttons relabel to the active rule; the color (rule) changes randomly. Numbers exclude 5 so magnitude is unambiguous. 30 trials; summary shows accuracy, same-rule RT, switch RT, and the switch cost (switch − same ms). Placed in "Visual & Spatial".
