@@ -14,6 +14,10 @@
 - **Broke template lockstep (Step 2).** Added a deterministic per-page heading picker to both SEO generators (`src/gen-calc-modules.js`, `src/gen-learn-categories.js`): each of the 5 section headings + the deep-dive hint now draws from 4–6 variants keyed by a stable hash of the page slug (so regenerations don't churn). Regenerated all 31 calc + 11 learn pages — identical "WHAT IT COMPUTES / KEY EQUATIONS / …" skeleton replaced with distributed variants; page bodies (already unique) untouched; ads preserved on the article pages.
 - Plan/council: docs/checklists/checklist_v5.8.0_adsense_round4.md + docs/guardian_councils/guardian_council_v5.8.0_adsense_round4.md. Backups in backups/v5.8.0_adsense/. Step 3 (content-first restructure) still pending; do NOT submit AdSense reconsideration until the learn app is smoke-tested in a browser. v5.8.0.
 
+## [5.7.99992] - 2026-06-01 - A11Y: keyboard support for Corsi blocks + Tower of London pegs
+- Continued the keyboard-a11y vein with the same `_kbd` helper: Corsi Blocks' 9 grid blocks (aria "Block N") and Tower of London's 3 pegs (aria "Peg N") are now role=button, tabindex-focusable, and operable with Enter/Space. With Go/No-Go + Spotlight from the prior tick, all the new tap-on-div modules are now keyboard-accessible. (The other new modules — Symbol Coding, Flanker, Simon, Numerosity, Reverse Recall, Rule Switch, Spot the Change — already use real <button>s.)
+- node --check passes. Bumps sw v1090→v1091. v5.7.99992.
+
 ## [5.7.99991] - 2026-06-01 - A11Y: keyboard support for new modules' clickable divs (Go/No-Go, Spotlight)
 - (Anthony: stop asking for direction in the loop, just keep improving — noted in memory; no more check-ins.) Real a11y gap found in the audit: several new modules respond to taps on `<div>`s, which aren't keyboard-operable. Added a `_kbd(el,label)` helper (sets role="button", tabindex=0, aria-label, and Enter/Space → el.click()).
 - Wired it into Go/No-Go (the GO/STOP stimulus box) and Spotlight/Posner (the left/right boxes) this round, so keyboard + switch users can play. Corsi blocks + Tower of London pegs next.
