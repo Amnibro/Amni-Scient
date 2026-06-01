@@ -8,6 +8,12 @@
 - **Broke template lockstep (Step 2).** Added a deterministic per-page heading picker to both SEO generators (`src/gen-calc-modules.js`, `src/gen-learn-categories.js`): each of the 5 section headings + the deep-dive hint now draws from 4–6 variants keyed by a stable hash of the page slug (so regenerations don't churn). Regenerated all 31 calc + 11 learn pages — identical "WHAT IT COMPUTES / KEY EQUATIONS / …" skeleton replaced with distributed variants; page bodies (already unique) untouched; ads preserved on the article pages.
 - Plan/council: docs/checklists/checklist_v5.8.0_adsense_round4.md + docs/guardian_councils/guardian_council_v5.8.0_adsense_round4.md. Backups in backups/v5.8.0_adsense/. Step 3 (content-first restructure) still pending; do NOT submit AdSense reconsideration until the learn app is smoke-tested in a browser. v5.8.0.
 
+## [5.7.942] - 2026-05-31 - Dedup Weather (8) + Science (4) banks
+- Weather dedup (8): L1 sun, rain, snow, cloud, rainbow, thunder (each had a "Which is ___?" entry + a reworded twin); L4 dew point; L5 ice-albedo feedback. Re-scan: Weather now fully clean.
+- Science dedup (4): L1 Earth ("what/which planet do we live on"), honey ("what do bees make" — verbatim twice); L2 three-states-of-matter, water-cycle. Kept the richer version of each.
+- VERIFIED-DISTINCT, kept both (same answer, different facts — NOT dups): Science L1 "water" (falls-from-clouds vs where-fish-live) + "oxygen" (gas trees RELEASE via photosynthesis vs gas humans BREATHE IN). These remain as intentional same-answer pairs.
+- node --check passes. Bumps sw v1022→v1023. v5.7.942.
+
 ## [5.7.941] - 2026-05-31 - Dedup Sports bank (17 dups); History verified clean
 - Sports dedup: removed 17 verified within-level concept-dups, keeping the richest version of each. L1 (9): surfing, cricket, field hockey, golf, badminton, skateboarding, archery, rock climbing, volleyball (each asked twice — the original bank had a terse set + a detailed emoji set). L3 (2): curling, water polo. L4 (3): Jesse Owens, Wayne Gretzky, Lance Armstrong. L5 (3): Wilt Chamberlain, Nadia Comaneci, Jim Thorpe.
 - HISTORY verified CLEAN: the 3 flagged collisions were FALSE POSITIVES — distinct subjects sharing an answer-prefix (Leonardo vs Michelangelo both "Italian Renaissance…"; Cortés/Aztec vs Pizarro/Inca both "Spanish conquistador…"; Bretton Woods vs Nuremberg both "Post-WWII…"). No removals. (Reinforces: always confirm by question text.)
