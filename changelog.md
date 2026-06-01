@@ -14,6 +14,10 @@
 - **Broke template lockstep (Step 2).** Added a deterministic per-page heading picker to both SEO generators (`src/gen-calc-modules.js`, `src/gen-learn-categories.js`): each of the 5 section headings + the deep-dive hint now draws from 4–6 variants keyed by a stable hash of the page slug (so regenerations don't churn). Regenerated all 31 calc + 11 learn pages — identical "WHAT IT COMPUTES / KEY EQUATIONS / …" skeleton replaced with distributed variants; page bodies (already unique) untouched; ads preserved on the article pages.
 - Plan/council: docs/checklists/checklist_v5.8.0_adsense_round4.md + docs/guardian_councils/guardian_council_v5.8.0_adsense_round4.md. Backups in backups/v5.8.0_adsense/. Step 3 (content-first restructure) still pending; do NOT submit AdSense reconsideration until the learn app is smoke-tested in a browser. v5.8.0.
 
+## [5.8.6] - 2026-06-01 - TTS #6: "How to Play" tutorials read aloud
+- Every tutorial modal now has a "🔊 Read aloud" button that speaks the title + all steps (HTML tags stripped via /<[^>]+>/g before speakSeq). At LEVEL 1 the instructions auto-read when the modal opens. Closing the modal (✕ / Got it! / backdrop) now also stops speech. Works for all ~90 games' tutorials. node --check passes. Bumps sw v1105→v1106. v5.8.6.
+- Pre-K TTS coverage is now broad: quiz (question + choices + feedback + explanation + replay), teach cards, and How-to-Play instructions — all voiced for non-readers via the offline Web Speech API.
+
 ## [5.8.5] - 2026-06-01 - TTS #5: tap-to-hear the answer explanation at pre-K
 - After answering, the explanation card (answer + the "why") is now tap-to-hear at LEVEL 1: tapping speaks the answer + explanation (speakSeq), and it's role=button + keyboard-operable via _kbd. Not auto-read (explanations are long + the feedback toast already speaks the result), so a toddler/parent hears the detail only on demand.
 - node --check passes. Bumps sw v1104→v1105. v5.8.5. Pre-K quiz flow now fully voiced: question + choices auto-read, feedback spoken, teach cards + explanation tap-to-hear, replay button. NEXT: "How to Play" tutorial read-aloud.

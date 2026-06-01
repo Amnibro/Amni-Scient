@@ -16847,12 +16847,16 @@ function playAnimalSound(type) {
     const t=_tutorials[game];if(!t)return;
     const ov=document.createElement('div');ov.className='tut-overlay';
     const box=document.createElement('div');box.className='tut-box';
-    const cl=document.createElement('button');cl.className='tut-close';cl.textContent='\u2715';cl.onclick=()=>ov.remove();
+    const _close=()=>{if(typeof stopSpeech==='function')stopSpeech();ov.remove();};
+    const cl=document.createElement('button');cl.className='tut-close';cl.textContent='\u2715';cl.onclick=_close;
     const ttl=document.createElement('div');ttl.className='tut-title';ttl.textContent=t.title;
     box.appendChild(cl);box.appendChild(ttl);
+    const readItems=[t.title, ...t.steps.map(s=>s.replace(/<[^>]+>/g,' '))];
+    const rb=document.createElement('button');rb.className='tut-btn';rb.style.cssText='background:#9b59b6;margin-bottom:8px';rb.textContent='\ud83d\udd0a Read aloud';rb.setAttribute('aria-label','Read these instructions aloud');rb.onclick=()=>speakSeq(readItems);box.appendChild(rb);
     t.steps.forEach((s,i)=>{const d=document.createElement('div');d.className='tut-step';d.innerHTML=`<span class="tut-num">${i+1}</span>${s}`;box.appendChild(d);});
-    const gb=document.createElement('button');gb.className='tut-btn';gb.textContent='Got it!';gb.onclick=()=>ov.remove();box.appendChild(gb);
-    ov.appendChild(box);ov.onclick=e=>{if(e.target===ov)ov.remove();};document.body.appendChild(ov);
+    const gb=document.createElement('button');gb.className='tut-btn';gb.textContent='Got it!';gb.onclick=_close;box.appendChild(gb);
+    ov.appendChild(box);ov.onclick=e=>{if(e.target===ov)_close();};document.body.appendChild(ov);
+    if(currentLevel===1) speakSeq(readItems);
   };
   function initDots(){
     const cv=$$('#dots-canvas'),ui=$$('#dots-ui');
