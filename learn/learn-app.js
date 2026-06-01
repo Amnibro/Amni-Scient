@@ -4580,13 +4580,14 @@
     const sInfo=document.createElement('div'); sInfo.className='music-info'; sInfo.textContent='C Major Scale — click notes to hear:'; sec.appendChild(sInfo);
     const sDiv=document.createElement('div'); sDiv.className='scale-builder';
     const cMaj=['C4','D4','E4','F4','G4','A4','B4','C5'];
-    noteNms.forEach(n=>{ const el=document.createElement('div'); el.className='scale-note'+(cMaj.includes(n+'4')||n+'5'==='C5'?' in-scale':''); el.textContent=n; el.onclick=()=>playNote(n+'4',0.5); sDiv.appendChild(el); });
+    noteNms.forEach(n=>{ const el=document.createElement('div'); el.className='scale-note'+(cMaj.includes(n+'4')||n+'5'==='C5'?' in-scale':''); el.textContent=n; el.onclick=()=>playNote(n+'4',0.5); _kbd(el,'Play note '+n); sDiv.appendChild(el); });
     sec.appendChild(sDiv);
     const cInfo=document.createElement('div'); cInfo.className='music-info'; cInfo.textContent='Chords — tap to hear:'; sec.appendChild(cInfo);
     const cDiv=document.createElement('div'); cDiv.className='chord-display';
     [{name:'C Major',notes:['C4','E4','G4']},{name:'D Minor',notes:['D4','F4','A4']},{name:'F Major',notes:['F4','A4','C5']},{name:'G Major',notes:['G4','B4','D5']},{name:'A Minor',notes:['A4','C5','E5']},{name:'C Maj7',notes:['C4','E4','G4','B4']},{name:'A Min7',notes:['A4','C5','E5','G5']},{name:'G Dom7',notes:['G4','B4','D5','F5']},{name:'B Dim',notes:['B4','D5','F5']},{name:'C Aug',notes:['C4','E4','G#4']},{name:'D Sus4',notes:['D4','G4','A4']},{name:'C Sus2',notes:['C4','D4','G4']}].forEach(ch=>{
       const btn=document.createElement('div'); btn.className='chord-btn'; btn.textContent=ch.name;
       btn.onclick=()=>{ ch.notes.forEach(n=>playNote(n,1.0));$$all('.p-key').forEach(k=>k.classList.remove('highlight'));ch.notes.forEach(n=>{let keyEl=$$(`.p-key[data-note="${n}"]`);if(keyEl)keyEl.classList.add('highlight');});setTimeout(()=>$$all('.p-key').forEach(k=>k.classList.remove('highlight')), 1000); $$all('.chord-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); };
+      _kbd(btn,'Play chord '+ch.name);
       cDiv.appendChild(btn);
     });
     sec.appendChild(cDiv);
@@ -4595,6 +4596,7 @@
     [{name:'C Major',notes:['C4','D4','E4','F4','G4','A4','B4','C5']},{name:'A Nat. Minor',notes:['A4','B4','C5','D5','E5','F5','G5','A5']},{name:'C Pentatonic',notes:['C4','D4','E4','G4','A4','C5']},{name:'C Blues',notes:['C4','D#4','F4','F#4','G4','A#4','C5']},{name:'D Dorian',notes:['D4','E4','F4','G4','A4','B4','C5','D5']},{name:'G Mixolydian',notes:['G4','A4','B4','C5','D5','E5','F5','G5']},{name:'F Lydian',notes:['F4','G4','A4','B4','C5','D5','E5','F5']}].forEach(sc=>{
       const btn=document.createElement('div'); btn.className='chord-btn'; btn.textContent=sc.name;
       btn.onclick=()=>{ sc.notes.forEach((n,i)=>setTimeout(()=>{playNote(n,0.35);const keyEl=$$(`.p-key[data-note="${n}"]`);if(keyEl){keyEl.classList.add('highlight');setTimeout(()=>keyEl.classList.remove('highlight'),330);}},i*200)); $$all('.chord-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); };
+      _kbd(btn,'Play '+sc.name+' scale');
       mDiv.appendChild(btn);
     });
     sec.appendChild(mDiv);
@@ -4618,6 +4620,7 @@
           setTimeout(()=>$$all('.p-key').forEach(k=>k.classList.remove('highlight')),750);
         },i*900));
       };
+      _kbd(btn,'Play '+prog.name+' progression');
       pDiv.appendChild(btn);
     });
     sec.appendChild(pDiv);
@@ -4678,6 +4681,7 @@
     instruments.forEach(inst=>{ const card=document.createElement('div'); card.className='inst-card';
       card.innerHTML=`<span class="inst-emoji">${inst.emoji}</span><span class="inst-name">${inst.name}</span><span class="inst-desc">${inst.desc}</span>`;
       card.onclick=()=>{ inst.wave==='drum'?playDrum(inst.note):playNote(inst.note,inst.dur,inst.wave); card.style.borderColor='#e94560'; card.style.transform='scale(1.08)'; setTimeout(()=>{card.style.borderColor='#0f3460';card.style.transform='scale(1)';},300); };
+      _kbd(card,'Play '+inst.name);
       grid.appendChild(card); });
     musicContent.appendChild(grid);
   }
