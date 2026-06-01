@@ -14,6 +14,11 @@
 - **Broke template lockstep (Step 2).** Added a deterministic per-page heading picker to both SEO generators (`src/gen-calc-modules.js`, `src/gen-learn-categories.js`): each of the 5 section headings + the deep-dive hint now draws from 4–6 variants keyed by a stable hash of the page slug (so regenerations don't churn). Regenerated all 31 calc + 11 learn pages — identical "WHAT IT COMPUTES / KEY EQUATIONS / …" skeleton replaced with distributed variants; page bodies (already unique) untouched; ads preserved on the article pages.
 - Plan/council: docs/checklists/checklist_v5.8.0_adsense_round4.md + docs/guardian_councils/guardian_council_v5.8.0_adsense_round4.md. Backups in backups/v5.8.0_adsense/. Step 3 (content-first restructure) still pending; do NOT submit AdSense reconsideration until the learn app is smoke-tested in a browser. v5.8.0.
 
+## [5.7.99991] - 2026-06-01 - A11Y: keyboard support for new modules' clickable divs (Go/No-Go, Spotlight)
+- (Anthony: stop asking for direction in the loop, just keep improving — noted in memory; no more check-ins.) Real a11y gap found in the audit: several new modules respond to taps on `<div>`s, which aren't keyboard-operable. Added a `_kbd(el,label)` helper (sets role="button", tabindex=0, aria-label, and Enter/Space → el.click()).
+- Wired it into Go/No-Go (the GO/STOP stimulus box) and Spotlight/Posner (the left/right boxes) this round, so keyboard + switch users can play. Corsi blocks + Tower of London pegs next.
+- node --check passes. Bumps sw v1089→v1090. v5.7.99991.
+
 ## [5.7.9999] - 2026-06-01 - THEME: first-time default honors OS prefers-color-scheme
 - Small theme-thread polish: a first-time visitor with no saved theme now defaults to Daylight (light) if their OS is set to light mode, instead of always starting dark. Derived once from `window.matchMedia('(prefers-color-scheme: light)')` and persisted to `amni-learn-theme` so the toggle/picker stay in sync; returning users with a saved choice are unaffected; wrapped in try/catch with a dark fallback.
 - node --check passes. Bumps sw v1088→v1089. v5.7.9999.
