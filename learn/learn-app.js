@@ -3980,6 +3980,7 @@
         pairWrap.innerHTML=`<div style="text-align:center;font-family:Comic Neue,cursive;color:#2c3e50;"><div style="font-size:2.2rem;margin-bottom:8px;">${wasBest?'🏆 NEW BEST!':'🎉 Game Over!'}</div><div style="font-size:1.3rem;">${score}/${TOTAL} correct</div></div>`;
         sameBtn.style.display='none';diffBtn.style.display='none';
         if(typeof spawnConfetti==='function')spawnConfetti(window.innerWidth/2,window.innerHeight/2,wasBest?120:60);
+        if(ttsAuto() && typeof speakSeq==='function')speakSeq([(wasBest?'New best! ':'All done! ')+'You got '+score+' out of '+TOTAL+'!']);
         if(typeof showFeedback==='function')showFeedback(`Same/Different: ${score}/${TOTAL}`,wasBest?'#2ecc71':'#3498db');
         if(typeof addScore==='function')addScore(score);
         const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='Play Again';rb.style.cssText='display:block;margin:14px auto;';rb.onclick=()=>initSameDiff();lifeArea.appendChild(rb);
@@ -3993,11 +3994,13 @@
       if(curIsSame){b=a;}
       else{do{b=pool[Math.floor(Math.random()*pool.length)];}while(b===a);}
       pairWrap.innerHTML=`<div style="font-size:5.5rem;line-height:1;">${a}</div><div style="font-size:5.5rem;line-height:1;">${b}</div>`;
+      if(ttsAuto() && typeof speakSeq==='function')speakSeq([round===1?'Are they the same, or different? Tap the green button for same, the red button for different.':'Same, or different?']);
     }
     function answer(picked){
       const correct=picked===curIsSame;
       if(correct){score++;const se=document.getElementById('sd-score');if(se)se.textContent=score;if(typeof showFeedback==='function')showFeedback('Yes! ✨','#2ecc71');}
       else{if(typeof showFeedback==='function')showFeedback(curIsSame?'They\'re the SAME!':'They\'re DIFFERENT!','#e67e22');if(typeof resetStreak==='function')resetStreak();}
+      if(ttsAuto() && typeof speakSeq==='function')speakSeq([correct?'Yes!':(curIsSame?'They are the same.':'They are different.')]);
       setTimeout(nextRound,800);
     }
     sameBtn.onclick=()=>answer(true);
