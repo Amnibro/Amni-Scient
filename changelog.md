@@ -14,6 +14,10 @@
 - **Broke template lockstep (Step 2).** Added a deterministic per-page heading picker to both SEO generators (`src/gen-calc-modules.js`, `src/gen-learn-categories.js`): each of the 5 section headings + the deep-dive hint now draws from 4–6 variants keyed by a stable hash of the page slug (so regenerations don't churn). Regenerated all 31 calc + 11 learn pages — identical "WHAT IT COMPUTES / KEY EQUATIONS / …" skeleton replaced with distributed variants; page bodies (already unique) untouched; ads preserved on the article pages.
 - Plan/council: docs/checklists/checklist_v5.8.0_adsense_round4.md + docs/guardian_councils/guardian_council_v5.8.0_adsense_round4.md. Backups in backups/v5.8.0_adsense/. Step 3 (content-first restructure) still pending; do NOT submit AdSense reconsideration until the learn app is smoke-tested in a browser. v5.8.0.
 
+## [5.8.3] - 2026-06-01 - TTS #3: teach-phase cards read aloud (tap-to-hear + auto-read at pre-K)
+- The "📚 Learn First!" teach cards are now tap-to-hear: tapping any card speaks its title + fact (speakSeq). Each card is role=button + keyboard-operable (Enter/Space) via _kbd. At LEVEL 1 the first card auto-reads when the teach phase opens, so a non-reading toddler immediately hears the lesson. Works at all levels for tap-to-hear (broadly useful); auto-read is pre-K only. Leaving for the quiz cancels teach speech automatically (loadQuestion's speakSeq cancels first).
+- node --check passes. Bumps sw v1102→v1103. v5.8.3. NEXT: pre-K game-instruction / hint read-aloud (the "How to Play" + in-game prompts).
+
 ## [5.8.2] - 2026-06-01 - TTS #2: pre-K reads question + ALL answer choices aloud
 - Refactored the speech core into `speakSeq(items)` (queues multiple utterances back-to-back with the kid-friendly voice) + `stopSpeech()`; `speakText` now delegates to it.
 - At LEVEL 1, non-audio questions now read the QUESTION then every ANSWER CHOICE in sequence on load — so a non-reading toddler hears all their options, not just the prompt. (isAudio letter/sound entries still just play their target via playAnimalSound/speakText, unchanged.)

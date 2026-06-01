@@ -10072,7 +10072,8 @@ function playAnimalSound(type) {
       teachPhaseEl.style.display='flex'; quizTaskArea.style.display='none'; teachPhaseEl.innerHTML='';
       const ttl=document.createElement('div'); ttl.className='music-title'; ttl.style.color='#2c3e50'; ttl.textContent='📚 Learn First!'; teachPhaseEl.appendChild(ttl);
       const crds=document.createElement('div'); crds.className='teach-cards';
-      tData.forEach((d,i)=>{ const c=document.createElement('div'); c.className='teach-card'; c.innerHTML=`<span class="tc-emoji">${d.emoji}</span><div class="tc-title">${d.title}</div><div class="tc-fact">${d.fact}</div>`; c.style.animation='bounceIn 0.4s ease both'; c.style.animationDelay=(Math.min(i,8)*0.06)+'s'; crds.appendChild(c); });
+      tData.forEach((d,i)=>{ const c=document.createElement('div'); c.className='teach-card'; c.innerHTML=`<span class="tc-emoji">${d.emoji}</span><div class="tc-title">${d.title}</div><div class="tc-fact">${d.fact}</div>`; c.style.animation='bounceIn 0.4s ease both'; c.style.animationDelay=(Math.min(i,8)*0.06)+'s'; c.style.cursor='pointer'; c.onclick=()=>speakSeq([d.title,d.fact]); _kbd(c,'Hear about '+d.title); crds.appendChild(c); });
+      if(currentLevel===1 && tData[0]) speakSeq([tData[0].title, tData[0].fact]);
       teachPhaseEl.appendChild(crds);
       const dotsWrap=document.createElement('div'); dotsWrap.className='teach-dots'; dotsWrap.setAttribute('aria-hidden','true');
       tData.forEach((_,i)=>{ const d=document.createElement('div'); d.className='teach-dot'+(i===0?' active':''); dotsWrap.appendChild(d); });
