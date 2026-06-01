@@ -14,6 +14,10 @@
 - **Broke template lockstep (Step 2).** Added a deterministic per-page heading picker to both SEO generators (`src/gen-calc-modules.js`, `src/gen-learn-categories.js`): each of the 5 section headings + the deep-dive hint now draws from 4–6 variants keyed by a stable hash of the page slug (so regenerations don't churn). Regenerated all 31 calc + 11 learn pages — identical "WHAT IT COMPUTES / KEY EQUATIONS / …" skeleton replaced with distributed variants; page bodies (already unique) untouched; ads preserved on the article pages.
 - Plan/council: docs/checklists/checklist_v5.8.0_adsense_round4.md + docs/guardian_councils/guardian_council_v5.8.0_adsense_round4.md. Backups in backups/v5.8.0_adsense/. Step 3 (content-first restructure) still pending; do NOT submit AdSense reconsideration until the learn app is smoke-tested in a browser. v5.8.0.
 
+## [5.7.99994] - 2026-06-01 - INTEGRATION: achievements for the new modules
+- Wired 5 new achievements into the ACHIEVEMENTS registry (reads via _intLS which checks local+session storage, so the new modules' sessionStorage bests count): 🟦 Block Memory (Corsi span 6), 🔢 Backward Wizard (Reverse Recall 5-span), 🗼 Master Planner (Tower of London 5 optimal solves), 🔵 Number Sense (Dot Estimate 25+), 🔣 Fast Coder (Symbol Coding 30+). They show progress + unlock in the achievements UI like the rest, integrating the new games into the progression/reward loop.
+- node --check passes. Bumps sw v1092→v1093. v5.7.99994.
+
 ## [5.7.99993] - 2026-06-01 - INTEGRATION: new modules' bests surfaced in the 📊 Stats overview
 - The 11 new brain modules stored personal bests (corsi/bsp/cd/gng/pos/flank/sim/ts/sym/nz/tol -best) but didn't appear in the Stats modal. Added a "🆕 New Exercises" section listing all 11 (read via the existing rd() which checks local+sessionStorage). The modal already filters out unplayed entries, so each row appears only once that module has been played — players now see their records for the new games alongside the rest.
 - node --check passes. Bumps sw v1091→v1092. v5.7.99993.
