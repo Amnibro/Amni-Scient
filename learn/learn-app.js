@@ -59,6 +59,8 @@
     pipes: $$('#pipes-view'),
     tetris: $$('#tetris-view'),
     flappy: $$('#flappy-view'),
+    pullpin: $$('#pullpin-view'),
+    fillcup: $$('#fillcup-view'),
     clicker: $$('#clicker-view'),
     autominer: $$('#autominer-view'),
     storybook: $$('#storybook-view'),
@@ -1033,6 +1035,8 @@
       if(game === 'pipes') initPipes();
       if(game === 'tetris') initTetris();
       if(game === 'flappy') initFlappy();
+      if(game === 'pullpin') initPullPin();
+      if(game === 'fillcup') initFillCup();
       if(game === 'clicker') initClicker();
       if(game === 'autominer') initAutoMiner();
       if(game === 'calculus') initCollege('calculus');
