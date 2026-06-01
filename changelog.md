@@ -8,6 +8,12 @@
 - **Broke template lockstep (Step 2).** Added a deterministic per-page heading picker to both SEO generators (`src/gen-calc-modules.js`, `src/gen-learn-categories.js`): each of the 5 section headings + the deep-dive hint now draws from 4–6 variants keyed by a stable hash of the page slug (so regenerations don't churn). Regenerated all 31 calc + 11 learn pages — identical "WHAT IT COMPUTES / KEY EQUATIONS / …" skeleton replaced with distributed variants; page bodies (already unique) untouched; ads preserved on the article pages.
 - Plan/council: docs/checklists/checklist_v5.8.0_adsense_round4.md + docs/guardian_councils/guardian_council_v5.8.0_adsense_round4.md. Backups in backups/v5.8.0_adsense/. Step 3 (content-first restructure) still pending; do NOT submit AdSense reconsideration until the learn app is smoke-tested in a browser. v5.8.0.
 
+## [5.7.945] - 2026-05-31 - Dedup Colors L1 (9 verbatim dups; same-color false-positives kept)
+- Colors L1 read in full (60 entries). The bank's many same-answer collisions are MOSTLY legitimate (different objects share a color: strawberry/stop-sign/fire-truck/tomato/apple all red; sun/school-bus/lemon all yellow — kept). Removed only 9 VERBATIM dups (same object asked 2-3×): grass→green (×3→1), banana→yellow (×3→1), sky→blue (×2→1), sunflower→yellow, flamingo→pink, zebra→black+white, pumpkin→orange. Kept richest version of each.
+- Kept distinct: paint-mixing trio (red+yellow, red+blue, blue+yellow), white objects (snow/milk/clouds), black+white animals (panda/zebra-kept/skunk). 
+- Methodology: colors/shapes REQUIRE per-question reading (answer-collision alone is mostly false-positive). Colors L2-L5 + Shapes still to verify next.
+- node --check passes. Bumps sw v1025→v1026. v5.7.945. (Session dedup total: 100 dup questions across 9 banks.)
+
 ## [5.7.944] - 2026-05-31 - Dedup Languages (5); Engineering clean
 - Languages dedup (5): L1 phonics "Which word starts with B?/S?/M?" (Ball/Sun/Moon) each verbatim-duplicated; L4 code-switching + Grimm's Law each duplicated. Kept richest version of each. (L2 "S" vs "Sí"-Spanish collision = false positive, kept.)
 - ENGINEERING verified: L1 gravity pair is NOT a dup — "What pulls things down?" vs "What force keeps a satellite in orbit?" are distinct gravity facts (kept both). NOTE: the satellite question is mis-leveled for pre-K (L1) — flagged for a future difficulty-leveling pass, not a dedup issue.
