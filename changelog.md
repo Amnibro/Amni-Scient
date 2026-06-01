@@ -8,6 +8,12 @@
 - **Broke template lockstep (Step 2).** Added a deterministic per-page heading picker to both SEO generators (`src/gen-calc-modules.js`, `src/gen-learn-categories.js`): each of the 5 section headings + the deep-dive hint now draws from 4–6 variants keyed by a stable hash of the page slug (so regenerations don't churn). Regenerated all 31 calc + 11 learn pages — identical "WHAT IT COMPUTES / KEY EQUATIONS / …" skeleton replaced with distributed variants; page bodies (already unique) untouched; ads preserved on the article pages.
 - Plan/council: docs/checklists/checklist_v5.8.0_adsense_round4.md + docs/guardian_councils/guardian_council_v5.8.0_adsense_round4.md. Backups in backups/v5.8.0_adsense/. Step 3 (content-first restructure) still pending; do NOT submit AdSense reconsideration until the learn app is smoke-tested in a browser. v5.8.0.
 
+## [5.7.975] - 2026-06-01 - CURRICULUM #12: State history grade-7/8 depth — Texas + Florida (TEKS/B.E.S.T.) → History L4
+- Rounded out state history at the MIDDLE-school band. Texas history is a full grade-7 TEKS course; Florida history spans grade-4 + grade-8. History L4 (dense world history + some US: Reconstruction, Mexican-American War) had ZERO of these — q: prompt probe returned 0 for Spindletop, cattle drive/Chisholm, Tejano, Flagler/railway, Seminole, citrus.
+- Added 6 to L4 (middle, TEKS 7.x Texas history / B.E.S.T. SS.8.A): TEXAS — Spindletop 1901 oil boom, post-Civil-War cattle drives up the Chisholm Trail, Tejano heritage. FLORIDA — Flagler's East Coast Railway → tourism, the Seminole Wars, citrus economy + the Cape Canaveral "Space Coast."
+- Neutral factual framing. Complements the grade-4 TX/FL set in L3 (#10). All 6 confirmed-0. node --check passes. Bumps sw v1055→v1056. v5.7.975.
+- Curriculum tally: 12 clusters, 114 questions.
+
 ## [5.7.974] - 2026-06-01 - CURRICULUM #11: Measurement — units, tools, conversions (TEKS/B.E.S.T.) → Counting L2 + L3
 - Math bank had perimeter/area FORMULAS, but the applied K-3 measurement skills were missing from the Counting bank: probe of q: prompts returned 0 for "which unit", measuring tools (ruler/scale/thermometer/measuring cup), customary-vs-metric, and the metric capacity/mass conversions (milliliter/liter/kilogram). (The earlier "gram"/"meter" hits were false positives — Venn diaGRAM and kiloMETERS.)
 - Added 6 to L2 (grades K-2, TEKS 1.7/2.9/K.6, B.E.S.T. MA.K-2.M): choose the right UNIT for length (pencil→inches) and weight (dog→pounds), choose the right TOOL (ruler/thermometer/measuring cup), and customary vs metric systems.
