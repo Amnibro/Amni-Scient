@@ -517,29 +517,51 @@
       rbanner.addEventListener('mouseleave',()=>{rbanner.style.transform='';rbanner.style.boxShadow='0 0 18px rgba(155,89,182,0.25)';});
     }
   },100);
-  // Light/dark theme toggle. Default dark; persists per-browser in localStorage.
-  // Theme system supports: dark, light, plus Amni-module data-themes.
-  // The theme-btn cycles dark ↔ light only; Amni themes are picked via
-  // the Profile modal (👤) and require unlocks.
+  // Theme toggle now CYCLES a set of clean flat themes (amni-scient.com style):
+  // Midnight, Mint, Ocean, Sunset, Rose (dark) + Daylight, Paper (light).
+  // 'dark'/'light' kept as ids for backward-compat with saved values; the
+  // Amni-module unlock themes still apply via the Profile modal (👤).
+  const CLEAN_THEMES = [
+    {id:'dark',         emoji:'🌙', name:'Midnight', light:false, dt:null},
+    {id:'clean-mint',   emoji:'🌿', name:'Mint',     light:false, dt:'clean-mint'},
+    {id:'clean-ocean',  emoji:'🌊', name:'Ocean',    light:false, dt:'clean-ocean'},
+    {id:'clean-sunset', emoji:'🌅', name:'Sunset',   light:false, dt:'clean-sunset'},
+    {id:'clean-rose',   emoji:'🌸', name:'Rose',     light:false, dt:'clean-rose'},
+    {id:'light',        emoji:'☀️', name:'Daylight', light:true,  dt:null},
+    {id:'clean-paper',  emoji:'📜', name:'Paper',    light:true,  dt:'clean-paper'}
+  ];
+  const _amniThemes = ['amni-ai','amni-gen','amni-code','amni-scient','amni-prism','azno','amni-haven','amni-chat','amni-life','amni-llm'];
   function _applyTheme(mode){
-    const isLight = mode === 'light';
-    document.body.classList.toggle('light-mode', isLight);
-    const amniThemes = ['amni-ai','amni-gen','amni-code','amni-scient','amni-prism','azno','amni-haven','amni-chat','amni-life','amni-llm'];
-    if (amniThemes.includes(mode)) document.body.setAttribute('data-theme', mode);
-    else document.body.removeAttribute('data-theme');
     const btn = $$('#theme-btn');
-    if (btn) btn.textContent = isLight ? '☀️' : (amniThemes.includes(mode) ? '🎨' : '🌙');
+    const clean = CLEAN_THEMES.find(t => t.id === mode);
+    if (clean) {
+      document.body.classList.toggle('light-mode', clean.light);
+      clean.dt ? document.body.setAttribute('data-theme', clean.dt) : document.body.removeAttribute('data-theme');
+      if (btn) { btn.textContent = clean.emoji; btn.title = 'Theme: ' + clean.name + ' (tap to change)'; btn.setAttribute('aria-label', 'Theme: ' + clean.name + '. Tap to change.'); }
+      return;
+    }
+    if (_amniThemes.includes(mode)) {
+      document.body.classList.remove('light-mode');
+      document.body.setAttribute('data-theme', mode);
+      if (btn) { btn.textContent = '🎨'; btn.title = 'Theme: ' + mode; }
+      return;
+    }
+    document.body.classList.remove('light-mode');
+    document.body.removeAttribute('data-theme');
+    if (btn) { btn.textContent = '🌙'; btn.title = 'Theme: Midnight (tap to change)'; }
   }
   try {
     const savedTheme = localStorage.getItem('amni-learn-theme') || 'dark';
     _applyTheme(savedTheme);
   } catch { _applyTheme('dark'); }
   $$('#theme-btn').addEventListener('click', () => {
-    // Toggle only between dark/light. Amni themes are managed via Profile.
+    // Cycle to the next clean theme. From an Amni unlock theme, start at Midnight.
     const cur = localStorage.getItem('amni-learn-theme') || 'dark';
-    const now = (cur === 'light') ? 'dark' : 'light';
+    const idx = CLEAN_THEMES.findIndex(t => t.id === cur);
+    const now = CLEAN_THEMES[(idx + 1) % CLEAN_THEMES.length].id;
     _applyTheme(now);
     try { localStorage.setItem('amni-learn-theme', now); } catch {}
+    if (typeof showFeedback === 'function') showFeedback(CLEAN_THEMES.find(t => t.id === now).emoji + ' ' + CLEAN_THEMES.find(t => t.id === now).name + ' theme', '#2ecc71');
   });
   // ── Unlockables registry ─────────────────────────────────────────────
   // Themes, mascots, and cursor trails — each gated by a per-module
