@@ -1259,6 +1259,7 @@
     const spread = currentLevel===1?3:(currentLevel===2?10:(currentLevel===3?20:(currentLevel===4?30:50)));
     while(choices.length<4) { const n = typeof mathAns==='number' ? +(mathAns + (Math.floor(Math.random()*spread*2)-spread) + (choices.length)).toFixed(1) : mathAns+choices.length; if(n>=0 && !choices.includes(n) && n!==mathAns) choices.push(n); else { const f = Math.floor(Math.random()*50)+1; if(!choices.includes(f)) choices.push(f); } }
     choices.sort(()=>Math.random()-0.5); mChoices.innerHTML = '';
+    if(currentLevel===1 && ttsAuto() && typeof speakSeq==='function' && (mathState.op==='+'||mathState.op==='-')) speakSeq([mathState.a+(mathState.op==='+'?' plus ':' minus ')+mathState.b+' equals what?', ...choices.map(String)]);
     function _showMathStep(correct){
       const panel=document.createElement('div');panel.className='math-step-panel';panel.style.cssText='margin-top:14px;padding:14px 16px;background:rgba(255,255,255,0.92);border-left:5px solid '+(correct?'#2ecc71':'#e67e22')+';border-radius:10px;color:#2c3e50;font-family:Comic Neue,cursive;font-size:1.05rem;text-align:left;line-height:1.55;max-width:560px;margin-left:auto;margin-right:auto;';
       panel.innerHTML='<div style="font-weight:bold;margin-bottom:4px;color:'+(correct?'#1e8449':'#a04000')+';">'+(correct?'✓ Correct! ':'💡 Answer: ')+mathAns+'</div><div>'+(mathState.explain||('The answer is '+mathAns+'.'))+'</div>';
