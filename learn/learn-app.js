@@ -3913,6 +3913,7 @@
         scene.innerHTML=`<div style="text-align:center;font-family:Comic Neue,cursive;color:#2c3e50;padding:20px;"><div style="font-size:2.4rem;margin-bottom:8px;">${wasBest?'🏆 NEW BEST!':'🎉 All happy!'}</div><div style="font-size:1.3rem;">${score}/${TOTAL} pets cared for</div></div>`;
         buttons.innerHTML='';
         if(typeof spawnConfetti==='function')spawnConfetti(window.innerWidth/2,window.innerHeight/2,wasBest?120:60);
+        if(ttsAuto() && typeof speakSeq==='function')speakSeq([(wasBest?'New best! ':'All done! ')+'You cared for '+score+' pets!']);
         if(typeof showFeedback==='function')showFeedback(`Pet Care: ${score}/${TOTAL} 🐾`,wasBest?'#2ecc71':'#3498db');
         if(typeof addScore==='function')addScore(score);
         const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='Play Again';rb.style.cssText='display:block;margin:14px auto;';rb.onclick=()=>initPetCare();lifeArea.appendChild(rb);
@@ -3921,6 +3922,7 @@
       const pet=PETS[Math.floor(Math.random()*PETS.length)];
       curNeed=NEEDS[Math.floor(Math.random()*NEEDS.length)];
       scene.innerHTML=`<div style="font-size:6rem;line-height:1;">${pet}</div><div style="background:#fff;border:3px solid #2c3e50;border-radius:18px;padding:10px 18px;font-family:Comic Neue,cursive;font-size:1.3rem;color:#2c3e50;position:relative;">💭 ${curNeed.msg} <span style="font-size:1.4rem;margin-left:6px;">${curNeed.emoji}</span></div>`;
+      if(ttsAuto() && typeof speakSeq==='function')speakSeq([curNeed.msg]);
       const shuffled=[...ACTIONS].sort(()=>Math.random()-0.5);
       buttons.innerHTML='';
       shuffled.forEach(a=>{
@@ -3943,6 +3945,7 @@
         if(typeof showFeedback==='function')showFeedback(`The pet wanted ${curNeed.action}!`,'#e67e22');
         if(typeof resetStreak==='function')resetStreak();
       }
+      if(ttsAuto() && typeof speakSeq==='function')speakSeq([picked===curNeed.action?'Happy pet!':('The pet was '+curNeed.label.toLowerCase()+'.')]);
       setTimeout(nextRound,1100);
     }
     nextRound();
