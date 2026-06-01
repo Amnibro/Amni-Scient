@@ -1278,7 +1278,7 @@
 <body>
 <div id="app">
   <div class="top-bar">
-    <button class="back-btn" id="nav-back">⬅<span class="btn-label"> HOME</span></button>
+    <button class="back-btn" id="nav-back" aria-label="Home">⬅<span class="btn-label"> HOME</span></button>
     <button class="back-btn" id="level-btn" title="Pick difficulty / age band">📚<span class="btn-label" id="level-btn-label"> Lv 1</span></button>
     <div class="brand-text" style="color:#4db8ff;font-family:'JetBrains Mono';font-weight:bold;font-size:1.2rem;">AMNI-LEARN</div>
     <div class="score-bar">
@@ -1286,12 +1286,12 @@
         <span class="streak-fire" id="streak-fire">🔥 <span class="streak-val" id="streak-val">0</span></span>
         <button class="retro-btn" id="leaderboard-btn" style="padding:2px 8px;font-size:0.75rem;margin-left:6px" onclick="window._showAllLeaderboards()" aria-label="Leaderboards" title="Leaderboards">🏆</button>
         <button class="retro-btn" id="stats-btn" style="padding:2px 8px;font-size:0.75rem;margin-left:4px" onclick="window._showStatsOverview()" title="Stats" aria-label="Statistics">📊</button>
-        <button class="retro-btn" id="profile-btn" style="padding:2px 8px;font-size:0.75rem;margin-left:4px;display:flex;align-items:center;gap:4px" onclick="window._showProfile()" title="Profile"><span id="profile-btn-icon">👤</span><span id="profile-btn-name" style="font-family:JetBrains Mono;font-size:0.75rem;color:var(--accent,#4db8ff);max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:none"></span></button>
+        <button class="retro-btn" id="profile-btn" style="padding:2px 8px;font-size:0.75rem;margin-left:4px;display:flex;align-items:center;gap:4px" onclick="window._showProfile()" title="Profile" aria-label="Profile"><span id="profile-btn-icon" aria-hidden="true">👤</span><span id="profile-btn-name" style="font-family:JetBrains Mono;font-size:0.75rem;color:var(--accent,#4db8ff);max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:none"></span></button>
     </div>
     <div class="top-controls">
         <span class="fs-hint" id="fs-hint">(Press ESC to exit)</span>
         <button class="theme-btn" id="theme-btn" title="Toggle light/dark theme" aria-label="Toggle theme">🌙</button>
-        <button class="fs-btn" id="fs-btn">⛶<span class="fs-label"> FULLSCREEN</span></button>
+        <button class="fs-btn" id="fs-btn" aria-label="Toggle fullscreen">⛶<span class="fs-label"> FULLSCREEN</span></button>
     </div>
   </div>
   <!-- Web-only level picker modal (native wrapper opens the drawer instead) -->
