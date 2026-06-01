@@ -8,6 +8,11 @@
 - **Broke template lockstep (Step 2).** Added a deterministic per-page heading picker to both SEO generators (`src/gen-calc-modules.js`, `src/gen-learn-categories.js`): each of the 5 section headings + the deep-dive hint now draws from 4–6 variants keyed by a stable hash of the page slug (so regenerations don't churn). Regenerated all 31 calc + 11 learn pages — identical "WHAT IT COMPUTES / KEY EQUATIONS / …" skeleton replaced with distributed variants; page bodies (already unique) untouched; ads preserved on the article pages.
 - Plan/council: docs/checklists/checklist_v5.8.0_adsense_round4.md + docs/guardian_councils/guardian_council_v5.8.0_adsense_round4.md. Backups in backups/v5.8.0_adsense/. Step 3 (content-first restructure) still pending; do NOT submit AdSense reconsideration until the learn app is smoke-tested in a browser. v5.8.0.
 
+## [5.7.956] - 2026-05-31 - VISUAL FUN #4: Math quiz feedback matches subject quiz
+- Extended the same satisfying answer feedback to the MATH game mode (m-choice buttons) for a consistent feel: correct answer POPS green (sortCorrect), wrong answer SHAKES, and the revealed-correct answer POPS when you miss. Previously math only dimmed the wrong pick + greened the right one (no motion).
+- Reuses the same keyframes (sortCorrect, shake); additive; node --check passes.
+- Bumps sw v1036→v1037. v5.7.956.
+
 ## [5.7.955] - 2026-05-31 - VISUAL FUN #3: high-score confetti on quiz complete
 - The quiz-complete screen now bursts CONFETTI for strong finishes — 80 particles at ≥70%, 150 at ≥90% — reusing the app's existing `spawnConfetti(x,y,count)` helper (same pattern as the games' best-score celebrations). Low scores get the encouraging 💪 screen without confetti.
 - Additive + guarded (`typeof spawnConfetti==='function'`); node --check passes.
