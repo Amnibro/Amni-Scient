@@ -9786,6 +9786,8 @@
   };
   let currentQuiz = [];
   let currentQIndex = 0;
+  let quizCorrect = 0;
+  let _quizBaseTitle = '';
   const audioBtn = $$('#quiz-audio-btn');
   
 function playAnimalSound(type) {
@@ -9831,7 +9833,7 @@ function playAnimalSound(type) {
   function startQuizDirectly(subject) {
       _quizCurrentSubject = subject;
       const data = quizData[subject];
-      quizTitle.textContent = data.title;
+      quizTitle.textContent = data.title; _quizBaseTitle = data.title;
       const lvl = Math.min(currentLevel, 5);
       const seen = new Set();
       const pool = [];
@@ -9854,6 +9856,7 @@ function playAnimalSound(type) {
       const freshSlice = fresh.slice(0, target - missedSlice.length);
       currentQuiz = [...missedSlice, ...freshSlice].sort(()=>Math.random()-0.5);
       currentQIndex = 0;
+      quizCorrect = 0;
       audioBtn.onclick = () => { if(currentQIndex < currentQuiz.length) {const cq = currentQuiz[currentQIndex]; speakText(cq.audioText || cq.q);} };
       // One-time UI hint when there's spaced-repetition material in this run
       if(missedSlice.length>0){if(typeof showFeedback==='function')showFeedback(`🔁 ${missedSlice.length} review question${missedSlice.length===1?'':'s'} mixed in`,'#9b59b6');}
@@ -9877,7 +9880,10 @@ function playAnimalSound(type) {
   }
   function loadQuestion() {
       if(currentQIndex >= currentQuiz.length) {
-          quizPrompt.textContent = "Quiz Complete! 🎉";
+          const _qt = currentQuiz.length, _qp = _qt?Math.round(100*quizCorrect/_qt):0, _qe = _qp>=90?'🏆':_qp>=70?'🌟':_qp>=50?'👍':'💪';
+          quizTitle.textContent = _quizBaseTitle;
+          quizPrompt.innerHTML = 'Quiz Complete! '+_qe+'<div style="font-size:1.4rem;margin-top:12px;color:#2c3e50;font-weight:bold;">You got '+quizCorrect+' / '+_qt+' correct ('+_qp+'%)</div>';
+          quizPrompt.style.animation = 'bounceIn 0.5s ease';
           audioBtn.style.display = 'none';
           quizChoices.innerHTML = '';
           setTimeout(() => {
@@ -9887,7 +9893,8 @@ function playAnimalSound(type) {
           return;
       }
       const q = currentQuiz[currentQIndex];
-      quizPrompt.textContent = q.q;
+      quizPrompt.textContent = q.q; quizPrompt.style.animation='';
+      quizTitle.textContent = _quizBaseTitle + ' · ' + (currentQIndex+1) + ' / ' + currentQuiz.length;
       if (currentLevel <= 2 && q.isAudio) speakText(q.audioText || q.q);
       quizChoices.innerHTML = '';
       if(currentLevel <= 3 && q.isAudio) {
@@ -9923,7 +9930,7 @@ function playAnimalSound(type) {
               if(answered) return;
               answered = true;
               if(c === q.a) {
-                  showFeedback("Correct!", "#2ecc71"); addScore(1);
+                  showFeedback("Correct!", "#2ecc71"); addScore(1); quizCorrect++;
                   if(_quizCurrentSubject) _markCorrect(_quizCurrentSubject, q);
                   showExplainAndContinue(true);
               } else {
