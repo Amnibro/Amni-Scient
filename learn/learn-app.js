@@ -10119,6 +10119,7 @@ function playAnimalSound(type) {
           exp.style.cssText = 'margin-top:14px;padding:14px 16px;background:rgba(255,255,255,0.92);border-left:5px solid '+(correctOnFirstTry?'#2ecc71':'#e67e22')+';border-radius:10px;color:#2c3e50;font-family:Comic Neue,cursive;font-size:1.05rem;text-align:left;line-height:1.55;max-width:560px;animation:bounceIn 0.4s ease;';
           const explainText = q.explain || ('The answer is '+q.a+'.');
           exp.innerHTML = '<div style="font-weight:bold;margin-bottom:4px;color:'+(correctOnFirstTry?'#1e8449':'#a04000')+';">'+(correctOnFirstTry?'✓ Correct! ':'💡 ')+q.a+'</div><div>'+explainText+'</div>';
+          if(currentLevel === 1){ exp.style.cursor='pointer'; exp.title='Tap to hear'; exp.onclick=()=>speakSeq([q.a, explainText]); _kbd(exp,'Hear the explanation'); }
           quizChoices.appendChild(exp);
           const cont = document.createElement('button');
           cont.className = 'm-choice';
