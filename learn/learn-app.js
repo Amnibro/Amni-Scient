@@ -36,6 +36,7 @@
     flanker: $$('#flanker-view'),
     simon: $$('#simon-view'),
     numerosity: $$('#numerosity-view'),
+    posner: $$('#posner-view'),
     nback: $$('#nback-view'),
     anagram: $$('#anagram-view'),
     chimp: $$('#chimp-view'),
@@ -910,6 +911,7 @@
       if(game === 'flanker') initFlanker();
       if(game === 'simon') initSimon();
       if(game === 'numerosity') initNumerosity();
+      if(game === 'posner') initPosner();
       if(game === 'nback') initNBack();
       if(game === 'anagram') initAnagram();
       if(game === 'chimp') initChimp();
@@ -13533,6 +13535,27 @@ function playAnimalSound(type) {
     ct.appendChild(_modeRow());
     const sb=document.createElement('button');sb.className='nmm-btn';sb.textContent='START';sb.onclick=()=>{act=true;sc=0;tot=0;stk=0;bestStk=0;rtTotal=0;rtCount=0;tm=c.time;$$('#stp-tm').textContent=tm;show();window._stpTimer=setInterval(()=>{tm--;$$('#stp-tm').textContent=tm;if(tm<=0)_gameOver();},1000);};ct.appendChild(sb);
   }
+  function initPosner(){
+    const ct=$$('#pos-container'),hud=$$('#pos-hud');
+    if(window._posTimeout){clearTimeout(window._posTimeout);window._posTimeout=null;}
+    const lvl=Math.min(currentLevel||3,5),TRIALS=lvl<=2?20:30,VALID_P=lvl<=2?0.85:lvl>=4?0.7:0.78;
+    let trial=0,correct=0,wrong=0,streak=0,awaiting=false,t0=0,targetSide='L',valid=true,rtV=[],rtI=[];
+    const best=parseInt(sessionStorage.getItem('pos-best')||'0');
+    hud.innerHTML=`<span class="game-stat">🎯 Trial <span class="game-stat-val" id="pos-tr">0</span>/${TRIALS}</span><span class="game-stat">✅ <span class="game-stat-val" id="pos-c">0</span></span><span class="game-stat">🔥 <span class="game-stat-val" id="pos-st">0</span></span><span class="game-stat">⭐ Best ${best||'—'}</span><span class="game-stat">📊 Lvl ${lvl}</span>`;
+    ct.innerHTML='';
+    const hint=document.createElement('div');hint.style.cssText='font-size:1.05rem;color:#2c3e50;font-family:Comic Neue,cursive;text-align:center;max-width:450px';hint.textContent='Eyes on the center +. A box flashes, then a dot appears — tap the box with the DOT as fast as you can!';
+    const stage=document.createElement('div');stage.style.cssText='animation:bounceIn 0.45s ease;display:flex;align-items:center;justify-content:center;gap:30px;width:min(92vw,460px);height:160px';
+    const mkBox=(side)=>{const b=document.createElement('div');b.style.cssText='width:120px;height:120px;border-radius:16px;background:rgba(44,62,80,0.88);border:4px solid transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:border-color 0.1s';const dot=document.createElement('div');dot.style.cssText='width:46px;height:46px;border-radius:50%;background:#f1c40f;opacity:0';b.appendChild(dot);b.onclick=()=>respond(side);b._dot=dot;return b;};
+    const left=mkBox('L'),right=mkBox('R');
+    const fix=document.createElement('div');fix.style.cssText='font-size:2.6rem;color:#2c3e50;font-weight:bold';fix.textContent='+';
+    stage.appendChild(left);stage.appendChild(fix);stage.appendChild(right);
+    ct.appendChild(hint);ct.appendChild(stage);
+    const clearAll=()=>{left._dot.style.opacity='0';right._dot.style.opacity='0';left.style.borderColor='transparent';right.style.borderColor='transparent';};
+    function finish(){const tot=correct+wrong,a=tot?Math.round(100*correct/tot):0,avgV=rtV.length?Math.round(rtV.reduce((x,y)=>x+y,0)/rtV.length):0,avgI=rtI.length?Math.round(rtI.reduce((x,y)=>x+y,0)/rtI.length):0,eff=(avgV&&avgI)?(avgI-avgV):0,score=Math.max(1,correct*2-wrong);if(score>best)sessionStorage.setItem('pos-best',score);ct.innerHTML='';const sum=document.createElement('div');sum.className='rxt-summary';sum.innerHTML=`<h3>${a>=90?'🌟 Lightning attention!':a>=75?'👍 Quick eyes!':'💪 Keep training'}</h3><div class="rxt-summary-stats"><div class="rxt-summary-stat"><span class="val">${a}%</span><span class="lbl">Accuracy</span></div><div class="rxt-summary-stat"><span class="val">${avgV||'—'}</span><span class="lbl">Valid ms</span></div><div class="rxt-summary-stat"><span class="val">${avgI||'—'}</span><span class="lbl">Invalid ms</span></div><div class="rxt-summary-stat"><span class="val">${eff?('+'+eff):'—'}</span><span class="lbl">Cue benefit</span></div></div><div class="rxt-tier-scale">The Posner task trains how fast attention SHIFTS to a spot. A valid cue speeds you up; an invalid one costs time — that gap is the "cueing effect."</div>`;ct.appendChild(sum);if(a>=90)spawnConfetti(window.innerWidth/2,window.innerHeight/2,90);showFeedback('Spotlight: '+a+'% 👀',score>best?'#2ecc71':'#f1c40f');addScore(Math.max(1,Math.floor(correct/3)));const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='AGAIN';rb.style.marginTop='12px';rb.onclick=()=>initPosner();ct.appendChild(rb);}
+    function respond(side){if(currentGame!=='posner'||!awaiting)return;awaiting=false;const rt=Date.now()-t0;side===targetSide?(correct++,streak++,addScore(1),(valid?rtV:rtI).push(rt)):(wrong++,streak=0,resetStreak());clearAll();const c=$$('#pos-c');if(c)c.textContent=correct;const st=$$('#pos-st');if(st)st.textContent=streak;window._posTimeout=setTimeout(()=>{if(currentGame==='posner')next();},320);}
+    function next(){if(currentGame!=='posner')return;if(trial>=TRIALS)return finish();trial++;const tr=$$('#pos-tr');if(tr)tr.textContent=trial;clearAll();awaiting=false;const cued=Math.random()<0.5?'L':'R';valid=Math.random()<VALID_P;targetSide=valid?cued:(cued==='L'?'R':'L');window._posTimeout=setTimeout(()=>{if(currentGame!=='posner')return;(cued==='L'?left:right).style.borderColor='#f1c40f';window._posTimeout=setTimeout(()=>{if(currentGame!=='posner')return;(cued==='L'?left:right).style.borderColor='transparent';(targetSide==='L'?left:right)._dot.style.opacity='1';awaiting=true;t0=Date.now();window._posTimeout=setTimeout(()=>{if(currentGame!=='posner'||!awaiting)return;awaiting=false;wrong++;streak=0;resetStreak();clearAll();const st=$$('#pos-st');if(st)st.textContent=streak;window._posTimeout=setTimeout(()=>{if(currentGame==='posner')next();},300);},1600);},300);},520);}
+    window._posTimeout=setTimeout(()=>{if(currentGame==='posner')next();},700);
+  }
   function initNumerosity(){
     const ct=$$('#nz-container'),hud=$$('#nz-hud');
     if(window._nzTimeout){clearTimeout(window._nzTimeout);window._nzTimeout=null;}
@@ -16419,6 +16442,14 @@ function playAnimalSound(type) {
       '<b>Strategy \u2014 Chunking:</b> Break long numbers into groups. "4815162342" becomes "48-15-16-23-42" \u2014 much easier!',
       '<b>Strategy \u2014 Rhythm:</b> Say the number in your head with a rhythm, like a phone number.',
       'Your <b>best score</b> is saved between rounds. Try to beat your record!'
+    ]},
+    posner:{title:'\ud83d\udc40 How to Play Spotlight',steps:[
+      'Keep your eyes on the <b>+ in the middle</b>. One of the two boxes will briefly <b>flash a yellow border</b> (the cue).',
+      'Right after, a <b>yellow dot</b> pops into one of the boxes. <b>Tap the box with the dot</b> as fast as you can.',
+      'Usually the dot appears in the box that just flashed (a \u201cvalid\u201d cue) \u2014 but sometimes it tricks you and appears in the other one!',
+      '30 trials. Tracks your speed on valid vs invalid cues, and the <b>\u201ccue benefit\u201d</b> (how much the flash helped).',
+      '<b>Why it helps:</b> trains how quickly your <b>attention shifts</b> to a new spot \u2014 the mental \u201cspotlight.\u201d',
+      'Stay centered and react fast \u2014 aim for <b>90%+</b>!'
     ]},
     numerosity:{title:'\ud83d\udd35 How to Play Dot Estimate',steps:[
       'Two boxes flash a scatter of dots for a split second, then the dots disappear.',
