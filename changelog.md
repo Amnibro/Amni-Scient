@@ -14,6 +14,10 @@
 - **Broke template lockstep (Step 2).** Added a deterministic per-page heading picker to both SEO generators (`src/gen-calc-modules.js`, `src/gen-learn-categories.js`): each of the 5 section headings + the deep-dive hint now draws from 4–6 variants keyed by a stable hash of the page slug (so regenerations don't churn). Regenerated all 31 calc + 11 learn pages — identical "WHAT IT COMPUTES / KEY EQUATIONS / …" skeleton replaced with distributed variants; page bodies (already unique) untouched; ads preserved on the article pages.
 - Plan/council: docs/checklists/checklist_v5.8.0_adsense_round4.md + docs/guardian_councils/guardian_council_v5.8.0_adsense_round4.md. Backups in backups/v5.8.0_adsense/. Step 3 (content-first restructure) still pending; do NOT submit AdSense reconsideration until the learn app is smoke-tested in a browser. v5.8.0.
 
+## [5.7.99999] - 2026-06-01 - POLISH: streak-milestone confetti across all new trial-games
+- Brought the remaining new trial-games to parity with Go/No-Go + the older modules: Flanker, Simon, Spotlight, Rule Switch, Dot Estimate, Spot the Change now fire a confetti burst on every 10-in-a-row streak (streak%10===0). A satisfying reward moment, no per-trial spam — consistent with the established streak-celebration pattern across the suite. Memory/planning games (Corsi/Reverse Recall/Tower of London) already celebrate per span-up / optimal solve.
+- node --check passes. Bumps sw v1097→v1098. v5.7.99999.
+
 ## [5.7.99998] - 2026-06-01 - POLISH: Go/No-Go streak-milestone confetti + older-module audit (clean)
 - Audited the older fast modules (Stroop, Speed Math, Logic, Word Search) — their confetti fires at STREAK MILESTONES (5/10/15/20) and end-game, not per-trial: well-designed, no fix needed. Also checked index.html for inline-onclick divs/spans lacking keyboard support — none (all interactive elements are real buttons).
 - Completed Go/No-Go's feedback design to match that established pattern: now that per-trial confetti is gone (v5.7.99997), it celebrates every 10-in-a-row streak with a confetti burst — a reward moment without the spam. node --check passes. Bumps sw v1096→v1097. v5.7.99998.
