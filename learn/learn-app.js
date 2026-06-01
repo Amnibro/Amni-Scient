@@ -4489,6 +4489,7 @@
                   totalDisp.textContent = '$0.00';
               }
           };
+          _kbd(btn, 'Add ' + d.label);
           tray.appendChild(btn);
       });
       const resetBtn = document.createElement('button');
