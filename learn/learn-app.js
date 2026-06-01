@@ -40,6 +40,7 @@
     backspan: $$('#backspan-view'),
     tol: $$('#tol-view'),
     changedet: $$('#changedet-view'),
+    taskswitch: $$('#taskswitch-view'),
     nback: $$('#nback-view'),
     anagram: $$('#anagram-view'),
     chimp: $$('#chimp-view'),
@@ -940,6 +941,7 @@
       if(game === 'backspan') initBackSpan();
       if(game === 'tol') initTowerLondon();
       if(game === 'changedet') initChangeDet();
+      if(game === 'taskswitch') initTaskSwitch();
       if(game === 'nback') initNBack();
       if(game === 'anagram') initAnagram();
       if(game === 'chimp') initChimp();
@@ -13564,6 +13566,26 @@ function playAnimalSound(type) {
     ct.appendChild(_modeRow());
     const sb=document.createElement('button');sb.className='nmm-btn';sb.textContent='START';sb.onclick=()=>{act=true;sc=0;tot=0;stk=0;bestStk=0;rtTotal=0;rtCount=0;tm=c.time;$$('#stp-tm').textContent=tm;show();window._stpTimer=setInterval(()=>{tm--;$$('#stp-tm').textContent=tm;if(tm<=0)_gameOver();},1000);};ct.appendChild(sb);
   }
+  function initTaskSwitch(){
+    const ct=$$('#ts-container'),hud=$$('#ts-hud');
+    if(window._tsTimeout){clearTimeout(window._tsTimeout);window._tsTimeout=null;}
+    const lvl=Math.min(currentLevel||3,5),TRIALS=lvl<=2?20:30,SWITCH_P=lvl<=2?0.3:lvl>=4?0.6:0.45,NUMS=[1,2,3,4,6,7,8,9];
+    let trial=0,correct=0,wrong=0,streak=0,awaiting=false,t0=0,rule='parity',prevRule='parity',num=0,isSwitch=false,rtSw=[],rtRep=[],valL='',valR='';
+    const best=parseInt(sessionStorage.getItem('ts-best')||'0');
+    hud.innerHTML=`<span class="game-stat">🎯 Trial <span class="game-stat-val" id="ts-tr">0</span>/${TRIALS}</span><span class="game-stat">✅ <span class="game-stat-val" id="ts-c">0</span></span><span class="game-stat">🔥 <span class="game-stat-val" id="ts-st">0</span></span><span class="game-stat">⭐ Best ${best||'—'}</span><span class="game-stat">📊 Lvl ${lvl}</span>`;
+    ct.innerHTML='';
+    const legend=document.createElement('div');legend.style.cssText='font-size:0.98rem;color:#2c3e50;font-family:Comic Neue,cursive;text-align:center;max-width:440px;line-height:1.5';legend.innerHTML='<b style="color:#3498db">🟦 Blue</b> → is it <b>Odd or Even?</b><br><b style="color:#e74c3c">🟥 Red</b> → is it <b>Low (under 5) or High (over 5)?</b>';
+    const card=document.createElement('div');card.style.cssText='animation:bounceIn 0.45s ease;width:140px;height:140px;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:4.5rem;font-weight:bold;color:#fff;font-family:Comic Neue,cursive;box-shadow:0 8px 0 rgba(0,0,0,0.2)';card.textContent='?';
+    const row=document.createElement('div');row.style.cssText='display:flex;gap:18px';
+    const mkBtn=side=>{const b=document.createElement('button');b.className='nmm-btn';b.style.cssText='font-size:1.2rem;min-width:130px';b.onclick=()=>respond(side);return b;};
+    const btnL=mkBtn('L'),btnR=mkBtn('R');row.appendChild(btnL);row.appendChild(btnR);
+    ct.appendChild(legend);ct.appendChild(card);ct.appendChild(row);
+    function setButtons(){if(rule==='parity'){btnL.textContent='Odd';valL='odd';btnR.textContent='Even';valR='even';}else{btnL.textContent='Low (<5)';valL='low';btnR.textContent='High (>5)';valR='high';}}
+    function finish(){const tot=correct+wrong,a=tot?Math.round(100*correct/tot):0,avgS=rtSw.length?Math.round(rtSw.reduce((x,y)=>x+y,0)/rtSw.length):0,avgR=rtRep.length?Math.round(rtRep.reduce((x,y)=>x+y,0)/rtRep.length):0,cost=(avgS&&avgR)?(avgS-avgR):0,score=Math.max(1,correct*2-wrong);if(score>best)sessionStorage.setItem('ts-best',score);ct.innerHTML='';const sum=document.createElement('div');sum.className='rxt-summary';sum.innerHTML=`<h3>${a>=90?'🌟 Mentally nimble!':a>=75?'👍 Flexible thinking!':'💪 Keep training'}</h3><div class="rxt-summary-stats"><div class="rxt-summary-stat"><span class="val">${a}%</span><span class="lbl">Accuracy</span></div><div class="rxt-summary-stat"><span class="val">${avgR||'—'}</span><span class="lbl">Same-rule ms</span></div><div class="rxt-summary-stat"><span class="val">${avgS||'—'}</span><span class="lbl">Switch ms</span></div><div class="rxt-summary-stat"><span class="val">${cost?('+'+cost):'—'}</span><span class="lbl">Switch cost</span></div></div><div class="rxt-tier-scale">Task switching trains COGNITIVE FLEXIBILITY — reconfiguring the rule on the fly. The "switch cost" is how much slower you are right after the rule changes; smaller is better.</div>`;ct.appendChild(sum);if(a>=90)spawnConfetti(window.innerWidth/2,window.innerHeight/2,90);showFeedback('Rule Switch: '+a+'% 🔀',score>best?'#2ecc71':'#f1c40f');addScore(Math.max(1,Math.floor(correct/3)));const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='AGAIN';rb.style.marginTop='12px';rb.onclick=()=>initTaskSwitch();ct.appendChild(rb);}
+    function respond(side){if(currentGame!=='taskswitch'||!awaiting)return;awaiting=false;const rt=Date.now()-t0,chosen=side==='L'?valL:valR,ans=rule==='parity'?(num%2?'odd':'even'):(num<5?'low':'high'),ok=chosen===ans;ok?(correct++,streak++,addScore(1),(isSwitch?rtSw:rtRep).push(rt),card.style.animation='sortCorrect 0.3s'):(wrong++,streak=0,resetStreak(),card.style.animation='shake 0.3s');setTimeout(()=>{if(card)card.style.animation='';},320);const c=$$('#ts-c');if(c)c.textContent=correct;const st=$$('#ts-st');if(st)st.textContent=streak;window._tsTimeout=setTimeout(()=>{if(currentGame==='taskswitch')next();},300);}
+    function next(){if(currentGame!=='taskswitch')return;if(trial>=TRIALS)return finish();trial++;const tr=$$('#ts-tr');if(tr)tr.textContent=trial;prevRule=rule;rule=(trial===1)?(Math.random()<0.5?'parity':'magnitude'):(Math.random()<SWITCH_P?(rule==='parity'?'magnitude':'parity'):rule);isSwitch=trial>1&&rule!==prevRule;num=NUMS[Math.floor(Math.random()*NUMS.length)];card.style.background=rule==='parity'?'#3498db':'#e74c3c';card.textContent=String(num);setButtons();awaiting=true;t0=Date.now();}
+    window._tsTimeout=setTimeout(()=>{if(currentGame==='taskswitch')next();},700);
+  }
   function initChangeDet(){
     const ct=$$('#cd-container'),hud=$$('#cd-hud');
     if(window._cdTimeout){clearTimeout(window._cdTimeout);window._cdTimeout=null;}
@@ -16542,6 +16564,14 @@ function playAnimalSound(type) {
       '<b>Strategy \u2014 Chunking:</b> Break long numbers into groups. "4815162342" becomes "48-15-16-23-42" \u2014 much easier!',
       '<b>Strategy \u2014 Rhythm:</b> Say the number in your head with a rhythm, like a phone number.',
       'Your <b>best score</b> is saved between rounds. Try to beat your record!'
+    ]},
+    taskswitch:{title:'\ud83d\udd00 How to Play Rule Switch',steps:[
+      'A number appears on a colored card. The card\u2019s <b>color tells you which rule</b> to use.',
+      '<b style="color:#3498db">Blue</b> \u2192 decide if the number is <b>Odd or Even</b>. <b style="color:#e74c3c">Red</b> \u2192 decide if it\u2019s <b>Low (under 5) or High (over 5)</b>.',
+      'The two buttons relabel to match the current rule \u2014 read them each time!',
+      'The color (and therefore the rule) <b>changes randomly</b>. You\u2019re slower right after a switch \u2014 that\u2019s the normal \u201cswitch cost.\u201d',
+      '<b>Why it helps:</b> task switching trains <b>cognitive flexibility</b> \u2014 the ability to drop one rule and pick up another quickly.',
+      '30 trials. The summary shows your accuracy and your switch cost (smaller = nimbler).'
     ]},
     changedet:{title:'\ud83c\udfa8 How to Play Spot the Change',steps:[
       'A handful of colored squares appears for a moment \u2014 try to <b>memorize all their colors</b>.',
