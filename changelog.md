@@ -8,6 +8,12 @@
 - **Broke template lockstep (Step 2).** Added a deterministic per-page heading picker to both SEO generators (`src/gen-calc-modules.js`, `src/gen-learn-categories.js`): each of the 5 section headings + the deep-dive hint now draws from 4–6 variants keyed by a stable hash of the page slug (so regenerations don't churn). Regenerated all 31 calc + 11 learn pages — identical "WHAT IT COMPUTES / KEY EQUATIONS / …" skeleton replaced with distributed variants; page bodies (already unique) untouched; ads preserved on the article pages.
 - Plan/council: docs/checklists/checklist_v5.8.0_adsense_round4.md + docs/guardian_councils/guardian_council_v5.8.0_adsense_round4.md. Backups in backups/v5.8.0_adsense/. Step 3 (content-first restructure) still pending; do NOT submit AdSense reconsideration until the learn app is smoke-tested in a browser. v5.8.0.
 
+## [5.7.968] - 2026-06-01 - CURRICULUM #5: Geography grades 3-5 (TEKS/B.E.S.T.) → History L3
+- Completed the geography strand into grades 3-5 (TEKS 3.4-6 / 4.6-11 / 5.6-10, Florida B.E.S.T. SS.3-5.G, VA SOL). Added 8 to History L3: LATITUDE & LONGITUDE grid, MAP SCALE, PHYSICAL vs POLITICAL maps, what a REGION is, the PRIME MERIDIAN (+ E/W hemispheres), LANDFORMS (plateau/plain/canyon/etc.), the 5 US REGIONS, and ABSOLUTE vs RELATIVE location.
+- Non-dup: climate zones already covered (weather bank, Köppen); these 3-5 concepts were all uncovered (probe returned 0 for latitude/longitude, map scale, physical/political maps, region, prime meridian, landform, US regions).
+- Geography strand now spans K-2 (History L2) + 3-5 (History L3). History L3 62→70. node --check passes. Bumps sw v1048→v1049. v5.7.968.
+- Curriculum tally: 5 clusters, 40 questions (economics K-2 + 3-5; geography K-2 + 3-5; rounding 3-5).
+
 ## [5.7.967] - 2026-06-01 - CURRICULUM #4: Rounding & estimation (TEKS/B.E.S.T.) → Math L3
 - Added the grades 3-5 ROUNDING + ESTIMATION strand (TEKS 3.4 / 4.2, Florida B.E.S.T. MA.3-4.NSO, VA SOL) — only 1 rounding question existed before. Added 8 to Math L3: the round-up/down RULE (5-or-more), round to nearest 10 / 100 / 1,000, the exactly-5 case (round half up), ESTIMATE a sum by rounding, round a DECIMAL to nearest whole, and why estimation is useful in real life. Traditional standard-algorithm framing (not Common Core).
 - Math L3 68→76. node --check passes. Bumps sw v1047→v1048. v5.7.967.
