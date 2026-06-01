@@ -14,6 +14,12 @@
 - **Broke template lockstep (Step 2).** Added a deterministic per-page heading picker to both SEO generators (`src/gen-calc-modules.js`, `src/gen-learn-categories.js`): each of the 5 section headings + the deep-dive hint now draws from 4–6 variants keyed by a stable hash of the page slug (so regenerations don't churn). Regenerated all 31 calc + 11 learn pages — identical "WHAT IT COMPUTES / KEY EQUATIONS / …" skeleton replaced with distributed variants; page bodies (already unique) untouched; ads preserved on the article pages.
 - Plan/council: docs/checklists/checklist_v5.8.0_adsense_round4.md + docs/guardian_councils/guardian_council_v5.8.0_adsense_round4.md. Backups in backups/v5.8.0_adsense/. Step 3 (content-first restructure) still pending; do NOT submit AdSense reconsideration until the learn app is smoke-tested in a browser. v5.8.0.
 
+## [5.7.997] - 2026-06-01 - NEW MODULE: Reverse Recall (backward digit span)
+- Brain-exercise #8 (Anthony: last 3 paradigms). Backward Digit Span — working memory + mental manipulation; distinct from the existing forward Number Memory (you must hold the digits AND flip their order).
+- Gameplay: digits flash one at a time (with a brief gap so repeats are clear), then a 0-9 number pad; type them BACKWARD. Correct full reverse → span +1; one wrong digit ends the run and reveals the answer. Score = longest span reversed. Placed in "Memory & Focus".
+- Level-scaled: start span L1-2=2, L3=3, L4-5=4; flash speed 900/750/600ms. Lvl HUD chip + bounce-in display.
+- Wiring across all 6 points (button, #backspan-view, registry, dispatcher initBackSpan, tutorial, fn). Cleanup-safe: flash/advance setTimeouts guarded by `currentGame!=='backspan'` + window._bspTimeout cleared on re-init; phase flag ('show'/'input'/'wait') gates the pad. node --check passes. Bumps sw v1077→v1078. v5.7.997. (1 module left: Tower of London.)
+
 ## [5.7.996] - 2026-06-01 - NEW MODULE: Spotlight (Posner spatial-cueing / attention orienting)
 - Brain-exercise #7 (Anthony: add the last 3 distinct paradigms). The Posner cueing task — measures how fast attention SHIFTS to a location; not covered by any existing module.
 - Gameplay: eyes on a center +; one of two boxes flashes a border (cue), then a dot appears in a box; tap the box with the dot ASAP. Cue is valid (dot on cued side) most of the time, occasionally invalid. 30 trials; tracks accuracy, valid RT, invalid RT, and the cue-benefit (invalid − valid ms). Placed in "Visual & Spatial".

@@ -37,6 +37,7 @@
     simon: $$('#simon-view'),
     numerosity: $$('#numerosity-view'),
     posner: $$('#posner-view'),
+    backspan: $$('#backspan-view'),
     nback: $$('#nback-view'),
     anagram: $$('#anagram-view'),
     chimp: $$('#chimp-view'),
@@ -912,6 +913,7 @@
       if(game === 'simon') initSimon();
       if(game === 'numerosity') initNumerosity();
       if(game === 'posner') initPosner();
+      if(game === 'backspan') initBackSpan();
       if(game === 'nback') initNBack();
       if(game === 'anagram') initAnagram();
       if(game === 'chimp') initChimp();
@@ -13535,6 +13537,24 @@ function playAnimalSound(type) {
     ct.appendChild(_modeRow());
     const sb=document.createElement('button');sb.className='nmm-btn';sb.textContent='START';sb.onclick=()=>{act=true;sc=0;tot=0;stk=0;bestStk=0;rtTotal=0;rtCount=0;tm=c.time;$$('#stp-tm').textContent=tm;show();window._stpTimer=setInterval(()=>{tm--;$$('#stp-tm').textContent=tm;if(tm<=0)_gameOver();},1000);};ct.appendChild(sb);
   }
+  function initBackSpan(){
+    const ct=$$('#bsp-container'),hud=$$('#bsp-hud');
+    if(window._bspTimeout){clearTimeout(window._bspTimeout);window._bspTimeout=null;}
+    const lvl=Math.min(currentLevel||3,5),flashMs=lvl<=2?900:lvl>=4?600:750;
+    let span=lvl<=2?2:lvl>=4?4:3,seq=[],target=[],idx=0,phase='show',maxSpan=0,round=0;
+    const best=parseInt(sessionStorage.getItem('bsp-best')||'0');
+    hud.innerHTML=`<span class="game-stat">📏 Span <span class="game-stat-val" id="bsp-span">${span}</span></span><span class="game-stat">🎯 Round <span class="game-stat-val" id="bsp-rd">0</span></span><span class="game-stat">⭐ Best ${best||'—'}</span><span class="game-stat">📊 Lvl ${lvl}</span>`;
+    ct.innerHTML='';
+    const status=document.createElement('div');status.id='bsp-status';status.style.cssText='font-size:1.2rem;color:#2c3e50;font-family:Comic Neue,cursive;min-height:1.5em;text-align:center;font-weight:bold';
+    const display=document.createElement('div');display.style.cssText='animation:bounceIn 0.45s ease;font-size:3.6rem;font-weight:bold;color:#2c3e50;font-family:monospace;min-height:80px;display:flex;align-items:center;justify-content:center;letter-spacing:0.15em';
+    const pad=document.createElement('div');pad.style.cssText='display:grid;grid-template-columns:repeat(5,1fr);gap:10px;max-width:340px';
+    for(let n=0;n<=9;n++){const b=document.createElement('button');b.className='nmm-btn';b.textContent=String(n);b.style.cssText='font-size:1.5rem;min-width:54px;padding:10px';b.onclick=()=>tapDigit(n);pad.appendChild(b);}
+    ct.appendChild(status);ct.appendChild(display);ct.appendChild(pad);
+    function finish(){if(maxSpan>best)sessionStorage.setItem('bsp-best',maxSpan);ct.innerHTML='';const sum=document.createElement('div');sum.className='rxt-summary';sum.innerHTML=`<h3>${maxSpan>=6?'🌟 Amazing memory!':maxSpan>=4?'👍 Strong span!':'💪 Keep training'}</h3><div class="rxt-summary-stats"><div class="rxt-summary-stat"><span class="val">${maxSpan}</span><span class="lbl">Best span</span></div><div class="rxt-summary-stat"><span class="val">${round}</span><span class="lbl">Rounds</span></div></div><div class="rxt-tier-scale">Backward Digit Span trains working memory + mental MANIPULATION — you hold the digits AND flip their order. Typical adult backward span ≈ 4-5.</div>`;ct.appendChild(sum);if(maxSpan>=5)spawnConfetti(window.innerWidth/2,window.innerHeight/2,90);showFeedback('Reverse Recall: '+maxSpan+' 🔢',maxSpan>best?'#2ecc71':'#f1c40f');const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='AGAIN';rb.style.marginTop='12px';rb.onclick=()=>initBackSpan();ct.appendChild(rb);}
+    function tapDigit(n){if(currentGame!=='backspan'||phase!=='input')return;if(n===target[idx]){idx++;display.textContent=target.slice(0,idx).join(' ');if(idx>=target.length){phase='wait';maxSpan=Math.max(maxSpan,span);addScore(span);status.textContent='✓ Correct!';showFeedback('✓ Span '+span+'!','#2ecc71');span++;window._bspTimeout=setTimeout(()=>{if(currentGame==='backspan')newRound();},900);}}else{phase='wait';resetStreak();status.textContent='✗ Not quite — it was:';display.textContent=target.join(' ');window._bspTimeout=setTimeout(()=>{if(currentGame==='backspan')finish();},1300);}}
+    function newRound(){round++;const r=$$('#bsp-rd');if(r)r.textContent=round;const sp=$$('#bsp-span');if(sp)sp.textContent=span;seq=[];for(let k=0;k<span;k++)seq.push(Math.floor(Math.random()*10));target=[...seq].reverse();idx=0;phase='show';status.textContent='Memorize the digits…';display.textContent='';let step=0;const showNext=()=>{if(currentGame!=='backspan')return;if(step>=seq.length){phase='input';status.textContent='Now type them BACKWARD!';display.textContent='';return;}display.textContent=String(seq[step]);step++;window._bspTimeout=setTimeout(()=>{if(currentGame!=='backspan')return;display.textContent='';window._bspTimeout=setTimeout(showNext,200);},flashMs);};window._bspTimeout=setTimeout(showNext,500);}
+    newRound();
+  }
   function initPosner(){
     const ct=$$('#pos-container'),hud=$$('#pos-hud');
     if(window._posTimeout){clearTimeout(window._posTimeout);window._posTimeout=null;}
@@ -16442,6 +16462,14 @@ function playAnimalSound(type) {
       '<b>Strategy \u2014 Chunking:</b> Break long numbers into groups. "4815162342" becomes "48-15-16-23-42" \u2014 much easier!',
       '<b>Strategy \u2014 Rhythm:</b> Say the number in your head with a rhythm, like a phone number.',
       'Your <b>best score</b> is saved between rounds. Try to beat your record!'
+    ]},
+    backspan:{title:'\ud83d\udd22 How to Play Reverse Recall',steps:[
+      'A short string of digits flashes <b>one at a time</b> \u2014 watch and remember them in order.',
+      'When they stop, type them <b>BACKWARD</b> on the number pad. If you saw 3 \u00b7 7 \u00b7 1, you tap <b>1 \u00b7 7 \u00b7 3</b>.',
+      'Get it right and the string grows by one digit. See how long a sequence you can reverse!',
+      'One wrong digit ends the run. Your score is the <b>longest span</b> you reversed.',
+      '<b>Why it helps:</b> backward digit span trains <b>working memory</b> AND mental manipulation \u2014 you must hold the digits and flip them at the same time.',
+      '<b>Typical adult backward span \u2248 4-5.</b> Can you beat it?'
     ]},
     posner:{title:'\ud83d\udc40 How to Play Spotlight',steps:[
       'Keep your eyes on the <b>+ in the middle</b>. One of the two boxes will briefly <b>flash a yellow border</b> (the cue).',
