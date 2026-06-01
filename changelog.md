@@ -8,6 +8,14 @@
 - **Broke template lockstep (Step 2).** Added a deterministic per-page heading picker to both SEO generators (`src/gen-calc-modules.js`, `src/gen-learn-categories.js`): each of the 5 section headings + the deep-dive hint now draws from 4–6 variants keyed by a stable hash of the page slug (so regenerations don't churn). Regenerated all 31 calc + 11 learn pages — identical "WHAT IT COMPUTES / KEY EQUATIONS / …" skeleton replaced with distributed variants; page bodies (already unique) untouched; ads preserved on the article pages.
 - Plan/council: docs/checklists/checklist_v5.8.0_adsense_round4.md + docs/guardian_councils/guardian_council_v5.8.0_adsense_round4.md. Backups in backups/v5.8.0_adsense/. Step 3 (content-first restructure) still pending; do NOT submit AdSense reconsideration until the learn app is smoke-tested in a browser. v5.8.0.
 
+## [5.7.971] - 2026-06-01 - CURRICULUM #8: Science process skills / Nature of Science (TEKS/B.E.S.T.) → Science L1 + L2
+- The science bank's CONTENT was saturated, but the inquiry-PROCESS strand was absent as quiz questions: probing q: prompts returned 0 for scientific method, variable, control group, fair test, independent variable, lab tools (goggles/thermometer/graduated cylinder/balance). This is TEKS Scientific Investigation & Reasoning (K.1-K.4 ... 5.1-5.4, present in EVERY grade) + Florida B.E.S.T. Nature of Science (SC.N).
+- Placed by the bank's difficulty gradient (L1 basic, L2 elementary-middle, L3 = HS/college topics like the Standard Model), NOT the raw L→grade map: foundational skills → L1; method/experiment-design → L2.
+- Added 4 to L1: OBSERVE first, magnifying glass (a science TOOL), PREDICTION (a smart guess), safety GOGGLES (lab safety).
+- Added 6 to L2: HYPOTHESIS (testable 'if...then'), fair test = change ONE variable (independent vs dependent), the CONTROL group, OBSERVATION vs INFERENCE, graduated cylinder (volume) vs balance/thermometer/ruler, and drawing a CONCLUSION as the final step.
+- All 10 on confirmed-0 process concepts. node --check passes. Bumps sw v1051→v1052. v5.7.971.
+- Curriculum tally: 8 clusters, 76 questions (econ K-2 + 3-5; geography K-2 + 3-5; rounding 3-5; reading-comp K-2 + 3-5; literary-elements K-2 + 3-5; science-process L1 + L2).
+
 ## [5.7.970] - 2026-06-01 - CURRICULUM #7: Literary elements strand (TEKS/B.E.S.T. ELA) → Reading & Languages L2 + L3
 - Second ELA reading strand: literary elements / author's craft (TEKS 3.8/4.8/5.8, Florida B.E.S.T. ELA.R.1/R.3, VA SOL). The Reading & Languages bank had setting/character/mood/tone but the narrative-structure core was missing — probe returned 0 for theme, plot, point of view, narrator, conflict, protagonist, antagonist, climax, genre, rising action, resolution, exposition.
 - Added 4 to L2 (grades K-2): PLOT as beginning-middle-end, GENRE (fantasy), NARRATOR (who tells the story), CONFLICT (the story's problem).
