@@ -14,6 +14,10 @@
 - **Broke template lockstep (Step 2).** Added a deterministic per-page heading picker to both SEO generators (`src/gen-calc-modules.js`, `src/gen-learn-categories.js`): each of the 5 section headings + the deep-dive hint now draws from 4–6 variants keyed by a stable hash of the page slug (so regenerations don't churn). Regenerated all 31 calc + 11 learn pages — identical "WHAT IT COMPUTES / KEY EQUATIONS / …" skeleton replaced with distributed variants; page bodies (already unique) untouched; ads preserved on the article pages.
 - Plan/council: docs/checklists/checklist_v5.8.0_adsense_round4.md + docs/guardian_councils/guardian_council_v5.8.0_adsense_round4.md. Backups in backups/v5.8.0_adsense/. Step 3 (content-first restructure) still pending; do NOT submit AdSense reconsideration until the learn app is smoke-tested in a browser. v5.8.0.
 
+## [5.7.978] - 2026-06-01 - POLISH: Spanish teach-card emoji → flag (consistency)
+- Audit of the teach-phase fact-card banks: every language card uses its country FLAG (🇫🇷 French, 🇩🇪 German, 🇮🇹 Italian, 🇵🇹 Portuguese, 🇯🇵 Japanese, etc.) — but Spanish stood out with a 🌍 globe. Changed to 🇪🇸 to match the sibling convention.
+- Also re-audited the colors quiz bank (🔴 Red/🔵 Blue/etc. all correctly paired) + the animals fact-card bank (clean) — no other mismatches found this pass. node --check passes. Bumps sw v1058→v1059. v5.7.978.
+
 ## [5.7.977] - 2026-06-01 - POLISH: fix hyena emoji (was fox 🦊) in Animals quiz
 - Loop pivoted from curriculum → quality/visual polish (Anthony's call). First polish fix: the "Which African mammal LAUGHS / cackles?" answer showed the FOX emoji (🦊 Hyena) — doubly wrong since the explain itself notes hyenas are "NOT related to dogs." Changed to neutral 🐾 (no dedicated hyena emoji exists); this also de-duplicates 🦊, which now appears only on the actual Fox question.
 - Audited all ~80 Animals-bank answer emojis: rest are correctly paired (🐴 Seahorse + 🪶 Kookaburra are deliberate generics — no dedicated emoji). node --check passes. Bumps sw v1057→v1058. v5.7.977.
