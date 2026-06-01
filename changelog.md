@@ -8,6 +8,11 @@
 - **Broke template lockstep (Step 2).** Added a deterministic per-page heading picker to both SEO generators (`src/gen-calc-modules.js`, `src/gen-learn-categories.js`): each of the 5 section headings + the deep-dive hint now draws from 4–6 variants keyed by a stable hash of the page slug (so regenerations don't churn). Regenerated all 31 calc + 11 learn pages — identical "WHAT IT COMPUTES / KEY EQUATIONS / …" skeleton replaced with distributed variants; page bodies (already unique) untouched; ads preserved on the article pages.
 - Plan/council: docs/checklists/checklist_v5.8.0_adsense_round4.md + docs/guardian_councils/guardian_council_v5.8.0_adsense_round4.md. Backups in backups/v5.8.0_adsense/. Step 3 (content-first restructure) still pending; do NOT submit AdSense reconsideration until the learn app is smoke-tested in a browser. v5.8.0.
 
+## [5.7.958] - 2026-05-31 - VISUAL FUN #6: dim non-correct options on answer (focus the right one)
+- When a subject-quiz answer is locked, the OTHER options now dim to 0.45 opacity so the green correct answer stands out (previously they stayed full-brightness + visually noisy). Matches the math mode, which already dims the wrong pick. The "Next ▶" button is appended after this pass so it's unaffected.
+- One-line additive change; node --check passes.
+- Bumps sw v1038→v1039. v5.7.958.
+
 ## [5.7.957] - 2026-05-31 - VISUAL FUN #5: streak counter pulses on each correct answer
 - The header streak counter (#streak-val) now gives a quick satisfying PULSE (spmPulse scale) every time it ticks up — reinforces the streak/combo gamification (which already has 🔥 5/10-streak callouts + 2×/3× score multipliers). Uses the reflow trick to re-trigger the animation on every increment.
 - Reuses existing keyframe (spmPulse); additive; node --check passes.

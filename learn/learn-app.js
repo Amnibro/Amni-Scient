@@ -9907,7 +9907,7 @@ function playAnimalSound(type) {
       let choices = [q.a, ...q.wrong];
       choices.sort(() => Math.random() - 0.5);
       const showExplainAndContinue = (correctOnFirstTry) => {
-          $$all('#quiz-choices .m-choice').forEach(b=>{b.style.pointerEvents='none';if(b.textContent===q.a){b.style.background='#2ecc71';b.style.color='#fff';b.style.animation='sortCorrect 0.5s ease';}});
+          $$all('#quiz-choices .m-choice').forEach(b=>{b.style.pointerEvents='none';if(b.textContent===q.a){b.style.background='#2ecc71';b.style.color='#fff';b.style.animation='sortCorrect 0.5s ease';}else{b.style.opacity='0.45';}});
           const exp = document.createElement('div');
           exp.className = 'quiz-explain';
           exp.style.cssText = 'margin-top:14px;padding:14px 16px;background:rgba(255,255,255,0.92);border-left:5px solid '+(correctOnFirstTry?'#2ecc71':'#e67e22')+';border-radius:10px;color:#2c3e50;font-family:Comic Neue,cursive;font-size:1.05rem;text-align:left;line-height:1.55;max-width:560px;animation:bounceIn 0.4s ease;';
