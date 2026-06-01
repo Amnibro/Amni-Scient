@@ -759,6 +759,20 @@
     }));
     _modalFocusObs.observe(document.body, { childList: true });
   } catch (e) {}
+  window.addEventListener('keydown', (e) => {
+    if (e.key !== 'Tab') return;
+    let modal = null;
+    const ovs = document.querySelectorAll('.hs-overlay, #ach-modal');
+    if (ovs.length) modal = ovs[ovs.length - 1];
+    else { const lvl = document.getElementById('level-picker-modal'); if (lvl && lvl.style.display && lvl.style.display !== 'none') modal = lvl; }
+    if (!modal) return;
+    const dlg = modal.querySelector('[role="dialog"]') || modal;
+    const foc = Array.from(dlg.querySelectorAll('button,[href],input:not([type="hidden"]),select,textarea,[tabindex]:not([tabindex="-1"])')).filter(el => el.offsetParent !== null && !el.disabled);
+    if (!foc.length) return;
+    const first = foc[0], last = foc[foc.length - 1], act = document.activeElement;
+    if (e.shiftKey && (act === first || !dlg.contains(act))) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && (act === last || !dlg.contains(act))) { e.preventDefault(); first.focus(); }
+  });
   $$('#nav-back').addEventListener('click', () => {
     if (currentGame) {
       showView('menu');
