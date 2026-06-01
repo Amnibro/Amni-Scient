@@ -14,6 +14,10 @@
 - **Broke template lockstep (Step 2).** Added a deterministic per-page heading picker to both SEO generators (`src/gen-calc-modules.js`, `src/gen-learn-categories.js`): each of the 5 section headings + the deep-dive hint now draws from 4–6 variants keyed by a stable hash of the page slug (so regenerations don't churn). Regenerated all 31 calc + 11 learn pages — identical "WHAT IT COMPUTES / KEY EQUATIONS / …" skeleton replaced with distributed variants; page bodies (already unique) untouched; ads preserved on the article pages.
 - Plan/council: docs/checklists/checklist_v5.8.0_adsense_round4.md + docs/guardian_councils/guardian_council_v5.8.0_adsense_round4.md. Backups in backups/v5.8.0_adsense/. Step 3 (content-first restructure) still pending; do NOT submit AdSense reconsideration until the learn app is smoke-tested in a browser. v5.8.0.
 
+## [5.7.99996] - 2026-06-01 - INTEGRATION: achievements now cover all 11 new modules
+- Verified the tutorial system first: every "? How to Play" button (showTutorial key) has matching content — no broken tutorials. Then completed achievement coverage: added the remaining 6 so all 11 new modules reward play — 🚦 Iron Will (Go/No-Go 45+), ➡️ Laser Focus (Flanker 50+), 🟦 Unflappable (Simon 50+), 👀 Eagle Attention (Spotlight 45+), 🔀 Mental Gymnast (Rule Switch 50+), 🎨 Photographic (Spot the Change 25+). With the prior 5 (Corsi/Reverse Recall/Tower of London/Dot Estimate/Symbol Coding), every new module now has an achievement.
+- node --check passes. Bumps sw v1094→v1095. v5.7.99996.
+
 ## [5.7.99995] - 2026-06-01 - A11Y: live phase announcements on new modules' status text
 - Made the new modules' inline status divs (Spot the Change, Tower of London, Reverse Recall, Corsi) `aria-live="polite"`, so screen-reader users hear phase transitions ("Memorize…" → "Now tap them back", "✓ Correct", etc.). The modules without a status line rely on the shared #feedback toast (already aria-live). Completes the new-module accessibility story (keyboard operability + live announcements).
 - node --check passes. Bumps sw v1093→v1094. v5.7.99995.
