@@ -500,7 +500,7 @@
           if(typeof spawnConfetti==='function')spawnConfetti(window.innerWidth/2,window.innerHeight/2,150);
           _dailyClaim(true);
         }else{
-          fb.innerHTML=`<div style="color:#e74c3c;font-weight:bold;font-size:1.05rem;">✗ Not quite. Correct answer: <b>${p.a}</b></div>${explainBlock}<button id="daily-done" style="background:#e74c3c;color:#fff;border:none;padding:10px 26px;border-radius:8px;font-family:'JetBrains Mono';font-weight:bold;cursor:pointer;margin-top:12px;">Got it</button>`;
+          fb.innerHTML=`<div style="color:#e74c3c;font-weight:bold;font-size:1.05rem;">✗ Not quite. Correct answer: <b>${String(p.a).charAt(0).toUpperCase()+String(p.a).slice(1)}</b></div>${explainBlock}<button id="daily-done" style="background:#e74c3c;color:#fff;border:none;padding:10px 26px;border-radius:8px;font-family:'JetBrains Mono';font-weight:bold;cursor:pointer;margin-top:12px;">Got it</button>`;
           _dailyClaim(false);
         }
         box.querySelector('#daily-submit').disabled=true;
