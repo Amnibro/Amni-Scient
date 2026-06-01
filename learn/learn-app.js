@@ -691,6 +691,7 @@
       currentGame = null;
       currentSubgame = null;
       cleanupLifeGame();
+      window._bubActive=false;
       try { if (typeof stopReading === 'function') stopReading(); } catch {}
       if(rhythmTimer){clearInterval(rhythmTimer);rhythmTimer=null;}
       melodyState=null;
@@ -3917,6 +3918,7 @@
     nextRound();
   }
   function initBubblePop(){
+    window._bubActive=true;
     lifeArea.innerHTML='';
     lifeTitle.textContent='🫧 Pop the Bubble!';
     const COLORS=[{n:'RED',e:'🔴'},{n:'BLUE',e:'🔵'},{n:'GREEN',e:'🟢'},{n:'YELLOW',e:'🟡'},{n:'PURPLE',e:'🟣'},{n:'ORANGE',e:'🟠'}];
@@ -3936,19 +3938,21 @@
     const arena=document.createElement('div');arena.id='bub-arena';arena.style.cssText='position:relative;width:min(96vw,500px);height:min(60vh,400px);margin:0 auto;background:linear-gradient(to bottom,#74b9ff 0%,#a8e6f7 100%);border-radius:18px;overflow:hidden;border:3px solid #0984e3;';
     lifeArea.appendChild(arena);
     function nextRound(){
+      if(!window._bubActive)return;
       round++;
       const re=document.getElementById('bub-round');if(re)re.textContent=round;
       if(round>TOTAL_ROUNDS){
         const wasBest=score>best;
         if(wasBest){sessionStorage.setItem(bestKey,score);}
-        arena.innerHTML=`<div style="text-align:center;padding:40px 20px;color:#fff;font-family:Comic Neue,cursive;"><div style="font-size:2.5rem;margin-bottom:10px;">${wasBest?'🏆 NEW BEST!':'🎉 All done!'}</div><div style="font-size:1.4rem;">${score}/${TOTAL_ROUNDS} popped correctly</div></div>`;
+        arena.innerHTML=`<div style="text-align:center;padding:20px;color:#fff;font-family:Comic Neue,cursive;"><div style="font-size:2.5rem;margin-bottom:10px;">${wasBest?'🏆 NEW BEST!':'🎉 All done!'}</div><div style="font-size:1.4rem;">${score}/${TOTAL_ROUNDS} popped correctly</div></div>`;
+        arena.style.display='flex';arena.style.alignItems='center';arena.style.justifyContent='center';
         if(typeof spawnConfetti==='function')spawnConfetti(window.innerWidth/2,window.innerHeight/2,wasBest?120:60);
         if(typeof showFeedback==='function')showFeedback(`Bubble Pop: ${score}/${TOTAL_ROUNDS} 🫧`,wasBest?'#2ecc71':'#3498db');
         if(typeof addScore==='function')addScore(score);
         const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='Play Again';rb.style.cssText='display:block;margin:14px auto;';rb.onclick=()=>{score=0;round=0;document.getElementById('bub-score').textContent=0;document.getElementById('bub-round').textContent=0;nextRound();};lifeArea.appendChild(rb);
         return;
       }
-      arena.innerHTML='';
+      arena.innerHTML='';arena.style.display='';arena.style.alignItems='';arena.style.justifyContent='';
       let pool,labelOf,targetIdx;
       if(mode==='colors'){pool=[...COLORS].sort(()=>Math.random()-0.5).slice(0,4);labelOf=(p)=>p.e;targetIdx=Math.floor(Math.random()*pool.length);prompt.innerHTML=`Pop the <b style="color:#e84393">${pool[targetIdx].n}</b> bubble!`;}
       else if(mode==='letters'){pool=[...LETTERS].sort(()=>Math.random()-0.5).slice(0,4);labelOf=(p)=>p;targetIdx=Math.floor(Math.random()*pool.length);prompt.innerHTML=`Pop the letter <b style="color:#e84393">${pool[targetIdx]}</b>!`;}
@@ -3969,7 +3973,7 @@
         const startTime=performance.now()+spawnDelay;
         let popped=false;
         function tick(){
-          if(!b.parentNode)return;
+          if(!b.parentNode||!window._bubActive)return;
           const elapsed=performance.now()-startTime;
           if(elapsed<0){requestAnimationFrame(tick);return;}
           const pct=Math.min(1,elapsed/floatDur);
@@ -3987,7 +3991,7 @@
       function clearArena(){[...arena.children].forEach(c=>{c.remove();});}
       function onHit(b){score++;const se=document.getElementById('bub-score');if(se)se.textContent=score;b.style.transition='transform 0.2s, opacity 0.2s';b.style.transform='scale(2)';b.style.opacity='0';if(typeof showFeedback==='function')showFeedback('Pop! ✨','#2ecc71');setTimeout(()=>{clearArena();nextRound();},400);}
       function onWrong(b){b.style.transition='transform 0.15s';b.style.transform='scale(0.9)';setTimeout(()=>b.style.transform='',150);if(typeof showFeedback==='function')showFeedback('Try again!','#e67e22');if(typeof resetStreak==='function')resetStreak();}
-      function onMiss(){if(typeof showFeedback==='function')showFeedback('Missed it!','#e67e22');setTimeout(()=>{clearArena();nextRound();},400);}
+      function onMiss(){if(!window._bubActive)return;if(typeof showFeedback==='function')showFeedback('Missed it!','#e67e22');setTimeout(()=>{clearArena();nextRound();},400);}
     }
     nextRound();
   }
