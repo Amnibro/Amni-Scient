@@ -687,7 +687,7 @@
   function _welcomeModal(){
     if(localStorage.getItem('profile-name')||localStorage.getItem('profile-welcomed')==='1')return;
     const ov=document.createElement('div');ov.className='hs-overlay';
-    ov.innerHTML=`<div class="hs-modal" style="min-width:320px;max-width:480px"><div class="hs-title">👋 Welcome to Amni-Learn!</div><div style="font-size:0.85rem;color:#bbb;margin:10px 0 14px;line-height:1.5">Pick a username for your progress card. It stays on this device — no password, no email, no sign-in needed.</div><input id="wel-name" type="text" placeholder="e.g. Anthony, Rikku, BrainNinja…" maxlength="24" style="width:100%;padding:10px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.18);border-radius:6px;color:var(--text,#ecf0f1);font-family:JetBrains Mono;font-size:0.95rem;margin-bottom:14px"><div style="display:flex;gap:8px"><button id="wel-save" class="retro-btn" style="flex:2">Save & Start</button><button id="wel-skip" class="retro-btn" style="flex:1">Skip</button></div></div>`;
+    ov.innerHTML=`<div class="hs-modal" role="dialog" aria-modal="true" style="min-width:320px;max-width:480px"><div class="hs-title">👋 Welcome to Amni-Learn!</div><div style="font-size:0.85rem;color:#bbb;margin:10px 0 14px;line-height:1.5">Pick a username for your progress card. It stays on this device — no password, no email, no sign-in needed.</div><input id="wel-name" type="text" placeholder="e.g. Anthony, Rikku, BrainNinja…" maxlength="24" style="width:100%;padding:10px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.18);border-radius:6px;color:var(--text,#ecf0f1);font-family:JetBrains Mono;font-size:0.95rem;margin-bottom:14px"><div style="display:flex;gap:8px"><button id="wel-save" class="retro-btn" style="flex:2">Save & Start</button><button id="wel-skip" class="retro-btn" style="flex:1">Skip</button></div></div>`;
     document.body.appendChild(ov);
     const inp=ov.querySelector('#wel-name');inp.focus();
     function save(){const nm=inp.value.trim();if(nm)localStorage.setItem('profile-name',nm);localStorage.setItem('profile-welcomed','1');ov.remove();_refreshProfileChip();if(nm&&typeof showFeedback==='function')showFeedback(`Welcome, ${nm}! 🌟`,'#2ecc71');}
@@ -703,7 +703,7 @@
     const theme=localStorage.getItem('amni-learn-theme')||'dark';
     const cursor=localStorage.getItem('profile-cursor')||'';
     const ov=document.createElement('div');ov.className='hs-overlay';ov.onclick=e=>{if(e.target===ov)ov.remove();};
-    const html=['<div class="hs-modal" style="max-height:88vh;overflow-y:auto;min-width:340px;max-width:580px"><div class="hs-title">👤 PROFILE</div>'];
+    const html=['<div class="hs-modal" role="dialog" aria-modal="true" style="max-height:88vh;overflow-y:auto;min-width:340px;max-width:580px"><div class="hs-title">👤 PROFILE</div>'];
     html.push('<div style="font-size:0.78rem;color:#7a8a9a;margin-bottom:8px">Set a display name. Pick a theme, mascot, and cursor trail — unlock more by playing.</div>');
     html.push(`<div style="margin:8px 0"><label style="font-size:0.82rem;color:#bbb">Display name<br><input id="prof-name" type="text" value="${name.replace(/"/g,'&quot;')}" maxlength="24" style="width:100%;padding:8px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.18);border-radius:6px;color:var(--text,#ecf0f1);font-family:JetBrains Mono;font-size:0.9rem"></label></div>`);
     function _pickerSection(title,key,storageKey,active){
@@ -810,7 +810,7 @@
     if(rank>10){if(onDone)onDone();return;}
     const ov=document.createElement('div');ov.className='hs-overlay';
     const rows=list.slice(0,5).map((e,i)=>`<tr><td class="hs-rank">${['🥇','🥈','🥉','4','5'][i]}</td><td class="hs-init">${e.i}</td><td class="hs-score">${e.s}</td></tr>`).join('');
-    ov.innerHTML=`<div class="hs-modal"><div class="hs-title">🏆 HIGH SCORES</div><div style="color:#aaa;font-size:0.85rem;margin-bottom:6px">${label||''}</div>${rows?`<table class="hs-table">${rows}</table>`:'<div style="color:#555;margin:10px 0">No scores yet</div>'}<div style="color:#f1c40f;margin:10px 0;font-size:0.9rem">YOU: #${rank} — ${score}</div><div style="color:#aaa;font-size:0.85rem;margin-bottom:8px">Enter your initials:</div><div class="hs-input-row"><input class="hs-letter" id="hs-l0" maxlength="1"><input class="hs-letter" id="hs-l1" maxlength="1"><input class="hs-letter" id="hs-l2" maxlength="1"></div><button class="retro-btn" id="hs-submit" style="margin-top:10px;padding:10px 30px;font-size:1rem">SUBMIT ▶</button><button class="retro-btn" id="hs-skip" style="margin-top:6px;padding:6px 16px;font-size:0.8rem;background:#333">SKIP</button></div>`;
+    ov.innerHTML=`<div class="hs-modal" role="dialog" aria-modal="true"><div class="hs-title">🏆 HIGH SCORES</div><div style="color:#aaa;font-size:0.85rem;margin-bottom:6px">${label||''}</div>${rows?`<table class="hs-table">${rows}</table>`:'<div style="color:#555;margin:10px 0">No scores yet</div>'}<div style="color:#f1c40f;margin:10px 0;font-size:0.9rem">YOU: #${rank} — ${score}</div><div style="color:#aaa;font-size:0.85rem;margin-bottom:8px">Enter your initials:</div><div class="hs-input-row"><input class="hs-letter" id="hs-l0" maxlength="1"><input class="hs-letter" id="hs-l1" maxlength="1"><input class="hs-letter" id="hs-l2" maxlength="1"></div><button class="retro-btn" id="hs-submit" style="margin-top:10px;padding:10px 30px;font-size:1rem">SUBMIT ▶</button><button class="retro-btn" id="hs-skip" style="margin-top:6px;padding:6px 16px;font-size:0.8rem;background:#333">SKIP</button></div>`;
     document.body.appendChild(ov);
     const ls=[$$('#hs-l0'),$$('#hs-l1'),$$('#hs-l2')];
     ls.forEach((l,i)=>{l.addEventListener('input',()=>{l.value=l.value.replace(/[^a-zA-Z]/g,'').toUpperCase().slice(-1);if(l.value&&i<2)ls[i+1].focus();});l.addEventListener('keydown',e=>{if(e.key==='Backspace'&&!l.value&&i>0)ls[i-1].focus();});});
@@ -823,7 +823,7 @@
     const list=_hs_get(game);
     const ov=document.createElement('div');ov.className='hs-overlay';ov.onclick=e=>{if(e.target===ov)ov.remove();};
     const rows=list.slice(0,10).map((e,i)=>`<tr><td class="hs-rank">${['🥇','🥈','🥉','4','5','6','7','8','9','10'][i]}</td><td class="hs-init">${e.i}</td><td class="hs-score">${e.s}</td></tr>`).join('');
-    ov.innerHTML=`<div class="hs-modal"><div class="hs-title">🏆 ${label||'HIGH SCORES'}</div>${rows?`<table class="hs-table">${rows}</table>`:'<div style="color:#555;padding:20px">No scores yet — be the first!</div>'}<button class="retro-btn" style="margin-top:10px">CLOSE</button></div>`;
+    ov.innerHTML=`<div class="hs-modal" role="dialog" aria-modal="true"><div class="hs-title">🏆 ${label||'HIGH SCORES'}</div>${rows?`<table class="hs-table">${rows}</table>`:'<div style="color:#555;padding:20px">No scores yet — be the first!</div>'}<button class="retro-btn" style="margin-top:10px">CLOSE</button></div>`;
     ov.querySelector('.retro-btn').onclick=()=>ov.remove();
     document.body.appendChild(ov);
   }
@@ -833,7 +833,7 @@
     const profName=(localStorage.getItem('profile-name')||'').trim();
     const myInit=profName?profName.toUpperCase().replace(/[^A-Z]/g,'').slice(0,3).padEnd(3,'?'):'';
     const ov=document.createElement('div');ov.className='hs-overlay';ov.onclick=e=>{if(e.target===ov)ov.remove();};
-    let html='<div class="hs-modal" style="max-height:85vh;overflow-y:auto;min-width:320px;max-width:520px"><div class="hs-title">🏆 LEADERBOARDS</div>';
+    let html='<div class="hs-modal" role="dialog" aria-modal="true" style="max-height:85vh;overflow-y:auto;min-width:320px;max-width:520px"><div class="hs-title">🏆 LEADERBOARDS</div>';
     html+='<div style="font-size:0.76rem;color:#7a8a9a;margin-bottom:10px;line-height:1.4">Arcade high scores stored on this device (each game keeps its top 10). Brain-training personal bests live in 📊 Stats.</div>';
     if(myInit)html+=`<div style="font-size:0.78rem;color:#bbb;margin-bottom:10px">Your initials: <b style="color:#f1c40f">${myInit}</b> &mdash; matching rows highlighted.</div>`;
     let anyData=false;
@@ -921,7 +921,7 @@
     const _profName=localStorage.getItem('profile-name')||'';
     const _profMascot=localStorage.getItem('profile-mascot')||'📊';
     const _statsTitle=_profName?`${_profMascot} ${_profName.toUpperCase()}'S STATS`:'📊 MY STATS';
-    let html=`<div class="hs-modal" style="max-height:85vh;overflow-y:auto;min-width:340px;max-width:560px"><div class="hs-title">${_statsTitle}</div><div style="font-size:0.78rem;color:#7a8a9a;margin-bottom:8px">Best results across all brain-exercise modules.</div>`;
+    let html=`<div class="hs-modal" role="dialog" aria-modal="true" style="max-height:85vh;overflow-y:auto;min-width:340px;max-width:560px"><div class="hs-title">${_statsTitle}</div><div style="font-size:0.78rem;color:#7a8a9a;margin-bottom:8px">Best results across all brain-exercise modules.</div>`;
     let totalRecorded=0;
     sec.forEach(s=>{
       const rows=s.rows.filter(r=>r.v!==null&&r.v!==undefined&&r.v!=='');
