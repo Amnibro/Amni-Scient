@@ -2911,7 +2911,7 @@
       if(subgame === 'sliding') initSliding();
       if(subgame === 'lightsout') initLightsOut();
       if(subgame === 'mathsolitaire') initMathSolitaire();
-      if(subgame === 'minesweeper') initMinesweeper();
+      if(subgame === 'minesweeper') initMinesweeperKids();
       if(subgame === 'twentyfortyeight') initTwentyFortyEight();
       if(subgame === 'sudoku') initSudoku4();
       if(subgame === 'memorymatch') initMemoryMatch();
@@ -3196,7 +3196,7 @@
     }
     spawn();spawn();render();
   }
-  function initMinesweeper(){
+  function initMinesweeperKids(){
     lifeArea.innerHTML='';
     lifeTitle.textContent='💣 Minesweeper';
     const LEVELS={easy:{n:6,mines:6,label:'Easy'},medium:{n:8,mines:12,label:'Medium'},hard:{n:10,mines:20,label:'Hard'}};
@@ -3238,7 +3238,7 @@
       hud.innerHTML=`<span class="game-stat">💣 Mines <span class="game-stat-val">${mineCount}</span></span><span class="game-stat">🚩 Left <span class="game-stat-val">${flagsLeft}</span></span><span class="game-stat">⭐ Best <span class="game-stat-val">${best<9999?best+'s':'—'}</span></span>`;
       lifeArea.appendChild(hud);
       const lvlRow=document.createElement('div');lvlRow.style.cssText='display:flex;gap:6px;justify-content:center;margin:4px 0 6px;flex-wrap:wrap;';
-      Object.keys(LEVELS).forEach(k=>{const b=document.createElement('button');b.className='sdk-btn'+(k===level?' active':'');b.style.cssText='font-size:0.85rem;padding:5px 12px;';b.textContent=LEVELS[k].label;b.onclick=()=>{sessionStorage.setItem('mn-level',k);initMinesweeper();};lvlRow.appendChild(b);});
+      Object.keys(LEVELS).forEach(k=>{const b=document.createElement('button');b.className='sdk-btn'+(k===level?' active':'');b.style.cssText='font-size:0.85rem;padding:5px 12px;';b.textContent=LEVELS[k].label;b.onclick=()=>{sessionStorage.setItem('mn-level',k);initMinesweeperKids();};lvlRow.appendChild(b);});
       lifeArea.appendChild(lvlRow);
       const modeRow=document.createElement('div');modeRow.style.cssText='display:flex;gap:8px;justify-content:center;margin:4px 0 10px;';
       const revBtn=document.createElement('button');revBtn.className='sdk-btn'+(flagMode?'':' active');revBtn.style.cssText='font-size:0.9rem;padding:6px 16px;';revBtn.textContent='⛏️ Reveal';revBtn.onclick=()=>{flagMode=false;render();};
@@ -3271,13 +3271,13 @@
       if(typeof spawnConfetti==='function')spawnConfetti(window.innerWidth/2,window.innerHeight/2,wasBest?150:80);
       if(typeof showFeedback==='function')showFeedback(`Minesweeper ${cfg.label}: ${t}s 💣`,wasBest?'#2ecc71':'#3498db');
       if(typeof addScore==='function')addScore(20+cfg.mines*2);
-      const again=document.createElement('button');again.className='nmm-btn';again.textContent='🔄 New Game';again.style.cssText='display:block;margin:14px auto;';again.onclick=()=>initMinesweeper();lifeArea.appendChild(again);
+      const again=document.createElement('button');again.className='nmm-btn';again.textContent='🔄 New Game';again.style.cssText='display:block;margin:14px auto;';again.onclick=()=>initMinesweeperKids();lifeArea.appendChild(again);
     }
     function onLose(){
       const b=document.createElement('div');b.style.cssText='text-align:center;padding:14px;background:#e74c3c;color:#fff;border-radius:10px;margin:10px auto;font-family:Comic Neue,cursive;font-size:1.15rem;max-width:420px;';
       b.innerHTML=`💥 You hit a mine! All mines revealed.`;
       lifeArea.appendChild(b);
-      const again=document.createElement('button');again.className='nmm-btn';again.textContent='🔄 Try Again';again.style.cssText='display:block;margin:14px auto;';again.onclick=()=>initMinesweeper();lifeArea.appendChild(again);
+      const again=document.createElement('button');again.className='nmm-btn';again.textContent='🔄 Try Again';again.style.cssText='display:block;margin:14px auto;';again.onclick=()=>initMinesweeperKids();lifeArea.appendChild(again);
     }
     render();
   }
