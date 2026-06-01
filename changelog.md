@@ -14,6 +14,13 @@
 - **Broke template lockstep (Step 2).** Added a deterministic per-page heading picker to both SEO generators (`src/gen-calc-modules.js`, `src/gen-learn-categories.js`): each of the 5 section headings + the deep-dive hint now draws from 4–6 variants keyed by a stable hash of the page slug (so regenerations don't churn). Regenerated all 31 calc + 11 learn pages — identical "WHAT IT COMPUTES / KEY EQUATIONS / …" skeleton replaced with distributed variants; page bodies (already unique) untouched; ads preserved on the article pages.
 - Plan/council: docs/checklists/checklist_v5.8.0_adsense_round4.md + docs/guardian_councils/guardian_council_v5.8.0_adsense_round4.md. Backups in backups/v5.8.0_adsense/. Step 3 (content-first restructure) still pending; do NOT submit AdSense reconsideration until the learn app is smoke-tested in a browser. v5.8.0.
 
+## [5.7.998] - 2026-06-01 - NEW MODULE: Tower of London (planning / executive function) — last of the 3
+- Brain-exercise #9, completing Anthony's "add the last 3" list. Tower of London — the classic PLANNING test (executive function); distinct from the existing Tower of Hanoi (Hanoi is size-ordered recursion; ToL is arbitrary colored-ball goals).
+- Gameplay: 3 pegs, 3 colored balls; a Goal mini-display shows the target. Tap a peg to lift its top ball, tap another to drop (cap 3/peg). Match the goal in as few moves as possible. The engine runs a BFS over the full state graph to compute the OPTIMAL move count, shown live as "Best path"; matching it = PERFECT. Score rewards efficiency. "NEW PUZZLE" reshuffles.
+- Level-scaled: goal is chosen from the BFS distance bucket — L1-2 ≈ 2 optimal moves, L3 ≈ 4, L4-5 ≈ 5. Lvl HUD chip + bounce-in board. Turn-based (no timers), so cleanup is just the `currentGame!=='tol'` guard in pegClick.
+- Wiring across all 6 points (button in Logic & Language, #tol-view, registry, dispatcher initTowerLondon, tutorial, fn). node --check passes. Bumps sw v1078→v1079. v5.7.998.
+- ALL 9 NEW BRAIN MODULES SHIPPED: Go/No-Go, Symbol Coding, Corsi, Flanker, Simon, Dot Estimate, Spotlight (Posner), Reverse Recall (backward span), Tower of London. Real remaining gate = an in-browser tap-through (can't be done from here).
+
 ## [5.7.997] - 2026-06-01 - NEW MODULE: Reverse Recall (backward digit span)
 - Brain-exercise #8 (Anthony: last 3 paradigms). Backward Digit Span — working memory + mental manipulation; distinct from the existing forward Number Memory (you must hold the digits AND flip their order).
 - Gameplay: digits flash one at a time (with a brief gap so repeats are clear), then a 0-9 number pad; type them BACKWARD. Correct full reverse → span +1; one wrong digit ends the run and reveals the answer. Score = longest span reversed. Placed in "Memory & Focus".

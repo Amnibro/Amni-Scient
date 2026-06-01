@@ -38,6 +38,7 @@
     numerosity: $$('#numerosity-view'),
     posner: $$('#posner-view'),
     backspan: $$('#backspan-view'),
+    tol: $$('#tol-view'),
     nback: $$('#nback-view'),
     anagram: $$('#anagram-view'),
     chimp: $$('#chimp-view'),
@@ -914,6 +915,7 @@
       if(game === 'numerosity') initNumerosity();
       if(game === 'posner') initPosner();
       if(game === 'backspan') initBackSpan();
+      if(game === 'tol') initTowerLondon();
       if(game === 'nback') initNBack();
       if(game === 'anagram') initAnagram();
       if(game === 'chimp') initChimp();
@@ -13537,6 +13539,35 @@ function playAnimalSound(type) {
     ct.appendChild(_modeRow());
     const sb=document.createElement('button');sb.className='nmm-btn';sb.textContent='START';sb.onclick=()=>{act=true;sc=0;tot=0;stk=0;bestStk=0;rtTotal=0;rtCount=0;tm=c.time;$$('#stp-tm').textContent=tm;show();window._stpTimer=setInterval(()=>{tm--;$$('#stp-tm').textContent=tm;if(tm<=0)_gameOver();},1000);};ct.appendChild(sb);
   }
+  function initTowerLondon(){
+    const ct=$$('#tol-container'),hud=$$('#tol-hud');
+    const lvl=Math.min(currentLevel||3,5),CAP=3,COL={R:'#e74c3c',G:'#2ecc71',B:'#f39c12'};
+    const start=[['R','G','B'],[],[]];
+    const key=s=>s.map(p=>p.join('')).join('|');
+    const clone=s=>s.map(p=>p.slice());
+    const neigh=s=>{const out=[];for(let f=0;f<3;f++){if(!s[f].length)continue;for(let t=0;t<3;t++){if(t===f||s[t].length>=CAP)continue;const n=clone(s);n[t].push(n[f].pop());out.push(n);}}return out;};
+    const dist={};const q=[start];dist[key(start)]=0;let qi=0;
+    while(qi<q.length){const cur=q[qi++],d=dist[key(cur)];for(const nx of neigh(cur)){const k=key(nx);if(dist[k]===undefined){dist[k]=d+1;q.push(nx);}}}
+    const buckets={};Object.keys(dist).forEach(k=>{(buckets[dist[k]]=buckets[dist[k]]||[]).push(k);});
+    let dPick=lvl<=2?2:lvl>=4?5:4;while(dPick>2&&!(buckets[dPick]&&buckets[dPick].length))dPick--;
+    const pool=buckets[dPick]||buckets[2];
+    const goalKey=pool[Math.floor(Math.random()*pool.length)];
+    const goal=goalKey.split('|').map(p=>p.split(''));
+    const optimal=dist[goalKey];
+    let stacks=clone(start),sel=-1,moves=0,done=false;
+    const best=parseInt(sessionStorage.getItem('tol-best')||'0');
+    hud.innerHTML=`<span class="game-stat">👣 Moves <span class="game-stat-val" id="tol-mv">0</span></span><span class="game-stat">🎯 Best path ${optimal}</span><span class="game-stat">⭐ Solved ${best||'—'}</span><span class="game-stat">📊 Lvl ${lvl}</span>`;
+    ct.innerHTML='';
+    function renderPegs(state,mini){const row=document.createElement('div');row.style.cssText='display:flex;gap:'+(mini?'10px':'20px')+';justify-content:center;align-items:flex-end'+(mini?'':';animation:bounceIn 0.45s ease');const bw=mini?20:52;state.forEach((peg,pi)=>{const col=document.createElement('div');col.style.cssText='display:flex;flex-direction:column-reverse;align-items:center;gap:4px;width:'+(bw+14)+'px;height:'+((bw+4)*CAP+12)+'px;background:rgba(44,62,80,'+(mini?'0.45':'0.85')+');border-radius:10px;border-bottom:6px solid #7f8c8d;padding:6px '+(mini?'3px':'7px');for(let h=0;h<peg.length;h++){const ball=document.createElement('div');ball.style.cssText='width:'+bw+'px;height:'+bw+'px;border-radius:50%;background:'+COL[peg[h]]+';box-shadow:inset 0 -4px 0 rgba(0,0,0,0.2)';col.appendChild(ball);}if(!mini){col.style.cursor='pointer';col.onclick=()=>pegClick(pi);if(pi===sel)col.style.boxShadow='0 0 0 4px #f1c40f';}row.appendChild(col);});return row;}
+    function redraw(){const old=$$('#tol-board');const nb=renderPegs(stacks,false);nb.id='tol-board';old.replaceWith(nb);}
+    function win(){const eff=moves<=optimal?'PERFECT':moves<=optimal+2?'GREAT':'SOLVED';if(moves<=optimal)sessionStorage.setItem('tol-best',best+1);ct.innerHTML='';const sum=document.createElement('div');sum.className='rxt-summary';sum.innerHTML=`<h3>${moves<=optimal?'🌟 PERFECT plan!':moves<=optimal+2?'👍 Great solve!':'✅ Solved!'}</h3><div class="rxt-summary-stats"><div class="rxt-summary-stat"><span class="val">${moves}</span><span class="lbl">Your moves</span></div><div class="rxt-summary-stat"><span class="val">${optimal}</span><span class="lbl">Best possible</span></div></div><div class="rxt-tier-scale">Tower of London trains PLANNING — looking ahead + sequencing your moves before you act. Matching "best possible" means you found the optimal path!</div>`;ct.appendChild(sum);spawnConfetti(window.innerWidth/2,window.innerHeight/2,moves<=optimal?120:70);showFeedback('Solved in '+moves+' moves ('+eff+') 🗼',moves<=optimal?'#2ecc71':'#f1c40f');addScore(Math.max(2,12-(moves-optimal)*2));const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='NEW PUZZLE';rb.style.marginTop='12px';rb.onclick=()=>initTowerLondon();ct.appendChild(rb);}
+    function pegClick(pi){if(currentGame!=='tol'||done)return;if(sel===-1){if(!stacks[pi].length)return;sel=pi;redraw();return;}if(pi===sel||stacks[pi].length>=CAP){sel=-1;redraw();return;}stacks[pi].push(stacks[sel].pop());sel=-1;moves++;const mv=$$('#tol-mv');if(mv)mv.textContent=moves;if(key(stacks)===goalKey){done=true;redraw();win();}else redraw();}
+    const goalWrap=document.createElement('div');goalWrap.style.cssText='text-align:center';goalWrap.innerHTML='<div style="font-family:Comic Neue,cursive;color:#2c3e50;font-weight:bold;margin-bottom:4px;font-size:0.95rem">🎯 Goal — build this:</div>';goalWrap.appendChild(renderPegs(goal,true));
+    const status=document.createElement('div');status.style.cssText='font-size:1.05rem;color:#2c3e50;font-family:Comic Neue,cursive;min-height:1.4em;text-align:center;font-weight:bold;max-width:440px';status.textContent='Tap a peg to lift its top ball, then tap another peg to drop it. Match the goal in as few moves as you can!';
+    const board=document.createElement('div');board.id='tol-board';
+    ct.appendChild(goalWrap);ct.appendChild(status);ct.appendChild(board);
+    redraw();
+  }
   function initBackSpan(){
     const ct=$$('#bsp-container'),hud=$$('#bsp-hud');
     if(window._bspTimeout){clearTimeout(window._bspTimeout);window._bspTimeout=null;}
@@ -16462,6 +16493,14 @@ function playAnimalSound(type) {
       '<b>Strategy \u2014 Chunking:</b> Break long numbers into groups. "4815162342" becomes "48-15-16-23-42" \u2014 much easier!',
       '<b>Strategy \u2014 Rhythm:</b> Say the number in your head with a rhythm, like a phone number.',
       'Your <b>best score</b> is saved between rounds. Try to beat your record!'
+    ]},
+    tol:{title:'\ud83d\uddfc How to Play Tower of London',steps:[
+      'You have 3 pegs and 3 colored balls. A small <b>\ud83c\udfaf Goal</b> picture shows the arrangement you need to build.',
+      'Tap a peg to <b>lift its top ball</b> (it highlights), then tap another peg to <b>drop the ball</b> there. Only the top ball moves, and a peg can hold up to 3.',
+      'Rearrange the balls until your pegs match the goal \u2014 using as <b>few moves</b> as possible.',
+      'The HUD shows the <b>best possible</b> number of moves. Match it for a PERFECT plan!',
+      '<b>Why it helps:</b> Tower of London is a classic test of <b>planning</b> \u2014 thinking several steps ahead before you act, instead of moving randomly.',
+      '<b>Tip:</b> picture the whole sequence in your head first, then move.'
     ]},
     backspan:{title:'\ud83d\udd22 How to Play Reverse Recall',steps:[
       'A short string of digits flashes <b>one at a time</b> \u2014 watch and remember them in order.',
