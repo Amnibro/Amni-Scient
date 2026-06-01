@@ -9898,10 +9898,10 @@ function playAnimalSound(type) {
       let choices = [q.a, ...q.wrong];
       choices.sort(() => Math.random() - 0.5);
       const showExplainAndContinue = (correctOnFirstTry) => {
-          $$all('#quiz-choices .m-choice').forEach(b=>{b.style.pointerEvents='none';if(b.textContent===q.a)b.style.background='#2ecc71';});
+          $$all('#quiz-choices .m-choice').forEach(b=>{b.style.pointerEvents='none';if(b.textContent===q.a){b.style.background='#2ecc71';b.style.color='#fff';b.style.animation='sortCorrect 0.5s ease';}});
           const exp = document.createElement('div');
           exp.className = 'quiz-explain';
-          exp.style.cssText = 'margin-top:14px;padding:14px 16px;background:rgba(255,255,255,0.92);border-left:5px solid '+(correctOnFirstTry?'#2ecc71':'#e67e22')+';border-radius:10px;color:#2c3e50;font-family:Comic Neue,cursive;font-size:1.05rem;text-align:left;line-height:1.55;max-width:560px;';
+          exp.style.cssText = 'margin-top:14px;padding:14px 16px;background:rgba(255,255,255,0.92);border-left:5px solid '+(correctOnFirstTry?'#2ecc71':'#e67e22')+';border-radius:10px;color:#2c3e50;font-family:Comic Neue,cursive;font-size:1.05rem;text-align:left;line-height:1.55;max-width:560px;animation:bounceIn 0.4s ease;';
           const explainText = q.explain || ('The answer is '+q.a+'.');
           exp.innerHTML = '<div style="font-weight:bold;margin-bottom:4px;color:'+(correctOnFirstTry?'#1e8449':'#a04000')+';">'+(correctOnFirstTry?'✓ Correct! ':'💡 ')+q.a+'</div><div>'+explainText+'</div>';
           quizChoices.appendChild(exp);
@@ -9928,7 +9928,7 @@ function playAnimalSound(type) {
                   showExplainAndContinue(true);
               } else {
                   showFeedback(`✗ Answer: ${q.a}`, "#e67e22"); resetStreak();
-                  btn.style.background='#e74c3c'; btn.style.color='#fff';
+                  btn.style.background='#e74c3c'; btn.style.color='#fff'; btn.style.animation='shake 0.4s';
                   if(_quizCurrentSubject) _markMissed(_quizCurrentSubject, q);
                   showExplainAndContinue(false);
               }
