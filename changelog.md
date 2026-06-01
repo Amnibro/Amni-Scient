@@ -8,6 +8,11 @@
 - **Broke template lockstep (Step 2).** Added a deterministic per-page heading picker to both SEO generators (`src/gen-calc-modules.js`, `src/gen-learn-categories.js`): each of the 5 section headings + the deep-dive hint now draws from 4–6 variants keyed by a stable hash of the page slug (so regenerations don't churn). Regenerated all 31 calc + 11 learn pages — identical "WHAT IT COMPUTES / KEY EQUATIONS / …" skeleton replaced with distributed variants; page bodies (already unique) untouched; ads preserved on the article pages.
 - Plan/council: docs/checklists/checklist_v5.8.0_adsense_round4.md + docs/guardian_councils/guardian_council_v5.8.0_adsense_round4.md. Backups in backups/v5.8.0_adsense/. Step 3 (content-first restructure) still pending; do NOT submit AdSense reconsideration until the learn app is smoke-tested in a browser. v5.8.0.
 
+## [5.7.948] - 2026-05-31 - Dedup Math (3) + Counting (2) via QUESTION matching; Civics clean
+- Used QUESTION-based dedup (answer-collision is invalid for numeric banks). Combined exact-match + normalized-match (to catch capitalization variants). Math (3): "What shape has 3 sides?"(triangle), "Banach-Tarski paradox", "Bayes' theorem" (caps variant). Counting (2): "Collatz conjecture", "How many hours in a day?" (caps variant). Kept richest version of each.
+- FALSE POSITIVES correctly NOT removed: normalized scan flagged 9×+5× "How many ___?" groups in counting L1, but exact-match confirmed these are DISTINCT emoji-counting questions (How many 🍎 / 🐶 / …) that only collapse to "howmany" when emoji are stripped. Civics: no dups (its government-type repetition is legit per-country).
+- node --check passes. Bumps sw v1028→v1029. v5.7.948. (Session dedup total: 121.)
+
 ## [5.7.947] - 2026-05-31 - Dedup Shapes L2-L5 (5) + Colors L2-L5 (2)
 - Shapes L2-L5 (5): pentagon (sides vs vertices), trapezoid (kept US/UK version), sphere (ball vs basketball → kept ball), triangle-interior-angles=180° (×2), Klein bottle (×2). Kept richer/clearer of each.
 - Colors L2-L5 (2): TEAL defined twice, FRAUNHOFER LINES defined twice. Kept richer.
