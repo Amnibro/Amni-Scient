@@ -744,6 +744,13 @@
       }
     }
   }, { passive: false });
+  window.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    const modals = document.querySelectorAll('.hs-overlay, #ach-modal');
+    if (modals.length) { modals[modals.length - 1].remove(); return; }
+    const lvl = document.getElementById('level-picker-modal');
+    if (lvl && lvl.style.display && lvl.style.display !== 'none') lvl.style.display = 'none';
+  });
   $$('#nav-back').addEventListener('click', () => {
     if (currentGame) {
       showView('menu');
