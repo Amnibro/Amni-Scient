@@ -13627,7 +13627,7 @@ function playAnimalSound(type) {
     ct.innerHTML='';
     const hint=document.createElement('div');hint.style.cssText='font-size:1.05rem;color:#2c3e50;font-family:Comic Neue,cursive;text-align:center;max-width:440px';hint.textContent='Memorize the colors. They vanish, then come back — did ONE color change?';
     const arena=document.createElement('div');arena.style.cssText='animation:bounceIn 0.45s ease;position:relative;width:min(88vw,360px);height:270px;background:rgba(255,255,255,0.55);border-radius:16px';
-    const status=document.createElement('div');status.style.cssText='font-size:1.05rem;color:#2c3e50;font-family:Comic Neue,cursive;min-height:1.4em;text-align:center;font-weight:bold';
+    const status=document.createElement('div');status.setAttribute('aria-live','polite');status.style.cssText='font-size:1.05rem;color:#2c3e50;font-family:Comic Neue,cursive;min-height:1.4em;text-align:center;font-weight:bold';
     const row=document.createElement('div');row.style.cssText='display:flex;gap:18px';
     const mkBtn=(label,val)=>{const b=document.createElement('button');b.className='nmm-btn';b.textContent=label;b.style.cssText='font-size:1.2rem;min-width:130px';b.onclick=()=>respond(val);return b;};
     row.appendChild(mkBtn('✓ Same',false));row.appendChild(mkBtn('✗ Changed',true));
@@ -13662,7 +13662,7 @@ function playAnimalSound(type) {
     function win(){const eff=moves<=optimal?'PERFECT':moves<=optimal+2?'GREAT':'SOLVED';if(moves<=optimal)sessionStorage.setItem('tol-best',best+1);ct.innerHTML='';const sum=document.createElement('div');sum.className='rxt-summary';sum.innerHTML=`<h3>${moves<=optimal?'🌟 PERFECT plan!':moves<=optimal+2?'👍 Great solve!':'✅ Solved!'}</h3><div class="rxt-summary-stats"><div class="rxt-summary-stat"><span class="val">${moves}</span><span class="lbl">Your moves</span></div><div class="rxt-summary-stat"><span class="val">${optimal}</span><span class="lbl">Best possible</span></div></div><div class="rxt-tier-scale">Tower of London trains PLANNING — looking ahead + sequencing your moves before you act. Matching "best possible" means you found the optimal path!</div>`;ct.appendChild(sum);spawnConfetti(window.innerWidth/2,window.innerHeight/2,moves<=optimal?120:70);showFeedback('Solved in '+moves+' moves ('+eff+') 🗼',moves<=optimal?'#2ecc71':'#f1c40f');addScore(Math.max(2,12-(moves-optimal)*2));const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='NEW PUZZLE';rb.style.marginTop='12px';rb.onclick=()=>initTowerLondon();ct.appendChild(rb);}
     function pegClick(pi){if(currentGame!=='tol'||done)return;if(sel===-1){if(!stacks[pi].length)return;sel=pi;redraw();return;}if(pi===sel||stacks[pi].length>=CAP){sel=-1;redraw();return;}stacks[pi].push(stacks[sel].pop());sel=-1;moves++;const mv=$$('#tol-mv');if(mv)mv.textContent=moves;if(key(stacks)===goalKey){done=true;redraw();win();}else redraw();}
     const goalWrap=document.createElement('div');goalWrap.style.cssText='text-align:center';goalWrap.innerHTML='<div style="font-family:Comic Neue,cursive;color:#2c3e50;font-weight:bold;margin-bottom:4px;font-size:0.95rem">🎯 Goal — build this:</div>';goalWrap.appendChild(renderPegs(goal,true));
-    const status=document.createElement('div');status.style.cssText='font-size:1.05rem;color:#2c3e50;font-family:Comic Neue,cursive;min-height:1.4em;text-align:center;font-weight:bold;max-width:440px';status.textContent='Tap a peg to lift its top ball, then tap another peg to drop it. Match the goal in as few moves as you can!';
+    const status=document.createElement('div');status.setAttribute('aria-live','polite');status.style.cssText='font-size:1.05rem;color:#2c3e50;font-family:Comic Neue,cursive;min-height:1.4em;text-align:center;font-weight:bold;max-width:440px';status.textContent='Tap a peg to lift its top ball, then tap another peg to drop it. Match the goal in as few moves as you can!';
     const board=document.createElement('div');board.id='tol-board';
     ct.appendChild(goalWrap);ct.appendChild(status);ct.appendChild(board);
     redraw();
@@ -13675,7 +13675,7 @@ function playAnimalSound(type) {
     const best=parseInt(sessionStorage.getItem('bsp-best')||'0');
     hud.innerHTML=`<span class="game-stat">📏 Span <span class="game-stat-val" id="bsp-span">${span}</span></span><span class="game-stat">🎯 Round <span class="game-stat-val" id="bsp-rd">0</span></span><span class="game-stat">⭐ Best ${best||'—'}</span><span class="game-stat">📊 Lvl ${lvl}</span>`;
     ct.innerHTML='';
-    const status=document.createElement('div');status.id='bsp-status';status.style.cssText='font-size:1.2rem;color:#2c3e50;font-family:Comic Neue,cursive;min-height:1.5em;text-align:center;font-weight:bold';
+    const status=document.createElement('div');status.setAttribute('aria-live','polite');status.id='bsp-status';status.style.cssText='font-size:1.2rem;color:#2c3e50;font-family:Comic Neue,cursive;min-height:1.5em;text-align:center;font-weight:bold';
     const display=document.createElement('div');display.style.cssText='animation:bounceIn 0.45s ease;font-size:3.6rem;font-weight:bold;color:#2c3e50;font-family:monospace;min-height:80px;display:flex;align-items:center;justify-content:center;letter-spacing:0.15em';
     const pad=document.createElement('div');pad.style.cssText='display:grid;grid-template-columns:repeat(5,1fr);gap:10px;max-width:340px';
     for(let n=0;n<=9;n++){const b=document.createElement('button');b.className='nmm-btn';b.textContent=String(n);b.style.cssText='font-size:1.5rem;min-width:54px;padding:10px';b.onclick=()=>tapDigit(n);pad.appendChild(b);}
@@ -13776,7 +13776,7 @@ function playAnimalSound(type) {
     const blocks=[];
     hud.innerHTML=`<span class="game-stat">📏 Span <span class="game-stat-val" id="corsi-span">${span}</span></span><span class="game-stat">🎯 Round <span class="game-stat-val" id="corsi-rd">0</span></span><span class="game-stat">⭐ Best ${best||'—'}</span><span class="game-stat">📊 Lvl ${lvl}</span>`;
     ct.innerHTML='';
-    const status=document.createElement('div');status.id='corsi-status';status.style.cssText='font-size:1.2rem;color:#2c3e50;font-family:Comic Neue,cursive;min-height:1.5em;text-align:center;font-weight:bold';
+    const status=document.createElement('div');status.setAttribute('aria-live','polite');status.id='corsi-status';status.style.cssText='font-size:1.2rem;color:#2c3e50;font-family:Comic Neue,cursive;min-height:1.5em;text-align:center;font-weight:bold';
     const grid=document.createElement('div');grid.style.cssText='animation:bounceIn 0.45s ease;display:grid;grid-template-columns:repeat(3,1fr);gap:14px;width:min(80vw,320px)';
     const lift=(b,col)=>{if(!b)return;b.style.background=col;b.style.transform='scale(1.06)';setTimeout(()=>{if(b){b.style.background='#5d6d7e';b.style.transform='';}},400);};
     for(let i=0;i<9;i++){const b=document.createElement('div');b.style.cssText='aspect-ratio:1;border-radius:14px;background:#5d6d7e;cursor:pointer;box-shadow:0 5px 0 rgba(0,0,0,0.2);transition:background 0.12s,transform 0.08s';b.onclick=()=>tap(i);_kbd(b,'Block '+(i+1));grid.appendChild(b);blocks.push(b);}
