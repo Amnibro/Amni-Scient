@@ -8,6 +8,11 @@
 - **Broke template lockstep (Step 2).** Added a deterministic per-page heading picker to both SEO generators (`src/gen-calc-modules.js`, `src/gen-learn-categories.js`): each of the 5 section headings + the deep-dive hint now draws from 4–6 variants keyed by a stable hash of the page slug (so regenerations don't churn). Regenerated all 31 calc + 11 learn pages — identical "WHAT IT COMPUTES / KEY EQUATIONS / …" skeleton replaced with distributed variants; page bodies (already unique) untouched; ads preserved on the article pages.
 - Plan/council: docs/checklists/checklist_v5.8.0_adsense_round4.md + docs/guardian_councils/guardian_council_v5.8.0_adsense_round4.md. Backups in backups/v5.8.0_adsense/. Step 3 (content-first restructure) still pending; do NOT submit AdSense reconsideration until the learn app is smoke-tested in a browser. v5.8.0.
 
+## [5.7.959] - 2026-05-31 - QUALITY: removed mis-leveled satellite question from pre-K Engineering
+- Engineering L1 (PRE-K) contained "What kind of force keeps a satellite around Earth?" with an orbital-mechanics explanation (ISS at 7.7 km/s) — far too advanced for pre-K. Removed it. Gravity stays covered at pre-K via the simpler siblings ("What pulls things down?", "Why does a ball roll downhill?"), and the satellite/orbit concept is already well-covered in the Space bank (for appropriate ages) + a parabola-dish question in Shapes — so nothing is lost from the suite.
+- Engineering L1 68→67. node --check passes; confirmed no satellite question remains in the engineering bank.
+- Bumps sw v1039→v1040. v5.7.959.
+
 ## [5.7.958] - 2026-05-31 - VISUAL FUN #6: dim non-correct options on answer (focus the right one)
 - When a subject-quiz answer is locked, the OTHER options now dim to 0.45 opacity so the green correct answer stands out (previously they stayed full-brightness + visually noisy). Matches the math mode, which already dims the wrong pick. The "Next ▶" button is appended after this pass so it's unaffected.
 - One-line additive change; node --check passes.
