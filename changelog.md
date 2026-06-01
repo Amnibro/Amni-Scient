@@ -8,6 +8,11 @@
 - **Broke template lockstep (Step 2).** Added a deterministic per-page heading picker to both SEO generators (`src/gen-calc-modules.js`, `src/gen-learn-categories.js`): each of the 5 section headings + the deep-dive hint now draws from 4–6 variants keyed by a stable hash of the page slug (so regenerations don't churn). Regenerated all 31 calc + 11 learn pages — identical "WHAT IT COMPUTES / KEY EQUATIONS / …" skeleton replaced with distributed variants; page bodies (already unique) untouched; ads preserved on the article pages.
 - Plan/council: docs/checklists/checklist_v5.8.0_adsense_round4.md + docs/guardian_councils/guardian_council_v5.8.0_adsense_round4.md. Backups in backups/v5.8.0_adsense/. Step 3 (content-first restructure) still pending; do NOT submit AdSense reconsideration until the learn app is smoke-tested in a browser. v5.8.0.
 
+## [5.7.950] - 2026-05-31 - Cross-level dedup: Opposites complete (17 more; bank now fully clean)
+- Finished Opposites cross-level dedup. Removed 17: medium opposites (polite, ancient, visible, fresh, calm, begin, increase, honest) consolidated to L2; advanced (temporary, optimist, horizontal, cause, active) kept at their L3 home; generous kept one L2 copy (dropped a within-L2 dup + the L4 copy). Each removal kept the level-appropriate copy.
+- VERIFIED: every opposite now appears in EXACTLY ONE level (within-level + cross-level fully deduped). Opposites bank complete.
+- node --check passes. Bumps sw v1030→v1031. v5.7.950. (Session dedup total: 157.)
+
 ## [5.7.949] - 2026-05-31 - Cross-level dedup phase 1: Opposites basics (19, keep level-appropriate)
 - Started CROSS-LEVEL dedup (Anthony's call: keep each repeated question at its level-APPROPRIATE tier, remove the rest). A scan found ~80 exact questions duplicated across difficulty levels suite-wide — often revealing mis-leveling (basic vocab leaked UP into harder levels; advanced topics leaked DOWN).
 - Opposites phase 1 (19 removed): 14 BASIC opposites (WIN, WET, SHARP, BRAVE, ABOVE, STRONG, LOUD, HEAVY, FULL, FIRST, EMPTY, EASY, CLEAN, AWAKE) were copied into L2/L3 — kept the pre-K L1 original of each, removed the higher-level copies (pure padding, too easy for those tiers).
