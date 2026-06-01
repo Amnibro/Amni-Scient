@@ -8,6 +8,11 @@
 - **Broke template lockstep (Step 2).** Added a deterministic per-page heading picker to both SEO generators (`src/gen-calc-modules.js`, `src/gen-learn-categories.js`): each of the 5 section headings + the deep-dive hint now draws from 4–6 variants keyed by a stable hash of the page slug (so regenerations don't churn). Regenerated all 31 calc + 11 learn pages — identical "WHAT IT COMPUTES / KEY EQUATIONS / …" skeleton replaced with distributed variants; page bodies (already unique) untouched; ads preserved on the article pages.
 - Plan/council: docs/checklists/checklist_v5.8.0_adsense_round4.md + docs/guardian_councils/guardian_council_v5.8.0_adsense_round4.md. Backups in backups/v5.8.0_adsense/. Step 3 (content-first restructure) still pending; do NOT submit AdSense reconsideration until the learn app is smoke-tested in a browser. v5.8.0.
 
+## [5.7.944] - 2026-05-31 - Dedup Languages (5); Engineering clean
+- Languages dedup (5): L1 phonics "Which word starts with B?/S?/M?" (Ball/Sun/Moon) each verbatim-duplicated; L4 code-switching + Grimm's Law each duplicated. Kept richest version of each. (L2 "S" vs "Sí"-Spanish collision = false positive, kept.)
+- ENGINEERING verified: L1 gravity pair is NOT a dup — "What pulls things down?" vs "What force keeps a satellite in orbit?" are distinct gravity facts (kept both). NOTE: the satellite question is mis-leveled for pre-K (L1) — flagged for a future difficulty-leveling pass, not a dedup issue.
+- node --check passes. Bumps sw v1024→v1025. v5.7.944.
+
 ## [5.7.943] - 2026-05-31 - Dedup Opposites (8); Music verified clean
 - Opposites dedup (8): "Opposite of DAY?"(night), "Opposite of CLEAN?"(dirty), "Opposite of ANCIENT?"(modern), "Opposite of ARTIFICIAL?"(natural), "Opposite of TRANSPARENT?"(opaque), "Opposite of OPTIMIST?"(pessimist) each duplicated; "Opposite of OPEN?"(closed) appeared 3× identically (removed 2). Kept richest version of each.
 - KEPT distinct, not a dup: "Opposite of FIND?"→Lose vs "Opposite of WIN?"→Lose (different prompts).
