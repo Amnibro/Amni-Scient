@@ -3806,6 +3806,7 @@
   function initFindIt(){
     lifeArea.innerHTML='';
     lifeTitle.textContent='🔍 Find It!';
+    const NAMES={'🐶':'dog','🐱':'cat','🐭':'mouse','🐹':'hamster','🐰':'rabbit','🦊':'fox','🐻':'bear','🐼':'panda','🐨':'koala','🐯':'tiger','🦁':'lion','🐮':'cow','🐷':'pig','🐸':'frog','🐵':'monkey','🐔':'chicken','🐧':'penguin','🦄':'unicorn','🐝':'bee','🦋':'butterfly','🐳':'whale','🐠':'fish','🦒':'giraffe','🦔':'hedgehog','🐢':'turtle','🦘':'kangaroo','🦃':'turkey','🦢':'swan','🦩':'flamingo','🍎':'apple','🍌':'banana','🍇':'grapes','🍓':'strawberry','🍑':'peach','🍍':'pineapple','🥝':'kiwi','🥭':'mango','🍊':'orange','🍋':'lemon','🍒':'cherries','🍐':'pear','🍉':'watermelon','🍈':'melon','🥥':'coconut','🍅':'tomato','🍆':'eggplant','🥑':'avocado','🍏':'green apple','🚗':'car','🚕':'taxi','🚙':'sport car','🚌':'bus','🚎':'trolley','🚐':'van','🚑':'ambulance','🚒':'fire truck','🚓':'police car','🚚':'truck','🚛':'big truck','🚜':'tractor','🏎️':'race car','🚲':'bicycle','🏍️':'motorcycle','🚂':'train','✈️':'airplane','🚀':'rocket','⛵':'sailboat','🚤':'speedboat','🚁':'helicopter','🚇':'subway','🚊':'tram','🛵':'scooter'};
     const POOLS={
       animals:['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','🐯','🦁','🐮','🐷','🐸','🐵','🐔','🐧','🦄','🐝','🦋','🐳','🐠','🦒','🐧','🦔','🐢','🦘','🦃','🦢','🦩'],
       fruits:['🍎','🍌','🍇','🍓','🍑','🍍','🥝','🥭','🍊','🍋','🍒','🍐','🍉','🍈','🥥','🍅','🍆','🥑','🍏','🍆'],
@@ -3837,6 +3838,7 @@
         grid.innerHTML='';
         prompt.innerHTML=`<div style="text-align:center;"><div style="font-size:2.2rem;margin-bottom:8px;">${wasBest?'🏆 NEW BEST!':'🎉 All found!'}</div><div style="font-size:1.3rem;">${score}/${TOTAL} found</div></div>`;
         if(typeof spawnConfetti==='function')spawnConfetti(window.innerWidth/2,window.innerHeight/2,wasBest?120:60);
+        if(ttsAuto() && typeof speakSeq==='function')speakSeq([(wasBest?'New best! ':'All done! ')+'You found '+score+' out of '+TOTAL+'!']);
         if(typeof showFeedback==='function')showFeedback(`Find It: ${score}/${TOTAL} 🔍`,wasBest?'#2ecc71':'#3498db');
         if(typeof addScore==='function')addScore(score);
         const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='Play Again';rb.style.cssText='display:block;margin:14px auto;';rb.onclick=()=>initFindIt();lifeArea.appendChild(rb);
@@ -3848,6 +3850,7 @@
       const distractors=pool.filter(p=>p!==target).sort(()=>Math.random()-0.5).slice(0,GRID_SIZE-1);
       const cells=[target,...distractors].sort(()=>Math.random()-0.5);
       prompt.innerHTML=`Find <span style="font-size:2.2rem;line-height:1;">${target}</span> in the grid!`;
+      const _tn=NAMES[target];if(_tn && ttsAuto() && typeof speakSeq==='function')speakSeq(['Find the '+_tn]);
       grid.innerHTML='';
       cells.forEach(c=>{
         const cell=document.createElement('button');
