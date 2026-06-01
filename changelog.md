@@ -8,6 +8,11 @@
 - **Broke template lockstep (Step 2).** Added a deterministic per-page heading picker to both SEO generators (`src/gen-calc-modules.js`, `src/gen-learn-categories.js`): each of the 5 section headings + the deep-dive hint now draws from 4–6 variants keyed by a stable hash of the page slug (so regenerations don't churn). Regenerated all 31 calc + 11 learn pages — identical "WHAT IT COMPUTES / KEY EQUATIONS / …" skeleton replaced with distributed variants; page bodies (already unique) untouched; ads preserved on the article pages.
 - Plan/council: docs/checklists/checklist_v5.8.0_adsense_round4.md + docs/guardian_councils/guardian_council_v5.8.0_adsense_round4.md. Backups in backups/v5.8.0_adsense/. Step 3 (content-first restructure) still pending; do NOT submit AdSense reconsideration until the learn app is smoke-tested in a browser. v5.8.0.
 
+## [5.7.955] - 2026-05-31 - VISUAL FUN #3: high-score confetti on quiz complete
+- The quiz-complete screen now bursts CONFETTI for strong finishes — 80 particles at ≥70%, 150 at ≥90% — reusing the app's existing `spawnConfetti(x,y,count)` helper (same pattern as the games' best-score celebrations). Low scores get the encouraging 💪 screen without confetti.
+- Additive + guarded (`typeof spawnConfetti==='function'`); node --check passes.
+- Bumps sw v1035→v1036. v5.7.955.
+
 ## [5.7.954] - 2026-05-31 - VISUAL FUN #2: quiz progress indicator + scored celebration screen
 - Subject quiz now shows live PROGRESS in the title bar ("Animals · 3 / 20") so kids see how far they are. Tracks a per-run correct counter (quizCorrect, reset each run, ++ on correct).
 - The bland "Quiz Complete! 🎉" end screen now CELEBRATES with the score: "You got 8 / 10 correct (80%)" + a tier emoji (🏆 ≥90% / 🌟 ≥70% / 👍 ≥50% / 💪 below) + a bounceIn pop. Restores the clean title on completion. Prompt animation is cleared per-question so it re-triggers cleanly.

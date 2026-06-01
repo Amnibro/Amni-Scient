@@ -9884,6 +9884,7 @@ function playAnimalSound(type) {
           quizTitle.textContent = _quizBaseTitle;
           quizPrompt.innerHTML = 'Quiz Complete! '+_qe+'<div style="font-size:1.4rem;margin-top:12px;color:#2c3e50;font-weight:bold;">You got '+quizCorrect+' / '+_qt+' correct ('+_qp+'%)</div>';
           quizPrompt.style.animation = 'bounceIn 0.5s ease';
+          if(_qp>=70 && typeof spawnConfetti==='function') spawnConfetti(window.innerWidth/2, window.innerHeight/3, _qp>=90?150:80);
           audioBtn.style.display = 'none';
           quizChoices.innerHTML = '';
           setTimeout(() => {
