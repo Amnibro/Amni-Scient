@@ -31,6 +31,7 @@
     stroop: $$('#stroop-view'),
     reaction: $$('#reaction-view'),
     gonogo: $$('#gonogo-view'),
+    symcode: $$('#symcode-view'),
     nback: $$('#nback-view'),
     anagram: $$('#anagram-view'),
     chimp: $$('#chimp-view'),
@@ -900,6 +901,7 @@
       if(game === 'stroop') initStroop();
       if(game === 'reaction') initReaction();
       if(game === 'gonogo') initGoNoGo();
+      if(game === 'symcode') initSymCode();
       if(game === 'nback') initNBack();
       if(game === 'anagram') initAnagram();
       if(game === 'chimp') initChimp();
@@ -13523,6 +13525,26 @@ function playAnimalSound(type) {
     ct.appendChild(_modeRow());
     const sb=document.createElement('button');sb.className='nmm-btn';sb.textContent='START';sb.onclick=()=>{act=true;sc=0;tot=0;stk=0;bestStk=0;rtTotal=0;rtCount=0;tm=c.time;$$('#stp-tm').textContent=tm;show();window._stpTimer=setInterval(()=>{tm--;$$('#stp-tm').textContent=tm;if(tm<=0)_gameOver();},1000);};ct.appendChild(sb);
   }
+  function initSymCode(){
+    const ct=$$('#sym-container'),hud=$$('#sym-hud');
+    if(window._symTimer){clearInterval(window._symTimer);window._symTimer=null;}
+    const order=['★','●','▲','■','◆','♥'].sort(()=>Math.random()-0.5);
+    let timeLeft=60,correct=0,wrong=0,streak=0,cur=0;
+    const best=parseInt(sessionStorage.getItem('sym-best')||'0');
+    hud.innerHTML=`<span class="game-stat">⏱ <span class="game-stat-val" id="sym-t">60</span>s</span><span class="game-stat">✅ <span class="game-stat-val" id="sym-c">0</span></span><span class="game-stat">🔥 <span class="game-stat-val" id="sym-st">0</span></span><span class="game-stat">⭐ Best ${best||'—'}</span>`;
+    ct.innerHTML='';
+    const key=document.createElement('div');key.style.cssText='display:flex;gap:8px;flex-wrap:wrap;justify-content:center;background:rgba(255,255,255,0.92);padding:10px 14px;border-radius:14px';
+    order.forEach((s,i)=>{const chip=document.createElement('div');chip.style.cssText='display:flex;flex-direction:column;align-items:center;font-family:Comic Neue,cursive;color:#2c3e50;font-weight:bold;min-width:36px';chip.innerHTML=`<span style="font-size:1.7rem">${s}</span><span style="font-size:1.05rem;color:#3498db">${i+1}</span>`;key.appendChild(chip);});
+    const target=document.createElement('div');target.id='sym-target';target.style.cssText='font-size:5rem;height:110px;display:flex;align-items:center;justify-content:center;color:#2c3e50';
+    const pad=document.createElement('div');pad.style.cssText='display:flex;gap:10px;flex-wrap:wrap;justify-content:center';
+    ct.appendChild(key);ct.appendChild(target);ct.appendChild(pad);
+    const newTarget=()=>{cur=Math.floor(Math.random()*order.length);target.textContent=order[cur];};
+    const answer=(n)=>{if(currentGame!=='symcode')return;n===cur+1?(correct++,streak++,addScore(1),target.style.animation='sortCorrect 0.4s'):(wrong++,streak=0,resetStreak(),target.style.animation='shake 0.4s');setTimeout(()=>{if(target)target.style.animation='';},400);const c=$$('#sym-c');if(c)c.textContent=correct;const st=$$('#sym-st');if(st)st.textContent=streak;newTarget();};
+    order.forEach((s,i)=>{const b=document.createElement('button');b.className='nmm-btn';b.textContent=String(i+1);b.style.cssText='font-size:1.6rem;min-width:56px';b.onclick=()=>answer(i+1);pad.appendChild(b);});
+    newTarget();
+    const finish=()=>{const tot=correct+wrong,a=tot?Math.round(100*correct/tot):0;if(correct>best)sessionStorage.setItem('sym-best',correct);ct.innerHTML='';const sum=document.createElement('div');sum.className='rxt-summary';sum.innerHTML=`<h3>${correct>=40?'🌟 Lightning coder!':correct>=25?'👍 Quick work!':'💪 Keep practicing'}</h3><div class="rxt-summary-stats"><div class="rxt-summary-stat"><span class="val">${correct}</span><span class="lbl">Correct</span></div><div class="rxt-summary-stat"><span class="val">${a}%</span><span class="lbl">Accuracy</span></div><div class="rxt-summary-stat"><span class="val">${correct}</span><span class="lbl">Items/min</span></div></div><div class="rxt-tier-scale">Digit-Symbol Coding trains PROCESSING SPEED — match each symbol to its number using the key as fast as you can. The key reshuffles every game.</div>`;ct.appendChild(sum);if(correct>=40)spawnConfetti(window.innerWidth/2,window.innerHeight/2,100);showFeedback(`Coding: ${correct} correct ⚡`,correct>best?'#2ecc71':'#f1c40f');addScore(Math.max(1,Math.floor(correct/3)));const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='AGAIN';rb.style.marginTop='12px';rb.onclick=()=>initSymCode();ct.appendChild(rb);};
+    window._symTimer=setInterval(()=>{if(currentGame!=='symcode'){clearInterval(window._symTimer);return;}timeLeft--;const t=$$('#sym-t');if(t)t.textContent=timeLeft;if(timeLeft<=0){clearInterval(window._symTimer);window._symTimer=null;finish();}},1000);
+  }
   function initGoNoGo(){
     const ct=$$('#gng-container'),hud=$$('#gng-hud');
     if(window._gngTimeout){clearTimeout(window._gngTimeout);window._gngTimeout=null;}
@@ -16309,6 +16331,14 @@ function playAnimalSound(type) {
       '<b>Strategy \u2014 Chunking:</b> Break long numbers into groups. "4815162342" becomes "48-15-16-23-42" \u2014 much easier!',
       '<b>Strategy \u2014 Rhythm:</b> Say the number in your head with a rhythm, like a phone number.',
       'Your <b>best score</b> is saved between rounds. Try to beat your record!'
+    ]},
+    symcode:{title:'\ud83d\udd23 How to Play Symbol Coding',steps:[
+      'A <b>KEY</b> at the top pairs each symbol with a number (\u2605=1, \u25cf=2, \u2026). It stays on screen the whole time.',
+      'A big symbol appears. Tap the <b>number</b> that matches it in the key \u2014 as fast as you can.',
+      'You have <b>60 seconds</b>. Every correct match scores a point; keep your streak going!',
+      'The key <b>reshuffles every game</b>, so you can\u2019t just memorize it \u2014 you have to read and match each time.',
+      '<b>Why it helps:</b> this is a classic <b>processing-speed</b> test (Digit-Symbol Coding) \u2014 it trains how fast your brain links symbols to meaning.',
+      'Aim for <b>25+</b> for quick, <b>40+</b> for lightning!'
     ]},
     gonogo:{title:'\ud83d\udea6 How to Play Go / No-Go',steps:[
       'A big box flashes a signal. When it turns <b style="color:#2ecc71">GREEN (GO!)</b>, tap it as <b>fast</b> as you can.',
