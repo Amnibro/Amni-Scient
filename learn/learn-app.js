@@ -13996,10 +13996,11 @@ function playAnimalSound(type) {
     const ct=$$('#chm-container'),hud=$$('#chm-hud');
     const chmReveal=sessionStorage.getItem('chm-reveal')||'always';
     const revealMs={always:0,'2000':2000,'1000':1000,'500':500}[chmReveal]||0;
-    let sz=4,best=parseInt(sessionStorage.getItem('chm-best-'+chmReveal)||sessionStorage.getItem('chm-best')||'4'),stk=0,bestStk=parseInt(sessionStorage.getItem('chm-best-stk-'+chmReveal)||sessionStorage.getItem('chm-best-stk')||'0');
+    const _lvl=Math.min(currentLevel||3,5);
+    let sz=(_lvl<=2?4:_lvl>=4?6:5),best=parseInt(sessionStorage.getItem('chm-best-'+chmReveal)||sessionStorage.getItem('chm-best')||'4'),stk=0,bestStk=parseInt(sessionStorage.getItem('chm-best-stk-'+chmReveal)||sessionStorage.getItem('chm-best-stk')||'0');
     document.querySelectorAll('.chm-summary,.chm-mode-row').forEach(n=>n.remove());
     if(window._chmRevealTimer){clearTimeout(window._chmRevealTimer);window._chmRevealTimer=null;}
-    hud.innerHTML=`<span class="game-stat">\ud83d\udc35 Numbers: <span class="game-stat-val" id="chm-sz">${sz}</span></span><span class="game-stat">\ud83d\udd25 Streak <span class="game-stat-val" id="chm-stk">0</span></span><span class="game-stat">\ud83c\udfc6 Best: <span class="game-stat-val" id="chm-best">${best}</span></span><span class="game-stat">\u23f1 ${chmReveal==='always'?'On tap':chmReveal+'ms'}</span>`;
+    hud.innerHTML=`<span class="game-stat">\ud83d\udc35 Numbers: <span class="game-stat-val" id="chm-sz">${sz}</span></span><span class="game-stat">\ud83d\udd25 Streak <span class="game-stat-val" id="chm-stk">0</span></span><span class="game-stat">\ud83c\udfc6 Best: <span class="game-stat-val" id="chm-best">${best}</span></span><span class="game-stat">\u23f1 ${chmReveal==='always'?'On tap':chmReveal+'ms'}</span><span class="game-stat">📊 Lvl ${_lvl}</span>`;
     const modeRow=document.createElement('div');modeRow.className='chm-mode-row sdk-controls';modeRow.style.cssText='display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:6px 0;';
     [['always','\u23f5 Always'],['2000','2.0s'],['1000','1.0s'],['500','0.5s (Ayumu)']].forEach(([k,lbl])=>{const b=document.createElement('button');b.className='sdk-btn'+(k===chmReveal?' active':'');b.style.cssText='font-size:0.82rem;padding:6px 10px;';b.textContent=lbl;b.onclick=()=>{sessionStorage.setItem('chm-reveal',k);initChimp();};modeRow.appendChild(b);});
     ct.parentElement.insertBefore(modeRow,ct);
