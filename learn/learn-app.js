@@ -2913,7 +2913,7 @@
       if(subgame === 'mathsolitaire') initMathSolitaire();
       if(subgame === 'minesweeper') initMinesweeper();
       if(subgame === 'twentyfortyeight') initTwentyFortyEight();
-      if(subgame === 'sudoku') initSudoku();
+      if(subgame === 'sudoku') initSudoku4();
       if(subgame === 'memorymatch') initMemoryMatch();
   }
   function initMemoryMatch(){
@@ -2987,7 +2987,7 @@
     }
     render();
   }
-  function initSudoku(){
+  function initSudoku4(){
     lifeArea.innerHTML='';
     lifeTitle.textContent='🔢 Sudoku 4×4';
     const LEVELS={easy:{remove:6,label:'Easy'},medium:{remove:9,label:'Medium'},hard:{remove:12,label:'Hard'}};
@@ -3047,7 +3047,7 @@
       hud.innerHTML=`<span class="game-stat">🎯 Moves <span class="game-stat-val">${moves}</span></span><span class="game-stat">⏱️ ${elapsed}s</span><span class="game-stat">⭐ Best <span class="game-stat-val">${best<9999?best:'—'}</span></span>`;
       lifeArea.appendChild(hud);
       const lvlRow=document.createElement('div');lvlRow.style.cssText='display:flex;gap:6px;justify-content:center;margin:4px 0 10px;flex-wrap:wrap;';
-      Object.keys(LEVELS).forEach(k=>{const b=document.createElement('button');b.className='sdk-btn'+(k===level?' active':'');b.style.cssText='font-size:0.85rem;padding:5px 12px;';b.textContent=LEVELS[k].label;b.onclick=()=>{sessionStorage.setItem('sd-level',k);initSudoku();};lvlRow.appendChild(b);});
+      Object.keys(LEVELS).forEach(k=>{const b=document.createElement('button');b.className='sdk-btn'+(k===level?' active':'');b.style.cssText='font-size:0.85rem;padding:5px 12px;';b.textContent=LEVELS[k].label;b.onclick=()=>{sessionStorage.setItem('sd-level',k);initSudoku4();};lvlRow.appendChild(b);});
       lifeArea.appendChild(lvlRow);
       const board=document.createElement('div');
       board.style.cssText='display:grid;grid-template-columns:repeat(4,min(72px,18vw));grid-template-rows:repeat(4,min(72px,18vw));gap:2px;background:#2c3e50;padding:8px;border-radius:10px;margin:6px auto;width:fit-content;';
@@ -3094,7 +3094,7 @@
       if(typeof spawnConfetti==='function')spawnConfetti(window.innerWidth/2,window.innerHeight/2,wasBest?150:80);
       if(typeof showFeedback==='function')showFeedback(`Sudoku ${cfg.label}: ${moves} moves 🔢`,wasBest?'#2ecc71':'#3498db');
       if(typeof addScore==='function')addScore(15+cfg.remove*2);
-      const again=document.createElement('button');again.className='nmm-btn';again.textContent='🔄 New Puzzle';again.style.cssText='display:block;margin:14px auto;';again.onclick=()=>initSudoku();lifeArea.appendChild(again);
+      const again=document.createElement('button');again.className='nmm-btn';again.textContent='🔄 New Puzzle';again.style.cssText='display:block;margin:14px auto;';again.onclick=()=>initSudoku4();lifeArea.appendChild(again);
     }
     render();
   }
