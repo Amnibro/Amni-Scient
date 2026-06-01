@@ -1050,6 +1050,7 @@
   function resizeConf() { confCanvas.width = window.innerWidth; confCanvas.height = window.innerHeight; }
   resizeConf(); window.addEventListener('resize', resizeConf);
   function spawnConfetti(x, y, count = 50) {
+    if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const colors = ['#e74c3c','#3498db','#2ecc71','#f1c40f','#9b59b6','#e67e22','#1abc9c','#fd79a8','#6c5ce7'];
     for(let i = 0; i < count; i++) confParts.push({ x, y, vx:(Math.random()-0.5)*14, vy:-Math.random()*16-4, c:colors[Math.floor(Math.random()*colors.length)], s:Math.random()*8+3, l:1.0, d:Math.random()*0.012+0.006, g:0.35, r:Math.random()*360, rv:(Math.random()-0.5)*10 });
     if(confParts.length <= count) requestAnimationFrame(animConf);
