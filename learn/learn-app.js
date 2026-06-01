@@ -691,7 +691,6 @@
       currentGame = null;
       currentSubgame = null;
       cleanupLifeGame();
-      window._bubActive=false;
       try { if (typeof stopReading === 'function') stopReading(); } catch {}
       if(rhythmTimer){clearInterval(rhythmTimer);rhythmTimer=null;}
       melodyState=null;
@@ -1395,6 +1394,7 @@
   const lifeControls = $$('#life-controls');
   let lifeState = {};
   function cleanupLifeGame() {
+      window._bubActive=false;
       lifeArea.innerHTML = '';
       lifeControls.innerHTML = '';
       lifeArea.onpointerdown = null;
