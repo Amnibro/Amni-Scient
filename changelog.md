@@ -14,6 +14,11 @@
 - **Broke template lockstep (Step 2).** Added a deterministic per-page heading picker to both SEO generators (`src/gen-calc-modules.js`, `src/gen-learn-categories.js`): each of the 5 section headings + the deep-dive hint now draws from 4–6 variants keyed by a stable hash of the page slug (so regenerations don't churn). Regenerated all 31 calc + 11 learn pages — identical "WHAT IT COMPUTES / KEY EQUATIONS / …" skeleton replaced with distributed variants; page bodies (already unique) untouched; ads preserved on the article pages.
 - Plan/council: docs/checklists/checklist_v5.8.0_adsense_round4.md + docs/guardian_councils/guardian_council_v5.8.0_adsense_round4.md. Backups in backups/v5.8.0_adsense/. Step 3 (content-first restructure) still pending; do NOT submit AdSense reconsideration until the learn app is smoke-tested in a browser. v5.8.0.
 
+## [5.7.979] - 2026-06-01 - POLISH: staggered bounce-in for teach-phase cards (visual fun)
+- Completed the emoji/title audit across ALL fact-card teach banks (math, engineering, weather, opposites, counting, shapes, science, mythology, sports, space) + the 16 quiz banks — all correctly paired; remaining generics (🟧 trapezoid/parallelogram, 🌟 heptagon, 🪐 Jupiter) are "no dedicated emoji exists" cases. Total audit yield: 2 bugs (hyena, Spanish), both fixed.
+- Visual fun: teach-phase fact cards previously appeared instantly. Added a STAGGERED bounce-in entrance — reuses the existing `bounceIn` keyframe (transform+opacity only, GPU-composited, no layout reflow, already proven on the quiz-complete screen), `both` fill so cards stay hidden until their turn, stagger capped at 8 (Math.min(i,8)*0.06s) so it stays snappy even on 16-card banks. Pure presentation; no engine/logic change.
+- node --check passes. Bumps sw v1059→v1060. v5.7.979.
+
 ## [5.7.978] - 2026-06-01 - POLISH: Spanish teach-card emoji → flag (consistency)
 - Audit of the teach-phase fact-card banks: every language card uses its country FLAG (🇫🇷 French, 🇩🇪 German, 🇮🇹 Italian, 🇵🇹 Portuguese, 🇯🇵 Japanese, etc.) — but Spanish stood out with a 🌍 globe. Changed to 🇪🇸 to match the sibling convention.
 - Also re-audited the colors quiz bank (🔴 Red/🔵 Blue/etc. all correctly paired) + the animals fact-card bank (clean) — no other mismatches found this pass. node --check passes. Bumps sw v1058→v1059. v5.7.978.
