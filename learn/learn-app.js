@@ -34,6 +34,7 @@
     symcode: $$('#symcode-view'),
     corsi: $$('#corsi-view'),
     flanker: $$('#flanker-view'),
+    simon: $$('#simon-view'),
     nback: $$('#nback-view'),
     anagram: $$('#anagram-view'),
     chimp: $$('#chimp-view'),
@@ -906,6 +907,7 @@
       if(game === 'symcode') initSymCode();
       if(game === 'corsi') initCorsi();
       if(game === 'flanker') initFlanker();
+      if(game === 'simon') initSimon();
       if(game === 'nback') initNBack();
       if(game === 'anagram') initAnagram();
       if(game === 'chimp') initChimp();
@@ -13529,6 +13531,26 @@ function playAnimalSound(type) {
     ct.appendChild(_modeRow());
     const sb=document.createElement('button');sb.className='nmm-btn';sb.textContent='START';sb.onclick=()=>{act=true;sc=0;tot=0;stk=0;bestStk=0;rtTotal=0;rtCount=0;tm=c.time;$$('#stp-tm').textContent=tm;show();window._stpTimer=setInterval(()=>{tm--;$$('#stp-tm').textContent=tm;if(tm<=0)_gameOver();},1000);};ct.appendChild(sb);
   }
+  function initSimon(){
+    const ct=$$('#simon-container'),hud=$$('#sim-hud');
+    if(window._simonTimeout){clearTimeout(window._simonTimeout);window._simonTimeout=null;}
+    const TRIALS=30,SIDE={blue:'L',orange:'R'},HEX={blue:'#3498db',orange:'#e67e22'};
+    let trial=0,correct=0,wrong=0,streak=0,awaiting=false,t0=0,curColor='blue',curCong=true,rtC=[],rtI=[];
+    const best=parseInt(sessionStorage.getItem('simon-best')||'0');
+    hud.innerHTML=`<span class="game-stat">🎯 Trial <span class="game-stat-val" id="sim-tr">0</span>/${TRIALS}</span><span class="game-stat">✅ <span class="game-stat-val" id="sim-c">0</span></span><span class="game-stat">🔥 <span class="game-stat-val" id="sim-st">0</span></span><span class="game-stat">⭐ Best ${best||'—'}</span>`;
+    ct.innerHTML='';
+    const hint=document.createElement('div');hint.style.cssText='font-size:1.05rem;color:#2c3e50;font-family:Comic Neue,cursive;text-align:center;max-width:420px';hint.textContent='Tap the button that MATCHES the square’s COLOR — ignore which side it appears on!';
+    const stage=document.createElement('div');stage.style.cssText='position:relative;width:min(86vw,420px);height:130px;background:rgba(255,255,255,0.55);border-radius:16px';
+    const sq=document.createElement('div');sq.style.cssText='position:absolute;top:35px;width:60px;height:60px;border-radius:12px;opacity:0;transition:opacity 0.1s';stage.appendChild(sq);
+    const row=document.createElement('div');row.style.cssText='display:flex;gap:30px';
+    const mkBtn=(name)=>{const b=document.createElement('button');b.className='nmm-btn';b.style.cssText='width:96px;height:62px;border-radius:14px;background:'+HEX[name]+';border:3px solid rgba(0,0,0,0.25)';b.onclick=()=>respond(name);return b;};
+    row.appendChild(mkBtn('blue'));row.appendChild(mkBtn('orange'));
+    ct.appendChild(hint);ct.appendChild(stage);ct.appendChild(row);
+    function finish(){const tot=correct+wrong,a=tot?Math.round(100*correct/tot):0,avgC=rtC.length?Math.round(rtC.reduce((x,y)=>x+y,0)/rtC.length):0,avgI=rtI.length?Math.round(rtI.reduce((x,y)=>x+y,0)/rtI.length):0,eff=(avgC&&avgI)?(avgI-avgC):0,score=Math.max(1,correct*2-wrong);if(score>best)sessionStorage.setItem('simon-best',score);ct.innerHTML='';const sum=document.createElement('div');sum.className='rxt-summary';sum.innerHTML=`<h3>${a>=90?'🌟 Unshakable focus!':a>=75?'👍 Nicely done!':'💪 Keep training'}</h3><div class="rxt-summary-stats"><div class="rxt-summary-stat"><span class="val">${a}%</span><span class="lbl">Accuracy</span></div><div class="rxt-summary-stat"><span class="val">${avgC||'—'}</span><span class="lbl">Match ms</span></div><div class="rxt-summary-stat"><span class="val">${avgI||'—'}</span><span class="lbl">Conflict ms</span></div><div class="rxt-summary-stat"><span class="val">${eff?('+'+eff):'—'}</span><span class="lbl">Simon effect</span></div></div><div class="rxt-tier-scale">The Simon task trains SPATIAL COMPATIBILITY — your brain wants to answer toward the side a thing appears, so a square on the “wrong” side slows you down. That slowdown is the “Simon effect.”</div>`;ct.appendChild(sum);if(a>=90)spawnConfetti(window.innerWidth/2,window.innerHeight/2,90);showFeedback('Simon: '+a+'% 🟦',score>best?'#2ecc71':'#f1c40f');addScore(Math.max(1,Math.floor(correct/3)));const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='AGAIN';rb.style.marginTop='12px';rb.onclick=()=>initSimon();ct.appendChild(rb);}
+    function respond(ans){if(currentGame!=='simon'||!awaiting)return;awaiting=false;const rt=Date.now()-t0;ans===curColor?(correct++,streak++,addScore(1),(curCong?rtC:rtI).push(rt),sq.style.boxShadow='0 0 0 4px #2ecc71'):(wrong++,streak=0,resetStreak(),sq.style.boxShadow='0 0 0 4px #e74c3c');const c2=$$('#sim-c');if(c2)c2.textContent=correct;const st=$$('#sim-st');if(st)st.textContent=streak;window._simonTimeout=setTimeout(()=>{if(currentGame!=='simon')return;sq.style.opacity='0';sq.style.boxShadow='none';next();},300);}
+    function next(){if(currentGame!=='simon')return;if(trial>=TRIALS)return finish();trial++;const tr=$$('#sim-tr');if(tr)tr.textContent=trial;curColor=Math.random()<0.5?'blue':'orange';const side=Math.random()<0.5?'L':'R';curCong=(side===SIDE[curColor]);sq.style.background=HEX[curColor];sq.style.left=side==='L'?'28px':'auto';sq.style.right=side==='R'?'28px':'auto';sq.style.opacity='1';awaiting=true;t0=Date.now();}
+    window._simonTimeout=setTimeout(()=>{if(currentGame==='simon')next();},700);
+  }
   function initFlanker(){
     const ct=$$('#flank-container'),hud=$$('#flank-hud');
     if(window._flankTimeout){clearTimeout(window._flankTimeout);window._flankTimeout=null;}
@@ -16372,6 +16394,14 @@ function playAnimalSound(type) {
       '<b>Strategy \u2014 Chunking:</b> Break long numbers into groups. "4815162342" becomes "48-15-16-23-42" \u2014 much easier!',
       '<b>Strategy \u2014 Rhythm:</b> Say the number in your head with a rhythm, like a phone number.',
       'Your <b>best score</b> is saved between rounds. Try to beat your record!'
+    ]},
+    simon:{title:'\ud83d\udfe6 How to Play Simon Match',steps:[
+      'A colored square flashes on the <b>left</b> or <b>right</b>. There are two buttons: a <b>blue</b> one (left) and an <b>orange</b> one (right).',
+      'Tap the button that <b>matches the square\u2019s COLOR</b> \u2014 blue\u2192blue, orange\u2192orange. <b>Ignore which side the square is on.</b>',
+      'It\u2019s easy when the color\u2019s side matches its position, but tricky when a blue square pops up on the <b>right</b> (your hand wants to go right!).',
+      '30 trials. Tracks accuracy + the <b>\u201cSimon effect\u201d</b> \u2014 how much the mismatched side slows you down.',
+      '<b>Why it helps:</b> trains <b>spatial compatibility</b> + overriding an automatic \u201cgo toward it\u201d pull.',
+      'Aim for <b>90%+</b> with a small Simon effect!'
     ]},
     flanker:{title:'\u27a1\ufe0f How to Play Flanker Focus',steps:[
       'A row of <b>five arrows</b> appears. Look only at the <b>MIDDLE</b> one and tap \u25c0 or \u25b6 for the way it points.',
