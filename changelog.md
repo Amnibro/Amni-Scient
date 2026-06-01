@@ -8,6 +8,12 @@
 - **Broke template lockstep (Step 2).** Added a deterministic per-page heading picker to both SEO generators (`src/gen-calc-modules.js`, `src/gen-learn-categories.js`): each of the 5 section headings + the deep-dive hint now draws from 4–6 variants keyed by a stable hash of the page slug (so regenerations don't churn). Regenerated all 31 calc + 11 learn pages — identical "WHAT IT COMPUTES / KEY EQUATIONS / …" skeleton replaced with distributed variants; page bodies (already unique) untouched; ads preserved on the article pages.
 - Plan/council: docs/checklists/checklist_v5.8.0_adsense_round4.md + docs/guardian_councils/guardian_council_v5.8.0_adsense_round4.md. Backups in backups/v5.8.0_adsense/. Step 3 (content-first restructure) still pending; do NOT submit AdSense reconsideration until the learn app is smoke-tested in a browser. v5.8.0.
 
+## [5.7.943] - 2026-05-31 - Dedup Opposites (8); Music verified clean
+- Opposites dedup (8): "Opposite of DAY?"(night), "Opposite of CLEAN?"(dirty), "Opposite of ANCIENT?"(modern), "Opposite of ARTIFICIAL?"(natural), "Opposite of TRANSPARENT?"(opaque), "Opposite of OPTIMIST?"(pessimist) each duplicated; "Opposite of OPEN?"(closed) appeared 3× identically (removed 2). Kept richest version of each.
+- KEPT distinct, not a dup: "Opposite of FIND?"→Lose vs "Opposite of WIN?"→Lose (different prompts).
+- MUSIC verified CLEAN: all collisions were false positives or distinct facts — cello vs violin (both 4 strings), crescendo vs decrescendo, E-Major vs E♭-Major, snare vs marimba (both percussion), flute-family vs air-column-family (both woodwinds), and same-composer/different-work pairs (Beethoven deaf vs Symphony 5; Reich/Ligeti two works each). No removals.
+- node --check passes. Bumps sw v1023→v1024. v5.7.943.
+
 ## [5.7.942] - 2026-05-31 - Dedup Weather (8) + Science (4) banks
 - Weather dedup (8): L1 sun, rain, snow, cloud, rainbow, thunder (each had a "Which is ___?" entry + a reworded twin); L4 dew point; L5 ice-albedo feedback. Re-scan: Weather now fully clean.
 - Science dedup (4): L1 Earth ("what/which planet do we live on"), honey ("what do bees make" — verbatim twice); L2 three-states-of-matter, water-cycle. Kept the richer version of each.
