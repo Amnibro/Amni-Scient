@@ -751,6 +751,13 @@
     const lvl = document.getElementById('level-picker-modal');
     if (lvl && lvl.style.display && lvl.style.display !== 'none') lvl.style.display = 'none';
   });
+  try {
+    const _modalFocusObs = new MutationObserver(ms => ms.forEach(m => {
+      m.addedNodes.forEach(n => { if (n.nodeType === 1 && n.classList && n.classList.contains('hs-overlay')) { n._prevFocus = document.activeElement; const d = n.querySelector('.hs-modal') || n; try { d.setAttribute('tabindex', '-1'); d.focus({ preventScroll: true }); } catch (e) {} } });
+      m.removedNodes.forEach(n => { if (n.nodeType === 1 && n._prevFocus && typeof n._prevFocus.focus === 'function') { try { n._prevFocus.focus({ preventScroll: true }); } catch (e) {} } });
+    }));
+    _modalFocusObs.observe(document.body, { childList: true });
+  } catch (e) {}
   $$('#nav-back').addEventListener('click', () => {
     if (currentGame) {
       showView('menu');
