@@ -14,6 +14,12 @@
 - **Broke template lockstep (Step 2).** Added a deterministic per-page heading picker to both SEO generators (`src/gen-calc-modules.js`, `src/gen-learn-categories.js`): each of the 5 section headings + the deep-dive hint now draws from 4–6 variants keyed by a stable hash of the page slug (so regenerations don't churn). Regenerated all 31 calc + 11 learn pages — identical "WHAT IT COMPUTES / KEY EQUATIONS / …" skeleton replaced with distributed variants; page bodies (already unique) untouched; ads preserved on the article pages.
 - Plan/council: docs/checklists/checklist_v5.8.0_adsense_round4.md + docs/guardian_councils/guardian_council_v5.8.0_adsense_round4.md. Backups in backups/v5.8.0_adsense/. Step 3 (content-first restructure) still pending; do NOT submit AdSense reconsideration until the learn app is smoke-tested in a browser. v5.8.0.
 
+## [5.8.1] - 2026-06-01 - TTS #1: pre-K read-aloud — robust speakText + auto-read every L1 question
+- New direction (Anthony): pre-K content needs text-to-speech (toddlers can't read). Web Speech API (speechSynthesis) is the pragmatic offline-first path (0 bytes, OS voices); kokoro/piper-quality neural TTS would mean bundling an ~80MB WASM model — noted as a future option, not done now.
+- Upgraded `speakText()`: cancels any in-flight speech (no overlap), strips emoji/symbols so it reads "Red" not "red-circle Red", slows to rate 0.9 + pitch 1.08 (kid-friendly), and picks a local en-US voice. Keeps the animal-sound mapping.
+- Pre-K auto-read: at LEVEL 1 every quiz QUESTION is now read aloud on load (previously only `isAudio` entries were). The 🔊 replay button now also shows on every L1 question (was isAudio-only), so a toddler can tap to hear it again. L2+ behavior unchanged.
+- node --check passes. Bumps sw v1100→v1101. v5.8.1. NEXT: per-choice TTS (tap a 🔊 on each answer), teach-card read-aloud, game-instruction TTS.
+
 ## [5.7.999992] - 2026-06-01 - DISCOVERABILITY: "NEW" badge on the 11 new module buttons
 - Added a small red "NEW" corner badge (CSS `::before` — `::after` is the shimmer effect) to the 11 new module buttons (gonogo/symcode/corsi/flanker/simon/numerosity/posner/backspan/tol/changedet/taskswitch) so players can spot the freshly-added games among the ~100 modules. CSS-only, scoped by data-game. Bumps sw v1099→v1100. v5.7.999992.
 

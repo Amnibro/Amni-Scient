@@ -9999,12 +9999,18 @@ function playAnimalSound(type) {
 
   function speakText(text) {
     if(["Moo","Woof","Meow","Oink","Baa","Quack","Neigh","Ribbit","Roar","Hoot","Buzz","Chirp","Tweet","Gobble","Howl","Cluck","Cock-a-doodle-doo","Hiss","Squawk","Purr","Bleat","Trumpet","Chatter","Screech","Caw","Croak","Bark","Chitter","Hee-Haw","Coo","Snort","Bay","Yip","Snap","Whinny"].includes(text)) { playAnimalSound(text); return; }
-        if('speechSynthesis' in window) {
-          const utterance = new SpeechSynthesisUtterance(text);
-          const voices = window.speechSynthesis.getVoices();
-          window.speechSynthesis.speak(utterance);
-      }
-
+        if(!('speechSynthesis' in window)) return;
+        try {
+          const clean = String(text).replace(/[\u{1F000}-\u{1FAFF}\u{2190}-\u{2BFF}\u{2600}-\u{27BF}\u{FE00}-\u{FE0F}\u{1F1E6}-\u{1F1FF}]/gu,'').replace(/\s+/g,' ').trim();
+          if(!clean) return;
+          window.speechSynthesis.cancel();
+          const u = new SpeechSynthesisUtterance(clean);
+          u.rate = 0.9; u.pitch = 1.08; u.lang = 'en-US';
+          const vs = window.speechSynthesis.getVoices();
+          const v = vs.find(x => /en[-_]US/i.test(x.lang) && x.localService) || vs.find(x => /^en/i.test(x.lang));
+          if(v) u.voice = v;
+          window.speechSynthesis.speak(u);
+        } catch(e) {}
   }
   const teachPhaseEl = $$('#teach-phase');
   const quizTaskArea = $$('#quiz-task-area');
@@ -10089,9 +10095,9 @@ function playAnimalSound(type) {
       const q = currentQuiz[currentQIndex];
       quizPrompt.textContent = q.q; quizPrompt.style.animation='';
       quizTitle.textContent = _quizBaseTitle + ' · ' + (currentQIndex+1) + ' / ' + currentQuiz.length;
-      if (currentLevel <= 2 && q.isAudio) speakText(q.audioText || q.q);
+      if (currentLevel === 1 || (currentLevel <= 2 && q.isAudio)) speakText(q.audioText || q.q);
       quizChoices.innerHTML = '';
-      if(currentLevel <= 3 && q.isAudio) {
+      if(currentLevel === 1 || (currentLevel <= 3 && q.isAudio)) {
           audioBtn.style.display = 'block';
       } else {
           audioBtn.style.display = 'none';
