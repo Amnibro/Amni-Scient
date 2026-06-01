@@ -3,27 +3,80 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>AMNI-SCIENT — Independent Software Studio</title>
-<meta name="description" content="Independent software studio building privacy-first, zero-telemetry tools. Home of Amni-Browse web browser, Amni-Calc engineering suite, Amni-Learn mini-games, Amni-Code AI assistant, and Amni-Haven messaging.">
-<meta name="keywords" content="amni-scient,amni-browse,amni-calc,amni-learn,amni-code,amni-haven,privacy,indie software,rust,webassembly">
+<title>AMNI-SCIENT — Free In-Browser Tools, Learning Games &amp; Field References</title>
+<meta name="description" content="Free in-browser engineering calculators, learning games for all ages, and field references — plus privacy-first apps. No install, no tracking. Amni-Calc, Amni-Learn, Amni-AI, Amni-Browse and more.">
+<meta name="keywords" content="amni-scient,engineering calculators,learning games,amni-calc,amni-learn,amni-ai,amni-browse,privacy,free tools,webassembly">
 <meta name="author" content="Amni-Scient">
-<meta property="og:title" content="AMNI-SCIENT — Independent Software Studio">
-<meta property="og:description" content="Privacy-first, zero-telemetry tools. Browser, engineering calculators, educational games, AI coding assistant, encrypted messaging.">
+<meta property="og:title" content="AMNI-SCIENT — Free In-Browser Tools &amp; References">
+<meta property="og:description" content="Free engineering calculators, learning games, and field references — no install, no tracking.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://amni-scient.com">
-<meta property="og:image" content="https://amni-scient.com/assets/browse/Interface.png">
+<meta property="og:image" content="https://amni-scient.com/assets/explore/og-explore.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="AMNI-SCIENT — Independent Software Studio">
-<meta name="twitter:description" content="Privacy-first tools: browser, engineering calcs, educational games, AI coding, encrypted messaging. Solo-built.">
-<meta name="twitter:image" content="https://amni-scient.com/assets/browse/Interface.png">
+<meta name="twitter:title" content="AMNI-SCIENT — Free In-Browser Tools &amp; References">
+<meta name="twitter:description" content="Free engineering calculators, learning games, and field references — no install, no tracking.">
+<meta name="twitter:image" content="https://amni-scient.com/assets/explore/og-explore.png">
 <link rel="canonical" href="https://amni-scient.com">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"AMNI-SCIENT","url":"https://amni-scient.com","description":"Independent software studio building privacy-first, zero-telemetry tools for the web and desktop.","founder":{"@type":"Organization","name":"Amni-Scient"},"sameAs":[]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"AMNI-SCIENT","url":"https://amni-scient.com","description":"Independent software studio publishing free in-browser tools, learning games, and field references, plus privacy-first apps.","founder":{"@type":"Organization","name":"Amni-Scient"},"sameAs":[]}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
+<style>
+#hero-wheel{--acc:var(--accent);max-width:980px;margin:0 auto;padding:0 1rem}
+#hero-wheel .stage-wrap{position:relative;max-width:900px;margin:1.2rem auto 0}
+#hero-wheel .stage{position:relative;height:188px;overflow:hidden;-webkit-mask-image:linear-gradient(to right,transparent,#000 16%,#000 84%,transparent);mask-image:linear-gradient(to right,transparent,#000 16%,#000 84%,transparent);touch-action:pan-y;cursor:grab;outline:none}
+#hero-wheel .stage:active{cursor:grabbing}
+#hero-wheel .stage:focus-visible{box-shadow:inset 0 0 0 1px var(--acc)}
+#hero-wheel .belt{position:absolute;inset:0}
+#hero-wheel .spin-hint{position:absolute;bottom:6px;left:50%;transform:translateX(-50%);font-size:.62rem;letter-spacing:2px;color:var(--dim);text-transform:uppercase;z-index:3;opacity:.7}
+#hero-wheel .edge{position:absolute;top:calc(50% - 14px);transform:translateY(-50%);z-index:6;width:62px;height:62px;border-radius:50%;background:rgba(10,14,22,.55);border:1px solid var(--border);color:var(--acc);font-size:2.4rem;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(5px);animation:hw-pulse 1.8s ease-in-out infinite;-webkit-tap-highlight-color:transparent}
+#hero-wheel .edge:hover{border-color:var(--acc)}
+#hero-wheel .edge-l{left:6px}
+#hero-wheel .edge-r{right:6px}
+@keyframes hw-pulse{0%,100%{opacity:.4;box-shadow:0 0 6px -2px var(--acc);text-shadow:0 0 5px var(--acc)}50%{opacity:1;box-shadow:0 0 20px -2px var(--acc);text-shadow:0 0 16px var(--acc)}}
+#hero-wheel .item{position:absolute;left:0;top:0;display:flex;flex-direction:column;align-items:center;gap:.45rem;white-space:nowrap;text-decoration:none;transform-origin:center;will-change:transform,opacity}
+#hero-wheel .item .ico{font-size:1.7rem;line-height:1;padding:.55rem;border-radius:50%;border:1px solid transparent;filter:drop-shadow(0 0 6px var(--ic));transition:background .2s,border-color .2s,box-shadow .2s}
+#hero-wheel .item .lbl{font-size:.82rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--dim)}
+#hero-wheel .item.focus .ico{background:color-mix(in srgb,var(--ic) 16%,transparent);border-color:var(--ic);box-shadow:0 0 20px -4px var(--ic)}
+#hero-wheel .item.focus .lbl{color:var(--text)}
+#hero-wheel .item.mini .lbl{display:none}
+#hero-wheel .panel{position:relative;z-index:2;max-width:760px;margin:.6rem auto 0;padding:1.4rem 1.6rem 1.8rem;border:1px solid var(--border);border-top:2px solid var(--acc);border-radius:8px;background:linear-gradient(180deg,color-mix(in srgb,var(--acc) 6%,transparent),transparent);transition:opacity .22s ease,transform .22s ease;text-align:left}
+#hero-wheel .panel.swap{opacity:0;transform:translateY(10px)}
+#hero-wheel .panel h2{font-size:1.3rem;letter-spacing:2px;color:var(--acc);margin:0}
+#hero-wheel .panel .tag{color:var(--dim);font-size:.85rem;margin:.4rem 0 1.1rem;line-height:1.6}
+#hero-wheel .feat{list-style:none;display:grid;gap:.55rem;margin:0;padding:0}
+#hero-wheel .feat li{font-size:.85rem;line-height:1.5;padding-left:1.4rem;position:relative;opacity:0;transform:translateY(8px);transition:opacity .3s ease,transform .3s ease;color:var(--text)}
+#hero-wheel .panel:not(.swap) .feat li{opacity:1;transform:none}
+#hero-wheel .feat li::before{content:'▸';position:absolute;left:0;color:var(--acc)}
+#hero-wheel .cta-row{display:flex;gap:.8rem;flex-wrap:wrap;margin-top:1.3rem}
+#hero-wheel .cta{font-size:.78rem;letter-spacing:1px;text-transform:uppercase;text-decoration:none;padding:.6rem 1.1rem;border-radius:4px;transition:transform .12s}
+#hero-wheel .cta:hover{transform:translateY(-1px)}
+#hero-wheel .cta.primary{background:var(--acc);color:#06080d;font-weight:700}
+#hero-wheel .cta.ghost{border:1px solid var(--border);color:var(--text)}
+#hero-wheel .shots{margin-top:1.5rem;border-top:1px solid var(--border);padding-top:1.2rem}
+#hero-wheel .deck{position:relative;height:182px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+#hero-wheel .deck .shot-card{position:absolute;height:166px;width:auto;max-width:94%;border-radius:10px;border:1px solid var(--border);box-shadow:0 14px 32px -12px #000;background:#0c121d;transform:translateX(calc(var(--z)*18px)) rotate(calc(var(--z)*4deg)) scale(calc(1 - var(--z)*.06));opacity:calc(1 - var(--z)*.3);transition:filter .2s}
+#hero-wheel .deck:hover .shot-card.top{filter:brightness(1.08)}
+#hero-wheel .shots-meta{margin-top:.8rem;font-size:.72rem;letter-spacing:1px;text-transform:uppercase;color:var(--dim);text-align:center}
+#hero-wheel .refs{max-width:760px;margin:2.4rem auto 0;padding:1.2rem 1.6rem;border:1px dashed var(--border);border-radius:8px;text-align:left}
+#hero-wheel .refs h3{font-size:.72rem;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin:0 0 .8rem}
+#hero-wheel .refs .links{display:flex;flex-wrap:wrap;gap:.5rem .9rem;font-size:.82rem}
+#hero-wheel .refs .links a{color:var(--text);text-decoration:none;border-bottom:1px solid transparent}
+#hero-wheel .refs .links a:hover{border-color:var(--acc);color:var(--acc)}
+#hero-wheel .refs .note{margin:1rem 0 0;font-size:.72rem;color:var(--dim);line-height:1.6}
+#hero-wheel .lb{position:fixed;inset:0;background:rgba(2,4,9,.94);display:none;align-items:center;justify-content:center;z-index:200}
+#hero-wheel .lb.open{display:flex}
+#hero-wheel .lb img{max-width:92vw;max-height:84vh;object-fit:contain;border-radius:8px;border:1px solid var(--border)}
+#hero-wheel .lb-x{position:absolute;top:12px;right:18px;background:none;border:none;color:#fff;font-size:2.6rem;line-height:1;cursor:pointer}
+#hero-wheel .lb-nav{position:absolute;top:50%;transform:translateY(-50%);background:rgba(10,14,22,.6);border:1px solid var(--border);color:var(--acc);width:54px;height:54px;border-radius:50%;font-size:2rem;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center}
+#hero-wheel .lb-prev{left:10px}
+#hero-wheel .lb-next{right:10px}
+#hero-wheel .lb-count{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);color:var(--dim);font-size:.8rem;letter-spacing:1px}
+@media (prefers-reduced-motion:reduce){#hero-wheel .item,#hero-wheel .item .ico{transition:none}#hero-wheel .panel,#hero-wheel .feat li{transition:opacity .2s ease}#hero-wheel .edge{animation:none;opacity:.7}}
+</style>
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
@@ -35,6 +88,9 @@
 <a href="/" class="logo">AMNI<span>-SCIENT</span></a>
 <div class="links" id="nav-links">
 <a href="/">HOME</a>
+<a href="amni-calc.html">CALCULATORS</a>
+<a href="amni-learn.html">LEARN</a>
+<a href="research.html">RESEARCH</a>
 <div class="nav-dd">
 <button class="nav-dd-trigger">PROJECTS</button>
 <div class="nav-dd-menu">
@@ -47,13 +103,13 @@
 <a href="amni-connect.html">AMNI-CONNECT</a>
 <a href="amni-code.html">AMNI-CODE</a>
 <a href="amni-haven.html">AMNI-HAVEN</a>
+<a href="amni-crypt.html">AMNI-CRYPT</a>
 <a href="amni-life.html">AMNI-LIFE</a>
 <a href="amni-prayer.html">AMNI-PRAYER</a>
 </div>
 </div>
 <a href="about.html">ABOUT</a>
 <a href="faq.html">FAQ</a>
-<a href="privacy.html">PRIVACY</a>
 </div>
 <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
 <div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
@@ -62,72 +118,34 @@
 </nav>
 <section class="hero">
 <h1>AMNI-SCIENT</h1>
-<p class="subtitle">INDEPENDENT SOFTWARE STUDIO</p>
-<p class="tagline">Privacy-first tools that actually respect you. Zero telemetry. Solo-built. Honest disclosures per product.</p>
-<div class="cta-row">
-<a href="#projects" class="btn btn-primary">VIEW PROJECTS</a>
-<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="btn btn-outline">&#9749; SUPPORT</a>
-</div>
+<p class="subtitle">FREE IN-BROWSER TOOLS &amp; REFERENCES</p>
+<p class="tagline">Engineering calculators, learning games for all ages, and field references — plus privacy-first apps. No install. No tracking. Spin the wheel or pick what you need.</p>
 </section>
-<section id="projects">
-<h2>PROJECTS</h2>
-<div class="card-grid">
-<a href="amni-browse.html" class="card" style="text-decoration:none;border-color:rgba(0,212,255,0.3)">
-<span class="badge badge--dev">ALPHA</span>
-<h3 style="color:#00d4ff">AMNI-BROWSE</h3>
-<p>Privacy-first web browser. Zero telemetry, built-in ad blocker, DNS-over-HTTPS, AES-256-GCM password vault, multi-profile. Single Rust binary.</p>
-</a>
-<a href="amni-calc.html" class="card" style="text-decoration:none;border-color:rgba(255,107,53,0.3)">
-<span class="badge badge--released">LIVE</span>
-<h3 style="color:#ff6b35">AMNI-CALC</h3>
-<p>Engineering calculator suite (WASM, 30+ modules): beam FEA, stress/Mohr, fatigue (Goodman/Gerber), thermal, echem (Nernst/Tafel/BV), batteries, fluids (Moody), heat exchangers (LMTD/NTU), pressure vessels (Lam&eacute;/ASME), cycles, HVAC, electrical, vibration, gears, bolts, springs, seals, columns (Euler/Johnson), shafts, welds (AWS), bearings (ISO 281), pumps (NPSH), combustion, motors, NEC wire, materials, units.</p>
-</a>
-<a href="amni-explore.html" class="card" style="text-decoration:none;border-color:rgba(0,180,255,0.3)">
-<span class="badge badge--released">LIVE</span>
-<h3 style="color:#00b4ff">AMNI-EXPLORE</h3>
-<p>80K-particle galaxy explorer with NASA exoplanet data and procedural star systems. Rust/WASM engine, runs in-browser.</p>
-</a>
-<a href="amni-learn.html" class="card" style="text-decoration:none;border-color:rgba(46,204,113,0.3)">
-<span class="badge badge--released">LIVE</span>
-<h3 style="color:#2ecc71">AMNI-LEARN</h3>
-<p>Learning platform for all ages: Pre-K tracing, K-12 math / reading / typing / STEM, plus adult brain exercise (sudoku, cards, number games). 60+ games.</p>
-</a>
-<a href="amni-llm.html" class="card" style="text-decoration:none;border-color:rgba(168,140,255,0.3)">
-<span class="badge badge--released">LIVE</span>
-<h3 style="color:#a88cff">AMNI-LLM</h3>
-<p>Universal in-browser GGUF runtime. Load any HuggingFace GGUF model client-side &mdash; Qwen 3.5, DeepSeek, Mistral, anything with a GGUF build. Open source (MIT).</p>
-</a>
-<a href="amni-connect.html" class="card" style="text-decoration:none;border-color:rgba(0,255,170,0.3)">
-<span class="badge badge--dev">ALPHA</span>
-<h3 style="color:#00ffaa">AMNI-CONNECT</h3>
-<p>End-to-end encrypted remote desktop over WebRTC. Rust input daemon, self-hostable signaling, zero logs, zero cloud.</p>
-</a>
-<a href="amni-code.html" class="card" style="text-decoration:none;border-color:rgba(233,30,99,0.3)">
-<span class="badge badge--dev">IN DEVELOPMENT</span>
-<h3 style="color:#e91e63">AMNI-CODE</h3>
-<p>Agentic AI coding assistant in a single Rust binary. 15-iteration autonomous tool loop, multi-provider LLM, local GGUF model discovery, six built-in tools.</p>
-</a>
-<a href="amni-haven.html" class="card" style="text-decoration:none;border-color:rgba(124,92,252,0.3)">
-<span class="badge badge--released">LIVE</span>
-<h3 style="color:#7c5cfc">AMNI-HAVEN</h3>
-<p>Android client for ANCSemi's Haven chat (self-hostable). Socket.IO real-time messaging, FCM push, WebRTC voice &amp; video. Live on Play Store.</p>
-</a>
-<a href="amni-prayer.html" class="card" style="text-decoration:none;border-color:rgba(245,200,66,0.3)">
-<span class="badge badge--released">LIVE</span>
-<h3 style="color:#f5c842">AMNI-PRAYER</h3>
-<p>Imago Nuntii Divini &mdash; the entire Catholic Bible as a living 3D nodal map. 35,817 verses, 64,497 cross-references, 17 layouts, Tandem reading mode.</p>
-</a>
+<div id="hero-wheel">
+<div class="stage-wrap">
+<div class="stage" id="stage" tabindex="0" role="listbox" aria-label="Project wheel — swipe sideways, or use arrow keys">
+<div class="belt" id="belt"></div>
+<div class="spin-hint">swipe · scroll · ← → · tap to pick</div>
 </div>
-</section>
-<section class="showcase-section">
-<h2>PROJECT SHOWCASE</h2>
-<div class="showcase-title">AMNI-HAVEN &mdash; Encrypted Messaging</div>
-<div class="showcase-row">
-<div class="showcase-item"><img class="gallery-thumb" src="assets/haven/Screenshot_32.png" alt="Haven encrypted chat" onclick="openLightbox(this.src,this.alt)"><div class="showcase-label">E2E ENCRYPTED CHAT</div></div>
-<div class="showcase-item"><img class="gallery-thumb" src="assets/haven/Screenshot_34.png" alt="Haven media sharing" onclick="openLightbox(this.src,this.alt)"><div class="showcase-label">MEDIA SHARING</div></div>
-<div class="showcase-item"><img class="gallery-thumb" src="assets/haven/10in_38.png" alt="Haven tablet view" onclick="openLightbox(this.src,this.alt)"><div class="showcase-label">TABLET VIEW</div></div>
+<button class="edge edge-l" id="edge-l" aria-label="Previous project">&#8249;</button>
+<button class="edge edge-r" id="edge-r" aria-label="Next project">&#8250;</button>
 </div>
-</section>
+<div class="panel" id="panel"></div>
+<div class="refs">
+<h3>Popular references — straight to the good stuff</h3>
+<div class="links">
+<a href="calc/bolts.html">Bolt Torque &amp; Preload</a><a href="calc/stress.html">Beam Stress &amp; Mohr</a><a href="calc/fatigue.html">Fatigue Life</a><a href="calc/hx.html">Heat Exchangers</a><a href="calc/pumps.html">Pump NPSH</a><a href="learn/elementary.html">Elementary Pack</a><a href="learn/brain-cognitive.html">Adult Brain Training</a><a href="learn/subjects.html">Subject Quizzes</a>
+</div>
+<p class="note">Free, in-browser, no sign-up — jump straight into the calculators and learning guides.</p>
+</div>
+<div class="lb" id="lb" aria-hidden="true">
+<button class="lb-x" id="lb-x" aria-label="Close">&times;</button>
+<button class="lb-nav lb-prev" id="lb-prev" aria-label="Previous">&#8249;</button>
+<img id="lb-img" alt="Screenshot">
+<button class="lb-nav lb-next" id="lb-next" aria-label="Next">&#8250;</button>
+<div class="lb-count" id="lb-count"></div>
+</div>
+</div>
 <section>
 <h2>PHILOSOPHY</h2>
 <div class="features-2x2">
@@ -157,9 +175,9 @@
 <h2>WHAT WE BUILD &amp; WHY</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
 <p>Every Amni-Scient project exists because existing solutions fell short in privacy, transparency, or accessibility. Rather than accept those tradeoffs, we built alternatives from scratch.</p>
-<p style="margin-top:1.2rem"><strong style="color:var(--text)">Web browsers</strong> ship with telemetry baked in, ad blocking as an afterthought, and sync services that hold your data hostage. Amni-Browse is a single Rust binary with zero telemetry, navigation-layer ad blocking, DNS-over-HTTPS, and an AES-256-GCM password vault &mdash; everything local, nothing phoned home.</p>
-<p style="margin-top:1.2rem"><strong style="color:var(--text)">Engineering calculators</strong> are usually either expensive desktop suites or imprecise web forms. Amni-Calc runs FEA beam analysis, seal design, bolt torque, and thermal calculations in a WASM backend &mdash; interactive, accurate, and free.</p>
+<p style="margin-top:1.2rem"><strong style="color:var(--text)">Engineering calculators</strong> are usually either expensive desktop suites or imprecise web forms. Amni-Calc runs FEA beam analysis, seal design, bolt torque, and thermal calculations in a WASM backend &mdash; interactive, accurate, and free, with theory and worked examples on every module.</p>
 <p style="margin-top:1.2rem"><strong style="color:var(--text)">Educational platforms for children</strong> commonly track behavior, serve ads, or require accounts. Amni-Learn collects zero data, runs offline after loading, and covers Pre-K through high school with 60+ interactive games.</p>
+<p style="margin-top:1.2rem"><strong style="color:var(--text)">Web browsers</strong> ship with telemetry baked in. Amni-Browse is a single Rust binary with zero telemetry, navigation-layer ad blocking, DNS-over-HTTPS, and an AES-256-GCM password vault &mdash; everything local, nothing phoned home.</p>
 <p style="margin-top:1.2rem">Want to know more? Visit the <a href="about.html">About page</a> or read the <a href="faq.html">FAQ</a>.</p>
 </div>
 </section>
@@ -175,7 +193,61 @@
 </div>
 <p>&copy; 2025-2026 Amni-Scient. All rights reserved.</p>
 </footer>
-<div class="lightbox" onclick="closeLightbox(event)"><span class="lightbox-close">&times;</span><img></div>
-<script>function openLightbox(s,a){const l=document.querySelector('.lightbox'),i=l.querySelector('img');i.src=s;i.alt=a;l.classList.add('open')}function closeLightbox(e){e.target.tagName!=='IMG'&&document.querySelector('.lightbox').classList.remove('open')}</script>
+<script>
+const P=[{k:'ai',n:'AMNI-AI',h:'amni-ai.html',c:'#ffb74d',w:5,t:'Adam — a local, self-improving AI assistant that gets better the more you use it.',f:['GF(17) texture-native — runs local in ~4&nbsp;GB VRAM, lossless','Self-improving memory: corrected once, never wrong twice','Voice + vision + wake-word, Jarvis-style UI, 42 skills','Drop-in Ollama + OpenAI API replacement on one port']},
+{k:'calc',n:'AMNI-CALC',h:'amni-calc.html',c:'#ff6b35',w:5,t:'Engineering calculator suite — 30+ in-browser WASM modules with theory and worked examples.',f:['Beam FEA, stress &amp; Mohr&rsquo;s circle, section properties','Fatigue (Goodman/Gerber), pressure vessels, columns','Fluids (Moody), heat exchangers (LMTD/NTU), pumps (NPSH)','Every module ships theory, a worked example &amp; cited standards']},
+{k:'learn',n:'AMNI-LEARN',h:'amni-learn.html',c:'#2ecc71',w:5,t:'60+ educational games and guides, Pre-K through adult brain training.',f:['Pre-K tracing, phonics &amp; counting','K-12 math, reading, typing &amp; STEM labs','Adult brain training: sudoku, memory, speed math','Zero telemetry — runs fully offline after first load']},
+{k:'explore',n:'AMNI-EXPLORE',h:'amni-explore.html',c:'#00b4ff',w:3,t:'An 80K-particle galaxy explorer with a real-data star map and idle empire layer.',f:['Real NASA exoplanet data','Procedurally generated star systems','Rust/WASM engine, runs in-browser','Build an interstellar economy']},
+{k:'browse',n:'AMNI-BROWSE',h:'amni-browse.html',c:'#00d4ff',w:2,t:'A privacy-first web browser in a single Rust binary.',f:['Zero telemetry','Built-in ad blocker + DNS-over-HTTPS','AES-256-GCM password vault','Multi-profile']},
+{k:'haven',n:'AMNI-HAVEN',h:'amni-haven.html',c:'#7c5cfc',w:2,t:'Encrypted messaging on your own server.',f:['E2E DMs: ECDH P-256 + HKDF + AES-256-GCM','WebRTC voice, video &amp; screen share','FCM push, Socket.IO real-time delivery','Live on the Play Store']},
+{k:'llm',n:'AMNI-LLM',h:'amni-llm.html',c:'#a88cff',w:2,t:'A universal in-browser GGUF runtime.',f:['Run any HuggingFace GGUF model client-side','Qwen, DeepSeek, Mistral &amp; more','Nothing leaves your device','Open source (MIT)']},
+{k:'code',n:'AMNI-CODE',h:'amni-code.html',c:'#e91e63',w:1,t:'An agentic AI coding assistant in one Rust binary.',f:['15-iteration autonomous tool loop','Multi-provider LLM + local GGUF discovery','Six built-in tools','Single binary, no install']},
+{k:'connect',n:'AMNI-CONNECT',h:'amni-connect.html',c:'#00ffaa',w:1,t:'End-to-end encrypted remote desktop over WebRTC.',f:['Peer-to-peer WebRTC','Rust input daemon','Self-hostable signaling','Zero logs, zero cloud']},
+{k:'crypt',n:'AMNI-CRYPT',h:'amni-crypt.html',c:'#ff4444',w:2,t:'Proprietary 1024-bit file encryption for Android.',f:['1024-bit encryption with a 16-round SPN','Shadow Texture Protocol key derivation','Encrypt any file type','Free on Android (ad-supported); premium removes ads']},
+{k:'core',n:'AMNI-CORE',h:'amni-core.html',c:'#6c7ae0',w:1,t:'A quantum-safe, GPU-forward systems platform — a post-legacy OS.',f:['Designed from scratch, not patched','GPU-native pipeline','Quantum-resilient by design','Deterministic execution, smaller trust base']},
+{k:'prayer',n:'AMNI-PRAYER',h:'amni-prayer.html',c:'#f5c842',w:2,t:'The entire Catholic Bible as a living 3D nodal map.',f:['35,817 verses as nodes','64,497 cross-references','17 layouts + Tandem reading mode','Imago Nuntii Divini']},
+{k:'life',n:'AMNI-LIFE',h:'amni-life.html',c:'#ff9f43',w:1,t:'An on-device personal life dashboard (installable PWA).',f:['Installs as an offline PWA','Private by default, fully on-device','Snapshots, media, QR sharing, geolocation']}];
+const IC={ai:'✨',calc:'⚙️',learn:'📚',explore:'🌌',browse:'🛡️',haven:'💬',llm:'🧠',code:'🤖',connect:'🖥️',crypt:'🔐',core:'🧱',prayer:'✝️',life:'🌱'};
+const SHOTS={calc:['assets/calc/ss_seal_analysis.png','assets/calc/ss_materials_1.png','assets/calc/ss_finishes_1.png','assets/calc/ss_finishes_2.png'],explore:['assets/explore/ss_galaxy.png','assets/explore/ss_planet.png','assets/explore/ss_solar_system.png'],browse:['assets/browse/Screenshot%202026-04-17%20110302.png','assets/browse/Screenshot%202026-04-17%20110316.png'],haven:['assets/haven/Screenshot_32.png','assets/haven/Screenshot_33.png','assets/haven/Screenshot_34.png','assets/haven/Screenshot_35.png','assets/haven/Screenshot_36.png','assets/haven/Screenshot_37.png'],code:['assets/code/Interface.png','assets/code/Response.png','assets/code/Thinking.png','assets/code/terminal.png','assets/code/Settings.png'],connect:['assets/connect/Screenshot%202026-04-17%20105239.png','assets/connect/Screenshot%202026-04-17%20105354.png'],crypt:['assets/crypt/feature_graphic.png'],learn:['assets/learn/ss_prek.png','assets/learn/ss_brain.png'],prayer:['assets/prayer/ss_map.png'],llm:['assets/llm/ss_loader.png']};
+const N=P.length;
+const hw=document.getElementById('hero-wheel'),stage=document.getElementById('stage'),belt=document.getElementById('belt'),panel=document.getElementById('panel');
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let pos=0,focusI=-1,raf=0,S=160;
+const items=P.map(p=>{const a=document.createElement('a');a.className='item';a.href=p.h;a.setAttribute('role','option');a.style.setProperty('--ic',p.c);a.innerHTML=`<span class="ico">${IC[p.k]}</span><span class="lbl">${p.n}</span>`;a.addEventListener('click',e=>e.preventDefault());belt.appendChild(a);return a;});
+const norm=d=>((d%360)+360)%360;
+const wrap=v=>{v=((v%N)+N)%N;return v>N/2?v-N:v;};
+const ctr=()=>((Math.round(pos)%N)+N)%N;
+const layout=()=>{S=Math.min(165,stage.clientWidth*0.44);const cx=stage.clientWidth/2,cy=stage.clientHeight/2-6,ti=ctr();items.forEach((el,i)=>{const d=wrap(i-pos),ad=Math.abs(d),x=cx+d*S,yo=Math.min(ad,2.6)*7,sc=Math.max(.55,1.28-ad*.4);el.style.transform=`translate(${x}px,${cy+yo}px) translate(-50%,-50%) scale(${sc})`;el.style.opacity=Math.max(0,1-ad*.42).toFixed(3);el.style.zIndex=Math.round((6-ad)*10);el.classList.toggle('mini',i!==ti);});};
+const ease=t=>1-Math.pow(1-t,3);
+const select=i=>{if(i===focusI)return;focusI=i;const p=P[i];items.forEach((el,j)=>el.classList.toggle('focus',j===i));hw.style.setProperty('--acc',p.c);panel.classList.add('swap');const build=()=>{panel.style.setProperty('--acc',p.c);const sh=SHOTS[p.k]||[];const deck=sh.length?`<div class="shots"><div class="deck" tabindex="0" role="button" aria-label="${p.n} screenshots">${sh.slice(0,3).map((src,z)=>`<img src="${src}" alt="${p.n} screenshot" class="shot-card${z===0?' top':''}" style="--z:${z};z-index:${3-z}" loading="lazy">`).join('')}</div><div class="shots-meta">${sh.length} screenshot${sh.length>1?'s':''} &mdash; tap to enlarge</div></div>`:'';panel.innerHTML=`<h2>${IC[p.k]} ${p.n}</h2><p class="tag">${p.t}</p><ul class="feat">${p.f.map(f=>`<li>${f}</li>`).join('')}</ul>${deck}<div class="cta-row"><a class="cta primary" href="${p.h}">Open ${p.n} &rarr;</a><a class="cta ghost" href="${p.h}">Details &amp; docs</a></div>`;requestAnimationFrame(()=>{panel.classList.remove('swap');[...panel.querySelectorAll('.feat li')].forEach((li,k)=>li.style.transitionDelay=(k*70)+'ms');const dk=panel.querySelector('.deck');dk&&dk.addEventListener('click',()=>openShots(sh));dk&&dk.addEventListener('keydown',ev=>{(ev.key==='Enter'||ev.key===' ')&&(ev.preventDefault(),openShots(sh));});});};reduce?build():setTimeout(build,180);};
+const spinTo=(target,extra)=>{cancelAnimationFrame(raf);let d=target-ctr();d=((d%N)+N)%N;if(d>N/2)d-=N;let end=Math.round(pos)+d+(extra?N:0);if(reduce){pos=end;layout();select(target);return;}const start=pos,dist=Math.abs(end-start),dur=extra?2600:Math.max(360,dist*210),t0=performance.now();const tick=now=>{const k=Math.min(1,(now-t0)/dur);pos=start+(end-start)*ease(k);layout();if(k<1)raf=requestAnimationFrame(tick);else{pos=end;layout();select(target);}};raf=requestAnimationFrame(tick);};
+const snap=()=>spinTo(ctr(),0);
+const step=dir=>{const b=focusI<0?ctr():focusI;spinTo((b+dir+N)%N,0);};
+const wRand=()=>{const pool=[];P.forEach((p,i)=>{for(let j=0;j<p.w;j++)pool.push(i);});return pool[Math.floor(Math.random()*pool.length)];};
+const lb=document.getElementById('lb'),lbImg=document.getElementById('lb-img'),lbCount=document.getElementById('lb-count');
+let lbArr=[],lbI=0,lsx=0,lsd=false;
+const lbRender=()=>{lbImg.src=lbArr[lbI];lbCount.textContent=(lbI+1)+' / '+lbArr.length;};
+const openShots=a=>{if(!a||!a.length)return;lbArr=a;lbI=0;lbRender();lb.classList.add('open');};
+const lbGo=d=>{lbI=(lbI+d+lbArr.length)%lbArr.length;lbRender();};
+const lbClose=()=>lb.classList.remove('open');
+document.getElementById('lb-x').addEventListener('click',lbClose);
+document.getElementById('lb-prev').addEventListener('click',e=>{e.stopPropagation();lbGo(-1);});
+document.getElementById('lb-next').addEventListener('click',e=>{e.stopPropagation();lbGo(1);});
+lb.addEventListener('click',e=>{e.target===lb&&lbClose();});
+lb.addEventListener('pointerdown',e=>{lsd=true;lsx=e.clientX;});
+lb.addEventListener('pointerup',e=>{if(!lsd)return;lsd=false;const dx=e.clientX-lsx;Math.abs(dx)>40&&lbGo(dx<0?1:-1);});
+let drag=false,sx=0,sy=0,sp=0,lock=0,acc=0;
+stage.addEventListener('pointerdown',e=>{drag=true;sx=e.clientX;sy=e.clientY;sp=pos;lock=0;cancelAnimationFrame(raf);stage.focus({preventScroll:true});});
+addEventListener('pointermove',e=>{if(!drag)return;const dx=e.clientX-sx,dy=e.clientY-sy;if(!lock){if(Math.hypot(dx,dy)<7)return;lock=Math.abs(dx)>=Math.abs(dy)?1:2;if(lock===2){drag=false;return;}}pos=sp-dx/S;layout();});
+addEventListener('pointerup',e=>{if(!drag)return;drag=false;if(lock===1){snap();}else{const it=e.target&&e.target.closest&&e.target.closest('.item');it?spinTo(items.indexOf(it),0):snap();}lock=0;});
+addEventListener('pointercancel',()=>{if(drag){drag=false;lock=0;snap();}});
+stage.addEventListener('wheel',e=>{if(document.activeElement!==stage)return;e.preventDefault();acc+=(Math.abs(e.deltaX)>Math.abs(e.deltaY)?e.deltaX:e.deltaY);if(Math.abs(acc)>=28){step(acc>0?1:-1);acc=0;}},{passive:false});
+addEventListener('keydown',e=>{if(lb.classList.contains('open')){if(e.key==='Escape')lbClose();else if(e.key==='ArrowRight')lbGo(1);else if(e.key==='ArrowLeft')lbGo(-1);return;}if(e.key==='ArrowRight'){e.preventDefault();step(1);}else if(e.key==='ArrowLeft'){e.preventDefault();step(-1);}});
+document.getElementById('edge-l').addEventListener('click',()=>step(-1));
+document.getElementById('edge-r').addEventListener('click',()=>step(1));
+addEventListener('resize',layout);
+layout();
+reduce?(pos=0,layout(),select(0)):spinTo(wRand(),1);
+</script>
 </body>
 </html>
