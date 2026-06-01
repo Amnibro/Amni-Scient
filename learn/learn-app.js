@@ -9902,6 +9902,7 @@
   if(audioBtn) audioBtn.setAttribute('aria-label','Hear the question read aloud');
   if(quizPrompt){ quizPrompt.setAttribute('aria-live','polite'); quizPrompt.setAttribute('role','status'); }
   if(quizChoices){ quizChoices.setAttribute('role','group'); quizChoices.setAttribute('aria-label','Answer choices'); }
+  const _fbEl = $$('#feedback'); if(_fbEl){ _fbEl.setAttribute('aria-live','polite'); _fbEl.setAttribute('role','status'); }
 function playAnimalSound(type) {
     const mappings = {
         'moo':'cow','woof':'dog','meow':'cat','oink':'pig','baa':'sheep','quack':'duck','neigh':'horse','ribbit':'frog',
@@ -9982,7 +9983,7 @@ function playAnimalSound(type) {
       const crds=document.createElement('div'); crds.className='teach-cards';
       tData.forEach((d,i)=>{ const c=document.createElement('div'); c.className='teach-card'; c.innerHTML=`<span class="tc-emoji">${d.emoji}</span><div class="tc-title">${d.title}</div><div class="tc-fact">${d.fact}</div>`; c.style.animation='bounceIn 0.4s ease both'; c.style.animationDelay=(Math.min(i,8)*0.06)+'s'; crds.appendChild(c); });
       teachPhaseEl.appendChild(crds);
-      const dotsWrap=document.createElement('div'); dotsWrap.className='teach-dots';
+      const dotsWrap=document.createElement('div'); dotsWrap.className='teach-dots'; dotsWrap.setAttribute('aria-hidden','true');
       tData.forEach((_,i)=>{ const d=document.createElement('div'); d.className='teach-dot'+(i===0?' active':''); dotsWrap.appendChild(d); });
       teachPhaseEl.appendChild(dotsWrap);
       crds.addEventListener('scroll',()=>{ const idx=Math.round(crds.scrollLeft/270); $$all('.teach-dot').forEach((d,i)=>d.classList.toggle('active',i===idx)); });

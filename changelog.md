@@ -14,6 +14,10 @@
 - **Broke template lockstep (Step 2).** Added a deterministic per-page heading picker to both SEO generators (`src/gen-calc-modules.js`, `src/gen-learn-categories.js`): each of the 5 section headings + the deep-dive hint now draws from 4–6 variants keyed by a stable hash of the page slug (so regenerations don't churn). Regenerated all 31 calc + 11 learn pages — identical "WHAT IT COMPUTES / KEY EQUATIONS / …" skeleton replaced with distributed variants; page bodies (already unique) untouched; ads preserved on the article pages.
 - Plan/council: docs/checklists/checklist_v5.8.0_adsense_round4.md + docs/guardian_councils/guardian_council_v5.8.0_adsense_round4.md. Backups in backups/v5.8.0_adsense/. Step 3 (content-first restructure) still pending; do NOT submit AdSense reconsideration until the learn app is smoke-tested in a browser. v5.8.0.
 
+## [5.7.981] - 2026-06-01 - POLISH: a11y round 2 — feedback toast announced + decorative dots hidden
+- Continued the accessibility pass (learn-app.js only, no behavior change): (1) the shared #feedback toast (used by EVERY module for "Correct!", "✗ Answer", achievements, scores) is now aria-live="polite" role="status", so results are announced to screen readers instead of being silent visual-only; (2) the teach-phase scroll-position dots are decorative, now aria-hidden="true" so screen readers don't read a meaningless dot list.
+- node --check passes. Bumps sw v1061→v1062. v5.7.981.
+
 ## [5.7.980] - 2026-06-01 - POLISH: accessibility (a11y) on the subject-quiz view
 - Screen-reader support for the quiz, set once in learn-app.js (no index.html change, no behavior change): (1) the icon-only 🔊 audio button now has aria-label="Hear the question read aloud" (was announced as just "button"); (2) #quiz-prompt is now an aria-live="polite" role="status" region, so each new question + the quiz-complete score are announced automatically; (3) #quiz-choices is role="group" aria-label="Answer choices". Choice + Next buttons were already real <button>s (keyboard-accessible).
 - node --check passes. Bumps sw v1060→v1061. v5.7.980.
