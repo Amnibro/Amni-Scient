@@ -13615,7 +13615,7 @@ function playAnimalSound(type) {
   function initSymCode(){
     const ct=$$('#sym-container'),hud=$$('#sym-hud');
     if(window._symTimer){clearInterval(window._symTimer);window._symTimer=null;}
-    const order=['★','●','▲','■','◆','♥'].sort(()=>Math.random()-0.5);
+    const lvl=Math.min(currentLevel||3,5),nSym=lvl<=2?4:lvl>=4?8:6,order=['★','●','▲','■','◆','♥','✦','✚'].slice(0,nSym).sort(()=>Math.random()-0.5);
     let timeLeft=60,correct=0,wrong=0,streak=0,cur=0;
     const best=parseInt(sessionStorage.getItem('sym-best')||'0');
     hud.innerHTML=`<span class="game-stat">⏱ <span class="game-stat-val" id="sym-t">60</span>s</span><span class="game-stat">✅ <span class="game-stat-val" id="sym-c">0</span></span><span class="game-stat">🔥 <span class="game-stat-val" id="sym-st">0</span></span><span class="game-stat">⭐ Best ${best||'—'}</span>`;
@@ -13635,7 +13635,7 @@ function playAnimalSound(type) {
   function initGoNoGo(){
     const ct=$$('#gng-container'),hud=$$('#gng-hud');
     if(window._gngTimeout){clearTimeout(window._gngTimeout);window._gngTimeout=null;}
-    const TRIALS=30,GO_P=0.7;
+    const lvl=Math.min(currentLevel||3,5),TRIALS=lvl<=2?20:30,GO_P=lvl<=2?0.78:lvl>=4?0.62:0.7;
     let trial=0,hits=0,crej=0,comm=0,omis=0,rts=[],streak=0,awaiting=false,isGo=false,stimStart=0,responded=false;
     const best=parseInt(sessionStorage.getItem('gng-best')||'0');
     const updHud=()=>{const t=$$('#gng-tr');if(t)t.textContent=trial;const done=hits+crej+comm+omis,a=done?Math.round(100*(hits+crej)/done):0,ae=$$('#gng-acc');if(ae)ae.textContent=a;const s=$$('#gng-st');if(s)s.textContent=streak;};
@@ -13648,7 +13648,7 @@ function playAnimalSound(type) {
     const finish=()=>{const a=acc(),avg=rts.length?Math.round(rts.reduce((x,y)=>x+y,0)/rts.length):0,score=Math.max(1,hits*2+crej*3-comm*2);if(score>best)sessionStorage.setItem('gng-best',score);ct.innerHTML='';const sum=document.createElement('div');sum.className='rxt-summary';sum.innerHTML=`<h3>${a>=85?'🌟 Sharp inhibition!':a>=70?'👍 Nice control':'💪 Keep training'}</h3><div class="rxt-summary-stats"><div class="rxt-summary-stat"><span class="val">${a}%</span><span class="lbl">Accuracy</span></div><div class="rxt-summary-stat"><span class="val">${avg||'—'}</span><span class="lbl">Avg Go ms</span></div><div class="rxt-summary-stat"><span class="val">${comm}</span><span class="lbl">Impulse slips</span></div><div class="rxt-summary-stat"><span class="val">${omis}</span><span class="lbl">Missed gos</span></div></div><div class="rxt-tier-scale">Go/No-Go trains response INHIBITION — tap fast on GO, hold back on STOP. Impulse slips = tapping STOP.</div>`;ct.appendChild(sum);a>=85?spawnConfetti(window.innerWidth/2,window.innerHeight/2,100):(a>=70&&spawnConfetti(window.innerWidth/2,window.innerHeight/3,50));showFeedback(`Go/No-Go: ${a}% 🚦`,a>=85?'#2ecc71':'#f1c40f');addScore(Math.max(1,Math.floor(score/4)));const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='AGAIN';rb.style.marginTop='12px';rb.onclick=()=>initGoNoGo();ct.appendChild(rb);};
     const respond=()=>{if(currentGame!=='gonogo'||!awaiting||responded)return;responded=true;awaiting=false;if(isGo){hits++;rts.push(Date.now()-stimStart);streak++;addScore(1);showFeedback('✓','#2ecc71');}else{comm++;streak=0;resetStreak();stim.style.animation='shake 0.4s';setTimeout(()=>{if(stim)stim.style.animation='';},420);showFeedback('✗ that was STOP!','#e74c3c');}flash();updHud();next();};
     stim.onclick=respond;
-    function next(){if(currentGame!=='gonogo')return;if(trial>=TRIALS)return finish();stim.style.background='#34495e';stim.textContent='…';window._gngTimeout=setTimeout(()=>{if(currentGame!=='gonogo')return;trial++;updHud();responded=false;awaiting=true;isGo=Math.random()<GO_P;stim.style.background=isGo?'#2ecc71':'#e74c3c';stim.textContent=isGo?'GO!':'STOP';stimStart=Date.now();const win=Math.max(550,1000-trial*12);window._gngTimeout=setTimeout(()=>{if(currentGame!=='gonogo'||!awaiting)return;awaiting=false;isGo?(omis++,streak=0,resetStreak(),showFeedback('⏱ too slow!','#e67e22')):(crej++,streak++,addScore(1),showFeedback('✓ held!','#2ecc71'));flash();updHud();next();},win);},500+Math.random()*400);}
+    function next(){if(currentGame!=='gonogo')return;if(trial>=TRIALS)return finish();stim.style.background='#34495e';stim.textContent='…';window._gngTimeout=setTimeout(()=>{if(currentGame!=='gonogo')return;trial++;updHud();responded=false;awaiting=true;isGo=Math.random()<GO_P;stim.style.background=isGo?'#2ecc71':'#e74c3c';stim.textContent=isGo?'GO!':'STOP';stimStart=Date.now();const win=lvl<=2?Math.max(750,1250-trial*8):lvl>=4?Math.max(460,880-trial*15):Math.max(550,1000-trial*12);window._gngTimeout=setTimeout(()=>{if(currentGame!=='gonogo'||!awaiting)return;awaiting=false;isGo?(omis++,streak=0,resetStreak(),showFeedback('⏱ too slow!','#e67e22')):(crej++,streak++,addScore(1),showFeedback('✓ held!','#2ecc71'));flash();updHud();next();},win);},500+Math.random()*400);}
     window._gngTimeout=setTimeout(()=>{if(currentGame==='gonogo')next();},700);
   }
   function initReaction(){

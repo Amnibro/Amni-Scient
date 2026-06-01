@@ -14,6 +14,12 @@
 - **Broke template lockstep (Step 2).** Added a deterministic per-page heading picker to both SEO generators (`src/gen-calc-modules.js`, `src/gen-learn-categories.js`): each of the 5 section headings + the deep-dive hint now draws from 4–6 variants keyed by a stable hash of the page slug (so regenerations don't churn). Regenerated all 31 calc + 11 learn pages — identical "WHAT IT COMPUTES / KEY EQUATIONS / …" skeleton replaced with distributed variants; page bodies (already unique) untouched; ads preserved on the article pages.
 - Plan/council: docs/checklists/checklist_v5.8.0_adsense_round4.md + docs/guardian_councils/guardian_council_v5.8.0_adsense_round4.md. Backups in backups/v5.8.0_adsense/. Step 3 (content-first restructure) still pending; do NOT submit AdSense reconsideration until the learn app is smoke-tested in a browser. v5.8.0.
 
+## [5.7.991] - 2026-06-01 - POLISH: level-scaled difficulty for new modules (Go/No-Go + Symbol Coding)
+- New direction (Anthony): polish the 6 new brain modules with difficulty / kid-vs-adult tuning. The app's global `currentLevel` (1-5, set by the level selector the quizzes already use) now scales each game. Round 1 of 3:
+- Go/No-Go: `lvl = min(currentLevel,5)`. Young (L1-2) → 20 trials, 78% GO (more forgiving), slower windows (≥750ms, gentle ramp). Advanced (L4-5) → 30 trials, 62% GO (harder inhibition — more STOPs), fast windows (≥460ms, steep ramp). Mid (L3) = original.
+- Symbol Coding: key size scales — L1-2 → 4 symbols (easy key), L3 → 6, L4-5 → 8 symbols (added ✦ ✚). Number pad + key auto-size to the symbol count.
+- Pure parameter tuning, no structural change; node --check passes. Bumps sw v1071→v1072. v5.7.991. (Corsi + Flanker next, then Simon + Dot Estimate.)
+
 ## [5.7.990] - 2026-06-01 - NEW MODULE: Dot Estimate (Approximate Number Sense exercise)
 - Brain-exercise #6 (Anthony's direction). The Approximate Number System (ANS) test — a distinct number-sense paradigm not covered by any existing module.
 - Gameplay: two panels briefly flash (~700ms) clusters of dots, then clear; tap ◀/▶ for the side that had MORE. Ratio between the two counts tightens every 5 trials (1.8 → 1.13), so it gets progressively harder. The correct side flashes green/red as feedback. 30 trials; tracks correct + accuracy. Summary + AGAIN. Placed in "Visual & Spatial".
