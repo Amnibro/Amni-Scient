@@ -14,6 +14,10 @@
 - **Broke template lockstep (Step 2).** Added a deterministic per-page heading picker to both SEO generators (`src/gen-calc-modules.js`, `src/gen-learn-categories.js`): each of the 5 section headings + the deep-dive hint now draws from 4–6 variants keyed by a stable hash of the page slug (so regenerations don't churn). Regenerated all 31 calc + 11 learn pages — identical "WHAT IT COMPUTES / KEY EQUATIONS / …" skeleton replaced with distributed variants; page bodies (already unique) untouched; ads preserved on the article pages.
 - Plan/council: docs/checklists/checklist_v5.8.0_adsense_round4.md + docs/guardian_councils/guardian_council_v5.8.0_adsense_round4.md. Backups in backups/v5.8.0_adsense/. Step 3 (content-first restructure) still pending; do NOT submit AdSense reconsideration until the learn app is smoke-tested in a browser. v5.8.0.
 
+## [5.7.982] - 2026-06-01 - POLISH: a11y round 3 — prefers-reduced-motion guard
+- Responsible follow-up to the new animations (teach-card bounce-in, quiz celebration, sortCorrect/shake): added a global `@media (prefers-reduced-motion: reduce)` rule in learn/index.html that near-instantly completes all CSS animations + transitions (0.001ms, iteration-count 1) and disables smooth-scroll for users who have the OS "reduce motion" setting on (vestibular-sensitivity standard). End-states still apply (so `both`-fill reveals still show content) — only the motion is removed; no functionality lost.
+- Scoped to learn/index.html (the learn shell, NOT the root homepage hero). Bumps sw v1062→v1063. v5.7.982.
+
 ## [5.7.981] - 2026-06-01 - POLISH: a11y round 2 — feedback toast announced + decorative dots hidden
 - Continued the accessibility pass (learn-app.js only, no behavior change): (1) the shared #feedback toast (used by EVERY module for "Correct!", "✗ Answer", achievements, scores) is now aria-live="polite" role="status", so results are announced to screen readers instead of being silent visual-only; (2) the teach-phase scroll-position dots are decorative, now aria-hidden="true" so screen readers don't read a meaningless dot list.
 - node --check passes. Bumps sw v1061→v1062. v5.7.981.
