@@ -720,13 +720,15 @@
     html.push(_pickerSection('🎨 Theme','theme','amni-learn-theme',theme));
     html.push(_pickerSection('🌟 Mascot','mascots','profile-mascot',mascot));
     html.push(_pickerSection('✨ Cursor Trail','cursors','profile-cursor',cursor));
+    const ttsOn=(localStorage.getItem('amni-learn-tts')||'on')!=='off';
+    html.push(`<div style="margin:14px 0 6px;color:#4db8ff;font-size:0.88rem;font-weight:bold">🔊 Read Aloud</div><div style="font-size:0.72rem;color:#7a8a9a;margin-bottom:6px">Auto-speaks questions, choices &amp; feedback at Level 1 (Pre-K) for kids who can't read yet. The 🔊 buttons always work regardless.</div><label style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.18);border-radius:8px;color:var(--text,#ecf0f1);font-family:JetBrains Mono;font-size:0.82rem;cursor:pointer"><input type="checkbox" id="prof-tts" ${ttsOn?'checked':''} style="width:18px;height:18px;cursor:pointer">Read questions aloud automatically (Pre-K)</label>`);
     html.push('<div style="margin-top:14px;display:flex;gap:8px"><button id="prof-save" class="retro-btn" style="flex:1">SAVE</button><button id="prof-cancel" class="retro-btn" style="flex:1">CLOSE</button></div></div>');
     ov.innerHTML=html.join('');
     document.body.appendChild(ov);
     ov.querySelectorAll('button[data-key]').forEach(b=>{
       b.onclick=()=>{if(b.disabled)return;const k=b.getAttribute('data-key'),v=b.getAttribute('data-val');localStorage.setItem(k,v);if(k==='amni-learn-theme')_applyTheme(v);ov.remove();window._showProfile();};
     });
-    ov.querySelector('#prof-save').onclick=()=>{const nm=ov.querySelector('#prof-name').value.trim();if(nm)localStorage.setItem('profile-name',nm);else localStorage.removeItem('profile-name');_refreshProfileChip();if(typeof showFeedback==='function')showFeedback('Profile saved!','#2ecc71');ov.remove();};
+    ov.querySelector('#prof-save').onclick=()=>{const nm=ov.querySelector('#prof-name').value.trim();if(nm)localStorage.setItem('profile-name',nm);else localStorage.removeItem('profile-name');const tt=ov.querySelector('#prof-tts');if(tt){localStorage.setItem('amni-learn-tts',tt.checked?'on':'off');if(!tt.checked&&typeof stopSpeech==='function')stopSpeech();}_refreshProfileChip();if(typeof showFeedback==='function')showFeedback('Profile saved!','#2ecc71');ov.remove();};
     ov.querySelector('#prof-cancel').onclick=()=>ov.remove();
   };
   document.addEventListener('fullscreenchange', () => { document.fullscreenElement ? (_fsNative=true,_cssFallback(true)) : (_fsNative=false,_cssFallback(false)); });
@@ -1068,7 +1070,7 @@
     fb.classList.add('show');
     const isPositive = color === '#2ecc71' || color === '#f1c40f' || color === '#9b59b6';
     if(isPositive) spawnConfetti(window.innerWidth/2, window.innerHeight/2, text.includes('Won') || text.includes('Complete') || text.includes('Done') || text.includes('Melody') ? 120 : 50);
-    if(currentLevel === 1 && typeof speakText === 'function') speakText(text);
+    if(currentLevel === 1 && ttsAuto() && typeof speakText === 'function') speakText(text);
     setTimeout(() => fb.classList.remove('show'), 1800);
   }
   const tCanvas = $$('#trace-canvas');
@@ -1129,7 +1131,7 @@
     tCtx.textAlign = 'center'; tCtx.textBaseline = 'middle';
     tCtx.fillText(text, tCanvas.width/2, tCanvas.height/2+20);
     maskData = tCtx.getImageData(0,0,tCanvas.width,tCanvas.height).data;
-    if(currentLevel<=2 && typeof speakText==='function') speakText(text);
+    if(currentLevel<=2 && ttsAuto() && typeof speakText==='function') speakText(text);
   }
   function initTracing() {
     tTargets = getTracingTargets(); tCurrentTarget = 0;
@@ -10015,6 +10017,7 @@ function playAnimalSound(type) {
     } catch(e) {}
   }
   function stopSpeech(){ try { if('speechSynthesis' in window) window.speechSynthesis.cancel(); } catch(e) {} }
+  function ttsAuto(){ try { return (localStorage.getItem('amni-learn-tts')||'on') !== 'off'; } catch(e) { return true; } }
   function speakText(text) {
     if(["Moo","Woof","Meow","Oink","Baa","Quack","Neigh","Ribbit","Roar","Hoot","Buzz","Chirp","Tweet","Gobble","Howl","Cluck","Cock-a-doodle-doo","Hiss","Squawk","Purr","Bleat","Trumpet","Chatter","Screech","Caw","Croak","Bark","Chitter","Hee-Haw","Coo","Snort","Bay","Yip","Snap","Whinny"].includes(text)) { playAnimalSound(text); return; }
     speakSeq([text]);
@@ -10075,7 +10078,7 @@ function playAnimalSound(type) {
       const ttl=document.createElement('div'); ttl.className='music-title'; ttl.style.color='#2c3e50'; ttl.textContent='📚 Learn First!'; teachPhaseEl.appendChild(ttl);
       const crds=document.createElement('div'); crds.className='teach-cards';
       tData.forEach((d,i)=>{ const c=document.createElement('div'); c.className='teach-card'; c.innerHTML=`<span class="tc-emoji">${d.emoji}</span><div class="tc-title">${d.title}</div><div class="tc-fact">${d.fact}</div>`; c.style.animation='bounceIn 0.4s ease both'; c.style.animationDelay=(Math.min(i,8)*0.06)+'s'; c.style.cursor='pointer'; c.onclick=()=>speakSeq([d.title,d.fact]); _kbd(c,'Hear about '+d.title); crds.appendChild(c); });
-      if(currentLevel===1 && tData[0]) speakSeq([tData[0].title, tData[0].fact]);
+      if(currentLevel===1 && tData[0] && ttsAuto()) speakSeq([tData[0].title, tData[0].fact]);
       teachPhaseEl.appendChild(crds);
       const dotsWrap=document.createElement('div'); dotsWrap.className='teach-dots'; dotsWrap.setAttribute('aria-hidden','true');
       tData.forEach((_,i)=>{ const d=document.createElement('div'); d.className='teach-dot'+(i===0?' active':''); dotsWrap.appendChild(d); });
@@ -10091,7 +10094,7 @@ function playAnimalSound(type) {
           quizTitle.textContent = _quizBaseTitle;
           quizPrompt.innerHTML = 'Quiz Complete! '+_qe+'<div style="font-size:1.4rem;margin-top:12px;color:#2c3e50;font-weight:bold;">You got '+quizCorrect+' / '+_qt+' correct ('+_qp+'%)</div>';
           quizPrompt.style.animation = 'bounceIn 0.5s ease';
-          if(currentLevel === 1) speakText('Quiz complete! You got '+quizCorrect+' out of '+_qt+' correct. '+(_qp>=70?'Great job!':'Good try!'));
+          if(currentLevel === 1 && ttsAuto()) speakText('Quiz complete! You got '+quizCorrect+' out of '+_qt+' correct. '+(_qp>=70?'Great job!':'Good try!'));
           if(_qp>=70 && typeof spawnConfetti==='function') spawnConfetti(window.innerWidth/2, window.innerHeight/3, _qp>=90?150:80);
           audioBtn.style.display = 'none';
           quizChoices.innerHTML = '';
@@ -10113,7 +10116,7 @@ function playAnimalSound(type) {
       }
       let choices = [q.a, ...q.wrong];
       choices.sort(() => Math.random() - 0.5);
-      if (currentLevel === 1 && !q.isAudio) speakSeq([q.q, ...choices]);
+      if (currentLevel === 1 && !q.isAudio && ttsAuto()) speakSeq([q.q, ...choices]);
       const showExplainAndContinue = (correctOnFirstTry) => {
           $$all('#quiz-choices .m-choice').forEach(b=>{b.style.pointerEvents='none';if(b.textContent===q.a){b.style.background='#2ecc71';b.style.color='#fff';b.style.animation='sortCorrect 0.5s ease';}else{b.style.opacity='0.45';}});
           const exp = document.createElement('div');
@@ -16858,7 +16861,7 @@ function playAnimalSound(type) {
     t.steps.forEach((s,i)=>{const d=document.createElement('div');d.className='tut-step';d.innerHTML=`<span class="tut-num">${i+1}</span>${s}`;box.appendChild(d);});
     const gb=document.createElement('button');gb.className='tut-btn';gb.textContent='Got it!';gb.onclick=_close;box.appendChild(gb);
     ov.appendChild(box);ov.onclick=e=>{if(e.target===ov)_close();};document.body.appendChild(ov);
-    if(currentLevel===1) speakSeq(readItems);
+    if(currentLevel===1 && ttsAuto()) speakSeq(readItems);
   };
   function initDots(){
     const cv=$$('#dots-canvas'),ui=$$('#dots-ui');
