@@ -14,6 +14,11 @@
 - **Broke template lockstep (Step 2).** Added a deterministic per-page heading picker to both SEO generators (`src/gen-calc-modules.js`, `src/gen-learn-categories.js`): each of the 5 section headings + the deep-dive hint now draws from 4–6 variants keyed by a stable hash of the page slug (so regenerations don't churn). Regenerated all 31 calc + 11 learn pages — identical "WHAT IT COMPUTES / KEY EQUATIONS / …" skeleton replaced with distributed variants; page bodies (already unique) untouched; ads preserved on the article pages.
 - Plan/council: docs/checklists/checklist_v5.8.0_adsense_round4.md + docs/guardian_councils/guardian_council_v5.8.0_adsense_round4.md. Backups in backups/v5.8.0_adsense/. Step 3 (content-first restructure) still pending; do NOT submit AdSense reconsideration until the learn app is smoke-tested in a browser. v5.8.0.
 
+## [5.7.9994] - 2026-06-01 - UPGRADE: Dot Tracking level-aware default
+- Upgrade thread #3. Dot Tracking (multiple-object tracking) always defaulted to 3 targets. Now the FIRST-TIME default scales with level — L1-2 → 3, L3 → 4, L4-5 → 5 — so advanced learners start with a harder track. Non-conflicting: an explicit choice saved in `mot-tc` (via the mode row) still wins; only the unset default changed.
+- Note: the level-scaling upgrade is now largely complete — the fixed-start modules (Number Memory, Chimp, Dot Tracking) are done; others (Visual Scan, Reaction) already expose their own easy/normal/hard or mode selectors, so forcing level on top would conflict. Future upgrade-thread work should be other improvements, not more level-scaling.
+- node --check passes. Bumps sw v1083→v1084. v5.7.9994.
+
 ## [5.7.9993] - 2026-06-01 - NEW MODULE: Spot the Change (visual working-memory / change detection)
 - Add-new thread (rotating the 3-thread direction). Change Detection (Luck & Vogel) — measures VISUAL working-memory capacity; distinct from Corsi (spatial sequence), the digit-span games (verbal), and the perceptual same/different life-game.
 - Gameplay: N colored squares flash, vanish (~900ms blank), then reappear — half the time one square's color changed. Tap ✓ Same / ✗ Changed. 30 trials; summary shows accuracy + an estimated capacity "K" = N·(hitRate + CRrate − 1). Placed in "Memory & Focus".

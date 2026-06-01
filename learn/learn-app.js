@@ -14130,7 +14130,8 @@ function playAnimalSound(type) {
   }
   function initDotTrack(){
     const ct=$$('#mot-container'),hud=$$('#mot-hud');
-    let targetCount=parseInt(sessionStorage.getItem('mot-tc')||'3'),rd=0,sc=0,phase='idle',stk=0,perfectRounds=0;
+    const _lvl=Math.min(currentLevel||3,5);
+    let targetCount=parseInt(sessionStorage.getItem('mot-tc')||String(_lvl<=2?3:_lvl>=4?5:4)),rd=0,sc=0,phase='idle',stk=0,perfectRounds=0;
     const dotCount=Math.max(8,targetCount+5);
     const speed=sessionStorage.getItem('mot-speed')||'normal';
     const speedCfg={slow:0.4,normal:0.7,fast:1.1};
