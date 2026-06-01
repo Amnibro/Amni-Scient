@@ -9899,7 +9899,9 @@
   let quizCorrect = 0;
   let _quizBaseTitle = '';
   const audioBtn = $$('#quiz-audio-btn');
-  
+  if(audioBtn) audioBtn.setAttribute('aria-label','Hear the question read aloud');
+  if(quizPrompt){ quizPrompt.setAttribute('aria-live','polite'); quizPrompt.setAttribute('role','status'); }
+  if(quizChoices){ quizChoices.setAttribute('role','group'); quizChoices.setAttribute('aria-label','Answer choices'); }
 function playAnimalSound(type) {
     const mappings = {
         'moo':'cow','woof':'dog','meow':'cat','oink':'pig','baa':'sheep','quack':'duck','neigh':'horse','ribbit':'frog',
