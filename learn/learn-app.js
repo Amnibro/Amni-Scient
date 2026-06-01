@@ -1068,6 +1068,7 @@
     fb.classList.add('show');
     const isPositive = color === '#2ecc71' || color === '#f1c40f' || color === '#9b59b6';
     if(isPositive) spawnConfetti(window.innerWidth/2, window.innerHeight/2, text.includes('Won') || text.includes('Complete') || text.includes('Done') || text.includes('Melody') ? 120 : 50);
+    if(currentLevel === 1 && typeof speakText === 'function') speakText(text);
     setTimeout(() => fb.classList.remove('show'), 1800);
   }
   const tCanvas = $$('#trace-canvas');
