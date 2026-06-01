@@ -1129,6 +1129,7 @@
     tCtx.textAlign = 'center'; tCtx.textBaseline = 'middle';
     tCtx.fillText(text, tCanvas.width/2, tCanvas.height/2+20);
     maskData = tCtx.getImageData(0,0,tCanvas.width,tCanvas.height).data;
+    if(currentLevel<=2 && typeof speakText==='function') speakText(text);
   }
   function initTracing() {
     tTargets = getTracingTargets(); tCurrentTarget = 0;

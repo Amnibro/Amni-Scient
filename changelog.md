@@ -14,6 +14,10 @@
 - **Broke template lockstep (Step 2).** Added a deterministic per-page heading picker to both SEO generators (`src/gen-calc-modules.js`, `src/gen-learn-categories.js`): each of the 5 section headings + the deep-dive hint now draws from 4–6 variants keyed by a stable hash of the page slug (so regenerations don't churn). Regenerated all 31 calc + 11 learn pages — identical "WHAT IT COMPUTES / KEY EQUATIONS / …" skeleton replaced with distributed variants; page bodies (already unique) untouched; ads preserved on the article pages.
 - Plan/council: docs/checklists/checklist_v5.8.0_adsense_round4.md + docs/guardian_councils/guardian_council_v5.8.0_adsense_round4.md. Backups in backups/v5.8.0_adsense/. Step 3 (content-first restructure) still pending; do NOT submit AdSense reconsideration until the learn app is smoke-tested in a browser. v5.8.0.
 
+## [5.8.8] - 2026-06-01 - TTS #8: Tracing speaks the target (letters/numbers/words)
+- The Tracing activity (trace letters/numbers/shapes/words) now SPEAKS the target when it's drawn, at L1-2: a toddler tracing "A" hears "A", tracing "PLANET" hears "planet". Added to drawTarget() so it fires on the initial target and each advance. Shape-symbol targets (★❤▲ etc.) are stripped to silence by _ttsClean — letters/digits/words speak. (Checked Matching: its results already speak via the shared feedback toast, and its cards are pictures — no extra TTS needed.)
+- node --check passes. Bumps sw v1107→v1108. v5.8.8.
+
 ## [5.8.7] - 2026-06-01 - TTS #7: pre-K hears the quiz-complete result
 - At LEVEL 1, finishing a subject quiz now speaks "Quiz complete! You got X out of Y correct. Great job! / Good try!" — so a non-reading toddler hears how they did, not just sees the score. node --check passes. Bumps sw v1106→v1107. v5.8.7.
 - Pre-K quiz read-aloud is now end-to-end complete: teach cards → question + choices → spoken feedback → tappable explanation → spoken completion, plus How-to-Play tutorials and the replay button.
