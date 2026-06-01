@@ -14,6 +14,12 @@
 - **Broke template lockstep (Step 2).** Added a deterministic per-page heading picker to both SEO generators (`src/gen-calc-modules.js`, `src/gen-learn-categories.js`): each of the 5 section headings + the deep-dive hint now draws from 4–6 variants keyed by a stable hash of the page slug (so regenerations don't churn). Regenerated all 31 calc + 11 learn pages — identical "WHAT IT COMPUTES / KEY EQUATIONS / …" skeleton replaced with distributed variants; page bodies (already unique) untouched; ads preserved on the article pages.
 - Plan/council: docs/checklists/checklist_v5.8.0_adsense_round4.md + docs/guardian_councils/guardian_council_v5.8.0_adsense_round4.md. Backups in backups/v5.8.0_adsense/. Step 3 (content-first restructure) still pending; do NOT submit AdSense reconsideration until the learn app is smoke-tested in a browser. v5.8.0.
 
+## [5.7.992] - 2026-06-01 - POLISH: level-scaled difficulty round 2 (Corsi + Flanker)
+- Round 2 of 3 (Anthony's polish direction): `currentLevel` now scales these two.
+- Corsi Blocks: starting span scales — L1-2 start at 2, L3 at 3, L4-5 at 4 (still grows +1 per success). Flash speed scales too — young get a slower 820ms reveal per block, advanced a snappy 530ms (mid 650ms). Easier for kids to follow, more demanding for adults.
+- Flanker Focus: L1-2 → 20 trials & 65% congruent (gentler — fewer conflict trials); L4-5 → 30 trials & only 40% congruent (60% conflict, much harder selective attention); L3 = 30 trials / 50-50.
+- Pure parameter tuning. node --check passes. Bumps sw v1072→v1073. v5.7.992. (Round 3 next: Simon + Dot Estimate.)
+
 ## [5.7.991] - 2026-06-01 - POLISH: level-scaled difficulty for new modules (Go/No-Go + Symbol Coding)
 - New direction (Anthony): polish the 6 new brain modules with difficulty / kid-vs-adult tuning. The app's global `currentLevel` (1-5, set by the level selector the quizzes already use) now scales each game. Round 1 of 3:
 - Go/No-Go: `lvl = min(currentLevel,5)`. Young (L1-2) → 20 trials, 78% GO (more forgiving), slower windows (≥750ms, gentle ramp). Advanced (L4-5) → 30 trials, 62% GO (harder inhibition — more STOPs), fast windows (≥460ms, steep ramp). Mid (L3) = original.
