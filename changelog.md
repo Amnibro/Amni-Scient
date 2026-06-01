@@ -8,6 +8,11 @@
 - **Broke template lockstep (Step 2).** Added a deterministic per-page heading picker to both SEO generators (`src/gen-calc-modules.js`, `src/gen-learn-categories.js`): each of the 5 section headings + the deep-dive hint now draws from 4–6 variants keyed by a stable hash of the page slug (so regenerations don't churn). Regenerated all 31 calc + 11 learn pages — identical "WHAT IT COMPUTES / KEY EQUATIONS / …" skeleton replaced with distributed variants; page bodies (already unique) untouched; ads preserved on the article pages.
 - Plan/council: docs/checklists/checklist_v5.8.0_adsense_round4.md + docs/guardian_councils/guardian_council_v5.8.0_adsense_round4.md. Backups in backups/v5.8.0_adsense/. Step 3 (content-first restructure) still pending; do NOT submit AdSense reconsideration until the learn app is smoke-tested in a browser. v5.8.0.
 
+## [5.7.951] - 2026-05-31 - Cross-level dedup: Weather (15) + History (11)
+- Weather (15): advanced concepts consolidated to appropriate tiers — jet stream→L4 (also fixed within-L2 dup), polar vortex→L3 (fixed within-L3 dup + two phrasings), urban-heat-island→L4, coriolis→L2, bomb-cyclone/virga→L3, monsoon→L2; basics tornado+sleet kept at L1; barometer→L2 (fixed within-L2 dup). Weather now fully clean.
+- History (11): all advanced topics — kept the highest-level copy of each, removed copies that leaked into easier tiers: Russian Revolution (L2/L3/L4→L4), Stalingrad (→L4), Hundred Years' War (→L4), Haitian Revolution (→L4), Congress of Vienna (→L5), Marco Polo (→L3), Boston Tea Party (→L3), Cultural Revolution (→L3), Joan of Arc (→L2), Alexander the Great (→L2). History now fully clean.
+- node --check passes. Bumps sw v1031→v1032. v5.7.951. (Session dedup total: 183.)
+
 ## [5.7.950] - 2026-05-31 - Cross-level dedup: Opposites complete (17 more; bank now fully clean)
 - Finished Opposites cross-level dedup. Removed 17: medium opposites (polite, ancient, visible, fresh, calm, begin, increase, honest) consolidated to L2; advanced (temporary, optimist, horizontal, cause, active) kept at their L3 home; generous kept one L2 copy (dropped a within-L2 dup + the L4 copy). Each removal kept the level-appropriate copy.
 - VERIFIED: every opposite now appears in EXACTLY ONE level (within-level + cross-level fully deduped). Opposites bank complete.
