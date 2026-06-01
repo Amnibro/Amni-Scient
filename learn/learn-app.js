@@ -13416,11 +13416,12 @@ function playAnimalSound(type) {
     const ct=$$('#nmm-container'),hud=$$('#nmm-hud');
     const nmmMode=sessionStorage.getItem('nmm-mode')||'forward';
     const bestKey='nmm-best-'+nmmMode;
-    let dg=3,best=parseInt(sessionStorage.getItem(bestKey)||sessionStorage.getItem('nmm-best')||'0'),tgt='',history=[];
+    const _lvl=Math.min(currentLevel||3,5);
+    let dg=(_lvl<=2?3:_lvl>=4?5:4),best=parseInt(sessionStorage.getItem(bestKey)||sessionStorage.getItem('nmm-best')||'0'),tgt='',history=[];
     if(window._nmmTimeout){clearTimeout(window._nmmTimeout);window._nmmTimeout=null;}
     if(window._nmmCount){clearInterval(window._nmmCount);window._nmmCount=null;}
     document.querySelectorAll('.nmm-summary,.nmm-mode-row').forEach(n=>n.remove());
-    hud.innerHTML=`<span class="game-stat">\ud83d\udccf <span class="game-stat-val" id="nmm-dg">${dg}</span> digits</span><span class="game-stat">\ud83d\udd25 Streak <span class="game-stat-val" id="nmm-stk">0</span></span><span class="game-stat">\ud83c\udfc6 Best: <span class="game-stat-val" id="nmm-best">${best}</span></span><span class="game-stat">${nmmMode==='backward'?'\u25c0\ufe0f Backward':'\u25b6\ufe0f Forward'}</span>`;
+    hud.innerHTML=`<span class="game-stat">\ud83d\udccf <span class="game-stat-val" id="nmm-dg">${dg}</span> digits</span><span class="game-stat">\ud83d\udd25 Streak <span class="game-stat-val" id="nmm-stk">0</span></span><span class="game-stat">\ud83c\udfc6 Best: <span class="game-stat-val" id="nmm-best">${best}</span></span><span class="game-stat">${nmmMode==='backward'?'\u25c0\ufe0f Backward':'\u25b6\ufe0f Forward'}</span><span class="game-stat">\ud83d\udcca Lvl ${_lvl}</span>`;
     const modeRow=document.createElement('div');modeRow.className='nmm-mode-row sdk-controls';modeRow.style.cssText='display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:6px 0;';
     [['forward','\u25b6\ufe0f Forward'],['backward','\u25c0\ufe0f Backward (WAIS)']].forEach(([k,lbl])=>{const b=document.createElement('button');b.className='sdk-btn'+(k===nmmMode?' active':'');b.style.cssText='font-size:0.85rem;padding:6px 10px;';b.textContent=lbl;b.onclick=()=>{sessionStorage.setItem('nmm-mode',k);initNumMem();};modeRow.appendChild(b);});
     ct.parentElement.insertBefore(modeRow,ct);
