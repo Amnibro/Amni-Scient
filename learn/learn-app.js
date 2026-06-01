@@ -1714,6 +1714,7 @@
     document.getElementById('story-title').textContent = book.title;
     document.getElementById('story-cover-large').textContent = book.cover;
     renderPage();
+    if (currentLevel === 1 && typeof ttsAuto === 'function' && ttsAuto() && typeof playCurrentPage === 'function') setTimeout(() => { if (_storyState.book === book && _storyState.pageIdx === 0 && !_storyState.utterance) playCurrentPage(); }, 700);
   }
   function renderPage() {
     const book = _storyState.book;
