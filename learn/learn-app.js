@@ -14966,7 +14966,7 @@ function playAnimalSound(type) {
     const dpad=document.createElement('div');dpad.className='retro-dpad';
     [['','⬆',''],['⬅','','➡'],['','⬇','']].flat().forEach((t,i)=>{const b=document.createElement('button');if(!t){b.className='empty';}else{b.textContent=t;b.onclick=()=>{const d=[[0,0],[0,-1],[0,0],[-1,0],[0,0],[1,0],[0,0],[0,1],[0,0]][i];if(d[0]!==0||d[1]!==0){if(dir.x!==-d[0]||dir.y!==-d[1])dir={x:d[0],y:d[1]};};};}dpad.appendChild(b);});
     root.appendChild(dpad);
-    document.addEventListener('keydown',e=>{if(currentGame!=='snake80')return;const m={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0],w:[0,-1],s:[0,1],a:[-1,0],d:[1,0]}[e.key];if(m&&(dir.x!==-m[0]||dir.y!==-m[1]))dir={x:m[0],y:m[1]};});
+    document.onkeydown=e=>{if(currentGame!=='snake80')return;const m={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0],w:[0,-1],s:[0,1],a:[-1,0],d:[1,0]}[e.key];if(m&&(dir.x!==-m[0]||dir.y!==-m[1]))dir={x:m[0],y:m[1]};};
     function gameOver(){
       alive=false;const wasBest=sc>best;
       if(wasBest){best=sc;sessionStorage.setItem('snake-best',best);const bEl=$$('#snake-best');if(bEl)bEl.textContent=best;}
@@ -15018,7 +15018,7 @@ function playAnimalSound(type) {
     const hud=document.createElement('div');hud.className='retro-hud';hud.innerHTML=`Score: <span id="brk-sc">0</span> | Lives: <span id="brk-lv">3</span> | Wave: <span id="brk-wv">1</span> | Best: <span id="brk-best">${best}</span>`;
     root.appendChild(hud);root.appendChild(canvas);
     canvas.addEventListener('pointermove',e=>{const r=canvas.getBoundingClientRect();padX=Math.max(0,Math.min(cW-padW,e.clientX-r.left-padW/2));});
-    document.addEventListener('keydown',e=>{if(currentGame!=='breakout')return;if(e.key==='ArrowLeft')padX=Math.max(0,padX-20);if(e.key==='ArrowRight')padX=Math.min(cW-padW,padX+20);});
+    document.onkeydown=e=>{if(currentGame!=='breakout')return;if(e.key==='ArrowLeft')padX=Math.max(0,padX-20);if(e.key==='ArrowRight')padX=Math.min(cW-padW,padX+20);};
     function gameOver(){
       go=true;const wasBest=sc>best;
       if(wasBest){best=sc;sessionStorage.setItem('brk-best',best);}
@@ -15074,7 +15074,7 @@ function playAnimalSound(type) {
     const diffBtns=[];['Easy','Medium','Hard'].forEach((d,i)=>{const b=document.createElement('button');b.className='retro-btn'+(i===0?' active':'');b.style.cssText='margin:3px;font-size:0.8rem;padding:4px 12px;';b.textContent=d;b.onclick=()=>{applyDiff(i);diffBtns.forEach(bb=>bb.classList.remove('active'));b.classList.add('active');restart();};diffDiv.appendChild(b);diffBtns.push(b);});
     root.appendChild(diffDiv);
     canvas.addEventListener('pointermove',e=>{const r=canvas.getBoundingClientRect();py=Math.max(0,Math.min(cH-PH,e.clientY-r.top-PH/2));});
-    document.addEventListener('keydown',e=>{if(currentGame!=='pong')return;if(e.key==='ArrowUp')py=Math.max(0,py-18);if(e.key==='ArrowDown')py=Math.min(cH-PH,py+18);});
+    document.onkeydown=e=>{if(currentGame!=='pong')return;if(e.key==='ArrowUp')py=Math.max(0,py-18);if(e.key==='ArrowDown')py=Math.min(cH-PH,py+18);};
     function loop(){
       if(currentGame!=='pong')return;
       if(!paused){
@@ -15111,7 +15111,7 @@ function playAnimalSound(type) {
     root.appendChild(hud);root.appendChild(canvas);
     canvas.addEventListener('pointermove',e=>{const r=canvas.getBoundingClientRect();px=Math.max(10,Math.min(cW-10,e.clientX-r.left));});
     canvas.addEventListener('pointerdown',()=>{if(go)return;if(bullets.length<4)bullets.push({x:px,y:cH-25});});
-    document.addEventListener('keydown',e=>{if(currentGame!=='invaders')return;if(e.key==='ArrowLeft')px=Math.max(10,px-15);if(e.key==='ArrowRight')px=Math.min(cW-10,px+15);if(e.key===' '&&!go&&bullets.length<4)bullets.push({x:px,y:cH-25});if(e.key==='s'&&shield>0&&!go){shield--;$$('#inv-sh').textContent=shield;eBullets=[];showFeedback('Shield used!','#3498db');}});
+    document.onkeydown=e=>{if(currentGame!=='invaders')return;if(e.key==='ArrowLeft')px=Math.max(10,px-15);if(e.key==='ArrowRight')px=Math.min(cW-10,px+15);if(e.key===' '&&!go&&bullets.length<4)bullets.push({x:px,y:cH-25});if(e.key==='s'&&shield>0&&!go){shield--;$$('#inv-sh').textContent=shield;eBullets=[];showFeedback('Shield used!','#3498db');}};
     function gameOver(){
       go=true;const wasBest=sc>best;
       if(wasBest){best=sc;sessionStorage.setItem('inv-best',best);}$$('#inv-best').textContent=best;
@@ -15314,7 +15314,7 @@ function playAnimalSound(type) {
     ].forEach(({t,fn})=>{const b=document.createElement('button');b.className='retro-btn';b.style.cssText='padding:6px 4px;font-size:0.75rem;margin:2px;';b.textContent=t;b.onclick=fn;dpad.appendChild(b);});
     root.appendChild(dpad);
     function upHud(){$$('#tet-sc').textContent=sc;$$('#tet-ln').textContent=lines;$$('#tet-lv').textContent=level;}
-    document.addEventListener('keydown',e=>{if(currentGame!=='tetris'||go)return;if(e.key==='ArrowLeft'&&canPlace(piece,px-1,py))px--;if(e.key==='ArrowRight'&&canPlace(piece,px+1,py))px++;if(e.key==='ArrowUp'||e.key==='x'||e.key==='X')rotate();if(e.key==='ArrowDown'){if(canPlace(piece,px,py+1))py++;else place();}if(e.key===' '){e.preventDefault();while(canPlace(piece,px,py+1))py++;place();}if(e.key==='c'||e.key==='C')holdSwap();draw();upHud();});
+    document.onkeydown=e=>{if(currentGame!=='tetris'||go)return;if(e.key==='ArrowLeft'&&canPlace(piece,px-1,py))px--;if(e.key==='ArrowRight'&&canPlace(piece,px+1,py))px++;if(e.key==='ArrowUp'||e.key==='x'||e.key==='X')rotate();if(e.key==='ArrowDown'){if(canPlace(piece,px,py+1))py++;else place();}if(e.key===' '){e.preventDefault();while(canPlace(piece,px,py+1))py++;place();}if(e.key==='c'||e.key==='C')holdSwap();draw();upHud();};
     function startDropTimer(){clearInterval(window._tetrisTimer);window._tetrisTimer=setInterval(()=>{if(currentGame!=='tetris'||go)return;if(canPlace(piece,px,py+1))py++;else place();draw();upHud();},dropSpeed);}
     startDropTimer();
     window._tetrisSpdWatch=setInterval(()=>{if(currentGame!=='tetris'){clearInterval(window._tetrisSpdWatch);return;}startDropTimer();},2000);
@@ -15333,7 +15333,7 @@ function playAnimalSound(type) {
     function reset(){by=cH/2;bv=0;pipes=[];sc=0;frame=0;alive=true;dead=false;speed=SPD_BASE;gap=GAP_BASE;milestone=0;for(let i=0;i<3;i++)pipes.push({x:cW+i*PIPE_DX,top:60+Math.random()*(cH-gap-140),scored:false,coin:Math.random()<0.3});const ov=$$('#flp-over');if(ov)ov.remove();}
     function tap(){if(dead)return;if(!alive){reset();return;}bv=FLAP;}
     canvas.addEventListener('pointerdown',tap);
-    document.addEventListener('keydown',e=>{if(currentGame!=='flappy')return;if(e.key===' ')tap();});
+    document.onkeydown=e=>{if(currentGame!=='flappy')return;if(e.key===' ')tap();};
     function _flpTier(s){if(s>=100)return{name:'Sky Sage',color:'#f1c40f',msg:'Flap-tap mastery transcendent.'};if(s>=50)return{name:'Soaring Eagle',color:'#9b59b6',msg:'Pipes part for you.'};if(s>=25)return{name:'Steady Glider',color:'#2ecc71',msg:'Threading needles.'};if(s>=10)return{name:'Pipe Dodger',color:'#3498db',msg:'Finding your rhythm.'};return{name:'Hatchling',color:'#e67e22',msg:'First flights.'};}
     function die(){
       alive=false;dead=true;resetStreak();
