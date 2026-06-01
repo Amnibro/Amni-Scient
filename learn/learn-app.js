@@ -10019,7 +10019,10 @@ function playAnimalSound(type) {
 }
 
   function _ttsClean(t){return String(t).replace(/[\u{1F000}-\u{1FAFF}\u{2190}-\u{2BFF}\u{2600}-\u{27BF}\u{FE00}-\u{FE0F}\u{1F1E6}-\u{1F1FF}]/gu,'').replace(/\s+/g,' ').trim();}
-  function _ttsVoice(){const vs=window.speechSynthesis.getVoices();return vs.find(x=>/Samantha|Karen|Google US English|Microsoft Aria|Microsoft Jenny|Microsoft Zira|Allison|Moira|Tessa|Fiona/.test(x.name))||vs.find(x=>/^en[-_]US/i.test(x.lang)&&/female/i.test(x.name))||vs.find(x=>/en[-_]US/i.test(x.lang)&&x.localService)||vs.find(x=>/^en/i.test(x.lang))||null;}
+  let _ttsVoiceCache=null;
+  function _ttsPickVoice(vs){return vs.find(x=>/Samantha|Karen|Google US English|Microsoft Aria|Microsoft Jenny|Microsoft Zira|Allison|Moira|Tessa|Fiona/.test(x.name))||vs.find(x=>/^en[-_]US/i.test(x.lang)&&/female/i.test(x.name))||vs.find(x=>/en[-_]US/i.test(x.lang)&&x.localService)||vs.find(x=>/^en/i.test(x.lang))||null;}
+  function _ttsVoice(){if(_ttsVoiceCache)return _ttsVoiceCache;_ttsVoiceCache=_ttsPickVoice(window.speechSynthesis.getVoices());return _ttsVoiceCache;}
+  if('speechSynthesis' in window){try{window.speechSynthesis.getVoices();window.speechSynthesis.addEventListener('voiceschanged',()=>{_ttsVoiceCache=_ttsPickVoice(window.speechSynthesis.getVoices());});}catch(e){}}
   function speakSeq(items){
     if(!('speechSynthesis' in window)) return;
     try {
