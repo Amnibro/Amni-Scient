@@ -14,6 +14,12 @@
 - **Broke template lockstep (Step 2).** Added a deterministic per-page heading picker to both SEO generators (`src/gen-calc-modules.js`, `src/gen-learn-categories.js`): each of the 5 section headings + the deep-dive hint now draws from 4–6 variants keyed by a stable hash of the page slug (so regenerations don't churn). Regenerated all 31 calc + 11 learn pages — identical "WHAT IT COMPUTES / KEY EQUATIONS / …" skeleton replaced with distributed variants; page bodies (already unique) untouched; ads preserved on the article pages.
 - Plan/council: docs/checklists/checklist_v5.8.0_adsense_round4.md + docs/guardian_councils/guardian_council_v5.8.0_adsense_round4.md. Backups in backups/v5.8.0_adsense/. Step 3 (content-first restructure) still pending; do NOT submit AdSense reconsideration until the learn app is smoke-tested in a browser. v5.8.0.
 
+## [5.8.2] - 2026-06-01 - TTS #2: pre-K reads question + ALL answer choices aloud
+- Refactored the speech core into `speakSeq(items)` (queues multiple utterances back-to-back with the kid-friendly voice) + `stopSpeech()`; `speakText` now delegates to it.
+- At LEVEL 1, non-audio questions now read the QUESTION then every ANSWER CHOICE in sequence on load — so a non-reading toddler hears all their options, not just the prompt. (isAudio letter/sound entries still just play their target via playAnimalSound/speakText, unchanged.)
+- The 🔊 replay button re-reads the question + all choices at L1; tapping an answer calls stopSpeech() so the voice stops the moment they choose.
+- node --check passes. Bumps sw v1101→v1102. v5.8.2. NEXT: teach-phase card read-aloud + pre-K game-instruction TTS.
+
 ## [5.8.1] - 2026-06-01 - TTS #1: pre-K read-aloud — robust speakText + auto-read every L1 question
 - New direction (Anthony): pre-K content needs text-to-speech (toddlers can't read). Web Speech API (speechSynthesis) is the pragmatic offline-first path (0 bytes, OS voices); kokoro/piper-quality neural TTS would mean bundling an ~80MB WASM model — noted as a future option, not done now.
 - Upgraded `speakText()`: cancels any in-flight speech (no overlap), strips emoji/symbols so it reads "Red" not "red-circle Red", slows to rate 0.9 + pitch 1.08 (kid-friendly), and picks a local en-US voice. Keeps the animal-sound mapping.

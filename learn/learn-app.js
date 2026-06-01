@@ -9997,20 +9997,25 @@ function playAnimalSound(type) {
     a.play().catch(e => console.error('Audio play failed:', animal, e));
 }
 
+  function _ttsClean(t){return String(t).replace(/[\u{1F000}-\u{1FAFF}\u{2190}-\u{2BFF}\u{2600}-\u{27BF}\u{FE00}-\u{FE0F}\u{1F1E6}-\u{1F1FF}]/gu,'').replace(/\s+/g,' ').trim();}
+  function _ttsVoice(){const vs=window.speechSynthesis.getVoices();return vs.find(x=>/en[-_]US/i.test(x.lang)&&x.localService)||vs.find(x=>/^en/i.test(x.lang))||null;}
+  function speakSeq(items){
+    if(!('speechSynthesis' in window)) return;
+    try {
+      window.speechSynthesis.cancel();
+      const v=_ttsVoice();
+      (Array.isArray(items)?items:[items]).forEach(t=>{
+        const clean=_ttsClean(t); if(!clean) return;
+        const u=new SpeechSynthesisUtterance(clean);
+        u.rate=0.9; u.pitch=1.08; u.lang='en-US'; if(v) u.voice=v;
+        window.speechSynthesis.speak(u);
+      });
+    } catch(e) {}
+  }
+  function stopSpeech(){ try { if('speechSynthesis' in window) window.speechSynthesis.cancel(); } catch(e) {} }
   function speakText(text) {
     if(["Moo","Woof","Meow","Oink","Baa","Quack","Neigh","Ribbit","Roar","Hoot","Buzz","Chirp","Tweet","Gobble","Howl","Cluck","Cock-a-doodle-doo","Hiss","Squawk","Purr","Bleat","Trumpet","Chatter","Screech","Caw","Croak","Bark","Chitter","Hee-Haw","Coo","Snort","Bay","Yip","Snap","Whinny"].includes(text)) { playAnimalSound(text); return; }
-        if(!('speechSynthesis' in window)) return;
-        try {
-          const clean = String(text).replace(/[\u{1F000}-\u{1FAFF}\u{2190}-\u{2BFF}\u{2600}-\u{27BF}\u{FE00}-\u{FE0F}\u{1F1E6}-\u{1F1FF}]/gu,'').replace(/\s+/g,' ').trim();
-          if(!clean) return;
-          window.speechSynthesis.cancel();
-          const u = new SpeechSynthesisUtterance(clean);
-          u.rate = 0.9; u.pitch = 1.08; u.lang = 'en-US';
-          const vs = window.speechSynthesis.getVoices();
-          const v = vs.find(x => /en[-_]US/i.test(x.lang) && x.localService) || vs.find(x => /^en/i.test(x.lang));
-          if(v) u.voice = v;
-          window.speechSynthesis.speak(u);
-        } catch(e) {}
+    speakSeq([text]);
   }
   const teachPhaseEl = $$('#teach-phase');
   const quizTaskArea = $$('#quiz-task-area');
@@ -10056,7 +10061,7 @@ function playAnimalSound(type) {
       currentQuiz = [...missedSlice, ...freshSlice].sort(()=>Math.random()-0.5);
       currentQIndex = 0;
       quizCorrect = 0;
-      audioBtn.onclick = () => { if(currentQIndex < currentQuiz.length) {const cq = currentQuiz[currentQIndex]; speakText(cq.audioText || cq.q);} };
+      audioBtn.onclick = () => { if(currentQIndex < currentQuiz.length) {const cq = currentQuiz[currentQIndex]; (currentLevel === 1 && !cq.isAudio) ? speakSeq([cq.q, cq.a, ...cq.wrong]) : speakText(cq.audioText || cq.q);} };
       // One-time UI hint when there's spaced-repetition material in this run
       if(missedSlice.length>0){if(typeof showFeedback==='function')showFeedback(`🔁 ${missedSlice.length} review question${missedSlice.length===1?'':'s'} mixed in`,'#9b59b6');}
       loadQuestion();
@@ -10095,7 +10100,7 @@ function playAnimalSound(type) {
       const q = currentQuiz[currentQIndex];
       quizPrompt.textContent = q.q; quizPrompt.style.animation='';
       quizTitle.textContent = _quizBaseTitle + ' · ' + (currentQIndex+1) + ' / ' + currentQuiz.length;
-      if (currentLevel === 1 || (currentLevel <= 2 && q.isAudio)) speakText(q.audioText || q.q);
+      if (currentLevel <= 2 && q.isAudio) speakText(q.audioText || q.q);
       quizChoices.innerHTML = '';
       if(currentLevel === 1 || (currentLevel <= 3 && q.isAudio)) {
           audioBtn.style.display = 'block';
@@ -10104,6 +10109,7 @@ function playAnimalSound(type) {
       }
       let choices = [q.a, ...q.wrong];
       choices.sort(() => Math.random() - 0.5);
+      if (currentLevel === 1 && !q.isAudio) speakSeq([q.q, ...choices]);
       const showExplainAndContinue = (correctOnFirstTry) => {
           $$all('#quiz-choices .m-choice').forEach(b=>{b.style.pointerEvents='none';if(b.textContent===q.a){b.style.background='#2ecc71';b.style.color='#fff';b.style.animation='sortCorrect 0.5s ease';}else{b.style.opacity='0.45';}});
           const exp = document.createElement('div');
@@ -10129,6 +10135,7 @@ function playAnimalSound(type) {
           btn.onclick = () => {
               if(answered) return;
               answered = true;
+              stopSpeech();
               if(c === q.a) {
                   showFeedback("Correct!", "#2ecc71"); addScore(1); quizCorrect++;
                   if(_quizCurrentSubject) _markCorrect(_quizCurrentSubject, q);
