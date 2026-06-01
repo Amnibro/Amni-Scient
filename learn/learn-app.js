@@ -30,6 +30,7 @@
     nummem: $$('#nummem-view'),
     stroop: $$('#stroop-view'),
     reaction: $$('#reaction-view'),
+    gonogo: $$('#gonogo-view'),
     nback: $$('#nback-view'),
     anagram: $$('#anagram-view'),
     chimp: $$('#chimp-view'),
@@ -898,6 +899,7 @@
       if(game === 'nummem') initNumMem();
       if(game === 'stroop') initStroop();
       if(game === 'reaction') initReaction();
+      if(game === 'gonogo') initGoNoGo();
       if(game === 'nback') initNBack();
       if(game === 'anagram') initAnagram();
       if(game === 'chimp') initChimp();
@@ -13521,6 +13523,25 @@ function playAnimalSound(type) {
     ct.appendChild(_modeRow());
     const sb=document.createElement('button');sb.className='nmm-btn';sb.textContent='START';sb.onclick=()=>{act=true;sc=0;tot=0;stk=0;bestStk=0;rtTotal=0;rtCount=0;tm=c.time;$$('#stp-tm').textContent=tm;show();window._stpTimer=setInterval(()=>{tm--;$$('#stp-tm').textContent=tm;if(tm<=0)_gameOver();},1000);};ct.appendChild(sb);
   }
+  function initGoNoGo(){
+    const ct=$$('#gng-container'),hud=$$('#gng-hud');
+    if(window._gngTimeout){clearTimeout(window._gngTimeout);window._gngTimeout=null;}
+    const TRIALS=30,GO_P=0.7;
+    let trial=0,hits=0,crej=0,comm=0,omis=0,rts=[],streak=0,awaiting=false,isGo=false,stimStart=0,responded=false;
+    const best=parseInt(sessionStorage.getItem('gng-best')||'0');
+    const updHud=()=>{const t=$$('#gng-tr');if(t)t.textContent=trial;const done=hits+crej+comm+omis,a=done?Math.round(100*(hits+crej)/done):0,ae=$$('#gng-acc');if(ae)ae.textContent=a;const s=$$('#gng-st');if(s)s.textContent=streak;};
+    hud.innerHTML=`<span class="game-stat">🎯 Trial <span class="game-stat-val" id="gng-tr">0</span>/${TRIALS}</span><span class="game-stat">✅ <span class="game-stat-val" id="gng-acc">0</span>%</span><span class="game-stat">🔥 <span class="game-stat-val" id="gng-st">0</span></span><span class="game-stat">⭐ Best ${best||'—'}</span>`;
+    const stim=document.createElement('div');stim.id='gng-stim';stim.style.cssText='width:min(70vw,240px);height:min(70vw,240px);border-radius:24px;display:flex;align-items:center;justify-content:center;font-size:2.4rem;font-weight:bold;color:#fff;font-family:Comic Neue,cursive;background:#34495e;cursor:pointer;user-select:none;box-shadow:0 8px 0 rgba(0,0,0,0.2);transition:transform 0.08s';stim.textContent='Get ready…';
+    const msg=document.createElement('div');msg.style.cssText='font-size:1.05rem;color:#2c3e50;font-family:Comic Neue,cursive;min-height:1.4em;text-align:center;max-width:420px';msg.textContent='TAP on GREEN 🟢 GO — do NOT tap on RED 🔴 STOP';
+    ct.innerHTML='';ct.appendChild(stim);ct.appendChild(msg);
+    const flash=()=>{stim.style.transform='scale(0.93)';setTimeout(()=>{if(stim)stim.style.transform='';},90);};
+    const acc=()=>{const done=hits+crej+comm+omis;return done?Math.round(100*(hits+crej)/done):0;};
+    const finish=()=>{const a=acc(),avg=rts.length?Math.round(rts.reduce((x,y)=>x+y,0)/rts.length):0,score=Math.max(1,hits*2+crej*3-comm*2);if(score>best)sessionStorage.setItem('gng-best',score);ct.innerHTML='';const sum=document.createElement('div');sum.className='rxt-summary';sum.innerHTML=`<h3>${a>=85?'🌟 Sharp inhibition!':a>=70?'👍 Nice control':'💪 Keep training'}</h3><div class="rxt-summary-stats"><div class="rxt-summary-stat"><span class="val">${a}%</span><span class="lbl">Accuracy</span></div><div class="rxt-summary-stat"><span class="val">${avg||'—'}</span><span class="lbl">Avg Go ms</span></div><div class="rxt-summary-stat"><span class="val">${comm}</span><span class="lbl">Impulse slips</span></div><div class="rxt-summary-stat"><span class="val">${omis}</span><span class="lbl">Missed gos</span></div></div><div class="rxt-tier-scale">Go/No-Go trains response INHIBITION — tap fast on GO, hold back on STOP. Impulse slips = tapping STOP.</div>`;ct.appendChild(sum);a>=85?spawnConfetti(window.innerWidth/2,window.innerHeight/2,100):(a>=70&&spawnConfetti(window.innerWidth/2,window.innerHeight/3,50));showFeedback(`Go/No-Go: ${a}% 🚦`,a>=85?'#2ecc71':'#f1c40f');addScore(Math.max(1,Math.floor(score/4)));const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='AGAIN';rb.style.marginTop='12px';rb.onclick=()=>initGoNoGo();ct.appendChild(rb);};
+    const respond=()=>{if(currentGame!=='gonogo'||!awaiting||responded)return;responded=true;awaiting=false;if(isGo){hits++;rts.push(Date.now()-stimStart);streak++;addScore(1);showFeedback('✓','#2ecc71');}else{comm++;streak=0;resetStreak();stim.style.animation='shake 0.4s';setTimeout(()=>{if(stim)stim.style.animation='';},420);showFeedback('✗ that was STOP!','#e74c3c');}flash();updHud();next();};
+    stim.onclick=respond;
+    function next(){if(currentGame!=='gonogo')return;if(trial>=TRIALS)return finish();stim.style.background='#34495e';stim.textContent='…';window._gngTimeout=setTimeout(()=>{if(currentGame!=='gonogo')return;trial++;updHud();responded=false;awaiting=true;isGo=Math.random()<GO_P;stim.style.background=isGo?'#2ecc71':'#e74c3c';stim.textContent=isGo?'GO!':'STOP';stimStart=Date.now();const win=Math.max(550,1000-trial*12);window._gngTimeout=setTimeout(()=>{if(currentGame!=='gonogo'||!awaiting)return;awaiting=false;isGo?(omis++,streak=0,resetStreak(),showFeedback('⏱ too slow!','#e67e22')):(crej++,streak++,addScore(1),showFeedback('✓ held!','#2ecc71'));flash();updHud();next();},win);},500+Math.random()*400);}
+    window._gngTimeout=setTimeout(()=>{if(currentGame==='gonogo')next();},700);
+  }
   function initReaction(){
     const ct=$$('#rxt-container'),hud=$$('#rxt-hud');
     let rd=0,res=[],wait=false,st=0;
@@ -16288,6 +16309,14 @@ function playAnimalSound(type) {
       '<b>Strategy \u2014 Chunking:</b> Break long numbers into groups. "4815162342" becomes "48-15-16-23-42" \u2014 much easier!',
       '<b>Strategy \u2014 Rhythm:</b> Say the number in your head with a rhythm, like a phone number.',
       'Your <b>best score</b> is saved between rounds. Try to beat your record!'
+    ]},
+    gonogo:{title:'\ud83d\udea6 How to Play Go / No-Go',steps:[
+      'A big box flashes a signal. When it turns <b style="color:#2ecc71">GREEN (GO!)</b>, tap it as <b>fast</b> as you can.',
+      'When it turns <b style="color:#e74c3c">RED (STOP)</b>, do <b>NOTHING</b> \u2014 hold your hand back and let it pass.',
+      'GO appears most of the time, so tapping becomes a habit \u2014 the challenge is <b>stopping</b> yourself on the rare STOP.',
+      'Tapping on STOP is an <b>impulse slip</b>; missing a GO is a <b>missed go</b>. Both lower your accuracy.',
+      '<b>Why it helps:</b> Go/No-Go trains <b>response inhibition</b> + impulse control \u2014 the brain\u2019s brakes. It pairs well with the Stroop Test.',
+      '30 trials, speeding up as you go. Aim for <b>85%+</b> accuracy with few impulse slips!'
     ]},
     stroop:{title:'\ud83c\udfa8 How to Play Stroop Test',steps:[
       'A color word appears in a <b>different ink color</b>. Tap the button matching the <b>INK COLOR</b>, not the word!',
