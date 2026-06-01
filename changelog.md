@@ -14,6 +14,9 @@
 - **Broke template lockstep (Step 2).** Added a deterministic per-page heading picker to both SEO generators (`src/gen-calc-modules.js`, `src/gen-learn-categories.js`): each of the 5 section headings + the deep-dive hint now draws from 4–6 variants keyed by a stable hash of the page slug (so regenerations don't churn). Regenerated all 31 calc + 11 learn pages — identical "WHAT IT COMPUTES / KEY EQUATIONS / …" skeleton replaced with distributed variants; page bodies (already unique) untouched; ads preserved on the article pages.
 - Plan/council: docs/checklists/checklist_v5.8.0_adsense_round4.md + docs/guardian_councils/guardian_council_v5.8.0_adsense_round4.md. Backups in backups/v5.8.0_adsense/. Step 3 (content-first restructure) still pending; do NOT submit AdSense reconsideration until the learn app is smoke-tested in a browser. v5.8.0.
 
+## [5.7.994] - 2026-06-01 - POLISH: "Lvl N" HUD indicator on the 6 new modules (difficulty transparency)
+- Now that all 6 new brain modules scale difficulty by `currentLevel`, added a 📊 Lvl N chip to each one's HUD (Go/No-Go, Symbol Coding, Corsi, Flanker, Simon, Dot Estimate) so players can see which difficulty tier they're on and why the game got harder/easier. Matched each HUD by its unique stat id (so older modules — which don't have `lvl` in scope — are untouched). node --check passes. Bumps sw v1074→v1075. v5.7.994.
+
 ## [5.7.993] - 2026-06-01 - POLISH: level-scaled difficulty round 3 (Simon + Dot Estimate) — all 6 done
 - Round 3 of 3 completes the kid-vs-adult tuning pass; all 6 new brain modules now read `currentLevel`.
 - Simon Match: L1-2 → 20 trials & 65% congruent (color usually on its own side, gentle); L4-5 → 30 trials & 40% congruent (60% conflict — strong spatial interference); L3 = 30 / 50-50. Side is now chosen to hit the target congruency rather than purely at random.
