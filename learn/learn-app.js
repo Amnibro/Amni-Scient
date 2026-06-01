@@ -33,6 +33,7 @@
     gonogo: $$('#gonogo-view'),
     symcode: $$('#symcode-view'),
     corsi: $$('#corsi-view'),
+    flanker: $$('#flanker-view'),
     nback: $$('#nback-view'),
     anagram: $$('#anagram-view'),
     chimp: $$('#chimp-view'),
@@ -904,6 +905,7 @@
       if(game === 'gonogo') initGoNoGo();
       if(game === 'symcode') initSymCode();
       if(game === 'corsi') initCorsi();
+      if(game === 'flanker') initFlanker();
       if(game === 'nback') initNBack();
       if(game === 'anagram') initAnagram();
       if(game === 'chimp') initChimp();
@@ -13527,6 +13529,25 @@ function playAnimalSound(type) {
     ct.appendChild(_modeRow());
     const sb=document.createElement('button');sb.className='nmm-btn';sb.textContent='START';sb.onclick=()=>{act=true;sc=0;tot=0;stk=0;bestStk=0;rtTotal=0;rtCount=0;tm=c.time;$$('#stp-tm').textContent=tm;show();window._stpTimer=setInterval(()=>{tm--;$$('#stp-tm').textContent=tm;if(tm<=0)_gameOver();},1000);};ct.appendChild(sb);
   }
+  function initFlanker(){
+    const ct=$$('#flank-container'),hud=$$('#flank-hud');
+    if(window._flankTimeout){clearTimeout(window._flankTimeout);window._flankTimeout=null;}
+    const TRIALS=30;
+    let trial=0,correct=0,wrong=0,streak=0,cDir='L',awaiting=false,t0=0,rtC=[],rtI=[],curCong=true;
+    const best=parseInt(sessionStorage.getItem('flank-best')||'0');
+    hud.innerHTML=`<span class="game-stat">🎯 Trial <span class="game-stat-val" id="flk-tr">0</span>/${TRIALS}</span><span class="game-stat">✅ <span class="game-stat-val" id="flk-c">0</span></span><span class="game-stat">🔥 <span class="game-stat-val" id="flk-st">0</span></span><span class="game-stat">⭐ Best ${best||'—'}</span>`;
+    ct.innerHTML='';
+    const hint=document.createElement('div');hint.style.cssText='font-size:1.05rem;color:#2c3e50;font-family:Comic Neue,cursive;text-align:center';hint.textContent='Which way does the MIDDLE arrow point?';
+    const stim=document.createElement('div');stim.style.cssText='font-size:3.4rem;letter-spacing:0.18em;height:90px;display:flex;align-items:center;justify-content:center;color:#2c3e50;font-weight:bold;font-family:monospace';stim.textContent='Ready?';
+    const row=document.createElement('div');row.style.cssText='display:flex;gap:18px';
+    const mkBtn=(label,dir)=>{const b=document.createElement('button');b.className='nmm-btn';b.textContent=label;b.style.cssText='font-size:2rem;min-width:80px';b.onclick=()=>respond(dir);return b;};
+    row.appendChild(mkBtn('◀','L'));row.appendChild(mkBtn('▶','R'));
+    ct.appendChild(hint);ct.appendChild(stim);ct.appendChild(row);
+    function finish(){const tot=correct+wrong,a=tot?Math.round(100*correct/tot):0,avgC=rtC.length?Math.round(rtC.reduce((x,y)=>x+y,0)/rtC.length):0,avgI=rtI.length?Math.round(rtI.reduce((x,y)=>x+y,0)/rtI.length):0,eff=(avgC&&avgI)?(avgI-avgC):0,score=Math.max(1,correct*2-wrong);if(score>best)sessionStorage.setItem('flank-best',score);ct.innerHTML='';const sum=document.createElement('div');sum.className='rxt-summary';sum.innerHTML=`<h3>${a>=90?'🌟 Laser focus!':a>=75?'👍 Sharp!':'💪 Keep training'}</h3><div class="rxt-summary-stats"><div class="rxt-summary-stat"><span class="val">${a}%</span><span class="lbl">Accuracy</span></div><div class="rxt-summary-stat"><span class="val">${avgC||'—'}</span><span class="lbl">Match ms</span></div><div class="rxt-summary-stat"><span class="val">${avgI||'—'}</span><span class="lbl">Conflict ms</span></div><div class="rxt-summary-stat"><span class="val">${eff?('+'+eff):'—'}</span><span class="lbl">Flanker cost</span></div></div><div class="rxt-tier-scale">The Flanker task trains SELECTIVE ATTENTION — lock onto the center arrow + ignore the rest. 'Flanker cost' = how much the conflicting arrows slow you down.</div>`;ct.appendChild(sum);if(a>=90)spawnConfetti(window.innerWidth/2,window.innerHeight/2,90);showFeedback('Flanker: '+a+'% 🎯',score>best?'#2ecc71':'#f1c40f');addScore(Math.max(1,Math.floor(correct/3)));const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='AGAIN';rb.style.marginTop='12px';rb.onclick=()=>initFlanker();ct.appendChild(rb);}
+    function respond(dir){if(currentGame!=='flanker'||!awaiting)return;awaiting=false;const rt=Date.now()-t0;dir===cDir?(correct++,streak++,addScore(1),(curCong?rtC:rtI).push(rt),stim.style.animation='sortCorrect 0.3s'):(wrong++,streak=0,resetStreak(),stim.style.animation='shake 0.3s');setTimeout(()=>{if(stim)stim.style.animation='';},320);const c2=$$('#flk-c');if(c2)c2.textContent=correct;const st=$$('#flk-st');if(st)st.textContent=streak;window._flankTimeout=setTimeout(()=>{if(currentGame==='flanker')next();},260);}
+    function next(){if(currentGame!=='flanker')return;if(trial>=TRIALS)return finish();trial++;const tr=$$('#flk-tr');if(tr)tr.textContent=trial;cDir=Math.random()<0.5?'L':'R';curCong=Math.random()<0.5;const c=cDir==='L'?'◀':'▶',f=curCong?c:(cDir==='L'?'▶':'◀');stim.textContent=f+f+c+f+f;awaiting=true;t0=Date.now();}
+    window._flankTimeout=setTimeout(()=>{if(currentGame==='flanker')next();},700);
+  }
   function initCorsi(){
     const ct=$$('#corsi-container'),hud=$$('#corsi-hud');
     if(window._corsiTimeout){clearTimeout(window._corsiTimeout);window._corsiTimeout=null;}
@@ -16351,6 +16372,14 @@ function playAnimalSound(type) {
       '<b>Strategy \u2014 Chunking:</b> Break long numbers into groups. "4815162342" becomes "48-15-16-23-42" \u2014 much easier!',
       '<b>Strategy \u2014 Rhythm:</b> Say the number in your head with a rhythm, like a phone number.',
       'Your <b>best score</b> is saved between rounds. Try to beat your record!'
+    ]},
+    flanker:{title:'\u27a1\ufe0f How to Play Flanker Focus',steps:[
+      'A row of <b>five arrows</b> appears. Look only at the <b>MIDDLE</b> one and tap \u25c0 or \u25b6 for the way it points.',
+      'Sometimes the outer arrows point the <b>same</b> way (easy), sometimes the <b>opposite</b> way (tricky!) \u2014 ignore them either way.',
+      'Example: <b>\u25b6\u25b6\u25c0\u25b6\u25b6</b> \u2014 the middle points <b>left</b>, so tap <b>\u25c0</b>, even though the others point right.',
+      '30 fast trials. The game measures your <b>accuracy</b> and your <b>\u201cflanker cost\u201d</b> \u2014 how much the conflicting arrows slow you down.',
+      '<b>Why it helps:</b> the Flanker task trains <b>selective attention</b> + the ability to tune out distractions.',
+      'Aim for <b>90%+</b> and a small flanker cost!'
     ]},
     corsi:{title:'\ud83d\udfe6 How to Play Corsi Blocks',steps:[
       'A grid of 9 blocks is shown. Some of them light up <b>one at a time</b> in a sequence \u2014 watch the <b>order</b> carefully.',
