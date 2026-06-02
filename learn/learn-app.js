@@ -15904,7 +15904,7 @@ function playAnimalSound(type) {
       hud.innerHTML=`<span class="game-stat">⚫ You <span class="game-stat-val">${b}</span></span><span class="game-stat">⚪ AI <span class="game-stat-val">${w}</span></span><span class="game-stat">🏆 <span class="game-stat-val">${prevWins+((over&&b>w)?1:0)}</span></span>`;
       root.appendChild(hud);
       const status=document.createElement('div');status.style.cssText='text-align:center;font-family:Comic Neue,cursive;font-size:1.2rem;color:var(--text,#2c3e50);margin:6px 0;min-height:28px;';
-      status.textContent=over?(b>w?'🎉 You win!':w>b?'🤖 AI wins! Try again':'🤝 Tie!'):(turn===1?'Your turn (⚫) — tap a dot':'🤖 AI thinking...');
+      status.textContent=over?(b>w?'🎉 You win!':w>b?'🤖 AI wins! Try again':'🤝 Tie!'):(turn===1?'Your turn (⚫) — tap a dot (or Tab + Enter)':'🤖 AI thinking...');
       root.appendChild(status);
       const howto=document.createElement('div');howto.style.cssText='text-align:center;font-size:0.78rem;color:var(--text,#7a8a9a);opacity:0.8;font-family:Comic Neue,cursive;max-width:380px;margin:0 auto 4px;';howto.textContent='Place a disc so you trap a line of enemy discs between two of yours — they all flip to your color. Most discs at the end wins!';root.appendChild(howto);
       const hintSet=new Set((turn===1&&!over?validMoves(1):[]).map(([r,c])=>idx(r,c)));
@@ -15914,7 +15914,7 @@ function playAnimalSound(type) {
         cell.style.cssText=`aspect-ratio:1;background:#2e8b57;border-radius:3px;display:flex;align-items:center;justify-content:center;cursor:${isHint?'pointer':'default'};`;
         if(v){const disc=document.createElement('div');disc.style.cssText=`width:78%;height:78%;border-radius:50%;background:${v===1?'radial-gradient(circle at 35% 30%,#555,#000)':'radial-gradient(circle at 35% 30%,#fff,#bbb)'};box-shadow:${idx(r,c)===lastAi?'0 0 0 3px #f1c40f,0 1px 3px rgba(0,0,0,0.4)':'0 1px 3px rgba(0,0,0,0.4)'};`;cell.appendChild(disc);}
         else if(isHint){const dot=document.createElement('div');dot.style.cssText='width:26%;height:26%;border-radius:50%;background:rgba(255,255,255,0.5);';cell.appendChild(dot);}
-        if(isHint)cell.onclick=()=>playerTap(r,c);
+        if(isHint){cell.onclick=()=>playerTap(r,c);if(typeof _kbd==='function')_kbd(cell,'Place disc at row '+(r+1)+', column '+(c+1));}
         boardEl.appendChild(cell);
       }
       root.appendChild(boardEl);
