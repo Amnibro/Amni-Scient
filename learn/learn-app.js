@@ -15858,7 +15858,7 @@ function playAnimalSound(type) {
       root.innerHTML='';
       const foeLeft=foe.ships.filter(s=>s.hits.size<s.cells.length).length,meLeft=me.ships.filter(s=>s.hits.size<s.cells.length).length;
       const status=document.createElement('div');status.style.cssText='text-align:center;font-family:Comic Neue,cursive;font-size:1.15rem;color:var(--text,#2c3e50);margin:4px 0;min-height:26px;';
-      status.textContent=over?(result==='win'?'🎉 You sank the enemy fleet!':'💀 Your fleet was sunk!'):(turn==='player'?'🎯 Your turn — fire at Enemy Waters':'🤖 Enemy firing...');
+      status.textContent=over?(result==='win'?'🎉 You sank the enemy fleet!':'💀 Your fleet was sunk!'):(turn==='player'?'🎯 Your turn — fire at Enemy Waters (tap, or Tab + Enter)':'🤖 Enemy firing...');
       root.appendChild(status);
       const winsEl=document.createElement('div');winsEl.className='game-hud';winsEl.style.cssText='margin:0 0 6px;';winsEl.innerHTML=`<span class="game-stat">🏆 Wins <span class="game-stat-val">${prevWins+((over&&result==='win')?1:0)}</span></span>`;root.appendChild(winsEl);
       const lab1=document.createElement('div');lab1.style.cssText='text-align:center;font-weight:bold;color:#e74c3c;font-family:Comic Neue,cursive;';lab1.textContent=`🎯 Enemy Waters (${foeLeft} left)`;root.appendChild(lab1);
