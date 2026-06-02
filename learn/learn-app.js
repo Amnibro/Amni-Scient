@@ -243,7 +243,7 @@
   function _renderAchStrip(){
     const strip=document.getElementById('achievements-strip');if(!strip)return;
     const state=_achState();
-    strip.innerHTML=ACHIEVEMENTS.map(a=>{const p=a.progress();const u=p.unlocked;return `<span style="display:inline-flex;align-items:center;gap:4px;padding:5px 9px;background:${u?'rgba(241,196,15,0.18)':'rgba(255,255,255,0.04)'};border:1px solid ${u?'#f1c40f':'rgba(255,255,255,0.12)'};border-radius:20px;font-size:0.8rem;opacity:${u?1:0.55};" title="${a.name}: ${a.desc} (${p.cur}/${p.target})">${u?'✅':'▢'} ${a.ic}</span>`;}).join('');
+    strip.innerHTML=[...ACHIEVEMENTS].sort((x,y)=>(y.progress().unlocked-x.progress().unlocked)).map(a=>{const p=a.progress();const u=p.unlocked;return `<span style="display:inline-flex;align-items:center;gap:4px;padding:5px 9px;background:${u?'rgba(241,196,15,0.18)':'rgba(255,255,255,0.04)'};border:1px solid ${u?'#f1c40f':'rgba(255,255,255,0.12)'};border-radius:20px;font-size:0.8rem;opacity:${u?1:0.55};" title="${a.name}: ${a.desc} (${p.cur}/${p.target})">${u?'✅':'▢'} ${a.ic}</span>`;}).join('');
     const total=ACHIEVEMENTS.length;const earned=ACHIEVEMENTS.filter(a=>a.progress().unlocked).length;
     strip.insertAdjacentHTML('beforeend',`<span style="display:inline-flex;align-items:center;padding:5px 9px;font-size:0.8rem;color:#bbb;">${earned}/${total}</span>`);
     const tc=document.getElementById('ach-toggle-count');if(tc)tc.textContent=`${earned}/${total}`;
