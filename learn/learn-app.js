@@ -64,6 +64,7 @@
     clicker: $$('#clicker-view'),
     garden: $$('#garden-view'),
     connect4: $$('#connect4-view'),
+    colorhunt: $$('#colorhunt-view'),
     autominer: $$('#autominer-view'),
     storybook: $$('#storybook-view'),
     t2048: $$('#t2048-view'),
@@ -1043,6 +1044,7 @@
       if(game === 'clicker') initClicker();
       if(game === 'garden') initGarden();
       if(game === 'connect4') initConnect4();
+      if(game === 'colorhunt') initColorHunt();
       if(game === 'autominer') initAutoMiner();
       if(game === 'calculus') initCollege('calculus');
       if(game === 'linalg') initCollege('linalg');
@@ -15673,6 +15675,52 @@ function playAnimalSound(type) {
     render();
     window._gardenTimer=setInterval(()=>{if(currentGame!=='garden')return;blooms+=effectiveCps()/10;save();checkAch();const d=$$('#gd-display');if(d)d.textContent=`🌻 ${fmt(blooms)}`;const r=root.querySelector('.idle-rate');if(r)r.textContent=`${fmt(effectiveCps())} per second${goldenMult>1?' (🦋 BLOOM RUSH!)':''}`;root.querySelectorAll('.idle-shop .idle-item').forEach((el,i)=>{if(upgrades[i]){const c=cost(upgrades[i]);el.classList.toggle('locked',blooms<c);}});},100);
     window._butterflySpawner=setInterval(()=>{if(currentGame!=='garden')return;if(Math.random()<0.15)spawnGolden();},15000);
+  }
+  function initColorHunt(){
+    const root=$$('#colorhunt-game');root.innerHTML='';
+    const prevBest=parseInt(sessionStorage.getItem('chunt-best')||'0');
+    let cleared=0,over=false,oddIndex=-1,best=prevBest;
+    const hud=document.createElement('div');hud.className='game-hud';hud.style.marginBottom='6px';
+    hud.innerHTML=`<span class="game-stat">🎯 Round <span class="game-stat-val" id="chunt-round">1</span></span><span class="game-stat">⭐ Best <span class="game-stat-val">${prevBest}</span></span>`;
+    root.appendChild(hud);
+    const info=document.createElement('div');info.style.cssText='text-align:center;font-family:Comic Neue,cursive;color:var(--text,#2c3e50);font-size:1.05rem;margin:6px 0;min-height:26px;';
+    info.textContent="Tap the tile that's a slightly different shade!";
+    root.appendChild(info);
+    const board=document.createElement('div');board.id='chunt-board';board.style.cssText='display:grid;gap:6px;max-width:min(92vw,360px);margin:10px auto;';
+    root.appendChild(board);
+    const ctrls=document.createElement('div');ctrls.style.cssText='display:flex;gap:8px;justify-content:center;margin-top:10px;';
+    const eb=document.createElement('button');eb.className='retro-btn';eb.style.background='#e74c3c';eb.textContent='🚪 Exit';eb.onclick=goBack;ctrls.appendChild(eb);
+    root.appendChild(ctrls);
+    function render(){
+      const round=cleared+1;
+      const re=document.getElementById('chunt-round');if(re)re.textContent=round;
+      const n=Math.min(2+Math.floor(round/3),6),total=n*n;
+      const delta=Math.max(5,42-round*2);
+      const h=Math.floor(Math.random()*360),s=55+Math.floor(Math.random()*25),l=42+Math.floor(Math.random()*14);
+      const base=`hsl(${h},${s}%,${l}%)`;
+      const dir=Math.random()<0.5?1:-1;
+      const odd=`hsl(${h},${s}%,${Math.max(8,Math.min(92,l+dir*delta))}%)`;
+      oddIndex=Math.floor(Math.random()*total);
+      board.style.gridTemplateColumns=`repeat(${n},1fr)`;board.innerHTML='';
+      for(let i=0;i<total;i++){const cell=document.createElement('div');cell.style.cssText=`aspect-ratio:1;border-radius:10px;background:${i===oddIndex?odd:base};cursor:pointer;`;cell.onclick=()=>pick(i);board.appendChild(cell);}
+    }
+    function pick(i){
+      if(over)return;
+      if(i===oddIndex){cleared++;render();}
+      else{over=true;if(cleared>best){best=cleared;sessionStorage.setItem('chunt-best',best);}gameOver();}
+    }
+    function gameOver(){
+      board.innerHTML='';board.style.gridTemplateColumns='1fr';info.textContent='';
+      const wasBest=cleared>prevBest;
+      const msg=document.createElement('div');msg.style.cssText='text-align:center;font-family:Comic Neue,cursive;color:var(--text,#2c3e50);';
+      msg.innerHTML=`<div style="font-size:2rem;margin-bottom:6px;">${wasBest?'🏆 NEW BEST!':'🎨 Game Over'}</div><div style="font-size:1.3rem;">You cleared ${cleared} round${cleared===1?'':'s'}!</div>`;
+      board.appendChild(msg);
+      if(typeof spawnConfetti==='function')spawnConfetti(window.innerWidth/2,window.innerHeight/2,wasBest?120:50);
+      if(typeof addScore==='function')addScore(Math.max(1,Math.floor(cleared/2)));
+      if(typeof showFeedback==='function')showFeedback(`Color Hunt: ${cleared} rounds 🎨`,wasBest?'#2ecc71':'#3498db');
+      const pa=document.createElement('button');pa.className='nmm-btn';pa.textContent='Play Again';pa.style.cssText='display:block;margin:14px auto;';pa.onclick=()=>initColorHunt();board.appendChild(pa);
+    }
+    render();
   }
   function initConnect4(){
     const root=$$('#connect4-game');root.innerHTML='';
