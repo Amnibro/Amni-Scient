@@ -15912,7 +15912,7 @@ function playAnimalSound(type) {
     const root=$$('#connect4-game');root.innerHTML='';
     const COLS=7,ROWS=6;
     let grid=Array.from({length:ROWS},()=>Array(COLS).fill(0));
-    let turn=1,over=false,winner=0,lastAi=-1;
+    let turn=1,over=false,winner=0,lastAi=-1,winCells=[];
     let pWins=parseInt(localStorage.getItem('cf-pwins')||'0'),aWins=parseInt(localStorage.getItem('cf-awins')||'0');
     function lowestRow(c){for(let r=ROWS-1;r>=0;r--){if(grid[r][c]===0)return r;}return -1;}
     function checkWinFrom(r,c,p){
@@ -15924,6 +15924,16 @@ function playAnimalSound(type) {
         if(cnt>=4)return true;
       }
       return false;
+    }
+    function findWinLine(r,c,p){
+      const dirs=[[0,1],[1,0],[1,1],[1,-1]];
+      for(const [dr,dc] of dirs){
+        const cells=[[r,c]];
+        for(let s=1;s<4;s++){const nr=r+dr*s,nc=c+dc*s;if(nr<0||nr>=ROWS||nc<0||nc>=COLS||grid[nr][nc]!==p)break;cells.push([nr,nc]);}
+        for(let s=1;s<4;s++){const nr=r-dr*s,nc=c-dc*s;if(nr<0||nr>=ROWS||nc<0||nc>=COLS||grid[nr][nc]!==p)break;cells.push([nr,nc]);}
+        if(cells.length>=4)return cells;
+      }
+      return [];
     }
     function boardFull(){return grid[0].every(v=>v!==0);}
     function validCols(){const out=[];for(let c=0;c<COLS;c++)if(lowestRow(c)>=0)out.push(c);return out;}
@@ -15939,7 +15949,7 @@ function playAnimalSound(type) {
       if(over||turn!==1)return;
       const r=lowestRow(c);if(r<0)return;
       grid[r][c]=1;
-      if(checkWinFrom(r,c,1)){over=true;winner=1;pWins++;localStorage.setItem('cf-pwins',pWins);if(typeof addScore==='function')addScore(5);if(typeof showFeedback==='function')showFeedback('🎉 You win!','#2ecc71');if(typeof spawnConfetti==='function')spawnConfetti(window.innerWidth/2,window.innerHeight/2,120);render();return;}
+      if(checkWinFrom(r,c,1)){over=true;winner=1;winCells=findWinLine(r,c,1);pWins++;localStorage.setItem('cf-pwins',pWins);if(typeof addScore==='function')addScore(5);if(typeof showFeedback==='function')showFeedback('🎉 You win!','#2ecc71');if(typeof spawnConfetti==='function')spawnConfetti(window.innerWidth/2,window.innerHeight/2,120);render();return;}
       if(boardFull()){over=true;winner=0;render();return;}
       turn=2;render();setTimeout(()=>{if(currentGame==='connect4')aiTurn();},500);
     }
@@ -15947,7 +15957,7 @@ function playAnimalSound(type) {
       if(over)return;
       const c=aiMove();if(c<0){over=true;winner=0;render();return;}
       const r=lowestRow(c);grid[r][c]=2;lastAi=r*COLS+c;
-      if(checkWinFrom(r,c,2)){over=true;winner=2;aWins++;localStorage.setItem('cf-awins',aWins);if(typeof showFeedback==='function')showFeedback('🤖 AI wins!','#e67e22');}
+      if(checkWinFrom(r,c,2)){over=true;winner=2;winCells=findWinLine(r,c,2);aWins++;localStorage.setItem('cf-awins',aWins);if(typeof showFeedback==='function')showFeedback('🤖 AI wins!','#e67e22');}
       else if(boardFull()){over=true;winner=0;}
       else turn=1;
       render();
@@ -15961,16 +15971,17 @@ function playAnimalSound(type) {
       status.textContent=over?(winner===1?'🎉 You win!':winner===2?'🤖 AI wins! Try again':'🤝 Draw!'):(turn===1?'Your turn — tap a column':'🤖 AI thinking...');
       root.appendChild(status);
       const boardEl=document.createElement('div');boardEl.style.cssText=`display:grid;grid-template-columns:repeat(${COLS},1fr);gap:5px;background:#2980b9;padding:8px;border-radius:12px;max-width:min(96vw,400px);margin:8px auto;`;
+      const winSet=new Set(winCells.map(([rr,cc])=>rr*COLS+cc));
       for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){
         const v=grid[r][c];const cell=document.createElement('div');
         const playable=!over&&turn===1&&lowestRow(c)>=0;
-        cell.style.cssText=`aspect-ratio:1;border-radius:50%;background:${v===1?'radial-gradient(circle at 35% 30%,#ff7675,#d63031)':v===2?'radial-gradient(circle at 35% 30%,#ffeaa7,#fdcb6e)':'#15405f'};cursor:${playable?'pointer':'default'};transition:transform 0.1s;${lastAi===r*COLS+c?'box-shadow:0 0 0 3px #fff,0 0 7px 2px #ffd700;':''}`;
+        cell.style.cssText=`aspect-ratio:1;border-radius:50%;background:${v===1?'radial-gradient(circle at 35% 30%,#ff7675,#d63031)':v===2?'radial-gradient(circle at 35% 30%,#ffeaa7,#fdcb6e)':'#15405f'};cursor:${playable?'pointer':'default'};transition:transform 0.1s;${winSet.has(r*COLS+c)?'box-shadow:0 0 0 4px #fff,0 0 12px 4px #2ecc71;':lastAi===r*COLS+c?'box-shadow:0 0 0 3px #fff,0 0 7px 2px #ffd700;':''}`;
         cell.onclick=()=>{if(!over&&turn===1)drop(c);};
         boardEl.appendChild(cell);
       }
       root.appendChild(boardEl);
       const btns=document.createElement('div');btns.style.cssText='display:flex;gap:8px;justify-content:center;margin-top:10px;';
-      const ng=document.createElement('button');ng.className='retro-btn';ng.textContent='🔄 New Game';ng.onclick=()=>{grid=Array.from({length:ROWS},()=>Array(COLS).fill(0));turn=1;over=false;winner=0;render();};
+      const ng=document.createElement('button');ng.className='retro-btn';ng.textContent='🔄 New Game';ng.onclick=()=>{grid=Array.from({length:ROWS},()=>Array(COLS).fill(0));turn=1;over=false;winner=0;winCells=[];lastAi=-1;render();};
       const eb=document.createElement('button');eb.className='retro-btn';eb.style.background='#e74c3c';eb.textContent='🚪 Exit';eb.onclick=goBack;
       btns.appendChild(ng);btns.appendChild(eb);root.appendChild(btns);
     }
