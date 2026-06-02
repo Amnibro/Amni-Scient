@@ -66,6 +66,7 @@
     connect4: $$('#connect4-view'),
     colorhunt: $$('#colorhunt-view'),
     reversi: $$('#reversi-view'),
+    battleship: $$('#battleship-view'),
     autominer: $$('#autominer-view'),
     storybook: $$('#storybook-view'),
     t2048: $$('#t2048-view'),
@@ -203,6 +204,7 @@
     {id:'four-in-a-row',ic:'🔴',name:'Four in a Row',desc:'Beat the AI at Connect Four',progress(){const c=_intLS('cf-pwins');return{cur:Math.min(c,1),target:1,unlocked:c>=1};}},
     {id:'sharp-eyes',ic:'🎨',name:'Sharp Eyes',desc:'Clear 10 rounds in Color Hunt',progress(){const c=_intLS('chunt-best');return{cur:Math.min(c,10),target:10,unlocked:c>=10};}},
     {id:'othello-master',ic:'⚫',name:'Othello Master',desc:'Beat the AI at Reversi',progress(){const c=_intLS('rv-wins');return{cur:Math.min(c,1),target:1,unlocked:c>=1};}},
+    {id:'admiral',ic:'🚢',name:'Admiral',desc:'Sink the enemy fleet in Battleship',progress(){const c=_intLS('bs-wins');return{cur:Math.min(c,1),target:1,unlocked:c>=1};}},
     {id:'sharp-spotter',ic:'🔍',name:'Sharp Spotter',desc:'Find all 10 in Find It (any mode)',progress(){let m=0;['animals','fruits','vehicles','mixed'].forEach(k=>{m=Math.max(m,_intLS('fi-best-'+k));});return{cur:Math.min(m,10),target:10,unlocked:m>=10};}},
     {id:'block-memory',ic:'🟦',name:'Block Memory',desc:'Reach a Corsi Blocks span of 6',progress(){const s=_intLS('corsi-best');return{cur:Math.min(s,6),target:6,unlocked:s>=6};}},
     {id:'backward-wizard',ic:'🔢',name:'Backward Wizard',desc:'Reverse a 5-digit span in Reverse Recall',progress(){const s=_intLS('bsp-best');return{cur:Math.min(s,5),target:5,unlocked:s>=5};}},
@@ -1051,6 +1053,7 @@
       if(game === 'connect4') initConnect4();
       if(game === 'colorhunt') initColorHunt();
       if(game === 'reversi') initReversi();
+      if(game === 'battleship') initBattleship();
       if(game === 'autominer') initAutoMiner();
       if(game === 'calculus') initCollege('calculus');
       if(game === 'linalg') initCollege('linalg');
@@ -15681,6 +15684,84 @@ function playAnimalSound(type) {
     render();
     window._gardenTimer=setInterval(()=>{if(currentGame!=='garden')return;blooms+=effectiveCps()/10;save();checkAch();const d=$$('#gd-display');if(d)d.textContent=`🌻 ${fmt(blooms)}`;const r=root.querySelector('.idle-rate');if(r)r.textContent=`${fmt(effectiveCps())} per second${goldenMult>1?' (🦋 BLOOM RUSH!)':''}`;root.querySelectorAll('.idle-shop .idle-item').forEach((el,i)=>{if(upgrades[i]){const c=cost(upgrades[i]);el.classList.toggle('locked',blooms<c);}});},100);
     window._butterflySpawner=setInterval(()=>{if(currentGame!=='garden')return;if(Math.random()<0.15)spawnGolden();},15000);
+  }
+  function initBattleship(){
+    const root=$$('#battleship-game');root.innerHTML='';
+    const N=8,SHIPS=[4,3,3,2],idx=(r,c)=>r*N+c;
+    const prevWins=parseInt(localStorage.getItem('bs-wins')||'0');
+    function placeFleet(){
+      const grid=new Array(N*N).fill(0),ships=[];
+      for(const len of SHIPS){
+        let placed=false,guard=0;
+        while(!placed&&guard++<300){
+          const horiz=Math.random()<0.5;
+          const r=Math.floor(Math.random()*(horiz?N:N-len+1));
+          const c=Math.floor(Math.random()*(horiz?N-len+1:N));
+          const cells=[];let ok=true;
+          for(let k=0;k<len;k++){const rr=horiz?r:r+k,cc=horiz?c+k:c;if(grid[idx(rr,cc)]){ok=false;break;}cells.push(idx(rr,cc));}
+          if(ok){cells.forEach(i=>grid[i]=1);ships.push({cells,hits:new Set()});placed=true;}
+        }
+      }
+      return {grid,ships};
+    }
+    let me=placeFleet(),foe=placeFleet();
+    let foeShots=new Array(N*N).fill(0),meShots=new Array(N*N).fill(0),aiQueue=[],turn='player',over=false,result='';
+    const shipAt=(ships,i)=>ships.find(s=>s.cells.includes(i));
+    const allSunk=ships=>ships.every(s=>s.hits.size>=s.cells.length);
+    function playerFire(i){
+      if(over||turn!=='player'||foeShots[i])return;
+      const ship=shipAt(foe.ships,i);
+      if(ship){ship.hits.add(i);foeShots[i]=2;}else foeShots[i]=1;
+      if(allSunk(foe.ships)){over=true;result='win';localStorage.setItem('bs-wins',prevWins+1);if(typeof addScore==='function')addScore(10);if(typeof spawnConfetti==='function')spawnConfetti(window.innerWidth/2,window.innerHeight/2,120);render();return;}
+      turn='ai';render();setTimeout(()=>{if(currentGame==='battleship')aiFire();},600);
+    }
+    function aiFire(){
+      if(over||turn!=='ai')return;
+      let target=-1;
+      while(aiQueue.length){const t=aiQueue.shift();if(!meShots[t]){target=t;break;}}
+      if(target<0){
+        const cand=[],any=[];
+        for(let i=0;i<N*N;i++){if(!meShots[i]){any.push(i);if(((Math.floor(i/N)+(i%N))%2)===0)cand.push(i);}}
+        const pool=cand.length?cand:any;
+        if(!pool.length)return;
+        target=pool[Math.floor(Math.random()*pool.length)];
+      }
+      const ship=shipAt(me.ships,target);
+      if(ship){ship.hits.add(target);meShots[target]=2;const r=Math.floor(target/N),c=target%N;[[r-1,c],[r+1,c],[r,c-1],[r,c+1]].forEach(([rr,cc])=>{if(rr>=0&&rr<N&&cc>=0&&cc<N){const ni=idx(rr,cc);if(!meShots[ni])aiQueue.push(ni);}});}
+      else meShots[target]=1;
+      if(allSunk(me.ships)){over=true;result='lose';render();return;}
+      turn='player';render();
+    }
+    function mkGrid(fleet,shots,isEnemy){
+      const g=document.createElement('div');g.style.cssText=`display:grid;grid-template-columns:repeat(${N},1fr);gap:2px;background:#16527a;padding:4px;border-radius:6px;max-width:min(86vw,300px);margin:5px auto;`;
+      for(let i=0;i<N*N;i++){
+        const cell=document.createElement('div'),sh=shots[i],hasShip=fleet.grid[i]===1;let bg,content='';
+        if(isEnemy){bg=sh===2?'#c0392b':sh===1?'#5d6d7e':'#2e86c1';content=sh===2?'💥':sh===1?'•':'';if(over&&hasShip&&sh!==2){bg='#7f8c8d';content='🚢';}}
+        else{bg=sh===2?'#c0392b':hasShip?'#34495e':(sh===1?'#5d6d7e':'#2e86c1');content=sh===2?'💥':sh===1?'•':'';}
+        const tappable=isEnemy&&!over&&turn==='player'&&!sh;
+        cell.style.cssText=`aspect-ratio:1;border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:0.72rem;background:${bg};cursor:${tappable?'pointer':'default'};`;
+        cell.textContent=content;
+        if(tappable)cell.onclick=()=>playerFire(i);
+        g.appendChild(cell);
+      }
+      return g;
+    }
+    function render(){
+      root.innerHTML='';
+      const foeLeft=foe.ships.filter(s=>s.hits.size<s.cells.length).length,meLeft=me.ships.filter(s=>s.hits.size<s.cells.length).length;
+      const status=document.createElement('div');status.style.cssText='text-align:center;font-family:Comic Neue,cursive;font-size:1.15rem;color:var(--text,#2c3e50);margin:4px 0;min-height:26px;';
+      status.textContent=over?(result==='win'?'🎉 You sank the enemy fleet!':'💀 Your fleet was sunk!'):(turn==='player'?'🎯 Your turn — fire at Enemy Waters':'🤖 Enemy firing...');
+      root.appendChild(status);
+      const lab1=document.createElement('div');lab1.style.cssText='text-align:center;font-weight:bold;color:#e74c3c;font-family:Comic Neue,cursive;';lab1.textContent=`🎯 Enemy Waters (${foeLeft} left)`;root.appendChild(lab1);
+      root.appendChild(mkGrid(foe,foeShots,true));
+      const lab2=document.createElement('div');lab2.style.cssText='text-align:center;font-weight:bold;color:#2980b9;font-family:Comic Neue,cursive;margin-top:6px;';lab2.textContent=`🚢 Your Fleet (${meLeft} left)`;root.appendChild(lab2);
+      root.appendChild(mkGrid(me,meShots,false));
+      const btns=document.createElement('div');btns.style.cssText='display:flex;gap:8px;justify-content:center;margin-top:10px;';
+      const ng=document.createElement('button');ng.className='retro-btn';ng.textContent='🔄 New Game';ng.onclick=()=>initBattleship();btns.appendChild(ng);
+      const eb=document.createElement('button');eb.className='retro-btn';eb.style.background='#e74c3c';eb.textContent='🚪 Exit';eb.onclick=goBack;btns.appendChild(eb);
+      root.appendChild(btns);
+    }
+    render();
   }
   function initReversi(){
     const root=$$('#reversi-game');root.innerHTML='';
