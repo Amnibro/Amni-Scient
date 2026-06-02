@@ -65,6 +65,7 @@
     garden: $$('#garden-view'),
     connect4: $$('#connect4-view'),
     colorhunt: $$('#colorhunt-view'),
+    reversi: $$('#reversi-view'),
     autominer: $$('#autominer-view'),
     storybook: $$('#storybook-view'),
     t2048: $$('#t2048-view'),
@@ -201,6 +202,7 @@
     {id:'green-thumb',ic:'🌻',name:'Green Thumb',desc:'Grow 1,000 blooms in Garden Grower',progress(){const c=_intLS('gd-lifetime');return{cur:Math.min(c,1000),target:1000,unlocked:c>=1000};}},
     {id:'four-in-a-row',ic:'🔴',name:'Four in a Row',desc:'Beat the AI at Connect Four',progress(){const c=_intLS('cf-pwins');return{cur:Math.min(c,1),target:1,unlocked:c>=1};}},
     {id:'sharp-eyes',ic:'🎨',name:'Sharp Eyes',desc:'Clear 10 rounds in Color Hunt',progress(){const c=_intLS('chunt-best');return{cur:Math.min(c,10),target:10,unlocked:c>=10};}},
+    {id:'othello-master',ic:'⚫',name:'Othello Master',desc:'Beat the AI at Reversi',progress(){const c=_intLS('rv-wins');return{cur:Math.min(c,1),target:1,unlocked:c>=1};}},
     {id:'sharp-spotter',ic:'🔍',name:'Sharp Spotter',desc:'Find all 10 in Find It (any mode)',progress(){let m=0;['animals','fruits','vehicles','mixed'].forEach(k=>{m=Math.max(m,_intLS('fi-best-'+k));});return{cur:Math.min(m,10),target:10,unlocked:m>=10};}},
     {id:'block-memory',ic:'🟦',name:'Block Memory',desc:'Reach a Corsi Blocks span of 6',progress(){const s=_intLS('corsi-best');return{cur:Math.min(s,6),target:6,unlocked:s>=6};}},
     {id:'backward-wizard',ic:'🔢',name:'Backward Wizard',desc:'Reverse a 5-digit span in Reverse Recall',progress(){const s=_intLS('bsp-best');return{cur:Math.min(s,5),target:5,unlocked:s>=5};}},
@@ -1048,6 +1050,7 @@
       if(game === 'garden') initGarden();
       if(game === 'connect4') initConnect4();
       if(game === 'colorhunt') initColorHunt();
+      if(game === 'reversi') initReversi();
       if(game === 'autominer') initAutoMiner();
       if(game === 'calculus') initCollege('calculus');
       if(game === 'linalg') initCollege('linalg');
@@ -15678,6 +15681,58 @@ function playAnimalSound(type) {
     render();
     window._gardenTimer=setInterval(()=>{if(currentGame!=='garden')return;blooms+=effectiveCps()/10;save();checkAch();const d=$$('#gd-display');if(d)d.textContent=`🌻 ${fmt(blooms)}`;const r=root.querySelector('.idle-rate');if(r)r.textContent=`${fmt(effectiveCps())} per second${goldenMult>1?' (🦋 BLOOM RUSH!)':''}`;root.querySelectorAll('.idle-shop .idle-item').forEach((el,i)=>{if(upgrades[i]){const c=cost(upgrades[i]);el.classList.toggle('locked',blooms<c);}});},100);
     window._butterflySpawner=setInterval(()=>{if(currentGame!=='garden')return;if(Math.random()<0.15)spawnGolden();},15000);
+  }
+  function initReversi(){
+    const root=$$('#reversi-game');root.innerHTML='';
+    const N=8,idx=(r,c)=>r*N+c;
+    let board=new Array(N*N).fill(0);
+    board[idx(3,3)]=2;board[idx(3,4)]=1;board[idx(4,3)]=1;board[idx(4,4)]=2;
+    let turn=1,over=false;
+    const DIRS=[[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
+    const WT=[120,-20,20,5,5,20,-20,120,-20,-40,-5,-5,-5,-5,-40,-20,20,-5,15,3,3,15,-5,20,5,-5,3,3,3,3,-5,5,5,-5,3,3,3,3,-5,5,20,-5,15,3,3,15,-5,20,-20,-40,-5,-5,-5,-5,-40,-20,120,-20,20,5,5,20,-20,120];
+    function flipsFor(r,c,p){if(board[idx(r,c)]!==0)return [];const opp=p===1?2:1,out=[];for(const [dr,dc] of DIRS){let rr=r+dr,cc=c+dc;const line=[];while(rr>=0&&rr<N&&cc>=0&&cc<N&&board[idx(rr,cc)]===opp){line.push(idx(rr,cc));rr+=dr;cc+=dc;}if(line.length&&rr>=0&&rr<N&&cc>=0&&cc<N&&board[idx(rr,cc)]===p)out.push(...line);}return out;}
+    function validMoves(p){const m=[];for(let r=0;r<N;r++)for(let c=0;c<N;c++){if(board[idx(r,c)]===0&&flipsFor(r,c,p).length)m.push([r,c]);}return m;}
+    function place(r,c,p){const f=flipsFor(r,c,p);if(!f.length)return false;board[idx(r,c)]=p;f.forEach(i=>board[i]=p);return true;}
+    function counts(){let a=0,b=0;for(const v of board){if(v===1)a++;else if(v===2)b++;}return [a,b];}
+    function aiBest(){const moves=validMoves(2);if(!moves.length)return null;let best=moves[0],bs=-1e9;for(const [r,c] of moves){const s=WT[idx(r,c)]+flipsFor(r,c,2).length;if(s>bs){bs=s;best=[r,c];}}return best;}
+    function playerTap(r,c){if(over||turn!==1)return;if(place(r,c,1))advance();}
+    function aiTurn(){if(over||turn!==2)return;const m=aiBest();if(m)place(m[0],m[1],2);advance();}
+    function advance(){
+      const other=turn===1?2:1;
+      if(validMoves(other).length){turn=other;}
+      else if(validMoves(turn).length){if(typeof showFeedback==='function')showFeedback((other===1?'You':'AI')+' pass — no moves','#888');}
+      else return endGame();
+      render();
+      if(turn===2&&!over)setTimeout(()=>{if(currentGame==='reversi')aiTurn();},650);
+    }
+    function endGame(){over=true;const [b,w]=counts();if(b>w){const n=parseInt(localStorage.getItem('rv-wins')||'0')+1;localStorage.setItem('rv-wins',n);if(typeof addScore==='function')addScore(8);}render();}
+    function render(){
+      root.innerHTML='';
+      const [b,w]=counts();
+      const hud=document.createElement('div');hud.className='game-hud';hud.style.marginBottom='6px';
+      hud.innerHTML=`<span class="game-stat">⚫ You <span class="game-stat-val">${b}</span></span><span class="game-stat">⚪ AI <span class="game-stat-val">${w}</span></span>`;
+      root.appendChild(hud);
+      const status=document.createElement('div');status.style.cssText='text-align:center;font-family:Comic Neue,cursive;font-size:1.2rem;color:var(--text,#2c3e50);margin:6px 0;min-height:28px;';
+      status.textContent=over?(b>w?'🎉 You win!':w>b?'🤖 AI wins! Try again':'🤝 Tie!'):(turn===1?'Your turn (⚫) — tap a dot':'🤖 AI thinking...');
+      root.appendChild(status);
+      const hintSet=new Set((turn===1&&!over?validMoves(1):[]).map(([r,c])=>idx(r,c)));
+      const boardEl=document.createElement('div');boardEl.style.cssText=`display:grid;grid-template-columns:repeat(${N},1fr);gap:2px;background:#1e6b3a;padding:6px;border-radius:8px;max-width:min(94vw,400px);margin:8px auto;`;
+      for(let r=0;r<N;r++)for(let c=0;c<N;c++){
+        const v=board[idx(r,c)],cell=document.createElement('div'),isHint=hintSet.has(idx(r,c));
+        cell.style.cssText=`aspect-ratio:1;background:#2e8b57;border-radius:3px;display:flex;align-items:center;justify-content:center;cursor:${isHint?'pointer':'default'};`;
+        if(v){const disc=document.createElement('div');disc.style.cssText=`width:78%;height:78%;border-radius:50%;background:${v===1?'radial-gradient(circle at 35% 30%,#555,#000)':'radial-gradient(circle at 35% 30%,#fff,#bbb)'};box-shadow:0 1px 3px rgba(0,0,0,0.4);`;cell.appendChild(disc);}
+        else if(isHint){const dot=document.createElement('div');dot.style.cssText='width:26%;height:26%;border-radius:50%;background:rgba(255,255,255,0.5);';cell.appendChild(dot);}
+        if(isHint)cell.onclick=()=>playerTap(r,c);
+        boardEl.appendChild(cell);
+      }
+      root.appendChild(boardEl);
+      const btns=document.createElement('div');btns.style.cssText='display:flex;gap:8px;justify-content:center;margin-top:10px;';
+      const ng=document.createElement('button');ng.className='retro-btn';ng.textContent='🔄 New Game';ng.onclick=()=>initReversi();btns.appendChild(ng);
+      const eb=document.createElement('button');eb.className='retro-btn';eb.style.background='#e74c3c';eb.textContent='🚪 Exit';eb.onclick=goBack;btns.appendChild(eb);
+      root.appendChild(btns);
+      if(over&&b>w&&typeof spawnConfetti==='function')spawnConfetti(window.innerWidth/2,window.innerHeight/2,120);
+    }
+    render();
   }
   function initColorHunt(){
     const root=$$('#colorhunt-game');root.innerHTML='';
