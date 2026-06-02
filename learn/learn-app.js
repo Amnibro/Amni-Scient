@@ -17929,7 +17929,7 @@ function playAnimalSound(type) {
         const o=i*4;d[o]=r;d[o+1]=g;d[o+2]=b;d[o+3]=c?255:0;}
       cx.putImageData(imgData,0,0);
     }
-    function loop(){step();step();render();animId=requestAnimationFrame(loop);}
+    function loop(){if(currentGame!=='netdebug')return;step();step();render();animId=requestAnimationFrame(loop);}
     loop();
   }
   function initNetDebug(){
