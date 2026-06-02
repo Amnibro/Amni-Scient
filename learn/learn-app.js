@@ -2908,6 +2908,7 @@
       if(subgame === 'samediff') initSameDiff();
       if(subgame === 'petcare') initPetCare();
       if(subgame === 'findit') initFindIt();
+      if(subgame === 'count') initCount();
       if(subgame === 'colormix') initColorMix();
       if(subgame === 'whackmole') initWhackMole();
       if(subgame === 'codelock') initCodeLock();
@@ -3984,6 +3985,74 @@
       }
       if(ttsAuto() && typeof speakSeq==='function')speakSeq([picked===curNeed.action?'Happy pet!':('The pet was '+curNeed.label.toLowerCase()+'.')]);
       setTimeout(nextRound,1100);
+    }
+    nextRound();
+  }
+  function initCount(){
+    lifeArea.innerHTML='';
+    lifeTitle.textContent='🔢 Count It!';
+    const ITEMS=[{e:'🍎',n:'apples'},{e:'🐶',n:'dogs'},{e:'⭐',n:'stars'},{e:'🐠',n:'fish'},{e:'🍌',n:'bananas'},{e:'🦋',n:'butterflies'},{e:'🚗',n:'cars'},{e:'🌸',n:'flowers'},{e:'🐸',n:'frogs'},{e:'🍓',n:'strawberries'},{e:'🐝',n:'bees'},{e:'🎈',n:'balloons'},{e:'🐱',n:'cats'},{e:'🐧',n:'penguins'},{e:'🍪',n:'cookies'},{e:'🌟',n:'stars'},{e:'🐥',n:'chicks'},{e:'🍊',n:'oranges'}];
+    let score=0,round=0;
+    const TOTAL=10;
+    const maxN=currentLevel===1?5:(currentLevel===2?10:15);
+    const bestKey='count-best-L'+currentLevel;
+    let best=parseInt(sessionStorage.getItem(bestKey)||'0');
+    const hud=document.createElement('div');hud.className='game-hud';hud.style.marginBottom='6px';
+    hud.innerHTML=`<span class="game-stat">🎯 <span class="game-stat-val" id="cnt-round">0</span>/${TOTAL}</span><span class="game-stat">✅ <span class="game-stat-val" id="cnt-score">0</span></span><span class="game-stat">⭐ Best <span class="game-stat-val" id="cnt-best">${best}</span></span>`;
+    lifeArea.appendChild(hud);
+    const prompt=document.createElement('div');prompt.id='cnt-prompt';prompt.style.cssText='text-align:center;font-family:Comic Neue,cursive;font-size:1.4rem;color:#2c3e50;margin:10px 0;min-height:40px;';
+    lifeArea.appendChild(prompt);
+    const grid=document.createElement('div');grid.id='cnt-grid';grid.style.cssText='display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-items:center;max-width:min(96vw,420px);min-height:120px;margin:8px auto;padding:12px;background:rgba(168,230,247,0.25);border-radius:14px;';
+    lifeArea.appendChild(grid);
+    const choices=document.createElement('div');choices.id='cnt-choices';choices.style.cssText='display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:14px 0;';
+    lifeArea.appendChild(choices);
+    function nextRound(){
+      round++;
+      const re=document.getElementById('cnt-round');if(re)re.textContent=round;
+      if(round>TOTAL){
+        const wasBest=score>best;
+        if(wasBest){sessionStorage.setItem(bestKey,score);}
+        grid.innerHTML='';choices.innerHTML='';
+        prompt.innerHTML=`<div style="text-align:center;"><div style="font-size:2.2rem;margin-bottom:8px;">${wasBest?'🏆 NEW BEST!':'🎉 All counted!'}</div><div style="font-size:1.3rem;">${score}/${TOTAL} correct</div></div>`;
+        if(typeof spawnConfetti==='function')spawnConfetti(window.innerWidth/2,window.innerHeight/2,wasBest?120:60);
+        if(ttsAuto() && typeof speakSeq==='function')speakSeq([(wasBest?'New best! ':'All done! ')+'You got '+score+' out of '+TOTAL+'!']);
+        if(typeof showFeedback==='function')showFeedback(`Count It: ${score}/${TOTAL} 🔢`,wasBest?'#2ecc71':'#3498db');
+        if(typeof addScore==='function')addScore(score);
+        const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='Play Again';rb.style.cssText='display:block;margin:14px auto;';rb.onclick=()=>initCount();lifeArea.appendChild(rb);
+        return;
+      }
+      const item=ITEMS[Math.floor(Math.random()*ITEMS.length)];
+      const count=Math.floor(Math.random()*maxN)+1;
+      grid.innerHTML='';
+      for(let i=0;i<count;i++){const s=document.createElement('span');s.style.cssText='font-size:2.6rem;line-height:1;';s.textContent=item.e;grid.appendChild(s);}
+      prompt.innerHTML=`How many <span style="font-size:1.9rem;">${item.e}</span> do you see?`;
+      if(ttsAuto() && typeof speakSeq==='function')speakSeq(['How many '+item.n+'? Count them!']);
+      const opts=new Set([count]);
+      while(opts.size<4){const d=count+Math.floor(Math.random()*5)-2;if(d>=1&&d<=maxN+2)opts.add(d);}
+      const arr=[...opts].sort(()=>Math.random()-0.5);
+      choices.innerHTML='';
+      arr.forEach(nv=>{
+        const b=document.createElement('button');
+        b.style.cssText='font-size:2rem;padding:10px 24px;border-radius:14px;border:3px solid #74b9ff;background:#fff;cursor:pointer;line-height:1;box-shadow:0 4px 0 #95a5a6;font-family:Comic Neue,cursive;font-weight:bold;color:#2c3e50;';
+        b.textContent=nv;
+        b.onclick=()=>handle(b,nv,count);
+        if(typeof _kbd==='function')_kbd(b,'Answer '+nv);
+        choices.appendChild(b);
+      });
+    }
+    function handle(btn,picked,answer){
+      if(picked===answer){
+        score++;const se=document.getElementById('cnt-score');if(se)se.textContent=score;
+        btn.style.background='#2ecc71';btn.style.color='#fff';
+        if(typeof showFeedback==='function')showFeedback('Correct! ✨','#2ecc71');
+        if(ttsAuto() && typeof speakSeq==='function')speakSeq(['Yes! '+answer+'!']);
+        [...choices.children].forEach(b=>b.style.pointerEvents='none');
+        setTimeout(nextRound,800);
+      }else{
+        btn.style.background='#e74c3c';btn.style.color='#fff';btn.style.pointerEvents='none';
+        if(typeof showFeedback==='function')showFeedback('Count again!','#e67e22');
+        if(typeof resetStreak==='function')resetStreak();
+      }
     }
     nextRound();
   }
