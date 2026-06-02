@@ -15752,7 +15752,7 @@ function playAnimalSound(type) {
     function playerFire(i){
       if(over||turn!=='player'||foeShots[i])return;
       const ship=shipAt(foe.ships,i);
-      if(ship){ship.hits.add(i);foeShots[i]=2;}else foeShots[i]=1;
+      if(ship){ship.hits.add(i);foeShots[i]=2;if(ship.hits.size>=ship.cells.length&&typeof showFeedback==='function')showFeedback('🎯 Sunk an enemy ship!','#2ecc71');}else foeShots[i]=1;
       if(allSunk(foe.ships)){over=true;result='win';localStorage.setItem('bs-wins',prevWins+1);if(typeof addScore==='function')addScore(10);if(typeof spawnConfetti==='function')spawnConfetti(window.innerWidth/2,window.innerHeight/2,120);render();return;}
       turn='ai';render();setTimeout(()=>{if(currentGame==='battleship')aiFire();},600);
     }
@@ -15768,7 +15768,7 @@ function playAnimalSound(type) {
         target=pool[Math.floor(Math.random()*pool.length)];
       }
       const ship=shipAt(me.ships,target);
-      if(ship){ship.hits.add(target);meShots[target]=2;const r=Math.floor(target/N),c=target%N;[[r-1,c],[r+1,c],[r,c-1],[r,c+1]].forEach(([rr,cc])=>{if(rr>=0&&rr<N&&cc>=0&&cc<N){const ni=idx(rr,cc);if(!meShots[ni])aiQueue.push(ni);}});}
+      if(ship){ship.hits.add(target);meShots[target]=2;const r=Math.floor(target/N),c=target%N;[[r-1,c],[r+1,c],[r,c-1],[r,c+1]].forEach(([rr,cc])=>{if(rr>=0&&rr<N&&cc>=0&&cc<N){const ni=idx(rr,cc);if(!meShots[ni])aiQueue.push(ni);}});if(ship.hits.size>=ship.cells.length&&typeof showFeedback==='function')showFeedback('💥 Enemy sank your ship!','#e67e22');}
       else meShots[target]=1;
       if(allSunk(me.ships)){over=true;result='lose';render();return;}
       turn='player';render();
