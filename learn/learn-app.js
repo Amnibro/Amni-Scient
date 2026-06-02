@@ -63,6 +63,7 @@
     fillcup: $$('#fillcup-view'),
     clicker: $$('#clicker-view'),
     garden: $$('#garden-view'),
+    connect4: $$('#connect4-view'),
     autominer: $$('#autominer-view'),
     storybook: $$('#storybook-view'),
     t2048: $$('#t2048-view'),
@@ -1041,6 +1042,7 @@
       if(game === 'fillcup') initFillCup();
       if(game === 'clicker') initClicker();
       if(game === 'garden') initGarden();
+      if(game === 'connect4') initConnect4();
       if(game === 'autominer') initAutoMiner();
       if(game === 'calculus') initCollege('calculus');
       if(game === 'linalg') initCollege('linalg');
@@ -15671,6 +15673,74 @@ function playAnimalSound(type) {
     render();
     window._gardenTimer=setInterval(()=>{if(currentGame!=='garden')return;blooms+=effectiveCps()/10;save();checkAch();const d=$$('#gd-display');if(d)d.textContent=`🌻 ${fmt(blooms)}`;const r=root.querySelector('.idle-rate');if(r)r.textContent=`${fmt(effectiveCps())} per second${goldenMult>1?' (🦋 BLOOM RUSH!)':''}`;root.querySelectorAll('.idle-shop .idle-item').forEach((el,i)=>{if(upgrades[i]){const c=cost(upgrades[i]);el.classList.toggle('locked',blooms<c);}});},100);
     window._butterflySpawner=setInterval(()=>{if(currentGame!=='garden')return;if(Math.random()<0.15)spawnGolden();},15000);
+  }
+  function initConnect4(){
+    const root=$$('#connect4-game');root.innerHTML='';
+    const COLS=7,ROWS=6;
+    let grid=Array.from({length:ROWS},()=>Array(COLS).fill(0));
+    let turn=1,over=false,winner=0;
+    let pWins=parseInt(sessionStorage.getItem('cf-pwins')||'0'),aWins=parseInt(sessionStorage.getItem('cf-awins')||'0');
+    function lowestRow(c){for(let r=ROWS-1;r>=0;r--){if(grid[r][c]===0)return r;}return -1;}
+    function checkWinFrom(r,c,p){
+      const dirs=[[0,1],[1,0],[1,1],[1,-1]];
+      for(const [dr,dc] of dirs){
+        let cnt=1;
+        for(let s=1;s<4;s++){const nr=r+dr*s,nc=c+dc*s;if(nr<0||nr>=ROWS||nc<0||nc>=COLS||grid[nr][nc]!==p)break;cnt++;}
+        for(let s=1;s<4;s++){const nr=r-dr*s,nc=c-dc*s;if(nr<0||nr>=ROWS||nc<0||nc>=COLS||grid[nr][nc]!==p)break;cnt++;}
+        if(cnt>=4)return true;
+      }
+      return false;
+    }
+    function boardFull(){return grid[0].every(v=>v!==0);}
+    function validCols(){const out=[];for(let c=0;c<COLS;c++)if(lowestRow(c)>=0)out.push(c);return out;}
+    function wouldWin(c,p){const r=lowestRow(c);if(r<0)return false;grid[r][c]=p;const w=checkWinFrom(r,c,p);grid[r][c]=0;return w;}
+    function aiMove(){
+      const cols=validCols();if(!cols.length)return -1;
+      for(const c of cols)if(wouldWin(c,2))return c;
+      for(const c of cols)if(wouldWin(c,1))return c;
+      const pref=[3,2,4,1,5,0,6].filter(c=>cols.includes(c));
+      return pref[Math.floor(Math.random()*Math.min(3,pref.length))];
+    }
+    function drop(c){
+      if(over||turn!==1)return;
+      const r=lowestRow(c);if(r<0)return;
+      grid[r][c]=1;
+      if(checkWinFrom(r,c,1)){over=true;winner=1;pWins++;sessionStorage.setItem('cf-pwins',pWins);if(typeof addScore==='function')addScore(5);if(typeof showFeedback==='function')showFeedback('🎉 You win!','#2ecc71');if(typeof spawnConfetti==='function')spawnConfetti(window.innerWidth/2,window.innerHeight/2,120);render();return;}
+      if(boardFull()){over=true;winner=0;render();return;}
+      turn=2;render();setTimeout(()=>{if(currentGame==='connect4')aiTurn();},500);
+    }
+    function aiTurn(){
+      if(over)return;
+      const c=aiMove();if(c<0){over=true;winner=0;render();return;}
+      const r=lowestRow(c);grid[r][c]=2;
+      if(checkWinFrom(r,c,2)){over=true;winner=2;aWins++;sessionStorage.setItem('cf-awins',aWins);if(typeof showFeedback==='function')showFeedback('🤖 AI wins!','#e67e22');}
+      else if(boardFull()){over=true;winner=0;}
+      else turn=1;
+      render();
+    }
+    function render(){
+      root.innerHTML='';
+      const hud=document.createElement('div');hud.className='game-hud';hud.style.marginBottom='6px';
+      hud.innerHTML=`<span class="game-stat">🔴 You <span class="game-stat-val">${pWins}</span></span><span class="game-stat">🟡 AI <span class="game-stat-val">${aWins}</span></span>`;
+      root.appendChild(hud);
+      const status=document.createElement('div');status.style.cssText='text-align:center;font-family:Comic Neue,cursive;font-size:1.3rem;color:var(--text,#2c3e50);margin:8px 0;min-height:32px;';
+      status.textContent=over?(winner===1?'🎉 You win!':winner===2?'🤖 AI wins! Try again':'🤝 Draw!'):(turn===1?'Your turn — tap a column':'🤖 AI thinking...');
+      root.appendChild(status);
+      const boardEl=document.createElement('div');boardEl.style.cssText=`display:grid;grid-template-columns:repeat(${COLS},1fr);gap:5px;background:#2980b9;padding:8px;border-radius:12px;max-width:min(96vw,400px);margin:8px auto;`;
+      for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){
+        const v=grid[r][c];const cell=document.createElement('div');
+        const playable=!over&&turn===1&&lowestRow(c)>=0;
+        cell.style.cssText=`aspect-ratio:1;border-radius:50%;background:${v===1?'radial-gradient(circle at 35% 30%,#ff7675,#d63031)':v===2?'radial-gradient(circle at 35% 30%,#ffeaa7,#fdcb6e)':'#15405f'};cursor:${playable?'pointer':'default'};transition:transform 0.1s;`;
+        cell.onclick=()=>{if(!over&&turn===1)drop(c);};
+        boardEl.appendChild(cell);
+      }
+      root.appendChild(boardEl);
+      const btns=document.createElement('div');btns.style.cssText='display:flex;gap:8px;justify-content:center;margin-top:10px;';
+      const ng=document.createElement('button');ng.className='retro-btn';ng.textContent='🔄 New Game';ng.onclick=()=>{grid=Array.from({length:ROWS},()=>Array(COLS).fill(0));turn=1;over=false;winner=0;render();};
+      const eb=document.createElement('button');eb.className='retro-btn';eb.style.background='#e74c3c';eb.textContent='🚪 Exit';eb.onclick=goBack;
+      btns.appendChild(ng);btns.appendChild(eb);root.appendChild(btns);
+    }
+    render();
   }
   function initAutoMiner(){
     const root=$$('#autominer-game');root.innerHTML='';
