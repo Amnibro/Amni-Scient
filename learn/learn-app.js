@@ -15581,7 +15581,7 @@ function playAnimalSound(type) {
       root.appendChild(hcInfo);
       const lifetime=parseFloat(localStorage.getItem('ck-lifetime')||sessionStorage.getItem('ck-lifetime')||'0');
       if(lifetime>0){const lt=document.createElement('div');lt.style.cssText='text-align:center;font-size:0.8rem;color:#888;margin:2px 0';lt.textContent=`🏆 Lifetime best: ${fmt(lifetime)}`;root.appendChild(lt);}
-      const btn=document.createElement('div');btn.className='idle-main-btn';btn.textContent='🍪';btn.onclick=()=>{const clickGain=Math.max(1,Math.floor(effectiveCps()*0.1)+1);cookies+=clickGain;save();checkAch();render();};root.appendChild(btn);
+      const btn=document.createElement('div');btn.className='idle-main-btn';btn.textContent='🍪';btn.onclick=()=>{const clickGain=Math.max(1,Math.floor(effectiveCps()*0.1)+1);cookies+=clickGain;save();checkAch();render();};if(typeof _kbd==='function')_kbd(btn,'Bake a cookie');root.appendChild(btn);
       const shop=document.createElement('div');shop.className='idle-shop';
       upgrades.forEach(u=>{
         const c=cost(u);const item=document.createElement('div');item.className='idle-item'+(cookies<c?' locked':'');
@@ -15683,7 +15683,7 @@ function playAnimalSound(type) {
       root.appendChild(hcInfo);
       const lifetime=parseFloat(localStorage.getItem('gd-lifetime')||sessionStorage.getItem('gd-lifetime')||'0');
       if(lifetime>0){const lt=document.createElement('div');lt.style.cssText='text-align:center;font-size:0.8rem;color:#888;margin:2px 0';lt.textContent=`🏆 Lifetime best: ${fmt(lifetime)}`;root.appendChild(lt);}
-      const btn=document.createElement('div');btn.className='idle-main-btn';btn.textContent='🌻';btn.onclick=()=>{const clickGain=Math.max(1,Math.floor(effectiveCps()*0.1)+1);blooms+=clickGain;save();checkAch();render();};root.appendChild(btn);
+      const btn=document.createElement('div');btn.className='idle-main-btn';btn.textContent='🌻';btn.onclick=()=>{const clickGain=Math.max(1,Math.floor(effectiveCps()*0.1)+1);blooms+=clickGain;save();checkAch();render();};if(typeof _kbd==='function')_kbd(btn,'Grow a bloom');root.appendChild(btn);
       const shop=document.createElement('div');shop.className='idle-shop';
       upgrades.forEach(u=>{
         const c=cost(u);const item=document.createElement('div');item.className='idle-item'+(blooms<c?' locked':'');
@@ -16138,7 +16138,7 @@ function playAnimalSound(type) {
       root.appendChild(achInfo);
       const lifetime=parseFloat(localStorage.getItem('am-lifetime')||sessionStorage.getItem('am-lifetime')||'0');
       if(lifetime>0){const lt=document.createElement('div');lt.style.cssText='text-align:center;font-size:0.78rem;color:#888;margin:2px 0';lt.textContent=`🏆 Lifetime best: ${fmt(lifetime)} gems`;root.appendChild(lt);}
-      const btn=document.createElement('div');btn.className='idle-main-btn';btn.textContent='⛏️';btn.onclick=()=>{gems+=clickPower();_checkAmAch();save();const d=$$('#am-display');if(d)d.textContent=`⛏️ ${fmt(gems)}`;};root.appendChild(btn);
+      const btn=document.createElement('div');btn.className='idle-main-btn';btn.textContent='⛏️';btn.onclick=()=>{gems+=clickPower();_checkAmAch();save();const d=$$('#am-display');if(d)d.textContent=`⛏️ ${fmt(gems)}`;};if(typeof _kbd==='function')_kbd(btn,'Mine a gem');root.appendChild(btn);
       const shop=document.createElement('div');shop.className='idle-shop';
       upgrades.forEach(u=>{
         const c=cost(u);const item=document.createElement('div');item.className='idle-item'+(gems<c?' locked':'');
