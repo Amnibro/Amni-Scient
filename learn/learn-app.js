@@ -17856,7 +17856,7 @@ function playAnimalSound(type) {
     }
     cv.addEventListener('mousedown',e=>{painting=true;paint(e.clientX,e.clientY);});
     cv.addEventListener('mousemove',e=>{if(painting)paint(e.clientX,e.clientY);});
-    document.addEventListener('mouseup',()=>{painting=false;});
+    if(window._rxnMouseUp)document.removeEventListener('mouseup',window._rxnMouseUp);window._rxnMouseUp=()=>{painting=false;};document.addEventListener('mouseup',window._rxnMouseUp);
     cv.addEventListener('touchstart',e=>{e.preventDefault();painting=true;paint(e.touches[0].clientX,e.touches[0].clientY);},{passive:false});
     cv.addEventListener('touchmove',e=>{e.preventDefault();if(painting)paint(e.touches[0].clientX,e.touches[0].clientY);},{passive:false});
     cv.addEventListener('touchend',e=>{e.preventDefault();painting=false;},{passive:false});
