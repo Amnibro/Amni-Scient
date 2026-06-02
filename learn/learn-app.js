@@ -4304,6 +4304,7 @@
                           if(wasBest)spawnConfetti(window.innerWidth/2,window.innerHeight/2,120);
                           else if(bonus>=2)spawnConfetti(window.innerWidth/2,window.innerHeight/3,60);
                           showFeedback(`${wasBest?'🏆 NEW BEST! ':''}${tier} (${vacTime}s · room #${cnt})`,tColor);addScore(bonus);
+                          if(typeof ttsAuto==='function'&&ttsAuto()&&typeof speakSeq==='function')speakSeq([(wasBest?'New best! ':'All clean! ')+'Great job!']);
                           setTimeout(() => initVacuum(), 2200);
                       }
                   }
