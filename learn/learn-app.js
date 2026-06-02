@@ -3994,6 +3994,7 @@
       animals:['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','🐯','🦁','🐮','🐷','🐸','🐵','🐔','🐧','🦄','🐝','🦋','🐳','🐠','🦒'],
       shapes:['⭕','🔺','🟦','▭','⭐','❤️','🔷','🔶','🟣','🟢'],
       colors:['🔴','🔵','🟢','🟡','🟠','🟣','🟤','⚫','⚪'],
+      food:['🍕','🍔','🌭','🍟','🍩','🍪','🍰','🍦','🍫','🍭','🌮','🥞','🧀','🍳','🥪','🥨'],
       mixed:null
     };
     let mode=sessionStorage.getItem('sd-mode')||'animals';
@@ -4005,7 +4006,7 @@
     hud.innerHTML=`<span class="game-stat">🎯 <span class="game-stat-val" id="sd-round">0</span>/${TOTAL}</span><span class="game-stat">✅ <span class="game-stat-val" id="sd-score">0</span></span><span class="game-stat">⭐ Best <span class="game-stat-val" id="sd-best">${best}</span></span>`;
     lifeArea.appendChild(hud);
     const modeRow=document.createElement('div');modeRow.style.cssText='display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:4px 0 10px;';
-    [['animals','🐶 Animals'],['shapes','🔷 Shapes'],['colors','🎨 Colors'],['mixed','🎲 Mixed']].forEach(([k,lbl])=>{const b=document.createElement('button');b.className='sdk-btn'+(k===mode?' active':'');b.style.cssText='font-size:0.8rem;padding:5px 10px;';b.textContent=lbl;b.onclick=()=>{sessionStorage.setItem('sd-mode',k);initSameDiff();};modeRow.appendChild(b);});
+    [['animals','🐶 Animals'],['shapes','🔷 Shapes'],['colors','🎨 Colors'],['food','🍕 Food'],['mixed','🎲 Mixed']].forEach(([k,lbl])=>{const b=document.createElement('button');b.className='sdk-btn'+(k===mode?' active':'');b.style.cssText='font-size:0.8rem;padding:5px 10px;';b.textContent=lbl;b.onclick=()=>{sessionStorage.setItem('sd-mode',k);initSameDiff();};modeRow.appendChild(b);});
     lifeArea.appendChild(modeRow);
     const pairWrap=document.createElement('div');pairWrap.id='sd-pair';pairWrap.style.cssText='display:flex;gap:30px;justify-content:center;align-items:center;margin:18px 0;min-height:100px;';
     lifeArea.appendChild(pairWrap);
@@ -4030,7 +4031,7 @@
         const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='Play Again';rb.style.cssText='display:block;margin:14px auto;';rb.onclick=()=>initSameDiff();lifeArea.appendChild(rb);
         return;
       }
-      const activeMode=mode==='mixed'?['animals','shapes','colors'][Math.floor(Math.random()*3)]:mode;
+      const activeMode=mode==='mixed'?['animals','shapes','colors','food'][Math.floor(Math.random()*4)]:mode;
       const pool=POOLS[activeMode];
       curIsSame=Math.random()<0.5;
       let a,b;
