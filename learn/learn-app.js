@@ -15707,6 +15707,7 @@ function playAnimalSound(type) {
       const status=document.createElement('div');status.style.cssText='text-align:center;font-family:Comic Neue,cursive;font-size:1.15rem;color:var(--text,#2c3e50);margin:4px 0;min-height:26px;';
       status.textContent=over?(board[6]>board[13]?`🎉 You win ${board[6]}–${board[13]}!`:board[13]>board[6]?`🤖 AI wins ${board[13]}–${board[6]}`:`🤝 Tie ${board[6]}–${board[13]}`):(turn==='player'?'Your turn — tap one of YOUR pits (bottom row)':'🤖 AI thinking...');
       root.appendChild(status);
+      const howto=document.createElement('div');howto.style.cssText='text-align:center;font-size:0.78rem;color:var(--text,#7a8a9a);opacity:0.8;font-family:Comic Neue,cursive;max-width:440px;margin:0 auto 4px;line-height:1.3;';howto.textContent='Sow seeds ⟳ into your pits and store. Last seed in YOUR store = free extra turn. Last seed in your own empty pit captures the seeds directly across!';root.appendChild(howto);
       const wrap=document.createElement('div');wrap.style.cssText='display:flex;align-items:center;justify-content:center;gap:6px;max-width:min(96vw,470px);margin:8px auto;';
       wrap.appendChild(mkStore(13,'AI'));
       const mid=document.createElement('div');mid.style.cssText='display:flex;flex-direction:column;gap:8px;';
@@ -15835,6 +15836,7 @@ function playAnimalSound(type) {
       const status=document.createElement('div');status.style.cssText='text-align:center;font-family:Comic Neue,cursive;font-size:1.2rem;color:var(--text,#2c3e50);margin:6px 0;min-height:28px;';
       status.textContent=over?(b>w?'🎉 You win!':w>b?'🤖 AI wins! Try again':'🤝 Tie!'):(turn===1?'Your turn (⚫) — tap a dot':'🤖 AI thinking...');
       root.appendChild(status);
+      const howto=document.createElement('div');howto.style.cssText='text-align:center;font-size:0.78rem;color:var(--text,#7a8a9a);opacity:0.8;font-family:Comic Neue,cursive;max-width:380px;margin:0 auto 4px;';howto.textContent='Place a disc so you trap a line of enemy discs between two of yours — they all flip to your color. Most discs at the end wins!';root.appendChild(howto);
       const hintSet=new Set((turn===1&&!over?validMoves(1):[]).map(([r,c])=>idx(r,c)));
       const boardEl=document.createElement('div');boardEl.style.cssText=`display:grid;grid-template-columns:repeat(${N},1fr);gap:2px;background:#1e6b3a;padding:6px;border-radius:8px;max-width:min(94vw,400px);margin:8px auto;`;
       for(let r=0;r<N;r++)for(let c=0;c<N;c++){
