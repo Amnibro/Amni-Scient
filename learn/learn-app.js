@@ -4058,6 +4058,7 @@
     const COLORS=[{n:'RED',e:'🔴'},{n:'BLUE',e:'🔵'},{n:'GREEN',e:'🟢'},{n:'YELLOW',e:'🟡'},{n:'PURPLE',e:'🟣'},{n:'ORANGE',e:'🟠'}];
     const LETTERS='ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
     const NUMBERS=['1','2','3','4','5','6','7','8','9','10'];
+    const SHAPES=[{n:'CIRCLE',e:'⭕'},{n:'SQUARE',e:'🟦'},{n:'TRIANGLE',e:'🔺'},{n:'STAR',e:'⭐'},{n:'HEART',e:'❤️'},{n:'DIAMOND',e:'🔶'}];
     let mode=sessionStorage.getItem('bub-mode')||'colors';
     let score=0,round=0,bestKey='bub-best-'+mode,best=parseInt(sessionStorage.getItem(bestKey)||'0');
     const TOTAL_ROUNDS=10;
@@ -4065,7 +4066,7 @@
     hud.innerHTML=`<span class="game-stat">🎯 <span class="game-stat-val" id="bub-round">0</span>/${TOTAL_ROUNDS}</span><span class="game-stat">✅ <span class="game-stat-val" id="bub-score">0</span></span><span class="game-stat">⭐ Best <span class="game-stat-val" id="bub-best">${best}</span></span>`;
     lifeArea.appendChild(hud);
     const modeRow=document.createElement('div');modeRow.style.cssText='display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:4px 0 8px;';
-    [['colors','🎨 Colors'],['letters','🔤 Letters'],['numbers','🔢 Numbers']].forEach(([k,lbl])=>{const b=document.createElement('button');b.className='sdk-btn'+(k===mode?' active':'');b.style.cssText='font-size:0.8rem;padding:5px 10px;';b.textContent=lbl;b.onclick=()=>{sessionStorage.setItem('bub-mode',k);initBubblePop();};modeRow.appendChild(b);});
+    [['colors','🎨 Colors'],['letters','🔤 Letters'],['numbers','🔢 Numbers'],['shapes','🔷 Shapes']].forEach(([k,lbl])=>{const b=document.createElement('button');b.className='sdk-btn'+(k===mode?' active':'');b.style.cssText='font-size:0.8rem;padding:5px 10px;';b.textContent=lbl;b.onclick=()=>{sessionStorage.setItem('bub-mode',k);initBubblePop();};modeRow.appendChild(b);});
     lifeArea.appendChild(modeRow);
     const prompt=document.createElement('div');prompt.id='bub-prompt';prompt.style.cssText='text-align:center;font-family:Comic Neue,cursive;font-size:1.4rem;color:#2c3e50;margin:8px 0;min-height:36px;';
     lifeArea.appendChild(prompt);
@@ -4091,9 +4092,10 @@
       let pool,labelOf,targetIdx;
       if(mode==='colors'){pool=[...COLORS].sort(()=>Math.random()-0.5).slice(0,4);labelOf=(p)=>p.e;targetIdx=Math.floor(Math.random()*pool.length);prompt.innerHTML=`Pop the <b style="color:#e84393">${pool[targetIdx].n}</b> bubble!`;}
       else if(mode==='letters'){pool=[...LETTERS].sort(()=>Math.random()-0.5).slice(0,4);labelOf=(p)=>p;targetIdx=Math.floor(Math.random()*pool.length);prompt.innerHTML=`Pop the letter <b style="color:#e84393">${pool[targetIdx]}</b>!`;}
+      else if(mode==='shapes'){pool=[...SHAPES].sort(()=>Math.random()-0.5).slice(0,4);labelOf=(p)=>p.e;targetIdx=Math.floor(Math.random()*pool.length);prompt.innerHTML=`Pop the <b style="color:#e84393">${pool[targetIdx].n}</b>!`;}
       else{pool=[...NUMBERS].sort(()=>Math.random()-0.5).slice(0,4);labelOf=(p)=>p;targetIdx=Math.floor(Math.random()*pool.length);prompt.innerHTML=`Pop the number <b style="color:#e84393">${pool[targetIdx]}</b>!`;}
       const target=pool[targetIdx];
-      if(ttsAuto() && typeof speakSeq==='function')speakSeq([mode==='colors'?('Pop the '+target.n.toLowerCase()+' bubble!'):mode==='letters'?('Pop the letter '+target+'!'):('Pop the number '+target+'!')]);
+      if(ttsAuto() && typeof speakSeq==='function')speakSeq([mode==='colors'?('Pop the '+target.n.toLowerCase()+' bubble!'):mode==='shapes'?('Pop the '+target.n.toLowerCase()+'!'):mode==='letters'?('Pop the letter '+target+'!'):('Pop the number '+target+'!')]);
       const slotW=100/pool.length;
       pool.forEach((p,i)=>{
         const b=document.createElement('div');
