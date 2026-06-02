@@ -4395,6 +4395,7 @@
                                           if(hit){spawnConfetti(window.innerWidth/2,window.innerHeight/2,hit>=100?150:80);showFeedback(`🏆 ${hit} dishes washed!`,'#f1c40f');}
                                           else{spawnConfetti(window.innerWidth/2,window.innerHeight/3,60);showFeedback(`All Done! 🍽️✨ (${dCnt} dishes total)`,'#2ecc71');}
                                           addScore(2);
+                                          if(typeof ttsAuto==='function'&&ttsAuto()&&typeof speakSeq==='function')speakSeq(['All done! Squeaky clean!']);
                                           setTimeout(initDishes, 2200);
                                       }, 1500);
                                   }
@@ -4518,6 +4519,7 @@
                   if(hit){spawnConfetti(window.innerWidth/2,window.innerHeight/3,hit>=50?120:60);showFeedback(`🏆 ${hit} clocks read!`,'#f1c40f');}
                   else{showFeedback(`Correct! ⏰ (#${cnt})`,'#2ecc71');}
                   addScore(1);
+                  if(typeof ttsAuto==='function'&&ttsAuto()&&typeof speakSeq==='function')speakSeq([targetMinute===0?('Correct! '+targetHour+" o'clock!"):'Correct!']);
                   $$all('.t-btn').forEach(b=>b.style.pointerEvents='none');
                   setTimeout(initClock, 1500);
               } else {
@@ -4616,6 +4618,7 @@
                   else{showFeedback(`Perfect! 💵 (#${cnt})`,'#2ecc71');}
                   const reward = currentLevel===5?6:(currentLevel===4?5:(currentLevel===3?3:1));
                   addScore(reward);
+                  if(typeof ttsAuto==='function'&&ttsAuto()&&typeof speakSeq==='function')speakSeq(['Perfect! Exactly right!']);
                   setTimeout(initMoney, 1800);
               } else if(currentTotal > targetAmount) {
                   showFeedback("Too much! Try again!", "#e74c3c"); resetStreak();
