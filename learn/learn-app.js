@@ -67,6 +67,7 @@
     colorhunt: $$('#colorhunt-view'),
     reversi: $$('#reversi-view'),
     battleship: $$('#battleship-view'),
+    mancala: $$('#mancala-view'),
     autominer: $$('#autominer-view'),
     storybook: $$('#storybook-view'),
     t2048: $$('#t2048-view'),
@@ -205,6 +206,7 @@
     {id:'sharp-eyes',ic:'🎨',name:'Sharp Eyes',desc:'Clear 10 rounds in Color Hunt',progress(){const c=_intLS('chunt-best');return{cur:Math.min(c,10),target:10,unlocked:c>=10};}},
     {id:'othello-master',ic:'⚫',name:'Othello Master',desc:'Beat the AI at Reversi',progress(){const c=_intLS('rv-wins');return{cur:Math.min(c,1),target:1,unlocked:c>=1};}},
     {id:'admiral',ic:'🚢',name:'Admiral',desc:'Sink the enemy fleet in Battleship',progress(){const c=_intLS('bs-wins');return{cur:Math.min(c,1),target:1,unlocked:c>=1};}},
+    {id:'mancala-master',ic:'🟤',name:'Mancala Master',desc:'Beat the AI at Mancala',progress(){const c=_intLS('mc-wins');return{cur:Math.min(c,1),target:1,unlocked:c>=1};}},
     {id:'sharp-spotter',ic:'🔍',name:'Sharp Spotter',desc:'Find all 10 in Find It (any mode)',progress(){let m=0;['animals','fruits','vehicles','mixed'].forEach(k=>{m=Math.max(m,_intLS('fi-best-'+k));});return{cur:Math.min(m,10),target:10,unlocked:m>=10};}},
     {id:'block-memory',ic:'🟦',name:'Block Memory',desc:'Reach a Corsi Blocks span of 6',progress(){const s=_intLS('corsi-best');return{cur:Math.min(s,6),target:6,unlocked:s>=6};}},
     {id:'backward-wizard',ic:'🔢',name:'Backward Wizard',desc:'Reverse a 5-digit span in Reverse Recall',progress(){const s=_intLS('bsp-best');return{cur:Math.min(s,5),target:5,unlocked:s>=5};}},
@@ -1054,6 +1056,7 @@
       if(game === 'colorhunt') initColorHunt();
       if(game === 'reversi') initReversi();
       if(game === 'battleship') initBattleship();
+      if(game === 'mancala') initMancala();
       if(game === 'autominer') initAutoMiner();
       if(game === 'calculus') initCollege('calculus');
       if(game === 'linalg') initCollege('linalg');
@@ -15684,6 +15687,42 @@ function playAnimalSound(type) {
     render();
     window._gardenTimer=setInterval(()=>{if(currentGame!=='garden')return;blooms+=effectiveCps()/10;save();checkAch();const d=$$('#gd-display');if(d)d.textContent=`🌻 ${fmt(blooms)}`;const r=root.querySelector('.idle-rate');if(r)r.textContent=`${fmt(effectiveCps())} per second${goldenMult>1?' (🦋 BLOOM RUSH!)':''}`;root.querySelectorAll('.idle-shop .idle-item').forEach((el,i)=>{if(upgrades[i]){const c=cost(upgrades[i]);el.classList.toggle('locked',blooms<c);}});},100);
     window._butterflySpawner=setInterval(()=>{if(currentGame!=='garden')return;if(Math.random()<0.15)spawnGolden();},15000);
+  }
+  function initMancala(){
+    const root=$$('#mancala-game');root.innerHTML='';
+    let board=[4,4,4,4,4,4,0,4,4,4,4,4,4,0];
+    let turn='player',over=false,aiChain=0;
+    const prevWins=parseInt(localStorage.getItem('mc-wins')||'0');
+    function sow(pit){const player=pit<=5,oppStore=player?13:6;let stones=board[pit];board[pit]=0;let i=pit;while(stones>0){i=(i+1)%14;if(i===oppStore)continue;board[i]++;stones--;}return i;}
+    function applyMove(pit){const player=pit<=5,last=sow(pit),myStore=player?6:13,lo=player?0:7,hi=player?5:12;let extra=false,captured=false;if(last===myStore)extra=true;else if(last>=lo&&last<=hi&&board[last]===1){const opp=12-last;if(board[opp]>0){board[myStore]+=board[opp]+1;board[opp]=0;board[last]=0;captured=true;}}return{extra,captured};}
+    function checkEnd(){const pSum=board.slice(0,6).reduce((a,b)=>a+b,0),aSum=board.slice(7,13).reduce((a,b)=>a+b,0);if(pSum===0||aSum===0){board[6]+=pSum;for(let k=0;k<6;k++)board[k]=0;board[13]+=aSum;for(let k=7;k<13;k++)board[k]=0;return true;}return false;}
+    function aiBest(){let best=-1,bs=-1e9;for(let p=7;p<=12;p++){if(board[p]===0)continue;const snap=board.slice();const before=board[13];const res=applyMove(p);const gain=board[13]-before;const score=gain*2+(res.extra?5:0)+(res.captured?4:0)+(p-7)*0.2;for(let k=0;k<14;k++)board[k]=snap[k];if(score>bs){bs=score;best=p;}}return best;}
+    function finish(){over=true;const p=board[6],a=board[13];if(p>a){localStorage.setItem('mc-wins',prevWins+1);if(typeof addScore==='function')addScore(8);if(typeof spawnConfetti==='function')spawnConfetti(window.innerWidth/2,window.innerHeight/2,120);}render();}
+    function playerMove(pit){if(over||turn!=='player'||pit<0||pit>5||board[pit]===0)return;const{extra}=applyMove(pit);if(checkEnd())return finish();if(extra){render();return;}turn='ai';render();setTimeout(()=>{if(currentGame==='mancala')aiMove();},700);}
+    function aiMove(){if(over||turn!=='ai')return;const pit=aiBest();if(pit<0){turn='player';render();return;}const{extra}=applyMove(pit);if(checkEnd())return finish();if(extra&&aiChain++<20){render();setTimeout(()=>{if(currentGame==='mancala')aiMove();},750);}else{aiChain=0;turn='player';render();}}
+    function mkPit(i,tappable){const d=document.createElement('div');d.style.cssText=`width:clamp(34px,9vw,52px);height:clamp(34px,9vw,52px);border-radius:50%;background:radial-gradient(circle at 35% 30%,#e9c89b,#c69b6d);display:flex;align-items:center;justify-content:center;font-weight:bold;font-family:Comic Neue,cursive;color:#5b3a1a;font-size:1.1rem;cursor:${tappable?'pointer':'default'};${tappable?'box-shadow:0 0 0 3px #f1c40f;':''}`;d.textContent=board[i];if(tappable)d.onclick=()=>playerMove(i);return d;}
+    function mkStore(i,label){const d=document.createElement('div');d.style.cssText='width:clamp(44px,12vw,64px);min-height:120px;border-radius:30px;background:rgba(91,58,26,0.18);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-family:Comic Neue,cursive;color:var(--text,#5b3a1a);';d.innerHTML=`<div style="font-size:1.6rem;font-weight:bold">${board[i]}</div><div style="font-size:0.62rem;opacity:0.7">${label}</div>`;return d;}
+    function render(){
+      root.innerHTML='';
+      const status=document.createElement('div');status.style.cssText='text-align:center;font-family:Comic Neue,cursive;font-size:1.15rem;color:var(--text,#2c3e50);margin:4px 0;min-height:26px;';
+      status.textContent=over?(board[6]>board[13]?`🎉 You win ${board[6]}–${board[13]}!`:board[13]>board[6]?`🤖 AI wins ${board[13]}–${board[6]}`:`🤝 Tie ${board[6]}–${board[13]}`):(turn==='player'?'Your turn — tap one of YOUR pits (bottom row)':'🤖 AI thinking...');
+      root.appendChild(status);
+      const wrap=document.createElement('div');wrap.style.cssText='display:flex;align-items:center;justify-content:center;gap:6px;max-width:min(96vw,470px);margin:8px auto;';
+      wrap.appendChild(mkStore(13,'AI'));
+      const mid=document.createElement('div');mid.style.cssText='display:flex;flex-direction:column;gap:8px;';
+      const top=document.createElement('div');top.style.cssText='display:flex;gap:6px;';
+      [12,11,10,9,8,7].forEach(i=>top.appendChild(mkPit(i,false)));
+      const bot=document.createElement('div');bot.style.cssText='display:flex;gap:6px;';
+      [0,1,2,3,4,5].forEach(i=>bot.appendChild(mkPit(i,turn==='player'&&!over&&board[i]>0)));
+      mid.appendChild(top);mid.appendChild(bot);wrap.appendChild(mid);
+      wrap.appendChild(mkStore(6,'You'));
+      root.appendChild(wrap);
+      const btns=document.createElement('div');btns.style.cssText='display:flex;gap:8px;justify-content:center;margin-top:12px;';
+      const ng=document.createElement('button');ng.className='retro-btn';ng.textContent='🔄 New Game';ng.onclick=()=>initMancala();btns.appendChild(ng);
+      const eb=document.createElement('button');eb.className='retro-btn';eb.style.background='#e74c3c';eb.textContent='🚪 Exit';eb.onclick=goBack;btns.appendChild(eb);
+      root.appendChild(btns);
+    }
+    render();
   }
   function initBattleship(){
     const root=$$('#battleship-game');root.innerHTML='';
