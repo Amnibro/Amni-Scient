@@ -209,6 +209,8 @@
     {id:'admiral',ic:'🚢',name:'Admiral',desc:'Sink the enemy fleet in Battleship',progress(){const c=_intLS('bs-wins');return{cur:Math.min(c,1),target:1,unlocked:c>=1};}},
     {id:'mancala-master',ic:'🟤',name:'Mancala Master',desc:'Beat the AI at Mancala',progress(){const c=_intLS('mc-wins');return{cur:Math.min(c,1),target:1,unlocked:c>=1};}},
     {id:'lucky-pig',ic:'🎲',name:'Lucky Pig',desc:'Win a game of Pig Dice',progress(){const c=_intLS('pig-wins');return{cur:Math.min(c,1),target:1,unlocked:c>=1};}},
+    {id:'brick-breaker',ic:'🧱',name:'Brick Breaker',desc:'Reach wave 3 in Breakout',progress(){const c=_intLS('brk-best-wave');return{cur:Math.min(c,3),target:3,unlocked:c>=3};}},
+    {id:'earth-defender',ic:'👽',name:'Earth Defender',desc:'Reach wave 3 in Space Invaders',progress(){const c=_intLS('inv-best-wave');return{cur:Math.min(c,3),target:3,unlocked:c>=3};}},
     {id:'sharp-spotter',ic:'🔍',name:'Sharp Spotter',desc:'Find all 10 in Find It (any mode)',progress(){let m=0;['animals','fruits','vehicles','mixed'].forEach(k=>{m=Math.max(m,_intLS('fi-best-'+k));});return{cur:Math.min(m,10),target:10,unlocked:m>=10};}},
     {id:'block-memory',ic:'🟦',name:'Block Memory',desc:'Reach a Corsi Blocks span of 6',progress(){const s=_intLS('corsi-best');return{cur:Math.min(s,6),target:6,unlocked:s>=6};}},
     {id:'backward-wizard',ic:'🔢',name:'Backward Wizard',desc:'Reverse a 5-digit span in Reverse Recall',progress(){const s=_intLS('bsp-best');return{cur:Math.min(s,5),target:5,unlocked:s>=5};}},
