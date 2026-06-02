@@ -4055,7 +4055,7 @@
       choices.innerHTML='';
       arr.forEach(nv=>{
         const b=document.createElement('button');
-        b.style.cssText='font-size:2rem;padding:10px 24px;border-radius:14px;border:3px solid #74b9ff;background:#fff;cursor:pointer;line-height:1;box-shadow:0 4px 0 #95a5a6;font-family:Comic Neue,cursive;font-weight:bold;color:#2c3e50;';
+        b.style.cssText='font-size:2rem;padding:10px 24px;border-radius:14px;border:3px solid #74b9ff;background:#fff;cursor:pointer;line-height:1;box-shadow:0 4px 0 #95a5a6;font-family:Comic Neue,cursive;font-weight:bold;color:#2c3e50;transition:transform 0.15s cubic-bezier(0.34,1.56,0.64,1);';
         b.textContent=nv;
         b.onclick=()=>handle(b,nv,count);
         if(typeof _kbd==='function')_kbd(b,'Answer '+nv);
@@ -4065,7 +4065,7 @@
     function handle(btn,picked,answer){
       if(picked===answer){
         score++;const se=document.getElementById('cnt-score');if(se)se.textContent=score;
-        btn.style.background='#2ecc71';btn.style.color='#fff';
+        btn.style.background='#2ecc71';btn.style.color='#fff';btn.style.transform='scale(1.25)';
         if(typeof showFeedback==='function')showFeedback('Correct! ✨','#2ecc71');
         if(ttsAuto() && typeof speakSeq==='function')speakSeq(['Yes! '+answer+'!']);
         [...choices.children].forEach(b=>b.style.pointerEvents='none');
