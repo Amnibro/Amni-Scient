@@ -68,6 +68,7 @@
     reversi: $$('#reversi-view'),
     battleship: $$('#battleship-view'),
     mancala: $$('#mancala-view'),
+    pig: $$('#pig-view'),
     autominer: $$('#autominer-view'),
     storybook: $$('#storybook-view'),
     t2048: $$('#t2048-view'),
@@ -207,6 +208,7 @@
     {id:'othello-master',ic:'⚫',name:'Othello Master',desc:'Beat the AI at Reversi',progress(){const c=_intLS('rv-wins');return{cur:Math.min(c,1),target:1,unlocked:c>=1};}},
     {id:'admiral',ic:'🚢',name:'Admiral',desc:'Sink the enemy fleet in Battleship',progress(){const c=_intLS('bs-wins');return{cur:Math.min(c,1),target:1,unlocked:c>=1};}},
     {id:'mancala-master',ic:'🟤',name:'Mancala Master',desc:'Beat the AI at Mancala',progress(){const c=_intLS('mc-wins');return{cur:Math.min(c,1),target:1,unlocked:c>=1};}},
+    {id:'lucky-pig',ic:'🎲',name:'Lucky Pig',desc:'Win a game of Pig Dice',progress(){const c=_intLS('pig-wins');return{cur:Math.min(c,1),target:1,unlocked:c>=1};}},
     {id:'sharp-spotter',ic:'🔍',name:'Sharp Spotter',desc:'Find all 10 in Find It (any mode)',progress(){let m=0;['animals','fruits','vehicles','mixed'].forEach(k=>{m=Math.max(m,_intLS('fi-best-'+k));});return{cur:Math.min(m,10),target:10,unlocked:m>=10};}},
     {id:'block-memory',ic:'🟦',name:'Block Memory',desc:'Reach a Corsi Blocks span of 6',progress(){const s=_intLS('corsi-best');return{cur:Math.min(s,6),target:6,unlocked:s>=6};}},
     {id:'backward-wizard',ic:'🔢',name:'Backward Wizard',desc:'Reverse a 5-digit span in Reverse Recall',progress(){const s=_intLS('bsp-best');return{cur:Math.min(s,5),target:5,unlocked:s>=5};}},
@@ -1057,6 +1059,7 @@
       if(game === 'reversi') initReversi();
       if(game === 'battleship') initBattleship();
       if(game === 'mancala') initMancala();
+      if(game === 'pig') initPig();
       if(game === 'autominer') initAutoMiner();
       if(game === 'calculus') initCollege('calculus');
       if(game === 'linalg') initCollege('linalg');
@@ -15688,6 +15691,54 @@ function playAnimalSound(type) {
     render();
     window._gardenTimer=setInterval(()=>{if(currentGame!=='garden')return;blooms+=effectiveCps()/10;save();checkAch();const d=$$('#gd-display');if(d)d.textContent=`🌻 ${fmt(blooms)}`;const r=root.querySelector('.idle-rate');if(r)r.textContent=`${fmt(effectiveCps())} per second${goldenMult>1?' (🦋 BLOOM RUSH!)':''}`;root.querySelectorAll('.idle-shop .idle-item').forEach((el,i)=>{if(upgrades[i]){const c=cost(upgrades[i]);el.classList.toggle('locked',blooms<c);}});},100);
     window._butterflySpawner=setInterval(()=>{if(currentGame!=='garden')return;if(Math.random()<0.15)spawnGolden();},15000);
+  }
+  function initPig(){
+    const root=$$('#pig-game');root.innerHTML='';
+    const GOAL=100,DIE=['','⚀','⚁','⚂','⚃','⚄','⚅'];
+    let pScore=0,aScore=0,turnTotal=0,turn='player',over=false,lastRoll=0;
+    const prevWins=parseInt(localStorage.getItem('pig-wins')||'0');
+    function roll(){
+      if(over||turn!=='player')return;
+      const r=1+Math.floor(Math.random()*6);lastRoll=r;
+      if(r===1){turnTotal=0;if(typeof showFeedback==='function')showFeedback('💥 Rolled a 1 — turn lost!','#e74c3c');turn='ai';render();setTimeout(()=>{if(currentGame==='pig')aiTurn();},950);}
+      else{turnTotal+=r;render();}
+    }
+    function bank(){
+      if(over||turn!=='player'||turnTotal===0)return;
+      pScore+=turnTotal;turnTotal=0;
+      if(pScore>=GOAL){over=true;localStorage.setItem('pig-wins',prevWins+1);if(typeof addScore==='function')addScore(10);if(typeof spawnConfetti==='function')spawnConfetti(window.innerWidth/2,window.innerHeight/2,140);render();return;}
+      turn='ai';render();setTimeout(()=>{if(currentGame==='pig')aiTurn();},900);
+    }
+    function aiTurn(){
+      if(over||turn!=='ai')return;
+      const r=1+Math.floor(Math.random()*6);lastRoll=r;
+      if(r===1){turnTotal=0;turn='player';render();if(typeof showFeedback==='function')showFeedback('🤖 AI rolled a 1 — your turn!','#2ecc71');return;}
+      turnTotal+=r;render();
+      if(aScore+turnTotal>=GOAL||turnTotal>=20){aScore+=turnTotal;turnTotal=0;if(aScore>=GOAL){over=true;render();return;}turn='player';render();return;}
+      setTimeout(()=>{if(currentGame==='pig')aiTurn();},750);
+    }
+    function render(){
+      root.innerHTML='';
+      const hud=document.createElement('div');hud.className='game-hud';hud.style.marginBottom='6px';
+      hud.innerHTML=`<span class="game-stat">🧑 You <span class="game-stat-val">${pScore}</span></span><span class="game-stat">🤖 AI <span class="game-stat-val">${aScore}</span></span><span class="game-stat">🎯 ${GOAL}</span>`;
+      root.appendChild(hud);
+      const status=document.createElement('div');status.style.cssText='text-align:center;font-family:Comic Neue,cursive;font-size:1.2rem;color:var(--text,#2c3e50);margin:6px 0;min-height:28px;';
+      status.textContent=over?(pScore>=GOAL?'🎉 You win!':'🤖 AI wins! Try again'):(turn==='player'?'Your turn — Roll or Bank':'🤖 AI is rolling...');
+      root.appendChild(status);
+      const dieWrap=document.createElement('div');dieWrap.style.cssText='text-align:center;margin:10px 0;';
+      dieWrap.innerHTML=`<div style="font-size:5rem;line-height:1;color:${turn==='player'?'#e74c3c':'#e67e22'};">${lastRoll?DIE[lastRoll]:'🎲'}</div><div style="font-family:Comic Neue,cursive;font-size:1.3rem;color:var(--text,#2c3e50);margin-top:4px;">This turn: <b>${turnTotal}</b></div>`;
+      root.appendChild(dieWrap);
+      const btns=document.createElement('div');btns.style.cssText='display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:8px;';
+      if(!over&&turn==='player'){
+        const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='🎲 Roll';rb.onclick=roll;btns.appendChild(rb);
+        const bb=document.createElement('button');bb.className='nmm-btn';bb.style.background='#27ae60';bb.textContent='🏦 Bank';if(turnTotal===0)bb.style.opacity='0.5';bb.onclick=bank;btns.appendChild(bb);
+      }
+      const ng=document.createElement('button');ng.className='retro-btn';ng.textContent='🔄 New Game';ng.onclick=()=>initPig();btns.appendChild(ng);
+      const eb=document.createElement('button');eb.className='retro-btn';eb.style.background='#e74c3c';eb.textContent='🚪 Exit';eb.onclick=goBack;btns.appendChild(eb);
+      root.appendChild(btns);
+      const hint=document.createElement('div');hint.style.cssText='text-align:center;font-size:0.78rem;color:var(--text,#7a8a9a);opacity:0.8;font-family:Comic Neue,cursive;max-width:420px;margin:8px auto 0;line-height:1.3;';hint.textContent='Roll to add to your turn total — but roll a 1 and you lose it all! Bank to keep your points. First to 100 wins.';root.appendChild(hint);
+    }
+    render();
   }
   function initMancala(){
     const root=$$('#mancala-game');root.innerHTML='';
