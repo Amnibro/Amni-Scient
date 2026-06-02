@@ -215,6 +215,7 @@
     {id:'pipe-master',ic:'🔧',name:'Pipe Master',desc:'Reach level 3 in Pipe Connect',progress(){const c=_intLS('pipe-lvl');return{cur:Math.min(c,3),target:3,unlocked:c>=3};}},
     {id:'pin-puller',ic:'🧷',name:'Pin Puller',desc:'Reach level 5 in Pull the Pin',progress(){const c=_intLS('pp-best');return{cur:Math.min(c,5),target:5,unlocked:c>=5};}},
     {id:'steady-pour',ic:'🥤',name:'Steady Pour',desc:'Hit a streak of 5 in Fill the Cup',progress(){const c=_intLS('fc-best');return{cur:Math.min(c,5),target:5,unlocked:c>=5};}},
+    {id:'gem-crusher',ic:'💎',name:'Gem Crusher',desc:'Score 500 in Gem Crush',progress(){const c=_intLS('bj-best');return{cur:Math.min(c,500),target:500,unlocked:c>=500};}},
     {id:'sharp-spotter',ic:'🔍',name:'Sharp Spotter',desc:'Find all 10 in Find It (any mode)',progress(){let m=0;['animals','fruits','vehicles','mixed'].forEach(k=>{m=Math.max(m,_intLS('fi-best-'+k));});return{cur:Math.min(m,10),target:10,unlocked:m>=10};}},
     {id:'block-memory',ic:'🟦',name:'Block Memory',desc:'Reach a Corsi Blocks span of 6',progress(){const s=_intLS('corsi-best');return{cur:Math.min(s,6),target:6,unlocked:s>=6};}},
     {id:'backward-wizard',ic:'🔢',name:'Backward Wizard',desc:'Reverse a 5-digit span in Reverse Recall',progress(){const s=_intLS('bsp-best');return{cur:Math.min(s,5),target:5,unlocked:s>=5};}},
