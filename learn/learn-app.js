@@ -4129,7 +4129,7 @@
       a=pool[Math.floor(Math.random()*pool.length)];
       if(curIsSame){b=a;}
       else{do{b=pool[Math.floor(Math.random()*pool.length)];}while(b===a);}
-      pairWrap.innerHTML=`<div style="font-size:5.5rem;line-height:1;">${a}</div><div style="font-size:5.5rem;line-height:1;">${b}</div>`;
+      pairWrap.innerHTML=`<div style="font-size:5.5rem;line-height:1;display:inline-block;animation:bounceIn 0.4s ease both;">${a}</div><div style="font-size:5.5rem;line-height:1;display:inline-block;animation:bounceIn 0.4s ease both;animation-delay:0.12s;">${b}</div>`;
       if(ttsAuto() && typeof speakSeq==='function')speakSeq([round===1?'Are they the same, or different? Tap the green button for same, the red button for different.':'Same, or different?']);
     }
     function answer(picked){
