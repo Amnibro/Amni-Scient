@@ -1392,7 +1392,7 @@
           if(wasBestMoves||wasBestTime){if(typeof spawnConfetti==='function')spawnConfetti(window.innerWidth/2,window.innerHeight/2,150);}
           else if(matchMoves<=totalPairs*2){if(typeof spawnConfetti==='function')spawnConfetti(window.innerWidth/2,window.innerHeight/3,80);}
           const prefix=(wasBestMoves||wasBestTime)?'🏆 NEW BEST! ':'';
-          setTimeout(()=>{showFeedback(`${prefix}${bonus} ${matchTime}s, ${matchMoves} moves`,wasBestMoves||wasBestTime?'#f1c40f':'#2ecc71');if(typeof ttsAuto==='function'&&ttsAuto()&&typeof speakSeq==='function')speakSeq([bonus]);addScore(Math.max(1,totalPairs-Math.floor(matchTime/10)));setTimeout(initMatching,2500);},500);
+          setTimeout(()=>{showFeedback(`${prefix}${bonus} ${matchTime}s, ${matchMoves} moves`,wasBestMoves||wasBestTime?'#f1c40f':'#2ecc71');if(typeof ttsAuto==='function'&&ttsAuto()&&typeof speakSeq==='function')speakSeq([bonus]);addScore(Math.max(1,totalPairs-Math.floor(matchTime/10)));setTimeout(()=>{if(currentGame==='matching')initMatching();},2500);},500);
         }
       } else { matchCombo=0; resetStreak(); const ce=$$('#match-combo'); if(ce) ce.textContent='0'; c1.classList.remove('flipped'); c1.textContent=''; c1.style.color=''; c2.classList.remove('flipped'); c2.textContent=''; c2.style.color=''; }
       flipped = [];
@@ -4305,7 +4305,7 @@
                           else if(bonus>=2)spawnConfetti(window.innerWidth/2,window.innerHeight/3,60);
                           showFeedback(`${wasBest?'🏆 NEW BEST! ':''}${tier} (${vacTime}s · room #${cnt})`,tColor);addScore(bonus);
                           if(typeof ttsAuto==='function'&&ttsAuto()&&typeof speakSeq==='function')speakSeq([(wasBest?'New best! ':'All clean! ')+'Great job!']);
-                          setTimeout(() => initVacuum(), 2200);
+                          setTimeout(() => {if(currentGame==='life'&&currentSubgame==='vacuum')initVacuum();}, 2200);
                       }
                   }
               }
@@ -4396,7 +4396,7 @@
                                           else{spawnConfetti(window.innerWidth/2,window.innerHeight/3,60);showFeedback(`All Done! 🍽️✨ (${dCnt} dishes total)`,'#2ecc71');}
                                           addScore(2);
                                           if(typeof ttsAuto==='function'&&ttsAuto()&&typeof speakSeq==='function')speakSeq(['All done! Squeaky clean!']);
-                                          setTimeout(initDishes, 2200);
+                                          setTimeout(()=>{if(currentGame==='life'&&currentSubgame==='dishes')initDishes();}, 2200);
                                       }, 1500);
                                   }
                               }
