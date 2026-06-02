@@ -14,6 +14,9 @@
 - **Broke template lockstep (Step 2).** Added a deterministic per-page heading picker to both SEO generators (`src/gen-calc-modules.js`, `src/gen-learn-categories.js`): each of the 5 section headings + the deep-dive hint now draws from 4–6 variants keyed by a stable hash of the page slug (so regenerations don't churn). Regenerated all 31 calc + 11 learn pages — identical "WHAT IT COMPUTES / KEY EQUATIONS / …" skeleton replaced with distributed variants; page bodies (already unique) untouched; ads preserved on the article pages.
 - Plan/council: docs/checklists/checklist_v5.8.0_adsense_round4.md + docs/guardian_councils/guardian_council_v5.8.0_adsense_round4.md. Backups in backups/v5.8.0_adsense/. Step 3 (content-first restructure) still pending; do NOT submit AdSense reconsideration until the learn app is smoke-tested in a browser. v5.8.0.
 
+## [5.8.79] - 2026-06-02 - Lifetime wins shown in all vs-AI games
+- Consistency pass: Reversi, Battleship, and Mancala each tracked a persistent win tally (read by their achievements) but never showed the player their record. Added a 🏆 wins display to each — Reversi in its existing HUD, Battleship + Mancala via a small `game-hud` line under the status. Connect Four (already) and Pig (last release) round it out, so **all five vs-AI games now show lifetime wins**. Each computed inline (`prevWins + won-this-game`) for accuracy with no extra state. Bumps sw v1177→v1178. v5.8.79.
+
 ## [5.8.78] - 2026-06-02 - Pig: show lifetime wins in the HUD
 - Pig already persisted a `pig-wins` tally (and the Lucky Pig achievement reads it), but the player never saw their record. Added a 🏆 wins counter to the Pig HUD — a nice motivator for a replay-heavy push-your-luck game. Computed inline (`prevWins + (won-this-game ? 1 : 0)`) so it's accurate the moment you win, with no extra state to manage. Bumps sw v1176→v1177. v5.8.78.
 

@@ -15759,6 +15759,7 @@ function playAnimalSound(type) {
       const status=document.createElement('div');status.style.cssText='text-align:center;font-family:Comic Neue,cursive;font-size:1.15rem;color:var(--text,#2c3e50);margin:4px 0;min-height:26px;';
       status.textContent=over?(board[6]>board[13]?`🎉 You win ${board[6]}–${board[13]}!`:board[13]>board[6]?`🤖 AI wins ${board[13]}–${board[6]}`:`🤝 Tie ${board[6]}–${board[13]}`):(turn==='player'?'Your turn — tap one of YOUR pits (bottom row)':'🤖 AI thinking...');
       root.appendChild(status);
+      const winsEl=document.createElement('div');winsEl.className='game-hud';winsEl.style.cssText='margin:0 0 4px;';winsEl.innerHTML=`<span class="game-stat">🏆 Wins <span class="game-stat-val">${prevWins+((over&&board[6]>board[13])?1:0)}</span></span>`;root.appendChild(winsEl);
       const howto=document.createElement('div');howto.style.cssText='text-align:center;font-size:0.78rem;color:var(--text,#7a8a9a);opacity:0.8;font-family:Comic Neue,cursive;max-width:440px;margin:0 auto 4px;line-height:1.3;';howto.textContent='Sow seeds ⟳ into your pits and store. Last seed in YOUR store = free extra turn. Last seed in your own empty pit captures the seeds directly across!';root.appendChild(howto);
       const wrap=document.createElement('div');wrap.style.cssText='display:flex;align-items:center;justify-content:center;gap:6px;max-width:min(96vw,470px);margin:8px auto;';
       wrap.appendChild(mkStore(13,'AI'));
@@ -15844,6 +15845,7 @@ function playAnimalSound(type) {
       const status=document.createElement('div');status.style.cssText='text-align:center;font-family:Comic Neue,cursive;font-size:1.15rem;color:var(--text,#2c3e50);margin:4px 0;min-height:26px;';
       status.textContent=over?(result==='win'?'🎉 You sank the enemy fleet!':'💀 Your fleet was sunk!'):(turn==='player'?'🎯 Your turn — fire at Enemy Waters':'🤖 Enemy firing...');
       root.appendChild(status);
+      const winsEl=document.createElement('div');winsEl.className='game-hud';winsEl.style.cssText='margin:0 0 6px;';winsEl.innerHTML=`<span class="game-stat">🏆 Wins <span class="game-stat-val">${prevWins+((over&&result==='win')?1:0)}</span></span>`;root.appendChild(winsEl);
       const lab1=document.createElement('div');lab1.style.cssText='text-align:center;font-weight:bold;color:#e74c3c;font-family:Comic Neue,cursive;';lab1.textContent=`🎯 Enemy Waters (${foeLeft} left)`;root.appendChild(lab1);
       root.appendChild(mkGrid(foe,foeShots,true));
       const lab2=document.createElement('div');lab2.style.cssText='text-align:center;font-weight:bold;color:#2980b9;font-family:Comic Neue,cursive;margin-top:6px;';lab2.textContent=`🚢 Your Fleet (${meLeft} left)`;root.appendChild(lab2);
@@ -15861,6 +15863,7 @@ function playAnimalSound(type) {
     let board=new Array(N*N).fill(0);
     board[idx(3,3)]=2;board[idx(3,4)]=1;board[idx(4,3)]=1;board[idx(4,4)]=2;
     let turn=1,over=false,lastAi=-1;
+    const prevWins=parseInt(localStorage.getItem('rv-wins')||'0');
     const DIRS=[[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
     const WT=[120,-20,20,5,5,20,-20,120,-20,-40,-5,-5,-5,-5,-40,-20,20,-5,15,3,3,15,-5,20,5,-5,3,3,3,3,-5,5,5,-5,3,3,3,3,-5,5,20,-5,15,3,3,15,-5,20,-20,-40,-5,-5,-5,-5,-40,-20,120,-20,20,5,5,20,-20,120];
     function flipsFor(r,c,p){if(board[idx(r,c)]!==0)return [];const opp=p===1?2:1,out=[];for(const [dr,dc] of DIRS){let rr=r+dr,cc=c+dc;const line=[];while(rr>=0&&rr<N&&cc>=0&&cc<N&&board[idx(rr,cc)]===opp){line.push(idx(rr,cc));rr+=dr;cc+=dc;}if(line.length&&rr>=0&&rr<N&&cc>=0&&cc<N&&board[idx(rr,cc)]===p)out.push(...line);}return out;}
@@ -15883,7 +15886,7 @@ function playAnimalSound(type) {
       root.innerHTML='';
       const [b,w]=counts();
       const hud=document.createElement('div');hud.className='game-hud';hud.style.marginBottom='6px';
-      hud.innerHTML=`<span class="game-stat">⚫ You <span class="game-stat-val">${b}</span></span><span class="game-stat">⚪ AI <span class="game-stat-val">${w}</span></span>`;
+      hud.innerHTML=`<span class="game-stat">⚫ You <span class="game-stat-val">${b}</span></span><span class="game-stat">⚪ AI <span class="game-stat-val">${w}</span></span><span class="game-stat">🏆 <span class="game-stat-val">${prevWins+((over&&b>w)?1:0)}</span></span>`;
       root.appendChild(hud);
       const status=document.createElement('div');status.style.cssText='text-align:center;font-family:Comic Neue,cursive;font-size:1.2rem;color:var(--text,#2c3e50);margin:6px 0;min-height:28px;';
       status.textContent=over?(b>w?'🎉 You win!':w>b?'🤖 AI wins! Try again':'🤝 Tie!'):(turn===1?'Your turn (⚫) — tap a dot':'🤖 AI thinking...');
