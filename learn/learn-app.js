@@ -4028,7 +4028,9 @@
       prompt.innerHTML=`How many <span style="font-size:1.9rem;">${item.e}</span> do you see?`;
       if(ttsAuto() && typeof speakSeq==='function')speakSeq(['How many '+item.n+'? Count them!']);
       const opts=new Set([count]);
-      while(opts.size<4){const d=count+Math.floor(Math.random()*5)-2;if(d>=1&&d<=maxN+2)opts.add(d);}
+      let guard=0;
+      while(opts.size<4&&guard++<60){const d=count+Math.floor(Math.random()*7)-3;if(d>=1)opts.add(d);}
+      let f=1;while(opts.size<4){if(f!==count)opts.add(f);f++;}
       const arr=[...opts].sort(()=>Math.random()-0.5);
       choices.innerHTML='';
       arr.forEach(nv=>{
