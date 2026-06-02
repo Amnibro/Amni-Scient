@@ -15954,7 +15954,7 @@ function playAnimalSound(type) {
       const odd=`hsl(${h},${s}%,${Math.max(8,Math.min(92,l+dir*delta))}%)`;
       oddIndex=Math.floor(Math.random()*total);
       board.style.gridTemplateColumns=`repeat(${n},1fr)`;board.innerHTML='';
-      for(let i=0;i<total;i++){const cell=document.createElement('div');cell.style.cssText=`aspect-ratio:1;border-radius:10px;background:${i===oddIndex?odd:base};cursor:pointer;`;cell.onclick=()=>pick(i);board.appendChild(cell);}
+      for(let i=0;i<total;i++){const cell=document.createElement('div');cell.style.cssText=`aspect-ratio:1;border-radius:10px;background:${i===oddIndex?odd:base};cursor:pointer;`;cell.onclick=()=>pick(i);if(typeof _kbd==='function')_kbd(cell,'Tile '+(i+1)+' of '+total);board.appendChild(cell);}
     }
     function pick(i){
       if(over)return;
