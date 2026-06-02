@@ -15849,7 +15849,7 @@ function playAnimalSound(type) {
         const tappable=isEnemy&&!over&&turn==='player'&&!sh;
         cell.style.cssText=`aspect-ratio:1;border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:0.72rem;background:${bg};cursor:${tappable?'pointer':'default'};`;
         cell.textContent=content;
-        if(tappable)cell.onclick=()=>playerFire(i);
+        if(tappable){cell.onclick=()=>playerFire(i);if(typeof _kbd==='function')_kbd(cell,'Fire at row '+(Math.floor(i/N)+1)+', column '+(i%N+1));}
         g.appendChild(cell);
       }
       return g;
