@@ -15768,7 +15768,7 @@ function playAnimalSound(type) {
     const N=8,idx=(r,c)=>r*N+c;
     let board=new Array(N*N).fill(0);
     board[idx(3,3)]=2;board[idx(3,4)]=1;board[idx(4,3)]=1;board[idx(4,4)]=2;
-    let turn=1,over=false;
+    let turn=1,over=false,lastAi=-1;
     const DIRS=[[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
     const WT=[120,-20,20,5,5,20,-20,120,-20,-40,-5,-5,-5,-5,-40,-20,20,-5,15,3,3,15,-5,20,5,-5,3,3,3,3,-5,5,5,-5,3,3,3,3,-5,5,20,-5,15,3,3,15,-5,20,-20,-40,-5,-5,-5,-5,-40,-20,120,-20,20,5,5,20,-20,120];
     function flipsFor(r,c,p){if(board[idx(r,c)]!==0)return [];const opp=p===1?2:1,out=[];for(const [dr,dc] of DIRS){let rr=r+dr,cc=c+dc;const line=[];while(rr>=0&&rr<N&&cc>=0&&cc<N&&board[idx(rr,cc)]===opp){line.push(idx(rr,cc));rr+=dr;cc+=dc;}if(line.length&&rr>=0&&rr<N&&cc>=0&&cc<N&&board[idx(rr,cc)]===p)out.push(...line);}return out;}
@@ -15777,7 +15777,7 @@ function playAnimalSound(type) {
     function counts(){let a=0,b=0;for(const v of board){if(v===1)a++;else if(v===2)b++;}return [a,b];}
     function aiBest(){const moves=validMoves(2);if(!moves.length)return null;let best=moves[0],bs=-1e9;for(const [r,c] of moves){const s=WT[idx(r,c)]+flipsFor(r,c,2).length;if(s>bs){bs=s;best=[r,c];}}return best;}
     function playerTap(r,c){if(over||turn!==1)return;if(place(r,c,1))advance();}
-    function aiTurn(){if(over||turn!==2)return;const m=aiBest();if(m)place(m[0],m[1],2);advance();}
+    function aiTurn(){if(over||turn!==2)return;const m=aiBest();if(m){place(m[0],m[1],2);lastAi=m[0]*N+m[1];}advance();}
     function advance(){
       const other=turn===1?2:1;
       if(validMoves(other).length){turn=other;}
@@ -15801,7 +15801,7 @@ function playAnimalSound(type) {
       for(let r=0;r<N;r++)for(let c=0;c<N;c++){
         const v=board[idx(r,c)],cell=document.createElement('div'),isHint=hintSet.has(idx(r,c));
         cell.style.cssText=`aspect-ratio:1;background:#2e8b57;border-radius:3px;display:flex;align-items:center;justify-content:center;cursor:${isHint?'pointer':'default'};`;
-        if(v){const disc=document.createElement('div');disc.style.cssText=`width:78%;height:78%;border-radius:50%;background:${v===1?'radial-gradient(circle at 35% 30%,#555,#000)':'radial-gradient(circle at 35% 30%,#fff,#bbb)'};box-shadow:0 1px 3px rgba(0,0,0,0.4);`;cell.appendChild(disc);}
+        if(v){const disc=document.createElement('div');disc.style.cssText=`width:78%;height:78%;border-radius:50%;background:${v===1?'radial-gradient(circle at 35% 30%,#555,#000)':'radial-gradient(circle at 35% 30%,#fff,#bbb)'};box-shadow:${idx(r,c)===lastAi?'0 0 0 3px #f1c40f,0 1px 3px rgba(0,0,0,0.4)':'0 1px 3px rgba(0,0,0,0.4)'};`;cell.appendChild(disc);}
         else if(isHint){const dot=document.createElement('div');dot.style.cssText='width:26%;height:26%;border-radius:50%;background:rgba(255,255,255,0.5);';cell.appendChild(dot);}
         if(isHint)cell.onclick=()=>playerTap(r,c);
         boardEl.appendChild(cell);
@@ -15865,7 +15865,7 @@ function playAnimalSound(type) {
     const root=$$('#connect4-game');root.innerHTML='';
     const COLS=7,ROWS=6;
     let grid=Array.from({length:ROWS},()=>Array(COLS).fill(0));
-    let turn=1,over=false,winner=0;
+    let turn=1,over=false,winner=0,lastAi=-1;
     let pWins=parseInt(localStorage.getItem('cf-pwins')||'0'),aWins=parseInt(localStorage.getItem('cf-awins')||'0');
     function lowestRow(c){for(let r=ROWS-1;r>=0;r--){if(grid[r][c]===0)return r;}return -1;}
     function checkWinFrom(r,c,p){
@@ -15899,7 +15899,7 @@ function playAnimalSound(type) {
     function aiTurn(){
       if(over)return;
       const c=aiMove();if(c<0){over=true;winner=0;render();return;}
-      const r=lowestRow(c);grid[r][c]=2;
+      const r=lowestRow(c);grid[r][c]=2;lastAi=r*COLS+c;
       if(checkWinFrom(r,c,2)){over=true;winner=2;aWins++;localStorage.setItem('cf-awins',aWins);if(typeof showFeedback==='function')showFeedback('🤖 AI wins!','#e67e22');}
       else if(boardFull()){over=true;winner=0;}
       else turn=1;
@@ -15917,7 +15917,7 @@ function playAnimalSound(type) {
       for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){
         const v=grid[r][c];const cell=document.createElement('div');
         const playable=!over&&turn===1&&lowestRow(c)>=0;
-        cell.style.cssText=`aspect-ratio:1;border-radius:50%;background:${v===1?'radial-gradient(circle at 35% 30%,#ff7675,#d63031)':v===2?'radial-gradient(circle at 35% 30%,#ffeaa7,#fdcb6e)':'#15405f'};cursor:${playable?'pointer':'default'};transition:transform 0.1s;`;
+        cell.style.cssText=`aspect-ratio:1;border-radius:50%;background:${v===1?'radial-gradient(circle at 35% 30%,#ff7675,#d63031)':v===2?'radial-gradient(circle at 35% 30%,#ffeaa7,#fdcb6e)':'#15405f'};cursor:${playable?'pointer':'default'};transition:transform 0.1s;${lastAi===r*COLS+c?'box-shadow:0 0 0 3px #fff,0 0 7px 2px #ffd700;':''}`;
         cell.onclick=()=>{if(!over&&turn===1)drop(c);};
         boardEl.appendChild(cell);
       }
