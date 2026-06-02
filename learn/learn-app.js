@@ -15860,9 +15860,9 @@ function playAnimalSound(type) {
   function initColorHunt(){
     const root=$$('#colorhunt-game');root.innerHTML='';
     const prevBest=parseInt(localStorage.getItem('chunt-best')||'0');
-    let cleared=0,over=false,oddIndex=-1,best=prevBest;
+    let cleared=0,over=false,oddIndex=-1,best=prevBest,lives=3;
     const hud=document.createElement('div');hud.className='game-hud';hud.style.marginBottom='6px';
-    hud.innerHTML=`<span class="game-stat">🎯 Round <span class="game-stat-val" id="chunt-round">1</span></span><span class="game-stat">⭐ Best <span class="game-stat-val">${prevBest}</span></span>`;
+    hud.innerHTML=`<span class="game-stat">🎯 Round <span class="game-stat-val" id="chunt-round">1</span></span><span class="game-stat" id="chunt-lives">❤️❤️❤️</span><span class="game-stat">⭐ Best <span class="game-stat-val">${prevBest}</span></span>`;
     root.appendChild(hud);
     const info=document.createElement('div');info.style.cssText='text-align:center;font-family:Comic Neue,cursive;color:var(--text,#2c3e50);font-size:1.05rem;margin:6px 0;min-height:26px;';
     info.textContent="Tap the tile that's a slightly different shade!";
@@ -15888,7 +15888,12 @@ function playAnimalSound(type) {
     function pick(i){
       if(over)return;
       if(i===oddIndex){cleared++;render();}
-      else{over=true;if(cleared>best){best=cleared;localStorage.setItem('chunt-best',best);}gameOver();}
+      else{
+        lives--;
+        const lv=document.getElementById('chunt-lives');if(lv)lv.textContent='❤️'.repeat(Math.max(0,lives));
+        if(lives<=0){over=true;if(cleared>best){best=cleared;localStorage.setItem('chunt-best',best);}gameOver();}
+        else if(typeof showFeedback==='function')showFeedback(`Not that one — ${lives} ❤️ left`,'#e67e22');
+      }
     }
     function gameOver(){
       board.innerHTML='';board.style.gridTemplateColumns='1fr';info.textContent='';
