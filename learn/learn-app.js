@@ -16035,7 +16035,7 @@ function playAnimalSound(type) {
       hud.innerHTML=`<span class="game-stat">🔴 You <span class="game-stat-val">${pWins}</span></span><span class="game-stat">🟡 AI <span class="game-stat-val">${aWins}</span></span>`;
       root.appendChild(hud);
       const status=document.createElement('div');status.style.cssText='text-align:center;font-family:Comic Neue,cursive;font-size:1.3rem;color:var(--text,#2c3e50);margin:8px 0;min-height:32px;';
-      status.textContent=over?(winner===1?'🎉 You win!':winner===2?'🤖 AI wins! Try again':'🤝 Draw!'):(turn===1?'Your turn — tap a column':'🤖 AI thinking...');
+      status.textContent=over?(winner===1?'🎉 You win!':winner===2?'🤖 AI wins! Try again':'🤝 Draw!'):(turn===1?'Your turn — tap a column (or press 1–7)':'🤖 AI thinking...');
       root.appendChild(status);
       const boardEl=document.createElement('div');boardEl.style.cssText=`display:grid;grid-template-columns:repeat(${COLS},1fr);gap:5px;background:#2980b9;padding:8px;border-radius:12px;max-width:min(96vw,400px);margin:8px auto;`;
       const winSet=new Set(winCells.map(([rr,cc])=>rr*COLS+cc));
@@ -16053,6 +16053,7 @@ function playAnimalSound(type) {
       btns.appendChild(ng);btns.appendChild(eb);root.appendChild(btns);
     }
     render();
+    document.onkeydown=(e)=>{if(currentGame!=='connect4'||over||turn!==1)return;const n=parseInt(e.key);if(n>=1&&n<=COLS&&lowestRow(n-1)>=0){e.preventDefault();drop(n-1);}};
   }
   function initAutoMiner(){
     const root=$$('#autominer-game');root.innerHTML='';
