@@ -15587,6 +15587,7 @@ function playAnimalSound(type) {
         const c=cost(u);const item=document.createElement('div');item.className='idle-item'+(cookies<c?' locked':'');
         item.innerHTML=`<div class="idle-item-name">${u.name} (${u.count})</div><div class="idle-item-desc">${u.desc}</div><div class="idle-item-cost">🍪 ${fmt(c)}</div>`;
         item.onclick=()=>{if(cookies>=c){cookies-=c;u.count++;cps=upgrades.reduce((a,uu)=>a+uu.cpsAdd*uu.count,0);save();checkAch();render();}};
+        if(typeof _kbd==='function')_kbd(item,'Buy '+u.name);
         shop.appendChild(item);
       });
       root.appendChild(shop);
@@ -15689,6 +15690,7 @@ function playAnimalSound(type) {
         const c=cost(u);const item=document.createElement('div');item.className='idle-item'+(blooms<c?' locked':'');
         item.innerHTML=`<div class="idle-item-name">${u.name} (${u.count})</div><div class="idle-item-desc">${u.desc}</div><div class="idle-item-cost">🌻 ${fmt(c)}</div>`;
         item.onclick=()=>{if(blooms>=c){blooms-=c;u.count++;cps=upgrades.reduce((a,uu)=>a+uu.cpsAdd*uu.count,0);save();checkAch();render();}};
+        if(typeof _kbd==='function')_kbd(item,'Buy '+u.name);
         shop.appendChild(item);
       });
       root.appendChild(shop);
@@ -16144,6 +16146,7 @@ function playAnimalSound(type) {
         const c=cost(u);const item=document.createElement('div');item.className='idle-item'+(gems<c?' locked':'');
         item.innerHTML=`<div class="idle-item-name">${u.name} (${u.count})</div><div class="idle-item-desc">${u.desc}</div><div class="idle-item-cost">⛏️ ${fmt(c)}</div>`;
         item.onclick=()=>{if(gems>=c){gems-=c;u.count++;depth=1+upgrades[4].count;gps=upgrades.reduce((a,uu)=>a+uu.cpsAdd*uu.count,0)*depth*pMult();_checkAmAch();save();render();}};
+        if(typeof _kbd==='function')_kbd(item,'Buy '+u.name);
         shop.appendChild(item);
       });
       root.appendChild(shop);
