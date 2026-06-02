@@ -15736,7 +15736,7 @@ function playAnimalSound(type) {
       hud.innerHTML=`<span class="game-stat">🧑 You <span class="game-stat-val">${pScore}</span></span><span class="game-stat">🤖 AI <span class="game-stat-val">${aScore}</span></span><span class="game-stat">🏆 <span class="game-stat-val">${prevWins+((over&&pScore>=GOAL)?1:0)}</span></span><span class="game-stat">🎯 ${GOAL}</span>`;
       root.appendChild(hud);
       const status=document.createElement('div');status.style.cssText='text-align:center;font-family:Comic Neue,cursive;font-size:1.2rem;color:var(--text,#2c3e50);margin:6px 0;min-height:28px;';
-      status.textContent=over?(pScore>=GOAL?'🎉 You win!':'🤖 AI wins! Try again'):(turn==='player'?'Your turn — Roll or Bank':'🤖 AI is rolling...');
+      status.textContent=over?(pScore>=GOAL?'🎉 You win!':'🤖 AI wins! Try again'):(turn==='player'?'Your turn — Roll or Bank (R / B)':'🤖 AI is rolling...');
       root.appendChild(status);
       const dieWrap=document.createElement('div');dieWrap.style.cssText='text-align:center;margin:10px 0;';
       dieWrap.innerHTML=`<div style="font-size:5rem;line-height:1;color:${turn==='player'?'#e74c3c':'#e67e22'};">${lastRoll?DIE[lastRoll]:'🎲'}</div><div style="font-family:Comic Neue,cursive;font-size:1.3rem;color:var(--text,#2c3e50);margin-top:4px;">This turn: <b>${turnTotal}</b></div>`;
@@ -15752,6 +15752,7 @@ function playAnimalSound(type) {
       const hint=document.createElement('div');hint.style.cssText='text-align:center;font-size:0.78rem;color:var(--text,#7a8a9a);opacity:0.8;font-family:Comic Neue,cursive;max-width:420px;margin:8px auto 0;line-height:1.3;';hint.textContent='Roll to add to your turn total — but roll a 1 and you lose it all! Bank to keep your points. First to 100 wins.';root.appendChild(hint);
     }
     render();
+    document.onkeydown=(e)=>{if(currentGame!=='pig'||over||turn!=='player')return;const k=(e.key||'').toLowerCase();if(k==='r'){e.preventDefault();roll();}else if(k==='b'){e.preventDefault();bank();}};
   }
   function initMancala(){
     const root=$$('#mancala-game');root.innerHTML='';
@@ -15770,7 +15771,7 @@ function playAnimalSound(type) {
     function render(){
       root.innerHTML='';
       const status=document.createElement('div');status.style.cssText='text-align:center;font-family:Comic Neue,cursive;font-size:1.15rem;color:var(--text,#2c3e50);margin:4px 0;min-height:26px;';
-      status.textContent=over?(board[6]>board[13]?`🎉 You win ${board[6]}–${board[13]}!`:board[13]>board[6]?`🤖 AI wins ${board[13]}–${board[6]}`:`🤝 Tie ${board[6]}–${board[13]}`):(turn==='player'?'Your turn — tap one of YOUR pits (bottom row)':'🤖 AI thinking...');
+      status.textContent=over?(board[6]>board[13]?`🎉 You win ${board[6]}–${board[13]}!`:board[13]>board[6]?`🤖 AI wins ${board[13]}–${board[6]}`:`🤝 Tie ${board[6]}–${board[13]}`):(turn==='player'?'Your turn — tap a pit on the bottom row (or press 1–6)':'🤖 AI thinking...');
       root.appendChild(status);
       const winsEl=document.createElement('div');winsEl.className='game-hud';winsEl.style.cssText='margin:0 0 4px;';winsEl.innerHTML=`<span class="game-stat">🏆 Wins <span class="game-stat-val">${prevWins+((over&&board[6]>board[13])?1:0)}</span></span>`;root.appendChild(winsEl);
       const howto=document.createElement('div');howto.style.cssText='text-align:center;font-size:0.78rem;color:var(--text,#7a8a9a);opacity:0.8;font-family:Comic Neue,cursive;max-width:440px;margin:0 auto 4px;line-height:1.3;';howto.textContent='Sow seeds ⟳ into your pits and store. Last seed in YOUR store = free extra turn. Last seed in your own empty pit captures the seeds directly across!';root.appendChild(howto);
@@ -15790,6 +15791,7 @@ function playAnimalSound(type) {
       root.appendChild(btns);
     }
     render();
+    document.onkeydown=(e)=>{if(currentGame!=='mancala'||over||turn!=='player')return;const n=parseInt(e.key);if(n>=1&&n<=6&&board[n-1]>0){e.preventDefault();playerMove(n-1);}};
   }
   function initBattleship(){
     const root=$$('#battleship-game');root.innerHTML='';
