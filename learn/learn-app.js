@@ -15252,7 +15252,7 @@ function playAnimalSound(type) {
     const root=$$('#minesweeper-game');root.innerHTML='';
     const DIFFS={easy:{rows:8,cols:8,mines:10},medium:{rows:10,cols:10,mines:15},hard:{rows:12,cols:12,mines:25}};
     let diff='medium',ROWS,COLS,MINES;
-    let grid=[],revealed=[],flagged=[],gameOver=false,firstClick=true,startTime=0,elapsed=0,timerInt=null,best=JSON.parse(sessionStorage.getItem('ms-best')||'{}');
+    let grid=[],revealed=[],flagged=[],gameOver=false,firstClick=true,startTime=0,elapsed=0,timerInt=null,best=(()=>{try{return JSON.parse(sessionStorage.getItem('ms-best')||'{}');}catch(e){return {};}})();
     function setDiff(d){diff=d;const c=DIFFS[d];ROWS=c.rows;COLS=c.cols;MINES=c.mines;firstClick=true;gameOver=false;elapsed=0;if(timerInt)clearInterval(timerInt);timerInt=null;gen(0,0);render();}
     function gen(safeR,safeC){
       grid=Array.from({length:ROWS},()=>Array(COLS).fill(0));revealed=Array.from({length:ROWS},()=>Array(COLS).fill(false));flagged=Array.from({length:ROWS},()=>Array(COLS).fill(false));gameOver=false;
@@ -15539,10 +15539,11 @@ function playAnimalSound(type) {
       {name:'🦄 Centenarian',desc:'Own 100 of any building',check:()=>upgrades.some(u=>u.count>=100),earned:false},
       {name:'🎨 Variety',desc:'Own at least 1 of each building',check:()=>upgrades.every(u=>u.count>=1),earned:false}
     ];
-    const savedAch=JSON.parse(localStorage.getItem('ck-ach')||sessionStorage.getItem('ck-ach')||'null');
-    if(savedAch)savedAch.forEach((s,i)=>{if(achievements[i])achievements[i].earned=s;});
-    const saved=JSON.parse(localStorage.getItem('ck-up')||sessionStorage.getItem('ck-up')||'null');
-    if(saved)saved.forEach((s,i)=>{if(upgrades[i])upgrades[i].count=s;});
+    const _ckSP=k=>{try{return JSON.parse(localStorage.getItem(k)||sessionStorage.getItem(k)||'null');}catch(e){return null;}};
+    const savedAch=_ckSP('ck-ach');
+    if(Array.isArray(savedAch))savedAch.forEach((s,i)=>{if(achievements[i])achievements[i].earned=s;});
+    const saved=_ckSP('ck-up');
+    if(Array.isArray(saved))saved.forEach((s,i)=>{if(upgrades[i])upgrades[i].count=s;});
     // Multiplier = 1 + (heavenly chips × 1%) + (earned achievements × 0.5%)
     function totalMult(){return 1+(heavenly*0.01)+(achievements.filter(a=>a.earned).length*0.005);}
     cps=upgrades.reduce((a,u)=>a+u.cpsAdd*u.count,0);
@@ -15644,10 +15645,11 @@ function playAnimalSound(type) {
       {name:'🦄 Eden',desc:'Own 100 of any plant',check:()=>upgrades.some(u=>u.count>=100),earned:false},
       {name:'🎨 Biodiversity',desc:'Own at least 1 of each plant',check:()=>upgrades.every(u=>u.count>=1),earned:false}
     ];
-    const savedAch=JSON.parse(localStorage.getItem('gd-ach')||sessionStorage.getItem('gd-ach')||'null');
-    if(savedAch)savedAch.forEach((s,i)=>{if(achievements[i])achievements[i].earned=s;});
-    const saved=JSON.parse(localStorage.getItem('gd-up')||sessionStorage.getItem('gd-up')||'null');
-    if(saved)saved.forEach((s,i)=>{if(upgrades[i])upgrades[i].count=s;});
+    const _gdSP=k=>{try{return JSON.parse(localStorage.getItem(k)||sessionStorage.getItem(k)||'null');}catch(e){return null;}};
+    const savedAch=_gdSP('gd-ach');
+    if(Array.isArray(savedAch))savedAch.forEach((s,i)=>{if(achievements[i])achievements[i].earned=s;});
+    const saved=_gdSP('gd-up');
+    if(Array.isArray(saved))saved.forEach((s,i)=>{if(upgrades[i])upgrades[i].count=s;});
     function totalMult(){return 1+(seeds*0.01)+(achievements.filter(a=>a.earned).length*0.005);}
     cps=upgrades.reduce((a,u)=>a+u.cpsAdd*u.count,0);
     function effectiveCps(){return cps*totalMult()*goldenMult;}
@@ -17842,7 +17844,7 @@ function playAnimalSound(type) {
     const imgData=cx.createImageData(W,H);
     function addLog(msg){logLines.push(msg);if(logLines.length>20)logLines.shift();log.innerHTML=logLines.map(l=>`<div>${l}</div>`).join('');log.scrollTop=log.scrollHeight;}
     const _RXN_TOTAL=14;
-    function _rxnTrack(type){const setKey='rxn-discovered';const set=new Set(JSON.parse(localStorage.getItem(setKey)||sessionStorage.getItem(setKey)||'[]'));const isNew=!set.has(type);if(isNew){set.add(type);localStorage.setItem(setKey,JSON.stringify([...set]));spawnConfetti(window.innerWidth/2,window.innerHeight/3,60);if(set.size===_RXN_TOTAL){spawnConfetti(window.innerWidth/2,window.innerHeight/2,150);showFeedback(`🏆 ALL ${_RXN_TOTAL} REACTIONS DISCOVERED! ⚗️`,'#f1c40f');}else{showFeedback(`✨ New reaction! (${set.size}/${_RXN_TOTAL})`,'#9b59b6');}addScore(5);}}
+    function _rxnTrack(type){const setKey='rxn-discovered';const set=new Set((()=>{try{return JSON.parse(localStorage.getItem(setKey)||sessionStorage.getItem(setKey)||'[]');}catch(e){return [];}})());const isNew=!set.has(type);if(isNew){set.add(type);localStorage.setItem(setKey,JSON.stringify([...set]));spawnConfetti(window.innerWidth/2,window.innerHeight/3,60);if(set.size===_RXN_TOTAL){spawnConfetti(window.innerWidth/2,window.innerHeight/2,150);showFeedback(`🏆 ALL ${_RXN_TOTAL} REACTIONS DISCOVERED! ⚗️`,'#f1c40f');}else{showFeedback(`✨ New reaction! (${set.size}/${_RXN_TOTAL})`,'#9b59b6');}addScore(5);}}
     function idx(x,y){return y*W+x;}
     function get(x,y){return(x<0||x>=W||y<0||y>=H)?255:grid[idx(x,y)];}
     function set(x,y,v){if(x>=0&&x<W&&y>=0&&y<H)grid[idx(x,y)]=v;}
