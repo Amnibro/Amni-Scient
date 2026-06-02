@@ -13374,7 +13374,7 @@ function playAnimalSound(type) {
       const nb2=document.createElement('button');nb2.className='sdk-btn';nb2.textContent='NEW PUZZLE';nb2.style.marginTop='10px';nb2.onclick=initWordSearch;container.appendChild(nb2);
     }
     function _wsEnd(){if(!selecting)return;selecting=false;const selWord=selCells.map(s=>grid[s.r][s.c]).join('');const revWord=selWord.split('').reverse().join('');const match=placed.find(p=>(p.word===selWord||p.word===revWord)&&!p.found);if(match){match.found=true;found++;const fe=$$('#ws-found');if(fe)fe.textContent=found;selCells.forEach(s=>{const el=gridEl.querySelector(`[data-r="${s.r}"][data-c="${s.c}"]`);if(el){el.classList.remove('ws-selecting');el.classList.add('ws-found');}});const we=$$('#ws-w-'+match.word);if(we)we.classList.add('ws-word-found');addScore(2);_showDefPop(match.word, defByWord[match.word]);if(found===Math.ceil(placed.length/2))spawnConfetti(window.innerWidth/2,window.innerHeight/3,30);if(found>=placed.length){_wsComplete();}}else{gridEl.querySelectorAll('.ws-selecting').forEach(c2=>c2.classList.remove('ws-selecting'));}selCells=[];}
-    gridEl.addEventListener('pointerup',_wsEnd);gridEl.addEventListener('pointercancel',_wsEnd);window.addEventListener('pointerup',_wsEnd);
+    gridEl.addEventListener('pointerup',_wsEnd);gridEl.addEventListener('pointercancel',_wsEnd);if(window._wsEndHandler)window.removeEventListener('pointerup',window._wsEndHandler);window._wsEndHandler=_wsEnd;window.addEventListener('pointerup',_wsEnd);
     container.appendChild(gridEl);
     const nb=document.createElement('button');nb.className='sdk-btn';nb.textContent='NEW PUZZLE';nb.style.marginTop='10px';nb.onclick=initWordSearch;container.appendChild(nb);
   }
