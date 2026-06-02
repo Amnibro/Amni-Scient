@@ -959,7 +959,7 @@
     const ov=document.createElement('div');ov.className='hs-overlay';ov.onclick=e=>{if(e.target===ov)ov.remove();};
     const _profName=localStorage.getItem('profile-name')||'';
     const _profMascot=localStorage.getItem('profile-mascot')||'📊';
-    const _statsTitle=_profName?`${_profMascot} ${_profName.toUpperCase()}'S STATS`:'📊 MY STATS';
+    const _statsTitle=_profName?`${_profMascot} ${_profName.toUpperCase().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}'S STATS`:'📊 MY STATS';
     let html=`<div class="hs-modal" role="dialog" aria-modal="true" style="max-height:85vh;overflow-y:auto;min-width:340px;max-width:560px"><div class="hs-title">${_statsTitle}</div><div style="font-size:0.78rem;color:#7a8a9a;margin-bottom:8px">Best results across all brain-exercise modules.</div>`;
     let totalRecorded=0;
     sec.forEach(s=>{
