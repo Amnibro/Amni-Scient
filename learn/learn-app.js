@@ -198,6 +198,9 @@
     {id:'eagle-eye',ic:'🟰',name:'Eagle Eye',desc:'Get 10/10 in Same or Different (any mode)',progress(){let m=0;['animals','shapes','colors','mixed'].forEach(k=>{m=Math.max(m,_intLS('sd-best-'+k));});return{cur:Math.min(m,10),target:10,unlocked:m>=10};}},
     {id:'caregiver',ic:'🐾',name:'Caregiver',desc:'Score 10/10 in Pet Care',progress(){const c=_intLS('petcare-best');return{cur:Math.min(c,10),target:10,unlocked:c>=10};}},
     {id:'counter',ic:'🔢',name:'Counter',desc:'Score 10/10 in Count It',progress(){const c=Math.max(_intLS('count-best-L1'),_intLS('count-best-L2'),_intLS('count-best-L3'),_intLS('count-best-L4'),_intLS('count-best-L5'));return{cur:Math.min(c,10),target:10,unlocked:c>=10};}},
+    {id:'green-thumb',ic:'🌻',name:'Green Thumb',desc:'Grow 1,000 blooms in Garden Grower',progress(){const c=_intLS('gd-lifetime');return{cur:Math.min(c,1000),target:1000,unlocked:c>=1000};}},
+    {id:'four-in-a-row',ic:'🔴',name:'Four in a Row',desc:'Beat the AI at Connect Four',progress(){const c=_intLS('cf-pwins');return{cur:Math.min(c,1),target:1,unlocked:c>=1};}},
+    {id:'sharp-eyes',ic:'🎨',name:'Sharp Eyes',desc:'Clear 10 rounds in Color Hunt',progress(){const c=_intLS('chunt-best');return{cur:Math.min(c,10),target:10,unlocked:c>=10};}},
     {id:'sharp-spotter',ic:'🔍',name:'Sharp Spotter',desc:'Find all 10 in Find It (any mode)',progress(){let m=0;['animals','fruits','vehicles','mixed'].forEach(k=>{m=Math.max(m,_intLS('fi-best-'+k));});return{cur:Math.min(m,10),target:10,unlocked:m>=10};}},
     {id:'block-memory',ic:'🟦',name:'Block Memory',desc:'Reach a Corsi Blocks span of 6',progress(){const s=_intLS('corsi-best');return{cur:Math.min(s,6),target:6,unlocked:s>=6};}},
     {id:'backward-wizard',ic:'🔢',name:'Backward Wizard',desc:'Reverse a 5-digit span in Reverse Recall',progress(){const s=_intLS('bsp-best');return{cur:Math.min(s,5),target:5,unlocked:s>=5};}},
@@ -15678,7 +15681,7 @@ function playAnimalSound(type) {
   }
   function initColorHunt(){
     const root=$$('#colorhunt-game');root.innerHTML='';
-    const prevBest=parseInt(sessionStorage.getItem('chunt-best')||'0');
+    const prevBest=parseInt(localStorage.getItem('chunt-best')||'0');
     let cleared=0,over=false,oddIndex=-1,best=prevBest;
     const hud=document.createElement('div');hud.className='game-hud';hud.style.marginBottom='6px';
     hud.innerHTML=`<span class="game-stat">🎯 Round <span class="game-stat-val" id="chunt-round">1</span></span><span class="game-stat">⭐ Best <span class="game-stat-val">${prevBest}</span></span>`;
@@ -15707,7 +15710,7 @@ function playAnimalSound(type) {
     function pick(i){
       if(over)return;
       if(i===oddIndex){cleared++;render();}
-      else{over=true;if(cleared>best){best=cleared;sessionStorage.setItem('chunt-best',best);}gameOver();}
+      else{over=true;if(cleared>best){best=cleared;localStorage.setItem('chunt-best',best);}gameOver();}
     }
     function gameOver(){
       board.innerHTML='';board.style.gridTemplateColumns='1fr';info.textContent='';
@@ -15727,7 +15730,7 @@ function playAnimalSound(type) {
     const COLS=7,ROWS=6;
     let grid=Array.from({length:ROWS},()=>Array(COLS).fill(0));
     let turn=1,over=false,winner=0;
-    let pWins=parseInt(sessionStorage.getItem('cf-pwins')||'0'),aWins=parseInt(sessionStorage.getItem('cf-awins')||'0');
+    let pWins=parseInt(localStorage.getItem('cf-pwins')||'0'),aWins=parseInt(localStorage.getItem('cf-awins')||'0');
     function lowestRow(c){for(let r=ROWS-1;r>=0;r--){if(grid[r][c]===0)return r;}return -1;}
     function checkWinFrom(r,c,p){
       const dirs=[[0,1],[1,0],[1,1],[1,-1]];
@@ -15753,7 +15756,7 @@ function playAnimalSound(type) {
       if(over||turn!==1)return;
       const r=lowestRow(c);if(r<0)return;
       grid[r][c]=1;
-      if(checkWinFrom(r,c,1)){over=true;winner=1;pWins++;sessionStorage.setItem('cf-pwins',pWins);if(typeof addScore==='function')addScore(5);if(typeof showFeedback==='function')showFeedback('🎉 You win!','#2ecc71');if(typeof spawnConfetti==='function')spawnConfetti(window.innerWidth/2,window.innerHeight/2,120);render();return;}
+      if(checkWinFrom(r,c,1)){over=true;winner=1;pWins++;localStorage.setItem('cf-pwins',pWins);if(typeof addScore==='function')addScore(5);if(typeof showFeedback==='function')showFeedback('🎉 You win!','#2ecc71');if(typeof spawnConfetti==='function')spawnConfetti(window.innerWidth/2,window.innerHeight/2,120);render();return;}
       if(boardFull()){over=true;winner=0;render();return;}
       turn=2;render();setTimeout(()=>{if(currentGame==='connect4')aiTurn();},500);
     }
@@ -15761,7 +15764,7 @@ function playAnimalSound(type) {
       if(over)return;
       const c=aiMove();if(c<0){over=true;winner=0;render();return;}
       const r=lowestRow(c);grid[r][c]=2;
-      if(checkWinFrom(r,c,2)){over=true;winner=2;aWins++;sessionStorage.setItem('cf-awins',aWins);if(typeof showFeedback==='function')showFeedback('🤖 AI wins!','#e67e22');}
+      if(checkWinFrom(r,c,2)){over=true;winner=2;aWins++;localStorage.setItem('cf-awins',aWins);if(typeof showFeedback==='function')showFeedback('🤖 AI wins!','#e67e22');}
       else if(boardFull()){over=true;winner=0;}
       else turn=1;
       render();
