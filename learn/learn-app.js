@@ -15652,7 +15652,7 @@ function playAnimalSound(type) {
     function ascend(){const gain=pendingHC()-seeds;if(gain<=0){showFeedback('Grow more blooms first!','#e67e22');return;}if(!confirm(`Replant the garden? You'll reset blooms & plants (but keep achievements) and gain ${gain} Golden Seeds. Each seed = +1% growth forever.`))return;seeds=pendingHC();blooms=0;cps=0;upgrades.forEach(u=>u.count=0);save();showFeedback(`🌰 Replanted! +${gain} Golden Seeds (total ${seeds})`,'#f1c40f');spawnConfetti(window.innerWidth/2,window.innerHeight/2,150);render();}
     function spawnGolden(){
       if(goldenActive||currentGame!=='garden')return;
-      const gc=document.createElement('div');gc.id='gd-golden';gc.textContent='🦋';gc.style.cssText=`position:absolute;font-size:2rem;cursor:pointer;animation:pulse 0.5s infinite alternate;top:${30+Math.random()*200}px;left:${10+Math.random()*60}%;z-index:10;`;
+      const gc=document.createElement('div');gc.id='gd-golden';gc.textContent='🦋';gc.style.cssText=`position:absolute;font-size:2rem;cursor:pointer;animation:pulse 0.5s infinite alternate;top:${30+Math.random()*200}px;left:${10+Math.random()*60}%;z-index:10;filter:drop-shadow(0 0 6px #ffe08a) drop-shadow(0 0 12px #ffd24d);`;
       gc.onclick=()=>{gc.remove();goldenActive=true;goldenMult=7;showFeedback('🦋 7x growth for 10s!','#f1c40f');achievements[7].earned=true;save();render();if(goldenTimer)clearTimeout(goldenTimer);goldenTimer=setTimeout(()=>{goldenMult=1;goldenActive=false;},10000);};
       root.style.position='relative';root.appendChild(gc);
       setTimeout(()=>{const el=$$('#gd-golden');if(el)el.remove();},6000);
