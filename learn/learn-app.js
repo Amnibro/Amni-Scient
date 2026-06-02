@@ -4043,7 +4043,7 @@
       const item=ITEMS[Math.floor(Math.random()*ITEMS.length)];
       const count=Math.floor(Math.random()*maxN)+1;
       grid.innerHTML='';
-      for(let i=0;i<count;i++){const s=document.createElement('span');s.style.cssText='font-size:2.6rem;line-height:1;';s.textContent=item.e;grid.appendChild(s);}
+      for(let i=0;i<count;i++){const s=document.createElement('span');s.style.cssText=`font-size:2.8rem;line-height:1;display:inline-block;animation:bounceIn 0.4s ease both;animation-delay:${i*0.08}s;`;s.textContent=item.e;grid.appendChild(s);}
       prompt.innerHTML=`How many <span style="font-size:1.9rem;">${item.e}</span> do you see?`;
       if(ttsAuto() && typeof speakSeq==='function')speakSeq(['How many '+item.n+'? Count them!']);
       const opts=new Set([count]);
