@@ -3978,7 +3978,7 @@
       }
       const pet=PETS[Math.floor(Math.random()*PETS.length)];
       curNeed=NEEDS[Math.floor(Math.random()*NEEDS.length)];
-      scene.innerHTML=`<div style="font-size:6rem;line-height:1;">${pet}</div><div style="background:#fff;border:3px solid #2c3e50;border-radius:18px;padding:10px 18px;font-family:Comic Neue,cursive;font-size:1.3rem;color:#2c3e50;position:relative;">💭 ${curNeed.msg} <span style="font-size:1.4rem;margin-left:6px;">${curNeed.emoji}</span></div>`;
+      scene.innerHTML=`<div id="pc-pet" style="font-size:6rem;line-height:1;transition:transform 0.25s cubic-bezier(0.34,1.56,0.64,1);">${pet}</div><div style="background:#fff;border:3px solid #2c3e50;border-radius:18px;padding:10px 18px;font-family:Comic Neue,cursive;font-size:1.3rem;color:#2c3e50;position:relative;">💭 ${curNeed.msg} <span style="font-size:1.4rem;margin-left:6px;">${curNeed.emoji}</span></div>`;
       if(ttsAuto() && typeof speakSeq==='function')speakSeq([curNeed.msg]);
       const shuffled=[...ACTIONS].sort(()=>Math.random()-0.5);
       buttons.innerHTML='';
@@ -3995,6 +3995,7 @@
       if(picked===curNeed.action){
         score++;const se=document.getElementById('pc-score');if(se)se.textContent=score;
         btn.style.background='#2ecc71';btn.style.color='#fff';
+        const pe=document.getElementById('pc-pet');if(pe){pe.style.transform='scale(1.3) rotate(-6deg)';setTimeout(()=>{if(pe)pe.style.transform='';},350);}
         if(typeof showFeedback==='function')showFeedback('Happy pet! 😊','#2ecc71');
       }else{
         btn.style.background='#e74c3c';btn.style.color='#fff';
