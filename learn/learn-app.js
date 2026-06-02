@@ -3846,11 +3846,12 @@
   function initFindIt(){
     lifeArea.innerHTML='';
     lifeTitle.textContent='🔍 Find It!';
-    const NAMES={'🐶':'dog','🐱':'cat','🐭':'mouse','🐹':'hamster','🐰':'rabbit','🦊':'fox','🐻':'bear','🐼':'panda','🐨':'koala','🐯':'tiger','🦁':'lion','🐮':'cow','🐷':'pig','🐸':'frog','🐵':'monkey','🐔':'chicken','🐧':'penguin','🦄':'unicorn','🐝':'bee','🦋':'butterfly','🐳':'whale','🐠':'fish','🦒':'giraffe','🦔':'hedgehog','🐢':'turtle','🦘':'kangaroo','🦃':'turkey','🦢':'swan','🦩':'flamingo','🍎':'apple','🍌':'banana','🍇':'grapes','🍓':'strawberry','🍑':'peach','🍍':'pineapple','🥝':'kiwi','🥭':'mango','🍊':'orange','🍋':'lemon','🍒':'cherries','🍐':'pear','🍉':'watermelon','🍈':'melon','🥥':'coconut','🍅':'tomato','🍆':'eggplant','🥑':'avocado','🍏':'green apple','🚗':'car','🚕':'taxi','🚙':'sport car','🚌':'bus','🚎':'trolley','🚐':'van','🚑':'ambulance','🚒':'fire truck','🚓':'police car','🚚':'truck','🚛':'big truck','🚜':'tractor','🏎️':'race car','🚲':'bicycle','🏍️':'motorcycle','🚂':'train','✈️':'airplane','🚀':'rocket','⛵':'sailboat','🚤':'speedboat','🚁':'helicopter','🚇':'subway','🚊':'tram','🛵':'scooter'};
+    const NAMES={'🐶':'dog','🐱':'cat','🐭':'mouse','🐹':'hamster','🐰':'rabbit','🦊':'fox','🐻':'bear','🐼':'panda','🐨':'koala','🐯':'tiger','🦁':'lion','🐮':'cow','🐷':'pig','🐸':'frog','🐵':'monkey','🐔':'chicken','🐧':'penguin','🦄':'unicorn','🐝':'bee','🦋':'butterfly','🐳':'whale','🐠':'fish','🦒':'giraffe','🦔':'hedgehog','🐢':'turtle','🦘':'kangaroo','🦃':'turkey','🦢':'swan','🦩':'flamingo','🍎':'apple','🍌':'banana','🍇':'grapes','🍓':'strawberry','🍑':'peach','🍍':'pineapple','🥝':'kiwi','🥭':'mango','🍊':'orange','🍋':'lemon','🍒':'cherries','🍐':'pear','🍉':'watermelon','🍈':'melon','🥥':'coconut','🍅':'tomato','🍆':'eggplant','🥑':'avocado','🍏':'green apple','🚗':'car','🚕':'taxi','🚙':'sport car','🚌':'bus','🚎':'trolley','🚐':'van','🚑':'ambulance','🚒':'fire truck','🚓':'police car','🚚':'truck','🚛':'big truck','🚜':'tractor','🏎️':'race car','🚲':'bicycle','🏍️':'motorcycle','🚂':'train','✈️':'airplane','🚀':'rocket','⛵':'sailboat','🚤':'speedboat','🚁':'helicopter','🚇':'subway','🚊':'tram','🛵':'scooter','🍕':'pizza','🍔':'burger','🌭':'hot dog','🍟':'fries','🍿':'popcorn','🍩':'donut','🍪':'cookie','🍰':'cake','🧁':'cupcake','🍦':'ice cream','🍫':'chocolate','🍬':'candy','🍭':'lollipop','🥨':'pretzel','🥪':'sandwich','🌮':'taco','🥞':'pancakes','🧀':'cheese','🥚':'egg','🍳':'fried egg'};
     const POOLS={
       animals:['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','🐯','🦁','🐮','🐷','🐸','🐵','🐔','🐧','🦄','🐝','🦋','🐳','🐠','🦒','🐧','🦔','🐢','🦘','🦃','🦢','🦩'],
       fruits:['🍎','🍌','🍇','🍓','🍑','🍍','🥝','🥭','🍊','🍋','🍒','🍐','🍉','🍈','🥥','🍅','🍆','🥑','🍏','🍆'],
       vehicles:['🚗','🚕','🚙','🚌','🚎','🚐','🚑','🚒','🚓','🚚','🚛','🚜','🏎️','🚲','🏍️','🚂','✈️','🚀','⛵','🚤','🚁','🚇','🚊','🛵'],
+      food:['🍕','🍔','🌭','🍟','🍿','🍩','🍪','🍰','🧁','🍦','🍫','🍬','🍭','🥨','🥪','🌮','🥞','🧀','🥚','🍳'],
       mixed:null
     };
     let mode=sessionStorage.getItem('fi-mode')||'animals';
@@ -3863,7 +3864,7 @@
     hud.innerHTML=`<span class="game-stat">🎯 <span class="game-stat-val" id="fi-round">0</span>/${TOTAL}</span><span class="game-stat">✅ <span class="game-stat-val" id="fi-score">0</span></span><span class="game-stat">⭐ Best <span class="game-stat-val" id="fi-best">${best}</span></span>`;
     lifeArea.appendChild(hud);
     const modeRow=document.createElement('div');modeRow.style.cssText='display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:4px 0 10px;';
-    [['animals','🐶 Animals'],['fruits','🍎 Fruits'],['vehicles','🚗 Vehicles'],['mixed','🎲 Mixed']].forEach(([k,lbl])=>{const b=document.createElement('button');b.className='sdk-btn'+(k===mode?' active':'');b.style.cssText='font-size:0.8rem;padding:5px 10px;';b.textContent=lbl;b.onclick=()=>{sessionStorage.setItem('fi-mode',k);initFindIt();};modeRow.appendChild(b);});
+    [['animals','🐶 Animals'],['fruits','🍎 Fruits'],['vehicles','🚗 Vehicles'],['food','🍕 Food'],['mixed','🎲 Mixed']].forEach(([k,lbl])=>{const b=document.createElement('button');b.className='sdk-btn'+(k===mode?' active':'');b.style.cssText='font-size:0.8rem;padding:5px 10px;';b.textContent=lbl;b.onclick=()=>{sessionStorage.setItem('fi-mode',k);initFindIt();};modeRow.appendChild(b);});
     lifeArea.appendChild(modeRow);
     const prompt=document.createElement('div');prompt.id='fi-prompt';prompt.style.cssText='text-align:center;font-family:Comic Neue,cursive;font-size:1.4rem;color:#2c3e50;margin:10px 0;min-height:48px;display:flex;align-items:center;justify-content:center;gap:10px;';
     lifeArea.appendChild(prompt);
@@ -3884,7 +3885,7 @@
         const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='Play Again';rb.style.cssText='display:block;margin:14px auto;';rb.onclick=()=>initFindIt();lifeArea.appendChild(rb);
         return;
       }
-      const activeMode=mode==='mixed'?['animals','fruits','vehicles'][Math.floor(Math.random()*3)]:mode;
+      const activeMode=mode==='mixed'?['animals','fruits','vehicles','food'][Math.floor(Math.random()*4)]:mode;
       const pool=POOLS[activeMode];
       const target=pool[Math.floor(Math.random()*pool.length)];
       const distractors=pool.filter(p=>p!==target).sort(()=>Math.random()-0.5).slice(0,GRID_SIZE-1);
