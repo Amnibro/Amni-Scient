@@ -15720,7 +15720,7 @@ function playAnimalSound(type) {
     function render(){
       root.innerHTML='';
       const hud=document.createElement('div');hud.className='game-hud';hud.style.marginBottom='6px';
-      hud.innerHTML=`<span class="game-stat">🧑 You <span class="game-stat-val">${pScore}</span></span><span class="game-stat">🤖 AI <span class="game-stat-val">${aScore}</span></span><span class="game-stat">🎯 ${GOAL}</span>`;
+      hud.innerHTML=`<span class="game-stat">🧑 You <span class="game-stat-val">${pScore}</span></span><span class="game-stat">🤖 AI <span class="game-stat-val">${aScore}</span></span><span class="game-stat">🏆 <span class="game-stat-val">${prevWins+((over&&pScore>=GOAL)?1:0)}</span></span><span class="game-stat">🎯 ${GOAL}</span>`;
       root.appendChild(hud);
       const status=document.createElement('div');status.style.cssText='text-align:center;font-family:Comic Neue,cursive;font-size:1.2rem;color:var(--text,#2c3e50);margin:6px 0;min-height:28px;';
       status.textContent=over?(pScore>=GOAL?'🎉 You win!':'🤖 AI wins! Try again'):(turn==='player'?'Your turn — Roll or Bank':'🤖 AI is rolling...');
