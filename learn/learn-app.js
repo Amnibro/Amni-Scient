@@ -62,6 +62,7 @@
     pullpin: $$('#pullpin-view'),
     fillcup: $$('#fillcup-view'),
     clicker: $$('#clicker-view'),
+    garden: $$('#garden-view'),
     autominer: $$('#autominer-view'),
     storybook: $$('#storybook-view'),
     t2048: $$('#t2048-view'),
@@ -1039,6 +1040,7 @@
       if(game === 'pullpin') initPullPin();
       if(game === 'fillcup') initFillCup();
       if(game === 'clicker') initClicker();
+      if(game === 'garden') initGarden();
       if(game === 'autominer') initAutoMiner();
       if(game === 'calculus') initCollege('calculus');
       if(game === 'linalg') initCollege('linalg');
@@ -15568,6 +15570,107 @@ function playAnimalSound(type) {
     render();
     window._clickerTimer=setInterval(()=>{if(currentGame!=='clicker')return;cookies+=effectiveCps()/10;save();checkAch();const d=$$('#ck-display');if(d)d.textContent=`🍪 ${fmt(cookies)}`;const r=root.querySelector('.idle-rate');if(r)r.textContent=`${fmt(effectiveCps())} per second${goldenMult>1?' (🌟 GOLDEN!)':''}`;root.querySelectorAll('.idle-shop .idle-item').forEach((el,i)=>{if(upgrades[i]){const c=cost(upgrades[i]);el.classList.toggle('locked',cookies<c);}});},100);
     window._goldenSpawner=setInterval(()=>{if(currentGame!=='clicker')return;if(Math.random()<0.15)spawnGolden();},15000);
+  }
+  function initGarden(){
+    const root=$$('#garden-game');root.innerHTML='';
+    function _gdLoad(k,fb){return parseFloat(localStorage.getItem(k)||sessionStorage.getItem(k)||fb);}
+    let blooms=_gdLoad('gd-c','0'),cps=_gdLoad('gd-cps','0');
+    let seeds=_gdLoad('gd-hc','0');
+    let goldenActive=false,goldenMult=1,goldenTimer=null;
+    const upgrades=[
+      {name:'Seed',desc:'Sprouts 1 bloom/sec',baseCost:15,cpsAdd:1,count:0},
+      {name:'Sprout',desc:'Grows 5 blooms/sec',baseCost:100,cpsAdd:5,count:0},
+      {name:'Flower Bed',desc:'Blooms 20/sec',baseCost:500,cpsAdd:20,count:0},
+      {name:'Gardener',desc:'Tends 80 blooms/sec',baseCost:2000,cpsAdd:80,count:0},
+      {name:'Sprinkler',desc:'Waters 300 blooms/sec',baseCost:10000,cpsAdd:300,count:0},
+      {name:'Greenhouse',desc:'Cultivates 1000/sec',baseCost:50000,cpsAdd:1000,count:0},
+      {name:'Beehive',desc:'Pollinates 5000/sec',baseCost:250000,cpsAdd:5000,count:0},
+      {name:'Orchard',desc:'Fruits 20000/sec',baseCost:1000000,cpsAdd:20000,count:0},
+      {name:'Botanical Garden',desc:'Curates 75000/sec',baseCost:5000000,cpsAdd:75000,count:0},
+      {name:'Terrarium World',desc:'Sustains 250000/sec',baseCost:25000000,cpsAdd:250000,count:0},
+      {name:'Rainforest',desc:'Teems with 1M blooms/sec',baseCost:150000000,cpsAdd:1000000,count:0},
+      {name:'Mega Bloom',desc:'Erupts 5M blooms/sec',baseCost:750000000,cpsAdd:5000000,count:0},
+      {name:'World Tree',desc:'Branches 25M blooms/sec',baseCost:4000000000,cpsAdd:25000000,count:0},
+      {name:"Gaia's Heart",desc:'Pulses 100M blooms/sec',baseCost:25000000000,cpsAdd:100000000,count:0},
+      {name:'Eden Engine',desc:'Seeds paradise — 500M/sec',baseCost:150000000000,cpsAdd:500000000,count:0},
+      {name:'Life Itself',desc:'You ARE the garden — 3B/sec',baseCost:1000000000000,cpsAdd:3000000000,count:0}
+    ];
+    const achievements=[
+      {name:'🌱 First Bloom',desc:'Grow your first bloom',check:()=>blooms>=1,earned:false},
+      {name:'💯 Bouquet',desc:'Reach 100 blooms',check:()=>blooms>=100,earned:false},
+      {name:'👩‍🌾 Green Thumb',desc:'Hire a Gardener',check:()=>upgrades[3].count>0,earned:false},
+      {name:'🏡 Greenkeeper',desc:'Build a Greenhouse',check:()=>upgrades[5].count>0,earned:false},
+      {name:'🐝 Pollinator',desc:'Build a Beehive',check:()=>upgrades[6].count>0,earned:false},
+      {name:'💰 Millionaire',desc:'Reach 1M blooms',check:()=>blooms>=1e6,earned:false},
+      {name:'🍎 Orchardist',desc:'Plant an Orchard',check:()=>upgrades[7].count>0,earned:false},
+      {name:'🦋 Butterfly',desc:'Catch a rainbow butterfly',check:()=>false,earned:false},
+      {name:'🌴 Worldly',desc:'Grow a Terrarium World',check:()=>upgrades[9].count>0,earned:false},
+      {name:'🌳 Wild',desc:'Grow a Rainforest',check:()=>upgrades[10].count>0,earned:false},
+      {name:'🌺 Mega Bloomer',desc:'Trigger a Mega Bloom',check:()=>upgrades[11].count>0,earned:false},
+      {name:'🌲 Treekeeper',desc:'Grow a World Tree',check:()=>upgrades[12].count>0,earned:false},
+      {name:'🌍 Gaia',desc:"Awaken Gaia's Heart",check:()=>upgrades[13].count>0,earned:false},
+      {name:'🌈 Paradise',desc:'Run the Eden Engine',check:()=>upgrades[14].count>0,earned:false},
+      {name:'✨ Life Giver',desc:'Become Life Itself',check:()=>upgrades[15].count>0,earned:false},
+      {name:'🚀 Billion Blooms',desc:'Reach 1B blooms',check:()=>blooms>=1e9,earned:false},
+      {name:'💎 Trillion Blooms',desc:'Reach 1T blooms',check:()=>blooms>=1e12,earned:false},
+      {name:'🌰 Replanted',desc:'Earn your first Golden Seed',check:()=>seeds>=1,earned:false},
+      {name:'🌟 Master Gardener',desc:'Earn 100 Golden Seeds',check:()=>seeds>=100,earned:false},
+      {name:'🏛️ Estate',desc:'Own 25 of any plant',check:()=>upgrades.some(u=>u.count>=25),earned:false},
+      {name:'🌾 Plantation',desc:'Own 50 of any plant',check:()=>upgrades.some(u=>u.count>=50),earned:false},
+      {name:'🦄 Eden',desc:'Own 100 of any plant',check:()=>upgrades.some(u=>u.count>=100),earned:false},
+      {name:'🎨 Biodiversity',desc:'Own at least 1 of each plant',check:()=>upgrades.every(u=>u.count>=1),earned:false}
+    ];
+    const savedAch=JSON.parse(localStorage.getItem('gd-ach')||sessionStorage.getItem('gd-ach')||'null');
+    if(savedAch)savedAch.forEach((s,i)=>{if(achievements[i])achievements[i].earned=s;});
+    const saved=JSON.parse(localStorage.getItem('gd-up')||sessionStorage.getItem('gd-up')||'null');
+    if(saved)saved.forEach((s,i)=>{if(upgrades[i])upgrades[i].count=s;});
+    function totalMult(){return 1+(seeds*0.01)+(achievements.filter(a=>a.earned).length*0.005);}
+    cps=upgrades.reduce((a,u)=>a+u.cpsAdd*u.count,0);
+    function effectiveCps(){return cps*totalMult()*goldenMult;}
+    function cost(u){return Math.floor(u.baseCost*Math.pow(1.15,u.count));}
+    function save(){localStorage.setItem('gd-c',blooms);localStorage.setItem('gd-cps',cps);localStorage.setItem('gd-hc',seeds);localStorage.setItem('gd-up',JSON.stringify(upgrades.map(u=>u.count)));localStorage.setItem('gd-ach',JSON.stringify(achievements.map(a=>a.earned)));}
+    function fmt(n){if(n>=1e18)return(n/1e18).toFixed(2)+'Qi';if(n>=1e15)return(n/1e15).toFixed(2)+'Qa';if(n>=1e12)return(n/1e12).toFixed(2)+'T';if(n>=1e9)return(n/1e9).toFixed(2)+'B';if(n>=1e6)return(n/1e6).toFixed(2)+'M';if(n>=1e3)return(n/1e3).toFixed(1)+'K';return Math.floor(n);}
+    function checkAch(){achievements.forEach(a=>{if(!a.earned&&a.check()){a.earned=true;showFeedback(`🎖️ ${a.name}`,'#f1c40f');spawnConfetti(window.innerWidth/2,window.innerHeight/3,60);}});const lifetime=parseFloat(localStorage.getItem('gd-lifetime')||sessionStorage.getItem('gd-lifetime')||'0');if(blooms>lifetime)localStorage.setItem('gd-lifetime',blooms);}
+    function pendingHC(){const lifetime=Math.max(blooms,parseFloat(localStorage.getItem('gd-lifetime')||'0'));return Math.floor(Math.sqrt(lifetime/1e9));}
+    function ascend(){const gain=pendingHC()-seeds;if(gain<=0){showFeedback('Grow more blooms first!','#e67e22');return;}if(!confirm(`Replant the garden? You'll reset blooms & plants (but keep achievements) and gain ${gain} Golden Seeds. Each seed = +1% growth forever.`))return;seeds=pendingHC();blooms=0;cps=0;upgrades.forEach(u=>u.count=0);save();showFeedback(`🌰 Replanted! +${gain} Golden Seeds (total ${seeds})`,'#f1c40f');spawnConfetti(window.innerWidth/2,window.innerHeight/2,150);render();}
+    function spawnGolden(){
+      if(goldenActive||currentGame!=='garden')return;
+      const gc=document.createElement('div');gc.id='gd-golden';gc.textContent='🦋';gc.style.cssText=`position:absolute;font-size:2rem;cursor:pointer;animation:pulse 0.5s infinite alternate;top:${30+Math.random()*200}px;left:${10+Math.random()*60}%;z-index:10;`;
+      gc.onclick=()=>{gc.remove();goldenActive=true;goldenMult=7;showFeedback('🦋 7x growth for 10s!','#f1c40f');achievements[7].earned=true;save();render();if(goldenTimer)clearTimeout(goldenTimer);goldenTimer=setTimeout(()=>{goldenMult=1;goldenActive=false;},10000);};
+      root.style.position='relative';root.appendChild(gc);
+      setTimeout(()=>{const el=$$('#gd-golden');if(el)el.remove();},6000);
+    }
+    function render(){
+      const existing=$$('#gd-golden');root.innerHTML='';if(existing)root.appendChild(existing);
+      const display=document.createElement('div');display.className='idle-display';display.id='gd-display';display.textContent=`🌻 ${fmt(blooms)}`;root.appendChild(display);
+      const rate=document.createElement('div');rate.className='idle-rate';rate.textContent=`${fmt(effectiveCps())} per second${goldenMult>1?' (🦋 BLOOM RUSH!)':''}`;root.appendChild(rate);
+      const hcInfo=document.createElement('div');hcInfo.style.cssText='text-align:center;font-size:0.82rem;color:#f1c40f;margin:3px 0';
+      const pend=pendingHC()-seeds;
+      hcInfo.innerHTML=`🌰 Golden Seeds: <b>${seeds}</b> (+${(seeds*1).toFixed(0)}% growth) · 🏆 ${achievements.filter(a=>a.earned).length} achievements (+${(achievements.filter(a=>a.earned).length*0.5).toFixed(1)}%)${pend>0?` · <span style="color:#2ecc71">+${pend} ready to replant</span>`:''}`;
+      root.appendChild(hcInfo);
+      const lifetime=parseFloat(localStorage.getItem('gd-lifetime')||sessionStorage.getItem('gd-lifetime')||'0');
+      if(lifetime>0){const lt=document.createElement('div');lt.style.cssText='text-align:center;font-size:0.8rem;color:#888;margin:2px 0';lt.textContent=`🏆 Lifetime best: ${fmt(lifetime)}`;root.appendChild(lt);}
+      const btn=document.createElement('div');btn.className='idle-main-btn';btn.textContent='🌻';btn.onclick=()=>{const clickGain=Math.max(1,Math.floor(effectiveCps()*0.1)+1);blooms+=clickGain;save();checkAch();render();};root.appendChild(btn);
+      const shop=document.createElement('div');shop.className='idle-shop';
+      upgrades.forEach(u=>{
+        const c=cost(u);const item=document.createElement('div');item.className='idle-item'+(blooms<c?' locked':'');
+        item.innerHTML=`<div class="idle-item-name">${u.name} (${u.count})</div><div class="idle-item-desc">${u.desc}</div><div class="idle-item-cost">🌻 ${fmt(c)}</div>`;
+        item.onclick=()=>{if(blooms>=c){blooms-=c;u.count++;cps=upgrades.reduce((a,uu)=>a+uu.cpsAdd*uu.count,0);save();checkAch();render();}};
+        shop.appendChild(item);
+      });
+      root.appendChild(shop);
+      const achDiv=document.createElement('div');achDiv.style.cssText='margin:8px 0;padding:6px;background:rgba(255,255,255,0.05);border-radius:8px;';
+      achDiv.innerHTML=`<div style="font-size:0.9rem;color:#f1c40f;margin-bottom:4px">🏆 Achievements (${achievements.filter(a=>a.earned).length}/${achievements.length})</div>`+achievements.map(a=>`<span style="margin:2px;opacity:${a.earned?1:0.3}" title="${a.desc}">${a.name}</span>`).join(' ');
+      root.appendChild(achDiv);
+      const btns=document.createElement('div');btns.style.cssText='display:flex;gap:6px;justify-content:center;margin-top:8px;flex-wrap:wrap;';
+      const ab=document.createElement('button');ab.className='retro-btn';ab.style.background=pend>0?'#f1c40f':'#7a8a9a';ab.style.color=pend>0?'#1a1f2e':'#fff';ab.textContent=`🌰 REPLANT${pend>0?' (+'+pend+')':''}`;ab.onclick=ascend;
+      const rb=document.createElement('button');rb.className='retro-btn';rb.textContent='🔄 RESET ALL';rb.onclick=()=>{if(!confirm('Reset blooms AND Golden Seeds? This wipes everything.'))return;blooms=0;cps=0;seeds=0;goldenMult=1;goldenActive=false;upgrades.forEach(u=>u.count=0);achievements.forEach(a=>a.earned=false);localStorage.removeItem('gd-lifetime');save();render();};
+      const eb=document.createElement('button');eb.className='retro-btn';eb.style.background='#e74c3c';eb.textContent='🚪 EXIT';eb.onclick=()=>{if(window._gardenTimer)clearInterval(window._gardenTimer);if(window._butterflySpawner)clearInterval(window._butterflySpawner);goBack();};
+      btns.appendChild(ab);btns.appendChild(rb);btns.appendChild(eb);root.appendChild(btns);
+    }
+    render();
+    window._gardenTimer=setInterval(()=>{if(currentGame!=='garden')return;blooms+=effectiveCps()/10;save();checkAch();const d=$$('#gd-display');if(d)d.textContent=`🌻 ${fmt(blooms)}`;const r=root.querySelector('.idle-rate');if(r)r.textContent=`${fmt(effectiveCps())} per second${goldenMult>1?' (🦋 BLOOM RUSH!)':''}`;root.querySelectorAll('.idle-shop .idle-item').forEach((el,i)=>{if(upgrades[i]){const c=cost(upgrades[i]);el.classList.toggle('locked',blooms<c);}});},100);
+    window._butterflySpawner=setInterval(()=>{if(currentGame!=='garden')return;if(Math.random()<0.15)spawnGolden();},15000);
   }
   function initAutoMiner(){
     const root=$$('#autominer-game');root.innerHTML='';
