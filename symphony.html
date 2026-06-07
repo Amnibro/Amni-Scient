@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Symphony &mdash; Private Family &amp; Community App | AMNI-SCIENT</title>
+<meta name="description" content="Symphony: a private, end-to-end-encrypted family & community app. Feeds, chat, calls, photos, stories, polls and full-palette theming — decentralized, no account, install in seconds.">
+<meta name="keywords" content="symphony,private social,family app,end-to-end encrypted,decentralized chat,amni-scient">
+<meta property="og:title" content="Symphony &mdash; Private Family &amp; Community App">
+<meta property="og:description" content="A private, end-to-end-encrypted family & community app — feeds, chat, calls, stories, polls and themes. No account, decentralized.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://amni-scient.com/symphony">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Symphony &mdash; Private Family &amp; Community App">
+<meta name="twitter:description" content="A private, end-to-end-encrypted family & community app. No account, decentralized.">
+<link rel="canonical" href="https://amni-scient.com/symphony">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<style>.theme-symphony{--accent:#2563eb;--accent-glow:rgba(37,99,235,.4)}.dl-steps{max-width:760px;margin:0 auto;counter-reset:step}.dl-steps li{list-style:none;position:relative;padding:.6rem 0 .6rem 2.6rem;color:var(--dim);font-size:.9rem;line-height:1.6}.dl-steps li::before{counter-increment:step;content:counter(step);position:absolute;left:0;top:.55rem;width:1.7rem;height:1.7rem;border:1px solid var(--accent);border-radius:5px;color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:.8rem}</style>
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+</head>
+<body class="theme-symphony">
+<div class="grid-bg"></div>
+<div class="scanlines"></div>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<a href="amni-haven.html">AMNI-HAVEN</a>
+<a href="symphony.html" class="active">SYMPHONY</a>
+<a href="about.html">ABOUT</a>
+<a href="privacy.html">PRIVACY</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<div class="product-hero">
+<div class="shield-icon float">
+<svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle cx="50" cy="50" r="44" stroke="#2563eb" stroke-width="2.5" fill="rgba(37,99,235,0.05)"/>
+<path d="M40 30 L40 64 M40 34 L68 28 L68 60" stroke="#2563eb" stroke-width="3" stroke-linecap="round"/>
+<circle cx="34" cy="64" r="7" stroke="#2563eb" stroke-width="3" fill="rgba(37,99,235,0.08)"/>
+<circle cx="62" cy="60" r="7" stroke="#2563eb" stroke-width="3" fill="rgba(37,99,235,0.08)"/>
+</svg>
+</div>
+<h1>SYMPHONY</h1>
+<p class="desc">A PRIVATE FAMILY &amp; COMMUNITY APP &bull; END-TO-END ENCRYPTED &bull; NO ACCOUNT</p>
+<div class="cta-row" style="justify-content:center; margin-top:1.5rem; margin-bottom:1rem; gap:1rem; flex-wrap:wrap;">
+<a href="symphony/symphony.apk" class="btn btn-primary" style="text-decoration:none" download>&#11015; DOWNLOAD APK (ANDROID)</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="btn btn-outline" style="text-decoration:none">&#9749; SUPPORT DEVELOPMENT</a>
+</div>
+<p style="text-align:center;color:var(--dim);font-size:.72rem;letter-spacing:1px"><span id="ver">Latest build</span> &bull; Android 8.0+ &bull; sideload (not on Play)</p>
+</div>
+<section>
+<h2>ONE APP FOR THE PEOPLE WHO MATTER</h2>
+<p style="text-align:center;color:var(--dim);max-width:720px;margin:0 auto 2rem;font-size:.9rem">Symphony is a private place for your family or community to share and talk &mdash; a feed, group chats, calls, photos, stories and polls, all end-to-end encrypted. There's no account to make and no company in the middle: you create a Family, invite people with a link or QR, and your messages route peer-to-peer through a relay that only ever sees ciphertext. Simple enough for grandma, private by design.</p>
+<div class="features">
+<div class="feature"><div class="icon">&#128241;</div><h4>A FEED, NOT A FEED ALGORITHM</h4><p>Open straight into your people's posts &mdash; photos, updates, polls. No ads, no ranking games, no strangers. Just the families and communities you chose.</p></div>
+<div class="feature"><div class="icon">&#128172;</div><h4>CHAT, CALLS &amp; ROOMS</h4><p>Group and 1:1 messaging, voice/video calls and screen-share, channels per Family, replies, reactions, GIFs, stickers and voice notes.</p></div>
+<div class="feature"><div class="icon">&#128274;</div><h4>END-TO-END ENCRYPTED</h4><p>One Ed25519 + X25519 identity per device (X25519 &rarr; HKDF &rarr; ChaCha20-Poly1305). The relay forwards sealed envelopes it cannot read. No plaintext, ever.</p></div>
+<div class="feature"><div class="icon">&#127881;</div><h4>STORIES, POLLS &amp; EFFECTS</h4><p>24-hour stories, create-and-vote polls, link previews, double-tap reactions, swipe-to-reply, and confetti/heart bursts on the moments that matter.</p></div>
+<div class="feature"><div class="icon">&#127912;</div><h4>FULL-PALETTE THEMING</h4><p>Make it yours, MySpace-style: whole-app color themes (Dracula, Nord, Daylight &amp; more) with a live preview, plus custom chat backgrounds.</p></div>
+<div class="feature"><div class="icon">&#128279;</div><h4>NO ACCOUNT, DECENTRALIZED</h4><p>No sign-up, no phone number. Create a Family and share an invite link or QR. Built to run on a relay, a phone, or mesh &mdash; your network, your rules.</p></div>
+</div>
+</section>
+<section>
+<h2>INSTALL IN THREE STEPS</h2>
+<ol class="dl-steps">
+<li>Tap <strong>Download APK</strong> above. When your browser warns about the file type, choose <em>Download anyway</em>.</li>
+<li>Open the downloaded <code>symphony.apk</code>. Android will ask to allow installs from your browser &mdash; tap <em>Settings</em> &rarr; enable <em>Allow from this source</em>, then back out and tap <em>Install</em>.</li>
+<li>Open Symphony, pick a name, and create or join a Family. That's it &mdash; updates download in-app automatically.</li>
+</ol>
+<p style="text-align:center;color:var(--dim);max-width:700px;margin:1.5rem auto 0;font-size:.8rem">Symphony is distributed as a sideloaded app (it isn't on the Play Store). It's debug-signed by Amni-Scient; you can update it any time from inside the app.</p>
+</section>
+<section>
+<h2>SPECIFICATIONS</h2>
+<table class="spec-table">
+<tr><th>PARAMETER</th><th>VALUE</th></tr>
+<tr><td>Identity</td><td>Ed25519 + X25519, on-device, no signup</td></tr>
+<tr><td>Encryption</td><td>X25519 &rarr; HKDF &rarr; ChaCha20-Poly1305 (E2E)</td></tr>
+<tr><td>Transport</td><td>Relay (store-and-forward) + WebRTC calls</td></tr>
+<tr><td>Calls</td><td>WebRTC 1:1 &amp; group, voice/video/screen-share</td></tr>
+<tr><td>Min SDK</td><td>Android 8.0 (API 26)</td></tr>
+<tr><td>Target SDK</td><td>36 (Android 16)</td></tr>
+<tr><td>Distribution</td><td>Sideload APK + in-app auto-update</td></tr>
+<tr><td>Price</td><td>Free</td></tr>
+</table>
+</section>
+<footer style="text-align:center;padding:3rem 1rem;color:var(--dim);font-size:.75rem;letter-spacing:1px">
+<p>&copy; AMNI-SCIENT &bull; <a href="privacy.html">PRIVACY</a> &bull; <a href="/">HOME</a></p>
+</footer>
+<script>
+fetch('symphony/version.json',{cache:'no-store'}).then(function(r){return r.json()}).then(function(v){var e=document.getElementById('ver');if(e&&v&&v.versionName)e.textContent='v'+v.versionName;}).catch(function(){});
+</script>
+</body>
+</html>

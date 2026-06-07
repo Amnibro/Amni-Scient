@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Join on Symphony</title>
+<meta name="description" content="You've been invited to join on Symphony — a private, end-to-end-encrypted family & community app.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+<style>.theme-symphony{--accent:#2563eb;--accent-glow:rgba(37,99,235,.4)}</style>
+</head>
+<body class="theme-symphony">
+<div class="grid-bg"></div>
+<div class="scanlines"></div>
+<nav><a href="/" class="logo">AMNI<span>-SCIENT</span></a></nav>
+<div class="product-hero">
+<div class="shield-icon float">
+<svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle cx="50" cy="50" r="44" stroke="#2563eb" stroke-width="2.5" fill="rgba(37,99,235,0.05)"/>
+<path d="M40 30 L40 64 M40 34 L68 28 L68 60" stroke="#2563eb" stroke-width="3" stroke-linecap="round"/>
+<circle cx="34" cy="64" r="7" stroke="#2563eb" stroke-width="3" fill="rgba(37,99,235,0.08)"/>
+<circle cx="62" cy="60" r="7" stroke="#2563eb" stroke-width="3" fill="rgba(37,99,235,0.08)"/>
+</svg>
+</div>
+<h1>JOIN ON SYMPHONY</h1>
+<p class="desc" id="fam">YOU'VE BEEN INVITED TO A FAMILY</p>
+<div class="cta-row" style="justify-content:center;margin-top:1.5rem;gap:1rem;flex-wrap:wrap">
+<a id="openbtn" href="#" class="btn btn-primary" style="text-decoration:none">&#9654; OPEN IN SYMPHONY</a>
+<a href="symphony.apk" class="btn btn-outline" style="text-decoration:none" download>&#11015; DOWNLOAD THE APP</a>
+</div>
+<p style="text-align:center;color:var(--dim);font-size:.8rem;max-width:560px;margin:1.5rem auto 0;line-height:1.7">On Android: tap <strong>Open in Symphony</strong>. If you don't have it yet, tap <strong>Download the app</strong>, install it, then open this invite link again to join. Your invite is end-to-end encrypted &mdash; only this Family can read it.</p>
+</div>
+<script>
+(function(){
+  var p=new URLSearchParams(location.search);
+  var i=p.get('i'); var n=p.get('n');
+  if(n){ try{ document.getElementById('fam').textContent="YOU'RE INVITED TO "+decodeURIComponent(n).toUpperCase(); }catch(e){} }
+  var deep = i ? decodeURIComponent(i) : null;
+  var open=document.getElementById('openbtn');
+  if(deep){ open.setAttribute('href', deep); }
+  if(deep && /android|iphone|ipad|mobile/i.test(navigator.userAgent)){ setTimeout(function(){ try{ window.location.href=deep; }catch(e){} }, 500); }
+})();
+</script>
+</body>
+</html>
