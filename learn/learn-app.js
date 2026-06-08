@@ -15291,7 +15291,7 @@ function playAnimalSound(type) {
       const hud=document.createElement('div');hud.className='retro-hud';
       let flagCnt=0;flagged.forEach(row=>row.forEach(f=>{if(f)flagCnt++;}));
       const bestStr=best[diff]?`Best: ${best[diff]}s`:'';
-      hud.innerHTML=`💣 ${MINES-flagCnt} | ⏱ <span id="ms-time">${elapsed}</span>s | ${gameOver?'GAME OVER':'🚩 Right-click/long-press'} ${bestStr?'| '+bestStr:''}`;root.appendChild(hud);
+      hud.innerHTML=`<span style="white-space:nowrap">💣 ${MINES-flagCnt}</span> <span style="white-space:nowrap">⏱ <span id="ms-time">${elapsed}</span>s</span> <span style="white-space:nowrap">🚩 ${gameOver?'GAME OVER':'long-press to flag'}</span>${bestStr?' <span style="white-space:nowrap">⭐ '+bestStr+'</span>':''}`;hud.style.cssText='display:flex;flex-wrap:wrap;justify-content:center;gap:6px 12px;';root.appendChild(hud);
       const g=document.createElement('div');g.className='ms-grid';g.style.gridTemplateColumns=`repeat(${COLS},clamp(24px,${Math.floor(70/COLS)}vw,36px))`;
       for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){
         const cell=document.createElement('div');cell.className='ms-cell';
