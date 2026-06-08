@@ -2654,7 +2654,7 @@
       <span class="hud-pill" style="border-color:#facc15;background:rgba(250,204,21,0.15)">💰 ${TD.gold}</span>
       <span class="hud-pill" style="border-color:#22c55e;background:rgba(34,197,94,0.15)">❤️ ${TD.lives}</span>
       <span class="hud-pill" style="border-color:#3b82f6;background:rgba(59,130,246,0.15)">🌊 Wave ${TD.wave}</span>
-      ${TD.over ? '<span class="hud-pill" style="border-color:#dc2626;background:rgba(220,38,38,0.2)">💀 Game Over — Restart</span>' : ''}`;
+      ${TD.over ? '<span class="hud-pill" style="border-color:#dc2626;background:rgba(220,38,38,0.2)">💀 Game Over — Restart</span>' : (TD.towers.length===0 ? '<span class="hud-pill" style="border-color:#a855f7;background:rgba(168,85,247,0.15)">👇 Pick a tower, tap the map to place it — defend against the waves!</span>' : '')}`;
   }
   function _tdClick(e, cvs) {
     if (TD.over) return;
