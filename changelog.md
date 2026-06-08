@@ -1,6 +1,12 @@
 ﻿
 # Changelog 
 
+## [5.8.106] - 2026-06-08 - Amni-Learn: polish pass (game-feel) from a 4-agent play review
+- **Reaction Lab empty-state.** The play area was a bare black box at start (reads as broken). Added an inviting in-canvas hint — "👇 Pick an element, then draw here to mix it! 🧪✨" — that disappears the moment you paint.
+- **Reaction Lab log spam.** Adjacent fire/oil (etc.) cells fired the same reaction every frame, flooding the Reaction Log with identical consecutive lines. `addLog` now collapses consecutive duplicates into "… ×N".
+- **Fill the Cup duplicate + mislabel.** The result label was drawn BOTH on the canvas and as the big feedback toast (a "sharp + ghost" double), and the on-canvas text mislabeled a "Short!" (under-fill) as "💦 Overflow!". Dropped the redundant canvas text — the toast now shows the single correct result (Perfect/Close/Overflow/Short) with its confetti.
+- Other review flags were design choices (the transient celebration toast briefly overlapping gameplay is the app's established pattern) or false positives (a captured un-answered quiz, the timer's "0s", post-move "Moves 1"). SW cache `v1202 → v1203`. `node --check` clean. v5.8.106.
+
 ## [5.8.105] - 2026-06-08 - Amni-Learn: fix app-wide back-button cleanup crash
 - **The HOME/back button threw on every game exit, silently leaking timers (HIGH).** The `#nav-back` handler referenced `mtnTimer`, a variable that was never declared (a leftover/typo for Auto Miner's actual `window._minerTimer`). So every time you left a game, line `if(mtnTimer){…}` threw `ReferenceError: mtnTimer is not defined`, which **aborted the rest of the cleanup block** — the timers/animations below it (`matchTimer`, `scrTimer`, `_sdkTimer` sudoku, `_spmTimer` speed-math, `_cpTimer` card-pairs, `_stpTimer`, `_nmmTimeout`, `_rxtTimeout`, `_motAnim`, `_pvTimer`) never got cleared and kept running in the background after you returned to the menu. Fixed the reference to `window._minerTimer`, which both stops the crash and restores all the downstream cleanup. Verified: leaving Auto Miner / Speed Math / Sudoku / Scramble / Card Pairs / Cookie Clicker now returns to the menu with 0 console errors (was a ReferenceError each time). Found via a gentle interaction probe (the bulk play-scan only saw it as a protocol timeout on the idle games). SW cache `v1201 → v1202`. `node --check` clean. v5.8.105.
 

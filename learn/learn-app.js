@@ -16262,8 +16262,6 @@ function playAnimalSound(type) {
       ctx.fillText(`${Math.round(fillAmt)}%`,cW/2,cupY+cupH+30);
       ctx.fillStyle='#aaa';ctx.font='12px JetBrains Mono';ctx.fillText(`Speed: ${fillSpeed.toFixed(1)}x | Streak: ${streak} | Best: ${best}`,cW/2,cupY+cupH+50);
       if(result){
-        const col=result==='perfect'?'#2ecc71':result==='close'?'#f39c12':'#e74c3c';
-        ctx.fillStyle=col;ctx.font='bold 28px Comic Neue';ctx.fillText(result==='perfect'?'🎯 PERFECT!':result==='close'?'👍 Close!':'💦 Overflow!',cW/2,cupY-20);
         if(result==='overflow'){ctx.fillStyle='rgba(72,219,251,0.3)';for(let i=0;i<5;i++)ctx.fillRect(cupX-20+Math.random()*cupW+40,cupY+cupH+Math.random()*30,6,6);}
       }
     }
@@ -17856,17 +17854,17 @@ function playAnimalSound(type) {
     const cv=$$('#rxn-canvas'),cx=cv.getContext('2d'),log=$$('#rxn-log');
     const W=400,H=400,EMPTY=0,WATER=1,SAND=2,NA=3,CL=4,ACID=5,FIRE=6,OIL=7,SALT=8,STEAM=9,GLASS=10,BOOM=11,ICE=12,PLANT=13,LAVA=14,OBSIDIAN=15,IRON=16,WOOD=17,RUST=18,ASH=19;
     const grid=new Uint8Array(W*H);
-    let chem='water',painting=false,animId=null,logLines=[];
+    let chem='water',painting=false,animId=null,logLines=[],everPainted=false;
     const chemMap={water:WATER,sand:SAND,sodium:NA,chlorine:CL,acid:ACID,fire:FIRE,oil:OIL,ice:ICE,plant:PLANT,lava:LAVA,iron:IRON,wood:WOOD};
     const COLORS={[EMPTY]:'#000',[WATER]:'#3498db',[SAND]:'#e67e22',[NA]:'#c0392b',[CL]:'#f1c40f',[ACID]:'#9b59b6',[FIRE]:'#e74c3c',[OIL]:'#2c3e50',[SALT]:'#ecf0f1',[STEAM]:'#bdc3c7',[GLASS]:'#1abc9c',[BOOM]:'#ff6b6b',[ICE]:'#a8e6f7',[PLANT]:'#27ae60',[LAVA]:'#ff5722',[OBSIDIAN]:'#1a1a2e',[IRON]:'#7f8c8d',[WOOD]:'#8b4513',[RUST]:'#a0522d',[ASH]:'#34495e'};
     const imgData=cx.createImageData(W,H);
-    function addLog(msg){logLines.push(msg);if(logLines.length>20)logLines.shift();log.innerHTML=logLines.map(l=>`<div>${l}</div>`).join('');log.scrollTop=log.scrollHeight;}
+    function addLog(msg){const last=logLines[logLines.length-1];if(last&&last.msg===msg){last.n++;}else{logLines.push({msg,n:1});if(logLines.length>20)logLines.shift();}log.innerHTML=logLines.map(l=>`<div>${l.msg}${l.n>1?' <span style="opacity:0.7">×'+l.n+'</span>':''}</div>`).join('');log.scrollTop=log.scrollHeight;}
     const _RXN_TOTAL=14;
     function _rxnTrack(type){const setKey='rxn-discovered';const set=new Set((()=>{try{return JSON.parse(localStorage.getItem(setKey)||sessionStorage.getItem(setKey)||'[]');}catch(e){return [];}})());const isNew=!set.has(type);if(isNew){set.add(type);localStorage.setItem(setKey,JSON.stringify([...set]));spawnConfetti(window.innerWidth/2,window.innerHeight/3,60);if(set.size===_RXN_TOTAL){spawnConfetti(window.innerWidth/2,window.innerHeight/2,150);showFeedback(`🏆 ALL ${_RXN_TOTAL} REACTIONS DISCOVERED! ⚗️`,'#f1c40f');}else{showFeedback(`✨ New reaction! (${set.size}/${_RXN_TOTAL})`,'#9b59b6');}addScore(5);}}
     function idx(x,y){return y*W+x;}
     function get(x,y){return(x<0||x>=W||y<0||y>=H)?255:grid[idx(x,y)];}
     function set(x,y,v){if(x>=0&&x<W&&y>=0&&y<H)grid[idx(x,y)]=v;}
-    function paint(ex,ey){const b=cv.getBoundingClientRect();const mx=Math.floor((ex-b.left)*(W/b.width)),my=Math.floor((ey-b.top)*(H/b.height));
+    function paint(ex,ey){everPainted=true;const b=cv.getBoundingClientRect();const mx=Math.floor((ex-b.left)*(W/b.width)),my=Math.floor((ey-b.top)*(H/b.height));
       if(chem==='clear'){for(let dy=-8;dy<=8;dy++)for(let dx=-8;dx<=8;dx++)set(mx+dx,my+dy,EMPTY);return;}
       const t=chemMap[chem]||WATER;
       for(let i=0;i<12;i++){const dx=Math.floor(Math.random()*10-5),dy=Math.floor(Math.random()*10-5);
@@ -17948,6 +17946,7 @@ function playAnimalSound(type) {
         const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
         const o=i*4;d[o]=r;d[o+1]=g;d[o+2]=b;d[o+3]=c?255:0;}
       cx.putImageData(imgData,0,0);
+      if(!everPainted){cx.fillStyle='rgba(255,255,255,0.45)';cx.font='bold 22px Comic Neue, sans-serif';cx.textAlign='center';cx.fillText('👇 Pick an element, then',W/2,H/2-14);cx.fillText('draw here to mix it!',W/2,H/2+16);cx.font='30px sans-serif';cx.fillText('🧪 ✨',W/2,H/2+58);}
     }
     function loop(){if(currentGame!=='rxnlab')return;step();step();render();animId=requestAnimationFrame(loop);}
     loop();
