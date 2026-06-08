@@ -1,6 +1,9 @@
 ﻿
 # Changelog 
 
+## [5.8.114] - 2026-06-08 - Amni-Learn: light-mode fix for STEM/college quizzes (13 modules)
+- **Light-mode audit** — a dimension never tested before (the app had only ever been checked in dark mode). Captured all 124 modules in light mode, both orientations (layout held: 124/124, 0 overflow), then reviewed for contrast. Found the 13 college/STEM quiz views (`#calculus-view` … `#psychology-view`) share a hardcoded dark-navy gradient background (index.html:834) that did NOT flip in light mode, while their text flipped to dark via `var(--text)` — so in light mode the title, question stem, and all four answer cards were dark-on-dark and completely illegible. Added `body.light-mode` overrides: light gradient view background + white cards + light option fills + dark text + readable formula/explain/topic colors. Verified calculus now fully readable in light mode. SW cache v1210 → v1211. v5.8.114.
+
 ## [5.8.108] - 2026-06-08 - Amni-Learn: STEM/college quiz polish (all 13 modules)
 - **30-dot progress strip → slim progress bar.** `initCollege` drew one tiny dot per question (~30), an unparseable strip that duplicated the existing "Question N/30" text. Replaced with a single slim gradient progress bar that fills as you advance. Applies to all 13 college/STEM quizzes (calculus, linalg, stats, discrete, physics, chemistry, biology, algorithms, datastructs, philosophy, economics, writing, psychology).
 - **Answer buttons → even 2×2 grid.** `.college-choices` was a `flex-wrap` that produced lopsided 3+1 rows; now a 2-column grid so the four options are always a tidy 2×2, with long answers wrapping within their cell (verified on calculus short answers + philosophy long answers, 0 overflow). SW cache `v1204 → v1205`. `node --check` clean. v5.8.108.
