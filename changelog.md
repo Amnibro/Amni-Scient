@@ -1,6 +1,9 @@
 ﻿
 # Changelog 
 
+## [5.8.118] - 2026-06-08 - Amni-Learn: light-mode fixes (Periodic, Versus, Word Bridge)
+- Finishing the light-mode contrast pass. **Periodic Table:** the element grid cells used faint *light* colors (`rgba(255,255,255,0.05)` fill, `rgba(236,240,241,0.35)` text) → invisible in light mode; made the inline cell colors theme-aware (faint dark cells on light), so the whole table is legible. **Team Challenges (versus):** category buttons hardcoded `rgba(0,0,0,0.5)` → flipped to white-with-teal in light mode. **Word Bridge:** the `.wb-card` answer tiles hardcoded a dark teal (`#1a3c40`) → flipped to white cards + dark text, and the view background to light. SW cache v1214 → v1215. v5.8.118.
+
 ## [5.8.117] - 2026-06-08 - Amni-Learn: light-mode fixes (Storybook, Music, Reflex)
 - Continuing the light-mode audit. **Storybook:** the story cards hardcoded a dark gradient (`#2c3e50→#1a252f`) that didn't flip, so titles were dark-on-dark — now white cards with readable titles in light mode. **Music:** the view kept its dark purple background and the tab buttons stayed dark — flipped the view to a light gradient + light/active tab styling. **Reflex:** the "Reflex Racer" title sat on the dark view (now light) and the `.rfx-hud` "Time:/Hits:" labels were white (invisible on light) — flipped the view + label color; the dark play arena is kept intentionally (bright targets need the dark backdrop). SW cache v1213 → v1214. v5.8.117.
 

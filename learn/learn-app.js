@@ -12426,7 +12426,8 @@ function playAnimalSound(type) {
     _ptElements.forEach(e=>{
       const [num,sym,name,row,col]=e;
       const cell = document.createElement('div');
-      cell.style.cssText = `background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:3px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:JetBrains Mono,monospace;color:rgba(236,240,241,0.35);grid-row:${row};grid-column:${col};font-size:clamp(0.55rem,1.2vw,0.85rem);padding:1px;cursor:pointer;transition:background 0.15s,border-color 0.15s;min-height:24px;`;
+      const _ptLm=document.body.classList.contains('light-mode');
+      cell.style.cssText = `background:${_ptLm?'rgba(0,0,0,0.04)':'rgba(255,255,255,0.05)'};border:1px solid ${_ptLm?'rgba(0,0,0,0.22)':'rgba(255,255,255,0.1)'};border-radius:3px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:JetBrains Mono,monospace;color:${_ptLm?'rgba(44,54,74,0.62)':'rgba(236,240,241,0.35)'};grid-row:${row};grid-column:${col};font-size:clamp(0.55rem,1.2vw,0.85rem);padding:1px;cursor:pointer;transition:background 0.15s,border-color 0.15s;min-height:24px;`;
       cell.innerHTML = `<span style="font-size:0.55em;line-height:1;">${num}</span><b>${sym}</b>`;
       cell.title = `${num} · ${name}`;
       cell.onclick = ()=> onCellClick(sym, cell);
