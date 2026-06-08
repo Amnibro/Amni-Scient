@@ -1203,6 +1203,7 @@
     tCtx.textAlign = 'center'; tCtx.textBaseline = 'middle';
     tCtx.fillText(text, tCanvas.width/2, tCanvas.height/2+20);
     maskData = tCtx.getImageData(0,0,tCanvas.width,tCanvas.height).data;
+    tCtx.save(); tCtx.strokeStyle = '#8d97a3'; tCtx.lineWidth = Math.max(2,fontSize*0.012); tCtx.lineJoin = 'round'; tCtx.setLineDash([fontSize*0.06, fontSize*0.05]); tCtx.strokeText(text, tCanvas.width/2, tCanvas.height/2+20); tCtx.setLineDash([]); tCtx.restore();
     if(currentLevel<=2 && ttsAuto() && typeof speakText==='function') speakText(text);
   }
   function initTracing() {
