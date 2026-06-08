@@ -1,6 +1,9 @@
 ﻿
 # Changelog 
 
+## [5.8.115] - 2026-06-08 - Amni-Learn: light-mode fix for idle games
+- Continuing the light-mode audit: Cookie Clicker / Auto Miner / Garden Grower kept their dark gradient view background in light mode, leaving the `.idle-item` upgrade cards (faint-white on dark) with dim labels barely readable. Added `body.light-mode` overrides — light view background + white upgrade cards + dark item names/descriptions. Verified Cookie Clicker readable in light mode. SW cache v1211 → v1212. v5.8.115.
+
 ## [5.8.114] - 2026-06-08 - Amni-Learn: light-mode fix for STEM/college quizzes (13 modules)
 - **Light-mode audit** — a dimension never tested before (the app had only ever been checked in dark mode). Captured all 124 modules in light mode, both orientations (layout held: 124/124, 0 overflow), then reviewed for contrast. Found the 13 college/STEM quiz views (`#calculus-view` … `#psychology-view`) share a hardcoded dark-navy gradient background (index.html:834) that did NOT flip in light mode, while their text flipped to dark via `var(--text)` — so in light mode the title, question stem, and all four answer cards were dark-on-dark and completely illegible. Added `body.light-mode` overrides: light gradient view background + white cards + light option fills + dark text + readable formula/explain/topic colors. Verified calculus now fully readable in light mode. SW cache v1210 → v1211. v5.8.114.
 
