@@ -1,6 +1,6 @@
 // Amni-Learn service worker — cold-cache offline / airplane mode support.
 // Bumps the CACHE name on every meaningful change so old caches roll out.
-const CACHE = 'amni-learn-v1212';
+const CACHE = 'amni-learn-v1213';
 const PRECACHE = [
   './',
   './index.html',
@@ -42,19 +42,24 @@ self.addEventListener('fetch', (e) => {
   // Google Fonts CSS / fonts.gstatic.com — those are best-effort and the
   // page already falls back to system fonts via display=swap.
   if (url.origin !== location.origin) return;
+  const save = (req, resp) => { if (resp && resp.status === 200 && resp.type === 'basic') { const clone = resp.clone(); caches.open(CACHE).then(c => c.put(req, clone)).catch(() => {}); } return resp; };
+  // The APP CODE (index.html + learn-app.js + the page itself) is NETWORK-FIRST
+  // so a fresh deploy always reaches the user when online — cache-first here
+  // would pin a stale learn-app.js on the device until the cache was evicted
+  // (the cause of "old content after an update"). Static assets (mp3s, images,
+  // fonts) stay cache-first below since they rarely change.
+  const isAppCode = e.request.mode === 'navigate' || /\/(index\.html|learn-app\.js)$/.test(url.pathname) || /\/learn\/?$/.test(url.pathname);
+  if (isAppCode) {
+    e.respondWith(
+      fetch(e.request).then(resp => save(e.request, resp))
+        .catch(() => caches.match(e.request).then(c => c || caches.match('./index.html')))
+    );
+    return;
+  }
   e.respondWith(
     caches.match(e.request).then(cached => {
       if (cached) return cached;
-      // Network with cache-on-success fallback.
-      return fetch(e.request).then(resp => {
-        if (resp && resp.status === 200 && resp.type === 'basic') {
-          const clone = resp.clone();
-          caches.open(CACHE).then(c => c.put(e.request, clone)).catch(() => {});
-        }
-        return resp;
-      }).catch(() => {
-        // Offline + not in cache — fall back to the cached app shell so a
-        // stray nav like /learn/missing.html still lands on something usable.
+      return fetch(e.request).then(resp => save(e.request, resp)).catch(() => {
         if (e.request.mode === 'navigate') return caches.match('./index.html');
         return new Response('', { status: 504, statusText: 'offline' });
       });

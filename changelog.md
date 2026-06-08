@@ -1,6 +1,9 @@
 ﻿
 # Changelog 
 
+## [5.8.116] - 2026-06-08 - Amni-Learn: SW network-first for app code (fixes stale-content-after-update)
+- **Root cause of "I still see the old version after you shipped a fix."** The service worker's fetch handler was cache-first for EVERYTHING, including `learn-app.js` and `index.html`. So once a device cached the app code, it kept serving that stale copy — bumping the cache name only helped if/when the new SW fully reinstalled and evicted the old cache, which can lag on an installed PWA. Concretely: a device still on the pre-v5.8.103 `learn-app.js` showed the old 40-question L1 Animals bank and TTS'd the 9 no-sound entries that were since removed. **Fix:** the app code (page navigations + `index.html` + `learn-app.js`) is now **network-first** — always fetch the freshest copy when online, update the cache, and fall back to cache only when offline. Static assets (animal mp3s, images, fonts) stay cache-first since they rarely change, so offline/airplane play still works. Verified amni-scient.com already serves the corrected bank (31 questions, all isAudio); this SW change ensures devices actually pick it up. SW cache v1212 → v1213. v5.8.116.
+
 ## [5.8.115] - 2026-06-08 - Amni-Learn: light-mode fix for idle games
 - Continuing the light-mode audit: Cookie Clicker / Auto Miner / Garden Grower kept their dark gradient view background in light mode, leaving the `.idle-item` upgrade cards (faint-white on dark) with dim labels barely readable. Added `body.light-mode` overrides — light view background + white upgrade cards + dark item names/descriptions. Verified Cookie Clicker readable in light mode. SW cache v1211 → v1212. v5.8.115.
 
