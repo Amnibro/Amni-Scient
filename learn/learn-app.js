@@ -3400,7 +3400,7 @@
       lifeArea.appendChild(cardWrap);
       if(!won&&!lost){
         const btnRow=document.createElement('div');btnRow.style.cssText='text-align:center;margin:8px 0;';
-        const pass=document.createElement('button');pass.className='nmm-btn';pass.textContent='⏭️ Pass';pass.style.background='#e67e22';pass.onclick=passCard;
+        const pass=document.createElement('button');pass.className='nmm-btn';pass.textContent='⏭️ Pass';pass.style.background='#e67e22';pass.style.color='#fff';pass.style.borderColor='#e67e22';pass.onclick=passCard;
         btnRow.appendChild(pass);
         lifeArea.appendChild(btnRow);
         const hint=document.createElement('div');hint.style.cssText='text-align:center;color:#7f8c8d;font-family:Comic Neue,cursive;font-size:0.9rem;margin:6px auto;max-width:480px;padding:0 12px;';
@@ -15288,7 +15288,7 @@ function playAnimalSound(type) {
     function render(){
       root.innerHTML='';
       const diffBar=document.createElement('div');diffBar.style.cssText='text-align:center;margin-bottom:6px;';
-      ['easy','medium','hard'].forEach(d=>{const b=document.createElement('button');b.className='retro-btn';b.style.cssText=`margin:2px;font-size:0.75rem;padding:3px 10px;${d===diff?'background:#2ecc71;':''}`;b.textContent=d.toUpperCase();b.onclick=()=>setDiff(d);diffBar.appendChild(b);});
+      ['easy','medium','hard'].forEach(d=>{const b=document.createElement('button');b.className='retro-btn';b.style.cssText=`margin:2px;font-size:0.75rem;padding:3px 10px;${d===diff?'background:#2ecc71;color:#0a2a14;font-weight:bold;':''}`;b.textContent=d.toUpperCase();b.onclick=()=>setDiff(d);diffBar.appendChild(b);});
       root.appendChild(diffBar);
       const hud=document.createElement('div');hud.className='retro-hud';
       let flagCnt=0;flagged.forEach(row=>row.forEach(f=>{if(f)flagCnt++;}));

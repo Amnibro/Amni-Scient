@@ -1,6 +1,9 @@
 ﻿
 # Changelog 
 
+## [5.8.120] - 2026-06-08 - Amni-Learn: light-mode polish (final 3 LOW items)
+- Closing out the light-mode pass with the last low-severity contrast tweaks. **Minesweeper:** the active difficulty pill (green fill) kept green text → washed out; gave it dark bold text. **Math Solitaire:** the orange "Pass" button used the default pale-teal `.nmm-btn` text → low contrast; made it white. **Lab games (Circuit/Reaction/Net Debug):** the `.lab-tool` palette buttons were a translucent black that read as muddy gray with dim yellow text; made the fill a solid dark and the text brighter yellow so they pop in both themes. With this, the light-mode audit is fully resolved — 25 modules' content + ~25 game titles, every previously-flagged item verified. SW cache v1216 → v1217. v5.8.120.
+
 ## [5.8.119] - 2026-06-08 - Amni-Learn: light-mode game titles (systemic, ~25 games)
 - The light-mode verification pass found a systemic issue: every game whose view is intentionally dark (retro arcade + casual/board games — Snake, Block Drop, Pong, Space Invaders, Minesweeper, Pipes, Flappy, Pull-the-Pin, Connect Four, Reversi, Battleship, Mancala, Pig, 2048, Color Sort, etc.) had its TITLE rendered dark-on-dark in light mode. Cause: `body.light-mode .life-title { color:#1a1f2e !important }` force-overrode the per-game inline bright title color. Fix: dropped the `!important` so the inline bright colors win on dark views (titles readable again), and added dark-title overrides for the 3 idle games (Cookie Clicker / Auto Miner / Garden) whose views were flipped to light. Verified Block Drop (bright title on dark) + Cookie Clicker (dark title on light). SW cache v1215 → v1216. v5.8.119.
 
