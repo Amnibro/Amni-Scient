@@ -10403,12 +10403,18 @@ function playAnimalSound(type) {
       if(isPowerUp) { t.style.boxShadow='0 0 15px rgba(241,196,15,0.6)'; t.style.border='2px solid #f1c40f'; }
       t.addEventListener('pointerdown', (e) => {
         e.preventDefault();
+        if(t.dataset.hit) return;
+        t.dataset.hit = '1';
         if(isPowerUp) { rfxDeadline += 3000; rfxBarTotal += 3000; showFeedback('+3s! ⏳','#f1c40f'); }
         rfxScore++; rfxCombo++;
         scoreEl.textContent = rfxScore;
         const ce = $$('#rfx-combo'); if(ce) ce.textContent = rfxCombo >= 3 ? `🔥 ${rfxCombo}x` : '';
         if(rfxCombo >= 5) { spawnComboPopup(`${rfxCombo}x COMBO!`, t); addScore(1); }
-        t.remove();
+        const r = t.getBoundingClientRect();
+        if(typeof spawnConfetti === 'function') spawnConfetti(r.left + r.width/2, r.top + r.height/2, isPowerUp ? 18 : 9);
+        t.classList.remove('rfx-target'); t.style.pointerEvents = 'none';
+        t.style.transition = 'transform 0.13s ease-out, opacity 0.13s'; t.style.transform = 'scale(1.7)'; t.style.opacity = '0';
+        setTimeout(() => t.remove(), 140);
       });
       if(currentLevel >= 3 && !isPowerUp) {
         let dx = (Math.random()-0.5)*2, dy = (Math.random()-0.5)*2;
@@ -15184,7 +15190,7 @@ function playAnimalSound(type) {
     function restart(){applyDiff(_diffIdx);ps=0;cs=0;pWins=0;cWins=0;resetRound();paused=false;$$('#pong-p')&&($$('#pong-p').textContent=0);$$('#pong-c')&&($$('#pong-c').textContent=0);$$('#pong-pw')&&($$('#pong-pw').textContent=0);$$('#pong-cw')&&($$('#pong-cw').textContent=0);}
     const hud=document.createElement('div');hud.className='retro-hud';hud.innerHTML=`You: <span id="pong-p">0</span> | CPU: <span id="pong-c">0</span> | Sets: <span id="pong-pw">0</span>-<span id="pong-cw">0</span> | 🏆 Matches: ${pongMatches} | 🔥 Streak: ${pongStreak}`;
     root.appendChild(hud);root.appendChild(canvas);
-    const diffDiv=document.createElement('div');diffDiv.style.cssText='text-align:center;margin-top:6px;';
+    const diffDiv=document.createElement('div');diffDiv.style.cssText='text-align:center;margin-top:6px;';diffDiv.innerHTML='<span style="font-family:Comic Neue,cursive;color:var(--text,#ecf0f1);opacity:0.75;font-size:0.85rem;margin-right:6px;">Difficulty:</span>';
     const diffBtns=[];['Easy','Medium','Hard'].forEach((d,i)=>{const b=document.createElement('button');b.className='retro-btn'+(i===0?' active':'');b.style.cssText='margin:3px;font-size:0.8rem;padding:4px 12px;';b.textContent=d;b.onclick=()=>{applyDiff(i);diffBtns.forEach(bb=>bb.classList.remove('active'));b.classList.add('active');restart();};diffDiv.appendChild(b);diffBtns.push(b);});
     root.appendChild(diffDiv);
     canvas.addEventListener('pointermove',e=>{const r=canvas.getBoundingClientRect();py=Math.max(0,Math.min(cH-PH,e.clientY-r.top-PH/2));});

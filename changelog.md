@@ -1,6 +1,11 @@
 ﻿
 # Changelog 
 
+## [5.8.107] - 2026-06-08 - Amni-Learn: game-feel polish (Reflex juice, Pong label)
+- **Reflex** tapping felt dead — the target just vanished. Now a tapped target pops (scale-up + fade) with a confetti burst at the tap point (bigger burst for the ⏳ power-up), plus a double-hit guard so a single target can't be scored twice.
+- **Pong** difficulty chips (Easy/Medium/Hard) had no label and read as orphaned controls — added a "Difficulty:" caption. (The game auto-starts, so no start prompt is needed.)
+- SW cache `v1203 → v1204`. `node --check` clean. v5.8.107.
+
 ## [5.8.106] - 2026-06-08 - Amni-Learn: polish pass (game-feel) from a 4-agent play review
 - **Reaction Lab empty-state.** The play area was a bare black box at start (reads as broken). Added an inviting in-canvas hint — "👇 Pick an element, then draw here to mix it! 🧪✨" — that disappears the moment you paint.
 - **Reaction Lab log spam.** Adjacent fire/oil (etc.) cells fired the same reaction every frame, flooding the Reaction Log with identical consecutive lines. `addLog` now collapses consecutive duplicates into "… ×N".
