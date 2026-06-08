@@ -603,7 +603,7 @@
     const now = CLEAN_THEMES[(idx + 1) % CLEAN_THEMES.length].id;
     _applyTheme(now);
     try { localStorage.setItem('amni-learn-theme', now); } catch {}
-    if (typeof showFeedback === 'function') showFeedback(CLEAN_THEMES.find(t => t.id === now).emoji + ' ' + CLEAN_THEMES.find(t => t.id === now).name + ' theme', '#2ecc71');
+    if (typeof _toast === 'function') _toast(CLEAN_THEMES.find(t => t.id === now).emoji + ' ' + CLEAN_THEMES.find(t => t.id === now).name + ' theme', '#2ecc71');
   });
   // ── Unlockables registry ─────────────────────────────────────────────
   // Themes, mascots, and cursor trails — each gated by a per-module
@@ -1106,6 +1106,7 @@
       $$('#nav-back').innerHTML = '⬅<span class="btn-label"> HOME</span>';
     }
     if(typeof _checkAchievements==='function'){_checkAchievements();if(typeof _renderAchStrip==='function')_renderAchStrip();}
+    _fitSoon();[120,400,900].forEach(d=>setTimeout(()=>_fitToCard(),d));
   }
   const confCanvas = $$('#confetti-canvas');
   const confCtx = confCanvas.getContext('2d');
@@ -1137,6 +1138,13 @@
     if(currentLevel === 1 && ttsAuto() && typeof speakText === 'function') speakText(text);
     setTimeout(() => fb.classList.remove('show'), 1800);
   }
+  function _toast(text,color){const t=$$('#mini-toast')||(()=>{const d=document.createElement('div');d.id='mini-toast';document.body.appendChild(d);return d;})();t.textContent=text;t.style.borderColor=color||'var(--accent,#4db8ff)';t.style.color=color||'var(--accent,#4db8ff)';t.classList.remove('show');void t.offsetWidth;t.classList.add('show');clearTimeout(t._tt);t._tt=setTimeout(()=>t.classList.remove('show'),1900);}
+  const _availW=(el)=>{const a=el||document.querySelector('.view.active .life-task-area, .view.active .quiz-task-area')||document.querySelector('.view.active')||document.body;const cs=getComputedStyle(a);const w=a.clientWidth-(parseFloat(cs.paddingLeft)||0)-(parseFloat(cs.paddingRight)||0);return Math.max(140,w||Math.min(window.innerWidth-32,560));};
+  const _boardCell=(n,maxCell,gap,pad,el)=>Math.max(10,Math.min(maxCell,Math.floor((_availW(el)-2*(pad||0)-((n||1)-1)*(gap||0))/(n||1))));
+  function _fitToCard(root){const v=root||document.querySelector('.view.active');if(!v||v.id==='menu-view')return;v.querySelectorAll('[data-fit],[id*="board"],[id*="grid"],[id*="arena"],[id*="tube"],[class*="board"],[class*="grid"],[class*="-tubes"],[class*="-tiles"],[class*="arena"]').forEach(el=>{if(el.tagName==='CANVAS'||el.dataset.hscroll!=null)return;const host=el.closest('.life-task-area,.quiz-task-area')||v;const avail=host.clientWidth-(host===v?20:10);const w=el.scrollWidth;if(w<=0)return;if(w>avail){const s=Math.max(0.3,avail/w);const tf='scale('+s.toFixed(4)+')';if(el.style.transform!==tf){el.style.transformOrigin='top center';el.style.transform=tf;el.style.marginBottom=Math.round(-el.offsetHeight*(1-s))+'px';}}else if(el.style.transform){el.style.transform='';el.style.marginBottom='';}});}
+  let _fitT=null;const _fitSoon=()=>{clearTimeout(_fitT);_fitT=setTimeout(()=>_fitToCard(),60);};
+  window.addEventListener('resize',_fitSoon);window.addEventListener('orientationchange',()=>{_fitSoon();setTimeout(_fitToCard,300);});
+  try{new MutationObserver(_fitSoon).observe($$('#app'),{childList:true,subtree:true});}catch(e){}
   const tCanvas = $$('#trace-canvas');
   const tCtx = tCanvas.getContext('2d', { willReadFrequently: true });
   let tIsDrawing = false, tCurrentTarget = 0, tTargets = [], maskData = null, tMode = 'trace', drawColor = '#e74c3c', drawBrush = 'pen';
@@ -2993,7 +3001,7 @@
       Object.keys(LEVELS).forEach(k=>{const b=document.createElement('button');b.className='sdk-btn'+(k===level?' active':'');b.style.cssText='font-size:0.85rem;padding:5px 12px;';b.textContent=LEVELS[k].label;b.onclick=()=>{sessionStorage.setItem('mm-level',k);initMemoryMatch();};lvlRow.appendChild(b);});
       lifeArea.appendChild(lvlRow);
       const board=document.createElement('div');
-      const cellPx=Math.min(64,Math.floor(420/cfg.cols));
+      const cellPx=_boardCell(cfg.cols,64,4,8);
       board.style.cssText=`display:grid;grid-template-columns:repeat(${cfg.cols},${cellPx}px);gap:4px;background:#2c3e50;padding:8px;border-radius:10px;margin:6px auto;width:fit-content;`;
       deck.forEach((c,i)=>{
         const cell=document.createElement('div');
@@ -3194,7 +3202,7 @@
       Object.keys(LEVELS).forEach(k=>{const b=document.createElement('button');b.className='sdk-btn'+(k===level?' active':'');b.style.cssText='font-size:0.85rem;padding:5px 12px;';b.textContent=LEVELS[k].label;b.onclick=()=>{sessionStorage.setItem('tf-level',k);initTwentyFortyEight();};lvlRow.appendChild(b);});
       lifeArea.appendChild(lvlRow);
       const board=document.createElement('div');
-      const cellPx=Math.min(72,Math.floor(360/n));
+      const cellPx=_boardCell(n,72,6,8);
       board.style.cssText=`display:grid;grid-template-columns:repeat(${n},${cellPx}px);gap:6px;background:#bbada0;padding:8px;border-radius:10px;margin:6px auto;width:fit-content;touch-action:none;`;
       for(let r=0;r<n;r++)for(let c=0;c<n;c++){
         const v=grid[r][c];
@@ -3280,7 +3288,7 @@
       modeRow.appendChild(revBtn);modeRow.appendChild(flagBtn);
       lifeArea.appendChild(modeRow);
       const board=document.createElement('div');
-      const cellPx=Math.min(44,Math.floor(360/n));
+      const cellPx=_boardCell(n,44,2,6);
       board.style.cssText=`display:grid;grid-template-columns:repeat(${n},${cellPx}px);gap:2px;background:#2c3e50;padding:6px;border-radius:10px;margin:6px auto;width:fit-content;`;
       for(let i=0;i<total;i++){
         const cell=document.createElement('div');
@@ -3450,7 +3458,7 @@
     info.textContent='Click a cell to toggle it and its 4 orthogonal neighbors (+ shape). Goal: turn ALL lights off.';
     lifeArea.appendChild(info);
     const board=document.createElement('div');board.id='lo-board';
-    const cellPx=Math.min(74,Math.floor(380/n));
+    const cellPx=_boardCell(n,74,4,8);
     board.style.cssText=`display:grid;grid-template-columns:repeat(${n},${cellPx}px);gap:4px;background:#1a2530;padding:8px;border-radius:14px;margin:8px auto;width:fit-content;`;
     lifeArea.appendChild(board);
     function onCount(){return grid.filter(g=>g).length;}
@@ -3514,7 +3522,7 @@
     info.textContent='Tap a tile next to the empty space to slide it. Arrange tiles in order with the empty space in the bottom-right corner.';
     lifeArea.appendChild(info);
     const board=document.createElement('div');board.id='sl-board';
-    const cellPx=Math.min(80,Math.floor(380/n));
+    const cellPx=_boardCell(n,80,4,6);
     board.style.cssText=`display:grid;grid-template-columns:repeat(${n},${cellPx}px);gap:4px;background:#34495e;padding:6px;border-radius:12px;margin:8px auto;width:fit-content;`;
     lifeArea.appendChild(board);
     function checkWin(){
@@ -4172,7 +4180,7 @@
     lifeArea.appendChild(modeRow);
     const prompt=document.createElement('div');prompt.id='bub-prompt';prompt.style.cssText='text-align:center;font-family:Comic Neue,cursive;font-size:1.4rem;color:#2c3e50;margin:8px 0;min-height:36px;';
     lifeArea.appendChild(prompt);
-    const arena=document.createElement('div');arena.id='bub-arena';arena.style.cssText='position:relative;width:min(96vw,500px);height:min(60vh,400px);margin:0 auto;background:linear-gradient(to bottom,#74b9ff 0%,#a8e6f7 100%);border-radius:18px;overflow:hidden;border:3px solid #0984e3;';
+    const arena=document.createElement('div');arena.id='bub-arena';arena.style.cssText='position:relative;width:min(100%,500px);height:min(60vh,400px);margin:0 auto;background:linear-gradient(to bottom,#74b9ff 0%,#a8e6f7 100%);border-radius:18px;overflow:hidden;border:3px solid #0984e3;';
     lifeArea.appendChild(arena);
     function nextRound(){
       if(!window._bubActive)return;
@@ -4242,7 +4250,7 @@
       let dirtCleaned = 0, vacTime = 0; window._vacTimer = null;
       const hud = document.createElement('div'); hud.className='game-hud'; hud.id='vac-hud';
       hud.innerHTML=`<span class="game-stat">🧹 <span class="game-stat-val" id="vac-prog">0/${dirtCount}</span></span><span class="game-stat">⏱ <span class="game-stat-val" id="vac-time">0s</span></span>`;
-      lifeArea.appendChild(hud);
+      lifeArea.appendChild(hud);hud.style.position='absolute';hud.style.top='8px';hud.style.left='0';hud.style.right='0';hud.style.zIndex='15';
       window._vacTimer = setInterval(()=>{ vacTime++; const te=$$('#vac-time'); if(te) te.textContent=vacTime+'s'; },1000);
       const vacuum = document.createElement('div');
       vacuum.id = 'vacuum';
@@ -4255,6 +4263,8 @@
       vacuum.style.zIndex = '10';
       vacuum.style.pointerEvents = 'none';
       vacuum.style.transform = 'translate(-50%, -50%)';
+      vacuum.style.left = '50%';
+      vacuum.style.top = '62%';
       vacuum.style.boxShadow = '0 10px 15px rgba(0,0,0,0.2)';
       const handle = document.createElement('div');
       handle.style.width = '10px';
@@ -4271,8 +4281,8 @@
           const d = document.createElement('div');
           d.className = 'dirt';
           d.textContent = currentLevel === 1 ? '🍂' : dirtTypes[Math.floor(Math.random()*dirtTypes.length)];
-          d.style.left = Math.random() * (lifeArea.offsetWidth - 40) + 'px';
-          d.style.top = Math.random() * (lifeArea.offsetHeight - 40) + 'px';
+          d.style.left = Math.random() * Math.max(20,lifeArea.clientWidth - 48) + 'px';
+          const _vtp=(hud.offsetHeight||36)+12;d.style.top = (_vtp + Math.random() * Math.max(40,lifeArea.clientHeight - 48 - _vtp)) + 'px';
           lifeArea.appendChild(d);
           dirts.push(d);
       }
@@ -4431,9 +4441,11 @@
       }
       const minuteAngle = targetMinute * 6; // 360 / 60
       const hourAngle = (targetHour % 12) * 30 + (targetMinute / 60) * 30; // 360 / 12 + partial hour
+      const SZ = Math.max(150, Math.min(250, Math.floor(window.innerHeight*0.42), Math.floor(window.innerWidth*0.72)));
       const clockContainer = document.createElement('div');
-      clockContainer.style.width = '250px';
-      clockContainer.style.height = '250px';
+      clockContainer.style.width = SZ+'px';
+      clockContainer.style.height = SZ+'px';
+      clockContainer.style.flexShrink = '0';
       clockContainer.style.borderRadius = '50%';
       clockContainer.style.border = '10px solid #2c3e50';
       clockContainer.style.background = '#fff';
@@ -4453,7 +4465,7 @@
       clockContainer.appendChild(dot);
       const hourHand = document.createElement('div');
       hourHand.style.width = '8px';
-      hourHand.style.height = '70px';
+      hourHand.style.height = (SZ*0.28)+'px';
       hourHand.style.background = '#e74c3c';
       hourHand.style.position = 'absolute';
       hourHand.style.bottom = '50%';
@@ -4464,7 +4476,7 @@
       clockContainer.appendChild(hourHand);
       const minHand = document.createElement('div');
       minHand.style.width = '6px';
-      minHand.style.height = '100px';
+      minHand.style.height = (SZ*0.40)+'px';
       minHand.style.background = '#34495e';
       minHand.style.position = 'absolute';
       minHand.style.bottom = '50%';
@@ -4479,14 +4491,14 @@
               num.textContent = i;
               num.style.position = 'absolute';
               num.style.fontFamily = 'Comic Neue, cursive';
-              num.style.fontSize = '1.5rem';
+              num.style.fontSize = Math.max(0.9,SZ*0.006)+'rem';
               num.style.fontWeight = 'bold';
               num.style.color = '#7f8c8d';
               num.style.transform = 'translate(-50%, -50%)';
               const angle = (i * 30 - 90) * (Math.PI / 180);
-              const r = 95; // radius
-              num.style.left = (125 + r * Math.cos(angle)) + 'px';
-              num.style.top = (125 + r * Math.sin(angle)) + 'px';
+              const r = SZ*0.38;
+              num.style.left = (SZ/2 + r * Math.cos(angle)) + 'px';
+              num.style.top = (SZ/2 + r * Math.sin(angle)) + 'px';
               clockContainer.appendChild(num);
           }
       }
@@ -4907,16 +4919,7 @@
               {q: "Which animal says 'Bleat'?", a: "🐐 Goat", wrong: ["🐶 Dog", "🐦 Bird", "🐝 Bee"], isAudio: true, audioText: "Bleat", explain: "Goats BLEAT! Goats were one of the first animals farmed by humans (~10,000 years ago). They're amazing climbers — some even climb trees! Their rectangular pupils give them a super-wide view to spot danger."},
               {q: "Which animal screeches from the sky?", a: "🦅 Eagle", wrong: ["🐸 Frog", "🐝 Bee", "🐶 Dog"], isAudio: true, audioText: "Screech", explain: "Eagles SCREECH! They have incredible eyesight — about 4-8× sharper than ours — and can spot a rabbit from 3 km away. Bald eagles build the biggest tree nests of any animal, up to 6 feet wide."},
               {q: "Which tiny animal goes 'Squeak'?", a: "🐭 Mouse", wrong: ["🐘 Elephant", "🐢 Turtle", "🐊 Crocodile"], isAudio: true, audioText: "Squeak", explain: "Mice SQUEAK! Most of their squeaks are ULTRASONIC — too high for human ears, used to call to family + warn of danger. Mice are small, nimble + breed quickly — popular pets + the most-studied lab animal in science."},
-              {q: "Which insect chirps on warm summer nights?", a: "🦗 Cricket", wrong: ["🐝 Bee", "🦋 Butterfly", "🐌 Snail"], isAudio: true, audioText: "Chirp", explain: "CRICKETS chirp by rubbing their wings together — only the males do it, to attract females. Cool fact: count chirps in 15 seconds + add 40 → roughly the temperature in °F. Their chirp speed scales with how warm the air is."},
-              {q: "Which clever ocean mammal communicates with clicks + whistles?", a: "🐬 Dolphin", wrong: ["🐢 Turtle", "🦀 Crab", "🦈 Shark"], isAudio: true, audioText: "Click", explain: "DOLPHINS use CLICKS for echolocation (bouncing sound off objects to 'see' underwater) + WHISTLES to talk to each other. Each dolphin has a unique 'signature whistle' — like a name. They're among the smartest non-human animals + recognize themselves in mirrors."},
-              {q: "Which bird HONKS in flying V-formations?", a: "🪿 Goose", wrong: ["🐝 Bee", "🐍 Snake", "🐭 Mouse"], isAudio: true, audioText: "Honk", explain: "GEESE HONK — loud + carrying. They migrate in 'V' formations because each bird drafts behind the one ahead, saving energy (~70% of a solo trip). The lead bird rotates as it gets tired. Calls also keep the flock together over long distances."},
               {q: "Which big forest animal GROWLS deep + low?", a: "🐻 Bear", wrong: ["🐦 Bird", "🐝 Bee", "🐭 Mouse"], isAudio: true, audioText: "Growl", explain: "BEARS GROWL when threatened or warning. They're huge omnivores — eat berries, fish, honey + meat. Brown + black bears HIBERNATE through winter (deep sleep, low heart rate). Their sense of smell is ~7× a bloodhound's — they can sniff food from kilometers away."},
-              {q: "Which tiny bird HUMS as it hovers?", a: "🐦 Hummingbird", wrong: ["🦅 Eagle", "🐧 Penguin", "🦉 Owl"], isAudio: true, audioText: "Hum", explain: "HUMMINGBIRDS get their name from the HUM of their wings — flapping ~50-80 times per SECOND! That lets them hover in place, fly backwards + even upside down. They drink nectar from flowers (their heart beats ~1,200 bpm in flight). Smallest birds on Earth."},
-              {q: "Which flying mammal uses high-pitched CLICKS to 'see' in the dark?", a: "🦇 Bat", wrong: ["🐦 Bird", "🦋 Butterfly", "🐭 Mouse"], isAudio: true, audioText: "Click", explain: "BATS use ECHOLOCATION — emitting ultrasonic clicks + listening to the echoes to map the world (the same way submarines + dolphins do). It lets them catch flying insects in pitch darkness. Bats are the ONLY mammals that truly fly + represent ~1 in 4 mammal species."},
-              {q: "Which black-and-white bird BRAYS like a donkey?", a: "🐧 Penguin", wrong: ["🐔 Chicken", "🐶 Dog", "🐝 Bee"], isAudio: true, audioText: "Bray", explain: "PENGUINS bray, honk + trumpet — emperor + king penguin chicks recognize their own parents' voices in noisy colonies of thousands. Penguins can't fly but are EXPERT swimmers (some 'fly' through the water at 35 km/h). They live mostly in the Southern Hemisphere — none at the North Pole!"},
-              {q: "Which African mammal LAUGHS / cackles?", a: "🐾 Hyena", wrong: ["🦁 Lion", "🐘 Elephant", "🦒 Giraffe"], isAudio: true, audioText: "Laugh", explain: "SPOTTED HYENAS produce a unique 'LAUGH'-like vocalization — actually communicates FRUSTRATION or social tension (when low-rank individuals are bullied). They have OVER A DOZEN distinct calls including whoops, groans + yells. NOT related to dogs — closer to cats + mongooses. Matriarchal society (females larger + dominant). Bite force ~1100 PSI crushes bone. Smartest of carnivores in some lab tests."},
-              {q: "Which giant ocean mammal SINGS long underwater songs?", a: "🐋 Whale", wrong: ["🐠 Fish", "🐢 Turtle", "🦀 Crab"], isAudio: true, audioText: "Song", explain: "WHALES — especially HUMPBACK WHALES — sing complex songs lasting up to 30 MINUTES, then repeat for HOURS. Songs travel hundreds of km through ocean. Only MALES sing (mostly during breeding season). Each population's song evolves yearly, with all males in a region matching. BLUE WHALE calls are LOUDER than a jet engine (~188 dB) + lowest-frequency animal sound on Earth (~10 Hz, below human hearing). Carl Sagan included humpback song on Voyager's Golden Record."},
-              {q: "Which Australian bird sounds like it's LAUGHING (kookoo-ka-ka)?", a: "🪶 Kookaburra", wrong: ["🦘 Kangaroo", "🐨 Koala", "🦗 Cricket"], isAudio: true, audioText: "Laugh", explain: "KOOKABURRA — large kingfisher native to Australia + New Guinea. Famous 'LAUGHING' call ('koo-koo-ka-ka-ka-ka') used territorially, often at DAWN + DUSK. Family groups CHORUS together — neighbors answer back across the bush. Used as JUNGLE SOUNDS in old Hollywood Tarzan movies (despite being Australian, not African!). Diet: snakes, lizards, mice, insects — fearless predators. Lifespan ~20 years. National symbol of Australia."},
               {q: "Which fluffy ocean mammal BARKS like a dog?", a: "🦭 Seal", wrong: ["🐠 Fish", "🦞 Lobster", "🦀 Crab"], isAudio: true, audioText: "Bark", explain: "SEALS + SEA LIONS BARK loudly. SEA LIONS (visible ear flaps) bark MORE; TRUE SEALS (no ear flaps, slither on bellies) snort + growl. PIER 39 in San Francisco hosts hundreds of barking sea lions year-round. ELEPHANT SEAL males emit deep TRUMPETING bellows audible 1+ km away. Live in cold ocean waters; thick BLUBBER keeps them warm. Excellent swimmers + divers (Weddell seal: 600m depth, 80 min underwater)."},
               {q: "Which orange wild canine SCREAMS at night (sounds eerily human)?", a: "🦊 Fox", wrong: ["🐶 Dog", "🐺 Wolf", "🐱 Cat"], isAudio: true, audioText: "Scream", explain: "FOXES make a STARTLING high-pitched SCREAM, especially during MATING SEASON (Jan-Feb in N. Hemisphere) — has been mistaken for human cries, leading to many late-night 911 calls! Also: 'GEKKER' (rapid stuttering chatter when fighting). Foxes have 20+ distinct vocalizations. Cunning hunters with EXCELLENT hearing — can hear a mouse squeak 100+ m away. Red fox is most widespread carnivore on Earth (every continent except Antarctica). 2013 viral song 'What Does the Fox Say?' (Ylvis) — actual answer: scream + bark + gekker, not 'ring-ding-ding'."}
           ],
@@ -10160,7 +10163,8 @@ function playAnimalSound(type) {
         'cock-a-doodle-doo':'rooster','tweet':'bird','hiss':'snake','squawk':'parrot','purr':'cat',
         'bleat':'goat','trumpet':'elephant','chatter':'monkey','screech':'eagle','caw':'crow','croak':'frog',
         'bark':'seal','chitter':'squirrel','hee-haw':'donkey','coo':'dove',
-        'snort':'rhino','bay':'dog','yip':'fox','snap':'crocodile','whinny':'horse'
+        'snort':'rhino','bay':'dog','yip':'fox','snap':'crocodile','whinny':'horse',
+        'squeak':'mouse','growl':'bear','scream':'fox'
     };
     const animal = mappings[type.toLowerCase()] || type.toLowerCase();
     const a = new Audio('assets/audio/' + animal + '.mp3');
@@ -10188,7 +10192,7 @@ function playAnimalSound(type) {
   function stopSpeech(){ try { if('speechSynthesis' in window) window.speechSynthesis.cancel(); } catch(e) {} }
   function ttsAuto(){ try { return (localStorage.getItem('amni-learn-tts')||'on') !== 'off'; } catch(e) { return true; } }
   function speakText(text) {
-    if(["Moo","Woof","Meow","Oink","Baa","Quack","Neigh","Ribbit","Roar","Hoot","Buzz","Chirp","Tweet","Gobble","Howl","Cluck","Cock-a-doodle-doo","Hiss","Squawk","Purr","Bleat","Trumpet","Chatter","Screech","Caw","Croak","Bark","Chitter","Hee-Haw","Coo","Snort","Bay","Yip","Snap","Whinny"].includes(text)) { playAnimalSound(text); return; }
+    if(["Moo","Woof","Meow","Oink","Baa","Quack","Neigh","Ribbit","Roar","Hoot","Buzz","Chirp","Tweet","Gobble","Howl","Cluck","Cock-a-doodle-doo","Hiss","Squawk","Purr","Bleat","Trumpet","Chatter","Screech","Caw","Croak","Bark","Chitter","Hee-Haw","Coo","Snort","Bay","Yip","Snap","Whinny","Squeak","Growl","Scream"].includes(text)) { playAnimalSound(text); return; }
     speakSeq([text]);
   }
   const teachPhaseEl = $$('#teach-phase');
@@ -10237,7 +10241,7 @@ function playAnimalSound(type) {
       quizCorrect = 0;
       audioBtn.onclick = () => { if(currentQIndex < currentQuiz.length) {const cq = currentQuiz[currentQIndex]; (currentLevel === 1 && !cq.isAudio) ? speakSeq([cq.q, cq.a, ...cq.wrong]) : speakText(cq.audioText || cq.q);} };
       // One-time UI hint when there's spaced-repetition material in this run
-      if(missedSlice.length>0){if(typeof showFeedback==='function')showFeedback(`🔁 ${missedSlice.length} review question${missedSlice.length===1?'':'s'} mixed in`,'#9b59b6');}
+      if(missedSlice.length>0){if(typeof _toast==='function')_toast(`🔁 ${missedSlice.length} review question${missedSlice.length===1?'':'s'} mixed in`,'#9b59b6');}
       loadQuestion();
   }
   function showTeachPhase(subject) {
@@ -10297,7 +10301,7 @@ function playAnimalSound(type) {
           quizChoices.appendChild(exp);
           const cont = document.createElement('button');
           cont.className = 'm-choice';
-          cont.style.cssText = 'background:#3498db;color:#fff;border:4px solid #2980b9;border-radius:14px;padding:12px 28px;font-size:1.3rem;cursor:pointer;font-family:Comic Neue,cursive;font-weight:bold;margin-top:12px;box-shadow:0 6px 0 #2471a3;';
+          cont.style.cssText = 'background:#3498db;color:#fff;border:4px solid #2980b9;border-radius:14px;padding:12px 28px;font-size:1.3rem;cursor:pointer;font-family:Comic Neue,cursive;font-weight:bold;margin-top:12px;box-shadow:0 6px 0 #2471a3;position:sticky;bottom:6px;align-self:center;z-index:5;';
           cont.textContent = 'Next ▶';
           cont.onclick = () => { currentQIndex++; loadQuestion(); };
           quizChoices.appendChild(cont);
@@ -13822,7 +13826,7 @@ function playAnimalSound(type) {
     hud.innerHTML=`<span class="game-stat">🎯 Trial <span class="game-stat-val" id="cd-tr">0</span>/${TRIALS}</span><span class="game-stat">✅ <span class="game-stat-val" id="cd-c">0</span></span><span class="game-stat">🔥 <span class="game-stat-val" id="cd-st">0</span></span><span class="game-stat">⭐ Best ${best||'—'}</span><span class="game-stat">📊 Lvl ${lvl}</span>`;
     ct.innerHTML='';
     const hint=document.createElement('div');hint.style.cssText='font-size:1.05rem;color:#2c3e50;font-family:Comic Neue,cursive;text-align:center;max-width:440px';hint.textContent='Memorize the colors. They vanish, then come back — did ONE color change?';
-    const arena=document.createElement('div');arena.style.cssText='animation:bounceIn 0.45s ease;position:relative;width:min(88vw,360px);height:270px;background:rgba(255,255,255,0.55);border-radius:16px';
+    const arena=document.createElement('div');arena.style.cssText='animation:bounceIn 0.45s ease;position:relative;width:min(100%,360px);height:270px;background:rgba(255,255,255,0.55);border-radius:16px';
     const status=document.createElement('div');status.setAttribute('aria-live','polite');status.style.cssText='font-size:1.05rem;color:#2c3e50;font-family:Comic Neue,cursive;min-height:1.4em;text-align:center;font-weight:bold';
     const row=document.createElement('div');row.style.cssText='display:flex;gap:18px';
     const mkBtn=(label,val)=>{const b=document.createElement('button');b.className='nmm-btn';b.textContent=label;b.style.cssText='font-size:1.2rem;min-width:130px';b.onclick=()=>respond(val);return b;};

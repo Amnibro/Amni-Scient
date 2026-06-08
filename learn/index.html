@@ -487,7 +487,7 @@
   .music-tab.active { background:#e94560; color:#fff; border-color:#e94560; }
   .music-tab:active { transform:scale(0.93); }
   .music-content { width:95%; max-width:900px; display:flex; flex-direction:column; align-items:center; }
-  .piano-wrap { display:flex; position:relative; user-select:none; touch-action:none; margin:12px auto; overflow-x:auto; }
+  #music-view .piano-wrap { display:flex; position:relative; user-select:none; touch-action:none; margin:12px auto; overflow-x:auto; max-width:100%!important; min-width:0; box-sizing:border-box; }
   .p-key { position:relative; cursor:pointer; display:flex; align-items:flex-end; justify-content:center; }
   .p-key.white { width:48px; height:180px; background:#fff; border:2px solid #bbb; border-radius:0 0 8px 8px; z-index:1; margin:0 1px; transition:background 0.08s; }
   .p-key.black { width:32px; height:110px; background:#222; border:2px solid #000; border-radius:0 0 6px 6px; position:absolute; z-index:2; transition:background 0.08s; }
@@ -832,7 +832,7 @@
   #pullpin-view,#fillcup-view { background:linear-gradient(135deg,#001a1a 0%,#002a2a 50%,#001a1a 100%); background-size:200% 200%; animation:bgShift 11s ease infinite; }
   #calculus-view,#linalg-view,#stats-view,#discrete-view,#physics-view,#chemistry-view,#biology-view,#algorithms-view,#datastructs-view,#philosophy-view,#economics-view,#writing-view,#psychology-view { background:linear-gradient(135deg,#001428 0%,#002040 50%,#001428 100%); background-size:200% 200%; animation:bgShift 15s ease infinite; }
   .retro-canvas { background:#000; border:3px solid; border-radius:8px; image-rendering:pixelated; touch-action:none; }
-  .retro-hud { display:flex; gap:15px; font-family:'JetBrains Mono',monospace; font-size:1.1rem; color:#0f0; margin:8px 0; text-shadow:0 0 6px #0f0; }
+  .retro-hud { display:flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:10px 15px; max-width:100%; font-family:'JetBrains Mono',monospace; font-size:1.1rem; color:#0f0; margin:8px 0; text-shadow:0 0 6px #0f0; }
   .retro-btn { font-family:'JetBrains Mono',monospace; font-size:1.1rem; padding:10px 24px; border:2px solid #ff6b9d; background:transparent; color:#ff6b9d; border-radius:8px; cursor:pointer; transition:0.2s; }
   .retro-btn:hover { background:rgba(255,107,157,0.15); }
   .retro-btn:active { transform:scale(0.95); }
@@ -1295,6 +1295,36 @@
   button:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:3px solid #f1c40f;outline-offset:2px;border-radius:6px}
   .nmm-btn,[role="button"]{touch-action:manipulation;-webkit-tap-highlight-color:rgba(77,184,255,0.18)}
   .game-btn[data-game="gonogo"]::before,.game-btn[data-game="symcode"]::before,.game-btn[data-game="corsi"]::before,.game-btn[data-game="flanker"]::before,.game-btn[data-game="simon"]::before,.game-btn[data-game="numerosity"]::before,.game-btn[data-game="posner"]::before,.game-btn[data-game="backspan"]::before,.game-btn[data-game="tol"]::before,.game-btn[data-game="changedet"]::before,.game-btn[data-game="taskswitch"]::before{content:'NEW';position:absolute;top:6px;right:6px;background:#e74c3c;color:#fff;font-size:0.56rem;font-weight:700;padding:2px 6px;border-radius:8px;letter-spacing:0.5px;z-index:3;box-shadow:0 1px 3px rgba(0,0,0,0.3)}
+  html,body,#app,.view,.top-bar{touch-action:manipulation;}
+  #quiz-prompt{font-size:clamp(1.25rem,5vw,2.5rem)!important;min-width:0;max-width:100%;flex-shrink:1;overflow-wrap:break-word;word-break:break-word;hyphens:auto;}
+  #quiz-task-area .m-choice{max-width:100%;overflow-wrap:break-word;}
+  #quiz-task-area{justify-content:flex-start!important;overflow-y:auto!important;-webkit-overflow-scrolling:touch;}
+  #mini-toast{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom));transform:translate(-50%,140%);background:rgba(12,15,18,0.96);border:2px solid var(--accent,#4db8ff);color:var(--accent,#4db8ff);font-family:'JetBrains Mono',monospace;font-size:0.86rem;font-weight:700;padding:9px 16px;border-radius:999px;z-index:120;pointer-events:none;max-width:92vw;text-align:center;box-shadow:0 6px 22px rgba(0,0,0,0.45);opacity:0;transition:transform 0.28s cubic-bezier(0.34,1.4,0.64,1),opacity 0.28s}
+  body.light-mode #mini-toast{background:rgba(255,255,255,0.97)}
+  #mini-toast.show{opacity:1;transform:translate(-50%,0)}
+  .game-active .life-task-area,.game-active .quiz-task-area{max-width:min(680px,96vw)}
+  .life-task-area>*,.quiz-task-area>*{max-width:100%}
+  @media (max-width:560px){
+    .top-bar{gap:4px!important;padding:4px 6px!important;flex-wrap:nowrap!important;overflow:hidden}
+    .score-bar{gap:5px!important;flex:0 1 auto;min-width:0;overflow:hidden}
+    #profile-btn-name{max-width:44px!important}
+    .back-btn,.fs-btn,.theme-btn{padding:5px 7px!important}
+    .score-bar .retro-btn{margin-left:2px!important}
+    #level-btn .btn-label{display:none!important}
+  }
+  @media (max-width:380px){
+    #profile-btn{display:none!important}
+    .menu-title{font-size:clamp(1.2rem,5.4vw,1.6rem)!important}
+  }
+  @media (max-height:520px) and (orientation:landscape){
+    .life-title,#quiz-title{font-size:1.4rem!important;margin-bottom:8px!important}
+    .menu-title{font-size:1.6rem!important;margin-bottom:0.5rem!important}
+    .view{padding-top:6px!important;padding-bottom:8px!important}
+    .life-task-area,.quiz-task-area{min-height:0!important}
+    .life-controls,.math-choices{position:static!important;margin-top:10px!important}
+    #math-view{justify-content:flex-start!important}
+    .math-problem{font-size:clamp(2rem,7vw,3.2rem)!important;margin-bottom:10px!important}
+  }
 </style>
 </head>
 <body>
