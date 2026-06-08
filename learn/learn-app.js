@@ -15854,7 +15854,7 @@ function playAnimalSound(type) {
       turn='player';render();
     }
     function mkGrid(fleet,shots,isEnemy){
-      const g=document.createElement('div');g.style.cssText=`display:grid;grid-template-columns:repeat(${N},1fr);gap:2px;background:#16527a;padding:4px;border-radius:6px;max-width:min(86vw,300px);margin:5px auto;`;
+      const g=document.createElement('div');g.style.cssText=`display:grid;grid-template-columns:repeat(${N},1fr);gap:2px;background:${isEnemy?'#5a1f1f':'#16527a'};padding:4px;border-radius:6px;max-width:min(86vw,300px);margin:5px auto;border:2px solid ${isEnemy?'#e74c3c':'#3498db'};box-shadow:0 0 12px ${isEnemy?'rgba(231,76,60,0.35)':'rgba(52,152,219,0.3)'};`;
       for(let i=0;i<N*N;i++){
         const cell=document.createElement('div'),sh=shots[i],hasShip=fleet.grid[i]===1;let bg,content='';
         if(isEnemy){bg=sh===2?'#c0392b':sh===1?'#5d6d7e':'#2e86c1';content=sh===2?'💥':sh===1?'•':'';if(over&&hasShip&&sh!==2){bg='#7f8c8d';content='🚢';}}
