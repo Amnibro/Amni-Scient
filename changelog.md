@@ -1,6 +1,9 @@
 ﻿
 # Changelog 
 
+## [5.8.119] - 2026-06-08 - Amni-Learn: light-mode game titles (systemic, ~25 games)
+- The light-mode verification pass found a systemic issue: every game whose view is intentionally dark (retro arcade + casual/board games — Snake, Block Drop, Pong, Space Invaders, Minesweeper, Pipes, Flappy, Pull-the-Pin, Connect Four, Reversi, Battleship, Mancala, Pig, 2048, Color Sort, etc.) had its TITLE rendered dark-on-dark in light mode. Cause: `body.light-mode .life-title { color:#1a1f2e !important }` force-overrode the per-game inline bright title color. Fix: dropped the `!important` so the inline bright colors win on dark views (titles readable again), and added dark-title overrides for the 3 idle games (Cookie Clicker / Auto Miner / Garden) whose views were flipped to light. Verified Block Drop (bright title on dark) + Cookie Clicker (dark title on light). SW cache v1215 → v1216. v5.8.119.
+
 ## [5.8.118] - 2026-06-08 - Amni-Learn: light-mode fixes (Periodic, Versus, Word Bridge)
 - Finishing the light-mode contrast pass. **Periodic Table:** the element grid cells used faint *light* colors (`rgba(255,255,255,0.05)` fill, `rgba(236,240,241,0.35)` text) → invisible in light mode; made the inline cell colors theme-aware (faint dark cells on light), so the whole table is legible. **Team Challenges (versus):** category buttons hardcoded `rgba(0,0,0,0.5)` → flipped to white-with-teal in light mode. **Word Bridge:** the `.wb-card` answer tiles hardcoded a dark teal (`#1a3c40`) → flipped to white cards + dark text, and the view background to light. SW cache v1214 → v1215. v5.8.118.
 
