@@ -808,7 +808,7 @@
       melodyState=null;
       if(rfxTimer){clearInterval(rfxTimer);rfxTimer=null;}
       if(blkRunning){blkRunning=false;}
-      if(mtnTimer){clearInterval(mtnTimer);mtnTimer=null;}
+      if(window._minerTimer){clearInterval(window._minerTimer);window._minerTimer=null;}
       if(matchTimer){clearInterval(matchTimer);matchTimer=null;}
       if(scrTimer){clearInterval(scrTimer);scrTimer=null;}
       if(window._sdkTimer){clearInterval(window._sdkTimer);window._sdkTimer=null;}
