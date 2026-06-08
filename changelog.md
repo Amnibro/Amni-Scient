@@ -1,6 +1,10 @@
 ﻿
 # Changelog 
 
+## [5.8.108] - 2026-06-08 - Amni-Learn: STEM/college quiz polish (all 13 modules)
+- **30-dot progress strip → slim progress bar.** `initCollege` drew one tiny dot per question (~30), an unparseable strip that duplicated the existing "Question N/30" text. Replaced with a single slim gradient progress bar that fills as you advance. Applies to all 13 college/STEM quizzes (calculus, linalg, stats, discrete, physics, chemistry, biology, algorithms, datastructs, philosophy, economics, writing, psychology).
+- **Answer buttons → even 2×2 grid.** `.college-choices` was a `flex-wrap` that produced lopsided 3+1 rows; now a 2-column grid so the four options are always a tidy 2×2, with long answers wrapping within their cell (verified on calculus short answers + philosophy long answers, 0 overflow). SW cache `v1204 → v1205`. `node --check` clean. v5.8.108.
+
 ## [5.8.107] - 2026-06-08 - Amni-Learn: game-feel polish (Reflex juice, Pong label)
 - **Reflex** tapping felt dead — the target just vanished. Now a tapped target pops (scale-up + fade) with a confetti burst at the tap point (bigger burst for the ⏳ power-up), plus a double-hit guard so a single target can't be scored twice.
 - **Pong** difficulty chips (Easy/Medium/Hard) had no label and read as orphaned controls — added a "Difficulty:" caption. (The game auto-starts, so no start prompt is needed.)

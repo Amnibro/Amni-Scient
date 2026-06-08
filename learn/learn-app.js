@@ -17181,8 +17181,8 @@ function playAnimalSound(type) {
         return;
       }
       const q=questions[idx];answered=false;
-      const prog=document.createElement('div');prog.className='college-progress';
-      questions.forEach((_,i)=>{const d=document.createElement('div');d.className='college-dot'+(i<idx?(questions[i]._correct?'done':'wrong-dot'):'')+(i===idx?' current':'');prog.appendChild(d);});
+      const prog=document.createElement('div');prog.className='college-progress';prog.style.cssText='width:min(100%,360px);height:9px;background:rgba(255,255,255,0.12);border-radius:99px;overflow:hidden;margin:0 auto 8px;display:block;';
+      prog.innerHTML=`<div style="height:100%;width:${Math.round(idx/questions.length*100)}%;background:linear-gradient(90deg,#2ecc71,#27ae60);border-radius:99px;transition:width 0.35s ease;"></div>`;
       root.appendChild(prog);
       const topic=document.createElement('div');topic.className='college-topic';topic.textContent=`${data.name} — Question ${idx+1}/${questions.length}`;root.appendChild(topic);
       const hud=document.createElement('div');hud.className='bj-hud';hud.innerHTML=`<span class="game-stat">✅ ${correct}/${idx}</span><span class="game-stat">📊 ${idx>0?Math.round(correct/idx*100):0}%</span>`;root.appendChild(hud);
