@@ -101,7 +101,7 @@
   const _lc={1:'#2ecc71',2:'#f1c40f',3:'#e67e22',4:'#e74c3c',5:'#9b59b6',6:'#1abc9c',7:'#ff6b9d',8:'#48dbfb'},_ln={1:'PRE-K GAMES',2:'GRADES K-2',3:'GRADES 3-5',4:'MIDDLE SCHOOL',5:'STEM CHALLENGE',6:'BRAIN EXERCISE',7:'DESTRESS ARCADE',8:'COLLEGE PREP'},_ac=_lc[currentLevel];
   $$('.menu-title').textContent=_ln[currentLevel];$$('.menu-title').style.color=_ac;$$('.menu-title').style.textShadow=`0 0 15px ${_ac}`;$$('#nav-back').style.borderColor=_ac;$$('#nav-back').style.color=_ac;$$('#fs-btn').style.borderColor=_ac;$$('#fs-btn').style.color=_ac;$$('.top-bar').children[1].style.color=_ac;$$('#menu-view').style.background=`radial-gradient(ellipse at 50% 30%,${_ac}12 0%,#0c0f12 60%)`;$$all('.cat-header').forEach(h=>h.style.borderBottomColor=_ac+'30');
   currentLevel===1?$$all('[data-subgame="money"],[data-subgame="clock"],[data-subgame="vacuum"],[data-subgame="dishes"]').forEach(el=>el?el.style.display='none':0):0;currentLevel>=4&&currentLevel!==6&&currentLevel!==7&&currentLevel!==8?($$('#stem-section').style.display='block',$$all('[data-subgame="vacuum"],[data-subgame="dishes"],[data-subgame="clock"],.tracing,.matching').forEach(el=>el?el.style.display='none':0)):0;(currentLevel===4||currentLevel===5)?$$('#main-game-grid').classList.add('wide-mode'):0;currentLevel===6?($$all('.game-category:not(#brain-section):not(.brain-cat)').forEach(c=>c.style.display='none'),$$('#brain-section').style.display='block',$$all('.brain-cat').forEach(c=>c.style.display='block'),$$('#main-game-grid').classList.add('brain-mode')):0;currentLevel===7?($$all('.game-category:not(.destress-cat)').forEach(c=>c.style.display='none'),$$all('.destress-cat').forEach(c=>c.style.display='block'),$$('#main-game-grid').classList.add('brain-mode')):0;currentLevel===8?($$all('.game-category:not(.college-cat)').forEach(c=>c.style.display='none'),$$all('.college-cat').forEach(c=>c.style.display='block'),$$('#main-game-grid').classList.add('brain-mode')):0;
-  const _glv={dots:'123',tracing:'12',math:'1234',matching:'123',typing:'12345',storybook:'123','life:vacuum':'23','life:dishes':'23','life:clock':'234','life:money':'234','life:bubble':'12','life:samediff':'12','life:petcare':'12','life:findit':'12','life:count':'12','life:colormix':'12','life:whackmole':'123','life:mathsolitaire':'345','life:codelock':'345','life:hanoi':'345','life:sliding':'2345','life:lightsout':'345','life:minesweeper':'345','life:twentyfortyeight':'345','life:sudoku':'345','life:memorymatch':'12345','quiz:animals':'1234',music:'1234','quiz:languages':'234','quiz:science':'2345','quiz:colors':'123','quiz:shapes':'123','quiz:counting':'123','quiz:opposites':'123','quiz:weather':'1234','quiz:space':'2345','quiz:sports':'234','quiz:mythology':'34','quiz:history':'34','quiz:civics':'34',reflex:'1234',blocks:'2345',sorthat:'2345',wbridge:'34',scramble:'234',memseq:'12345',pattern:'12345',geo:'34','quiz:math':'45','quiz:engineering':'45',circuitlab:'5',rxnlab:'5',netdebug:'5',versus:'45'};
+  const _glv={dots:'123',tracing:'12',math:'1234',matching:'123',typing:'12345',storybook:'123','life:vacuum':'23','life:dishes':'23','life:clock':'234','life:money':'23','life:bubble':'12','life:samediff':'12','life:petcare':'12','life:findit':'12','life:count':'12','life:colormix':'12','life:whackmole':'123','life:mathsolitaire':'345','life:codelock':'345','life:hanoi':'345','life:sliding':'2345','life:lightsout':'345','life:minesweeper':'345','life:twentyfortyeight':'345','life:sudoku':'345','life:memorymatch':'12345','quiz:animals':'1234',music:'1234','quiz:languages':'234','quiz:science':'2345','quiz:colors':'123','quiz:shapes':'123','quiz:counting':'123','quiz:opposites':'123','quiz:weather':'1234','quiz:space':'2345','quiz:sports':'234','quiz:mythology':'34','quiz:history':'34','quiz:civics':'34',reflex:'1234',blocks:'2345',sorthat:'2345',wbridge:'34',scramble:'234',memseq:'12345',pattern:'12345',geo:'34','quiz:math':'45','quiz:engineering':'45',circuitlab:'5',rxnlab:'5',netdebug:'5',versus:'45'};
   currentLevel<=5?$$all('#main-game-grid .game-btn').forEach(b=>{const g=b.dataset.game,s=b.dataset.subgame,j=b.dataset.subject,k=s?g+':'+s:(j?g+':'+j:g),lv=_glv[k];lv&&!lv.includes(String(currentLevel))?b.style.display='none':0;}):0;
   $$all('#main-game-grid > .game-category').forEach(cat=>{if(cat.style.display==='none')return;const btns=cat.querySelectorAll('.game-btn');if(!btns.length)return;Array.from(btns).every(b=>b.style.display==='none'||getComputedStyle(b).display==='none')?cat.style.display='none':0;});
   let sessionScore = parseInt(sessionStorage.getItem('amni-learn-score')||'0');
@@ -4557,37 +4557,25 @@
   function initMoney() {
       lifeArea.innerHTML = '';
       lifeControls.innerHTML = '';
-      const mLvl = Math.min(currentLevel, 4);
-      const titles={1:'Count the Coins!',2:'Count the Money!',3:'Make Change!',4:'Cart Total + Sales Tax'};
+      const mLvl = Math.min(currentLevel, 3);
+      const titles={1:'Count the Coins!',2:'Count the Money!',3:'Make Change!'};
       lifeTitle.textContent = titles[mLvl]||'Count the Money!';
-      // L1: cents only. L2: mixed dollars. L3: make change.
-      // L4: multi-item cart with 8% sales tax (game caps here — no adult finance).
+      // L1: cents only. L2: mixed dollars + bills. L3: make change.
+      // Counting/change only — the register interaction matches the objective.
       const itemPools={
           1:[{name:'🍭 Candy',price:0.25},{name:'🧃 Juice',price:0.50},{name:'🍪 Cookie',price:0.35},{name:'✏️ Pencil',price:0.10},{name:'🎈 Balloon',price:0.15},{name:'🍬 Gumball',price:0.05},{name:'📎 Clip',price:0.20},{name:'🧸 Sticker',price:0.30},{name:'🌭 Mini-dog',price:0.45},{name:'🧁 Mini-cupcake',price:0.60},{name:'🍫 Mini-bar',price:0.75},{name:'🥜 Peanut',price:0.99}],
           2:[{name:'🍔 Burger',price:3.50},{name:'📕 Book',price:5.25},{name:'🧢 Hat',price:7.99},{name:'🎮 Game',price:12.50},{name:'🧃 Drink',price:1.75},{name:'🍕 Pizza Slice',price:2.50},{name:'🎒 Notebook',price:4.25},{name:'✏️ Pen Set',price:6.00}],
-          3:[{name:'🍔 Burger',price:8.49},{name:'🥤 Drink',price:2.99},{name:'🍟 Fries',price:3.49},{name:'🍩 Donut',price:1.99},{name:'☕ Coffee',price:4.50},{name:'🥪 Sandwich',price:6.75},{name:'🧁 Cupcake',price:3.25},{name:'🍣 Sushi Roll',price:9.99}],
-          4:[{name:'🍔 Burger',price:4.50},{name:'🥤 Drink',price:1.99},{name:'🍟 Fries',price:2.75},{name:'🍩 Donut',price:1.49},{name:'☕ Coffee',price:3.25},{name:'🥪 Sandwich',price:5.50},{name:'🧁 Cupcake',price:2.75},{name:'🥗 Salad',price:6.95},{name:'🍕 Pizza Slice',price:3.50},{name:'🍦 Ice Cream',price:2.25},{name:'🌭 Hotdog',price:3.75},{name:'🥨 Pretzel',price:2.50}]
+          3:[{name:'🍔 Burger',price:8.49},{name:'🥤 Drink',price:2.99},{name:'🍟 Fries',price:3.49},{name:'🍩 Donut',price:1.99},{name:'☕ Coffee',price:4.50},{name:'🥪 Sandwich',price:6.75},{name:'🧁 Cupcake',price:3.25},{name:'🍣 Sushi Roll',price:9.99}]
       };
-      // L4: pick 2-3 items, sum + 8% tax
       let targetAmount, displayHTML;
-      if(mLvl===4){
-          const pool=itemPools[4];const n=2+Math.floor(Math.random()*2);
-          const cart=[];const used=new Set();
-          while(cart.length<n){const i=Math.floor(Math.random()*pool.length);if(!used.has(i)){used.add(i);cart.push(pool[i]);}}
-          const subtotal=+cart.reduce((s,i)=>s+i.price,0).toFixed(2);
-          const tax=+(subtotal*0.08).toFixed(2);
-          targetAmount=+(subtotal+tax).toFixed(2);
-          displayHTML=`<div style="font-size:0.92rem;text-align:left;line-height:1.45;padding:8px 12px;">${cart.map(c=>`${c.name} — $${c.price.toFixed(2)}`).join('<br>')}<br><span style="opacity:0.7">Subtotal: $${subtotal.toFixed(2)}<br>Tax 8%: $${tax.toFixed(2)}</span><br><b>Total: $${targetAmount.toFixed(2)}</b></div>`;
-      } else {
-          const pool=itemPools[mLvl]||itemPools[2];
-          const item=pool[Math.floor(Math.random()*pool.length)];
-          if(mLvl<=2){targetAmount=item.price;displayHTML=item.name+' costs $'+targetAmount.toFixed(2);}
-          else{const payAmount=Math.max(Math.ceil(item.price),Math.floor(item.price)+1);targetAmount=+(payAmount-item.price).toFixed(2);displayHTML=item.name+' costs $'+item.price.toFixed(2)+' — Paid $'+payAmount+'.00 — Give back:';}
-      }
+      const pool=itemPools[mLvl]||itemPools[2];
+      const item=pool[Math.floor(Math.random()*pool.length)];
+      if(mLvl<=2){targetAmount=item.price;displayHTML=item.name+' costs $'+targetAmount.toFixed(2);}
+      else{const payAmount=Math.max(Math.ceil(item.price),Math.floor(item.price)+1);targetAmount=+(payAmount-item.price).toFixed(2);displayHTML=item.name+' costs $'+item.price.toFixed(2)+' — Paid $'+payAmount+'.00 — Give back:';}
       const reg = document.createElement('div');
       reg.className = 'register-display';
       reg.innerHTML = displayHTML;
-      reg.style.fontSize = mLvl===4?'1.05rem':(mLvl===3?'1.5rem':'2rem');
+      reg.style.fontSize = mLvl===3?'1.5rem':'2rem';
       lifeArea.appendChild(reg);
       const totalDisp = document.createElement('div');
       totalDisp.className = 'register-display';
@@ -4605,9 +4593,7 @@
           ? [{val:0.01,label:'1¢',type:'coin silver'},{val:0.05,label:'5¢',type:'coin silver'},{val:0.10,label:'10¢',type:'coin silver'},{val:0.25,label:'25¢',type:'coin'}]
           : mLvl === 2
           ? [{val:0.01,label:'1¢',type:'coin silver'},{val:0.05,label:'5¢',type:'coin silver'},{val:0.10,label:'10¢',type:'coin silver'},{val:0.25,label:'25¢',type:'coin'},{val:1,label:'$1',type:'bill'},{val:5,label:'$5',type:'bill'},{val:10,label:'$10',type:'bill'},{val:20,label:'$20',type:'bill'}]
-          : mLvl === 3
-          ? [{val:0.01,label:'1¢',type:'coin silver'},{val:0.05,label:'5¢',type:'coin silver'},{val:0.10,label:'10¢',type:'coin silver'},{val:0.25,label:'25¢',type:'coin'},{val:1,label:'$1',type:'bill'},{val:5,label:'$5',type:'bill'}]
-          : [{val:0.01,label:'1¢',type:'coin silver'},{val:0.05,label:'5¢',type:'coin silver'},{val:0.10,label:'10¢',type:'coin silver'},{val:0.25,label:'25¢',type:'coin'},{val:1,label:'$1',type:'bill'},{val:5,label:'$5',type:'bill'},{val:10,label:'$10',type:'bill'},{val:20,label:'$20',type:'bill'},{val:50,label:'$50',type:'bill'}];
+          : [{val:0.01,label:'1¢',type:'coin silver'},{val:0.05,label:'5¢',type:'coin silver'},{val:0.10,label:'10¢',type:'coin silver'},{val:0.25,label:'25¢',type:'coin'},{val:1,label:'$1',type:'bill'},{val:5,label:'$5',type:'bill'}];
       denominations.forEach(d => {
           const btn = document.createElement('div');
           btn.className = d.type;
@@ -4623,7 +4609,7 @@
                   const hit=milestones.find(m=>m===cnt);
                   if(hit){spawnConfetti(window.innerWidth/2,window.innerHeight/3,hit>=50?120:60);showFeedback(`🏆 ${hit} purchases!`,'#f1c40f');}
                   else{showFeedback(`Perfect! 💵 (#${cnt})`,'#2ecc71');}
-                  const reward = mLvl===4?5:(mLvl===3?3:1);
+                  const reward = mLvl===3?3:1;
                   addScore(reward);
                   if(typeof ttsAuto==='function'&&ttsAuto()&&typeof speakSeq==='function')speakSeq(['Perfect! Exactly right!']);
                   setTimeout(initMoney, 1800);
