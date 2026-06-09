@@ -1,6 +1,9 @@
 ﻿
 # Changelog 
 
+## [5.8.121] - 2026-06-09 - Amni-Learn: light mode now flat & consistent (Anthony feedback)
+- Anthony: "light mode doesn't really feel like light mode with the weird gradient." Two problems: (1) the per-game flips I'd added used tinted light *gradients* (bluish/cream), and (2) most game views still kept their hardcoded dark gradient, so "light mode" was a patchwork of dark and tinted screens. Refactored to a genuine flat light theme: one blanket `body.light-mode .view, #menu-view { background:#f4f6fa !important; animation:none }` flattens EVERY view (overriding all the per-view dark gradients), restored dark game titles + dark `.retro-hud` text (since everything is light now), and removed the tinted-gradient overrides. Game canvases (retro arcade boards) stay their own dark color — now reading as a clean contained game board framed by light chrome. Verified Block Drop + Calculus: flat light bg, dark title/HUD, readable content. SW cache v1217 → v1218. v5.8.121.
+
 ## [5.8.120] - 2026-06-08 - Amni-Learn: light-mode polish (final 3 LOW items)
 - Closing out the light-mode pass with the last low-severity contrast tweaks. **Minesweeper:** the active difficulty pill (green fill) kept green text → washed out; gave it dark bold text. **Math Solitaire:** the orange "Pass" button used the default pale-teal `.nmm-btn` text → low contrast; made it white. **Lab games (Circuit/Reaction/Net Debug):** the `.lab-tool` palette buttons were a translucent black that read as muddy gray with dim yellow text; made the fill a solid dark and the text brighter yellow so they pop in both themes. With this, the light-mode audit is fully resolved — 25 modules' content + ~25 game titles, every previously-flagged item verified. SW cache v1216 → v1217. v5.8.120.
 
