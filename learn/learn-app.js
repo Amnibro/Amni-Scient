@@ -4038,7 +4038,7 @@
     const ITEMS=[{e:'🍎',n:'apples'},{e:'🐶',n:'dogs'},{e:'⭐',n:'stars'},{e:'🐠',n:'fish'},{e:'🍌',n:'bananas'},{e:'🦋',n:'butterflies'},{e:'🚗',n:'cars'},{e:'🌸',n:'flowers'},{e:'🐸',n:'frogs'},{e:'🍓',n:'strawberries'},{e:'🐝',n:'bees'},{e:'🎈',n:'balloons'},{e:'🐱',n:'cats'},{e:'🐧',n:'penguins'},{e:'🍪',n:'cookies'},{e:'🌟',n:'stars'},{e:'🐥',n:'chicks'},{e:'🍊',n:'oranges'}];
     let score=0,round=0;
     const TOTAL=10;
-    const maxN=currentLevel===1?5:(currentLevel===2?10:15);
+    const maxN=currentLevel===1?5:10;
     const bestKey='count-best-L'+currentLevel;
     let best=parseInt(sessionStorage.getItem(bestKey)||'0');
     const hud=document.createElement('div');hud.className='game-hud';hud.style.marginBottom='6px';
@@ -4251,11 +4251,13 @@
   }
   function initVacuum() {
       lifeArea.innerHTML = '';
-      lifeTitle.textContent = "Clean the Floor!";
-      let dirtCount = currentLevel === 1 ? 15 : (currentLevel === 2 ? 25 : (currentLevel === 3 ? 35 : (currentLevel === 4 ? 50 : 75)));
-      let dirtCleaned = 0, vacTime = 0; window._vacTimer = null;
+      const vLvl = Math.min(Math.max(currentLevel,2),3);
+      lifeTitle.textContent = "🧹 Vacuum the trash — skip the toys!";
+      let dirtCount = vLvl === 2 ? 10 : 15;
+      const keepCount = vLvl === 2 ? 3 : 5;
+      let dirtCleaned = 0, oops = 0, vacTime = 0; window._vacTimer = null;
       const hud = document.createElement('div'); hud.className='game-hud'; hud.id='vac-hud';
-      hud.innerHTML=`<span class="game-stat">🧹 <span class="game-stat-val" id="vac-prog">0/${dirtCount}</span></span><span class="game-stat">⏱ <span class="game-stat-val" id="vac-time">0s</span></span>`;
+      hud.innerHTML=`<span class="game-stat">🧹 <span class="game-stat-val" id="vac-prog">0/${dirtCount}</span></span><span class="game-stat">⚠️ <span class="game-stat-val" id="vac-oops">0</span></span><span class="game-stat">⏱ <span class="game-stat-val" id="vac-time">0s</span></span>`;
       lifeArea.appendChild(hud);hud.style.position='absolute';hud.style.top='8px';hud.style.left='0';hud.style.right='0';hud.style.zIndex='15';
       window._vacTimer = setInterval(()=>{ vacTime++; const te=$$('#vac-time'); if(te) te.textContent=vacTime+'s'; },1000);
       const vacuum = document.createElement('div');
@@ -4282,16 +4284,12 @@
       vacuum.appendChild(handle);
       lifeArea.appendChild(vacuum);
       const dirts = [];
-      const dirtTypes = ['🧦', '🧸', '🍂', '🍁', '🧩', '📄', '✏️', '🖍️', '🍬', '🪙', '📦', '🗑️', '🗞️', '🍎', '🍌'];
-      for(let i=0; i<dirtCount; i++) {
-          const d = document.createElement('div');
-          d.className = 'dirt';
-          d.textContent = currentLevel === 1 ? '🍂' : dirtTypes[Math.floor(Math.random()*dirtTypes.length)];
-          d.style.left = Math.random() * Math.max(20,lifeArea.clientWidth - 48) + 'px';
-          const _vtp=(hud.offsetHeight||36)+12;d.style.top = (_vtp + Math.random() * Math.max(40,lifeArea.clientHeight - 48 - _vtp)) + 'px';
-          lifeArea.appendChild(d);
-          dirts.push(d);
-      }
+      const DIRT = ['🍂', '🍁', '🗞️', '📄', '🕸️', '🦠', '🧶', '🍌', '🗑️'];
+      const KEEP = ['🧸', '🧩', '🪙', '🎈', '🚗', '🪀', '📱', '🎮'];
+      const _vtp=(hud.offsetHeight||36)+12;
+      const place = (emoji,keep) => { const d = document.createElement('div'); d.className = 'dirt'; d.textContent = emoji; d.dataset.keep = keep ? '1' : '0'; if(keep) d.style.fontSize = '2.3rem'; d.style.left = Math.random() * Math.max(20,lifeArea.clientWidth - 48) + 'px'; d.style.top = (_vtp + Math.random() * Math.max(40,lifeArea.clientHeight - 48 - _vtp)) + 'px'; lifeArea.appendChild(d); dirts.push(d); };
+      for(let i=0; i<dirtCount; i++) place(DIRT[Math.floor(Math.random()*DIRT.length)], false);
+      for(let i=0; i<keepCount; i++) place(KEEP[Math.floor(Math.random()*KEEP.length)], true);
       let isVacuuming = false;
       lifeArea.onpointerdown = (e) => { isVacuuming = true; moveVacuum(e); };
       lifeArea.onpointermove = (e) => { if(isVacuuming) moveVacuum(e); };
@@ -4303,32 +4301,40 @@
           vacuum.style.left = x + 'px';
           vacuum.style.top = y + 'px';
           dirts.forEach(d => {
-              if(!d.classList.contains('cleaned')) {
+              if(d.dataset.keep !== 'done') {
                   const dx = (parseFloat(d.style.left) + 16) - x; 
                   const dy = (parseFloat(d.style.top) + 16) - y;
                   const dist = Math.sqrt(dx*dx + dy*dy);
-                  if(dist < 50) { // Sucking radius
-                      d.classList.add('cleaned');
+                  if(dist < 46) {
+                      if(d.dataset.keep === '1') {
+                          d.dataset.keep = 'done'; oops++;
+                          d.style.opacity = '0.25'; d.style.filter = 'grayscale(1)';
+                          const oe=$$('#vac-oops'); if(oe) oe.textContent=oops;
+                          showFeedback(`Oops! Leave the ${d.textContent}!`,'#e67e22'); resetStreak();
+                      } else {
+                      d.classList.add('cleaned'); d.dataset.keep = 'done';
                       dirtCleaned++;
                       const pe=$$('#vac-prog'); if(pe) pe.textContent=dirtCleaned+'/'+dirtCount;
                       if(dirtCleaned === dirtCount) {
                           clearInterval(window._vacTimer);
-                          const bonus = vacTime < dirtCount ? 3 : (vacTime < dirtCount*2 ? 2 : 1);
-                          const bestKey='vac-best-time-L'+currentLevel;
+                          const speed = vacTime < dirtCount ? 3 : (vacTime < dirtCount*2 ? 2 : 1);
+                          const bonus = Math.max(1, speed - oops);
+                          const bestKey='vac-best-time-L'+vLvl;
                           const prevBest=parseInt(sessionStorage.getItem(bestKey)||'99999');
-                          const wasBest=vacTime<prevBest;
+                          const wasBest=vacTime<prevBest && oops===0;
                           if(wasBest)sessionStorage.setItem(bestKey,vacTime);
-                          const cntKey='vac-cleaned-L'+currentLevel;
+                          const cntKey='vac-cleaned-L'+vLvl;
                           const cnt=parseInt(sessionStorage.getItem(cntKey)||'0')+1;
                           sessionStorage.setItem(cntKey,cnt);
-                          let tier='Clean!',tColor='#2ecc71';
-                          if(bonus===3){tier='🏆 Lightning Clean!';tColor='#f1c40f';}
-                          else if(bonus===2){tier='⚡ Speedy Clean!';tColor='#9b59b6';}
+                          let tier=oops?`Done · ${oops} toy${oops>1?'s':''} grabbed`:'Spotless!',tColor=oops?'#3498db':'#2ecc71';
+                          if(!oops&&speed===3){tier='🏆 Perfect & Fast!';tColor='#f1c40f';}
+                          else if(!oops&&speed===2){tier='⚡ Speedy & Spotless!';tColor='#9b59b6';}
                           if(wasBest)spawnConfetti(window.innerWidth/2,window.innerHeight/2,120);
-                          else if(bonus>=2)spawnConfetti(window.innerWidth/2,window.innerHeight/3,60);
+                          else if(!oops)spawnConfetti(window.innerWidth/2,window.innerHeight/3,60);
                           showFeedback(`${wasBest?'🏆 NEW BEST! ':''}${tier} (${vacTime}s · room #${cnt})`,tColor);addScore(bonus);
-                          if(typeof ttsAuto==='function'&&ttsAuto()&&typeof speakSeq==='function')speakSeq([(wasBest?'New best! ':'All clean! ')+'Great job!']);
+                          if(typeof ttsAuto==='function'&&ttsAuto()&&typeof speakSeq==='function')speakSeq([oops?'All clean! Watch the toys next time!':'Spotless! You left the toys alone!']);
                           setTimeout(() => {if(currentGame==='life'&&currentSubgame==='vacuum')initVacuum();}, 2200);
+                      }
                       }
                   }
               }
@@ -4336,12 +4342,15 @@
       }
   }
   function initDishes() {
-      lifeTitle.textContent = "Scrub the Dishes!";
-      const dishCount = currentLevel === 1 ? 1 : (currentLevel === 2 ? 2 : (currentLevel === 3 ? 3 : (currentLevel === 4 ? 4 : 5)));
+      const dLvl = Math.min(Math.max(currentLevel,2),3);
+      lifeTitle.textContent = "🧼 Wash it, then put it away!";
+      const TYPES = [['Plates','🍽️'],['Cups','🥤'],['Bowls','🥣']];
+      const dishCount = dLvl === 2 ? 3 : 5;
       let dishesWashed = 0;
-      let stainsToClean = currentLevel === 1 ? 3 : (currentLevel === 2 ? 5 : (currentLevel === 3 ? 7 : (currentLevel === 4 ? 9 : 12)));
+      let stainsToClean = dLvl === 2 ? 4 : 6;
       function spawnDish() {
-          lifeArea.innerHTML = '';
+          lifeArea.innerHTML = ''; lifeControls.innerHTML = '';
+          const type = TYPES[Math.floor(Math.random()*TYPES.length)];
           const hud = document.createElement('div'); hud.className='game-hud'; hud.id='dish-hud';
           hud.innerHTML=`<span class="game-stat">🍽️ Dish <span class="game-stat-val" id="dish-num">${dishesWashed+1}/${dishCount}</span></span><span class="game-stat">🦠 Stains <span class="game-stat-val" id="stain-prog">0/${stainsToClean}</span></span>`;
           lifeArea.appendChild(hud);
@@ -4353,7 +4362,8 @@
           dish.style.margin = '50px auto 0 auto'; // Push down slightly
           dish.style.top = '0';
           dish.style.left = '0';
-          dish.style.transform = 'none';
+          dish.style.transform = 'none'; dish.style.fontSize = '7rem';
+          const face = document.createElement('span'); face.textContent = type[1]; face.style.opacity = '0.4'; dish.appendChild(face);
           let cleanedStains = 0;
           const stains = [];
           for(let i=0; i<stainsToClean; i++) {
@@ -4404,24 +4414,9 @@
                               if(cleanedStains >= stainsToClean) {
                                   dish.style.background = '#fff';
                                   dish.style.boxShadow = '0 0 40px rgba(46, 204, 113, 0.8)';
-                                  dishesWashed++;
                                   showFeedback("Squeaky Clean!", "#3498db");
-                                  if(dishesWashed < dishCount) {
-                                      setTimeout(spawnDish, 1500);
-                                  } else {
-                                      setTimeout(() => {
-                                          const dCntKey='dishes-cleaned-L'+currentLevel;
-                                          const dCnt=parseInt(sessionStorage.getItem(dCntKey)||'0')+dishCount;
-                                          sessionStorage.setItem(dCntKey,dCnt);
-                                          const milestones=[10,25,50,100,200];
-                                          const hit=milestones.find(m=>m<=dCnt&&m>dCnt-dishCount);
-                                          if(hit){spawnConfetti(window.innerWidth/2,window.innerHeight/2,hit>=100?150:80);showFeedback(`🏆 ${hit} dishes washed!`,'#f1c40f');}
-                                          else{spawnConfetti(window.innerWidth/2,window.innerHeight/3,60);showFeedback(`All Done! 🍽️✨ (${dCnt} dishes total)`,'#2ecc71');}
-                                          addScore(2);
-                                          if(typeof ttsAuto==='function'&&ttsAuto()&&typeof speakSeq==='function')speakSeq(['All done! Squeaky clean!']);
-                                          setTimeout(()=>{if(currentGame==='life'&&currentSubgame==='dishes')initDishes();}, 2200);
-                                      }, 1500);
-                                  }
+                                  isScrubbing = false; sponge.style.display = 'none'; lifeArea.onpointerdown = null; lifeArea.onpointermove = null;
+                                  sortPhase(type);
                               }
                           }
                       }
@@ -4429,22 +4424,43 @@
               });
           }
       }
+      function sortPhase(type){
+          const prompt=document.createElement('div');prompt.style.cssText='text-align:center;font-family:Comic Neue,cursive;font-size:1.15rem;color:#2c3e50;margin:14px 0 4px;font-weight:bold;';prompt.textContent='✨ Squeaky clean! Where does it go?';lifeArea.appendChild(prompt);
+          lifeControls.innerHTML='';
+          TYPES.forEach(([name,emoji])=>{
+              const b=document.createElement('button');b.className='t-btn';b.style.fontSize='1.4rem';b.style.padding='10px 16px';b.style.lineHeight='1.1';b.innerHTML=`${emoji}<br><span style="font-size:0.75rem;">${name}</span>`;
+              b.onclick=()=>{
+                  if(name===type[0]){
+                      [...lifeControls.children].forEach(x=>x.style.pointerEvents='none');
+                      dishesWashed++;showFeedback(`${emoji} Put away!`,'#2ecc71');spawnConfetti(window.innerWidth/2,window.innerHeight/3,40);
+                      if(typeof ttsAuto==='function'&&ttsAuto()&&typeof speakSeq==='function')speakSeq(['Washed and put away!']);
+                      dishesWashed<dishCount?setTimeout(spawnDish,1100):setTimeout(finishDishes,1100);
+                  }else{showFeedback(`Not the ${name.toLowerCase()} shelf — try again!`,'#e67e22');resetStreak();b.style.opacity='0.4';b.style.pointerEvents='none';}
+              };
+              if(typeof _kbd==='function')_kbd(b,name+' shelf');
+              lifeControls.appendChild(b);
+          });
+      }
+      function finishDishes(){
+          const dCntKey='dishes-cleaned-L'+dLvl;const dCnt=parseInt(sessionStorage.getItem(dCntKey)||'0')+dishCount;sessionStorage.setItem(dCntKey,dCnt);
+          const milestones=[10,25,50,100,200];const hit=milestones.find(m=>m<=dCnt&&m>dCnt-dishCount);
+          lifeArea.innerHTML='';lifeControls.innerHTML='';
+          if(hit){spawnConfetti(window.innerWidth/2,window.innerHeight/2,hit>=100?150:80);showFeedback(`🏆 ${hit} dishes done!`,'#f1c40f');}
+          else{spawnConfetti(window.innerWidth/2,window.innerHeight/3,60);showFeedback(`All sorted! 🍽️✨ (${dCnt} total)`,'#2ecc71');}
+          addScore(dishCount===5?3:2);
+          if(typeof ttsAuto==='function'&&ttsAuto()&&typeof speakSeq==='function')speakSeq(['All washed and sorted! Great job!']);
+          const done=document.createElement('div');done.style.cssText='text-align:center;font-family:Comic Neue,cursive;font-size:1.5rem;color:#2c3e50;margin-top:30px;';done.innerHTML='🎉 All washed &amp; sorted!';lifeArea.appendChild(done);
+          const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='Play Again';rb.style.cssText='display:block;margin:14px auto;';rb.onclick=()=>initDishes();lifeArea.appendChild(rb);
+      }
       spawnDish();
   }
   function initClock() {
       lifeArea.innerHTML = '';
       lifeControls.innerHTML = '';
-      lifeTitle.textContent = "What time is it?";
+      const cLvl = Math.min(Math.max(currentLevel,2),3);
+      lifeTitle.textContent = "🕐 What time is it?";
       let targetHour = Math.floor(Math.random() * 12) + 1;
-      let targetMinute = 0;
-      if(currentLevel === 1) {
-          targetMinute = 0;
-      } else if (currentLevel === 2) {
-          const mins = [0, 15, 30, 45];
-          targetMinute = mins[Math.floor(Math.random() * mins.length)];
-      } else {
-          targetMinute = Math.floor(Math.random() * 12) * 5;
-      }
+      let targetMinute = cLvl === 2 ? [0, 15, 30, 45][Math.floor(Math.random() * 4)] : Math.floor(Math.random() * 12) * 5;
       const minuteAngle = targetMinute * 6; // 360 / 60
       const hourAngle = (targetHour % 12) * 30 + (targetMinute / 60) * 30; // 360 / 12 + partial hour
       const SZ = Math.max(150, Math.min(250, Math.floor(window.innerHeight*0.42), Math.floor(window.innerWidth*0.72)));
@@ -4491,7 +4507,7 @@
       minHand.style.transform = `rotate(${minuteAngle}deg)`;
       minHand.style.borderRadius = '3px 3px 0 0';
       clockContainer.appendChild(minHand);
-      if(currentLevel <= 3) {
+      if(cLvl <= 3) {
           for(let i=1; i<=12; i++) {
               const num = document.createElement('div');
               num.textContent = i;
@@ -4518,11 +4534,7 @@
       let choices = [correctTimeStr];
       while(choices.length < 4) {
           let rh = Math.floor(Math.random() * 12) + 1;
-          let rm = 0;
-          if(currentLevel === 2) rm = [0, 15, 30, 45][Math.floor(Math.random() * 4)];
-          if(currentLevel === 3) rm = Math.floor(Math.random() * 12) * 5;
-          if(currentLevel >= 4) rm = Math.floor(Math.random() * 60);
-          if(currentLevel >= 4) rm = Math.floor(Math.random() * 60);
+          let rm = cLvl === 2 ? [0, 15, 30, 45][Math.floor(Math.random() * 4)] : Math.floor(Math.random() * 12) * 5;
           let str = `${rh}:${rm.toString().padStart(2, '0')}`;
           if(!choices.includes(str)) choices.push(str);
       }
