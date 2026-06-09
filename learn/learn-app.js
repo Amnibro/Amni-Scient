@@ -13285,9 +13285,10 @@ function playAnimalSound(type) {
     const sizes=[{r:3,c:4,pairs:6},{r:4,c:4,pairs:8},{r:4,c:5,pairs:10},{r:5,c:4,pairs:10},{r:5,c:6,pairs:15}];
     const sizeIdx=Math.min(parseInt(sessionStorage.getItem('cp-size')||'0'),sizes.length-1);
     const sz=sizes[sizeIdx];cpTotal=sz.pairs;
+    const cpBestKey='cp-best-'+sz.r+'x'+sz.c;let cpBest=parseInt(localStorage.getItem(cpBestKey)||'0');
     const themePick=sessionStorage.getItem('cp-theme')||'random';
     const theme=themePick==='random'?themes[Math.floor(Math.random()*themes.length)]:(themes.find(t=>t.name===themePick)||themes[0]);
-    hud.innerHTML=`<span class="game-stat">\u23f1 <span class="game-stat-val" id="cp-time">0s</span></span><span class="game-stat">\ud83d\udd04 <span class="game-stat-val" id="cp-moves">0</span></span><span class="game-stat">\ud83d\udd25 <span class="game-stat-val" id="cp-combo">0</span></span><span class="game-stat">\ud83c\udfa8 ${theme.name}</span>`;
+    hud.innerHTML=`<span class="game-stat">\u23f1 <span class="game-stat-val" id="cp-time">0s</span></span><span class="game-stat">\ud83d\udd04 <span class="game-stat-val" id="cp-moves">0</span></span><span class="game-stat">\ud83d\udd25 <span class="game-stat-val" id="cp-combo">0</span></span><span class="game-stat">\u2b50 <span class="game-stat-val" id="cp-best">${cpBest?cpBest+'s':'\u2014'}</span></span><span class="game-stat">\ud83c\udfa8 ${theme.name}</span>`;
     document.querySelectorAll('#cp-size-picker,#cp-theme-picker').forEach(n=>n.remove());
     const thPicker=document.createElement('div');thPicker.id='cp-theme-picker';thPicker.style.cssText='display:flex;gap:4px;justify-content:center;margin:6px 0;flex-wrap:wrap;';
     [['random','\ud83c\udfb2 Random'],...themes.map(t=>[t.name,t.name])].forEach(([k,lbl])=>{const b=document.createElement('button');b.className='sdk-btn'+(k===themePick?' active':'');b.style.cssText='font-size:0.78rem;padding:5px 8px;';b.textContent=lbl;b.onclick=()=>{sessionStorage.setItem('cp-theme',k);initCardPairs();};thPicker.appendChild(b);});
@@ -13314,7 +13315,7 @@ function playAnimalSound(type) {
       const px = Math.floor(w * cardFontRatio);
       grid.querySelectorAll('.cp-card').forEach(c => { c.style.fontSize = px + 'px'; });
     }
-    deck.forEach((sym,idx)=>{const card=document.createElement('div');card.className='cp-card';card.dataset.val=sym;card.dataset.idx=idx;card.onclick=()=>{if(card.classList.contains('cp-flipped')||card.classList.contains('cp-matched')||cpFlipped.length>=2)return;card.classList.add('cp-flipped');card.textContent=sym;card.style.color='#333';cpFlipped.push(card);if(cpFlipped.length===2){cpMoves++;const me=$$('#cp-moves');if(me)me.textContent=cpMoves;const a=cpFlipped[0],b=cpFlipped[1];const isMatch=a.dataset.val===b.dataset.val&&a.dataset.idx!==b.dataset.idx;if(isMatch){a.classList.add('cp-matched');b.classList.add('cp-matched');cpMatched+=2;cpCombo++;const ce=$$('#cp-combo');if(ce)ce.textContent=cpCombo;addScore(cpCombo>=3?3:(cpCombo>=2?2:1));cpCombo>=3?showFeedback(`${cpCombo}x Combo! \ud83d\udd25`,'#e74c3c'):showFeedback('Match! \u2728','#1abc9c');cpFlipped=[];if(cpMatched>=sz.pairs*2){clearInterval(window._cpTimer);window._cpTimer=null;try{localStorage.setItem('cp-lifetime-wins',(parseInt(localStorage.getItem('cp-lifetime-wins')||'0')+1));}catch{}const bonus=cpMoves<=sz.pairs*2?'Perfect Memory! \ud83e\udde0':'Well Done! \ud83c\udf1f';showFeedback(`${bonus} ${cpTime}s`,'#2ecc71');addScore(Math.max(1,sz.pairs*2-cpMoves));if(sizeIdx<sizes.length-1)sessionStorage.setItem('cp-size',sizeIdx+1);setTimeout(initCardPairs,2200);}}else{setTimeout(()=>{cpCombo=0;resetStreak();const ce=$$('#cp-combo');if(ce)ce.textContent='0';a.classList.remove('cp-flipped');b.classList.remove('cp-flipped');a.textContent='';b.textContent='';a.style.color='';b.style.color='';cpFlipped=[];},500);}}};grid.appendChild(card);});
+    deck.forEach((sym,idx)=>{const card=document.createElement('div');card.className='cp-card';card.dataset.val=sym;card.dataset.idx=idx;card.onclick=()=>{if(card.classList.contains('cp-flipped')||card.classList.contains('cp-matched')||cpFlipped.length>=2)return;card.classList.add('cp-flipped');card.textContent=sym;card.style.color='#333';cpFlipped.push(card);if(cpFlipped.length===2){cpMoves++;const me=$$('#cp-moves');if(me)me.textContent=cpMoves;const a=cpFlipped[0],b=cpFlipped[1];const isMatch=a.dataset.val===b.dataset.val&&a.dataset.idx!==b.dataset.idx;if(isMatch){a.classList.add('cp-matched');b.classList.add('cp-matched');cpMatched+=2;cpCombo++;const ce=$$('#cp-combo');if(ce)ce.textContent=cpCombo;addScore(cpCombo>=3?3:(cpCombo>=2?2:1));cpCombo>=3?showFeedback(`${cpCombo}x Combo! \ud83d\udd25`,'#e74c3c'):showFeedback('Match! \u2728','#1abc9c');cpFlipped=[];if(cpMatched>=sz.pairs*2){clearInterval(window._cpTimer);window._cpTimer=null;try{localStorage.setItem('cp-lifetime-wins',(parseInt(localStorage.getItem('cp-lifetime-wins')||'0')+1));}catch{}const cpWasBest=!cpBest||cpTime<cpBest;if(cpWasBest){try{localStorage.setItem(cpBestKey,cpTime);}catch{}}const bonus=cpMoves<=sz.pairs*2?'Perfect Memory! \ud83e\udde0':'Well Done! \ud83c\udf1f';showFeedback(`${cpWasBest?'🏆 NEW BEST! ':''}${bonus} ${cpTime}s`,cpWasBest?'#f1c40f':'#2ecc71');addScore(Math.max(1,sz.pairs*2-cpMoves));if(sizeIdx<sizes.length-1)sessionStorage.setItem('cp-size',sizeIdx+1);setTimeout(initCardPairs,2200);}}else{setTimeout(()=>{cpCombo=0;resetStreak();const ce=$$('#cp-combo');if(ce)ce.textContent='0';a.classList.remove('cp-flipped');b.classList.remove('cp-flipped');a.textContent='';b.textContent='';a.style.color='';b.style.color='';cpFlipped=[];},500);}}};grid.appendChild(card);});
     // Initial size + resize watcher
     requestAnimationFrame(_cpSizeFonts);
     if (window._cpResize) window.removeEventListener('resize', window._cpResize);
@@ -13773,8 +13774,8 @@ function playAnimalSound(type) {
     function _diffDisplay(target, guess){let html='';for(let i=0;i<target.length;i++){const c=target[i];const g=guess[i]||'';html+=`<span class="${c===g?'digit-ok':'digit-bad'}">${c}</span>`;}return html;}
     function _gameOver(v){
       const reached=dg-1; // digits successfully completed
-      const wasBest=dg>best;
-      if(wasBest){best=dg;sessionStorage.setItem('nmm-best',best);}
+      const wasBest=reached>best;
+      if(wasBest){best=reached;sessionStorage.setItem(bestKey,best);}
       const t=_tier(reached);
       const sum=document.createElement('div');sum.className='nmm-summary';
       const dtCmp=nmmMode==='backward'?tgt.split('').reverse().join(''):tgt;
@@ -13805,7 +13806,7 @@ function playAnimalSound(type) {
           const compareTarget=nmmMode==='backward'?tgt.split('').reverse().join(''):tgt;
           if(v===compareTarget){
             history.push(dg);
-            if(dg>best){best=dg;sessionStorage.setItem(bestKey,best);$$('#nmm-best').textContent=best;}
+            if(dg>best){$$('#nmm-best').textContent=dg;}
             $$('#nmm-stk').textContent=history.length;
             const t=_tier(dg);
             if(dg===6||dg===8||dg===10||dg===12)spawnConfetti(window.innerWidth/2,window.innerHeight/3,dg>=10?80:50);
@@ -14392,9 +14393,9 @@ function playAnimalSound(type) {
     ct.parentElement.insertBefore(modeRow,ct);
     function _tier(n){if(n>=16)return{name:'ayumu',label:'Ayumu-class',color:'#f1c40f',msg:"Matching famed chimpanzee Ayumu's working memory!"};if(n>=12)return{name:'expert',label:'Expert',color:'#e74c3c',msg:'Far beyond typical adult range.'};if(n>=9)return{name:'aboveAvg',label:'Above Average',color:'#2ecc71',msg:'Strong spatial working memory.'};if(n>=6)return{name:'avg',label:'Average',color:'#1abc9c',msg:'Typical adult range (6-8).'};if(n>=4)return{name:'starter',label:'Starter',color:'#3498db',msg:'Building the skill \u2014 keep going!'};return{name:'basic',label:'Basic',color:'#7a8a9a',msg:'Just getting warmed up.'};}
     function _gameOver(score){
-      const wasBest=sz>best;
+      const wasBest=score>best;
       const wasBestStk=stk>bestStk;
-      if(wasBest){best=sz;sessionStorage.setItem('chm-best-'+chmReveal,best);}
+      if(wasBest){best=score;sessionStorage.setItem('chm-best-'+chmReveal,best);}
       if(wasBestStk){bestStk=stk;sessionStorage.setItem('chm-best-stk-'+chmReveal,bestStk);}
       const t=_tier(score);
       ct.innerHTML='';
@@ -14455,8 +14456,8 @@ function playAnimalSound(type) {
             nextExp++;
             if(nextExp>sz){
               stk++;
-              if(stk>bestStk){bestStk=stk;sessionStorage.setItem('chm-best-stk',bestStk);}
-              if(sz>best){best=sz;sessionStorage.setItem('chm-best',best);$$('#chm-best').textContent=best;}
+              if(stk>bestStk){bestStk=stk;sessionStorage.setItem('chm-best-stk-'+chmReveal,bestStk);}
+              if(sz>best){best=sz;sessionStorage.setItem('chm-best-'+chmReveal,best);$$('#chm-best').textContent=best;}
               sz++;
               $$('#chm-sz').textContent=sz;
               $$('#chm-stk').textContent=stk;
