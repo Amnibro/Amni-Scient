@@ -3735,9 +3735,10 @@
   }
   function initWhackMole(){
     lifeArea.innerHTML='';
-    lifeTitle.textContent='🔨 Whack-a-Mole!';
     const MOLE_EMOJIS=['🐹','🐰','🐭','🐿️'];
     const BOMB='💣';
+    const target=MOLE_EMOJIS[Math.floor(Math.random()*MOLE_EMOJIS.length)];
+    lifeTitle.textContent=`🔨 Whack only the ${target}!`;
     let mode=sessionStorage.getItem('wm-mode')||'normal';
     const CFG={easy:{revealMs:1300,gapMs:600,bombChance:0.05,time:30},normal:{revealMs:1000,gapMs:400,bombChance:0.10,time:30},hard:{revealMs:700,gapMs:300,bombChance:0.18,time:25}};
     const c=CFG[mode]||CFG.normal;
@@ -3747,7 +3748,7 @@
     if(window._wmInterval){clearInterval(window._wmInterval);window._wmInterval=null;}
     if(window._wmTick){clearInterval(window._wmTick);window._wmTick=null;}
     const hud=document.createElement('div');hud.className='game-hud';hud.style.marginBottom='6px';
-    hud.innerHTML=`<span class="game-stat">⏱ <span class="game-stat-val" id="wm-time">${c.time}</span>s</span><span class="game-stat">🎯 <span class="game-stat-val" id="wm-score">0</span></span><span class="game-stat">⭐ Best <span class="game-stat-val" id="wm-best">${best}</span></span>`;
+    hud.innerHTML=`<span class="game-stat">⏱ <span class="game-stat-val" id="wm-time">${c.time}</span>s</span><span class="game-stat">🎯 <span class="game-stat-val" style="font-size:1.2rem;">${target}</span></span><span class="game-stat">🔨 <span class="game-stat-val" id="wm-score">0</span></span><span class="game-stat">⭐ <span class="game-stat-val" id="wm-best">${best}</span></span>`;
     lifeArea.appendChild(hud);
     const modeRow=document.createElement('div');modeRow.style.cssText='display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:4px 0 10px;';
     [['easy','🐌 Easy'],['normal','⚡ Normal'],['hard','🔥 Hard']].forEach(([k,lbl])=>{const b=document.createElement('button');b.className='sdk-btn'+(k===mode?' active':'');b.style.cssText='font-size:0.82rem;padding:5px 10px;';b.textContent=lbl;b.onclick=()=>{sessionStorage.setItem('wm-mode',k);initWhackMole();};modeRow.appendChild(b);});
@@ -3769,7 +3770,8 @@
       const wasContent=h.dataset.content;
       h.dataset.content='';h.textContent='';
       if(wasContent===BOMB){score=Math.max(0,score-3);if(typeof showFeedback==='function')showFeedback('💥 Bomb! −3','#e74c3c');if(typeof resetStreak==='function')resetStreak();}
-      else{score++;if(typeof showFeedback==='function')showFeedback('+1 🔨','#2ecc71');}
+      else if(wasContent===target){score++;if(typeof showFeedback==='function')showFeedback('+1 🔨','#2ecc71');}
+      else{score=Math.max(0,score-1);if(typeof showFeedback==='function')showFeedback(`Not the ${wasContent}! −1`,'#e67e22');if(typeof resetStreak==='function')resetStreak();}
       const se=document.getElementById('wm-score');if(se)se.textContent=score;
     }
     function spawn(){
@@ -3778,7 +3780,7 @@
       if(!empties.length){setTimeout(spawn,c.gapMs);return;}
       const h=empties[Math.floor(Math.random()*empties.length)];
       const isBomb=Math.random()<c.bombChance;
-      const content=isBomb?BOMB:MOLE_EMOJIS[Math.floor(Math.random()*MOLE_EMOJIS.length)];
+      const content=isBomb?BOMB:(Math.random()<0.5?target:MOLE_EMOJIS.filter(e=>e!==target)[Math.floor(Math.random()*(MOLE_EMOJIS.length-1))]);
       h.dataset.content=content;h.textContent=content;
       setTimeout(()=>{if(h.dataset.content===content){h.dataset.content='';h.textContent='';}},c.revealMs);
       setTimeout(spawn,c.gapMs+Math.random()*200);
@@ -4000,7 +4002,7 @@
       }
       const pet=PETS[Math.floor(Math.random()*PETS.length)];
       curNeed=NEEDS[Math.floor(Math.random()*NEEDS.length)];
-      scene.innerHTML=`<div id="pc-pet" style="font-size:6rem;line-height:1;transition:transform 0.25s cubic-bezier(0.34,1.56,0.64,1);">${pet}</div><div style="background:#fff;border:3px solid #2c3e50;border-radius:18px;padding:10px 18px;font-family:Comic Neue,cursive;font-size:1.3rem;color:#2c3e50;position:relative;">💭 ${curNeed.msg} <span style="font-size:1.4rem;margin-left:6px;">${curNeed.emoji}</span></div>`;
+      scene.innerHTML=`<div id="pc-pet" style="font-size:6rem;line-height:1;transition:transform 0.25s cubic-bezier(0.34,1.56,0.64,1);">${pet}</div><div style="background:#fff;border:3px solid #2c3e50;border-radius:18px;padding:10px 18px;font-family:Comic Neue,cursive;font-size:1.3rem;color:#2c3e50;position:relative;">💭 ${curNeed.msg}</div>`;
       if(ttsAuto() && typeof speakSeq==='function')speakSeq([curNeed.msg]);
       const shuffled=[...ACTIONS].sort(()=>Math.random()-0.5);
       buttons.innerHTML='';
