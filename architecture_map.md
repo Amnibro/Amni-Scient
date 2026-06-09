@@ -57,6 +57,9 @@
 - **Reconsideration submission** — both calc and learn SEO landing pages now have substantive unique content; site ready for AdSense manual-action reconsideration request via Search Console.
 - **Backups** — `backups/v5.5.0_calc_seo/` (calc) and `backups/v5.5.0_learn_seo/` (learn).
 
+## v5.8.122 Amni-Learn per-level curation (`_glv` grade-band filter)
+- `learn/learn-app.js` (~line 103): added `_glv` map (general-pool game key → allowed level digits) + a filter pass for `currentLevel<=5` that hides any `.game-btn` whose key isn't allowed at the current grade band. Key = `data-game` + optional `:data-subgame`/`:data-subject` (e.g. `life:hanoi`, `quiz:history`, `circuitlab`). Levels 6/7/8 still swap to their own `.brain-cat`/`.destress-cat`/`.college-cat` sets and are untouched by the filter. The existing line-104 empty-category sweep collapses any band left with no visible buttons. Fixes the prior state where L1/L2/L3 were near-identical and L4(MIDDLE)/L5(STEM) were identical full-library dumps. Per-level menu probe: `learn/tests/layout/menuprobe2.js` (screenshots to `menus2/`).
+
 ## v5.4.0 Amni-Learn theme + UX + neutral content sweep
 - `learn/sw.js` cache bumped `amni-learn-v1` → `amni-learn-v2` so users on stale cached pre-e78ee19 HTML pick up the views-map fix (was the real cause of "storybooks / 2048 / cblast / solitaire / tdgame display no content").
 - `learn/index.html`: post-level-filter sweep hides any `.game-category` with no visible `.game-btn` children — kills the empty Life Skills band at PRE-K and is robust against future per-level filters.
