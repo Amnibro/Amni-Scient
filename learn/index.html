@@ -409,8 +409,8 @@
   .apple { transition: opacity 1s, transform 1s, filter 1s; font-size: 2.5rem; display: inline-block; }
   .apple.removed { opacity: 0; transform: translateY(-30px) scale(0.5); filter: grayscale(100%); }
   .match-grid { display: grid; gap: 15px; padding: 20px; max-width: min(95vw,950px); margin: 0 auto; }
-  .m-card { width: clamp(56px,20vw,100px); height: clamp(67px,24vw,120px); background: #9c88ff; border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: clamp(2rem,9vw,3.5rem); cursor: pointer; box-shadow: 0 6px 0 #7158e2; color: transparent; transition: 0.3s; user-select: none; }
-  @media (min-width: 600px) { .m-card { width: 140px; height: 160px; font-size: 5rem; } }
+  .m-card { width: 100%; max-width: 100px; min-width: 0; aspect-ratio: 5/6; margin: 0 auto; background: #9c88ff; border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: clamp(1.4rem,7vw,3.5rem); cursor: pointer; box-shadow: 0 6px 0 #7158e2; color: transparent; transition: 0.3s; user-select: none; }
+  @media (min-width: 600px) { .m-card { max-width: 140px; font-size: 5rem; } }
   .m-card.flipped { background: #fff; border: 3px solid #9c88ff; color: #333; box-shadow: 0 2px 0 #7158e2; transform: translateY(4px); }
   .m-card.matched { background: #2ecc71; border-color: #27ae60; color: #fff; box-shadow: 0 2px 0 #27ae60; transform: translateY(4px) scale(0.95); opacity: 0.8; }
   .type-container { display: flex; justify-content: center; gap: 5px; margin-bottom: 30px; flex-wrap: wrap; }

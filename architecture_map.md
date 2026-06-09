@@ -57,6 +57,9 @@
 - **Reconsideration submission** — both calc and learn SEO landing pages now have substantive unique content; site ready for AdSense manual-action reconsideration request via Search Console.
 - **Backups** — `backups/v5.5.0_calc_seo/` (calc) and `backups/v5.5.0_learn_seo/` (learn).
 
+## v5.8.124 Amni-Learn higher-level layout verification
+- Layout harness (`learn/tests/layout/harness.js`) now takes a `LEVEL` env var (was hardcoded `?level=1`) so games that scale their grid by `currentLevel` (Matching, Math, life chores) can be stress-tested at their biggest board. Found + fixed Matching portrait overflow at L3: `.m-card` switched from fixed `width:clamp()` to `width:100%;max-width:100px;aspect-ratio:5/6` so it fills its `1fr` grid track at any column count. Theme sweep harness: `learn/tests/layout/themesweep.js` (20 themes, accent/border/contrast checks).
+
 ## v5.8.122 Amni-Learn per-level curation (`_glv` grade-band filter)
 - `learn/learn-app.js` (~line 103): added `_glv` map (general-pool game key → allowed level digits) + a filter pass for `currentLevel<=5` that hides any `.game-btn` whose key isn't allowed at the current grade band. Key = `data-game` + optional `:data-subgame`/`:data-subject` (e.g. `life:hanoi`, `quiz:history`, `circuitlab`). Levels 6/7/8 still swap to their own `.brain-cat`/`.destress-cat`/`.college-cat` sets and are untouched by the filter. The existing line-104 empty-category sweep collapses any band left with no visible buttons. Fixes the prior state where L1/L2/L3 were near-identical and L4(MIDDLE)/L5(STEM) were identical full-library dumps. Per-level menu probe: `learn/tests/layout/menuprobe2.js` (screenshots to `menus2/`).
 
