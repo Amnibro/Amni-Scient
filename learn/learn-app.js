@@ -1177,7 +1177,7 @@
     for(let i=0; i<maskData.length; i+=4) {
       if(maskData[i] > 200 && maskData[i] < 255) { targetPixels++; if(currentData[i]<100||currentData[i+1]<100||currentData[i+2]<100) filledPixels++; }
     }
-    if((filledPixels/Math.max(1,targetPixels)) > 0.25) {
+    if((filledPixels/Math.max(1,targetPixels)) > (currentLevel===1?0.32:0.45)) {
       const tracedKey='trace-count-L'+currentLevel;
       const cnt=parseInt(sessionStorage.getItem(tracedKey)||'0')+1;
       sessionStorage.setItem(tracedKey,cnt);
@@ -3421,7 +3421,7 @@
       const c=idx<deck.length?deck[idx]:null;if(!c)return;
       moves++;
       const f=found[i];
-      if(c.val===f.target&&f.filled<f.cap){f.filled++;idx++;if(found.every(x=>x.filled>=x.cap))won=true;}else{idx++;}
+      if(c.val===f.target&&f.filled<f.cap){f.filled++;idx++;if(found.every(x=>x.filled>=x.cap))won=true;if(typeof showFeedback==='function')showFeedback('✓ '+c.expr+' = '+f.target,'#2ecc71');}else{idx++;if(typeof showFeedback==='function')showFeedback(f.filled>=f.cap?('🎯 '+f.target+' already full — discarded'):('✗ '+c.expr+' ≠ '+f.target+' — discarded'),'#e74c3c');if(typeof resetStreak==='function')resetStreak();}
       if(!won&&idx>=deck.length){if(found.some(x=>x.filled<x.cap))lost=true;}
       render();
     }
@@ -3703,18 +3703,23 @@
   function initCodeLock(){
     lifeArea.innerHTML='';
     lifeTitle.textContent='🔐 Code Lock';
-    const COLORS=['🔴','🟠','🟡','🟢','🔵','🟣'];
-    const CODE_LEN=4;
-    const MAX_GUESSES=10;
+    const DIFFS={easy:{colors:5,len:4,max:10,label:'Easy'},medium:{colors:6,len:4,max:9,label:'Medium'},hard:{colors:7,len:5,max:10,label:'Hard'}};
+    let diff=sessionStorage.getItem('cl-difficulty')||'easy';if(!DIFFS[diff])diff='easy';const dc=DIFFS[diff];
+    const COLORS=['🔴','🟠','🟡','🟢','🔵','🟣','🟤'].slice(0,dc.colors);
+    const CODE_LEN=dc.len;
+    const MAX_GUESSES=dc.max;
     const bestKey='cl-best';
     let best=parseInt(sessionStorage.getItem(bestKey)||'99');
     let code=[];for(let i=0;i<CODE_LEN;i++)code.push(COLORS[Math.floor(Math.random()*COLORS.length)]);
-    let guesses=[],current=[null,null,null,null],won=false,lost=false;
+    let guesses=[],current=new Array(CODE_LEN).fill(null),won=false,lost=false;
     const hud=document.createElement('div');hud.className='game-hud';hud.style.marginBottom='6px';
     hud.innerHTML=`<span class="game-stat">🎯 Guess <span class="game-stat-val" id="cl-num">1</span>/${MAX_GUESSES}</span><span class="game-stat">⭐ Best <span class="game-stat-val">${best<99?best+' guesses':'—'}</span></span>`;
     lifeArea.appendChild(hud);
+    const diffRow=document.createElement('div');diffRow.style.cssText='display:flex;gap:6px;justify-content:center;margin:4px 0 8px;flex-wrap:wrap;';
+    Object.keys(DIFFS).forEach(k=>{const b=document.createElement('button');b.className='sdk-btn'+(k===diff?' active':'');b.style.cssText='font-size:0.85rem;padding:5px 14px;';b.textContent=DIFFS[k].label;b.onclick=()=>{sessionStorage.setItem('cl-difficulty',k);initCodeLock();};diffRow.appendChild(b);});
+    lifeArea.appendChild(diffRow);
     const info=document.createElement('div');info.style.cssText='text-align:center;font-family:Comic Neue,cursive;color:#2c3e50;font-size:0.95rem;margin:6px 0 10px;line-height:1.4;max-width:460px;margin-left:auto;margin-right:auto;';
-    info.innerHTML='Crack the 4-color code. <b style="background:#2c3e50;color:#fff;padding:1px 6px;border-radius:8px;">⚫ black</b> = right color, right spot. <b style="background:#fff;color:#2c3e50;padding:1px 6px;border-radius:8px;border:1px solid #2c3e50;">⚪ white</b> = right color, wrong spot.';
+    info.innerHTML=`Crack the ${CODE_LEN}-color code (${COLORS.length} colors). <b style="background:#2c3e50;color:#fff;padding:1px 6px;border-radius:8px;">⚫ black</b> = right color, right spot. <b style="background:#fff;color:#2c3e50;padding:1px 6px;border-radius:8px;border:1px solid #2c3e50;">⚪ white</b> = right color, wrong spot.`;
     lifeArea.appendChild(info);
     const history=document.createElement('div');history.id='cl-hist';history.style.cssText='display:flex;flex-direction:column;gap:6px;max-width:420px;margin:8px auto;';
     lifeArea.appendChild(history);
@@ -3766,7 +3771,7 @@
       for(let i=0;i<white;i++){const p=document.createElement('div');p.style.cssText='width:14px;height:14px;border-radius:50%;background:#fff;border:2px solid #2c3e50;box-sizing:border-box;';feedback.appendChild(p);}
       row.appendChild(feedback);
       history.appendChild(row);
-      current=[null,null,null,null];renderGuessRow();
+      current=new Array(CODE_LEN).fill(null);renderGuessRow();
       const ne=document.getElementById('cl-num');if(ne)ne.textContent=guesses.length+1;
       if(black===CODE_LEN){
         won=true;
@@ -3792,7 +3797,7 @@
       updateSubmitBtn();
     }
     submitBtn=document.createElement('button');submitBtn.textContent='🔍 Submit Guess';submitBtn.style.cssText='font-family:Comic Neue,cursive;font-size:1.15rem;padding:11px 26px;border-radius:12px;border:3px solid #27ae60;background:#2ecc71;color:#fff;font-weight:bold;cursor:pointer;box-shadow:0 4px 0 #27ae60;';submitBtn.onclick=submitGuess;
-    const clearBtn=document.createElement('button');clearBtn.textContent='✖ Clear';clearBtn.style.cssText='font-family:Comic Neue,cursive;font-size:1.05rem;padding:11px 20px;border-radius:12px;border:3px solid #e74c3c;background:#fff;color:#e74c3c;cursor:pointer;';clearBtn.onclick=()=>{if(won||lost)return;current=[null,null,null,null];renderGuessRow();updateSubmitBtn();};
+    const clearBtn=document.createElement('button');clearBtn.textContent='✖ Clear';clearBtn.style.cssText='font-family:Comic Neue,cursive;font-size:1.05rem;padding:11px 20px;border-radius:12px;border:3px solid #e74c3c;background:#fff;color:#e74c3c;cursor:pointer;';clearBtn.onclick=()=>{if(won||lost)return;current=new Array(CODE_LEN).fill(null);renderGuessRow();updateSubmitBtn();};
     actions.appendChild(clearBtn);actions.appendChild(submitBtn);
     renderGuessRow();renderPalette();updateSubmitBtn();
   }
