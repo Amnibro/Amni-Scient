@@ -3709,7 +3709,7 @@
     const CODE_LEN=dc.len;
     const MAX_GUESSES=dc.max;
     const bestKey='cl-best';
-    let best=parseInt(sessionStorage.getItem(bestKey)||'99');
+    let best=parseInt(localStorage.getItem(bestKey)||sessionStorage.getItem(bestKey)||'99');
     let code=[];for(let i=0;i<CODE_LEN;i++)code.push(COLORS[Math.floor(Math.random()*COLORS.length)]);
     let guesses=[],current=new Array(CODE_LEN).fill(null),won=false,lost=false;
     const hud=document.createElement('div');hud.className='game-hud';hud.style.marginBottom='6px';
@@ -3776,7 +3776,7 @@
       if(black===CODE_LEN){
         won=true;
         const wasBest=guesses.length<best;
-        if(wasBest){sessionStorage.setItem(bestKey,guesses.length);}
+        if(wasBest){localStorage.setItem(bestKey,guesses.length);}
         const banner=document.createElement('div');banner.style.cssText='text-align:center;padding:14px;background:#2ecc71;color:#fff;border-radius:10px;margin:10px auto;font-family:Comic Neue,cursive;font-size:1.3rem;max-width:420px;';
         banner.innerHTML=`🎉 Cracked in ${guesses.length} guess${guesses.length===1?'':'es'}!${wasBest?' 🏆 NEW BEST!':''}`;
         lifeArea.appendChild(banner);
@@ -13761,7 +13761,7 @@ function playAnimalSound(type) {
     const nmmMode=sessionStorage.getItem('nmm-mode')||'forward';
     const bestKey='nmm-best-'+nmmMode;
     const _lvl=Math.min(currentLevel||3,5);
-    let dg=(_lvl<=2?3:_lvl>=4?5:4),best=parseInt(sessionStorage.getItem(bestKey)||sessionStorage.getItem('nmm-best')||'0'),tgt='',history=[];
+    let dg=(_lvl<=2?3:_lvl>=4?5:4),best=parseInt(localStorage.getItem(bestKey)||sessionStorage.getItem(bestKey)||sessionStorage.getItem('nmm-best')||'0'),tgt='',history=[];
     if(window._nmmTimeout){clearTimeout(window._nmmTimeout);window._nmmTimeout=null;}
     if(window._nmmCount){clearInterval(window._nmmCount);window._nmmCount=null;}
     document.querySelectorAll('.nmm-summary,.nmm-mode-row').forEach(n=>n.remove());
@@ -13775,7 +13775,7 @@ function playAnimalSound(type) {
     function _gameOver(v){
       const reached=dg-1; // digits successfully completed
       const wasBest=reached>best;
-      if(wasBest){best=reached;sessionStorage.setItem(bestKey,best);}
+      if(wasBest){best=reached;localStorage.setItem(bestKey,best);}
       const t=_tier(reached);
       const sum=document.createElement('div');sum.className='nmm-summary';
       const dtCmp=nmmMode==='backward'?tgt.split('').reverse().join(''):tgt;
@@ -14384,7 +14384,7 @@ function playAnimalSound(type) {
     const chmReveal=sessionStorage.getItem('chm-reveal')||'always';
     const revealMs={always:0,'2000':2000,'1000':1000,'500':500}[chmReveal]||0;
     const _lvl=Math.min(currentLevel||3,5);
-    let sz=(_lvl<=2?4:_lvl>=4?6:5),best=parseInt(sessionStorage.getItem('chm-best-'+chmReveal)||sessionStorage.getItem('chm-best')||'4'),stk=0,bestStk=parseInt(sessionStorage.getItem('chm-best-stk-'+chmReveal)||sessionStorage.getItem('chm-best-stk')||'0');
+    let sz=(_lvl<=2?4:_lvl>=4?6:5),best=parseInt(localStorage.getItem('chm-best-'+chmReveal)||sessionStorage.getItem('chm-best-'+chmReveal)||sessionStorage.getItem('chm-best')||'4'),stk=0,bestStk=parseInt(localStorage.getItem('chm-best-stk-'+chmReveal)||sessionStorage.getItem('chm-best-stk-'+chmReveal)||sessionStorage.getItem('chm-best-stk')||'0');
     document.querySelectorAll('.chm-summary,.chm-mode-row').forEach(n=>n.remove());
     if(window._chmRevealTimer){clearTimeout(window._chmRevealTimer);window._chmRevealTimer=null;}
     hud.innerHTML=`<span class="game-stat">\ud83d\udc35 Numbers: <span class="game-stat-val" id="chm-sz">${sz}</span></span><span class="game-stat">\ud83d\udd25 Streak <span class="game-stat-val" id="chm-stk">0</span></span><span class="game-stat">\ud83c\udfc6 Best: <span class="game-stat-val" id="chm-best">${best}</span></span><span class="game-stat">\u23f1 ${chmReveal==='always'?'On tap':chmReveal+'ms'}</span><span class="game-stat">📊 Lvl ${_lvl}</span>`;
@@ -14395,8 +14395,8 @@ function playAnimalSound(type) {
     function _gameOver(score){
       const wasBest=score>best;
       const wasBestStk=stk>bestStk;
-      if(wasBest){best=score;sessionStorage.setItem('chm-best-'+chmReveal,best);}
-      if(wasBestStk){bestStk=stk;sessionStorage.setItem('chm-best-stk-'+chmReveal,bestStk);}
+      if(wasBest){best=score;localStorage.setItem('chm-best-'+chmReveal,best);}
+      if(wasBestStk){bestStk=stk;localStorage.setItem('chm-best-stk-'+chmReveal,bestStk);}
       const t=_tier(score);
       ct.innerHTML='';
       const sum=document.createElement('div');sum.className='chm-summary';
@@ -14456,8 +14456,8 @@ function playAnimalSound(type) {
             nextExp++;
             if(nextExp>sz){
               stk++;
-              if(stk>bestStk){bestStk=stk;sessionStorage.setItem('chm-best-stk-'+chmReveal,bestStk);}
-              if(sz>best){best=sz;sessionStorage.setItem('chm-best-'+chmReveal,best);$$('#chm-best').textContent=best;}
+              if(stk>bestStk){bestStk=stk;localStorage.setItem('chm-best-stk-'+chmReveal,bestStk);}
+              if(sz>best){best=sz;localStorage.setItem('chm-best-'+chmReveal,best);$$('#chm-best').textContent=best;}
               sz++;
               $$('#chm-sz').textContent=sz;
               $$('#chm-stk').textContent=stk;
