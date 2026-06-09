@@ -17800,13 +17800,22 @@ function playAnimalSound(type) {
     function pos(e){const b=cv.getBoundingClientRect();return{x:(e.clientX??e.touches?.[0]?.clientX??0)-b.left,y:(e.clientY??e.touches?.[0]?.clientY??0)-b.top};}
     function hitComp(x,y){return comps.find(c=>Math.hypot(c.x-x,c.y-y)<R);}
     function neighbors(comp){return wires.filter(w=>w.a===comp||w.b===comp).map(w=>w.a===comp?w.b:w.a);}
-    function traceCircuit(){
-      const bats=comps.filter(c=>c.type==='battery');if(!bats.length)return false;
-      const visited=new Set();
-      function dfs(node){if(visited.has(node))return node===bats[0];visited.add(node);
-        if(node.type==='switch'&&!node.on)return false;
-        return neighbors(node).some(n=>dfs(n));}
-      return dfs(bats[0]);
+    function energizedSet(){
+      const en=new Set();const bats=comps.filter(c=>c.type==='battery');if(!bats.length)return en;
+      const active=comps.filter(c=>!(c.type==='switch'&&!c.on));const ok=new Set(active);
+      const adj=new Map();active.forEach(c=>adj.set(c,[]));
+      wires.forEach(w=>{if(ok.has(w.a)&&ok.has(w.b)){adj.get(w.a).push(w.b);adj.get(w.b).push(w.a);}});
+      const disc=new Map(),low=new Map(),est=[];let timer=0;
+      function dfs(u,par){disc.set(u,++timer);low.set(u,timer);let skip=par;
+        for(const v of adj.get(u)){
+          if(v===skip){skip=null;continue;}
+          if(!disc.has(v)){est.push([u,v]);dfs(v,u);low.set(u,Math.min(low.get(u),low.get(v)));
+            if(low.get(v)>=disc.get(u)){const vs=new Set();let ec=0,e;do{e=est.pop();vs.add(e[0]);vs.add(e[1]);ec++;}while(e[0]!==u||e[1]!==v);if(ec>=2&&[...vs].some(n=>n.type==='battery'))vs.forEach(n=>en.add(n));}
+          }else if(disc.get(v)<disc.get(u)){est.push([u,v]);low.set(u,Math.min(low.get(u),disc.get(v)));}
+        }
+      }
+      active.forEach(c=>{if(!disc.has(c))dfs(c,null);});
+      return en;
     }
     cv.addEventListener('mousedown',onDown);cv.addEventListener('mousemove',onMove);cv.addEventListener('mouseup',onUp);
     cv.addEventListener('touchstart',e=>{e.preventDefault();onDown(e);},{passive:false});
@@ -17851,18 +17860,19 @@ function playAnimalSound(type) {
     });
     function testCircuit(){
       comps.forEach(c=>{c.lit=false;});
-      const closed=traceCircuit();
+      const en=energizedSet();
+      const closed=en.size>0;
       if(closed){
-        comps.filter(c=>c.type==='bulb'||c.type==='led'||c.type==='diode'||c.type==='buzzer'||c.type==='motor').forEach(c=>{c.lit=true;});
-        const r=comps.filter(c=>c.type==='resistor').length;
+        comps.filter(c=>en.has(c)&&(c.type==='bulb'||c.type==='led'||c.type==='diode'||c.type==='buzzer'||c.type==='motor')).forEach(c=>{c.lit=true;});
+        const r=comps.filter(c=>c.type==='resistor'&&en.has(c)).length;
         // Total resistance = base resistor count × 100Ω, plus diode forward drop
         // (~50Ω equiv), plus motor coil (~150Ω), minus capacitor short-time bypass.
-        const diodes=comps.filter(c=>c.type==='diode').length;
-        const motors=comps.filter(c=>c.type==='motor').length;
-        const caps=comps.filter(c=>c.type==='capacitor').length;
-        const buzzers=comps.filter(c=>c.type==='buzzer').length;
-        const inductors=comps.filter(c=>c.type==='inductor').length;
-        const grounds=comps.filter(c=>c.type==='ground').length;
+        const diodes=comps.filter(c=>c.type==='diode'&&en.has(c)).length;
+        const motors=comps.filter(c=>c.type==='motor'&&en.has(c)).length;
+        const caps=comps.filter(c=>c.type==='capacitor'&&en.has(c)).length;
+        const buzzers=comps.filter(c=>c.type==='buzzer'&&en.has(c)).length;
+        const inductors=comps.filter(c=>c.type==='inductor'&&en.has(c)).length;
+        const grounds=comps.filter(c=>c.type==='ground'&&en.has(c)).length;
         const totalR=Math.max(r,1)*100 + diodes*50 + motors*150 + inductors*30 - caps*20;
         const v=12,current=(v/Math.max(totalR,10)).toFixed(3);
         let extras='';
