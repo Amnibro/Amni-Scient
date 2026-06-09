@@ -1738,6 +1738,25 @@
       "'Later, when the wounded man ran to us, the most important time was when you attended to him; the most important man was he; and the most important affair was the care you bestowed on him. Remember then: there is only one time that is important — Now! It is the most important time because it is the only time when we have any power. The most necessary man is he with whom you are, for no one knows whether he will ever have dealings with anyone else. And the most important affair is to do that man good, because for that purpose alone was man sent into this life.'"
     ]}
   ];
+  const STORY_QUIZZES = {
+    peter_rabbit:[{q:"Where was Peter told NOT to go?",a:"Mr. McGregor's garden",wrong:["The river","Grandma's house","School"]},{q:"What did Peter lose while running away?",a:"His jacket and shoes",wrong:["His basket","His hat","His umbrella"]}],
+    three_pigs:[{q:"Which house could the wolf NOT blow down?",a:"The brick house",wrong:["The straw house","The stick house","The paper house"]},{q:"How did the wolf try to knock the houses down?",a:"By huffing and puffing",wrong:["By kicking them","By digging","By knocking politely"]}],
+    goldilocks:[{q:"Whose porridge was 'just right'?",a:"The baby bear's",wrong:["The papa bear's","The mama bear's","Goldilocks' own"]},{q:"What did Goldilocks break?",a:"The baby bear's chair",wrong:["A window","The front door","A bowl"]}],
+    tortoise_hare:[{q:"Who won the race?",a:"The tortoise",wrong:["The hare","They tied","The fox"]},{q:"Why did the hare lose?",a:"He stopped to nap, sure he'd win",wrong:["He got lost","He hurt his foot","He ran the wrong way"]}],
+    lion_mouse:[{q:"How did the mouse save the lion?",a:"It chewed through the net",wrong:["It roared loudly","It brought food","It called a hunter"]},{q:"What is the lesson?",a:"Even the small can help the mighty",wrong:["Lions are scary","Mice are fast","Never trust a lion"]}],
+    boy_wolf:[{q:"Why didn't the villagers come the last time?",a:"He had lied about the wolf before",wrong:["They were asleep","It was raining","They didn't hear"]},{q:"What is the lesson?",a:"No one believes a liar, even when they tell the truth",wrong:["Wolves are dangerous","Always run fast","Sheep are silly"]}],
+    mother_goose:[{q:"Mother Goose is famous for what?",a:"Nursery rhymes",wrong:["Dragon tales","Recipes","Science facts"]},{q:"'Humpty Dumpty sat on a...'",a:"wall",wrong:["chair","hill","horse"]}],
+    ugly_duckling:[{q:"What did the 'ugly duckling' grow up to be?",a:"A beautiful swan",wrong:["A big duck","An eagle","A goose"]},{q:"Why were the others mean to him?",a:"He looked different from them",wrong:["He was loud","He ate too much","He couldn't swim"]}],
+    little_red_hen:[{q:"Who helped the hen plant the wheat?",a:"No one",wrong:["The cat","The dog","All her friends"]},{q:"Who got to eat the fresh bread?",a:"Only the hen (and her chicks)",wrong:["Everyone","The lazy cat","The duck"]}],
+    ant_grasshopper:[{q:"What did the ant do all summer?",a:"Worked and stored food",wrong:["Played music","Slept all day","Traveled far"]},{q:"Why was the grasshopper hungry in winter?",a:"He played instead of storing food",wrong:["Ants stole his food","He lost it","It was too cold to look"]}],
+    town_country_mouse:[{q:"Why did the country mouse leave the town?",a:"It was too dangerous and scary",wrong:["It was boring","There was no food","It was too cold"]},{q:"What did the country mouse prefer?",a:"A simple, safe life",wrong:["Fancy food","The big city","Lots of friends"]}],
+    princess_pea:[{q:"How did they test the real princess?",a:"A pea under many mattresses",wrong:["A hard riddle","A running race","A crown that fit"]},{q:"How did the princess sleep that night?",a:"Badly — she felt the pea",wrong:["Very well","Not at all","On the floor"]}],
+    emperors_clothes:[{q:"What were the emperor's 'magic' clothes really?",a:"Nothing at all",wrong:["Robes of gold","Invisible armor","A paper suit"]},{q:"Who finally told the truth out loud?",a:"A little child",wrong:["The emperor","The weavers","A knight"]}],
+    cinderella:[{q:"What did Cinderella leave behind at the ball?",a:"A glass slipper",wrong:["A glove","A gold ring","Her cloak"]},{q:"Who helped Cinderella get to the ball?",a:"Her fairy godmother",wrong:["The prince","Her stepsisters","A talking cat"]}],
+    gift_magi:[{q:"What did Della sell to buy Jim's gift?",a:"Her long, beautiful hair",wrong:["Her ring","Her winter coat","Her watch"]},{q:"What had Jim sold to buy Della's combs?",a:"His treasured watch",wrong:["His coat","His books","His shoes"]}],
+    last_leaf:[{q:"What did Johnsy believe would happen when the last leaf fell?",a:"She would die",wrong:["It would snow","She'd get well","Spring would come"]},{q:"What was the last leaf really?",a:"A leaf painted on the wall by Behrman",wrong:["A real leaf","Made of paper","Only a dream"]}],
+    three_questions:[{q:"What is the most important TIME?",a:"Now — the present moment",wrong:["Tomorrow","The past","Midnight"]},{q:"Who is the most important PERSON?",a:"The one you are with right now",wrong:["The king","The hermit","A stranger far away"]}]
+  };
   const _storyState = { book: null, pageIdx: 0, utterance: null, words: [], autoplay: false };
   function speakWord(text, near){
     if (!('speechSynthesis' in window)) return;
@@ -1798,6 +1817,9 @@
     if (!book) return;
     const text = book.pages[_storyState.pageIdx] || '';
     const pageEl = document.getElementById('story-page');
+    pageEl.style.display=''; const _sq=document.getElementById('story-quiz'); if(_sq)_sq.style.display='none';
+    const _sc=document.querySelector('.story-controls'); if(_sc)_sc.style.display='flex';
+    const _sp=document.getElementById('story-progress'); if(_sp)_sp.style.display='';
     // Tokenize into words (preserving punctuation as part of the word)
     _storyState.words = [];
     let pos = 0;
@@ -1822,6 +1844,47 @@
     document.getElementById('story-progress').textContent = `Page ${_storyState.pageIdx + 1} of ${book.pages.length}`;
     document.getElementById('story-prev').disabled = _storyState.pageIdx === 0;
     document.getElementById('story-next').disabled = _storyState.pageIdx === book.pages.length - 1;
+    if(_storyState.pageIdx === book.pages.length - 1 && STORY_QUIZZES[book.id]){ const cb=document.createElement('button'); cb.className='t-btn t-next'; cb.style.cssText='display:block;margin:18px auto 0;background:#9b59b6;color:#fff;'; cb.textContent='🧠 Quick Comprehension Check!'; cb.onclick=()=>showStoryComprehension(book); pageEl.appendChild(cb); }
+  }
+  function showStoryComprehension(book) {
+    stopReading();
+    const qs = STORY_QUIZZES[book.id]; if(!qs || !qs.length) return;
+    const pg=document.getElementById('story-page'); const sq=document.getElementById('story-quiz');
+    pg.style.display='none'; const sc=document.querySelector('.story-controls'); if(sc)sc.style.display='none'; const sp=document.getElementById('story-progress'); if(sp)sp.style.display='none';
+    sq.style.display='block';
+    let idx=0, score=0;
+    function render(){
+      sq.innerHTML='';
+      if(idx>=qs.length){
+        const all=score===qs.length;
+        const hd=document.createElement('div'); hd.style.cssText='text-align:center;'; hd.innerHTML=`<div style="font-size:2.4rem;margin-bottom:6px;">${all?'🌟':'📖'}</div><div style="font-size:1.4rem;font-weight:bold;">You understood ${score}/${qs.length}!</div>`; sq.appendChild(hd);
+        if(typeof addScore==='function') addScore(score+(all?1:0));
+        if(all && typeof spawnConfetti==='function') spawnConfetti(window.innerWidth/2, window.innerHeight/3, 90);
+        if(typeof showFeedback==='function') showFeedback(all?'🌟 You really understood it!':`Good reading! ${score}/${qs.length}`, all?'#f1c40f':'#3498db');
+        const row=document.createElement('div'); row.style.cssText='display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:18px;';
+        const again=document.createElement('button'); again.className='t-btn t-next'; again.textContent='↻ Read Again'; again.onclick=()=>openStorybook(book);
+        const lib=document.createElement('button'); lib.className='t-btn'; lib.style.cssText='background:#34495e;color:#fff;'; lib.textContent='📚 Library'; lib.onclick=()=>initStorybook();
+        row.appendChild(again); row.appendChild(lib); sq.appendChild(row);
+        return;
+      }
+      const q=qs[idx];
+      const head=document.createElement('div'); head.style.cssText='text-align:center;color:#bb8fce;font-weight:bold;margin-bottom:6px;'; head.textContent=`Quick Check — ${idx+1}/${qs.length}`; sq.appendChild(head);
+      const pr=document.createElement('div'); pr.style.cssText='font-size:1.3rem;font-weight:bold;text-align:center;margin:8px 0 14px;'; pr.textContent=q.q; sq.appendChild(pr);
+      if(currentLevel===1 && typeof ttsAuto==='function' && ttsAuto() && typeof speakSeq==='function') speakSeq([q.q,q.a,...q.wrong]);
+      const opts=[q.a,...q.wrong].sort(()=>Math.random()-0.5);
+      let wrongPicked=false, answered=false;
+      opts.forEach(o=>{
+        const b=document.createElement('button'); b.className='t-btn'; b.style.cssText='display:block;width:100%;max-width:480px;margin:8px auto;text-align:left;background:#2c3e50;color:#fff;'; b.textContent=o;
+        b.onclick=()=>{
+          if(answered) return;
+          if(o===q.a){ answered=true; b.style.background='#2ecc71'; if(!wrongPicked) score++; if(typeof showFeedback==='function') showFeedback('Yes! 📖','#2ecc71'); setTimeout(()=>{ idx++; render(); }, 1100); }
+          else{ wrongPicked=true; b.style.background='#e74c3c'; b.style.pointerEvents='none'; if(typeof resetStreak==='function') resetStreak(); }
+        };
+        if(typeof _kbd==='function') _kbd(b,o);
+        sq.appendChild(b);
+      });
+    }
+    render();
   }
   function navigatePage(delta) {
     stopReading();
