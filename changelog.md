@@ -1,5 +1,10 @@
 # Changelog 
 
+## [5.19.7] - 2026-06-10 - Calc: NEC ampacity chart un-scrambled; combustion/electrical/motors verified exact
+- The ampacity chart plotted conductor sizes in Object.keys() order - JS sorts integer-like keys numerically first ('1'...'1000') and appends '1/0'-'4/0' last - so the curve zigzagged (AWG 1 down to 14, jump to 250-1000 kcmil, back down to 1/0-4/0) under a "(smaller -> larger)" axis label. Explicit size order 14->1->1/0->4/0->250->1000 kcmil; curves now monotonic for all three temperature columns.
+- Hand-verified EXACT: LHV/HHV (43.869 = 47.3 - 2.444*9*0.156), transformer card (FLA 90.2/208.2 A, turns 2.31:1, SCC 3621 A = FLA/Z_pu, I2t 1.31e6), AC power triangle numbers + phasor (1955 W / 1211.6 VAR / 31.8 deg lagging), NEC voltage drop (21.49 V = 8.95% on AWG14 x 100 ft @ 35 A), NEMA frame lookup (10 HP 1800 ODP -> 215T per MG-1).
+- Rig: dump_view_text.mjs now clicks each card's calc button and dumps live input values - hand-calc verification is one command per view.
+
 ## [5.19.6] - 2026-06-10 - Calc: duct velocity was 60x low; PV/cycles cards hand-verified exact
 - HVAC round-duct card: velocity formula had a stray /60 - Q*144/(pi*D^2/4) is already ft/min - so 400 CFM through a 10.27" duct displayed 11.6 fpm instead of 695 fpm. Fixed and verified live; D_eq itself reproduces the ASHRAE friction relation exactly. Note now carries the 1500-1800 fpm supply-main noise guideline.
 - Hand-verified EXACT: ASME 2:1 ellipsoidal head t=PD/(2SE-0.2P)=6.258mm (+3 CA), UG-37 nozzle reinforcement (A_req 528 = 88x6, available 532 -> no pad), lifting lug stresses (bearing 24.5 / tear-out 12.3 / net tensile 12.3 MPa vs 120 allow), Carnot COP pair (6.575 / 7.575).

@@ -1012,7 +1012,7 @@ function injectNECChart(){
     plotDiv=document.createElement('div');plotDiv.id='p-nec-amp';plotDiv.style.cssText='width:100%;height:340px';
     ampCard.appendChild(plotDiv);
   }
-  const awgs=Object.keys(NEC_AMPACITY);
+  const awgs=['14','12','10','8','6','4','3','2','1','1/0','2/0','3/0','4/0','250','300','350','400','500','600','750','1000'];
   const xs=awgs.map((_,i)=>i);
   const t=pTheme();
   plot('p-nec-amp',[
