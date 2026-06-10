@@ -1,5 +1,11 @@
 # Changelog 
 
+## [5.22.0] - 2026-06-10 - Construct: address -> satellite -> trace -> PERMIT-READY SITE PLAN; patio stone surfaces
+- Both builders' trace tab now starts from an ADDRESS: Nominatim geocoding + Esri World Imagery satellite tiles render on the trace canvas with AUTOMATIC scale (web-mercator meters-per-pixel - no calibration clicks). Drag to pan, +/- zoom, then trace the build right on your own yard.
+- Tracing from map or photo now generates a SITE / TOP-DOWN PLAN sheet in 2D Plans built for permit review: the imagery snapshot, the proposed footprint with per-edge dimensions, 10-ft scale bar, north arrow, and a title block with the geocoded address, footprint summary, scale and date. Included in Download SVGs. Verified end-to-end against Monument Square, Troy NY (22 cm/px, address block populated).
+- Amni-Patio v1.1.0: five stone surfaces - concrete pavers, clay-brick herringbone, cobblestone, flagstone, mosaic tile - with procedural 3D textures, and the wasm BOM adds surface area +10% waste, mortar/sand setting bed, polymeric sand, plus a carry-the-joints-through warning (29/29 core tests).
+- Attribution: Imagery (c) Esri, Geocoding (c) OpenStreetMap/Nominatim. All map use is client-side and light-touch.
+
 ## [5.21.0] - 2026-06-10 - AMNI-CONSTRUCT umbrella at /construct/ + photo trace comes to Amni-Deck
 - Amni-Deck v2.2.0: new PHOTO TRACE tab (same flow as Patio - upload stays on-device, two-click scale calibration, corner tracing with a live bounding-rectangle readout). Use outline snaps the deck to the traced rectangle (nearest 6") and drops the photo under the 3D deck as the ground layer. Verified: scripted 15.5' x 7' trace lands exactly.
 - /construct/ landing unifies the two builders with cross-links in both app headers (Deck <-> Patio); homepage now shows one AMNI-CONSTRUCT card; sitemap updated.

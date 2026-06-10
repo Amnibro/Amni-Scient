@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { initPermits, updatePermits } from './codes.js'
+import { initMapTrace, sitePlanSVG } from './maptrace.js'
 const LS = 'amnipatio.cfg.v1', LSP = 'amnipatio.prices.v1'
 const defCfg = { mode: 'rect', w: 14, d: 12, polygon: null, thickness_in: 4, base_in: 4, reinforce: 'mesh', finish: 'plain', turndown: { enabled: false, depth_in: 12, width_in: 8 }, vehicle: false, joint_max_ft: 0, house_edge: 0 }
 let cfg = (() => { try { return { ...defCfg, ...JSON.parse(localStorage.getItem(LS)) } } catch { return { ...defCfg } } })()
@@ -8,7 +9,8 @@ let out = null
 let priceEdits = (() => { try { return JSON.parse(localStorage.getItem(LSP)) || {} } catch { return {} } })()
 let catalog = {}
 const $ = s => document.querySelector(s)
-const FINISHES = { plain: ['#b9b9b9', 'Broom gray'], smooth: ['#cfcfcf', 'Smooth'], charcoal: ['#6e6e72', 'Charcoal'], terracotta: ['#b46a4a', 'Terracotta'], sandstone: ['#c9b08a', 'Sandstone'], slate: ['#7d8088', 'Stamped slate'] }
+const FINISHES = { plain: ['#b9b9b9', 'Broom gray'], smooth: ['#cfcfcf', 'Smooth'], charcoal: ['#6e6e72', 'Charcoal'], terracotta: ['#b46a4a', 'Terracotta'], sandstone: ['#c9b08a', 'Sandstone'], slate: ['#7d8088', 'Stamped slate'], pavers: ['#b89a7a', 'Pavers'], herringbone: ['#a4543f', 'Brick herring.'], cobble: ['#8d8d92', 'Cobblestone'], flagstone: ['#a89884', 'Flagstone'], mosaic: ['#7aa7b8', 'Mosaic tile'] }
+const STONE = ['pavers', 'herringbone', 'cobble', 'flagstone', 'mosaic']
 const wasm = await WebAssembly.instantiateStreaming(fetch('patio_core.wasm'))
 const { alloc, dealloc, build, memory } = wasm.instance.exports
 const enc = new TextEncoder(), dec = new TextDecoder()
@@ -48,6 +50,19 @@ const speckle = hex => {
   for (let i = 0; i < 2200; i++) { x.fillStyle = `rgba(${Math.random() > 0.5 ? '255,255,255' : '0,0,0'},${Math.random() * 0.09})`; x.fillRect(Math.random() * 128, Math.random() * 128, 1.6, 1.6) }
   const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; return t
 }
+const patternTex = (kind, hex) => {
+  const c = document.createElement('canvas'); c.width = c.height = 256
+  const x = c.getContext('2d')
+  x.fillStyle = '#4a443c'; x.fillRect(0, 0, 256, 256)
+  const shade = (h, f) => { const n = parseInt(h.slice(1), 16); return `rgb(${Math.min(255, ((n >> 16) & 255) * f) | 0},${Math.min(255, ((n >> 8) & 255) * f) | 0},${Math.min(255, (n & 255) * f) | 0})` }
+  const rnd = (a, b) => a + Math.random() * (b - a)
+  if (kind === 'pavers') { for (let r = 0; r < 8; r++) for (let col = -1; col < 5; col++) { x.fillStyle = shade(hex, rnd(0.82, 1.12)); x.fillRect(col * 64 + (r % 2 ? 32 : 0) + 2, r * 32 + 2, 60, 28) } }
+  else if (kind === 'herringbone') { for (let i = -8; i < 16; i++) for (let j = -2; j < 10; j++) { x.save(); x.translate(i * 32, j * 32 + (i % 2 ? 0 : 16)); x.rotate(i % 2 ? Math.PI / 4 : -Math.PI / 4); x.fillStyle = shade(hex, rnd(0.8, 1.15)); x.fillRect(-26, -10, 52, 20); x.restore() } }
+  else if (kind === 'cobble') { for (let r = 0; r < 7; r++) for (let col = 0; col < 7; col++) { x.fillStyle = shade(hex, rnd(0.7, 1.2)); x.beginPath(); x.ellipse(col * 38 + (r % 2 ? 19 : 0) + rnd(-3, 3), r * 38 + rnd(-3, 3), rnd(14, 18), rnd(12, 16), rnd(0, 3), 0, 7); x.fill() } }
+  else if (kind === 'flagstone') { for (let i = 0; i < 14; i++) { const cx = rnd(0, 256), cy = rnd(0, 256), n = 5 + (Math.random() * 3 | 0); x.fillStyle = shade(hex, rnd(0.75, 1.15)); x.beginPath(); for (let k = 0; k <= n; k++) { const a = k / n * Math.PI * 2, rr = rnd(24, 44); x[k ? 'lineTo' : 'moveTo'](cx + rr * Math.cos(a), cy + rr * Math.sin(a)) } x.fill() } }
+  else { for (let r = 0; r < 16; r++) for (let col = 0; col < 16; col++) { x.fillStyle = shade(hex, rnd(0.6, 1.35)); x.fillRect(col * 16 + 1, r * 16 + 1, 14, 14) } }
+  const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; return t
+}
 const rebuild3D = () => {
   while (grp.children.length) { const m = grp.children.pop(); m.geometry && m.geometry.dispose() }
   const poly = polyOf(cfg)
@@ -55,8 +70,9 @@ const rebuild3D = () => {
   const t = cfg.thickness_in / 12, b = cfg.base_in / 12
   const mk = (depth, mat, yBottom) => { const g = new THREE.ExtrudeGeometry(shape, { depth, bevelEnabled: false }); const m = new THREE.Mesh(g, mat); m.rotation.x = -Math.PI / 2; m.position.y = yBottom; grp.add(m); return m }
   if (b > 0.01) mk(b, new THREE.MeshStandardMaterial({ color: 0x9a8a68, roughness: 1 }), 0)
-  const tex = speckle(FINISHES[cfg.finish][0])
-  tex.repeat.set(0.5, 0.5)
+  const stone = STONE.includes(cfg.finish)
+  const tex = stone ? patternTex(cfg.finish, FINISHES[cfg.finish][0]) : speckle(FINISHES[cfg.finish][0])
+  tex.repeat.set(stone ? 0.25 : 0.5, stone ? 0.25 : 0.5)
   mk(t, new THREE.MeshStandardMaterial({ map: tex, roughness: cfg.finish === 'smooth' ? 0.55 : 0.95 }), b)
   if (out && out.joints) for (const j of out.joints) {
     const len = Math.hypot(j.x2 - j.x1, j.y2 - j.y1)
@@ -93,7 +109,16 @@ const rebuild3D = () => {
 const resize = () => { const c = $('#c3d'); const w = c.clientWidth || 800, h = c.clientHeight || 600; renderer.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix() }
 new ResizeObserver(resize).observe($('#view'))
 ;(function loop() { controls.update(); renderer.render(scene, cam); requestAnimationFrame(loop) })()
-const renderPlans = () => out && ['layout', 'section', 'formwork', 'joints'].forEach(k => $(`#svg-${k}`).innerHTML = out.svgs[k])
+let siteSnap = null
+const renderPlans = () => {
+  if (!out) return
+  ;['layout', 'section', 'formwork', 'joints'].forEach(k => $(`#svg-${k}`).innerHTML = out.svgs[k])
+  if (siteSnap) {
+    let wrap = $('#svg-site')
+    if (!wrap) { wrap = document.createElement('div'); wrap.className = 'svgwrap'; wrap.id = 'svg-site'; const pane = $('#pane-plans'); pane.insertBefore(wrap, pane.querySelector('.svgwrap')) }
+    wrap.innerHTML = sitePlanSVG({ ...siteSnap, title: 'SITE PLAN — PROPOSED PATIO', footprint: `Proposed: ${out.calc.area_ft2.toFixed(0)} ft² concrete patio, ${cfg.thickness_in}" slab, ${cfg.house_edge >= 0 ? 'abutting dwelling (isolation joint)' : 'freestanding'}` })
+  }
+}
 const renderWarns = () => {
   const w = $('#warns'); w.innerHTML = '<h3 style="font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--acc);margin:16px 0 8px">Build Notes</h3>'
   if (!out) return
@@ -223,8 +248,11 @@ $('#tuse').onclick = () => {
   sel.innerHTML = '<option value="-1">Freestanding</option>' + edges.map((L, i) => `<option value="${i}">Edge ${i + 1} (${L.toFixed(1)} ft) = house</option>`).join('')
   sel.value = String(edges.indexOf(Math.max(...edges)))
   cfg.house_edge = +sel.value
+  let snap = null
+  try { snap = tc.toDataURL('image/jpeg', 0.85) } catch {}
+  siteSnap = { snap, w: tc.width, h: tc.height, poly: T.poly.map(p => [...p]), pxPerFt: T.pxPerFt, address: window.__siteAddr || '' }
   recompute()
-  tStatus(`Outline applied: ${out && out.calc ? out.calc.area_ft2.toFixed(0) : '?'} ft². Check the 3D view — your photo is the ground layer!`)
+  tStatus(`Outline applied: ${out && out.calc ? out.calc.area_ft2.toFixed(0) : '?'} ft². 3D has your imagery as the ground — and a SITE PLAN was added to 2D Plans for the permit packet.`)
 }
 const buildFinishes = () => {
   const sw = $('#finishes'); sw.innerHTML = ''
@@ -267,7 +295,7 @@ const initUI = () => {
     const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([csv], { type: 'text/csv' })), download: 'patio-materials.csv' })
     a.click()
   }
-  $('#dl-svg').onclick = () => ['layout', 'section', 'formwork', 'joints'].forEach(k => { const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([out.svgs[k]], { type: 'image/svg+xml' })), download: `patio-${k}.svg` }); a.click() })
+  $('#dl-svg').onclick = () => { ['layout', 'section', 'formwork', 'joints'].forEach(k => { const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([out.svgs[k]], { type: 'image/svg+xml' })), download: `patio-${k}.svg` }); a.click() }); const sw = $('#svg-site'); sw && Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([sw.innerHTML], { type: 'image/svg+xml' })), download: 'patio-site-plan.svg' }).click() }
   buildFinishes()
   initPermits(() => ({ ...cfg, height: 0, attach: cfg.house_edge >= 0 ? 'house' : 'free', length: 0, depth: 0 }), () => out)
   if (cfg.mode === 'poly' && cfg.polygon) { $('#rw').style.display = 'none'; $('#rd').style.display = 'none'; document.querySelectorAll('#mode button').forEach(b => b.classList.toggle('on', b.dataset.v === 'poly')); const edges = cfg.polygon.map((a, i) => { const b2 = cfg.polygon[(i + 1) % cfg.polygon.length]; return Math.hypot(b2[0] - a[0], b2[1] - a[1]) }); const sel = $('#house'); sel.innerHTML = '<option value="-1">Freestanding</option>' + edges.map((L, i) => `<option value="${i}">Edge ${i + 1} (${L.toFixed(1)} ft) = house</option>`).join(''); sel.value = String(cfg.house_edge) }
@@ -276,4 +304,5 @@ catalog = await fetch('catalog.json').then(r => r.json()).catch(() => ({}))
 initUI()
 resize()
 tDraw()
+initMapTrace({ tc, T, tDraw, tStatus })
 recompute()

@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { initPermits, updatePermits } from './codes.js'
+import { initMapTrace, sitePlanSVG } from './maptrace.js'
 const LS = 'amnideck.cfg.v2', LSP = 'amnideck.prices.v1'
 const defCfg = { length: 12, depth: 8, height: 16, spacing: 16, decking: 'pt', attach: 'ledger', stain: 'redwood', stairs: [{ side: 'front', width: 48, offset: -1 }], railing: { front: false, left: false, right: false, style: 'wood' }, door: { pos: -1, width: 60, rise: 7 } }
 const migrate = c => !c ? null : (Array.isArray(c.stairs) ? c : { ...c, stain: c.stain || 'redwood', door: c.door || { pos: -1, width: 60, rise: 7 }, stairs: c.stairs?.enabled ? [{ side: c.stairs.side, width: c.stairs.width, offset: c.stairs.offset }] : [] })
@@ -241,7 +242,15 @@ const renderWarns = () => {
     return `<div class="warn ${cls}">${icon} ${rest.join('|') || tag}</div>`
   }).join('')
 }
-const renderPlans = () => ['framing', 'decking', 'elevation', 'stringer', 'ledger', 'connections'].forEach(k => $(`#svg-${k}`).innerHTML = out.svgs[k])
+let siteSnap = null
+const renderPlans = () => {
+  ;['framing', 'decking', 'elevation', 'stringer', 'ledger', 'connections'].forEach(k => $(`#svg-${k}`).innerHTML = out.svgs[k])
+  if (siteSnap) {
+    let wrap = document.getElementById('svg-site')
+    if (!wrap) { wrap = document.createElement('div'); wrap.className = 'svgwrap'; wrap.id = 'svg-site'; const pane = document.getElementById('pane-plans'); pane.insertBefore(wrap, pane.querySelector('.svgwrap')) }
+    wrap.innerHTML = sitePlanSVG({ ...siteSnap, title: 'SITE PLAN — PROPOSED DECK', footprint: `Proposed: ${cfg.length}' × ${cfg.depth}' ${cfg.attach === 'ledger' ? 'ledger-attached' : 'freestanding'} deck, ${cfg.height}" above grade` })
+  }
+}
 const renderStairList = () => {
   const wrap = $('#stairlist')
   wrap.innerHTML = ''
@@ -343,10 +352,14 @@ const initUI = () => {
     const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([csv], { type: 'text/csv' })), download: 'deck-materials.csv' })
     a.click()
   }
-  $('#dl-svg').onclick = () => ['framing', 'decking', 'elevation', 'stringer', 'ledger', 'connections'].forEach(k => {
-    const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([out.svgs[k]], { type: 'image/svg+xml' })), download: `deck-${k}.svg` })
-    a.click()
-  })
+  $('#dl-svg').onclick = () => {
+    ;['framing', 'decking', 'elevation', 'stringer', 'ledger', 'connections'].forEach(k => {
+      const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([out.svgs[k]], { type: 'image/svg+xml' })), download: `deck-${k}.svg` })
+      a.click()
+    })
+    const sw = document.getElementById('svg-site')
+    sw && Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([sw.innerHTML], { type: 'image/svg+xml' })), download: 'deck-site-plan.svg' }).click()
+  }
   const pasteFor = store => async () => {
     const st = $('#pstatus')
     try {
@@ -447,9 +460,13 @@ document.getElementById('tuse').onclick = () => {
     photoPlane.position.set((tc.width / 2 - minX) * s, 0.6, (tc.height / 2 - minY) * s)
     scene.add(photoPlane)
   }
+  let snap = null
+  try { snap = tc.toDataURL('image/jpeg', 0.85) } catch {}
+  siteSnap = { snap, w: tc.width, h: tc.height, poly: T.poly.map(p => [...p]), pxPerFt: T.pxPerFt, address: window.__siteAddr || '' }
   recompute()
   document.querySelector('.tab[data-pane="3d"]').click()
-  tStatus(`Applied: ${L}' × ${D}' deck. Photo is now the ground layer in 3D.`)
+  tStatus(`Applied: ${L}' × ${D}' deck. Photo is the 3D ground layer — and a SITE PLAN was added to 2D Plans.`)
 }
+initMapTrace({ tc, T, tDraw, tStatus })
 tDraw()
 Promise.all([wasmReady, catReady]).then(() => { buildMats(); initUI(); recompute(); tick() })

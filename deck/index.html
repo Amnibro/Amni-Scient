@@ -120,7 +120,14 @@ td a:hover{text-decoration:underline}
     <div id="hud">drag = orbit · wheel = zoom · right-drag = pan · <b style="color:#e8a33d">grab stairs to move them</b></div>
     <div class="pane" id="pane-trace">
       <div class="planbar">
-        <label class="btn acc" style="display:inline-block">📷 Upload photo / sketch<input type="file" id="timg" accept="image/*" style="display:none"></label>
+        <input id="maddr" placeholder="🗺️ Address — e.g. 123 Main St, Troy NY (satellite view, auto-scale)" style="flex:1;min-width:260px;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:7px 10px">
+        <button class="btn acc" id="mfind">Find address</button>
+        <button class="btn" id="mzin">＋</button>
+        <button class="btn" id="mzout">－</button>
+        <span id="mattrib" style="font-size:10px;color:var(--mut)"></span>
+      </div>
+      <div class="planbar">
+        <label class="btn" style="display:inline-block">📷 Or upload photo / sketch<input type="file" id="timg" accept="image/*" style="display:none"></label>
         <button class="btn" id="tscale">1️⃣ Set scale</button>
         <button class="btn" id="ttrace">2️⃣ Trace deck area</button>
         <button class="btn" id="tundo">↩ Undo point</button>
