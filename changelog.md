@@ -1,5 +1,11 @@
 # Changelog 
 
+## [5.19.0] - 2026-06-10 - Curriculum P5: math L3/L4 enrichment (TEKS-aligned, traditional methods)
+- Re-leveling the math bank (P1, v5.15.0) correctly thinned the grade-3-5 (L3) and middle-school (L4) tiers because so much advanced content had been mis-filed there. Refilled both with grade-appropriate questions: L3 31->51 (+20), L4 38->58 (+20).
+- L3 (grades 3-5): long division, multi-digit multiplication, same-denominator fraction addition, fraction-of-a-set, equivalent fractions, fraction<->decimal, rounding to tens/hundreds/whole, place value, perimeter & area (rectangle + triangle), elapsed time, making change, division-with-remainder, mixed numbers, x11 shortcut. Traditional standard algorithms; every answer verified with a worked check.
+- L4 (grades 6-8): integer +/-/x (sign rules), percent of a number, tip/discount/sales-tax, 1- and 2-step equations, ratio simplification, unit rate, exponents, comparing negatives, complementary/supplementary angles, order of operations (PEMDAS), fraction/decimal->percent, mean. NO Common Core framing.
+- Verified: node --check clean; 0 new duplicates (_dedup.js); band-provenance pure on every tier (gr3 battles 100% L3, gr4 100% L4, zero backfill). Civics/history "gap" topics (Washington as 1st president, rule of law, Bill of Rights, Alamo, Texas independence) confirmed already covered - no additions needed. sw cache v1242->v1243.
+
 ## [5.18.0] - 2026-06-10 - AMNI-DECK LAUNCHED at /deck/ - 3D deck builder with location-aware permits
 - New app live: WASM parametric 3D deck builder (drag-and-drop stairs, stain preview, railing) + six printable 2D plans (framing, decking, elevation, stringer template, ledger detail, connection details) + bin-packed cut list + HD/Lowe's paste-to-fill pricing
 - Code & Permits panel: tap-to-geolocate (or pick state/city) -> state code body, typical frost depth, permit-office links for your town, NY snow-load note, plus design-driven IRC checks (guard 30" rule, riser/handrail, ledger flashing R507.9, R105.2 freestanding exemption); verified headless with spoofed Troy NY coords
