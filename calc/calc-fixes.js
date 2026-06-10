@@ -1098,6 +1098,7 @@ window.calcACPower=function(){
   }
   /* Also write to electrical-results in standard form so other callers see it */
   const er=$('electrical-results');if(er)er.innerHTML='<h3>AC POWER</h3>'+(out?out.innerHTML:'');
+  typeof window.drawPowerTri==='function'&&window.drawPowerTri(P,Q,S);
 };
 
 /* ============================================================

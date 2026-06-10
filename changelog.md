@@ -1,5 +1,10 @@
 # Changelog 
 
+## [5.19.8] - 2026-06-10 - Calc: power-triangle canvas finally draws; echem/battery/materials verified exact
+- The electrical POWER TRIANGLE card showed "Compute AC power to render" forever: three calcACPower implementations exist across layers and the winning one (calc-fixes) drew its Plotly phasor but never fed the legacy canvas. It now also calls drawPowerTri(P,Q,S) - pixel-verified.
+- Hand-verified EXACT: Faraday electroplating (m = I*t*M*eta/(n*F) = 5.631 g, 18000 C, 0.08861 mol), battery SOC by Coulomb counting (80.0%) + coulombic efficiency (98.57%), materials quick-chart families (1018/4140/304 all textbook values).
+- Visual: finishes recommendation engine ranks the full catalog with score bars; Tafel/Butler-Volmer curve renders.
+
 ## [5.19.7] - 2026-06-10 - Calc: NEC ampacity chart un-scrambled; combustion/electrical/motors verified exact
 - The ampacity chart plotted conductor sizes in Object.keys() order - JS sorts integer-like keys numerically first ('1'...'1000') and appends '1/0'-'4/0' last - so the curve zigzagged (AWG 1 down to 14, jump to 250-1000 kcmil, back down to 1/0-4/0) under a "(smaller -> larger)" axis label. Explicit size order 14->1->1/0->4/0->250->1000 kcmil; curves now monotonic for all three temperature columns.
 - Hand-verified EXACT: LHV/HHV (43.869 = 47.3 - 2.444*9*0.156), transformer card (FLA 90.2/208.2 A, turns 2.31:1, SCC 3621 A = FLA/Z_pu, I2t 1.31e6), AC power triangle numbers + phasor (1955 W / 1211.6 VAR / 31.8 deg lagging), NEC voltage drop (21.49 V = 8.95% on AWG14 x 100 ft @ 35 A), NEMA frame lookup (10 HP 1800 ODP -> 215T per MG-1).
