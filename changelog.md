@@ -1,4 +1,24 @@
-﻿
+# Changelog 
+
+## [5.18.0] - 2026-06-10 - AMNI-DECK LAUNCHED at /deck/ - 3D deck builder with location-aware permits
+- New app live: WASM parametric 3D deck builder (drag-and-drop stairs, stain preview, railing) + six printable 2D plans (framing, decking, elevation, stringer template, ledger detail, connection details) + bin-packed cut list + HD/Lowe's paste-to-fill pricing
+- Code & Permits panel: tap-to-geolocate (or pick state/city) -> state code body, typical frost depth, permit-office links for your town, NY snow-load note, plus design-driven IRC checks (guard 30" rule, riser/handrail, ledger flashing R507.9, R105.2 freestanding exemption); verified headless with spoofed Troy NY coords
+- 2D plan QA pass: ledger detail rebuilt with numbered legend (labels collided and clipped off-canvas), stringer notes rewrapped to fit, elevation now draws the door at sill height
+- Homepage card, sitemap entry, favicon; 32/32 core wasm tests green
+
+## [5.16.2] - 2026-06-10 - Calc: section preset results no longer wiped + patch-layer peace treaty
+- SECTION view: clicking CALC after applying a preset ERASED the rendered properties with the 'Draw at least 3 vertices' placeholder - calc-overrides' polygon calcSection was clobbering calc-fixes' preset results (two result-writers, one panel). Empty-vertices branch now preserves existing results. Rectangle 50x100 verified end-to-end: A=5000 mm2, Ix=4.167e6 mm4, Sx=83.33e3, Zx=125e3, rx=28.868 - all exact.
+- Patch-layer untangling: page runs FOUR JS layers (obfuscated bundle, inline AI script, calc-overrides, calc-3d + calc-fixes). calc-overrides no longer owns applyPreset (calc-fixes' version is canonical) and only injects its preset dropdown when the select is empty - it was clobbering calc-fixes' options with stale keys.
+- Test rig: 5s settle before interaction (page needs ~4s for all layers to bind; rig was outracing fixes-layer handler assignment and reporting ghosts).
+
+## [5.16.1] - 2026-06-10 - Calc: live-page beam demo righted + Ko-fi popup made polite
+- Beam axis titles were truncating ('sag positive dow...'); relayout shortens to Shear V (kN) / Moment M (N-m) / Deflection (mm) - conventions stay in the footnote line
+- The page's own demo seed loaded -10 kN UPWARD (negative reactions, deflection bowing up against its printed 'positive = downward' convention) - overrides now sign-flip negative seed loads via window.beamLoads + renderLoadList + re-solve; live demo reads +10 kN down, R=+5 kN, M=+7500 N-m sagging, delta=+0.337 mm
+- Removed the legacy ghost-support injection (this page seeds its own pin/roller; the old E-lineage canvas-click path left a stray roller@2998)
+- Ko-fi support box: shows once per session and auto-hides after 12 s (was permanently overlapping result cards on every view)
+- Test rig: audit + screenshot servers now bind ephemeral ports (zombie-run port collisions were masquerading as page freezes)
+- Visual card pass: stress view verified - Enhanced Mohr matches hand calcs (112.43/27.57/42.43 MPa); queued: basic Mohr canvas label clipping, sigma glyph casing
+
 # Changelog 
 
 ## [5.17.0] - 2026-06-10 - Amni-Learn curriculum audit P3/P4: fact + theme fixes, exact dedup (near-dups kept as reinforcement)

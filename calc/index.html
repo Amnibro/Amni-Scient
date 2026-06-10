@@ -374,7 +374,7 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <div class="row">
 <div class="field"><label for="ld-type">TYPE</label><select id="ld-type"><option value="point">POINT LOAD</option><option value="distributed">DISTRIBUTED</option><option value="moment">MOMENT</option></select></div>
 <div class="field"><label for="ld-pos">POSITION</label><div class="field-row"><input type="number" id="ld-pos" value="1500" step="any"><select id="ld-pos-u" aria-label="unit"><option>mm</option><option>m</option><option>in</option><option>ft</option></select></div></div>
-<div class="field"><label for="ld-mag">MAGNITUDE</label><div class="field-row"><input type="number" id="ld-mag" value="-10" step="any"><select id="ld-mag-u" aria-label="unit"><option>kN</option><option>N</option><option>lbf</option><option>kip</option></select></div></div>
+<div class="field"><label for="ld-mag">MAGNITUDE</label><div class="field-row"><input type="number" id="ld-mag" value="10" step="any"><select id="ld-mag-u" aria-label="unit"><option>kN</option><option>N</option><option>lbf</option><option>kip</option></select></div></div>
 <div class="field" id="ld-end-wrap" style="display:none"><label for="ld-end">END POS</label><div class="field-row"><input type="number" id="ld-end" step="any"><select id="ld-end-u" aria-label="unit"><option>mm</option><option>m</option><option>in</option><option>ft</option></select></div></div>
 </div>
 <div style="margin-top:.5rem"><button class="btn btn-sm" onclick="addLoad()">+ ADD LOAD</button> <button class="btn btn-sm" onclick="clearLoads()">CLEAR ALL</button></div>
@@ -2520,7 +2520,6 @@ byId('calc-ai-webllm-unload').addEventListener('click',unloadBrowserEngine);
 document.querySelectorAll('.calc-ai-chip').forEach(button=>button.addEventListener('click',()=>sendQuery(button.getAttribute('data-q')||'')));
 document.addEventListener('click',event=>{const tab=event.target.closest('[role="tab"]');tab&&setTimeout(updateContextBar,0);});
 const savedWebLLM=getWebLLMConfig();
-probeLocalAI();
 updateContextBar();
 savedWebLLM.enabled&&navigator.gpu&&setTimeout(()=>loadBrowserEngine(savedWebLLM.model),1200);
 })();
