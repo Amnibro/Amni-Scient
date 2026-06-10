@@ -1445,7 +1445,7 @@ function injectBoltTorqueAdvanced(){
   const card=document.createElement('div');card.className='card bolt-x';card.id='bolt-torque-adv';card.style.marginTop='.6rem';
   card.innerHTML='<h3>TORQUE SEQUENCE (ADVANCED)</h3>'+
     '<div class="row">'+
-      '<div class="field"><label for="bts-method">METHOD</label><select id="bts-method"><option value="torque">TORQUE CONTROL (T = K·F·d)</option><option value="angle">TORQUE + ANGLE (snug + Δθ)</option><option value="yield">YIELD-CONTROL (joint analyzer)</option></select></div>'+
+      '<div class="field"><label for="bts-method">METHOD</label><select id="bts-method" onchange="calcBoltTorqueSeq()"><option value="torque">TORQUE CONTROL (T = K·F·d)</option><option value="angle">TORQUE + ANGLE (snug + Δθ)</option><option value="yield">YIELD-CONTROL (joint analyzer)</option></select></div>'+
       '<div class="field"><label for="bts-fi">TARGET PRELOAD F_i (N)</label><input type="number" id="bts-fi" value="50000" step="any"></div>'+
       '<div class="field"><label for="bts-d">BOLT d (mm)</label><input type="number" id="bts-d" value="12" step="0.1"></div>'+
     '</div>'+
@@ -1459,6 +1459,10 @@ function injectBoltTorqueAdvanced(){
       '<div class="field"><label for="bts-relax">GASKET RELAX %</label><input type="number" id="bts-relax" value="10" step="1"></div>'+
       '<div class="field"><label for="bts-c">JOINT C (k_b/(k_b+k_m))</label><input type="number" id="bts-c" value="0.25" step="0.05"></div>'+
       '<div class="field"><label for="bts-fext">EXT LOAD F_ext (N)</label><input type="number" id="bts-fext" value="20000" step="any"></div>'+
+    '</div>'+
+    '<div class="row" style="margin-top:.5rem">'+
+      '<div class="field"><label for="bts-pitch">THREAD PITCH p (mm)</label><input type="number" id="bts-pitch" value="1.75" step="0.05"></div>'+
+      '<div class="field"><label for="bts-grip">GRIP LENGTH (mm)</label><input type="number" id="bts-grip" value="40" step="1"></div>'+
     '</div>'+
     '<button class="btn btn-sm" onclick="calcBoltTorqueSeq()" style="margin-top:.5rem">COMPUTE SEQUENCE</button>'+
     '<div id="bts-table" style="margin-top:.6rem"></div>'+
@@ -1479,15 +1483,23 @@ window.calcBoltTorqueSeq=function(){
   const T_target=Kn*Fi*d/1000;
   const T_lo=(Kn-Ks)*Fi*d/1000,T_hi=(Kn+Ks)*Fi*d/1000;
   const F_lo=Fi*(Kn/(Kn+Ks)),F_hi=Fi*(Kn/(Math.max(0.05,Kn-Ks)));
-  const rows=[];rows.push('<tr><th>PASS</th><th>%</th><th>T_target (N·m)</th><th>F_preload (N)</th><th>NOTE</th></tr>');
-  ratios.forEach((r,i)=>{const T=T_target*r/100,F=Fi*r/100;const note=i===passes-1?(relax>0?`final pass — re-torque after ${(relax*100).toFixed(0)}% relax`:'final pass'):(i===0?'snug-and-mark':'cross/star, equalize gap');rows.push(`<tr><td>${i+1}</td><td>${r.toFixed(0)}%</td><td>${T.toFixed(2)}</td><td>${F.toFixed(0)}</td><td>${note}</td></tr>`);});
-  if(relax>0)rows.push(`<tr><td>RT</td><td>100%</td><td>${T_target.toFixed(2)}</td><td>${Fi.toFixed(0)}</td><td>re-torque after gasket relaxation</td></tr>`);
+  const pitch=Math.max(0.25,v('bts-pitch')||1.75),grip=Math.max(5,v('bts-grip')||40);
+  const As=Math.PI/4*Math.pow(Math.max(1,d-0.9382*pitch),2);
+  const kb=205000*As/grip;
+  const degPerN=360/(pitch*kb*Math.max(0.05,1-C));
+  const angleMode=method==='angle';
+  const rows=[];rows.push('<tr><th>PASS</th><th>%</th><th>T_target (N·m)</th><th>F_preload (N)</th>'+(angleMode?'<th>Δθ FROM PREV</th>':'')+'<th>NOTE</th></tr>');
+  ratios.forEach((r,i)=>{const T=T_target*r/100,F=Fi*r/100;const Fprev=i===0?0:Fi*ratios[i-1]/100;const dTheta=(F-Fprev)*degPerN;const note=i===passes-1?(relax>0?`final pass — re-torque after ${(relax*100).toFixed(0)}% relax`:'final pass'):(i===0?'snug-and-mark':'cross/star, equalize gap');const angCell=angleMode?(i===0?`<td>snug @ ${T.toFixed(1)} N·m</td>`:`<td><b>+${dTheta.toFixed(0)}°</b></td>`):'';rows.push(`<tr><td>${i+1}</td><td>${r.toFixed(0)}%</td><td>${angleMode&&i>0?'(angle-driven)':T.toFixed(2)}</td><td>${F.toFixed(0)}</td>${angCell}<td>${note}</td></tr>`);});
+  if(relax>0)rows.push(`<tr><td>RT</td><td>100%</td><td>${angleMode?'re-snug + re-angle':T_target.toFixed(2)}</td><td>${Fi.toFixed(0)}</td>${angleMode?`<td>+${(Fi*relax*degPerN).toFixed(0)}°</td>`:''}<td>re-torque after gasket relaxation</td></tr>`);
   const F_b=Fi+C*Fext,F_j=Fi-(1-C)*Fext;
   const sepMargin=Fi/((1-C)*Math.max(1,Fext));
   const fmt=(n,p)=>isFinite(n)?(p>0?n.toFixed(p):n.toFixed(0)):'—';
   let summary='<table class="data" style="font-size:.74rem;width:100%;margin-top:.3rem"><thead>'+rows[0]+'</thead><tbody>'+rows.slice(1).join('')+'</tbody></table>';
+  const snugF=Fi*ratios[0]/100;
+  const totalTheta=(Fi-snugF)*degPerN;
   summary+='<div class="result-grid" style="margin-top:.5rem">'+
     [['Method',method.toUpperCase()],
+     ...(angleMode?[['Snug torque (pass 1)',fmt(T_target*ratios[0]/100,2)+' N·m'],['θ total snug→100%',fmt(totalTheta,0)+'°'],['k_b bolt stiffness',fmt(kb/1000,0)+' kN/mm'],['Stretch at F_i',fmt(Fi/kb,3)+' mm']]:[]),
      ['T_target',fmt(T_target,2)+' N·m'],
      ['T range (K-scatter)',fmt(T_lo,2)+' – '+fmt(T_hi,2)+' N·m'],
      ['F_preload range',fmt(F_lo,0)+' – '+fmt(F_hi,0)+' N'],
