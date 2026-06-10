@@ -1,5 +1,10 @@
 # Changelog 
 
+## [5.19.5] - 2026-06-10 - Calc: pump NPSH suction input disambiguated; pumps + HX hand-verified
+- The NPSH card's "H_suction (m)" input is SUBTRACTED by calcNPSH (suction-lift convention) - a flooded-suction user entering positive static head got NPSHa wrong by twice that head. Relabeled "Suction lift (m, + = liquid below impeller)"; formula unchanged.
+- Hand-verified EXACT: pump/system operating point (off-BEP 29.6%, brake power 8.34 kW = rho*g*Q*H/eta), NPSH chain (10.111 - 2 - 1 = 7.11 m, margin 4.11), HX NTU/epsilon (NTU=2.5, Cr=0.667, counterflow eps=79.60%, Q=159.21 kW per 100K).
+- Visual: pump/system curve intersection + BEP marker, eps-NTU curve + operating point, 3D shell-and-tube bundle all render.
+
 ## [5.19.4] - 2026-06-10 - Calc: bolt grade data corrected, Bernoulli no longer stomps the Moody chart
 - SAE Grade 2 proof strength was 225 MPa (that's Grade 1); J429 Grade 2 (<=3/4") proof is 55 ksi = 380 MPa. Selector, reference table and joint calc all regenerate from the fixed BOLT_GRADES entry. Extra-notes card also said A490 Sp=895 - that's its yield; now Sp=830, Sy=895.
 - calcMoody and calcBernoulli both plotted into the single #p-fluids div under the hardcoded "MOODY CHART (f vs Re)" title - whichever you clicked last replaced the other's chart with the wrong caption. Bernoulli now creates its own "BERNOULLI HEAD BREAKDOWN (m)" card on first use; verified both plots coexist.
