@@ -16,10 +16,10 @@ function setCardOut(cardId,html){const card=$(cardId);if(!card)return;let out=ca
 function shoelaceProps(pts){if(!pts||pts.length<3)return null;const n=pts.length;let A=0,Cx=0,Cy=0;for(let i=0;i<n;i++){const j=(i+1)%n,xi=pts[i][0],yi=pts[i][1],xj=pts[j][0],yj=pts[j][1];const cr=xi*yj-xj*yi;A+=cr;Cx+=(xi+xj)*cr;Cy+=(yi+yj)*cr;}A=A/2;const sgn=A<0?-1:1;A=Math.abs(A);if(A<1e-9)return null;Cx=Cx*sgn/(6*A);Cy=Cy*sgn/(6*A);let Ixo=0,Iyo=0;for(let i=0;i<n;i++){const j=(i+1)%n,xi=pts[i][0],yi=pts[i][1],xj=pts[j][0],yj=pts[j][1];const cr=xi*yj-xj*yi;Ixo+=(yi*yi+yi*yj+yj*yj)*cr;Iyo+=(xi*xi+xi*xj+xj*xj)*cr;}Ixo=Math.abs(Ixo*sgn)/12;Iyo=Math.abs(Iyo*sgn)/12;const Ix=Ixo-A*Cy*Cy,Iy=Iyo-A*Cx*Cx;let cTop=0,cBot=0,cR=0,cL=0;pts.forEach(p=>{const dy=p[1]-Cy,dx=p[0]-Cx;if(dy>cTop)cTop=dy;if(-dy>cBot)cBot=-dy;if(dx>cR)cR=dx;if(-dx>cL)cL=-dx;});const cy=Math.max(cTop,cBot),cx=Math.max(cR,cL);return{A,Cx,Cy,Ixx:Ix,Iyy:Iy,Sx:cy>0?Ix/cy:0,Sy:cx>0?Iy/cx:0,rx:A>0?Math.sqrt(Ix/A):0,ry:A>0?Math.sqrt(Iy/A):0,J:Ix+Iy};}
 function saveCustomSection(props,label){if(!props||!isFinite(props.A))return;const rec={label:label||'CUSTOM',A:props.A,Ix:props.Ix||props.Ixx||null,Iy:props.Iy||props.Iyy||null,Sx:props.Sx||props.Sx_top||null,Sy:props.Sy||null,Zx:props.Zx||null,rx:props.rx||null,ry:props.ry||null,J:props.J||null,yC:props.yCentroid||props.Cy||null,xC:props.xCentroid||props.Cx||null,ts:Date.now()};window.__customSection=rec;try{localStorage.setItem('amni-calc-section',JSON.stringify(rec));}catch(_){}injectSectionImportChip();}
 function loadCustomSection(){if(window.__customSection)return window.__customSection;try{const j=localStorage.getItem('amni-calc-section');if(j){const r=JSON.parse(j);window.__customSection=r;return r;}}catch(_){}return null;}
-function injectSectionImportChip(){const bm=$('bm-i');if(!bm)return;const wrap=bm.closest('.field');if(!wrap||wrap.querySelector('.sec-import-chip'))return;const chip=document.createElement('button');chip.type='button';chip.className='btn btn-sm sec-import-chip';chip.style.cssText='margin-top:.3rem;font-size:.65rem;padding:3px 8px;background:var(--accent);color:#000;border:0;border-radius:3px;cursor:pointer';chip.textContent='↙ USE CUSTOM SECTION';chip.onclick=()=>{const s=loadCustomSection();if(!s||!s.Ix){alert('No custom section saved yet — visit the Sections tab and Calculate first.');return;}bm.value=(s.Ix/1e4).toFixed(3);const u=$('bm-i-u');if(u)u.value='cm4';bm.dispatchEvent(new Event('input',{bubbles:true}));chip.textContent='✅ LOADED '+s.label+' (I_x='+(s.Ix/1e4).toFixed(2)+' cm⁴)';setTimeout(()=>{chip.textContent='↙ USE CUSTOM SECTION';},2200);};wrap.appendChild(chip);}
+function injectSectionImportChip(){const bm=$('bm-i');if(!bm)return;const wrap=bm.closest('.field');if(!wrap||wrap.querySelector('.sec-import-chip'))return;const chip=document.createElement('button');chip.type='button';chip.className='btn btn-sm sec-import-chip';chip.style.cssText='margin-top:.3rem;font-size:.65rem;padding:3px 8px;background:var(--accent);color:#000;border:0;border-radius:3px;cursor:pointer';chip.textContent='↙ USE CUSTOM SECTION';chip.onclick=()=>{const s=loadCustomSection();if(!s||!s.Ix){cfToast('No custom section saved yet — visit the Sections tab and Calculate first.');return;}bm.value=(s.Ix/1e4).toFixed(3);const u=$('bm-i-u');if(u)u.value='cm4';bm.dispatchEvent(new Event('input',{bubbles:true}));chip.textContent='✅ LOADED '+s.label+' (I_x='+(s.Ix/1e4).toFixed(2)+' cm⁴)';setTimeout(()=>{chip.textContent='↙ USE CUSTOM SECTION';},2200);};wrap.appendChild(chip);}
 function injectSectionExportButton(){const out=$('sec-results');if(!out)return;if(out.querySelector('.sec-export-row'))return;const last=window.__customSection;if(!last||!last.Ix)return;const row=document.createElement('div');row.className='sec-export-row';row.style.cssText='margin-top:.6rem;display:flex;gap:.4rem;flex-wrap:wrap';row.innerHTML='<button type="button" class="btn btn-sm" onclick="window.__sectionToBeam()" style="font-size:.7rem">→ LOAD INTO BEAM (I_x)</button><button type="button" class="btn btn-sm" onclick="window.__sectionToShaft()" style="font-size:.7rem">→ LOAD INTO SHAFTS (J)</button><span style="font-size:.65rem;color:var(--dim);align-self:center">Saved: '+last.label+'</span>';out.appendChild(row);}
-window.__sectionToBeam=function(){const s=loadCustomSection();if(!s||!s.Ix){alert('Calculate a section first.');return;}const bm=$('bm-i');if(!bm){alert('Open the Beams tab.');return;}bm.value=(s.Ix/1e4).toFixed(3);const u=$('bm-i-u');if(u)u.value='cm4';bm.dispatchEvent(new Event('input',{bubbles:true}));const tab=document.querySelector('[data-v="beam"]');if(tab)tab.click();};
-window.__sectionToShaft=function(){const s=loadCustomSection();if(!s||!s.J){alert('This section has no J (torsion constant) — works only for closed solid/hollow sections.');return;}const sh=$('sh-do')||$('sh-J');if(!sh){alert('Open the Shafts tab.');return;}if(sh.id==='sh-J'){sh.value=s.J.toFixed(2);sh.dispatchEvent(new Event('input',{bubbles:true}));}else alert('Shaft tab uses d_outer / d_inner directly. J='+s.J.toFixed(2)+' mm⁴ — set Do/Di to a pipe geometry that matches.');const tab=document.querySelector('[data-v="shafts"]');if(tab)tab.click();};
+window.__sectionToBeam=function(){const s=loadCustomSection();if(!s||!s.Ix){cfToast('Calculate a section first.');return;}const bm=$('bm-i');if(!bm){cfToast('Open the Beams tab.');return;}bm.value=(s.Ix/1e4).toFixed(3);const u=$('bm-i-u');if(u)u.value='cm4';bm.dispatchEvent(new Event('input',{bubbles:true}));const tab=document.querySelector('[data-v="beam"]');if(tab)tab.click();};
+window.__sectionToShaft=function(){const s=loadCustomSection();if(!s||!s.J){cfToast('This section has no J (torsion constant) — works only for closed solid/hollow sections.');return;}const sh=$('sh-do')||$('sh-J');if(!sh){cfToast('Open the Shafts tab.');return;}if(sh.id==='sh-J'){sh.value=s.J.toFixed(2);sh.dispatchEvent(new Event('input',{bubbles:true}));}else cfToast('Shaft tab uses d_outer / d_inner directly. J='+s.J.toFixed(2)+' mm⁴ — set Do/Di to a pipe geometry that matches.');const tab=document.querySelector('[data-v="shafts"]');if(tab)tab.click();};
 function pTheme(){
   const css=getComputedStyle(document.documentElement);
   const isLight=(document.documentElement.getAttribute('data-theme')||'dark')==='light';
@@ -54,6 +54,7 @@ function plot(id,traces,axes){
   Plotly.react(id,traces,layout,{displayModeBar:false,responsive:true});
 }
 window.calcFixes={pTheme,plot};
+window.cfToast=function(m){let t=document.getElementById('cf-toast');if(!t){t=document.createElement('div');t.id='cf-toast';t.style.cssText='position:fixed;left:50%;bottom:84px;transform:translateX(-50%);background:var(--panel,#1d2026);color:var(--text,#eee);border:1px solid var(--accent,#ff6b35);border-radius:8px;padding:10px 16px;font:12px JetBrains Mono,monospace;z-index:99999;max-width:70vw;box-shadow:0 6px 24px rgba(0,0,0,.5)';document.body.appendChild(t);}t.textContent=m;t.style.display='block';clearTimeout(t._h);t._h=setTimeout(()=>{t.style.display='none';},3500);};
 window.addEventListener('DOMContentLoaded',()=>{
   const obs=new MutationObserver(()=>{rethemeAllPlots();rethemeCanvases();});
   obs.observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
@@ -77,7 +78,7 @@ window.beamLoads=window.beamLoads||[];
 window.addTypedSupport=function(){
   const t=sv('sup-typed-type')||'pin';
   const pos=getLen('sup-typed-pos');
-  if(!isFinite(pos)||pos<0){alert('Enter a valid position.');return;}
+  if(!isFinite(pos)||pos<0){cfToast('Enter a valid position.');return;}
   window.beamSupports.push({type:t,x:pos});
   renderSupportList();
   if(typeof window.solveBeam==='function')try{window.solveBeam();}catch(e){}
@@ -103,7 +104,7 @@ window.addLoad=function(){
   const pos=getLen('ld-pos');
   const mag=getForce('ld-mag');
   const endPos=$('ld-end')&&$('ld-end').value?getLen('ld-end'):null;
-  if(!isFinite(pos)||!isFinite(mag)){alert('Need position and magnitude.');return;}
+  if(!isFinite(pos)||!isFinite(mag)){cfToast('Need position and magnitude.');return;}
   window.beamLoads.push({type,x:pos,mag,xEnd:endPos});
   renderLoadList();
   if(typeof window.solveBeam==='function')try{window.solveBeam();}catch(e){}
@@ -1843,7 +1844,7 @@ function downloadFile(filename,content,mime){
   setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);},200);
 }
 window.exportGearSTL=function(){
-  const geom=buildGearGeometry();if(!geom){alert('No gear geometry. Click REBUILD first.');return;}
+  const geom=buildGearGeometry();if(!geom){cfToast('No gear geometry. Click REBUILD first.');return;}
   const type=sv('g3d-type')||'spur';
   const N=Math.round(v('g3d-N')||24),m=v('g3d-m')||3;
   const filename='gear_'+type+'_N'+N+'_m'+m+'.stl';

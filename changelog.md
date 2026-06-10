@@ -1,5 +1,11 @@
 # Changelog 
 
+## [5.19.1] - 2026-06-10 - Calc: 3D views resurrected on 18 modules + blocking alert() modals retired
+- THREE.js 3D viewers (springs/seals/bolts/gears/bearings/shafts/welds/columns/stress/thermal/fluids/pumps/hx/pv/vibration/motors/battery/sections) were ALL dead on live: calc-3d.js loaded OrbitControls from three@0.149.0/examples/js/ which no longer exists (removed in r148) -> script chain rejected -> no viewer ever booted. Repinned both scripts to three@0.147.0 (verified 200 on CDN); gears render the full involute pair again.
+- 3D contexts now boot LAZILY per visible view instead of all 18 at page load - Chrome caps WebGL contexts (~16) and was evicting the earliest ("context lost" white canvas). Hidden views skip their render loops (battery/CPU), and a lost context self-heals on next visit.
+- All 9 alert() validation modals in calc-fixes.js replaced with cfToast() - non-blocking bottom toast (3.5s auto-hide, theme-aware). Verified: empty beam-support position toasts and the page keeps working; valid input still adds + re-solves.
+- ROOT-CAUSED the audits' phantom "main-thread freezes": headless Edge has no dialog handler, so ONE validation alert() froze every later check - the wedge point moved run-to-run depending on which button hit an empty field first. Rig now auto-dismisses dialogs (reporting them as issues), settles 5s, filters ads-slot noise. Full audit: 32 views, 107 buttons, 0 failures.
+
 ## [5.19.0] - 2026-06-10 - Curriculum P5: math L3/L4 enrichment (TEKS-aligned, traditional methods)
 - Re-leveling the math bank (P1, v5.15.0) correctly thinned the grade-3-5 (L3) and middle-school (L4) tiers because so much advanced content had been mis-filed there. Refilled both with grade-appropriate questions: L3 31->51 (+20), L4 38->58 (+20).
 - L3 (grades 3-5): long division, multi-digit multiplication, same-denominator fraction addition, fraction-of-a-set, equivalent fractions, fraction<->decimal, rounding to tens/hundreds/whole, place value, perimeter & area (rectangle + triangle), elapsed time, making change, division-with-remainder, mixed numbers, x11 shortcut. Traditional standard algorithms; every answer verified with a worked check.
