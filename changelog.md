@@ -1,5 +1,11 @@
 # Changelog 
 
+## [5.19.3] - 2026-06-10 - Calc: shock response spectrum rebuilt on real physics (was saturating at 2.5 G)
+- calcShock's SRS clamped the RESPONSE to 2.5 G absolute - Math.min(2.5, |Q|*G) put the amplification-factor cap on factor*G - so any pulse above ~2.5G flatlined (the MIL-STD 50G/11ms default read "2.50 G / 0.05x" at 50 Hz). The closed-form Q also spiked ~5x near ratio 0.5 and decayed to zero at high f_n instead of approaching quasi-static 1.0.
+- Replaced with a numeric maximax SRS: RK4 integration of a zeta=0.05 SDOF through the pulse (all four shapes) + analytic residual peak from the end state. 60-point spectrum computes in 9 ms.
+- Verified against half-sine SRS theory: 50G/11ms at f_n=50Hz -> 76.31 G / 1.53x (textbook maximax band); quasi-static asymptote 1.04; impulsive region matches 4*fn*tau within 5%; 100G/6ms crash pulse checks out.
+- Isolator transmissibility AUDITED CLEAN: r=6, T=0.0333, 96.7% isolation - exact damped formula; resonance card (X_static, X@r=1, Q=1/2zeta) exact.
+
 ## [5.19.2] - 2026-06-10 - Calc: weld-group polar J corrected + corner-vector tau_max; five modules hand-verified exact
 - calcWeldGroup (overrides layer) used J = (b+d)^3/6 - b^2d^2/(2(b+d)) - the wrong table entry (that subtraction belongs to open/3-sided groups). Full-perimeter rectangle is exactly (b+d)^3/6: defaults now read J_w=1.91e7 mm4 (was 1.63e7), tau_t=23.43 MPa (was 27.50).
 - tau_max upgraded from sqrt(tau_d^2+tau_t^2) to the Shigley worst-corner component method (tau_x=Mc_y/J, tau_y=tau_d+Mc_x/J): 27.84 MPa on defaults - matches hand calc digit-for-digit.

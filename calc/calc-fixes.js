@@ -933,27 +933,26 @@ window.calcShock=function(){
     case 'haversine':dV=a_peak*tau/2;break;
     default:dV=a_peak*tau/2;
   }
-  /* Shock response spectrum: max response of an SDOF oscillator at varying f_n
-   * Approximation using shock amplification factor curves. */
-  const fns=[];const Qs=[];
-  for(let i=0;i<60;i++){
-    const f=Math.pow(10,Math.log10(0.1)+i*(Math.log10(1000)-Math.log10(0.1))/59);
-    fns.push(f);
-    const omega=2*Math.PI*f;const omega_pulse=2*Math.PI/tau;const ratio=omega/omega_pulse;
-    let Q;
-    if(shape==='half-sine'){
-      Q=ratio<=0.5?2*ratio*Math.sin(Math.PI/(2*ratio))/(1-Math.pow(2*ratio,2)+1e-9):2*ratio/(Math.pow(2*ratio,2)-1+1e-9)*Math.cos(Math.PI/(2*ratio));
-    }else if(shape==='rectangular'){
-      Q=2*Math.abs(Math.sin(Math.PI*f*tau));
-    }else{
-      Q=2*Math.PI*f*tau<2?Math.sin(2*Math.PI*f*tau)/(2*Math.PI*f*tau)*ratio*2:0.5;
+  /* Shock response spectrum: maximax absolute-acceleration response of a
+   * zeta=0.05 SDOF oscillator, integrated numerically (RK4) through the pulse;
+   * residual peak taken analytically from the end state. */
+  const zeta=0.05;
+  const baseA=tt=>a_peak*(shape==='half-sine'?Math.sin(Math.PI*tt/tau):shape==='sawtooth'?tt/tau:shape==='rectangular'?1:0.5*(1-Math.cos(2*Math.PI*tt/tau)));
+  const srsAt=f=>{
+    const wn=2*Math.PI*f,n=Math.max(600,Math.ceil(40*f*tau)),dt=tau/n,der=(z,zd,ab)=>[zd,-2*zeta*wn*zd-wn*wn*z-ab];
+    let z=0,zd=0,amax=0;
+    for(let s=0;s<n;s++){
+      const t0=s*dt,ab0=baseA(t0),abm=baseA(t0+dt/2),ab1=baseA(t0+dt);
+      const k1=der(z,zd,ab0),k2=der(z+dt/2*k1[0],zd+dt/2*k1[1],abm),k3=der(z+dt/2*k2[0],zd+dt/2*k2[1],abm),k4=der(z+dt*k3[0],zd+dt*k3[1],ab1);
+      z+=dt/6*(k1[0]+2*k2[0]+2*k3[0]+k4[0]);zd+=dt/6*(k1[1]+2*k2[1]+2*k3[1]+k4[1]);
+      const aabs=Math.abs(2*zeta*wn*zd+wn*wn*z);
+      aabs>amax&&(amax=aabs);
     }
-    Qs.push(Math.min(2.5,Math.max(0,Math.abs(Q||0)*G)));
-  }
-  /* Peak response at user's system f_n */
-  const ratio_user=2*Math.PI*fn/(2*Math.PI/tau);
-  const Q_user=Qs.reduce((best,q,i)=>Math.abs(fns[i]-fn)<Math.abs(fns[best]-fn)?i:best,0);
-  const a_response=Qs[Q_user];
+    return Math.max(amax,wn*wn*Math.hypot(z,zd/wn))/9.81;
+  };
+  const fns=[];const Qs=[];
+  for(let i=0;i<60;i++){const f=Math.pow(10,Math.log10(0.1)+i*4/59);fns.push(f);Qs.push(srsAt(f));}
+  const a_response=srsAt(fn);
   const t=pTheme();
   plot('p-shock',[
     {x:fns,y:Qs,mode:'lines',line:{color:t.accent,width:2.5},name:'SRS'},
