@@ -1,5 +1,10 @@
 # Changelog 
 
+## [5.19.10] - 2026-06-10 - Calc: Greek glyphs stay lowercase in result labels; redundant basic Mohr card retired
+- Result-label CSS (text-transform: uppercase) was capitalizing Greek - sigma became Σ, tau became Τ - across every module's result tiles. New GK() helper wraps Greek runs in text-transform:none spans, applied in the shared grid() builder and all calc-fixes templates. Verified at computed-style level.
+- The basic MOHR'S CIRCLE canvas (R=/C= labels clipped at the edges, drawn by the obfuscated bundle) is now hidden - the Enhanced Mohr card (hand-verified exact) and the Plotly circle are the primary displays.
+- Math show-work negative-sign formatting marked wontfix for now: the generator lives in the obfuscated bundle and the final answers are correct.
+
 ## [5.19.9] - 2026-06-10 - Calc: unit-converter precision (1 rev now = 360 deg exactly); ALL 32 VIEWS SWEPT
 - units.rs had truncated factors: deg 0.0174533 (so 1 rad displayed 57.295755 deg instead of 57.2957795, and 1 rev -> deg gave 359.99977), rev 6.28318, km/h 0.27778, lbf/in 175.127. All four now full f64 precision; wasm rebuilt + redeployed; 36/36 correctness suite green; spot-verified 1 rev = 360 deg exact.
 - Math view verified (quadratic roots/discriminant/vertex, circle area/circumference, polynomial derivative, determinant - all exact); equations reference formulas all textbook; refs view (standards map, FoS screening, fits, fastener map) reads clean. Queued: show-work lines misprint negative coefficients (answers are right).

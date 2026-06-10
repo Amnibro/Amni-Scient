@@ -218,8 +218,8 @@ window.solveBeam=function(){
     <div class="result-grid">
       <div class="result-item"><div class="lbl">V_max</div><div class="val">${VmaxKN.toFixed(3)} kN</div></div>
       <div class="result-item"><div class="lbl">M_max</div><div class="val">${MmaxNm.toFixed(3)} N·m</div></div>
-      <div class="result-item"><div class="lbl">δ_max</div><div class="val">${dmax.toFixed(3)} mm @ ${xs[dmaxIdx].toFixed(0)} mm</div></div>
-      <div class="result-item"><div class="lbl">L/δ</div><div class="val">${(Math.abs(dmax)>1e-9?(L/Math.abs(dmax)).toFixed(0):'∞')}</div></div>
+      <div class="result-item"><div class="lbl"><span style="text-transform:none">δ</span>_max</div><div class="val">${dmax.toFixed(3)} mm @ ${xs[dmaxIdx].toFixed(0)} mm</div></div>
+      <div class="result-item"><div class="lbl">L/<span style="text-transform:none">δ</span></div><div class="val">${(Math.abs(dmax)>1e-9?(L/Math.abs(dmax)).toFixed(0):'∞')}</div></div>
     </div>
     <table class="data" style="margin-top:.6rem;font-size:.78rem">
       <thead><tr><th>SUPPORT</th><th>REACTION (V)</th><th>REACTION (M)</th></tr></thead>
@@ -961,7 +961,7 @@ window.calcShock=function(){
   const out=$('shock-out');if(out){
     const pulse_label={'half-sine':'half-sine','sawtooth':'sawtooth (terminal-peak)','rectangular':'rectangular (square)','haversine':'haversine'}[shape];
     out.innerHTML='<div class="result-grid">'+
-      [['Peak accel',G+' G ('+a_peak.toFixed(0)+' m/s²)'],['Pulse '+pulse_label,(tau*1000).toFixed(1)+' ms'],['ΔV (impulse)',(dV*1000).toFixed(1)+' mm/s ('+dV.toFixed(3)+' m/s)'],['Response @ '+fn+' Hz',a_response.toFixed(2)+' G ('+(a_response*9.81).toFixed(0)+' m/s²)'],['Amplification',(a_response/G).toFixed(2)+'×']].map(([l,v])=>`<div class="result-item"><div class="lbl">${l}</div><div class="val">${v}</div></div>`).join('')+
+      [['Peak accel',G+' G ('+a_peak.toFixed(0)+' m/s²)'],['Pulse '+pulse_label,(tau*1000).toFixed(1)+' ms'],['ΔV (impulse)',(dV*1000).toFixed(1)+' mm/s ('+dV.toFixed(3)+' m/s)'],['Response @ '+fn+' Hz',a_response.toFixed(2)+' G ('+(a_response*9.81).toFixed(0)+' m/s²)'],['Amplification',(a_response/G).toFixed(2)+'×']].map(([l,v])=>`<div class="result-item"><div class="lbl">${window.GK?window.GK(l):l}</div><div class="val">${v}</div></div>`).join('')+
       '</div>'+
       '<p style="margin-top:.4rem;color:var(--dim);font-size:.7rem">Half-sine ΔV = 2·a_peak·τ/π. SRS peaks near f_n ≈ 1/(2τ). MIL-STD-810 standard half-sine: 50G/11ms (functional shock), 100G/6ms (crash safety). Equipment design: target SRS amp factor ≤ 1.5 by stiffening (raise f_n) or isolating (lower f_n well below 1/τ).</p>';
   }
@@ -1067,7 +1067,7 @@ window.calcXfmr=function(){
   const Z_per_unit=Z/100;
   const turnsRatio=Vp/Vs;
   setCardOut('xfmr-card','<div class="result-grid">'+
-    [['Primary FLA',FLA_p.toFixed(1)+' A'],['Secondary FLA',FLA_s.toFixed(1)+' A'],['Turns ratio',turnsRatio.toFixed(2)+':1'],['SCC (sec, 3-cyc)',SCC_s.toFixed(0)+' A',SCC_s>10000?'warn':'ok'],['Z per-unit',Z_per_unit.toFixed(4)],['I²t (~6-cyc, 0.1s)',I2t_thermal.toExponential(2)+' A²·s']].map(([l,v,c])=>`<div class="result-item"><div class="lbl">${l}</div><div class="val ${c||''}">${v}</div></div>`).join('')+
+    [['Primary FLA',FLA_p.toFixed(1)+' A'],['Secondary FLA',FLA_s.toFixed(1)+' A'],['Turns ratio',turnsRatio.toFixed(2)+':1'],['SCC (sec, 3-cyc)',SCC_s.toFixed(0)+' A',SCC_s>10000?'warn':'ok'],['Z per-unit',Z_per_unit.toFixed(4)],['I²t (~6-cyc, 0.1s)',I2t_thermal.toExponential(2)+' A²·s']].map(([l,v,c])=>`<div class="result-item"><div class="lbl">${window.GK?window.GK(l):l}</div><div class="val ${c||''}">${v}</div></div>`).join('')+
     '</div>'+
     '<p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem"><strong>NEC 240.21 secondary tap rules:</strong> 10-ft tap allows downstream OCPD if conductors ≥ 1/10 of primary OCPD rating; 25-ft tap requires conductors ≥ 1/3 of primary rating. <strong>Short-circuit:</strong> SCC = FLA / (Z/100) — coordinate with branch breaker AIC rating. <strong>Inrush:</strong> typical 8-12× FLA for first cycle, decay over 0.1 s. Use NEMA TP 1 efficiencies for sizing-vs-loss tradeoff.</p>');
 };
@@ -1093,7 +1093,7 @@ window.calcACPower=function(){
   const phaseLabel=Q>=0?'Lagging (inductive)':'Leading (capacitive)';
   const out=$('phasor-out');if(out){
     out.innerHTML='<div class="result-grid">'+
-      [['S apparent',S.toFixed(0)+' VA'],['P real',P.toFixed(0)+' W'],['Q reactive',Q.toFixed(0)+' VAR'],['PF',PF.toFixed(3)],['φ (angle)',angle.toFixed(1)+'°'],['Type',phaseLabel]].map(([l,v])=>`<div class="result-item"><div class="lbl">${l}</div><div class="val">${v}</div></div>`).join('')+
+      [['S apparent',S.toFixed(0)+' VA'],['P real',P.toFixed(0)+' W'],['Q reactive',Q.toFixed(0)+' VAR'],['PF',PF.toFixed(3)],['φ (angle)',angle.toFixed(1)+'°'],['Type',phaseLabel]].map(([l,v])=>`<div class="result-item"><div class="lbl">${window.GK?window.GK(l):l}</div><div class="val">${v}</div></div>`).join('')+
       '</div>';
   }
   /* Also write to electrical-results in standard form so other callers see it */
@@ -1179,7 +1179,7 @@ window.calcMotorTSC=function(){
   ],{xaxis:{title:'Speed (rpm)',range:[0,Ns*1.05]},yaxis:{title:'Torque (N·m)',range:[0,Tfl*d.LRT*1.2]},showlegend:false});
   const out=$('motor-ts-out');if(out){
     out.innerHTML='<div class="result-grid">'+
-      [['Design',dKey],['T_FL (full load)',Tfl.toFixed(2)+' N·m'],['T_LR (locked rotor)',(Tfl*d.LRT).toFixed(1)+' N·m ('+(d.LRT*100).toFixed(0)+'% FL)'],['T_BD (breakdown)',(Tfl*d.BDT).toFixed(1)+' N·m ('+(d.BDT*100).toFixed(0)+'%)'],['I_LR / I_FL',(d.LRC).toFixed(1)+'×'],['Rated slip',(d.slip*100).toFixed(1)+'%']].map(([l,v])=>`<div class="result-item"><div class="lbl">${l}</div><div class="val">${v}</div></div>`).join('')+
+      [['Design',dKey],['T_FL (full load)',Tfl.toFixed(2)+' N·m'],['T_LR (locked rotor)',(Tfl*d.LRT).toFixed(1)+' N·m ('+(d.LRT*100).toFixed(0)+'% FL)'],['T_BD (breakdown)',(Tfl*d.BDT).toFixed(1)+' N·m ('+(d.BDT*100).toFixed(0)+'%)'],['I_LR / I_FL',(d.LRC).toFixed(1)+'×'],['Rated slip',(d.slip*100).toFixed(1)+'%']].map(([l,v])=>`<div class="result-item"><div class="lbl">${window.GK?window.GK(l):l}</div><div class="val">${v}</div></div>`).join('')+
       '</div><p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem"><strong>'+dKey+':</strong> '+d.note+'.<br><strong>Starting current:</strong> ~'+d.LRC.toFixed(1)+'× FLA across-the-line. Use soft-start or VFD to limit inrush. <strong>Across-the-line OK</strong> if utility transformer ≥ 5× motor kVA. <strong>Code letter:</strong> NEMA Code G ≈ 6.0 kVA/HP locked rotor; B/C usually fall in F-G.</p>';
   }
 };
@@ -1201,7 +1201,7 @@ window.calcNemaFrame=function(){
   const tefcFrame=enc==='TEFC'&&frame?frame.replace(/T$/,'TZ').replace(/(\d{3})/,m=>(parseInt(m)+2)+''):frame;
   const finalFrame=enc==='TEFC'?tefcFrame:frame;
   setCardOut('mt-frame-card','<div class="result-grid">'+
-    [['Required HP',pick+' HP'],['NEMA frame',finalFrame||'—'],['Speed class',rpm+' rpm sync ('+(rpm===3600?'2-pole':rpm===1800?'4-pole':rpm===1200?'6-pole':'8-pole')+')'],['Enclosure',enc]].map(([l,v])=>`<div class="result-item"><div class="lbl">${l}</div><div class="val">${v}</div></div>`).join('')+
+    [['Required HP',pick+' HP'],['NEMA frame',finalFrame||'—'],['Speed class',rpm+' rpm sync ('+(rpm===3600?'2-pole':rpm===1800?'4-pole':rpm===1200?'6-pole':'8-pole')+')'],['Enclosure',enc]].map(([l,v])=>`<div class="result-item"><div class="lbl">${window.GK?window.GK(l):l}</div><div class="val">${v}</div></div>`).join('')+
     '</div>'+
     '<p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem">NEMA MG-1 standard frames. T-frame (1964+) replaces older U-frame. TEFC frames typically one size up from ODP for same HP. Shaft and bolt patterns are interchangeable within frame number for OEM swap-out.</p>');
 };
@@ -1301,7 +1301,7 @@ window.calcPumpCurve=function(){
     const opStatus=offBep<10?'ok':offBep<30?'warn':'err';
     const opLabel=offBep<10?'In sweet spot':offBep<30?'Off BEP — efficiency drop':'Far from BEP — recirc/cavitation risk';
     out.innerHTML='<div class="result-grid">'+
-      [['Operating Q',Qop.toFixed(1)+' m³/h'],['Operating H',Hop.toFixed(1)+' m'],['Off-BEP %',offBep.toFixed(1)+'%',opStatus],['Efficiency',(effOp*100).toFixed(1)+'%'],['Brake power',Pbrake.toFixed(2)+' kW'],['NPSHr (BEP)',model.NPSHr.toFixed(1)+' m']].map(([l,v,c])=>`<div class="result-item"><div class="lbl">${l}</div><div class="val ${c||''}">${v}</div></div>`).join('')+
+      [['Operating Q',Qop.toFixed(1)+' m³/h'],['Operating H',Hop.toFixed(1)+' m'],['Off-BEP %',offBep.toFixed(1)+'%',opStatus],['Efficiency',(effOp*100).toFixed(1)+'%'],['Brake power',Pbrake.toFixed(2)+' kW'],['NPSHr (BEP)',model.NPSHr.toFixed(1)+' m']].map(([l,v,c])=>`<div class="result-item"><div class="lbl">${window.GK?window.GK(l):l}</div><div class="val ${c||''}">${v}</div></div>`).join('')+
       '</div><p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem"><strong>'+opLabel+'</strong>. '+model.note+'. Operate within ±20% of BEP. Verify NPSHa &gt; NPSHr+1m. Below 50% BEP risk: recirculation, vibration, seal failure. Above 120% BEP: low NPSHa margin, cavitation, motor overload.</p>';
   }
 };
@@ -1368,7 +1368,7 @@ window.calcPVHead=function(){
   }
   const tTotal=t+CA;
   setCardOut('pv-head-card','<div class="result-grid">'+
-    [['t_required',t.toFixed(3)+' mm'],['t_total (with C.A.)',tTotal.toFixed(3)+' mm'],['Head type',type==='hemi'?'Hemispherical':type==='ellip'?'Ellipsoidal 2:1':type==='tori'?'Torispherical F&D':'Flat']].map(([l,v])=>`<div class="result-item"><div class="lbl">${l}</div><div class="val">${v}</div></div>`).join('')+
+    [['t_required',t.toFixed(3)+' mm'],['t_total (with C.A.)',tTotal.toFixed(3)+' mm'],['Head type',type==='hemi'?'Hemispherical':type==='ellip'?'Ellipsoidal 2:1':type==='tori'?'Torispherical F&D':'Flat']].map(([l,v])=>`<div class="result-item"><div class="lbl">${window.GK?window.GK(l):l}</div><div class="val">${v}</div></div>`).join('')+
     '</div><p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem"><strong>Formula:</strong> '+formula+'. <strong>Selection:</strong> Hemi gives thinnest head but tallest profile and most expensive. Ellipsoidal 2:1 is standard process choice. Torispherical (F&D) uses flat-bottom forming, common low-pressure storage. Add corrosion allowance per service. Verify spot-radiography per UW-12 for E (1.0 full RT, 0.85 spot, 0.70 none).</p>');
 };
 window.calcPVNozzle=function(){
@@ -1383,7 +1383,7 @@ window.calcPVNozzle=function(){
   const A_short=A_req-A_avail;
   const pad_t=pad_needed?A_short/(2*dO):0;
   setCardOut('pv-nozzle-card','<div class="result-grid">'+
-    [['Opening d',d.toFixed(1)+' mm'],['A required',A_req.toFixed(1)+' mm²'],['A from shell',A1.toFixed(1)+' mm²'],['A from nozzle',A2.toFixed(1)+' mm²'],['A total available',A_avail.toFixed(1)+' mm²',A_avail>=A_req?'ok':'err'],['Pad needed?',pad_needed?'YES':'NO',pad_needed?'warn':'ok'],['Pad t (min)',pad_needed?pad_t.toFixed(1)+' mm':'—']].map(([l,v,c])=>`<div class="result-item"><div class="lbl">${l}</div><div class="val ${c||''}">${v}</div></div>`).join('')+
+    [['Opening d',d.toFixed(1)+' mm'],['A required',A_req.toFixed(1)+' mm²'],['A from shell',A1.toFixed(1)+' mm²'],['A from nozzle',A2.toFixed(1)+' mm²'],['A total available',A_avail.toFixed(1)+' mm²',A_avail>=A_req?'ok':'err'],['Pad needed?',pad_needed?'YES':'NO',pad_needed?'warn':'ok'],['Pad t (min)',pad_needed?pad_t.toFixed(1)+' mm':'—']].map(([l,v,c])=>`<div class="result-item"><div class="lbl">${window.GK?window.GK(l):l}</div><div class="val ${c||''}">${v}</div></div>`).join('')+
     '</div><p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem">UG-37 area-replacement rule: cross-sectional area removed from shell by the opening (A_req = d·t_r) must be replaced by metal within the reinforcement zone. Available metal = excess shell thickness × d + nozzle wall × 2.5·t_n on each side. If short, add a reinforcement pad. Pad diameter typically d_pad = 2·d for full credit.</p>');
 };
 window.calcPVLug=function(){
@@ -1399,7 +1399,7 @@ window.calcPVLug=function(){
   const A_net=(w-d)*t;
   const sigma_tens=F_design/A_net;
   setCardOut('pv-lug-card','<div class="result-grid">'+
-    [['F per lug (1g)',F_per.toFixed(0)+' N'],['F design (×'+factor+')',F_design.toFixed(0)+' N'],['σ bearing',sigma_bear.toFixed(1)+' MPa',sigma_bear<S?'ok':'err'],['τ tear-out',tau_tear.toFixed(1)+' MPa',tau_tear<0.6*S?'ok':'err'],['σ tensile (net sec)',sigma_tens.toFixed(1)+' MPa',sigma_tens<S?'ok':'err'],['Allowable',S+' MPa']].map(([l,v,c])=>`<div class="result-item"><div class="lbl">${l}</div><div class="val ${c||''}">${v}</div></div>`).join('')+
+    [['F per lug (1g)',F_per.toFixed(0)+' N'],['F design (×'+factor+')',F_design.toFixed(0)+' N'],['σ bearing',sigma_bear.toFixed(1)+' MPa',sigma_bear<S?'ok':'err'],['τ tear-out',tau_tear.toFixed(1)+' MPa',tau_tear<0.6*S?'ok':'err'],['σ tensile (net sec)',sigma_tens.toFixed(1)+' MPa',sigma_tens<S?'ok':'err'],['Allowable',S+' MPa']].map(([l,v,c])=>`<div class="result-item"><div class="lbl">${window.GK?window.GK(l):l}</div><div class="val ${c||''}">${v}</div></div>`).join('')+
     '</div><p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem"><strong>ASME B30.20 / OSHA:</strong> Design factor 2× for fixed lugs, 5× for slings. Bearing stress on pin: F/(d·t). Tear-out (double shear): F/(2·a·t) where a = edge distance. Tensile through net section: F/((w-d)·t). All < S_allow. Welded lug to shell: check fillet weld + base metal HAZ separately.</p>');
 };
 
@@ -1464,7 +1464,7 @@ window.calcBoltTorqueSeq=function(){
      ['F_bolt @ ext load',fmt(F_b,0)+' N'],
      ['F_joint @ ext load',fmt(F_j,0)+' N',F_j>0?'ok':'err'],
      ['Separation margin',isFinite(sepMargin)?fmt(sepMargin,2)+'×':'∞',sepMargin>1.5?'ok':sepMargin>1?'warn':'err'],
-     ['Joint stiffness ratio C',fmt(C,2)]].map(([l,v,c])=>`<div class="result-item"><div class="lbl">${l}</div><div class="val ${c||''}">${v}</div></div>`).join('')+'</div>';
+     ['Joint stiffness ratio C',fmt(C,2)]].map(([l,v,c])=>`<div class="result-item"><div class="lbl">${window.GK?window.GK(l):l}</div><div class="val ${c||''}">${v}</div></div>`).join('')+'</div>';
   summary+='<p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem"><strong>Method notes:</strong> Torque control ±25% preload scatter typical. Torque + angle (e.g. snug then 90°) cuts scatter to ±10%. Yield-control (or ultrasonic) reaches ±5%. <strong>Sequence:</strong> star/cross pattern, opposite bolts in pairs, work outward for circular flanges. <strong>ASME PCC-1</strong> is the canonical assembly guideline. Re-torque after gasket relaxation typically 10–20% of original preload for compressed-fiber sheet, lower for spiral-wound, higher for soft sheet.</p>';
   $('bts-table').innerHTML=summary;
   /* Joint diagram: F_b and F_j vs F_ext */
@@ -1595,7 +1595,7 @@ window.calcDeposition=function(){
   const depRateLbHr=depRate*2.205;
   const heat=(amp*volt*0.06/tts);
   setCardOut('weld-rate-card','<div class="result-grid">'+
-    [['Melt rate',meltRate.toFixed(3)+' kg/hr'],['Deposit rate',depRate.toFixed(3)+' kg/hr'],['Deposit rate',depRateLbHr.toFixed(2)+' lb/hr'],['Heat input',heat.toFixed(2)+' kJ/mm',heat>3.5?'warn':heat>1.5?'ok':'warn'],['Process',proc]].map(([l,v,c])=>`<div class="result-item"><div class="lbl">${l}</div><div class="val ${c||''}">${v}</div></div>`).join('')+
+    [['Melt rate',meltRate.toFixed(3)+' kg/hr'],['Deposit rate',depRate.toFixed(3)+' kg/hr'],['Deposit rate',depRateLbHr.toFixed(2)+' lb/hr'],['Heat input',heat.toFixed(2)+' kJ/mm',heat>3.5?'warn':heat>1.5?'ok':'warn'],['Process',proc]].map(([l,v,c])=>`<div class="result-item"><div class="lbl">${window.GK?window.GK(l):l}</div><div class="val ${c||''}">${v}</div></div>`).join('')+
     '</div><p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem"><strong>Heat input:</strong> H = (A·V·0.06)/v_travel kJ/mm. <strong>Limits:</strong> Carbon steel 0.8–3.5 kJ/mm; HSLA 0.8–2.5; Duplex 0.5–2.0 (over-heat embrittlement); aluminum 0.6–2.0. Below 0.8 kJ/mm risks lack of fusion; above max risks HAZ softening / grain growth. <strong>Deposition efficiency:</strong> SMAW 60-65%, GMAW 92-95% (short-arc) / 88% (spray), FCAW 78-85%, GTAW 100% (no spatter), SAW 95-100%.</p>');
 };
 
@@ -2321,7 +2321,7 @@ window.addEventListener('DOMContentLoaded',()=>{
       });
       const out=$('mohr-x-out');if(out){
         out.innerHTML='<div class="result-grid">'+
-          [['σ₁',s1.toFixed(2)+' MPa'],['σ₂',s2.toFixed(2)+' MPa'],['τ_max',tmax.toFixed(2)+' MPa'],['Center σ_avg',cx.toFixed(2)+' MPa'],['Radius R',R.toFixed(2)+' MPa'],['θ_p',tp.toFixed(2)+'°'],['σ_vM (2D)',sv0.toFixed(2)+' MPa'],['τ_Tresca',tr.toFixed(2)+' MPa']].map(([l,v])=>`<div class="result-item"><div class="lbl">${l}</div><div class="val">${v}</div></div>`).join('')+
+          [['σ₁',s1.toFixed(2)+' MPa'],['σ₂',s2.toFixed(2)+' MPa'],['τ_max',tmax.toFixed(2)+' MPa'],['Center σ_avg',cx.toFixed(2)+' MPa'],['Radius R',R.toFixed(2)+' MPa'],['θ_p',tp.toFixed(2)+'°'],['σ_vM (2D)',sv0.toFixed(2)+' MPa'],['τ_Tresca',tr.toFixed(2)+' MPa']].map(([l,v])=>`<div class="result-item"><div class="lbl">${window.GK?window.GK(l):l}</div><div class="val">${v}</div></div>`).join('')+
           '</div><p style="margin-top:.4rem;color:var(--dim);font-size:.72rem">Principal axes rotate '+tp.toFixed(1)+'° from x-axis. Use σ_vM for ductile-yield FoS, σ₁ for brittle/fatigue. Tresca more conservative than vM by ~15%.</p>';
       }
     };
