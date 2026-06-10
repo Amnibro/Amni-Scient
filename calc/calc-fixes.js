@@ -832,7 +832,7 @@ function drawSpringAnim(d,D,nt,fl,deflectedL,type){
         ctx.stroke();
       }
     }else{
-      const turns=Math.max(3,Math.floor(nt));
+      const turns=Math.min(60,Math.max(3,Math.floor(nt)));
       const segPerTurn=12;
       const totalSeg=turns*segPerTurn;
       ctx.beginPath();
@@ -939,7 +939,7 @@ window.calcShock=function(){
   const zeta=0.05;
   const baseA=tt=>a_peak*(shape==='half-sine'?Math.sin(Math.PI*tt/tau):shape==='sawtooth'?tt/tau:shape==='rectangular'?1:0.5*(1-Math.cos(2*Math.PI*tt/tau)));
   const srsAt=f=>{
-    const wn=2*Math.PI*f,n=Math.max(600,Math.ceil(40*f*tau)),dt=tau/n,der=(z,zd,ab)=>[zd,-2*zeta*wn*zd-wn*wn*z-ab];
+    const wn=2*Math.PI*f,n=Math.min(20000,Math.max(600,Math.ceil(40*f*tau))),dt=tau/n,der=(z,zd,ab)=>[zd,-2*zeta*wn*zd-wn*wn*z-ab];
     let z=0,zd=0,amax=0;
     for(let s=0;s<n;s++){
       const t0=s*dt,ab0=baseA(t0),abm=baseA(t0+dt/2),ab1=baseA(t0+dt);
@@ -1699,7 +1699,7 @@ let gear3DScene=null,gear3DMesh=null,gear3DRenderer=null,gear3DCamera=null,gear3
 function buildGearGeometry(){
   const T=window.THREE;if(!T)return null;
   const type=sv('g3d-type')||'spur';
-  const N=Math.max(6,Math.round(v('g3d-N')||24));
+  const N=Math.min(200,Math.max(6,Math.round(v('g3d-N')||24)));
   const m=Math.max(0.5,v('g3d-m')||3);
   const phi=v('g3d-phi')||20;
   const fw=Math.max(3,v('g3d-fw')||20);

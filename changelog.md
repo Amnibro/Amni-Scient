@@ -1,5 +1,11 @@
 # Changelog 
 
+## [5.19.11] - 2026-06-10 - Calc: edge-input fuzzing kills six freeze-the-tab bugs
+- New fuzz rig (every numeric input driven to 0 / -1 / 1e12 across all 32 views) found six ways to permanently freeze the page with one keystroke, all fixed:
+- Unbounded geometry loops clamped: gear teeth (3D builder AND 2D mesh draw) max 200, spring coil draw max 60 turns, 3D spring tube max 50 coils, bolt-pattern count max 100 / cols 50, shock-spectrum integrator max 20k steps per point.
+- Zero-step infinite loops: Lame thick-wall plot stepped r by (ro-ri)/40 (forever when ro=ri) and the Goodman diagram stepped by Sut/50 (forever when Sut=0) - both now fixed-count index loops with input guards.
+- Re-fuzz confirms zero main-thread hangs anywhere. Remaining NaN/Infinity text at nonsense inputs queued as polish (page survives them).
+
 ## [5.19.10] - 2026-06-10 - Calc: Greek glyphs stay lowercase in result labels; redundant basic Mohr card retired
 - Result-label CSS (text-transform: uppercase) was capitalizing Greek - sigma became Σ, tau became Τ - across every module's result tiles. New GK() helper wraps Greek runs in text-transform:none spans, applied in the shared grid() builder and all calc-fixes templates. Verified at computed-style level.
 - The basic MOHR'S CIRCLE canvas (R=/C= labels clipped at the edges, drawn by the obfuscated bundle) is now hidden - the Enhanced Mohr card (hand-verified exact) and the Plotly circle are the primary displays.
