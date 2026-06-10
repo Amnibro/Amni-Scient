@@ -1,5 +1,10 @@
 # Changelog 
 
+## [5.19.13] - 2026-06-10 - Calc: seals wasm physics corrected (contact stress was ~25% stiff)
+- Deep audit of the seals module: Gent hardness-to-modulus is exact, Mooney-Rivlin form correct, chord contact width sound, Parker max-extrusion-gap table matches the handbook, groove dims land inside Parker ranges.
+- Two model fixes: M-R constants implied an effective modulus 1.25x the input (C10 now E/7.5 so 6(C10+C01)=E), and the face-seal shape factor reduced to a geometry-independent constant (terms cancelled) - all gland types now use the chord-based shape factor.
+- correctness_audit.mjs grows 9 seals checks (groove depth/width/fill, dynamic squeeze, solver squeeze/fill, contact-pressure sanity, Parker gap): 44/44 green. Rebuilt wasm deployed; live view verified.
+
 ## [5.19.12] - 2026-06-10 - Calc: fuzz round 2 - two more freeze loops dead, NaN never reaches the screen
 - Tafel curve stepped 0.005 V at a time up to 2x the overpotential input (1e12 V froze the tab); now a 200-point sweep capped at 2 V. Battery discharge curve stepped by I/10 (zero current = zero step = freeze); now guarded.
 - NaN/Infinity can no longer render: a text-node janitor in the last-loading layer scrubs any NaN/Infinity in visible view output to an em-dash (works even for the obfuscated bundle's output), plus source guards for the welds heat-input (zero travel speed) and bolt torque-sequence formatter.
