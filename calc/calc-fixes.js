@@ -300,6 +300,35 @@ function renderSecParams(){
     `<div class="field" style="min-width:140px"><label for="secp-${p.id}">${p.label}</label><input type="number" id="secp-${p.id}" value="${p.def}" step="${snap}" oninput="window.applyPreset()" onblur="this.value=(Math.round(parseFloat(this.value||0)/${snap})*${snap}).toFixed(${snap<1?Math.max(0,-Math.log10(snap)):0});window.applyPreset()"></div>`
   ).join('')+'</div>';
 }
+function circlePts(r,cx,cy){const pts=[];for(let i=0;i<48;i++){const a=i/48*2*Math.PI;pts.push([cx+r*Math.cos(a),cy+r*Math.sin(a)]);}return pts;}
+function drawPresetOutline(key,p){
+  const c=$('c-section');if(!c)return;
+  const polys=(()=>{switch(key){
+    case 'rect':return [[[0,0],[p.b,0],[p.b,p.h],[0,p.h]]];
+    case 'hollow_rect':{const t=p.t;return [[[0,0],[p.b,0],[p.b,p.h],[0,p.h]],[[t,t],[p.b-t,t],[p.b-t,p.h-t],[t,p.h-t]]];}
+    case 'circle':{const r=(p.d||0)/2;return [circlePts(r,r,r)];}
+    case 'hollow_circle':{const ro=p.do/2;return [circlePts(ro,ro,ro),circlePts((p.di||0)/2,ro,ro)];}
+    case 'pipe':{const ro=p.do/2;return [circlePts(ro,ro,ro),circlePts(Math.max(0,ro-(p.t||0)),ro,ro)];}
+    case 'i_beam':{const b=p.bf,tf=p.tf,d=p.d,tw=p.tw,cx=b/2;return [[[0,0],[b,0],[b,tf],[cx+tw/2,tf],[cx+tw/2,d-tf],[b,d-tf],[b,d],[0,d],[0,d-tf],[cx-tw/2,d-tf],[cx-tw/2,tf],[0,tf]]];}
+    case 'channel':{const b=p.bf,tf=p.tf,d=p.d,tw=p.tw;return [[[0,0],[b,0],[b,tf],[tw,tf],[tw,d-tf],[b,d-tf],[b,d],[0,d]]];}
+    case 'tee':{const b=p.bf,tf=p.tf,d=p.d,tw=p.tw,cx=b/2;return [[[0,d],[0,d-tf],[cx-tw/2,d-tf],[cx-tw/2,0],[cx+tw/2,0],[cx+tw/2,d-tf],[b,d-tf],[b,d]]];}
+    case 'angle':return [[[0,0],[p.b,0],[p.b,p.t],[p.t,p.t],[p.t,p.h],[0,p.h]]];
+    case 'trapezoid':{const off=((p.b||0)-(p.a||0))/2;return [[[0,0],[p.b,0],[p.b-off,p.h],[off,p.h]]];}
+    case 'triangle':return [[[0,0],[p.b,0],[p.b/2,p.h]]];
+    default:return null;}})();
+  if(!polys||!polys[0]||!polys[0].length)return;
+  const xs=polys[0].map(q=>q[0]),ys=polys[0].map(q=>q[1]);
+  const minX=Math.min(...xs),maxX=Math.max(...xs),minY=Math.min(...ys),maxY=Math.max(...ys);
+  const span=Math.max(maxX-minX,maxY-minY,1e-6),sc=320/span,ox=(c.width-(maxX-minX)*sc)/2,oy=(c.height-(maxY-minY)*sc)/2;
+  const X=q=>ox+(q[0]-minX)*sc,Y=q=>c.height-(oy+(q[1]-minY)*sc);
+  const x=c.getContext('2d');x.clearRect(0,0,c.width,c.height);
+  x.beginPath();
+  polys.forEach(poly=>{poly.forEach((q,i)=>{i?x.lineTo(X(q),Y(q)):x.moveTo(X(q),Y(q));});x.closePath();});
+  x.fillStyle='rgba(255,107,53,0.18)';x.fill('evenodd');
+  x.strokeStyle='#ff6b35';x.lineWidth=2;x.stroke();
+  x.fillStyle='#9aa';x.font='11px JetBrains Mono,monospace';x.textAlign='center';
+  x.fillText((maxX-minX).toFixed(0)+' mm wide × '+(maxY-minY).toFixed(0)+' mm tall (to scale)',c.width/2,c.height-8);
+}
 window.applyPreset=function(){
   const sel=$('sec-presets');if(!sel)return;
   const preset=SECTION_PRESETS[sel.value];if(!preset)return;
@@ -326,6 +355,7 @@ window.applyPreset=function(){
     '<div class="result-grid">'+items.map(i=>`<div class="result-item"><div class="lbl">${i[0]}</div><div class="val">${i[1]}</div></div>`).join('')+'</div>'+
     '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.7rem">A = area, I = second moment of area, S = elastic section modulus (I/c), Z = plastic section modulus, r = radius of gyration (√(I/A)), J = polar/torsion constant. All bending values are about the centroidal axis. Values change instantly when you edit inputs above.</p>';
   saveCustomSection(res,preset.label);
+  drawPresetOutline(sel.value,params);
   injectSectionExportButton();
 };
 

@@ -1,5 +1,10 @@
 # Changelog 
 
+## [5.19.14] - 2026-06-10 - Calc: section presets draw to scale; beam moment convention labeled on the plot
+- Picking a section preset now renders the actual profile to scale on the drawing canvas (all 11 shapes incl. I-beam/channel/tee with proper holes for hollow sections, plus a dimension caption) - previously the canvas stayed blank on the preset path.
+- The beam moment diagram keeps its structural tension-side convention but now says so right on the axis: "Moment M (N-m) - sagging plots down (tension side)".
+- Pump hydraulic-power card ignores degenerate inputs (Q/H/rho <= 0) instead of grinding Plotly on garbage.
+
 ## [5.19.13] - 2026-06-10 - Calc: seals wasm physics corrected (contact stress was ~25% stiff)
 - Deep audit of the seals module: Gent hardness-to-modulus is exact, Mooney-Rivlin form correct, chord contact width sound, Parker max-extrusion-gap table matches the handbook, groove dims land inside Parker ranges.
 - Two model fixes: M-R constants implied an effective modulus 1.25x the input (C10 now E/7.5 so 6(C10+C01)=E), and the face-seal shape factor reduced to a geometry-independent constant (terms cancelled) - all gland types now use the chord-based shape factor.
