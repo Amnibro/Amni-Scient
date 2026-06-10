@@ -333,7 +333,7 @@ window.applyPreset=function(){
  * BOLTS — full grade + size library, live-compute
  * ============================================================ */
 const BOLT_GRADES={
-  'SAE-2':{Sp:225,Sy:393,Su:510,std:'SAE J429 — low/medium-carbon'},
+  'SAE-2':{Sp:380,Sy:393,Su:510,std:'SAE J429 — low/medium-carbon (≤3/4"; larger dia drops to Sp 228)'},
   'SAE-5':{Sp:585,Sy:634,Su:827,std:'SAE J429 — medium-carbon Q&T (most common)'},
   'SAE-7':{Sp:725,Sy:896,Su:1034,std:'SAE J429 — medium-carbon alloy Q&T'},
   'SAE-8':{Sp:830,Sy:896,Su:1034,std:'SAE J429 — medium-carbon alloy Q&T (high-strength)'},

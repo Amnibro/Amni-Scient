@@ -1,5 +1,10 @@
 # Changelog 
 
+## [5.19.4] - 2026-06-10 - Calc: bolt grade data corrected, Bernoulli no longer stomps the Moody chart
+- SAE Grade 2 proof strength was 225 MPa (that's Grade 1); J429 Grade 2 (<=3/4") proof is 55 ksi = 380 MPa. Selector, reference table and joint calc all regenerate from the fixed BOLT_GRADES entry. Extra-notes card also said A490 Sp=895 - that's its yield; now Sp=830, Sy=895.
+- calcMoody and calcBernoulli both plotted into the single #p-fluids div under the hardcoded "MOODY CHART (f vs Re)" title - whichever you clicked last replaced the other's chart with the wrong caption. Bernoulli now creates its own "BERNOULLI HEAD BREAKDOWN (m)" card on first use; verified both plots coexist.
+- Hand-verified EXACT: full bolt joint card (proof/yield/preload/torque/stress/separation, Shigley C=0.25 algebra), torque-sequence passes, Bernoulli p2=287.425 kPa on defaults. LBM flow-field demo confirmed alive.
+
 ## [5.19.3] - 2026-06-10 - Calc: shock response spectrum rebuilt on real physics (was saturating at 2.5 G)
 - calcShock's SRS clamped the RESPONSE to 2.5 G absolute - Math.min(2.5, |Q|*G) put the amplification-factor cap on factor*G - so any pulse above ~2.5G flatlined (the MIL-STD 50G/11ms default read "2.50 G / 0.05x" at 50 Hz). The closed-form Q also spiked ~5x near ratio 0.5 and decayed to zero at high f_n instead of approaching quasi-static 1.0.
 - Replaced with a numeric maximax SRS: RK4 integration of a zeta=0.05 SDOF through the pulse (all four shapes) + analytic residual peak from the end state. 60-point spectrum computes in 9 ms.
