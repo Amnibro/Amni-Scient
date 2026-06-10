@@ -1,5 +1,11 @@
 # Changelog 
 
+## [5.19.2] - 2026-06-10 - Calc: weld-group polar J corrected + corner-vector tau_max; five modules hand-verified exact
+- calcWeldGroup (overrides layer) used J = (b+d)^3/6 - b^2d^2/(2(b+d)) - the wrong table entry (that subtraction belongs to open/3-sided groups). Full-perimeter rectangle is exactly (b+d)^3/6: defaults now read J_w=1.91e7 mm4 (was 1.63e7), tau_t=23.43 MPa (was 27.50).
+- tau_max upgraded from sqrt(tau_d^2+tau_t^2) to the Shigley worst-corner component method (tau_x=Mc_y/J, tau_y=tau_d+Mc_x/J): 27.84 MPa on defaults - matches hand calc digit-for-digit.
+- Hand-verified EXACT against textbook formulas: columns (Euler/Johnson sigma_cr=111.03 MPa, P_cr=166.55 kN), shafts (tau=39.8 MPa, N_cr=1337.6 rpm + avoid band), bearings (L10=3375 Mrev = 31,250 h), gears (all five involute diameters + circular pitch), weld deposition (melt->deposit eff + kg/lb conversion + heat input).
+- Visual pass: columns/shafts/bearings/gears 3D viewers confirmed live post-resurrection. Queued: vibration isolator transmissibility readout needs a numeric audit.
+
 ## [5.19.1] - 2026-06-10 - Calc: 3D views resurrected on 18 modules + blocking alert() modals retired
 - THREE.js 3D viewers (springs/seals/bolts/gears/bearings/shafts/welds/columns/stress/thermal/fluids/pumps/hx/pv/vibration/motors/battery/sections) were ALL dead on live: calc-3d.js loaded OrbitControls from three@0.149.0/examples/js/ which no longer exists (removed in r148) -> script chain rejected -> no viewer ever booted. Repinned both scripts to three@0.147.0 (verified 200 on CDN); gears render the full involute pair again.
 - 3D contexts now boot LAZILY per visible view instead of all 18 at page load - Chrome caps WebGL contexts (~16) and was evicting the earliest ("context lost" white canvas). Hidden views skip their render loops (battery/CPU), and a lost context self-heals on next visit.
