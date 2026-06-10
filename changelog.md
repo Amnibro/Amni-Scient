@@ -1,5 +1,10 @@
 # Changelog 
 
+## [5.19.6] - 2026-06-10 - Calc: duct velocity was 60x low; PV/cycles cards hand-verified exact
+- HVAC round-duct card: velocity formula had a stray /60 - Q*144/(pi*D^2/4) is already ft/min - so 400 CFM through a 10.27" duct displayed 11.6 fpm instead of 695 fpm. Fixed and verified live; D_eq itself reproduces the ASHRAE friction relation exactly. Note now carries the 1500-1800 fpm supply-main noise guideline.
+- Hand-verified EXACT: ASME 2:1 ellipsoidal head t=PD/(2SE-0.2P)=6.258mm (+3 CA), UG-37 nozzle reinforcement (A_req 528 = 88x6, available 532 -> no pad), lifting lug stresses (bearing 24.5 / tear-out 12.3 / net tensile 12.3 MPa vs 120 allow), Carnot COP pair (6.575 / 7.575).
+- Visual: psychrometric chart, PV cards, cycles cards all render clean.
+
 ## [5.19.5] - 2026-06-10 - Calc: pump NPSH suction input disambiguated; pumps + HX hand-verified
 - The NPSH card's "H_suction (m)" input is SUBTRACTED by calcNPSH (suction-lift convention) - a flooded-suction user entering positive static head got NPSHa wrong by twice that head. Relabeled "Suction lift (m, + = liquid below impeller)"; formula unchanged.
 - Hand-verified EXACT: pump/system operating point (off-BEP 29.6%, brake power 8.34 kW = rho*g*Q*H/eta), NPSH chain (10.111 - 2 - 1 = 7.11 m, margin 4.11), HX NTU/epsilon (NTU=2.5, Cr=0.667, counterflow eps=79.60%, Q=159.21 kW per 100K).
