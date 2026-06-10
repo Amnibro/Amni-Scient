@@ -1,5 +1,10 @@
 # Changelog 
 
+## [5.19.15] - 2026-06-10 - Calc: OVERHAUL COMPLETE - UX polish batch + final green board
+- Copy button on every result grid (clipboard as label: value lines), print stylesheet (clean black-on-white cards, no nav/ads/buttons), LMTD card now rejects thermodynamically impossible terminal temperatures (temperature cross) and handles the equal-dT log-mean limit, offline notice when the Plotly CDN is unreachable (calculations all still work).
+- Last zero-step freeze fixed: thermal fin temperature profile looped x += L/40 (forever at L=0).
+- FINAL BOARD: browser audit 32 views / 107 buttons / 0 issues; correctness suite 44/44; fuzz sweep clean (one documented finite slow-render at absurd inputs). The overhaul arc closed ~25 real bugs: wrong formulas (weld J, SRS, Mooney constants, duct /60, unit factors), dead features (3D on 18 modules, power triangle), eight freeze-the-tab loops, blocking alerts, data errors (SAE-2/A490), plot collisions, and NaN leaks.
+
 ## [5.19.14] - 2026-06-10 - Calc: section presets draw to scale; beam moment convention labeled on the plot
 - Picking a section preset now renders the actual profile to scale on the drawing canvas (all 11 shapes incl. I-beam/channel/tee with proper holes for hollow sections, plus a dimension caption) - previously the canvas stayed blank on the preset path.
 - The beam moment diagram keeps its structural tension-side convention but now says so right on the axis: "Moment M (N-m) - sagging plots down (tension side)".
