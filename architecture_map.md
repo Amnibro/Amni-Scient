@@ -7,6 +7,10 @@
 > - **Do NOT re-add AdSense** to `amni-{calc,explore,haven,learn,llm}.html`, `explore/index.html`, or `learn/index.html` — ads were intentionally removed (AdSense block remediation). Ads stay ONLY on `calc/*.html` and `learn/*.html` article pages.
 > - Versioning: `v5.8.0` is this ad/de-inline branch. Your learn lifts can keep their own sequence — just don't undo the bullet points above. After any `learn-app.js` change, re-run `node --check learn/learn-app.js`.
 
+## v5.10.0–v5.14.0 Amni-Learn ⚔️ ADVENTURE MODE arc complete (2026-06-09)
+- M2 (v5.11.0): `advShop()`/`ADV_GEAR` weapon+armor ladders, boss relics (`advS.relics`, +2 atk each), Guardian Spirit revive (Lv3+, `advCtx.revived`). M3 (v5.12.0): `advSfx()` WebAudio synth (gate `adv-sfx`), crits combo≥3 ×1.5 (`advLastHit`), `advBurst()` particles, `advShakeBT()`, region drift sprites + battle vignette. M4 (v5.13.0): daily quests (`ADV_QPOOL`/`advDailyEnsure`/`advQuest`, date-deterministic), 5 achievements pushed into `ACHIEVEMENTS` (counters adv-wins/crits/bosses), NG+ (`advS.ngp` 1.5× foes / 2× rewards). M5 (v5.14.0): `advIntro()` story + `advName()` (profile-name), ✓ CLEARED ribbons, two-phase final boss (heal 20% + `advCtx.enraged` 1.5× dmg), named epilogue.
+- Regression suite (gitignored learn/tests/layout/): advcheck.js + advcheck2-5.js + smoke.js — run ALL before any Adventure ship.
+
 ## v5.10.0 Amni-Learn ⚔️ ADVENTURE MODE (2026-06-09)
 - New RPG layer over the quiz content; classic mode untouched/default. `#adv-btn` (⚔️ QUEST, top-bar) toggles `#adventure-view` (registered first in `views{}`); all UI JS-rendered into `#adv-root`; styles injected once as `#adv-css`.
 - Module lives at the END of `learn/learn-app.js` (`ADV_THEME`…`advToggle`): `advTier()` picks 6 region subjects per grade band; `advPool()` reuses `quizData` with walk-down level fallback; battles = answer-as-attack (combo damage), `advWin/advLose`; state in localStorage `adv-state` {xp,coins,hero,prog}; quadratic level curve `advLvl()`.
