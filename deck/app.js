@@ -378,4 +378,78 @@ const initUI = () => {
     st.textContent = got ? `auto-fetched ${got} prices` : 'stores blocked it (they always do) — use the paste buttons, they work every time'
   }
 }
+let photoPlane = null
+const T = { img: null, mode: null, scalePts: [], dist: 10, poly: [], pxPerFt: 0 }
+const tc = document.getElementById('tcanvas'), tctx = tc.getContext('2d')
+const tStatus = s => { const e = document.getElementById('tstatus'); e && (e.textContent = s) }
+const tDraw = () => {
+  tctx.clearRect(0, 0, tc.width, tc.height)
+  if (T.img) tctx.drawImage(T.img, 0, 0, tc.width, tc.height)
+  else { tctx.fillStyle = '#15181d'; tctx.fillRect(0, 0, tc.width, tc.height); tctx.strokeStyle = 'rgba(255,255,255,0.05)'; for (let g = 0; g < tc.width; g += 49) { tctx.beginPath(); tctx.moveTo(g, 0); tctx.lineTo(g, tc.height); tctx.stroke() } for (let g = 0; g < tc.height; g += 49) { tctx.beginPath(); tctx.moveTo(0, g); tctx.lineTo(tc.width, g); tctx.stroke() } tctx.fillStyle = '#566'; tctx.font = '16px monospace'; tctx.textAlign = 'center'; tctx.fillText('Upload a photo or sketch — or trace on this blank grid', tc.width / 2, tc.height / 2) }
+  if (T.scalePts.length) {
+    tctx.strokeStyle = '#ffd166'; tctx.lineWidth = 2; tctx.fillStyle = '#ffd166'
+    T.scalePts.forEach(p => { tctx.beginPath(); tctx.arc(p[0], p[1], 5, 0, 7); tctx.fill() })
+    if (T.scalePts.length === 2) { tctx.beginPath(); tctx.moveTo(...T.scalePts[0]); tctx.lineTo(...T.scalePts[1]); tctx.stroke(); tctx.font = 'bold 14px monospace'; tctx.fillText(`${T.dist} ft`, (T.scalePts[0][0] + T.scalePts[1][0]) / 2 + 8, (T.scalePts[0][1] + T.scalePts[1][1]) / 2 - 8) }
+  }
+  if (T.poly.length) {
+    tctx.strokeStyle = '#e8a33d'; tctx.fillStyle = 'rgba(232,163,61,0.18)'; tctx.lineWidth = 2.5
+    tctx.beginPath(); tctx.moveTo(...T.poly[0]); T.poly.forEach(p => tctx.lineTo(...p)); T.poly.length > 2 && tctx.closePath(); tctx.fill(); tctx.stroke()
+    tctx.fillStyle = '#e8a33d'
+    T.poly.forEach(p => { tctx.beginPath(); tctx.arc(p[0], p[1], 4.5, 0, 7); tctx.fill() })
+    if (T.pxPerFt > 0 && T.poly.length > 1) {
+      const xs = T.poly.map(p => p[0]), ys = T.poly.map(p => p[1])
+      const bw = (Math.max(...xs) - Math.min(...xs)) / T.pxPerFt, bh = (Math.max(...ys) - Math.min(...ys)) / T.pxPerFt
+      tctx.strokeStyle = '#4f9cf0'; tctx.setLineDash([6, 5]); tctx.strokeRect(Math.min(...xs), Math.min(...ys), bw * T.pxPerFt, bh * T.pxPerFt); tctx.setLineDash([])
+      tctx.font = 'bold 13px monospace'; tctx.fillStyle = '#4f9cf0'; tctx.fillText(`deck rect: ${bw.toFixed(1)}' × ${bh.toFixed(1)}'`, Math.min(...xs) + 6, Math.min(...ys) - 8)
+      document.getElementById('tdims').innerHTML = `<b style="color:var(--acc)">BOUNDING RECT</b><br>length ${bw.toFixed(1)} ft × depth ${bh.toFixed(1)} ft`
+    }
+  }
+}
+tc.addEventListener('click', e => {
+  const r = tc.getBoundingClientRect()
+  const p = [(e.clientX - r.left) * tc.width / r.width, (e.clientY - r.top) * tc.height / r.height]
+  if (T.mode === 'scale') {
+    T.scalePts.push(p)
+    if (T.scalePts.length === 2) {
+      const d = parseFloat(prompt('Real distance between those two points, in feet:', '10'))
+      isFinite(d) && d > 0 ? (T.dist = d, T.pxPerFt = Math.hypot(T.scalePts[1][0] - T.scalePts[0][0], T.scalePts[1][1] - T.scalePts[0][1]) / d, tStatus(`Scale set: ${T.pxPerFt.toFixed(1)} px/ft. Now click "Trace deck area" and click the corners.`)) : (T.scalePts = [], tStatus('Scale cancelled — try again.'))
+      T.mode = null
+    } else tStatus('Click the second reference point…')
+  } else if (T.mode === 'trace') { T.poly.push(p); tStatus(`${T.poly.length} corner${T.poly.length > 1 ? 's' : ''} — keep clicking, then Use outline.`) }
+  tDraw()
+})
+document.getElementById('timg').addEventListener('change', e => {
+  const f = e.target.files[0]; if (!f) return
+  const img = new Image()
+  img.onload = () => { T.img = img; tc.width = 980; tc.height = Math.round(980 / (img.width / img.height)); tDraw(); tStatus('Photo loaded. Set scale: click two points a known distance apart.') }
+  img.src = URL.createObjectURL(f)
+})
+document.getElementById('tscale').onclick = () => { T.mode = 'scale'; T.scalePts = []; tStatus('Click the FIRST reference point…'); tDraw() }
+document.getElementById('ttrace').onclick = () => { T.pxPerFt > 0 ? (T.mode = 'trace', tStatus('Click each corner of the deck area.')) : tStatus('Set the scale first.') }
+document.getElementById('tundo').onclick = () => { T.poly.pop(); tDraw() }
+document.getElementById('tclear').onclick = () => { T.poly = []; T.scalePts = []; T.mode = null; tDraw(); tStatus('Cleared.') }
+document.getElementById('tuse').onclick = () => {
+  if (T.pxPerFt <= 0 || T.poly.length < 2) { tStatus('Need a scale + at least 2 corners.'); return }
+  const xs = T.poly.map(p => p[0]), ys = T.poly.map(p => p[1])
+  const minX = Math.min(...xs), minY = Math.min(...ys)
+  const L = Math.min(40, Math.max(4, Math.round((Math.max(...xs) - minX) / T.pxPerFt * 2) / 2))
+  const D = Math.min(20, Math.max(4, Math.round((Math.max(...ys) - minY) / T.pxPerFt * 2) / 2))
+  cfg.length = L; cfg.depth = D
+  const li = document.getElementById('length'), di = document.getElementById('depth')
+  li && (li.value = L); di && (di.value = D)
+  if (T.img) {
+    const ic = document.createElement('canvas'); ic.width = tc.width; ic.height = tc.height
+    ic.getContext('2d').drawImage(T.img, 0, 0, ic.width, ic.height)
+    photoPlane && scene.remove(photoPlane)
+    const s = 12 / T.pxPerFt
+    photoPlane = new THREE.Mesh(new THREE.PlaneGeometry(tc.width * s, tc.height * s), new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(ic), transparent: true, opacity: 0.9 }))
+    photoPlane.rotation.x = -Math.PI / 2
+    photoPlane.position.set((tc.width / 2 - minX) * s, 0.6, (tc.height / 2 - minY) * s)
+    scene.add(photoPlane)
+  }
+  recompute()
+  document.querySelector('.tab[data-pane="3d"]').click()
+  tStatus(`Applied: ${L}' × ${D}' deck. Photo is now the ground layer in 3D.`)
+}
+tDraw()
 Promise.all([wasmReady, catReady]).then(() => { buildMats(); initUI(); recompute(); tick() })

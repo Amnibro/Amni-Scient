@@ -1,5 +1,9 @@
 # Changelog 
 
+## [5.21.0] - 2026-06-10 - AMNI-CONSTRUCT umbrella at /construct/ + photo trace comes to Amni-Deck
+- Amni-Deck v2.2.0: new PHOTO TRACE tab (same flow as Patio - upload stays on-device, two-click scale calibration, corner tracing with a live bounding-rectangle readout). Use outline snaps the deck to the traced rectangle (nearest 6") and drops the photo under the 3D deck as the ground layer. Verified: scripted 15.5' x 7' trace lands exactly.
+- /construct/ landing unifies the two builders with cross-links in both app headers (Deck <-> Patio); homepage now shows one AMNI-CONSTRUCT card; sitemap updated.
+
 ## [5.20.1] - 2026-06-10 - Calc: torque+angle mode shows real angles; seal slider drives the solver
 - TORQUE SEQUENCE card: angle mode now computes actual turn-of-nut angles from joint compliance - new thread-pitch + grip-length inputs, k_b = E*As/L, theta = 360*dF/(p*k_b*(1-C)). Table grows a "dTheta from prev" column (snug torque pass 1, then +deg per pass incl. the re-torque pass); summary adds snug torque, total angle, bolt stiffness and stretch. Verified by hand: M12x1.75, 40mm grip -> k_b 432 kN/mm, 22 deg snug-to-full.
 - SEAL slider actually updates results now: dragging SQUEEZE % writes the equivalent groove depth (gd = cs - gap - squeeze*cs) and re-runs the solver, so contact pressure / force / fill / extrusion all track the slider live (before it only redrew the animation).

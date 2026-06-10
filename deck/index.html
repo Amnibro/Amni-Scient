@@ -73,9 +73,10 @@ td a:hover{text-decoration:underline}
 <body>
 <header>
   <h1>🛠️ Amni-Deck</h1>
-  <span style="color:var(--mut);font-size:12px">v2 — WASM parametric deck builder</span>
+  <span style="color:var(--mut);font-size:12px">part of <a href="../construct/" style="color:var(--acc);text-decoration:none">AMNI-CONSTRUCT</a> · <a href="../patio/" style="color:#8fa8b8;text-decoration:none">switch to 🧱 Patio</a></span>
   <div class="tabs">
     <div class="tab on" data-pane="3d">3D View</div>
+    <div class="tab" data-pane="trace">📷 Photo Trace</div>
     <div class="tab" data-pane="plans">2D Plans</div>
     <div class="tab" data-pane="mat">Materials &amp; Pricing</div>
     <div class="tab" data-pane="cuts">Cut List</div>
@@ -117,6 +118,24 @@ td a:hover{text-decoration:underline}
   <div id="view">
     <canvas id="c3d"></canvas>
     <div id="hud">drag = orbit · wheel = zoom · right-drag = pan · <b style="color:#e8a33d">grab stairs to move them</b></div>
+    <div class="pane" id="pane-trace">
+      <div class="planbar">
+        <label class="btn acc" style="display:inline-block">📷 Upload photo / sketch<input type="file" id="timg" accept="image/*" style="display:none"></label>
+        <button class="btn" id="tscale">1️⃣ Set scale</button>
+        <button class="btn" id="ttrace">2️⃣ Trace deck area</button>
+        <button class="btn" id="tundo">↩ Undo point</button>
+        <button class="btn" id="tclear">✖ Clear</button>
+        <button class="btn acc" id="tuse">✅ Use outline</button>
+      </div>
+      <div style="display:flex;gap:14px;flex-wrap:wrap">
+        <canvas id="tcanvas" width="980" height="660" style="background:#0d0f12;border:1px solid var(--line);border-radius:10px;cursor:crosshair;max-width:100%"></canvas>
+        <div style="min-width:240px;max-width:300px;display:flex;flex-direction:column;gap:8px">
+          <div id="tstatus" style="font-size:12px;color:var(--warn);min-height:32px">Upload an overhead photo or sketch. Set scale (two clicks + a known distance), trace the deck area's corners, then Use outline — the deck takes the bounding rectangle of your trace.</div>
+          <div id="tdims" style="font-size:12px;color:var(--mut);line-height:1.7"></div>
+          <p style="font-size:11px;color:var(--mut)">Photos never leave your device. The framed deck uses the outline's bounding rectangle (length × depth); the photo becomes the ground under the 3D deck.</p>
+        </div>
+      </div>
+    </div>
     <div class="pane" id="pane-plans">
       <div class="planbar"><button class="btn acc" onclick="window.print()">🖨️ Print all plans</button><button class="btn" id="dl-svg">⬇️ Download SVGs</button></div>
       <div class="svgwrap" id="svg-framing"></div>
