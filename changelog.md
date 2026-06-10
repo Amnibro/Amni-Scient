@@ -1,5 +1,10 @@
 # Changelog 
 
+## [5.19.12] - 2026-06-10 - Calc: fuzz round 2 - two more freeze loops dead, NaN never reaches the screen
+- Tafel curve stepped 0.005 V at a time up to 2x the overpotential input (1e12 V froze the tab); now a 200-point sweep capped at 2 V. Battery discharge curve stepped by I/10 (zero current = zero step = freeze); now guarded.
+- NaN/Infinity can no longer render: a text-node janitor in the last-loading layer scrubs any NaN/Infinity in visible view output to an em-dash (works even for the obfuscated bundle's output), plus source guards for the welds heat-input (zero travel speed) and bolt torque-sequence formatter.
+- Re-fuzz of all 32 views: clean. One known quirk logged: pump affinity at all-zero inputs spends ~7 s in a finite Plotly autoscale grind.
+
 ## [5.19.11] - 2026-06-10 - Calc: edge-input fuzzing kills six freeze-the-tab bugs
 - New fuzz rig (every numeric input driven to 0 / -1 / 1e12 across all 32 views) found six ways to permanently freeze the page with one keystroke, all fixed:
 - Unbounded geometry loops clamped: gear teeth (3D builder AND 2D mesh draw) max 200, spring coil draw max 60 turns, 3D spring tube max 50 coils, bolt-pattern count max 100 / cols 50, shock-spectrum integrator max 20k steps per point.

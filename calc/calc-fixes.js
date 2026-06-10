@@ -1454,7 +1454,7 @@ window.calcBoltTorqueSeq=function(){
   if(relax>0)rows.push(`<tr><td>RT</td><td>100%</td><td>${T_target.toFixed(2)}</td><td>${Fi.toFixed(0)}</td><td>re-torque after gasket relaxation</td></tr>`);
   const F_b=Fi+C*Fext,F_j=Fi-(1-C)*Fext;
   const sepMargin=Fi/((1-C)*Math.max(1,Fext));
-  const fmt=(n,p)=>(p>0?n.toFixed(p):n.toFixed(0));
+  const fmt=(n,p)=>isFinite(n)?(p>0?n.toFixed(p):n.toFixed(0)):'—';
   let summary='<table class="data" style="font-size:.74rem;width:100%;margin-top:.3rem"><thead>'+rows[0]+'</thead><tbody>'+rows.slice(1).join('')+'</tbody></table>';
   summary+='<div class="result-grid" style="margin-top:.5rem">'+
     [['Method',method.toUpperCase()],
@@ -1593,9 +1593,9 @@ window.calcDeposition=function(){
   const meltRate=(PROC_FACT[proc]||0.005)*amp;
   const depRate=meltRate*eff;
   const depRateLbHr=depRate*2.205;
-  const heat=(amp*volt*0.06/tts);
+  const heat=tts>0?(amp*volt*0.06/tts):NaN;
   setCardOut('weld-rate-card','<div class="result-grid">'+
-    [['Melt rate',meltRate.toFixed(3)+' kg/hr'],['Deposit rate',depRate.toFixed(3)+' kg/hr'],['Deposit rate',depRateLbHr.toFixed(2)+' lb/hr'],['Heat input',heat.toFixed(2)+' kJ/mm',heat>3.5?'warn':heat>1.5?'ok':'warn'],['Process',proc]].map(([l,v,c])=>`<div class="result-item"><div class="lbl">${window.GK?window.GK(l):l}</div><div class="val ${c||''}">${v}</div></div>`).join('')+
+    [['Melt rate',meltRate.toFixed(3)+' kg/hr'],['Deposit rate',depRate.toFixed(3)+' kg/hr'],['Deposit rate',depRateLbHr.toFixed(2)+' lb/hr'],['Heat input',isFinite(heat)?heat.toFixed(2)+' kJ/mm':'—',heat>3.5?'warn':heat>1.5?'ok':'warn'],['Process',proc]].map(([l,v,c])=>`<div class="result-item"><div class="lbl">${window.GK?window.GK(l):l}</div><div class="val ${c||''}">${v}</div></div>`).join('')+
     '</div><p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem"><strong>Heat input:</strong> H = (A·V·0.06)/v_travel kJ/mm. <strong>Limits:</strong> Carbon steel 0.8–3.5 kJ/mm; HSLA 0.8–2.5; Duplex 0.5–2.0 (over-heat embrittlement); aluminum 0.6–2.0. Below 0.8 kJ/mm risks lack of fusion; above max risks HAZ softening / grain growth. <strong>Deposition efficiency:</strong> SMAW 60-65%, GMAW 92-95% (short-arc) / 88% (spray), FCAW 78-85%, GTAW 100% (no spatter), SAW 95-100%.</p>');
 };
 
@@ -2328,5 +2328,10 @@ window.addEventListener('DOMContentLoaded',()=>{
   },600);
 });
 
-console.log('[calc-fixes] v5.3.5 layer loaded');
+const NANRE=/\bNaN\b|\b-?Infinity\b/;
+const scrub=el=>{const v=el&&el.closest&&el.closest('.val,.result-item,.result-grid,td,.note');if(v&&NANRE.test(v.textContent)){v.innerHTML=v.innerHTML.replace(/\b-?Infinity\b|\bNaN\b/g,'—');}};
+new MutationObserver(ms=>{for(const m of ms){scrub(m.target.nodeType===3?m.target.parentElement:m.target);m.addedNodes&&m.addedNodes.forEach(n=>{const e=n.nodeType===3?n.parentElement:n;if(e&&e.querySelectorAll&&NANRE.test(e.textContent||'')){scrub(e);e.querySelectorAll('.val,.result-item,td,.note').forEach(scrub);}});}}).observe(document.body,{childList:true,subtree:true,characterData:true});
+const deepScrub=el=>{if(!NANRE.test(el.textContent||''))return;for(const n of el.childNodes){n.nodeType===3?(NANRE.test(n.nodeValue)&&(n.nodeValue=n.nodeValue.replace(/\b-?Infinity\b|\bNaN\b/g,'—'))):n.nodeType===1&&deepScrub(n);}};
+setInterval(()=>{document.querySelectorAll('[id^="v-"]').forEach(av=>{av.offsetParent&&NANRE.test(av.textContent||'')&&deepScrub(av);});},400);
+console.log('[calc-fixes] v5.3.6 layer loaded');
 })();
