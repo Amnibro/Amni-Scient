@@ -1,5 +1,11 @@
 # Changelog 
 
+## [5.20.0] - 2026-06-10 - AMNI-PATIO LAUNCHED at /patio/ - trace your yard photo into a concrete patio design
+- New app: Rust/WASM polygon slab core (area, concrete volume with bags-vs-ready-mix, gravel, mesh/rebar, forms, auto control-joint layout that handles L-shapes, turndown edges, ACI-guided build notes) + three.js 3D with finish swatches.
+- PHOTO TRACE: upload an overhead photo or sketch (stays on-device), click two points to set scale, click corners to trace - live edge lengths as you go - and one click turns it into the slab model, four printable plans (layout/section/formwork/joints), the materials list, and the photo becomes the ground layer under the 3D slab.
+- Same location-aware permit panel as Amni-Deck, tuned for flatwork (exemptions, zoning/impervious-surface, frost isolation, call-811).
+- 25/25 core hand-calc tests; scripted headless trace flow verified end-to-end (93 ft2 L-shape exact). Homepage card + sitemap added.
+
 ## [5.19.15] - 2026-06-10 - Calc: OVERHAUL COMPLETE - UX polish batch + final green board
 - Copy button on every result grid (clipboard as label: value lines), print stylesheet (clean black-on-white cards, no nav/ads/buttons), LMTD card now rejects thermodynamically impossible terminal temperatures (temperature cross) and handles the equal-dT log-mean limit, offline notice when the Plotly CDN is unreachable (calculations all still work).
 - Last zero-step freeze fixed: thermal fin temperature profile looped x += L/40 (forever at L=0).
