@@ -12,7 +12,7 @@ const puppeteer = require('puppeteer-core');
   await page.goto('http://localhost:8765/game/', { waitUntil: 'networkidle2', timeout: 60000 });
   await page.click('#playBtn');
   await page.waitForFunction("document.getElementById('overlay').style.display === 'none'", { timeout: 90000 });
-  await new Promise(r => setTimeout(r, 800));
+  await new Promise(r => setTimeout(r, 26000));
   await page.click('#amni-game canvas');
   await new Promise(r => setTimeout(r, 500));
   await page.keyboard.press('Space');
