@@ -67,8 +67,22 @@ export const initMapTrace = ({ tc, T, tDraw, tStatus }) => {
   })
   return M
 }
+export const cropForPlan = (tc, poly, pxPerFt) => {
+  const xs = poly.map(p => p[0]), ys = poly.map(p => p[1])
+  const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys)
+  const span = Math.max(x1 - x0, y1 - y0, 30 * pxPerFt) * 2.6
+  const w = Math.min(tc.width, span), h = Math.min(tc.height, span * 0.72)
+  const sx = Math.max(0, Math.min(tc.width - w, (x0 + x1) / 2 - w / 2)), sy = Math.max(0, Math.min(tc.height - h, (y0 + y1) / 2 - h / 2))
+  const out = document.createElement('canvas')
+  const scale = 980 / w
+  out.width = 980; out.height = Math.round(h * scale)
+  out.getContext('2d').drawImage(tc, sx, sy, w, h, 0, 0, out.width, out.height)
+  let snap = null
+  try { snap = out.toDataURL('image/jpeg', 0.88) } catch {}
+  return { snap, w: out.width, h: out.height, poly: poly.map(p => [(p[0] - sx) * scale, (p[1] - sy) * scale]), pxPerFt: pxPerFt * scale }
+}
 export const sitePlanSVG = ({ snap, w, h, poly, pxPerFt, title, address, footprint, northUp = true }) => {
-  const pad = 30, tb = 120
+  const pad = 30, tb = 140
   const W = w + 2 * pad, H = h + tb + 2 * pad
   let s = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 ${W} ${H}' font-family='monospace'><rect width='${W}' height='${H}' fill='#fff'/>`
   s += `<text x='${pad}' y='24' font-size='18' font-weight='bold' fill='#111'>${title}</text>`
@@ -94,7 +108,8 @@ export const sitePlanSVG = ({ snap, w, h, poly, pxPerFt, title, address, footpri
   const ty = oy + h + 24
   s += `<rect x='${pad}' y='${ty}' width='${w}' height='${tb - 34}' fill='#f6f6f6' stroke='#999'/>`
   s += `<text x='${pad + 12}' y='${ty + 24}' font-size='14' fill='${northUp ? '#111' : '#a00'}' font-weight='bold'>${northUp ? 'SITE / TOP-DOWN PLAN — FOR PERMIT REVIEW' : 'PHOTO REFERENCE SKETCH — NOT FOR PERMIT SUBMISSION'}</text>`
-  s += `<text x='${pad + 12}' y='${ty + 46}' font-size='12.5' fill='#333'>${address || 'Site: (address not set — traced from photo)'} </text>`
-  s += `<text x='${pad + 12}' y='${ty + 66}' font-size='12.5' fill='#333'>${footprint} · ${northUp ? `Scale: 1 px = ${(1 / pxPerFt).toFixed(3)} ft · North-up imagery` : 'PERSPECTIVE PHOTO — dimensions approximate, verify on site'} · Generated ${new Date().toISOString().slice(0, 10)} by amni-scient.com/construct</text>`
+  s += `<text x='${pad + 12}' y='${ty + 46}' font-size='12.5' fill='#333'>${(address || 'Site: (address not set — traced from photo)').slice(0, 120)}</text>`
+  s += `<text x='${pad + 12}' y='${ty + 66}' font-size='12.5' fill='#333'>${footprint.slice(0, 120)}</text>`
+  s += `<text x='${pad + 12}' y='${ty + 86}' font-size='12.5' fill='#333'>${northUp ? `Scale: 1 px = ${(1 / pxPerFt).toFixed(3)} ft · North-up imagery` : 'PERSPECTIVE PHOTO — dimensions approximate, verify on site'} · Generated ${new Date().toISOString().slice(0, 10)} · amni-scient.com</text>`
   return s + '</svg>'
 }

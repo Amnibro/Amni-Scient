@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
-import { initPermits, updatePermits } from './codes.js?v=111'
-import { initMapTrace, sitePlanSVG } from './maptrace.js?v=111'
+import { initPermits, updatePermits } from './codes.js?v=112'
+import { initMapTrace, sitePlanSVG, cropForPlan } from './maptrace.js?v=112'
 const LS = 'amnipatio.cfg.v1', LSP = 'amnipatio.prices.v1'
 const defCfg = { mode: 'rect', w: 14, d: 12, polygon: null, thickness_in: 4, base_in: 4, reinforce: 'mesh', finish: 'plain', turndown: { enabled: false, depth_in: 12, width_in: 8 }, vehicle: false, joint_max_ft: 0, house_edge: 0 }
 let cfg = (() => { try { return { ...defCfg, ...JSON.parse(localStorage.getItem(LS)) } } catch { return { ...defCfg } } })()
@@ -248,9 +248,7 @@ $('#tuse').onclick = () => {
   sel.innerHTML = '<option value="-1">Freestanding</option>' + edges.map((L, i) => `<option value="${i}">Edge ${i + 1} (${L.toFixed(1)} ft) = house</option>`).join('')
   sel.value = String(edges.indexOf(Math.max(...edges)))
   cfg.house_edge = +sel.value
-  let snap = null
-  try { snap = tc.toDataURL('image/jpeg', 0.85) } catch {}
-  siteSnap = { snap, w: tc.width, h: tc.height, poly: T.poly.map(p => [...p]), pxPerFt: T.pxPerFt, address: window.__siteMapOn ? (window.__siteAddr || '') : '', northUp: !!window.__siteMapOn }
+  siteSnap = { ...cropForPlan(tc, T.poly, T.pxPerFt), address: window.__siteMapOn ? (window.__siteAddr || '') : '', northUp: !!window.__siteMapOn }
   recompute()
   tStatus(`Outline applied: ${out && out.calc ? out.calc.area_ft2.toFixed(0) : '?'} ft². 3D has your imagery as the ground — and a SITE PLAN was added to 2D Plans for the permit packet.`)
 }

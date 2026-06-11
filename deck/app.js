@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
-import { initPermits, updatePermits } from './codes.js?v=231'
-import { initMapTrace, sitePlanSVG } from './maptrace.js?v=231'
+import { initPermits, updatePermits } from './codes.js?v=232'
+import { initMapTrace, sitePlanSVG, cropForPlan } from './maptrace.js?v=232'
 const LS = 'amnideck.cfg.v2', LSP = 'amnideck.prices.v1'
 const defCfg = { length: 12, depth: 8, height: 16, spacing: 16, decking: 'pt', attach: 'ledger', stain: 'redwood', stairs: [{ side: 'front', width: 48, offset: -1 }], railing: { front: false, left: false, right: false, style: 'wood' }, door: { pos: -1, width: 60, rise: 7 } }
 const migrate = c => !c ? null : (Array.isArray(c.stairs) ? c : { ...c, stain: c.stain || 'redwood', door: c.door || { pos: -1, width: 60, rise: 7 }, stairs: c.stairs?.enabled ? [{ side: c.stairs.side, width: c.stairs.width, offset: c.stairs.offset }] : [] })
@@ -460,9 +460,7 @@ document.getElementById('tuse').onclick = () => {
     photoPlane.position.set((tc.width / 2 - minX) * s, 0.6, (tc.height / 2 - minY) * s)
     scene.add(photoPlane)
   }
-  let snap = null
-  try { snap = tc.toDataURL('image/jpeg', 0.85) } catch {}
-  siteSnap = { snap, w: tc.width, h: tc.height, poly: T.poly.map(p => [...p]), pxPerFt: T.pxPerFt, address: window.__siteMapOn ? (window.__siteAddr || '') : '', northUp: !!window.__siteMapOn }
+  siteSnap = { ...cropForPlan(tc, T.poly, T.pxPerFt), address: window.__siteMapOn ? (window.__siteAddr || '') : '', northUp: !!window.__siteMapOn }
   recompute()
   document.querySelector('.tab[data-pane="3d"]').click()
   tStatus(`Applied: ${L}' × ${D}' deck. Photo is the 3D ground layer — and a SITE PLAN was added to 2D Plans.`)
