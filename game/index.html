@@ -24,6 +24,8 @@ main { width: 100%; max-width: 1320px; padding: 18px; display: flex; flex-direct
 #playBtn:hover { transform: scale(1.04); }
 #playBtn:disabled { opacity: 0.6; cursor: wait; }
 #status { color: #8d967e; font-size: 0.85rem; min-height: 1.2em; }
+#spin { width: 34px; height: 34px; border: 4px solid #3a4530; border-top-color: var(--gold); border-radius: 50%; animation: sp 0.9s linear infinite; display: none; }
+@keyframes sp { to { transform: rotate(360deg); } }
 .controls { width: 100%; max-width: 1280px; background: var(--panel); border: 1px solid #2e3a26; border-radius: 10px; padding: 14px 18px; font-size: 0.92rem; color: #c9d0b8; line-height: 1.7; }
 .controls b { color: var(--gold); }
 footer { margin-top: auto; padding: 16px; color: #707a62; font-size: 0.8rem; }
@@ -41,6 +43,7 @@ footer a { color: #9aa48c; }
       <h2>AMNI</h2>
       <p>A grounded &times; collect-a-thon adventure. You are one brave mouse: eight realms, four tyrants, four elemental transforms, and 33 canvases to bring home. Runs entirely in your browser &mdash; saves stay on this device. Best in Edge or Chrome (WebGPU).</p>
       <button id="playBtn">&#9654;&nbsp; PLAY</button>
+      <div id="spin"></div>
       <div id="status"></div>
     </div>
   </div>
@@ -54,10 +57,20 @@ const btn = document.getElementById('playBtn');
 const status = document.getElementById('status');
 btn.addEventListener('click', async () => {
   btn.disabled = true;
-  status.textContent = 'Loading the glade...';
+  document.getElementById('spin').style.display = 'block';
+  status.textContent = 'Fetching the world seed (4.5 MB)...';
   try {
     const { default: init } = await import('./pkg/amni.js');
+    status.textContent = 'Growing eight realms — about 15 seconds, the page may hold its breath...';
+    await new Promise(r => setTimeout(r, 60));
     await init();
+    const t0 = Date.now();
+    await new Promise(res => {
+      const iv = setInterval(() => {
+        const c = document.querySelector('#amni-game canvas');
+        if ((c && c.width > 8) || Date.now() - t0 > 90000) { clearInterval(iv); res(); }
+      }, 250);
+    });
     document.getElementById('overlay').style.display = 'none';
     const canvas = document.querySelector('#amni-game canvas');
     if (canvas) { canvas.setAttribute('tabindex', '0'); canvas.focus(); }
