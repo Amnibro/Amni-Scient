@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
-import { initPermits, updatePermits } from './codes.js?v=110'
-import { initMapTrace, sitePlanSVG } from './maptrace.js?v=110'
+import { initPermits, updatePermits } from './codes.js?v=111'
+import { initMapTrace, sitePlanSVG } from './maptrace.js?v=111'
 const LS = 'amnipatio.cfg.v1', LSP = 'amnipatio.prices.v1'
 const defCfg = { mode: 'rect', w: 14, d: 12, polygon: null, thickness_in: 4, base_in: 4, reinforce: 'mesh', finish: 'plain', turndown: { enabled: false, depth_in: 12, width_in: 8 }, vehicle: false, joint_max_ft: 0, house_edge: 0 }
 let cfg = (() => { try { return { ...defCfg, ...JSON.parse(localStorage.getItem(LS)) } } catch { return { ...defCfg } } })()
@@ -116,7 +116,7 @@ const renderPlans = () => {
   if (siteSnap) {
     let wrap = $('#svg-site')
     if (!wrap) { wrap = document.createElement('div'); wrap.className = 'svgwrap'; wrap.id = 'svg-site'; const pane = $('#pane-plans'); pane.insertBefore(wrap, pane.querySelector('.svgwrap')) }
-    wrap.innerHTML = sitePlanSVG({ ...siteSnap, title: 'SITE PLAN — PROPOSED PATIO', footprint: `Proposed: ${out.calc.area_ft2.toFixed(0)} ft² concrete patio, ${cfg.thickness_in}" slab, ${cfg.house_edge >= 0 ? 'abutting dwelling (isolation joint)' : 'freestanding'}` })
+    wrap.innerHTML = sitePlanSVG({ ...siteSnap, title: siteSnap.northUp ? 'SITE PLAN — PROPOSED PATIO' : 'REFERENCE SKETCH — PROPOSED PATIO', footprint: `Proposed: ${out.calc.area_ft2.toFixed(0)} ft² concrete patio, ${cfg.thickness_in}" slab, ${cfg.house_edge >= 0 ? 'abutting dwelling (isolation joint)' : 'freestanding'}` })
   }
 }
 const renderWarns = () => {
@@ -196,7 +196,7 @@ const tDraw = () => {
   if (T.scalePts.length) {
     tx.strokeStyle = '#ffd166'; tx.lineWidth = 2; tx.fillStyle = '#ffd166'
     T.scalePts.forEach(p => { tx.beginPath(); tx.arc(p[0], p[1], 5, 0, 7); tx.fill() })
-    if (T.scalePts.length === 2) { tx.beginPath(); tx.moveTo(...T.scalePts[0]); tx.lineTo(...T.scalePts[1]); tx.stroke(); const m = [(T.scalePts[0][0] + T.scalePts[1][0]) / 2, (T.scalePts[0][1] + T.scalePts[1][1]) / 2]; tx.font = 'bold 14px monospace'; tx.fillText(`${T.dist} ft`, m[0] + 8, m[1] - 8) }
+    if (T.scalePts.length === 2) { tx.beginPath(); tx.moveTo(...T.scalePts[0]); tx.lineTo(...T.scalePts[1]); tx.stroke(); const m = [(T.scalePts[0][0] + T.scalePts[1][0]) / 2, (T.scalePts[0][1] + T.scalePts[1][1]) / 2]; tx.font = 'bold 14px monospace'; tx.fillText(`${Math.floor(T.dist)}' ${Math.round((T.dist % 1) * 12)}\"`, m[0] + 8, m[1] - 8) }
   }
   if (T.poly.length) {
     tx.strokeStyle = '#8fd8a0'; tx.fillStyle = 'rgba(143,216,160,0.18)'; tx.lineWidth = 2.5
@@ -224,7 +224,7 @@ tc.addEventListener('click', e => {
 $('#timg').addEventListener('change', e => {
   const f = e.target.files[0]; if (!f) return
   const img = new Image()
-  img.onload = () => { T.img = img; const ar = img.width / img.height; tc.width = 980; tc.height = Math.round(980 / ar); tDraw(); tStatus('Photo loaded. Click "Set scale", then click two points a known distance apart (a fence panel, tape on the ground, the house wall…).') }
+  img.onload = () => { window.__siteMapOn = false; T.img = img; const ar = img.width / img.height; tc.width = 980; tc.height = Math.round(980 / ar); tDraw(); tStatus('Photo loaded. Click "Set scale", then click two points a known distance apart (a fence panel, tape on the ground, the house wall…).') }
   img.src = URL.createObjectURL(f)
 })
 $('#tscale').onclick = () => { T.mode = 'scale'; T.scalePts = []; tStatus('Click the FIRST reference point on the image…'); tDraw() }
@@ -238,7 +238,7 @@ $('#tuse').onclick = () => {
   cfg.mode = 'poly'
   document.querySelectorAll('#mode button').forEach(b => b.classList.toggle('on', b.dataset.v === 'poly'))
   $('#rw').style.display = 'none'; $('#rd').style.display = 'none'
-  if (T.img) {
+  if (T.img && window.__siteMapOn) {
     const ic = document.createElement('canvas'); ic.width = tc.width; ic.height = tc.height
     ic.getContext('2d').drawImage(T.img, 0, 0, ic.width, ic.height)
     photoMeta = { tex: new THREE.CanvasTexture(ic), wFt: tc.width / T.pxPerFt, hFt: tc.height / T.pxPerFt, cxFt: (tc.width / 2 - minX) / T.pxPerFt, cyFt: (maxY - tc.height / 2) / T.pxPerFt }
@@ -250,7 +250,7 @@ $('#tuse').onclick = () => {
   cfg.house_edge = +sel.value
   let snap = null
   try { snap = tc.toDataURL('image/jpeg', 0.85) } catch {}
-  siteSnap = { snap, w: tc.width, h: tc.height, poly: T.poly.map(p => [...p]), pxPerFt: T.pxPerFt, address: window.__siteAddr || '' }
+  siteSnap = { snap, w: tc.width, h: tc.height, poly: T.poly.map(p => [...p]), pxPerFt: T.pxPerFt, address: window.__siteMapOn ? (window.__siteAddr || '') : '', northUp: !!window.__siteMapOn }
   recompute()
   tStatus(`Outline applied: ${out && out.calc ? out.calc.area_ft2.toFixed(0) : '?'} ft². 3D has your imagery as the ground — and a SITE PLAN was added to 2D Plans for the permit packet.`)
 }

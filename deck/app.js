@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
-import { initPermits, updatePermits } from './codes.js?v=230'
-import { initMapTrace, sitePlanSVG } from './maptrace.js?v=230'
+import { initPermits, updatePermits } from './codes.js?v=231'
+import { initMapTrace, sitePlanSVG } from './maptrace.js?v=231'
 const LS = 'amnideck.cfg.v2', LSP = 'amnideck.prices.v1'
 const defCfg = { length: 12, depth: 8, height: 16, spacing: 16, decking: 'pt', attach: 'ledger', stain: 'redwood', stairs: [{ side: 'front', width: 48, offset: -1 }], railing: { front: false, left: false, right: false, style: 'wood' }, door: { pos: -1, width: 60, rise: 7 } }
 const migrate = c => !c ? null : (Array.isArray(c.stairs) ? c : { ...c, stain: c.stain || 'redwood', door: c.door || { pos: -1, width: 60, rise: 7 }, stairs: c.stairs?.enabled ? [{ side: c.stairs.side, width: c.stairs.width, offset: c.stairs.offset }] : [] })
@@ -248,7 +248,7 @@ const renderPlans = () => {
   if (siteSnap) {
     let wrap = document.getElementById('svg-site')
     if (!wrap) { wrap = document.createElement('div'); wrap.className = 'svgwrap'; wrap.id = 'svg-site'; const pane = document.getElementById('pane-plans'); pane.insertBefore(wrap, pane.querySelector('.svgwrap')) }
-    wrap.innerHTML = sitePlanSVG({ ...siteSnap, title: 'SITE PLAN — PROPOSED DECK', footprint: `Proposed: ${cfg.length}' × ${cfg.depth}' ${cfg.attach === 'ledger' ? 'ledger-attached' : 'freestanding'} deck, ${cfg.height}" above grade` })
+    wrap.innerHTML = sitePlanSVG({ ...siteSnap, title: siteSnap.northUp ? 'SITE PLAN — PROPOSED DECK' : 'REFERENCE SKETCH — PROPOSED DECK', footprint: `Proposed: ${cfg.length}' × ${cfg.depth}' ${cfg.attach === 'ledger' ? 'ledger-attached' : 'freestanding'} deck, ${cfg.height}" above grade` })
   }
 }
 const renderStairList = () => {
@@ -402,7 +402,7 @@ const tDraw = () => {
   if (T.scalePts.length) {
     tctx.strokeStyle = '#ffd166'; tctx.lineWidth = 2; tctx.fillStyle = '#ffd166'
     T.scalePts.forEach(p => { tctx.beginPath(); tctx.arc(p[0], p[1], 5, 0, 7); tctx.fill() })
-    if (T.scalePts.length === 2) { tctx.beginPath(); tctx.moveTo(...T.scalePts[0]); tctx.lineTo(...T.scalePts[1]); tctx.stroke(); tctx.font = 'bold 14px monospace'; tctx.fillText(`${T.dist} ft`, (T.scalePts[0][0] + T.scalePts[1][0]) / 2 + 8, (T.scalePts[0][1] + T.scalePts[1][1]) / 2 - 8) }
+    if (T.scalePts.length === 2) { tctx.beginPath(); tctx.moveTo(...T.scalePts[0]); tctx.lineTo(...T.scalePts[1]); tctx.stroke(); tctx.font = 'bold 14px monospace'; tctx.fillText(`${Math.floor(T.dist)}' ${Math.round((T.dist % 1) * 12)}\"`, (T.scalePts[0][0] + T.scalePts[1][0]) / 2 + 8, (T.scalePts[0][1] + T.scalePts[1][1]) / 2 - 8) }
   }
   if (T.poly.length) {
     tctx.strokeStyle = '#e8a33d'; tctx.fillStyle = 'rgba(232,163,61,0.18)'; tctx.lineWidth = 2.5
@@ -434,7 +434,7 @@ tc.addEventListener('click', e => {
 document.getElementById('timg').addEventListener('change', e => {
   const f = e.target.files[0]; if (!f) return
   const img = new Image()
-  img.onload = () => { T.img = img; tc.width = 980; tc.height = Math.round(980 / (img.width / img.height)); tDraw(); tStatus('Photo loaded. Set scale: click two points a known distance apart.') }
+  img.onload = () => { window.__siteMapOn = false; T.img = img; tc.width = 980; tc.height = Math.round(980 / (img.width / img.height)); tDraw(); tStatus('Photo loaded. Set scale: click two points a known distance apart.') }
   img.src = URL.createObjectURL(f)
 })
 document.getElementById('tscale').onclick = () => { T.mode = 'scale'; T.scalePts = []; tStatus('Click the FIRST reference point…'); tDraw() }
@@ -450,7 +450,7 @@ document.getElementById('tuse').onclick = () => {
   cfg.length = L; cfg.depth = D
   const li = document.getElementById('length'), di = document.getElementById('depth')
   li && (li.value = L); di && (di.value = D)
-  if (T.img) {
+  if (T.img && window.__siteMapOn) {
     const ic = document.createElement('canvas'); ic.width = tc.width; ic.height = tc.height
     ic.getContext('2d').drawImage(T.img, 0, 0, ic.width, ic.height)
     photoPlane && scene.remove(photoPlane)
@@ -462,7 +462,7 @@ document.getElementById('tuse').onclick = () => {
   }
   let snap = null
   try { snap = tc.toDataURL('image/jpeg', 0.85) } catch {}
-  siteSnap = { snap, w: tc.width, h: tc.height, poly: T.poly.map(p => [...p]), pxPerFt: T.pxPerFt, address: window.__siteAddr || '' }
+  siteSnap = { snap, w: tc.width, h: tc.height, poly: T.poly.map(p => [...p]), pxPerFt: T.pxPerFt, address: window.__siteMapOn ? (window.__siteAddr || '') : '', northUp: !!window.__siteMapOn }
   recompute()
   document.querySelector('.tab[data-pane="3d"]').click()
   tStatus(`Applied: ${L}' × ${D}' deck. Photo is the 3D ground layer — and a SITE PLAN was added to 2D Plans.`)

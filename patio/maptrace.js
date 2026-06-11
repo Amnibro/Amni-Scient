@@ -43,7 +43,7 @@ export const initMapTrace = ({ tc, T, tDraw, tStatus }) => {
       const hit = await geocode(q)
       if (!hit) { tStatus('Address not found — try adding city + state.'); return }
       M.lat = hit.lat; M.lon = hit.lon; M.on = true
-      window.__siteAddr = hit.name
+      window.__siteAddr = hit.name; window.__siteMapOn = true
       await render()
       tStatus(`📍 ${hit.name.slice(0, 70)} — satellite view at ${(0.3048 / T.pxPerFt * 100).toFixed(0)} cm/px, scale is AUTOMATIC. Drag to pan, then Trace and click corners.`)
       document.getElementById('mattrib').textContent = 'Imagery © Esri · Geocoding © OpenStreetMap'
@@ -67,7 +67,7 @@ export const initMapTrace = ({ tc, T, tDraw, tStatus }) => {
   })
   return M
 }
-export const sitePlanSVG = ({ snap, w, h, poly, pxPerFt, title, address, footprint }) => {
+export const sitePlanSVG = ({ snap, w, h, poly, pxPerFt, title, address, footprint, northUp = true }) => {
   const pad = 30, tb = 120
   const W = w + 2 * pad, H = h + tb + 2 * pad
   let s = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 ${W} ${H}' font-family='monospace'><rect width='${W}' height='${H}' fill='#fff'/>`
@@ -85,14 +85,16 @@ export const sitePlanSVG = ({ snap, w, h, poly, pxPerFt, title, address, footpri
     }
   }
   const sb = pxPerFt * 10
+  if (northUp) {
   s += `<line x1='${pad + 10}' y1='${oy + h - 18}' x2='${pad + 10 + sb}' y2='${oy + h - 18}' stroke='#fff' stroke-width='5'/><line x1='${pad + 10}' y1='${oy + h - 18}' x2='${pad + 10 + sb}' y2='${oy + h - 18}' stroke='#111' stroke-width='3'/>`
   s += `<text x='${pad + 10 + sb / 2}' y='${oy + h - 26}' font-size='13' fill='#fff' stroke='#000' stroke-width='3' paint-order='stroke' text-anchor='middle'>10 ft</text>`
   const nx = pad + w - 30, ny = oy + 40
   s += `<polygon points='${nx},${ny - 22} ${nx - 8},${ny + 6} ${nx},${ny} ${nx + 8},${ny + 6}' fill='#fff' stroke='#111' stroke-width='1.5'/><text x='${nx}' y='${ny + 22}' font-size='14' font-weight='bold' fill='#fff' stroke='#000' stroke-width='3' paint-order='stroke' text-anchor='middle'>N</text>`
+  }
   const ty = oy + h + 24
   s += `<rect x='${pad}' y='${ty}' width='${w}' height='${tb - 34}' fill='#f6f6f6' stroke='#999'/>`
-  s += `<text x='${pad + 12}' y='${ty + 24}' font-size='14' fill='#111' font-weight='bold'>SITE / TOP-DOWN PLAN — FOR PERMIT REVIEW</text>`
+  s += `<text x='${pad + 12}' y='${ty + 24}' font-size='14' fill='${northUp ? '#111' : '#a00'}' font-weight='bold'>${northUp ? 'SITE / TOP-DOWN PLAN — FOR PERMIT REVIEW' : 'PHOTO REFERENCE SKETCH — NOT FOR PERMIT SUBMISSION'}</text>`
   s += `<text x='${pad + 12}' y='${ty + 46}' font-size='12.5' fill='#333'>${address || 'Site: (address not set — traced from photo)'} </text>`
-  s += `<text x='${pad + 12}' y='${ty + 66}' font-size='12.5' fill='#333'>${footprint} · Scale: 1 px = ${(1 / pxPerFt).toFixed(3)} ft · North-up imagery · Generated ${new Date().toISOString().slice(0, 10)} by amni-scient.com/construct</text>`
+  s += `<text x='${pad + 12}' y='${ty + 66}' font-size='12.5' fill='#333'>${footprint} · ${northUp ? `Scale: 1 px = ${(1 / pxPerFt).toFixed(3)} ft · North-up imagery` : 'PERSPECTIVE PHOTO — dimensions approximate, verify on site'} · Generated ${new Date().toISOString().slice(0, 10)} by amni-scient.com/construct</text>`
   return s + '</svg>'
 }
