@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
-import { initPermits, updatePermits } from './codes.js?v=112'
-import { initMapTrace, sitePlanSVG, cropForPlan } from './maptrace.js?v=112'
+import { initPermits, updatePermits } from './codes.js?v=113'
+import { initMapTrace, sitePlanSVG, cropForPlan, mapPlanSnapshot } from './maptrace.js?v=113'
 const LS = 'amnipatio.cfg.v1', LSP = 'amnipatio.prices.v1'
 const defCfg = { mode: 'rect', w: 14, d: 12, polygon: null, thickness_in: 4, base_in: 4, reinforce: 'mesh', finish: 'plain', turndown: { enabled: false, depth_in: 12, width_in: 8 }, vehicle: false, joint_max_ft: 0, house_edge: 0 }
 let cfg = (() => { try { return { ...defCfg, ...JSON.parse(localStorage.getItem(LS)) } } catch { return { ...defCfg } } })()
@@ -186,6 +186,7 @@ const recompute = () => {
   if (out.error) { $('#warns').innerHTML = `<div class="warn">${out.error}</div>`; return }
   persist(); rebuild3D(); fitCam(); renderPlans(); renderMat(); renderWarns(); updatePermits()
 }
+let MV = null
 const T = { img: null, mode: null, scalePts: [], dist: 10, poly: [], pxPerFt: 0 }
 const tc = $('#tcanvas'), tx = tc.getContext('2d')
 const tStatus = s => $('#tstatus').textContent = s
@@ -231,7 +232,7 @@ $('#tscale').onclick = () => { T.mode = 'scale'; T.scalePts = []; tStatus('Click
 $('#ttrace').onclick = () => { T.pxPerFt > 0 ? (T.mode = 'trace', tStatus('Click each corner of the patio outline in order (clockwise or counter-clockwise).')) : tStatus('Set the scale first (two points + real distance).') }
 $('#tundo').onclick = () => { T.poly.pop(); tDraw() }
 $('#tclear').onclick = () => { T.poly = []; T.scalePts = []; T.mode = null; tDraw(); tStatus('Cleared. Set scale, then trace.') }
-$('#tuse').onclick = () => {
+$('#tuse').onclick = async () => {
   if (T.pxPerFt <= 0 || T.poly.length < 3) { tStatus('Need a scale + at least 3 corners before using the outline.'); return }
   const minX = Math.min(...T.poly.map(p => p[0])), maxY = Math.max(...T.poly.map(p => p[1]))
   cfg.polygon = T.poly.map(p => [+(((p[0] - minX) / T.pxPerFt).toFixed(2)), +(((maxY - p[1]) / T.pxPerFt).toFixed(2))])
@@ -248,7 +249,7 @@ $('#tuse').onclick = () => {
   sel.innerHTML = '<option value="-1">Freestanding</option>' + edges.map((L, i) => `<option value="${i}">Edge ${i + 1} (${L.toFixed(1)} ft) = house</option>`).join('')
   sel.value = String(edges.indexOf(Math.max(...edges)))
   cfg.house_edge = +sel.value
-  siteSnap = { ...cropForPlan(tc, T.poly, T.pxPerFt), address: window.__siteMapOn ? (window.__siteAddr || '') : '', northUp: !!window.__siteMapOn }
+  siteSnap = { ...(window.__siteMapOn && MV ? await mapPlanSnapshot(MV, tc.width, tc.height, T.poly, T.pxPerFt) : cropForPlan(T.img || tc, tc.width, tc.height, T.poly, T.pxPerFt)), address: window.__siteMapOn ? (window.__siteAddr || '') : '', northUp: !!window.__siteMapOn }
   recompute()
   tStatus(`Outline applied: ${out && out.calc ? out.calc.area_ft2.toFixed(0) : '?'} ft². 3D has your imagery as the ground — and a SITE PLAN was added to 2D Plans for the permit packet.`)
 }
@@ -302,5 +303,5 @@ catalog = await fetch('catalog.json').then(r => r.json()).catch(() => ({}))
 initUI()
 resize()
 tDraw()
-initMapTrace({ tc, T, tDraw, tStatus })
+MV = initMapTrace({ tc, T, tDraw, tStatus })
 recompute()

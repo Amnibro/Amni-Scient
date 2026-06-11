@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
-import { initPermits, updatePermits } from './codes.js?v=232'
-import { initMapTrace, sitePlanSVG, cropForPlan } from './maptrace.js?v=232'
+import { initPermits, updatePermits } from './codes.js?v=233'
+import { initMapTrace, sitePlanSVG, cropForPlan, mapPlanSnapshot } from './maptrace.js?v=233'
 const LS = 'amnideck.cfg.v2', LSP = 'amnideck.prices.v1'
 const defCfg = { length: 12, depth: 8, height: 16, spacing: 16, decking: 'pt', attach: 'ledger', stain: 'redwood', stairs: [{ side: 'front', width: 48, offset: -1 }], railing: { front: false, left: false, right: false, style: 'wood' }, door: { pos: -1, width: 60, rise: 7 } }
 const migrate = c => !c ? null : (Array.isArray(c.stairs) ? c : { ...c, stain: c.stain || 'redwood', door: c.door || { pos: -1, width: 60, rise: 7 }, stairs: c.stairs?.enabled ? [{ side: c.stairs.side, width: c.stairs.width, offset: c.stairs.offset }] : [] })
@@ -392,6 +392,7 @@ const initUI = () => {
   }
 }
 let photoPlane = null
+let MV = null
 const T = { img: null, mode: null, scalePts: [], dist: 10, poly: [], pxPerFt: 0 }
 const tc = document.getElementById('tcanvas'), tctx = tc.getContext('2d')
 const tStatus = s => { const e = document.getElementById('tstatus'); e && (e.textContent = s) }
@@ -441,7 +442,7 @@ document.getElementById('tscale').onclick = () => { T.mode = 'scale'; T.scalePts
 document.getElementById('ttrace').onclick = () => { T.pxPerFt > 0 ? (T.mode = 'trace', tStatus('Click each corner of the deck area.')) : tStatus('Set the scale first.') }
 document.getElementById('tundo').onclick = () => { T.poly.pop(); tDraw() }
 document.getElementById('tclear').onclick = () => { T.poly = []; T.scalePts = []; T.mode = null; tDraw(); tStatus('Cleared.') }
-document.getElementById('tuse').onclick = () => {
+document.getElementById('tuse').onclick = async () => {
   if (T.pxPerFt <= 0 || T.poly.length < 2) { tStatus('Need a scale + at least 2 corners.'); return }
   const xs = T.poly.map(p => p[0]), ys = T.poly.map(p => p[1])
   const minX = Math.min(...xs), minY = Math.min(...ys)
@@ -460,11 +461,11 @@ document.getElementById('tuse').onclick = () => {
     photoPlane.position.set((tc.width / 2 - minX) * s, 0.6, (tc.height / 2 - minY) * s)
     scene.add(photoPlane)
   }
-  siteSnap = { ...cropForPlan(tc, T.poly, T.pxPerFt), address: window.__siteMapOn ? (window.__siteAddr || '') : '', northUp: !!window.__siteMapOn }
+  siteSnap = { ...(window.__siteMapOn && MV ? await mapPlanSnapshot(MV, tc.width, tc.height, T.poly, T.pxPerFt) : cropForPlan(T.img || tc, tc.width, tc.height, T.poly, T.pxPerFt)), address: window.__siteMapOn ? (window.__siteAddr || '') : '', northUp: !!window.__siteMapOn }
   recompute()
   document.querySelector('.tab[data-pane="3d"]').click()
   tStatus(`Applied: ${L}' × ${D}' deck. Photo is the 3D ground layer — and a SITE PLAN was added to 2D Plans.`)
 }
-initMapTrace({ tc, T, tDraw, tStatus })
+MV = initMapTrace({ tc, T, tDraw, tStatus })
 tDraw()
 Promise.all([wasmReady, catReady]).then(() => { buildMats(); initUI(); recompute(); tick() })
