@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
-import { initPermits, updatePermits } from './codes.js?v=120'
-import { initMapTrace, sitePlanSVG, cropForPlan, mapPlanSnapshot } from './maptrace.js?v=120'
+import { initPermits, updatePermits } from './codes.js?v=121'
+import { initMapTrace, sitePlanSVG, cropForPlan, mapPlanSnapshot } from './maptrace.js?v=121'
 const LS = 'amnipatio.cfg.v1', LSP = 'amnipatio.prices.v1'
 const defCfg = { mode: 'rect', w: 14, d: 12, polygon: null, thickness_in: 4, base_in: 4, reinforce: 'mesh', finish: 'plain', turndown: { enabled: false, depth_in: 12, width_in: 8 }, vehicle: false, joint_max_ft: 0, house_edge: 0, border: false, sleeves: false }
 let cfg = (() => { try { return { ...defCfg, ...JSON.parse(localStorage.getItem(LS)) } } catch { return { ...defCfg } } })()
@@ -11,7 +11,7 @@ let catalog = {}
 const $ = s => document.querySelector(s)
 const FINISHES = { plain: ['#b9b9b9', 'Broom gray'], smooth: ['#cfcfcf', 'Smooth'], charcoal: ['#6e6e72', 'Charcoal'], terracotta: ['#b46a4a', 'Terracotta'], sandstone: ['#c9b08a', 'Sandstone'], slate: ['#7d8088', 'Stamped slate'], aggregate: ['#9b9484', 'Exposed agg.'], pavers: ['#b89a7a', 'Pavers'], herringbone: ['#a4543f', 'Brick herring.'], cobble: ['#8d8d92', 'Cobblestone'], flagstone: ['#a89884', 'Flagstone'], mosaic: ['#7aa7b8', 'Mosaic tile'] }
 const STONE = ['pavers', 'herringbone', 'cobble', 'flagstone', 'mosaic']
-const wasm = await WebAssembly.instantiateStreaming(fetch('patio_core.wasm?v=120'))
+const wasm = await WebAssembly.instantiateStreaming(fetch('patio_core.wasm?v=121'))
 const { alloc, dealloc, build, memory } = wasm.instance.exports
 const enc = new TextEncoder(), dec = new TextDecoder()
 const polyOf = c => c.mode === 'poly' && c.polygon && c.polygon.length >= 3 ? c.polygon : [[0, 0], [c.w, 0], [c.w, c.d], [0, c.d]]
@@ -87,11 +87,16 @@ const rebuild3D = () => {
     const i = +cfg.house_edge, jn = (i + 1) % poly.length
     const [a, c2] = [poly[i], poly[jn]]
     const len = Math.hypot(c2[0] - a[0], c2[1] - a[1]), ang = Math.atan2(-(c2[1] - a[1]), c2[0] - a[0])
-    const wall = new THREE.Mesh(new THREE.BoxGeometry(len + 2, 9, 0.5), new THREE.MeshStandardMaterial({ color: 0xd8ccb8, roughness: 0.9 }))
+    const wall = new THREE.Mesh(new THREE.BoxGeometry(len + 2, 9, 0.5), new THREE.MeshStandardMaterial({ color: 0xefe8cf, roughness: 0.9 }))
     wall.position.set((a[0] + c2[0]) / 2, 4.5, -(a[1] + c2[1]) / 2)
     wall.rotation.y = ang
     wall.translateZ(-0.3)
     grp.add(wall)
+    const fdn = new THREE.Mesh(new THREE.BoxGeometry(len + 2, 1.3, 0.56), new THREE.MeshStandardMaterial({ color: 0x6e2f2b, roughness: 0.95 }))
+    fdn.position.set((a[0] + c2[0]) / 2, 0.65, -(a[1] + c2[1]) / 2)
+    fdn.rotation.y = ang
+    fdn.translateZ(-0.3)
+    grp.add(fdn)
     const felt = new THREE.Mesh(new THREE.BoxGeometry(len, t, 0.05), new THREE.MeshStandardMaterial({ color: 0x1a1a1a }))
     felt.position.set((a[0] + c2[0]) / 2, b + t / 2, -(a[1] + c2[1]) / 2)
     felt.rotation.y = ang
