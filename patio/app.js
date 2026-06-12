@@ -3,20 +3,20 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { initPermits, updatePermits } from './codes.js?v=120'
 import { initMapTrace, sitePlanSVG, cropForPlan, mapPlanSnapshot } from './maptrace.js?v=120'
 const LS = 'amnipatio.cfg.v1', LSP = 'amnipatio.prices.v1'
-const defCfg = { mode: 'rect', w: 14, d: 12, polygon: null, thickness_in: 4, base_in: 4, reinforce: 'mesh', finish: 'plain', turndown: { enabled: false, depth_in: 12, width_in: 8 }, vehicle: false, joint_max_ft: 0, house_edge: 0 }
+const defCfg = { mode: 'rect', w: 14, d: 12, polygon: null, thickness_in: 4, base_in: 4, reinforce: 'mesh', finish: 'plain', turndown: { enabled: false, depth_in: 12, width_in: 8 }, vehicle: false, joint_max_ft: 0, house_edge: 0, border: false, sleeves: false }
 let cfg = (() => { try { return { ...defCfg, ...JSON.parse(localStorage.getItem(LS)) } } catch { return { ...defCfg } } })()
 let out = null
 let priceEdits = (() => { try { return JSON.parse(localStorage.getItem(LSP)) || {} } catch { return {} } })()
 let catalog = {}
 const $ = s => document.querySelector(s)
-const FINISHES = { plain: ['#b9b9b9', 'Broom gray'], smooth: ['#cfcfcf', 'Smooth'], charcoal: ['#6e6e72', 'Charcoal'], terracotta: ['#b46a4a', 'Terracotta'], sandstone: ['#c9b08a', 'Sandstone'], slate: ['#7d8088', 'Stamped slate'], pavers: ['#b89a7a', 'Pavers'], herringbone: ['#a4543f', 'Brick herring.'], cobble: ['#8d8d92', 'Cobblestone'], flagstone: ['#a89884', 'Flagstone'], mosaic: ['#7aa7b8', 'Mosaic tile'] }
+const FINISHES = { plain: ['#b9b9b9', 'Broom gray'], smooth: ['#cfcfcf', 'Smooth'], charcoal: ['#6e6e72', 'Charcoal'], terracotta: ['#b46a4a', 'Terracotta'], sandstone: ['#c9b08a', 'Sandstone'], slate: ['#7d8088', 'Stamped slate'], aggregate: ['#9b9484', 'Exposed agg.'], pavers: ['#b89a7a', 'Pavers'], herringbone: ['#a4543f', 'Brick herring.'], cobble: ['#8d8d92', 'Cobblestone'], flagstone: ['#a89884', 'Flagstone'], mosaic: ['#7aa7b8', 'Mosaic tile'] }
 const STONE = ['pavers', 'herringbone', 'cobble', 'flagstone', 'mosaic']
 const wasm = await WebAssembly.instantiateStreaming(fetch('patio_core.wasm?v=120'))
 const { alloc, dealloc, build, memory } = wasm.instance.exports
 const enc = new TextEncoder(), dec = new TextDecoder()
 const polyOf = c => c.mode === 'poly' && c.polygon && c.polygon.length >= 3 ? c.polygon : [[0, 0], [c.w, 0], [c.w, c.d], [0, c.d]]
 const callCore = c => {
-  const payload = enc.encode(JSON.stringify({ polygon: polyOf(c), thickness_in: +c.thickness_in, base_in: +c.base_in, reinforce: c.reinforce, finish: c.finish, turndown: c.turndown, vehicle: c.vehicle, joint_max_ft: +c.joint_max_ft, house_edge: c.mode === 'rect' ? +c.house_edge : +c.house_edge, issue_date: new Date().toLocaleDateString('en-CA') }))
+  const payload = enc.encode(JSON.stringify({ polygon: polyOf(c), thickness_in: +c.thickness_in, base_in: +c.base_in, reinforce: c.reinforce, finish: c.finish, turndown: c.turndown, vehicle: c.vehicle, joint_max_ft: +c.joint_max_ft, house_edge: c.mode === 'rect' ? +c.house_edge : +c.house_edge, border: !!c.border, sleeves: !!c.sleeves, issue_date: new Date().toLocaleDateString('en-CA') }))
   const p = alloc(payload.length)
   new Uint8Array(memory.buffer, p, payload.length).set(payload)
   const rp = build(p, payload.length)
@@ -60,6 +60,7 @@ const patternTex = (kind, hex) => {
   else if (kind === 'herringbone') { for (let i = -8; i < 16; i++) for (let j = -2; j < 10; j++) { x.save(); x.translate(i * 32, j * 32 + (i % 2 ? 0 : 16)); x.rotate(i % 2 ? Math.PI / 4 : -Math.PI / 4); x.fillStyle = shade(hex, rnd(0.8, 1.15)); x.fillRect(-26, -10, 52, 20); x.restore() } }
   else if (kind === 'cobble') { for (let r = 0; r < 7; r++) for (let col = 0; col < 7; col++) { x.fillStyle = shade(hex, rnd(0.7, 1.2)); x.beginPath(); x.ellipse(col * 38 + (r % 2 ? 19 : 0) + rnd(-3, 3), r * 38 + rnd(-3, 3), rnd(14, 18), rnd(12, 16), rnd(0, 3), 0, 7); x.fill() } }
   else if (kind === 'flagstone') { for (let i = 0; i < 14; i++) { const cx = rnd(0, 256), cy = rnd(0, 256), n = 5 + (Math.random() * 3 | 0); x.fillStyle = shade(hex, rnd(0.75, 1.15)); x.beginPath(); for (let k = 0; k <= n; k++) { const a = k / n * Math.PI * 2, rr = rnd(24, 44); x[k ? 'lineTo' : 'moveTo'](cx + rr * Math.cos(a), cy + rr * Math.sin(a)) } x.fill() } }
+  else if (kind === 'aggregate') { x.fillStyle = hex; x.fillRect(0, 0, 256, 256); const tones = ['#7a6f5e', '#8d857a', '#a39684', '#6b655c', '#b3a28b', '#5d564b']; for (let i = 0; i < 900; i++) { x.fillStyle = tones[(Math.random() * tones.length) | 0]; x.beginPath(); x.ellipse(rnd(0, 256), rnd(0, 256), rnd(1.2, 3.4), rnd(1.0, 2.8), rnd(0, 3), 0, 7); x.fill() } }
   else { for (let r = 0; r < 16; r++) for (let col = 0; col < 16; col++) { x.fillStyle = shade(hex, rnd(0.6, 1.35)); x.fillRect(col * 16 + 1, r * 16 + 1, 14, 14) } }
   const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; return t
 }
@@ -71,7 +72,7 @@ const rebuild3D = () => {
   const mk = (depth, mat, yBottom) => { const g = new THREE.ExtrudeGeometry(shape, { depth, bevelEnabled: false }); const m = new THREE.Mesh(g, mat); m.rotation.x = -Math.PI / 2; m.position.y = yBottom; grp.add(m); return m }
   if (b > 0.01) mk(b, new THREE.MeshStandardMaterial({ color: 0x9a8a68, roughness: 1 }), 0)
   const stone = STONE.includes(cfg.finish)
-  const tex = stone ? patternTex(cfg.finish, FINISHES[cfg.finish][0]) : speckle(FINISHES[cfg.finish][0])
+  const tex = stone || cfg.finish === 'aggregate' ? patternTex(cfg.finish, FINISHES[cfg.finish][0]) : speckle(FINISHES[cfg.finish][0])
   tex.repeat.set(stone ? 0.25 : 0.5, stone ? 0.25 : 0.5)
   mk(t, new THREE.MeshStandardMaterial({ map: tex, roughness: cfg.finish === 'smooth' ? 0.55 : 0.95 }), b)
   if (out && out.joints) for (const j of out.joints) {
@@ -271,6 +272,10 @@ const initUI = () => {
   $('#vehicle').onchange = e => { cfg.vehicle = e.target.checked; recompute() }
   $('#td').checked = cfg.turndown.enabled
   $('#td').onchange = e => { cfg.turndown.enabled = e.target.checked; recompute() }
+  $('#border').checked = !!cfg.border
+  $('#border').onchange = e => { cfg.border = e.target.checked; recompute() }
+  $('#sleeves').checked = !!cfg.sleeves
+  $('#sleeves').onchange = e => { cfg.sleeves = e.target.checked; recompute() }
   document.querySelectorAll('#mode button').forEach(b => b.onclick = () => {
     cfg.mode = b.dataset.v
     document.querySelectorAll('#mode button').forEach(x => x.classList.toggle('on', x === b))
