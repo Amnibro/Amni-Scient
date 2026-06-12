@@ -1,10 +1,10 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Amni-Deck â€” 3D Deck Builder</title>
+<title>Amni-Deck — 3D Deck Builder</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="Free 3D deck builder â€” parametric WASM design, drag-and-drop stairs, printable 2D framing plans, cut lists, Home Depot/Lowe's pricing, and location-aware permit guidance.">
+<meta name="description" content="Free 3D deck builder — parametric WASM design, drag-and-drop stairs, printable 2D framing plans, cut lists, Home Depot/Lowe's pricing, and location-aware permit guidance.">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230a0a0a'/%3E%3Ctext x='32' y='44' font-size='38' text-anchor='middle' font-family='monospace' font-weight='bold' fill='%23e8a33d'%3EAD%3C/text%3E%3C/svg%3E">
 <style>
 :root{--bg:#14161a;--panel:#1d2026;--ink:#e8e6e0;--mut:#9aa0aa;--acc:#e8a33d;--acc2:#4f9cf0;--ok:#5fbf6e;--warn:#e0b341;--line:#2c3038}
@@ -72,11 +72,11 @@ td a:hover{text-decoration:underline}
 </head>
 <body>
 <header>
-  <h1>ðŸ› ï¸ Amni-Deck</h1>
-  <span style="color:var(--mut);font-size:12px">part of <a href="../construct/" style="color:var(--acc);text-decoration:none">AMNI-CONSTRUCT</a> Â· <a href="../patio/" style="color:#8fa8b8;text-decoration:none">switch to ðŸ§± Patio</a></span>
+  <h1>🛠️ Amni-Deck</h1>
+  <span style="color:var(--mut);font-size:12px">part of <a href="../construct/" style="color:var(--acc);text-decoration:none">AMNI-CONSTRUCT</a> · <a href="../patio/" style="color:#8fa8b8;text-decoration:none">switch to 🧱 Patio</a></span>
   <div class="tabs">
     <div class="tab on" data-pane="3d">3D View</div>
-    <div class="tab" data-pane="trace">ðŸ“· Photo Trace</div>
+    <div class="tab" data-pane="trace">📷 Photo Trace</div>
     <div class="tab" data-pane="plans">2D Plans</div>
     <div class="tab" data-pane="mat">Materials &amp; Pricing</div>
     <div class="tab" data-pane="cuts">Cut List</div>
@@ -102,7 +102,7 @@ td a:hover{text-decoration:underline}
     <div class="row"><label>Door position (ft, -1=center)</label><input type="number" id="dr_pos" min="-1" max="40" step="0.5" value="-1"></div>
     <div class="row"><label>Door width (in)</label><input type="number" id="dr_w" min="30" max="96" step="2" value="60"></div>
     <div class="row"><label>Threshold above deck (in)</label><input type="number" id="dr_rise" min="0" max="24" step="0.5" value="0"></div>
-    <h3>Stairs <span style="color:var(--mut);text-transform:none;letter-spacing:0">â€” drag them in 3D!</span></h3>
+    <h3>Stairs <span style="color:var(--mut);text-transform:none;letter-spacing:0">— drag them in 3D!</span></h3>
     <div id="stairlist"></div>
     <button class="addbtn" id="addstair">+ Add stairs</button>
     <h3>Railing</h3>
@@ -111,7 +111,7 @@ td a:hover{text-decoration:underline}
     <div class="row"><label>Right edge</label><input type="checkbox" id="rl_r"></div>
     <div class="seg" id="rl_style"><button data-v="wood" class="on">Wood 2x2</button><button data-v="alum">Aluminum</button></div>
     <h3>Code &amp; Permits</h3>
-    <button class="addbtn" id="loc-detect">ðŸ“ Use my location</button>
+    <button class="addbtn" id="loc-detect">📍 Use my location</button>
     <div style="font-size:11px;color:var(--mut);margin:4px 0" id="loc-status"></div>
     <div class="row"><label>State</label><select id="loc-state"></select></div>
     <div class="row"><label>City / town</label><input type="text" id="loc-city" placeholder="e.g. Troy"></div>
@@ -120,34 +120,34 @@ td a:hover{text-decoration:underline}
   </div>
   <div id="view">
     <canvas id="c3d"></canvas>
-    <div id="hud">drag = orbit Â· wheel = zoom Â· right-drag = pan Â· <b style="color:#e8a33d">grab stairs to move them</b></div>
+    <div id="hud">drag = orbit · wheel = zoom · right-drag = pan · <b style="color:#e8a33d">grab stairs to move them</b></div>
     <div class="pane" id="pane-trace">
       <div class="planbar">
-        <input id="maddr" placeholder="ðŸ—ºï¸ Address â€” e.g. 123 Main St, Troy NY (satellite view, auto-scale)" style="flex:1;min-width:260px;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:7px 10px">
+        <input id="maddr" placeholder="🗺️ Address — e.g. 123 Main St, Troy NY (satellite view, auto-scale)" style="flex:1;min-width:260px;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:7px 10px">
         <button class="btn acc" id="mfind">Find address</button>
-        <button class="btn" id="mzin">ï¼‹</button>
-        <button class="btn" id="mzout">ï¼</button>
+        <button class="btn" id="mzin">＋</button>
+        <button class="btn" id="mzout">－</button>
         <span id="mattrib" style="font-size:10px;color:var(--mut)"></span>
       </div>
       <div class="planbar">
-        <label class="btn" style="display:inline-block">ðŸ“· Or upload photo / sketch<input type="file" id="timg" accept="image/*" style="display:none"></label>
-        <button class="btn" id="tscale">1ï¸âƒ£ Set scale</button>
-        <button class="btn" id="ttrace">2ï¸âƒ£ Trace deck area</button>
-        <button class="btn" id="tundo">â†© Undo point</button>
-        <button class="btn" id="tclear">âœ– Clear</button>
-        <button class="btn acc" id="tuse">âœ… Use outline</button>
+        <label class="btn" style="display:inline-block">📷 Or upload photo / sketch<input type="file" id="timg" accept="image/*" style="display:none"></label>
+        <button class="btn" id="tscale">1️⃣ Set scale</button>
+        <button class="btn" id="ttrace">2️⃣ Trace deck area</button>
+        <button class="btn" id="tundo">↩ Undo point</button>
+        <button class="btn" id="tclear">✖ Clear</button>
+        <button class="btn acc" id="tuse">✅ Use outline</button>
       </div>
       <div style="display:flex;gap:14px;flex-wrap:wrap">
         <canvas id="tcanvas" width="980" height="660" style="background:#0d0f12;border:1px solid var(--line);border-radius:10px;cursor:crosshair;max-width:100%"></canvas>
         <div style="min-width:240px;max-width:300px;display:flex;flex-direction:column;gap:8px">
-          <div id="tstatus" style="font-size:12px;color:var(--warn);min-height:32px">Upload an overhead photo or sketch. Set scale (two clicks + a known distance), trace the deck area's corners, then Use outline â€” the deck takes the bounding rectangle of your trace.</div>
+          <div id="tstatus" style="font-size:12px;color:var(--warn);min-height:32px">Upload an overhead photo or sketch. Set scale (two clicks + a known distance), trace the deck area's corners, then Use outline — the deck takes the bounding rectangle of your trace.</div>
           <div id="tdims" style="font-size:12px;color:var(--mut);line-height:1.7"></div>
-          <p style="font-size:11px;color:var(--mut)">Photos never leave your device. The framed deck uses the outline's bounding rectangle (length Ã— depth); the photo becomes the ground under the 3D deck.</p>
+          <p style="font-size:11px;color:var(--mut)">Photos never leave your device. The framed deck uses the outline's bounding rectangle (length × depth); the photo becomes the ground under the 3D deck.</p>
         </div>
       </div>
     </div>
     <div class="pane" id="pane-plans">
-      <div class="planbar"><button class="btn acc" onclick="window.print()">ðŸ–¨ï¸ Print all plans</button><button class="btn" id="dl-svg">â¬‡ï¸ Download SVGs</button></div>
+      <div class="planbar"><button class="btn acc" onclick="window.print()">🖨️ Print all plans</button><button class="btn" id="dl-svg">⬇️ Download SVGs</button></div>
       <div class="svgwrap" id="svg-framing"></div>
       <div class="svgwrap" id="svg-decking"></div>
       <div class="svgwrap" id="svg-elevation"></div>
@@ -158,20 +158,20 @@ td a:hover{text-decoration:underline}
     <div class="pane" id="pane-mat">
       <div class="summary" id="mat-summary"></div>
       <div class="pastebox">
-        <h4>ðŸ“‹ Live prices, the way that actually works</h4>
-        <p>The stores block robots â€” but not you. Open a store link below (or load your whole cart), press <b>Ctrl+A</b> then <b>Ctrl+C</b> on the store page, come back here and click a paste button. Every price found gets matched to your items automatically. One cart paste can fill the entire list.</p>
-        <button class="btn acc" id="paste-hd">ðŸ“¥ Paste â†’ Home Depot prices</button>
-        <button class="btn acc" id="paste-lowes">ðŸ“¥ Paste â†’ Lowe's prices</button>
-        <button class="btn" id="live-prices">âš¡ Try auto-fetch anyway</button>
-        <button class="btn" id="open-all-hd">â†— Open all HD links</button>
+        <h4>📋 Live prices, the way that actually works</h4>
+        <p>The stores block robots — but not you. Open a store link below (or load your whole cart), press <b>Ctrl+A</b> then <b>Ctrl+C</b> on the store page, come back here and click a paste button. Every price found gets matched to your items automatically. One cart paste can fill the entire list.</p>
+        <button class="btn acc" id="paste-hd">📥 Paste → Home Depot prices</button>
+        <button class="btn acc" id="paste-lowes">📥 Paste → Lowe's prices</button>
+        <button class="btn" id="live-prices">⚡ Try auto-fetch anyway</button>
+        <button class="btn" id="open-all-hd">↗ Open all HD links</button>
         <span id="pstatus"></span>
       </div>
       <div class="planbar">
         <button class="btn" id="reset-prices">Reset to catalog</button>
-        <button class="btn" id="export-csv">â¬‡ï¸ Export CSV</button>
+        <button class="btn" id="export-csv">⬇️ Export CSV</button>
       </div>
       <table id="mat-table"></table>
-      <p style="color:var(--mut);font-size:12px;margin-top:12px">Catalog prices are editable estimates â€” click any cell to adjust. Edits persist locally.</p>
+      <p style="color:var(--mut);font-size:12px;margin-top:12px">Catalog prices are editable estimates — click any cell to adjust. Edits persist locally.</p>
     </div>
     <div class="pane" id="pane-cuts">
       <div class="summary" id="cut-summary"></div>

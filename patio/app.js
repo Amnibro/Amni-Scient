@@ -1,4 +1,4 @@
-﻿import * as THREE from 'three'
+import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { initPermits, updatePermits } from './codes.js?v=120'
 import { initMapTrace, sitePlanSVG, cropForPlan, mapPlanSnapshot } from './maptrace.js?v=120'
@@ -117,7 +117,7 @@ const renderPlans = () => {
   if (siteSnap) {
     let wrap = $('#svg-site')
     if (!wrap) { wrap = document.createElement('div'); wrap.className = 'svgwrap'; wrap.id = 'svg-site'; const pane = $('#pane-plans'); pane.insertBefore(wrap, pane.querySelector('.svgwrap')) }
-    wrap.innerHTML = sitePlanSVG({ ...siteSnap, title: siteSnap.northUp ? 'SITE PLAN â€” PROPOSED PATIO' : 'REFERENCE SKETCH â€” PROPOSED PATIO', footprint: `Proposed: ${out.calc.area_ft2.toFixed(0)} ftÂ² concrete patio, ${cfg.thickness_in}" slab, ${cfg.house_edge >= 0 ? 'abutting dwelling (isolation joint)' : 'freestanding'}` })
+    wrap.innerHTML = sitePlanSVG({ ...siteSnap, title: siteSnap.northUp ? 'SITE PLAN — PROPOSED PATIO' : 'REFERENCE SKETCH — PROPOSED PATIO', footprint: `Proposed: ${out.calc.area_ft2.toFixed(0)} ft² concrete patio, ${cfg.thickness_in}" slab, ${cfg.house_edge >= 0 ? 'abutting dwelling (isolation joint)' : 'freestanding'}` })
   }
 }
 const renderWarns = () => {
@@ -129,14 +129,14 @@ const price = (id, store) => priceEdits[`${id}.${store}`] ?? catalog[id]?.[store
 const renderMat = () => {
   if (!out) return
   const c = out.calc
-  $('#mat-summary').innerHTML = [[`${c.area_ft2.toFixed(0)} ftÂ²`, 'slab area'], [`${c.order_yd3.toFixed(2)} ydÂ³`, 'concrete to order'], [`${c.bags80}`, '80 lb bags (DIY alt)'], [`${c.gravel_tons.toFixed(1)} t`, 'gravel base'], [`${c.panels}`, 'joint panels']].map(([b, s]) => `<div class="chip"><b>${b}</b><span>${s}</span></div>`).join('')
+  $('#mat-summary').innerHTML = [[`${c.area_ft2.toFixed(0)} ft²`, 'slab area'], [`${c.order_yd3.toFixed(2)} yd³`, 'concrete to order'], [`${c.bags80}`, '80 lb bags (DIY alt)'], [`${c.gravel_tons.toFixed(1)} t`, 'gravel base'], [`${c.panels}`, 'joint panels']].map(([b, s]) => `<div class="chip"><b>${b}</b><span>${s}</span></div>`).join('')
   let th = 0, tl = 0
   const rows = out.bom.map(it => {
     const cat = catalog[it.id] || {}
     const ph = price(it.id, 'hd'), pl = price(it.id, 'lowes')
     ph != null && (th += ph * it.qty); pl != null && (tl += pl * it.qty)
-    const link = (store, q) => q ? `<a href="https://www.${store === 'hd' ? 'homedepot' : 'lowes'}.com/s/${encodeURIComponent(q)}" target="_blank" rel="noopener">â†—</a>` : ''
-    return `<tr><td>${it.desc}</td><td>${it.qty}</td><td><input data-id="${it.id}" data-store="hd" value="${ph ?? ''}"> ${link('hd', cat.hdq)}</td><td>${ph != null ? '$' + (ph * it.qty).toFixed(2) : 'â€”'}</td><td><input data-id="${it.id}" data-store="lowes" value="${pl ?? ''}"> ${link('lowes', cat.lq)}</td><td>${pl != null ? '$' + (pl * it.qty).toFixed(2) : 'â€”'}</td></tr>`
+    const link = (store, q) => q ? `<a href="https://www.${store === 'hd' ? 'homedepot' : 'lowes'}.com/s/${encodeURIComponent(q)}" target="_blank" rel="noopener">↗</a>` : ''
+    return `<tr><td>${it.desc}</td><td>${it.qty}</td><td><input data-id="${it.id}" data-store="hd" value="${ph ?? ''}"> ${link('hd', cat.hdq)}</td><td>${ph != null ? '$' + (ph * it.qty).toFixed(2) : '—'}</td><td><input data-id="${it.id}" data-store="lowes" value="${pl ?? ''}"> ${link('lowes', cat.lq)}</td><td>${pl != null ? '$' + (pl * it.qty).toFixed(2) : '—'}</td></tr>`
   }).join('')
   $('#mat-table').innerHTML = `<tr><th>Item</th><th>Qty</th><th>HD $</th><th>HD total</th><th>Lowes $</th><th>Lowes total</th></tr>${rows}<tr><td class="tot">TOTALS</td><td></td><td></td><td class="tot ${th <= tl ? 'best' : ''}">$${th.toFixed(2)}</td><td></td><td class="tot ${tl < th ? 'best' : ''}">$${tl.toFixed(2)}</td></tr>`
   document.querySelectorAll('#mat-table input').forEach(i => i.onchange = () => { const v = parseFloat(i.value); isNaN(v) ? delete priceEdits[`${i.dataset.id}.${i.dataset.store}`] : priceEdits[`${i.dataset.id}.${i.dataset.store}`] = v; localStorage.setItem(LSP, JSON.stringify(priceEdits)); renderMat() })
@@ -193,7 +193,7 @@ const tc = $('#tcanvas'), tx = tc.getContext('2d')
 const tStatus = s => $('#tstatus').textContent = s
 const tDraw = () => {
   tx.clearRect(0, 0, tc.width, tc.height)
-  if (T.img) { tx.drawImage(T.img, 0, 0, tc.width, tc.height) } else { tx.fillStyle = '#15181d'; tx.fillRect(0, 0, tc.width, tc.height); tx.fillStyle = '#566'; tx.font = '16px monospace'; tx.textAlign = 'center'; tx.fillText('Upload a photo or sketch to begin â€” or trace on this blank grid', tc.width / 2, tc.height / 2) }
+  if (T.img) { tx.drawImage(T.img, 0, 0, tc.width, tc.height) } else { tx.fillStyle = '#15181d'; tx.fillRect(0, 0, tc.width, tc.height); tx.fillStyle = '#566'; tx.font = '16px monospace'; tx.textAlign = 'center'; tx.fillText('Upload a photo or sketch to begin — or trace on this blank grid', tc.width / 2, tc.height / 2) }
   if (!T.img) { tx.strokeStyle = 'rgba(255,255,255,0.05)'; for (let g = 0; g < tc.width; g += 49) { tx.beginPath(); tx.moveTo(g, 0); tx.lineTo(g, tc.height); tx.stroke() } for (let g = 0; g < tc.height; g += 49) { tx.beginPath(); tx.moveTo(0, g); tx.lineTo(tc.width, g); tx.stroke() } }
   if (T.scalePts.length) {
     tx.strokeStyle = '#ffd166'; tx.lineWidth = 2; tx.fillStyle = '#ffd166'
@@ -217,19 +217,19 @@ tc.addEventListener('click', e => {
     T.scalePts.push(p)
     if (T.scalePts.length === 2) {
       const pd = prompt('Real distance between those two points (e.g. 133in or 11ft or 11.08):', '10ft');const pm = pd && pd.match(/([\d.]+)\s*(in|\"|ft|'|m)?/i);const d = pm ? parseFloat(pm[1]) * (/(in|\")/i.test(pm[2] || '') ? 1 / 12 : /m/i.test(pm[2] || '') ? 3.28084 : 1) : NaN
-      isFinite(d) && d > 0 ? (T.dist = d, T.pxPerFt = Math.hypot(T.scalePts[1][0] - T.scalePts[0][0], T.scalePts[1][1] - T.scalePts[0][1]) / d, tStatus(`Scale set: ${T.pxPerFt.toFixed(1)} px/ft. Now click TRACE and click each corner of the patio.`)) : (T.scalePts = [], tStatus('Scale cancelled â€” click Set scale and try again.'))
+      isFinite(d) && d > 0 ? (T.dist = d, T.pxPerFt = Math.hypot(T.scalePts[1][0] - T.scalePts[0][0], T.scalePts[1][1] - T.scalePts[0][1]) / d, tStatus(`Scale set: ${T.pxPerFt.toFixed(1)} px/ft. Now click TRACE and click each corner of the patio.`)) : (T.scalePts = [], tStatus('Scale cancelled — click Set scale and try again.'))
       T.mode = null
-    } else tStatus('Click the second reference pointâ€¦')
-  } else if (T.mode === 'trace') { T.poly.push(p); tStatus(`${T.poly.length} corner${T.poly.length > 1 ? 's' : ''} placed â€” keep clicking corners, then hit USE OUTLINE.`) }
+    } else tStatus('Click the second reference point…')
+  } else if (T.mode === 'trace') { T.poly.push(p); tStatus(`${T.poly.length} corner${T.poly.length > 1 ? 's' : ''} placed — keep clicking corners, then hit USE OUTLINE.`) }
   tDraw()
 })
 $('#timg').addEventListener('change', e => {
   const f = e.target.files[0]; if (!f) return
   const img = new Image()
-  img.onload = () => { window.__siteMapOn = false; T.img = img; const ar = img.width / img.height; tc.width = 980; tc.height = Math.round(980 / ar); tDraw(); tStatus('Photo loaded. Click "Set scale", then click two points a known distance apart (a fence panel, tape on the ground, the house wallâ€¦).') }
+  img.onload = () => { window.__siteMapOn = false; T.img = img; const ar = img.width / img.height; tc.width = 980; tc.height = Math.round(980 / ar); tDraw(); tStatus('Photo loaded. Click "Set scale", then click two points a known distance apart (a fence panel, tape on the ground, the house wall…).') }
   img.src = URL.createObjectURL(f)
 })
-$('#tscale').onclick = () => { T.mode = 'scale'; T.scalePts = []; tStatus('Click the FIRST reference point on the imageâ€¦'); tDraw() }
+$('#tscale').onclick = () => { T.mode = 'scale'; T.scalePts = []; tStatus('Click the FIRST reference point on the image…'); tDraw() }
 $('#ttrace').onclick = () => { T.pxPerFt > 0 ? (T.mode = 'trace', tStatus('Click each corner of the patio outline in order (clockwise or counter-clockwise).')) : tStatus('Set the scale first (two points + real distance).') }
 $('#tundo').onclick = () => { T.poly.pop(); tDraw() }
 $('#tclear').onclick = () => { T.poly = []; T.scalePts = []; T.mode = null; tDraw(); tStatus('Cleared. Set scale, then trace.') }
@@ -252,7 +252,7 @@ $('#tuse').onclick = async () => {
   cfg.house_edge = +sel.value
   siteSnap = { ...(window.__siteMapOn && MV ? await mapPlanSnapshot(MV, tc.width, tc.height, T.poly, T.pxPerFt) : cropForPlan(T.img || tc, tc.width, tc.height, T.poly, T.pxPerFt)), address: window.__siteMapOn ? (window.__siteAddr || '') : '', northUp: !!window.__siteMapOn }
   recompute()
-  tStatus(`Outline applied: ${out && out.calc ? out.calc.area_ft2.toFixed(0) : '?'} ftÂ². 3D has your imagery as the ground â€” and a SITE PLAN was added to 2D Plans for the permit packet.`)
+  tStatus(`Outline applied: ${out && out.calc ? out.calc.area_ft2.toFixed(0) : '?'} ft². 3D has your imagery as the ground — and a SITE PLAN was added to 2D Plans for the permit packet.`)
 }
 const buildFinishes = () => {
   const sw = $('#finishes'); sw.innerHTML = ''
@@ -281,7 +281,7 @@ const initUI = () => {
     document.querySelectorAll('#mode button').forEach(x => x.classList.toggle('on', x === b))
     const rectMode = cfg.mode === 'rect'
     $('#rw').style.display = rectMode ? 'flex' : 'none'; $('#rd').style.display = rectMode ? 'flex' : 'none'
-    if (rectMode) { const sel = $('#house'); sel.innerHTML = '<option value="0">Yes â€” back edge</option><option value="-1">Freestanding</option>'; sel.value = cfg.house_edge >= 0 ? '0' : '-1'; cfg.house_edge = +sel.value }
+    if (rectMode) { const sel = $('#house'); sel.innerHTML = '<option value="0">Yes — back edge</option><option value="-1">Freestanding</option>'; sel.value = cfg.house_edge >= 0 ? '0' : '-1'; cfg.house_edge = +sel.value }
     if (!rectMode && (!cfg.polygon || cfg.polygon.length < 3)) { document.querySelector('.tab[data-pane="trace"]').click() }
     recompute()
   })
@@ -290,8 +290,8 @@ const initUI = () => {
     document.querySelectorAll('.pane').forEach(p => p.classList.toggle('on', p.id === `pane-${t.dataset.pane}`))
     $('#hud').style.display = t.dataset.pane === '3d' ? 'block' : 'none'
   })
-  $('#paste-hd').onclick = async () => { try { const txt = await navigator.clipboard.readText(); const f = parsePaste(txt, 'hd'); $('#pstatus').textContent = f.length ? `âœ… filled ${f.length} HD prices` : 'no prices matched â€” copy the whole store page (Ctrl+A, Ctrl+C)'; renderMat() } catch { $('#pstatus').textContent = 'clipboard blocked â€” click the page first' } }
-  $('#paste-lowes').onclick = async () => { try { const txt = await navigator.clipboard.readText(); const f = parsePaste(txt, 'lowes'); $('#pstatus').textContent = f.length ? `âœ… filled ${f.length} Lowes prices` : 'no prices matched â€” copy the whole store page'; renderMat() } catch { $('#pstatus').textContent = 'clipboard blocked â€” click the page first' } }
+  $('#paste-hd').onclick = async () => { try { const txt = await navigator.clipboard.readText(); const f = parsePaste(txt, 'hd'); $('#pstatus').textContent = f.length ? `✅ filled ${f.length} HD prices` : 'no prices matched — copy the whole store page (Ctrl+A, Ctrl+C)'; renderMat() } catch { $('#pstatus').textContent = 'clipboard blocked — click the page first' } }
+  $('#paste-lowes').onclick = async () => { try { const txt = await navigator.clipboard.readText(); const f = parsePaste(txt, 'lowes'); $('#pstatus').textContent = f.length ? `✅ filled ${f.length} Lowes prices` : 'no prices matched — copy the whole store page'; renderMat() } catch { $('#pstatus').textContent = 'clipboard blocked — click the page first' } }
   $('#open-all-hd').onclick = () => out && out.bom.slice(0, 6).forEach(it => catalog[it.id]?.hdq && window.open(`https://www.homedepot.com/s/${encodeURIComponent(catalog[it.id].hdq)}`, '_blank'))
   $('#reset-prices').onclick = () => { priceEdits = {}; localStorage.removeItem(LSP); renderMat() }
   $('#export-csv').onclick = () => {

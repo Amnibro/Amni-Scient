@@ -1,10 +1,10 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Amni-Patio â€” Concrete Patio Designer</title>
+<title>Amni-Patio — Concrete Patio Designer</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="Free 3D concrete patio designer â€” trace your yard photo to scale, get printable layout/formwork/joint plans, exact concrete volume, materials list with store pricing, and local permit guidance.">
+<meta name="description" content="Free 3D concrete patio designer — trace your yard photo to scale, get printable layout/formwork/joint plans, exact concrete volume, materials list with store pricing, and local permit guidance.">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230a0a0a'/%3E%3Ctext x='32' y='44' font-size='38' text-anchor='middle' font-family='monospace' font-weight='bold' fill='%238fa8b8'%3EAP%3C/text%3E%3C/svg%3E">
 <style>
 :root{--bg:#14161a;--panel:#1d2026;--ink:#e8e6e0;--mut:#9aa0aa;--acc:#8fa8b8;--acc2:#4f9cf0;--ok:#5fbf6e;--warn:#e0b341;--line:#2c3038}
@@ -74,11 +74,11 @@ td a{color:var(--acc2);text-decoration:none}
 </head>
 <body>
 <header>
-  <h1>ðŸ§± Amni-Patio</h1>
-  <span style="color:var(--mut);font-size:12px">part of <a href="../construct/" style="color:#d8893a;text-decoration:none">AMNI-CONSTRUCT</a> Â· <a href="../deck/" style="color:#e8a33d;text-decoration:none">switch to ðŸ› ï¸ Deck</a></span>
+  <h1>🧱 Amni-Patio</h1>
+  <span style="color:var(--mut);font-size:12px">part of <a href="../construct/" style="color:#d8893a;text-decoration:none">AMNI-CONSTRUCT</a> · <a href="../deck/" style="color:#e8a33d;text-decoration:none">switch to 🛠️ Deck</a></span>
   <div class="tabs">
     <div class="tab on" data-pane="3d">3D View</div>
-    <div class="tab" data-pane="trace">ðŸ“· Photo Trace</div>
+    <div class="tab" data-pane="trace">📷 Photo Trace</div>
     <div class="tab" data-pane="plans">2D Plans</div>
     <div class="tab" data-pane="mat">Materials &amp; Pricing</div>
   </div>
@@ -89,7 +89,7 @@ td a{color:var(--acc2);text-decoration:none}
     <div class="seg" id="mode"><button data-v="rect" class="on">Rectangle</button><button data-v="poly">Traced outline</button></div>
     <div class="row" id="rw"><label>Width along house (ft)</label><input type="number" id="w" min="4" max="60" step="1" value="14"></div>
     <div class="row" id="rd"><label>Depth from house (ft)</label><input type="number" id="d" min="4" max="60" step="1" value="12"></div>
-    <div class="row"><label>Against house</label><select id="house"><option value="0" selected>Yes â€” back edge</option><option value="-1">Freestanding</option></select></div>
+    <div class="row"><label>Against house</label><select id="house"><option value="0" selected>Yes — back edge</option><option value="-1">Freestanding</option></select></div>
     <h3>Slab</h3>
     <div class="row"><label>Thickness (in)</label><select id="t"><option>4</option><option>5</option><option>6</option></select></div>
     <div class="row"><label>Gravel base (in)</label><select id="base"><option>0</option><option selected>4</option><option>6</option></select></div>
@@ -102,7 +102,7 @@ td a{color:var(--acc2);text-decoration:none}
     <h3>Finish</h3>
     <div class="swatches" id="finishes"></div>
     <h3>Code &amp; Permits</h3>
-    <button class="addbtn" id="loc-detect">ðŸ“ Use my location</button>
+    <button class="addbtn" id="loc-detect">📍 Use my location</button>
     <div style="font-size:11px;color:var(--mut);margin:4px 0" id="loc-status"></div>
     <div class="row"><label>State</label><select id="loc-state"></select></div>
     <div class="row"><label>City / town</label><input type="text" id="loc-city" placeholder="e.g. Troy"></div>
@@ -111,34 +111,34 @@ td a{color:var(--acc2);text-decoration:none}
   </div>
   <div id="view">
     <canvas id="c3d"></canvas>
-    <div id="hud">drag = orbit Â· wheel = zoom Â· right-drag = pan</div>
+    <div id="hud">drag = orbit · wheel = zoom · right-drag = pan</div>
     <div class="pane" id="pane-trace">
       <div class="planbar">
-        <input id="maddr" placeholder="ðŸ—ºï¸ Address â€” e.g. 123 Main St, Troy NY (satellite view, auto-scale)" style="flex:1;min-width:260px;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:7px 10px">
+        <input id="maddr" placeholder="🗺️ Address — e.g. 123 Main St, Troy NY (satellite view, auto-scale)" style="flex:1;min-width:260px;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:7px 10px">
         <button class="btn acc" id="mfind">Find address</button>
-        <button class="btn" id="mzin">ï¼‹</button>
-        <button class="btn" id="mzout">ï¼</button>
+        <button class="btn" id="mzin">＋</button>
+        <button class="btn" id="mzout">－</button>
         <span id="mattrib" style="font-size:10px;color:var(--mut)"></span>
       </div>
       <div class="planbar">
-        <label class="btn" style="display:inline-block">ðŸ“· Or upload photo / sketch<input type="file" id="timg" accept="image/*" style="display:none"></label>
-        <button class="btn" id="tscale">1ï¸âƒ£ Set scale</button>
-        <button class="btn" id="ttrace">2ï¸âƒ£ Trace outline</button>
-        <button class="btn" id="tundo">â†© Undo point</button>
-        <button class="btn" id="tclear">âœ– Clear</button>
-        <button class="btn acc" id="tuse">âœ… Use outline</button>
+        <label class="btn" style="display:inline-block">📷 Or upload photo / sketch<input type="file" id="timg" accept="image/*" style="display:none"></label>
+        <button class="btn" id="tscale">1️⃣ Set scale</button>
+        <button class="btn" id="ttrace">2️⃣ Trace outline</button>
+        <button class="btn" id="tundo">↩ Undo point</button>
+        <button class="btn" id="tclear">✖ Clear</button>
+        <button class="btn acc" id="tuse">✅ Use outline</button>
       </div>
       <div id="tracewrap">
         <canvas id="tcanvas" width="980" height="660"></canvas>
         <div id="tside">
           <div id="tstatus">Upload an overhead photo or a sketch of your yard. Then: Set scale (click two points you know the real distance between), Trace (click each corner of the patio), Use outline.</div>
           <div id="tdims"></div>
-          <p style="font-size:11px;color:var(--mut)">Photos stay on your device â€” nothing uploads anywhere. Overhead/drone shots or drawn-to-scale sketches work best; angled photos distort distances.</p>
+          <p style="font-size:11px;color:var(--mut)">Photos stay on your device — nothing uploads anywhere. Overhead/drone shots or drawn-to-scale sketches work best; angled photos distort distances.</p>
         </div>
       </div>
     </div>
     <div class="pane" id="pane-plans">
-      <div class="planbar"><button class="btn acc" onclick="window.print()">ðŸ–¨ï¸ Print all plans</button><button class="btn" id="dl-svg">â¬‡ï¸ Download SVGs</button></div>
+      <div class="planbar"><button class="btn acc" onclick="window.print()">🖨️ Print all plans</button><button class="btn" id="dl-svg">⬇️ Download SVGs</button></div>
       <div class="svgwrap" id="svg-layout"></div>
       <div class="svgwrap" id="svg-section"></div>
       <div class="svgwrap" id="svg-formwork"></div>
@@ -147,19 +147,19 @@ td a{color:var(--acc2);text-decoration:none}
     <div class="pane" id="pane-mat">
       <div class="summary" id="mat-summary"></div>
       <div class="pastebox">
-        <h4>ðŸ“‹ Live prices, the way that actually works</h4>
-        <p>Stores block robots â€” but not you. Open a store link below, press <b>Ctrl+A</b> then <b>Ctrl+C</b> on the store page, come back and click a paste button. Every price found is matched automatically.</p>
-        <button class="btn acc" id="paste-hd">ðŸ“¥ Paste â†’ Home Depot prices</button>
-        <button class="btn acc" id="paste-lowes">ðŸ“¥ Paste â†’ Lowe's prices</button>
-        <button class="btn" id="open-all-hd">â†— Open all HD links</button>
+        <h4>📋 Live prices, the way that actually works</h4>
+        <p>Stores block robots — but not you. Open a store link below, press <b>Ctrl+A</b> then <b>Ctrl+C</b> on the store page, come back and click a paste button. Every price found is matched automatically.</p>
+        <button class="btn acc" id="paste-hd">📥 Paste → Home Depot prices</button>
+        <button class="btn acc" id="paste-lowes">📥 Paste → Lowe's prices</button>
+        <button class="btn" id="open-all-hd">↗ Open all HD links</button>
         <span id="pstatus"></span>
       </div>
       <div class="planbar">
         <button class="btn" id="reset-prices">Reset to catalog</button>
-        <button class="btn" id="export-csv">â¬‡ï¸ Export CSV</button>
+        <button class="btn" id="export-csv">⬇️ Export CSV</button>
       </div>
       <table id="mat-table"></table>
-      <p style="color:var(--mut);font-size:12px;margin-top:12px">Catalog prices are editable estimates â€” click any cell to adjust. Ready-mix is quoted locally; call 2-3 plants with your ydÂ³ (short-load fees apply under ~4 ydÂ³).</p>
+      <p style="color:var(--mut);font-size:12px;margin-top:12px">Catalog prices are editable estimates — click any cell to adjust. Ready-mix is quoted locally; call 2-3 plants with your yd³ (short-load fees apply under ~4 yd³).</p>
     </div>
   </div>
 </main>

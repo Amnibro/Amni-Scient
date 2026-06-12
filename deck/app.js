@@ -1,4 +1,4 @@
-﻿import * as THREE from 'three'
+import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { initPermits, updatePermits } from './codes.js?v=250'
 import { initMapTrace, sitePlanSVG, cropForPlan, mapPlanSnapshot } from './maptrace.js?v=250'
@@ -210,7 +210,7 @@ const link = (id, store) => {
   const q = encodeURIComponent(c ? (store === 'hd' ? c.hdq : c.lq) : (out.bom.find(b => b.id === id)?.desc || id))
   return store === 'hd' ? `https://www.homedepot.com/s/${q}` : `https://www.lowes.com/search?searchTerm=${q}`
 }
-const money = x => x == null ? 'â€”' : `$${x.toFixed(2)}`
+const money = x => x == null ? '—' : `$${x.toFixed(2)}`
 const renderMat = (flashIds = []) => {
   let thd = 0, tlo = 0
   const rows = out.bom.map(it => {
@@ -219,8 +219,8 @@ const renderMat = (flashIds = []) => {
     pl != null && (tlo += pl * it.qty)
     const fl = s => flashIds.includes(`${it.id}.${s}`) ? ' class="flash"' : ''
     return `<tr><td>${it.desc}</td><td><b>${it.qty}</b></td>
-      <td><input${fl('hd')} data-id="${it.id}" data-st="hd" value="${ph ?? ''}"></td><td>${money(ph != null ? ph * it.qty : null)}</td><td><a href="${link(it.id, 'hd')}" target="_blank">HD â†—</a></td>
-      <td><input${fl('lowes')} data-id="${it.id}" data-st="lowes" value="${pl ?? ''}"></td><td>${money(pl != null ? pl * it.qty : null)}</td><td><a href="${link(it.id, 'lowes')}" target="_blank">Lowes â†—</a></td></tr>`
+      <td><input${fl('hd')} data-id="${it.id}" data-st="hd" value="${ph ?? ''}"></td><td>${money(ph != null ? ph * it.qty : null)}</td><td><a href="${link(it.id, 'hd')}" target="_blank">HD ↗</a></td>
+      <td><input${fl('lowes')} data-id="${it.id}" data-st="lowes" value="${pl ?? ''}"></td><td>${money(pl != null ? pl * it.qty : null)}</td><td><a href="${link(it.id, 'lowes')}" target="_blank">Lowes ↗</a></td></tr>`
   }).join('')
   const best = thd <= tlo ? 'Home Depot' : "Lowe's"
   $('#mat-table').innerHTML = `<tr><th>Item</th><th>Qty</th><th>HD $/ea</th><th>HD total</th><th></th><th>Lowes $/ea</th><th>Lowes total</th><th></th></tr>${rows}
@@ -239,17 +239,17 @@ const renderMat = (flashIds = []) => {
 const renderCuts = () => {
   $('#cut-summary').innerHTML = `<div class="chip"><b>${out.calc.joists}</b><span>joists @ ${cfg.spacing}" OC</span></div>
     <div class="chip"><b>${out.calc.boards}</b><span>deck boards (incl. waste)</span></div>
-    <div class="chip"><b>${out.calc.risers} Ã— ${out.calc.riser}</b><span>stair risers</span></div>
+    <div class="chip"><b>${out.calc.risers} × ${out.calc.riser}</b><span>stair risers</span></div>
     <div class="chip"><b>${out.calc.balusters}</b><span>balusters</span></div>
     ${out.calc.door_steps ? `<div class="chip"><b>${out.calc.door_steps}</b><span>door step platform(s)</span></div>` : ''}`
   $('#cut-table').innerHTML = `<tr><th>Stock</th><th>Cut length</th><th>Pieces</th><th>Boards</th><th>Use</th></tr>` +
     out.cuts.map(c => `<tr><td>${c.stock}</td><td>${c.len}</td><td>${c.count}</td><td>${c.boards}</td><td>${c.label}</td></tr>`).join('')
 }
-const ICONS = { WARN: ['âš ï¸', 'warn'], OK: ['âœ…', 'ok'], INFO: ['â„¹ï¸', 'info'], CUT: ['âœ‚ï¸', 'info'], HOUSE: ['ðŸ ', 'info'], FROST: ['ðŸ¥¶', 'warn'], PERMIT: ['ðŸ“‹', 'warn'] }
+const ICONS = { WARN: ['⚠️', 'warn'], OK: ['✅', 'ok'], INFO: ['ℹ️', 'info'], CUT: ['✂️', 'info'], HOUSE: ['🏠', 'info'], FROST: ['🥶', 'warn'], PERMIT: ['📋', 'warn'] }
 const renderWarns = () => {
   $('#warns').innerHTML = out.warnings.map(w => {
     const [tag, ...rest] = w.split('|')
-    const [icon, cls] = ICONS[tag] || ['â€¢', 'info']
+    const [icon, cls] = ICONS[tag] || ['•', 'info']
     return `<div class="warn ${cls}">${icon} ${rest.join('|') || tag}</div>`
   }).join('')
 }
@@ -259,7 +259,7 @@ const renderPlans = () => {
   if (siteSnap) {
     let wrap = document.getElementById('svg-site')
     if (!wrap) { wrap = document.createElement('div'); wrap.className = 'svgwrap'; wrap.id = 'svg-site'; const pane = document.getElementById('pane-plans'); pane.insertBefore(wrap, pane.querySelector('.svgwrap')) }
-    wrap.innerHTML = sitePlanSVG({ ...siteSnap, title: siteSnap.northUp ? 'SITE PLAN â€” PROPOSED DECK' : 'REFERENCE SKETCH â€” PROPOSED DECK', footprint: `Proposed: ${cfg.length}' Ã— ${cfg.depth}' ${cfg.attach === 'ledger' ? 'ledger-attached' : 'freestanding'} deck, ${cfg.height}" above grade` })
+    wrap.innerHTML = sitePlanSVG({ ...siteSnap, title: siteSnap.northUp ? 'SITE PLAN — PROPOSED DECK' : 'REFERENCE SKETCH — PROPOSED DECK', footprint: `Proposed: ${cfg.length}' × ${cfg.depth}' ${cfg.attach === 'ledger' ? 'ledger-attached' : 'freestanding'} deck, ${cfg.height}" above grade` })
   }
 }
 const renderStairList = () => {
@@ -268,7 +268,7 @@ const renderStairList = () => {
   cfg.stairs.forEach((st, i) => {
     const div = document.createElement('div')
     div.className = 'stair-item'
-    div.innerHTML = `<button class="rm" title="remove">âœ•</button>
+    div.innerHTML = `<button class="rm" title="remove">✕</button>
       <div class="row"><label>Side</label><select data-k="side"><option value="front">Front</option><option value="left">Left</option><option value="right">Right</option></select></div>
       <div class="row"><label>Width (in)</label><input type="number" data-k="width" min="36" max="96" step="2" value="${st.width}"></div>
       <div class="row"><label>Position (in, -1=center)</label><input type="number" data-k="offset" min="-1" step="1" value="${Math.round(st.offset)}"></div>`
@@ -292,7 +292,7 @@ const recompute = (full = true) => {
 }
 const parsePaste = (text, store) => {
   const filled = []
-  const norm = text.toLowerCase().replace(/[Â ]/g, ' ')
+  const norm = text.toLowerCase().replace(/[ ]/g, ' ')
   for (const it of out.bom) {
     const c = catalog[it.id]
     if (!c) continue
@@ -378,19 +378,19 @@ const initUI = () => {
     const st = $('#pstatus')
     try {
       const text = await navigator.clipboard.readText()
-      if (!text || text.length < 40) { st.textContent = 'clipboard looks empty â€” copy the store page first (Ctrl+A, Ctrl+C)'; return }
+      if (!text || text.length < 40) { st.textContent = 'clipboard looks empty — copy the store page first (Ctrl+A, Ctrl+C)'; return }
       const filled = parsePaste(text, store)
       localStorage.setItem(LSP, JSON.stringify(priceEdits))
       renderMat(filled)
-      st.textContent = filled.length ? `matched ${filled.length} price${filled.length > 1 ? 's' : ''} from your paste âœ”` : 'no matches in that paste â€” try the product/cart page with items visible'
-    } catch { st.textContent = 'clipboard blocked â€” click the page first, then retry' }
+      st.textContent = filled.length ? `matched ${filled.length} price${filled.length > 1 ? 's' : ''} from your paste ✔` : 'no matches in that paste — try the product/cart page with items visible'
+    } catch { st.textContent = 'clipboard blocked — click the page first, then retry' }
   }
   $('#paste-hd').onclick = pasteFor('hd')
   $('#paste-lowes').onclick = pasteFor('lowes')
   $('#open-all-hd').onclick = () => out.bom.slice(0, 12).forEach((it, i) => setTimeout(() => window.open(link(it.id, 'hd'), '_blank'), i * 250))
   $('#live-prices').onclick = async () => {
     const st = $('#pstatus')
-    st.textContent = 'trying auto-fetchâ€¦'
+    st.textContent = 'trying auto-fetch…'
     let got = 0
     for (const it of out.bom) {
       for (const store of ['hd', 'lowes']) {
@@ -402,7 +402,7 @@ const initUI = () => {
     }
     localStorage.setItem(LSP, JSON.stringify(priceEdits))
     renderMat()
-    st.textContent = got ? `auto-fetched ${got} prices` : 'stores blocked it (they always do) â€” use the paste buttons, they work every time'
+    st.textContent = got ? `auto-fetched ${got} prices` : 'stores blocked it (they always do) — use the paste buttons, they work every time'
   }
 }
 let photoPlane = null
@@ -413,7 +413,7 @@ const tStatus = s => { const e = document.getElementById('tstatus'); e && (e.tex
 const tDraw = () => {
   tctx.clearRect(0, 0, tc.width, tc.height)
   if (T.img) tctx.drawImage(T.img, 0, 0, tc.width, tc.height)
-  else { tctx.fillStyle = '#15181d'; tctx.fillRect(0, 0, tc.width, tc.height); tctx.strokeStyle = 'rgba(255,255,255,0.05)'; for (let g = 0; g < tc.width; g += 49) { tctx.beginPath(); tctx.moveTo(g, 0); tctx.lineTo(g, tc.height); tctx.stroke() } for (let g = 0; g < tc.height; g += 49) { tctx.beginPath(); tctx.moveTo(0, g); tctx.lineTo(tc.width, g); tctx.stroke() } tctx.fillStyle = '#566'; tctx.font = '16px monospace'; tctx.textAlign = 'center'; tctx.fillText('Upload a photo or sketch â€” or trace on this blank grid', tc.width / 2, tc.height / 2) }
+  else { tctx.fillStyle = '#15181d'; tctx.fillRect(0, 0, tc.width, tc.height); tctx.strokeStyle = 'rgba(255,255,255,0.05)'; for (let g = 0; g < tc.width; g += 49) { tctx.beginPath(); tctx.moveTo(g, 0); tctx.lineTo(g, tc.height); tctx.stroke() } for (let g = 0; g < tc.height; g += 49) { tctx.beginPath(); tctx.moveTo(0, g); tctx.lineTo(tc.width, g); tctx.stroke() } tctx.fillStyle = '#566'; tctx.font = '16px monospace'; tctx.textAlign = 'center'; tctx.fillText('Upload a photo or sketch — or trace on this blank grid', tc.width / 2, tc.height / 2) }
   if (T.scalePts.length) {
     tctx.strokeStyle = '#ffd166'; tctx.lineWidth = 2; tctx.fillStyle = '#ffd166'
     T.scalePts.forEach(p => { tctx.beginPath(); tctx.arc(p[0], p[1], 5, 0, 7); tctx.fill() })
@@ -428,8 +428,8 @@ const tDraw = () => {
       const xs = T.poly.map(p => p[0]), ys = T.poly.map(p => p[1])
       const bw = (Math.max(...xs) - Math.min(...xs)) / T.pxPerFt, bh = (Math.max(...ys) - Math.min(...ys)) / T.pxPerFt
       tctx.strokeStyle = '#4f9cf0'; tctx.setLineDash([6, 5]); tctx.strokeRect(Math.min(...xs), Math.min(...ys), bw * T.pxPerFt, bh * T.pxPerFt); tctx.setLineDash([])
-      tctx.font = 'bold 13px monospace'; tctx.fillStyle = '#4f9cf0'; tctx.fillText(`deck rect: ${bw.toFixed(1)}' Ã— ${bh.toFixed(1)}'`, Math.min(...xs) + 6, Math.min(...ys) - 8)
-      document.getElementById('tdims').innerHTML = `<b style="color:var(--acc)">BOUNDING RECT</b><br>length ${bw.toFixed(1)} ft Ã— depth ${bh.toFixed(1)} ft`
+      tctx.font = 'bold 13px monospace'; tctx.fillStyle = '#4f9cf0'; tctx.fillText(`deck rect: ${bw.toFixed(1)}' × ${bh.toFixed(1)}'`, Math.min(...xs) + 6, Math.min(...ys) - 8)
+      document.getElementById('tdims').innerHTML = `<b style="color:var(--acc)">BOUNDING RECT</b><br>length ${bw.toFixed(1)} ft × depth ${bh.toFixed(1)} ft`
     }
   }
 }
@@ -440,10 +440,10 @@ tc.addEventListener('click', e => {
     T.scalePts.push(p)
     if (T.scalePts.length === 2) {
       const pd = prompt('Real distance between those two points (e.g. 133in or 11ft or 11.08):', '10ft');const pm = pd && pd.match(/([\d.]+)\s*(in|\"|ft|'|m)?/i);const d = pm ? parseFloat(pm[1]) * (/(in|\")/i.test(pm[2] || '') ? 1 / 12 : /m/i.test(pm[2] || '') ? 3.28084 : 1) : NaN
-      isFinite(d) && d > 0 ? (T.dist = d, T.pxPerFt = Math.hypot(T.scalePts[1][0] - T.scalePts[0][0], T.scalePts[1][1] - T.scalePts[0][1]) / d, tStatus(`Scale set: ${T.pxPerFt.toFixed(1)} px/ft. Now click "Trace deck area" and click the corners.`)) : (T.scalePts = [], tStatus('Scale cancelled â€” try again.'))
+      isFinite(d) && d > 0 ? (T.dist = d, T.pxPerFt = Math.hypot(T.scalePts[1][0] - T.scalePts[0][0], T.scalePts[1][1] - T.scalePts[0][1]) / d, tStatus(`Scale set: ${T.pxPerFt.toFixed(1)} px/ft. Now click "Trace deck area" and click the corners.`)) : (T.scalePts = [], tStatus('Scale cancelled — try again.'))
       T.mode = null
-    } else tStatus('Click the second reference pointâ€¦')
-  } else if (T.mode === 'trace') { T.poly.push(p); tStatus(`${T.poly.length} corner${T.poly.length > 1 ? 's' : ''} â€” keep clicking, then Use outline.`) }
+    } else tStatus('Click the second reference point…')
+  } else if (T.mode === 'trace') { T.poly.push(p); tStatus(`${T.poly.length} corner${T.poly.length > 1 ? 's' : ''} — keep clicking, then Use outline.`) }
   tDraw()
 })
 document.getElementById('timg').addEventListener('change', e => {
@@ -452,7 +452,7 @@ document.getElementById('timg').addEventListener('change', e => {
   img.onload = () => { window.__siteMapOn = false; T.img = img; tc.width = 980; tc.height = Math.round(980 / (img.width / img.height)); tDraw(); tStatus('Photo loaded. Set scale: click two points a known distance apart.') }
   img.src = URL.createObjectURL(f)
 })
-document.getElementById('tscale').onclick = () => { T.mode = 'scale'; T.scalePts = []; tStatus('Click the FIRST reference pointâ€¦'); tDraw() }
+document.getElementById('tscale').onclick = () => { T.mode = 'scale'; T.scalePts = []; tStatus('Click the FIRST reference point…'); tDraw() }
 document.getElementById('ttrace').onclick = () => { T.pxPerFt > 0 ? (T.mode = 'trace', tStatus('Click each corner of the deck area.')) : tStatus('Set the scale first.') }
 document.getElementById('tundo').onclick = () => { T.poly.pop(); tDraw() }
 document.getElementById('tclear').onclick = () => { T.poly = []; T.scalePts = []; T.mode = null; tDraw(); tStatus('Cleared.') }
@@ -478,7 +478,7 @@ document.getElementById('tuse').onclick = async () => {
   siteSnap = { ...(window.__siteMapOn && MV ? await mapPlanSnapshot(MV, tc.width, tc.height, T.poly, T.pxPerFt) : cropForPlan(T.img || tc, tc.width, tc.height, T.poly, T.pxPerFt)), address: window.__siteMapOn ? (window.__siteAddr || '') : '', northUp: !!window.__siteMapOn }
   recompute()
   document.querySelector('.tab[data-pane="3d"]').click()
-  tStatus(`Applied: ${L}' Ã— ${D}' deck. Photo is the 3D ground layer â€” and a SITE PLAN was added to 2D Plans.`)
+  tStatus(`Applied: ${L}' × ${D}' deck. Photo is the 3D ground layer — and a SITE PLAN was added to 2D Plans.`)
 }
 MV = initMapTrace({ tc, T, tDraw, tStatus })
 tDraw()
