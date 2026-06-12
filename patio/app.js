@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
-import { initPermits, updatePermits } from './codes.js?v=121'
-import { initMapTrace, sitePlanSVG, cropForPlan, mapPlanSnapshot } from './maptrace.js?v=121'
+import { initPermits, updatePermits } from './codes.js?v=122'
+import { initMapTrace, sitePlanSVG, cropForPlan, mapPlanSnapshot } from './maptrace.js?v=122'
 const LS = 'amnipatio.cfg.v1', LSP = 'amnipatio.prices.v1'
 const defCfg = { mode: 'rect', w: 14, d: 12, polygon: null, thickness_in: 4, base_in: 4, reinforce: 'mesh', finish: 'plain', turndown: { enabled: false, depth_in: 12, width_in: 8 }, vehicle: false, joint_max_ft: 0, house_edge: 0, border: false, sleeves: false }
 let cfg = (() => { try { return { ...defCfg, ...JSON.parse(localStorage.getItem(LS)) } } catch { return { ...defCfg } } })()
@@ -11,7 +11,7 @@ let catalog = {}
 const $ = s => document.querySelector(s)
 const FINISHES = { plain: ['#b9b9b9', 'Broom gray'], smooth: ['#cfcfcf', 'Smooth'], charcoal: ['#6e6e72', 'Charcoal'], terracotta: ['#b46a4a', 'Terracotta'], sandstone: ['#c9b08a', 'Sandstone'], slate: ['#7d8088', 'Stamped slate'], aggregate: ['#9b9484', 'Exposed agg.'], pavers: ['#b89a7a', 'Pavers'], herringbone: ['#a4543f', 'Brick herring.'], cobble: ['#8d8d92', 'Cobblestone'], flagstone: ['#a89884', 'Flagstone'], mosaic: ['#7aa7b8', 'Mosaic tile'] }
 const STONE = ['pavers', 'herringbone', 'cobble', 'flagstone', 'mosaic']
-const wasm = await WebAssembly.instantiateStreaming(fetch('patio_core.wasm?v=121'))
+const wasm = await WebAssembly.instantiateStreaming(fetch('patio_core.wasm?v=122'))
 const { alloc, dealloc, build, memory } = wasm.instance.exports
 const enc = new TextEncoder(), dec = new TextDecoder()
 const polyOf = c => c.mode === 'poly' && c.polygon && c.polygon.length >= 3 ? c.polygon : [[0, 0], [c.w, 0], [c.w, c.d], [0, c.d]]
@@ -112,8 +112,24 @@ const rebuild3D = () => {
     scene.add(photoPlane)
   } else if (photoPlane && cfg.mode !== 'poly') { scene.remove(photoPlane); photoPlane = null }
 }
-const resize = () => { const c = $('#c3d'); const w = c.clientWidth || 800, h = c.clientHeight || 600; renderer.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix() }
+const resize = () => { const c = $('#c3d'); const w = c.clientWidth, h = c.clientHeight; if (!w || !h) return; renderer.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix() }
 new ResizeObserver(resize).observe($('#view'))
+window.addEventListener('beforeprint', () => {
+  const c3v = $('#c3d')
+  c3v.clientWidth && c3v.clientHeight && (resize(), renderer.render(scene, cam))
+  if (!c3v.width || !c3v.height) return
+  let ps = $('#printshot')
+  const pane = $('#pane-plans')
+  ps || (ps = Object.assign(document.createElement('div'), { id: 'printshot', className: 'svgwrap' }), pane.insertBefore(ps, pane.querySelector('.svgwrap')))
+  ps.innerHTML = '<div style="font:bold 15px monospace;color:#111;padding:10px 12px 4px">3D VIEW — AS DESIGNED</div>'
+  const c3 = $('#c3d')
+  const snap = document.createElement('canvas')
+  snap.width = c3.width
+  snap.height = c3.height
+  snap.getContext('2d').drawImage(c3, 0, 0)
+  snap.style.cssText = 'width:100%;display:block'
+  ps.appendChild(snap)
+})
 ;(function loop() { controls.update(); renderer.render(scene, cam); requestAnimationFrame(loop) })()
 let siteSnap = null
 const renderPlans = () => {
@@ -177,15 +193,15 @@ const fitCam = () => {
   const key = `${cx.toFixed(1)},${cy.toFixed(1)},${span.toFixed(1)}`
   if (key === lastFit) return
   lastFit = key
-  controls.target.set(cx, 0, -cy)
-  let ux = 0.12, uy = -1.25
+  controls.target.set(cx, 3, -cy)
+  let ux = 0.12, uy = -1.55
   if (+cfg.house_edge >= 0) {
     const i = +cfg.house_edge, j = (i + 1) % poly.length
     const mx = (poly[i][0] + poly[j][0]) / 2, my = (poly[i][1] + poly[j][1]) / 2
     const vx = cx - mx, vy = cy - my, vl = Math.hypot(vx, vy) || 1
-    ux = vx / vl * 1.3 + 0.1; uy = vy / vl * 1.3
+    ux = vx / vl * 1.55 + 0.1; uy = vy / vl * 1.55
   }
-  cam.position.set(cx + ux * span, span * 0.95, -(cy + uy * span))
+  cam.position.set(cx + ux * span, span * 0.9 + 4, -(cy + uy * span))
 }
 const recompute = () => {
   out = callCore(cfg)

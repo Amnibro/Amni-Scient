@@ -69,7 +69,8 @@ td a{color:var(--acc2);text-decoration:none}
 #tside{min-width:240px;max-width:300px;display:flex;flex-direction:column;gap:8px}
 #tstatus{font-size:12px;color:var(--warn);min-height:32px}
 #tdims{font-size:12px;color:var(--mut);line-height:1.7}
-@media print{#side,header,.planbar,#hud{display:none}.pane{position:static;overflow:visible}body{background:#fff;height:auto;overflow:visible}.svgwrap{page-break-inside:avoid}}
+#printshot{display:none}
+@media print{#side,header,.planbar,#hud,#c3d{display:none}.pane{display:none!important}#pane-plans{display:block!important;position:static;overflow:visible;padding:0;background:#fff}#printshot{display:block}body{background:#fff;height:auto;overflow:hidden auto}main,#view{display:block;min-height:0}.svgwrap{page-break-inside:avoid}}
 </style>
 </head>
 <body>
@@ -164,6 +165,6 @@ td a{color:var(--acc2);text-decoration:none}
   </div>
 </main>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
-<script type="module" src="app.js?v=121"></script>
+<script type="module" src="app.js?v=122"></script>
 </body>
 </html>
