@@ -1,7 +1,8 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
-import { initPermits, updatePermits } from './codes.js?v=122'
-import { initMapTrace, sitePlanSVG, cropForPlan, mapPlanSnapshot } from './maptrace.js?v=122'
+import { initPermits, updatePermits } from './codes.js?v=123'
+import { initMapTrace, sitePlanSVG, cropForPlan, mapPlanSnapshot } from './maptrace.js?v=123'
+import { initAutoDetect } from './autodetect.js?v=123'
 const LS = 'amnipatio.cfg.v1', LSP = 'amnipatio.prices.v1'
 const defCfg = { mode: 'rect', w: 14, d: 12, polygon: null, thickness_in: 4, base_in: 4, reinforce: 'mesh', finish: 'plain', turndown: { enabled: false, depth_in: 12, width_in: 8 }, vehicle: false, joint_max_ft: 0, house_edge: 0, border: false, sleeves: false }
 let cfg = (() => { try { return { ...defCfg, ...JSON.parse(localStorage.getItem(LS)) } } catch { return { ...defCfg } } })()
@@ -11,7 +12,7 @@ let catalog = {}
 const $ = s => document.querySelector(s)
 const FINISHES = { plain: ['#b9b9b9', 'Broom gray'], smooth: ['#cfcfcf', 'Smooth'], charcoal: ['#6e6e72', 'Charcoal'], terracotta: ['#b46a4a', 'Terracotta'], sandstone: ['#c9b08a', 'Sandstone'], slate: ['#7d8088', 'Stamped slate'], aggregate: ['#9b9484', 'Exposed agg.'], pavers: ['#b89a7a', 'Pavers'], herringbone: ['#a4543f', 'Brick herring.'], cobble: ['#8d8d92', 'Cobblestone'], flagstone: ['#a89884', 'Flagstone'], mosaic: ['#7aa7b8', 'Mosaic tile'] }
 const STONE = ['pavers', 'herringbone', 'cobble', 'flagstone', 'mosaic']
-const wasm = await WebAssembly.instantiateStreaming(fetch('patio_core.wasm?v=122'))
+const wasm = await WebAssembly.instantiateStreaming(fetch('patio_core.wasm?v=123'))
 const { alloc, dealloc, build, memory } = wasm.instance.exports
 const enc = new TextEncoder(), dec = new TextDecoder()
 const polyOf = c => c.mode === 'poly' && c.polygon && c.polygon.length >= 3 ? c.polygon : [[0, 0], [c.w, 0], [c.w, c.d], [0, c.d]]
@@ -330,4 +331,6 @@ initUI()
 resize()
 tDraw()
 MV = initMapTrace({ tc, T, tDraw, tStatus })
+const AD = initAutoDetect({ tc, T, tDraw, tStatus, getMapOn: () => !!window.__siteMapOn })
+document.getElementById('tauto').onclick = () => AD.detectFootprint()
 recompute()
