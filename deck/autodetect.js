@@ -26,7 +26,7 @@ const minRect = pts => {
   const c = best, corner = (u, v) => [u * c.ux + v * c.vx, u * c.uy + v * c.vy]
   return [corner(c.mnU, c.mnV), corner(c.mxU, c.mnV), corner(c.mxU, c.mxV), corner(c.mnU, c.mxV)]
 }
-const maskOf = (data, n) => {
+const regionMask = (data, n) => {
   const fg = new Uint8Array(n)
   for (let i = 0, j = 0; i < n; i++, j += 4) {
     const r = data[j], g = data[j + 1], b = data[j + 2], sum = r + g + b
@@ -37,9 +37,15 @@ const maskOf = (data, n) => {
   }
   return fg
 }
+const inkMask = (data, n) => {
+  let sum = 0
+  for (let j = 0; j < n * 4; j += 4) sum += (data[j] + data[j + 1] + data[j + 2]) / 3
+  const thr = sum / n * 0.62, fg = new Uint8Array(n)
+  for (let i = 0, j = 0; i < n; i++, j += 4) fg[i] = (data[j] + data[j + 1] + data[j + 2]) / 3 < thr ? 1 : 0
+  return fg
+}
 const components = (fg, w, h) => {
-  const lab = new Int32Array(fg.length).fill(-1), stack = new Int32Array(fg.length)
-  const comps = []
+  const lab = new Int32Array(fg.length).fill(-1), stack = new Int32Array(fg.length), comps = []
   for (let s = 0; s < fg.length; s++) {
     if (!fg[s] || lab[s] >= 0) continue
     const id = comps.length
@@ -60,64 +66,75 @@ const components = (fg, w, h) => {
   }
   return { lab, comps }
 }
-const detectPoly = src => {
-  const sc = Math.min(1, WORK / src.width), w = Math.max(8, Math.round(src.width * sc)), h = Math.max(8, Math.round(src.height * sc))
+const imgData = (src, cap) => {
+  const sc = Math.min(1, cap / src.width), w = Math.max(8, Math.round(src.width * sc)), h = Math.max(8, Math.round(src.height * sc))
   const off = document.createElement('canvas'); off.width = w; off.height = h
   const o = off.getContext('2d', { willReadFrequently: true }); o.drawImage(src, 0, 0, w, h)
-  const data = o.getImageData(0, 0, w, h).data, n = w * h
-  const fg = maskOf(data, n)
-  const { lab, comps } = components(fg, w, h)
-  if (!comps.length) return null
-  const N = n, cx0 = w / 2, cy0 = h / 2
-  const valid = comps.filter(c => c.area > N * 0.004 && c.area < N * 0.92 && c.maxX - c.minX > 6 && c.maxY - c.minY > 6)
-  const pool = valid.length ? valid : comps
-  const pick = pool.reduce((a, c) => { const score = c.area / (1 + 0.0015 * Math.hypot(c.cx - cx0, c.cy - cy0) * Math.hypot(c.cx - cx0, c.cy - cy0)); return score > a.score ? { c, score } : a }, { c: null, score: -1 }).c
-  if (!pick) return null
-  const pix = []
-  for (let p = 0; p < n; p++) if (lab[p] === pick.id) { const x = p % w; pix.push([x, (p - x) / w]) }
+  return { data: o.getImageData(0, 0, w, h).data, w, h, sc }
+}
+const detectPoly = (src, mode) => {
+  const { data, w, h, sc } = imgData(src, WORK), n = w * h
+  let pix
+  if (mode === 'ink') {
+    const fg = inkMask(data, n); pix = []
+    for (let p = 0; p < n; p++) if (fg[p]) { const x = p % w; pix.push([x, (p - x) / w]) }
+    if (pix.length < 24) return null
+  } else {
+    const fg = regionMask(data, n), { lab, comps } = components(fg, w, h)
+    if (!comps.length) return null
+    const N = n, cx0 = w / 2, cy0 = h / 2
+    const valid = comps.filter(c => c.area > N * 0.004 && c.area < N * 0.92 && c.maxX - c.minX > 6 && c.maxY - c.minY > 6)
+    const pool = valid.length ? valid : comps
+    const pick = pool.reduce((a, c) => { const d = Math.hypot(c.cx - cx0, c.cy - cy0); const score = c.area / (1 + 0.0015 * d * d); return score > a.score ? { c, score } : a }, { c: null, score: -1 }).c
+    if (!pick) return null
+    pix = []
+    for (let p = 0; p < n; p++) if (lab[p] === pick.id) { const x = p % w; pix.push([x, (p - x) / w]) }
+  }
   const rect = minRect(pix)
   if (!rect) return null
   const inv = 1 / sc
   return rect.map(p => [clamp(p[0] * inv, 0, src.width), clamp(p[1] * inv, 0, src.height)])
 }
 export const classifyImage = src => {
-  const w = 256, h = Math.max(8, Math.round(256 * src.height / src.width))
-  const off = document.createElement('canvas'); off.width = w; off.height = h
-  const o = off.getContext('2d', { willReadFrequently: true }); o.drawImage(src, 0, 0, w, h)
-  const d = o.getImageData(0, 0, w, h).data, n = w * h
+  const { data, w, h } = imgData(src, 256), n = w * h
   let green = 0, gray = 0, white = 0, satSum = 0, topSky = 0, edge = 0
-  const topRows = Math.round(h * 0.25), lum = new Float32Array(n)
+  const topRows = Math.max(1, Math.round(h * 0.25)), lum = new Float32Array(n)
   for (let i = 0, j = 0; i < n; i++, j += 4) {
-    const r = d[j], g = d[j + 1], b = d[j + 2], mx = Math.max(r, g, b), mn = Math.min(r, g, b)
+    const r = data[j], g = data[j + 1], b = data[j + 2], mx = Math.max(r, g, b), mn = Math.min(r, g, b)
     lum[i] = (r + g + b) / 3
-    const sat = mx === 0 ? 0 : (mx - mn) / mx
-    satSum += sat
+    satSum += mx === 0 ? 0 : (mx - mn) / mx
     if (g >= r && g >= b && g - r >= 8 && g - b >= 8) green++
-    if (sat < 0.18 && mx > 90 && mx < 210) gray++
+    if (mx - mn < 36 && mx > 90 && mx < 215) gray++
     if (mn > 200) white++
-    const y = (i / w) | 0
-    if (y < topRows && ((b > r + 10 && b > 120) || mn > 205)) topSky++
+    if (((i / w) | 0) < topRows && b > r + 10 && b > g + 4 && b > 120) topSky++
   }
-  for (let y = 1; y < h - 1; y++) for (let x = 1; x < w - 1; x++) {
-    const i = y * w + x, gx = lum[i - 1] - lum[i + 1], gy = lum[i - w] - lum[i + w]
-    if (Math.hypot(gx, gy) > 36) edge++
-  }
-  const greenF = green / n, grayF = gray / n, whiteF = white / n, satM = satSum / n, skyF = topSky / Math.max(1, topRows * w), edgeF = edge / n
-  let aerial = 0.34, ground = 0.33, drawing = 0.33
-  if (whiteF > 0.5 && satM < 0.12 && edgeF > 0.015 && edgeF < 0.32) drawing += 0.5
-  if (skyF > 0.34) ground += 0.45
-  if (greenF > 0.1 && grayF > 0.04 && skyF < 0.25) aerial += 0.4
-  if (greenF > 0.22 && skyF < 0.2) aerial += 0.15
+  for (let y = 1; y < h - 1; y++) for (let x = 1; x < w - 1; x++) { const i = y * w + x; if (Math.hypot(lum[i - 1] - lum[i + 1], lum[i - w] - lum[i + w]) > 36) edge++ }
+  const greenF = green / n, grayF = gray / n, whiteF = white / n, satM = satSum / n, skyF = topSky / (topRows * w), edgeF = edge / n
+  let aerial = 0.05, ground = 0.05, drawing = 0.05
+  if (whiteF > 0.42 && satM < 0.14 && edgeF > 0.006) drawing += 1
+  if (whiteF > 0.6 && satM < 0.08) drawing += 0.4
+  if (skyF > 0.3) ground += 1
+  if (skyF > 0.5) ground += 0.4
+  if (greenF > 0.12 && skyF < 0.25) aerial += 1
+  if (grayF > 0.06 && greenF > 0.04 && skyF < 0.25 && whiteF < 0.4) aerial += 0.4
   const sum = aerial + ground + drawing
   aerial /= sum; ground /= sum; drawing /= sum
-  const m = Math.max(aerial, ground, drawing)
-  const route = m === drawing ? 'drawing' : m === ground ? 'ground' : 'aerial'
-  const margin = m - [aerial, ground, drawing].sort((a, b) => b - a)[1]
-  return { aerial, ground, drawing, route, margin, msg: route === 'aerial' ? 'Looks like an overhead/aerial view — detecting the footprint.' : route === 'ground' ? 'This looks like a ground-level photo — footprint detection is rough on angled shots; check the corners or trace manually.' : 'This looks like a line drawing — I will outline the largest shape; confirm a known dimension for scale.' }
+  const arr = [['aerial', aerial], ['ground', ground], ['drawing', drawing]].sort((a, b) => b[1] - a[1])
+  const route = arr[0][0], margin = arr[0][1] - arr[1][1]
+  const msg = route === 'aerial' ? 'Looks like an overhead/aerial view — I can auto-detect the footprint.' : route === 'ground' ? 'Looks like a ground-level photo — angled shots distort distances, so detected corners are approximate. (Full ground reconstruction is coming.)' : 'Looks like a line drawing — I will outline the largest shape; set a known dimension for scale.'
+  return { aerial, ground, drawing, route, margin, msg }
 }
 export const initAutoDetect = ({ tc, T, tDraw, tStatus, getMapOn }) => {
-  let drag = -1
+  let drag = -1, forced = null, lastCls = null
+  const routeBtns = document.getElementById('troute')
   const ptOf = e => { const r = tc.getBoundingClientRect(); return [(e.clientX - r.left) * tc.width / r.width, (e.clientY - r.top) * tc.height / r.height] }
+  const routeNow = () => forced || (lastCls ? lastCls.route : 'aerial')
+  const setActive = r => routeBtns && [...routeBtns.querySelectorAll('button')].forEach(b => b.classList.toggle('acc', b.dataset.r === r))
+  const hint = r => tStatus(r === 'aerial' ? 'Aerial mode — ✨ Auto-detect will trace the footprint; set scale if this is an upload.' : r === 'ground' ? 'Ground-photo mode — ✨ Auto-detect gives an approximate outline; verify the corners.' : 'Drawing mode — ✨ Auto-detect outlines the largest shape; set a known dimension for scale.')
+  if (routeBtns) [...routeBtns.querySelectorAll('button')].forEach(b => b.onclick = () => { forced = b.dataset.r; setActive(forced); hint(forced) })
+  const onImage = img => { lastCls = classifyImage(img); forced = null; routeBtns && (routeBtns.style.display = 'flex'); setActive(lastCls.route); tStatus(lastCls.msg + ' Override the type at left if needed, then ✨ Auto-detect.') }
+  const timg = document.getElementById('timg')
+  timg && timg.addEventListener('change', e => { const f = e.target.files && e.target.files[0]; if (!f) return; const u = URL.createObjectURL(f), im = new Image(); im.onload = () => { onImage(im); URL.revokeObjectURL(u) }; im.src = u })
   const onDown = e => {
     if (T.mode || !T.poly.length) return
     const p = ptOf(e); let bi = -1, bd = 16
@@ -130,15 +147,14 @@ export const initAutoDetect = ({ tc, T, tDraw, tStatus, getMapOn }) => {
   window.addEventListener('mousemove', onMove, true)
   window.addEventListener('mouseup', onUp, true)
   const detectFootprint = () => {
-    if (!T.img) { tStatus('Find an address (satellite) or upload a photo first, then Auto-detect.'); return false }
-    const mapOn = !!getMapOn()
-    const cls = mapOn ? null : classifyImage(T.img)
-    const poly = detectPoly(T.img)
-    if (!poly) { tStatus('Could not find a clear footprint — trace the corners manually instead.'); return false }
-    T.poly = poly
-    tDraw()
-    const lead = cls && cls.route !== 'aerial' ? cls.msg + ' ' : ''
-    mapOn ? tStatus(`${lead}Footprint proposed — drag any corner to fine-tune, then ✅ Use outline. (North-up satellite scale is set.)`) : T.pxPerFt > 0 ? tStatus(`${lead}Footprint proposed — drag corners to fix, then ✅ Use outline.`) : tStatus(`${lead}Footprint proposed — drag corners to fix, then ① Set scale (two points a known distance apart) and ✅ Use outline.`)
+    if (!T.img) { tStatus('Find an address (satellite) or upload a photo first, then ✨ Auto-detect.'); return false }
+    const mapOn = !!getMapOn(), route = mapOn ? 'aerial' : routeNow()
+    const poly = detectPoly(T.img, route === 'drawing' ? 'ink' : 'region')
+    if (!poly) { tStatus('Could not find a clear shape — trace the corners manually instead.'); return false }
+    T.poly = poly; tDraw()
+    const lead = route === 'ground' ? 'Approximate outline (angled photo) — ' : route === 'drawing' ? 'Outlined the largest shape — ' : 'Footprint proposed — '
+    const tail = mapOn ? 'drag any corner to fine-tune, then ✅ Use outline. (North-up satellite scale is set.)' : T.pxPerFt > 0 ? 'drag corners to fix, then ✅ Use outline.' : 'drag corners to fix, then ① Set scale (two points a known distance apart) and ✅ Use outline.'
+    tStatus(lead + tail)
     return true
   }
   const dispose = () => { tc.removeEventListener('mousedown', onDown, true); window.removeEventListener('mousemove', onMove, true); window.removeEventListener('mouseup', onUp, true) }
