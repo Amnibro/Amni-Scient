@@ -1,16 +1,16 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
-import { initPermits, updatePermits } from './codes.js?v=266'
-import { initMapTrace, sitePlanSVG, cropForPlan, mapPlanSnapshot } from './maptrace.js?v=266'
-import { initAutoDetect } from './autodetect.js?v=266'
+import { initPermits, updatePermits } from './codes.js?v=267'
+import { initMapTrace, sitePlanSVG, cropForPlan, mapPlanSnapshot } from './maptrace.js?v=267'
+import { initAutoDetect } from './autodetect.js?v=267'
 const LS = 'amnideck.cfg.v2', LSP = 'amnideck.prices.v1'
-const defCfg = { length: 12, depth: 8, height: 16, spacing: 16, decking: 'pt', attach: 'ledger', joist: '2x8', fascia: false, skirting: false, stain: 'redwood', house: 'cream', stairs: [{ side: 'front', width: 48, offset: -1 }], railing: { front: false, left: false, right: false, style: 'wood' }, door: { pos: -1, width: 60, rise: 7, panels: 2 } }
+const defCfg = { length: 12, depth: 8, height: 16, spacing: 16, decking: 'pt', attach: 'ledger', joist: '2x8', fascia: false, skirting: false, stain: 'redwood', house: 'cream', stairs: [{ side: 'front', width: 48, offset: -1 }], railing: { front: false, left: false, right: false, style: 'wood' }, door: { pos: -1, width: 60, rise: 7, panels: 2, count: 1 } }
 const migrate = c => !c ? null : (Array.isArray(c.stairs) ? c : { ...c, stain: c.stain || 'redwood', door: c.door || { pos: -1, width: 60, rise: 7 }, stairs: c.stairs?.enabled ? [{ side: c.stairs.side, width: c.stairs.width, offset: c.stairs.offset }] : [] })
 let cfg = migrate(JSON.parse(localStorage.getItem(LS) || localStorage.getItem('amnideck.cfg.v1') || 'null')) || structuredClone(defCfg)
 let priceEdits = JSON.parse(localStorage.getItem(LSP) || '{}')
 let catalog = {}, core = null, out = null
 const $ = s => document.querySelector(s)
-const wasmReady = fetch('deck_core.wasm?v=266').then(r => r.arrayBuffer()).then(b => WebAssembly.instantiate(b, {})).then(w => core = w.instance.exports)
+const wasmReady = fetch('deck_core.wasm?v=267').then(r => r.arrayBuffer()).then(b => WebAssembly.instantiate(b, {})).then(w => core = w.instance.exports)
 const catReady = fetch('catalog.json').then(r => r.json()).then(j => catalog = j)
 const callCore = c => {
   const bytes = new TextEncoder().encode(JSON.stringify({ ...c, issue_date: new Date().toLocaleDateString('en-CA') }))
@@ -159,30 +159,26 @@ const buildHouse = () => {
   houseGroup.add(roof)
   const doorX = cfg.door.pos < 0 ? l / 2 : Math.min(Math.max(cfg.door.pos * 12, cfg.door.width / 2), l - cfg.door.width / 2)
   const sillY = cfg.height + (cfg.door.rise || 0)
-  const W = cfg.door.width, np = Math.max(1, Math.min(4, cfg.door.panels || 2))
-  const frame = new THREE.Mesh(new THREE.BoxGeometry(W + 6, 84, 3), trimMat)
-  frame.position.set(doorX, sillY + 40, -0.5)
-  const interior = new THREE.Mesh(new THREE.BoxGeometry(W - 4, 76, 0.5), new THREE.MeshStandardMaterial({ color: 0x2a2622, roughness: 1 }))
-  interior.position.set(doorX, sillY + 41, -0.2)
-  const curtain = new THREE.Mesh(new THREE.BoxGeometry(W / np * 0.8, 74, 0.6), new THREE.MeshStandardMaterial({ color: 0xd8d2c4, roughness: 1 }))
-  curtain.position.set(doorX - W / 2 + W / np * 0.5, sillY + 41.5, 0.05)
-  houseGroup.add(frame, interior, curtain)
+  const W = cfg.door.width, np = Math.max(1, Math.min(4, cfg.door.panels || 2)), nd = Math.max(1, Math.min(3, cfg.door.count || 1))
+  const centers = nd === 1 ? [doorX] : Array.from({ length: nd }, (_, i) => Math.min(Math.max(l * (i + 1) / (nd + 1), W / 2 + 4), l - W / 2 - 4))
   const glassMat = new THREE.MeshPhysicalMaterial({ color: 0x9ec5e8, roughness: 0.08, metalness: 0.1, transparent: true, opacity: 0.4 })
-  for (let i = 0; i < np; i++) { const g = new THREE.Mesh(new THREE.BoxGeometry(W / np - 3, 76, 1.5), glassMat); g.position.set(doorX - W / 2 + (i + 0.5) * W / np, sillY + 41, 0.6); houseGroup.add(g) }
-  for (let i = 0; i <= np; i++) { const s = new THREE.Mesh(new THREE.BoxGeometry(2.6, 78, 2.2), trimMat); s.position.set(doorX - W / 2 + i * W / np, sillY + 41, 1); houseGroup.add(s) }
-  const track = new THREE.Mesh(new THREE.BoxGeometry(W + 6, 2.5, 3.5), new THREE.MeshStandardMaterial({ color: 0xb9b9b9, roughness: 0.4, metalness: 0.5 }))
-  track.position.set(doorX, sillY + 0.5, 0.2)
-  houseGroup.add(track)
-  const winX = doorX + cfg.door.width / 2 + 50
-  const winInt = new THREE.Mesh(new THREE.BoxGeometry(40, 34, 0.5), new THREE.MeshStandardMaterial({ color: 0x2a2622, roughness: 1 }))
-  winInt.position.set(winX, sillY + 52, -0.4)
-  const win = new THREE.Mesh(new THREE.BoxGeometry(40, 34, 2), new THREE.MeshPhysicalMaterial({ color: 0xaecfe8, roughness: 0.1, transparent: true, opacity: 0.5 }))
-  win.position.set(winX, sillY + 52, 0.2)
-  const winFrame = new THREE.Mesh(new THREE.BoxGeometry(46, 40, 1.5), trimMat)
-  winFrame.position.set(winX, sillY + 52, -0.3)
-  const winSash = new THREE.Mesh(new THREE.BoxGeometry(2.2, 34, 2.4), trimMat)
-  winSash.position.set(winX, sillY + 52, 0.4)
-  houseGroup.add(winInt, winFrame, win, winSash)
+  for (const dx of centers) {
+    const frame = new THREE.Mesh(new THREE.BoxGeometry(W + 6, 84, 3), trimMat); frame.position.set(dx, sillY + 40, -0.5)
+    const interior = new THREE.Mesh(new THREE.BoxGeometry(W - 4, 76, 0.5), new THREE.MeshStandardMaterial({ color: 0x2a2622, roughness: 1 })); interior.position.set(dx, sillY + 41, -0.2)
+    const curtain = new THREE.Mesh(new THREE.BoxGeometry(W / np * 0.8, 74, 0.6), new THREE.MeshStandardMaterial({ color: 0xd8d2c4, roughness: 1 })); curtain.position.set(dx - W / 2 + W / np * 0.5, sillY + 41.5, 0.05)
+    houseGroup.add(frame, interior, curtain)
+    for (let i = 0; i < np; i++) { const g = new THREE.Mesh(new THREE.BoxGeometry(W / np - 3, 76, 1.5), glassMat); g.position.set(dx - W / 2 + (i + 0.5) * W / np, sillY + 41, 0.6); houseGroup.add(g) }
+    for (let i = 0; i <= np; i++) { const s = new THREE.Mesh(new THREE.BoxGeometry(2.6, 78, 2.2), trimMat); s.position.set(dx - W / 2 + i * W / np, sillY + 41, 1); houseGroup.add(s) }
+    const track = new THREE.Mesh(new THREE.BoxGeometry(W + 6, 2.5, 3.5), new THREE.MeshStandardMaterial({ color: 0xb9b9b9, roughness: 0.4, metalness: 0.5 })); track.position.set(dx, sillY + 0.5, 0.2); houseGroup.add(track)
+  }
+  if (nd === 1) {
+    const winX = Math.min(doorX + W / 2 + 50, l + 70)
+    const winInt = new THREE.Mesh(new THREE.BoxGeometry(40, 34, 0.5), new THREE.MeshStandardMaterial({ color: 0x2a2622, roughness: 1 })); winInt.position.set(winX, sillY + 52, -0.4)
+    const win = new THREE.Mesh(new THREE.BoxGeometry(40, 34, 2), new THREE.MeshPhysicalMaterial({ color: 0xaecfe8, roughness: 0.1, transparent: true, opacity: 0.5 })); win.position.set(winX, sillY + 52, 0.2)
+    const winFrame = new THREE.Mesh(new THREE.BoxGeometry(46, 40, 1.5), trimMat); winFrame.position.set(winX, sillY + 52, -0.3)
+    const winSash = new THREE.Mesh(new THREE.BoxGeometry(2.2, 34, 2.4), trimMat); winSash.position.set(winX, sillY + 52, 0.4)
+    houseGroup.add(winInt, winFrame, win, winSash)
+  }
   const mulchMat = new THREE.MeshStandardMaterial({ color: 0x46362a, roughness: 1 })
   for (const [x0, x1] of [[-80, -2], [l + 2, l + 80]]) {
     const strip = new THREE.Mesh(new THREE.BoxGeometry(x1 - x0, 1.6, 16), mulchMat)
@@ -396,6 +392,7 @@ const initUI = () => {
   bindNum('#dr_w', () => cfg.door.width, v => cfg.door.width = Math.max(30, v))
   bindNum('#dr_rise', () => cfg.door.rise, v => cfg.door.rise = Math.max(0, v))
   bindNum('#dr_panels', () => cfg.door.panels || 2, v => cfg.door.panels = Math.max(1, Math.min(4, v)))
+  bindNum('#dr_count', () => cfg.door.count || 1, v => cfg.door.count = Math.max(1, Math.min(3, v)))
   bindChk('#rl_f', () => cfg.railing.front, v => cfg.railing.front = v)
   bindChk('#rl_l', () => cfg.railing.left, v => cfg.railing.left = v)
   bindChk('#rl_r', () => cfg.railing.right, v => cfg.railing.right = v)
