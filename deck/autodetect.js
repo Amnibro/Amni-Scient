@@ -72,20 +72,35 @@ const imgData = (src, cap) => {
   const o = off.getContext('2d', { willReadFrequently: true }); o.drawImage(src, 0, 0, w, h)
   return { data: o.getImageData(0, 0, w, h).data, w, h, sc }
 }
-const detectPoly = (src, mode) => {
+const seedGrow = (data, w, h, sx, sy, tol) => {
+  const o = (sy * w + sx) * 4, br = data[o], bg = data[o + 1], bb = data[o + 2]
+  if (bg >= br && bg >= bb && bg - br >= 8 && bg - bb >= 8) return null
+  const seen = new Uint8Array(w * h), st = new Int32Array(w * h), pix = [], cap = w * h * 0.45
+  let sp = 0; st[sp++] = sy * w + sx; seen[sy * w + sx] = 1
+  while (sp > 0) {
+    const p = st[--sp], x = p % w, y = (p - x) / w
+    pix.push([x, y]); if (pix.length > cap) return null
+    const near = (nx, ny) => { if (nx < 0 || ny < 0 || nx >= w || ny >= h) return; const np = ny * w + nx; if (seen[np]) return; const q = np * 4; if (Math.abs(data[q] - br) + Math.abs(data[q + 1] - bg) + Math.abs(data[q + 2] - bb) < tol) { seen[np] = 1; st[sp++] = np } }
+    near(x + 1, y); near(x - 1, y); near(x, y + 1); near(x, y - 1)
+  }
+  return pix
+}
+const detectPoly = (src, mode, seed) => {
   const { data, w, h, sc } = imgData(src, WORK), n = w * h
   let pix
   if (mode === 'ink') {
     const fg = inkMask(data, n); pix = []
     for (let p = 0; p < n; p++) if (fg[p]) { const x = p % w; pix.push([x, (p - x) / w]) }
     if (pix.length < 24) return null
+  } else if (seed) {
+    pix = seedGrow(data, w, h, clamp(Math.round(seed[0] * sc), 0, w - 1), clamp(Math.round(seed[1] * sc), 0, h - 1), 56)
+    if (!pix || pix.length < 30) return null
   } else {
-    const fg = regionMask(data, n), { lab, comps } = components(fg, w, h)
+    const N = n, fg = regionMask(data, n), { lab, comps } = components(fg, w, h)
     if (!comps.length) return null
-    const N = n, cx0 = w / 2, cy0 = h / 2
+    const cx0 = w / 2, cy0 = h / 2
     const valid = comps.filter(c => c.area > N * 0.004 && c.area < N * 0.92 && c.maxX - c.minX > 6 && c.maxY - c.minY > 6)
-    const pool = valid.length ? valid : comps
-    const pick = pool.reduce((a, c) => { const d = Math.hypot(c.cx - cx0, c.cy - cy0); const score = c.area / (1 + 0.0015 * d * d); return score > a.score ? { c, score } : a }, { c: null, score: -1 }).c
+    const pick = (valid.length ? valid : comps).reduce((a, c) => { const d = Math.hypot(c.cx - cx0, c.cy - cy0); const score = c.area / (1 + 0.0015 * d * d); return score > a.score ? { c, score } : a }, { c: null, score: -1 }).c
     if (!pick) return null
     pix = []
     for (let p = 0; p < n; p++) if (lab[p] === pick.id) { const x = p % w; pix.push([x, (p - x) / w]) }
@@ -125,38 +140,39 @@ export const classifyImage = src => {
   return { aerial, ground, drawing, route, margin, msg }
 }
 export const initAutoDetect = ({ tc, T, tDraw, tStatus, getMapOn }) => {
-  let drag = -1, forced = null, lastCls = null
+  let drag = -1, forced = null, lastCls = null, seed = null, downPt = null, moved = false
   const routeBtns = document.getElementById('troute')
   const ptOf = e => { const r = tc.getBoundingClientRect(); return [(e.clientX - r.left) * tc.width / r.width, (e.clientY - r.top) * tc.height / r.height] }
   const routeNow = () => forced || (lastCls ? lastCls.route : 'aerial')
   const setActive = r => routeBtns && [...routeBtns.querySelectorAll('button')].forEach(b => b.classList.toggle('acc', b.dataset.r === r))
-  const hint = r => tStatus(r === 'aerial' ? 'Aerial mode — ✨ Auto-detect will trace the footprint; set scale if this is an upload.' : r === 'ground' ? 'Ground-photo mode — ✨ Auto-detect gives an approximate outline; verify the corners.' : 'Drawing mode — ✨ Auto-detect outlines the largest shape; set a known dimension for scale.')
+  const hint = r => tStatus(r === 'aerial' ? 'Aerial mode — click your deck/patio in the image (or ✨ Auto-detect).' : r === 'ground' ? 'Ground-photo mode — ✨ Auto-detect gives an approximate outline; verify the corners.' : 'Drawing mode — ✨ Auto-detect outlines the largest shape; set a known dimension for scale.')
   if (routeBtns) [...routeBtns.querySelectorAll('button')].forEach(b => b.onclick = () => { forced = b.dataset.r; setActive(forced); hint(forced) })
-  const onImage = img => { lastCls = classifyImage(img); forced = null; routeBtns && (routeBtns.style.display = 'flex'); setActive(lastCls.route); tStatus(lastCls.msg + ' Override the type at left if needed, then ✨ Auto-detect.') }
+  const onImage = img => { lastCls = classifyImage(img); forced = null; seed = null; routeBtns && (routeBtns.style.display = 'flex'); setActive(lastCls.route); tStatus(lastCls.msg + ' Override the type at left if needed, then click the shape or ✨ Auto-detect.') }
   const timg = document.getElementById('timg')
   timg && timg.addEventListener('change', e => { const f = e.target.files && e.target.files[0]; if (!f) return; const u = URL.createObjectURL(f), im = new Image(); im.onload = () => { onImage(im); URL.revokeObjectURL(u) }; im.src = u })
-  const onDown = e => {
-    if (T.mode || !T.poly.length) return
-    const p = ptOf(e); let bi = -1, bd = 16
-    T.poly.forEach((q, i) => { const dd = Math.hypot(q[0] - p[0], q[1] - p[1]); if (dd < bd) { bd = dd; bi = i } })
-    if (bi >= 0) { drag = bi; e.stopPropagation(); e.preventDefault() }
-  }
-  const onMove = e => { if (drag < 0) return; const p = ptOf(e); T.poly[drag] = [clamp(p[0], 0, tc.width), clamp(p[1], 0, tc.height)]; tDraw() }
-  const onUp = () => { drag = -1 }
-  tc.addEventListener('mousedown', onDown, true)
-  window.addEventListener('mousemove', onMove, true)
-  window.addEventListener('mouseup', onUp, true)
-  const detectFootprint = () => {
-    if (!T.img) { tStatus('Find an address (satellite) or upload a photo first, then ✨ Auto-detect.'); return false }
+  const detect = () => {
+    if (!T.img) { tStatus('Find an address (satellite) or upload a photo first, then click your deck/patio or ✨ Auto-detect.'); return false }
     const mapOn = !!getMapOn(), route = mapOn ? 'aerial' : routeNow()
-    const poly = detectPoly(T.img, route === 'drawing' ? 'ink' : 'region')
-    if (!poly) { tStatus('Could not find a clear shape — trace the corners manually instead.'); return false }
+    if (mapOn && !seed) { tStatus('Click directly on your deck/patio in the satellite image — I will detect that shape (panning to the backyard helps).'); return false }
+    const poly = detectPoly(T.img, route === 'drawing' ? 'ink' : 'region', route === 'drawing' ? null : seed)
+    if (!poly) { tStatus('Could not find a clear shape there — click right on your deck/patio, or trace the corners manually.'); return false }
     T.poly = poly; tDraw()
-    const lead = route === 'ground' ? 'Approximate outline (angled photo) — ' : route === 'drawing' ? 'Outlined the largest shape — ' : 'Footprint proposed — '
-    const tail = mapOn ? 'drag any corner to fine-tune, then ✅ Use outline. (North-up satellite scale is set.)' : T.pxPerFt > 0 ? 'drag corners to fix, then ✅ Use outline.' : 'drag corners to fix, then ① Set scale (two points a known distance apart) and ✅ Use outline.'
+    const lead = route === 'ground' ? 'Approximate outline (angled photo) — ' : route === 'drawing' ? 'Outlined the largest shape — ' : seed ? 'Detected around your click — ' : 'Footprint proposed — '
+    const tail = mapOn ? 'drag corners to fine-tune (or click a different spot), then ✅ Use outline. Scale is set.' : T.pxPerFt > 0 ? 'drag corners to fix, then ✅ Use outline.' : 'drag corners, then ① Set scale (two points a known distance apart) and ✅ Use outline.'
     tStatus(lead + tail)
     return true
   }
+  const onDown = e => {
+    if (T.mode) return
+    downPt = ptOf(e); moved = false; drag = -1
+    if (T.poly.length) { let bi = -1, bd = 16; T.poly.forEach((q, i) => { const dd = Math.hypot(q[0] - downPt[0], q[1] - downPt[1]); if (dd < bd) { bd = dd; bi = i } }); if (bi >= 0) { drag = bi; e.stopPropagation(); e.preventDefault() } }
+  }
+  const onMove = e => { const p = ptOf(e); if (drag >= 0) { T.poly[drag] = [clamp(p[0], 0, tc.width), clamp(p[1], 0, tc.height)]; tDraw(); return } if (downPt && Math.hypot(p[0] - downPt[0], p[1] - downPt[1]) > 5) moved = true }
+  const onUp = () => { if (drag >= 0) { drag = -1; downPt = null; return } if (downPt && !moved && !T.mode && T.img) { seed = downPt; downPt = null; detect(); return } downPt = null }
+  tc.addEventListener('mousedown', onDown, true)
+  window.addEventListener('mousemove', onMove, true)
+  window.addEventListener('mouseup', onUp, true)
+  const detectFootprint = () => { seed = null; return detect() }
   const dispose = () => { tc.removeEventListener('mousedown', onDown, true); window.removeEventListener('mousemove', onMove, true); window.removeEventListener('mouseup', onUp, true) }
   return { detectFootprint, classifyImage, dispose }
 }
