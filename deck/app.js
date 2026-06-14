@@ -1,8 +1,8 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
-import { initPermits, updatePermits } from './codes.js?v=264'
-import { initMapTrace, sitePlanSVG, cropForPlan, mapPlanSnapshot } from './maptrace.js?v=264'
-import { initAutoDetect } from './autodetect.js?v=264'
+import { initPermits, updatePermits } from './codes.js?v=265'
+import { initMapTrace, sitePlanSVG, cropForPlan, mapPlanSnapshot } from './maptrace.js?v=265'
+import { initAutoDetect } from './autodetect.js?v=265'
 const LS = 'amnideck.cfg.v2', LSP = 'amnideck.prices.v1'
 const defCfg = { length: 12, depth: 8, height: 16, spacing: 16, decking: 'pt', attach: 'ledger', joist: '2x8', fascia: false, skirting: false, stain: 'redwood', house: 'cream', stairs: [{ side: 'front', width: 48, offset: -1 }], railing: { front: false, left: false, right: false, style: 'wood' }, door: { pos: -1, width: 60, rise: 7 } }
 const migrate = c => !c ? null : (Array.isArray(c.stairs) ? c : { ...c, stain: c.stain || 'redwood', door: c.door || { pos: -1, width: 60, rise: 7 }, stairs: c.stairs?.enabled ? [{ side: c.stairs.side, width: c.stairs.width, offset: c.stairs.offset }] : [] })
@@ -10,7 +10,7 @@ let cfg = migrate(JSON.parse(localStorage.getItem(LS) || localStorage.getItem('a
 let priceEdits = JSON.parse(localStorage.getItem(LSP) || '{}')
 let catalog = {}, core = null, out = null
 const $ = s => document.querySelector(s)
-const wasmReady = fetch('deck_core.wasm?v=264').then(r => r.arrayBuffer()).then(b => WebAssembly.instantiate(b, {})).then(w => core = w.instance.exports)
+const wasmReady = fetch('deck_core.wasm?v=265').then(r => r.arrayBuffer()).then(b => WebAssembly.instantiate(b, {})).then(w => core = w.instance.exports)
 const catReady = fetch('catalog.json').then(r => r.json()).then(j => catalog = j)
 const callCore = c => {
   const bytes = new TextEncoder().encode(JSON.stringify({ ...c, issue_date: new Date().toLocaleDateString('en-CA') }))
@@ -520,10 +520,23 @@ document.getElementById('timg').addEventListener('change', e => {
   img.src = URL.createObjectURL(f)
 })
 document.getElementById('tscale').onclick = () => { T.mode = 'scale'; T.scalePts = []; tStatus('Click the FIRST reference point…'); tDraw() }
-document.getElementById('ttrace').onclick = () => { T.pxPerFt > 0 ? (T.mode = 'trace', tStatus('Click each corner of the deck area.')) : tStatus('Set the scale first.') }
+document.getElementById('ttrace').onclick = () => { T.pxPerFt > 0 || (AD && AD.route && AD.route() === 'ground') ? (T.mode = 'trace', tStatus(AD && AD.route && AD.route() === 'ground' ? 'Tap the 4 deck-floor corners in order: back-left, back-right, front-right, front-left.' : 'Click each corner of the deck area.')) : tStatus('Set the scale first.') }
 document.getElementById('tundo').onclick = () => { T.poly.pop(); tDraw() }
 document.getElementById('tclear').onclick = () => { T.poly = []; T.scalePts = []; T.mode = null; tDraw(); tStatus('Cleared.') }
 document.getElementById('tuse').onclick = async () => {
+  const gnd = AD && AD.route && AD.route() === 'ground' ? AD.reconstructGround() : null
+  if (gnd && gnd.ok) {
+    const L = Math.min(40, Math.max(4, Math.round(gnd.length * 2) / 2)), D = Math.min(20, Math.max(4, Math.round(gnd.depth * 2) / 2))
+    cfg.length = L; cfg.depth = D
+    const li = document.getElementById('length'), di = document.getElementById('depth')
+    li && (li.value = L); di && (di.value = D)
+    const wpx = (Math.hypot(T.poly[1][0] - T.poly[0][0], T.poly[1][1] - T.poly[0][1]) + Math.hypot(T.poly[2][0] - T.poly[3][0], T.poly[2][1] - T.poly[3][1])) / 2
+    siteSnap = { ...cropForPlan(T.img || tc, tc.width, tc.height, T.poly, wpx / gnd.length || 10), address: '', northUp: false }
+    recompute()
+    document.querySelector('.tab[data-pane="3d"]').click()
+    tStatus(`Reconstructed from your photo: ${L}' × ${D}' deck${gnd.affine ? ' (near head-on — double-check depth)' : ''}. A perspective REFERENCE sketch was added to 2D Plans.`)
+    return
+  }
   if (T.pxPerFt <= 0 || T.poly.length < 2) { tStatus('Need a scale + at least 2 corners.'); return }
   const xs = T.poly.map(p => p[0]), ys = T.poly.map(p => p[1])
   const minX = Math.min(...xs), minY = Math.min(...ys)

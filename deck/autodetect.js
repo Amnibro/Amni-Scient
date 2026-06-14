@@ -1,5 +1,26 @@
 const WORK = 480
 const clamp = (v, a, b) => v < a ? a : v > b ? b : v
+const cr3 = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]]
+const dt3 = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2]
+const nm3 = a => { const m = Math.hypot(a[0], a[1], a[2]) || 1; return [a[0] / m, a[1] / m, a[2] / m] }
+export const rectifyQuad = (q, cx, cy) => {
+  if (q.length < 4) return { ok: false }
+  const H = q.map(p => [p[0], p[1], 1])
+  const u = cr3(cr3(H[0], H[1]), cr3(H[3], H[2])), v = cr3(cr3(H[0], H[3]), cr3(H[1], H[2]))
+  const el = (a, b) => Math.hypot(q[a][0] - q[b][0], q[a][1] - q[b][1])
+  const wlPx = (el(0, 1) + el(3, 2)) / 2, dlPx = (el(0, 3) + el(1, 2)) / 2 || 1
+  if (Math.abs(u[2]) < 1e-7 || Math.abs(v[2]) < 1e-7) return { ok: true, affine: true, aspect: wlPx / dlPx }
+  const up = [u[0] / u[2], u[1] / u[2]], vp = [v[0] / v[2], v[1] / v[2]]
+  const f2 = -((up[0] - cx) * (vp[0] - cx) + (up[1] - cy) * (vp[1] - cy))
+  if (!(f2 > 1)) return { ok: true, affine: true, aspect: wlPx / dlPx }
+  const f = Math.sqrt(f2)
+  const du = nm3([(up[0] - cx) / f, (up[1] - cy) / f, 1]), dv = nm3([(vp[0] - cx) / f, (vp[1] - cy) / f, 1])
+  const n = nm3(cr3(du, dv))
+  const X = p => { const r = [(p[0] - cx) / f, (p[1] - cy) / f, 1], t = 1 / dt3(n, r); return [r[0] * t, r[1] * t, r[2] * t] }
+  const P = q.map(X), d3 = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2])
+  const wl = (d3(P[0], P[1]) + d3(P[3], P[2])) / 2, dl = (d3(P[0], P[3]) + d3(P[1], P[2])) / 2 || 1
+  return { ok: true, affine: false, f, aspect: wl / dl }
+}
 const convex = pts => {
   const ps = pts.slice().sort((a, b) => a[0] - b[0] || a[1] - b[1])
   if (ps.length < 3) return ps
@@ -150,9 +171,21 @@ export const initAutoDetect = ({ tc, T, tDraw, tStatus, getMapOn }) => {
   const onImage = img => { lastCls = classifyImage(img); forced = null; seed = null; routeBtns && (routeBtns.style.display = 'flex'); setActive(lastCls.route); tStatus(lastCls.msg + ' Override the type at left if needed, then click the shape or ✨ Auto-detect.') }
   const timg = document.getElementById('timg')
   timg && timg.addEventListener('change', e => { const f = e.target.files && e.target.files[0]; if (!f) return; const u = URL.createObjectURL(f), im = new Image(); im.onload = () => { onImage(im); URL.revokeObjectURL(u) }; im.src = u })
+  const reconstructGround = () => {
+    if (T.poly.length < 4) { tStatus('Ground photo: tap the 4 deck-floor corners first (② Trace) — back-left, back-right, front-right, front-left.'); return null }
+    const r = rectifyQuad(T.poly.slice(0, 4), tc.width / 2, tc.height / 2)
+    if (!r.ok) { tStatus('Could not solve the perspective — re-tap the 4 floor corners as a clear rectangle.'); return null }
+    const pd = prompt('Real width of the deck/patio ALONG the house (e.g. 133in or 11ft):', '11ft')
+    const m = pd && pd.match(/([\d.]+)\s*(in|"|ft|')?/i)
+    const wFt = m ? parseFloat(m[1]) * (/(in|")/i.test(m[2] || '') ? 1 / 12 : 1) : NaN
+    if (!(wFt > 0)) { tStatus('Need the real width to size it.'); return null }
+    const lowConf = !!r.affine || r.aspect > 3 || r.aspect < 0.34
+    return { ok: true, length: clamp(wFt, 2, 80), depth: clamp(wFt / r.aspect, 2, 80), aspect: r.aspect, affine: lowConf }
+  }
   const detect = () => {
     if (!T.img) { tStatus('Find an address (satellite) or upload a photo first, then click your deck/patio or ✨ Auto-detect.'); return false }
     const mapOn = !!getMapOn(), route = mapOn ? 'aerial' : routeNow()
+    if (route === 'ground') { tStatus('Ground photo: tap the 4 deck-floor corners (② Trace) in order — back-left → back-right → front-right → front-left — then ✅ Use outline to reconstruct in 3D.'); return false }
     if (mapOn && !seed) { tStatus('Click directly on your deck/patio in the satellite image — I will detect that shape (panning to the backyard helps).'); return false }
     const poly = detectPoly(T.img, route === 'drawing' ? 'ink' : 'region', route === 'drawing' ? null : seed)
     if (!poly) { tStatus('Could not find a clear shape there — click right on your deck/patio, or trace the corners manually.'); return false }
@@ -174,5 +207,5 @@ export const initAutoDetect = ({ tc, T, tDraw, tStatus, getMapOn }) => {
   window.addEventListener('mouseup', onUp, true)
   const detectFootprint = () => { seed = null; return detect() }
   const dispose = () => { tc.removeEventListener('mousedown', onDown, true); window.removeEventListener('mousemove', onMove, true); window.removeEventListener('mouseup', onUp, true) }
-  return { detectFootprint, classifyImage, dispose }
+  return { detectFootprint, classifyImage, reconstructGround, route: routeNow, dispose }
 }
