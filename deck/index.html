@@ -86,8 +86,10 @@ td a:hover{text-decoration:underline}
 <main>
   <div id="side">
     <h3>Deck Size</h3>
-    <div class="row"><label>Length along house (ft)</label><input type="number" id="length" min="4" max="40" step="1" value="12"></div>
-    <div class="row"><label>Depth from house (ft)</label><input type="number" id="depth" min="4" max="20" step="1" value="8"></div>
+    <div class="seg" id="mode"><button data-v="rect" class="on">Rectangle</button><button data-v="poly">Non-rect / traced</button></div>
+    <div class="row" id="rw"><label>Length along house (ft)</label><input type="number" id="length" min="4" max="40" step="1" value="12"></div>
+    <div class="row" id="rd"><label>Depth from house (ft)</label><input type="number" id="depth" min="4" max="20" step="1" value="8"></div>
+    <div class="row" id="rhouse" style="display:none"><label>House edge</label><select id="house"></select></div>
     <div class="row"><label>Height above grade (in)</label><input type="number" id="height" min="8" max="96" step="1" value="16"></div>
     <h3>Structure</h3>
     <div class="row"><label>Joist spacing (in OC)</label><select id="spacing"><option>12</option><option selected>16</option><option>24</option></select></div>
@@ -189,6 +191,6 @@ td a:hover{text-decoration:underline}
   </div>
 </main>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
-<script type="module" src="app.js?v=268"></script>
+<script type="module" src="app.js?v=269"></script>
 </body>
 </html>

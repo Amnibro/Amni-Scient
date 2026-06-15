@@ -1,19 +1,19 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
-import { initPermits, updatePermits } from './codes.js?v=268'
-import { initMapTrace, sitePlanSVG, cropForPlan, mapPlanSnapshot } from './maptrace.js?v=268'
-import { initAutoDetect } from './autodetect.js?v=268'
+import { initPermits, updatePermits } from './codes.js?v=269'
+import { initMapTrace, sitePlanSVG, cropForPlan, mapPlanSnapshot } from './maptrace.js?v=269'
+import { initAutoDetect } from './autodetect.js?v=269'
 const LS = 'amnideck.cfg.v2', LSP = 'amnideck.prices.v1'
-const defCfg = { length: 12, depth: 8, height: 16, spacing: 16, decking: 'pt', attach: 'ledger', joist: '2x8', fascia: false, skirting: false, stain: 'redwood', house: 'cream', stairs: [{ side: 'front', width: 48, offset: -1 }], railing: { front: false, left: false, right: false, style: 'wood' }, door: { pos: -1, width: 60, rise: 7, panels: 2, count: 1 } }
+const defCfg = { length: 12, depth: 8, height: 16, spacing: 16, decking: 'pt', attach: 'ledger', joist: '2x8', fascia: false, skirting: false, stain: 'redwood', house: 'cream', mode: 'rect', polygon: null, house_edge: 0, stairs: [{ side: 'front', width: 48, offset: -1 }], railing: { front: false, left: false, right: false, style: 'wood' }, door: { pos: -1, width: 60, rise: 7, panels: 2, count: 1 } }
 const migrate = c => !c ? null : (Array.isArray(c.stairs) ? c : { ...c, stain: c.stain || 'redwood', door: c.door || { pos: -1, width: 60, rise: 7 }, stairs: c.stairs?.enabled ? [{ side: c.stairs.side, width: c.stairs.width, offset: c.stairs.offset }] : [] })
 let cfg = migrate(JSON.parse(localStorage.getItem(LS) || localStorage.getItem('amnideck.cfg.v1') || 'null')) || structuredClone(defCfg)
 let priceEdits = JSON.parse(localStorage.getItem(LSP) || '{}')
 let catalog = {}, core = null, out = null
 const $ = s => document.querySelector(s)
-const wasmReady = fetch('deck_core.wasm?v=268').then(r => r.arrayBuffer()).then(b => WebAssembly.instantiate(b, {})).then(w => core = w.instance.exports)
+const wasmReady = fetch('deck_core.wasm?v=269').then(r => r.arrayBuffer()).then(b => WebAssembly.instantiate(b, {})).then(w => core = w.instance.exports)
 const catReady = fetch('catalog.json').then(r => r.json()).then(j => catalog = j)
 const callCore = c => {
-  const bytes = new TextEncoder().encode(JSON.stringify({ ...c, issue_date: new Date().toLocaleDateString('en-CA') }))
+  const bytes = new TextEncoder().encode(JSON.stringify({ ...c, polygon: c.mode === 'poly' && Array.isArray(c.polygon) && c.polygon.length >= 3 ? c.polygon : [], house_edge: c.house_edge ?? -1, issue_date: new Date().toLocaleDateString('en-CA') }))
   const ip = core.alloc(bytes.length)
   new Uint8Array(core.memory.buffer, ip, bytes.length).set(bytes)
   const op = core.build(ip, bytes.length)
@@ -389,6 +389,25 @@ const initUI = () => {
   bindSel('#joist', () => cfg.joist || '2x8', v => cfg.joist = v)
   bindChk('#fascia', () => !!cfg.fascia, v => cfg.fascia = v)
   bindChk('#skirting', () => !!cfg.skirting, v => cfg.skirting = v)
+  const buildHouseSel = () => {
+    const sel = $('#house'); if (!sel) return
+    const p = cfg.polygon || []
+    sel.innerHTML = '<option value="-1">Freestanding</option>' + p.map((a, i) => { const b = p[(i + 1) % p.length]; return `<option value="${i}">Edge ${i + 1} (${Math.hypot(b[0] - a[0], b[1] - a[1]).toFixed(1)} ft)</option>` }).join('')
+    sel.value = String(cfg.house_edge ?? -1)
+    sel.onchange = () => { cfg.house_edge = +sel.value; recompute() }
+  }
+  window.__deckBuildHouseSel = buildHouseSel
+  const applyMode = () => {
+    const poly = cfg.mode === 'poly'
+    $('#rw').style.display = poly ? 'none' : 'flex'
+    $('#rd').style.display = poly ? 'none' : 'flex'
+    $('#rhouse').style.display = poly && cfg.polygon && cfg.polygon.length >= 3 ? 'flex' : 'none'
+    document.querySelectorAll('#mode button').forEach(b => b.classList.toggle('on', b.dataset.v === cfg.mode))
+    if (poly) buildHouseSel()
+  }
+  window.__deckApplyMode = applyMode
+  document.querySelectorAll('#mode button').forEach(b => b.onclick = () => { cfg.mode = b.dataset.v; applyMode(); recompute() })
+  applyMode()
   bindNum('#dr_pos', () => cfg.door.pos, v => cfg.door.pos = v)
   bindNum('#dr_w', () => cfg.door.width, v => cfg.door.width = Math.max(30, v))
   bindNum('#dr_rise', () => cfg.door.rise, v => cfg.door.rise = Math.max(0, v))
@@ -535,6 +554,20 @@ document.getElementById('tuse').onclick = async () => {
     recompute()
     document.querySelector('.tab[data-pane="3d"]').click()
     tStatus(`Reconstructed from your photo: ${L}' × ${D}' deck${gnd.affine ? ' (near head-on — double-check depth)' : ''}. A perspective REFERENCE sketch was added to 2D Plans.`)
+    return
+  }
+  if ((cfg.mode === 'poly' || T.poly.length >= 5) && T.pxPerFt > 0 && T.poly.length >= 3) {
+    const mnX = Math.min(...T.poly.map(p => p[0])), mnY = Math.min(...T.poly.map(p => p[1]))
+    cfg.polygon = T.poly.map(p => [+(((p[0] - mnX) / T.pxPerFt).toFixed(2)), +(((p[1] - mnY) / T.pxPerFt).toFixed(2))])
+    cfg.mode = 'poly'
+    let bestHe = 0, bestY = Infinity
+    cfg.polygon.forEach((a, i) => { const b = cfg.polygon[(i + 1) % cfg.polygon.length]; const m = (a[1] + b[1]) / 2; if (m < bestY) { bestY = m; bestHe = i } })
+    cfg.house_edge = bestHe
+    window.__deckApplyMode && window.__deckApplyMode()
+    siteSnap = { ...(window.__siteMapOn && MV ? await mapPlanSnapshot(MV, tc.width, tc.height, T.poly, T.pxPerFt) : cropForPlan(T.img || tc, tc.width, tc.height, T.poly, T.pxPerFt)), address: window.__siteMapOn ? (window.__siteAddr || '') : '', northUp: !!window.__siteMapOn }
+    recompute()
+    document.querySelector('.tab[data-pane="3d"]').click()
+    tStatus(`Applied non-rectangular deck: ${cfg.polygon.length} corners, ${out && out.calc ? out.calc.area.toFixed(0) : '?'} ft². Set the house edge under Deck Size if needed.`)
     return
   }
   if (T.pxPerFt <= 0 || T.poly.length < 2) { tStatus('Need a scale + at least 2 corners.'); return }
