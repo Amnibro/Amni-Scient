@@ -1,3 +1,5 @@
+/* @ts-self-types="./amni.d.ts" */
+
 /**
  * Chroma subsampling format
  * @enum {0 | 1 | 2 | 3}
