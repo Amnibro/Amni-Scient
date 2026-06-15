@@ -1,8 +1,8 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
-import { initPermits, updatePermits } from './codes.js?v=267'
-import { initMapTrace, sitePlanSVG, cropForPlan, mapPlanSnapshot } from './maptrace.js?v=267'
-import { initAutoDetect } from './autodetect.js?v=267'
+import { initPermits, updatePermits } from './codes.js?v=268'
+import { initMapTrace, sitePlanSVG, cropForPlan, mapPlanSnapshot } from './maptrace.js?v=268'
+import { initAutoDetect } from './autodetect.js?v=268'
 const LS = 'amnideck.cfg.v2', LSP = 'amnideck.prices.v1'
 const defCfg = { length: 12, depth: 8, height: 16, spacing: 16, decking: 'pt', attach: 'ledger', joist: '2x8', fascia: false, skirting: false, stain: 'redwood', house: 'cream', stairs: [{ side: 'front', width: 48, offset: -1 }], railing: { front: false, left: false, right: false, style: 'wood' }, door: { pos: -1, width: 60, rise: 7, panels: 2, count: 1 } }
 const migrate = c => !c ? null : (Array.isArray(c.stairs) ? c : { ...c, stain: c.stain || 'redwood', door: c.door || { pos: -1, width: 60, rise: 7 }, stairs: c.stairs?.enabled ? [{ side: c.stairs.side, width: c.stairs.width, offset: c.stairs.offset }] : [] })
@@ -10,7 +10,7 @@ let cfg = migrate(JSON.parse(localStorage.getItem(LS) || localStorage.getItem('a
 let priceEdits = JSON.parse(localStorage.getItem(LSP) || '{}')
 let catalog = {}, core = null, out = null
 const $ = s => document.querySelector(s)
-const wasmReady = fetch('deck_core.wasm?v=267').then(r => r.arrayBuffer()).then(b => WebAssembly.instantiate(b, {})).then(w => core = w.instance.exports)
+const wasmReady = fetch('deck_core.wasm?v=268').then(r => r.arrayBuffer()).then(b => WebAssembly.instantiate(b, {})).then(w => core = w.instance.exports)
 const catReady = fetch('catalog.json').then(r => r.json()).then(j => catalog = j)
 const callCore = c => {
   const bytes = new TextEncoder().encode(JSON.stringify({ ...c, issue_date: new Date().toLocaleDateString('en-CA') }))
@@ -139,20 +139,21 @@ const buildHouse = () => {
   st.wrapS = st.wrapT = THREE.RepeatWrapping
   st.repeat.set(4, 1.5)
   wallMat.map = st
-  const wall = new THREE.Mesh(new THREE.BoxGeometry(l + 160, 130, 10), wallMat)
+  const ext = 40, ww = l + 2 * ext
+  const wall = new THREE.Mesh(new THREE.BoxGeometry(ww, 130, 10), wallMat)
   wall.position.set(l / 2, 65, -5.1)
   wall.receiveShadow = wall.castShadow = true
   houseGroup.add(wall)
   const trimMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.6 })
-  const found = new THREE.Mesh(new THREE.BoxGeometry(l + 160, 15, 10.6), new THREE.MeshStandardMaterial({ color: 0x6e2f2b, roughness: 0.95 }))
+  const found = new THREE.Mesh(new THREE.BoxGeometry(ww, 15, 10.6), new THREE.MeshStandardMaterial({ color: 0x6e2f2b, roughness: 0.95 }))
   found.position.set(l / 2, 7.5, -4.9)
   found.receiveShadow = true
   houseGroup.add(found)
-  for (const cx of [-79, l + 79]) { const corner = new THREE.Mesh(new THREE.BoxGeometry(4, 115, 11), trimMat); corner.position.set(l / 2 + cx, 72.5, -5.0); houseGroup.add(corner) }
-  const fascia = new THREE.Mesh(new THREE.BoxGeometry(l + 164, 8, 13), trimMat)
+  for (const cx of [-(ext - 1), l + (ext - 1)]) { const corner = new THREE.Mesh(new THREE.BoxGeometry(4, 115, 11), trimMat); corner.position.set(cx, 72.5, -5.0); houseGroup.add(corner) }
+  const fascia = new THREE.Mesh(new THREE.BoxGeometry(ww + 4, 8, 13), trimMat)
   fascia.position.set(l / 2, 132, -4.6)
   houseGroup.add(fascia)
-  const roof = new THREE.Mesh(new THREE.BoxGeometry(l + 176, 3, 26), new THREE.MeshStandardMaterial({ color: 0x4a4a4e, roughness: 1 }))
+  const roof = new THREE.Mesh(new THREE.BoxGeometry(ww + 16, 3, 26), new THREE.MeshStandardMaterial({ color: 0x4a4a4e, roughness: 1 }))
   roof.position.set(l / 2, 139, -2.0)
   roof.rotation.x = 0.32
   roof.castShadow = true
@@ -180,7 +181,7 @@ const buildHouse = () => {
     houseGroup.add(winInt, winFrame, win, winSash)
   }
   const mulchMat = new THREE.MeshStandardMaterial({ color: 0x46362a, roughness: 1 })
-  for (const [x0, x1] of [[-80, -2], [l + 2, l + 80]]) {
+  for (const [x0, x1] of [[-ext, -2], [l + 2, l + ext]]) {
     const strip = new THREE.Mesh(new THREE.BoxGeometry(x1 - x0, 1.6, 16), mulchMat)
     strip.position.set((x0 + x1) / 2, 0.8, 8)
     strip.receiveShadow = true
