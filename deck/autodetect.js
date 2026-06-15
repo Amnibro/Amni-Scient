@@ -106,12 +106,54 @@ const seedGrow = (data, w, h, sx, sy, tol) => {
   }
   return pix
 }
-const detectPoly = (src, mode, seed) => {
+const traceContour = (fg, w, h) => {
+  let start = -1
+  for (let i = 0; i < fg.length; i++) if (fg[i]) { start = i; break }
+  if (start < 0) return null
+  const nb = [[-1, 0], [-1, -1], [0, -1], [1, -1], [1, 0], [1, 1], [0, 1], [-1, 1]]
+  const at = (x, y) => x >= 0 && y >= 0 && x < w && y < h && fg[y * w + x]
+  const sx = start % w, sy = (start - (start % w)) / w
+  let cx = sx, cy = sy, bx = sx - 1, by = sy
+  const pts = [[cx, cy]]
+  let guard = 0, max = w * h * 4
+  do {
+    let bi = 0
+    for (let k = 0; k < 8; k++) if (cx + nb[k][0] === bx && cy + nb[k][1] === by) { bi = k; break }
+    let found = false
+    for (let k = 1; k <= 8; k++) { const idx = (bi + k) % 8, nx = cx + nb[idx][0], ny = cy + nb[idx][1]; if (at(nx, ny)) { bx = cx; by = cy; cx = nx; cy = ny; pts.push([cx, cy]); found = true; break } }
+    if (!found) break
+    guard++
+  } while ((cx !== sx || cy !== sy) && guard < max)
+  return pts
+}
+const perpD = (p, a, b) => { const dx = b[0] - a[0], dy = b[1] - a[1], l2 = dx * dx + dy * dy; if (l2 < 1e-6) return Math.hypot(p[0] - a[0], p[1] - a[1]); const t = ((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / l2, qx = a[0] + t * dx, qy = a[1] + t * dy; return Math.hypot(p[0] - qx, p[1] - qy) }
+const dpSimplify = (pts, eps) => {
+  if (pts.length < 3) return pts.slice()
+  let dmax = 0, idx = 0
+  for (let i = 1; i < pts.length - 1; i++) { const d = perpD(pts[i], pts[0], pts[pts.length - 1]); if (d > dmax) { dmax = d; idx = i } }
+  return dmax > eps ? dpSimplify(pts.slice(0, idx + 1), eps).slice(0, -1).concat(dpSimplify(pts.slice(idx), eps)) : [pts[0], pts[pts.length - 1]]
+}
+const contourPoly = (pix, w, h) => {
+  const fg = new Uint8Array(w * h)
+  for (const [x, y] of pix) fg[y * w + x] = 1
+  const c = traceContour(fg, w, h)
+  if (!c || c.length < 8) return null
+  let fi = 0, fd = 0
+  for (let i = 1; i < c.length; i++) { const d = Math.hypot(c[i][0] - c[0][0], c[i][1] - c[0][1]); if (d > fd) { fd = d; fi = i } }
+  const eps = Math.max(2.5, c.length * 0.012)
+  let poly = dpSimplify(c.slice(0, fi + 1), eps).slice(0, -1).concat(dpSimplify(c.slice(fi), eps).slice(0, -1))
+  if (poly.length > 12) poly = dpSimplify(poly.concat([poly[0]]), eps * 1.6).slice(0, -1)
+  return poly.length >= 3 ? poly : null
+}
+const detectPoly = (src, mode, seed, wantPoly) => {
   const { data, w, h, sc } = imgData(src, WORK), n = w * h
   let pix
   if (mode === 'ink') {
-    const fg = inkMask(data, n); pix = []
-    for (let p = 0; p < n; p++) if (fg[p]) { const x = p % w; pix.push([x, (p - x) / w]) }
+    const fg = inkMask(data, n), { lab, comps } = components(fg, w, h)
+    if (!comps.length) return null
+    const pick = comps.reduce((a, c) => c.area > a.area ? c : a, comps[0])
+    pix = []
+    for (let p = 0; p < n; p++) if (lab[p] === pick.id) { const x = p % w; pix.push([x, (p - x) / w]) }
     if (pix.length < 24) return null
   } else if (seed) {
     pix = seedGrow(data, w, h, clamp(Math.round(seed[0] * sc), 0, w - 1), clamp(Math.round(seed[1] * sc), 0, h - 1), 56)
@@ -126,9 +168,10 @@ const detectPoly = (src, mode, seed) => {
     pix = []
     for (let p = 0; p < n; p++) if (lab[p] === pick.id) { const x = p % w; pix.push([x, (p - x) / w]) }
   }
+  const inv = 1 / sc
+  if (wantPoly) { const cp = contourPoly(pix, w, h); if (cp && cp.length >= 3 && cp.length <= 14) return cp.map(p => [clamp(p[0] * inv, 0, src.width), clamp(p[1] * inv, 0, src.height)]) }
   const rect = minRect(pix)
   if (!rect) return null
-  const inv = 1 / sc
   return rect.map(p => [clamp(p[0] * inv, 0, src.width), clamp(p[1] * inv, 0, src.height)])
 }
 export const classifyImage = src => {
@@ -187,7 +230,7 @@ export const initAutoDetect = ({ tc, T, tDraw, tStatus, getMapOn }) => {
     const mapOn = !!getMapOn(), route = mapOn ? 'aerial' : routeNow()
     if (route === 'ground') { tStatus('Ground photo: tap the 4 deck-floor corners (② Trace) in order — back-left → back-right → front-right → front-left — then ✅ Use outline to reconstruct in 3D.'); return false }
     if (mapOn && !seed) { tStatus('Click directly on your deck/patio in the satellite image — I will detect that shape (panning to the backyard helps).'); return false }
-    const poly = detectPoly(T.img, route === 'drawing' ? 'ink' : 'region', route === 'drawing' ? null : seed)
+    const poly = detectPoly(T.img, route === 'drawing' ? 'ink' : 'region', route === 'drawing' ? null : seed, route === 'drawing')
     if (!poly) { tStatus('Could not find a clear shape there — click right on your deck/patio, or trace the corners manually.'); return false }
     T.poly = poly; tDraw()
     const lead = route === 'ground' ? 'Approximate outline (angled photo) — ' : route === 'drawing' ? 'Outlined the largest shape — ' : seed ? 'Detected around your click — ' : 'Footprint proposed — '

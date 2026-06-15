@@ -1,8 +1,8 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
-import { initPermits, updatePermits } from './codes.js?v=269'
-import { initMapTrace, sitePlanSVG, cropForPlan, mapPlanSnapshot } from './maptrace.js?v=269'
-import { initAutoDetect } from './autodetect.js?v=269'
+import { initPermits, updatePermits } from './codes.js?v=270'
+import { initMapTrace, sitePlanSVG, cropForPlan, mapPlanSnapshot } from './maptrace.js?v=270'
+import { initAutoDetect } from './autodetect.js?v=270'
 const LS = 'amnideck.cfg.v2', LSP = 'amnideck.prices.v1'
 const defCfg = { length: 12, depth: 8, height: 16, spacing: 16, decking: 'pt', attach: 'ledger', joist: '2x8', fascia: false, skirting: false, stain: 'redwood', house: 'cream', mode: 'rect', polygon: null, house_edge: 0, stairs: [{ side: 'front', width: 48, offset: -1 }], railing: { front: false, left: false, right: false, style: 'wood' }, door: { pos: -1, width: 60, rise: 7, panels: 2, count: 1 } }
 const migrate = c => !c ? null : (Array.isArray(c.stairs) ? c : { ...c, stain: c.stain || 'redwood', door: c.door || { pos: -1, width: 60, rise: 7 }, stairs: c.stairs?.enabled ? [{ side: c.stairs.side, width: c.stairs.width, offset: c.stairs.offset }] : [] })
@@ -10,7 +10,7 @@ let cfg = migrate(JSON.parse(localStorage.getItem(LS) || localStorage.getItem('a
 let priceEdits = JSON.parse(localStorage.getItem(LSP) || '{}')
 let catalog = {}, core = null, out = null
 const $ = s => document.querySelector(s)
-const wasmReady = fetch('deck_core.wasm?v=269').then(r => r.arrayBuffer()).then(b => WebAssembly.instantiate(b, {})).then(w => core = w.instance.exports)
+const wasmReady = fetch('deck_core.wasm?v=270').then(r => r.arrayBuffer()).then(b => WebAssembly.instantiate(b, {})).then(w => core = w.instance.exports)
 const catReady = fetch('catalog.json').then(r => r.json()).then(j => catalog = j)
 const callCore = c => {
   const bytes = new TextEncoder().encode(JSON.stringify({ ...c, polygon: c.mode === 'poly' && Array.isArray(c.polygon) && c.polygon.length >= 3 ? c.polygon : [], house_edge: c.house_edge ?? -1, issue_date: new Date().toLocaleDateString('en-CA') }))
