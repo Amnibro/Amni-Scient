@@ -1,5 +1,10 @@
 # Changelog 
 
+## [5.26.0] - 2026-06-16 - Brain-module content x2: Pattern + Anagram (verified)
+- PATTERN PUZZLES 160 -> 325 (2.03x, +165). Generated numeric sequences (arithmetic, geometric, squares, triangular, Fibonacci, primes, factorials, powers, pronic) with COMPUTED answers; each new puzzle validated so the answer is correct AND present in the 4 options, options de-duplicated, no repeated sequences. Doubled every level 1-5.
+- ANAGRAM WORDS 300 -> 682 (2.27x, +382). New real English words across all 5 length tiers (4-8 letters), each with a kid-friendly definition + emoji category. Hard validation dropped anything off-length, non-alphabetic, or duplicated against the existing 300 or across tiers — final 682 words, 0 duplicates.
+- New tooling: learn/tests/layout/_patterngen.js, _anabuild.js (+ per-tier word JSON). sw cache v1245->v1246.
+
 ## [5.25.0] - 2026-06-16 - Brain-module content x2-3: Chess + Morse (verified)
 - CHESS PUZZLES 42 -> 114 (2.7x). Built a real mate-in-1 verifier (move-gen + check + checkmate detection, handles X-ray, promotion, smothered). It caught 3 BROKEN existing puzzles — #19 d1-h5 (white king already in check from black rook, move doesn't resolve it), #37 h1-a1 (own bishop blocks the rook's a-file so it never checks), #40 b5-c7 (black king escapes to b8) — all removed. Added 27 hand-authored varied patterns + 56 brute-force-harvested mates, then re-verified the ENTIRE pool: 114/114 certified true mate-in-1, 0 problems. Module plays clean.
 - MORSE Q-CODES 27 -> 86. Added 59 authentic ham-radio abbreviations/Q-codes (AGN, CFM, QRL, QRX, QSB, 73/88 family, etc.); each code's Morse is COMPUTED from _morseMap and round-trip-decoded back to the key to guarantee correctness (0 errors).
