@@ -1,5 +1,9 @@
 # Changelog 
 
+## [5.27.0] - 2026-06-16 - Brain-module content x2: Word Search (405 -> 807)
+- WORD SEARCH word banks DOUBLED — every one of the 27 topics went from 15 to ~30 words (+402 total). Each new word validated: length 3-12 (fits the 12x12 grid), A-Z only, no duplicate within its topic or against the existing bank, definition present. Rejected the over-length PARALLELOGRAM and the non-word WEEVILBUG during authoring. Since each puzzle draws 8 random words from a topic, doubling the bank sharply cuts repeat encounters.
+- New tooling: learn/tests/layout/_wsbuild.js (+_wsextract.js avoid-list). sw cache v1246->v1247.
+
 ## [5.26.0] - 2026-06-16 - Brain-module content x2: Pattern + Anagram (verified)
 - PATTERN PUZZLES 160 -> 325 (2.03x, +165). Generated numeric sequences (arithmetic, geometric, squares, triangular, Fibonacci, primes, factorials, powers, pronic) with COMPUTED answers; each new puzzle validated so the answer is correct AND present in the 4 options, options de-duplicated, no repeated sequences. Doubled every level 1-5.
 - ANAGRAM WORDS 300 -> 682 (2.27x, +382). New real English words across all 5 length tiers (4-8 letters), each with a kid-friendly definition + emoji category. Hard validation dropped anything off-length, non-alphabetic, or duplicated against the existing 300 or across tiers — final 682 words, 0 duplicates.
