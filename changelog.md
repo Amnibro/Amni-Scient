@@ -1,5 +1,10 @@
 # Changelog 
 
+## [5.30.0] - 2026-06-16 - Brain modules to 3x: Anagram 907, Word Search ~1205
+- ANAGRAM 682 -> 907 (exactly 3x the original 300). +225 real words across all 5 length tiers (4-8 letters), each with kid-friendly def + emoji category. Hard validation dropped off-length/non-alpha/duplicate entries (incl. cross-round dups); final 907 words, 0 duplicates.
+- WORD SEARCH ~807 -> ~1205 (~3x the original 405). Every one of the 27 topics went from ~30 to ~45 words (+393). Each new word validated: length 3-12 (fits 12x12 grid), A-Z, no dup within topic, definition present; over-length and duplicate candidates rejected.
+- Both agent-drafted then machine-validated; nothing trusted blindly. sw cache v1249->v1250.
+
 ## [5.29.0] - 2026-06-16 - Brain modules deeper (round 2): Chess 282, Logic 457, Pattern 410
 - CHESS 114 -> 282 (6.7x the original 42). Rebuilt with up to 3 verified mates per king-square for spread; the mate-in-1 verifier certifies all 282 (0 problems).
 - LOGIC 353 -> 457. +104 net-new: more programmatic math word problems (subtraction, grouping multiplication, division, legs-counting, consecutive sums, halving, unit price, temperature, ratios — all computed answers) + 20 fresh verified riddles. Full-bank audit: 457 puzzles, 0 structural problems, 0 duplicates.
