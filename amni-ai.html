@@ -304,11 +304,7 @@ OPENAI_API_KEY=anything</pre>
 <div class="flow-row">
 <span class="flow-step">ASSERT FAIL?</span>
 <span class="flow-arrow">&rarr;</span>
-<span class="flow-step">PERTURB SMALL</span>
-<span class="flow-arrow">&rarr;</span>
-<span class="flow-step">PERTURB MEDIUM</span>
-<span class="flow-arrow">&rarr;</span>
-<span class="flow-step">PERTURB LARGE</span>
+<span class="flow-step">ADAPTIVE RETRY</span>
 <span class="flow-arrow">&rarr;</span>
 <span class="flow-step terminal">RECOVER OR REPORT</span>
 </div>
@@ -340,34 +336,7 @@ OPENAI_API_KEY=anything</pre>
 <span class="flow-arrow">&rarr;</span>
 <span class="flow-step terminal">MARK TESTED WHEN HUMAN CONFIRMS</span>
 </div>
-<p style="text-align:center;color:var(--dim);max-width:720px;margin:1.5rem auto .5rem;font-size:.88rem">Adam can also look at <em>itself</em> &mdash; inspect its own source, propose changes against an append-only log, and run experiments in scoped Python sandboxes:</p>
-<div class="flow-row">
-<span class="flow-step">self_inspect SUBSYSTEM</span>
-<span class="flow-arrow">&rarr;</span>
-<span class="flow-step">self_improvement.propose</span>
-<span class="flow-arrow">&rarr;</span>
-<span class="flow-step">APPEND-ONLY JSONL LOG</span>
-<span class="flow-arrow">&rarr;</span>
-<span class="flow-step">STATE MACHINE</span>
-</div>
-<div class="flow-row">
-<span class="flow-step">venv create &lt;name&gt;</span>
-<span class="flow-arrow">&rarr;</span>
-<span class="flow-step">&lt;workdir&gt;/.adam-venvs/</span>
-<span class="flow-arrow">&rarr;</span>
-<span class="flow-step">pip install (validated)</span>
-<span class="flow-arrow">&rarr;</span>
-<span class="flow-step terminal">RUN EXPERIMENT (TIMEOUTED)</span>
-</div>
-<div class="flow-row">
-<span class="flow-step">proposed</span>
-<span class="flow-arrow">&rarr;</span>
-<span class="flow-step">attempted</span>
-<span class="flow-arrow">&rarr;</span>
-<span class="flow-step">validated</span>
-<span class="flow-arrow">&rarr;</span>
-<span class="flow-step terminal">deployed | declined | reverted</span>
-</div>
+<p style="text-align:center;color:var(--dim);max-width:720px;margin:1.5rem auto .5rem;font-size:.88rem">Adam can also look at <em>itself</em> &mdash; inspect its own subsystems, propose improvements against an append-only audit log, and run experiments in isolated, time-boxed sandboxes before anything is adopted. Every proposal moves through a tracked lifecycle (proposed &rarr; validated &rarr; deployed, declined, or reverted) so nothing changes silently.</p>
 </section>
 
 <section>
@@ -395,15 +364,15 @@ OPENAI_API_KEY=anything</pre>
 <div class="card-grid">
 <div class="card">
 <h3>LEXICAL FILTER</h3>
-<p>Fast regex for obvious phrasings. Catches the easy cases instantly without engaging anything heavier downstream.</p>
+<p>Fast pattern match for obvious phrasings. Catches the easy cases instantly without engaging anything heavier downstream.</p>
 </div>
 <div class="card">
-<h3>GF(17) HASH MATCHER</h3>
-<p>Hash-pattern matching over n-grams. Catches lexical variants of known unsafe intents that escape the regex layer.</p>
+<h3>VARIANT MATCHER</h3>
+<p>Catches reworded and lightly-obfuscated variants of known unsafe intents that slip past the first layer.</p>
 </div>
 <div class="card">
 <h3>SEMANTIC INTENT SCREEN</h3>
-<p>MiniLM embeddings + cosine distance against a canonical intent bank. Pre-decoders handle common encoding tricks so the semantic match sees the actual intent, not the obfuscation.</p>
+<p>Embedding-based intent matching against a canonical bank, with pre-decoding of common encoding tricks so the screen sees the real intent, not the obfuscation.</p>
 </div>
 </div>
 <p style="text-align:center;color:var(--dim);max-width:660px;margin:1.5rem auto 0;font-size:.78rem">Validated against a held-out benign set with no measurable false positives. We don't publish per-family bypass rates &mdash; that would be a roadmap for attackers. Legitimate security researchers can request the internal harness via <a href="mailto:amnibro7@gmail.com" style="color:var(--accent)">amnibro7@gmail.com</a>.</p>
@@ -419,13 +388,13 @@ OPENAI_API_KEY=anything</pre>
 <tr><td>Inference</td><td>TMU lookups via GPU texture units, NVMe&rarr;VRAM progressive tier streaming</td></tr>
 <tr><td>VRAM minimum</td><td>4 GB (Adam only) &middot; 8 GB recommended (Adam + web-crawler tier)</td></tr>
 <tr><td>RAM minimum</td><td>8 GB &middot; 16 GB for full lesson bank + persona overlays</td></tr>
-<tr><td>Inference speed</td><td>~18 tok/s on RX 7800 XT &middot; ~25 tok/s on RTX 4070</td></tr>
+<tr><td>Inference speed</td><td>Real-time interactive generation on consumer GPUs (AMD ROCm / NVIDIA CUDA)</td></tr>
 <tr><td>First-token latency</td><td>~15s cold-start + ~60s background warmup (user can chat during warmup; LUT hits answer instantly) &middot; 80ms LUT hit on cached queries</td></tr>
-<tr><td>Closed-loop memory</td><td>PTEX&nbsp;+&nbsp;ATEX spine: verify-after-write (no silent half-writes), instant exact recall, confidence-graded tiers (T0 exact &rarr; T1 grounded &rarr; T2 model), anti-pattern suppression &mdash; a correction is verified, never re-emitted, and grounds future replies. Non-personal facts federate; personal stays local.</td></tr>
-<tr><td>Verify before answering</td><td>Code answers run in a sandbox + self-test before they ship; math answers default to self-consistency (sample-and-vote majority) instead of a single greedy guess. The verify&rarr;correct loop is the runtime default for verifiable tasks &mdash; the lever that lifts correctness without a bigger model.</td></tr>
-<tr><td>Seed lesson bank</td><td>56-1792 lessons depending on install (60 default starter; <code>--seed</code> + corpus modules add more). Grows continuously via the 24/7 LearningDaemon.</td></tr>
-<tr><td>Personas</td><td>11 built-in (Alfred [default], Adam, Mentor, Rikku, Yoda, Pirate Captain, Scientist, Steve Jobs, Haiku Poet, Sherlock Holmes, Jarvis) &middot; unlimited user-created via <code>/persona create</code> or the in-UI &quot;learn new&quot; flow that web-scrapes the voice profile. Every persona inherits a SAFETY BASELINE: voice and style only, never behavior or worldview. No persona belittles the user, asserts religious / philosophical / metaphysical positions, or pushes politics &mdash; if the persona&rsquo;s flavor would conflict, Adam drops it for that response and answers plainly.</td></tr>
-<tr><td>Skills</td><td>42 skills across coding (read/write/edit/diff/format/symbols/auto-import/rename/git/test_run/run_python), live data widgets (weather/system/time/news/stock/file_preview/disk/git_status), content ingestion (scan/ingest_url/ingest_pdf/ingest_youtube/build_curriculum), memory + reasoning (mem/coach/kg_query/learning_daemon), automation (schedule_loop/watch), voice (tts/stt), vision (describe_image), and meta (parse_error/project_info/export_session/prune_sessions/web/calc/time).</td></tr>
+<tr><td>Closed-loop memory</td><td>PTEX&nbsp;+&nbsp;ATEX spine: verify-after-write (no silent half-writes), instant exact recall, confidence-graded recall and correction suppression &mdash; a correction is verified, never re-emitted, and grounds future replies. Non-personal facts federate; personal stays local.</td></tr>
+<tr><td>Verify before answering</td><td>Code answers run in a sandbox + self-test before they ship; reasoning answers are cross-checked rather than taken from a single guess. Verifying before responding is the runtime default for checkable tasks &mdash; the lever that lifts correctness without a bigger model.</td></tr>
+<tr><td>Seed lesson bank</td><td>Ships with a starter lesson bank that grows continuously via the 24/7 learning daemon.</td></tr>
+<tr><td>Personas</td><td>A dozen built-in voices (Alfred is the default) &middot; unlimited user-created via <code>/persona create</code> or the in-UI &quot;learn new&quot; flow that builds a voice profile on demand. Every persona inherits a SAFETY BASELINE: voice and style only, never behavior or worldview. No persona belittles the user, asserts religious / philosophical / metaphysical positions, or pushes politics &mdash; if the persona&rsquo;s flavor would conflict, Adam drops it for that response and answers plainly.</td></tr>
+<tr><td>Skills</td><td>A broad, extensible skill set spanning coding (read/write/edit/refactor/git/run/test), live data widgets (weather/system/time/news/stock/disk/git), content ingestion (URLs/PDFs/YouTube/curriculum building), memory &amp; reasoning, automation, voice, vision, and project utilities &mdash; with room to add your own.</td></tr>
 <tr><td>API compatibility</td><td>Ollama-shape (<code>/api/tags</code>, <code>/api/chat</code>, <code>/api/generate</code>, <code>/api/embed</code>, <code>/api/version</code>) &middot; OpenAI-shape (<code>/v1/chat/completions</code>, <code>/v1/models</code>) with tool-calling &middot; MCP (<code>/mcp</code>) &middot; native (<code>/chat</code>, <code>/chat/stream</code>, <code>/skills/*</code>, <code>/memory/*</code>, <code>/tasks</code>, <code>/voice/*</code>, <code>/vision/*</code>) &middot; UI surfaces (<code>/</code> unified, <code>/jarvis</code>, <code>/hud</code>)</td></tr>
 <tr><td>UI surfaces</td><td>Four on the same <code>:7700</code> port: the unified UI at root (<code>/</code>) &mdash; integrated status bar, left-rail navigation, and a loading screen while the GF(17) weights warm; Jarvis-style neon UI with widgets + MediaPipe hand gestures + paste/drop image (<code>/jarvis</code>); and the tactical HUD dashboard (<code>/hud</code>).</td></tr>
 <tr><td>Voice</td><td>Local-first: Piper TTS (~50MB ONNX voices) + faster-whisper STT. Per-sentence streaming TTS so Adam starts speaking before the reply finishes generating. Continuous conversation mode with VAD, barge-in, and Whisper-hallucination filtering. Browser Web Speech as fallback.</td></tr>
@@ -433,10 +402,10 @@ OPENAI_API_KEY=anything</pre>
 <tr><td>Gestures</td><td>MediaPipe Hands in-browser (60 fps). Six gestures: pinch (toggle voice), fist (clear chat), open palm (system check), peace (cycle theme), point (next question), thumb up (submit).</td></tr>
 <tr><td>Autonomous learning</td><td>24/7 LearningDaemon: curiosity engine picks knowledge gaps, parallel ingest workers fetch &amp; distill via DDG, atomic Q-A extraction (5&times; density vs raw chunks), multi-source consensus tracking, sleep consolidation (clusters &rarr; summary cells), spaced repetition on stale facts. Yields cleanly when user is active.</td></tr>
 <tr><td>Knowledge graph</td><td>SPO triple store (subject-predicate-object) with BFS path-traversal (&quot;what connects X to Y&quot;), per-cell provenance, multi-source consensus, fuzzy subject search.</td></tr>
-<tr><td>Self-verifying edits</td><td>Every <code>file_write</code> / <code>code_edit</code> runs disk sha256 readback + per-extension semantic check (Python <code>ast.parse</code>+<code>compile</code>, JSON / YAML / TOML parse, bracket-balance for 14 brace-syntax languages). Python edits auto-spawn sibling <code>test_&lt;stem&gt;.py</code> via pytest with 20s cap; failing tests flip the verification status to FAIL and surface the failing test names. Unverifiable changes (unknown extension, or <code>.html</code>/<code>.css</code>/<code>.js</code> needing visual review) queue on <code>data/needs_testing.jsonl</code>, visible in /jarvis as a TESTS pill.</td></tr>
+<tr><td>Self-verifying edits</td><td>Every file write / code edit runs a disk read-back + per-language validity check (syntax/parse checks across many languages). Python edits auto-run their sibling unit tests; failing tests flip the verification status to FAIL and surface the failing test names. Unverifiable changes (unknown extension, or <code>.html</code>/<code>.css</code>/<code>.js</code> needing visual review) queue on <code>data/needs_testing.jsonl</code>, visible in /jarvis as a TESTS pill.</td></tr>
 <tr><td>Socratic coach mode</td><td>Ask-answer-ask tutoring loop. Topic + 5 difficulty levels &rarr; Adam generates a question &rarr; you answer &rarr; Adam grades (0-100) with feedback + correct-facts + missing-facts &rarr; next question adapts to your streak. Voice-native mode auto-speaks questions, hints, and grades via Piper streaming TTS. Per-topic mastery tracked in <code>CoachAtlas</code>. Natural-language triggers: "coach me on X", "quiz me on X", "let's practice X". Per-topic deck export to Markdown / Anki-import txt / JSON; daily-use streak gamification (🔥 ≥3d / ⚡ ≥14d badge tiers).</td></tr>
 <tr><td>Wake-word convo</td><td>Continuous voice listening with VAD + barge-in + Whisper-hallucination filter. Optional WAKE gate (<code>"Adam, ..."</code> / <code>"Hey Adam, ..."</code>) — Adam only responds in convo mode when directly addressed; third-person narration ("Adam is sleeping") is rejected. Pair with coach voice-mode for fully hands-free Socratic tutoring.</td></tr>
-<tr><td>Custom gesture training</td><td>Adam's 6 built-in gestures (pinch / fist / open-palm / peace / point / thumb-up) are bound to default actions. The cam-panel's <code>+ TRAIN</code> button records 1.5s of live MediaPipe landmark data, extracts a 10-dim feature vector (5 finger-extension flags + 5 normalized fingertip distances), stores it as a template. Recognition matches new templates under a 0.18 Euclidean threshold and fires the bound action (chat-prompt / built-in / panel-toggle). Up to 20 custom gestures, exportable as portable JSON packs (<code>amni-ai-gesture-pack</code> schema), importable with dedup + sanitization.</td></tr>
+<tr><td>Custom gesture training</td><td>Six built-in gestures (pinch / fist / open-palm / peace / point / thumb-up) bound to default actions, plus custom training: the cam-panel's <code>+ TRAIN</code> button records a brief sample of live hand-landmark data and binds the learned gesture to an action (chat prompt / built-in / panel toggle). Custom gestures export and import as portable JSON packs.</td></tr>
 <tr><td>Inline rendering</td><td>Markdown (code blocks, lists, links), <strong>KaTeX math</strong> (<code>$x^2+1$</code> inline and <code>$$...$$</code> display with graceful CDN fallback, dollar-amount guard), <strong>Mermaid diagrams</strong> (flowcharts / sequence / state / ER / class / gantt / mindmap with custom Jarvis dark theme), syntax-highlighted code, and 9 widget types (weather / system / time / news / stock / disk / git / file_change / file_preview) all render inline in chat bubbles.</td></tr>
 <tr><td>Auditability</td><td>Every state-mutating action is timestamped + visible: <code>data/shell_history.jsonl</code> (all shell+git invocations with rc + stdout/stderr tails), <code>data/verification_log.jsonl</code> (per-edit verification trace), <code>data/needs_testing.jsonl</code> (queued unverifiable edits), <code>logs/agent_skill_calls.jsonl</code> (per-skill latency + error rate). All surfaced in /jarvis as color-coded header pills (SHELL / TESTS / LEARNING) plus a one-tap <strong>24-hour BRIEFING</strong> card aggregating facts learned, runs, errors, verified edits, skill calls, and coach streak.</td></tr>
 <tr><td>Platform</td><td>Windows 10/11 + Linux &middot; Python 3.10+ &middot; AMD ROCm 7.2+ or NVIDIA CUDA 12+</td></tr>
