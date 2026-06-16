@@ -1,5 +1,10 @@
 # Changelog 
 
+## [5.25.0] - 2026-06-16 - Brain-module content x2-3: Chess + Morse (verified)
+- CHESS PUZZLES 42 -> 114 (2.7x). Built a real mate-in-1 verifier (move-gen + check + checkmate detection, handles X-ray, promotion, smothered). It caught 3 BROKEN existing puzzles — #19 d1-h5 (white king already in check from black rook, move doesn't resolve it), #37 h1-a1 (own bishop blocks the rook's a-file so it never checks), #40 b5-c7 (black king escapes to b8) — all removed. Added 27 hand-authored varied patterns + 56 brute-force-harvested mates, then re-verified the ENTIRE pool: 114/114 certified true mate-in-1, 0 problems. Module plays clean.
+- MORSE Q-CODES 27 -> 86. Added 59 authentic ham-radio abbreviations/Q-codes (AGN, CFM, QRL, QRX, QSB, 73/88 family, etc.); each code's Morse is COMPUTED from _morseMap and round-trip-decoded back to the key to guarantee correctness (0 errors).
+- New tooling: learn/tests/layout/_chessverify.js (mate verifier), _chessbuild.js, _morsegen.js. sw cache v1244->v1245.
+
 ## [5.24.0] - 2026-06-16 - Amni-Learn module bug sweep: Sudoku unsolvable-puzzle fix + data + anti-repeat
 - FULL headless sweep of all 124 module buttons (puppeteer+Edge): init/render pass AND a 14-round click/keypress/canvas interaction storm per module. Result: 124/124 launch + survive interaction with ZERO JS errors. New harnesses learn/tests/layout/{sweep.js,storm.js}.
 - BROKEN MODULE FIXED — Sudoku (9x9): generate() removed clues with NO uniqueness check while placeNum()/checkWin() validated against the single hidden solution. On hard/expert this made puzzles with multiple solutions, so a logically-VALID entry got flagged "Wrong!" and auto-erased, and alternate valid completions could never win. Added countSolutions() (respects X-Sudoku diagonals) + uniqueness-gated cell removal (mirrors the correct 4x4 version). Verified: every difficulty in classic AND X mode now uniquely solvable; worst-case gen ~0.9s (expert settles ~25 clues when 22 can't stay unique — valid beats impossible).
