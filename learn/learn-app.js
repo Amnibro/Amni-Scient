@@ -10634,6 +10634,14 @@ function playAnimalSound(type) {
     const info = $$('#sort-info');
     const allRounds = {
       1:[
+        {title:"Big vs Small",buckets:["🐘 Big","🐜 Small"],items:[{e:"🐘",b:0},{e:"🐜",b:1},{e:"🐳",b:0},{e:"🐁",b:1},{e:"🦒",b:0},{e:"🐝",b:1},{e:"🦏",b:0},{e:"🐌",b:1}]},
+        {title:"Day vs Night",buckets:["☀️ Day","🌙 Night"],items:[{e:"☀️",b:0},{e:"🌙",b:1},{e:"🌻",b:0},{e:"⭐",b:1},{e:"🌈",b:0},{e:"🦉",b:1},{e:"🦋",b:0},{e:"🦇",b:1}]},
+        {title:"Land vs Air Vehicles",buckets:["🚗 Land","✈️ Air"],items:[{e:"🚗",b:0},{e:"✈️",b:1},{e:"🚌",b:0},{e:"🚁",b:1},{e:"🚲",b:0},{e:"🚀",b:1},{e:"🚜",b:0},{e:"🎈",b:1}]},
+        {title:"Sweet vs Salty",buckets:["🍩 Sweet","🍟 Salty"],items:[{e:"🍩",b:0},{e:"🍟",b:1},{e:"🍰",b:0},{e:"🥨",b:1},{e:"🍫",b:0},{e:"🧀",b:1},{e:"🍪",b:0},{e:"🍿",b:1}]},
+        {title:"Sky vs Ground",buckets:["☁️ Sky","🌳 Ground"],items:[{e:"☁️",b:0},{e:"🌳",b:1},{e:"🌙",b:0},{e:"🪨",b:1},{e:"⭐",b:0},{e:"🌷",b:1},{e:"🌈",b:0},{e:"🍄",b:1}]},
+        {title:"Hot vs Cold Clothes",buckets:["🧤 Cold","🩳 Hot"],items:[{e:"🧤",b:0},{e:"🩳",b:1},{e:"🧣",b:0},{e:"🕶️",b:1},{e:"🧥",b:0},{e:"👙",b:1},{e:"🥾",b:0},{e:"🩴",b:1}]},
+        {title:"Water Animals vs Bugs",buckets:["🐟 Water","🐝 Bugs"],items:[{e:"🐟",b:0},{e:"🐝",b:1},{e:"🐙",b:0},{e:"🦋",b:1},{e:"🦈",b:0},{e:"🐛",b:1},{e:"🐬",b:0},{e:"🐞",b:1}]},
+        {title:"Pets vs Wild",buckets:["🐕 Pet","🦁 Wild"],items:[{e:"🐕",b:0},{e:"🦁",b:1},{e:"🐈",b:0},{e:"🐯",b:1},{e:"🐹",b:0},{e:"🐘",b:1},{e:"🐠",b:0},{e:"🦒",b:1}]},
         {title:'Fruits vs Vegetables',buckets:['🍎 Fruits','🥦 Vegetables'],items:[{e:'🍌',b:0},{e:'🥕',b:1},{e:'🍇',b:0},{e:'🥒',b:1},{e:'🍓',b:0},{e:'🌽',b:1},{e:'🍊',b:0},{e:'🥬',b:1}]},
         {title:'Animals: Land vs Water',buckets:['🌍 Land','🌊 Water'],items:[{e:'🐶',b:0},{e:'🐟',b:1},{e:'🐱',b:0},{e:'🐙',b:1},{e:'🐘',b:0},{e:'🦈',b:1},{e:'🐴',b:0},{e:'🐋',b:1}]},
         {title:'Hot vs Cold',buckets:['🔥 Hot','❄️ Cold'],items:[{e:'☀️',b:0},{e:'⛄',b:1},{e:'🌋',b:0},{e:'🧊',b:1},{e:'🏝️',b:0},{e:'🐧',b:1},{e:'🌶️',b:0},{e:'🏔️',b:1}]},
@@ -10648,6 +10656,14 @@ function playAnimalSound(type) {
         {title:'Loud vs Quiet',buckets:['🔊 Loud','🤫 Quiet'],items:[{e:'🦁 Lion roar',b:0},{e:'🐱 Cat purr',b:1},{e:'⚡ Thunder',b:0},{e:'🐌 Snail',b:1},{e:'🥁 Drum',b:0},{e:'📚 Library',b:1},{e:'🚒 Siren',b:0},{e:'🪶 Feather',b:1}]}
       ],
       2:[
+        {title:"Living vs Nonliving",buckets:["🌳 Living","🪨 Nonliving"],items:[{e:"🌳",b:0},{e:"🪨",b:1},{e:"🐶",b:0},{e:"🚗",b:1},{e:"🐝",b:0},{e:"📱",b:1},{e:"🌻",b:0},{e:"⛰️",b:1}]},
+        {title:"Reptiles vs Birds",buckets:["🐍 Reptile","🦅 Bird"],items:[{e:"🐍",b:0},{e:"🦅",b:1},{e:"🦎",b:0},{e:"🦜",b:1},{e:"🐢",b:0},{e:"🐧",b:1},{e:"🐊",b:0},{e:"🦆",b:1}]},
+        {title:"Float vs Sink",buckets:["🛟 Floats","🪨 Sinks"],items:[{e:"🛟",b:0},{e:"🪨",b:1},{e:"🦆",b:0},{e:"🔩",b:1},{e:"🪵",b:0},{e:"⚓",b:1},{e:"🍃",b:0},{e:"🔨",b:1}]},
+        {title:"Instruments vs Sports Gear",buckets:["🎸 Music","⚽ Sport"],items:[{e:"🎸",b:0},{e:"⚽",b:1},{e:"🥁",b:0},{e:"🏀",b:1},{e:"🎺",b:0},{e:"🎾",b:1},{e:"🎻",b:0},{e:"🏈",b:1}]},
+        {title:"Insects vs Mammals",buckets:["🐜 Insect","🐘 Mammal"],items:[{e:"🐜",b:0},{e:"🐘",b:1},{e:"🦗",b:0},{e:"🐅",b:1},{e:"🐝",b:0},{e:"🐒",b:1},{e:"🦋",b:0},{e:"🐴",b:1}]},
+        {title:"Summer vs Winter",buckets:["🏖️ Summer","⛷️ Winter"],items:[{e:"🏖️",b:0},{e:"⛷️",b:1},{e:"🍦",b:0},{e:"☃️",b:1},{e:"😎",b:0},{e:"🧤",b:1},{e:"🩴",b:0},{e:"🛷",b:1}]},
+        {title:"Tools vs Toys",buckets:["🔨 Tool","🧸 Toy"],items:[{e:"🔨",b:0},{e:"🧸",b:1},{e:"🪚",b:0},{e:"🪀",b:1},{e:"🔧",b:0},{e:"🪁",b:1},{e:"🪛",b:0},{e:"🎈",b:1}]},
+        {title:"Breakfast vs Dinner",buckets:["🥞 Breakfast","🍝 Dinner"],items:[{e:"🥞",b:0},{e:"🍝",b:1},{e:"🥓",b:0},{e:"🍖",b:1},{e:"🍳",b:0},{e:"🥗",b:1},{e:"🥐",b:0},{e:"🍲",b:1}]},
         {title:'Living vs Non-Living',buckets:['🌱 Living','🪨 Non-Living'],items:[{e:'🌸',b:0},{e:'🪑',b:1},{e:'🐝',b:0},{e:'📱',b:1},{e:'🌲',b:0},{e:'🔑',b:1},{e:'🐸',b:0},{e:'💎',b:1}]},
         {title:'Day vs Night',buckets:['🌞 Day','🌙 Night'],items:[{e:'☀️',b:0},{e:'⭐',b:1},{e:'🌈',b:0},{e:'🦉',b:1},{e:'🦋',b:0},{e:'🦇',b:1},{e:'🐓',b:0},{e:'🌜',b:1}]},
         {title:'Big vs Small',buckets:['🐋 Big','🐜 Small'],items:[{e:'🐘',b:0},{e:'🐜',b:1},{e:'🏔️',b:0},{e:'🌱',b:1},{e:'🐋',b:0},{e:'🐛',b:1},{e:'🌳',b:0},{e:'🍓',b:1}]},
@@ -10662,6 +10678,14 @@ function playAnimalSound(type) {
         {title:'Tools vs Toys',buckets:['🔧 Tool','🎮 Toy'],items:[{e:'🔨 Hammer',b:0},{e:'🧸 Teddy bear',b:1},{e:'🪛 Screwdriver',b:0},{e:'🎮 Controller',b:1},{e:'🪚 Saw',b:0},{e:'🧩 Puzzle',b:1},{e:'🔩 Wrench',b:0},{e:'🪀 Yo-yo',b:1}]}
       ],
       3:[
+        {title:"Mammals vs Fish",buckets:["🐬 Mammal","🐠 Fish"],items:[{e:"🐬",b:0},{e:"🐠",b:1},{e:"🐳",b:0},{e:"🐟",b:1},{e:"🦭",b:0},{e:"🦈",b:1},{e:"🦦",b:0},{e:"🐡",b:1}]},
+        {title:"Solid vs Liquid",buckets:["🧊 Solid","💧 Liquid"],items:[{e:"🧊",b:0},{e:"💧",b:1},{e:"🪨",b:0},{e:"🥛",b:1},{e:"🧱",b:0},{e:"🌊",b:1},{e:"📦",b:0},{e:"☕",b:1}]},
+        {title:"Herbivore vs Carnivore",buckets:["🦌 Herbivore","🦁 Carnivore"],items:[{e:"🦌",b:0},{e:"🦁",b:1},{e:"🐘",b:0},{e:"🐺",b:1},{e:"🐄",b:0},{e:"🦈",b:1},{e:"🐇",b:0},{e:"🐊",b:1}]},
+        {title:"Plants vs Animals",buckets:["🌳 Plant","🦅 Animal"],items:[{e:"🌳",b:0},{e:"🦅",b:1},{e:"🌻",b:0},{e:"🐠",b:1},{e:"🌵",b:0},{e:"🐝",b:1},{e:"🍄",b:0},{e:"🐅",b:1}]},
+        {title:"Even vs Odd Numbers",buckets:["2️⃣ Even","1️⃣ Odd"],items:[{e:"2️⃣",b:0},{e:"1️⃣",b:1},{e:"4️⃣",b:0},{e:"3️⃣",b:1},{e:"6️⃣",b:0},{e:"5️⃣",b:1},{e:"8️⃣",b:0},{e:"7️⃣",b:1}]},
+        {title:"2D vs 3D Shapes",buckets:["🔺 2D","🧊 3D"],items:[{e:"🔺",b:0},{e:"🧊",b:1},{e:"⬜",b:0},{e:"⚽",b:1},{e:"🔵",b:0},{e:"📦",b:1},{e:"⭐",b:0},{e:"🔶",b:1}]},
+        {title:"Writing vs Eating Tools",buckets:["✏️ Write","🍴 Eat"],items:[{e:"✏️",b:0},{e:"🍴",b:1},{e:"🖊️",b:0},{e:"🥄",b:1},{e:"🖍️",b:0},{e:"🥢",b:1},{e:"📝",b:0},{e:"🍽️",b:1}]},
+        {title:"Day Sky vs Night Sky",buckets:["☀️ Day","🌙 Night"],items:[{e:"☀️",b:0},{e:"🌙",b:1},{e:"🌈",b:0},{e:"⭐",b:1},{e:"⛅",b:0},{e:"🌌",b:1},{e:"🦅",b:0},{e:"🦉",b:1}]},
         {title:'Metals vs Non-Metals',buckets:['⚙️ Metals','💨 Non-Metals'],items:[{e:'Fe (Iron)',b:0},{e:'O (Oxygen)',b:1},{e:'Cu (Copper)',b:0},{e:'N (Nitrogen)',b:1},{e:'Au (Gold)',b:0},{e:'C (Carbon)',b:1},{e:'Ag (Silver)',b:0},{e:'He (Helium)',b:1}]},
         {title:'Vertebrates vs Invertebrates',buckets:['🦴 Vertebrate','🪱 Invertebrate'],items:[{e:'🐍 Snake',b:0},{e:'🐙 Octopus',b:1},{e:'🐸 Frog',b:0},{e:'🦋 Butterfly',b:1},{e:'🐟 Fish',b:0},{e:'🐌 Snail',b:1},{e:'🦅 Eagle',b:0},{e:'🕷 Spider',b:1}]},
         {title:'Renewable vs Non-Renewable',buckets:['♻️ Renewable','⛽ Non-Renewable'],items:[{e:'☀️ Solar',b:0},{e:'🛢️ Oil',b:1},{e:'💨 Wind',b:0},{e:'⛏️ Coal',b:1},{e:'🌊 Hydro',b:0},{e:'⚛️ Nuclear',b:1},{e:'🌿 Biomass',b:0},{e:'🔥 Gas',b:1}]},
@@ -10676,6 +10700,12 @@ function playAnimalSound(type) {
         {title:'Mass vs Weight',buckets:['⚖️ Mass','🏋️ Weight'],items:[{e:'Measured in kg',b:0},{e:'Measured in N',b:1},{e:'Same on Moon',b:0},{e:'Less on Moon',b:1},{e:'Amount of matter',b:0},{e:'Force from gravity',b:1},{e:'Scalar quantity',b:0},{e:'Vector quantity',b:1}]}
       ],
       4:[
+        {title:"Producers vs Consumers",buckets:["🌳 Producer","🦁 Consumer"],items:[{e:"🌳",b:0},{e:"🦁",b:1},{e:"🌻",b:0},{e:"🐺",b:1},{e:"🌿",b:0},{e:"🦅",b:1},{e:"🌱",b:0},{e:"🐻",b:1}]},
+        {title:"Renewable vs Fossil Energy",buckets:["☀️ Renewable","⛽ Fossil"],items:[{e:"☀️",b:0},{e:"⛽",b:1},{e:"💨",b:0},{e:"🛢️",b:1},{e:"🌊",b:0},{e:"🏭",b:1},{e:"🔋",b:0},{e:"🔥",b:1}]},
+        {title:"Vertebrate vs Invertebrate",buckets:["🐕 Vertebrate","🐙 Invertebrate"],items:[{e:"🐕",b:0},{e:"🐙",b:1},{e:"🦅",b:0},{e:"🦋",b:1},{e:"🐍",b:0},{e:"🦀",b:1},{e:"🐟",b:0},{e:"🐌",b:1}]},
+        {title:"Prime vs Composite",buckets:["3️⃣ Prime","4️⃣ Composite"],items:[{e:"2️⃣",b:0},{e:"4️⃣",b:1},{e:"3️⃣",b:0},{e:"6️⃣",b:1},{e:"5️⃣",b:0},{e:"8️⃣",b:1},{e:"7️⃣",b:0},{e:"9️⃣",b:1}]},
+        {title:"Ancient vs Modern",buckets:["🏛️ Ancient","🚀 Modern"],items:[{e:"🏺",b:0},{e:"💻",b:1},{e:"🏛️",b:0},{e:"📱",b:1},{e:"🗿",b:0},{e:"🚗",b:1},{e:"⚱️",b:0},{e:"🚀",b:1}]},
+        {title:"Conductors vs Insulators",buckets:["🔩 Conductor","🪵 Insulator"],items:[{e:"🔩",b:0},{e:"🪵",b:1},{e:"🪙",b:0},{e:"🧱",b:1},{e:"⚙️",b:0},{e:"🎈",b:1},{e:"🔌",b:0},{e:"🧽",b:1}]},
         {title:'Acids vs Bases',buckets:['🍋 Acid (pH<7)','🧼 Base (pH>7)'],items:[{e:'Lemon juice',b:0},{e:'Soap',b:1},{e:'Vinegar',b:0},{e:'Baking soda',b:1},{e:'Stomach acid',b:0},{e:'Bleach',b:1},{e:'Battery acid',b:0},{e:'Ammonia',b:1}]},
         {title:'Potential vs Kinetic Energy',buckets:['📦 Potential','🏃 Kinetic'],items:[{e:'Boulder on cliff',b:0},{e:'Rolling ball',b:1},{e:'Stretched spring',b:0},{e:'Flying arrow',b:1},{e:'Water in dam',b:0},{e:'Wind blowing',b:1},{e:'Charged battery',b:0},{e:'Spinning wheel',b:1}]},
         {title:'Prokaryote vs Eukaryote',buckets:['🦠 Prokaryote','🧬 Eukaryote'],items:[{e:'E. coli',b:0},{e:'Human cell',b:1},{e:'Salmonella',b:0},{e:'Yeast',b:1},{e:'Streptococcus',b:0},{e:'Plant cell',b:1},{e:'Archaea',b:0},{e:'Amoeba',b:1}]},
@@ -10690,6 +10720,12 @@ function playAnimalSound(type) {
         {title:'Contact vs Non-Contact Forces',buckets:['🤝 Contact','🌌 Non-Contact'],items:[{e:'Friction',b:0},{e:'Gravity',b:1},{e:'Normal force',b:0},{e:'Magnetism',b:1},{e:'Tension',b:0},{e:'Electrostatic',b:1},{e:'Air resistance',b:0},{e:'Strong nuclear',b:1}]}
       ],
       5:[
+        {title:"Mammals vs Reptiles",buckets:["🦇 Mammal","🐢 Reptile"],items:[{e:"🦇",b:0},{e:"🐢",b:1},{e:"🐋",b:0},{e:"🦎",b:1},{e:"🦫",b:0},{e:"🐍",b:1},{e:"🦔",b:0},{e:"🐊",b:1}]},
+        {title:"Rivers vs Mountains",buckets:["🏞️ River","⛰️ Mountain"],items:[{e:"🏞️",b:0},{e:"⛰️",b:1},{e:"🌊",b:0},{e:"🏔️",b:1},{e:"💧",b:0},{e:"🗻",b:1},{e:"🚣",b:0},{e:"🧗",b:1}]},
+        {title:"Acids vs Bases",buckets:["🍋 Acid","🧼 Base"],items:[{e:"🍋",b:0},{e:"🧼",b:1},{e:"🍊",b:0},{e:"🧴",b:1},{e:"🍅",b:0},{e:"🪥",b:1},{e:"🧃",b:0},{e:"🥚",b:1}]},
+        {title:"Solid vs Gas",buckets:["🧊 Solid","💨 Gas"],items:[{e:"🧊",b:0},{e:"💨",b:1},{e:"🪨",b:0},{e:"🎈",b:1},{e:"🧱",b:0},{e:"☁️",b:1},{e:"💎",b:0},{e:"🌫️",b:1}]},
+        {title:"Herbivore vs Carnivore",buckets:["🐘 Herbivore","🐆 Carnivore"],items:[{e:"🐘",b:0},{e:"🐆",b:1},{e:"🦏",b:0},{e:"🐅",b:1},{e:"🦛",b:0},{e:"🐺",b:1},{e:"🦬",b:0},{e:"🦈",b:1}]},
+        {title:"Light vs Heavy Elements",buckets:["🎈 Light","🥇 Heavy"],items:[{e:"🎈",b:0},{e:"🥇",b:1},{e:"💨",b:0},{e:"⚙️",b:1},{e:"☁️",b:0},{e:"🔩",b:1},{e:"🌬️",b:0},{e:"🪙",b:1}]},
         {title:'Exothermic vs Endothermic',buckets:['🔥 Exothermic','❄️ Endothermic'],items:[{e:'Combustion',b:0},{e:'Photosynthesis',b:1},{e:'Neutralization',b:0},{e:'Electrolysis',b:1},{e:'Rusting',b:0},{e:'Melting ice',b:1},{e:'Respiration',b:0},{e:'Evaporation',b:1}]},
         {title:'Classical vs Quantum Physics',buckets:['🍎 Classical','⚛️ Quantum'],items:[{e:'F=ma',b:0},{e:'Schrödinger eq.',b:1},{e:'Gravity',b:0},{e:'Wave-particle duality',b:1},{e:'Projectile motion',b:0},{e:'Superposition',b:1},{e:'Friction',b:0},{e:'Tunneling',b:1}]},
         {title:'Ionic vs Covalent Bonds',buckets:['⚡ Ionic','🤝 Covalent'],items:[{e:'NaCl',b:0},{e:'H₂O',b:1},{e:'MgO',b:0},{e:'CO₂',b:1},{e:'KBr',b:0},{e:'CH₄',b:1},{e:'CaF₂',b:0},{e:'O₂',b:1}]},
@@ -10704,6 +10740,12 @@ function playAnimalSound(type) {
         {title:'AC vs DC Current',buckets:['🔁 AC','➡️ DC'],items:[{e:'Wall outlet',b:0},{e:'AA battery',b:1},{e:'Power grid',b:0},{e:'USB power',b:1},{e:'60 Hz oscillation',b:0},{e:'Constant polarity',b:1},{e:'Transformers work',b:0},{e:'Solar panel output',b:1}]}
       ],
       6:[
+        {title:"Renewable vs Nonrenewable",buckets:["♻️ Renewable","🛢️ Nonrenewable"],items:[{e:"☀️",b:0},{e:"🛢️",b:1},{e:"💨",b:0},{e:"⛽",b:1},{e:"🌊",b:0},{e:"⛏️",b:1},{e:"🌋",b:0},{e:"🏭",b:1}]},
+        {title:"Producers vs Decomposers",buckets:["🌿 Producer","🍄 Decomposer"],items:[{e:"🌳",b:0},{e:"🍄",b:1},{e:"🌻",b:0},{e:"🦠",b:1},{e:"🌿",b:0},{e:"🐛",b:1},{e:"🌱",b:0},{e:"🪱",b:1}]},
+        {title:"Vertebrate vs Invertebrate",buckets:["🦅 Vertebrate","🦂 Invertebrate"],items:[{e:"🦅",b:0},{e:"🦂",b:1},{e:"🐬",b:0},{e:"🦑",b:1},{e:"🐸",b:0},{e:"🐝",b:1},{e:"🦎",b:0},{e:"🪼",b:1}]},
+        {title:"Conductor vs Insulator",buckets:["🪙 Conductor","🧱 Insulator"],items:[{e:"🪙",b:0},{e:"🧱",b:1},{e:"🔩",b:0},{e:"🪵",b:1},{e:"⚙️",b:0},{e:"🎈",b:1},{e:"🔌",b:0},{e:"🧊",b:1}]},
+        {title:"Warm-blooded vs Cold-blooded",buckets:["🦅 Warm","🐍 Cold"],items:[{e:"🦅",b:0},{e:"🐍",b:1},{e:"🐕",b:0},{e:"🐟",b:1},{e:"🐘",b:0},{e:"🐸",b:1},{e:"🐈",b:0},{e:"🐢",b:1}]},
+        {title:"Prime vs Composite",buckets:["7️⃣ Prime","9️⃣ Composite"],items:[{e:"2️⃣",b:0},{e:"9️⃣",b:1},{e:"3️⃣",b:0},{e:"6️⃣",b:1},{e:"5️⃣",b:0},{e:"8️⃣",b:1},{e:"7️⃣",b:0},{e:"4️⃣",b:1}]},
         {title:'Functional vs Object-Oriented',buckets:['λ Functional','🧩 OOP'],items:[{e:'Immutability',b:0},{e:'Encapsulation',b:1},{e:'Pure functions',b:0},{e:'Inheritance',b:1},{e:'Higher-order fns',b:0},{e:'Polymorphism',b:1},{e:'Map/Reduce',b:0},{e:'Classes & objects',b:1}]},
         {title:'Hash Function vs Cipher',buckets:['#️⃣ Hash','🔐 Cipher'],items:[{e:'SHA-256',b:0},{e:'AES',b:1},{e:'BLAKE3',b:0},{e:'ChaCha20',b:1},{e:'One-way',b:0},{e:'Reversible with key',b:1},{e:'Fixed output size',b:0},{e:'Variable output size',b:1}]},
         {title:'Supervised vs Unsupervised ML',buckets:['👨‍🏫 Supervised','🔍 Unsupervised'],items:[{e:'Linear regression',b:0},{e:'K-means clustering',b:1},{e:'Random forest',b:0},{e:'PCA',b:1},{e:'Logistic regression',b:0},{e:'Autoencoder',b:1},{e:'Has labels',b:0},{e:'No labels',b:1}]},
@@ -12185,6 +12227,8 @@ function playAnimalSound(type) {
         {flag:'🇰🇲',country:'Comoros',capital:'Moroni',continent:'Africa'},
         {flag:'🇨🇻',country:'Cape Verde',capital:'Praia',continent:'Africa'}
       ]
+    ,
+      6:[{flag:"🇿🇲",country:"Zambia",capital:"Lusaka",continent:"Africa"},{flag:"🇲🇼",country:"Malawi",capital:"Lilongwe",continent:"Africa"},{flag:"🇧🇮",country:"Burundi",capital:"Gitega",continent:"Africa"},{flag:"🇧🇯",country:"Benin",capital:"Porto-Novo",continent:"Africa"},{flag:"🇹🇬",country:"Togo",capital:"Lomé",continent:"Africa"},{flag:"🇸🇱",country:"Sierra Leone",capital:"Freetown",continent:"Africa"},{flag:"🇱🇷",country:"Liberia",capital:"Monrovia",continent:"Africa"},{flag:"🇬🇳",country:"Guinea",capital:"Conakry",continent:"Africa"},{flag:"🇬🇼",country:"Guinea-Bissau",capital:"Bissau",continent:"Africa"},{flag:"🇬🇲",country:"The Gambia",capital:"Banjul",continent:"Africa"},{flag:"🇱🇸",country:"Lesotho",capital:"Maseru",continent:"Africa"},{flag:"🇸🇿",country:"Eswatini",capital:"Mbabane",continent:"Africa"},{flag:"🇩🇯",country:"Djibouti",capital:"Djibouti",continent:"Africa"},{flag:"🇸🇩",country:"Sudan",capital:"Khartoum",continent:"Africa"},{flag:"🇱🇾",country:"Libya",capital:"Tripoli",continent:"Africa"},{flag:"🇲🇺",country:"Mauritius",capital:"Port Louis",continent:"Africa"},{flag:"🇸🇹",country:"São Tomé and Príncipe",capital:"São Tomé",continent:"Africa"},{flag:"🇰🇵",country:"North Korea",capital:"Pyongyang",continent:"Asia"},{flag:"🇳🇮",country:"Nicaragua",capital:"Managua",continent:"North America"},{flag:"🇧🇸",country:"Bahamas",capital:"Nassau",continent:"North America"},{flag:"🇧🇧",country:"Barbados",capital:"Bridgetown",continent:"North America"},{flag:"🇬🇩",country:"Grenada",capital:"St. George's",continent:"North America"},{flag:"🇱🇨",country:"Saint Lucia",capital:"Castries",continent:"North America"},{flag:"🇦🇬",country:"Antigua and Barbuda",capital:"St. John's",continent:"North America"},{flag:"🇩🇲",country:"Dominica",capital:"Roseau",continent:"North America"},{flag:"🇲🇪",country:"Montenegro",capital:"Podgorica",continent:"Europe"},{flag:"🇰🇮",country:"Kiribati",capital:"Tarawa",continent:"Oceania"},{flag:"🇹🇻",country:"Tuvalu",capital:"Funafuti",continent:"Oceania"},{flag:"🇲🇭",country:"Marshall Islands",capital:"Majuro",continent:"Oceania"},{flag:"🇫🇲",country:"Micronesia",capital:"Palikir",continent:"Oceania"},{flag:"🇵🇼",country:"Palau",capital:"Ngerulmud",continent:"Oceania"},{flag:"🇳🇷",country:"Nauru",capital:"Yaren",continent:"Oceania"}]
     };
     const facts = {
       'United States':'Population 330M; 50 states; gained independence from Britain in 1776.',
@@ -12347,7 +12391,7 @@ function playAnimalSound(type) {
       'Seychelles':'115-island archipelago in the Indian Ocean; Aldabra atoll hosts giant tortoises.',
       'Comoros':'Volcanic archipelago between Madagascar and Mozambique; world\'s top ylang-ylang producer.',
       'Cape Verde':'Atlantic archipelago off West Africa; Portuguese-speaking; rich morna music tradition (Cesária Évora).'
-    };
+    ,"Zambia":"Home to Victoria Falls (shared with Zimbabwe), one of the largest waterfalls on Earth.","Malawi":"Named for Lake Malawi, a huge freshwater lake teeming with colorful cichlid fish.","Burundi":"A small, hilly East African country; one of the sources of the Nile lies here.","Benin":"Birthplace of the Vodun (voodoo) religion; once the powerful Kingdom of Dahomey.","Togo":"A narrow West African nation stretching from the Gulf of Guinea inland.","Sierra Leone":"Its capital Freetown was founded as a home for freed slaves in the 1790s.","Liberia":"Africa's oldest republic, founded in 1847 by freed American slaves.","Guinea":"Holds some of the world's largest reserves of bauxite, the ore for aluminum.","Guinea-Bissau":"A small West African country known for the Bijagós Archipelago of islands.","The Gambia":"Africa's smallest mainland country, a thin strip along the Gambia River.","Lesotho":"A mountain kingdom entirely surrounded by South Africa; the whole country is above 1,400 m.","Eswatini":"One of the world's last absolute monarchies; renamed from Swaziland in 2018.","Djibouti":"Sits at the mouth of the Red Sea; Lake Assal is the lowest point in Africa.","Sudan":"Has more ancient pyramids than Egypt, built by the Kingdom of Kush.","Libya":"Over 90% desert; the Sahara covers most of the country.","Mauritius":"An Indian Ocean island, once the only home of the now-extinct dodo bird.","São Tomé and Príncipe":"A tiny island nation on the equator off Central Africa.","North Korea":"One of the world's most isolated countries, on the Korean Peninsula.","Nicaragua":"The largest country in Central America, dotted with lakes and volcanoes.","Bahamas":"An archipelago of about 700 islands in the Atlantic near Florida.","Barbados":"The easternmost Caribbean island; birthplace of the singer Rihanna.","Grenada":"Known as the \"Spice Isle\" for its nutmeg and mace production.","Saint Lucia":"A volcanic Caribbean island famous for the twin Piton peaks.","Antigua and Barbuda":"A Caribbean nation said to have a different beach for every day of the year.","Dominica":"The \"Nature Isle,\" rich in rainforest, hot springs, and a boiling lake.","Montenegro":"A small Balkan country on the Adriatic Sea; its name means \"black mountain.\"","Kiribati":"Spans all four hemispheres and was the first nation to enter the year 2000.","Tuvalu":"One of the world's smallest and lowest-lying nations, threatened by rising seas.","Marshall Islands":"A Pacific nation of coral atolls; site of the famous Bikini Atoll.","Micronesia":"A federation of hundreds of Pacific islands, including ancient Nan Madol ruins.","Palau":"A Pacific nation famous for Jellyfish Lake and world-class diving.","Nauru":"The world's smallest island nation, just 21 square kilometers."};
     let geoIdx = 0, geoCorrect = 0, geoStreak = 0, geoBestStreak = 0, pool = [];
     const geoBest = parseInt(sessionStorage.getItem('geo-best-L'+currentLevel)||'0');
     document.querySelectorAll('.geo-fact-card,.geo-summary').forEach(n=>n.remove());

@@ -1,5 +1,10 @@
 # Changelog 
 
+## [5.32.0] - 2026-06-16 - Other modules: Geography +32 countries, Sorting Hat +42 rounds
+- GEOGRAPHY EXPLORER 160 -> 192 countries. Added a 6th level of 32 real UN countries not previously covered (Zambia, Malawi, Benin, Togo, Sierra Leone, Nicaragua, Bahamas, Montenegro, Tuvalu, Palau, etc.) with verified capitals + continents + a fact each.
+- SORTING HAT 69 -> 111 rounds (+42, ~7 per level across 6 levels). New 2-bucket sorts with verified categorizations (Living/Nonliving, Mammals/Fish, Herbivore/Carnivore, Producers/Consumers, Vertebrate/Invertebrate, Prime/Composite, Warm/Cold-blooded, etc.); each round validated to have exactly 2 buckets and 8 items split 4/4. Caught + fixed one mislabeled round (reptile emojis under "Amphibian") before ship.
+- sw cache v1251->v1252.
+
 ## [5.31.0] - 2026-06-16 - Other modules: Word Scramble doubled (200 -> 399)
 - WORD SCRAMBLE 200 -> 399 (~2x). Each of the 5 length-tiers (3/5/8/9/10-13 letters) went from 40 to ~80 words. Every new word carries a hint, emoji, and definition; hard validation enforced exact per-tier length (agents drifted off-length and self-corrected, so the validator was the real gate), A-Z, no per-tier duplicate, and complete fields. sw cache v1250->v1251.
 - New tooling: learn/tests/layout/_scrbuild.js (+_dumpwords.js avoid-list).
