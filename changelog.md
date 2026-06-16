@@ -1,5 +1,10 @@
 # Changelog 
 
+## [5.28.0] - 2026-06-16 - Brain-module content: Logic Puzzles 197 -> 353
+- LOGIC PUZZLES nearly doubled (+156). Bulk generated programmatically — math word problems (totals, change, equal sharing, arrays, ages, percent, distance, time, doubling/halving) with COMPUTED answers, plus syllogism logic — so every answer is correct and present in its 4 options by construction. Added ~40 hand-authored, individually-verified classic riddles and lateral-thinking puzzles (snail-climbing-wall, bat-and-ball cousins, "portrait" riddle, etc.).
+- Full-bank integrity check (learn/tests/layout/_logicaudit.js): all 353 puzzles have exactly 4 options with the answer among them; removed 2 questions that duplicated existing ones — 0 structural problems, 0 duplicates.
+- New tooling: learn/tests/layout/_logicgen.js. sw cache v1247->v1248.
+
 ## [5.27.0] - 2026-06-16 - Brain-module content x2: Word Search (405 -> 807)
 - WORD SEARCH word banks DOUBLED — every one of the 27 topics went from 15 to ~30 words (+402 total). Each new word validated: length 3-12 (fits the 12x12 grid), A-Z only, no duplicate within its topic or against the existing bank, definition present. Rejected the over-length PARALLELOGRAM and the non-word WEEVILBUG during authoring. Since each puzzle draws 8 random words from a topic, doubling the bank sharply cuts repeat encounters.
 - New tooling: learn/tests/layout/_wsbuild.js (+_wsextract.js avoid-list). sw cache v1246->v1247.
