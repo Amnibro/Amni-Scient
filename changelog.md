@@ -1,5 +1,11 @@
 # Changelog 
 
+## [5.29.0] - 2026-06-16 - Brain modules deeper (round 2): Chess 282, Logic 457, Pattern 410
+- CHESS 114 -> 282 (6.7x the original 42). Rebuilt with up to 3 verified mates per king-square for spread; the mate-in-1 verifier certifies all 282 (0 problems).
+- LOGIC 353 -> 457. +104 net-new: more programmatic math word problems (subtraction, grouping multiplication, division, legs-counting, consecutive sums, halving, unit price, temperature, ratios — all computed answers) + 20 fresh verified riddles. Full-bank audit: 457 puzzles, 0 structural problems, 0 duplicates.
+- PATTERN 325 -> 410. +85 net-new sequences (deduped against existing by sequence signature), all answers computed and validated in-options.
+- sw cache v1248->v1249.
+
 ## [5.28.0] - 2026-06-16 - Brain-module content: Logic Puzzles 197 -> 353
 - LOGIC PUZZLES nearly doubled (+156). Bulk generated programmatically — math word problems (totals, change, equal sharing, arrays, ages, percent, distance, time, doubling/halving) with COMPUTED answers, plus syllogism logic — so every answer is correct and present in its 4 options by construction. Added ~40 hand-authored, individually-verified classic riddles and lateral-thinking puzzles (snail-climbing-wall, bat-and-ball cousins, "portrait" riddle, etc.).
 - Full-bank integrity check (learn/tests/layout/_logicaudit.js): all 353 puzzles have exactly 4 options with the answer among them; removed 2 questions that duplicated existing ones — 0 structural problems, 0 duplicates.
