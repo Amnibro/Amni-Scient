@@ -177,7 +177,7 @@
 <table class="bench-table">
 <thead><tr><th>MODEL &mdash; MMLU-Pro (same benchmark)</th><th>SCORE</th><th style="width:42%"></th></tr></thead>
 <tbody>
-<tr class="bench-row-adam"><td>Adam 3B &mdash; <strong>closed loop</strong> (verify + know-gate + crawl)</td><td class="bench-num">59.5%</td><td><span class="bench-bar" style="width:72%"></span></td></tr>
+<tr class="bench-row-adam"><td>Adam 3B &mdash; <strong>closed reasoning loop</strong></td><td class="bench-num">59.5%</td><td><span class="bench-bar" style="width:72%"></span></td></tr>
 <tr><td>Adam 3B &mdash; frozen base, no loop</td><td>48.8%</td><td><span class="bench-bar dim" style="width:59%"></span></td></tr>
 <tr><td>Qwen-3.5 2B &mdash; same size class <span style="color:#5a6168">(self-reported)</span></td><td>~54%</td><td><span class="bench-bar dim" style="width:65%"></span></td></tr>
 <tr><td>Qwen-3.5 4B <span style="color:#5a6168">(self-reported)</span></td><td>~79%</td><td><span class="bench-bar dim" style="width:95%"></span></td></tr>
@@ -195,26 +195,8 @@
 
 <section>
 <h2>THE LEARNING LOOP &mdash; HOW A 3B PUNCHES ABOVE ITS WEIGHT</h2>
-<p style="text-align:center;color:var(--dim);max-width:740px;margin:0 auto 1rem;font-size:.9rem">Adam handles a hard question the way an engineer does &mdash; check what you already know, attempt it, <em>verify</em> the answer with fresh eyes, recognize when you&rsquo;re guessing, go find the missing fact, and remember what worked. One loop, applied to any problem.</p>
-<div class="flow-row">
-<span class="flow-step">CHECK MEMORY (PTEX)</span>
-<span class="flow-arrow">&rarr;</span>
-<span class="flow-step">ATTEMPT (self-consistency)</span>
-<span class="flow-arrow">&rarr;</span>
-<span class="flow-step">VERIFY (fresh context)</span>
-<span class="flow-arrow">&rarr;</span>
-<span class="flow-step">KNOW-GATE</span>
-</div>
-<div class="flow-row">
-<span class="flow-step">DON&rsquo;T KNOW? &rarr; CRAWL THE GAP</span>
-<span class="flow-arrow">&rarr;</span>
-<span class="flow-step">TOO BIG? &rarr; PIECEMEAL + DEBUG</span>
-<span class="flow-arrow">&rarr;</span>
-<span class="flow-step">RE-VERIFY</span>
-<span class="flow-arrow">&rarr;</span>
-<span class="flow-step terminal">BANK KNOWLEDGE + ERRORS-TO-AVOID</span>
-</div>
-<p style="text-align:center;color:var(--dim);max-width:740px;margin:1.2rem auto .5rem;font-size:.88rem">The metacognition is the trick: self-consistency <em>agreement</em> is Adam&rsquo;s know / don&rsquo;t-know signal. When samples agree, it trusts the answer; when they scatter, it stops guessing and goes looking &mdash; crawling the web, distilling the missing fact, re-solving with it in hand. Every verified win <strong>and</strong> every logged mistake is written to the GF(17) lesson bank, so the same gap is never re-learned and the same error is never reported twice. The crawl-and-bank step literally fills the sparse regions of Adam&rsquo;s weight-atlas &mdash; <strong>Adam is a 3B that keeps learning, not a 3B frozen at a training cut-off.</strong></p>
+<p style="text-align:center;color:var(--dim);max-width:740px;margin:0 auto 1rem;font-size:.9rem">Adam doesn&rsquo;t just answer &mdash; it <em>works the problem</em>. It recognizes when it&rsquo;s unsure instead of bluffing, goes and finds what it&rsquo;s missing, checks its own answer before handing it to you, and remembers what worked. The payoff is a small model that behaves like a much larger one on the questions that matter &mdash; and one that keeps getting sharper the more you use it.</p>
+<p style="text-align:center;color:var(--dim);max-width:740px;margin:0 auto 1rem;font-size:.88rem">Every verified answer and every corrected mistake is written to Adam&rsquo;s GF(17) memory, so it never re-learns the same thing twice and never repeats an error you&rsquo;ve corrected. <strong>Adam is a 3B that keeps learning &mdash; not one frozen at a training cut-off.</strong></p>
 <div class="loop-grid">
 <div class="loop-stat"><span class="big">~35&times;</span><span class="lbl">faster on a repeat question &mdash; banked answers recall instantly instead of re-deriving</span></div>
 <div class="loop-stat"><span class="big">0&rarr;60%</span><span class="lbl">knowledge-gap questions (TriviaQA) once the crawl-and-bank step fires</span></div>
