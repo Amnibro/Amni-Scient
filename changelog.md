@@ -1,5 +1,9 @@
 # Changelog 
 
+## [5.31.0] - 2026-06-16 - Other modules: Word Scramble doubled (200 -> 399)
+- WORD SCRAMBLE 200 -> 399 (~2x). Each of the 5 length-tiers (3/5/8/9/10-13 letters) went from 40 to ~80 words. Every new word carries a hint, emoji, and definition; hard validation enforced exact per-tier length (agents drifted off-length and self-corrected, so the validator was the real gate), A-Z, no per-tier duplicate, and complete fields. sw cache v1250->v1251.
+- New tooling: learn/tests/layout/_scrbuild.js (+_dumpwords.js avoid-list).
+
 ## [5.30.0] - 2026-06-16 - Brain modules to 3x: Anagram 907, Word Search ~1205
 - ANAGRAM 682 -> 907 (exactly 3x the original 300). +225 real words across all 5 length tiers (4-8 letters), each with kid-friendly def + emoji category. Hard validation dropped off-length/non-alpha/duplicate entries (incl. cross-round dups); final 907 words, 0 duplicates.
 - WORD SEARCH ~807 -> ~1205 (~3x the original 405). Every one of the 27 topics went from ~30 to ~45 words (+393). Each new word validated: length 3-12 (fits 12x12 grid), A-Z, no dup within topic, definition present; over-length and duplicate candidates rejected.
