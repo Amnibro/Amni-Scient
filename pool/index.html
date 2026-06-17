@@ -83,6 +83,7 @@ td a{color:var(--acc2);text-decoration:none}
     <div class="tab" data-pane="trace">📷 Photo Trace</div>
     <div class="tab" data-pane="plans">2D Plans</div>
     <div class="tab" data-pane="mat">Materials &amp; Pricing</div>
+    <div class="tab" data-pane="guide">🧭 Build Guide</div>
   </div>
 </header>
 <main>
@@ -142,7 +143,9 @@ td a{color:var(--acc2);text-decoration:none}
       <div class="planbar"><button class="btn acc" onclick="window.print()">🖨️ Print all plans</button><button class="btn" id="dl-svg">⬇️ Download SVGs</button></div>
       <div class="svgwrap" id="svg-layout"></div>
       <div class="svgwrap" id="svg-section"></div>
+      <div class="svgwrap" id="svg-details"></div>
     </div>
+    <div class="pane" id="pane-guide"><div id="guide-body" style="max-width:780px"></div></div>
     <div class="pane" id="pane-mat">
       <div class="summary" id="mat-summary"></div>
       <div class="pastebox">
@@ -163,6 +166,6 @@ td a{color:var(--acc2);text-decoration:none}
   </div>
 </main>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
-<script type="module" src="app.js?v=pro1"></script>
+<script type="module" src="app.js?v=pro2"></script>
 </body>
 </html>
