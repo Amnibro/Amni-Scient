@@ -1,5 +1,9 @@
 # Changelog 
 
+## Amni-Construct — Amni-Pool LAUNCHED - 2026-06-16
+- NEW app **amni-scient.com/pool** — 3D swimming pool designer off the patio shell. Polygon/rect shape, shallow+deep depth profile, water volume in gallons, 8-hour turnover GPM, pump HP + cartridge filter ft² + heater BTU sizing, excavation yd³, skimmer/return counts; translucent water box in 3D; two permit sheets (POOL PLAN + SECTION); barrier/811/VGB/no-diving safety notes; priced BOM. Rust→WASM core (18 tests pass), verified headless (boot + plan sheets, 512 ft²→17,235 gal).
+- Amni-Construct hub: flipped 🏊 Pools to LIVE, added pool card; sitemap + roadmap updated.
+
 ## [5.32.0] - 2026-06-16 - Other modules: Geography +32 countries, Sorting Hat +42 rounds
 - GEOGRAPHY EXPLORER 160 -> 192 countries. Added a 6th level of 32 real UN countries not previously covered (Zambia, Malawi, Benin, Togo, Sierra Leone, Nicaragua, Bahamas, Montenegro, Tuvalu, Palau, etc.) with verified capitals + continents + a fact each.
 - SORTING HAT 69 -> 111 rounds (+42, ~7 per level across 6 levels). New 2-bucket sorts with verified categorizations (Living/Nonliving, Mammals/Fish, Herbivore/Carnivore, Producers/Consumers, Vertebrate/Invertebrate, Prime/Composite, Warm/Cold-blooded, etc.); each round validated to have exactly 2 buckets and 8 items split 4/4. Caught + fixed one mislabeled round (reptile emojis under "Amphibian") before ship.

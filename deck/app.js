@@ -4,13 +4,13 @@ import { initPermits, updatePermits } from './codes.js?v=270'
 import { initMapTrace, sitePlanSVG, cropForPlan, mapPlanSnapshot } from './maptrace.js?v=270'
 import { initAutoDetect } from './autodetect.js?v=270'
 const LS = 'amnideck.cfg.v2', LSP = 'amnideck.prices.v1'
-const defCfg = { length: 12, depth: 8, height: 16, spacing: 16, decking: 'pt', attach: 'ledger', joist: '2x8', fascia: false, skirting: false, stain: 'redwood', house: 'cream', mode: 'rect', polygon: null, house_edge: 0, stairs: [{ side: 'front', width: 48, offset: -1 }], railing: { front: false, left: false, right: false, style: 'wood' }, door: { pos: -1, width: 60, rise: 7, panels: 2, count: 1 } }
+const defCfg = { length: 12, depth: 8, height: 16, spacing: 16, decking: 'pt', attach: 'ledger', foundation: 'pier', joist: '2x8', fascia: false, skirting: false, stain: 'redwood', house: 'cream', mode: 'rect', polygon: null, house_edge: 0, stairs: [{ side: 'front', width: 48, offset: -1 }], railing: { front: false, left: false, right: false, style: 'wood' }, door: { pos: -1, width: 60, rise: 7, panels: 2, count: 1 } }
 const migrate = c => !c ? null : (Array.isArray(c.stairs) ? c : { ...c, stain: c.stain || 'redwood', door: c.door || { pos: -1, width: 60, rise: 7 }, stairs: c.stairs?.enabled ? [{ side: c.stairs.side, width: c.stairs.width, offset: c.stairs.offset }] : [] })
 let cfg = migrate(JSON.parse(localStorage.getItem(LS) || localStorage.getItem('amnideck.cfg.v1') || 'null')) || structuredClone(defCfg)
 let priceEdits = JSON.parse(localStorage.getItem(LSP) || '{}')
 let catalog = {}, core = null, out = null
 const $ = s => document.querySelector(s)
-const wasmReady = fetch('deck_core.wasm?v=270').then(r => r.arrayBuffer()).then(b => WebAssembly.instantiate(b, {})).then(w => core = w.instance.exports)
+const wasmReady = fetch('deck_core.wasm?v=274').then(r => r.arrayBuffer()).then(b => WebAssembly.instantiate(b, {})).then(w => core = w.instance.exports)
 const catReady = fetch('catalog.json').then(r => r.json()).then(j => catalog = j)
 const callCore = c => {
   const bytes = new TextEncoder().encode(JSON.stringify({ ...c, polygon: c.mode === 'poly' && Array.isArray(c.polygon) && c.polygon.length >= 3 ? c.polygon : [], house_edge: c.house_edge ?? -1, issue_date: new Date().toLocaleDateString('en-CA') }))
@@ -291,6 +291,7 @@ const renderMat = (flashIds = []) => {
     localStorage.setItem(LSP, JSON.stringify(priceEdits))
     renderMat()
   })
+  renderTools()
 }
 const renderCuts = () => {
   $('#cut-summary').innerHTML = `<div class="chip"><b>${out.calc.joists}</b><span>joists @ ${cfg.spacing}" OC</span></div>
@@ -301,7 +302,136 @@ const renderCuts = () => {
   $('#cut-table').innerHTML = `<tr><th>Stock</th><th>Cut length</th><th>Pieces</th><th>Boards</th><th>Use</th></tr>` +
     out.cuts.map(c => `<tr><td>${c.stock}</td><td>${c.len}</td><td>${c.count}</td><td>${c.boards}</td><td>${c.label}</td></tr>`).join('')
 }
-const ICONS = { WARN: ['⚠️', 'warn'], OK: ['✅', 'ok'], INFO: ['ℹ️', 'info'], CUT: ['✂️', 'info'], HOUSE: ['🏠', 'info'], FROST: ['🥶', 'warn'], PERMIT: ['📋', 'warn'] }
+const HD = q => `https://www.homedepot.com/s/${encodeURIComponent(q)}`
+const buildTools = () => {
+  const led = cfg.attach === 'ledger', fnd = cfg.foundation || 'pier', hasStairs = cfg.stairs && cfg.stairs.length
+  const mk = a => a.map(t => ({ name: t[0], hd: t[1], q: t[2] }))
+  const must = mk([['Tape measure (25 ft)', 12, '25 ft tape measure'], ['Speed square', 9, 'speed square'], ['Carpenter pencils', 4, 'carpenter pencil'], ['4-ft level', 30, '4 ft box level'], ['Line level (for strings)', 4, 'line level'], ['Cordless drill + impact driver kit', 149, 'cordless drill impact driver combo kit'], ['Circular saw', 69, 'circular saw'], ['Chalk line', 9, 'chalk line reel'], ['Claw hammer (16 oz)', 18, '16 oz claw hammer'], ['Mason string + stakes', 12, 'mason line string'], ['Safety glasses', 6, 'safety glasses'], ['Work gloves', 12, 'work gloves']])
+  const easier = []
+  if (fnd === 'footing') easier.push({ name: 'Power auger', rent: 'rent ~$80/day', q: 'one man earth auger rental' }, { name: 'Wheelbarrow', hd: 79, q: 'wheelbarrow' }, { name: 'Mixing hoe', hd: 22, q: 'mortar mixing hoe' }, { name: 'Hand tamper', hd: 30, q: 'hand tamper' })
+  else easier.push({ name: 'Post-hole digger', hd: 35, q: 'post hole digger' }, { name: 'Hand tamper', hd: 30, q: 'hand tamper' })
+  if (led) easier.push({ name: 'Caulk gun (for flashing)', hd: 8, q: 'caulk gun' })
+  easier.push({ name: 'Bar clamps (2-pack)', hd: 25, q: 'bar clamps 2 pack' })
+  if (hasStairs) easier.push({ name: 'Framing square', hd: 18, q: 'framing square' }, { name: 'Stair gauges', hd: 11, q: 'stair gauge set' }, { name: 'Jigsaw', hd: 49, q: 'jigsaw' })
+  const nice = mk([['Miter saw (10 in)', 129, '10 in miter saw'], ['Knee pads', 20, 'knee pads'], ['Spare battery (2-pack)', 79, '20v battery 2 pack'], ['Stud finder', 25, 'stud finder'], ['Shop vacuum', 69, 'shop vacuum']])
+  return { must, easier, nice }
+}
+const renderTools = () => {
+  if (!$('#tools-table')) return
+  const { must, easier, nice } = buildTools()
+  let kit = 0
+  const row = (t, cat) => { (cat === 'must' && t.hd) && (kit += t.hd); return `<tr><td>${t.name}</td><td style="color:var(--mut)">${cat}</td><td>${t.rent ? `<span style="color:var(--acc2)">${t.rent}</span>` : money(t.hd)}</td><td><a href="${HD(t.q)}" target="_blank">HD ↗</a></td></tr>` }
+  const sec = (title, arr, cat) => `<tr><td colspan="4" style="color:var(--acc);font-weight:600;padding-top:12px">${title}</td></tr>` + arr.map(t => row(t, cat)).join('')
+  $('#tools-table').innerHTML = `<tr><th>Tool</th><th>Tier</th><th>Est $ (buy new)</th><th></th></tr>`
+    + sec('Must-have', must, 'must') + sec('Makes life easier (rent/borrow)', easier, 'easier') + sec('Nice to have', nice, 'nice')
+    + `<tr><td class="tot">MUST-HAVE KIT</td><td></td><td class="tot">${money(kit)}</td><td></td></tr>`
+}
+const GUIDE_LS = 'amnideck.guide.v1'
+let guideChecked = JSON.parse(localStorage.getItem(GUIDE_LS) || '{}')
+const renderGuide = () => {
+  const led = cfg.attach === 'ledger', fnd = cfg.foundation || 'pier', comp = cfg.decking === 'comp', cc = out.calc
+  const rl = cfg.railing || {}, hasRail = rl.front || rl.left || rl.right || cfg.height > 30
+  const nf = out.bom.find(b => ['pier', 'camo-block', 'tube-48'].includes(b.id))?.qty || 0
+  const beamPly = (cfg.joist || '2x8').replace('2x', '')
+  const phases = []
+  phases.push(['📋 Before you lift a finger', [
+    'Permit IN HAND first — don\'t dig or buy lumber until the City issues it. Note your inspection schedule (Cohoes wants 48-hr notice).',
+    'Call 811 (free, dial 8-1-1) 2–3 business days before digging — they mark buried gas/electric/cable. Skipping it is illegal and dangerous.',
+    'Open the 2D Plans tab → 🖨️ Print all plans. That sheet set (S-1…S-6) is your bible on site — keep it in a zip bag.',
+    'Read your sketches once, end to end, so nothing surprises you mid-build.'
+  ]])
+  phases.push(['📐 Lay it out  (sheet S-1 + your site sketch)', [
+    `Mark the footprint: ${cfg.length}' along the house × ${cfg.depth}' out. Drive batter boards past each corner, run mason string.`,
+    'Square the strings with the 3-4-5 rule (3 ft one way, 4 ft the other → diagonal = 5 ft). Level the strings with a line level.',
+    `Transfer your ${nf} support centers from sheet S-1 to the ground (~6 ft apart along the outer beam line).`
+  ]])
+  if (fnd === 'footing') phases.push(['🕳️ Frost footings  (sheet S-6 detail 3 — the code-solid way)', [
+    `Dig ${nf} holes ~48" deep at your marks — a rented power auger turns a sweaty afternoon into 20 minutes.`,
+    'Drop 4" of gravel in each, tamp. Set an 8" tube form, leave ~2" proud of grade, check it plumb.',
+    'Mix concrete in a wheelbarrow, fill the tube, rod out air pockets, screed the top flat.',
+    'Press a galvanized standoff post base into the wet top, lined up to your string. Cure overnight.',
+    '⛔ STOP — this is the footing/post inspection. Don\'t backfill or build until it passes.'
+  ]])
+  else if (fnd === 'deckblock') phases.push(['🧱 Floating deck blocks', [
+    `Set ${nf} CAMO blocks on 4" of tamped gravel at your marks.`,
+    'Level every block to the others (level on a straight board). Short posts drop into the block to reach height.',
+    'Best on a freestanding deck — if yours is ledger-attached, clear it with your inspector first.'
+  ]])
+  else phases.push(['🧱 Pier blocks  (sheet S-6 detail 3 + elevation S-3)', [
+    `At each of the ${nf} spots, clear a ~16×16" pad down to firm soil (that\'s what "16×16" on S-1 means — the pad, not a paver).`,
+    'Add ~4" of paver-base gravel, tamp dead flat.',
+    'Set a concrete deck pier block (the heavy notched block, NOT a thin paver) on the gravel. Level all blocks to each other.',
+    'Many low decks still get a footing inspection here — confirm with Cohoes before you bury anything.'
+  ]])
+  if (led) phases.push(['🏠 Ledger board  (sheet S-5 — nail this; water rots houses)', [
+    'Snap a level line for the top of the ledger (deck surface sits ~1.5" above the joist top).',
+    'Cut the siding back clear of the ledger zone. NEVER bolt through siding alone.',
+    'Flash it: peel-and-stick up the wall behind the house wrap, out over the ledger top, drip leg down the face (S-5).',
+    'Bolt to the house RIM with LedgerLOK 3-5/8", two rows staggered every 16". An impact driver drives these fast.'
+  ]])
+  phases.push(['🪵 Beam & posts  (sheet S-6 detail 3)', [
+    cfg.height <= 24 ? 'Low deck — the beam basically bears on the blocks/bases; use the standoff base to keep wood off the dirt, little to no post needed.' : 'Stand the 4×4 posts on the bases, plumb and brace, mark beam height off your level line, cut posts to length.',
+    `Build the beam (double 2×${beamPly}) and set it on the posts/bases. Tie with post caps + through-bolts — never plain deck screws.`
+  ]])
+  phases.push(['🔩 Joists  (sheet S-1)', [
+    `Hang ${cc.joists} joists in the LUS hangers ${cfg.spacing}" on-center. FILL EVERY hanger hole with structural screws.`,
+    'Crown each joist (bow up), add blocking at midspan, and an H2.5A hurricane tie at every joist-to-beam crossing.'
+  ]])
+  phases.push(['🪚 Decking  (sheet S-2)', [
+    `Lay ${cc.boards} ${comp ? 'composite' : '5/4 PT'} boards starting tight at the house. ${comp ? 'Hidden clips, one per joist.' : '2 fasteners per joist crossing.'}`,
+    'Gap boards 3/16" (a 16d nail makes a handy spacer). Run them long past the edge.',
+    'Snap a chalk line and cut the whole edge flush in one pass. Last board rips to width — start with a ripped board AT the house so the skinny piece hides there.'
+  ]])
+  if (cfg.stairs && cfg.stairs.length) phases.push(['🪜 Stairs  (sheets S-3 & S-4)', [
+    `Cut stringers from 2×12 with the S-4 template — framing square + stair gauges, ${cc.risers} risers @ ${cc.riser}, ${cc.run} run.`,
+    'DROP the bottom of each stringer by one tread thickness (1-1/2") so the first step isn\'t tall.',
+    'Set stringers on a solid landing pad (the 16×16 pavers), then screw down 2×6 treads, two per step.'
+  ]])
+  if (hasRail) phases.push(['🛡️ Railing', [
+    'Through-bolt 4×4 rail posts to the rim with two 1/2" galvanized bolts (washer + nut on blocking) — NOT lag screws, they loosen.',
+    `Posts 36" min above the deck; baluster gaps under 4" (a 4" ball must not pass). ~${cc.balusters} balusters.`
+  ]])
+  phases.push(['✅ Finish & final inspection', [
+    cfg.fascia ? 'Wrap the rim with fascia for a clean edge.' : null,
+    cfg.skirting ? 'Install lattice skirting — keep it 2" off grade, frame an access panel for airflow.' : null,
+    comp ? 'Composite needs no stain — just a wash.' : 'Let PT lumber dry (often 1–3 months) before you stain/seal — sealing it wet traps moisture.',
+    'Call for the FINAL framing/final inspection (48-hr notice). Don\'t cover anything structural until it passes.',
+    'Then crack a cold one — you built a deck. 🍻'
+  ].filter(Boolean)])
+  const { must, easier, nice } = buildTools()
+  const toolCol = (title, arr) => `<div class="guide-sec"><h2>${title}</h2><ul>${arr.map(t => `<li>${t.name}${t.rent ? ` <span style="color:var(--mut)">(${t.rent})</span>` : ''}</li>`).join('')}</ul></div>`
+  const phaseOf = id => /^(pier|camo-block|tube-48|concrete-60|post-base|gravel-05)/.test(id) ? 'Foundation' : (id === 'lok-50' || id === 'tape-4x50') ? 'Ledger & flashing' : (id === 'paver-16' || /^pt-2x12-/.test(id)) ? 'Stairs' : (/^(pt-54|comp-)/.test(id) || id === 'comp-clips' || id === 'screws-deck-5lb') ? 'Decking' : /^bal-/.test(id) ? 'Railing' : (/^(fascia|lattice|pt-1x4)/.test(id) || id === 'stain-gal') ? 'Finish' : 'Framing'
+  const phaseOrder = ['Foundation', 'Ledger & flashing', 'Framing', 'Decking', 'Stairs', 'Railing', 'Finish'], byPhase = {}
+  out.bom.forEach(it => (byPhase[phaseOf(it.id)] = byPhase[phaseOf(it.id)] || []).push(it))
+  let grand = 0
+  const shop = phaseOrder.filter(p => byPhase[p]).map(p => {
+    let sub = 0
+    const rows = byPhase[p].map(it => { const ea = price(it.id, 'hd'), tot = ea != null ? ea * it.qty : null; if (tot != null) sub += tot; return `<li style="justify-content:space-between"><span>${it.desc} ×${it.qty}</span><b style="font-weight:600;color:var(--mut)">${money(tot)}</b></li>` }).join('')
+    grand += sub
+    return `<div class="guide-sec"><h2>${p}<span style="float:right;color:var(--ok)">${money(sub)}</span></h2><ul>${rows}</ul></div>`
+  }).join('')
+  const infoSec = (title, items) => `<div class="guide-sec"><h2>${title}</h2><ul>${items.map(i => `<li style="display:list-item;border:none;padding:3px 0;margin-left:18px;list-style:disc">${i}</li>`).join('')}</ul></div>`
+  const gravelBags = out.bom.find(b => b.id === 'gravel-05')?.qty || 0, concBags = out.bom.find(b => b.id === 'concrete-60')?.qty || 0
+  let digHtml = ''
+  if (fnd === 'footing') { const cuftPer = Math.PI * (4 / 12) ** 2 * 4; digHtml = infoSec('📏 Dig & concrete math (footings)', [`Holes: <b>${nf}</b> — each <b>~48" deep</b> × <b>8" tube</b> (below the ~48" Cohoes frost line).`, `Concrete per hole: π×(4")²×48" ≈ <b>${cuftPer.toFixed(2)} cu ft</b> ≈ ${(cuftPer / 0.45).toFixed(1)} × 60-lb bags → round to <b>4/hole</b>.`, `Total: <b>${concBags} × 60-lb bags</b> (a 60-lb bag ≈ 0.45 cu ft mixed; a little spare is normal).`, `Gravel base: 4" in each hole bottom — <b>${gravelBags} × 0.5 cu ft</b>.`, `Mix it stiff (not soupy) and rod out air pockets as you fill.`]) }
+  else if (fnd === 'pier') digHtml = infoSec('📏 Dig & gravel math (pier blocks)', [`Pads: <b>${nf}</b> — clear each ~<b>16"×16"</b> down to firm soil.`, `Gravel base: ~4" per pad — <b>${gravelBags} × 0.5 cu ft</b>.`, `No concrete to mix — the precast block IS the footing. Just level all ${nf} to each other.`])
+  else digHtml = infoSec('📏 Dig & gravel math (deck blocks)', [`Blocks: <b>${nf}</b> on ~4" tamped gravel each — <b>${gravelBags} × 0.5 cu ft</b>.`, `No concrete. Dead-level every block — that\'s what keeps the whole frame flat.`])
+  const inspSecs = [
+    [fnd === 'footing' ? '🕳️ Footing / post inspection (before you backfill)' : '🕳️ Footing / post inspection (before you bury anything)', [fnd === 'footing' ? `Holes dug to ~48" (below frost), 8" tube, ${nf} at the marked spots.` : `${nf} supports on firm soil with 4" tamped gravel, dead level.`, 'Post bases / anchors set and aligned to the string lines.', 'Nothing backfilled — the inspector needs to SEE the depth and bearing.', 'Layout matches the stamped plan (spacing + setbacks from the lot lines).']],
+    ['🏗️ Framing inspection (before decking goes down)', [led ? 'Ledger flashed per S-5 and bolted with LedgerLOK, two rows staggered ~16".' : 'Free-standing: house-side beam set, 1" gap kept at the siding.', 'Every joist-hanger hole filled with structural screws (no roofing/drywall screws).', 'H2.5A tie at every joist-to-beam crossing; blocking at midspan.', 'Beam-to-post made with caps/through-bolts; all hardware galvanized (ZMAX/G185) for PT.', `Joist size/spacing matches plan (${cfg.joist} @ ${cfg.spacing}" OC).`]],
+    ['✅ Final inspection', [comp ? 'Decking down, no springy/proud boards, trip-free surface.' : 'Decking fastened (2 per joist), even gaps, no proud screws.', ...(cfg.stairs && cfg.stairs.length ? [`Stairs: equal rise (${cc.riser}) & run (${cc.run}) within 3/8"; solid landing.`, 'Graspable handrail if 4+ risers (34–38" above the nosings).'] : []), hasRail ? 'Guard 36" min, baluster gaps &lt; 4" (4" ball test), posts solid.' : `Deck is ${cfg.height}" high — guard only required over 30"; confirm with the inspector.`]]
+  ]
+  const inspHtml = `<h3 style="color:var(--acc);text-transform:uppercase;letter-spacing:.08em;font-size:13px;margin:18px 0 10px">🔍 What each inspection checks</h3>` + inspSecs.map(s => infoSec(s[0], s[1])).join('')
+  $('#guide-body').innerHTML = `<div class="guide-intro">A stress-free, in-order checklist built for <b>your</b> ${cfg.length}'×${cfg.depth}' ${led ? 'ledger-attached' : 'freestanding'} deck (${cfg.height}" high, ${fnd === 'footing' ? 'frost footings' : fnd === 'deckblock' ? 'deck blocks' : 'pier blocks'}). Every step points to the matching sheet in your 2D Plans — work top to bottom and don\'t skip the inspection holds.</div>`
+    + phases.map((ph, pi) => `<div class="guide-sec"><h2>${ph[0]}</h2><ul>${ph[1].map((step, ii) => { const k = pi + ':' + ii, on = guideChecked[k]; return `<li class="${on ? 'done' : ''}"><input type="checkbox" data-gk="${k}" ${on ? 'checked' : ''}><span>${step}</span></li>` }).join('')}</ul></div>`).join('')
+    + digHtml + inspHtml
+    + `<h3 style="color:var(--acc);text-transform:uppercase;letter-spacing:.08em;font-size:13px;margin:8px 0 12px">🧰 Tools that make this easy</h3>`
+    + `<div class="tools-grid">${toolCol('Must-have', must)}${toolCol('Makes life WAY easier (rent/borrow)', easier)}${toolCol('Nice to have', nice)}</div>`
+    + `<h3 style="color:var(--acc);text-transform:uppercase;letter-spacing:.08em;font-size:13px;margin:18px 0 10px">🛒 Shopping list by build phase</h3><div class="guide-intro">Buy each phase's pile when you reach it — no giant overwhelming heap up front. Home Depot estimates from the Materials tab; grand total ≈ <b style="color:var(--ok)">${money(grand)}</b>. (Lumber for treads/rails rides under Framing since it's the same boards.)</div>`
+    + shop
+  $('#guide-body').querySelectorAll('input[data-gk]').forEach(el => el.onchange = () => { guideChecked[el.dataset.gk] = el.checked; localStorage.setItem(GUIDE_LS, JSON.stringify(guideChecked)); el.closest('li').classList.toggle('done', el.checked) })
+}
+const ICONS = { WARN: ['⚠️', 'warn'], OK: ['✅', 'ok'], INFO: ['ℹ️', 'info'], CUT: ['✂️', 'info'], HOUSE: ['🏠', 'info'], FROST: ['🥶', 'warn'], PERMIT: ['📋', 'warn'], FOUNDATION: ['🧱', 'ok'] }
 const renderWarns = () => {
   $('#warns').innerHTML = out.warnings.map(w => {
     const [tag, ...rest] = w.split('|')
@@ -311,7 +441,7 @@ const renderWarns = () => {
 }
 let siteSnap = null
 const renderPlans = () => {
-  ;['framing', 'decking', 'elevation', 'stringer', 'ledger', 'connections'].forEach(k => $(`#svg-${k}`).innerHTML = out.svgs[k])
+  ;['framing', 'decking', 'elevation', 'stringer', 'ledger', 'connections', 'railing'].forEach(k => $(`#svg-${k}`).innerHTML = out.svgs[k])
   if (siteSnap) {
     let wrap = document.getElementById('svg-site')
     if (!wrap) { wrap = document.createElement('div'); wrap.className = 'svgwrap'; wrap.id = 'svg-site'; const pane = document.getElementById('pane-plans'); pane.insertBefore(wrap, pane.querySelector('.svgwrap')) }
@@ -344,7 +474,7 @@ const recompute = (full = true) => {
   if (out.error) { console.error(out.error); return }
   persist()
   rebuild3D()
-  full && (renderPlans(), renderMat(), renderCuts(), renderWarns(), updatePermits())
+  full && (renderPlans(), renderMat(), renderCuts(), renderGuide(), renderWarns(), updatePermits())
 }
 const parsePaste = (text, store) => {
   const filled = []
@@ -385,6 +515,7 @@ const initUI = () => {
   bindNum('#height', () => cfg.height, v => cfg.height = Math.max(8, v))
   bindSel('#spacing', () => String(cfg.spacing), v => cfg.spacing = parseFloat(v))
   bindSel('#attach', () => cfg.attach, v => cfg.attach = v)
+  bindSel('#foundation', () => cfg.foundation || 'pier', v => cfg.foundation = v)
   bindSel('#decking', () => cfg.decking, v => cfg.decking = v)
   bindSel('#joist', () => cfg.joist || '2x8', v => cfg.joist = v)
   bindChk('#fascia', () => !!cfg.fascia, v => cfg.fascia = v)
@@ -444,6 +575,7 @@ const initUI = () => {
     $('#hud').style.display = t.dataset.pane === '3d' ? 'block' : 'none'
   })
   $('#reset-prices').onclick = () => { priceEdits = {}; localStorage.removeItem(LSP); renderMat() }
+  $('#print-guide').onclick = () => { const w = window.open('', '_blank'); w.document.write(`<title>Deck Build Guide</title><style>body{font:14px/1.5 system-ui,Segoe UI,sans-serif;padding:26px;max-width:780px;margin:auto;color:#111}h2{font-size:15px;margin:16px 0 4px;color:#b9761a}h3{margin:18px 0 8px}.guide-intro{color:#555;margin-bottom:14px}.guide-sec{break-inside:avoid;margin-bottom:10px}ul{margin:0 0 8px 0}.guide-sec>ul{list-style:none;padding-left:0}.guide-sec>ul li:before{content:"☐  "}.tools-grid ul{list-style:disc;padding-left:20px}li{margin:3px 0}</style>` + $('#guide-body').innerHTML); w.document.close(); w.focus(); setTimeout(() => w.print(), 200) }
   $('#export-csv').onclick = () => {
     const csv = ['Item,Qty,HD each,HD total,Lowes each,Lowes total', ...out.bom.map(it => {
       const ph = price(it.id, 'hd'), pl = price(it.id, 'lowes')

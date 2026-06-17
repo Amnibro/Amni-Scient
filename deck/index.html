@@ -67,6 +67,18 @@ td a:hover{text-decoration:underline}
 .pastebox{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:16px}
 .pastebox h4{color:var(--acc);font-size:13px;margin-bottom:6px}
 .pastebox p{color:var(--mut);font-size:12px;margin-bottom:10px}
+.guide-sec{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:14px}
+.guide-sec h2{font-size:15px;color:var(--acc);margin-bottom:6px}
+.guide-sec ul{list-style:none}
+.guide-sec li{display:flex;gap:10px;align-items:flex-start;padding:6px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+.guide-sec li:last-child{border-bottom:none}
+.guide-sec li input{margin-top:3px;width:16px;height:16px;accent-color:var(--acc);flex:none}
+.guide-sec li.done span{color:var(--mut);text-decoration:line-through}
+.guide-intro{color:var(--mut);font-size:13px;margin-bottom:14px;line-height:1.6}
+.tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.tools-grid .guide-sec{margin-bottom:0}
+.tools-grid ul{list-style:disc;padding-left:18px}
+.tools-grid li{display:list-item;border:none;padding:3px 0;font-size:13px}
 #printshot{display:none}
 @media print{#side,header,.planbar,#hud,#c3d{display:none}.pane{display:none!important}#pane-plans{display:block!important;position:static;overflow:visible;padding:0;background:#fff}#printshot{display:block}body{background:#fff;height:auto;overflow:hidden auto}main,#view{display:block;min-height:0}.svgwrap{page-break-inside:avoid}}
 </style>
@@ -81,6 +93,7 @@ td a:hover{text-decoration:underline}
     <div class="tab" data-pane="plans">2D Plans</div>
     <div class="tab" data-pane="mat">Materials &amp; Pricing</div>
     <div class="tab" data-pane="cuts">Cut List</div>
+    <div class="tab" data-pane="guide">🧭 Build Guide</div>
   </div>
 </header>
 <main>
@@ -95,6 +108,7 @@ td a:hover{text-decoration:underline}
     <div class="row"><label>Joist spacing (in OC)</label><select id="spacing"><option>12</option><option selected>16</option><option>24</option></select></div>
     <div class="row"><label>Joist size</label><select id="joist"><option>2x6</option><option selected>2x8</option><option>2x10</option></select></div>
     <div class="row"><label>Attachment</label><select id="attach"><option value="ledger" selected>Ledger to house</option><option value="free">Freestanding</option></select></div>
+    <div class="row"><label>Foundation</label><select id="foundation"><option value="pier" selected>Concrete pier block</option><option value="deckblock">Floating deck block (CAMO)</option><option value="footing">Frost footing (48" tube)</option></select></div>
     <div class="row"><label>Decking</label><select id="decking"><option value="pt" selected>5/4 PT wood</option><option value="comp">Composite</option></select></div>
     <div class="row"><label>Fascia wrap (rim cover)</label><input type="checkbox" id="fascia"></div>
     <div class="row"><label>Lattice skirting</label><input type="checkbox" id="skirting"></div>
@@ -164,6 +178,7 @@ td a:hover{text-decoration:underline}
       <div class="svgwrap" id="svg-stringer"></div>
       <div class="svgwrap" id="svg-ledger"></div>
       <div class="svgwrap" id="svg-connections"></div>
+      <div class="svgwrap" id="svg-railing"></div>
     </div>
     <div class="pane" id="pane-mat">
       <div class="summary" id="mat-summary"></div>
@@ -182,15 +197,24 @@ td a:hover{text-decoration:underline}
       </div>
       <table id="mat-table"></table>
       <p style="color:var(--mut);font-size:12px;margin-top:12px">Catalog prices are editable estimates — click any cell to adjust. Edits persist locally.</p>
+      <div id="tools-wrap" style="margin-top:26px">
+        <div style="color:var(--acc);font-size:13px;text-transform:uppercase;letter-spacing:.05em;font-weight:600;margin-bottom:8px">🧰 Tools for the job — one-time &amp; reusable (NOT in the deck total)</div>
+        <table id="tools-table"></table>
+        <p style="color:var(--mut);font-size:12px;margin-top:10px">Budget-tier estimates at Home Depot; rentals noted. You probably own some already. Adapts to your foundation &amp; whether you have stairs. Links are live searches.</p>
+      </div>
     </div>
     <div class="pane" id="pane-cuts">
       <div class="summary" id="cut-summary"></div>
       <table id="cut-table"></table>
       <p style="color:var(--mut);font-size:12px;margin-top:12px">"Boards" = how many stock boards that line consumes (bin-packed). The Materials tab quantities include these plus waste factor.</p>
     </div>
+    <div class="pane" id="pane-guide">
+      <div class="planbar"><button class="btn acc" id="print-guide">🖨️ Print this guide</button><span style="color:var(--mut);font-size:12px">Tailored to your deck. Checkboxes save automatically — tick them off as you build.</span></div>
+      <div id="guide-body"></div>
+    </div>
   </div>
 </main>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
-<script type="module" src="app.js?v=270"></script>
+<script type="module" src="app.js?v=274"></script>
 </body>
 </html>
