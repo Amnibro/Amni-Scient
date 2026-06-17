@@ -11,7 +11,7 @@ let priceEdits = (() => { try { return JSON.parse(localStorage.getItem(LSP)) || 
 let catalog = {}
 const $ = s => document.querySelector(s)
 const FINISHES = {}
-const wasm = await WebAssembly.instantiateStreaming(fetch('elec_core.wasm?v=1'))
+const wasm = await WebAssembly.instantiateStreaming(fetch('elec_core.wasm?v=2'))
 const { alloc, dealloc, build, memory } = wasm.instance.exports
 const enc = new TextEncoder(), dec = new TextDecoder()
 const polyOf = c => c.mode === 'poly' && c.polygon && c.polygon.length >= 3 ? c.polygon : [[0, 0], [c.w, 0], [c.w, c.d], [0, c.d]]
@@ -81,7 +81,7 @@ window.addEventListener('beforeprint', () => {
 let siteSnap = null
 const renderPlans = () => {
   if (!out) return
-  ;['layout'].forEach(k => $(`#svg-${k}`).innerHTML = out.svgs[k])
+  ;['layout', 'details'].forEach(k => $(`#svg-${k}`).innerHTML = out.svgs[k])
   if (siteSnap) {
     let wrap = $('#svg-site')
     if (!wrap) { wrap = document.createElement('div'); wrap.className = 'svgwrap'; wrap.id = 'svg-site'; const pane = $('#pane-plans'); pane.insertBefore(wrap, pane.querySelector('.svgwrap')) }
@@ -92,6 +92,32 @@ const renderWarns = () => {
   const w = $('#warns'); w.innerHTML = '<h3 style="font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--acc);margin:16px 0 8px">Build Notes</h3>'
   if (!out) return
   for (const s of out.warnings) { const [tag, txt] = s.includes('|') ? s.split('|') : ['INFO', s]; const d = document.createElement('div'); d.className = 'warn' + (tag === 'OK' ? ' ok' : tag === 'INFO' ? ' info' : ''); d.textContent = txt; w.appendChild(d) }
+}
+const G_LS = 'amnielec.guide.v1'
+let gChk = (() => { try { return JSON.parse(localStorage.getItem(G_LS)) || {} } catch { return {} } })()
+const SEC = 'background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:14px', GH = 'font-size:15px;color:var(--acc);margin-bottom:6px;font-weight:600'
+const guideList = (title, items) => `<div style="${SEC}"><div style="${GH}">${title}</div><ul style="list-style:disc;padding-left:20px;font-size:13px;line-height:1.7;color:var(--ink)">${items.map(t => `<li>${t}</li>`).join('')}</ul></div>`
+const renderGuide = () => {
+  const body = $('#guide-body'); if (!body || !out) return
+  const c = out.calc
+  const phases = [
+    ['📋 Plan + permit', ['Pull the electrical permit; the load calc sets your service size — confirm the panel + meter location with the utility.', 'Lay out devices + lights, mark each homerun back to the panel, and count box fill before you buy boxes.', `Order ${c.service_size_a} A panel, breakers (incl AFCI/GFCI), NM cable, boxes, devices, plates.`]],
+    ['🔌 Rough-in: boxes  (sheet E-2, detail 1)', ['Set device + fixture boxes at standard heights (receptacles ~12-16", switches ~48").', 'Use nail-on boxes in new framing, old-work boxes in finished walls; leave 6-8" of free conductor at each.', 'Mount the panel; 36" of clear working space in front, nothing stored in it.']],
+    ['🧵 Pull cable', ['Run homeruns to the panel; staple within 8" of a box and every 4-1/2 ft.', 'Protect cable through studs: keep it 1-1/4" back from the edge or add a nail plate.', "Don't kink NM cable; keep line + load straight at GFCI/AFCI devices."]],
+    ['⚡ Make-up + panel  (sheet E-2, details 1 & 3)', ['Pigtail devices so the circuit never depends on a single receptacle.', 'Land hots on breakers, neutrals on the neutral bus, grounds on the ground bus — main bond at the SERVICE only.', 'AFCI on living-area circuits, GFCI in wet areas; LABEL every breaker.']],
+    ['🔎 Rough inspection', ['Call before insulation/drywall: box fill, support, cable protection, grounding + bonding all get checked.', 'Nothing gets covered until the rough passes.']],
+    ['🔘 Trim-out (finish)', ['Devices + plates, fixtures, smoke/CO alarms interconnected.', 'Set the panel cover; verify TR receptacles + correct breaker for each wire size.']],
+    ['✅ Final + energize', ['Torque-check terminations to spec; test every circuit + the AFCI/GFCI test buttons.', 'Final inspection, then the utility connects the meter. Never work it hot.']],
+  ]
+  const tools = ["Lineman's pliers + diagonal cutters", 'Wire strippers (10-18 AWG)', 'Non-contact tester + multimeter', 'Insulated screwdrivers + nut driver', 'Right-angle drill + auger bit', 'Fish tape', 'Cable stapler + nail plates', 'Torpedo level', 'NM cable ripper', 'Torque screwdriver', 'Circuit labels + marker']
+  let cost = 0; (out.bom || []).forEach(it => { const p = price(it.id, 'hd'); if (p != null) cost += p * it.qty })
+  const chk = phases.map((ph, pi) => `<div style="${SEC}"><div style="${GH}">${ph[0]}</div>${ph[1].map((t, ii) => { const k = pi + ':' + ii, on = gChk[k]; return `<label style="display:flex;gap:9px;align-items:flex-start;padding:5px 0;font-size:13px;cursor:pointer"><input type="checkbox" data-gk="${k}" ${on ? 'checked' : ''} style="margin-top:3px;accent-color:var(--acc);flex:none"><span style="${on ? 'color:var(--mut);text-decoration:line-through' : ''}">${t}</span></label>` }).join('')}</div>`).join('')
+  body.innerHTML = `<div style="color:var(--mut);font-size:13px;margin-bottom:14px">A pro rough-to-final sequence for your <b>${c.service_size_a} A / ${c.total_circuits}-circuit</b> service. Tick as you go. Pair with sheets E-1 (panel schedule) + E-2 (details). <b style="color:var(--warn)">Mains/panel + tie-in: hire a licensed electrician.</b></div>`
+    + chk
+    + guideList('🔍 Inspections', ['<b>Rough-in</b>: with walls open — box fill, support, protection, grounding/bonding.', '<b>Final</b>: devices, covers, GFCI/AFCI test, smoke/CO, panel labeled.', 'The service, panel, and meter tie-in are licensed-electrician + utility work.'])
+    + guideList('🧰 Tools', tools)
+    + `<div style="${SEC}"><div style="${GH}">💵 Materials estimate</div><div style="font-size:13px;color:var(--ink)">~<b style="color:var(--ok)">$${cost.toFixed(0)}</b> in panel, breakers, wire + devices (Home Depot catalog) — edit prices on the Materials tab. Permit + electrician labor are separate.</div></div>`
+  body.querySelectorAll('input[data-gk]').forEach(el => el.onchange = () => { gChk[el.dataset.gk] = el.checked; localStorage.setItem(G_LS, JSON.stringify(gChk)); renderGuide() })
 }
 const price = (id, store) => priceEdits[`${id}.${store}`] ?? catalog[id]?.[store] ?? null
 const renderMat = () => {
@@ -153,7 +179,7 @@ const fitCam = () => {
 const recompute = () => {
   out = callCore(cfg)
   if (out.error) { $('#warns').innerHTML = `<div class="warn">${out.error}</div>`; return }
-  persist(); rebuild3D(); fitCam(); renderPlans(); renderMat(); renderWarns(); updatePermits()
+  persist(); rebuild3D(); fitCam(); renderPlans(); renderMat(); renderWarns(); renderGuide(); updatePermits()
 }
 let MV = null
 const T = { img: null, mode: null, scalePts: [], dist: 10, poly: [], pxPerFt: 0 }
@@ -273,7 +299,7 @@ const initUI = () => {
     const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([csv], { type: 'text/csv' })), download: 'elec-materials.csv' })
     a.click()
   }
-  $('#dl-svg').onclick = () => { ['layout'].forEach(k => { const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([out.svgs[k]], { type: 'image/svg+xml' })), download: `elec-${k}.svg` }); a.click() }); const sw = $('#svg-site'); sw && Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([sw.innerHTML], { type: 'image/svg+xml' })), download: 'elec-site-plan.svg' }).click() }
+  $('#dl-svg').onclick = () => { ['layout', 'details'].forEach(k => { const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([out.svgs[k]], { type: 'image/svg+xml' })), download: `elec-${k}.svg` }); a.click() }); const sw = $('#svg-site'); sw && Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([sw.innerHTML], { type: 'image/svg+xml' })), download: 'elec-site-plan.svg' }).click() }
   buildFinishes()
   initPermits(() => ({ ...cfg, height: 0, attach: cfg.house_edge >= 0 ? 'house' : 'free', length: 0, depth: 0 }), () => out)
   if (cfg.mode === 'poly' && cfg.polygon) { $('#rw').style.display = 'none'; $('#rd').style.display = 'none'; document.querySelectorAll('#mode button').forEach(b => b.classList.toggle('on', b.dataset.v === 'poly')); const edges = cfg.polygon.map((a, i) => { const b2 = cfg.polygon[(i + 1) % cfg.polygon.length]; return Math.hypot(b2[0] - a[0], b2[1] - a[1]) }); const sel = $('#house'); sel.innerHTML = '<option value="-1">Freestanding</option>' + edges.map((L, i) => `<option value="${i}">Edge ${i + 1} (${L.toFixed(1)} ft) = house</option>`).join(''); sel.value = String(cfg.house_edge) }
