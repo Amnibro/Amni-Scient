@@ -1,5 +1,9 @@
 # Changelog 
 
+## Amni-Construct — Amni-Elec LAUNCHED - 2026-06-17
+- NEW app **amni-scient.com/elec** — electrical load + circuit estimator. NEC Article 220 dwelling load calc (3 VA/ft² general lighting, 2 small-appliance + laundry circuits, 3 kVA-then-35% demand factor, fixed-appliance 75% rule at 4+, range/dryer/HVAC) → demand VA → service size (100–400 A). Branch-circuit list with breaker amps + wire gauge (general/SA/bath/laundry + dedicated range/dryer/WH/DW/disposal/microwave/HVAC), receptacle/switch/fixture counts, AFCI/GFCI, NM-B cable + SE feeder takeoff. E-1 panel + circuit schedule sheet; priced BOM. Brand-new Rust→WASM core from scratch (19 tests pass), headless-verified (1200 ft² all-electric → 31 kVA → 200 A, 14 circuits). Licensed-electrician + permit warnings.
+- Amni-Construct hub: flipped ⚡ Electrical to LIVE, added elec card; sitemap + roadmap updated. **8 of 8 construct trade apps now live** (deck, patio, pool, floor, roof, frame, plumb, elec); whole-house canvas remains.
+
 ## Amni-Construct — Amni-Plumb LAUNCHED - 2026-06-17
 - NEW app **amni-scient.com/plumb** — plumbing estimator. Fixture counts (toilets/lavs/tubs/showers/kitchen sinks/dishwashers/washers) → water supply fixture units, demand GPM, main supply size, drainage fixture units → building-drain size; supply/DWV/vent pipe lengths, P-traps, angle stops, fittings, cleanouts, water heater, main valve; PEX/copper/CPVC. P-1 supply+DWV riser diagram (hot/cold trunks, fixture stubs, vent thru roof, cleanout, slope to sewer); priced BOM. Brand-new Rust→WASM core from scratch (19 tests pass), headless-verified (9 fixtures→13.4 WSFU→14 GPM, 18 DFU→3 in drain). Trap/vent, slope, 4-in-upsize, backflow, and permit warnings.
 - Amni-Construct hub: flipped 🚿 Plumbing to LIVE, added plumb card; sitemap + roadmap updated.
