@@ -82,6 +82,7 @@ td a{color:var(--acc2);text-decoration:none}
     <div class="tab on" data-pane="3d">3D Massing</div>
     <div class="tab" data-pane="plans">Floor Plan</div>
     <div class="tab" data-pane="mat">🧩 Trade Rollup</div>
+    <div class="tab" data-pane="guide">🧭 Build Guide</div>
   </div>
 </header>
 <main>
@@ -140,7 +141,9 @@ td a{color:var(--acc2);text-decoration:none}
     <div class="pane" id="pane-plans">
       <div class="planbar"><button class="btn acc" onclick="window.print()">🖨️ Print floor plan</button><button class="btn" id="dl-svg">⬇️ Download SVG</button></div>
       <div class="svgwrap" id="svg-layout"></div>
+      <div class="svgwrap" id="svg-details"></div>
     </div>
+    <div class="pane" id="pane-guide"><div id="guide-body" style="max-width:780px"></div></div>
     <div class="pane" id="pane-mat">
       <div class="summary" id="mat-summary"></div>
       <p style="color:var(--mut);font-size:13px;margin-bottom:12px">Your plan, handed to every Amni-Construct trade app. Click <b>open ↗</b> to size each one — the rollup numbers come straight from your rooms.</p>
@@ -154,6 +157,6 @@ td a{color:var(--acc2);text-decoration:none}
   </div>
 </main>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
-<script type="module" src="app.js?v=pro1"></script>
+<script type="module" src="app.js?v=pro2"></script>
 </body>
 </html>

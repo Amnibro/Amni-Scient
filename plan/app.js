@@ -11,7 +11,7 @@ let priceEdits = (() => { try { return JSON.parse(localStorage.getItem(LSP)) || 
 let catalog = {}
 const $ = s => document.querySelector(s)
 const FINISHES = {}
-const wasm = await WebAssembly.instantiateStreaming(fetch('plan_core.wasm?v=1'))
+const wasm = await WebAssembly.instantiateStreaming(fetch('plan_core.wasm?v=2'))
 const { alloc, dealloc, build, memory } = wasm.instance.exports
 const enc = new TextEncoder(), dec = new TextDecoder()
 const polyOf = c => c.mode === 'poly' && c.polygon && c.polygon.length >= 3 ? c.polygon : [[0, 0], [c.w, 0], [c.w, c.d], [0, c.d]]
@@ -79,7 +79,7 @@ window.addEventListener('beforeprint', () => {
 let siteSnap = null
 const renderPlans = () => {
   if (!out) return
-  ;['layout'].forEach(k => $(`#svg-${k}`).innerHTML = out.svgs[k])
+  ;['layout', 'details'].forEach(k => $(`#svg-${k}`).innerHTML = out.svgs[k])
   if (siteSnap) {
     let wrap = $('#svg-site')
     if (!wrap) { wrap = document.createElement('div'); wrap.className = 'svgwrap'; wrap.id = 'svg-site'; const pane = $('#pane-plans'); pane.insertBefore(wrap, pane.querySelector('.svgwrap')) }
@@ -90,6 +90,29 @@ const renderWarns = () => {
   const w = $('#warns'); w.innerHTML = '<h3 style="font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--acc);margin:16px 0 8px">Build Notes</h3>'
   if (!out) return
   for (const s of out.warnings) { const [tag, txt] = s.includes('|') ? s.split('|') : ['INFO', s]; const d = document.createElement('div'); d.className = 'warn' + (tag === 'OK' ? ' ok' : tag === 'INFO' ? ' info' : ''); d.textContent = txt; w.appendChild(d) }
+}
+const G_LS = 'amniplan.guide.v1'
+let gChk = (() => { try { return JSON.parse(localStorage.getItem(G_LS)) || {} } catch { return {} } })()
+const SEC = 'background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:14px', GH = 'font-size:15px;color:var(--acc);margin-bottom:6px;font-weight:600'
+const guideList = (title, items) => `<div style="${SEC}"><div style="${GH}">${title}</div><ul style="list-style:disc;padding-left:20px;font-size:13px;line-height:1.7;color:var(--ink)">${items.map(t => `<li>${t}</li>`).join('')}</ul></div>`
+const renderGuide = () => {
+  const body = $('#guide-body'); if (!body || !out) return
+  const c = out.calc
+  const phases = [
+    ['📐 Define the rooms', ['Add every room with real dimensions — the app totals net area + footprint as you go.', 'Group by floor; keep wet rooms (kitchen/baths/laundry) stacked + back-to-back to shorten plumbing.', 'Note door/window walls + the main entry; think about sun + circulation.']],
+    ['🧭 Check zoning FIRST', ['Confirm setbacks (front/side/rear), max lot coverage / FAR, and height limit before you fall in love with a layout.', 'Find easements + flood/septic/wetland constraints; call the zoning office + 811 early.', 'HOA or overlay district? Get their rules in writing.']],
+    ['📊 Size each trade  (sheet FP-2, card 4)', ['Use the linked trade apps to size + price each scope from this plan: <b>Floor</b> (area), <b>Roof</b> + <b>Frame</b> (footprint), <b>Plumb</b> (fixtures), <b>Elec</b> (loads).', 'Each opens with your location so its codes + permit office are already set.']],
+    ['📋 Assemble the permit set', ['Most new construction needs: site plan, floor plans, elevations, structural, and MEP — usually STAMPED by a design pro.', 'Submit, then expect a plan-review cycle + revisions before the permit issues.']],
+    ['🏗️ Build in sequence  (sheet FP-2, card 1)', ['Foundation → frame → roof/dry-in → rough plumbing/electrical/HVAC → insulate → drywall → floor → trim → final.', 'Each trade pulls its own permit + passes its own inspection in this order.']],
+    ['🔎 Inspection milestones  (sheet FP-2, card 3)', ['Footing/foundation → framing (after rough trades) → rough MEP → insulation/energy → final.', 'Nothing gets covered until the inspection for that stage passes.']],
+  ]
+  const tools = ['This planner (room list + FP-1/FP-2 sheets)', 'Local zoning bylaw + a plot/survey', 'The trade apps: Floor / Roof / Frame / Plumb / Elec', 'A design pro / architect for stamped plans', 'Budget + lender pre-qual', 'Contractor quotes (3+)']
+  const chk = phases.map((ph, pi) => `<div style="${SEC}"><div style="${GH}">${ph[0]}</div>${ph[1].map((t, ii) => { const k = pi + ':' + ii, on = gChk[k]; return `<label style="display:flex;gap:9px;align-items:flex-start;padding:5px 0;font-size:13px;cursor:pointer"><input type="checkbox" data-gk="${k}" ${on ? 'checked' : ''} style="margin-top:3px;accent-color:var(--acc);flex:none"><span style="${on ? 'color:var(--mut);text-decoration:line-through' : ''}">${t}</span></label>` }).join('')}</div>`).join('')
+  body.innerHTML = `<div style="color:var(--mut);font-size:13px;margin-bottom:14px">How to take your <b>${c.room_count}-room / ${c.total_area.toFixed(0)} ft²</b> plan from sketch to permit. Tick as you go. Pair with sheets FP-1 (floor plan) + FP-2 (trade + zoning checklist). <b style="color:var(--warn)">This is a planning tool — a real build needs stamped plans + permits.</b></div>`
+    + chk
+    + guideList('🧰 Planning checklist', tools)
+    + `<div style="${SEC}"><div style="${GH}">💵 Cost</div><div style="font-size:13px;color:var(--ink)">This planner doesn't price materials — open each <b>trade app</b> (Floor, Roof, Frame, Plumb, Elec, Deck, Patio, Pool, Garden) for its own live Home-Depot estimate, then add labor + permits + design fees.</div></div>`
+  body.querySelectorAll('input[data-gk]').forEach(el => el.onchange = () => { gChk[el.dataset.gk] = el.checked; localStorage.setItem(G_LS, JSON.stringify(gChk)); renderGuide() })
 }
 const price = (id, store) => priceEdits[`${id}.${store}`] ?? catalog[id]?.[store] ?? null
 const renderMat = () => {
@@ -179,7 +202,7 @@ const recompute = () => {
   const fw = out.calc.footprint_w, fd = out.calc.footprint_d, s = Math.max(fw, fd, 12)
   controls.target.set(fw / 2, 0, -fd / 2)
   cam.position.set(fw / 2 + s * 0.65, s * 0.95, -fd / 2 + s * 0.95)
-  renderPlans(); renderMat(); renderWarns(); updatePermits()
+  renderPlans(); renderMat(); renderWarns(); renderGuide(); updatePermits()
 }
 let MV = null
 const T = { img: null, mode: null, scalePts: [], dist: 10, poly: [], pxPerFt: 0 }
@@ -298,7 +321,7 @@ const initUI = () => {
     const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([csv], { type: 'text/csv' })), download: 'plan-rooms.csv' })
     a.click()
   }
-  $('#dl-svg').onclick = () => { ['layout'].forEach(k => { const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([out.svgs[k]], { type: 'image/svg+xml' })), download: `plan-${k}.svg` }); a.click() }) }
+  $('#dl-svg').onclick = () => { ['layout', 'details'].forEach(k => { const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([out.svgs[k]], { type: 'image/svg+xml' })), download: `plan-${k}.svg` }); a.click() }) }
   buildFinishes()
   initPermits(() => ({ ...cfg, height: 0, attach: cfg.house_edge >= 0 ? 'house' : 'free', length: 0, depth: 0 }), () => out)
   if (cfg.mode === 'poly' && cfg.polygon) { $('#rw').style.display = 'none'; $('#rd').style.display = 'none'; document.querySelectorAll('#mode button').forEach(b => b.classList.toggle('on', b.dataset.v === 'poly')); const edges = cfg.polygon.map((a, i) => { const b2 = cfg.polygon[(i + 1) % cfg.polygon.length]; return Math.hypot(b2[0] - a[0], b2[1] - a[1]) }); const sel = $('#house'); sel.innerHTML = '<option value="-1">Freestanding</option>' + edges.map((L, i) => `<option value="${i}">Edge ${i + 1} (${L.toFixed(1)} ft) = house</option>`).join(''); sel.value = String(cfg.house_edge) }
