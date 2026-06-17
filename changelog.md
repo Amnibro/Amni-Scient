@@ -1,5 +1,9 @@
 # Changelog 
 
+## Amni-Construct — Amni-Frame LAUNCHED - 2026-06-17
+- NEW app **amni-scient.com/frame** — wall framing estimator. Footprint perimeter = exterior wall: studs by spacing (16/24 OC) + 3-stud corners + opening framing, PT sill + double top plate boards, 2-ply headers, OSB sheathing + house wrap, anchor bolts, framing nails; choose 2x4/2x6, doors/windows, wall height. FR-1 framing elevation (PT sill, double top plate, studs, window + door rough openings with header/king/jack/sill/cripple labeled, dims, notes); 3D wall-envelope massing; priced BOM. Brand-new Rust→WASM core from scratch (21 tests pass), headless-verified (140 lf×8 ft → 178 studs, 39 OSB). Single-top-plate, 2x6 insulation, fire-block, and bearing-wall permit warnings.
+- Amni-Construct hub: flipped 🔩 Framing to LIVE, added frame card; sitemap + roadmap updated.
+
 ## Amni-Construct — Amni-Roof LAUNCHED - 2026-06-17
 - NEW app **amni-scient.com/roof** — roofing estimator. Footprint + pitch (x:12) → slope factor, roof area, squares, shingle bundles (or metal panels) with waste (gable 10% / hip 15% / +steep), starter, hip & ridge cap, synthetic underlayment, ice & water shield, drip edge, ridge/hip/rake/eave lengths, balanced ventilation (1/300), nails/boots/cement; RF-1 roof plan (ridge + slope arrows + dims + notes); 3D gable/hip massing; priced BOM. Brand-new Rust→WASM core authored from scratch on the shared scaffold (23 tests pass), headless-verified (1200 ft²→15 sq→50 bundles). Low-slope + fall-hazard + cold-climate ice&water warnings.
 - Amni-Construct hub: flipped 🏠 Roofing to LIVE, added roof card; sitemap + roadmap updated.
