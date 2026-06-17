@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
-import { initPermits, updatePermits } from './codes.js?v=127'
+import { initPermits, updatePermits } from './codes.js?v=pro1'
 import { initMapTrace, sitePlanSVG, cropForPlan, mapPlanSnapshot } from './maptrace.js?v=127'
 import { initAutoDetect } from './autodetect.js?v=127'
 const LS = 'amnipatio.cfg.v1', LSP = 'amnipatio.prices.v1'
