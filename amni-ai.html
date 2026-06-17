@@ -57,6 +57,12 @@
 .loop-stat .big{font-size:1.5rem;font-weight:700;color:var(--accent);display:block;line-height:1.1}
 .loop-stat .lbl{font-size:.72rem;color:var(--dim);margin-top:.4rem;line-height:1.35}
 .footnote{text-align:center;color:var(--dim);max-width:760px;margin:1rem auto 0;font-size:.76rem;line-height:1.5}
+.shot-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.2rem;max-width:1040px;margin:1.5rem auto}
+.shot{border:1px solid var(--border);border-radius:8px;overflow:hidden;background:#070a12;box-shadow:0 0 18px rgba(0,0,0,.4)}
+.shot img{width:100%;height:auto;display:block;border-bottom:1px solid var(--border)}
+.shot .cap{padding:.7rem .9rem;font-size:.8rem;color:var(--dim)}
+.shot .cap strong{color:var(--accent);display:block;font-size:.85rem;margin-bottom:.15rem}
+.shot-wide{grid-column:1/-1}
 </style>
 </head>
 <body class="theme-ai">
@@ -221,6 +227,18 @@
 </tbody>
 </table>
 <p class="footnote">Straight talk: on a cold one-shot prompt against the hardest tasks, a frontier cloud model still out-reasons a 3B &mdash; we&rsquo;re not pretending otherwise. Adam&rsquo;s edge is <strong>structural</strong>: it&rsquo;s private, free to run, local, and the only assistant that compounds &mdash; it turns <em>your</em> corrections and <em>your</em> repeated questions into permanent, instant capability. The loop narrows the raw-capability gap; locality and learning are things a cloud wrapper structurally can&rsquo;t give you.</p>
+</section>
+
+<section>
+<h2>SEE ADAM IN ACTION</h2>
+<p style="text-align:center;color:var(--dim);max-width:740px;margin:0 auto 1rem;font-size:.9rem">Real captures of Adam running locally &mdash; the neon Jarvis interface, voice + vision panels, live data widgets, the built-in Socratic coach, and the closed-loop coding flow. Everything below runs on one consumer GPU, fully offline.</p>
+<div class="shot-grid">
+<div class="shot shot-wide"><img src="assets/adam/hud.png" alt="Adam HUD dashboard — voice, sessions, and skills" loading="lazy"><div class="cap"><strong>The HUD dashboard</strong>Live voice controls, recent sessions, and the full skill palette &mdash; one local surface for everything Adam can do.</div></div>
+<div class="shot"><img src="assets/adam/chat.png" alt="Adam answering a question in the chat UI" loading="lazy"><div class="cap"><strong>Conversational chat</strong>Ask anything &mdash; answers stream back locally with live token-rate readouts.</div></div>
+<div class="shot"><img src="assets/adam/coach.png" alt="Adam Socratic coach generating a question" loading="lazy"><div class="cap"><strong>Socratic coach mode</strong>&ldquo;Coach me on X&rdquo; &rarr; Adam quizzes you, grades your answers, and adapts the difficulty.</div></div>
+<div class="shot"><img src="assets/adam/widget.png" alt="Adam live system-stats widget" loading="lazy"><div class="cap"><strong>Live data widgets</strong>System, weather, news, git and more render as inline cards &mdash; not just text.</div></div>
+<div class="shot"><img src="assets/adam/ui.png" alt="Adam unified Jarvis interface" loading="lazy"><div class="cap"><strong>The Jarvis interface</strong>A clean, fast, keyboard- and voice-driven surface that greets you in your chosen persona.</div></div>
+</div>
 </section>
 
 <section id="install">
