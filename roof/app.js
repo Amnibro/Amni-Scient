@@ -11,7 +11,7 @@ let priceEdits = (() => { try { return JSON.parse(localStorage.getItem(LSP)) || 
 let catalog = {}
 const $ = s => document.querySelector(s)
 const FINISHES = { arch: ['#5a6b78', 'Architectural'], '3tab': ['#6e7d88', '3-tab'], metal: ['#9aa6ad', 'Metal'], synthetic: ['#4f6470', 'Synthetic'] }
-const wasm = await WebAssembly.instantiateStreaming(fetch('roof_core.wasm?v=1'))
+const wasm = await WebAssembly.instantiateStreaming(fetch('roof_core.wasm?v=2'))
 const { alloc, dealloc, build, memory } = wasm.instance.exports
 const enc = new TextEncoder(), dec = new TextDecoder()
 const polyOf = c => c.mode === 'poly' && c.polygon && c.polygon.length >= 3 ? c.polygon : [[0, 0], [c.w, 0], [c.w, c.d], [0, c.d]]
@@ -96,7 +96,7 @@ window.addEventListener('beforeprint', () => {
 let siteSnap = null
 const renderPlans = () => {
   if (!out) return
-  ;['layout'].forEach(k => $(`#svg-${k}`).innerHTML = out.svgs[k])
+  ;['layout', 'details'].forEach(k => $(`#svg-${k}`).innerHTML = out.svgs[k])
   if (siteSnap) {
     let wrap = $('#svg-site')
     if (!wrap) { wrap = document.createElement('div'); wrap.className = 'svgwrap'; wrap.id = 'svg-site'; const pane = $('#pane-plans'); pane.insertBefore(wrap, pane.querySelector('.svgwrap')) }
@@ -107,6 +107,32 @@ const renderWarns = () => {
   const w = $('#warns'); w.innerHTML = '<h3 style="font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--acc);margin:16px 0 8px">Build Notes</h3>'
   if (!out) return
   for (const s of out.warnings) { const [tag, txt] = s.includes('|') ? s.split('|') : ['INFO', s]; const d = document.createElement('div'); d.className = 'warn' + (tag === 'OK' ? ' ok' : tag === 'INFO' ? ' info' : ''); d.textContent = txt; w.appendChild(d) }
+}
+const G_LS = 'amniroof.guide.v1'
+let gChk = (() => { try { return JSON.parse(localStorage.getItem(G_LS)) || {} } catch { return {} } })()
+const SEC = 'background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:14px', GH = 'font-size:15px;color:var(--acc);margin-bottom:6px;font-weight:600'
+const guideList = (title, items) => `<div style="${SEC}"><div style="${GH}">${title}</div><ul style="list-style:disc;padding-left:20px;font-size:13px;line-height:1.7;color:var(--ink)">${items.map(t => `<li>${t}</li>`).join('')}</ul></div>`
+const renderGuide = () => {
+  const body = $('#guide-body'); if (!body || !out) return
+  const c = out.calc, metal = cfg.material === 'metal'
+  const phases = [
+    ['📋 Before you climb', ['Pull the roofing permit; pick a dry window (45-85°F seals best).', 'Fall protection FIRST: harness + rope grab to a ridge anchor; roof jacks on steep pitch.', 'Stage a dumpster + ground tarps; load material onto the roof, split each side of the ridge.', `Order ${metal ? 'panels' : c.bundles + ' bundles'} + starter, hip/ridge cap, underlayment, ice & water, drip edge, boots.`]],
+    ['🧹 Tear-off', ['Strip to the deck (code max 2 layers — go to deck if a 2nd layer or any rot).', 'Pull/drive every old nail; replace soft sheathing; re-nail loose decking.', 'Sweep the deck dead clean — debris telegraphs through new shingles.']],
+    ['💧 Dry-in  (sheet RF-2, details 1 & 3)', ['Drip edge at the EAVES first, under the underlayment.', 'Ice & water shield at eaves to 24" past the warm wall, and full-width in every valley.', 'Synthetic underlayment up the field — 6" side / 12" end laps, fastened per the print.', 'Drip edge at the RAKES, this time OVER the underlayment.']],
+    ['▶️ Starter + field', ['Starter strip along eaves + rakes (adhesive to the edge).', 'Snap chalk lines; run courses to the ridge, staggering the joints.', metal ? 'Set panels square to the eave; fasten in the flats per the panel spec + closures.' : '4-6 nails per shingle (high-wind), in the nail zone, driven flush — not over/under.']],
+    ['🔥 Flashing  (sheet RF-2, detail 4)', ['Step flashing at walls — ONE piece per shingle course, woven in; counter-flash / siding laps over.', 'Kickout flashing where a wall dies into the eave (stops the hidden rot behind the gutter).', 'Fresh pipe boots + apron flashing at every penetration; metal or tight-woven valleys.']],
+    ['🌬️ Ridge vent + cap  (sheet RF-2, detail 2)', ['Cut the ridge slot ~1" back each side of the ridge board (stop short of the ends).', 'Set continuous ridge vent; cap with hip/ridge shingles facing INTO the prevailing wind.', 'Confirm matching soffit intake so the attic actually breathes.']],
+    ['✅ Cleanup + final', ['Run a magnetic sweeper over the lawn/drive several times — nails hide everywhere.', 'Clean gutters, recheck all flashing + sealant, photograph for the warranty.', 'Call for the FINAL inspection before you call it done.']],
+  ]
+  const tools = ['Roofing nailer + compressor (or hammer-tacker)', 'Tear-off shovel / pry bar', 'Hook-blade utility knife (+ spare blades)', 'Chalk line', 'Tin snips for flashing', 'Caulk gun + roofing sealant', 'Flat bar + roofing hatchet', 'Extension ladder + roof jacks/brackets', 'Harness + rope grab + ridge anchor', 'Magnetic sweeper', 'Tarps']
+  let cost = 0; (out.bom || []).forEach(it => { const p = price(it.id, 'hd'); if (p != null) cost += p * it.qty })
+  const chk = phases.map((ph, pi) => `<div style="${SEC}"><div style="${GH}">${ph[0]}</div>${ph[1].map((t, ii) => { const k = pi + ':' + ii, on = gChk[k]; return `<label style="display:flex;gap:9px;align-items:flex-start;padding:5px 0;font-size:13px;cursor:pointer"><input type="checkbox" data-gk="${k}" ${on ? 'checked' : ''} style="margin-top:3px;accent-color:var(--acc);flex:none"><span style="${on ? 'color:var(--mut);text-decoration:line-through' : ''}">${t}</span></label>` }).join('')}</div>`).join('')
+  body.innerHTML = `<div style="color:var(--mut);font-size:13px;margin-bottom:14px">A pro install sequence for your <b>${c.squares.toFixed(1)}-square ${cfg.roof_type}</b> roof. Tick steps as you go. Pair with sheets RF-1 (plan) + RF-2 (details).</div>`
+    + chk
+    + guideList('🔍 Inspections', ['Many jurisdictions want a <b>dry-in / underlayment</b> inspection BEFORE you shingle — call first.', 'Final after cap + flashing + cleanup.', 'Photograph the ice &amp; water, flashing, and ridge slot for the warranty + inspector.'])
+    + guideList('🧰 Tools', tools)
+    + `<div style="${SEC}"><div style="${GH}">💵 Materials estimate</div><div style="font-size:13px;color:var(--ink)">~<b style="color:var(--ok)">$${cost.toFixed(0)}</b> in materials (Home Depot catalog) for ${c.squares.toFixed(1)} squares — edit prices on the Materials tab. Labor (tear-off + install) typically adds $3.50-7/ft².</div></div>`
+  body.querySelectorAll('input[data-gk]').forEach(el => el.onchange = () => { gChk[el.dataset.gk] = el.checked; localStorage.setItem(G_LS, JSON.stringify(gChk)); renderGuide() })
 }
 const price = (id, store) => priceEdits[`${id}.${store}`] ?? catalog[id]?.[store] ?? null
 const renderMat = () => {
@@ -168,7 +194,7 @@ const fitCam = () => {
 const recompute = () => {
   out = callCore(cfg)
   if (out.error) { $('#warns').innerHTML = `<div class="warn">${out.error}</div>`; return }
-  persist(); rebuild3D(); fitCam(); renderPlans(); renderMat(); renderWarns(); updatePermits()
+  persist(); rebuild3D(); fitCam(); renderPlans(); renderMat(); renderWarns(); renderGuide(); updatePermits()
 }
 let MV = null
 const T = { img: null, mode: null, scalePts: [], dist: 10, poly: [], pxPerFt: 0 }
@@ -286,7 +312,7 @@ const initUI = () => {
     const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([csv], { type: 'text/csv' })), download: 'roof-materials.csv' })
     a.click()
   }
-  $('#dl-svg').onclick = () => { ['layout'].forEach(k => { const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([out.svgs[k]], { type: 'image/svg+xml' })), download: `roof-${k}.svg` }); a.click() }); const sw = $('#svg-site'); sw && Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([sw.innerHTML], { type: 'image/svg+xml' })), download: 'roof-site-plan.svg' }).click() }
+  $('#dl-svg').onclick = () => { ['layout', 'details'].forEach(k => { const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([out.svgs[k]], { type: 'image/svg+xml' })), download: `roof-${k}.svg` }); a.click() }); const sw = $('#svg-site'); sw && Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([sw.innerHTML], { type: 'image/svg+xml' })), download: 'roof-site-plan.svg' }).click() }
   buildFinishes()
   initPermits(() => ({ ...cfg, height: 0, attach: cfg.house_edge >= 0 ? 'house' : 'free', length: 0, depth: 0 }), () => out)
   if (cfg.mode === 'poly' && cfg.polygon) { $('#rw').style.display = 'none'; $('#rd').style.display = 'none'; document.querySelectorAll('#mode button').forEach(b => b.classList.toggle('on', b.dataset.v === 'poly')); const edges = cfg.polygon.map((a, i) => { const b2 = cfg.polygon[(i + 1) % cfg.polygon.length]; return Math.hypot(b2[0] - a[0], b2[1] - a[1]) }); const sel = $('#house'); sel.innerHTML = '<option value="-1">Freestanding</option>' + edges.map((L, i) => `<option value="${i}">Edge ${i + 1} (${L.toFixed(1)} ft) = house</option>`).join(''); sel.value = String(cfg.house_edge) }
