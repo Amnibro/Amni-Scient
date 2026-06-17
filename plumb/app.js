@@ -11,7 +11,7 @@ let priceEdits = (() => { try { return JSON.parse(localStorage.getItem(LSP)) || 
 let catalog = {}
 const $ = s => document.querySelector(s)
 const FINISHES = { pex: ['#c23a3a', 'PEX'], copper: ['#b87333', 'Copper'], cpvc: ['#d8c9a8', 'CPVC'] }
-const wasm = await WebAssembly.instantiateStreaming(fetch('plumb_core.wasm?v=1'))
+const wasm = await WebAssembly.instantiateStreaming(fetch('plumb_core.wasm?v=2'))
 const { alloc, dealloc, build, memory } = wasm.instance.exports
 const enc = new TextEncoder(), dec = new TextDecoder()
 const polyOf = c => c.mode === 'poly' && c.polygon && c.polygon.length >= 3 ? c.polygon : [[0, 0], [c.w, 0], [c.w, c.d], [0, c.d]]
@@ -81,7 +81,7 @@ window.addEventListener('beforeprint', () => {
 let siteSnap = null
 const renderPlans = () => {
   if (!out) return
-  ;['layout'].forEach(k => $(`#svg-${k}`).innerHTML = out.svgs[k])
+  ;['layout', 'details'].forEach(k => $(`#svg-${k}`).innerHTML = out.svgs[k])
   if (siteSnap) {
     let wrap = $('#svg-site')
     if (!wrap) { wrap = document.createElement('div'); wrap.className = 'svgwrap'; wrap.id = 'svg-site'; const pane = $('#pane-plans'); pane.insertBefore(wrap, pane.querySelector('.svgwrap')) }
@@ -92,6 +92,32 @@ const renderWarns = () => {
   const w = $('#warns'); w.innerHTML = '<h3 style="font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--acc);margin:16px 0 8px">Build Notes</h3>'
   if (!out) return
   for (const s of out.warnings) { const [tag, txt] = s.includes('|') ? s.split('|') : ['INFO', s]; const d = document.createElement('div'); d.className = 'warn' + (tag === 'OK' ? ' ok' : tag === 'INFO' ? ' info' : ''); d.textContent = txt; w.appendChild(d) }
+}
+const G_LS = 'amniplumb.guide.v1'
+let gChk = (() => { try { return JSON.parse(localStorage.getItem(G_LS)) || {} } catch { return {} } })()
+const SEC = 'background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:14px', GH = 'font-size:15px;color:var(--acc);margin-bottom:6px;font-weight:600'
+const guideList = (title, items) => `<div style="${SEC}"><div style="${GH}">${title}</div><ul style="list-style:disc;padding-left:20px;font-size:13px;line-height:1.7;color:var(--ink)">${items.map(t => `<li>${t}</li>`).join('')}</ul></div>`
+const renderGuide = () => {
+  const body = $('#guide-body'); if (!body || !out) return
+  const c = out.calc, mat = (cfg.pipe_material || 'pex').toUpperCase()
+  const phases = [
+    ['📋 Plan + permit', ['Pull the plumbing permit; confirm whether your area uses the IPC or UPC.', 'Mark every fixture; plan the shortest drain runs and the vent path up through the roof.', `Order ${mat} supply, DWV + fittings, traps, stops, cleanouts, boots — dry-fit before you cut anything for good.`]],
+    ['🕳️ DWV rough  (sheet P-2, details 1, 3 & 4)', ['Set the building drain + stack: 1/4"/ft slope (1/8" min on 3"+), supported every few feet.', 'Branch to each fixture; a P-trap AND a vent on every one; toilet on a 3" line.', 'Cleanouts at the base of each stack, direction changes, and ≤100 ft; dry-fit, then solvent-weld / no-hub.']],
+    ['💧 Water supply rough  (sheet P-2, detail 2)', [`3/4" trunk, 1/2" branches in ${mat}; balance hot + cold; insulate hot lines.`, 'Stub out at the rough-in heights; a 1/4-turn stop planned at every fixture.', 'Anchor + protect pipe through studs (nail plates) — keep it off sharp edges.']],
+    ['🌬️ Venting', ['Tie fixture vents into a stack; one (or more) vent penetrates the roof with a boot.', 'Keep each vent within the trap-arm distance for its trap size; no flat (un-sloped) vents below the flood rim.']],
+    ['🔎 Test + rough inspection', ['Cap it and pressure-test: water column on the DWV, air/water on the supply — hold per code.', 'Call the rough-in inspection; nothing gets closed in until DWV + supply pass.']],
+    ['🚽 Set fixtures (finish)', ['Set the closet flange + wax ring; faucets, stops, supply lines, traps.', 'Water heater: cold in / hot out, T&P relief to within 6" of the floor, expansion tank on a closed system, drain pan.', 'Caulk + putty per the fixture; snug — do not overtighten plastic.']],
+    ['✅ Final', ['Fill the system, run every fixture, and check EACH joint for weeps.', 'Confirm traps hold a seal and nothing drains slow; then the final inspection.']],
+  ]
+  const tools = [`${mat === 'COPPER' ? 'Torch + flux + solder' : mat === 'CPVC' ? 'CPVC cement + primer' : 'PEX crimp or expander tool + rings'}`, 'PVC/ABS cement + primer (DWV)', 'Tubing cutter + ratchet PVC cutter', 'Hacksaw / mini-hacksaw', 'Right-angle drill + auger/hole-saw (joists)', 'Torpedo + 2-ft level (slope)', 'Channel-locks + basin wrench', 'Plumber’s putty + thread tape', 'Test balls / caps + gauge', 'Tape, marker, deburr tool']
+  let cost = 0; (out.bom || []).forEach(it => { const p = price(it.id, 'hd'); if (p != null) cost += p * it.qty })
+  const chk = phases.map((ph, pi) => `<div style="${SEC}"><div style="${GH}">${ph[0]}</div>${ph[1].map((t, ii) => { const k = pi + ':' + ii, on = gChk[k]; return `<label style="display:flex;gap:9px;align-items:flex-start;padding:5px 0;font-size:13px;cursor:pointer"><input type="checkbox" data-gk="${k}" ${on ? 'checked' : ''} style="margin-top:3px;accent-color:var(--acc);flex:none"><span style="${on ? 'color:var(--mut);text-decoration:line-through' : ''}">${t}</span></label>` }).join('')}</div>`).join('')
+  body.innerHTML = `<div style="color:var(--mut);font-size:13px;margin-bottom:14px">A pro rough-to-finish sequence for your <b>${c.total_fixtures}-fixture</b> system (${mat}, ${c.building_drain_in}" drain). Tick as you go. Pair with sheets P-1 (riser) + P-2 (details).</div>`
+    + chk
+    + guideList('🔍 Inspections', ['<b>Rough-in</b>: DWV + supply pressure test, with pipe exposed — call before you close walls.', '<b>Final</b>: fixtures set, traps sealed, water heater T&P + pan, no leaks.', 'Gas water-heater venting + any sewer/septic tie-in usually need a licensed plumber.'])
+    + guideList('🧰 Tools', tools)
+    + `<div style="${SEC}"><div style="${GH}">💵 Materials estimate</div><div style="font-size:13px;color:var(--ink)">~<b style="color:var(--ok)">$${cost.toFixed(0)}</b> in pipe, fittings + fixtures hardware (Home Depot catalog) — edit prices on the Materials tab. Fixtures + the water heater are extra.</div></div>`
+  body.querySelectorAll('input[data-gk]').forEach(el => el.onchange = () => { gChk[el.dataset.gk] = el.checked; localStorage.setItem(G_LS, JSON.stringify(gChk)); renderGuide() })
 }
 const price = (id, store) => priceEdits[`${id}.${store}`] ?? catalog[id]?.[store] ?? null
 const renderMat = () => {
@@ -153,7 +179,7 @@ const fitCam = () => {
 const recompute = () => {
   out = callCore(cfg)
   if (out.error) { $('#warns').innerHTML = `<div class="warn">${out.error}</div>`; return }
-  persist(); rebuild3D(); fitCam(); renderPlans(); renderMat(); renderWarns(); updatePermits()
+  persist(); rebuild3D(); fitCam(); renderPlans(); renderMat(); renderWarns(); renderGuide(); updatePermits()
 }
 let MV = null
 const T = { img: null, mode: null, scalePts: [], dist: 10, poly: [], pxPerFt: 0 }
@@ -273,7 +299,7 @@ const initUI = () => {
     const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([csv], { type: 'text/csv' })), download: 'plumb-materials.csv' })
     a.click()
   }
-  $('#dl-svg').onclick = () => { ['layout'].forEach(k => { const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([out.svgs[k]], { type: 'image/svg+xml' })), download: `plumb-${k}.svg` }); a.click() }); const sw = $('#svg-site'); sw && Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([sw.innerHTML], { type: 'image/svg+xml' })), download: 'plumb-site-plan.svg' }).click() }
+  $('#dl-svg').onclick = () => { ['layout', 'details'].forEach(k => { const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([out.svgs[k]], { type: 'image/svg+xml' })), download: `plumb-${k}.svg` }); a.click() }); const sw = $('#svg-site'); sw && Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([sw.innerHTML], { type: 'image/svg+xml' })), download: 'plumb-site-plan.svg' }).click() }
   buildFinishes()
   initPermits(() => ({ ...cfg, height: 0, attach: cfg.house_edge >= 0 ? 'house' : 'free', length: 0, depth: 0 }), () => out)
   if (cfg.mode === 'poly' && cfg.polygon) { $('#rw').style.display = 'none'; $('#rd').style.display = 'none'; document.querySelectorAll('#mode button').forEach(b => b.classList.toggle('on', b.dataset.v === 'poly')); const edges = cfg.polygon.map((a, i) => { const b2 = cfg.polygon[(i + 1) % cfg.polygon.length]; return Math.hypot(b2[0] - a[0], b2[1] - a[1]) }); const sel = $('#house'); sel.innerHTML = '<option value="-1">Freestanding</option>' + edges.map((L, i) => `<option value="${i}">Edge ${i + 1} (${L.toFixed(1)} ft) = house</option>`).join(''); sel.value = String(cfg.house_edge) }
