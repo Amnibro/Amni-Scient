@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Amni-Roof — Roofing Estimator</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Free roofing estimator — footprint + pitch to roof area, squares, shingle bundles (or metal panels), underlayment, ice & water, drip edge, ridge/hip/eave lengths, ventilation, a roof plan, and store pricing.">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230a0a0a'/%3E%3Ctext x='32' y='44' font-size='38' text-anchor='middle' font-family='monospace' font-weight='bold' fill='%23708696'%3EAR%3C/text%3E%3C/svg%3E">
+<style>
+:root{--bg:#14161a;--panel:#1d2026;--ink:#e8e6e0;--mut:#9aa0aa;--acc:#8fa8b8;--acc2:#4f9cf0;--ok:#5fbf6e;--warn:#e0b341;--line:#2c3038}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font:14px/1.45 system-ui,Segoe UI,sans-serif;height:100vh;display:flex;flex-direction:column;overflow:hidden}
+header{display:flex;align-items:center;gap:16px;padding:10px 16px;background:var(--panel);border-bottom:1px solid var(--line)}
+header h1{font-size:17px;color:var(--acc)}
+header .tabs{display:flex;gap:4px;margin-left:auto}
+.tab{padding:7px 14px;border-radius:8px;cursor:pointer;color:var(--mut);border:1px solid transparent;user-select:none}
+.tab.on{color:var(--ink);background:var(--bg);border-color:var(--line)}
+main{flex:1;display:flex;min-height:0}
+#side{width:308px;min-width:308px;background:var(--panel);border-right:1px solid var(--line);overflow-y:auto;padding:14px}
+#side h3{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--acc);margin:16px 0 8px}
+#side h3:first-child{margin-top:0}
+.row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:6px 0}
+.row label{color:var(--mut);flex:1}
+.row input[type=number],.row input[type=text],.row select{width:108px;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:5px 8px}
+.row input[type=checkbox]{accent-color:var(--acc);width:16px;height:16px}
+.seg{display:flex;gap:4px;width:100%;margin:6px 0}
+.seg button{flex:1;padding:6px 4px;background:var(--bg);color:var(--mut);border:1px solid var(--line);border-radius:6px;cursor:pointer;font-size:12px}
+.seg button.on{color:#111;background:var(--acc);border-color:var(--acc);font-weight:600}
+.swatches{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 18px}
+.sw{width:38px;height:30px;border-radius:7px;border:2px solid var(--line);cursor:pointer;position:relative}
+.sw.on{border-color:var(--acc);box-shadow:0 0 0 2px rgba(143,168,184,.35)}
+.sw span{position:absolute;bottom:-16px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--mut);white-space:nowrap}
+.addbtn{width:100%;padding:7px;background:var(--bg);border:1px dashed var(--line);color:var(--mut);border-radius:8px;cursor:pointer;margin-top:4px}
+.addbtn:hover{border-color:var(--acc);color:var(--acc)}
+#warns{margin-top:14px;display:flex;flex-direction:column;gap:6px}
+.warn{font-size:12px;padding:8px 10px;border-radius:8px;background:var(--bg);border-left:3px solid var(--warn)}
+.warn.ok{border-left-color:var(--ok)}
+.warn.info{border-left-color:var(--acc2)}
+#view{flex:1;position:relative;min-width:0}
+#c3d{width:100%;height:100%;display:block;touch-action:none}
+.pane{position:absolute;inset:0;overflow:auto;padding:20px;background:var(--bg);display:none}
+.pane.on{display:block}
+#hud{position:absolute;left:14px;bottom:12px;font-size:12px;color:var(--mut);background:rgba(20,22,26,.78);padding:6px 10px;border-radius:8px;pointer-events:none}
+.svgwrap{background:#fff;border-radius:10px;margin-bottom:18px;padding:6px}
+.svgwrap svg{display:block;width:100%;height:auto}
+.planbar{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
+.btn{padding:7px 14px;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:8px;cursor:pointer}
+.btn:hover{border-color:var(--acc)}
+.btn.acc{background:var(--acc);color:#111;border-color:var(--acc);font-weight:600}
+.btn.on{background:var(--acc);color:#111;border-color:var(--acc)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
+th{color:var(--mut);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.05em}
+td input{width:78px;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:4px 6px}
+td input.flash{border-color:var(--ok);box-shadow:0 0 0 2px rgba(95,191,110,.3)}
+td a{color:var(--acc2);text-decoration:none}
+.tot{font-size:16px;font-weight:700}
+.tot.best{color:var(--ok)}
+#pstatus{color:var(--mut);font-size:12px;margin-left:8px}
+.summary{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:16px}
+.chip{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 16px}
+.chip b{display:block;font-size:18px;color:var(--acc)}
+.chip span{font-size:12px;color:var(--mut)}
+.pastebox{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:16px}
+.pastebox h4{color:var(--acc);font-size:13px;margin-bottom:6px}
+.pastebox p{color:var(--mut);font-size:12px;margin-bottom:10px}
+#tracewrap{display:flex;gap:14px;flex-wrap:wrap}
+#tcanvas{background:#0d0f12;border:1px solid var(--line);border-radius:10px;cursor:crosshair;max-width:100%}
+#tside{min-width:240px;max-width:300px;display:flex;flex-direction:column;gap:8px}
+#tstatus{font-size:12px;color:var(--warn);min-height:32px}
+#tdims{font-size:12px;color:var(--mut);line-height:1.7}
+#printshot{display:none}
+@media print{#side,header,.planbar,#hud,#c3d{display:none}.pane{display:none!important}#pane-plans{display:block!important;position:static;overflow:visible;padding:0;background:#fff}#printshot{display:block}body{background:#fff;height:auto;overflow:hidden auto}main,#view{display:block;min-height:0}.svgwrap{page-break-inside:avoid}}
+</style>
+</head>
+<body>
+<header>
+  <h1>🏠 Amni-Roof</h1>
+  <span style="color:var(--mut);font-size:12px">part of <a href="../construct/" style="color:#d8893a;text-decoration:none">AMNI-CONSTRUCT</a> · <a href="../deck/" style="color:#e8a33d;text-decoration:none">🛠️ Deck</a> · <a href="../patio/" style="color:#8fa8b8;text-decoration:none">🧱 Patio</a> · <a href="../pool/" style="color:#2f9bd6;text-decoration:none">🏊 Pool</a> · <a href="../floor/" style="color:#b5894e;text-decoration:none">🪵 Floor</a></span>
+  <div class="tabs">
+    <div class="tab on" data-pane="3d">3D View</div>
+    <div class="tab" data-pane="trace">📷 Photo Trace</div>
+    <div class="tab" data-pane="plans">2D Plans</div>
+    <div class="tab" data-pane="mat">Materials &amp; Pricing</div>
+  </div>
+</header>
+<main>
+  <div id="side">
+    <h3>Shape</h3>
+    <div class="seg" id="mode"><button data-v="rect" class="on">Rectangle</button><button data-v="poly">Traced outline</button></div>
+    <div class="row" id="rw"><label>Building width (ft)</label><input type="number" id="w" min="8" max="120" step="1" value="40"></div>
+    <div class="row" id="rd"><label>Building depth (ft)</label><input type="number" id="d" min="8" max="120" step="1" value="30"></div>
+    <div class="row"><label>Ridge wall (layout)</label><select id="house"><option value="0" selected>Longest / back edge</option><option value="-1">Auto</option></select></div>
+    <h3>Roof</h3>
+    <div class="row"><label>Pitch (rise : 12)</label><input type="number" id="pitch" min="1" max="18" step="0.5" value="6"></div>
+    <div class="row"><label>Type</label><select id="rooftype"><option value="gable" selected>Gable</option><option value="hip">Hip</option></select></div>
+    <div class="row"><label>Material</label><select id="material"><option value="arch" selected>Architectural shingle</option><option value="3tab">3-tab shingle</option><option value="metal">Metal panel</option><option value="synthetic">Synthetic</option></select></div>
+    <div class="row"><label>Eave/rake overhang (in)</label><input type="number" id="overhang" min="0" max="36" step="1" value="12"></div>
+    <h3>Material preview</h3>
+    <div class="swatches" id="finishes"></div>
+    <h3>Code &amp; Permits</h3>
+    <button class="addbtn" id="loc-detect">📍 Use my location</button>
+    <div style="font-size:11px;color:var(--mut);margin:4px 0" id="loc-status"></div>
+    <div class="row"><label>State</label><select id="loc-state"></select></div>
+    <div class="row"><label>City / town</label><input type="text" id="loc-city" placeholder="e.g. Troy"></div>
+    <div id="permit-info" style="display:flex;flex-direction:column;gap:6px;margin-top:8px"></div>
+    <div id="warns"></div>
+  </div>
+  <div id="view">
+    <canvas id="c3d"></canvas>
+    <div id="hud">drag = orbit · wheel = zoom · right-drag = pan</div>
+    <div class="pane" id="pane-trace">
+      <div class="planbar">
+        <input id="maddr" placeholder="🗺️ Address — e.g. 123 Main St, Troy NY (satellite view, auto-scale)" style="flex:1;min-width:260px;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:7px 10px">
+        <button class="btn acc" id="mfind">Find address</button>
+        <button class="btn" id="mzin">＋</button>
+        <button class="btn" id="mzout">－</button>
+        <span id="mattrib" style="font-size:10px;color:var(--mut)"></span>
+      </div>
+      <div class="planbar">
+        <label class="btn" style="display:inline-block">📷 Or upload photo / sketch<input type="file" id="timg" accept="image/*" style="display:none"></label>
+        <button class="btn" id="tscale">1️⃣ Set scale</button>
+        <button class="btn" id="ttrace">2️⃣ Trace outline</button>
+        <button class="btn acc" id="tauto">✨ Auto-detect</button>
+        <button class="btn" id="tundo">↩ Undo point</button>
+        <button class="btn" id="tclear">✖ Clear</button>
+        <button class="btn acc" id="tuse">✅ Use outline</button>
+      </div>
+      <div class="planbar" id="troute" style="display:none;align-items:center;font-size:12px;color:var(--mut)">detected type:<button class="btn" data-r="aerial">🛰️ Aerial</button><button class="btn" data-r="ground">📷 Ground</button><button class="btn" data-r="drawing">📐 Drawing</button><span style="font-size:11px">— override if I guessed wrong</span></div>
+      <div id="tracewrap">
+        <canvas id="tcanvas" width="980" height="660"></canvas>
+        <div id="tside">
+          <div id="tstatus">Upload an overhead photo or a sketch of your yard. Then: Set scale (click two points you know the real distance between), Trace (click each corner of the patio), Use outline.</div>
+          <div id="tdims"></div>
+          <p style="font-size:11px;color:var(--mut)">Photos stay on your device — nothing uploads anywhere. Overhead/drone shots or drawn-to-scale sketches work best; angled photos distort distances.</p>
+        </div>
+      </div>
+    </div>
+    <div class="pane" id="pane-plans">
+      <div class="planbar"><button class="btn acc" onclick="window.print()">🖨️ Print all plans</button><button class="btn" id="dl-svg">⬇️ Download SVGs</button></div>
+      <div class="svgwrap" id="svg-layout"></div>
+    </div>
+    <div class="pane" id="pane-mat">
+      <div class="summary" id="mat-summary"></div>
+      <div class="pastebox">
+        <h4>📋 Live prices, the way that actually works</h4>
+        <p>Stores block robots — but not you. Open a store link below, press <b>Ctrl+A</b> then <b>Ctrl+C</b> on the store page, come back and click a paste button. Every price found is matched automatically.</p>
+        <button class="btn acc" id="paste-hd">📥 Paste → Home Depot prices</button>
+        <button class="btn acc" id="paste-lowes">📥 Paste → Lowe's prices</button>
+        <button class="btn" id="open-all-hd">↗ Open all HD links</button>
+        <span id="pstatus"></span>
+      </div>
+      <div class="planbar">
+        <button class="btn" id="reset-prices">Reset to catalog</button>
+        <button class="btn" id="export-csv">⬇️ Export CSV</button>
+      </div>
+      <table id="mat-table"></table>
+      <p style="color:var(--mut);font-size:12px;margin-top:12px">Catalog prices are editable estimates — click any cell to adjust. Ready-mix is quoted locally; call 2-3 plants with your yd³ (short-load fees apply under ~4 yd³).</p>
+    </div>
+  </div>
+</main>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+<script type="module" src="app.js?v=127"></script>
+</body>
+</html>

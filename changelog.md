@@ -1,5 +1,9 @@
 # Changelog 
 
+## Amni-Construct — Amni-Roof LAUNCHED - 2026-06-17
+- NEW app **amni-scient.com/roof** — roofing estimator. Footprint + pitch (x:12) → slope factor, roof area, squares, shingle bundles (or metal panels) with waste (gable 10% / hip 15% / +steep), starter, hip & ridge cap, synthetic underlayment, ice & water shield, drip edge, ridge/hip/rake/eave lengths, balanced ventilation (1/300), nails/boots/cement; RF-1 roof plan (ridge + slope arrows + dims + notes); 3D gable/hip massing; priced BOM. Brand-new Rust→WASM core authored from scratch on the shared scaffold (23 tests pass), headless-verified (1200 ft²→15 sq→50 bundles). Low-slope + fall-hazard + cold-climate ice&water warnings.
+- Amni-Construct hub: flipped 🏠 Roofing to LIVE, added roof card; sitemap + roadmap updated.
+
 ## Amni-Construct — Amni-Floor LAUNCHED - 2026-06-16
 - NEW app **amni-scient.com/floor** — flooring estimator off the patio shell. Trace/rect a room → area, boxes by material (LVP/laminate/hardwood/tile/carpet) & pattern (straight/brick/diagonal/herringbone, waste 8/10/15/18% auto), underlayment rolls, tile backer/thinset/grout, trim & transitions; FL-1 layout plan (plank run parallel to longest wall, expansion gap, stagger, acclimate, deflection notes); priced BOM. Rust→WASM core (18 tests pass), headless-verified (144 ft²→7 boxes).
 - Amni-Construct hub: flipped 🪵 Flooring to LIVE, added floor card; sitemap + roadmap updated.
