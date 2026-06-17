@@ -60,10 +60,11 @@ btn.addEventListener('click', async () => {
   document.getElementById('spin').style.display = 'block';
   status.textContent = 'Fetching the world seed (4.5 MB)...';
   try {
-    const { default: init } = await import('./pkg/amni.js');
+    const V = '140';
+    const { default: init } = await import('./pkg/amni.js?v=' + V);
     status.textContent = 'Growing eight realms — about 15 seconds, the page may hold its breath...';
     await new Promise(r => setTimeout(r, 60));
-    await init();
+    await init({ module_or_path: './pkg/amni_bg.wasm?v=' + V });
     const t0 = Date.now();
     await new Promise(res => {
       const iv = setInterval(() => {
