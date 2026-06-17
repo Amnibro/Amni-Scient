@@ -1,5 +1,9 @@
 # Changelog 
 
+## Amni-Construct — Amni-Floor LAUNCHED - 2026-06-16
+- NEW app **amni-scient.com/floor** — flooring estimator off the patio shell. Trace/rect a room → area, boxes by material (LVP/laminate/hardwood/tile/carpet) & pattern (straight/brick/diagonal/herringbone, waste 8/10/15/18% auto), underlayment rolls, tile backer/thinset/grout, trim & transitions; FL-1 layout plan (plank run parallel to longest wall, expansion gap, stagger, acclimate, deflection notes); priced BOM. Rust→WASM core (18 tests pass), headless-verified (144 ft²→7 boxes).
+- Amni-Construct hub: flipped 🪵 Flooring to LIVE, added floor card; sitemap + roadmap updated.
+
 ## Amni-Construct — Amni-Pool LAUNCHED - 2026-06-16
 - NEW app **amni-scient.com/pool** — 3D swimming pool designer off the patio shell. Polygon/rect shape, shallow+deep depth profile, water volume in gallons, 8-hour turnover GPM, pump HP + cartridge filter ft² + heater BTU sizing, excavation yd³, skimmer/return counts; translucent water box in 3D; two permit sheets (POOL PLAN + SECTION); barrier/811/VGB/no-diving safety notes; priced BOM. Rust→WASM core (18 tests pass), verified headless (boot + plan sheets, 512 ft²→17,235 gal).
 - Amni-Construct hub: flipped 🏊 Pools to LIVE, added pool card; sitemap + roadmap updated.
