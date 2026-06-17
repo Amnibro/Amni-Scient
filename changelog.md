@@ -1,5 +1,9 @@
 # Changelog 
 
+## Amni-Construct — Amni-Plumb LAUNCHED - 2026-06-17
+- NEW app **amni-scient.com/plumb** — plumbing estimator. Fixture counts (toilets/lavs/tubs/showers/kitchen sinks/dishwashers/washers) → water supply fixture units, demand GPM, main supply size, drainage fixture units → building-drain size; supply/DWV/vent pipe lengths, P-traps, angle stops, fittings, cleanouts, water heater, main valve; PEX/copper/CPVC. P-1 supply+DWV riser diagram (hot/cold trunks, fixture stubs, vent thru roof, cleanout, slope to sewer); priced BOM. Brand-new Rust→WASM core from scratch (19 tests pass), headless-verified (9 fixtures→13.4 WSFU→14 GPM, 18 DFU→3 in drain). Trap/vent, slope, 4-in-upsize, backflow, and permit warnings.
+- Amni-Construct hub: flipped 🚿 Plumbing to LIVE, added plumb card; sitemap + roadmap updated.
+
 ## Amni-Construct — Amni-Frame LAUNCHED - 2026-06-17
 - NEW app **amni-scient.com/frame** — wall framing estimator. Footprint perimeter = exterior wall: studs by spacing (16/24 OC) + 3-stud corners + opening framing, PT sill + double top plate boards, 2-ply headers, OSB sheathing + house wrap, anchor bolts, framing nails; choose 2x4/2x6, doors/windows, wall height. FR-1 framing elevation (PT sill, double top plate, studs, window + door rough openings with header/king/jack/sill/cripple labeled, dims, notes); 3D wall-envelope massing; priced BOM. Brand-new Rust→WASM core from scratch (21 tests pass), headless-verified (140 lf×8 ft → 178 studs, 39 OSB). Single-top-plate, 2x6 insulation, fire-block, and bearing-wall permit warnings.
 - Amni-Construct hub: flipped 🔩 Framing to LIVE, added frame card; sitemap + roadmap updated.
