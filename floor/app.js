@@ -11,7 +11,7 @@ let priceEdits = (() => { try { return JSON.parse(localStorage.getItem(LSP)) || 
 let catalog = {}
 const $ = s => document.querySelector(s)
 const FINISHES = { lvp: ['#c8a25a', 'LVP'], laminate: ['#d7b27a', 'Laminate'], hardwood: ['#9c5a2a', 'Hardwood'], tile: ['#cfcabc', 'Tile'], carpet: ['#9a9488', 'Carpet'] }
-const wasm = await WebAssembly.instantiateStreaming(fetch('floor_core.wasm?v=1'))
+const wasm = await WebAssembly.instantiateStreaming(fetch('floor_core.wasm?v=2'))
 const { alloc, dealloc, build, memory } = wasm.instance.exports
 const enc = new TextEncoder(), dec = new TextDecoder()
 const polyOf = c => c.mode === 'poly' && c.polygon && c.polygon.length >= 3 ? c.polygon : [[0, 0], [c.w, 0], [c.w, c.d], [0, c.d]]
@@ -81,7 +81,7 @@ window.addEventListener('beforeprint', () => {
 let siteSnap = null
 const renderPlans = () => {
   if (!out) return
-  ;['layout'].forEach(k => $(`#svg-${k}`).innerHTML = out.svgs[k])
+  ;['layout', 'details'].forEach(k => $(`#svg-${k}`).innerHTML = out.svgs[k])
   if (siteSnap) {
     let wrap = $('#svg-site')
     if (!wrap) { wrap = document.createElement('div'); wrap.className = 'svgwrap'; wrap.id = 'svg-site'; const pane = $('#pane-plans'); pane.insertBefore(wrap, pane.querySelector('.svgwrap')) }
@@ -92,6 +92,32 @@ const renderWarns = () => {
   const w = $('#warns'); w.innerHTML = '<h3 style="font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--acc);margin:16px 0 8px">Build Notes</h3>'
   if (!out) return
   for (const s of out.warnings) { const [tag, txt] = s.includes('|') ? s.split('|') : ['INFO', s]; const d = document.createElement('div'); d.className = 'warn' + (tag === 'OK' ? ' ok' : tag === 'INFO' ? ' info' : ''); d.textContent = txt; w.appendChild(d) }
+}
+const G_LS = 'amnifloor.guide.v1'
+let gChk = (() => { try { return JSON.parse(localStorage.getItem(G_LS)) || {} } catch { return {} } })()
+const SEC = 'background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:14px', GH = 'font-size:15px;color:var(--acc);margin-bottom:6px;font-weight:600'
+const guideList = (title, items) => `<div style="${SEC}"><div style="${GH}">${title}</div><ul style="list-style:disc;padding-left:20px;font-size:13px;line-height:1.7;color:var(--ink)">${items.map(t => `<li>${t}</li>`).join('')}</ul></div>`
+const renderGuide = () => {
+  const body = $('#guide-body'); if (!body || !out) return
+  const c = out.calc, mat = cfg.material, tile = mat === 'tile', floating = mat === 'lvp' || mat === 'laminate'
+  const phases = [
+    ['📋 Acclimate + prep', [`Buy 5-10% extra (${c.boxes} boxes here) from one dye lot; acclimate 48 h flat in the room.`, 'Subfloor must be clean, dry + FLAT — within 3/16" over 10 ft; grind highs, fill lows.', 'On a slab: test moisture (RH / calcium-chloride). Screw down any squeaks.']],
+    ['📐 Dry-lay + plan  (sheet FL-2, detail 4)', ['Find the longest/straightest wall + the room center; dry-lay a few rows.', 'Plan so the LAST row is not a sliver — rip the first row to balance both sides.', 'Undercut door casings so planks slide under (use a scrap as a height gauge).']],
+    [floating ? '🧱 Underlayment' : tile ? '🧱 Backer / membrane' : '🧱 Underlayment', floating ? ['Roll underlayment; on/below grade add a 6-mil poly or rated vapor barrier (tape seams).', 'Butt seams, do not overlap; keep it flat + debris-free.'] : tile ? ['Cement backer or uncoupling membrane in thinset; stagger sheets, screw per spec.', 'Subfloor deflection L/360 (L/720 for stone) — stiffen if bouncy.'] : ['Underlayment/pad per the product; staple or tape per spec.']],
+    ['▶️ Lay the field  (sheet FL-2, detail 1)', [`Start straight off the longest wall with 1/4" spacers at every wall.`, 'Stagger end joints 6-8"+; tap planks tight with a block + pull bar — never hammer the edge.', tile ? 'Back-butter large tile; keep 95%+ thinset coverage; consistent grout joints + spacers.' : 'Work toward the main light; keep the expansion gap continuous around obstacles.']],
+    ['✂️ Cuts + obstacles', ['Measure + rip the last row to width (mind the gap).', 'Notch around jambs, vents, and the toilet flange; scribe to out-of-square walls.', tile ? 'Wet-saw cuts; plan cut tiles at the least-visible edge.' : 'Jigsaw curves; a multi-tool cleans tight inside corners.']],
+    ['🚪 Transitions + trim  (sheet FL-2, detail 2)', ['T-molding at doorways + runs over ~30-40 ft; thresholds at exterior doors.', 'Reinstall/scribe baseboard + quarter-round — nail to the WALL, never through a floating floor.']],
+    ['✅ Finish', [tile ? 'Let thinset cure, then grout + wipe haze; seal grout (and stone) after it cures.' : 'Vacuum, pull spacers, check for hollow/loose spots + movement.', 'Floors rarely need a permit — keep the install receipt + lot number for the warranty.']],
+  ]
+  const tools = ['Tapping block + pull bar + 1/4" spacers', 'Miter / table / track saw', 'Jamb (undercut) saw', 'Jigsaw + multi-tool (notches)', 'Utility knife (LVP/carpet)', 'Tape, square + chalk line', 'Rubber mallet', 'Knee pads', 'Moisture meter (slabs)'].concat(tile ? ['Notched trowel + wet saw', 'Grout float + sponge + mixing paddle'] : [])
+  let cost = 0; (out.bom || []).forEach(it => { const p = price(it.id, 'hd'); if (p != null) cost += p * it.qty })
+  const chk = phases.map((ph, pi) => `<div style="${SEC}"><div style="${GH}">${ph[0]}</div>${ph[1].map((t, ii) => { const k = pi + ':' + ii, on = gChk[k]; return `<label style="display:flex;gap:9px;align-items:flex-start;padding:5px 0;font-size:13px;cursor:pointer"><input type="checkbox" data-gk="${k}" ${on ? 'checked' : ''} style="margin-top:3px;accent-color:var(--acc);flex:none"><span style="${on ? 'color:var(--mut);text-decoration:line-through' : ''}">${t}</span></label>` }).join('')}</div>`).join('')
+  body.innerHTML = `<div style="color:var(--mut);font-size:13px;margin-bottom:14px">A pro install sequence for your <b>${c.area_ft2.toFixed(0)} ft² ${mat}</b> floor (${c.boxes} boxes). Tick as you go. Pair with sheets FL-1 (layout) + FL-2 (details).</div>`
+    + chk
+    + guideList('🔍 Notes', ['Flooring rarely needs a building permit — but moisture + flatness make or break it.', 'Floating floors must stay floating: keep the gap, never pin them down at trim or transitions.', 'Save a few planks/tiles for future repairs.'])
+    + guideList('🧰 Tools', tools)
+    + `<div style="${SEC}"><div style="${GH}">💵 Materials estimate</div><div style="font-size:13px;color:var(--ink)">~<b style="color:var(--ok)">$${cost.toFixed(0)}</b> in flooring + underlayment/trim (Home Depot catalog) — edit prices on the Materials tab.</div></div>`
+  body.querySelectorAll('input[data-gk]').forEach(el => el.onchange = () => { gChk[el.dataset.gk] = el.checked; localStorage.setItem(G_LS, JSON.stringify(gChk)); renderGuide() })
 }
 const price = (id, store) => priceEdits[`${id}.${store}`] ?? catalog[id]?.[store] ?? null
 const renderMat = () => {
@@ -153,7 +179,7 @@ const fitCam = () => {
 const recompute = () => {
   out = callCore(cfg)
   if (out.error) { $('#warns').innerHTML = `<div class="warn">${out.error}</div>`; return }
-  persist(); rebuild3D(); fitCam(); renderPlans(); renderMat(); renderWarns(); updatePermits()
+  persist(); rebuild3D(); fitCam(); renderPlans(); renderMat(); renderWarns(); renderGuide(); updatePermits()
 }
 let MV = null
 const T = { img: null, mode: null, scalePts: [], dist: 10, poly: [], pxPerFt: 0 }
@@ -271,7 +297,7 @@ const initUI = () => {
     const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([csv], { type: 'text/csv' })), download: 'floor-materials.csv' })
     a.click()
   }
-  $('#dl-svg').onclick = () => { ['layout'].forEach(k => { const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([out.svgs[k]], { type: 'image/svg+xml' })), download: `floor-${k}.svg` }); a.click() }); const sw = $('#svg-site'); sw && Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([sw.innerHTML], { type: 'image/svg+xml' })), download: 'floor-site-plan.svg' }).click() }
+  $('#dl-svg').onclick = () => { ['layout', 'details'].forEach(k => { const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([out.svgs[k]], { type: 'image/svg+xml' })), download: `floor-${k}.svg` }); a.click() }); const sw = $('#svg-site'); sw && Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([sw.innerHTML], { type: 'image/svg+xml' })), download: 'floor-site-plan.svg' }).click() }
   buildFinishes()
   initPermits(() => ({ ...cfg, height: 0, attach: cfg.house_edge >= 0 ? 'house' : 'free', length: 0, depth: 0 }), () => out)
   if (cfg.mode === 'poly' && cfg.polygon) { $('#rw').style.display = 'none'; $('#rd').style.display = 'none'; document.querySelectorAll('#mode button').forEach(b => b.classList.toggle('on', b.dataset.v === 'poly')); const edges = cfg.polygon.map((a, i) => { const b2 = cfg.polygon[(i + 1) % cfg.polygon.length]; return Math.hypot(b2[0] - a[0], b2[1] - a[1]) }); const sel = $('#house'); sel.innerHTML = '<option value="-1">Freestanding</option>' + edges.map((L, i) => `<option value="${i}">Edge ${i + 1} (${L.toFixed(1)} ft) = house</option>`).join(''); sel.value = String(cfg.house_edge) }
