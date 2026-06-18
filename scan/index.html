@@ -657,15 +657,45 @@ async function reconstructAR() {
   Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([s], { type: 'text/plain' })), download: 'amni-scan-cloud.ply' }).click()
   vstatus('Exported ' + n + ' points as a colored .ply — yours to keep, open anywhere.')
 }
+function covEig(neigh) {
+  const m = neigh.length, mean = [0, 0, 0]; for (const p of neigh) for (let k = 0; k < 3; k++) mean[k] += p[k]; for (let k = 0; k < 3; k++) mean[k] /= m
+  const C = [0, 0, 0, 0, 0, 0, 0, 0, 0]; for (const p of neigh) { const d = [p[0] - mean[0], p[1] - mean[1], p[2] - mean[2]]; for (let a = 0; a < 3; a++) for (let b = 0; b < 3; b++) C[a * 3 + b] += d[a] * d[b] } for (let i = 0; i < 9; i++) C[i] /= m
+  const eig = jacobiEig(C, 3), val = eig.values; let v0 = ecol(eig, 0), v1 = ecol(eig, 1), v2 = ecol(eig, 2)
+  let R = [v0[0], v1[0], v2[0], v0[1], v1[1], v2[1], v0[2], v1[2], v2[2]]
+  if (m3det(R) < 0) { v2 = v2.map(x => -x); R = [v0[0], v1[0], v2[0], v0[1], v1[1], v2[1], v0[2], v1[2], v2[2]] }
+  const floor = Math.max(1e-8, val[0] * 1e-4)
+  return { R, scale3: val.map(e => Math.sqrt(Math.max(floor, e))) }
+}
+function mat3ToQuat(m) { const t = m[0] + m[4] + m[8]; let q; if (t > 0) { const s = Math.sqrt(t + 1) * 2; q = [0.25 * s, (m[7] - m[5]) / s, (m[2] - m[6]) / s, (m[3] - m[1]) / s] } else if (m[0] > m[4] && m[0] > m[8]) { const s = Math.sqrt(1 + m[0] - m[4] - m[8]) * 2; q = [(m[7] - m[5]) / s, 0.25 * s, (m[1] + m[3]) / s, (m[2] + m[6]) / s] } else if (m[4] > m[8]) { const s = Math.sqrt(1 + m[4] - m[0] - m[8]) * 2; q = [(m[2] - m[6]) / s, (m[1] + m[3]) / s, 0.25 * s, (m[5] + m[7]) / s] } else { const s = Math.sqrt(1 + m[8] - m[0] - m[4]) * 2; q = [(m[3] - m[1]) / s, (m[2] + m[6]) / s, (m[5] + m[7]) / s, 0.25 * s] } const nn = Math.hypot(q[0], q[1], q[2], q[3]) || 1; return [q[0] / nn, q[1] / nn, q[2] / nn, q[3] / nn] }
+function anisotropyFromNeighbors(pos, k) {
+  k = k || 12; const n = pos.length / 3, scale3 = new Float32Array(n * 3), quat = new Float32Array(n * 4)
+  let mn = [1e9, 1e9, 1e9], mx = [-1e9, -1e9, -1e9]
+  for (let i = 0; i < n; i++) for (let c = 0; c < 3; c++) { const v = pos[i * 3 + c]; if (v < mn[c]) mn[c] = v; if (v > mx[c]) mx[c] = v }
+  const diag = Math.hypot(mx[0] - mn[0], mx[1] - mn[1], mx[2] - mn[2]) || 1, cell = Math.max(1e-6, diag / Math.cbrt(Math.max(1, n)))
+  if (n < 4) { for (let i = 0; i < n; i++) { scale3[i * 3] = scale3[i * 3 + 1] = scale3[i * 3 + 2] = cell * 0.5; quat[i * 4] = 1 } return { scale3, quat } }
+  const cc = (v, c) => Math.floor((v - mn[c]) / cell), grid = new Map()
+  for (let i = 0; i < n; i++) { const key = cc(pos[i * 3], 0) + ',' + cc(pos[i * 3 + 1], 1) + ',' + cc(pos[i * 3 + 2], 2); (grid.get(key) || grid.set(key, []).get(key)).push(i) }
+  for (let i = 0; i < n; i++) {
+    const cx = cc(pos[i * 3], 0), cy = cc(pos[i * 3 + 1], 1), cz = cc(pos[i * 3 + 2], 2); let cand = []
+    for (let ring = 1; ring <= 5; ring++) { cand = []; for (let dx = -ring; dx <= ring; dx++) for (let dy = -ring; dy <= ring; dy++) for (let dz = -ring; dz <= ring; dz++) { const arr = grid.get((cx + dx) + ',' + (cy + dy) + ',' + (cz + dz)); if (!arr) continue; for (const j of arr) if (j !== i) cand.push(j) } if (cand.length >= k) break }
+    cand.sort((a, b) => ((pos[a * 3] - pos[i * 3]) ** 2 + (pos[a * 3 + 1] - pos[i * 3 + 1]) ** 2 + (pos[a * 3 + 2] - pos[i * 3 + 2]) ** 2) - ((pos[b * 3] - pos[i * 3]) ** 2 + (pos[b * 3 + 1] - pos[i * 3 + 1]) ** 2 + (pos[b * 3 + 2] - pos[i * 3 + 2]) ** 2))
+    const neigh = [[pos[i * 3], pos[i * 3 + 1], pos[i * 3 + 2]]]; for (let t = 0; t < Math.min(k, cand.length); t++) { const j = cand[t]; neigh.push([pos[j * 3], pos[j * 3 + 1], pos[j * 3 + 2]]) }
+    if (neigh.length < 4) { scale3[i * 3] = scale3[i * 3 + 1] = scale3[i * 3 + 2] = cell * 0.5; quat[i * 4] = 1; continue }
+    const e = covEig(neigh); scale3[i * 3] = e.scale3[0]; scale3[i * 3 + 1] = e.scale3[1]; scale3[i * 3 + 2] = e.scale3[2]
+    const q = mat3ToQuat(e.R); quat[i * 4] = q[0]; quat[i * 4 + 1] = q[1]; quat[i * 4 + 2] = q[2]; quat[i * 4 + 3] = q[3]
+  }
+  return { scale3, quat }
+}
 function exportGsplatPly(G) {
   const n = G.n, C0 = 0.28209479177, props = ['x', 'y', 'z', 'nx', 'ny', 'nz', 'f_dc_0', 'f_dc_1', 'f_dc_2', 'opacity', 'scale_0', 'scale_1', 'scale_2', 'rot_0', 'rot_1', 'rot_2', 'rot_3']
   const header = 'ply\nformat binary_little_endian 1.0\nelement vertex ' + n + '\n' + props.map(p => 'property float ' + p).join('\n') + '\nend_header\n'
   const henc = new TextEncoder().encode(header), stride = props.length * 4, buf = new ArrayBuffer(henc.length + n * stride)
   new Uint8Array(buf).set(henc, 0)
-  const dv = new DataView(buf, henc.length), logit = a => Math.log(a / (1 - a))
+  const dv = new DataView(buf, henc.length), logit = a => Math.log(a / (1 - a)), aniso = anisotropyFromNeighbors(G.pos, 12)
   for (let i = 0; i < n; i++) {
-    const o = i * stride, sc = Math.log(Math.max(1e-6, G.scale[i])), op = logit(Math.min(0.999, Math.max(0.001, G.opacity[i])))
-    const vals = [G.pos[i * 3], G.pos[i * 3 + 1], G.pos[i * 3 + 2], 0, 0, 0, (G.col[i * 3] - 0.5) / C0, (G.col[i * 3 + 1] - 0.5) / C0, (G.col[i * 3 + 2] - 0.5) / C0, op, sc, sc, sc, 1, 0, 0, 0]
+    const o = i * stride, op = logit(Math.min(0.999, Math.max(0.001, G.opacity[i])))
+    const s0 = Math.log(Math.max(1e-6, aniso.scale3[i * 3])), s1 = Math.log(Math.max(1e-6, aniso.scale3[i * 3 + 1])), s2 = Math.log(Math.max(1e-6, aniso.scale3[i * 3 + 2]))
+    const vals = [G.pos[i * 3], G.pos[i * 3 + 1], G.pos[i * 3 + 2], 0, 0, 0, (G.col[i * 3] - 0.5) / C0, (G.col[i * 3 + 1] - 0.5) / C0, (G.col[i * 3 + 2] - 0.5) / C0, op, s0, s1, s2, aniso.quat[i * 4], aniso.quat[i * 4 + 1], aniso.quat[i * 4 + 2], aniso.quat[i * 4 + 3]]
     for (let k = 0; k < vals.length; k++) dv.setFloat32(o + k * 4, vals[k], true)
   }
   return buf
