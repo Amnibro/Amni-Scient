@@ -93,6 +93,8 @@ code{background:var(--bg);border:1px solid var(--line);border-radius:5px;padding
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
       <button class="btn" id="c-recon">🧊 Reconstruct → point cloud</button>
       <button class="btn ghost" id="c-recon-ar">🥽 Reconstruct in AR (depth)</button>
+      <button class="btn ghost" id="c-splat">🌫️ Soft splats: off</button>
+      <button class="btn ghost" id="c-ply">⬇️ Export .ply</button>
     </div>
     <div id="c-status" class="muted" style="margin-bottom:8px">Tap Start camera, then slowly circle the object or room, capturing 20-40 frames from different angles. Frames stay on your device — nothing uploads.</div>
     <div style="position:relative;width:100%;aspect-ratio:16/10;background:#0c0e12;border:1px solid var(--line);border-radius:12px;overflow:hidden">
@@ -331,7 +333,7 @@ wrap.addEventListener('drop', e => { e.preventDefault(); const f = e.dataTransfe
 
 // ---------- Our own point-cloud renderer (raw WebGL) + reconstruct (stage 3b) ----------
 const PC_VS = 'attribute vec3 p;attribute vec3 c;uniform mat4 mvp;uniform float sz;varying vec3 vc;void main(){gl_Position=mvp*vec4(p,1.0);gl_PointSize=sz;vc=c;}'
-const PC_FS = 'precision mediump float;varying vec3 vc;void main(){vec2 d=gl_PointCoord-0.5;if(dot(d,d)>0.25)discard;gl_FragColor=vec4(vc,1.0);}'
+const PC_FS = 'precision mediump float;varying vec3 vc;uniform float ua;void main(){vec2 d=gl_PointCoord-0.5;float a=1.0-dot(d,d)*4.0;if(a<=0.0)discard;gl_FragColor=vec4(vc, ua>=0.99?1.0:a*ua);}'
 const v3 = { sub: (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]], cross: (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]], dot: (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2], norm: a => { const l = Math.hypot(a[0], a[1], a[2]) || 1; return [a[0] / l, a[1] / l, a[2] / l] } }
 const m4 = {
   persp: (fov, asp, n, f) => { const t = 1 / Math.tan(fov / 2); return [t / asp, 0, 0, 0, 0, t, 0, 0, 0, 0, (f + n) / (n - f), -1, 0, 0, 2 * f * n / (n - f), 0] },
@@ -339,9 +341,10 @@ const m4 = {
   mul: (a, b) => { const o = new Array(16); for (let r = 0; r < 4; r++) for (let cc = 0; cc < 4; cc++) { let s = 0; for (let k = 0; k < 4; k++) s += a[k * 4 + r] * b[cc * 4 + k]; o[cc * 4 + r] = s } return o }
 }
 function makeProgram(gl, vs, fs) { const c = (t, s) => { const sh = gl.createShader(t); gl.shaderSource(sh, s); gl.compileShader(sh); return gl.getShaderParameter(sh, gl.COMPILE_STATUS) ? sh : null }; const V = c(gl.VERTEX_SHADER, vs), F = c(gl.FRAGMENT_SHADER, fs); if (!V || !F) return null; const p = gl.createProgram(); gl.attachShader(p, V); gl.attachShader(p, F); gl.linkProgram(p); return gl.getProgramParameter(p, gl.LINK_STATUS) ? p : null }
-let pcRAF = 0, pcGL = null
+let pcRAF = 0, pcGL = null, splatMode = false, lastCloud = null
 function renderPointsGL(pos, col) {
   const n = pos.length / 3; if (!n) { vstatus('No points to show.'); return }
+  lastCloud = { pos, col }
   let canvas = document.querySelector('#pccanvas')
   if (!canvas) { canvas = document.createElement('canvas'); canvas.id = 'pccanvas'; canvas.style.cssText = 'width:100%;height:100%;display:block'; $('#vwrap').appendChild(canvas) }
   const vc = $('#vcanvas'); if (vc) vc.style.display = 'none'; canvas.style.display = 'block'; const vsd = $('#vstatus'); if (vsd) vsd.style.display = 'none'
@@ -355,7 +358,7 @@ function renderPointsGL(pos, col) {
   const cb = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, cb); gl.bufferData(gl.ARRAY_BUFFER, col, gl.STATIC_DRAW)
   let cx = 0, cy = 0, cz = 0; for (let i = 0; i < n; i++) { cx += pos[i * 3]; cy += pos[i * 3 + 1]; cz += pos[i * 3 + 2] } cx /= n; cy /= n; cz /= n
   let rad = 0.001; for (let i = 0; i < n; i++) rad = Math.max(rad, Math.hypot(pos[i * 3] - cx, pos[i * 3 + 1] - cy, pos[i * 3 + 2] - cz))
-  const aP = gl.getAttribLocation(prog, 'p'), aC = gl.getAttribLocation(prog, 'c'), uMVP = gl.getUniformLocation(prog, 'mvp'), uSz = gl.getUniformLocation(prog, 'sz')
+  const aP = gl.getAttribLocation(prog, 'p'), aC = gl.getAttribLocation(prog, 'c'), uMVP = gl.getUniformLocation(prog, 'mvp'), uSz = gl.getUniformLocation(prog, 'sz'), uA = gl.getUniformLocation(prog, 'ua')
   gl.enable(gl.DEPTH_TEST); cancelAnimationFrame(pcRAF); let ang = 0
   const draw = () => {
     ang += 0.006; const d = rad * 2.6
@@ -366,7 +369,8 @@ function renderPointsGL(pos, col) {
     gl.useProgram(prog)
     gl.bindBuffer(gl.ARRAY_BUFFER, pb); gl.enableVertexAttribArray(aP); gl.vertexAttribPointer(aP, 3, gl.FLOAT, false, 0, 0)
     gl.bindBuffer(gl.ARRAY_BUFFER, cb); gl.enableVertexAttribArray(aC); gl.vertexAttribPointer(aC, 3, gl.FLOAT, false, 0, 0)
-    gl.uniformMatrix4fv(uMVP, false, mvp); gl.uniform1f(uSz, Math.max(2, 3.5 * dpr))
+    if (splatMode) { gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA); gl.depthMask(false) } else { gl.disable(gl.BLEND); gl.depthMask(true) }
+    gl.uniformMatrix4fv(uMVP, false, mvp); gl.uniform1f(uSz, splatMode ? Math.max(7, 10 * dpr) : Math.max(2, 3.5 * dpr)); gl.uniform1f(uA, splatMode ? 0.5 : 1.0)
     gl.drawArrays(gl.POINTS, 0, n)
     pcRAF = requestAnimationFrame(draw)
   }
@@ -434,6 +438,15 @@ async function reconstructAR() {
 }
 ;($('#c-recon') || {}).onclick = reconstructFromFrames
 ;($('#c-recon-ar') || {}).onclick = reconstructAR
+;($('#c-splat') || {}).onclick = () => { splatMode = !splatMode; const e = $('#c-splat'); if (e) e.textContent = '🌫️ Soft splats: ' + (splatMode ? 'on' : 'off'); if (lastCloud) renderPointsGL(lastCloud.pos, lastCloud.col) }
+;($('#c-ply') || {}).onclick = () => {
+  if (!lastCloud) { vstatus('Reconstruct a point cloud first.'); return }
+  const pos = lastCloud.pos, col = lastCloud.col, n = pos.length / 3
+  let s = 'ply\nformat ascii 1.0\nelement vertex ' + n + '\nproperty float x\nproperty float y\nproperty float z\nproperty uchar red\nproperty uchar green\nproperty uchar blue\nend_header\n'
+  for (let i = 0; i < n; i++) s += pos[i*3].toFixed(4) + ' ' + pos[i*3+1].toFixed(4) + ' ' + pos[i*3+2].toFixed(4) + ' ' + Math.round(col[i*3]*255) + ' ' + Math.round(col[i*3+1]*255) + ' ' + Math.round(col[i*3+2]*255) + '\n'
+  Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([s], { type: 'text/plain' })), download: 'amni-scan-cloud.ply' }).click()
+  vstatus('Exported ' + n + ' points as a colored .ply — yours to keep, open anywhere.')
+}
 if (location.search.indexOf('demo') >= 0) {
   const pos = [], col = []
   for (let i = 0; i < 12; i++) for (let j = 0; j < 12; j++) for (let k = 0; k < 12; k++) { pos.push(i / 11 - 0.5, j / 11 - 0.5, k / 11 - 0.5); col.push(i / 11, j / 11, k / 11) }
