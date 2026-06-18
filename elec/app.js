@@ -1,6 +1,8 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { initPermits, updatePermits } from './codes.js?v=fix1'
+import { emptyScene, reachableFrom } from './sketch.js'
+import { mountSketch } from './sketch-canvas.js'
 const LS = 'amnielec.cfg.v1', LSP = 'amnielec.prices.v1'
 const defCfg = { sqft: 1800, bedrooms: 3, bathrooms: 2, has_laundry: true, electric_range: 1, electric_dryer: 1, water_heater_elec: true, dishwasher: true, disposal: true, microwave: true, hvac_amps: 30 }
 let cfg = (() => { try { return { ...defCfg, ...JSON.parse(localStorage.getItem(LS)) } } catch { return { ...defCfg } } })()
@@ -208,10 +210,21 @@ const initUI = () => {
   $('#dl-svg').onclick = () => { ['layout', 'details'].forEach(k => { const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([out.svgs[k]], { type: 'image/svg+xml' })), download: `elec-${k}.svg` }); a.click() }) }
   initPermits(() => ({ ...cfg, height: 0, attach: 'free', length: 0, depth: 0 }), () => out)
 }
+const SK_LS = 'amnielec.sketch.v1'
+const elecTrade = {
+  name: 'elec',
+  palette: [{ type: 'panel', label: 'Panel', glyph: '▣', color: '#e8c33d' }, { type: 'recept', label: 'Outlet', glyph: '⊟', color: '#4f9cf0' }, { type: 'gfci', label: 'GFCI', glyph: 'G', color: '#5fbf6e' }, { type: 'switch', label: 'Switch', glyph: 'S', color: '#b58fd8' }, { type: 'light', label: 'Light', glyph: '☀', color: '#e0b341' }],
+  runTypes: [{ type: 'nm142', label: '14-2 (15A)', color: '#d88b6a' }, { type: 'nm122', label: '12-2 (20A)', color: '#e0c341' }],
+  bom: (scene, m) => { const o = [], f1 = m.byRunType.nm142 || 0, f2 = m.byRunType.nm122 || 0; if (f1) o.push({ key: 'nm142', qty: Math.ceil(f1 / 250), unit: 'roll', note: Math.round(f1) + ' ft' }); if (f2) o.push({ key: 'nm122', qty: Math.ceil(f2 / 250), unit: 'roll', note: Math.round(f2) + ' ft' }); const dev = (m.nodeCounts.recept || 0) + (m.nodeCounts.gfci || 0); if (dev) o.push({ key: 'recept', qty: dev, unit: 'ea' }); if (m.nodeCounts.switch) o.push({ key: 'switch', qty: m.nodeCounts.switch, unit: 'ea' }); if (m.nodeCounts.light) o.push({ key: 'fixture', qty: m.nodeCounts.light, unit: 'ea' }); if (scene.nodes.length) o.push({ key: 'box', qty: scene.nodes.length, unit: 'ea' }); if (scene.nodes.some(n => n.type === 'panel')) o.push({ key: 'breaker', qty: Math.max(1, scene.runs.length), unit: 'ea' }); return o },
+  validate: (scene, m) => { const c = [], panel = scene.nodes.find(n => n.type === 'panel'); if (!panel) { if (scene.nodes.length) c.push({ level: 'warn', msg: 'No panel placed yet — add one and wire devices to it' }); return c } const reach = reachableFrom(scene, panel.id), orphans = scene.nodes.filter(n => !reach.has(n.id)); c.push(orphans.length ? { level: 'fail', msg: orphans.length + ' device(s) not wired to the panel' } : { level: 'ok', msg: 'all devices reach the panel' }); const f1 = m.byRunType.nm142 || 0; if (f1 > 200) c.push({ level: 'warn', msg: '14-2 run total ' + Math.round(f1) + " ft — check voltage drop on long 15A runs" }); if (m.nodeCounts.gfci) c.push({ level: 'ok', msg: m.nodeCounts.gfci + ' GFCI device(s) placed' }); return c },
+}
+let sketchScene = (() => { try { const s = JSON.parse(localStorage.getItem(SK_LS)); if (s && s.nodes) return s } catch (e) {} return emptyScene(24) })()
+function setupSketch() { const host = $('#sketch-host'); if (!host) return; mountSketch(host, { scene: sketchScene, trade: elecTrade, catalog, store: 'hd', onChange: sc => { try { localStorage.setItem(SK_LS, JSON.stringify(sc)) } catch (e) {} } }) }
 catalog = await fetch('catalog.json').then(r => r.json()).catch(() => ({}))
 initUI()
 resize()
 recompute()
+setupSketch()
 
 
 function maybeScanBanner() {
