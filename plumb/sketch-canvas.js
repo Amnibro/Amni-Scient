@@ -4,10 +4,21 @@ import { addNode, addRun, removeNode, nodeById, runPoints, runLengthFt, evaluate
 const NS = 'http://www.w3.org/2000/svg'
 const el = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e }
 
+export function bomCsv(ev, opts) {
+  opts = opts || {}
+  const esc = c => /[",\n]/.test('' + c) ? '"' + ('' + c).replace(/"/g, '""') + '"' : '' + c
+  const rows = [['Item', 'Qty', 'Unit', 'Unit price', 'Line cost']]
+  for (const l of ev.quote.lines) rows.push([l.name + (l.note ? ' (' + l.note + ')' : ''), l.qty, l.unitName || '', (l.unitPrice || 0).toFixed(2), l.cost.toFixed(2)])
+  const labor = opts.laborPct ? ev.quote.total * opts.laborPct / 100 : 0
+  if (labor) rows.push(['Labor / markup (' + opts.laborPct + '%)', '', '', '', labor.toFixed(2)])
+  rows.push(['TOTAL', '', '', '', (ev.quote.total + labor).toFixed(2)])
+  return rows.map(r => r.map(esc).join(',')).join('\n')
+}
+
 export function mountSketch(container, opts) {
   const scene = opts.scene, trade = opts.trade, catalog = opts.catalog || {}, onChange = opts.onChange || (() => {})
   const store = () => (typeof opts.store === 'function' ? opts.store() : (opts.store || 'hd'))
-  const W = 960, H = 600, GRID = scene.scalePxPerFt || 24
+  const W = 960, H = 600
   let mode = 'select', connectFrom = null, selected = null, drag = null
 
   container.innerHTML = ''
@@ -19,7 +30,21 @@ export function mountSketch(container, opts) {
   left.appendChild(svg)
   const hint = document.createElement('div'); hint.style.cssText = 'color:var(--mut);font-size:11px;margin-top:6px'; left.appendChild(hint)
   container.appendChild(left)
-  const read = document.createElement('div'); read.style.cssText = 'min-width:250px;max-width:330px;font-size:13px'; container.appendChild(read)
+  const read = document.createElement('div'); read.style.cssText = 'min-width:250px;max-width:340px;font-size:13px'; container.appendChild(read)
+  const ctl = document.createElement('div'); ctl.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px'; read.appendChild(ctl)
+  const readBody = document.createElement('div'); read.appendChild(readBody)
+  const inpCss = 'width:54px;background:var(--bg);border:1px solid var(--line);border-radius:6px;color:inherit;padding:4px 6px'
+  const scaleL = document.createElement('label'); scaleL.style.cssText = 'font-size:12px;color:var(--mut);display:flex;align-items:center;gap:4px'; scaleL.append('px/ft')
+  const scaleI = document.createElement('input'); scaleI.type = 'number'; scaleI.min = '4'; scaleI.max = '120'; scaleI.step = '1'; scaleI.value = scene.scalePxPerFt || 24; scaleI.style.cssText = inpCss
+  scaleI.onchange = () => { const v = +scaleI.value; if (v >= 4) { scene.scalePxPerFt = v; onChange(scene); render() } }
+  scaleL.appendChild(scaleI); ctl.appendChild(scaleL)
+  const laborL = document.createElement('label'); laborL.style.cssText = 'font-size:12px;color:var(--mut);display:flex;align-items:center;gap:4px'; laborL.append('labor%')
+  const laborI = document.createElement('input'); laborI.type = 'number'; laborI.min = '0'; laborI.max = '300'; laborI.step = '5'; laborI.value = '0'; laborI.style.cssText = inpCss
+  laborI.onchange = () => renderReadout()
+  laborL.appendChild(laborI); ctl.appendChild(laborL)
+  const csvB = document.createElement('button'); csvB.className = 'btn'; csvB.textContent = '⬇️ BOM CSV'; csvB.style.cssText = 'padding:5px 9px;font-size:12px'
+  csvB.onclick = () => { const ev = evaluate(scene, trade, catalog, store()); const csv = bomCsv(ev, { laborPct: +laborI.value || 0 }); Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([csv], { type: 'text/csv' })), download: (trade.name || 'sketch') + '-bom.csv' }).click() }
+  ctl.appendChild(csvB)
 
   const mkBtn = (label, on, sty) => { const b = document.createElement('button'); b.className = 'btn'; b.textContent = label; b.style.cssText = 'padding:6px 9px;font-size:12px;' + (sty || ''); b.onclick = on; bar.appendChild(b); return b }
   function setMode(m) { mode = m; connectFrom = null; renderBar(); render() }
@@ -34,7 +59,7 @@ export function mountSketch(container, opts) {
     mkBtn('Clear', () => { if (!scene.nodes.length || confirm('Clear the layout?')) { scene.nodes = []; scene.runs = []; selected = null; changed() } })
   }
   const ptOf = e => { const p = svg.createSVGPoint(); p.x = e.clientX; p.y = e.clientY; const m = svg.getScreenCTM(); if (!m) return [0, 0]; const q = p.matrixTransform(m.inverse()); return [q.x, q.y] }
-  const snap = v => Math.round(v / (GRID / 2)) * (GRID / 2)
+  const snap = v => { const g = scene.scalePxPerFt || 24; return Math.round(v / (g / 2)) * (g / 2) }
   const clamp = (v, mx) => Math.max(10, Math.min(mx - 10, v))
   const closestAttr = (t, a) => (t && t.closest) ? t.closest('[' + a + ']') : null
 
@@ -61,9 +86,10 @@ export function mountSketch(container, opts) {
 
   function render() {
     while (svg.firstChild) svg.removeChild(svg.firstChild)
-    for (let gx = 0; gx <= W; gx += GRID) el('line', { x1: gx, y1: 0, x2: gx, y2: H, stroke: gx % (GRID * 5) === 0 ? '#262b32' : '#171a1f', 'stroke-width': 1 }, svg)
-    for (let gy = 0; gy <= H; gy += GRID) el('line', { x1: 0, y1: gy, x2: W, y2: gy, stroke: gy % (GRID * 5) === 0 ? '#262b32' : '#171a1f', 'stroke-width': 1 }, svg)
-    el('line', { x1: 14, y1: H - 16, x2: 14 + GRID * 5, y2: H - 16, stroke: '#8fa8b8', 'stroke-width': 2 }, svg)
+    const G = scene.scalePxPerFt || 24
+    for (let gx = 0; gx <= W; gx += G) el('line', { x1: gx, y1: 0, x2: gx, y2: H, stroke: gx % (G * 5) === 0 ? '#262b32' : '#171a1f', 'stroke-width': 1 }, svg)
+    for (let gy = 0; gy <= H; gy += G) el('line', { x1: 0, y1: gy, x2: W, y2: gy, stroke: gy % (G * 5) === 0 ? '#262b32' : '#171a1f', 'stroke-width': 1 }, svg)
+    el('line', { x1: 14, y1: H - 16, x2: 14 + G * 5, y2: H - 16, stroke: '#8fa8b8', 'stroke-width': 2 }, svg)
     const rt = el('text', { x: 14, y: H - 22, fill: '#8fa8b8', 'font-size': 11, 'font-family': 'system-ui' }, svg); rt.textContent = '5 ft'
     for (const r of scene.runs) {
       const pts = runPoints(r, scene); if (pts.length < 2) continue
@@ -86,6 +112,9 @@ export function mountSketch(container, opts) {
 
   function renderReadout() {
     const ev = evaluate(scene, trade, catalog, store())
+    try { window.__sketchBOM = ev } catch (e) {}
+    if (opts.onEvaluate) opts.onEvaluate(ev)
+    const laborPct = +laborI.value || 0, labor = ev.quote.total * laborPct / 100, grand = ev.quote.total + labor
     let h = '<div style="font-weight:700;color:var(--acc);margin-bottom:8px">📐 Live readout</div>'
     h += '<table style="width:100%;font-size:12px;margin-bottom:6px">'
     let any = false
@@ -94,11 +123,12 @@ export function mountSketch(container, opts) {
     h += '</table>'
     h += '<div style="font-weight:600;margin:10px 0 4px">Materials &amp; quote</div><table style="width:100%;font-size:12px">'
     for (const l of ev.quote.lines) h += `<tr><td style="color:var(--mut)">${l.name}${l.note ? ' <span style="opacity:.55">(' + l.note + ')</span>' : ''}</td><td style="text-align:right;white-space:nowrap">${l.qty} ${l.unitName || ''}</td><td style="text-align:right">$${l.cost.toFixed(0)}</td></tr>`
-    h += `<tr style="border-top:1px solid var(--line)"><td><b>Estimated quote</b></td><td></td><td style="text-align:right"><b style="color:var(--ok)">$${ev.quote.total.toFixed(0)}</b></td></tr></table>`
+    if (labor) { h += `<tr><td style="color:var(--mut)">Materials subtotal</td><td></td><td style="text-align:right">$${ev.quote.total.toFixed(0)}</td></tr>`; h += `<tr><td style="color:var(--mut)">Labor / markup (${laborPct}%)</td><td></td><td style="text-align:right">$${labor.toFixed(0)}</td></tr>` }
+    h += `<tr style="border-top:1px solid var(--line)"><td><b>Estimated quote</b></td><td></td><td style="text-align:right"><b style="color:var(--ok)">$${grand.toFixed(0)}</b></td></tr></table>`
     h += '<div style="font-weight:600;margin:12px 0 4px">Validation</div>'
     if (!ev.checks.length) h += '<div style="color:var(--mut);font-size:12px">draw a layout to validate it against code</div>'
     for (const c of ev.checks) { const ic = c.level === 'ok' ? '✓' : c.level === 'warn' ? '⚠' : '✗'; const col = c.level === 'ok' ? 'var(--ok)' : c.level === 'warn' ? 'var(--warn)' : '#e06b6b'; h += `<div style="font-size:12px;padding:5px 9px;margin:3px 0;border-left:3px solid ${col};background:var(--bg);border-radius:6px"><b style="color:${col}">${ic}</b> ${c.msg}</div>` }
-    read.innerHTML = h
+    readBody.innerHTML = h
   }
 
   renderBar(); render()
