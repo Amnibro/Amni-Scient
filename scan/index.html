@@ -98,6 +98,7 @@ code{background:var(--bg);border:1px solid var(--line);border-radius:5px;padding
       <button class="btn ghost" id="c-splat">🌫️ Soft splats: off</button>
       <button class="btn ghost" id="c-train">🌌 Train splats</button>
       <button class="btn ghost" id="c-ply">⬇️ Export .ply</button>
+      <button class="btn ghost" id="c-gsplat">⬇️ Export gsplat .ply</button>
     </div>
     <div id="c-status" class="muted" style="margin-bottom:8px">Tap Start camera, then slowly circle the object or room, capturing 20-40 frames from different angles. Frames stay on your device — nothing uploads.</div>
     <div style="position:relative;width:100%;aspect-ratio:16/10;background:#0c0e12;border:1px solid var(--line);border-radius:12px;overflow:hidden">
@@ -628,6 +629,25 @@ async function reconstructAR() {
   for (let i = 0; i < n; i++) s += pos[i*3].toFixed(4) + ' ' + pos[i*3+1].toFixed(4) + ' ' + pos[i*3+2].toFixed(4) + ' ' + Math.round(col[i*3]*255) + ' ' + Math.round(col[i*3+1]*255) + ' ' + Math.round(col[i*3+2]*255) + '\n'
   Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([s], { type: 'text/plain' })), download: 'amni-scan-cloud.ply' }).click()
   vstatus('Exported ' + n + ' points as a colored .ply — yours to keep, open anywhere.')
+}
+function exportGsplatPly(G) {
+  const n = G.n, C0 = 0.28209479177, props = ['x', 'y', 'z', 'nx', 'ny', 'nz', 'f_dc_0', 'f_dc_1', 'f_dc_2', 'opacity', 'scale_0', 'scale_1', 'scale_2', 'rot_0', 'rot_1', 'rot_2', 'rot_3']
+  const header = 'ply\nformat binary_little_endian 1.0\nelement vertex ' + n + '\n' + props.map(p => 'property float ' + p).join('\n') + '\nend_header\n'
+  const henc = new TextEncoder().encode(header), stride = props.length * 4, buf = new ArrayBuffer(henc.length + n * stride)
+  new Uint8Array(buf).set(henc, 0)
+  const dv = new DataView(buf, henc.length), logit = a => Math.log(a / (1 - a))
+  for (let i = 0; i < n; i++) {
+    const o = i * stride, sc = Math.log(Math.max(1e-6, G.scale[i])), op = logit(Math.min(0.999, Math.max(0.001, G.opacity[i])))
+    const vals = [G.pos[i * 3], G.pos[i * 3 + 1], G.pos[i * 3 + 2], 0, 0, 0, (G.col[i * 3] - 0.5) / C0, (G.col[i * 3 + 1] - 0.5) / C0, (G.col[i * 3 + 2] - 0.5) / C0, op, sc, sc, sc, 1, 0, 0, 0]
+    for (let k = 0; k < vals.length; k++) dv.setFloat32(o + k * 4, vals[k], true)
+  }
+  return buf
+}
+;($('#c-gsplat') || {}).onclick = () => {
+  const G = splatState || (lastCloud ? buildGaussians(lastCloud.pos, lastCloud.col) : null)
+  if (!G) { vstatus('Reconstruct a cloud (and ideally 🌌 Train splats) first — then export the gaussians as a gsplat .ply.'); return }
+  Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([exportGsplatPly(G)], { type: 'application/octet-stream' })), download: 'amni-scan-splat.ply' }).click()
+  vstatus('Exported ' + G.n + ' gaussians as a gsplat .ply (SH-DC color, logit opacity, log scale, identity rotation). Drop it back into the viewer above — it loads in the PlayCanvas gsplat renderer.' + (splatState ? '' : ' (Untrained — 🌌 Train splats first for optimized color/opacity.)'))
 }
 // ---------- Gaussian splat trainer core (node-verified: gradients to 2e-11) ----------
 function splatComposite(gs) { let C = [0, 0, 0], T = 1; for (const g of gs) { const a = g.op * g.G; C[0] += g.c[0] * a * T; C[1] += g.c[1] * a * T; C[2] += g.c[2] * a * T; T *= (1 - a) } return C }
