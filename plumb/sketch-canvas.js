@@ -26,9 +26,20 @@ export function mountSketch(container, opts) {
   const left = document.createElement('div'); left.style.cssText = 'flex:1;min-width:520px'
   const bar = document.createElement('div'); bar.style.cssText = 'display:flex;gap:5px;flex-wrap:wrap;margin-bottom:9px;align-items:center'
   left.appendChild(bar)
-  const svg = el('svg', { viewBox: `0 0 ${W} ${H}`, width: '100%', style: 'background:#0d0f12;border:1px solid var(--line);border-radius:10px;touch-action:none;display:block;max-height:62vh' })
-  left.appendChild(svg)
+  const photoStrip = document.createElement('div'); photoStrip.style.cssText = 'display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:8px'
+  const photoL = document.createElement('label'); photoL.className = 'btn'; photoL.style.cssText = 'padding:6px 10px;font-size:12px;cursor:pointer'; photoL.textContent = '📷 Add room photo'
+  const photoIn = document.createElement('input'); photoIn.type = 'file'; photoIn.accept = 'image/*'; photoIn.setAttribute('capture', 'environment'); photoIn.style.display = 'none'; photoL.appendChild(photoIn)
+  photoIn.onchange = e => { loadBg(e.target.files && e.target.files[0]); photoIn.value = '' }
+  const photoClr = document.createElement('button'); photoClr.className = 'btn'; photoClr.textContent = '✕'; photoClr.title = 'remove photo'; photoClr.style.cssText = 'padding:6px 9px;font-size:12px'
+  photoClr.onclick = () => { scene.bgImage = null; applyBg(); onChange(scene); render() }
+  const photoTip = document.createElement('span'); photoTip.style.cssText = 'font-size:11px;color:var(--mut)'; photoTip.textContent = 'snap your wall/room, then trace your runs right on it'
+  photoStrip.append(photoL, photoClr, photoTip); left.appendChild(photoStrip)
+  const svgWrap = document.createElement('div'); svgWrap.style.cssText = 'border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#0d0f12;background-size:cover;background-position:center'
+  const svg = el('svg', { viewBox: `0 0 ${W} ${H}`, width: '100%', style: 'touch-action:none;display:block;max-height:62vh;background:transparent' })
+  svgWrap.appendChild(svg); left.appendChild(svgWrap)
   const hint = document.createElement('div'); hint.style.cssText = 'color:var(--mut);font-size:11px;margin-top:6px'; left.appendChild(hint)
+  function applyBg() { svgWrap.style.backgroundImage = scene.bgImage ? `linear-gradient(rgba(13,15,18,.34),rgba(13,15,18,.34)), url(${scene.bgImage})` : 'none' }
+  function loadBg(file) { if (!file) return; const img = new Image(); img.onload = () => { const mx = 1280, sc = Math.min(1, mx / Math.max(img.width, img.height)); const c = document.createElement('canvas'); c.width = Math.max(1, Math.round(img.width * sc)); c.height = Math.max(1, Math.round(img.height * sc)); c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); try { scene.bgImage = c.toDataURL('image/jpeg', 0.72) } catch (e) { scene.bgImage = null } try { URL.revokeObjectURL(img.src) } catch (e) {} applyBg(); onChange(scene); render() }; img.onerror = () => { try { URL.revokeObjectURL(img.src) } catch (e) {} }; img.src = URL.createObjectURL(file) }
   container.appendChild(left)
   const read = document.createElement('div'); read.style.cssText = 'min-width:250px;max-width:340px;font-size:13px'; container.appendChild(read)
   const ctl = document.createElement('div'); ctl.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px'; read.appendChild(ctl)
@@ -86,9 +97,9 @@ export function mountSketch(container, opts) {
 
   function render() {
     while (svg.firstChild) svg.removeChild(svg.firstChild)
-    const G = scene.scalePxPerFt || 24
-    for (let gx = 0; gx <= W; gx += G) el('line', { x1: gx, y1: 0, x2: gx, y2: H, stroke: gx % (G * 5) === 0 ? '#262b32' : '#171a1f', 'stroke-width': 1 }, svg)
-    for (let gy = 0; gy <= H; gy += G) el('line', { x1: 0, y1: gy, x2: W, y2: gy, stroke: gy % (G * 5) === 0 ? '#262b32' : '#171a1f', 'stroke-width': 1 }, svg)
+    const G = scene.scalePxPerFt || 24, go = scene.bgImage ? 0.18 : 1
+    for (let gx = 0; gx <= W; gx += G) el('line', { x1: gx, y1: 0, x2: gx, y2: H, stroke: gx % (G * 5) === 0 ? '#262b32' : '#171a1f', 'stroke-width': 1, 'stroke-opacity': go }, svg)
+    for (let gy = 0; gy <= H; gy += G) el('line', { x1: 0, y1: gy, x2: W, y2: gy, stroke: gy % (G * 5) === 0 ? '#262b32' : '#171a1f', 'stroke-width': 1, 'stroke-opacity': go }, svg)
     el('line', { x1: 14, y1: H - 16, x2: 14 + G * 5, y2: H - 16, stroke: '#8fa8b8', 'stroke-width': 2 }, svg)
     const rt = el('text', { x: 14, y: H - 22, fill: '#8fa8b8', 'font-size': 11, 'font-family': 'system-ui' }, svg); rt.textContent = '5 ft'
     for (const r of scene.runs) {
@@ -131,6 +142,6 @@ export function mountSketch(container, opts) {
     readBody.innerHTML = h
   }
 
-  renderBar(); render()
+  applyBg(); renderBar(); render()
   return { render, scene, setMode }
 }
