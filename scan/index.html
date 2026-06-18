@@ -89,6 +89,8 @@ code{background:var(--bg);border:1px solid var(--line);border-radius:5px;padding
       <button class="btn ghost" id="c-burst" disabled>⏺ Auto-burst: off</button>
       <button class="btn ghost" id="c-stop" disabled>⏹ Stop</button>
       <button class="btn ghost" id="c-reset" disabled>🗑 Reset</button>
+      <label class="btn ghost" for="c-vidfile" style="cursor:pointer">🎞️ From video</label>
+      <input id="c-vidfile" type="file" accept="video/*" style="display:none">
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
       <button class="btn" id="c-recon">🧊 Reconstruct → point cloud</button>
@@ -266,15 +268,30 @@ function finishAR(pts) {
 // ---------- Our own in-browser camera capture (stage 3a) ----------
 const CAP = { stream: null, frames: [], burst: false, timer: null }
 const cstat = t => { const e = $('#c-status'); if (e) e.textContent = t }
+const capPush = (c) => {
+  CAP.frames.push(c); $('#c-count').textContent = CAP.frames.length + ' frames'; $('#c-reset').disabled = false
+  const t = document.createElement('canvas'); t.width = 56; t.height = Math.round(56 * c.height / c.width); t.getContext('2d').drawImage(c, 0, 0, t.width, t.height)
+  t.style.cssText = 'border-radius:5px;border:1px solid var(--line)'; const th = $('#c-thumbs'); th.appendChild(t); while (th.children.length > 96) th.firstChild.remove()
+}
 const capGrab = () => {
   const v = $('#c-video'); if (!v || !v.videoWidth) return
   const sc = Math.min(1, 640 / v.videoWidth)
   const c = document.createElement('canvas'); c.width = Math.round(v.videoWidth * sc); c.height = Math.round(v.videoHeight * sc)
-  c.getContext('2d').drawImage(v, 0, 0, c.width, c.height)
-  CAP.frames.push(c); $('#c-count').textContent = CAP.frames.length + ' frames'; $('#c-reset').disabled = false
-  const t = document.createElement('canvas'); t.width = 56; t.height = Math.round(56 * c.height / c.width); t.getContext('2d').drawImage(c, 0, 0, t.width, t.height)
-  t.style.cssText = 'border-radius:5px;border:1px solid var(--line)'; const th = $('#c-thumbs'); th.appendChild(t); while (th.children.length > 48) th.firstChild.remove()
+  c.getContext('2d').drawImage(v, 0, 0, c.width, c.height); capPush(c)
 }
+async function framesFromVideo(file) {
+  const v = document.createElement('video'); v.muted = true; v.playsInline = true; v.preload = 'auto'; v.src = URL.createObjectURL(file)
+  try {
+    await new Promise((res, rej) => { v.onloadedmetadata = () => res(); v.onerror = () => rej(new Error('could not load this video')) })
+    const dur = v.duration; if (!dur || !isFinite(dur)) throw new Error('unreadable duration')
+    const sc = Math.min(1, 640 / v.videoWidth), W = Math.round(v.videoWidth * sc), H = Math.round(v.videoHeight * sc)
+    const N = Math.min(30, Math.max(6, Math.floor(dur / 0.35))), step = dur / (N + 1)
+    const grab = (t) => new Promise((res) => { const on = () => { v.removeEventListener('seeked', on); const c = document.createElement('canvas'); c.width = W; c.height = H; c.getContext('2d').drawImage(v, 0, 0, W, H); res(c) }; v.addEventListener('seeked', on); v.currentTime = Math.min(dur - 0.01, t) })
+    for (let i = 1; i <= N; i++) { capPush(await grab(i * step)); cstat('Extracting frames from video… ' + i + '/' + N) }
+    cstat('Pulled ' + N + ' frames from your video. Now 🧊 Reconstruct → point cloud, then 🌌 Train splats. (Best results: slow, steady pan across a textured scene.)')
+  } catch (e) { cstat('Video error: ' + (e && e.message || e)) } finally { URL.revokeObjectURL(v.src) }
+}
+;($('#c-vidfile') || {}).onchange = e => { const f = e.target.files[0]; if (f) framesFromVideo(f) }
 const capBurst = () => { CAP.burst = !CAP.burst; $('#c-burst').textContent = '⏺ Auto-burst: ' + (CAP.burst ? 'on' : 'off'); if (CAP.burst) CAP.timer = setInterval(capGrab, 500); else clearInterval(CAP.timer) }
 const capStop = () => { if (CAP.burst) capBurst(); if (CAP.stream) CAP.stream.getTracks().forEach(t => t.stop()); CAP.stream = null; $('#c-start').disabled = false;['c-frame', 'c-burst', 'c-stop'].forEach(id => { const e = $('#' + id); if (e) e.disabled = true }); cstat(`Stopped — ${CAP.frames.length} frames captured. Reconstruction (point cloud → splat) is the next stage being built.`) }
 const capStart = async () => {
