@@ -90,16 +90,6 @@ td a{color:var(--acc2);text-decoration:none}
     <h3>Rooms</h3>
     <div id="roomlist"></div>
     <button class="addbtn" id="addroom">+ Add room</button>
-    <div style="display:none">
-      <div class="seg" id="mode"><button data-v="rect" class="on">r</button><button data-v="poly">p</button></div>
-      <input id="w" value="40"><input id="d" value="30"><input id="rw"><input id="rd"><div id="rhouse"></div>
-      <select id="house"><option value="0" selected>0</option><option value="-1">-1</option></select>
-      <select id="t"><option>4</option></select><select id="base"><option>4</option></select>
-      <select id="reinf"><option value="mesh">m</option></select>
-      <input type="checkbox" id="vehicle"><input type="checkbox" id="td"><input id="jspace" value="0">
-      <input type="checkbox" id="border"><input type="checkbox" id="sleeves">
-      <div class="swatches" id="finishes"></div>
-    </div>
     <h3>Code &amp; Permits</h3>
     <button class="addbtn" id="loc-detect">📍 Use my location</button>
     <div style="font-size:11px;color:var(--mut);margin:4px 0" id="loc-status"></div>
@@ -111,33 +101,6 @@ td a{color:var(--acc2);text-decoration:none}
   <div id="view">
     <canvas id="c3d"></canvas>
     <div id="hud">drag = orbit · wheel = zoom · right-drag = pan</div>
-    <div class="pane" id="pane-trace">
-      <div class="planbar">
-        <input id="maddr" placeholder="🗺️ Address — e.g. 123 Main St, Troy NY (satellite view, auto-scale)" style="flex:1;min-width:260px;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:7px 10px">
-        <button class="btn acc" id="mfind">Find address</button>
-        <button class="btn" id="mzin">＋</button>
-        <button class="btn" id="mzout">－</button>
-        <span id="mattrib" style="font-size:10px;color:var(--mut)"></span>
-      </div>
-      <div class="planbar">
-        <label class="btn" style="display:inline-block">📷 Or upload photo / sketch<input type="file" id="timg" accept="image/*" style="display:none"></label>
-        <button class="btn" id="tscale">1️⃣ Set scale</button>
-        <button class="btn" id="ttrace">2️⃣ Trace outline</button>
-        <button class="btn acc" id="tauto">✨ Auto-detect</button>
-        <button class="btn" id="tundo">↩ Undo point</button>
-        <button class="btn" id="tclear">✖ Clear</button>
-        <button class="btn acc" id="tuse">✅ Use outline</button>
-      </div>
-      <div class="planbar" id="troute" style="display:none;align-items:center;font-size:12px;color:var(--mut)">detected type:<button class="btn" data-r="aerial">🛰️ Aerial</button><button class="btn" data-r="ground">📷 Ground</button><button class="btn" data-r="drawing">📐 Drawing</button><span style="font-size:11px">— override if I guessed wrong</span></div>
-      <div id="tracewrap">
-        <canvas id="tcanvas" width="980" height="660"></canvas>
-        <div id="tside">
-          <div id="tstatus">Upload an overhead photo or a sketch of your yard. Then: Set scale (click two points you know the real distance between), Trace (click each corner of the patio), Use outline.</div>
-          <div id="tdims"></div>
-          <p style="font-size:11px;color:var(--mut)">Photos stay on your device — nothing uploads anywhere. Overhead/drone shots or drawn-to-scale sketches work best; angled photos distort distances.</p>
-        </div>
-      </div>
-    </div>
     <div class="pane" id="pane-plans">
       <div class="planbar"><button class="btn acc" onclick="window.print()">🖨️ Print floor plan</button><button class="btn" id="dl-svg">⬇️ Download SVG</button></div>
       <div class="svgwrap" id="svg-layout"></div>
@@ -157,6 +120,6 @@ td a{color:var(--acc2);text-decoration:none}
   </div>
 </main>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
-<script type="module" src="app.js?v=fix1"></script>
+<script type="module" src="app.js?v=fix2"></script>
 </body>
 </html>
