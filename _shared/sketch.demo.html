@@ -9,20 +9,17 @@ table{border-collapse:collapse}
 <script type="module">
 import { emptyScene, addNode, addRun } from './sketch.js'
 import { mountSketch } from './sketch-canvas.js'
-import { makeElecTrade } from './elec-rules.js'
-const catalog = { nm142:{name:'14/2 NM-B (250ft)',hd:79}, nm122:{name:'12/2 NM-B (250ft)',hd:119}, nm103:{name:'10/3 NM-B (25ft)',hd:44}, nm63:{name:'6/3 NM-B (25ft)',hd:89}, recept:{name:'Receptacle',hd:1.98}, gfci:{name:'GFCI breaker/recept',hd:18.97}, afci:{name:'AFCI breaker',hd:44.97}, switch:{name:'Switch',hd:2.48}, fixture:{name:'Light fixture',hd:14.97}, box:{name:'Box',hd:1.18}, breaker:{name:'Breaker',hd:8.97}, panel:{name:'Panel',hd:169}, misc:{name:'Wire nuts/staples',hd:39} }
-const trade = makeElecTrade()
+import { makePlumbTrade } from './plumb-rules.js'
+const catalog = { pex:{name:'½ in PEX (100ft)',hd:39.97}, pex34:{name:'¾ in PEX (100ft)',hd:64.97}, dwv3:{name:'3 in PVC DWV (10ft)',hd:24.97}, dwv4:{name:'4 in PVC DWV (10ft)',hd:34.97}, vent:{name:'2 in PVC vent (10ft)',hd:13.97}, trap:{name:'P-trap',hd:4.98}, stop:{name:'Angle stop',hd:8.97}, fitting:{name:'Fittings (assorted)',hd:1.98}, cleanout:{name:'Cleanout + plug',hd:12.97}, heater:{name:'Water heater',hd:549}, mainvalve:{name:'Main shutoff/PRV',hd:24.97} }
+const trade = makePlumbTrade()
 const scene = emptyScene(24)
-const P = addNode(scene,'panel',60,300)
-// kitchen circuit (needs GFCI) - missing GFCI to show a fail
-const k1 = addNode(scene,'recept',300,110,{room:'kitchen'}), k2 = addNode(scene,'recept',480,110,{room:'kitchen'})
-addRun(scene,'nm122',P,k1); addRun(scene,'nm122',k1,k2)
-// bedroom lighting circuit (AFCI)
-const b1 = addNode(scene,'light',300,300,{room:'bedroom'}), sw = addNode(scene,'switch',480,300)
-addRun(scene,'nm142',P,b1); addRun(scene,'nm142',b1,sw)
-// dedicated range
-const rg = addNode(scene,'range',300,490)
-addRun(scene,'nm63',P,rg)
+const M = addNode(scene,'main',90,470), CO = addNode(scene,'cleanout',210,470), V = addNode(scene,'vent',360,100)
+addRun(scene,'dwv3',M,CO)
+const WC = addNode(scene,'toilet',360,250), LAV = addNode(scene,'lav',470,200), TUB = addNode(scene,'tub',300,380)
+addRun(scene,'dwv3',WC,CO); addRun(scene,'dwv2',WC,V)
+addRun(scene,'dwv15',LAV,CO); addRun(scene,'dwv15',LAV,V)
+addRun(scene,'dwv15',TUB,CO); addRun(scene,'dwv2',TUB,V)
+addRun(scene,'sup34',M,LAV); addRun(scene,'sup12',M,WC)
 mountSketch(document.getElementById('sketch'), { scene, trade, catalog, store:'hd', onChange:()=>{} })
 window.__ready = true
 </script></body></html>
