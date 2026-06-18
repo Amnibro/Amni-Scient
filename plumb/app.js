@@ -1,10 +1,8 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { initPermits, updatePermits } from './codes.js?v=fix1'
-import { initMapTrace, sitePlanSVG, cropForPlan, mapPlanSnapshot } from './maptrace.js?v=1'
-import { initAutoDetect } from './autodetect.js?v=1'
 const LS = 'amniplumb.cfg.v1', LSP = 'amniplumb.prices.v1'
-const defCfg = { mode: 'rect', w: 40, d: 30, polygon: null, toilets: 2, lavs: 2, tubs: 1, showers: 1, kitchen_sinks: 1, dishwashers: 1, washers: 1, water_heater: true, pipe_material: 'pex', house_edge: 0 }
+const defCfg = { w: 40, d: 30, toilets: 2, lavs: 2, tubs: 1, showers: 1, kitchen_sinks: 1, dishwashers: 1, washers: 1, water_heater: true, pipe_material: 'pex' }
 let cfg = (() => { try { return { ...defCfg, ...JSON.parse(localStorage.getItem(LS)) } } catch { return { ...defCfg } } })()
 let out = null
 let priceEdits = (() => { try { return JSON.parse(localStorage.getItem(LSP)) || {} } catch { return {} } })()
@@ -14,7 +12,7 @@ const FINISHES = { pex: ['#c23a3a', 'PEX'], copper: ['#b87333', 'Copper'], cpvc:
 const wasm = await WebAssembly.instantiateStreaming(fetch('plumb_core.wasm?v=2'))
 const { alloc, dealloc, build, memory } = wasm.instance.exports
 const enc = new TextEncoder(), dec = new TextDecoder()
-const polyOf = c => c.mode === 'poly' && c.polygon && c.polygon.length >= 3 ? c.polygon : [[0, 0], [c.w, 0], [c.w, c.d], [0, c.d]]
+const polyOf = c => [[0, 0], [c.w, 0], [c.w, c.d], [0, c.d]]
 const callCore = c => {
   const payload = enc.encode(JSON.stringify({ polygon: polyOf(c), toilets: +c.toilets, lavs: +c.lavs, tubs: +c.tubs, showers: +c.showers, kitchen_sinks: +c.kitchen_sinks, dishwashers: +c.dishwashers, washers: +c.washers, water_heater: !!c.water_heater, pipe_material: c.pipe_material, issue_date: new Date().toLocaleDateString('en-CA') }))
   const p = alloc(payload.length)
@@ -32,32 +30,34 @@ cam.position.set(16, 14, 20)
 const renderer = new THREE.WebGLRenderer({ canvas: $('#c3d'), antialias: true })
 const controls = new OrbitControls(cam, $('#c3d'))
 controls.enableDamping = true
-scene.add(new THREE.AmbientLight(0xffffff, 0.65))
+scene.add(new THREE.AmbientLight(0xffffff, 0.7))
 const sun = new THREE.DirectionalLight(0xfff4e0, 1.1)
 sun.position.set(30, 40, 18)
 scene.add(sun)
 const grp = new THREE.Group()
 scene.add(grp)
-let photoPlane = null, photoMeta = null
 const groundMat = new THREE.MeshStandardMaterial({ color: 0x3e5e36, roughness: 1 })
 const ground = new THREE.Mesh(new THREE.PlaneGeometry(400, 400), groundMat)
 ground.rotation.x = -Math.PI / 2
 ground.position.y = -0.02
 scene.add(ground)
+const FIXMESH = [['toilets', 0x6fa8d8, 1.4], ['lavs', 0x8fc7d8, 1.0], ['tubs', 0xcfd3d8, 2.2], ['showers', 0xb8d0c0, 1.8], ['kitchen_sinks', 0xd8b87a, 1.2], ['dishwashers', 0xc0c4ca, 1.4], ['washers', 0xd0b0c0, 1.6]]
 const rebuild3D = () => {
   while (grp.children.length) { const m = grp.children.pop(); m.geometry && m.geometry.dispose() }
-  const poly = polyOf(cfg)
-  const shape = new THREE.Shape(poly.map(p => new THREE.Vector2(p[0], p[1])))
-  const slab = new THREE.Mesh(new THREE.ExtrudeGeometry(shape, { depth: 0.1, bevelEnabled: false }), new THREE.MeshStandardMaterial({ color: 0xcfd3d8, roughness: 0.9 }))
-  slab.rotation.x = -Math.PI / 2; slab.position.y = 0; grp.add(slab)
-  if (photoMeta && cfg.mode === 'poly') {
-    photoPlane && scene.remove(photoPlane)
-    const { tex, wFt, hFt, cxFt, cyFt } = photoMeta
-    photoPlane = new THREE.Mesh(new THREE.PlaneGeometry(wFt, hFt), new THREE.MeshBasicMaterial({ map: tex, transparent: true, opacity: 0.85 }))
-    photoPlane.rotation.x = -Math.PI / 2
-    photoPlane.position.set(cxFt, 0.01, -cyFt)
-    scene.add(photoPlane)
-  } else if (photoPlane && cfg.mode !== 'poly') { scene.remove(photoPlane); photoPlane = null }
+  const slab = new THREE.Mesh(new THREE.BoxGeometry(cfg.w, 0.1, cfg.d), new THREE.MeshStandardMaterial({ color: 0xcfd3d8, roughness: 0.95 }))
+  slab.position.set(cfg.w / 2, 0, -cfg.d / 2); grp.add(slab)
+  let i = 0
+  for (const [key, col, h] of FIXMESH) {
+    const n = +cfg[key] || 0
+    for (let k = 0; k < n; k++) {
+      const g = new THREE.BoxGeometry(1.6, h, 1.6)
+      const m = new THREE.Mesh(g, new THREE.MeshStandardMaterial({ color: col, roughness: 0.7 }))
+      const col2 = i % Math.max(1, Math.floor(cfg.w / 3)), row = Math.floor(i / Math.max(1, Math.floor(cfg.w / 3)))
+      m.position.set(2 + col2 * 3, h / 2, -(2 + row * 3)); grp.add(m)
+      i++
+    }
+  }
+  if (cfg.water_heater) { const g = new THREE.CylinderGeometry(0.9, 0.9, 4, 16); const m = new THREE.Mesh(g, new THREE.MeshStandardMaterial({ color: 0xe0e0e0, roughness: 0.5 })); m.position.set(cfg.w - 2, 2, -2); grp.add(m) }
 }
 const resize = () => { const c = $('#c3d'); const w = c.clientWidth, h = c.clientHeight; if (!w || !h) return; renderer.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix() }
 new ResizeObserver(resize).observe($('#view'))
@@ -71,32 +71,25 @@ window.addEventListener('beforeprint', () => {
   ps.innerHTML = '<div style="font:bold 15px monospace;color:#111;padding:10px 12px 4px">3D VIEW — AS DESIGNED</div>'
   const c3 = $('#c3d')
   const snap = document.createElement('canvas')
-  snap.width = c3.width
-  snap.height = c3.height
+  snap.width = c3.width; snap.height = c3.height
   snap.getContext('2d').drawImage(c3, 0, 0)
   snap.style.cssText = 'width:100%;display:block'
   ps.appendChild(snap)
 })
 ;(function loop() { controls.update(); renderer.render(scene, cam); requestAnimationFrame(loop) })()
-let siteSnap = null
 const renderPlans = () => {
   if (!out) return
   ;['layout', 'details'].forEach(k => $(`#svg-${k}`).innerHTML = out.svgs[k])
-  if (siteSnap) {
-    let wrap = $('#svg-site')
-    if (!wrap) { wrap = document.createElement('div'); wrap.className = 'svgwrap'; wrap.id = 'svg-site'; const pane = $('#pane-plans'); pane.insertBefore(wrap, pane.querySelector('.svgwrap')) }
-    wrap.innerHTML = sitePlanSVG({ ...siteSnap, title: siteSnap.northUp ? 'SITE PLAN — PLUMBING' : 'REFERENCE SKETCH — PLUMBING', footprint: `Proposed: ${out.calc.total_fixtures} fixtures, ~${out.calc.demand_gpm} GPM, ${out.calc.main_supply_in}" main` })
-  }
 }
 const renderWarns = () => {
   const w = $('#warns'); w.innerHTML = '<h3 style="font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--acc);margin:16px 0 8px">Build Notes</h3>'
   if (!out) return
   for (const s of out.warnings) { const [tag, txt] = s.includes('|') ? s.split('|') : ['INFO', s]; const d = document.createElement('div'); d.className = 'warn' + (tag === 'OK' ? ' ok' : tag === 'INFO' ? ' info' : ''); d.textContent = txt; w.appendChild(d) }
 }
-const G_LS = 'amniplumb.guide.v1'
-let gChk = (() => { try { return JSON.parse(localStorage.getItem(G_LS)) || {} } catch { return {} } })()
 const SEC = 'background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:14px', GH = 'font-size:15px;color:var(--acc);margin-bottom:6px;font-weight:600'
 const guideList = (title, items) => `<div style="${SEC}"><div style="${GH}">${title}</div><ul style="list-style:disc;padding-left:20px;font-size:13px;line-height:1.7;color:var(--ink)">${items.map(t => `<li>${t}</li>`).join('')}</ul></div>`
+const G_LS = 'amniplumb.guide.v1'
+let gChk = (() => { try { return JSON.parse(localStorage.getItem(G_LS)) || {} } catch { return {} } })()
 const renderGuide = () => {
   const body = $('#guide-body'); if (!body || !out) return
   const c = out.calc, mat = (cfg.pipe_material || 'pex').toUpperCase()
@@ -118,6 +111,19 @@ const renderGuide = () => {
     + guideList('🧰 Tools', tools)
     + `<div style="${SEC}"><div style="${GH}">💵 Materials estimate</div><div style="font-size:13px;color:var(--ink)">~<b style="color:var(--ok)">$${cost.toFixed(0)}</b> in pipe, fittings + fixtures hardware (Home Depot catalog) — edit prices on the Materials tab. Fixtures + the water heater are extra.</div></div>`
   body.querySelectorAll('input[data-gk]').forEach(el => el.onchange = () => { gChk[el.dataset.gk] = el.checked; localStorage.setItem(G_LS, JSON.stringify(gChk)); renderGuide() })
+}
+const renderBest = () => {
+  const body = $('#best-body'); if (!body) return
+  const c = out && out.calc
+  body.innerHTML = `<div style="color:var(--mut);font-size:13px;margin-bottom:14px">Field-proven plumbing practice + the code rules that matter${c ? ` for your <b>${c.total_fixtures} fixtures · ${c.demand_gpm} GPM · ${c.building_drain_in}" drain</b>` : ''}. Your jurisdiction adopts the <b>IPC</b> or <b>UPC</b> — confirm which; the numbers below are the common values.</div>`
+    + guideList('🪤 Traps + vents (the #1 rule)', ['EVERY fixture gets its own P-trap AND a vent — no exceptions, no double-trapping, no S-traps.', 'Trap-arm max length to the vent by drain size: 1¼"→5 ft, 1½"→6 ft, 2"→8 ft, 3"→12 ft.', 'Trap seal 2-4"; toilets are self-trapped (no separate trap). Air-admittance valves only where code allows.'])
+    + guideList('📉 Drains + slope', ['Horizontal DWV slopes 1/4"/ft (1/8" min on 3" and larger). Too steep (>3") lets water outrun solids.', 'Toilets drain to 3" min; use long-sweep/wye fittings on DWV — never a hard 90° on its back.', 'Cleanouts at the base of every stack, each change of direction, and at least every 100 ft.'])
+    + guideList('🚰 Water supply', ['Run a 3/4" trunk and branch to 1/2" at the fixtures; keep hot + cold balanced.', 'A 1/4-turn shutoff (stop) at EVERY fixture; hammer arrestors at quick-closing valves (washer, dishwasher, ice maker).', 'Street pressure over 80 psi → add a PRV; a closed system needs a thermal-expansion tank. Insulate hot lines.'])
+    + guideList('📏 Rough-in heights (typical)', ['Lav: drain 16-18" AFF; hot/cold supply 20-22" AFF, 8" apart, centered on the drain.', 'Toilet: closet flange 12-1/2" from the finished wall; cold supply 6" left of center at 8" AFF.', 'Tub/shower: valve 28-32" (tub) / 48" (shower); head 78"; check your faucet’s spec sheet.'])
+    + guideList('🔥 Water heater', ['Cold in / hot out; full-port shutoff on cold. T&P relief piped to within 6" of the floor — never valved or capped.', 'Drain pan with a piped drain on any upper floor or finished space; expansion tank on closed systems.', 'Gas units need correct venting + combustion air; tankless need gas-line + venting sizing. Get a pro for gas.'])
+    + guideList('🧰 Pipe materials', ['PEX — flexible, freeze-tolerant, fewest joints, fast (crimp/expansion). Great for DIY repipes; keep off direct sun + 18" from the WH for the first run.', 'Copper — durable + heat-proof but soldered + pricey. CPVC — cheap, but brittle when cold + needs solvent cement.', 'Protect any pipe through studs/plates with a steel nail plate (or keep it 1-1/4" back from the edge).'])
+    + guideList('❄️ Protect + test', ['In cold climates keep supply lines OUT of exterior-wall cavities; insulate + heat-tape vulnerable runs.', 'Pressure-test before close-in: a 10-ft water column on the DWV, air or water on the supply — hold per code.', 'A licensed plumber is usually required for the gas water-heater + any sewer/septic/water-main tie-in.'])
+  if (c) body.innerHTML += `<div style="${SEC}"><div style="${GH}">📐 Interactive layout — coming next</div><div style="font-size:13px;color:var(--ink)">A drag-and-drop fixture layout (drop a WC/lav/tub into a room → auto DWV + supply riser) is the next upgrade. For now, use the <b>Quick build</b> presets in the sidebar to assemble your fixtures and the P-1 riser + P-2 details on the 2D Plans tab.</div></div>`
 }
 const price = (id, store) => priceEdits[`${id}.${store}`] ?? catalog[id]?.[store] ?? null
 const renderMat = () => {
@@ -142,7 +148,7 @@ const parsePaste = (text, store) => {
     const c = catalog[it.id]
     if (!c) continue
     const toks = (store === 'hd' ? c.hdq : c.lq).toLowerCase().split(/\s+/).filter(t => t.length > 1)
-    const prim = toks.find(t => /\d|mesh|rebar|felt|poly|sealer|stake/.test(t)) || toks[0]
+    const prim = toks.find(t => /\d|pex|pipe|trap|valve|flange|heater|fitting/.test(t)) || toks[0]
     let best = null, idx = norm.indexOf(prim)
     while (idx !== -1) {
       const win = norm.slice(Math.max(0, idx - 160), idx + 360)
@@ -157,108 +163,20 @@ const parsePaste = (text, store) => {
   return filled
 }
 const persist = () => localStorage.setItem(LS, JSON.stringify(cfg))
-let lastFit = ''
-const fitCam = () => {
-  const poly = polyOf(cfg)
-  const xs = poly.map(p => p[0]), ys = poly.map(p => p[1])
-  const cx = (Math.min(...xs) + Math.max(...xs)) / 2, cy = (Math.min(...ys) + Math.max(...ys)) / 2
-  const span = Math.max(Math.max(...xs) - Math.min(...xs), Math.max(...ys) - Math.min(...ys), 8)
-  const key = `${cx.toFixed(1)},${cy.toFixed(1)},${span.toFixed(1)}`
-  if (key === lastFit) return
-  lastFit = key
-  controls.target.set(cx, 3, -cy)
-  let ux = 0.12, uy = -1.55
-  if (+cfg.house_edge >= 0) {
-    const i = +cfg.house_edge, j = (i + 1) % poly.length
-    const mx = (poly[i][0] + poly[j][0]) / 2, my = (poly[i][1] + poly[j][1]) / 2
-    const vx = cx - mx, vy = cy - my, vl = Math.hypot(vx, vy) || 1
-    ux = vx / vl * 1.55 + 0.1; uy = vy / vl * 1.55
-  }
-  cam.position.set(cx + ux * span, span * 0.9 + 4, -(cy + uy * span))
+const FIX = { toilets: '#toilets', lavs: '#lavs', tubs: '#tubs', showers: '#showers', kitchen_sinks: '#ksinks', dishwashers: '#dishwashers', washers: '#washers' }
+const syncInputs = () => { for (const [k, id] of Object.entries(FIX)) { const el = $(id); if (el) el.value = cfg[k] } }
+const PRESETS = {
+  fullbath: { label: '➕ Full bath', add: { toilets: 1, lavs: 1, tubs: 1 } },
+  threeq: { label: '➕ ¾ bath', add: { toilets: 1, lavs: 1, showers: 1 } },
+  half: { label: '➕ Half bath', add: { toilets: 1, lavs: 1 } },
+  primary: { label: '➕ Primary suite', add: { toilets: 1, lavs: 2, showers: 1, tubs: 1 } },
+  kitchen: { label: '➕ Kitchen', add: { kitchen_sinks: 1, dishwashers: 1 } },
+  laundry: { label: '➕ Laundry', add: { washers: 1 } },
 }
 const recompute = () => {
   out = callCore(cfg)
   if (out.error) { $('#warns').innerHTML = `<div class="warn">${out.error}</div>`; return }
-  persist(); rebuild3D(); fitCam(); renderPlans(); renderMat(); renderWarns(); renderGuide(); updatePermits()
-}
-let MV = null
-const T = { img: null, mode: null, scalePts: [], dist: 10, poly: [], pxPerFt: 0 }
-const tc = $('#tcanvas'), tx = tc.getContext('2d')
-const tStatus = s => $('#tstatus').textContent = s
-const tDraw = () => {
-  tx.clearRect(0, 0, tc.width, tc.height)
-  if (T.img) { tx.drawImage(T.img, 0, 0, tc.width, tc.height) } else { tx.fillStyle = '#15181d'; tx.fillRect(0, 0, tc.width, tc.height); tx.fillStyle = '#566'; tx.font = '16px monospace'; tx.textAlign = 'center'; tx.fillText('Upload a photo or sketch to begin — or trace on this blank grid', tc.width / 2, tc.height / 2) }
-  if (!T.img) { tx.strokeStyle = 'rgba(255,255,255,0.05)'; for (let g = 0; g < tc.width; g += 49) { tx.beginPath(); tx.moveTo(g, 0); tx.lineTo(g, tc.height); tx.stroke() } for (let g = 0; g < tc.height; g += 49) { tx.beginPath(); tx.moveTo(0, g); tx.lineTo(tc.width, g); tx.stroke() } }
-  if (T.scalePts.length) {
-    tx.strokeStyle = '#ffd166'; tx.lineWidth = 2; tx.fillStyle = '#ffd166'
-    T.scalePts.forEach(p => { tx.beginPath(); tx.arc(p[0], p[1], 5, 0, 7); tx.fill() })
-    if (T.scalePts.length === 2) { tx.beginPath(); tx.moveTo(...T.scalePts[0]); tx.lineTo(...T.scalePts[1]); tx.stroke(); const m = [(T.scalePts[0][0] + T.scalePts[1][0]) / 2, (T.scalePts[0][1] + T.scalePts[1][1]) / 2]; tx.font = 'bold 14px monospace'; tx.fillText(`${Math.floor(T.dist)}' ${Math.round((T.dist % 1) * 12)}\"`, m[0] + 8, m[1] - 8) }
-  }
-  if (T.poly.length) {
-    tx.strokeStyle = '#8fd8a0'; tx.fillStyle = 'rgba(143,216,160,0.18)'; tx.lineWidth = 2.5
-    tx.beginPath(); tx.moveTo(...T.poly[0]); T.poly.forEach(p => tx.lineTo(...p)); if (T.poly.length > 2) tx.closePath(); tx.fill(); tx.stroke()
-    tx.fillStyle = '#8fd8a0'
-    T.poly.forEach(p => { tx.beginPath(); tx.arc(p[0], p[1], 4.5, 0, 7); tx.fill() })
-    if (T.pxPerFt > 0) { tx.font = 'bold 13px monospace'; tx.fillStyle = '#fff'; tx.strokeStyle = 'rgba(0,0,0,0.7)'; tx.lineWidth = 3; for (let i = 0; i < T.poly.length - (T.poly.length > 2 ? 0 : 1); i++) { const a = T.poly[i], b = T.poly[(i + 1) % T.poly.length]; if (T.poly.length <= 2 && i === T.poly.length - 1) break; const len = Math.hypot(b[0] - a[0], b[1] - a[1]) / T.pxPerFt; const m = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2]; const s = len.toFixed(1) + "'"; tx.strokeText(s, m[0] + 6, m[1] - 6); tx.fillText(s, m[0] + 6, m[1] - 6) } }
-  }
-  const dims = T.pxPerFt > 0 && T.poly.length > 2 ? T.poly.map((a, i) => { const b = T.poly[(i + 1) % T.poly.length]; return `edge ${i + 1}: ${(Math.hypot(b[0] - a[0], b[1] - a[1]) / T.pxPerFt).toFixed(1)} ft` }).join('<br>') : ''
-  $('#tdims').innerHTML = dims ? `<b style="color:var(--acc)">TRACED EDGES</b><br>${dims}` : ''
-}
-tc.addEventListener('click', e => {
-  const r = tc.getBoundingClientRect()
-  const p = [(e.clientX - r.left) * tc.width / r.width, (e.clientY - r.top) * tc.height / r.height]
-  if (T.mode === 'scale') {
-    T.scalePts.push(p)
-    if (T.scalePts.length === 2) {
-      const pd = prompt('Real distance between those two points (e.g. 133in or 11ft or 11.08):', '10ft');const pm = pd && pd.match(/([\d.]+)\s*(in|\"|ft|'|m)?/i);const d = pm ? parseFloat(pm[1]) * (/(in|\")/i.test(pm[2] || '') ? 1 / 12 : /m/i.test(pm[2] || '') ? 3.28084 : 1) : NaN
-      isFinite(d) && d > 0 ? (T.dist = d, T.pxPerFt = Math.hypot(T.scalePts[1][0] - T.scalePts[0][0], T.scalePts[1][1] - T.scalePts[0][1]) / d, tStatus(`Scale set: ${T.pxPerFt.toFixed(1)} px/ft. Now click TRACE and click each corner of the patio.`)) : (T.scalePts = [], tStatus('Scale cancelled — click Set scale and try again.'))
-      T.mode = null
-    } else tStatus('Click the second reference point…')
-  } else if (T.mode === 'trace') { T.poly.push(p); tStatus(`${T.poly.length} corner${T.poly.length > 1 ? 's' : ''} placed — keep clicking corners, then hit USE OUTLINE.`) }
-  tDraw()
-})
-$('#timg').addEventListener('change', e => {
-  const f = e.target.files[0]; if (!f) return
-  const img = new Image()
-  img.onload = () => { window.__siteMapOn = false; T.img = img; const ar = img.width / img.height; tc.width = 980; tc.height = Math.round(980 / ar); tDraw(); tStatus('Photo loaded. Click "Set scale", then click two points a known distance apart (a fence panel, tape on the ground, the house wall…).') }
-  img.src = URL.createObjectURL(f)
-})
-$('#tscale').onclick = () => { T.mode = 'scale'; T.scalePts = []; tStatus('Click the FIRST reference point on the image…'); tDraw() }
-$('#ttrace').onclick = () => { T.pxPerFt > 0 || (AD && AD.route && AD.route() === 'ground') ? (T.mode = 'trace', tStatus(AD && AD.route && AD.route() === 'ground' ? 'Tap the 4 deck-floor corners in order: back-left, back-right, front-right, front-left.' : 'Click each corner of the patio outline in order.')) : tStatus('Set the scale first (two points + real distance).') }
-$('#tundo').onclick = () => { T.poly.pop(); tDraw() }
-$('#tclear').onclick = () => { T.poly = []; T.scalePts = []; T.mode = null; tDraw(); tStatus('Cleared. Set scale, then trace.') }
-$('#tuse').onclick = async () => {
-  const gnd = AD && AD.route && AD.route() === 'ground' ? AD.reconstructGround() : null
-  if (gnd && gnd.ok) {
-    cfg.polygon = [[0, 0], [gnd.length, 0], [gnd.length, gnd.depth], [0, gnd.depth]]
-    cfg.mode = 'poly'
-    document.querySelectorAll('#mode button').forEach(b => b.classList.toggle('on', b.dataset.v === 'poly'))
-    $('#rw').style.display = 'none'; $('#rd').style.display = 'none'
-    const sel = $('#house'); sel.innerHTML = '<option value="-1">Freestanding</option><option value="0" selected>Edge 1 (back) = house</option>'; cfg.house_edge = 0
-    siteSnap = { ...cropForPlan(T.img || tc, tc.width, tc.height, T.poly, (Math.hypot(T.poly[1][0] - T.poly[0][0], T.poly[1][1] - T.poly[0][1]) / gnd.length) || 10), address: '', northUp: false }
-    recompute()
-    tStatus(`Reconstructed from your photo: ${gnd.length.toFixed(1)}' × ${gnd.depth.toFixed(1)}' (${(gnd.length * gnd.depth).toFixed(0)} ft²)${gnd.affine ? ' — near head-on, double-check depth' : ''}. Perspective REFERENCE sketch added to 2D Plans.`)
-    return
-  }
-  if (T.pxPerFt <= 0 || T.poly.length < 3) { tStatus('Need a scale + at least 3 corners before using the outline.'); return }
-  const minX = Math.min(...T.poly.map(p => p[0])), maxY = Math.max(...T.poly.map(p => p[1]))
-  cfg.polygon = T.poly.map(p => [+(((p[0] - minX) / T.pxPerFt).toFixed(2)), +(((maxY - p[1]) / T.pxPerFt).toFixed(2))])
-  cfg.mode = 'poly'
-  document.querySelectorAll('#mode button').forEach(b => b.classList.toggle('on', b.dataset.v === 'poly'))
-  $('#rw').style.display = 'none'; $('#rd').style.display = 'none'
-  if (T.img && window.__siteMapOn) {
-    const ic = document.createElement('canvas'); ic.width = tc.width; ic.height = tc.height
-    ic.getContext('2d').drawImage(T.img, 0, 0, ic.width, ic.height)
-    photoMeta = { tex: new THREE.CanvasTexture(ic), wFt: tc.width / T.pxPerFt, hFt: tc.height / T.pxPerFt, cxFt: (tc.width / 2 - minX) / T.pxPerFt, cyFt: (maxY - tc.height / 2) / T.pxPerFt }
-  }
-  const edges = cfg.polygon.map((a, i) => { const b = cfg.polygon[(i + 1) % cfg.polygon.length]; return Math.hypot(b[0] - a[0], b[1] - a[1]) })
-  const sel = $('#house')
-  sel.innerHTML = '<option value="-1">Freestanding</option>' + edges.map((L, i) => `<option value="${i}">Edge ${i + 1} (${L.toFixed(1)} ft) = house</option>`).join('')
-  sel.value = String(edges.indexOf(Math.max(...edges)))
-  cfg.house_edge = +sel.value
-  siteSnap = { ...(window.__siteMapOn && MV ? await mapPlanSnapshot(MV, tc.width, tc.height, T.poly, T.pxPerFt) : cropForPlan(T.img || tc, tc.width, tc.height, T.poly, T.pxPerFt)), address: window.__siteMapOn ? (window.__siteAddr || '') : '', northUp: !!window.__siteMapOn }
-  recompute()
-  tStatus(`Outline applied: ${out && out.calc ? out.calc.area_ft2.toFixed(0) : '?'} ft². 3D has your imagery as the ground — and a SITE PLAN was added to 2D Plans for the permit packet.`)
+  persist(); rebuild3D(); renderPlans(); renderMat(); renderWarns(); renderGuide(); renderBest(); updatePermits()
 }
 const buildFinishes = () => {
   const sw = $('#finishes'); sw.innerHTML = ''
@@ -272,18 +190,17 @@ const buildFinishes = () => {
   })
 }
 const initUI = () => {
-  const bind = (id, key, num = true) => { const el = $(id); el.value = cfg[key]; el.onchange = () => { cfg[key] = num ? +el.value : el.value; recompute() } }
-  bind('#w', 'w'); bind('#d', 'd'); bind('#toilets', 'toilets'); bind('#lavs', 'lavs'); bind('#tubs', 'tubs'); bind('#showers', 'showers'); bind('#ksinks', 'kitchen_sinks'); bind('#dishwashers', 'dishwashers'); bind('#washers', 'washers'); bind('#house', 'house_edge')
+  const bind = (id, key) => { const el = $(id); if (!el) return; el.value = cfg[key]; el.onchange = () => { cfg[key] = +el.value; recompute() } }
+  for (const [k, id] of Object.entries(FIX)) bind(id, k)
   $('#wheater').checked = !!cfg.water_heater
   $('#wheater').onchange = e => { cfg.water_heater = e.target.checked; recompute() }
-  document.querySelectorAll('#mode button').forEach(b => b.onclick = () => {
-    cfg.mode = b.dataset.v
-    document.querySelectorAll('#mode button').forEach(x => x.classList.toggle('on', x === b))
-    const rectMode = cfg.mode === 'rect'
-    $('#rw').style.display = rectMode ? 'flex' : 'none'; $('#rd').style.display = rectMode ? 'flex' : 'none'
-    if (rectMode) { const sel = $('#house'); sel.innerHTML = '<option value="0">Yes — back edge</option><option value="-1">Freestanding</option>'; sel.value = cfg.house_edge >= 0 ? '0' : '-1'; cfg.house_edge = +sel.value }
-    if (!rectMode && (!cfg.polygon || cfg.polygon.length < 3)) { document.querySelector('.tab[data-pane="trace"]').click() }
-    recompute()
+  const pwrap = $('#presets')
+  if (pwrap) pwrap.innerHTML = Object.entries(PRESETS).map(([k, v]) => `<button class="seg-b" data-preset="${k}">${v.label}</button>`).join('') + '<button class="seg-b" data-preset="__clear" style="color:#d88">✖ Clear all</button>'
+  pwrap && pwrap.querySelectorAll('button[data-preset]').forEach(b => b.onclick = () => {
+    const p = b.dataset.preset
+    if (p === '__clear') { for (const k of Object.keys(FIX)) cfg[k] = 0; cfg.water_heater = false; $('#wheater').checked = false }
+    else { const add = PRESETS[p].add; for (const [k, v] of Object.entries(add)) cfg[k] = (+cfg[k] || 0) + v }
+    syncInputs(); recompute()
   })
   document.querySelectorAll('.tab').forEach(t => t.onclick = () => {
     document.querySelectorAll('.tab').forEach(x => x.classList.toggle('on', x === t))
@@ -296,19 +213,13 @@ const initUI = () => {
   $('#reset-prices').onclick = () => { priceEdits = {}; localStorage.removeItem(LSP); renderMat() }
   $('#export-csv').onclick = () => {
     const csv = ['Item,Qty,HD each,HD total,Lowes each,Lowes total', ...out.bom.map(it => { const ph = price(it.id, 'hd'), pl = price(it.id, 'lowes'); return `"${it.desc}",${it.qty},${ph ?? ''},${ph != null ? (ph * it.qty).toFixed(2) : ''},${pl ?? ''},${pl != null ? (pl * it.qty).toFixed(2) : ''}` })].join('\n')
-    const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([csv], { type: 'text/csv' })), download: 'plumb-materials.csv' })
-    a.click()
+    Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([csv], { type: 'text/csv' })), download: 'plumb-materials.csv' }).click()
   }
-  $('#dl-svg').onclick = () => { ['layout', 'details'].forEach(k => { const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([out.svgs[k]], { type: 'image/svg+xml' })), download: `plumb-${k}.svg` }); a.click() }); const sw = $('#svg-site'); sw && Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([sw.innerHTML], { type: 'image/svg+xml' })), download: 'plumb-site-plan.svg' }).click() }
+  $('#dl-svg').onclick = () => { ['layout', 'details'].forEach(k => { const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([out.svgs[k]], { type: 'image/svg+xml' })), download: `plumb-${k}.svg` }); a.click() }) }
   buildFinishes()
-  initPermits(() => ({ ...cfg, height: 0, attach: cfg.house_edge >= 0 ? 'house' : 'free', length: 0, depth: 0 }), () => out)
-  if (cfg.mode === 'poly' && cfg.polygon) { $('#rw').style.display = 'none'; $('#rd').style.display = 'none'; document.querySelectorAll('#mode button').forEach(b => b.classList.toggle('on', b.dataset.v === 'poly')); const edges = cfg.polygon.map((a, i) => { const b2 = cfg.polygon[(i + 1) % cfg.polygon.length]; return Math.hypot(b2[0] - a[0], b2[1] - a[1]) }); const sel = $('#house'); sel.innerHTML = '<option value="-1">Freestanding</option>' + edges.map((L, i) => `<option value="${i}">Edge ${i + 1} (${L.toFixed(1)} ft) = house</option>`).join(''); sel.value = String(cfg.house_edge) }
+  initPermits(() => ({ ...cfg, height: 0, attach: 'free', length: 0, depth: 0 }), () => out)
 }
 catalog = await fetch('catalog.json').then(r => r.json()).catch(() => ({}))
 initUI()
 resize()
-tDraw()
-MV = initMapTrace({ tc, T, tDraw, tStatus })
-const AD = initAutoDetect({ tc, T, tDraw, tStatus, getMapOn: () => !!window.__siteMapOn })
-document.getElementById('tauto').onclick = () => AD.detectFootprint()
 recompute()
