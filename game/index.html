@@ -8,23 +8,23 @@
 <meta name="description" content="Amni: a cozy 3D collect-a-thon you can play right in your browser. Eight worlds, four tyrants, four transforms — one brave mouse.">
 <style>
 :root{
-  --gold:#f3c64a; --gold-soft:#e0b23e;
-  --ink:#ece7d6; --muted:#a7b196;
-  --bg0:#0f140f; --bg1:#161d15; --panel:#1b231a; --panel2:#222b20;
-  --edge:#33402d; --accent:#7fb96a;
+  --gold:#f5c44b; --gold-soft:#e0b23e;
+  --ink:#eef1f6; --muted:#9aa3b2;
+  --bg0:#0c0e12; --bg1:#13161c; --panel:#181c24; --panel2:#1e232c;
+  --edge:#2b313c; --accent:#6cb6e6;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{
   background:
-    radial-gradient(1200px 600px at 50% -10%, #1d2a1a 0%, transparent 60%),
+    radial-gradient(1100px 560px at 50% -12%, #1c2330 0%, transparent 62%),
     linear-gradient(180deg,var(--bg1) 0%,var(--bg0) 100%);
   background-attachment:fixed;
   color:var(--ink); font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
   min-height:100vh; display:flex; flex-direction:column; align-items:center;
 }
 header{width:100%;display:flex;align-items:center;gap:12px;padding:12px 22px;
-  background:rgba(12,16,11,.72);backdrop-filter:blur(8px);
+  background:rgba(10,12,16,.78);backdrop-filter:blur(8px);
   border-bottom:1px solid var(--edge);position:sticky;top:0;z-index:20}
 header a.home{color:var(--gold);text-decoration:none;font-weight:700;letter-spacing:.02em}
 header .sep{color:#5c6650}
@@ -76,14 +76,14 @@ footer a{color:var(--muted)}
 <main>
   <div class="hero">
     <h1>AMNI</h1>
-    <div class="tag">A cozy collect-a-thon — eight realms, four tyrants, four transforms, one brave mouse.</div>
+    <div class="tag">A 3D collect-a-thon platformer. Explore eight worlds, collect everything, beat four bosses.</div>
   </div>
   <div id="stage">
     <div id="amni-game"></div>
     <div id="overlay">
       <div class="crest">🐭</div>
-      <h2>AMNI — A TINY ADVENTURE</h2>
-      <p>Explore eight hand-grown worlds, collect canvases, master four transforms, and topple four tyrants. Runs entirely in your browser — your progress saves on this device.</p>
+      <h2>AMNI</h2>
+      <p>A 3D collect-a-thon platformer that runs right in your browser. Eight worlds to explore, canvases to collect, four transforms to master, and four bosses to beat. Your progress saves automatically on this device.</p>
       <button id="playBtn">▶&nbsp; PLAY</button>
       <div id="spin"></div>
       <div id="status"></div>
@@ -122,7 +122,7 @@ btn.addEventListener('click', async () => {
   document.getElementById('spin').style.display = 'block';
   status.textContent = 'Fetching the world seed (4.5 MB)...';
   try {
-    const V = '147';
+    const V = '148';
     const { default: init } = await import('./pkg/amni.js?v=' + V);
     status.textContent = 'Growing eight realms — about 15 seconds, the page may hold its breath...';
     await new Promise(r => setTimeout(r, 60));
