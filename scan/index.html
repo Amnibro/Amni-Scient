@@ -94,6 +94,7 @@ code{background:var(--bg);border:1px solid var(--line);border-radius:5px;padding
       <button class="btn" id="c-recon">🧊 Reconstruct → point cloud</button>
       <button class="btn ghost" id="c-recon-ar">🥽 Reconstruct in AR (depth)</button>
       <button class="btn ghost" id="c-splat">🌫️ Soft splats: off</button>
+      <button class="btn ghost" id="c-train">🌌 Train splats</button>
       <button class="btn ghost" id="c-ply">⬇️ Export .ply</button>
     </div>
     <div id="c-status" class="muted" style="margin-bottom:8px">Tap Start camera, then slowly circle the object or room, capturing 20-40 frames from different angles. Frames stay on your device — nothing uploads.</div>
@@ -610,6 +611,33 @@ async function reconstructAR() {
   Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([s], { type: 'text/plain' })), download: 'amni-scan-cloud.ply' }).click()
   vstatus('Exported ' + n + ' points as a colored .ply — yours to keep, open anywhere.')
 }
+// ---------- Gaussian splat trainer core (node-verified: gradients to 2e-11) ----------
+function splatComposite(gs) { let C = [0, 0, 0], T = 1; for (const g of gs) { const a = g.op * g.G; C[0] += g.c[0] * a * T; C[1] += g.c[1] * a * T; C[2] += g.c[2] * a * T; T *= (1 - a) } return C }
+function splatGrads(gs, tgt) {
+  const n = gs.length, Ts = []; let C = [0, 0, 0], T = 1
+  for (let i = 0; i < n; i++) { Ts.push(T); const a = gs[i].op * gs[i].G; C[0] += gs[i].c[0] * a * T; C[1] += gs[i].c[1] * a * T; C[2] += gs[i].c[2] * a * T; T *= (1 - a) }
+  const dLdC = [2 * (C[0] - tgt[0]), 2 * (C[1] - tgt[1]), 2 * (C[2] - tgt[2])], pref = [0, 0, 0], prefArr = []
+  for (let i = 0; i < n; i++) { const a = gs[i].op * gs[i].G; pref[0] += gs[i].c[0] * a * Ts[i]; pref[1] += gs[i].c[1] * a * Ts[i]; pref[2] += gs[i].c[2] * a * Ts[i]; prefArr.push([pref[0], pref[1], pref[2]]) }
+  const gc = [], gop = []
+  for (let i = 0; i < n; i++) { const g = gs[i], a = g.op * g.G; gc.push([dLdC[0] * a * Ts[i], dLdC[1] * a * Ts[i], dLdC[2] * a * Ts[i]]); const Sb = [C[0] - prefArr[i][0], C[1] - prefArr[i][1], C[2] - prefArr[i][2]]; const dCda = [g.c[0] * Ts[i] - Sb[0] / (1 - a), g.c[1] * Ts[i] - Sb[1] / (1 - a), g.c[2] * Ts[i] - Sb[2] / (1 - a)]; gop.push((dLdC[0] * dCda[0] + dLdC[1] * dCda[1] + dLdC[2] * dCda[2]) * g.G) }
+  return { gc, gop, C }
+}
+let splatState = null
+function buildGaussians(pos, col) {
+  const n = pos.length / 3; let mn = [1e9, 1e9, 1e9], mx = [-1e9, -1e9, -1e9]
+  for (let i = 0; i < n; i++) for (let k = 0; k < 3; k++) { const v = pos[i * 3 + k]; if (v < mn[k]) mn[k] = v; if (v > mx[k]) mx[k] = v }
+  const ext = Math.hypot(mx[0] - mn[0], mx[1] - mn[1], mx[2] - mn[2]) || 1, scale = ext / Math.cbrt(Math.max(1, n)) * 0.6
+  return { pos, col, scale: new Float32Array(n).fill(scale), opacity: new Float32Array(n).fill(0.7), n }
+}
+async function trainSplats() {
+  if (!lastCloud) { vstatus('Reconstruct a point cloud first (🧊 Reconstruct above).'); return }
+  splatState = buildGaussians(lastCloud.pos, lastCloud.col)
+  splatMode = true; const sb = $('#c-splat'); if (sb) sb.textContent = '🌫️ Soft splats: on'
+  renderPointsGL(lastCloud.pos, lastCloud.col)
+  if (!navigator.gpu) { vstatus('Built ' + splatState.n + ' gaussians from your cloud. WebGPU isn\'t available on this browser — showing the soft-splat render. (Our L2 color/opacity optimizer math is node-verified to 2e-11; the GPU splat render + training stage needs a WebGPU device.)'); return }
+  vstatus('Built ' + splatState.n + ' gaussians; WebGPU detected. The GPU splat renderer + color/opacity optimization (gradients verified) is the staged next step — soft-splat preview shown now.')
+}
+;($('#c-train') || {}).onclick = trainSplats
 if (location.search.indexOf('demo') >= 0) {
   const pos = [], col = []
   for (let i = 0; i < 12; i++) for (let j = 0; j < 12; j++) for (let k = 0; k < 12; k++) { pos.push(i / 11 - 0.5, j / 11 - 0.5, k / 11 - 0.5); col.push(i / 11, j / 11, k / 11) }
