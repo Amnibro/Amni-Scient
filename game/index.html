@@ -5,53 +5,115 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Amni — A Tiny Adventure | Amni-Scient</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='80' font-size='80'>🐭</text></svg>">
-<meta name="description" content="Amni: a grounded x Banjo-Kazooie 3D collect-a-thon you can play right in your browser. Eight worlds, four tyrants, four transforms — one brave mouse.">
+<meta name="description" content="Amni: a cozy 3D collect-a-thon you can play right in your browser. Eight worlds, four tyrants, four transforms — one brave mouse.">
 <style>
-:root { --gold: #f0c33c; --bg: #11150f; --panel: #1c2418; }
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { background: var(--bg); color: #e8e4d4; font-family: 'Segoe UI', system-ui, sans-serif; min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
-header { width: 100%; padding: 14px 22px; display: flex; align-items: center; gap: 14px; background: var(--panel); border-bottom: 2px solid #2e3a26; }
-header a { color: var(--gold); text-decoration: none; font-weight: 600; }
-header .crumb { color: #9aa48c; font-size: 0.9rem; }
-h1 { font-size: 1.15rem; color: var(--gold); letter-spacing: 0.04em; }
-main { width: 100%; max-width: 1320px; padding: 18px; display: flex; flex-direction: column; align-items: center; gap: 14px; }
-#stage { position: relative; width: 100%; max-width: 1280px; aspect-ratio: 16 / 9; background: #000; border: 2px solid #3a4530; border-radius: 10px; overflow: hidden; box-shadow: 0 8px 40px rgba(0,0,0,0.55); }
-#amni-game, #amni-game canvas { width: 100%; height: 100%; display: block; }
-#overlay { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; background: radial-gradient(ellipse at center, #1d2616 0%, #0c0f0a 100%); z-index: 5; }
-#overlay h2 { color: var(--gold); font-size: 2rem; letter-spacing: 0.06em; }
-#overlay p { color: #b9c2a8; max-width: 520px; text-align: center; line-height: 1.5; padding: 0 16px; }
-#playBtn { background: var(--gold); color: #1c1a10; border: none; font-size: 1.2rem; font-weight: 700; padding: 14px 46px; border-radius: 999px; cursor: pointer; letter-spacing: 0.08em; box-shadow: 0 0 24px rgba(240,195,60,0.35); }
-#playBtn:hover { transform: scale(1.04); }
-#playBtn:disabled { opacity: 0.6; cursor: wait; }
-#status { color: #8d967e; font-size: 0.85rem; min-height: 1.2em; }
-#spin { width: 34px; height: 34px; border: 4px solid #3a4530; border-top-color: var(--gold); border-radius: 50%; animation: sp 0.9s linear infinite; display: none; }
-@keyframes sp { to { transform: rotate(360deg); } }
-.controls { width: 100%; max-width: 1280px; background: var(--panel); border: 1px solid #2e3a26; border-radius: 10px; padding: 14px 18px; font-size: 0.92rem; color: #c9d0b8; line-height: 1.7; }
-.controls b { color: var(--gold); }
-footer { margin-top: auto; padding: 16px; color: #707a62; font-size: 0.8rem; }
-footer a { color: #9aa48c; }
+:root{
+  --gold:#f3c64a; --gold-soft:#e0b23e;
+  --ink:#ece7d6; --muted:#a7b196;
+  --bg0:#0f140f; --bg1:#161d15; --panel:#1b231a; --panel2:#222b20;
+  --edge:#33402d; --accent:#7fb96a;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:
+    radial-gradient(1200px 600px at 50% -10%, #1d2a1a 0%, transparent 60%),
+    linear-gradient(180deg,var(--bg1) 0%,var(--bg0) 100%);
+  background-attachment:fixed;
+  color:var(--ink); font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+  min-height:100vh; display:flex; flex-direction:column; align-items:center;
+}
+header{width:100%;display:flex;align-items:center;gap:12px;padding:12px 22px;
+  background:rgba(12,16,11,.72);backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--edge);position:sticky;top:0;z-index:20}
+header a.home{color:var(--gold);text-decoration:none;font-weight:700;letter-spacing:.02em}
+header .sep{color:#5c6650}
+header .here{color:var(--muted);font-size:.9rem;font-weight:600;letter-spacing:.08em}
+main{width:100%;max-width:1320px;padding:22px 18px 40px;display:flex;flex-direction:column;align-items:center;gap:22px}
+.hero{text-align:center;margin-top:6px}
+.hero h1{font-size:2.6rem;letter-spacing:.16em;color:var(--gold);
+  text-shadow:0 2px 0 #6b531a,0 0 28px rgba(243,198,74,.28)}
+.hero .tag{margin-top:6px;color:var(--muted);font-size:1.02rem;letter-spacing:.04em}
+#stage{position:relative;width:100%;max-width:1280px;aspect-ratio:16/9;background:#000;
+  border:1px solid var(--edge);border-radius:14px;overflow:hidden;
+  box-shadow:0 18px 60px rgba(0,0,0,.6),inset 0 0 0 1px rgba(255,255,255,.03)}
+#amni-game,#amni-game canvas{width:100%;height:100%;display:block}
+#overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;
+  background:radial-gradient(ellipse at center,#1f2c1a 0%,#0a0d09 100%);z-index:5;padding:0 18px;text-align:center}
+#overlay .crest{font-size:3.2rem;filter:drop-shadow(0 4px 10px rgba(0,0,0,.5))}
+#overlay h2{color:var(--gold);font-size:2.1rem;letter-spacing:.12em}
+#overlay p{color:#c2cbb2;max-width:560px;line-height:1.6}
+#playBtn{background:linear-gradient(180deg,#f7d262,#e0a82f);color:#241f10;border:none;
+  font-size:1.15rem;font-weight:800;padding:14px 52px;border-radius:999px;cursor:pointer;
+  letter-spacing:.1em;box-shadow:0 6px 22px rgba(240,195,60,.35);transition:transform .12s ease,box-shadow .12s}
+#playBtn:hover{transform:translateY(-2px) scale(1.03);box-shadow:0 10px 30px rgba(240,195,60,.5)}
+#playBtn:disabled{opacity:.6;cursor:wait;transform:none}
+#status{color:#93a085;font-size:.86rem;min-height:1.2em}
+#spin{width:34px;height:34px;border:4px solid #3a4530;border-top-color:var(--gold);border-radius:50%;animation:sp .9s linear infinite;display:none}
+@keyframes sp{to{transform:rotate(360deg)}}
+.note{color:var(--muted);font-size:.82rem}
+.note b{color:var(--accent)}
+.controls{width:100%;max-width:1280px;background:linear-gradient(180deg,var(--panel),var(--panel2));
+  border:1px solid var(--edge);border-radius:14px;padding:18px 20px}
+.controls h3{color:var(--gold);font-size:.82rem;letter-spacing:.18em;text-transform:uppercase;margin-bottom:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px 18px}
+.row{display:flex;align-items:center;gap:10px;font-size:.92rem;color:#cdd4be}
+kbd{display:inline-flex;align-items:center;justify-content:center;min-width:30px;height:26px;padding:0 8px;
+  background:#0e120d;border:1px solid #44523a;border-bottom-width:2px;border-radius:6px;
+  color:var(--ink);font-family:inherit;font-size:.78rem;font-weight:700;white-space:nowrap}
+.row .act{color:var(--muted)}
+.tips{display:flex;flex-wrap:wrap;gap:8px 20px;margin-top:14px;padding-top:12px;border-top:1px solid var(--edge);color:var(--muted);font-size:.85rem}
+.tips b{color:var(--accent)}
+footer{margin-top:auto;padding:18px;color:#6f7a60;font-size:.8rem;text-align:center}
+footer a{color:var(--muted)}
+@media(max-width:560px){.hero h1{font-size:1.9rem}#overlay h2{font-size:1.6rem}}
 </style>
 </head>
 <body>
 <header>
-  <a href="/">Amni-Scient</a><span class="crumb">/</span><h1>AMNI — A TINY ADVENTURE</h1>
+  <a class="home" href="/">Amni-Scient</a><span class="sep">/</span><span class="here">A TINY ADVENTURE</span>
 </header>
 <main>
+  <div class="hero">
+    <h1>AMNI</h1>
+    <div class="tag">A cozy collect-a-thon — eight realms, four tyrants, four transforms, one brave mouse.</div>
+  </div>
   <div id="stage">
     <div id="amni-game"></div>
     <div id="overlay">
-      <h2>AMNI</h2>
-      <p>A grounded &times; collect-a-thon adventure. You are one brave mouse: eight realms, four tyrants, four elemental transforms, and 33 canvases to bring home. Runs entirely in your browser &mdash; saves stay on this device. Best in Edge or Chrome (WebGPU).</p>
-      <button id="playBtn">&#9654;&nbsp; PLAY</button>
+      <div class="crest">🐭</div>
+      <h2>AMNI — A TINY ADVENTURE</h2>
+      <p>Explore eight hand-grown worlds, collect canvases, master four transforms, and topple four tyrants. Runs entirely in your browser — your progress saves on this device.</p>
+      <button id="playBtn">▶&nbsp; PLAY</button>
       <div id="spin"></div>
       <div id="status"></div>
+      <div class="note">Best in <b>Edge</b> or <b>Chrome</b> (WebGPU). First load grows the worlds — give it ~15 seconds.</div>
     </div>
   </div>
   <div class="controls">
-    <b>WASD</b> move &middot; <b>SPACE</b> jump (again to double-jump, hold to flutter) &middot; <b>F</b> attack &middot; <b>Q</b> throw cones &middot; <b>SHIFT</b> dash &middot; <b>CTRL</b> ground-pound (and <b>hold CTRL to dive/swim down</b> in water) &middot; <b>mouse wheel</b> zoom camera &middot; <b>E</b> read &amp; interact &middot; <b>R</b> cycle cones &middot; <b>P</b> photo mode &middot; <b>F11</b> fullscreen &middot; <b>ESC</b> pause (press R there to flip SETTINGS / ATLAS / CONTROLS / GALLERY &mdash; rebind keys in CONTROLS) &middot; Gamepads supported
+    <h3>Controls</h3>
+    <div class="grid">
+      <div class="row"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd><span class="act">Move</span></div>
+      <div class="row"><kbd>Space</kbd><span class="act">Jump · again = double · hold = flutter</span></div>
+      <div class="row"><kbd>Shift</kbd><span class="act">Dash (works midair)</span></div>
+      <div class="row"><kbd>Ctrl</kbd><span class="act">Ground-pound · hold to dive in water</span></div>
+      <div class="row"><kbd>F</kbd><span class="act">Attack</span></div>
+      <div class="row"><kbd>Q</kbd><span class="act">Throw cones</span> <kbd>R</kbd><span class="act">cycle</span></div>
+      <div class="row"><kbd>E</kbd><span class="act">Read &amp; interact</span></div>
+      <div class="row"><kbd>Wheel</kbd><span class="act">Zoom camera</span></div>
+      <div class="row"><kbd>P</kbd><span class="act">Photo mode</span></div>
+      <div class="row"><kbd>F11</kbd><span class="act">Fullscreen</span></div>
+      <div class="row"><kbd>Esc</kbd><span class="act">Pause · press R for tabs</span></div>
+      <div class="row"><kbd>🎮</kbd><span class="act">Gamepads supported</span></div>
+    </div>
+    <div class="tips">
+      <span>💡 Pause &rarr; <b>Controls</b> tab to rebind keys.</span>
+      <span>🎨 Pause &rarr; <b>Gallery</b> for collection, ghost-race &amp; co-op codes.</span>
+      <span>💾 Autosaves as you play.</span>
+    </div>
   </div>
 </main>
-<footer><a href="/">amni-scient.com</a> &middot; Amni is procedural &mdash; no tracking, saves live in your browser. Music: original Amni soundtrack (area + per-realm boss themes) &middot; <a href="music/CREDITS.md" style="color:#9aa48c">credits</a>.</footer>
+<footer><a href="/">amni-scient.com</a> &middot; Amni is procedural &mdash; no tracking, saves live in your browser. Original soundtrack (area + per-realm boss themes) &middot; <a href="music/CREDITS.md">credits</a>.</footer>
 <script type="module">
 const btn = document.getElementById('playBtn');
 const status = document.getElementById('status');
