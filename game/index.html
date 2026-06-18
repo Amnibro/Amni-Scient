@@ -97,7 +97,7 @@ footer a{color:var(--muted)}
       <div class="row"><kbd>Space</kbd><span class="act">Jump · again = double · hold = flutter</span></div>
       <div class="row"><kbd>Shift</kbd><span class="act">Dash (works midair)</span></div>
       <div class="row"><kbd>Ctrl</kbd><span class="act">Ground-pound · hold to dive in water</span></div>
-      <div class="row"><kbd>F</kbd><span class="act">Attack</span></div>
+      <div class="row"><kbd>F</kbd><span class="act">Attack · mash for a 3-hit combo</span></div>
       <div class="row"><kbd>Q</kbd><span class="act">Throw cones</span> <kbd>R</kbd><span class="act">cycle</span></div>
       <div class="row"><kbd>E</kbd><span class="act">Read &amp; interact</span></div>
       <div class="row"><kbd>Wheel</kbd><span class="act">Zoom camera</span></div>
@@ -122,7 +122,7 @@ btn.addEventListener('click', async () => {
   document.getElementById('spin').style.display = 'block';
   status.textContent = 'Fetching the world seed (4.5 MB)...';
   try {
-    const V = '150';
+    const V = '151';
     const { default: init } = await import('./pkg/amni.js?v=' + V);
     status.textContent = 'Growing eight realms — about 15 seconds, the page may hold its breath...';
     await new Promise(r => setTimeout(r, 60));
