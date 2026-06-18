@@ -123,7 +123,7 @@ btn.addEventListener('click', async () => {
   document.getElementById('spin').style.display = 'block';
   status.textContent = 'Fetching the world seed (4.5 MB)...';
   try {
-    const V = '180';
+    const V = '181';
     const { default: init } = await import('./pkg/amni.js?v=' + V);
     status.textContent = 'Growing eight realms — about 15 seconds, the page may hold its breath...';
     await new Promise(r => setTimeout(r, 60));
