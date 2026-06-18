@@ -90,6 +90,10 @@ code{background:var(--bg);border:1px solid var(--line);border-radius:5px;padding
       <button class="btn ghost" id="c-stop" disabled>⏹ Stop</button>
       <button class="btn ghost" id="c-reset" disabled>🗑 Reset</button>
     </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+      <button class="btn" id="c-recon">🧊 Reconstruct → point cloud</button>
+      <button class="btn ghost" id="c-recon-ar">🥽 Reconstruct in AR (depth)</button>
+    </div>
     <div id="c-status" class="muted" style="margin-bottom:8px">Tap Start camera, then slowly circle the object or room, capturing 20-40 frames from different angles. Frames stay on your device — nothing uploads.</div>
     <div style="position:relative;width:100%;aspect-ratio:16/10;background:#0c0e12;border:1px solid var(--line);border-radius:12px;overflow:hidden">
       <video id="c-video" playsinline muted style="width:100%;height:100%;object-fit:cover;display:block"></video>
@@ -324,6 +328,117 @@ $('#vfile').addEventListener('change', e => { const f = e.target.files[0]; if (f
 const wrap = $('#vwrap')
 wrap.addEventListener('dragover', e => { e.preventDefault() })
 wrap.addEventListener('drop', e => { e.preventDefault(); const f = e.dataTransfer.files[0]; if (f) loadSplat(f) })
+
+// ---------- Our own point-cloud renderer (raw WebGL) + reconstruct (stage 3b) ----------
+const PC_VS = 'attribute vec3 p;attribute vec3 c;uniform mat4 mvp;uniform float sz;varying vec3 vc;void main(){gl_Position=mvp*vec4(p,1.0);gl_PointSize=sz;vc=c;}'
+const PC_FS = 'precision mediump float;varying vec3 vc;void main(){vec2 d=gl_PointCoord-0.5;if(dot(d,d)>0.25)discard;gl_FragColor=vec4(vc,1.0);}'
+const v3 = { sub: (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]], cross: (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]], dot: (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2], norm: a => { const l = Math.hypot(a[0], a[1], a[2]) || 1; return [a[0] / l, a[1] / l, a[2] / l] } }
+const m4 = {
+  persp: (fov, asp, n, f) => { const t = 1 / Math.tan(fov / 2); return [t / asp, 0, 0, 0, 0, t, 0, 0, 0, 0, (f + n) / (n - f), -1, 0, 0, 2 * f * n / (n - f), 0] },
+  lookAt: (e, c, u) => { const z = v3.norm(v3.sub(e, c)), x = v3.norm(v3.cross(u, z)), y = v3.cross(z, x); return [x[0], y[0], z[0], 0, x[1], y[1], z[1], 0, x[2], y[2], z[2], 0, -v3.dot(x, e), -v3.dot(y, e), -v3.dot(z, e), 1] },
+  mul: (a, b) => { const o = new Array(16); for (let r = 0; r < 4; r++) for (let cc = 0; cc < 4; cc++) { let s = 0; for (let k = 0; k < 4; k++) s += a[k * 4 + r] * b[cc * 4 + k]; o[cc * 4 + r] = s } return o }
+}
+function makeProgram(gl, vs, fs) { const c = (t, s) => { const sh = gl.createShader(t); gl.shaderSource(sh, s); gl.compileShader(sh); return gl.getShaderParameter(sh, gl.COMPILE_STATUS) ? sh : null }; const V = c(gl.VERTEX_SHADER, vs), F = c(gl.FRAGMENT_SHADER, fs); if (!V || !F) return null; const p = gl.createProgram(); gl.attachShader(p, V); gl.attachShader(p, F); gl.linkProgram(p); return gl.getProgramParameter(p, gl.LINK_STATUS) ? p : null }
+let pcRAF = 0, pcGL = null
+function renderPointsGL(pos, col) {
+  const n = pos.length / 3; if (!n) { vstatus('No points to show.'); return }
+  let canvas = document.querySelector('#pccanvas')
+  if (!canvas) { canvas = document.createElement('canvas'); canvas.id = 'pccanvas'; canvas.style.cssText = 'width:100%;height:100%;display:block'; $('#vwrap').appendChild(canvas) }
+  const vc = $('#vcanvas'); if (vc) vc.style.display = 'none'; canvas.style.display = 'block'; const vsd = $('#vstatus'); if (vsd) vsd.style.display = 'none'
+  const gl = pcGL || (pcGL = canvas.getContext('webgl', { antialias: true }))
+  if (!gl) { vstatus('WebGL unavailable for the point cloud.'); return }
+  const dpr = Math.min(2, window.devicePixelRatio || 1)
+  canvas.width = Math.max(4, Math.round((canvas.clientWidth || 640) * dpr)); canvas.height = Math.max(4, Math.round((canvas.clientHeight || 400) * dpr))
+  gl.viewport(0, 0, canvas.width, canvas.height)
+  const prog = makeProgram(gl, PC_VS, PC_FS); if (!prog) { vstatus('Point shader failed to compile.'); return }
+  const pb = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, pb); gl.bufferData(gl.ARRAY_BUFFER, pos, gl.STATIC_DRAW)
+  const cb = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, cb); gl.bufferData(gl.ARRAY_BUFFER, col, gl.STATIC_DRAW)
+  let cx = 0, cy = 0, cz = 0; for (let i = 0; i < n; i++) { cx += pos[i * 3]; cy += pos[i * 3 + 1]; cz += pos[i * 3 + 2] } cx /= n; cy /= n; cz /= n
+  let rad = 0.001; for (let i = 0; i < n; i++) rad = Math.max(rad, Math.hypot(pos[i * 3] - cx, pos[i * 3 + 1] - cy, pos[i * 3 + 2] - cz))
+  const aP = gl.getAttribLocation(prog, 'p'), aC = gl.getAttribLocation(prog, 'c'), uMVP = gl.getUniformLocation(prog, 'mvp'), uSz = gl.getUniformLocation(prog, 'sz')
+  gl.enable(gl.DEPTH_TEST); cancelAnimationFrame(pcRAF); let ang = 0
+  const draw = () => {
+    ang += 0.006; const d = rad * 2.6
+    const view = m4.lookAt([cx + Math.sin(ang) * d, cy + rad * 0.5, cz + Math.cos(ang) * d], [cx, cy, cz], [0, 1, 0])
+    const proj = m4.persp(1.0, canvas.width / canvas.height, rad * 0.03, rad * 12)
+    const mvp = new Float32Array(m4.mul(proj, view))
+    gl.clearColor(0.05, 0.055, 0.07, 1); gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
+    gl.useProgram(prog)
+    gl.bindBuffer(gl.ARRAY_BUFFER, pb); gl.enableVertexAttribArray(aP); gl.vertexAttribPointer(aP, 3, gl.FLOAT, false, 0, 0)
+    gl.bindBuffer(gl.ARRAY_BUFFER, cb); gl.enableVertexAttribArray(aC); gl.vertexAttribPointer(aC, 3, gl.FLOAT, false, 0, 0)
+    gl.uniformMatrix4fv(uMVP, false, mvp); gl.uniform1f(uSz, Math.max(2, 3.5 * dpr))
+    gl.drawArrays(gl.POINTS, 0, n)
+    pcRAF = requestAnimationFrame(draw)
+  }
+  draw()
+}
+function reconstructFromFrames() {
+  if (!CAP.frames.length) { vstatus('Capture some frames first with the camera above.'); return }
+  const pos = [], col = [], F = CAP.frames, GX = 44, GY = 33, R = 2.2
+  F.forEach((cv, fi) => {
+    const data = cv.getContext('2d').getImageData(0, 0, cv.width, cv.height).data
+    const ang = (F.length > 1 ? fi / (F.length - 1) - 0.5 : 0) * Math.PI * 1.5
+    const cxp = Math.sin(ang) * R, czp = Math.cos(ang) * R, tx = Math.cos(ang), tz = -Math.sin(ang)
+    for (let gy = 0; gy < GY; gy++) for (let gx = 0; gx < GX; gx++) {
+      const px = Math.floor((gx + 0.5) / GX * cv.width), py = Math.floor((gy + 0.5) / GY * cv.height), o = (py * cv.width + px) * 4
+      const u = (gx / (GX - 1) - 0.5) * 1.7, w = (0.5 - gy / (GY - 1)) * 1.25
+      pos.push(cxp + u * tx, 1.0 + w, czp + u * tz)
+      col.push(data[o] / 255, data[o + 1] / 255, data[o + 2] / 255)
+    }
+  })
+  renderPointsGL(new Float32Array(pos), new Float32Array(col))
+  vstatus('Coarse preview from your ' + F.length + ' frames (placed in a capture ring). A true depth/pose point cloud is the next stage — use AR depth on Android, or this sharpens as we add structure-from-motion.')
+}
+async function reconstructAR() {
+  if (!navigator.xr) { vstatus('No WebXR — AR depth needs Android Chrome.'); return }
+  let ok = false; try { ok = await navigator.xr.isSessionSupported('immersive-ar') } catch {}
+  if (!ok) { vstatus('Immersive AR not supported here — use Reconstruct (frames), or try on Android.'); return }
+  const overlay = document.createElement('div')
+  overlay.style.cssText = 'position:fixed;inset:0;z-index:99;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;pointer-events:none'
+  overlay.innerHTML = '<div style="margin-bottom:28px;display:flex;gap:10px;pointer-events:auto"><button id="ard-done" style="padding:14px 20px;border:none;border-radius:30px;background:#5fbf6e;color:#053;font:700 16px system-ui">Done (0 pts)</button><button id="ard-x" style="padding:14px 18px;border:none;border-radius:30px;background:#444;color:#fff;font:700 16px system-ui">✕</button></div>'
+  const canvas = document.createElement('canvas'); const gl = canvas.getContext('webgl', { xrCompatible: true })
+  let session
+  try { session = await navigator.xr.requestSession('immersive-ar', { requiredFeatures: ['depth-sensing'], optionalFeatures: ['local-floor', 'dom-overlay'], depthSensing: { usagePreference: ['cpu-optimized'], dataFormatPreference: ['luminance-alpha'] }, domOverlay: { root: overlay } }) }
+  catch (e) { vstatus('AR depth not available on this device: ' + (e.message || e)); return }
+  document.body.appendChild(overlay)
+  try { await gl.makeXRCompatible() } catch {}
+  session.updateRenderState({ baseLayer: new XRWebGLLayer(session, gl) })
+  let refSpace; try { refSpace = await session.requestReferenceSpace('local-floor') } catch { refSpace = await session.requestReferenceSpace('local') }
+  const pos = [], col = []
+  overlay.querySelector('#ard-x').onclick = () => session.end()
+  overlay.querySelector('#ard-done').onclick = () => session.end()
+  session.addEventListener('end', () => { overlay.remove(); if (pos.length) { renderPointsGL(new Float32Array(pos), new Float32Array(col)); vstatus('Point cloud from AR depth: ' + (pos.length / 3 | 0) + ' points — ours, no app.') } else vstatus('No depth points captured (device may lack depth sensing).') })
+  let fc = 0
+  const onFrame = (t, frame) => {
+    session.requestAnimationFrame(onFrame)
+    const layer = session.renderState.baseLayer; gl.bindFramebuffer(gl.FRAMEBUFFER, layer.framebuffer); gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
+    const pose = frame.getViewerPose(refSpace); if (!pose) return
+    fc++; if (fc % 6 !== 0) return
+    for (const view of pose.views) {
+      const dep = frame.getDepthInformation ? frame.getDepthInformation(view) : null; if (!dep) continue
+      const vp = view.projectionMatrix, vm = view.transform.matrix, W = dep.width, H = dep.height
+      for (let y = 0; y < H; y += 6) for (let x = 0; x < W; x += 6) {
+        let dm; try { dm = dep.getDepthInMeters((x + 0.5) / W, (y + 0.5) / H) } catch (e) { continue }
+        if (!(dm > 0.2 && dm < 8)) continue
+        const ndcx = (x / W) * 2 - 1, ndcy = (1 - y / H) * 2 - 1
+        const px = ndcx / vp[0] * dm, py = ndcy / vp[5] * dm, pz = -dm
+        pos.push(vm[0] * px + vm[4] * py + vm[8] * pz + vm[12], vm[1] * px + vm[5] * py + vm[9] * pz + vm[13], vm[2] * px + vm[6] * py + vm[10] * pz + vm[14])
+        col.push(0.55, 0.72, 0.85)
+        if (pos.length / 3 > 60000) break
+      }
+    }
+    const db = overlay.querySelector('#ard-done'); if (db) db.textContent = 'Done (' + (pos.length / 3 | 0) + ' pts)'
+  }
+  session.requestAnimationFrame(onFrame)
+  vstatus('AR depth scanning — move slowly around the space, then Done.')
+}
+;($('#c-recon') || {}).onclick = reconstructFromFrames
+;($('#c-recon-ar') || {}).onclick = reconstructAR
+if (location.search.indexOf('demo') >= 0) {
+  const pos = [], col = []
+  for (let i = 0; i < 12; i++) for (let j = 0; j < 12; j++) for (let k = 0; k < 12; k++) { pos.push(i / 11 - 0.5, j / 11 - 0.5, k / 11 - 0.5); col.push(i / 11, j / 11, k / 11) }
+  renderPointsGL(new Float32Array(pos), new Float32Array(col))
+}
 </script>
 </body>
 </html>
