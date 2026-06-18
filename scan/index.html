@@ -95,6 +95,7 @@ code{background:var(--bg);border:1px solid var(--line);border-radius:5px;padding
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
       <button class="btn" id="c-recon">🧊 Reconstruct → point cloud</button>
       <button class="btn ghost" id="c-recon-ar">🥽 Reconstruct in AR (depth)</button>
+      <button class="btn ghost" id="c-clean">🧹 Clean</button>
       <button class="btn ghost" id="c-splat">🌫️ Soft splats: off</button>
       <button class="btn ghost" id="c-train">🌌 Train splats</button>
       <button class="btn ghost" id="c-ply">⬇️ Export .ply</button>
@@ -556,6 +557,26 @@ function runSfM(frames) {
   }
   return { points: new Float32Array(pos), colors: new Float32Array(col), nPoses: poses.filter(Boolean).length, nPoints: pos.length / 3, poses, f, cx, cy }
 }
+function denoiseCloud(pos, col, opts) {
+  opts = opts || {}; const k = opts.k || 8, alpha = opts.alpha == null ? 1.5 : opts.alpha, n = pos.length / 3
+  if (n < k + 2) return { pos, col, removed: 0 }
+  let mn = [1e9, 1e9, 1e9], mx = [-1e9, -1e9, -1e9]
+  for (let i = 0; i < n; i++) for (let c = 0; c < 3; c++) { const v = pos[i * 3 + c]; if (v < mn[c]) mn[c] = v; if (v > mx[c]) mx[c] = v }
+  const diag = Math.hypot(mx[0] - mn[0], mx[1] - mn[1], mx[2] - mn[2]) || 1, cell = Math.max(1e-6, diag / Math.cbrt(n))
+  const cc = (v, c) => Math.floor((v - mn[c]) / cell), grid = new Map()
+  for (let i = 0; i < n; i++) { const key = cc(pos[i * 3], 0) + ',' + cc(pos[i * 3 + 1], 1) + ',' + cc(pos[i * 3 + 2], 2); (grid.get(key) || grid.set(key, []).get(key)).push(i) }
+  const meanD = new Float32Array(n)
+  for (let i = 0; i < n; i++) {
+    const cx = cc(pos[i * 3], 0), cy = cc(pos[i * 3 + 1], 1), cz = cc(pos[i * 3 + 2], 2); let dists = []
+    for (let ring = 1; ring <= 5; ring++) { dists = []; for (let dx = -ring; dx <= ring; dx++) for (let dy = -ring; dy <= ring; dy++) for (let dz = -ring; dz <= ring; dz++) { const arr = grid.get((cx + dx) + ',' + (cy + dy) + ',' + (cz + dz)); if (!arr) continue; for (const j of arr) { if (j === i) continue; dists.push(Math.hypot(pos[j * 3] - pos[i * 3], pos[j * 3 + 1] - pos[i * 3 + 1], pos[j * 3 + 2] - pos[i * 3 + 2])) } } if (dists.length >= k) break }
+    dists.sort((a, b) => a - b); const m = Math.min(k, dists.length); let s = 0; for (let t = 0; t < m; t++) s += dists[t]; meanD[i] = m ? s / m : diag
+  }
+  let mu = 0; for (let i = 0; i < n; i++) mu += meanD[i]; mu /= n
+  let vv = 0; for (let i = 0; i < n; i++) vv += (meanD[i] - mu) ** 2; vv /= n; const thr = mu + alpha * Math.sqrt(vv)
+  const kp = [], kc = []
+  for (let i = 0; i < n; i++) if (meanD[i] <= thr) { kp.push(pos[i * 3], pos[i * 3 + 1], pos[i * 3 + 2]); kc.push(col[i * 3], col[i * 3 + 1], col[i * 3 + 2]) }
+  return { pos: new Float32Array(kp), col: new Float32Array(kc), removed: n - kp.length / 3 }
+}
 let lastSfM = null
 function reconstructFromFrames() {
   if (!CAP.frames.length) { vstatus('Capture some frames first with the camera above.'); return }
@@ -563,7 +584,7 @@ function reconstructFromFrames() {
     try {
       vstatus('Reconstructing — detect features → match → pose → triangulate…')
       const r = runSfM(CAP.frames)
-      if (r.nPoses >= 2 && r.nPoints >= 150) { lastSfM = { poses: r.poses, f: r.f, cx: r.cx, cy: r.cy }; renderPointsGL(r.points, r.colors); vstatus('Reconstructed: ' + CAP.frames.length + ' frames → ' + r.nPoses + ' camera poses, ' + r.nPoints + ' points (our own monocular SfM — relative scale).'); return }
+      if (r.nPoses >= 2 && r.nPoints >= 150) { lastSfM = { poses: r.poses, f: r.f, cx: r.cx, cy: r.cy }; const dn = denoiseCloud(r.points, r.colors, { k: 8, alpha: 1.5 }); renderPointsGL(dn.pos, dn.col); vstatus('Reconstructed: ' + CAP.frames.length + ' frames → ' + r.nPoses + ' camera poses, ' + (r.nPoints - dn.removed) + ' points (our own monocular SfM — relative scale; removed ' + dn.removed + ' flyer points). Set 📏 Real size to make it metric.'); return }
       vstatus('Low matches/parallax for SfM (' + r.nPoses + ' poses, ' + r.nPoints + ' pts) — showing the capture-ring preview. For real 3D: move steadily sideways across a textured scene + capture 8-20 frames.')
     } catch (e) { vstatus('SfM hit an error (' + (e && e.message || e) + ') — showing the capture preview.') }
   }
@@ -736,6 +757,7 @@ function applyMetricMult(mult) {
   vstatus('Scaled to real size — longest dimension ' + real.toFixed(1) + ' ft. Cloud is now ~' + nd.dx.toFixed(1) + ' × ' + nd.dy.toFixed(1) + ' × ' + nd.dz.toFixed(1) + ' ft. Exports (.ply / gsplat) now use these real units.')
 }
 ;($('#c-resetscale') || {}).onclick = () => { if (metricFactor !== 1) applyMetricMult(1 / metricFactor); vstatus('Scale reset to relative (monocular SfM has no inherent scale until you set a reference).') }
+;($('#c-clean') || {}).onclick = () => { if (!lastCloud) { vstatus('Reconstruct a cloud first — then 🧹 Clean removes statistical outlier (flyer) points.'); return } const dn = denoiseCloud(lastCloud.pos, lastCloud.col, { k: 8, alpha: 1.5 }); renderPointsGL(dn.pos, dn.col); vstatus('Cleaned — removed ' + dn.removed + ' outlier points, ' + (dn.pos.length / 3) + ' remain.') }
 ;(() => { try { const s = JSON.parse(localStorage.getItem('amni_scan')); if (s && s.edges_ft && s.edges_ft.length) { const el = $('#c-reallen'); if (el) { el.value = Math.max.apply(null, s.edges_ft).toFixed(1); el.title = 'Prefilled from your measurement (' + (s.area_ft2 || '?') + ' ft²)' } } } catch (e) {} })()
 if (location.search.indexOf('demo') >= 0) {
   const pos = [], col = []
