@@ -429,6 +429,18 @@ function detectFeatures(gray, opts) {
   for (const c of cands) { let ok = true; for (const o of out) { const dx = c[0] - o[0], dy = c[1] - o[1]; if (dx * dx + dy * dy < md2) { ok = false; break } } if (ok) { out.push(c); if (out.length >= N) break } }
   return out.map(c => [c[0], c[1]])
 }
+function matchFeatures(ga, pts, gb, opts) {
+  opts = opts || {}; const r = opts.patch || 4, S = opts.search || 14, thr = opts.thr || 0.8, W = ga.W, H = ga.H, A = ga.g, B = gb.g, out = []
+  const patchAt = (img, cx, cy) => { const len = (2 * r + 1) * (2 * r + 1), p = new Float32Array(len); let k = 0, sum = 0; for (let dy = -r; dy <= r; dy++) for (let dx = -r; dx <= r; dx++) { const v = img[(cy + dy) * W + (cx + dx)]; p[k++] = v; sum += v } const mean = sum / len; let nrm = 0; for (let i = 0; i < len; i++) { p[i] -= mean; nrm += p[i] * p[i] } nrm = Math.sqrt(nrm) || 1; for (let i = 0; i < len; i++) p[i] /= nrm; return p }
+  for (const pt of pts) {
+    const ax = pt[0], ay = pt[1]
+    if (ax < r + 1 || ay < r + 1 || ax >= W - r - 1 || ay >= H - r - 1) continue
+    const pa = patchAt(A, ax, ay); let best = -2, bx = -1, by = -1
+    for (let sy = -S; sy <= S; sy++) for (let sx = -S; sx <= S; sx++) { const cx = ax + sx, cy = ay + sy; if (cx < r + 1 || cy < r + 1 || cx >= W - r - 1 || cy >= H - r - 1) continue; const pb = patchAt(B, cx, cy); let ncc = 0; for (let i = 0; i < pa.length; i++) ncc += pa[i] * pb[i]; if (ncc > best) { best = ncc; bx = cx; by = cy } }
+    if (best >= thr) out.push([ax, ay, bx, by])
+  }
+  return out
+}
 function reconstructFromFrames() {
   if (!CAP.frames.length) { vstatus('Capture some frames first with the camera above.'); return }
   const pos = [], col = [], F = CAP.frames, GX = 44, GY = 33, R = 2.2
