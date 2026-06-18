@@ -1,20 +1,18 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { initPermits, updatePermits } from './codes.js?v=fix1'
-import { initMapTrace, sitePlanSVG, cropForPlan, mapPlanSnapshot } from './maptrace.js?v=1'
-import { initAutoDetect } from './autodetect.js?v=1'
 const LS = 'amnielec.cfg.v1', LSP = 'amnielec.prices.v1'
-const defCfg = { mode: 'rect', w: 40, d: 30, polygon: null, bedrooms: 3, bathrooms: 2, has_laundry: true, electric_range: 1, electric_dryer: 1, water_heater_elec: true, dishwasher: true, disposal: true, microwave: true, hvac_amps: 30, house_edge: 0 }
+const defCfg = { sqft: 1800, bedrooms: 3, bathrooms: 2, has_laundry: true, electric_range: 1, electric_dryer: 1, water_heater_elec: true, dishwasher: true, disposal: true, microwave: true, hvac_amps: 30 }
 let cfg = (() => { try { return { ...defCfg, ...JSON.parse(localStorage.getItem(LS)) } } catch { return { ...defCfg } } })()
 let out = null
 let priceEdits = (() => { try { return JSON.parse(localStorage.getItem(LSP)) || {} } catch { return {} } })()
 let catalog = {}
 const $ = s => document.querySelector(s)
-const FINISHES = {}
 const wasm = await WebAssembly.instantiateStreaming(fetch('elec_core.wasm?v=2'))
 const { alloc, dealloc, build, memory } = wasm.instance.exports
 const enc = new TextEncoder(), dec = new TextDecoder()
-const polyOf = c => c.mode === 'poly' && c.polygon && c.polygon.length >= 3 ? c.polygon : [[0, 0], [c.w, 0], [c.w, c.d], [0, c.d]]
+const sideOf = c => Math.sqrt(Math.max(100, +c.sqft || 1500))
+const polyOf = c => { const s = sideOf(c); return [[0, 0], [s, 0], [s, s], [0, s]] }
 const callCore = c => {
   const payload = enc.encode(JSON.stringify({ polygon: polyOf(c), bedrooms: +c.bedrooms, bathrooms: +c.bathrooms, has_laundry: !!c.has_laundry, electric_range: +c.electric_range, electric_dryer: +c.electric_dryer, water_heater_elec: !!c.water_heater_elec, dishwasher: !!c.dishwasher, disposal: !!c.disposal, microwave: !!c.microwave, hvac_amps: +c.hvac_amps, issue_date: new Date().toLocaleDateString('en-CA') }))
   const p = alloc(payload.length)
@@ -32,32 +30,33 @@ cam.position.set(16, 14, 20)
 const renderer = new THREE.WebGLRenderer({ canvas: $('#c3d'), antialias: true })
 const controls = new OrbitControls(cam, $('#c3d'))
 controls.enableDamping = true
-scene.add(new THREE.AmbientLight(0xffffff, 0.65))
+scene.add(new THREE.AmbientLight(0xffffff, 0.7))
 const sun = new THREE.DirectionalLight(0xfff4e0, 1.1)
 sun.position.set(30, 40, 18)
 scene.add(sun)
 const grp = new THREE.Group()
 scene.add(grp)
-let photoPlane = null, photoMeta = null
 const groundMat = new THREE.MeshStandardMaterial({ color: 0x3e5e36, roughness: 1 })
 const ground = new THREE.Mesh(new THREE.PlaneGeometry(400, 400), groundMat)
 ground.rotation.x = -Math.PI / 2
 ground.position.y = -0.02
 scene.add(ground)
+const perim = (s, t) => { const side = Math.floor(t % 4), f = (t % 4) - side; return side === 0 ? [f * s, 0] : side === 1 ? [s, -f * s] : side === 2 ? [s - f * s, -s] : [0, -(s - f * s)] }
 const rebuild3D = () => {
   while (grp.children.length) { const m = grp.children.pop(); m.geometry && m.geometry.dispose() }
-  const poly = polyOf(cfg)
-  const shape = new THREE.Shape(poly.map(p => new THREE.Vector2(p[0], p[1])))
-  const slab = new THREE.Mesh(new THREE.ExtrudeGeometry(shape, { depth: 0.1, bevelEnabled: false }), new THREE.MeshStandardMaterial({ color: 0xcfd3d8, roughness: 0.9 }))
-  slab.rotation.x = -Math.PI / 2; slab.position.y = 0; grp.add(slab)
-  if (photoMeta && cfg.mode === 'poly') {
-    photoPlane && scene.remove(photoPlane)
-    const { tex, wFt, hFt, cxFt, cyFt } = photoMeta
-    photoPlane = new THREE.Mesh(new THREE.PlaneGeometry(wFt, hFt), new THREE.MeshBasicMaterial({ map: tex, transparent: true, opacity: 0.85 }))
-    photoPlane.rotation.x = -Math.PI / 2
-    photoPlane.position.set(cxFt, 0.01, -cyFt)
-    scene.add(photoPlane)
-  } else if (photoPlane && cfg.mode !== 'poly') { scene.remove(photoPlane); photoPlane = null }
+  const s = sideOf(cfg)
+  const slab = new THREE.Mesh(new THREE.BoxGeometry(s, 0.1, s), new THREE.MeshStandardMaterial({ color: 0xcfd3d8, roughness: 0.95 }))
+  slab.position.set(s / 2, 0, -s / 2); grp.add(slab)
+  const panel = new THREE.Mesh(new THREE.BoxGeometry(1.4, 3, 0.5), new THREE.MeshStandardMaterial({ color: 0x2a3340, roughness: 0.6 }))
+  panel.position.set(0.6, 1.5, -s / 2 + 0.3); grp.add(panel)
+  if (out && out.calc) {
+    const nr = Math.min(+out.calc.receptacles || 0, 64)
+    const rg = new THREE.BoxGeometry(0.5, 0.5, 0.5), rm = new THREE.MeshStandardMaterial({ color: 0xe8c33d, roughness: 0.5 })
+    for (let i = 0; i < nr; i++) { const [x, z] = perim(s, (i + 0.5) / nr * 4); const m = new THREE.Mesh(rg, rm); m.position.set(x, 0.4, z); grp.add(m) }
+    const nl = Math.min(+out.calc.lights || 0, 40), gc = Math.max(1, Math.round(Math.sqrt(nl)))
+    const lg = new THREE.SphereGeometry(0.4, 8, 6), lm = new THREE.MeshStandardMaterial({ color: 0xfff2c0, emissive: 0x9a8a40, roughness: 0.4 })
+    for (let i = 0; i < nl; i++) { const c = i % gc, r = Math.floor(i / gc); const m = new THREE.Mesh(lg, lm); m.position.set(s * (c + 0.5) / gc, 2.6, -s * (r + 0.5) / Math.ceil(nl / gc)); grp.add(m) }
+  }
 }
 const resize = () => { const c = $('#c3d'); const w = c.clientWidth, h = c.clientHeight; if (!w || !h) return; renderer.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix() }
 new ResizeObserver(resize).observe($('#view'))
@@ -71,32 +70,25 @@ window.addEventListener('beforeprint', () => {
   ps.innerHTML = '<div style="font:bold 15px monospace;color:#111;padding:10px 12px 4px">3D VIEW — AS DESIGNED</div>'
   const c3 = $('#c3d')
   const snap = document.createElement('canvas')
-  snap.width = c3.width
-  snap.height = c3.height
+  snap.width = c3.width; snap.height = c3.height
   snap.getContext('2d').drawImage(c3, 0, 0)
   snap.style.cssText = 'width:100%;display:block'
   ps.appendChild(snap)
 })
 ;(function loop() { controls.update(); renderer.render(scene, cam); requestAnimationFrame(loop) })()
-let siteSnap = null
 const renderPlans = () => {
   if (!out) return
   ;['layout', 'details'].forEach(k => $(`#svg-${k}`).innerHTML = out.svgs[k])
-  if (siteSnap) {
-    let wrap = $('#svg-site')
-    if (!wrap) { wrap = document.createElement('div'); wrap.className = 'svgwrap'; wrap.id = 'svg-site'; const pane = $('#pane-plans'); pane.insertBefore(wrap, pane.querySelector('.svgwrap')) }
-    wrap.innerHTML = sitePlanSVG({ ...siteSnap, title: siteSnap.northUp ? 'SITE PLAN — ELECTRICAL' : 'REFERENCE SKETCH — ELECTRICAL', footprint: `Proposed: ${out.calc.service_size_a} A service, ${out.calc.total_circuits} circuits, ~${Math.round(out.calc.service_amps)} A demand` })
-  }
 }
 const renderWarns = () => {
   const w = $('#warns'); w.innerHTML = '<h3 style="font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--acc);margin:16px 0 8px">Build Notes</h3>'
   if (!out) return
   for (const s of out.warnings) { const [tag, txt] = s.includes('|') ? s.split('|') : ['INFO', s]; const d = document.createElement('div'); d.className = 'warn' + (tag === 'OK' ? ' ok' : tag === 'INFO' ? ' info' : ''); d.textContent = txt; w.appendChild(d) }
 }
-const G_LS = 'amnielec.guide.v1'
-let gChk = (() => { try { return JSON.parse(localStorage.getItem(G_LS)) || {} } catch { return {} } })()
 const SEC = 'background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:14px', GH = 'font-size:15px;color:var(--acc);margin-bottom:6px;font-weight:600'
 const guideList = (title, items) => `<div style="${SEC}"><div style="${GH}">${title}</div><ul style="list-style:disc;padding-left:20px;font-size:13px;line-height:1.7;color:var(--ink)">${items.map(t => `<li>${t}</li>`).join('')}</ul></div>`
+const G_LS = 'amnielec.guide.v1'
+let gChk = (() => { try { return JSON.parse(localStorage.getItem(G_LS)) || {} } catch { return {} } })()
 const renderGuide = () => {
   const body = $('#guide-body'); if (!body || !out) return
   const c = out.calc
@@ -118,6 +110,19 @@ const renderGuide = () => {
     + guideList('🧰 Tools', tools)
     + `<div style="${SEC}"><div style="${GH}">💵 Materials estimate</div><div style="font-size:13px;color:var(--ink)">~<b style="color:var(--ok)">$${cost.toFixed(0)}</b> in panel, breakers, wire + devices (Home Depot catalog) — edit prices on the Materials tab. Permit + electrician labor are separate.</div></div>`
   body.querySelectorAll('input[data-gk]').forEach(el => el.onchange = () => { gChk[el.dataset.gk] = el.checked; localStorage.setItem(G_LS, JSON.stringify(gChk)); renderGuide() })
+}
+const renderBest = () => {
+  const body = $('#best-body'); if (!body) return
+  const c = out && out.calc
+  body.innerHTML = `<div style="color:var(--mut);font-size:13px;margin-bottom:14px">The NEC rules that drive a clean, passing rough-in${c ? ` for your <b>${c.service_size_a} A · ${c.total_circuits} circuits · ${c.receptacles} receptacles</b>` : ''}. Your state adopts a specific NEC edition (most 2020 or 2023) — confirm the local amendments.</div>`
+    + guideList('🔌 Receptacle spacing (210.52)', ['The "6-foot rule": no point along a wall is more than 6 ft from a receptacle — so they land ~12 ft apart. Any wall 2 ft or wider gets one.', 'Kitchen + dining counters: a receptacle within 24" of any point, none more than 4 ft apart; islands/peninsulas per the current edition.', 'Hallways 10 ft+ need one; one outdoor front + back; one in the garage + each basement.'])
+    + guideList('⚙️ Required circuits (210.11)', ['At least TWO 20A small-appliance circuits for kitchen/dining counters; one 20A laundry; one 20A bathroom (bath-only).', 'Dedicated circuits: range, dryer, electric water heater, HVAC, dishwasher, disposal, often the microwave.', 'Garage + outdoor receptacles on a 20A circuit; a dedicated circuit for any fixed 1 HP+ load.'])
+    + guideList('🛡️ GFCI (210.8) + AFCI (210.12)', ['GFCI: kitchens, baths, laundry, garages, outdoors, crawlspaces/unfinished basements, and within 6 ft of any sink/tub/shower.', 'AFCI: nearly all 120V 15/20A circuits in living areas (bedrooms, living, kitchen, laundry…).', 'Where both apply, use a dual-function AFCI/GFCI breaker or device. All receptacles tamper-resistant (406.12).'])
+    + guideList('📏 Device heights + box fill', ['Receptacles ~12-16" to center; wall switches ~48"; kitchen-counter receptacles ~44" (above the backsplash).', 'Count box fill per 314.16 — conductors, devices, clamps + grounds; oversize the box rather than cram it.', 'Leave 6" of free conductor past the box face; support cable within 8" of a box and every 4-1/2 ft.'])
+    + guideList('🔋 Panel + service (110.26, 408)', ['Working clearance at the panel: 36" deep, 30" wide, 6 ft 6 in high — clear, nothing stored in front.', 'Label every breaker (408.4); 200 A is the common new-home service; size per the load calc.', 'Smoke + CO alarms interconnected + on a protected circuit (R314/R315).'])
+    + guideList('🧵 Wire gauge × ampacity (Cu, 75°C)', ['15A→14 AWG · 20A→12 · 30A→10 · 40A→8 · 50A→6 · 100A→#3 · 200A→2/0 (or 4/0 Al).', 'Derate for conduit fill + ambient temperature; a 100A subfeed is typically #4 Cu / #2 Al.', 'Match the breaker to the SMALLEST wire on the circuit — never protect 14 AWG with a 20A breaker.'])
+    + guideList('⏚ Grounding + bonding (250)', ['Grounding electrode system: two ground rods 6 ft apart (+ a Ufer/concrete-encased electrode where available).', 'Main bonding jumper ties neutral to ground at the SERVICE ONLY.', 'Subpanels keep neutral + ground SEPARATE on a 4-wire feeder; bond the gas + water piping.'])
+  if (c) body.innerHTML += `<div style="${SEC}"><div style="${GH}">📐 Interactive device layout — coming next</div><div style="font-size:13px;color:var(--ink)">A drag-and-drop device layout (drop receptacles/switches/lights into rooms → auto circuits + homeruns + the 6-ft check) is the next upgrade. For now, use the <b>Quick build</b> presets in the sidebar and the E-1 panel schedule + E-2 details on the 2D Plans tab.</div></div>`
 }
 const price = (id, store) => priceEdits[`${id}.${store}`] ?? catalog[id]?.[store] ?? null
 const renderMat = () => {
@@ -142,7 +147,7 @@ const parsePaste = (text, store) => {
     const c = catalog[it.id]
     if (!c) continue
     const toks = (store === 'hd' ? c.hdq : c.lq).toLowerCase().split(/\s+/).filter(t => t.length > 1)
-    const prim = toks.find(t => /\d|mesh|rebar|felt|poly|sealer|stake/.test(t)) || toks[0]
+    const prim = toks.find(t => /\d|wire|breaker|panel|receptacle|switch|box|romex/.test(t)) || toks[0]
     let best = null, idx = norm.indexOf(prim)
     while (idx !== -1) {
       const win = norm.slice(Math.max(0, idx - 160), idx + 360)
@@ -157,133 +162,35 @@ const parsePaste = (text, store) => {
   return filled
 }
 const persist = () => localStorage.setItem(LS, JSON.stringify(cfg))
-let lastFit = ''
-const fitCam = () => {
-  const poly = polyOf(cfg)
-  const xs = poly.map(p => p[0]), ys = poly.map(p => p[1])
-  const cx = (Math.min(...xs) + Math.max(...xs)) / 2, cy = (Math.min(...ys) + Math.max(...ys)) / 2
-  const span = Math.max(Math.max(...xs) - Math.min(...xs), Math.max(...ys) - Math.min(...ys), 8)
-  const key = `${cx.toFixed(1)},${cy.toFixed(1)},${span.toFixed(1)}`
-  if (key === lastFit) return
-  lastFit = key
-  controls.target.set(cx, 3, -cy)
-  let ux = 0.12, uy = -1.55
-  if (+cfg.house_edge >= 0) {
-    const i = +cfg.house_edge, j = (i + 1) % poly.length
-    const mx = (poly[i][0] + poly[j][0]) / 2, my = (poly[i][1] + poly[j][1]) / 2
-    const vx = cx - mx, vy = cy - my, vl = Math.hypot(vx, vy) || 1
-    ux = vx / vl * 1.55 + 0.1; uy = vy / vl * 1.55
-  }
-  cam.position.set(cx + ux * span, span * 0.9 + 4, -(cy + uy * span))
+const NUMF = { bedrooms: '#bedrooms', bathrooms: '#bathrooms', electric_range: '#range', electric_dryer: '#dryer', hvac_amps: '#hvac' }
+const CHKF = { has_laundry: '#laundry', water_heater_elec: '#whelec', dishwasher: '#dw', disposal: '#disp', microwave: '#mw' }
+const syncInputs = () => { for (const [k, id] of Object.entries(NUMF)) { const e = $(id); if (e) e.value = cfg[k] } for (const [k, id] of Object.entries(CHKF)) { const e = $(id); if (e) e.checked = !!cfg[k] } }
+const PRESETS = {
+  bedroom: { label: '➕ Bedroom', add: { bedrooms: 1 } },
+  bath: { label: '➕ Bathroom', add: { bathrooms: 1 } },
+  kitchen: { label: '➕ Kitchen', set: { electric_range: 1, dishwasher: true, disposal: true, microwave: true } },
+  laundry: { label: '➕ Laundry', set: { has_laundry: true }, add: { electric_dryer: 1 } },
+  wh: { label: '➕ Electric WH', set: { water_heater_elec: true } },
+  hvac: { label: '➕ HVAC 30A', add: { hvac_amps: 30 } },
 }
 const recompute = () => {
   out = callCore(cfg)
   if (out.error) { $('#warns').innerHTML = `<div class="warn">${out.error}</div>`; return }
-  persist(); rebuild3D(); fitCam(); renderPlans(); renderMat(); renderWarns(); renderGuide(); updatePermits()
-}
-let MV = null
-const T = { img: null, mode: null, scalePts: [], dist: 10, poly: [], pxPerFt: 0 }
-const tc = $('#tcanvas'), tx = tc.getContext('2d')
-const tStatus = s => $('#tstatus').textContent = s
-const tDraw = () => {
-  tx.clearRect(0, 0, tc.width, tc.height)
-  if (T.img) { tx.drawImage(T.img, 0, 0, tc.width, tc.height) } else { tx.fillStyle = '#15181d'; tx.fillRect(0, 0, tc.width, tc.height); tx.fillStyle = '#566'; tx.font = '16px monospace'; tx.textAlign = 'center'; tx.fillText('Upload a photo or sketch to begin — or trace on this blank grid', tc.width / 2, tc.height / 2) }
-  if (!T.img) { tx.strokeStyle = 'rgba(255,255,255,0.05)'; for (let g = 0; g < tc.width; g += 49) { tx.beginPath(); tx.moveTo(g, 0); tx.lineTo(g, tc.height); tx.stroke() } for (let g = 0; g < tc.height; g += 49) { tx.beginPath(); tx.moveTo(0, g); tx.lineTo(tc.width, g); tx.stroke() } }
-  if (T.scalePts.length) {
-    tx.strokeStyle = '#ffd166'; tx.lineWidth = 2; tx.fillStyle = '#ffd166'
-    T.scalePts.forEach(p => { tx.beginPath(); tx.arc(p[0], p[1], 5, 0, 7); tx.fill() })
-    if (T.scalePts.length === 2) { tx.beginPath(); tx.moveTo(...T.scalePts[0]); tx.lineTo(...T.scalePts[1]); tx.stroke(); const m = [(T.scalePts[0][0] + T.scalePts[1][0]) / 2, (T.scalePts[0][1] + T.scalePts[1][1]) / 2]; tx.font = 'bold 14px monospace'; tx.fillText(`${Math.floor(T.dist)}' ${Math.round((T.dist % 1) * 12)}\"`, m[0] + 8, m[1] - 8) }
-  }
-  if (T.poly.length) {
-    tx.strokeStyle = '#8fd8a0'; tx.fillStyle = 'rgba(143,216,160,0.18)'; tx.lineWidth = 2.5
-    tx.beginPath(); tx.moveTo(...T.poly[0]); T.poly.forEach(p => tx.lineTo(...p)); if (T.poly.length > 2) tx.closePath(); tx.fill(); tx.stroke()
-    tx.fillStyle = '#8fd8a0'
-    T.poly.forEach(p => { tx.beginPath(); tx.arc(p[0], p[1], 4.5, 0, 7); tx.fill() })
-    if (T.pxPerFt > 0) { tx.font = 'bold 13px monospace'; tx.fillStyle = '#fff'; tx.strokeStyle = 'rgba(0,0,0,0.7)'; tx.lineWidth = 3; for (let i = 0; i < T.poly.length - (T.poly.length > 2 ? 0 : 1); i++) { const a = T.poly[i], b = T.poly[(i + 1) % T.poly.length]; if (T.poly.length <= 2 && i === T.poly.length - 1) break; const len = Math.hypot(b[0] - a[0], b[1] - a[1]) / T.pxPerFt; const m = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2]; const s = len.toFixed(1) + "'"; tx.strokeText(s, m[0] + 6, m[1] - 6); tx.fillText(s, m[0] + 6, m[1] - 6) } }
-  }
-  const dims = T.pxPerFt > 0 && T.poly.length > 2 ? T.poly.map((a, i) => { const b = T.poly[(i + 1) % T.poly.length]; return `edge ${i + 1}: ${(Math.hypot(b[0] - a[0], b[1] - a[1]) / T.pxPerFt).toFixed(1)} ft` }).join('<br>') : ''
-  $('#tdims').innerHTML = dims ? `<b style="color:var(--acc)">TRACED EDGES</b><br>${dims}` : ''
-}
-tc.addEventListener('click', e => {
-  const r = tc.getBoundingClientRect()
-  const p = [(e.clientX - r.left) * tc.width / r.width, (e.clientY - r.top) * tc.height / r.height]
-  if (T.mode === 'scale') {
-    T.scalePts.push(p)
-    if (T.scalePts.length === 2) {
-      const pd = prompt('Real distance between those two points (e.g. 133in or 11ft or 11.08):', '10ft');const pm = pd && pd.match(/([\d.]+)\s*(in|\"|ft|'|m)?/i);const d = pm ? parseFloat(pm[1]) * (/(in|\")/i.test(pm[2] || '') ? 1 / 12 : /m/i.test(pm[2] || '') ? 3.28084 : 1) : NaN
-      isFinite(d) && d > 0 ? (T.dist = d, T.pxPerFt = Math.hypot(T.scalePts[1][0] - T.scalePts[0][0], T.scalePts[1][1] - T.scalePts[0][1]) / d, tStatus(`Scale set: ${T.pxPerFt.toFixed(1)} px/ft. Now click TRACE and click each corner of the patio.`)) : (T.scalePts = [], tStatus('Scale cancelled — click Set scale and try again.'))
-      T.mode = null
-    } else tStatus('Click the second reference point…')
-  } else if (T.mode === 'trace') { T.poly.push(p); tStatus(`${T.poly.length} corner${T.poly.length > 1 ? 's' : ''} placed — keep clicking corners, then hit USE OUTLINE.`) }
-  tDraw()
-})
-$('#timg').addEventListener('change', e => {
-  const f = e.target.files[0]; if (!f) return
-  const img = new Image()
-  img.onload = () => { window.__siteMapOn = false; T.img = img; const ar = img.width / img.height; tc.width = 980; tc.height = Math.round(980 / ar); tDraw(); tStatus('Photo loaded. Click "Set scale", then click two points a known distance apart (a fence panel, tape on the ground, the house wall…).') }
-  img.src = URL.createObjectURL(f)
-})
-$('#tscale').onclick = () => { T.mode = 'scale'; T.scalePts = []; tStatus('Click the FIRST reference point on the image…'); tDraw() }
-$('#ttrace').onclick = () => { T.pxPerFt > 0 || (AD && AD.route && AD.route() === 'ground') ? (T.mode = 'trace', tStatus(AD && AD.route && AD.route() === 'ground' ? 'Tap the 4 deck-floor corners in order: back-left, back-right, front-right, front-left.' : 'Click each corner of the patio outline in order.')) : tStatus('Set the scale first (two points + real distance).') }
-$('#tundo').onclick = () => { T.poly.pop(); tDraw() }
-$('#tclear').onclick = () => { T.poly = []; T.scalePts = []; T.mode = null; tDraw(); tStatus('Cleared. Set scale, then trace.') }
-$('#tuse').onclick = async () => {
-  const gnd = AD && AD.route && AD.route() === 'ground' ? AD.reconstructGround() : null
-  if (gnd && gnd.ok) {
-    cfg.polygon = [[0, 0], [gnd.length, 0], [gnd.length, gnd.depth], [0, gnd.depth]]
-    cfg.mode = 'poly'
-    document.querySelectorAll('#mode button').forEach(b => b.classList.toggle('on', b.dataset.v === 'poly'))
-    $('#rw').style.display = 'none'; $('#rd').style.display = 'none'
-    const sel = $('#house'); sel.innerHTML = '<option value="-1">Freestanding</option><option value="0" selected>Edge 1 (back) = house</option>'; cfg.house_edge = 0
-    siteSnap = { ...cropForPlan(T.img || tc, tc.width, tc.height, T.poly, (Math.hypot(T.poly[1][0] - T.poly[0][0], T.poly[1][1] - T.poly[0][1]) / gnd.length) || 10), address: '', northUp: false }
-    recompute()
-    tStatus(`Reconstructed from your photo: ${gnd.length.toFixed(1)}' × ${gnd.depth.toFixed(1)}' (${(gnd.length * gnd.depth).toFixed(0)} ft²)${gnd.affine ? ' — near head-on, double-check depth' : ''}. Perspective REFERENCE sketch added to 2D Plans.`)
-    return
-  }
-  if (T.pxPerFt <= 0 || T.poly.length < 3) { tStatus('Need a scale + at least 3 corners before using the outline.'); return }
-  const minX = Math.min(...T.poly.map(p => p[0])), maxY = Math.max(...T.poly.map(p => p[1]))
-  cfg.polygon = T.poly.map(p => [+(((p[0] - minX) / T.pxPerFt).toFixed(2)), +(((maxY - p[1]) / T.pxPerFt).toFixed(2))])
-  cfg.mode = 'poly'
-  document.querySelectorAll('#mode button').forEach(b => b.classList.toggle('on', b.dataset.v === 'poly'))
-  $('#rw').style.display = 'none'; $('#rd').style.display = 'none'
-  if (T.img && window.__siteMapOn) {
-    const ic = document.createElement('canvas'); ic.width = tc.width; ic.height = tc.height
-    ic.getContext('2d').drawImage(T.img, 0, 0, ic.width, ic.height)
-    photoMeta = { tex: new THREE.CanvasTexture(ic), wFt: tc.width / T.pxPerFt, hFt: tc.height / T.pxPerFt, cxFt: (tc.width / 2 - minX) / T.pxPerFt, cyFt: (maxY - tc.height / 2) / T.pxPerFt }
-  }
-  const edges = cfg.polygon.map((a, i) => { const b = cfg.polygon[(i + 1) % cfg.polygon.length]; return Math.hypot(b[0] - a[0], b[1] - a[1]) })
-  const sel = $('#house')
-  sel.innerHTML = '<option value="-1">Freestanding</option>' + edges.map((L, i) => `<option value="${i}">Edge ${i + 1} (${L.toFixed(1)} ft) = house</option>`).join('')
-  sel.value = String(edges.indexOf(Math.max(...edges)))
-  cfg.house_edge = +sel.value
-  siteSnap = { ...(window.__siteMapOn && MV ? await mapPlanSnapshot(MV, tc.width, tc.height, T.poly, T.pxPerFt) : cropForPlan(T.img || tc, tc.width, tc.height, T.poly, T.pxPerFt)), address: window.__siteMapOn ? (window.__siteAddr || '') : '', northUp: !!window.__siteMapOn }
-  recompute()
-  tStatus(`Outline applied: ${out && out.calc ? out.calc.area_ft2.toFixed(0) : '?'} ft². 3D has your imagery as the ground — and a SITE PLAN was added to 2D Plans for the permit packet.`)
-}
-const buildFinishes = () => {
-  const sw = $('#finishes'); sw.innerHTML = ''
-  Object.entries(FINISHES).forEach(([k, [hex, name]]) => {
-    const d = document.createElement('div')
-    d.className = 'sw' + (cfg.finish === k ? ' on' : '')
-    d.style.background = hex
-    d.innerHTML = `<span>${name}</span>`
-    d.onclick = () => { cfg.finish = k; document.querySelectorAll('.sw').forEach(x => x.classList.toggle('on', x === d)); recompute() }
-    sw.appendChild(d)
-  })
+  persist(); rebuild3D(); renderPlans(); renderMat(); renderWarns(); renderGuide(); renderBest(); updatePermits()
 }
 const initUI = () => {
-  const bind = (id, key, num = true) => { const el = $(id); el.value = cfg[key]; el.onchange = () => { cfg[key] = num ? +el.value : el.value; recompute() } }
-  bind('#w', 'w'); bind('#d', 'd'); bind('#bedrooms', 'bedrooms'); bind('#bathrooms', 'bathrooms'); bind('#range', 'electric_range'); bind('#dryer', 'electric_dryer'); bind('#hvac', 'hvac_amps'); bind('#house', 'house_edge')
-  const chk = (id, key) => { const el = $(id); el.checked = !!cfg[key]; el.onchange = e => { cfg[key] = e.target.checked; recompute() } }
-  chk('#laundry', 'has_laundry'); chk('#whelec', 'water_heater_elec'); chk('#dw', 'dishwasher'); chk('#disp', 'disposal'); chk('#mw', 'microwave')
-  document.querySelectorAll('#mode button').forEach(b => b.onclick = () => {
-    cfg.mode = b.dataset.v
-    document.querySelectorAll('#mode button').forEach(x => x.classList.toggle('on', x === b))
-    const rectMode = cfg.mode === 'rect'
-    $('#rw').style.display = rectMode ? 'flex' : 'none'; $('#rd').style.display = rectMode ? 'flex' : 'none'
-    if (rectMode) { const sel = $('#house'); sel.innerHTML = '<option value="0">Yes — back edge</option><option value="-1">Freestanding</option>'; sel.value = cfg.house_edge >= 0 ? '0' : '-1'; cfg.house_edge = +sel.value }
-    if (!rectMode && (!cfg.polygon || cfg.polygon.length < 3)) { document.querySelector('.tab[data-pane="trace"]').click() }
-    recompute()
+  const bind = (id, key) => { const el = $(id); if (!el) return; el.value = cfg[key]; el.onchange = () => { cfg[key] = +el.value; recompute() } }
+  bind('#sqft', 'sqft')
+  for (const [k, id] of Object.entries(NUMF)) bind(id, k)
+  const chk = (id, key) => { const el = $(id); if (!el) return; el.checked = !!cfg[key]; el.onchange = e => { cfg[key] = e.target.checked; recompute() } }
+  for (const [k, id] of Object.entries(CHKF)) chk(id, k)
+  const pwrap = $('#presets')
+  if (pwrap) pwrap.innerHTML = Object.entries(PRESETS).map(([k, v]) => `<button class="seg-b" data-preset="${k}">${v.label}</button>`).join('') + '<button class="seg-b" data-preset="__clear" style="color:#d88">✖ Clear all</button>'
+  pwrap && pwrap.querySelectorAll('button[data-preset]').forEach(b => b.onclick = () => {
+    const p = b.dataset.preset
+    if (p === '__clear') { for (const k of Object.keys(NUMF)) cfg[k] = 0; for (const k of Object.keys(CHKF)) cfg[k] = false }
+    else { const d = PRESETS[p]; if (d.add) for (const [k, v] of Object.entries(d.add)) cfg[k] = (+cfg[k] || 0) + v; if (d.set) for (const [k, v] of Object.entries(d.set)) cfg[k] = v }
+    syncInputs(); recompute()
   })
   document.querySelectorAll('.tab').forEach(t => t.onclick = () => {
     document.querySelectorAll('.tab').forEach(x => x.classList.toggle('on', x === t))
@@ -296,19 +203,12 @@ const initUI = () => {
   $('#reset-prices').onclick = () => { priceEdits = {}; localStorage.removeItem(LSP); renderMat() }
   $('#export-csv').onclick = () => {
     const csv = ['Item,Qty,HD each,HD total,Lowes each,Lowes total', ...out.bom.map(it => { const ph = price(it.id, 'hd'), pl = price(it.id, 'lowes'); return `"${it.desc}",${it.qty},${ph ?? ''},${ph != null ? (ph * it.qty).toFixed(2) : ''},${pl ?? ''},${pl != null ? (pl * it.qty).toFixed(2) : ''}` })].join('\n')
-    const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([csv], { type: 'text/csv' })), download: 'elec-materials.csv' })
-    a.click()
+    Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([csv], { type: 'text/csv' })), download: 'elec-materials.csv' }).click()
   }
-  $('#dl-svg').onclick = () => { ['layout', 'details'].forEach(k => { const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([out.svgs[k]], { type: 'image/svg+xml' })), download: `elec-${k}.svg` }); a.click() }); const sw = $('#svg-site'); sw && Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([sw.innerHTML], { type: 'image/svg+xml' })), download: 'elec-site-plan.svg' }).click() }
-  buildFinishes()
-  initPermits(() => ({ ...cfg, height: 0, attach: cfg.house_edge >= 0 ? 'house' : 'free', length: 0, depth: 0 }), () => out)
-  if (cfg.mode === 'poly' && cfg.polygon) { $('#rw').style.display = 'none'; $('#rd').style.display = 'none'; document.querySelectorAll('#mode button').forEach(b => b.classList.toggle('on', b.dataset.v === 'poly')); const edges = cfg.polygon.map((a, i) => { const b2 = cfg.polygon[(i + 1) % cfg.polygon.length]; return Math.hypot(b2[0] - a[0], b2[1] - a[1]) }); const sel = $('#house'); sel.innerHTML = '<option value="-1">Freestanding</option>' + edges.map((L, i) => `<option value="${i}">Edge ${i + 1} (${L.toFixed(1)} ft) = house</option>`).join(''); sel.value = String(cfg.house_edge) }
+  $('#dl-svg').onclick = () => { ['layout', 'details'].forEach(k => { const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([out.svgs[k]], { type: 'image/svg+xml' })), download: `elec-${k}.svg` }); a.click() }) }
+  initPermits(() => ({ ...cfg, height: 0, attach: 'free', length: 0, depth: 0 }), () => out)
 }
 catalog = await fetch('catalog.json').then(r => r.json()).catch(() => ({}))
 initUI()
 resize()
-tDraw()
-MV = initMapTrace({ tc, T, tDraw, tStatus })
-const AD = initAutoDetect({ tc, T, tDraw, tStatus, getMapOn: () => !!window.__siteMapOn })
-document.getElementById('tauto').onclick = () => AD.detectFootprint()
 recompute()
