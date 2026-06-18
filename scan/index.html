@@ -405,6 +405,30 @@ function renderPointsGL(pos, col) {
   }
   draw()
 }
+// ---------- Structure-from-motion (our own, node-verified) ----------
+function sfmGray(cv) { const W = cv.width, H = cv.height, d = cv.getContext('2d').getImageData(0, 0, W, H).data, g = new Float32Array(W * H); for (let i = 0; i < W * H; i++) g[i] = 0.299 * d[i * 4] + 0.587 * d[i * 4 + 1] + 0.114 * d[i * 4 + 2]; return { g, W, H, d } }
+function detectFeatures(gray, opts) {
+  opts = opts || {}; const g = gray.g, W = gray.W, H = gray.H, N = opts.maxFeatures || 250, minDist = opts.minDist || 8, win = opts.win || 2, q = opts.qualityLevel || 0.04
+  const Ix = new Float32Array(W * H), Iy = new Float32Array(W * H)
+  for (let y = 1; y < H - 1; y++) for (let x = 1; x < W - 1; x++) { const i = y * W + x; Ix[i] = (g[i + 1] - g[i - 1]) * 0.5; Iy[i] = (g[i + W] - g[i - W]) * 0.5 }
+  const R = new Float32Array(W * H)
+  for (let y = win + 1; y < H - win - 1; y++) for (let x = win + 1; x < W - win - 1; x++) {
+    let sxx = 0, syy = 0, sxy = 0
+    for (let dy = -win; dy <= win; dy++) for (let dx = -win; dx <= win; dx++) { const i = (y + dy) * W + (x + dx); sxx += Ix[i] * Ix[i]; syy += Iy[i] * Iy[i]; sxy += Ix[i] * Iy[i] }
+    const tr = (sxx + syy) * 0.5, dd = Math.sqrt(Math.max(0, ((sxx - syy) * 0.5) ** 2 + sxy * sxy)); R[y * W + x] = tr - dd
+  }
+  let maxR = 0; for (let i = 0; i < W * H; i++) if (R[i] > maxR) maxR = R[i]
+  const thr = maxR * q, cands = []
+  for (let y = win + 1; y < H - win - 1; y++) for (let x = win + 1; x < W - win - 1; x++) {
+    const i = y * W + x, v = R[i]; if (v < thr) continue
+    let lm = true; for (let dy = -1; dy <= 1 && lm; dy++) for (let dx = -1; dx <= 1; dx++) if (R[(y + dy) * W + (x + dx)] > v) { lm = false; break }
+    if (lm) cands.push([x, y, v])
+  }
+  cands.sort((a, b) => b[2] - a[2])
+  const out = [], md2 = minDist * minDist
+  for (const c of cands) { let ok = true; for (const o of out) { const dx = c[0] - o[0], dy = c[1] - o[1]; if (dx * dx + dy * dy < md2) { ok = false; break } } if (ok) { out.push(c); if (out.length >= N) break } }
+  return out.map(c => [c[0], c[1]])
+}
 function reconstructFromFrames() {
   if (!CAP.frames.length) { vstatus('Capture some frames first with the camera above.'); return }
   const pos = [], col = [], F = CAP.frames, GX = 44, GY = 33, R = 2.2
