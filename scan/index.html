@@ -441,6 +441,62 @@ function matchFeatures(ga, pts, gb, opts) {
   }
   return out
 }
+function jacobiEig(Ain, n) {
+  const a = Float64Array.from(Ain), v = new Float64Array(n * n)
+  for (let i = 0; i < n; i++) v[i * n + i] = 1
+  for (let sweep = 0; sweep < 100; sweep++) {
+    let off = 0; for (let p = 0; p < n; p++) for (let q = p + 1; q < n; q++) off += a[p * n + q] * a[p * n + q]
+    if (off < 1e-20) break
+    for (let p = 0; p < n; p++) for (let q = p + 1; q < n; q++) {
+      const apq = a[p * n + q]; if (Math.abs(apq) < 1e-22) continue
+      const app = a[p * n + p], aqq = a[q * n + q], theta = (aqq - app) / (2 * apq)
+      const t = (theta >= 0 ? 1 : -1) / (Math.abs(theta) + Math.sqrt(theta * theta + 1)), c = 1 / Math.sqrt(t * t + 1), s = t * c
+      for (let i = 0; i < n; i++) { const aip = a[i * n + p], aiq = a[i * n + q]; a[i * n + p] = c * aip - s * aiq; a[i * n + q] = s * aip + c * aiq }
+      for (let i = 0; i < n; i++) { const api = a[p * n + i], aqi = a[q * n + i]; a[p * n + i] = c * api - s * aqi; a[q * n + i] = s * api + c * aqi }
+      for (let i = 0; i < n; i++) { const vip = v[i * n + p], viq = v[i * n + q]; v[i * n + p] = c * vip - s * viq; v[i * n + q] = s * vip + c * viq }
+    }
+  }
+  const idx = [...Array(n).keys()].sort((i, j) => a[j * n + j] - a[i * n + i])
+  return { values: idx.map(i => a[i * n + i]), vectors: idx, raw: v, n }
+}
+const ecol = (eig, c) => { const o = eig.vectors[c], n = eig.n, v = []; for (let i = 0; i < n; i++) v.push(eig.raw[i * n + o]); return v }
+const m3t = (M) => [M[0], M[3], M[6], M[1], M[4], M[7], M[2], M[5], M[8]]
+const m3m = (A, B) => { const C = new Array(9); for (let r = 0; r < 3; r++) for (let cc = 0; cc < 3; cc++) { let s = 0; for (let k = 0; k < 3; k++) s += A[r * 3 + k] * B[k * 3 + cc]; C[r * 3 + cc] = s } return C }
+const m3v = (M, x) => [M[0] * x[0] + M[1] * x[1] + M[2] * x[2], M[3] * x[0] + M[4] * x[1] + M[5] * x[2], M[6] * x[0] + M[7] * x[1] + M[8] * x[2]]
+const m3det = (M) => M[0] * (M[4] * M[8] - M[5] * M[7]) - M[1] * (M[3] * M[8] - M[5] * M[6]) + M[2] * (M[3] * M[7] - M[4] * M[6])
+const v3cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]]
+const v3n = (a) => { const l = Math.hypot(a[0], a[1], a[2]) || 1; return [a[0] / l, a[1] / l, a[2] / l] }
+function svd3(M) {
+  const Ve = jacobiEig(m3m(m3t(M), M), 3), Vc = [ecol(Ve, 0), ecol(Ve, 1), ecol(Ve, 2)], S = Ve.values.map(e => Math.sqrt(Math.max(0, e))), Uc = []
+  for (let i = 0; i < 3; i++) { if (S[i] > S[0] * 1e-6 + 1e-12) Uc.push(v3n(m3v(M, Vc[i]))); else Uc.push(null) }
+  if (!Uc[2]) Uc[2] = v3n(v3cross(Uc[0], Uc[1])); if (!Uc[1]) Uc[1] = v3n(v3cross(Uc[2], Uc[0])); if (!Uc[0]) Uc[0] = v3n(v3cross(Uc[1], Uc[2]))
+  return { U: [Uc[0][0], Uc[1][0], Uc[2][0], Uc[0][1], Uc[1][1], Uc[2][1], Uc[0][2], Uc[1][2], Uc[2][2]], S, V: [Vc[0][0], Vc[1][0], Vc[2][0], Vc[0][1], Vc[1][1], Vc[2][1], Vc[0][2], Vc[1][2], Vc[2][2]] }
+}
+function triangulate(P1, P2, x1, x2) {
+  const A = [[x1[0] * P1[8] - P1[0], x1[0] * P1[9] - P1[1], x1[0] * P1[10] - P1[2], x1[0] * P1[11] - P1[3]], [x1[1] * P1[8] - P1[4], x1[1] * P1[9] - P1[5], x1[1] * P1[10] - P1[6], x1[1] * P1[11] - P1[7]], [x2[0] * P2[8] - P2[0], x2[0] * P2[9] - P2[1], x2[0] * P2[10] - P2[2], x2[0] * P2[11] - P2[3]], [x2[1] * P2[8] - P2[4], x2[1] * P2[9] - P2[5], x2[1] * P2[10] - P2[6], x2[1] * P2[11] - P2[7]]]
+  const AtA = new Float64Array(16); for (let i = 0; i < 4; i++) for (let j = 0; j < 4; j++) { let s = 0; for (let k = 0; k < 4; k++) s += A[k][i] * A[k][j]; AtA[i * 4 + j] = s }
+  const e = jacobiEig(AtA, 4), X = ecol(e, 3); return [X[0] / X[3], X[1] / X[3], X[2] / X[3]]
+}
+function estimatePose(matches, f, cx, cy) {
+  const M = matches.length; if (M < 8) return { degenerate: true }
+  const n1 = matches.map(m => [(m[0] - cx) / f, (m[1] - cy) / f]), n2 = matches.map(m => [(m[2] - cx) / f, (m[3] - cy) / f])
+  const hartley = (pts) => { let mx = 0, my = 0; for (const p of pts) { mx += p[0]; my += p[1] } mx /= pts.length; my /= pts.length; let d = 0; for (const p of pts) d += Math.hypot(p[0] - mx, p[1] - my); d /= pts.length; const s = Math.SQRT2 / (d || 1); return { T: [s, 0, -s * mx, 0, s, -s * my, 0, 0, 1], pts: pts.map(p => [s * (p[0] - mx), s * (p[1] - my)]) } }
+  const H1 = hartley(n1), H2 = hartley(n2), A = new Float64Array(M * 9)
+  for (let i = 0; i < M; i++) { const x1 = H1.pts[i][0], y1 = H1.pts[i][1], x2 = H2.pts[i][0], y2 = H2.pts[i][1]; A.set([x2 * x1, x2 * y1, x2, y2 * x1, y2 * y1, y2, x1, y1, 1], i * 9) }
+  const AtA = new Float64Array(81); for (let i = 0; i < 9; i++) for (let j = 0; j < 9; j++) { let s = 0; for (let k = 0; k < M; k++) s += A[k * 9 + i] * A[k * 9 + j]; AtA[i * 9 + j] = s }
+  let F = ecol(jacobiEig(AtA, 9), 8); const sv = svd3(F); F = m3m(m3m(sv.U, [sv.S[0], 0, 0, 0, sv.S[1], 0, 0, 0, 0]), m3t(sv.V))
+  let E = m3m(m3m(m3t(H2.T), F), H1.T); const se = svd3(E); E = m3m(m3m(se.U, [1, 0, 0, 0, 1, 0, 0, 0, 0]), m3t(se.V))
+  const fin = svd3(E); let U = fin.U, Vt = m3t(fin.V); if (m3det(U) < 0) U = U.map(x => -x); if (m3det(Vt) < 0) Vt = Vt.map(x => -x)
+  const W = [0, -1, 0, 1, 0, 0, 0, 0, 1], Ra = m3m(m3m(U, W), Vt), Rb = m3m(m3m(U, m3t(W)), Vt), t = [U[2], U[5], U[8]]
+  const cands = [[Ra, t], [Ra, t.map(x => -x)], [Rb, t], [Rb, t.map(x => -x)]], P1 = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0]
+  let best = -1, bestRT = null
+  for (const [R, tt] of cands) {
+    const P2 = [R[0], R[1], R[2], tt[0], R[3], R[4], R[5], tt[1], R[6], R[7], R[8], tt[2]]; let front = 0
+    for (let i = 0; i < M; i++) { const X = triangulate(P1, P2, n1[i], n2[i]); if (X[2] > 0 && (m3v(R, X)[2] + tt[2]) > 0) front++ }
+    if (front > best) { best = front; bestRT = { R, t: tt } }
+  }
+  return { R: bestRT.R, t: bestRT.t, inliers: best, total: M }
+}
 function reconstructFromFrames() {
   if (!CAP.frames.length) { vstatus('Capture some frames first with the camera above.'); return }
   const pos = [], col = [], F = CAP.frames, GX = 44, GY = 33, R = 2.2
