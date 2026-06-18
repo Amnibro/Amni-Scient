@@ -329,3 +329,28 @@ MV = initMapTrace({ tc, T, tDraw, tStatus })
 const AD = initAutoDetect({ tc, T, tDraw, tStatus, getMapOn: () => !!window.__siteMapOn })
 document.getElementById('tauto').onclick = () => AD.detectFootprint()
 recompute()
+
+
+function maybeScanBanner() {
+  let scan; try { scan = JSON.parse(localStorage.getItem('amni_scan')) } catch (e) {}
+  if (!scan || !scan.polygon || scan.polygon.length < 3 || Date.now() - (scan.ts || 0) > 86400000) return
+  const side = document.querySelector('#side'); if (!side) return
+  const b = document.createElement('button')
+  b.style.cssText = 'display:block;width:100%;padding:9px;margin-bottom:12px;background:var(--bg);border:1px dashed var(--acc);color:var(--acc);border-radius:8px;cursor:pointer;font-weight:600;font-size:13px'
+  b.textContent = '\u{1F4D0} Use my scan (' + scan.area_ft2 + ' ft²)'
+  side.insertBefore(b, side.firstChild)
+  b.onclick = () => {
+    cfg.polygon = scan.polygon.map(p => [+p[0], +p[1]]); cfg.mode = 'poly'
+    const edges = cfg.polygon.map((a, i) => { const c = cfg.polygon[(i + 1) % cfg.polygon.length]; return Math.hypot(c[0] - a[0], c[1] - a[1]) })
+    cfg.house_edge = edges.indexOf(Math.max.apply(null, edges))
+    document.querySelectorAll('#mode button').forEach(x => x.classList.toggle('on', x.dataset.v === 'poly'))
+    const rw = document.querySelector('#rw'), rd = document.querySelector('#rd'); if (rw) rw.style.display = 'none'; if (rd) rd.style.display = 'none'
+    const sel = document.querySelector('#house')
+    if (sel) { sel.innerHTML = '<option value="-1">Freestanding</option>' + edges.map((L, i) => '<option value="' + i + '">Edge ' + (i + 1) + ' (' + L.toFixed(1) + ' ft) = house</option>').join(''); sel.value = String(cfg.house_edge) }
+    if (window.__deckApplyMode) window.__deckApplyMode()
+    recompute()
+    b.textContent = '✓ Using your scan (' + scan.area_ft2 + ' ft²)'; b.style.color = 'var(--ok)'; b.style.borderColor = 'var(--ok)'
+  }
+}
+
+maybeScanBanner()

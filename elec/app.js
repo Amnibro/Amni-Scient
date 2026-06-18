@@ -212,3 +212,17 @@ catalog = await fetch('catalog.json').then(r => r.json()).catch(() => ({}))
 initUI()
 resize()
 recompute()
+
+
+function maybeScanBanner() {
+  let scan; try { scan = JSON.parse(localStorage.getItem('amni_scan')) } catch (e) {}
+  if (!scan || !scan.area_ft2 || Date.now() - (scan.ts || 0) > 86400000) return
+  const side = document.querySelector('#side'); if (!side) return
+  const b = document.createElement('button')
+  b.style.cssText = 'display:block;width:100%;padding:9px;margin-bottom:12px;background:var(--bg);border:1px dashed var(--acc);color:var(--acc);border-radius:8px;cursor:pointer;font-weight:600;font-size:13px'
+  b.textContent = '\u{1F4D0} Use my scan area (' + scan.area_ft2 + ' ft²)'
+  side.insertBefore(b, side.firstChild)
+  b.onclick = () => { cfg.sqft = Math.round(scan.area_ft2); const e = document.querySelector('#sqft'); if (e) e.value = cfg.sqft; recompute(); b.textContent = '✓ Using ' + cfg.sqft + ' ft² from your scan'; b.style.color = 'var(--ok)'; b.style.borderColor = 'var(--ok)' }
+}
+
+maybeScanBanner()
