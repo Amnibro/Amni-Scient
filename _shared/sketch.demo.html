@@ -7,19 +7,22 @@ table{border-collapse:collapse}
 </style></head><body>
 <div id="sketch"></div>
 <script type="module">
-import { emptyScene, addNode, addRun, reachableFrom } from './sketch.js'
+import { emptyScene, addNode, addRun } from './sketch.js'
 import { mountSketch } from './sketch-canvas.js'
-const catalog = { nm142:{name:'14/2 NM-B (250ft)',hd:79}, nm122:{name:'12/2 NM-B (250ft)',hd:119}, recept:{name:'Receptacle',hd:1.98}, switch:{name:'Switch',hd:2.48}, fixture:{name:'Light fixture',hd:14.97}, box:{name:'Box',hd:1.18}, breaker:{name:'Breaker',hd:8.97} }
-const trade = {
-  name:'elec',
-  palette:[{type:'panel',label:'Panel',glyph:'▣',color:'#e8c33d'},{type:'recept',label:'Outlet',glyph:'⊟',color:'#4f9cf0'},{type:'gfci',label:'GFCI',glyph:'G',color:'#5fbf6e'},{type:'switch',label:'Switch',glyph:'S',color:'#b58fd8'},{type:'light',label:'Light',glyph:'☀',color:'#e0b341'}],
-  runTypes:[{type:'nm142',label:'14-2 (15A)',color:'#d88b6a'},{type:'nm122',label:'12-2 (20A)',color:'#e0c341'}],
-  bom:(scene,m)=>{const o=[];const f1=m.byRunType.nm142||0,f2=m.byRunType.nm122||0;if(f1)o.push({key:'nm142',qty:Math.ceil(f1/250),unit:'roll',note:Math.round(f1)+' ft'});if(f2)o.push({key:'nm122',qty:Math.ceil(f2/250),unit:'roll',note:Math.round(f2)+' ft'});const dev=(m.nodeCounts.recept||0)+(m.nodeCounts.gfci||0);if(dev)o.push({key:'recept',qty:dev,unit:'ea'});if(m.nodeCounts.switch)o.push({key:'switch',qty:m.nodeCounts.switch,unit:'ea'});if(m.nodeCounts.light)o.push({key:'fixture',qty:m.nodeCounts.light,unit:'ea'});if(scene.nodes.length)o.push({key:'box',qty:scene.nodes.length,unit:'ea'});if(scene.nodes.some(n=>n.type==='panel'))o.push({key:'breaker',qty:Math.max(1,scene.runs.length),unit:'ea'});return o},
-  validate:(scene,m)=>{const c=[];const panel=scene.nodes.find(n=>n.type==='panel');if(!panel){c.push({level:'warn',msg:'No panel placed yet'});return c}const reach=reachableFrom(scene,panel.id);const orphans=scene.nodes.filter(n=>!reach.has(n.id));c.push(orphans.length?{level:'fail',msg:orphans.length+' device(s) not wired to the panel'}:{level:'ok',msg:'all devices reach the panel'});const f1=m.byRunType.nm142||0;c.push(f1>200?{level:'warn',msg:'14-2 run total '+Math.round(f1)+' ft — check voltage drop on long 15A runs'}:{level:'ok',msg:'run lengths within typical limits'});return c}
-}
+import { makeElecTrade } from './elec-rules.js'
+const catalog = { nm142:{name:'14/2 NM-B (250ft)',hd:79}, nm122:{name:'12/2 NM-B (250ft)',hd:119}, nm103:{name:'10/3 NM-B (25ft)',hd:44}, nm63:{name:'6/3 NM-B (25ft)',hd:89}, recept:{name:'Receptacle',hd:1.98}, gfci:{name:'GFCI breaker/recept',hd:18.97}, afci:{name:'AFCI breaker',hd:44.97}, switch:{name:'Switch',hd:2.48}, fixture:{name:'Light fixture',hd:14.97}, box:{name:'Box',hd:1.18}, breaker:{name:'Breaker',hd:8.97}, panel:{name:'Panel',hd:169}, misc:{name:'Wire nuts/staples',hd:39} }
+const trade = makeElecTrade()
 const scene = emptyScene(24)
-const P=addNode(scene,'panel',60,300), R1=addNode(scene,'recept',300,120), R2=addNode(scene,'recept',480,120), G1=addNode(scene,'gfci',300,300), S=addNode(scene,'switch',300,480), L=addNode(scene,'light',540,480)
-addRun(scene,'nm142',P,R1); addRun(scene,'nm142',R1,R2); addRun(scene,'nm122',P,G1); addRun(scene,'nm142',P,S); addRun(scene,'nm142',S,L)
+const P = addNode(scene,'panel',60,300)
+// kitchen circuit (needs GFCI) - missing GFCI to show a fail
+const k1 = addNode(scene,'recept',300,110,{room:'kitchen'}), k2 = addNode(scene,'recept',480,110,{room:'kitchen'})
+addRun(scene,'nm122',P,k1); addRun(scene,'nm122',k1,k2)
+// bedroom lighting circuit (AFCI)
+const b1 = addNode(scene,'light',300,300,{room:'bedroom'}), sw = addNode(scene,'switch',480,300)
+addRun(scene,'nm142',P,b1); addRun(scene,'nm142',b1,sw)
+// dedicated range
+const rg = addNode(scene,'range',300,490)
+addRun(scene,'nm63',P,rg)
 mountSketch(document.getElementById('sketch'), { scene, trade, catalog, store:'hd', onChange:()=>{} })
 window.__ready = true
 </script></body></html>

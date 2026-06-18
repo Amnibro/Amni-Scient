@@ -54,6 +54,7 @@ export function mountSketch(container, opts) {
   })
   svg.addEventListener('pointermove', e => { if (!drag) return; const [x, y] = ptOf(e); const n = nodeById(scene, drag.id); if (!n) return; n.x = clamp(snap(x - drag.dx), W); n.y = clamp(snap(y - drag.dy), H); render() })
   svg.addEventListener('pointerup', () => { if (drag) { drag = null; changed() } })
+  svg.addEventListener('dblclick', e => { const nE = closestAttr(e.target, 'data-node'), id = nE && nE.getAttribute('data-node'); if (id && trade.onNodeActivate) { const n = nodeById(scene, id); if (n && trade.onNodeActivate(n)) changed() } })
   window.addEventListener('keydown', e => { if ((e.key === 'Delete' || e.key === 'Backspace') && selected && container.offsetParent !== null) { e.preventDefault(); delSelected() } })
 
   function changed() { onChange(scene); render() }
@@ -77,9 +78,9 @@ export function mountSketch(container, opts) {
       if (connectFrom === n.id) el('circle', { cx: n.x, cy: n.y, r: 19, fill: 'none', stroke: '#5fbf6e', 'stroke-width': 2, 'stroke-dasharray': '3 3' }, g)
       el('circle', { cx: n.x, cy: n.y, r: 14, fill: p.color, stroke: selected && selected.id === n.id ? '#fff' : 'rgba(0,0,0,.45)', 'stroke-width': selected && selected.id === n.id ? 3 : 1.5 }, g)
       const gl = el('text', { x: n.x, y: n.y + 4, 'text-anchor': 'middle', 'font-size': 13, 'font-weight': 'bold', fill: '#0d0f12', 'font-family': 'system-ui', style: 'pointer-events:none' }, g); gl.textContent = p.glyph || '•'
-      const lb = el('text', { x: n.x, y: n.y + 27, 'text-anchor': 'middle', 'font-size': 10, fill: '#9aa0aa', 'font-family': 'system-ui', style: 'pointer-events:none' }, g); lb.textContent = n.props && n.props.label ? n.props.label : p.label
+      const lb = el('text', { x: n.x, y: n.y + 27, 'text-anchor': 'middle', 'font-size': 10, fill: '#9aa0aa', 'font-family': 'system-ui', style: 'pointer-events:none' }, g); lb.textContent = trade.nodeLabel ? trade.nodeLabel(n) : (n.props && n.props.label ? n.props.label : p.label)
     }
-    hint.textContent = mode === 'select' ? 'Select mode — drag a node to move · click then Delete to remove' : mode.startsWith('place:') ? 'Click the canvas to place. Pick ↖ Select when done.' : 'Click a node, then another, to run ' + mode.slice(8) + ' between them.'
+    hint.textContent = mode === 'select' ? 'Select mode — drag to move · double-click a device to set its room · select + Delete to remove' : mode.startsWith('place:') ? 'Click the canvas to place. Pick ↖ Select when done.' : 'Click a node, then another, to run ' + mode.slice(8) + ' between them.'
     renderReadout()
   }
 
