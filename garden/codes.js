@@ -90,8 +90,8 @@ const render = () => {
   const rows = []
   const s = ST[loc.st]
   const frost = s ? s[2] : 36
+  const [name, code, fr, url] = s || []
   if (s) {
-    const [name, code, fr, url] = s
     const place = loc.city ? `${loc.city}, ${loc.st}` : name
     rows.push(box('info', `<b>${esc(place)}</b> — ${esc(code)}. Typical frost depth ~${fr}" <span style="color:var(--mut)">(varies by site — your inspector has the local number)</span>`))
     rows.push(box('info', `Permit office: ${lk(g(`${NOUN[TRADE] || ''} permit ${loc.city || ''} ${name}`), `permits in ${loc.city || name}`)} · ${lk(g(`${loc.city || name} ${loc.st} building department ${NOUN[TRADE] || ''} requirements`), 'building dept')}`))
