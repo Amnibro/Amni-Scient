@@ -497,8 +497,50 @@ function estimatePose(matches, f, cx, cy) {
   }
   return { R: bestRT.R, t: bestRT.t, inliers: best, total: M }
 }
+const P34 = (pose) => [pose.R[0], pose.R[1], pose.R[2], pose.t[0], pose.R[3], pose.R[4], pose.R[5], pose.t[1], pose.R[6], pose.R[7], pose.R[8], pose.t[2]]
+function sfmChain(pairMatches, f, cx, cy) {
+  const poses = [{ R: [1, 0, 0, 0, 1, 0, 0, 0, 1], t: [0, 0, 0] }]
+  for (let i = 0; i < pairMatches.length; i++) {
+    const rel = pairMatches[i].length >= 8 ? estimatePose(pairMatches[i], f, cx, cy) : { degenerate: true }
+    if (!rel || rel.degenerate || !rel.R) { poses.push(null); continue }
+    const prev = poses[i] || { R: [1, 0, 0, 0, 1, 0, 0, 0, 1], t: [0, 0, 0] }
+    const Rg = m3m(rel.R, prev.R), Rpt = m3v(rel.R, prev.t)
+    poses.push({ R: Rg, t: [Rpt[0] + rel.t[0], Rpt[1] + rel.t[1], Rpt[2] + rel.t[2]] })
+  }
+  return poses
+}
+function runSfM(frames) {
+  const W = frames[0].width, H = frames[0].height, f = 1.1 * Math.max(W, H), cx = W / 2, cy = H / 2
+  const grays = frames.map(sfmGray), pairMatches = []
+  for (let i = 0; i < frames.length - 1; i++) {
+    const ptsA = detectFeatures(grays[i], { maxFeatures: 240, minDist: 8, qualityLevel: 0.035 })
+    pairMatches.push(matchFeatures(grays[i], ptsA, grays[i + 1], { patch: 5, search: 20, thr: 0.78 }))
+  }
+  const poses = sfmChain(pairMatches, f, cx, cy), pos = [], col = []
+  for (let i = 0; i < pairMatches.length; i++) {
+    const Pi = poses[i], Pj = poses[i + 1]; if (!Pi || !Pj) continue
+    const P1 = P34(Pi), P2 = P34(Pj), data = frames[i].getContext('2d').getImageData(0, 0, W, H).data
+    for (const m of pairMatches[i]) {
+      const X = triangulate(P1, P2, [(m[0] - cx) / f, (m[1] - cy) / f], [(m[2] - cx) / f, (m[3] - cy) / f])
+      if (!isFinite(X[0]) || !isFinite(X[1]) || !isFinite(X[2])) continue
+      const dci = m3v(Pi.R, X); if (!((dci[2] + Pi.t[2]) > 0) || Math.hypot(X[0], X[1], X[2]) > 200) continue
+      pos.push(X[0], X[1], X[2])
+      const o = (Math.min(H - 1, Math.max(0, Math.round(m[1]))) * W + Math.min(W - 1, Math.max(0, Math.round(m[0])))) * 4
+      col.push(data[o] / 255, data[o + 1] / 255, data[o + 2] / 255)
+    }
+  }
+  return { points: new Float32Array(pos), colors: new Float32Array(col), nPoses: poses.filter(Boolean).length, nPoints: pos.length / 3 }
+}
 function reconstructFromFrames() {
   if (!CAP.frames.length) { vstatus('Capture some frames first with the camera above.'); return }
+  if (CAP.frames.length >= 2) {
+    try {
+      vstatus('Reconstructing — detect features → match → pose → triangulate…')
+      const r = runSfM(CAP.frames)
+      if (r.nPoses >= 2 && r.nPoints >= 150) { renderPointsGL(r.points, r.colors); vstatus('Reconstructed: ' + CAP.frames.length + ' frames → ' + r.nPoses + ' camera poses, ' + r.nPoints + ' points (our own monocular SfM — relative scale).'); return }
+      vstatus('Low matches/parallax for SfM (' + r.nPoses + ' poses, ' + r.nPoints + ' pts) — showing the capture-ring preview. For real 3D: move steadily sideways across a textured scene + capture 8-20 frames.')
+    } catch (e) { vstatus('SfM hit an error (' + (e && e.message || e) + ') — showing the capture preview.') }
+  }
   const pos = [], col = [], F = CAP.frames, GX = 44, GY = 33, R = 2.2
   F.forEach((cv, fi) => {
     const data = cv.getContext('2d').getImageData(0, 0, cv.width, cv.height).data
@@ -512,7 +554,7 @@ function reconstructFromFrames() {
     }
   })
   renderPointsGL(new Float32Array(pos), new Float32Array(col))
-  vstatus('Coarse preview from your ' + F.length + ' frames (placed in a capture ring). A true depth/pose point cloud is the next stage — use AR depth on Android, or this sharpens as we add structure-from-motion.')
+  vstatus('Capture-ring preview of your ' + F.length + ' frame(s). For a real SfM cloud: capture 2+ frames moving steadily sideways across a textured scene (the reconstruct then runs detect→match→pose→triangulate).')
 }
 async function reconstructAR() {
   if (!navigator.xr) { vstatus('No WebXR — AR depth needs Android Chrome.'); return }
