@@ -100,6 +100,12 @@ code{background:var(--bg);border:1px solid var(--line);border-radius:5px;padding
       <button class="btn ghost" id="c-ply">⬇️ Export .ply</button>
       <button class="btn ghost" id="c-gsplat">⬇️ Export gsplat .ply</button>
     </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px">
+      <span class="muted" style="font-size:13px">📏 Real size:</span>
+      <input id="c-reallen" type="number" step="0.1" min="0" placeholder="longest dim (ft)" style="width:140px;padding:7px;background:#0c0e12;border:1px solid var(--line);border-radius:8px;color:inherit">
+      <button class="btn ghost" id="c-setscale">Set scale</button>
+      <button class="btn ghost" id="c-resetscale">Reset</button>
+    </div>
     <div id="c-status" class="muted" style="margin-bottom:8px">Tap Start camera, then slowly circle the object or room, capturing 20-40 frames from different angles. Frames stay on your device — nothing uploads.</div>
     <div style="position:relative;width:100%;aspect-ratio:16/10;background:#0c0e12;border:1px solid var(--line);border-radius:12px;overflow:hidden">
       <video id="c-video" playsinline muted style="width:100%;height:100%;object-fit:cover;display:block"></video>
@@ -711,6 +717,26 @@ async function trainSplats() {
   vstatus('Trained ' + G.n + ' gaussians on ' + views.length + ' views (color+opacity optimized vs your frames; geometry from SfM, isotropic). ⬇️ Export .ply or toggle soft-splats. Remaining frontier: positional + anisotropic-covariance backprop, bundle adjustment, metric scale.' + gpu)
 }
 ;($('#c-train') || {}).onclick = trainSplats
+let metricFactor = 1
+function cloudDims(pos) { const n = pos.length / 3; let mn = [1e9, 1e9, 1e9], mx = [-1e9, -1e9, -1e9]; for (let i = 0; i < n; i++) for (let k = 0; k < 3; k++) { const v = pos[i * 3 + k]; if (v < mn[k]) mn[k] = v; if (v > mx[k]) mx[k] = v } const dx = mx[0] - mn[0], dy = mx[1] - mn[1], dz = mx[2] - mn[2]; return { dx, dy, dz, maxEdge: Math.max(dx, dy, dz) } }
+function applyMetricMult(mult) {
+  if (!isFinite(mult) || mult <= 0) return
+  if (lastCloud) for (let i = 0; i < lastCloud.pos.length; i++) lastCloud.pos[i] *= mult
+  if (splatState) { for (let i = 0; i < splatState.pos.length; i++) splatState.pos[i] *= mult; for (let i = 0; i < splatState.scale.length; i++) splatState.scale[i] *= mult }
+  metricFactor *= mult
+  if (lastCloud) renderPointsGL(lastCloud.pos, lastCloud.col)
+}
+;($('#c-setscale') || {}).onclick = () => {
+  if (!lastCloud) { vstatus('Reconstruct a point cloud first, then set its real-world size.'); return }
+  const real = parseFloat(($('#c-reallen') || {}).value)
+  if (!(real > 0)) { vstatus('Enter the real length (in feet) of the cloud\'s longest dimension, then Set scale.'); return }
+  const d = cloudDims(lastCloud.pos); if (!(d.maxEdge > 0)) return
+  applyMetricMult(real / d.maxEdge)
+  const nd = cloudDims(lastCloud.pos)
+  vstatus('Scaled to real size — longest dimension ' + real.toFixed(1) + ' ft. Cloud is now ~' + nd.dx.toFixed(1) + ' × ' + nd.dy.toFixed(1) + ' × ' + nd.dz.toFixed(1) + ' ft. Exports (.ply / gsplat) now use these real units.')
+}
+;($('#c-resetscale') || {}).onclick = () => { if (metricFactor !== 1) applyMetricMult(1 / metricFactor); vstatus('Scale reset to relative (monocular SfM has no inherent scale until you set a reference).') }
+;(() => { try { const s = JSON.parse(localStorage.getItem('amni_scan')); if (s && s.edges_ft && s.edges_ft.length) { const el = $('#c-reallen'); if (el) { el.value = Math.max.apply(null, s.edges_ft).toFixed(1); el.title = 'Prefilled from your measurement (' + (s.area_ft2 || '?') + ' ft²)' } } } catch (e) {} })()
 if (location.search.indexOf('demo') >= 0) {
   const pos = [], col = []
   for (let i = 0; i < 12; i++) for (let j = 0; j < 12; j++) for (let k = 0; k < 12; k++) { pos.push(i / 11 - 0.5, j / 11 - 0.5, k / 11 - 0.5); col.push(i / 11, j / 11, k / 11) }
