@@ -326,10 +326,39 @@ async function loadSplat(file) {
     pcApp.assets.load(asset)
   } catch (e) { vstatus('Viewer error: ' + (e && e.message || e)) }
 }
-$('#vfile').addEventListener('change', e => { const f = e.target.files[0]; if (f) loadSplat(f) })
+function parsePointPly(buf) {
+  const bytes = new Uint8Array(buf); let hs = '', headEnd = -1
+  for (let i = 0; i < Math.min(bytes.length, 65536); i++) { hs += String.fromCharCode(bytes[i]); if (hs.indexOf('end_header') >= 0) { headEnd = hs.indexOf('end_header') + 10; while (bytes[headEnd] === 10 || bytes[headEnd] === 13) headEnd++; break } }
+  if (headEnd < 0) return null
+  const ascii = /format\s+ascii/.test(hs), m = hs.match(/element\s+vertex\s+(\d+)/); if (!m) return null
+  const n = +m[1], props = []; hs.split('\n').forEach(l => { const pm = l.trim().match(/^property\s+(\w+)\s+(\w+)$/); if (pm) props.push({ type: pm[1], name: pm[2] }) })
+  const idx = nm => props.findIndex(p => p.name === nm), ix = idx('x'), iy = idx('y'), iz = idx('z'), ir = idx('red'), ig = idx('green'), ib = idx('blue')
+  if (ix < 0) return null
+  const pos = new Float32Array(n * 3), col = new Float32Array(n * 3)
+  if (ascii) {
+    const lines = new TextDecoder('ascii').decode(bytes.subarray(headEnd)).split('\n'); let k = 0
+    for (let i = 0; i < lines.length && k < n; i++) { const t = lines[i].trim(); if (!t) continue; const v = t.split(/\s+/); pos[k*3]=+v[ix];pos[k*3+1]=+v[iy];pos[k*3+2]=+v[iz]; col[k*3]=ir>=0?(+v[ir])/255:0.7;col[k*3+1]=ig>=0?(+v[ig])/255:0.8;col[k*3+2]=ib>=0?(+v[ib])/255:0.9; k++ }
+    return { pos: pos.slice(0, k * 3), col: col.slice(0, k * 3) }
+  }
+  const SZ = { char:1,uchar:1,int8:1,uint8:1,short:2,ushort:2,int16:2,uint16:2,int:4,uint:4,int32:4,uint32:4,float:4,float32:4,double:8,float64:8 }
+  let stride = 0; const off = props.map(p => { const o = stride; stride += SZ[p.type] || 4; return o })
+  const dv = new DataView(buf, headEnd)
+  const rd = (pi, base) => { const o = off[pi], ty = props[pi].type; switch (ty) { case 'uchar': case 'uint8': return dv.getUint8(base+o); case 'char': case 'int8': return dv.getInt8(base+o); case 'ushort': case 'uint16': return dv.getUint16(base+o,true); case 'short': case 'int16': return dv.getInt16(base+o,true); case 'uint': case 'uint32': return dv.getUint32(base+o,true); case 'int': case 'int32': return dv.getInt32(base+o,true); case 'double': case 'float64': return dv.getFloat64(base+o,true); default: return dv.getFloat32(base+o,true) } }
+  for (let i = 0; i < n; i++) { const base = i * stride; pos[i*3]=rd(ix,base);pos[i*3+1]=rd(iy,base);pos[i*3+2]=rd(iz,base); col[i*3]=ir>=0?rd(ir,base)/255:0.7;col[i*3+1]=ig>=0?rd(ig,base)/255:0.8;col[i*3+2]=ib>=0?rd(ib,base)/255:0.9 }
+  return { pos, col }
+}
+async function loadFile(file) {
+  const name = (file.name || '').toLowerCase()
+  if (name.endsWith('.splat') || name.endsWith('.ksplat')) { loadSplat(file); return }
+  let head = ''; try { head = await file.slice(0, 4096).text() } catch (e) {}
+  if (/\b(scale_0|rot_0|f_dc_0|opacity)\b/.test(head)) { loadSplat(file); return }
+  try { const buf = await file.arrayBuffer(); const pc = parsePointPly(buf); if (pc && pc.pos.length >= 3) { renderPointsGL(pc.pos, pc.col); vstatus('Loaded ' + (pc.pos.length / 3 | 0) + ' points from your .ply.'); return } } catch (e) {}
+  loadSplat(file)
+}
+$('#vfile').addEventListener('change', e => { const f = e.target.files[0]; if (f) loadFile(f) })
 const wrap = $('#vwrap')
 wrap.addEventListener('dragover', e => { e.preventDefault() })
-wrap.addEventListener('drop', e => { e.preventDefault(); const f = e.dataTransfer.files[0]; if (f) loadSplat(f) })
+wrap.addEventListener('drop', e => { e.preventDefault(); const f = e.dataTransfer.files[0]; if (f) loadFile(f) })
 
 // ---------- Our own point-cloud renderer (raw WebGL) + reconstruct (stage 3b) ----------
 const PC_VS = 'attribute vec3 p;attribute vec3 c;uniform mat4 mvp;uniform float sz;varying vec3 vc;void main(){gl_Position=mvp*vec4(p,1.0);gl_PointSize=sz;vc=c;}'
