@@ -66,10 +66,19 @@ export function mountSketch(container, opts) {
   floorBtn.onclick = () => { calibPts = []; setMode('calibrate') }
   const snapBtn = document.createElement('button'); snapBtn.className = 'btn on'; snapBtn.style.cssText = 'padding:6px 10px;font-size:12px'; snapBtn.textContent = '🧲 Snap: on'
   snapBtn.onclick = () => { snapOn = !snapOn; snapBtn.textContent = '🧲 Snap: ' + (snapOn ? 'on' : 'off'); snapBtn.classList.toggle('on', snapOn) }
+  const saveBtn = document.createElement('button'); saveBtn.className = 'btn'; saveBtn.style.cssText = 'padding:6px 10px;font-size:12px'; saveBtn.textContent = '📸 Save image'; saveBtn.onclick = () => exportImage()
   const photoClr = document.createElement('button'); photoClr.className = 'btn'; photoClr.textContent = '✕'; photoClr.title = 'remove photo + floor'; photoClr.style.cssText = 'padding:6px 9px;font-size:12px'
   photoClr.onclick = () => { scene.bgImage = null; scene.floorH = null; scene.ceilH = null; scene.vpVert = null; scene.floorCal = null; applyBg(); onChange(scene); render() }
   const photoTip = document.createElement('span'); photoTip.style.cssText = 'font-size:11px;color:var(--mut)'; photoTip.textContent = 'snap your wall/room, set the floor, then drop fixtures on it'
-  photoStrip.append(photoL, floorBtn, snapBtn, photoClr, photoTip); left.appendChild(photoStrip)
+  photoStrip.append(photoL, floorBtn, snapBtn, saveBtn, photoClr, photoTip); left.appendChild(photoStrip)
+  function composeImage() {
+    return new Promise(resolve => {
+      const c = document.createElement('canvas'); c.width = W; c.height = H; const ctx = c.getContext('2d')
+      const drawSvg = () => { const clone = svg.cloneNode(true); clone.setAttribute('xmlns', NS); clone.setAttribute('width', W); clone.setAttribute('height', H); const str = new XMLSerializer().serializeToString(clone); const img = new Image(); img.onload = () => { ctx.drawImage(img, 0, 0, W, H); try { resolve(c.toDataURL('image/png')) } catch (e) { resolve(null) } }; img.onerror = () => resolve(null); img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(str) }
+      if (scene.bgImage) { const bg = new Image(); bg.onload = () => { const sc = Math.max(W / bg.width, H / bg.height), dw = bg.width * sc, dh = bg.height * sc; ctx.drawImage(bg, (W - dw) / 2, (H - dh) / 2, dw, dh); drawSvg() }; bg.onerror = drawSvg; bg.src = scene.bgImage } else { ctx.fillStyle = '#0d0f12'; ctx.fillRect(0, 0, W, H); drawSvg() }
+    })
+  }
+  async function exportImage() { const url = await composeImage(); if (url) { Object.assign(document.createElement('a'), { href: url, download: 'my-layout.png' }).click(); return } const str = new XMLSerializer().serializeToString(svg); Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([str], { type: 'image/svg+xml' })), download: 'my-layout.svg' }).click() }
   const svgWrap = document.createElement('div'); svgWrap.style.cssText = 'position:relative;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#0d0f12;background-size:cover;background-position:center'
   const svg = el('svg', { viewBox: `0 0 ${W} ${H}`, width: '100%', style: 'touch-action:none;display:block;max-height:62vh;background:transparent' })
   svgWrap.appendChild(svg); left.appendChild(svgWrap)
@@ -274,5 +283,5 @@ export function mountSketch(container, opts) {
   }
 
   applyBg(); renderBar(); render(); history.push(snapshot()); updateUndoBtns(); maybeCoach()
-  return { render, scene, setMode }
+  return { render, scene, setMode, composeImage }
 }
