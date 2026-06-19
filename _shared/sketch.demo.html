@@ -22,8 +22,9 @@ bx.fillStyle = 'rgba(255,255,255,.06)'; bx.fillRect(0, 380, 720, 80)
 scene.bgImage = bgC.toDataURL('image/jpeg', 0.8)
 scene.floorH = computeHomography([[0,0],[10,0],[10,12],[0,12]], [[320,360],[640,360],[800,560],[160,560]])
 scene.floorCal = { px:[[320,360],[640,360],[800,560],[160,560]], w:10, d:12 }
-const place = (type, fx, fz) => { const px = applyH(scene.floorH, [fx, fz]); addNode(scene, type, px[0], px[1], { fx, fz }) }
-place('toilet', 5, 5); place('tub', 2, 8)
+const place = (type, fx, fz) => { const px = applyH(scene.floorH, [fx, fz]); return addNode(scene, type, px[0], px[1], { fx, fz }) }
+const WC = place('toilet', 6, 4), TUB = place('tub', 2.2, 7), V = place('vent', 8.5, 3), M = place('main', 5, 10.5)
+addRun(scene,'dwv3',WC,M); addRun(scene,'dwv2',TUB,M); addRun(scene,'dwv2',WC,V)
 const ctrl = mountSketch(document.getElementById('sketch'), { scene, trade, catalog, store:'hd', onChange:()=>{} })
 window.__ready = true
 </script></body></html>

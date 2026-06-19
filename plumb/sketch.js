@@ -15,6 +15,8 @@ export function runPoints(run, scene) {
   return [[a.x, a.y], ...(run.waypoints || []), [b.x, b.y]]
 }
 export function runLengthFt(run, scene) {
+  const a = nodeById(scene, run.a), b = nodeById(scene, run.b)
+  if (a && b && a.props && a.props.fx != null && b.props && b.props.fx != null) return Math.hypot(b.props.fx - a.props.fx, b.props.fz - a.props.fz)
   const pts = runPoints(run, scene); let px = 0
   for (let i = 1; i < pts.length; i++) px += Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1])
   return px / (scene.scalePxPerFt || 24)
