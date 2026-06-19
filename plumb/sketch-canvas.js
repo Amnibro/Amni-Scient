@@ -84,6 +84,13 @@ export function mountSketch(container, opts) {
     calForm.querySelector('#_cset').onclick = () => { const w = +calForm.querySelector('#_cw').value || 10, d = +calForm.querySelector('#_cd').value || 12, p = calibPts.slice(0, 6), cal = calibrateRoom(p[0], p[1], p[2], p[3], p[4], p[5], w, d); if (!cal) { calForm.innerHTML = '<div style="color:#e06b6b;max-width:200px">Hmm, couldn\'t read that corner — the taps may be off. Redo the 6 corners.</div><button id="_cretry" class="btn" style="margin-top:9px;padding:5px 12px">↻ Redo</button>'; calForm.querySelector('#_cretry').onclick = () => { calForm.style.display = 'none'; calibPts = []; setMode('calibrate') }; return } scene.floorH = cal.floorH; scene.ceilH = cal.ceilH; scene.vpVert = cal.vpVert; scene.floorCal = { w, d, corner: p }; calForm.style.display = 'none'; setMode('select'); onChange(scene); render() }
     calForm.querySelector('#_ccan').onclick = () => { calForm.style.display = 'none'; setMode('select') }
   }
+  const coach = document.createElement('div'); coach.style.cssText = 'position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:7;display:none;width:330px;max-width:90%;background:rgba(20,24,30,.97);border:1px solid var(--acc);border-radius:16px;padding:18px 20px;box-shadow:0 10px 34px #000b;font-size:13px;line-height:1.45'
+  const cstep = (n, html) => '<div style="display:flex;gap:10px;align-items:flex-start;margin:9px 0"><span style="flex:none;width:22px;height:22px;border-radius:50%;background:var(--acc);color:#111;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:12px">' + n + '</span><span>' + html + '</span></div>'
+  coach.innerHTML = '<div style="font-weight:700;font-size:16px;color:var(--acc);margin-bottom:6px">👋 Plan your room in 3 steps</div>' + cstep(1, 'Tap <b>📷 Add room photo</b> — a picture of your room.') + cstep(2, 'Tap <b>📐 Set floor</b> and mark the room corner.') + cstep(3, 'Pick a fixture below and <b>tap the floor</b> — it stands up to scale.') + '<button id="_coachok" class="btn on" style="margin-top:12px;width:100%;padding:9px;font-weight:600">Got it ✓</button>'
+  svgWrap.appendChild(coach)
+  const hideCoach = () => { coach.style.display = 'none' }
+  coach.querySelector('#_coachok').onclick = () => { try { localStorage.setItem('amni_sketch_seen', '1') } catch (e) {} hideCoach() }
+  function maybeCoach() { let seen; try { seen = localStorage.getItem('amni_sketch_seen') } catch (e) {} coach.style.display = (!seen && !scene.nodes.length) ? 'block' : 'none' }
   function updateBanner() {
     let txt = '', col = '', btn = ''
     if (mode === 'calibrate') { txt = calibPts.length >= 6 ? '✓ Now tell me the wall sizes →' : '👆 Tap ' + CAL_STEPS[calibPts.length] + '  (' + (calibPts.length + 1) + '/6)'; col = '#2a6ec2'; btn = '✕ Cancel' }
@@ -119,7 +126,7 @@ export function mountSketch(container, opts) {
   ctl.appendChild(csvB)
 
   const mkBtn = (label, on, sty) => { const b = document.createElement('button'); b.className = 'btn'; b.textContent = label; b.style.cssText = 'padding:6px 9px;font-size:12px;' + (sty || ''); b.onclick = on; bar.appendChild(b); return b }
-  function setMode(m) { mode = m; connectFrom = null; if (m !== 'calibrate' && calForm) calForm.style.display = 'none'; renderBar(); render() }
+  function setMode(m) { mode = m; connectFrom = null; if (m !== 'calibrate' && calForm) calForm.style.display = 'none'; if (m !== 'select') hideCoach(); renderBar(); render() }
   function delSelected() { if (!selected) return; if (selected.kind === 'node') removeNode(scene, selected.id); else scene.runs = scene.runs.filter(r => r.id !== selected.id); selected = null; changed() }
   function renderBar() {
     bar.innerHTML = ''
@@ -165,7 +172,7 @@ export function mountSketch(container, opts) {
   function doUndo() { const s = history.undo(); if (s != null) restore(s) }
   function doRedo() { const s = history.redo(); if (s != null) restore(s) }
   function updateUndoBtns() { if (undoBtn) undoBtn.disabled = !history.canUndo(); if (redoBtn) redoBtn.disabled = !history.canRedo() }
-  function changed() { onChange(scene); history.push(snapshot()); updateUndoBtns(); render() }
+  function changed() { hideCoach(); onChange(scene); history.push(snapshot()); updateUndoBtns(); render() }
 
   function render() {
     while (svg.firstChild) svg.removeChild(svg.firstChild)
@@ -263,6 +270,6 @@ export function mountSketch(container, opts) {
     readBody.innerHTML = h
   }
 
-  applyBg(); renderBar(); render(); history.push(snapshot()); updateUndoBtns()
+  applyBg(); renderBar(); render(); history.push(snapshot()); updateUndoBtns(); maybeCoach()
   return { render, scene, setMode }
 }
