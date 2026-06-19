@@ -65,6 +65,18 @@ export function mountSketch(container, opts) {
   photoIn.onchange = e => { loadBg(e.target.files && e.target.files[0]); photoIn.value = '' }
   const floorBtn = document.createElement('button'); floorBtn.className = 'btn'; floorBtn.style.cssText = 'padding:6px 10px;font-size:12px'; floorBtn.textContent = '📐 Set floor'
   floorBtn.onclick = () => { calibPts = []; setMode('calibrate') }
+  const autoBtn = document.createElement('button'); autoBtn.className = 'btn'; autoBtn.style.cssText = 'padding:6px 10px;font-size:12px'; autoBtn.textContent = '✨ Auto-detect room'
+  autoBtn.onclick = async () => {
+    if (!scene.bgImage) { hint.textContent = 'Add a room photo first, then ✨ auto-detect.'; return }
+    autoBtn.textContent = '… detecting'
+    try {
+      const m = await import('./room-detect.js'), det = await m.detectRoom(scene.bgImage)
+      const room = det && det.confidence >= 0.25 ? m.buildRoomFromDetection(det, W, H, scene.floorCal || { w: 12, d: 12 }) : null
+      if (!room || !room.floorH) { hint.textContent = '🤔 Couldn\'t read the room clearly — tap 📐 Set floor to mark the corner instead.' }
+      else { scene.floorH = room.floorH; scene.ceilH = room.ceilH; scene.vpVert = room.vpVert; scene.floorCal = room.floorCal; changed(); hint.textContent = '✨ Room detected (' + Math.round(det.confidence * 100) + '%) — drop fixtures, or tap 📐 to fine-tune the corners.' }
+    } catch (e) { hint.textContent = '✨ Auto-detect needs the module page (CV libs).' }
+    autoBtn.textContent = '✨ Auto-detect room'
+  }
   const snapBtn = document.createElement('button'); snapBtn.className = 'btn on'; snapBtn.style.cssText = 'padding:6px 10px;font-size:12px'; snapBtn.textContent = '🧲 Snap: on'
   snapBtn.onclick = () => { snapOn = !snapOn; snapBtn.textContent = '🧲 Snap: ' + (snapOn ? 'on' : 'off'); snapBtn.classList.toggle('on', snapOn) }
   const saveBtn = document.createElement('button'); saveBtn.className = 'btn'; saveBtn.style.cssText = 'padding:6px 10px;font-size:12px'; saveBtn.textContent = '📸 Save image'; saveBtn.onclick = () => exportImage()
@@ -72,7 +84,7 @@ export function mountSketch(container, opts) {
   const photoClr = document.createElement('button'); photoClr.className = 'btn'; photoClr.textContent = '✕'; photoClr.title = 'remove photo + floor'; photoClr.style.cssText = 'padding:6px 9px;font-size:12px'
   photoClr.onclick = () => { scene.bgImage = null; scene.floorH = null; scene.ceilH = null; scene.vpVert = null; scene.floorCal = null; applyBg(); onChange(scene); render() }
   const photoTip = document.createElement('span'); photoTip.style.cssText = 'font-size:11px;color:var(--mut)'; photoTip.textContent = 'snap your wall/room, set the floor, then drop fixtures on it'
-  photoStrip.append(photoL, floorBtn, snapBtn, td3Btn, saveBtn, photoClr, photoTip); left.appendChild(photoStrip)
+  photoStrip.append(photoL, floorBtn, autoBtn, snapBtn, td3Btn, saveBtn, photoClr, photoTip); left.appendChild(photoStrip)
   const td3 = document.createElement('div'); td3.style.cssText = 'display:none;width:100%;height:62vh;min-height:420px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#10141a'; left.appendChild(td3)
   td3Btn.onclick = async () => {
     if (view3d) { view3d.dispose(); view3d = null; td3.style.display = 'none'; td3.innerHTML = ''; svgWrap.style.display = ''; td3Btn.textContent = '🧊 3D'; td3Btn.classList.remove('on'); return }

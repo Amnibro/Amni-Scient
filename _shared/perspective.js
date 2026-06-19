@@ -64,6 +64,12 @@ export function calibrateRoom(FC, FL, FR, CC, CL, CR, W, D) {
   const vpVert = lineInt(FC, CC, FL, CL)
   return { floorH, ceilH, vpVert }
 }
+// Build a plane homography from an origin corner O, the two axis far-points A/B, and the two
+// horizontal vanishing points directly (finite [x,y]) — for CV room-detect that recovers the VPs
+// from the photo instead of from tapped ceiling corners.
+export function floorFromVPs(O, A, B, VPl, VPr, W, D) {
+  return plane(O, A, B, [VPl[0], VPl[1], 1], [VPr[0], VPr[1], 1], W, D)
+}
 // invert a 3x3 (image px -> floor feet), for tap-on-photo -> floor position
 export function invert3(H) {
   const a = H[0], b = H[1], c = H[2], d = H[3], e = H[4], f = H[5], g = H[6], h = H[7], i = H[8]
