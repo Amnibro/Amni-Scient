@@ -125,14 +125,14 @@ async function webgpuReason(){
   try { const a = await navigator.gpu.requestAdapter({powerPreference:'high-performance'}); return a ? 'ok' : 'no-adapter'; }
   catch(e){ return 'no-adapter'; }
 }
-if(!navigator.gpu){ status.innerHTML = '⚠️ This browser has no <b>WebGPU</b> — Amni needs it. Try Chrome, Edge, Firefox, or Safari 26+ (incl. iOS 26).'; }
+if(!navigator.gpu){ status.innerHTML = '⚠️ No <b>WebGPU</b> detected — Amni needs it. <b>Brave?</b> enable brave://flags/#enable-unsafe-webgpu &amp; restart. Else Chrome, Edge, Firefox, or Safari 26+.'; }
 btn.addEventListener('click', async () => {
   btn.disabled = true;
   spin.style.display = 'block';
   status.textContent = 'Checking WebGPU...';
   const reason = await webgpuReason();
-  if(reason === 'no-api') return fail('⚠️ This browser doesn\'t support <b>WebGPU</b>, which Amni needs.<br>Use Chrome, Edge, Firefox 141+, or Safari 26+ (incl. iOS 26).');
-  if(reason === 'no-adapter') return fail('⚠️ WebGPU is here but no GPU was available.<br>Enable hardware acceleration / update graphics drivers, then retry.');
+  if(reason === 'no-api') return fail('⚠️ <b>WebGPU</b> isn\'t available, and Amni needs it.<br><b>Brave?</b> It blocks WebGPU by default — turn it on at <b>brave://flags/#enable-unsafe-webgpu</b> (set to Enabled) and restart, or lower Shields for this site.<br>Otherwise use Chrome, Edge, Firefox 141+, or Safari 26+ (incl. iOS 26).');
+  if(reason === 'no-adapter') return fail('⚠️ WebGPU is present but no GPU adapter responded.<br><b>Brave?</b> Enable <b>brave://flags/#enable-unsafe-webgpu</b> and restart (or lower Shields).<br>Otherwise enable hardware acceleration / update graphics drivers, then retry.');
   status.textContent = 'Fetching the world seed (4.5 MB)...';
   try {
     const V = '194';
