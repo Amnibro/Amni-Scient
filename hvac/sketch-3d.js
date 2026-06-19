@@ -97,15 +97,32 @@ export function mount3D(container, opts) {
     for (const rt of (trade.runTypes || [])) mkb(rt.label, () => setMode('connect:' + rt.type), mode === 'connect:' + rt.type, rt.color)
     mkb('🗑', () => { if (selected) { removeNode(scene3, selected); selected = null; commit() } }, false)
     if (cloudPoints) mkb('☁️ Room cloud', () => { cloudPoints.visible = !cloudPoints.visible; renderBar() }, cloudPoints.visible)
+    mkb(camOn ? '📷 Camera: on' : '📷 Camera', () => toggleCamera(), camOn)
   }
   function setMode(m) { mode = m; connectFrom = null; controls.enabled = (m === 'select'); renderBar() }
   function commit() { rebuild(); onChange(scene3) }
   // three renderer + camera + controls
   const cam = new THREE.PerspectiveCamera(50, Math.max(1, container.clientWidth) / Math.max(1, container.clientHeight || 500), 0.05, 500)
   const md = Math.max(W, D); cam.position.set(W / 2 - md * 0.55, md * 0.78, D + md * 0.5)
-  const renderer = new THREE.WebGLRenderer({ antialias: true }); renderer.setPixelRatio(Math.min(2, (typeof devicePixelRatio !== 'undefined' ? devicePixelRatio : 1)))
-  renderer.domElement.style.cssText = 'width:100%;height:100%;display:block;border-radius:10px;touch-action:none'
-  container.appendChild(renderer.domElement)
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true }); renderer.setPixelRatio(Math.min(2, (typeof devicePixelRatio !== 'undefined' ? devicePixelRatio : 1))); renderer.setClearColor(0x000000, 0)
+  renderer.domElement.style.cssText = 'width:100%;height:100%;display:block;border-radius:10px;touch-action:none;position:relative;z-index:1'
+  // camera-overlay AR (no WebXR): a live camera frame (or a still) behind the transparent 3D scene.
+  const camBg = document.createElement('div'); camBg.style.cssText = 'position:absolute;inset:0;z-index:0;display:none;border-radius:10px;overflow:hidden;background:#000'
+  const camVid = document.createElement('video'); camVid.muted = true; camVid.autoplay = true; camVid.playsInline = true; camVid.setAttribute('playsinline', ''); camVid.style.cssText = 'width:100%;height:100%;object-fit:cover'
+  const camImg = document.createElement('img'); camImg.style.cssText = 'width:100%;height:100%;object-fit:cover;display:none'
+  const toast = document.createElement('div'); toast.style.cssText = 'position:absolute;left:50%;bottom:14px;transform:translateX(-50%);z-index:7;display:none;background:rgba(16,18,22,.92);color:#eef2f6;font:12px system-ui;padding:7px 12px;border-radius:9px;max-width:80%;text-align:center'
+  camBg.append(camVid, camImg); container.append(camBg, renderer.domElement, toast)
+  let camOn = false, camStream = null
+  const setSceneSolid = on => { root.background = on ? new THREE.Color(0x10141a) : null; floor.visible = on; grid.visible = on; wz.visible = on; wx.visible = on }
+  async function toggleCamera() {
+    camOn = !camOn
+    if (!camOn) { camBg.style.display = 'none'; if (camStream) { camStream.getTracks().forEach(t => t.stop()); camStream = null } setSceneSolid(true); renderBar(); return }
+    setSceneSolid(false); camBg.style.display = 'block'; toast.style.display = 'none'
+    if (opts.cameraStill) { camImg.src = opts.cameraStill; camImg.style.display = 'block'; camVid.style.display = 'none'; renderBar(); return }
+    try { camStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } }); camVid.srcObject = camStream; camVid.style.display = 'block'; camImg.style.display = 'none'; await camVid.play().catch(() => {}) }
+    catch (e) { camOn = false; camBg.style.display = 'none'; setSceneSolid(true); toast.textContent = '📷 Camera unavailable — allow access, or use ☁️ Room cloud / a photo.'; toast.style.display = 'block' }
+    renderBar()
+  }
   const setSize = () => { const w = container.clientWidth || 760, h = container.clientHeight || 500; renderer.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix() }; setSize()
   const controls = new OrbitControls(cam, renderer.domElement); controls.target.set(W / 2, 0.8, D / 2); controls.enableDamping = true; controls.update()
   // interaction

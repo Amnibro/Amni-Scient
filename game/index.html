@@ -87,7 +87,7 @@ footer a{color:var(--muted)}
       <button id="playBtn">▶&nbsp; PLAY</button>
       <div id="spin"></div>
       <div id="status"></div>
-      <div class="note">Best in <b>Edge</b> or <b>Chrome</b> (WebGPU). First load grows the worlds — give it ~15 seconds.</div>
+      <div class="note">Needs <b>WebGPU</b> — works in Chrome, Edge, Firefox, or Safari 26+ (incl. iOS 26). First load grows the worlds — give it ~15 seconds.</div>
     </div>
   </div>
   <div class="controls">
@@ -118,9 +118,21 @@ footer a{color:var(--muted)}
 <script type="module">
 const btn = document.getElementById('playBtn');
 const status = document.getElementById('status');
+const spin = document.getElementById('spin');
+const fail = (html) => { status.innerHTML = html; spin.style.display = 'none'; btn.disabled = false; };
+async function webgpuReason(){
+  if(!navigator.gpu) return 'no-api';
+  try { const a = await navigator.gpu.requestAdapter({powerPreference:'high-performance'}); return a ? 'ok' : 'no-adapter'; }
+  catch(e){ return 'no-adapter'; }
+}
+if(!navigator.gpu){ status.innerHTML = '⚠️ This browser has no <b>WebGPU</b> — Amni needs it. Try Chrome, Edge, Firefox, or Safari 26+ (incl. iOS 26).'; }
 btn.addEventListener('click', async () => {
   btn.disabled = true;
-  document.getElementById('spin').style.display = 'block';
+  spin.style.display = 'block';
+  status.textContent = 'Checking WebGPU...';
+  const reason = await webgpuReason();
+  if(reason === 'no-api') return fail('⚠️ This browser doesn\'t support <b>WebGPU</b>, which Amni needs.<br>Use Chrome, Edge, Firefox 141+, or Safari 26+ (incl. iOS 26).');
+  if(reason === 'no-adapter') return fail('⚠️ WebGPU is here but no GPU was available.<br>Enable hardware acceleration / update graphics drivers, then retry.');
   status.textContent = 'Fetching the world seed (4.5 MB)...';
   try {
     const V = '194';
@@ -129,12 +141,15 @@ btn.addEventListener('click', async () => {
     await new Promise(r => setTimeout(r, 60));
     await init({ module_or_path: './pkg/amni_bg.wasm?v=' + V });
     const t0 = Date.now();
+    let appeared = false;
     await new Promise(res => {
       const iv = setInterval(() => {
         const c = document.querySelector('#amni-game canvas');
-        if ((c && c.width > 8) || Date.now() - t0 > 90000) { clearInterval(iv); res(); }
+        if (c && c.width > 8) { appeared = true; clearInterval(iv); res(); }
+        else if (Date.now() - t0 > 90000) { clearInterval(iv); res(); }
       }, 250);
     });
+    if (!appeared) return fail('Hmm — the world didn\'t appear in time. Reload to retry; if it keeps happening, your GPU may have stalled.');
     document.getElementById('overlay').style.display = 'none';
     const canvas = document.querySelector('#amni-game canvas');
     if (canvas) { canvas.setAttribute('tabindex', '0'); canvas.focus(); }
@@ -145,8 +160,7 @@ btn.addEventListener('click', async () => {
       if (canvas) { canvas.setAttribute('tabindex', '0'); canvas.focus(); }
       return;
     }
-    status.textContent = 'Could not start: ' + e;
-    btn.disabled = false;
+    fail('Could not start: ' + e + '<br>(If this mentions GPU or adapter, the browser likely lacks full WebGPU support.)');
   }
 });
 </script>
