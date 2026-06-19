@@ -2,13 +2,13 @@
 import { runLengthFt } from './sketch.js'
 
 export const PLUMB_PALETTE = [
-  { type: 'toilet', label: 'Toilet', glyph: '🚽', color: '#5fbf6e', dims: [1.3, 2.3], shape: 'toilet' },
-  { type: 'lav', label: 'Bath sink', glyph: '🚰', color: '#4f9cf0', dims: [2.0, 1.7], shape: 'basin' },
-  { type: 'sink', label: 'Kitchen sink', glyph: '🍽️', color: '#4f9cf0', dims: [2.6, 2.0], shape: 'ksink' },
-  { type: 'shower', label: 'Shower', glyph: '🚿', color: '#b58fd8', dims: [3, 3], shape: 'shower' },
-  { type: 'tub', label: 'Bathtub', glyph: '🛁', color: '#b58fd8', dims: [2.5, 5], shape: 'tub' },
-  { type: 'washer', label: 'Washer', glyph: '🧺', color: '#e0b341', dims: [2.3, 2.3], shape: 'washer' },
-  { type: 'waterheater', label: 'Water heater', glyph: '♨️', color: '#e07b4a', dims: [1.7, 1.7], shape: 'round' },
+  { type: 'toilet', label: 'Toilet', glyph: '🚽', color: '#5fbf6e', dims: [1.3, 2.3], shape: 'toilet', height: 1.3 },
+  { type: 'lav', label: 'Bath sink', glyph: '🚰', color: '#4f9cf0', dims: [2.0, 1.7], shape: 'basin', height: 2.9 },
+  { type: 'sink', label: 'Kitchen sink', glyph: '🍽️', color: '#4f9cf0', dims: [2.6, 2.0], shape: 'ksink', height: 3 },
+  { type: 'shower', label: 'Shower', glyph: '🚿', color: '#b58fd8', dims: [3, 3], shape: 'shower', height: 6.8 },
+  { type: 'tub', label: 'Bathtub', glyph: '🛁', color: '#b58fd8', dims: [2.5, 5], shape: 'tub', height: 1.9 },
+  { type: 'washer', label: 'Washer', glyph: '🧺', color: '#e0b341', dims: [2.3, 2.3], shape: 'washer', height: 3.2 },
+  { type: 'waterheater', label: 'Water heater', glyph: '♨️', color: '#e07b4a', dims: [1.7, 1.7], shape: 'round', height: 4.7 },
   { type: 'hosebibb', label: 'Outdoor faucet', glyph: '🚰', color: '#6ac0d8', dims: [0.6, 0.6], shape: 'marker' },
   { type: 'vent', label: 'Roof vent', glyph: '🌬️', color: '#6ac0d8', dims: [0.6, 0.6], shape: 'marker' },
   { type: 'main', label: 'Drain out', glyph: '🏠', color: '#8a8f98', dims: [0.8, 0.8], shape: 'marker' },

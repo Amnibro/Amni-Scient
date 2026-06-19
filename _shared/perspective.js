@@ -43,13 +43,26 @@ export function applyH(H, p) { const x = p[0], y = p[1], w = H[6] * x + H[7] * y
 // floor+ceiling edges of each wall converge at a vanishing point -> the two floor axes.
 const cross3 = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]]
 const lineInt = (p1, p2, p3, p4) => cross3(cross3([p1[0], p1[1], 1], [p2[0], p2[1], 1]), cross3([p3[0], p3[1], 1], [p4[0], p4[1], 1]))
-export function roomHomography(FC, FL, FR, CC, CL, CR, W, D) {
-  const VPl = lineInt(FC, FL, CC, CL), VPr = lineInt(FC, FR, CC, CR), col3 = [FC[0], FC[1], 1]
+// homography for a plane given its origin O, axis reference points A (at floor (W,0)) and B (at
+// (0,D)), and the two shared horizontal vanishing points. Columns lie along the VP directions.
+function plane(O, A, B, VPa, VPb, W, D) {
+  const col3 = [O[0], O[1], 1]
   const sc = (VP, target, dist) => { let best = 0, bd = 0; for (const k of [0, 1]) { const den = dist * (VP[k] - VP[2] * target[k]); if (Math.abs(den) > Math.abs(bd)) { bd = den; best = (target[k] - col3[k]) / den } } return best }
-  const l1 = sc(VPl, FL, W), l2 = sc(VPr, FR, D)
-  const c1 = [VPl[0] * l1, VPl[1] * l1, VPl[2] * l1], c2 = [VPr[0] * l2, VPr[1] * l2, VPr[2] * l2]
+  const l1 = sc(VPa, A, W), l2 = sc(VPb, B, D), c1 = [VPa[0] * l1, VPa[1] * l1, VPa[2] * l1], c2 = [VPb[0] * l2, VPb[1] * l2, VPb[2] * l2]
   const H = [c1[0], c2[0], col3[0], c1[1], c2[1], col3[1], c1[2], c2[2], col3[2]]
   return (H.every(x => isFinite(x)) && Math.abs(H[8]) > 1e-9) ? H : null
+}
+export function roomHomography(FC, FL, FR, CC, CL, CR, W, D) {
+  return plane(FC, FL, FR, lineInt(FC, FL, CC, CL), lineInt(FC, FR, CC, CR), W, D)
+}
+// Full room calibration: floor + ceiling plane homographies (share the horizontal VPs) + the
+// vertical vanishing point. Lets us raise fixtures to 3D boxes. ceilFt = wall height (default 8).
+export function calibrateRoom(FC, FL, FR, CC, CL, CR, W, D) {
+  const VPl = lineInt(FC, FL, CC, CL), VPr = lineInt(FC, FR, CC, CR)
+  const floorH = plane(FC, FL, FR, VPl, VPr, W, D), ceilH = plane(CC, CL, CR, VPl, VPr, W, D)
+  if (!floorH || !ceilH) return null
+  const vpVert = lineInt(FC, CC, FL, CL)
+  return { floorH, ceilH, vpVert }
 }
 // invert a 3x3 (image px -> floor feet), for tap-on-photo -> floor position
 export function invert3(H) {

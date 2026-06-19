@@ -1,7 +1,8 @@
 // Interactive SVG canvas layer over the shared sketch engine core.
 // Framework-free. mountSketch(container, {scene, trade, catalog, store, onChange}) -> controller.
 import { addNode, addRun, removeNode, nodeById, runPoints, runLengthFt, evaluate } from './sketch.js'
-import { computeHomography, roomHomography, applyH, invert3 } from './perspective.js'
+import { computeHomography, roomHomography, calibrateRoom, applyH, invert3 } from './perspective.js'
+const CEIL_FT = 8
 const CAL_STEPS = ['the bottom corner where the two walls meet the floor', 'the bottom corner at the far end of the LEFT wall', 'the bottom corner at the far end of the RIGHT wall', 'the ceiling corner straight above your 1st tap', 'the top corner above your LEFT-wall tap', 'the top corner above your RIGHT-wall tap']
 const NS = 'http://www.w3.org/2000/svg'
 const el = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e }
@@ -36,7 +37,10 @@ export function mountSketch(container, opts) {
   const W = 960, H = 600
   let mode = 'select', connectFrom = null, selected = null, drag = null, calibPts = []
   const nodePix = n => (scene.floorH && n.props && n.props.fx != null) ? applyH(scene.floorH, [n.props.fx, n.props.fz]) : [n.x, n.y]
-  const floorQuad = (fx, fz, w, d, rotDeg) => { const r = (rotDeg || 0) * Math.PI / 180, c = Math.cos(r), s = Math.sin(r); return [[-w / 2, -d / 2], [w / 2, -d / 2], [w / 2, d / 2], [-w / 2, d / 2]].map(([px, py]) => applyH(scene.floorH, [fx + (px * c - py * s), fz + (px * s + py * c)])) }
+  const floorPts = (fx, fz, w, d, rotDeg) => { const r = (rotDeg || 0) * Math.PI / 180, c = Math.cos(r), s = Math.sin(r); return [[-w / 2, -d / 2], [w / 2, -d / 2], [w / 2, d / 2], [-w / 2, d / 2]].map(([px, py]) => [fx + (px * c - py * s), fz + (px * s + py * c)]) }
+  const floorQuad = (fx, fz, w, d, rotDeg) => floorPts(fx, fz, w, d, rotDeg).map(p => applyH(scene.floorH, p))
+  const heightLerp = (p0, pc, rho) => { const v = scene.vpVert; if (!v || Math.abs(v[2]) < 1e-9) return [p0[0] + rho * (pc[0] - p0[0]), p0[1] + rho * (pc[1] - p0[1])]; const VX = v[0] / v[2], VY = v[1] / v[2], dx = pc[0] - p0[0], dy = pc[1] - p0[1], L2 = dx * dx + dy * dy; if (L2 < 1e-9) return p0.slice(); const u = ((VX - p0[0]) * dx + (VY - p0[1]) * dy) / L2; let t = Math.abs(u + rho - 1) < 1e-6 ? rho : rho * u / (u + rho - 1); if (!isFinite(t) || t < -0.5 || t > 4) t = rho; return [p0[0] + t * dx, p0[1] + t * dy] }
+  const fixtureBox = (fx, fz, w, d, rotDeg, hft) => { const fp = floorPts(fx, fz, w, d, rotDeg), floor = fp.map(p => applyH(scene.floorH, p)), ceil = fp.map(p => applyH(scene.ceilH, p)), rho = Math.min(0.97, Math.max(0, (hft || 0) / CEIL_FT)), top = floor.map((p, i) => heightLerp(p, ceil[i], rho)); return { floor, top } }
 
   container.innerHTML = ''
   container.style.cssText = 'display:flex;gap:14px;flex-wrap:wrap;align-items:flex-start'
@@ -50,7 +54,7 @@ export function mountSketch(container, opts) {
   const floorBtn = document.createElement('button'); floorBtn.className = 'btn'; floorBtn.style.cssText = 'padding:6px 10px;font-size:12px'; floorBtn.textContent = '📐 Set floor'
   floorBtn.onclick = () => { calibPts = []; setMode('calibrate') }
   const photoClr = document.createElement('button'); photoClr.className = 'btn'; photoClr.textContent = '✕'; photoClr.title = 'remove photo + floor'; photoClr.style.cssText = 'padding:6px 9px;font-size:12px'
-  photoClr.onclick = () => { scene.bgImage = null; scene.floorH = null; scene.floorCal = null; applyBg(); onChange(scene); render() }
+  photoClr.onclick = () => { scene.bgImage = null; scene.floorH = null; scene.ceilH = null; scene.vpVert = null; scene.floorCal = null; applyBg(); onChange(scene); render() }
   const photoTip = document.createElement('span'); photoTip.style.cssText = 'font-size:11px;color:var(--mut)'; photoTip.textContent = 'snap your wall/room, set the floor, then drop fixtures on it'
   photoStrip.append(photoL, floorBtn, photoClr, photoTip); left.appendChild(photoStrip)
   const svgWrap = document.createElement('div'); svgWrap.style.cssText = 'position:relative;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#0d0f12;background-size:cover;background-position:center'
@@ -64,7 +68,7 @@ export function mountSketch(container, opts) {
   function showCalForm() {
     calForm.style.display = 'block'
     calForm.innerHTML = '<div style="margin-bottom:9px;font-weight:600">How long is each wall?</div><div style="display:flex;gap:4px;align-items:center;justify-content:center">left<input id="_cw" type="number" min="1" value="10" style="' + inCss + '">ft &nbsp;·&nbsp; right<input id="_cd" type="number" min="1" value="12" style="' + inCss + '">ft</div><div style="margin-top:11px;display:flex;gap:8px;justify-content:center"><button id="_cset" class="btn" style="padding:5px 12px">✓ Set floor</button><button id="_ccan" class="btn" style="padding:5px 12px">✕</button></div>'
-    calForm.querySelector('#_cset').onclick = () => { const w = +calForm.querySelector('#_cw').value || 10, d = +calForm.querySelector('#_cd').value || 12, p = calibPts.slice(0, 6), HH = roomHomography(p[0], p[1], p[2], p[3], p[4], p[5], w, d); if (!HH) { calForm.innerHTML = '<div style="color:#e06b6b;max-width:200px">Hmm, couldn\'t read that corner — the taps may be off. Redo the 6 corners.</div><button id="_cretry" class="btn" style="margin-top:9px;padding:5px 12px">↻ Redo</button>'; calForm.querySelector('#_cretry').onclick = () => { calForm.style.display = 'none'; calibPts = []; setMode('calibrate') }; return } scene.floorH = HH; scene.floorCal = { w, d, corner: p }; calForm.style.display = 'none'; setMode('select'); onChange(scene); render() }
+    calForm.querySelector('#_cset').onclick = () => { const w = +calForm.querySelector('#_cw').value || 10, d = +calForm.querySelector('#_cd').value || 12, p = calibPts.slice(0, 6), cal = calibrateRoom(p[0], p[1], p[2], p[3], p[4], p[5], w, d); if (!cal) { calForm.innerHTML = '<div style="color:#e06b6b;max-width:200px">Hmm, couldn\'t read that corner — the taps may be off. Redo the 6 corners.</div><button id="_cretry" class="btn" style="margin-top:9px;padding:5px 12px">↻ Redo</button>'; calForm.querySelector('#_cretry').onclick = () => { calForm.style.display = 'none'; calibPts = []; setMode('calibrate') }; return } scene.floorH = cal.floorH; scene.ceilH = cal.ceilH; scene.vpVert = cal.vpVert; scene.floorCal = { w, d, corner: p }; calForm.style.display = 'none'; setMode('select'); onChange(scene); render() }
     calForm.querySelector('#_ccan').onclick = () => { calForm.style.display = 'none'; setMode('select') }
   }
   function updateBanner() {
@@ -174,11 +178,17 @@ export function mountSketch(container, opts) {
       const ctr = nodePix(n), g = el('g', { 'data-node': n.id, style: 'cursor:pointer' }, svg)
       const lbl = trade.nodeLabel ? trade.nodeLabel(n) : (n.props && n.props.label ? n.props.label : p.label)
       if (persp && n.props && n.props.fx != null && p.shape !== 'marker') {
-        const q = floorQuad(n.props.fx, n.props.fz, dims[0], dims[1], rot), pts = q.map(pt => pt[0].toFixed(1) + ',' + pt[1].toFixed(1)).join(' ')
-        if (connectFrom === n.id) el('polygon', { points: pts, fill: 'none', stroke: '#5fbf6e', 'stroke-width': 4, 'stroke-dasharray': '5 3' }, g)
-        el('polygon', { points: pts, fill: 'rgba(238,242,246,.9)', stroke: sel ? '#fff' : p.color, 'stroke-width': sel ? 4 : 2.5, 'stroke-linejoin': 'round' }, g)
-        const ex = q.reduce((s, pt) => s + pt[0], 0) / 4, ey = q.reduce((s, pt) => s + pt[1], 0) / 4, maxy = Math.max(q[0][1], q[1][1], q[2][1], q[3][1])
-        el('text', { x: ex, y: ey + 5, 'text-anchor': 'middle', 'font-size': 17, 'font-family': '"Segoe UI Emoji","Apple Color Emoji",system-ui', style: 'pointer-events:none' }, g).textContent = p.glyph || '•'
+        const box = (scene.ceilH && p.height > 0) ? fixtureBox(n.props.fx, n.props.fz, dims[0], dims[1], rot, p.height) : null
+        const fq = box ? box.floor : floorQuad(n.props.fx, n.props.fz, dims[0], dims[1], rot), str = a => a.map(pt => pt[0].toFixed(1) + ',' + pt[1].toFixed(1)).join(' ')
+        const ex = (box ? box.top : fq).reduce((s, pt) => s + pt[0], 0) / 4, ey = (box ? box.top : fq).reduce((s, pt) => s + pt[1], 0) / 4, maxy = Math.max(fq[0][1], fq[1][1], fq[2][1], fq[3][1])
+        if (connectFrom === n.id) el('polygon', { points: str(fq), fill: 'none', stroke: '#5fbf6e', 'stroke-width': 4, 'stroke-dasharray': '5 3' }, g)
+        if (box) {
+          el('polygon', { points: str(fq), fill: 'rgba(18,22,28,.34)', stroke: 'none' }, g)
+          const sides = [0, 1, 2, 3].map(i => { const j = (i + 1) % 4; return { my: (fq[i][1] + fq[j][1]) / 2, poly: [fq[i], fq[j], box.top[j], box.top[i]] } }).sort((a, b) => a.my - b.my)
+          for (const sd of sides) el('polygon', { points: str(sd.poly), fill: 'rgba(34,40,49,.62)', stroke: p.color, 'stroke-width': 1.2, 'stroke-opacity': 0.55, 'stroke-linejoin': 'round' }, g)
+          el('polygon', { points: str(box.top), fill: 'rgba(238,242,246,.93)', stroke: sel ? '#fff' : p.color, 'stroke-width': sel ? 3.5 : 2, 'stroke-linejoin': 'round' }, g)
+        } else el('polygon', { points: str(fq), fill: 'rgba(238,242,246,.9)', stroke: sel ? '#fff' : p.color, 'stroke-width': sel ? 4 : 2.5, 'stroke-linejoin': 'round' }, g)
+        el('text', { x: ex, y: ey + 5, 'text-anchor': 'middle', 'font-size': box ? 15 : 17, 'font-family': '"Segoe UI Emoji","Apple Color Emoji",system-ui', style: 'pointer-events:none' }, g).textContent = p.glyph || '•'
         el('rect', { x: ex - (lbl.length * 3.2 + 5), y: maxy + 3, width: lbl.length * 6.4 + 10, height: 15, rx: 7, fill: 'rgba(16,18,22,.84)', style: 'pointer-events:none' }, g)
         el('text', { x: ex, y: maxy + 14, 'text-anchor': 'middle', 'font-size': 10, fill: '#eef2f6', 'font-family': 'system-ui', style: 'pointer-events:none' }, g).textContent = lbl
         continue

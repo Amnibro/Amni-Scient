@@ -3,9 +3,9 @@
 import { runLengthFt } from './sketch.js'
 
 export const HVAC_PALETTE = [
-  { type: 'airhandler', label: 'Air Handler', glyph: '🌡️', color: '#e07b4a', dims: [2.2, 2.6], shape: 'square' },
-  { type: 'supply', label: 'Supply vent', glyph: '💨', color: '#4f9cf0', dims: [0.5, 1.0], shape: 'square' },
-  { type: 'return', label: 'Return grille', glyph: '↩️', color: '#5fbf6e', dims: [1.7, 1.7], shape: 'square' },
+  { type: 'airhandler', label: 'Air Handler', glyph: '🌡️', color: '#e07b4a', dims: [2.2, 2.6], shape: 'square', height: 4.5 },
+  { type: 'supply', label: 'Supply vent', glyph: '💨', color: '#4f9cf0', dims: [0.5, 1.0], shape: 'square', height: 0.3 },
+  { type: 'return', label: 'Return grille', glyph: '↩️', color: '#5fbf6e', dims: [1.7, 1.7], shape: 'square', height: 0.3 },
   { type: 'damper', label: 'Damper', glyph: '🎛️', color: '#c0a86a', dims: [0.6, 0.6], shape: 'marker' },
 ]
 export const HVAC_RUNTYPES = [

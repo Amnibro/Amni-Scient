@@ -2,17 +2,17 @@
 import { neighbors, reachableFrom, runLengthFt } from './sketch.js'
 
 export const ELEC_PALETTE = [
-  { type: 'panel', label: 'Panel', glyph: '🔲', color: '#e8c33d', dims: [1.2, 2.6], shape: 'panel' },
+  { type: 'panel', label: 'Panel', glyph: '🔲', color: '#e8c33d', dims: [1.2, 2.6], shape: 'panel', height: 3.5 },
   { type: 'recept', label: 'Outlet', glyph: '🔌', color: '#4f9cf0', dims: [0.4, 0.4], shape: 'marker' },
   { type: 'gfci', label: 'GFCI outlet', glyph: '🔌', color: '#5fbf6e', dims: [0.4, 0.4], shape: 'marker' },
   { type: 'switch', label: 'Switch', glyph: '🎚️', color: '#b58fd8', dims: [0.4, 0.4], shape: 'marker' },
   { type: 'light', label: 'Light', glyph: '💡', color: '#e0b341', dims: [1.0, 1.0], shape: 'round' },
-  { type: 'dishwasher', label: 'Dishwasher', glyph: '🍽️', color: '#6ac0d8', dims: [2.0, 2.0], shape: 'square' },
-  { type: 'microwave', label: 'Microwave', glyph: '🔳', color: '#6ac0d8', dims: [1.6, 1.1], shape: 'square' },
-  { type: 'range', label: 'Range/Oven', glyph: '🍳', color: '#e07b4a', dims: [2.5, 2.5], shape: 'square' },
-  { type: 'dryer', label: 'Dryer', glyph: '🌀', color: '#e07b4a', dims: [2.3, 2.3], shape: 'square' },
-  { type: 'waterheater', label: 'Water heater', glyph: '♨️', color: '#e07b4a', dims: [1.7, 1.7], shape: 'round' },
-  { type: 'hvac', label: 'AC / Heat', glyph: '❄️', color: '#e07b4a', dims: [2.5, 2.5], shape: 'square' },
+  { type: 'dishwasher', label: 'Dishwasher', glyph: '🍽️', color: '#6ac0d8', dims: [2.0, 2.0], shape: 'square', height: 2.9 },
+  { type: 'microwave', label: 'Microwave', glyph: '🔳', color: '#6ac0d8', dims: [1.6, 1.1], shape: 'square', height: 1.2 },
+  { type: 'range', label: 'Range/Oven', glyph: '🍳', color: '#e07b4a', dims: [2.5, 2.5], shape: 'square', height: 3 },
+  { type: 'dryer', label: 'Dryer', glyph: '🌀', color: '#e07b4a', dims: [2.3, 2.3], shape: 'square', height: 3.3 },
+  { type: 'waterheater', label: 'Water heater', glyph: '♨️', color: '#e07b4a', dims: [1.7, 1.7], shape: 'round', height: 4.7 },
+  { type: 'hvac', label: 'AC / Heat', glyph: '❄️', color: '#e07b4a', dims: [2.5, 2.5], shape: 'square', height: 2.8 },
 ]
 export const ELEC_RUNTYPES = [
   { type: 'nm142', label: 'Wire 15A', color: '#d88b6a' },
