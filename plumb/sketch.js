@@ -74,6 +74,16 @@ export function evaluate(scene, trade, catalog, store) {
   return { measure: m, bom, quote, checks }
 }
 
+// Which endpoint of a run is "downstream" (flow points toward it): a sink-type node (drain main /
+// panel / air handler) wins; otherwise the higher-degree (more trunk-like) node; else b. For flow arrows.
+export function flowDownstream(run, scene, m, sinkTypes) {
+  const a = nodeById(scene, run.a), b = nodeById(scene, run.b); if (!a || !b) return run.b
+  const sink = sinkTypes || new Set(['main', 'panel', 'airhandler']), aS = sink.has(a.type), bS = sink.has(b.type)
+  if (aS !== bS) return aS ? run.a : run.b
+  const da = m.deg[run.a] || 0, db = m.deg[run.b] || 0
+  return da !== db ? (da > db ? run.a : run.b) : run.b
+}
+
 // Buildable "real components / cut list": per run-type stock sticks/coils + the actual cut lengths,
 // couplings, elbows (drawn bends + a drop per end fixture), tees (each junction beyond 2-way), and the
 // placed fixtures — priced from the catalog where a SKU exists. Trade supplies `stock` (runType ->

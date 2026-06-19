@@ -3,7 +3,7 @@
 // fitting geometry, in a Three.js room you can orbit, place, drag, and connect. 1 unit = 1 ft.
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
-import { addNode, addRun, nodeById, removeNode, snapToWall } from './sketch.js'
+import { addNode, addRun, nodeById, removeNode, snapToWall, evaluate, flowDownstream } from './sketch.js'
 import { fitGroundPlane, floorAlign } from './cloud-align.js'
 
 const PIPE_R = { sup12: 0.05, sup34: 0.06, dwv15: 0.08, dwv2: 0.1, dwv3: 0.13, dwv4: 0.16, nm142: 0.04, nm122: 0.045, nm103: 0.05, nm63: 0.06, s6: 0.25, s8: 0.33, s10: 0.42, s12: 0.5, r8: 0.33, r10: 0.42, r12: 0.5 }
@@ -70,24 +70,41 @@ export function mount3D(container, opts) {
     const f = nfloor(n); g.position.set(f[0], 0, f[1]); g.rotation.y = -(((n.props && n.props.rot) || 0) * Math.PI / 180); g.userData.nodeId = n.id
     return g
   }
+  const sinkTypes = new Set(trade.sinkTypes || ['main', 'panel', 'airhandler', 'cleanout'])
   function rebuild() {
     disposeGroup(fixtureGroup)
-    for (const n of scene3.nodes) fixtureGroup.add(buildFixture(n))
+    for (const n of scene3.nodes) {
+      const p = (trade.palette || []).find(z => z.type === n.type) || { dims: [0.6, 0.6] }, dims = p.dims || [0.6, 0.6], f = nfloor(n)
+      const sh = new THREE.Mesh(new THREE.CircleGeometry(Math.max(dims[0], dims[1]) * 0.62, 22), new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.26 }))
+      sh.rotation.x = -Math.PI / 2; sh.position.set(f[0], 0.012, f[1]); fixtureGroup.add(sh)
+      fixtureGroup.add(buildFixture(n))
+    }
     const deg = {}; for (const r of scene3.runs) { deg[r.a] = (deg[r.a] || 0) + 1; deg[r.b] = (deg[r.b] || 0) + 1 }
     for (const r of scene3.runs) {
       const A = nodeById(scene3, r.a), B = nodeById(scene3, r.b); if (!A || !B) continue
       const fa = nfloor(A), fb = nfloor(B), a = new THREE.Vector3(fa[0], 0.35, fa[1]), b = new THREE.Vector3(fb[0], 0.35, fb[1])
-      const rt = (trade.runTypes || []).find(z => z.type === r.type) || { color: '#bbb' }, pm = new THREE.MeshStandardMaterial({ color: new THREE.Color(rt.color), roughness: 0.5, metalness: 0.35 }), rad = PIPE_R[r.type] || 0.06
+      const rt = (trade.runTypes || []).find(z => z.type === r.type) || { color: '#bbb' }, pm = new THREE.MeshStandardMaterial({ color: new THREE.Color(rt.color), roughness: 0.42, metalness: 0.55 }), rad = PIPE_R[r.type] || 0.06
       const dir = new THREE.Vector3().subVectors(b, a), len = dir.length() || 0.01
       const pipe = new THREE.Mesh(new THREE.CylinderGeometry(rad, rad, len, 14), pm); pipe.position.copy(a).add(b).multiplyScalar(0.5); pipe.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir.clone().normalize()); fixtureGroup.add(pipe)
       for (const e of [a, b]) { const j = new THREE.Mesh(new THREE.SphereGeometry(rad * 1.5, 12, 10), pm); j.position.copy(e); fixtureGroup.add(j) }
+      const dsId = flowDownstream(r, scene3, { deg }, sinkTypes), to = dsId === r.b ? b : a, from = dsId === r.b ? a : b, fdir = new THREE.Vector3().subVectors(to, from).normalize()
+      const arrowMat = new THREE.MeshStandardMaterial({ color: 0xeef4fa, emissive: 0x18242e })
+      for (const t of (len > 1.4 ? [0.34, 0.68] : [0.5])) { const cone = new THREE.Mesh(new THREE.ConeGeometry(rad * 1.7 + 0.02, rad * 5 + 0.08, 10), arrowMat); cone.position.lerpVectors(from, to, t); cone.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), fdir); fixtureGroup.add(cone) }
     }
     for (const n of scene3.nodes) if ((deg[n.id] || 0) >= 3) { const f = nfloor(n), tee = box(0.22, 0.22, 0.22, new THREE.MeshStandardMaterial({ color: 0xd8a24a, roughness: 0.5 })); tee.position.set(f[0], 0.35, f[1]); fixtureGroup.add(tee) }
-    updateSel()
+    updateSel(); updateHud()
   }
   function updateSel() { const n = selected && nodeById(scene3, selected); if (n) { const f = nfloor(n); selRing.position.set(f[0], 0.04, f[1]); const p = (trade.palette || []).find(z => z.type === n.type) || { dims: [1, 1] }; selRing.scale.setScalar(Math.max(0.6, Math.max(p.dims ? p.dims[0] : 1, p.dims ? p.dims[1] : 1) * 0.6)); selRing.visible = true } else selRing.visible = false }
   // toolbar
   const bar = document.createElement('div'); bar.style.cssText = 'position:absolute;left:8px;top:8px;right:8px;z-index:6;display:flex;gap:4px;flex-wrap:wrap'; container.appendChild(bar)
+  const hud = document.createElement('div'); hud.style.cssText = 'position:absolute;left:8px;top:56px;z-index:5;display:none;background:rgba(16,18,22,.84);color:#eef2f6;font:12px system-ui;padding:8px 11px;border-radius:9px;pointer-events:none;line-height:1.55;max-width:210px;box-shadow:0 2px 10px #0006'; container.appendChild(hud)
+  function updateHud() {
+    if (!scene3.nodes.length) { hud.style.display = 'none'; return }
+    let ev; try { ev = evaluate(scene3, trade, opts.catalog || {}, opts.store || 'hd') } catch (e) { hud.style.display = 'none'; return }
+    const todo = ev.checks.filter(c => c.level === 'fail' || c.level === 'warn').length
+    hud.style.display = 'block'
+    hud.innerHTML = '<div style="font-weight:700;color:#8fd0ff;margin-bottom:2px">🧊 ' + (trade.name || 'sim').toUpperCase() + '</div><div>📏 ' + ev.measure.totalRunFt.toFixed(1) + ' ft · ' + scene3.nodes.length + ' fixtures</div><div>💲 ~$' + ev.quote.total.toFixed(0) + ' materials</div><div style="color:' + (todo ? '#e0b341' : '#5fbf6e') + ';font-weight:600">' + (todo ? '⚠ ' + todo + ' to fix' : '✓ code: all good') + '</div>'
+  }
   const mkb = (label, on, active, bcol) => { const b = document.createElement('button'); b.textContent = label; b.style.cssText = 'padding:5px 8px;font-size:11px;background:' + (active ? '#8fa8b8' : 'rgba(22,26,32,.85)') + ';color:' + (active ? '#111' : '#e8e6e0') + ';border:1px solid ' + (bcol || '#2c3038') + ';border-radius:7px;cursor:pointer;font-weight:' + (active ? 600 : 400); b.onclick = on; bar.appendChild(b); return b }
   function renderBar() {
     bar.innerHTML = ''
