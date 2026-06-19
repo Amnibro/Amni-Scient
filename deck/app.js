@@ -4,7 +4,7 @@ import { initPermits, updatePermits } from './codes.js?v=fix1'
 import { initMapTrace, sitePlanSVG, cropForPlan, mapPlanSnapshot } from './maptrace.js?v=270'
 import { initAutoDetect } from './autodetect.js?v=270'
 const LS = 'amnideck.cfg.v2', LSP = 'amnideck.prices.v1'
-const defCfg = { length: 12, depth: 8, height: 16, spacing: 16, decking: 'pt', attach: 'ledger', foundation: 'pier', joist: '2x8', fascia: false, skirting: false, stain: 'redwood', house: 'cream', mode: 'rect', polygon: null, house_edge: 0, stairs: [{ side: 'front', width: 48, offset: -1 }], railing: { front: false, left: false, right: false, style: 'wood' }, door: { pos: -1, width: 60, rise: 7, panels: 2, count: 1 } }
+const defCfg = { length: 12, depth: 8, height: 16, spacing: 16, decking: 'pt', attach: 'ledger', foundation: 'footing', joist: '2x8', fascia: false, skirting: false, stain: 'redwood', house: 'cream', mode: 'rect', polygon: null, house_edge: 0, stairs: [{ side: 'front', width: 48, offset: -1 }], railing: { front: false, left: false, right: false, style: 'wood' }, door: { pos: -1, width: 60, rise: 7, panels: 2, count: 1 } }
 const migrate = c => !c ? null : (Array.isArray(c.stairs) ? c : { ...c, stain: c.stain || 'redwood', door: c.door || { pos: -1, width: 60, rise: 7 }, stairs: c.stairs?.enabled ? [{ side: c.stairs.side, width: c.stairs.width, offset: c.stairs.offset }] : [] })
 let cfg = migrate(JSON.parse(localStorage.getItem(LS) || localStorage.getItem('amnideck.cfg.v1') || 'null')) || structuredClone(defCfg)
 let priceEdits = JSON.parse(localStorage.getItem(LSP) || '{}')
@@ -304,7 +304,7 @@ const renderCuts = () => {
 }
 const HD = q => `https://www.homedepot.com/s/${encodeURIComponent(q)}`
 const buildTools = () => {
-  const led = cfg.attach === 'ledger', fnd = cfg.foundation || 'pier', hasStairs = cfg.stairs && cfg.stairs.length
+  const led = cfg.attach === 'ledger', fnd = cfg.foundation || 'footing', hasStairs = cfg.stairs && cfg.stairs.length
   const mk = a => a.map(t => ({ name: t[0], hd: t[1], q: t[2] }))
   const must = mk([['Tape measure (25 ft)', 12, '25 ft tape measure'], ['Speed square', 9, 'speed square'], ['Carpenter pencils', 4, 'carpenter pencil'], ['4-ft level', 30, '4 ft box level'], ['Line level (for strings)', 4, 'line level'], ['Cordless drill + impact driver kit', 149, 'cordless drill impact driver combo kit'], ['Circular saw', 69, 'circular saw'], ['Chalk line', 9, 'chalk line reel'], ['Claw hammer (16 oz)', 18, '16 oz claw hammer'], ['Mason string + stakes', 12, 'mason line string'], ['Safety glasses', 6, 'safety glasses'], ['Work gloves', 12, 'work gloves']])
   const easier = []
@@ -329,7 +329,7 @@ const renderTools = () => {
 const GUIDE_LS = 'amnideck.guide.v1'
 let guideChecked = JSON.parse(localStorage.getItem(GUIDE_LS) || '{}')
 const renderGuide = () => {
-  const led = cfg.attach === 'ledger', fnd = cfg.foundation || 'pier', comp = cfg.decking === 'comp', cc = out.calc
+  const led = cfg.attach === 'ledger', fnd = cfg.foundation || 'footing', comp = cfg.decking === 'comp', cc = out.calc
   const rl = cfg.railing || {}, hasRail = rl.front || rl.left || rl.right || cfg.height > 30
   const nf = out.bom.find(b => ['pier', 'camo-block', 'tube-48'].includes(b.id))?.qty || 0
   const beamPly = (cfg.joist || '2x8').replace('2x', '')
@@ -413,7 +413,7 @@ const renderGuide = () => {
   const infoSec = (title, items) => `<div class="guide-sec"><h2>${title}</h2><ul>${items.map(i => `<li style="display:list-item;border:none;padding:3px 0;margin-left:18px;list-style:disc">${i}</li>`).join('')}</ul></div>`
   const gravelBags = out.bom.find(b => b.id === 'gravel-05')?.qty || 0, concBags = out.bom.find(b => b.id === 'concrete-60')?.qty || 0
   let digHtml = ''
-  if (fnd === 'footing') { const cuftPer = Math.PI * (4 / 12) ** 2 * 4; digHtml = infoSec('📏 Dig & concrete math (footings)', [`Holes: <b>${nf}</b> — each <b>~48" deep</b> × <b>8" tube</b> (below the ~48" Cohoes frost line).`, `Concrete per hole: π×(4")²×48" ≈ <b>${cuftPer.toFixed(2)} cu ft</b> ≈ ${(cuftPer / 0.45).toFixed(1)} × 60-lb bags → round to <b>4/hole</b>.`, `Total: <b>${concBags} × 60-lb bags</b> (a 60-lb bag ≈ 0.45 cu ft mixed; a little spare is normal).`, `Gravel base: 4" in each hole bottom — <b>${gravelBags} × 0.5 cu ft</b>.`, `Mix it stiff (not soupy) and rod out air pockets as you fill.`]) }
+  if (fnd === 'footing') { const cuftPer = Math.PI * (4 / 12) ** 2 * 4; digHtml = infoSec('🏛️ Pier schedule — what the permit office needs', [`<b>${nf} poured concrete piers</b> · <b>8" diameter</b> · <b>48" deep</b> (below the ~48" Cohoes frost line) · ~<b>${nf > 1 ? (cfg.length / (nf - 1)).toFixed(1) : cfg.length}' on-center</b> along the outer beam line. <span style="color:#e0b341">Pier blocks are NOT allowed.</span>`, `Each hole: 48" deep × 8" tube form, 4" gravel in the bottom, galvanized standoff post-base set in the wet top.`, `Concrete per hole: π×(4")²×48" ≈ <b>${cuftPer.toFixed(2)} cu ft</b> ≈ ${(cuftPer / 0.45).toFixed(1)} × 60-lb bags → round to <b>4/hole</b>.`, `Total: <b>${concBags} × 60-lb bags</b> (a 60-lb bag ≈ 0.45 cu ft mixed; a little spare is normal).`, `Gravel base: 4" in each hole bottom — <b>${gravelBags} × 0.5 cu ft</b>.`, `Mix it stiff (not soupy) and rod out air pockets as you fill.`]) }
   else if (fnd === 'pier') digHtml = infoSec('📏 Dig & gravel math (pier blocks)', [`Pads: <b>${nf}</b> — clear each ~<b>16"×16"</b> down to firm soil.`, `Gravel base: ~4" per pad — <b>${gravelBags} × 0.5 cu ft</b>.`, `No concrete to mix — the precast block IS the footing. Just level all ${nf} to each other.`])
   else digHtml = infoSec('📏 Dig & gravel math (deck blocks)', [`Blocks: <b>${nf}</b> on ~4" tamped gravel each — <b>${gravelBags} × 0.5 cu ft</b>.`, `No concrete. Dead-level every block — that\'s what keeps the whole frame flat.`])
   const inspSecs = [
@@ -475,6 +475,8 @@ const recompute = (full = true) => {
   persist()
   rebuild3D()
   full && (renderPlans(), renderMat(), renderCuts(), renderGuide(), renderWarns(), updatePermits())
+  const _fw = document.getElementById('fnd-warn')
+  if (_fw) { const f = cfg.foundation || 'footing'; if (f === 'pier' || f === 'deckblock') { _fw.style.display = 'block'; _fw.innerHTML = '⚠ <b>' + (f === 'pier' ? 'Pier blocks' : 'Floating deck blocks') + ' are not accepted for a permitted deck</b> in many jurisdictions — the City of Cohoes, NY explicitly disallows them. For a permit, switch to <b>Poured concrete piers</b>; the app then sizes them to frost depth and lists the diameter, depth &amp; spacing the inspector needs.' } else { _fw.style.display = 'none' } }
 }
 const parsePaste = (text, store) => {
   const filled = []
@@ -515,7 +517,7 @@ const initUI = () => {
   bindNum('#height', () => cfg.height, v => cfg.height = Math.max(8, v))
   bindSel('#spacing', () => String(cfg.spacing), v => cfg.spacing = parseFloat(v))
   bindSel('#attach', () => cfg.attach, v => cfg.attach = v)
-  bindSel('#foundation', () => cfg.foundation || 'pier', v => cfg.foundation = v)
+  bindSel('#foundation', () => cfg.foundation || 'footing', v => cfg.foundation = v)
   bindSel('#decking', () => cfg.decking, v => cfg.decking = v)
   bindSel('#joist', () => cfg.joist || '2x8', v => cfg.joist = v)
   bindChk('#fascia', () => !!cfg.fascia, v => cfg.fascia = v)
