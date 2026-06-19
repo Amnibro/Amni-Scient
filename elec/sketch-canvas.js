@@ -31,11 +31,21 @@ const SHAPES = {
   panel: (g, w, h, c) => { el('rect', { x: -w / 2, y: -h / 2, width: w, height: h, rx: 3, fill: '#eef2f6', stroke: c, 'stroke-width': 2 }, g); for (let i = 1; i < 4; i++) el('line', { x1: -w / 2 + 3, y1: -h / 2 + h * i / 4, x2: w / 2 - 3, y2: -h / 2 + h * i / 4, stroke: c, 'stroke-width': 0.8, 'stroke-opacity': 0.5 }, g) },
   marker: (g, w, h, c) => { el('circle', { cx: 0, cy: 0, r: Math.max(13, Math.min(w, h) / 2), fill: 'rgba(248,250,252,.96)', stroke: c, 'stroke-width': 3 }, g) },
 }
+// Undo/redo history: linear stack + pointer. push() truncates the redo tail; undo/redo move the
+// pointer and return the snapshot (or null at an end). Capped.
+export function makeHistory(cap) {
+  cap = cap || 60; let stack = [], ptr = -1
+  return {
+    push(snap) { stack = stack.slice(0, ptr + 1); stack.push(snap); while (stack.length > cap) stack.shift(); ptr = stack.length - 1 },
+    canUndo() { return ptr > 0 }, canRedo() { return ptr < stack.length - 1 },
+    undo() { return ptr > 0 ? stack[--ptr] : null }, redo() { return ptr < stack.length - 1 ? stack[++ptr] : null },
+  }
+}
 export function mountSketch(container, opts) {
   const scene = opts.scene, trade = opts.trade, catalog = opts.catalog || {}, onChange = opts.onChange || (() => {})
   const store = () => (typeof opts.store === 'function' ? opts.store() : (opts.store || 'hd'))
   const W = 960, H = 600
-  let mode = 'select', connectFrom = null, selected = null, drag = null, calibPts = [], snapOn = true
+  let mode = 'select', connectFrom = null, selected = null, drag = null, calibPts = [], snapOn = true, undoBtn = null, redoBtn = null
   const applySnap = (type, fx, fz, curRot) => { if (!snapOn || !scene.floorH || !scene.floorCal) return { fx, fz, rot: curRot }; const pal = trade.palette.find(z => z.type === type); if (!pal || pal.shape === 'marker') return { fx, fz, rot: curRot }; const sn = snapToWall(fx, fz, (pal.dims || [1, 1])[1], scene.floorCal.w, scene.floorCal.d, 2.5); return sn ? { fx: sn.fx, fz: sn.fz, rot: sn.rot } : { fx, fz, rot: curRot } }
   const nodePix = n => (scene.floorH && n.props && n.props.fx != null) ? applyH(scene.floorH, [n.props.fx, n.props.fz]) : [n.x, n.y]
   const floorPts = (fx, fz, w, d, rotDeg) => { const r = (rotDeg || 0) * Math.PI / 180, c = Math.cos(r), s = Math.sin(r); return [[-w / 2, -d / 2], [w / 2, -d / 2], [w / 2, d / 2], [-w / 2, d / 2]].map(([px, py]) => [fx + (px * c - py * s), fz + (px * s + py * c)]) }
@@ -91,6 +101,9 @@ export function mountSketch(container, opts) {
   container.appendChild(left)
   const read = document.createElement('div'); read.style.cssText = 'min-width:250px;max-width:340px;font-size:13px'; container.appendChild(read)
   const ctl = document.createElement('div'); ctl.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px'; read.appendChild(ctl)
+  undoBtn = document.createElement('button'); undoBtn.className = 'btn'; undoBtn.textContent = '↶'; undoBtn.title = 'Undo (Ctrl+Z)'; undoBtn.style.cssText = 'padding:4px 9px;font-size:14px'; undoBtn.onclick = () => doUndo()
+  redoBtn = document.createElement('button'); redoBtn.className = 'btn'; redoBtn.textContent = '↷'; redoBtn.title = 'Redo (Ctrl+Y)'; redoBtn.style.cssText = 'padding:4px 9px;font-size:14px'; redoBtn.onclick = () => doRedo()
+  ctl.append(undoBtn, redoBtn)
   const readBody = document.createElement('div'); read.appendChild(readBody)
   const inpCss = 'width:54px;background:var(--bg);border:1px solid var(--line);border-radius:6px;color:inherit;padding:4px 6px'
   const scaleL = document.createElement('label'); scaleL.style.cssText = 'font-size:12px;color:var(--mut);display:flex;align-items:center;gap:4px'; scaleL.append('px/ft')
@@ -140,9 +153,19 @@ export function mountSketch(container, opts) {
   svg.addEventListener('pointermove', e => { if (!drag) return; const [x, y] = ptOf(e); const n = nodeById(scene, drag.id); if (!n) return; if (scene.floorH && n.props && n.props.fx != null) { const f = applyH(invert3(scene.floorH), [x - drag.dx, y - drag.dy]), sn = applySnap(n.type, f[0], f[1], n.props.rot || 0); n.props.fx = sn.fx; n.props.fz = sn.fz; n.props.rot = sn.rot; const px = nodePix(n); n.x = px[0]; n.y = px[1] } else { n.x = clamp(snap(x - drag.dx), W); n.y = clamp(snap(y - drag.dy), H) } render() })
   svg.addEventListener('pointerup', () => { if (drag) { drag = null; changed() } })
   svg.addEventListener('dblclick', e => { const nE = closestAttr(e.target, 'data-node'), id = nE && nE.getAttribute('data-node'); if (!id) return; const n = nodeById(scene, id); if (!n) return; if (trade.onNodeActivate && trade.onNodeActivate(n)) { changed(); return } const p = trade.palette.find(z => z.type === n.type); if (p && p.dims && p.shape !== 'marker' && p.shape !== 'round') { n.props.rot = ((n.props.rot || 0) + 90) % 360; changed() } })
-  window.addEventListener('keydown', e => { if ((e.key === 'Delete' || e.key === 'Backspace') && selected && container.offsetParent !== null) { e.preventDefault(); delSelected() } })
-
-  function changed() { onChange(scene); render() }
+  window.addEventListener('keydown', e => {
+    if (container.offsetParent === null) return
+    if ((e.ctrlKey || e.metaKey) && (e.key === 'z' || e.key === 'Z')) { e.preventDefault(); e.shiftKey ? doRedo() : doUndo(); return }
+    if ((e.ctrlKey || e.metaKey) && (e.key === 'y' || e.key === 'Y')) { e.preventDefault(); doRedo(); return }
+    if ((e.key === 'Delete' || e.key === 'Backspace') && selected) { e.preventDefault(); delSelected() }
+  })
+  const history = makeHistory(60)
+  const snapshot = () => JSON.stringify({ nodes: scene.nodes, runs: scene.runs, seq: scene.seq, scalePxPerFt: scene.scalePxPerFt, floorH: scene.floorH, ceilH: scene.ceilH, vpVert: scene.vpVert, floorCal: scene.floorCal })
+  function restore(snap) { const s = JSON.parse(snap); scene.nodes = s.nodes; scene.runs = s.runs; scene.seq = s.seq; scene.scalePxPerFt = s.scalePxPerFt; scene.floorH = s.floorH; scene.ceilH = s.ceilH; scene.vpVert = s.vpVert; scene.floorCal = s.floorCal; selected = null; connectFrom = null; onChange(scene); render(); updateUndoBtns() }
+  function doUndo() { const s = history.undo(); if (s != null) restore(s) }
+  function doRedo() { const s = history.redo(); if (s != null) restore(s) }
+  function updateUndoBtns() { if (undoBtn) undoBtn.disabled = !history.canUndo(); if (redoBtn) redoBtn.disabled = !history.canRedo() }
+  function changed() { onChange(scene); history.push(snapshot()); updateUndoBtns(); render() }
 
   function render() {
     while (svg.firstChild) svg.removeChild(svg.firstChild)
@@ -240,6 +263,6 @@ export function mountSketch(container, opts) {
     readBody.innerHTML = h
   }
 
-  applyBg(); renderBar(); render()
+  applyBg(); renderBar(); render(); history.push(snapshot()); updateUndoBtns()
   return { render, scene, setMode }
 }
