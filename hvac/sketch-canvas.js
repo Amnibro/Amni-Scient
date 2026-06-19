@@ -62,10 +62,11 @@ export function mountSketch(container, opts) {
 
   container.innerHTML = ''
   container.style.cssText = 'display:flex;gap:14px;flex-wrap:wrap;align-items:flex-start'
-  const left = document.createElement('div'); left.style.cssText = 'flex:1;min-width:520px'
-  const bar = document.createElement('div'); bar.style.cssText = 'display:flex;gap:5px;flex-wrap:wrap;margin-bottom:9px;align-items:center'
+  if (!document.getElementById('sk-responsive')) { const st = document.createElement('style'); st.id = 'sk-responsive'; st.textContent = '@media(max-width:820px){.sk-read{flex-basis:100%!important;max-width:none!important}.sk-bar,.sk-strip{flex-wrap:nowrap!important;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;padding-bottom:5px;scrollbar-width:none}.sk-bar::-webkit-scrollbar,.sk-strip::-webkit-scrollbar{display:none}.sk-bar>*,.sk-strip>*{flex:0 0 auto}}'; document.head.appendChild(st) }
+  const left = document.createElement('div'); left.className = 'sk-left'; left.style.cssText = 'flex:1 1 340px;min-width:0'
+  const bar = document.createElement('div'); bar.className = 'sk-bar'; bar.style.cssText = 'display:flex;gap:5px;flex-wrap:wrap;margin-bottom:9px;align-items:center'
   left.appendChild(bar)
-  const photoStrip = document.createElement('div'); photoStrip.style.cssText = 'display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:8px'
+  const photoStrip = document.createElement('div'); photoStrip.className = 'sk-strip'; photoStrip.style.cssText = 'display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:8px'
   const photoL = document.createElement('label'); photoL.className = 'btn'; photoL.style.cssText = 'padding:6px 10px;font-size:12px;cursor:pointer'; photoL.textContent = '📷 Add room photo'
   const photoIn = document.createElement('input'); photoIn.type = 'file'; photoIn.accept = 'image/*'; photoIn.setAttribute('capture', 'environment'); photoIn.style.display = 'none'; photoL.appendChild(photoIn)
   photoIn.onchange = e => { loadBg(e.target.files && e.target.files[0]); photoIn.value = '' }
@@ -142,7 +143,7 @@ export function mountSketch(container, opts) {
   function applyBg() { svgWrap.style.backgroundImage = scene.bgImage ? `linear-gradient(rgba(13,15,18,.34),rgba(13,15,18,.34)), url(${scene.bgImage})` : 'none' }
   function loadBg(file) { if (!file) return; const img = new Image(); img.onload = () => { const mx = 1280, sc = Math.min(1, mx / Math.max(img.width, img.height)); const c = document.createElement('canvas'); c.width = Math.max(1, Math.round(img.width * sc)); c.height = Math.max(1, Math.round(img.height * sc)); c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); try { scene.bgImage = c.toDataURL('image/jpeg', 0.72) } catch (e) { scene.bgImage = null } try { URL.revokeObjectURL(img.src) } catch (e) {} applyBg(); onChange(scene); render() }; img.onerror = () => { try { URL.revokeObjectURL(img.src) } catch (e) {} }; img.src = URL.createObjectURL(file) }
   container.appendChild(left)
-  const read = document.createElement('div'); read.style.cssText = 'min-width:250px;max-width:340px;font-size:13px'; container.appendChild(read)
+  const read = document.createElement('div'); read.className = 'sk-read'; read.style.cssText = 'flex:1 1 260px;min-width:0;max-width:380px;font-size:13px'; container.appendChild(read)
   const ctl = document.createElement('div'); ctl.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px'; read.appendChild(ctl)
   undoBtn = document.createElement('button'); undoBtn.className = 'btn'; undoBtn.textContent = '↶'; undoBtn.title = 'Undo (Ctrl+Z)'; undoBtn.style.cssText = 'padding:4px 9px;font-size:14px'; undoBtn.onclick = () => doUndo()
   redoBtn = document.createElement('button'); redoBtn.className = 'btn'; redoBtn.textContent = '↷'; redoBtn.title = 'Redo (Ctrl+Y)'; redoBtn.style.cssText = 'padding:4px 9px;font-size:14px'; redoBtn.onclick = () => doRedo()
