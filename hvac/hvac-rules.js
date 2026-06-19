@@ -3,15 +3,15 @@
 import { runLengthFt } from './sketch.js'
 
 export const HVAC_PALETTE = [
-  { type: 'airhandler', label: 'Air Handler', glyph: 'AH', color: '#e07b4a' },
-  { type: 'supply', label: 'Supply Reg', glyph: 'S', color: '#4f9cf0' },
-  { type: 'return', label: 'Return Grille', glyph: 'R', color: '#5fbf6e' },
-  { type: 'damper', label: 'Damper', glyph: 'D', color: '#c0a86a' },
+  { type: 'airhandler', label: 'Air Handler', glyph: '🌡️', color: '#e07b4a', dims: [2.2, 2.6], shape: 'square' },
+  { type: 'supply', label: 'Supply vent', glyph: '💨', color: '#4f9cf0', dims: [0.5, 1.0], shape: 'square' },
+  { type: 'return', label: 'Return grille', glyph: '↩️', color: '#5fbf6e', dims: [1.7, 1.7], shape: 'square' },
+  { type: 'damper', label: 'Damper', glyph: '🎛️', color: '#c0a86a', dims: [0.6, 0.6], shape: 'marker' },
 ]
 export const HVAC_RUNTYPES = [
-  { type: 's6', label: '6" supply', color: '#6ab0e0' },
-  { type: 's8', label: '8" supply', color: '#4f9cf0' },
-  { type: 's10', label: '10" supply', color: '#2a6ec2' },
+  { type: 's6', label: '6" duct', color: '#6ab0e0' },
+  { type: 's8', label: '8" duct', color: '#4f9cf0' },
+  { type: 's10', label: '10" duct', color: '#2a6ec2' },
   { type: 's12', label: '12" trunk', color: '#1a4e92' },
   { type: 'r8', label: '8" return', color: '#7fd08e' },
   { type: 'r10', label: '10" return', color: '#5fbf6e' },

@@ -2,23 +2,23 @@
 import { neighbors, reachableFrom, runLengthFt } from './sketch.js'
 
 export const ELEC_PALETTE = [
-  { type: 'panel', label: 'Panel', glyph: '▣', color: '#e8c33d' },
-  { type: 'recept', label: 'Outlet', glyph: '⊟', color: '#4f9cf0' },
-  { type: 'gfci', label: 'GFCI', glyph: 'G', color: '#5fbf6e' },
-  { type: 'switch', label: 'Switch', glyph: 'S', color: '#b58fd8' },
-  { type: 'light', label: 'Light', glyph: '☀', color: '#e0b341' },
-  { type: 'dishwasher', label: 'Dishwasher', glyph: 'DW', color: '#6ac0d8' },
-  { type: 'microwave', label: 'Microwave', glyph: 'MW', color: '#6ac0d8' },
-  { type: 'range', label: 'Range', glyph: 'R', color: '#e07b4a' },
-  { type: 'dryer', label: 'Dryer', glyph: 'DR', color: '#e07b4a' },
-  { type: 'waterheater', label: 'Water Htr', glyph: 'WH', color: '#e07b4a' },
-  { type: 'hvac', label: 'HVAC', glyph: 'AC', color: '#e07b4a' },
+  { type: 'panel', label: 'Panel', glyph: '🔲', color: '#e8c33d', dims: [1.2, 2.6], shape: 'panel' },
+  { type: 'recept', label: 'Outlet', glyph: '🔌', color: '#4f9cf0', dims: [0.4, 0.4], shape: 'marker' },
+  { type: 'gfci', label: 'GFCI outlet', glyph: '🔌', color: '#5fbf6e', dims: [0.4, 0.4], shape: 'marker' },
+  { type: 'switch', label: 'Switch', glyph: '🎚️', color: '#b58fd8', dims: [0.4, 0.4], shape: 'marker' },
+  { type: 'light', label: 'Light', glyph: '💡', color: '#e0b341', dims: [1.0, 1.0], shape: 'round' },
+  { type: 'dishwasher', label: 'Dishwasher', glyph: '🍽️', color: '#6ac0d8', dims: [2.0, 2.0], shape: 'square' },
+  { type: 'microwave', label: 'Microwave', glyph: '🔳', color: '#6ac0d8', dims: [1.6, 1.1], shape: 'square' },
+  { type: 'range', label: 'Range/Oven', glyph: '🍳', color: '#e07b4a', dims: [2.5, 2.5], shape: 'square' },
+  { type: 'dryer', label: 'Dryer', glyph: '🌀', color: '#e07b4a', dims: [2.3, 2.3], shape: 'square' },
+  { type: 'waterheater', label: 'Water heater', glyph: '♨️', color: '#e07b4a', dims: [1.7, 1.7], shape: 'round' },
+  { type: 'hvac', label: 'AC / Heat', glyph: '❄️', color: '#e07b4a', dims: [2.5, 2.5], shape: 'square' },
 ]
 export const ELEC_RUNTYPES = [
-  { type: 'nm142', label: '14-2 (15A)', color: '#d88b6a' },
-  { type: 'nm122', label: '12-2 (20A)', color: '#e0c341' },
-  { type: 'nm103', label: '10-3 (30A)', color: '#d8d36a' },
-  { type: 'nm63', label: '6-3 (50A)', color: '#e07b4a' },
+  { type: 'nm142', label: 'Wire 15A', color: '#d88b6a' },
+  { type: 'nm122', label: 'Wire 20A', color: '#e0c341' },
+  { type: 'nm103', label: 'Wire 30A', color: '#d8d36a' },
+  { type: 'nm63', label: 'Wire 50A', color: '#e07b4a' },
 ]
 const RUN = { nm142: { gauge: 14, amps: 15, v: 120, R: 3.14, roll: 250 }, nm122: { gauge: 12, amps: 20, v: 120, R: 1.98, roll: 250 }, nm103: { gauge: 10, amps: 30, v: 240, R: 1.24, roll: 25 }, nm63: { gauge: 6, amps: 50, v: 240, R: 0.491, roll: 25 } }
 const DEV = { recept: { va: 180 }, gfci: { va: 180, isGfci: true }, light: { va: 100 }, switch: { va: 0 }, dishwasher: { va: 1500, ded: true }, microwave: { va: 1500, ded: true }, range: { va: 8000, ded: true }, dryer: { va: 5000, ded: true }, waterheater: { va: 4500, ded: true }, hvac: { va: 3600, ded: true }, panel: { va: 0 } }

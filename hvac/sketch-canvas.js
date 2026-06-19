@@ -15,6 +15,19 @@ export function bomCsv(ev, opts) {
   return rows.map(r => r.map(esc).join(',')).join('\n')
 }
 
+// Top-view plan shapes drawn centered at (0,0) into group g, given px width/height + color.
+const SHAPES = {
+  toilet: (g, w, h, c) => { el('rect', { x: -w / 2, y: -h / 2, width: w, height: h * 0.34, rx: w * 0.12, fill: '#eef2f6', stroke: c, 'stroke-width': 2 }, g); el('ellipse', { cx: 0, cy: h * 0.12, rx: w * 0.44, ry: h * 0.32, fill: '#eef2f6', stroke: c, 'stroke-width': 2 }, g) },
+  tub: (g, w, h, c) => { el('rect', { x: -w / 2, y: -h / 2, width: w, height: h, rx: 7, fill: '#eef2f6', stroke: c, 'stroke-width': 2 }, g); el('rect', { x: -w / 2 + w * 0.13, y: -h / 2 + h * 0.09, width: w * 0.74, height: h * 0.82, rx: 7, fill: 'none', stroke: c, 'stroke-width': 1.4 }, g) },
+  basin: (g, w, h, c) => { el('rect', { x: -w / 2, y: -h / 2, width: w, height: h, rx: 6, fill: '#eef2f6', stroke: c, 'stroke-width': 2 }, g); el('ellipse', { cx: 0, cy: h * 0.04, rx: w * 0.3, ry: h * 0.32, fill: 'none', stroke: c, 'stroke-width': 1.4 }, g) },
+  ksink: (g, w, h, c) => { el('rect', { x: -w / 2, y: -h / 2, width: w, height: h, rx: 5, fill: '#eef2f6', stroke: c, 'stroke-width': 2 }, g); el('rect', { x: -w * 0.43, y: -h * 0.3, width: w * 0.38, height: h * 0.6, rx: 3, fill: 'none', stroke: c, 'stroke-width': 1.4 }, g); el('rect', { x: w * 0.05, y: -h * 0.3, width: w * 0.38, height: h * 0.6, rx: 3, fill: 'none', stroke: c, 'stroke-width': 1.4 }, g) },
+  shower: (g, w, h, c) => { el('rect', { x: -w / 2, y: -h / 2, width: w, height: h, rx: 4, fill: '#eef2f6', stroke: c, 'stroke-width': 2 }, g); el('line', { x1: -w / 2, y1: -h / 2, x2: w / 2, y2: h / 2, stroke: c, 'stroke-width': 1, 'stroke-opacity': 0.4 }, g); el('line', { x1: w / 2, y1: -h / 2, x2: -w / 2, y2: h / 2, stroke: c, 'stroke-width': 1, 'stroke-opacity': 0.4 }, g); el('circle', { cx: 0, cy: 0, r: Math.min(w, h) * 0.09, fill: 'none', stroke: c, 'stroke-width': 1.4 }, g) },
+  washer: (g, w, h, c) => { el('rect', { x: -w / 2, y: -h / 2, width: w, height: h, rx: 5, fill: '#eef2f6', stroke: c, 'stroke-width': 2 }, g); el('circle', { cx: 0, cy: 0, r: Math.min(w, h) * 0.33, fill: 'none', stroke: c, 'stroke-width': 1.4 }, g) },
+  round: (g, w, h, c) => { el('ellipse', { cx: 0, cy: 0, rx: w / 2, ry: h / 2, fill: '#eef2f6', stroke: c, 'stroke-width': 2 }, g) },
+  square: (g, w, h, c) => { el('rect', { x: -w / 2, y: -h / 2, width: w, height: h, rx: 4, fill: '#eef2f6', stroke: c, 'stroke-width': 2 }, g) },
+  panel: (g, w, h, c) => { el('rect', { x: -w / 2, y: -h / 2, width: w, height: h, rx: 3, fill: '#eef2f6', stroke: c, 'stroke-width': 2 }, g); for (let i = 1; i < 4; i++) el('line', { x1: -w / 2 + 3, y1: -h / 2 + h * i / 4, x2: w / 2 - 3, y2: -h / 2 + h * i / 4, stroke: c, 'stroke-width': 0.8, 'stroke-opacity': 0.5 }, g) },
+  marker: (g, w, h, c) => { el('circle', { cx: 0, cy: 0, r: Math.max(13, Math.min(w, h) / 2), fill: 'rgba(248,250,252,.96)', stroke: c, 'stroke-width': 3 }, g) },
+}
 export function mountSketch(container, opts) {
   const scene = opts.scene, trade = opts.trade, catalog = opts.catalog || {}, onChange = opts.onChange || (() => {})
   const store = () => (typeof opts.store === 'function' ? opts.store() : (opts.store || 'hd'))
@@ -34,9 +47,21 @@ export function mountSketch(container, opts) {
   photoClr.onclick = () => { scene.bgImage = null; applyBg(); onChange(scene); render() }
   const photoTip = document.createElement('span'); photoTip.style.cssText = 'font-size:11px;color:var(--mut)'; photoTip.textContent = 'snap your wall/room, then trace your runs right on it'
   photoStrip.append(photoL, photoClr, photoTip); left.appendChild(photoStrip)
-  const svgWrap = document.createElement('div'); svgWrap.style.cssText = 'border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#0d0f12;background-size:cover;background-position:center'
+  const svgWrap = document.createElement('div'); svgWrap.style.cssText = 'position:relative;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#0d0f12;background-size:cover;background-position:center'
   const svg = el('svg', { viewBox: `0 0 ${W} ${H}`, width: '100%', style: 'touch-action:none;display:block;max-height:62vh;background:transparent' })
   svgWrap.appendChild(svg); left.appendChild(svgWrap)
+  const banner = document.createElement('div'); banner.style.cssText = 'position:absolute;left:50%;top:10px;transform:translateX(-50%);z-index:5;display:none;align-items:center;gap:10px;padding:8px 15px;border-radius:22px;font-size:13px;font-weight:600;box-shadow:0 3px 10px #0007;max-width:92%;text-align:center'
+  svgWrap.appendChild(banner)
+  function updateBanner() {
+    let txt = '', col = '', btn = ''
+    if (mode.startsWith('place:')) { const p = trade.palette.find(z => z.type === mode.slice(6)) || {}; txt = '👆 Tap the photo where the ' + (p.glyph || '') + ' ' + (p.label || 'item') + ' goes'; col = '#2a6ec2'; btn = '✓ Done' }
+    else if (mode.startsWith('connect:')) { const t = trade.runTypes.find(z => z.type === mode.slice(8)) || {}; txt = connectFrom ? '👆 Now tap what it connects to' : '👆 Tap the two things to join with the ' + (t.label || 'line'); col = '#2f8f4a'; btn = '✕ Cancel' }
+    else if (!scene.nodes.length) { txt = '👇 Pick something below, then tap the photo to place it'; col = '#4a4f58' }
+    else { banner.style.display = 'none'; return }
+    banner.style.display = 'flex'; banner.style.background = col; banner.style.color = '#fff'
+    banner.innerHTML = '<span>' + txt + '</span>' + (btn ? '<button style="background:rgba(255,255,255,.25);border:0;color:#fff;border-radius:12px;padding:3px 11px;cursor:pointer;font-weight:600;font-size:12px">' + btn + '</button>' : '')
+    const b = banner.querySelector('button'); if (b) b.onclick = () => setMode('select')
+  }
   const hint = document.createElement('div'); hint.style.cssText = 'color:var(--mut);font-size:11px;margin-top:6px'; left.appendChild(hint)
   function applyBg() { svgWrap.style.backgroundImage = scene.bgImage ? `linear-gradient(rgba(13,15,18,.34),rgba(13,15,18,.34)), url(${scene.bgImage})` : 'none' }
   function loadBg(file) { if (!file) return; const img = new Image(); img.onload = () => { const mx = 1280, sc = Math.min(1, mx / Math.max(img.width, img.height)); const c = document.createElement('canvas'); c.width = Math.max(1, Math.round(img.width * sc)); c.height = Math.max(1, Math.round(img.height * sc)); c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); try { scene.bgImage = c.toDataURL('image/jpeg', 0.72) } catch (e) { scene.bgImage = null } try { URL.revokeObjectURL(img.src) } catch (e) {} applyBg(); onChange(scene); render() }; img.onerror = () => { try { URL.revokeObjectURL(img.src) } catch (e) {} }; img.src = URL.createObjectURL(file) }
@@ -90,7 +115,7 @@ export function mountSketch(container, opts) {
   })
   svg.addEventListener('pointermove', e => { if (!drag) return; const [x, y] = ptOf(e); const n = nodeById(scene, drag.id); if (!n) return; n.x = clamp(snap(x - drag.dx), W); n.y = clamp(snap(y - drag.dy), H); render() })
   svg.addEventListener('pointerup', () => { if (drag) { drag = null; changed() } })
-  svg.addEventListener('dblclick', e => { const nE = closestAttr(e.target, 'data-node'), id = nE && nE.getAttribute('data-node'); if (id && trade.onNodeActivate) { const n = nodeById(scene, id); if (n && trade.onNodeActivate(n)) changed() } })
+  svg.addEventListener('dblclick', e => { const nE = closestAttr(e.target, 'data-node'), id = nE && nE.getAttribute('data-node'); if (!id) return; const n = nodeById(scene, id); if (!n) return; if (trade.onNodeActivate && trade.onNodeActivate(n)) { changed(); return } const p = trade.palette.find(z => z.type === n.type); if (p && p.dims && p.shape !== 'marker' && p.shape !== 'round') { n.props.rot = ((n.props.rot || 0) + 90) % 360; changed() } })
   window.addEventListener('keydown', e => { if ((e.key === 'Delete' || e.key === 'Backspace') && selected && container.offsetParent !== null) { e.preventDefault(); delSelected() } })
 
   function changed() { onChange(scene); render() }
@@ -104,20 +129,29 @@ export function mountSketch(container, opts) {
     const rt = el('text', { x: 14, y: H - 22, fill: '#8fa8b8', 'font-size': 11, 'font-family': 'system-ui' }, svg); rt.textContent = '5 ft'
     for (const r of scene.runs) {
       const pts = runPoints(r, scene); if (pts.length < 2) continue
-      const t = trade.runTypes.find(z => z.type === r.type) || { color: '#888', label: r.type }
-      el('polyline', { points: pts.map(p => p.join(',')).join(' '), fill: 'none', stroke: t.color, 'stroke-width': selected && selected.id === r.id ? 6 : 3.5, 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'data-run': r.id, style: 'cursor:pointer' }, svg)
-      const mid = pts[Math.floor((pts.length - 1) / 2)], nx = pts[Math.floor((pts.length - 1) / 2) + 1] || mid
-      const lt = el('text', { x: (mid[0] + nx[0]) / 2, y: (mid[1] + nx[1]) / 2 - 5, fill: t.color, 'font-size': 10, 'text-anchor': 'middle', 'font-family': 'system-ui', style: 'pointer-events:none' }, svg); lt.textContent = runLengthFt(r, scene).toFixed(1) + "'"
+      const t = trade.runTypes.find(z => z.type === r.type) || { color: '#888', label: r.type }, sel = selected && selected.id === r.id
+      el('polyline', { points: pts.map(p => p.join(',')).join(' '), fill: 'none', stroke: '#0008', 'stroke-width': sel ? 9 : 7, 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'data-run': r.id, style: 'cursor:pointer' }, svg)
+      el('polyline', { points: pts.map(p => p.join(',')).join(' '), fill: 'none', stroke: t.color, 'stroke-width': sel ? 5 : 3.5, 'stroke-linecap': 'round', 'stroke-linejoin': 'round', style: 'pointer-events:none' }, svg)
+      const mid = pts[Math.floor((pts.length - 1) / 2)], nx = pts[Math.floor((pts.length - 1) / 2) + 1] || mid, lx = (mid[0] + nx[0]) / 2, ly = (mid[1] + nx[1]) / 2, txt = runLengthFt(r, scene).toFixed(1) + "'"
+      el('rect', { x: lx - txt.length * 3.4 - 3, y: ly - 16, width: txt.length * 6.8 + 6, height: 14, rx: 7, fill: 'rgba(16,18,22,.8)', style: 'pointer-events:none' }, svg)
+      el('text', { x: lx, y: ly - 6, fill: '#dfe6ee', 'font-size': 10, 'text-anchor': 'middle', 'font-family': 'system-ui', style: 'pointer-events:none' }, svg).textContent = txt
     }
     for (const n of scene.nodes) {
-      const p = trade.palette.find(z => z.type === n.type) || { color: '#777', glyph: '•', label: n.type }
+      const p = trade.palette.find(z => z.type === n.type) || { color: '#777', glyph: '•', label: n.type, shape: 'marker' }
+      const sel = selected && selected.id === n.id, dims = p.dims || [0.6, 0.6], rot = (n.props && n.props.rot) || 0
+      const wpx = Math.max(15, dims[0] * G), hpx = Math.max(15, dims[1] * G), half = Math.max(wpx, hpx) / 2
       const g = el('g', { 'data-node': n.id, style: 'cursor:pointer' }, svg)
-      if (connectFrom === n.id) el('circle', { cx: n.x, cy: n.y, r: 19, fill: 'none', stroke: '#5fbf6e', 'stroke-width': 2, 'stroke-dasharray': '3 3' }, g)
-      el('circle', { cx: n.x, cy: n.y, r: 14, fill: p.color, stroke: selected && selected.id === n.id ? '#fff' : 'rgba(0,0,0,.45)', 'stroke-width': selected && selected.id === n.id ? 3 : 1.5 }, g)
-      const gl = el('text', { x: n.x, y: n.y + 4, 'text-anchor': 'middle', 'font-size': 13, 'font-weight': 'bold', fill: '#0d0f12', 'font-family': 'system-ui', style: 'pointer-events:none' }, g); gl.textContent = p.glyph || '•'
-      const lb = el('text', { x: n.x, y: n.y + 27, 'text-anchor': 'middle', 'font-size': 10, fill: '#9aa0aa', 'font-family': 'system-ui', style: 'pointer-events:none' }, g); lb.textContent = trade.nodeLabel ? trade.nodeLabel(n) : (n.props && n.props.label ? n.props.label : p.label)
+      const shp = el('g', { transform: `translate(${n.x},${n.y}) rotate(${rot})` }, g)
+      if (connectFrom === n.id) el('rect', { x: -wpx / 2 - 5, y: -hpx / 2 - 5, width: wpx + 10, height: hpx + 10, rx: 8, fill: 'none', stroke: '#5fbf6e', 'stroke-width': 3, 'stroke-dasharray': '5 3' }, shp)
+      if (sel) el('rect', { x: -wpx / 2 - 3, y: -hpx / 2 - 3, width: wpx + 6, height: hpx + 6, rx: 7, fill: 'none', stroke: '#fff', 'stroke-width': 2 }, shp)
+      ;(SHAPES[p.shape] || SHAPES.marker)(shp, wpx, hpx, p.color)
+      el('text', { x: n.x, y: n.y + 5, 'text-anchor': 'middle', 'font-size': Math.min(20, Math.max(12, Math.min(wpx, hpx) * 0.5)), 'font-family': '"Segoe UI Emoji","Apple Color Emoji",system-ui', style: 'pointer-events:none' }, g).textContent = p.glyph || '•'
+      const lbl = trade.nodeLabel ? trade.nodeLabel(n) : (n.props && n.props.label ? n.props.label : p.label), ly = n.y + half + 13
+      el('rect', { x: n.x - (lbl.length * 3.2 + 5), y: ly - 11, width: lbl.length * 6.4 + 10, height: 15, rx: 7, fill: 'rgba(16,18,22,.84)', style: 'pointer-events:none' }, g)
+      el('text', { x: n.x, y: ly, 'text-anchor': 'middle', 'font-size': 10, fill: '#eef2f6', 'font-family': 'system-ui', style: 'pointer-events:none' }, g).textContent = lbl
     }
-    hint.textContent = mode === 'select' ? 'Select mode — drag to move · double-click a device to set its room · select + Delete to remove' : mode.startsWith('place:') ? 'Click the canvas to place. Pick ↖ Select when done.' : 'Click a node, then another, to run ' + mode.slice(8) + ' between them.'
+    hint.textContent = 'Tip: drag to move · double-click a fixture to change it · tap it then Delete to remove'
+    updateBanner()
     renderReadout()
   }
 
@@ -136,9 +170,17 @@ export function mountSketch(container, opts) {
     for (const l of ev.quote.lines) h += `<tr><td style="color:var(--mut)">${l.name}${l.note ? ' <span style="opacity:.55">(' + l.note + ')</span>' : ''}</td><td style="text-align:right;white-space:nowrap">${l.qty} ${l.unitName || ''}</td><td style="text-align:right">$${l.cost.toFixed(0)}</td></tr>`
     if (labor) { h += `<tr><td style="color:var(--mut)">Materials subtotal</td><td></td><td style="text-align:right">$${ev.quote.total.toFixed(0)}</td></tr>`; h += `<tr><td style="color:var(--mut)">Labor / markup (${laborPct}%)</td><td></td><td style="text-align:right">$${labor.toFixed(0)}</td></tr>` }
     h += `<tr style="border-top:1px solid var(--line)"><td><b>Estimated quote</b></td><td></td><td style="text-align:right"><b style="color:var(--ok)">$${grand.toFixed(0)}</b></td></tr></table>`
-    h += '<div style="font-weight:600;margin:12px 0 4px">Validation</div>'
-    if (!ev.checks.length) h += '<div style="color:var(--mut);font-size:12px">draw a layout to validate it against code</div>'
-    for (const c of ev.checks) { const ic = c.level === 'ok' ? '✓' : c.level === 'warn' ? '⚠' : '✗'; const col = c.level === 'ok' ? 'var(--ok)' : c.level === 'warn' ? 'var(--warn)' : '#e06b6b'; h += `<div style="font-size:12px;padding:5px 9px;margin:3px 0;border-left:3px solid ${col};background:var(--bg);border-radius:6px"><b style="color:${col}">${ic}</b> ${c.msg}</div>` }
+    const fails = ev.checks.filter(c => c.level === 'fail'), warns = ev.checks.filter(c => c.level === 'warn'), oks = ev.checks.filter(c => c.level === 'ok')
+    const mute = s => s.replace(/\s*\[([^\]]+)\]/g, ' <span style="opacity:.4;font-size:9px">[$1]</span>')
+    const card = (c, ic, col) => `<div style="font-size:12px;padding:6px 9px;margin:3px 0;border-left:3px solid ${col};background:var(--bg);border-radius:6px"><b style="color:${col}">${ic}</b> ${mute(c.msg)}</div>`
+    if (!ev.checks.length) h += '<div style="font-weight:600;margin:12px 0 4px">Check</div><div style="color:var(--mut);font-size:12px">Add fixtures + pipe and I\'ll check it as you go.</div>'
+    else {
+      const todo = fails.length + warns.length
+      h += `<div style="display:flex;align-items:center;gap:8px;margin:12px 0 6px"><b>Check</b><span style="font-size:12px;color:${todo ? 'var(--warn)' : 'var(--ok)'}">${todo ? '🔧 ' + todo + ' to fix · ' + oks.length + ' good' : '✅ all ' + oks.length + ' good — nice!'}</span></div>`
+      if (fails.length) h += '<div style="font-size:11px;color:var(--mut);margin:6px 0 2px">Fix these:</div>' + fails.map(c => card(c, '✗', '#e06b6b')).join('')
+      if (warns.length) h += '<div style="font-size:11px;color:var(--mut);margin:6px 0 2px">Worth a look:</div>' + warns.map(c => card(c, '⚠', 'var(--warn)')).join('')
+      if (oks.length) h += '<div style="font-size:11px;color:var(--mut);margin:6px 0 2px">Good:</div>' + oks.map(c => card(c, '✓', 'var(--ok)')).join('')
+    }
     readBody.innerHTML = h
   }
 

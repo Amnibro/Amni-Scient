@@ -5,13 +5,13 @@ const ev = s => validatePlumb(s, measure(s))
 const results = [], check = (n, ok) => results.push([n, ok])
 
 // 1) fixture with no vent -> fail
-{ const s = emptyScene(24); const M = addNode(s, 'main', 0, 0); const L = addNode(s, 'lav', 100, 0); addRun(s, 'dwv15', L, M); check('no vent -> fail', has(ev(s), 'fail', 'no vent')) }
+{ const s = emptyScene(24); const M = addNode(s, 'main', 0, 0); const L = addNode(s, 'lav', 100, 0); addRun(s, 'dwv15', L, M); check('no vent -> fail', has(ev(s), 'fail', 'vent')) }
 // 2) 4 toilets (12 DFU) through a 2" trunk -> undersized fail
 { const s = emptyScene(24); const M = addNode(s, 'main', 0, 0); const J = addNode(s, 'cleanout', 120, 0); const V = addNode(s, 'vent', 120, -80); addRun(s, 'dwv2', M, J); addRun(s, 'dwv2', J, V); for (let i = 0; i < 4; i++) { const w = addNode(s, 'toilet', 200, -120 + i * 60); addRun(s, 'dwv3', w, J) } check('12 DFU on 2" -> capacity fail', has(ev(s), 'fail', 'capacity')) }
 // 3) proper lav: trap + vent (short) + drain to main -> ok, no fails
 { const s = emptyScene(24); const M = addNode(s, 'main', 300, 0); const V = addNode(s, 'vent', 100, -60); const L = addNode(s, 'lav', 100, 0); addRun(s, 'dwv15', L, V); addRun(s, 'dwv15', L, M); const c = ev(s); check('proper lav -> trapped+vented', has(c, 'ok', 'trapped + vented')); check('proper lav -> no fails', !c.some(x => x.level === 'fail')) }
 // 4) no main -> fail
-{ const s = emptyScene(24); const V = addNode(s, 'vent', 100, -60); const L = addNode(s, 'lav', 100, 0); addRun(s, 'dwv15', L, V); check('no main -> fail', has(ev(s), 'fail', 'no building drain')) }
+{ const s = emptyScene(24); const V = addNode(s, 'vent', 100, -60); const L = addNode(s, 'lav', 100, 0); addRun(s, 'dwv15', L, V); check('no main -> fail', has(ev(s), 'fail', 'drain out')) }
 // 5) toilet on 2" arm -> WC<3" fail
 { const s = emptyScene(24); const M = addNode(s, 'main', 300, 0); const V = addNode(s, 'vent', 100, -60); const W = addNode(s, 'toilet', 100, 0); addRun(s, 'dwv2', W, V); addRun(s, 'dwv2', W, M); check('WC on 2" -> 3in min fail', has(ev(s), 'fail', '3"')) }
 // 6) bom: lav scene -> pipe + trap + stops

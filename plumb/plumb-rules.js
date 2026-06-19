@@ -2,25 +2,25 @@
 import { runLengthFt } from './sketch.js'
 
 export const PLUMB_PALETTE = [
-  { type: 'main', label: 'Main/Sewer', glyph: '⌂', color: '#8a8f98' },
-  { type: 'vent', label: 'Vent (VTR)', glyph: '↑', color: '#6ac0d8' },
-  { type: 'cleanout', label: 'Cleanout', glyph: 'CO', color: '#c0a86a' },
-  { type: 'lav', label: 'Lavatory', glyph: 'L', color: '#4f9cf0' },
-  { type: 'sink', label: 'Kitchen Sink', glyph: 'KS', color: '#4f9cf0' },
-  { type: 'toilet', label: 'Toilet', glyph: 'WC', color: '#5fbf6e' },
-  { type: 'tub', label: 'Tub', glyph: 'T', color: '#b58fd8' },
-  { type: 'shower', label: 'Shower', glyph: 'SH', color: '#b58fd8' },
-  { type: 'washer', label: 'Washer', glyph: 'CW', color: '#e0b341' },
-  { type: 'waterheater', label: 'Water Htr', glyph: 'WH', color: '#e07b4a' },
-  { type: 'hosebibb', label: 'Hose Bibb', glyph: 'HB', color: '#6ac0d8' },
+  { type: 'toilet', label: 'Toilet', glyph: '🚽', color: '#5fbf6e', dims: [1.3, 2.3], shape: 'toilet' },
+  { type: 'lav', label: 'Bath sink', glyph: '🚰', color: '#4f9cf0', dims: [2.0, 1.7], shape: 'basin' },
+  { type: 'sink', label: 'Kitchen sink', glyph: '🍽️', color: '#4f9cf0', dims: [2.6, 2.0], shape: 'ksink' },
+  { type: 'shower', label: 'Shower', glyph: '🚿', color: '#b58fd8', dims: [3, 3], shape: 'shower' },
+  { type: 'tub', label: 'Bathtub', glyph: '🛁', color: '#b58fd8', dims: [2.5, 5], shape: 'tub' },
+  { type: 'washer', label: 'Washer', glyph: '🧺', color: '#e0b341', dims: [2.3, 2.3], shape: 'washer' },
+  { type: 'waterheater', label: 'Water heater', glyph: '♨️', color: '#e07b4a', dims: [1.7, 1.7], shape: 'round' },
+  { type: 'hosebibb', label: 'Outdoor faucet', glyph: '🚰', color: '#6ac0d8', dims: [0.6, 0.6], shape: 'marker' },
+  { type: 'vent', label: 'Roof vent', glyph: '🌬️', color: '#6ac0d8', dims: [0.6, 0.6], shape: 'marker' },
+  { type: 'main', label: 'Drain out', glyph: '🏠', color: '#8a8f98', dims: [0.8, 0.8], shape: 'marker' },
+  { type: 'cleanout', label: 'Cleanout', glyph: '🔧', color: '#c0a86a', dims: [0.6, 0.6], shape: 'marker' },
 ]
 export const PLUMB_RUNTYPES = [
-  { type: 'sup12', label: '½" supply', color: '#4f9cf0' },
-  { type: 'sup34', label: '¾" supply', color: '#2a6ec2' },
-  { type: 'dwv15', label: '1½" DWV', color: '#9aa0aa' },
-  { type: 'dwv2', label: '2" DWV', color: '#b6bcc6' },
-  { type: 'dwv3', label: '3" DWV', color: '#c8a86a' },
-  { type: 'dwv4', label: '4" DWV', color: '#e07b4a' },
+  { type: 'sup12', label: 'Water ½"', color: '#4f9cf0' },
+  { type: 'sup34', label: 'Water ¾"', color: '#2a6ec2' },
+  { type: 'dwv15', label: 'Drain 1½"', color: '#9aa0aa' },
+  { type: 'dwv2', label: 'Drain 2"', color: '#b6bcc6' },
+  { type: 'dwv3', label: 'Drain 3"', color: '#c8a86a' },
+  { type: 'dwv4', label: 'Drain 4"', color: '#e07b4a' },
 ]
 const FIX = {
   lav: { dfu: 1, wsfu: 1, arm: 'dwv15', label: 'Lavatory' },
@@ -57,13 +57,13 @@ export function validatePlumb(scene, m) {
   const adj = dwvAdj(scene)
   const fixtures = scene.nodes.filter(n => FIX[n.type] && !FIX[n.type].supplyOnly)
   const mains = scene.nodes.filter(n => n.type === 'main'), vents = scene.nodes.filter(n => n.type === 'vent'), cleanouts = scene.nodes.filter(n => n.type === 'cleanout')
-  if (!mains.length) checks.push({ level: 'fail', msg: 'No building drain / sewer connection (Main) placed [IPC 710]' })
+  if (!mains.length) checks.push({ level: 'fail', msg: 'Add a "Drain out" — where everything exits to the sewer/septic [IPC 710]' })
   const runDFU = {}
   for (const f of fixtures) {
     const fd = FIX[f.type]
-    if (!vents.length) checks.push({ level: 'fail', msg: fd.label + ': no vent placed — every trap needs a vent or it self-siphons (S-trap) [IPC 909]' })
-    else { const vd = nearestVentDist(scene, f.id, adj); if (vd === Infinity) checks.push({ level: 'fail', msg: fd.label + ': no vent path — unvented trap (S-trap) [IPC 909]' }); else if (vd > (TRAP_ARM[fd.arm] || 6)) checks.push({ level: 'warn', msg: fd.label + ': trap arm ' + vd.toFixed(1) + ' ft exceeds ' + (TRAP_ARM[fd.arm] || 6) + ' ft max for ' + sizeName(fd.arm) + ' [IPC 906]' }); else checks.push({ level: 'ok', msg: fd.label + ': trapped + vented ✓' }) }
-    if (mains.length) { const path = pathToMain(scene, f.id, adj); if (!path) checks.push({ level: 'fail', msg: fd.label + ': not draining to the building main [IPC 710]' }); else { for (const r of path) runDFU[r.id] = (runDFU[r.id] || 0) + fd.dfu; if (fd.isWC && path[0] && (path[0].type === 'dwv15' || path[0].type === 'dwv2')) checks.push({ level: 'fail', msg: 'Toilet on a ' + sizeName(path[0].type) + ' drain — a WC requires a 3" minimum [IPC 709]' }) } }
+    if (!vents.length) checks.push({ level: 'fail', msg: fd.label + ': add a Roof vent + run a drain to it (so it doesn\'t gurgle or siphon dry) [IPC 909]' })
+    else { const vd = nearestVentDist(scene, f.id, adj); if (vd === Infinity) checks.push({ level: 'fail', msg: fd.label + ': run a drain pipe to a Roof vent (un-vented = gurgles & siphons) [IPC 909]' }); else if (vd > (TRAP_ARM[fd.arm] || 6)) checks.push({ level: 'warn', msg: fd.label + ': vent is a bit far (' + vd.toFixed(1) + ' ft; max ' + (TRAP_ARM[fd.arm] || 6) + ' ft for ' + sizeName(fd.arm) + ') [IPC 906]' }); else checks.push({ level: 'ok', msg: fd.label + ': trapped + vented ✓' }) }
+    if (mains.length) { const path = pathToMain(scene, f.id, adj); if (!path) checks.push({ level: 'fail', msg: fd.label + ': run a drain pipe to the "Drain out" [IPC 710]' }); else { for (const r of path) runDFU[r.id] = (runDFU[r.id] || 0) + fd.dfu; if (fd.isWC && path[0] && (path[0].type === 'dwv15' || path[0].type === 'dwv2')) checks.push({ level: 'fail', msg: 'Toilet on a ' + sizeName(path[0].type) + ' drain — a WC requires a 3" minimum [IPC 709]' }) } }
   }
   for (const r of dwvRuns(scene)) { const dfu = runDFU[r.id] || 0, cap = DWV_CAP[r.type] || 0; if (dfu > cap) checks.push({ level: 'fail', msg: sizeName(r.type) + ' drain carries ' + dfu + ' DFU — exceeds its ' + cap + '-DFU capacity, upsize it [IPC Table 710.1(2)]' }) }
   if (mains.length && dwvRuns(scene).length && !cleanouts.length) checks.push({ level: 'warn', msg: 'No cleanout placed — required at the building drain and on long/abrupt runs [IPC 708]' })
