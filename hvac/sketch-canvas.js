@@ -1,7 +1,8 @@
 // Interactive SVG canvas layer over the shared sketch engine core.
 // Framework-free. mountSketch(container, {scene, trade, catalog, store, onChange}) -> controller.
 import { addNode, addRun, removeNode, nodeById, runPoints, runLengthFt, evaluate } from './sketch.js'
-import { computeHomography, applyH, invert3 } from './perspective.js'
+import { computeHomography, roomHomography, applyH, invert3 } from './perspective.js'
+const CAL_STEPS = ['the bottom corner where the two walls meet the floor', 'the bottom corner at the far end of the LEFT wall', 'the bottom corner at the far end of the RIGHT wall', 'the ceiling corner straight above your 1st tap', 'the top corner above your LEFT-wall tap', 'the top corner above your RIGHT-wall tap']
 const NS = 'http://www.w3.org/2000/svg'
 const el = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e }
 
@@ -62,13 +63,13 @@ export function mountSketch(container, opts) {
   const inCss = 'width:52px;background:var(--bg);border:1px solid var(--line);border-radius:6px;color:inherit;padding:5px 6px;margin:0 4px'
   function showCalForm() {
     calForm.style.display = 'block'
-    calForm.innerHTML = '<div style="margin-bottom:9px;font-weight:600">How big is that floor area?</div><div style="display:flex;gap:4px;align-items:center;justify-content:center">width<input id="_cw" type="number" min="1" value="10" style="' + inCss + '">ft &nbsp;×&nbsp; depth<input id="_cd" type="number" min="1" value="12" style="' + inCss + '">ft</div><div style="margin-top:11px;display:flex;gap:8px;justify-content:center"><button id="_cset" class="btn" style="padding:5px 12px">✓ Set floor</button><button id="_ccan" class="btn" style="padding:5px 12px">✕</button></div>'
-    calForm.querySelector('#_cset').onclick = () => { const w = +calForm.querySelector('#_cw').value || 10, d = +calForm.querySelector('#_cd').value || 12; scene.floorH = computeHomography([[0, 0], [w, 0], [w, d], [0, d]], calibPts.slice(0, 4)); scene.floorCal = { px: calibPts.slice(0, 4), w, d }; calForm.style.display = 'none'; setMode('select'); onChange(scene); render() }
+    calForm.innerHTML = '<div style="margin-bottom:9px;font-weight:600">How long is each wall?</div><div style="display:flex;gap:4px;align-items:center;justify-content:center">left<input id="_cw" type="number" min="1" value="10" style="' + inCss + '">ft &nbsp;·&nbsp; right<input id="_cd" type="number" min="1" value="12" style="' + inCss + '">ft</div><div style="margin-top:11px;display:flex;gap:8px;justify-content:center"><button id="_cset" class="btn" style="padding:5px 12px">✓ Set floor</button><button id="_ccan" class="btn" style="padding:5px 12px">✕</button></div>'
+    calForm.querySelector('#_cset').onclick = () => { const w = +calForm.querySelector('#_cw').value || 10, d = +calForm.querySelector('#_cd').value || 12, p = calibPts.slice(0, 6), HH = roomHomography(p[0], p[1], p[2], p[3], p[4], p[5], w, d); if (!HH) { calForm.innerHTML = '<div style="color:#e06b6b;max-width:200px">Hmm, couldn\'t read that corner — the taps may be off. Redo the 6 corners.</div><button id="_cretry" class="btn" style="margin-top:9px;padding:5px 12px">↻ Redo</button>'; calForm.querySelector('#_cretry').onclick = () => { calForm.style.display = 'none'; calibPts = []; setMode('calibrate') }; return } scene.floorH = HH; scene.floorCal = { w, d, corner: p }; calForm.style.display = 'none'; setMode('select'); onChange(scene); render() }
     calForm.querySelector('#_ccan').onclick = () => { calForm.style.display = 'none'; setMode('select') }
   }
   function updateBanner() {
     let txt = '', col = '', btn = ''
-    if (mode === 'calibrate') { txt = '👆 Tap the 4 corners of a floor area — clockwise (' + calibPts.length + '/4)'; col = '#2a6ec2'; btn = '✕ Cancel' }
+    if (mode === 'calibrate') { txt = calibPts.length >= 6 ? '✓ Now tell me the wall sizes →' : '👆 Tap ' + CAL_STEPS[calibPts.length] + '  (' + (calibPts.length + 1) + '/6)'; col = '#2a6ec2'; btn = '✕ Cancel' }
     else if (mode.startsWith('place:')) { const p = trade.palette.find(z => z.type === mode.slice(6)) || {}; txt = '👆 Tap the photo where the ' + (p.glyph || '') + ' ' + (p.label || 'item') + ' goes'; col = '#2a6ec2'; btn = '✓ Done' }
     else if (mode.startsWith('connect:')) { const t = trade.runTypes.find(z => z.type === mode.slice(8)) || {}; txt = connectFrom ? '👆 Now tap what it connects to' : '👆 Tap the two things to join with the ' + (t.label || 'line'); col = '#2f8f4a'; btn = '✕ Cancel' }
     else if (!scene.nodes.length) { txt = '👇 Pick something below, then tap the photo to place it'; col = '#4a4f58' }
@@ -118,7 +119,7 @@ export function mountSketch(container, opts) {
     const [x, y] = ptOf(e)
     const nE = closestAttr(e.target, 'data-node'), nodeId = nE && nE.getAttribute('data-node')
     const rE = closestAttr(e.target, 'data-run'), runId = rE && rE.getAttribute('data-run')
-    if (mode === 'calibrate') { calibPts.push([x, y]); if (calibPts.length >= 4) showCalForm(); render(); return }
+    if (mode === 'calibrate') { if (calibPts.length < 6) calibPts.push([x, y]); if (calibPts.length >= 6) showCalForm(); render(); return }
     if (mode.startsWith('place:')) { let nx = clamp(snap(x), W), ny = clamp(snap(y), H), props = {}; if (scene.floorH) { const f = applyH(invert3(scene.floorH), [x, y]); props = { fx: f[0], fz: f[1] }; nx = x; ny = y }; addNode(scene, mode.slice(6), nx, ny, props); changed(); return }
     if (mode.startsWith('connect:')) {
       if (nodeId) { if (!connectFrom) { connectFrom = nodeId; render() } else if (connectFrom !== nodeId) { addRun(scene, mode.slice(8), connectFrom, nodeId); connectFrom = null; changed() } }
@@ -154,7 +155,8 @@ export function mountSketch(container, opts) {
       el('polygon', { points: bc.map(p => p.join(',')).join(' '), fill: 'none', stroke: '#6cc0ff', 'stroke-width': 2, 'stroke-opacity': 0.55 }, svg)
     }
     if (mode === 'calibrate') {
-      if (calibPts.length > 1) el('polyline', { points: calibPts.map(p => p.join(',')).join(' '), fill: 'none', stroke: '#6cc0ff', 'stroke-width': 1.5, 'stroke-dasharray': '4 3' }, svg)
+      const edge = (i, j) => { if (calibPts[i] && calibPts[j]) el('line', { x1: calibPts[i][0], y1: calibPts[i][1], x2: calibPts[j][0], y2: calibPts[j][1], stroke: '#6cc0ff', 'stroke-width': 1.5, 'stroke-dasharray': '4 3' }, svg) }
+      edge(0, 1); edge(0, 2); edge(3, 4); edge(3, 5); edge(0, 3); edge(1, 4); edge(2, 5)
       calibPts.forEach((p, i) => { el('circle', { cx: p[0], cy: p[1], r: 8, fill: '#6cc0ff', stroke: '#fff', 'stroke-width': 2 }, svg); el('text', { x: p[0], y: p[1] - 12, 'text-anchor': 'middle', fill: '#fff', 'font-size': 12, 'font-weight': 'bold', 'font-family': 'system-ui' }, svg).textContent = (i + 1) })
     }
     for (const r of scene.runs) {

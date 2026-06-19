@@ -36,6 +36,21 @@ export function computeHomography(src, dst) {
 }
 // project a floor point (feet) -> image pixel through H
 export function applyH(H, p) { const x = p[0], y = p[1], w = H[6] * x + H[7] * y + H[8]; return [(H[0] * x + H[1] * y + H[2]) / w, (H[3] * x + H[4] * y + H[5]) / w] }
+// Room-corner calibration: derive the floor homography from a room CORNER instead of 4 floor
+// corners (which a real photo never shows). Inputs are image px: FC=floor corner (two walls meet
+// the floor), FL/FR = a point further along each wall's base, CC=ceiling corner above FC, CL/CR =
+// top of each wall above FL/FR. W,D = the floor distances FC->FL and FC->FR in feet. The parallel
+// floor+ceiling edges of each wall converge at a vanishing point -> the two floor axes.
+const cross3 = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]]
+const lineInt = (p1, p2, p3, p4) => cross3(cross3([p1[0], p1[1], 1], [p2[0], p2[1], 1]), cross3([p3[0], p3[1], 1], [p4[0], p4[1], 1]))
+export function roomHomography(FC, FL, FR, CC, CL, CR, W, D) {
+  const VPl = lineInt(FC, FL, CC, CL), VPr = lineInt(FC, FR, CC, CR), col3 = [FC[0], FC[1], 1]
+  const sc = (VP, target, dist) => { let best = 0, bd = 0; for (const k of [0, 1]) { const den = dist * (VP[k] - VP[2] * target[k]); if (Math.abs(den) > Math.abs(bd)) { bd = den; best = (target[k] - col3[k]) / den } } return best }
+  const l1 = sc(VPl, FL, W), l2 = sc(VPr, FR, D)
+  const c1 = [VPl[0] * l1, VPl[1] * l1, VPl[2] * l1], c2 = [VPr[0] * l2, VPr[1] * l2, VPr[2] * l2]
+  const H = [c1[0], c2[0], col3[0], c1[1], c2[1], col3[1], c1[2], c2[2], col3[2]]
+  return (H.every(x => isFinite(x)) && Math.abs(H[8]) > 1e-9) ? H : null
+}
 // invert a 3x3 (image px -> floor feet), for tap-on-photo -> floor position
 export function invert3(H) {
   const a = H[0], b = H[1], c = H[2], d = H[3], e = H[4], f = H[5], g = H[6], h = H[7], i = H[8]

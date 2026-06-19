@@ -10,7 +10,7 @@ table{border-collapse:collapse}
 import { emptyScene, addNode, addRun } from './sketch.js'
 import { mountSketch } from './sketch-canvas.js'
 import { makePlumbTrade } from './plumb-rules.js'
-import { computeHomography, applyH } from './perspective.js'
+import { computeHomography, roomHomography, applyH } from './perspective.js'
 const catalog = { pex:{name:'½ in PEX (100ft)',hd:39.97}, pex34:{name:'¾ in PEX (100ft)',hd:64.97}, dwv3:{name:'3 in PVC DWV (10ft)',hd:24.97}, dwv4:{name:'4 in PVC DWV (10ft)',hd:34.97}, vent:{name:'2 in PVC vent (10ft)',hd:13.97}, trap:{name:'P-trap',hd:4.98}, stop:{name:'Angle stop',hd:8.97}, fitting:{name:'Fittings (assorted)',hd:1.98}, cleanout:{name:'Cleanout + plug',hd:12.97}, heater:{name:'Water heater',hd:549}, mainvalve:{name:'Main shutoff/PRV',hd:24.97} }
 const trade = makePlumbTrade()
 const scene = emptyScene(24)
@@ -20,8 +20,9 @@ bx.fillStyle = '#33414f'; bx.fillRect(70, 150, 150, 310); bx.strokeStyle = '#8aa
 bx.fillStyle = '#6b7c8a'; bx.fillRect(430, 120, 200, 150); bx.strokeStyle = '#aebccc'; bx.strokeRect(430, 120, 200, 150)
 bx.fillStyle = 'rgba(255,255,255,.06)'; bx.fillRect(0, 380, 720, 80)
 scene.bgImage = bgC.toDataURL('image/jpeg', 0.8)
-scene.floorH = computeHomography([[0,0],[10,0],[10,12],[0,12]], [[320,360],[640,360],[800,560],[160,560]])
-scene.floorCal = { px:[[320,360],[640,360],[800,560],[160,560]], w:10, d:12 }
+const RC = [[450,470],[120,430],[820,430],[450,170],[120,120],[820,120]]
+scene.floorH = roomHomography(RC[0],RC[1],RC[2],RC[3],RC[4],RC[5], 10, 12)
+scene.floorCal = { w:10, d:12, corner: RC }
 const place = (type, fx, fz) => { const px = applyH(scene.floorH, [fx, fz]); return addNode(scene, type, px[0], px[1], { fx, fz }) }
 const WC = place('toilet', 6, 4), TUB = place('tub', 2.2, 7), V = place('vent', 8.5, 3), M = place('main', 5, 10.5)
 addRun(scene,'dwv3',WC,M); addRun(scene,'dwv2',TUB,M); addRun(scene,'dwv2',WC,V)
