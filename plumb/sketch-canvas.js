@@ -214,13 +214,16 @@ export function mountSketch(container, opts) {
         const box = (scene.ceilH && p.height > 0) ? fixtureBox(n.props.fx, n.props.fz, dims[0], dims[1], rot, p.height) : null
         const fq = box ? box.floor : floorQuad(n.props.fx, n.props.fz, dims[0], dims[1], rot), str = a => a.map(pt => pt[0].toFixed(1) + ',' + pt[1].toFixed(1)).join(' ')
         const ex = (box ? box.top : fq).reduce((s, pt) => s + pt[0], 0) / 4, ey = (box ? box.top : fq).reduce((s, pt) => s + pt[1], 0) / 4, maxy = Math.max(fq[0][1], fq[1][1], fq[2][1], fq[3][1])
+        el('polygon', { points: str(fq.map(pt => [pt[0] + 3, pt[1] + 5])), fill: 'rgba(0,0,0,.22)', stroke: 'none', style: 'pointer-events:none' }, g)
         if (connectFrom === n.id) el('polygon', { points: str(fq), fill: 'none', stroke: '#5fbf6e', 'stroke-width': 4, 'stroke-dasharray': '5 3' }, g)
+        if (sel) { el('polygon', { points: str(fq), fill: 'none', stroke: '#8fd0ff', 'stroke-width': 7, 'stroke-opacity': 0.5, 'stroke-linejoin': 'round' }, g); if (box) el('polygon', { points: str(box.top), fill: 'none', stroke: '#8fd0ff', 'stroke-width': 7, 'stroke-opacity': 0.5, 'stroke-linejoin': 'round' }, g) }
         if (box) {
-          el('polygon', { points: str(fq), fill: 'rgba(18,22,28,.34)', stroke: 'none' }, g)
-          const sides = [0, 1, 2, 3].map(i => { const j = (i + 1) % 4; return { my: (fq[i][1] + fq[j][1]) / 2, poly: [fq[i], fq[j], box.top[j], box.top[i]] } }).sort((a, b) => a.my - b.my)
-          for (const sd of sides) el('polygon', { points: str(sd.poly), fill: 'rgba(34,40,49,.62)', stroke: p.color, 'stroke-width': 1.2, 'stroke-opacity': 0.55, 'stroke-linejoin': 'round' }, g)
-          el('polygon', { points: str(box.top), fill: 'rgba(238,242,246,.93)', stroke: sel ? '#fff' : p.color, 'stroke-width': sel ? 3.5 : 2, 'stroke-linejoin': 'round' }, g)
-        } else el('polygon', { points: str(fq), fill: 'rgba(238,242,246,.9)', stroke: sel ? '#fff' : p.color, 'stroke-width': sel ? 4 : 2.5, 'stroke-linejoin': 'round' }, g)
+          el('polygon', { points: str(fq), fill: 'rgba(16,20,26,.28)', stroke: 'none' }, g)
+          const cxq = (fq[0][0] + fq[1][0] + fq[2][0] + fq[3][0]) / 4
+          const sides = [0, 1, 2, 3].map(i => { const j = (i + 1) % 4; return { my: (fq[i][1] + fq[j][1]) / 2, mx: (fq[i][0] + fq[j][0]) / 2, poly: [fq[i], fq[j], box.top[j], box.top[i]] } }).sort((a, b) => a.my - b.my)
+          for (const sd of sides) el('polygon', { points: str(sd.poly), fill: sd.mx < cxq ? '#454d58' : '#2b323b', stroke: p.color, 'stroke-width': 1, 'stroke-opacity': 0.4, 'stroke-linejoin': 'round' }, g)
+          el('polygon', { points: str(box.top), fill: '#f2f5f8', stroke: sel ? '#fff' : p.color, 'stroke-width': sel ? 2.5 : 1.8, 'stroke-linejoin': 'round' }, g)
+        } else el('polygon', { points: str(fq), fill: 'rgba(240,244,248,.92)', stroke: sel ? '#fff' : p.color, 'stroke-width': sel ? 3.5 : 2.2, 'stroke-linejoin': 'round' }, g)
         el('text', { x: ex, y: ey + 5, 'text-anchor': 'middle', 'font-size': box ? 15 : 17, 'font-family': '"Segoe UI Emoji","Apple Color Emoji",system-ui', style: 'pointer-events:none' }, g).textContent = p.glyph || '•'
         el('rect', { x: ex - (lbl.length * 3.2 + 5), y: maxy + 3, width: lbl.length * 6.4 + 10, height: 15, rx: 7, fill: 'rgba(16,18,22,.84)', style: 'pointer-events:none' }, g)
         el('text', { x: ex, y: maxy + 14, 'text-anchor': 'middle', 'font-size': 10, fill: '#eef2f6', 'font-family': 'system-ui', style: 'pointer-events:none' }, g).textContent = lbl
