@@ -45,7 +45,7 @@ export function mountSketch(container, opts) {
   const scene = opts.scene, trade = opts.trade, catalog = opts.catalog || {}, onChange = opts.onChange || (() => {})
   const store = () => (typeof opts.store === 'function' ? opts.store() : (opts.store || 'hd'))
   const W = 960, H = 600
-  let mode = 'select', connectFrom = null, selected = null, drag = null, calibPts = [], snapOn = true, undoBtn = null, redoBtn = null
+  let mode = 'select', connectFrom = null, selected = null, drag = null, calibPts = [], snapOn = true, undoBtn = null, redoBtn = null, view3d = null
   const applySnap = (type, fx, fz, curRot) => { if (!snapOn || !scene.floorH || !scene.floorCal) return { fx, fz, rot: curRot }; const pal = trade.palette.find(z => z.type === type); if (!pal || pal.shape === 'marker') return { fx, fz, rot: curRot }; const sn = snapToWall(fx, fz, (pal.dims || [1, 1])[1], scene.floorCal.w, scene.floorCal.d, 2.5); return sn ? { fx: sn.fx, fz: sn.fz, rot: sn.rot } : { fx, fz, rot: curRot } }
   const clampFloor = (fx, fz) => scene.floorCal ? [Math.max(0, Math.min(scene.floorCal.w, fx)), Math.max(0, Math.min(scene.floorCal.d, fz))] : [fx, fz]
   const nodePix = n => (scene.floorH && n.props && n.props.fx != null) ? applyH(scene.floorH, [n.props.fx, n.props.fz]) : [n.x, n.y]
@@ -68,10 +68,18 @@ export function mountSketch(container, opts) {
   const snapBtn = document.createElement('button'); snapBtn.className = 'btn on'; snapBtn.style.cssText = 'padding:6px 10px;font-size:12px'; snapBtn.textContent = '🧲 Snap: on'
   snapBtn.onclick = () => { snapOn = !snapOn; snapBtn.textContent = '🧲 Snap: ' + (snapOn ? 'on' : 'off'); snapBtn.classList.toggle('on', snapOn) }
   const saveBtn = document.createElement('button'); saveBtn.className = 'btn'; saveBtn.style.cssText = 'padding:6px 10px;font-size:12px'; saveBtn.textContent = '📸 Save image'; saveBtn.onclick = () => exportImage()
+  const td3Btn = document.createElement('button'); td3Btn.className = 'btn'; td3Btn.style.cssText = 'padding:6px 10px;font-size:12px'; td3Btn.textContent = '🧊 3D'
   const photoClr = document.createElement('button'); photoClr.className = 'btn'; photoClr.textContent = '✕'; photoClr.title = 'remove photo + floor'; photoClr.style.cssText = 'padding:6px 9px;font-size:12px'
   photoClr.onclick = () => { scene.bgImage = null; scene.floorH = null; scene.ceilH = null; scene.vpVert = null; scene.floorCal = null; applyBg(); onChange(scene); render() }
   const photoTip = document.createElement('span'); photoTip.style.cssText = 'font-size:11px;color:var(--mut)'; photoTip.textContent = 'snap your wall/room, set the floor, then drop fixtures on it'
-  photoStrip.append(photoL, floorBtn, snapBtn, saveBtn, photoClr, photoTip); left.appendChild(photoStrip)
+  photoStrip.append(photoL, floorBtn, snapBtn, td3Btn, saveBtn, photoClr, photoTip); left.appendChild(photoStrip)
+  const td3 = document.createElement('div'); td3.style.cssText = 'display:none;width:100%;height:62vh;min-height:420px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#10141a'; left.appendChild(td3)
+  td3Btn.onclick = async () => {
+    if (view3d) { view3d.dispose(); view3d = null; td3.style.display = 'none'; td3.innerHTML = ''; svgWrap.style.display = ''; td3Btn.textContent = '🧊 3D'; td3Btn.classList.remove('on'); return }
+    td3Btn.textContent = '…'
+    try { const m = await import('./sketch-3d.js'); svgWrap.style.display = 'none'; td3.style.display = 'block'; td3.innerHTML = ''; view3d = m.mount3D(td3, { scene, trade, catalog, store: store(), onChange }); td3Btn.textContent = '↩ 2D'; td3Btn.classList.add('on') }
+    catch (e) { td3Btn.textContent = '🧊 3D'; td3.style.display = 'none'; svgWrap.style.display = ''; hint.textContent = '3D view needs three.js (works on the module pages).' }
+  }
   function composeImage() {
     return new Promise(resolve => {
       const c = document.createElement('canvas'); c.width = W; c.height = H; const ctx = c.getContext('2d')
