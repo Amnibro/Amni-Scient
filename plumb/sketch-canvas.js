@@ -1,6 +1,7 @@
 // Interactive SVG canvas layer over the shared sketch engine core.
 // Framework-free. mountSketch(container, {scene, trade, catalog, store, onChange}) -> controller.
 import { addNode, addRun, removeNode, nodeById, runPoints, runLengthFt, evaluate } from './sketch.js'
+import { computeHomography, applyH, invert3 } from './perspective.js'
 const NS = 'http://www.w3.org/2000/svg'
 const el = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e }
 
@@ -32,7 +33,8 @@ export function mountSketch(container, opts) {
   const scene = opts.scene, trade = opts.trade, catalog = opts.catalog || {}, onChange = opts.onChange || (() => {})
   const store = () => (typeof opts.store === 'function' ? opts.store() : (opts.store || 'hd'))
   const W = 960, H = 600
-  let mode = 'select', connectFrom = null, selected = null, drag = null
+  let mode = 'select', connectFrom = null, selected = null, drag = null, calibPts = []
+  const nodePix = n => (scene.floorH && n.props && n.props.fx != null) ? applyH(scene.floorH, [n.props.fx, n.props.fz]) : [n.x, n.y]
 
   container.innerHTML = ''
   container.style.cssText = 'display:flex;gap:14px;flex-wrap:wrap;align-items:flex-start'
@@ -43,18 +45,30 @@ export function mountSketch(container, opts) {
   const photoL = document.createElement('label'); photoL.className = 'btn'; photoL.style.cssText = 'padding:6px 10px;font-size:12px;cursor:pointer'; photoL.textContent = '📷 Add room photo'
   const photoIn = document.createElement('input'); photoIn.type = 'file'; photoIn.accept = 'image/*'; photoIn.setAttribute('capture', 'environment'); photoIn.style.display = 'none'; photoL.appendChild(photoIn)
   photoIn.onchange = e => { loadBg(e.target.files && e.target.files[0]); photoIn.value = '' }
-  const photoClr = document.createElement('button'); photoClr.className = 'btn'; photoClr.textContent = '✕'; photoClr.title = 'remove photo'; photoClr.style.cssText = 'padding:6px 9px;font-size:12px'
-  photoClr.onclick = () => { scene.bgImage = null; applyBg(); onChange(scene); render() }
-  const photoTip = document.createElement('span'); photoTip.style.cssText = 'font-size:11px;color:var(--mut)'; photoTip.textContent = 'snap your wall/room, then trace your runs right on it'
-  photoStrip.append(photoL, photoClr, photoTip); left.appendChild(photoStrip)
+  const floorBtn = document.createElement('button'); floorBtn.className = 'btn'; floorBtn.style.cssText = 'padding:6px 10px;font-size:12px'; floorBtn.textContent = '📐 Set floor'
+  floorBtn.onclick = () => { calibPts = []; setMode('calibrate') }
+  const photoClr = document.createElement('button'); photoClr.className = 'btn'; photoClr.textContent = '✕'; photoClr.title = 'remove photo + floor'; photoClr.style.cssText = 'padding:6px 9px;font-size:12px'
+  photoClr.onclick = () => { scene.bgImage = null; scene.floorH = null; scene.floorCal = null; applyBg(); onChange(scene); render() }
+  const photoTip = document.createElement('span'); photoTip.style.cssText = 'font-size:11px;color:var(--mut)'; photoTip.textContent = 'snap your wall/room, set the floor, then drop fixtures on it'
+  photoStrip.append(photoL, floorBtn, photoClr, photoTip); left.appendChild(photoStrip)
   const svgWrap = document.createElement('div'); svgWrap.style.cssText = 'position:relative;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#0d0f12;background-size:cover;background-position:center'
   const svg = el('svg', { viewBox: `0 0 ${W} ${H}`, width: '100%', style: 'touch-action:none;display:block;max-height:62vh;background:transparent' })
   svgWrap.appendChild(svg); left.appendChild(svgWrap)
   const banner = document.createElement('div'); banner.style.cssText = 'position:absolute;left:50%;top:10px;transform:translateX(-50%);z-index:5;display:none;align-items:center;gap:10px;padding:8px 15px;border-radius:22px;font-size:13px;font-weight:600;box-shadow:0 3px 10px #0007;max-width:92%;text-align:center'
   svgWrap.appendChild(banner)
+  const calForm = document.createElement('div'); calForm.style.cssText = 'position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:6;display:none;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;box-shadow:0 6px 20px #0009;text-align:center;font-size:13px'
+  svgWrap.appendChild(calForm)
+  const inCss = 'width:52px;background:var(--bg);border:1px solid var(--line);border-radius:6px;color:inherit;padding:5px 6px;margin:0 4px'
+  function showCalForm() {
+    calForm.style.display = 'block'
+    calForm.innerHTML = '<div style="margin-bottom:9px;font-weight:600">How big is that floor area?</div><div style="display:flex;gap:4px;align-items:center;justify-content:center">width<input id="_cw" type="number" min="1" value="10" style="' + inCss + '">ft &nbsp;×&nbsp; depth<input id="_cd" type="number" min="1" value="12" style="' + inCss + '">ft</div><div style="margin-top:11px;display:flex;gap:8px;justify-content:center"><button id="_cset" class="btn" style="padding:5px 12px">✓ Set floor</button><button id="_ccan" class="btn" style="padding:5px 12px">✕</button></div>'
+    calForm.querySelector('#_cset').onclick = () => { const w = +calForm.querySelector('#_cw').value || 10, d = +calForm.querySelector('#_cd').value || 12; scene.floorH = computeHomography([[0, 0], [w, 0], [w, d], [0, d]], calibPts.slice(0, 4)); scene.floorCal = { px: calibPts.slice(0, 4), w, d }; calForm.style.display = 'none'; setMode('select'); onChange(scene); render() }
+    calForm.querySelector('#_ccan').onclick = () => { calForm.style.display = 'none'; setMode('select') }
+  }
   function updateBanner() {
     let txt = '', col = '', btn = ''
-    if (mode.startsWith('place:')) { const p = trade.palette.find(z => z.type === mode.slice(6)) || {}; txt = '👆 Tap the photo where the ' + (p.glyph || '') + ' ' + (p.label || 'item') + ' goes'; col = '#2a6ec2'; btn = '✓ Done' }
+    if (mode === 'calibrate') { txt = '👆 Tap the 4 corners of a floor area — clockwise (' + calibPts.length + '/4)'; col = '#2a6ec2'; btn = '✕ Cancel' }
+    else if (mode.startsWith('place:')) { const p = trade.palette.find(z => z.type === mode.slice(6)) || {}; txt = '👆 Tap the photo where the ' + (p.glyph || '') + ' ' + (p.label || 'item') + ' goes'; col = '#2a6ec2'; btn = '✓ Done' }
     else if (mode.startsWith('connect:')) { const t = trade.runTypes.find(z => z.type === mode.slice(8)) || {}; txt = connectFrom ? '👆 Now tap what it connects to' : '👆 Tap the two things to join with the ' + (t.label || 'line'); col = '#2f8f4a'; btn = '✕ Cancel' }
     else if (!scene.nodes.length) { txt = '👇 Pick something below, then tap the photo to place it'; col = '#4a4f58' }
     else { banner.style.display = 'none'; return }
@@ -83,7 +97,7 @@ export function mountSketch(container, opts) {
   ctl.appendChild(csvB)
 
   const mkBtn = (label, on, sty) => { const b = document.createElement('button'); b.className = 'btn'; b.textContent = label; b.style.cssText = 'padding:6px 9px;font-size:12px;' + (sty || ''); b.onclick = on; bar.appendChild(b); return b }
-  function setMode(m) { mode = m; connectFrom = null; renderBar(); render() }
+  function setMode(m) { mode = m; connectFrom = null; if (m !== 'calibrate' && calForm) calForm.style.display = 'none'; renderBar(); render() }
   function delSelected() { if (!selected) return; if (selected.kind === 'node') removeNode(scene, selected.id); else scene.runs = scene.runs.filter(r => r.id !== selected.id); selected = null; changed() }
   function renderBar() {
     bar.innerHTML = ''
@@ -103,7 +117,8 @@ export function mountSketch(container, opts) {
     const [x, y] = ptOf(e)
     const nE = closestAttr(e.target, 'data-node'), nodeId = nE && nE.getAttribute('data-node')
     const rE = closestAttr(e.target, 'data-run'), runId = rE && rE.getAttribute('data-run')
-    if (mode.startsWith('place:')) { addNode(scene, mode.slice(6), clamp(snap(x), W), clamp(snap(y), H)); changed(); return }
+    if (mode === 'calibrate') { calibPts.push([x, y]); if (calibPts.length >= 4) showCalForm(); render(); return }
+    if (mode.startsWith('place:')) { let nx = clamp(snap(x), W), ny = clamp(snap(y), H), props = {}; if (scene.floorH) { const f = applyH(invert3(scene.floorH), [x, y]); props = { fx: f[0], fz: f[1] }; nx = x; ny = y }; addNode(scene, mode.slice(6), nx, ny, props); changed(); return }
     if (mode.startsWith('connect:')) {
       if (nodeId) { if (!connectFrom) { connectFrom = nodeId; render() } else if (connectFrom !== nodeId) { addRun(scene, mode.slice(8), connectFrom, nodeId); connectFrom = null; changed() } }
       else { connectFrom = null; render() }
@@ -113,7 +128,7 @@ export function mountSketch(container, opts) {
     else if (runId) { selected = { kind: 'run', id: runId }; render() }
     else { selected = null; render() }
   })
-  svg.addEventListener('pointermove', e => { if (!drag) return; const [x, y] = ptOf(e); const n = nodeById(scene, drag.id); if (!n) return; n.x = clamp(snap(x - drag.dx), W); n.y = clamp(snap(y - drag.dy), H); render() })
+  svg.addEventListener('pointermove', e => { if (!drag) return; const [x, y] = ptOf(e); const n = nodeById(scene, drag.id); if (!n) return; if (scene.floorH && n.props && n.props.fx != null) { const f = applyH(invert3(scene.floorH), [x - drag.dx, y - drag.dy]); n.props.fx = f[0]; n.props.fz = f[1]; const px = nodePix(n); n.x = px[0]; n.y = px[1] } else { n.x = clamp(snap(x - drag.dx), W); n.y = clamp(snap(y - drag.dy), H) } render() })
   svg.addEventListener('pointerup', () => { if (drag) { drag = null; changed() } })
   svg.addEventListener('dblclick', e => { const nE = closestAttr(e.target, 'data-node'), id = nE && nE.getAttribute('data-node'); if (!id) return; const n = nodeById(scene, id); if (!n) return; if (trade.onNodeActivate && trade.onNodeActivate(n)) { changed(); return } const p = trade.palette.find(z => z.type === n.type); if (p && p.dims && p.shape !== 'marker' && p.shape !== 'round') { n.props.rot = ((n.props.rot || 0) + 90) % 360; changed() } })
   window.addEventListener('keydown', e => { if ((e.key === 'Delete' || e.key === 'Backspace') && selected && container.offsetParent !== null) { e.preventDefault(); delSelected() } })
@@ -122,11 +137,25 @@ export function mountSketch(container, opts) {
 
   function render() {
     while (svg.firstChild) svg.removeChild(svg.firstChild)
-    const G = scene.scalePxPerFt || 24, go = scene.bgImage ? 0.18 : 1
-    for (let gx = 0; gx <= W; gx += G) el('line', { x1: gx, y1: 0, x2: gx, y2: H, stroke: gx % (G * 5) === 0 ? '#262b32' : '#171a1f', 'stroke-width': 1, 'stroke-opacity': go }, svg)
-    for (let gy = 0; gy <= H; gy += G) el('line', { x1: 0, y1: gy, x2: W, y2: gy, stroke: gy % (G * 5) === 0 ? '#262b32' : '#171a1f', 'stroke-width': 1, 'stroke-opacity': go }, svg)
-    el('line', { x1: 14, y1: H - 16, x2: 14 + G * 5, y2: H - 16, stroke: '#8fa8b8', 'stroke-width': 2 }, svg)
-    const rt = el('text', { x: 14, y: H - 22, fill: '#8fa8b8', 'font-size': 11, 'font-family': 'system-ui' }, svg); rt.textContent = '5 ft'
+    const G = scene.scalePxPerFt || 24, persp = !!(scene.floorH && scene.floorCal), go = persp ? 0 : (scene.bgImage ? 0.18 : 1)
+    if (go > 0) {
+      for (let gx = 0; gx <= W; gx += G) el('line', { x1: gx, y1: 0, x2: gx, y2: H, stroke: gx % (G * 5) === 0 ? '#262b32' : '#171a1f', 'stroke-width': 1, 'stroke-opacity': go }, svg)
+      for (let gy = 0; gy <= H; gy += G) el('line', { x1: 0, y1: gy, x2: W, y2: gy, stroke: gy % (G * 5) === 0 ? '#262b32' : '#171a1f', 'stroke-width': 1, 'stroke-opacity': go }, svg)
+      el('line', { x1: 14, y1: H - 16, x2: 14 + G * 5, y2: H - 16, stroke: '#8fa8b8', 'stroke-width': 2 }, svg)
+      el('text', { x: 14, y: H - 22, fill: '#8fa8b8', 'font-size': 11, 'font-family': 'system-ui' }, svg).textContent = '5 ft'
+    }
+    if (persp) {
+      const FH = scene.floorH, fw = scene.floorCal.w, fd = scene.floorCal.d, step = Math.max(1, Math.round(Math.max(fw, fd) / 8))
+      const fl = (a, b) => { const p1 = applyH(FH, a), p2 = applyH(FH, b); el('line', { x1: p1[0], y1: p1[1], x2: p2[0], y2: p2[1], stroke: '#6cc0ff', 'stroke-width': 1, 'stroke-opacity': 0.3 }, svg) }
+      for (let gx = 0; gx <= fw + 1e-6; gx += step) fl([gx, 0], [gx, fd])
+      for (let gz = 0; gz <= fd + 1e-6; gz += step) fl([0, gz], [fw, gz])
+      const bc = [[0, 0], [fw, 0], [fw, fd], [0, fd]].map(p => applyH(FH, p))
+      el('polygon', { points: bc.map(p => p.join(',')).join(' '), fill: 'none', stroke: '#6cc0ff', 'stroke-width': 2, 'stroke-opacity': 0.55 }, svg)
+    }
+    if (mode === 'calibrate') {
+      if (calibPts.length > 1) el('polyline', { points: calibPts.map(p => p.join(',')).join(' '), fill: 'none', stroke: '#6cc0ff', 'stroke-width': 1.5, 'stroke-dasharray': '4 3' }, svg)
+      calibPts.forEach((p, i) => { el('circle', { cx: p[0], cy: p[1], r: 8, fill: '#6cc0ff', stroke: '#fff', 'stroke-width': 2 }, svg); el('text', { x: p[0], y: p[1] - 12, 'text-anchor': 'middle', fill: '#fff', 'font-size': 12, 'font-weight': 'bold', 'font-family': 'system-ui' }, svg).textContent = (i + 1) })
+    }
     for (const r of scene.runs) {
       const pts = runPoints(r, scene); if (pts.length < 2) continue
       const t = trade.runTypes.find(z => z.type === r.type) || { color: '#888', label: r.type }, sel = selected && selected.id === r.id
