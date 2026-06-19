@@ -10,7 +10,7 @@
 (function(){
 'use strict';
 const $=id=>document.getElementById(id);
-const v=id=>{const e=$(id);return e?parseFloat(e.value):NaN;};
+const v=id=>{const e=$(id);if(!e)return NaN;var r=parseFloat(e.value);return window.__uconv?window.__uconv(e,r):r;};
 const sv=id=>{const e=$(id);return e?e.value:'';};
 function setCardOut(cardId,html){const card=$(cardId);if(!card)return;let out=card.querySelector(':scope > .card-out');if(!out){out=document.createElement('div');out.className='card-out';out.style.marginTop='.5rem';card.appendChild(out);}out.innerHTML=html;}
 function shoelaceProps(pts){if(!pts||pts.length<3)return null;const n=pts.length;let A=0,Cx=0,Cy=0;for(let i=0;i<n;i++){const j=(i+1)%n,xi=pts[i][0],yi=pts[i][1],xj=pts[j][0],yj=pts[j][1];const cr=xi*yj-xj*yi;A+=cr;Cx+=(xi+xj)*cr;Cy+=(yi+yj)*cr;}A=A/2;const sgn=A<0?-1:1;A=Math.abs(A);if(A<1e-9)return null;Cx=Cx*sgn/(6*A);Cy=Cy*sgn/(6*A);let Ixo=0,Iyo=0;for(let i=0;i<n;i++){const j=(i+1)%n,xi=pts[i][0],yi=pts[i][1],xj=pts[j][0],yj=pts[j][1];const cr=xi*yj-xj*yi;Ixo+=(yi*yi+yi*yj+yj*yj)*cr;Iyo+=(xi*xi+xi*xj+xj*xj)*cr;}Ixo=Math.abs(Ixo*sgn)/12;Iyo=Math.abs(Iyo*sgn)/12;const Ix=Ixo-A*Cy*Cy,Iy=Iyo-A*Cx*Cx;let cTop=0,cBot=0,cR=0,cL=0;pts.forEach(p=>{const dy=p[1]-Cy,dx=p[0]-Cx;if(dy>cTop)cTop=dy;if(-dy>cBot)cBot=-dy;if(dx>cR)cR=dx;if(-dx>cL)cL=-dx;});const cy=Math.max(cTop,cBot),cx=Math.max(cR,cL);return{A,Cx,Cy,Ixx:Ix,Iyy:Iy,Sx:cy>0?Ix/cy:0,Sy:cx>0?Iy/cx:0,rx:A>0?Math.sqrt(Ix/A):0,ry:A>0?Math.sqrt(Iy/A):0,J:Ix+Iy};}
@@ -780,7 +780,7 @@ window.calcSpring=function(){
   }else if(type==='torsion'){
     const E=200000;
     k=E*Math.pow(d,4)/(64*D*na);
-    delta=F*100/k;Lsolid=nt*d;
+    delta=F/k*180/Math.PI;Lsolid=nt*d;
     const sigma=32*F*D/(Math.PI*Math.pow(d,3));
     items.push(['Type','TORSION (Shigley)']);
     items.push(['Index C',C.toFixed(2)]);
