@@ -47,6 +47,7 @@ export function mountSketch(container, opts) {
   const W = 960, H = 600
   let mode = 'select', connectFrom = null, selected = null, drag = null, calibPts = [], snapOn = true, undoBtn = null, redoBtn = null
   const applySnap = (type, fx, fz, curRot) => { if (!snapOn || !scene.floorH || !scene.floorCal) return { fx, fz, rot: curRot }; const pal = trade.palette.find(z => z.type === type); if (!pal || pal.shape === 'marker') return { fx, fz, rot: curRot }; const sn = snapToWall(fx, fz, (pal.dims || [1, 1])[1], scene.floorCal.w, scene.floorCal.d, 2.5); return sn ? { fx: sn.fx, fz: sn.fz, rot: sn.rot } : { fx, fz, rot: curRot } }
+  const clampFloor = (fx, fz) => scene.floorCal ? [Math.max(0, Math.min(scene.floorCal.w, fx)), Math.max(0, Math.min(scene.floorCal.d, fz))] : [fx, fz]
   const nodePix = n => (scene.floorH && n.props && n.props.fx != null) ? applyH(scene.floorH, [n.props.fx, n.props.fz]) : [n.x, n.y]
   const floorPts = (fx, fz, w, d, rotDeg) => { const r = (rotDeg || 0) * Math.PI / 180, c = Math.cos(r), s = Math.sin(r); return [[-w / 2, -d / 2], [w / 2, -d / 2], [w / 2, d / 2], [-w / 2, d / 2]].map(([px, py]) => [fx + (px * c - py * s), fz + (px * s + py * c)]) }
   const floorQuad = (fx, fz, w, d, rotDeg) => floorPts(fx, fz, w, d, rotDeg).map(p => applyH(scene.floorH, p))
@@ -156,7 +157,7 @@ export function mountSketch(container, opts) {
     const nE = closestAttr(e.target, 'data-node'), nodeId = nE && nE.getAttribute('data-node')
     const rE = closestAttr(e.target, 'data-run'), runId = rE && rE.getAttribute('data-run')
     if (mode === 'calibrate') { if (calibPts.length < 6) calibPts.push([x, y]); if (calibPts.length >= 6) showCalForm(); render(); return }
-    if (mode.startsWith('place:')) { const type = mode.slice(6); let nx = clamp(snap(x), W), ny = clamp(snap(y), H), props = {}; if (scene.floorH) { const f = applyH(invert3(scene.floorH), [x, y]), sn = applySnap(type, f[0], f[1], 0); props = { fx: sn.fx, fz: sn.fz, rot: sn.rot }; nx = x; ny = y }; addNode(scene, type, nx, ny, props); changed(); return }
+    if (mode.startsWith('place:')) { const type = mode.slice(6); let nx = clamp(snap(x), W), ny = clamp(snap(y), H), props = {}; if (scene.floorH) { const f = applyH(invert3(scene.floorH), [x, y]), cf = clampFloor(f[0], f[1]), sn = applySnap(type, cf[0], cf[1], 0); props = { fx: sn.fx, fz: sn.fz, rot: sn.rot }; nx = x; ny = y }; addNode(scene, type, nx, ny, props); changed(); return }
     if (mode.startsWith('connect:')) {
       if (nodeId) { if (!connectFrom) { connectFrom = nodeId; render() } else if (connectFrom !== nodeId) { addRun(scene, mode.slice(8), connectFrom, nodeId); connectFrom = null; changed() } }
       else { connectFrom = null; render() }
@@ -166,7 +167,7 @@ export function mountSketch(container, opts) {
     else if (runId) { selected = { kind: 'run', id: runId }; render() }
     else { selected = null; render() }
   })
-  svg.addEventListener('pointermove', e => { if (!drag) return; const [x, y] = ptOf(e); const n = nodeById(scene, drag.id); if (!n) return; if (scene.floorH && n.props && n.props.fx != null) { const f = applyH(invert3(scene.floorH), [x - drag.dx, y - drag.dy]), sn = applySnap(n.type, f[0], f[1], n.props.rot || 0); n.props.fx = sn.fx; n.props.fz = sn.fz; n.props.rot = sn.rot; const px = nodePix(n); n.x = px[0]; n.y = px[1] } else { n.x = clamp(snap(x - drag.dx), W); n.y = clamp(snap(y - drag.dy), H) } render() })
+  svg.addEventListener('pointermove', e => { if (!drag) return; const [x, y] = ptOf(e); const n = nodeById(scene, drag.id); if (!n) return; if (scene.floorH && n.props && n.props.fx != null) { const f = applyH(invert3(scene.floorH), [x - drag.dx, y - drag.dy]), cf = clampFloor(f[0], f[1]), sn = applySnap(n.type, cf[0], cf[1], n.props.rot || 0); n.props.fx = sn.fx; n.props.fz = sn.fz; n.props.rot = sn.rot; const px = nodePix(n); n.x = px[0]; n.y = px[1] } else { n.x = clamp(snap(x - drag.dx), W); n.y = clamp(snap(y - drag.dy), H) } render() })
   svg.addEventListener('pointerup', () => { if (drag) { drag = null; changed() } })
   svg.addEventListener('dblclick', e => { const nE = closestAttr(e.target, 'data-node'), id = nE && nE.getAttribute('data-node'); if (!id) return; const n = nodeById(scene, id); if (!n) return; if (trade.onNodeActivate && trade.onNodeActivate(n)) { changed(); return } const p = trade.palette.find(z => z.type === n.type); if (p && p.dims && p.shape !== 'marker' && p.shape !== 'round') { n.props.rot = ((n.props.rot || 0) + 90) % 360; changed() } })
   window.addEventListener('keydown', e => {
@@ -239,6 +240,7 @@ export function mountSketch(container, opts) {
         continue
       }
       const wpx = Math.max(15, dims[0] * G), hpx = Math.max(15, dims[1] * G), half = Math.max(wpx, hpx) / 2
+      if (Math.min(wpx, hpx) < 30) el('circle', { cx: ctr[0], cy: ctr[1], r: 22, fill: 'transparent', style: 'pointer-events:all' }, g)
       const shp = el('g', { transform: `translate(${ctr[0]},${ctr[1]}) rotate(${persp ? 0 : rot})` }, g)
       if (connectFrom === n.id) el('rect', { x: -wpx / 2 - 5, y: -hpx / 2 - 5, width: wpx + 10, height: hpx + 10, rx: 8, fill: 'none', stroke: '#5fbf6e', 'stroke-width': 3, 'stroke-dasharray': '5 3' }, shp)
       if (sel) el('rect', { x: -wpx / 2 - 3, y: -hpx / 2 - 3, width: wpx + 6, height: hpx + 6, rx: 7, fill: 'none', stroke: '#fff', 'stroke-width': 2 }, shp)
