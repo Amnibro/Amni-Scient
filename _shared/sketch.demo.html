@@ -24,9 +24,10 @@ const RC = [[450,475],[110,430],[830,430],[450,150],[175,130],[765,130]]
 const cal = calibrateRoom(RC[0],RC[1],RC[2],RC[3],RC[4],RC[5], 10, 12)
 scene.floorH = cal.floorH; scene.ceilH = cal.ceilH; scene.vpVert = cal.vpVert
 scene.floorCal = { w:10, d:12, corner: RC }
-const place = (type, fx, fz) => { const px = applyH(scene.floorH, [fx, fz]); return addNode(scene, type, px[0], px[1], { fx, fz }) }
-const WC = place('toilet', 6, 4), TUB = place('tub', 2.2, 7), V = place('vent', 8.5, 3), M = place('main', 5, 10.5)
-addRun(scene,'dwv3',WC,M); addRun(scene,'dwv2',TUB,M); addRun(scene,'dwv2',WC,V)
+const place = (type, fx, fz, rot) => { const px = applyH(scene.floorH, [fx, fz]); return addNode(scene, type, px[0], px[1], { fx, fz, rot: rot||0 }) }
+const TUB = place('tub', 2.6, 2.5, 0), SH = place('shower', 6.8, 1.5, 0), WC = place('toilet', 1.15, 7, 270), LAV = place('lav', 0.85, 9.5, 270)
+const V = place('vent', 8, 10), M = place('main', 0.5, 11.2)
+addRun(scene,'dwv3',WC,M); addRun(scene,'dwv2',TUB,M); addRun(scene,'dwv2',WC,V); addRun(scene,'dwv15',LAV,M)
 const ctrl = mountSketch(document.getElementById('sketch'), { scene, trade, catalog, store:'hd', onChange:()=>{} })
 window.__ready = true
 </script></body></html>

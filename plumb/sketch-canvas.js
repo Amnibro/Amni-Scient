@@ -1,6 +1,6 @@
 // Interactive SVG canvas layer over the shared sketch engine core.
 // Framework-free. mountSketch(container, {scene, trade, catalog, store, onChange}) -> controller.
-import { addNode, addRun, removeNode, nodeById, runPoints, runLengthFt, evaluate } from './sketch.js'
+import { addNode, addRun, removeNode, nodeById, runPoints, runLengthFt, evaluate, snapToWall } from './sketch.js'
 import { computeHomography, roomHomography, calibrateRoom, applyH, invert3 } from './perspective.js'
 const CEIL_FT = 8
 const CAL_STEPS = ['the bottom corner where the two walls meet the floor', 'the bottom corner at the far end of the LEFT wall', 'the bottom corner at the far end of the RIGHT wall', 'the ceiling corner straight above your 1st tap', 'the top corner above your LEFT-wall tap', 'the top corner above your RIGHT-wall tap']
@@ -35,7 +35,8 @@ export function mountSketch(container, opts) {
   const scene = opts.scene, trade = opts.trade, catalog = opts.catalog || {}, onChange = opts.onChange || (() => {})
   const store = () => (typeof opts.store === 'function' ? opts.store() : (opts.store || 'hd'))
   const W = 960, H = 600
-  let mode = 'select', connectFrom = null, selected = null, drag = null, calibPts = []
+  let mode = 'select', connectFrom = null, selected = null, drag = null, calibPts = [], snapOn = true
+  const applySnap = (type, fx, fz, curRot) => { if (!snapOn || !scene.floorH || !scene.floorCal) return { fx, fz, rot: curRot }; const pal = trade.palette.find(z => z.type === type); if (!pal || pal.shape === 'marker') return { fx, fz, rot: curRot }; const sn = snapToWall(fx, fz, (pal.dims || [1, 1])[1], scene.floorCal.w, scene.floorCal.d, 2.5); return sn ? { fx: sn.fx, fz: sn.fz, rot: sn.rot } : { fx, fz, rot: curRot } }
   const nodePix = n => (scene.floorH && n.props && n.props.fx != null) ? applyH(scene.floorH, [n.props.fx, n.props.fz]) : [n.x, n.y]
   const floorPts = (fx, fz, w, d, rotDeg) => { const r = (rotDeg || 0) * Math.PI / 180, c = Math.cos(r), s = Math.sin(r); return [[-w / 2, -d / 2], [w / 2, -d / 2], [w / 2, d / 2], [-w / 2, d / 2]].map(([px, py]) => [fx + (px * c - py * s), fz + (px * s + py * c)]) }
   const floorQuad = (fx, fz, w, d, rotDeg) => floorPts(fx, fz, w, d, rotDeg).map(p => applyH(scene.floorH, p))
@@ -53,10 +54,12 @@ export function mountSketch(container, opts) {
   photoIn.onchange = e => { loadBg(e.target.files && e.target.files[0]); photoIn.value = '' }
   const floorBtn = document.createElement('button'); floorBtn.className = 'btn'; floorBtn.style.cssText = 'padding:6px 10px;font-size:12px'; floorBtn.textContent = '📐 Set floor'
   floorBtn.onclick = () => { calibPts = []; setMode('calibrate') }
+  const snapBtn = document.createElement('button'); snapBtn.className = 'btn on'; snapBtn.style.cssText = 'padding:6px 10px;font-size:12px'; snapBtn.textContent = '🧲 Snap: on'
+  snapBtn.onclick = () => { snapOn = !snapOn; snapBtn.textContent = '🧲 Snap: ' + (snapOn ? 'on' : 'off'); snapBtn.classList.toggle('on', snapOn) }
   const photoClr = document.createElement('button'); photoClr.className = 'btn'; photoClr.textContent = '✕'; photoClr.title = 'remove photo + floor'; photoClr.style.cssText = 'padding:6px 9px;font-size:12px'
   photoClr.onclick = () => { scene.bgImage = null; scene.floorH = null; scene.ceilH = null; scene.vpVert = null; scene.floorCal = null; applyBg(); onChange(scene); render() }
   const photoTip = document.createElement('span'); photoTip.style.cssText = 'font-size:11px;color:var(--mut)'; photoTip.textContent = 'snap your wall/room, set the floor, then drop fixtures on it'
-  photoStrip.append(photoL, floorBtn, photoClr, photoTip); left.appendChild(photoStrip)
+  photoStrip.append(photoL, floorBtn, snapBtn, photoClr, photoTip); left.appendChild(photoStrip)
   const svgWrap = document.createElement('div'); svgWrap.style.cssText = 'position:relative;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#0d0f12;background-size:cover;background-position:center'
   const svg = el('svg', { viewBox: `0 0 ${W} ${H}`, width: '100%', style: 'touch-action:none;display:block;max-height:62vh;background:transparent' })
   svgWrap.appendChild(svg); left.appendChild(svgWrap)
@@ -124,7 +127,7 @@ export function mountSketch(container, opts) {
     const nE = closestAttr(e.target, 'data-node'), nodeId = nE && nE.getAttribute('data-node')
     const rE = closestAttr(e.target, 'data-run'), runId = rE && rE.getAttribute('data-run')
     if (mode === 'calibrate') { if (calibPts.length < 6) calibPts.push([x, y]); if (calibPts.length >= 6) showCalForm(); render(); return }
-    if (mode.startsWith('place:')) { let nx = clamp(snap(x), W), ny = clamp(snap(y), H), props = {}; if (scene.floorH) { const f = applyH(invert3(scene.floorH), [x, y]); props = { fx: f[0], fz: f[1] }; nx = x; ny = y }; addNode(scene, mode.slice(6), nx, ny, props); changed(); return }
+    if (mode.startsWith('place:')) { const type = mode.slice(6); let nx = clamp(snap(x), W), ny = clamp(snap(y), H), props = {}; if (scene.floorH) { const f = applyH(invert3(scene.floorH), [x, y]), sn = applySnap(type, f[0], f[1], 0); props = { fx: sn.fx, fz: sn.fz, rot: sn.rot }; nx = x; ny = y }; addNode(scene, type, nx, ny, props); changed(); return }
     if (mode.startsWith('connect:')) {
       if (nodeId) { if (!connectFrom) { connectFrom = nodeId; render() } else if (connectFrom !== nodeId) { addRun(scene, mode.slice(8), connectFrom, nodeId); connectFrom = null; changed() } }
       else { connectFrom = null; render() }
@@ -134,7 +137,7 @@ export function mountSketch(container, opts) {
     else if (runId) { selected = { kind: 'run', id: runId }; render() }
     else { selected = null; render() }
   })
-  svg.addEventListener('pointermove', e => { if (!drag) return; const [x, y] = ptOf(e); const n = nodeById(scene, drag.id); if (!n) return; if (scene.floorH && n.props && n.props.fx != null) { const f = applyH(invert3(scene.floorH), [x - drag.dx, y - drag.dy]); n.props.fx = f[0]; n.props.fz = f[1]; const px = nodePix(n); n.x = px[0]; n.y = px[1] } else { n.x = clamp(snap(x - drag.dx), W); n.y = clamp(snap(y - drag.dy), H) } render() })
+  svg.addEventListener('pointermove', e => { if (!drag) return; const [x, y] = ptOf(e); const n = nodeById(scene, drag.id); if (!n) return; if (scene.floorH && n.props && n.props.fx != null) { const f = applyH(invert3(scene.floorH), [x - drag.dx, y - drag.dy]), sn = applySnap(n.type, f[0], f[1], n.props.rot || 0); n.props.fx = sn.fx; n.props.fz = sn.fz; n.props.rot = sn.rot; const px = nodePix(n); n.x = px[0]; n.y = px[1] } else { n.x = clamp(snap(x - drag.dx), W); n.y = clamp(snap(y - drag.dy), H) } render() })
   svg.addEventListener('pointerup', () => { if (drag) { drag = null; changed() } })
   svg.addEventListener('dblclick', e => { const nE = closestAttr(e.target, 'data-node'), id = nE && nE.getAttribute('data-node'); if (!id) return; const n = nodeById(scene, id); if (!n) return; if (trade.onNodeActivate && trade.onNodeActivate(n)) { changed(); return } const p = trade.palette.find(z => z.type === n.type); if (p && p.dims && p.shape !== 'marker' && p.shape !== 'round') { n.props.rot = ((n.props.rot || 0) + 90) % 360; changed() } })
   window.addEventListener('keydown', e => { if ((e.key === 'Delete' || e.key === 'Backspace') && selected && container.offsetParent !== null) { e.preventDefault(); delSelected() } })

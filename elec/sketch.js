@@ -14,6 +14,18 @@ export function runPoints(run, scene) {
   if (!a || !b) return []
   return [[a.x, a.y], ...(run.waypoints || []), [b.x, b.y]]
 }
+// Snap a fixture (floor center fx,fz; footprint depth ft) to the nearest floor-rect wall edge of a
+// W×D floor, flush against it, rotated to face INTO the room. Returns {fx,fz,rot} or null if no wall
+// is within thresh. (x=0 right wall→rot270, x=W→90, z=0 left wall→0, z=D→180.)
+export function snapToWall(fx, fz, depth, W, D, thresh) {
+  const dL = fx, dR = W - fx, dN = fz, dF = D - fz, m = Math.min(dL, dR, dN, dF)
+  if (m > thresh) return null
+  const h = (depth || 0) / 2
+  if (m === dL) return { fx: h, fz, rot: 270 }
+  if (m === dR) return { fx: W - h, fz, rot: 90 }
+  if (m === dN) return { fx, fz: h, rot: 0 }
+  return { fx, fz: D - h, rot: 180 }
+}
 export function runLengthFt(run, scene) {
   const a = nodeById(scene, run.a), b = nodeById(scene, run.b)
   if (a && b && a.props && a.props.fx != null && b.props && b.props.fx != null) return Math.hypot(b.props.fx - a.props.fx, b.props.fz - a.props.fz)
