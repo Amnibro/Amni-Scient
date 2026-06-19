@@ -4,6 +4,7 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { addNode, addRun, nodeById, removeNode, snapToWall } from './sketch.js'
+import { fitGroundPlane, floorAlign } from './cloud-align.js'
 
 const PIPE_R = { sup12: 0.05, sup34: 0.06, dwv15: 0.08, dwv2: 0.1, dwv3: 0.13, dwv4: 0.16, nm142: 0.04, nm122: 0.045, nm103: 0.05, nm63: 0.06, s6: 0.25, s8: 0.33, s10: 0.42, s12: 0.5, r8: 0.33, r10: 0.42, r12: 0.5 }
 const porc = new THREE.MeshStandardMaterial({ color: 0xeef2f6, roughness: 0.4, metalness: 0.05 })
@@ -41,6 +42,25 @@ export function mount3D(container, opts) {
   root.add(new THREE.HemisphereLight(0xeaf2ff, 0x202830, 1.05))
   const sun = new THREE.DirectionalLight(0xfff4e0, 1.0); sun.position.set(W * 0.7, 10, D * 0.3); root.add(sun)
   const fixtureGroup = new THREE.Group(); root.add(fixtureGroup)
+  // optional scanned room point cloud (Amni-Scan): floor-aligned (cloud-align) + scaled to the room.
+  let cloudPoints = null
+  function loadCloud() {
+    let raw = opts.pointCloud
+    if (!raw) { try { const s = localStorage.getItem('amni_scan_cloud'); if (s) raw = JSON.parse(s) } catch (e) {} }
+    if (!raw || !raw.positions || raw.positions.length < 9) return
+    const pos = raw.positions, col = raw.colors || [], n = (pos.length / 3) | 0, sample = [], step = Math.max(1, (n / 3000) | 0)
+    for (let i = 0; i < n; i += step) sample.push([pos[i * 3], pos[i * 3 + 1], pos[i * 3 + 2]])
+    const plane = fitGroundPlane(sample); if (!plane) return
+    const al = floorAlign(plane), aligned = new Float32Array(n * 3)
+    let mnx = Infinity, mnz = Infinity, mxx = -Infinity, mxz = -Infinity
+    for (let i = 0; i < n; i++) { const q = al.apply([pos[i * 3], pos[i * 3 + 1], pos[i * 3 + 2]]); aligned[i * 3] = q[0]; aligned[i * 3 + 1] = q[1]; aligned[i * 3 + 2] = q[2]; if (q[0] < mnx) mnx = q[0]; if (q[0] > mxx) mxx = q[0]; if (q[2] < mnz) mnz = q[2]; if (q[2] > mxz) mxz = q[2] }
+    const scale = Math.min(W / ((mxx - mnx) || 1), D / ((mxz - mnz) || 1)) * 0.92, cx = (mnx + mxx) / 2, cz = (mnz + mxz) / 2
+    for (let i = 0; i < n; i++) { aligned[i * 3] = (aligned[i * 3] - cx) * scale + W / 2; aligned[i * 3 + 1] *= scale; aligned[i * 3 + 2] = (aligned[i * 3 + 2] - cz) * scale + D / 2 }
+    const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.BufferAttribute(aligned, 3))
+    const hasCol = col.length >= n * 3; if (hasCol) geo.setAttribute('color', new THREE.BufferAttribute(Float32Array.from(col.slice(0, n * 3)), 3))
+    cloudPoints = new THREE.Points(geo, new THREE.PointsMaterial({ size: 0.06, vertexColors: hasCol, color: hasCol ? 0xffffff : 0x8fb8d8 })); root.add(cloudPoints)
+  }
+  loadCloud()
   const selRing = new THREE.Mesh(new THREE.TorusGeometry(1, 0.05, 8, 28), new THREE.MeshBasicMaterial({ color: 0x8fd0ff })); selRing.rotation.x = -Math.PI / 2; selRing.visible = false; root.add(selRing)
   let mode = 'select', connectFrom = null, selected = null, dragId = null
   function buildFixture(n) {
@@ -76,6 +96,7 @@ export function mount3D(container, opts) {
     const sp = document.createElement('span'); sp.textContent = '│'; sp.style.cssText = 'color:#9aa0aa;align-self:center'; bar.appendChild(sp)
     for (const rt of (trade.runTypes || [])) mkb(rt.label, () => setMode('connect:' + rt.type), mode === 'connect:' + rt.type, rt.color)
     mkb('🗑', () => { if (selected) { removeNode(scene3, selected); selected = null; commit() } }, false)
+    if (cloudPoints) mkb('☁️ Room cloud', () => { cloudPoints.visible = !cloudPoints.visible; renderBar() }, cloudPoints.visible)
   }
   function setMode(m) { mode = m; connectFrom = null; controls.enabled = (m === 'select'); renderBar() }
   function commit() { rebuild(); onChange(scene3) }

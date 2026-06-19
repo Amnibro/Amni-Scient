@@ -100,6 +100,7 @@ code{background:var(--bg);border:1px solid var(--line);border-radius:5px;padding
       <button class="btn ghost" id="c-train">🌌 Train splats</button>
       <button class="btn ghost" id="c-ply">⬇️ Export .ply</button>
       <button class="btn ghost" id="c-gsplat">⬇️ Export gsplat .ply</button>
+      <button class="btn ghost" id="c-construct">🏗️ Send to Construct</button>
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px">
       <span class="muted" style="font-size:13px">📏 Real size:</span>
@@ -656,6 +657,12 @@ async function reconstructAR() {
   for (let i = 0; i < n; i++) s += pos[i*3].toFixed(4) + ' ' + pos[i*3+1].toFixed(4) + ' ' + pos[i*3+2].toFixed(4) + ' ' + Math.round(col[i*3]*255) + ' ' + Math.round(col[i*3+1]*255) + ' ' + Math.round(col[i*3+2]*255) + '\n'
   Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([s], { type: 'text/plain' })), download: 'amni-scan-cloud.ply' }).click()
   vstatus('Exported ' + n + ' points as a colored .ply — yours to keep, open anywhere.')
+}
+;($('#c-construct') || {}).onclick = () => {
+  if (!lastCloud) { vstatus('Reconstruct a point cloud first.'); return }
+  const pos = lastCloud.pos, col = lastCloud.col, n = pos.length / 3, step = Math.max(1, Math.ceil(n / 16000)), P = [], C = []
+  for (let i = 0; i < n; i += step) { P.push(+pos[i*3].toFixed(4), +pos[i*3+1].toFixed(4), +pos[i*3+2].toFixed(4)); C.push(+col[i*3].toFixed(3), +col[i*3+1].toFixed(3), +col[i*3+2].toFixed(3)) }
+  try { localStorage.setItem('amni_scan_cloud', JSON.stringify({ positions: P, colors: C, ts: Date.now() })); vstatus('Sent ' + (P.length/3|0) + ' points to Amni-Construct — open the 🧊 3D view in any trade and toggle ☁️ Room cloud to build inside your scan.') } catch (e) { vstatus('Cloud too large for browser storage — export a .ply instead. (' + e + ')') }
 }
 function covEig(neigh) {
   const m = neigh.length, mean = [0, 0, 0]; for (const p of neigh) for (let k = 0; k < 3; k++) mean[k] += p[k]; for (let k = 0; k < 3; k++) mean[k] /= m
