@@ -94,6 +94,8 @@ export function bomElec(scene, m) {
 export function makeElecTrade() {
   return {
     name: 'elec', palette: ELEC_PALETTE, runTypes: ELEC_RUNTYPES, bom: bomElec, validate: validateElec,
+    stock: { nm142: { len: 250, key: 'nm142', est: 89, unitName: '14/2 roll' }, nm122: { len: 250, key: 'nm122', est: 119, unitName: '12/2 roll' }, nm103: { len: 125, key: 'nm103', est: 119, unitName: '10/3 roll' }, nm63: { len: 125, key: 'nm63', est: 169, unitName: '6/3 roll' } },
+    fittings: { bend: 'Device / outlet box', branch: 'Junction box', elbowKey: 'box', teeKey: 'box' },
     onNodeActivate: n => { if (!ROOMED.has(n.type)) return false; const i = ROOMS.indexOf((n.props && n.props.room) || 'general'); n.props.room = ROOMS[(i + 1) % ROOMS.length]; return true },
     nodeLabel: n => { const p = ELEC_PALETTE.find(z => z.type === n.type), lab = p ? p.label : n.type, r = n.props && n.props.room; return r && r !== 'general' ? lab + ' · ' + r : lab },
   }

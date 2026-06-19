@@ -88,5 +88,10 @@ export function bomPlumb(scene, m) {
 }
 
 export function makePlumbTrade() {
-  return { name: 'plumb', palette: PLUMB_PALETTE, runTypes: PLUMB_RUNTYPES, bom: bomPlumb, validate: validatePlumb, nodeLabel: n => { const p = PLUMB_PALETTE.find(z => z.type === n.type); return p ? p.label : n.type } }
+  return {
+    name: 'plumb', palette: PLUMB_PALETTE, runTypes: PLUMB_RUNTYPES, bom: bomPlumb, validate: validatePlumb,
+    stock: { sup12: { len: 100, key: 'pex', unitName: 'PEX coil' }, sup34: { len: 100, key: 'pex34', unitName: 'PEX coil' }, dwv15: { len: 10, key: 'vent', unitName: 'PVC stick' }, dwv2: { len: 10, key: 'vent', unitName: 'PVC stick' }, dwv3: { len: 10, key: 'dwv3', unitName: 'PVC stick' }, dwv4: { len: 10, key: 'dwv4', unitName: 'PVC stick' }, fittingKey: 'fitting', fixtures: { waterheater: 'heater', cleanout: 'cleanout' } },
+    fittings: { bend: 'Elbow (90°)', branch: 'Tee / wye', elbowKey: 'fitting', teeKey: 'fitting' },
+    nodeLabel: n => { const p = PLUMB_PALETTE.find(z => z.type === n.type); return p ? p.label : n.type },
+  }
 }

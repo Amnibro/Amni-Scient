@@ -60,6 +60,8 @@ export function bomHvac(scene, m) {
 export function makeHvacTrade() {
   return {
     name: 'hvac', palette: HVAC_PALETTE, runTypes: HVAC_RUNTYPES, bom: bomHvac, validate: validateHvac,
+    stock: { s6: { len: 25, key: 'duct6', unitName: 'flex/pipe' }, s8: { len: 25, key: 'duct8', unitName: 'flex/pipe' }, s10: { len: 25, key: 'duct10', unitName: 'flex/pipe' }, s12: { len: 4, key: 'duct12', unitName: 'trunk' }, r8: { len: 25, key: 'duct8', unitName: 'return flex' }, r10: { len: 25, key: 'duct10', unitName: 'return flex' }, r12: { len: 4, key: 'duct12', unitName: 'return trunk' }, fittingKey: 'boot', fixtures: { airhandler: 'ahu', supply: 'register', return: 'grille' } },
+    fittings: { bend: 'Elbow / take-off', branch: 'Wye / branch', elbowKey: 'boot', teeKey: 'boot' },
     onNodeActivate: n => { if (n.type === 'airhandler') { const i = TON_OPTS.indexOf((n.props && n.props.tons) || 3); n.props.tons = TON_OPTS[(i + 1) % TON_OPTS.length]; return true } if (n.type === 'supply' || n.type === 'return') { const i = CFM_OPTS.indexOf((n.props && n.props.cfm) || 100); n.props.cfm = CFM_OPTS[(i + 1) % CFM_OPTS.length]; return true } return false },
     nodeLabel: n => { const p = HVAC_PALETTE.find(z => z.type === n.type), lab = p ? p.label : n.type; if (n.type === 'airhandler') return lab + ' · ' + ((n.props && n.props.tons) || 3) + ' ton'; if (n.type === 'supply' || n.type === 'return') return lab + ' · ' + ((n.props && n.props.cfm) || 100) + ' CFM'; return lab },
   }

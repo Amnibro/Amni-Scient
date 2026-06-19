@@ -73,3 +73,36 @@ export function evaluate(scene, trade, catalog, store) {
   const checks = trade.validate ? trade.validate(scene, m) : []
   return { measure: m, bom, quote, checks }
 }
+
+// Buildable "real components / cut list": per run-type stock sticks/coils + the actual cut lengths,
+// couplings, elbows (drawn bends + a drop per end fixture), tees (each junction beyond 2-way), and the
+// placed fixtures — priced from the catalog where a SKU exists. Trade supplies `stock` (runType ->
+// {len ft, key, ...}) + optional `fittings` labels/keys + `fixtures` price-key map. Estimates.
+export function realComponents(scene, trade, catalog, store) {
+  catalog = catalog || {}; store = store || 'hd'
+  const m = measure(scene), stock = trade.stock || {}, fit = trade.fittings || {}, def = { elbow: 2.2, tee: 4.5, coupling: 1.6 }
+  const price = (key, fb) => { const c = key && catalog[key]; return (c && +c[store]) || fb || 0 }
+  const items = [], runsByType = {}
+  for (const r of scene.runs) (runsByType[r.type] = runsByType[r.type] || []).push(runLengthFt(r, scene))
+  for (const type of Object.keys(m.byRunType)) {
+    const rt = (trade.runTypes || []).find(z => z.type === type) || { label: type }, st = stock[type] || {}
+    const stockLen = st.len || (/^(sup|nm|wire|pex|r1)/.test(type) ? 100 : 10)
+    const lenFt = m.byRunType[type], sticks = Math.max(1, Math.ceil(lenFt / stockLen))
+    const cuts = (runsByType[type] || []).map(x => Math.round(x * 10) / 10), each = price(st.key, st.est || (stockLen >= 100 ? 40 : 12))
+    items.push({ qty: sticks, name: rt.label + ' · ' + stockLen + 'ft ' + (st.unitName || 'stock'), unit: stockLen >= 100 ? 'coil' : 'stick', each, cost: each * sticks, note: Math.round(lenFt) + ' ft · cuts ' + cuts.map(c => c + "'").join(', ') })
+    const coup = Math.max(0, sticks - (runsByType[type] || []).length)
+    if (coup > 0) { const e = price(st.couplingKey || stock.fittingKey, def.coupling); items.push({ qty: coup, name: rt.label + ' coupling', unit: 'ea', each: e, cost: e * coup }) }
+  }
+  let leaves = 0, tees = 0
+  for (const n of scene.nodes) { const d = m.deg[n.id] || 0; if (d === 1) leaves++; if (d > 2) tees += d - 2 }
+  const elbows = m.elbows + leaves
+  if (!trade.noFittings) {
+    if (elbows > 0) { const e = price(fit.elbowKey || stock.fittingKey, def.elbow); items.push({ qty: elbows, name: fit.bend || 'Elbow (90°)', unit: 'ea', each: e, cost: e * elbows, note: m.elbows + ' bend(s) + ' + leaves + ' end drop(s)' }) }
+    if (tees > 0) { const e = price(fit.teeKey || stock.fittingKey, def.tee); items.push({ qty: tees, name: fit.branch || 'Tee / branch', unit: 'ea', each: e, cost: e * tees }) }
+  }
+  for (const type of Object.keys(m.nodeCounts)) {
+    const p = (trade.palette || []).find(z => z.type === type), key = stock.fixtures && stock.fixtures[type], e = price(key, 0)
+    items.push({ qty: m.nodeCounts[type], name: (p ? p.label : type), unit: 'ea', each: e, cost: e * m.nodeCounts[type], note: e ? '' : 'price varies' })
+  }
+  return { items, total: items.reduce((s, it) => s + (it.cost || 0), 0) }
+}

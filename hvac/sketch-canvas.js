@@ -1,6 +1,6 @@
 // Interactive SVG canvas layer over the shared sketch engine core.
 // Framework-free. mountSketch(container, {scene, trade, catalog, store, onChange}) -> controller.
-import { addNode, addRun, removeNode, nodeById, runPoints, runLengthFt, evaluate, snapToWall } from './sketch.js'
+import { addNode, addRun, removeNode, nodeById, runPoints, runLengthFt, evaluate, snapToWall, realComponents } from './sketch.js'
 import { computeHomography, roomHomography, calibrateRoom, applyH, invert3 } from './perspective.js'
 const CEIL_FT = 8
 const CAL_STEPS = ['the bottom corner where the two walls meet the floor', 'the bottom corner at the far end of the LEFT wall', 'the bottom corner at the far end of the RIGHT wall', 'the ceiling corner straight above your 1st tap', 'the top corner above your LEFT-wall tap', 'the top corner above your RIGHT-wall tap']
@@ -15,6 +15,12 @@ export function bomCsv(ev, opts) {
   const labor = opts.laborPct ? ev.quote.total * opts.laborPct / 100 : 0
   if (labor) rows.push(['Labor / markup (' + opts.laborPct + '%)', '', '', '', labor.toFixed(2)])
   rows.push(['TOTAL', '', '', '', (ev.quote.total + labor).toFixed(2)])
+  const rco = opts.realComponents
+  if (rco && rco.items.length) {
+    rows.push(['']); rows.push(['REAL COMPONENTS / CUT LIST (estimate)', '', '', '', ''])
+    for (const it of rco.items) rows.push([it.name + (it.note ? ' (' + it.note + ')' : ''), it.qty, it.unit || '', (it.each || 0).toFixed(2), (it.cost || 0).toFixed(2)])
+    rows.push(['PARTS TOTAL', '', '', '', rco.total.toFixed(2)])
+  }
   return rows.map(r => r.map(esc).join(',')).join('\n')
 }
 
@@ -152,7 +158,7 @@ export function mountSketch(container, opts) {
   laborI.onchange = () => renderReadout()
   laborL.appendChild(laborI); ctl.appendChild(laborL)
   const csvB = document.createElement('button'); csvB.className = 'btn'; csvB.textContent = '⬇️ BOM CSV'; csvB.style.cssText = 'padding:5px 9px;font-size:12px'
-  csvB.onclick = () => { const ev = evaluate(scene, trade, catalog, store()); const csv = bomCsv(ev, { laborPct: +laborI.value || 0 }); Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([csv], { type: 'text/csv' })), download: (trade.name || 'sketch') + '-bom.csv' }).click() }
+  csvB.onclick = () => { const ev = evaluate(scene, trade, catalog, store()); const csv = bomCsv(ev, { laborPct: +laborI.value || 0, realComponents: realComponents(scene, trade, catalog, store()) }); Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([csv], { type: 'text/csv' })), download: (trade.name || 'sketch') + '-bom.csv' }).click() }
   ctl.appendChild(csvB)
 
   const mkBtn = (label, on, sty) => { const b = document.createElement('button'); b.className = 'btn'; b.textContent = label; b.style.cssText = 'padding:6px 9px;font-size:12px;' + (sty || ''); b.onclick = on; bar.appendChild(b); return b }
@@ -290,6 +296,12 @@ export function mountSketch(container, opts) {
     for (const l of ev.quote.lines) h += `<tr><td style="color:var(--mut)">${l.name}${l.note ? ' <span style="opacity:.55">(' + l.note + ')</span>' : ''}</td><td style="text-align:right;white-space:nowrap">${l.qty} ${l.unitName || ''}</td><td style="text-align:right">$${l.cost.toFixed(0)}</td></tr>`
     if (labor) { h += `<tr><td style="color:var(--mut)">Materials subtotal</td><td></td><td style="text-align:right">$${ev.quote.total.toFixed(0)}</td></tr>`; h += `<tr><td style="color:var(--mut)">Labor / markup (${laborPct}%)</td><td></td><td style="text-align:right">$${labor.toFixed(0)}</td></tr>` }
     h += `<tr style="border-top:1px solid var(--line)"><td><b>Estimated quote</b></td><td></td><td style="text-align:right"><b style="color:var(--ok)">$${grand.toFixed(0)}</b></td></tr></table>`
+    const rco = realComponents(scene, trade, catalog, store())
+    if (rco.items.length) {
+      h += '<div style="font-weight:600;margin:12px 0 4px">🧾 Real components <span style="opacity:.5;font-size:10px">cut list · est.</span></div><table style="width:100%;font-size:12px">'
+      for (const it of rco.items) h += `<tr><td style="color:var(--mut)">${it.qty}× ${it.name}${it.note ? ' <span style="opacity:.5">· ' + it.note + '</span>' : ''}</td><td style="text-align:right;white-space:nowrap">${it.cost ? '$' + it.cost.toFixed(0) : '—'}</td></tr>`
+      h += `<tr style="border-top:1px solid var(--line)"><td style="color:var(--mut)">parts subtotal</td><td style="text-align:right">$${rco.total.toFixed(0)}</td></tr></table>`
+    }
     const fails = ev.checks.filter(c => c.level === 'fail'), warns = ev.checks.filter(c => c.level === 'warn'), oks = ev.checks.filter(c => c.level === 'ok')
     const mute = s => s.replace(/\s*\[([^\]]+)\]/g, ' <span style="opacity:.4;font-size:9px">[$1]</span>')
     const card = (c, ic, col) => `<div style="font-size:12px;padding:6px 9px;margin:3px 0;border-left:3px solid ${col};background:var(--bg);border-radius:6px"><b style="color:${col}">${ic}</b> ${mute(c.msg)}</div>`
