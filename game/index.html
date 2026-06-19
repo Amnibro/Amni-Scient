@@ -135,7 +135,7 @@ btn.addEventListener('click', async () => {
   if(reason === 'no-adapter') return fail('⚠️ WebGPU is present but no GPU adapter responded.<br><b>Brave?</b> Enable <b>brave://flags/#enable-unsafe-webgpu</b> and restart (or lower Shields).<br>Otherwise enable hardware acceleration / update graphics drivers, then retry.');
   status.textContent = 'Fetching the world seed (4.5 MB)...';
   try {
-    const V = '198';
+    const V = '199';
     const { default: init } = await import('./pkg/amni.js?v=' + V);
     status.textContent = 'Growing eight realms — about 15 seconds, the page may hold its breath...';
     await new Promise(r => setTimeout(r, 60));
