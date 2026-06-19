@@ -35,6 +35,7 @@ export function mountSketch(container, opts) {
   const W = 960, H = 600
   let mode = 'select', connectFrom = null, selected = null, drag = null, calibPts = []
   const nodePix = n => (scene.floorH && n.props && n.props.fx != null) ? applyH(scene.floorH, [n.props.fx, n.props.fz]) : [n.x, n.y]
+  const floorQuad = (fx, fz, w, d, rotDeg) => { const r = (rotDeg || 0) * Math.PI / 180, c = Math.cos(r), s = Math.sin(r); return [[-w / 2, -d / 2], [w / 2, -d / 2], [w / 2, d / 2], [-w / 2, d / 2]].map(([px, py]) => applyH(scene.floorH, [fx + (px * c - py * s), fz + (px * s + py * c)])) }
 
   container.innerHTML = ''
   container.style.cssText = 'display:flex;gap:14px;flex-wrap:wrap;align-items:flex-start'
@@ -168,16 +169,27 @@ export function mountSketch(container, opts) {
     for (const n of scene.nodes) {
       const p = trade.palette.find(z => z.type === n.type) || { color: '#777', glyph: '•', label: n.type, shape: 'marker' }
       const sel = selected && selected.id === n.id, dims = p.dims || [0.6, 0.6], rot = (n.props && n.props.rot) || 0
+      const ctr = nodePix(n), g = el('g', { 'data-node': n.id, style: 'cursor:pointer' }, svg)
+      const lbl = trade.nodeLabel ? trade.nodeLabel(n) : (n.props && n.props.label ? n.props.label : p.label)
+      if (persp && n.props && n.props.fx != null && p.shape !== 'marker') {
+        const q = floorQuad(n.props.fx, n.props.fz, dims[0], dims[1], rot), pts = q.map(pt => pt[0].toFixed(1) + ',' + pt[1].toFixed(1)).join(' ')
+        if (connectFrom === n.id) el('polygon', { points: pts, fill: 'none', stroke: '#5fbf6e', 'stroke-width': 4, 'stroke-dasharray': '5 3' }, g)
+        el('polygon', { points: pts, fill: 'rgba(238,242,246,.9)', stroke: sel ? '#fff' : p.color, 'stroke-width': sel ? 4 : 2.5, 'stroke-linejoin': 'round' }, g)
+        const ex = q.reduce((s, pt) => s + pt[0], 0) / 4, ey = q.reduce((s, pt) => s + pt[1], 0) / 4, maxy = Math.max(q[0][1], q[1][1], q[2][1], q[3][1])
+        el('text', { x: ex, y: ey + 5, 'text-anchor': 'middle', 'font-size': 17, 'font-family': '"Segoe UI Emoji","Apple Color Emoji",system-ui', style: 'pointer-events:none' }, g).textContent = p.glyph || '•'
+        el('rect', { x: ex - (lbl.length * 3.2 + 5), y: maxy + 3, width: lbl.length * 6.4 + 10, height: 15, rx: 7, fill: 'rgba(16,18,22,.84)', style: 'pointer-events:none' }, g)
+        el('text', { x: ex, y: maxy + 14, 'text-anchor': 'middle', 'font-size': 10, fill: '#eef2f6', 'font-family': 'system-ui', style: 'pointer-events:none' }, g).textContent = lbl
+        continue
+      }
       const wpx = Math.max(15, dims[0] * G), hpx = Math.max(15, dims[1] * G), half = Math.max(wpx, hpx) / 2
-      const g = el('g', { 'data-node': n.id, style: 'cursor:pointer' }, svg)
-      const shp = el('g', { transform: `translate(${n.x},${n.y}) rotate(${rot})` }, g)
+      const shp = el('g', { transform: `translate(${ctr[0]},${ctr[1]}) rotate(${persp ? 0 : rot})` }, g)
       if (connectFrom === n.id) el('rect', { x: -wpx / 2 - 5, y: -hpx / 2 - 5, width: wpx + 10, height: hpx + 10, rx: 8, fill: 'none', stroke: '#5fbf6e', 'stroke-width': 3, 'stroke-dasharray': '5 3' }, shp)
       if (sel) el('rect', { x: -wpx / 2 - 3, y: -hpx / 2 - 3, width: wpx + 6, height: hpx + 6, rx: 7, fill: 'none', stroke: '#fff', 'stroke-width': 2 }, shp)
       ;(SHAPES[p.shape] || SHAPES.marker)(shp, wpx, hpx, p.color)
-      el('text', { x: n.x, y: n.y + 5, 'text-anchor': 'middle', 'font-size': Math.min(20, Math.max(12, Math.min(wpx, hpx) * 0.5)), 'font-family': '"Segoe UI Emoji","Apple Color Emoji",system-ui', style: 'pointer-events:none' }, g).textContent = p.glyph || '•'
-      const lbl = trade.nodeLabel ? trade.nodeLabel(n) : (n.props && n.props.label ? n.props.label : p.label), ly = n.y + half + 13
-      el('rect', { x: n.x - (lbl.length * 3.2 + 5), y: ly - 11, width: lbl.length * 6.4 + 10, height: 15, rx: 7, fill: 'rgba(16,18,22,.84)', style: 'pointer-events:none' }, g)
-      el('text', { x: n.x, y: ly, 'text-anchor': 'middle', 'font-size': 10, fill: '#eef2f6', 'font-family': 'system-ui', style: 'pointer-events:none' }, g).textContent = lbl
+      el('text', { x: ctr[0], y: ctr[1] + 5, 'text-anchor': 'middle', 'font-size': Math.min(20, Math.max(12, Math.min(wpx, hpx) * 0.5)), 'font-family': '"Segoe UI Emoji","Apple Color Emoji",system-ui', style: 'pointer-events:none' }, g).textContent = p.glyph || '•'
+      const ly = ctr[1] + half + 13
+      el('rect', { x: ctr[0] - (lbl.length * 3.2 + 5), y: ly - 11, width: lbl.length * 6.4 + 10, height: 15, rx: 7, fill: 'rgba(16,18,22,.84)', style: 'pointer-events:none' }, g)
+      el('text', { x: ctr[0], y: ly, 'text-anchor': 'middle', 'font-size': 10, fill: '#eef2f6', 'font-family': 'system-ui', style: 'pointer-events:none' }, g).textContent = lbl
     }
     hint.textContent = 'Tip: drag to move · double-click a fixture to change it · tap it then Delete to remove'
     updateBanner()
