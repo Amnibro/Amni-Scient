@@ -52,6 +52,24 @@
     b.onclick = function () { if (!confirm('Clear all saved calculator inputs and reset to the page defaults?')) return; try { localStorage.removeItem(VKEY); localStorage.removeItem(TKEY); } catch (e) {} location.reload(); };
     host.appendChild(b);
   }
+  // live auto-recompute: once you've computed a module, tweaking any of its inputs re-runs it
+  // (debounced, active view only) so you don't keep clicking COMPUTE while exploring.
+  var liveViews = {}, recalcTimer = null;
+  function viewBtn(view) { return view.querySelector('button[onclick*="calc" i], button.btn-fill, button.btn'); }
+  document.addEventListener('click', function (e) {
+    var btn = e.target && e.target.closest && e.target.closest('button[onclick]');
+    if (!btn) return;
+    if (!/calc|analyz|comput/i.test(btn.getAttribute('onclick') || '')) return;
+    var view = btn.closest('.view'); if (view && view.id) liveViews[view.id] = 1;
+  }, true);
+  document.addEventListener('input', function (e) {
+    var el = e.target; if (!isField(el)) return;
+    var view = el.closest && el.closest('.view');
+    if (!view || !view.id || !liveViews[view.id] || !view.classList.contains('active')) return;
+    var btn = viewBtn(view); if (!btn) return;
+    if (recalcTimer) clearTimeout(recalcTimer);
+    recalcTimer = setTimeout(function () { try { btn.click(); } catch (e2) {} }, 450);
+  }, true);
   function init() { restore(); restoreTab(); injectReset(); }
   if (document.readyState === 'complete') setTimeout(init, 80);
   else window.addEventListener('load', function () { setTimeout(init, 80); });
