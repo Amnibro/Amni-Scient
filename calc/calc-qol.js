@@ -41,16 +41,21 @@
     var cur = document.querySelector('#tabs .tab.active');
     if (tab && (!cur || cur.dataset.v !== v)) tab.click();
   }
-  function injectReset() {
-    if (document.getElementById('qol-reset')) return;
-    var host = document.querySelector('.sidebar'); if (!host) return;
-    var b = document.createElement('button'); b.id = 'qol-reset'; b.type = 'button'; b.textContent = '↺ Reset inputs';
-    b.title = 'Clear all saved inputs and restore the page defaults';
-    b.style.cssText = 'display:block;width:calc(100% - 28px);margin:10px 14px 14px;padding:6px;background:none;border:1px solid var(--line,#272c35);color:var(--dim,#9aa0aa);border-radius:6px;font-family:inherit;font-size:.6rem;letter-spacing:1px;text-transform:uppercase;cursor:pointer';
+  function mkBtn(id, label, title, mt) {
+    var b = document.createElement('button'); b.id = id; b.type = 'button'; b.textContent = label; b.title = title;
+    b.style.cssText = 'display:block;width:calc(100% - 28px);margin:' + (mt || 10) + 'px 14px 0;padding:6px;background:none;border:1px solid var(--line,#272c35);color:var(--dim,#9aa0aa);border-radius:6px;font-family:inherit;font-size:.6rem;letter-spacing:1px;text-transform:uppercase;cursor:pointer';
     b.onmouseenter = function () { b.style.borderColor = 'var(--accent,#8fa8b8)'; b.style.color = 'var(--accent,#8fa8b8)'; };
     b.onmouseleave = function () { b.style.borderColor = 'var(--line,#272c35)'; b.style.color = 'var(--dim,#9aa0aa)'; };
-    b.onclick = function () { if (!confirm('Clear all saved calculator inputs and reset to the page defaults?')) return; try { localStorage.removeItem(VKEY); localStorage.removeItem(TKEY); } catch (e) {} location.reload(); };
-    host.appendChild(b);
+    return b;
+  }
+  function injectControls() {
+    if (document.getElementById('qol-reset')) return;
+    var host = document.querySelector('.sidebar'); if (!host) return;
+    // (results already have the app's own 📋 COPY button — no need to add one here)
+    var reset = mkBtn('qol-reset', '↺ Reset inputs', 'Clear all saved inputs and restore the page defaults');
+    reset.style.marginBottom = '14px';
+    reset.onclick = function () { if (!confirm('Clear all saved calculator inputs and reset to the page defaults?')) return; try { localStorage.removeItem(VKEY); localStorage.removeItem(TKEY); localStorage.removeItem(LKEY); } catch (e) {} location.reload(); };
+    host.appendChild(reset);
   }
   // live auto-recompute: once you've computed a module, tweaking any of its inputs re-runs it
   // (debounced, active view only) so you don't keep clicking COMPUTE while exploring. The set of
@@ -78,7 +83,7 @@
     if (btn) { e.preventDefault(); btn.click(); }
   }, true);
   function init() {
-    restore(); restoreTab(); injectReset();
+    restore(); restoreTab(); injectControls();
     setTimeout(function () { var av = document.querySelector('.view.active'); var btn = viewBtn(av); if (av && btn && liveViews[av.id]) try { btn.click(); } catch (e) {} }, 220);
   }
   if (document.readyState === 'complete') setTimeout(init, 80);
