@@ -82,6 +82,12 @@
     var view = e.target.closest && e.target.closest('.view'); var btn = viewBtn(view);
     if (btn) { e.preventDefault(); btn.click(); }
   }, true);
+  // stop the mouse wheel from silently changing a focused number field (and triggering a recompute)
+  // while you scroll the page — a classic number-input papercut, worse here with live-recompute on.
+  document.addEventListener('wheel', function (e) {
+    var el = e.target;
+    if (el && el.tagName === 'INPUT' && el.type === 'number' && el === document.activeElement) { e.preventDefault(); el.blur(); }
+  }, { passive: false });
   function init() {
     restore(); restoreTab(); injectControls();
     setTimeout(function () { var av = document.querySelector('.view.active'); var btn = viewBtn(av); if (av && btn && liveViews[av.id]) try { btn.click(); } catch (e) {} }, 220);
