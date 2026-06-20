@@ -53,24 +53,34 @@
     host.appendChild(b);
   }
   // live auto-recompute: once you've computed a module, tweaking any of its inputs re-runs it
-  // (debounced, active view only) so you don't keep clicking COMPUTE while exploring.
-  var liveViews = {}, recalcTimer = null;
-  function viewBtn(view) { return view.querySelector('button[onclick*="calc" i], button.btn-fill, button.btn'); }
+  // (debounced, active view only) so you don't keep clicking COMPUTE while exploring. The set of
+  // computed modules is remembered, so returning to one re-runs it and your results are right there.
+  var LKEY = 'calc-qol-live-v1', recalcTimer = null;
+  var liveViews = (function () { try { return JSON.parse(localStorage.getItem(LKEY) || '{}'); } catch (e) { return {}; } })();
+  function viewBtn(view) { return view && view.querySelector('button[onclick*="calc" i], button.btn-fill, button.btn'); }
   document.addEventListener('click', function (e) {
     var btn = e.target && e.target.closest && e.target.closest('button[onclick]');
-    if (!btn) return;
-    if (!/calc|analyz|comput/i.test(btn.getAttribute('onclick') || '')) return;
-    var view = btn.closest('.view'); if (view && view.id) liveViews[view.id] = 1;
+    if (!btn || !/calc|analyz|comput/i.test(btn.getAttribute('onclick') || '')) return;
+    var view = btn.closest('.view'); if (view && view.id && !liveViews[view.id]) { liveViews[view.id] = 1; try { localStorage.setItem(LKEY, JSON.stringify(liveViews)); } catch (e2) {} }
   }, true);
-  document.addEventListener('input', function (e) {
-    var el = e.target; if (!isField(el)) return;
+  function liveRecalc(el) {
     var view = el.closest && el.closest('.view');
     if (!view || !view.id || !liveViews[view.id] || !view.classList.contains('active')) return;
     var btn = viewBtn(view); if (!btn) return;
     if (recalcTimer) clearTimeout(recalcTimer);
     recalcTimer = setTimeout(function () { try { btn.click(); } catch (e2) {} }, 450);
+  }
+  document.addEventListener('input', function (e) { if (isField(e.target)) liveRecalc(e.target); }, true);
+  // Enter in any field runs that module's compute button (handy for the first run before live kicks in)
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Enter' || !isField(e.target) || e.target.tagName === 'SELECT') return;
+    var view = e.target.closest && e.target.closest('.view'); var btn = viewBtn(view);
+    if (btn) { e.preventDefault(); btn.click(); }
   }, true);
-  function init() { restore(); restoreTab(); injectReset(); }
+  function init() {
+    restore(); restoreTab(); injectReset();
+    setTimeout(function () { var av = document.querySelector('.view.active'); var btn = viewBtn(av); if (av && btn && liveViews[av.id]) try { btn.click(); } catch (e) {} }, 220);
+  }
   if (document.readyState === 'complete') setTimeout(init, 80);
   else window.addEventListener('load', function () { setTimeout(init, 80); });
 })();
