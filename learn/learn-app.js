@@ -3841,7 +3841,7 @@
       h.dataset.content='';h.textContent='';
       if(wasContent===BOMB){score=Math.max(0,score-3);if(typeof showFeedback==='function')showFeedback('💥 Bomb! −3','#e74c3c');if(typeof resetStreak==='function')resetStreak();}
       else if(wasContent===target){score++;if(typeof showFeedback==='function')showFeedback('+1 🔨','#2ecc71');}
-      else{score=Math.max(0,score-1);if(typeof showFeedback==='function')showFeedback(`Not the ${wasContent}! −1`,'#e67e22');if(typeof resetStreak==='function')resetStreak();}
+      else{score=Math.max(0,score-1);if(typeof showFeedback==='function')showFeedback(`❌ Whack the ${target} — that was a ${wasContent}! −1`,'#e67e22');if(typeof resetStreak==='function')resetStreak();}
       const se=document.getElementById('wm-score');if(se)se.textContent=score;
     }
     function spawn(){
