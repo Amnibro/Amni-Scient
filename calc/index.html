@@ -1437,7 +1437,7 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <div class="field"><label for="hx-tho">T_h,out (&deg;C)</label><input type="number" id="hx-tho" value="90" step="any"></div>
 <div class="field"><label for="hx-tci">T_c,in (&deg;C)</label><input type="number" id="hx-tci" value="25" step="any"></div>
 <div class="field"><label for="hx-tco">T_c,out (&deg;C)</label><input type="number" id="hx-tco" value="70" step="any"></div>
-<div class="field"><label for="hx-flow">Flow</label><select id="hx-flow"><option value="counter">Counterflow</option><option value="parallel">Parallel</option></select></div>
+<div class="field"><label for="hx-flow">Flow</label><select id="hx-flow"><option value="counter">Counterflow</option><option value="parallel">Parallel</option><option value="shell12">Shell-and-tube (1 shell, 2+ tube passes)</option></select></div>
 <div class="field"><label for="hx-u">U (W/m&sup2;K)</label><input type="number" id="hx-u" value="500" step="any"></div>
 <div class="field"><label for="hx-a">A (m&sup2;)</label><input type="number" id="hx-a" value="10" step="any"></div>
 </div>
@@ -2547,7 +2547,7 @@ Plotly.react(id,traces,Object.assign({},pLayout,{margin:{l:70,r:25,t:20,b:50},sh
 window.drawSealDiagram=drawSealDiagram;
 window._calcSealWasm=(...args)=>calc_seal(...args);
 </script>
-<script src="./calc-overrides.js" defer></script>
+<script src="./calc-overrides.js?v=phys1" defer></script>
 <script src="./calc-3d.js" defer></script>
 <script src="./calc-fixes.js?v=sec22" defer></script>
 <script src="./calc-units.js" defer></script>
