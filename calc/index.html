@@ -630,7 +630,7 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <div class="row" style="margin-top:.5rem">
 <div class="field"><label for="bl-preload">PRELOAD %</label><input type="number" id="bl-preload" value="75" min="0" max="100"></div>
 <div class="field"><label for="bl-c">STIFFNESS RATIO C</label><input type="number" id="bl-c" value="0.25" min="0" max="1" step="0.05"></div>
-<div class="field"><label for="bl-mu">NUT FACTOR K</label><input type="number" id="bl-mu" value="0.20" step="0.01"></div>
+<div class="field"><label for="bl-coat">COATING → K</label><select id="bl-coat" onchange="var m=document.getElementById('bl-mu');if(m){m.value=this.value;m.dispatchEvent(new Event('input',{bubbles:true}));}"><option value="0.20">Plain / as-received (0.20)</option><option value="0.22">Zinc plated (0.22)</option><option value="0.25">Hot-dip galvanized (0.25)</option><option value="0.16">Cadmium plated (0.16)</option><option value="0.18">Black oxide (0.18)</option><option value="0.15">Phosphate &amp; oil (0.15)</option><option value="0.13">Anti-seize Ni/Cu (0.13)</option><option value="0.12">Waxed / PTFE (0.12)</option><option value="0.10">MoS₂ moly (0.10)</option></select></div><div class="field"><label for="bl-mu">NUT FACTOR K</label><input type="number" id="bl-mu" value="0.20" step="0.01"></div>
 </div>
 <button class="btn btn-fill" onclick="calcBolt()" style="margin-top:.75rem">ANALYZE JOINT</button>
 </div>
@@ -2549,7 +2549,7 @@ window._calcSealWasm=(...args)=>calc_seal(...args);
 </script>
 <script src="./calc-overrides.js?v=phys1" defer></script>
 <script src="./calc-3d.js" defer></script>
-<script src="./calc-fixes.js?v=sec22" defer></script>
+<script src="./calc-fixes.js?v=phys1" defer></script>
 <script src="./calc-units.js" defer></script>
 <script src="./calc-qol.js" defer></script>
 </body>
