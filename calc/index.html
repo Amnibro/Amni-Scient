@@ -1780,7 +1780,7 @@ n_out = n_in/GR &nbsp;|&nbsp; T_out = T_in&middot;GR&middot;&eta;<br>
 <div class="field"><label for="wl-f">Load F (kN)</label><input type="number" id="wl-f" value="50" step="any"></div>
 <div class="field"><label for="wl-l">Weld length L (mm)</label><input type="number" id="wl-l" value="200" step="any"></div>
 <div class="field"><label for="wl-a">Leg a (mm)</label><input type="number" id="wl-a" value="6" step="any"></div>
-<div class="field"><label for="wl-e">Electrode</label><select id="wl-e"><option value="70">E70XX (70 ksi)</option><option value="60">E60XX</option><option value="80">E80XX</option><option value="90">E90XX</option></select></div>
+<div class="field"><label for="wl-e">Electrode</label><select id="wl-e"><option value="70">E70XX (70 ksi)</option><option value="60">E60XX (60 ksi)</option><option value="80">E80XX (80 ksi)</option><option value="90">E90XX (90 ksi)</option><option value="100">E100XX (100 ksi)</option><option value="110">E110XX (110 ksi)</option><option value="120">E120XX (120 ksi)</option><option value="70">ER70S-6 MIG (70 ksi)</option><option value="70">E71T-1 flux-core (70 ksi)</option><option value="75">E308L stainless (75 ksi)</option><option value="80">E316L stainless (80 ksi)</option></select></div>
 <div class="field"><label for="wl-t">Load type</label><select id="wl-t"><option value="shear">Shear (parallel)</option><option value="tension">Tension (transverse)</option></select></div>
 </div>
 <button class="btn btn-fill" onclick="calcWeld()">COMPUTE</button>
@@ -1815,7 +1815,7 @@ n_out = n_in/GR &nbsp;|&nbsp; T_out = T_in&middot;GR&middot;&eta;<br>
 <div class="field"><label for="br-y">Y (thrust fac)</label><input type="number" id="br-y" value="0" step="any"></div>
 <div class="field"><label for="br-v">V (rotation)</label><input type="number" id="br-v" value="1.0" step="any"></div>
 <div class="field"><label for="br-n">n (rpm)</label><input type="number" id="br-n" value="1800" step="any"></div>
-<div class="field"><label for="br-ty">Type</label><select id="br-ty"><option value="3">Ball (p=3)</option><option value="3.333">Roller (p=10/3)</option></select></div>
+<div class="field"><label for="br-ty">Type</label><select id="br-ty"><option value="3">Deep-groove ball (p=3)</option><option value="3">Angular-contact ball (p=3)</option><option value="3">Self-aligning ball (p=3)</option><option value="3">Thrust ball (p=3)</option><option value="3.333">Cylindrical roller (p=10/3)</option><option value="3.333">Tapered roller (p=10/3)</option><option value="3.333">Spherical roller (p=10/3)</option><option value="3.333">Needle roller (p=10/3)</option></select></div>
 <div class="field"><label for="br-a1">a_1 (reliab.)</label><input type="number" id="br-a1" value="1.0" step="any"></div>
 </div>
 <button class="btn btn-fill" onclick="calcBearing()">COMPUTE</button>
