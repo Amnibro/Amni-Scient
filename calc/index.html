@@ -1695,6 +1695,7 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <div class="field"><label for="lw-f">F (face, mm)</label><input type="number" id="lw-f" value="20" step="any"></div>
 <div class="field"><label for="lw-m">m (mm)</label><input type="number" id="lw-m" value="2" step="any"></div>
 <div class="field"><label for="lw-y">Y (form factor)</label><input type="number" id="lw-y" value="0.322" step="any"></div>
+<div class="field"><label for="lw-v">V (m/s)</label><input type="number" id="lw-v" value="0" step="any"></div>
 </div>
 <button class="btn btn-sm" onclick="calcLewis()">&sigma;_b</button>
 </div>
@@ -2547,9 +2548,9 @@ Plotly.react(id,traces,Object.assign({},pLayout,{margin:{l:70,r:25,t:20,b:50},sh
 window.drawSealDiagram=drawSealDiagram;
 window._calcSealWasm=(...args)=>calc_seal(...args);
 </script>
-<script src="./calc-overrides.js?v=phys2" defer></script>
+<script src="./calc-overrides.js?v=phys3" defer></script>
 <script src="./calc-3d.js" defer></script>
-<script src="./calc-fixes.js?v=phys1" defer></script>
+<script src="./calc-fixes.js?v=phys2" defer></script>
 <script src="./calc-units.js" defer></script>
 <script src="./calc-qol.js" defer></script>
 </body>
