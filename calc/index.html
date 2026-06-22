@@ -1255,6 +1255,29 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 </div>
 <button class="btn btn-sm" onclick="calcThermalConv()">CONVECTION</button>
 </div>
+<div class="card"><h3>h FROM Nu (DITTUS-BOELTER)</h3>
+<div class="row">
+<div class="field"><label for="tn-re">Re</label><input type="number" id="tn-re" value="50000" step="any"></div>
+<div class="field"><label for="tn-pr">Pr</label><input type="number" id="tn-pr" value="0.7" step="any"></div>
+<div class="field"><label for="tn-k">k_fluid (W/m&middot;K)</label><input type="number" id="tn-k" value="0.026" step="any"></div>
+<div class="field"><label for="tn-d">D (m)</label><input type="number" id="tn-d" value="0.05" step="any"></div>
+<div class="field"><label for="tn-mode">Mode</label><select id="tn-mode"><option value="0.4">Heating (n=0.4)</option><option value="0.3">Cooling (n=0.3)</option></select></div>
+</div>
+<button class="btn btn-sm" onclick="calcThermalNu()">COMPUTE h</button>
+</div>
+<div class="card"><h3>LUMPED CAPACITANCE (TRANSIENT)</h3>
+<div class="row">
+<div class="field"><label for="tl-h">h (W/m&sup2;K)</label><input type="number" id="tl-h" value="25" step="any"></div>
+<div class="field"><label for="tl-lc">L_c = V/A_s (m)</label><input type="number" id="tl-lc" value="0.01" step="any"></div>
+<div class="field"><label for="tl-k">k_solid (W/m&middot;K)</label><input type="number" id="tl-k" value="50" step="any"></div>
+<div class="field"><label for="tl-rho">&rho; (kg/m&sup3;)</label><input type="number" id="tl-rho" value="7800" step="any"></div>
+<div class="field"><label for="tl-cp">c_p (J/kg&middot;K)</label><input type="number" id="tl-cp" value="460" step="any"></div>
+<div class="field"><label for="tl-t0">T_0 (&deg;C)</label><input type="number" id="tl-t0" value="200" step="any"></div>
+<div class="field"><label for="tl-ti">T_inf (&deg;C)</label><input type="number" id="tl-ti" value="25" step="any"></div>
+<div class="field"><label for="tl-time">t (s)</label><input type="number" id="tl-time" value="300" step="any"></div>
+</div>
+<button class="btn btn-sm" onclick="calcThermalLumped()">COMPUTE</button>
+</div>
 <div class="card"><h3>RADIATION</h3>
 <div class="row">
 <div class="field"><label for="tr-e">Emissivity</label><input type="number" id="tr-e" value="0.9" step="any"></div>
@@ -2550,7 +2573,7 @@ Plotly.react(id,traces,Object.assign({},pLayout,{margin:{l:70,r:25,t:20,b:50},sh
 window.drawSealDiagram=drawSealDiagram;
 window._calcSealWasm=(...args)=>calc_seal(...args);
 </script>
-<script src="./calc-overrides.js?v=phys5" defer></script>
+<script src="./calc-overrides.js?v=phys6" defer></script>
 <script src="./calc-3d.js" defer></script>
 <script src="./calc-fixes.js?v=phys2" defer></script>
 <script src="./calc-units.js" defer></script>
