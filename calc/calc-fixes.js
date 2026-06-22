@@ -540,6 +540,10 @@ window.calcBolt=function(){
     '<div class="result-grid">'+items.map(i=>`<div class="result-item"><div class="lbl">${i[0]}</div><div class="val ${i[2]||''}">${i[1]}</div></div>`).join('')+'</div>'+
     '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem"><strong>Standard:</strong> '+grade.std+'. <strong>Size:</strong> '+size.kind+', d_nom='+size.d+' mm, pitch='+size.p+' mm, A_t='+size.At+' mm².<br><strong>Method:</strong> Shigley joint stiffness — F_b = F_i + C·F_ext, F_j = F_i − (1−C)·F_ext. Stiffness ratio C = k_bolt/(k_bolt + k_member) — typical 0.2–0.4 for steel-on-steel. Preload 75% of proof for reusable; up to 90% for permanent. Torque T=K·F_i·d with K≈0.20 dry, 0.15 lubricated. Interaction IR = (σ/Sp)² + (τ/0.577·Sp)² &lt; 1.</p>'+
     '<p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem"><strong>Thin-material rule of thumb:</strong> tap depth ≥ 1.0·d in steel, 1.5·d in aluminum, 2.0·d in plastic for full strength. Below 0.5·d the joint will strip the threads before the bolt yields.</p>';
+  const _bsync={'bts-fi':Fi,'bts-d':size.d,'bts-pitch':size.p,'bts-kn':mu,'bts-c':C,'bts-fext':FextPer};
+  let _bany=false;
+  for(const _bk in _bsync){const _be=$(_bk),_bv=_bsync[_bk];if(_be&&_be!==document.activeElement&&isFinite(_bv)){const _bs=String(Math.round(_bv*1000)/1000);_be.value!==_bs&&(_be.value=_bs,_bany=true);}}
+  if(_bany&&typeof window.calcBoltTorqueSeq==='function')try{window.calcBoltTorqueSeq();}catch(e){}
 };
 /* Live-compute on any input change (debounced) */
 function wireLive(viewId,recompute){
@@ -1475,6 +1479,7 @@ function injectBoltTorqueAdvanced(){
   if(!target)return;
   const card=document.createElement('div');card.className='card bolt-x';card.id='bolt-torque-adv';card.style.marginTop='.6rem';
   card.innerHTML='<h3>TORQUE SEQUENCE (ADVANCED)</h3>'+
+    '<p style="font-size:.7rem;color:var(--dim);margin:0 0 .6rem">F_i, d, pitch, K, C and F_ext are auto-filled from the JOINT RESULTS above — change the bolt/grade/load there and these follow. Tune scatter, passes, ratios &amp; relaxation here.</p>'+
     '<div class="row">'+
       '<div class="field"><label for="bts-method">METHOD</label><select id="bts-method" onchange="calcBoltTorqueSeq()"><option value="torque">TORQUE CONTROL (T = K·F·d)</option><option value="angle">TORQUE + ANGLE (snug + Δθ)</option><option value="yield">YIELD-CONTROL (joint analyzer)</option></select></div>'+
       '<div class="field"><label for="bts-fi">TARGET PRELOAD F_i (N)</label><input type="number" id="bts-fi" value="50000" step="any"></div>'+
@@ -1489,7 +1494,7 @@ function injectBoltTorqueAdvanced(){
     '<div class="row" style="margin-top:.5rem">'+
       '<div class="field"><label for="bts-relax">GASKET RELAX %</label><input type="number" id="bts-relax" value="10" step="1"></div>'+
       '<div class="field"><label for="bts-c">JOINT C (k_b/(k_b+k_m))</label><input type="number" id="bts-c" value="0.25" step="0.05"></div>'+
-      '<div class="field"><label for="bts-fext">EXT LOAD F_ext (N)</label><input type="number" id="bts-fext" value="20000" step="any"></div>'+
+      '<div class="field"><label for="bts-fext">EXT LOAD F_ext (N / bolt)</label><input type="number" id="bts-fext" value="20000" step="any"></div>'+
     '</div>'+
     '<div class="row" style="margin-top:.5rem">'+
       '<div class="field"><label for="bts-pitch">THREAD PITCH p (mm)</label><input type="number" id="bts-pitch" value="1.75" step="0.05"></div>'+
@@ -1499,7 +1504,8 @@ function injectBoltTorqueAdvanced(){
     '<div id="bts-table" style="margin-top:.6rem"></div>'+
     '<div id="p-bts-joint" style="width:100%;height:280px;margin-top:.4rem"></div>';
   target.appendChild(card);
-  if(typeof window.calcBoltTorqueSeq==='function')try{window.calcBoltTorqueSeq();}catch(e){}
+  if(typeof window.calcBolt==='function')try{window.calcBolt();}catch(e){}
+  else if(typeof window.calcBoltTorqueSeq==='function')try{window.calcBoltTorqueSeq();}catch(e){}
 }
 window.calcBoltTorqueSeq=function(){
   const method=sv('bts-method')||'torque';
