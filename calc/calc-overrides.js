@@ -48,7 +48,7 @@ window.calcPeukert=()=>{const C=v('pk-c'),H=v('pk-h'),I=v('pk-i'),k=v('pk-k')||1
 window.calcSOC=()=>{const Qr=v('soc-qr'),Qn=v('soc-qn'),Qi=v('soc-qi'),Qo=v('soc-qo');const soc=Qn/Qr*100,ec=Qo/Qi*100;setRes('battery','SOC / η_C',grid([['SOC',F(soc,1)+' %'],['η_Coulombic',F(ec,2)+' %'],['Capacity loss',F(100-soc,1)+' %']]),note('SOC by Coulomb-counting. η_C < 99% for new Li-ion is concerning.'));};
 const fmt2=(n,d=2)=>(typeof n==='number'&&isFinite(n))?n.toFixed(d):'—';
 let _sealModP=null;
-const _loadSealMod=()=>_sealModP||(_sealModP=import('./pkg/amni_calc_wasm.js').then(async m=>{try{await m.default();}catch(_){ }window._calcSealWasm=(json)=>m.calc_seal(json);return m;}).catch(e=>{_sealModP=null;throw e;}));
+const _loadSealMod=()=>_sealModP||(_sealModP=import('./pkg/amni_calc_wasm.js?v=phys2').then(async m=>{try{await m.default('./pkg/amni_calc_wasm_bg.wasm?v=phys2');}catch(_){ }window._calcSealWasm=(json)=>m.calc_seal(json);return m;}).catch(e=>{_sealModP=null;throw e;}));
 const _runSeal=async json=>{try{return typeof window._calcSealWasm==='function'?window._calcSealWasm(json):(await _loadSealMod()).calc_seal(json);}catch(_){const m=await _loadSealMod();return m.calc_seal(json);}};
 const _squeezeRangeByGland={face:[10,20],radial_bore:[15,30],radial_piston:[12,25]};
 const _squeezeMatAdjust=[
