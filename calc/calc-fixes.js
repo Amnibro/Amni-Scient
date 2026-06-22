@@ -174,7 +174,7 @@ window.solveBeam=function(){
   }
   function momentAt(x){
     let M=0;
-    for(const sx in reactions){const sxn=parseFloat(sx);if(sxn<=x+1e-6){M+=reactions[sx].V*(x-sxn);if(reactions[sx].type==='fixed'&&Math.abs(sxn-x)<1e-6)M+=reactions[sx].M;else if(reactions[sx].type==='fixed')M+=reactions[sx].M;}}
+    for(const sx in reactions){const sxn=parseFloat(sx);if(sxn<=x+1e-6){M+=reactions[sx].V*(x-sxn);if(reactions[sx].type==='fixed')M-=reactions[sx].M;}}
     loads.forEach(ld=>{
       if(ld.type==='point'){if(ld.x<=x+1e-6)M+=ld.mag*(x-ld.x);}
       else if(ld.type==='distributed'){const a=ld.x,b=ld.xEnd||L;const w=ld.mag/(b-a);if(x>=a){const upTo=Math.min(x,b);const dx=upTo-a;M+=w*dx*(x-(a+upTo)/2);}}
@@ -207,7 +207,7 @@ window.solveBeam=function(){
   const Mmax=Ms.reduce((a,b)=>Math.abs(b)>Math.abs(a)?b:a,0);
   const dmax=defl.reduce((a,b)=>Math.abs(b)>Math.abs(a)?b:a,0);
   const dmaxIdx=defl.findIndex(d=>d===dmax);
-  const VmaxKN=Vmax/1000,MmaxNm=Mmax/1000;
+  const VmaxKN=Vmax/1000,MmaxNm=-Mmax/1000;
   const rxLines=Object.entries(reactions).map(([x,r])=>{
     const xN=parseFloat(x);
     const VkN=(r.V/1000).toFixed(3);
