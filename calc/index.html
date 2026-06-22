@@ -1397,6 +1397,8 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <div class="field"><label for="fl-rho">&rho; (kg/m&sup3;)</label><input type="number" id="fl-rho" value="998" step="any"></div>
 <div class="field"><label for="fl-mu">&mu; (Pa&middot;s)</label><input type="number" id="fl-mu" value="0.001" step="any"></div>
 <div class="field"><label for="fl-e">&epsilon; (m)</label><input type="number" id="fl-e" value="4.5e-5" step="any"></div>
+<div class="field"><label for="fl-k">&Sigma;K (fittings)</label><input type="number" id="fl-k" value="0" step="any"></div>
+<div class="field"><label for="fl-dz">&Delta;z (m)</label><input type="number" id="fl-dz" value="0" step="any"></div>
 </div>
 <button class="btn btn-sm" onclick="calcMoody()">FRICTION / &Delta;P</button>
 </div>
@@ -2548,7 +2550,7 @@ Plotly.react(id,traces,Object.assign({},pLayout,{margin:{l:70,r:25,t:20,b:50},sh
 window.drawSealDiagram=drawSealDiagram;
 window._calcSealWasm=(...args)=>calc_seal(...args);
 </script>
-<script src="./calc-overrides.js?v=phys3" defer></script>
+<script src="./calc-overrides.js?v=phys4" defer></script>
 <script src="./calc-3d.js" defer></script>
 <script src="./calc-fixes.js?v=phys2" defer></script>
 <script src="./calc-units.js" defer></script>
