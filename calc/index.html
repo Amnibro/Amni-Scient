@@ -1225,6 +1225,15 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 </div>
 <button class="btn btn-fill" onclick="calcFatigue()">COMPUTE</button>
 </div>
+<div class="card" style="margin-top:1rem"><h3>Se FROM MARIN FACTORS</h3>
+<div class="row">
+<div class="field"><label for="fm-surf">Surface</label><select id="fm-surf"><option value="1.58;-0.085">Ground</option><option value="4.51;-0.265" selected>Machined / CD</option><option value="57.7;-0.718">Hot-rolled</option><option value="272;-0.995">As-forged</option></select></div>
+<div class="field"><label for="fm-d">d (mm)</label><input type="number" id="fm-d" value="10" step="any"></div>
+<div class="field"><label for="fm-load">Load</label><select id="fm-load"><option value="1">Bending</option><option value="0.85">Axial</option><option value="0.59">Torsion</option></select></div>
+<div class="field"><label for="fm-rel">Reliability</label><select id="fm-rel"><option value="0">50%</option><option value="1.288">90%</option><option value="1.645">95%</option><option value="2.326" selected>99%</option><option value="3.091">99.9%</option></select></div>
+</div>
+<button class="btn btn-sm" onclick="calcMarin()">COMPUTE Se &rarr; above</button>
+</div>
 </div>
 <div>
 <div class="card" id="fatigue-results"><h3>SAFETY FACTORS</h3><p class="muted">Enter values and compute.</p></div>
@@ -2573,7 +2582,7 @@ Plotly.react(id,traces,Object.assign({},pLayout,{margin:{l:70,r:25,t:20,b:50},sh
 window.drawSealDiagram=drawSealDiagram;
 window._calcSealWasm=(...args)=>calc_seal(...args);
 </script>
-<script src="./calc-overrides.js?v=phys6" defer></script>
+<script src="./calc-overrides.js?v=phys7" defer></script>
 <script src="./calc-3d.js" defer></script>
 <script src="./calc-fixes.js?v=phys2" defer></script>
 <script src="./calc-units.js" defer></script>
