@@ -1678,6 +1678,7 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <button class="btn btn-sm" onclick="calcNatFreq()">&omega;_n / &zeta;</button>
 </div>
 <div class="card"><h3>ISOLATOR (TRANSMISSIBILITY)</h3>
+<p style="font-size:.68rem;color:var(--dim);margin:0 0 .5rem">f_n and &zeta; auto-fill from the SDOF card above.</p>
 <div class="row">
 <div class="field"><label for="is-fd">f_drive (Hz)</label><input type="number" id="is-fd" value="60" step="any"></div>
 <div class="field"><label for="is-fn">f_n (Hz)</label><input type="number" id="is-fn" value="10" step="any"></div>
@@ -1686,6 +1687,7 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <button class="btn btn-sm" onclick="calcIsolator()">TR</button>
 </div>
 <div class="card"><h3>RESONANCE AMP.</h3>
+<p style="font-size:.68rem;color:var(--dim);margin:0 0 .5rem">k and &zeta; auto-fill from the SDOF card above.</p>
 <div class="row">
 <div class="field"><label for="res-f">F0 (N)</label><input type="number" id="res-f" value="100" step="any"></div>
 <div class="field"><label for="res-k">k (N/m)</label><input type="number" id="res-k" value="10000" step="any"></div>
@@ -1791,6 +1793,7 @@ n_out = n_in/GR &nbsp;|&nbsp; T_out = T_in&middot;GR&middot;&eta;<br>
 <button class="btn btn-sm" onclick="calcCritSpeed()">N_cr</button>
 </div>
 <div class="card"><h3>KEY SIZING (ASME)</h3>
+<p style="font-size:.68rem;color:var(--dim);margin:0 0 .5rem">T and shaft d auto-fill from the TORSION card above.</p>
 <div class="row">
 <div class="field"><label for="sk-t">T (N&middot;m)</label><input type="number" id="sk-t" value="500" step="any"></div>
 <div class="field"><label for="sk-d">Shaft d (mm)</label><input type="number" id="sk-d" value="40" step="any"></div>
@@ -2582,7 +2585,7 @@ Plotly.react(id,traces,Object.assign({},pLayout,{margin:{l:70,r:25,t:20,b:50},sh
 window.drawSealDiagram=drawSealDiagram;
 window._calcSealWasm=(...args)=>calc_seal(...args);
 </script>
-<script src="./calc-overrides.js?v=phys8" defer></script>
+<script src="./calc-overrides.js?v=sync1" defer></script>
 <script src="./calc-3d.js" defer></script>
 <script src="./calc-fixes.js?v=bolt1" defer></script>
 <script src="./calc-units.js" defer></script>
