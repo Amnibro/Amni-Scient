@@ -1928,6 +1928,7 @@ n_out = n_in/GR &nbsp;|&nbsp; T_out = T_in&middot;GR&middot;&eta;<br>
 <button class="btn btn-sm" onclick="calcAFR()">AFR / &lambda;</button>
 </div>
 <div class="card"><h3>ADIABATIC FLAME (SIMPLE)</h3>
+<p style="font-size:.68rem;color:var(--dim);margin:0 0 .5rem">LHV auto-fills from the LHV &harr; HHV card below.</p>
 <div class="row">
 <div class="field"><label for="af2-lhv">LHV (MJ/kg)</label><input type="number" id="af2-lhv" value="44.0" step="any"></div>
 <div class="field"><label for="af2-af">AFR (mass)</label><input type="number" id="af2-af" value="14.7" step="any"></div>
@@ -2586,7 +2587,7 @@ Plotly.react(id,traces,Object.assign({},pLayout,{margin:{l:70,r:25,t:20,b:50},sh
 window.drawSealDiagram=drawSealDiagram;
 window._calcSealWasm=(...args)=>calc_seal(...args);
 </script>
-<script src="./calc-overrides.js?v=sync2" defer></script>
+<script src="./calc-overrides.js?v=sync3" defer></script>
 <script src="./calc-3d.js" defer></script>
 <script src="./calc-fixes.js?v=sync2" defer></script>
 <script src="./calc-units.js" defer></script>
