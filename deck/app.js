@@ -10,7 +10,7 @@ let cfg = migrate(JSON.parse(localStorage.getItem(LS) || localStorage.getItem('a
 let priceEdits = JSON.parse(localStorage.getItem(LSP) || '{}')
 let catalog = {}, core = null, out = null
 const $ = s => document.querySelector(s)
-const wasmReady = fetch('deck_core.wasm?v=277').then(r => r.arrayBuffer()).then(b => WebAssembly.instantiate(b, {})).then(w => core = w.instance.exports)
+const wasmReady = fetch('deck_core.wasm?v=278').then(r => r.arrayBuffer()).then(b => WebAssembly.instantiate(b, {})).then(w => core = w.instance.exports)
 const catReady = fetch('catalog.json').then(r => r.json()).then(j => catalog = j)
 const callCore = c => {
   const bytes = new TextEncoder().encode(JSON.stringify({ ...c, polygon: c.mode === 'poly' && Array.isArray(c.polygon) && c.polygon.length >= 3 ? c.polygon : [], house_edge: c.house_edge ?? -1, issue_date: new Date().toLocaleDateString('en-CA') }))
