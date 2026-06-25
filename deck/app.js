@@ -10,7 +10,7 @@ let cfg = migrate(JSON.parse(localStorage.getItem(LS) || localStorage.getItem('a
 let priceEdits = JSON.parse(localStorage.getItem(LSP) || '{}')
 let catalog = {}, core = null, out = null
 const $ = s => document.querySelector(s)
-const wasmReady = fetch('deck_core.wasm?v=280').then(r => r.arrayBuffer()).then(b => WebAssembly.instantiate(b, {})).then(w => core = w.instance.exports)
+const wasmReady = fetch('deck_core.wasm?v=281').then(r => r.arrayBuffer()).then(b => WebAssembly.instantiate(b, {})).then(w => core = w.instance.exports)
 const catReady = fetch('catalog.json').then(r => r.json()).then(j => catalog = j)
 const callCore = c => {
   const bytes = new TextEncoder().encode(JSON.stringify({ ...c, polygon: c.mode === 'poly' && Array.isArray(c.polygon) && c.polygon.length >= 3 ? c.polygon : [], house_edge: c.house_edge ?? -1, issue_date: new Date().toLocaleDateString('en-CA') }))
@@ -158,10 +158,11 @@ const buildHouse = () => {
   roof.rotation.x = 0.32
   roof.castShadow = true
   houseGroup.add(roof)
-  const doorX = cfg.door.pos < 0 ? l / 2 : Math.min(Math.max(cfg.door.pos * 12, cfg.door.width / 2), l - cfg.door.width / 2)
-  const sillY = cfg.height + (cfg.door.rise || 0)
   const W = cfg.door.width, np = Math.max(1, Math.min(4, cfg.door.panels || 2)), nd = Math.max(1, Math.min(3, cfg.door.count || 1))
-  const centers = nd === 1 ? [doorX] : Array.from({ length: nd }, (_, i) => Math.min(Math.max(l * (i + 1) / (nd + 1), W / 2 + 4), l - W / 2 - 4))
+  const gw = Math.min(W * nd, l)
+  const doorX = cfg.door.pos < 0 ? l / 2 : Math.min(Math.max(cfg.door.pos * 12, gw / 2), l - gw / 2)
+  const sillY = cfg.height + (cfg.door.rise || 0)
+  const centers = Array.from({ length: nd }, (_, i) => doorX - gw / 2 + (gw / nd) * (i + 0.5))
   const glassMat = new THREE.MeshPhysicalMaterial({ color: 0x9ec5e8, roughness: 0.08, metalness: 0.1, transparent: true, opacity: 0.4 })
   for (const dx of centers) {
     const frame = new THREE.Mesh(new THREE.BoxGeometry(W + 6, 84, 3), trimMat); frame.position.set(dx, sillY + 40, -0.5)
