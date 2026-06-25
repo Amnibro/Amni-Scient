@@ -10,7 +10,7 @@ let cfg = migrate(JSON.parse(localStorage.getItem(LS) || localStorage.getItem('a
 let priceEdits = JSON.parse(localStorage.getItem(LSP) || '{}')
 let catalog = {}, core = null, out = null
 const $ = s => document.querySelector(s)
-const wasmReady = fetch('deck_core.wasm?v=282').then(r => r.arrayBuffer()).then(b => WebAssembly.instantiate(b, {})).then(w => core = w.instance.exports)
+const wasmReady = fetch('deck_core.wasm?v=283').then(r => r.arrayBuffer()).then(b => WebAssembly.instantiate(b, {})).then(w => core = w.instance.exports)
 const catReady = fetch('catalog.json').then(r => r.json()).then(j => catalog = j)
 const callCore = c => {
   const bytes = new TextEncoder().encode(JSON.stringify({ ...c, polygon: c.mode === 'poly' && Array.isArray(c.polygon) && c.polygon.length >= 3 ? c.polygon : [], house_edge: c.house_edge ?? -1, issue_date: new Date().toLocaleDateString('en-CA') }))
@@ -114,9 +114,11 @@ ground.receiveShadow = true
 scene.add(ground)
 let deckGroup = new THREE.Group(), houseGroup = new THREE.Group()
 scene.add(deckGroup, houseGroup)
+const doorMeshes = []
 const HOUSES = { cream: ['#efe8cf', 'Cream'], white: ['#f2f0ea', 'White'], gray: ['#cdd0d2', 'Gray'], sage: ['#c6cdbb', 'Sage'], blue: ['#b7c6d3', 'Blue'], tan: ['#d9c8a6', 'Tan'] }
 const buildHouse = () => {
   houseGroup.clear()
+  doorMeshes.length = 0
   const l = cfg.length * 12
   const sidHex = (HOUSES[cfg.house] || HOUSES.cream)[0]
   const wallMat = new THREE.MeshStandardMaterial({ roughness: 0.9 })
@@ -169,8 +171,9 @@ const buildHouse = () => {
     const frame = new THREE.Mesh(new THREE.BoxGeometry(W + 6, 84, 3), trimMat); frame.position.set(dx, sillY + 40, -0.5)
     const interior = new THREE.Mesh(new THREE.BoxGeometry(W - 4, 76, 0.5), new THREE.MeshStandardMaterial({ color: 0x2a2622, roughness: 1 })); interior.position.set(dx, sillY + 41, -0.2)
     const curtain = new THREE.Mesh(new THREE.BoxGeometry(W / np * 0.8, 74, 0.6), new THREE.MeshStandardMaterial({ color: 0xd8d2c4, roughness: 1 })); curtain.position.set(dx - W / 2 + W / np * 0.5, sillY + 41.5, 0.05)
+    frame.userData.door = true; doorMeshes.push(frame)
     houseGroup.add(frame, interior, curtain)
-    for (let i = 0; i < np; i++) { const g = new THREE.Mesh(new THREE.BoxGeometry(W / np - 3, 76, 1.5), glassMat); g.position.set(dx - W / 2 + (i + 0.5) * W / np, sillY + 41, 0.6); houseGroup.add(g) }
+    for (let i = 0; i < np; i++) { const g = new THREE.Mesh(new THREE.BoxGeometry(W / np - 3, 76, 1.5), glassMat); g.position.set(dx - W / 2 + (i + 0.5) * W / np, sillY + 41, 0.6); g.userData.door = true; doorMeshes.push(g); houseGroup.add(g) }
     for (let i = 0; i <= np; i++) { const s = new THREE.Mesh(new THREE.BoxGeometry(2.6, 78, 2.2), trimMat); s.position.set(dx - W / 2 + i * W / np, sillY + 41, 1); houseGroup.add(s) }
     const track = new THREE.Mesh(new THREE.BoxGeometry(W + 6, 2.5, 3.5), new THREE.MeshStandardMaterial({ color: 0xb9b9b9, roughness: 0.4, metalness: 0.5 })); track.position.set(dx, sillY + 0.5, 0.2); houseGroup.add(track)
   }
@@ -209,7 +212,7 @@ const rebuild3D = () => {
 const ray = new THREE.Raycaster()
 const ptr = new THREE.Vector2()
 const groundPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0)
-let dragging = -1, hover = -1
+let dragging = -1, hover = -1, draggingDoor = false
 const setPtr = e => {
   const r = canvas.getBoundingClientRect()
   ptr.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1)
@@ -220,18 +223,27 @@ const pickStair = e => {
   const hit = ray.intersectObjects(stairMeshes, false)[0]
   return hit ? hit.object.userData.stair : -1
 }
+const pickDoor = e => { setPtr(e); ray.setFromCamera(ptr, camera); return ray.intersectObjects(doorMeshes, false).length > 0 }
 let dragRAF = false
 canvas.addEventListener('pointerdown', e => {
   const s = pickStair(e)
-  if (s >= 0) { dragging = s; controls.enabled = false; canvas.setPointerCapture(e.pointerId) }
+  if (s >= 0) { dragging = s; controls.enabled = false; canvas.setPointerCapture(e.pointerId); return }
+  if (pickDoor(e)) { draggingDoor = true; controls.enabled = false; canvas.setPointerCapture(e.pointerId) }
 })
 canvas.addEventListener('pointermove', e => {
-  if (dragging < 0) { const h = pickStair(e); h !== hover && (hover = h, canvas.style.cursor = h >= 0 ? 'grab' : ''); return }
+  if (dragging < 0 && !draggingDoor) { canvas.style.cursor = (pickStair(e) >= 0 || pickDoor(e)) ? 'grab' : ''; return }
   setPtr(e)
   ray.setFromCamera(ptr, camera)
   const pt = new THREE.Vector3()
   if (!ray.ray.intersectPlane(groundPlane, pt)) return
   const l = cfg.length * 12, dp = cfg.depth * 12
+  if (draggingDoor) {
+    const W = cfg.door.width, nd = Math.max(1, Math.min(3, cfg.door.count || 1)), gap = Math.max(0, cfg.door.gap || 0)
+    const gw = Math.min(W * nd + gap * (nd - 1), l)
+    cfg.door.pos = Math.min(Math.max(pt.x, gw / 2), l - gw / 2) / 12
+    if (!dragRAF) { dragRAF = true; requestAnimationFrame(() => { dragRAF = false; recompute(false) }) }
+    return
+  }
   const st = cfg.stairs[dragging]
   if (!st) return
   const dF = Math.abs(pt.z - dp), dL = Math.abs(pt.x - 0), dR = Math.abs(pt.x - l)
@@ -242,7 +254,10 @@ canvas.addEventListener('pointermove', e => {
   st.offset = Math.min(Math.max(along - st.width / 2, 0), elen - st.width)
   if (!dragRAF) { dragRAF = true; requestAnimationFrame(() => { dragRAF = false; recompute(false) }) }
 })
-canvas.addEventListener('pointerup', () => { if (dragging >= 0) { dragging = -1; controls.enabled = true; persist(); renderStairList() } })
+canvas.addEventListener('pointerup', () => {
+  if (dragging >= 0) { dragging = -1; controls.enabled = true; persist(); renderStairList() }
+  if (draggingDoor) { draggingDoor = false; controls.enabled = true; persist(); const di = document.querySelector('#dr_pos'); if (di) di.value = cfg.door.pos.toFixed(1) }
+})
 const resize = () => {
   const w = canvas.clientWidth, h = canvas.clientHeight
   if (w && h && (canvas.width !== w || canvas.height !== h)) { renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix() }
