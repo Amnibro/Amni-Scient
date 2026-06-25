@@ -144,6 +144,7 @@ td a:hover{text-decoration:underline}
     <div class="row"><label>Door width (in)</label><input type="number" id="dr_w" min="30" max="96" step="2" value="60"></div>
     <div class="row"><label>Threshold above deck (in)</label><input type="number" id="dr_rise" min="0" max="24" step="0.5" value="0"></div>
     <div class="row"><label>Doors on wall</label><input type="number" id="dr_count" min="1" max="3" step="1" value="1"></div>
+    <div class="row"><label>Gap between doors (in)</label><input type="number" id="dr_gap" min="0" max="60" step="1" value="0"></div>
     <div class="row"><label>Panels per door (sliding glass)</label><input type="number" id="dr_panels" min="1" max="4" step="1" value="2"></div>
     <h3>Stairs <span style="color:var(--mut);text-transform:none;letter-spacing:0">— drag them in 3D!</span></h3>
     <div id="stairlist"></div>
@@ -236,7 +237,7 @@ td a:hover{text-decoration:underline}
   </div>
 </main>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
-<script type="module" src="app.js?v=permit4"></script>
+<script type="module" src="app.js?v=permit5"></script>
 <script>(function(){var b=document.getElementById("menubtn"),s=document.getElementById("side"),d=document.getElementById("backdrop");if(!b||!s||!d)return;function set(o){s.classList.toggle("open",o);d.classList.toggle("open",o)}b.addEventListener("click",function(){set(!s.classList.contains("open"))});d.addEventListener("click",function(){set(false)});s.addEventListener("click",function(e){if(e.target.closest(".seg-b,.addbtn,.preset"))setTimeout(function(){set(false)},160)})})();</script>
 </body>
 </html>
