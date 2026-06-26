@@ -95,7 +95,7 @@ export const initMapTrace = ({ tc, T, tDraw, tStatus }) => {
     const r = tc.getBoundingClientRect()
     setZoom(M.zoom + (e.deltaY < 0 ? 1 : -1), (e.clientX - r.left) * tc.width / r.width, (e.clientY - r.top) * tc.height / r.height)
   }, { passive: false })
-  tc.addEventListener('mousedown', e => { if (M.on && !T.mode) M.drag = { x: e.clientX, y: e.clientY } })
+  tc.addEventListener('mousedown', e => { if (M.on && !T.mode && !T.dragCorner) M.drag = { x: e.clientX, y: e.clientY } })
   window.addEventListener('mouseup', () => M.drag = null)
   window.addEventListener('mousemove', e => {
     if (!M.drag || !M.on || T.mode) return

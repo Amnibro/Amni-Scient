@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { initPermits, updatePermits } from './codes.js?v=fix1'
-import { initMapTrace, sitePlanSVG, cropForPlan, mapPlanSnapshot } from './maptrace.js?v=270'
+import { initMapTrace, sitePlanSVG, cropForPlan, mapPlanSnapshot } from './maptrace.js?v=271'
 import { initAutoDetect } from './autodetect.js?v=270'
 const LS = 'amnideck.cfg.v2', LSP = 'amnideck.prices.v1'
 const defCfg = { length: 12, depth: 8, height: 16, spacing: 16, decking: 'pt', attach: 'ledger', foundation: 'footing', joist: '2x8', fascia: false, skirting: false, stain: 'redwood', house: 'cream', mode: 'rect', polygon: null, house_edge: 0, stairs: [{ side: 'front', width: 48, offset: -1 }], railing: { front: false, left: false, right: false, style: 'wood' }, door: { pos: -1, width: 60, rise: 7, panels: 2, count: 1 } }
@@ -645,7 +645,8 @@ const initUI = () => {
 }
 let photoPlane = null
 let MV = null
-const T = { img: null, mode: null, scalePts: [], dist: 10, poly: [], pxPerFt: 0 }
+const T = { img: null, mode: null, scalePts: [], dist: 10, poly: [], pxPerFt: 0, dragCorner: false }
+let Tsel = -1, Tdrag = null
 const tc = document.getElementById('tcanvas'), tctx = tc.getContext('2d')
 const tStatus = s => { const e = document.getElementById('tstatus'); e && (e.textContent = s) }
 const tDraw = () => {
@@ -660,20 +661,29 @@ const tDraw = () => {
   if (T.poly.length) {
     tctx.strokeStyle = '#e8a33d'; tctx.fillStyle = 'rgba(232,163,61,0.18)'; tctx.lineWidth = 2.5
     tctx.beginPath(); tctx.moveTo(...T.poly[0]); T.poly.forEach(p => tctx.lineTo(...p)); T.poly.length > 2 && tctx.closePath(); tctx.fill(); tctx.stroke()
-    tctx.fillStyle = '#e8a33d'
-    T.poly.forEach(p => { tctx.beginPath(); tctx.arc(p[0], p[1], 4.5, 0, 7); tctx.fill() })
+    if (T.pxPerFt > 0 && T.poly.length >= 2) {
+      tctx.font = 'bold 13px monospace'; tctx.textAlign = 'center'; tctx.lineWidth = 3.5; tctx.lineJoin = 'round'
+      const nE = T.poly.length === 2 ? 1 : T.poly.length
+      for (let i = 0; i < nE; i++) { const a = T.poly[i], b = T.poly[(i + 1) % T.poly.length], mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2, t = `${(Math.hypot(b[0] - a[0], b[1] - a[1]) / T.pxPerFt).toFixed(1)}'`; tctx.strokeStyle = '#000'; tctx.strokeText(t, mx, my - 5); tctx.fillStyle = '#fff'; tctx.fillText(t, mx, my - 5) }
+      tctx.textAlign = 'left'
+    }
+    T.poly.forEach((p, i) => { tctx.beginPath(); tctx.arc(p[0], p[1], i === Tsel ? 7 : 5.5, 0, 7); tctx.fillStyle = i === Tsel ? '#fff' : '#e8a33d'; tctx.fill(); tctx.lineWidth = 2; tctx.strokeStyle = '#e8541d'; tctx.stroke() })
     if (T.pxPerFt > 0 && T.poly.length > 1) {
       const xs = T.poly.map(p => p[0]), ys = T.poly.map(p => p[1])
       const bw = (Math.max(...xs) - Math.min(...xs)) / T.pxPerFt, bh = (Math.max(...ys) - Math.min(...ys)) / T.pxPerFt
-      tctx.strokeStyle = '#4f9cf0'; tctx.setLineDash([6, 5]); tctx.strokeRect(Math.min(...xs), Math.min(...ys), bw * T.pxPerFt, bh * T.pxPerFt); tctx.setLineDash([])
-      tctx.font = 'bold 13px monospace'; tctx.fillStyle = '#4f9cf0'; tctx.fillText(`deck rect: ${bw.toFixed(1)}' × ${bh.toFixed(1)}'`, Math.min(...xs) + 6, Math.min(...ys) - 8)
-      document.getElementById('tdims').innerHTML = `<b style="color:var(--acc)">BOUNDING RECT</b><br>length ${bw.toFixed(1)} ft × depth ${bh.toFixed(1)} ft`
+      tctx.strokeStyle = '#4f9cf0'; tctx.setLineDash([6, 5]); tctx.lineWidth = 1.5; tctx.strokeRect(Math.min(...xs), Math.min(...ys), bw * T.pxPerFt, bh * T.pxPerFt); tctx.setLineDash([])
+      tctx.font = 'bold 13px monospace'; tctx.fillStyle = '#4f9cf0'; tctx.textAlign = 'left'; tctx.fillText(`deck rect: ${bw.toFixed(1)}' × ${bh.toFixed(1)}'`, Math.min(...xs) + 6, Math.min(...ys) - 8)
+      document.getElementById('tdims').innerHTML = `<b style="color:var(--acc)">BOUNDING RECT</b><br>length ${bw.toFixed(1)} ft × depth ${bh.toFixed(1)} ft<br><span style="color:var(--mut);font-size:11px">drag any dot, or click one and use arrow keys (Shift = bigger)</span>`
     }
   }
 }
-tc.addEventListener('click', e => {
-  const r = tc.getBoundingClientRect()
-  const p = [(e.clientX - r.left) * tc.width / r.width, (e.clientY - r.top) * tc.height / r.height]
+tc.tabIndex = 0
+const tPt = e => { const r = tc.getBoundingClientRect(); return [(e.clientX - r.left) * tc.width / r.width, (e.clientY - r.top) * tc.height / r.height] }
+const tHit = p => { let bi = -1, ba = null, bd = 169; T.poly.forEach((q, i) => { const d = (q[0] - p[0]) ** 2 + (q[1] - p[1]) ** 2; d < bd && (bd = d, bi = i, ba = 'poly') }); T.scalePts.forEach((q, i) => { const d = (q[0] - p[0]) ** 2 + (q[1] - p[1]) ** 2; d < bd && (bd = d, bi = i, ba = 'scale') }); return bi < 0 ? null : { arr: ba, idx: bi } }
+const tRescale = () => T.scalePts.length === 2 && (T.pxPerFt = Math.hypot(T.scalePts[1][0] - T.scalePts[0][0], T.scalePts[1][1] - T.scalePts[0][1]) / T.dist)
+tc.addEventListener('pointerdown', e => {
+  const p = tPt(e), hit = tHit(p)
+  if (hit) { Tdrag = hit; T.dragCorner = true; Tsel = hit.arr === 'poly' ? hit.idx : -1; tc.setPointerCapture(e.pointerId); tc.focus(); tStatus(hit.arr === 'poly' ? `Corner ${hit.idx + 1} — drag, or arrow-keys (Shift = 5px) to fine-tune.` : 'Drag the scale point — px/ft updates live.'); tDraw(); return }
   if (T.mode === 'scale') {
     T.scalePts.push(p)
     if (T.scalePts.length === 2) {
@@ -681,8 +691,18 @@ tc.addEventListener('click', e => {
       isFinite(d) && d > 0 ? (T.dist = d, T.pxPerFt = Math.hypot(T.scalePts[1][0] - T.scalePts[0][0], T.scalePts[1][1] - T.scalePts[0][1]) / d, tStatus(`Scale set: ${T.pxPerFt.toFixed(1)} px/ft. Now click "Trace deck area" and click the corners.`)) : (T.scalePts = [], tStatus('Scale cancelled — try again.'))
       T.mode = null
     } else tStatus('Click the second reference point…')
-  } else if (T.mode === 'trace') { T.poly.push(p); tStatus(`${T.poly.length} corner${T.poly.length > 1 ? 's' : ''} — keep clicking, then Use outline.`) }
+  } else if (T.mode === 'trace') { T.poly.push(p); Tsel = T.poly.length - 1; tStatus(`${T.poly.length} corner${T.poly.length > 1 ? 's' : ''} — click to add more, or drag any dot / arrow-keys to fine-tune, then Use outline.`) }
   tDraw()
+})
+tc.addEventListener('pointermove', e => {
+  if (Tdrag) { (Tdrag.arr === 'poly' ? T.poly : T.scalePts)[Tdrag.idx] = tPt(e); Tdrag.arr === 'scale' && tRescale(); tDraw(); return }
+  tc.style.cursor = tHit(tPt(e)) ? 'grab' : (T.mode ? 'crosshair' : (window.__siteMapOn ? 'move' : 'default'))
+})
+tc.addEventListener('pointerup', () => { Tdrag = null; T.dragCorner = false })
+tc.addEventListener('keydown', e => {
+  if (Tsel < 0 || Tsel >= T.poly.length) return
+  const s = e.shiftKey ? 5 : 1, mv = { ArrowLeft: [-s, 0], ArrowRight: [s, 0], ArrowUp: [0, -s], ArrowDown: [0, s] }[e.key]
+  mv && (e.preventDefault(), T.poly[Tsel] = [T.poly[Tsel][0] + mv[0], T.poly[Tsel][1] + mv[1]], tDraw())
 })
 document.getElementById('timg').addEventListener('change', e => {
   const f = e.target.files[0]; if (!f) return
