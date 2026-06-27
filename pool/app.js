@@ -25,47 +25,75 @@ const callCore = c => {
   dealloc(p, payload.length); dealloc(rp, len + 4)
   return res
 }
+const mkTex = (rep, draw) => { const cv = document.createElement('canvas'); cv.width = cv.height = 256; draw(cv.getContext('2d')); const t = new THREE.CanvasTexture(cv); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(rep, rep); return t }
+const grassTex = mkTex(60, g => { g.fillStyle = '#4d7c3a'; g.fillRect(0, 0, 256, 256); for (let i = 0; i < 2600; i++) { g.fillStyle = `hsl(${100 + Math.random() * 30},${34 + Math.random() * 26}%,${21 + Math.random() * 18}%)`; g.fillRect(Math.random() * 256, Math.random() * 256, 2, 2) } })
+const concTex = (base, rep) => mkTex(rep, g => { const b = new THREE.Color(base); g.fillStyle = base; g.fillRect(0, 0, 256, 256); for (let i = 0; i < 1700; i++) { g.fillStyle = `#${b.clone().offsetHSL(0, 0, (Math.random() - 0.5) * 0.22).getHexString()}`; g.fillRect(Math.random() * 256, Math.random() * 256, 1.7, 1.7) } })
+const sidingTex = hex => mkTex(1, g => { const b = new THREE.Color(hex); for (let y = 0; y < 256; y += 20) { const gr = g.createLinearGradient(0, y, 0, y + 20); gr.addColorStop(0, `#${b.clone().offsetHSL(0, 0, 0.04).getHexString()}`); gr.addColorStop(0.8, `#${b.getHexString()}`); gr.addColorStop(1, `#${b.clone().offsetHSL(0, 0, -0.14).getHexString()}`); g.fillStyle = gr; g.fillRect(0, y, 256, 20) } })
+const waterBump = mkTex(3, g => { g.fillStyle = '#808080'; g.fillRect(0, 0, 256, 256); for (let i = 0; i < 46; i++) { g.strokeStyle = `rgba(255,255,255,${0.04 + Math.random() * 0.07})`; g.lineWidth = 2 + Math.random() * 7; const y = Math.random() * 256; g.beginPath(); g.moveTo(0, y); for (let x = 0; x <= 256; x += 12) g.lineTo(x, y + Math.sin(x / 17 + i) * 7); g.stroke() } })
+const offsetPoly = (pts, d) => { const n = pts.length; let ar = 0; for (let i = 0; i < n; i++) { const p = pts[i], q = pts[(i + 1) % n]; ar += p[0] * q[1] - q[0] * p[1] } const s = ar > 0 ? 1 : -1; const nm = e => { const l = Math.hypot(e[0], e[1]) || 1; return [s * e[1] / l, -s * e[0] / l] }; const ix = (p, dp, q, dq) => { const dn = dp[0] * dq[1] - dp[1] * dq[0]; if (Math.abs(dn) < 1e-6) return null; const t = ((q[0] - p[0]) * dq[1] - (q[1] - p[1]) * dq[0]) / dn; return [p[0] + dp[0] * t, p[1] + dp[1] * t] }; return pts.map((p1, i) => { const p0 = pts[(i - 1 + n) % n], p2 = pts[(i + 1) % n], e1 = [p1[0] - p0[0], p1[1] - p0[1]], e2 = [p2[0] - p1[0], p2[1] - p1[1]], n1 = nm(e1), n2 = nm(e2); return ix([p0[0] + n1[0] * d, p0[1] + n1[1] * d], e1, [p1[0] + n2[0] * d, p1[1] + n2[1] * d], e2) || [p1[0] + n2[0] * d, p1[1] + n2[1] * d] }) }
+const waterMats = []
 const scene = new THREE.Scene()
-scene.background = new THREE.Color(0x182028)
-const cam = new THREE.PerspectiveCamera(50, 2, 0.1, 800)
-cam.position.set(16, 14, 20)
+const skyCv = document.createElement('canvas'); skyCv.width = 4; skyCv.height = 256
+{ const s = skyCv.getContext('2d'), gr = s.createLinearGradient(0, 0, 0, 256); gr.addColorStop(0, '#4d8fc9'); gr.addColorStop(0.5, '#9cc4e6'); gr.addColorStop(1, '#dcebf6'); s.fillStyle = gr; s.fillRect(0, 0, 4, 256) }
+scene.background = new THREE.CanvasTexture(skyCv)
+scene.fog = new THREE.Fog(0xcfe2f2, 95, 320)
+const cam = new THREE.PerspectiveCamera(50, 2, 0.1, 2000)
+cam.position.set(24, 20, 32)
 const renderer = new THREE.WebGLRenderer({ canvas: $('#c3d'), antialias: true })
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap
 const controls = new OrbitControls(cam, $('#c3d'))
-controls.enableDamping = true
-scene.add(new THREE.AmbientLight(0xffffff, 0.65))
-const sun = new THREE.DirectionalLight(0xfff4e0, 1.1)
-sun.position.set(30, 40, 18)
-scene.add(sun)
+controls.enableDamping = true; controls.maxPolarAngle = Math.PI / 2 - 0.04
+scene.add(new THREE.HemisphereLight(0xcfe4f5, 0x52733f, 1.3))
+const sun = new THREE.DirectionalLight(0xfff3df, 2.3); sun.position.set(38, 56, 30); sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048); sun.shadow.bias = -0.0004
+Object.assign(sun.shadow.camera, { left: -80, right: 80, top: 80, bottom: -80, near: 1, far: 280 })
+const fill = new THREE.DirectionalLight(0xe2edf6, 0.6); fill.position.set(-24, 30, 64)
+scene.add(sun, fill, new THREE.AmbientLight(0xffffff, 0.24))
 const grp = new THREE.Group()
 scene.add(grp)
 let photoPlane = null, photoMeta = null
-const groundMat = new THREE.MeshStandardMaterial({ color: 0x3e5e36, roughness: 1 })
-const ground = new THREE.Mesh(new THREE.PlaneGeometry(400, 400), groundMat)
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(900, 900), new THREE.MeshStandardMaterial({ map: grassTex, roughness: 1 }))
 ground.rotation.x = -Math.PI / 2
-ground.position.y = -0.02
+ground.position.y = -0.03
+ground.receiveShadow = true
 scene.add(ground)
 const rebuild3D = () => {
   while (grp.children.length) { const m = grp.children.pop(); m.geometry && m.geometry.dispose() }
+  waterMats.length = 0
   const poly = polyOf(cfg)
-  const shape = new THREE.Shape(poly.map(p => new THREE.Vector2(p[0], p[1])))
-  const avgD = ((+cfg.shallow_in + +cfg.deep_in) / 2) / 12
-  const mk = (depth, mat, yBottom) => { const g = new THREE.ExtrudeGeometry(shape, { depth, bevelEnabled: false }); const m = new THREE.Mesh(g, mat); m.rotation.x = -Math.PI / 2; m.position.y = yBottom; grp.add(m); return m }
-  mk(0.5, new THREE.MeshStandardMaterial({ color: 0xcfd3d8, roughness: 0.85 }), -avgD - 0.5)
-  mk(avgD, new THREE.MeshPhysicalMaterial({ color: FINISHES[cfg.finish][0], transparent: true, opacity: 0.78, roughness: 0.1, metalness: 0 }), -avgD)
+  const above = cfg.kind === 'above'
+  const dMax = Math.max(+cfg.deep_in, +cfg.shallow_in) / 12
+  const fin = FINISHES[cfg.finish][0], finC = new THREE.Color(fin)
+  const base = above ? 0.12 : -dMax, top = above ? dMax + 0.12 : 0
+  const shp = new THREE.Shape(poly.map(p => new THREE.Vector2(p[0], p[1])))
+  const lay = (mesh, y, sh) => { mesh.rotation.x = -Math.PI / 2; mesh.position.y = y; sh && (mesh.castShadow = mesh.receiveShadow = true); grp.add(mesh); return mesh }
+  const ext = (s, depth, mat) => new THREE.Mesh(new THREE.ExtrudeGeometry(s, { depth, bevelEnabled: false }), mat)
+  const xs = poly.map(p => p[0]), ys = poly.map(p => p[1])
+  const minX = Math.min(...xs), maxX = Math.max(...xs), minY = Math.min(...ys), maxY = Math.max(...ys)
+  const ring = (outerD, holePts) => { const s = new THREE.Shape(offsetPoly(poly, outerD).map(p => new THREE.Vector2(p[0], p[1]))); s.holes.push(new THREE.Path(holePts.map(p => new THREE.Vector2(p[0], p[1])))); return s }
+  if (!above) {
+    const mg = 6, ds = new THREE.Shape([[minX - mg, minY - mg], [maxX + mg, minY - mg], [maxX + mg, maxY + mg], [minX - mg, maxY + mg]].map(p => new THREE.Vector2(p[0], p[1])))
+    ds.holes.push(new THREE.Path(offsetPoly(poly, 1.1).map(p => new THREE.Vector2(p[0], p[1]))))
+    lay(ext(ds, 0.4, new THREE.MeshStandardMaterial({ map: concTex('#c4c2bb', 1.1), roughness: 0.92 })), 0.12, true)
+  } else lay(ext(ring(0.55, poly), top, new THREE.MeshStandardMaterial({ map: concTex('#cdd2d7', 1.4), roughness: 0.45, metalness: 0.25 })), top, true)
+  lay(ext(ring(1.1, poly), 0.45, new THREE.MeshStandardMaterial({ map: concTex('#d6cbb4', 1.5), roughness: 0.72 })), top + 0.42, true)
+  lay(new THREE.Mesh(new THREE.ShapeGeometry(shp), new THREE.MeshStandardMaterial({ color: finC.clone().offsetHSL(0, 0, -0.05), roughness: 0.32 })), base, true)
+  const wallMat = new THREE.MeshStandardMaterial({ color: finC.clone().offsetHSL(0, 0, -0.02), roughness: 0.28, side: THREE.DoubleSide })
+  for (let i = 0; i < poly.length; i++) { const a = poly[i], b = poly[(i + 1) % poly.length], len = Math.hypot(b[0] - a[0], b[1] - a[1]); if (len < 0.01) continue; const w = new THREE.Mesh(new THREE.BoxGeometry(len, top - base, 0.12), wallMat); w.position.set((a[0] + b[0]) / 2, (base + top) / 2, -(a[1] + b[1]) / 2); w.rotation.y = Math.atan2(-(b[1] - a[1]), b[0] - a[0]); grp.add(w) }
+  lay(ext(shp, top - base - 0.25, new THREE.MeshPhysicalMaterial({ color: finC, transparent: true, opacity: 0.5, roughness: 0.15, transmission: 0.25, ior: 1.33 })), top - 0.25)
+  const surf = lay(new THREE.Mesh(new THREE.ShapeGeometry(shp), new THREE.MeshPhysicalMaterial({ color: finC.clone().offsetHSL(0, 0.06, 0.07), transparent: true, opacity: 0.84, roughness: 0.06, clearcoat: 1, clearcoatRoughness: 0.05, bumpMap: waterBump, bumpScale: 0.08, side: THREE.DoubleSide })), top - 0.16)
+  waterMats.push(surf.material)
   if (+cfg.house_edge >= 0) {
-    const i = +cfg.house_edge, jn = (i + 1) % poly.length
-    const [a, c2] = [poly[i], poly[jn]]
-    const len = Math.hypot(c2[0] - a[0], c2[1] - a[1]), ang = Math.atan2(-(c2[1] - a[1]), c2[0] - a[0])
-    const wall = new THREE.Mesh(new THREE.BoxGeometry(len + 2, 9, 0.5), new THREE.MeshStandardMaterial({ color: 0xefe8cf, roughness: 0.9 }))
-    wall.position.set((a[0] + c2[0]) / 2, 4.5, -(a[1] + c2[1]) / 2)
-    wall.rotation.y = ang
-    wall.translateZ(-0.3)
-    grp.add(wall)
-    const fdn = new THREE.Mesh(new THREE.BoxGeometry(len + 2, 1.3, 0.56), new THREE.MeshStandardMaterial({ color: 0x6e2f2b, roughness: 0.95 }))
-    fdn.position.set((a[0] + c2[0]) / 2, 0.65, -(a[1] + c2[1]) / 2)
-    fdn.rotation.y = ang
-    fdn.translateZ(-0.3)
-    grp.add(fdn)
+    const i = +cfg.house_edge, jn = (i + 1) % poly.length, a = poly[i], c2 = poly[jn]
+    const len = Math.hypot(c2[0] - a[0], c2[1] - a[1]), ang = Math.atan2(-(c2[1] - a[1]), c2[0] - a[0]), mx = (a[0] + c2[0]) / 2, mz = -(a[1] + c2[1]) / 2
+    const sd = sidingTex('#f1ecdb'); sd.repeat.set(Math.max(2, len / 4), 2)
+    const wall = new THREE.Mesh(new THREE.BoxGeometry(len + 4, 10, 0.5), new THREE.MeshStandardMaterial({ map: sd, roughness: 0.9 }))
+    wall.position.set(mx, 5, mz); wall.rotation.y = ang; wall.translateZ(-1.4); wall.castShadow = wall.receiveShadow = true; grp.add(wall)
+    const fdn = new THREE.Mesh(new THREE.BoxGeometry(len + 4, 1.4, 0.6), new THREE.MeshStandardMaterial({ color: 0x6e2f2b, roughness: 0.95 }))
+    fdn.position.set(mx, 0.7, mz); fdn.rotation.y = ang; fdn.translateZ(-1.4); grp.add(fdn)
+    const dr = new THREE.Group()
+    dr.add(new THREE.Mesh(new THREE.BoxGeometry(6.5, 7.1, 0.32), new THREE.MeshStandardMaterial({ color: 0x303338, roughness: 0.5, metalness: 0.3 })).translateY(3.55))
+    const glass = new THREE.Mesh(new THREE.BoxGeometry(5.9, 6.5, 0.16), new THREE.MeshPhysicalMaterial({ color: 0x8fb6d8, roughness: 0.07, metalness: 0.15, transparent: true, opacity: 0.55 })); glass.position.set(0, 3.55, 0.13)
+    dr.add(glass, new THREE.Mesh(new THREE.BoxGeometry(0.22, 6.5, 0.22), new THREE.MeshStandardMaterial({ color: 0x303338, roughness: 0.5, metalness: 0.3 })).translateY(3.55).translateZ(0.14)); dr.position.set(mx, 0, mz); dr.rotation.y = ang; dr.translateZ(-1.15); grp.add(dr)
   }
   if (photoMeta && cfg.mode === 'poly') {
     photoPlane && scene.remove(photoPlane)
@@ -94,7 +122,7 @@ window.addEventListener('beforeprint', () => {
   snap.style.cssText = 'width:100%;display:block'
   ps.appendChild(snap)
 })
-;(function loop() { controls.update(); renderer.render(scene, cam); requestAnimationFrame(loop) })()
+;(function loop() { controls.update(); waterBump.offset.x += 0.0006; waterBump.offset.y += 0.0004; renderer.render(scene, cam); requestAnimationFrame(loop) })()
 let siteSnap = null
 const renderPlans = () => {
   if (!out) return

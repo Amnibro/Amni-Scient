@@ -26,24 +26,32 @@ const callCore = c => {
   dealloc(p, payload.length); dealloc(rp, len + 4)
   return res
 }
+const mkTex = (rep, draw) => { const cv = document.createElement('canvas'); cv.width = cv.height = 256; draw(cv.getContext('2d')); const t = new THREE.CanvasTexture(cv); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(rep, rep); return t }
+const grassTex = mkTex(60, g => { g.fillStyle = '#4d7c3a'; g.fillRect(0, 0, 256, 256); for (let i = 0; i < 2600; i++) { g.fillStyle = `hsl(${100 + Math.random() * 30},${34 + Math.random() * 26}%,${21 + Math.random() * 18}%)`; g.fillRect(Math.random() * 256, Math.random() * 256, 2, 2) } })
+const sidingTex = hex => mkTex(1, g => { const b = new THREE.Color(hex); for (let y = 0; y < 256; y += 20) { const gr = g.createLinearGradient(0, y, 0, y + 20); gr.addColorStop(0, `#${b.clone().offsetHSL(0, 0, 0.04).getHexString()}`); gr.addColorStop(0.8, `#${b.getHexString()}`); gr.addColorStop(1, `#${b.clone().offsetHSL(0, 0, -0.14).getHexString()}`); g.fillStyle = gr; g.fillRect(0, y, 256, 20) } })
 const scene = new THREE.Scene()
-scene.background = new THREE.Color(0x182028)
-const cam = new THREE.PerspectiveCamera(50, 2, 0.1, 800)
-cam.position.set(16, 14, 20)
+const skyCv = document.createElement('canvas'); skyCv.width = 4; skyCv.height = 256
+{ const s = skyCv.getContext('2d'), gr = s.createLinearGradient(0, 0, 0, 256); gr.addColorStop(0, '#4d8fc9'); gr.addColorStop(0.5, '#9cc4e6'); gr.addColorStop(1, '#dcebf6'); s.fillStyle = gr; s.fillRect(0, 0, 4, 256) }
+scene.background = new THREE.CanvasTexture(skyCv)
+scene.fog = new THREE.Fog(0xcfe2f2, 95, 320)
+const cam = new THREE.PerspectiveCamera(50, 2, 0.1, 2000)
+cam.position.set(22, 18, 30)
 const renderer = new THREE.WebGLRenderer({ canvas: $('#c3d'), antialias: true })
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap
 const controls = new OrbitControls(cam, $('#c3d'))
-controls.enableDamping = true
-scene.add(new THREE.AmbientLight(0xffffff, 0.65))
-const sun = new THREE.DirectionalLight(0xfff4e0, 1.1)
-sun.position.set(30, 40, 18)
-scene.add(sun)
+controls.enableDamping = true; controls.maxPolarAngle = Math.PI / 2 - 0.04
+scene.add(new THREE.HemisphereLight(0xcfe4f5, 0x52733f, 1.3))
+const sun = new THREE.DirectionalLight(0xfff3df, 2.2); sun.position.set(34, 54, 30); sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048); sun.shadow.bias = -0.0004
+Object.assign(sun.shadow.camera, { left: -70, right: 70, top: 70, bottom: -70, near: 1, far: 260 })
+const fill = new THREE.DirectionalLight(0xe2edf6, 0.55); fill.position.set(-22, 28, 60)
+scene.add(sun, fill, new THREE.AmbientLight(0xffffff, 0.24))
 const grp = new THREE.Group()
 scene.add(grp)
 let photoPlane = null, photoMeta = null
-const groundMat = new THREE.MeshStandardMaterial({ color: 0x3e5e36, roughness: 1 })
-const ground = new THREE.Mesh(new THREE.PlaneGeometry(400, 400), groundMat)
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(900, 900), new THREE.MeshStandardMaterial({ map: grassTex, roughness: 1 }))
 ground.rotation.x = -Math.PI / 2
-ground.position.y = -0.02
+ground.position.y = -0.03
+ground.receiveShadow = true
 scene.add(ground)
 const speckle = hex => {
   const c = document.createElement('canvas'); c.width = c.height = 128
@@ -70,7 +78,7 @@ const rebuild3D = () => {
   const poly = polyOf(cfg)
   const shape = new THREE.Shape(poly.map(p => new THREE.Vector2(p[0], p[1])))
   const t = cfg.thickness_in / 12, b = cfg.base_in / 12
-  const mk = (depth, mat, yBottom) => { const g = new THREE.ExtrudeGeometry(shape, { depth, bevelEnabled: false }); const m = new THREE.Mesh(g, mat); m.rotation.x = -Math.PI / 2; m.position.y = yBottom; grp.add(m); return m }
+  const mk = (depth, mat, yBottom) => { const g = new THREE.ExtrudeGeometry(shape, { depth, bevelEnabled: false }); const m = new THREE.Mesh(g, mat); m.rotation.x = -Math.PI / 2; m.position.y = yBottom; m.castShadow = m.receiveShadow = true; grp.add(m); return m }
   if (b > 0.01) mk(b, new THREE.MeshStandardMaterial({ color: 0x9a8a68, roughness: 1 }), 0)
   const stone = STONE.includes(cfg.finish)
   const tex = stone || cfg.finish === 'aggregate' ? patternTex(cfg.finish, FINISHES[cfg.finish][0]) : speckle(FINISHES[cfg.finish][0])
@@ -88,16 +96,22 @@ const rebuild3D = () => {
     const i = +cfg.house_edge, jn = (i + 1) % poly.length
     const [a, c2] = [poly[i], poly[jn]]
     const len = Math.hypot(c2[0] - a[0], c2[1] - a[1]), ang = Math.atan2(-(c2[1] - a[1]), c2[0] - a[0])
-    const wall = new THREE.Mesh(new THREE.BoxGeometry(len + 2, 9, 0.5), new THREE.MeshStandardMaterial({ color: 0xefe8cf, roughness: 0.9 }))
-    wall.position.set((a[0] + c2[0]) / 2, 4.5, -(a[1] + c2[1]) / 2)
+    const sd = sidingTex('#f1ecdb'); sd.repeat.set(Math.max(2, len / 4), 2)
+    const wall = new THREE.Mesh(new THREE.BoxGeometry(len + 4, 10, 0.5), new THREE.MeshStandardMaterial({ map: sd, roughness: 0.9 }))
+    wall.position.set((a[0] + c2[0]) / 2, 5, -(a[1] + c2[1]) / 2)
     wall.rotation.y = ang
-    wall.translateZ(-0.3)
+    wall.translateZ(-0.45); wall.castShadow = wall.receiveShadow = true
     grp.add(wall)
-    const fdn = new THREE.Mesh(new THREE.BoxGeometry(len + 2, 1.3, 0.56), new THREE.MeshStandardMaterial({ color: 0x6e2f2b, roughness: 0.95 }))
-    fdn.position.set((a[0] + c2[0]) / 2, 0.65, -(a[1] + c2[1]) / 2)
+    const fdn = new THREE.Mesh(new THREE.BoxGeometry(len + 4, 1.4, 0.6), new THREE.MeshStandardMaterial({ color: 0x6e2f2b, roughness: 0.95 }))
+    fdn.position.set((a[0] + c2[0]) / 2, 0.7, -(a[1] + c2[1]) / 2)
     fdn.rotation.y = ang
-    fdn.translateZ(-0.3)
+    fdn.translateZ(-0.45)
     grp.add(fdn)
+    const dr = new THREE.Group()
+    dr.add(new THREE.Mesh(new THREE.BoxGeometry(6.5, 7.1, 0.32), new THREE.MeshStandardMaterial({ color: 0x303338, roughness: 0.5, metalness: 0.3 })).translateY(3.55))
+    const glass = new THREE.Mesh(new THREE.BoxGeometry(5.9, 6.5, 0.16), new THREE.MeshPhysicalMaterial({ color: 0x8fb6d8, roughness: 0.07, metalness: 0.15, transparent: true, opacity: 0.55 })); glass.position.set(0, 3.55, 0.13)
+    dr.add(glass, new THREE.Mesh(new THREE.BoxGeometry(0.22, 6.5, 0.22), new THREE.MeshStandardMaterial({ color: 0x303338, roughness: 0.5, metalness: 0.3 })).translateY(3.55).translateZ(0.14)); dr.position.set((a[0] + c2[0]) / 2, 0, -(a[1] + c2[1]) / 2); dr.rotation.y = ang; dr.translateZ(-0.2)
+    grp.add(dr)
     const felt = new THREE.Mesh(new THREE.BoxGeometry(len, t, 0.05), new THREE.MeshStandardMaterial({ color: 0x1a1a1a }))
     felt.position.set((a[0] + c2[0]) / 2, b + t / 2, -(a[1] + c2[1]) / 2)
     felt.rotation.y = ang
