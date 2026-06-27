@@ -25,24 +25,32 @@ const callCore = c => {
   dealloc(p, payload.length); dealloc(rp, len + 4)
   return res
 }
+const mkTex = (rep, draw) => { const cv = document.createElement('canvas'); cv.width = cv.height = 256; draw(cv.getContext('2d')); const t = new THREE.CanvasTexture(cv); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(rep, rep); return t }
+const grassTex = mkTex(60, g => { g.fillStyle = '#4d7c3a'; g.fillRect(0, 0, 256, 256); for (let i = 0; i < 2600; i++) { g.fillStyle = `hsl(${100 + Math.random() * 30},${34 + Math.random() * 26}%,${21 + Math.random() * 18}%)`; g.fillRect(Math.random() * 256, Math.random() * 256, 2, 2) } })
 const scene = new THREE.Scene()
-scene.background = new THREE.Color(0x182028)
-const cam = new THREE.PerspectiveCamera(50, 2, 0.1, 800)
-cam.position.set(16, 14, 20)
+const skyCv = document.createElement('canvas'); skyCv.width = 4; skyCv.height = 256
+{ const s = skyCv.getContext('2d'), gr = s.createLinearGradient(0, 0, 0, 256); gr.addColorStop(0, '#4d8fc9'); gr.addColorStop(0.5, '#9cc4e6'); gr.addColorStop(1, '#dcebf6'); s.fillStyle = gr; s.fillRect(0, 0, 4, 256) }
+scene.background = new THREE.CanvasTexture(skyCv)
+scene.fog = new THREE.Fog(0xcfe2f2, 95, 320)
+const cam = new THREE.PerspectiveCamera(50, 2, 0.1, 2000)
+cam.position.set(22, 18, 30)
 const renderer = new THREE.WebGLRenderer({ canvas: $('#c3d'), antialias: true })
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap
 const controls = new OrbitControls(cam, $('#c3d'))
-controls.enableDamping = true
-scene.add(new THREE.AmbientLight(0xffffff, 0.65))
-const sun = new THREE.DirectionalLight(0xfff4e0, 1.1)
-sun.position.set(30, 40, 18)
-scene.add(sun)
+controls.enableDamping = true; controls.maxPolarAngle = Math.PI / 2 - 0.04
+scene.add(new THREE.HemisphereLight(0xcfe4f5, 0x52733f, 1.3))
+const sun = new THREE.DirectionalLight(0xfff3df, 2.2); sun.position.set(34, 54, 30); sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048); sun.shadow.bias = -0.0004
+Object.assign(sun.shadow.camera, { left: -70, right: 70, top: 70, bottom: -70, near: 1, far: 260 })
+const fill = new THREE.DirectionalLight(0xe2edf6, 0.55); fill.position.set(-22, 28, 60)
+scene.add(sun, fill, new THREE.AmbientLight(0xffffff, 0.24))
 const grp = new THREE.Group()
 scene.add(grp)
+const _gadd = grp.add.bind(grp); grp.add = (...o) => { o.forEach(m => m.traverse && m.traverse(x => { x.isMesh && (x.castShadow = x.receiveShadow = true) })); return _gadd(...o) }
 let photoPlane = null, photoMeta = null
-const groundMat = new THREE.MeshStandardMaterial({ color: 0x3e5e36, roughness: 1 })
-const ground = new THREE.Mesh(new THREE.PlaneGeometry(400, 400), groundMat)
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(900, 900), new THREE.MeshStandardMaterial({ map: grassTex, roughness: 1 }))
 ground.rotation.x = -Math.PI / 2
-ground.position.y = -0.02
+ground.position.y = -0.03
+ground.receiveShadow = true
 scene.add(ground)
 const rebuild3D = () => {
   while (grp.children.length) { const m = grp.children.pop(); m.geometry && m.geometry.dispose() }

@@ -27,22 +27,27 @@ const callCore = c => {
   return res
 }
 const scene = new THREE.Scene()
-scene.background = new THREE.Color(0x182028)
-const cam = new THREE.PerspectiveCamera(50, 2, 0.1, 800)
-cam.position.set(16, 14, 20)
+const bgCv = document.createElement('canvas'); bgCv.width = 4; bgCv.height = 256
+{ const s = bgCv.getContext('2d'), gr = s.createLinearGradient(0, 0, 0, 256); gr.addColorStop(0, '#e2e8ee'); gr.addColorStop(1, '#aab4be'); s.fillStyle = gr; s.fillRect(0, 0, 4, 256) }
+scene.background = new THREE.CanvasTexture(bgCv)
+const cam = new THREE.PerspectiveCamera(50, 2, 0.1, 2000)
+cam.position.set(18, 16, 24)
 const renderer = new THREE.WebGLRenderer({ canvas: $('#c3d'), antialias: true })
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap
 const controls = new OrbitControls(cam, $('#c3d'))
-controls.enableDamping = true
-scene.add(new THREE.AmbientLight(0xffffff, 0.7))
-const sun = new THREE.DirectionalLight(0xfff4e0, 1.1)
-sun.position.set(30, 40, 18)
-scene.add(sun)
+controls.enableDamping = true; controls.maxPolarAngle = Math.PI / 2 - 0.02
+scene.add(new THREE.HemisphereLight(0xffffff, 0x97a0aa, 1.15))
+const sun = new THREE.DirectionalLight(0xffffff, 1.7); sun.position.set(24, 42, 20); sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048); sun.shadow.bias = -0.0004
+Object.assign(sun.shadow.camera, { left: -55, right: 55, top: 55, bottom: -55, near: 1, far: 200 })
+const fill = new THREE.DirectionalLight(0xeef2f6, 0.5); fill.position.set(-20, 26, -30)
+scene.add(sun, fill, new THREE.AmbientLight(0xffffff, 0.4))
 const grp = new THREE.Group()
 scene.add(grp)
-const groundMat = new THREE.MeshStandardMaterial({ color: 0x3e5e36, roughness: 1 })
-const ground = new THREE.Mesh(new THREE.PlaneGeometry(400, 400), groundMat)
+const _gadd = grp.add.bind(grp); grp.add = (...o) => { o.forEach(m => m.traverse && m.traverse(x => { x.isMesh && (x.castShadow = x.receiveShadow = true) })); return _gadd(...o) }
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(900, 900), new THREE.MeshStandardMaterial({ color: 0xb9bec4, roughness: 0.95 }))
 ground.rotation.x = -Math.PI / 2
-ground.position.y = -0.02
+ground.position.y = -0.03
+ground.receiveShadow = true
 scene.add(ground)
 const FIXMESH = [['toilets', 0x6fa8d8, 1.4], ['lavs', 0x8fc7d8, 1.0], ['tubs', 0xcfd3d8, 2.2], ['showers', 0xb8d0c0, 1.8], ['kitchen_sinks', 0xd8b87a, 1.2], ['dishwashers', 0xc0c4ca, 1.4], ['washers', 0xd0b0c0, 1.6]]
 const rebuild3D = () => {
