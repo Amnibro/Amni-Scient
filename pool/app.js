@@ -82,6 +82,10 @@ const rebuild3D = () => {
   lay(ext(shp, top - base - 0.25, new THREE.MeshPhysicalMaterial({ color: finC, transparent: true, opacity: 0.5, roughness: 0.15, transmission: 0.25, ior: 1.33 })), top - 0.25)
   const surf = lay(new THREE.Mesh(new THREE.ShapeGeometry(shp), new THREE.MeshPhysicalMaterial({ color: finC.clone().offsetHSL(0, 0.06, 0.07), transparent: true, opacity: 0.84, roughness: 0.06, clearcoat: 1, clearcoatRoughness: 0.05, bumpMap: waterBump, bumpScale: 0.08, side: THREE.DoubleSide })), top - 0.16)
   waterMats.push(surf.material)
+  { const lx = maxX - 0.7, lz = -((minY + maxY) / 2), botY = Math.max(base + 0.3, top - 3), chrome = new THREE.MeshStandardMaterial({ color: 0xd8dde2, roughness: 0.25, metalness: 0.85 })
+    for (const dz of [-0.6, 0.6]) { const rail = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, top + 1.4 - botY, 10), chrome); rail.position.set(lx, (top + 1.4 + botY) / 2, lz + dz); grp.add(rail) }
+    for (let k = 0; k < 3; k++) { const rung = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 1.2, 8), chrome); rung.rotation.x = Math.PI / 2; rung.position.set(lx, top - 0.4 - k * 0.8, lz); grp.add(rung) }
+    const hb = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 1.2, 10), chrome); hb.rotation.x = Math.PI / 2; hb.position.set(lx, top + 1.4, lz); grp.add(hb) }
   if (+cfg.house_edge >= 0) {
     const i = +cfg.house_edge, jn = (i + 1) % poly.length, a = poly[i], c2 = poly[jn]
     const len = Math.hypot(c2[0] - a[0], c2[1] - a[1]), ang = Math.atan2(-(c2[1] - a[1]), c2[0] - a[0]), mx = (a[0] + c2[0]) / 2, mz = -(a[1] + c2[1]) / 2

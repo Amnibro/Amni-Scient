@@ -25,6 +25,8 @@ const callCore = c => {
   dealloc(p, payload.length); dealloc(rp, len + 4)
   return res
 }
+const mkTex = (rep, draw) => { const cv = document.createElement('canvas'); cv.width = cv.height = 256; draw(cv.getContext('2d')); const t = new THREE.CanvasTexture(cv); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(rep, rep); return t }
+const floorTex = (mat, hex) => mkTex(1, g => { const b = new THREE.Color(hex); if (mat === 'carpet') { g.fillStyle = hex; g.fillRect(0, 0, 256, 256); for (let i = 0; i < 7000; i++) { g.fillStyle = `#${b.clone().offsetHSL(0, 0, (Math.random() - 0.5) * 0.12).getHexString()}`; g.fillRect(Math.random() * 256, Math.random() * 256, 1.5, 1.5) } return } if (mat === 'tile') { const n = 4, ts = 256 / n; for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) { g.fillStyle = `#${b.clone().offsetHSL(0, 0, (Math.random() - 0.5) * 0.05).getHexString()}`; g.fillRect(c * ts, r * ts, ts, ts) } g.strokeStyle = 'rgba(55,50,44,0.55)'; g.lineWidth = 4; for (let i = 0; i <= n; i++) { g.beginPath(); g.moveTo(i * ts, 0); g.lineTo(i * ts, 256); g.moveTo(0, i * ts); g.lineTo(256, i * ts); g.stroke() } return } const rows = 6, rh = 256 / rows; for (let r = 0; r < rows; r++) { const y = r * rh; for (let seg = -1; seg < 3; seg++) { const x0 = seg * 128 + (r % 2) * 64, c = b.clone().offsetHSL(0.012 * (Math.random() - 0.5), 0, (Math.random() - 0.5) * 0.13); g.fillStyle = `#${c.getHexString()}`; g.fillRect(x0, y, 128, rh); for (let k = 0; k < 16; k++) { g.strokeStyle = `#${c.clone().offsetHSL(0, 0, (Math.random() - 0.5) * 0.09).getHexString()}`; g.lineWidth = 0.5 + Math.random() * 1.3; const yy = y + Math.random() * rh; g.beginPath(); g.moveTo(x0, yy); g.bezierCurveTo(x0 + 42, yy + (Math.random() - 0.5) * 4, x0 + 90, yy + (Math.random() - 0.5) * 4, x0 + 128, yy + (Math.random() - 0.5) * 3); g.stroke() } g.strokeStyle = 'rgba(0,0,0,0.28)'; g.lineWidth = 1.4; g.strokeRect(x0, y, 128, rh) } } })
 const scene = new THREE.Scene()
 const bgCv = document.createElement('canvas'); bgCv.width = 4; bgCv.height = 256
 { const s = bgCv.getContext('2d'), gr = s.createLinearGradient(0, 0, 0, 256); gr.addColorStop(0, '#e2e8ee'); gr.addColorStop(1, '#aab4be'); s.fillStyle = gr; s.fillRect(0, 0, 4, 256) }
@@ -53,7 +55,11 @@ const rebuild3D = () => {
   while (grp.children.length) { const m = grp.children.pop(); m.geometry && m.geometry.dispose() }
   const poly = polyOf(cfg)
   const shape = new THREE.Shape(poly.map(p => new THREE.Vector2(p[0], p[1])))
-  const slab = new THREE.Mesh(new THREE.ExtrudeGeometry(shape, { depth: 0.08, bevelEnabled: false }), new THREE.MeshStandardMaterial({ color: FINISHES[cfg.material][0], roughness: cfg.material === 'tile' ? 0.45 : 0.72 }))
+  const ft = floorTex(cfg.material, FINISHES[cfg.material][0])
+  const pw = Math.max(2, +cfg.plank_w_in) / 12, pl = Math.max(6, +cfg.plank_l_in) / 12
+  cfg.material === 'tile' ? ft.repeat.set(1 / (4 * pw), 1 / (4 * pw)) : cfg.material === 'carpet' ? ft.repeat.set(0.6, 0.6) : ft.repeat.set(1 / (2 * pl), 1 / (6 * pw))
+  cfg.pattern === 'diagonal' && (ft.center.set(0.5, 0.5), ft.rotation = Math.PI / 4)
+  const slab = new THREE.Mesh(new THREE.ExtrudeGeometry(shape, { depth: 0.08, bevelEnabled: false }), new THREE.MeshStandardMaterial({ map: ft, roughness: cfg.material === 'tile' ? 0.4 : cfg.material === 'carpet' ? 1 : 0.6 }))
   slab.rotation.x = -Math.PI / 2; slab.position.y = 0; grp.add(slab)
   if (photoMeta && cfg.mode === 'poly') {
     photoPlane && scene.remove(photoPlane)

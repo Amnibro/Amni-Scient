@@ -28,6 +28,8 @@ const callCore = c => {
 }
 const mkTex = (rep, draw) => { const cv = document.createElement('canvas'); cv.width = cv.height = 256; draw(cv.getContext('2d')); const t = new THREE.CanvasTexture(cv); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(rep, rep); return t }
 const grassTex = mkTex(60, g => { g.fillStyle = '#4d7c3a'; g.fillRect(0, 0, 256, 256); for (let i = 0; i < 2600; i++) { g.fillStyle = `hsl(${100 + Math.random() * 30},${34 + Math.random() * 26}%,${21 + Math.random() * 18}%)`; g.fillRect(Math.random() * 256, Math.random() * 256, 2, 2) } })
+const soilTex = mkTex(4, g => { g.fillStyle = '#3a2a1a'; g.fillRect(0, 0, 256, 256); for (let i = 0; i < 3500; i++) { g.fillStyle = Math.random() > 0.5 ? `rgba(92,70,46,${0.3 + Math.random() * 0.4})` : `rgba(26,18,10,${0.3 + Math.random() * 0.4})`; g.fillRect(Math.random() * 256, Math.random() * 256, 2.2, 2.2) } })
+const TALL = ['tomato', 'bean', 'pepper', 'squash', 'cucumber', 'kale']
 const scene = new THREE.Scene()
 const skyCv = document.createElement('canvas'); skyCv.width = 4; skyCv.height = 256
 { const s = skyCv.getContext('2d'), gr = s.createLinearGradient(0, 0, 0, 256); gr.addColorStop(0, '#4d8fc9'); gr.addColorStop(0.5, '#9cc4e6'); gr.addColorStop(1, '#dcebf6'); s.fillStyle = gr; s.fillRect(0, 0, 4, 256) }
@@ -58,18 +60,20 @@ const rebuild3D = () => {
   if (!out || !out.beds) return
   const h = 1
   for (const b of out.beds) {
-    const g = new THREE.BoxGeometry(b.w, h, b.l)
-    const m = new THREE.Mesh(g, new THREE.MeshStandardMaterial({ color: 0x6b4a26, roughness: 1 }))
-    m.position.set(b.x + b.w / 2, h / 2, -(b.y + b.l / 2))
-    grp.add(m)
-    const eg = new THREE.LineSegments(new THREE.EdgesGeometry(g), new THREE.LineBasicMaterial({ color: 0x3a2a14 }))
+    const m = new THREE.Mesh(new THREE.BoxGeometry(b.w, h, b.l), new THREE.MeshStandardMaterial({ color: 0x6e4a28, roughness: 0.95 }))
+    m.position.set(b.x + b.w / 2, h / 2, -(b.y + b.l / 2)); grp.add(m)
+    const eg = new THREE.LineSegments(new THREE.EdgesGeometry(m.geometry), new THREE.LineBasicMaterial({ color: 0x3a2a14 }))
     eg.position.copy(m.position); grp.add(eg)
-    const dr = Math.min(b.rows, 6), dc = Math.min(b.per_row, 10)
-    const dot = new THREE.SphereGeometry(Math.min(b.w / dc, b.l / dr) * 0.2, 6, 5)
-    const dmat = new THREE.MeshStandardMaterial({ color: PCOL[b.plant] ?? 0x5fae5f, roughness: 0.7 })
+    const soil = new THREE.Mesh(new THREE.BoxGeometry(b.w - 0.5, 0.28, b.l - 0.5), new THREE.MeshStandardMaterial({ map: soilTex, roughness: 1 }))
+    soil.position.set(b.x + b.w / 2, h - 0.04, -(b.y + b.l / 2)); grp.add(soil)
+    const dr = Math.min(b.rows, 6), dc = Math.min(b.per_row, 10), tall = TALL.includes(b.plant)
+    const r = Math.max(0.13, Math.min(b.w / dc, b.l / dr) * 0.32)
+    const pg = new THREE.IcosahedronGeometry(r, 0)
+    const pmat = new THREE.MeshStandardMaterial({ color: PCOL[b.plant] ?? 0x5fae5f, roughness: 0.85, flatShading: true })
     for (let i = 0; i < dr; i++) for (let j = 0; j < dc; j++) {
-      const s = new THREE.Mesh(dot, dmat)
-      s.position.set(b.x + b.w * (j + 0.5) / dc, h + 0.12, -(b.y + b.l * (i + 0.5) / dr))
+      const s = new THREE.Mesh(pg, pmat)
+      s.position.set(b.x + b.w * (j + 0.5) / dc, h + 0.1 + r * (tall ? 1.1 : 0.5), -(b.y + b.l * (i + 0.5) / dr))
+      s.scale.set(1, tall ? 1.9 : 0.9, 1); s.rotation.y = (i * 7 + j * 3) % 6
       grp.add(s)
     }
   }

@@ -27,6 +27,7 @@ const callCore = c => {
 }
 const mkTex = (rep, draw) => { const cv = document.createElement('canvas'); cv.width = cv.height = 256; draw(cv.getContext('2d')); const t = new THREE.CanvasTexture(cv); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(rep, rep); return t }
 const grassTex = mkTex(60, g => { g.fillStyle = '#4d7c3a'; g.fillRect(0, 0, 256, 256); for (let i = 0; i < 2600; i++) { g.fillStyle = `hsl(${100 + Math.random() * 30},${34 + Math.random() * 26}%,${21 + Math.random() * 18}%)`; g.fillRect(Math.random() * 256, Math.random() * 256, 2, 2) } })
+const shingleTex = (hex, kind) => mkTex(1, g => { const b = new THREE.Color(hex); g.fillStyle = `#${b.clone().offsetHSL(0, 0, -0.04).getHexString()}`; g.fillRect(0, 0, 256, 256); if (kind === 'metal') { for (let x = 0; x < 256; x += 26) { g.fillStyle = `#${b.clone().offsetHSL(0, 0, 0.08).getHexString()}`; g.fillRect(x, 0, 2.5, 256); g.fillStyle = `#${b.clone().offsetHSL(0, 0, -0.13).getHexString()}`; g.fillRect(x + 2.5, 0, 1.5, 256) } return } const courses = kind === '3tab' ? 9 : 7, ch = 256 / courses; for (let r = 0; r < courses; r++) { const y = r * ch, off = (r % 2) * 22; for (let x = -22; x < 256; x += 44) { g.fillStyle = `#${b.clone().offsetHSL(0, 0, (Math.random() - 0.5) * (kind === '3tab' ? 0.06 : 0.17)).getHexString()}`; g.fillRect(x + off, y, 43, ch); g.strokeStyle = 'rgba(0,0,0,0.18)'; g.lineWidth = 1.4; g.strokeRect(x + off + 0.7, y + 0.7, 41.6, ch - 1.4) } g.fillStyle = 'rgba(0,0,0,0.16)'; g.fillRect(0, y, 256, 2) } })
 const scene = new THREE.Scene()
 const skyCv = document.createElement('canvas'); skyCv.width = 4; skyCv.height = 256
 { const s = skyCv.getContext('2d'), gr = s.createLinearGradient(0, 0, 0, 256); gr.addColorStop(0, '#4d8fc9'); gr.addColorStop(0.5, '#9cc4e6'); gr.addColorStop(1, '#dcebf6'); s.fillStyle = gr; s.fillRect(0, 0, 4, 256) }
@@ -60,9 +61,11 @@ const rebuild3D = () => {
   const cx = (Math.min(...xs) + Math.max(...xs)) / 2, cy = (Math.min(...ys) + Math.max(...ys)) / 2
   const horiz = w >= d, span = horiz ? d : w, rlen = horiz ? w : d
   const h = (span / 2) * (Math.max(0.5, +cfg.pitch) / 12)
-  const col = new THREE.Color(FINISHES[cfg.material][0])
-  const mat = new THREE.MeshStandardMaterial({ color: col, roughness: cfg.material === 'metal' ? 0.4 : 0.9, side: THREE.DoubleSide })
+  const kind = cfg.material === '3tab' ? '3tab' : cfg.material === 'metal' ? 'metal' : 'arch'
   const slopeLen = Math.hypot(span / 2, h)
+  const sh = shingleTex(FINISHES[cfg.material][0], kind)
+  kind === 'metal' ? sh.repeat.set(Math.max(2, rlen / 2.5), 1) : sh.repeat.set(Math.max(3, rlen / 6), Math.max(3, slopeLen / 3))
+  const mat = new THREE.MeshStandardMaterial({ map: sh, roughness: kind === 'metal' ? 0.35 : 0.92, metalness: kind === 'metal' ? 0.5 : 0, side: THREE.DoubleSide })
   for (const s of [-1, 1]) {
     const plane = new THREE.Mesh(new THREE.PlaneGeometry(rlen, slopeLen), mat)
     if (horiz) { plane.rotation.x = -Math.PI / 2 + s * Math.atan2(h, span / 2); plane.position.set(cx, h / 2, -(cy + s * span / 4)) }

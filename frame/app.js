@@ -57,11 +57,16 @@ const rebuild3D = () => {
   const poly = polyOf(cfg)
   const shape = new THREE.Shape(poly.map(p => new THREE.Vector2(p[0], p[1])))
   const H = Math.max(7, +cfg.wall_height_ft)
-  const geo = new THREE.ExtrudeGeometry(shape, { depth: H, bevelEnabled: false })
-  const wall = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ color: FINISHES[cfg.stud_size][0], roughness: 0.85, transparent: true, opacity: 0.4, side: THREE.DoubleSide }))
-  wall.rotation.x = -Math.PI / 2; wall.position.y = 0; grp.add(wall)
-  const edges = new THREE.LineSegments(new THREE.EdgesGeometry(geo), new THREE.LineBasicMaterial({ color: 0x6b4a26 }))
-  edges.rotation.x = -Math.PI / 2; grp.add(edges)
+  const studMat = new THREE.MeshStandardMaterial({ color: FINISHES[cfg.stud_size][0], roughness: 0.82 })
+  const th = cfg.stud_size === '2x6' ? 0.458 : 0.292, sw = 0.125, oc = Math.max(8, +cfg.spacing) / 12
+  for (let i = 0; i < poly.length; i++) {
+    const a = poly[i], b = poly[(i + 1) % poly.length], len = Math.hypot(b[0] - a[0], b[1] - a[1]); if (len < 0.1) continue
+    const ang = Math.atan2(-(b[1] - a[1]), b[0] - a[0]), mx = (a[0] + b[0]) / 2, mz = -(a[1] + b[1]) / 2, dx = (b[0] - a[0]) / len, dy = (b[1] - a[1]) / len
+    const bp = new THREE.Mesh(new THREE.BoxGeometry(len, 0.125, th), studMat); bp.position.set(mx, 0.06, mz); bp.rotation.y = ang; grp.add(bp)
+    for (let k = 0; k < (cfg.double_top_plate ? 2 : 1); k++) { const tp = new THREE.Mesh(new THREE.BoxGeometry(len, 0.125, th), studMat); tp.position.set(mx, H - 0.06 - k * 0.13, mz); tp.rotation.y = ang; grp.add(tp) }
+    const nStud = Math.floor(len / oc + 1e-6)
+    for (let s = 0; s <= nStud; s++) { const t = Math.min(s * oc, len - 0.07), px = a[0] + dx * t, pz = -(a[1] + dy * t), st = new THREE.Mesh(new THREE.BoxGeometry(sw, H - 0.26, th), studMat); st.position.set(px, H / 2, pz); st.rotation.y = ang; grp.add(st) }
+  }
   if (photoMeta && cfg.mode === 'poly') {
     photoPlane && scene.remove(photoPlane)
     const { tex, wFt, hFt, cxFt, cyFt } = photoMeta
