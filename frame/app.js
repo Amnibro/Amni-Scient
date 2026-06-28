@@ -59,13 +59,27 @@ const rebuild3D = () => {
   const H = Math.max(7, +cfg.wall_height_ft)
   const studMat = new THREE.MeshStandardMaterial({ color: FINISHES[cfg.stud_size][0], roughness: 0.82 })
   const th = cfg.stud_size === '2x6' ? 0.458 : 0.292, sw = 0.125, oc = Math.max(8, +cfg.spacing) / 12
+  const openQ = []
+  for (let d = 0; d < (+cfg.doors || 0); d++) openQ.push({ w: 3, sill: 0, head: 6.8, win: false })
+  for (let w = 0; w < (+cfg.windows || 0); w++) openQ.push({ w: 3, sill: 3, head: 6.5, win: true })
+  let qi = 0
   for (let i = 0; i < poly.length; i++) {
     const a = poly[i], b = poly[(i + 1) % poly.length], len = Math.hypot(b[0] - a[0], b[1] - a[1]); if (len < 0.1) continue
-    const ang = Math.atan2(-(b[1] - a[1]), b[0] - a[0]), mx = (a[0] + b[0]) / 2, mz = -(a[1] + b[1]) / 2, dx = (b[0] - a[0]) / len, dy = (b[1] - a[1]) / len
-    const bp = new THREE.Mesh(new THREE.BoxGeometry(len, 0.125, th), studMat); bp.position.set(mx, 0.06, mz); bp.rotation.y = ang; grp.add(bp)
-    for (let k = 0; k < (cfg.double_top_plate ? 2 : 1); k++) { const tp = new THREE.Mesh(new THREE.BoxGeometry(len, 0.125, th), studMat); tp.position.set(mx, H - 0.06 - k * 0.13, mz); tp.rotation.y = ang; grp.add(tp) }
+    const ang = Math.atan2(-(b[1] - a[1]), b[0] - a[0]), dx = (b[0] - a[0]) / len, dy = (b[1] - a[1]) / len
+    const stud = (t, hgt, yc) => { const m = new THREE.Mesh(new THREE.BoxGeometry(sw, hgt, th), studMat); m.position.set(a[0] + dx * t, yc, -(a[1] + dy * t)); m.rotation.y = ang; grp.add(m) }
+    const horiz = (t, hgt, yc, wd) => { const m = new THREE.Mesh(new THREE.BoxGeometry(wd, hgt, th), studMat); m.position.set(a[0] + dx * t, yc, -(a[1] + dy * t)); m.rotation.y = ang; grp.add(m) }
+    horiz(len / 2, 0.125, 0.06, len)
+    for (let k = 0; k < (cfg.double_top_plate ? 2 : 1); k++) horiz(len / 2, 0.125, H - 0.06 - k * 0.13, len)
+    const slots = Math.max(0, Math.floor(len / 7)), myOpen = []
+    for (let sIdx = 0; sIdx < slots && qi < openQ.length; sIdx++) myOpen.push({ ...openQ[qi++], c: len * (sIdx + 0.5) / slots })
     const nStud = Math.floor(len / oc + 1e-6)
-    for (let s = 0; s <= nStud; s++) { const t = Math.min(s * oc, len - 0.07), px = a[0] + dx * t, pz = -(a[1] + dy * t), st = new THREE.Mesh(new THREE.BoxGeometry(sw, H - 0.26, th), studMat); st.position.set(px, H / 2, pz); st.rotation.y = ang; grp.add(st) }
+    for (let s = 0; s <= nStud; s++) { const t = Math.min(s * oc, len - 0.07); if (myOpen.some(o => Math.abs(t - o.c) < o.w / 2 + 0.15)) continue; stud(t, H - 0.26, H / 2) }
+    for (const o of myOpen) {
+      for (const sgn of [-1, 1]) stud(Math.min(Math.max(o.c + sgn * (o.w / 2 + 0.14), 0.1), len - 0.1), H - 0.26, H / 2)
+      horiz(o.c, 0.32, o.head + 0.16, o.w + 0.5)
+      for (const sgn of [-1, 1]) stud(o.c + sgn * o.w / 2, o.head, o.head / 2)
+      if (o.win) { horiz(o.c, 0.16, o.sill, o.w + 0.3); for (const f of [0.34, 0.66]) stud(o.c - o.w / 2 + o.w * f, o.sill, o.sill / 2) }
+    }
   }
   if (photoMeta && cfg.mode === 'poly') {
     photoPlane && scene.remove(photoPlane)
