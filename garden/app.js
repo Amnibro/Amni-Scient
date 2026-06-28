@@ -69,7 +69,9 @@ const rebuild3D = () => {
     const dr = Math.min(b.rows, 6), dc = Math.min(b.per_row, 10), tall = TALL.includes(b.plant)
     const r = Math.max(0.13, Math.min(b.w / dc, b.l / dr) * 0.32), pg = new THREE.IcosahedronGeometry(r, 0)
     const pmat = new THREE.MeshStandardMaterial({ color: PCOL[b.plant] ?? 0x5fae5f, roughness: 0.85, flatShading: true })
-    for (let i = 0; i < dr; i++) for (let j = 0; j < dc; j++) { const s = new THREE.Mesh(pg, pmat); s.position.set(-b.w / 2 + b.w * (j + 0.5) / dc, h + 0.1 + r * (tall ? 1.1 : 0.5), b.l / 2 - b.l * (i + 0.5) / dr); s.scale.set(1, tall ? 1.9 : 0.9, 1); s.rotation.y = (i * 7 + j * 3) % 6; gb.add(s) }
+    const inst = new THREE.InstancedMesh(pg, pmat, dr * dc); let ii = 0; const mtx = new THREE.Matrix4(), q = new THREE.Quaternion(), ev = new THREE.Euler()
+    for (let i = 0; i < dr; i++) for (let j = 0; j < dc; j++) { ev.set(0, (i * 7 + j * 3) % 6, 0); q.setFromEuler(ev); mtx.compose(new THREE.Vector3(-b.w / 2 + b.w * (j + 0.5) / dc, h + 0.1 + r * (tall ? 1.1 : 0.5), b.l / 2 - b.l * (i + 0.5) / dr), q, new THREE.Vector3(1, tall ? 1.9 : 0.9, 1)); inst.setMatrixAt(ii++, mtx) }
+    gb.add(inst)
     grp.add(gb)
   })
 }
