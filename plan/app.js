@@ -50,17 +50,28 @@ scene.add(ground)
 const KCOL = { bedroom: 0xd9e4f0, bath: 0xd6eef0, kitchen: 0xf0e6d2, living: 0xe4f0e0, dining: 0xe4f0e0, laundry: 0xefe0ea, garage: 0xe4e6e8, hall: 0xeceff2, office: 0xeae0f0, other: 0xeceff2 }
 const txtSprite = (text, sub) => { const c = document.createElement('canvas'); c.width = 256; c.height = 80; const x = c.getContext('2d'); x.fillStyle = 'rgba(255,255,255,0.92)'; x.fillRect(0, 0, 256, 80); x.strokeStyle = '#8a96a0'; x.lineWidth = 3; x.strokeRect(2, 2, 252, 76); x.fillStyle = '#16222e'; x.font = 'bold 34px system-ui,sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(text, 128, sub ? 30 : 40); if (sub) { x.fillStyle = '#5a6470'; x.font = '24px system-ui,sans-serif'; x.fillText(sub, 128, 58) } const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(c), depthTest: false })); s.scale.set(3.2, 1.0, 1); return s }
 const rebuild3D = () => {
-  while (grp.children.length) { const m = grp.children.pop(); m.geometry && m.geometry.dispose() }
+  while (grp.children.length) { const m = grp.children.pop(); m.traverse && m.traverse(o => o.geometry && o.geometry.dispose()) }
   if (!out || !out.rooms) return
+  cfg.roomPos = cfg.roomPos || {}
   const wmat = new THREE.MeshStandardMaterial({ color: 0xf4f6f8, roughness: 0.85 })
   for (const r of out.rooms) {
-    const cx = r.x + r.w / 2, cz = -(r.y + r.d / 2), wh = 2.6, tt = 0.22
-    const floor = new THREE.Mesh(new THREE.BoxGeometry(r.w, 0.16, r.d), new THREE.MeshStandardMaterial({ color: KCOL[r.kind] ?? 0xeceff2, roughness: 0.92 }))
-    floor.position.set(cx, 0.08, cz); grp.add(floor)
-    for (const [bw, bd, ox, oz] of [[r.w, tt, 0, -r.d / 2], [r.w, tt, 0, r.d / 2], [tt, r.d, -r.w / 2, 0], [tt, r.d, r.w / 2, 0]]) { const wall = new THREE.Mesh(new THREE.BoxGeometry(bw, wh, bd), wmat); wall.position.set(cx + ox, wh / 2 + 0.16, cz + oz); grp.add(wall) }
-    const lbl = txtSprite(r.name || r.kind, `${Math.round(r.w)}' × ${Math.round(r.d)}'`); lbl.position.set(cx, wh + 1.3, cz); grp.add(lbl)
+    const ov = cfg.roomPos[r.name], rx = ov ? ov[0] : r.x, ry = ov ? ov[1] : r.y
+    const cx = rx + r.w / 2, cz = -(ry + r.d / 2), wh = 2.6, tt = 0.22
+    const grm = new THREE.Group(); grm.position.set(cx, 0, cz); grm.userData.drag = { name: r.name, w: r.w, d: r.d }
+    const floor = new THREE.Mesh(new THREE.BoxGeometry(r.w, 0.16, r.d), new THREE.MeshStandardMaterial({ color: KCOL[r.kind] ?? 0xeceff2, roughness: 0.92 })); floor.position.y = 0.08; grm.add(floor)
+    for (const [bw, bd, ox, oz] of [[r.w, tt, 0, -r.d / 2], [r.w, tt, 0, r.d / 2], [tt, r.d, -r.w / 2, 0], [tt, r.d, r.w / 2, 0]]) { const wall = new THREE.Mesh(new THREE.BoxGeometry(bw, wh, bd), wmat); wall.position.set(ox, wh / 2 + 0.16, oz); grm.add(wall) }
+    const lbl = txtSprite(r.name || r.kind, `${Math.round(r.w)}' × ${Math.round(r.d)}'`); lbl.position.set(0, wh + 1.3, 0); grm.add(lbl)
+    grp.add(grm)
   }
 }
+const dray = new THREE.Raycaster(), dptr = new THREE.Vector2(), dplane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0)
+let dragO = null; const dragOff = new THREE.Vector3()
+const dSetPtr = e => { const r = $('#c3d').getBoundingClientRect(); dptr.set((e.clientX - r.left) / r.width * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1) }
+const dPick = () => { dray.setFromCamera(dptr, cam); for (const hh of dray.intersectObjects(grp.children, true)) { let o = hh.object; while (o && !o.userData.drag) o = o.parent; if (o) return o } return null }
+const dGround = () => { dray.setFromCamera(dptr, cam); const p = new THREE.Vector3(); return dray.ray.intersectPlane(dplane, p) ? p : null }
+$('#c3d').addEventListener('pointerdown', e => { dSetPtr(e); const o = dPick(); if (!o) return; dragO = o; controls.enabled = false; $('#c3d').setPointerCapture(e.pointerId); const p = dGround(); p && (dragOff.copy(o.position).sub(p), dragOff.y = 0) })
+$('#c3d').addEventListener('pointermove', e => { dSetPtr(e); if (dragO) { const p = dGround(); p && (dragO.position.x = p.x + dragOff.x, dragO.position.z = p.z + dragOff.z); return } $('#c3d').style.cursor = dPick() ? 'grab' : '' })
+$('#c3d').addEventListener('pointerup', () => { if (!dragO) return; const u = dragO.userData.drag, nx = Math.round((dragO.position.x - u.w / 2) * 2) / 2, ny = Math.round((-dragO.position.z - u.d / 2) * 2) / 2; dragO.position.set(nx + u.w / 2, 0, -(ny + u.d / 2)); cfg.roomPos[u.name] = [nx, ny]; persist(); dragO = null; controls.enabled = true })
 const resize = () => { const c = $('#c3d'); const w = c.clientWidth, h = c.clientHeight; if (!w || !h) return; renderer.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix() }
 new ResizeObserver(resize).observe($('#view'))
 window.addEventListener('beforeprint', () => {

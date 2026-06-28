@@ -74,14 +74,17 @@ const rebuild3D = () => {
   for (const [key] of FIXMESH) {
     const n = +cfg[key] || 0
     for (let k = 0; k < n; k++) {
-      const cx = 2.5 + (i % cols) * 4, cz = -(2.5 + Math.floor(i / cols) * 4)
-      const f = makeFixture(key); f.position.set(cx, 0.1, cz); grp.add(f)
-      const lbl = txtSprite(LABELS[key]); lbl.position.set(cx, 4.6, cz); grp.add(lbl)
+      const id = `${key}${k}`, ov = (cfg.pos = cfg.pos || {})[id]
+      const cx = ov ? ov[0] : 2.5 + (i % cols) * 4, cz = ov ? ov[1] : -(2.5 + Math.floor(i / cols) * 4)
+      const f = makeFixture(key); f.userData.drag = { key: id }; f.position.set(cx, 0.1, cz)
+      const lbl = txtSprite(LABELS[key]); lbl.position.set(0, 4.5, 0); f.add(lbl); grp.add(f)
       i++
     }
   }
-  if (cfg.water_heater) { const tank = new THREE.Mesh(new THREE.CylinderGeometry(0.95, 0.95, 4, 18), new THREE.MeshStandardMaterial({ color: 0xeceef0, roughness: 0.5 })); tank.position.set(cfg.w - 2.2, 2, -2.2); grp.add(tank); const cap = new THREE.Mesh(new THREE.CylinderGeometry(0.7, 0.95, 0.5, 18), new THREE.MeshStandardMaterial({ color: 0xd8dbde, roughness: 0.6 })); cap.position.set(cfg.w - 2.2, 4.2, -2.2); grp.add(cap); const lbl = txtSprite('Water Htr'); lbl.position.set(cfg.w - 2.2, 5.2, -2.2); grp.add(lbl) }
+  if (cfg.water_heater) { const whg = new THREE.Group(); const ov = (cfg.pos = cfg.pos || {}).wh; whg.position.set(ov ? ov[0] : cfg.w - 2.2, 0, ov ? ov[1] : -2.2); whg.userData.drag = { key: 'wh' }; const tank = new THREE.Mesh(new THREE.CylinderGeometry(0.95, 0.95, 4, 18), new THREE.MeshStandardMaterial({ color: 0xeceef0, roughness: 0.5 })); tank.position.y = 2; const cap = new THREE.Mesh(new THREE.CylinderGeometry(0.7, 0.95, 0.5, 18), new THREE.MeshStandardMaterial({ color: 0xd8dbde, roughness: 0.6 })); cap.position.y = 4.2; const lbl = txtSprite('Water Htr'); lbl.position.set(0, 5.2, 0); whg.add(tank, cap, lbl); grp.add(whg) }
 }
+const installDrag = () => { const cv = $('#c3d'), dray = new THREE.Raycaster(), dptr = new THREE.Vector2(), dplane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0); let dragO = null; const dragOff = new THREE.Vector3(); const sp = e => { const r = cv.getBoundingClientRect(); dptr.set((e.clientX - r.left) / r.width * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1) }; const pick = () => { dray.setFromCamera(dptr, cam); for (const hh of dray.intersectObjects(grp.children, true)) { let o = hh.object; while (o && !o.userData.drag) o = o.parent; if (o) return o } return null }; const gp = () => { dray.setFromCamera(dptr, cam); const p = new THREE.Vector3(); return dray.ray.intersectPlane(dplane, p) ? p : null }; cv.addEventListener('pointerdown', e => { sp(e); const o = pick(); if (!o) return; dragO = o; controls.enabled = false; cv.setPointerCapture(e.pointerId); const p = gp(); p && (dragOff.copy(o.position).sub(p), dragOff.y = 0) }); cv.addEventListener('pointermove', e => { sp(e); if (dragO) { const p = gp(); p && (dragO.position.x = p.x + dragOff.x, dragO.position.z = p.z + dragOff.z); return } cv.style.cursor = pick() ? 'grab' : '' }); cv.addEventListener('pointerup', () => { if (!dragO) return; cfg.pos = cfg.pos || {}; cfg.pos[dragO.userData.drag.key] = [+dragO.position.x.toFixed(2), +dragO.position.z.toFixed(2)]; persist(); dragO = null; controls.enabled = true }) }
+installDrag()
 const resize = () => { const c = $('#c3d'); const w = c.clientWidth, h = c.clientHeight; if (!w || !h) return; renderer.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix() }
 new ResizeObserver(resize).observe($('#view'))
 window.addEventListener('beforeprint', () => {

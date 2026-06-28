@@ -124,11 +124,12 @@ const rebuild3D = () => {
     grp.add(felt)
   }
   { const xs = poly.map(p => p[0]), ys = poly.map(p => p[1]), minX = Math.min(...xs), maxX = Math.max(...xs), minY = Math.min(...ys), maxY = Math.max(...ys), sy = b + t, dy = maxY - minY, dx2 = maxX - minX
+    cfg.pos = cfg.pos || {}; const P = (k, dx, dz) => { const ov = cfg.pos[k]; return [ov ? ov[0] : dx, ov ? ov[1] : dz] }
     if (dy > 7 && dx2 > 7) { const cx = (minX + maxX) / 2, tz = -(maxY - dy * 0.36)
-      const tbl = makeTable(); tbl.position.set(cx, sy, tz); grp.add(tbl)
-      let ci = 0; for (const [ox, oz] of [[0, 2.4], [0, -2.4], [2.4, 0], [-2.4, 0]]) { if (ci++ >= 3) break; const ch = makeChair(); ch.position.set(cx + ox, sy, tz + oz); ch.rotation.y = Math.atan2(ox, oz) + Math.PI; grp.add(ch) }
-      const pl1 = makePlanter(0x4a8a3a); pl1.position.set(minX + 1.4, sy, -(minY + 1.4)); grp.add(pl1)
-      const pl2 = makePlanter(0xc24a5a); pl2.position.set(maxX - 1.4, sy, -(minY + 1.4)); grp.add(pl2)
+      const tp = P('table', cx, tz), tbl = makeTable(); tbl.userData.drag = { key: 'table' }; tbl.position.set(tp[0], sy, tp[1]); grp.add(tbl)
+      let ci = 0; for (const [ox, oz] of [[0, 2.4], [0, -2.4], [2.4, 0], [-2.4, 0]]) { if (ci >= 3) break; const k = `chair${ci}`, cp = P(k, cx + ox, tz + oz), ch = makeChair(); ch.userData.drag = { key: k }; ch.position.set(cp[0], sy, cp[1]); ch.rotation.y = Math.atan2(ox, oz) + Math.PI; grp.add(ch); ci++ }
+      const p1 = P('planter1', minX + 1.4, -(minY + 1.4)), pl1 = makePlanter(0x4a8a3a); pl1.userData.drag = { key: 'planter1' }; pl1.position.set(p1[0], sy, p1[1]); grp.add(pl1)
+      const p2 = P('planter2', maxX - 1.4, -(minY + 1.4)), pl2 = makePlanter(0xc24a5a); pl2.userData.drag = { key: 'planter2' }; pl2.position.set(p2[0], sy, p2[1]); grp.add(pl2)
     } }
   if (photoMeta && cfg.mode === 'poly') {
     photoPlane && scene.remove(photoPlane)
@@ -139,6 +140,8 @@ const rebuild3D = () => {
     scene.add(photoPlane)
   } else if (photoPlane && cfg.mode !== 'poly') { scene.remove(photoPlane); photoPlane = null }
 }
+const installDrag = () => { const cv = $('#c3d'), dray = new THREE.Raycaster(), dptr = new THREE.Vector2(), dplane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0); let dragO = null; const dragOff = new THREE.Vector3(); const sp = e => { const r = cv.getBoundingClientRect(); dptr.set((e.clientX - r.left) / r.width * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1) }; const pick = () => { dray.setFromCamera(dptr, cam); for (const hh of dray.intersectObjects(grp.children, true)) { let o = hh.object; while (o && !o.userData.drag) o = o.parent; if (o) return o } return null }; const gp = () => { dray.setFromCamera(dptr, cam); const p = new THREE.Vector3(); return dray.ray.intersectPlane(dplane, p) ? p : null }; cv.addEventListener('pointerdown', e => { sp(e); const o = pick(); if (!o) return; dragO = o; controls.enabled = false; cv.setPointerCapture(e.pointerId); const p = gp(); p && (dragOff.copy(o.position).sub(p), dragOff.y = 0) }); cv.addEventListener('pointermove', e => { sp(e); if (dragO) { const p = gp(); p && (dragO.position.x = p.x + dragOff.x, dragO.position.z = p.z + dragOff.z); return } cv.style.cursor = pick() ? 'grab' : '' }); cv.addEventListener('pointerup', () => { if (!dragO) return; cfg.pos = cfg.pos || {}; cfg.pos[dragO.userData.drag.key] = [+dragO.position.x.toFixed(2), +dragO.position.z.toFixed(2)]; persist(); dragO = null; controls.enabled = true }) }
+installDrag()
 const resize = () => { const c = $('#c3d'); const w = c.clientWidth, h = c.clientHeight; if (!w || !h) return; renderer.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix() }
 new ResizeObserver(resize).observe($('#view'))
 window.addEventListener('beforeprint', () => {
