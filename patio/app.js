@@ -73,6 +73,11 @@ const patternTex = (kind, hex) => {
   else { for (let r = 0; r < 16; r++) for (let col = 0; col < 16; col++) { x.fillStyle = shade(hex, rnd(0.6, 1.35)); x.fillRect(col * 16 + 1, r * 16 + 1, 14, 14) } }
   const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; return t
 }
+const woodF = () => new THREE.MeshStandardMaterial({ color: 0x6b4f34, roughness: 0.7 })
+const metalF = () => new THREE.MeshStandardMaterial({ color: 0x35383c, roughness: 0.4, metalness: 0.6 })
+const makeTable = () => { const g = new THREE.Group(); const top = new THREE.Mesh(new THREE.CylinderGeometry(1.4, 1.4, 0.12, 20), woodF()); top.position.y = 2.3; const ped = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 2.3, 10), metalF()); ped.position.y = 1.15; const base = new THREE.Mesh(new THREE.CylinderGeometry(0.6, 0.7, 0.12, 16), metalF()); base.position.y = 0.06; g.add(top, ped, base); return g }
+const makeChair = () => { const g = new THREE.Group(); const seat = new THREE.Mesh(new THREE.BoxGeometry(1.3, 0.14, 1.3), woodF()); seat.position.y = 1.5; const back = new THREE.Mesh(new THREE.BoxGeometry(1.3, 1.4, 0.14), woodF()); back.position.set(0, 2.2, -0.58); for (const [xx, zz] of [[-0.5, -0.5], [0.5, -0.5], [-0.5, 0.5], [0.5, 0.5]]) { const leg = new THREE.Mesh(new THREE.BoxGeometry(0.12, 1.5, 0.12), metalF()); leg.position.set(xx, 0.75, zz); g.add(leg) } g.add(seat, back); return g }
+const makePlanter = col => { const g = new THREE.Group(); const box = new THREE.Mesh(new THREE.BoxGeometry(2, 1.6, 2), woodF()); box.position.y = 0.8; const soil = new THREE.Mesh(new THREE.BoxGeometry(1.7, 0.2, 1.7), new THREE.MeshStandardMaterial({ color: 0x3a2a1a, roughness: 1 })); soil.position.y = 1.55; g.add(box, soil); for (let i = 0; i < 5; i++) { const p = new THREE.Mesh(new THREE.IcosahedronGeometry(0.4 + Math.random() * 0.2, 0), new THREE.MeshStandardMaterial({ color: col, roughness: 0.85, flatShading: true })); p.position.set((Math.random() - 0.5) * 1.2, 1.9 + Math.random() * 0.5, (Math.random() - 0.5) * 1.2); p.scale.y = 1.5; g.add(p) } return g }
 const rebuild3D = () => {
   while (grp.children.length) { const m = grp.children.pop(); m.geometry && m.geometry.dispose() }
   const poly = polyOf(cfg)
@@ -118,6 +123,13 @@ const rebuild3D = () => {
     felt.translateZ(0.05)
     grp.add(felt)
   }
+  { const xs = poly.map(p => p[0]), ys = poly.map(p => p[1]), minX = Math.min(...xs), maxX = Math.max(...xs), minY = Math.min(...ys), maxY = Math.max(...ys), sy = b + t, dy = maxY - minY, dx2 = maxX - minX
+    if (dy > 7 && dx2 > 7) { const cx = (minX + maxX) / 2, tz = -(maxY - dy * 0.36)
+      const tbl = makeTable(); tbl.position.set(cx, sy, tz); grp.add(tbl)
+      let ci = 0; for (const [ox, oz] of [[0, 2.4], [0, -2.4], [2.4, 0], [-2.4, 0]]) { if (ci++ >= 3) break; const ch = makeChair(); ch.position.set(cx + ox, sy, tz + oz); ch.rotation.y = Math.atan2(ox, oz) + Math.PI; grp.add(ch) }
+      const pl1 = makePlanter(0x4a8a3a); pl1.position.set(minX + 1.4, sy, -(minY + 1.4)); grp.add(pl1)
+      const pl2 = makePlanter(0xc24a5a); pl2.position.set(maxX - 1.4, sy, -(minY + 1.4)); grp.add(pl2)
+    } }
   if (photoMeta && cfg.mode === 'poly') {
     photoPlane && scene.remove(photoPlane)
     const { tex, wFt, hFt, cxFt, cyFt } = photoMeta

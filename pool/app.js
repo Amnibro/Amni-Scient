@@ -86,6 +86,23 @@ const rebuild3D = () => {
     for (const dz of [-0.6, 0.6]) { const rail = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, top + 1.4 - botY, 10), chrome); rail.position.set(lx, (top + 1.4 + botY) / 2, lz + dz); grp.add(rail) }
     for (let k = 0; k < 3; k++) { const rung = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 1.2, 8), chrome); rung.rotation.x = Math.PI / 2; rung.position.set(lx, top - 0.4 - k * 0.8, lz); grp.add(rung) }
     const hb = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 1.2, 10), chrome); hb.rotation.x = Math.PI / 2; hb.position.set(lx, top + 1.4, lz); grp.add(hb) }
+  if (!above) {
+    const stepMat = new THREE.MeshStandardMaterial({ color: 0xeef1f3, roughness: 0.4 })
+    for (let k = 0; k < 3; k++) { const ty = top - (k + 1) * (top - base) / 4; const tread = new THREE.Mesh(new THREE.BoxGeometry(4, 0.3, 1.2), stepMat); tread.position.set(minX + 2.2, ty, -(minY + 0.8 + k * 1.0)); grp.add(tread) }
+    const hi = +cfg.house_edge, mg = 6, fY = 4
+    let hmx = 1e9, hmz = 1e9; if (hi >= 0) { const a = poly[hi], c2 = poly[(hi + 1) % poly.length]; hmx = (a[0] + c2[0]) / 2; hmz = -(a[1] + c2[1]) / 2 }
+    const fx0 = minX - mg + 0.8, fx1 = maxX + mg - 0.8, fz0 = -(minY - mg + 0.8), fz1 = -(maxY + mg - 0.8)
+    const postMat = new THREE.MeshStandardMaterial({ color: 0x2e3236, roughness: 0.4, metalness: 0.6 })
+    const panelMat = new THREE.MeshPhysicalMaterial({ color: 0xbfe0f0, roughness: 0.08, transparent: true, opacity: 0.2 })
+    for (const [ax, az, bx, bz] of [[fx0, fz0, fx1, fz0], [fx0, fz1, fx1, fz1], [fx0, fz0, fx0, fz1], [fx1, fz0, fx1, fz1]]) {
+      const mxp = (ax + bx) / 2, mzp = (az + bz) / 2; if (hi >= 0 && Math.hypot(mxp - hmx, mzp - hmz) < mg + 3) continue
+      const len = Math.hypot(bx - ax, bz - az), ang = Math.atan2(-(bz - az), bx - ax)
+      const panel = new THREE.Mesh(new THREE.BoxGeometry(len - 0.3, fY - 0.7, 0.06), panelMat); panel.position.set(mxp, fY / 2 + 0.1, mzp); panel.rotation.y = ang; grp.add(panel)
+      const rail = new THREE.Mesh(new THREE.BoxGeometry(len, 0.12, 0.12), postMat); rail.position.set(mxp, fY, mzp); rail.rotation.y = ang; grp.add(rail)
+      const np = Math.max(2, Math.round(len / 5))
+      for (let p = 0; p <= np; p++) { const post = new THREE.Mesh(new THREE.BoxGeometry(0.14, fY, 0.14), postMat); post.position.set(ax + (bx - ax) * p / np, fY / 2, az + (bz - az) * p / np); grp.add(post) }
+    }
+  }
   if (+cfg.house_edge >= 0) {
     const i = +cfg.house_edge, jn = (i + 1) % poly.length, a = poly[i], c2 = poly[jn]
     const len = Math.hypot(c2[0] - a[0], c2[1] - a[1]), ang = Math.atan2(-(c2[1] - a[1]), c2[0] - a[0]), mx = (a[0] + c2[0]) / 2, mz = -(a[1] + c2[1]) / 2
