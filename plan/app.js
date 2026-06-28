@@ -48,16 +48,17 @@ ground.position.y = -0.03
 ground.receiveShadow = true
 scene.add(ground)
 const KCOL = { bedroom: 0xd9e4f0, bath: 0xd6eef0, kitchen: 0xf0e6d2, living: 0xe4f0e0, dining: 0xe4f0e0, laundry: 0xefe0ea, garage: 0xe4e6e8, hall: 0xeceff2, office: 0xeae0f0, other: 0xeceff2 }
+const txtSprite = (text, sub) => { const c = document.createElement('canvas'); c.width = 256; c.height = 80; const x = c.getContext('2d'); x.fillStyle = 'rgba(255,255,255,0.92)'; x.fillRect(0, 0, 256, 80); x.strokeStyle = '#8a96a0'; x.lineWidth = 3; x.strokeRect(2, 2, 252, 76); x.fillStyle = '#16222e'; x.font = 'bold 34px system-ui,sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(text, 128, sub ? 30 : 40); if (sub) { x.fillStyle = '#5a6470'; x.font = '24px system-ui,sans-serif'; x.fillText(sub, 128, 58) } const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(c), depthTest: false })); s.scale.set(3.2, 1.0, 1); return s }
 const rebuild3D = () => {
   while (grp.children.length) { const m = grp.children.pop(); m.geometry && m.geometry.dispose() }
   if (!out || !out.rooms) return
+  const wmat = new THREE.MeshStandardMaterial({ color: 0xf4f6f8, roughness: 0.85 })
   for (const r of out.rooms) {
-    const g = new THREE.BoxGeometry(r.w, 8, r.d)
-    const m = new THREE.Mesh(g, new THREE.MeshStandardMaterial({ color: KCOL[r.kind] ?? 0xeceff2, roughness: 0.9, transparent: true, opacity: 0.5 }))
-    m.position.set(r.x + r.w / 2, 4, -(r.y + r.d / 2))
-    grp.add(m)
-    const eg = new THREE.LineSegments(new THREE.EdgesGeometry(g), new THREE.LineBasicMaterial({ color: 0x5a6470 }))
-    eg.position.copy(m.position); grp.add(eg)
+    const cx = r.x + r.w / 2, cz = -(r.y + r.d / 2), wh = 2.6, tt = 0.22
+    const floor = new THREE.Mesh(new THREE.BoxGeometry(r.w, 0.16, r.d), new THREE.MeshStandardMaterial({ color: KCOL[r.kind] ?? 0xeceff2, roughness: 0.92 }))
+    floor.position.set(cx, 0.08, cz); grp.add(floor)
+    for (const [bw, bd, ox, oz] of [[r.w, tt, 0, -r.d / 2], [r.w, tt, 0, r.d / 2], [tt, r.d, -r.w / 2, 0], [tt, r.d, r.w / 2, 0]]) { const wall = new THREE.Mesh(new THREE.BoxGeometry(bw, wh, bd), wmat); wall.position.set(cx + ox, wh / 2 + 0.16, cz + oz); grp.add(wall) }
+    const lbl = txtSprite(r.name || r.kind, `${Math.round(r.w)}' × ${Math.round(r.d)}'`); lbl.position.set(cx, wh + 1.3, cz); grp.add(lbl)
   }
 }
 const resize = () => { const c = $('#c3d'); const w = c.clientWidth, h = c.clientHeight; if (!w || !h) return; renderer.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix() }

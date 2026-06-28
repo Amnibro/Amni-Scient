@@ -50,22 +50,37 @@ ground.position.y = -0.03
 ground.receiveShadow = true
 scene.add(ground)
 const FIXMESH = [['toilets', 0x6fa8d8, 1.4], ['lavs', 0x8fc7d8, 1.0], ['tubs', 0xcfd3d8, 2.2], ['showers', 0xb8d0c0, 1.8], ['kitchen_sinks', 0xd8b87a, 1.2], ['dishwashers', 0xc0c4ca, 1.4], ['washers', 0xd0b0c0, 1.6]]
+const LABELS = { toilets: 'Toilet', lavs: 'Sink', tubs: 'Tub', showers: 'Shower', kitchen_sinks: 'Kitchen', dishwashers: 'Dishwasher', washers: 'Washer' }
+const txtSprite = (text, color = '#16222e') => { const c = document.createElement('canvas'); c.width = 256; c.height = 64; const x = c.getContext('2d'); x.fillStyle = 'rgba(255,255,255,0.9)'; x.fillRect(0, 0, 256, 64); x.strokeStyle = '#8a96a0'; x.lineWidth = 3; x.strokeRect(2, 2, 252, 60); x.fillStyle = color; x.font = 'bold 34px system-ui,sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(text, 128, 34); const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(c), depthTest: false })); s.scale.set(2.6, 0.65, 1); return s }
+const PORC = () => new THREE.MeshStandardMaterial({ color: 0xeef1f3, roughness: 0.32 })
+const STEEL = () => new THREE.MeshStandardMaterial({ color: 0xb9bdc2, roughness: 0.3, metalness: 0.75 })
+const DARKI = () => new THREE.MeshStandardMaterial({ color: 0x2b3138, roughness: 0.6 })
+const GLASSI = () => new THREE.MeshPhysicalMaterial({ color: 0xbfdcec, roughness: 0.1, transparent: true, opacity: 0.28 })
+const makeFixture = type => { const g = new THREE.Group(), add = (...m) => g.add(...m)
+  if (type === 'toilets') { const bowl = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.45, 0.9, 16), PORC()); bowl.position.set(0, 0.45, 0.2); const seat = new THREE.Mesh(new THREE.CylinderGeometry(0.56, 0.56, 0.12, 16), PORC()); seat.position.set(0, 0.96, 0.2); const tank = new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.95, 0.42), PORC()); tank.position.set(0, 0.78, -0.5); add(bowl, seat, tank) }
+  else if (type === 'lavs') { const ped = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.32, 1.7, 12), PORC()); ped.position.y = 0.85; const basin = new THREE.Mesh(new THREE.CylinderGeometry(0.56, 0.4, 0.42, 16), PORC()); basin.position.y = 1.9; const fau = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.45, 8), STEEL()); fau.position.set(0, 2.2, -0.32); add(ped, basin, fau) }
+  else if (type === 'tubs') { const body = new THREE.Mesh(new THREE.BoxGeometry(2.4, 1.4, 1.2), PORC()); body.position.y = 0.7; const inner = new THREE.Mesh(new THREE.BoxGeometry(2.0, 1.0, 0.85), DARKI()); inner.position.y = 0.96; add(body, inner) }
+  else if (type === 'showers') { const pan = new THREE.Mesh(new THREE.BoxGeometry(2.0, 0.25, 2.0), PORC()); pan.position.y = 0.12; const w1 = new THREE.Mesh(new THREE.BoxGeometry(2.0, 4, 0.08), GLASSI()); w1.position.set(0, 2, -0.96); const w2 = new THREE.Mesh(new THREE.BoxGeometry(0.08, 4, 2.0), GLASSI()); w2.position.set(-0.96, 2, 0); const head = new THREE.Mesh(new THREE.SphereGeometry(0.2, 10, 8), STEEL()); head.position.set(-0.7, 3.7, -0.7); add(pan, w1, w2, head) }
+  else if (type === 'kitchen_sinks') { const cab = new THREE.Mesh(new THREE.BoxGeometry(2.2, 3, 2.0), new THREE.MeshStandardMaterial({ color: 0x8a6a44, roughness: 0.7 })); cab.position.y = 1.5; const counter = new THREE.Mesh(new THREE.BoxGeometry(2.3, 0.18, 2.1), new THREE.MeshStandardMaterial({ color: 0x383d43, roughness: 0.4 })); counter.position.y = 3.1; const b1 = new THREE.Mesh(new THREE.BoxGeometry(0.75, 0.45, 0.95), STEEL()); b1.position.set(-0.5, 3.05, 0); const b2 = new THREE.Mesh(new THREE.BoxGeometry(0.75, 0.45, 0.95), STEEL()); b2.position.set(0.5, 3.05, 0); const fau = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.8, 8), STEEL()); fau.position.set(0, 3.5, -0.6); add(cab, counter, b1, b2, fau) }
+  else if (type === 'dishwashers') { const body = new THREE.Mesh(new THREE.BoxGeometry(2.0, 3, 2.0), STEEL()); body.position.y = 1.5; const handle = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.14, 0.14), STEEL()); handle.position.set(0, 2.65, 1.05); add(body, handle) }
+  else { const body = new THREE.Mesh(new THREE.BoxGeometry(2.0, 3, 2.0), new THREE.MeshStandardMaterial({ color: 0xf2f4f5, roughness: 0.4 })); body.position.y = 1.5; const door = new THREE.Mesh(new THREE.CylinderGeometry(0.62, 0.62, 0.18, 18), DARKI()); door.rotation.x = Math.PI / 2; door.position.set(0, 1.6, 1.05); add(body, door) }
+  return g }
 const rebuild3D = () => {
   while (grp.children.length) { const m = grp.children.pop(); m.geometry && m.geometry.dispose() }
-  const slab = new THREE.Mesh(new THREE.BoxGeometry(cfg.w, 0.1, cfg.d), new THREE.MeshStandardMaterial({ color: 0xcfd3d8, roughness: 0.95 }))
+  const slab = new THREE.Mesh(new THREE.BoxGeometry(cfg.w, 0.1, cfg.d), new THREE.MeshStandardMaterial({ color: 0xdfe3e7, roughness: 0.95 }))
   slab.position.set(cfg.w / 2, 0, -cfg.d / 2); grp.add(slab)
   let i = 0
-  for (const [key, col, h] of FIXMESH) {
+  const cols = Math.max(1, Math.floor((cfg.w - 1) / 4))
+  for (const [key] of FIXMESH) {
     const n = +cfg[key] || 0
     for (let k = 0; k < n; k++) {
-      const g = new THREE.BoxGeometry(1.6, h, 1.6)
-      const m = new THREE.Mesh(g, new THREE.MeshStandardMaterial({ color: col, roughness: 0.7 }))
-      const col2 = i % Math.max(1, Math.floor(cfg.w / 3)), row = Math.floor(i / Math.max(1, Math.floor(cfg.w / 3)))
-      m.position.set(2 + col2 * 3, h / 2, -(2 + row * 3)); grp.add(m)
+      const cx = 2.5 + (i % cols) * 4, cz = -(2.5 + Math.floor(i / cols) * 4)
+      const f = makeFixture(key); f.position.set(cx, 0.1, cz); grp.add(f)
+      const lbl = txtSprite(LABELS[key]); lbl.position.set(cx, 4.6, cz); grp.add(lbl)
       i++
     }
   }
-  if (cfg.water_heater) { const g = new THREE.CylinderGeometry(0.9, 0.9, 4, 16); const m = new THREE.Mesh(g, new THREE.MeshStandardMaterial({ color: 0xe0e0e0, roughness: 0.5 })); m.position.set(cfg.w - 2, 2, -2); grp.add(m) }
+  if (cfg.water_heater) { const tank = new THREE.Mesh(new THREE.CylinderGeometry(0.95, 0.95, 4, 18), new THREE.MeshStandardMaterial({ color: 0xeceef0, roughness: 0.5 })); tank.position.set(cfg.w - 2.2, 2, -2.2); grp.add(tank); const cap = new THREE.Mesh(new THREE.CylinderGeometry(0.7, 0.95, 0.5, 18), new THREE.MeshStandardMaterial({ color: 0xd8dbde, roughness: 0.6 })); cap.position.set(cfg.w - 2.2, 4.2, -2.2); grp.add(cap); const lbl = txtSprite('Water Htr'); lbl.position.set(cfg.w - 2.2, 5.2, -2.2); grp.add(lbl) }
 }
 const resize = () => { const c = $('#c3d'); const w = c.clientWidth, h = c.clientHeight; if (!w || !h) return; renderer.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix() }
 new ResizeObserver(resize).observe($('#view'))

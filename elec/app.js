@@ -50,20 +50,23 @@ ground.position.y = -0.03
 ground.receiveShadow = true
 scene.add(ground)
 const perim = (s, t) => { const side = Math.floor(t % 4), f = (t % 4) - side; return side === 0 ? [f * s, 0] : side === 1 ? [s, -f * s] : side === 2 ? [s - f * s, -s] : [0, -(s - f * s)] }
+const txtSprite = (text, color = '#16222e') => { const c = document.createElement('canvas'); c.width = 256; c.height = 64; const x = c.getContext('2d'); x.fillStyle = 'rgba(255,255,255,0.9)'; x.fillRect(0, 0, 256, 64); x.strokeStyle = '#8a96a0'; x.lineWidth = 3; x.strokeRect(2, 2, 252, 60); x.fillStyle = color; x.font = 'bold 32px system-ui,sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(text, 128, 34); const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(c), depthTest: false })); s.scale.set(2.6, 0.65, 1); return s }
+const makeOutlet = () => { const g = new THREE.Group(); const post = new THREE.Mesh(new THREE.BoxGeometry(0.12, 1.2, 0.12), new THREE.MeshStandardMaterial({ color: 0xb0b4ba, roughness: 0.6 })); post.position.y = 0.6; const plate = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.85, 0.1), new THREE.MeshStandardMaterial({ color: 0xf3f4f5, roughness: 0.5 })); plate.position.y = 1.25; const s1 = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.3, 0.06), new THREE.MeshStandardMaterial({ color: 0x2b3138 })); s1.position.set(0, 1.42, 0.06); const s2 = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.3, 0.06), new THREE.MeshStandardMaterial({ color: 0x2b3138 })); s2.position.set(0, 1.08, 0.06); g.add(post, plate, s1, s2); return g }
+const makeLight = () => { const g = new THREE.Group(); const can = new THREE.Mesh(new THREE.CylinderGeometry(0.45, 0.5, 0.18, 16), new THREE.MeshStandardMaterial({ color: 0xe0e3e7, roughness: 0.5 })); const lens = new THREE.Mesh(new THREE.CylinderGeometry(0.36, 0.36, 0.06, 16), new THREE.MeshStandardMaterial({ color: 0xfff4cf, emissive: 0xc2a44a, emissiveIntensity: 0.9, roughness: 0.3 })); lens.position.y = -0.09; g.add(can, lens); return g }
+const makePanel = () => { const g = new THREE.Group(); const box = new THREE.Mesh(new THREE.BoxGeometry(1.7, 3.4, 0.5), new THREE.MeshStandardMaterial({ color: 0x3a4350, roughness: 0.55, metalness: 0.3 })); box.position.y = 1.7; const door = new THREE.Mesh(new THREE.BoxGeometry(1.5, 3.2, 0.08), new THREE.MeshStandardMaterial({ color: 0x4c5764, roughness: 0.5, metalness: 0.4 })); door.position.set(0.4, 1.7, 0.27); door.rotation.y = -0.5; for (let r = 0; r < 8; r++) for (const sx of [-0.35, 0.35]) { const br = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.13, 0.06), new THREE.MeshStandardMaterial({ color: 0x14181c })); br.position.set(sx, 0.65 + r * 0.34, 0.3); g.add(br) } g.add(box, door); return g }
 const rebuild3D = () => {
   while (grp.children.length) { const m = grp.children.pop(); m.geometry && m.geometry.dispose() }
   const s = sideOf(cfg)
-  const slab = new THREE.Mesh(new THREE.BoxGeometry(s, 0.1, s), new THREE.MeshStandardMaterial({ color: 0xcfd3d8, roughness: 0.95 }))
+  const slab = new THREE.Mesh(new THREE.BoxGeometry(s, 0.1, s), new THREE.MeshStandardMaterial({ color: 0xdfe3e7, roughness: 0.95 }))
   slab.position.set(s / 2, 0, -s / 2); grp.add(slab)
-  const panel = new THREE.Mesh(new THREE.BoxGeometry(1.4, 3, 0.5), new THREE.MeshStandardMaterial({ color: 0x2a3340, roughness: 0.6 }))
-  panel.position.set(0.6, 1.5, -s / 2 + 0.3); grp.add(panel)
+  const panel = makePanel(); panel.position.set(1.0, 0, -s / 2 + 0.35); grp.add(panel)
+  const plbl = txtSprite('Panel'); plbl.position.set(1.0, 3.9, -s / 2 + 0.35); grp.add(plbl)
   if (out && out.calc) {
-    const nr = Math.min(+out.calc.receptacles || 0, 64)
-    const rg = new THREE.BoxGeometry(0.5, 0.5, 0.5), rm = new THREE.MeshStandardMaterial({ color: 0xe8c33d, roughness: 0.5 })
-    for (let i = 0; i < nr; i++) { const [x, z] = perim(s, (i + 0.5) / nr * 4); const m = new THREE.Mesh(rg, rm); m.position.set(x, 0.4, z); grp.add(m) }
+    const nr = Math.min(+out.calc.receptacles || 0, 56)
+    for (let i = 0; i < nr; i++) { const [x, z] = perim(s, (i + 0.5) / nr * 4); const o = makeOutlet(); o.position.set(x, 0.1, z); grp.add(o) }
     const nl = Math.min(+out.calc.lights || 0, 40), gc = Math.max(1, Math.round(Math.sqrt(nl)))
-    const lg = new THREE.SphereGeometry(0.4, 8, 6), lm = new THREE.MeshStandardMaterial({ color: 0xfff2c0, emissive: 0x9a8a40, roughness: 0.4 })
-    for (let i = 0; i < nl; i++) { const c = i % gc, r = Math.floor(i / gc); const m = new THREE.Mesh(lg, lm); m.position.set(s * (c + 0.5) / gc, 2.6, -s * (r + 0.5) / Math.ceil(nl / gc)); grp.add(m) }
+    for (let i = 0; i < nl; i++) { const c = i % gc, r = Math.floor(i / gc); const lt = makeLight(); lt.position.set(s * (c + 0.5) / gc, 2.7, -s * (r + 0.5) / Math.ceil(nl / gc)); grp.add(lt) }
+    const leg = txtSprite(`${nr} outlets · ${nl} lights`); leg.scale.set(4.6, 0.7, 1); leg.position.set(s / 2, 4.6, -0.3); grp.add(leg)
   }
 }
 const resize = () => { const c = $('#c3d'); const w = c.clientWidth, h = c.clientHeight; if (!w || !h) return; renderer.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix() }
