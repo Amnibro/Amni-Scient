@@ -28,6 +28,7 @@ const callCore = c => {
 const mkTex = (rep, draw) => { const cv = document.createElement('canvas'); cv.width = cv.height = 256; draw(cv.getContext('2d')); const t = new THREE.CanvasTexture(cv); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(rep, rep); return t }
 const grassTex = mkTex(60, g => { g.fillStyle = '#4d7c3a'; g.fillRect(0, 0, 256, 256); for (let i = 0; i < 2600; i++) { g.fillStyle = `hsl(${100 + Math.random() * 30},${34 + Math.random() * 26}%,${21 + Math.random() * 18}%)`; g.fillRect(Math.random() * 256, Math.random() * 256, 2, 2) } })
 const shingleTex = (hex, kind) => mkTex(1, g => { const b = new THREE.Color(hex); g.fillStyle = `#${b.clone().offsetHSL(0, 0, -0.04).getHexString()}`; g.fillRect(0, 0, 256, 256); if (kind === 'metal') { for (let x = 0; x < 256; x += 26) { g.fillStyle = `#${b.clone().offsetHSL(0, 0, 0.08).getHexString()}`; g.fillRect(x, 0, 2.5, 256); g.fillStyle = `#${b.clone().offsetHSL(0, 0, -0.13).getHexString()}`; g.fillRect(x + 2.5, 0, 1.5, 256) } return } const courses = kind === '3tab' ? 9 : 7, ch = 256 / courses; for (let r = 0; r < courses; r++) { const y = r * ch, off = (r % 2) * 22; for (let x = -22; x < 256; x += 44) { g.fillStyle = `#${b.clone().offsetHSL(0, 0, (Math.random() - 0.5) * (kind === '3tab' ? 0.06 : 0.17)).getHexString()}`; g.fillRect(x + off, y, 43, ch); g.strokeStyle = 'rgba(0,0,0,0.18)'; g.lineWidth = 1.4; g.strokeRect(x + off + 0.7, y + 0.7, 41.6, ch - 1.4) } g.fillStyle = 'rgba(0,0,0,0.16)'; g.fillRect(0, y, 256, 2) } })
+const sidingTex = hex => mkTex(1, g => { const b = new THREE.Color(hex); for (let y = 0; y < 256; y += 20) { const gr = g.createLinearGradient(0, y, 0, y + 20); gr.addColorStop(0, `#${b.clone().offsetHSL(0, 0, 0.04).getHexString()}`); gr.addColorStop(0.8, `#${b.getHexString()}`); gr.addColorStop(1, `#${b.clone().offsetHSL(0, 0, -0.14).getHexString()}`); g.fillStyle = gr; g.fillRect(0, y, 256, 20) } })
 const scene = new THREE.Scene()
 const skyCv = document.createElement('canvas'); skyCv.width = 4; skyCv.height = 256
 { const s = skyCv.getContext('2d'), gr = s.createLinearGradient(0, 0, 0, 256); gr.addColorStop(0, '#4d8fc9'); gr.addColorStop(0.5, '#9cc4e6'); gr.addColorStop(1, '#dcebf6'); s.fillStyle = gr; s.fillRect(0, 0, 4, 256) }
@@ -60,7 +61,7 @@ const rebuild3D = () => {
   const w = Math.max(...xs) - Math.min(...xs), d = Math.max(...ys) - Math.min(...ys)
   const cx = (Math.min(...xs) + Math.max(...xs)) / 2, cy = (Math.min(...ys) + Math.max(...ys)) / 2
   const horiz = w >= d, span = horiz ? d : w, rlen = horiz ? w : d
-  const h = (span / 2) * (Math.max(0.5, +cfg.pitch) / 12)
+  const h = (span / 2) * (Math.max(0.5, +cfg.pitch) / 12), wallH = 9
   const kind = cfg.material === '3tab' ? '3tab' : cfg.material === 'metal' ? 'metal' : 'arch'
   const slopeLen = Math.hypot(span / 2, h)
   const sh = shingleTex(FINISHES[cfg.material][0], kind)
@@ -68,14 +69,24 @@ const rebuild3D = () => {
   const mat = new THREE.MeshStandardMaterial({ map: sh, roughness: kind === 'metal' ? 0.35 : 0.92, metalness: kind === 'metal' ? 0.5 : 0, side: THREE.DoubleSide })
   for (const s of [-1, 1]) {
     const plane = new THREE.Mesh(new THREE.PlaneGeometry(rlen, slopeLen), mat)
-    if (horiz) { plane.rotation.x = -Math.PI / 2 + s * Math.atan2(h, span / 2); plane.position.set(cx, h / 2, -(cy + s * span / 4)) }
-    else { plane.rotation.z = s * Math.atan2(h, span / 2); plane.rotation.y = Math.PI / 2; plane.position.set(cx + s * span / 4, h / 2, -cy) }
+    if (horiz) { plane.rotation.x = -Math.PI / 2 + s * Math.atan2(h, span / 2); plane.position.set(cx, wallH + h / 2, -(cy + s * span / 4)) }
+    else { plane.rotation.z = s * Math.atan2(h, span / 2); plane.rotation.y = Math.PI / 2; plane.position.set(cx + s * span / 4, wallH + h / 2, -cy) }
     grp.add(plane)
   }
-  const ridgeGeo = new THREE.BoxGeometry(horiz ? rlen : 0.3, 0.25, horiz ? 0.3 : rlen)
-  const ridge = new THREE.Mesh(ridgeGeo, new THREE.MeshStandardMaterial({ color: 0x3a4650 }))
-  ridge.position.set(cx, h + 0.12, -cy)
-  grp.add(ridge)
+  const ridge = new THREE.Mesh(new THREE.BoxGeometry(horiz ? rlen : 0.3, 0.25, horiz ? 0.3 : rlen), new THREE.MeshStandardMaterial({ color: 0x3a4650 }))
+  ridge.position.set(cx, wallH + h + 0.12, -cy); grp.add(ridge)
+  const sd = sidingTex('#e7decb'); sd.repeat.set(Math.max(3, w / 4), 2)
+  const body = new THREE.Mesh(new THREE.BoxGeometry(w, wallH, d), new THREE.MeshStandardMaterial({ map: sd, roughness: 0.9 }))
+  body.position.set(cx, wallH / 2, -cy); grp.add(body)
+  const found = new THREE.Mesh(new THREE.BoxGeometry(w + 0.4, 1.2, d + 0.4), new THREE.MeshStandardMaterial({ color: 0x6e2f2b, roughness: 0.95 })); found.position.set(cx, 0.6, -cy); grp.add(found)
+  const gmat = new THREE.MeshStandardMaterial({ map: sidingTex('#e7decb'), roughness: 0.9, side: THREE.DoubleSide })
+  for (const s of [-1, 1]) {
+    const tri = new THREE.Shape(); tri.moveTo(-span / 2, 0); tri.lineTo(span / 2, 0); tri.lineTo(0, h); tri.closePath()
+    const gable = new THREE.Mesh(new THREE.ShapeGeometry(tri), gmat)
+    if (horiz) { gable.rotation.y = Math.PI / 2; gable.position.set(cx + s * rlen / 2, wallH, -cy) }
+    else { gable.position.set(cx, wallH, -(cy + s * rlen / 2)) }
+    grp.add(gable)
+  }
   if (photoMeta && cfg.mode === 'poly') {
     photoPlane && scene.remove(photoPlane)
     const { tex, wFt, hFt, cxFt, cyFt } = photoMeta
