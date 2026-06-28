@@ -58,26 +58,23 @@ const PCOL = { tomato: 0xe0533b, pepper: 0xe0a03b, lettuce: 0x7cc24a, carrot: 0x
 const rebuild3D = () => {
   while (grp.children.length) { const m = grp.children.pop(); m.geometry && m.geometry.dispose() }
   if (!out || !out.beds) return
+  cfg.bedPos = cfg.bedPos || {}
   const h = 1
-  for (const b of out.beds) {
-    const m = new THREE.Mesh(new THREE.BoxGeometry(b.w, h, b.l), new THREE.MeshStandardMaterial({ color: 0x6e4a28, roughness: 0.95 }))
-    m.position.set(b.x + b.w / 2, h / 2, -(b.y + b.l / 2)); grp.add(m)
-    const eg = new THREE.LineSegments(new THREE.EdgesGeometry(m.geometry), new THREE.LineBasicMaterial({ color: 0x3a2a14 }))
-    eg.position.copy(m.position); grp.add(eg)
-    const soil = new THREE.Mesh(new THREE.BoxGeometry(b.w - 0.5, 0.28, b.l - 0.5), new THREE.MeshStandardMaterial({ map: soilTex, roughness: 1 }))
-    soil.position.set(b.x + b.w / 2, h - 0.04, -(b.y + b.l / 2)); grp.add(soil)
+  out.beds.forEach((b, bi) => {
+    const key = b.name || `bed${bi}`, ov = cfg.bedPos[key], bx = ov ? ov[0] : b.x, by = ov ? ov[1] : b.y
+    const gb = new THREE.Group(); gb.position.set(bx + b.w / 2, 0, -(by + b.l / 2)); gb.userData.drag = { key, w: b.w, l: b.l }
+    const m = new THREE.Mesh(new THREE.BoxGeometry(b.w, h, b.l), new THREE.MeshStandardMaterial({ color: 0x6e4a28, roughness: 0.95 })); m.position.y = h / 2; gb.add(m)
+    const eg = new THREE.LineSegments(new THREE.EdgesGeometry(m.geometry), new THREE.LineBasicMaterial({ color: 0x3a2a14 })); eg.position.y = h / 2; gb.add(eg)
+    const soil = new THREE.Mesh(new THREE.BoxGeometry(b.w - 0.5, 0.28, b.l - 0.5), new THREE.MeshStandardMaterial({ map: soilTex, roughness: 1 })); soil.position.y = h - 0.04; gb.add(soil)
     const dr = Math.min(b.rows, 6), dc = Math.min(b.per_row, 10), tall = TALL.includes(b.plant)
-    const r = Math.max(0.13, Math.min(b.w / dc, b.l / dr) * 0.32)
-    const pg = new THREE.IcosahedronGeometry(r, 0)
+    const r = Math.max(0.13, Math.min(b.w / dc, b.l / dr) * 0.32), pg = new THREE.IcosahedronGeometry(r, 0)
     const pmat = new THREE.MeshStandardMaterial({ color: PCOL[b.plant] ?? 0x5fae5f, roughness: 0.85, flatShading: true })
-    for (let i = 0; i < dr; i++) for (let j = 0; j < dc; j++) {
-      const s = new THREE.Mesh(pg, pmat)
-      s.position.set(b.x + b.w * (j + 0.5) / dc, h + 0.1 + r * (tall ? 1.1 : 0.5), -(b.y + b.l * (i + 0.5) / dr))
-      s.scale.set(1, tall ? 1.9 : 0.9, 1); s.rotation.y = (i * 7 + j * 3) % 6
-      grp.add(s)
-    }
-  }
+    for (let i = 0; i < dr; i++) for (let j = 0; j < dc; j++) { const s = new THREE.Mesh(pg, pmat); s.position.set(-b.w / 2 + b.w * (j + 0.5) / dc, h + 0.1 + r * (tall ? 1.1 : 0.5), b.l / 2 - b.l * (i + 0.5) / dr); s.scale.set(1, tall ? 1.9 : 0.9, 1); s.rotation.y = (i * 7 + j * 3) % 6; gb.add(s) }
+    grp.add(gb)
+  })
 }
+const installDrag = () => { const cv = $('#c3d'), dray = new THREE.Raycaster(), dptr = new THREE.Vector2(), dplane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0); let dragO = null; const dragOff = new THREE.Vector3(); const sp = e => { const r = cv.getBoundingClientRect(); dptr.set((e.clientX - r.left) / r.width * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1) }; const pick = () => { dray.setFromCamera(dptr, cam); for (const hh of dray.intersectObjects(grp.children, true)) { let o = hh.object; while (o && !o.userData.drag) o = o.parent; if (o) return o } return null }; const gp = () => { dray.setFromCamera(dptr, cam); const p = new THREE.Vector3(); return dray.ray.intersectPlane(dplane, p) ? p : null }; cv.addEventListener('pointerdown', e => { sp(e); const o = pick(); if (!o) return; dragO = o; controls.enabled = false; cv.setPointerCapture(e.pointerId); const p = gp(); p && (dragOff.copy(o.position).sub(p), dragOff.y = 0) }); cv.addEventListener('pointermove', e => { sp(e); if (dragO) { const p = gp(); p && (dragO.position.x = p.x + dragOff.x, dragO.position.z = p.z + dragOff.z); return } cv.style.cursor = pick() ? 'grab' : '' }); cv.addEventListener('pointerup', () => { if (!dragO) return; const u = dragO.userData.drag, nx = Math.round((dragO.position.x - u.w / 2) * 2) / 2, ny = Math.round((-dragO.position.z - u.l / 2) * 2) / 2; dragO.position.set(nx + u.w / 2, 0, -(ny + u.l / 2)); cfg.bedPos = cfg.bedPos || {}; cfg.bedPos[u.key] = [nx, ny]; persist(); dragO = null; controls.enabled = true }) }
+installDrag()
 const resize = () => { const c = $('#c3d'); const w = c.clientWidth, h = c.clientHeight; if (!w || !h) return; renderer.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix() }
 new ResizeObserver(resize).observe($('#view'))
 window.addEventListener('beforeprint', () => {
