@@ -57,7 +57,7 @@ const rebuild3D = () => {
   for (const r of out.rooms) {
     const ov = cfg.roomPos[r.name], rx = ov ? ov[0] : r.x, ry = ov ? ov[1] : r.y
     const cx = rx + r.w / 2, cz = -(ry + r.d / 2), wh = 2.6, tt = 0.22
-    const grm = new THREE.Group(); grm.position.set(cx, 0, cz); grm.userData.drag = { name: r.name, w: r.w, d: r.d }
+    const grm = new THREE.Group(); grm.position.set(cx, 0, cz); grm.userData.drag = { name: r.name, w: r.w, d: r.d }; grm.rotation.y = ov && ov[2] != null ? ov[2] : 0
     const floor = new THREE.Mesh(new THREE.BoxGeometry(r.w, 0.16, r.d), new THREE.MeshStandardMaterial({ color: KCOL[r.kind] ?? 0xeceff2, roughness: 0.92 })); floor.position.y = 0.08; grm.add(floor)
     for (const [bw, bd, ox, oz] of [[r.w, tt, 0, -r.d / 2], [r.w, tt, 0, r.d / 2], [tt, r.d, -r.w / 2, 0], [tt, r.d, r.w / 2, 0]]) { const wall = new THREE.Mesh(new THREE.BoxGeometry(bw, wh, bd), wmat); wall.position.set(ox, wh / 2 + 0.16, oz); grm.add(wall) }
     const lbl = txtSprite(r.name || r.kind, `${Math.round(r.w)}' × ${Math.round(r.d)}'`); lbl.position.set(0, wh + 1.3, 0); grm.add(lbl)
@@ -65,13 +65,13 @@ const rebuild3D = () => {
   }
 }
 const dray = new THREE.Raycaster(), dptr = new THREE.Vector2(), dplane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0)
-let dragO = null; const dragOff = new THREE.Vector3()
+let dragO = null, dmode = 'm', dsx0 = 0, dsr0 = 0; const dragOff = new THREE.Vector3()
 const dSetPtr = e => { const r = $('#c3d').getBoundingClientRect(); dptr.set((e.clientX - r.left) / r.width * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1) }
 const dPick = () => { dray.setFromCamera(dptr, cam); for (const hh of dray.intersectObjects(grp.children, true)) { let o = hh.object; while (o && !o.userData.drag) o = o.parent; if (o) return o } return null }
 const dGround = () => { dray.setFromCamera(dptr, cam); const p = new THREE.Vector3(); return dray.ray.intersectPlane(dplane, p) ? p : null }
-$('#c3d').addEventListener('pointerdown', e => { dSetPtr(e); const o = dPick(); if (!o) return; dragO = o; controls.enabled = false; $('#c3d').setPointerCapture(e.pointerId); const p = dGround(); p && (dragOff.copy(o.position).sub(p), dragOff.y = 0) })
-$('#c3d').addEventListener('pointermove', e => { dSetPtr(e); if (dragO) { const p = dGround(); p && (dragO.position.x = p.x + dragOff.x, dragO.position.z = p.z + dragOff.z); return } $('#c3d').style.cursor = dPick() ? 'grab' : '' })
-$('#c3d').addEventListener('pointerup', () => { if (!dragO) return; const u = dragO.userData.drag, nx = Math.round((dragO.position.x - u.w / 2) * 2) / 2, ny = Math.round((-dragO.position.z - u.d / 2) * 2) / 2; dragO.position.set(nx + u.w / 2, 0, -(ny + u.d / 2)); cfg.roomPos[u.name] = [nx, ny]; persist(); dragO = null; controls.enabled = true })
+$('#c3d').addEventListener('pointerdown', e => { dSetPtr(e); const o = dPick(); if (!o) return; dragO = o; dmode = e.shiftKey ? 'r' : 'm'; dsx0 = e.clientX; dsr0 = o.rotation.y; controls.enabled = false; $('#c3d').setPointerCapture(e.pointerId); const p = dGround(); p && (dragOff.copy(o.position).sub(p), dragOff.y = 0) })
+$('#c3d').addEventListener('pointermove', e => { dSetPtr(e); if (dragO) { if (dmode === 'r') dragO.rotation.y = dsr0 + (e.clientX - dsx0) * 0.02; else { const p = dGround(); p && (dragO.position.x = p.x + dragOff.x, dragO.position.z = p.z + dragOff.z) } return } $('#c3d').style.cursor = dPick() ? 'grab' : '' })
+$('#c3d').addEventListener('pointerup', () => { if (!dragO) return; const u = dragO.userData.drag, nx = Math.round((dragO.position.x - u.w / 2) * 2) / 2, ny = Math.round((-dragO.position.z - u.d / 2) * 2) / 2; dragO.position.set(nx + u.w / 2, 0, -(ny + u.d / 2)); cfg.roomPos[u.name] = [nx, ny, +dragO.rotation.y.toFixed(3)]; persist(); dragO = null; controls.enabled = true })
 const resize = () => { const c = $('#c3d'); const w = c.clientWidth, h = c.clientHeight; if (!w || !h) return; renderer.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix() }
 new ResizeObserver(resize).observe($('#view'))
 window.addEventListener('beforeprint', () => {
