@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { initPermits, updatePermits } from './codes.js?v=fix1'
-import { emptyScene } from './sketch.js'
+import { emptyScene, addNode, addRun } from './sketch.js'
 import { mountSketch } from './sketch-canvas.js'
 import { makePlumbTrade } from './plumb-rules.js'
 const LS = 'amniplumb.cfg.v1', LSP = 'amniplumb.prices.v1'
@@ -248,9 +248,23 @@ const initUI = () => {
 const SK_LS = 'amniplumb.sketch.v1'
 const plumbTrade = makePlumbTrade()
 let sketchScene = (() => { try { const s = JSON.parse(localStorage.getItem(SK_LS)); if (s && s.nodes) return s } catch (e) {} return emptyScene(24) })()
+const seedScene = () => {
+  if (sketchScene.nodes.length) return
+  const sc = sketchScene, sp = sc.scalePxPerFt = 24
+  const W = Math.max(12, +cfg.w || 30), D = Math.max(10, +cfg.d || 24)
+  sc.floorCal = { w: W, d: D }
+  const place = (type, fx, fz) => addNode(sc, type, fx * sp, fz * sp, { fx, fz, rot: 0 })
+  const main = place('main', 1, D - 1), wh = cfg.water_heater ? place('waterheater', 2.5, D - 2.5) : null
+  const fix = [[+cfg.toilets || 0, 'toilet', 'dwv3'], [+cfg.lavs || 0, 'lav', 'dwv15'], [+cfg.kitchen_sinks || 0, 'sink', 'dwv15'], [+cfg.showers || 0, 'shower', 'dwv2'], [+cfg.tubs || 0, 'tub', 'dwv15'], [+cfg.washers || 0, 'washer', 'dwv2']]
+  let i = 0; const cols = Math.max(2, Math.floor((W - 4) / 5))
+  for (const [n, type, arm] of fix) for (let j = 0; j < n; j++) { const id = place(type, Math.min(W - 2, 3 + (i % cols) * 5), Math.min(D - 4, 2.5 + Math.floor(i / cols) * 6)); addRun(sc, arm, main, id); wh && addRun(sc, 'sup12', wh, id); i++ }
+  place('vent', W - 1.5, 1.5)
+  try { localStorage.setItem(SK_LS, JSON.stringify(sc)) } catch (e) {}
+}
 function setupSketch() { const host = $('#sketch-host'); if (!host) return; mountSketch(host, { scene: sketchScene, trade: plumbTrade, catalog, store: 'hd', onChange: sc => { try { localStorage.setItem(SK_LS, JSON.stringify(sc)) } catch (e) {} } }) }
 catalog = await fetch('catalog.json').then(r => r.json()).catch(() => ({}))
 initUI()
 resize()
 recompute()
+seedScene()
 setupSketch()

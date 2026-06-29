@@ -1,5 +1,5 @@
 import { initPermits } from './codes.js?v=fix1'
-import { emptyScene } from './sketch.js'
+import { emptyScene, addNode, addRun } from './sketch.js'
 import { mountSketch } from './sketch-canvas.js'
 import { makeHvacTrade } from './hvac-rules.js'
 const $ = s => document.querySelector(s)
@@ -35,9 +35,20 @@ function renderMat() {
 
 const hvacTrade = makeHvacTrade()
 let sketchScene = (() => { try { const s = JSON.parse(localStorage.getItem(SK_LS)); if (s && s.nodes) return s } catch (e) {} return emptyScene(24) })()
+const seedScene = () => {
+  if (sketchScene.nodes.length) return
+  const sc = sketchScene, sp = sc.scalePxPerFt = 24, W = 30, D = 24
+  sc.floorCal = { w: W, d: D }
+  const place = (type, fx, fz) => addNode(sc, type, fx * sp, fz * sp, { fx, fz, rot: 0 })
+  const ah = place('airhandler', 2.6, D - 2.6), ret = place('return', 5.2, D - 2.6); addRun(sc, 'r12', ah, ret)
+  const cols = 3, rows = 2
+  for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) { const id = place('supply', W * (c + 0.7) / (cols + 0.4), D * (r + 0.6) / (rows + 0.8)); addRun(sc, c === 0 ? 's10' : 's8', ah, id) }
+  try { localStorage.setItem(SK_LS, JSON.stringify(sc)) } catch (e) {}
+}
 function setupSketch() { const host = $('#sketch-host'); if (!host) return; mountSketch(host, { scene: sketchScene, trade: hvacTrade, catalog, store: 'hd', onChange: sc => { try { localStorage.setItem(SK_LS, JSON.stringify(sc)) } catch (e) {} }, onEvaluate: ev => { lastEv = ev; renderMat() } }) }
 
 catalog = await fetch('catalog.json').then(r => r.json()).catch(() => ({}))
+seedScene()
 setupSketch()
 renderMat()
 initPermits(() => ({}), () => null)
