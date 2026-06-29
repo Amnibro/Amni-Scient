@@ -245,7 +245,7 @@ const initUI = () => {
   buildFinishes()
   initPermits(() => ({ ...cfg, height: 0, attach: 'free', length: 0, depth: 0 }), () => out)
 }
-const SK_LS = 'amniplumb.sketch.v1'
+const SK_LS = 'amniplumb.sketch.v2'
 const plumbTrade = makePlumbTrade()
 let sketchScene = (() => { try { const s = JSON.parse(localStorage.getItem(SK_LS)); if (s && s.nodes) return s } catch (e) {} return emptyScene(24) })()
 const seedScene = () => {
@@ -254,11 +254,13 @@ const seedScene = () => {
   const W = Math.max(12, +cfg.w || 30), D = Math.max(10, +cfg.d || 24)
   sc.floorCal = { w: W, d: D }
   const place = (type, fx, fz) => addNode(sc, type, fx * sp, fz * sp, { fx, fz, rot: 0 })
-  const main = place('main', 1, D - 1), wh = cfg.water_heater ? place('waterheater', 2.5, D - 2.5) : null
+  const main = place('main', 0.8, D - 0.8), wh = cfg.water_heater ? place('waterheater', 2.6, D - 0.8) : null
   const fix = [[+cfg.toilets || 0, 'toilet', 'dwv3'], [+cfg.lavs || 0, 'lav', 'dwv15'], [+cfg.kitchen_sinks || 0, 'sink', 'dwv15'], [+cfg.showers || 0, 'shower', 'dwv2'], [+cfg.tubs || 0, 'tub', 'dwv15'], [+cfg.washers || 0, 'washer', 'dwv2']]
-  let i = 0; const cols = Math.max(2, Math.floor((W - 4) / 5))
-  for (const [n, type, arm] of fix) for (let j = 0; j < n; j++) { const id = place(type, Math.min(W - 2, 3 + (i % cols) * 5), Math.min(D - 4, 2.5 + Math.floor(i / cols) * 6)); addRun(sc, arm, main, id); wh && addRun(sc, 'sup12', wh, id); i++ }
-  place('vent', W - 1.5, 1.5)
+  const nodes = []; let i = 0; const cols = Math.max(2, Math.floor((W - 4) / 5))
+  for (const [n, type, arm] of fix) for (let j = 0; j < n; j++) { const r = Math.floor(i / cols), cr = i % cols, c = r % 2 ? cols - 1 - cr : cr; nodes.push({ id: place(type, Math.min(W - 2, 3 + c * 5), Math.min(D - 4, 2.5 + r * 6)), arm }); i++ }
+  let pd = main; for (const nd of nodes) { addRun(sc, nd.arm, pd, nd.id); pd = nd.id }
+  if (wh) { let ps = wh; for (const nd of nodes) { addRun(sc, 'sup12', ps, nd.id); ps = nd.id } }
+  place('vent', W - 1, 1)
   try { localStorage.setItem(SK_LS, JSON.stringify(sc)) } catch (e) {}
 }
 function setupSketch() { const host = $('#sketch-host'); if (!host) return; mountSketch(host, { scene: sketchScene, trade: plumbTrade, catalog, store: 'hd', onChange: sc => { try { localStorage.setItem(SK_LS, JSON.stringify(sc)) } catch (e) {} } }) }

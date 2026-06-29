@@ -223,7 +223,7 @@ const initUI = () => {
   $('#dl-svg').onclick = () => { ['layout', 'details'].forEach(k => { const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([out.svgs[k]], { type: 'image/svg+xml' })), download: `elec-${k}.svg` }); a.click() }) }
   initPermits(() => ({ ...cfg, height: 0, attach: 'free', length: 0, depth: 0 }), () => out)
 }
-const SK_LS = 'amnielec.sketch.v1'
+const SK_LS = 'amnielec.sketch.v2'
 const elecTrade = makeElecTrade()
 let sketchScene = (() => { try { const s = JSON.parse(localStorage.getItem(SK_LS)); if (s && s.nodes) return s } catch (e) {} return emptyScene(24) })()
 const seedScene = () => {
@@ -232,14 +232,16 @@ const seedScene = () => {
   const W = Math.max(12, Math.round(Math.sqrt((+cfg.sqft || 1200) * 1.3))), D = Math.max(10, Math.round((+cfg.sqft || 1200) / W))
   sc.floorCal = { w: W, d: D }
   const place = (type, fx, fz, rot) => addNode(sc, type, fx * sp, fz * sp, { fx, fz, rot: rot || 0 })
-  const panel = place('panel', 0.8, D / 2, 90), link = (id, wire) => addRun(sc, wire, panel, id)
-  const nr = Math.min(+out.calc.receptacles || 0, 18)
-  for (let i = 0; i < nr; i++) { const t = (i + 0.5) / nr * 4, side = Math.floor(t), f = t - side, e = side === 0 ? [f * W, 0.5] : side === 1 ? [W - 0.5, f * D] : side === 2 ? [W - f * W, D - 0.5] : [0.5, D - f * D]; link(place('recept', e[0], e[1]), 'nm142') }
-  const nl = Math.min(+out.calc.lights || 0, 14), gc = Math.max(1, Math.round(Math.sqrt(nl)))
-  for (let i = 0; i < nl; i++) { const c = i % gc, r = Math.floor(i / gc); link(place('light', W * (c + 0.7) / (gc + 0.4), D * (r + 0.7) / (Math.ceil(nl / gc) + 0.4)), 'nm142') }
+  const panel = place('panel', 0.6, 0.6, 0)
+  const nr = Math.min(+out.calc.receptacles || 0, 20)
+  let prev = panel
+  for (let i = 0; i < nr; i++) { const t = (i + 0.5) / nr * 4, side = Math.floor(t), f = t - side, e = side === 0 ? [0.5 + f * (W - 1), 0.5] : side === 1 ? [W - 0.5, 0.5 + f * (D - 1)] : side === 2 ? [W - 0.5 - f * (W - 1), D - 0.5] : [0.5, D - 0.5 - f * (D - 1)]; const id = place('recept', e[0], e[1]); addRun(sc, 'nm142', i % 8 === 0 ? panel : prev, id); prev = id }
+  const nl = Math.min(+out.calc.lights || 0, 14), gc = Math.max(1, Math.round(Math.sqrt(nl * W / D))), gr = Math.max(1, Math.ceil(nl / gc))
+  prev = panel
+  for (let i = 0; i < nl; i++) { const r = Math.floor(i / gc), cr = i % gc, c = r % 2 ? gc - 1 - cr : cr; const id = place('light', W * (c + 0.8) / (gc + 0.6), D * (r + 0.8) / (gr + 0.6)); addRun(sc, 'nm142', i === 0 ? panel : prev, id); prev = id }
   const appl = [[+cfg.electric_range || 0, 'range', 'nm63'], [+cfg.electric_dryer || 0, 'dryer', 'nm103'], [cfg.dishwasher ? 1 : 0, 'dishwasher', 'nm122'], [cfg.microwave ? 1 : 0, 'microwave', 'nm122'], [cfg.water_heater_elec ? 1 : 0, 'waterheater', 'nm103'], [(+cfg.hvac_amps || 0) > 0 ? 1 : 0, 'hvac', 'nm103']]
-  let ax = 3
-  for (const [n, type, wire] of appl) for (let j = 0; j < n; j++) { link(place(type, Math.min(W - 2, ax), D - 2.5), wire); ax += 3 }
+  let ax = 3.5
+  for (const [n, type, wire] of appl) for (let j = 0; j < n; j++) { const id = place(type, Math.min(W - 2, ax), D - 3); addRun(sc, wire, panel, id); ax += 3.4 }
   try { localStorage.setItem(SK_LS, JSON.stringify(sc)) } catch (e) {}
 }
 function setupSketch() { const host = $('#sketch-host'); if (!host) return; mountSketch(host, { scene: sketchScene, trade: elecTrade, catalog, store: 'hd', onChange: sc => { try { localStorage.setItem(SK_LS, JSON.stringify(sc)) } catch (e) {} } }) }

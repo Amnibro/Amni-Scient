@@ -3,7 +3,7 @@ import { emptyScene, addNode, addRun } from './sketch.js'
 import { mountSketch } from './sketch-canvas.js'
 import { makeHvacTrade } from './hvac-rules.js'
 const $ = s => document.querySelector(s)
-const LSP = 'amnihvac.prices.v1', SK_LS = 'amnihvac.sketch.v1'
+const LSP = 'amnihvac.prices.v1', SK_LS = 'amnihvac.sketch.v2'
 let catalog = {}, lastEv = null
 let priceEdits = (() => { try { return JSON.parse(localStorage.getItem(LSP)) || {} } catch (e) { return {} } })()
 document.querySelectorAll('.tab').forEach(t => t.onclick = () => { document.querySelectorAll('.tab').forEach(x => x.classList.toggle('on', x === t)); document.querySelectorAll('.pane').forEach(p => p.classList.toggle('on', p.id === `pane-${t.dataset.pane}`)) })
@@ -40,9 +40,10 @@ const seedScene = () => {
   const sc = sketchScene, sp = sc.scalePxPerFt = 24, W = 30, D = 24
   sc.floorCal = { w: W, d: D }
   const place = (type, fx, fz) => addNode(sc, type, fx * sp, fz * sp, { fx, fz, rot: 0 })
-  const ah = place('airhandler', 2.6, D - 2.6), ret = place('return', 5.2, D - 2.6); addRun(sc, 'r12', ah, ret)
+  const ah = place('airhandler', 0.9, D - 0.9), ret = place('return', 3.4, D - 0.9); addRun(sc, 'r12', ah, ret)
   const cols = 3, rows = 2
-  for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) { const id = place('supply', W * (c + 0.7) / (cols + 0.4), D * (r + 0.6) / (rows + 0.8)); addRun(sc, c === 0 ? 's10' : 's8', ah, id) }
+  let prev = ah, k = 0
+  for (let r = 0; r < rows; r++) for (let cc = 0; cc < cols; cc++) { const c = r % 2 ? cols - 1 - cc : cc; const id = place('supply', W * (c + 0.8) / (cols + 0.6), D * (r + 0.7) / (rows + 0.8)); addRun(sc, k < 2 ? 's12' : k < 4 ? 's10' : 's8', prev, id); prev = id; k++ }
   try { localStorage.setItem(SK_LS, JSON.stringify(sc)) } catch (e) {}
 }
 function setupSketch() { const host = $('#sketch-host'); if (!host) return; mountSketch(host, { scene: sketchScene, trade: hvacTrade, catalog, store: 'hd', onChange: sc => { try { localStorage.setItem(SK_LS, JSON.stringify(sc)) } catch (e) {} }, onEvaluate: ev => { lastEv = ev; renderMat() } }) }
