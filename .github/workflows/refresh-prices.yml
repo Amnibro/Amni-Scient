@@ -1,0 +1,36 @@
+name: Refresh store prices
+
+on:
+  schedule:
+    - cron: '23 9 * * 1'   # weekly, Monday 09:23 UTC
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-prices
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    if: github.repository_owner == 'Amnibro'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Crawl + bake store prices (defensive, falls back to estimates)
+        run: node tools/refresh-prices.mjs
+      - name: Commit refreshed prices (only if changed)
+        run: |
+          git config user.name "amni-price-bot"
+          git config user.email "price-bot@amni-scient.com"
+          git add */catalog.json
+          if git diff --cached --quiet; then
+            echo "No price changes this run."
+          else
+            git commit -m "chore(prices): weekly store-price refresh [skip ci]"
+            git push
+          fi
