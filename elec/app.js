@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { initPermits, updatePermits } from './codes.js?v=fix1'
-import { emptyScene } from './sketch.js'
+import { emptyScene, addNode, addRun } from './sketch.js'
 import { mountSketch } from './sketch-canvas.js'
 import { makeElecTrade } from './elec-rules.js'
 const LS = 'amnielec.cfg.v1', LSP = 'amnielec.prices.v1'
@@ -226,11 +226,28 @@ const initUI = () => {
 const SK_LS = 'amnielec.sketch.v1'
 const elecTrade = makeElecTrade()
 let sketchScene = (() => { try { const s = JSON.parse(localStorage.getItem(SK_LS)); if (s && s.nodes) return s } catch (e) {} return emptyScene(24) })()
+const seedScene = () => {
+  if (!out || !out.calc || sketchScene.nodes.length) return
+  const sc = sketchScene, sp = sc.scalePxPerFt = 24
+  const W = Math.max(12, Math.round(Math.sqrt((+cfg.sqft || 1200) * 1.3))), D = Math.max(10, Math.round((+cfg.sqft || 1200) / W))
+  sc.floorCal = { w: W, d: D }
+  const place = (type, fx, fz, rot) => addNode(sc, type, fx * sp, fz * sp, { fx, fz, rot: rot || 0 })
+  const panel = place('panel', 0.8, D / 2, 90), link = (id, wire) => addRun(sc, wire, panel, id)
+  const nr = Math.min(+out.calc.receptacles || 0, 18)
+  for (let i = 0; i < nr; i++) { const t = (i + 0.5) / nr * 4, side = Math.floor(t), f = t - side, e = side === 0 ? [f * W, 0.5] : side === 1 ? [W - 0.5, f * D] : side === 2 ? [W - f * W, D - 0.5] : [0.5, D - f * D]; link(place('recept', e[0], e[1]), 'nm142') }
+  const nl = Math.min(+out.calc.lights || 0, 14), gc = Math.max(1, Math.round(Math.sqrt(nl)))
+  for (let i = 0; i < nl; i++) { const c = i % gc, r = Math.floor(i / gc); link(place('light', W * (c + 0.7) / (gc + 0.4), D * (r + 0.7) / (Math.ceil(nl / gc) + 0.4)), 'nm142') }
+  const appl = [[+cfg.electric_range || 0, 'range', 'nm63'], [+cfg.electric_dryer || 0, 'dryer', 'nm103'], [cfg.dishwasher ? 1 : 0, 'dishwasher', 'nm122'], [cfg.microwave ? 1 : 0, 'microwave', 'nm122'], [cfg.water_heater_elec ? 1 : 0, 'waterheater', 'nm103'], [(+cfg.hvac_amps || 0) > 0 ? 1 : 0, 'hvac', 'nm103']]
+  let ax = 3
+  for (const [n, type, wire] of appl) for (let j = 0; j < n; j++) { link(place(type, Math.min(W - 2, ax), D - 2.5), wire); ax += 3 }
+  try { localStorage.setItem(SK_LS, JSON.stringify(sc)) } catch (e) {}
+}
 function setupSketch() { const host = $('#sketch-host'); if (!host) return; mountSketch(host, { scene: sketchScene, trade: elecTrade, catalog, store: 'hd', onChange: sc => { try { localStorage.setItem(SK_LS, JSON.stringify(sc)) } catch (e) {} } }) }
 catalog = await fetch('catalog.json').then(r => r.json()).catch(() => ({}))
 initUI()
 resize()
 recompute()
+seedScene()
 setupSketch()
 
 
