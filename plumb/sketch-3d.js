@@ -5,12 +5,14 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { addNode, addRun, nodeById, removeNode, snapToWall, evaluate, flowDownstream } from './sketch.js'
 import { fitGroundPlane, floorAlign } from './cloud-align.js'
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js'
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js'
 
 const PIPE_R = { sup12: 0.05, sup34: 0.06, dwv15: 0.08, dwv2: 0.1, dwv3: 0.13, dwv4: 0.16, nm142: 0.04, nm122: 0.045, nm103: 0.05, nm63: 0.06, s6: 0.25, s8: 0.33, s10: 0.42, s12: 0.5, r8: 0.33, r10: 0.42, r12: 0.5 }
-const porc = new THREE.MeshStandardMaterial({ color: 0xeef2f6, roughness: 0.4, metalness: 0.05 })
-const metal = new THREE.MeshStandardMaterial({ color: 0xc6ccd4, roughness: 0.45, metalness: 0.55 })
-const glass = new THREE.MeshStandardMaterial({ color: 0xbfe0ec, roughness: 0.1, metalness: 0.1, transparent: true, opacity: 0.28 })
-const box = (w, h, d, m) => new THREE.Mesh(new THREE.BoxGeometry(w, h, d), m)
+const porc = new THREE.MeshPhysicalMaterial({ color: 0xf3f6f8, roughness: 0.22, metalness: 0, clearcoat: 0.7, clearcoatRoughness: 0.22, envMapIntensity: 1.0 })
+const metal = new THREE.MeshStandardMaterial({ color: 0xd2d8de, roughness: 0.25, metalness: 0.92, envMapIntensity: 1.2 })
+const glass = new THREE.MeshPhysicalMaterial({ color: 0xd4e8f0, roughness: 0.05, metalness: 0, transmission: 0.55, thickness: 0.4, transparent: true, opacity: 0.45, envMapIntensity: 1.0 })
+const box = (w, h, d, m) => new THREE.Mesh(new RoundedBoxGeometry(w, h, d, 2, Math.min(w, h, d) * 0.14), m)
 const cyl = (rt, rb, h, m, seg) => new THREE.Mesh(new THREE.CylinderGeometry(rt, rb, h, seg || 20), m)
 const SHAPES3D = {
   toilet: (w, d, h) => { const g = new THREE.Group(); const tank = box(w * 0.85, h * 0.62, d * 0.26, porc); tank.position.set(0, h * 0.31, -d / 2 + d * 0.13); g.add(tank); const bowl = cyl(w * 0.44, w * 0.36, h * 0.4, porc, 22); bowl.position.set(0, h * 0.2, d * 0.04); g.add(bowl); const seat = new THREE.Mesh(new THREE.TorusGeometry(w * 0.4, w * 0.09, 10, 22), porc); seat.rotation.x = Math.PI / 2; seat.position.set(0, h * 0.41, d * 0.04); g.add(seat); return g },
@@ -33,14 +35,18 @@ export function mount3D(container, opts) {
   let W = scene3.floorCal ? scene3.floorCal.w : 12, D = scene3.floorCal ? scene3.floorCal.d : 14
   for (const n of scene3.nodes) { const f = nfloor(n); W = Math.max(W, f[0] + 2); D = Math.max(D, f[1] + 2) }
   W = Math.max(8, W); D = Math.max(8, D)
-  const root = new THREE.Scene(); root.background = new THREE.Color(0x10141a)
-  const floor = new THREE.Mesh(new THREE.PlaneGeometry(W, D), new THREE.MeshStandardMaterial({ color: 0x2a3038, roughness: 0.95 })); floor.rotation.x = -Math.PI / 2; floor.position.set(W / 2, 0, D / 2); root.add(floor)
-  const grid = new THREE.GridHelper(Math.max(W, D), Math.max(W, D) | 0, 0x44505e, 0x333b45); grid.position.set(W / 2, 0.01, D / 2); root.add(grid)
-  const wallMat = new THREE.MeshStandardMaterial({ color: 0x3a424c, roughness: 0.9, transparent: true, opacity: 0.5, side: THREE.DoubleSide })
-  const wz = new THREE.Mesh(new THREE.PlaneGeometry(W, 8), wallMat); wz.position.set(W / 2, 4, 0); root.add(wz)
-  const wx = new THREE.Mesh(new THREE.PlaneGeometry(D, 8), wallMat); wx.rotation.y = Math.PI / 2; wx.position.set(0, 4, D / 2); root.add(wx)
-  root.add(new THREE.HemisphereLight(0xeaf2ff, 0x202830, 1.05))
-  const sun = new THREE.DirectionalLight(0xfff4e0, 1.0); sun.position.set(W * 0.7, 10, D * 0.3); root.add(sun)
+  const root = new THREE.Scene()
+  const skyC = document.createElement('canvas'); skyC.width = 8; skyC.height = 128
+  { const x = skyC.getContext('2d'), g = x.createLinearGradient(0, 0, 0, 128); g.addColorStop(0, '#eaeef3'); g.addColorStop(1, '#c1c8d2'); x.fillStyle = g; x.fillRect(0, 0, 8, 128) }
+  const skyTex = new THREE.CanvasTexture(skyC); root.background = skyTex
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(W * 2 + 12, D * 2 + 12), new THREE.MeshStandardMaterial({ color: 0xe2e6eb, roughness: 0.7, metalness: 0, envMapIntensity: 0.5 })); floor.rotation.x = -Math.PI / 2; floor.position.set(W / 2, 0, D / 2); floor.receiveShadow = true; root.add(floor)
+  const grid = new THREE.GridHelper(Math.max(W, D) | 0, Math.max(W, D) | 0, 0xa6aeba, 0xccd2da); grid.position.set(W / 2, 0.013, D / 2); grid.material.transparent = true; grid.material.opacity = 0.55; root.add(grid)
+  const wallMat = new THREE.MeshStandardMaterial({ color: 0xeef1f5, roughness: 0.9, transparent: true, opacity: 0.22, side: THREE.DoubleSide })
+  const wz = new THREE.Mesh(new THREE.PlaneGeometry(W, 8), wallMat); wz.position.set(W / 2, 4, 0); wz.receiveShadow = true; root.add(wz)
+  const wx = new THREE.Mesh(new THREE.PlaneGeometry(D, 8), wallMat); wx.rotation.y = Math.PI / 2; wx.position.set(0, 4, D / 2); wx.receiveShadow = true; root.add(wx)
+  root.add(new THREE.HemisphereLight(0xeef4ff, 0x9098a4, 0.65))
+  const sun = new THREE.DirectionalLight(0xfff6ec, 2.1); const md0 = Math.max(W, D); sun.position.set(W * 0.6, md0 * 1.15, D * 0.35); sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048); sun.shadow.bias = -0.0005; const ss = md0 * 0.85; Object.assign(sun.shadow.camera, { left: -ss, right: ss, top: ss, bottom: -ss, near: 0.5, far: md0 * 3.5 }); root.add(sun)
+  root.add(new THREE.AmbientLight(0xffffff, 0.16))
   const fixtureGroup = new THREE.Group(); root.add(fixtureGroup)
   // optional scanned room point cloud (Amni-Scan): floor-aligned (cloud-align) + scaled to the room.
   let cloudPoints = null
@@ -73,17 +79,12 @@ export function mount3D(container, opts) {
   const sinkTypes = new Set(trade.sinkTypes || ['main', 'panel', 'airhandler', 'cleanout'])
   function rebuild() {
     disposeGroup(fixtureGroup)
-    for (const n of scene3.nodes) {
-      const p = (trade.palette || []).find(z => z.type === n.type) || { dims: [0.6, 0.6] }, dims = p.dims || [0.6, 0.6], f = nfloor(n)
-      const sh = new THREE.Mesh(new THREE.CircleGeometry(Math.max(dims[0], dims[1]) * 0.62, 22), new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.26 }))
-      sh.rotation.x = -Math.PI / 2; sh.position.set(f[0], 0.012, f[1]); fixtureGroup.add(sh)
-      fixtureGroup.add(buildFixture(n))
-    }
+    for (const n of scene3.nodes) fixtureGroup.add(buildFixture(n))
     const deg = {}; for (const r of scene3.runs) { deg[r.a] = (deg[r.a] || 0) + 1; deg[r.b] = (deg[r.b] || 0) + 1 }
     for (const r of scene3.runs) {
       const A = nodeById(scene3, r.a), B = nodeById(scene3, r.b); if (!A || !B) continue
       const fa = nfloor(A), fb = nfloor(B), a = new THREE.Vector3(fa[0], 0.35, fa[1]), b = new THREE.Vector3(fb[0], 0.35, fb[1])
-      const rt = (trade.runTypes || []).find(z => z.type === r.type) || { color: '#bbb' }, pm = new THREE.MeshStandardMaterial({ color: new THREE.Color(rt.color), roughness: 0.42, metalness: 0.55 }), rad = PIPE_R[r.type] || 0.06
+      const rt = (trade.runTypes || []).find(z => z.type === r.type) || { color: '#bbb' }, pm = new THREE.MeshStandardMaterial({ color: new THREE.Color(rt.color), roughness: 0.32, metalness: 0.65, envMapIntensity: 1.0 }), rad = PIPE_R[r.type] || 0.06
       const dir = new THREE.Vector3().subVectors(b, a), len = dir.length() || 0.01
       const pipe = new THREE.Mesh(new THREE.CylinderGeometry(rad, rad, len, 14), pm); pipe.position.copy(a).add(b).multiplyScalar(0.5); pipe.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir.clone().normalize()); fixtureGroup.add(pipe)
       for (const e of [a, b]) { const j = new THREE.Mesh(new THREE.SphereGeometry(rad * 1.5, 12, 10), pm); j.position.copy(e); fixtureGroup.add(j) }
@@ -91,7 +92,8 @@ export function mount3D(container, opts) {
       const arrowMat = new THREE.MeshStandardMaterial({ color: 0xeef4fa, emissive: 0x18242e })
       for (const t of (len > 1.4 ? [0.34, 0.68] : [0.5])) { const cone = new THREE.Mesh(new THREE.ConeGeometry(rad * 1.7 + 0.02, rad * 5 + 0.08, 10), arrowMat); cone.position.lerpVectors(from, to, t); cone.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), fdir); fixtureGroup.add(cone) }
     }
-    for (const n of scene3.nodes) if ((deg[n.id] || 0) >= 3) { const f = nfloor(n), tee = box(0.22, 0.22, 0.22, new THREE.MeshStandardMaterial({ color: 0xd8a24a, roughness: 0.5 })); tee.position.set(f[0], 0.35, f[1]); fixtureGroup.add(tee) }
+    for (const n of scene3.nodes) if ((deg[n.id] || 0) >= 3) { const f = nfloor(n), tee = box(0.22, 0.22, 0.22, new THREE.MeshStandardMaterial({ color: 0xd8a24a, roughness: 0.45, metalness: 0.3 })); tee.position.set(f[0], 0.35, f[1]); fixtureGroup.add(tee) }
+    fixtureGroup.traverse(o => { if (o.isMesh && !(o.material && o.material.transparent)) { o.castShadow = true; o.receiveShadow = true } })
     updateSel(); updateHud()
   }
   function updateSel() { const n = selected && nodeById(scene3, selected); if (n) { const f = nfloor(n); selRing.position.set(f[0], 0.04, f[1]); const p = (trade.palette || []).find(z => z.type === n.type) || { dims: [1, 1] }; selRing.scale.setScalar(Math.max(0.6, Math.max(p.dims ? p.dims[0] : 1, p.dims ? p.dims[1] : 1) * 0.6)); selRing.visible = true } else selRing.visible = false }
@@ -122,6 +124,8 @@ export function mount3D(container, opts) {
   const cam = new THREE.PerspectiveCamera(50, Math.max(1, container.clientWidth) / Math.max(1, container.clientHeight || 500), 0.05, 500)
   const md = Math.max(W, D); cam.position.set(W / 2 - md * 0.55, md * 0.78, D + md * 0.5)
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true }); renderer.setPixelRatio(Math.min(2, (typeof devicePixelRatio !== 'undefined' ? devicePixelRatio : 1))); renderer.setClearColor(0x000000, 0)
+  renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05; renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap
+  const pmrem = new THREE.PMREMGenerator(renderer); root.environment = pmrem.fromScene(new RoomEnvironment(), 0.035).texture; pmrem.dispose()
   renderer.domElement.style.cssText = 'width:100%;height:100%;display:block;border-radius:10px;touch-action:none;position:relative;z-index:1'
   // camera-overlay AR (no WebXR): a live camera frame (or a still) behind the transparent 3D scene.
   const camBg = document.createElement('div'); camBg.style.cssText = 'position:absolute;inset:0;z-index:0;display:none;border-radius:10px;overflow:hidden;background:#000'
@@ -130,7 +134,7 @@ export function mount3D(container, opts) {
   const toast = document.createElement('div'); toast.style.cssText = 'position:absolute;left:50%;bottom:14px;transform:translateX(-50%);z-index:7;display:none;background:rgba(16,18,22,.92);color:#eef2f6;font:12px system-ui;padding:7px 12px;border-radius:9px;max-width:80%;text-align:center'
   camBg.append(camVid, camImg); container.append(camBg, renderer.domElement, toast)
   let camOn = false, camStream = null
-  const setSceneSolid = on => { root.background = on ? new THREE.Color(0x10141a) : null; floor.visible = on; grid.visible = on; wz.visible = on; wx.visible = on }
+  const setSceneSolid = on => { root.background = on ? skyTex : null; floor.visible = on; grid.visible = on; wz.visible = on; wx.visible = on }
   async function toggleCamera() {
     camOn = !camOn
     if (!camOn) { camBg.style.display = 'none'; if (camStream) { camStream.getTracks().forEach(t => t.stop()); camStream = null } setSceneSolid(true); renderBar(); return }

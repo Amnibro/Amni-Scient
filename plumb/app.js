@@ -266,7 +266,7 @@ const seedScene = () => {
 }
 function setupSketch() { const host = $('#sketch-host'); if (!host) return; mountSketch(host, { scene: sketchScene, trade: plumbTrade, catalog, store: 'hd', onChange: sc => { try { localStorage.setItem(SK_LS, JSON.stringify(sc)) } catch (e) {} } }) }
 let view3d = null
-async function mount3DView() { const host = $('#sketch3d-host'); if (!host) return; if (view3d) { view3d.rebuild(); return } try { const m = await import('./sketch-3d.js'); view3d = m.mount3D(host, { scene: sketchScene, trade: plumbTrade, catalog, store: 'hd', onChange: sc => { try { localStorage.setItem(SK_LS, JSON.stringify(sc)) } catch (e) {} } }) } catch (e) { host.innerHTML = '<div style="padding:20px;color:#9aa0aa">3D sim unavailable</div>' } }
+async function mount3DView() { const host = $('#sketch3d-host'); if (!host) return; if (view3d) { view3d.rebuild(); return } try { const m = await import('./sketch-3d.js?v=m1'); view3d = m.mount3D(host, { scene: sketchScene, trade: plumbTrade, catalog, store: 'hd', onChange: sc => { try { localStorage.setItem(SK_LS, JSON.stringify(sc)) } catch (e) {} } }) } catch (e) { host.innerHTML = '<div style="padding:20px;color:#9aa0aa">3D sim unavailable</div>' } }
 catalog = await fetch('catalog.json').then(r => r.json()).catch(() => ({}))
 initUI()
 resize()
