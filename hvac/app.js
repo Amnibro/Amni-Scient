@@ -1,6 +1,6 @@
 import { initPermits } from './codes.js?v=fix1'
-import { emptyScene, addNode, addRun } from './sketch.js?v=o1'
-import { mountSketch } from './sketch-canvas.js?v=o1'
+import { emptyScene, addNode, addRun } from './sketch.js?v=o2'
+import { mountSketch } from './sketch-canvas.js?v=o2'
 import { makeHvacTrade } from './hvac-rules.js'
 const $ = s => document.querySelector(s)
 const LSP = 'amnihvac.prices.v1', SK_LS = 'amnihvac.sketch.v2'
@@ -62,7 +62,7 @@ function renderPlans() {
     + `</div>`
 }
 let view3d = null
-async function mount3DView() { const host = $('#sketch3d-host'); if (!host) return; if (view3d) { view3d.rebuild(); return } try { const m = await import('./sketch-3d.js?v=m5'); view3d = m.mount3D(host, { scene: sketchScene, trade: hvacTrade, catalog, store: 'hd', onChange: sc => { try { localStorage.setItem(SK_LS, JSON.stringify(sc)) } catch (e) {} } }) } catch (e) { host.innerHTML = '<div style="padding:20px;color:#9aa0aa">3D sim unavailable</div>' } }
+async function mount3DView() { const host = $('#sketch3d-host'); if (!host) return; if (view3d) { view3d.rebuild(); return } try { const m = await import('./sketch-3d.js?v=m6'); view3d = m.mount3D(host, { scene: sketchScene, trade: hvacTrade, catalog, store: 'hd', onChange: sc => { try { localStorage.setItem(SK_LS, JSON.stringify(sc)) } catch (e) {} } }) } catch (e) { host.innerHTML = '<div style="padding:20px;color:#9aa0aa">3D sim unavailable</div>' } }
 const hvacTrade = makeHvacTrade()
 let sketchScene = (() => { try { const s = JSON.parse(localStorage.getItem(SK_LS)); if (s && s.nodes) return s } catch (e) {} return emptyScene(24) })()
 const seedScene = () => {

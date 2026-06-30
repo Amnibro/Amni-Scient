@@ -18,11 +18,16 @@ export function runPathFt(scene, run) {
   const sp = scene.scalePxPerFt || 24
   const ff = n => (n.props && n.props.fx != null) ? [n.props.fx, n.props.fz] : [n.x / sp, n.y / sp]
   const a = ff(A), b = ff(B)
-  if (run.waypoints && run.waypoints.length) return [a, ...run.waypoints.map(p => Array.isArray(p) ? [p[0] / sp, p[1] / sp] : (p.fx != null ? [p.fx, p.fz] : [p.x / sp, p.y / sp])), b]
-  if (Math.abs(a[0] - b[0]) < 0.06 || Math.abs(a[1] - b[1]) < 0.06) return [a, b]
   const w = scene.floorCal ? scene.floorCal.w : 1e4, d = scene.floorCal ? scene.floorCal.d : 1e4
-  const c1 = [b[0], a[1]], c2 = [a[0], b[1]], wd = (x, z) => Math.min(x, w - x, z, d - z)
-  return [a, wd(c1[0], c1[1]) <= wd(c2[0], c2[1]) ? c1 : c2, b]
+  const corner = (p, q) => {
+    if (Math.abs(p[0] - q[0]) < 0.06 || Math.abs(p[1] - q[1]) < 0.06) return null
+    const c1 = [q[0], p[1]], c2 = [p[0], q[1]], wd = (x, z) => Math.min(x, w - x, z, d - z)
+    return wd(c1[0], c1[1]) <= wd(c2[0], c2[1]) ? c1 : c2
+  }
+  const wps = (run.waypoints || []).map(p => Array.isArray(p) ? [p[0] / sp, p[1] / sp] : (p.fx != null ? [p.fx, p.fz] : [p.x / sp, p.y / sp]))
+  const path = [a]; let prev = a
+  for (const q of wps.concat([b])) { const c = corner(prev, q); if (c) path.push(c); path.push(q); prev = q }
+  return path
 }
 export function runPoints(run, scene) {
   const sp = scene.scalePxPerFt || 24

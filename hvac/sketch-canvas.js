@@ -1,6 +1,6 @@
 // Interactive SVG canvas layer over the shared sketch engine core.
 // Framework-free. mountSketch(container, {scene, trade, catalog, store, onChange}) -> controller.
-import { addNode, addRun, removeNode, nodeById, runPoints, runLengthFt, evaluate, snapToWall, realComponents } from './sketch.js?v=o1'
+import { addNode, addRun, removeNode, nodeById, runPoints, runLengthFt, evaluate, snapToWall, realComponents } from './sketch.js?v=o2'
 import { computeHomography, roomHomography, calibrateRoom, applyH, invert3 } from './perspective.js'
 const CEIL_FT = 8
 const CAL_STEPS = ['the bottom corner where the two walls meet the floor', 'the bottom corner at the far end of the LEFT wall', 'the bottom corner at the far end of the RIGHT wall', 'the ceiling corner straight above your 1st tap', 'the top corner above your LEFT-wall tap', 'the top corner above your RIGHT-wall tap']
@@ -96,7 +96,7 @@ export function mountSketch(container, opts) {
   td3Btn.onclick = async () => {
     if (view3d) { view3d.dispose(); view3d = null; td3.style.display = 'none'; td3.innerHTML = ''; svgWrap.style.display = ''; td3Btn.textContent = '🧊 3D'; td3Btn.classList.remove('on'); return }
     td3Btn.textContent = '…'
-    try { const m = await import('./sketch-3d.js?v=m5'); svgWrap.style.display = 'none'; td3.style.display = 'block'; td3.innerHTML = ''; view3d = m.mount3D(td3, { scene, trade, catalog, store: store(), onChange }); td3Btn.textContent = '↩ 2D'; td3Btn.classList.add('on') }
+    try { const m = await import('./sketch-3d.js?v=m6'); svgWrap.style.display = 'none'; td3.style.display = 'block'; td3.innerHTML = ''; view3d = m.mount3D(td3, { scene, trade, catalog, store: store(), onChange }); td3Btn.textContent = '↩ 2D'; td3Btn.classList.add('on') }
     catch (e) { td3Btn.textContent = '🧊 3D'; td3.style.display = 'none'; svgWrap.style.display = ''; hint.textContent = '3D view needs three.js (works on the module pages).' }
   }
   function composeImage() {
@@ -183,6 +183,7 @@ export function mountSketch(container, opts) {
     const [x, y] = ptOf(e)
     const nE = closestAttr(e.target, 'data-node'), nodeId = nE && nE.getAttribute('data-node')
     const rE = closestAttr(e.target, 'data-run'), runId = rE && rE.getAttribute('data-run')
+    const bE = closestAttr(e.target, 'data-bend'), bendId = bE && bE.getAttribute('data-bend')
     if (mode === 'calibrate') { if (calibPts.length < 6) calibPts.push([x, y]); if (calibPts.length >= 6) showCalForm(); render(); return }
     if (mode.startsWith('place:')) { const type = mode.slice(6); let nx = clamp(snap(x), W), ny = clamp(snap(y), H), props = {}; if (scene.floorH) { const f = applyH(invert3(scene.floorH), [x, y]), cf = clampFloor(f[0], f[1]), sn = applySnap(type, cf[0], cf[1], 0); props = { fx: sn.fx, fz: sn.fz, rot: sn.rot }; nx = x; ny = y }; addNode(scene, type, nx, ny, props); changed(); return }
     if (mode.startsWith('connect:')) {
@@ -190,13 +191,14 @@ export function mountSketch(container, opts) {
       else { connectFrom = null; render() }
       return
     }
-    if (nodeId) { selected = { kind: 'node', id: nodeId }; const n = nodeById(scene, nodeId); drag = { id: nodeId, dx: x - n.x, dy: y - n.y }; try { svg.setPointerCapture(e.pointerId) } catch (z) {} render() }
+    if (bendId) { selected = { kind: 'run', id: bendId }; drag = { bend: bendId }; try { svg.setPointerCapture(e.pointerId) } catch (z) {} render() }
+    else if (nodeId) { selected = { kind: 'node', id: nodeId }; const n = nodeById(scene, nodeId); drag = { id: nodeId, dx: x - n.x, dy: y - n.y }; try { svg.setPointerCapture(e.pointerId) } catch (z) {} render() }
     else if (runId) { selected = { kind: 'run', id: runId }; render() }
     else { selected = null; render() }
   })
-  svg.addEventListener('pointermove', e => { if (!drag) return; const [x, y] = ptOf(e); const n = nodeById(scene, drag.id); if (!n) return; if (scene.floorH && n.props && n.props.fx != null) { const f = applyH(invert3(scene.floorH), [x - drag.dx, y - drag.dy]), cf = clampFloor(f[0], f[1]), sn = applySnap(n.type, cf[0], cf[1], n.props.rot || 0); n.props.fx = sn.fx; n.props.fz = sn.fz; n.props.rot = sn.rot; const px = nodePix(n); n.x = px[0]; n.y = px[1] } else { n.x = clamp(snap(x - drag.dx), W); n.y = clamp(snap(y - drag.dy), H) } render() })
+  svg.addEventListener('pointermove', e => { if (!drag) return; const [x, y] = ptOf(e); if (drag.bend) { const r = scene.runs.find(rr => rr.id === drag.bend); if (r) { r.waypoints = [[clamp(snap(x), W), clamp(snap(y), H)]]; render() } return } const n = nodeById(scene, drag.id); if (!n) return; if (scene.floorH && n.props && n.props.fx != null) { const f = applyH(invert3(scene.floorH), [x - drag.dx, y - drag.dy]), cf = clampFloor(f[0], f[1]), sn = applySnap(n.type, cf[0], cf[1], n.props.rot || 0); n.props.fx = sn.fx; n.props.fz = sn.fz; n.props.rot = sn.rot; const px = nodePix(n); n.x = px[0]; n.y = px[1] } else { n.x = clamp(snap(x - drag.dx), W); n.y = clamp(snap(y - drag.dy), H) } render() })
   svg.addEventListener('pointerup', () => { if (drag) { drag = null; changed() } })
-  svg.addEventListener('dblclick', e => { const nE = closestAttr(e.target, 'data-node'), id = nE && nE.getAttribute('data-node'); if (!id) return; const n = nodeById(scene, id); if (!n) return; if (trade.onNodeActivate && trade.onNodeActivate(n)) { changed(); return } const p = trade.palette.find(z => z.type === n.type); if (p && p.dims && p.shape !== 'marker' && p.shape !== 'round') { n.props.rot = ((n.props.rot || 0) + 90) % 360; changed() } })
+  svg.addEventListener('dblclick', e => { const bE = closestAttr(e.target, 'data-bend'), rE = closestAttr(e.target, 'data-run'), rid = (bE && bE.getAttribute('data-bend')) || (rE && rE.getAttribute('data-run')); if (rid) { const r = scene.runs.find(rr => rr.id === rid); if (r && r.waypoints && r.waypoints.length) { r.waypoints = []; changed(); return } } const nE = closestAttr(e.target, 'data-node'), id = nE && nE.getAttribute('data-node'); if (!id) return; const n = nodeById(scene, id); if (!n) return; if (trade.onNodeActivate && trade.onNodeActivate(n)) { changed(); return } const p = trade.palette.find(z => z.type === n.type); if (p && p.dims && p.shape !== 'marker' && p.shape !== 'round') { n.props.rot = ((n.props.rot || 0) + 90) % 360; changed() } })
   window.addEventListener('keydown', e => {
     if (container.offsetParent === null) return
     if ((e.ctrlKey || e.metaKey) && (e.key === 'z' || e.key === 'Z')) { e.preventDefault(); e.shiftKey ? doRedo() : doUndo(); return }
@@ -277,7 +279,8 @@ export function mountSketch(container, opts) {
       el('rect', { x: ctr[0] - (lbl.length * 3.2 + 5), y: ly - 11, width: lbl.length * 6.4 + 10, height: 15, rx: 7, fill: 'rgba(16,18,22,.84)', style: 'pointer-events:none' }, g)
       el('text', { x: ctr[0], y: ly, 'text-anchor': 'middle', 'font-size': 10, fill: '#eef2f6', 'font-family': 'system-ui', style: 'pointer-events:none' }, g).textContent = lbl
     }
-    hint.textContent = 'Tip: drag to move · double-click a fixture to change it · tap it then Delete to remove'
+    if (selected && selected.kind === 'run') { const r = scene.runs.find(rr => rr.id === selected.id); if (r) { const pp = runPoints(r, scene); if (pp.length >= 2) { const c = pp.length >= 3 ? pp[Math.floor(pp.length / 2)] : [(pp[0][0] + pp[pp.length - 1][0]) / 2, (pp[0][1] + pp[pp.length - 1][1]) / 2]; el('circle', { cx: c[0], cy: c[1], r: 12, fill: 'rgba(143,208,255,.22)', stroke: 'none', style: 'pointer-events:none' }, svg); el('circle', { cx: c[0], cy: c[1], r: 7, fill: '#8fd0ff', stroke: '#fff', 'stroke-width': 2, 'data-bend': r.id, style: 'cursor:move' }, svg) } } }
+    hint.textContent = selected && selected.kind === 'run' ? 'Drag the blue handle to route this pipe along the walls · double-click it to snap back to auto-route' : 'Tip: drag to move · double-click a fixture to change it · tap it then Delete to remove'
     updateBanner()
     renderReadout()
   }

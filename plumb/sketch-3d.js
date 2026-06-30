@@ -3,7 +3,7 @@
 // fitting geometry, in a Three.js room you can orbit, place, drag, and connect. 1 unit = 1 ft.
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
-import { addNode, addRun, nodeById, removeNode, snapToWall, evaluate, flowDownstream, runPathFt } from './sketch.js?v=o1'
+import { addNode, addRun, nodeById, removeNode, snapToWall, evaluate, flowDownstream, runPathFt } from './sketch.js?v=o2'
 import { fitGroundPlane, floorAlign } from './cloud-align.js'
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js'
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js'
