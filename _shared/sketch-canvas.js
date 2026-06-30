@@ -96,7 +96,7 @@ export function mountSketch(container, opts) {
   td3Btn.onclick = async () => {
     if (view3d) { view3d.dispose(); view3d = null; td3.style.display = 'none'; td3.innerHTML = ''; svgWrap.style.display = ''; td3Btn.textContent = '🧊 3D'; td3Btn.classList.remove('on'); return }
     td3Btn.textContent = '…'
-    try { const m = await import('./sketch-3d.js?v=m6'); svgWrap.style.display = 'none'; td3.style.display = 'block'; td3.innerHTML = ''; view3d = m.mount3D(td3, { scene, trade, catalog, store: store(), onChange }); td3Btn.textContent = '↩ 2D'; td3Btn.classList.add('on') }
+    try { const m = await import('./sketch-3d.js?v=m7'); svgWrap.style.display = 'none'; td3.style.display = 'block'; td3.innerHTML = ''; view3d = m.mount3D(td3, { scene, trade, catalog, store: store(), onChange }); td3Btn.textContent = '↩ 2D'; td3Btn.classList.add('on') }
     catch (e) { td3Btn.textContent = '🧊 3D'; td3.style.display = 'none'; svgWrap.style.display = ''; hint.textContent = '3D view needs three.js (works on the module pages).' }
   }
   function composeImage() {

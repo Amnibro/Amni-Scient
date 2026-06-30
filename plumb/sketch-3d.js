@@ -8,7 +8,15 @@ import { fitGroundPlane, floorAlign } from './cloud-align.js'
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js'
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js'
 
-const PIPE_R = { sup12: 0.05, sup34: 0.06, dwv15: 0.08, dwv2: 0.1, dwv3: 0.13, dwv4: 0.16, nm142: 0.04, nm122: 0.045, nm103: 0.05, nm63: 0.06, s6: 0.25, s8: 0.33, s10: 0.42, s12: 0.5, r8: 0.33, r10: 0.42, r12: 0.5 }
+const PIPE_R = { sup12: 0.035, sup34: 0.046, dwv15: 0.066, dwv2: 0.085, dwv3: 0.125, dwv4: 0.165, nm142: 0.03, nm122: 0.036, nm103: 0.045, nm63: 0.058, s6: 0.25, s8: 0.33, s10: 0.42, s12: 0.5, r8: 0.33, r10: 0.42, r12: 0.5 }
+const NMCOL = { nm142: 0xeef0f2, nm122: 0xe0c84a, nm103: 0xe08a3b, nm63: 0x33373d }
+const pipeStyle = (type, fallback) => {
+  if (/^dwv/.test(type)) return { col: 0xeef1f4, rough: 0.55, metal: 0.0 }
+  if (/^sup/.test(type)) return { col: 0xc4814f, rough: 0.26, metal: 0.86 }
+  if (/^[sr]\d/.test(type)) return { col: 0xc6ccd4, rough: 0.36, metal: 0.85 }
+  if (/^nm/.test(type)) return { col: NMCOL[type] || 0xeef0f2, rough: 0.62, metal: 0.0 }
+  return { col: new THREE.Color(fallback || '#bbb').getHex(), rough: 0.4, metal: 0.3 }
+}
 const porc = new THREE.MeshPhysicalMaterial({ color: 0xf3f6f8, roughness: 0.22, metalness: 0, clearcoat: 0.7, clearcoatRoughness: 0.22, envMapIntensity: 1.0 })
 const metal = new THREE.MeshStandardMaterial({ color: 0xd2d8de, roughness: 0.25, metalness: 0.92, envMapIntensity: 1.2 })
 const glass = new THREE.MeshPhysicalMaterial({ color: 0xd4e8f0, roughness: 0.05, metalness: 0, transmission: 0.55, thickness: 0.4, transparent: true, opacity: 0.45, envMapIntensity: 1.0 })
@@ -16,6 +24,7 @@ const box = (w, h, d, m, bev) => new THREE.Mesh(new RoundedBoxGeometry(w, h, d, 
 const cyl = (rt, rb, h, m, seg) => new THREE.Mesh(new THREE.CylinderGeometry(rt, rb, h, seg || 44), m)
 const lathe = (pts, m, sz) => { const mm = m.clone(); mm.side = THREE.DoubleSide; const me = new THREE.Mesh(new THREE.LatheGeometry(pts.map(p => new THREE.Vector2(Math.max(0.0001, p[0]), p[1])), 56), mm); if (sz) me.scale.z = sz; return me }
 const tube = (pts, r, m) => new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts.map(p => new THREE.Vector3(p[0], p[1], p[2]))), 28, r, 16), m)
+const pTrap = (P, D, rad, mat) => { const r2 = Math.max(0.075, rad * 1.7); return tube([[P.x, P.y + 0.55, P.z], [P.x, P.y + 0.14, P.z], [P.x - D.x * r2 * 0.4, P.y + 0.14 - r2, P.z - D.z * r2 * 0.4], [P.x + D.x * r2 * 0.5, P.y + 0.12 - r2 * 1.1, P.z + D.z * r2 * 0.5], [P.x + D.x * r2 * 1.15, P.y + 0.14 - r2 * 0.25, P.z + D.z * r2 * 1.15], [P.x + D.x * r2 * 1.15, P.y + 0.34, P.z + D.z * r2 * 1.15]], rad * 0.95, mat) }
 const dark = new THREE.MeshStandardMaterial({ color: 0x2b3138, roughness: 0.5, metalness: 0.22 })
 const chrome = new THREE.MeshStandardMaterial({ color: 0xd6dbe0, roughness: 0.15, metalness: 0.95, envMapIntensity: 1.3 })
 const knobAt = (g, x, y, z) => { const k = cyl(0.045, 0.055, 0.05, chrome, 20); k.rotation.x = Math.PI / 2; k.position.set(x, y, z); g.add(k) }
@@ -126,13 +135,15 @@ export function mount3D(container, opts) {
   function rebuild() {
     disposeGroup(fixtureGroup)
     for (const n of scene3.nodes) fixtureGroup.add(buildFixture(n))
+    const trapTypes = new Set(trade.trapTypes || []), ventTypes = new Set(trade.ventTypes || ['vent'])
+    for (const n of scene3.nodes) if (ventTypes.has(n.type)) { const f = nfloor(n), pvc = new THREE.MeshStandardMaterial({ color: 0xeef1f4, roughness: 0.55 }); const riser = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 5.5, 20), pvc); riser.position.set(f[0], 2.75, f[1]); fixtureGroup.add(riser); const cap = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.09, 0.14, 20), new THREE.MeshStandardMaterial({ color: 0x3b3f45, roughness: 0.6 })); cap.position.set(f[0], 5.55, f[1]); fixtureGroup.add(cap) }
     const deg = {}; for (const r of scene3.runs) { deg[r.a] = (deg[r.a] || 0) + 1; deg[r.b] = (deg[r.b] || 0) + 1 }
     const incident = {}
     for (const r of scene3.runs) {
       const path = runPathFt(scene3, r); if (path.length < 2) continue
-      const rt = (trade.runTypes || []).find(z => z.type === r.type) || { color: '#bbb' }, rad = PIPE_R[r.type] || 0.06, big = rad > 0.18
-      const pm = new THREE.MeshStandardMaterial({ color: new THREE.Color(rt.color), roughness: big ? 0.3 : 0.42, metalness: big ? 0.78 : 0.22, envMapIntensity: 1.0 })
-      const fm = new THREE.MeshStandardMaterial({ color: new THREE.Color(rt.color).multiplyScalar(0.8), roughness: 0.3, metalness: Math.max(0.62, big ? 0.78 : 0.4), envMapIntensity: 1.2 })
+      const rt = (trade.runTypes || []).find(z => z.type === r.type) || { color: '#bbb' }, rad = PIPE_R[r.type] || 0.06, ps = pipeStyle(r.type, rt.color), isDrain = /^dwv/.test(r.type)
+      const pm = new THREE.MeshStandardMaterial({ color: ps.col, roughness: ps.rough, metalness: ps.metal, envMapIntensity: 1.0 })
+      const fm = new THREE.MeshStandardMaterial({ color: new THREE.Color(ps.col).multiplyScalar(0.86), roughness: ps.rough * 0.82, metalness: ps.metal, envMapIntensity: 1.15 })
       const pts3 = path.map(p => new THREE.Vector3(p[0], 0.35, p[1])), last = pts3.length - 1
       const dsId = flowDownstream(r, scene3, { deg }, sinkTypes), fwd = dsId === r.b
       const arrowMat = new THREE.MeshStandardMaterial({ color: 0xf2f6fa, emissive: 0x1c2832, roughness: 0.5, metalness: 0.1 })
@@ -144,6 +155,9 @@ export function mount3D(container, opts) {
       }
       ;(incident[r.a] = incident[r.a] || []).push({ p: pts3[0], dir: new THREE.Vector3().subVectors(pts3[1], pts3[0]).normalize(), fm, rad })
       ;(incident[r.b] = incident[r.b] || []).push({ p: pts3[last], dir: new THREE.Vector3().subVectors(pts3[last - 1], pts3[last]).normalize(), fm, rad })
+      const aN = nodeById(scene3, r.a), bN = nodeById(scene3, r.b)
+      if (isDrain && aN && trapTypes.has(aN.type)) { const d = new THREE.Vector3().subVectors(pts3[1], pts3[0]); d.y = 0; if (d.lengthSq() > 1e-4) { d.normalize(); fixtureGroup.add(pTrap(pts3[0], d, rad, pm)) } }
+      if (isDrain && bN && trapTypes.has(bN.type)) { const d = new THREE.Vector3().subVectors(pts3[last - 1], pts3[last]); d.y = 0; if (d.lengthSq() > 1e-4) { d.normalize(); fixtureGroup.add(pTrap(pts3[last], d, rad, pm)) } }
       for (let s = 1; s < last; s++) { const c = pts3[s], hubR = rad * 1.5; const hub = new THREE.Mesh(new THREE.SphereGeometry(hubR, 20, 14), fm); hub.position.copy(c); fixtureGroup.add(hub); for (const nb of [pts3[s - 1], pts3[s + 1]]) { const cd = new THREE.Vector3().subVectors(nb, c).normalize(); const collar = new THREE.Mesh(new THREE.CylinderGeometry(rad * 1.3, rad * 1.3, hubR * 1.5, 20), fm); collar.position.copy(c).addScaledVector(cd, hubR * 0.75); collar.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), cd); fixtureGroup.add(collar) } }
     }
     for (const id in incident) {
