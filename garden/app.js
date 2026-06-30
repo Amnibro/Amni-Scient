@@ -1,5 +1,7 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js'
+import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js'
 import { initPermits, updatePermits } from './codes.js?v=fix1'
 const LS = 'amnigarden.cfg.v1', LSP = 'amnigarden.prices.v1'
 const defCfg = { soil_depth_in: 10, beds: [
@@ -39,6 +41,10 @@ const cam = new THREE.PerspectiveCamera(50, 2, 0.1, 2000)
 cam.position.set(22, 18, 30)
 const renderer = new THREE.WebGLRenderer({ canvas: $('#c3d'), antialias: true })
 renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap
+renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05
+const pmremG = new THREE.PMREMGenerator(renderer); scene.environment = pmremG.fromScene(new RoomEnvironment(), 0.04).texture; pmremG.dispose()
+const foliageGeo = mergeGeometries([[0.6, 0, 0.5, 0], [0.42, 0.38, 0.8, 0.16], [0.42, -0.36, 0.76, -0.18], [0.4, 0.06, 1.04, 0.34], [0.38, -0.12, 0.56, 0.42]].map(([rad, x, y, z]) => { const s = new THREE.SphereGeometry(rad, 12, 10); s.translate(x, y, z); return s }))
+const accGeo = mergeGeometries([[0.2, 0, 0, 0], [0.15, 0.24, 0.06, 0.13], [0.15, -0.2, -0.04, -0.11]].map(([rad, x, y, z]) => { const s = new THREE.SphereGeometry(rad, 10, 8); s.translate(x, y, z); return s }))
 const controls = new OrbitControls(cam, $('#c3d'))
 controls.enableDamping = true; controls.maxPolarAngle = Math.PI / 2 - 0.04
 scene.add(new THREE.HemisphereLight(0xcfe4f5, 0x52733f, 1.3))
@@ -67,11 +73,18 @@ const rebuild3D = () => {
     const eg = new THREE.LineSegments(new THREE.EdgesGeometry(m.geometry), new THREE.LineBasicMaterial({ color: 0x3a2a14 })); eg.position.y = h / 2; gb.add(eg)
     const soil = new THREE.Mesh(new THREE.BoxGeometry(b.w - 0.5, 0.28, b.l - 0.5), new THREE.MeshStandardMaterial({ map: soilTex, roughness: 1 })); soil.position.y = h - 0.04; gb.add(soil)
     const dr = Math.min(b.rows, 6), dc = Math.min(b.per_row, 10), tall = TALL.includes(b.plant)
-    const r = Math.max(0.13, Math.min(b.w / dc, b.l / dr) * 0.32), pg = new THREE.IcosahedronGeometry(r, 0)
-    const pmat = new THREE.MeshStandardMaterial({ color: PCOL[b.plant] ?? 0x5fae5f, roughness: 0.85, flatShading: true })
-    const inst = new THREE.InstancedMesh(pg, pmat, dr * dc); let ii = 0; const mtx = new THREE.Matrix4(), q = new THREE.Quaternion(), ev = new THREE.Euler()
-    for (let i = 0; i < dr; i++) for (let j = 0; j < dc; j++) { ev.set(0, (i * 7 + j * 3) % 6, 0); q.setFromEuler(ev); mtx.compose(new THREE.Vector3(-b.w / 2 + b.w * (j + 0.5) / dc, h + 0.1 + r * (tall ? 1.1 : 0.5), b.l / 2 - b.l * (i + 0.5) / dr), q, new THREE.Vector3(1, tall ? 1.9 : 0.9, 1)); inst.setMatrixAt(ii++, mtx) }
-    gb.add(inst)
+    const r = Math.max(0.13, Math.min(b.w / dc, b.l / dr) * 0.34)
+    const fmat = new THREE.MeshStandardMaterial({ color: tall ? 0x4f8a3e : 0x6aad4e, roughness: 0.86 })
+    const amat = new THREE.MeshStandardMaterial({ color: PCOL[b.plant] ?? 0x5fae5f, roughness: 0.68 })
+    const fInst = new THREE.InstancedMesh(foliageGeo, fmat, dr * dc), aInst = new THREE.InstancedMesh(accGeo, amat, dr * dc)
+    let ii = 0; const mtx = new THREE.Matrix4(), amtx = new THREE.Matrix4(), q = new THREE.Quaternion(), ev = new THREE.Euler()
+    for (let i = 0; i < dr; i++) for (let j = 0; j < dc; j++) {
+      const px = -b.w / 2 + b.w * (j + 0.5) / dc, pz = b.l / 2 - b.l * (i + 0.5) / dr, sc = r * 1.25, sy = sc * (tall ? 1.7 : 0.85)
+      ev.set(0, (i * 7 + j * 3) % 6, 0); q.setFromEuler(ev)
+      mtx.compose(new THREE.Vector3(px, h + 0.04, pz), q, new THREE.Vector3(sc, sy, sc)); fInst.setMatrixAt(ii, mtx)
+      amtx.compose(new THREE.Vector3(px, h + 0.04 + sy * 1.15, pz), q, new THREE.Vector3(sc * 0.85, sc * 0.85, sc * 0.85)); aInst.setMatrixAt(ii, amtx); ii++
+    }
+    gb.add(fInst, aInst)
     grp.add(gb)
   })
 }

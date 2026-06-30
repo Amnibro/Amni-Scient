@@ -1,5 +1,7 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js'
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js'
 import { initPermits, updatePermits } from './codes.js?v=fix1'
 import { initMapTrace, sitePlanSVG, cropForPlan, mapPlanSnapshot } from './maptrace.js?v=127'
 import { initAutoDetect } from './autodetect.js?v=127'
@@ -38,6 +40,8 @@ const cam = new THREE.PerspectiveCamera(50, 2, 0.1, 2000)
 cam.position.set(22, 18, 30)
 const renderer = new THREE.WebGLRenderer({ canvas: $('#c3d'), antialias: true })
 renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap
+renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05
+const pmrem = new THREE.PMREMGenerator(renderer); scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture; pmrem.dispose()
 const controls = new OrbitControls(cam, $('#c3d'))
 controls.enableDamping = true; controls.maxPolarAngle = Math.PI / 2 - 0.04
 scene.add(new THREE.HemisphereLight(0xcfe4f5, 0x52733f, 1.3))
@@ -75,9 +79,31 @@ const patternTex = (kind, hex) => {
 }
 const woodF = () => new THREE.MeshStandardMaterial({ color: 0x6b4f34, roughness: 0.7 })
 const metalF = () => new THREE.MeshStandardMaterial({ color: 0x35383c, roughness: 0.4, metalness: 0.6 })
-const makeTable = () => { const g = new THREE.Group(); const top = new THREE.Mesh(new THREE.CylinderGeometry(1.4, 1.4, 0.12, 20), woodF()); top.position.y = 2.3; const ped = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 2.3, 10), metalF()); ped.position.y = 1.15; const base = new THREE.Mesh(new THREE.CylinderGeometry(0.6, 0.7, 0.12, 16), metalF()); base.position.y = 0.06; g.add(top, ped, base); return g }
-const makeChair = () => { const g = new THREE.Group(); const seat = new THREE.Mesh(new THREE.BoxGeometry(1.3, 0.14, 1.3), woodF()); seat.position.y = 1.5; const back = new THREE.Mesh(new THREE.BoxGeometry(1.3, 1.4, 0.14), woodF()); back.position.set(0, 2.2, -0.58); for (const [xx, zz] of [[-0.5, -0.5], [0.5, -0.5], [-0.5, 0.5], [0.5, 0.5]]) { const leg = new THREE.Mesh(new THREE.BoxGeometry(0.12, 1.5, 0.12), metalF()); leg.position.set(xx, 0.75, zz); g.add(leg) } g.add(seat, back); return g }
-const makePlanter = col => { const g = new THREE.Group(); const box = new THREE.Mesh(new THREE.BoxGeometry(2, 1.6, 2), woodF()); box.position.y = 0.8; const soil = new THREE.Mesh(new THREE.BoxGeometry(1.7, 0.2, 1.7), new THREE.MeshStandardMaterial({ color: 0x3a2a1a, roughness: 1 })); soil.position.y = 1.55; g.add(box, soil); for (let i = 0; i < 5; i++) { const p = new THREE.Mesh(new THREE.IcosahedronGeometry(0.4 + Math.random() * 0.2, 0), new THREE.MeshStandardMaterial({ color: col, roughness: 0.85, flatShading: true })); p.position.set((Math.random() - 0.5) * 1.2, 1.9 + Math.random() * 0.5, (Math.random() - 0.5) * 1.2); p.scale.y = 1.5; g.add(p) } return g }
+const rbox = (w, h, d, m, b) => new THREE.Mesh(new RoundedBoxGeometry(w, h, d, 3, b || 0.04), m)
+const makeTable = () => { const g = new THREE.Group()
+  const top = new THREE.Mesh(new THREE.CylinderGeometry(1.45, 1.45, 0.08, 48), woodF()); top.position.y = 2.3
+  const rim = new THREE.Mesh(new THREE.TorusGeometry(1.45, 0.05, 14, 48), metalF()); rim.rotation.x = Math.PI / 2; rim.position.y = 2.29
+  const ped = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.13, 2.2, 28), metalF()); ped.position.y = 1.2
+  const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 0.12, 28), metalF()); hub.position.y = 2.18
+  const base = new THREE.Mesh(new THREE.CylinderGeometry(0.45, 0.78, 0.09, 36), metalF()); base.position.y = 0.05
+  g.add(top, rim, ped, hub, base); return g }
+const makeChair = () => { const g = new THREE.Group()
+  const seat = rbox(1.2, 0.12, 1.15, woodF(), 0.05); seat.position.set(0, 1.45, 0.05); g.add(seat)
+  for (const sx of [-1, 1]) { const post = rbox(0.1, 1.4, 0.1, metalF(), 0.03); post.position.set(sx * 0.52, 2.05, -0.52); g.add(post) }
+  for (let i = 0; i < 4; i++) { const slat = rbox(1.0, 0.16, 0.06, woodF(), 0.02); slat.position.set(0, 1.72 + i * 0.3, -0.52); slat.rotation.x = -0.08; g.add(slat) }
+  for (const sx of [-1, 1]) { const arm = rbox(0.1, 0.09, 1.05, metalF(), 0.03); arm.position.set(sx * 0.58, 1.78, 0.05); g.add(arm); const ap = rbox(0.09, 0.42, 0.09, metalF(), 0.03); ap.position.set(sx * 0.58, 1.6, 0.52); g.add(ap) }
+  for (const [xx, zz] of [[-0.5, -0.46], [0.5, -0.46], [-0.5, 0.5], [0.5, 0.5]]) { const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.06, 1.45, 16), metalF()); leg.position.set(xx, 0.72, zz); g.add(leg) }
+  return g }
+const makePlanter = col => { const g = new THREE.Group()
+  const pot = new THREE.Mesh(new THREE.CylinderGeometry(1.05, 0.78, 1.6, 32), new THREE.MeshStandardMaterial({ color: 0xc9bfae, roughness: 0.85 })); pot.position.y = 0.8
+  const rim = new THREE.Mesh(new THREE.TorusGeometry(1.05, 0.08, 14, 36), new THREE.MeshStandardMaterial({ color: 0xb6ab98, roughness: 0.8 })); rim.rotation.x = Math.PI / 2; rim.position.y = 1.58
+  const soil = new THREE.Mesh(new THREE.CylinderGeometry(0.96, 0.96, 0.16, 28), new THREE.MeshStandardMaterial({ color: 0x3a2a1a, roughness: 1 })); soil.position.y = 1.56
+  g.add(pot, rim, soil)
+  const foliage = new THREE.MeshStandardMaterial({ color: 0x4f7e3c, roughness: 0.9 })
+  for (let i = 0; i < 11; i++) { const a = i / 11 * Math.PI * 2, r = 0.35 + (i % 3) * 0.2; const leaf = new THREE.Mesh(new THREE.SphereGeometry(0.34 + (i % 2) * 0.12, 14, 12), foliage); leaf.position.set(Math.cos(a) * r, 1.95 + (i % 3) * 0.32, Math.sin(a) * r); leaf.scale.y = 1.25; g.add(leaf) }
+  const fmat = new THREE.MeshStandardMaterial({ color: col, roughness: 0.65 })
+  for (let i = 0; i < 7; i++) { const a = i / 7 * Math.PI * 2; const fl = new THREE.Mesh(new THREE.SphereGeometry(0.15, 12, 10), fmat); fl.position.set(Math.cos(a) * 0.58, 2.55 + Math.sin(i * 1.3) * 0.22, Math.sin(a) * 0.58); g.add(fl) }
+  return g }
 const rebuild3D = () => {
   while (grp.children.length) { const m = grp.children.pop(); m.geometry && m.geometry.dispose() }
   const poly = polyOf(cfg)
