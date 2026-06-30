@@ -9,10 +9,24 @@ export function addRun(scene, type, a, b, waypoints) { const id = 'r' + (scene.s
 export function nodeById(scene, id) { return scene.nodes.find(n => n.id === id) }
 export function removeNode(scene, id) { scene.nodes = scene.nodes.filter(n => n.id !== id); scene.runs = scene.runs.filter(r => r.a !== id && r.b !== id) }
 
+// Orthogonal (right-angle, wall-hugging) route between a run's endpoints, in FLOOR FEET.
+// Honors explicit waypoints; otherwise inserts one wall-biased elbow so pipes/wires move in
+// axis-aligned increments instead of cutting diagonally across the room.
+export function runPathFt(scene, run) {
+  const A = nodeById(scene, run.a), B = nodeById(scene, run.b)
+  if (!A || !B) return []
+  const sp = scene.scalePxPerFt || 24
+  const ff = n => (n.props && n.props.fx != null) ? [n.props.fx, n.props.fz] : [n.x / sp, n.y / sp]
+  const a = ff(A), b = ff(B)
+  if (run.waypoints && run.waypoints.length) return [a, ...run.waypoints.map(p => Array.isArray(p) ? [p[0] / sp, p[1] / sp] : (p.fx != null ? [p.fx, p.fz] : [p.x / sp, p.y / sp])), b]
+  if (Math.abs(a[0] - b[0]) < 0.06 || Math.abs(a[1] - b[1]) < 0.06) return [a, b]
+  const w = scene.floorCal ? scene.floorCal.w : 1e4, d = scene.floorCal ? scene.floorCal.d : 1e4
+  const c1 = [b[0], a[1]], c2 = [a[0], b[1]], wd = (x, z) => Math.min(x, w - x, z, d - z)
+  return [a, wd(c1[0], c1[1]) <= wd(c2[0], c2[1]) ? c1 : c2, b]
+}
 export function runPoints(run, scene) {
-  const a = nodeById(scene, run.a), b = nodeById(scene, run.b)
-  if (!a || !b) return []
-  return [[a.x, a.y], ...(run.waypoints || []), [b.x, b.y]]
+  const sp = scene.scalePxPerFt || 24
+  return runPathFt(scene, run).map(p => [p[0] * sp, p[1] * sp])
 }
 // Snap a fixture (floor center fx,fz; footprint depth ft) to the nearest floor-rect wall edge of a
 // W×D floor, flush against it, rotated to face INTO the room. Returns {fx,fz,rot} or null if no wall
@@ -27,11 +41,9 @@ export function snapToWall(fx, fz, depth, W, D, thresh) {
   return { fx, fz: D - h, rot: 180 }
 }
 export function runLengthFt(run, scene) {
-  const a = nodeById(scene, run.a), b = nodeById(scene, run.b)
-  if (a && b && a.props && a.props.fx != null && b.props && b.props.fx != null) return Math.hypot(b.props.fx - a.props.fx, b.props.fz - a.props.fz)
-  const pts = runPoints(run, scene); let px = 0
-  for (let i = 1; i < pts.length; i++) px += Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1])
-  return px / (scene.scalePxPerFt || 24)
+  const pts = runPathFt(scene, run); let ft = 0
+  for (let i = 1; i < pts.length; i++) ft += Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1])
+  return ft
 }
 
 // Quantitative summary the BOM + validation read from.
@@ -40,7 +52,7 @@ export function measure(scene) {
   for (const r of scene.runs) { byRunType[r.type] = (byRunType[r.type] || 0) + runLengthFt(r, scene); deg[r.a] = (deg[r.a] || 0) + 1; deg[r.b] = (deg[r.b] || 0) + 1 }
   for (const n of scene.nodes) nodeCounts[n.type] = (nodeCounts[n.type] || 0) + 1
   let elbows = 0, branches = 0
-  for (const r of scene.runs) elbows += (r.waypoints || []).length
+  for (const r of scene.runs) elbows += Math.max(0, runPathFt(scene, r).length - 2)
   for (const n of scene.nodes) if ((deg[n.id] || 0) >= 3) branches++
   const totalRunFt = Object.values(byRunType).reduce((a, b) => a + b, 0)
   return { byRunType, nodeCounts, deg, elbows, branches, totalRunFt }

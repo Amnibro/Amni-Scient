@@ -3,7 +3,7 @@
 // fitting geometry, in a Three.js room you can orbit, place, drag, and connect. 1 unit = 1 ft.
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
-import { addNode, addRun, nodeById, removeNode, snapToWall, evaluate, flowDownstream } from './sketch.js'
+import { addNode, addRun, nodeById, removeNode, snapToWall, evaluate, flowDownstream, runPathFt } from './sketch.js?v=o1'
 import { fitGroundPlane, floorAlign } from './cloud-align.js'
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js'
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js'
@@ -129,18 +129,22 @@ export function mount3D(container, opts) {
     const deg = {}; for (const r of scene3.runs) { deg[r.a] = (deg[r.a] || 0) + 1; deg[r.b] = (deg[r.b] || 0) + 1 }
     const incident = {}
     for (const r of scene3.runs) {
-      const A = nodeById(scene3, r.a), B = nodeById(scene3, r.b); if (!A || !B) continue
-      const fa = nfloor(A), fb = nfloor(B), a = new THREE.Vector3(fa[0], 0.35, fa[1]), b = new THREE.Vector3(fb[0], 0.35, fb[1])
+      const path = runPathFt(scene3, r); if (path.length < 2) continue
       const rt = (trade.runTypes || []).find(z => z.type === r.type) || { color: '#bbb' }, rad = PIPE_R[r.type] || 0.06, big = rad > 0.18
       const pm = new THREE.MeshStandardMaterial({ color: new THREE.Color(rt.color), roughness: big ? 0.3 : 0.42, metalness: big ? 0.78 : 0.22, envMapIntensity: 1.0 })
       const fm = new THREE.MeshStandardMaterial({ color: new THREE.Color(rt.color).multiplyScalar(0.8), roughness: 0.3, metalness: Math.max(0.62, big ? 0.78 : 0.4), envMapIntensity: 1.2 })
-      const dir = new THREE.Vector3().subVectors(b, a), len = dir.length() || 0.01, nd = dir.clone().normalize()
-      const pipe = new THREE.Mesh(new THREE.CylinderGeometry(rad, rad, len, 26), pm); pipe.position.copy(a).add(b).multiplyScalar(0.5); pipe.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), nd); fixtureGroup.add(pipe)
-      ;(incident[r.a] = incident[r.a] || []).push({ p: a, dir: nd.clone(), fm, rad })
-      ;(incident[r.b] = incident[r.b] || []).push({ p: b, dir: nd.clone().negate(), fm, rad })
-      const dsId = flowDownstream(r, scene3, { deg }, sinkTypes), to = dsId === r.b ? b : a, from = dsId === r.b ? a : b, fdir = new THREE.Vector3().subVectors(to, from).normalize()
+      const pts3 = path.map(p => new THREE.Vector3(p[0], 0.35, p[1])), last = pts3.length - 1
+      const dsId = flowDownstream(r, scene3, { deg }, sinkTypes), fwd = dsId === r.b
       const arrowMat = new THREE.MeshStandardMaterial({ color: 0xf2f6fa, emissive: 0x1c2832, roughness: 0.5, metalness: 0.1 })
-      for (const t of (len > 1.6 ? [0.36, 0.7] : [0.5])) { const cone = new THREE.Mesh(new THREE.ConeGeometry(rad * 1.4 + 0.014, rad * 3.4 + 0.05, 16), arrowMat); cone.position.lerpVectors(from, to, t).addScaledVector(new THREE.Vector3(0, 1, 0), rad + 0.03); cone.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), fdir); fixtureGroup.add(cone) }
+      for (let s = 0; s < last; s++) {
+        const a = pts3[s], b = pts3[s + 1], dir = new THREE.Vector3().subVectors(b, a), len = dir.length(); if (len < 0.02) continue
+        const pipe = new THREE.Mesh(new THREE.CylinderGeometry(rad, rad, len, 26), pm); pipe.position.copy(a).add(b).multiplyScalar(0.5); pipe.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir.clone().normalize()); fixtureGroup.add(pipe)
+        const from = fwd ? a : b, to = fwd ? b : a, fdir = new THREE.Vector3().subVectors(to, from).normalize()
+        for (const t of (len > 1.6 ? [0.34, 0.7] : [0.5])) { const cone = new THREE.Mesh(new THREE.ConeGeometry(rad * 1.4 + 0.014, rad * 3.4 + 0.05, 16), arrowMat); cone.position.lerpVectors(from, to, t).addScaledVector(new THREE.Vector3(0, 1, 0), rad + 0.03); cone.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), fdir); fixtureGroup.add(cone) }
+      }
+      ;(incident[r.a] = incident[r.a] || []).push({ p: pts3[0], dir: new THREE.Vector3().subVectors(pts3[1], pts3[0]).normalize(), fm, rad })
+      ;(incident[r.b] = incident[r.b] || []).push({ p: pts3[last], dir: new THREE.Vector3().subVectors(pts3[last - 1], pts3[last]).normalize(), fm, rad })
+      for (let s = 1; s < last; s++) { const c = pts3[s], hubR = rad * 1.5; const hub = new THREE.Mesh(new THREE.SphereGeometry(hubR, 20, 14), fm); hub.position.copy(c); fixtureGroup.add(hub); for (const nb of [pts3[s - 1], pts3[s + 1]]) { const cd = new THREE.Vector3().subVectors(nb, c).normalize(); const collar = new THREE.Mesh(new THREE.CylinderGeometry(rad * 1.3, rad * 1.3, hubR * 1.5, 20), fm); collar.position.copy(c).addScaledVector(cd, hubR * 0.75); collar.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), cd); fixtureGroup.add(collar) } }
     }
     for (const id in incident) {
       const list = incident[id], hubR = Math.max(...list.map(x => x.rad)) * 1.5
