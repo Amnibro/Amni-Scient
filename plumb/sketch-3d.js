@@ -127,18 +127,26 @@ export function mount3D(container, opts) {
     disposeGroup(fixtureGroup)
     for (const n of scene3.nodes) fixtureGroup.add(buildFixture(n))
     const deg = {}; for (const r of scene3.runs) { deg[r.a] = (deg[r.a] || 0) + 1; deg[r.b] = (deg[r.b] || 0) + 1 }
+    const incident = {}
     for (const r of scene3.runs) {
       const A = nodeById(scene3, r.a), B = nodeById(scene3, r.b); if (!A || !B) continue
       const fa = nfloor(A), fb = nfloor(B), a = new THREE.Vector3(fa[0], 0.35, fa[1]), b = new THREE.Vector3(fb[0], 0.35, fb[1])
-      const rt = (trade.runTypes || []).find(z => z.type === r.type) || { color: '#bbb' }, pm = new THREE.MeshStandardMaterial({ color: new THREE.Color(rt.color), roughness: 0.32, metalness: 0.65, envMapIntensity: 1.0 }), rad = PIPE_R[r.type] || 0.06
-      const dir = new THREE.Vector3().subVectors(b, a), len = dir.length() || 0.01
-      const pipe = new THREE.Mesh(new THREE.CylinderGeometry(rad, rad, len, 24), pm); pipe.position.copy(a).add(b).multiplyScalar(0.5); pipe.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir.clone().normalize()); fixtureGroup.add(pipe)
-      for (const e of [a, b]) { const j = new THREE.Mesh(new THREE.SphereGeometry(rad * 1.5, 20, 14), pm); j.position.copy(e); fixtureGroup.add(j) }
+      const rt = (trade.runTypes || []).find(z => z.type === r.type) || { color: '#bbb' }, rad = PIPE_R[r.type] || 0.06, big = rad > 0.18
+      const pm = new THREE.MeshStandardMaterial({ color: new THREE.Color(rt.color), roughness: big ? 0.3 : 0.42, metalness: big ? 0.78 : 0.22, envMapIntensity: 1.0 })
+      const fm = new THREE.MeshStandardMaterial({ color: new THREE.Color(rt.color).multiplyScalar(0.8), roughness: 0.3, metalness: Math.max(0.62, big ? 0.78 : 0.4), envMapIntensity: 1.2 })
+      const dir = new THREE.Vector3().subVectors(b, a), len = dir.length() || 0.01, nd = dir.clone().normalize()
+      const pipe = new THREE.Mesh(new THREE.CylinderGeometry(rad, rad, len, 26), pm); pipe.position.copy(a).add(b).multiplyScalar(0.5); pipe.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), nd); fixtureGroup.add(pipe)
+      ;(incident[r.a] = incident[r.a] || []).push({ p: a, dir: nd.clone(), fm, rad })
+      ;(incident[r.b] = incident[r.b] || []).push({ p: b, dir: nd.clone().negate(), fm, rad })
       const dsId = flowDownstream(r, scene3, { deg }, sinkTypes), to = dsId === r.b ? b : a, from = dsId === r.b ? a : b, fdir = new THREE.Vector3().subVectors(to, from).normalize()
-      const arrowMat = new THREE.MeshStandardMaterial({ color: 0xeef4fa, emissive: 0x18242e })
-      for (const t of (len > 1.4 ? [0.34, 0.68] : [0.5])) { const cone = new THREE.Mesh(new THREE.ConeGeometry(rad * 1.7 + 0.02, rad * 5 + 0.08, 18), arrowMat); cone.position.lerpVectors(from, to, t); cone.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), fdir); fixtureGroup.add(cone) }
+      const arrowMat = new THREE.MeshStandardMaterial({ color: 0xf2f6fa, emissive: 0x1c2832, roughness: 0.5, metalness: 0.1 })
+      for (const t of (len > 1.6 ? [0.36, 0.7] : [0.5])) { const cone = new THREE.Mesh(new THREE.ConeGeometry(rad * 1.4 + 0.014, rad * 3.4 + 0.05, 16), arrowMat); cone.position.lerpVectors(from, to, t).addScaledVector(new THREE.Vector3(0, 1, 0), rad + 0.03); cone.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), fdir); fixtureGroup.add(cone) }
     }
-    for (const n of scene3.nodes) if ((deg[n.id] || 0) >= 3) { const f = nfloor(n), tee = box(0.22, 0.22, 0.22, new THREE.MeshStandardMaterial({ color: 0xd8a24a, roughness: 0.45, metalness: 0.3 })); tee.position.set(f[0], 0.35, f[1]); fixtureGroup.add(tee) }
+    for (const id in incident) {
+      const list = incident[id], hubR = Math.max(...list.map(x => x.rad)) * 1.5
+      const hub = new THREE.Mesh(new THREE.SphereGeometry(hubR, 22, 16), list[0].fm); hub.position.copy(list[0].p); fixtureGroup.add(hub)
+      for (const inc of list) { const collar = new THREE.Mesh(new THREE.CylinderGeometry(inc.rad * 1.32, inc.rad * 1.32, hubR * 1.5, 22), inc.fm); collar.position.copy(inc.p).addScaledVector(inc.dir, hubR * 0.75); collar.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), inc.dir); fixtureGroup.add(collar) }
+    }
     fixtureGroup.traverse(o => { if (o.isMesh && !(o.material && o.material.transparent)) { o.castShadow = true; o.receiveShadow = true } })
     updateSel(); updateHud()
   }
