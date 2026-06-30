@@ -12,55 +12,65 @@ const PIPE_R = { sup12: 0.05, sup34: 0.06, dwv15: 0.08, dwv2: 0.1, dwv3: 0.13, d
 const porc = new THREE.MeshPhysicalMaterial({ color: 0xf3f6f8, roughness: 0.22, metalness: 0, clearcoat: 0.7, clearcoatRoughness: 0.22, envMapIntensity: 1.0 })
 const metal = new THREE.MeshStandardMaterial({ color: 0xd2d8de, roughness: 0.25, metalness: 0.92, envMapIntensity: 1.2 })
 const glass = new THREE.MeshPhysicalMaterial({ color: 0xd4e8f0, roughness: 0.05, metalness: 0, transmission: 0.55, thickness: 0.4, transparent: true, opacity: 0.45, envMapIntensity: 1.0 })
-const box = (w, h, d, m, bev) => new THREE.Mesh(new RoundedBoxGeometry(w, h, d, 4, bev != null ? bev : Math.min(0.045, Math.min(w, h, d) * 0.25)), m)
-const cyl = (rt, rb, h, m, seg) => new THREE.Mesh(new THREE.CylinderGeometry(rt, rb, h, seg || 40), m)
-const dark = new THREE.MeshStandardMaterial({ color: 0x2b3138, roughness: 0.5, metalness: 0.2 })
-const tap = (g, w, d, h) => { const stem = cyl(0.035, 0.04, h * 0.26, metal, 18); stem.position.set(0, h * 0.93, -d * 0.3); g.add(stem); const spout = cyl(0.03, 0.03, w * 0.26, metal, 14); spout.rotation.z = Math.PI / 2.1; spout.position.set(0, h * 1.04, -d * 0.22); g.add(spout) }
+const box = (w, h, d, m, bev) => new THREE.Mesh(new RoundedBoxGeometry(w, h, d, 4, bev != null ? bev : Math.min(0.04, Math.min(w, h, d) * 0.22)), m)
+const cyl = (rt, rb, h, m, seg) => new THREE.Mesh(new THREE.CylinderGeometry(rt, rb, h, seg || 44), m)
+const lathe = (pts, m, sz) => { const mm = m.clone(); mm.side = THREE.DoubleSide; const me = new THREE.Mesh(new THREE.LatheGeometry(pts.map(p => new THREE.Vector2(Math.max(0.0001, p[0]), p[1])), 56), mm); if (sz) me.scale.z = sz; return me }
+const tube = (pts, r, m) => new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts.map(p => new THREE.Vector3(p[0], p[1], p[2]))), 28, r, 16), m)
+const dark = new THREE.MeshStandardMaterial({ color: 0x2b3138, roughness: 0.5, metalness: 0.22 })
+const chrome = new THREE.MeshStandardMaterial({ color: 0xd6dbe0, roughness: 0.15, metalness: 0.95, envMapIntensity: 1.3 })
+const knobAt = (g, x, y, z) => { const k = cyl(0.045, 0.055, 0.05, chrome, 20); k.rotation.x = Math.PI / 2; k.position.set(x, y, z); g.add(k) }
 const SHAPES3D = {
-  toilet: (w, d, h) => { const g = new THREE.Group()
-    const tank = box(w * 0.92, h * 0.6, d * 0.28, porc); tank.position.set(0, h * 0.34, -d / 2 + d * 0.15); g.add(tank)
-    const lid = box(w * 0.78, h * 0.05, d * 0.42, porc); lid.position.set(0, h * 0.45, d * 0.05); g.add(lid)
-    const bowl = cyl(w * 0.44, w * 0.28, h * 0.42, porc, 44); bowl.position.set(0, h * 0.23, d * 0.05); g.add(bowl)
-    const seat = new THREE.Mesh(new THREE.TorusGeometry(w * 0.4, w * 0.085, 18, 56), porc); seat.rotation.x = Math.PI / 2; seat.scale.z = 1.22; seat.position.set(0, h * 0.44, d * 0.07); g.add(seat)
-    const foot = cyl(w * 0.24, w * 0.32, h * 0.1, porc, 36); foot.position.set(0, h * 0.05, d * 0.05); g.add(foot); return g },
-  basin: (w, d, h) => { const g = new THREE.Group()
-    const ped = cyl(w * 0.15, w * 0.27, h * 0.72, porc, 30); ped.position.y = h * 0.36; g.add(ped)
-    const top = cyl(w * 0.5, w * 0.46, h * 0.1, porc, 36); top.position.y = h * 0.8; g.add(top)
-    const bowl = cyl(w * 0.36, w * 0.2, h * 0.14, porc, 36); bowl.position.set(0, h * 0.78, 0); g.add(bowl)
-    tap(g, w, d, h); return g },
+  toilet: (w, d, h) => { const g = new THREE.Group(), R = w * 0.5
+    const body = lathe([[0, 0], [R * 0.56, 0], [R * 0.5, h * 0.08], [R * 0.34, h * 0.19], [R * 0.44, h * 0.31], [R * 0.92, h * 0.44], [R, h * 0.49], [R, h * 0.52], [R * 0.82, h * 0.52], [R * 0.7, h * 0.47], [R * 0.5, h * 0.36], [R * 0.18, h * 0.28], [0, h * 0.28]], porc, 1.3); body.position.z = d * 0.06; g.add(body)
+    const seat = lathe([[R * 0.64, 0], [R * 1.02, 0], [R * 1.02, h * 0.04], [R * 0.64, h * 0.04], [R * 0.64, 0]], porc, 1.32); seat.position.set(0, h * 0.52, d * 0.06); g.add(seat)
+    const tank = box(w * 0.96, h * 0.44, d * 0.26, porc, 0.04); tank.position.set(0, h * 0.72, -d * 0.33); g.add(tank)
+    const lid = box(w * 0.82, h * 0.06, d * 0.3, porc, 0.03); lid.position.set(0, h * 0.95, -d * 0.31); g.add(lid)
+    const btn = cyl(0.05, 0.05, 0.04, chrome, 18); btn.position.set(w * 0.18, h * 0.98, -d * 0.31); g.add(btn); return g },
+  basin: (w, d, h) => { const g = new THREE.Group(), R = w * 0.5
+    const ped = lathe([[R * 0.3, 0], [R * 0.34, 0], [R * 0.3, h * 0.08], [R * 0.15, h * 0.36], [R * 0.18, h * 0.6], [R * 0.3, h * 0.7]], porc); g.add(ped)
+    const basin = lathe([[0, h * 0.72], [R * 0.5, h * 0.72], [R * 0.86, h * 0.78], [R, h * 0.88], [R * 0.86, h * 0.88], [R * 0.8, h * 0.82], [R * 0.34, h * 0.76], [0, h * 0.76]], porc); g.add(basin)
+    const fau = tube([[0, h * 0.88, -d * 0.3], [0, h * 1.08, -d * 0.3], [0, h * 1.14, -d * 0.22], [0, h * 1.1, -d * 0.1]], 0.022, chrome); g.add(fau); return g },
   ksink: (w, d, h) => { const g = new THREE.Group()
-    const cab = box(w, h * 0.84, d, new THREE.MeshStandardMaterial({ color: 0xc4c9d0, roughness: 0.45, metalness: 0.25 })); cab.position.y = h * 0.42; g.add(cab)
-    const counter = box(w * 1.05, h * 0.07, d * 1.06, new THREE.MeshStandardMaterial({ color: 0x2f343b, roughness: 0.3, metalness: 0.15 })); counter.position.y = h * 0.88; g.add(counter)
-    for (const sx of [-1, 1]) { const b = box(w * 0.36, h * 0.18, d * 0.56, metal, 0.03); b.position.set(sx * w * 0.2, h * 0.85, 0); g.add(b) }
-    tap(g, w, d, h); return g },
+    const cab = box(w, h * 0.82, d, new THREE.MeshStandardMaterial({ color: 0xc4c9d0, roughness: 0.45, metalness: 0.2 })); cab.position.y = h * 0.41; g.add(cab)
+    const ct = box(w * 1.06, h * 0.07, d * 1.06, new THREE.MeshStandardMaterial({ color: 0x2f343b, roughness: 0.3, metalness: 0.15 })); ct.position.y = h * 0.86; g.add(ct)
+    const sinkTop = box(w * 0.82, h * 0.05, d * 0.72, chrome, 0.02); sinkTop.position.set(0, h * 0.88, 0); g.add(sinkTop)
+    for (const sx of [-1, 1]) { const basin = box(w * 0.32, h * 0.11, d * 0.52, new THREE.MeshStandardMaterial({ color: 0x6c747d, roughness: 0.3, metalness: 0.5 }), 0.02); basin.position.set(sx * w * 0.19, h * 0.84, 0); g.add(basin) }
+    const fau = tube([[0, h * 0.9, -d * 0.3], [0, h * 1.18, -d * 0.3], [0, h * 1.26, -d * 0.14], [0, h * 1.16, d * 0.02]], 0.025, chrome); g.add(fau); return g },
   tub: (w, d, h) => { const g = new THREE.Group()
-    const shell = box(w, h, d, porc, 0.08); shell.position.y = h / 2; g.add(shell)
-    const well = new THREE.Mesh(new THREE.CapsuleGeometry(d * 0.34, w * 0.5, 6, 28), new THREE.MeshStandardMaterial({ color: 0xe7ecf2, roughness: 0.16 })); well.rotation.z = Math.PI / 2; well.position.set(0, h * 0.78, 0); g.add(well); return g },
+    const apron = box(w, h, d, porc, 0.05); apron.position.y = h / 2; g.add(apron)
+    const well = new THREE.Mesh(new THREE.CapsuleGeometry(d * 0.36, w * 0.46, 8, 32), new THREE.MeshStandardMaterial({ color: 0xeaeff4, roughness: 0.12, metalness: 0.05, envMapIntensity: 1.1 })); well.rotation.z = Math.PI / 2; well.position.set(0, h * 0.78, 0); g.add(well)
+    const fau = tube([[w * 0.42, h, -d * 0.32], [w * 0.42, h * 1.1, -d * 0.32], [w * 0.42, h * 1.12, -d * 0.2]], 0.025, chrome); g.add(fau); return g },
   shower: (w, d, h) => { const g = new THREE.Group()
-    const pan = box(w, h * 0.06, d, porc); pan.position.y = h * 0.03; g.add(pan)
-    const wallA = box(w, h, 0.035, glass, 0.008); wallA.position.set(0, h / 2, -d / 2); g.add(wallA)
-    const wallB = box(0.035, h, d, glass, 0.008); wallB.position.set(-w / 2, h / 2, 0); g.add(wallB)
-    const arm = cyl(0.028, 0.028, w * 0.2, metal, 14); arm.rotation.z = Math.PI / 2.3; arm.position.set(-w * 0.34, h * 0.84, -d * 0.42); g.add(arm)
-    const head = cyl(0.15, 0.15, 0.045, metal, 28); head.rotation.x = 0.55; head.position.set(-w * 0.22, h * 0.79, -d * 0.36); g.add(head); return g },
-  round: (w, d, h) => { const g = new THREE.Group()
-    const body = cyl(w * 0.5, w * 0.5, h * 0.9, new THREE.MeshStandardMaterial({ color: 0xe6eaee, roughness: 0.34, metalness: 0.45, envMapIntensity: 1.1 }), 48); body.position.y = h * 0.45; g.add(body)
-    const top = cyl(w * 0.5, w * 0.4, h * 0.1, metal, 48); top.position.y = h * 0.95; g.add(top)
-    const p1 = cyl(0.05, 0.05, h * 0.18, metal, 14); p1.position.set(w * 0.24, h * 1.02, 0); g.add(p1); return g },
+    const pan = box(w, h * 0.05, d, porc); pan.position.y = h * 0.025; g.add(pan)
+    const wallA = box(w, h, 0.03, glass, 0.006); wallA.position.set(0, h / 2, -d / 2); g.add(wallA)
+    const wallB = box(0.03, h, d, glass, 0.006); wallB.position.set(-w / 2, h / 2, 0); g.add(wallB)
+    const arm = tube([[-w * 0.42, h * 0.86, -d * 0.42], [-w * 0.32, h * 0.84, -d * 0.4], [-w * 0.24, h * 0.8, -d * 0.36]], 0.018, chrome); g.add(arm)
+    const head = cyl(0.14, 0.15, 0.05, chrome, 28); head.rotation.x = 0.5; head.position.set(-w * 0.22, h * 0.78, -d * 0.34); g.add(head)
+    const valve = cyl(0.07, 0.07, 0.05, chrome, 20); valve.rotation.x = Math.PI / 2; valve.position.set(-w * 0.42, h * 0.42, -d * 0.46); g.add(valve); return g },
+  round: (w, d, h) => { const g = new THREE.Group(), R = w * 0.5
+    const body = lathe([[0, 0], [R * 0.9, 0], [R, h * 0.04], [R, h * 0.86], [R * 0.92, h * 0.93], [R * 0.6, h * 0.99], [R * 0.2, h], [0, h]], new THREE.MeshStandardMaterial({ color: 0xe8ebee, roughness: 0.32, metalness: 0.4, envMapIntensity: 1.1 })); g.add(body)
+    const p1 = cyl(0.05, 0.05, h * 0.16, chrome, 16); p1.position.set(R * 0.4, h * 1.02, 0); g.add(p1)
+    const p2 = cyl(0.05, 0.05, h * 0.16, chrome, 16); p2.position.set(-R * 0.4, h * 1.02, 0); g.add(p2)
+    const ctrl = box(w * 0.3, h * 0.16, 0.06, dark); ctrl.position.set(0, h * 0.4, R * 0.96); g.add(ctrl); return g },
   washer: (w, d, h) => { const g = new THREE.Group()
-    const b = box(w, h, d, new THREE.MeshStandardMaterial({ color: 0xeef2f5, roughness: 0.3, metalness: 0.12 }), 0.04); b.position.y = h / 2; g.add(b)
-    const ctrl = box(w * 0.86, h * 0.13, d * 0.08, dark); ctrl.position.set(0, h * 0.86, d / 2 - 0.03); g.add(ctrl)
-    const ring = new THREE.Mesh(new THREE.TorusGeometry(w * 0.26, w * 0.05, 16, 44), metal); ring.position.set(0, h * 0.44, d / 2 + 0.01); g.add(ring)
-    const gd = cyl(w * 0.22, w * 0.22, 0.04, new THREE.MeshPhysicalMaterial({ color: 0x9ec0d2, roughness: 0.08, transmission: 0.55, transparent: true, opacity: 0.5 }), 36); gd.rotation.x = Math.PI / 2; gd.position.set(0, h * 0.44, d / 2 + 0.03); g.add(gd); return g },
+    const b = box(w, h, d, new THREE.MeshStandardMaterial({ color: 0xeef2f5, roughness: 0.28, metalness: 0.12 }), 0.04); b.position.y = h / 2; g.add(b)
+    const cons = box(w * 0.9, h * 0.16, d * 0.5, new THREE.MeshStandardMaterial({ color: 0xdce1e6, roughness: 0.3 })); cons.position.set(0, h * 0.92, -d * 0.2); g.add(cons)
+    knobAt(g, -w * 0.3, h * 0.97, d * 0.02); knobAt(g, w * 0.3, h * 0.97, d * 0.02)
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(w * 0.28, w * 0.05, 18, 44), chrome); ring.position.set(0, h * 0.44, d / 2); g.add(ring)
+    const gd = cyl(w * 0.24, w * 0.24, 0.05, new THREE.MeshPhysicalMaterial({ color: 0x90b6c8, roughness: 0.06, transmission: 0.6, transparent: true, opacity: 0.5, envMapIntensity: 1.2 }), 36); gd.rotation.x = Math.PI / 2; gd.position.set(0, h * 0.44, d / 2 + 0.02); g.add(gd); return g },
   square: (w, d, h) => { const g = new THREE.Group()
-    const b = box(w, h, d, new THREE.MeshStandardMaterial({ color: 0xdfe3e8, roughness: 0.32, metalness: 0.4, envMapIntensity: 1.1 }), 0.05); b.position.y = h / 2; g.add(b)
-    const ctrl = box(w * 0.9, h * 0.12, d * 0.06, dark); ctrl.position.set(0, h * 0.9, d / 2 - 0.01); g.add(ctrl); return g },
-  panel: (w, d, h) => { const g = new THREE.Group()
-    const b = box(w, h, Math.max(0.4, d), new THREE.MeshStandardMaterial({ color: 0x59636f, roughness: 0.42, metalness: 0.6 }), 0.04); b.position.y = h / 2; g.add(b)
-    const door = box(w * 0.84, h * 0.9, 0.04, new THREE.MeshStandardMaterial({ color: 0x707b86, roughness: 0.38, metalness: 0.65 }), 0.015); door.position.set(0, h / 2, Math.max(0.4, d) / 2 + 0.02); g.add(door); return g },
-  marker: (w, d, h, acc) => { const g = new THREE.Group(); const m = new THREE.MeshStandardMaterial({ color: acc, roughness: 0.38, metalness: 0.3 })
-    const puck = cyl(0.2, 0.2, 0.1, m, 30); puck.position.y = 0.34; g.add(puck)
-    const ring = new THREE.Mesh(new THREE.TorusGeometry(0.2, 0.03, 12, 30), metal); ring.rotation.x = Math.PI / 2; ring.position.y = 0.39; g.add(ring)
-    const stem = cyl(0.045, 0.045, 0.34, new THREE.MeshStandardMaterial({ color: 0xaab0b8, roughness: 0.5 }), 14); stem.position.y = 0.17; g.add(stem); return g },
+    const b = box(w, h, d, new THREE.MeshStandardMaterial({ color: 0xe2e6ea, roughness: 0.3, metalness: 0.4, envMapIntensity: 1.1 }), 0.05); b.position.y = h / 2; g.add(b)
+    const cons = box(w * 0.92, h * 0.14, d * 0.06, dark); cons.position.set(0, h * 0.92, d / 2 - 0.02); g.add(cons)
+    const handle = cyl(0.04, 0.04, w * 0.7, chrome, 16); handle.rotation.z = Math.PI / 2; handle.position.set(0, h * 0.6, d / 2 + 0.05); g.add(handle)
+    knobAt(g, -w * 0.32, h * 0.92, d / 2 - 0.01); knobAt(g, -w * 0.14, h * 0.92, d / 2 - 0.01); return g },
+  panel: (w, d, h) => { const g = new THREE.Group(), dd = Math.max(0.4, d)
+    const b = box(w, h, dd, new THREE.MeshStandardMaterial({ color: 0x59636f, roughness: 0.42, metalness: 0.6 }), 0.03); b.position.y = h / 2; g.add(b)
+    const door = box(w * 0.86, h * 0.92, 0.05, new THREE.MeshStandardMaterial({ color: 0x6f7a85, roughness: 0.36, metalness: 0.7 }), 0.02); door.position.set(w * 0.02, h / 2, dd / 2 + 0.03); door.rotation.y = -0.12; g.add(door)
+    for (let r = 0; r < 6; r++) for (const sx of [-1, 1]) { const br = box(w * 0.3, h * 0.05, 0.03, dark); br.position.set(sx * w * 0.2, h * 0.28 + r * h * 0.1, dd / 2 + 0.01); g.add(br) } return g },
+  marker: (w, d, h, acc) => { const g = new THREE.Group(); const m = new THREE.MeshStandardMaterial({ color: acc, roughness: 0.4, metalness: 0.25 })
+    const plate = box(0.42, 0.66, 0.1, new THREE.MeshStandardMaterial({ color: 0xeef1f4, roughness: 0.4 })); plate.position.y = 0.6; g.add(plate)
+    const face = box(0.3, 0.5, 0.05, m); face.position.set(0, 0.6, 0.06); g.add(face)
+    const stem = cyl(0.05, 0.06, 0.36, new THREE.MeshStandardMaterial({ color: 0xb0b6be, roughness: 0.5 }), 16); stem.position.y = 0.18; g.add(stem); return g },
 }
 const disposeGroup = g => { g.traverse(o => { if (o.geometry) o.geometry.dispose(); if (o.material && o.material.dispose && o.material !== porc && o.material !== metal && o.material !== glass) o.material.dispose() }); while (g.children.length) g.remove(g.children[0]) }
 
