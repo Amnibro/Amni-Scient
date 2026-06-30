@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js'
 import { initPermits, updatePermits } from './codes.js?v=fix1'
 import { initMapTrace, sitePlanSVG, cropForPlan, mapPlanSnapshot } from './maptrace.js?v=1'
 import { initAutoDetect } from './autodetect.js?v=1'
@@ -41,6 +42,8 @@ const cam = new THREE.PerspectiveCamera(50, 2, 0.1, 2000)
 cam.position.set(24, 20, 32)
 const renderer = new THREE.WebGLRenderer({ canvas: $('#c3d'), antialias: true })
 renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap
+renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.04
+const pmremP = new THREE.PMREMGenerator(renderer); scene.environment = pmremP.fromScene(new RoomEnvironment(), 0.04).texture; pmremP.dispose()
 const controls = new OrbitControls(cam, $('#c3d'))
 controls.enableDamping = true; controls.maxPolarAngle = Math.PI / 2 - 0.04
 scene.add(new THREE.HemisphereLight(0xcfe4f5, 0x52733f, 1.3))
