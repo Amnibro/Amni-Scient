@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js'
 import { initPermits, updatePermits } from './codes.js?v=fix1'
 import { initMapTrace, sitePlanSVG, cropForPlan, mapPlanSnapshot } from './maptrace.js?v=271'
 import { initAutoDetect } from './autodetect.js?v=270'
@@ -85,6 +86,8 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap
 const scene = new THREE.Scene()
 scene.background = new THREE.Color(0x8db8da)
 scene.fog = new THREE.Fog(0x8db8da, 700, 1800)
+renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.0
+const pmrem = new THREE.PMREMGenerator(renderer); scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture; pmrem.dispose()
 const camera = new THREE.PerspectiveCamera(55, 2, 1, 4000)
 camera.position.set(230, 140, 290)
 const controls = new OrbitControls(camera, canvas)

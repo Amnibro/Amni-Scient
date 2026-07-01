@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js'
 import { initPermits, updatePermits } from './codes.js?v=fix1'
 const LS = 'amniplan.cfg.v1', LSP = 'amniplan.prices.v1'
 const defCfg = { w: 40, d: 30, house_edge: 0, rooms: [{ name: 'Living', kind: 'living', w: 18, d: 14 }, { name: 'Kitchen', kind: 'kitchen', w: 13, d: 12 }, { name: 'Bed 1', kind: 'bedroom', w: 13, d: 12 }, { name: 'Bed 2', kind: 'bedroom', w: 12, d: 11 }, { name: 'Bath', kind: 'bath', w: 8, d: 6 }, { name: 'Bath 2', kind: 'bath', w: 7, d: 5 }, { name: 'Laundry', kind: 'laundry', w: 7, d: 6 }] }
@@ -32,6 +33,8 @@ const cam = new THREE.PerspectiveCamera(50, 2, 0.1, 2000)
 cam.position.set(22, 18, 30)
 const renderer = new THREE.WebGLRenderer({ canvas: $('#c3d'), antialias: true })
 renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap
+renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05
+const pmrem = new THREE.PMREMGenerator(renderer); scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture; pmrem.dispose()
 const controls = new OrbitControls(cam, $('#c3d'))
 controls.enableDamping = true; controls.maxPolarAngle = Math.PI / 2 - 0.04
 scene.add(new THREE.HemisphereLight(0xcfe4f5, 0x52733f, 1.3))
