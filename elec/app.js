@@ -266,5 +266,16 @@ function maybeScanBanner() {
   side.insertBefore(b, side.firstChild)
   b.onclick = () => { cfg.sqft = Math.round(scan.area_ft2); const e = document.querySelector('#sqft'); if (e) e.value = cfg.sqft; recompute(); b.textContent = '✓ Using ' + cfg.sqft + ' ft² from your scan'; b.style.color = 'var(--ok)'; b.style.borderColor = 'var(--ok)' }
 }
+function maybePlanBanner() {
+  let plan; try { plan = JSON.parse(localStorage.getItem('amni_construct_plan')) } catch (e) {}
+  if (!plan || Date.now() - (plan.ts || 0) > 86400000) return
+  const side = document.querySelector('#side'); if (!side) return
+  const b = document.createElement('button')
+  b.style.cssText = 'display:block;width:100%;padding:9px;margin-bottom:12px;background:var(--bg);border:1px dashed var(--acc2);color:var(--acc2);border-radius:8px;cursor:pointer;font-weight:600;font-size:13px'
+  b.textContent = '🏠 Use my house plan (' + (+plan.net_area || +plan.area_ft2 || 0).toFixed(0) + ' ft², ' + (+plan.bedrooms || 0) + ' bd/' + (+plan.baths || 0) + ' ba)'
+  side.insertBefore(b, side.firstChild)
+  b.onclick = () => { cfg.sqft = Math.round(+plan.net_area || +plan.area_ft2 || cfg.sqft); if (plan.bedrooms != null) cfg.bedrooms = +plan.bedrooms; if (plan.baths != null) cfg.bathrooms = +plan.baths; syncInputs(); const e = document.querySelector('#sqft'); if (e) e.value = cfg.sqft; recompute(); b.textContent = '✓ Using your house plan'; b.style.color = 'var(--ok)'; b.style.borderColor = 'var(--ok)' }
+}
 
 maybeScanBanner()
+maybePlanBanner()

@@ -206,7 +206,7 @@ const price = (id, store) => priceEdits[`${id}.${store}`] ?? catalog[id]?.[store
 const renderMat = () => {
   if (!out) return
   const c = out.calc
-  $('#mat-summary').innerHTML = [[`${c.area_ft2.toFixed(0)} ft²`, 'slab area'], [`${c.order_yd3.toFixed(2)} yd³`, 'concrete to order'], [`${c.bags80}`, '80 lb bags (DIY alt)'], [`${c.gravel_tons.toFixed(1)} t`, 'gravel base'], [`${c.panels}`, 'joint panels']].map(([b, s]) => `<div class="chip"><b>${b}</b><span>${s}</span></div>`).join('')
+  $('#mat-summary').innerHTML = [[`${c.area_ft2.toFixed(0)} ft²`, 'slab area'], [`${c.order_yd3.toFixed(2)} yd³`, 'concrete to order'], [`${c.bags80}`, '80 lb bags (DIY alt)'], [`${c.gravel_tons.toFixed(1)} t`, 'gravel base'], [`${c.panels}`, 'joint panels']].map(([b, s]) => `<div class="chip"><b>${b}</b><span>${s}</span></div>`).join('') + '<div style="flex-basis:100%;font-size:12px;color:var(--mut);margin-top:2px">Concrete-to-order includes a waste allowance — add ~10% for uneven subgrade + spillage, and order a touch extra rather than run short mid-pour.</div>'
   let th = 0, tl = 0
   const rows = out.bom.map(it => {
     const cat = catalog[it.id] || {}

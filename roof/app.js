@@ -173,7 +173,7 @@ const price = (id, store) => priceEdits[`${id}.${store}`] ?? catalog[id]?.[store
 const renderMat = () => {
   if (!out) return
   const c = out.calc
-  $('#mat-summary').innerHTML = [[`${c.squares.toFixed(1)}`, 'squares'], [`${c.bundles}`, 'bundles'], [`${c.roof_area_ft2.toFixed(0)} ft²`, 'roof area'], [`${c.pitch}:12`, 'pitch'], [`${c.eave_ft.toFixed(0)} ft`, 'eaves']].map(([b, s]) => `<div class="chip"><b>${b}</b><span>${s}</span></div>`).join('')
+  $('#mat-summary').innerHTML = [[`${c.squares.toFixed(1)}`, 'squares'], [`${c.bundles}`, 'bundles'], [`${c.roof_area_ft2.toFixed(0)} ft²`, 'roof area'], [`${c.pitch}:12`, 'pitch'], [`${c.eave_ft.toFixed(0)} ft`, 'eaves']].map(([b, s]) => `<div class="chip"><b>${b}</b><span>${s}</span></div>`).join('') + '<div style="flex-basis:100%;font-size:12px;color:var(--mut);margin-top:2px">Bundle counts include ~10–15% waste for cuts, hips/valleys, starter + ridge cap — add more for a very cut-up roof.</div>'
   let th = 0, tl = 0
   const rows = out.bom.map(it => {
     const cat = catalog[it.id] || {}

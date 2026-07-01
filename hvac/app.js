@@ -85,3 +85,14 @@ renderMat()
 renderPlans()
 renderGuide()
 initPermits(() => ({}), () => null)
+function maybePlanBanner() {
+  let plan; try { plan = JSON.parse(localStorage.getItem('amni_construct_plan')) } catch (e) {}
+  if (!plan || Date.now() - (plan.ts || 0) > 86400000) return
+  const side = document.querySelector('#side'); if (!side) return
+  const area = +plan.net_area || +plan.area_ft2 || 0, tons = Math.max(1, Math.round(area / 500 * 2) / 2), cfm = Math.round(tons * 400)
+  const b = document.createElement('div')
+  b.style.cssText = 'padding:9px 11px;margin-bottom:12px;background:var(--bg);border:1px dashed var(--acc2);color:var(--ink);border-radius:8px;font-size:12px;line-height:1.5'
+  b.innerHTML = '🏠 <b>From your house plan:</b> ~' + area.toFixed(0) + ' ft² ≈ <b>' + tons + ' tons</b> ≈ <b>' + cfm + ' CFM</b>. Size the air handler + total supply to match (rule of thumb — confirm with a Manual J).'
+  side.insertBefore(b, side.firstChild)
+}
+maybePlanBanner()

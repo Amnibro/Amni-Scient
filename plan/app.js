@@ -139,6 +139,7 @@ const renderMat = () => {
     ['🔩 Frame', 'frame', `~${c.perimeter.toFixed(0)} lf of exterior wall to frame`],
     ['🚿 Plumb', 'plumb', `${c.toilets} WC, ${c.lavs + c.kitchen_sinks} sinks, ${c.showers} bath, ${c.washers} laundry`],
     ['⚡ Elec', 'elec', `${c.total_area.toFixed(0)} ft², ${c.bedrooms} bed / ${c.baths} bath -> size service`],
+    ['🌡️ HVAC', 'hvac', `~${Math.max(1, Math.round(c.total_area / 500 * 2) / 2)} tons / ${Math.round(Math.max(1, c.total_area / 500 * 2) / 2 * 400)} CFM for ${c.total_area.toFixed(0)} ft²`],
     ['🛠️ Deck', 'deck', 'add a deck off this plan'],
     ['🧱 Patio', 'patio', 'add a patio / walkway'],
     ['🏊 Pool', 'pool', 'size a pool for the yard'],
