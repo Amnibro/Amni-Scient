@@ -36,7 +36,7 @@ const cam = new THREE.PerspectiveCamera(50, 2, 0.1, 2000)
 cam.position.set(18, 16, 24)
 const renderer = new THREE.WebGLRenderer({ canvas: $('#c3d'), antialias: true })
 renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap
-renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.12
+renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.0
 const pmrem = new THREE.PMREMGenerator(renderer); scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture; pmrem.dispose()
 const controls = new OrbitControls(cam, $('#c3d'))
 controls.enableDamping = true; controls.maxPolarAngle = Math.PI / 2 - 0.02
