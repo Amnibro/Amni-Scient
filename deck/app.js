@@ -299,8 +299,9 @@ const renderMat = (flashIds = []) => {
       <td><input${fl('lowes')} data-id="${it.id}" data-st="lowes" value="${pl ?? ''}"></td><td>${money(pl != null ? pl * it.qty : null)}</td><td><a href="${link(it.id, 'lowes')}" target="_blank">Lowes ↗</a></td></tr>`
   }).join('')
   const best = thd <= tlo ? 'Home Depot' : "Lowe's"
+  const A = out.calc.area, allIn = `<tr><td colspan="8" style="padding-top:16px"><div style="background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px"><div style="color:var(--acc);font-weight:600;margin-bottom:6px">💪 Installed / all-in estimate</div><div style="font-size:13px;color:var(--ink)">Materials <b>$${thd.toFixed(0)}</b> + typical build labor <b>$${(A * 10).toFixed(0)}–$${(A * 25).toFixed(0)}</b> (${A.toFixed(0)} ft² × $10–$25/ft²) = <b style="color:var(--ok)">$${(thd + A * 10).toFixed(0)}–$${(thd + A * 25).toFixed(0)} installed</b></div><div style="font-size:12px;color:var(--mut);margin-top:5px">Hire it out and labor typically adds this range; DIY and it's near $0. Rough regional guide — get local quotes.</div></div></td></tr>`
   $('#mat-table').innerHTML = `<tr><th>Item</th><th>Qty</th><th>HD $/ea</th><th>HD total</th><th></th><th>Lowes $/ea</th><th>Lowes total</th><th></th></tr>${rows}
-    <tr><td class="tot">TOTAL</td><td></td><td></td><td class="tot ${thd <= tlo ? 'best' : ''}">${money(thd)}</td><td></td><td></td><td class="tot ${tlo < thd ? 'best' : ''}">${money(tlo)}</td><td></td></tr>`
+    <tr><td class="tot">TOTAL</td><td></td><td></td><td class="tot ${thd <= tlo ? 'best' : ''}">${money(thd)}</td><td></td><td></td><td class="tot ${tlo < thd ? 'best' : ''}">${money(tlo)}</td><td></td></tr>${allIn}`
   $('#mat-summary').innerHTML = `<div class="chip"><b>${money(Math.min(thd, tlo))}</b><span>best total (${best})</span></div>
     <div class="chip"><b>${out.calc.area.toFixed(0)} sq ft</b><span>deck area</span></div>
     <div class="chip"><b>${out.bom.reduce((a, b) => a + b.qty, 0)}</b><span>total pieces</span></div>

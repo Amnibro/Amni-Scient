@@ -134,6 +134,8 @@ const renderGuide = () => {
   body.querySelectorAll('input[data-gk]').forEach(el => el.onchange = () => { gChk[el.dataset.gk] = el.checked; localStorage.setItem(G_LS, JSON.stringify(gChk)); renderGuide() })
 }
 const FLOOR_PPSF = { lvp: 2.6, laminate: 2.1, hardwood: 6.5, tile: 4.5, carpet: 2.8 }
+const FLOOR_LABOR = { lvp: [1, 2.5], laminate: [1, 2], hardwood: [3, 6], tile: [5, 10], carpet: [1, 2] }
+const allInBanner = (matTotal, area, loR, hiR, cols, diy) => `<tr><td colspan="${cols || 6}" style="padding-top:16px"><div style="background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px"><div style="color:var(--acc);font-weight:600;margin-bottom:6px">💪 Installed / all-in estimate</div><div style="font-size:13px;color:var(--ink)">Materials <b>$${matTotal.toFixed(0)}</b> + typical install labor <b>$${(area * loR).toFixed(0)}–$${(area * hiR).toFixed(0)}</b> (${area.toFixed(0)} ft² × $${loR}–$${hiR}/ft²) = <b style="color:var(--ok)">$${(matTotal + area * loR).toFixed(0)}–$${(matTotal + area * hiR).toFixed(0)} installed</b></div><div style="font-size:12px;color:var(--mut);margin-top:5px">${diy || 'DIY it yourself → labor is $0 (the materials number)'}. Labor is a rough regional guide — get local quotes for a firm bid.</div></div></td></tr>`
 const FLOOR_Q = { lvp: ['luxury vinyl plank flooring', 'lvp flooring'], laminate: ['laminate flooring', 'laminate flooring'], hardwood: ['solid hardwood flooring', 'hardwood flooring'], tile: ['ceramic floor tile', 'floor tile'], carpet: ['carpet by the roll', 'carpet'] }
 const floorUnit = store => +(((FLOOR_PPSF[cfg.material] || FLOOR_PPSF.lvp) * (+cfg.box_sqft || 24)) * (store === 'lowes' ? 1.04 : 1)).toFixed(2)
 const floorQ = store => (FLOOR_Q[cfg.material] || FLOOR_Q.lvp)[store === 'hd' ? 0 : 1]
@@ -151,7 +153,8 @@ const renderMat = () => {
     const hq = it.id === 'floor' ? floorQ('hd') : cat.hdq, lq = it.id === 'floor' ? floorQ('lowes') : cat.lq
     return `<tr><td>${it.desc}</td><td>${it.qty}</td><td><input data-id="${it.id}" data-store="hd" value="${ph ?? ''}"> ${link('hd', hq)}</td><td>${ph != null ? '$' + (ph * it.qty).toFixed(2) : '—'}</td><td><input data-id="${it.id}" data-store="lowes" value="${pl ?? ''}"> ${link('lowes', lq)}</td><td>${pl != null ? '$' + (pl * it.qty).toFixed(2) : '—'}</td></tr>`
   }).join('')
-  $('#mat-table').innerHTML = `<tr><th>Item</th><th>Qty</th><th>HD $</th><th>HD total</th><th>Lowes $</th><th>Lowes total</th></tr>${rows}<tr><td class="tot">TOTALS</td><td></td><td></td><td class="tot ${th <= tl ? 'best' : ''}">$${th.toFixed(2)}</td><td></td><td class="tot ${tl < th ? 'best' : ''}">$${tl.toFixed(2)}</td></tr>`
+  const [loR, hiR] = FLOOR_LABOR[cfg.material] || FLOOR_LABOR.lvp
+  $('#mat-table').innerHTML = `<tr><th>Item</th><th>Qty</th><th>HD $</th><th>HD total</th><th>Lowes $</th><th>Lowes total</th></tr>${rows}<tr><td class="tot">TOTALS</td><td></td><td></td><td class="tot ${th <= tl ? 'best' : ''}">$${th.toFixed(2)}</td><td></td><td class="tot ${tl < th ? 'best' : ''}">$${tl.toFixed(2)}</td></tr>${allInBanner(th, c.area_ft2, loR, hiR)}`
   document.querySelectorAll('#mat-table input').forEach(i => i.onchange = () => { const v = parseFloat(i.value); isNaN(v) ? delete priceEdits[`${i.dataset.id}.${i.dataset.store}`] : priceEdits[`${i.dataset.id}.${i.dataset.store}`] = v; localStorage.setItem(LSP, JSON.stringify(priceEdits)); renderMat() })
 }
 const parsePaste = (text, store) => {
