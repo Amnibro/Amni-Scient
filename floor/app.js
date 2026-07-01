@@ -133,7 +133,11 @@ const renderGuide = () => {
     + `<div style="${SEC}"><div style="${GH}">💵 Materials estimate</div><div style="font-size:13px;color:var(--ink)">~<b style="color:var(--ok)">$${cost.toFixed(0)}</b> in flooring + underlayment/trim (Home Depot catalog) — edit prices on the Materials tab.</div></div>`
   body.querySelectorAll('input[data-gk]').forEach(el => el.onchange = () => { gChk[el.dataset.gk] = el.checked; localStorage.setItem(G_LS, JSON.stringify(gChk)); renderGuide() })
 }
-const price = (id, store) => priceEdits[`${id}.${store}`] ?? catalog[id]?.[store] ?? null
+const FLOOR_PPSF = { lvp: 2.6, laminate: 2.1, hardwood: 6.5, tile: 4.5, carpet: 2.8 }
+const FLOOR_Q = { lvp: ['luxury vinyl plank flooring', 'lvp flooring'], laminate: ['laminate flooring', 'laminate flooring'], hardwood: ['solid hardwood flooring', 'hardwood flooring'], tile: ['ceramic floor tile', 'floor tile'], carpet: ['carpet by the roll', 'carpet'] }
+const floorUnit = store => +(((FLOOR_PPSF[cfg.material] || FLOOR_PPSF.lvp) * (+cfg.box_sqft || 24)) * (store === 'lowes' ? 1.04 : 1)).toFixed(2)
+const floorQ = store => (FLOOR_Q[cfg.material] || FLOOR_Q.lvp)[store === 'hd' ? 0 : 1]
+const price = (id, store) => { const e = priceEdits[`${id}.${store}`]; return e != null ? e : id === 'floor' ? floorUnit(store) : catalog[id]?.[store] ?? null }
 const renderMat = () => {
   if (!out) return
   const c = out.calc
@@ -144,7 +148,8 @@ const renderMat = () => {
     const ph = price(it.id, 'hd'), pl = price(it.id, 'lowes')
     ph != null && (th += ph * it.qty); pl != null && (tl += pl * it.qty)
     const link = (store, q) => q ? `<a href="https://www.${store === 'hd' ? 'homedepot' : 'lowes'}.com/s/${encodeURIComponent(q)}" target="_blank" rel="noopener">↗</a>` : ''
-    return `<tr><td>${it.desc}</td><td>${it.qty}</td><td><input data-id="${it.id}" data-store="hd" value="${ph ?? ''}"> ${link('hd', cat.hdq)}</td><td>${ph != null ? '$' + (ph * it.qty).toFixed(2) : '—'}</td><td><input data-id="${it.id}" data-store="lowes" value="${pl ?? ''}"> ${link('lowes', cat.lq)}</td><td>${pl != null ? '$' + (pl * it.qty).toFixed(2) : '—'}</td></tr>`
+    const hq = it.id === 'floor' ? floorQ('hd') : cat.hdq, lq = it.id === 'floor' ? floorQ('lowes') : cat.lq
+    return `<tr><td>${it.desc}</td><td>${it.qty}</td><td><input data-id="${it.id}" data-store="hd" value="${ph ?? ''}"> ${link('hd', hq)}</td><td>${ph != null ? '$' + (ph * it.qty).toFixed(2) : '—'}</td><td><input data-id="${it.id}" data-store="lowes" value="${pl ?? ''}"> ${link('lowes', lq)}</td><td>${pl != null ? '$' + (pl * it.qty).toFixed(2) : '—'}</td></tr>`
   }).join('')
   $('#mat-table').innerHTML = `<tr><th>Item</th><th>Qty</th><th>HD $</th><th>HD total</th><th>Lowes $</th><th>Lowes total</th></tr>${rows}<tr><td class="tot">TOTALS</td><td></td><td></td><td class="tot ${th <= tl ? 'best' : ''}">$${th.toFixed(2)}</td><td></td><td class="tot ${tl < th ? 'best' : ''}">$${tl.toFixed(2)}</td></tr>`
   document.querySelectorAll('#mat-table input').forEach(i => i.onchange = () => { const v = parseFloat(i.value); isNaN(v) ? delete priceEdits[`${i.dataset.id}.${i.dataset.store}`] : priceEdits[`${i.dataset.id}.${i.dataset.store}`] = v; localStorage.setItem(LSP, JSON.stringify(priceEdits)); renderMat() })
