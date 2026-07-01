@@ -211,7 +211,7 @@ const buildFinishes = () => {
     d.className = 'sw' + (cfg.pipe_material === k ? ' on' : '')
     d.style.background = hex
     d.innerHTML = `<span>${name}</span>`
-    d.onclick = () => { cfg.pipe_material = k; document.querySelectorAll('.sw').forEach(x => x.classList.toggle('on', x === d)); recompute() }
+    d.onclick = () => { cfg.pipe_material = k; document.querySelectorAll('.sw').forEach(x => x.classList.toggle('on', x === d)); recompute(); if (view3d) view3d.setSupply(k) }
     sw.appendChild(d)
   })
 }
@@ -266,7 +266,7 @@ const seedScene = () => {
 }
 function setupSketch() { const host = $('#sketch-host'); if (!host) return; mountSketch(host, { scene: sketchScene, trade: plumbTrade, catalog, store: 'hd', onChange: sc => { try { localStorage.setItem(SK_LS, JSON.stringify(sc)) } catch (e) {} } }) }
 let view3d = null
-async function mount3DView() { const host = $('#sketch3d-host'); if (!host) return; if (view3d) { view3d.rebuild(); return } try { const m = await import('./sketch-3d.js?v=m7'); view3d = m.mount3D(host, { scene: sketchScene, trade: plumbTrade, catalog, store: 'hd', onChange: sc => { try { localStorage.setItem(SK_LS, JSON.stringify(sc)) } catch (e) {} } }) } catch (e) { host.innerHTML = '<div style="padding:20px;color:#9aa0aa">3D sim unavailable</div>' } }
+async function mount3DView() { const host = $('#sketch3d-host'); if (!host) return; if (view3d) { view3d.rebuild(); view3d.setSupply(cfg.pipe_material); return } try { const m = await import('./sketch-3d.js?v=m8'); view3d = m.mount3D(host, { scene: sketchScene, trade: plumbTrade, catalog, store: 'hd', supplyMaterial: cfg.pipe_material, onChange: sc => { try { localStorage.setItem(SK_LS, JSON.stringify(sc)) } catch (e) {} } }) } catch (e) { host.innerHTML = '<div style="padding:20px;color:#9aa0aa">3D sim unavailable</div>' } }
 catalog = await fetch('catalog.json').then(r => r.json()).catch(() => ({}))
 initUI()
 resize()

@@ -10,9 +10,10 @@ import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.j
 
 const PIPE_R = { sup12: 0.035, sup34: 0.046, dwv15: 0.066, dwv2: 0.085, dwv3: 0.125, dwv4: 0.165, nm142: 0.03, nm122: 0.036, nm103: 0.045, nm63: 0.058, s6: 0.25, s8: 0.33, s10: 0.42, s12: 0.5, r8: 0.33, r10: 0.42, r12: 0.5 }
 const NMCOL = { nm142: 0xeef0f2, nm122: 0xe0c84a, nm103: 0xe08a3b, nm63: 0x33373d }
-const pipeStyle = (type, fallback) => {
+const SUPMAT = { copper: { col: 0xc4814f, rough: 0.26, metal: 0.86 }, pex: { col: 0xc23a3a, rough: 0.5, metal: 0.0 }, cpvc: { col: 0xd8c9a8, rough: 0.42, metal: 0.0 } }
+const pipeStyle = (type, fallback, supMat) => {
   if (/^dwv/.test(type)) return { col: 0xeef1f4, rough: 0.55, metal: 0.0 }
-  if (/^sup/.test(type)) return { col: 0xc4814f, rough: 0.26, metal: 0.86 }
+  if (/^sup/.test(type)) return SUPMAT[supMat] || SUPMAT.copper
   if (/^[sr]\d/.test(type)) return { col: 0xc6ccd4, rough: 0.36, metal: 0.85 }
   if (/^nm/.test(type)) return { col: NMCOL[type] || 0xeef0f2, rough: 0.62, metal: 0.0 }
   return { col: new THREE.Color(fallback || '#bbb').getHex(), rough: 0.4, metal: 0.3 }
@@ -85,6 +86,7 @@ const disposeGroup = g => { g.traverse(o => { if (o.geometry) o.geometry.dispose
 
 export function mount3D(container, opts) {
   const scene3 = opts.scene, trade = opts.trade, onChange = opts.onChange || (() => {})
+  let supMat = opts.supplyMaterial || 'copper'
   container.style.position = 'relative'
   const nfloor = n => (n.props && n.props.fx != null) ? [n.props.fx, n.props.fz] : [n.x / (scene3.scalePxPerFt || 24), n.y / (scene3.scalePxPerFt || 24)]
   let W = scene3.floorCal ? scene3.floorCal.w : 12, D = scene3.floorCal ? scene3.floorCal.d : 14
@@ -141,7 +143,7 @@ export function mount3D(container, opts) {
     const incident = {}
     for (const r of scene3.runs) {
       const path = runPathFt(scene3, r); if (path.length < 2) continue
-      const rt = (trade.runTypes || []).find(z => z.type === r.type) || { color: '#bbb' }, rad = PIPE_R[r.type] || 0.06, ps = pipeStyle(r.type, rt.color), isDrain = /^dwv/.test(r.type)
+      const rt = (trade.runTypes || []).find(z => z.type === r.type) || { color: '#bbb' }, rad = PIPE_R[r.type] || 0.06, ps = pipeStyle(r.type, rt.color, supMat), isDrain = /^dwv/.test(r.type)
       const pm = new THREE.MeshStandardMaterial({ color: ps.col, roughness: ps.rough, metalness: ps.metal, envMapIntensity: 1.0 })
       const fm = new THREE.MeshStandardMaterial({ color: new THREE.Color(ps.col).multiplyScalar(0.86), roughness: ps.rough * 0.82, metalness: ps.metal, envMapIntensity: 1.15 })
       const pts3 = path.map(p => new THREE.Vector3(p[0], 0.35, p[1])), last = pts3.length - 1
@@ -238,5 +240,5 @@ export function mount3D(container, opts) {
   const loop = () => { if (!alive) return; controls.update(); renderer.render(root, cam); requestAnimationFrame(loop) }
   rebuild(); renderBar(); setMode('select'); loop()
   const onResize = () => setSize(); window.addEventListener('resize', onResize)
-  return { dispose() { alive = false; window.removeEventListener('resize', onResize); if (bar.parentNode) bar.parentNode.removeChild(bar); renderer.dispose(); if (renderer.domElement.parentNode) renderer.domElement.parentNode.removeChild(renderer.domElement) }, rebuild, place: placeAt, render: () => renderer.render(root, cam) }
+  return { dispose() { alive = false; window.removeEventListener('resize', onResize); if (bar.parentNode) bar.parentNode.removeChild(bar); renderer.dispose(); if (renderer.domElement.parentNode) renderer.domElement.parentNode.removeChild(renderer.domElement) }, rebuild, setSupply(m) { if (m && m !== supMat) { supMat = m; rebuild() } }, place: placeAt, render: () => renderer.render(root, cam) }
 }
