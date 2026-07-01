@@ -453,12 +453,18 @@ const renderGuide = () => {
   $('#guide-body').querySelectorAll('input[data-gk]').forEach(el => el.onchange = () => { guideChecked[el.dataset.gk] = el.checked; localStorage.setItem(GUIDE_LS, JSON.stringify(guideChecked)); el.closest('li').classList.toggle('done', el.checked) })
 }
 const ICONS = { WARN: ['⚠️', 'warn'], OK: ['✅', 'ok'], INFO: ['ℹ️', 'info'], CUT: ['✂️', 'info'], HOUSE: ['🏠', 'info'], FROST: ['🥶', 'warn'], PERMIT: ['📋', 'warn'], FOUNDATION: ['🧱', 'ok'] }
+const SPANS = { '2x6': { 12: 10, 16: 9, 24: 7 }, '2x8': { 12: 13, 16: 12, 24: 10 }, '2x10': { 12: 16, 16: 15, 24: 13 } }
 const renderWarns = () => {
-  $('#warns').innerHTML = out.warnings.map(w => {
+  const base = out.warnings.map(w => {
     const [tag, ...rest] = w.split('|')
     const [icon, cls] = ICONS[tag] || ['•', 'info']
     return `<div class="warn ${cls}">${icon} ${rest.join('|') || tag}</div>`
   }).join('')
+  const allow = (SPANS[cfg.joist] || {})[cfg.spacing], dep = +cfg.depth
+  const span = allow ? (dep > allow
+    ? `<div class="warn">⚠ ${cfg.joist} joists @ ${cfg.spacing}" OC span about ${allow} ft, but your deck runs ${dep} ft deep. Upsize the joists, tighten the spacing, or add a mid-span beam — otherwise it'll bounce and may not pass inspection.</div>`
+    : `<div class="warn ok">✓ ${cfg.joist} @ ${cfg.spacing}" OC handles a ${dep} ft span (≤ ~${allow} ft allowable).</div>`) : ''
+  $('#warns').innerHTML = span + base
 }
 let siteSnap = null
 const renderPlans = () => {

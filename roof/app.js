@@ -61,8 +61,9 @@ const rebuild3D = () => {
   while (grp.children.length) { const m = grp.children.pop(); m.geometry && m.geometry.dispose() }
   const poly = polyOf(cfg)
   const xs = poly.map(p => p[0]), ys = poly.map(p => p[1])
-  const w = Math.max(...xs) - Math.min(...xs), d = Math.max(...ys) - Math.min(...ys)
-  const cx = (Math.min(...xs) + Math.max(...xs)) / 2, cy = (Math.min(...ys) + Math.max(...ys)) / 2
+  const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys)
+  const w = x1 - x0, d = y1 - y0, cx = (x0 + x1) / 2, cy = (y0 + y1) / 2
+  const hip = cfg.roof_type === 'hip'
   const horiz = w >= d, span = horiz ? d : w, rlen = horiz ? w : d
   const h = (span / 2) * (Math.max(0.5, +cfg.pitch) / 12), wallH = 9
   const kind = cfg.material === '3tab' ? '3tab' : cfg.material === 'metal' ? 'metal' : 'arch'
@@ -70,25 +71,34 @@ const rebuild3D = () => {
   const sh = shingleTex(FINISHES[cfg.material][0], kind)
   kind === 'metal' ? sh.repeat.set(Math.max(2, rlen / 2.5), 1) : sh.repeat.set(Math.max(3, rlen / 6), Math.max(3, slopeLen / 3))
   const mat = new THREE.MeshStandardMaterial({ map: sh, roughness: kind === 'metal' ? 0.35 : 0.92, metalness: kind === 'metal' ? 0.5 : 0, side: THREE.DoubleSide })
-  for (const s of [-1, 1]) {
-    const plane = new THREE.Mesh(new THREE.PlaneGeometry(rlen, slopeLen), mat)
-    if (horiz) { plane.rotation.x = -Math.PI / 2 + s * Math.atan2(h, span / 2); plane.position.set(cx, wallH + h / 2, -(cy + s * span / 4)) }
-    else { plane.rotation.z = s * Math.atan2(h, span / 2); plane.rotation.y = Math.PI / 2; plane.position.set(cx + s * span / 4, wallH + h / 2, -cy) }
-    grp.add(plane)
-  }
-  const ridge = new THREE.Mesh(new THREE.BoxGeometry(horiz ? rlen : 0.3, 0.25, horiz ? 0.3 : rlen), new THREE.MeshStandardMaterial({ color: 0x3a4650 }))
-  ridge.position.set(cx, wallH + h + 0.12, -cy); grp.add(ridge)
   const sd = sidingTex('#e7decb'); sd.repeat.set(Math.max(3, w / 4), 2)
-  const body = new THREE.Mesh(new THREE.BoxGeometry(w, wallH, d), new THREE.MeshStandardMaterial({ map: sd, roughness: 0.9 }))
-  body.position.set(cx, wallH / 2, -cy); grp.add(body)
-  const found = new THREE.Mesh(new THREE.BoxGeometry(w + 0.4, 1.2, d + 0.4), new THREE.MeshStandardMaterial({ color: 0x6e2f2b, roughness: 0.95 })); found.position.set(cx, 0.6, -cy); grp.add(found)
-  const gmat = new THREE.MeshStandardMaterial({ map: sidingTex('#e7decb'), roughness: 0.9, side: THREE.DoubleSide })
-  for (const s of [-1, 1]) {
-    const tri = new THREE.Shape(); tri.moveTo(-span / 2, 0); tri.lineTo(span / 2, 0); tri.lineTo(0, h); tri.closePath()
-    const gable = new THREE.Mesh(new THREE.ShapeGeometry(tri), gmat)
-    if (horiz) { gable.rotation.y = Math.PI / 2; gable.position.set(cx + s * rlen / 2, wallH, -cy) }
-    else { gable.position.set(cx, wallH, -(cy + s * rlen / 2)) }
-    grp.add(gable)
+  const shp = new THREE.Shape(poly.map(p => new THREE.Vector2(p[0], p[1])))
+  const body = new THREE.Mesh(new THREE.ExtrudeGeometry(shp, { depth: wallH, bevelEnabled: false }), new THREE.MeshStandardMaterial({ map: sd, roughness: 0.9, side: THREE.DoubleSide }))
+  body.rotation.x = -Math.PI / 2; grp.add(body)
+  const found = new THREE.Mesh(new THREE.ExtrudeGeometry(shp, { depth: 1.2, bevelEnabled: false }), new THREE.MeshStandardMaterial({ color: 0x6e2f2b, roughness: 0.95, side: THREE.DoubleSide }))
+  found.rotation.x = -Math.PI / 2; found.position.y = -0.9; grp.add(found)
+  const P3 = (fx, y, fz) => new THREE.Vector3(fx, y, -fz)
+  const A = P3(x0, wallH, y0), B = P3(x1, wallH, y0), C = P3(x1, wallH, y1), D = P3(x0, wallH, y1)
+  let R0, R1
+  if (horiz) { const rl = hip ? Math.max(0, (w - d) / 2) : w / 2; R0 = P3(cx - rl, wallH + h, cy); R1 = P3(cx + rl, wallH + h, cy) }
+  else { const rl = hip ? Math.max(0, (d - w) / 2) : d / 2; R0 = P3(cx, wallH + h, cy - rl); R1 = P3(cx, wallH + h, cy + rl) }
+  const pos = [], uv = [], vpush = v => { pos.push(v.x, v.y, v.z); uv.push((v.x - x0) / Math.max(1, w), (v.z + y1) / Math.max(1, d)) }
+  const face = (...vs) => { for (let i = 1; i < vs.length - 1; i++) { vpush(vs[0]); vpush(vs[i]); vpush(vs[i + 1]) } }
+  face(A, B, R1, R0); face(C, D, R0, R1)
+  if (hip) { face(D, A, R0); face(B, C, R1) }
+  const rg = new THREE.BufferGeometry(); rg.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); rg.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); rg.computeVertexNormals()
+  grp.add(new THREE.Mesh(rg, mat))
+  const ridge = new THREE.Mesh(new THREE.BoxGeometry(horiz ? (hip ? Math.max(0.3, w - d) : rlen) : 0.3, 0.25, horiz ? 0.3 : (hip ? Math.max(0.3, d - w) : rlen)), new THREE.MeshStandardMaterial({ color: 0x3a4650 }))
+  ridge.position.set(cx, wallH + h + 0.12, -cy); grp.add(ridge)
+  if (!hip) {
+    const gmat = new THREE.MeshStandardMaterial({ map: sidingTex('#e7decb'), roughness: 0.9, side: THREE.DoubleSide })
+    for (const s of [-1, 1]) {
+      const tri = new THREE.Shape(); tri.moveTo(-span / 2, 0); tri.lineTo(span / 2, 0); tri.lineTo(0, h); tri.closePath()
+      const gable = new THREE.Mesh(new THREE.ShapeGeometry(tri), gmat)
+      if (horiz) { gable.rotation.y = Math.PI / 2; gable.position.set(cx + s * rlen / 2, wallH, -cy) }
+      else { gable.position.set(cx, wallH, -(cy + s * rlen / 2)) }
+      grp.add(gable)
+    }
   }
   if (photoMeta && cfg.mode === 'poly') {
     photoPlane && scene.remove(photoPlane)
