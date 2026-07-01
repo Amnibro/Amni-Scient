@@ -5,7 +5,7 @@ import { initPermits, updatePermits } from './codes.js?v=fix1'
 import { initMapTrace, sitePlanSVG, cropForPlan, mapPlanSnapshot } from './maptrace.js?v=1'
 import { initAutoDetect } from './autodetect.js?v=1'
 const LS = 'amniframe.cfg.v1', LSP = 'amniframe.prices.v1'
-const defCfg = { mode: 'rect', w: 40, d: 30, polygon: null, wall_height_ft: 8, spacing: 16, stud_size: '2x4', doors: 2, windows: 6, double_top_plate: true, sheathing: true, house_edge: 0 }
+const defCfg = { mode: 'rect', w: 40, d: 30, polygon: null, wall_height_ft: 8, spacing: 16, stud_size: '2x4', doors: 2, windows: 6, door_w: 3, window_w: 3, double_top_plate: true, sheathing: true, house_edge: 0 }
 let cfg = (() => { try { return { ...defCfg, ...JSON.parse(localStorage.getItem(LS)) } } catch { return { ...defCfg } } })()
 let out = null
 let priceEdits = (() => { try { return JSON.parse(localStorage.getItem(LSP)) || {} } catch { return {} } })()
@@ -63,8 +63,8 @@ const rebuild3D = () => {
   const studMat = new THREE.MeshStandardMaterial({ color: FINISHES[cfg.stud_size][0], roughness: 0.82 })
   const th = cfg.stud_size === '2x6' ? 0.458 : 0.292, sw = 0.125, oc = Math.max(8, +cfg.spacing) / 12
   const openQ = []
-  for (let d = 0; d < (+cfg.doors || 0); d++) openQ.push({ w: 3, sill: 0, head: 6.8, win: false })
-  for (let w = 0; w < (+cfg.windows || 0); w++) openQ.push({ w: 3, sill: 3, head: 6.5, win: true })
+  for (let d = 0; d < (+cfg.doors || 0); d++) openQ.push({ w: Math.max(2, +cfg.door_w || 3), sill: 0, head: 6.8, win: false })
+  for (let w = 0; w < (+cfg.windows || 0); w++) openQ.push({ w: Math.max(1.5, +cfg.window_w || 3), sill: 3, head: 6.5, win: true })
   let qi = 0
   for (let i = 0; i < poly.length; i++) {
     const a = poly[i], b = poly[(i + 1) % poly.length], len = Math.hypot(b[0] - a[0], b[1] - a[1]); if (len < 0.1) continue
@@ -126,6 +126,10 @@ const renderWarns = () => {
   const w = $('#warns'); w.innerHTML = '<h3 style="font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--acc);margin:16px 0 8px">Build Notes</h3>'
   if (!out) return
   for (const s of out.warnings) { const [tag, txt] = s.includes('|') ? s.split('|') : ['INFO', s]; const d = document.createElement('div'); d.className = 'warn' + (tag === 'OK' ? ' ok' : tag === 'INFO' ? ' info' : ''); d.textContent = txt; w.appendChild(d) }
+  const wid = Math.max(+cfg.door_w || 3, +cfg.window_w || 3), hdr = wid <= 3 ? '2x6' : wid <= 4 ? '2x8' : wid <= 6 ? '2x10' : wid <= 8 ? '2x12' : 'an engineered LVL / beam', eng = wid > 8
+  const dv = document.createElement('div'); dv.className = 'warn' + (eng ? '' : ' info')
+  dv.textContent = `${eng ? '⚠ ' : ''}Widest opening ${wid} ft → size the header around ${hdr}${eng ? ' — spans over ~8 ft need an engineered header, get it sized' : ''}. The lumber estimate assumes a standard header, so confirm the header for your widest span.`
+  w.appendChild(dv)
 }
 const G_LS = 'amniframe.guide.v1'
 let gChk = (() => { try { return JSON.parse(localStorage.getItem(G_LS)) || {} } catch { return {} } })()
@@ -309,7 +313,7 @@ const buildFinishes = () => {
 }
 const initUI = () => {
   const bind = (id, key, num = true) => { const el = $(id); el.value = cfg[key]; el.onchange = () => { cfg[key] = num ? +el.value : el.value; recompute() } }
-  bind('#w', 'w'); bind('#d', 'd'); bind('#height', 'wall_height_ft'); bind('#spacing', 'spacing', false); bind('#doors', 'doors'); bind('#windows', 'windows'); bind('#house', 'house_edge')
+  bind('#w', 'w'); bind('#d', 'd'); bind('#height', 'wall_height_ft'); bind('#spacing', 'spacing', false); bind('#doors', 'doors'); bind('#windows', 'windows'); bind('#doorw', 'door_w'); bind('#windoww', 'window_w'); bind('#house', 'house_edge')
   $('#dbltop').checked = !!cfg.double_top_plate
   $('#dbltop').onchange = e => { cfg.double_top_plate = e.target.checked; recompute() }
   $('#sheathe').checked = !!cfg.sheathing
