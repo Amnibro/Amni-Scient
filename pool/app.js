@@ -179,7 +179,7 @@ const renderGuide = () => {
     ['🚧 Barrier + final  (sheet PL-3, detail 4)', ['Install the 48" barrier + self-closing / self-latching gate (latch 54" AFG, opens out, 4" sphere rule).', 'Add alarms / a safety cover where required; pass the barrier + final inspection BEFORE anyone swims.']],
   ]
   const tools = ['Laser level / transit', ig ? 'Excavator + skid steer (rental) + shovels' : 'Hand level + tamper + rake', 'PVC cutter + primer/cement', 'Channel-locks + pipe wrench', 'Torpedo + 4-ft level', '#8 bond wire + lug + crimper', 'Garden hose(s) for fill', 'Test kit + brush + vacuum', 'Shop vac / submersible pump']
-  let cost = 0; (out.bom || []).forEach(it => { const p = price(it.id, 'hd'); if (p != null) cost += p * it.qty })
+  let cost = 0; (out.bom || []).forEach(it => { const p = price(it.id, 'hd'); if (p != null && !BIG.has(it.id)) cost += p * it.qty })
   const chk = phases.map((ph, pi) => `<div style="${SEC}"><div style="${GH}">${ph[0]}</div>${ph[1].map((t, ii) => { const k = pi + ':' + ii, on = gChk[k]; return `<label style="display:flex;gap:9px;align-items:flex-start;padding:5px 0;font-size:13px;cursor:pointer"><input type="checkbox" data-gk="${k}" ${on ? 'checked' : ''} style="margin-top:3px;accent-color:var(--acc);flex:none"><span style="${on ? 'color:var(--mut);text-decoration:line-through' : ''}">${t}</span></label>` }).join('')}</div>`).join('')
   body.innerHTML = `<div style="color:var(--mut);font-size:13px;margin-bottom:14px">A build sequence for your <b>${c.gallons.toLocaleString()}-gal ${ig ? 'in-ground' : 'above-ground'}</b> pool. Tick as you go. Pair with sheets PL-1 (plan), PL-2 (section) + PL-3 (details). <b style="color:var(--warn)">Bonding, the gas heater + shell work usually need licensed pros.</b></div>`
     + chk
@@ -189,19 +189,18 @@ const renderGuide = () => {
   body.querySelectorAll('input[data-gk]').forEach(el => el.onchange = () => { gChk[el.dataset.gk] = el.checked; localStorage.setItem(G_LS, JSON.stringify(gChk)); renderGuide() })
 }
 const price = (id, store) => priceEdits[`${id}.${store}`] ?? catalog[id]?.[store] ?? null
+const BIG = new Set(['shell', 'wallkit', 'haul'])
 const renderMat = () => {
   if (!out) return
   const c = out.calc
   $('#mat-summary').innerHTML = [[`${c.gallons.toLocaleString()}`, 'gallons'], [`${c.turnover_gpm.toFixed(0)} gpm`, 'turnover (8 h)'], [`${c.pump_hp} hp`, 'pump'], [`${c.filter_sqft} ft²`, 'filter'], [`${c.excavation_yd3.toFixed(1)} yd³`, 'excavation']].map(([b, s]) => `<div class="chip"><b>${b}</b><span>${s}</span></div>`).join('')
-  let th = 0, tl = 0
-  const rows = out.bom.map(it => {
-    const cat = catalog[it.id] || {}
-    const ph = price(it.id, 'hd'), pl = price(it.id, 'lowes')
-    ph != null && (th += ph * it.qty); pl != null && (tl += pl * it.qty)
-    const link = (store, q) => q ? `<a href="https://www.${store === 'hd' ? 'homedepot' : 'lowes'}.com/s/${encodeURIComponent(q)}" target="_blank" rel="noopener">↗</a>` : ''
-    return `<tr><td>${it.desc}</td><td>${it.qty}</td><td><input data-id="${it.id}" data-store="hd" value="${ph ?? ''}"> ${link('hd', cat.hdq)}</td><td>${ph != null ? '$' + (ph * it.qty).toFixed(2) : '—'}</td><td><input data-id="${it.id}" data-store="lowes" value="${pl ?? ''}"> ${link('lowes', cat.lq)}</td><td>${pl != null ? '$' + (pl * it.qty).toFixed(2) : '—'}</td></tr>`
-  }).join('')
-  $('#mat-table').innerHTML = `<tr><th>Item</th><th>Qty</th><th>HD $</th><th>HD total</th><th>Lowes $</th><th>Lowes total</th></tr>${rows}<tr><td class="tot">TOTALS</td><td></td><td></td><td class="tot ${th <= tl ? 'best' : ''}">$${th.toFixed(2)}</td><td></td><td class="tot ${tl < th ? 'best' : ''}">$${tl.toFixed(2)}</td></tr>`
+  const link = (store, q) => q ? `<a href="https://www.${store === 'hd' ? 'homedepot' : 'lowes'}.com/s/${encodeURIComponent(q)}" target="_blank" rel="noopener">↗</a>` : ''
+  const rowFor = it => { const cat = catalog[it.id] || {}, ph = price(it.id, 'hd'), pl = price(it.id, 'lowes'); return { ph, pl, html: `<tr><td>${it.desc}</td><td>${it.qty}</td><td><input data-id="${it.id}" data-store="hd" value="${ph ?? ''}"> ${link('hd', cat.hdq)}</td><td>${ph != null ? '$' + (ph * it.qty).toFixed(2) : '—'}</td><td><input data-id="${it.id}" data-store="lowes" value="${pl ?? ''}"> ${link('lowes', cat.lq)}</td><td>${pl != null ? '$' + (pl * it.qty).toFixed(2) : '—'}</td></tr>` } }
+  let thM = 0, tlM = 0, thB = 0, tlB = 0, matRows = '', bigRows = ''
+  for (const it of out.bom) { const r = rowFor(it); if (BIG.has(it.id)) { r.ph != null && (thB += r.ph * it.qty); r.pl != null && (tlB += r.pl * it.qty); bigRows += r.html } else { r.ph != null && (thM += r.ph * it.qty); r.pl != null && (tlM += r.pl * it.qty); matRows += r.html } }
+  const subRow = (label, a, b, style) => `<tr><td class="tot" style="${style || ''}">${label}</td><td></td><td></td><td class="tot ${style ? '' : (a <= b ? 'best' : '')}" style="${style || ''}">$${a.toFixed(2)}</td><td></td><td class="tot ${style ? '' : (b < a ? 'best' : '')}" style="${style || ''}">$${b.toFixed(2)}</td></tr>`
+  const bigBlock = bigRows ? `<tr><td colspan="6" style="padding-top:16px;color:var(--warn);font-weight:600">🏗️ Big-ticket / contractor — regional, get 2–3 local bids</td></tr>${bigRows}<tr><td colspan="6" style="color:var(--mut);font-size:12px;padding:4px 10px 8px">Shell/excavation vary hugely by construction — vinyl-liner kit ~$8–15k · fiberglass ~$20–40k · gunite ~$30–60k installed. The line prices are placeholders; get local bids.</td></tr>${subRow('Big-ticket subtotal', thB, tlB, 'color:var(--warn)')}` : ''
+  $('#mat-table').innerHTML = `<tr><th>Item</th><th>Qty</th><th>HD $</th><th>HD total</th><th>Lowes $</th><th>Lowes total</th></tr>${matRows}${subRow('🛒 Shoppable materials + equipment', thM, tlM)}${bigBlock}${subRow('≈ Ballpark all-in', thM + thB, tlM + tlB, 'color:var(--ink);border-top:2px solid var(--line)')}`
   document.querySelectorAll('#mat-table input').forEach(i => i.onchange = () => { const v = parseFloat(i.value); isNaN(v) ? delete priceEdits[`${i.dataset.id}.${i.dataset.store}`] : priceEdits[`${i.dataset.id}.${i.dataset.store}`] = v; localStorage.setItem(LSP, JSON.stringify(priceEdits)); renderMat() })
 }
 const parsePaste = (text, store) => {
