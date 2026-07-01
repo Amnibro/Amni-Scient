@@ -2,7 +2,7 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { initPermits, updatePermits } from './codes.js?v=fix1'
 import { emptyScene, addNode, addRun } from './sketch.js?v=o2'
-import { mountSketch } from './sketch-canvas.js?v=o2'
+import { mountSketch } from './sketch-canvas.js?v=o3'
 import { makeElecTrade } from './elec-rules.js'
 const LS = 'amnielec.cfg.v1', LSP = 'amnielec.prices.v1'
 const defCfg = { sqft: 1800, bedrooms: 3, bathrooms: 2, has_laundry: true, electric_range: 1, electric_dryer: 1, water_heater_elec: true, dishwasher: true, disposal: true, microwave: true, hvac_amps: 30 }
