@@ -82,8 +82,8 @@ const rebuild3D = () => {
   lay(new THREE.Mesh(new THREE.ShapeGeometry(shp), new THREE.MeshStandardMaterial({ color: finC.clone().offsetHSL(0, 0, -0.05), roughness: 0.32 })), base, true)
   const wallMat = new THREE.MeshStandardMaterial({ color: finC.clone().offsetHSL(0, 0, -0.02), roughness: 0.28, side: THREE.DoubleSide })
   for (let i = 0; i < poly.length; i++) { const a = poly[i], b = poly[(i + 1) % poly.length], len = Math.hypot(b[0] - a[0], b[1] - a[1]); if (len < 0.01) continue; const w = new THREE.Mesh(new THREE.BoxGeometry(len, top - base, 0.12), wallMat); w.position.set((a[0] + b[0]) / 2, (base + top) / 2, -(a[1] + b[1]) / 2); w.rotation.y = Math.atan2(-(b[1] - a[1]), b[0] - a[0]); grp.add(w) }
-  lay(ext(shp, top - base - 0.25, new THREE.MeshPhysicalMaterial({ color: finC, transparent: true, opacity: 0.5, roughness: 0.15, transmission: 0.25, ior: 1.33 })), top - 0.25)
-  const surf = lay(new THREE.Mesh(new THREE.ShapeGeometry(shp), new THREE.MeshPhysicalMaterial({ color: finC.clone().offsetHSL(0, 0.06, 0.07), transparent: true, opacity: 0.84, roughness: 0.06, clearcoat: 1, clearcoatRoughness: 0.05, bumpMap: waterBump, bumpScale: 0.08, side: THREE.DoubleSide })), top - 0.16)
+  lay(ext(shp, top - base - 0.25, new THREE.MeshStandardMaterial({ color: finC.clone().offsetHSL(0, 0.1, -0.2), roughness: 0.4, envMapIntensity: 0.12, side: THREE.DoubleSide })), base)
+  const surf = lay(new THREE.Mesh(new THREE.ShapeGeometry(shp), new THREE.MeshStandardMaterial({ color: finC.clone().offsetHSL(0, 0.2, -0.14), emissive: finC.clone().offsetHSL(0, 0.12, -0.14), emissiveIntensity: 0.32, roughness: 0.24, metalness: 0, transparent: true, opacity: 0.94, bumpMap: waterBump, bumpScale: 0.05, side: THREE.DoubleSide })), top - 0.02)
   waterMats.push(surf.material)
   { const lx = maxX - 0.7, lz = -((minY + maxY) / 2), botY = Math.max(base + 0.3, top - 3), chrome = new THREE.MeshStandardMaterial({ color: 0xd8dde2, roughness: 0.25, metalness: 0.85 })
     for (const dz of [-0.6, 0.6]) { const rail = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, top + 1.4 - botY, 10), chrome); rail.position.set(lx, (top + 1.4 + botY) / 2, lz + dz); grp.add(rail) }
