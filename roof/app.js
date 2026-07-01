@@ -2,7 +2,7 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js'
 import { initPermits, updatePermits } from './codes.js?v=fix1'
-import { initMapTrace, sitePlanSVG, cropForPlan, mapPlanSnapshot } from './maptrace.js?v=1'
+import { initMapTrace, sitePlanSVG, cropForPlan, mapPlanSnapshot } from './maptrace.js?v=hd1'
 import { initAutoDetect } from './autodetect.js?v=1'
 const LS = 'amniroof.cfg.v1', LSP = 'amniroof.prices.v1'
 const defCfg = { mode: 'rect', w: 40, d: 30, polygon: null, pitch: 6, material: 'arch', roof_type: 'gable', overhang_in: 12, house_edge: 0 }

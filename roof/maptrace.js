@@ -38,27 +38,31 @@ export const geocode = async q => {
   return j && j[0] ? { lat: +j[0].lat, lon: +j[0].lon, name: j[0].display_name } : null
 }
 export const initMapTrace = ({ tc, T, tDraw, tStatus }) => {
-  const M = { on: false, lat: 42.728, lon: -73.692, zoom: 19, mc: document.createElement('canvas'), drag: null, gen: 0 }
-  M.mc.width = tc.width; M.mc.height = tc.height
+  const SS = Math.min(2, Math.max(1, Math.round(window.devicePixelRatio || 1))), dz = Math.round(Math.log2(SS))
+  const M = { on: false, lat: 42.728, lon: -73.692, zoom: 20, mc: document.createElement('canvas'), drag: null, gen: 0 }
+  M.mc.width = tc.width * SS; M.mc.height = tc.height * SS
   const mPerPx = () => 156543.03392 * Math.cos(M.lat * Math.PI / 180) / Math.pow(2, M.zoom)
   const render = async () => {
     const gen = ++M.gen
     const live = () => gen === M.gen
-    M.mc.width = tc.width; M.mc.height = tc.height
+    M.mc.width = tc.width * SS; M.mc.height = tc.height * SS
     const g = M.mc.getContext('2d')
     g.fillStyle = '#222'; g.fillRect(0, 0, M.mc.width, M.mc.height)
-    const c = toPx(M.lat, M.lon, M.zoom)
+    const z = M.zoom + dz, c = toPx(M.lat, M.lon, z)
     const left = c.x - M.mc.width / 2, top = c.y - M.mc.height / 2
+    const tx0 = Math.floor(left / 256), tx1 = Math.floor((left + M.mc.width) / 256), ty0 = Math.floor(top / 256), ty1 = Math.floor((top + M.mc.height) / 256)
     const jobs = []
-    for (let tx = Math.floor(left / 256); tx <= Math.floor((left + M.mc.width) / 256); tx++)
-      for (let ty = Math.floor(top / 256); ty <= Math.floor((top + M.mc.height) / 256); ty++)
-        jobs.push(putTile(g, M.zoom, tx, ty, tx * 256 - left, ty * 256 - top, live))
+    for (let tx = tx0; tx <= tx1; tx++) for (let ty = ty0; ty <= ty1; ty++) jobs.push(putTile(g, z, tx, ty, tx * 256 - left, ty * 256 - top, live))
+    for (let tx = tx0 - 1; tx <= tx1 + 1; tx++) { tile(z, tx, ty0 - 1); tile(z, tx, ty1 + 1) }
+    for (let ty = ty0; ty <= ty1; ty++) { tile(z, tx0 - 1, ty); tile(z, tx1 + 1, ty) }
     await Promise.all(jobs)
     if (!live()) return
     T.img = M.mc
     T.pxPerFt = 0.3048 / mPerPx()
     tDraw()
   }
+  let raf = false
+  const scheduleRender = () => { if (raf) return; raf = true; requestAnimationFrame(() => { raf = false; render() }) }
   const xform = fn => { T.poly = T.poly.map(fn); T.scalePts = T.scalePts.map(fn) }
   const setZoom = (nz, cx, cy) => {
     nz = Math.min(22, Math.max(16, nz))
@@ -69,7 +73,7 @@ export const initMapTrace = ({ tc, T, tDraw, tStatus }) => {
     const nc = toLL(w.x * k - (cx - tc.width / 2), w.y * k - (cy - tc.height / 2), nz)
     M.lat = nc.lat; M.lon = nc.lon; M.zoom = nz
     xform(p => [(p[0] - cx) * k + cx, (p[1] - cy) * k + cy])
-    render()
+    scheduleRender()
   }
   const find = async () => {
     const q = document.getElementById('maddr').value.trim()
@@ -95,7 +99,7 @@ export const initMapTrace = ({ tc, T, tDraw, tStatus }) => {
     const r = tc.getBoundingClientRect()
     setZoom(M.zoom + (e.deltaY < 0 ? 1 : -1), (e.clientX - r.left) * tc.width / r.width, (e.clientY - r.top) * tc.height / r.height)
   }, { passive: false })
-  tc.addEventListener('mousedown', e => { if (M.on && !T.mode) M.drag = { x: e.clientX, y: e.clientY } })
+  tc.addEventListener('mousedown', e => { if (M.on && !T.mode && !T.dragCorner) M.drag = { x: e.clientX, y: e.clientY } })
   window.addEventListener('mouseup', () => M.drag = null)
   window.addEventListener('mousemove', e => {
     if (!M.drag || !M.on || T.mode) return
@@ -107,7 +111,7 @@ export const initMapTrace = ({ tc, T, tDraw, tStatus }) => {
     M.lat = nc.lat; M.lon = nc.lon
     M.drag = { x: e.clientX, y: e.clientY }
     xform(p => [p[0] + dx, p[1] + dy])
-    render()
+    scheduleRender()
   })
   return M
 }
