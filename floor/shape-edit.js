@@ -36,28 +36,35 @@ export function mountShapeEditor(host, opts) {
   const evFt = e => { const r = svg.getBoundingClientRect(); return ft(e.clientX - r.left, e.clientY - r.top) }
   function redraw() {
     W = svg.clientWidth || W; H = svg.clientHeight || H; svg.setAttribute('viewBox', `0 0 ${W} ${H}`); while (svg.firstChild) svg.removeChild(svg.firstChild)
-    const c0 = ft(0, H), c1 = ft(W, 0), step = s < 9 ? 5 : s < 18 ? 2 : 1
-    for (let x = Math.floor(c0[0] / step) * step; x <= c1[0]; x += step) { const a = px(x, c0[1]), b = px(x, c1[1]); svg.append(el('line', { x1: a[0], y1: a[1], x2: b[0], y2: b[1], stroke: '#1c212a', 'stroke-width': x === 0 ? 1.4 : 0.6 })) }
-    for (let z = Math.floor(c0[1] / step) * step; z <= c1[1]; z += step) { const a = px(c0[0], z), b = px(c1[0], z); svg.append(el('line', { x1: a[0], y1: a[1], x2: b[0], y2: b[1], stroke: '#1c212a', 'stroke-width': z === 0 ? 1.4 : 0.6 })) }
+    const defs = el('defs'), grad = el('linearGradient', { id: 'shpfill', x1: 0, y1: 0, x2: 0, y2: 1 })
+    grad.append(el('stop', { offset: 0, 'stop-color': '#eaa858', 'stop-opacity': 0.24 }), el('stop', { offset: 1, 'stop-color': '#d8893a', 'stop-opacity': 0.09 }))
+    defs.append(grad); svg.append(defs)
+    const c0 = ft(0, H), c1 = ft(W, 0), step = s < 9 ? 5 : s < 18 ? 2 : 1, major = step * 5
+    const gl = (a, b, col, wd) => svg.append(el('line', { x1: a[0], y1: a[1], x2: b[0], y2: b[1], stroke: col, 'stroke-width': wd }))
+    for (let x = Math.floor(c0[0] / step) * step; x <= c1[0]; x += step) { const o0 = Math.abs(x) < 1e-6, om = Math.abs(x % major) < 1e-6; gl(px(x, c0[1]), px(x, c1[1]), o0 ? '#313b48' : om ? '#232b35' : '#191e27', o0 ? 1.6 : om ? 0.9 : 0.5) }
+    for (let z = Math.floor(c0[1] / step) * step; z <= c1[1]; z += step) { const o0 = Math.abs(z) < 1e-6, om = Math.abs(z % major) < 1e-6; gl(px(c0[0], z), px(c1[0], z), o0 ? '#313b48' : om ? '#232b35' : '#191e27', o0 ? 1.6 : om ? 0.9 : 0.5) }
     const pts = V.map(p => px(p[0], p[1]))
-    svg.append(el('polygon', { points: pts.map(p => p.join(',')).join(' '), fill: 'rgba(216,137,58,0.14)', stroke: '#d8893a', 'stroke-width': 2, 'stroke-linejoin': 'round' }))
+    svg.append(el('polygon', { points: pts.map(p => p.join(',')).join(' '), fill: 'url(#shpfill)', stroke: '#eaa858', 'stroke-width': 2.5, 'stroke-linejoin': 'round', 'stroke-linecap': 'round' }))
     V.forEach((p, i) => {
       const q = V[(i + 1) % V.length], a = pts[i], b = pts[(i + 1) % V.length], mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2, len = Math.hypot(q[0] - p[0], q[1] - p[1])
-      const line = el('line', { x1: a[0], y1: a[1], x2: b[0], y2: b[1], stroke: i === house ? '#4f9cf0' : (i === sel ? '#e0b341' : 'transparent'), 'stroke-width': i === house ? 5 : 7, 'stroke-linecap': 'round', style: 'cursor:pointer', opacity: i === house ? 0.9 : (i === sel ? 0.8 : 0.01) })
+      if (i === house) svg.append(el('line', { x1: a[0], y1: a[1], x2: b[0], y2: b[1], stroke: '#4f9cf0', 'stroke-width': 4, 'stroke-linecap': 'round', opacity: 0.92 }))
+      const line = el('line', { x1: a[0], y1: a[1], x2: b[0], y2: b[1], stroke: i === sel ? '#e0b341' : 'transparent', 'stroke-width': 10, 'stroke-linecap': 'round', style: 'cursor:pointer', opacity: i === sel ? 0.85 : 0.01 })
       line.onpointerup = ev => { if (moved) return; ev.stopPropagation(); sel = sel === i ? -1 : i; syncEdge(); redraw() }
       svg.append(line)
-      const t = el('text', { x: mx, y: my - 6, fill: i === house ? '#8fc2ff' : '#aeb4bd', 'font-size': 12, 'font-family': 'system-ui', 'text-anchor': 'middle', style: 'pointer-events:none;font-weight:600' }); t.textContent = (i === house ? '🏠 ' : '') + len.toFixed(1) + "'"; svg.append(t)
-      const add = el('circle', { cx: mx, cy: my, r: 6.5, fill: '#12161d', stroke: '#5a6472', 'stroke-width': 1.5, style: 'cursor:copy' })
+      const t = el('text', { x: mx, y: my - 7, fill: i === house ? '#a9d0ff' : '#e8e6e0', stroke: '#0d1016', 'stroke-width': 3.4, 'paint-order': 'stroke', 'stroke-linejoin': 'round', 'font-size': 12, 'font-family': 'system-ui', 'text-anchor': 'middle', style: 'pointer-events:none;font-weight:700' }); t.textContent = (i === house ? '🏠 ' : '') + len.toFixed(1) + "'"; svg.append(t)
+      const add = el('circle', { cx: mx, cy: my, r: 6, fill: '#12161d', stroke: '#4a5361', 'stroke-width': 1.4, style: 'cursor:copy', opacity: 0.92 })
       add.onpointerdown = ev => { ev.stopPropagation(); ev.preventDefault(); const f = evFt(ev); V.splice(i + 1, 0, [snap(f[0]), snap(f[1])]); if (house > i) house++; drag = i + 1; sel = -1; syncEdge(); redraw() }
-      const plus = el('text', { x: mx, y: my + 4, fill: '#8b95a3', 'font-size': 12, 'text-anchor': 'middle', style: 'pointer-events:none' }); plus.textContent = '+'; svg.append(add, plus)
+      const plus = el('text', { x: mx, y: my + 3.8, fill: '#8b95a3', 'font-size': 12, 'text-anchor': 'middle', style: 'pointer-events:none' }); plus.textContent = '+'; svg.append(add, plus)
     })
     pts.forEach((a, i) => {
-      const h = el('circle', { cx: a[0], cy: a[1], r: 8, fill: '#d8893a', stroke: '#fff', 'stroke-width': 2, style: 'cursor:grab' })
+      svg.append(el('circle', { cx: a[0], cy: a[1], r: 12, fill: '#eaa858', opacity: drag === i ? 0.3 : 0.15, style: 'pointer-events:none' }))
+      const h = el('circle', { cx: a[0], cy: a[1], r: 7, fill: drag === i ? '#f4bd73' : '#eaa858', stroke: '#fff', 'stroke-width': 2, style: 'cursor:grab' })
       h.onpointerdown = ev => { ev.stopPropagation(); ev.preventDefault(); drag = i; moved = false; svg.setPointerCapture(ev.pointerId) }
       h.ondblclick = ev => { ev.stopPropagation(); if (V.length > 3) { V.splice(i, 1); if (house >= V.length) house = 0; sel = -1; syncEdge(); redraw() } }
       svg.append(h)
     })
-    readout.textContent = `${area(V).toFixed(0)} ft²  ·  ${perim(V).toFixed(0)} ft perim  ·  ${V.length} corners`
+    const bb = bounds()
+    readout.textContent = `${area(V).toFixed(0)} ft²  ·  ${bb.w.toFixed(0)}×${bb.d.toFixed(0)} ft  ·  ${perim(V).toFixed(0)} ft perim`
   }
   let moved = false
   const syncEdge = () => { if (sel < 0) { edn.style.display = 'none'; return } edn.style.display = 'flex'; const A = V[sel], B = V[(sel + 1) % V.length]; edin.value = Math.hypot(B[0] - A[0], B[1] - A[1]).toFixed(1) }
