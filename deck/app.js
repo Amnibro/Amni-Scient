@@ -596,6 +596,7 @@ const initUI = () => {
     document.querySelectorAll('.tab').forEach(x => x.classList.toggle('on', x === t))
     document.querySelectorAll('.pane').forEach(p => p.classList.toggle('on', p.id === `pane-${t.dataset.pane}`))
     $('#hud').style.display = t.dataset.pane === '3d' ? 'block' : 'none'
+    if (t.dataset.pane === 'draw') mountDraw()
   })
   $('#reset-prices').onclick = () => { priceEdits = {}; localStorage.removeItem(LSP); renderMat() }
   $('#print-guide').onclick = () => { const w = window.open('', '_blank'); w.document.write(`<title>Deck Build Guide</title><style>body{font:14px/1.5 system-ui,Segoe UI,sans-serif;padding:26px;max-width:780px;margin:auto;color:#111}h2{font-size:15px;margin:16px 0 4px;color:#b9761a}h3{margin:18px 0 8px}.guide-intro{color:#555;margin-bottom:14px}.guide-sec{break-inside:avoid;margin-bottom:10px}ul{margin:0 0 8px 0}.guide-sec>ul{list-style:none;padding-left:0}.guide-sec>ul li:before{content:"☐  "}.tools-grid ul{list-style:disc;padding-left:20px}li{margin:3px 0}</style>` + $('#guide-body').innerHTML); w.document.close(); w.focus(); setTimeout(() => w.print(), 200) }
@@ -784,15 +785,20 @@ function maybeScanBanner() {
   b.textContent = '\u{1F4D0} Use my scan (' + scan.area_ft2 + ' ft²)'
   side.insertBefore(b, side.firstChild)
   b.onclick = () => {
-    cfg.polygon = scan.polygon.map(p => [+p[0], +p[1]]); cfg.mode = 'poly'
-    const edges = cfg.polygon.map((a, i) => { const c = cfg.polygon[(i + 1) % cfg.polygon.length]; return Math.hypot(c[0] - a[0], c[1] - a[1]) })
-    cfg.house_edge = edges.indexOf(Math.max.apply(null, edges))
-    document.querySelectorAll('#mode button').forEach(x => x.classList.toggle('on', x.dataset.v === 'poly'))
-    const rw = document.querySelector('#rw'), rd = document.querySelector('#rd'); if (rw) rw.style.display = 'none'; if (rd) rd.style.display = 'none'
-    const sel = document.querySelector('#house')
-    if (sel) { sel.innerHTML = '<option value="-1">Freestanding</option>' + edges.map((L, i) => '<option value="' + i + '">Edge ' + (i + 1) + ' (' + L.toFixed(1) + ' ft) = house</option>').join(''); sel.value = String(cfg.house_edge) }
-    if (window.__deckApplyMode) window.__deckApplyMode()
-    recompute()
+    applyPoly(scan.polygon)
     b.textContent = '✓ Using your scan (' + scan.area_ft2 + ' ft²)'; b.style.color = 'var(--ok)'; b.style.borderColor = 'var(--ok)'
   }
+}
+function applyPoly(polygon, houseEdge) {
+  cfg.polygon = polygon.map(p => [+p[0], +p[1]]); cfg.mode = 'poly'
+  const edges = cfg.polygon.map((a, i) => { const c = cfg.polygon[(i + 1) % cfg.polygon.length]; return Math.hypot(c[0] - a[0], c[1] - a[1]) })
+  cfg.house_edge = houseEdge != null ? +houseEdge : edges.indexOf(Math.max.apply(null, edges))
+  window.__deckApplyMode && window.__deckApplyMode()
+  recompute()
+}
+let shapeEd = null
+async function mountDraw() {
+  const host = document.querySelector('#draw-host'); if (!host || shapeEd) return
+  try { const m = await import('./shape-edit.js?v=se1'); shapeEd = m.mountShapeEditor(host, { rect: { w: +cfg.length, d: +cfg.depth }, polygon: cfg.mode === 'poly' ? cfg.polygon : null, houseEdge: cfg.house_edge, onApply: ({ polygon, houseEdge }) => { applyPoly(polygon, houseEdge); const t = document.querySelector('.tab[data-pane="3d"]'); if (t) t.click() } }) }
+  catch (e) { host.innerHTML = '<div style="padding:20px;color:#9aa0aa">draw tool unavailable</div>' }
 }

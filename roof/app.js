@@ -327,6 +327,7 @@ const initUI = () => {
     document.querySelectorAll('.tab').forEach(x => x.classList.toggle('on', x === t))
     document.querySelectorAll('.pane').forEach(p => p.classList.toggle('on', p.id === `pane-${t.dataset.pane}`))
     $('#hud').style.display = t.dataset.pane === '3d' ? 'block' : 'none'
+    if (t.dataset.pane === 'draw') mountDraw()
   })
   $('#paste-hd').onclick = async () => { try { const txt = await navigator.clipboard.readText(); const f = parsePaste(txt, 'hd'); $('#pstatus').textContent = f.length ? `✅ filled ${f.length} HD prices` : 'no prices matched — copy the whole store page (Ctrl+A, Ctrl+C)'; renderMat() } catch { $('#pstatus').textContent = 'clipboard blocked — click the page first' } }
   $('#paste-lowes').onclick = async () => { try { const txt = await navigator.clipboard.readText(); const f = parsePaste(txt, 'lowes'); $('#pstatus').textContent = f.length ? `✅ filled ${f.length} Lowes prices` : 'no prices matched — copy the whole store page'; renderMat() } catch { $('#pstatus').textContent = 'clipboard blocked — click the page first' } }
@@ -361,17 +362,24 @@ function maybeScanBanner() {
   b.textContent = '\u{1F4D0} Use my scan (' + scan.area_ft2 + ' ft²)'
   side.insertBefore(b, side.firstChild)
   b.onclick = () => {
-    cfg.polygon = scan.polygon.map(p => [+p[0], +p[1]]); cfg.mode = 'poly'
-    const edges = cfg.polygon.map((a, i) => { const c = cfg.polygon[(i + 1) % cfg.polygon.length]; return Math.hypot(c[0] - a[0], c[1] - a[1]) })
-    cfg.house_edge = edges.indexOf(Math.max.apply(null, edges))
-    document.querySelectorAll('#mode button').forEach(x => x.classList.toggle('on', x.dataset.v === 'poly'))
-    const rw = document.querySelector('#rw'), rd = document.querySelector('#rd'); if (rw) rw.style.display = 'none'; if (rd) rd.style.display = 'none'
-    const sel = document.querySelector('#house')
-    if (sel) { sel.innerHTML = '<option value="-1">Freestanding</option>' + edges.map((L, i) => '<option value="' + i + '">Edge ' + (i + 1) + ' (' + L.toFixed(1) + ' ft) = house</option>').join(''); sel.value = String(cfg.house_edge) }
-    if (window.__deckApplyMode) window.__deckApplyMode()
-    recompute()
+    applyPoly(scan.polygon)
     b.textContent = '✓ Using your scan (' + scan.area_ft2 + ' ft²)'; b.style.color = 'var(--ok)'; b.style.borderColor = 'var(--ok)'
   }
 }
-
+function applyPoly(polygon, houseEdge) {
+  cfg.polygon = polygon.map(p => [+p[0], +p[1]]); cfg.mode = 'poly'
+  const edges = cfg.polygon.map((a, i) => { const c = cfg.polygon[(i + 1) % cfg.polygon.length]; return Math.hypot(c[0] - a[0], c[1] - a[1]) })
+  cfg.house_edge = houseEdge != null ? +houseEdge : edges.indexOf(Math.max.apply(null, edges))
+  document.querySelectorAll('#mode button').forEach(x => x.classList.toggle('on', x.dataset.v === 'poly'))
+  const rw = document.querySelector('#rw'), rd = document.querySelector('#rd'); if (rw) rw.style.display = 'none'; if (rd) rd.style.display = 'none'
+  const sel = document.querySelector('#house')
+  if (sel) { sel.innerHTML = '<option value="-1">Freestanding</option>' + edges.map((L, i) => '<option value="' + i + '">Edge ' + (i + 1) + ' (' + L.toFixed(1) + ' ft) = house</option>').join(''); sel.value = String(cfg.house_edge) }
+  recompute()
+}
+let shapeEd = null
+async function mountDraw() {
+  const host = document.querySelector('#draw-host'); if (!host || shapeEd) return
+  try { const m = await import('./shape-edit.js?v=se1'); shapeEd = m.mountShapeEditor(host, { rect: { w: +cfg.w, d: +cfg.d }, polygon: cfg.mode === 'poly' ? cfg.polygon : null, houseEdge: cfg.house_edge, onApply: ({ polygon, houseEdge }) => { applyPoly(polygon, houseEdge); const t = document.querySelector('.tab[data-pane="3d"]'); if (t) t.click() } }) }
+  catch (e) { host.innerHTML = '<div style="padding:20px;color:#9aa0aa">draw tool unavailable</div>' }
+}
 maybeScanBanner()
