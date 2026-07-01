@@ -27,7 +27,7 @@ const callCore = c => {
   return res
 }
 const mkTex = (rep, draw) => { const cv = document.createElement('canvas'); cv.width = cv.height = 256; draw(cv.getContext('2d')); const t = new THREE.CanvasTexture(cv); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(rep, rep); return t }
-const grassTex = mkTex(60, g => { g.fillStyle = '#4d7c3a'; g.fillRect(0, 0, 256, 256); for (let i = 0; i < 2600; i++) { g.fillStyle = `hsl(${100 + Math.random() * 30},${34 + Math.random() * 26}%,${21 + Math.random() * 18}%)`; g.fillRect(Math.random() * 256, Math.random() * 256, 2, 2) } })
+const grassTex = mkTex(52, g => { const gr = g.createLinearGradient(0, 0, 210, 256); gr.addColorStop(0, '#557f3d'); gr.addColorStop(1, '#446b32'); g.fillStyle = gr; g.fillRect(0, 0, 256, 256); for (let i = 0; i < 52; i++) { g.fillStyle = `hsla(${92 + Math.random() * 44},${28 + Math.random() * 26}%,${25 + Math.random() * 16}%,0.4)`; g.beginPath(); g.ellipse(Math.random() * 256, Math.random() * 256, 22 + Math.random() * 46, 15 + Math.random() * 30, Math.random() * 3, 0, 7); g.fill() } for (let i = 0; i < 3000; i++) { g.fillStyle = `hsl(${98 + Math.random() * 34},${34 + Math.random() * 26}%,${19 + Math.random() * 21}%)`; g.fillRect(Math.random() * 256, Math.random() * 256, 1.5, 2.5) } })
 const scene = new THREE.Scene()
 const skyCv = document.createElement('canvas'); skyCv.width = 4; skyCv.height = 256
 { const s = skyCv.getContext('2d'), gr = s.createLinearGradient(0, 0, 0, 256); gr.addColorStop(0, '#4d8fc9'); gr.addColorStop(0.5, '#9cc4e6'); gr.addColorStop(1, '#dcebf6'); s.fillStyle = gr; s.fillRect(0, 0, 4, 256) }
