@@ -385,3 +385,14 @@ async function mountDraw() {
   try { const m = await import('./shape-edit.js?v=se1'); shapeEd = m.mountShapeEditor(host, { rect: { w: +cfg.w, d: +cfg.d }, polygon: cfg.mode === 'poly' ? cfg.polygon : null, houseEdge: cfg.house_edge, onApply: ({ polygon, houseEdge }) => { applyPoly(polygon, houseEdge); const t = document.querySelector('.tab[data-pane="3d"]'); if (t) t.click() } }) }
   catch (e) { host.innerHTML = '<div style="padding:20px;color:#9aa0aa">draw tool unavailable</div>' }
 }
+function maybePlanBanner() {
+  let plan; try { plan = JSON.parse(localStorage.getItem('amni_construct_plan')) } catch (e) {}
+  if (!plan || !plan.polygon || plan.polygon.length < 3 || Date.now() - (plan.ts || 0) > 86400000) return
+  const side = document.querySelector('#side'); if (!side) return
+  const b = document.createElement('button')
+  b.style.cssText = 'display:block;width:100%;padding:9px;margin-bottom:12px;background:var(--bg);border:1px dashed var(--acc2);color:var(--acc2);border-radius:8px;cursor:pointer;font-weight:600;font-size:13px'
+  b.textContent = '🏠 Use my house plan (' + (+plan.area_ft2 || 0).toFixed(0) + ' ft²)'
+  side.insertBefore(b, side.firstChild)
+  b.onclick = () => { applyPoly(plan.polygon); b.textContent = '✓ Using your house plan'; b.style.color = 'var(--ok)'; b.style.borderColor = 'var(--ok)' }
+}
+maybePlanBanner()

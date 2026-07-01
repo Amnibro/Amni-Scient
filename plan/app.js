@@ -145,6 +145,8 @@ const renderMat = () => {
     ['🌱 Garden', 'garden', 'plan raised beds for the yard'],
   ]
   $('#mat-table').innerHTML = `<tr><th>Trade app</th><th>From this plan</th><th></th></tr>` + rollup.map(([t, slug, txt]) => `<tr><td><b>${t}</b></td><td>${txt}</td><td><a href="../${slug}/" target="_blank">open ↗</a></td></tr>`).join('')
+  const payload = { ts: Date.now(), polygon: [[0, 0], [c.footprint_w, 0], [c.footprint_w, c.footprint_d], [0, c.footprint_d]], area_ft2: c.footprint_area, net_area: c.total_area, w: c.footprint_w, d: c.footprint_d, bedrooms: c.bedrooms, baths: c.baths, toilets: c.toilets, lavs: c.lavs, kitchen_sinks: c.kitchen_sinks, showers: c.showers, washers: c.washers }
+  $('#mat-table').querySelectorAll('a[href^="../"]').forEach(a => a.onclick = () => { try { localStorage.setItem('amni_construct_plan', JSON.stringify(payload)) } catch (e) {} })
 }
 const persist = () => localStorage.setItem(LS, JSON.stringify(cfg))
 const KINDS = ['bedroom', 'bath', 'kitchen', 'living', 'dining', 'laundry', 'garage', 'hall', 'office', 'other']

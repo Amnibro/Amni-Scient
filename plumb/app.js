@@ -273,3 +273,14 @@ resize()
 recompute()
 seedScene()
 setupSketch()
+function maybePlanBanner() {
+  let plan; try { plan = JSON.parse(localStorage.getItem('amni_construct_plan')) } catch (e) {}
+  if (!plan || Date.now() - (plan.ts || 0) > 86400000) return
+  const side = document.querySelector('#side'); if (!side) return
+  const b = document.createElement('button')
+  b.style.cssText = 'display:block;width:100%;padding:9px;margin-bottom:12px;background:var(--bg);border:1px dashed var(--acc2);color:var(--acc2);border-radius:8px;cursor:pointer;font-weight:600;font-size:13px'
+  b.textContent = '🏠 Use my house plan (' + (+plan.toilets || 0) + ' WC / ' + ((+plan.lavs || 0) + (+plan.kitchen_sinks || 0)) + ' sinks)'
+  side.insertBefore(b, side.firstChild)
+  b.onclick = () => { ['toilets', 'lavs', 'kitchen_sinks', 'showers', 'washers'].forEach(k => { if (plan[k] != null) cfg[k] = +plan[k] }); cfg.water_heater = true; const wh = document.querySelector('#wheater'); if (wh) wh.checked = true; syncInputs(); recompute(); b.textContent = '✓ Using your house plan'; b.style.color = 'var(--ok)'; b.style.borderColor = 'var(--ok)' }
+}
+maybePlanBanner()
