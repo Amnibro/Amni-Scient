@@ -82,6 +82,7 @@ header p{color:var(--mut);max-width:660px;margin:14px auto 0;line-height:1.65}
 .gx th{color:var(--ink)}
 footer{text-align:center;color:var(--mut);font-size:12px;padding:24px}
 footer a{color:var(--acc);text-decoration:none}
+.app .resume{position:absolute;top:14px;right:16px;font-size:11px;color:#5fae5f;letter-spacing:.03em}
 body{overflow-x:hidden}
 @media (max-width:560px){
   header{padding:30px 16px 14px}
@@ -267,5 +268,6 @@ body{overflow-x:hidden}
   </div>
 </div>
 <footer><a href="../">amni-scient.com</a> · free forever · no accounts, no uploads, no tracking</footer>
+<script>(()=>{const K={deck:'amnideck.cfg.v2',patio:'amnipatio.cfg.v1',pool:'amnipool.cfg.v1',floor:'amnifloor.cfg.v1',roof:'amniroof.cfg.v1',frame:'amniframe.cfg.v1',plumb:'amniplumb.cfg.v1',elec:'amnielec.cfg.v1',plan:'amniplan.cfg.v1',garden:'amnigarden.cfg.v1',hvac:'amnihvac.sketch.v2'};document.querySelectorAll('.apps .app').forEach(a=>{const m=[...a.classList].find(c=>K[c]);m&&localStorage.getItem(K[m])&&a.insertAdjacentHTML('beforeend','<span class="resume">● saved project</span>')})})()</script>
 </body>
 </html>
