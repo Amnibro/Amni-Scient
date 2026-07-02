@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Plumbing Rough-In Cost Estimator & Pipe Sizing Calculator — Free Supply + DWV Planner | AMNI-SCIENT</title>
+<meta name="description" content="Free plumbing rough-in estimator: sketch fixtures on your floor plan, auto-route supply and DWV pipe, size mains, drains and vents, and price every fitting.">
+<meta name="keywords" content="amni-construct,plumb cost,plumb calculator,plumbing estimator,diy plumb,materials estimator">
+<meta name="author" content="Amni-Scient">
+<meta property="og:title" content="Plumbing Rough-In Cost Estimator &amp; Pipe Sizing Calculator — Free Supply + DWV Planner">
+<meta property="og:description" content="Free plumbing rough-in estimator: sketch fixtures on your floor plan, auto-route supply and DWV pipe, size mains, drains and vents, and price every fitting.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://amni-scient.com/construct/plumb.html">
+<meta property="og:image" content="https://amni-scient.com/assets/explore/og-explore.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Plumbing Rough-In Cost Estimator &amp; Pipe Sizing Calculator — Free Supply + DWV Planner">
+<meta name="twitter:description" content="Free plumbing rough-in estimator: sketch fixtures on your floor plan, auto-route supply and DWV pipe, size mains, drains and vents, and price every fitting.">
+<link rel="canonical" href="https://amni-scient.com/construct/plumb.html">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Plumbing Rough-In Cost Estimator & Pipe Sizing Calculator — Free Supply + DWV Planner","description":"Free plumbing rough-in estimator: sketch fixtures on your floor plan, auto-route supply and DWV pipe, size mains, drains and vents, and price every fitting.","author":{"@type":"Organization","name":"AMNI-SCIENT"},"publisher":{"@type":"Organization","name":"AMNI-SCIENT","url":"https://amni-scient.com"},"mainEntityOfPage":"https://amni-scient.com/construct/plumb.html"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Can I legally do my own plumbing?","acceptedAnswer":{"@type":"Answer","text":"In many US jurisdictions, yes homeowner permits are issued for owner-occupied single-family homes, with inspections. Rentals, condos and some cities require a licensed plumber, and gas piping is licensed work almost everywhere. The permit panel summarizes your state; your building department confirms."}},{"@type":"Question","name":"PEX or copper?","acceptedAnswer":{"@type":"Answer","text":"PEX-A dominates 2026 new construction: a third the material cost, freeze-tolerant, far fewer fittings buried in walls, and 25-year warranties. Copper still wins for exposed runs, UV exposure, and buyers who expect it. Most sensible answer: PEX in the walls, copper stubs where it shows the tool prices both."}},{"@type":"Question","name":"What size water main does my house need?","acceptedAnswer":{"@type":"Answer","text":"It comes out of the WSFU math: total the fixture units, convert to peak GPM, and size for available pressure and run length. Most 2 3 bath houses land on a 1 in main with 3/4 in trunks. The estimator runs this live from your sketched fixtures per IPC Appendix E."}},{"@type":"Question","name":"Does the tool handle venting?","acceptedAnswer":{"@type":"Answer","text":"Yes every fixture is checked for a vent path and trap-arm distance as you draw, and the warnings panel calls out anything unvented. Air admittance valves can substitute where your jurisdiction allows them (not all do) confirm in the permit panel."}},{"@type":"Question","name":"What is a P-1 riser diagram and do I need one?","acceptedAnswer":{"@type":"Answer","text":"It is the schematic sheet showing supply and DWV piping with sizes many plan reviewers require one with a plumbing permit application. The estimator generates it from your sketch in the 2D Plans tab."}}]}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8345487545441889" crossorigin="anonymous" data-overlays="false"></script>
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+<style>
+.crumbs{color:var(--dim);font-size:.75rem;letter-spacing:1px;text-transform:uppercase;margin:1rem 0 0;padding:0 1.5rem}
+.crumbs a{color:var(--dim)}
+.crumbs a:hover{color:#e0954a}
+.g-wrap{max-width:880px;margin:0 auto;padding:0 1.5rem}
+.g-wrap p{color:var(--text);line-height:1.75;font-size:.92rem}
+.g-block{margin:2.4rem 0}
+.g-block h2{color:#e0954a;font-size:1.05rem;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:1rem}
+.g-block code{background:rgba(224,149,74,.09);border:1px solid rgba(224,149,74,.25);border-radius:3px;padding:.05rem .35rem;font-family:'JetBrains Mono',monospace;font-size:.85em;color:var(--text)}
+.factor-list{list-style:none;padding:0;margin:0}
+.factor-list li{background:rgba(224,149,74,.05);border-left:3px solid #e0954a;border-radius:0 4px 4px 0;padding:.8rem 1.1rem;margin-bottom:.6rem}
+.factor-list strong{display:block;color:var(--text);margin-bottom:.25rem}
+.factor-list span{color:var(--dim);font-size:.87rem;line-height:1.65}
+.worked{background:linear-gradient(180deg,rgba(224,149,74,.07),rgba(224,149,74,.02));border:1px solid rgba(224,149,74,.28);border-radius:6px;padding:1.2rem 1.4rem}
+.step-list{list-style:none;counter-reset:s;padding:0;margin:0}
+.step-list li{display:flex;gap:.9rem;align-items:flex-start;padding:.55rem 0;color:var(--text);font-size:.9rem;line-height:1.7}
+.step-n{flex:0 0 26px;height:26px;border-radius:50%;background:rgba(224,149,74,.14);border:1px solid rgba(224,149,74,.4);color:#e0954a;font-family:'JetBrains Mono',monospace;font-size:.75rem;display:flex;align-items:center;justify-content:center;margin-top:.15rem}
+.pitfall-list{list-style:none;padding:0;margin:0}
+.pitfall-list li{padding:.7rem 0;border-bottom:1px dashed var(--border,rgba(255,255,255,.08))}
+.pitfall-list strong{display:block;color:#e0954a;margin-bottom:.25rem;font-size:.9rem}
+.pitfall-list span{color:var(--dim);font-size:.87rem;line-height:1.65}
+.g-tbl{width:100%;border-collapse:collapse;font-size:.85rem}
+.g-tbl th{text-align:left;color:#e0954a;letter-spacing:.5px;font-size:.72rem;text-transform:uppercase;padding:.5rem .7rem;border-bottom:1px solid rgba(224,149,74,.35)}
+.g-tbl td{padding:.55rem .7rem;color:var(--text);border-bottom:1px solid var(--border,rgba(255,255,255,.07))}
+.tbl-note{color:var(--dim);font-size:.78rem;margin-top:.6rem}
+.faq-q{border:1px solid var(--border,rgba(255,255,255,.1));border-radius:5px;margin-bottom:.6rem;background:rgba(255,255,255,.015)}
+.faq-q summary{cursor:pointer;padding:.75rem 1rem;color:var(--text);font-size:.9rem;list-style:none}
+.faq-q summary::-webkit-details-marker{display:none}
+.faq-q summary::before{content:'+ ';color:#e0954a;font-family:'JetBrains Mono',monospace}
+.faq-q[open] summary::before{content:'− '}
+.faq-q div{padding:0 1rem .9rem;color:var(--dim);font-size:.87rem;line-height:1.7}
+.rel-row{display:flex;flex-wrap:wrap;gap:.6rem}
+.rel-row a{border:1px solid rgba(224,149,74,.35);border-radius:99px;padding:.4rem .95rem;font-size:.8rem;color:var(--text);text-decoration:none}
+.rel-row a:hover{border-color:#e0954a;color:#e0954a}
+.btn-construct{background:#e0954a;color:var(--bg);box-shadow:0 0 10px rgba(224,149,74,.6)}
+</style>
+</head>
+<body>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu">
+<a href="../construct/" class="active">AMNI-CONSTRUCT</a>
+<a href="../amni-calc.html">AMNI-CALC</a>
+<a href="../amni-browse.html">AMNI-BROWSE</a>
+<a href="../amni-explore.html">AMNI-EXPLORE</a>
+<a href="../amni-learn.html">AMNI-LEARN</a>
+<a href="../amni-connect.html">AMNI-CONNECT</a>
+<a href="../amni-code.html">AMNI-CODE</a>
+<a href="../amni-haven.html">AMNI-HAVEN</a>
+</div>
+</div>
+<a href="../about.html">ABOUT</a>
+<a href="../faq.html">FAQ</a>
+<a href="../privacy.html">PRIVACY</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<p class="crumbs"><a href="../">Home</a> &rsaquo; <a href="../construct/">Amni-Construct</a> &rsaquo; Plumbing Estimator Guide</p>
+<div class="product-hero">
+<h1>PLUMBING ROUGH-IN COST ESTIMATOR & PIPE SIZING CALCULATOR — FREE SUPPLY + DWV PLANNER</h1>
+<p class="desc">SKETCH FIXTURES ON YOUR FLOOR PLAN, AUTO-ROUTE SUPPLY AND DWV PIPE, SIZE MAINS AND DRAINS, AND PRICE EVERY FITTING AT HOME DEPOT AND LOWE'S</p>
+<div style="margin-top:1.5rem">
+<a href="../plumb/" class="btn btn-primary btn-construct">OPEN THE FREE PLUMBING ESTIMATOR ESTIMATOR &rarr;</a>
+</div>
+</div>
+<div class="g-wrap">
+<div class="g-block"><p>Plumbers bill $80&ndash;$150 an hour in 2026, and a full bathroom rough-in &mdash; toilet, lavatory, tub &mdash; typically quotes at $2,500&ndash;$4,500 before a single fixture is set. The materials in that same rough-in are $400&ndash;$600 in PEX and PVC. A whole-house repipe runs $4,000&ndash;$15,000 hired out versus $1,500&ndash;$3,000 in PEX-A tubing, fittings and stops done yourself. Plumbing labor is mostly layout thinking &mdash; which you can do in advance, for free.</p><p>Amni-Plumb works the way a plumber plans: snap a photo of your wall or room (optional), then drag toilets, lavs, tubs, showers, kitchen sink, washer and water heater onto the 2D layout, place the building main and vent stack, and the supply and DWV runs auto-route with live footage and pricing. Behind the sketch it runs the code math &mdash; water supply fixture units to peak-demand GPM to main and branch sizing, drainage fixture units to drain diameter, trap and vent validation as you draw. Flip to the 3D view, print the P-1 riser diagram for permits, and pull live Home Depot and Lowe&apos;s prices into the materials table &mdash; all in the browser, no account.</p></div>
+<div class="g-block"><h2>Where the Money Goes</h2><ul class="factor-list"><li><strong>Pipe material</strong><span>Half-inch PEX-A runs $0.50&ndash;$1.00 per foot and 3/4 in about $1&ndash;$1.50; type L copper is roughly triple that and demands soldering or a press tool; CPVC sits between. DWV is PVC almost everywhere: about $1.50&ndash;$2.50 per foot for 2 in, $3&ndash;$6 for 3 and 4 in.</span></li><li><strong>Fixture count and WSFU</strong><span>Every fixture carries a water supply fixture unit value per IPC Appendix E; the total converts to peak-demand GPM, which sets the main and trunk sizes. A typical 2.5-bath house lands around 20&ndash;25 WSFU &mdash; a 1 in main, 3/4 in trunks, 1/2 in branch runs. The tool recomputes the math as you drop fixtures.</span></li><li><strong>Drain, waste and vent</strong><span>Drainage sizes off DFU counts &mdash; a toilet alone is 3&ndash;4 DFU and forces a 3 in branch minimum. Every trap needs a vent within its trap-arm limit (roughly 42 in for a 1-1/2 in arm, 5 ft for 2 in under the IPC). Venting is where DIY layouts fail plan review; the sketch flags an unvented or over-long arm as you draw.</span></li><li><strong>Open studs versus finished walls</strong><span>Rough-in with walls open is the easy case. Fishing supply and drain through finished walls multiplies labor 2&ndash;4&times; and adds drywall repair. The sketch photo underlay helps you find the shortest real path.</span></li><li><strong>Water heater</strong><span>A 50-gallon electric tank is $550&ndash;$900, gas $700&ndash;$1,200, and a condensing tankless unit $600&ndash;$1,500 plus venting &mdash; and gas models often force a larger gas line, which is licensed work. A sidebar toggle adds it all to the takeoff.</span></li></ul></div>
+<div class="g-block"><h2>What a Typical Project Costs</h2><div class="worked"><p>Take the classic project: a full bathroom addition rough-in &mdash; toilet, lavatory, tub/shower &mdash; tying into an existing 3 in stack about 20 ft away, in PEX-A.</p><p>Supply: roughly 60 ft of 1/2 in and 3/4 in PEX-A at $0.50&ndash;$1.20 per foot &mdash; <code>$55&ndash;$75</code>; expansion fittings, rings and drop-ear elbows &mdash; <code>$70&ndash;$95</code>; quarter-turn stops and braided supply lines &mdash; <code>$40</code>. DWV: 20 ft of 3 in PVC for the toilet run <code>$70</code>, about 50 ft of 2 in and 1-1/2 in branch and vent <code>$90</code>, then the fitting pile &mdash; wyes, sanitary tees, closet flange, P-traps, cleanout &mdash; <code>$110&ndash;$130</code>. Strapping, nail plates, primer and cement add <code>$40</code>.</p><p>Rough-in materials total: <strong>about $475&ndash;$550</strong>. A one-day PEX expansion tool rental is $50&ndash;$70 (buying a Milwaukee M12 ProPEX runs $300&ndash;$400 and pays for itself on a repipe). Finish fixtures &mdash; toilet, tub, vanity, faucets &mdash; add $700&ndash;$1,700. The identical rough-in quotes $2,500&ndash;$4,500 from a plumber, and the estimator&apos;s materials table gets you within a few percent.</p></div></div>
+
+<div class="g-block"><h2>From Plan to Finished Project</h2><ol class="step-list"><li><span class="step-n">1</span><span>Check who may do the work first: many states issue homeowner plumbing permits for owner-occupied houses, with inspections; some cities do not, and gas piping is licensed-only almost everywhere. The Code &amp; Permits panel gives your state&apos;s stance; your building department rules.</span></li><li><span class="step-n">2</span><span>In the Layout tab, snap a photo of the wall or room (or use the blank grid), then pick a quick-build preset or set fixture counts in the sidebar.</span></li><li><span class="step-n">3</span><span>Drag fixtures into position, then place the building main and the vent stack. Supply and DWV runs auto-route and price live as you connect.</span></li><li><span class="step-n">4</span><span>Watch the validation warnings as you draw &mdash; trap arm too long, fixture without a vent path, undersized drain. Fixing it in pixels costs nothing.</span></li><li><span class="step-n">5</span><span>Pick your pipe material swatch &mdash; PEX, copper or CPVC &mdash; and compare totals before committing.</span></li><li><span class="step-n">6</span><span>Open Materials &amp; Pricing: the full takeoff, with paste-in live Home Depot and Lowe&apos;s pricing. Edit any cell to match a local quote and export the CSV.</span></li><li><span class="step-n">7</span><span>Print the 2D plans and the P-1 riser diagram for your permit application, then follow the Build Guide order: DWV first &mdash; the big sloped pipe claims its space before supply fills in around it.</span></li><li><span class="step-n">8</span><span>Plan the tests: supply gets pressure-tested and DWV gets a head or air test before walls close. Schedule the rough-in inspection before insulation and drywall.</span></li></ol></div>
+<div class="g-block"><h2>Mistakes That Cost Real Money</h2><ul class="pitfall-list"><li><strong>Building an accidental S-trap</strong><span>A fixture drain dropping straight down past its trap with no vent siphons the trap dry and lets sewer gas in. Every trap needs a vent connection within its trap-arm distance &mdash; the sketch flags it, and inspectors always check.</span></li><li><strong>Getting the slope wrong</strong><span>Drains 2-1/2 in and smaller need 1/4 in per foot of fall; 3 in and larger can run 1/8 in per foot. Below minimum, solids strand and clog. Check the fall across your longest run against the ceiling space you have before cutting.</span></li><li><strong>Mixing metals without a dielectric union</strong><span>Copper threaded straight onto galvanized steel sets up galvanic corrosion that eats the joint within a few years. Use dielectric unions or a brass fitting between dissimilar metals, especially at the water heater.</span></li><li><strong>Skipping nail plates</strong><span>Any pipe within 1-1/4 in of a stud or plate face needs a steel protection plate. A trim nail through PEX leaks in month six behind finished drywall, not on day one. Plates cost under a dollar each; the takeoff includes them.</span></li><li><strong>Buying fittings for the wrong PEX system</strong><span>PEX-A expansion fittings (ASTM F1960) and PEX-B crimp fittings (F1807) are not interchangeable. Pick one system, set it in the tool, and buy off a single list.</span></li></ul></div>
+<div class="g-block"><h2>FAQ</h2><details class="faq-q"><summary>Can I legally do my own plumbing?</summary><div>In many US jurisdictions, yes &mdash; homeowner permits are issued for owner-occupied single-family homes, with inspections. Rentals, condos and some cities require a licensed plumber, and gas piping is licensed work almost everywhere. The permit panel summarizes your state; your building department confirms.</div></details><details class="faq-q"><summary>PEX or copper?</summary><div>PEX-A dominates 2026 new construction: a third the material cost, freeze-tolerant, far fewer fittings buried in walls, and 25-year warranties. Copper still wins for exposed runs, UV exposure, and buyers who expect it. Most sensible answer: PEX in the walls, copper stubs where it shows &mdash; the tool prices both.</div></details><details class="faq-q"><summary>What size water main does my house need?</summary><div>It comes out of the WSFU math: total the fixture units, convert to peak GPM, and size for available pressure and run length. Most 2&ndash;3 bath houses land on a 1 in main with 3/4 in trunks. The estimator runs this live from your sketched fixtures per IPC Appendix E.</div></details><details class="faq-q"><summary>Does the tool handle venting?</summary><div>Yes &mdash; every fixture is checked for a vent path and trap-arm distance as you draw, and the warnings panel calls out anything unvented. Air admittance valves can substitute where your jurisdiction allows them (not all do) &mdash; confirm in the permit panel.</div></details><details class="faq-q"><summary>What is a P-1 riser diagram and do I need one?</summary><div>It is the schematic sheet showing supply and DWV piping with sizes &mdash; many plan reviewers require one with a plumbing permit application. The estimator generates it from your sketch in the 2D Plans tab.</div></details></div>
+<div class="g-block"><h2>Related Projects</h2><div class="rel-row"><a href="./elec.html">Electrical Estimator guide</a><a href="./hvac.html">HVAC Duct Designer guide</a><a href="./plan.html">Whole-House Planner guide</a><a href="../construct/">All 11 estimators</a></div></div>
+</div>
+<section style="text-align:center">
+<h2>PRICE YOUR PROJECT IN MINUTES</h2>
+<p style="color:var(--dim);margin-bottom:1.5rem;font-size:.9rem">Everything computes on your device. Free, private, instant.</p>
+<div class="cta-row" style="justify-content:center;gap:1rem;flex-wrap:wrap">
+<a href="../plumb/" class="btn btn-primary btn-construct">LAUNCH PLUMBING ESTIMATOR &rarr;</a>
+<a href="../construct/" class="btn btn-outline">ALL CONSTRUCT TOOLS</a>
+</div>
+</section>
+<div class="site-ad-banner">
+<span class="ad-note">Sponsored</span>
+<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8345487545441889" data-ad-slot="1720203631" data-ad-format="auto" data-full-width-responsive="true"></ins>
+<script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>
+</div>
+<footer>
+<div class="footer-links">
+<a href="../about.html">ABOUT</a>
+<a href="../faq.html">FAQ</a>
+<a href="../construct/">AMNI-CONSTRUCT</a>
+<a href="../privacy.html">PRIVACY</a>
+<a href="../terms.html">TERMS</a>
+<a href="mailto:amnibro7@gmail.com">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amni-Scient. All rights reserved.</p>
+</footer>
+</body>
+</html>

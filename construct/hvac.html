@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>HVAC Duct Sizing Calculator & Ductwork Cost Estimator — Free Layout Designer | AMNI-SCIENT</title>
+<meta name="description" content="Free HVAC duct calculator: draw your air handler, registers and returns, get live Manual D CFM sizing, airflow vs tonnage checks and a priced materials list.">
+<meta name="keywords" content="amni-construct,hvac cost,hvac calculator,hvac duct designer,diy hvac,materials estimator">
+<meta name="author" content="Amni-Scient">
+<meta property="og:title" content="HVAC Duct Sizing Calculator &amp; Ductwork Cost Estimator — Free Layout Designer">
+<meta property="og:description" content="Free HVAC duct calculator: draw your air handler, registers and returns, get live Manual D CFM sizing, airflow vs tonnage checks and a priced materials list.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://amni-scient.com/construct/hvac.html">
+<meta property="og:image" content="https://amni-scient.com/assets/explore/og-explore.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="HVAC Duct Sizing Calculator &amp; Ductwork Cost Estimator — Free Layout Designer">
+<meta name="twitter:description" content="Free HVAC duct calculator: draw your air handler, registers and returns, get live Manual D CFM sizing, airflow vs tonnage checks and a priced materials list.">
+<link rel="canonical" href="https://amni-scient.com/construct/hvac.html">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"HVAC Duct Sizing Calculator & Ductwork Cost Estimator — Free Layout Designer","description":"Free HVAC duct calculator: draw your air handler, registers and returns, get live Manual D CFM sizing, airflow vs tonnage checks and a priced materials list.","author":{"@type":"Organization","name":"AMNI-SCIENT"},"publisher":{"@type":"Organization","name":"AMNI-SCIENT","url":"https://amni-scient.com"},"mainEntityOfPage":"https://amni-scient.com/construct/hvac.html"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Can I install my own ductwork?","acceptedAnswer":{"@type":"Answer","text":"In many jurisdictions, yes duct fabrication and installation is homeowner-permittable work under a mechanical permit with inspection, and it is genuinely DIY-friendly sheet-metal-and-flex labor. The refrigerant circuit is the exception: charging and brazing linesets requires EPA 608 certification. Plan and duct it yourself; hire the refrigerant work or choose pre-charged equipment."}},{"@type":"Question","name":"What is the difference between Manual J and Manual D?","acceptedAnswer":{"@type":"Answer","text":"Manual J is the room-by-room heating and cooling load calculation; Manual S selects equipment to match it; Manual D sizes the ducts to deliver each room s airflow within the blower s static pressure budget. This tool applies Manual D friction-rate sizing to the layout you draw you bring the loads, it sizes the runs."}},{"@type":"Question","name":"Is flex duct bad?","acceptedAnswer":{"@type":"Answer","text":"No badly installed flex is bad. Pulled tight, supported every 4 ft, and kept to short branch runs, R-8 flex performs close to spec at half the installed effort of metal. Long saggy runs and pinched bends are what give it the reputation. The estimator prices either; the table above shows the honest penalty."}},{"@type":"Question","name":"How many CFM does each room need?","acceptedAnswer":{"@type":"Answer","text":"It falls out of the room s share of the load: a typical bedroom wants 75 125 CFM, a large living area 200 400. Divide the system total (400 CFM per ton) across rooms by load share, set each register s CFM in the sketch, and the duct sizes follow automatically."}}]}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8345487545441889" crossorigin="anonymous" data-overlays="false"></script>
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+<style>
+.crumbs{color:var(--dim);font-size:.75rem;letter-spacing:1px;text-transform:uppercase;margin:1rem 0 0;padding:0 1.5rem}
+.crumbs a{color:var(--dim)}
+.crumbs a:hover{color:#e0954a}
+.g-wrap{max-width:880px;margin:0 auto;padding:0 1.5rem}
+.g-wrap p{color:var(--text);line-height:1.75;font-size:.92rem}
+.g-block{margin:2.4rem 0}
+.g-block h2{color:#e0954a;font-size:1.05rem;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:1rem}
+.g-block code{background:rgba(224,149,74,.09);border:1px solid rgba(224,149,74,.25);border-radius:3px;padding:.05rem .35rem;font-family:'JetBrains Mono',monospace;font-size:.85em;color:var(--text)}
+.factor-list{list-style:none;padding:0;margin:0}
+.factor-list li{background:rgba(224,149,74,.05);border-left:3px solid #e0954a;border-radius:0 4px 4px 0;padding:.8rem 1.1rem;margin-bottom:.6rem}
+.factor-list strong{display:block;color:var(--text);margin-bottom:.25rem}
+.factor-list span{color:var(--dim);font-size:.87rem;line-height:1.65}
+.worked{background:linear-gradient(180deg,rgba(224,149,74,.07),rgba(224,149,74,.02));border:1px solid rgba(224,149,74,.28);border-radius:6px;padding:1.2rem 1.4rem}
+.step-list{list-style:none;counter-reset:s;padding:0;margin:0}
+.step-list li{display:flex;gap:.9rem;align-items:flex-start;padding:.55rem 0;color:var(--text);font-size:.9rem;line-height:1.7}
+.step-n{flex:0 0 26px;height:26px;border-radius:50%;background:rgba(224,149,74,.14);border:1px solid rgba(224,149,74,.4);color:#e0954a;font-family:'JetBrains Mono',monospace;font-size:.75rem;display:flex;align-items:center;justify-content:center;margin-top:.15rem}
+.pitfall-list{list-style:none;padding:0;margin:0}
+.pitfall-list li{padding:.7rem 0;border-bottom:1px dashed var(--border,rgba(255,255,255,.08))}
+.pitfall-list strong{display:block;color:#e0954a;margin-bottom:.25rem;font-size:.9rem}
+.pitfall-list span{color:var(--dim);font-size:.87rem;line-height:1.65}
+.g-tbl{width:100%;border-collapse:collapse;font-size:.85rem}
+.g-tbl th{text-align:left;color:#e0954a;letter-spacing:.5px;font-size:.72rem;text-transform:uppercase;padding:.5rem .7rem;border-bottom:1px solid rgba(224,149,74,.35)}
+.g-tbl td{padding:.55rem .7rem;color:var(--text);border-bottom:1px solid var(--border,rgba(255,255,255,.07))}
+.tbl-note{color:var(--dim);font-size:.78rem;margin-top:.6rem}
+.faq-q{border:1px solid var(--border,rgba(255,255,255,.1));border-radius:5px;margin-bottom:.6rem;background:rgba(255,255,255,.015)}
+.faq-q summary{cursor:pointer;padding:.75rem 1rem;color:var(--text);font-size:.9rem;list-style:none}
+.faq-q summary::-webkit-details-marker{display:none}
+.faq-q summary::before{content:'+ ';color:#e0954a;font-family:'JetBrains Mono',monospace}
+.faq-q[open] summary::before{content:'− '}
+.faq-q div{padding:0 1rem .9rem;color:var(--dim);font-size:.87rem;line-height:1.7}
+.rel-row{display:flex;flex-wrap:wrap;gap:.6rem}
+.rel-row a{border:1px solid rgba(224,149,74,.35);border-radius:99px;padding:.4rem .95rem;font-size:.8rem;color:var(--text);text-decoration:none}
+.rel-row a:hover{border-color:#e0954a;color:#e0954a}
+.btn-construct{background:#e0954a;color:var(--bg);box-shadow:0 0 10px rgba(224,149,74,.6)}
+</style>
+</head>
+<body>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu">
+<a href="../construct/" class="active">AMNI-CONSTRUCT</a>
+<a href="../amni-calc.html">AMNI-CALC</a>
+<a href="../amni-browse.html">AMNI-BROWSE</a>
+<a href="../amni-explore.html">AMNI-EXPLORE</a>
+<a href="../amni-learn.html">AMNI-LEARN</a>
+<a href="../amni-connect.html">AMNI-CONNECT</a>
+<a href="../amni-code.html">AMNI-CODE</a>
+<a href="../amni-haven.html">AMNI-HAVEN</a>
+</div>
+</div>
+<a href="../about.html">ABOUT</a>
+<a href="../faq.html">FAQ</a>
+<a href="../privacy.html">PRIVACY</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<p class="crumbs"><a href="../">Home</a> &rsaquo; <a href="../construct/">Amni-Construct</a> &rsaquo; HVAC Duct Designer Guide</p>
+<div class="product-hero">
+<h1>HVAC DUCT SIZING CALCULATOR & DUCTWORK COST ESTIMATOR — FREE LAYOUT DESIGNER</h1>
+<p class="desc">DRAW THE AIR HANDLER, REGISTERS AND RETURNS ON YOUR FLOOR PLAN — EVERY DUCT RUN SIZES TO ITS CFM AND PRICES AS YOU GO</p>
+<div style="margin-top:1.5rem">
+<a href="../hvac/" class="btn btn-primary btn-construct">OPEN THE FREE HVAC DUCT DESIGNER ESTIMATOR &rarr;</a>
+</div>
+</div>
+<div class="g-wrap">
+<div class="g-block"><p>Ductwork is the quiet half of every HVAC bill. Contractors price duct replacement at $25&ndash;$55 per installed foot &mdash; $2,500&ndash;$6,000 for a typical house &mdash; while the sheet metal and flex behind that number costs a fraction: 6 in snap-lock pipe at $2&ndash;$3 per foot, R-8 insulated flex around $50&ndash;$80 per 25 ft bag, registers $10&ndash;$25 each. And bad duct design wastes money forever: an undersized return or a crushed flex run can strangle a brand-new system into short-cycling, which is why the sizing math matters more than the parts.</p><p>Amni-HVAC is a drawing tool that does that math while you sketch. Snap a photo of your space (optional), drop an air handler, place supply registers and return grilles, and run duct between them &mdash; every segment gets live CFM sizing using the Manual D friction-rate method, with an airflow-versus-tonnage check (about 400 CFM per ton) and a supply/return balance check running the whole time. Double-click the air handler to set tonnage, or any register to set its CFM. The 3D view shows the routing in space, the materials tab prices the takeoff straight from your drawn layout, and the Code &amp; Permits panel covers mechanical-permit notes for your state. Free, in the browser, nothing installed.</p></div>
+<div class="g-block"><h2>What Moves the Number</h2><ul class="factor-list"><li><strong>Tonnage and total airflow</strong><span>Cooling needs roughly 400 CFM of air movement per ton, so a 3-ton system has to breathe 1,200 CFM through whatever ducts you give it. Tonnage itself should come from a Manual J load calculation &mdash; the square-feet-per-ton folklore swings from 500 to 1,500 depending on climate and insulation, and oversizing is the single most common residential HVAC mistake.</span></li><li><strong>Duct material</strong><span>Galvanized snap-lock trunk and branch runs $2&ndash;$4 per foot bare, plus wrap; R-8 insulated flex is $2&ndash;$3.50 per foot and installs fast. Metal flows better and lasts; flex performs fine when pulled tight, supported every 4 ft and kept short. Energy code (IECC) wants R-8 insulation on ducts in unconditioned attics, R-6 elsewhere outside the envelope.</span></li><li><strong>Registers and returns</strong><span>Plan about one supply register per 100&ndash;150 sq ft, with room CFM set by load, not habit. Returns are where systems actually starve &mdash; total return area should match supply, and a single central return needs jumper ducts or door undercuts to pull from closed bedrooms. The balance check flags a starved return before you build it.</span></li><li><strong>The static pressure budget</strong><span>Residential blowers are typically rated around 0.5 in wc of external static, and everything spends it: filters, coils, every elbow, every foot of flex. Manual D sizing at a 0.1 in per 100 ft friction rate keeps the spend sane &mdash; add a restrictive MERV 13 filter and long saggy flex and the budget is gone.</span></li></ul></div>
+<div class="g-block"><h2>What a Typical Project Costs</h2><div class="worked"><p>A 3-ton, 1,200 CFM single-story system for about 1,600 sq ft: air handler in the utility closet, eight supply runs, two returns.</p><p>Supply side: plenum <code>$80&ndash;$150</code>; eight takeoffs at about $10 &mdash; <code>$80</code>; eight boots at $12 &mdash; <code>$96</code>; eight registers at $15 &mdash; <code>$120</code>; roughly 120 ft of duct between 6 and 8 in &mdash; <code>$300&ndash;$420</code> in R-8 flex, somewhat more in wrapped metal. Return side: two filter-ready grilles <code>$60&ndash;$80</code> and about 30 ft of larger return duct <code>$120&ndash;$160</code>. Mastic, foil tape, straps and sealant <code>$60</code>.</p><p>Duct materials total: <strong>about $950&ndash;$1,200</strong>, against $3,500&ndash;$6,000 for the same ductwork installed. Two honest caveats the tool also gives you: the equipment itself (air handler, condenser, lineset) is a separate budget, and anything touching the refrigerant circuit requires EPA 608 certification &mdash; hire that out, or sidestep it with a pre-charged DIY mini-split like MRCOOL at $1,500&ndash;$3,000 per zone.</p></div></div>
+<div class="g-block"><h2>Round Duct Capacity at Manual D Friction (0.1 in wc per 100 ft)</h2><table class="g-tbl"><thead><tr><th>Duct size</th><th>Metal, approx CFM</th><th>Flex (pulled tight), approx CFM</th><th>Typical use</th></tr></thead><tbody><tr><td>6 in</td><td>~110</td><td>~90</td><td>Small bedroom, office</td></tr><tr><td>7 in</td><td>~160</td><td>~130</td><td>Large bedroom</td></tr><tr><td>8 in</td><td>~220</td><td>~180</td><td>Master suite, living zone branch</td></tr><tr><td>10 in</td><td>~410</td><td>~330</td><td>Short trunk, 1-ton branch</td></tr><tr><td>12 in</td><td>~680</td><td>~550</td><td>Main trunk, ~1.5 tons</td></tr></tbody></table><p class="tbl-note">Rules of thumb for sanity-checking &mdash; the tool computes each drawn segment from its actual CFM and length. Sagging or compressed flex flows far below the pulled-tight column.</p></div>
+<div class="g-block"><h2>From Plan to Finished Project</h2><ol class="step-list"><li><span class="step-n">1</span><span>Set the air handler tonnage first (double-click it) &mdash; from a Manual J load calculation if you have one, not from square footage folklore. The airflow-versus-tonnage check keys off this number.</span></li><li><span class="step-n">2</span><span>Snap a photo of your space in the Layout tab if you want to draw over reality, then place supply registers about one per 100&ndash;150 sq ft and set each room&apos;s CFM.</span></li><li><span class="step-n">3</span><span>Place return grilles and watch the supply/return balance readout &mdash; matching return capacity to supply is the difference between a quiet system and a whistling one.</span></li><li><span class="step-n">4</span><span>Run duct from the air handler to each register. Every segment live-sizes to the CFM it carries at the Manual D friction rate, so you see required diameters as you draw.</span></li><li><span class="step-n">5</span><span>Flip to the 3D view to sanity-check the routing against joists and chases, then print the 2D plan set from the Plans tab.</span></li><li><span class="step-n">6</span><span>Open Materials &amp; Pricing for the takeoff priced from your drawn layout, adjust catalog prices against local quotes, and check the Code &amp; Permits panel: duct alterations need a mechanical permit in many jurisdictions, and refrigerant-side work is certified-tech territory.</span></li></ol></div>
+<div class="g-block"><h2>Mistakes That Cost Real Money</h2><ul class="pitfall-list"><li><strong>Sizing equipment by square footage</strong><span>An oversized air conditioner cools the thermostat fast and shuts off before it dehumidifies, forever &mdash; clammy rooms and short-cycle wear. Manual J exists because envelope quality moves the load 3&times; between houses of identical size. Size the load, then the airflow, then the ducts.</span></li><li><strong>Crushed and sagging flex duct</strong><span>A 6 in flex run yanked around a tight corner or pinched by a truss flows like 4 in pipe. Support flex every 4 ft with wide straps, keep sag under about 1/2 in per foot, pull the inner liner tight, and treat every extra foot of length as lost airflow.</span></li><li><strong>Sealing with cloth duct tape</strong><span>The one thing duct tape is provably bad at is ducts &mdash; the adhesive bakes out in a season. Typical homes leak 20&ndash;30% of conditioned air; seal every joint with mastic or UL 181 foil tape. Many jurisdictions now require a duct-leakage test on new systems, so this is a code item, not a nicety.</span></li><li><strong>One central return with the doors closed</strong><span>Bedrooms with supplies but no return path pressurize when doors close, forcing air out through the walls while the return starves. Jumper ducts, transfer grilles, or a 1 in door undercut per bedroom fix it cheaply at rough-in and expensively after paint.</span></li><li><strong>Spending the static budget on a filter</strong><span>Swapping a builder-grade filter for a thick high-MERV one without upsizing the return can push total external static past the blower rating &mdash; airflow drops, coils ice, the new furnace runs worse than the old one. If you want MERV 13, size the return grille area for it; the balance check will show the strain.</span></li></ul></div>
+<div class="g-block"><h2>FAQ</h2><details class="faq-q"><summary>Can I install my own ductwork?</summary><div>In many jurisdictions, yes &mdash; duct fabrication and installation is homeowner-permittable work under a mechanical permit with inspection, and it is genuinely DIY-friendly sheet-metal-and-flex labor. The refrigerant circuit is the exception: charging and brazing linesets requires EPA 608 certification. Plan and duct it yourself; hire the refrigerant work or choose pre-charged equipment.</div></details><details class="faq-q"><summary>What is the difference between Manual J and Manual D?</summary><div>Manual J is the room-by-room heating and cooling load calculation; Manual S selects equipment to match it; Manual D sizes the ducts to deliver each room&apos;s airflow within the blower&apos;s static pressure budget. This tool applies Manual D friction-rate sizing to the layout you draw &mdash; you bring the loads, it sizes the runs.</div></details><details class="faq-q"><summary>Is flex duct bad?</summary><div>No &mdash; badly installed flex is bad. Pulled tight, supported every 4 ft, and kept to short branch runs, R-8 flex performs close to spec at half the installed effort of metal. Long saggy runs and pinched bends are what give it the reputation. The estimator prices either; the table above shows the honest penalty.</div></details><details class="faq-q"><summary>How many CFM does each room need?</summary><div>It falls out of the room&apos;s share of the load: a typical bedroom wants 75&ndash;125 CFM, a large living area 200&ndash;400. Divide the system total (400 CFM per ton) across rooms by load share, set each register&apos;s CFM in the sketch, and the duct sizes follow automatically.</div></details></div>
+<div class="g-block"><h2>Related Projects</h2><div class="rel-row"><a href="./elec.html">Electrical Estimator guide</a><a href="./plan.html">Whole-House Planner guide</a><a href="../construct/">All 11 estimators</a></div></div>
+</div>
+<section style="text-align:center">
+<h2>PRICE YOUR PROJECT IN MINUTES</h2>
+<p style="color:var(--dim);margin-bottom:1.5rem;font-size:.9rem">Everything computes on your device. Free, private, instant.</p>
+<div class="cta-row" style="justify-content:center;gap:1rem;flex-wrap:wrap">
+<a href="../hvac/" class="btn btn-primary btn-construct">LAUNCH HVAC DUCT DESIGNER &rarr;</a>
+<a href="../construct/" class="btn btn-outline">ALL CONSTRUCT TOOLS</a>
+</div>
+</section>
+<div class="site-ad-banner">
+<span class="ad-note">Sponsored</span>
+<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8345487545441889" data-ad-slot="1720203631" data-ad-format="auto" data-full-width-responsive="true"></ins>
+<script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>
+</div>
+<footer>
+<div class="footer-links">
+<a href="../about.html">ABOUT</a>
+<a href="../faq.html">FAQ</a>
+<a href="../construct/">AMNI-CONSTRUCT</a>
+<a href="../privacy.html">PRIVACY</a>
+<a href="../terms.html">TERMS</a>
+<a href="mailto:amnibro7@gmail.com">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amni-Scient. All rights reserved.</p>
+</footer>
+</body>
+</html>

@@ -64,4 +64,12 @@ const stepify = () => document.querySelectorAll('#side .row input[type=number]')
   w.appendChild(minus); w.appendChild(i); w.appendChild(plus)
 })
 stepify(); setTimeout(stepify, 1500)
+const AFF = window.AMNI_AFF || { hd: '', lowes: '' }
+const GC = window.AMNI_GC || ''
+const affFor = h => /homedepot\.com/.test(h) ? AFF.hd : /lowes\.com/.test(h) ? AFF.lowes : ''
+document.addEventListener('click', e => { const a = e.target.closest ? e.target.closest('a[href]') : null; const t = a && !a.dataset.ukAff ? affFor(a.href) : ''; t && (a.dataset.ukAff = '1', a.rel = 'sponsored noopener', a.href = t.replace('{u}', encodeURIComponent(a.href))) }, true)
+;(AFF.hd || AFF.lowes) && matHost && matHost.parentNode.insertAdjacentHTML('beforeend', '<div class="uk-affnote">Store links are affiliate links — qualifying purchases may earn this site a commission at no extra cost to you.</div>')
+if (GC) { const s = document.createElement('script'); s.async = !0; s.src = 'https://gc.zgo.at/count.js'; s.setAttribute('data-goatcounter', 'https://' + GC + '.goatcounter.com/count'); document.head.appendChild(s) }
+mod && $('#side') && fetch('../_shared/presets.json?v=p1').then(r => r.ok ? r.json() : {}).then(P => { const list = P[mod] || []; if (!list.length) return; const side = $('#side'), w = document.createElement('div'); w.id = 'uk-presets'; w.innerHTML = '<span>⚡ Quick start</span>' + list.map((p, i) => `<button type="button" data-i="${i}" title="${p.tip || ''}">${p.name}</button>`).join(''); side.insertBefore(w, side.firstChild); w.addEventListener('click', e => { const b = e.target.closest('button'); b && (location.hash = '#share=' + list[+b.dataset.i].h, location.reload()) }) }).catch(() => {})
+mod && $('#side') && $('#side').insertAdjacentHTML('beforeend', `<a class="uk-guide" href="../construct/${mod}.html">📖 Full cost guide &amp; how-to</a>`)
 })()

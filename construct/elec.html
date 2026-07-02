@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Electrical Wiring Cost Estimator & NEC Load Calculator — Free Circuit + Panel Planner | AMNI-SCIENT</title>
+<meta name="description" content="Free electrical estimator: NEC load calc to service size, sketch outlets and cable runs on your plan, get a breaker schedule, wire takeoff and store pricing.">
+<meta name="keywords" content="amni-construct,elec cost,elec calculator,electrical estimator,diy elec,materials estimator">
+<meta name="author" content="Amni-Scient">
+<meta property="og:title" content="Electrical Wiring Cost Estimator &amp; NEC Load Calculator — Free Circuit + Panel Planner">
+<meta property="og:description" content="Free electrical estimator: NEC load calc to service size, sketch outlets and cable runs on your plan, get a breaker schedule, wire takeoff and store pricing.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://amni-scient.com/construct/elec.html">
+<meta property="og:image" content="https://amni-scient.com/assets/explore/og-explore.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Electrical Wiring Cost Estimator &amp; NEC Load Calculator — Free Circuit + Panel Planner">
+<meta name="twitter:description" content="Free electrical estimator: NEC load calc to service size, sketch outlets and cable runs on your plan, get a breaker schedule, wire takeoff and store pricing.">
+<link rel="canonical" href="https://amni-scient.com/construct/elec.html">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Electrical Wiring Cost Estimator & NEC Load Calculator — Free Circuit + Panel Planner","description":"Free electrical estimator: NEC load calc to service size, sketch outlets and cable runs on your plan, get a breaker schedule, wire takeoff and store pricing.","author":{"@type":"Organization","name":"AMNI-SCIENT"},"publisher":{"@type":"Organization","name":"AMNI-SCIENT","url":"https://amni-scient.com"},"mainEntityOfPage":"https://amni-scient.com/construct/elec.html"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Is it legal to do my own electrical work?","acceptedAnswer":{"@type":"Answer","text":"Many states and cities issue homeowner electrical permits for owner-occupied single-family homes, always with inspections; others, and nearly all rental or multi-family property, require a licensed electrician. The utility side and meter equipment are never DIY. The tool s permit panel gives your state s stance your local AHJ decides."}},{"@type":"Question","name":"What service size do I need?","acceptedAnswer":{"@type":"Answer","text":"Run the load calc: NEC 220.82 takes 100% of the first 10 kVA and 40% of the rest, with HVAC at full value. Most modern houses land on 200 A; adding a heat pump, induction range and EV charging is what pushes past it. The sidebar computes this live as you toggle loads."}},{"@type":"Question","name":"How accurate is the wire takeoff?","acceptedAnswer":{"@type":"Answer","text":"The footage comes from cable runs drawn on your actual room layout, plus a service allowance per drop not a per-square-foot guess. Prices come from catalog estimates you can overwrite with pasted-in live store pricing, so the total tracks checkout."}},{"@type":"Question","name":"Do bedroom outlets really need AFCI breakers?","acceptedAnswer":{"@type":"Answer","text":"Yes. Since the 2014 NEC cycle, 210.12 has covered virtually all 120 V 15/20 A circuits in living spaces bedrooms, living rooms, kitchens, laundry. Combination AFCI breakers at $40 $60 are the standard fix; the breaker schedule includes them wherever required."}},{"@type":"Question","name":"Can I wire the circuits and have an electrician connect the panel?","acceptedAnswer":{"@type":"Answer","text":"That split is common and often the smart play: you rough boxes and cable on a homeowner permit, the licensed electrician terminates the panel and signs off the hot work. Print the E-1 sheet and materials list a clean circuit directory is what makes that handoff cheap."}}]}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8345487545441889" crossorigin="anonymous" data-overlays="false"></script>
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+<style>
+.crumbs{color:var(--dim);font-size:.75rem;letter-spacing:1px;text-transform:uppercase;margin:1rem 0 0;padding:0 1.5rem}
+.crumbs a{color:var(--dim)}
+.crumbs a:hover{color:#e0954a}
+.g-wrap{max-width:880px;margin:0 auto;padding:0 1.5rem}
+.g-wrap p{color:var(--text);line-height:1.75;font-size:.92rem}
+.g-block{margin:2.4rem 0}
+.g-block h2{color:#e0954a;font-size:1.05rem;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:1rem}
+.g-block code{background:rgba(224,149,74,.09);border:1px solid rgba(224,149,74,.25);border-radius:3px;padding:.05rem .35rem;font-family:'JetBrains Mono',monospace;font-size:.85em;color:var(--text)}
+.factor-list{list-style:none;padding:0;margin:0}
+.factor-list li{background:rgba(224,149,74,.05);border-left:3px solid #e0954a;border-radius:0 4px 4px 0;padding:.8rem 1.1rem;margin-bottom:.6rem}
+.factor-list strong{display:block;color:var(--text);margin-bottom:.25rem}
+.factor-list span{color:var(--dim);font-size:.87rem;line-height:1.65}
+.worked{background:linear-gradient(180deg,rgba(224,149,74,.07),rgba(224,149,74,.02));border:1px solid rgba(224,149,74,.28);border-radius:6px;padding:1.2rem 1.4rem}
+.step-list{list-style:none;counter-reset:s;padding:0;margin:0}
+.step-list li{display:flex;gap:.9rem;align-items:flex-start;padding:.55rem 0;color:var(--text);font-size:.9rem;line-height:1.7}
+.step-n{flex:0 0 26px;height:26px;border-radius:50%;background:rgba(224,149,74,.14);border:1px solid rgba(224,149,74,.4);color:#e0954a;font-family:'JetBrains Mono',monospace;font-size:.75rem;display:flex;align-items:center;justify-content:center;margin-top:.15rem}
+.pitfall-list{list-style:none;padding:0;margin:0}
+.pitfall-list li{padding:.7rem 0;border-bottom:1px dashed var(--border,rgba(255,255,255,.08))}
+.pitfall-list strong{display:block;color:#e0954a;margin-bottom:.25rem;font-size:.9rem}
+.pitfall-list span{color:var(--dim);font-size:.87rem;line-height:1.65}
+.g-tbl{width:100%;border-collapse:collapse;font-size:.85rem}
+.g-tbl th{text-align:left;color:#e0954a;letter-spacing:.5px;font-size:.72rem;text-transform:uppercase;padding:.5rem .7rem;border-bottom:1px solid rgba(224,149,74,.35)}
+.g-tbl td{padding:.55rem .7rem;color:var(--text);border-bottom:1px solid var(--border,rgba(255,255,255,.07))}
+.tbl-note{color:var(--dim);font-size:.78rem;margin-top:.6rem}
+.faq-q{border:1px solid var(--border,rgba(255,255,255,.1));border-radius:5px;margin-bottom:.6rem;background:rgba(255,255,255,.015)}
+.faq-q summary{cursor:pointer;padding:.75rem 1rem;color:var(--text);font-size:.9rem;list-style:none}
+.faq-q summary::-webkit-details-marker{display:none}
+.faq-q summary::before{content:'+ ';color:#e0954a;font-family:'JetBrains Mono',monospace}
+.faq-q[open] summary::before{content:'− '}
+.faq-q div{padding:0 1rem .9rem;color:var(--dim);font-size:.87rem;line-height:1.7}
+.rel-row{display:flex;flex-wrap:wrap;gap:.6rem}
+.rel-row a{border:1px solid rgba(224,149,74,.35);border-radius:99px;padding:.4rem .95rem;font-size:.8rem;color:var(--text);text-decoration:none}
+.rel-row a:hover{border-color:#e0954a;color:#e0954a}
+.btn-construct{background:#e0954a;color:var(--bg);box-shadow:0 0 10px rgba(224,149,74,.6)}
+</style>
+</head>
+<body>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu">
+<a href="../construct/" class="active">AMNI-CONSTRUCT</a>
+<a href="../amni-calc.html">AMNI-CALC</a>
+<a href="../amni-browse.html">AMNI-BROWSE</a>
+<a href="../amni-explore.html">AMNI-EXPLORE</a>
+<a href="../amni-learn.html">AMNI-LEARN</a>
+<a href="../amni-connect.html">AMNI-CONNECT</a>
+<a href="../amni-code.html">AMNI-CODE</a>
+<a href="../amni-haven.html">AMNI-HAVEN</a>
+</div>
+</div>
+<a href="../about.html">ABOUT</a>
+<a href="../faq.html">FAQ</a>
+<a href="../privacy.html">PRIVACY</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<p class="crumbs"><a href="../">Home</a> &rsaquo; <a href="../construct/">Amni-Construct</a> &rsaquo; Electrical Estimator Guide</p>
+<div class="product-hero">
+<h1>ELECTRICAL WIRING COST ESTIMATOR & NEC LOAD CALCULATOR — FREE CIRCUIT + PANEL PLANNER</h1>
+<p class="desc">NEC DWELLING LOAD CALC, BREAKER SCHEDULE AND WIRE TAKEOFF FROM A SKETCH OF YOUR ACTUAL ROOMS — PRICED AT HOME DEPOT AND LOWE'S</p>
+<div style="margin-top:1.5rem">
+<a href="../elec/" class="btn btn-primary btn-construct">OPEN THE FREE ELECTRICAL ESTIMATOR ESTIMATOR &rarr;</a>
+</div>
+</div>
+<div class="g-wrap">
+<div class="g-block"><p>Electricians run $80&ndash;$150 an hour in 2026, a new 20 A circuit quotes at $300&ndash;$800, and a whole-house rewire lands at $8,000&ndash;$20,000. The materials underneath those numbers are modest &mdash; $50&ndash;$120 for that circuit, $1.50&ndash;$3 per square foot for a whole house &mdash; but copper is the wildcard: after the 2025 price run-up, 12/2 NM-B (Romex) sits at $0.80&ndash;$1.20 per foot cut to length. Wire is routinely half the materials bill now, making an accurate footage takeoff worth real money.</p><p>Amni-Elec attacks the estimate from both ends. The sidebar runs a live NEC Article 220 dwelling load calculation &mdash; square footage, bedrooms, bathrooms, range, dryer, HVAC amps, water heater, dishwasher, disposal, microwave &mdash; and turns it into a service size (100&ndash;400 A), a branch-circuit list and a breaker schedule. The Layout tab is the takeoff: photograph your room (optional), place the panel, drag receptacles, switches and fixtures onto the plan, and cable runs route and total in real feet with NEC validation &mdash; receptacle spacing, GFCI zones, AFCI coverage &mdash; flagging as you go. One honest line up front, which the Code &amp; Permits panel repeats: planning and estimating is the safe DIY layer; pulling wire needs a permit and often a license, and panel interiors and the utility side are professional territory, full stop.</p></div>
+<div class="g-block"><h2>What Moves the Number</h2><ul class="factor-list"><li><strong>Service size</strong><span>The NEC 220.82 load calc decides it: 100 A is obsolete for anything all-electric, a heat pump plus induction range plus EV charger pushes most houses to 200 A, and large all-electric builds go 320/400 A. A service upgrade runs $2,500&ndash;$4,500 &mdash; the utility connection makes it non-negotiable licensed work.</span></li><li><strong>Copper cable</strong><span>Mid-2026 big-box pricing: 14/2 at $0.55&ndash;$0.85 per foot, 12/2 at $0.80&ndash;$1.20, 10/2 at $1.50&ndash;$2.20, 6/3 for a range at $4&ndash;$6. Buying 250 ft rolls saves 25&ndash;40% over cut lengths; the measured footage tells you whether a roll clears the job.</span></li><li><strong>AFCI and GFCI everywhere</strong><span>NEC 210.12 puts arc-fault protection on nearly every 15/20 A dwelling circuit, and 210.8 wants GFCI in baths, kitchens, garages, laundry and outdoors. Combination breakers are $40&ndash;$60 against $8 for a plain one &mdash; on a 30-circuit panel the breakers can out-cost the panel itself.</span></li><li><strong>Circuit count is set by code, not preference</strong><span>NEC 210.52 receptacle spacing means no point along a wall more than 6 ft from an outlet, kitchens need two 20 A small-appliance circuits, baths a dedicated 20 A, laundry its own, plus one per fixed appliance. The sketch flags spacing gaps before drywall does.</span></li><li><strong>Open framing versus fishing</strong><span>Rough-in wiring in open studs moves at hundreds of feet a day. Old-work in finished walls means fish tape, old-work boxes, and cutting-and-patching &mdash; the labor multiplier that makes remodel quotes sting.</span></li><li><strong>Panel and device hardware</strong><span>A 200 A 40-space main-breaker load center is $200&ndash;$350; boxes $1&ndash;$3; spec-grade receptacles $3&ndash;$5; GFCI receptacles $18&ndash;$25; dimmers $10&ndash;$25. Small numbers that multiply &mdash; a typical house carries 80+ devices; the takeoff counts every one from the sketch.</span></li></ul></div>
+<div class="g-block"><h2>A Real-Numbers Example</h2><div class="worked"><p>A 400 sq ft basement finish &mdash; bedroom, rec room, small bath: two 15 A AFCI general circuits, one 20 A GFCI bath circuit, one 20 A workbench circuit.</p><p>Cable: a 250 ft roll of 14/2 (<code>$140&ndash;$200</code>) covers the general circuits; a 250 ft roll of 12/2 (<code>$200&ndash;$280</code>) covers bath and bench with slack. Devices and boxes: 22 boxes at about $2, sixteen receptacles, two GFCIs, six switches, cover plates &mdash; <code>$150&ndash;$190</code>. Breakers: two AFCI at $50 and one 20 A GFCI combination at $50&ndash;$55 &mdash; <code>$150&ndash;$155</code>. Staples, nail plates, wire nuts and a smoke/CO head &mdash; <code>$70</code>.</p><p>Materials: <strong>about $710&ndash;$895</strong>. An electrician quotes the same scope at $2,500&ndash;$4,000. A realistic middle path: pull a homeowner permit, rough the boxes and cable yourself, and pay a licensed electrician for the panel terminations &mdash; the footage and breaker schedule make that a clean handoff.</p></div></div>
+<div class="g-block"><h2>Copper NM-B Cable by Circuit (mid-2026 big-box pricing)</h2><table class="g-tbl"><thead><tr><th>Cable</th><th>Breaker</th><th>Typical circuits</th><th>Price per ft</th></tr></thead><tbody><tr><td>14/2</td><td>15 A</td><td>Lighting, bedroom receptacles</td><td>$0.55&ndash;$0.85</td></tr><tr><td>12/2</td><td>20 A</td><td>Kitchen, bath, garage, general</td><td>$0.80&ndash;$1.20</td></tr><tr><td>10/2</td><td>30 A</td><td>Water heater, mini-split</td><td>$1.50&ndash;$2.20</td></tr><tr><td>10/3</td><td>30 A</td><td>Electric dryer</td><td>$1.90&ndash;$2.70</td></tr><tr><td>6/3</td><td>50 A</td><td>Range, EV charger</td><td>$4.00&ndash;$6.00</td></tr></tbody></table><p class="tbl-note">250 ft rolls run 25&ndash;40% below cut-to-length pricing. Add $40&ndash;$60 per circuit where AFCI or GFCI breakers are required &mdash; which under NEC 210.12 is most of them.</p></div>
+<div class="g-block"><h2>Plan It, Then Build It</h2><ol class="step-list"><li><span class="step-n">1</span><span>Enter the house in the sidebar &mdash; conditioned square footage, bedrooms, bathrooms, range, dryer, HVAC amps, and the appliance toggles. The NEC load calc and service size update live.</span></li><li><span class="step-n">2</span><span>Read the warnings panel. If the computed load crowds your existing service, the first call is a licensed electrician about an upgrade &mdash; settle that before anything else.</span></li><li><span class="step-n">3</span><span>Switch to the Layout tab: snap a photo of the room if it helps, place the panel, then drag receptacles, switches and fixtures where they go.</span></li><li><span class="step-n">4</span><span>Run cable between devices. Footage is measured off the drawing, and NEC checks &mdash; receptacle spacing, GFCI zones, AFCI coverage &mdash; flag violations while they are free to fix.</span></li><li><span class="step-n">5</span><span>Review the breaker schedule and print the E-1 panel sheet. Inspectors are friendlier to a panel whose directory matches the walls.</span></li><li><span class="step-n">6</span><span>Open Materials &amp; Pricing, paste in store pages for live Home Depot and Lowe&apos;s prices, adjust any cell against a local quote, and export the CSV shopping list.</span></li><li><span class="step-n">7</span><span>Check the Code &amp; Permits panel for your state&apos;s homeowner-permit rules, schedule the rough-in inspection before insulation goes in, and do not energize anything before the final.</span></li></ol></div>
+<div class="g-block"><h2>Where DIYers Go Wrong</h2><ul class="pitfall-list"><li><strong>Opening a live panel</strong><span>Flipping the main breaker off still leaves the service lugs and the line side hot &mdash; there is no de-energized state a homeowner can create inside a panel. This is the bright line where DIY ends. Plan and rough the branch wiring; let a licensed electrician land it.</span></li><li><strong>Overfilled boxes</strong><span>NEC 314.16 box-fill math is real: each 12 AWG conductor counts 2.25 cubic inches, devices count double, and a crowded switch box fails inspection and cooks its connections. Size boxes up front &mdash; the bigger box costs pennies more.</span></li><li><strong>Skipping AFCI to save on breakers</strong><span>Ten circuits of arc-fault protection is $400&ndash;$500 and it hurts, so people quietly install standard breakers. The panel is the first thing a final looks at; swapping breakers later costs the same money plus a re-inspection fee.</span></li><li><strong>Ignoring voltage drop on long runs</strong><span>A 20 A circuit on 12/2 to a detached garage 100 ft away drops past the 3% the NEC recommends &mdash; tools bog and LEDs flicker. Size up a gauge on runs much past 75&ndash;100 ft; the sketch shows the true measured length, always longer than the mental estimate.</span></li></ul></div>
+<div class="g-block"><h2>Questions People Actually Ask</h2><details class="faq-q"><summary>Is it legal to do my own electrical work?</summary><div>Many states and cities issue homeowner electrical permits for owner-occupied single-family homes, always with inspections; others, and nearly all rental or multi-family property, require a licensed electrician. The utility side and meter equipment are never DIY. The tool&apos;s permit panel gives your state&apos;s stance &mdash; your local AHJ decides.</div></details><details class="faq-q"><summary>What service size do I need?</summary><div>Run the load calc: NEC 220.82 takes 100% of the first 10 kVA and 40% of the rest, with HVAC at full value. Most modern houses land on 200 A; adding a heat pump, induction range and EV charging is what pushes past it. The sidebar computes this live as you toggle loads.</div></details><details class="faq-q"><summary>How accurate is the wire takeoff?</summary><div>The footage comes from cable runs drawn on your actual room layout, plus a service allowance per drop &mdash; not a per-square-foot guess. Prices come from catalog estimates you can overwrite with pasted-in live store pricing, so the total tracks checkout.</div></details><details class="faq-q"><summary>Do bedroom outlets really need AFCI breakers?</summary><div>Yes. Since the 2014 NEC cycle, 210.12 has covered virtually all 120 V 15/20 A circuits in living spaces &mdash; bedrooms, living rooms, kitchens, laundry. Combination AFCI breakers at $40&ndash;$60 are the standard fix; the breaker schedule includes them wherever required.</div></details><details class="faq-q"><summary>Can I wire the circuits and have an electrician connect the panel?</summary><div>That split is common and often the smart play: you rough boxes and cable on a homeowner permit, the licensed electrician terminates the panel and signs off the hot work. Print the E-1 sheet and materials list &mdash; a clean circuit directory is what makes that handoff cheap.</div></details></div>
+<div class="g-block"><h2>Related Projects</h2><div class="rel-row"><a href="./plumb.html">Plumbing Estimator guide</a><a href="./plan.html">Whole-House Planner guide</a><a href="../construct/">All 11 estimators</a></div></div>
+</div>
+<section style="text-align:center">
+<h2>RUN YOUR NUMBERS FREE</h2>
+<p style="color:var(--dim);margin-bottom:1.5rem;font-size:.9rem">Runs entirely in your browser — no account, no upload, no install.</p>
+<div class="cta-row" style="justify-content:center;gap:1rem;flex-wrap:wrap">
+<a href="../elec/" class="btn btn-primary btn-construct">LAUNCH ELECTRICAL ESTIMATOR &rarr;</a>
+<a href="../construct/" class="btn btn-outline">ALL CONSTRUCT TOOLS</a>
+</div>
+</section>
+<div class="site-ad-banner">
+<span class="ad-note">Sponsored</span>
+<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8345487545441889" data-ad-slot="1720203631" data-ad-format="auto" data-full-width-responsive="true"></ins>
+<script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>
+</div>
+<footer>
+<div class="footer-links">
+<a href="../about.html">ABOUT</a>
+<a href="../faq.html">FAQ</a>
+<a href="../construct/">AMNI-CONSTRUCT</a>
+<a href="../privacy.html">PRIVACY</a>
+<a href="../terms.html">TERMS</a>
+<a href="mailto:amnibro7@gmail.com">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amni-Scient. All rights reserved.</p>
+</footer>
+</body>
+</html>
