@@ -1,5 +1,12 @@
 # Changelog 
 
+## Amni-Learn v5.32.0 — Daily Curriculum v3: more content, better visuals, more variety, ages 1+ - 2026-07-06
+- Ages now start at 1: a caregiver-guided toddler band (1-2) with its own "Little Hands" worksheet (giant shape tracing, scribble zone, point-and-name row) and 48 toddler activities written as 5-minute caregiver scripts.
+- Activity pools grew from 6 to 8 per category for every band — 336 activities total.
+- Worksheets now rotate daily: tracing/numbers/shapes or copywork/journal prompts on page 2, matched math variants per band (count-and-circle through percent-of and find-the-mean), and a page-3 bonus — sing-together nursery rhyme + what-comes-next pattern for the little ones, a real generated word search for ages 5+.
+- Better visuals: sheets render as white paper pages on screen, categories are color-coded, real handwriting guide lines (baseline + dashed midline) that survive printing, dashed SVG shape tracing, band mascot in the header.
+- Typing a child's name now always shows up (forces the name-tracing variant) and no longer shifts the rest of the day's content.
+
 ## Amni-Learn v5.31.0 — Pre-K Phonics (spoken) module - 2026-07-06
 - New Phonics game in School Skills (Pre-K only): a Letter Sounds tab (tap any of the 26 letters to see + hear its sound and an example word) and a Sound It Out tab (tap-to-hear letter/blend chunks for 24 simple words, then hear the whole word blended together).
 - Every tap always plays sound regardless of the app's global read-aloud mute — the module's whole point is to be heard, so it doesn't silently sit muted by default like other auto-narration does.
