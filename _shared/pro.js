@@ -14,6 +14,7 @@ Q.client = Q.client || { name: '', addr: '', contact: '' }
 Q.scope = Q.scope || ''
 Q.labor = Q.labor && Q.labor.length ? Q.labor : [{ desc: 'Labor — installation', hrs: 0, rate: PS.def.rate }]
 Q.extras = Q.extras || []
+Q.permit = Q.permit || { jur: '', parcel: '', val: 0 }
 Q.r = Q.r || { markup: PS.def.markup, tax: PS.def.tax, overhead: PS.def.overhead }
 Q.r.deposit = Q.r.deposit ?? 50
 Q.r.discount = Q.r.discount ?? 0
@@ -64,6 +65,15 @@ drawer.innerHTML = `<div id="pro-head"><b>💼 AMNI-CONSTRUCT PRO</b><span id="p
 <div id="pro-totals" style="margin-top:12px"></div>
 <button class="pro-btn big" id="pro-gen">🧾 Generate branded quote</button>
 <p class="pro-note">Opens a print-ready quote — use your browser's Print → Save as PDF. Quote numbers increment automatically.</p>
+<h3>Permit packet</h3><div class="pro-grid">
+<div><label>Jurisdiction / city</label><input type="text" id="pro-pm-jur"></div>
+<div><label>Parcel / lot #</label><input type="text" id="pro-pm-parcel"></div>
+<div class="full"><label>Project valuation $ (blank = quote total)</label><input type="number" id="pro-pm-val" step="1"></div></div>
+<button class="pro-btn big" id="pro-permit">📋 Generate permit packet (cover + plan sheets)</button>
+<h3>Showcase</h3>
+<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="pro-btn" id="pro-snap">📸 Snapshot 3D</button><button class="pro-btn" id="pro-show">🏗️ Copy showcase link</button></div>
+<div id="pro-snap-prev" style="margin-top:8px"></div>
+<p class="pro-note">Snapshot embeds the 3D view in your quote. The showcase link opens your client's interactive 3D design, branded with your company.</p>
 <div id="pro-lic-row"></div></div>`
 document.body.appendChild(drawer)
 const gate = document.createElement('div')
@@ -146,6 +156,7 @@ const quoteDoc = () => {
   <div class="two"><div class="blk"><h3>Prepared for</h3><div><b>${esc(Q.client.name || '—')}</b></div><div>${esc(Q.client.addr || '')}</div><div>${esc(Q.client.contact || '')}</div></div>
   <div class="blk"><h3>Project</h3><div><b>${MODNAME} project</b></div><div>${esc(Q.client.addr || '')}</div></div></div>
   ${Q.scope ? `<h3>Scope of work</h3><div style="font-size:13px;white-space:pre-wrap">${esc(Q.scope)}</div>` : ''}
+  ${Q.snap ? `<h3>Proposed design</h3><img src="${Q.snap}" style="max-width:100%;border:1px solid #e8ecf0;border-radius:6px">` : ''}
   <h3>Investment</h3><table><thead><tr><th>Description</th><th>Amount</th></tr></thead><tbody>
   <tr><td>Materials &amp; supplies — furnished and installed</td><td>${money(c.ms)}</td></tr>
   ${Q.labor.filter(l => (+l.hrs || 0) * (+l.rate || 0) > 0).map(l => `<tr><td>${esc(l.desc || 'Labor')}</td><td>${money((+l.hrs || 0) * (+l.rate || 0))}</td></tr>`).join('')}
@@ -164,6 +175,73 @@ const quoteDoc = () => {
   localStorage.setItem('amni.pro.quotes.v1', JSON.stringify(hist.slice(0, 200)))
   const w = window.open('', '_blank')
   w ? (w.document.write(html), w.document.close()) : alert('Allow pop-ups to generate the quote document.')
+}
+const bindPm = (id, k) => { const el = S(id); el.value = Q.permit[k] || ''; el.addEventListener('input', () => { Q.permit[k] = k === 'val' ? +el.value || 0 : el.value; saveQ() }) }
+bindPm('pro-pm-jur', 'jur'); bindPm('pro-pm-parcel', 'parcel'); bindPm('pro-pm-val', 'val')
+const permitDoc = () => {
+  const c = calc(), d = new Date(), val = Q.permit.val || c.grand
+  let svgs = [...document.querySelectorAll('#pane-plans .svgwrap svg')]
+  svgs.length || (svgs = [...document.querySelectorAll('.svgwrap svg')])
+  const sheets = svgs.map((s, i) => { const t = ((s.closest('.svgwrap') || {}).id || '').replace(/^svg-/, '').replace(/-/g, ' ').toUpperCase() || 'SHEET ' + (i + 1); return `<div class="sheet"><div class="sh-t">SHEET ${i + 2} — ${t}</div>${s.outerHTML}</div>` }).join('')
+  const idx = svgs.map((s, i) => `<tr><td>Sheet ${i + 2}</td><td>${(((s.closest('.svgwrap') || {}).id || '').replace(/^svg-/, '').replace(/-/g, ' ').toUpperCase()) || 'PLAN'}</td></tr>`).join('')
+  const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Permit packet — ${esc(Q.client.addr || MODNAME)}</title><style>
+  body{font:13px/1.65 'Segoe UI',system-ui,sans-serif;color:#1a2028;margin:0;padding:40px 48px;max-width:860px}
+  h1{font-size:22px;letter-spacing:.1em;color:#1a2028;border-bottom:3px solid #d78f3c;padding-bottom:10px}
+  h1 small{display:block;font-size:11px;letter-spacing:.14em;color:#8a94a0;font-weight:400}
+  table.info{width:100%;border-collapse:collapse;font-size:12.5px;margin:16px 0}
+  table.info td{padding:7px 10px;border:1px solid #d0d6dd}
+  table.info td:first-child{width:200px;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#8a94a0;background:#f4f6f8}
+  .scope{border:1px solid #d0d6dd;padding:12px 14px;font-size:13px;white-space:pre-wrap;margin:10px 0}
+  .sheet{page-break-before:always;padding-top:10px}
+  .sh-t{font-size:11px;letter-spacing:.12em;color:#8a94a0;border-bottom:2px solid #d78f3c;margin-bottom:8px;padding-bottom:4px}
+  .sheet svg{width:100%!important;height:auto!important;max-height:930px}
+  .fine{font-size:10px;color:#8a94a0;line-height:1.6;margin-top:18px;border-top:1px solid #e8ecf0;padding-top:10px}
+  .sig{display:flex;gap:40px;margin-top:40px}
+  .sig div{flex:1;border-top:1.5px solid #1a2028;padding-top:5px;font-size:11px;color:#5a6470}
+  .pbar{position:fixed;top:12px;right:12px}@media print{.pbar{display:none}body{padding:0}}
+  </style></head><body>
+  <div class="pbar"><button onclick="print()" style="font:600 13px 'Segoe UI';padding:9px 18px;background:#d78f3c;color:#fff;border:none;border-radius:7px;cursor:pointer">🖨 Print / Save PDF</button></div>
+  <h1>PERMIT SUBMITTAL PACKET<small>${esc(MODNAME).toUpperCase()} PROJECT · PREPARED ${d.toLocaleDateString()}</small></h1>
+  <table class="info">
+  <tr><td>Project address</td><td>${esc(Q.client.addr || '')}</td></tr>
+  <tr><td>Owner</td><td>${esc(Q.client.name || '')}${Q.client.contact ? ' · ' + esc(Q.client.contact) : ''}</td></tr>
+  <tr><td>Contractor</td><td><b>${esc(PS.co.name || '')}</b>${PS.co.lic ? ' · License ' + esc(PS.co.lic) : ''}${PS.co.phone ? ' · ' + esc(PS.co.phone) : ''}</td></tr>
+  <tr><td>Contractor address</td><td>${esc(PS.co.addr || '')}</td></tr>
+  <tr><td>Jurisdiction</td><td>${esc(Q.permit.jur || '')}</td></tr>
+  <tr><td>Parcel / lot</td><td>${esc(Q.permit.parcel || '')}</td></tr>
+  <tr><td>Declared valuation</td><td><b id="pm-val">${money(val)}</b></td></tr>
+  </table>
+  ${Q.scope ? `<div class="sh-t" style="border:none;margin-bottom:2px">SCOPE OF WORK</div><div class="scope">${esc(Q.scope)}</div>` : ''}
+  <div class="sh-t" style="border:none;margin-bottom:2px">SHEET INDEX</div>
+  <table class="info"><tr><td>Sheet 1</td><td>COVER — THIS SHEET</td></tr>${idx}</table>
+  <div class="sig"><div>Owner / agent signature · date</div><div>Contractor signature · date</div></div>
+  <p class="fine">Plan sheets generated by Amni-Construct from the modeled design. These drawings are diagrammatic and are not stamped engineering documents; the permitting jurisdiction's review, local code amendments, and field inspections govern. Verify setbacks, frost depth, and utility locates (811) before work begins.</p>
+  ${sheets}
+  </body></html>`
+  const w = window.open('', '_blank')
+  w ? (w.document.write(html), w.document.close()) : alert('Allow pop-ups to generate the permit packet.')
+}
+S('pro-permit').onclick = () => { if (!isPro()) return gate.classList.add('on'); const pt = document.querySelector('.tab[data-pane="plans"]'); document.querySelectorAll('#pane-plans svg,.svgwrap svg').length || !pt ? permitDoc() : (pt.click(), setTimeout(permitDoc, 450)) }
+const snapPrev = () => { S('pro-snap-prev').innerHTML = Q.snap ? `<img src="${Q.snap}" style="max-width:100%;border-radius:6px;border:1px solid var(--line,#2a3038)"><button class="l-del" id="pro-snap-del" style="vertical-align:top">✕</button>` : ''; const dl = S('pro-snap-del'); dl && (dl.onclick = () => { delete Q.snap; saveQ(); snapPrev() }) }
+snapPrev()
+S('pro-snap').onclick = () => { const cv = document.querySelector('#view canvas') || document.querySelector('canvas'); if (!cv) return alert('No 3D view found on this module.'); requestAnimationFrame(() => { try { const d = cv.toDataURL('image/jpeg', 0.9); const im = new Image(); im.onload = () => { const t = document.createElement('canvas'); t.width = 8; t.height = 8; const tc = t.getContext('2d'); tc.drawImage(im, 0, 0, 8, 8); const px = tc.getImageData(0, 0, 8, 8).data; let mn = 255, mx = 0; for (let i = 0; i < px.length; i += 4) { const v = (px[i] + px[i + 1] + px[i + 2]) / 3; mn = Math.min(mn, v); mx = Math.max(mx, v) } if (mx - mn < 6) return alert('Snapshot came back empty — drag the 3D view slightly, then snap again.'); const sc2 = Math.min(1, 760 / im.width), o = document.createElement('canvas'); o.width = Math.round(im.width * sc2); o.height = Math.round(im.height * sc2); o.getContext('2d').drawImage(im, 0, 0, o.width, o.height); Q.snap = o.toDataURL('image/jpeg', 0.82); saveQ(); snapPrev() }; im.src = d } catch (e) { alert('Snapshot failed: ' + e.message) } }) }
+S('pro-show').onclick = () => {
+  if (!isPro()) return gate.classList.add('on')
+  const d = {}
+  Object.keys(localStorage).filter(k => k.startsWith('amni' + mod + '.')).forEach(k => d[k] = localStorage.getItem(k))
+  if (!Object.keys(d).length) return alert('Design something first — the showcase link carries the whole design.')
+  d['amni.showcase.brand'] = JSON.stringify({ n: PS.co.name, p: PS.co.phone, w: PS.co.web, m: mod, ts: Date.now() })
+  const u = location.origin + location.pathname + '#share=' + btoa(unescape(encodeURIComponent(JSON.stringify(d))))
+  const ok = () => { S('pro-show').textContent = '✓ Link copied'; setTimeout(() => S('pro-show').textContent = '🏗️ Copy showcase link', 1800) }
+  navigator.clipboard && navigator.clipboard.writeText ? navigator.clipboard.writeText(u).then(ok, () => prompt('Copy this showcase link:', u)) : prompt('Copy this showcase link:', u)
+}
+const brand = (() => { try { return JSON.parse(localStorage.getItem('amni.showcase.brand')) } catch { return null } })()
+if (brand && brand.n && brand.m === mod && Date.now() - (brand.ts || 0) < 7 * 864e5) {
+  const bn = document.createElement('div')
+  bn.id = 'pro-brandbar'
+  bn.innerHTML = `<span>🏗️ <b>${esc(brand.n)}</b> prepared this design for you${brand.p ? ' · ' + esc(brand.p) : ''}${brand.w ? ' · ' + esc(brand.w) : ''}</span><button title="Dismiss">✕</button>`
+  document.body.appendChild(bn)
+  bn.querySelector('button').onclick = () => { localStorage.removeItem('amni.showcase.brand'); bn.remove() }
 }
 S('pro-gen').onclick = () => isPro() ? quoteDoc() : gate.classList.add('on')
 btn.addEventListener('click', () => { drawer.classList.add('on'); status(); totals(); pjUI(); clList() })

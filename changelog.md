@@ -1,5 +1,11 @@
 # Changelog 
 
+## Amni-Construct PRO v5.26.0 — R4: permit packets, 3D snapshots, showcases - 2026-07-06
+- **Permit packet** (Pro-gated): cover sheet (project/owner/contractor+license/jurisdiction/parcel/declared valuation [override or quote total]/scope/sheet index/signatures/diagrammatic-not-stamped disclaimer) + ALL plan-sheet SVGs harvested live from `#pane-plans .svgwrap` (auto-clicks the Plans tab if not yet rendered), one print job. Deck packet = cover + 7 sheets, valuation asserted to the cent.
+- **📸 3D snapshot**: captures the module canvas in a rAF (blank-detect via 8×8 luma variance → "drag and retry" hint), downscales to ≤760px JPEG into `Q.snap`, previewed in drawer, embedded in the quote as "Proposed design". Works headless (40KB capture verified).
+- **🏗️ Showcase links**: share payload + `amni.showcase.brand` key (company name/phone/web/mod/ts) → recipient's module shows a dismissible branded pill "<Co> prepared this design for you" (7-day expiry, module-scoped). Clipboard w/ prompt fallback.
+- pro.js/css → ?v=p4. Harness: permit fields+sheets+valuation, snapshot bytes, brand-in-payload decode, recipient bar + dismiss-clears-LS. ALL PASS, 0 leaks.
+
 ## Amni-Construct PRO v5.25.0 — R3: clients, saved projects, dashboard - 2026-07-06
 - **Clients** (`amni.pro.clients.v1`): save/reuse from the drawer — client-name datalist autofills address+contact on match.
 - **Named project saves** (`amni.pro.projects.v1`, cap 100): 💾 snapshots ALL `amni<mod>.*` LS keys; Open restores via the race-free `#share=`+reload path (uk-restore). Listed per-module in the drawer and cross-module on the dashboard (Pro-gated).
