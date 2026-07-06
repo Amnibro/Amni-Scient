@@ -1,5 +1,11 @@
 # Changelog 
 
+## Amni-Construct PRO v5.24.0 — R2: quote depth + hub pitch - 2026-07-06
+- **Other line items** (dumpster, equipment, permit fees… flat $) join labor in the drawer + quote doc. **Rate book**: 10 seeded labor tasks w/ typical rates (demo $65, licensed electrical $110…), one-tap add, persisted `PS.rateBook` for future editing. **Discount $** (shown on quote) and **Deposit %** (default 50 — "Deposit due on acceptance" line on the quote and in drawer). Math: `sub = materials×(1+markup) + labor + extras + overhead − discount; grand = sub×(1+tax); deposit = grand×dep%`.
+- **Quote history** `amni.pro.quotes.v1` (qn/ts/module/client/total/status 'draft', cap 200) recorded on every generate — feeds the R3 dashboard.
+- **Hub PRO strip** (`construct/index.html .pro-strip`) under the intro → pro.html. pro.js/css → ?v=p2.
+- Harness extended: extras+discount+deposit asserted to the cent ($2,751.30 & deposit $1,375.65 exact), rate-book add, history record. ALL PASS.
+
 ## Amni-Construct PRO v5.23.0 — contractor layer R1: quotes + paywall foundation - 2026-07-06
 - **Trigger:** Anthony's /loop mission — turn Amni-Construct into a paywalled contractor tool (quotes, showcases, permits; web then Android). R1 = foundation.
 - **`_shared/pro.js` + `_shared/pro.css`** (?v=p1, loaded by all 11 modules; overlay pattern, zero app.js changes). A `💼 Pro` button in the tabs bar (deliberately NOT class `.tab` — the apps re-wire `.tab.onclick` post-WASM-boot and would swallow the handler) opens a slide-over drawer.

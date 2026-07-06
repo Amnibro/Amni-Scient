@@ -13,7 +13,11 @@ const Q = (() => { try { return JSON.parse(localStorage.getItem(QK)) || {} } cat
 Q.client = Q.client || { name: '', addr: '', contact: '' }
 Q.scope = Q.scope || ''
 Q.labor = Q.labor && Q.labor.length ? Q.labor : [{ desc: 'Labor — installation', hrs: 0, rate: PS.def.rate }]
+Q.extras = Q.extras || []
 Q.r = Q.r || { markup: PS.def.markup, tax: PS.def.tax, overhead: PS.def.overhead }
+Q.r.deposit = Q.r.deposit ?? 50
+Q.r.discount = Q.r.discount ?? 0
+PS.rateBook = PS.rateBook && PS.rateBook.length ? PS.rateBook : [{ d: 'Demolition & tear-out', r: 65 }, { d: 'Installation labor', r: 75 }, { d: 'Carpentry — framing', r: 70 }, { d: 'Finish carpentry', r: 85 }, { d: 'Electrical (licensed)', r: 110 }, { d: 'Plumbing (licensed)', r: 105 }, { d: 'Concrete & flatwork', r: 70 }, { d: 'Roofing labor', r: 80 }, { d: 'Painting & finishing', r: 55 }, { d: 'Site cleanup & haul-off', r: 50 }]
 const saveP = () => localStorage.setItem('amni.pro.v1', JSON.stringify(PS))
 const saveQ = () => localStorage.setItem(QK, JSON.stringify(Q))
 const TRIAL_MS = 14 * 864e5
@@ -23,7 +27,7 @@ const trialDays = () => PS.trialStart ? Math.max(0, Math.ceil((PS.trialStart + T
 const lsqCheck = k => window.AMNI_LSQ ? fetch('https://api.lemonsqueezy.com/v1/licenses/validate', { method: 'POST', headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' }, body: JSON.stringify({ license_key: k }) }).then(r => r.json()).then(j => !!j.valid).catch(() => chk(k)) : Promise.resolve(chk(k))
 const money = n => '$' + (+n || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 const matRaw = () => { if (!matHost) return 0; const t = matHost.querySelector('.tot.best') || matHost.querySelector('.tot'); const m = (t ? t.textContent : matHost.textContent).match(/\$\s*([\d,]+(?:\.\d{2})?)/g); return m && m.length ? Math.max(...m.map(x => +x.replace(/[$,\s]/g, ''))) : 0 }
-const calc = () => { const mr = matRaw(), ms = mr * (1 + (+Q.r.markup || 0) / 100), lb = Q.labor.reduce((a, l) => a + (+l.hrs || 0) * (+l.rate || 0), 0), oh = +Q.r.overhead || 0, sub = ms + lb + oh, tax = sub * (+Q.r.tax || 0) / 100; return { mr, ms, lb, oh, sub, tax, grand: sub + tax } }
+const calc = () => { const mr = matRaw(), ms = mr * (1 + (+Q.r.markup || 0) / 100), lb = Q.labor.reduce((a, l) => a + (+l.hrs || 0) * (+l.rate || 0), 0), ex = Q.extras.reduce((a, x) => a + (+x.amt || 0), 0), oh = +Q.r.overhead || 0, di = +Q.r.discount || 0, sub = ms + lb + ex + oh - di, tax = sub * (+Q.r.tax || 0) / 100, grand = sub + tax; return { mr, ms, lb, ex, oh, di, sub, tax, grand, dep: grand * (+Q.r.deposit || 0) / 100 } }
 const btn = document.createElement('div')
 btn.className = 'pro-tab'
 btn.id = 'pro-open'
@@ -46,12 +50,15 @@ drawer.innerHTML = `<div id="pro-head"><b>💼 AMNI-CONSTRUCT PRO</b><span id="p
 <div class="full"><label>Project address</label><input type="text" id="pro-cl-addr"></div>
 <div class="full"><label>Client phone / email</label><input type="text" id="pro-cl-contact"></div>
 <div class="full"><label>Scope of work</label><textarea id="pro-scope" placeholder="Supply and install..."></textarea></div></div>
-<h3>Labor</h3><div id="pro-labor"></div><button class="pro-btn ghost" id="pro-labor-add">+ Add labor line</button>
+<h3>Labor</h3><div id="pro-labor"></div><div style="display:flex;gap:6px;flex-wrap:wrap"><button class="pro-btn ghost" id="pro-labor-add">+ Add labor line</button><select id="pro-ratebook" style="flex:1;min-width:150px;background:var(--bg,#0b0e12);border:1px solid var(--line,#2a3038);border-radius:6px;color:var(--mut,#8a94a0);font:inherit;font-size:11.5px;padding:6px"><option value="">+ from rate book…</option></select></div>
+<h3>Other line items</h3><div id="pro-extras"></div><button class="pro-btn ghost" id="pro-extras-add">+ Add item (dumpster, equipment, permits…)</button>
 <h3>Pricing</h3><div class="pro-grid">
 <div><label>Materials markup %</label><input type="number" id="pro-r-markup" step="1"></div>
 <div><label>Tax %</label><input type="number" id="pro-r-tax" step="0.01"></div>
 <div><label>Overhead / PM $</label><input type="number" id="pro-r-overhead" step="1"></div>
-<div><label>Default labor $/hr</label><input type="number" id="pro-r-rate" step="1"></div></div>
+<div><label>Default labor $/hr</label><input type="number" id="pro-r-rate" step="1"></div>
+<div><label>Discount $</label><input type="number" id="pro-r-discount" step="1"></div>
+<div><label>Deposit %</label><input type="number" id="pro-r-deposit" step="1"></div></div>
 <div id="pro-totals" style="margin-top:12px"></div>
 <button class="pro-btn big" id="pro-gen">🧾 Generate branded quote</button>
 <p class="pro-note">Opens a print-ready quote — use your browser's Print → Save as PDF. Quote numbers increment automatically.</p>
@@ -70,11 +77,17 @@ bindCl('pro-cl-name', 'name'); bindCl('pro-cl-addr', 'addr'); bindCl('pro-cl-con
 const sc = S('pro-scope'); sc.value = Q.scope; sc.addEventListener('input', () => { Q.scope = sc.value; saveQ() })
 const bindR = (id, k) => { const el = S(id); el.value = Q.r[k] ?? ''; el.addEventListener('input', () => { Q.r[k] = +el.value || 0; PS.def[k === 'rate' ? 'rate' : k] = Q.r[k]; saveQ(); saveP(); totals() }) }
 Q.r.rate = Q.r.rate ?? PS.def.rate
-bindR('pro-r-markup', 'markup'); bindR('pro-r-tax', 'tax'); bindR('pro-r-overhead', 'overhead'); bindR('pro-r-rate', 'rate')
+bindR('pro-r-markup', 'markup'); bindR('pro-r-tax', 'tax'); bindR('pro-r-overhead', 'overhead'); bindR('pro-r-rate', 'rate'); bindR('pro-r-discount', 'discount'); bindR('pro-r-deposit', 'deposit')
+const rb = S('pro-ratebook')
+PS.rateBook.forEach((e, i) => { const o = document.createElement('option'); o.value = i; o.textContent = `${e.d} — $${e.r}/hr`; rb.appendChild(o) })
+rb.addEventListener('change', () => { if (rb.value === '') return; const e = PS.rateBook[+rb.value]; Q.labor.push({ desc: e.d, hrs: 0, rate: e.r }); saveQ(); laborUI(); totals(); rb.value = '' })
 const laborUI = () => { const w = S('pro-labor'); w.innerHTML = ''; Q.labor.forEach((l, i) => { const row = document.createElement('div'); row.className = 'pro-labor'; row.innerHTML = `<input type="text" class="l-desc" placeholder="Task" value=""><input type="number" class="l-hrs" placeholder="hrs" step="0.5"><input type="number" class="l-rate" placeholder="$/hr" step="1"><button class="l-del" title="Remove">✕</button>`; const [de, hr, ra] = row.querySelectorAll('input'); de.value = l.desc || ''; hr.value = l.hrs || ''; ra.value = l.rate || ''; de.addEventListener('input', () => { l.desc = de.value; saveQ() }); hr.addEventListener('input', () => { l.hrs = +hr.value || 0; saveQ(); totals() }); ra.addEventListener('input', () => { l.rate = +ra.value || 0; saveQ(); totals() }); row.querySelector('.l-del').onclick = () => { Q.labor.splice(i, 1); saveQ(); laborUI(); totals() }; w.appendChild(row) }) }
 laborUI()
 S('pro-labor-add').onclick = () => { Q.labor.push({ desc: '', hrs: 0, rate: Q.r.rate || PS.def.rate }); saveQ(); laborUI() }
-const totals = () => { const c = calc(); S('pro-totals').innerHTML = `<div class="pro-tot"><span>Materials (retail ${money(c.mr)} + ${+Q.r.markup || 0}%)</span><b>${money(c.ms)}</b></div><div class="pro-tot"><span>Labor</span><b>${money(c.lb)}</b></div>${c.oh ? `<div class="pro-tot"><span>Overhead / PM</span><b>${money(c.oh)}</b></div>` : ''}<div class="pro-tot"><span>Tax ${+Q.r.tax || 0}%</span><b>${money(c.tax)}</b></div><div class="pro-tot grand"><span>Quote total</span><b>${money(c.grand)}</b></div>` }
+const extrasUI = () => { const w = S('pro-extras'); w.innerHTML = ''; Q.extras.forEach((x, i) => { const row = document.createElement('div'); row.className = 'pro-labor'; row.innerHTML = `<input type="text" class="l-desc" placeholder="Item"><input type="number" class="l-rate" placeholder="$" step="1" style="width:92px"><button class="l-del" title="Remove">✕</button>`; const [de, am] = row.querySelectorAll('input'); de.value = x.desc || ''; am.value = x.amt || ''; de.addEventListener('input', () => { x.desc = de.value; saveQ() }); am.addEventListener('input', () => { x.amt = +am.value || 0; saveQ(); totals() }); row.querySelector('.l-del').onclick = () => { Q.extras.splice(i, 1); saveQ(); extrasUI(); totals() }; w.appendChild(row) }) }
+extrasUI()
+S('pro-extras-add').onclick = () => { Q.extras.push({ desc: '', amt: 0 }); saveQ(); extrasUI() }
+const totals = () => { const c = calc(); S('pro-totals').innerHTML = `<div class="pro-tot"><span>Materials (retail ${money(c.mr)} + ${+Q.r.markup || 0}%)</span><b>${money(c.ms)}</b></div><div class="pro-tot"><span>Labor</span><b>${money(c.lb)}</b></div>${c.ex ? `<div class="pro-tot"><span>Other items</span><b>${money(c.ex)}</b></div>` : ''}${c.oh ? `<div class="pro-tot"><span>Overhead / PM</span><b>${money(c.oh)}</b></div>` : ''}${c.di ? `<div class="pro-tot"><span>Discount</span><b>−${money(c.di)}</b></div>` : ''}<div class="pro-tot"><span>Tax ${+Q.r.tax || 0}%</span><b>${money(c.tax)}</b></div><div class="pro-tot grand"><span>Quote total</span><b>${money(c.grand)}</b></div>${+Q.r.deposit ? `<div class="pro-tot"><span>Deposit on acceptance (${+Q.r.deposit}%)</span><b>${money(c.dep)}</b></div>` : ''}` }
 totals()
 matHost && new MutationObserver(totals).observe(matHost, { childList: true, subtree: true, characterData: true })
 const logoImg = S('pro-logo-img')
@@ -125,14 +138,19 @@ const quoteDoc = () => {
   <h3>Investment</h3><table><thead><tr><th>Description</th><th>Amount</th></tr></thead><tbody>
   <tr><td>Materials &amp; supplies — furnished and installed</td><td>${money(c.ms)}</td></tr>
   ${Q.labor.filter(l => (+l.hrs || 0) * (+l.rate || 0) > 0).map(l => `<tr><td>${esc(l.desc || 'Labor')}</td><td>${money((+l.hrs || 0) * (+l.rate || 0))}</td></tr>`).join('')}
+  ${Q.extras.filter(x => +x.amt > 0).map(x => `<tr><td>${esc(x.desc || 'Additional item')}</td><td>${money(+x.amt)}</td></tr>`).join('')}
   ${c.oh ? `<tr><td>Project management &amp; overhead</td><td>${money(c.oh)}</td></tr>` : ''}
+  ${c.di ? `<tr><td>Discount</td><td>−${money(c.di)}</td></tr>` : ''}
   </tbody></table>
-  <div class="tots"><div><span>Subtotal</span><span>${money(c.sub)}</span></div><div><span>Tax (${+Q.r.tax || 0}%)</span><span>${money(c.tax)}</span></div><div class="g"><span>TOTAL</span><span id="q-total">${money(c.grand)}</span></div></div>
+  <div class="tots"><div><span>Subtotal</span><span>${money(c.sub)}</span></div><div><span>Tax (${+Q.r.tax || 0}%)</span><span>${money(c.tax)}</span></div><div class="g"><span>TOTAL</span><span id="q-total">${money(c.grand)}</span></div>${c.dep ? `<div style="color:#d78f3c;font-weight:600"><span>Deposit due on acceptance (${+Q.r.deposit}%)</span><span id="q-dep">${money(c.dep)}</span></div>` : ''}</div>
   ${matSchedule()}
   <div class="terms"><b>Terms</b><br>${esc(terms)}</div>
   <div class="sig"><div>Contractor signature / date</div><div>Client acceptance signature / date</div></div>
   <div class="foot">${esc(PS.co.name || '')} · ${qn} · generated with Amni-Construct Pro</div>
   </body></html>`
+  const hist = (() => { try { return JSON.parse(localStorage.getItem('amni.pro.quotes.v1')) || [] } catch { return [] } })()
+  hist.unshift({ qn, ts: Date.now(), mod, client: Q.client.name || '', total: +c.grand.toFixed(2), status: 'draft' })
+  localStorage.setItem('amni.pro.quotes.v1', JSON.stringify(hist.slice(0, 200)))
   const w = window.open('', '_blank')
   w ? (w.document.write(html), w.document.close()) : alert('Allow pop-ups to generate the quote document.')
 }

@@ -82,6 +82,13 @@ header p{color:var(--mut);max-width:660px;margin:14px auto 0;line-height:1.65}
 .gx th{color:var(--ink)}
 footer{text-align:center;color:var(--mut);font-size:12px;padding:24px}
 footer a{color:var(--acc);text-decoration:none}
+.pro-strip{display:flex;align-items:center;gap:12px;max-width:1024px;margin:18px auto 0;padding:12px 18px;border:1px solid rgba(232,181,101,.45);border-radius:12px;background:linear-gradient(135deg,rgba(224,169,74,.12),rgba(224,149,74,.03));color:var(--ink);text-decoration:none;font-size:13px;line-height:1.5;transition:border-color .15s,transform .12s}
+.pro-strip:hover{border-color:#e8b565;transform:translateY(-1px)}
+.pro-strip b{color:#e8b565}
+.pro-strip u{color:#e8b565;text-decoration-color:rgba(232,181,101,.5)}
+.pro-strip-badge{flex:0 0 auto;font-size:10px;letter-spacing:.08em;color:#14100a;background:#e8b565;border-radius:99px;padding:3px 9px;font-weight:700}
+.pro-strip-go{margin-left:auto;color:#e8b565;font-size:18px}
+@media(max-width:640px){.pro-strip{margin:14px 12px 0;flex-wrap:wrap}.pro-strip-go{display:none}}
 .guides{max-width:1060px;margin:26px auto 0;padding:0 18px;text-align:center}
 .guides h4{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);margin:0 0 10px;font-weight:600}
 .guides .grow{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
@@ -103,6 +110,7 @@ body{overflow-x:hidden}
   <h1>🏗️ AMNI-CONSTRUCT</h1>
   <p>Design any work on your house before you swing a hammer. Trace from a photo or satellite, model it in 3D, print real construction plans, price every board, bag and fixture, and know what your town requires — free, in your browser. Building toward the whole house: decks, patios, pools, flooring, framing, roofing, plumbing &amp; electrical. New — <a href="../scan/" style="color:#6cc0d8;text-decoration:none">scan a space with your phone</a> and drop the real dimensions into any project.</p>
 </header>
+<a href="pro.html" class="pro-strip"><span class="pro-strip-badge">💼 NEW</span><span><b>Amni-Construct Pro</b> — contractor mode: branded client quotes with your rates &amp; markup, permit packets, showcases. <u>Free 14-day trial</u> in every estimator.</span><span class="pro-strip-go">→</span></a>
 <div class="apps">
   <a class="app deck" href="../deck/">
     <h2>🛠️ DECK</h2>
