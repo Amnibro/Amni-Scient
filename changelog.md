@@ -1,5 +1,11 @@
 # Changelog 
 
+## Amni-Learn v5.33.0 — Daily Curriculum v4: big-print UX, hands-on activities, 50-50 together split, weekly supplies page - 2026-07-06
+- The whole packet scales to the child: toddler and pre-K sheets print with much bigger tracing (with real handwriting guide lines), bigger emojis, bigger checkboxes and answer blanks; K-2 gets a medium bump.
+- New printable games rotating through the sheets: mouse-to-cheese mazes (three sizes by age), draw-a-line match-ups, dot-to-dot shapes, odd-one-out, color-and-count stars, and thick-outline coloring pictures for toddlers.
+- Every activity is now tagged 🤝 Together or ⭐ On my own, and each day's checklist is balanced 3/3 — half things parents supervise (planting seeds, washing veggies, spreading bread, egg cracking, laundry), half independent. 60 new hands-on plants/cooking/cleaning activities added (396 total).
+- New page 4: "This Week's Supplies" — a checkbox list computed from the actual upcoming 7 days of activities, so parents can gather everything once.
+
 ## Amni-Learn v5.32.0 — Daily Curriculum v3: more content, better visuals, more variety, ages 1+ - 2026-07-06
 - Ages now start at 1: a caregiver-guided toddler band (1-2) with its own "Little Hands" worksheet (giant shape tracing, scribble zone, point-and-name row) and 48 toddler activities written as 5-minute caregiver scripts.
 - Activity pools grew from 6 to 8 per category for every band — 336 activities total.
