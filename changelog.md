@@ -1,5 +1,10 @@
 # Changelog 
 
+## Amni-Learn v5.34.0 — Daily Curriculum v5: Texas TEKS / Florida B.E.S.T. aligned expansion - 2026-07-06
+- 72 new standards-aligned activities (420 total): positional words and counting to 20 for pre-K; place-value bundles, clock hunts, phonics blends for K-2; times-table sprints, arrays, cardinal directions, state symbols, flag etiquette for grades 3-5; Preamble memorization, Bill of Rights, primary sources, integer temperatures, sales-tax math, moon phases for middle school.
+- New worksheet types rotating on page 2: analog clock reading (real SVG clock faces), phonics Word Builders, fact families, area & perimeter with labeled rectangles, coordinate-plane points, integer addition. Multiplication practice now covers facts through 10x10 (TEKS fluency standard) and grade-3+ copywork is done in cursive on guide lines.
+- New Civics Corner rotating on page 3 for ages 7+: strictly factual civics (branches of government, first ten amendments, flag facts, supreme law, Declaration year) in the USCIS-question style — politically neutral by construction, matching both states' required civics content.
+
 ## Amni-Learn v5.33.0 — Daily Curriculum v4: big-print UX, hands-on activities, 50-50 together split, weekly supplies page - 2026-07-06
 - The whole packet scales to the child: toddler and pre-K sheets print with much bigger tracing (with real handwriting guide lines), bigger emojis, bigger checkboxes and answer blanks; K-2 gets a medium bump.
 - New printable games rotating through the sheets: mouse-to-cheese mazes (three sizes by age), draw-a-line match-ups, dot-to-dot shapes, odd-one-out, color-and-count stars, and thick-outline coloring pictures for toddlers.
