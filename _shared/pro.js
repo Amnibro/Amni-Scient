@@ -244,7 +244,7 @@ if (brand && brand.n && brand.m === mod && Date.now() - (brand.ts || 0) < 7 * 86
   bn.querySelector('button').onclick = () => { localStorage.removeItem('amni.showcase.brand'); bn.remove() }
 }
 S('pro-gen').onclick = () => isPro() ? quoteDoc() : gate.classList.add('on')
-btn.addEventListener('click', () => { drawer.classList.add('on'); status(); totals(); pjUI(); clList() })
+btn.addEventListener('click', () => { const ck2 = document.querySelector('#uk-coach'); ck2 && ck2.remove(); drawer.classList.add('on'); status(); totals(); pjUI(); clList() })
 drawer.querySelector('.pro-x').onclick = () => drawer.classList.remove('on')
 gate.addEventListener('click', e => e.target === gate && gate.classList.remove('on'))
 gate.querySelector('#pro-trial').onclick = () => { PS.trialStart = PS.trialStart || Date.now(); saveP(); gate.classList.remove('on'); status() }

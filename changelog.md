@@ -1,5 +1,12 @@
 # Changelog 
 
+## Amni-Construct PRO v5.27.0 — R5: PWA install + payment config + mobile audit - 2026-07-06
+- **PWA**: `construct/manifest.webmanifest` (name/short_name, start_url /construct/, scope /, standalone, theme #e0954a, shortcuts to Dashboard/Deck/Plan) + generated icons (icon-192/512/maskable — headless-rendered 🏗️ on the construct palette). Manifest + theme-color linked from hub, pro, dashboard and all 11 modules → installable as an app on desktop + Android (Chrome no longer requires a SW for install; offline caching deferred deliberately — a root-scope SW would risk the whole site's caching).
+- **`_shared/pro-config.js` (?v=c1)** — ONE place for Anthony's activation flips: `AMNI_LSQ` (LemonSqueezy license validation), `AMNI_BUY_URL` (pro.html checkout), `AMNI_GC` (analytics), `AMNI_AFF` (affiliate templates). Loaded before pro.js in 11 modules + pro.html.
+- **pro.html** feature cards updated to live status (permits/showcases/clients+dashboard shipped — "rolling out" badges removed).
+- **Mobile audit** (412×880): drawer full-width + body-scrolls + zero horizontal overflow; dashboard tiles wrap clean. Fix: opening the Pro drawer dismisses the ui-kit first-visit coach (overlapped on phones).
+- Full regression harness ALL PASS after changes; 0 leaked processes.
+
 ## Amni-Construct PRO v5.26.0 — R4: permit packets, 3D snapshots, showcases - 2026-07-06
 - **Permit packet** (Pro-gated): cover sheet (project/owner/contractor+license/jurisdiction/parcel/declared valuation [override or quote total]/scope/sheet index/signatures/diagrammatic-not-stamped disclaimer) + ALL plan-sheet SVGs harvested live from `#pane-plans .svgwrap` (auto-clicks the Plans tab if not yet rendered), one print job. Deck packet = cover + 7 sheets, valuation asserted to the cent.
 - **📸 3D snapshot**: captures the module canvas in a rAF (blank-detect via 8×8 luma variance → "drag and retry" hint), downscales to ≤760px JPEG into `Q.snap`, previewed in drawer, embedded in the quote as "Proposed design". Works headless (40KB capture verified).
