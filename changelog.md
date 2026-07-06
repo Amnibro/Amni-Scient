@@ -1,5 +1,11 @@
 # Changelog 
 
+## Amni-Construct PRO v5.28.0 — R7: backup/restore, rate-book editor, final polish - 2026-07-06
+- **Export/Import backup** on the dashboard (wired PRE-gate — restore works while locked, which is exactly when you need it): ⬇ Export = every `amni*` LS key (designs, quotes, clients, projects, company, license) → one dated JSON file; ⬆ Import validates shape, confirms count, restores + reloads. "Restore from a backup file" link on the locked gate card. Round-trip harness-verified through a full localStorage wipe.
+- **Rate-book editor** (✎ next to the rate-book select): edit task names/rates, add/delete, persists `PS.rateBook`, select rebuilds live.
+- **Esc** closes the Pro drawer + gate modal. pro.html FAQ points at the real backup tools. pro.js → ?v=p5.
+- (R6, no site change: **Android app** built + installed — Capacitor 8 wrapper in `ai/amni-construct-app`, APK 7.9MB on the Fold; README has build/Play-policy notes.)
+
 ## Amni-Construct PRO v5.27.0 — R5: PWA install + payment config + mobile audit - 2026-07-06
 - **PWA**: `construct/manifest.webmanifest` (name/short_name, start_url /construct/, scope /, standalone, theme #e0954a, shortcuts to Dashboard/Deck/Plan) + generated icons (icon-192/512/maskable — headless-rendered 🏗️ on the construct palette). Manifest + theme-color linked from hub, pro, dashboard and all 11 modules → installable as an app on desktop + Android (Chrome no longer requires a SW for install; offline caching deferred deliberately — a root-scope SW would risk the whole site's caching).
 - **`_shared/pro-config.js` (?v=c1)** — ONE place for Anthony's activation flips: `AMNI_LSQ` (LemonSqueezy license validation), `AMNI_BUY_URL` (pro.html checkout), `AMNI_GC` (analytics), `AMNI_AFF` (affiliate templates). Loaded before pro.js in 11 modules + pro.html.

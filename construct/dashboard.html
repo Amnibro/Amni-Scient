@@ -43,20 +43,27 @@ select.st-draft{color:var(--mut)}select.st-sent{color:#6cc0d8}select.st-accepted
 <meta name="theme-color" content="#e0954a">
 </head>
 <body>
-<header><b>💼 PRO DASHBOARD</b><span class="sp"></span><a href="./">← Construct hub</a><a href="pro.html">Pricing</a></header>
-<div id="gate" style="display:none"><h1>💼 Pro Dashboard</h1><p>Your quote pipeline, saved projects and clients live here — part of Amni-Construct Pro. Start a free 14-day trial from the 💼 Pro tab in any estimator.</p><a href="../deck/">Open an estimator →</a></div>
+<header><b>💼 PRO DASHBOARD</b><span class="sp"></span><a href="#" id="exp">⬇ Export backup</a><a href="#" id="imp">⬆ Import</a><a href="./">← Construct hub</a><a href="pro.html">Pricing</a><input type="file" id="impf" accept="application/json" style="display:none"></header>
+<div id="gate" style="display:none"><h1>💼 Pro Dashboard</h1><p>Your quote pipeline, saved projects and clients live here — part of Amni-Construct Pro. Start a free 14-day trial from the 💼 Pro tab in any estimator.</p><a href="../deck/">Open an estimator →</a><p style="margin-top:16px;font-size:12px"><a href="#" id="imp2" style="color:var(--acc);background:none;box-shadow:none;padding:0;font-weight:400">Restore from a backup file</a></p></div>
 <div class="wrap" id="app" style="display:none">
 <div class="tiles" id="tiles"></div>
 <h2>Quotes</h2><div id="quotes"></div>
 <h2>Saved projects</h2><div id="projects"></div>
 <h2>Clients</h2><div id="clients"></div>
-<p style="color:var(--mut);font-size:11px;margin-top:26px">Everything on this page lives in this browser's local storage — nothing is uploaded. Export/backup tools coming in a later update.</p>
+<p style="color:var(--mut);font-size:11px;margin-top:26px">Everything on this page lives in this browser's local storage — nothing is uploaded. Use ⬇ Export backup regularly (top bar) — it saves every design, quote, client and setting to one file you control.</p>
 </div>
 <script>
 (()=>{
 const g=k=>{try{return JSON.parse(localStorage.getItem(k))||[]}catch{return[]}}
 const PS=(()=>{try{return JSON.parse(localStorage.getItem('amni.pro.v1'))||{}}catch{return{}}})()
 const isPro=PS.key?true:PS.trialStart?Date.now()<PS.trialStart+14*864e5:false
+const expData=()=>{const data={};Object.keys(localStorage).filter(k=>k.startsWith('amni')).forEach(k=>data[k]=localStorage.getItem(k));const b=new Blob([JSON.stringify({v:1,app:'amni-construct-pro',ts:Date.now(),data})],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='amni-construct-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),4000)}
+window.__amniImport=txt=>{let j;try{j=JSON.parse(txt)}catch{return alert('That file is not a valid backup.')}if(!j||!j.data||typeof j.data!=='object')return alert('That file is not an Amni-Construct backup.');const n=Object.keys(j.data).length;if(!confirm('Restore '+n+' entries from '+new Date(j.ts||0).toLocaleDateString()+'? This overwrites matching data in this browser.'))return;Object.entries(j.data).forEach(([k,v])=>localStorage.setItem(k,String(v)));location.reload()}
+const impf=document.getElementById('impf')
+impf.addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>window.__amniImport(r.result);r.readAsText(f);impf.value=''})
+document.getElementById('exp').addEventListener('click',e=>{e.preventDefault();expData()})
+document.getElementById('imp').addEventListener('click',e=>{e.preventDefault();impf.click()})
+const i2=document.getElementById('imp2');i2&&i2.addEventListener('click',e=>{e.preventDefault();impf.click()})
 if(!isPro){document.getElementById('gate').style.display='block';return}
 document.getElementById('app').style.display='block'
 const money=n=>'$'+(+n||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})
