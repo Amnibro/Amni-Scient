@@ -4,14 +4,16 @@ const snap = v => Math.round(v * 2) / 2
 const area = V => Math.abs(V.reduce((s, p, i) => { const q = V[(i + 1) % V.length]; return s + (p[0] * q[1] - q[0] * p[1]) }, 0)) / 2
 const perim = V => V.reduce((s, p, i) => { const q = V[(i + 1) % V.length]; return s + Math.hypot(q[0] - p[0], q[1] - p[1]) }, 0)
 const longest = V => { let bi = 0, bl = -1; V.forEach((p, i) => { const q = V[(i + 1) % V.length], l = Math.hypot(q[0] - p[0], q[1] - p[1]); if (l > bl) { bl = l; bi = i } }); return bi }
+const collinearClean = (P, he) => { let pts = P.map(p => [+p[0], +p[1]]), h = typeof he === 'number' && he >= 0 ? he : -1, hit = true; while (hit && pts.length > 3) { hit = false; for (let i = 0; i < pts.length && pts.length > 3; i++) { const n = pts.length; if (h >= 0 && (i === h || i === (h + 1) % n)) continue; const a = pts[(i - 1 + n) % n], b = pts[i], c = pts[(i + 1) % n], vx = c[0] - a[0], vy = c[1] - a[1], L = Math.hypot(vx, vy); if (L && Math.abs(vx * (b[1] - a[1]) - vy * (b[0] - a[0])) / L < 0.02) { pts.splice(i, 1); h > i && h--; hit = true; i-- } } } return { pts, he: h } }
 const preset = (kind, w, d) => kind === 'rect' ? [[0, 0], [w, 0], [w, d], [0, d]]
   : kind === 'l' ? [[0, 0], [w, 0], [w, d * 0.55], [w * 0.5, d * 0.55], [w * 0.5, d], [0, d]]
   : kind === 't' ? [[0, 0], [w, 0], [w, d * 0.4], [w * 0.68, d * 0.4], [w * 0.68, d], [w * 0.32, d], [w * 0.32, d * 0.4], [0, d * 0.4]]
   : [[0, 0], [w, 0], [w, d], [w * 0.66, d], [w * 0.66, d * 0.34], [w * 0.34, d * 0.34], [w * 0.34, d], [0, d]]
 export function mountShapeEditor(host, opts) {
   const o = opts || {}, seedW = Math.max(4, +o.rect?.w || 16), seedD = Math.max(4, +o.rect?.d || 12)
-  let V = (o.polygon && o.polygon.length >= 3) ? o.polygon.map(p => [+p[0], +p[1]]) : preset('rect', seedW, seedD)
-  let sel = -1, drag = -1, house = o.houseEdge != null ? +o.houseEdge : longest(V)
+  const cc0 = (o.polygon && o.polygon.length >= 3) ? collinearClean(o.polygon, o.houseEdge != null ? +o.houseEdge : -1) : null
+  let V = cc0 ? cc0.pts : preset('rect', seedW, seedD)
+  let sel = -1, drag = -1, house = cc0 ? (cc0.he >= 0 ? cc0.he : longest(V)) : (o.houseEdge != null ? +o.houseEdge : longest(V))
   host.innerHTML = ''
   const wrap = document.createElement('div'); wrap.style.cssText = 'display:flex;flex-direction:column;height:100%;min-height:0;background:#0f1217'
   const bar = document.createElement('div'); bar.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 12px;border-bottom:1px solid #272c35;font:13px system-ui,sans-serif;color:#e8e6e0'
@@ -26,7 +28,7 @@ export function mountShapeEditor(host, opts) {
   const edin = document.createElement('input'); edin.type = 'number'; edin.step = '0.5'; edin.min = '0.5'; edin.style.cssText = 'width:66px;background:#0f1217;color:#e8e6e0;border:1px solid #2f3540;border-radius:6px;padding:5px 7px'
   edin.onchange = () => { if (sel < 0) return; const L = Math.max(0.5, +edin.value || 0), A = V[sel], B = V[(sel + 1) % V.length]; let dx = B[0] - A[0], dz = B[1] - A[1], m = Math.hypot(dx, dz) || 1; V[(sel + 1) % V.length] = [snap(A[0] + dx / m * L), snap(A[1] + dz / m * L)]; house = house; redraw() }
   edn.append(label('edge'), edin, label('ft'))
-  const applyB = mkbtn('✓ Use this shape', () => { const min = bounds(); const P = V.map(p => [+(p[0] - min.x0).toFixed(2), +(p[1] - min.z0).toFixed(2)]); o.onApply && o.onApply({ polygon: P, houseEdge: house }) }, true)
+  const applyB = mkbtn('✓ Use this shape', () => { const cc = collinearClean(V, house); V = cc.pts; house = cc.he >= 0 ? cc.he : longest(V); const min = bounds(); const P = V.map(p => [+(p[0] - min.x0).toFixed(2), +(p[1] - min.z0).toFixed(2)]); redraw(); o.onApply && o.onApply({ polygon: P, houseEdge: house }) }, true)
   bar.append(label('Preset'), presets, mkbtn('Fit', () => { fit(); redraw() }), edn, readout, applyB)
   let s = 10, cx = 0, cz = 0, W = 0, H = 0
   const bounds = () => { const xs = V.map(p => p[0]), zs = V.map(p => p[1]); const x0 = Math.min(...xs), x1 = Math.max(...xs), z0 = Math.min(...zs), z1 = Math.max(...zs); return { x0, x1, z0, z1, w: x1 - x0, d: z1 - z0 } }

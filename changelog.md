@@ -1,5 +1,10 @@
 # Changelog 
 
+## Amni-Construct v5.28.1 — collinear polygon nodes removed (odd-shape frost footings) - 2026-07-06
+- **Anthony's field find (from the Android app!):** extra nodes sitting ON a straight edge (left by the draw tool's ⊕ midpoint handles) read as "corners" to the WASM cores → phantom beam segments + extra frost piers on S-1 for odd-shaped decks.
+- **Fix in `shape-edit.js`** (single implementation, copied to deck/patio/pool/floor/roof/frame + _shared; ?v=se3, app.js ?v=hd3): `collinearClean(P, houseEdge)` removes any vertex whose perpendicular deviation from the line through its neighbors is <0.02 ft — EXCEPT the two endpoints of the house edge (the ledger sub-segment on a straight run is semantic, e.g. a 3.5' ledger on a 12' edge). House-edge index remapped through removals; wraparound handled; min 3 vertices. Runs on editor LOAD and on ✓ Use this shape — existing saved shapes self-clean the next time they're applied.
+- Verified headless: noisy 12-vertex U → 9 vertices after one apply, ledger node + house_edge preserved, framing-plan element count drops 53→45 and EXACTLY matches a clean-drawn polygon; clean shapes untouched; node unit tests for wraparound + house-edge protection.
+
 ## Amni-Construct PRO v5.28.0 — R7: backup/restore, rate-book editor, final polish - 2026-07-06
 - **Export/Import backup** on the dashboard (wired PRE-gate — restore works while locked, which is exactly when you need it): ⬇ Export = every `amni*` LS key (designs, quotes, clients, projects, company, license) → one dated JSON file; ⬆ Import validates shape, confirms count, restores + reloads. "Restore from a backup file" link on the locked gate card. Round-trip harness-verified through a full localStorage wipe.
 - **Rate-book editor** (✎ next to the rate-book select): edit task names/rates, add/delete, persists `PS.rateBook`, select rebuilds live.
