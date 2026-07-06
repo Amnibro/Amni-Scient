@@ -4,19 +4,19 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Daily Curriculum Printable &mdash; Amni-Learn | AMNI-SCIENT</title>
-<meta name="description" content="Pick your child's age and print a free daily curriculum: 6 tailored, screen-free activities across reading, math, fine motor, science, creative arts, and life skills. No sign-up.">
-<meta name="keywords" content="daily curriculum,printable activities,homeschool worksheet,kids activities by age,preschool activities,screen-free activities,amni-learn">
+<meta name="description" content="Pick your child's age and print a free daily curriculum packet: an activity checklist plus real practice worksheets (tracing, math, a draw box) across reading, math, fine motor, science, creative arts, and life skills. No sign-up.">
+<meta name="keywords" content="daily curriculum,printable worksheets,homeschool worksheet,kids activities by age,preschool activities,letter tracing,printable math worksheet,amni-learn">
 <meta name="author" content="Amni-Scient">
 <meta property="og:title" content="Daily Curriculum Printable &mdash; Amni-Learn">
-<meta property="og:description" content="Pick an age, print today's 6 tailored screen-free activities: reading, math, fine motor, science, creative arts, life skills.">
+<meta property="og:description" content="Pick an age, print a 3-page packet: today's 6 tailored activities plus real tracing/math/drawing worksheet pages.">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://amni-scient.com/learn/curriculum.html">
 <meta property="og:image" content="https://amni-scient.com/assets/explore/og-explore.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Daily Curriculum Printable &mdash; Amni-Learn">
-<meta name="twitter:description" content="Pick an age, print today's 6 tailored screen-free activities.">
+<meta name="twitter:description" content="Pick an age, print a 3-page activity + worksheet packet.">
 <link rel="canonical" href="https://amni-scient.com/learn/curriculum.html">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Daily Curriculum Printable","description":"Pick an age, print today's 6 tailored screen-free activities across reading, math, fine motor, science, creative arts, and life skills.","url":"https://amni-scient.com/learn/curriculum.html","publisher":{"@type":"Organization","name":"AMNI-SCIENT"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Daily Curriculum Printable","description":"Pick an age, print a 3-page packet: an activity checklist plus tracing, math, and creative worksheet pages tailored to age.","url":"https://amni-scient.com/learn/curriculum.html","publisher":{"@type":"Organization","name":"AMNI-SCIENT"}}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -36,14 +36,20 @@
 .age-btn:hover{border-color:var(--accent)}
 .age-btn.active{background:var(--accent);border-color:var(--accent);color:#05070a;transform:scale(1.08)}
 .band-label{font-size:.78rem;color:var(--dim);margin-bottom:1rem}
+.name-field{margin:.2rem 0 1.1rem}
+.name-field label{display:block;font-size:.78rem;color:var(--dim);margin-bottom:.35rem}
+.name-field input{font-family:'JetBrains Mono',monospace;padding:.5rem .7rem;border-radius:6px;border:2px solid var(--border2);background:var(--panel2);color:var(--text);font-size:.9rem;width:220px;max-width:100%}
+.name-field input:focus{outline:none;border-color:var(--accent)}
 .curr-actions{display:flex;gap:10px;flex-wrap:wrap}
-#sheet{display:none}
-#sheet.ready{display:block}
+#sheets{display:none}
+#sheets.ready{display:block}
+.sheet-page{margin-bottom:1rem}
 .sheet-head{text-align:center;border-bottom:3px solid var(--accent);padding-bottom:1rem;margin-bottom:1.4rem}
 .sheet-head h2{margin:0;font-size:1.6rem;letter-spacing:2px}
 .sheet-sub{color:var(--dim);font-size:.85rem;margin-top:.4rem}
 .sheet-fields{display:flex;gap:1.5rem;justify-content:center;flex-wrap:wrap;margin-top:.9rem;font-size:.82rem;color:var(--text)}
 .sheet-fields span{border-bottom:1px solid var(--border2);padding-bottom:2px;min-width:140px;display:inline-block}
+.mini-head{text-align:center;border-bottom:2px solid var(--accent);padding-bottom:.6rem;margin-bottom:1.2rem;font-size:.78rem;color:var(--dim);letter-spacing:1px;text-transform:uppercase}
 .sheet-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .act-card{border:2px solid var(--border2);border-radius:8px;padding:.9rem 1rem;display:flex;gap:.7rem;break-inside:avoid}
 .act-box{flex-shrink:0;width:24px;height:24px;border:2px solid var(--text);border-radius:4px;margin-top:2px}
@@ -53,17 +59,48 @@
 .stars-row{text-align:center;margin-top:1.4rem;font-size:1.5rem;letter-spacing:6px;color:var(--accent)}
 .stars-row div{font-size:.7rem;letter-spacing:1px;color:var(--dim);margin-top:.3rem}
 .sheet-foot{text-align:center;font-size:.68rem;color:var(--dim);margin-top:1.2rem}
-@media (max-width:640px){.sheet-grid{grid-template-columns:1fr}.sheet-fields{flex-direction:column;align-items:center;gap:.6rem}}
+.page-sep{display:flex;align-items:center;gap:10px;margin:1.6rem 0;color:var(--dim);font-size:.7rem;letter-spacing:1px;text-transform:uppercase}
+.page-sep::before,.page-sep::after{content:'';flex:1;border-top:1px dashed var(--border2)}
+.prac-h{margin:1.1rem 0 .5rem;font-size:.85rem;letter-spacing:1px;text-transform:uppercase;color:var(--accent)}
+.prac-p{margin:.3rem 0;font-size:.92rem;line-height:1.7}
+.trace-row{display:flex;gap:16px;flex-wrap:wrap;margin:.4rem 0}
+.trace-letter{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:2.8rem;color:transparent;-webkit-text-stroke:1.5px #667;letter-spacing:2px;line-height:1}
+.trace-letter.small{font-size:1.8rem}
+.trace-wavy{font-size:2rem;color:#889;letter-spacing:3px;margin:.3rem 0}
+.write-lines{display:flex;flex-direction:column;gap:16px;margin:.6rem 0 1.1rem}
+.write-line{border-bottom:1px solid var(--border2);height:1px;display:block}
+.prob-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 24px;margin:.4rem 0 1.1rem}
+.prob{font-size:1.05rem;font-family:'JetBrains Mono',monospace;display:flex;align-items:center;gap:8px}
+.prob.cw{font-size:1.3rem}
+.blank{display:inline-block;width:46px;height:1.4em;border:2px solid var(--border2);border-radius:4px;vertical-align:middle}
+.blank.wide{width:110px}
+.draw-box{border:2px dashed var(--border2);border-radius:10px;min-height:220px;display:flex;align-items:flex-end;padding:.6rem .8rem;margin:.5rem 0 1.1rem}
+.draw-label{font-size:.8rem;color:var(--dim)}
+.choice-row{display:flex;gap:16px;flex-wrap:wrap;margin:.4rem 0 1.1rem;font-size:.85rem;align-items:center}
+.choice{display:flex;align-items:center;gap:6px}
+.choice-circle{width:16px;height:16px;border:2px solid var(--text);border-radius:50%;display:inline-block}
+.choice-circle.big{width:26px;height:26px}
+.choice .emoji{font-size:1.3rem}
+@media (max-width:640px){.sheet-grid{grid-template-columns:1fr}.sheet-fields{flex-direction:column;align-items:center;gap:.6rem}.prob-grid{grid-template-columns:1fr}}
 @media print{
-nav,footer,.hamburger,.grid-bg,.scanlines,.crumbs,.product-hero,.curr-controls,.support-cta,section.curr-intro,section.curr-how,section.curr-why,.curr-keep,.curr-cta{display:none!important}
+nav,footer,.hamburger,.grid-bg,.scanlines,.crumbs,.product-hero,.curr-controls,.support-cta,section.curr-intro,section.curr-how,section.curr-why,.curr-keep,.curr-cta,.page-sep{display:none!important}
 body{background:#fff!important;color:#111!important;padding-top:0!important}
 .curr-wrap{max-width:100%;padding:0}
-#sheet{display:block!important}
-.sheet-head{border-bottom-color:#111}
+#sheets{display:block!important}
+.sheet-page{page-break-after:always;break-after:page}
+.sheet-page:last-child{page-break-after:auto;break-after:auto}
+.sheet-head,.mini-head{border-bottom-color:#111!important;color:#111!important}
 .act-card{border-color:#333!important}
 .act-box{border-color:#111}
 .act-body p{color:#333!important}
 .stars-row,.stars-row div,.act-time,.sheet-sub,.sheet-foot{color:#555!important}
+.prac-h,.prac-p{color:#111!important}
+.trace-letter{-webkit-text-stroke-color:#333!important}
+.trace-wavy{color:#999!important}
+.write-line{border-bottom-color:#333!important}
+.blank{border-color:#333!important}
+.draw-box{border-color:#333!important}
+.choice-circle{border-color:#111!important}
 @page{size:letter;margin:.5in}
 }
 </style>
@@ -104,7 +141,7 @@ body{background:#fff!important;color:#111!important;padding-top:0!important}
 </div>
 <section class="curr-intro">
 <div style="max-width:800px;margin:0 auto;text-align:left;padding:0 1.5rem">
-<p style="color:var(--text);font-size:.88rem;line-height:1.8">A free, screen-free companion to the Amni-Learn games: pick your child's age and get one printable sheet with 6 hands-on activities for the day &mdash; reading, math, fine motor, science, creative arts, and a life skill, each sized for a quick 10&ndash;25 minute session. Today's picks stay the same all day (so a sheet printed this morning still matches one printed tonight); tap New Set for a fresh mix any time.</p>
+<p style="color:var(--text);font-size:.88rem;line-height:1.8">A free, screen-free companion to the Amni-Learn games: pick your child's age and print a 3-page packet &mdash; an activity checklist plus two real worksheet pages (tracing &amp; math practice, then a creative draw-and-discover page). Today's picks stay the same all day (so a packet printed this morning still matches one printed tonight); tap New Set for a fresh mix any time.</p>
 </div>
 </section>
 <div class="curr-wrap">
@@ -112,13 +149,15 @@ body{background:#fff!important;color:#111!important;padding-top:0!important}
 <h3>1. Pick an age</h3>
 <div class="age-row" id="age-row"></div>
 <div class="band-label" id="band-label"></div>
-<h3>2. Get today's sheet</h3>
+<div class="name-field"><label for="child-name">Child's name (optional &mdash; used for the tracing page)</label><input type="text" id="child-name" maxlength="14" placeholder="e.g. Emma" autocomplete="off"></div>
+<h3>2. Get today's packet</h3>
 <div class="curr-actions">
 <button class="btn btn-primary" id="new-set-btn" style="background:var(--accent);color:#05070a;box-shadow:0 0 10px var(--accent-glow)">&#128256; NEW SET</button>
-<button class="btn btn-outline" id="print-btn">&#128424;&#65039; PRINT THIS PAGE</button>
+<button class="btn btn-outline" id="print-btn">&#128424;&#65039; PRINT THIS PACKET</button>
 </div>
 </div>
-<div id="sheet">
+<div id="sheets">
+<div class="sheet-page" id="page1">
 <div class="sheet-head">
 <h2 id="sheet-title">MY LEARNING DAY</h2>
 <div class="sheet-sub" id="sheet-date"></div>
@@ -128,13 +167,24 @@ body{background:#fff!important;color:#111!important;padding-top:0!important}
 <div class="stars-row" id="stars-row"></div>
 <div class="sheet-foot">amni-scient.com/learn &mdash; free, private, no sign-up</div>
 </div>
+<div class="page-sep">Page 2 &mdash; Practice Page</div>
+<div class="sheet-page" id="page2">
+<div class="mini-head" id="page2-mini"></div>
+<div id="page2-body"></div>
+</div>
+<div class="page-sep">Page 3 &mdash; Creative &amp; Discovery</div>
+<div class="sheet-page" id="page3">
+<div class="mini-head" id="page3-mini"></div>
+<div id="page3-body"></div>
+</div>
+</div>
 </div>
 <section class="curr-how">
 <h2>HOW IT WORKS</h2>
 <div class="how-works-grid">
-<div class="card"><h3>1. PICK AN AGE</h3><p>Choose any age from 3 to 13. Activities are grouped into five developmental bands so difficulty and vocabulary match where your child actually is.</p></div>
-<div class="card"><h3>2. TODAY'S SIX</h3><p>One activity from each of six categories is chosen for the day &mdash; balanced across reading, math, fine motor, science, creative arts, and life skills.</p></div>
-<div class="card"><h3>3. PRINT & CHECK OFF</h3><p>The sheet fits one to two printed pages with big checkboxes, so a child can mark off each activity as it's finished.</p></div>
+<div class="card"><h3>1. PICK AN AGE</h3><p>Choose any age from 3 to 13. Activities and worksheets are grouped into five developmental bands so difficulty and vocabulary match where your child actually is.</p></div>
+<div class="card"><h3>2. THREE PAGES</h3><p>Page 1 is today's 6-activity checklist. Page 2 is a real practice worksheet (tracing/copywork + math problems). Page 3 is a draw-and-discover page with a weather and mood check-in.</p></div>
+<div class="card"><h3>3. PRINT & GO</h3><p>Each page is sized to print cleanly on its own sheet, with big checkboxes and blanks a kid can write straight onto.</p></div>
 </div>
 </section>
 <section class="curr-why">
@@ -207,10 +257,45 @@ sc:[{t:"Independent Experiment",d:"Design your own experiment from start to fini
 cr:[{t:"Short Story Craft",d:"Write a short story with a clear conflict and resolution, at least a page long.",n:25},{t:"Photography Project",d:"Take 5 photos around one theme, like shadows or colors, and pick your favorite.",n:20},{t:"New Technique Art",d:"Create an art piece trying a technique you've never used before.",n:20},{t:"Podcast Script",d:"Write a 2-minute script for a podcast episode on a topic you love.",n:20},{t:"Music Composition",d:"Compose a short melody or beat using an instrument or an app.",n:20},{t:"Design Challenge",d:"Design a logo or poster for a made-up club or business.",n:20}],
 ls:[{t:"Meal Independence",d:"Plan and cook a simple meal mostly on your own, with supervision.",n:25},{t:"Budget Project",d:"Create a monthly budget for a pretend allowance or job.",n:20},{t:"Job Shadowing Chat",d:"Interview a family member about their job and what a normal day looks like for them.",n:15},{t:"Goal Setting",d:"Write 3 personal goals for the month and one first step for each.",n:15},{t:"Digital Citizenship",d:"Write 3 rules for staying safe and kind online.",n:15},{t:"Community Service",d:"Plan and do one small act of community service or volunteering.",n:20}]}
 };
+var LETTERS_P34=['A','B','C','D','E','H','I','L','M','O','S','T','U','V','F','P'];
+var SIGHT_WORDS_K56=['the','and','is','you','my','see','can','like','go','we','to','said','have','are','play','look'];
+var RHYME_WORDS_K56=['cat','sun','dog','hop','red','tree','box','pig','run','bee'];
+var COPYWORK_G78=["The early bird catches the worm.","Practice makes progress, not perfection.","A kind word can change someone's whole day.","Every expert was once a beginner.","Slow and steady wins the race.","Great things take time to grow.","Curiosity is the engine of learning.","Small steps still move you forward.","Good habits are built one day at a time.","A calm mind solves problems faster."];
+var COPYWORK_G910=["The best time to start is usually right now.","Effort compounds in ways that are easy to miss day to day.","Every skill looks like magic until you learn how it's built.","Mistakes are proof that you're actually trying something new.","A clear plan turns a big goal into a series of small steps.","Listening carefully is its own kind of skill worth practicing.","Curiosity asks better questions than certainty ever does.","What you repeat becomes who you are, on purpose or not."];
+var VOCAB_G910=[{w:"diligent",def:"working hard and carefully",s:"She was so ____ that she finished her project two days early."},{w:"reluctant",def:"unwilling or hesitant",s:"He felt ____ to try the new food at first."},{w:"generous",def:"willing to give more than expected",s:"It was ____ of them to share their lunch."},{w:"curious",def:"eager to learn or know something",s:"The ____ kitten explored every corner of the room."},{w:"cautious",def:"careful to avoid danger or mistakes",s:"Be ____ when crossing a busy street."},{w:"ancient",def:"very old, from a long time ago",s:"The museum displayed ____ pottery from centuries ago."},{w:"enormous",def:"extremely large in size",s:"The whale was an ____ creature swimming near the boat."},{w:"fragile",def:"easily broken or damaged",s:"Handle the ____ glass ornament with both hands."}];
+var COPYWORK_T1113=["Discipline is choosing what you want most over what you want right now.","A good question is often more valuable than a quick answer.","Growth happens right at the edge of what feels comfortable.","The way you practice is the way you'll perform when it counts.","Understanding why something works matters as much as knowing that it works.","Small, consistent effort beats occasional bursts of motivation.","Being wrong quickly is often faster progress than being right slowly.","Real confidence comes from preparation, not from pretending."];
+var VOCAB_T1113=[{w:"resilient",def:"able to recover quickly from difficulty",s:"After the setback, the team stayed ____ and kept improving."},{w:"ambiguous",def:"open to more than one interpretation",s:"The instructions were ____, so everyone read them differently."},{w:"meticulous",def:"showing great attention to detail",s:"The engineer was ____ when checking every measurement."},{w:"skeptical",def:"not easily convinced; having doubts",s:"She stayed ____ of the claim until she saw real evidence."},{w:"innovative",def:"introducing new ideas or methods",s:"The startup was known for its ____ approach to old problems."},{w:"concise",def:"giving information clearly in few words",s:"His ____ summary covered the whole report in one paragraph."},{w:"persistent",def:"continuing firmly despite difficulty",s:"Her ____ practice finally paid off at the recital."},{w:"objective",def:"based on facts rather than feelings",s:"Try to stay ____ when judging your own work."}];
 var todayStr=function(){var d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();};
 var bandOf=function(age){return age<=4?'p34':age<=6?'k56':age<=8?'g78':age<=10?'g910':'t1113';};
 var xmur3=function(str){for(var i=0,h=1779033703^str.length;i<str.length;i++){h=Math.imul(h^str.charCodeAt(i),3432918353);h=h<<13|h>>>19;}return function(){h=Math.imul(h^(h>>>16),2246822507);h=Math.imul(h^(h>>>13),3266489909);return (h^=h>>>16)>>>0;};};
 var mulberry32=function(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;var t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return ((t^t>>>14)>>>0)/4294967296;};};
+var pickN=function(rnd,pool,n){var arr=pool.slice(),res=[];for(var i=0;i<n&&arr.length;i++){res.push(arr.splice(Math.floor(rnd()*arr.length),1)[0]);}return res;};
+var countWrite=function(rnd,count){var out=[];for(var i=0;i<count;i++)out.push(1+Math.floor(rnd()*5));return out;};
+var addSub=function(rnd,count){var out=[];for(var i=0;i<count;i++){if(rnd()<0.5){var a=1+Math.floor(rnd()*8),b=1+Math.floor(rnd()*8);out.push(a+' + '+b+' =');}else{var a=5+Math.floor(rnd()*10),b=1+Math.floor(rnd()*a);out.push(a+' - '+b+' =');}}return out;};
+var multProbs=function(rnd,count){var out=[];for(var i=0;i<count;i++){var a=1+Math.floor(rnd()*5),b=1+Math.floor(rnd()*5);out.push(a+' &times; '+b+' =');}return out;};
+var divProbs=function(rnd,count){var out=[];for(var i=0;i<count;i++){var d=2+Math.floor(rnd()*8),q=2+Math.floor(rnd()*11);out.push((d*q)+' &divide; '+d+' =');}return out;};
+var eqProbs=function(rnd,count){var out=[];for(var i=0;i<count;i++){var a=1+Math.floor(rnd()*12),x=1+Math.floor(rnd()*12),b=a+x;out.push('x + '+a+' = '+b);}return out;};
+var traceBlockHTML=function(band,rnd,name){
+if(band==='p34'){var rows=name?[0,1,2].map(function(){return '<div class="trace-row"><span class="trace-letter">'+name.toUpperCase()+'</span></div>';}).join(''):pickN(rnd,LETTERS_P34,3).map(function(l){return '<div class="trace-row"><span class="trace-letter">'+l+'</span><span class="trace-letter">'+l+'</span><span class="trace-letter">'+l+'</span></div>';}).join('');return '<h4 class="prac-h">Trace Your Letters</h4>'+rows+'<h4 class="prac-h">Trace the Line</h4><div class="trace-wavy">~~~~~~~~~~~~~~~~~~~~</div>';}
+if(band==='k56'){var rows=name?[0,1,2].map(function(){return '<div class="trace-row"><span class="trace-letter small">'+name+'</span></div>';}).join(''):pickN(rnd,SIGHT_WORDS_K56,3).map(function(w){return '<div class="trace-row"><span class="trace-letter small">'+w+'</span></div>';}).join('');var rhyme=pickN(rnd,RHYME_WORDS_K56,1)[0];return '<h4 class="prac-h">Trace Your Words</h4>'+rows+'<h4 class="prac-h">Rhyme Time</h4><p class="prac-p">Write 2 words that rhyme with <strong>'+rhyme+'</strong>:</p><div class="write-lines"><span class="write-line"></span><span class="write-line"></span></div>';}
+if(band==='g78'){var sentence=pickN(rnd,COPYWORK_G78,1)[0];return '<h4 class="prac-h">Copy It Neatly</h4><p class="prac-p">'+sentence+'</p><div class="write-lines"><span class="write-line"></span><span class="write-line"></span></div>';}
+var pool=band==='g910'?{cw:COPYWORK_G910,vc:VOCAB_G910}:{cw:COPYWORK_T1113,vc:VOCAB_T1113};
+var sentence=pickN(rnd,pool.cw,1)[0],vocab=pickN(rnd,pool.vc,2),vh=vocab.map(function(v){return '<p class="prac-p"><strong>'+v.w+'</strong> &mdash; '+v.def+'<br>'+v.s.replace('____','<span class="blank wide"></span>')+'</p>';}).join('');
+return '<h4 class="prac-h">Copy It Neatly</h4><p class="prac-p">'+sentence+'</p><div class="write-lines"><span class="write-line"></span></div><h4 class="prac-h">Word Challenge</h4>'+vh;
+};
+var mathBlockHTML=function(band,rnd){
+if(band==='p34'){var items=countWrite(rnd,4).map(function(n){return '<div class="prob cw"><span class="dots">'+'&#9679; '.repeat(n)+'</span><span class="blank"></span></div>';}).join('');return '<h4 class="prac-h">Count &amp; Write</h4><div class="prob-grid">'+items+'</div>';}
+if(band==='k56'){var items=addSub(rnd,6).map(function(s){return '<div class="prob">'+s+' <span class="blank"></span></div>';}).join('');return '<h4 class="prac-h">Math Practice</h4><div class="prob-grid">'+items+'</div>';}
+if(band==='g78'){var items=multProbs(rnd,8).map(function(s){return '<div class="prob">'+s+' <span class="blank"></span></div>';}).join('');return '<h4 class="prac-h">Multiplication Practice</h4><div class="prob-grid">'+items+'</div>';}
+if(band==='g910'){var items=divProbs(rnd,6).map(function(s){return '<div class="prob">'+s+' <span class="blank"></span></div>';}).join('');return '<h4 class="prac-h">Division Practice</h4><div class="prob-grid">'+items+'</div>';}
+var items=eqProbs(rnd,6).map(function(s){return '<div class="prob">'+s+', x = <span class="blank"></span></div>';}).join('');return '<h4 class="prac-h">Solve for X</h4><div class="prob-grid">'+items+'</div>';
+};
+var page3HTML=function(rnd,creativeItem){
+var weather=['&#9728;&#65039; Sunny','&#9729;&#65039; Cloudy','&#127783;&#65039; Rainy','&#10052;&#65039; Snowy'].map(function(w){return '<span class="choice"><span class="choice-circle"></span>'+w+'</span>';}).join('');
+var feels=['&#129397; Hot','&#128522; Warm','&#128528; Cool','&#129398; Cold'].map(function(w){return '<span class="choice"><span class="choice-circle"></span>'+w+'</span>';}).join('');
+var mood=['&#128516;','&#128578;','&#128528;','&#128577;','&#128546;'].map(function(w){return '<span class="choice"><span class="choice-circle big"></span><span class="emoji">'+w+'</span></span>';}).join('');
+return '<div class="draw-box"><div class="draw-label">Draw or design: '+creativeItem.t+'</div></div><p class="prac-p">Tell me about it:</p><div class="write-lines"><span class="write-line"></span><span class="write-line"></span></div><h4 class="prac-h">Today\'s Weather</h4><div class="choice-row">'+weather+'</div><h4 class="prac-h">It Feels</h4><div class="choice-row">'+feels+'</div><h4 class="prac-h">How I Feel Today</h4><div class="choice-row">'+mood+'</div>';
+};
 var currentAge=6,currentNonce=Number(sessionStorage.getItem('curr-nonce-'+todayStr())||0);
 var render=function(age){
 currentAge=age;
@@ -218,17 +303,27 @@ document.querySelectorAll('.age-btn').forEach(function(b){b.classList.toggle('ac
 var band=bandOf(age),bandLabel=BANDS.find(function(b){return b[0]===band;})[1];
 document.getElementById('band-label').textContent='Selected band: '+bandLabel;
 var rnd=mulberry32(xmur3(todayStr()+'|'+band+'|'+currentNonce)());
-var cards=CATS.map(function(c){var pool=CURR[band][c[0]],item=pool[Math.floor(rnd()*pool.length)];return '<div class="act-card"><div class="act-box"></div><div class="act-body"><h4>'+c[2]+' '+item.t+'</h4><p>'+item.d+'</p><span class="act-time">~'+item.n+' min &middot; '+c[1]+'</span></div></div>';}).join('');
+var picks={};
+CATS.forEach(function(c){var pool=CURR[band][c[0]];picks[c[0]]=pool[Math.floor(rnd()*pool.length)];});
+var cards=CATS.map(function(c){var item=picks[c[0]];return '<div class="act-card"><div class="act-box"></div><div class="act-body"><h4>'+c[2]+' '+item.t+'</h4><p>'+item.d+'</p><span class="act-time">~'+item.n+' min &middot; '+c[1]+'</span></div></div>';}).join('');
 document.getElementById('sheet-grid').innerHTML=cards;
-document.getElementById('sheet-date').textContent=bandLabel+' · '+new Date().toLocaleDateString(undefined,{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+var dateStr=new Date().toLocaleDateString(undefined,{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+document.getElementById('sheet-date').textContent=bandLabel+' · '+dateStr;
 document.getElementById('stars-row').innerHTML='&#9734;'.repeat(CATS.length)+'<div>Color a star for every activity you finish!</div>';
-document.getElementById('sheet').classList.add('ready');
+var nameRaw=(document.getElementById('child-name').value||'').replace(/[^a-zA-Z]/g,'');
+var name=nameRaw.length>=2?nameRaw.slice(0,12):'';
+document.getElementById('page2-mini').textContent='My Learning Day · Page 2 of 3 · '+bandLabel;
+document.getElementById('page2-body').innerHTML=traceBlockHTML(band,rnd,name)+mathBlockHTML(band,rnd);
+document.getElementById('page3-mini').textContent='My Learning Day · Page 3 of 3 · '+bandLabel;
+document.getElementById('page3-body').innerHTML=page3HTML(rnd,picks.cr);
+document.getElementById('sheets').classList.add('ready');
 };
 window.addEventListener('DOMContentLoaded',function(){
 var row=document.getElementById('age-row');
 for(var a=3;a<=13;a++){var btn=document.createElement('button');btn.className='age-btn';btn.type='button';btn.dataset.age=a;btn.textContent=a;btn.setAttribute('aria-label','Age '+a);btn.onclick=function(){render(Number(this.dataset.age));};row.appendChild(btn);}
 document.getElementById('new-set-btn').onclick=function(){currentNonce++;sessionStorage.setItem('curr-nonce-'+todayStr(),currentNonce);render(currentAge);};
 document.getElementById('print-btn').onclick=function(){window.print();};
+document.getElementById('child-name').oninput=function(){render(currentAge);};
 render(currentAge);
 });
 </script>

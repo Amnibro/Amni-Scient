@@ -1,5 +1,10 @@
 # Changelog 
 
+## Amni-Learn v5.30.0 — Daily Curriculum: 3-page worksheet packet - 2026-07-06
+- `learn/curriculum.html` now prints a 3-page packet instead of one sheet: page 1 checklist (unchanged), page 2 an actual practice worksheet (letter/word tracing or copywork+vocab, plus computed math problems, both scaled to the age band), page 3 a draw-and-discover page (draws the day's Creative activity, plus weather/feels/mood check-in rows).
+- New optional child's-name field personalizes the tracing rows instead of using generic letters/words.
+- Everything still comes from the same date-seeded generator as the activity picks, so the whole 3-page packet is stable all day and reproducible.
+
 ## Amni-Learn v5.29.0 — Daily Curriculum Printable - 2026-07-06
 - New `learn/curriculum.html`: pick a child's age (3-13), get a printable "learning day" sheet with 6 tailored screen-free activities (reading, math, fine motor, science, creative arts, life skills), one activity from each so no single subject crowds the day.
 - 180 hand-authored activities across 5 developmental age bands. Picks are date-seeded so the sheet stays the same all day; a "New Set" button reshuffles on demand.
