@@ -1,5 +1,11 @@
 # Changelog 
 
+## Amni-Learn v5.29.0 — Daily Curriculum Printable - 2026-07-06
+- New `learn/curriculum.html`: pick a child's age (3-13), get a printable "learning day" sheet with 6 tailored screen-free activities (reading, math, fine motor, science, creative arts, life skills), one activity from each so no single subject crowds the day.
+- 180 hand-authored activities across 5 developmental age bands. Picks are date-seeded so the sheet stays the same all day; a "New Set" button reshuffles on demand.
+- Print stylesheet hides site chrome/marketing sections and lays the sheet out in ink-friendly colors with big checkboxes; verified to fit one printed page. No AdSense on this page (it's a tool, not an article).
+- Linked from `amni-learn.html`'s hero and features grid. Did not touch `learn/index.html`'s top-bar (kept outside the SPA's tested surface).
+
 ## Amni-Construct v5.28.1 — collinear polygon nodes removed (odd-shape frost footings) - 2026-07-06
 - **Anthony's field find (from the Android app!):** extra nodes sitting ON a straight edge (left by the draw tool's ⊕ midpoint handles) read as "corners" to the WASM cores → phantom beam segments + extra frost piers on S-1 for odd-shaped decks.
 - **Fix in `shape-edit.js`** (single implementation, copied to deck/patio/pool/floor/roof/frame + _shared; ?v=se3, app.js ?v=hd3): `collinearClean(P, houseEdge)` removes any vertex whose perpendicular deviation from the line through its neighbors is <0.02 ft — EXCEPT the two endpoints of the house edge (the ledger sub-segment on a straight run is semantic, e.g. a 3.5' ledger on a 12' edge). House-edge index remapped through removals; wraparound handled; min 3 vertices. Runs on editor LOAD and on ✓ Use this shape — existing saved shapes self-clean the next time they're applied.
