@@ -1,5 +1,10 @@
 # Changelog 
 
+## Amni-Learn v5.31.0 — Pre-K Phonics (spoken) module - 2026-07-06
+- New Phonics game in School Skills (Pre-K only): a Letter Sounds tab (tap any of the 26 letters to see + hear its sound and an example word) and a Sound It Out tab (tap-to-hear letter/blend chunks for 24 simple words, then hear the whole word blended together).
+- Every tap always plays sound regardless of the app's global read-aloud mute — the module's whole point is to be heard, so it doesn't silently sit muted by default like other auto-narration does.
+- New achievement ("Sound It Out") for browsing 20 words. `learn/prek.html` lineup updated, service worker cache bumped so users get the new module.
+
 ## Amni-Learn v5.30.0 — Daily Curriculum: 3-page worksheet packet - 2026-07-06
 - `learn/curriculum.html` now prints a 3-page packet instead of one sheet: page 1 checklist (unchanged), page 2 an actual practice worksheet (letter/word tracing or copywork+vocab, plus computed math problems, both scaled to the age band), page 3 a draw-and-discover page (draws the day's Creative activity, plus weather/feels/mood check-in rows).
 - New optional child's-name field personalizes the tracing rows instead of using generic letters/words.

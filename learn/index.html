@@ -362,6 +362,7 @@
   .game-btn.tracing { border-color: #ff6b35; } .game-btn.tracing:hover { box-shadow: 0 10px 30px rgba(255,107,53,0.25); }
   .game-btn.math { border-color: #4cd137; } .game-btn.math:hover { box-shadow: 0 10px 30px rgba(76,209,55,0.25); }
   .game-btn.matching { border-color: #9c88ff; } .game-btn.matching:hover { box-shadow: 0 10px 30px rgba(156,136,255,0.25); }
+  .game-btn.phonics { border-color: #ff9f43; } .game-btn.phonics:hover { box-shadow: 0 10px 30px rgba(255,159,67,0.25); }
   .game-btn.typing { border-color: #f1c40f; } .game-btn.typing:hover { box-shadow: 0 10px 30px rgba(241,196,15,0.25); }
   .game-btn.life{border-color:#e84393}.game-btn.life:hover{box-shadow:0 10px 30px rgba(232,67,147,0.25)}.game-btn.brain{border-color:#1abc9c}.game-btn.brain:hover{box-shadow:0 10px 30px rgba(26,188,156,0.25)}.game-btn.lab{border-color:#f1c40f}.game-btn.lab:hover{box-shadow:0 10px 30px rgba(241,196,15,0.25)}.game-btn.ai{border-color:#9b59b6}.game-btn.ai:hover{box-shadow:0 10px 30px rgba(155,89,182,0.25)}.game-btn.multi{border-color:#1abc9c}.game-btn.multi:hover{box-shadow:0 10px 30px rgba(26,188,156,0.25)}.game-btn.dots{border-color:#f39c12}.game-btn.dots:hover{box-shadow:0 10px 30px rgba(243,156,18,0.25)}.btn-icon{font-size:2.4rem;line-height:1;display:block;margin-bottom:4px}.btn-text{font-size:0.88rem;font-weight:700;text-align:center;line-height:1.2}
   .btn-desc { font-size: 0.68rem; color: #556; text-align: center; line-height: 1.3; font-family: 'JetBrains Mono', monospace; margin-top: 2px; }
@@ -414,6 +415,26 @@
   @media (min-width: 600px) { .m-card { max-width: 140px; font-size: 5rem; } }
   .m-card.flipped { background: #fff; border: 3px solid #9c88ff; color: #333; box-shadow: 0 2px 0 #7158e2; transform: translateY(4px); }
   .m-card.matched { background: #2ecc71; border-color: #27ae60; color: #fff; box-shadow: 0 2px 0 #27ae60; transform: translateY(4px) scale(0.95); opacity: 0.8; }
+  .phon-area { justify-content: flex-start !important; }
+  .phon-tabs { display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; justify-content: center; }
+  .phon-tab { font-family: 'JetBrains Mono', monospace; font-weight: 700; padding: 8px 16px; border-radius: 999px; border: 2px solid #ddd; background: #fff; color: #555; cursor: pointer; font-size: 0.85rem; }
+  .phon-tab.active { background: #ff9f43; border-color: #ff9f43; color: #fff; }
+  .phon-pane { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 14px; }
+  .phon-letter-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(46px, 1fr)); gap: 8px; width: 100%; }
+  .phon-tile { aspect-ratio: 1; border-radius: 14px; border: 3px solid #ddd; background: #fff; font-size: 1.5rem; font-weight: bold; cursor: pointer; color: #333; font-family: 'JetBrains Mono', monospace; transition: transform .12s, border-color .15s; }
+  .phon-tile:hover { transform: scale(1.06); border-color: #ff9f43; }
+  .phon-tile.on { background: #ff9f43; border-color: #ff9f43; color: #fff; }
+  .phon-detail { background: #fff9f2; border: 4px solid #ff9f43; border-radius: 18px; padding: 16px 20px; text-align: center; width: 100%; max-width: 340px; }
+  .phon-detail .pd-emoji { font-size: 3rem; }
+  .phon-detail .pd-letter { font-size: 2.4rem; font-weight: bold; color: #333; font-family: 'JetBrains Mono', monospace; }
+  .phon-detail .pd-sound { font-size: 1.1rem; color: #e67e22; font-weight: bold; margin-top: 4px; }
+  .phon-hear-btn { margin-top: 10px; padding: 10px 22px; border-radius: 999px; border: none; background: #ff9f43; color: #fff; font-weight: bold; font-size: 0.95rem; cursor: pointer; font-family: 'JetBrains Mono', monospace; }
+  .phon-word-card { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .phon-word-emoji { font-size: 3.4rem; }
+  .phon-blend-row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+  .phon-chunk { padding: 10px 16px; border-radius: 12px; border: 3px solid #ddd; background: #fff; font-size: 1.4rem; font-weight: bold; font-family: 'JetBrains Mono', monospace; cursor: pointer; color: #333; }
+  .phon-chunk:hover { border-color: #ff9f43; transform: scale(1.05); }
+  .phon-word-nav { display: flex; gap: 10px; }
   .type-container { display: flex; justify-content: center; gap: 5px; margin-bottom: 30px; flex-wrap: wrap; }
   .type-letter { font-size: clamp(2.5rem,8vw,6rem); font-family: 'JetBrains Mono', monospace; font-weight: bold; color: #ddd; text-transform: uppercase; transition: transform 0.1s, color 0.2s; text-align: center; border-bottom: 4px solid #ccc; padding: 0 clamp(4px,1vw,10px); min-width: clamp(30px,8vw,60px); }
   .type-letter.filled { color: #333; border-bottom-color: #2ecc71; }
@@ -1416,6 +1437,7 @@
           <button class="game-btn tracing" data-game="tracing"><span class="btn-icon">✏️</span><span class="btn-text">Tracing & Art</span><span class="btn-desc">Draw letters & create art</span></button>
           <button class="game-btn math" data-game="math"><span class="btn-icon">➕</span><span class="btn-text">Math Basics</span><span class="btn-desc">Addition, subtraction & more</span></button>
           <button class="game-btn matching" data-game="matching"><span class="btn-icon">🧩</span><span class="btn-text">Matching</span><span class="btn-desc">Find the hidden pairs</span></button>
+          <button class="game-btn phonics" data-game="phonics"><span class="game-new-badge">NEW</span><span class="btn-icon">🔤</span><span class="btn-text">Phonics</span><span class="btn-desc">Hear letters & sound out words</span></button>
           <button class="game-btn typing" data-game="typing"><span class="btn-icon">⌨️</span><span class="btn-text">Typing Fun</span><span class="btn-desc">Learn your keyboard</span></button>
           <button class="game-btn storybook" data-game="storybook"><span class="btn-icon">📖</span><span class="btn-text">Storybooks</span><span class="btn-desc">Classic tales read aloud</span></button>
         </div>
@@ -1699,6 +1721,16 @@
   </div>
   <div id="matching-view" class="view">
     <div class="match-grid" id="match-grid"></div>
+  </div>
+  <div id="phonics-view" class="view">
+    <div class="life-task-area phon-area">
+      <div class="phon-tabs">
+        <button class="phon-tab active" id="phon-tab-letters">🔤 Letter Sounds</button>
+        <button class="phon-tab" id="phon-tab-words">🧩 Sound It Out</button>
+      </div>
+      <div id="phon-letters-pane" class="phon-pane"></div>
+      <div id="phon-words-pane" class="phon-pane" style="display:none"></div>
+    </div>
   </div>
   <div id="typing-view" class="view">
     <div class="type-prompt" id="type-prompt">Type the letters on your keyboard!</div>

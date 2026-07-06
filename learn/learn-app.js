@@ -6,6 +6,7 @@
     tracing: $$('#tracing-view'),
     math: $$('#math-view'),
     matching: $$('#matching-view'),
+    phonics: $$('#phonics-view'),
     typing: $$('#typing-view'),
     life: $$('#life-view'),
     quiz: $$('#quiz-view'),
@@ -102,7 +103,7 @@
   const _lc={1:'#2ecc71',2:'#f1c40f',3:'#e67e22',4:'#e74c3c',5:'#9b59b6',6:'#1abc9c',7:'#ff6b9d',8:'#48dbfb'},_ln={1:'PRE-K GAMES',2:'GRADES K-2',3:'GRADES 3-5',4:'MIDDLE SCHOOL',5:'STEM CHALLENGE',6:'BRAIN EXERCISE',7:'DESTRESS ARCADE',8:'COLLEGE PREP'},_ac=_lc[currentLevel];
   $$('.menu-title').textContent=_ln[currentLevel];$$('.menu-title').style.color=_ac;$$('.menu-title').style.textShadow=`0 0 15px ${_ac}`;$$('#nav-back').style.borderColor=_ac;$$('#nav-back').style.color=_ac;$$('#fs-btn').style.borderColor=_ac;$$('#fs-btn').style.color=_ac;$$('.top-bar').children[1].style.color=_ac;$$('#menu-view').style.background=`radial-gradient(ellipse at 50% 30%,${_ac}12 0%,#0c0f12 60%)`;$$all('.cat-header').forEach(h=>h.style.borderBottomColor=_ac+'30');
   currentLevel===1?$$all('[data-subgame="money"],[data-subgame="clock"],[data-subgame="vacuum"],[data-subgame="dishes"]').forEach(el=>el?el.style.display='none':0):0;currentLevel>=4&&currentLevel!==6&&currentLevel!==7&&currentLevel!==8?($$('#stem-section').style.display='block',$$all('[data-subgame="vacuum"],[data-subgame="dishes"],[data-subgame="clock"],.tracing,.matching').forEach(el=>el?el.style.display='none':0)):0;(currentLevel===4||currentLevel===5)?$$('#main-game-grid').classList.add('wide-mode'):0;currentLevel===6?($$all('.game-category:not(#brain-section):not(.brain-cat)').forEach(c=>c.style.display='none'),$$('#brain-section').style.display='block',$$all('.brain-cat').forEach(c=>c.style.display='block'),$$('#main-game-grid').classList.add('brain-mode')):0;currentLevel===7?($$all('.game-category:not(.destress-cat)').forEach(c=>c.style.display='none'),$$all('.destress-cat').forEach(c=>c.style.display='block'),$$('#main-game-grid').classList.add('brain-mode')):0;currentLevel===8?($$all('.game-category:not(.college-cat)').forEach(c=>c.style.display='none'),$$all('.college-cat').forEach(c=>c.style.display='block'),$$('#main-game-grid').classList.add('brain-mode')):0;
-  const _glv={dots:'123',tracing:'12',math:'1234',matching:'123',typing:'12345',storybook:'123','life:vacuum':'23','life:dishes':'23','life:clock':'234','life:money':'23','life:bubble':'12','life:samediff':'12','life:petcare':'12','life:findit':'12','life:count':'12','life:colormix':'12','life:whackmole':'123','life:mathsolitaire':'345','life:codelock':'345','life:hanoi':'345','life:sliding':'2345','life:lightsout':'345','life:minesweeper':'345','life:twentyfortyeight':'345','life:sudoku':'345','life:memorymatch':'12345','quiz:animals':'1234',music:'1234','quiz:languages':'234','quiz:science':'2345','quiz:colors':'123','quiz:shapes':'123','quiz:counting':'123','quiz:opposites':'123','quiz:weather':'1234','quiz:space':'2345','quiz:sports':'234','quiz:mythology':'34','quiz:history':'34','quiz:civics':'34',reflex:'1234',blocks:'2345',sorthat:'2345',wbridge:'34',scramble:'234',memseq:'12345',pattern:'12345',geo:'34','quiz:math':'45','quiz:engineering':'45',circuitlab:'5',rxnlab:'5',netdebug:'5',versus:'45'};
+  const _glv={dots:'123',tracing:'12',math:'1234',matching:'123',phonics:'1',typing:'12345',storybook:'123','life:vacuum':'23','life:dishes':'23','life:clock':'234','life:money':'23','life:bubble':'12','life:samediff':'12','life:petcare':'12','life:findit':'12','life:count':'12','life:colormix':'12','life:whackmole':'123','life:mathsolitaire':'345','life:codelock':'345','life:hanoi':'345','life:sliding':'2345','life:lightsout':'345','life:minesweeper':'345','life:twentyfortyeight':'345','life:sudoku':'345','life:memorymatch':'12345','quiz:animals':'1234',music:'1234','quiz:languages':'234','quiz:science':'2345','quiz:colors':'123','quiz:shapes':'123','quiz:counting':'123','quiz:opposites':'123','quiz:weather':'1234','quiz:space':'2345','quiz:sports':'234','quiz:mythology':'34','quiz:history':'34','quiz:civics':'34',reflex:'1234',blocks:'2345',sorthat:'2345',wbridge:'34',scramble:'234',memseq:'12345',pattern:'12345',geo:'34','quiz:math':'45','quiz:engineering':'45',circuitlab:'5',rxnlab:'5',netdebug:'5',versus:'45'};
   currentLevel<=5?$$all('#main-game-grid .game-btn').forEach(b=>{const g=b.dataset.game,s=b.dataset.subgame,j=b.dataset.subject,k=s?g+':'+s:(j?g+':'+j:g),lv=_glv[k];lv&&!lv.includes(String(currentLevel))?b.style.display='none':0;}):0;
   $$all('#main-game-grid > .game-category').forEach(cat=>{if(cat.style.display==='none')return;const btns=cat.querySelectorAll('.game-btn');if(!btns.length)return;Array.from(btns).every(b=>b.style.display==='none'||getComputedStyle(b).display==='none')?cat.style.display='none':0;});
   let sessionScore = parseInt(sessionStorage.getItem('amni-learn-score')||'0');
@@ -161,7 +162,7 @@
   function _setLS(k){const v=localStorage.getItem(k)||sessionStorage.getItem(k);try{return JSON.parse(v||'[]');}catch{return [];}}
   // Shared "any game played" key set — used by both First Steps and Polymath so
   // they never drift. Add a game's best/win key here when adding a new game.
-  const _PLAY_NUM_KEYS=['snake-best','tet-best','brk-best','flp-best','inv-best','lgc-best','scr-best','agm-best','pat-best','haven_t2048_best','haven_cblast_best','pong-matches','haven_sol_wins','circuit-built','story-total-reads','spm-best','spm-best-mixed','spm-best-times','geo-best-L1','geo-best-L2','wb-best-es-L1','wb-best-fr-L1','pip-best','ws-best','sdk-wins-easy','sdk-wins-medium','sdk-wins-hard','sdk-wins-classic-easy','sdk-wins-classic-medium','sdk-wins-x-easy','rfx-best-L1','rfx-best-L2','chess-solved','bj-best','pipe-best','pipe-lvl','cs-lvl','haven_td_best_wave','nbk-best-1','nbk-best-2','nmm-best-forward','nmm-best-backward','chm-best-always','chm-best','chm-best-500','morse-total-correct','ear-life-correct','mc-best-round-world-easy','mc-best-round-us-easy','pt-solved-easy','pt-solved-normal','pt-solved-hard','sort-rounds-done','lgc-solved','daily-best','trace-count-L1','sl-best-4','lo-best-3','mn-best-easy','tf-tile-easy','sd-best-easy','mm-best-easy','hanoi-best-3','cl-best','bub-best-colors','sd-best-animals','petcare-best','fi-best-animals','cmix-best','wm-best-easy','rxt-best-single','stp-best-easy-word','nbk-dual-best-1','vs-best-coding'];
+  const _PLAY_NUM_KEYS=['snake-best','tet-best','brk-best','flp-best','inv-best','lgc-best','scr-best','agm-best','pat-best','haven_t2048_best','haven_cblast_best','pong-matches','haven_sol_wins','circuit-built','story-total-reads','spm-best','spm-best-mixed','spm-best-times','geo-best-L1','geo-best-L2','wb-best-es-L1','wb-best-fr-L1','pip-best','ws-best','sdk-wins-easy','sdk-wins-medium','sdk-wins-hard','sdk-wins-classic-easy','sdk-wins-classic-medium','sdk-wins-x-easy','rfx-best-L1','rfx-best-L2','chess-solved','bj-best','pipe-best','pipe-lvl','cs-lvl','haven_td_best_wave','nbk-best-1','nbk-best-2','nmm-best-forward','nmm-best-backward','chm-best-always','chm-best','chm-best-500','morse-total-correct','ear-life-correct','mc-best-round-world-easy','mc-best-round-us-easy','pt-solved-easy','pt-solved-normal','pt-solved-hard','sort-rounds-done','lgc-solved','daily-best','trace-count-L1','sl-best-4','lo-best-3','mn-best-easy','tf-tile-easy','sd-best-easy','mm-best-easy','hanoi-best-3','cl-best','bub-best-colors','sd-best-animals','petcare-best','fi-best-animals','cmix-best','wm-best-easy','rxt-best-single','stp-best-easy-word','nbk-dual-best-1','vs-best-coding','phon-words-seen'];
   const _PLAY_FLOAT_KEYS=['ck-lifetime','am-lifetime'];
   const ACHIEVEMENTS = [
     {id:'first',ic:'🌟',name:'First Steps',desc:'Play any game once',progress(){const played=_PLAY_NUM_KEYS.some(k=>_intLS(k)>0)||_PLAY_FLOAT_KEYS.some(k=>_floatLS(k)>0)||_hasKey('ms-best');return{cur:played?1:0,target:1,unlocked:played};}},
@@ -243,7 +244,8 @@
     {id:'bomb-squad',ic:'💣',name:'Bomb Squad',desc:'Clear Minesweeper on any difficulty',progress(){let m=9999;['easy','medium','hard'].forEach(k=>{const v=_intLS('mn-best-'+k);if(v>0&&v<m)m=v;});const ok=m<9999;return{cur:ok?1:0,target:1,unlocked:ok};}},
     {id:'tile-master',ic:'🔢',name:'2048 Master',desc:'Reach the 2048 tile on any difficulty',progress(){let m=0;['easy','medium','hard'].forEach(k=>{const v=_intLS('tf-tile-'+k);if(v>m)m=v;});const ok=m>=2048;return{cur:Math.min(m,2048),target:2048,unlocked:ok};}},
     {id:'sudoku-solver',ic:'🔢',name:'Sudoku Solver',desc:'Complete Sudoku 4×4 on any difficulty',progress(){let m=9999;['easy','medium','hard'].forEach(k=>{const v=_intLS('sd-best-'+k);if(v>0&&v<m)m=v;});const ok=m<9999;return{cur:ok?1:0,target:1,unlocked:ok};}},
-    {id:'memory-mind',ic:'🧠',name:'Memory Mind',desc:'Clear Memory Match on any difficulty',progress(){let m=9999;['easy','medium','hard'].forEach(k=>{const v=_intLS('mm-best-'+k);if(v>0&&v<m)m=v;});const ok=m<9999;return{cur:ok?1:0,target:1,unlocked:ok};}}
+    {id:'memory-mind',ic:'🧠',name:'Memory Mind',desc:'Clear Memory Match on any difficulty',progress(){let m=9999;['easy','medium','hard'].forEach(k=>{const v=_intLS('mm-best-'+k);if(v>0&&v<m)m=v;});const ok=m<9999;return{cur:ok?1:0,target:1,unlocked:ok};}},
+    {id:'phonics-star',ic:'🔤',name:'Sound It Out',desc:'Browse 20 words in Phonics',progress(){const c=_intLS('phon-words-seen');return{cur:Math.min(c,20),target:20,unlocked:c>=20};}}
   ];
   function _achState(){try{return JSON.parse(localStorage.getItem('amni-achievements')||'{}');}catch{return{};}}
   function _saveAchState(s){try{localStorage.setItem('amni-achievements',JSON.stringify(s));}catch{}}
@@ -995,6 +997,7 @@
       if(game === 'tracing') initTracing();
       if(game === 'math') initMath();
       if(game === 'matching') initMatching();
+      if(game === 'phonics') initPhonics();
       if(game === 'typing') initTyping();
       if(game === 'storybook') initStorybook();
       if(game === 'life') {
@@ -1445,6 +1448,58 @@
         matchGrid.appendChild(card);
       });
     }
+  }
+  const PHON_LETTERS=[
+    {l:'A',s:'ah',w:'Apple',e:'🍎'},{l:'B',s:'buh',w:'Ball',e:'⚽'},{l:'C',s:'kuh',w:'Cat',e:'🐱'},
+    {l:'D',s:'duh',w:'Dog',e:'🐶'},{l:'E',s:'eh',w:'Egg',e:'🥚'},{l:'F',s:'fuh',w:'Fish',e:'🐟'},
+    {l:'G',s:'guh',w:'Goat',e:'🐐'},{l:'H',s:'huh',w:'Hat',e:'🎩'},{l:'I',s:'ih',w:'Igloo',e:'🧊'},
+    {l:'J',s:'juh',w:'Jam',e:'🍯'},{l:'K',s:'kuh',w:'Kite',e:'🪁'},{l:'L',s:'luh',w:'Lion',e:'🦁'},
+    {l:'M',s:'muh',w:'Moon',e:'🌙'},{l:'N',s:'nuh',w:'Nest',e:'🪺'},{l:'O',s:'ah',w:'Octopus',e:'🐙'},
+    {l:'P',s:'puh',w:'Pig',e:'🐷'},{l:'Q',s:'kwuh',w:'Queen',e:'👑'},{l:'R',s:'ruh',w:'Rain',e:'🌧️'},
+    {l:'S',s:'sss',w:'Sun',e:'☀️'},{l:'T',s:'tuh',w:'Tree',e:'🌳'},{l:'U',s:'uh',w:'Umbrella',e:'☂️'},
+    {l:'V',s:'vuh',w:'Van',e:'🚐'},{l:'W',s:'wuh',w:'Watermelon',e:'🍉'},{l:'X',s:'ks',w:'Fox',e:'🦊'},
+    {l:'Y',s:'yuh',w:'Yarn',e:'🧶'},{l:'Z',s:'zzz',w:'Zebra',e:'🦓'}
+  ];
+  const PHON_WORDS=[
+    {w:'cat',c:['c','a','t'],e:'🐱'},{w:'dog',c:['d','o','g'],e:'🐶'},{w:'sun',c:['s','u','n'],e:'☀️'},
+    {w:'hat',c:['h','a','t'],e:'🎩'},{w:'pig',c:['p','i','g'],e:'🐷'},{w:'map',c:['m','a','p'],e:'🗺️'},
+    {w:'bed',c:['b','e','d'],e:'🛏️'},{w:'cup',c:['c','u','p'],e:'☕'},{w:'sit',c:['s','i','t'],e:'🪑'},
+    {w:'run',c:['r','u','n'],e:'🏃'},{w:'red',c:['r','e','d'],e:'🔴'},{w:'bug',c:['b','u','g'],e:'🐛'},
+    {w:'fan',c:['f','a','n'],e:'🪭'},{w:'log',c:['l','o','g'],e:'🪵'},{w:'net',c:['n','e','t'],e:'🥅'},
+    {w:'fish',c:['f','i','sh'],e:'🐟'},{w:'frog',c:['f','r','o','g'],e:'🐸'},{w:'star',c:['s','t','a','r'],e:'⭐'},
+    {w:'moon',c:['m','oo','n'],e:'🌙'},{w:'duck',c:['d','u','ck'],e:'🦆'},{w:'milk',c:['m','i','l','k'],e:'🥛'},
+    {w:'nest',c:['n','e','s','t'],e:'🪺'},{w:'shop',c:['sh','o','p'],e:'🏪'},{w:'chin',c:['ch','i','n'],e:'😀'}
+  ];
+  let phonIdx=0,phonWordIdx=0;
+  function _phonSpeak(text){if(typeof speakText==='function')speakText(text);}
+  function _phonMark(){localStorage.setItem('phon-words-seen',String(_intLS('phon-words-seen')+1));}
+  function renderPhonLetters(){
+    const pane=$$('#phon-letters-pane');if(!pane)return;
+    const cur=PHON_LETTERS[phonIdx];
+    const grid=PHON_LETTERS.map((p,i)=>`<button class="phon-tile${i===phonIdx?' on':''}" data-i="${i}" aria-label="Letter ${p.l}">${p.l}</button>`).join('');
+    pane.innerHTML=`<div class="phon-letter-grid">${grid}</div><div class="phon-detail"><div class="pd-emoji">${cur.e}</div><div class="pd-letter">${cur.l}</div><div class="pd-sound">&quot;${cur.s}&quot; like ${cur.w}</div><button class="phon-hear-btn" id="phon-hear">🔊 Hear It</button></div>`;
+    pane.querySelectorAll('.phon-tile').forEach(btn=>btn.addEventListener('click',()=>{phonIdx=Number(btn.dataset.i);renderPhonLetters();const c=PHON_LETTERS[phonIdx];_phonSpeak(c.l+'. '+c.s+'. like '+c.w);}));
+    $$('#phon-hear').addEventListener('click',()=>{const c=PHON_LETTERS[phonIdx];_phonSpeak(c.l+'. '+c.s+'. like '+c.w);});
+  }
+  function renderPhonWord(){
+    const pane=$$('#phon-words-pane');if(!pane)return;
+    const cur=PHON_WORDS[phonWordIdx];
+    const chunks=cur.c.map(c=>`<button class="phon-chunk" data-c="${c}">${c}</button>`).join('');
+    pane.innerHTML=`<div class="phon-word-card"><div class="phon-word-emoji">${cur.e}</div><div class="phon-blend-row">${chunks}</div><button class="phon-hear-btn" id="phon-blend-btn">🔊 Blend It</button><div class="phon-word-nav"><button class="phon-tab" id="phon-word-prev">◀ Prev</button><button class="phon-tab" id="phon-word-next">Next ▶</button></div></div>`;
+    pane.querySelectorAll('.phon-chunk').forEach(btn=>btn.addEventListener('click',()=>_phonSpeak(btn.dataset.c)));
+    $$('#phon-blend-btn').addEventListener('click',()=>{if(typeof speakSeq==='function')speakSeq([...cur.c,cur.w]);else _phonSpeak(cur.w);});
+    $$('#phon-word-prev').addEventListener('click',()=>{phonWordIdx=(phonWordIdx-1+PHON_WORDS.length)%PHON_WORDS.length;renderPhonWord();const c=PHON_WORDS[phonWordIdx];if(typeof speakSeq==='function')speakSeq([...c.c,c.w]);});
+    $$('#phon-word-next').addEventListener('click',()=>{phonWordIdx=(phonWordIdx+1)%PHON_WORDS.length;_phonMark();renderPhonWord();const c=PHON_WORDS[phonWordIdx];if(typeof speakSeq==='function')speakSeq([...c.c,c.w]);});
+  }
+  function initPhonics(){
+    phonIdx=0;phonWordIdx=0;
+    const tabL=$$('#phon-tab-letters'),tabW=$$('#phon-tab-words'),paneL=$$('#phon-letters-pane'),paneW=$$('#phon-words-pane');
+    if(!tabL||!tabW||!paneL||!paneW)return;
+    tabL.classList.add('active');tabW.classList.remove('active');paneL.style.display='flex';paneW.style.display='none';
+    tabL.onclick=()=>{tabL.classList.add('active');tabW.classList.remove('active');paneL.style.display='flex';paneW.style.display='none';};
+    tabW.onclick=()=>{tabW.classList.add('active');tabL.classList.remove('active');paneW.style.display='flex';paneL.style.display='none';};
+    renderPhonLetters();renderPhonWord();
+    if(currentLevel===1&&typeof ttsAuto==='function'&&ttsAuto()){const c=PHON_LETTERS[0];_phonSpeak(c.l+'. '+c.s+'. like '+c.w);}
   }
   function spawnComboPopup(text, near) {
     const el = document.createElement('div'); el.className='combo-popup'; el.textContent=text;
