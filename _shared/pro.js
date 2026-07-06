@@ -35,7 +35,7 @@ btn.textContent = '💼 Pro'
 tabs.appendChild(btn)
 const drawer = document.createElement('div')
 drawer.id = 'pro-drawer'
-drawer.innerHTML = `<div id="pro-head"><b>💼 AMNI-CONSTRUCT PRO</b><span id="pro-status"></span><button class="pro-x" title="Close">✕</button></div><div id="pro-body">
+drawer.innerHTML = `<div id="pro-head"><b>💼 AMNI-CONSTRUCT PRO</b><span id="pro-status"></span><a href="../construct/dashboard.html" title="Quotes & projects dashboard" style="color:#e8b565;text-decoration:none;font-size:16px;margin-left:auto">📊</a><button class="pro-x" title="Close" style="margin-left:6px">✕</button></div><div id="pro-body">
 <h3>Your company</h3><div class="pro-grid">
 <div class="full pro-logo-row"><img id="pro-logo-img" alt="" style="display:none"><button class="pro-btn pro-logo-btn" id="pro-logo-btn">Upload logo</button><input type="file" id="pro-logo-file" accept="image/*" style="display:none"><span class="pro-note">shows on quotes</span></div>
 <div class="full"><label>Company name</label><input type="text" id="pro-co-name"></div>
@@ -46,10 +46,12 @@ drawer.innerHTML = `<div id="pro-head"><b>💼 AMNI-CONSTRUCT PRO</b><span id="p
 <div class="full"><label>Address</label><input type="text" id="pro-co-addr"></div>
 <div class="full"><label>Quote terms (blank = standard)</label><textarea id="pro-co-terms" placeholder="50% deposit due on acceptance..."></textarea></div></div>
 <h3>Client & project</h3><div class="pro-grid">
-<div class="full"><label>Client name</label><input type="text" id="pro-cl-name"></div>
+<div class="full"><label>Client name</label><input type="text" id="pro-cl-name" list="pro-cl-list"><datalist id="pro-cl-list"></datalist></div>
 <div class="full"><label>Project address</label><input type="text" id="pro-cl-addr"></div>
 <div class="full"><label>Client phone / email</label><input type="text" id="pro-cl-contact"></div>
+<div class="full"><button class="pro-btn ghost" id="pro-cl-save" style="font-size:11px;padding:5px 10px">＋ Save client for reuse</button></div>
 <div class="full"><label>Scope of work</label><textarea id="pro-scope" placeholder="Supply and install..."></textarea></div></div>
+<h3>Saved projects</h3><div id="pro-projects"></div><button class="pro-btn ghost" id="pro-proj-save">💾 Save current design as project</button>
 <h3>Labor</h3><div id="pro-labor"></div><div style="display:flex;gap:6px;flex-wrap:wrap"><button class="pro-btn ghost" id="pro-labor-add">+ Add labor line</button><select id="pro-ratebook" style="flex:1;min-width:150px;background:var(--bg,#0b0e12);border:1px solid var(--line,#2a3038);border-radius:6px;color:var(--mut,#8a94a0);font:inherit;font-size:11.5px;padding:6px"><option value="">+ from rate book…</option></select></div>
 <h3>Other line items</h3><div id="pro-extras"></div><button class="pro-btn ghost" id="pro-extras-add">+ Add item (dumpster, equipment, permits…)</button>
 <h3>Pricing</h3><div class="pro-grid">
@@ -74,6 +76,14 @@ const bindCo = (id, k) => { const el = S(id); el.value = PS.co[k] || ''; el.addE
 bindCo('pro-co-name', 'name'); bindCo('pro-co-phone', 'phone'); bindCo('pro-co-email', 'email'); bindCo('pro-co-lic', 'lic'); bindCo('pro-co-web', 'web'); bindCo('pro-co-addr', 'addr'); bindCo('pro-co-terms', 'terms')
 const bindCl = (id, k) => { const el = S(id); el.value = Q.client[k] || ''; el.addEventListener('input', () => { Q.client[k] = el.value; saveQ() }) }
 bindCl('pro-cl-name', 'name'); bindCl('pro-cl-addr', 'addr'); bindCl('pro-cl-contact', 'contact')
+const CK = 'amni.pro.clients.v1', PJ = 'amni.pro.projects.v1'
+const getCl = () => { try { return JSON.parse(localStorage.getItem(CK)) || [] } catch { return [] } }
+const getPj = () => { try { return JSON.parse(localStorage.getItem(PJ)) || [] } catch { return [] } }
+const clList = () => { S('pro-cl-list').innerHTML = getCl().map(c => `<option value="${esc(c.name)}">`).join('') }
+S('pro-cl-name').addEventListener('input', () => { const c = getCl().find(x => x.name === S('pro-cl-name').value); c && (Q.client.addr = c.addr || '', Q.client.contact = c.contact || '', S('pro-cl-addr').value = Q.client.addr, S('pro-cl-contact').value = Q.client.contact, saveQ()) })
+S('pro-cl-save').onclick = () => { const n = Q.client.name.trim(); if (!n) return; const cl = getCl(), ex = cl.find(x => x.name === n); ex ? Object.assign(ex, { addr: Q.client.addr, contact: Q.client.contact }) : cl.push({ id: Date.now().toString(36), name: n, addr: Q.client.addr, contact: Q.client.contact }); localStorage.setItem(CK, JSON.stringify(cl)); clList(); S('pro-cl-save').textContent = '✓ Client saved'; setTimeout(() => S('pro-cl-save').textContent = '＋ Save client for reuse', 1600) }
+const pjUI = () => { const w = S('pro-projects'); const list = getPj().filter(p => p.mod === mod); w.innerHTML = list.length ? list.map(p => `<div class="pro-labor" style="align-items:center"><span style="flex:1;font-size:12px;color:var(--ink,#dfe6ee)">${esc(p.name)}<span style="color:var(--mut,#8a94a0);font-size:10px"> · ${new Date(p.ts).toLocaleDateString()}</span></span><button class="pro-btn ghost" data-load="${p.id}" style="font-size:10.5px;padding:4px 9px">Open</button><button class="l-del" data-del="${p.id}" title="Delete">✕</button></div>`).join('') : '<p class="pro-note">No saved projects for this module yet — design something and save it.</p>'; w.querySelectorAll('[data-load]').forEach(b => b.onclick = () => { const p = getPj().find(x => x.id === b.dataset.load); p && (location.hash = '#share=' + btoa(unescape(encodeURIComponent(JSON.stringify(p.data)))), location.reload()) }); w.querySelectorAll('[data-del]').forEach(b => b.onclick = () => { localStorage.setItem(PJ, JSON.stringify(getPj().filter(x => x.id !== b.dataset.del))); pjUI() }) }
+S('pro-proj-save').onclick = () => { if (!isPro()) return gate.classList.add('on'); const data = {}; Object.keys(localStorage).filter(k => k.startsWith('amni' + mod + '.')).forEach(k => data[k] = localStorage.getItem(k)); if (!Object.keys(data).length) return; const name = prompt('Project name:', (Q.client.name ? Q.client.name + ' — ' : '') + MODNAME) || ''; if (!name.trim()) return; const pj = getPj(); pj.unshift({ id: Date.now().toString(36), name: name.trim(), mod, client: Q.client.name || '', ts: Date.now(), data }); localStorage.setItem(PJ, JSON.stringify(pj.slice(0, 100))); pjUI() }
 const sc = S('pro-scope'); sc.value = Q.scope; sc.addEventListener('input', () => { Q.scope = sc.value; saveQ() })
 const bindR = (id, k) => { const el = S(id); el.value = Q.r[k] ?? ''; el.addEventListener('input', () => { Q.r[k] = +el.value || 0; PS.def[k === 'rate' ? 'rate' : k] = Q.r[k]; saveQ(); saveP(); totals() }) }
 Q.r.rate = Q.r.rate ?? PS.def.rate
@@ -96,6 +106,7 @@ logoShow()
 S('pro-logo-btn').onclick = () => S('pro-logo-file').click()
 S('pro-logo-file').addEventListener('change', e => { const f = e.target.files[0]; if (!f) return; const r = new FileReader(); r.onload = () => { const im = new Image(); im.onload = () => { const sc2 = Math.min(1, 200 / Math.max(im.width, im.height)), cv = document.createElement('canvas'); cv.width = Math.round(im.width * sc2); cv.height = Math.round(im.height * sc2); cv.getContext('2d').drawImage(im, 0, 0, cv.width, cv.height); PS.co.logo = cv.toDataURL('image/png'); saveP(); logoShow() }; im.src = r.result }; r.readAsDataURL(f) })
 const esc = s => String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+clList(); pjUI()
 const matSchedule = () => { if (!matHost) return ''; const rows = [...matHost.querySelectorAll('tr')].map(tr => [...tr.children].map(td => td.textContent.trim())).filter(c => c.length >= 2 && c[0] && !/total|subtotal/i.test(c[0]) && /^\d/.test(c[1] || '')).map(c => `<tr><td>${esc(c[0])}</td><td>${esc(c[1])}</td></tr>`); return rows.length ? `<h3>Materials schedule</h3><table class="ms"><thead><tr><th>Item</th><th>Qty</th></tr></thead><tbody>${rows.join('')}</tbody></table><p class="fine">Quantities computed by Amni-Construct from the approved design. Substitutions of equal grade permitted.</p>` : '' }
 const quoteDoc = () => {
   const c = calc(), d = new Date(), vd = new Date(Date.now() + 30 * 864e5)
@@ -155,7 +166,7 @@ const quoteDoc = () => {
   w ? (w.document.write(html), w.document.close()) : alert('Allow pop-ups to generate the quote document.')
 }
 S('pro-gen').onclick = () => isPro() ? quoteDoc() : gate.classList.add('on')
-btn.addEventListener('click', () => { drawer.classList.add('on'); status(); totals() })
+btn.addEventListener('click', () => { drawer.classList.add('on'); status(); totals(); pjUI(); clList() })
 drawer.querySelector('.pro-x').onclick = () => drawer.classList.remove('on')
 gate.addEventListener('click', e => e.target === gate && gate.classList.remove('on'))
 gate.querySelector('#pro-trial').onclick = () => { PS.trialStart = PS.trialStart || Date.now(); saveP(); gate.classList.remove('on'); status() }

@@ -1,5 +1,11 @@
 # Changelog 
 
+## Amni-Construct PRO v5.25.0 — R3: clients, saved projects, dashboard - 2026-07-06
+- **Clients** (`amni.pro.clients.v1`): save/reuse from the drawer — client-name datalist autofills address+contact on match.
+- **Named project saves** (`amni.pro.projects.v1`, cap 100): 💾 snapshots ALL `amni<mod>.*` LS keys; Open restores via the race-free `#share=`+reload path (uk-restore). Listed per-module in the drawer and cross-module on the dashboard (Pro-gated).
+- **`construct/dashboard.html`** (noindex): pipeline tiles (quotes count / out-for-signature $ / won $ / projects / clients), quotes table w/ status select (draft→sent→accepted/declined, color-coded, writes back), projects table w/ Open-anywhere share links + delete, clients roll-up (quote count + value). Own Pro gate (trial or key), 📊 link in drawer head. pro.js/css → ?v=p3.
+- Harness: client+project saves, dashboard rows, status pipeline write-back, gate-on-wipe. ALL PASS, 0 leaks.
+
 ## Amni-Construct PRO v5.24.0 — R2: quote depth + hub pitch - 2026-07-06
 - **Other line items** (dumpster, equipment, permit fees… flat $) join labor in the drawer + quote doc. **Rate book**: 10 seeded labor tasks w/ typical rates (demo $65, licensed electrical $110…), one-tap add, persisted `PS.rateBook` for future editing. **Discount $** (shown on quote) and **Deposit %** (default 50 — "Deposit due on acceptance" line on the quote and in drawer). Math: `sub = materials×(1+markup) + labor + extras + overhead − discount; grand = sub×(1+tax); deposit = grand×dep%`.
 - **Quote history** `amni.pro.quotes.v1` (qn/ts/module/client/total/status 'draft', cap 200) recorded on every generate — feeds the R3 dashboard.

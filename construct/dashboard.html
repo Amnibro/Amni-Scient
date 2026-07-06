@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Pro Dashboard — Quotes, Projects & Clients | Amni-Construct</title>
+<meta name="robots" content="noindex">
+<style>
+:root{--bg:#0b0e12;--panel:#12161c;--ink:#dfe6ee;--mut:#8a94a0;--line:#2a3038;--acc:#e8b565}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.6 'Segoe UI',system-ui,sans-serif}
+header{display:flex;align-items:center;gap:14px;padding:16px 22px;border-bottom:1px solid var(--line)}
+header b{color:var(--acc);letter-spacing:.05em}
+header a{color:var(--mut);text-decoration:none;font-size:12px}
+header a:hover{color:var(--acc)}
+header .sp{flex:1}
+.wrap{max-width:1080px;margin:0 auto;padding:22px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:26px}
+.tile{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.tile .n{font-size:22px;font-weight:700;color:var(--acc)}
+.tile .l{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut)}
+h2{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);margin:26px 0 10px;display:flex;align-items:center;gap:10px}
+h2::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(232,181,101,.3),transparent)}
+table{width:100%;border-collapse:collapse;font-size:12.5px;background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+th{text-align:left;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);padding:9px 12px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.015)}
+td{padding:9px 12px;border-bottom:1px solid rgba(255,255,255,.045)}
+tr:last-child td{border-bottom:none}
+td:last-child,th:last-child{text-align:right}
+select{background:var(--bg);border:1px solid var(--line);border-radius:6px;color:var(--ink);font:inherit;font-size:11.5px;padding:4px 6px}
+select.st-draft{color:var(--mut)}select.st-sent{color:#6cc0d8}select.st-accepted{color:#7fd18a}select.st-declined{color:#c96b6b}
+.btn{display:inline-block;font-size:11px;padding:5px 12px;border-radius:6px;border:1px solid rgba(232,181,101,.5);background:none;color:var(--acc);cursor:pointer;text-decoration:none}
+.btn:hover{border-color:var(--acc)}
+.btn.red{border-color:rgba(201,107,107,.4);color:#c96b6b}
+.empty{color:var(--mut);font-size:12.5px;background:var(--panel);border:1px dashed var(--line);border-radius:10px;padding:18px;text-align:center}
+#gate{max-width:460px;margin:80px auto;text-align:center;background:var(--panel);border:1px solid rgba(232,181,101,.4);border-radius:14px;padding:34px}
+#gate h1{color:var(--acc);font-size:20px;margin:0 0 8px}
+#gate p{color:var(--mut);font-size:13px;line-height:1.7}
+#gate a{display:inline-block;margin-top:10px;background:var(--acc);color:#14100a;font-weight:700;padding:10px 22px;border-radius:8px;text-decoration:none}
+.mod-chip{display:inline-block;font-size:10px;letter-spacing:.05em;border:1px solid var(--line);border-radius:99px;padding:2px 8px;color:var(--mut)}
+@media(max-width:700px){.wrap{padding:12px}td,th{padding:7px 8px}}
+</style>
+</head>
+<body>
+<header><b>💼 PRO DASHBOARD</b><span class="sp"></span><a href="./">← Construct hub</a><a href="pro.html">Pricing</a></header>
+<div id="gate" style="display:none"><h1>💼 Pro Dashboard</h1><p>Your quote pipeline, saved projects and clients live here — part of Amni-Construct Pro. Start a free 14-day trial from the 💼 Pro tab in any estimator.</p><a href="../deck/">Open an estimator →</a></div>
+<div class="wrap" id="app" style="display:none">
+<div class="tiles" id="tiles"></div>
+<h2>Quotes</h2><div id="quotes"></div>
+<h2>Saved projects</h2><div id="projects"></div>
+<h2>Clients</h2><div id="clients"></div>
+<p style="color:var(--mut);font-size:11px;margin-top:26px">Everything on this page lives in this browser's local storage — nothing is uploaded. Export/backup tools coming in a later update.</p>
+</div>
+<script>
+(()=>{
+const g=k=>{try{return JSON.parse(localStorage.getItem(k))||[]}catch{return[]}}
+const PS=(()=>{try{return JSON.parse(localStorage.getItem('amni.pro.v1'))||{}}catch{return{}}})()
+const isPro=PS.key?true:PS.trialStart?Date.now()<PS.trialStart+14*864e5:false
+if(!isPro){document.getElementById('gate').style.display='block';return}
+document.getElementById('app').style.display='block'
+const money=n=>'$'+(+n||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})
+const esc=s=>String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+const MOD={deck:'Deck',patio:'Patio',pool:'Pool',floor:'Floor',roof:'Roof',frame:'Frame',plumb:'Plumb',elec:'Elec',hvac:'HVAC',plan:'Plan',garden:'Garden'}
+const QK='amni.pro.quotes.v1',PJ='amni.pro.projects.v1',CK='amni.pro.clients.v1'
+const STATUSES=['draft','sent','accepted','declined']
+const render=()=>{
+const qs=g(QK),pj=g(PJ),cl=g(CK)
+const sum=st=>qs.filter(q=>q.status===st).reduce((a,q)=>a+(+q.total||0),0)
+document.getElementById('tiles').innerHTML=`
+<div class="tile"><div class="n">${qs.length}</div><div class="l">Quotes</div></div>
+<div class="tile"><div class="n">${money(sum('sent'))}</div><div class="l">Out for signature</div></div>
+<div class="tile"><div class="n">${money(sum('accepted'))}</div><div class="l">Won</div></div>
+<div class="tile"><div class="n">${pj.length}</div><div class="l">Saved projects</div></div>
+<div class="tile"><div class="n">${cl.length}</div><div class="l">Clients</div></div>`
+document.getElementById('quotes').innerHTML=qs.length?`<table><thead><tr><th>Quote #</th><th>Date</th><th>Trade</th><th>Client</th><th>Status</th><th>Total</th></tr></thead><tbody>${qs.map((q,i)=>`<tr><td>${esc(q.qn)}</td><td>${new Date(q.ts).toLocaleDateString()}</td><td><span class="mod-chip">${MOD[q.mod]||q.mod}</span></td><td>${esc(q.client)||'—'}</td><td><select data-qi="${i}" class="st-${q.status}">${STATUSES.map(s=>`<option${s===q.status?' selected':''}>${s}</option>`).join('')}</select></td><td>${money(q.total)}</td></tr>`).join('')}</tbody></table>`:'<div class="empty">No quotes yet — open any estimator, hit 💼 Pro, and generate your first branded quote.</div>'
+document.getElementById('projects').innerHTML=pj.length?`<table><thead><tr><th>Project</th><th>Trade</th><th>Client</th><th>Saved</th><th></th></tr></thead><tbody>${pj.map(p=>`<tr><td>${esc(p.name)}</td><td><span class="mod-chip">${MOD[p.mod]||p.mod}</span></td><td>${esc(p.client)||'—'}</td><td>${new Date(p.ts).toLocaleDateString()}</td><td><a class="btn" href="../${p.mod}/#share=${btoa(unescape(encodeURIComponent(JSON.stringify(p.data))))}">Open</a> <button class="btn red" data-pdel="${p.id}">✕</button></td></tr>`).join('')}</tbody></table>`:'<div class="empty">No saved projects — design something and hit 💾 in the Pro drawer.</div>'
+const qByCl=n=>qs.filter(q=>q.client===n)
+document.getElementById('clients').innerHTML=cl.length?`<table><thead><tr><th>Client</th><th>Contact</th><th>Quotes</th><th>Value</th></tr></thead><tbody>${cl.map(c=>`<tr><td>${esc(c.name)}</td><td>${esc([c.addr,c.contact].filter(Boolean).join(' · '))}</td><td>${qByCl(c.name).length}</td><td>${money(qByCl(c.name).reduce((a,q)=>a+(+q.total||0),0))}</td></tr>`).join('')}</tbody></table>`:'<div class="empty">No saved clients — save one from the Client &amp; project section of the Pro drawer.</div>'
+document.querySelectorAll('select[data-qi]').forEach(s=>s.addEventListener('change',()=>{const list=g(QK);list[+s.dataset.qi].status=s.value;localStorage.setItem(QK,JSON.stringify(list));render()}))
+document.querySelectorAll('[data-pdel]').forEach(b=>b.onclick=()=>{localStorage.setItem(PJ,JSON.stringify(g(PJ).filter(x=>x.id!==b.dataset.pdel)));render()})
+}
+render()
+})()
+</script>
+</body>
+</html>
