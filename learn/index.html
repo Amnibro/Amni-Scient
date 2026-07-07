@@ -435,6 +435,15 @@
   .phon-chunk { padding: 10px 16px; border-radius: 12px; border: 3px solid #ddd; background: #fff; font-size: 1.4rem; font-weight: bold; font-family: 'JetBrains Mono', monospace; cursor: pointer; color: #333; }
   .phon-chunk:hover { border-color: #ff9f43; transform: scale(1.05); }
   .phon-word-nav { display: flex; gap: 10px; }
+  .phon-game-hud { font-family: 'JetBrains Mono', monospace; font-size: 1rem; color: #555; background: #fff; border: 2px solid #eee; border-radius: 999px; padding: 6px 16px; }
+  .phon-game-q { font-size: 1.15rem; color: #333; text-align: center; margin: 4px 0; font-weight: bold; }
+  .phon-game-tile { min-width: 84px; min-height: 84px; border-radius: 18px; border: 4px solid #ddd; background: #fff; font-size: 2.4rem; font-weight: bold; font-family: 'JetBrains Mono', monospace; cursor: pointer; color: #333; transition: transform .12s, border-color .15s; padding: 8px 14px; }
+  .phon-game-tile:hover { transform: scale(1.06); border-color: #ff9f43; }
+  .phon-game-tile.phon-pic { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+  .phon-game-tile .pt-emoji { font-size: 2.4rem; line-height: 1.1; }
+  .phon-game-tile .pt-word { font-size: 0.95rem; letter-spacing: 1px; }
+  .phon-game-tile.phon-right { background: #2ecc71; border-color: #27ae60; color: #fff; animation: bounceIn 0.4s ease-out; }
+  .phon-game-tile.phon-wrong { background: #fdecea; border-color: #e74c3c; opacity: 0.6; }
   .type-container { display: flex; justify-content: center; gap: 5px; margin-bottom: 30px; flex-wrap: wrap; }
   .type-letter { font-size: clamp(2.5rem,8vw,6rem); font-family: 'JetBrains Mono', monospace; font-weight: bold; color: #ddd; text-transform: uppercase; transition: transform 0.1s, color 0.2s; text-align: center; border-bottom: 4px solid #ccc; padding: 0 clamp(4px,1vw,10px); min-width: clamp(30px,8vw,60px); }
   .type-letter.filled { color: #333; border-bottom-color: #2ecc71; }
@@ -1727,9 +1736,13 @@
       <div class="phon-tabs">
         <button class="phon-tab active" id="phon-tab-letters">🔤 Letter Sounds</button>
         <button class="phon-tab" id="phon-tab-words">🧩 Sound It Out</button>
+        <button class="phon-tab" id="phon-tab-match">🎯 Letter Catch</button>
+        <button class="phon-tab" id="phon-tab-rhyme">🎵 Rhyme Time</button>
       </div>
       <div id="phon-letters-pane" class="phon-pane"></div>
       <div id="phon-words-pane" class="phon-pane" style="display:none"></div>
+      <div id="phon-match-pane" class="phon-pane" style="display:none"></div>
+      <div id="phon-rhyme-pane" class="phon-pane" style="display:none"></div>
     </div>
   </div>
   <div id="typing-view" class="view">

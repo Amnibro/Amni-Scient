@@ -162,7 +162,7 @@
   function _setLS(k){const v=localStorage.getItem(k)||sessionStorage.getItem(k);try{return JSON.parse(v||'[]');}catch{return [];}}
   // Shared "any game played" key set — used by both First Steps and Polymath so
   // they never drift. Add a game's best/win key here when adding a new game.
-  const _PLAY_NUM_KEYS=['snake-best','tet-best','brk-best','flp-best','inv-best','lgc-best','scr-best','agm-best','pat-best','haven_t2048_best','haven_cblast_best','pong-matches','haven_sol_wins','circuit-built','story-total-reads','spm-best','spm-best-mixed','spm-best-times','geo-best-L1','geo-best-L2','wb-best-es-L1','wb-best-fr-L1','pip-best','ws-best','sdk-wins-easy','sdk-wins-medium','sdk-wins-hard','sdk-wins-classic-easy','sdk-wins-classic-medium','sdk-wins-x-easy','rfx-best-L1','rfx-best-L2','chess-solved','bj-best','pipe-best','pipe-lvl','cs-lvl','haven_td_best_wave','nbk-best-1','nbk-best-2','nmm-best-forward','nmm-best-backward','chm-best-always','chm-best','chm-best-500','morse-total-correct','ear-life-correct','mc-best-round-world-easy','mc-best-round-us-easy','pt-solved-easy','pt-solved-normal','pt-solved-hard','sort-rounds-done','lgc-solved','daily-best','trace-count-L1','sl-best-4','lo-best-3','mn-best-easy','tf-tile-easy','sd-best-easy','mm-best-easy','hanoi-best-3','cl-best','bub-best-colors','sd-best-animals','petcare-best','fi-best-animals','cmix-best','wm-best-easy','rxt-best-single','stp-best-easy-word','nbk-dual-best-1','vs-best-coding','phon-words-seen'];
+  const _PLAY_NUM_KEYS=['snake-best','tet-best','brk-best','flp-best','inv-best','lgc-best','scr-best','agm-best','pat-best','haven_t2048_best','haven_cblast_best','pong-matches','haven_sol_wins','circuit-built','story-total-reads','spm-best','spm-best-mixed','spm-best-times','geo-best-L1','geo-best-L2','wb-best-es-L1','wb-best-fr-L1','pip-best','ws-best','sdk-wins-easy','sdk-wins-medium','sdk-wins-hard','sdk-wins-classic-easy','sdk-wins-classic-medium','sdk-wins-x-easy','rfx-best-L1','rfx-best-L2','chess-solved','bj-best','pipe-best','pipe-lvl','cs-lvl','haven_td_best_wave','nbk-best-1','nbk-best-2','nmm-best-forward','nmm-best-backward','chm-best-always','chm-best','chm-best-500','morse-total-correct','ear-life-correct','mc-best-round-world-easy','mc-best-round-us-easy','pt-solved-easy','pt-solved-normal','pt-solved-hard','sort-rounds-done','lgc-solved','daily-best','trace-count-L1','sl-best-4','lo-best-3','mn-best-easy','tf-tile-easy','sd-best-easy','mm-best-easy','hanoi-best-3','cl-best','bub-best-colors','sd-best-animals','petcare-best','fi-best-animals','cmix-best','wm-best-easy','rxt-best-single','stp-best-easy-word','nbk-dual-best-1','vs-best-coding','phon-words-seen','phon-match-best','phon-rhyme-best'];
   const _PLAY_FLOAT_KEYS=['ck-lifetime','am-lifetime'];
   const ACHIEVEMENTS = [
     {id:'first',ic:'🌟',name:'First Steps',desc:'Play any game once',progress(){const played=_PLAY_NUM_KEYS.some(k=>_intLS(k)>0)||_PLAY_FLOAT_KEYS.some(k=>_floatLS(k)>0)||_hasKey('ms-best');return{cur:played?1:0,target:1,unlocked:played};}},
@@ -245,7 +245,9 @@
     {id:'tile-master',ic:'🔢',name:'2048 Master',desc:'Reach the 2048 tile on any difficulty',progress(){let m=0;['easy','medium','hard'].forEach(k=>{const v=_intLS('tf-tile-'+k);if(v>m)m=v;});const ok=m>=2048;return{cur:Math.min(m,2048),target:2048,unlocked:ok};}},
     {id:'sudoku-solver',ic:'🔢',name:'Sudoku Solver',desc:'Complete Sudoku 4×4 on any difficulty',progress(){let m=9999;['easy','medium','hard'].forEach(k=>{const v=_intLS('sd-best-'+k);if(v>0&&v<m)m=v;});const ok=m<9999;return{cur:ok?1:0,target:1,unlocked:ok};}},
     {id:'memory-mind',ic:'🧠',name:'Memory Mind',desc:'Clear Memory Match on any difficulty',progress(){let m=9999;['easy','medium','hard'].forEach(k=>{const v=_intLS('mm-best-'+k);if(v>0&&v<m)m=v;});const ok=m<9999;return{cur:ok?1:0,target:1,unlocked:ok};}},
-    {id:'phonics-star',ic:'🔤',name:'Sound It Out',desc:'Browse 20 words in Phonics',progress(){const c=_intLS('phon-words-seen');return{cur:Math.min(c,20),target:20,unlocked:c>=20};}}
+    {id:'phonics-star',ic:'🔤',name:'Sound It Out',desc:'Browse 20 words in Phonics',progress(){const c=_intLS('phon-words-seen');return{cur:Math.min(c,20),target:20,unlocked:c>=20};}},
+    {id:'sound-sniper',ic:'🎯',name:'Sound Sniper',desc:'Score 10/10 in Letter Catch',progress(){const c=_intLS('phon-match-best');return{cur:Math.min(c,10),target:10,unlocked:c>=10};}},
+    {id:'rhyme-ranger',ic:'🎵',name:'Rhyme Ranger',desc:'Score 10/10 in Rhyme Time',progress(){const c=_intLS('phon-rhyme-best');return{cur:Math.min(c,10),target:10,unlocked:c>=10};}}
   ];
   function _achState(){try{return JSON.parse(localStorage.getItem('amni-achievements')||'{}');}catch{return{};}}
   function _saveAchState(s){try{localStorage.setItem('amni-achievements',JSON.stringify(s));}catch{}}
@@ -1468,9 +1470,24 @@
     {w:'fan',c:['f','a','n'],e:'🪭'},{w:'log',c:['l','o','g'],e:'🪵'},{w:'net',c:['n','e','t'],e:'🥅'},
     {w:'fish',c:['f','i','sh'],e:'🐟'},{w:'frog',c:['f','r','o','g'],e:'🐸'},{w:'star',c:['s','t','a','r'],e:'⭐'},
     {w:'moon',c:['m','oo','n'],e:'🌙'},{w:'duck',c:['d','u','ck'],e:'🦆'},{w:'milk',c:['m','i','l','k'],e:'🥛'},
-    {w:'nest',c:['n','e','s','t'],e:'🪺'},{w:'shop',c:['sh','o','p'],e:'🏪'},{w:'chin',c:['ch','i','n'],e:'😀'}
+    {w:'nest',c:['n','e','s','t'],e:'🪺'},{w:'shop',c:['sh','o','p'],e:'🏪'},{w:'chin',c:['ch','i','n'],e:'😀'},
+    {w:'bat',c:['b','a','t'],e:'🦇'},{w:'hen',c:['h','e','n'],e:'🐓'},{w:'box',c:['b','o','x'],e:'📦'},
+    {w:'bus',c:['b','u','s'],e:'🚌'},{w:'web',c:['w','e','b'],e:'🕸️'},{w:'jet',c:['j','e','t'],e:'✈️'},
+    {w:'crab',c:['c','r','a','b'],e:'🦀'},{w:'drum',c:['d','r','u','m'],e:'🥁'},{w:'flag',c:['f','l','a','g'],e:'🚩'},
+    {w:'swim',c:['s','w','i','m'],e:'🏊'},{w:'hand',c:['h','a','n','d'],e:'✋'},{w:'lamp',c:['l','a','m','p'],e:'💡'},
+    {w:'ring',c:['r','i','ng'],e:'💍'},{w:'king',c:['k','i','ng'],e:'👑'},{w:'ship',c:['sh','i','p'],e:'🚢'},
+    {w:'sock',c:['s','o','ck'],e:'🧦'},{w:'clock',c:['c','l','o','ck'],e:'🕐'},{w:'sheep',c:['sh','ee','p'],e:'🐑'},
+    {w:'bee',c:['b','ee'],e:'🐝'},{w:'tree',c:['t','r','ee'],e:'🌳'},{w:'rain',c:['r','ai','n'],e:'🌧️'},
+    {w:'snail',c:['s','n','ai','l'],e:'🐌'},{w:'train',c:['t','r','ai','n'],e:'🚂'},{w:'boat',c:['b','oa','t'],e:'⛵'},
+    {w:'cake',c:['c','a','ke'],e:'🍰'},{w:'snake',c:['s','n','a','ke'],e:'🐍'}
   ];
-  let phonIdx=0,phonWordIdx=0;
+  const PHON_RHYMES=[
+    ['cat','🐱','hat','🎩','bat','🦇'],['dog','🐶','frog','🐸','log','🪵'],['sun','☀️','bun','🥐','run','🏃'],
+    ['bee','🐝','tree','🌳','key','🔑'],['cake','🍰','snake','🐍','rake','🍂'],['moon','🌙','spoon','🥄','balloon','🎈'],
+    ['sock','🧦','clock','🕐','rock','🪨'],['fox','🦊','box','📦'],['star','⭐','car','🚗','guitar','🎸'],
+    ['mouse','🐭','house','🏠'],['ball','⚽','wall','🧱'],['fish','🐟','dish','🍽️']
+  ];
+  let phonIdx=0,phonWordIdx=0,phonMatch=null,phonRhyme=null;
   function _phonSpeak(text){if(typeof speakText==='function')speakText(text);}
   function _phonMark(){localStorage.setItem('phon-words-seen',String(_intLS('phon-words-seen')+1));}
   function renderPhonLetters(){
@@ -1491,13 +1508,85 @@
     $$('#phon-word-prev').addEventListener('click',()=>{phonWordIdx=(phonWordIdx-1+PHON_WORDS.length)%PHON_WORDS.length;renderPhonWord();const c=PHON_WORDS[phonWordIdx];if(typeof speakSeq==='function')speakSeq([...c.c,c.w]);});
     $$('#phon-word-next').addEventListener('click',()=>{phonWordIdx=(phonWordIdx+1)%PHON_WORDS.length;_phonMark();renderPhonWord();const c=PHON_WORDS[phonWordIdx];if(typeof speakSeq==='function')speakSeq([...c.c,c.w]);});
   }
+  function _phonPickN(pool,n,skip){
+    const arr=pool.filter(x=>x!==skip),res=[];
+    for(let i=0;i<n&&arr.length;i++)res.push(arr.splice(Math.floor(Math.random()*arr.length),1)[0]);
+    return res;
+  }
+  function _phonGameHUD(g,total){return '<div class="phon-game-hud">⭐ <b>'+g.score+'</b> · Round <b>'+Math.min(g.idx+1,total)+'</b>/'+total+'</div>';}
+  function _phonFinish(pane,g,bestKey,label,replayFn){
+    const best=Math.max(g.score,parseInt(localStorage.getItem(bestKey)||'0'));
+    localStorage.setItem(bestKey,String(best));
+    pane.innerHTML='<div class="phon-detail"><div class="pd-emoji">'+(g.score>=9?'🏆':g.score>=6?'🌟':'💪')+'</div><div class="pd-letter">'+g.score+'/10</div><div class="pd-sound">'+(g.score>=9?'Amazing!':g.score>=6?'Great job!':'Good try — play again!')+'</div><button class="phon-hear-btn" id="phon-again">🔁 Play Again</button></div>';
+    _phonSpeak(g.score>=9?'Amazing! '+g.score+' out of 10!':g.score>=6?'Great job! '+g.score+' out of 10!':'Good try! Play again!');
+    if(typeof showFeedback==='function'&&g.score>=9)showFeedback('🏆 '+label+' '+g.score+'/10!','#2ecc71');
+    if(typeof _checkAchievements==='function')_checkAchievements();
+    $$('#phon-again').onclick=()=>{g.idx=0;g.score=0;replayFn();};
+  }
+  function phonMatchRound(){
+    const pane=$$('#phon-match-pane');if(!pane)return;
+    if(phonMatch.idx>=10){_phonFinish(pane,phonMatch,'phon-match-best','Letter Catch',phonMatchRound);return;}
+    const target=PHON_LETTERS[Math.floor(Math.random()*PHON_LETTERS.length)];
+    const others=_phonPickN(PHON_LETTERS,2,target);
+    const tiles=_phonPickN([target,...others],3,null);
+    phonMatch.firstTry=true;
+    pane.innerHTML=_phonGameHUD(phonMatch,10)+'<p class="phon-game-q">Which letter says <strong>&quot;'+target.s+'&quot;</strong>?</p><div class="phon-blend-row">'+tiles.map(t=>'<button class="phon-game-tile" data-l="'+t.l+'"'+(t===target?' data-ok="1"':'')+'>'+t.l+'</button>').join('')+'</div><button class="phon-hear-btn" id="phon-match-replay">🔊 Hear It Again</button>';
+    _phonSpeak(target.s+'. Which letter says '+target.s+'?');
+    $$('#phon-match-replay').onclick=()=>_phonSpeak(target.s+'. Which letter says '+target.s+'?');
+    pane.querySelectorAll('.phon-game-tile').forEach(btn=>btn.addEventListener('click',()=>{
+      if(btn.dataset.ok){
+        if(phonMatch.firstTry){phonMatch.score++;if(typeof addScore==='function')addScore(1);}
+        btn.classList.add('phon-right');
+        _phonSpeak('Yes! '+target.l+' says '+target.s+'!');
+        phonMatch.idx++;
+        setTimeout(()=>{if(currentGame==='phonics')phonMatchRound();},1100);
+      }else{
+        phonMatch.firstTry=false;btn.classList.add('phon-wrong');
+        _phonSpeak('Try again! Which letter says '+target.s+'?');
+      }
+    }));
+  }
+  function phonRhymeRound(){
+    const pane=$$('#phon-rhyme-pane');if(!pane)return;
+    if(phonRhyme.idx>=10){_phonFinish(pane,phonRhyme,'phon-rhyme-best','Rhyme Time',phonRhymeRound);return;}
+    const fam=PHON_RHYMES[Math.floor(Math.random()*PHON_RHYMES.length)];
+    const pairs=[];for(let i=0;i<fam.length;i+=2)pairs.push([fam[i],fam[i+1]]);
+    const pick=_phonPickN(pairs,2,null),target=pick[0],answer=pick[1];
+    const distractors=[];
+    let guard=0;
+    while(distractors.length<2&&guard++<50){
+      const of=PHON_RHYMES[Math.floor(Math.random()*PHON_RHYMES.length)];
+      if(of===fam)continue;
+      const oi=2*Math.floor(Math.random()*(of.length/2));
+      const w=[of[oi],of[oi+1]];
+      if(!distractors.some(d=>d[0]===w[0]))distractors.push(w);
+    }
+    const tiles=_phonPickN([answer,...distractors],3,null);
+    phonRhyme.firstTry=true;
+    pane.innerHTML=_phonGameHUD(phonRhyme,10)+'<div class="phon-word-emoji">'+target[1]+'</div><p class="phon-game-q">Which one rhymes with <strong>'+target[0]+'</strong>?</p><div class="phon-blend-row">'+tiles.map(t=>'<button class="phon-game-tile phon-pic" data-w="'+t[0]+'"'+(t===answer?' data-ok="1"':'')+'><span class="pt-emoji">'+t[1]+'</span><span class="pt-word">'+t[0]+'</span></button>').join('')+'</div><button class="phon-hear-btn" id="phon-rhyme-replay">🔊 Hear It Again</button>';
+    if(typeof speakSeq==='function')speakSeq([target[0]+'. Which one rhymes with '+target[0]+'?']);
+    $$('#phon-rhyme-replay').onclick=()=>{if(typeof speakSeq==='function')speakSeq([target[0]+'. '+tiles.map(t=>t[0]).join('. ')]);};
+    pane.querySelectorAll('.phon-game-tile').forEach(btn=>btn.addEventListener('click',()=>{
+      if(btn.dataset.ok){
+        if(phonRhyme.firstTry){phonRhyme.score++;if(typeof addScore==='function')addScore(1);}
+        btn.classList.add('phon-right');
+        _phonSpeak(btn.dataset.w+'! '+target[0]+' and '+btn.dataset.w+' rhyme!');
+        phonRhyme.idx++;
+        setTimeout(()=>{if(currentGame==='phonics')phonRhymeRound();},1300);
+      }else{
+        phonRhyme.firstTry=false;btn.classList.add('phon-wrong');
+        _phonSpeak(btn.dataset.w+' does not rhyme with '+target[0]+'. Try again!');
+      }
+    }));
+  }
   function initPhonics(){
-    phonIdx=0;phonWordIdx=0;
-    const tabL=$$('#phon-tab-letters'),tabW=$$('#phon-tab-words'),paneL=$$('#phon-letters-pane'),paneW=$$('#phon-words-pane');
-    if(!tabL||!tabW||!paneL||!paneW)return;
-    tabL.classList.add('active');tabW.classList.remove('active');paneL.style.display='flex';paneW.style.display='none';
-    tabL.onclick=()=>{tabL.classList.add('active');tabW.classList.remove('active');paneL.style.display='flex';paneW.style.display='none';};
-    tabW.onclick=()=>{tabW.classList.add('active');tabL.classList.remove('active');paneW.style.display='flex';paneL.style.display='none';};
+    phonIdx=0;phonWordIdx=0;phonMatch={idx:0,score:0};phonRhyme={idx:0,score:0};
+    const tabs=[['#phon-tab-letters','#phon-letters-pane'],['#phon-tab-words','#phon-words-pane'],['#phon-tab-match','#phon-match-pane'],['#phon-tab-rhyme','#phon-rhyme-pane']];
+    const els=tabs.map(([t,p])=>[$$(t),$$(p)]);
+    if(els.some(([t,p])=>!t||!p))return;
+    const show=(i)=>{els.forEach(([t,p],j)=>{t.classList.toggle('active',i===j);p.style.display=i===j?'flex':'none';});};
+    els.forEach(([t],i)=>{t.onclick=()=>{show(i);if(i===2){phonMatch={idx:0,score:0};phonMatchRound();}if(i===3){phonRhyme={idx:0,score:0};phonRhymeRound();}};});
+    show(0);
     renderPhonLetters();renderPhonWord();
     if(currentLevel===1&&typeof ttsAuto==='function'&&ttsAuto()){const c=PHON_LETTERS[0];_phonSpeak(c.l+'. '+c.s+'. like '+c.w);}
   }

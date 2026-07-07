@@ -1,5 +1,10 @@
 # Changelog 
 
+## Amni-Learn v5.35.0 — Pre-K Phonics v2: doubled words + Letter Catch & Rhyme Time games - 2026-07-06
+- Sound It Out now has 48 words (was 24), adding vowel teams (rain, boat, sheep), -ng/-ck endings (ring, sock, clock), consonant blends (crab, drum, flag, snail, train), and magic-e words (cake, snake).
+- Two new games inside Phonics: 🎯 Letter Catch (hear a sound, tap the letter that makes it — 10 rounds) and 🎵 Rhyme Time (see and hear a word, tap the picture that rhymes). Wrong answers just replay the sound and let the child try again; stars are earned on first-try answers. Two new achievements for perfect 10/10 runs.
+- Service worker cache bumped so everyone gets the new content.
+
 ## Amni-Learn v5.34.0 — Daily Curriculum v5: Texas TEKS / Florida B.E.S.T. aligned expansion - 2026-07-06
 - 72 new standards-aligned activities (420 total): positional words and counting to 20 for pre-K; place-value bundles, clock hunts, phonics blends for K-2; times-table sprints, arrays, cardinal directions, state symbols, flag etiquette for grades 3-5; Preamble memorization, Bill of Rights, primary sources, integer temperatures, sales-tax math, moon phases for middle school.
 - New worksheet types rotating on page 2: analog clock reading (real SVG clock faces), phonics Word Builders, fact families, area & perimeter with labeled rectangles, coordinate-plane points, integer addition. Multiplication practice now covers facts through 10x10 (TEKS fluency standard) and grade-3+ copywork is done in cursive on guide lines.
