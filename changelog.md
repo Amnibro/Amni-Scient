@@ -1,5 +1,10 @@
 # Changelog 
 
+## Amni-Learn v5.36.0 — QoL: Bubble Pop ghost-game fix + boards fit the window - 2026-07-06
+- Fixed Bubble Pop showing "Missed it!" during a new game after switching modes: the previous game kept running invisibly in a detached arena and its misses bled into the new one. Games now carry a generation token so old rounds die instantly on any switch.
+- Card Pairs (the flip-and-match game) now scales its card grid to fit the window height on landscape phones — no more cards hidden below the screen. Same treatment for 2048, Gem Crush, and Color Sort boards.
+- The quiz "I'm Ready! Start Quiz!" button is now always reachable (it could sit below the fold on landscape phones).
+
 ## Amni-Learn v5.35.0 — Pre-K Phonics v2: doubled words + Letter Catch & Rhyme Time games - 2026-07-06
 - Sound It Out now has 48 words (was 24), adding vowel teams (rain, boat, sheep), -ng/-ck endings (ring, sock, clock), consonant blends (crab, drum, flag, snail, train), and magic-e words (cake, snake).
 - Two new games inside Phonics: 🎯 Letter Catch (hear a sound, tap the letter that makes it — 10 rounds) and 🎵 Rhyme Time (see and hear a word, tap the picture that rhymes). Wrong answers just replay the sound and let the child try again; stars are earned on first-try answers. Two new achievements for perfect 10/10 runs.
