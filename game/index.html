@@ -96,7 +96,7 @@ footer a{color:var(--muted)}
       <div class="row"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd><span class="act">Move</span></div>
       <div class="row"><kbd>Space</kbd><span class="act">Jump · again = double · hold = flutter</span></div>
       <div class="row"><kbd>Shift</kbd><span class="act">Dash (works midair)</span></div>
-      <div class="row"><kbd>Ctrl</kbd><span class="act">Ground-pound · hold to dive in water</span></div>
+      <div class="row"><kbd>Ctrl</kbd><kbd>C</kbd><span class="act">Ground-pound · hold to dive in water</span></div>
       <div class="row"><kbd>F</kbd><span class="act">Attack · mash = 3-hit combo · in air = dive-slash</span></div>
       <div class="row"><kbd>V</kbd><span class="act">First-person · Q fires the acorn blaster</span></div>
       <div class="row"><kbd>Q</kbd><span class="act">Throw cones</span> <kbd>R</kbd><span class="act">cycle</span></div>
@@ -119,6 +119,20 @@ footer a{color:var(--muted)}
 const btn = document.getElementById('playBtn');
 const status = document.getElementById('status');
 const spin = document.getElementById('spin');
+let playing = false;
+window.addEventListener('beforeunload', (e) => { if (playing) { e.preventDefault(); e.returnValue = ''; } });
+window.addEventListener('keydown', (e) => {
+  if (!playing || e.shiftKey || e.altKey) return;
+  const k = (e.key || '').toLowerCase();
+  if ((e.ctrlKey || e.metaKey) && 'sdpofgruhjkleqc'.includes(k) && k.length === 1) e.preventDefault();
+}, { capture: true });
+document.addEventListener('fullscreenchange', () => {
+  if (document.fullscreenElement && playing && navigator.keyboard && navigator.keyboard.lock) {
+    navigator.keyboard.lock().catch(() => {});
+  } else if (navigator.keyboard && navigator.keyboard.unlock) {
+    navigator.keyboard.unlock();
+  }
+});
 const fail = (html) => { status.innerHTML = html; spin.style.display = 'none'; btn.disabled = false; };
 async function webgpuReason(){
   if(!navigator.gpu) return 'no-api';
@@ -135,7 +149,7 @@ btn.addEventListener('click', async () => {
   if(reason === 'no-adapter') return fail('⚠️ WebGPU is present but no GPU adapter responded.<br><b>Brave?</b> Enable <b>brave://flags/#enable-unsafe-webgpu</b> and restart (or lower Shields).<br>Otherwise enable hardware acceleration / update graphics drivers, then retry.');
   status.textContent = 'Fetching the world seed (4.5 MB)...';
   try {
-    const V = '225';
+    const V = '226';
     const { default: init } = await import('./pkg/amni.js?v=' + V);
     status.textContent = 'Growing eight realms — about 15 seconds, the page may hold its breath...';
     await new Promise(r => setTimeout(r, 60));
@@ -151,11 +165,13 @@ btn.addEventListener('click', async () => {
     });
     if (!appeared) return fail('Hmm — the world didn\'t appear in time. Reload to retry; if it keeps happening, your GPU may have stalled.');
     document.getElementById('overlay').style.display = 'none';
+    playing = true;
     const canvas = document.querySelector('#amni-game canvas');
     if (canvas) { canvas.setAttribute('tabindex', '0'); canvas.focus(); }
   } catch (e) {
     if (String(e).includes('Using exceptions for control flow')) {
       document.getElementById('overlay').style.display = 'none';
+      playing = true;
       const canvas = document.querySelector('#amni-game canvas');
       if (canvas) { canvas.setAttribute('tabindex', '0'); canvas.focus(); }
       return;
