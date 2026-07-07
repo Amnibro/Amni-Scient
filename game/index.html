@@ -133,6 +133,17 @@ document.addEventListener('fullscreenchange', () => {
     navigator.keyboard.unlock();
   }
 });
+const armCanvas = () => {
+  const canvas = document.querySelector('#amni-game canvas');
+  if (!canvas) return;
+  canvas.setAttribute('tabindex', '0');
+  canvas.focus();
+  canvas.addEventListener('mousedown', () => {
+    if (!playing || document.pointerLockElement) return;
+    try { const p = canvas.requestPointerLock({ unadjustedMovement: true }); if (p && p.catch) p.catch(() => { canvas.requestPointerLock(); }); }
+    catch (e) { try { canvas.requestPointerLock(); } catch (e2) {} }
+  });
+};
 const fail = (html) => { status.innerHTML = html; spin.style.display = 'none'; btn.disabled = false; };
 async function webgpuReason(){
   if(!navigator.gpu) return 'no-api';
@@ -149,7 +160,7 @@ btn.addEventListener('click', async () => {
   if(reason === 'no-adapter') return fail('⚠️ WebGPU is present but no GPU adapter responded.<br><b>Brave?</b> Enable <b>brave://flags/#enable-unsafe-webgpu</b> and restart (or lower Shields).<br>Otherwise enable hardware acceleration / update graphics drivers, then retry.');
   status.textContent = 'Fetching the world seed (4.5 MB)...';
   try {
-    const V = '247';
+    const V = '248';
     const { default: init } = await import('./pkg/amni.js?v=' + V);
     status.textContent = 'Growing eight realms — about 15 seconds, the page may hold its breath...';
     await new Promise(r => setTimeout(r, 60));
@@ -166,14 +177,12 @@ btn.addEventListener('click', async () => {
     if (!appeared) return fail('Hmm — the world didn\'t appear in time. Reload to retry; if it keeps happening, your GPU may have stalled.');
     document.getElementById('overlay').style.display = 'none';
     playing = true;
-    const canvas = document.querySelector('#amni-game canvas');
-    if (canvas) { canvas.setAttribute('tabindex', '0'); canvas.focus(); }
+    armCanvas();
   } catch (e) {
     if (String(e).includes('Using exceptions for control flow')) {
       document.getElementById('overlay').style.display = 'none';
       playing = true;
-      const canvas = document.querySelector('#amni-game canvas');
-      if (canvas) { canvas.setAttribute('tabindex', '0'); canvas.focus(); }
+      armCanvas();
       return;
     }
     fail('Could not start: ' + e + '<br>(If this mentions GPU or adapter, the browser likely lacks full WebGPU support.)');
