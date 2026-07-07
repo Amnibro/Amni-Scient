@@ -108,6 +108,14 @@
 .dot2dot{display:block;margin:.4rem auto}
 .maze-wrap{display:block;margin:.5rem auto}
 .color-pic{display:block;margin:.5rem auto}
+.opt-row{margin:.2rem 0 1.1rem}
+.opt-chk{display:inline-flex;align-items:center;gap:8px;font-size:.82rem;color:var(--text);cursor:pointer}
+.opt-chk input{width:18px;height:18px;accent-color:var(--accent);cursor:pointer}
+.plan-row{display:flex;gap:12px;border:2px solid var(--border2);border-left:6px solid #1e8449;border-radius:8px;padding:.55rem .75rem;margin-bottom:9px;align-items:flex-start;break-inside:avoid}
+.plan-day{min-width:92px;flex-shrink:0;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:.78rem;color:#1c2026;line-height:1.4}
+.plan-day span{display:block;font-weight:400;color:#6a7180;font-size:.7rem}
+.plan-acts{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.74rem;color:#39404a;line-height:1.5}
+.plan-act{white-space:nowrap}
 .supply-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px 26px;margin:.6rem 0 1rem}
 .supply-item{display:flex;gap:10px;align-items:center;font-size:.95rem;color:#1c2026}
 .supply-box{width:22px;height:22px;border:2px solid #444;border-radius:5px;flex-shrink:0}
@@ -180,6 +188,7 @@ body{background:#fff!important;color:#111!important;padding-top:0!important}
 .choice-circle{border-color:#111!important}
 .pn-q{border-color:#555!important}
 .sing-line{border-color:#999!important;background:#fff!important}
+.plan-row{border-color:#333!important;border-left-color:#333!important}
 *{print-color-adjust:exact;-webkit-print-color-adjust:exact}
 @page{size:letter;margin:.5in}
 }
@@ -221,7 +230,7 @@ body{background:#fff!important;color:#111!important;padding-top:0!important}
 </div>
 <section class="curr-intro">
 <div style="max-width:800px;margin:0 auto;text-align:left;padding:0 1.5rem">
-<p style="color:var(--text);font-size:.88rem;line-height:1.8">A free, screen-free companion to the Amni-Learn games: pick your child's age (1 to 13) and print a 4-page packet &mdash; a balanced activity checklist (half 🤝 do-together, half ⭐ on-my-own), big-print worksheet pages with rotating games (tracing, mazes, match-ups, dot-to-dot, word searches), a creative page, and a supplies checklist covering the whole week ahead. Ages 1&ndash;2 get a caregiver-guided "Little Hands" edition. Today's picks stay the same all day; tap New Set for a fresh mix.</p>
+<p style="color:var(--text);font-size:.88rem;line-height:1.8">A free, screen-free companion to the Amni-Learn games: pick your child's age (1 to 13) and print a 4-page packet &mdash; a balanced activity checklist (half 🤝 do-together, half ⭐ on-my-own), big-print worksheet pages with rotating games (tracing, mazes, match-ups, dot-to-dot, word searches), a creative page, a supplies checklist covering the whole week ahead, and an optional week-at-a-glance planner. Ages 1&ndash;2 get a caregiver-guided "Little Hands" edition. Today's picks stay the same all day; tap New Set for a fresh mix.</p>
 </div>
 </section>
 <div class="curr-wrap">
@@ -230,6 +239,7 @@ body{background:#fff!important;color:#111!important;padding-top:0!important}
 <div class="age-row" id="age-row"></div>
 <div class="band-label" id="band-label"></div>
 <div class="name-field"><label for="child-name">Child's name (optional &mdash; used for the tracing page)</label><input type="text" id="child-name" maxlength="14" placeholder="e.g. Emma" autocomplete="off"></div>
+<div class="opt-row"><label class="opt-chk"><input type="checkbox" id="opt-planner" checked> 📅 Include weekly planner page</label></div>
 <h3>2. Get today's packet</h3>
 <div class="curr-actions">
 <button class="btn btn-primary" id="new-set-btn" style="background:var(--accent);color:#05070a;box-shadow:0 0 10px var(--accent-glow)">&#128256; NEW SET</button>
@@ -263,6 +273,11 @@ body{background:#fff!important;color:#111!important;padding-top:0!important}
 <div class="sheet-page" id="page4">
 <div class="mini-head" id="page4-mini"></div>
 <div id="page4-body"></div>
+</div>
+<div class="page-sep" id="sep5">Page 5 &mdash; Weekly Planner</div>
+<div class="sheet-page" id="page5">
+<div class="mini-head" id="page5-mini"></div>
+<div id="page5-body"></div>
 </div>
 </div>
 </div>
@@ -620,6 +635,18 @@ picks[c[0]]=use[Math.floor(rnd()*use.length)];
 });
 return picks;
 };
+var weekPlanHTML=function(band){
+var out='',DOWFMT={weekday:'long'},DFMT={month:'short',day:'numeric'};
+for(var d=0;d<7;d++){
+var dt=new Date();dt.setDate(dt.getDate()+d);
+var ds=dt.getFullYear()+'-'+(dt.getMonth()+1)+'-'+dt.getDate();
+var r=mulberry32(xmur3(ds+'|'+band+'|0')());
+var pk=pickDay(band,r);
+var acts=CATS.map(function(c){var it=pk[c[0]];return '<span class="plan-act">'+c[2]+' '+it.t+(band!=='t12'?(it.g?' 🤝':' ⭐'):'')+'</span>';}).join('');
+out+='<div class="plan-row"><div class="plan-day">'+(d===0?'Today':dt.toLocaleDateString(undefined,DOWFMT))+'<span>'+dt.toLocaleDateString(undefined,DFMT)+'</span></div><div class="plan-acts">'+acts+'</div></div>';
+}
+return '<h4 class="prac-h">My Week at a Glance</h4><p class="prac-p" style="font-size:.8rem;color:#6a7180">Every day\'s six activities for the week ahead'+(band!=='t12'?' — 🤝 together, ⭐ on my own':'')+'. Based on each day\'s first activity set.</p>'+out;
+};
 var weekSupplies=function(band){
 var set={};
 for(var d=0;d<7;d++){
@@ -658,6 +685,13 @@ var sup=weekSupplies(band);
 var a=new Date(),b2=new Date();b2.setDate(b2.getDate()+6);
 var fmtD=function(d){return d.toLocaleDateString(undefined,{month:'short',day:'numeric'});};
 document.getElementById('page4-body').innerHTML='<h4 class="prac-h">Supplies for This Week</h4><p class="prac-p">Gather these once and the whole week of activities ('+fmtD(a)+' &ndash; '+fmtD(b2)+') is covered:</p>'+(sup.length?'<div class="supply-grid">'+sup.map(function(s){return '<div class="supply-item"><span class="supply-box"></span>'+s.charAt(0).toUpperCase()+s.slice(1)+'</div>';}).join('')+'</div>':'<p class="prac-p">Nothing special needed this week — household basics cover it!</p>')+'<p class="prac-p" style="font-size:.78rem;color:#6a7180">Everyday basics assumed: paper, crayons or pencils, safety scissors, tape. List is based on each day&apos;s first activity set.</p>';
+var showPlan=document.getElementById('opt-planner').checked;
+document.getElementById('sep5').style.display=showPlan?'':'none';
+document.getElementById('page5').style.display=showPlan?'':'none';
+if(showPlan){
+document.getElementById('page5-mini').textContent='My Learning Week · Planner · '+bandLabel;
+document.getElementById('page5-body').innerHTML=weekPlanHTML(band);
+}
 var sheets=document.getElementById('sheets');
 sheets.classList.remove('scale-xl','scale-lg');
 (band==='t12'||band==='p34')?sheets.classList.add('scale-xl'):band==='k56'?sheets.classList.add('scale-lg'):0;
@@ -669,6 +703,7 @@ for(var a=1;a<=13;a++){var btn=document.createElement('button');btn.className='a
 document.getElementById('new-set-btn').onclick=function(){currentNonce++;sessionStorage.setItem('curr-nonce-'+todayStr(),currentNonce);render(currentAge);};
 document.getElementById('print-btn').onclick=function(){window.print();};
 document.getElementById('child-name').oninput=function(){render(currentAge);};
+document.getElementById('opt-planner').onchange=function(){render(currentAge);};
 render(currentAge);
 });
 </script>

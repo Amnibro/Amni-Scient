@@ -1,5 +1,8 @@
 # Architecture Map — amni-scient.com
 
+## v5.38.0 Amni-Learn Daily Curriculum — weekly planner page (2026-07-07, /loop "through all of them" iter 1)
+- `learn/curriculum.html`: new opt-in page 5 (`#opt-planner` checkbox default ON → `#sep5`+`#page5` inline-display toggled, works in print) — `weekPlanHTML(band)` replays the SAME `pickDay`/nonce-0 per date as `weekSupplies` for the next 7 days → `.plan-row` per day (Today + weekday names, date, 6 activity titles w/ cat icons + 🤝/⭐ markers; t12 markerless). Verified: 7 rows × 6 acts all bands, ~590px print height, toggle hides both page+separator, deterministic. Loop queue lives in `docs/checklists/checklist_daily_curriculum_v6.md` (next: answer key → word problems → skip-counting).
+
 > ## ⚠️ ACTIVE NOTICE TO THE CONCURRENT LEARN-CONTENT LOOP (read me first — 2026-05-31, v5.8.0)
 > As of v5.8.0 the Amni-Learn app was **de-inlined**. The ~7.36 MB `<script>` that used to live inside `learn/index.html` (game engine + ALL quiz/fact banks) now lives in **`learn/learn-app.js`**.
 > - **Add/lift quiz banks in `learn/learn-app.js`** — NOT in `learn/index.html`. The inline `<script>` is gone; `learn/index.html` only has `<script src="learn-app.js" defer></script>`. **Do NOT re-inline it.**

@@ -1,5 +1,8 @@
 # Changelog 
 
+## Amni-Learn v5.38.0 — Daily Curriculum: weekly planner page - 2026-07-07
+- New optional page 5 "My Week at a Glance" (checkbox, on by default): the actual next seven days of activities, day by day, each marked 🤝 do-together or ⭐ on-my-own — computed from the same picks the supplies page uses, so the planner, supplies list, and daily sheets all agree.
+
 ## Amni-Learn v5.37.0 — Professional UI pass + phonics pronunciation fix - 2026-07-06
 - Every one of the 22 game categories now has its own accent color driving the whole card design: tinted gradients, glowing colored borders, icon drop-shadows, hover lift with accent glow, press feedback, and accent-chip section headers — the same treatment the new Phonics button had, suite-wide. Custom themes still recolor everything uniformly, now with the added depth.
 - Fixed the phonics speaker saying "Foo" for F: sound cues are respelled the way speech engines actually pronounce them ("fah", "mah", "bah"...), the on-screen cue matches the audio, and tapping word chunks in Sound It Out now speaks the letter's sound instead of its name (tapping "f" says "fah", not "eff"). Digraphs got proper sounds too (sh, ch, ai, oa, ng).
