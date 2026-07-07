@@ -1,5 +1,9 @@
 # Architecture Map — amni-scient.com
 
+## v5.38.2 Amni-Learn Daily Curriculum — word problems (/loop iter 3, 2026-07-07)
+- `wordProbsHTML(rnd,band)`: template word problems w/ neutral name pool (WPN), 3/sheet, integer-safe by construction (change=paid−cost with paid>cost; wilted<planted; k56 sums within 20). Slotted as 5th math variant for k56/g78/g910 (variant dice now *5 — daily rotations shifted, expected). Answers ANS.push'd ("Word problem N: $X").
+- Verified 12 nonces/band: rotates in for all 3 bands, 3 keyed answers every time, story-number cross-check 0 suspects, no overflow.
+
 ## v5.38.1 Amni-Learn Daily Curriculum — answer key page (/loop iter 2, 2026-07-07)
 - Opt-in `#opt-key` (default OFF) → `#sep6`/`#page6`. Mechanism: module-level `ANS=[]` collector reset in render() right before the page-2 build; EVERY generator pushes its answers as it builds (all 15 math generators + clocks/fact-families/area-perimeter/coords inline blocks + letter-hunt count + vocab words + match-up/dot-to-dot/color-count/odd-one-out/pattern + CIVICS entries which now carry `a:` reference answers); `ansSplit=ANS.length` after page 2 splits the key into Practice/Creative sections. Civics answers render as q+a pairs (`.full` grid rows). **RULE: any NEW worksheet block must ANS.push or it silently goes ungraded.**
 - Page numbering: `tot=4+plan+key` drives every mini-head ('Page 2 of '+tot); key page is always last (Page tot of tot).

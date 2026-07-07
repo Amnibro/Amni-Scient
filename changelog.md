@@ -1,5 +1,8 @@
 # Changelog 
 
+## Amni-Learn v5.38.2 — Daily Curriculum: word problems - 2026-07-07
+- New Word Problems worksheet rotating into the math slot for ages 5-10: simple add/subtract stories for K-2, money and multiplication for grades 2-3 (pencils, change, crayon boxes), and true multi-step problems for grades 4-5 (buy N at $X, pay with $Y; rows-times-plants minus wilted; tickets plus snacks). All integer-safe by construction and fully covered by the answer key.
+
 ## Amni-Learn v5.38.1 — Daily Curriculum: answer key page - 2026-07-07
 - New opt-in "Answer key (for parents)" page (off by default so it never sneaks into the kid's packet): every math problem, clock, fill-in word, letter hunt, pattern, match-up, and Civics Corner question on today's sheets gets its answer, grouped by page. Page numbering across the packet now adapts to which optional pages are on.
 

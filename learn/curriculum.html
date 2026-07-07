@@ -433,6 +433,29 @@ var decAdd=function(rnd,count){var out=[];for(var i=0;i<count;i++){var a=(10+Mat
 var eqProbs=function(rnd,count){var out=[];for(var i=0;i<count;i++){var a=1+Math.floor(rnd()*12),x=1+Math.floor(rnd()*12);out.push('x + '+a+' = '+(a+x));ANS.push('x + '+a+' = '+(a+x)+' → x = '+x);}return out;};
 var pctOf=function(rnd,count){var out=[];for(var i=0;i<count;i++){var pick=[[10,10],[20,5],[25,4],[50,2]][Math.floor(rnd()*4)],ans=2+Math.floor(rnd()*18);out.push(pick[0]+'% of '+(ans*pick[1])+' =');ANS.push(pick[0]+'% of '+(ans*pick[1])+' = '+ans);}return out;};
 var meanOf=function(rnd,count){var out=[];for(var i=0;i<count;i++){var m=7+Math.floor(rnd()*8),d1=Math.floor(rnd()*5)-2,d2=Math.floor(rnd()*5)-2,d3=Math.floor(rnd()*5)-2,n4=4*m-(3*m+d1+d2+d3);out.push('Mean of '+(m+d1)+', '+(m+d2)+', '+(m+d3)+', '+n4+' =');ANS.push('Mean('+(m+d1)+','+(m+d2)+','+(m+d3)+','+n4+') = '+m);}return out;};
+var WPN=['Sam','Mia','Leo','Ava','Max','Zoe','Ben','Lily'];
+var wordProbsHTML=function(rnd,band){
+var out=[],i;
+var nm=function(){return WPN[Math.floor(rnd()*WPN.length)];};
+if(band==='k56'){
+for(i=0;i<3;i++){var t=Math.floor(rnd()*3),a,b,n=nm();
+if(t===0){a=3+Math.floor(rnd()*9);b=2+Math.floor(rnd()*8);out.push({q:n+' has '+a+' apples. A friend gives '+n+' '+b+' more. How many apples now?',a:(a+b)+' apples'});}
+else if(t===1){a=8+Math.floor(rnd()*12);b=2+Math.floor(rnd()*(a-3));out.push({q:'There are '+a+' birds on a fence. '+b+' fly away. How many are left?',a:(a-b)+' birds'});}
+else{a=4+Math.floor(rnd()*8);b=3+Math.floor(rnd()*7);out.push({q:n+' finds '+a+' shells at the beach and '+b+' more on the path. How many altogether?',a:(a+b)+' shells'});}
+}}else if(band==='g78'){
+for(i=0;i<3;i++){var t2=Math.floor(rnd()*3),c,d,n2=nm();
+if(t2===0){c=5+Math.floor(rnd()*6);d=3+Math.floor(rnd()*7);out.push({q:'Pencils cost '+c+'&cent; each. How much do '+d+' pencils cost?',a:(c*d)+'¢'});}
+else if(t2===1){c=3+Math.floor(rnd()*7);d=c+1+Math.floor(rnd()*7);out.push({q:n2+' buys a toy for $'+c+' and pays with $'+d+'. How much change?',a:'$'+(d-c)});}
+else{c=4+Math.floor(rnd()*9);d=3+Math.floor(rnd()*6);out.push({q:'A box holds '+c+' crayons. How many crayons are in '+d+' boxes?',a:(c*d)+' crayons'});}
+}}else{
+for(i=0;i<3;i++){var t3=Math.floor(rnd()*3),e,f,g,n3=nm();
+if(t3===0){e=2+Math.floor(rnd()*5);f=3+Math.floor(rnd()*7);g=e*f+1+Math.floor(rnd()*8);out.push({q:n3+' buys '+e+' books at $'+f+' each and pays with $'+g+'. How much change?',a:'$'+(g-e*f)});}
+else if(t3===1){e=3+Math.floor(rnd()*6);f=4+Math.floor(rnd()*8);g=2+Math.floor(rnd()*Math.min(9,e*f-1));out.push({q:'A garden has '+e+' rows of '+f+' plants. '+g+' plants wilt. How many healthy plants remain?',a:(e*f-g)+' plants'});}
+else{e=6+Math.floor(rnd()*7);f=2+Math.floor(rnd()*4);g=5+Math.floor(rnd()*11);out.push({q:'Tickets cost $'+e+' each for '+f+' people, plus $'+g+' for snacks. What is the total cost?',a:'$'+(e*f+g)});}
+}}
+out.forEach(function(p,ix){ANS.push('Word problem '+(ix+1)+': '+p.a);});
+return '<h4 class="prac-h">Word Problems</h4>'+out.map(function(p,ix){return '<p class="prac-p">'+(ix+1)+'. '+p.q+'</p><p class="prac-p" style="margin-top:.1rem">Answer: <span class="blank wide"></span></p>';}).join('');
+};
 var wordSearch=function(rnd,words,size){
 var g=[],r,c;for(r=0;r<size;r++){g.push([]);for(c=0;c<size;c++)g[r].push('');}
 var placed=[];
@@ -574,15 +597,17 @@ return colorCountHTML(rnd);
 };
 var mathBlockHTML=function(band,rnd){
 if(band==='k56'){
-var kv=Math.floor(rnd()*4);
+var kv=Math.floor(rnd()*5);
 if(kv===0){var it=addSub(rnd,6).map(function(s){return '<div class="prob">'+s+' <span class="blank"></span></div>';}).join('');return '<h4 class="prac-h">Math Practice</h4><div class="prob-grid">'+it+'</div>';}
 if(kv===1){var mn=missingNum(rnd,6).map(function(p){return '<div class="prob">'+p.pre+'<span class="blank"></span>'+p.post+'</div>';}).join('');return '<h4 class="prac-h">Find the Missing Number</h4><div class="prob-grid">'+mn+'</div>';}
 if(kv===2){var cp=comparePairs(rnd,4).map(function(p){return '<div class="prob">'+p[0]+' &nbsp;or&nbsp; '+p[1]+'</div>';}).join('');return '<h4 class="prac-h">Circle the Bigger Number</h4><div class="prob-grid">'+cp+'</div>';}
+if(kv===4)return wordProbsHTML(rnd,'k56');
 var cl=[];for(var ci=0;ci<4;ci++){var chh=1+Math.floor(rnd()*12),cmm=rnd()<0.5?0:30;cl.push({h:chh,m:cmm});ANS.push('Clock '+(ci+1)+': '+chh+':'+(cmm===0?'00':'30'));}
 return '<h4 class="prac-h">What Time Is It?</h4><div class="prob-grid">'+cl.map(function(c){return '<div class="prob" style="flex-direction:column;align-items:center;gap:6px">'+clockSVG(c.h,c.m,105)+'<span>_____ : _____</span></div>';}).join('')+'</div>';
 }
 if(band==='g78'){
-var gv=Math.floor(rnd()*4);
+var gv=Math.floor(rnd()*5);
+if(gv===4)return wordProbsHTML(rnd,'g78');
 if(gv===0){var m=multProbs(rnd,8).map(function(s){return '<div class="prob">'+s+' <span class="blank"></span></div>';}).join('');return '<h4 class="prac-h">Multiplication Practice</h4><div class="prob-grid">'+m+'</div>';}
 if(gv===1){var mf=missFactor(rnd,6).map(function(p){return '<div class="prob"><span class="blank"></span>'+p.post+'</div>';}).join('');return '<h4 class="prac-h">Find the Missing Factor</h4><div class="prob-grid">'+mf+'</div>';}
 if(gv===2){var ba=bigAdd(rnd,6).map(function(s){return '<div class="prob">'+s+' <span class="blank"></span></div>';}).join('');return '<h4 class="prac-h">Big Addition</h4><div class="prob-grid">'+ba+'</div>';}
@@ -590,7 +615,8 @@ var ff=[];for(var fi=0;fi<2;fi++){var fa=2+Math.floor(rnd()*8),fb=2+Math.floor(r
 return '<h4 class="prac-h">Fact Families</h4><p class="prac-p">Write the 4 facts for each family:</p><div class="prob-grid">'+ff.map(function(f){return '<div class="prob" style="flex-direction:column;align-items:flex-start;gap:8px"><strong>'+f[0]+' &middot; '+f[1]+' &middot; '+(f[0]*f[1])+'</strong><span>___ &times; ___ = ___</span><span>___ &times; ___ = ___</span><span>___ &divide; ___ = ___</span><span>___ &divide; ___ = ___</span></div>';}).join('')+'</div>';
 }
 if(band==='g910'){
-var nv=Math.floor(rnd()*4);
+var nv=Math.floor(rnd()*5);
+if(nv===4)return wordProbsHTML(rnd,'g910');
 if(nv===0){var d=divProbs(rnd,6).map(function(s){return '<div class="prob">'+s+' <span class="blank"></span></div>';}).join('');return '<h4 class="prac-h">Division Practice</h4><div class="prob-grid">'+d+'</div>';}
 if(nv===1){var f=fracOf(rnd,6).map(function(s){return '<div class="prob">'+s+' <span class="blank"></span></div>';}).join('');return '<h4 class="prac-h">Fractions of a Number</h4><div class="prob-grid">'+f+'</div>';}
 if(nv===2){var dc=decAdd(rnd,6).map(function(s){return '<div class="prob">'+s+' <span class="blank"></span></div>';}).join('');return '<h4 class="prac-h">Decimal Addition</h4><div class="prob-grid">'+dc+'</div>';}
