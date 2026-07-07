@@ -1,5 +1,5 @@
 // Amni-Plumb trade rules for the draw-it layout tool. Pure logic (node-testable).
-import { runLengthFt } from './sketch.js'
+import { runLengthFt, addNode, addRun } from './sketch.js'
 
 export const PLUMB_PALETTE = [
   { type: 'toilet', label: 'Toilet', glyph: '🚽', color: '#5fbf6e', dims: [1.3, 2.3], shape: 'toilet', height: 1.3 },
@@ -87,9 +87,24 @@ export function bomPlumb(scene, m) {
   return o
 }
 
+export function plumbRunDFU(scene) {
+  const adj = dwvAdj(scene), runDFU = {}
+  for (const f of scene.nodes.filter(n => FIX[n.type] && !FIX[n.type].supplyOnly)) { const path = pathToMain(scene, f.id, adj); if (path) for (const r of path) runDFU[r.id] = (runDFU[r.id] || 0) + FIX[f.type].dfu }
+  return runDFU
+}
+export function plumbRunBadges(scene) {
+  const dfu = plumbRunDFU(scene), out = {}
+  for (const r of dwvRuns(scene)) { const d = dfu[r.id] || 0; if (d > 0) out[r.id] = { txt: d + ' DFU', warn: d > (DWV_CAP[r.type] || 0) } }
+  return out
+}
+const TPP = sc => { const sp = sc.scalePxPerFt || 24; return (type, fx, fz, props) => addNode(sc, type, fx * sp, fz * sp, { fx, fz, rot: 0, ...(props || {}) }) }
+export const PLUMB_TEMPLATES = [
+  { name: '🛁 Full bath group — WC + lav + tub, vented', build(sc) { sc.floorCal = sc.floorCal || { w: 11, d: 10 }; const P = TPP(sc); const main = P('main', 1, 9), co = P('cleanout', 2.4, 8); const wc = P('toilet', 4, 1.4), lv = P('lav', 6, 1.2), tb = P('tub', 8.2, 1.6), vt = P('vent', 6, 0.3); addRun(sc, 'dwv3', wc, main); addRun(sc, 'dwv15', lv, wc); addRun(sc, 'dwv2', tb, wc); addRun(sc, 'dwv15', lv, vt); addRun(sc, 'dwv3', co, main) } },
+  { name: '🍽️ Kitchen + laundry stack', build(sc) { sc.floorCal = sc.floorCal || { w: 11, d: 10 }; const P = TPP(sc); const main = P('main', 1, 9), co = P('cleanout', 2.4, 8); const sk = P('sink', 5, 1.4), wa = P('washer', 8, 1.5), vt = P('vent', 5, 0.3); addRun(sc, 'dwv2', sk, main); addRun(sc, 'dwv2', wa, sk); addRun(sc, 'dwv15', sk, vt); addRun(sc, 'dwv3', co, main) } },
+]
 export function makePlumbTrade() {
   return {
-    name: 'plumb', palette: PLUMB_PALETTE, runTypes: PLUMB_RUNTYPES, bom: bomPlumb, validate: validatePlumb,
+    name: 'plumb', palette: PLUMB_PALETTE, runTypes: PLUMB_RUNTYPES, bom: bomPlumb, validate: validatePlumb, runBadges: plumbRunBadges, templates: PLUMB_TEMPLATES,
     trapTypes: ['lav', 'sink', 'shower', 'tub', 'washer'], ventTypes: ['vent'],
     stock: { sup12: { len: 100, key: 'pex', unitName: 'PEX coil' }, sup34: { len: 100, key: 'pex34', unitName: 'PEX coil' }, dwv15: { len: 10, key: 'vent', unitName: 'PVC stick' }, dwv2: { len: 10, key: 'vent', unitName: 'PVC stick' }, dwv3: { len: 10, key: 'dwv3', unitName: 'PVC stick' }, dwv4: { len: 10, key: 'dwv4', unitName: 'PVC stick' }, fittingKey: 'fitting', fixtures: { waterheater: 'heater', cleanout: 'cleanout' } },
     fittings: { bend: 'Elbow (90°)', branch: 'Tee / wye', elbowKey: 'fitting', teeKey: 'fitting' },

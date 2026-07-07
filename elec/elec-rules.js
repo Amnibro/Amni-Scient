@@ -1,5 +1,5 @@
 // Amni-Elec trade rules for the draw-it layout tool. Pure logic (node-testable).
-import { neighbors, reachableFrom, runLengthFt } from './sketch.js'
+import { neighbors, reachableFrom, runLengthFt, addNode, addRun } from './sketch.js'
 
 export const ELEC_PALETTE = [
   { type: 'panel', label: 'Panel', glyph: '🔲', color: '#e8c33d', dims: [1.2, 2.6], shape: 'panel', height: 3.5 },
@@ -91,12 +91,24 @@ export function bomElec(scene, m) {
   return o
 }
 
+export function elecRunBadges(scene) {
+  const { circuits } = elecCircuits(scene), out = {}
+  circuits.forEach((c, i) => { for (const r of c.runs) { const ra = (RUN[r.type] || RUN.nm142).amps; out[r.id] = { txt: 'ckt ' + (i + 1) + ' · ' + ra + 'A', warn: ra < c.breaker.amps } } })
+  return out
+}
+const TP = sc => { const sp = sc.scalePxPerFt || 24; return (type, fx, fz, props) => addNode(sc, type, fx * sp, fz * sp, { fx, fz, rot: 0, ...(props || {}) }) }
+export const ELEC_TEMPLATES = [
+  { name: '🍳 Kitchen rough-in — 2 SA circuits + appliances', build(sc) { sc.floorCal = sc.floorCal || { w: 14, d: 12 }; const P = TP(sc); const pn = P('panel', 0.8, 0.8); const g1 = P('gfci', 3.5, 0.6, { room: 'kitchen' }), g2 = P('gfci', 6.5, 0.6, { room: 'kitchen' }), g3 = P('gfci', 9.5, 0.6, { room: 'kitchen' }), g4 = P('gfci', 12.5, 0.6, { room: 'kitchen' }); addRun(sc, 'nm122', pn, g1); addRun(sc, 'nm122', g1, g2); addRun(sc, 'nm122', pn, g3); addRun(sc, 'nm122', g3, g4); const dw = P('dishwasher', 4.5, 3), mw = P('microwave', 7.5, 2.8), rg = P('range', 11, 3.2); addRun(sc, 'nm122', pn, dw); addRun(sc, 'nm122', pn, mw); addRun(sc, 'nm63', pn, rg); const sw = P('switch', 1.9, 0.6), l1 = P('light', 5, 7), l2 = P('light', 9, 7); addRun(sc, 'nm142', pn, sw); addRun(sc, 'nm142', sw, l1); addRun(sc, 'nm142', l1, l2) } },
+  { name: '🛏️ Bedroom circuit — AFCI receptacle ring', build(sc) { sc.floorCal = sc.floorCal || { w: 13, d: 11 }; const P = TP(sc); const pn = P('panel', 0.8, 0.8); const pts = [[4, 0.6], [9, 0.6], [12.4, 4], [12.4, 8], [8, 10.4], [3, 10.4]]; let prev = pn; const ids = pts.map(([x, z]) => P('recept', x, z, { room: 'bedroom' })); for (const id of ids) { addRun(sc, 'nm142', prev, id); prev = id } const sw = P('switch', 1.6, 0.6, { room: 'bedroom' }), lt = P('light', 6.5, 5.5, { room: 'bedroom' }); addRun(sc, 'nm142', pn, sw); addRun(sc, 'nm142', sw, lt) } },
+  { name: '🛁 Bathroom — 20A GFCI + light/switch', build(sc) { sc.floorCal = sc.floorCal || { w: 9, d: 8 }; const P = TP(sc); const pn = P('panel', 0.8, 0.8); const gf = P('gfci', 5, 0.6, { room: 'bath' }); addRun(sc, 'nm122', pn, gf); const sw = P('switch', 2.2, 0.6), lt = P('light', 4.5, 4); addRun(sc, 'nm142', pn, sw); addRun(sc, 'nm142', sw, lt) } },
+]
 export function makeElecTrade() {
   return {
-    name: 'elec', palette: ELEC_PALETTE, runTypes: ELEC_RUNTYPES, bom: bomElec, validate: validateElec,
+    name: 'elec', palette: ELEC_PALETTE, runTypes: ELEC_RUNTYPES, bom: bomElec, validate: validateElec, runBadges: elecRunBadges, templates: ELEC_TEMPLATES,
     stock: { nm142: { len: 250, key: 'nm142', est: 89, unitName: '14/2 roll' }, nm122: { len: 250, key: 'nm122', est: 119, unitName: '12/2 roll' }, nm103: { len: 125, key: 'nm103', est: 119, unitName: '10/3 roll' }, nm63: { len: 125, key: 'nm63', est: 169, unitName: '6/3 roll' } },
     fittings: { bend: 'Device / outlet box', branch: 'Junction box', elbowKey: 'box', teeKey: 'box' },
     onNodeActivate: n => { if (!ROOMED.has(n.type)) return false; const i = ROOMS.indexOf((n.props && n.props.room) || 'general'); n.props.room = ROOMS[(i + 1) % ROOMS.length]; return true },
+    props: n => ROOMED.has(n.type) ? [{ key: 'room', label: 'room', def: 'general', opts: ROOMS.map(r => [r, r]) }] : null,
     nodeLabel: n => { const p = ELEC_PALETTE.find(z => z.type === n.type), lab = p ? p.label : n.type, r = n.props && n.props.room; return r && r !== 'general' ? lab + ' · ' + r : lab },
   }
 }

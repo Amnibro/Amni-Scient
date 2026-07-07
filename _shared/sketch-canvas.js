@@ -92,6 +92,12 @@ export function mountSketch(container, opts) {
   photoClr.onclick = () => { scene.bgImage = null; scene.floorH = null; scene.ceilH = null; scene.vpVert = null; scene.floorCal = null; applyBg(); onChange(scene); render() }
   const photoTip = document.createElement('span'); photoTip.style.cssText = 'font-size:11px;color:var(--mut)'; photoTip.textContent = 'snap your wall/room, set the floor, then drop fixtures on it'
   photoStrip.append(photoL, floorBtn, autoBtn, snapBtn, td3Btn, saveBtn, photoClr, photoTip); left.appendChild(photoStrip)
+  if (trade.templates && trade.templates.length) {
+    const tsel = document.createElement('select'); tsel.className = 'sk-tpl'; tsel.style.cssText = 'background:var(--bg);border:1px solid var(--acc);border-radius:8px;color:var(--acc);font:600 12px system-ui;padding:6px 8px;max-width:230px;cursor:pointer'
+    tsel.innerHTML = '<option value="">🧩 Start from a template…</option>' + trade.templates.map((t, i) => `<option value="${i}">${t.name}</option>`).join('')
+    tsel.onchange = () => { const t = trade.templates[+tsel.value]; tsel.value = ''; if (!t) return; if (scene.nodes.length && !confirm('Replace the current layout with "' + t.name + '"?')) return; scene.nodes = []; scene.runs = []; scene.seq = 1; t.build(scene); selected = null; connectFrom = null; hideCoach(); changed(); hint.textContent = '🧩 ' + t.name + ' loaded — drag anything, tap a piece to edit its properties, everything reprices live.' }
+    photoStrip.insertBefore(tsel, photoL)
+  }
   const td3 = document.createElement('div'); td3.style.cssText = 'display:none;width:100%;height:62vh;min-height:420px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#10141a'; left.appendChild(td3)
   td3Btn.onclick = async () => {
     if (view3d) { view3d.dispose(); view3d = null; td3.style.display = 'none'; td3.innerHTML = ''; svgWrap.style.display = ''; td3Btn.textContent = '🧊 3D'; td3Btn.classList.remove('on'); return }
@@ -120,6 +126,25 @@ export function mountSketch(container, opts) {
     calForm.innerHTML = '<div style="margin-bottom:9px;font-weight:600">How long is each wall?</div><div style="display:flex;gap:4px;align-items:center;justify-content:center">left<input id="_cw" type="number" min="1" value="10" style="' + inCss + '">ft &nbsp;·&nbsp; right<input id="_cd" type="number" min="1" value="12" style="' + inCss + '">ft</div><div style="margin-top:11px;display:flex;gap:8px;justify-content:center"><button id="_cset" class="btn" style="padding:5px 12px">✓ Set floor</button><button id="_ccan" class="btn" style="padding:5px 12px">✕</button></div>'
     calForm.querySelector('#_cset').onclick = () => { const w = +calForm.querySelector('#_cw').value || 10, d = +calForm.querySelector('#_cd').value || 12, p = calibPts.slice(0, 6), cal = calibrateRoom(p[0], p[1], p[2], p[3], p[4], p[5], w, d); if (!cal) { calForm.innerHTML = '<div style="color:#e06b6b;max-width:200px">Hmm, couldn\'t read that corner — the taps may be off. Redo the 6 corners.</div><button id="_cretry" class="btn" style="margin-top:9px;padding:5px 12px">↻ Redo</button>'; calForm.querySelector('#_cretry').onclick = () => { calForm.style.display = 'none'; calibPts = []; setMode('calibrate') }; return } scene.floorH = cal.floorH; scene.ceilH = cal.ceilH; scene.vpVert = cal.vpVert; scene.floorCal = { w, d, corner: p }; calForm.style.display = 'none'; setMode('select'); onChange(scene); render() }
     calForm.querySelector('#_ccan').onclick = () => { calForm.style.display = 'none'; setMode('select') }
+  }
+  const propBar = document.createElement('div'); propBar.style.cssText = 'position:absolute;left:10px;bottom:10px;z-index:5;display:none;gap:9px;align-items:center;background:rgba(14,18,24,.94);border:1px solid var(--line);border-radius:10px;padding:7px 11px;font-size:12px;flex-wrap:wrap;max-width:94%;box-shadow:0 6px 20px #0008'
+  svgWrap.appendChild(propBar)
+  function renderProps() {
+    const n = selected && selected.kind === 'node' ? nodeById(scene, selected.id) : null
+    const defs = n && trade.props ? trade.props(n) : null
+    if (!n || !defs || !defs.length) { propBar.style.display = 'none'; return }
+    propBar.style.display = 'flex'; propBar.innerHTML = ''
+    const p = trade.palette.find(z => z.type === n.type)
+    const tt = document.createElement('b'); tt.textContent = ((p && p.glyph) || '') + ' ' + ((p && p.label) || n.type); tt.style.cssText = 'color:var(--acc)'; propBar.appendChild(tt)
+    for (const d of defs) {
+      const lb = document.createElement('label'); lb.style.cssText = 'display:flex;gap:5px;align-items:center;color:var(--mut)'; lb.textContent = d.label
+      const se = document.createElement('select'); se.style.cssText = 'background:var(--bg);border:1px solid var(--line);border-radius:6px;color:#dfe6ee;font-size:12px;padding:4px 6px'
+      const cur = (n.props && n.props[d.key]) ?? d.def
+      se.innerHTML = d.opts.map(o => `<option value="${o[0]}"${'' + o[0] === '' + cur ? ' selected' : ''}>${o[1]}</option>`).join('')
+      se.onchange = () => { n.props = n.props || {}; n.props[d.key] = d.num ? +se.value : se.value; changed() }
+      lb.appendChild(se); propBar.appendChild(lb)
+    }
+    const del = document.createElement('button'); del.className = 'btn'; del.textContent = '🗑'; del.title = 'Delete'; del.style.cssText = 'padding:4px 9px;font-size:12px'; del.onclick = delSelected; propBar.appendChild(del)
   }
   const coach = document.createElement('div'); coach.style.cssText = 'position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:7;display:none;width:330px;max-width:90%;background:rgba(20,24,30,.97);border:1px solid var(--acc);border-radius:16px;padding:18px 20px;box-shadow:0 10px 34px #000b;font-size:13px;line-height:1.45'
   const cstep = (n, html) => '<div style="display:flex;gap:10px;align-items:flex-start;margin:9px 0"><span style="flex:none;width:22px;height:22px;border-radius:50%;background:var(--acc);color:#111;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:12px">' + n + '</span><span>' + html + '</span></div>'
@@ -235,14 +260,16 @@ export function mountSketch(container, opts) {
       edge(0, 1); edge(0, 2); edge(3, 4); edge(3, 5); edge(0, 3); edge(1, 4); edge(2, 5)
       calibPts.forEach((p, i) => { el('circle', { cx: p[0], cy: p[1], r: 8, fill: '#6cc0ff', stroke: '#fff', 'stroke-width': 2 }, svg); el('text', { x: p[0], y: p[1] - 12, 'text-anchor': 'middle', fill: '#fff', 'font-size': 12, 'font-weight': 'bold', 'font-family': 'system-ui' }, svg).textContent = (i + 1) })
     }
+    const badges = trade.runBadges ? trade.runBadges(scene) : null
     for (const r of scene.runs) {
       const pts = runPoints(r, scene); if (pts.length < 2) continue
       const t = trade.runTypes.find(z => z.type === r.type) || { color: '#888', label: r.type }, sel = selected && selected.id === r.id
       el('polyline', { points: pts.map(p => p.join(',')).join(' '), fill: 'none', stroke: '#0008', 'stroke-width': sel ? 9 : 7, 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'data-run': r.id, style: 'cursor:pointer' }, svg)
       el('polyline', { points: pts.map(p => p.join(',')).join(' '), fill: 'none', stroke: t.color, 'stroke-width': sel ? 5 : 3.5, 'stroke-linecap': 'round', 'stroke-linejoin': 'round', style: 'pointer-events:none' }, svg)
-      const mid = pts[Math.floor((pts.length - 1) / 2)], nx = pts[Math.floor((pts.length - 1) / 2) + 1] || mid, lx = (mid[0] + nx[0]) / 2, ly = (mid[1] + nx[1]) / 2, txt = runLengthFt(r, scene).toFixed(1) + "'"
-      el('rect', { x: lx - txt.length * 3.4 - 3, y: ly - 16, width: txt.length * 6.8 + 6, height: 14, rx: 7, fill: 'rgba(16,18,22,.8)', style: 'pointer-events:none' }, svg)
-      el('text', { x: lx, y: ly - 6, fill: '#dfe6ee', 'font-size': 10, 'text-anchor': 'middle', 'font-family': 'system-ui', style: 'pointer-events:none' }, svg).textContent = txt
+      const bd = badges && badges[r.id]
+      const mid = pts[Math.floor((pts.length - 1) / 2)], nx = pts[Math.floor((pts.length - 1) / 2) + 1] || mid, lx = (mid[0] + nx[0]) / 2, ly = (mid[1] + nx[1]) / 2, txt = runLengthFt(r, scene).toFixed(1) + "'" + (bd ? ' · ' + bd.txt : '')
+      el('rect', { x: lx - txt.length * 3.4 - 3, y: ly - 16, width: txt.length * 6.8 + 6, height: 14, rx: 7, fill: bd && bd.warn ? 'rgba(140,32,32,.92)' : 'rgba(16,18,22,.8)', style: 'pointer-events:none' }, svg)
+      el('text', { x: lx, y: ly - 6, fill: bd && bd.warn ? '#ffd7d7' : '#dfe6ee', 'font-size': 10, 'text-anchor': 'middle', 'font-family': 'system-ui', style: 'pointer-events:none' }, svg).textContent = txt
     }
     for (const n of scene.nodes) {
       const p = trade.palette.find(z => z.type === n.type) || { color: '#777', glyph: '•', label: n.type, shape: 'marker' }
@@ -282,6 +309,7 @@ export function mountSketch(container, opts) {
     if (selected && selected.kind === 'run') { const r = scene.runs.find(rr => rr.id === selected.id); if (r) { const pp = runPoints(r, scene); if (pp.length >= 2) { const c = pp.length >= 3 ? pp[Math.floor(pp.length / 2)] : [(pp[0][0] + pp[pp.length - 1][0]) / 2, (pp[0][1] + pp[pp.length - 1][1]) / 2]; el('circle', { cx: c[0], cy: c[1], r: 12, fill: 'rgba(143,208,255,.22)', stroke: 'none', style: 'pointer-events:none' }, svg); el('circle', { cx: c[0], cy: c[1], r: 7, fill: '#8fd0ff', stroke: '#fff', 'stroke-width': 2, 'data-bend': r.id, style: 'cursor:move' }, svg) } } }
     hint.textContent = selected && selected.kind === 'run' ? 'Drag the blue handle to route this pipe along the walls · double-click it to snap back to auto-route' : 'Tip: drag to move · double-click a fixture to change it · tap it then Delete to remove'
     updateBanner()
+    renderProps()
     renderReadout()
   }
 

@@ -74,6 +74,10 @@ drawer.innerHTML = `<div id="pro-head"><b>💼 AMNI-CONSTRUCT PRO</b><span id="p
 <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="pro-btn" id="pro-snap">📸 Snapshot 3D</button><button class="pro-btn" id="pro-show">🏗️ Copy showcase link</button></div>
 <div id="pro-snap-prev" style="margin-top:8px"></div>
 <p class="pro-note">Snapshot embeds the 3D view in your quote. The showcase link opens your client's interactive 3D design, branded with your company.</p>
+<h3>💡 Suggest a feature</h3>
+<div class="pro-grid"><div class="full"><textarea id="pro-sug" placeholder="What would make this tool better for your business? Rough edges, missing trades, report formats — everything helps."></textarea></div>
+<div class="full"><input type="text" id="pro-sug-mail" placeholder="Your email (optional — only if you want a reply)"></div>
+<div class="full"><button class="pro-btn" id="pro-sug-send">Send suggestion</button><span class="pro-note" id="pro-sug-note" style="margin-left:10px"></span></div></div>
 <div id="pro-lic-row"></div></div>`
 document.body.appendChild(drawer)
 const gate = document.createElement('div')
@@ -245,6 +249,13 @@ if (brand && brand.n && brand.m === mod && Date.now() - (brand.ts || 0) < 7 * 86
   bn.innerHTML = `<span>🏗️ <b>${esc(brand.n)}</b> prepared this design for you${brand.p ? ' · ' + esc(brand.p) : ''}${brand.w ? ' · ' + esc(brand.w) : ''}</span><button title="Dismiss">✕</button>`
   document.body.appendChild(bn)
   bn.querySelector('button').onclick = () => { localStorage.removeItem('amni.showcase.brand'); bn.remove() }
+}
+S('pro-sug-send').onclick = () => {
+  const txt = S('pro-sug').value.trim(), em = S('pro-sug-mail').value.trim(), note = S('pro-sug-note')
+  if (txt.length < 8) return note.textContent = 'Tell us a little more first!'
+  note.textContent = 'Sending…'
+  const ctx = `module: ${mod} · status: ${PS.key ? 'pro' : isPro() ? 'trial' : 'free'} · ua: ${navigator.userAgent.slice(0, 60)}`
+  fetch('https://formsubmit.co/ajax/amnibro7@gmail.com', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify({ _subject: 'Amni-Construct suggestion (' + mod + ')', suggestion: txt, reply_to: em || '(none)', context: ctx, _template: 'table' }) }).then(r => r.json()).then(j => { j.success === 'true' || j.success === true ? (note.textContent = '✓ Sent — thank you!', S('pro-sug').value = '') : Promise.reject(0) }).catch(() => { location.href = 'mailto:amnibro7@gmail.com?subject=' + encodeURIComponent('Amni-Construct suggestion (' + mod + ')') + '&body=' + encodeURIComponent(txt + '\n\n' + ctx + (em ? '\nreply: ' + em : '')); note.textContent = 'Opening your email app instead…' })
 }
 S('pro-gen').onclick = () => isPro() ? quoteDoc() : gate.classList.add('on')
 btn.addEventListener('click', () => { const ck2 = document.querySelector('#uk-coach'); ck2 && ck2.remove(); drawer.classList.add('on'); status(); totals(); pjUI(); clList() })

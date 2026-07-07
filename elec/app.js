@@ -2,8 +2,8 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { initPermits, updatePermits } from './codes.js?v=fix1'
 import { emptyScene, addNode, addRun } from './sketch.js?v=o2'
-import { mountSketch } from './sketch-canvas.js?v=o3'
-import { makeElecTrade } from './elec-rules.js'
+import { mountSketch } from './sketch-canvas.js?v=o4'
+import { makeElecTrade } from './elec-rules.js?v=r2'
 const LS = 'amnielec.cfg.v1', LSP = 'amnielec.prices.v1'
 const defCfg = { sqft: 1800, bedrooms: 3, bathrooms: 2, has_laundry: true, electric_range: 1, electric_dryer: 1, water_heater_elec: true, dishwasher: true, disposal: true, microwave: true, hvac_amps: 30 }
 let cfg = (() => { try { return { ...defCfg, ...JSON.parse(localStorage.getItem(LS)) } } catch { return { ...defCfg } } })()
@@ -137,7 +137,7 @@ const renderBest = () => {
     + guideList('🔋 Panel + service (110.26, 408)', ['Working clearance at the panel: 36" deep, 30" wide, 6 ft 6 in high — clear, nothing stored in front.', 'Label every breaker (408.4); 200 A is the common new-home service; size per the load calc.', 'Smoke + CO alarms interconnected + on a protected circuit (R314/R315).'])
     + guideList('🧵 Wire gauge × ampacity (Cu, 75°C)', ['15A→14 AWG · 20A→12 · 30A→10 · 40A→8 · 50A→6 · 100A→#3 · 200A→2/0 (or 4/0 Al).', 'Derate for conduit fill + ambient temperature; a 100A subfeed is typically #4 Cu / #2 Al.', 'Match the breaker to the SMALLEST wire on the circuit — never protect 14 AWG with a 20A breaker.'])
     + guideList('⏚ Grounding + bonding (250)', ['Grounding electrode system: two ground rods 6 ft apart (+ a Ufer/concrete-encased electrode where available).', 'Main bonding jumper ties neutral to ground at the SERVICE ONLY.', 'Subpanels keep neutral + ground SEPARATE on a 4-wire feeder; bond the gas + water piping.'])
-  if (c) body.innerHTML += `<div style="${SEC}"><div style="${GH}">📐 Interactive device layout — coming next</div><div style="font-size:13px;color:var(--ink)">A drag-and-drop device layout (drop receptacles/switches/lights into rooms → auto circuits + homeruns + the 6-ft check) is the next upgrade. For now, use the <b>Quick build</b> presets in the sidebar and the E-1 panel schedule + E-2 details on the 2D Plans tab.</div></div>`
+  if (c) body.innerHTML += `<div style="${SEC}"><div style="${GH}">📐 Interactive device layout — it's live</div><div style="font-size:13px;color:var(--ink)">The <b>✏️ Layout</b> tab is a full drag-and-drop designer: drop devices, wire circuits from the panel, and it derives every circuit with NEC load/GFCI/AFCI/voltage-drop checks, live wire badges, and a priced BOM. Start from a 🧩 template and tune from there.</div></div>`
 }
 const price = (id, store) => priceEdits[`${id}.${store}`] ?? catalog[id]?.[store] ?? null
 const renderMat = () => {
