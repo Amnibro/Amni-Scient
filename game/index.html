@@ -76,14 +76,14 @@ footer a{color:var(--muted)}
 <main>
   <div class="hero">
     <h1>AMNI</h1>
-    <div class="tag">A 3D collect-a-thon platformer. Explore eight worlds, collect everything, beat four bosses.</div>
+    <div class="tag">A 3D collect-a-thon platformer. Explore eight worlds, fell eight tyrants, and paint Amni's true masterpiece.</div>
   </div>
   <div id="stage">
     <div id="amni-game"></div>
     <div id="overlay">
       <div class="crest">🐭</div>
       <h2>AMNI</h2>
-      <p>A 3D collect-a-thon platformer that runs right in your browser. Eight worlds to explore, canvases to collect, four transforms to master, and four bosses to beat. Your progress saves automatically on this device.</p>
+      <p>A 3D collect-a-thon platformer that runs right in your browser. Eight worlds to explore, 33 canvases to hunt, four transforms to master, and eight tyrants to fell — the true masterpiece demands 16 canvases and 4 tyrants. Your progress saves automatically on this device.</p>
       <button id="playBtn">▶&nbsp; PLAY</button>
       <div id="spin"></div>
       <div id="status"></div>
@@ -149,7 +149,7 @@ btn.addEventListener('click', async () => {
   if(reason === 'no-adapter') return fail('⚠️ WebGPU is present but no GPU adapter responded.<br><b>Brave?</b> Enable <b>brave://flags/#enable-unsafe-webgpu</b> and restart (or lower Shields).<br>Otherwise enable hardware acceleration / update graphics drivers, then retry.');
   status.textContent = 'Fetching the world seed (4.5 MB)...';
   try {
-    const V = '242';
+    const V = '243';
     const { default: init } = await import('./pkg/amni.js?v=' + V);
     status.textContent = 'Growing eight realms — about 15 seconds, the page may hold its breath...';
     await new Promise(r => setTimeout(r, 60));
