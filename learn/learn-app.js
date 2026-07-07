@@ -1466,15 +1466,15 @@
     }
   }
   const PHON_LETTERS=[
-    {l:'A',s:'ah',w:'Apple',e:'🍎'},{l:'B',s:'buh',w:'Ball',e:'⚽'},{l:'C',s:'kuh',w:'Cat',e:'🐱'},
-    {l:'D',s:'duh',w:'Dog',e:'🐶'},{l:'E',s:'eh',w:'Egg',e:'🥚'},{l:'F',s:'fuh',w:'Fish',e:'🐟'},
-    {l:'G',s:'guh',w:'Goat',e:'🐐'},{l:'H',s:'huh',w:'Hat',e:'🎩'},{l:'I',s:'ih',w:'Igloo',e:'🧊'},
-    {l:'J',s:'juh',w:'Jam',e:'🍯'},{l:'K',s:'kuh',w:'Kite',e:'🪁'},{l:'L',s:'luh',w:'Lion',e:'🦁'},
-    {l:'M',s:'muh',w:'Moon',e:'🌙'},{l:'N',s:'nuh',w:'Nest',e:'🪺'},{l:'O',s:'ah',w:'Octopus',e:'🐙'},
-    {l:'P',s:'puh',w:'Pig',e:'🐷'},{l:'Q',s:'kwuh',w:'Queen',e:'👑'},{l:'R',s:'ruh',w:'Rain',e:'🌧️'},
-    {l:'S',s:'sss',w:'Sun',e:'☀️'},{l:'T',s:'tuh',w:'Tree',e:'🌳'},{l:'U',s:'uh',w:'Umbrella',e:'☂️'},
-    {l:'V',s:'vuh',w:'Van',e:'🚐'},{l:'W',s:'wuh',w:'Watermelon',e:'🍉'},{l:'X',s:'ks',w:'Fox',e:'🦊'},
-    {l:'Y',s:'yuh',w:'Yarn',e:'🧶'},{l:'Z',s:'zzz',w:'Zebra',e:'🦓'}
+    {l:'A',s:'ah',w:'Apple',e:'🍎'},{l:'B',s:'bah',w:'Ball',e:'⚽'},{l:'C',s:'kah',w:'Cat',e:'🐱'},
+    {l:'D',s:'dah',w:'Dog',e:'🐶'},{l:'E',s:'eh',w:'Egg',e:'🥚'},{l:'F',s:'fah',w:'Fish',e:'🐟'},
+    {l:'G',s:'gah',w:'Goat',e:'🐐'},{l:'H',s:'hah',w:'Hat',e:'🎩'},{l:'I',s:'ih',w:'Igloo',e:'🧊'},
+    {l:'J',s:'jah',w:'Jam',e:'🍯'},{l:'K',s:'kah',w:'Kite',e:'🪁'},{l:'L',s:'lah',w:'Lion',e:'🦁'},
+    {l:'M',s:'mah',w:'Moon',e:'🌙'},{l:'N',s:'nah',w:'Nest',e:'🪺'},{l:'O',s:'aw',w:'Octopus',e:'🐙'},
+    {l:'P',s:'pah',w:'Pig',e:'🐷'},{l:'Q',s:'kwah',w:'Queen',e:'👑'},{l:'R',s:'rah',w:'Rain',e:'🌧️'},
+    {l:'S',s:'sss',w:'Sun',e:'☀️'},{l:'T',s:'tah',w:'Tree',e:'🌳'},{l:'U',s:'uh',w:'Umbrella',e:'☂️'},
+    {l:'V',s:'vah',w:'Van',e:'🚐'},{l:'W',s:'wah',w:'Watermelon',e:'🍉'},{l:'X',s:'kss',w:'Fox',e:'🦊'},
+    {l:'Y',s:'yah',w:'Yarn',e:'🧶'},{l:'Z',s:'zzz',w:'Zebra',e:'🦓'}
   ];
   const PHON_WORDS=[
     {w:'cat',c:['c','a','t'],e:'🐱'},{w:'dog',c:['d','o','g'],e:'🐶'},{w:'sun',c:['s','u','n'],e:'☀️'},
@@ -1501,6 +1501,8 @@
     ['sock','🧦','clock','🕐','rock','🪨'],['fox','🦊','box','📦'],['star','⭐','car','🚗','guitar','🎸'],
     ['mouse','🐭','house','🏠'],['ball','⚽','wall','🧱'],['fish','🐟','dish','🍽️']
   ];
+  const PHON_SP={a:'ah',b:'bah',c:'kah',d:'dah',e:'eh',f:'fah',g:'gah',h:'hah',i:'ih',j:'jah',k:'kah',l:'lah',m:'mah',n:'nah',o:'aw',p:'pah',q:'kwah',r:'rah',s:'sss',t:'tah',u:'uh',v:'vah',w:'wah',x:'kss',y:'yah',z:'zzz',sh:'shah',ch:'chah',ck:'kah',oo:'oo',ee:'ee',ai:'ay',oa:'oh',ng:'ing',ke:'kah'};
+  const _phonSnd=(x)=>PHON_SP[String(x).toLowerCase()]||x;
   let phonIdx=0,phonWordIdx=0,phonMatch=null,phonRhyme=null;
   function _phonSpeak(text){if(typeof speakText==='function')speakText(text);}
   function _phonMark(){localStorage.setItem('phon-words-seen',String(_intLS('phon-words-seen')+1));}
@@ -1517,10 +1519,10 @@
     const cur=PHON_WORDS[phonWordIdx];
     const chunks=cur.c.map(c=>`<button class="phon-chunk" data-c="${c}">${c}</button>`).join('');
     pane.innerHTML=`<div class="phon-word-card"><div class="phon-word-emoji">${cur.e}</div><div class="phon-blend-row">${chunks}</div><button class="phon-hear-btn" id="phon-blend-btn">🔊 Blend It</button><div class="phon-word-nav"><button class="phon-tab" id="phon-word-prev">◀ Prev</button><button class="phon-tab" id="phon-word-next">Next ▶</button></div></div>`;
-    pane.querySelectorAll('.phon-chunk').forEach(btn=>btn.addEventListener('click',()=>_phonSpeak(btn.dataset.c)));
-    $$('#phon-blend-btn').addEventListener('click',()=>{if(typeof speakSeq==='function')speakSeq([...cur.c,cur.w]);else _phonSpeak(cur.w);});
-    $$('#phon-word-prev').addEventListener('click',()=>{phonWordIdx=(phonWordIdx-1+PHON_WORDS.length)%PHON_WORDS.length;renderPhonWord();const c=PHON_WORDS[phonWordIdx];if(typeof speakSeq==='function')speakSeq([...c.c,c.w]);});
-    $$('#phon-word-next').addEventListener('click',()=>{phonWordIdx=(phonWordIdx+1)%PHON_WORDS.length;_phonMark();renderPhonWord();const c=PHON_WORDS[phonWordIdx];if(typeof speakSeq==='function')speakSeq([...c.c,c.w]);});
+    pane.querySelectorAll('.phon-chunk').forEach(btn=>btn.addEventListener('click',()=>_phonSpeak(_phonSnd(btn.dataset.c))));
+    $$('#phon-blend-btn').addEventListener('click',()=>{if(typeof speakSeq==='function')speakSeq([...cur.c.map(_phonSnd),cur.w]);else _phonSpeak(cur.w);});
+    $$('#phon-word-prev').addEventListener('click',()=>{phonWordIdx=(phonWordIdx-1+PHON_WORDS.length)%PHON_WORDS.length;renderPhonWord();const c=PHON_WORDS[phonWordIdx];if(typeof speakSeq==='function')speakSeq([...c.c.map(_phonSnd),c.w]);});
+    $$('#phon-word-next').addEventListener('click',()=>{phonWordIdx=(phonWordIdx+1)%PHON_WORDS.length;_phonMark();renderPhonWord();const c=PHON_WORDS[phonWordIdx];if(typeof speakSeq==='function')speakSeq([...c.c.map(_phonSnd),c.w]);});
   }
   function _phonPickN(pool,n,skip){
     const arr=pool.filter(x=>x!==skip),res=[];
