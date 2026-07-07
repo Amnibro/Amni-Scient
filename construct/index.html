@@ -10,6 +10,7 @@
 <style>
 :root{--bg:#0e1014;--bg2:#12151b;--panel:#161a21;--panel2:#1b1f28;--ink:#e8eaed;--mut:#9aa0aa;--acc:#e0954a;--deck:#e8a33d;--patio:#8fa8b8;--pool:#2f9bd6;--floor:#b5894e;--roof:#7d93a4;--frame:#caa46a;--plumb:#2db4e0;--elec:#e8c33d;--plan:#9a8cf0;--garden:#5fae5f;--hvac:#e07b4a;--line:#262a33;--line2:#323744;--radius:16px;--shadow:0 14px 36px -18px rgba(0,0,0,.72);--glass:linear-gradient(165deg,rgba(255,255,255,.04),rgba(255,255,255,.008) 55%,transparent);--mono:'JetBrains Mono',ui-monospace,'SF Mono',Consolas,monospace}
 *{box-sizing:border-box;margin:0;padding:0}
+html,body{overscroll-behavior-y:none}
 body{background-color:var(--bg);background-image:radial-gradient(900px 480px at 50% -60px,rgba(216,137,58,.11),transparent 66%);background-repeat:no-repeat;color:var(--ink);font:15px/1.6 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
 header{padding:48px 20px 18px;text-align:center}
 header h1{font-family:var(--mono);font-size:clamp(22px,7vw,38px);color:var(--acc);letter-spacing:1px;overflow-wrap:break-word;text-shadow:0 0 34px rgba(216,137,58,.32)}
@@ -300,5 +301,6 @@ body{overflow-x:hidden}
 </div>
 <footer><a href="../">amni-scient.com</a> · free forever · no accounts, no uploads, no tracking</footer>
 <script>(()=>{const K={deck:'amnideck.cfg.v2',patio:'amnipatio.cfg.v1',pool:'amnipool.cfg.v1',floor:'amnifloor.cfg.v1',roof:'amniroof.cfg.v1',frame:'amniframe.cfg.v1',plumb:'amniplumb.cfg.v1',elec:'amnielec.cfg.v1',plan:'amniplan.cfg.v1',garden:'amnigarden.cfg.v1',hvac:'amnihvac.sketch.v2'};document.querySelectorAll('.apps .app').forEach(a=>{const m=[...a.classList].find(c=>K[c]);m&&localStorage.getItem(K[m])&&a.insertAdjacentHTML('beforeend','<span class="resume">● saved project</span>')})})()</script>
+<script>"serviceWorker" in navigator&&navigator.serviceWorker.register("sw.js").catch(()=>{})</script>
 </body>
 </html>

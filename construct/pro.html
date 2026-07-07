@@ -19,6 +19,7 @@
 </script>
 <style>
 .crumbs{color:var(--dim);font-size:.75rem;letter-spacing:1px;text-transform:uppercase;margin:1rem 0 0;padding:0 1.5rem}
+html,body{overscroll-behavior-y:none}
 .crumbs a{color:var(--dim)}
 .pro-wrap{max-width:960px;margin:0 auto;padding:0 1.5rem}
 .pro-hero{text-align:center;padding:3rem 0 2rem}
@@ -123,5 +124,6 @@
 </footer>
 <script src="../_shared/pro-config.js?v=c1"></script>
 <script>window.AMNI_BUY_URL&&(document.getElementById('buy-btn').href=window.AMNI_BUY_URL,document.getElementById('buy-btn').textContent='Subscribe — $19/mo →',document.getElementById('buy-note').textContent='Secure checkout · cancel anytime · license key by email')</script>
+<script>"serviceWorker" in navigator&&navigator.serviceWorker.register("sw.js").catch(()=>{})</script>
 </body>
 </html>

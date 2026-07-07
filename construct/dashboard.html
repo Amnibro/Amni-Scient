@@ -8,6 +8,7 @@
 <style>
 :root{--bg:#0b0e12;--panel:#12161c;--ink:#dfe6ee;--mut:#8a94a0;--line:#2a3038;--acc:#e8b565}
 *{box-sizing:border-box}
+html,body{overscroll-behavior-y:none}
 body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.6 'Segoe UI',system-ui,sans-serif}
 header{display:flex;align-items:center;gap:14px;padding:16px 22px;border-bottom:1px solid var(--line)}
 header b{color:var(--acc);letter-spacing:.05em}
@@ -90,5 +91,6 @@ document.querySelectorAll('[data-pdel]').forEach(b=>b.onclick=()=>{localStorage.
 render()
 })()
 </script>
+<script>"serviceWorker" in navigator&&navigator.serviceWorker.register("sw.js").catch(()=>{})</script>
 </body>
 </html>
