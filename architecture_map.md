@@ -1,5 +1,10 @@
 # Architecture Map — amni-scient.com
 
+## v5.38.1 Amni-Learn Daily Curriculum — answer key page (/loop iter 2, 2026-07-07)
+- Opt-in `#opt-key` (default OFF) → `#sep6`/`#page6`. Mechanism: module-level `ANS=[]` collector reset in render() right before the page-2 build; EVERY generator pushes its answers as it builds (all 15 math generators + clocks/fact-families/area-perimeter/coords inline blocks + letter-hunt count + vocab words + match-up/dot-to-dot/color-count/odd-one-out/pattern + CIVICS entries which now carry `a:` reference answers); `ansSplit=ANS.length` after page 2 splits the key into Practice/Creative sections. Civics answers render as q+a pairs (`.full` grid rows). **RULE: any NEW worksheet block must ANS.push or it silently goes ungraded.**
+- Page numbering: `tot=4+plan+key` drives every mini-head ('Page 2 of '+tot); key page is always last (Page tot of tot).
+- Verified 6 ages × 4 nonces: harness re-computes every parsed answer line (+,−,×,÷,integers,x-solve,%,fractions) = 0 bad math; key hidden by default; heights ≤358px; t12 shows "nothing to grade" fallback. GOTCHA: curriculum.html is CRLF — multi-line Edit anchors fail; use single-line anchors.
+
 ## v5.38.0 Amni-Learn Daily Curriculum — weekly planner page (2026-07-07, /loop "through all of them" iter 1)
 - `learn/curriculum.html`: new opt-in page 5 (`#opt-planner` checkbox default ON → `#sep5`+`#page5` inline-display toggled, works in print) — `weekPlanHTML(band)` replays the SAME `pickDay`/nonce-0 per date as `weekSupplies` for the next 7 days → `.plan-row` per day (Today + weekday names, date, 6 activity titles w/ cat icons + 🤝/⭐ markers; t12 markerless). Verified: 7 rows × 6 acts all bands, ~590px print height, toggle hides both page+separator, deterministic. Loop queue lives in `docs/checklists/checklist_daily_curriculum_v6.md` (next: answer key → word problems → skip-counting).
 

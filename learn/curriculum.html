@@ -116,6 +116,10 @@
 .plan-day span{display:block;font-weight:400;color:#6a7180;font-size:.7rem}
 .plan-acts{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.74rem;color:#39404a;line-height:1.5}
 .plan-act{white-space:nowrap}
+.ans-sec{margin:.2rem 0 .9rem}
+.ans-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px 24px;font-size:.8rem;color:#1c2026;font-family:'JetBrains Mono',monospace}
+.ans-grid .full{grid-column:1/-1;font-family:inherit}
+.ans-q{color:#6a7180;font-family:inherit;font-size:.75rem}
 .supply-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px 26px;margin:.6rem 0 1rem}
 .supply-item{display:flex;gap:10px;align-items:center;font-size:.95rem;color:#1c2026}
 .supply-box{width:22px;height:22px;border:2px solid #444;border-radius:5px;flex-shrink:0}
@@ -239,7 +243,7 @@ body{background:#fff!important;color:#111!important;padding-top:0!important}
 <div class="age-row" id="age-row"></div>
 <div class="band-label" id="band-label"></div>
 <div class="name-field"><label for="child-name">Child's name (optional &mdash; used for the tracing page)</label><input type="text" id="child-name" maxlength="14" placeholder="e.g. Emma" autocomplete="off"></div>
-<div class="opt-row"><label class="opt-chk"><input type="checkbox" id="opt-planner" checked> 📅 Include weekly planner page</label></div>
+<div class="opt-row"><label class="opt-chk"><input type="checkbox" id="opt-planner" checked> 📅 Include weekly planner page</label> &nbsp; <label class="opt-chk"><input type="checkbox" id="opt-key"> ✅ Include answer key (for parents)</label></div>
 <h3>2. Get today's packet</h3>
 <div class="curr-actions">
 <button class="btn btn-primary" id="new-set-btn" style="background:var(--accent);color:#05070a;box-shadow:0 0 10px var(--accent-glow)">&#128256; NEW SET</button>
@@ -278,6 +282,11 @@ body{background:#fff!important;color:#111!important;padding-top:0!important}
 <div class="sheet-page" id="page5">
 <div class="mini-head" id="page5-mini"></div>
 <div id="page5-body"></div>
+</div>
+<div class="page-sep" id="sep6">Answer Key</div>
+<div class="sheet-page" id="page6">
+<div class="mini-head" id="page6-mini"></div>
+<div id="page6-body"></div>
 </div>
 </div>
 </div>
@@ -390,7 +399,7 @@ var COUNT_EMOJI=['🍎','⭐','🐟','🎈','🌸'];
 var MATCH_PAIRS=[['🐶','🦴'],['🐱','🐟'],['🐰','🥕'],['🐵','🍌'],['🐮','🌾'],['🐝','🌸'],['🐿️','🌰'],['🐸','🪰']];
 var ODD_SETS=[['🍎','🍌'],['🐶','🐱'],['⭐','🌙'],['🚗','🚲'],['🐟','🐸'],['🧦','👟']];
 var BLENDS=['bl','st','tr','sh','ch','fr','gr','sn'];
-var CIVICS=[{q:"How many branches does the U.S. government have? Name them.",l:2},{q:"What are the first ten amendments to the Constitution called?",l:1},{q:"Who signs bills into law, and which branch writes them?",l:2},{q:"Why does the U.S. flag have 13 stripes and 50 stars?",l:2},{q:"What is the supreme law of the land?",l:1},{q:"What are the three levels of government? Give one job of each.",l:3},{q:"Match each branch to its job: makes laws, carries out laws, interprets laws.",l:3},{q:"What is the capital of your state, and what is one job of a governor?",l:2},{q:"In what year was the Declaration of Independence adopted, and what did it declare?",l:2},{q:"Name two freedoms protected by the First Amendment.",l:2}];
+var CIVICS=[{q:"How many branches does the U.S. government have? Name them.",l:2,a:"Three — legislative, executive, judicial"},{q:"What are the first ten amendments to the Constitution called?",l:1,a:"The Bill of Rights"},{q:"Who signs bills into law, and which branch writes them?",l:2,a:"The President signs; Congress (the legislative branch) writes them"},{q:"Why does the U.S. flag have 13 stripes and 50 stars?",l:2,a:"13 original colonies; 50 states"},{q:"What is the supreme law of the land?",l:1,a:"The Constitution"},{q:"What are the three levels of government? Give one job of each.",l:3,a:"National (defense), state (schools/roads), local (police/fire, zoning)"},{q:"Match each branch to its job: makes laws, carries out laws, interprets laws.",l:3,a:"Legislative makes; executive carries out; judicial interprets"},{q:"What is the capital of your state, and what is one job of a governor?",l:2,a:"Varies by state; governors carry out state laws and lead the state government"},{q:"In what year was the Declaration of Independence adopted, and what did it declare?",l:2,a:"1776 — independence from Great Britain"},{q:"Name two freedoms protected by the First Amendment.",l:2,a:"Any two of: speech, religion, press, assembly, petition"}];
 var DOT_SHAPES={triangle:[[60,18],[108,102],[12,102]],square:[[18,18],[102,18],[102,102],[18,102]],house:[[60,12],[104,48],[104,104],[16,104],[16,48]],diamond:[[60,12],[108,60],[60,108],[12,60]]};
 var COLOR_PICS={
 sun:'<svg class="color-pic" width="250" height="210" viewBox="0 0 125 105"><circle cx="62" cy="52" r="24" stroke="#556" stroke-width="3" fill="none"/><g stroke="#556" stroke-width="3" stroke-linecap="round"><line x1="92" y1="52" x2="106" y2="52"/><line x1="83" y1="73" x2="93" y2="83"/><line x1="62" y1="82" x2="62" y2="96"/><line x1="41" y1="73" x2="31" y2="83"/><line x1="32" y1="52" x2="18" y2="52"/><line x1="41" y1="31" x2="31" y2="21"/><line x1="62" y1="22" x2="62" y2="8"/><line x1="83" y1="31" x2="93" y2="21"/></g></svg>',
@@ -409,20 +418,21 @@ kind==='triangle'?'<svg width="'+s+'" height="'+s+'" viewBox="0 0 110 110"><poly
 kind==='star'?'<svg width="'+s+'" height="'+s+'" viewBox="0 0 110 110"><polygon points="55,8 67,40 102,42 75,64 84,98 55,79 26,98 35,64 8,42 43,40" '+d+'/></svg>':
 kind==='heart'?'<svg width="'+s+'" height="'+s+'" viewBox="0 0 110 110"><path d="M55 96 C20 68 8 48 16 32 C24 16 46 16 55 34 C64 16 86 16 94 32 C102 48 90 68 55 96 Z" '+d+'/></svg>':
 '<svg width="'+(s*2)+'" height="'+Math.round(s/2)+'" viewBox="0 0 220 55"><polyline points="5,45 35,10 65,45 95,10 125,45 155,10 185,45 215,10" '+d+'/></svg>';};
-var countWrite=function(rnd,count){var out=[];for(var i=0;i<count;i++)out.push(1+Math.floor(rnd()*5));return out;};
-var countCircle=function(rnd,rows){var out=[];for(var i=0;i<rows;i++){var em=COUNT_EMOJI[Math.floor(rnd()*COUNT_EMOJI.length)],n=3+Math.floor(rnd()*4);out.push({em:em,n:n,total:n+2+Math.floor(rnd()*3)});}return out;};
-var addSub=function(rnd,count){var out=[];for(var i=0;i<count;i++){if(rnd()<0.5){var a=1+Math.floor(rnd()*10),b=1+Math.floor(rnd()*10);out.push(a+' + '+b+' =');}else{var a2=5+Math.floor(rnd()*16),b2=1+Math.floor(rnd()*a2);out.push(a2+' - '+b2+' =');}}return out;};
-var missingNum=function(rnd,count){var out=[];for(var i=0;i<count;i++){var a=1+Math.floor(rnd()*8),ans=a+2+Math.floor(rnd()*8);out.push({pre:a+' + ',post:' = '+ans});}return out;};
-var comparePairs=function(rnd,count){var out=[];for(var i=0;i<count;i++){var a=1+Math.floor(rnd()*20),b=1+Math.floor(rnd()*20);b===a?b=a+1:0;out.push([a,b]);}return out;};
-var multProbs=function(rnd,count){var out=[];for(var i=0;i<count;i++){var a=2+Math.floor(rnd()*9),b=2+Math.floor(rnd()*9);out.push(a+' &times; '+b+' =');}return out;};
-var missFactor=function(rnd,count){var out=[];for(var i=0;i<count;i++){var f=2+Math.floor(rnd()*8),m=2+Math.floor(rnd()*8);out.push({post:' &times; '+f+' = '+(f*m)});}return out;};
-var bigAdd=function(rnd,count){var out=[];for(var i=0;i<count;i++){var a=13+Math.floor(rnd()*37),b=15+Math.floor(rnd()*34);out.push(a+' + '+b+' =');}return out;};
-var divProbs=function(rnd,count){var out=[];for(var i=0;i<count;i++){var d=2+Math.floor(rnd()*8),q=2+Math.floor(rnd()*11);out.push((d*q)+' &divide; '+d+' =');}return out;};
-var fracOf=function(rnd,count){var out=[];for(var i=0;i<count;i++){var den=[2,3,4][Math.floor(rnd()*3)],base=den*(2+Math.floor(rnd()*5));out.push('1/'+den+' of '+base+' =');}return out;};
-var decAdd=function(rnd,count){var out=[];for(var i=0;i<count;i++){var a=(10+Math.floor(rnd()*40))/10,b=(10+Math.floor(rnd()*40))/10;out.push(a.toFixed(1)+' + '+b.toFixed(1)+' =');}return out;};
-var eqProbs=function(rnd,count){var out=[];for(var i=0;i<count;i++){var a=1+Math.floor(rnd()*12),x=1+Math.floor(rnd()*12);out.push('x + '+a+' = '+(a+x));}return out;};
-var pctOf=function(rnd,count){var out=[];for(var i=0;i<count;i++){var pick=[[10,10],[20,5],[25,4],[50,2]][Math.floor(rnd()*4)],ans=2+Math.floor(rnd()*18);out.push(pick[0]+'% of '+(ans*pick[1])+' =');}return out;};
-var meanOf=function(rnd,count){var out=[];for(var i=0;i<count;i++){var m=7+Math.floor(rnd()*8),d1=Math.floor(rnd()*5)-2,d2=Math.floor(rnd()*5)-2,d3=Math.floor(rnd()*5)-2,n4=4*m-(3*m+d1+d2+d3);out.push('Mean of '+(m+d1)+', '+(m+d2)+', '+(m+d3)+', '+n4+' =');}return out;};
+var ANS=[];
+var countWrite=function(rnd,count){var out=[],ns=[];for(var i=0;i<count;i++){var n=1+Math.floor(rnd()*5);out.push(n);ns.push(n);}ANS.push('Count & Write: '+ns.join(', '));return out;};
+var countCircle=function(rnd,rows){var out=[];for(var i=0;i<rows;i++){var em=COUNT_EMOJI[Math.floor(rnd()*COUNT_EMOJI.length)],n=3+Math.floor(rnd()*4);out.push({em:em,n:n,total:n+2+Math.floor(rnd()*3)});ANS.push('Circle '+n+' '+em);}return out;};
+var addSub=function(rnd,count){var out=[];for(var i=0;i<count;i++){if(rnd()<0.5){var a=1+Math.floor(rnd()*10),b=1+Math.floor(rnd()*10);out.push(a+' + '+b+' =');ANS.push(a+' + '+b+' = '+(a+b));}else{var a2=5+Math.floor(rnd()*16),b2=1+Math.floor(rnd()*a2);out.push(a2+' - '+b2+' =');ANS.push(a2+' - '+b2+' = '+(a2-b2));}}return out;};
+var missingNum=function(rnd,count){var out=[];for(var i=0;i<count;i++){var a=1+Math.floor(rnd()*8),ans=a+2+Math.floor(rnd()*8);out.push({pre:a+' + ',post:' = '+ans});ANS.push(a+' + ['+(ans-a)+'] = '+ans);}return out;};
+var comparePairs=function(rnd,count){var out=[];for(var i=0;i<count;i++){var a=1+Math.floor(rnd()*20),b=1+Math.floor(rnd()*20);b===a?b=a+1:0;out.push([a,b]);ANS.push(a+' vs '+b+' → '+Math.max(a,b));}return out;};
+var multProbs=function(rnd,count){var out=[];for(var i=0;i<count;i++){var a=2+Math.floor(rnd()*9),b=2+Math.floor(rnd()*9);out.push(a+' &times; '+b+' =');ANS.push(a+' × '+b+' = '+(a*b));}return out;};
+var missFactor=function(rnd,count){var out=[];for(var i=0;i<count;i++){var f=2+Math.floor(rnd()*8),m=2+Math.floor(rnd()*8);out.push({post:' &times; '+f+' = '+(f*m)});ANS.push('['+m+'] × '+f+' = '+(f*m));}return out;};
+var bigAdd=function(rnd,count){var out=[];for(var i=0;i<count;i++){var a=13+Math.floor(rnd()*37),b=15+Math.floor(rnd()*34);out.push(a+' + '+b+' =');ANS.push(a+' + '+b+' = '+(a+b));}return out;};
+var divProbs=function(rnd,count){var out=[];for(var i=0;i<count;i++){var d=2+Math.floor(rnd()*8),q=2+Math.floor(rnd()*11);out.push((d*q)+' &divide; '+d+' =');ANS.push((d*q)+' ÷ '+d+' = '+q);}return out;};
+var fracOf=function(rnd,count){var out=[];for(var i=0;i<count;i++){var den=[2,3,4][Math.floor(rnd()*3)],base=den*(2+Math.floor(rnd()*5));out.push('1/'+den+' of '+base+' =');ANS.push('1/'+den+' of '+base+' = '+(base/den));}return out;};
+var decAdd=function(rnd,count){var out=[];for(var i=0;i<count;i++){var a=(10+Math.floor(rnd()*40))/10,b=(10+Math.floor(rnd()*40))/10;out.push(a.toFixed(1)+' + '+b.toFixed(1)+' =');ANS.push(a.toFixed(1)+' + '+b.toFixed(1)+' = '+(a+b).toFixed(1));}return out;};
+var eqProbs=function(rnd,count){var out=[];for(var i=0;i<count;i++){var a=1+Math.floor(rnd()*12),x=1+Math.floor(rnd()*12);out.push('x + '+a+' = '+(a+x));ANS.push('x + '+a+' = '+(a+x)+' → x = '+x);}return out;};
+var pctOf=function(rnd,count){var out=[];for(var i=0;i<count;i++){var pick=[[10,10],[20,5],[25,4],[50,2]][Math.floor(rnd()*4)],ans=2+Math.floor(rnd()*18);out.push(pick[0]+'% of '+(ans*pick[1])+' =');ANS.push(pick[0]+'% of '+(ans*pick[1])+' = '+ans);}return out;};
+var meanOf=function(rnd,count){var out=[];for(var i=0;i<count;i++){var m=7+Math.floor(rnd()*8),d1=Math.floor(rnd()*5)-2,d2=Math.floor(rnd()*5)-2,d3=Math.floor(rnd()*5)-2,n4=4*m-(3*m+d1+d2+d3);out.push('Mean of '+(m+d1)+', '+(m+d2)+', '+(m+d3)+', '+n4+' =');ANS.push('Mean('+(m+d1)+','+(m+d2)+','+(m+d3)+','+n4+') = '+m);}return out;};
 var wordSearch=function(rnd,words,size){
 var g=[],r,c;for(r=0;r<size;r++){g.push([]);for(c=0;c<size;c++)g[r].push('');}
 var placed=[];
@@ -451,7 +461,7 @@ for(var i=0;i<12;i++){var a=i*30*rad;ticks+='<line x1="'+(55+44*Math.cos(a)).toF
 return '<svg width="'+s+'" height="'+s+'" viewBox="0 0 110 110"><circle cx="55" cy="55" r="50" stroke="#444" stroke-width="3" fill="none"/>'+ticks+'<text x="55" y="20" font-size="11" text-anchor="middle" fill="#444" font-weight="bold">12</text><text x="94" y="59" font-size="11" text-anchor="middle" fill="#444" font-weight="bold">3</text><text x="55" y="99" font-size="11" text-anchor="middle" fill="#444" font-weight="bold">6</text><text x="16" y="59" font-size="11" text-anchor="middle" fill="#444" font-weight="bold">9</text><line x1="55" y1="55" x2="'+hx.toFixed(1)+'" y2="'+hy.toFixed(1)+'" stroke="#444" stroke-width="4" stroke-linecap="round"/><line x1="55" y1="55" x2="'+mx.toFixed(1)+'" y2="'+my.toFixed(1)+'" stroke="#444" stroke-width="2.5" stroke-linecap="round"/><circle cx="55" cy="55" r="3" fill="#444"/></svg>';};
 var rectAPHTML=function(rnd){var out='';
 for(var i=0;i<2;i++){var w=3+Math.floor(rnd()*7),h=2+Math.floor(rnd()*5),pw=w*16,ph=h*16;
-out+='<div class="prob" style="flex-direction:column;align-items:flex-start;gap:6px"><svg width="'+(pw+56)+'" height="'+(ph+34)+'"><rect x="6" y="20" width="'+pw+'" height="'+ph+'" stroke="#444" stroke-width="2.5" fill="none"/><text x="'+(6+pw/2)+'" y="14" font-size="12" text-anchor="middle" fill="#444">'+w+' cm</text><text x="'+(pw+14)+'" y="'+(20+ph/2+4)+'" font-size="12" fill="#444">'+h+' cm</text></svg><span>A = <span class="blank"></span> &nbsp; P = <span class="blank"></span></span></div>';}
+out+='<div class="prob" style="flex-direction:column;align-items:flex-start;gap:6px"><svg width="'+(pw+56)+'" height="'+(ph+34)+'"><rect x="6" y="20" width="'+pw+'" height="'+ph+'" stroke="#444" stroke-width="2.5" fill="none"/><text x="'+(6+pw/2)+'" y="14" font-size="12" text-anchor="middle" fill="#444">'+w+' cm</text><text x="'+(pw+14)+'" y="'+(20+ph/2+4)+'" font-size="12" fill="#444">'+h+' cm</text></svg><span>A = <span class="blank"></span> &nbsp; P = <span class="blank"></span></span></div>';ANS.push(w+'×'+h+': A = '+(w*h)+' cm², P = '+(2*(w+h))+' cm');}
 return '<h4 class="prac-h">Area &amp; Perimeter</h4><div class="prob-grid">'+out+'</div>';};
 var coordPlaneHTML=function(rnd){var pts=[],used={},L=['A','B','C'];
 for(var t=0;t<50&&pts.length<3;t++){var x=1+Math.floor(rnd()*5),y=1+Math.floor(rnd()*5),k=x+','+y;if(!used[k]){used[k]=1;pts.push([x,y]);}}
@@ -459,28 +469,32 @@ var cell=34,S=6*cell,grid='';
 for(var i=0;i<=6;i++){grid+='<line x1="'+(i*cell)+'" y1="0" x2="'+(i*cell)+'" y2="'+S+'" stroke="#c8cedb" stroke-width="1"/><line x1="0" y1="'+(i*cell)+'" x2="'+S+'" y2="'+(i*cell)+'" stroke="#c8cedb" stroke-width="1"/><text x="'+(i*cell)+'" y="'+(S+16)+'" font-size="11" text-anchor="middle" fill="#444">'+i+'</text><text x="-10" y="'+(S-i*cell+4)+'" font-size="11" text-anchor="middle" fill="#444">'+i+'</text>';}
 grid+='<line x1="0" y1="'+S+'" x2="'+S+'" y2="'+S+'" stroke="#444" stroke-width="2.5"/><line x1="0" y1="0" x2="0" y2="'+S+'" stroke="#444" stroke-width="2.5"/>';
 var dots=pts.map(function(p,ix){return '<circle cx="'+(p[0]*cell)+'" cy="'+(S-p[1]*cell)+'" r="5" fill="#c0392b"/><text x="'+(p[0]*cell+9)+'" y="'+(S-p[1]*cell-8)+'" font-size="13" font-weight="bold" fill="#c0392b">'+L[ix]+'</text>';}).join('');
+ANS.push('Points: '+pts.map(function(p,ix){return L[ix]+'=('+p[0]+','+p[1]+')';}).join('  '));
 var qs=L.map(function(l){return '<div class="prob">'+l+' = ( <span class="blank" style="width:36px"></span> , <span class="blank" style="width:36px"></span> )</div>';}).join('');
 return '<h4 class="prac-h">Coordinate Points</h4><p class="prac-p">Write the coordinates of each point:</p><svg width="'+(S+34)+'" height="'+(S+26)+'" viewBox="-22 -6 '+(S+40)+' '+(S+30)+'">'+grid+dots+'</svg><div class="prob-grid" style="margin-top:.5rem">'+qs+'</div>';};
-var intAdd=function(rnd,count){var out=[];for(var i=0;i<count;i++){var a=Math.floor(rnd()*19)-9,b=Math.floor(rnd()*19)-9;out.push('('+a+') + ('+b+') =');}return out;};
+var intAdd=function(rnd,count){var out=[];for(var i=0;i<count;i++){var a=Math.floor(rnd()*19)-9,b=Math.floor(rnd()*19)-9;out.push('('+a+') + ('+b+') =');ANS.push('('+a+') + ('+b+') = '+(a+b));}return out;};
 var civicsHTML=function(rnd){var qs=pickN(rnd,CIVICS,2);
+qs.forEach(function(c){ANS.push({q:c.q,a:c.a});});
 return '<h4 class="prac-h">Civics Corner</h4>'+qs.map(function(c){return '<p class="prac-p">'+c.q+'</p><div class="write-lines">'+Array(c.l+1).join('<span class="write-line"></span>')+'</div>';}).join('');};
 var matchUpHTML=function(rnd){
 var pairs=pickN(rnd,MATCH_PAIRS,3);
-var rights=pickN(rnd,pairs.map(function(p){return p[1];}),3);
+var rights=pickN(rnd,pairs.map(function(p){return p[1];}),3);ANS.push('Match: '+pairs.map(function(p){return p[0]+'→'+p[1];}).join('  '));
 return '<h4 class="prac-h">Match It Up!</h4><p class="prac-p">Draw a line from each animal to its favorite food:</p><div class="match-cols"><div class="match-col">'+pairs.map(function(p){return '<span>'+p[0]+' &bull;</span>';}).join('')+'</div><div class="match-col">'+rights.map(function(r){return '<span>&bull; '+r+'</span>';}).join('')+'</div></div>';
 };
 var oddOneOutHTML=function(rnd){
-var p=ODD_SETS[Math.floor(rnd()*ODD_SETS.length)],pos=Math.floor(rnd()*5),row=[];
+var p=ODD_SETS[Math.floor(rnd()*ODD_SETS.length)],pos=Math.floor(rnd()*5),row=[];ANS.push('Odd one out: '+p[1]+' (spot '+(pos+1)+')');
 for(var i=0;i<5;i++)row.push(i===pos?p[1]:p[0]);
 return '<h4 class="prac-h">Odd One Out</h4><p class="prac-p">Circle the one that is different:</p><div class="circle-row">'+row.join('')+'</div>';
 };
 var dotToDotHTML=function(rnd){
 var keys=['triangle','square','house','diamond'],k=keys[Math.floor(rnd()*keys.length)],pts=DOT_SHAPES[k];
+ANS.push('Dot to dot: a '+k);
 var svg='<svg class="dot2dot" width="190" height="190" viewBox="0 0 120 120">'+pts.map(function(p,i){return '<circle cx="'+p[0]+'" cy="'+p[1]+'" r="4" fill="#444"/><text x="'+(p[0]+(p[0]>60?7:-13))+'" y="'+(p[1]+(p[1]>60?14:-6))+'" font-size="11" font-weight="bold" fill="#444">'+(i+1)+'</text>';}).join('')+'</svg>';
 return '<h4 class="prac-h">Dot to Dot</h4><p class="prac-p">Connect the dots from 1 to '+pts.length+' — what shape did you make?</p>'+svg;
 };
 var colorCountHTML=function(rnd){
 var n=2+Math.floor(rnd()*3),stars='';
+ANS.push('Color exactly '+n+' stars');
 for(var i=0;i<5;i++)stars+=shapeSVG('star',64);
 return '<h4 class="prac-h">Color &amp; Count</h4><p class="prac-p">Color exactly <strong>'+n+'</strong> of the 5 stars:</p><div class="shape-row" style="gap:14px">'+stars+'</div>';
 };
@@ -533,7 +547,7 @@ return '<h4 class="prac-h">'+(name?'Trace Your Name':'Trace Your Words')+'</h4>'
 }
 if(kv===1)return '<h4 class="prac-h">Copy the Sentence</h4><p class="prac-p">'+sent+'</p>'+guidedRow('')+guidedRow('')+'<h4 class="prac-h">Rhyme Time</h4><p class="prac-p">Write 2 words that rhyme with <strong>'+rhyme+'</strong>:</p><div class="write-lines"><span class="write-line"></span><span class="write-line"></span></div>';
 if(kv===2){
-var target=name?name[0].toUpperCase():hl,cells=letterHunt(rnd,target);
+var target=name?name[0].toUpperCase():hl,cells=letterHunt(rnd,target);ANS.push('Letter hunt: '+cells.filter(function(cc){return cc===target;}).length+' × '+target);
 return '<h4 class="prac-h">Letter Hunt</h4><p class="prac-p">Circle every letter <strong>'+target+'</strong> you can find!</p><div class="hunt-grid">'+cells.map(function(cc){return '<span class="hunt-cell">'+cc+'</span>';}).join('')+'</div>';
 }
 return '<h4 class="prac-h">Word Builders</h4>'+blends.map(function(bl){return '<p class="prac-p">Write 2 words that start with <strong>'+bl+'</strong>:</p><div class="write-lines"><span class="write-line"></span><span class="write-line"></span></div>';}).join('');
@@ -544,7 +558,7 @@ if(gv===0)return '<h4 class="prac-h">Copy in Your Best Cursive</h4><p class="pra
 return '<h4 class="prac-h">Question of the Day</h4><p class="prac-p">'+q+' Write 2-3 sentences:</p><div class="write-lines"><span class="write-line"></span><span class="write-line"></span><span class="write-line"></span></div>';
 }
 var pool=band==='g910'?{cw:COPYWORK_G910,j:JOURNAL_G910,vc:VOCAB_G910}:{cw:COPYWORK_T1113,j:JOURNAL_T1113,vc:VOCAB_T1113};
-var ov=Math.floor(rnd()*2),cwS=pickN(rnd,pool.cw,1)[0],jS=pickN(rnd,pool.j,1)[0],vocab=pickN(rnd,pool.vc,2);
+var ov=Math.floor(rnd()*2),cwS=pickN(rnd,pool.cw,1)[0],jS=pickN(rnd,pool.j,1)[0],vocab=pickN(rnd,pool.vc,2);ANS.push('Word Challenge: '+vocab.map(function(v){return v.w;}).join(', '));
 var vh=vocab.map(function(v){return '<p class="prac-p"><strong>'+v.w+'</strong> &mdash; '+v.def+'<br>'+v.s.replace('____','<span class="blank wide"></span>')+'</p>';}).join('');
 if(ov===0)return '<h4 class="prac-h">Copy It Neatly</h4><p class="prac-p">'+cwS+'</p><div class="write-lines"><span class="write-line"></span></div><h4 class="prac-h">Word Challenge</h4>'+vh;
 return '<h4 class="prac-h">Journal Prompt</h4><p class="prac-p">'+jS+'</p><div class="write-lines"><span class="write-line"></span><span class="write-line"></span></div><h4 class="prac-h">Word Challenge</h4>'+vh;
@@ -553,7 +567,7 @@ var p34GameHTML=function(rnd){
 var v=Math.floor(rnd()*6);
 if(v===0){var items=countWrite(rnd,4).map(function(n){return '<div class="prob cw"><span>'+'&#9679; '.repeat(n)+'</span><span class="blank"></span></div>';}).join('');return '<h4 class="prac-h">Count &amp; Write</h4><div class="prob-grid">'+items+'</div>';}
 if(v===1){var rows=countCircle(rnd,2).map(function(r){return '<p class="prac-p">Circle <strong>'+r.n+'</strong>:</p><div class="circle-row">'+Array(r.total+1).join(r.em)+'</div>';}).join('');return '<h4 class="prac-h">Count &amp; Circle</h4>'+rows;}
-if(v===2)return '<h4 class="prac-h">Shape Spotting</h4><p class="prac-p">Circle all the <strong>blue circles</strong>!</p><div class="circle-row">🔵🔺🟩🔵⭐🔵❤️🔵</div><p class="prac-p">How many did you find? <span class="blank"></span></p>';
+if(v===2){ANS.push('Blue circles: 4');return '<h4 class="prac-h">Shape Spotting</h4><p class="prac-p">Circle all the <strong>blue circles</strong>!</p><div class="circle-row">🔵🔺🟩🔵⭐🔵❤️🔵</div><p class="prac-p">How many did you find? <span class="blank"></span></p>';}
 if(v===3)return matchUpHTML(rnd);
 if(v===4)return dotToDotHTML(rnd);
 return colorCountHTML(rnd);
@@ -564,7 +578,7 @@ var kv=Math.floor(rnd()*4);
 if(kv===0){var it=addSub(rnd,6).map(function(s){return '<div class="prob">'+s+' <span class="blank"></span></div>';}).join('');return '<h4 class="prac-h">Math Practice</h4><div class="prob-grid">'+it+'</div>';}
 if(kv===1){var mn=missingNum(rnd,6).map(function(p){return '<div class="prob">'+p.pre+'<span class="blank"></span>'+p.post+'</div>';}).join('');return '<h4 class="prac-h">Find the Missing Number</h4><div class="prob-grid">'+mn+'</div>';}
 if(kv===2){var cp=comparePairs(rnd,4).map(function(p){return '<div class="prob">'+p[0]+' &nbsp;or&nbsp; '+p[1]+'</div>';}).join('');return '<h4 class="prac-h">Circle the Bigger Number</h4><div class="prob-grid">'+cp+'</div>';}
-var cl=[];for(var ci=0;ci<4;ci++)cl.push({h:1+Math.floor(rnd()*12),m:rnd()<0.5?0:30});
+var cl=[];for(var ci=0;ci<4;ci++){var chh=1+Math.floor(rnd()*12),cmm=rnd()<0.5?0:30;cl.push({h:chh,m:cmm});ANS.push('Clock '+(ci+1)+': '+chh+':'+(cmm===0?'00':'30'));}
 return '<h4 class="prac-h">What Time Is It?</h4><div class="prob-grid">'+cl.map(function(c){return '<div class="prob" style="flex-direction:column;align-items:center;gap:6px">'+clockSVG(c.h,c.m,105)+'<span>_____ : _____</span></div>';}).join('')+'</div>';
 }
 if(band==='g78'){
@@ -572,7 +586,7 @@ var gv=Math.floor(rnd()*4);
 if(gv===0){var m=multProbs(rnd,8).map(function(s){return '<div class="prob">'+s+' <span class="blank"></span></div>';}).join('');return '<h4 class="prac-h">Multiplication Practice</h4><div class="prob-grid">'+m+'</div>';}
 if(gv===1){var mf=missFactor(rnd,6).map(function(p){return '<div class="prob"><span class="blank"></span>'+p.post+'</div>';}).join('');return '<h4 class="prac-h">Find the Missing Factor</h4><div class="prob-grid">'+mf+'</div>';}
 if(gv===2){var ba=bigAdd(rnd,6).map(function(s){return '<div class="prob">'+s+' <span class="blank"></span></div>';}).join('');return '<h4 class="prac-h">Big Addition</h4><div class="prob-grid">'+ba+'</div>';}
-var ff=[];for(var fi=0;fi<2;fi++){var fa=2+Math.floor(rnd()*8),fb=2+Math.floor(rnd()*8);ff.push([fa,fb]);}
+var ff=[];for(var fi=0;fi<2;fi++){var fa=2+Math.floor(rnd()*8),fb=2+Math.floor(rnd()*8);ff.push([fa,fb]);ANS.push(fa+'·'+fb+'·'+(fa*fb)+': '+fa+'×'+fb+'='+(fa*fb)+', '+fb+'×'+fa+'='+(fa*fb)+', '+(fa*fb)+'÷'+fa+'='+fb+', '+(fa*fb)+'÷'+fb+'='+fa);}
 return '<h4 class="prac-h">Fact Families</h4><p class="prac-p">Write the 4 facts for each family:</p><div class="prob-grid">'+ff.map(function(f){return '<div class="prob" style="flex-direction:column;align-items:flex-start;gap:8px"><strong>'+f[0]+' &middot; '+f[1]+' &middot; '+(f[0]*f[1])+'</strong><span>___ &times; ___ = ___</span><span>___ &times; ___ = ___</span><span>___ &divide; ___ = ___</span><span>___ &divide; ___ = ___</span></div>';}).join('')+'</div>';
 }
 if(band==='g910'){
@@ -609,7 +623,7 @@ return pic+'<p class="prac-p">Caregiver: write down anything they said about it:
 }
 if(band==='p34'){
 var pv=Math.floor(rnd()*2);
-var bonus=pv===0?(function(){var pair=PATTERN_PAIRS[Math.floor(rnd()*PATTERN_PAIRS.length)],distractor=PATTERN_PAIRS[(PATTERN_PAIRS.indexOf(pair)+1)%PATTERN_PAIRS.length][0],choices=pickN(rnd,[pair[0],pair[1],distractor],3);return '<h4 class="prac-h">What Comes Next?</h4><div class="pattern-row">'+pair[0]+pair[1]+pair[0]+pair[1]+pair[0]+' <span class="pn-q">?</span></div><p class="prac-p">Circle the answer:</p><div class="circle-row">'+choices.join(' &nbsp; ')+'</div>';})():mazeHTML(rnd,5,44);
+var bonus=pv===0?(function(){var pair=PATTERN_PAIRS[Math.floor(rnd()*PATTERN_PAIRS.length)],distractor=PATTERN_PAIRS[(PATTERN_PAIRS.indexOf(pair)+1)%PATTERN_PAIRS.length][0],choices=pickN(rnd,[pair[0],pair[1],distractor],3);ANS.push('Pattern next: '+pair[1]);return '<h4 class="prac-h">What Comes Next?</h4><div class="pattern-row">'+pair[0]+pair[1]+pair[0]+pair[1]+pair[0]+' <span class="pn-q">?</span></div><p class="prac-p">Circle the answer:</p><div class="circle-row">'+choices.join(' &nbsp; ')+'</div>';})():mazeHTML(rnd,5,44);
 var rhy2=pickN(rnd,RHYMES,1)[0];
 return '<div class="draw-box" style="min-height:'+(pv===1?120:150)+'px"><div class="draw-label">Draw or design: '+creativeItem.t+'</div></div><p class="prac-p">Tell me about it:</p><div class="write-lines"><span class="write-line"></span></div>'+checksLite+bonus+'<h4 class="prac-h">Sing Together</h4><div class="sing-line">🎵 Today&apos;s song: <strong>'+rhy2+'</strong> — sing it with the motions!</div>';
 }
@@ -675,22 +689,33 @@ document.getElementById('sheet-legend').style.display=band==='t12'?'none':'';
 document.getElementById('stars-row').innerHTML='&#9734;'.repeat(CATS.length)+'<div>Color a star for every activity you finish!</div>';
 var nameRaw=(document.getElementById('child-name').value||'').replace(/[^a-zA-Z]/g,'');
 var name=nameRaw.length>=2?nameRaw.slice(0,12):'';
+var showPlan=document.getElementById('opt-planner').checked,showKey=document.getElementById('opt-key').checked;
+var tot=4+(showPlan?1:0)+(showKey?1:0);
 document.getElementById('sep2').textContent=band==='t12'?'Page 2 — Little Hands Page':'Page 2 — Practice Page';
-document.getElementById('page2-mini').textContent='My Learning Day · Page 2 of 4 · '+bandLabel;
+document.getElementById('page2-mini').textContent='My Learning Day · Page 2 of '+tot+' · '+bandLabel;
+ANS=[];
 document.getElementById('page2-body').innerHTML=band==='t12'?littleHandsHTML(rnd):band==='p34'?traceBlockHTML(band,rnd,name)+p34GameHTML(rnd):traceBlockHTML(band,rnd,name)+mathBlockHTML(band,rnd);
-document.getElementById('page3-mini').textContent='My Learning Day · Page 3 of 4 · '+bandLabel;
+var ansSplit=ANS.length;
+document.getElementById('page3-mini').textContent='My Learning Day · Page 3 of '+tot+' · '+bandLabel;
 document.getElementById('page3-body').innerHTML=page3HTML(band,rnd,picks.cr);
-document.getElementById('page4-mini').textContent='My Learning Week · Page 4 of 4 · '+bandLabel;
+document.getElementById('page4-mini').textContent='My Learning Week · Page 4 of '+tot+' · '+bandLabel;
 var sup=weekSupplies(band);
 var a=new Date(),b2=new Date();b2.setDate(b2.getDate()+6);
 var fmtD=function(d){return d.toLocaleDateString(undefined,{month:'short',day:'numeric'});};
 document.getElementById('page4-body').innerHTML='<h4 class="prac-h">Supplies for This Week</h4><p class="prac-p">Gather these once and the whole week of activities ('+fmtD(a)+' &ndash; '+fmtD(b2)+') is covered:</p>'+(sup.length?'<div class="supply-grid">'+sup.map(function(s){return '<div class="supply-item"><span class="supply-box"></span>'+s.charAt(0).toUpperCase()+s.slice(1)+'</div>';}).join('')+'</div>':'<p class="prac-p">Nothing special needed this week — household basics cover it!</p>')+'<p class="prac-p" style="font-size:.78rem;color:#6a7180">Everyday basics assumed: paper, crayons or pencils, safety scissors, tape. List is based on each day&apos;s first activity set.</p>';
-var showPlan=document.getElementById('opt-planner').checked;
 document.getElementById('sep5').style.display=showPlan?'':'none';
 document.getElementById('page5').style.display=showPlan?'':'none';
 if(showPlan){
-document.getElementById('page5-mini').textContent='My Learning Week · Planner · '+bandLabel;
+document.getElementById('page5-mini').textContent='My Learning Week · Planner · Page 5 of '+tot+' · '+bandLabel;
 document.getElementById('page5-body').innerHTML=weekPlanHTML(band);
+}
+document.getElementById('sep6').style.display=showKey?'':'none';
+document.getElementById('page6').style.display=showKey?'':'none';
+if(showKey){
+var p2a=ANS.slice(0,ansSplit),p3a=ANS.slice(ansSplit);
+var fmtA=function(x){return typeof x==='string'?'<div>'+x+'</div>':'<div class="full"><span class="ans-q">'+x.q+'</span><br>'+x.a+'</div>';};
+document.getElementById('page6-mini').textContent='Answer Key · Page '+tot+' of '+tot+' · '+bandLabel;
+document.getElementById('page6-body').innerHTML='<h4 class="prac-h">Answer Key — for grown-ups</h4><p class="prac-p" style="font-size:.78rem;color:#6a7180">Matches today&apos;s sheets (same daily set).</p>'+(p2a.length?'<div class="ans-sec"><h4 class="prac-h" style="font-size:.76rem">Practice Page</h4><div class="ans-grid">'+p2a.map(fmtA).join('')+'</div></div>':'')+(p3a.length?'<div class="ans-sec"><h4 class="prac-h" style="font-size:.76rem">Creative &amp; Discovery</h4><div class="ans-grid">'+p3a.map(fmtA).join('')+'</div></div>':'')+((p2a.length+p3a.length)?'':'<p class="prac-p">Nothing to grade today — everything is open-ended play!</p>');
 }
 var sheets=document.getElementById('sheets');
 sheets.classList.remove('scale-xl','scale-lg');
@@ -704,6 +729,7 @@ document.getElementById('new-set-btn').onclick=function(){currentNonce++;session
 document.getElementById('print-btn').onclick=function(){window.print();};
 document.getElementById('child-name').oninput=function(){render(currentAge);};
 document.getElementById('opt-planner').onchange=function(){render(currentAge);};
+document.getElementById('opt-key').onchange=function(){render(currentAge);};
 render(currentAge);
 });
 </script>

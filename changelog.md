@@ -1,5 +1,8 @@
 # Changelog 
 
+## Amni-Learn v5.38.1 — Daily Curriculum: answer key page - 2026-07-07
+- New opt-in "Answer key (for parents)" page (off by default so it never sneaks into the kid's packet): every math problem, clock, fill-in word, letter hunt, pattern, match-up, and Civics Corner question on today's sheets gets its answer, grouped by page. Page numbering across the packet now adapts to which optional pages are on.
+
 ## Amni-Learn v5.38.0 — Daily Curriculum: weekly planner page - 2026-07-07
 - New optional page 5 "My Week at a Glance" (checkbox, on by default): the actual next seven days of activities, day by day, each marked 🤝 do-together or ⭐ on-my-own — computed from the same picks the supplies page uses, so the planner, supplies list, and daily sheets all agree.
 
