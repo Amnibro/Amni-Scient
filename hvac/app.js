@@ -1,6 +1,6 @@
 import { initPermits } from './codes.js?v=fix1'
 import { emptyScene, addNode, addRun } from './sketch.js?v=o2'
-import { mountSketch } from './sketch-canvas.js?v=o4'
+import { mountSketch } from './sketch-canvas.js?v=o5'
 import { makeHvacTrade } from './hvac-rules.js?v=r2'
 const $ = s => document.querySelector(s)
 const LSP = 'amnihvac.prices.v1', SK_LS = 'amnihvac.sketch.v2'

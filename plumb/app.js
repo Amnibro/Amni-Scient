@@ -2,7 +2,7 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { initPermits, updatePermits } from './codes.js?v=fix1'
 import { emptyScene, addNode, addRun } from './sketch.js?v=o2'
-import { mountSketch } from './sketch-canvas.js?v=o4'
+import { mountSketch } from './sketch-canvas.js?v=o5'
 import { makePlumbTrade } from './plumb-rules.js?v=trap2'
 const LS = 'amniplumb.cfg.v1', LSP = 'amniplumb.prices.v1'
 const defCfg = { w: 40, d: 30, toilets: 2, lavs: 2, tubs: 1, showers: 1, kitchen_sinks: 1, dishwashers: 1, washers: 1, water_heater: true, pipe_material: 'pex' }

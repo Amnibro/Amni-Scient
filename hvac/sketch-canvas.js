@@ -77,10 +77,15 @@ export function mountSketch(container, opts) {
     if (!scene.bgImage) { hint.textContent = 'Add a room photo first, then ✨ auto-detect.'; return }
     autoBtn.textContent = '… detecting'
     try {
-      const m = await import('./room-detect.js'), det = await m.detectRoom(scene.bgImage)
+      const m = await import('./room-detect.js?v=rd2'), det = await m.detectRoom(scene.bgImage)
       const room = det && det.confidence >= 0.25 ? m.buildRoomFromDetection(det, W, H, scene.floorCal || { w: 12, d: 12 }) : null
       if (!room || !room.floorH) { hint.textContent = '🤔 Couldn\'t read the room clearly — tap 📐 Set floor to mark the corner instead.' }
-      else { scene.floorH = room.floorH; scene.ceilH = room.ceilH; scene.vpVert = room.vpVert; scene.floorCal = room.floorCal; changed(); hint.textContent = '✨ Room detected (' + Math.round(det.confidence * 100) + '%) — drop fixtures, or tap 📐 to fine-tune the corners.' }
+      else {
+        scene.floorH = room.floorH; scene.ceilH = room.ceilH; scene.vpVert = room.vpVert; scene.floorCal = room.floorCal; changed()
+        const cp = (room.floorCal.corner || []).filter(p => p && isFinite(p[0]) && isFinite(p[1])).slice(0, 6)
+        if (cp.length >= 3) { calibPts = cp.map(p => [Math.max(6, Math.min(W - 6, p[0])), Math.max(6, Math.min(H - 6, p[1]))]); setMode('calibrate'); hint.textContent = '✨ Room detected (' + Math.round(det.confidence * 100) + '%) — drag any numbered dot exactly onto its corner, then hit ✓ Wall sizes.' }
+        else hint.textContent = '✨ Room detected (' + Math.round(det.confidence * 100) + '%) — drop fixtures, or tap 📐 to fine-tune the corners.'
+      }
     } catch (e) { hint.textContent = '✨ Auto-detect needs the module page (CV libs).' }
     autoBtn.textContent = '✨ Auto-detect room'
   }
@@ -123,7 +128,7 @@ export function mountSketch(container, opts) {
   const inCss = 'width:52px;background:var(--bg);border:1px solid var(--line);border-radius:6px;color:inherit;padding:5px 6px;margin:0 4px'
   function showCalForm() {
     calForm.style.display = 'block'
-    calForm.innerHTML = '<div style="margin-bottom:9px;font-weight:600">How long is each wall?</div><div style="display:flex;gap:4px;align-items:center;justify-content:center">left<input id="_cw" type="number" min="1" value="10" style="' + inCss + '">ft &nbsp;·&nbsp; right<input id="_cd" type="number" min="1" value="12" style="' + inCss + '">ft</div><div style="margin-top:11px;display:flex;gap:8px;justify-content:center"><button id="_cset" class="btn" style="padding:5px 12px">✓ Set floor</button><button id="_ccan" class="btn" style="padding:5px 12px">✕</button></div>'
+    calForm.innerHTML = '<div style="margin-bottom:9px;font-weight:600">How long is each wall?</div><div style="display:flex;gap:4px;align-items:center;justify-content:center">left<input id="_cw" type="number" min="1" value="' + ((scene.floorCal && scene.floorCal.w) || 10) + '" style="' + inCss + '">ft &nbsp;·&nbsp; right<input id="_cd" type="number" min="1" value="' + ((scene.floorCal && scene.floorCal.d) || 12) + '" style="' + inCss + '">ft</div><div style="margin-top:11px;display:flex;gap:8px;justify-content:center"><button id="_cset" class="btn" style="padding:5px 12px">✓ Set floor</button><button id="_ccan" class="btn" style="padding:5px 12px">✕</button></div>'
     calForm.querySelector('#_cset').onclick = () => { const w = +calForm.querySelector('#_cw').value || 10, d = +calForm.querySelector('#_cd').value || 12, p = calibPts.slice(0, 6), cal = calibrateRoom(p[0], p[1], p[2], p[3], p[4], p[5], w, d); if (!cal) { calForm.innerHTML = '<div style="color:#e06b6b;max-width:200px">Hmm, couldn\'t read that corner — the taps may be off. Redo the 6 corners.</div><button id="_cretry" class="btn" style="margin-top:9px;padding:5px 12px">↻ Redo</button>'; calForm.querySelector('#_cretry').onclick = () => { calForm.style.display = 'none'; calibPts = []; setMode('calibrate') }; return } scene.floorH = cal.floorH; scene.ceilH = cal.ceilH; scene.vpVert = cal.vpVert; scene.floorCal = { w, d, corner: p }; calForm.style.display = 'none'; setMode('select'); onChange(scene); render() }
     calForm.querySelector('#_ccan').onclick = () => { calForm.style.display = 'none'; setMode('select') }
   }
@@ -155,14 +160,14 @@ export function mountSketch(container, opts) {
   function maybeCoach() { let seen; try { seen = localStorage.getItem('amni_sketch_seen') } catch (e) {} coach.style.display = (!seen && !scene.nodes.length) ? 'block' : 'none' }
   function updateBanner() {
     let txt = '', col = '', btn = ''
-    if (mode === 'calibrate') { txt = calibPts.length >= 6 ? '✓ Now tell me the wall sizes →' : '👆 Tap ' + CAL_STEPS[calibPts.length] + '  (' + (calibPts.length + 1) + '/6)'; col = '#2a6ec2'; btn = '✕ Cancel' }
+    if (mode === 'calibrate') { txt = calibPts.length >= 6 ? '✨ Drag the numbered dots onto the exact corners, then confirm' : '👆 Tap ' + CAL_STEPS[calibPts.length] + '  (' + (calibPts.length + 1) + '/6)'; col = '#2a6ec2'; btn = calibPts.length >= 6 ? '✓ Wall sizes' : '✕ Cancel' }
     else if (mode.startsWith('place:')) { const p = trade.palette.find(z => z.type === mode.slice(6)) || {}; txt = '👆 Tap the photo where the ' + (p.glyph || '') + ' ' + (p.label || 'item') + ' goes'; col = '#2a6ec2'; btn = '✓ Done' }
     else if (mode.startsWith('connect:')) { const t = trade.runTypes.find(z => z.type === mode.slice(8)) || {}; txt = connectFrom ? '👆 Now tap what it connects to' : '👆 Tap the two things to join with the ' + (t.label || 'line'); col = '#2f8f4a'; btn = '✕ Cancel' }
     else if (!scene.nodes.length) { txt = '👇 Pick something below, then tap the photo to place it'; col = '#4a4f58' }
     else { banner.style.display = 'none'; return }
     banner.style.display = 'flex'; banner.style.background = col; banner.style.color = '#fff'
     banner.innerHTML = '<span>' + txt + '</span>' + (btn ? '<button style="background:rgba(255,255,255,.25);border:0;color:#fff;border-radius:12px;padding:3px 11px;cursor:pointer;font-weight:600;font-size:12px">' + btn + '</button>' : '')
-    const b = banner.querySelector('button'); if (b) b.onclick = () => setMode('select')
+    const b = banner.querySelector('button'); if (b) b.onclick = () => { mode === 'calibrate' && calibPts.length >= 6 ? showCalForm() : setMode('select') }
   }
   const hint = document.createElement('div'); hint.style.cssText = 'color:var(--mut);font-size:11px;margin-top:6px'; left.appendChild(hint)
   function applyBg() { svgWrap.style.backgroundImage = scene.bgImage ? `linear-gradient(rgba(13,15,18,.34),rgba(13,15,18,.34)), url(${scene.bgImage})` : 'none' }
@@ -209,7 +214,7 @@ export function mountSketch(container, opts) {
     const nE = closestAttr(e.target, 'data-node'), nodeId = nE && nE.getAttribute('data-node')
     const rE = closestAttr(e.target, 'data-run'), runId = rE && rE.getAttribute('data-run')
     const bE = closestAttr(e.target, 'data-bend'), bendId = bE && bE.getAttribute('data-bend')
-    if (mode === 'calibrate') { if (calibPts.length < 6) calibPts.push([x, y]); if (calibPts.length >= 6) showCalForm(); render(); return }
+    if (mode === 'calibrate') { const ci = calibPts.findIndex(p => Math.hypot(p[0] - x, p[1] - y) < 18); if (ci >= 0) { drag = { cal: ci }; try { svg.setPointerCapture(e.pointerId) } catch (z) {} render(); return } if (calibPts.length < 6) calibPts.push([x, y]); if (calibPts.length >= 6) showCalForm(); render(); return }
     if (mode.startsWith('place:')) { const type = mode.slice(6); let nx = clamp(snap(x), W), ny = clamp(snap(y), H), props = {}; if (scene.floorH) { const f = applyH(invert3(scene.floorH), [x, y]), cf = clampFloor(f[0], f[1]), sn = applySnap(type, cf[0], cf[1], 0); props = { fx: sn.fx, fz: sn.fz, rot: sn.rot }; nx = x; ny = y }; addNode(scene, type, nx, ny, props); changed(); return }
     if (mode.startsWith('connect:')) {
       if (nodeId) { if (!connectFrom) { connectFrom = nodeId; render() } else if (connectFrom !== nodeId) { addRun(scene, mode.slice(8), connectFrom, nodeId); connectFrom = null; changed() } }
@@ -221,8 +226,8 @@ export function mountSketch(container, opts) {
     else if (runId) { selected = { kind: 'run', id: runId }; render() }
     else { selected = null; render() }
   })
-  svg.addEventListener('pointermove', e => { if (!drag) return; const [x, y] = ptOf(e); if (drag.bend) { const r = scene.runs.find(rr => rr.id === drag.bend); if (r) { r.waypoints = [[clamp(snap(x), W), clamp(snap(y), H)]]; render() } return } const n = nodeById(scene, drag.id); if (!n) return; if (scene.floorH && n.props && n.props.fx != null) { const f = applyH(invert3(scene.floorH), [x - drag.dx, y - drag.dy]), cf = clampFloor(f[0], f[1]), sn = applySnap(n.type, cf[0], cf[1], n.props.rot || 0); n.props.fx = sn.fx; n.props.fz = sn.fz; n.props.rot = sn.rot; const px = nodePix(n); n.x = px[0]; n.y = px[1] } else { n.x = clamp(snap(x - drag.dx), W); n.y = clamp(snap(y - drag.dy), H); if (n.props && n.props.fx != null) { const sp = scene.scalePxPerFt || 24; n.props.fx = n.x / sp; n.props.fz = n.y / sp } } render() })
-  svg.addEventListener('pointerup', () => { if (drag) { drag = null; changed() } })
+  svg.addEventListener('pointermove', e => { if (!drag) return; const [x, y] = ptOf(e); if (drag.cal != null) { calibPts[drag.cal] = [x, y]; render(); return } if (drag.bend) { const r = scene.runs.find(rr => rr.id === drag.bend); if (r) { r.waypoints = [[clamp(snap(x), W), clamp(snap(y), H)]]; render() } return } const n = nodeById(scene, drag.id); if (!n) return; if (scene.floorH && n.props && n.props.fx != null) { const f = applyH(invert3(scene.floorH), [x - drag.dx, y - drag.dy]), cf = clampFloor(f[0], f[1]), sn = applySnap(n.type, cf[0], cf[1], n.props.rot || 0); n.props.fx = sn.fx; n.props.fz = sn.fz; n.props.rot = sn.rot; const px = nodePix(n); n.x = px[0]; n.y = px[1] } else { n.x = clamp(snap(x - drag.dx), W); n.y = clamp(snap(y - drag.dy), H); if (n.props && n.props.fx != null) { const sp = scene.scalePxPerFt || 24; n.props.fx = n.x / sp; n.props.fz = n.y / sp } } render() })
+  svg.addEventListener('pointerup', () => { if (drag) { const wasCal = drag.cal != null; drag = null; wasCal ? render() : changed() } })
   svg.addEventListener('dblclick', e => { const bE = closestAttr(e.target, 'data-bend'), rE = closestAttr(e.target, 'data-run'), rid = (bE && bE.getAttribute('data-bend')) || (rE && rE.getAttribute('data-run')); if (rid) { const r = scene.runs.find(rr => rr.id === rid); if (r && r.waypoints && r.waypoints.length) { r.waypoints = []; changed(); return } } const nE = closestAttr(e.target, 'data-node'), id = nE && nE.getAttribute('data-node'); if (!id) return; const n = nodeById(scene, id); if (!n) return; if (trade.onNodeActivate && trade.onNodeActivate(n)) { changed(); return } const p = trade.palette.find(z => z.type === n.type); if (p && p.dims && p.shape !== 'marker' && p.shape !== 'round') { n.props.rot = ((n.props.rot || 0) + 90) % 360; changed() } })
   window.addEventListener('keydown', e => {
     if (container.offsetParent === null) return
