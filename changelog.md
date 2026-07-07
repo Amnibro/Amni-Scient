@@ -1,5 +1,8 @@
 # Changelog 
 
+## Amni-Learn v5.38.3 — Daily Curriculum: skip counting - 2026-07-07
+- New Skip Counting worksheet in the K-2 rotation: three rows of counting circles (by 2s, 5s, and 10s) with missing numbers to fill in — a TEKS/B.E.S.T. staple. Fully answer-keyed.
+
 ## Amni-Learn v5.38.2 — Daily Curriculum: word problems - 2026-07-07
 - New Word Problems worksheet rotating into the math slot for ages 5-10: simple add/subtract stories for K-2, money and multiplication for grades 2-3 (pencils, change, crayon boxes), and true multi-step problems for grades 4-5 (buy N at $X, pay with $Y; rows-times-plants minus wilted; tickets plus snacks). All integer-safe by construction and fully covered by the answer key.
 

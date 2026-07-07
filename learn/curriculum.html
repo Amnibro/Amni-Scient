@@ -120,6 +120,9 @@
 .ans-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px 24px;font-size:.8rem;color:#1c2026;font-family:'JetBrains Mono',monospace}
 .ans-grid .full{grid-column:1/-1;font-family:inherit}
 .ans-q{color:#6a7180;font-family:inherit;font-size:.75rem}
+.skip-row{display:flex;gap:7px;margin:.2rem 0 .8rem;flex-wrap:wrap}
+.skip-cell{width:44px;height:44px;border-radius:50%;border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:.95rem;color:#1c2026}
+.skip-cell.skip-blank{border-style:dashed;border-color:#7d8595}
 .supply-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px 26px;margin:.6rem 0 1rem}
 .supply-item{display:flex;gap:10px;align-items:center;font-size:.95rem;color:#1c2026}
 .supply-box{width:22px;height:22px;border:2px solid #444;border-radius:5px;flex-shrink:0}
@@ -193,6 +196,7 @@ body{background:#fff!important;color:#111!important;padding-top:0!important}
 .pn-q{border-color:#555!important}
 .sing-line{border-color:#999!important;background:#fff!important}
 .plan-row{border-color:#333!important;border-left-color:#333!important}
+.skip-cell{border-color:#555!important}
 *{print-color-adjust:exact;-webkit-print-color-adjust:exact}
 @page{size:letter;margin:.5in}
 }
@@ -433,6 +437,19 @@ var decAdd=function(rnd,count){var out=[];for(var i=0;i<count;i++){var a=(10+Mat
 var eqProbs=function(rnd,count){var out=[];for(var i=0;i<count;i++){var a=1+Math.floor(rnd()*12),x=1+Math.floor(rnd()*12);out.push('x + '+a+' = '+(a+x));ANS.push('x + '+a+' = '+(a+x)+' → x = '+x);}return out;};
 var pctOf=function(rnd,count){var out=[];for(var i=0;i<count;i++){var pick=[[10,10],[20,5],[25,4],[50,2]][Math.floor(rnd()*4)],ans=2+Math.floor(rnd()*18);out.push(pick[0]+'% of '+(ans*pick[1])+' =');ANS.push(pick[0]+'% of '+(ans*pick[1])+' = '+ans);}return out;};
 var meanOf=function(rnd,count){var out=[];for(var i=0;i<count;i++){var m=7+Math.floor(rnd()*8),d1=Math.floor(rnd()*5)-2,d2=Math.floor(rnd()*5)-2,d3=Math.floor(rnd()*5)-2,n4=4*m-(3*m+d1+d2+d3);out.push('Mean of '+(m+d1)+', '+(m+d2)+', '+(m+d3)+', '+n4+' =');ANS.push('Mean('+(m+d1)+','+(m+d2)+','+(m+d3)+','+n4+') = '+m);}return out;};
+var skipCountHTML=function(rnd){
+var out='';
+var steps=pickN(rnd,[2,5,10],3);
+steps.forEach(function(s){
+var blanks=pickN(rnd,[2,3,4,5,6,7],3).sort(function(a,b){return a-b;});
+var miss=[];
+var cells='';
+for(var i=0;i<8;i++){var v=s*(i+1),isB=blanks.indexOf(i)>=0;if(isB)miss.push(v);cells+='<span class="skip-cell'+(isB?' skip-blank':'')+'">'+(isB?'':v)+'</span>';}
+ANS.push('Skip by '+s+': '+miss.join(', '));
+out+='<p class="prac-p" style="margin-bottom:.15rem">Count by <strong>'+s+'s</strong>:</p><div class="skip-row">'+cells+'</div>';
+});
+return '<h4 class="prac-h">Skip Counting</h4><p class="prac-p">Fill in the missing numbers:</p>'+out;
+};
 var WPN=['Sam','Mia','Leo','Ava','Max','Zoe','Ben','Lily'];
 var wordProbsHTML=function(rnd,band){
 var out=[],i;
@@ -597,7 +614,8 @@ return colorCountHTML(rnd);
 };
 var mathBlockHTML=function(band,rnd){
 if(band==='k56'){
-var kv=Math.floor(rnd()*5);
+var kv=Math.floor(rnd()*6);
+if(kv===5)return skipCountHTML(rnd);
 if(kv===0){var it=addSub(rnd,6).map(function(s){return '<div class="prob">'+s+' <span class="blank"></span></div>';}).join('');return '<h4 class="prac-h">Math Practice</h4><div class="prob-grid">'+it+'</div>';}
 if(kv===1){var mn=missingNum(rnd,6).map(function(p){return '<div class="prob">'+p.pre+'<span class="blank"></span>'+p.post+'</div>';}).join('');return '<h4 class="prac-h">Find the Missing Number</h4><div class="prob-grid">'+mn+'</div>';}
 if(kv===2){var cp=comparePairs(rnd,4).map(function(p){return '<div class="prob">'+p[0]+' &nbsp;or&nbsp; '+p[1]+'</div>';}).join('');return '<h4 class="prac-h">Circle the Bigger Number</h4><div class="prob-grid">'+cp+'</div>';}

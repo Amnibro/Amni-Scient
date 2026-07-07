@@ -1,5 +1,9 @@
 # Architecture Map — amni-scient.com
 
+## v5.38.3 Amni-Learn Daily Curriculum — skip counting (/loop iter 4 — named queue COMPLETE, 2026-07-07)
+- `skipCountHTML(rnd)`: 3 rows (steps shuffled from 2/5/10), 8 circle cells each (`.skip-cell`, dashed `.skip-blank` ×3 at positions 2-7 so the pattern anchor stays visible), ANS-keyed. k56 math variant #6 (dice *6).
+- Verified: rows/blanks/key-divisibility/cell-sequence all asserted, h≈534px. The /loop "through all of them" named queue (planner→answer key→word problems→skip counting) is now fully shipped as v5.38.0-.3.
+
 ## v5.38.2 Amni-Learn Daily Curriculum — word problems (/loop iter 3, 2026-07-07)
 - `wordProbsHTML(rnd,band)`: template word problems w/ neutral name pool (WPN), 3/sheet, integer-safe by construction (change=paid−cost with paid>cost; wilted<planted; k56 sums within 20). Slotted as 5th math variant for k56/g78/g910 (variant dice now *5 — daily rotations shifted, expected). Answers ANS.push'd ("Word problem N: $X").
 - Verified 12 nonces/band: rotates in for all 3 bands, 3 keyed answers every time, story-number cross-check 0 suspects, no overflow.
