@@ -1,5 +1,10 @@
 # Changelog 
 
+## Amni-Learn v5.45.0 — Module /loop iter 1: tracing actually teaches tracing - 2026-07-10
+- **Tracing scribble-pass fixed**: the checker only measured how much of the letter got covered (32-45%), with no penalty for ink outside it — any big scribble passed. Now dual-gate: letter coverage (45% L1 / 55% L2+) AND precision — the share of drawn ink that lands on the letter or a small halo around it (55% L1 / 68% L2+, halo = letter re-stroked at max(36, fontSize×0.12)px so honest edge-overshoot still counts).
+- **Teaching feedback**: empty canvas → "Trace the letter first! ✏️"; low coverage → "Cover the whole letter — trace every part!"; low precision → "Oops — stay on the letter, not outside it!" — tells the child what to fix instead of a generic "Keep Trying".
+- Test hook `window.__traceT` (cov/prec/ink) gated by sessionStorage `trace-test`. Verified headless: scribble = 100% coverage but 18.9% precision → rejected; 206-point on-glyph trace → cov 1.0 prec 1.0 → passes; empty → prompt. Zero page errors. SW cache v1256→v1257.
+
 ## Amni-Calc v5.44.0 — Seals rebalance, sidebar follows you, fresh solve targets - 2026-07-10
 - Seals module rebalanced like springs/bolts: MATERIAL PROPERTIES moved under the gland config (it's a selection aid) — columns now 3/3 instead of 2-vs-5.
 - Sidebar auto-scrolls the active module into view (on load-restore and every tab click) — the current tab was off-screen in the 30+ list whenever you worked low in a category.

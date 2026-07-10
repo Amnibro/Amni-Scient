@@ -1170,7 +1170,7 @@
   try{new MutationObserver(_fitSoon).observe($$('#app'),{childList:true,subtree:true});}catch(e){}
   const tCanvas = $$('#trace-canvas');
   const tCtx = tCanvas.getContext('2d', { willReadFrequently: true });
-  let tIsDrawing = false, tCurrentTarget = 0, tTargets = [], maskData = null, tMode = 'trace', drawColor = '#e74c3c', drawBrush = 'pen';
+  let tIsDrawing = false, tCurrentTarget = 0, tTargets = [], maskData = null, tHaloData = null, tMode = 'trace', drawColor = '#e74c3c', drawBrush = 'pen';
   function getTracingTargets() {
       const shuffle=a=>{const x=[...a];for(let i=x.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[x[i],x[j]]=[x[j],x[i]];}return x;};
       if(currentLevel === 1) return shuffle([...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split(''), ...'0123456789'.split(''), '★', '❤', '▲', '■', '●', '♦', '♣', '♠']);
@@ -1194,11 +1194,16 @@
   $$('#t-clear').addEventListener('click', () => drawTarget(tTargets[tCurrentTarget]));
   $$('#t-next').addEventListener('click', () => {
     const currentData = tCtx.getImageData(0,0,tCanvas.width,tCanvas.height).data;
-    let targetPixels = 0, filledPixels = 0;
+    let targetPixels = 0, filledPixels = 0, inkPixels = 0, inkOnTarget = 0;
     for(let i=0; i<maskData.length; i+=4) {
+      const isInk = currentData[i]<100 && currentData[i+2]>150;
       if(maskData[i] > 200 && maskData[i] < 255) { targetPixels++; if(currentData[i]<100||currentData[i+1]<100||currentData[i+2]<100) filledPixels++; }
+      if(isInk) { inkPixels++; if(tHaloData && tHaloData[i]>200) inkOnTarget++; }
     }
-    if((filledPixels/Math.max(1,targetPixels)) > (currentLevel===1?0.32:0.45)) {
+    const tCov = filledPixels/Math.max(1,targetPixels), tPrec = inkOnTarget/Math.max(1,inkPixels);
+    if(sessionStorage.getItem('trace-test')==='1') window.__traceT = {cov:tCov, prec:tPrec, ink:inkPixels};
+    if(!inkPixels) { showFeedback('Trace the letter first! ✏️', '#e67e22'); return; }
+    if(tCov > (currentLevel===1?0.45:0.55) && tPrec > (currentLevel===1?0.55:0.68)) {
       const tracedKey='trace-count-L'+currentLevel;
       const cnt=parseInt(sessionStorage.getItem(tracedKey)||'0')+1;
       sessionStorage.setItem(tracedKey,cnt);
@@ -1207,7 +1212,7 @@
       if(hit){if(typeof spawnConfetti==='function')spawnConfetti(window.innerWidth/2,window.innerHeight/3,hit>=100?120:60);showFeedback(`🏆 ${hit} traces!`,'#f1c40f');}
       else{showFeedback(`Awesome! (#${cnt})`,'#2ecc71');}
       addScore(1); tCurrentTarget = tCurrentTarget+1; if(tCurrentTarget>=tTargets.length){tTargets=getTracingTargets();tCurrentTarget=0;} setTimeout(()=>drawTarget(tTargets[tCurrentTarget]), 1000);
-    } else { showFeedback('Keep Trying!', '#e74c3c'); resetStreak(); }
+    } else { showFeedback(tCov <= (currentLevel===1?0.45:0.55) ? 'Cover the whole letter — trace every part!' : 'Oops — stay on the letter, not outside it!', '#e74c3c'); resetStreak(); }
   });
   function drawTarget(char) {
     tCtx.clearRect(0, 0, tCanvas.width, tCanvas.height); tCtx.fillStyle = '#eeeeee';
@@ -1224,6 +1229,9 @@
       tCtx.font = `bold ${fontSize}px "Comic Neue", Arial`;
     }
     tCtx.textAlign = 'center'; tCtx.textBaseline = 'middle';
+    tCtx.save(); tCtx.strokeStyle = '#eeeeee'; tCtx.lineWidth = Math.max(36, fontSize*0.12); tCtx.lineJoin = 'round'; tCtx.strokeText(text, tCanvas.width/2, tCanvas.height/2+20); tCtx.fillText(text, tCanvas.width/2, tCanvas.height/2+20); tCtx.restore();
+    tHaloData = tCtx.getImageData(0,0,tCanvas.width,tCanvas.height).data;
+    tCtx.clearRect(0, 0, tCanvas.width, tCanvas.height);
     tCtx.fillText(text, tCanvas.width/2, tCanvas.height/2+20);
     maskData = tCtx.getImageData(0,0,tCanvas.width,tCanvas.height).data;
     tCtx.save(); tCtx.strokeStyle = '#8d97a3'; tCtx.lineWidth = Math.max(2,fontSize*0.012); tCtx.lineJoin = 'round'; tCtx.setLineDash([fontSize*0.06, fontSize*0.05]); tCtx.strokeText(text, tCanvas.width/2, tCanvas.height/2+20); tCtx.setLineDash([]); tCtx.restore();
