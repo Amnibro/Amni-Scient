@@ -1,5 +1,10 @@
 # Changelog 
 
+## Amni-Calc v5.43.0 — Goal-seek over dropdowns + sticky quick-nav + uniform card rhythm - 2026-07-10
+- **⌖ SOLVE FOR now handles dropdowns** (marked ▾ in the BY VARYING list): every option is swept — inline onchange side-effects honored so coating→K style pickers work — and the option whose output lands closest to the target wins, with a "(nearest available — no exact match)" tag when the discrete catalog can't hit it exactly. Ask "which bolt SIZE gives me 25 kN preload" or "which bearing type hits 40 000 h" directly. Unit selectors are excluded (changing display units isn't a design variable).
+- **Sticky quick-nav**: the card chips now pin to the top of the module while you scroll (with scroll-margin so a jumped-to card never hides under them).
+- **Consistent card rhythm**: one uniform gap between all cards in every module — the mix of inline margin-tops (static 1rem, injected 0.6rem, none) is normalized away. Cache-buster calc-engineer.js?v=eng2.
+
 ## Amni-Calc v5.42.0 — Springs/Belleville packs, bolts fine threads, flicker-free results - 2026-07-10
 - **Belleville springs rebuilt on real physics**: found and fixed a wrong Almen-Laszlo implementation (`ratio·(ratio−0.5)·ratio` went NEGATIVE for DIN A-series discs with h₀/t<0.5) — replaced with the standard `F(s)=C·t³·s·[(h₀−s)(h₀−s/2)/t²+1]`, plus real disc inputs (D_e, D_i, t, h₀ — previously D_i was hardcoded 0.51·D_e and preset dims were silently ignored), numeric peak detection for snap-through discs, and bisection deflection solve. Node-verified against catalog magnitudes.
 - **STACK / PACK BUILDER**: single / series-alternating / parallel-nested / series-parallel packs (n_s × n_p) with k_eq, stack deflection (nonlinear per-disc for belleville), free stack height L₀ = n_s(h₀+n_p·t), solid height, and force capacity.

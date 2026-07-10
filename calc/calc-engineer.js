@@ -55,9 +55,19 @@ var v2=same?conv(p.n,p.u,o.du):p.n,dq=same?Math.abs(conv(p.n+p.q,p.u,o.du)-v2):p
 return{v:v2,dq:dq,el:it}}
 function runSolve(pn,card){var o=pn._outs[+pn.querySelector('.es-out').value],inp=document.getElementById(pn.querySelector('.es-in').value),t=parseFloat(pn.querySelector('.es-val').value),st=pn.querySelector('.es-st'),scope=pn._scope,fn=pn._fn;
 if(!o||!inp||!isFinite(t)){st.textContent='enter a numeric target value first';return}
-var x0=parseFloat(inp.value)||0,lastQ=0;
-var set=function(x){inp.value=x};
+var lastQ=0;
 var get=function(){try{window[fn]()}catch(e){return NaN}var r=readOut(scope,o);if(!r)return NaN;lastQ=r.dq;return r.v};
+if(inp.tagName==='SELECT'){
+var orig=inp.value,best=null;
+var setOpt=function(val){inp.value=val;if(typeof inp.onchange==='function')try{inp.onchange({target:inp});}catch(e){}};
+for(var oi=0;oi<inp.options.length;oi++){setOpt(inp.options[oi].value);var y2=get();if(!isFinite(y2))continue;var e2=Math.abs(y2-t);(!best||e2<best.e)&&(best={e:e2,v:inp.options[oi].value,lbl:inp.options[oi].textContent.trim(),y:y2})}
+if(!best){setOpt(orig);try{window[fn]()}catch(e){}st.textContent='✗ no option produces a numeric value for that output';return}
+setOpt(best.v);inp.dispatchEvent(new Event('change',{bubbles:true}));try{window[fn]()}catch(e){}
+st.textContent='✓ closest option: '+best.lbl+'  →  '+o.lbl+' = '+fmt(best.y)+(o.du?' '+o.du:'')+(best.e>Math.max(Math.abs(t)*0.05,lastQ*2)?'  (nearest available — no exact match)':'');
+var rs=readOut(scope,o);rs&&rs.el&&(rs.el.classList.add('eng-flash'),setTimeout(function(){rs.el.classList.remove('eng-flash')},1500));
+return}
+var x0=parseFloat(inp.value)||0;
+var set=function(x){inp.value=x};
 var res=solveFor(set,get,t,x0,function(){return lastQ});
 if(res.ok){inp.value=fmt(res.x);inp.dispatchEvent(new Event('input',{bubbles:true}));inp.dispatchEvent(new Event('change',{bubbles:true}));try{window[fn]()}catch(e){}
 st.textContent='✓ '+fieldLabel(inp)+' = '+fmt(res.x)+'  →  '+o.lbl+' = '+fmt(res.y)+(o.du?' '+o.du:'');
@@ -69,11 +79,12 @@ try{window[fn]()}catch(e){}
 scan();
 var scope=resScope(card,vw),outs=[];
 scope.querySelectorAll('.result-item').forEach(function(it,i){var vl=it.querySelector('.val');if(!vl||vl.children.length)return;var p=parseVal(vl.textContent);if(!p)return;outs.push({i:i,lbl:it.querySelector('.lbl').textContent.trim(),du:vl.dataset.du||p.u||''})});
-var inps=[].slice.call(card.querySelectorAll('input[type="number"]')).filter(function(x){return x.id&&!x.closest('.eng-solve')});
-inps.length||(inps=[].slice.call(vw.querySelectorAll('input[type="number"]')).filter(function(x){return x.id&&!x.closest('.eng-solve')}));
+var elig=function(x){return x.id&&!x.closest('.eng-solve')&&!(x.tagName==='SELECT'&&(/-u$/.test(x.id)||x.classList.contains('u-sel')||x.options.length<2))};
+var inps=[].slice.call(card.querySelectorAll('input[type="number"],select')).filter(elig);
+inps.length||(inps=[].slice.call(vw.querySelectorAll('input[type="number"],select')).filter(elig));
 if(!outs.length||!inps.length){btn.title='compute once first — no numeric outputs to target yet';return}
 pn=document.createElement('div');pn.className='eng-solve open';
-pn.innerHTML='<div class="row"><div class="field"><label>TARGET OUTPUT</label><select class="es-out">'+outs.map(function(o,k){return'<option value="'+k+'">'+esc(o.lbl)+(o.du?' ('+esc(o.du)+')':'')+'</option>'}).join('')+'</select></div><div class="field"><label>= VALUE</label><input type="number" class="es-val" step="any"></div><div class="field"><label>BY VARYING</label><select class="es-in">'+inps.map(function(x){return'<option value="'+esc(x.id)+'">'+esc(fieldLabel(x))+'</option>'}).join('')+'</select></div><button type="button" class="btn btn-sm es-go">SOLVE</button></div><div class="eng-note es-st">goal seek: pick an output, enter the value you need (in the unit shown), choose which input to adjust</div>';
+pn.innerHTML='<div class="row"><div class="field"><label>TARGET OUTPUT</label><select class="es-out">'+outs.map(function(o,k){return'<option value="'+k+'">'+esc(o.lbl)+(o.du?' ('+esc(o.du)+')':'')+'</option>'}).join('')+'</select></div><div class="field"><label>= VALUE</label><input type="number" class="es-val" step="any"></div><div class="field"><label>BY VARYING</label><select class="es-in">'+inps.map(function(x){return'<option value="'+esc(x.id)+'">'+esc(fieldLabel(x))+(x.tagName==='SELECT'?' ▾':'')+'</option>'}).join('')+'</select></div><button type="button" class="btn btn-sm es-go">SOLVE</button></div><div class="eng-note es-st">goal seek: pick an output, enter the value you need (in the unit shown), choose which input to adjust — ▾ marks dropdowns (every option is tried, closest wins)</div>';
 card.appendChild(pn);btn._engPanel=pn;pn._outs=outs;pn._scope=scope;pn._fn=fn;
 pn.querySelector('.es-go').onclick=function(){runSolve(pn,card)}}
 function injectSolve(){document.querySelectorAll('.view button[onclick]').forEach(function(btn){
