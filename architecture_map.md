@@ -1,5 +1,9 @@
 # Architecture Map — amni-scient.com
 
+## v5.47.0 Amni-Calc Placeholder consistency + Enter-to-solve (2026-07-10, /loop iter 4)
+- index.html: all 20 static results placeholders -> "Results compute live as you type." (input panels) / "Results compute live from whichever card you use." (shared-results modules) — the old strings referenced Analyze/Compute buttons that live-compute hides.
+- calc-engineer.js (`?v=eng5`): Enter in `.es-val` triggers runSolve.
+
 ## v5.46.0 Amni-Calc Module descriptions + dropdown runners-up (2026-07-10, /loop iter 3)
 - calc-engineer.js (`?v=eng4`): `DESC` map (32 view-keyed one-liners, inputs→outputs) + `injectDesc()` inserts `.mod-desc` <p> after each view h2 (before the sticky qn-row; injectQuickNav anchors after `.mod-desc` when present). SELECT goal-seek collects ALL options into `cands`, sorts by |y−t|, applies best, and prints top-2 runners-up in the status line (option labels stripped of parenthetical suffixes).
 - index.html: `.mod-desc` CSS (dim .72rem, tucked -.5rem under h2).

@@ -1,5 +1,9 @@
 # Changelog 
 
+## Amni-Calc v5.47.0 — Honest placeholders + Enter-to-solve - 2026-07-10
+- All 20 results-panel placeholders normalized: the mix of "Configure bolt and click Analyze" / "Enter values and compute." / "Choose a mode." (referring to buttons that live-compute hides) is now two accurate strings — "Results compute live as you type." and, for shared-results modules, "Results compute live from whichever card you use."
+- Pressing Enter in the goal-seek VALUE field runs the solve. Cache-buster calc-engineer.js?v=eng5.
+
 ## Amni-Calc v5.46.0 — Every module says what it does + dropdown solve runners-up - 2026-07-10
 - One-line description under every module header: inputs → outputs at a glance ("Grade + thread size + loads → preload, joint clamp, torque spec, pattern & tightening sequence"), all 32 modules — first-time navigation no longer requires opening cards to find the right tool. Sidebar search already indexes these.
 - Dropdown goal-seek now reports the two runners-up next to the winner ("closest: M12 → 24 810 N · runners-up: M12x1.25 → 25 130, M14 → 33 750") so catalog neighbors are visible without re-solving. Cache-buster calc-engineer.js?v=eng4.

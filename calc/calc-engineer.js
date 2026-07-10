@@ -90,7 +90,8 @@ if(!outs.length||!inps.length){btn.title='compute once first — no numeric outp
 pn=document.createElement('div');pn.className='eng-solve open';
 pn.innerHTML='<div class="row"><div class="field"><label>TARGET OUTPUT</label><select class="es-out">'+outs.map(function(o,k){return'<option value="'+k+'">'+esc(o.lbl)+(o.du?' ('+esc(o.du)+')':'')+'</option>'}).join('')+'</select></div><div class="field"><label>= VALUE</label><input type="number" class="es-val" step="any"></div><div class="field"><label>BY VARYING</label><select class="es-in">'+inps.map(function(x){return'<option value="'+esc(x.id)+'">'+esc(fieldLabel(x))+(x.tagName==='SELECT'?' ▾':'')+'</option>'}).join('')+'</select></div><button type="button" class="btn btn-sm es-go">SOLVE</button></div><div class="eng-note es-st">goal seek: pick an output, enter the value you need (in the unit shown), choose which input to adjust — ▾ marks dropdowns (every option is tried, closest wins)</div>';
 card.appendChild(pn);btn._engPanel=pn;pn._outs=outs;pn._scope=scope;pn._fn=fn;
-pn.querySelector('.es-go').onclick=function(){runSolve(pn,card)}}
+pn.querySelector('.es-go').onclick=function(){runSolve(pn,card)};
+pn.querySelector('.es-val').addEventListener('keydown',function(e){e.key==='Enter'&&(e.preventDefault(),runSolve(pn,card))})}
 function injectSolve(){document.querySelectorAll('.view button[onclick]').forEach(function(btn){
 if(btn._engDone)return;btn._engDone=1;
 var fn=calcName(btn);if(!fn||typeof window[fn]!=='function')return;
