@@ -1,0 +1,42 @@
+let pass=0,fail=0;
+const ok=(c,m)=>{c?pass++:(fail++,console.log('FAIL: '+m))};
+const ap=(a,b,m,r)=>ok(typeof a==='number'&&isFinite(a)&&Math.abs(a-b)<=Math.abs(b)*(r||1e-6),m+' got '+a+' want '+b);
+function bell(De,Di,t,h0){
+  const E=210000,nu=0.3,a=De/2,b=Di/2,M=6/Math.PI*Math.pow(a/b-1,2)/Math.log(a/b)/Math.pow(a/b,2);
+  const CAL=4*E/((1-nu*nu)*M*De*De);
+  const Fs=s=>CAL*t*t*t*s*((h0-s)*(h0-s/2)/(t*t)+1);
+  const k0=CAL*t*t*t*(h0*h0/(t*t)+1);
+  let sPk=h0,FPk=Fs(h0),prevF=0;
+  for(let i=1;i<=400;i++){const s2=h0*i/400,f2=Fs(s2);if(f2<prevF){sPk=h0*(i-1)/400;FPk=prevF;break;}prevF=f2;}
+  const dAt=Ff=>{if(!(Ff>0))return 0;if(Ff>=FPk)return sPk;let lo=0,hi=sPk;for(let i=0;i<80;i++){const m2=(lo+hi)/2;Fs(m2)<Ff?lo=m2:hi=m2;}return(lo+hi)/2;};
+  return{Fs,k0,sPk,FPk,dAt};
+}
+const A=bell(31.5,16.3,1.75,0.7);
+ok(A.Fs(0.7)>0,'A31.5 flat force positive (old formula gave negative)');
+ap(A.Fs(0.7),5170,'A31.5 F_flat',0.01);
+ap(A.k0,8568,'A31.5 k0',0.01);
+ok(A.sPk===0.7&&Math.abs(A.FPk-A.Fs(0.7))<1e-9,'A-series (h0/t=0.4) monotone: peak at flat');
+const dHalf=A.dAt(A.Fs(0.35));ap(dHalf,0.35,'deflection solve round-trips at half-h0',1e-3);
+const C=bell(31.5,16.3,0.8,1.05);
+ok(C.FPk>C.Fs(1.05)*0.999&&C.sPk<=1.05,'C-series peak detected within range');
+ok(C.Fs(1.05)>0,'C31.5 flat force positive');
+const B=bell(50,25.4,2.0,1.4);
+ap(B.Fs(1.4),6058,'B50 F_flat',0.01);
+const snap=bell(40,20.4,0.5,1.6);
+ok(snap.sPk<1.6&&snap.FPk>snap.Fs(1.6),'snap-through disc (h0/t=3.2) peaks before flat');
+const k=100,ns=4,np=2,F=300;
+ap(k*np/ns,50,'helical pack k_eq = k*np/ns');
+ap(F/(k*np/ns),6,'helical pack deflection');
+const dStack=ns*A.dAt(F/np);
+ok(dStack>0&&dStack<ns*A.sPk,'belleville stack deflection positive and bounded by ns*s_peak');
+ok(A.dAt(F/np)<A.dAt(F),'per-disc force split reduces per-disc deflection');
+ok(ns*A.dAt(F)>A.dAt(F),'series multiplies deflection');
+const dBig=ns*A.dAt(4000/np);
+ok(dBig<=ns*A.dAt(4000)/2+1e-9,'degressive curve: half-force deflection <= half of full-force deflection');
+ap(4*(0.7+2*1.75),16.8,'stack free height L0 = ns*(h0+np*t)');
+ap(4*2*1.75,14,'stack solid = ns*np*t');
+const rt=A.dAt(A.Fs(0.52));ap(rt,0.52,'bisection inverse exact on monotone curve',1e-3);
+ok(A.dAt(-5)===0,'negative force clamps to 0');
+ok(A.dAt(A.FPk*2)===A.sPk,'overload clamps to peak deflection');
+console.log(pass+' passed, '+fail+' failed');
+process.exitCode=fail?1:0;

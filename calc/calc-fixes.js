@@ -12,7 +12,8 @@
 const $=id=>document.getElementById(id);
 const v=id=>{const e=$(id);if(!e)return NaN;var r=parseFloat(e.value);return window.__uconv?window.__uconv(e,r):r;};
 const sv=id=>{const e=$(id);return e?e.value:'';};
-function setCardOut(cardId,html){const card=$(cardId);if(!card)return;let out=card.querySelector(':scope > .card-out');if(!out){out=document.createElement('div');out.className='card-out';out.style.marginTop='.5rem';card.appendChild(out);}out.innerHTML=html;}
+const _mr=(el,h)=>{el&&(window.__morphRes?window.__morphRes(el,h):(el.innerHTML=h));};
+function setCardOut(cardId,html){const card=$(cardId);if(!card)return;let out=card.querySelector(':scope > .card-out');if(!out){out=document.createElement('div');out.className='card-out';out.style.marginTop='.5rem';card.appendChild(out);}_mr(out,html);}
 function shoelaceProps(pts){if(!pts||pts.length<3)return null;const n=pts.length;let A=0,Cx=0,Cy=0;for(let i=0;i<n;i++){const j=(i+1)%n,xi=pts[i][0],yi=pts[i][1],xj=pts[j][0],yj=pts[j][1];const cr=xi*yj-xj*yi;A+=cr;Cx+=(xi+xj)*cr;Cy+=(yi+yj)*cr;}A=A/2;const sgn=A<0?-1:1;A=Math.abs(A);if(A<1e-9)return null;Cx=Cx*sgn/(6*A);Cy=Cy*sgn/(6*A);let Ixo=0,Iyo=0;for(let i=0;i<n;i++){const j=(i+1)%n,xi=pts[i][0],yi=pts[i][1],xj=pts[j][0],yj=pts[j][1];const cr=xi*yj-xj*yi;Ixo+=(yi*yi+yi*yj+yj*yj)*cr;Iyo+=(xi*xi+xi*xj+xj*xj)*cr;}Ixo=Math.abs(Ixo*sgn)/12;Iyo=Math.abs(Iyo*sgn)/12;const Ix=Ixo-A*Cy*Cy,Iy=Iyo-A*Cx*Cx;let cTop=0,cBot=0,cR=0,cL=0;pts.forEach(p=>{const dy=p[1]-Cy,dx=p[0]-Cx;if(dy>cTop)cTop=dy;if(-dy>cBot)cBot=-dy;if(dx>cR)cR=dx;if(-dx>cL)cL=-dx;});const cy=Math.max(cTop,cBot),cx=Math.max(cR,cL);return{A,Cx,Cy,Ixx:Ix,Iyy:Iy,Sx:cy>0?Ix/cy:0,Sy:cx>0?Iy/cx:0,rx:A>0?Math.sqrt(Ix/A):0,ry:A>0?Math.sqrt(Iy/A):0,J:Ix+Iy};}
 function saveCustomSection(props,label){if(!props||!isFinite(props.A))return;const rec={label:label||'CUSTOM',A:props.A,Ix:props.Ix||props.Ixx||null,Iy:props.Iy||props.Iyy||null,Sx:props.Sx||props.Sx_top||null,Sy:props.Sy||null,Zx:props.Zx||null,rx:props.rx||null,ry:props.ry||null,J:props.J||null,yC:props.yCentroid||props.Cy||null,xC:props.xCentroid||props.Cx||null,ts:Date.now()};window.__customSection=rec;try{localStorage.setItem('amni-calc-section',JSON.stringify(rec));}catch(_){}injectSectionImportChip();}
 function loadCustomSection(){if(window.__customSection)return window.__customSection;try{const j=localStorage.getItem('amni-calc-section');if(j){const r=JSON.parse(j);window.__customSection=r;return r;}}catch(_){}return null;}
@@ -498,12 +499,20 @@ const BOLT_SIZES={
   'M56':{d:56.0,p:5.50,At:2030,kind:'Metric coarse'},
   'M64':{d:64.0,p:6.00,At:2676,kind:'Metric coarse'}
 };
+function orderedBoltSizes(){
+  const fam=['Metric coarse','Metric fine','Inch UNC','Inch UNF (fine)','Inch UNC (very fine)'];
+  const groups={};
+  Object.entries(BOLT_SIZES).forEach(([k,z])=>{(groups[z.kind]=groups[z.kind]||[]).push([k,z]);});
+  const order=fam.concat(Object.keys(groups).filter(k=>fam.indexOf(k)<0));
+  return order.filter(k=>groups[k]).map(kind=>{const list=groups[kind];list.sort((a,b)=>a[1].d-b[1].d||a[1].p-b[1].p);return[kind,list];});
+}
 function populateBoltDropdowns(){
   const g=$('bl-grade'),s=$('bl-size');
   if(g){g.innerHTML='';Object.keys(BOLT_GRADES).forEach(k=>{const o=document.createElement('option');o.value=k;o.textContent=k+' (Sp '+BOLT_GRADES[k].Sp+' MPa)';g.appendChild(o);});g.value='SAE-5';}
-  if(s){s.innerHTML='';Object.keys(BOLT_SIZES).forEach(k=>{const o=document.createElement('option');o.value=k;o.textContent=k+' (At '+BOLT_SIZES[k].At+' mm²)';s.appendChild(o);});s.value='1/2-13';}
+  const fams=orderedBoltSizes();
+  if(s){s.innerHTML='';fams.forEach(([kind,list])=>{const og=document.createElement('optgroup');og.label=kind.toUpperCase()+' ('+list.length+')';list.forEach(([k,z])=>{const o=document.createElement('option');o.value=k;o.textContent=k+' (At '+z.At+' mm²)';og.appendChild(o);});s.appendChild(og);});s.value='1/2-13';}
   const gtbl=$('bl-grade-tbl');if(gtbl){gtbl.innerHTML=Object.entries(BOLT_GRADES).map(([k,g])=>`<tr><td>${k}</td><td>${g.Sp}</td><td>${g.Sy}</td><td>${g.Su}</td></tr>`).join('');}
-  const stbl=$('bl-size-tbl');if(stbl){stbl.innerHTML=Object.entries(BOLT_SIZES).map(([k,s])=>`<tr><td>${k}</td><td>${s.d}</td><td>${s.p}</td><td>${s.At}</td></tr>`).join('');}
+  const stbl=$('bl-size-tbl');if(stbl){stbl.innerHTML=fams.map(([kind,list])=>`<tr><td colspan="4" style="color:var(--accent);font-size:.65rem;letter-spacing:1px">${kind.toUpperCase()}</td></tr>`+list.map(([k,z])=>`<tr><td>${k}</td><td>${z.d}</td><td>${z.p}</td><td>${z.At}</td></tr>`).join('')).join('');}
 }
 window.calcBolt=function(){
   const grade=BOLT_GRADES[sv('bl-grade')]||BOLT_GRADES['SAE-5'];
@@ -541,10 +550,12 @@ window.calcBolt=function(){
     ['T (K=0.20)',T_K.toFixed(2)+' N·m'],
     ['Separation safety',isFinite(sepFactor)?sepFactor.toFixed(2)+'×':'∞',sepFactor>1.5?'ok':sepFactor>1?'warn':'err']
   ];
-  out.innerHTML='<h3>JOINT RESULTS — '+sv('bl-size')+' '+sv('bl-grade')+' × '+n+'</h3>'+
+  _mr(out,'<h3>JOINT RESULTS — '+sv('bl-size')+' '+sv('bl-grade')+' × '+n+'</h3>'+
     '<div class="result-grid">'+items.map(i=>`<div class="result-item"><div class="lbl">${i[0]}</div><div class="val ${i[2]||''}">${i[1]}</div></div>`).join('')+'</div>'+
     '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem"><strong>Standard:</strong> '+grade.std+'. <strong>Size:</strong> '+size.kind+', d_nom='+size.d+' mm, pitch='+size.p+' mm, A_t='+size.At+' mm².<br><strong>Method:</strong> Shigley joint stiffness — F_b = F_i + C·F_ext, F_j = F_i − (1−C)·F_ext. Stiffness ratio C = k_bolt/(k_bolt + k_member) — typical 0.2–0.4 for steel-on-steel. Preload 75% of proof for reusable; up to 90% for permanent. Torque T=K·F_i·d with K≈0.20 dry, 0.15 lubricated. Interaction IR = (σ/Sp)² + (τ/0.577·Sp)² &lt; 1.</p>'+
-    '<p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem"><strong>Thin-material rule of thumb:</strong> tap depth ≥ 1.0·d in steel, 1.5·d in aluminum, 2.0·d in plastic for full strength. Below 0.5·d the joint will strip the threads before the bolt yields.</p>';
+    '<p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem"><strong>Thin-material rule of thumb:</strong> tap depth ≥ 1.0·d in steel, 1.5·d in aluminum, 2.0·d in plastic for full strength. Below 0.5·d the joint will strip the threads before the bolt yields.</p>');
+  const _bpn=$('bp-n');
+  if(_bpn&&_bpn!==document.activeElement&&parseInt(_bpn.value)!==n){_bpn.value=n;if(typeof window.drawBoltPattern==='function')try{window.drawBoltPattern();}catch(e){}}
   const _bsync={'bts-fi':Fi,'bts-d':size.d,'bts-pitch':size.p,'bts-kn':mu,'bts-c':C,'bts-fext':FextPer};
   let _bany=false;
   for(const _bk in _bsync){const _be=$(_bk),_bv=_bsync[_bk];if(_be&&_be!==document.activeElement&&isFinite(_bv)){const _bs=String(Math.round(_bv*1000)/1000);_be.value!==_bs&&(_be.value=_bs,_bany=true);}}
@@ -734,7 +745,11 @@ const SPRING_PRESETS={
       'M3 stainless utility':{d:0.5,D:4,na:8,nt:10,fl:14,sy:1100,F:5},
       'Pen / latch return':{d:0.7,D:6,na:10,nt:12,fl:20,sy:1200,F:8},
       'M-size (light duty)':{d:1.2,D:10,na:8,nt:10,fl:30,sy:1200,F:25},
+      'Battery contact':{d:0.5,D:6,na:6,nt:8,fl:15,sy:1200,F:3},
+      'Ballpoint click (micro)':{d:0.3,D:2.5,na:12,nt:14,fl:12,sy:1400,F:2},
       'Industrial (medium)':{d:3,D:25,na:8,nt:10,fl:60,sy:1100,F:100},
+      'Automotive valve spring':{d:4.0,D:28,na:6,nt:8,fl:50,sy:1500,F:300},
+      'Furniture / seat':{d:3.5,D:60,na:6,nt:8,fl:120,sy:1200,F:150},
       'Heavy (industrial valve)':{d:5,D:40,na:10,nt:13,fl:120,sy:1300,F:500},
       'Suspension coil':{d:12,D:120,na:8,nt:10,fl:300,sy:1500,F:5000}
     }
@@ -743,34 +758,54 @@ const SPRING_PRESETS={
     label:'EXTENSION',
     items:{
       'Screen door (light)':{d:1.0,D:8,na:30,nt:32,fl:80,sy:1100,F:15},
-      'Garage door (medium)':{d:5,D:50,na:60,nt:62,fl:600,sy:1300,F:300},
-      'Trampoline / heavy':{d:3,D:25,na:50,nt:52,fl:200,sy:1300,F:200}
+      'Brake pedal return':{d:2.0,D:16,na:40,nt:42,fl:150,sy:1300,F:60},
+      'Trampoline / heavy':{d:3,D:25,na:50,nt:52,fl:200,sy:1300,F:200},
+      'Tailgate assist':{d:4,D:30,na:80,nt:82,fl:400,sy:1300,F:250},
+      'Garage door (medium)':{d:5,D:50,na:60,nt:62,fl:600,sy:1300,F:300}
     }
   },
   torsion:{
     label:'TORSION',
     items:{
+      'Clothespin':{d:0.9,D:5,na:4,nt:6,fl:10,sy:1300,F:2},
+      'Ratchet pawl':{d:1.0,D:8,na:5,nt:7,fl:20,sy:1200,F:10},
       'Mousetrap (snap)':{d:1.2,D:10,na:6,nt:8,fl:30,sy:1200,F:5},
       'Hinge return':{d:2.0,D:20,na:8,nt:10,fl:40,sy:1200,F:20},
-      'Ratchet pawl':{d:1.0,D:8,na:5,nt:7,fl:20,sy:1200,F:10}
+      'Hatch counterbalance':{d:4,D:35,na:12,nt:14,fl:80,sy:1400,F:80}
     }
   },
   belleville:{
-    label:'BELLEVILLE / DISC',
+    label:'BELLEVILLE / DISC (DIN 2093)',
     items:{
-      'B-12 (M3 bolt) light':{d:0.4,D:12,na:1,nt:1,fl:0.55,sy:1500,F:200,bell:{De:12,Di:6.2,h0:0.35,t:0.4}},
-      'B-20 (M5)':{d:0.5,D:20,na:1,nt:1,fl:0.95,sy:1500,F:850,bell:{De:20,Di:10.2,h0:0.55,t:0.7}},
-      'B-31.5 (M14 / utility)':{d:0.7,D:31.5,na:1,nt:1,fl:1.55,sy:1500,F:2750,bell:{De:31.5,Di:16.3,h0:0.8,t:1.25}},
-      'B-50 (heavy industrial)':{d:1.4,D:50,na:1,nt:1,fl:3.0,sy:1500,F:8200,bell:{De:50,Di:25.4,h0:1.4,t:2.0}},
-      'B-100 (heavy press)':{d:2.5,D:100,na:1,nt:1,fl:6.0,sy:1500,F:40000,bell:{De:100,Di:51,h0:2.7,t:4.0}}
+      'M3 washer 7×3.2×0.4':{d:0.4,D:7,na:1,nt:1,fl:0.2,sy:1500,F:250,bell:{De:7,Di:3.2,h0:0.2,t:0.4}},
+      'A 8×4.2×0.4 (M4)':{d:0.4,D:8,na:1,nt:1,fl:0.2,sy:1500,F:215,bell:{De:8,Di:4.2,h0:0.2,t:0.4}},
+      'M5 washer 11×5.2×0.6':{d:0.6,D:11,na:1,nt:1,fl:0.3,sy:1500,F:525,bell:{De:11,Di:5.2,h0:0.3,t:0.6}},
+      'M6 washer 14×6.4×0.8':{d:0.8,D:14,na:1,nt:1,fl:0.4,sy:1500,F:1005,bell:{De:14,Di:6.4,h0:0.4,t:0.8}},
+      'M12 washer 31×13×1.5':{d:1.5,D:31,na:1,nt:1,fl:0.75,sy:1500,F:2460,bell:{De:31,Di:13,h0:0.75,t:1.5}},
+      'B 12×6.2×0.4 (M6)':{d:0.4,D:12,na:1,nt:1,fl:0.35,sy:1500,F:180,bell:{De:12,Di:6.2,h0:0.35,t:0.4}},
+      'A 20×10.2×1.1 (M10)':{d:1.1,D:20,na:1,nt:1,fl:0.45,sy:1500,F:1560,bell:{De:20,Di:10.2,h0:0.45,t:1.1}},
+      'B 20×10.2×0.7 (M10)':{d:0.7,D:20,na:1,nt:1,fl:0.55,sy:1500,F:525,bell:{De:20,Di:10.2,h0:0.55,t:0.7}},
+      'A 31.5×16.3×1.75 (M16)':{d:1.75,D:31.5,na:1,nt:1,fl:0.7,sy:1500,F:3980,bell:{De:31.5,Di:16.3,h0:0.7,t:1.75}},
+      'B 31.5×16.3×1.25 (M16)':{d:1.25,D:31.5,na:1,nt:1,fl:0.9,sy:1500,F:1960,bell:{De:31.5,Di:16.3,h0:0.9,t:1.25}},
+      'C 31.5×16.3×0.8 (M16)':{d:0.8,D:31.5,na:1,nt:1,fl:1.05,sy:1500,F:705,bell:{De:31.5,Di:16.3,h0:1.05,t:0.8}},
+      'A 50×25.4×3 (M24)':{d:3,D:50,na:1,nt:1,fl:1.1,sy:1500,F:12300,bell:{De:50,Di:25.4,h0:1.1,t:3.0}},
+      'B 50×25.4×2 (M24)':{d:2,D:50,na:1,nt:1,fl:1.4,sy:1500,F:4890,bell:{De:50,Di:25.4,h0:1.4,t:2.0}},
+      'C 50×25.4×1.25 (M24)':{d:1.25,D:50,na:1,nt:1,fl:1.6,sy:1500,F:1590,bell:{De:50,Di:25.4,h0:1.6,t:1.25}},
+      'A 63×31×3.5 (M30)':{d:3.5,D:63,na:1,nt:1,fl:1.3,sy:1500,F:14290,bell:{De:63,Di:31,h0:1.3,t:3.5}},
+      'B 80×41×3 (M39)':{d:3,D:80,na:1,nt:1,fl:2.3,sy:1500,F:10800,bell:{De:80,Di:41,h0:2.3,t:3.0}},
+      'B 100×51×4 (M48)':{d:4,D:100,na:1,nt:1,fl:2.7,sy:1500,F:18800,bell:{De:100,Di:51,h0:2.7,t:4.0}},
+      'A 100×51×5.5 (M48)':{d:5.5,D:100,na:1,nt:1,fl:2.2,sy:1500,F:38100,bell:{De:100,Di:51,h0:2.2,t:5.5}},
+      'B 125×64×5 (heavy press)':{d:5,D:125,na:1,nt:1,fl:3.5,sy:1500,F:30700,bell:{De:125,Di:64,h0:3.5,t:5.0}}
     }
   },
   die:{
-    label:'DIE SPRING',
+    label:'DIE SPRING (ISO 10243)',
     items:{
+      'Extra light (small die)':{d:3,D:20,na:9,nt:11,fl:50,sy:1500,F:150},
       'Light load (yellow stripe)':{d:5,D:32,na:8,nt:10,fl:64,sy:1500,F:600},
       'Medium (blue stripe)':{d:8,D:40,na:7,nt:9,fl:80,sy:1500,F:2200},
-      'Heavy (red stripe)':{d:12,D:50,na:6,nt:8,fl:100,sy:1700,F:6000}
+      'Heavy (red stripe)':{d:12,D:50,na:6,nt:8,fl:100,sy:1700,F:6000},
+      'Extra heavy (large die)':{d:15,D:60,na:5,nt:7,fl:110,sy:1700,F:11000}
     }
   }
 };
@@ -789,7 +824,7 @@ window.applySpringPreset=function(){
   const set=SPRING_PRESETS[type];if(!set)return;
   const p=set.items[sel.value];if(!p)return;
   ['d','D','na','nt','fl','sy','F'].forEach(k=>{const el=$('sp-'+k);if(el)el.value=p[k];});
-  if(p.bell){/* Belleville-specific extras would populate here if bell-* inputs exist */}
+  if(p.bell)[['de','De'],['di','Di'],['t','t'],['h0','h0']].forEach(([i,k])=>{const el=$('sp-'+i);if(el&&p.bell[k]!=null)el.value=p.bell[k];});
   window.calcSpring();
 };
 function unitVal(id,multipliers){const u=sv(id+'-u');return v(id)*(multipliers[u]||1);}
@@ -809,23 +844,32 @@ window.calcSpring=function(){
   const out=$('spring-results');if(!out)return;
   if(!d||!D){out.innerHTML='<div class="note warn">Wire diameter and coil diameter required.</div>';return;}
   const items=[];let k=0,delta=0,Lsolid=0,Fmax=0;let extra='';
+  let _bellFs=null,_bellSPk=0,_bellFPk=0,_bellH0=0,_bellT=0,_bellDe=0,_bellDi=0;
   const C=D/d;
   if(type==='belleville'){
-    const De=D,Di=D*0.51,h0=fl||(d*1.5),t=d;
+    const De=v('sp-de')||D,Di=v('sp-di')||De*0.51,t=v('sp-t')||d,h0=v('sp-h0')||fl||(d*1.5);
     const E=210000,nu=0.3;
     const a=De/2,b=Di/2,M=6/Math.PI*Math.pow(a/b-1,2)/Math.log(a/b)/Math.pow(a/b,2);
-    const C1=6/Math.PI*Math.pow(a/b-1,2)/Math.log(a/b)/Math.pow(a/b,2);
+    const CAL=4*E/((1-nu*nu)*M*De*De);
+    const Fs=s=>CAL*t*t*t*s*((h0-s)*(h0-s/2)/(t*t)+1);
     const ratio=h0/t;
-    const F_at_h0=4*E/(1-nu*nu)*Math.pow(t,4)/(M*De*De)*ratio*(ratio-0.5)*ratio;
-    k=F_at_h0/h0;delta=F/k;Lsolid=t;Fmax=F_at_h0;
+    const F_at_h0=Fs(h0);
+    k=CAL*t*t*t*(h0*h0/(t*t)+1);
+    let sPk=h0,FPk=F_at_h0,prevF=0;
+    for(let i=1;i<=400;i++){const s2=h0*i/400,f2=Fs(s2);if(f2<prevF){sPk=h0*(i-1)/400;FPk=prevF;break;}prevF=f2;}
+    const dAt=Ff=>{if(!(Ff>0))return 0;if(Ff>=FPk)return sPk;let lo=0,hi=sPk;for(let i=0;i<80;i++){const m2=(lo+hi)/2;Fs(m2)<Ff?lo=m2:hi=m2;}return(lo+hi)/2;};
+    delta=dAt(F);Lsolid=t;Fmax=FPk;
+    _bellFs=Fs;_bellSPk=sPk;_bellFPk=FPk;_bellH0=h0;_bellT=t;_bellDe=De;_bellDi=Di;window.__bellDAt=dAt;
     items.push(['Type','Belleville (Almen-Laszlo)']);
     items.push(['D_e / D_i',De.toFixed(1)+' / '+Di.toFixed(1)+' mm']);
     items.push(['h_0 / t',h0.toFixed(2)+' / '+t.toFixed(2)+' mm (ratio '+ratio.toFixed(2)+')']);
-    items.push(['k @ free',k.toFixed(1)+' N/mm']);
-    items.push(['F at flat (h_0)',Math.round(F_at_h0)+' N']);
-    items.push(['δ at applied F',delta.toFixed(3)+' mm']);
-    items.push(['Behavior',ratio<0.4?'~Linear':ratio<1.4?'Progressive':ratio<2.83?'Plateau (snap-through)':'Snap-through']);
-    extra='Use stacked in series for more deflection (k_total = k/n) or in parallel for more force (k_total = k·n). Avoid h_0/t > 2.83 unless snap-through is the goal.';
+    items.push(['k_0 initial rate',k.toFixed(1)+' N/mm']);
+    items.push(['F at flat (s=h_0)',Math.round(F_at_h0)+' N']);
+    items.push(['F usable peak',Math.round(FPk)+' N (s='+sPk.toFixed(2)+' mm)']);
+    items.push(['δ at applied F',delta.toFixed(3)+' mm',F<=FPk?'ok':'err']);
+    if(F>FPk)items.push(['Overload','F exceeds peak — disc goes flat','err']);
+    items.push(['Behavior',ratio<0.4?'~Linear':ratio<1.42?'Progressive-degressive':ratio<2.83?'Plateau (near-constant force)':'Snap-through (bistable)']);
+    extra='Almen-Laszlo load-deflection, E=210 GPa, ν=0.3 (DIN 2092 basis). Work discs at 15–75% of h_0. Build stacks below: series-alternating discs add deflection (k/n_s), parallel-nested discs add force (k·n_p, plus ~2–3% friction per contact surface).';
   }else if(type==='compression'||type==='extension'||type==='die'){
     k=G*Math.pow(d,4)/(8*Math.pow(D,3)*na);
     delta=F/k;Lsolid=nt*d;
@@ -856,52 +900,43 @@ window.calcSpring=function(){
     items.push(['σ bending',sigma.toFixed(0)+' MPa',sigma<Sy*0.78?'ok':'err']);
     extra='Torsion springs use bending stress, not shear. F input acts as moment in N·mm. K_b correction omitted (typical static design).';
   }
-  out.innerHTML='<h3>SPRING RESULTS — '+type.toUpperCase()+'</h3>'+
+  _mr(out,'<h3>SPRING RESULTS — '+type.toUpperCase()+'</h3>'+
     '<div class="result-grid">'+items.map(i=>`<div class="result-item"><div class="lbl">${i[0]}</div><div class="val ${i[2]||''}">${i[1]}</div></div>`).join('')+'</div>'+
-    '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">'+extra+'</p>';
-  /* Series/parallel combiner output */
-  const arr=sv('sp-stack-arr')||'series';
-  const n=Math.max(1,parseInt(v('sp-stack-n'))||1);
-  const k_combined=arr==='series'?k/n:k*n;
-  const F_combined=arr==='series'?F:F*n;
-  const delta_combined=F_combined/k_combined;
-  const so=$('sp-stack-out');if(so){
-    so.innerHTML=`<strong>${arr.toUpperCase()} of ${n}</strong> &mdash; combined rate <strong>${k_combined.toFixed(2)} N/mm</strong>, deflection at force <strong>${delta_combined.toFixed(2)} mm</strong>. ${arr==='series'?'Same force, '+n+'× the deflection.':n+'× the force, same deflection per spring.'}`;
+    '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">'+extra+'</p>');
+  const arr=sv('sp-stack-arr')||'single';
+  let ns=Math.max(1,Math.round(v('sp-ns'))||1),np=Math.max(1,Math.round(v('sp-np'))||1);
+  arr==='single'?(ns=1,np=1):arr==='series'?(np=1):arr==='parallel'&&(ns=1);
+  const bell=type==='belleville';
+  const k_eq=k*np/ns;
+  const dSt=bell&&window.__bellDAt?ns*window.__bellDAt(F/np):F/k_eq;
+  const L0st=bell?ns*(_bellH0+np*_bellT):(ns>1?ns*fl:fl);
+  const solidSt=bell?ns*np*_bellT:ns*Lsolid;
+  const capSt=np*Fmax;
+  const so=$('sp-stack-out');
+  if(so)_mr(so,`<strong>${arr==='single'?'SINGLE UNIT':ns+' IN SERIES × '+np+' IN PARALLEL'}</strong> &mdash; k_eq <strong>${k_eq.toFixed(2)} N/mm</strong> · δ_stack at F <strong>${dSt.toFixed(3)} mm</strong> · free ${bell?'stack height L_0':'length'} <strong>${L0st.toFixed(1)} mm</strong> · solid <strong>${solidSt.toFixed(1)} mm</strong> · capacity <strong>${Math.round(capSt)} N</strong>${bell&&np>1?' · parallel nesting adds ~2–3% friction per surface':''}`);
+  const stacked=ns*np>1,colStack='#3b82f6';
+  let traces,shapes,xTop,yTop;
+  if(bell&&_bellFs){
+    const npts=90,xs1=[],ys1=[],xsS=[],ysS=[];
+    for(let i=0;i<=npts;i++){const s2=_bellSPk*i/npts;xs1.push(s2);ys1.push(_bellFs(s2));xsS.push(s2*ns);ysS.push(_bellFs(s2)*np);}
+    xTop=_bellSPk*ns;yTop=_bellFPk*np;
+    traces=[{x:xs1,y:ys1,mode:'lines',line:{color:pTheme().accent,width:2.5},name:'Single disc'}];
+    stacked&&traces.push({x:xsS,y:ysS,mode:'lines',line:{color:colStack,width:2,dash:'dash'},name:ns+'S×'+np+'P stack'});
+    shapes=[{type:'rect',x0:0.15*_bellH0*ns,x1:Math.min(0.75*_bellH0,_bellSPk)*ns,y0:0,y1:yTop,fillcolor:'rgba(34,197,94,0.12)',line:{width:0}}];
+    isFinite(dSt)&&dSt>0&&traces.push({x:[dSt],y:[F],mode:'markers',marker:{color:'#fff',size:11,symbol:'diamond',line:{color:'#000',width:1.5}},name:'Operating point'});
+  }else{
+    const Lavail=fl-Lsolid,xMax=Lavail>0?Lavail:fl*0.8,xMaxStack=xMax*ns;
+    xTop=Math.max(xMax,xMaxStack);
+    const npts=80,xs=Array.from({length:npts},(_,i)=>i*xTop/(npts-1));
+    traces=[{x:xs,y:xs.map(x=>x<=xMax?k*x:null),mode:'lines',line:{color:pTheme().accent,width:2.5},name:'Single (k='+k.toFixed(1)+' N/mm)'}];
+    stacked&&traces.push({x:xs,y:xs.map(x=>x<=xMaxStack?k_eq*x:null),mode:'lines',line:{color:colStack,width:2,dash:'dash'},name:ns+'S×'+np+'P (k_eq='+k_eq.toFixed(1)+' N/mm)'});
+    yTop=Math.max(k*xMax,k_eq*xMaxStack);
+    shapes=[{type:'rect',x0:xMax*0.15,x1:xMax*0.80,y0:0,y1:yTop,fillcolor:'rgba(34,197,94,0.12)',line:{width:0}},{type:'line',x0:xMax,x1:xMax,y0:0,y1:yTop*1.05,line:{color:'#ef4444',width:1.5,dash:'dash'}}];
+    isFinite(dSt)&&dSt>0&&traces.push({x:[dSt],y:[F],mode:'markers',marker:{color:'#fff',size:11,symbol:'diamond',line:{color:'#000',width:1.5}},name:'Operating point'});
   }
-  /* Force-deflection chart with ideal range overlay AND series/parallel overlay */
-  const Lavail=fl-Lsolid;
-  const xMax=Lavail>0?Lavail:fl*0.8;
-  const xMaxStack=arr==='series'?xMax*n:xMax;
-  const xCharted=Math.max(xMax,xMaxStack);
-  const npts=80;const xs=Array.from({length:npts},(_,i)=>i*xCharted/(npts-1));
-  const Fs_single=xs.map(x=>x<=xMax?k*x:null);
-  const Fs_series=xs.map(x=>x<=xMaxStack?k_combined*x:null);
-  const Fs_parallel=xs.map(x=>x<=xMax?k*n*x:null);
-  const idealMin=xMax*0.15,idealMax=xMax*0.80;
-  const Fmax_chart=Math.max(k*xMax,k_combined*xMaxStack,k*n*xMax);
-  const shapes=[
-    {type:'rect',x0:idealMin,x1:idealMax,y0:0,y1:Fmax_chart,fillcolor:'rgba(34,197,94,0.12)',line:{width:0}},
-    {type:'line',x0:xMax,x1:xMax,y0:0,y1:Fmax_chart*1.05,line:{color:'#ef4444',width:1.5,dash:'dash'}}
-  ];
-  if(isFinite(delta)&&delta>0&&delta<xMax){
-    shapes.push({type:'line',x0:delta,x1:delta,y0:0,y1:F,line:{color:pTheme().accent,width:1,dash:'dot'}});
-  }
-  const traces=[
-    {x:xs,y:Fs_single,mode:'lines',line:{color:pTheme().accent,width:2.5},name:'Single spring (k='+k.toFixed(1)+' N/mm)'}
-  ];
-  if(n>1){
-    const colSeries='#3b82f6',colParallel='#a855f7';
-    if(arr==='series')traces.push({x:xs,y:Fs_series,mode:'lines',line:{color:colSeries,width:2,dash:'dash'},name:'Series of '+n+' (k='+k_combined.toFixed(1)+' N/mm)'});
-    if(arr==='parallel')traces.push({x:xs,y:Fs_parallel,mode:'lines',line:{color:colParallel,width:2,dash:'dash'},name:'Parallel of '+n+' (k='+(k*n).toFixed(1)+' N/mm)'});
-    /* Always show BOTH series and parallel for comparison even if user only picked one */
-    if(arr!=='series')traces.push({x:xs,y:Fs_series,mode:'lines',line:{color:colSeries,width:1,dash:'dot'},name:'(if Series of '+n+': k='+k_combined.toFixed(1)+')',opacity:0.5});
-    if(arr!=='parallel')traces.push({x:xs,y:Fs_parallel,mode:'lines',line:{color:colParallel,width:1,dash:'dot'},name:'(if Parallel of '+n+': k='+(k*n).toFixed(1)+')',opacity:0.5});
-  }
-  if(isFinite(delta))traces.push({x:[delta],y:[F],mode:'markers',marker:{color:'#fff',size:11,symbol:'diamond',line:{color:'#000',width:1.5}},name:'Operating point'});
-  plot('p-spring-fd',traces,{xaxis:{title:'δ deflection (mm)',range:[0,xCharted*1.05]},yaxis:{title:'F force (N)',range:[0,Fmax_chart*1.1]},shapes,showlegend:n>1,legend:{x:0.02,y:0.98,bgcolor:'rgba(0,0,0,0)',font:{size:9}}});
-  /* Compressed vs uncompressed animation */
-  drawSpringAnim(d,D,nt,fl,Math.max(0.1,fl-delta),type);
-  /* Force 3D update */
+  plot('p-spring-fd',traces,{xaxis:{title:'δ deflection (mm)',range:[0,xTop*1.05]},yaxis:{title:'F force (N)',range:[0,yTop*1.1]},shapes,showlegend:stacked,legend:{x:0.02,y:0.98,bgcolor:'rgba(0,0,0,0)',font:{size:9}}});
+  bell?drawSpringAnim(_bellT,_bellDe,1,_bellH0+_bellT,Math.max(_bellT,_bellH0+_bellT-delta),type):drawSpringAnim(d,D,nt,fl,Math.max(0.1,fl-delta),type);
+  drawSpringPack(type,arr,ns,np,{d:d,D:D,fl:fl,nt:nt,delta:delta,De:_bellDe,Di:_bellDi,t:_bellT,h0:_bellH0});
   if(window.calc3DUpdate)try{window.calc3DUpdate('springs');}catch(e){}
 };
 function drawSpringAnim(d,D,nt,fl,deflectedL,type){
@@ -953,6 +988,55 @@ function drawSpringAnim(d,D,nt,fl,deflectedL,type){
   ctx.beginPath();ctx.moveTo(w*0.43,h/2);ctx.lineTo(w*0.57,h/2);ctx.stroke();
   ctx.beginPath();ctx.moveTo(w*0.55,h/2-4);ctx.lineTo(w*0.57,h/2);ctx.lineTo(w*0.55,h/2+4);ctx.stroke();
 }
+function drawBellDisc(x,cx,y,ro,ri,h,t,up,th){
+  const L1=up?[[cx-ro,y+h],[cx-ri,y],[cx-ri,y+t],[cx-ro,y+h+t]]:[[cx-ro,y],[cx-ri,y+h],[cx-ri,y+h+t],[cx-ro,y+t]];
+  const R1=L1.map(p=>[2*cx-p[0],p[1]]);
+  [L1,R1].forEach(q=>{x.beginPath();x.moveTo(q[0][0],q[0][1]);q.slice(1).forEach(p=>x.lineTo(p[0],p[1]));x.closePath();x.fillStyle='rgba(255,153,102,0.25)';x.fill();x.strokeStyle=th.accent||'#f96';x.lineWidth=1.5;x.stroke();});
+}
+function drawCoilMini(x,cx,yTop,w,h,turns,th){
+  x.strokeStyle=th.accent||'#f96';x.lineWidth=2;x.beginPath();
+  const n=turns*14;
+  for(let i=0;i<=n;i++){const t2=i/n,yy=yTop+t2*h,xo=Math.sin(t2*turns*Math.PI*2)*w/2;i===0?x.moveTo(cx+xo,yy):x.lineTo(cx+xo,yy);}
+  x.stroke();
+  x.strokeStyle=th.dim;x.lineWidth=1.5;
+  x.beginPath();x.moveTo(cx-w/2-6,yTop);x.lineTo(cx+w/2+6,yTop);x.moveTo(cx-w/2-6,yTop+h);x.lineTo(cx+w/2+6,yTop+h);x.stroke();
+}
+function drawSpringPack(type,arr,ns,np,g){
+  const c=$('c-spring-pack');if(!c)return;
+  const x=c.getContext('2d'),W=c.width,H=c.height,th=pTheme();
+  x.fillStyle=th.plot;x.fillRect(0,0,W,H);
+  x.font='11px JetBrains Mono,monospace';x.textAlign='left';x.textBaseline='alphabetic';
+  x.fillStyle=th.text;
+  x.fillText((arr==='single'?'SINGLE':'STACK '+ns+'S × '+np+'P')+' — '+type.toUpperCase(),10,16);
+  if(type==='belleville'){
+    const h0=g.h0>0?g.h0:1,t=g.t>0?g.t:1,De=g.De>0?g.De:30,Di=g.Di>0?g.Di:De*0.51;
+    const unitH=h0+np*t,total=ns*unitH;
+    const sc=Math.min((H-70)/total,(W*0.55)/De);
+    const cx=W*0.40,y0=(H-46-total*sc)/2+30;
+    x.strokeStyle=th.dim;x.setLineDash([4,4]);x.beginPath();x.moveTo(cx,y0-12);x.lineTo(cx,y0+total*sc+12);x.stroke();x.setLineDash([]);
+    let y=y0;
+    for(let i=0;i<ns;i++){
+      const up=arr==='parallel'||i%2===0;
+      for(let j=0;j<np;j++){drawBellDisc(x,cx,y+j*t*sc,De*sc/2,Di*sc/2,h0*sc,t*sc,up,th);}
+      y+=unitH*sc;
+    }
+    x.strokeStyle=th.accent||'#f96';x.fillStyle=th.text;x.lineWidth=1;
+    const xr=cx+De*sc/2+16;
+    x.beginPath();x.moveTo(xr,y0);x.lineTo(xr,y0+total*sc);x.stroke();
+    x.beginPath();x.moveTo(xr-4,y0+5);x.lineTo(xr,y0);x.lineTo(xr+4,y0+5);x.moveTo(xr-4,y0+total*sc-5);x.lineTo(xr,y0+total*sc);x.lineTo(xr+4,y0+total*sc-5);x.stroke();
+    x.fillText('L0 = '+total.toFixed(1)+' mm',Math.min(xr+8,W-110),y0+total*sc/2);
+    x.fillStyle=th.dim;
+    x.fillText(arr==='parallel'?np+' discs nested — same orientation (force adds)':ns>1?'alternating ⟨⟩ orientation (deflection adds)'+(np>1?' · '+np+' nested per group':''):np>1?np+' discs nested (parallel)':'single disc',10,H-10);
+  }else{
+    const cols=Math.min(np,6),rows=Math.min(ns,8);
+    const cellW=Math.min(100,(W-80)/cols),cellH=(H-70)/rows;
+    const x0=(W-cols*cellW)/2,y0=30;
+    for(let r2=0;r2<rows;r2++)for(let c2=0;c2<cols;c2++){drawCoilMini(x,x0+c2*cellW+cellW/2,y0+r2*cellH+5,Math.min(cellW*0.55,60),cellH-14,Math.min(8,Math.max(3,Math.floor(g.nt||6))),th);}
+    x.fillStyle=th.dim;
+    x.fillText((rows>1?rows+' end-to-end (series — seat plates between)':'')+(rows>1&&cols>1?' · ':'')+(cols>1?cols+' side-by-side (parallel)':rows>1?'':'single spring'),10,H-10);
+    if(np>6||ns>8){x.fillText('(showing '+rows+'×'+cols+' of '+ns+'×'+np+')',W-170,16);}
+  }
+}
 function gateBellevillePresets(){
   /* Card always visible since every spring type has presets, but the
    * dropdown contents are filtered per type so Belleville items only
@@ -962,6 +1046,8 @@ function gateBellevillePresets(){
   const set=SPRING_PRESETS[type]||SPRING_PRESETS.compression;
   const h3=card?card.querySelector('h3'):null;
   if(h3)h3.textContent='PRESETS — '+set.label;
+  const br=$('sp-bell-row');if(br)br.style.display=type==='belleville'?'':'none';
+  ['sp-d','sp-D','sp-na','sp-nt','sp-fl'].forEach(id=>{const el=$(id),f=el&&el.closest('.field');if(f)f.style.display=type==='belleville'?'none':'';});
   populateSpringPresets();
 }
 
@@ -1507,7 +1593,7 @@ window.calcPVLug=function(){
 function injectBoltTorqueAdvanced(){
   const view=$('v-bolts');if(!view)return;
   if($('bolt-torque-adv'))return;
-  const target=view.querySelector('.bolt-x')?view.querySelector('.bolt-x').parentElement:view.querySelector('.split>div:last-child');
+  const target=view.querySelector('.split>div:last-child')||(view.querySelector('.bolt-x')?view.querySelector('.bolt-x').parentElement:null);
   if(!target)return;
   const card=document.createElement('div');card.className='card bolt-x';card.id='bolt-torque-adv';card.style.marginTop='.6rem';
   card.innerHTML='<h3>TORQUE SEQUENCE (ADVANCED)</h3>'+
@@ -2288,7 +2374,7 @@ window.addEventListener('DOMContentLoaded',()=>{
     if(boltBtn)boltBtn.style.display='none';
     /* Springs init */
     gateBellevillePresets();
-    const typeEl=$('sp-type');if(typeEl)typeEl.addEventListener('change',()=>{populateSpringPresets();window.calcSpring();});
+    const typeEl=$('sp-type');if(typeEl)typeEl.addEventListener('change',()=>{gateBellevillePresets();window.calcSpring();});
     wireLive('v-springs',window.calcSpring);
     /* Hide CALCULATE button on springs since live-compute */
     const springBtn=document.querySelector('#v-springs button[onclick="calcSpring()"]');

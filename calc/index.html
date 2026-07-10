@@ -686,6 +686,12 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <div class="field"><label for="sp-nt">TOTAL COILS</label><input type="number" id="sp-nt" value="10" step="0.5"></div>
 <div class="field"><label for="sp-fl">FREE LENGTH</label><div class="field-row"><input type="number" id="sp-fl" value="60" step="any"><span style="color:var(--dim);font-size:.7rem">mm</span></div></div>
 </div>
+<div class="row" id="sp-bell-row" style="margin-top:.5rem;display:none">
+<div class="field"><label for="sp-de">DISC OD D_e (mm)</label><input type="number" id="sp-de" value="31.5" step="any"></div>
+<div class="field"><label for="sp-di">DISC ID D_i (mm)</label><input type="number" id="sp-di" value="16.3" step="any"></div>
+<div class="field"><label for="sp-t">THICKNESS t (mm)</label><input type="number" id="sp-t" value="1.25" step="any"></div>
+<div class="field"><label for="sp-h0">CONE HEIGHT h_0 (mm)</label><input type="number" id="sp-h0" value="0.9" step="any"></div>
+</div>
 <div class="row" style="margin-top:.5rem">
 <div class="field"><label for="sp-g">SHEAR MODULUS G</label><div class="field-row"><input type="number" id="sp-g" value="79.3" step="any"><select id="sp-g-u" aria-label="unit"><option>GPa</option><option>MPa</option><option>psi</option></select></div></div>
 <div class="field"><label for="sp-f">APPLIED FORCE</label><div class="field-row"><input type="number" id="sp-f" value="100" step="any"><select id="sp-f-u" aria-label="unit"><option>N</option><option>lbf</option><option>kgf</option></select></div></div>
@@ -693,24 +699,30 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 </div>
 <button class="btn btn-fill" onclick="calcSpring()" style="margin-top:.75rem">CALCULATE</button>
 </div>
+<div class="card" id="spring-presets-card" style="margin-top:.6rem">
+<h3>PRESETS</h3>
+<div class="field"><label for="sp-preset">PRESET (filtered by TYPE)</label><select id="sp-preset"></select></div>
+<button class="btn btn-sm" onclick="applySpringPreset()" style="margin-top:.4rem">LOAD PRESET</button>
+</div>
+<div class="card" id="spring-stack-card" style="margin-top:.6rem">
+<h3>STACK / PACK BUILDER</h3>
+<div class="row" style="gap:.5rem">
+<div class="field"><label for="sp-stack-arr">ARRANGEMENT</label><select id="sp-stack-arr"><option value="single">SINGLE</option><option value="series">SERIES STACK (alternating)</option><option value="parallel">PARALLEL (nested / side-by-side)</option><option value="serpar">SERIES-PARALLEL PACK</option></select></div>
+<div class="field"><label for="sp-ns"># IN SERIES n_s</label><input type="number" id="sp-ns" value="4" min="1" max="40" step="1"></div>
+<div class="field"><label for="sp-np"># IN PARALLEL n_p</label><input type="number" id="sp-np" value="1" min="1" max="10" step="1"></div>
+</div>
+<div id="sp-stack-out" style="margin-top:.5rem;font-size:.78rem;color:var(--dim)">Stack results compute live.</div>
+</div>
 </div>
 <div>
 <div class="card" id="spring-results">
 <h3>SPRING RESULTS</h3>
 <p style="font-size:.75rem;color:var(--dim)">Enter parameters; results compute live</p>
 </div>
-<div class="card" id="spring-presets-card" style="margin-top:.6rem">
-<h3>PRESETS</h3>
-<div class="field"><label for="sp-preset">PRESET (filtered by TYPE)</label><select id="sp-preset"></select></div>
-<button class="btn btn-sm" onclick="applySpringPreset()" style="margin-top:.4rem">LOAD PRESET</button>
-</div>
-<div class="card" id="spring-combiner-card" style="margin-top:.6rem">
-<h3>SERIES / PARALLEL COMBINER</h3>
-<div class="row" style="gap:.5rem">
-<div class="field"><label for="sp-stack-arr">ARRANGEMENT</label><select id="sp-stack-arr"><option value="series">SERIES (rates add reciprocally)</option><option value="parallel">PARALLEL (rates add)</option></select></div>
-<div class="field"><label for="sp-stack-n"># OF SPRINGS</label><input type="number" id="sp-stack-n" value="2" min="1" max="20"></div>
-</div>
-<div id="sp-stack-out" style="margin-top:.5rem;font-size:.78rem;color:var(--dim)">Combined rate computes live.</div>
+<div class="card" id="spring-pack-card" style="margin-top:.6rem">
+<h3>PACK VIEW — PARTS &amp; ORIENTATION</h3>
+<canvas id="c-spring-pack" width="500" height="260" style="width:100%;height:260px;background:var(--panel2);border-radius:3px;display:block"></canvas>
+<p class="note" style="margin-top:.3rem;color:var(--dim);font-size:.7rem">Cross-section of the built stack. Belleville: series discs alternate orientation ⟨⟩⟨⟩, parallel discs nest in the same direction. Helical: series springs sit end-to-end, parallel springs side-by-side.</p>
 </div>
 <div class="card" style="margin-top:.6rem">
 <h3>FORCE vs DEFLECTION</h3>
@@ -2604,9 +2616,9 @@ window.drawSealDiagram=drawSealDiagram;
 window._calcSealWasm=(...args)=>calc_seal(...args);
 </script>
 <script src="./calc-unit-core.js?v=units1" defer></script>
-<script src="./calc-overrides.js?v=sync3" defer></script>
-<script src="./calc-3d.js" defer></script>
-<script src="./calc-fixes.js?v=sync3" defer></script>
+<script src="./calc-overrides.js?v=eng2" defer></script>
+<script src="./calc-3d.js?v=eng2" defer></script>
+<script src="./calc-fixes.js?v=eng2" defer></script>
 <script src="./calc-units.js?v=units1" defer></script>
 <script src="./calc-qol.js" defer></script>
 <script src="./calc-engineer.js?v=eng1" defer></script>
