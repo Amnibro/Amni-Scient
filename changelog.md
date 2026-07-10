@@ -1,6 +1,6 @@
 # Changelog 
 
-## Amni-Calc v5.53.0 — NEW MODULE: Fits & Tolerances (ISO 286) + press-fit design + beam modes - 2026-07-10
+## Amni-Calc v5.54.0 — NEW MODULE: Fits & Tolerances (ISO 286) + press-fit design + beam modes - 2026-07-10
 - **Fits & Tolerances** (new Mechanical tab): nominal Ø + hole/shaft class → exact ISO 286 limits, clearances/interference, fit classification, and a tolerance-zone diagram. Preferred-fits dropdown (H11/c11 loose running → H7/s6 medium drive) or fully custom letter+grade (holes D–H, JS; shafts c–s incl. split subranges for c/r/s; IT5–IT11 to Ø500, published table values, spot-verified: 25 H7 = +21/0, g6 = −7/−20, p6 = +35/+22). Sizes where the standard's subranges aren't covered say so explicitly instead of extrapolating.
 - **Press / shrink fit (Lamé)**: diametral interference (auto-filled min/max from an interference or transition fit above) → contact pressure, holding torque and axial capacity at BOTH interference extremes, hub-bore tangential stress, and hub heating ΔT for thermal assembly. Closed-form verified: Ø50/Ø100 steel, 0.05 mm → 75.0 MPa exactly.
 - **Beam natural frequencies** (new card in Vibration): first 3 modes for simply-supported / cantilever / fixed-fixed / fixed-pinned uniform beams (Blevins λ² constants), with critical rpm — the module previously only handled SDOF systems.

@@ -1,6 +1,6 @@
 # Architecture Map — amni-scient.com
 
-## v5.53.0 Amni-Calc FITS & TOLERANCES module + press-fit + beam modes (2026-07-10)
+## v5.54.0 Amni-Calc FITS & TOLERANCES module + press-fit + beam modes (2026-07-10)
 - index.html: new tab `data-v="fits"` (after Shafts) + static `#v-fits` view (LIMITS & FITS card: ft-d/ft-pref/ft-hl/hg/sl/sg; PRESS/SHRINK card: pf-* with own `#pf-out`; right column `#fits-results` + `#c-fits` zone diagram). Static tab participates in the obfuscated app's binding because views parse before the app script.
 - calc-fixes.js (`?v=eng5`): `FIT_RANGES/FIT_IT` (IT5–11 × 13 ranges, PUBLISHED values not the i-formula) + `FIT_SHAFT` (d,e,f,g,h,k[grades≥8→0],m,n,p arrays; c,r,s as `bp` breakpoint lists capped ≤120mm → null beyond = explicit warning). Holes: H (EI=0), D–G mirror (−es), JS ±IT/2. `calcFits` → limits/clearances/type + `drawFitDiagram` + interference handoff (pf-d/pf-dmin/pf-dmax, skip-if-focused) + auto calcPressFit. `calcPressFit`: Lamé two-cylinder bracket, quotes p/T/F at δmin AND δmax, σ_t hub, ΔT=(δmax+clr)/(α·d/1000). `injectBeamFnCard` (v-vibration left col) + `calcBeamFn` (Blevins λ²: ss 9.870/39.48/88.83, cant 3.516/22.03/61.70, ff 22.37/61.67/120.9, fp 15.42/49.96/104.2) → shared vibration-results via _mr. Init: injectBeamFnCard() + calcFits() fire.
 - calc-engineer.js (`?v=eng8`): DESC entry for fits. Tests `calc/tests/fits_audit.js` (23: table anchors, subrange split, cap-null, H7/g6 7..41µm, H7/p6 1..35µm, press closed-form 75 MPa, beam f1 vs π/2L²·√(EI/m̄)).
