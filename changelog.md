@@ -1,5 +1,12 @@
 # Changelog 
 
+## Amni-Learn v5.48.0 — Module /loop iter 2: Connect the Dots overhaul - 2026-07-10
+- **Broken shapes fixed**: Mug, Bowtie, Sword and Flag were single polylines with mid-shape "jumps" that drew stray diagonals (the mug's handle jump cut a line across its body) and never closed. All four redesigned as clean single closed outlines (Flag → swallowtail Banner Flag); every 2D shape at L1/L2 is now `closed:true` and fills on completion.
+- **Real randomization**: the pool is shuffled per module open — it used to start at Triangle and play the identical sequence every session.
+- **More diverse pool**: +4 shapes — Circle (12 dots, teaches counting 1-12), Ice Cream cone (L1), Butterfly and Snowman silhouettes (L2). L1/L2 now 16 shapes each.
+- **Number-hunting pedagogy**: every unconnected dot now shows its number above it (gray, small) — the child hunts for the next number like a real dot-to-dot instead of tapping the one highlighted dot; the next dot keeps its bold in-dot label.
+- Geometry lint (all 32 L1/L2 shapes: closure, bounds, ≥12px vertex spacing, no jump segments) + headless playthroughs to completion at L1/L2 all green; shuffle verified across reloads (Crown/Arrow/Banner Flag first vs eternal Triangle). Test hook `window.__dotsT` behind sessionStorage `dots-test`. SW cache v1257→v1258.
+
 ## Amni-Calc v5.47.0 — Honest placeholders + Enter-to-solve - 2026-07-10
 - All 20 results-panel placeholders normalized: the mix of "Configure bolt and click Analyze" / "Enter values and compute." / "Choose a mode." (referring to buttons that live-compute hides) is now two accurate strings — "Results compute live as you type." and, for shared-results modules, "Results compute live from whichever card you use."
 - Pressing Enter in the goal-seek VALUE field runs the solve. Cache-buster calc-engineer.js?v=eng5.

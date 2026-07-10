@@ -1,5 +1,11 @@
 # Architecture Map — amni-scient.com
 
+## v5.48.0 Amni-Learn module /loop iter 2 — Connect the Dots (2026-07-10)
+- `learn/learn-app.js` `initDots` SHAPES data: Mug/Bowtie/Sword/Flag rebuilt as single closed outlines (the old ones were polylines with mid-shape jumps → stray diagonal lines + open regions; the engine draws ALL consecutive points as one connected path, so 2D multi-part shapes MUST be a single closed loop — no pen-lift support). +4 new: Circle 12-dot, Ice Cream (L1), Butterfly, Snowman (L2) → 16 shapes per level. RULE for new 2D shapes: closed:true, every vertex ≥12px from every other (the <10px group-merge in drawFunc would fuse them), points within 20-380.
+- `shapeList` now Fisher-Yates shuffled per initDots (was fixed order starting at Triangle every session).
+- Number labels: unconnected non-next dots draw their number (min unconnected id+1) at y−16 in gray 11px; next dot keeps bold 13px in-dot label — restores find-the-number pedagogy. 3D wireframe levels inherit labels via group min-id (revisited vertices show their first index).
+- Test hook `window.__dotsT={name,closed,idx,total,nextDot,done,groups}` refreshed each drawFunc when sessionStorage `dots-test`==='1'. Probe: scratchpad `_dots_probe.js` = static geometry lint (eval'd SHAPES: closure/bounds/vertex-spacing/jump-segs) + headless click-through to done via __dotsT groups. Lint clean, 3 playthroughs done=true, shuffle verified, 0 page errors. SW v1258. Backup `backups/v5.48.0_learn_loop_i2/`.
+
 ## v5.47.0 Amni-Calc Placeholder consistency + Enter-to-solve (2026-07-10, /loop iter 4)
 - index.html: all 20 static results placeholders -> "Results compute live as you type." (input panels) / "Results compute live from whichever card you use." (shared-results modules) — the old strings referenced Analyze/Compute buttons that live-compute hides.
 - calc-engineer.js (`?v=eng5`): Enter in `.es-val` triggers runSolve.
