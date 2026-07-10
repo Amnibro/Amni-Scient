@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Daily Curriculum Printable &mdash; Amni-Learn | AMNI-SCIENT</title>
-<meta name="description" content="Pick your child's age (1-13) and print a free daily curriculum packet: activity checklist with together/on-my-own balance, big-print worksheets, mazes, games, and a weekly supplies list. No sign-up.">
+<meta name="description" content="Pick age 1-13, choose Classic Checklist or Adventure Day format, and print a free daily curriculum packet: themed quests or category checklist, age-tuned worksheets, games, and weekly supplies. No sign-up.">
 <meta name="keywords" content="daily curriculum,printable worksheets,homeschool worksheet,toddler activities,kids activities by age,preschool activities,letter tracing,printable maze,supplies list,amni-learn">
 <meta name="author" content="Amni-Scient">
 <meta property="og:title" content="Daily Curriculum Printable &mdash; Amni-Learn">
@@ -43,144 +43,219 @@
 .curr-actions{display:flex;gap:10px;flex-wrap:wrap}
 #sheets{display:none}
 #sheets.ready{display:block}
-.sheet-page{--text:#1c2026;--text-soft:#39404a;--dim:#6a7180;--border2:#c6ccd8;--accent:#1e8449;background:#fff;color:#1c2026;border-radius:14px;padding:1.7rem 1.9rem;box-shadow:0 12px 34px rgba(0,0,0,.38);margin-bottom:1rem}
-.sheet-head{text-align:center;border-bottom:3px solid var(--accent);padding-bottom:1rem;margin-bottom:1.3rem}
-.sheet-head h2{margin:0;font-size:1.6rem;letter-spacing:2px;color:#1c2026}
-.sheet-mascot{font-size:2.2rem;line-height:1;margin-bottom:.3rem}
-.sheet-sub{color:var(--dim);font-size:.85rem;margin-top:.4rem}
-.sheet-legend{text-align:center;font-size:.75rem;color:#6a7180;margin-top:.55rem}
-.sheet-fields{display:flex;gap:1.5rem;justify-content:center;flex-wrap:wrap;margin-top:.9rem;font-size:.82rem;color:var(--text)}
+#sheets{
+  --fs-base:15px;
+  --fs-title:1.5rem;
+  --fs-sub:.82rem;
+  --fs-h:.82rem;
+  --fs-body:.9rem;
+  --fs-small:.72rem;
+  --fs-chip:.62rem;
+  --fs-mono:1rem;
+  --fs-emoji:1.35rem;
+  --page-pad:1.45rem 1.55rem;
+  --page-min:1020px;
+  --line:1.45;
+  font-size:var(--fs-base);
+  font-family:'JetBrains Mono',ui-monospace,Consolas,monospace;
+}
+#sheets.scale-lg{
+  --fs-base:15.5px;
+  --fs-title:1.55rem;
+  --fs-sub:.84rem;
+  --fs-h:.84rem;
+  --fs-body:.94rem;
+  --fs-small:.74rem;
+  --fs-mono:1.05rem;
+  --fs-emoji:1.45rem;
+  --page-min:1020px;
+}
+#sheets.scale-xl{
+  --fs-base:16.5px;
+  --fs-title:1.65rem;
+  --fs-sub:.88rem;
+  --fs-h:.88rem;
+  --fs-body:1rem;
+  --fs-small:.78rem;
+  --fs-mono:1.12rem;
+  --fs-emoji:1.55rem;
+  --fs-chip:.68rem;
+  --page-min:1020px;
+}
+.sheet-page{
+  --text:#1c2026;--text-soft:#39404a;--dim:#6a7180;--border2:#c6ccd8;--accent:#1e8449;
+  background:#fff;color:#1c2026;
+  border-radius:14px;
+  padding:var(--page-pad);
+  box-shadow:0 12px 34px rgba(0,0,0,.38);
+  margin:0 auto 1rem;
+  max-width:820px;
+  min-height:var(--page-min);
+  box-sizing:border-box;
+  font-size:var(--fs-base);
+  line-height:var(--line);
+  display:flex;
+  flex-direction:column;
+}
+.sheet-page > :last-child{margin-bottom:0}
+.sheet-head{text-align:center;border-bottom:3px solid var(--accent);padding-bottom:.85rem;margin-bottom:1rem;flex-shrink:0}
+.sheet-head h2{margin:0;font-size:var(--fs-title);letter-spacing:1.5px;color:#1c2026;line-height:1.2}
+.sheet-mascot{font-size:calc(var(--fs-title) + .55rem);line-height:1;margin-bottom:.25rem}
+.sheet-sub{color:var(--dim);font-size:var(--fs-sub);margin-top:.35rem}
+.sheet-legend{text-align:center;font-size:var(--fs-small);color:#6a7180;margin-top:.45rem}
+.sheet-fields{display:flex;gap:1.2rem;justify-content:center;flex-wrap:wrap;margin-top:.75rem;font-size:var(--fs-sub);color:var(--text)}
 .sheet-fields span{border-bottom:1px solid var(--border2);padding-bottom:2px;min-width:140px;display:inline-block}
-.mini-head{text-align:center;border-bottom:2px solid var(--accent);padding-bottom:.6rem;margin-bottom:1.2rem;font-size:.78rem;color:var(--dim);letter-spacing:1px;text-transform:uppercase}
-.sheet-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.act-card{border:2px solid var(--border2);border-left-width:6px;border-radius:8px;padding:.85rem 1rem;display:flex;gap:.7rem;break-inside:avoid}
-.act-box{flex-shrink:0;width:26px;height:26px;border:2px solid var(--text);border-radius:5px;margin-top:2px}
+.mini-head{text-align:center;border-bottom:2px solid var(--accent);padding-bottom:.55rem;margin-bottom:1rem;font-size:var(--fs-small);color:var(--dim);letter-spacing:1px;text-transform:uppercase;flex-shrink:0}
+.sheet-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;flex:1}
+.act-card{border:2px solid var(--border2);border-left-width:6px;border-radius:8px;padding:.75rem .9rem;display:flex;gap:.65rem;break-inside:avoid}
+.act-box{flex-shrink:0;width:24px;height:24px;border:2px solid var(--text);border-radius:5px;margin-top:2px}
 .act-body{flex:1;min-width:0}
-.act-body h4{margin:0 0 .3rem;font-size:.92rem;display:flex;align-items:center;gap:.4rem;color:#1c2026;flex-wrap:wrap}
-.act-ic{font-size:1.35rem;line-height:1}
-.act-tag{font-size:.6rem;font-weight:700;letter-spacing:.5px;padding:2px 8px;border-radius:999px;border:1.5px solid;margin-left:auto;white-space:nowrap}
+.act-body h4{margin:0 0 .25rem;font-size:var(--fs-body);font-weight:700;display:flex;align-items:center;gap:.35rem;color:#1c2026;flex-wrap:wrap;line-height:1.3}
+.act-ic{font-size:var(--fs-emoji);line-height:1}
+.act-tag{font-size:var(--fs-chip);font-weight:700;letter-spacing:.4px;padding:2px 7px;border-radius:999px;border:1.5px solid;margin-left:auto;white-space:nowrap}
 .act-tag.tog{color:#b9770e;border-color:#b9770e}
 .act-tag.solo{color:#1e8449;border-color:#1e8449}
-.act-body p{margin:0;font-size:.8rem;line-height:1.5;color:var(--text-soft)}
-.act-time{display:inline-block;margin-top:.35rem;font-size:.7rem;letter-spacing:.5px;font-weight:700}
-.stars-row{text-align:center;margin-top:1.3rem;font-size:1.6rem;letter-spacing:6px;color:var(--accent)}
-.stars-row div{font-size:.7rem;letter-spacing:1px;color:var(--dim);margin-top:.3rem}
-.sheet-foot{text-align:center;font-size:.68rem;color:var(--dim);margin-top:1.1rem}
-.page-sep{display:flex;align-items:center;gap:10px;margin:1.6rem 0;color:var(--dim);font-size:.7rem;letter-spacing:1px;text-transform:uppercase}
+.act-body p{margin:0;font-size:var(--fs-body);line-height:var(--line);color:var(--text-soft)}
+.act-time{display:inline-block;margin-top:.3rem;font-size:var(--fs-small);letter-spacing:.4px;font-weight:700}
+.stars-row{text-align:center;margin-top:auto;padding-top:1rem;font-size:1.45rem;letter-spacing:6px;color:var(--accent);flex-shrink:0}
+.stars-row div{font-size:var(--fs-small);letter-spacing:1px;color:var(--dim);margin-top:.25rem}
+.sheet-foot{text-align:center;font-size:var(--fs-small);color:var(--dim);margin-top:.85rem;flex-shrink:0}
+.page-sep{display:flex;align-items:center;gap:10px;margin:1.4rem auto;max-width:820px;color:var(--dim);font-size:var(--fs-small);letter-spacing:1px;text-transform:uppercase}
 .page-sep::before,.page-sep::after{content:'';flex:1;border-top:1px dashed var(--border2)}
-.prac-h{margin:1rem 0 .5rem;font-size:.85rem;letter-spacing:1px;text-transform:uppercase;color:var(--accent)}
-.prac-p{margin:.3rem 0;font-size:.92rem;line-height:1.7;color:#1c2026}
-.trace-row{display:flex;gap:16px;flex-wrap:wrap;margin:.4rem 0;align-items:flex-end}
-.trace-row.guided{position:relative;width:100%;min-height:58px;border-bottom:2px solid #7d8595;padding:0 8px 2px}
+.prac-h{margin:.85rem 0 .4rem;font-size:var(--fs-h);letter-spacing:1px;text-transform:uppercase;color:var(--accent);font-weight:700}
+.prac-p{margin:.25rem 0;font-size:var(--fs-body);line-height:var(--line);color:#1c2026}
+.trace-row{display:flex;gap:14px;flex-wrap:wrap;margin:.35rem 0;align-items:flex-end}
+.trace-row.guided{position:relative;width:100%;min-height:56px;border-bottom:2px solid #7d8595;padding:0 8px 2px}
 .trace-row.guided::before{content:'';position:absolute;left:0;right:0;top:52%;border-top:2px dashed #cfd5df}
-.trace-letter{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:2.7rem;color:transparent;-webkit-text-stroke:1.5px #7d8595;letter-spacing:2px;line-height:1;position:relative;z-index:1}
-.trace-letter.small{font-size:1.8rem}
-.try-label{font-size:.66rem;color:#9aa1ae;letter-spacing:1px;text-transform:uppercase;align-self:center;position:relative;z-index:1}
-.trace-wavy{font-size:2rem;color:#8b93a3;letter-spacing:3px;margin:.3rem 0}
-.shape-row{display:flex;gap:26px;flex-wrap:wrap;justify-content:center;margin:.5rem 0}
-.write-lines{display:flex;flex-direction:column;gap:16px;margin:.6rem 0 1rem}
+.trace-letter{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:2.4rem;color:transparent;-webkit-text-stroke:1.5px #7d8595;letter-spacing:2px;line-height:1;position:relative;z-index:1}
+.trace-letter.small{font-size:1.7rem}
+.trace-letter.mid{font-size:2rem}
+.trace-letter.sm2{font-size:1.55rem}
+.try-label{font-size:var(--fs-chip);color:#9aa1ae;letter-spacing:1px;text-transform:uppercase;align-self:center;position:relative;z-index:1}
+.trace-wavy{font-size:1.7rem;color:#8b93a3;letter-spacing:3px;margin:.25rem 0}
+.shape-row{display:flex;gap:22px;flex-wrap:wrap;justify-content:center;margin:.45rem 0}
+.write-lines{display:flex;flex-direction:column;gap:14px;margin:.5rem 0 .85rem}
 .write-line{border-bottom:1px solid var(--border2);height:1px;display:block}
-.prob-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 24px;margin:.4rem 0 1rem}
-.prob{font-size:1.05rem;font-family:'JetBrains Mono',monospace;display:flex;align-items:center;gap:8px;color:#1c2026}
-.prob.cw{font-size:1.3rem}
-.blank{display:inline-block;width:46px;height:1.4em;border:2px solid var(--border2);border-radius:4px;vertical-align:middle}
-.blank.wide{width:110px}
-.circle-row{font-size:1.7rem;letter-spacing:8px;margin:.2rem 0 .7rem}
-.pattern-row{font-size:1.9rem;letter-spacing:8px;margin:.2rem 0}
-.pn-q{display:inline-block;width:40px;height:40px;border:2px dashed #7d8595;border-radius:8px;vertical-align:middle;text-align:center;font-size:1.4rem;line-height:38px;color:#9aa1ae}
-.hunt-grid{display:grid;grid-template-columns:repeat(8,34px);gap:3px;margin:.4rem 0 .9rem}
-.hunt-cell{width:34px;height:34px;display:flex;align-items:center;justify-content:center;border:1px solid var(--border2);border-radius:5px;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:1rem;color:#1c2026}
-.ws-grid{display:grid;gap:2px;margin:.4rem 0 .5rem;width:max-content}
-.ws-cell{width:26px;height:26px;display:flex;align-items:center;justify-content:center;border:1px solid var(--border2);font-family:'JetBrains Mono',monospace;font-weight:700;font-size:.82rem;color:#1c2026}
-.ws-words{font-size:.85rem;color:#39404a;margin-bottom:.6rem}
-.ws-words b{margin-right:12px;letter-spacing:1px}
-.draw-box{border:2px dashed var(--border2);border-radius:10px;display:flex;align-items:flex-end;padding:.6rem .8rem;margin:.5rem 0 1rem}
-.draw-label{font-size:.8rem;color:var(--dim)}
-.choice-row{display:flex;gap:16px;flex-wrap:wrap;margin:.4rem 0 .9rem;font-size:.85rem;align-items:center;color:#1c2026}
+.prob-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;margin:.35rem 0 .85rem}
+.prob{font-size:var(--fs-mono);font-family:'JetBrains Mono',monospace;display:flex;align-items:center;gap:8px;color:#1c2026}
+.prob.cw{font-size:calc(var(--fs-mono) * 1.15)}
+.blank{display:inline-block;width:44px;height:1.35em;border:2px solid var(--border2);border-radius:4px;vertical-align:middle}
+.blank.wide{width:100px}
+.circle-row{font-size:1.55rem;letter-spacing:8px;margin:.2rem 0 .6rem}
+.pattern-row{font-size:1.7rem;letter-spacing:8px;margin:.2rem 0}
+.pn-q{display:inline-block;width:38px;height:38px;border:2px dashed #7d8595;border-radius:8px;vertical-align:middle;text-align:center;font-size:1.25rem;line-height:36px;color:#9aa1ae}
+.hunt-grid{display:grid;grid-template-columns:repeat(8,32px);gap:3px;margin:.35rem 0 .75rem}
+.hunt-cell{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border:1px solid var(--border2);border-radius:5px;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:.9rem;color:#1c2026}
+.ws-grid{display:grid;gap:2px;margin:.35rem 0 .45rem;width:max-content}
+.ws-cell{width:24px;height:24px;display:flex;align-items:center;justify-content:center;border:1px solid var(--border2);font-family:'JetBrains Mono',monospace;font-weight:700;font-size:.78rem;color:#1c2026}
+.ws-words{font-size:var(--fs-body);color:#39404a;margin-bottom:.5rem}
+.ws-words b{margin-right:10px;letter-spacing:1px}
+.draw-box{border:2px dashed var(--border2);border-radius:10px;display:flex;align-items:flex-end;padding:.55rem .75rem;margin:.45rem 0 .85rem;min-height:140px;box-sizing:border-box}
+.draw-label{font-size:var(--fs-small);color:var(--dim)}
+.choice-row{display:flex;gap:14px;flex-wrap:wrap;margin:.35rem 0 .75rem;font-size:var(--fs-body);align-items:center;color:#1c2026}
 .choice{display:flex;align-items:center;gap:6px}
 .choice-circle{width:16px;height:16px;border:2px solid var(--text);border-radius:50%;display:inline-block}
-.choice-circle.big{width:26px;height:26px}
-.choice .emoji{font-size:1.3rem}
-.point-row{font-size:2.5rem;letter-spacing:16px;text-align:center;margin:.4rem 0 .8rem}
-.sing-line{background:#f4f8f4;border:2px solid #cfe3d2;border-radius:10px;padding:.7rem 1rem;font-size:.92rem;color:#1c2026;margin:.4rem 0 .8rem}
-.match-cols{display:flex;justify-content:space-between;max-width:420px;margin:.4rem auto .9rem}
-.match-col{display:flex;flex-direction:column;gap:24px;font-size:2.2rem;text-align:center}
-.dot2dot{display:block;margin:.4rem auto}
-.maze-wrap{display:block;margin:.5rem auto}
-.color-pic{display:block;margin:.5rem auto}
+.choice-circle.big{width:24px;height:24px}
+.choice .emoji{font-size:var(--fs-emoji)}
+.point-row{font-size:2.2rem;letter-spacing:14px;text-align:center;margin:.35rem 0 .7rem}
+.sing-line{background:#f4f8f4;border:2px solid #cfe3d2;border-radius:10px;padding:.65rem .9rem;font-size:var(--fs-body);color:#1c2026;margin:.35rem 0 .7rem}
+.match-cols{display:flex;justify-content:space-between;max-width:400px;margin:.35rem auto .75rem}
+.match-col{display:flex;flex-direction:column;gap:20px;font-size:2rem;text-align:center}
+.dot2dot{display:block;margin:.35rem auto}
+.maze-wrap{display:block;margin:.4rem auto}
+.color-pic{display:block;margin:.4rem auto}
 .opt-row{margin:.2rem 0 1.1rem}
 .opt-chk{display:inline-flex;align-items:center;gap:8px;font-size:.82rem;color:var(--text);cursor:pointer}
 .opt-chk input{width:18px;height:18px;accent-color:var(--accent);cursor:pointer}
-.plan-row{display:flex;gap:12px;border:2px solid var(--border2);border-left:6px solid #1e8449;border-radius:8px;padding:.55rem .75rem;margin-bottom:9px;align-items:flex-start;break-inside:avoid}
-.plan-day{min-width:92px;flex-shrink:0;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:.78rem;color:#1c2026;line-height:1.4}
-.plan-day span{display:block;font-weight:400;color:#6a7180;font-size:.7rem}
-.plan-acts{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.74rem;color:#39404a;line-height:1.5}
+.plan-row{display:flex;gap:12px;border:2px solid var(--border2);border-left:6px solid #1e8449;border-radius:8px;padding:.5rem .7rem;margin-bottom:8px;align-items:flex-start;break-inside:avoid}
+.plan-day{min-width:92px;flex-shrink:0;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:var(--fs-small);color:#1c2026;line-height:1.4}
+.plan-day span{display:block;font-weight:400;color:#6a7180;font-size:var(--fs-chip)}
+.plan-acts{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:var(--fs-small);color:#39404a;line-height:1.45}
 .plan-act{white-space:nowrap}
-.ans-sec{margin:.2rem 0 .9rem}
-.ans-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px 24px;font-size:.8rem;color:#1c2026;font-family:'JetBrains Mono',monospace}
+.ans-sec{margin:.2rem 0 .75rem}
+.ans-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px 20px;font-size:var(--fs-small);color:#1c2026;font-family:'JetBrains Mono',monospace}
 .ans-grid .full{grid-column:1/-1;font-family:inherit}
-.ans-q{color:#6a7180;font-family:inherit;font-size:.75rem}
-.skip-row{display:flex;gap:7px;margin:.2rem 0 .8rem;flex-wrap:wrap}
-.skip-cell{width:44px;height:44px;border-radius:50%;border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:.95rem;color:#1c2026}
+.ans-q{color:#6a7180;font-family:inherit;font-size:var(--fs-chip)}
+.skip-row{display:flex;gap:6px;margin:.2rem 0 .7rem;flex-wrap:wrap}
+.skip-cell{width:40px;height:40px;border-radius:50%;border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:var(--fs-body);color:#1c2026}
 .skip-cell.skip-blank{border-style:dashed;border-color:#7d8595}
-.supply-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px 26px;margin:.6rem 0 1rem}
-.supply-item{display:flex;gap:10px;align-items:center;font-size:.95rem;color:#1c2026}
-.supply-box{width:22px;height:22px;border:2px solid #444;border-radius:5px;flex-shrink:0}
-.scale-lg .trace-letter{font-size:3.4rem}
-.scale-lg .trace-letter.small{font-size:2.4rem}
-.scale-lg .trace-row.guided{min-height:84px}
-.scale-lg .hunt-grid{grid-template-columns:repeat(8,44px)}
-.scale-lg .hunt-cell{width:44px;height:44px;font-size:1.25rem}
-.scale-lg .prob{font-size:1.25rem}
-.scale-lg .blank{width:56px}
-.scale-lg .circle-row{font-size:2.2rem;letter-spacing:12px}
-.scale-lg .choice .emoji{font-size:1.7rem}
-.scale-lg .choice-circle{width:20px;height:20px}
-.scale-lg .choice-circle.big{width:30px;height:30px}
-.scale-lg .act-box{width:28px;height:28px}
-.scale-lg .act-ic{font-size:1.6rem}
-.scale-lg .prac-p{font-size:1rem}
-.scale-lg .supply-item{font-size:1rem}
-.scale-xl .trace-letter{font-size:4.2rem;-webkit-text-stroke:2px #7d8595}
-.scale-xl .trace-letter.mid{font-size:3.2rem}
-.scale-xl .trace-letter.sm2{font-size:2.5rem}
-.scale-xl .trace-letter.small{font-size:2.9rem}
-.scale-xl .trace-row.guided{min-height:100px}
-.scale-xl .trace-wavy{font-size:2.7rem;margin:.2rem 0}
-.scale-xl .point-row{font-size:3.6rem;letter-spacing:22px}
-.scale-xl .circle-row{font-size:2.7rem;letter-spacing:14px}
-.scale-xl .pattern-row{font-size:2.7rem}
-.scale-xl .pn-q{width:56px;height:56px;line-height:52px;font-size:2rem}
-.scale-xl .prob{font-size:1.5rem}
-.scale-xl .prob.cw{font-size:1.9rem}
-.scale-xl .blank{width:64px;height:1.5em}
-.scale-xl .act-box{width:32px;height:32px}
-.scale-xl .act-ic{font-size:1.9rem}
-.scale-xl .act-tag{font-size:.68rem}
-.scale-xl .act-body h4{font-size:1.02rem}
-.scale-xl .act-body p{font-size:.88rem}
-.scale-xl .stars-row{font-size:2.3rem}
-.scale-xl .choice .emoji{font-size:2.2rem}
-.scale-xl .choice-circle{width:22px;height:22px}
-.scale-xl .choice-circle.big{width:34px;height:34px}
-.scale-xl .choice-row{gap:22px;font-size:1.02rem}
-.scale-xl .prac-h{font-size:1rem}
-.scale-xl .prac-p{font-size:1.05rem}
-.scale-xl .sheet-head h2{font-size:1.85rem}
-.scale-xl .sheet-mascot{font-size:2.8rem}
-.scale-xl .sing-line{font-size:1.05rem}
-.scale-xl .write-lines{gap:26px}
-.scale-xl .match-col{font-size:2.6rem;gap:24px}
-.scale-xl .choice-row{margin:.3rem 0 .6rem}
-.scale-xl .prac-h{margin:.8rem 0 .4rem}
-.scale-xl .supply-item{font-size:1.05rem}
-@media (max-width:640px){.sheet-grid{grid-template-columns:1fr}.sheet-fields{flex-direction:column;align-items:center;gap:.6rem}.prob-grid{grid-template-columns:1fr}.hunt-grid{grid-template-columns:repeat(8,minmax(26px,1fr))}.scale-lg .hunt-grid{grid-template-columns:repeat(8,minmax(30px,1fr))}.sheet-page{padding:1.1rem 1rem}.supply-grid{grid-template-columns:1fr}}
+.supply-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 22px;margin:.5rem 0 .85rem}
+.supply-item{display:flex;gap:10px;align-items:center;font-size:var(--fs-body);color:#1c2026}
+.supply-box{width:20px;height:20px;border:2px solid #444;border-radius:5px;flex-shrink:0}
+#sheets.scale-lg .trace-letter{font-size:2.85rem}
+#sheets.scale-lg .trace-letter.small{font-size:2rem}
+#sheets.scale-lg .trace-row.guided{min-height:72px}
+#sheets.scale-lg .hunt-grid{grid-template-columns:repeat(8,36px)}
+#sheets.scale-lg .hunt-cell{width:36px;height:36px;font-size:1rem}
+#sheets.scale-lg .circle-row{font-size:1.85rem;letter-spacing:10px}
+#sheets.scale-xl .trace-letter{font-size:3.2rem;-webkit-text-stroke:1.75px #7d8595}
+#sheets.scale-xl .trace-letter.mid{font-size:2.5rem}
+#sheets.scale-xl .trace-letter.sm2{font-size:2rem}
+#sheets.scale-xl .trace-letter.small{font-size:2.25rem}
+#sheets.scale-xl .trace-row.guided{min-height:84px}
+#sheets.scale-xl .trace-wavy{font-size:2.1rem}
+#sheets.scale-xl .point-row{font-size:2.7rem;letter-spacing:16px}
+#sheets.scale-xl .circle-row{font-size:2.1rem;letter-spacing:11px}
+#sheets.scale-xl .pattern-row{font-size:2.1rem}
+#sheets.scale-xl .pn-q{width:48px;height:48px;line-height:44px;font-size:1.5rem}
+#sheets.scale-xl .write-lines{gap:18px}
+#sheets.scale-xl .match-col{font-size:2.2rem;gap:18px}
+#sheets.scale-xl .act-box{width:28px;height:28px}
+
+.fmt-row{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 1.1rem}
+.fmt-btn{font-family:'JetBrains Mono',monospace;font-weight:700;border:2px solid var(--border2);background:var(--panel2);color:var(--text);border-radius:10px;padding:.55rem .9rem;cursor:pointer;font-size:.78rem;letter-spacing:.3px;transition:border-color .15s,background .15s,transform .12s;text-align:left;max-width:100%;line-height:1.35}
+.fmt-btn small{display:block;font-weight:400;opacity:.75;margin-top:.2rem;font-size:.68rem;letter-spacing:0}
+.fmt-btn:hover{border-color:var(--accent)}
+.fmt-btn.active{background:var(--accent);border-color:var(--accent);color:#05070a;transform:scale(1.02)}
+.theme-banner{background:linear-gradient(135deg,#e8f8ef,#fff7e0);border:2px solid #1e8449;border-radius:12px;padding:.85rem 1rem;margin-bottom:.85rem;text-align:center}
+.theme-banner .th-icon{font-size:calc(var(--fs-title) + .4rem);line-height:1}
+.theme-banner h3{margin:.2rem 0 .15rem;font-size:var(--fs-title);color:#1c2026;letter-spacing:1px;line-height:1.2}
+.theme-banner p{margin:0;font-size:var(--fs-body);color:#39404a;line-height:var(--line)}
+.quest-path{display:flex;flex-direction:column;gap:10px;flex:1}
+.quest-stop{border:2px solid var(--border2);border-radius:10px;padding:.65rem .8rem;display:grid;grid-template-columns:auto 1fr;gap:.55rem .75rem;break-inside:avoid;position:relative}
+.quest-stop::before{content:'';position:absolute;left:20px;top:-10px;width:3px;height:10px;background:#c6ccd8}
+.quest-stop:first-child::before{display:none}
+.q-num{width:36px;height:36px;border-radius:50%;background:#1e8449;color:#fff;font-weight:700;font-family:'JetBrains Mono',monospace;display:flex;align-items:center;justify-content:center;font-size:var(--fs-body);flex-shrink:0}
+.q-body h4{margin:0 0 .2rem;font-size:var(--fs-body);font-weight:700;color:#1c2026;display:flex;flex-wrap:wrap;align-items:center;gap:.3rem;line-height:1.3}
+.q-body p{margin:0;font-size:var(--fs-body);color:#39404a;line-height:var(--line)}
+.q-steps{margin:.35rem 0 0;padding:0 0 0 1.05rem;font-size:var(--fs-body);color:#39404a;line-height:var(--line)}
+.q-steps li{margin:.12rem 0}
+.q-meta{display:flex;flex-wrap:wrap;gap:5px;margin-top:.35rem}
+.q-chip{font-size:var(--fs-chip);font-weight:700;letter-spacing:.35px;padding:2px 7px;border-radius:999px;border:1.5px solid #7d8595;color:#39404a}
+.q-chip.tog{border-color:#b9770e;color:#b9770e}
+.q-chip.solo{border-color:#1e8449;color:#1e8449}
+.q-chip.hi{border-color:#c0392b;color:#c0392b}
+.q-chip.lo{border-color:#2471a3;color:#2471a3}
+.side-quests{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:.75rem}
+.side-q{border:2px dashed #7d8595;border-radius:10px;padding:.55rem .7rem;font-size:var(--fs-body);color:#39404a;line-height:var(--line)}
+.side-q strong{display:block;color:#1c2026;font-size:var(--fs-body);margin-bottom:.15rem}
+.stamp-track{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:auto;padding-top:.85rem}
+.stamp{width:40px;height:40px;border:2px dashed #7d8595;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:var(--fs-body);color:#9aa1ae}
+.story-box{background:#f7f3ff;border:2px solid #c9b6f0;border-radius:10px;padding:.75rem .9rem;margin:.4rem 0 .75rem;font-size:var(--fs-body);color:#1c2026;line-height:var(--line)}
+.stretch{background:#fff8e8;border:2px solid #e0b84a;border-radius:10px;padding:.6rem .75rem;margin:.55rem 0;font-size:var(--fs-body)}
+.stretch strong{color:#8a6a00}
+.duo-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+#page2-body,#page3-body,#page4-body,#page5-body,#page6-body{flex:1;font-size:var(--fs-body)}
+@media (max-width:640px){
+  .sheet-grid{grid-template-columns:1fr}
+  .sheet-fields{flex-direction:column;align-items:center;gap:.55rem}
+  .prob-grid{grid-template-columns:1fr}
+  .hunt-grid{grid-template-columns:repeat(8,minmax(26px,1fr))}
+  #sheets.scale-lg .hunt-grid{grid-template-columns:repeat(8,minmax(30px,1fr))}
+  .sheet-page{padding:1.1rem 1rem;min-height:0}
+  .supply-grid{grid-template-columns:1fr}
+  .side-quests,.duo-grid{grid-template-columns:1fr}
+  .fmt-btn{flex:1 1 100%}
+  #sheets{--page-min:0px}
+}
 @media print{
+@page{size:letter;margin:.5in}
 nav,footer,.hamburger,.grid-bg,.scanlines,.crumbs,.product-hero,.curr-controls,.support-cta,section.curr-intro,section.curr-how,section.curr-why,.curr-keep,.curr-cta,.page-sep{display:none!important}
 body{background:#fff!important;color:#111!important;padding-top:0!important}
 .curr-wrap{max-width:100%;padding:0}
-#sheets{display:block!important}
-.sheet-page{page-break-after:always;break-after:page;box-shadow:none;border-radius:0;padding:0;margin:0}
+#sheets{display:block!important;font-size:11pt;--fs-base:11pt;--fs-title:16pt;--fs-sub:10pt;--fs-h:10pt;--fs-body:10.5pt;--fs-small:9pt;--fs-chip:8pt;--fs-mono:11pt;--fs-emoji:13pt;--page-min:0;--page-pad:0;--line:1.35}
+#sheets.scale-lg,#sheets.scale-xl{--fs-base:11pt;--fs-title:16pt;--fs-sub:10pt;--fs-h:10pt;--fs-body:10.5pt;--fs-small:9pt;--fs-chip:8pt;--fs-mono:11pt;--fs-emoji:13pt}
+.sheet-page{page-break-after:always;break-after:page;box-shadow:none;border-radius:0;padding:0;margin:0;max-width:none;min-height:0;width:100%;font-size:11pt}
 .sheet-page:last-child{page-break-after:auto;break-after:auto}
 .sheet-head,.mini-head{border-bottom-color:#111!important}
 .act-card{border-color:#333!important;border-left-color:inherit}
@@ -234,11 +309,11 @@ body{background:#fff!important;color:#111!important;padding-top:0!important}
 <p class="crumbs"><a href="../">Home</a> &rsaquo; <a href="../amni-learn.html">Amni-Learn</a> &rsaquo; Daily Curriculum</p>
 <div class="product-hero">
 <h1>DAILY CURRICULUM</h1>
-<p class="desc">PICK AN AGE (1&ndash;13) &mdash; PRINT TODAY'S LEARNING PACKET</p>
+<p class="desc">PICK AN AGE (1&ndash;13) &middot; CLASSIC OR ADVENTURE FORMAT &mdash; PRINT TODAY'S PACKET</p>
 </div>
 <section class="curr-intro">
 <div style="max-width:800px;margin:0 auto;text-align:left;padding:0 1.5rem">
-<p style="color:var(--text);font-size:.88rem;line-height:1.8">A free, screen-free companion to the Amni-Learn games: pick your child's age (1 to 13) and print a 4-page packet &mdash; a balanced activity checklist (half 🤝 do-together, half ⭐ on-my-own), big-print worksheet pages with rotating games (tracing, mazes, match-ups, dot-to-dot, word searches), a creative page, a supplies checklist covering the whole week ahead, and an optional week-at-a-glance planner. Ages 1&ndash;2 get a caregiver-guided "Little Hands" edition. Today's picks stay the same all day; tap New Set for a fresh mix.</p>
+<p style="color:var(--text);font-size:.88rem;line-height:1.8">A free, screen-free companion to the Amni-Learn games: pick your child's age (1 to 13), choose <strong>Classic Checklist</strong> or the new <strong>Adventure Day</strong> quest format, and print a multi-page packet. Classic keeps the six-category balance (half 🤝 do-together, half ⭐ on-my-own). Adventure Day wraps the day in a fun theme with a quest path, side quests, bigger young-kid print, denser older-kid challenges, rotating worksheets, supplies, and an optional week planner. Ages 1&ndash;2 get a caregiver-guided "Little Hands" edition. Today's picks stay the same all day; tap New Set for a fresh mix.</p>
 </div>
 </section>
 <div class="curr-wrap">
@@ -247,8 +322,13 @@ body{background:#fff!important;color:#111!important;padding-top:0!important}
 <div class="age-row" id="age-row"></div>
 <div class="band-label" id="band-label"></div>
 <div class="name-field"><label for="child-name">Child's name (optional &mdash; used for the tracing page)</label><input type="text" id="child-name" maxlength="14" placeholder="e.g. Emma" autocomplete="off"></div>
+<h3>2. Pick a day format</h3>
+<div class="fmt-row" id="fmt-row" role="group" aria-label="Day format">
+<button type="button" class="fmt-btn active" data-fmt="classic" id="fmt-classic">📋 Classic Checklist<small>6 categories · balanced together/solo · original packet</small></button>
+<button type="button" class="fmt-btn" data-fmt="adventure" id="fmt-adventure">🗺️ Adventure Day<small>Themed quest path · more stations · age-tuned fun &amp; stretch challenges</small></button>
+</div>
 <div class="opt-row"><label class="opt-chk"><input type="checkbox" id="opt-planner" checked> 📅 Include weekly planner page</label> &nbsp; <label class="opt-chk"><input type="checkbox" id="opt-key"> ✅ Include answer key (for parents)</label></div>
-<h3>2. Get today's packet</h3>
+<h3>3. Get today's packet</h3>
 <div class="curr-actions">
 <button class="btn btn-primary" id="new-set-btn" style="background:var(--accent);color:#05070a;box-shadow:0 0 10px var(--accent-glow)">&#128256; NEW SET</button>
 <button class="btn btn-outline" id="print-btn">&#128424;&#65039; PRINT THIS PACKET</button>
@@ -298,7 +378,7 @@ body{background:#fff!important;color:#111!important;padding-top:0!important}
 <h2>HOW IT WORKS</h2>
 <div class="how-works-grid">
 <div class="card"><h3>1. PICK AN AGE</h3><p>Choose any age from 1 to 13. Activities and worksheets come from six developmental bands &mdash; including a caregiver-guided toddler packet for ages 1&ndash;2 with extra-big print throughout.</p></div>
-<div class="card"><h3>2. FOUR PAGES, FRESH DAILY</h3><p>Page 1 is a balanced checklist: half do-together activities (cooking, plants, cleaning, experiments), half independent. Pages 2&ndash;3 are big-print worksheets and games that rotate daily &mdash; tracing, mazes, match-ups, dot-to-dot, word searches. Page 4 is the week's supplies checklist.</p></div>
+<div class="card"><h3>2. FOUR PAGES, FRESH DAILY</h3><p>Classic mode: Page 1 is a balanced six-category checklist. Adventure mode: a themed quest path with five stations, side quests, and stamp track. Pages 2&ndash;3 rotate age-tuned worksheets (more volume + stretch challenges in Adventure). Page 4 is the week's supplies checklist.</p></div>
 <div class="card"><h3>3. GATHER ONCE, PLAY ALL WEEK</h3><p>The supplies page unions the actual upcoming week of activities into one shopping-style checklist, so everything's on hand before it's needed.</p></div>
 </div>
 </section>
@@ -653,7 +733,7 @@ var shape=pickN(rnd,['circle','square','heart'],1)[0];
 var pts=pickN(rnd,POINT_ITEMS,6);
 var v=Math.floor(rnd()*2);
 var fourth=v===0?'<h4 class="prac-h">Point &amp; Name</h4><p class="prac-p">Caregiver: ask &quot;Where is the '+pts.map(function(p){return p[1];}).join(', the ')+'?&quot; and let them point.</p><div class="point-row">'+pts.map(function(p){return p[0];}).join('')+'</div>':oddOneOutHTML(rnd);
-return '<h4 class="prac-h">Trace Together (hand over hand)</h4><div class="shape-row">'+shapeSVG(shape,190)+shapeSVG('zigzag',140)+'</div><h4 class="prac-h">Scribble Zone</h4><div class="draw-box" style="min-height:170px"><div class="draw-label">Free scribbling — any marks count!</div></div>'+fourth;
+return '<h4 class="prac-h">Trace Together (hand over hand)</h4><div class="shape-row">'+shapeSVG(shape,190)+shapeSVG('zigzag',140)+'</div><h4 class="prac-h">Scribble Zone</h4><div class="draw-box"><div class="draw-label">Free scribbling — any marks count!</div></div>'+fourth;
 };
 var page3HTML=function(band,rnd,creativeItem){
 var weather=['&#9728;&#65039; Sunny','&#9729;&#65039; Cloudy','&#127783;&#65039; Rainy','&#10052;&#65039; Snowy'].map(function(w){return '<span class="choice"><span class="choice-circle"></span>'+w+'</span>';}).join('');
@@ -669,18 +749,18 @@ if(band==='p34'){
 var pv=Math.floor(rnd()*2);
 var bonus=pv===0?(function(){var pair=PATTERN_PAIRS[Math.floor(rnd()*PATTERN_PAIRS.length)],distractor=PATTERN_PAIRS[(PATTERN_PAIRS.indexOf(pair)+1)%PATTERN_PAIRS.length][0],choices=pickN(rnd,[pair[0],pair[1],distractor],3);ANS.push('Pattern next: '+pair[1]);return '<h4 class="prac-h">What Comes Next?</h4><div class="pattern-row">'+pair[0]+pair[1]+pair[0]+pair[1]+pair[0]+' <span class="pn-q">?</span></div><p class="prac-p">Circle the answer:</p><div class="circle-row">'+choices.join(' &nbsp; ')+'</div>';})():mazeHTML(rnd,5,44);
 var rhy2=pickN(rnd,RHYMES,1)[0];
-return '<div class="draw-box" style="min-height:'+(pv===1?120:150)+'px"><div class="draw-label">Draw or design: '+creativeItem.t+'</div></div><p class="prac-p">Tell me about it:</p><div class="write-lines"><span class="write-line"></span></div>'+checksLite+bonus+'<h4 class="prac-h">Sing Together</h4><div class="sing-line">🎵 Today&apos;s song: <strong>'+rhy2+'</strong> — sing it with the motions!</div>';
+return '<div class="draw-box"><div class="draw-label">Draw or design: '+creativeItem.t+'</div></div><p class="prac-p">Tell me about it:</p><div class="write-lines"><span class="write-line"></span></div>'+checksLite+bonus+'<h4 class="prac-h">Sing Together</h4><div class="sing-line">🎵 Today&apos;s song: <strong>'+rhy2+'</strong> — sing it with the motions!</div>';
 }
 if(band==='k56'||band==='g78'){
 var bv=Math.floor(rnd()*(band==='g78'?3:2));
 var bonus2=bv===0?(function(){var words=pickN(rnd,WS_WORDS[band],band==='k56'?3:4),size=WS_SIZE[band],ws=wordSearch(rnd,words,size);return '<h4 class="prac-h">Word Search</h4><div class="ws-words">'+ws.words.map(function(w){return '<b>'+w+'</b>';}).join('')+'</div><div class="ws-grid" style="grid-template-columns:repeat('+size+',26px)">'+ws.grid.map(function(row){return row.map(function(cch){return '<span class="ws-cell">'+cch+'</span>';}).join('');}).join('')+'</div>';})():bv===1?mazeHTML(rnd,band==='k56'?7:9,band==='k56'?42:36):civicsHTML(rnd);
 var drawH=bv===1?(band==='k56'?130:110):bv===2?120:(band==='k56'?150:140);
-return '<div class="draw-box" style="min-height:'+drawH+'px"><div class="draw-label">Draw or design: '+creativeItem.t+'</div></div><p class="prac-p">Tell me about it:</p><div class="write-lines"><span class="write-line"></span><span class="write-line"></span></div>'+checks+bonus2;
+return '<div class="draw-box"><div class="draw-label">Draw or design: '+creativeItem.t+'</div></div><p class="prac-p">Tell me about it:</p><div class="write-lines"><span class="write-line"></span><span class="write-line"></span></div>'+checks+bonus2;
 }
 var bv2=Math.floor(rnd()*2);
 var words2=pickN(rnd,WS_WORDS[band],4),size2=WS_SIZE[band],ws2=wordSearch(rnd,words2,size2);
 var tailBonus=bv2===0?'<h4 class="prac-h">Word Search</h4><div class="ws-words">'+ws2.words.map(function(w){return '<b>'+w+'</b>';}).join('')+'</div><div class="ws-grid" style="grid-template-columns:repeat('+size2+',26px)">'+ws2.grid.map(function(row){return row.map(function(cch){return '<span class="ws-cell">'+cch+'</span>';}).join('');}).join('')+'</div>':civicsHTML(rnd);
-return '<div class="draw-box" style="min-height:150px"><div class="draw-label">Draw or design: '+creativeItem.t+'</div></div><p class="prac-p">Tell me about it:</p><div class="write-lines"><span class="write-line"></span><span class="write-line"></span></div>'+checks+tailBonus;
+return '<div class="draw-box"><div class="draw-label">Draw or design: '+creativeItem.t+'</div></div><p class="prac-p">Tell me about it:</p><div class="write-lines"><span class="write-line"></span><span class="write-line"></span></div>'+checks+tailBonus;
 };
 var pickDay=function(band,rnd){
 var picks={};
@@ -716,37 +796,418 @@ CATKEYS.forEach(function(k){(pk[k].s||[]).forEach(function(it){set[it]=1;});});
 }
 return Object.keys(set).sort();
 };
+
+var currentFmt=sessionStorage.getItem('curr-fmt')||'classic';
+var THEMES={
+t12:[
+{id:'snuggle',icon:'🧸',name:'Snuggle & Sound Day',hook:'Today is all about pointing, naming, and cozy listening with you.'},
+{id:'splash',icon:'💧',name:'Splash & Scoop Day',hook:'Water, scoops, and big wet giggles — sensory science for little hands.'},
+{id:'bounce',icon:'🎶',name:'Bounce & Beat Day',hook:'Music, motion, and drumming on pots — we feel the rhythm together.'},
+{id:'outside',icon:'🌳',name:'Outside Explorer Day',hook:'Grass, leaves, bugs, and big sky words on a short nature stroll.'},
+{id:'mirror',icon:'🪞',name:'Mirror Face Day',hook:'Silly faces, body parts, and “hi / bye” practice in the mirror.'},
+{id:'kitchen',icon:'🥄',name:'Kitchen Helper Day',hook:'Stir, wipe, dump, and cheer — real life skills at snack height.'}
+],
+p34:[
+{id:'dino',icon:'🦕',name:'Dinosaur Dig Day',hook:'We dig, count bones, roar letter sounds, and invent a dino home.'},
+{id:'space',icon:'🚀',name:'Space Launch Day',hook:'Count down, float like astronauts, and draw our own planet.'},
+{id:'bakery',icon:'🧁',name:'Pretend Bakery Day',hook:'Measure, decorate, and sell imaginary treats with real counting.'},
+{id:'bug',icon:'🐛',name:'Bug Safari Day',hook:'Hunt for critters, sort by color, and build a mini bug hotel.'},
+{id:'pirate',icon:'🏴‍☠️',name:'Treasure Map Day',hook:'Follow a simple map, match shapes, and draw where X marks the spot.'},
+{id:'weather',icon:'🌈',name:'Weather Watcher Day',hook:'Check the sky, act out rain/sun, and paint today’s weather.'}
+],
+k56:[
+{id:'detective',icon:'🕵️',name:'Word Detective Day',hook:'Clues, rhymes, letter hunts, and a mystery sentence to solve.'},
+{id:'zoo',icon:'🦁',name:'Zoo Keeper Day',hook:'Sort animals, count snacks, and design the perfect habitat.'},
+{id:'builder',icon:'🧱',name:'Master Builder Day',hook:'Plan, measure, stack, and write a label for your invention.'},
+{id:'garden',icon:'🌻',name:'Garden Lab Day',hook:'Plant science, seed math, and a nature journal page.'},
+{id:'market',icon:'🛒',name:'Market Math Day',hook:'Prices, change, shopping lists, and a tiny store you run.'},
+{id:'story',icon:'📚',name:'Story Studio Day',hook:'Retell, rewrite the ending, and illustrate chapter one.'}
+],
+g78:[
+{id:'inventor',icon:'💡',name:'Inventor Workshop Day',hook:'Prototype a fix for a real problem, then pitch it in writing.'},
+{id:'cartographer',icon:'🗺️',name:'Map Maker Day',hook:'Scale, coordinates, compass rose, and a legend you invent.'},
+{id:'chef',icon:'👩‍🍳',name:'Recipe Engineer Day',hook:'Fractions in the kitchen, scale a recipe, write clear steps.'},
+{id:'reporter',icon:'📰',name:'Newsroom Day',hook:'Interview, headline, and a 5-sentence news brief about home life.'},
+{id:'eco',icon:'♻️',name:'Planet Protector Day',hook:'Audit trash/recycling, graph it, design a greener habit.'},
+{id:'stage',icon:'🎭',name:'Stage & Script Day',hook:'Write a 1-minute scene, practice dialogue, and perform once.'}
+],
+g910:[
+{id:'coder',icon:'🤖',name:'Algorithm Architect Day',hook:'Write clear steps a robot could follow — then debug a friend’s algorithm.'},
+{id:'economist',icon:'💰',name:'Budget Boss Day',hook:'Plan a $20 day trip: priorities, trade-offs, and a short reflection.'},
+{id:'biologist',icon:'🧬',name:'Life Systems Day',hook:'Observe a living thing, record data, and form a testable question.'},
+{id:'historian',icon:'⏳',name:'Timeline Traveler Day',hook:'Build a personal or local history timeline with three evidence notes.'},
+{id:'engineer',icon:'⚙️',name:'Bridge Challenge Day',hook:'Design for load, test with books, redesign once, report what changed.'},
+{id:'poet',icon:'✒️',name:'Poetry Lab Day',hook:'Collect sensory words, draft two forms, and perform one aloud.'}
+],
+t1113:[
+{id:'startup',icon:'🚀',name:'Micro-Startup Day',hook:'Spot a need, sketch a product, price it, and write a 60-second pitch.'},
+{id:'civic',icon:'⚖️',name:'Civic Design Day',hook:'Pick a community issue, map stakeholders, propose one concrete action.'},
+{id:'data',icon:'📊',name:'Data Detective Day',hook:'Collect 12 data points, find mean/mode, and chart a claim with evidence.'},
+{id:'maker',icon:'🛠️',name:'Maker Sprint Day',hook:'Prototype in under 45 minutes, user-test once, ship a one-page manual.'},
+{id:'debate',icon:'🎤',name:'Socratic Arena Day',hook:'Claim → evidence → counterclaim on a low-stakes house rule or news topic.'},
+{id:'wellness',icon:'🧘',name:'Mind & Body Systems Day',hook:'Track sleep/mood/movement, notice patterns, design one weekly experiment.'}
+]
+};
+var QUEST={
+t12:{
+warm:[
+{t:'Name Song Bounce',d:'Bounce gently while singing their name in a silly tune.',steps:['Sit face to face','Clap each syllable of their name','Bounce and repeat 3 times'],n:5,g:1,e:'hi',s:[]},
+{t:'Toe Wiggly Count',d:'Wiggle and count toes together out loud.',steps:['Take off socks','Wiggle one toe at a time','Count to 10 together'],n:5,g:1,e:'lo',s:[]},
+{t:'Scarf Float',d:'Toss light scarves and watch them fall.',steps:['Stand safely','Toss scarf high','Say “up!” and “down!”'],n:5,g:1,e:'hi',s:['scarves']}
+],
+brain:[
+{t:'Picture Point Quest',d:'Find animals in a board book by pointing.',steps:['Open a sturdy book','Ask “Where’s the ___?”','Celebrate every point'],n:8,g:1,e:'lo',s:['picture books']},
+{t:'Sound Safari',d:'Name 4 house sounds together.',steps:['Pause and listen','Point to the sound source','Copy the sound with your voice'],n:8,g:1,e:'lo',s:[]},
+{t:'First Word Echo',d:'Echo ball, cup, dog, moon with cheers.',steps:['Hold up each object or picture','Say the word slowly','Celebrate any try'],n:6,g:1,e:'lo',s:[]}
+],
+hands:[
+{t:'Sticker Constellation',d:'Stick big stickers along a drawn line.',steps:['Draw a thick line','Peel stickers together','Stick along the line'],n:8,g:1,e:'lo',s:['large stickers','paper']},
+{t:'Dough Poke Lab',d:'Poke holes and squash play-dough mounds.',steps:['Roll a mound','Poke 5 holes','Squish flat — reset once'],n:8,g:1,e:'med',s:['play-dough']},
+{t:'Cup Tower Crash',d:'Stack 4 cups then knock them down.',steps:['Stack carefully','Count each cup','Crash and rebuild once'],n:6,g:1,e:'hi',s:['plastic cups']}
+],
+create:[
+{t:'Handprint Keepsake',d:'Trace or paint a hand and date it.',steps:['Paint or trace hand','Add the date','Wave bye to the print'],n:10,g:1,e:'med',s:['washable paint','paper']},
+{t:'Pot Drum Band',d:'Drum a pot with a wooden spoon to a song.',steps:['Flip a pot','Tap slow then fast','March 20 steps drumming'],n:6,g:1,e:'hi',s:['pot & wooden spoon']},
+{t:'Bubble Pop Chase',d:'Chase and pop bubbles outside or in a hall.',steps:['Blow bubbles','Say “pop!” each time','Try catching one on a wand'],n:8,g:1,e:'hi',s:['bubbles']}
+],
+life:[
+{t:'Wipe Mission',d:'Wipe the tray or table with a cloth together.',steps:['Wet cloth lightly','Wipe in big circles','Hang cloth up'],n:5,g:1,e:'lo',s:['cloths']},
+{t:'Toy Taxi',d:'Drive 4 toys back to the bin.',steps:['Park 4 toys in a line','Drive each to the bin','Cheer “garage closed!”'],n:6,g:1,e:'med',s:[]},
+{t:'Sock Tug Practice',d:'Pull socks off, try pushing one back on.',steps:['Pull socks off','Try one sock on','Grown-up finishes kindly'],n:6,g:1,e:'lo',s:['socks']}
+],
+side:[
+{t:'Window Watch Bonus',d:'Name 3 things outside the window.',n:4,g:1,s:[]},
+{t:'Snack One-by-One',d:'Hand snack pieces saying “one more!”',n:4,g:1,s:['cereal or crackers']},
+{t:'Mirror Silly Faces',d:'Make 3 faces in a mirror together.',n:4,g:1,s:[]}
+]
+},
+p34:{
+warm:[
+{t:'Dinosaur Stomp Stretch',d:'Stomp, reach high like a long neck, curl small like an egg.',steps:['Stomp 10 times','Reach to the sky','Curl into an egg — hatch!'],n:5,g:1,e:'hi',s:[]},
+{t:'Rocket Countdown',d:'Count 10 to 1 then jump “blast off!”',steps:['Feet together','Count down loud','Jump on zero'],n:4,g:1,e:'hi',s:[]},
+{t:'Weather Yoga',d:'Sun arms up, rain fingers wiggle, wind twist.',steps:['Sun pose 5 sec','Rain fingers','Wind twists ×5'],n:5,g:1,e:'med',s:[]}
+],
+brain:[
+{t:'Letter Treasure Hunt',d:'Find 4 things that start with today’s letter.',steps:['Pick a letter together','Hunt room to room','Draw or stick the finds'],n:12,g:0,e:'med',s:['paper','crayons']},
+{t:'Story Retell Chain',d:'Retell a book with 3 picture cards you draw.',steps:['Read or hear a short story','Draw beginning/middle/end','Tell it back'],n:12,g:1,e:'lo',s:['picture books','paper','crayons']},
+{t:'Rhyme Relay',d:'Invent 6 rhymes for cat/hat and dog/log.',steps:['Say the base word','Take turns rhyming','Circle favorites'],n:8,g:1,e:'lo',s:[]}
+],
+hands:[
+{t:'Bone Dig Sensory Bin',d:'Hide “bones” (spoons/sticks) in rice; dig and count.',steps:['Hide 6 items','Dig with hands or spoon','Count finds'],n:12,g:0,e:'med',s:['dry beans or rice','spoons']},
+{t:'Scissor Snack Strip',d:'Snip paper strips into “dino teeth.”',steps:['Draw thick lines','Snip on the lines','Glue teeth on a mouth drawing'],n:12,g:0,e:'med',s:['safety scissors','paper','glue']},
+{t:'Shape Cookie Press',d:'Press cookie cutters into dough; name shapes.',steps:['Flatten dough','Press 4 shapes','Name each shape'],n:10,g:0,e:'lo',s:['play-dough','cookie cutters']}
+],
+create:[
+{t:'Habitat Diorama Lid',d:'Build a dino/bug home in a box lid.',steps:['Pick animals','Add paper trees/rocks','Tell who lives there'],n:15,g:0,e:'med',s:['box','paper','crayons']},
+{t:'Treasure Map Draw',d:'Draw a room map with an X for treasure.',steps:['Sketch furniture blobs','Add path dots','Hide a small treasure at X'],n:12,g:1,e:'lo',s:['paper','crayons']},
+{t:'Weather Canvas',d:'Paint or crayon today’s real weather scene.',steps:['Look outside','Choose colors','Fill the page'],n:12,g:0,e:'lo',s:['paper','crayons']}
+],
+life:[
+{t:'Set the Launch Pad',d:'Set napkin + cup for each person at a meal.',steps:['Count people','Place napkin/cup each','Check your work'],n:8,g:0,e:'lo',s:[]},
+{t:'Sock Sorting Dock',d:'Match 5 pairs of socks from a pile.',steps:['Dump clean socks','Match pairs','Fold or clip pairs'],n:10,g:0,e:'lo',s:['socks','laundry']},
+{t:'Wipe & Reset Station',d:'Wipe table, push chairs, put 3 toys away.',steps:['Wipe spills','Push chairs in','Toy taxi to bin'],n:8,g:1,e:'med',s:['cloths']}
+],
+side:[
+{t:'Color Mix Surprise',d:'Mix two paint blobs; name the new color.',n:6,g:1,s:['washable paint','paper']},
+{t:'Animal Yoga Freeze',d:'Freeze as cat, frog, flamingo on signal.',n:5,g:1,s:[]},
+{t:'Pattern Bracelet',d:'Bead or sticker ABAB pattern strip.',n:8,g:0,s:['large stickers','paper']}
+]
+},
+k56:{
+warm:[
+{t:'Spy Stretch Circuit',d:'Tip-toe, army crawl, freeze when “spotted.”',steps:['Tip-toe 20 steps','Crawl to a pillow base','Freeze 5 seconds ×3'],n:6,g:1,e:'hi',s:[]},
+{t:'Multiplication Jump',d:'Jump counting by 2s to 20.',steps:['Jump and say 2,4,6…','Try by 5s if easy','High-five finish'],n:5,g:0,e:'hi',s:[]}
+],
+brain:[
+{t:'Clue Card Words',d:'Build 5 CVC or sight words from letter cards.',steps:['Pull 6 letters','Build 5 real words','Read them to a grown-up'],n:12,g:0,e:'lo',s:['letter magnets or puzzle']},
+{t:'Mystery Sentence',d:'Unscramble a 5-word sentence about animals.',steps:['Write words on slips','Mix them','Rebuild + illustrate'],n:12,g:0,e:'lo',s:['paper','pencil']},
+{t:'Rhyme Detective Sheet',d:'List 8 rhymes for ship/train/light.',steps:['Pick 2 base words','List 4 rhymes each','Star the funniest'],n:10,g:0,e:'lo',s:['paper','pencil']}
+],
+hands:[
+{t:'Habitat Blueprint',d:'Draw and label a zoo habitat with 5 features.',steps:['Choose animal','Draw food/water/shelter','Label 5 parts'],n:15,g:0,e:'lo',s:['paper','crayons']},
+{t:'Seed Math Tray',d:'Plant or pretend-plant and array seeds in rows.',steps:['Make 3 rows of 4','Write 3×4=12','Water (or pretend)'],n:12,g:1,e:'med',s:['paper','seeds or beans']},
+{t:'Bridge of Books',d:'Build a paper/book bridge that holds a toy car.',steps:['Design first','Build','Test + rebuild once'],n:15,g:0,e:'med',s:['paper','tape','blocks']}
+],
+create:[
+{t:'Comic of the Day',d:'3-panel comic: problem → try → fix.',steps:['Sketch panels','Add speech bubbles','Color one panel fully'],n:15,g:0,e:'lo',s:['paper','crayons']},
+{t:'Soundtrack Sketch',d:'Draw the story while a song plays twice.',steps:['Play one song','Draw what you hear','Title your piece'],n:12,g:0,e:'lo',s:['paper','crayons']},
+{t:'Clay Character',d:'Sculpt a zoo keeper or detective from dough.',steps:['Body + head','Add 1 tool prop','Name them'],n:12,g:0,e:'med',s:['play-dough']}
+],
+life:[
+{t:'Mini Market',d:'Price 4 toys and “sell” them with play money.',steps:['Price tags $1–$5','Buyer pays','Count change simply'],n:12,g:1,e:'med',s:['paper','pencil']},
+{t:'Lunch Pack Pro',d:'Pack a balanced snack with 3 food groups.',steps:['Choose items','Pack neatly','Tell why each helps'],n:10,g:1,e:'lo',s:[]},
+{t:'Room Reset Timer',d:'10-minute tidy with a checklist of 5 jobs.',steps:['Write 5 jobs','Set timer','Check off each'],n:10,g:0,e:'med',s:['paper','pencil']}
+],
+side:[
+{t:'Password of the Day',d:'Invent a 6-letter nonsense password and memorize it.',n:5,g:0,s:['paper']},
+{t:'Estimate Jar',d:'Guess items in a jar; count to check.',n:8,g:1,s:['jar','small objects']},
+{t:'Kindness Courier',d:'Deliver a thank-you note to someone at home.',n:8,g:0,s:['paper','pencil']}
+]
+},
+g78:{
+warm:[
+{t:'Inventor Warm-Up',d:'2-minute rapid sketch: 6 ways to improve a spoon.',steps:['Timer 2 min','Sketch 6 ideas','Star the best'],n:5,g:0,e:'med',s:['paper','pencil']},
+{t:'Map Stretch',d:'Face N/S/E/W; walk a path of 4 compass calls.',steps:['Find north roughly','Follow 4 directions','Draw the path'],n:6,g:1,e:'hi',s:[]}
+],
+brain:[
+{t:'One-Page Pitch',d:'Write a product pitch: problem, fix, who it helps.',steps:['Name the problem','Describe the fix','2 sentences on benefits'],n:15,g:0,e:'lo',s:['paper','pencil']},
+{t:'Scale Map Grid',d:'Map a room on grid paper with a legend.',steps:['Measure paces','Draw to scale roughly','Add 4 symbols + legend'],n:18,g:0,e:'med',s:['paper','pencil']},
+{t:'Recipe Fractions',d:'Double and half a 4-ingredient snack recipe.',steps:['Write original','Double each amount','Halve each amount'],n:12,g:0,e:'lo',s:['paper','pencil']}
+],
+hands:[
+{t:'Cardboard Prototype',d:'Build a simple tool from scrap that solves a chore.',steps:['Define the chore','Build 10 min','Test once'],n:20,g:0,e:'med',s:['box','tape','scissors']},
+{t:'Load Test Bridge',d:'Paper bridge between books; count max coins/blocks.',steps:['Build','Load slowly','Record max load + redesign note'],n:18,g:0,e:'med',s:['paper','tape','blocks']},
+{t:'Interview Kit',d:'Prep 5 questions; interview a family member 5 min.',steps:['Write questions','Interview','Note 3 quotes'],n:15,g:1,e:'lo',s:['paper','pencil']}
+],
+create:[
+{t:'60-Second Scene',d:'Write and perform a 1-minute scene with a prop.',steps:['Write dialogue','Rehearse once','Perform'],n:15,g:1,e:'hi',s:['paper','pencil']},
+{t:'Eco Poster',d:'Design a poster for one greener home habit.',steps:['Pick habit','Headline + 3 tips','Illustration'],n:15,g:0,e:'lo',s:['paper','crayons']},
+{t:'News Brief',d:'Write a 5-sentence news article about a home event.',steps:['Who/what/when/where','Quote someone','Headline'],n:12,g:0,e:'lo',s:['paper','pencil']}
+],
+life:[
+{t:'Trash Audit Graph',d:'Sort recycling vs trash for one day; tally bars.',steps:['Sort safely','Tally','Bar graph + one insight'],n:15,g:1,e:'med',s:['paper','pencil']},
+{t:'Meal Math Helper',d:'Help cook; measure 3 ingredients and time steps.',steps:['Read recipe','Measure carefully','Note total time'],n:20,g:1,e:'med',s:[]},
+{t:'Chore Algorithm',d:'Write numbered steps for laundry or dishes.',steps:['List steps','Test by following only the list','Fix missing steps'],n:12,g:0,e:'lo',s:['paper','pencil']}
+],
+side:[
+{t:'Coordinate Doodle',d:'Plot 6 points and connect into a creature.',n:8,g:0,s:['paper','pencil']},
+{t:'Budget $10 Challenge',d:'Plan a picnic under $10 with real flyer prices.',n:10,g:0,s:['paper','pencil']},
+{t:'Etymology Mini',d:'Look up 2 word origins; teach someone.',n:8,g:1,s:[]}
+]
+},
+g910:{
+warm:[
+{t:'Focus Sprint',d:'4 minutes silent focus on one stretch problem.',steps:['Pick hard problem','Timer 4 min','Note strategy used'],n:5,g:0,e:'lo',s:['paper','pencil']},
+{t:'Mobility + Mindset',d:'2-min stretch + write today’s “win condition.”',steps:['Stretch','Write one clear win','Post it visible'],n:5,g:0,e:'med',s:['paper']}
+],
+brain:[
+{t:'Robot Recipe',d:'Write an algorithm a sibling could follow blind.',steps:['Task: make a sandwich or fold shirt','Number steps','Debug after one trial'],n:15,g:1,e:'lo',s:['paper','pencil']},
+{t:'$20 Trip Budget',d:'Plan a day trip with categories and trade-offs.',steps:['List wants','Allocate $20','Cut one item; explain'],n:15,g:0,e:'lo',s:['paper','pencil']},
+{t:'Evidence Timeline',d:'Timeline of a local/family event with 3 sources.',steps:['Pick event','3 dated entries','Note source types'],n:18,g:0,e:'lo',s:['paper','pencil']}
+],
+hands:[
+{t:'Bridge Redesign Lab',d:'Build, test, redesign, retest; log variables.',steps:['Build v1','Test load','Change 1 variable; retest'],n:25,g:0,e:'med',s:['paper','tape','blocks']},
+{t:'Bioblitz Notes',d:'Observe one organism 10 min; sketch + questions.',steps:['Observe','Sketch','2 testable questions'],n:15,g:0,e:'lo',s:['paper','pencil']},
+{t:'Data Collect 12',d:'Collect 12 measures (steps, temps, scores); mean/mode.',steps:['Collect','Compute mean/mode','Claim + evidence sentence'],n:18,g:0,e:'lo',s:['paper','pencil']}
+],
+create:[
+{t:'Poetry Dual Form',d:'Write haiku + free verse on same image.',steps:['Pick image/theme','Draft both','Perform one'],n:15,g:0,e:'lo',s:['paper','pencil']},
+{t:'Manual Page',d:'One-page user manual for something you made.',steps:['Title + materials','Numbered steps','Warning tip'],n:12,g:0,e:'lo',s:['paper','pencil']},
+{t:'Pitch Comic',d:'3-panel ad comic for a product idea.',steps:['Problem panel','Solution panel','Call to action'],n:12,g:0,e:'lo',s:['paper','crayons']}
+],
+life:[
+{t:'Habit Experiment',d:'Design 7-day habit test with measure.',steps:['Choose habit','Define metric','Day-1 baseline note'],n:12,g:0,e:'lo',s:['paper','pencil']},
+{t:'Kitchen Ratio Lab',d:'Scale a recipe by 1.5×; cook or mock-cook.',steps:['Pick recipe','Scale amounts','Check math with adult'],n:20,g:1,e:'med',s:[]},
+{t:'Conflict Protocol',d:'Write a calm 4-step fix for a recurring friction.',steps:['Name the friction','4 steps','Practice once calmly'],n:12,g:1,e:'lo',s:['paper','pencil']}
+],
+side:[
+{t:'Percent Shopping',d:'Find 3 real % off deals; compute savings.',n:10,g:0,s:['paper','pencil']},
+{t:'Debug the Day',d:'List 3 friction points; root-cause one.',n:8,g:0,s:['paper']},
+{t:'Teach-Back',d:'Teach a younger kid one skill in 5 minutes.',n:10,g:1,s:[]}
+]
+},
+t1113:{
+warm:[
+{t:'Deep Work Gate',d:'Write intention + 1 distraction you’ll block.',steps:['One sentence intention','Name distraction','Put phone away if used'],n:4,g:0,e:'lo',s:['paper']},
+{t:'Power Reset',d:'90 sec breathing + 90 sec mobility.',steps:['Box breathe 4 cycles','Hip/shoulder openers','Start task timer'],n:4,g:0,e:'lo',s:[]}
+],
+brain:[
+{t:'Stakeholder Map',d:'Map who is affected by a house/community rule.',steps:['Pick issue','List 5 stakeholders','One need each'],n:15,g:0,e:'lo',s:['paper','pencil']},
+{t:'Claim–Evidence–Counter',d:'Argue both sides of a low-stakes rule.',steps:['Write claim','2 evidence bits','Steel-man counterclaim'],n:15,g:0,e:'lo',s:['paper','pencil']},
+{t:'Data Story',d:'12+ points → mean + chart → one honest claim.',steps:['Collect/use data','Mean + sketch chart','Claim with caveat'],n:18,g:0,e:'lo',s:['paper','pencil']}
+],
+hands:[
+{t:'45-Min Maker Sprint',d:'Prototype a tool/product; stop at timebox.',steps:['Define user','Build','Photo or sketch result'],n:45,g:0,e:'med',s:['box','tape','scissors']},
+{t:'User Test Once',d:'Watch someone use your prototype; note 3 frictions.',steps:['Silent observe','Note 3 issues','Prioritize one fix'],n:15,g:1,e:'lo',s:['paper']},
+{t:'Civic Action Card',d:'One concrete action + who + when for a local issue.',steps:['Issue one-liner','Action steps','Calendar the first step'],n:12,g:0,e:'lo',s:['paper','pencil']}
+],
+create:[
+{t:'Pitch Deck Lite',d:'4 boxes: problem, product, user, ask.',steps:['Sketch 4 panels','One sentence each','Rehearse 60 sec'],n:15,g:0,e:'lo',s:['paper','pencil']},
+{t:'Socratic Script',d:'Write 6 questions that deepen a topic without yes/no.',steps:['Pick topic','Draft 6 questions','Try 2 on a person'],n:12,g:1,e:'lo',s:['paper','pencil']},
+{t:'Systems Comic',d:'Show feedback loop in a habit (trigger→action→result).',steps:['Draw loop','Label arrows','One leverage point'],n:12,g:0,e:'lo',s:['paper','crayons']}
+],
+life:[
+{t:'Weekly Experiment Design',d:'Sleep/mood/movement log plan for 7 days.',steps:['Pick metrics','Build log table','Fill day 1'],n:12,g:0,e:'lo',s:['paper','pencil']},
+{t:'Budget Scenario',d:'Allocate $50 across needs/wants/save; defend trade-offs.',steps:['3 buckets','$ amounts','2-sentence defense'],n:12,g:0,e:'lo',s:['paper','pencil']},
+{t:'Runbook: Home System',d:'Write a runbook for a recurring chore system.',steps:['Trigger','Steps','Definition of done'],n:12,g:0,e:'lo',s:['paper','pencil']}
+],
+side:[
+{t:'Fermi Estimate',d:'Estimate something huge (piano tuners, etc.) with steps.',n:10,g:0,s:['paper']},
+{t:'Ethics Fork',d:'Two-option dilemma; list stakeholders & least-harm pick.',n:10,g:0,s:['paper']},
+{t:'Teach a Mental Model',d:'Explain opportunity cost with a real example.',n:8,g:1,s:[]}
+]
+}
+};
+var pickAdventure=function(band,rnd){
+var themes=THEMES[band],theme=themes[Math.floor(rnd()*themes.length)];
+var Q=QUEST[band];
+var pick=function(key){var pool=Q[key];return pool[Math.floor(rnd()*pool.length)];};
+var stations=[
+{slot:'Warm-Up',icon:'⚡',item:pick('warm')},
+{slot:'Brain Quest',icon:'🧠',item:pick('brain')},
+{slot:'Hands Quest',icon:'✋',item:pick('hands')},
+{slot:'Create Quest',icon:'🎨',item:pick('create')},
+{slot:'Real-Life Quest',icon:'🏠',item:pick('life')}
+];
+var sides=pickN(rnd,Q.side,2);
+return {theme:theme,stations:stations,sides:sides};
+};
+var adventurePage1HTML=function(band,adv){
+var th=adv.theme;
+var stops=adv.stations.map(function(st,i){
+var it=st.item,steps=(it.steps||[]).map(function(s){return '<li>'+s+'</li>';}).join('');
+var tog=band==='t12'||it.g;
+var energy=it.e==='hi'?'High energy':it.e==='lo'?'Calm':'Steady';
+var ecls=it.e==='hi'?'hi':it.e==='lo'?'lo':'';
+return '<div class="quest-stop"><div class="q-num">'+(i+1)+'</div><div class="q-body"><h4>'+st.icon+' '+it.t+' <span class="q-chip">'+st.slot+'</span></h4><p>'+it.d+'</p>'+(steps?'<ol class="q-steps">'+steps+'</ol>':'')+'<div class="q-meta"><span class="q-chip">~'+it.n+' min</span><span class="q-chip '+(tog?'tog':'solo')+'">'+(band==='t12'||it.g?'🤝 Together':'⭐ On my own')+'</span><span class="q-chip '+ecls+'">'+energy+'</span></div></div></div>';
+}).join('');
+var sides=adv.sides.map(function(s){return '<div class="side-q"><strong>⭐ Side quest: '+s.t+'</strong>'+s.d+(s.n?' <em>(~'+s.n+' min)</em>':'')+'</div>';}).join('');
+var stamps=adv.stations.map(function(st,i){return '<div class="stamp">'+(i+1)+'</div>';}).join('');
+return '<div class="theme-banner"><div class="th-icon">'+th.icon+'</div><h3>'+th.name+'</h3><p>'+th.hook+'</p></div><h4 class="prac-h">Quest Path — follow in order (or swap 2 &amp; 3 if you need)</h4><div class="quest-path">'+stops+'</div><h4 class="prac-h">Optional Side Quests</h4><div class="side-quests">'+sides+'</div><div class="stamp-track">'+stamps+'</div><div class="stars-row" style="margin-top:.6rem"><div>Color a stamp each time you finish a station!</div></div>';
+};
+var adventureMathBoostHTML=function(band,rnd){
+if(band==='t12')return '';
+if(band==='p34'){
+var rows=countCircle(rnd,3).map(function(r){return '<p class="prac-p">Circle <strong>'+r.n+'</strong>:</p><div class="circle-row">'+Array(r.total+1).join(r.em)+'</div>';}).join('');
+var cw=countWrite(rnd,4).map(function(n){return '<div class="prob cw"><span>'+'&#9679; '.repeat(n)+'</span><span class="blank"></span></div>';}).join('');
+return '<h4 class="prac-h">Adventure Math Boost</h4>'+rows+'<h4 class="prac-h">Count &amp; Write</h4><div class="prob-grid">'+cw+'</div>'+matchUpHTML(rnd);
+}
+if(band==='k56'){
+var it=addSub(rnd,8).map(function(s){return '<div class="prob">'+s+' <span class="blank"></span></div>';}).join('');
+return '<h4 class="prac-h">Quest Math (more reps!)</h4><div class="prob-grid">'+it+'</div>'+skipCountHTML(rnd)+wordProbsHTML(rnd,'k56');
+}
+if(band==='g78'){
+var m=multProbs(rnd,10).map(function(s){return '<div class="prob">'+s+' <span class="blank"></span></div>';}).join('');
+return '<h4 class="prac-h">Quest Math Marathon</h4><div class="prob-grid">'+m+'</div>'+wordProbsHTML(rnd,'g78')+'<div class="stretch"><strong>Stretch:</strong> Write your own word problem using a × fact from above, then solve it.</div>';
+}
+if(band==='g910'){
+var d=divProbs(rnd,8).map(function(s){return '<div class="prob">'+s+' <span class="blank"></span></div>';}).join('');
+var f=fracOf(rnd,6).map(function(s){return '<div class="prob">'+s+' <span class="blank"></span></div>';}).join('');
+return '<h4 class="prac-h">Quest Math Marathon</h4><div class="prob-grid">'+d+'</div><h4 class="prac-h">Fraction Hits</h4><div class="prob-grid">'+f+'</div>'+wordProbsHTML(rnd,'g910')+'<div class="stretch"><strong>Stretch:</strong> Explain one solution in two sentences as if teaching a friend.</div>';
+}
+var e=eqProbs(rnd,8).map(function(s){return '<div class="prob">'+s+', x = <span class="blank"></span></div>';}).join('');
+var p=pctOf(rnd,6).map(function(s){return '<div class="prob">'+s+' <span class="blank"></span></div>';}).join('');
+return '<h4 class="prac-h">Quest Algebra &amp; Percents</h4><div class="prob-grid">'+e+p+'</div>'+coordPlaneHTML(rnd)+'<div class="stretch"><strong>Stretch:</strong> Invent a real-life situation for one equation and solve it in context.</div>';
+};
+var adventurePage2HTML=function(band,rnd,name){
+if(band==='t12')return littleHandsHTML(rnd)+'<div class="stretch"><strong>Caregiver tip:</strong> Keep each station under 10 minutes. Follow their lead — quitting happy beats finishing grumpy.</div>';
+if(band==='p34')return traceBlockHTML(band,rnd,name)+adventureMathBoostHTML(band,rnd)+'<div class="stretch"><strong>Boss level:</strong> Teach a stuffed animal one letter or number you traced today.</div>';
+var core=traceBlockHTML(band,rnd,name);
+return core+adventureMathBoostHTML(band,rnd);
+};
+var adventurePage3HTML=function(band,rnd,adv){
+var th=adv.theme;
+var storyHooks={
+t12:'Caregiver narrates a 4-sentence story about '+th.name+' using their name — pause for them to fill animal sounds.',
+p34:'Once upon a time on '+th.name+', a tiny explorer found a mystery box. What was inside? Draw it, then tell the ending out loud.',
+k56:'You are the hero of '+th.name+'. Write 4 sentences: where you are, what goes wrong, what you try, how it ends.',
+g78:'Journal from the middle of '+th.name+': what problem did you face, what evidence did you use, what would you try differently?',
+g910:'Reflect on '+th.name+' as a system: inputs, process, outputs, and one bottleneck you noticed while working.',
+t1113:'Write a brief after-action report for '+th.name+': goal, what shipped, what failed, next experiment.'
+};
+var weather=['&#9728;&#65039; Sunny','&#9729;&#65039; Cloudy','&#127783;&#65039; Rainy','&#10052;&#65039; Snowy'].map(function(w){return '<span class="choice"><span class="choice-circle"></span>'+w+'</span>';}).join('');
+var mood=['&#128516;','&#128578;','&#128528;','&#128577;','&#128546;'].map(function(w){return '<span class="choice"><span class="choice-circle big"></span><span class="emoji">'+w+'</span></span>';}).join('');
+var checks='<h4 class="prac-h">Mission Check-In</h4><div class="choice-row">'+weather+'</div><div class="choice-row">'+mood+'</div>';
+var story='<h4 class="prac-h">Story Hook — '+th.icon+' '+th.name+'</h4><div class="story-box">'+storyHooks[band]+'</div>';
+var drawH=band==='t12'||band==='p34'?160:band==='k56'?140:130;
+var draw='<div class="draw-box"><div class="draw-label">Draw your favorite moment from today\'s adventure</div></div>';
+var bonus='';
+if(band==='t12')bonus=colorPicHTML(rnd)+'<div class="sing-line">🎵 End-of-day song: <strong>'+pickN(rnd,RHYMES,1)[0]+'</strong></div>';
+else if(band==='p34')bonus=mazeHTML(rnd,5,44)+oddOneOutHTML(rnd);
+else if(band==='k56'){var words=pickN(rnd,WS_WORDS.k56,4),ws=wordSearch(rnd,words,WS_SIZE.k56);bonus='<div class="duo-grid"><div><h4 class="prac-h">Word Search</h4><div class="ws-words">'+ws.words.map(function(w){return '<b>'+w+'</b>';}).join('')+'</div><div class="ws-grid" style="grid-template-columns:repeat('+WS_SIZE.k56+',26px)">'+ws.grid.map(function(row){return row.map(function(c){return '<span class="ws-cell">'+c+'</span>';}).join('');}).join('')+'</div></div><div>'+mazeHTML(rnd,7,40)+'</div></div>';}
+else if(band==='g78'){var w2=pickN(rnd,WS_WORDS.g78,4),ws2=wordSearch(rnd,w2,WS_SIZE.g78);bonus='<div class="duo-grid"><div><h4 class="prac-h">Word Search</h4><div class="ws-words">'+ws2.words.map(function(w){return '<b>'+w+'</b>';}).join('')+'</div><div class="ws-grid" style="grid-template-columns:repeat('+WS_SIZE.g78+',26px)">'+ws2.grid.map(function(row){return row.map(function(c){return '<span class="ws-cell">'+c+'</span>';}).join('');}).join('')+'</div></div><div>'+civicsHTML(rnd)+'</div></div>';}
+else bonus=civicsHTML(rnd)+'<div class="stretch"><strong>Debrief:</strong> What was the hardest station? What skill did you level up?</div>';
+return story+draw+(band==='t12'||band==='p34'?'<div class="write-lines"><span class="write-line"></span></div>':'<p class="prac-p">Caption / reflection:</p><div class="write-lines"><span class="write-line"></span><span class="write-line"></span></div>')+checks+bonus;
+};
+var adventureSupplies=function(band,adv){
+var set={};
+adv.stations.forEach(function(st){(st.item.s||[]).forEach(function(x){set[x]=1;});});
+adv.sides.forEach(function(s){(s.s||[]).forEach(function(x){set[x]=1;});});
+return Object.keys(set).sort();
+};
+var weekPlanAdventureHTML=function(band){
+var out='',DOWFMT={weekday:'long'},DFMT={month:'short',day:'numeric'};
+for(var d=0;d<7;d++){
+var dt=new Date();dt.setDate(dt.getDate()+d);
+var ds=dt.getFullYear()+'-'+(dt.getMonth()+1)+'-'+dt.getDate();
+var r=mulberry32(xmur3(ds+'|'+band+'|0|adventure')());
+var adv=pickAdventure(band,r);
+var acts=adv.stations.map(function(st){return '<span class="plan-act">'+st.icon+' '+st.item.t+'</span>';}).join('');
+out+='<div class="plan-row"><div class="plan-day">'+(d===0?'Today':dt.toLocaleDateString(undefined,DOWFMT))+'<span>'+dt.toLocaleDateString(undefined,DFMT)+'</span><span style="color:#1e8449">'+adv.theme.icon+' '+adv.theme.name+'</span></div><div class="plan-acts">'+acts+'</div></div>';
+}
+return '<h4 class="prac-h">Adventure Week at a Glance</h4><p class="prac-p" style="font-size:.8rem;color:#6a7180">Each day\'s theme + five quest stations (first activity set of that day).</p>'+out;
+};
+
 var currentAge=6,currentNonce=Number(sessionStorage.getItem('curr-nonce-'+todayStr())||0);
 var render=function(age){
 currentAge=age;
 document.querySelectorAll('.age-btn').forEach(function(b){b.classList.toggle('active',Number(b.dataset.age)===age);});
+document.querySelectorAll('.fmt-btn').forEach(function(b){b.classList.toggle('active',b.dataset.fmt===currentFmt);});
 var band=bandOf(age),bandLabel=BANDS.find(function(b){return b[0]===band;})[1];
-document.getElementById('band-label').textContent='Selected band: '+bandLabel+(band==='t12'?' (caregiver-guided)':'');
-var rnd=mulberry32(xmur3(todayStr()+'|'+band+'|'+currentNonce)());
-var picks=pickDay(band,rnd);
-var cards=CATS.map(function(c){var item=picks[c[0]];return '<div class="act-card" style="border-left-color:'+c[3]+'"><div class="act-box"></div><div class="act-body"><h4><span class="act-ic">'+c[2]+'</span> '+item.t+(band!=='t12'?'<span class="act-tag '+(item.g?'tog':'solo')+'">'+(item.g?'🤝 Together':'⭐ On my own')+'</span>':'')+'</h4><p>'+item.d+'</p><span class="act-time" style="color:'+c[3]+'">~'+item.n+' min &middot; '+c[1]+'</span></div></div>';}).join('');
-document.getElementById('sheet-grid').innerHTML=cards;
-var dateStr=new Date().toLocaleDateString(undefined,{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-document.getElementById('sheet-mascot').textContent=MASCOTS[band];
-document.getElementById('sheet-date').textContent=bandLabel+' · '+dateStr;
-document.getElementById('sheet-legend').style.display=band==='t12'?'none':'';
-document.getElementById('stars-row').innerHTML='&#9734;'.repeat(CATS.length)+'<div>Color a star for every activity you finish!</div>';
+document.getElementById('band-label').textContent='Selected band: '+bandLabel+(band==='t12'?' (caregiver-guided)':'')+' · Format: '+(currentFmt==='adventure'?'Adventure Day':'Classic Checklist');
+var rnd=mulberry32(xmur3(todayStr()+'|'+band+'|'+currentNonce+'|'+currentFmt)());
 var nameRaw=(document.getElementById('child-name').value||'').replace(/[^a-zA-Z]/g,'');
 var name=nameRaw.length>=2?nameRaw.slice(0,12):'';
 var showPlan=document.getElementById('opt-planner').checked,showKey=document.getElementById('opt-key').checked;
 var tot=4+(showPlan?1:0)+(showKey?1:0);
+var dateStr=new Date().toLocaleDateString(undefined,{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+document.getElementById('sheet-mascot').textContent=MASCOTS[band];
+document.getElementById('sheet-date').textContent=bandLabel+' · '+dateStr;
+ANS=[];
+var adv=null,picks=null;
+if(currentFmt==='adventure'){
+adv=pickAdventure(band,rnd);
+document.getElementById('sheet-title').textContent='MY ADVENTURE DAY';
+document.getElementById('sheet-legend').style.display='none';
+document.getElementById('sheet-grid').innerHTML=adventurePage1HTML(band,adv);
+document.getElementById('stars-row').innerHTML='';
+document.getElementById('sep2').textContent=band==='t12'?'Page 2 — Little Hands Challenges':'Page 2 — Quest Challenges';
+document.getElementById('page2-mini').textContent='Adventure Day · Page 2 of '+tot+' · '+bandLabel+' · '+adv.theme.name;
+document.getElementById('page2-body').innerHTML=adventurePage2HTML(band,rnd,name);
+var ansSplit=ANS.length;
+document.getElementById('page3-mini').textContent='Adventure Day · Page 3 of '+tot+' · '+bandLabel;
+document.getElementById('page3-body').innerHTML=adventurePage3HTML(band,rnd,adv);
+document.getElementById('page4-mini').textContent='Adventure Week · Page 4 of '+tot+' · '+bandLabel;
+var supA=adventureSupplies(band,adv);
+var a=new Date(),b2=new Date();b2.setDate(b2.getDate()+6);
+var fmtD=function(d){return d.toLocaleDateString(undefined,{month:'short',day:'numeric'});};
+// merge week adventure supplies (first set each day)
+var weekSet={};supA.forEach(function(s){weekSet[s]=1;});
+for(var d=0;d<7;d++){var dt=new Date();dt.setDate(dt.getDate()+d);var ds=dt.getFullYear()+'-'+(dt.getMonth()+1)+'-'+dt.getDate();var r=mulberry32(xmur3(ds+'|'+band+'|0|adventure')());var ad=pickAdventure(band,r);adventureSupplies(band,ad).forEach(function(s){weekSet[s]=1;});}
+var sup=Object.keys(weekSet).sort();
+document.getElementById('page4-body').innerHTML='<h4 class="prac-h">Supplies for This Adventure Week</h4><p class="prac-p">Gather these once for themes + quests ('+fmtD(a)+' &ndash; '+fmtD(b2)+'):</p>'+(sup.length?'<div class="supply-grid">'+sup.map(function(s){return '<div class="supply-item"><span class="supply-box"></span>'+s.charAt(0).toUpperCase()+s.slice(1)+'</div>';}).join('')+'</div>':'<p class="prac-p">Nothing special needed this week — household basics cover it!</p>')+'<p class="prac-p" style="font-size:.78rem;color:#6a7180">Everyday basics assumed: paper, crayons or pencils, safety scissors, tape.</p>';
+document.getElementById('sep5').style.display=showPlan?'':'none';
+document.getElementById('page5').style.display=showPlan?'':'none';
+if(showPlan){
+document.getElementById('page5-mini').textContent='Adventure Week · Planner · Page 5 of '+tot+' · '+bandLabel;
+document.getElementById('page5-body').innerHTML=weekPlanAdventureHTML(band);
+}
+document.getElementById('sep6').style.display=showKey?'':'none';
+document.getElementById('page6').style.display=showKey?'':'none';
+if(showKey){
+var p2a=ANS.slice(0,ansSplit),p3a=ANS.slice(ansSplit);
+var fmtA=function(x){return typeof x==='string'?'<div>'+x+'</div>':'<div class="full"><span class="ans-q">'+x.q+'</span><br>'+x.a+'</div>';};
+document.getElementById('page6-mini').textContent='Answer Key · Page '+tot+' of '+tot+' · '+bandLabel;
+document.getElementById('page6-body').innerHTML='<h4 class="prac-h">Answer Key — for grown-ups</h4><p class="prac-p" style="font-size:.78rem;color:#6a7180">Matches today&apos;s Adventure sheets (same daily set).</p>'+(p2a.length?'<div class="ans-sec"><h4 class="prac-h" style="font-size:.76rem">Quest Challenges</h4><div class="ans-grid">'+p2a.map(fmtA).join('')+'</div></div>':'')+(p3a.length?'<div class="ans-sec"><h4 class="prac-h" style="font-size:.76rem">Story &amp; Discovery</h4><div class="ans-grid">'+p3a.map(fmtA).join('')+'</div></div>':'')+((p2a.length+p3a.length)?'':'<p class="prac-p">Nothing to grade today — open-ended adventure play!</p>');
+}
+}else{
+picks=pickDay(band,rnd);
+document.getElementById('sheet-title').textContent='MY LEARNING DAY';
+document.getElementById('sheet-legend').style.display=band==='t12'?'none':'';
+var cards=CATS.map(function(c){var item=picks[c[0]];return '<div class="act-card" style="border-left-color:'+c[3]+'"><div class="act-box"></div><div class="act-body"><h4><span class="act-ic">'+c[2]+'</span> '+item.t+(band!=='t12'?'<span class="act-tag '+(item.g?'tog':'solo')+'">'+(item.g?'🤝 Together':'⭐ On my own')+'</span>':'')+'</h4><p>'+item.d+'</p><span class="act-time" style="color:'+c[3]+'">~'+item.n+' min &middot; '+c[1]+'</span></div></div>';}).join('');
+document.getElementById('sheet-grid').innerHTML=cards;
+document.getElementById('stars-row').innerHTML='&#9734;'.repeat(CATS.length)+'<div>Color a star for every activity you finish!</div>';
 document.getElementById('sep2').textContent=band==='t12'?'Page 2 — Little Hands Page':'Page 2 — Practice Page';
 document.getElementById('page2-mini').textContent='My Learning Day · Page 2 of '+tot+' · '+bandLabel;
-ANS=[];
 document.getElementById('page2-body').innerHTML=band==='t12'?littleHandsHTML(rnd):band==='p34'?traceBlockHTML(band,rnd,name)+p34GameHTML(rnd):traceBlockHTML(band,rnd,name)+mathBlockHTML(band,rnd);
-var ansSplit=ANS.length;
+var ansSplit2=ANS.length;
 document.getElementById('page3-mini').textContent='My Learning Day · Page 3 of '+tot+' · '+bandLabel;
 document.getElementById('page3-body').innerHTML=page3HTML(band,rnd,picks.cr);
 document.getElementById('page4-mini').textContent='My Learning Week · Page 4 of '+tot+' · '+bandLabel;
-var sup=weekSupplies(band);
-var a=new Date(),b2=new Date();b2.setDate(b2.getDate()+6);
-var fmtD=function(d){return d.toLocaleDateString(undefined,{month:'short',day:'numeric'});};
-document.getElementById('page4-body').innerHTML='<h4 class="prac-h">Supplies for This Week</h4><p class="prac-p">Gather these once and the whole week of activities ('+fmtD(a)+' &ndash; '+fmtD(b2)+') is covered:</p>'+(sup.length?'<div class="supply-grid">'+sup.map(function(s){return '<div class="supply-item"><span class="supply-box"></span>'+s.charAt(0).toUpperCase()+s.slice(1)+'</div>';}).join('')+'</div>':'<p class="prac-p">Nothing special needed this week — household basics cover it!</p>')+'<p class="prac-p" style="font-size:.78rem;color:#6a7180">Everyday basics assumed: paper, crayons or pencils, safety scissors, tape. List is based on each day&apos;s first activity set.</p>';
+var sup2=weekSupplies(band);
+var a2=new Date(),b3=new Date();b3.setDate(b3.getDate()+6);
+var fmtD2=function(d){return d.toLocaleDateString(undefined,{month:'short',day:'numeric'});};
+document.getElementById('page4-body').innerHTML='<h4 class="prac-h">Supplies for This Week</h4><p class="prac-p">Gather these once and the whole week of activities ('+fmtD2(a2)+' &ndash; '+fmtD2(b3)+') is covered:</p>'+(sup2.length?'<div class="supply-grid">'+sup2.map(function(s){return '<div class="supply-item"><span class="supply-box"></span>'+s.charAt(0).toUpperCase()+s.slice(1)+'</div>';}).join('')+'</div>':'<p class="prac-p">Nothing special needed this week — household basics cover it!</p>')+'<p class="prac-p" style="font-size:.78rem;color:#6a7180">Everyday basics assumed: paper, crayons or pencils, safety scissors, tape. List is based on each day&apos;s first activity set.</p>';
 document.getElementById('sep5').style.display=showPlan?'':'none';
 document.getElementById('page5').style.display=showPlan?'':'none';
 if(showPlan){
@@ -756,10 +1217,11 @@ document.getElementById('page5-body').innerHTML=weekPlanHTML(band);
 document.getElementById('sep6').style.display=showKey?'':'none';
 document.getElementById('page6').style.display=showKey?'':'none';
 if(showKey){
-var p2a=ANS.slice(0,ansSplit),p3a=ANS.slice(ansSplit);
-var fmtA=function(x){return typeof x==='string'?'<div>'+x+'</div>':'<div class="full"><span class="ans-q">'+x.q+'</span><br>'+x.a+'</div>';};
+var p2b=ANS.slice(0,ansSplit2),p3b=ANS.slice(ansSplit2);
+var fmtB=function(x){return typeof x==='string'?'<div>'+x+'</div>':'<div class="full"><span class="ans-q">'+x.q+'</span><br>'+x.a+'</div>';};
 document.getElementById('page6-mini').textContent='Answer Key · Page '+tot+' of '+tot+' · '+bandLabel;
-document.getElementById('page6-body').innerHTML='<h4 class="prac-h">Answer Key — for grown-ups</h4><p class="prac-p" style="font-size:.78rem;color:#6a7180">Matches today&apos;s sheets (same daily set).</p>'+(p2a.length?'<div class="ans-sec"><h4 class="prac-h" style="font-size:.76rem">Practice Page</h4><div class="ans-grid">'+p2a.map(fmtA).join('')+'</div></div>':'')+(p3a.length?'<div class="ans-sec"><h4 class="prac-h" style="font-size:.76rem">Creative &amp; Discovery</h4><div class="ans-grid">'+p3a.map(fmtA).join('')+'</div></div>':'')+((p2a.length+p3a.length)?'':'<p class="prac-p">Nothing to grade today — everything is open-ended play!</p>');
+document.getElementById('page6-body').innerHTML='<h4 class="prac-h">Answer Key — for grown-ups</h4><p class="prac-p" style="font-size:.78rem;color:#6a7180">Matches today&apos;s sheets (same daily set).</p>'+(p2b.length?'<div class="ans-sec"><h4 class="prac-h" style="font-size:.76rem">Practice Page</h4><div class="ans-grid">'+p2b.map(fmtB).join('')+'</div></div>':'')+(p3b.length?'<div class="ans-sec"><h4 class="prac-h" style="font-size:.76rem">Creative &amp; Discovery</h4><div class="ans-grid">'+p3b.map(fmtB).join('')+'</div></div>':'')+((p2b.length+p3b.length)?'':'<p class="prac-p">Nothing to grade today — everything is open-ended play!</p>');
+}
 }
 var sheets=document.getElementById('sheets');
 sheets.classList.remove('scale-xl','scale-lg');
@@ -774,6 +1236,7 @@ document.getElementById('print-btn').onclick=function(){window.print();};
 document.getElementById('child-name').oninput=function(){render(currentAge);};
 document.getElementById('opt-planner').onchange=function(){render(currentAge);};
 document.getElementById('opt-key').onchange=function(){render(currentAge);};
+document.querySelectorAll('.fmt-btn').forEach(function(btn){btn.onclick=function(){currentFmt=this.dataset.fmt;sessionStorage.setItem('curr-fmt',currentFmt);render(currentAge);};});
 render(currentAge);
 });
 </script>

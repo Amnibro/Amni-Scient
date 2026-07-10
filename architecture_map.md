@@ -1,5 +1,9 @@
 # Architecture Map — amni-scient.com
 
+## v5.39.0 Amni-Learn Daily Curriculum — Adventure Day second format (2026-07-09)
+- `learn/curriculum.html`: new **Adventure Day** format toggle next to Classic Checklist. Per age band: 6 rotating themes + QUEST pools (warm/brain/hands/create/life + side quests) with multi-step stations, energy chips, stamp track. Pages 2–3 get more volume (math marathons, duo wordsearch+maze, stretch/debrief). Supplies + planner use adventure seed. Deterministic via `today|band|nonce|format`. Backup: `backups/v5.39.0_curriculum_adventure/`.
+- `amni-learn.html` feature card updated for dual formats.
+
 ## v5.38.3 Amni-Learn Daily Curriculum — skip counting (/loop iter 4 — named queue COMPLETE, 2026-07-07)
 - `skipCountHTML(rnd)`: 3 rows (steps shuffled from 2/5/10), 8 circle cells each (`.skip-cell`, dashed `.skip-blank` ×3 at positions 2-7 so the pattern anchor stays visible), ANS-keyed. k56 math variant #6 (dice *6).
 - Verified: rows/blanks/key-divisibility/cell-sequence all asserted, h≈534px. The /loop "through all of them" named queue (planner→answer key→word problems→skip counting) is now fully shipped as v5.38.0-.3.
