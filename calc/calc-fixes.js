@@ -562,6 +562,131 @@ window.calcBolt=function(){
   for(const _bk in _bsync){const _be=$(_bk),_bv=_bsync[_bk];if(_be&&_be!==document.activeElement&&isFinite(_bv)){const _bs=String(Math.round(_bv*1000)/1000);_be.value!==_bs&&(_be.value=_bs,_bany=true);}}
   if(_bany&&typeof window.calcBoltTorqueSeq==='function')try{window.calcBoltTorqueSeq();}catch(e){}
 };
+const FIT_RANGES=[3,6,10,18,30,50,80,120,180,250,315,400,500];
+const FIT_IT={5:[4,5,6,8,9,11,13,15,18,20,23,25,27],6:[6,8,9,11,13,16,19,22,25,29,32,36,40],7:[10,12,15,18,21,25,30,35,40,46,52,57,63],8:[14,18,22,27,33,39,46,54,63,72,81,89,97],9:[25,30,36,43,52,62,74,87,100,115,130,140,155],10:[40,48,58,70,84,100,120,140,160,185,210,230,250],11:[60,75,90,110,130,160,190,220,250,290,320,360,400]};
+const FIT_SHAFT={d:{t:'es',v:[-20,-30,-40,-50,-65,-80,-100,-120,-145,-170,-190,-210,-230]},e:{t:'es',v:[-14,-20,-25,-32,-40,-50,-60,-72,-85,-100,-110,-125,-135]},f:{t:'es',v:[-6,-10,-13,-16,-20,-25,-30,-36,-43,-50,-56,-62,-68]},g:{t:'es',v:[-2,-4,-5,-6,-7,-9,-10,-12,-14,-15,-17,-18,-20]},h:{t:'es',v:[0,0,0,0,0,0,0,0,0,0,0,0,0]},k:{t:'ei',v:[0,1,1,1,2,2,2,3,3,4,4,4,5]},m:{t:'ei',v:[2,4,6,7,8,9,11,13,15,17,20,21,23]},n:{t:'ei',v:[4,8,10,12,15,17,20,23,27,31,34,37,40]},p:{t:'ei',v:[6,12,15,18,22,26,32,37,43,50,56,62,68]},c:{t:'es',bp:[[3,-60],[6,-70],[10,-80],[18,-95],[30,-110],[40,-120],[50,-130],[65,-140],[80,-150],[100,-170],[120,-180]]},r:{t:'ei',bp:[[3,10],[6,15],[10,19],[18,23],[30,28],[50,34],[65,41],[80,43],[100,51],[120,54]]},s:{t:'ei',bp:[[3,14],[6,19],[10,23],[18,28],[30,35],[50,43],[65,53],[80,59],[100,71],[120,79]]}};
+function fitRangeIdx(D){if(!(D>0)||D>500)return -1;for(let i=0;i<FIT_RANGES.length;i++)if(D<=FIT_RANGES[i])return i;return -1;}
+function fitDeviation(letter,D,it){
+  if(letter==='js')return{sym:FIT_IT[it]?FIT_IT[it][fitRangeIdx(D)]/2:null};
+  const e=FIT_SHAFT[letter];if(!e)return null;
+  if(e.bp){for(const[mx,val]of e.bp)if(D<=mx)return{t:e.t,v:val};return null;}
+  const ri=fitRangeIdx(D);if(ri<0)return null;
+  let v0=e.v[ri];
+  if(letter==='k'&&it>=8)v0=0;
+  return{t:e.t,v:v0};
+}
+window.applyPreferredFit=function(){
+  const pv=sv('ft-pref');if(!pv)return;
+  const m=/^([A-Z]+)(\d+)\/([a-z]+)(\d+)$/.exec(pv);if(!m)return;
+  const set=(id,val)=>{const el=$(id);if(el)el.value=val;};
+  set('ft-hl',m[1]);set('ft-hg',m[2]);set('ft-sl',m[3]);set('ft-sg',m[4]);
+  window.calcFits();
+};
+window.calcFits=function(){
+  const D=v('ft-d'),hl=sv('ft-hl')||'H',hg=parseInt(sv('ft-hg'))||7,sl=sv('ft-sl')||'g',sg=parseInt(sv('ft-sg'))||6;
+  const out=$('fits-results');if(!out)return;
+  const ri=fitRangeIdx(D);
+  if(ri<0){_mr(out,'<h3>FIT RESULTS</h3><div class="note warn">Nominal size must be 0 &lt; Ø ≤ 500 mm.</div>');return;}
+  const ITh=FIT_IT[hg]?FIT_IT[hg][ri]:null,ITs=FIT_IT[sg]?FIT_IT[sg][ri]:null;
+  if(ITh==null||ITs==null){_mr(out,'<h3>FIT RESULTS</h3><div class="note warn">Grade must be IT5–IT11.</div>');return;}
+  let EI,ES;
+  if(hl==='JS'){ES=ITh/2;EI=-ITh/2;}
+  else if(hl==='H'){EI=0;ES=ITh;}
+  else{const sd=fitDeviation(hl.toLowerCase(),D,hg);if(!sd||sd.v==null){_mr(out,'<h3>FIT RESULTS</h3><div class="note warn">Hole class '+hl+' not available at this size.</div>');return;}EI=-sd.v;ES=EI+ITh;}
+  let es,ei;
+  const dv=fitDeviation(sl,D,sg);
+  if(!dv){_mr(out,'<h3>FIT RESULTS</h3><div class="note warn">Shaft class '+sl+sg+' not covered'+(D>120&&(sl==='r'||sl==='s'||sl==='c')?' above 120 mm — consult the ISO 286 table':'')+'.</div>');return;}
+  if(dv.sym!=null){es=dv.sym;ei=-dv.sym;}
+  else if(dv.t==='es'){es=dv.v;ei=es-ITs;}
+  else{ei=dv.v;es=ei+ITs;}
+  const cmax=ES-ei,cmin=EI-es;
+  const kind=cmin>=0?'CLEARANCE':cmax<=0?'INTERFERENCE':'TRANSITION';
+  const f3=n=>(D+n/1000).toFixed(3);
+  const rows=[
+    ['Fit',hl+hg+' / '+sl+sg+' @ Ø'+D+' mm'],
+    ['Hole '+hl+hg,'+'+ES+' / '+(EI>=0?'+':'')+EI+' µm'],
+    ['Hole limits',f3(EI)+' – '+f3(ES)+' mm'],
+    ['Shaft '+sl+sg,(es>=0?'+':'')+es+' / '+(ei>=0?'+':'')+ei+' µm'],
+    ['Shaft limits',f3(ei)+' – '+f3(es)+' mm'],
+    ['Type',kind,kind==='CLEARANCE'?'ok':kind==='INTERFERENCE'?'warn':''],
+  ];
+  kind!=='INTERFERENCE'&&rows.push(['Clearance (max)',cmax+' µm']);
+  cmin>=0?rows.push(['Clearance (min)',cmin+' µm']):rows.push(['Interference (max)',(-cmin)+' µm']);
+  cmax<=0&&rows.push(['Interference (min)',(-cmax)+' µm']);
+  _mr(out,'<h3>FIT RESULTS — '+hl+hg+'/'+sl+sg+'</h3><div class="result-grid">'+rows.map(r=>`<div class="result-item"><div class="lbl">${r[0]}</div><div class="val ${r[2]||''}">${r[1]}</div></div>`).join('')+'</div>'+
+    '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">ISO 286-1 published IT grades and fundamental deviations (hole letters D–H mirror shafts; JS symmetric). '+(kind==='CLEARANCE'?'Guaranteed running clearance across tolerance extremes.':kind==='INTERFERENCE'?'Guaranteed interference — press/thermal assembly; capacity computed in the press-fit card.':'May assemble loose or tight depending on where parts land in tolerance — typical for keyed locational fits.')+'</p>');
+  drawFitDiagram(D,ES,EI,es,ei);
+  if(kind!=='CLEARANCE'){
+    const iMax=-cmin,iMin=Math.max(0,-cmax);
+    [['pf-d',D],['pf-dmin',iMin],['pf-dmax',iMax]].forEach(([id,val])=>{const el=$(id);if(el&&el!==document.activeElement&&parseFloat(el.value)!==val)el.value=val;});
+    if(typeof window.calcPressFit==='function')try{window.calcPressFit();}catch(e){}
+  }
+};
+function drawFitDiagram(D,ES,EI,es,ei){
+  const c=$('c-fits');if(!c)return;
+  const x=c.getContext('2d'),W=c.width,H=c.height,t=pTheme();
+  x.fillStyle=t.plot;x.fillRect(0,0,W,H);
+  const all=[ES,EI,es,ei,0],hi=Math.max(...all),lo=Math.min(...all),span=Math.max(hi-lo,1);
+  const y0=40,y1=H-40,scl=(y1-y0)/span,yOf=u=>y0+(hi-u)*scl;
+  x.strokeStyle=t.text;x.lineWidth=1.5;x.beginPath();x.moveTo(30,yOf(0));x.lineTo(W-30,yOf(0));x.stroke();
+  x.fillStyle=t.dim;x.font='10px JetBrains Mono,monospace';x.fillText('0 (Ø'+D+' mm)',W-115,yOf(0)-5);
+  const zone=(cx,w,top,bot,col,lbl,uTop,uBot)=>{
+    const yT=yOf(top),yB=yOf(bot);
+    x.fillStyle=col+'30';x.strokeStyle=col;x.lineWidth=1.5;
+    x.fillRect(cx-w/2,yT,w,Math.max(2,yB-yT));x.strokeRect(cx-w/2,yT,w,Math.max(2,yB-yT));
+    x.fillStyle=t.text;x.textAlign='center';x.fillText(lbl,cx,yT-6);
+    x.fillStyle=t.dim;x.fillText((uTop>=0?'+':'')+uTop,cx,yT+12);x.fillText((uBot>=0?'+':'')+uBot,cx,yB-4);x.textAlign='left';
+  };
+  zone(W*0.33,90,ES,EI,'#3b82f6','HOLE',ES,EI);
+  zone(W*0.67,90,es,ei,(/^#[0-9a-f]{6}$/i.test(t.accent)?t.accent:'#ff6b35'),'SHAFT',es,ei);
+  x.fillStyle=t.dim;x.fillText('µm',8,y0-8);
+}
+window.calcPressFit=function(){
+  const d=v('pf-d'),dO=v('pf-do'),dI=v('pf-di')||0,L=v('pf-l'),mu=v('pf-mu')||0.15,clr=v('pf-clr')||0;
+  const Eh=(v('pf-eh')||200)*1000,Es2=(v('pf-es')||200)*1000,nu=v('pf-nu')||0.3,al=v('pf-al')||11.7;
+  const o=$('pf-out');if(!o)return;
+  if(!(d>0)||!(dO>d)||!(L>0)){_mr(o,'<div class="note warn" style="margin-top:.5rem">Need d &gt; 0, hub OD &gt; d, L &gt; 0.</div>');return;}
+  if(dI>=d){_mr(o,'<div class="note warn" style="margin-top:.5rem">Shaft bore must be smaller than the interface Ø.</div>');return;}
+  const bracket=d*((1/Eh)*((dO*dO+d*d)/(dO*dO-d*d)+nu)+(1/Es2)*((d*d+dI*dI)/(d*d-dI*dI)-nu));
+  const one=du=>{const p=(du/1000)/bracket;return{p:p,F:mu*p*Math.PI*d*L,T:mu*p*Math.PI*d*d*L/2000,st:p*(dO*dO+d*d)/(dO*dO-d*d)};};
+  const dmin=Math.max(0,v('pf-dmin')),dmax=Math.max(dmin,v('pf-dmax'));
+  const a=one(dmin),b=one(dmax);
+  const dT=(dmax+clr)/(al*d/1000);
+  _mr(o,'<div class="result-grid" style="margin-top:.6rem">'+[
+    ['p contact @ δmin',a.p.toFixed(1)+' MPa'],['p contact @ δmax',b.p.toFixed(1)+' MPa'],
+    ['T holding @ δmin',a.T.toFixed(1)+' N·m',a.T>0?'ok':'warn'],['T holding @ δmax',b.T.toFixed(1)+' N·m'],
+    ['F axial @ δmin',Math.round(a.F)+' N'],['F axial @ δmax',Math.round(b.F)+' N'],
+    ['σ_t hub bore @ δmax',b.st.toFixed(1)+' MPa',b.st<250?'ok':'warn'],['ΔT to slip on (hub heat)',Math.round(dT)+' K']
+  ].map(r=>`<div class="result-item"><div class="lbl">${r[0]}</div><div class="val ${r[2]||''}">${r[1]}</div></div>`).join('')+'</div>'+
+    '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">Lamé thick-cylinder contact pressure, diametral interference. Rate holding capacity at δ_min (worst case); check hub bore tangential stress at δ_max against yield with FoS. Heating ΔT includes the assembly clearance; keep below the hub temper temperature.</p>');
+};
+function injectBeamFnCard(){
+  const vw=$('v-vibration');if(!vw||$('bfn-card'))return;
+  const host=vw.querySelector('.split>div:first-child')||vw;
+  const card=document.createElement('div');card.className='card';card.id='bfn-card';
+  card.innerHTML='<h3>BEAM NATURAL FREQUENCY (CONTINUOUS)</h3><div class="row">'+
+    '<div class="field"><label for="bf2-bc">BOUNDARY</label><select id="bf2-bc"><option value="ss">SIMPLY SUPPORTED</option><option value="cant">CANTILEVER</option><option value="ff">FIXED-FIXED</option><option value="fp">FIXED-PINNED</option></select></div>'+
+    '<div class="field"><label for="bf2-e">E (GPa)</label><input type="number" id="bf2-e" value="200" step="any"></div>'+
+    '<div class="field"><label for="bf2-i">I (cm⁴)</label><input type="number" id="bf2-i" value="100" step="any"></div>'+
+    '<div class="field"><label for="bf2-l">L (m)</label><input type="number" id="bf2-l" value="3" step="any"></div>'+
+    '<div class="field"><label for="bf2-m">MASS/LENGTH (kg/m)</label><input type="number" id="bf2-m" value="20" step="any"></div>'+
+    '</div><button class="btn btn-fill" onclick="calcBeamFn()" style="margin-top:.75rem">COMPUTE MODES</button>';
+  host.appendChild(card);
+}
+window.calcBeamFn=function(){
+  const bc=sv('bf2-bc')||'ss',E=(v('bf2-e')||200)*1e9,I=(v('bf2-i')||0)*1e-8,L=v('bf2-l'),mb=v('bf2-m');
+  const out=$('vibration-results');if(!out)return;
+  if(!(L>0)||!(mb>0)||!(I>0)){_mr(out,'<h3>BEAM NATURAL FREQUENCY</h3><div class="note warn">Need I, L, mass/length &gt; 0.</div>');return;}
+  const LAM={ss:[9.870,39.48,88.83],cant:[3.516,22.03,61.70],ff:[22.37,61.67,120.9],fp:[15.42,49.96,104.2]}[bc];
+  const NM={ss:'Simply supported',cant:'Cantilever',ff:'Fixed–fixed',fp:'Fixed–pinned'}[bc];
+  const base=Math.sqrt(E*I/(mb*Math.pow(L,4)))/(2*Math.PI);
+  const f=LAM.map(l2=>l2*base);
+  _mr(out,'<h3>BEAM NATURAL FREQUENCY — '+NM.toUpperCase()+'</h3><div class="result-grid">'+[
+    ['f₁ (mode 1)',f[0].toFixed(2)+' Hz'],['f₂ (mode 2)',f[1].toFixed(2)+' Hz'],['f₃ (mode 3)',f[2].toFixed(2)+' Hz'],
+    ['N₁ critical',Math.round(f[0]*60)+' rpm'],['λ₁²',LAM[0].toFixed(3)],['√(EI/m̄L⁴)/2π',base.toExponential(3)+' Hz']
+  ].map(r=>`<div class="result-item"><div class="lbl">${r[0]}</div><div class="val">${r[1]}</div></div>`).join('')+'</div>'+
+    '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">Euler-Bernoulli continuous beam, f_i = λ_i²/2π·√(EI/m̄L⁴) (Blevins constants). Uniform section, no axial load, no added point masses — first-pass values; shear &amp; rotary inertia (Timoshenko) lower the high modes for deep beams. Keep excitation ≥ ±20% away from each f_i.</p>');
+};
 /* ============================================================
  * STRESS MODULE — revive the dead σx card + honor the st-u unit
  * (the obfuscated app never defined calcStress, so the MPa/ksi/
@@ -2375,6 +2500,8 @@ window.addEventListener('DOMContentLoaded',()=>{
     if(boltBtn)boltBtn.style.display='none';
     /* Springs init */
     gateBellevillePresets();
+    injectBeamFnCard();
+    window.calcFits();
     const typeEl=$('sp-type');if(typeEl)typeEl.addEventListener('change',()=>{gateBellevillePresets();window.calcSpring();});
     wireLive('v-springs',window.calcSpring);
     /* Hide CALCULATE button on springs since live-compute */

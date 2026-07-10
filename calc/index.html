@@ -326,6 +326,7 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <button class="tab" data-v="seals" role="tab" id="tab-seals" aria-controls="v-seals" aria-selected="false" tabindex="-1">Seals</button>
 <button class="tab" data-v="columns" role="tab" id="tab-columns" aria-controls="v-columns" aria-selected="false" tabindex="-1">Columns</button>
 <button class="tab" data-v="shafts" role="tab" id="tab-shafts" aria-controls="v-shafts" aria-selected="false" tabindex="-1">Shafts</button>
+<button class="tab" data-v="fits" role="tab" id="tab-fits" aria-controls="v-fits" aria-selected="false" tabindex="-1">Fits &amp; Tol</button>
 <button class="tab" data-v="welds" role="tab" id="tab-welds" aria-controls="v-welds" aria-selected="false" tabindex="-1">Welds</button>
 <button class="tab" data-v="bearings" role="tab" id="tab-bearings" aria-controls="v-bearings" aria-selected="false" tabindex="-1">Bearings</button>
 <button class="tab" data-v="gears" role="tab" id="tab-gears" aria-controls="v-gears" aria-selected="false" tabindex="-1">Gears</button>
@@ -671,6 +672,73 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <div>
 <h3 style="font-size:.75rem">SIZES</h3>
 <table class="data"><thead><tr><th>SIZE</th><th>NOM (mm)</th><th>PITCH</th><th>At (mm²)</th></tr></thead><tbody id="bl-size-tbl"></tbody></table>
+</div>
+</div>
+</div>
+</div>
+<div class="view" id="v-fits">
+<h2>FITS &amp; TOLERANCES (ISO 286)</h2>
+<div class="split">
+<div>
+<div class="card">
+<h3>LIMITS &amp; FITS</h3>
+<div class="row">
+<div class="field"><label for="ft-d">NOMINAL Ø (mm)</label><input type="number" id="ft-d" value="25" step="any" min="0.1" max="500"></div>
+<div class="field"><label for="ft-pref">PREFERRED FIT</label><select id="ft-pref" onchange="applyPreferredFit()">
+<option value="">CUSTOM (set below)</option>
+<option value="H11/c11">H11/c11 — loose running</option>
+<option value="H9/d9">H9/d9 — free running</option>
+<option value="H8/f7">H8/f7 — close running</option>
+<option value="H7/g6" selected>H7/g6 — sliding</option>
+<option value="H7/h6">H7/h6 — locational clearance</option>
+<option value="H7/k6">H7/k6 — locational transition</option>
+<option value="H7/n6">H7/n6 — transition (keying)</option>
+<option value="H7/p6">H7/p6 — locational interference</option>
+<option value="H7/s6">H7/s6 — medium drive / press</option>
+</select></div>
+</div>
+<div class="row" style="margin-top:.5rem">
+<div class="field"><label for="ft-hl">HOLE LETTER</label><select id="ft-hl"><option>D</option><option>E</option><option>F</option><option>G</option><option selected>H</option><option>JS</option></select></div>
+<div class="field"><label for="ft-hg">HOLE GRADE (IT)</label><select id="ft-hg"><option>5</option><option>6</option><option selected>7</option><option>8</option><option>9</option><option>10</option><option>11</option></select></div>
+<div class="field"><label for="ft-sl">SHAFT LETTER</label><select id="ft-sl"><option>c</option><option>d</option><option>e</option><option>f</option><option selected>g</option><option>h</option><option>js</option><option>k</option><option>m</option><option>n</option><option>p</option><option>r</option><option>s</option></select></div>
+<div class="field"><label for="ft-sg">SHAFT GRADE (IT)</label><select id="ft-sg"><option>5</option><option selected>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option></select></div>
+</div>
+<button class="btn btn-fill" onclick="calcFits()" style="margin-top:.75rem">COMPUTE FIT</button>
+</div>
+<div class="card">
+<h3>PRESS / SHRINK FIT (LAMÉ)</h3>
+<p style="font-size:.7rem;color:var(--dim);margin:0 0 .5rem">δ auto-fills from an interference/transition fit above — or enter your own diametral interference.</p>
+<div class="row">
+<div class="field"><label for="pf-d">INTERFACE Ø d (mm)</label><input type="number" id="pf-d" value="25" step="any"></div>
+<div class="field"><label for="pf-do">HUB OD (mm)</label><input type="number" id="pf-do" value="50" step="any"></div>
+<div class="field"><label for="pf-di">SHAFT BORE (mm)</label><input type="number" id="pf-di" value="0" step="any"></div>
+<div class="field"><label for="pf-l">ENGAGEMENT L (mm)</label><input type="number" id="pf-l" value="30" step="any"></div>
+</div>
+<div class="row" style="margin-top:.5rem">
+<div class="field"><label for="pf-dmin">δ MIN (µm)</label><input type="number" id="pf-dmin" value="1" step="any"></div>
+<div class="field"><label for="pf-dmax">δ MAX (µm)</label><input type="number" id="pf-dmax" value="35" step="any"></div>
+<div class="field"><label for="pf-mu">FRICTION µ</label><input type="number" id="pf-mu" value="0.15" step="0.01"></div>
+<div class="field"><label for="pf-clr">ASSEMBLY CLEARANCE (µm)</label><input type="number" id="pf-clr" value="50" step="any"></div>
+</div>
+<div class="row" style="margin-top:.5rem">
+<div class="field"><label for="pf-eh">HUB E (GPa)</label><input type="number" id="pf-eh" value="200" step="any"></div>
+<div class="field"><label for="pf-es">SHAFT E (GPa)</label><input type="number" id="pf-es" value="200" step="any"></div>
+<div class="field"><label for="pf-nu">POISSON ν</label><input type="number" id="pf-nu" value="0.3" step="0.01"></div>
+<div class="field"><label for="pf-al">HUB α (µm/m·K)</label><input type="number" id="pf-al" value="11.7" step="any"></div>
+</div>
+<button class="btn btn-fill" onclick="calcPressFit()" style="margin-top:.75rem">COMPUTE CAPACITY</button>
+<div id="pf-out"></div>
+</div>
+</div>
+<div>
+<div class="card" id="fits-results">
+<h3>FIT RESULTS</h3>
+<p style="font-size:.75rem;color:var(--dim)">Results compute live as you type.</p>
+</div>
+<div class="card">
+<h3>TOLERANCE ZONE DIAGRAM</h3>
+<canvas id="c-fits" width="500" height="240" style="width:100%;height:240px;background:var(--panel2);border-radius:3px;display:block"></canvas>
+<p class="note" style="margin-top:.3rem;color:var(--dim);font-size:.7rem">Zones drawn about the zero (nominal) line — hole left, shaft right. Overlap = transition; shaft zone above hole zone = interference.</p>
 </div>
 </div>
 </div>
@@ -2621,9 +2689,9 @@ window._calcSealWasm=(...args)=>calc_seal(...args);
 <script src="./calc-unit-core.js?v=units1" defer></script>
 <script src="./calc-overrides.js?v=eng2" defer></script>
 <script src="./calc-3d.js?v=eng3" defer></script>
-<script src="./calc-fixes.js?v=eng4" defer></script>
+<script src="./calc-fixes.js?v=eng5" defer></script>
 <script src="./calc-units.js?v=units1" defer></script>
 <script src="./calc-qol.js" defer></script>
-<script src="./calc-engineer.js?v=eng7" defer></script>
+<script src="./calc-engineer.js?v=eng8" defer></script>
 </body>
 </html>
