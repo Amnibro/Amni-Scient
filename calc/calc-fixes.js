@@ -1229,6 +1229,278 @@ window.applyIsolatorDesign=function(){
   window.calcIsolatorDesign();
   if(typeof window.calcNatFreq==='function')try{window.calcNatFreq();}catch(e){}
 };
+const GEAR_MODULES=[1,1.25,1.5,2,2.5,3,4,5,6,8,10,12];
+function injectGearDesigner(){
+  const vw=$('v-gears');if(!vw||$('grd-card'))return;
+  const host=vw.querySelector('.split>div:first-child')||vw;
+  const card=document.createElement('div');card.className='card';card.id='grd-card';
+  card.innerHTML='<h3>⚡ GEAR DESIGNER — START HERE</h3>'+
+    '<p style="font-size:.72rem;color:var(--dim);margin:0 0 .5rem">Power + speed + ratio + hardness → the module and face width that survive pitting.</p>'+
+    '<div class="row">'+
+    '<div class="field"><label for="grd-p">POWER (kW)</label><input type="number" id="grd-p" value="5" step="any"></div>'+
+    '<div class="field"><label for="grd-n">PINION SPEED (rpm)</label><input type="number" id="grd-n" value="1500" step="any"></div>'+
+    '<div class="field"><label for="grd-mg">RATIO m_G</label><input type="number" id="grd-mg" value="4" step="any"></div>'+
+    '<div class="field"><label for="grd-hb">HARDNESS (HB)</label><input type="number" id="grd-hb" value="300" step="1"></div>'+
+    '<div class="field"><label for="grd-np">PINION TEETH</label><input type="number" id="grd-np" value="18" min="14" step="1"></div>'+
+    '</div><div class="row" style="margin-top:.6rem"><button class="btn btn-fill" onclick="calcGearDesign()">DESIGN IT</button><button class="btn" onclick="applyGearDesign()">APPLY TO ANALYSIS →</button></div><div id="grd-out"></div>';
+  host.insertBefore(card,host.firstChild);
+}
+function gearDesignPick(){
+  const P=v('grd-p'),n=v('grd-n'),mG=v('grd-mg')||1,HB=v('grd-hb')||300,Np=Math.max(14,Math.round(v('grd-np'))||18);
+  const Sc=2.22*HB+200,phi=20*Math.PI/180,ZI=Math.cos(phi)*Math.sin(phi)/2*(mG/(mG+1)),ZE=191,KH=1.6;
+  for(const m of GEAR_MODULES){
+    const d1=m*Np,b=10*m,V=Math.PI*d1*n/60000,Wt=V>0?P*1000/V:Infinity,Kv=(6.1+V)/6.1;
+    const sH=ZE*Math.sqrt(Wt*Kv*KH/(d1*b*ZI)),SH=Sc/sH;
+    if(SH>=1.2)return{m,d1,b,V,Wt,Kv,sH,SH,Sc,ZI,Np,mG,found:true};
+  }
+  return{found:false};
+}
+window.calcGearDesign=function(){
+  const o=$('grd-out');if(!o)return;
+  if(!(v('grd-p')>0)||!(v('grd-n')>0)){_mr(o,'<div class="note warn" style="margin-top:.5rem">Need power and speed &gt; 0.</div>');return;}
+  const R=gearDesignPick();
+  if(!R.found){_mr(o,'<div class="note warn" style="margin-top:.5rem">Even m=12 fails — raise hardness, widen face beyond 10m, split into two stages, or go helical.</div>');return;}
+  _mr(o,'<div class="result-grid" style="margin-top:.6rem">'+[
+    ['USE MODULE',R.m+' mm','ok'],['Pinion',R.Np+'T, Ø'+R.d1.toFixed(0)+' mm'],['Gear',Math.round(R.Np*R.mG)+'T'],
+    ['Face width b',R.b.toFixed(0)+' mm (10·m)'],['Pitch-line V',R.V.toFixed(2)+' m/s'],['W_t',R.Wt.toFixed(0)+' N'],
+    ['σ_H / S_c',R.sH.toFixed(0)+' / '+R.Sc.toFixed(0)+' MPa'],['Pitting S_H',R.SH.toFixed(2),'ok']
+  ].map(x=>`<div class="result-item"><div class="lbl">${x[0]}</div><div class="val ${x[2]||''}">${x[1]}</div></div>`).join('')+'</div>'+
+    '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">Smallest standard module with pitting S_H ≥ 1.2 (AGMA contact stress, Barth K_v, K_H = 1.6, Grade-1 steel S_c = 2.22·HB+200, b = 10·m, 20° spur). Bending usually has more margin — APPLY loads both the AGMA and Lewis cards to confirm.</p>');
+};
+window.applyGearDesign=function(){
+  const R=gearDesignPick();if(!R.found)return void window.calcGearDesign();
+  const set=(id,val)=>{const el=$(id);if(el)el.value=val;};
+  [['ag-wt',Math.round(R.Wt)],['ag-np',R.Np],['ag-m',R.m],['ag-mg',R.mG],['ag-b',R.b],['ag-kv',+(R.Kv.toFixed(2))],['ag-hb',v('grd-hb')||300],['gg-n',R.Np],['gg-m',R.m],['lw-w',Math.round(R.Wt)],['lw-m',R.m],['lw-f',R.b],['lw-v',+(R.V.toFixed(2))]].forEach(([id,val])=>set(id,val));
+  window.calcGearDesign();
+  if(typeof window.calcAgmaPitting==='function')try{window.calcAgmaPitting();}catch(e){}
+};
+function injectBeamDesigner(){
+  const vw=$('v-beam');if(!vw||$('bmd-card'))return;
+  const host=vw.querySelector('.split>div:first-child');
+  const card=document.createElement('div');card.className='card';card.id='bmd-card';
+  card.innerHTML='<h3>⚡ BEAM DESIGNER — START HERE</h3>'+
+    '<p style="font-size:.72rem;color:var(--dim);margin:0 0 .5rem">Load + span + how much sag you can live with → the section properties to shop for.</p>'+
+    '<div class="row">'+
+    '<div class="field"><label for="bmd-cfg">CONFIGURATION</label><select id="bmd-cfg"><option value="ssp">SIMPLY SUPPORTED — CENTER POINT</option><option value="ssu">SIMPLY SUPPORTED — UDL</option><option value="cp">CANTILEVER — END POINT</option><option value="cu">CANTILEVER — UDL</option></select></div>'+
+    '<div class="field"><label for="bmd-w">LOAD (N total)</label><input type="number" id="bmd-w" value="10000" step="any"></div>'+
+    '<div class="field"><label for="bmd-l">SPAN (m)</label><input type="number" id="bmd-l" value="4" step="any"></div>'+
+    '<div class="field"><label for="bmd-lim">DEFLECTION LIMIT</label><select id="bmd-lim"><option value="240">L/240 (roofs)</option><option value="360" selected>L/360 (floors/general)</option><option value="500">L/500 (machinery)</option><option value="800">L/800 (crane rails)</option></select></div>'+
+    '<div class="field"><label for="bmd-sy">MATERIAL S_y (MPa)</label><input type="number" id="bmd-sy" value="250" step="any"></div>'+
+    '<div class="field"><label for="bmd-e">E (GPa)</label><input type="number" id="bmd-e" value="200" step="any"></div>'+
+    '</div><div class="row" style="margin-top:.6rem"><button class="btn btn-fill" onclick="calcBeamDesign()">DESIGN IT</button><button class="btn" onclick="applyBeamDesign()">APPLY TO BEAM →</button></div><div id="bmd-out"></div>';
+  if(host){host.insertBefore(card,host.firstChild);}else{const h2=vw.querySelector('h2');vw.insertBefore(card,h2&&h2.parentElement===vw?h2.nextSibling:vw.firstChild);}
+}
+function beamDesignPick(){
+  const cfg=sv('bmd-cfg')||'ssp',W=v('bmd-w'),L=v('bmd-l'),rat=parseFloat(sv('bmd-lim'))||360,Sy=v('bmd-sy')||250,E=(v('bmd-e')||200)*1e9;
+  const dAll=L/rat;
+  const M={ssp:W*L/4,ssu:W*L/8,cp:W*L,cu:W*L/2}[cfg];
+  const Ireq={ssp:W*Math.pow(L,3)/(48*E*dAll),ssu:5*W*Math.pow(L,3)/(384*E*dAll),cp:W*Math.pow(L,3)/(3*E*dAll),cu:W*Math.pow(L,3)/(8*E*dAll)}[cfg];
+  const Sreq=M/(0.6*Sy*1e6);
+  return{cfg,W,L,rat,Sy,dAll,M,Ireq,Sreq,Icm4:Ireq*1e8,Scm3:Sreq*1e6};
+}
+window.calcBeamDesign=function(){
+  const o=$('bmd-out');if(!o)return;
+  const R=beamDesignPick();
+  if(!(R.W>0)||!(R.L>0)){_mr(o,'<div class="note warn" style="margin-top:.5rem">Need load and span &gt; 0.</div>');return;}
+  const IfromS=R.Scm3;
+  _mr(o,'<div class="result-grid" style="margin-top:.6rem">'+[
+    ['REQUIRED I_x',R.Icm4.toFixed(0)+' cm⁴','ok'],['REQUIRED S_x',R.Scm3.toFixed(1)+' cm³','ok'],
+    ['M_max',(R.M/1000).toFixed(2)+' kN·m'],['δ allowed',(R.dAll*1000).toFixed(1)+' mm (L/'+R.rat+')'],
+    ['σ allowable',(0.6*R.Sy).toFixed(0)+' MPa (0.6·S_y)'],
+    ['Governs','pick a section meeting BOTH']
+  ].map(x=>`<div class="result-item"><div class="lbl">${x[0]}</div><div class="val ${x[2]||''}">${x[1]}</div></div>`).join('')+'</div>'+
+    '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">Closed-form sizing (self-weight excluded — add ~5-10% or re-run with it in the load). Find a section with I_x and S_x above both requirements in SECTIONS (its → LOAD INTO BEAM button carries it over), or APPLY here to preload span + required I into the beam solver directly.</p>');
+};
+window.applyBeamDesign=function(){
+  const R=beamDesignPick();
+  const set=(id,val)=>{const el=$(id);if(el)el.value=val;};
+  set('bm-len',R.L*1000);const lu=$('bm-len-u');lu&&(lu.value='mm');
+  set('bm-i',Math.ceil(R.Icm4));const iu=$('bm-i-u');iu&&(iu.value='cm4');
+  set('bm-e',v('bmd-e')||200);const eu=$('bm-e-u');eu&&(eu.value='GPa');
+  window.calcBeamDesign();
+};
+function injectColumnDesigner(){
+  const vw=$('v-columns');if(!vw||$('cld-card'))return;
+  const host=vw.querySelector('.split>div:first-child')||vw;
+  const card=document.createElement('div');card.className='card';card.id='cld-card';
+  card.innerHTML='<h3>⚡ COLUMN DESIGNER — START HERE</h3>'+
+    '<p style="font-size:.72rem;color:var(--dim);margin:0 0 .5rem">Axial load + length + end fixity → the section properties that won\'t buckle.</p>'+
+    '<div class="row">'+
+    '<div class="field"><label for="cld-p">AXIAL LOAD (kN)</label><input type="number" id="cld-p" value="100" step="any"></div>'+
+    '<div class="field"><label for="cld-l">LENGTH (m)</label><input type="number" id="cld-l" value="3" step="any"></div>'+
+    '<div class="field"><label for="cld-k">END CONDITION</label><select id="cld-k"><option value="1">PINNED-PINNED (K=1)</option><option value="0.5">FIXED-FIXED (K=0.5)</option><option value="0.7">FIXED-PINNED (K=0.7)</option><option value="2">FIXED-FREE (K=2)</option></select></div>'+
+    '<div class="field"><label for="cld-fos">FoS</label><input type="number" id="cld-fos" value="2.5" step="0.1"></div>'+
+    '<div class="field"><label for="cld-sy">S_y (MPa)</label><input type="number" id="cld-sy" value="250" step="any"></div>'+
+    '<div class="field"><label for="cld-e">E (GPa)</label><input type="number" id="cld-e" value="200" step="any"></div>'+
+    '</div><div class="row" style="margin-top:.6rem"><button class="btn btn-fill" onclick="calcColumnDesign()">DESIGN IT</button><button class="btn" onclick="applyColumnDesign()">APPLY TO ANALYSIS →</button></div><div id="cld-out"></div>';
+  host.insertBefore(card,host.firstChild);
+}
+function columnDesignPick(){
+  const P=v('cld-p')*1000,L=v('cld-l'),K=parseFloat(sv('cld-k'))||1,fos=v('cld-fos')||2.5,Sy=v('cld-sy')||250,E=(v('cld-e')||200)*1e9;
+  const Ireq=fos*P*Math.pow(K*L,2)/(Math.PI*Math.PI*E);
+  const Areq=fos*P/(Sy*1e6);
+  return{P,L,K,fos,Sy,Ireq,Areq,Icm4:Ireq*1e8,Acm2:Areq*1e4,rMin:Math.sqrt(Ireq/Areq)*100};
+}
+window.calcColumnDesign=function(){
+  const o=$('cld-out');if(!o)return;
+  const R=columnDesignPick();
+  if(!(R.P>0)||!(R.L>0)){_mr(o,'<div class="note warn" style="margin-top:.5rem">Need load and length &gt; 0.</div>');return;}
+  _mr(o,'<div class="result-grid" style="margin-top:.6rem">'+[
+    ['REQUIRED I (weak axis)',R.Icm4.toFixed(1)+' cm⁴','ok'],['REQUIRED A',R.Acm2.toFixed(1)+' cm²','ok'],
+    ['Effective length',(R.K*R.L).toFixed(2)+' m (K='+R.K+')'],['Implied r at both limits',R.rMin.toFixed(1)+' cm'],
+    ['Euler capacity check','P_cr ≥ '+(R.fos*R.P/1000).toFixed(0)+' kN']
+  ].map(x=>`<div class="result-item"><div class="lbl">${x[0]}</div><div class="val ${x[2]||''}">${x[1]}</div></div>`).join('')+'</div>'+
+    '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">Euler sizing (I from elastic buckling with FoS, A from squash). If the section you pick lands in the intermediate range, the COLUMNS card automatically switches to Johnson — APPLY preloads it; use SECTIONS → LOAD INTO COLUMNS to carry a real section\'s r and A here.</p>');
+};
+window.applyColumnDesign=function(){
+  const R=columnDesignPick();
+  const set=(id,val)=>{const el=$(id);if(el)el.value=val;};
+  [['cl-l',R.L*1000],['cl-k',R.K],['cl-e',v('cld-e')||200],['cl-sy',R.Sy],['cl-p',R.P/1000]].forEach(([id,val])=>set(id,val));
+  window.calcColumnDesign();
+};
+const SEAL_CS=[1.78,2.62,3.53,5.33,6.99];
+const SEAL_MAT_RULES=[
+  {id:'NBR',tmin:-30,tmax:100,media:['oil','fuel'],n:'NBR (nitrile)'},
+  {id:'EPDM',tmin:-45,tmax:130,media:['water','brake'],n:'EPDM'},
+  {id:'FKM',tmin:-20,tmax:200,media:['oil','fuel','acid'],n:'FKM (Viton)'},
+  {id:'VMQ',tmin:-55,tmax:200,media:['water','food'],n:'VMQ (silicone, static only)'},
+  {id:'FFKM',tmin:-15,tmax:275,media:['oil','fuel','acid','solvent','water'],n:'FFKM (Kalrez-class)'}
+];
+function injectSealDesigner(){
+  const vw=$('v-seals');if(!vw||$('sld-card'))return;
+  const host=vw.querySelector('.split>div:first-child')||vw;
+  const card=document.createElement('div');card.className='card';card.id='sld-card';
+  card.innerHTML='<h3>⚡ SEAL DESIGNER — START HERE</h3>'+
+    '<p style="font-size:.72rem;margin:0 0 .5rem;color:var(--dim)">Bore + pressure + fluid + temperature → cross-section, groove, squeeze and elastomer.</p>'+
+    '<div class="row">'+
+    '<div class="field"><label for="sld-id">BORE / GLAND Ø (mm)</label><input type="number" id="sld-id" value="25" step="any"></div>'+
+    '<div class="field"><label for="sld-p">PRESSURE (MPa)</label><input type="number" id="sld-p" value="10" step="any"></div>'+
+    '<div class="field"><label for="sld-t">TEMP (°C)</label><input type="number" id="sld-t" value="80" step="any"></div>'+
+    '<div class="field"><label for="sld-med">FLUID</label><select id="sld-med"><option value="oil">OIL / HYDRAULIC</option><option value="fuel">FUEL</option><option value="water">WATER / STEAM</option><option value="acid">ACID / CHEMICAL</option><option value="solvent">SOLVENT / EXOTIC</option></select></div>'+
+    '<div class="field"><label for="sld-gl">GLAND TYPE</label><select id="sld-gl"><option value="face">FACE (AXIAL)</option><option value="radial_bore">RADIAL — BORE</option><option value="radial_piston">RADIAL — PISTON</option></select></div>'+
+    '</div><div class="row" style="margin-top:.6rem"><button class="btn btn-fill" onclick="calcSealDesign()">DESIGN IT</button><button class="btn" onclick="applySealDesign()">APPLY TO ANALYSIS →</button></div><div id="sld-out"></div>';
+  host.insertBefore(card,host.firstChild);
+}
+function sealDesignPick(){
+  const id=v('sld-id'),P=v('sld-p'),T=v('sld-t'),med=sv('sld-med')||'oil',gl=sv('sld-gl')||'face';
+  const cs=id<15?1.78:id<30?2.62:id<75?3.53:id<150?5.33:6.99;
+  const sq=gl==='face'?0.25:0.15;
+  const depth=cs*(1-sq),width=cs*1.35;
+  const mat=SEAL_MAT_RULES.find(m=>T>=m.tmin&&T<=m.tmax&&m.media.indexOf(med)>=0)||SEAL_MAT_RULES.find(m=>m.id==='FFKM'&&T<=m.tmax);
+  const backup=P>8.3;
+  return{id,P,T,med,gl,cs,sq,depth,width,mat,backup};
+}
+window.calcSealDesign=function(){
+  const o=$('sld-out');if(!o)return;
+  const R=sealDesignPick();
+  if(!(R.id>0)){_mr(o,'<div class="note warn" style="margin-top:.5rem">Bore diameter required.</div>');return;}
+  if(!R.mat){_mr(o,'<div class="note warn" style="margin-top:.5rem">No standard elastomer covers '+R.T+' °C with '+R.med+' — metal seal or engineered solution territory.</div>');return;}
+  _mr(o,'<div class="result-grid" style="margin-top:.6rem">'+[
+    ['CROSS-SECTION',R.cs+' mm (AS568 series)','ok'],['MATERIAL',R.mat.n,'ok'],
+    ['Squeeze',(R.sq*100).toFixed(0)+' % ('+(R.gl==='face'?'axial':'radial')+')'],
+    ['Groove depth',R.depth.toFixed(2)+' mm'],['Groove width',R.width.toFixed(2)+' mm'],
+    ['Backup ring',R.backup?'REQUIRED (P > 8.3 MPa)':'not needed',R.backup?'warn':'ok'],
+    ['Material window',R.mat.tmin+' … '+R.mat.tmax+' °C']
+  ].map(x=>`<div class="result-item"><div class="lbl">${x[0]}</div><div class="val ${x[2]||''}">${x[1]}</div></div>`).join('')+'</div>'+
+    '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">Parker O-ring handbook conventions: CS stepped by bore, squeeze 20-30% face / 10-20% radial, groove width ≈ 1.35·CS, backup rings above ~1200 psi at 70 Shore A. EPDM is destroyed by petroleum oils; VMQ is static-only. APPLY runs the full gland analysis (fill %, stretch, extrusion) with these numbers.</p>');
+};
+window.applySealDesign=function(){
+  const R=sealDesignPick();if(!R.mat)return void window.calcSealDesign();
+  const set=(id,val)=>{const el=$(id);if(el)el.value=val;};
+  [['sl-cord',R.cs],['sl-id',R.id],['sl-depth',+(R.depth.toFixed(2))],['sl-width',+(R.width.toFixed(2))],['sl-press',R.P],['sl-temp',R.T]].forEach(([id,val])=>set(id,val));
+  const gl=$('sl-gland');gl&&(gl.value=R.gl);
+  const mat=$('sl-mat');mat&&[].some.call(mat.options,op=>new RegExp(R.mat.id,'i').test(op.textContent)&&((mat.value=op.value),true));
+  window.calcSealDesign();
+  if(typeof window.calcSeal==='function')try{window.calcSeal();}catch(e){}
+};
+const MOTOR_KW=[0.75,1.1,1.5,2.2,3,4,5.5,7.5,11,15,18.5,22,30,37,45,55,75,90,110,132,160,200];
+function injectPumpDesigner(){
+  const vw=$('v-pumps');if(!vw||$('ppd-card'))return;
+  const host=vw.querySelector('.split>div:first-child')||vw;
+  const card=document.createElement('div');card.className='card';card.id='ppd-card';
+  card.innerHTML='<h3>⚡ PUMP DESIGNER — START HERE</h3>'+
+    '<p style="font-size:.72rem;color:var(--dim);margin:0 0 .5rem">Flow + head → shaft power, the motor to buy, and the pump type.</p>'+
+    '<div class="row">'+
+    '<div class="field"><label for="ppd-q">FLOW (m³/h)</label><input type="number" id="ppd-q" value="50" step="any"></div>'+
+    '<div class="field"><label for="ppd-h">TOTAL HEAD (m)</label><input type="number" id="ppd-h" value="30" step="any"></div>'+
+    '<div class="field"><label for="ppd-rho">ρ (kg/m³)</label><input type="number" id="ppd-rho" value="1000" step="any"></div>'+
+    '<div class="field"><label for="ppd-eff">EFFICIENCY EST.</label><input type="number" id="ppd-eff" value="0.7" step="0.05" min="0.2" max="0.95"></div>'+
+    '<div class="field"><label for="ppd-n">SPEED (rpm)</label><input type="number" id="ppd-n" value="2900" step="any"></div>'+
+    '</div><div class="row" style="margin-top:.6rem"><button class="btn btn-fill" onclick="calcPumpDesign()">DESIGN IT</button><button class="btn" onclick="applyPumpDesign()">APPLY TO ANALYSIS →</button></div><div id="ppd-out"></div>';
+  host.insertBefore(card,host.firstChild);
+}
+function pumpDesignPick(){
+  const Q=v('ppd-q'),H=v('ppd-h'),rho=v('ppd-rho')||1000,eff=Math.min(0.95,Math.max(0.2,v('ppd-eff')||0.7)),n=v('ppd-n')||2900;
+  const Pw=rho*9.81*(Q/3600)*H/1000,Ps=Pw/eff;
+  const motor=MOTOR_KW.find(k=>k>=Ps*1.15);
+  const NsUS=n*Math.sqrt(Q*4.4029)/Math.pow(H*3.2808,0.75);
+  return{Q,H,rho,eff,n,Pw,Ps,motor,NsUS,type:NsUS<1500?'Radial (centrifugal)':NsUS<4000?'Mixed flow':NsUS<10000?'Axial':'Propeller'};
+}
+window.calcPumpDesign=function(){
+  const o=$('ppd-out');if(!o)return;
+  const R=pumpDesignPick();
+  if(!(R.Q>0)||!(R.H>0)){_mr(o,'<div class="note warn" style="margin-top:.5rem">Need flow and head &gt; 0.</div>');return;}
+  _mr(o,'<div class="result-grid" style="margin-top:.6rem">'+[
+    ['Hydraulic power',R.Pw.toFixed(2)+' kW'],['Shaft power',R.Ps.toFixed(2)+' kW','ok'],
+    ['MOTOR (IEC, +15%)',R.motor?R.motor+' kW':'&gt; 200 kW — engineered drive',R.motor?'ok':'warn'],
+    ['Specific speed N_s',R.NsUS.toFixed(0)+' (US)'],['Pump type',R.type]
+  ].map(x=>`<div class="result-item"><div class="lbl">${x[0]}</div><div class="val ${x[2]||''}">${x[1]}</div></div>`).join('')+'</div>'+
+    '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">P = ρgQH/η with your efficiency estimate (centrifugal 0.6-0.8 typical at BEP); motor picked with 15% service margin on the IEC frame ladder. Check NPSH_a against the vendor curve in the NPSH card — cavitation kills more pumps than power does. APPLY loads the power card.</p>');
+};
+window.applyPumpDesign=function(){
+  const R=pumpDesignPick();
+  const set=(id,val)=>{const el=$(id);if(el)el.value=val;};
+  [['pp-q',R.Q],['pp-h',R.H],['pp-rho',R.rho],['pp-eff',R.eff],['ns-n',R.n],['ns-q',R.Q/3600],['ns-h',R.H]].forEach(([id,val])=>set(id,val));
+  window.calcPumpDesign();
+  if(typeof window.calcPumpPwr==='function')try{window.calcPumpPwr();}catch(e){}
+};
+const HX_U_TYP=[['Water / water',1200],['Steam / water',2000],['Oil / water',250],['Gas / water',40],['Refrigerant / water',600]];
+function injectHxDesigner(){
+  const vw=$('v-hx');if(!vw||$('hxd-card'))return;
+  const host=vw.querySelector('.split>div:first-child')||vw;
+  const card=document.createElement('div');card.className='card';card.id='hxd-card';
+  card.innerHTML='<h3>⚡ HX DESIGNER — START HERE</h3>'+
+    '<p style="font-size:.72rem;color:var(--dim);margin:0 0 .5rem">Duty + four temperatures → the area to buy.</p>'+
+    '<div class="row">'+
+    '<div class="field"><label for="hxd-q">DUTY (kW)</label><input type="number" id="hxd-q" value="100" step="any"></div>'+
+    '<div class="field"><label for="hxd-thi">T_h,in (°C)</label><input type="number" id="hxd-thi" value="90" step="any"></div>'+
+    '<div class="field"><label for="hxd-tho">T_h,out (°C)</label><input type="number" id="hxd-tho" value="50" step="any"></div>'+
+    '<div class="field"><label for="hxd-tci">T_c,in (°C)</label><input type="number" id="hxd-tci" value="20" step="any"></div>'+
+    '<div class="field"><label for="hxd-tco">T_c,out (°C)</label><input type="number" id="hxd-tco" value="40" step="any"></div>'+
+    '<div class="field"><label for="hxd-u">SERVICE (typical U)</label><select id="hxd-u">'+HX_U_TYP.map(([n2,u])=>`<option value="${u}">${n2} (~${u})</option>`).join('')+'<option value="custom">CUSTOM →</option></select></div>'+
+    '<div class="field"><label for="hxd-uc">U custom (W/m²K)</label><input type="number" id="hxd-uc" value="800" step="any"></div>'+
+    '</div><div class="row" style="margin-top:.6rem"><button class="btn btn-fill" onclick="calcHxDesign()">DESIGN IT</button><button class="btn" onclick="applyHxDesign()">APPLY TO ANALYSIS →</button></div><div id="hxd-out"></div>';
+  host.insertBefore(card,host.firstChild);
+}
+function hxDesignPick(){
+  const Q=v('hxd-q')*1000,thi=v('hxd-thi'),tho=v('hxd-tho'),tci=v('hxd-tci'),tco=v('hxd-tco');
+  const U=sv('hxd-u')==='custom'?(v('hxd-uc')||800):parseFloat(sv('hxd-u'))||1200;
+  const dT1=thi-tco,dT2=tho-tci;
+  if(dT1<=0||dT2<=0)return{cross:true};
+  const lmtd=Math.abs(dT1-dT2)<1e-9?dT1:(dT1-dT2)/Math.log(dT1/dT2);
+  const A=Q/(U*lmtd);
+  const mh=Q/(4186*(thi-tho)),mc=Q/(4186*(tco-tci));
+  return{Q,U,lmtd,A,mh,mc,thi,tho,tci,tco};
+}
+window.calcHxDesign=function(){
+  const o=$('hxd-out');if(!o)return;
+  const R=hxDesignPick();
+  if(R.cross){_mr(o,'<div class="note warn" style="margin-top:.5rem">Temperature cross — impossible in pure counterflow with these four temperatures. Re-check ins/outs or split into two exchangers.</div>');return;}
+  if(!(R.Q>0)){_mr(o,'<div class="note warn" style="margin-top:.5rem">Duty required.</div>');return;}
+  _mr(o,'<div class="result-grid" style="margin-top:.6rem">'+[
+    ['AREA (counterflow)',R.A.toFixed(2)+' m²','ok'],['LMTD',R.lmtd.toFixed(1)+' K'],
+    ['Hot flow (if water)',R.mh.toFixed(2)+' kg/s'],['Cold flow (if water)',R.mc.toFixed(2)+' kg/s'],
+    ['With 25% fouling margin',(R.A*1.25).toFixed(2)+' m²']
+  ].map(x=>`<div class="result-item"><div class="lbl">${x[0]}</div><div class="val ${x[2]||''}">${x[1]}</div></div>`).join('')+'</div>'+
+    '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">A = Q/(U·LMTD), true counterflow (apply the F-factor in the LMTD card for shell-and-tube). Typical-U presets are mid-range — the FOULED U card refines U for end-of-service. Flows assume water c_p; scale for other fluids.</p>');
+};
+window.applyHxDesign=function(){
+  const R=hxDesignPick();if(R.cross||!R.A)return void window.calcHxDesign();
+  const set=(id,val)=>{const el=$(id);if(el)el.value=val;};
+  [['hx-thi',R.thi],['hx-tho',R.tho],['hx-tci',R.tci],['hx-tco',R.tco],['hx-u',R.U],['hx-a',+(R.A.toFixed(2))],['fu-uc',R.U]].forEach(([id,val])=>set(id,val));
+  window.calcHxDesign();
+  if(typeof window.calcLMTD==='function')try{window.calcLMTD();}catch(e){}
+};
 function injectThreadEngage(){
   const vw=$('v-bolts');if(!vw||$('te-card'))return;
   const host=vw.querySelector('.split>div:last-child')||vw;
@@ -3090,6 +3362,12 @@ window.addEventListener('DOMContentLoaded',()=>{
     injectWireDesigner();
     injectBatteryDesigner();
     injectIsolatorDesigner();
+    injectGearDesigner();
+    injectBeamDesigner();
+    injectColumnDesigner();
+    injectSealDesigner();
+    injectPumpDesigner();
+    injectHxDesigner();
     window.calcFits();
     const typeEl=$('sp-type');if(typeEl)typeEl.addEventListener('change',()=>{gateBellevillePresets();window.calcSpring();});
     wireLive('v-springs',window.calcSpring);
