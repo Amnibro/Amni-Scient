@@ -73,12 +73,14 @@ if(res.ok){inp.value=fmt(res.x);inp.dispatchEvent(new Event('input',{bubbles:tru
 st.textContent='✓ '+fieldLabel(inp)+' = '+fmt(res.x)+'  →  '+o.lbl+' = '+fmt(res.y)+(o.du?' '+o.du:'');
 var r2=readOut(scope,o);r2&&r2.el&&(r2.el.classList.add('eng-flash'),setTimeout(function(){r2.el.classList.remove('eng-flash')},1500))}
 else{inp.value=x0;try{window[fn]()}catch(e){}st.textContent='✗ no solution found — that output may not depend on this input, or the target is out of reach'}}
+function freshOuts(scope){var outs=[];scope.querySelectorAll('.result-item').forEach(function(it,i){var vl=it.querySelector('.val');if(!vl||vl.children.length)return;var p=parseVal(vl.textContent);if(!p)return;outs.push({i:i,lbl:it.querySelector('.lbl').textContent.trim(),du:vl.dataset.du||p.u||''})});return outs}
 function openSolve(btn,fn,card,vw){var pn=btn._engPanel;
-if(pn){pn.classList.toggle('open');return}
+if(pn){var opening=!pn.classList.contains('open');pn.classList.toggle('open');
+if(opening){try{window[fn]()}catch(e){}scan();var no=freshOuts(pn._scope);no.length&&(pn._outs=no,pn.querySelector('.es-out').innerHTML=no.map(function(o,k){return'<option value="'+k+'">'+esc(o.lbl)+(o.du?' ('+esc(o.du)+')':'')+'</option>'}).join(''))}
+return}
 try{window[fn]()}catch(e){}
 scan();
-var scope=resScope(card,vw),outs=[];
-scope.querySelectorAll('.result-item').forEach(function(it,i){var vl=it.querySelector('.val');if(!vl||vl.children.length)return;var p=parseVal(vl.textContent);if(!p)return;outs.push({i:i,lbl:it.querySelector('.lbl').textContent.trim(),du:vl.dataset.du||p.u||''})});
+var scope=resScope(card,vw),outs=freshOuts(scope);
 var elig=function(x){return x.id&&!x.closest('.eng-solve')&&!(x.tagName==='SELECT'&&(/-u$/.test(x.id)||x.classList.contains('u-sel')||x.options.length<2))};
 var inps=[].slice.call(card.querySelectorAll('input[type="number"],select')).filter(elig);
 inps.length||(inps=[].slice.call(vw.querySelectorAll('input[type="number"],select')).filter(elig));
@@ -123,7 +125,8 @@ try{PREF=JSON.parse(localStorage.getItem(LSP)||'{}')||{}}catch(e){PREF={}}
 wrapUsys();injectFind();injectQuickNav();injectSolve();scan();
 document.addEventListener('click',function(e){var el=e.target&&e.target.closest?e.target.closest('.result-item .val'):null;if(!el||!el.dataset.bu)return;var d=el.dataset.dim,us=Object.keys(DIMX[d].u).filter(function(u2){return u2!=='m³/h'&&u2!=='µm'}),cur=el.dataset.du||el.dataset.bu,nx=us[(us.indexOf(cur)+1)%us.length];PREF[d]=nx;try{localStorage.setItem(LSP,JSON.stringify(PREF))}catch(err){}scan()});
 new MutationObserver(function(ms){for(var i2=0;i2<ms.length;i2++)if(ms[i2].addedNodes&&ms[i2].addedNodes.length){scan();return}}).observe(document.body,{childList:true,subtree:true});
-setTimeout(function(){injectQuickNav();injectSolve()},1800);
+document.addEventListener('click',function(e){var tb=e.target&&e.target.closest?e.target.closest('.sidebar .tab'):null;tb&&setTimeout(function(){tb.scrollIntoView({block:'nearest'})},60)});
+setTimeout(function(){injectQuickNav();injectSolve();var at=document.querySelector('.sidebar .tab.active');at&&at.scrollIntoView({block:'nearest'})},1800);
 setTimeout(function(){injectQuickNav();injectSolve()},3600)}
 document.readyState==='loading'?document.addEventListener('DOMContentLoaded',init):init();
 })();

@@ -1,5 +1,10 @@
 # Changelog 
 
+## Amni-Calc v5.44.0 — Seals rebalance, sidebar follows you, fresh solve targets - 2026-07-10
+- Seals module rebalanced like springs/bolts: MATERIAL PROPERTIES moved under the gland config (it's a selection aid) — columns now 3/3 instead of 2-vs-5.
+- Sidebar auto-scrolls the active module into view (on load-restore and every tab click) — the current tab was off-screen in the 30+ list whenever you worked low in a category.
+- ⌖ SOLVE FOR panels refresh their TARGET OUTPUT list every time they reopen — previously a panel opened once cached its outputs, so switching spring type (or any mode dropdown) left it aiming at stale result labels. Cache-buster calc-engineer.js?v=eng3.
+
 ## Amni-Calc v5.43.0 — Goal-seek over dropdowns + sticky quick-nav + uniform card rhythm - 2026-07-10
 - **⌖ SOLVE FOR now handles dropdowns** (marked ▾ in the BY VARYING list): every option is swept — inline onchange side-effects honored so coating→K style pickers work — and the option whose output lands closest to the target wins, with a "(nearest available — no exact match)" tag when the discrete catalog can't hit it exactly. Ask "which bolt SIZE gives me 25 kN preload" or "which bearing type hits 40 000 h" directly. Unit selectors are excluded (changing display units isn't a design variable).
 - **Sticky quick-nav**: the card chips now pin to the top of the module while you scroll (with scroll-margin so a jumped-to card never hides under them).

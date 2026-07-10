@@ -1,5 +1,9 @@
 # Architecture Map — amni-scient.com
 
+## v5.44.0 Amni-Calc Seals rebalance + nav follow + solve refresh (2026-07-10, /loop iter 2)
+- index.html v-seals: `#seal-mat-detail` moved LEFT under COMPRESSION ANIMATION (config side) — split now 3/3. Split-imbalance survey (cards/column): thermal[6,2]/echem[5,2]/battery[4,2]/cycles[5,2]/electrical[5,2]/pumps[4,2]/motors[4,2] are DELIBERATE multi-calculator patterns (inputs left, shared results right) — do NOT "rebalance" them; sticky qn-row chips are the nav answer there.
+- calc-engineer.js (`?v=eng3`): `freshOuts(scope)` extracted; openSolve rebuilds `_outs`+es-out options on every reopen (stale-target fix after mode/type switches). Sidebar follow: click delegate + init(+1800ms) `scrollIntoView({block:'nearest'})` on `.sidebar .tab.active`.
+
 ## v5.43.0 Amni-Calc Goal-seek Dropdowns + Nav/Format polish (2026-07-10, /loop iter 1)
 - calc-engineer.js (`?v=eng2`): runSolve branches on `inp.tagName==='SELECT'` — discrete sweep of all options via `setOpt` (calls inline `el.onchange({target:el})` so pickers with side-effects like bl-coat→bl-mu stay coherent), keeps `best` by |y−t|, restores original on total failure, dispatches change for qol persistence, tags "(nearest available)" when best.e>max(5%·t, 2·quantum). openSolve `elig` filter admits selects with ≥2 options, excludes `-u`/`.u-sel` unit selectors + .eng-solve internals; dropdown entries marked ▾.
 - index.html: `.qn-row` sticky (top:0, z-20, var(--bg) bg, border-bottom) inside the .view scroll container — `.view` padding-top moved onto `.view>h2` so chips pin flush; `.view .card{margin-top:0!important;scroll-margin-top:62px}` = uniform .85rem card rhythm (kills inconsistent inline margin-tops) + jump targets clear the sticky bar.
