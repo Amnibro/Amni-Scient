@@ -1,5 +1,10 @@
 # Changelog 
 
+## Amni-Calc v5.57.0 — BOLT DESIGNER: think like an engineer, not a calculator - 2026-07-10
+- New **⚡ BOLT DESIGNER — START HERE** card leads the Bolts module, matching how the problem actually arrives: **how many + what material + what load → what size, what torque, what preload, what to expect.** It walks the 81-size catalog (optionally restricted to a thread family), finds the smallest bolt meeting proof-usage ≤ 90%, separation ≥ 1.5× and tension-shear interaction < 1, then quotes: the size, the wrench torque (N·m and lbf·ft), per-bolt preload, margins, minimum thread engagement in steel AND aluminum, plus the next size up as a conservative alternative.
+- **APPLY TO FULL ANALYSIS →** loads the recommendation into the joint card — torque sequence, tightening pattern, and stripping check all light up with the same numbers. Reusable (75% proof) vs permanent (90%) service selector; clear "no size passes" verdict instead of silent oversizing.
+- Boundary-anchored tests: 4 × SAE-5 carrying 20 kN picks M6 because M5 misses proof usage at 90.04% (bolts_designer_audit.js, 9 assertions). Cache-busters calc-fixes.js?v=eng8, calc-engineer.js?v=eng9.
+
 ## Amni-Calc v5.56.0 — AGMA pitting + thread stripping - 2026-07-10
 - **AGMA pitting (surface durability)** in Gears: σ_H = Z_E·√(W_t·K_o·K_v·K_H/(d_p·b·Z_I)) with spur geometry factor Z_I from φ and m_G, Grade-1 allowable S_c = 2.22·HB+200, and a pitting safety factor with status. Gears previously had only Lewis bending — pitting usually governs hardened industrial gears.
 - **Thread engagement / stripping** in Bolts: basic-size FED-STD-H28 shear areas (A_ext = 0.75π·K_n·L_e, A_int = 0.875π·d·L_e), strip forces both sides at 0.6·S_u, governing failure mode, and the minimum engagement for break-before-strip. Bolt size and S_u follow the joint card automatically; the old "1.0·d steel / 1.5·d aluminum" note is now a real calculation. Tests: gaps2_audit.js grows to 21 (Z_I ≈ 0.1286 anchor, M12 minor-dia/area/L_e-min checks); all suites green. Cache-buster calc-fixes.js?v=eng7.

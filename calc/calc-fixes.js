@@ -837,6 +837,70 @@ window.calcAgmaPitting=function(){
   ].map(r=>`<div class="result-item"><div class="lbl">${r[0]}</div><div class="val ${r[2]||''}">${r[1]}</div></div>`).join('')+'</div>'+
     '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">Shigley/AGMA 2101: σ_H = Z_E·√(W_t·K_o·K_v·K_H/(d_p·b·Z_I)), Z_I = cosφ·sinφ/2 · m_G/(m_G+1) (spur, m_N=1). S_c = 2.22·HB+200 MPa (Grade 1 through-hardened steel, 10⁷ cycles, 99% reliability); apply Z_N life and Z_W hardness-ratio factors for other conditions. K_s and Z_R taken as 1. Complements the Lewis BENDING card — pitting usually governs hardened industrial gears.</p>');
 };
+function injectBoltDesigner(){
+  const vw=$('v-bolts');if(!vw||$('bd-card'))return;
+  const host=vw.querySelector('.split>div:first-child')||vw;
+  const card=document.createElement('div');card.className='card';card.id='bd-card';
+  card.innerHTML='<h3>⚡ BOLT DESIGNER — START HERE</h3>'+
+    '<p style="font-size:.72rem;color:var(--dim);margin:0 0 .5rem">How many, what material, what load → the smallest standard bolt that works, what to torque it to, and what to expect.</p>'+
+    '<div class="row">'+
+    '<div class="field"><label for="bd-n"># BOLTS</label><input type="number" id="bd-n" value="4" min="1" step="1"></div>'+
+    '<div class="field"><label for="bd-grade">MATERIAL / GRADE</label><select id="bd-grade"></select></div>'+
+    '<div class="field"><label for="bd-fext">TOTAL TENSILE LOAD (N)</label><input type="number" id="bd-fext" value="20000" step="any"></div>'+
+    '<div class="field"><label for="bd-shear">TOTAL SHEAR (N)</label><input type="number" id="bd-shear" value="0" step="any"></div>'+
+    '</div><div class="row" style="margin-top:.5rem">'+
+    '<div class="field"><label for="bd-svc">SERVICE</label><select id="bd-svc"><option value="0.75">REUSABLE (75% proof preload)</option><option value="0.90">PERMANENT (90% proof)</option></select></div>'+
+    '<div class="field"><label for="bd-fam">THREAD FAMILY</label><select id="bd-fam"><option value="">ANY</option><option value="Metric coarse">METRIC COARSE</option><option value="Metric fine">METRIC FINE</option><option value="Inch UNC">INCH UNC</option><option value="Inch UNF (fine)">INCH UNF</option></select></div>'+
+    '<div class="field"><label for="bd-c">STIFFNESS C</label><input type="number" id="bd-c" value="0.25" step="0.05" min="0" max="1"></div>'+
+    '<div class="field"><label for="bd-k">NUT FACTOR K</label><input type="number" id="bd-k" value="0.20" step="0.01"></div>'+
+    '</div><div class="row" style="margin-top:.6rem"><button class="btn btn-fill" onclick="calcBoltDesign()">DESIGN IT</button>'+
+    '<button class="btn" onclick="applyBoltDesign()" title="load the recommendation into the joint analysis, torque sequence, pattern and stripping cards">APPLY TO FULL ANALYSIS →</button></div><div id="bd-out"></div>';
+  host.insertBefore(card,host.firstChild);
+  const g=$('bd-grade');
+  if(g&&!g.options.length){Object.keys(BOLT_GRADES).forEach(k=>{const o=document.createElement('option');o.value=k;o.textContent=k+' (Sp '+BOLT_GRADES[k].Sp+' MPa)';g.appendChild(o);});g.value='SAE-5';}
+}
+function boltDesignPick(){
+  const n=Math.max(1,Math.round(v('bd-n'))||1),grade=BOLT_GRADES[sv('bd-grade')]||BOLT_GRADES['SAE-5'];
+  const Fext=v('bd-fext')||0,Fsh=v('bd-shear')||0,pre=parseFloat(sv('bd-svc'))||0.75,C=v('bd-c')||0.25,K=v('bd-k')||0.20,fam=sv('bd-fam');
+  const FextPer=Fext/n,FshPer=Fsh/n,Sp=grade.Sp;
+  const cands=Object.entries(BOLT_SIZES).filter(([k,z])=>!fam||z.kind===fam).sort((a,b)=>a[1].At-b[1].At);
+  const evalSize=z=>{
+    const Fi=pre*Sp*z.At,Fb=Fi+C*FextPer,sb=Fb/z.At,use=sb/Sp,sep=FextPer>0?Fi/(FextPer*(1-C)):Infinity;
+    const tau=FshPer/z.At,IR=Math.pow(sb/Sp,2)+Math.pow(tau/(0.577*Sp),2);
+    return{Fi,Fb,use,sep,tau,IR,T:K*Fi*z.d/1000,pass:use<=0.9&&sep>=1.5&&IR<1};
+  };
+  let pick=null,next=null;
+  for(let i=0;i<cands.length;i++){const r=evalSize(cands[i][1]);if(r.pass){pick={key:cands[i][0],z:cands[i][1],r};const j=i+1<cands.length?cands[i+1]:null;j&&(next={key:j[0],z:j[1],r:evalSize(j[1])});break;}}
+  return{n,grade,Fext,Fsh,pre,C,K,pick,next};
+}
+window.calcBoltDesign=function(){
+  const o=$('bd-out');if(!o)return;
+  const D=boltDesignPick();
+  if(!D.pick){_mr(o,'<div class="note warn" style="margin-top:.5rem">No standard size passes at this load/count — add bolts, raise the grade, or split the load path.</div>');return;}
+  const{key,z,r}=D.pick;
+  const Kn=z.d-1.0825*z.p,leSteel=D.grade.Su*z.At/Math.min(0.6*D.grade.Su*0.75*Math.PI*Kn,0.6*D.grade.Su*0.875*Math.PI*z.d),leAl=D.grade.Su*z.At/(0.6*310*0.875*Math.PI*z.d);
+  _mr(o,'<div class="result-grid" style="margin-top:.6rem">'+[
+    ['USE',key+' × '+D.n,'ok'],
+    ['Torque to',r.T.toFixed(1)+' N·m ('+(r.T*0.7376).toFixed(1)+' lbf·ft)','ok'],
+    ['Preload F_i (each)',(r.Fi/1000).toFixed(2)+' kN'],
+    ['Proof usage',(r.use*100).toFixed(0)+' %',r.use<0.85?'ok':'warn'],
+    ['Separation safety',r.sep===Infinity?'∞':r.sep.toFixed(2)+'×',r.sep>=1.5?'ok':'warn'],
+    ['Shear interaction IR',r.IR.toFixed(3),r.IR<1?'ok':'err'],
+    ['Min engagement — steel',leSteel.toFixed(1)+' mm'],
+    ['Min engagement — aluminum',leAl.toFixed(1)+' mm'],
+    ['Next size up',D.next?D.next.key+' (proof '+(D.next.r.use*100).toFixed(0)+'%, T='+D.next.r.T.toFixed(1)+' N·m)':'—']
+  ].map(x=>`<div class="result-item"><div class="lbl">${x[0]}</div><div class="val ${x[2]||''}">${x[1]}</div></div>`).join('')+'</div>'+
+    '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">Smallest '+(sv('bd-fam')||'standard')+' size meeting: proof usage ≤ 90% at '+(D.pre*100).toFixed(0)+'% preload, separation ≥ 1.5×, tension-shear interaction &lt; 1 (Shigley joint model, C='+D.C+'). Torque T = K·F_i·d with your K='+D.K+' — calibrate K on the real joint for critical work. APPLY loads this pick into every card below (joint, torque sequence, pattern, stripping).</p>');
+};
+window.applyBoltDesign=function(){
+  const D=boltDesignPick();if(!D.pick)return void window.calcBoltDesign();
+  const set=(id,val)=>{const el=$(id);if(el){el.value=val;}};
+  set('bl-num',D.n);set('bl-grade',sv('bd-grade'));set('bl-size',D.pick.key);
+  set('bl-fext',D.Fext);const fu=$('bl-fext-u');fu&&(fu.value='N');
+  set('bl-shear',D.Fsh);set('bl-preload',D.pre*100);set('bl-c',D.C);set('bl-mu',D.K);
+  window.calcBoltDesign();
+  if(typeof window.calcBolt==='function')try{window.calcBolt();}catch(e){}
+};
 function injectThreadEngage(){
   const vw=$('v-bolts');if(!vw||$('te-card'))return;
   const host=vw.querySelector('.split>div:last-child')||vw;
@@ -2690,6 +2754,7 @@ window.addEventListener('DOMContentLoaded',()=>{
     injectFouledU();
     injectAgmaPitting();
     injectThreadEngage();
+    injectBoltDesigner();
     window.calcFits();
     const typeEl=$('sp-type');if(typeEl)typeEl.addEventListener('change',()=>{gateBellevillePresets();window.calcSpring();});
     wireLive('v-springs',window.calcSpring);

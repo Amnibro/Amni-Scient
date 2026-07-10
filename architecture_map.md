@@ -1,5 +1,9 @@
 # Architecture Map — amni-scient.com
 
+## v5.57.0 Amni-Calc BOLT DESIGNER (design-first entry) (2026-07-10)
+- calc-fixes.js (`?v=eng8`): `#bd-card` injected FIRST in v-bolts left column (bd-n/grade/fext/shear/svc 0.75|0.90/fam/c/k). `boltDesignPick()` walks BOLT_SIZES sorted by At (family filter), evalSize criteria: use=(pre·Sp·At+C·FextPer)/At/Sp ≤ 0.9, sep=Fi/(FextPer(1−C)) ≥ 1.5, IR=(σ/Sp)²+(τ/0.577Sp)² < 1 — monotone in At so smallest-pass is unique. Output incl. Le_min steel/aluminum (reuses basic-size strip formulas) + next-size-up. `applyBoltDesign()` writes bl-num/grade/size/fext(+unit N)/shear/preload/c/mu → calcBolt → whole module (bts/bp/te cards) syncs. DESIGN-FIRST PATTERN established — candidates to replicate: springs (load+deflection→wire/coil), shafts (torque+material→diameter), beams (load+span+deflection limit→section).
+- calc-engineer.js (`?v=eng9`): bolts DESC line now leads with DESIGNER. Tests `bolts_designer_audit.js` (9: M5-fails-at-90.04% boundary anchor, monotonicity in n and Sp, pure-shear via IR, impossible→null).
+
 ## v5.56.0 Amni-Calc AGMA pitting + thread stripping (2026-07-10)
 - calc-fixes.js (`?v=eng7`): `#ag-card` injected in v-gears (calcAgmaPitting: Z_I=cosφsinφ/2·mG/(mG+1), σ_H per Shigley 14-16 SI, S_c=2.22HB+200 Gr.1, S_H status gates 1.2/1.0; Z_E dropdown steel-steel 191 √MPa + custom, K_s/Z_R=1 noted). `#te-card` injected in v-bolts right column (calcThreadEngage: basic-size A_ext=0.75πK_n·L_e / A_int=0.875πd·L_e, K_n=d−1.0825p, strip=0.6S_u·A, L_e_min=break/strip-rate, mode callout; reads bl-size). calcBolt tail also syncs grade S_u → te-sub + refires calcThreadEngage.
 
