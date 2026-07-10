@@ -729,6 +729,16 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <button class="btn btn-fill" onclick="calcPressFit()" style="margin-top:.75rem">COMPUTE CAPACITY</button>
 <div id="pf-out"></div>
 </div>
+<div class="card">
+<h3>TOLERANCE STACK-UP (WC / RSS)</h3>
+<p style="font-size:.7rem;color:var(--dim);margin:0 0 .5rem">Dimension chain closing a gap: + adds toward the gap, − subtracts. Worst-case sums all tolerances; RSS assumes independent, centered normal distributions.</p>
+<div id="ts-rows"></div>
+<div class="row" style="margin-top:.4rem">
+<button class="btn btn-sm" onclick="addTolRow()">+ ADD DIMENSION</button>
+<button class="btn btn-sm" onclick="calcTolStack()">COMPUTE STACK</button>
+</div>
+<div id="ts-out"></div>
+</div>
 </div>
 <div>
 <div class="card" id="fits-results">
@@ -2689,7 +2699,7 @@ window._calcSealWasm=(...args)=>calc_seal(...args);
 <script src="./calc-unit-core.js?v=units1" defer></script>
 <script src="./calc-overrides.js?v=eng2" defer></script>
 <script src="./calc-3d.js?v=eng3" defer></script>
-<script src="./calc-fixes.js?v=eng5" defer></script>
+<script src="./calc-fixes.js?v=eng6" defer></script>
 <script src="./calc-units.js?v=units1" defer></script>
 <script src="./calc-qol.js" defer></script>
 <script src="./calc-engineer.js?v=eng8" defer></script>

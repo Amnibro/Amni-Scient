@@ -1,0 +1,34 @@
+let pass=0,fail=0;
+const ok=(c,m)=>{c?pass++:(fail++,console.log('FAIL: '+m))};
+const ap=(a,b,m,r)=>ok(typeof a==='number'&&isFinite(a)&&Math.abs(a-b)<=Math.abs(b)*(r||1e-9)+1e-12,m+' got '+a+' want '+b);
+const tols=[0.1,0.2,0.2];
+ap(tols.reduce((a,t)=>a+t,0),0.5,'WC sum');
+ap(Math.sqrt(tols.reduce((a,t)=>a+t*t,0)),0.3,'RSS');
+const noms=[[50,1],[20,-1],[29.5,-1]];
+ap(noms.reduce((a,[n,s])=>a+s*n,0),0.5,'signed nominal gap');
+const AIR_T=[250,300,350,400,450,500],AIR_NU=[11.44,15.89,20.92,26.41,32.39,38.79],AIR_K=[22.3,26.3,30.0,33.8,37.3,40.7],AIR_PR=[0.720,0.707,0.700,0.690,0.686,0.684];
+function airProps(TK){const T=Math.max(AIR_T[0],Math.min(AIR_T[5],TK));let i=0;while(i<4&&T>AIR_T[i+1])i++;const f=(T-AIR_T[i])/(AIR_T[i+1]-AIR_T[i]);const L=a=>a[i]+f*(a[i+1]-a[i]);return{nu:L(AIR_NU)*1e-6,k:L(AIR_K)*1e-3,pr:L(AIR_PR),beta:1/TK};}
+const p313=airProps(313.15);
+ap(p313.nu,17.21e-6,'air nu @ 313K',0.01);
+ap(p313.k,0.02727,'air k @ 313K',0.01);
+ok(p313.pr>0.70&&p313.pr<0.71,'air Pr @ 313K in band');
+function chuchill(geo,L,Ts,Ti){
+  const Tf=(Ts+Ti)/2+273.15,p=airProps(Tf),dT=Math.abs(Ts-Ti);
+  const Ra=9.81*p.beta*dT*Math.pow(L,3)/(p.nu*p.nu)*p.pr;
+  const pt=c=>Math.pow(1+Math.pow(c/p.pr,9/16),8/27);
+  const Nu=geo==='hcyl'?Math.pow(0.60+0.387*Math.pow(Ra,1/6)/pt(0.559),2):Math.pow(0.825+0.387*Math.pow(Ra,1/6)/pt(0.492),2);
+  return{Ra,Nu,h:Nu*p.k/L};
+}
+const c1=chuchill('vplate',0.5,60,20);
+ok(c1.Ra>3e8&&c1.Ra<4.5e8,'vplate Ra magnitude (textbook ~3.7e8), got '+c1.Ra.toExponential(2));
+ok(c1.h>4.4&&c1.h<5.5,'vplate h ~4.5-5.5 W/m2K (textbook ~5), got '+c1.h.toFixed(2));
+const c2=chuchill('hcyl',0.025,100,20);
+ok(c2.h>7&&c2.h<12,'25mm cylinder at 100C: h in the 7-12 W/m2K band, got '+c2.h.toFixed(2));
+const c3=chuchill('vplate',1.0,60,20);
+ok(c3.h>c1.h*0.7&&c3.h<c1.h*1.1,'taller plate: slightly lower-to-similar h (turbulent transition)');
+ok(c3.Ra>c1.Ra*7,'Ra scales ~L^3');
+const Uc=500,Rh=0.000176,Rc=0.000441;
+ap(1/(1/Uc+Rh+Rc),382.19,'fouled U 500 w/ tower+river water',1e-3);
+ap(0.0005*0.17611,0.0000881,'TEMA unit conversion hrft2F/Btu -> m2K/W',1e-3);
+console.log(pass+' passed, '+fail+' failed');
+process.exitCode=fail?1:0;

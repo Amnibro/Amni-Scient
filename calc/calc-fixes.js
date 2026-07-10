@@ -687,6 +687,115 @@ window.calcBeamFn=function(){
   ].map(r=>`<div class="result-item"><div class="lbl">${r[0]}</div><div class="val">${r[1]}</div></div>`).join('')+'</div>'+
     '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">Euler-Bernoulli continuous beam, f_i = λ_i²/2π·√(EI/m̄L⁴) (Blevins constants). Uniform section, no axial load, no added point masses — first-pass values; shear &amp; rotary inertia (Timoshenko) lower the high modes for deep beams. Keep excitation ≥ ±20% away from each f_i.</p>');
 };
+let _tsN=0;
+window.addTolRow=function(lbl,nom,tol,sgn){
+  const host=$('ts-rows');if(!host)return;
+  const i=++_tsN,row=document.createElement('div');row.className='row ts-row';row.style.cssText='gap:.5rem;margin-top:.35rem;align-items:flex-end';
+  row.innerHTML=`<div class="field" style="min-width:110px"><label for="ts-lbl-${i}">NAME</label><input type="text" id="ts-lbl-${i}" value="${lbl||'Dim '+i}" style="width:100%"></div>`+
+    `<div class="field" style="min-width:90px"><label for="ts-nom-${i}">NOMINAL (mm)</label><input type="number" id="ts-nom-${i}" value="${nom!=null?nom:10}" step="any"></div>`+
+    `<div class="field" style="min-width:80px"><label for="ts-tol-${i}">± TOL (mm)</label><input type="number" id="ts-tol-${i}" value="${tol!=null?tol:0.1}" step="any" min="0"></div>`+
+    `<div class="field" style="min-width:70px"><label for="ts-sgn-${i}">DIR</label><select id="ts-sgn-${i}"><option value="1"${sgn!==-1?' selected':''}>+</option><option value="-1"${sgn===-1?' selected':''}>−</option></select></div>`+
+    `<button type="button" class="btn btn-sm" onclick="this.closest('.ts-row').remove();calcTolStack()" title="remove">✕</button>`;
+  host.appendChild(row);
+};
+window.calcTolStack=function(){
+  const host=$('ts-rows'),out=$('ts-out');if(!host||!out)return;
+  const rows=[].slice.call(host.querySelectorAll('.ts-row')).map(r=>{
+    const g=s=>r.querySelector('[id^="ts-'+s+'-"]');
+    return{lbl:(g('lbl')||{}).value||'?',nom:parseFloat((g('nom')||{}).value)||0,tol:Math.abs(parseFloat((g('tol')||{}).value)||0),sgn:parseInt((g('sgn')||{}).value)||1};
+  });
+  if(rows.length<2){_mr(out,'<div class="note warn" style="margin-top:.5rem">Add at least two dimensions.</div>');return;}
+  const nom=rows.reduce((a,r)=>a+r.sgn*r.nom,0);
+  const wc=rows.reduce((a,r)=>a+r.tol,0);
+  const rss=Math.sqrt(rows.reduce((a,r)=>a+r.tol*r.tol,0));
+  const big=rows.slice().sort((a,b)=>b.tol-a.tol)[0];
+  const pct=rss>0?(big.tol*big.tol/(rss*rss)*100):0;
+  _mr(out,'<div class="result-grid" style="margin-top:.6rem">'+[
+    ['Nominal gap',nom.toFixed(3)+' mm'],
+    ['Worst case','± '+wc.toFixed(3)+' mm'],
+    ['WC limits',(nom-wc).toFixed(3)+' – '+(nom+wc).toFixed(3)+' mm',nom-wc<0&&nom>0?'warn':''],
+    ['RSS (±3σ)','± '+rss.toFixed(3)+' mm'],
+    ['RSS limits',(nom-rss).toFixed(3)+' – '+(nom+rss).toFixed(3)+' mm'],
+    ['Top contributor',big.lbl+' ('+pct.toFixed(0)+'% of RSS²)']
+  ].map(r=>`<div class="result-item"><div class="lbl">${r[0]}</div><div class="val ${r[2]||''}">${r[1]}</div></div>`).join('')+'</div>'+
+    '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">WC guarantees assembly at any in-tolerance combination; RSS (√Σtol²) reflects ±3σ statistical stacking when each dimension is an independent, centered ±3σ process — typical for &gt;4-dim chains. Negative WC minimum with a positive nominal gap means worst-case interference: tighten the top contributor first.</p>');
+};
+function injectTolRows(){const host=$('ts-rows');if(!host||host.children.length)return;window.addTolRow('Housing',50,0.15,1);window.addTolRow('Bearing',20,0.05,-1);window.addTolRow('Shaft shoulder',29.5,0.10,-1);window.calcTolStack();}
+const AIR_T=[250,300,350,400,450,500],AIR_NU=[11.44,15.89,20.92,26.41,32.39,38.79],AIR_K=[22.3,26.3,30.0,33.8,37.3,40.7],AIR_PR=[0.720,0.707,0.700,0.690,0.686,0.684];
+function airProps(TK){
+  const T=Math.max(AIR_T[0],Math.min(AIR_T[AIR_T.length-1],TK));
+  let i=0;while(i<AIR_T.length-2&&T>AIR_T[i+1])i++;
+  const f=(T-AIR_T[i])/(AIR_T[i+1]-AIR_T[i]);
+  const lerp=a=>a[i]+f*(a[i+1]-a[i]);
+  return{nu:lerp(AIR_NU)*1e-6,k:lerp(AIR_K)*1e-3,pr:lerp(AIR_PR),beta:1/TK,clamped:TK<AIR_T[0]||TK>AIR_T[AIR_T.length-1]};
+}
+window.__airProps=airProps;
+function injectNatConv(){
+  const vw=$('v-thermal');if(!vw||$('nc-card'))return;
+  const host=vw.querySelector('.split>div:first-child')||vw;
+  const card=document.createElement('div');card.className='card';card.id='nc-card';
+  card.innerHTML='<h3>NATURAL CONVECTION (CHURCHILL-CHU)</h3><div class="row">'+
+    '<div class="field"><label for="nc-geo">GEOMETRY</label><select id="nc-geo"><option value="vplate">VERTICAL PLATE (L = height)</option><option value="hcyl">HORIZONTAL CYLINDER (L = Ø)</option></select></div>'+
+    '<div class="field"><label for="nc-l">L characteristic (m)</label><input type="number" id="nc-l" value="0.5" step="any"></div>'+
+    '<div class="field"><label for="nc-ts">T_surf (°C)</label><input type="number" id="nc-ts" value="60" step="any"></div>'+
+    '<div class="field"><label for="nc-ti">T_inf (°C)</label><input type="number" id="nc-ti" value="20" step="any"></div>'+
+    '<div class="field"><label for="nc-fl">FLUID</label><select id="nc-fl" onchange="var m=document.getElementById(\'nc-man\');if(m)m.style.display=this.value===\'manual\'?\'\':\'none\';"><option value="air">AIR (props auto @ film T)</option><option value="manual">MANUAL PROPERTIES</option></select></div>'+
+    '</div><div class="row" id="nc-man" style="margin-top:.5rem;display:none">'+
+    '<div class="field"><label for="nc-nu">ν (×10⁻⁶ m²/s)</label><input type="number" id="nc-nu" value="15.9" step="any"></div>'+
+    '<div class="field"><label for="nc-k">k (W/m·K)</label><input type="number" id="nc-k" value="0.026" step="any"></div>'+
+    '<div class="field"><label for="nc-pr">Pr</label><input type="number" id="nc-pr" value="0.71" step="any"></div>'+
+    '<div class="field"><label for="nc-b">β (×10⁻³ 1/K)</label><input type="number" id="nc-b" value="3.2" step="any"></div>'+
+    '</div><button class="btn btn-sm" onclick="calcNatConv()" style="margin-top:.6rem">COMPUTE h</button>';
+  host.appendChild(card);
+}
+window.calcNatConv=function(){
+  const out=$('thermal-results');if(!out)return;
+  const geo=sv('nc-geo')||'vplate',L=v('nc-l'),Ts=v('nc-ts'),Ti=v('nc-ti'),man=sv('nc-fl')==='manual';
+  if(!(L>0)||!isFinite(Ts)||!isFinite(Ti)||Ts===Ti){_mr(out,'<h3>NATURAL CONVECTION</h3><div class="note warn">Need L &gt; 0 and T_surf ≠ T_inf.</div>');return;}
+  const Tf=(Ts+Ti)/2+273.15;
+  const pr2=man?{nu:(v('nc-nu')||15.9)*1e-6,k:v('nc-k')||0.026,pr:v('nc-pr')||0.71,beta:(v('nc-b')||3.2)*1e-3,clamped:false}:airProps(Tf);
+  const dT=Math.abs(Ts-Ti);
+  const Ra=9.81*pr2.beta*dT*Math.pow(L,3)/(pr2.nu*pr2.nu)*pr2.pr;
+  const prTerm=c=>Math.pow(1+Math.pow(c/pr2.pr,9/16),8/27);
+  let Nu,valid='';
+  if(geo==='hcyl'){Nu=Math.pow(0.60+0.387*Math.pow(Ra,1/6)/prTerm(0.559),2);Ra>1e12&&(valid='⚠ Ra &gt; 10¹² — outside Churchill-Chu cylinder validity. ');}
+  else{Nu=Math.pow(0.825+0.387*Math.pow(Ra,1/6)/prTerm(0.492),2);}
+  const h=Nu*pr2.k/L,q=h*dT;
+  const hEl=$('tv-h');if(hEl&&hEl!==document.activeElement){hEl.value=h.toFixed(2);}
+  _mr(out,'<h3>NATURAL CONVECTION — '+(geo==='hcyl'?'HORIZONTAL CYLINDER':'VERTICAL PLATE')+'</h3><div class="result-grid">'+[
+    ['Ra Rayleigh',Ra.toExponential(3)],['Nu',Nu.toFixed(1)],['h',h.toFixed(2)+' W/m²K'],['q″ = h·ΔT',q.toFixed(1)+' W/m²'],
+    ['Film T',(Tf-273.15).toFixed(1)+' °C'],['Regime',Ra<1e9?'Laminar':'Turbulent']
+  ].map(r=>`<div class="result-item"><div class="lbl">${r[0]}</div><div class="val">${r[1]}</div></div>`).join('')+'</div>'+
+    '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">'+valid+(pr2.clamped?'⚠ Film temperature outside the 250–500 K air-property table — props clamped. ':'')+'Churchill-Chu all-Ra correlation; h auto-filled into the CONVECTION card above. Air properties interpolated at film temperature (Incropera Table A.4). For horizontal plates or enclosures use the geometry-specific correlations.</p>');
+};
+const TEMA_RF=[['Distilled / closed-loop water',0.000088],['Seawater ≤ 52 °C',0.000088],['Treated cooling-tower water',0.000176],['River water',0.000441],['Steam (oil-free)',0.000088],['Refrigerant liquid',0.000176],['Compressed air',0.000176],['Light fuel oil',0.000881],['Lube oil',0.000352]];
+function injectFouledU(){
+  const vw=$('v-hx');if(!vw||$('fu-card'))return;
+  const host=vw.querySelector('.split>div:first-child')||vw;
+  const opts=TEMA_RF.map(([n,r])=>`<option value="${r}">${n} (${r})</option>`).join('')+'<option value="custom">CUSTOM</option>';
+  const card=document.createElement('div');card.className='card';card.id='fu-card';
+  card.innerHTML='<h3>FOULED U (TEMA)</h3><div class="row">'+
+    '<div class="field"><label for="fu-uc">U clean (W/m²K)</label><input type="number" id="fu-uc" value="500" step="any"></div>'+
+    '<div class="field"><label for="fu-h">HOT-SIDE SERVICE</label><select id="fu-h">'+opts+'</select></div>'+
+    '<div class="field"><label for="fu-hc">Rf hot custom (m²K/W)</label><input type="number" id="fu-hc" value="0.0002" step="any"></div>'+
+    '<div class="field"><label for="fu-c">COLD-SIDE SERVICE</label><select id="fu-c">'+opts+'</select></div>'+
+    '<div class="field"><label for="fu-cc">Rf cold custom (m²K/W)</label><input type="number" id="fu-cc" value="0.0002" step="any"></div>'+
+    '</div><button class="btn btn-sm" onclick="calcFouledU()" style="margin-top:.6rem">COMPUTE FOULED U</button><div id="fu-out"></div>';
+  host.appendChild(card);
+}
+window.calcFouledU=function(){
+  const o=$('fu-out');if(!o)return;
+  const Uc=v('fu-uc');
+  const rf=side=>{const s=sv('fu-'+side);return s==='custom'?(v('fu-'+side+'c')||0):(parseFloat(s)||0);};
+  const Rh=rf('h'),Rc=rf('c');
+  if(!(Uc>0)){_mr(o,'<div class="note warn" style="margin-top:.5rem">U clean must be &gt; 0.</div>');return;}
+  const Ud=1/(1/Uc+Rh+Rc),der=(1-Ud/Uc)*100;
+  const uEl=$('hx-u');if(uEl&&uEl!==document.activeElement&&Math.abs(parseFloat(uEl.value)-Ud)>0.05){uEl.value=Ud.toFixed(1);if(typeof window.calcLMTD==='function')try{window.calcLMTD();}catch(e){}}
+  _mr(o,'<div class="result-grid" style="margin-top:.6rem">'+[
+    ['U dirty',Ud.toFixed(1)+' W/m²K'],['Derate',der.toFixed(1)+' %',der<30?'ok':'warn'],['ΣRf',(Rh+Rc).toExponential(2)+' m²K/W'],['Extra area needed','+'+(Uc/Ud*100-100).toFixed(1)+' %']
+  ].map(r=>`<div class="result-item"><div class="lbl">${r[0]}</div><div class="val ${r[2]||''}">${r[1]}</div></div>`).join('')+'</div>'+
+    '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">U_dirty = 1/(1/U_clean + ΣRf), TEMA typical fouling resistances. The fouled U is written into the LMTD card so Q reflects end-of-service performance; size A for the dirty condition.</p>');
+};
 /* ============================================================
  * STRESS MODULE — revive the dead σx card + honor the st-u unit
  * (the obfuscated app never defined calcStress, so the MPa/ksi/
@@ -2501,6 +2610,9 @@ window.addEventListener('DOMContentLoaded',()=>{
     /* Springs init */
     gateBellevillePresets();
     injectBeamFnCard();
+    injectTolRows();
+    injectNatConv();
+    injectFouledU();
     window.calcFits();
     const typeEl=$('sp-type');if(typeEl)typeEl.addEventListener('change',()=>{gateBellevillePresets();window.calcSpring();});
     wireLive('v-springs',window.calcSpring);
