@@ -1,5 +1,9 @@
 # Changelog 
 
+## Amni-Calc v5.52.0 — Sections 3D finally shows YOUR section - 2026-07-10
+- The sections 3D view had never reflected the chosen preset: it read the dormant preset system's input ids (scp-*) and old shape keys (ibeam/circ/hrect) while the active library uses secp-* and i_beam/circle/hollow_rect — so it always extruded a default 100×100 square. Now mapped to the live inputs across 12 preset shapes, with channel, tee and triangle profiles added to the 3D extruder, auto-fit scaling, and live refresh on every preset/parameter change (calc3DUpdate('sections') was never being called).
+- The dormant _SCP dropdown branch stays inert by design (its population is skipped because the active lib fills the select first) — documented rather than removed to keep the drawing-tool wiring untouched. Cache-busters calc-3d.js?v=eng3, calc-fixes.js?v=eng4.
+
 ## Amni-Learn v5.51.0 — Module /loop iter 3: HD voice for Phonics & Storybooks - 2026-07-10
 - **Phonics and Storybooks now use the Piper HD neural voice automatically** — no hidden settings flag. Opening either module lazy-loads the voice (progress banner "🎙️ Loading HD voice… N%"), first load downloads once and persists in browser storage; vendor runtime (onnx wasm) is service-worker cached after first use. Web Speech keeps working as the fallback while loading or on any failure — nothing goes silent.
 - **Storybook HD reading**: pages are synthesized per-page with word-by-word highlighting (time-proportional mapping), autoplay page turns preserved, play resumes a paused HD reading instead of restarting, pause/stop control whichever engine is speaking.

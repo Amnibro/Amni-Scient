@@ -374,6 +374,7 @@ window.applyPreset=function(){
     '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.7rem">A = area, I = second moment of area, S = elastic section modulus (I/c), Z = plastic section modulus, r = radius of gyration (√(I/A)), J = polar/torsion constant. All bending values are about the centroidal axis. Values change instantly when you edit inputs above.</p>';
   saveCustomSection(res,preset.label);
   drawPresetOutline(sel.value,params);
+  if(window.calc3DUpdate)try{window.calc3DUpdate('sections');}catch(e){}
   injectSectionExportButton();
 };
 
