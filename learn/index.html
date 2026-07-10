@@ -736,6 +736,8 @@
   @keyframes targetBob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
   @keyframes robotWalk { 0%{transform:rotate(-5deg)} 50%{transform:rotate(5deg)} 100%{transform:rotate(-5deg)} }
   @keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-8px)} 40%{transform:translateX(8px)} 60%{transform:translateX(-4px)} 80%{transform:translateX(4px)} }
+  .jz-shake { animation: jzShake 0.28s ease; }
+  @keyframes jzShake { 20%{transform:translate(var(--jz-mag,6px),0)} 40%{transform:translate(calc(var(--jz-mag,6px)*-1),calc(var(--jz-mag,6px)*0.6))} 60%{transform:translate(calc(var(--jz-mag,6px)*0.5),calc(var(--jz-mag,6px)*-0.6))} 80%{transform:translate(calc(var(--jz-mag,6px)*-0.3),0)} }
   #tracing-view { background:linear-gradient(135deg,#1b1e23 0%,#2a1a2e 50%,#1b1e23 100%); background-size:200% 200%; animation:bgShift 12s ease infinite; }
   #math-view { background:linear-gradient(135deg,#1e252b 0%,#1a2e1e 50%,#1e252b 100%); background-size:200% 200%; animation:bgShift 15s ease infinite; }
   #matching-view { background:linear-gradient(135deg,#221f26 0%,#2a1f3a 50%,#221f26 100%); background-size:200% 200%; animation:bgShift 10s ease infinite; }
