@@ -64,14 +64,18 @@ window.addEventListener('DOMContentLoaded',()=>{
 /* ============================================================
  * BEAM MODULE — proper mechanics, shear/moment/deflection plots
  * ============================================================ */
-const LEN_TO_MM={mm:1,m:1000,in:25.4,ft:304.8};
-const FORCE_TO_N={N:1,kN:1000,lbf:4.44822,kip:4448.22};
-const E_TO_MPA={MPa:1,GPa:1000,psi:0.00689476,ksi:6.89476};
-const I_TO_MM4={mm4:1,cm4:1e4,in4:416231};
+const _UC=(typeof window!=='undefined'&&window.UCORE)||null;
+const LEN_TO_MM=(_UC&&_UC.tables.LEN_TO_MM)||{mm:1,cm:10,m:1000,'µm':1e-3,um:1e-3,in:25.4,ft:304.8};
+const FORCE_TO_N=(_UC&&_UC.tables.FORCE_TO_N)||{N:1,kN:1000,lbf:4.4482216152605,kip:4448.2216152605,kgf:9.80665};
+const E_TO_MPA=(_UC&&_UC.tables.PRESS_TO_MPA)||{Pa:1e-6,kPa:1e-3,MPa:1,GPa:1000,bar:0.1,psi:0.00689475729316836,ksi:6.89475729316836};
+const I_TO_MM4=(_UC&&_UC.tables.INERTIA_TO_MM4)||{mm4:1,cm4:1e4,in4:416231.4256};
 function getLen(id){const u=sv(id+'-u')||'mm';return v(id)*(LEN_TO_MM[u]||1);}
 function getForce(id){const u=sv(id+'-u')||'N';return v(id)*(FORCE_TO_N[u]||1);}
 function getE(id){const u=sv(id+'-u')||'MPa';return v(id)*(E_TO_MPA[u]||1);}
 function getI(id){const u=sv(id+'-u')||'mm4';return v(id)*(I_TO_MM4[u]||1);}
+function _fmtU(val,u){if(!isFinite(val))return '—';const a=Math.abs(val);return(a!==0&&(a>=1e5||a<1e-3)?val.toExponential(3):parseFloat(val.toFixed(3)))+' '+u;}
+function _lenDisp(mm,u){u=u||'mm';return _fmtU(mm/(LEN_TO_MM[u]||1),u);}
+function _forceDisp(N,u){u=u||'kN';return _fmtU(N/(FORCE_TO_N[u]||1),u);}
 
 window.beamSupports=window.beamSupports||[];
 window.beamLoads=window.beamLoads||[];
@@ -80,7 +84,7 @@ window.addTypedSupport=function(){
   const t=sv('sup-typed-type')||'pin';
   const pos=getLen('sup-typed-pos');
   if(!isFinite(pos)||pos<0){cfToast('Enter a valid position.');return;}
-  window.beamSupports.push({type:t,x:pos});
+  window.beamSupports.push({type:t,x:pos,posU:sv('sup-typed-pos-u')||'mm'});
   renderSupportList();
   if(typeof window.solveBeam==='function')try{window.solveBeam();}catch(e){}
 };
@@ -93,7 +97,7 @@ function renderSupportList(){
     el.innerHTML='<span style="opacity:.5">No supports placed yet — add at least one above.</span>';
   }else{
     el.innerHTML='<strong style="color:var(--text)">SUPPORTS:</strong> '+window.beamSupports.map((s,i)=>
-      `<span class="chip" style="font-size:.72rem;background:rgba(255,107,53,0.12);color:var(--text);padding:3px 8px;border-radius:3px;border:1px solid var(--accent,#ff6b35)">${s.type.toUpperCase()} @ ${s.x.toFixed(0)} mm <a href="#" onclick="window.beamSupports.splice(${i},1);window.renderSupportList();window.solveBeam&&window.solveBeam();return false" style="margin-left:.4rem;color:#f55;text-decoration:none">×</a></span>`
+      `<span class="chip" style="font-size:.72rem;background:rgba(255,107,53,0.12);color:var(--text);padding:3px 8px;border-radius:3px;border:1px solid var(--accent,#ff6b35)">${s.type.toUpperCase()} @ ${_lenDisp(s.x,s.posU)} <a href="#" onclick="window.beamSupports.splice(${i},1);window.renderSupportList();window.solveBeam&&window.solveBeam();return false" style="margin-left:.4rem;color:#f55;text-decoration:none">×</a></span>`
     ).join(' ');
   }
 }
@@ -106,7 +110,7 @@ window.addLoad=function(){
   const mag=getForce('ld-mag');
   const endPos=$('ld-end')&&$('ld-end').value?getLen('ld-end'):null;
   if(!isFinite(pos)||!isFinite(mag)){cfToast('Need position and magnitude.');return;}
-  window.beamLoads.push({type,x:pos,mag,xEnd:endPos});
+  window.beamLoads.push({type,x:pos,mag,xEnd:endPos,magU:sv('ld-mag-u')||'kN',posU:sv('ld-pos-u')||'mm'});
   renderLoadList();
   if(typeof window.solveBeam==='function')try{window.solveBeam();}catch(e){}
 };
@@ -114,8 +118,8 @@ window.clearLoads=function(){window.beamLoads=[];renderLoadList();if(typeof wind
 function renderLoadList(){
   const el=$('load-list');if(!el)return;
   el.innerHTML=window.beamLoads.map((l,i)=>{
-    const mN=l.mag,mLbl=Math.abs(mN)>=1000?(mN/1000).toFixed(2)+' kN':mN.toFixed(1)+' N';
-    const posLbl=l.xEnd?`${l.x.toFixed(0)}-${l.xEnd.toFixed(0)} mm`:`@ ${l.x.toFixed(0)} mm`;
+    const mN=l.mag,mLbl=_forceDisp(mN,l.magU);
+    const posLbl=l.xEnd?`${_lenDisp(l.x,l.posU)}–${_lenDisp(l.xEnd,l.posU)}`:`@ ${_lenDisp(l.x,l.posU)}`;
     return `<span class="chip" style="font-size:.7rem">${l.type.toUpperCase()} ${mLbl} ${posLbl} <a href="#" onclick="window.beamLoads.splice(${i},1);renderLoadList();return false" style="margin-left:.4rem;color:var(--err,#f55)">×</a></span>`;
   }).join('');
 }
@@ -546,6 +550,33 @@ window.calcBolt=function(){
   for(const _bk in _bsync){const _be=$(_bk),_bv=_bsync[_bk];if(_be&&_be!==document.activeElement&&isFinite(_bv)){const _bs=String(Math.round(_bv*1000)/1000);_be.value!==_bs&&(_be.value=_bs,_bany=true);}}
   if(_bany&&typeof window.calcBoltTorqueSeq==='function')try{window.calcBoltTorqueSeq();}catch(e){}
 };
+/* ============================================================
+ * STRESS MODULE — revive the dead σx card + honor the st-u unit
+ * (the obfuscated app never defined calcStress, so the MPa/ksi/
+ *  psi/GPa selector did nothing). All six tensor components read
+ *  in the st-u unit; results displayed in that same unit.
+ *  Principal stresses via Smith's stable symmetric-3x3 eigenvalue
+ *  algorithm (magnitude-robust — the old cubic's absolute disc
+ *  threshold collapsed to a hydrostatic triple root at high σ).
+ * ============================================================ */
+const _principal3=(_UC&&_UC.principal3)||function(sx,sy,sz,txy,tyz,txz){const e=[sx,sy,sz];e.sort((a,b)=>b-a);return e;};
+window.__principal3=_principal3;
+window.calcStress=function(){
+  const out=$('stress-results');if(!out)return;
+  const U=sv('st-u')||'MPa';
+  const s=((_UC&&_UC.factor('pressure',U))||1)||1;
+  const sx=v('st-sx')*s,sy=v('st-sy')*s,sz=v('st-sz')*s,txy=v('st-txy')*s,txz=v('st-txz')*s,tyz=v('st-tyz')*s;
+  const Sy=v('st-sy-val'),Su=v('st-su-val');
+  if(![sx,sy,sz,txy,txz,tyz].every(isFinite)){out.innerHTML='<div class="note warn">Enter the stress components.</div>';return;}
+  const pr=_principal3(sx,sy,sz,txy,tyz,txz);
+  const s1=pr[0],s2=pr[1],s3=pr[2],tmax=(s1-s3)/2,vM=Math.sqrt(0.5*(Math.pow(s1-s2,2)+Math.pow(s2-s3,2)+Math.pow(s3-s1,2)));
+  const dsp=x=>_fmtU(x/s,U),css=n=>n>=2?'ok':n>=1?'warn':'err';
+  const rows=[['σ₁',dsp(s1)],['σ₂',dsp(s2)],['σ₃',dsp(s3)],['τ_max (Tresca)',dsp(tmax)],['σ_vM (3D)',dsp(vM)]];
+  if(isFinite(Sy)&&Sy>0&&vM>0)rows.push(['FoS yield',(Sy/vM).toFixed(2)+'×',css(Sy/vM)]);
+  if(isFinite(Su)&&Su>0&&vM>0)rows.push(['FoS ultimate',(Su/vM).toFixed(2)+'×',css(Su/vM)]);
+  const gk=window.GK||(x=>x);
+  out.innerHTML='<h3>STRESS ANALYSIS — '+U+'</h3><div class="result-grid">'+rows.map(r=>`<div class="result-item"><div class="lbl">${gk(r[0])}</div><div class="val ${r[2]||''}">${r[1]}</div></div>`).join('')+'</div><p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">The σx unit selector sets the unit for all six stress components (σy, σz, τxy, τxz, τyz); results are shown in <strong>'+U+'</strong>. Yield/ultimate strengths keep their own unit selector. Principal stresses from the cubic invariants — σ_vM for ductile yield, σ₁ for brittle/fatigue, Tresca = (σ₁−σ₃)/2. Aim FoS ≥ 1.5–2.</p>';
+};
 /* Live-compute on any input change (debounced) */
 function wireLive(viewId,recompute){
   const view=$(viewId);if(!view)return;
@@ -764,9 +795,9 @@ window.applySpringPreset=function(){
 function unitVal(id,multipliers){const u=sv(id+'-u');return v(id)*(multipliers[u]||1);}
 window.calcSpring=function(){
   const type=sv('sp-type')||'compression';
-  const dMult={mm:1,'in':25.4};
-  const fMult={N:1,lbf:4.44822,kgf:9.80665};
-  const gMult={GPa:1e3,MPa:1,psi:6.89476e-3};
+  const dMult=(_UC&&_UC.tables.LEN_TO_MM)||{mm:1,'in':25.4};
+  const fMult=(_UC&&_UC.tables.FORCE_TO_N)||{N:1,lbf:4.4482216152605,kgf:9.80665};
+  const gMult=(_UC&&_UC.tables.PRESS_TO_MPA)||{GPa:1e3,MPa:1,psi:6.89475729316836e-3};
   const d=v('sp-d')*(dMult[sv('sp-d-u')]||1);
   const D=v('sp-D')*(dMult[sv('sp-D-u')]||1);
   const na=v('sp-na')||0;
@@ -2336,6 +2367,7 @@ window.addEventListener('DOMContentLoaded',()=>{
         if(typeof window.calcPVNozzle==='function')try{window.calcPVNozzle();}catch(e){}
         if(typeof window.calcPVLug==='function')try{window.calcPVLug();}catch(e){}
         if(typeof window.calcDeposition==='function')try{window.calcDeposition();}catch(e){}
+        if(typeof window.calcStress==='function')try{window.calcStress();}catch(e){}
       },400);
     },800);
   },400);
@@ -2415,5 +2447,5 @@ const deepScrub=el=>{if(!NANRE.test(el.textContent||''))return;for(const n of el
 const addCopy=()=>{document.querySelectorAll('.result-grid').forEach(g=>{const prev=g.previousElementSibling;if(prev&&prev.classList&&prev.classList.contains('cf-copy'))return;const b=document.createElement('button');b.className='cf-copy';b.type='button';b.textContent='📋 COPY';b.style.cssText='float:right;margin:0 0 2px;background:none;border:1px solid var(--border2,#444);color:var(--dim,#9aa);font-size:.6rem;padding:2px 8px;border-radius:3px;cursor:pointer';b.onclick=()=>{const lines=[...g.querySelectorAll('.result-item')].map(it=>{const l=it.querySelector('.lbl'),vv=it.querySelector('.val');return(l?l.textContent.trim():'')+': '+(vv?vv.textContent.trim():'');}).join('\n');navigator.clipboard&&navigator.clipboard.writeText(lines).then(()=>{b.textContent='✓ COPIED';setTimeout(()=>{b.textContent='📋 COPY';},1500);}).catch(()=>{});};g.parentNode.insertBefore(b,g);});};
 setInterval(()=>{document.querySelectorAll('[id^="v-"]').forEach(av=>{av.offsetParent&&NANRE.test(av.textContent||'')&&deepScrub(av);});addCopy();},400);
 setTimeout(()=>{if(!window.Plotly){const n=document.createElement('div');n.style.cssText='position:fixed;top:8px;left:50%;transform:translateX(-50%);background:var(--panel,#222);color:var(--warn,#e0b341);border:1px solid var(--warn,#e0b341);border-radius:6px;padding:6px 14px;font-size:.7rem;z-index:99998';n.textContent='⚠ Charts unavailable (Plotly CDN unreachable) — all calculations still work.';document.body.appendChild(n);setTimeout(()=>n.remove(),12000);}},4000);
-console.log('[calc-fixes] v5.3.6 layer loaded');
+console.log('[calc-fixes] v5.20.0 layer loaded (unit-core single source of truth + calcStress)');
 })();

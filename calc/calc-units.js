@@ -7,7 +7,7 @@
    physical quantity. A global SI / Imperial toggle flips every attached dropdown at once.
    The 13 fields that already had their own -u <select> are left exactly as they were. */
 (function () {
-  var DIMS = {
+  var DIMS = (typeof window !== 'undefined' && window.UCORE && window.UCORE.DIMS) || {
     length: { si: 'mm', imp: 'in', u: { 'mm': 1, 'cm': 10, 'm': 1000, 'µm': 0.001, 'um': 0.001, 'in': 25.4, 'ft': 304.8 } },
     area: { si: 'mm²', imp: 'in²', u: { 'mm²': 1, 'cm²': 100, 'm²': 1e6, 'in²': 645.16, 'ft²': 92903.04 } },
     pressure: { si: 'MPa', imp: 'psi', u: { 'Pa': 1e-6, 'kPa': 1e-3, 'MPa': 1, 'GPa': 1e3, 'bar': 0.1, 'psi': 0.00689476, 'ksi': 6.89476 } },

@@ -259,6 +259,22 @@ footer a{color:var(--accent);font-size:.7rem}
 .view{padding:1.15rem 1.2rem}
 .view>h2{margin-bottom:.95rem}
 .card-out{margin-top:.55rem}
+.side-find{padding:8px 12px;border-bottom:1px solid var(--border2)}
+.side-find input{width:100%;font-size:.72rem;padding:5px 8px;background:var(--panel2);border:1px solid var(--border2);border-radius:3px;color:var(--text)}
+.side-find input:focus{border-color:var(--accent)}
+.qn-row{display:flex;flex-wrap:wrap;gap:5px;margin:0 0 .85rem}
+.qn-chip{background:var(--panel2);border:1px solid var(--border2);color:var(--dim);border-radius:999px;padding:3px 10px;font-size:.62rem;letter-spacing:1px;text-transform:uppercase;cursor:pointer;font-family:var(--font);transition:all .15s}
+.qn-chip:hover{color:var(--accent);border-color:var(--accent)}
+.result-item .val[data-bu]{cursor:pointer;text-decoration:underline dotted var(--border2);text-underline-offset:3px}
+.result-item .val[data-bu]:hover{text-decoration-color:var(--accent)}
+.eng-flash{outline:2px solid var(--accent);outline-offset:2px}
+.eng-solve{display:none;margin-top:.6rem;padding:.65rem .75rem;border:1px dashed var(--border2);border-radius:4px;background:var(--panel2)}
+.eng-solve.open{display:block}
+.eng-solve .row{align-items:flex-end}
+.eng-solve .field{min-width:150px}
+.eng-note{font-size:.68rem;color:var(--dim);margin-top:.4rem;line-height:1.5}
+.eng-solve-btn{margin-left:.45rem}
+@media(min-width:1560px){.view{padding-left:calc((100% - 1300px)/2);padding-right:calc((100% - 1300px)/2)}}
 </style>
 <style media="print">body{background:#fff!important;color:#000!important}.tab,.side-item,.nav-item,.adsbygoogle,ins,.cf-copy,button,[id^="kofi"],#ad-tx,.sidebar,nav{display:none!important}[id^="v-"] .card{break-inside:avoid;border:1px solid #ccc}.val,.lbl,h3,p,td,th,label{color:#000!important}</style></head>
 <body>
@@ -2587,10 +2603,12 @@ Plotly.react(id,traces,Object.assign({},pLayout,{margin:{l:70,r:25,t:20,b:50},sh
 window.drawSealDiagram=drawSealDiagram;
 window._calcSealWasm=(...args)=>calc_seal(...args);
 </script>
+<script src="./calc-unit-core.js?v=units1" defer></script>
 <script src="./calc-overrides.js?v=sync3" defer></script>
 <script src="./calc-3d.js" defer></script>
-<script src="./calc-fixes.js?v=sync2" defer></script>
-<script src="./calc-units.js" defer></script>
+<script src="./calc-fixes.js?v=sync3" defer></script>
+<script src="./calc-units.js?v=units1" defer></script>
 <script src="./calc-qol.js" defer></script>
+<script src="./calc-engineer.js?v=eng1" defer></script>
 </body>
 </html>

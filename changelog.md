@@ -1,5 +1,15 @@
 # Changelog 
 
+## Amni-Calc v5.40.0 — Engineer Refresh: output units, goal seek, module search - 2026-07-10
+- New additive layer `calc/calc-engineer.js` (loaded last, DOM-only — obfuscated app and audited math untouched):
+  - **Results follow YOUR units**: every numeric result value (stress, force, torque, flow, power, temperature, inertia, section modulus...) now converts with the sidebar SI/US toggle, and clicking any result value cycles it through that dimension's units (choice persists per dimension). Exact UCORE-grade factors; Δ-temperature values are protected from absolute-offset conversion; psi/lbf auto-step up to ksi/kip when large.
+  - **⌖ SOLVE FOR (goal seek) on every compute card**: pick any output, enter the value you need (in the displayed unit), choose which input to vary — a secant solver with bracketed-bisection fallback finds the input, respecting display quantization; the input is restored on failure. Turns every one of the ~39 one-way calculators into an inverse designer (required section for a target deflection, preload for a target torque, pipe size for a target head loss...).
+  - **Sidebar module search** ("/" to focus, Enter opens the first hit): filters the 30+ tabs by name AND by every card title/input label inside each module, so "torque" finds Bolts, Shafts, and Motors; empty categories collapse.
+  - **Quick-nav chips** at the top of every multi-card module jump straight to a card (late-injected cards picked up automatically).
+- Layout: content column centered on ultra-wide monitors (≥1560px); result values show a dotted underline to signal click-to-convert.
+- Also ships the previously-unpushed v5.20.0 unit-consistency sweep (calc-unit-core.js single source of truth, working STRESS STATE card via window.calcStress, Smith principal3) which had been sitting uncommitted since 2026-06-29.
+- Tests: `calc/tests/engineer_layer.js` (74 assertions: parser, exact conversions, IMP-map dimensional consistency, solver incl. quantized/negative/impossible cases) + existing `unit_audit.js` (61) — all green. Backup: `backups/amni-calc-deployed/index.html.v5.40.0.bak`. Cache-buster `calc-engineer.js?v=eng1`.
+
 ## Amni-Learn v5.38.3 — Daily Curriculum: skip counting - 2026-07-07
 - New Skip Counting worksheet in the K-2 rotation: three rows of counting circles (by 2s, 5s, and 10s) with missing numbers to fill in — a TEKS/B.E.S.T. staple. Fully answer-keyed.
 

@@ -1,5 +1,15 @@
 # Architecture Map — amni-scient.com
 
+## v5.40.0 Amni-Calc Engineer Refresh (2026-07-10)
+- New `calc/calc-engineer.js` (`window.__ENG`, node-requireable like UCORE) loaded LAST: unit-core → overrides → 3d → fixes → units → qol → **engineer** (`?v=eng1`).
+- **Output-unit layer**: parses every text-only `.result-item .val` matching `number unit` (tokens from `DIMX`: length/area/pressure/force/torque/power/velocity/mass/flow/inertia/smod/temp), stores original in `data-bv/bu/orig`, renders per `MODE` (wraps `window.__usys`, shares `calc-units-sys` localStorage key with the input layer) + per-dim click-to-cycle prefs (`calc-out-pref`). Idempotent MutationObserver rescans on any added nodes (writes only when display differs — terminates). Δ-labeled temps skipped (delta vs absolute offset); `stepUp` psi→ksi ≥1e3, lbf→kip ≥1e4 (IMP-mode only, not user prefs).
+- **Goal seek**: `⌖ SOLVE FOR` button injected after every `.view button[onclick^="calc|solve"]`; panel = target-output select (from that card's `.card-out` or `#<view>-results` grid) + target value (entered in DISPLAYED unit; solver reads fresh SI text and converts through the recorded token) + vary-input select (card-scoped, view fallback). `solveFor(set,get,t,x0,qf)`: secant 60 iters → sign-scan ±3 decades both signs → bisection 90; accept tol `|t|·2e-3 + displayQuantum·1.5`; input restored on failure. Buttons hidden by live-compute stay hidden — the ⌖ button has no onclick attr so universalLiveCompute ignores it.
+- **Sidebar search** `#eng-find` ("/" focuses, Esc clears, Enter opens first hit): lazy keyword index per tab = tab text + view h2/h3/label text; `.sidebar-cat` headers collapse when all their tabs are filtered out.
+- **Quick-nav chips** (`.qn-row`) injected after each view's h2 when ≥3 cards; rebuilt at +1800/+3600ms if card count changed (late inject* cards).
+- index.html: `.side-find/.qn-*/.eng-*` CSS + `@media(min-width:1560px)` centered content column (≤1300px). Print CSS already hides buttons → chips/solve UI print-safe.
+- This commit ALSO ships the v5.20.0 unit sweep files (calc-unit-core.js etc.) which were uncommitted since 2026-06-29 — live had a dead STRESS STATE card until now.
+- Tests `calc/tests/engineer_layer.js` (74) + `unit_audit.js` (61) green. Backup `backups/amni-calc-deployed/index.html.v5.40.0.bak`. NOTE: `data-ad-slot="1720203631"` appears twice (disclaimer + site-ad-banner, both labeled, both pre-existing) — flagged, not changed.
+
 ## v5.39.0 Amni-Learn Daily Curriculum — Adventure Day second format (2026-07-09)
 - `learn/curriculum.html`: new **Adventure Day** format toggle next to Classic Checklist. Per age band: 6 rotating themes + QUEST pools (warm/brain/hands/create/life + side quests) with multi-step stations, energy chips, stamp track. Pages 2–3 get more volume (math marathons, duo wordsearch+maze, stretch/debrief). Supplies + planner use adventure seed. Deterministic via `today|band|nonce|format`. Backup: `backups/v5.39.0_curriculum_adventure/`.
 - `amni-learn.html` feature card updated for dual formats.
