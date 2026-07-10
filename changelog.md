@@ -1,5 +1,9 @@
 # Changelog 
 
+## Amni-Calc v5.46.0 — Every module says what it does + dropdown solve runners-up - 2026-07-10
+- One-line description under every module header: inputs → outputs at a glance ("Grade + thread size + loads → preload, joint clamp, torque spec, pattern & tightening sequence"), all 32 modules — first-time navigation no longer requires opening cards to find the right tool. Sidebar search already indexes these.
+- Dropdown goal-seek now reports the two runners-up next to the winner ("closest: M12 → 24 810 N · runners-up: M12x1.25 → 25 130, M14 → 33 750") so catalog neighbors are visible without re-solving. Cache-buster calc-engineer.js?v=eng4.
+
 ## Amni-Learn v5.45.0 — Module /loop iter 1: tracing actually teaches tracing - 2026-07-10
 - **Tracing scribble-pass fixed**: the checker only measured how much of the letter got covered (32-45%), with no penalty for ink outside it — any big scribble passed. Now dual-gate: letter coverage (45% L1 / 55% L2+) AND precision — the share of drawn ink that lands on the letter or a small halo around it (55% L1 / 68% L2+, halo = letter re-stroked at max(36, fontSize×0.12)px so honest edge-overshoot still counts).
 - **Teaching feedback**: empty canvas → "Trace the letter first! ✏️"; low coverage → "Cover the whole letter — trace every part!"; low precision → "Oops — stay on the letter, not outside it!" — tells the child what to fix instead of a generic "Keep Trying".

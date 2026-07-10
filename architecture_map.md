@@ -1,5 +1,9 @@
 # Architecture Map — amni-scient.com
 
+## v5.46.0 Amni-Calc Module descriptions + dropdown runners-up (2026-07-10, /loop iter 3)
+- calc-engineer.js (`?v=eng4`): `DESC` map (32 view-keyed one-liners, inputs→outputs) + `injectDesc()` inserts `.mod-desc` <p> after each view h2 (before the sticky qn-row; injectQuickNav anchors after `.mod-desc` when present). SELECT goal-seek collects ALL options into `cands`, sorts by |y−t|, applies best, and prints top-2 runners-up in the status line (option labels stripped of parenthetical suffixes).
+- index.html: `.mod-desc` CSS (dim .72rem, tucked -.5rem under h2).
+
 ## v5.45.0 Amni-Learn module /loop iter 1 — tracing validation (2026-07-10)
 - `learn/learn-app.js` tracing module: `drawTarget` now captures TWO masks per target — `maskData` (letter body, unchanged #eee fill semantics) and new `tHaloData` (same text re-rendered with `strokeText` at `lineWidth=max(36,fontSize*0.12)` + fill = letter+tolerance halo), then re-renders the visible guide. `#t-next` dual-gates: coverage `filled/target > (L1?0.45:0.55)` AND precision `inkOnHalo/ink > (L1?0.55:0.68)` where ink = pixels `r<100&&b>150` (blue stroke; excludes dash gray #8d97a3 and guide #eee). Scribbles now fail on precision (measured 0.19 for a canvas-wide zigzag); differentiated feedback (empty/coverage/precision). Old checker passed ANY scribble covering ≥32% of the glyph.
 - Test hook: `window.__traceT={cov,prec,ink}` when sessionStorage `trace-test`==='1'. Probe pattern: scratchpad `_trace_probe.js` — **dispatch PointerEvents directly on `#trace-canvas`** (headless pg.mouse near canvas corners is unreliable — first pointerdown can land on overlay chrome and paints nothing); continuous glyph path built by sampling guide pixels (r 200-254) column-serpentine at stride 12.

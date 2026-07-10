@@ -58,12 +58,14 @@ if(!o||!inp||!isFinite(t)){st.textContent='enter a numeric target value first';r
 var lastQ=0;
 var get=function(){try{window[fn]()}catch(e){return NaN}var r=readOut(scope,o);if(!r)return NaN;lastQ=r.dq;return r.v};
 if(inp.tagName==='SELECT'){
-var orig=inp.value,best=null;
+var orig=inp.value,cands=[];
 var setOpt=function(val){inp.value=val;if(typeof inp.onchange==='function')try{inp.onchange({target:inp});}catch(e){}};
-for(var oi=0;oi<inp.options.length;oi++){setOpt(inp.options[oi].value);var y2=get();if(!isFinite(y2))continue;var e2=Math.abs(y2-t);(!best||e2<best.e)&&(best={e:e2,v:inp.options[oi].value,lbl:inp.options[oi].textContent.trim(),y:y2})}
-if(!best){setOpt(orig);try{window[fn]()}catch(e){}st.textContent='✗ no option produces a numeric value for that output';return}
+for(var oi=0;oi<inp.options.length;oi++){setOpt(inp.options[oi].value);var y2=get();if(!isFinite(y2))continue;cands.push({e:Math.abs(y2-t),v:inp.options[oi].value,lbl:inp.options[oi].textContent.trim().replace(/\s*\(.*$/,''),y:y2})}
+if(!cands.length){setOpt(orig);try{window[fn]()}catch(e){}st.textContent='✗ no option produces a numeric value for that output';return}
+cands.sort(function(a,b){return a.e-b.e});
+var best=cands[0];
 setOpt(best.v);inp.dispatchEvent(new Event('change',{bubbles:true}));try{window[fn]()}catch(e){}
-st.textContent='✓ closest option: '+best.lbl+'  →  '+o.lbl+' = '+fmt(best.y)+(o.du?' '+o.du:'')+(best.e>Math.max(Math.abs(t)*0.05,lastQ*2)?'  (nearest available — no exact match)':'');
+st.textContent='✓ closest option: '+best.lbl+'  →  '+o.lbl+' = '+fmt(best.y)+(o.du?' '+o.du:'')+(best.e>Math.max(Math.abs(t)*0.05,lastQ*2)?'  (nearest available — no exact match)':'')+(cands[1]?'   ·   runners-up: '+cands.slice(1,3).map(function(c){return c.lbl+' → '+fmt(c.y)}).join(',  '):'');
 var rs=readOut(scope,o);rs&&rs.el&&(rs.el.classList.add('eng-flash'),setTimeout(function(){rs.el.classList.remove('eng-flash')},1500));
 return}
 var x0=parseFloat(inp.value)||0;
@@ -97,13 +99,19 @@ if(!card.querySelectorAll('input[type="number"]').length&&!vw.querySelectorAll('
 var b=document.createElement('button');b.type='button';b.className='btn btn-sm eng-solve-btn';b.textContent='⌖ SOLVE FOR';b.title='goal seek: find the input value that hits a target output';
 b.onclick=function(){openSolve(b,fn,card,vw)};
 btn.parentNode.insertBefore(b,btn.nextSibling)})}
+var DESC={beam:'Loads + supports + section → reactions, shear/moment diagrams, deflection (Euler-Bernoulli superposition)',stress:'Stress tensor components → principal stresses, von Mises / Tresca, FoS against yield',section:'Shape dimensions or a drawn polygon → A, I, S, r — hands off to Beam / Shaft / Columns',bolts:'Grade + thread size + loads → preload, joint clamp, torque spec, pattern & tightening sequence',springs:'Wire/coil or disc dimensions → rate, stress, deflection — build series/parallel stacks & packs',seals:'Gland + cord + material → squeeze, fill, stretch, extrusion risk, material suitability',columns:'Length + section (r, A) + end condition → Euler/Johnson buckling load & FoS',shafts:'Torque + geometry → shear stress, twist, critical speed, key sizing',welds:'Weld size + loads → throat stress vs AISC allowables; eccentric groups via polar method',bearings:'Load + speed + bearing type → ISO 281 L10 life in Mrev, hours, years',gears:'Module + teeth + loads → geometry, ratios, Lewis bending stress with Barth Kv',fatigue:'Mean/alternating stress + Se → Goodman / Gerber / Soderberg safety factors; Marin Se builder',vibration:'m, k, c → natural frequency, damping ratio, isolator transmissibility, resonance check',fluids:'Pipe + flow + fluid → Reynolds, Moody friction, minor losses, pump head; Bernoulli',pumps:'Duty point → hydraulic & shaft power, NPSH margin, affinity scaling, specific speed',thermal:'Geometry + properties → conduction / convection / radiation, fins, h from Nu, transients',hx:'Temperatures + flows → LMTD (with F-factor) and ε-NTU exchanger sizing',pv:'Pressure + geometry → thin-wall / Lamé / ASME VIII-1 wall stress and required thickness',cycles:'Cycle parameters → Carnot / Otto / Diesel / Brayton efficiency, refrigeration COP',hvac:'Air states + loads → psychrometrics, cooling load, duct sizing',combustion:'Fuel composition → stoichiometric AFR, λ, adiabatic flame temperature, LHV',electrical:'V / I / R + phases → Ohm, AC power triangle, wire drop, RC/RL time constants',motors:'Power + speed + poles → torque, FLA, synchronous speed & slip, service factor',nec:'Load + run length → NEC 310.16 ampacity with derates, voltage drop by AWG',echem:'Electrode & cell parameters → Nernst, Tafel, Butler-Volmer, corrosion rate, Faraday mass',battery:'Cell specs + topology → pack V / Ah / Wh, runtime with Peukert, state of charge',materials:'Searchable database — ~190 metals, alloys and polymers with mechanical & thermal data',finishes:'Weighted requirements → ranked surface finish / coating recommendations',math:'Quadratics, cubics, linear systems, geometry and calculus utilities with shown work',equations:'Formula reference cards for every module',units:'Unit converter across all engineering dimensions',refs:'Standards and literature the calculators implement'};
+function injectDesc(){document.querySelectorAll('.view').forEach(function(vw){
+var nm=vw.id?vw.id.slice(2):'';if(!DESC[nm]||vw.querySelector('.mod-desc'))return;
+var h2=vw.querySelector('h2');if(!h2||h2.parentElement!==vw)return;
+var p=document.createElement('p');p.className='mod-desc';p.textContent=DESC[nm];
+vw.insertBefore(p,h2.nextSibling)})}
 function injectQuickNav(){document.querySelectorAll('.view').forEach(function(vw){
 var cards=[].slice.call(vw.querySelectorAll('.card')).filter(function(c){return c.querySelector('h3')});
 if(cards.length<3)return;
 var row=vw.querySelector('.qn-row');if(row&&+row.dataset.n===cards.length)return;
 row&&row.remove();row=document.createElement('div');row.className='qn-row';row.dataset.n=cards.length;
 cards.forEach(function(cd){var t=cd.querySelector('h3').textContent.trim().replace(/\s+/g,' ');t.length>32&&(t=t.slice(0,30)+'…');var b=document.createElement('button');b.type='button';b.className='qn-chip';b.textContent=t;b.onclick=function(){cd.scrollIntoView({behavior:'smooth',block:'start'});cd.classList.add('eng-flash');setTimeout(function(){cd.classList.remove('eng-flash')},1200)};row.appendChild(b)});
-var h2=vw.querySelector('h2');h2&&h2.parentElement===vw?vw.insertBefore(row,h2.nextSibling):vw.insertBefore(row,vw.firstChild)})}
+var anc=vw.querySelector('.mod-desc')||vw.querySelector('h2');anc&&anc.parentElement===vw?vw.insertBefore(row,anc.nextSibling):vw.insertBefore(row,vw.firstChild)})}
 var KW={};
 function viewKw(name){var el=document.getElementById('v-'+name);if(!el)return'';var t=[];el.querySelectorAll('h2,h3,label').forEach(function(n){t.push(n.textContent)});return t.join(' ').toLowerCase()}
 function injectFind(){if(document.getElementById('eng-find'))return;
@@ -122,7 +130,7 @@ document.addEventListener('keydown',function(e){var t=e.target,tg=t&&t.tagName;e
 function init(){
 try{MODE=localStorage.getItem('calc-units-sys')==='imp'?'imp':'si'}catch(e){}
 try{PREF=JSON.parse(localStorage.getItem(LSP)||'{}')||{}}catch(e){PREF={}}
-wrapUsys();injectFind();injectQuickNav();injectSolve();scan();
+wrapUsys();injectFind();injectDesc();injectQuickNav();injectSolve();scan();
 document.addEventListener('click',function(e){var el=e.target&&e.target.closest?e.target.closest('.result-item .val'):null;if(!el||!el.dataset.bu)return;var d=el.dataset.dim,us=Object.keys(DIMX[d].u).filter(function(u2){return u2!=='m³/h'&&u2!=='µm'}),cur=el.dataset.du||el.dataset.bu,nx=us[(us.indexOf(cur)+1)%us.length];PREF[d]=nx;try{localStorage.setItem(LSP,JSON.stringify(PREF))}catch(err){}scan()});
 new MutationObserver(function(ms){for(var i2=0;i2<ms.length;i2++)if(ms[i2].addedNodes&&ms[i2].addedNodes.length){scan();return}}).observe(document.body,{childList:true,subtree:true});
 document.addEventListener('click',function(e){var tb=e.target&&e.target.closest?e.target.closest('.sidebar .tab'):null;tb&&setTimeout(function(){tb.scrollIntoView({block:'nearest'})},60)});
