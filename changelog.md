@@ -1,5 +1,11 @@
 # Changelog 
 
+## Amni-Learn v5.63.0 — Fun R4: daily anagram, clicky idle games, tactile tetris - 2026-07-10
+- **📅 Daily Word in Anagrams**: every day the first puzzle is the same date-seeded word for everyone, marked with a gold Daily badge; solving it flips the HUD chip to ✅ and grows a 🔥 daily-streak counter (localStorage, consecutive-day logic). Miss a day, streak resets to 1. First real daily-comeback mechanic in the app.
+- **Idle games feel clicky**: the big 🍪/🌻/⛏️ buttons in Cookie Clicker, Garden Grower and Auto Miner now tick on click (throttled to ≤1 sound per 80ms so mashing doesn't buzz) — pairing with their existing press-scale animation.
+- **Tetris rotate** clicks on every successful rotation (incl. wall-kicks); **Breakout bricks** now burst into a small confetti spray at the brick's actual position when destroyed (canvas→page coordinate mapping).
+- Verified headless: full daily-anagram loop (badge → wrong-guess reveal → correct solve → ✅ + streak 1 + localStorage stamp; same word across runs = deterministic seed), idle click spam, tetris rotations, breakout destroying bricks for 8s with bursts — zero page errors. Discovered the idle buttons already had a native :active scale-pop (kept, no duplicate CSS). SW cache v1263→v1264.
+
 ## Amni-Learn v5.62.0 — Brain fun R3: every cognitive game answers back - 2026-07-10
 - The juice kit now covers the **entire brain band — 33 functions, 106 call sites**: reaction, speed math, stroop, go/no-go, symbol code, flanker, simon, sudoku, logic riddles, tower of london, anagrams, word search, chess puzzles, periodic table, map click, morse, ear training, dot track, peripheral vision, visual search, mental rotation, trail making, numerosity, posner, task switching — plus number memory, backward span, corsi blocks, n-back, dual n-back, chimp test, card pairs and change detection which live in the same block.
 - **Brain palette** (calmer than arcade): correct answers pop, wrong answers get a soft thud, streak milestones riff, session summaries close with a win/score stinger beside the existing best-score logic. No screen shake — these are focus games.
