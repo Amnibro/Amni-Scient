@@ -1372,10 +1372,12 @@
     }
     let mAnswered=false;
     choices.forEach(c => { const btn = document.createElement('div'); btn.className='m-choice'; btn.textContent=c; btn.onclick=()=>{ if(mAnswered)return; mAnswered=true; $$all('.m-choice').forEach(b=>b.style.pointerEvents='none'); if(c===mathAns){showFeedback('Correct! ✨','#2ecc71'); addScore(1); mathCorrect++; btn.style.background='#2ecc71';btn.style.color='#fff';btn.style.animation='sortCorrect 0.5s ease'; if(currentLevel<=2){mathRound++;setTimeout(initMath,1500);}else{_showMathStep(true);}} else {showFeedback('See the steps below','#e67e22'); resetStreak(); btn.style.opacity='0.4'; btn.style.animation='shake 0.4s'; $$all('.m-choice').forEach(b=>{if(Number(b.textContent)===mathAns||b.textContent==mathAns){b.style.background='#2ecc71';b.style.color='#fff';b.style.animation='sortCorrect 0.5s ease';}}); _showMathStep(false);}}; _kbd(btn,'Answer '+c); mChoices.appendChild(btn); });
+    if(currentLevel===1&&(mathState.op==='+'||mathState.op==='-')&&typeof _mathViz==='function')_mathViz();
   }
-  hintBtn.addEventListener('click', () => {
-      if(currentLevel>1) return showFeedback('Hints are for Early Level!','#e67e22');
+  let _mvGen = 0;
+  function _mathViz(){
       hintBtn.style.display = 'none'; mViz.style.display = 'flex';
+      const g = ++_mvGen;
       let html = '';
       if(mathState.op === '+') {
           html += `<div class="apple-group"><div class="apple-num">${mathState.a}</div><div class="apple-icons">`+'<span class="apple">🍎</span>'.repeat(mathState.a)+`</div></div> <div style="font-weight:bold">+</div> <div class="apple-group"><div class="apple-num">${mathState.b}</div><div class="apple-icons">`+'<span class="apple">🍎</span>'.repeat(mathState.b)+'</div></div>';
@@ -1383,9 +1385,13 @@
           html += `<div class="apple-group"><div class="apple-num">${mathState.a}</div><div class="apple-icons">`;
           for(let i=0;i<mathState.a;i++) html+=`<span class="apple" id="apple-${i}">🍎</span>`;
           html += `</div></div> <div style="font-weight:bold">- ${mathState.b}</div>`;
-          setTimeout(()=>{for(let i=0;i<mathState.b;i++){let a=$$(`#apple-${mathState.a-1-i}`);if(a)a.classList.add('removed');}},800);
+          setTimeout(()=>{if(g!==_mvGen)return;for(let i=0;i<mathState.b;i++){let a=$$(`#apple-${mathState.a-1-i}`);if(a)a.classList.add('removed');}},800);
       }
       mViz.innerHTML = html;
+  }
+  hintBtn.addEventListener('click', () => {
+      if(currentLevel>1) return showFeedback('Hints are for Early Level!','#e67e22');
+      _mathViz();
   });
   const matchGrid = $$('#match-grid'), emojis = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐸','🐯','🦁','🐮','🐷','🐵','🐧','🐦','🐤','🐣','🦇','🦉','🦅','🦆','🐺','🦋','🐌','🐛','🐜','🐝','🪲','🐞','🦗','🕷','🕸','🦂','🐢','🐍','🦎','🦖','🦕','🐙','🦑','🦐','🦞','🦀','🐡','🐠','🐟','🐬','🐳','🐋','🦈','🐊','🐅','🐆','🦓','🦍','🦧','🐘','🦛','🦏','🐪','🐫','🦒','🦘','🐃','🐂','🐄','🐎','🐖','🐏','🐑','🦙','🐐','🦌','🐕','🐩','🦮','🐕‍🦺','🐈','🐈‍⬛','🐓','🦃','🦚','🦜','🦢','🦩','🕊','🐇','🦝','🦨','🦡','🦦','🦥','🐁','🐀','🐿','🦔'];
   const conceptPairs = [

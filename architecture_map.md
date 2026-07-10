@@ -1,5 +1,9 @@
 # Architecture Map — amni-scient.com
 
+## v5.53.0 Amni-Learn module /loop iter 4 — Pre-K math auto-viz (2026-07-10)
+- `learn/learn-app.js` math module: hint-button viz body extracted to `_mathViz()` (module fn, `_mvGen` generation token guards the 800ms subtraction take-away timer — old timer could strip the NEXT problem's apples on fast answers). `initMath` tail: `if(currentLevel===1&&(op +|-))_mathViz()` → L1 always renders the apple-group counting viz inline and hides the hint button; hint click path (L1-only gate unchanged) reuses `_mathViz`. L2+ behavior untouched (viz none, hint per-op).
+- Probe: scratchpad `_math_probe.js` — parses `#math-problem`, asserts viz shown + `.apple` count === operand sum (+) / minuend (−), hint hidden, clicks correct choice through 4 rounds, asserts L3 viz stays hidden. All green, 0 page errors. SW v1259→v1260. Backup `backups/v5.53.0_learn_loop_i4/`.
+
 ## v5.52.0 Amni-Calc Sections 3D preset mapping (2026-07-10, /loop iter 7)
 - calc-3d.js (`?v=eng3`) MODS.sections.params: reads ACTIVE `secp-*` inputs + maps fixes keys (rect/i_beam/wf_unequal/circle/hollow_circle/pipe/hollow_rect/square_tube/channel/tee/triangle/right_triangle) -> extruder types; build() adds channel/tee/tri/rtri profiles + auto-fit `g.scale`. calc-fixes.js (`?v=eng4`) applyPreset tail calls `calc3DUpdate('sections')` (was NEVER called — 3D stayed a default square).
 - `_SCP`/`injectSectionOverride` dropdown branch remains dormant-by-design (active lib populates `sec-presets` first); left in place because injectSectionOverride ALSO rebinds the drawing canvas (load-bearing).

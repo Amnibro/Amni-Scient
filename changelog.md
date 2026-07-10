@@ -1,5 +1,10 @@
 # Changelog 
 
+## Amni-Learn v5.53.0 — Module /loop iter 4: Pre-K math shows the counting, always - 2026-07-10
+- **Pre-K (L1) math now auto-shows the concrete counting visualization** on every +/− problem — the apple groups used to hide behind a "💡 Hint" button a 4-year-old would never find, leaving bare symbolic "3 + 2 = ?" text. At that age counting real objects IS the math (TX Pre-K guidelines); the hint button is gone at L1 and the visualization is just part of the problem. Levels 2+ unchanged.
+- Subtraction take-away animation is now generation-guarded — the old 800ms timer could remove apples from the NEXT problem's picture if a kid answered fast (same ghost-timer class as the v5.36 Bubble Pop fix). Viz builder unified into one `_mathViz()` shared by the auto path and the (L1-only) hint button.
+- Verified headless: 4 L1 rounds — viz auto-shown every problem, apple counts exactly match the operands, hint hidden, answer flow advances; L3 stays visualization-free; zero page errors. SW cache v1259→v1260.
+
 ## Amni-Calc v5.52.0 — Sections 3D finally shows YOUR section - 2026-07-10
 - The sections 3D view had never reflected the chosen preset: it read the dormant preset system's input ids (scp-*) and old shape keys (ibeam/circ/hrect) while the active library uses secp-* and i_beam/circle/hollow_rect — so it always extruded a default 100×100 square. Now mapped to the live inputs across 12 preset shapes, with channel, tee and triangle profiles added to the 3D extruder, auto-fit scaling, and live refresh on every preset/parameter change (calc3DUpdate('sections') was never being called).
 - The dormant _SCP dropdown branch stays inert by design (its population is skipped because the active lib fills the select first) — documented rather than removed to keep the drawing-tool wiring untouched. Cache-busters calc-3d.js?v=eng3, calc-fixes.js?v=eng4.
