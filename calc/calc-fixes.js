@@ -837,6 +837,15 @@ window.calcAgmaPitting=function(){
   ].map(r=>`<div class="result-item"><div class="lbl">${r[0]}</div><div class="val ${r[2]||''}">${r[1]}</div></div>`).join('')+'</div>'+
     '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">Shigley/AGMA 2101: σ_H = Z_E·√(W_t·K_o·K_v·K_H/(d_p·b·Z_I)), Z_I = cosφ·sinφ/2 · m_G/(m_G+1) (spur, m_N=1). S_c = 2.22·HB+200 MPa (Grade 1 through-hardened steel, 10⁷ cycles, 99% reliability); apply Z_N life and Z_W hardness-ratio factors for other conditions. K_s and Z_R taken as 1. Complements the Lewis BENDING card — pitting usually governs hardened industrial gears.</p>');
 };
+function dsgnCondRow(px){
+  return '<div class="row" style="margin-top:.5rem">'+
+    '<div class="field"><label for="'+px+'-load2">LOADING</label><select id="'+px+'-load2"><option value="static">STATIC / STEADY</option><option value="dyn">VIBRATION / CYCLIC</option><option value="shock">SHOCK / IMPACT</option></select></div>'+
+    '<div class="field"><label for="'+px+'-temp2">SERVICE TEMP (°C)</label><input type="number" id="'+px+'-temp2" value="20" step="any"></div>'+
+    '<div class="field"><label for="'+px+'-env2">ENVIRONMENT</label><select id="'+px+'-env2"><option value="dry">DRY / INDOOR</option><option value="wet">WET / OUTDOOR</option><option value="marine">MARINE / SALT</option><option value="chem">CHEMICAL</option></select></div></div>';
+}
+function dsgnCond(px){return{load:sv(px+'-load2')||'static',temp:isFinite(v(px+'-temp2'))?v(px+'-temp2'):20,env:sv(px+'-env2')||'dry'};}
+const BOLT_SE=[[/12\.9/,190],[/10\.9/,162],[/9\.8/,140],[/8\.8/,129],[/SAE-8/,160],[/SAE-7/,142],[/SAE-5/,128]];
+function boltSe(gradeKey){for(const[re,se]of BOLT_SE)if(re.test(gradeKey))return se;return null;}
 function injectBoltDesigner(){
   const vw=$('v-bolts');if(!vw||$('bd-card'))return;
   const host=vw.querySelector('.split>div:first-child')||vw;
@@ -853,25 +862,41 @@ function injectBoltDesigner(){
     '<div class="field"><label for="bd-fam">THREAD FAMILY</label><select id="bd-fam"><option value="">ANY</option><option value="Metric coarse">METRIC COARSE</option><option value="Metric fine">METRIC FINE</option><option value="Inch UNC">INCH UNC</option><option value="Inch UNF (fine)">INCH UNF</option></select></div>'+
     '<div class="field"><label for="bd-c">STIFFNESS C</label><input type="number" id="bd-c" value="0.25" step="0.05" min="0" max="1"></div>'+
     '<div class="field"><label for="bd-k">NUT FACTOR K</label><input type="number" id="bd-k" value="0.20" step="0.01"></div>'+
-    '</div><div class="row" style="margin-top:.6rem"><button class="btn btn-fill" onclick="calcBoltDesign()">DESIGN IT</button>'+
+    '</div>'+dsgnCondRow('bd')+'<div class="row" style="margin-top:.6rem"><button class="btn btn-fill" onclick="calcBoltDesign()">DESIGN IT</button>'+
     '<button class="btn" onclick="applyBoltDesign()" title="load the recommendation into the joint analysis, torque sequence, pattern and stripping cards">APPLY TO FULL ANALYSIS →</button></div><div id="bd-out"></div>';
   host.insertBefore(card,host.firstChild);
   const g=$('bd-grade');
   if(g&&!g.options.length){Object.keys(BOLT_GRADES).forEach(k=>{const o=document.createElement('option');o.value=k;o.textContent=k+' (Sp '+BOLT_GRADES[k].Sp+' MPa)';g.appendChild(o);});g.value='SAE-5';}
 }
 function boltDesignPick(){
-  const n=Math.max(1,Math.round(v('bd-n'))||1),grade=BOLT_GRADES[sv('bd-grade')]||BOLT_GRADES['SAE-5'];
-  const Fext=v('bd-fext')||0,Fsh=v('bd-shear')||0,pre=parseFloat(sv('bd-svc'))||0.75,C=v('bd-c')||0.25,K=v('bd-k')||0.20,fam=sv('bd-fam');
-  const FextPer=Fext/n,FshPer=Fsh/n,Sp=grade.Sp;
+  const n=Math.max(1,Math.round(v('bd-n'))||1),gradeKey=sv('bd-grade'),grade=BOLT_GRADES[gradeKey]||BOLT_GRADES['SAE-5'];
+  const cond=dsgnCond('bd');
+  const Fext=v('bd-fext')||0,Fsh=v('bd-shear')||0,C=v('bd-c')||0.25,K=v('bd-k')||0.20,fam=sv('bd-fam');
+  let pre=parseFloat(sv('bd-svc'))||0.75;
+  cond.load==='dyn'&&(pre=0.90);
+  const lim=cond.load==='shock'?{use:0.75,sep:2.0,ir:0.7}:{use:0.9,sep:1.5,ir:1};
+  const Se=boltSe(gradeKey);
+  const FextPer=Fext/n,FshPer=Fsh/n,Sp=grade.Sp,Su=grade.Su;
   const cands=Object.entries(BOLT_SIZES).filter(([k,z])=>!fam||z.kind===fam).sort((a,b)=>a[1].At-b[1].At);
   const evalSize=z=>{
     const Fi=pre*Sp*z.At,Fb=Fi+C*FextPer,sb=Fb/z.At,use=sb/Sp,sep=FextPer>0?Fi/(FextPer*(1-C)):Infinity;
     const tau=FshPer/z.At,IR=Math.pow(sb/Sp,2)+Math.pow(tau/(0.577*Sp),2);
-    return{Fi,Fb,use,sep,tau,IR,T:K*Fi*z.d/1000,pass:use<=0.9&&sep>=1.5&&IR<1};
+    const sa=C*FextPer/(2*z.At),si=pre*Sp;
+    const nf=cond.load==='dyn'&&Se&&sa>0?Se*(Su-si)/(sa*(Su+Se)):null;
+    return{Fi,Fb,use,sep,tau,IR,sa,nf,T:K*Fi*z.d/1000,pass:use<=lim.use&&sep>=lim.sep&&IR<lim.ir&&(nf===null||nf>=1.5)};
   };
   let pick=null,next=null;
   for(let i=0;i<cands.length;i++){const r=evalSize(cands[i][1]);if(r.pass){pick={key:cands[i][0],z:cands[i][1],r};const j=i+1<cands.length?cands[i+1]:null;j&&(next={key:j[0],z:j[1],r:evalSize(j[1])});break;}}
-  return{n,grade,Fext,Fsh,pre,C,K,pick,next};
+  return{n,grade,gradeKey,Fext,Fsh,pre,C,K,cond,Se,pick,next};
+}
+function boltCondNotes(D){
+  const c=D.cond,ss=/A2|A4|austenitic|316/i.test(D.gradeKey),out=[];
+  c.load==='dyn'&&out.push('Vibration: preload raised to 90% proof; use a thread-locking method (adhesive, prevailing-torque nut or wedge washers)'+(D.Se?'; Goodman fatigue factor shown uses published Se='+D.Se+' MPa (rolled threads, Shigley T8-17)':'; ⚠ no published Se for this grade — fatigue NOT checked')+'.');
+  c.load==='shock'&&out.push('Shock: criteria tightened (proof ≤ 75%, separation ≥ 2×, IR &lt; 0.7) — conservative practice; verify with an impact energy budget for repeated impacts.');
+  c.temp>300?out.push('⚠ '+c.temp+' °C: standard property classes are NOT rated here — specify ASTM A193 B7/B16 or equivalent high-temp studs.'):c.temp>150&&out.push('⚠ '+c.temp+' °C exceeds the 150 °C envelope where ISO 898-1/SAE proof loads apply — derate per the fastener standard or move to A193 B7.');
+  c.env!=='dry'&&!ss&&out.push(c.env==='wet'?'Wet/outdoor: prefer A2-70 stainless or hot-dip galvanized (then K ≈ 0.25 — retorque spec).':c.env==='marine'?'Marine/salt: use A4-80 (316) stainless; carbon steel even coated will crevice-corrode.':'Chemical service: A4-80 baseline; verify the specific medium (chlorides attack even 316).');
+  c.env!=='dry'&&out.push('Check galvanic pairing with the clamped material; isolate dissimilar metals.');
+  return out.length?'<p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.72rem">'+out.join('<br>')+'</p>':'';
 }
 window.calcBoltDesign=function(){
   const o=$('bd-out');if(!o)return;
@@ -879,18 +904,21 @@ window.calcBoltDesign=function(){
   if(!D.pick){_mr(o,'<div class="note warn" style="margin-top:.5rem">No standard size passes at this load/count — add bolts, raise the grade, or split the load path.</div>');return;}
   const{key,z,r}=D.pick;
   const Kn=z.d-1.0825*z.p,leSteel=D.grade.Su*z.At/Math.min(0.6*D.grade.Su*0.75*Math.PI*Kn,0.6*D.grade.Su*0.875*Math.PI*z.d),leAl=D.grade.Su*z.At/(0.6*310*0.875*Math.PI*z.d);
-  _mr(o,'<div class="result-grid" style="margin-top:.6rem">'+[
+  const rows=[
     ['USE',key+' × '+D.n,'ok'],
     ['Torque to',r.T.toFixed(1)+' N·m ('+(r.T*0.7376).toFixed(1)+' lbf·ft)','ok'],
-    ['Preload F_i (each)',(r.Fi/1000).toFixed(2)+' kN'],
+    ['Preload F_i (each)',(r.Fi/1000).toFixed(2)+' kN ('+(D.pre*100).toFixed(0)+'% proof)'],
     ['Proof usage',(r.use*100).toFixed(0)+' %',r.use<0.85?'ok':'warn'],
     ['Separation safety',r.sep===Infinity?'∞':r.sep.toFixed(2)+'×',r.sep>=1.5?'ok':'warn'],
     ['Shear interaction IR',r.IR.toFixed(3),r.IR<1?'ok':'err'],
     ['Min engagement — steel',leSteel.toFixed(1)+' mm'],
     ['Min engagement — aluminum',leAl.toFixed(1)+' mm'],
     ['Next size up',D.next?D.next.key+' (proof '+(D.next.r.use*100).toFixed(0)+'%, T='+D.next.r.T.toFixed(1)+' N·m)':'—']
-  ].map(x=>`<div class="result-item"><div class="lbl">${x[0]}</div><div class="val ${x[2]||''}">${x[1]}</div></div>`).join('')+'</div>'+
-    '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">Smallest '+(sv('bd-fam')||'standard')+' size meeting: proof usage ≤ 90% at '+(D.pre*100).toFixed(0)+'% preload, separation ≥ 1.5×, tension-shear interaction &lt; 1 (Shigley joint model, C='+D.C+'). Torque T = K·F_i·d with your K='+D.K+' — calibrate K on the real joint for critical work. APPLY loads this pick into every card below (joint, torque sequence, pattern, stripping).</p>');
+  ];
+  r.nf!==null&&r.nf!==undefined&&rows.splice(6,0,['Fatigue n_f (Goodman)',r.nf.toFixed(2),r.nf>=1.5?'ok':'err']);
+  _mr(o,'<div class="result-grid" style="margin-top:.6rem">'+rows.map(x=>`<div class="result-item"><div class="lbl">${x[0]}</div><div class="val ${x[2]||''}">${x[1]}</div></div>`).join('')+'</div>'+
+    boltCondNotes(D)+
+    '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">Smallest '+(sv('bd-fam')||'standard')+' size meeting the criteria for this service (Shigley joint model, C='+D.C+'). Torque T = K·F_i·d with your K='+D.K+' — calibrate K on the real joint for critical work. APPLY loads this pick into every card below (joint, torque sequence, pattern, stripping).</p>');
 };
 window.applyBoltDesign=function(){
   const D=boltDesignPick();if(!D.pick)return void window.calcBoltDesign();
@@ -900,6 +928,306 @@ window.applyBoltDesign=function(){
   set('bl-shear',D.Fsh);set('bl-preload',D.pre*100);set('bl-c',D.C);set('bl-mu',D.K);
   window.calcBoltDesign();
   if(typeof window.calcBolt==='function')try{window.calcBolt();}catch(e){}
+};
+const SPRING_WIRE={auto:{n:'AUTO (pick for me)'},music:{A:2211,m:0.145,G:79300,tmax:120,wet:false,n:'Music wire (A228)'},hd:{A:1783,m:0.190,G:79300,tmax:120,wet:false,n:'Hard-drawn (A227)'},crv:{A:2005,m:0.168,G:79300,tmax:230,wet:false,n:'Chrome-vanadium (A232)'},crsi:{A:1974,m:0.108,G:79300,tmax:245,wet:false,n:'Chrome-silicon (A401)'},ss302:{A:1867,m:0.146,G:69000,tmax:260,wet:true,n:'302 stainless (A313)'}};
+const WIRE_STD=[0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2,1.4,1.6,1.8,2.0,2.2,2.5,2.8,3.0,3.5,4.0,4.5,5.0,5.5,6.0,6.5,7.0,8.0,9.0,10,12];
+function springDesignPick(F,dfl,C,matKey,cond){
+  let mk=matKey;
+  if(mk==='auto')mk=cond.env!=='dry'?'ss302':cond.temp>245?'ss302':cond.temp>120?'crsi':'music';
+  const M=SPRING_WIRE[mk];
+  if(cond.temp>M.tmax)return{fail:'Service temperature '+cond.temp+' °C exceeds '+M.n+' limit ('+M.tmax+' °C). Use '+(cond.temp<=260?'302 stainless (≤260 °C)':'Inconel X-750 / high-temp alloy — outside this catalog')+'.'};
+  if(cond.env!=='dry'&&!M.wet)return{fail:M.n+' is not corrosion-resistant — pick 302 stainless (or AUTO) for '+cond.env+' service.'};
+  const frac=cond.load==='static'?0.45:0.30;
+  const Kw=(4*C-1)/(4*C-4)+0.615/C;
+  let d=2;for(let i=0;i<40;i++){const Sut=M.A/Math.pow(d,M.m),ta=frac*Sut;d=Math.sqrt(8*Kw*F*C/(Math.PI*ta));}
+  const dStd=WIRE_STD.find(w=>w>=d);
+  if(!dStd)return{fail:'Needs wire beyond 12 mm — split load across multiple springs or use a die spring.'};
+  const Sut=M.A/Math.pow(dStd,M.m),ta=frac*Sut,D=C*dStd;
+  const tau=Kw*8*F*D/(Math.PI*Math.pow(dStd,3));
+  const k=F/dfl,na=M.G*Math.pow(dStd,4)/(8*Math.pow(D,3)*k),nt=na+2,Ls=nt*dStd,L0=Ls+1.15*dfl;
+  const tauSolid=tau*1.15,buck=L0/D;
+  return{mk,M,frac,d:dStd,dCalc:d,D,Kw,Sut,ta,tau,k,na,nt,Ls,L0,tauSolid,buck};
+}
+function injectSpringDesigner(){
+  const vw=$('v-springs');if(!vw||$('spd-card'))return;
+  const host=vw.querySelector('.split>div:first-child')||vw;
+  const card=document.createElement('div');card.className='card';card.id='spd-card';
+  card.innerHTML='<h3>⚡ SPRING DESIGNER — START HERE</h3>'+
+    '<p style="font-size:.72rem;color:var(--dim);margin:0 0 .5rem">What force at what deflection → wire size, coil size, turns and free length (helical compression).</p>'+
+    '<div class="row">'+
+    '<div class="field"><label for="spd-f">FORCE (N)</label><input type="number" id="spd-f" value="100" step="any"></div>'+
+    '<div class="field"><label for="spd-def">AT DEFLECTION (mm)</label><input type="number" id="spd-def" value="25" step="any"></div>'+
+    '<div class="field"><label for="spd-c">INDEX C = D/d</label><input type="number" id="spd-c" value="8" min="4" max="12" step="0.5"></div>'+
+    '<div class="field"><label for="spd-mat">MATERIAL</label><select id="spd-mat">'+Object.entries(SPRING_WIRE).map(([k,m])=>`<option value="${k}">${m.n}</option>`).join('')+'</select></div>'+
+    '</div>'+dsgnCondRow('spd')+
+    '<div class="row" style="margin-top:.6rem"><button class="btn btn-fill" onclick="calcSpringDesign()">DESIGN IT</button><button class="btn" onclick="applySpringDesign()">APPLY TO ANALYSIS →</button></div><div id="spd-out"></div>';
+  host.insertBefore(card,host.firstChild);
+}
+window.calcSpringDesign=function(){
+  const o=$('spd-out');if(!o)return;
+  const F=v('spd-f'),dfl=v('spd-def'),C=Math.min(12,Math.max(4,v('spd-c')||8)),cond=dsgnCond('spd');
+  if(!(F>0)||!(dfl>0)){_mr(o,'<div class="note warn" style="margin-top:.5rem">Need force and deflection &gt; 0.</div>');return;}
+  const R=springDesignPick(F,dfl,C,sv('spd-mat')||'auto',cond);
+  if(R.fail){_mr(o,'<div class="note warn" style="margin-top:.5rem">'+R.fail+'</div>');return;}
+  _mr(o,'<div class="result-grid" style="margin-top:.6rem">'+[
+    ['USE',R.M.n,'ok'],['Wire d',R.d+' mm (calc '+R.dCalc.toFixed(2)+')','ok'],['Coil D (mean)',R.D.toFixed(1)+' mm'],
+    ['Active coils n_a',R.na.toFixed(1)],['Free length L₀',R.L0.toFixed(1)+' mm'],['Rate k',R.k.toFixed(2)+' N/mm'],
+    ['τ at F',R.tau.toFixed(0)+' / '+R.ta.toFixed(0)+' MPa allow',R.tau<=R.ta?'ok':'err'],
+    ['τ at solid (~1.15F)',R.tauSolid.toFixed(0)+' MPa',R.tauSolid<=R.ta*1.1?'ok':'warn'],
+    ['Buckling L₀/D',R.buck.toFixed(2),R.buck<5.2?'ok':'warn']
+  ].map(x=>`<div class="result-item"><div class="lbl">${x[0]}</div><div class="val ${x[2]||''}">${x[1]}</div></div>`).join('')+'</div>'+
+    '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">Shigley sizing at τ_allow = '+(R.frac*100)+'%·S_ut ('+(cond.load==='static'?'static':'cyclic — unpeened; shot-peening buys ~20%')+'), S_ut = A/d^m (Table 10-4: A='+R.M.A+', m='+R.M.m+'), squared-ground ends (n_t = n_a+2), L₀ sized for 15% solid margin. L₀/D ≥ 5.2 risks buckling — guide the spring or split it. APPLY loads this into the spring analysis with S_y set so the module reproduces the same allowable.</p>');
+};
+window.applySpringDesign=function(){
+  const F=v('spd-f'),dfl=v('spd-def'),C=Math.min(12,Math.max(4,v('spd-c')||8)),cond=dsgnCond('spd');
+  const R=springDesignPick(F,dfl,C,sv('spd-mat')||'auto',cond);if(R.fail)return void window.calcSpringDesign();
+  const set=(id,val)=>{const el=$(id);if(el)el.value=val;};
+  const tp=$('sp-type');tp&&(tp.value='compression');
+  set('sp-d',R.d);set('sp-D',Math.round(R.D*10)/10);set('sp-na',Math.round(R.na*2)/2);set('sp-nt',Math.round(R.na*2)/2+2);set('sp-fl',Math.round(R.L0));set('sp-f',F);set('sp-sy',Math.round(R.Sut));set('sp-g',R.M.G/1000);
+  const du=$('sp-d-u'),Du=$('sp-D-u');du&&(du.value='mm');Du&&(Du.value='mm');
+  window.calcSpringDesign();
+  if(typeof gateBellevillePresets==='function')gateBellevillePresets();
+  if(typeof window.calcSpring==='function')try{window.calcSpring();}catch(e){}
+};
+const SHAFT_STD=[6,8,10,12,14,16,18,20,22,25,28,30,32,35,38,40,45,50,55,60,70,80,90,100,110,125,140,160];
+function injectShaftDesigner(){
+  const vw=$('v-shafts');if(!vw||$('shd-card'))return;
+  const host=vw.querySelector('.split>div:first-child')||vw;
+  const card=document.createElement('div');card.className='card';card.id='shd-card';
+  card.innerHTML='<h3>⚡ SHAFT DESIGNER — START HERE</h3>'+
+    '<p style="font-size:.72rem;color:var(--dim);margin:0 0 .5rem">Torque + material → the diameter, rounded up to stock sizes.</p>'+
+    '<div class="row">'+
+    '<div class="field"><label for="shd-t">TORQUE (N·m)</label><input type="number" id="shd-t" value="100" step="any"></div>'+
+    '<div class="field"><label for="shd-sy">MATERIAL S_y (MPa)</label><input type="number" id="shd-sy" value="350" step="any"></div>'+
+    '<div class="field"><label for="shd-nd">DESIGN FACTOR</label><select id="shd-nd"><option value="1.5">STEADY (1.5)</option><option value="2">MINOR SHOCK / STARTS (2.0)</option><option value="3">HEAVY SHOCK / REVERSING (3.0)</option></select></div>'+
+    '<div class="field"><label for="shd-stiff">STIFFNESS LIMIT</label><select id="shd-stiff"><option value="1">θ/L ≤ 0.25°/m (machine practice)</option><option value="0">STRENGTH ONLY</option></select></div>'+
+    '</div><div class="row" style="margin-top:.6rem"><button class="btn btn-fill" onclick="calcShaftDesign()">DESIGN IT</button><button class="btn" onclick="applyShaftDesign()">APPLY TO ANALYSIS →</button></div><div id="shd-out"></div>';
+  host.insertBefore(card,host.firstChild);
+}
+function shaftDesignPick(){
+  const T=v('shd-t'),Sy=v('shd-sy')||350,nd=parseFloat(sv('shd-nd'))||1.5,useStiff=sv('shd-stiff')!=='0';
+  const tAll=0.4*Sy/nd*1.5;
+  const dStr=Math.cbrt(16*T*1000*nd/(Math.PI*0.4*Sy));
+  const G=79300,thPerMm=(0.25*Math.PI/180)/1000;
+  const Jreq=T*1000/(G*thPerMm),dStiff=useStiff?Math.pow(32*Jreq/Math.PI,0.25):0;
+  const dReq=Math.max(dStr,dStiff);
+  const d=SHAFT_STD.find(s=>s>=dReq);
+  return{T,Sy,nd,useStiff,dStr,dStiff,dReq,d};
+}
+window.calcShaftDesign=function(){
+  const o=$('shd-out');if(!o)return;
+  const R=shaftDesignPick();
+  if(!(R.T>0)){_mr(o,'<div class="note warn" style="margin-top:.5rem">Torque required.</div>');return;}
+  if(!R.d){_mr(o,'<div class="note warn" style="margin-top:.5rem">Needs Ø &gt; 160 mm — check bending too and consider a hollow section.</div>');return;}
+  const J=Math.PI*Math.pow(R.d,4)/32,tau=R.T*1000*(R.d/2)/J,thL=R.T*1000/(79300*J)*1000*180/Math.PI;
+  _mr(o,'<div class="result-grid" style="margin-top:.6rem">'+[
+    ['USE Ø',R.d+' mm','ok'],['Strength needs',R.dStr.toFixed(1)+' mm'],
+    ['Stiffness needs',R.useStiff?R.dStiff.toFixed(1)+' mm':'—'],
+    ['Governing',R.useStiff&&R.dStiff>R.dStr?'STIFFNESS':'STRENGTH'],
+    ['τ actual',tau.toFixed(1)+' MPa vs '+(0.4*R.Sy/R.nd).toFixed(0)+' allow',tau<=0.4*R.Sy/R.nd*1.001?'ok':'err'],
+    ['θ/L actual',thL.toFixed(3)+' °/m',thL<=0.25*1.001?'ok':'warn']
+  ].map(x=>`<div class="result-item"><div class="lbl">${x[0]}</div><div class="val ${x[2]||''}">${x[1]}</div></div>`).join('')+'</div>'+
+    '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">Torsion-only sizing: τ_allow = 0.4·S_y/n_d, stiffness per 0.25°/m machine-design practice; rounded up to preferred stock. Combined bending+torsion or keyways need the full shaft analysis (ASME/DE-Goodman) — this is the starting diameter. APPLY loads it into torsion analysis below.</p>');
+};
+window.applyShaftDesign=function(){
+  const R=shaftDesignPick();if(!R.d)return void window.calcShaftDesign();
+  const set=(id,val)=>{const el=$(id);if(el)el.value=val;};
+  set('sh-t',R.T);set('sh-do',R.d);set('sh-di',0);
+  window.calcShaftDesign();
+  if(typeof window.calcShaftTorsion==='function')try{window.calcShaftTorsion();}catch(e){}
+};
+function injectBearingDesigner(){
+  const vw=$('v-bearings');if(!vw||$('brd-card'))return;
+  const host=vw.querySelector('.split>div:first-child')||vw;
+  const card=document.createElement('div');card.className='card';card.id='brd-card';
+  card.innerHTML='<h3>⚡ BEARING DESIGNER — START HERE</h3>'+
+    '<p style="font-size:.72rem;color:var(--dim);margin:0 0 .5rem">Load + speed + how long it must live → the dynamic capacity C to shop for.</p>'+
+    '<div class="row">'+
+    '<div class="field"><label for="brd-p">EQUIVALENT LOAD P (kN)</label><input type="number" id="brd-p" value="5" step="any"></div>'+
+    '<div class="field"><label for="brd-n">SPEED (rpm)</label><input type="number" id="brd-n" value="1500" step="any"></div>'+
+    '<div class="field"><label for="brd-life">LIFE TARGET</label><select id="brd-life"><option value="20000">INTERMITTENT DUTY (20 000 h)</option><option value="50000" selected>CONTINUOUS INDUSTRIAL (50 000 h)</option><option value="100000">CRITICAL / 24-7 (100 000 h)</option><option value="custom">CUSTOM →</option></select></div>'+
+    '<div class="field"><label for="brd-h">CUSTOM HOURS</label><input type="number" id="brd-h" value="30000" step="any"></div>'+
+    '</div><div class="row" style="margin-top:.6rem"><button class="btn btn-fill" onclick="calcBearingDesign()">DESIGN IT</button><button class="btn" onclick="applyBearingDesign()">APPLY TO ANALYSIS →</button></div><div id="brd-out"></div>';
+  host.insertBefore(card,host.firstChild);
+}
+function bearingDesignPick(){
+  const P=v('brd-p'),n=v('brd-n'),h=sv('brd-life')==='custom'?v('brd-h'):parseFloat(sv('brd-life'))||50000;
+  const L10=60*n*h/1e6;
+  return{P,n,h,L10,Cball:P*Math.pow(L10,1/3),Croll:P*Math.pow(L10,0.3)};
+}
+window.calcBearingDesign=function(){
+  const o=$('brd-out');if(!o)return;
+  const R=bearingDesignPick();
+  if(!(R.P>0)||!(R.n>0)||!(R.h>0)){_mr(o,'<div class="note warn" style="margin-top:.5rem">Need P, rpm and hours &gt; 0.</div>');return;}
+  _mr(o,'<div class="result-grid" style="margin-top:.6rem">'+[
+    ['L10 required',R.L10.toFixed(0)+' Mrev'],
+    ['C required — BALL',R.Cball.toFixed(1)+' kN','ok'],
+    ['C required — ROLLER',R.Croll.toFixed(1)+' kN','ok'],
+    ['Shop for','catalog C ≥ these at your bore']
+  ].map(x=>`<div class="result-item"><div class="lbl">${x[0]}</div><div class="val ${x[2]||''}">${x[1]}</div></div>`).join('')+'</div>'+
+    '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">ISO 281: C = P·L10^(1/p), p = 3 ball / 10⁄3 roller, 90% reliability (a₁=1). For 95%+ reliability or marginal lubrication apply a₁/a_ISO from the bearing catalog. APPLY loads C and speed into the L10 card for the inverse check.</p>');
+};
+window.applyBearingDesign=function(){
+  const R=bearingDesignPick();
+  const set=(id,val)=>{const el=$(id);if(el)el.value=val;};
+  set('br-c',R.Cball.toFixed(1));set('br-fr',R.P);set('br-n',R.n);set('br-fa',0);
+  window.calcBearingDesign();
+  if(typeof window.calcBearing==='function')try{window.calcBearing();}catch(e){}
+};
+const WELD_LEGS=[3,4,5,6,8,10,12,14,16];
+function injectWeldDesigner(){
+  const vw=$('v-welds');if(!vw||$('wld-card'))return;
+  const host=vw.querySelector('.split>div:first-child')||vw;
+  const card=document.createElement('div');card.className='card';card.id='wld-card';
+  card.innerHTML='<h3>⚡ WELD DESIGNER — START HERE</h3>'+
+    '<p style="font-size:.72rem;color:var(--dim);margin:0 0 .5rem">Load + available weld length → the fillet leg size.</p>'+
+    '<div class="row">'+
+    '<div class="field"><label for="wld-f">LOAD (kN)</label><input type="number" id="wld-f" value="50" step="any"></div>'+
+    '<div class="field"><label for="wld-l">TOTAL WELD LENGTH (mm)</label><input type="number" id="wld-l" value="200" step="any"></div>'+
+    '<div class="field"><label for="wld-e">ELECTRODE</label><select id="wld-e"><option value="60">E60XX</option><option value="70" selected>E70XX</option><option value="80">E80XX</option><option value="90">E90XX</option><option value="110">E110XX</option></select></div>'+
+    '<div class="field"><label for="wld-load2">LOADING</label><select id="wld-load2"><option value="static">STATIC</option><option value="dyn">CYCLIC / FATIGUE</option></select></div>'+
+    '</div><div class="row" style="margin-top:.6rem"><button class="btn btn-fill" onclick="calcWeldDesign()">DESIGN IT</button><button class="btn" onclick="applyWeldDesign()">APPLY TO ANALYSIS →</button></div><div id="wld-out"></div>';
+  host.insertBefore(card,host.firstChild);
+}
+function weldDesignPick(){
+  const F=v('wld-f'),L=v('wld-l'),Fexx=(parseFloat(sv('wld-e'))||70)*6.895;
+  const aReq=F*1000/(0.707*L*0.3*Fexx);
+  const a=WELD_LEGS.find(x=>x>=aReq);
+  return{F,L,Fexx,aReq,a,dyn:sv('wld-load2')==='dyn'};
+}
+window.calcWeldDesign=function(){
+  const o=$('wld-out');if(!o)return;
+  const R=weldDesignPick();
+  if(!(R.F>0)||!(R.L>0)){_mr(o,'<div class="note warn" style="margin-top:.5rem">Need load and length &gt; 0.</div>');return;}
+  if(!R.a){_mr(o,'<div class="note warn" style="margin-top:.5rem">Needs leg &gt; 16 mm — add weld length, use both sides, or move to a groove weld.</div>');return;}
+  const tau=R.F*1000/(0.707*R.a*R.L);
+  _mr(o,'<div class="result-grid" style="margin-top:.6rem">'+[
+    ['USE LEG a',R.a+' mm (calc '+R.aReq.toFixed(2)+')','ok'],
+    ['τ actual',tau.toFixed(1)+' MPa vs '+(0.3*R.Fexx).toFixed(0)+' allow',tau<=0.3*R.Fexx?'ok':'err'],
+    ['Throat',(0.707*R.a).toFixed(2)+' mm'],
+    ['Weld metal volume',(R.a*R.a/2*R.L/1000).toFixed(1)+' cm³']
+  ].map(x=>`<div class="result-item"><div class="lbl">${x[0]}</div><div class="val ${x[2]||''}">${x[1]}</div></div>`).join('')+'</div>'+
+    '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">AISC static allowable 0.30·F_EXX on the throat, parallel loading (conservative for transverse). Leg must also be ≥ plate-thickness minimums (AWS D1.1 Table 5.8) and base metal checked at 0.40·F_y.'+(R.dyn?' <b>⚠ CYCLIC:</b> static sizing is NOT sufficient — size against the AWS fatigue category (stress range) for the detail; expect a substantially larger or full-penetration weld.':'')+'</p>');
+};
+window.applyWeldDesign=function(){
+  const R=weldDesignPick();if(!R.a)return void window.calcWeldDesign();
+  const set=(id,val)=>{const el=$(id);if(el)el.value=val;};
+  set('wl-f',R.F);set('wl-l',R.L);set('wl-a',R.a);
+  const we=$('wl-e');we&&[].some.call(we.options,op=>op.value.indexOf(sv('wld-e'))===0&&((we.value=op.value),true));
+  window.calcWeldDesign();
+  if(typeof window.calcWeld==='function')try{window.calcWeld();}catch(e){}
+};
+const AMP75={14:20,12:25,10:35,8:50,6:65,4:85,3:100,2:115,1:130,'1/0':150,'2/0':175,'3/0':200,'4/0':230,'250':255,'300':285,'350':310,'400':335,'500':380,'600':420,'750':475};
+const AWG_ORDER=['14','12','10','8','6','4','3','2','1','1/0','2/0','3/0','4/0','250','300','350','400','500','600','750'];
+function injectWireDesigner(){
+  const vw=$('v-nec');if(!vw||$('wrd-card'))return;
+  const host=vw.querySelector('.split>div:first-child')||vw;
+  const card=document.createElement('div');card.className='card';card.id='wrd-card';
+  card.innerHTML='<h3>⚡ WIRE DESIGNER — START HERE</h3>'+
+    '<p style="font-size:.72rem;color:var(--dim);margin:0 0 .5rem">Load + run length → the smallest copper conductor passing ampacity AND voltage drop.</p>'+
+    '<div class="row">'+
+    '<div class="field"><label for="wrd-i">LOAD (A)</label><input type="number" id="wrd-i" value="30" step="any"></div>'+
+    '<div class="field"><label for="wrd-l">ONE-WAY LENGTH (ft)</label><input type="number" id="wrd-l" value="100" step="any"></div>'+
+    '<div class="field"><label for="wrd-v">SYSTEM VOLTAGE (V)</label><input type="number" id="wrd-v" value="120" step="any"></div>'+
+    '<div class="field"><label for="wrd-drop">MAX DROP (%)</label><input type="number" id="wrd-drop" value="3" step="0.5"></div>'+
+    '<div class="field"><label for="wrd-cont">DUTY</label><select id="wrd-cont"><option value="1.25">CONTINUOUS (125% sizing)</option><option value="1">NON-CONTINUOUS</option></select></div>'+
+    '</div><div class="row" style="margin-top:.6rem"><button class="btn btn-fill" onclick="calcWireDesign()">DESIGN IT</button></div><div id="wrd-out"></div>';
+  host.insertBefore(card,host.firstChild);
+}
+window.calcWireDesign=function(){
+  const o=$('wrd-out');if(!o)return;
+  const I=v('wrd-i'),L=v('wrd-l'),V=v('wrd-v')||120,dropPct=v('wrd-drop')||3,mult=parseFloat(sv('wrd-cont'))||1.25;
+  if(!(I>0)||!(L>0)){_mr(o,'<div class="note warn" style="margin-top:.5rem">Need load and length &gt; 0.</div>');return;}
+  const R=window.__NEC_R||{14:3.07,12:1.93,10:1.21,8:0.764,6:0.491,4:0.308,3:0.245,2:0.194,1:0.154,'1/0':0.122,'2/0':0.0967,'3/0':0.0766,'4/0':0.0608,'250':0.0515,'300':0.0429,'350':0.0367,'400':0.0321,'500':0.0258,'600':0.0214,'750':0.0171};
+  const Vmax=V*dropPct/100;
+  let pick=null;
+  for(const awg of AWG_ORDER){
+    const amp=AMP75[awg],r=R[awg];if(amp==null||r==null)continue;
+    const vd=2*I*r*L/1000;
+    if(amp>=I*mult&&vd<=Vmax){pick={awg,amp,vd};break;}
+  }
+  if(!pick){_mr(o,'<div class="note warn" style="margin-top:.5rem">Nothing ≤ 750 kcmil passes — run parallel conductors or raise the system voltage.</div>');return;}
+  _mr(o,'<div class="result-grid" style="margin-top:.6rem">'+[
+    ['USE',(isNaN(parseInt(pick.awg))||parseInt(pick.awg)<15?'#':'')+pick.awg+(parseInt(pick.awg)>200?' kcmil':' AWG')+' Cu','ok'],
+    ['Ampacity (75 °C)',pick.amp+' A vs '+(I*mult).toFixed(0)+' A required',pick.amp>=I*mult?'ok':'err'],
+    ['Voltage drop',pick.vd.toFixed(2)+' V ('+(pick.vd/V*100).toFixed(2)+' %)',pick.vd<=Vmax?'ok':'err'],
+    ['V at load',(V-pick.vd).toFixed(1)+' V']
+  ].map(x=>`<div class="result-item"><div class="lbl">${x[0]}</div><div class="val ${x[2]||''}">${x[1]}</div></div>`).join('')+'</div>'+
+    '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">NEC 310.16 copper @ 75 °C terminations, single-phase 2-wire drop = 2·I·R·L. No conduit-fill or ambient derates applied — for &gt;3 current-carrying conductors or hot locations use the AMPACITY card below with derates, then re-check drop. 3-phase drop ≈ 0.866× this value.</p>');
+};
+function injectBatteryDesigner(){
+  const vw=$('v-battery');if(!vw||$('btd-card'))return;
+  const host=vw.querySelector('.split>div:first-child')||vw;
+  const card=document.createElement('div');card.className='card';card.id='btd-card';
+  card.innerHTML='<h3>⚡ PACK DESIGNER — START HERE</h3>'+
+    '<p style="font-size:.72rem;color:var(--dim);margin:0 0 .5rem">Target voltage + capacity + your cell → the S×P topology.</p>'+
+    '<div class="row">'+
+    '<div class="field"><label for="btd-v">TARGET V (nominal)</label><input type="number" id="btd-v" value="48" step="any"></div>'+
+    '<div class="field"><label for="btd-ah">TARGET CAPACITY (Ah)</label><input type="number" id="btd-ah" value="20" step="any"></div>'+
+    '<div class="field"><label for="btd-cv">CELL V nom</label><input type="number" id="btd-cv" value="3.6" step="any"></div>'+
+    '<div class="field"><label for="btd-cah">CELL Ah</label><input type="number" id="btd-cah" value="3.5" step="any"></div>'+
+    '</div><div class="row" style="margin-top:.6rem"><button class="btn btn-fill" onclick="calcBatteryDesign()">DESIGN IT</button><button class="btn" onclick="applyBatteryDesign()">APPLY TO ANALYSIS →</button></div><div id="btd-out"></div>';
+  host.insertBefore(card,host.firstChild);
+}
+function batteryDesignPick(){
+  const V=v('btd-v'),Ah=v('btd-ah'),cv=v('btd-cv')||3.6,cah=v('btd-cah')||3.5;
+  const S=Math.max(1,Math.round(V/cv)),P=Math.max(1,Math.ceil(Ah/cah));
+  return{V,Ah,cv,cah,S,P,Vr:S*cv,Ahr:P*cah,Wh:S*cv*P*cah,cells:S*P};
+}
+window.calcBatteryDesign=function(){
+  const o=$('btd-out');if(!o)return;
+  const R=batteryDesignPick();
+  if(!(R.V>0)||!(R.Ah>0)){_mr(o,'<div class="note warn" style="margin-top:.5rem">Need target V and Ah.</div>');return;}
+  _mr(o,'<div class="result-grid" style="margin-top:.6rem">'+[
+    ['USE',R.S+'S'+R.P+'P ('+R.cells+' cells)','ok'],
+    ['Pack voltage',R.Vr.toFixed(1)+' V nominal',Math.abs(R.Vr-R.V)/R.V<0.05?'ok':'warn'],
+    ['Pack capacity',R.Ahr.toFixed(1)+' Ah'],['Energy',(R.Wh/1000).toFixed(2)+' kWh']
+  ].map(x=>`<div class="result-item"><div class="lbl">${x[0]}</div><div class="val ${x[2]||''}">${x[1]}</div></div>`).join('')+'</div>'+
+    '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">S rounded to nearest (check charger window: pack max = S·4.2 V for Li-ion), P rounded up. Verify cell max continuous current ≥ pack load / P, and add BMS balancing per S count. APPLY loads the pack card for runtime/Peukert analysis.</p>');
+};
+window.applyBatteryDesign=function(){
+  const R=batteryDesignPick();
+  const set=(id,val)=>{const el=$(id);if(el)el.value=val;};
+  [['bp-s',R.S],['bp-ns',R.S],['bp-p',R.P],['bp-np',R.P],['bp-qc',R.cah],['bp-vc',R.cv],['bp-v',R.cv]].forEach(([id,val])=>set(id,val));
+  window.calcBatteryDesign();
+  if(typeof window.calcPack==='function')try{window.calcPack();}catch(e){}
+};
+function injectIsolatorDesigner(){
+  const vw=$('v-vibration');if(!vw||$('isd-card'))return;
+  const host=vw.querySelector('.split>div:first-child')||vw;
+  const card=document.createElement('div');card.className='card';card.id='isd-card';
+  card.innerHTML='<h3>⚡ ISOLATOR DESIGNER — START HERE</h3>'+
+    '<p style="font-size:.72rem;color:var(--dim);margin:0 0 .5rem">Machine mass + disturbing frequency + how much isolation → the mount stiffness to buy.</p>'+
+    '<div class="row">'+
+    '<div class="field"><label for="isd-m">MASS (kg)</label><input type="number" id="isd-m" value="100" step="any"></div>'+
+    '<div class="field"><label for="isd-f">DISTURBING f (Hz)</label><input type="number" id="isd-f" value="30" step="any"></div>'+
+    '<div class="field"><label for="isd-iso">ISOLATION</label><select id="isd-iso"><option value="0.8">80 %</option><option value="0.9" selected>90 %</option><option value="0.95">95 %</option></select></div>'+
+    '<div class="field"><label for="isd-nm"># MOUNTS</label><input type="number" id="isd-nm" value="4" min="1" step="1"></div>'+
+    '</div><div class="row" style="margin-top:.6rem"><button class="btn btn-fill" onclick="calcIsolatorDesign()">DESIGN IT</button><button class="btn" onclick="applyIsolatorDesign()">APPLY TO ANALYSIS →</button></div><div id="isd-out"></div>';
+  host.insertBefore(card,host.firstChild);
+}
+function isolatorDesignPick(){
+  const m=v('isd-m'),f=v('isd-f'),iso=parseFloat(sv('isd-iso'))||0.9,nm=Math.max(1,Math.round(v('isd-nm'))||4);
+  const TR=1-iso,r=Math.sqrt(1+1/TR),fn=f/r,k=m*Math.pow(2*Math.PI*fn,2);
+  return{m,f,iso,nm,TR,r,fn,k,kEach:k/nm,dfl:m*9.81/k*1000};
+}
+window.calcIsolatorDesign=function(){
+  const o=$('isd-out');if(!o)return;
+  const R=isolatorDesignPick();
+  if(!(R.m>0)||!(R.f>0)){_mr(o,'<div class="note warn" style="margin-top:.5rem">Need mass and disturbing frequency.</div>');return;}
+  _mr(o,'<div class="result-grid" style="margin-top:.6rem">'+[
+    ['Total k',(R.k/1000).toFixed(1)+' kN/m','ok'],['k per mount ('+R.nm+')',(R.kEach/1000).toFixed(2)+' kN/m','ok'],
+    ['Mount f_n',R.fn.toFixed(2)+' Hz'],['f/f_n ratio',R.r.toFixed(2)],
+    ['Static deflection',R.dfl.toFixed(1)+' mm',R.dfl<25?'ok':'warn'],['Transmissibility',(R.TR*100).toFixed(0)+' %']
+  ].map(x=>`<div class="result-item"><div class="lbl">${x[0]}</div><div class="val ${x[2]||''}">${x[1]}</div></div>`).join('')+'</div>'+
+    '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">Undamped SDOF: isolation needs f/f_n = √(1+1/TR) &gt; √2. Real elastomer damping (ζ ≈ 0.05–0.1) slightly reduces isolation but tames startup resonance pass-through. Static deflection &gt; 25 mm usually means coil-spring mounts, not pads. APPLY loads m and k into the SDOF card.</p>');
+};
+window.applyIsolatorDesign=function(){
+  const R=isolatorDesignPick();
+  const set=(id,val)=>{const el=$(id);if(el)el.value=val;};
+  [['nf-m',R.m],['vb-m',R.m],['nf-k',Math.round(R.k)],['vb-k',Math.round(R.k)]].forEach(([id,val])=>set(id,val));
+  window.calcIsolatorDesign();
+  if(typeof window.calcNatFreq==='function')try{window.calcNatFreq();}catch(e){}
 };
 function injectThreadEngage(){
   const vw=$('v-bolts');if(!vw||$('te-card'))return;
@@ -2755,6 +3083,13 @@ window.addEventListener('DOMContentLoaded',()=>{
     injectAgmaPitting();
     injectThreadEngage();
     injectBoltDesigner();
+    injectSpringDesigner();
+    injectShaftDesigner();
+    injectBearingDesigner();
+    injectWeldDesigner();
+    injectWireDesigner();
+    injectBatteryDesigner();
+    injectIsolatorDesigner();
     window.calcFits();
     const typeEl=$('sp-type');if(typeEl)typeEl.addEventListener('change',()=>{gateBellevillePresets();window.calcSpring();});
     wireLive('v-springs',window.calcSpring);

@@ -1,0 +1,38 @@
+let pass=0,fail=0;
+const ok=(c,m)=>{c?pass++:(fail++,console.log('FAIL: '+m))};
+const ap=(a,b,m,r)=>ok(typeof a==='number'&&isFinite(a)&&Math.abs(a-b)<=Math.abs(b)*(r||1e-9)+1e-12,m+' got '+a+' want '+b);
+const dStr=Math.cbrt(16*100*1000*2/(Math.PI*0.4*350));
+ok(dStr>19&&dStr<20,'shaft strength d ~19.4mm for 100Nm Sy350 nd2, got '+dStr.toFixed(2));
+const STD=[6,8,10,12,14,16,18,20,22,25];ok(STD.find(s=>s>=dStr)===20,'rounds to 20mm stock');
+const G=79300,thPerMm=(0.25*Math.PI/180)/1000,Jreq=100*1000/(G*thPerMm),dStiff=Math.pow(32*Jreq/Math.PI,0.25);
+ok(dStiff>40&&dStiff<60,'stiffness governs at low torque long-shaft practice (0.25 deg/m), d='+dStiff.toFixed(1));
+const L10=60*1500*20000/1e6;ap(L10,1800,'bearing L10 Mrev');
+ap(5*Math.pow(L10,1/3),60.75,'C ball ~60.8kN',1e-2);
+ok(5*Math.pow(L10,0.3)<5*Math.pow(L10,1/3),'roller C < ball C for same life (p=10/3)');
+const Fexx=70*6.895,aReq=50*1000/(0.707*200*0.3*Fexx);
+ok(aReq>2.3&&aReq<2.6,'weld leg calc ~2.44mm, got '+aReq.toFixed(2));
+ok([3,4,5,6,8].find(x=>x>=aReq)===3,'rounds to 3mm leg');
+const TR=0.1,r=Math.sqrt(1+1/TR),fn=30/r,k=100*Math.pow(2*Math.PI*fn,2);
+ap(r,Math.sqrt(11),'isolation 90% needs r=sqrt(11)');
+ok(k>310000&&k<340000,'isolator k ~323 kN/m, got '+(k/1000).toFixed(1));
+ap(100*9.81/k*1000,3.03,'static deflection ~3mm',5e-2);
+const R={10:1.21,8:0.764,6:0.491},AMP={10:35,8:50,6:65};
+function wire(I,L,V,pct,mult){for(const a of['10','8','6']){const vd=2*I*R[a]*L/1000;if(AMP[a]>=I*mult&&vd<=V*pct/100)return{a,vd};}return null;}
+const w=wire(30,100,120,3,1.25);
+ok(w&&w.a==='6','30A 100ft 120V 3% continuous -> #6 (10:7.26V, 8:4.58V fail; 6:2.95V pass), got '+(w&&w.a));
+ap(w.vd,2.946,'drop 2.95V',1e-3);
+const M={A:2211,m:0.145},C=8,F=100,Kw=(4*C-1)/(4*C-4)+0.615/C;
+let d=2;for(let i=0;i<40;i++){const ta=0.45*M.A/Math.pow(d,M.m);d=Math.sqrt(8*Kw*F*C/(Math.PI*ta));}
+ok(d>1.5&&d<3.5,'music-wire d converges to sane size for 100N C8, got '+d.toFixed(3));
+const d2s=[0.5,1,2,4].map(d0=>{let x=d0;for(let i=0;i<40;i++){const ta=0.45*M.A/Math.pow(x,M.m);x=Math.sqrt(8*Kw*F*C/(Math.PI*ta));}return x;});
+ok(Math.max(...d2s)-Math.min(...d2s)<1e-9,'fixed point independent of start');
+const dS=2.2,Sut=M.A/Math.pow(dS,M.m),tau=Kw*8*F*(C*dS)/(Math.PI*Math.pow(dS,3));
+ok(tau<=0.45*Sut,'chosen standard wire satisfies allowable');
+const Se=129,Su=830,pre=0.90,Sp=660,si=pre*Sp,sa=0.25*5000/(2*84.3);
+const nf=Se*(Su-si)/(sa*(Su+Se));
+ok(nf>1.5,'M12 8.8 4-bolt 20kN vibration: Goodman n_f>1.5, got '+nf.toFixed(2));
+ok(si<Su,'preload below ultimate sanity');
+const kb=Math.max(1,Math.round(48/3.6)),pb=Math.ceil(20/3.5);
+ok(kb===13&&pb===6,'48V/20Ah with 3.6V/3.5Ah cell -> 13S6P');
+console.log(pass+' passed, '+fail+' failed');
+process.exitCode=fail?1:0;
