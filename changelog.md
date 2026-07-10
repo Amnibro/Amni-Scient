@@ -1,5 +1,11 @@
 # Changelog 
 
+## Amni-Learn v5.51.0 — Module /loop iter 3: HD voice for Phonics & Storybooks - 2026-07-10
+- **Phonics and Storybooks now use the Piper HD neural voice automatically** — no hidden settings flag. Opening either module lazy-loads the voice (progress banner "🎙️ Loading HD voice… N%"), first load downloads once and persists in browser storage; vendor runtime (onnx wasm) is service-worker cached after first use. Web Speech keeps working as the fallback while loading or on any failure — nothing goes silent.
+- **Storybook HD reading**: pages are synthesized per-page with word-by-word highlighting (time-proportional mapping), autoplay page turns preserved, play resumes a paused HD reading instead of restarting, pause/stop control whichever engine is speaking.
+- **The old HD layer was effectively dead code**: it required a localStorage flag nobody sets AND refused to download the voice model when triggered from normal speech calls (`hd-not-stored` throw). New `_hdWarm()` (idempotent, with progress UI) fixes the download path; `_hdCtx()` scopes auto-HD to phonics/storybook so the rest of the app keeps lightweight Web Speech.
+- Phonics TTS-true cues (PHON_SP "fah"/"bah" respellings) unchanged — Piper reads them as written sound cues. Verified headless with a mocked vits-web: phonics tile tap → HD synth path, storybook Peter Rabbit autoplay chained 6 page synths, zero page errors; fallback path exercised with HD unready. Real-device ear check pending (headless is silent). SW cache v1258→v1259.
+
 ## Amni-Calc v5.50.0 — Quick-nav shows where you are - 2026-07-10
 - The sticky card chips now highlight the card currently in view as you scroll (scroll-spy via IntersectionObserver) — in long modules like thermal or echem you always know which calculator you're looking at and can jump anywhere in one click.
 - Results-header audit across all ~45 setRes titles: already consistent (uppercase context + governing standard in parens) — no changes needed, documented as verified. Cache-buster calc-engineer.js?v=eng7.
