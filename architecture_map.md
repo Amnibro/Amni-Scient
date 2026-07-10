@@ -1,5 +1,9 @@
 # Architecture Map — amni-scient.com
 
+## v5.50.0 Amni-Calc Quick-nav scroll-spy (2026-07-10, /loop iter 6)
+- calc-engineer.js (`?v=eng7`): injectQuickNav attaches an IntersectionObserver (root=the .view scroll container, rootMargin -8%/-72%) toggling `.qn-on` on the chip whose card is in the reading band; `row._io` disconnected on rebuild. index.html: `.qn-chip.qn-on` accent style.
+- setRes-title audit: all ~45 titles verified consistent (UPPERCASE context, standards in parens) — no sweep required.
+
 ## v5.49.0 Amni-Calc Theme-true visuals + print pass (2026-07-10, /loop iter 5)
 - calc-fixes.js (`?v=eng3`): drawBellDisc fill = `th.accent+'38'` (8-digit hex alpha) when accent is 6-hex, fallback rgba orange.
 - calc-engineer.js (`?v=eng6`): `.theme-toggle` click delegate re-runs the active view's calc fn (+120ms) so canvases/plots repaint in the new theme.

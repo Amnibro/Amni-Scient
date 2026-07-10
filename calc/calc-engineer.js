@@ -112,6 +112,7 @@ if(cards.length<3)return;
 var row=vw.querySelector('.qn-row');if(row&&+row.dataset.n===cards.length)return;
 row&&row.remove();row=document.createElement('div');row.className='qn-row';row.dataset.n=cards.length;
 cards.forEach(function(cd){var t=cd.querySelector('h3').textContent.trim().replace(/\s+/g,' ');t.length>32&&(t=t.slice(0,30)+'…');var b=document.createElement('button');b.type='button';b.className='qn-chip';b.textContent=t;b.onclick=function(){cd.scrollIntoView({behavior:'smooth',block:'start'});cd.classList.add('eng-flash');setTimeout(function(){cd.classList.remove('eng-flash')},1200)};row.appendChild(b)});
+if(window.IntersectionObserver){row._io&&row._io.disconnect();var io=new IntersectionObserver(function(es){es.forEach(function(en){if(!en.isIntersecting)return;var idx=cards.indexOf(en.target);idx<0||[].forEach.call(row.children,function(ch,k){ch.classList.toggle('qn-on',k===idx)})})},{root:vw,rootMargin:'-8% 0px -72% 0px'});cards.forEach(function(cd){io.observe(cd)});row._io=io}
 var anc=vw.querySelector('.mod-desc')||vw.querySelector('h2');anc&&anc.parentElement===vw?vw.insertBefore(row,anc.nextSibling):vw.insertBefore(row,vw.firstChild)})}
 var KW={};
 function viewKw(name){var el=document.getElementById('v-'+name);if(!el)return'';var t=[];el.querySelectorAll('h2,h3,label').forEach(function(n){t.push(n.textContent)});return t.join(' ').toLowerCase()}

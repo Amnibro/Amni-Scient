@@ -1,5 +1,9 @@
 # Changelog 
 
+## Amni-Calc v5.50.0 — Quick-nav shows where you are - 2026-07-10
+- The sticky card chips now highlight the card currently in view as you scroll (scroll-spy via IntersectionObserver) — in long modules like thermal or echem you always know which calculator you're looking at and can jump anywhere in one click.
+- Results-header audit across all ~45 setRes titles: already consistent (uppercase context + governing standard in parens) — no changes needed, documented as verified. Cache-buster calc-engineer.js?v=eng7.
+
 ## Amni-Calc v5.49.0 — Theme-true visuals + clean printouts - 2026-07-10
 - Belleville pack-view discs now tint from the live accent color (theme-aware) instead of a hardcoded orange; toggling light/dark re-renders the active module so plots and canvases repaint in the new palette immediately (previously they kept stale colors until the next input change).
 - Print pass: goal-seek panels, quick-nav chips and the sidebar filter are excluded from printouts. Cache-busters calc-engineer.js?v=eng6, calc-fixes.js?v=eng3.
