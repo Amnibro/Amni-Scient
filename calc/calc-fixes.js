@@ -557,6 +557,8 @@ window.calcBolt=function(){
     '<p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem"><strong>Thin-material rule of thumb:</strong> tap depth ≥ 1.0·d in steel, 1.5·d in aluminum, 2.0·d in plastic for full strength. Below 0.5·d the joint will strip the threads before the bolt yields.</p>');
   const _bpn=$('bp-n');
   if(_bpn&&_bpn!==document.activeElement&&parseInt(_bpn.value)!==n){_bpn.value=n;if(typeof window.drawBoltPattern==='function')try{window.drawBoltPattern();}catch(e){}}
+  const _teb=$('te-sub');
+  if(_teb&&_teb!==document.activeElement&&parseFloat(_teb.value)!==Su){_teb.value=Su;if(typeof window.calcThreadEngage==='function')try{window.calcThreadEngage();}catch(e){}}
   const _bsync={'bts-fi':Fi,'bts-d':size.d,'bts-pitch':size.p,'bts-kn':mu,'bts-c':C,'bts-fext':FextPer};
   let _bany=false;
   for(const _bk in _bsync){const _be=$(_bk),_bv=_bsync[_bk];if(_be&&_be!==document.activeElement&&isFinite(_bv)){const _bs=String(Math.round(_bv*1000)/1000);_be.value!==_bs&&(_be.value=_bs,_bany=true);}}
@@ -795,6 +797,79 @@ window.calcFouledU=function(){
     ['U dirty',Ud.toFixed(1)+' W/m²K'],['Derate',der.toFixed(1)+' %',der<30?'ok':'warn'],['ΣRf',(Rh+Rc).toExponential(2)+' m²K/W'],['Extra area needed','+'+(Uc/Ud*100-100).toFixed(1)+' %']
   ].map(r=>`<div class="result-item"><div class="lbl">${r[0]}</div><div class="val ${r[2]||''}">${r[1]}</div></div>`).join('')+'</div>'+
     '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">U_dirty = 1/(1/U_clean + ΣRf), TEMA typical fouling resistances. The fouled U is written into the LMTD card so Q reflects end-of-service performance; size A for the dirty condition.</p>');
+};
+function injectAgmaPitting(){
+  const vw=$('v-gears');if(!vw||$('ag-card'))return;
+  const host=vw.querySelector('.split>div:first-child')||vw;
+  const card=document.createElement('div');card.className='card';card.id='ag-card';
+  card.innerHTML='<h3>AGMA PITTING (SURFACE DURABILITY)</h3><div class="row">'+
+    '<div class="field"><label for="ag-wt">W_t (N)</label><input type="number" id="ag-wt" value="1000" step="any"></div>'+
+    '<div class="field"><label for="ag-np">PINION TEETH N_p</label><input type="number" id="ag-np" value="16" step="1"></div>'+
+    '<div class="field"><label for="ag-m">MODULE m (mm)</label><input type="number" id="ag-m" value="3" step="any"></div>'+
+    '<div class="field"><label for="ag-mg">RATIO m_G</label><input type="number" id="ag-mg" value="4" step="any"></div>'+
+    '<div class="field"><label for="ag-b">FACE b (mm)</label><input type="number" id="ag-b" value="40" step="any"></div>'+
+    '<div class="field"><label for="ag-phi">φ (°)</label><input type="number" id="ag-phi" value="20" step="any"></div>'+
+    '</div><div class="row" style="margin-top:.5rem">'+
+    '<div class="field"><label for="ag-ze">Z_E (√MPa)</label><select id="ag-ze"><option value="191">STEEL / STEEL (191)</option><option value="custom">CUSTOM →</option></select></div>'+
+    '<div class="field"><label for="ag-zec">Z_E custom</label><input type="number" id="ag-zec" value="191" step="any"></div>'+
+    '<div class="field"><label for="ag-ko">K_o overload</label><input type="number" id="ag-ko" value="1" step="0.05"></div>'+
+    '<div class="field"><label for="ag-kv">K_v dynamic</label><input type="number" id="ag-kv" value="1.2" step="0.05"></div>'+
+    '<div class="field"><label for="ag-kh">K_H load dist.</label><input type="number" id="ag-kh" value="1.6" step="0.05"></div>'+
+    '<div class="field"><label for="ag-hb">PINION HB</label><input type="number" id="ag-hb" value="300" step="1"></div>'+
+    '</div><button class="btn btn-sm" onclick="calcAgmaPitting()" style="margin-top:.6rem">COMPUTE σ_H</button>';
+  host.appendChild(card);
+}
+window.calcAgmaPitting=function(){
+  const out=$('gears-results');if(!out)return;
+  const Wt=v('ag-wt'),Np=Math.max(6,Math.round(v('ag-np'))||16),m=v('ag-m'),mG=v('ag-mg')||1,b=v('ag-b'),phi=(v('ag-phi')||20)*Math.PI/180;
+  const ZE=sv('ag-ze')==='custom'?(v('ag-zec')||191):191;
+  const Ko=v('ag-ko')||1,Kv=v('ag-kv')||1,KH=v('ag-kh')||1,HB=v('ag-hb')||300;
+  if(!(Wt>0)||!(m>0)||!(b>0)){_mr(out,'<h3>AGMA PITTING</h3><div class="note warn">Need W_t, m, b &gt; 0.</div>');return;}
+  const d1=m*Np;
+  const ZI=Math.cos(phi)*Math.sin(phi)/2*(mG/(mG+1));
+  const sH=ZE*Math.sqrt(Wt*Ko*Kv*KH/(d1*b*ZI));
+  const Sc=2.22*HB+200;
+  const SH=Sc/sH;
+  _mr(out,'<h3>AGMA PITTING — SPUR, EXTERNAL MESH</h3><div class="result-grid">'+[
+    ['d_p pinion',d1.toFixed(1)+' mm'],['Z_I geometry',ZI.toFixed(4)],['σ_H contact',sH.toFixed(0)+' MPa',''],
+    ['S_c allowable (Gr.1, HB'+HB+')',Sc.toFixed(0)+' MPa'],['S_H = S_c/σ_H',SH.toFixed(2),SH>=1.2?'ok':SH>=1?'warn':'err'],
+    ['Status',SH>=1.2?'PITTING OK':SH>=1?'MARGINAL':'PITTING RISK',SH>=1.2?'ok':SH>=1?'warn':'err']
+  ].map(r=>`<div class="result-item"><div class="lbl">${r[0]}</div><div class="val ${r[2]||''}">${r[1]}</div></div>`).join('')+'</div>'+
+    '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">Shigley/AGMA 2101: σ_H = Z_E·√(W_t·K_o·K_v·K_H/(d_p·b·Z_I)), Z_I = cosφ·sinφ/2 · m_G/(m_G+1) (spur, m_N=1). S_c = 2.22·HB+200 MPa (Grade 1 through-hardened steel, 10⁷ cycles, 99% reliability); apply Z_N life and Z_W hardness-ratio factors for other conditions. K_s and Z_R taken as 1. Complements the Lewis BENDING card — pitting usually governs hardened industrial gears.</p>');
+};
+function injectThreadEngage(){
+  const vw=$('v-bolts');if(!vw||$('te-card'))return;
+  const host=vw.querySelector('.split>div:last-child')||vw;
+  const card=document.createElement('div');card.className='card bolt-x';card.id='te-card';
+  card.innerHTML='<h3>THREAD ENGAGEMENT / STRIPPING</h3>'+
+    '<p style="font-size:.7rem;color:var(--dim);margin:0 0 .5rem">Size and A_t follow the JOINT card selection. Basic-size shear areas (FED-STD-H28 simplification): A_ext = 0.75·π·K_n·L_e, A_int = 0.875·π·d·L_e.</p>'+
+    '<div class="row">'+
+    '<div class="field"><label for="te-le">ENGAGEMENT L_e (mm)</label><input type="number" id="te-le" value="12" step="any"></div>'+
+    '<div class="field"><label for="te-sub">BOLT S_u (MPa)</label><input type="number" id="te-sub" value="830" step="any"></div>'+
+    '<div class="field"><label for="te-sun">NUT/TAP MATERIAL S_u (MPa)</label><input type="number" id="te-sun" value="830" step="any"></div>'+
+    '</div><button class="btn btn-sm" onclick="calcThreadEngage()" style="margin-top:.6rem">CHECK STRIPPING</button><div id="te-out"></div>';
+  host.appendChild(card);
+}
+window.calcThreadEngage=function(){
+  const o=$('te-out');if(!o)return;
+  const size=BOLT_SIZES[sv('bl-size')]||BOLT_SIZES['1/2-13'];
+  const d=size.d,p=size.p,At=size.At;
+  const Le=v('te-le'),Sub=v('te-sub')||830,Sun=v('te-sun')||Sub;
+  if(!(Le>0)){_mr(o,'<div class="note warn" style="margin-top:.5rem">Engagement length required.</div>');return;}
+  const Kn=d-1.0825*p;
+  const ASe=0.75*Math.PI*Kn*Le,ASi=0.875*Math.PI*d*Le;
+  const Fbreak=Sub*At,FstripB=0.6*Sub*ASe,FstripN=0.6*Sun*ASi;
+  const Fmin=Math.min(FstripB,FstripN);
+  const LeMin=Fbreak/Math.min(0.6*Sub*0.75*Math.PI*Kn,0.6*Sun*0.875*Math.PI*d);
+  const mode=Fbreak<=Fmin?'BOLT BREAKS FIRST (ductile, preferred)':FstripB<FstripN?'BOLT THREADS STRIP':'INTERNAL THREADS STRIP';
+  _mr(o,'<div class="result-grid" style="margin-top:.6rem">'+[
+    ['Size',sv('bl-size')+' (d='+d+', p='+p+')'],['F bolt break',Math.round(Fbreak/1000)+' kN'],
+    ['F strip — bolt threads',Math.round(FstripB/1000)+' kN'],['F strip — internal threads',Math.round(FstripN/1000)+' kN'],
+    ['Governing mode',mode,Fbreak<=Fmin?'ok':'err'],
+    ['L_e min (break-before-strip)',LeMin.toFixed(1)+' mm',Le>=LeMin?'ok':'err'],
+    ['L_e / d',(Le/d).toFixed(2),Le/d>=0.8?'ok':'warn']
+  ].map(r=>`<div class="result-item"><div class="lbl">${r[0]}</div><div class="val ${r[2]||''}">${r[1]}</div></div>`).join('')+'</div>'+
+    '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">Thread shear strength taken as 0.6·S_u; basic-size areas (no allowance/tolerance derating) — apply ≥1.5× on L_e_min for production. Soft tapped materials (aluminum ≈ 1.5·d, plastics ≈ 2·d) drive the internal-strip line down fast: drop S_u nut/tap accordingly.</p>');
 };
 /* ============================================================
  * STRESS MODULE — revive the dead σx card + honor the st-u unit
@@ -2613,6 +2688,8 @@ window.addEventListener('DOMContentLoaded',()=>{
     injectTolRows();
     injectNatConv();
     injectFouledU();
+    injectAgmaPitting();
+    injectThreadEngage();
     window.calcFits();
     const typeEl=$('sp-type');if(typeEl)typeEl.addEventListener('change',()=>{gateBellevillePresets();window.calcSpring();});
     wireLive('v-springs',window.calcSpring);

@@ -1,5 +1,8 @@
 # Architecture Map — amni-scient.com
 
+## v5.56.0 Amni-Calc AGMA pitting + thread stripping (2026-07-10)
+- calc-fixes.js (`?v=eng7`): `#ag-card` injected in v-gears (calcAgmaPitting: Z_I=cosφsinφ/2·mG/(mG+1), σ_H per Shigley 14-16 SI, S_c=2.22HB+200 Gr.1, S_H status gates 1.2/1.0; Z_E dropdown steel-steel 191 √MPa + custom, K_s/Z_R=1 noted). `#te-card` injected in v-bolts right column (calcThreadEngage: basic-size A_ext=0.75πK_n·L_e / A_int=0.875πd·L_e, K_n=d−1.0825p, strip=0.6S_u·A, L_e_min=break/strip-rate, mode callout; reads bl-size). calcBolt tail also syncs grade S_u → te-sub + refires calcThreadEngage.
+
 ## v5.55.0 Amni-Calc Stack-up + Churchill-Chu + TEMA fouling (2026-07-10)
 - calc-fixes.js (`?v=eng6`): TOLERANCE STACK-UP static card in v-fits (`#ts-rows` dynamic rows ts-lbl/nom/tol/sgn-N, addTolRow/calcTolStack, injectTolRows seeds 3); NATURAL CONVECTION injected card `#nc-card` in v-thermal (calcNatConv: Ra=gβΔTL³/ν²·Pr, Nu={0.825|0.60 + 0.387Ra^⅙/[1+(0.492|0.559/Pr)^(9/16)]^(8/27)}², airProps() interp 250–500K clamped-with-warning, manual-props row for other fluids, h → tv-h); FOULED U injected card `#fu-card` in v-hx (TEMA_RF list, U_dirty=1/(1/Uc+ΣRf) → hx-u + calcLMTD refire). All outputs via _mr; init calls injectTolRows/injectNatConv/injectFouledU.
 - Tests `calc/tests/gaps2_audit.js` (13: WC/RSS, air-prop interp @313K, Churchill-Chu plate anchor h≈4.9±, cylinder band, Ra~L³, fouled-U arithmetic, TEMA unit conversion).

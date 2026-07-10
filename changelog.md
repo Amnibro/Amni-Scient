@@ -1,5 +1,9 @@
 # Changelog 
 
+## Amni-Calc v5.56.0 — AGMA pitting + thread stripping - 2026-07-10
+- **AGMA pitting (surface durability)** in Gears: σ_H = Z_E·√(W_t·K_o·K_v·K_H/(d_p·b·Z_I)) with spur geometry factor Z_I from φ and m_G, Grade-1 allowable S_c = 2.22·HB+200, and a pitting safety factor with status. Gears previously had only Lewis bending — pitting usually governs hardened industrial gears.
+- **Thread engagement / stripping** in Bolts: basic-size FED-STD-H28 shear areas (A_ext = 0.75π·K_n·L_e, A_int = 0.875π·d·L_e), strip forces both sides at 0.6·S_u, governing failure mode, and the minimum engagement for break-before-strip. Bolt size and S_u follow the joint card automatically; the old "1.0·d steel / 1.5·d aluminum" note is now a real calculation. Tests: gaps2_audit.js grows to 21 (Z_I ≈ 0.1286 anchor, M12 minor-dia/area/L_e-min checks); all suites green. Cache-buster calc-fixes.js?v=eng7.
+
 ## Amni-Calc v5.55.0 — Tolerance stack-up, natural convection, fouled U - 2026-07-10
 - **Tolerance stack-up (WC / RSS)** in Fits & Tol: build a ± dimension chain (add/remove rows, +/− direction), get the nominal gap, worst-case limits, RSS ±3σ limits, and the top contributor to variance — with an interference warning when the worst case goes negative.
 - **Natural convection (Churchill-Chu)** in Thermal: vertical-plate and horizontal-cylinder correlations across all Ra, air properties auto-interpolated at film temperature (Incropera A.4) or fully manual for other fluids; computed h auto-fills the Convection card. Closes the free-convection gap (Dittus-Boelter only covered forced flow). Textbook anchor verified: 0.5 m plate, 60→20 °C → h ≈ 4.9 W/m²K.
