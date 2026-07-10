@@ -1,5 +1,9 @@
 # Changelog 
 
+## Amni-Calc v5.49.0 — Theme-true visuals + clean printouts - 2026-07-10
+- Belleville pack-view discs now tint from the live accent color (theme-aware) instead of a hardcoded orange; toggling light/dark re-renders the active module so plots and canvases repaint in the new palette immediately (previously they kept stale colors until the next input change).
+- Print pass: goal-seek panels, quick-nav chips and the sidebar filter are excluded from printouts. Cache-busters calc-engineer.js?v=eng6, calc-fixes.js?v=eng3.
+
 ## Amni-Learn v5.48.0 — Module /loop iter 2: Connect the Dots overhaul - 2026-07-10
 - **Broken shapes fixed**: Mug, Bowtie, Sword and Flag were single polylines with mid-shape "jumps" that drew stray diagonals (the mug's handle jump cut a line across its body) and never closed. All four redesigned as clean single closed outlines (Flag → swallowtail Banner Flag); every 2D shape at L1/L2 is now `closed:true` and fills on completion.
 - **Real randomization**: the pool is shuffled per module open — it used to start at Triangle and play the identical sequence every session.

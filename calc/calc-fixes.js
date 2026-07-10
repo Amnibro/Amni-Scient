@@ -991,7 +991,7 @@ function drawSpringAnim(d,D,nt,fl,deflectedL,type){
 function drawBellDisc(x,cx,y,ro,ri,h,t,up,th){
   const L1=up?[[cx-ro,y+h],[cx-ri,y],[cx-ri,y+t],[cx-ro,y+h+t]]:[[cx-ro,y],[cx-ri,y+h],[cx-ri,y+h+t],[cx-ro,y+t]];
   const R1=L1.map(p=>[2*cx-p[0],p[1]]);
-  [L1,R1].forEach(q=>{x.beginPath();x.moveTo(q[0][0],q[0][1]);q.slice(1).forEach(p=>x.lineTo(p[0],p[1]));x.closePath();x.fillStyle='rgba(255,153,102,0.25)';x.fill();x.strokeStyle=th.accent||'#f96';x.lineWidth=1.5;x.stroke();});
+  [L1,R1].forEach(q=>{x.beginPath();x.moveTo(q[0][0],q[0][1]);q.slice(1).forEach(p=>x.lineTo(p[0],p[1]));x.closePath();x.fillStyle=(/^#[0-9a-f]{6}$/i.test(th.accent)?th.accent+'38':'rgba(255,153,102,0.25)');x.fill();x.strokeStyle=th.accent||'#f96';x.lineWidth=1.5;x.stroke();});
 }
 function drawCoilMini(x,cx,yTop,w,h,turns,th){
   x.strokeStyle=th.accent||'#f96';x.lineWidth=2;x.beginPath();

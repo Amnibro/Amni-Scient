@@ -1,5 +1,10 @@
 # Architecture Map — amni-scient.com
 
+## v5.49.0 Amni-Calc Theme-true visuals + print pass (2026-07-10, /loop iter 5)
+- calc-fixes.js (`?v=eng3`): drawBellDisc fill = `th.accent+'38'` (8-digit hex alpha) when accent is 6-hex, fallback rgba orange.
+- calc-engineer.js (`?v=eng6`): `.theme-toggle` click delegate re-runs the active view's calc fn (+120ms) so canvases/plots repaint in the new theme.
+- index.html print CSS additionally hides `.eng-solve,.qn-row,.side-find,.eng-solve-btn`.
+
 ## v5.48.0 Amni-Learn module /loop iter 2 — Connect the Dots (2026-07-10)
 - `learn/learn-app.js` `initDots` SHAPES data: Mug/Bowtie/Sword/Flag rebuilt as single closed outlines (the old ones were polylines with mid-shape jumps → stray diagonal lines + open regions; the engine draws ALL consecutive points as one connected path, so 2D multi-part shapes MUST be a single closed loop — no pen-lift support). +4 new: Circle 12-dot, Ice Cream (L1), Butterfly, Snowman (L2) → 16 shapes per level. RULE for new 2D shapes: closed:true, every vertex ≥12px from every other (the <10px group-merge in drawFunc would fuse them), points within 20-380.
 - `shapeList` now Fisher-Yates shuffled per initDots (was fixed order starting at Triangle every session).

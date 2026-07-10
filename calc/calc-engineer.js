@@ -134,7 +134,8 @@ try{PREF=JSON.parse(localStorage.getItem(LSP)||'{}')||{}}catch(e){PREF={}}
 wrapUsys();injectFind();injectDesc();injectQuickNav();injectSolve();scan();
 document.addEventListener('click',function(e){var el=e.target&&e.target.closest?e.target.closest('.result-item .val'):null;if(!el||!el.dataset.bu)return;var d=el.dataset.dim,us=Object.keys(DIMX[d].u).filter(function(u2){return u2!=='m³/h'&&u2!=='µm'}),cur=el.dataset.du||el.dataset.bu,nx=us[(us.indexOf(cur)+1)%us.length];PREF[d]=nx;try{localStorage.setItem(LSP,JSON.stringify(PREF))}catch(err){}scan()});
 new MutationObserver(function(ms){for(var i2=0;i2<ms.length;i2++)if(ms[i2].addedNodes&&ms[i2].addedNodes.length){scan();return}}).observe(document.body,{childList:true,subtree:true});
-document.addEventListener('click',function(e){var tb=e.target&&e.target.closest?e.target.closest('.sidebar .tab'):null;tb&&setTimeout(function(){tb.scrollIntoView({block:'nearest'})},60)});
+document.addEventListener('click',function(e){var tb=e.target&&e.target.closest?e.target.closest('.sidebar .tab'):null;tb&&setTimeout(function(){tb.scrollIntoView({block:'nearest'})},60);
+var th=e.target&&e.target.closest?e.target.closest('.theme-toggle'):null;th&&setTimeout(function(){var vw=document.querySelector('.view.active'),bt=vw&&vw.querySelector('button[onclick]'),fn=bt&&calcName(bt);fn&&typeof window[fn]==='function'&&function(){try{window[fn]()}catch(err){}}()},120)});
 setTimeout(function(){injectQuickNav();injectSolve();var at=document.querySelector('.sidebar .tab.active');at&&at.scrollIntoView({block:'nearest'})},1800);
 setTimeout(function(){injectQuickNav();injectSolve()},3600)}
 document.readyState==='loading'?document.addEventListener('DOMContentLoaded',init):init();
