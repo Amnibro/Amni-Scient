@@ -1480,15 +1480,15 @@
     }
   }
   const PHON_LETTERS=[
-    {l:'A',s:'ah',w:'Apple',e:'🍎'},{l:'B',s:'bah',w:'Ball',e:'⚽'},{l:'C',s:'kah',w:'Cat',e:'🐱'},
-    {l:'D',s:'dah',w:'Dog',e:'🐶'},{l:'E',s:'eh',w:'Egg',e:'🥚'},{l:'F',s:'fah',w:'Fish',e:'🐟'},
-    {l:'G',s:'gah',w:'Goat',e:'🐐'},{l:'H',s:'hah',w:'Hat',e:'🎩'},{l:'I',s:'ih',w:'Igloo',e:'🧊'},
-    {l:'J',s:'jah',w:'Jam',e:'🍯'},{l:'K',s:'kah',w:'Kite',e:'🪁'},{l:'L',s:'lah',w:'Lion',e:'🦁'},
-    {l:'M',s:'mah',w:'Moon',e:'🌙'},{l:'N',s:'nah',w:'Nest',e:'🪺'},{l:'O',s:'aw',w:'Octopus',e:'🐙'},
-    {l:'P',s:'pah',w:'Pig',e:'🐷'},{l:'Q',s:'kwah',w:'Queen',e:'👑'},{l:'R',s:'rah',w:'Rain',e:'🌧️'},
-    {l:'S',s:'sss',w:'Sun',e:'☀️'},{l:'T',s:'tah',w:'Tree',e:'🌳'},{l:'U',s:'uh',w:'Umbrella',e:'☂️'},
-    {l:'V',s:'vah',w:'Van',e:'🚐'},{l:'W',s:'wah',w:'Watermelon',e:'🍉'},{l:'X',s:'kss',w:'Fox',e:'🦊'},
-    {l:'Y',s:'yah',w:'Yarn',e:'🧶'},{l:'Z',s:'zzz',w:'Zebra',e:'🦓'}
+    {l:'A',s:'aaa',w:'Apple',e:'🍎'},{l:'B',s:'buh',w:'Ball',e:'⚽'},{l:'C',s:'kuh',w:'Cat',e:'🐱'},
+    {l:'D',s:'duh',w:'Dog',e:'🐶'},{l:'E',s:'ehh',w:'Egg',e:'🥚'},{l:'F',s:'fff',w:'Fish',e:'🐟'},
+    {l:'G',s:'guh',w:'Goat',e:'🐐'},{l:'H',s:'huh',w:'Hat',e:'🎩'},{l:'I',s:'ihh',w:'Igloo',e:'🧊'},
+    {l:'J',s:'juh',w:'Jam',e:'🍯'},{l:'K',s:'kuh',w:'Kite',e:'🪁'},{l:'L',s:'lll',w:'Lion',e:'🦁'},
+    {l:'M',s:'mmm',w:'Moon',e:'🌙'},{l:'N',s:'nnn',w:'Nest',e:'🪺'},{l:'O',s:'aww',w:'Octopus',e:'🐙'},
+    {l:'P',s:'puh',w:'Pig',e:'🐷'},{l:'Q',s:'kwuh',w:'Queen',e:'👑'},{l:'R',s:'rrr',w:'Rain',e:'🌧️'},
+    {l:'S',s:'sss',w:'Sun',e:'☀️'},{l:'T',s:'tuh',w:'Tree',e:'🌳'},{l:'U',s:'uhh',w:'Umbrella',e:'☂️'},
+    {l:'V',s:'vvv',w:'Van',e:'🚐'},{l:'W',s:'wuh',w:'Watermelon',e:'🍉'},{l:'X',s:'ks',w:'Fox',e:'🦊'},
+    {l:'Y',s:'yuh',w:'Yarn',e:'🧶'},{l:'Z',s:'zzz',w:'Zebra',e:'🦓'}
   ];
   const PHON_WORDS=[
     {w:'cat',c:['c','a','t'],e:'🐱'},{w:'dog',c:['d','o','g'],e:'🐶'},{w:'sun',c:['s','u','n'],e:'☀️'},
@@ -1515,28 +1515,32 @@
     ['sock','🧦','clock','🕐','rock','🪨'],['fox','🦊','box','📦'],['star','⭐','car','🚗','guitar','🎸'],
     ['mouse','🐭','house','🏠'],['ball','⚽','wall','🧱'],['fish','🐟','dish','🍽️']
   ];
-  const PHON_SP={a:'ah',b:'bah',c:'kah',d:'dah',e:'eh',f:'fah',g:'gah',h:'hah',i:'ih',j:'jah',k:'kah',l:'lah',m:'mah',n:'nah',o:'aw',p:'pah',q:'kwah',r:'rah',s:'sss',t:'tah',u:'uh',v:'vah',w:'wah',x:'kss',y:'yah',z:'zzz',sh:'shah',ch:'chah',ck:'kah',oo:'oo',ee:'ee',ai:'ay',oa:'oh',ng:'ing',ke:'kah'};
-  const _phonSnd=(x)=>PHON_SP[String(x).toLowerCase()]||x;
+  const PHON_SP={a:'aaa',b:'buh',c:'kuh',d:'duh',e:'ehh',f:'fff',g:'guh',h:'huh',i:'ihh',j:'juh',k:'kuh',l:'lll',m:'mmm',n:'nnn',o:'aww',p:'puh',q:'kwuh',r:'rrr',s:'sss',t:'tuh',u:'uhh',v:'vvv',w:'wuh',x:'ks',y:'yuh',z:'zzz',sh:'shhh',ch:'chuh',ck:'kuh',oo:'ooo',ee:'eee',ai:'ayy',oa:'ohh',ng:'nng',ke:'kuh'};
+  const _phonSnd=(x)=>{const k=String(x).toLowerCase();return PHON_SP[k]||k;};
+  function _phonLetterSay(c){const snd=_phonSnd(c.l);return c.w+'. '+c.w+' starts with '+snd+'. The letter '+c.l+' says '+snd+'.';}
+  function _phonSoundAsk(c){const snd=_phonSnd(c.l);return 'Listen. '+snd+'. Which letter says '+snd+'?';}
+  function _phonSoundYes(c){const snd=_phonSnd(c.l);return 'Yes! '+c.l+' says '+snd+'. '+c.w+' starts with '+snd+'.';}
+  function _phonBlendSay(cur){return [...cur.c.map(_phonSnd), 'That makes '+cur.w+'!'];}
   let phonIdx=0,phonWordIdx=0,phonMatch=null,phonRhyme=null;
-  function _phonSpeak(text){if(typeof speakText==='function')speakText(text);}
+  function _phonSpeak(text){if(typeof speakSeq==='function')speakSeq([text]);else if(typeof speakText==='function')speakText(text);}
   function _phonMark(){localStorage.setItem('phon-words-seen',String(_intLS('phon-words-seen')+1));}
   function renderPhonLetters(){
     const pane=$$('#phon-letters-pane');if(!pane)return;
     const cur=PHON_LETTERS[phonIdx];
     const grid=PHON_LETTERS.map((p,i)=>`<button class="phon-tile${i===phonIdx?' on':''}" data-i="${i}" aria-label="Letter ${p.l}">${p.l}</button>`).join('');
-    pane.innerHTML=`<div class="phon-letter-grid">${grid}</div><div class="phon-detail"><div class="pd-emoji">${cur.e}</div><div class="pd-letter">${cur.l}</div><div class="pd-sound">&quot;${cur.s}&quot; like ${cur.w}</div><button class="phon-hear-btn" id="phon-hear">🔊 Hear It</button></div>`;
-    pane.querySelectorAll('.phon-tile').forEach(btn=>btn.addEventListener('click',()=>{phonIdx=Number(btn.dataset.i);renderPhonLetters();const c=PHON_LETTERS[phonIdx];_phonSpeak(c.l+'. '+c.s+'. like '+c.w);}));
-    $$('#phon-hear').addEventListener('click',()=>{const c=PHON_LETTERS[phonIdx];_phonSpeak(c.l+'. '+c.s+'. like '+c.w);});
+    pane.innerHTML=`<div class="phon-letter-grid">${grid}</div><div class="phon-detail"><div class="pd-emoji">${cur.e}</div><div class="pd-letter">${cur.l}</div><div class="pd-sound">Sound: &quot;${cur.s}&quot; · ${cur.w} starts with it</div><button class="phon-hear-btn" id="phon-hear">🔊 Hear It</button></div>`;
+    pane.querySelectorAll('.phon-tile').forEach(btn=>btn.addEventListener('click',()=>{phonIdx=Number(btn.dataset.i);renderPhonLetters();_phonSpeak(_phonLetterSay(PHON_LETTERS[phonIdx]));}));
+    $('#phon-hear').addEventListener('click',()=>_phonSpeak(_phonLetterSay(PHON_LETTERS[phonIdx])));
   }
   function renderPhonWord(){
     const pane=$$('#phon-words-pane');if(!pane)return;
     const cur=PHON_WORDS[phonWordIdx];
     const chunks=cur.c.map(c=>`<button class="phon-chunk" data-c="${c}">${c}</button>`).join('');
     pane.innerHTML=`<div class="phon-word-card"><div class="phon-word-emoji">${cur.e}</div><div class="phon-blend-row">${chunks}</div><button class="phon-hear-btn" id="phon-blend-btn">🔊 Blend It</button><div class="phon-word-nav"><button class="phon-tab" id="phon-word-prev">◀ Prev</button><button class="phon-tab" id="phon-word-next">Next ▶</button></div></div>`;
-    pane.querySelectorAll('.phon-chunk').forEach(btn=>btn.addEventListener('click',()=>_phonSpeak(_phonSnd(btn.dataset.c))));
-    $$('#phon-blend-btn').addEventListener('click',()=>{if(typeof speakSeq==='function')speakSeq([...cur.c.map(_phonSnd),cur.w]);else _phonSpeak(cur.w);});
-    $$('#phon-word-prev').addEventListener('click',()=>{phonWordIdx=(phonWordIdx-1+PHON_WORDS.length)%PHON_WORDS.length;renderPhonWord();const c=PHON_WORDS[phonWordIdx];if(typeof speakSeq==='function')speakSeq([...c.c.map(_phonSnd),c.w]);});
-    $$('#phon-word-next').addEventListener('click',()=>{phonWordIdx=(phonWordIdx+1)%PHON_WORDS.length;_phonMark();renderPhonWord();const c=PHON_WORDS[phonWordIdx];if(typeof speakSeq==='function')speakSeq([...c.c.map(_phonSnd),c.w]);});
+    pane.querySelectorAll('.phon-chunk').forEach(btn=>btn.addEventListener('click',()=>{const snd=_phonSnd(btn.dataset.c);_phonSpeak(snd+'. '+snd+'.');}));
+    $('#phon-blend-btn').addEventListener('click',()=>{if(typeof speakSeq==='function')speakSeq(_phonBlendSay(cur));else _phonSpeak(cur.w);});
+    $('#phon-word-prev').addEventListener('click',()=>{phonWordIdx=(phonWordIdx-1+PHON_WORDS.length)%PHON_WORDS.length;renderPhonWord();const c=PHON_WORDS[phonWordIdx];if(typeof speakSeq==='function')speakSeq(_phonBlendSay(c));});
+    $('#phon-word-next').addEventListener('click',()=>{phonWordIdx=(phonWordIdx+1)%PHON_WORDS.length;_phonMark();renderPhonWord();const c=PHON_WORDS[phonWordIdx];if(typeof speakSeq==='function')speakSeq(_phonBlendSay(c));});
   }
   function _phonPickN(pool,n,skip){
     const arr=pool.filter(x=>x!==skip),res=[];
@@ -1561,18 +1565,18 @@
     const tiles=_phonPickN([target,...others],3,null);
     phonMatch.firstTry=true;
     pane.innerHTML=_phonGameHUD(phonMatch,10)+'<p class="phon-game-q">Which letter says <strong>&quot;'+target.s+'&quot;</strong>?</p><div class="phon-blend-row">'+tiles.map(t=>'<button class="phon-game-tile" data-l="'+t.l+'"'+(t===target?' data-ok="1"':'')+'>'+t.l+'</button>').join('')+'</div><button class="phon-hear-btn" id="phon-match-replay">🔊 Hear It Again</button>';
-    _phonSpeak(target.s+'. Which letter says '+target.s+'?');
-    $$('#phon-match-replay').onclick=()=>_phonSpeak(target.s+'. Which letter says '+target.s+'?');
+    _phonSpeak(_phonSoundAsk(target));
+    $('#phon-match-replay').onclick=()=>_phonSpeak(_phonSoundAsk(target));
     pane.querySelectorAll('.phon-game-tile').forEach(btn=>btn.addEventListener('click',()=>{
       if(btn.dataset.ok){
         if(phonMatch.firstTry){phonMatch.score++;if(typeof addScore==='function')addScore(1);}
         btn.classList.add('phon-right');
-        _phonSpeak('Yes! '+target.l+' says '+target.s+'!');
+        _phonSpeak(_phonSoundYes(target));
         phonMatch.idx++;
         setTimeout(()=>{if(currentGame==='phonics')phonMatchRound();},1100);
       }else{
         phonMatch.firstTry=false;btn.classList.add('phon-wrong');
-        _phonSpeak('Try again! Which letter says '+target.s+'?');
+        _phonSpeak('Not that one. '+_phonSoundAsk(target));
       }
     }));
   }
@@ -1619,7 +1623,7 @@
     els.forEach(([t],i)=>{t.onclick=()=>{show(i);if(i===2){phonMatch={idx:0,score:0};phonMatchRound();}if(i===3){phonRhyme={idx:0,score:0};phonRhymeRound();}};});
     show(0);
     renderPhonLetters();renderPhonWord();
-    if(currentLevel===1&&typeof ttsAuto==='function'&&ttsAuto()){const c=PHON_LETTERS[0];_phonSpeak(c.l+'. '+c.s+'. like '+c.w);}
+    if(currentLevel===1&&typeof ttsAuto==='function'&&ttsAuto())_phonSpeak(_phonLetterSay(PHON_LETTERS[0]));
   }
   function spawnComboPopup(text, near) {
     const el = document.createElement('div'); el.className='combo-popup'; el.textContent=text;
@@ -2168,7 +2172,14 @@
     const book = _storyState.book;
     if (!book) return;
     const text = book.pages[_storyState.pageIdx] || '';
-    if((_kkReady||_hdReady)&&(hdOn()||_hdCtx())&&!_storyState.webFallback){_hdReadPage(text);return;}
+    if((hdOn()||_hdCtx())&&!_storyState.webFallback){
+      if(_kkReady||_hdReady){_hdReadPage(text);return;}
+      _storyWait=text;_speakWait=null;
+      try{if('speechSynthesis' in window)window.speechSynthesis.cancel();}catch(e){}
+      _hdBanner('Loading natural voice... please wait');
+      _piperWarm();
+      return;
+    }
     if (!('speechSynthesis' in window)) return;
     const u = new SpeechSynthesisUtterance(text);
     u.rate = 0.92;
@@ -10512,13 +10523,18 @@ function playAnimalSound(type) {
   async function _synthWav(text,speed){if(_hdReady){try{const m=await _hdLoad();return await m.predict({text:text,voiceId:_HDVOICE});}catch(e){}}if(_kkReady||_kkCan()){try{return await _kkWav(text,speed);}catch(e){}}throw new Error('no-synth');}
   function hdOn(){try{return localStorage.getItem('amni-learn-tts-hd')==='on';}catch(e){return false;}}
   function _hdCtx(){return currentGame==='phonics'||currentGame==='storybook';}
-  function _piperWarm(){if(_hdReady)return;let shown=false;_hdLoad(p=>{shown=true;_hdBanner('🎙️ Loading HD voice… '+(p||0)+'%');}).then(()=>{if(shown){_hdBanner('🎙️ HD voice ready!');setTimeout(()=>_hdBanner(null),1800);}}).catch(()=>_hdBanner(null));}
-  function _hdWarm(){if(!_hdReady)_piperWarm();if(_kkCan()&&!_kkReady&&!_kkFailed){let shown=false;_kkLoad(p=>{shown=true;_hdBanner('🎙️ Loading experimental Kokoro… '+(p||0)+'%');}).then(()=>{if(shown){_hdBanner('🎙️ Kokoro ready (experimental)');setTimeout(()=>_hdBanner(null),1800);}}).catch(()=>_hdBanner(null));}}
-  function _hdBanner(msg){let b=document.getElementById('hd-tts-banner');if(!msg){if(b)b.remove();return;}if(!b){b=document.createElement('div');b.id='hd-tts-banner';b.style.cssText='position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:99999;background:#1a1f2e;border:1px solid #4db8ff;color:#cfe8ff;font-family:JetBrains Mono,monospace;font-size:0.8rem;padding:9px 14px;border-radius:10px;box-shadow:0 6px 24px rgba(0,0,0,0.5)';document.body.appendChild(b);}b.textContent=msg;}
+  let _speakWait=null,_storyWait=null,_hdWarming=false;
+  function _flushHdQueue(){
+    if(_storyWait!=null){const t=_storyWait;_storyWait=null;_hdBanner(null);if(typeof _hdReadPage==='function')_hdReadPage(t);return;}
+    if(_speakWait){const q=_speakWait;_speakWait=null;_hdBanner(null);_hdSay(q).catch(()=>_webSeq(q));}
+  }
+  function _piperWarm(){if(_hdReady){_flushHdQueue();return;}if(_hdWarming)return;_hdWarming=true;_hdBanner('Loading natural voice... please wait');_hdLoad(p=>_hdBanner('Loading natural voice... '+(p||0)+'%')).then(()=>{_hdWarming=false;_hdBanner('Natural voice ready!');setTimeout(()=>{if(!_speakWait&&_storyWait==null)_hdBanner(null);},1400);_flushHdQueue();}).catch(()=>{_hdWarming=false;const q=_speakWait;const st=_storyWait;_speakWait=null;_storyWait=null;_hdBanner('Using device voice for now');setTimeout(()=>_hdBanner(null),1800);if(st!=null&&typeof playCurrentPage==='function'){_storyState.webFallback=true;playCurrentPage(true);}else if(q)_webSeq(q);});}
+  function _hdWarm(){if(!_hdReady)_piperWarm();if(_kkCan()&&!_kkReady&&!_kkFailed){let shown=false;_kkLoad(p=>{shown=true;_hdBanner('Loading experimental voice... '+(p||0)+'%');}).then(()=>{if(shown){_hdBanner('Experimental voice ready');setTimeout(()=>_hdBanner(null),1600);}}).catch(()=>_hdBanner(null));}}
+  function _hdBanner(msg){let b=document.getElementById('hd-tts-banner');if(!msg){if(b)b.remove();return;}if(!b){b=document.createElement('div');b.id='hd-tts-banner';b.setAttribute('role','status');b.setAttribute('aria-live','polite');b.style.cssText='position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:99999;background:#1a1f2e;border:2px solid #4db8ff;color:#cfe8ff;font-family:system-ui,sans-serif;font-size:1rem;font-weight:600;padding:12px 18px;border-radius:12px;box-shadow:0 8px 28px rgba(0,0,0,0.55);max-width:90vw;text-align:center';document.body.appendChild(b);}b.textContent=msg;}
   async function _hdLoad(onProg){
     if(_hdReady)return _hdMod;
     if(_hdInit)return _hdInit;
-    _hdInit=(async()=>{const m=await import('/learn/vendor/vits-web/vits-web.js');const have=await m.stored().catch(()=>[]);if(!have.includes(_HDVOICE)){await m.download(_HDVOICE,p=>{const pct=p&&p.total?Math.round(p.loaded/p.total*100):0;if(onProg)onProg(pct);else _hdBanner('🎙️ Loading HD voice… '+pct+'%');});_hdBanner('🎙️ HD voice ready!');setTimeout(()=>_hdBanner(null),1600);}const blob=await m.predict({text:'Hello! Ready to learn.',voiceId:_HDVOICE});if(!blob||!(blob.size>1000))throw new Error('hd-empty');_hdMod=m;_hdReady=true;return m;})();
+    _hdInit=(async()=>{_hdBanner('Loading natural voice... please wait');const m=await import('/learn/vendor/vits-web/vits-web.js');const have=await m.stored().catch(()=>[]);if(!have.includes(_HDVOICE)){await m.download(_HDVOICE,p=>{const pct=p&&p.total?Math.round(p.loaded/p.total*100):0;if(onProg)onProg(pct);else _hdBanner('Loading natural voice... '+pct+'%');});}else{_hdBanner('Warming up natural voice...');}const blob=await m.predict({text:'Hello! Ready to learn.',voiceId:_HDVOICE});if(!blob||!(blob.size>1000))throw new Error('hd-empty');_hdMod=m;_hdReady=true;return m;})();
     try{return await _hdInit;}catch(e){_hdInit=null;throw e;}
   }
   function _hdStop(){_hdGen++;try{if(_hdAudio){_hdAudio.onended=null;_hdAudio.onerror=null;_hdAudio.pause();_hdAudio.src='';_hdAudio=null;}}catch(e){}}
@@ -10532,13 +10548,23 @@ function playAnimalSound(type) {
       (Array.isArray(items)?items:[items]).forEach(t=>{
         const clean=_ttsClean(t); if(!clean) return;
         const u=new SpeechSynthesisUtterance(clean);
-        u.rate=0.9; u.pitch=1.08; u.lang='en-US'; if(v) u.voice=v;
+        u.rate=0.88; u.pitch=1.05; u.lang='en-US'; if(v) u.voice=v;
         window.speechSynthesis.speak(u);
       });
     } catch(e) {}
   }
-  function speakSeq(items){ return (hdOn()||_hdCtx()) ? ((_kkReady||_hdReady) ? (_hdSay(items).catch(()=>_webSeq(items)),void 0) : (_hdWarm(),_webSeq(items))) : _webSeq(items); }
-  function stopSpeech(){ try { if('speechSynthesis' in window) window.speechSynthesis.cancel(); } catch(e) {} _hdStop(); }
+  function speakSeq(items){
+    const arr=(Array.isArray(items)?items:[items]).filter(t=>t!=null&&String(t).trim());
+    if(!arr.length)return;
+    const wantHd=hdOn()||_hdCtx();
+    if(!wantHd)return _webSeq(arr);
+    if(_hdReady||_kkReady)return void _hdSay(arr).catch(()=>_webSeq(arr));
+    _speakWait=arr;_storyWait=null;
+    try{if('speechSynthesis' in window)window.speechSynthesis.cancel();}catch(e){}
+    _hdBanner('Loading natural voice... please wait');
+    _piperWarm();
+  }
+  function stopSpeech(){ try { if('speechSynthesis' in window) window.speechSynthesis.cancel(); } catch(e) {} _hdStop(); _speakWait=null;_storyWait=null; }
   function ttsAuto(){ try { return localStorage.getItem('amni-learn-tts') === 'on'; } catch(e) { return false; } }
   function _syncTTSBtn(){const b=document.getElementById('tts-btn');if(!b)return;const on=ttsAuto();b.textContent=on?'🔊':'🔇';b.setAttribute('aria-pressed',on?'true':'false');b.title='Read aloud ('+(on?'on':'off')+')';}
   function _toggleTTS(){const on=!ttsAuto();try{localStorage.setItem('amni-learn-tts',on?'on':'off');}catch(e){}if(!on)stopSpeech();_syncTTSBtn();if(typeof showFeedback==='function')showFeedback(on?'🔊 Read aloud ON':'🔇 Muted',on?'#2ecc71':'#7a8a9a');if(on&&(hdOn()||_hdCtx())&&!(_kkReady||_hdReady))_hdWarm();}

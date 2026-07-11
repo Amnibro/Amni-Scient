@@ -1,5 +1,11 @@
 # Changelog 
 
+## Amni-Learn v5.79.0 — Toddler phonics speech + wait for natural voice - 2026-07-10
+- **Phonics no longer says "B bah like ball."** Letter teaching uses a toddler script: word first, then pure sound, then letter (`Ball. Ball starts with buh. The letter B says buh.`). Sound map retuned for neural TTS (buh/kuh/mmm/sss..., not bah/kah). Letter Catch + blend path share the same helpers.
+- **No more stock Windows TTS while HD loads.** In Phonics/Storybook (and HD-on), `speakSeq` queues speech, shows `Loading natural voice... please wait` (with download %), and only speaks after Piper is ready. Device voice is last-resort on failure, not the first thing kids hear.
+- Storybook page play waits the same way. `stopSpeech` clears the wait queue. SW `amni-learn-v1271`.
+- Tests: `_phon_script_test.js`, `_tts_wait_probe.js` (zero web-speech during gate, banner present, Piper predicts after release).
+
 ## Amni-Calc v5.80.0 — CAD tube primitive + the flange-tightening sequence card - 2026-07-10
 - **CAD Studio gains TUBE / PIPE**: a true annular primitive (no boolean needed) for bushings, spacers, and pipe segments — its tessellated volume matches the closed-form annular prism to 1e-6 in the audit, and it slots and cuts like everything else.
 - **Bolts gains a TIGHTENING SEQUENCE card (ASME PCC-1)**: bolt count -> the star order riggers and millwrights actually follow (the classic 1-5-3-7-2-6-4-8 for eight bolts falls out exactly), with the 3-pass torque schedule computed from your final torque (25/60/100%) and the rotational check-pass guidance that stops gasket creep from eating the preload. Works for any count 3-48: divisible-by-four counts get the true rotating-quadrant cross, other even counts pair opposites, odd counts get the star polygon — every pattern provably visits each bolt exactly once.

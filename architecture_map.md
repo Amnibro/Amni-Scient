@@ -1,5 +1,10 @@
 # Architecture Map — amni-scient.com
 
+## v5.79.0 Amni-Learn toddler phonics + HD wait banner (2026-07-10)
+- Phonics scripts: `_phonLetterSay` / `_phonSoundAsk` / `_phonSoundYes` / `_phonBlendSay` + retuned `PHON_SP` (buh not bah). Teach order = concrete word -> pure sound -> letter.
+- HD wait: `_speakWait` / `_storyWait` queue; `speakSeq` and storybook `playCurrentPage` do NOT call `_webSeq` until Piper ready (banner: `Loading natural voice... please wait`). Flush via `_flushHdQueue` on warm success.
+- SW v1270->v1271. Probes: `_phon_script_test.js`, `_tts_wait_probe.js`.
+
 ## v5.80.0 Amni-Calc: CAD tube primitive + PCC-1 tightening sequence (2026-07-10, loop iter 9)
 - calc-cad.js (`?v=cad3`): tube(ro,ri,h,n) primitive — direct annular polygons (outer wall outward, inner wall REVERSED winding, annular top/bottom quads), no boolean needed; genFeature clamps ri < 0.98·ro. Anchor: volume = inscribed-prism annulus EXACTLY (1e-6), slot-cut boolean smoke, STL layout.
 - calc-fixes.js (`?v=eng17`): boltSeq(N) — PCC-1 legacy cross patterns: N%4==0 interleave half[j]=floor(j/2)+1+(j%2)(N/4) paired opposite (N8 -> 1,5,3,7,2,6,4,8; N12 -> 1,7,4,10,...), even else sequential opposite pairs, odd star step (N-1)/2 (always coprime, proof: d|N and d|(N-1)/2 -> d|1). injectBoltSeq bsq-card in v-bolts right (bsq-n/bsq-t): star order + 3 passes (25/60/100%) w/ computed torques + rotational check passes note.
