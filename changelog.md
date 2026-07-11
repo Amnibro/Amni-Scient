@@ -1,5 +1,14 @@
 # Changelog 
 
+## Amni-Learn v5.78.0 — Piper-primary neural voice (buzz-proof) - 2026-07-10
+- **Root problem still biting after v5.75**: even CPU-first Kokoro auto-attempted on any `navigator.gpu` machine, and the quiet-frame-only quality gate still let AMD-style continuous buzz through. Users heard noise instead of coherent speech.
+- **Default HD path is now Piper VITS** (`en_US-hfc_female-medium`) — the proven natural neural voice already vendored for Learn. One-time ~63MB download, then offline. Phonics + Storybook warm Piper first; profile toggle labels it clearly.
+- **Kokoro is opt-in only** (`localStorage amni-learn-kk=on`). No more auto-load just because WebGPU exists. WASM fp32 still the only automatic Kokoro tier if forced; WebGPU remains explicit `amni-learn-kk-device=webgpu`.
+- **Stricter `_kkAudioOk`**: clip>8%, quietFrac≥8%, mean/peak crest, ZCR band 200–12000/s, frame-energy variance. **Per-utterance gate** in `_kkWav` disposes the session and fails closed on garbage.
+- **`_hdLoad` always downloads when missing** (no more silent `hd-not-stored` dead-end without a progress callback). Warm-up predict requires a non-empty blob.
+- Web Speech fallback voice picker prefers Microsoft Natural/Neural + Google US English.
+- Verified: `_tts_gate_test.js` 7/7, Playwright `_tts_piper_primary_probe.js` (Piper download+predict, Kokoro stays off, 0 pageerrors). SW `amni-learn-v1270`.
+
 ## Amni-Calc v5.77.0 — Springs you can see, donuts you can model - 2026-07-10
 - **The 3D spring view now matches the math**: conical springs render with their actual taper (large end down, small end from the D1 field), and wave springs get a real crest-to-crest render — alternating-phase sinusoidal rings whose crests touch, the way the part actually stacks — instead of borrowing the helical coil.
 - **CAD Studio grows a TORUS primitive**: model o-ring grooves, donut counterweights, and tube bends. The audit holds it to the same standard as everything else — volume within tessellation distance of the Pappus 2-pi-squared-R-r-squared exact answer and converging toward it as segments increase, and a rod through the donut hole proving disjoint booleans sum exactly.

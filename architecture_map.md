@@ -1,5 +1,13 @@
 # Architecture Map — amni-scient.com
 
+## v5.78.0 Amni-Learn Piper-primary TTS (buzz-proof) (2026-07-10)
+- Priority inverted: **Piper VITS is the default HD neural voice**; Kokoro only if `amni-learn-kk==='on'`.
+- Why: browser Kokoro (onnxruntime-web jsep) keeps producing non-speech on this hardware even after CPU-first; Amni-AI's good path is native PyTorch CPU, not the browser stack. Piper was already the working HD path from v5.51.
+- `_kkAudioOk` hardened (clip / quietFrac / crest / ZCR / frame variance); `_kkWav` per-utterance fail-closed → dispose + `_kkFailed`.
+- `_hdLoad` always downloads missing voice (progress banner when no callback); rejects empty warm-up blob.
+- `_synthWav`: Piper first if ready, else opt-in Kokoro, else throw → Web Speech at callers.
+- Probes: `learn/tests/_tts_gate_test.js`, `learn/tests/_tts_piper_primary_probe.js`. SW v1269→v1270. Backup `backups/kokoro_voice_r5/`.
+
 ## v5.77.0 Amni-Calc: conical/wave 3D renders + CAD torus (2026-07-10, loop iter 7)
 - calc-3d.js (`?v=eng4`): MODS.springs params +cd1/wt/wnw/wnt. CONICAL taper: coil() radius rr = R−(R−R1)·t2 (large end at bottom, R1 from sp-cd1 clamped ≤ R). WAVE render: early-return branch — Nt closed TubeGeometry rings, y = amp·sin(Nw·a + jπ) (alternating phase = crests touch, true crest-to-crest), amp=2t, auto-scale; skips coil/plate path.
 - calc-cad.js (`?v=cad2`): torus(R,r,n,m) primitive (lat-lon quads, winding verified by positive volume), FDEF/genFeature/+TORUS button, exported for node. cad_audit.js +5: torus within 3.5% under Pappus 2π²Rr² AND converges upward at finer tessellation, centroid origin, rod-through-donut-hole disjoint union = EXACT sum (1e-6), torus grooves a block. 27 cad anchors; all 13 suites green (388).

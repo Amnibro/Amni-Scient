@@ -755,7 +755,7 @@
     html.push(_pickerSection('✨ Cursor Trail','cursors','profile-cursor',cursor));
     const ttsOn=localStorage.getItem('amni-learn-tts')==='on';
     const ttsHd=localStorage.getItem('amni-learn-tts-hd')==='on';
-    html.push(`<div style="margin:14px 0 6px;color:#4db8ff;font-size:0.88rem;font-weight:bold">🔊 Read Aloud</div><div style="font-size:0.72rem;color:#7a8a9a;margin-bottom:6px">Off by default. Tap the 🔊 button up top to mute/unmute anytime. When on, auto-speaks questions &amp; choices at Level 1 (Pre-K). The 🔊 buttons in games always work.</div><label style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.18);border-radius:8px;color:var(--text,#ecf0f1);font-family:JetBrains Mono;font-size:0.82rem;cursor:pointer"><input type="checkbox" id="prof-tts" ${ttsOn?'checked':''} style="width:18px;height:18px;cursor:pointer">Read questions aloud automatically (Pre-K)</label><label style="display:flex;align-items:center;gap:10px;padding:8px 10px;margin-top:8px;background:rgba(255,255,255,0.04);border:1px solid rgba(77,184,255,0.35);border-radius:8px;color:var(--text,#ecf0f1);font-family:JetBrains Mono;font-size:0.82rem;cursor:pointer"><input type="checkbox" id="prof-tts-hd" ${ttsHd?'checked':''} style="width:18px;height:18px;cursor:pointer"><span>🎙️ HD neural voice <span style="color:#7a8a9a;font-size:0.7rem">— one-time ~63MB, then offline</span></span></label>`);
+    html.push(`<div style="margin:14px 0 6px;color:#4db8ff;font-size:0.88rem;font-weight:bold">🔊 Read Aloud</div><div style="font-size:0.72rem;color:#7a8a9a;margin-bottom:6px">Off by default. Tap the 🔊 button up top to mute/unmute anytime. When on, auto-speaks questions &amp; choices at Level 1 (Pre-K). The 🔊 buttons in games always work.</div><label style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.18);border-radius:8px;color:var(--text,#ecf0f1);font-family:JetBrains Mono;font-size:0.82rem;cursor:pointer"><input type="checkbox" id="prof-tts" ${ttsOn?'checked':''} style="width:18px;height:18px;cursor:pointer">Read questions aloud automatically (Pre-K)</label><label style="display:flex;align-items:center;gap:10px;padding:8px 10px;margin-top:8px;background:rgba(255,255,255,0.04);border:1px solid rgba(77,184,255,0.35);border-radius:8px;color:var(--text,#ecf0f1);font-family:JetBrains Mono;font-size:0.82rem;cursor:pointer"><input type="checkbox" id="prof-tts-hd" ${ttsHd?'checked':''} style="width:18px;height:18px;cursor:pointer"><span>🎙️ HD neural voice (Piper) <span style="color:#7a8a9a;font-size:0.7rem">— one-time ~63MB, natural offline speech</span></span></label>`);
     html.push('<div style="margin-top:14px;display:flex;gap:8px"><button id="prof-save" class="retro-btn" style="flex:1">SAVE</button><button id="prof-cancel" class="retro-btn" style="flex:1">CLOSE</button></div></div>');
     ov.innerHTML=html.join('');
     document.body.appendChild(ov);
@@ -10459,28 +10459,37 @@ function playAnimalSound(type) {
 
   function _ttsClean(t){return String(t).replace(/[\u{1F000}-\u{1FAFF}\u{2190}-\u{2BFF}\u{2600}-\u{27BF}\u{FE00}-\u{FE0F}\u{1F1E6}-\u{1F1FF}]/gu,'').replace(/\s+/g,' ').trim();}
   let _ttsVoiceCache=null;
-  function _ttsPickVoice(vs){return vs.find(x=>/Samantha|Karen|Google US English|Microsoft Aria|Microsoft Jenny|Microsoft Zira|Allison|Moira|Tessa|Fiona/.test(x.name))||vs.find(x=>/^en[-_]US/i.test(x.lang)&&/female/i.test(x.name))||vs.find(x=>/en[-_]US/i.test(x.lang)&&x.localService)||vs.find(x=>/^en/i.test(x.lang))||null;}
+  function _ttsPickVoice(vs){return vs.find(x=>/Microsoft (Aria|Jenny|Michelle|Natural)|Google US English|Samantha|Karen|Allison|Moira|Tessa|Fiona|Microsoft Zira/i.test(x.name))||vs.find(x=>/en[-_]US/i.test(x.lang)&&/natural|neural|online/i.test(x.name))||vs.find(x=>/^en[-_]US/i.test(x.lang)&&/female/i.test(x.name))||vs.find(x=>/en[-_]US/i.test(x.lang)&&x.localService)||vs.find(x=>/^en/i.test(x.lang))||null;}
   function _ttsVoice(){if(_ttsVoiceCache)return _ttsVoiceCache;_ttsVoiceCache=_ttsPickVoice(window.speechSynthesis.getVoices());return _ttsVoiceCache;}
   if('speechSynthesis' in window){try{window.speechSynthesis.getVoices();window.speechSynthesis.addEventListener('voiceschanged',()=>{_ttsVoiceCache=_ttsPickVoice(window.speechSynthesis.getVoices());});}catch(e){}}
   let _hdMod=null,_hdReady=false,_hdInit=null,_hdAudio=null,_hdGen=0;const _HDVOICE='en_US-hfc_female-medium';
   let _kkTTS=null,_kkReady=false,_kkInit=null,_kkFailed=false,_kkTier=null;const _KKVOICE='af_heart';
   function _kkAudioOk(a){
     const x=a&&a.audio;if(!x||!x.length)return false;
-    let clip=0;for(let i=0;i<x.length;i++){const v=x[i];if(v!==v)return false;if(v>0.98||v<-0.98)clip++;}
-    if(clip/x.length>0.15)return false;
-    const fr=480,rms=[];let maxR=0;
-    for(let o=0;o+fr<=x.length;o+=fr){let s=0;for(let i=o;i<o+fr;i++)s+=x[i]*x[i];const r=Math.sqrt(s/fr);rms.push(r);r>maxR&&(maxR=r);}
+    let clip=0,zcr=0,prev=0;
+    for(let i=0;i<x.length;i++){const v=x[i];if(v!==v)return false;if(v>0.98||v<-0.98)clip++;if(i&&((prev>=0&&v<0)||(prev<0&&v>=0)))zcr++;prev=v;}
+    if(clip/x.length>0.08)return false;
+    const fr=480,rms=[];let maxR=0,sumR=0;
+    for(let o=0;o+fr<=x.length;o+=fr){let s2=0;for(let i=o;i<o+fr;i++)s2+=x[i]*x[i];const r=Math.sqrt(s2/fr);rms.push(r);if(r>maxR)maxR=r;sumR+=r;}
     if(!rms.length||maxR<1e-4)return false;
-    let quiet=0;const thr=Math.max(0.02,maxR*0.1);for(const r of rms)r<thr&&quiet++;
-    return quiet/rms.length>=0.04;
+    let quiet=0;const thr=Math.max(0.015,maxR*0.08);for(const r of rms)if(r<thr)quiet++;
+    const quietFrac=quiet/rms.length;if(quietFrac<0.08)return false;
+    const meanR=sumR/rms.length;if(meanR/maxR>0.55)return false;
+    const sr=(a.sampling_rate||a.sample_rate||24000);const dur=x.length/sr;const zcrRate=zcr/Math.max(0.01,dur);
+    if(zcrRate>12000||zcrRate<200)return false;
+    let varR=0;for(const r of rms)varR+=(r-meanR)*(r-meanR);varR/=rms.length;
+    if(varR<1e-6&&meanR>0.01)return false;
+    return true;
   }
-  function _kkCan(){try{return !_kkFailed&&localStorage.getItem('amni-learn-kk')!=='off'&&(!!navigator.gpu||localStorage.getItem('amni-learn-kk-device')==='wasm');}catch(e){return !!navigator.gpu&&!_kkFailed;}}
+  function _kkCan(){try{return !_kkFailed&&localStorage.getItem('amni-learn-kk')==='on';}catch(e){return false;}}
   async function _kkLoad(onProg){
     if(_kkReady)return _kkTTS;
     if(_kkInit)return _kkInit;
+    if(!_kkCan())throw new Error('kk-disabled');
     _kkInit=(async()=>{
       const m=await import('/learn/vendor/kokoro/kokoro.js');
       try{m.env.backends.onnx.wasm.wasmPaths='/learn/vendor/kokoro/';}catch(e){}
+      try{if(m.env&&m.env.backends&&m.env.backends.onnx){m.env.backends.onnx.wasm.numThreads=1;}}catch(e){}
       let force=null;try{force=localStorage.getItem('amni-learn-kk-device');}catch(e){}
       const tiers=force==='webgpu'?[{device:'webgpu',dtype:'fp32'}]:[{device:'wasm',dtype:'fp32'}];
       let last=null;
@@ -10499,22 +10508,22 @@ function playAnimalSound(type) {
   }
   function _kkPrep(t){t=String(t).replace(/([.!?])\s*(?=[A-Z])/g,'$1 ').replace(/,\s*/g,', ').replace(/!{2,}/g,'!').replace(/\.{3,}/g,'…');const a=t.replace(/[^a-zA-Z]/g,'');if(a&&a.replace(/[^A-Z]/g,'').length/a.length>0.6){t=t.toLowerCase().replace(/(^|[.!?]\s+)([a-z])/g,(m,p,c)=>p+c.toUpperCase()).replace(/\bi\b/g,'I');}return t;}
   function _chunkSpans(text){const spans=[];const re=/[^.!?]*[.!?]+\s*/g;let m;while((m=re.exec(text))){if(m[0].trim())spans.push({s:m.index,e:m.index+m[0].length,t:m[0]});}spans.length?(spans[spans.length-1].e<text.length&&text.slice(spans[spans.length-1].e).trim()&&spans.push({s:spans[spans.length-1].e,e:text.length,t:text.slice(spans[spans.length-1].e)})):spans.push({s:0,e:text.length,t:text});const out=[];for(const sp of spans){const last=out[out.length-1];last&&(last.e-last.s)+(sp.e-sp.s)<140?(last.e=sp.e,last.t+=sp.t):out.push({s:sp.s,e:sp.e,t:sp.t});}return out;}
-  async function _kkWav(text,speed){const t=await _kkLoad();const a=await t.generate(_kkPrep(text),{voice:_KKVOICE,speed:speed||1});return a.toBlob();}
-  async function _synthWav(text,speed){if(_kkReady)try{return await _kkWav(text,speed);}catch(e){}if(_hdReady){const m=await _hdLoad();return m.predict({text:text,voiceId:_HDVOICE});}throw new Error('no-synth');}
+  async function _kkWav(text,speed){const t=await _kkLoad();const a=await t.generate(_kkPrep(text),{voice:_KKVOICE,speed:speed||1});if(!_kkAudioOk(a)){_kkFailed=true;_kkReady=false;try{t.model&&t.model.dispose&&t.model.dispose();}catch(e){}throw new Error('kk-garbage-utt');}return a.toBlob();}
+  async function _synthWav(text,speed){if(_hdReady){try{const m=await _hdLoad();return await m.predict({text:text,voiceId:_HDVOICE});}catch(e){}}if(_kkReady||_kkCan()){try{return await _kkWav(text,speed);}catch(e){}}throw new Error('no-synth');}
   function hdOn(){try{return localStorage.getItem('amni-learn-tts-hd')==='on';}catch(e){return false;}}
   function _hdCtx(){return currentGame==='phonics'||currentGame==='storybook';}
   function _piperWarm(){if(_hdReady)return;let shown=false;_hdLoad(p=>{shown=true;_hdBanner('🎙️ Loading HD voice… '+(p||0)+'%');}).then(()=>{if(shown){_hdBanner('🎙️ HD voice ready!');setTimeout(()=>_hdBanner(null),1800);}}).catch(()=>_hdBanner(null));}
-  function _hdWarm(){if(_kkReady||_hdReady)return;if(!_kkCan())return _piperWarm();let shown=false;_kkLoad(p=>{shown=true;_hdBanner('🎙️ Loading natural voice… '+(p||0)+'%');}).then(()=>{if(shown){_hdBanner('🎙️ Natural voice ready!');setTimeout(()=>_hdBanner(null),1800);}}).catch(()=>{_hdBanner(null);_piperWarm();});}
+  function _hdWarm(){if(!_hdReady)_piperWarm();if(_kkCan()&&!_kkReady&&!_kkFailed){let shown=false;_kkLoad(p=>{shown=true;_hdBanner('🎙️ Loading experimental Kokoro… '+(p||0)+'%');}).then(()=>{if(shown){_hdBanner('🎙️ Kokoro ready (experimental)');setTimeout(()=>_hdBanner(null),1800);}}).catch(()=>_hdBanner(null));}}
   function _hdBanner(msg){let b=document.getElementById('hd-tts-banner');if(!msg){if(b)b.remove();return;}if(!b){b=document.createElement('div');b.id='hd-tts-banner';b.style.cssText='position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:99999;background:#1a1f2e;border:1px solid #4db8ff;color:#cfe8ff;font-family:JetBrains Mono,monospace;font-size:0.8rem;padding:9px 14px;border-radius:10px;box-shadow:0 6px 24px rgba(0,0,0,0.5)';document.body.appendChild(b);}b.textContent=msg;}
   async function _hdLoad(onProg){
     if(_hdReady)return _hdMod;
     if(_hdInit)return _hdInit;
-    _hdInit=(async()=>{const m=await import('/learn/vendor/vits-web/vits-web.js');const have=await m.stored().catch(()=>[]);if(!have.includes(_HDVOICE)){if(!onProg)throw new Error('hd-not-stored');await m.download(_HDVOICE,p=>onProg(p&&p.total?Math.round(p.loaded/p.total*100):0));}await m.predict({text:'Ready',voiceId:_HDVOICE}).catch(()=>{});_hdMod=m;_hdReady=true;return m;})();
+    _hdInit=(async()=>{const m=await import('/learn/vendor/vits-web/vits-web.js');const have=await m.stored().catch(()=>[]);if(!have.includes(_HDVOICE)){await m.download(_HDVOICE,p=>{const pct=p&&p.total?Math.round(p.loaded/p.total*100):0;if(onProg)onProg(pct);else _hdBanner('🎙️ Loading HD voice… '+pct+'%');});_hdBanner('🎙️ HD voice ready!');setTimeout(()=>_hdBanner(null),1600);}const blob=await m.predict({text:'Hello! Ready to learn.',voiceId:_HDVOICE});if(!blob||!(blob.size>1000))throw new Error('hd-empty');_hdMod=m;_hdReady=true;return m;})();
     try{return await _hdInit;}catch(e){_hdInit=null;throw e;}
   }
   function _hdStop(){_hdGen++;try{if(_hdAudio){_hdAudio.onended=null;_hdAudio.onerror=null;_hdAudio.pause();_hdAudio.src='';_hdAudio=null;}}catch(e){}}
   function _hdPlayBlob(b){return new Promise(res=>{let a;try{a=new Audio(URL.createObjectURL(b));}catch(e){return res();}_hdAudio=a;const done=()=>{try{URL.revokeObjectURL(a.src);}catch(e){}res();};a.onended=done;a.onerror=done;a.play().catch(done);});}
-  async function _hdSay(items){_hdStop();const gen=_hdGen;if(!_kkReady&&!_hdReady)await(_kkCan()?_kkLoad().catch(()=>_hdLoad()):_hdLoad());if(gen!==_hdGen)return;const arr=(Array.isArray(items)?items:[items]).map(_ttsClean).filter(Boolean);const parts=arr.flatMap(t=>_chunkSpans(t).map(c=>c.t));const pre=t=>{const p=_synthWav(t);p.catch(()=>{});return p;};let next=parts.length?pre(parts[0]):null;for(let i=0;i<parts.length;i++){if(gen!==_hdGen)return;const wav=await next;next=i+1<parts.length?pre(parts[i+1]):null;if(gen!==_hdGen)return;await _hdPlayBlob(wav);}}
+  async function _hdSay(items){_hdStop();const gen=_hdGen;if(!_hdReady&&!_kkReady){try{await _hdLoad();}catch(e){if(_kkCan())try{await _kkLoad();}catch(_){}}}if(gen!==_hdGen)return;const arr=(Array.isArray(items)?items:[items]).map(_ttsClean).filter(Boolean);const parts=arr.flatMap(t=>_chunkSpans(t).map(c=>c.t));const pre=t=>{const p=_synthWav(t);p.catch(()=>{});return p;};let next=parts.length?pre(parts[0]):null;for(let i=0;i<parts.length;i++){if(gen!==_hdGen)return;let wav;try{wav=await next;}catch(e){if(gen!==_hdGen)return;_webSeq([parts[i]]);continue;}next=i+1<parts.length?pre(parts[i+1]):null;if(gen!==_hdGen)return;await _hdPlayBlob(wav);}}
   function _webSeq(items){
     if(!('speechSynthesis' in window)) return;
     try {
