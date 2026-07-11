@@ -135,6 +135,20 @@ function sphere(r,n,m){
   }
   return polys;
 }
+function tube(ro,ri,h,n){
+  n=n||32;const polys=[],y0=-h/2,y1=h/2;
+  const pt=(r,y,a)=>({x:r*Math.cos(a),y,z:r*Math.sin(a)});
+  for(let i=0;i<n;i++){
+    const a0=i/n*2*Math.PI,a1=(i+1)/n*2*Math.PI;
+    const ob0=pt(ro,y0,a0),ob1=pt(ro,y0,a1),ot0=pt(ro,y1,a0),ot1=pt(ro,y1,a1);
+    const ib0=pt(ri,y0,a0),ib1=pt(ri,y0,a1),it0=pt(ri,y1,a0),it1=pt(ri,y1,a1);
+    polys.push(new Polygon([ob0,ot0,ot1,ob1].map(v=>new Vertex(v))));
+    polys.push(new Polygon([ib0,ib1,it1,it0].map(v=>new Vertex(v))));
+    polys.push(new Polygon([ot0,it0,it1,ot1].map(v=>new Vertex(v))));
+    polys.push(new Polygon([ob0,ob1,ib1,ib0].map(v=>new Vertex(v))));
+  }
+  return polys;
+}
 function torus(R,r,n,m){
   n=n||32;m=m||16;const polys=[];
   const pt=(a,b)=>({x:(R+r*Math.cos(b))*Math.cos(a),y:r*Math.sin(b),z:(R+r*Math.cos(b))*Math.sin(a)});
@@ -186,7 +200,7 @@ function toSTL(polys){
   }
   return buf;
 }
-if(typeof module!=='undefined'&&module.exports)module.exports={cube,cylinder,sphere,torus,transform,csgUnion,csgSubtract,csgIntersect,massProps,toSTL};
+if(typeof module!=='undefined'&&module.exports)module.exports={cube,cylinder,sphere,torus,tube,transform,csgUnion,csgSubtract,csgIntersect,massProps,toSTL};
 if(typeof document==='undefined')return;
 /* ============ browser UI ============ */
 const D=document,W=window,$=id=>D.getElementById(id);
@@ -196,7 +210,8 @@ const FDEF={
   cyl:{n:'CYLINDER',p:{r:15,h:40}},
   cone:{n:'CONE',p:{r1:20,r2:8,h:35}},
   sphere:{n:'SPHERE',p:{r:18}},
-  torus:{n:'TORUS',p:{R:25,r:8}}
+  torus:{n:'TORUS',p:{R:25,r:8}},
+  tube:{n:'TUBE / PIPE',p:{ro:20,ri:15,h:40}}
 };
 const CAD=W.__CAD={features:[],nid:1,polys:null,built:false};
 function genFeature(f){
@@ -204,6 +219,7 @@ function genFeature(f){
     :f.type==='cyl'?cylinder(f.p.r,f.p.r,f.p.h,32)
     :f.type==='cone'?cylinder(f.p.r1,f.p.r2,f.p.h,32)
     :f.type==='torus'?torus(f.p.R,f.p.r,32,16)
+    :f.type==='tube'?tube(f.p.ro,Math.min(f.p.ri,f.p.ro*0.98),f.p.h,32)
     :sphere(f.p.r,24,12);
   return transform(base,f.rot.x,f.rot.y,f.rot.z,f.pos.x,f.pos.y,f.pos.z);
 }

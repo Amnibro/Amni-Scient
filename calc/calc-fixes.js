@@ -1795,6 +1795,39 @@ window.calcSlingCg=function(){
     (low?'<div class="note warn" style="margin-top:.4rem">A leg is below 30° — re-rig before lifting.</div>':'')+
     '<p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem">Statics: the leg NEARER the CoG carries more — vertical share V₁ = W·d₂/(d₁+d₂), tension T = V·L/h. Size BOTH slings for the near-leg tension so the load can&#39;t be hooked backwards. Hook must sit plumb over the CoG or the load rotates on pick.</p>');
 };
+function boltSeq(N){
+  if(N<3)return Array.from({length:N},(_,i)=>i+1);
+  if(N%4===0)return Array.from({length:N/2},(_,j)=>Math.floor(j/2)+1+(j%2)*(N/4)).flatMap(x=>[x,x+N/2]);
+  if(N%2===0)return Array.from({length:N/2},(_,j)=>j+1).flatMap(x=>[x,x+N/2]);
+  const step=(N-1)/2,out=[];let p=1;
+  for(let i=0;i<N;i++){out.push(p);p=(p-1+step)%N+1;}
+  return out;
+}
+function injectBoltSeq(){
+  const vw=$('v-bolts');if(!vw||$('bsq-card'))return;
+  const host=vw.querySelector('.split>div:last-child')||vw;
+  const card=document.createElement('div');card.className='card bolt-x';card.id='bsq-card';card.style.marginTop='.6rem';
+  card.innerHTML='<h3>TIGHTENING SEQUENCE (ASME PCC-1)</h3>'+
+    '<div class="row">'+
+    '<div class="field"><label for="bsq-n"># BOLTS</label><input type="number" id="bsq-n" value="8" step="1" min="3" max="48"></div>'+
+    '<div class="field"><label for="bsq-t">FINAL TORQUE (N·m)</label><input type="number" id="bsq-t" value="180" step="any"></div>'+
+    '</div><button class="btn btn-sm" onclick="calcBoltSeq()" style="margin-top:.6rem">SEQUENCE</button><div id="bsq-out"></div>';
+  host.appendChild(card);
+}
+window.calcBoltSeq=function(){
+  const o=$('bsq-out');if(!o)return;
+  const N=Math.max(3,Math.min(48,Math.round(v('bsq-n')||8))),T=v('bsq-t')||0;
+  const seq=boltSeq(N);
+  const pass=f=>T>0?' — '+Math.round(T*f)+' N·m':'';
+  _mr(o,'<div style="margin-top:.6rem"><div class="result-grid">'+[
+    ['STAR ORDER',seq.join(' → '),'ok'],
+    ['Pass 1 (20-30%)','star order'+pass(0.25)],
+    ['Pass 2 (50-70%)','star order'+pass(0.6)],
+    ['Pass 3 (100%)','star order'+pass(1)],
+    ['Check passes','ROTATIONAL (1→'+N+' clockwise) at 100% until no nut moves']
+  ].map(x=>`<div class="result-item"><div class="lbl">${x[0]}</div><div class="val ${x[2]||''}">${x[1]}</div></div>`).join('')+'</div></div>'+
+    '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">ASME PCC-1 legacy cross pattern: opposite bolts in rotating quadrants so the flange pulls down flat instead of cocking. Number the bolts clockwise from 12 o&#39;clock. After pass 3, keep circling at full torque until nothing turns — gasket creep gives back preload for several rounds. Lubricate threads AND nut face, and use the K value that matches that lubricant in the JOINT card above.</p>');
+};
 const DP_CD={orifice:['Sharp-edge orifice',0.61],nozzle:['Flow nozzle',0.96],venturi:['Venturi',0.98],custom:['Custom C_d',0]};
 function injectFlowMeter(){
   const vw=$('v-fluids');if(!vw||$('dp-card'))return;
@@ -3862,6 +3895,7 @@ window.addEventListener('DOMContentLoaded',()=>{
     injectKeyway();
     injectFlowMeter();
     injectPlanetary();
+    injectBoltSeq();
     window.calcFits();
     const typeEl=$('sp-type');if(typeEl)typeEl.addEventListener('change',()=>{gateBellevillePresets();window.calcSpring();});
     wireLive('v-springs',window.calcSpring);

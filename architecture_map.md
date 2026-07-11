@@ -1,5 +1,10 @@
 # Architecture Map — amni-scient.com
 
+## v5.80.0 Amni-Calc: CAD tube primitive + PCC-1 tightening sequence (2026-07-10, loop iter 9)
+- calc-cad.js (`?v=cad3`): tube(ro,ri,h,n) primitive — direct annular polygons (outer wall outward, inner wall REVERSED winding, annular top/bottom quads), no boolean needed; genFeature clamps ri < 0.98·ro. Anchor: volume = inscribed-prism annulus EXACTLY (1e-6), slot-cut boolean smoke, STL layout.
+- calc-fixes.js (`?v=eng17`): boltSeq(N) — PCC-1 legacy cross patterns: N%4==0 interleave half[j]=floor(j/2)+1+(j%2)(N/4) paired opposite (N8 -> 1,5,3,7,2,6,4,8; N12 -> 1,7,4,10,...), even else sequential opposite pairs, odd star step (N-1)/2 (always coprime, proof: d|N and d|(N-1)/2 -> d|1). injectBoltSeq bsq-card in v-bolts right (bsq-n/bsq-t): star order + 3 passes (25/60/100%) w/ computed torques + rotational check passes note.
+- tests/seq_tube_audit.js 23 anchors (canonical N4/5/6/8/12 sequences, permutation property across 12 counts, opposite-pairing invariant, tube exactness). All 15 suites green (428).
+
 ## v5.79.0 Amni-Calc: dP flow metering + planetary trains (2026-07-10, loop iter 8)
 - calc-fixes.js (`?v=eng16`): injectFlowMeter dp-card appended to v-fluids left (fm- prefix TAKEN by fatigue Marin — used dp-): Q = Cd·At·sqrt(2dP/rho)/sqrt(1-beta^4), DP_CD textbook high-Re coefficients (orifice .61 / nozzle .96 / venturi .98 / custom), beta 0.2-0.75 band flag, permanent loss (1-beta^2)·dP orifice vs ~13% venturi. injectPlanetary gt-card in v-gears left: Willis kinematics — Zr = Zs+2Zp meshing constraint, ring-fixed 1+Zr/Zs, sun-fixed 1+Zs/Zr, carrier-fixed -Zr/Zs (reversed), assembly (Zs+Zr) % n_planets, torque multiplication note.
 - tests/flow_planetary_audit.js 17 anchors (8.69 m3/h at beta .5/25 kPa water, sqrt-dP scaling exact, velocity-of-approach 1.0328, 3.5/1.4/-2.5 ratio triple, 84/3 assembles 84/5 does not, Willis closure check ring speed = 0). All 14 suites green (405).

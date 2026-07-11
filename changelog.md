@@ -1,5 +1,10 @@
 # Changelog 
 
+## Amni-Calc v5.80.0 — CAD tube primitive + the flange-tightening sequence card - 2026-07-10
+- **CAD Studio gains TUBE / PIPE**: a true annular primitive (no boolean needed) for bushings, spacers, and pipe segments — its tessellated volume matches the closed-form annular prism to 1e-6 in the audit, and it slots and cuts like everything else.
+- **Bolts gains a TIGHTENING SEQUENCE card (ASME PCC-1)**: bolt count -> the star order riggers and millwrights actually follow (the classic 1-5-3-7-2-6-4-8 for eight bolts falls out exactly), with the 3-pass torque schedule computed from your final torque (25/60/100%) and the rotational check-pass guidance that stops gasket creep from eating the preload. Works for any count 3-48: divisible-by-four counts get the true rotating-quadrant cross, other even counts pair opposites, odd counts get the star polygon — every pattern provably visits each bolt exactly once.
+- 23 new anchors; all 15 suites green, 428 total. Cache-busters fixes?v=eng17, cad?v=cad3.
+
 ## Amni-Calc v5.79.0 — Flow metering and planetary gear trains - 2026-07-10
 - **Fluids gains a dP FLOW MEASUREMENT card**: pipe ID + throat + dP + fluid -> flow rate through the universal metering equation with the textbook coefficients for sharp-edge orifice (0.61), flow nozzle (0.96) and venturi (0.98) — plus beta-ratio guidance, throat velocity, mass flow, and the permanent pressure loss that separates a cheap orifice from a venturi that gives the dP back. ISO 5167 calibration note for custody transfer.
 - **Gears gains a PLANETARY / EPICYCLIC card**: sun and planet teeth in, Willis-equation kinematics out — ring teeth from the meshing constraint, all three classic configurations (ring fixed, sun fixed, carrier fixed with its direction reversal), output speed, and the equal-spacing assembly check that catches gear sets which cannot physically be built ((Zs+Zr) must divide by the planet count).
