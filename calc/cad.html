@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>CAD Studio: Browser Parametric Modeler &mdash; Amni-Calc | AMNI-SCIENT</title>
+<meta name="description" content="CSG solids from primitives, exact mass properties, watertight binary STL export — no install, no upload. In-browser engineering calculator with theory, formulas, when-to-use scenarios, and cited standards. WebAssembly backend, no install.">
+<meta name="keywords" content="amni-calc,cad,csg solids from primitives, exact mass properties, watertight binary stl export — no install, no upload,engineering calculator,design tools">
+<meta name="author" content="Amni-Scient">
+<meta property="og:title" content="CAD Studio: Browser Parametric Modeler &mdash; Amni-Calc">
+<meta property="og:description" content="CSG solids from primitives, exact mass properties, watertight binary STL export — no install, no upload. In-browser WASM calculator.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://amni-scient.com/calc/cad.html">
+<meta property="og:image" content="https://amni-scient.com/assets/explore/og-explore.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="CAD Studio: Browser Parametric Modeler &mdash; Amni-Calc">
+<meta name="twitter:description" content="CSG solids from primitives, exact mass properties, watertight binary STL export — no install, no upload">
+<link rel="canonical" href="https://amni-scient.com/calc/cad.html">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"CAD Studio: Browser Parametric Modeler","description":"CSG solids from primitives, exact mass properties, watertight binary STL export — no install, no upload","author":{"@type":"Organization","name":"AMNI-SCIENT"},"publisher":{"@type":"Organization","name":"AMNI-SCIENT","url":"https://amni-scient.com"},"mainEntityOfPage":"https://amni-scient.com/calc/cad.html"}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8345487545441889" crossorigin="anonymous" data-overlays="false"></script>
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+<style>
+.eq-list{list-style:none;padding:0;margin:1rem 0}
+.eq-list li{background:rgba(255,107,53,0.06);border-left:3px solid #ff6b35;padding:.7rem 1rem;margin-bottom:.5rem;font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--text);border-radius:0 3px 3px 0;overflow-x:auto}
+.eq-list code{color:var(--text);font-family:inherit}
+.crumbs{color:var(--dim);font-size:.75rem;letter-spacing:1px;text-transform:uppercase;margin:1rem 0 0;padding:0 1.5rem}
+.crumbs a{color:var(--dim)}
+.crumbs a:hover{color:#ff6b35}
+.std-line{font-size:.78rem;color:var(--dim);margin-top:1rem;padding-top:.7rem;border-top:1px dashed var(--border,rgba(255,255,255,.08))}
+.std-line strong{color:var(--text);letter-spacing:1px;text-transform:uppercase;font-size:.7rem;display:block;margin-bottom:.3rem}
+.deep-section{max-width:880px;margin:2.5rem auto 1rem;padding:0 1.5rem}
+.deep-dive{background:linear-gradient(180deg,rgba(255,107,53,0.04),rgba(255,107,53,0.01));border:1px solid rgba(255,107,53,0.22);border-radius:6px;padding:0}
+.deep-dive>summary{cursor:pointer;list-style:none;padding:1.1rem 1.4rem;display:flex;align-items:center;gap:.85rem;flex-wrap:wrap;border-radius:6px;transition:background .15s}
+.deep-dive>summary::-webkit-details-marker{display:none}
+.deep-dive>summary:hover{background:rgba(255,107,53,0.05)}
+.deep-dive[open]>summary{border-bottom:1px solid rgba(255,107,53,0.18);border-radius:6px 6px 0 0}
+.deep-icon{color:#ff6b35;font-size:1.1rem;line-height:1}
+.deep-label{color:var(--text);letter-spacing:2px;font-size:.85rem;text-transform:uppercase;font-weight:700}
+.deep-hint{color:var(--dim);font-size:.7rem;letter-spacing:.5px;flex-basis:100%;margin-top:.15rem}
+.deep-body{padding:1.4rem 1.6rem 1.8rem;display:grid;gap:1.6rem}
+.deep-block h3{color:#ff6b35;letter-spacing:1.5px;font-size:.82rem;text-transform:uppercase;margin:0 0 .7rem;border-bottom:1px solid rgba(255,107,53,0.18);padding-bottom:.4rem}
+.deep-block p{color:var(--text);font-size:.85rem;line-height:1.75;margin:0 0 .8rem}
+.deep-block p:last-child{margin-bottom:0}
+.deep-block code{background:rgba(255,107,53,0.08);padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--text)}
+.step-list{list-style:none;padding:0;margin:0;display:grid;gap:.6rem}
+.step-list li{display:flex;gap:.8rem;align-items:flex-start;font-size:.85rem;line-height:1.7;color:var(--text)}
+.step-n{flex-shrink:0;width:24px;height:24px;border-radius:50%;background:#ff6b35;color:var(--bg);display:inline-flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;font-family:'JetBrains Mono',monospace}
+.pitfall-list{list-style:none;padding:0;margin:0;display:grid;gap:.7rem}
+.pitfall-list li{display:flex;flex-direction:column;gap:.2rem;padding:.6rem .9rem;background:rgba(255,68,68,0.05);border-left:3px solid #ff4444;border-radius:0 3px 3px 0}
+.pitfall-list li strong{color:#ff8866;font-size:.78rem;letter-spacing:.5px;text-transform:uppercase}
+.pitfall-list li span{color:var(--text);font-size:.83rem;line-height:1.65}
+.faq-q{margin-bottom:.45rem;border:1px solid rgba(255,255,255,.06);border-radius:4px;background:rgba(255,255,255,.015)}
+.faq-q>summary{padding:.7rem .95rem;cursor:pointer;color:var(--text);font-size:.85rem;font-weight:600;list-style:none}
+.faq-q>summary::-webkit-details-marker{display:none}
+.faq-q>summary::before{content:'+';display:inline-block;margin-right:.55rem;color:#ff6b35;font-weight:700;width:.85em}
+.faq-q[open]>summary::before{content:'–'}
+.faq-q>div{padding:0 .95rem .85rem 1.8rem;color:var(--dim);font-size:.83rem;line-height:1.7}
+.deep-tbl{width:100%;border-collapse:collapse;font-size:.8rem;font-family:'JetBrains Mono',monospace}
+.deep-tbl th{background:rgba(255,107,53,0.08);color:var(--text);text-align:left;padding:.5rem .7rem;border-bottom:1px solid rgba(255,107,53,0.2);letter-spacing:.5px;font-size:.72rem;text-transform:uppercase}
+.deep-tbl td{padding:.45rem .7rem;color:var(--text);border-bottom:1px solid rgba(255,255,255,.04)}
+.deep-tbl tr:hover td{background:rgba(255,107,53,0.03)}
+.tbl-note{color:var(--dim);font-size:.74rem;margin-top:.55rem;font-style:italic}
+</style>
+</head>
+<body class="theme-calc">
+<div class="grid-bg"></div>
+<div class="scanlines"></div>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu">
+<a href="../amni-browse.html">AMNI-BROWSE</a>
+<a href="../amni-calc.html" class="active">AMNI-CALC</a>
+<a href="../amni-explore.html">AMNI-EXPLORE</a>
+<a href="../amni-learn.html">AMNI-LEARN</a>
+<a href="../amni-connect.html">AMNI-CONNECT</a>
+<a href="../amni-code.html">AMNI-CODE</a>
+<a href="../amni-haven.html">AMNI-HAVEN</a>
+<a href="../amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</div>
+<a href="../about.html">ABOUT</a>
+<a href="../faq.html">FAQ</a>
+<a href="../privacy.html">PRIVACY</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<p class="crumbs"><a href="../">Home</a> &rsaquo; <a href="../amni-calc.html">Amni-Calc</a> &rsaquo; Design Tools &rsaquo; CAD Studio: Browser Parametric Modeler</p>
+<div class="product-hero">
+<h1>CAD STUDIO: BROWSER PARAMETRIC MODELER</h1>
+<p class="desc">CSG SOLIDS FROM PRIMITIVES, EXACT MASS PROPERTIES, WATERTIGHT BINARY STL EXPORT — NO INSTALL, NO UPLOAD</p>
+<div style="margin-top:1.5rem">
+<a href="./#tab-cad" class="btn btn-primary" style="background:#ff6b35;color:var(--bg);box-shadow:0 0 10px #ff6b35">OPEN CAD CALCULATOR &rarr;</a>
+</div>
+</div>
+<section>
+<h2>SCOPE OF THIS MODULE</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.85;color:var(--text);font-size:.88rem">
+<p>CAD Studio is a parametric solid modeler that runs entirely in the browser. Models are feature stacks: add boxes, cylinders, cones, and spheres; flip any feature to CUT and it booleans away from the running solid via BSP (binary space partitioning) constructive solid geometry. Every rebuild reports exact mass properties — volume, surface area, center of gravity, and mass for a chosen material — computed by the divergence theorem over the actual triangle mesh, so the numbers are exact for the solid you see. Export is watertight binary STL, ready for a slicer or CAM package.</p>
+</div>
+</section>
+<section>
+<h2>GOVERNING EQUATIONS</h2>
+<div style="max-width:800px;margin:0 auto">
+<ul class="eq-list"><li><code>V = Σ v₁·(v₂×v₃)/6   over all mesh triangles (divergence theorem)</code></li><li><code>CoG = Σ (v₁+v₂+v₃)/4 · V_tet / V</code></li><li><code>m = ρ·V   (six built-in material densities)</code></li><li><code>Binary STL = 84 + 50·n bytes (n triangles)</code></li><li><code>Booleans: BSP clip sequences (union, subtract, intersect)</code></li></ul>
+<p class="std-line"><strong>References &amp; Standards</strong>BSP CSG per E. Wallace csg.js (MIT); binary STL de-facto standard (3D Systems, 1989); densities from standard material tables</p>
+</div>
+</section>
+<section>
+<h2>REAL-WORLD USE CASES</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.85;color:var(--text);font-size:.88rem">
+<p>Model the bracket while the idea is hot: a drilled plate, a flanged bushing, a counterweight whose mass you need before ordering stock. The mass-properties card answers "how heavy" and "where's the CoG" — feed the CoG straight into the Rigging module for the lift plan, or the volume into a casting quote. It will not replace a full parametric CAD seat for production drawings; it will beat opening one for the 90% of quick questions that end at volume, mass, and a printable STL.</p>
+</div>
+</section>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Is the exported STL watertight?","acceptedAnswer":{"@type":"Answer","text":"Yes — BSP output is a closed 2-manifold re-triangulated by fans, and slicers accept it directly. If a boolean with coplanar faces produced an ambiguous sliver (see limits), re-model with overlap margins rather than repairing downstream."}},{"@type":"Question","name":"Why STL and not STEP?","acceptedAnswer":{"@type":"Answer","text":"STEP carries exact analytic geometry and needs a full B-rep kernel — megabytes of code and a different accuracy contract. STL carries triangles, which is exactly what this modeler produces, what printers consume, and what the mass-properties math is exact FOR."}},{"@type":"Question","name":"How accurate are the mass properties?","acceptedAnswer":{"@type":"Answer","text":"Exact for the mesh, by construction — the divergence theorem is an identity, not an approximation. The only gap to the ideal solid is polygonal circles, stated on the card (~0.3% under πr² at 32 segments). Boxes and plates are exact to floating point."}},{"@type":"Question","name":"Does any geometry leave my machine?","acceptedAnswer":{"@type":"Answer","text":"No. Modeling, booleans, mass properties, and STL generation are local JavaScript; the only network fetch is the 3-D display library. Refresh the page and unrendered models are gone — export the STL to keep the part."}}]}</script>
+<section class="deep-section"><details class="deep-dive"><summary><span class="deep-icon">&#9776;</span><span class="deep-label">Modeler Notes & Accuracy</span><span class="deep-hint">Click to expand &mdash; worked numbers, step-by-step procedure, common mistakes, FAQ</span></summary><div class="deep-body"><div class="deep-block deep-worked"><h3>Worked Example: Checking the Modeler by Hand</h3><p>The "plate with 4 holes" preset: a 100×10×60 mm plate minus four Ø8 through-holes.</p><p>Hand calculation: plate = <code>60,000 mm³</code>; each hole removes <code>π×4²×10 = 502.7 mm³</code> (the modeler's 32-segment cylinders remove 502.0 — the inscribed-polygon deficit of 0.14%). Net: <code>57,992 mm³ ≈ 58.0 cm³</code>. Steel at 7.85 g/cm³: <strong>455 g</strong>.</p><p>The mass-properties card reports exactly this, because the divergence-theorem integral is exact for the tessellated solid — the only approximation in the whole chain is polygonal circles, and the card tells you so. Symmetric holes leave the CoG at the plate center; drag one hole off-pattern and watch the CoG walk away from it.</p></div><div class="deep-block deep-procedure"><h3>Modeling Workflow</h3><ol class="step-list"><li><span class="step-n">1</span><span>Start from the biggest positive volume — the stock, the plate, the body. The first feature is always ADD.</span></li><li><span class="step-n">2</span><span>Add joining volumes next (bosses, flanges, ribs), then cut holes and pockets last — booleans are order-independent for disjoint cuts, but cut-last keeps the tree readable.</span></li><li><span class="step-n">3</span><span>Position features by their centers: a through-hole in a 10 mm plate is a cylinder of height 20 centered on the plate mid-plane, so both faces clear with margin.</span></li><li><span class="step-n">4</span><span>Rebuild and read the stats line: polygon count and rebuild time grow with every boolean — keep models under a dozen features and 32-segment circles unless you need more.</span></li><li><span class="step-n">5</span><span>Pick the material and read mass and CoG; screenshot or note them for the drawing.</span></li><li><span class="step-n">6</span><span>Export STL only when the solid looks right from several orbits — the exporter writes exactly what you see.</span></li></ol></div><div class="deep-block deep-pitfalls"><h3>Limits To Respect</h3><ul class="pitfall-list"><li><strong>Curved faces are polygons</strong><span>Cylinders and spheres are 32/24-segment approximations: volumes read ~0.1-0.5% under the smooth ideal and printed holes come out marginally faceted. Drill or ream printed holes that need to be round.</span></li><li><strong>Coplanar boolean faces</strong><span>Cutting with a face exactly flush to a face of the solid puts the BSP on a knife edge — the result may keep or drop the sliver either way. Overlap cuts by a margin (the workflow above) and the ambiguity never arises.</span></li><li><strong>STL has no units</strong><span>The file stores bare numbers; this modeler works in millimeters. Tell the slicer or CAM import dialog "mm" — the same file read as inches comes out 25.4× too large.</span></li><li><strong>No fillets or chamfers yet</strong><span>The primitive set is box/cylinder/cone/sphere with booleans. Stress-relieving fillets and lead-in chamfers must be added downstream, or approximated with cone cuts.</span></li></ul></div><div class="deep-block deep-faq"><h3>Engineer FAQ</h3><details class="faq-q"><summary>Is the exported STL watertight?</summary><div>Yes — BSP output is a closed 2-manifold re-triangulated by fans, and slicers accept it directly. If a boolean with coplanar faces produced an ambiguous sliver (see limits), re-model with overlap margins rather than repairing downstream.</div></details><details class="faq-q"><summary>Why STL and not STEP?</summary><div>STEP carries exact analytic geometry and needs a full B-rep kernel — megabytes of code and a different accuracy contract. STL carries triangles, which is exactly what this modeler produces, what printers consume, and what the mass-properties math is exact FOR.</div></details><details class="faq-q"><summary>How accurate are the mass properties?</summary><div>Exact for the mesh, by construction — the divergence theorem is an identity, not an approximation. The only gap to the ideal solid is polygonal circles, stated on the card (~0.3% under πr² at 32 segments). Boxes and plates are exact to floating point.</div></details><details class="faq-q"><summary>Does any geometry leave my machine?</summary><div>No. Modeling, booleans, mass properties, and STL generation are local JavaScript; the only network fetch is the 3-D display library. Refresh the page and unrendered models are gone — export the STL to keep the part.</div></details></div></div></details></section>
+<section>
+<h2>RELATED CALCULATORS</h2>
+<div class="card-grid"><a href="sections.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">SECTIONS</h3><p>Area, centroid, moment of inertia, section modulus, radius of gyration</p></a><a href="materials.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">MATERIALS</h3><p>Yield, ultimate, modulus, density, k, cp for common metals & polymers</p></a><a href="machining.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">MACHINING</h3><p>RPM and feed from cutting-speed bands, percent-thread tap drills, sheet-metal bend allowance, E140 hardness conversion, bolt circles</p></a><a href="units.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">UNITS</h3><p>SI ↔ US customary for force, pressure, energy, viscosity</p></a></div>
+</section>
+<section style="text-align:center">
+<h2>START CALCULATING</h2>
+<p style="color:var(--dim);margin-bottom:1.5rem;font-size:.9rem">All calculations run locally in your browser. No data leaves the device.</p>
+<div class="cta-row" style="justify-content:center;gap:1rem;flex-wrap:wrap">
+<a href="./#tab-cad" class="btn btn-primary" style="background:#ff6b35;color:var(--bg);box-shadow:0 0 10px #ff6b35">LAUNCH CAD &rarr;</a>
+<a href="../amni-calc.html" class="btn btn-outline">ALL CALC MODULES</a>
+</div>
+</section>
+<div class="site-ad-banner">
+<span class="ad-note">Sponsored</span>
+<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8345487545441889" data-ad-slot="1720203631" data-ad-format="auto" data-full-width-responsive="true"></ins>
+<script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>
+</div>
+<footer>
+<div class="footer-links">
+<a href="../about.html">ABOUT</a>
+<a href="../faq.html">FAQ</a>
+<a href="../amni-calc.html">AMNI-CALC</a>
+<a href="../privacy.html">PRIVACY</a>
+<a href="../terms.html">TERMS</a>
+<a href="mailto:amnibro7@gmail.com">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amni-Scient. All rights reserved.</p>
+</footer>
+</body>
+</html>

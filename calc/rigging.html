@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Lifting & Rigging: Sling Loads &mdash; Amni-Calc | AMNI-SCIENT</title>
+<meta name="description" content="Sling tension by angle and hitch, CoG-offset leg loads, the 30° refusal, eyebolt derates. In-browser engineering calculator with theory, formulas, when-to-use scenarios, and cited standards. WebAssembly backend, no install.">
+<meta name="keywords" content="amni-calc,rigging,sling tension by angle and hitch, cog-offset leg loads, the 30° refusal, eyebolt derates,engineering calculator,mechanical & structural">
+<meta name="author" content="Amni-Scient">
+<meta property="og:title" content="Lifting & Rigging: Sling Loads &mdash; Amni-Calc">
+<meta property="og:description" content="Sling tension by angle and hitch, CoG-offset leg loads, the 30° refusal, eyebolt derates. In-browser WASM calculator.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://amni-scient.com/calc/rigging.html">
+<meta property="og:image" content="https://amni-scient.com/assets/explore/og-explore.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Lifting & Rigging: Sling Loads &mdash; Amni-Calc">
+<meta name="twitter:description" content="Sling tension by angle and hitch, CoG-offset leg loads, the 30° refusal, eyebolt derates">
+<link rel="canonical" href="https://amni-scient.com/calc/rigging.html">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Lifting &amp; Rigging: Sling Loads","description":"Sling tension by angle and hitch, CoG-offset leg loads, the 30° refusal, eyebolt derates","author":{"@type":"Organization","name":"AMNI-SCIENT"},"publisher":{"@type":"Organization","name":"AMNI-SCIENT","url":"https://amni-scient.com"},"mainEntityOfPage":"https://amni-scient.com/calc/rigging.html"}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8345487545441889" crossorigin="anonymous" data-overlays="false"></script>
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+<style>
+.eq-list{list-style:none;padding:0;margin:1rem 0}
+.eq-list li{background:rgba(255,107,53,0.06);border-left:3px solid #ff6b35;padding:.7rem 1rem;margin-bottom:.5rem;font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--text);border-radius:0 3px 3px 0;overflow-x:auto}
+.eq-list code{color:var(--text);font-family:inherit}
+.crumbs{color:var(--dim);font-size:.75rem;letter-spacing:1px;text-transform:uppercase;margin:1rem 0 0;padding:0 1.5rem}
+.crumbs a{color:var(--dim)}
+.crumbs a:hover{color:#ff6b35}
+.std-line{font-size:.78rem;color:var(--dim);margin-top:1rem;padding-top:.7rem;border-top:1px dashed var(--border,rgba(255,255,255,.08))}
+.std-line strong{color:var(--text);letter-spacing:1px;text-transform:uppercase;font-size:.7rem;display:block;margin-bottom:.3rem}
+.deep-section{max-width:880px;margin:2.5rem auto 1rem;padding:0 1.5rem}
+.deep-dive{background:linear-gradient(180deg,rgba(255,107,53,0.04),rgba(255,107,53,0.01));border:1px solid rgba(255,107,53,0.22);border-radius:6px;padding:0}
+.deep-dive>summary{cursor:pointer;list-style:none;padding:1.1rem 1.4rem;display:flex;align-items:center;gap:.85rem;flex-wrap:wrap;border-radius:6px;transition:background .15s}
+.deep-dive>summary::-webkit-details-marker{display:none}
+.deep-dive>summary:hover{background:rgba(255,107,53,0.05)}
+.deep-dive[open]>summary{border-bottom:1px solid rgba(255,107,53,0.18);border-radius:6px 6px 0 0}
+.deep-icon{color:#ff6b35;font-size:1.1rem;line-height:1}
+.deep-label{color:var(--text);letter-spacing:2px;font-size:.85rem;text-transform:uppercase;font-weight:700}
+.deep-hint{color:var(--dim);font-size:.7rem;letter-spacing:.5px;flex-basis:100%;margin-top:.15rem}
+.deep-body{padding:1.4rem 1.6rem 1.8rem;display:grid;gap:1.6rem}
+.deep-block h3{color:#ff6b35;letter-spacing:1.5px;font-size:.82rem;text-transform:uppercase;margin:0 0 .7rem;border-bottom:1px solid rgba(255,107,53,0.18);padding-bottom:.4rem}
+.deep-block p{color:var(--text);font-size:.85rem;line-height:1.75;margin:0 0 .8rem}
+.deep-block p:last-child{margin-bottom:0}
+.deep-block code{background:rgba(255,107,53,0.08);padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--text)}
+.step-list{list-style:none;padding:0;margin:0;display:grid;gap:.6rem}
+.step-list li{display:flex;gap:.8rem;align-items:flex-start;font-size:.85rem;line-height:1.7;color:var(--text)}
+.step-n{flex-shrink:0;width:24px;height:24px;border-radius:50%;background:#ff6b35;color:var(--bg);display:inline-flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;font-family:'JetBrains Mono',monospace}
+.pitfall-list{list-style:none;padding:0;margin:0;display:grid;gap:.7rem}
+.pitfall-list li{display:flex;flex-direction:column;gap:.2rem;padding:.6rem .9rem;background:rgba(255,68,68,0.05);border-left:3px solid #ff4444;border-radius:0 3px 3px 0}
+.pitfall-list li strong{color:#ff8866;font-size:.78rem;letter-spacing:.5px;text-transform:uppercase}
+.pitfall-list li span{color:var(--text);font-size:.83rem;line-height:1.65}
+.faq-q{margin-bottom:.45rem;border:1px solid rgba(255,255,255,.06);border-radius:4px;background:rgba(255,255,255,.015)}
+.faq-q>summary{padding:.7rem .95rem;cursor:pointer;color:var(--text);font-size:.85rem;font-weight:600;list-style:none}
+.faq-q>summary::-webkit-details-marker{display:none}
+.faq-q>summary::before{content:'+';display:inline-block;margin-right:.55rem;color:#ff6b35;font-weight:700;width:.85em}
+.faq-q[open]>summary::before{content:'–'}
+.faq-q>div{padding:0 .95rem .85rem 1.8rem;color:var(--dim);font-size:.83rem;line-height:1.7}
+.deep-tbl{width:100%;border-collapse:collapse;font-size:.8rem;font-family:'JetBrains Mono',monospace}
+.deep-tbl th{background:rgba(255,107,53,0.08);color:var(--text);text-align:left;padding:.5rem .7rem;border-bottom:1px solid rgba(255,107,53,0.2);letter-spacing:.5px;font-size:.72rem;text-transform:uppercase}
+.deep-tbl td{padding:.45rem .7rem;color:var(--text);border-bottom:1px solid rgba(255,255,255,.04)}
+.deep-tbl tr:hover td{background:rgba(255,107,53,0.03)}
+.tbl-note{color:var(--dim);font-size:.74rem;margin-top:.55rem;font-style:italic}
+</style>
+</head>
+<body class="theme-calc">
+<div class="grid-bg"></div>
+<div class="scanlines"></div>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu">
+<a href="../amni-browse.html">AMNI-BROWSE</a>
+<a href="../amni-calc.html" class="active">AMNI-CALC</a>
+<a href="../amni-explore.html">AMNI-EXPLORE</a>
+<a href="../amni-learn.html">AMNI-LEARN</a>
+<a href="../amni-connect.html">AMNI-CONNECT</a>
+<a href="../amni-code.html">AMNI-CODE</a>
+<a href="../amni-haven.html">AMNI-HAVEN</a>
+<a href="../amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</div>
+<a href="../about.html">ABOUT</a>
+<a href="../faq.html">FAQ</a>
+<a href="../privacy.html">PRIVACY</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<p class="crumbs"><a href="../">Home</a> &rsaquo; <a href="../amni-calc.html">Amni-Calc</a> &rsaquo; Mechanical & Structural &rsaquo; Lifting & Rigging: Sling Loads</p>
+<div class="product-hero">
+<h1>LIFTING & RIGGING: SLING LOADS</h1>
+<p class="desc">SLING TENSION BY ANGLE AND HITCH, COG-OFFSET LEG LOADS, THE 30° REFUSAL, EYEBOLT DERATES</p>
+<div style="margin-top:1.5rem">
+<a href="./#tab-rigging" class="btn btn-primary" style="background:#ff6b35;color:var(--bg);box-shadow:0 0 10px #ff6b35">OPEN RIGGING CALCULATOR &rarr;</a>
+</div>
+</div>
+<section>
+<h2>WHAT THE CALCULATOR HANDLES</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.85;color:var(--text);font-size:.88rem">
+<p>Sling math is statics with consequences. A load W on n legs at angle θ from horizontal puts T = W/(n·sinθ) in each leg — at 60° each of two legs carries 58% of the load, at 30° each carries 100%, and below that the tension grows toward infinity as the sling flattens. Hitch style scales capacity: a choker grips at about 75% of vertical rating, a true basket doubles it. When the center of gravity sits off-center, the leg NEARER the CoG carries more — computed exactly from moment equilibrium. This module refuses to print a number below 30°, because that is what a qualified rigger would do.</p>
+</div>
+</section>
+<section>
+<h2>THE MATH BEHIND IT</h2>
+<div style="max-width:800px;margin:0 auto">
+<ul class="eq-list"><li><code>T = W / (n_eff · sin θ)   (θ from HORIZONTAL)</code></li><li><code>Angle factor = 1 / sin θ  (1.155 @ 60°, 1.414 @ 45°, 2.0 @ 30°)</code></li><li><code>Hitch: vertical ×1.0 · choker ×0.75 · basket ×2.0</code></li><li><code>V₁ = W·d₂/(d₁+d₂)  (vertical share, offset CoG)</code></li><li><code>T₁ = V₁·L₁/h   with  L = √(d² + h²)</code></li><li><code>Shoulder eyebolt: 100% in-line, ~30% @ 45°, ~25% @ 90°</code></li></ul>
+<p class="std-line"><strong>References &amp; Standards</strong>ASME B30.9 (slings), B30.26 (rigging hardware), B30.20 / BTH-1 (below-the-hook devices), OSHA 1926.251</p>
+</div>
+</section>
+<section>
+<h2>WHEN TO USE THIS MODULE</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.85;color:var(--text);font-size:.88rem">
+<p>Plan any lift where sling angle, hitch, or an offset CoG is in play: machine skids, vessels with nozzles all on one end, a gearbox with the motor still bolted on. Compute the per-leg tension, divide by the hitch factor, and buy slings whose Working Load Limit covers the worst leg — both slings, sized for the near-leg tension, so the load cannot be hooked up backwards. Then walk the answer into the hardware: shackles, hooks, and the eyebolt derates that fall off a cliff with angle.</p>
+</div>
+</section>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why the hard refusal below 30°?","acceptedAnswer":{"@type":"Answer","text":"At 30° each leg already carries the full load share (angle factor 2.0), horizontal compression on the load peaks, and a small further flattening sends tension vertical — er, asymptotic. ASME-based sling charts simply stop at 30°; so does this module."}},{"@type":"Question","name":"Do sling weights matter?","acceptedAnswer":{"@type":"Answer","text":"For shop lifts, rarely. For long bridles on big lifts, sling and block weight add to W and shift the effective CoG — crane engineering practice includes them above roughly the 10 t class."}},{"@type":"Question","name":"Choker or basket for a smooth cylinder?","acceptedAnswer":{"@type":"Answer","text":"A basket doubles capacity but the load can roll out of it — baskets need the CoG below the sling contact and ideally a double-wrap. A choker grips and controls rotation at 75% capacity. Control beats capacity: choke it, or basket with a double wrap."}},{"@type":"Question","name":"What about the lug itself?","acceptedAnswer":{"@type":"Answer","text":"The pad-eye is a structural member: check bearing on the pin hole, shear tear-out, and the weld group (Welds module) at the worst leg tension times any applicable design factor — BTH-1 uses 2.0 on yield for lifting devices, higher for shock."}}]}</script>
+<section class="deep-section"><details class="deep-dive"><summary><span class="deep-icon">&#9776;</span><span class="deep-label">Rigging Plan Field Notes</span><span class="deep-hint">Click to expand &mdash; theory, a worked example, design steps, and gotchas</span></summary><div class="deep-body"><div class="deep-block deep-worked"><h3>Worked Example: Offset-CoG Skid</h3><p>A 10 kN skid has its CoG 1 m from lug 1 and 2 m from lug 2; the hook floats 2 m above the lug plane. Find both leg tensions.</p><p>Vertical shares by moment balance: <code>V₁ = 10×2/3 = 6.67 kN</code>, <code>V₂ = 3.33 kN</code> — the near leg carries twice the far leg. Leg geometry: <code>L₁ = √(1²+2²) = 2.24 m</code> at 63.4°, <code>L₂ = √(4+4) = 2.83 m</code> at 45°.</p><p>Tensions: <code>T₁ = 6.67 × 2.24/2 = 7.45 kN</code>, <code>T₂ = 3.33 × 2.83/2 = 4.71 kN</code>. Verticals sum to 10.00 kN — the statics close. Buy BOTH slings for ≥ 7.45 kN ÷ 9.81 ≈ 0.76 t so a swapped hookup cannot overload anything, and rig the hook plumb over the CoG or the skid will rotate on pick.</p></div><div class="deep-block deep-procedure"><h3>Lift Planning Steps</h3><ol class="step-list"><li><span class="step-n">1</span><span>Find the weight from drawings, scale ticket, or calculation — never from memory. Add rigging weight for big lifts.</span></li><li><span class="step-n">2</span><span>Locate the CoG. Symmetric loads are the exception; anything with a motor, gearbox, or full tank is offset. Test-pick an unknown CoG a few centimeters and watch the tilt.</span></li><li><span class="step-n">3</span><span>Choose sling count and length so every leg sits at 45-60° from horizontal. Longer slings cost headroom but buy angle.</span></li><li><span class="step-n">4</span><span>Compute the worst leg tension (this module), divide by the hitch factor, and select slings with WLL above it — every leg gets the worst-leg sling.</span></li><li><span class="step-n">5</span><span>Check every piece of hardware in the chain: shackle WLL, hook latch, lug weld (Welds module), and the eyebolt derate if anything pulls at an angle.</span></li><li><span class="step-n">6</span><span>Walk the lift: plumb hook over CoG, tag lines on, no one under the load, test pick at 100 mm, hold, inspect, proceed.</span></li></ol></div><div class="deep-block deep-pitfalls"><h3>Common Pitfalls</h3><ul class="pitfall-list"><li><strong>Measuring the angle from vertical</strong><span>Every chart and this module use the angle from HORIZONTAL. Swapping conventions turns a comfortable 60° rig into a lethal 30° one on paper that reads fine.</span></li><li><strong>Trusting four legs to share</strong><span>A rigid load on four slings sits on three at most — usually two, diagonal. Standard practice sizes 3- and 4-leg bridles on two legs carrying everything unless a spreader or equalizing hardware guarantees the share.</span></li><li><strong>Choking below 120° of wrap</strong><span>The published 75% choker factor assumes a reasonable choke angle. Choking a wide load bends the sling past its rating at the choke — below ~120° wrap the derate steepens; consult the sling chart.</span></li><li><strong>Side-loading hooks and eyebolts</strong><span>A shoulder eyebolt at 90° keeps a quarter of its rating; a plain (no-shoulder) eyebolt keeps essentially none — it bends and pops. Hooks side-loaded on the tip lose most of theirs. Use swivel hoist rings for anything that rotates into line.</span></li><li><strong>Snatching the load</strong><span>Dynamic amplification on a jerked pick easily doubles the static tension. Cranes accelerate smoothly; come-alongs and forklifts do not — plan the power source accordingly.</span></li></ul></div><div class="deep-block deep-faq"><h3>Engineer FAQ</h3><details class="faq-q"><summary>Why the hard refusal below 30°?</summary><div>At 30° each leg already carries the full load share (angle factor 2.0), horizontal compression on the load peaks, and a small further flattening sends tension vertical — er, asymptotic. ASME-based sling charts simply stop at 30°; so does this module.</div></details><details class="faq-q"><summary>Do sling weights matter?</summary><div>For shop lifts, rarely. For long bridles on big lifts, sling and block weight add to W and shift the effective CoG — crane engineering practice includes them above roughly the 10 t class.</div></details><details class="faq-q"><summary>Choker or basket for a smooth cylinder?</summary><div>A basket doubles capacity but the load can roll out of it — baskets need the CoG below the sling contact and ideally a double-wrap. A choker grips and controls rotation at 75% capacity. Control beats capacity: choke it, or basket with a double wrap.</div></details><details class="faq-q"><summary>What about the lug itself?</summary><div>The pad-eye is a structural member: check bearing on the pin hole, shear tear-out, and the weld group (Welds module) at the worst leg tension times any applicable design factor — BTH-1 uses 2.0 on yield for lifting devices, higher for shock.</div></details></div></div></details></section>
+<section>
+<h2>EXPLORE NEXT</h2>
+<div class="card-grid"><a href="welds.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">WELDS</h3><p>Throat sizing, weld-group polar moment, allowable strength</p></a><a href="bolts.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">BOLTS</h3><p>Nut-factor, detailed friction, yield checks, preload scatter</p></a><a href="beam.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">BEAM</h3><p>Shear, moment, slope and deflection for standard cases — plus required I & S from a sag budget</p></a><a href="columns.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">COLUMNS</h3><p>Slenderness ratio, end-condition K, Euler-Johnson transition</p></a></div>
+</section>
+<section style="text-align:center">
+<h2>OPEN THE MODULE</h2>
+<p style="color:var(--dim);margin-bottom:1.5rem;font-size:.9rem">All calculations run locally in your browser. No data leaves the device.</p>
+<div class="cta-row" style="justify-content:center;gap:1rem;flex-wrap:wrap">
+<a href="./#tab-rigging" class="btn btn-primary" style="background:#ff6b35;color:var(--bg);box-shadow:0 0 10px #ff6b35">LAUNCH RIGGING &rarr;</a>
+<a href="../amni-calc.html" class="btn btn-outline">ALL CALC MODULES</a>
+</div>
+</section>
+<div class="site-ad-banner">
+<span class="ad-note">Sponsored</span>
+<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8345487545441889" data-ad-slot="1720203631" data-ad-format="auto" data-full-width-responsive="true"></ins>
+<script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>
+</div>
+<footer>
+<div class="footer-links">
+<a href="../about.html">ABOUT</a>
+<a href="../faq.html">FAQ</a>
+<a href="../amni-calc.html">AMNI-CALC</a>
+<a href="../privacy.html">PRIVACY</a>
+<a href="../terms.html">TERMS</a>
+<a href="mailto:amnibro7@gmail.com">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amni-Scient. All rights reserved.</p>
+</footer>
+</body>
+</html>

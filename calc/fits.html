@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Limits, Fits & Press-Fit Design (ISO 286) &mdash; Amni-Calc | AMNI-SCIENT</title>
+<meta name="description" content="Hole/shaft limits, clearance &amp; interference, Lamé press-fit pressure, assembly temperature, tolerance stack-up. In-browser engineering calculator with theory, formulas, when-to-use scenarios, and cited standards. WebAssembly backend, no install.">
+<meta name="keywords" content="amni-calc,fits,hole/shaft limits, clearance &amp; interference, lamé press-fit pressure, assembly temperature, tolerance stack-up,engineering calculator,mechanical & structural">
+<meta name="author" content="Amni-Scient">
+<meta property="og:title" content="Limits, Fits & Press-Fit Design (ISO 286) &mdash; Amni-Calc">
+<meta property="og:description" content="Hole/shaft limits, clearance &amp; interference, Lamé press-fit pressure, assembly temperature, tolerance stack-up. In-browser WASM calculator.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://amni-scient.com/calc/fits.html">
+<meta property="og:image" content="https://amni-scient.com/assets/explore/og-explore.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Limits, Fits & Press-Fit Design (ISO 286) &mdash; Amni-Calc">
+<meta name="twitter:description" content="Hole/shaft limits, clearance &amp; interference, Lamé press-fit pressure, assembly temperature, tolerance stack-up">
+<link rel="canonical" href="https://amni-scient.com/calc/fits.html">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Limits, Fits &amp; Press-Fit Design (ISO 286)","description":"Hole/shaft limits, clearance &amp; interference, Lamé press-fit pressure, assembly temperature, tolerance stack-up","author":{"@type":"Organization","name":"AMNI-SCIENT"},"publisher":{"@type":"Organization","name":"AMNI-SCIENT","url":"https://amni-scient.com"},"mainEntityOfPage":"https://amni-scient.com/calc/fits.html"}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8345487545441889" crossorigin="anonymous" data-overlays="false"></script>
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+<style>
+.eq-list{list-style:none;padding:0;margin:1rem 0}
+.eq-list li{background:rgba(255,107,53,0.06);border-left:3px solid #ff6b35;padding:.7rem 1rem;margin-bottom:.5rem;font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--text);border-radius:0 3px 3px 0;overflow-x:auto}
+.eq-list code{color:var(--text);font-family:inherit}
+.crumbs{color:var(--dim);font-size:.75rem;letter-spacing:1px;text-transform:uppercase;margin:1rem 0 0;padding:0 1.5rem}
+.crumbs a{color:var(--dim)}
+.crumbs a:hover{color:#ff6b35}
+.std-line{font-size:.78rem;color:var(--dim);margin-top:1rem;padding-top:.7rem;border-top:1px dashed var(--border,rgba(255,255,255,.08))}
+.std-line strong{color:var(--text);letter-spacing:1px;text-transform:uppercase;font-size:.7rem;display:block;margin-bottom:.3rem}
+.deep-section{max-width:880px;margin:2.5rem auto 1rem;padding:0 1.5rem}
+.deep-dive{background:linear-gradient(180deg,rgba(255,107,53,0.04),rgba(255,107,53,0.01));border:1px solid rgba(255,107,53,0.22);border-radius:6px;padding:0}
+.deep-dive>summary{cursor:pointer;list-style:none;padding:1.1rem 1.4rem;display:flex;align-items:center;gap:.85rem;flex-wrap:wrap;border-radius:6px;transition:background .15s}
+.deep-dive>summary::-webkit-details-marker{display:none}
+.deep-dive>summary:hover{background:rgba(255,107,53,0.05)}
+.deep-dive[open]>summary{border-bottom:1px solid rgba(255,107,53,0.18);border-radius:6px 6px 0 0}
+.deep-icon{color:#ff6b35;font-size:1.1rem;line-height:1}
+.deep-label{color:var(--text);letter-spacing:2px;font-size:.85rem;text-transform:uppercase;font-weight:700}
+.deep-hint{color:var(--dim);font-size:.7rem;letter-spacing:.5px;flex-basis:100%;margin-top:.15rem}
+.deep-body{padding:1.4rem 1.6rem 1.8rem;display:grid;gap:1.6rem}
+.deep-block h3{color:#ff6b35;letter-spacing:1.5px;font-size:.82rem;text-transform:uppercase;margin:0 0 .7rem;border-bottom:1px solid rgba(255,107,53,0.18);padding-bottom:.4rem}
+.deep-block p{color:var(--text);font-size:.85rem;line-height:1.75;margin:0 0 .8rem}
+.deep-block p:last-child{margin-bottom:0}
+.deep-block code{background:rgba(255,107,53,0.08);padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--text)}
+.step-list{list-style:none;padding:0;margin:0;display:grid;gap:.6rem}
+.step-list li{display:flex;gap:.8rem;align-items:flex-start;font-size:.85rem;line-height:1.7;color:var(--text)}
+.step-n{flex-shrink:0;width:24px;height:24px;border-radius:50%;background:#ff6b35;color:var(--bg);display:inline-flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;font-family:'JetBrains Mono',monospace}
+.pitfall-list{list-style:none;padding:0;margin:0;display:grid;gap:.7rem}
+.pitfall-list li{display:flex;flex-direction:column;gap:.2rem;padding:.6rem .9rem;background:rgba(255,68,68,0.05);border-left:3px solid #ff4444;border-radius:0 3px 3px 0}
+.pitfall-list li strong{color:#ff8866;font-size:.78rem;letter-spacing:.5px;text-transform:uppercase}
+.pitfall-list li span{color:var(--text);font-size:.83rem;line-height:1.65}
+.faq-q{margin-bottom:.45rem;border:1px solid rgba(255,255,255,.06);border-radius:4px;background:rgba(255,255,255,.015)}
+.faq-q>summary{padding:.7rem .95rem;cursor:pointer;color:var(--text);font-size:.85rem;font-weight:600;list-style:none}
+.faq-q>summary::-webkit-details-marker{display:none}
+.faq-q>summary::before{content:'+';display:inline-block;margin-right:.55rem;color:#ff6b35;font-weight:700;width:.85em}
+.faq-q[open]>summary::before{content:'–'}
+.faq-q>div{padding:0 .95rem .85rem 1.8rem;color:var(--dim);font-size:.83rem;line-height:1.7}
+.deep-tbl{width:100%;border-collapse:collapse;font-size:.8rem;font-family:'JetBrains Mono',monospace}
+.deep-tbl th{background:rgba(255,107,53,0.08);color:var(--text);text-align:left;padding:.5rem .7rem;border-bottom:1px solid rgba(255,107,53,0.2);letter-spacing:.5px;font-size:.72rem;text-transform:uppercase}
+.deep-tbl td{padding:.45rem .7rem;color:var(--text);border-bottom:1px solid rgba(255,255,255,.04)}
+.deep-tbl tr:hover td{background:rgba(255,107,53,0.03)}
+.tbl-note{color:var(--dim);font-size:.74rem;margin-top:.55rem;font-style:italic}
+</style>
+</head>
+<body class="theme-calc">
+<div class="grid-bg"></div>
+<div class="scanlines"></div>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu">
+<a href="../amni-browse.html">AMNI-BROWSE</a>
+<a href="../amni-calc.html" class="active">AMNI-CALC</a>
+<a href="../amni-explore.html">AMNI-EXPLORE</a>
+<a href="../amni-learn.html">AMNI-LEARN</a>
+<a href="../amni-connect.html">AMNI-CONNECT</a>
+<a href="../amni-code.html">AMNI-CODE</a>
+<a href="../amni-haven.html">AMNI-HAVEN</a>
+<a href="../amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</div>
+<a href="../about.html">ABOUT</a>
+<a href="../faq.html">FAQ</a>
+<a href="../privacy.html">PRIVACY</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<p class="crumbs"><a href="../">Home</a> &rsaquo; <a href="../amni-calc.html">Amni-Calc</a> &rsaquo; Mechanical & Structural &rsaquo; Limits, Fits & Press-Fit Design (ISO 286)</p>
+<div class="product-hero">
+<h1>LIMITS, FITS & PRESS-FIT DESIGN (ISO 286)</h1>
+<p class="desc">HOLE/SHAFT LIMITS, CLEARANCE & INTERFERENCE, LAMÉ PRESS-FIT PRESSURE, ASSEMBLY TEMPERATURE, TOLERANCE STACK-UP</p>
+<div style="margin-top:1.5rem">
+<a href="./#tab-fits" class="btn btn-primary" style="background:#ff6b35;color:var(--bg);box-shadow:0 0 10px #ff6b35">OPEN FITS CALCULATOR &rarr;</a>
+</div>
+</div>
+<section>
+<h2>SCOPE OF THIS MODULE</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.85;color:var(--text);font-size:.88rem">
+<p>ISO 286 encodes every fit as a hole letter + IT grade over a shaft letter + IT grade — 25H7/g6 fully defines four limit dimensions. The hole letter sets the fundamental deviation (H = zero line), the IT grade sets the tolerance width from published tables. Clearance fits (H/g, H/f) slide; transition fits (H/k, H/n) locate; interference fits (H/p, H/s) transmit torque through contact pressure alone. That pressure comes from Lamé thick-cylinder theory, and from it follow holding force, torque capacity, hub stress, and the heating ΔT needed to assemble. The stack-up card sums a chain of toleranced dimensions worst-case and RSS.</p>
+</div>
+</section>
+<section>
+<h2>FORMULAS USED</h2>
+<div style="max-width:800px;margin:0 auto">
+<ul class="eq-list"><li><code>Hole limits: EI = 0 (H), ES = EI + IT_grade</code></li><li><code>Clearance = hole − shaft (min & max from the four limits)</code></li><li><code>p = E·δ_d/d · (d_o² − d²)/(2·d_o²)  (solid shaft, same materials)</code></li><li><code>F_axial = μ·p·π·d·L,   T = μ·p·π·d²·L/2</code></li><li><code>σ_hoop,hub = p·(d_o² + d²)/(d_o² − d²)</code></li><li><code>ΔT_assembly = (δ_max + clearance)/(α·d)</code></li><li><code>Stack: worst-case Σt_i, RSS √(Σt_i²)</code></li></ul>
+<p class="std-line"><strong>References &amp; Standards</strong>ISO 286-1/-2, ANSI B4.2, Shigley 3-16 & 7-8 (Lamé), Machinery's Handbook "Allowances and Tolerances"</p>
+</div>
+</section>
+<section>
+<h2>WHERE THIS APPLIES</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.85;color:var(--text);font-size:.88rem">
+<p>Reach for this module whenever two cylindrical parts meet: a bearing seat (the bearing maker dictates k5/m5 shaft, H6/J6 housing), a dowel in a jig plate, a bushing pressed into a bore, a gear shrunk on a shaft. Pick the preferred fit by function first, read the limits, then — for interference — verify three things: enough minimum interference to carry the torque, hub hoop stress below yield at maximum interference, and an assembly method (press force or oven temperature) the shop can actually execute.</p>
+</div>
+</section>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"H7/g6 or H7/h6 for a sliding fit?","acceptedAnswer":{"@type":"Answer","text":"g6 guarantees clearance at every legal combination — parts always slide, with a whisper of play. h6 can produce line-to-line contact at the extremes, so assemblies may need a push. Choose g6 for mechanisms that must never bind, h6 for location where occasional hand-press is acceptable."}},{"@type":"Question","name":"Do I still need a key with an interference fit?","acceptedAnswer":{"@type":"Answer","text":"A properly sized shrink fit carries torque without one, and high-speed balance prefers no keyway. Keys get added for de-ratable drives (fit loosens with temperature or speed), for positive timing, or where codes demand mechanical redundancy. If you add a key, the keyway stress concentration lands in the most stressed fiber of the hub — check it."}},{"@type":"Question","name":"What does the 0.8 in 25H7 ⌀0.8 surface callout have to do with the fit?","acceptedAnswer":{"@type":"Answer","text":"Roughness eats interference: peaks crush on assembly, so the effective interference is less than measured over peaks. Heavy press fits on rough surfaces can lose a meaningful share of their grip — grind the seats for serious shrink fits."}},{"@type":"Question","name":"When is a transition fit the right answer?","acceptedAnswer":{"@type":"Answer","text":"When location accuracy matters and torque comes from elsewhere (a key, a clamp, bolts). H7/k6 centers a bearing or gear precisely and still assembles with light tooling — the occasional light interference is a feature, not a defect."}}]}</script>
+<section class="deep-section"><details class="deep-dive"><summary><span class="deep-icon">&#9776;</span><span class="deep-label">Fits & Interference Field Notes</span><span class="deep-hint">Click to expand &mdash; worked numbers, step-by-step procedure, common mistakes, FAQ</span></summary><div class="deep-body"><div class="deep-block deep-worked"><h3>Worked Example: Shrink-Fit Torque Capacity</h3><p>A steel ring (OD 100 mm) is shrunk onto a 50 mm solid steel shaft with 0.05 mm diametral interference. Both parts E = 200 GPa. Find the contact pressure, torque capacity for a 40 mm long hub (μ = 0.12), and the assembly temperature.</p><p>Lamé, same materials, solid shaft: <code>p = E·δ/d · (d_o²−d²)/(2·d_o²) = 200,000 × (0.05/50) × (10,000−2,500)/(2×10,000) = 200 × 0.375 = 75 MPa</code>.</p><p>Torque: <code>T = μ·p·π·d²·L/2 = 0.12 × 75 × π × 50² × 40 / 2 = 1,414 N·m</code>. Hub hoop stress at the bore: <code>σ = p·(d_o²+d²)/(d_o²−d²) = 75 × 12,500/7,500 = 125 MPa</code> — comfortable for any hub steel.</p><p>Assembly: to pass over the shaft with 0.03 mm working clearance, <code>ΔT = (0.05+0.03)/(11.7×10⁻⁶ × 50) = 137 °C</code> — a 160 °C oven soak does it. Above ~250 °C required, re-think: tempered hubs lose hardness and the fit is probably too heavy.</p></div><div class="deep-block deep-procedure"><h3>Choosing a Fit</h3><ol class="step-list"><li><span class="step-n">1</span><span>Name the function first: free running (H8/f7), precise sliding (H7/g6), location with easy assembly (H7/h6), keyed location (H7/k6), light press for accessories (H7/p6), torque-carrying shrink (H7/s6).</span></li><li><span class="step-n">2</span><span>Read the four limit dimensions from ISO 286 and compute min/max clearance or interference — design decisions hang on the extremes, not the nominals.</span></li><li><span class="step-n">3</span><span>For interference fits: verify torque capacity at MINIMUM interference (the weakest assembly that ships) and hub stress at MAXIMUM interference (the tightest).</span></li><li><span class="step-n">4</span><span>Derate for surface finish: pressing flattens asperities and eats real interference — budget several µm of loss on ordinary turned finishes, less on ground surfaces.</span></li><li><span class="step-n">5</span><span>Pick the assembly method: press force = μ·p·π·d·L at max interference (check the shop press), or thermal with ΔT from the equation plus a working clearance.</span></li><li><span class="step-n">6</span><span>If the joint also sees rotation at speed, check that centrifugal growth of the hub does not eat the interference — high-speed rotors lose grip as they spin up.</span></li></ol></div><div class="deep-block deep-pitfalls"><h3>Common Pitfalls</h3><ul class="pitfall-list"><li><strong>Verifying torque at nominal interference</strong><span>Tolerances make interference a RANGE. A H7/s6 fit at Ø50 can vary its interference nearly 2:1 across the limits — the drive must survive the loosest legal assembly, so all capacity math uses δ_min.</span></li><li><strong>Bursting a thin hub</strong><span>Hub hoop stress rises steeply as wall thins: at d_o/d < 1.5 an s-class fit can pass yield at δ_max. Check σ_hoop against hub Sy before committing; a keyed lighter fit may serve better.</span></li><li><strong>Ignoring dissimilar materials</strong><span>An aluminum hub on a steel shaft: different E and α change both the pressure equation (full two-cylinder Lamé) and the temperature behavior — an interference fit sized at 20 °C can walk loose at 120 °C because aluminum grows twice as fast.</span></li><li><strong>Worst-case stacking long chains</strong><span>Adding ten worst-case tolerances predicts a spread that essentially never occurs. RSS reflects reality for independent dimensions; save worst-case for chains of three or fewer, or for safety-critical clearances.</span></li><li><strong>Measuring at the wrong temperature</strong><span>ISO 286 limits are defined at 20 °C. A 300 mm aluminum part measured in a 30 °C shop reads 70 µm oversize — more than an entire IT7 band.</span></li></ul></div><div class="deep-block deep-faq"><h3>Engineer FAQ</h3><details class="faq-q"><summary>H7/g6 or H7/h6 for a sliding fit?</summary><div>g6 guarantees clearance at every legal combination — parts always slide, with a whisper of play. h6 can produce line-to-line contact at the extremes, so assemblies may need a push. Choose g6 for mechanisms that must never bind, h6 for location where occasional hand-press is acceptable.</div></details><details class="faq-q"><summary>Do I still need a key with an interference fit?</summary><div>A properly sized shrink fit carries torque without one, and high-speed balance prefers no keyway. Keys get added for de-ratable drives (fit loosens with temperature or speed), for positive timing, or where codes demand mechanical redundancy. If you add a key, the keyway stress concentration lands in the most stressed fiber of the hub — check it.</div></details><details class="faq-q"><summary>What does the 0.8 in 25H7 ⌀0.8 surface callout have to do with the fit?</summary><div>Roughness eats interference: peaks crush on assembly, so the effective interference is less than measured over peaks. Heavy press fits on rough surfaces can lose a meaningful share of their grip — grind the seats for serious shrink fits.</div></details><details class="faq-q"><summary>When is a transition fit the right answer?</summary><div>When location accuracy matters and torque comes from elsewhere (a key, a clamp, bolts). H7/k6 centers a bearing or gear precisely and still assembles with light tooling — the occasional light interference is a feature, not a defect.</div></details></div></div></details></section>
+<section>
+<h2>WHERE TO GO NEXT</h2>
+<div class="card-grid"><a href="shafts.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">SHAFTS</h3><p>Torsional stress, twist angle, Rayleigh critical speed, keyway sizing</p></a><a href="bearings.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">BEARINGS</h3><p>Dynamic load, equivalent load, L10 life</p></a><a href="machining.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">MACHINING</h3><p>RPM and feed from cutting-speed bands, percent-thread tap drills, sheet-metal bend allowance, E140 hardness conversion, bolt circles</p></a><a href="sections.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">SECTIONS</h3><p>Area, centroid, moment of inertia, section modulus, radius of gyration</p></a></div>
+</section>
+<section style="text-align:center">
+<h2>OPEN THE MODULE</h2>
+<p style="color:var(--dim);margin-bottom:1.5rem;font-size:.9rem">All calculations run locally in your browser. No data leaves the device.</p>
+<div class="cta-row" style="justify-content:center;gap:1rem;flex-wrap:wrap">
+<a href="./#tab-fits" class="btn btn-primary" style="background:#ff6b35;color:var(--bg);box-shadow:0 0 10px #ff6b35">LAUNCH FITS &rarr;</a>
+<a href="../amni-calc.html" class="btn btn-outline">ALL CALC MODULES</a>
+</div>
+</section>
+<div class="site-ad-banner">
+<span class="ad-note">Sponsored</span>
+<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8345487545441889" data-ad-slot="1720203631" data-ad-format="auto" data-full-width-responsive="true"></ins>
+<script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>
+</div>
+<footer>
+<div class="footer-links">
+<a href="../about.html">ABOUT</a>
+<a href="../faq.html">FAQ</a>
+<a href="../amni-calc.html">AMNI-CALC</a>
+<a href="../privacy.html">PRIVACY</a>
+<a href="../terms.html">TERMS</a>
+<a href="mailto:amnibro7@gmail.com">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amni-Scient. All rights reserved.</p>
+</footer>
+</body>
+</html>

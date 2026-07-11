@@ -1,5 +1,10 @@
 # Architecture Map — amni-scient.com
 
+## v5.73.0 Amni-Calc: SEO pages for 6 modules + hash-router (2026-07-10, loop iter 4)
+- src/gen-calc-modules.js: M array grew 31->37 entries — beam (was ALSO missing, huge search term), fits, machining, hydraulics, rigging, cad. Each with about/use/eqs/std + deep (worked example reusing the audited test anchors, procedure, pitfalls, FAQ w/ JSON-LD FAQPage schema). Regen is IDEMPOTENT (37 written, git shows only 6 new files — template untouched). Gotchas hit: entries must be comma-separated (missing comma after refs entry) and single-quoted strings cannot hold 's (Machinery's) — use backticks.
+- calc-engineer.js (`?v=eng16`): hash-router in init — /^#tab-[a-z]+$/ clicks the sidebar button after 700ms. Every SEO page CTA links ./#tab-<k>; before this it only scrolled, never activated, on all 37 pages.
+- sitemap.xml: +6 calc URLs (monthly/0.7). All 12 suites still green (366).
+
 ## v5.72.0 Amni-Calc: Keyway designer (Shafts) + NEW Lifting & Rigging module (2026-07-10, loop iter 3)
 - calc-fixes.js (`?v=eng14`): DIN6885 table ([dmax,b,h] bands 8->130mm, find d<=dmax) + KEY_MAT (C45 340 / mild 250 / 4140HT 655 / A2 205) + injectKeyway -> ky-card appended to v-shafts right column (ky-t/d/mat/fos). calcKeyway: L_shear=2Tn/(d.b.0.577Sy), L_crush=4Tn/(d.h.Sy) (crush governs, both shown), ceil to 5mm stock, L>1.5d -> two-keys/spline verdict, >130mm -> spline territory. NOTE: first Edit swallowed the `const MC_VC={alu:` opener (same class of bug as the stress-comment destruction) -> repaired in the follow-up edit; grep-verify the neighbor line after inserting BEFORE a const.
 - NEW MODULE RIGGING: tab data-v="rigging" after Vibration, static v-rigging view. calcSling (rg-w tonnes/n/ang/hitch): W=Wt.9.81, ang<30 -> REFUSAL note (no numbers), neff=min(n,2) for rigid loads, T=W/(neff.sin ang), HITCH vertical 1.0/choker 0.75/basket 2.0 -> required WLL=T/hitch, 30-45 deg CAUTION row. calcSlingCg (rgu-w/d1/d2/h): V1=W.d2/(d1+d2), T=V.L/h with L=hypot(d,h), per-leg angles atan2(h,d), min<30 -> re-rig warn; note: size BOTH slings for near-leg tension.

@@ -1,5 +1,10 @@
 # Changelog 
 
+## Amni-Calc v5.73.0 — Six new module landing pages + deep links that actually work - 2026-07-10
+- **Google can now find the new modules**: full SEO landing pages for Beam Deflection (somehow never had one), Fits & Tolerances, Machining, Hydraulics, Lifting & Rigging, and CAD Studio — each with the theory, governing equations, cited standards, a worked example lifted from the audited test anchors (the 600 cm-4 walkway beam, the 75 MPa shrink fit, the number-7 tap drill, the bore-80 press cylinder, the offset-CoG skid, the 455 g drilled plate), a design procedure, a pitfalls list, and an FAQ with schema.org markup. Sitemap updated.
+- **Deep links fixed suite-wide**: every landing page's "OPEN CALCULATOR" button targets #tab-<module> — which until today just scrolled the sidebar without switching tabs, on all 37 pages. A tiny hash-router in the engineer layer now activates the right module on arrival.
+- Generator regeneration verified idempotent (existing 31 pages byte-identical). All 12 test suites green, 366 anchors. Cache-buster engineer?v=eng16.
+
 ## Amni-Calc v5.72.0 — Keyway sizing + NEW Lifting & Rigging module - 2026-07-10
 - **Shafts gets a KEYWAY card (DIN 6885)**: torque + shaft diameter + key material -> the standard key section for that shaft, required length from BOTH Shigley checks (shear at 0.577.Sy/FoS and the crush check that usually governs), rounded to 5 mm stock — and an honest "use two keys or a spline" verdict when the length passes 1.5.d, or "spline/interference-fit territory" beyond the 130 mm table.
 - **NEW: Lifting & Rigging module** — pure statics, the way riggers actually think: load + legs + sling angle + hitch -> per-leg tension and the sling WLL to buy (vertical/choker/basket factors). Below 30 degrees it REFUSES with an explanation instead of printing a number, 30-45 gets a caution row, and 3-4 leg bridles are honestly treated as two-legs-carry unless a spreader guarantees sharing. The CoG-offset card solves unequal legs exactly (near leg carries more, verticals provably sum to the load) and tells you to size both slings for the near-leg tension so the load can't be hooked backwards.

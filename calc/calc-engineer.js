@@ -138,6 +138,7 @@ new MutationObserver(function(ms){for(var i2=0;i2<ms.length;i2++)if(ms[i2].added
 document.addEventListener('click',function(e){var tb=e.target&&e.target.closest?e.target.closest('.sidebar .tab'):null;tb&&setTimeout(function(){tb.scrollIntoView({block:'nearest'})},60);
 var th=e.target&&e.target.closest?e.target.closest('.theme-toggle'):null;th&&setTimeout(function(){var vw=document.querySelector('.view.active'),bt=vw&&vw.querySelector('button[onclick]'),fn=bt&&calcName(bt);fn&&typeof window[fn]==='function'&&function(){try{window[fn]()}catch(err){}}()},120)});
 setTimeout(function(){injectQuickNav();injectSolve();var at=document.querySelector('.sidebar .tab.active');at&&at.scrollIntoView({block:'nearest'})},1800);
-setTimeout(function(){injectQuickNav();injectSolve()},3600)}
+setTimeout(function(){injectQuickNav();injectSolve()},3600);
+/^#tab-[a-z]+$/.test(location.hash)&&setTimeout(function(){var tb=document.getElementById(location.hash.slice(1));tb&&tb.click&&tb.click()},700)}
 document.readyState==='loading'?document.addEventListener('DOMContentLoaded',init):init();
 })();

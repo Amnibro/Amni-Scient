@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Machining: Speeds, Feeds & Shop Math &mdash; Amni-Calc | AMNI-SCIENT</title>
+<meta name="description" content="RPM and feed from cutting-speed bands, percent-thread tap drills, sheet-metal bend allowance, E140 hardness conversion, bolt circles. In-browser engineering calculator with theory, formulas, when-to-use scenarios, and cited standards. WebAssembly backend, no install.">
+<meta name="keywords" content="amni-calc,machining,rpm and feed from cutting-speed bands, percent-thread tap drills, sheet-metal bend allowance, e140 hardness conversion, bolt circles,engineering calculator,manufacturing">
+<meta name="author" content="Amni-Scient">
+<meta property="og:title" content="Machining: Speeds, Feeds & Shop Math &mdash; Amni-Calc">
+<meta property="og:description" content="RPM and feed from cutting-speed bands, percent-thread tap drills, sheet-metal bend allowance, E140 hardness conversion, bolt circles. In-browser WASM calculator.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://amni-scient.com/calc/machining.html">
+<meta property="og:image" content="https://amni-scient.com/assets/explore/og-explore.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Machining: Speeds, Feeds & Shop Math &mdash; Amni-Calc">
+<meta name="twitter:description" content="RPM and feed from cutting-speed bands, percent-thread tap drills, sheet-metal bend allowance, E140 hardness conversion, bolt circles">
+<link rel="canonical" href="https://amni-scient.com/calc/machining.html">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Machining: Speeds, Feeds &amp; Shop Math","description":"RPM and feed from cutting-speed bands, percent-thread tap drills, sheet-metal bend allowance, E140 hardness conversion, bolt circles","author":{"@type":"Organization","name":"AMNI-SCIENT"},"publisher":{"@type":"Organization","name":"AMNI-SCIENT","url":"https://amni-scient.com"},"mainEntityOfPage":"https://amni-scient.com/calc/machining.html"}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8345487545441889" crossorigin="anonymous" data-overlays="false"></script>
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+<style>
+.eq-list{list-style:none;padding:0;margin:1rem 0}
+.eq-list li{background:rgba(255,107,53,0.06);border-left:3px solid #ff6b35;padding:.7rem 1rem;margin-bottom:.5rem;font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--text);border-radius:0 3px 3px 0;overflow-x:auto}
+.eq-list code{color:var(--text);font-family:inherit}
+.crumbs{color:var(--dim);font-size:.75rem;letter-spacing:1px;text-transform:uppercase;margin:1rem 0 0;padding:0 1.5rem}
+.crumbs a{color:var(--dim)}
+.crumbs a:hover{color:#ff6b35}
+.std-line{font-size:.78rem;color:var(--dim);margin-top:1rem;padding-top:.7rem;border-top:1px dashed var(--border,rgba(255,255,255,.08))}
+.std-line strong{color:var(--text);letter-spacing:1px;text-transform:uppercase;font-size:.7rem;display:block;margin-bottom:.3rem}
+.deep-section{max-width:880px;margin:2.5rem auto 1rem;padding:0 1.5rem}
+.deep-dive{background:linear-gradient(180deg,rgba(255,107,53,0.04),rgba(255,107,53,0.01));border:1px solid rgba(255,107,53,0.22);border-radius:6px;padding:0}
+.deep-dive>summary{cursor:pointer;list-style:none;padding:1.1rem 1.4rem;display:flex;align-items:center;gap:.85rem;flex-wrap:wrap;border-radius:6px;transition:background .15s}
+.deep-dive>summary::-webkit-details-marker{display:none}
+.deep-dive>summary:hover{background:rgba(255,107,53,0.05)}
+.deep-dive[open]>summary{border-bottom:1px solid rgba(255,107,53,0.18);border-radius:6px 6px 0 0}
+.deep-icon{color:#ff6b35;font-size:1.1rem;line-height:1}
+.deep-label{color:var(--text);letter-spacing:2px;font-size:.85rem;text-transform:uppercase;font-weight:700}
+.deep-hint{color:var(--dim);font-size:.7rem;letter-spacing:.5px;flex-basis:100%;margin-top:.15rem}
+.deep-body{padding:1.4rem 1.6rem 1.8rem;display:grid;gap:1.6rem}
+.deep-block h3{color:#ff6b35;letter-spacing:1.5px;font-size:.82rem;text-transform:uppercase;margin:0 0 .7rem;border-bottom:1px solid rgba(255,107,53,0.18);padding-bottom:.4rem}
+.deep-block p{color:var(--text);font-size:.85rem;line-height:1.75;margin:0 0 .8rem}
+.deep-block p:last-child{margin-bottom:0}
+.deep-block code{background:rgba(255,107,53,0.08);padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--text)}
+.step-list{list-style:none;padding:0;margin:0;display:grid;gap:.6rem}
+.step-list li{display:flex;gap:.8rem;align-items:flex-start;font-size:.85rem;line-height:1.7;color:var(--text)}
+.step-n{flex-shrink:0;width:24px;height:24px;border-radius:50%;background:#ff6b35;color:var(--bg);display:inline-flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;font-family:'JetBrains Mono',monospace}
+.pitfall-list{list-style:none;padding:0;margin:0;display:grid;gap:.7rem}
+.pitfall-list li{display:flex;flex-direction:column;gap:.2rem;padding:.6rem .9rem;background:rgba(255,68,68,0.05);border-left:3px solid #ff4444;border-radius:0 3px 3px 0}
+.pitfall-list li strong{color:#ff8866;font-size:.78rem;letter-spacing:.5px;text-transform:uppercase}
+.pitfall-list li span{color:var(--text);font-size:.83rem;line-height:1.65}
+.faq-q{margin-bottom:.45rem;border:1px solid rgba(255,255,255,.06);border-radius:4px;background:rgba(255,255,255,.015)}
+.faq-q>summary{padding:.7rem .95rem;cursor:pointer;color:var(--text);font-size:.85rem;font-weight:600;list-style:none}
+.faq-q>summary::-webkit-details-marker{display:none}
+.faq-q>summary::before{content:'+';display:inline-block;margin-right:.55rem;color:#ff6b35;font-weight:700;width:.85em}
+.faq-q[open]>summary::before{content:'–'}
+.faq-q>div{padding:0 .95rem .85rem 1.8rem;color:var(--dim);font-size:.83rem;line-height:1.7}
+.deep-tbl{width:100%;border-collapse:collapse;font-size:.8rem;font-family:'JetBrains Mono',monospace}
+.deep-tbl th{background:rgba(255,107,53,0.08);color:var(--text);text-align:left;padding:.5rem .7rem;border-bottom:1px solid rgba(255,107,53,0.2);letter-spacing:.5px;font-size:.72rem;text-transform:uppercase}
+.deep-tbl td{padding:.45rem .7rem;color:var(--text);border-bottom:1px solid rgba(255,255,255,.04)}
+.deep-tbl tr:hover td{background:rgba(255,107,53,0.03)}
+.tbl-note{color:var(--dim);font-size:.74rem;margin-top:.55rem;font-style:italic}
+</style>
+</head>
+<body class="theme-calc">
+<div class="grid-bg"></div>
+<div class="scanlines"></div>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu">
+<a href="../amni-browse.html">AMNI-BROWSE</a>
+<a href="../amni-calc.html" class="active">AMNI-CALC</a>
+<a href="../amni-explore.html">AMNI-EXPLORE</a>
+<a href="../amni-learn.html">AMNI-LEARN</a>
+<a href="../amni-connect.html">AMNI-CONNECT</a>
+<a href="../amni-code.html">AMNI-CODE</a>
+<a href="../amni-haven.html">AMNI-HAVEN</a>
+<a href="../amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</div>
+<a href="../about.html">ABOUT</a>
+<a href="../faq.html">FAQ</a>
+<a href="../privacy.html">PRIVACY</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<p class="crumbs"><a href="../">Home</a> &rsaquo; <a href="../amni-calc.html">Amni-Calc</a> &rsaquo; Manufacturing &rsaquo; Machining: Speeds, Feeds & Shop Math</p>
+<div class="product-hero">
+<h1>MACHINING: SPEEDS, FEEDS & SHOP MATH</h1>
+<p class="desc">RPM AND FEED FROM CUTTING-SPEED BANDS, PERCENT-THREAD TAP DRILLS, SHEET-METAL BEND ALLOWANCE, E140 HARDNESS CONVERSION, BOLT CIRCLES</p>
+<div style="margin-top:1.5rem">
+<a href="./#tab-machining" class="btn btn-primary" style="background:#ff6b35;color:var(--bg);box-shadow:0 0 10px #ff6b35">OPEN MACHINING CALCULATOR &rarr;</a>
+</div>
+</div>
+<section>
+<h2>WHAT THIS MODULE SOLVES</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.85;color:var(--text);font-size:.88rem">
+<p>Four calculations cover most shop-floor arithmetic. Spindle speed comes from the cutting speed the tool/material pair supports: N = 1000·V_c/(π·D), with published band values for HSS and carbide. Table feed follows from chip load per tooth. Tap drills come from the percent-of-thread formulas — metric drill = d − p·%/76.98, unified drill = d − 0.01299·%/TPI — the same math behind every chart on every shop wall. Sheet-metal flat patterns come from the bend allowance BA = θ(R + K·t) with the K-factor locating the neutral axis. Hardness conversion interpolates the ASTM E140 steel table between HRC, HV, and HB.</p>
+</div>
+</section>
+<section>
+<h2>FORMULAS USED</h2>
+<div style="max-width:800px;margin:0 auto">
+<ul class="eq-list"><li><code>N = 1000·V_c / (π·D)   [rpm, V_c m/min, D mm]</code></li><li><code>v_f = f_z · z · N   [mm/min]</code></li><li><code>MRR = a_p · a_e · v_f / 1000   [cm³/min]</code></li><li><code>Tap drill (metric) = d − p·% / 76.98</code></li><li><code>Tap drill (unified) = d − 0.01299·% / TPI</code></li><li><code>BA = θ·(R + K·t),  BD = 2(R+t)·tan(θ/2) − BA</code></li><li><code>UTS ≈ 3.45 · HB   [MPa, steel]</code></li></ul>
+<p class="std-line"><strong>References &amp; Standards</strong>Machinery's Handbook (speeds & feeds, tap drill), ASTM E140 (hardness), DIN 6935 (bending)</p>
+</div>
+</section>
+<section>
+<h2>WHERE THIS APPLIES</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.85;color:var(--text);font-size:.88rem">
+<p>Use it when the chart is not on the wall: a tool diameter between rows, a material the chart skips, a 65% tap for work-hardening stainless, a flat-pattern length the press brake operator wants before cutting, a cert quoting HV when the drawing says HRC. The bolt-circle card prints X-Y coordinates for a rotary-table-less mill and the chord distance for layout verification.</p>
+</div>
+</section>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Climb or conventional milling?","acceptedAnswer":{"@type":"Answer","text":"Climb by default on any machine with backlash control: better finish, lower cutting force, chips thrown clear of the cut. Conventional survives on worn knee mills (backlash makes climb grab) and through scale or flame-cut skin where the down-cutting edge would land on the crust."}},{"@type":"Question","name":"Why does my calculated RPM exceed the spindle?","acceptedAnswer":{"@type":"Answer","text":"Small tools want more speed than most spindles have — a Ø3 carbide tool in aluminum computes to 40k+ rpm. Run at max spindle and keep the CHIP LOAD correct at that reduced speed; feed per tooth, not surface speed, protects the tool."}},{"@type":"Question","name":"Where does 76.98 come from in the tap-drill formula?","acceptedAnswer":{"@type":"Answer","text":"It is the geometry constant of a 60° thread: one full thread height H = 0.86603·p engages 76.98% when the drill leaves exactly d − p. That is why the ancient d − p rule of thumb IS the 77% drill."}},{"@type":"Question","name":"Does the 3.45·HB tensile estimate replace a pull test?","acceptedAnswer":{"@type":"Answer","text":"No — it is a ±10% correlation for carbon and low-alloy steels used for sanity checks and incoming-material screening. Certs, code work, and anything safety-rated need the real tensile test."}}]}</script>
+<section class="deep-section"><details class="deep-dive"><summary><span class="deep-icon">&#9776;</span><span class="deep-label">Shop Math That Pays Rent</span><span class="deep-hint">Click to expand &mdash; the full derivation, a case study, pitfalls, and standards notes</span></summary><div class="deep-body"><div class="deep-block deep-worked"><h3>Worked Example: One Part, All Four Cards</h3><p>A 1018 steel plate gets a pocket, four tapped holes, and one bent flange.</p><p><strong>Pocket:</strong> Ø10 mm 2-flute carbide, mid-band V_c = 145 m/min → <code>N = 1000×145/(π×10) = 4,616 rpm</code>; at f_z = 0.05 mm: <code>v_f = 0.05×2×4616 = 462 mm/min</code>; a 5×4 mm cut removes <code>9.2 cm³/min</code>.</p><p><strong>Holes:</strong> M6×1.0 at 75%: <code>drill = 6 − 1.0×75/76.98 = 5.03 → 5.0 mm</code>. The classic check: ¼-20 UNC at 75% gives <code>0.250 − 0.01299×75/20 = 0.2013″</code> — the #7 drill, exactly as the wall chart says.</p><p><strong>Flange:</strong> t = 2 mm, inside R = 3 mm, 90°, air-bent (K ≈ 0.33): <code>BA = (π/2)(3 + 0.66) = 5.75 mm</code>, setback = R + t = 5 mm, bend deduction = 4.25 mm, so legs of 50 and 80 mm cut flat at <code>125.75 mm</code>.</p><p><strong>Cert says HV 413:</strong> E140 interpolation → HRC 42, HB 391, UTS ≈ 1,349 MPa — matches the 4140 HT the drawing intended.</p></div><div class="deep-block deep-procedure"><h3>Dialing In a New Cut</h3><ol class="step-list"><li><span class="step-n">1</span><span>Start at mid-band V_c for the material/tool pair — the bands assume sharp tools and coolant. Slot cuts, long stickout, and thin walls start at the LOW end.</span></li><li><span class="step-n">2</span><span>Set chip load by tool diameter (roughly D/200 for steel, double for aluminum) — too little rubs and work-hardens, too much chips the edge.</span></li><li><span class="step-n">3</span><span>Listen and look: steady hiss and C-shaped chips mean go up 10%; squeal means more feed (not less speed); blue chips in steel mean back off V_c.</span></li><li><span class="step-n">4</span><span>For tapping, drop to 65-70% thread in stainless and titanium — tap torque falls by a third and the joint loses almost nothing.</span></li><li><span class="step-n">5</span><span>Bend a test coupon on the actual brake before cutting a nest of parts: back-solve K from the measured flat, then trust YOUR K, not the table.</span></li><li><span class="step-n">6</span><span>Convert hardness only within the E140 family it belongs to — the steel table lies about aluminum, copper, and austenitic stainless.</span></li></ol></div><div class="deep-block deep-pitfalls"><h3>Common Pitfalls</h3><ul class="pitfall-list"><li><strong>Running HSS at carbide numbers</strong><span>The bands differ 3-5×. Carbide speeds burn an HSS end mill in seconds — the tool material column matters more than the workpiece column.</span></li><li><strong>Chasing 100% thread</strong><span>Going from 75% to 100% thread roughly doubles tapping torque for about 5% more strip strength. Broken taps in finished parts cost more than the 5%.</span></li><li><strong>One K-factor for every bend</strong><span>K drifts with R/t, tooling, and grain direction: ~0.33 air-bending tight radii, up to ~0.45 above R = 2t. On precision flats, coupon-derived K beats every published table.</span></li><li><strong>Chip-load panic below Ø4 mm</strong><span>Small tools deflect and snap at book chip loads. Halve f_z below Ø4 and use full theoretical speed — micro tools die from force, not heat.</span></li><li><strong>Hardness-testing thin or case-hardened parts with the wrong scale</strong><span>A Brinell ball punches through thin case depth and reads the soft core; HRC needs ~10× indent depth of material beneath. Use HV microhardness on cases and sheet.</span></li></ul></div><div class="deep-block deep-faq"><h3>Engineer FAQ</h3><details class="faq-q"><summary>Climb or conventional milling?</summary><div>Climb by default on any machine with backlash control: better finish, lower cutting force, chips thrown clear of the cut. Conventional survives on worn knee mills (backlash makes climb grab) and through scale or flame-cut skin where the down-cutting edge would land on the crust.</div></details><details class="faq-q"><summary>Why does my calculated RPM exceed the spindle?</summary><div>Small tools want more speed than most spindles have — a Ø3 carbide tool in aluminum computes to 40k+ rpm. Run at max spindle and keep the CHIP LOAD correct at that reduced speed; feed per tooth, not surface speed, protects the tool.</div></details><details class="faq-q"><summary>Where does 76.98 come from in the tap-drill formula?</summary><div>It is the geometry constant of a 60° thread: one full thread height H = 0.86603·p engages 76.98% when the drill leaves exactly d − p. That is why the ancient d − p rule of thumb IS the 77% drill.</div></details><details class="faq-q"><summary>Does the 3.45·HB tensile estimate replace a pull test?</summary><div>No — it is a ±10% correlation for carbon and low-alloy steels used for sanity checks and incoming-material screening. Certs, code work, and anything safety-rated need the real tensile test.</div></details></div></div></details></section>
+<section>
+<h2>WHERE TO GO NEXT</h2>
+<div class="card-grid"><a href="materials.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">MATERIALS</h3><p>Yield, ultimate, modulus, density, k, cp for common metals & polymers</p></a><a href="fits.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">FITS</h3><p>Hole/shaft limits, clearance & interference, Lamé press-fit pressure, assembly temperature, tolerance stack-up</p></a><a href="finishes.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">FINISHES</h3><p>Roughness parameters, process capability ranges</p></a><a href="cad.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">CAD</h3><p>CSG solids from primitives, exact mass properties, watertight binary STL export — no install, no upload</p></a></div>
+</section>
+<section style="text-align:center">
+<h2>RUN THE NUMBERS</h2>
+<p style="color:var(--dim);margin-bottom:1.5rem;font-size:.9rem">All calculations run locally in your browser. No data leaves the device.</p>
+<div class="cta-row" style="justify-content:center;gap:1rem;flex-wrap:wrap">
+<a href="./#tab-machining" class="btn btn-primary" style="background:#ff6b35;color:var(--bg);box-shadow:0 0 10px #ff6b35">LAUNCH MACHINING &rarr;</a>
+<a href="../amni-calc.html" class="btn btn-outline">ALL CALC MODULES</a>
+</div>
+</section>
+<div class="site-ad-banner">
+<span class="ad-note">Sponsored</span>
+<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8345487545441889" data-ad-slot="1720203631" data-ad-format="auto" data-full-width-responsive="true"></ins>
+<script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>
+</div>
+<footer>
+<div class="footer-links">
+<a href="../about.html">ABOUT</a>
+<a href="../faq.html">FAQ</a>
+<a href="../amni-calc.html">AMNI-CALC</a>
+<a href="../privacy.html">PRIVACY</a>
+<a href="../terms.html">TERMS</a>
+<a href="mailto:amnibro7@gmail.com">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amni-Scient. All rights reserved.</p>
+</footer>
+</body>
+</html>
