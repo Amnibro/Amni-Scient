@@ -1,5 +1,11 @@
 # Changelog 
 
+## Amni-Learn v5.75.0 — Voice buzz ROOT-CAUSED: GPU path poisoned everything; CPU-first now - 2026-07-10
+- **Diagnosis with real waveforms** (no more ear-check roundtrips): ran the actual model headless on the same AMD hardware. Two proven facts: (1) a fresh page generating on **CPU produces perfect speech** — clean silence gaps, zero clipping; (2) after ANY WebGPU attempt in the same page, even `device:'wasm'` sessions create GPU buffers — **the tier ladder's CPU fallback was silently inheriting the broken GPU state**, so every "tier" Anthony heard was the same buzzing WebGPU path. The quant changes never had a chance.
+- **Fix: CPU-first, always.** The default (and only automatic) tier is now WASM fp32 — the exact configuration captured clean on real hardware, and the same shape as Amni-AI's proven KPipeline-on-CPU integration. WebGPU is opt-in only (`amni-learn-kk-device`='webgpu') and if its warm-up fails the quality gate the session is disposed and Piper takes over directly — no same-page CPU retry that would inherit the poison.
+- Desktop timings from the real run: ~6s one-time session init per module open, ~7s to synthesize a 5s sentence — sentence streaming from v5.70.0 keeps first-words latency at one chunk. No new download: fp32 was already cached.
+- Sent Anthony the captured clean CPU WAV as the reference for what the app should now sound like. All three probe modes green (CPU default / forced-GPU buzz → gate → Piper handoff / kokoro-404 → Piper), zero page errors. SW v1268→v1269.
+
 ## Amni-Calc v5.74.0 — Equations reference catches up with the new modules - 2026-07-10
 - Five new cards in the EQUATIONS tab so the formula catalog matches the calculator suite again: Machining (speeds/feeds, both tap-drill percent formulas, bend allowance & deduction, the 3.45-HB tensile estimate), Hydraulics (cylinder forces and speeds, area ratio & intensification, rod Euler buckling, the absolute-pressure accumulator gas law), Lifting & Rigging (sling tension, angle factors, hitch factors, CoG-offset shares, eyebolt derates), Fits & Press Fits (limit extremes, Lame pressure, torque capacity, hub hoop stress, assembly temperature, DIN 6885 key length), and Solid Modeling (divergence-theorem volume/CoG, STL layout, tessellation deficit). Every row keeps the hover-tooltip explanation pattern.
 

@@ -10482,7 +10482,7 @@ function playAnimalSound(type) {
       const m=await import('/learn/vendor/kokoro/kokoro.js');
       try{m.env.backends.onnx.wasm.wasmPaths='/learn/vendor/kokoro/';}catch(e){}
       let force=null;try{force=localStorage.getItem('amni-learn-kk-device');}catch(e){}
-      const tiers=force==='wasm'?[{device:'wasm',dtype:'fp32'}]:force==='webgpu'?[{device:'webgpu',dtype:'fp32'}]:navigator.gpu?[{device:'webgpu',dtype:'fp32'},{device:'wasm',dtype:'fp32'}]:[{device:'wasm',dtype:'fp32'}];
+      const tiers=force==='webgpu'?[{device:'webgpu',dtype:'fp32'}]:[{device:'wasm',dtype:'fp32'}];
       let last=null;
       for(const t of tiers){
         let tts=null;
