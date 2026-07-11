@@ -2115,42 +2115,52 @@
     const gen=_hdGen;
     const pageEl=document.getElementById('story-page');
     const words=_storyState.words||[];
-    const totalC=Math.max(1,text.length);
     let lastIdx=-1;
     document.getElementById('story-play').style.display='none';
     document.getElementById('story-pause').style.display='';
     document.getElementById('story-stop').style.display='';
-    _synthWav(text,0.95).then(wav=>{
-      if(gen!==_hdGen||!_storyState.book)return;
-      let a;try{a=new Audio(URL.createObjectURL(wav));}catch(e){_storyState.webFallback=true;playCurrentPage(true);return;}
-      _hdAudio=a;
-      a.ontimeupdate=()=>{
-        if(!a.duration)return;
-        const cpos=a.currentTime/a.duration*totalC;
-        let idx=-1;for(let i=0;i<words.length;i++){if(cpos>=words[i].start)idx=i;else break;}
-        if(idx===lastIdx||idx<0)return;
-        if(lastIdx>=0)pageEl.querySelector(`[data-wi="${lastIdx}"]`)?.classList.remove('hl');
-        pageEl.querySelector(`[data-wi="${idx}"]`)?.classList.add('hl');
-        lastIdx=idx;
-      };
-      const done=()=>{
-        try{URL.revokeObjectURL(a.src);}catch(e){}
-        if(gen!==_hdGen)return;
-        _hdAudio=null;
-        document.querySelectorAll('#story-page .story-word.hl').forEach(el=>el.classList.remove('hl'));
-        if(_storyState.book&&_storyState.autoplay&&_storyState.pageIdx<_storyState.book.pages.length-1){
-          setTimeout(()=>{if(!_storyState.autoplay||gen!==_hdGen)return;_storyState.pageIdx+=1;renderPage();playCurrentPage(true);},900);
-        }else{
-          _storyState.autoplay=false;
-          document.getElementById('story-play').style.display='';
-          document.getElementById('story-pause').style.display='none';
-          document.getElementById('story-stop').style.display='none';
-        }
-      };
-      a.onended=done;
-      a.onerror=()=>{_storyState.webFallback=true;done();};
-      a.play().catch(()=>{_storyState.webFallback=true;done();});
-    }).catch(()=>{if(gen!==_hdGen)return;_storyState.webFallback=true;playCurrentPage(true);});
+    const chunks=_chunkSpans(text);
+    const pre=t=>{const p=_synthWav(t,0.95);p.catch(()=>{});return p;};
+    let next=pre(chunks[0].t);
+    const finish=()=>{
+      document.querySelectorAll('#story-page .story-word.hl').forEach(el=>el.classList.remove('hl'));
+      if(_storyState.book&&_storyState.autoplay&&_storyState.pageIdx<_storyState.book.pages.length-1){
+        setTimeout(()=>{if(!_storyState.autoplay||gen!==_hdGen)return;_storyState.pageIdx+=1;renderPage();playCurrentPage(true);},900);
+      }else{
+        _storyState.autoplay=false;
+        document.getElementById('story-play').style.display='';
+        document.getElementById('story-pause').style.display='none';
+        document.getElementById('story-stop').style.display='none';
+      }
+    };
+    const playK=k=>{
+      next.then(wav=>{
+        if(gen!==_hdGen||!_storyState.book)return;
+        next=k+1<chunks.length?pre(chunks[k+1].t):null;
+        let a;try{a=new Audio(URL.createObjectURL(wav));}catch(e){_storyState.webFallback=true;playCurrentPage(true);return;}
+        _hdAudio=a;
+        const base=chunks[k].s,span=Math.max(1,chunks[k].e-chunks[k].s);
+        a.ontimeupdate=()=>{
+          if(!a.duration)return;
+          const cpos=base+a.currentTime/a.duration*span;
+          let idx=-1;for(let i=0;i<words.length;i++){if(cpos>=words[i].start)idx=i;else break;}
+          if(idx===lastIdx||idx<0)return;
+          if(lastIdx>=0)pageEl.querySelector(`[data-wi="${lastIdx}"]`)?.classList.remove('hl');
+          pageEl.querySelector(`[data-wi="${idx}"]`)?.classList.add('hl');
+          lastIdx=idx;
+        };
+        const done=()=>{
+          try{URL.revokeObjectURL(a.src);}catch(e){}
+          if(gen!==_hdGen)return;
+          _hdAudio=null;
+          k+1<chunks.length&&!_storyState.webFallback?playK(k+1):finish();
+        };
+        a.onended=done;
+        a.onerror=()=>{_storyState.webFallback=true;done();};
+        a.play().catch(()=>{_storyState.webFallback=true;done();});
+      }).catch(()=>{if(gen!==_hdGen)return;_storyState.webFallback=true;playCurrentPage(true);});
+    };
+    playK(0);
   }
   function playCurrentPage(continued) {
     if (!continued) stopReading();
@@ -10472,7 +10482,7 @@ function playAnimalSound(type) {
       const m=await import('/learn/vendor/kokoro/kokoro.js');
       try{m.env.backends.onnx.wasm.wasmPaths='/learn/vendor/kokoro/';}catch(e){}
       let force=null;try{force=localStorage.getItem('amni-learn-kk-device');}catch(e){}
-      const tiers=force==='wasm'?[{device:'wasm',dtype:'q8'}]:force==='webgpu'?[{device:'webgpu',dtype:'fp32'}]:navigator.gpu?[{device:'webgpu',dtype:'fp32'},{device:'wasm',dtype:'q8'}]:[{device:'wasm',dtype:'q8'}];
+      const tiers=force==='wasm'?[{device:'wasm',dtype:'fp32'}]:force==='webgpu'?[{device:'webgpu',dtype:'fp32'}]:navigator.gpu?[{device:'webgpu',dtype:'fp32'},{device:'wasm',dtype:'fp32'}]:[{device:'wasm',dtype:'fp32'}];
       let last=null;
       for(const t of tiers){
         let tts=null;
@@ -10487,7 +10497,9 @@ function playAnimalSound(type) {
     })();
     try{return await _kkInit;}catch(e){_kkInit=null;_kkFailed=true;throw e;}
   }
-  async function _kkWav(text,speed){const t=await _kkLoad();const a=await t.generate(text,{voice:_KKVOICE,speed:speed||1});return a.toBlob();}
+  function _kkPrep(t){t=String(t).replace(/([.!?])\s*(?=[A-Z])/g,'$1 ').replace(/,\s*/g,', ').replace(/!{2,}/g,'!').replace(/\.{3,}/g,'…');const a=t.replace(/[^a-zA-Z]/g,'');if(a&&a.replace(/[^A-Z]/g,'').length/a.length>0.6){t=t.toLowerCase().replace(/(^|[.!?]\s+)([a-z])/g,(m,p,c)=>p+c.toUpperCase()).replace(/\bi\b/g,'I');}return t;}
+  function _chunkSpans(text){const spans=[];const re=/[^.!?]*[.!?]+\s*/g;let m;while((m=re.exec(text))){if(m[0].trim())spans.push({s:m.index,e:m.index+m[0].length,t:m[0]});}spans.length?(spans[spans.length-1].e<text.length&&text.slice(spans[spans.length-1].e).trim()&&spans.push({s:spans[spans.length-1].e,e:text.length,t:text.slice(spans[spans.length-1].e)})):spans.push({s:0,e:text.length,t:text});const out=[];for(const sp of spans){const last=out[out.length-1];last&&(last.e-last.s)+(sp.e-sp.s)<140?(last.e=sp.e,last.t+=sp.t):out.push({s:sp.s,e:sp.e,t:sp.t});}return out;}
+  async function _kkWav(text,speed){const t=await _kkLoad();const a=await t.generate(_kkPrep(text),{voice:_KKVOICE,speed:speed||1});return a.toBlob();}
   async function _synthWav(text,speed){if(_kkReady)try{return await _kkWav(text,speed);}catch(e){}if(_hdReady){const m=await _hdLoad();return m.predict({text:text,voiceId:_HDVOICE});}throw new Error('no-synth');}
   function hdOn(){try{return localStorage.getItem('amni-learn-tts-hd')==='on';}catch(e){return false;}}
   function _hdCtx(){return currentGame==='phonics'||currentGame==='storybook';}
@@ -10502,7 +10514,7 @@ function playAnimalSound(type) {
   }
   function _hdStop(){_hdGen++;try{if(_hdAudio){_hdAudio.onended=null;_hdAudio.onerror=null;_hdAudio.pause();_hdAudio.src='';_hdAudio=null;}}catch(e){}}
   function _hdPlayBlob(b){return new Promise(res=>{let a;try{a=new Audio(URL.createObjectURL(b));}catch(e){return res();}_hdAudio=a;const done=()=>{try{URL.revokeObjectURL(a.src);}catch(e){}res();};a.onended=done;a.onerror=done;a.play().catch(done);});}
-  async function _hdSay(items){_hdStop();const gen=_hdGen;if(!_kkReady&&!_hdReady)await(_kkCan()?_kkLoad().catch(()=>_hdLoad()):_hdLoad());if(gen!==_hdGen)return;const arr=(Array.isArray(items)?items:[items]).map(_ttsClean).filter(Boolean);for(const t of arr){if(gen!==_hdGen)return;const wav=await _synthWav(t);if(gen!==_hdGen)return;await _hdPlayBlob(wav);}}
+  async function _hdSay(items){_hdStop();const gen=_hdGen;if(!_kkReady&&!_hdReady)await(_kkCan()?_kkLoad().catch(()=>_hdLoad()):_hdLoad());if(gen!==_hdGen)return;const arr=(Array.isArray(items)?items:[items]).map(_ttsClean).filter(Boolean);const parts=arr.flatMap(t=>_chunkSpans(t).map(c=>c.t));const pre=t=>{const p=_synthWav(t);p.catch(()=>{});return p;};let next=parts.length?pre(parts[0]):null;for(let i=0;i<parts.length;i++){if(gen!==_hdGen)return;const wav=await next;next=i+1<parts.length?pre(parts[i+1]):null;if(gen!==_hdGen)return;await _hdPlayBlob(wav);}}
   function _webSeq(items){
     if(!('speechSynthesis' in window)) return;
     try {

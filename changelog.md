@@ -1,5 +1,11 @@
 # Changelog 
 
+## Amni-Learn v5.70.0 — Kokoro at full precision + sentence-streamed reading - 2026-07-10
+- Anthony flagged the CPU-tier voice as still bad — the q8 quantized Kokoro is known-metallic. Amni-AI's proven integration (amni/voice/tts.py) runs Kokoro **full-precision on CPU**, so the learn app now does the same: the WASM tier loads **fp32** instead of q8. Zero new download on machines that already tried the GPU tier — fp32 is the same model file the WebGPU attempt cached.
+- **Sentence-streamed synthesis** (mirrors KPipeline's per-sentence chunk stream): storybook pages and long teach-card facts are split into sentence chunks (~140 chars, offset-tracked) and the next chunk generates *while the current one plays* — first words start in a couple of seconds on CPU instead of waiting for the whole page. Word-by-word highlight now maps through per-chunk character spans (more accurate than the old whole-page proportional mapping).
+- **Amni-AI's prosody text-prep ported** (`_kkPrep`): pause hints after sentence punctuation, comma spacing, multi-bang collapse, ellipsis normalization, and all-caps de-shouting — same preprocessing that made the Amni-AI voices sound natural.
+- Verified headless in all three modes (clean GPU / garbage GPU → CPU / kokoro-404 → Piper): chunked generation confirmed by per-page generate counts, highlight + autoplay intact, zero Piper leakage on Kokoro tiers, zero page errors. Chunker unit-checked: contiguous coverage, no-punctuation and short-text edge cases. SW v1267→v1268.
+
 ## Amni-Calc v5.69.0 — NEW MODULE: Machining / Manufacturing - 2026-07-10
 - **The suite's first manufacturing module** (sidebar, after Fits & Tol) — the Engineers-Edge-class gap: nothing on the site previously answered shop-floor questions. Five cards:
 - **⚡ SPEEDS & FEEDS**: material (9 standard reference bands, HSS and carbide) + tool Ø + flutes + chip load → spindle RPM (N = 1000·V_c/πD), table feed, feed/rev and MRR — always showing the published band so you know where mid-band sits, with real starting-point guidance (slots low, finishing high, aluminum doubles chip load, halve below Ø4 mm).
