@@ -135,6 +135,18 @@ function sphere(r,n,m){
   }
   return polys;
 }
+function torus(R,r,n,m){
+  n=n||32;m=m||16;const polys=[];
+  const pt=(a,b)=>({x:(R+r*Math.cos(b))*Math.cos(a),y:r*Math.sin(b),z:(R+r*Math.cos(b))*Math.sin(a)});
+  for(let i=0;i<n;i++){
+    const a0=i/n*2*Math.PI,a1=(i+1)/n*2*Math.PI;
+    for(let j=0;j<m;j++){
+      const b0=j/m*2*Math.PI,b1=(j+1)/m*2*Math.PI;
+      polys.push(new Polygon([pt(a0,b0),pt(a0,b1),pt(a1,b1),pt(a1,b0)].map(v=>new Vertex(v))));
+    }
+  }
+  return polys;
+}
 function transform(polys,rx,ry,rz,tx,ty,tz){
   const cr=d=>Math.cos(d*Math.PI/180),sr=d=>Math.sin(d*Math.PI/180);
   const cx=cr(rx),sx=sr(rx),cy=cr(ry),sy=sr(ry),cz=cr(rz),sz=sr(rz);
@@ -174,7 +186,7 @@ function toSTL(polys){
   }
   return buf;
 }
-if(typeof module!=='undefined'&&module.exports)module.exports={cube,cylinder,sphere,transform,csgUnion,csgSubtract,csgIntersect,massProps,toSTL};
+if(typeof module!=='undefined'&&module.exports)module.exports={cube,cylinder,sphere,torus,transform,csgUnion,csgSubtract,csgIntersect,massProps,toSTL};
 if(typeof document==='undefined')return;
 /* ============ browser UI ============ */
 const D=document,W=window,$=id=>D.getElementById(id);
@@ -183,13 +195,15 @@ const FDEF={
   box:{n:'BOX',p:{sx:60,sy:20,sz:40}},
   cyl:{n:'CYLINDER',p:{r:15,h:40}},
   cone:{n:'CONE',p:{r1:20,r2:8,h:35}},
-  sphere:{n:'SPHERE',p:{r:18}}
+  sphere:{n:'SPHERE',p:{r:18}},
+  torus:{n:'TORUS',p:{R:25,r:8}}
 };
 const CAD=W.__CAD={features:[],nid:1,polys:null,built:false};
 function genFeature(f){
   const base=f.type==='box'?cube(f.p.sx,f.p.sy,f.p.sz)
     :f.type==='cyl'?cylinder(f.p.r,f.p.r,f.p.h,32)
     :f.type==='cone'?cylinder(f.p.r1,f.p.r2,f.p.h,32)
+    :f.type==='torus'?torus(f.p.R,f.p.r,32,16)
     :sphere(f.p.r,24,12);
   return transform(base,f.rot.x,f.rot.y,f.rot.z,f.pos.x,f.pos.y,f.pos.z);
 }

@@ -40,5 +40,15 @@ const nx=dv.getFloat32(84,true),ny=dv.getFloat32(88,true),nz=dv.getFloat32(92,tr
 ap(Math.sqrt(nx*nx+ny*ny+nz*nz),1,'first STL normal unit length',1e-4);
 const chain=C.csgSubtract(C.csgUnion(C.cube(60,10,60),C.transform(C.cube(60,60,10),0,0,0,0,25,-25)),C.cylinder(5,5,30,32));
 ok(C.massProps(chain).volume>0,'3-op feature chain produces positive solid');
+const tor=C.torus(20,5,32,16),mpT=C.massProps(tor);
+const Vpappus=2*Math.PI*Math.PI*20*25;
+ok(mpT.volume>0.965*Vpappus&&mpT.volume<Vpappus,'torus R20 r5 within 3.5% under Pappus 9870, got '+mpT.volume.toFixed(0));
+ok(Math.abs(mpT.centroid.x)<1e-6&&Math.abs(mpT.centroid.y)<1e-6,'torus centroid at origin');
+const torHi=C.massProps(C.torus(20,5,64,32)).volume;
+ok(torHi>mpT.volume&&torHi<Vpappus,'finer torus tessellation converges upward toward Pappus, got '+torHi.toFixed(0));
+const rod=C.transform(C.cylinder(8,8,12,32),0,0,0,0,0,0);
+const uni=C.massProps(C.csgUnion(tor,rod)).volume;
+ap(uni,mpT.volume+C.massProps(rod).volume,'rod through the donut hole is disjoint: union = exact sum',1e-6);
+ok(C.massProps(C.csgSubtract(C.cube(60,20,60),tor)).volume<C.massProps(C.cube(60,20,60)).volume,'torus cuts a donut groove from a block');
 console.log(pass+' passed, '+fail+' failed');
 process.exitCode=fail?1:0;

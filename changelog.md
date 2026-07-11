@@ -1,5 +1,10 @@
 # Changelog 
 
+## Amni-Calc v5.77.0 — Springs you can see, donuts you can model - 2026-07-10
+- **The 3D spring view now matches the math**: conical springs render with their actual taper (large end down, small end from the D1 field), and wave springs get a real crest-to-crest render — alternating-phase sinusoidal rings whose crests touch, the way the part actually stacks — instead of borrowing the helical coil.
+- **CAD Studio grows a TORUS primitive**: model o-ring grooves, donut counterweights, and tube bends. The audit holds it to the same standard as everything else — volume within tessellation distance of the Pappus 2-pi-squared-R-r-squared exact answer and converging toward it as segments increase, and a rod through the donut hole proving disjoint booleans sum exactly.
+- 5 new anchors; all 13 suites green, 388 total. Cache-busters 3d?v=eng4, cad?v=cad2.
+
 ## Amni-Calc v5.76.0 — Conical and wave springs join the family - 2026-07-10
 - **Springs now speaks 7 types.** CONICAL (tapered helical): the published SMI constant-pitch rate — which the test suite proves collapses exactly to the plain helical formula when both ends match — stress checked at the largest coil where it actually governs, the telescoping test ((D2-D1)/2Na > d) that decides whether it flattens to two wire diameters, and the force at which the largest coil grounds and the progressive stiffening begins (the whole reason conical springs get bought). WAVE (crest-to-crest): the Smalley design-manual rate and stress forms, with the fourth-power wave count and cubed thickness scaling laws verified as anchors.
 - **Constant-force springs deliberately NOT added**: the catalog sizing constant could not be reconciled with first principles, and this suite does not ship formulas it cannot stand behind — same refusal as DIN 471 retaining-ring grooves.
