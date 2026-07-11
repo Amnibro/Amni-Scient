@@ -1,5 +1,10 @@
 # Changelog 
 
+## Amni-Calc v5.85.0 — Coherence pass: the catalog catches up with itself - 2026-07-10
+- **Equations tab gains three cards + lug rows** so every formula shipped in the last five iterations is in the reference: FRACTURE & NOTCHES (stress intensity, critical crack, Paris law with its closed form, Howland and Inglis K_t, fatigue notch factor), GEAR TRAINS (meshing constraint, all three Willis ratios, assembly divisibility, per-mesh load), METERING & REFRIGERATION (the dP-meter equation, permanent loss, refrigeration COP with its Carnot bound, the discharge-enthalpy approximation) — and the pad-eye screening triple joins LIFTING & RIGGING.
+- **Eight module descriptions updated** so the sidebar tells the truth about what each module now does: Fluids mentions flow metering, Gears mentions planetary trains, Fatigue mentions LEFM fracture, Stress mentions K_t, Cycles mentions the R134a cycle, Shafts mentions keyways and ring grooves, Bolts mentions PCC-1 sequences, Rigging mentions lug checks.
+- All 18 suites green, 481 anchors. Cache-buster engineer?v=eng17.
+
 ## Amni-Calc v5.84.0 — Chamfer technique + planetary-to-AGMA handoff - 2026-07-10
 - **CAD Studio teaches the chamfer move**: a new chamfered-bushing preset cuts a true 45-degree chamfer on both bore edges with cone subtractions (radius change = height), and the modeler card now states the technique so nobody waits for a fillet button that is not coming. The audit proves the cut: the 2 mm chamfer ring removes its analytic ~134 mm-cubed and shifts the CoG the right way.
 - **Planetary card hands off to AGMA**: sun torque + module inputs added, and CHECK SUN MESH IN AGMA computes the per-mesh tangential load (torque split across the planets — 3 planets cut it to a third), loads the sun-planet pair into the pitting card, and scrolls you to it. The gear train and the tooth-stress check finally speak to each other.

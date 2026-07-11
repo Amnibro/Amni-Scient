@@ -1346,6 +1346,36 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <tr title="Vertical share of the leg nearer the CoG (moment balance)"><td>CoG Offset Share</td><td>V₁ = W·d₂ / (d₁+d₂)</td></tr>
 <tr title="Leg tension from its vertical share and geometry"><td>Offset Leg Tension</td><td>T = V·L / h, L = √(d²+h²)</td></tr>
 <tr title="Shoulder eyebolts derate steeply with pull angle; plain eyebolts take no angular load"><td>Eyebolt Derate</td><td>100% in-line · ~30% @45° · ~25% @90°</td></tr>
+<tr title="Pad-eye screening triple: pin bearing, net-section tension, double-plane tear-out; BTH-1 governs real lifters"><td>Lug Checks</td><td>σ_br = P/(d·t) · σ_t = P/((w−d)·t) · τ = P/(2t(a−d/2))</td></tr>
+</tbody></table>
+</div>
+<div class="card">
+<h3>FRACTURE &amp; NOTCHES</h3>
+<table class="data table-static"><tbody>
+<tr title="LEFM stress intensity. Y: center crack 1.0, edge 1.12, penny 2/π"><td>Stress Intensity</td><td>K_I = Y·σ·√(π·a)</td></tr>
+<tr title="Crack size at which K_I reaches the material toughness"><td>Critical Crack</td><td>a_c = (K_IC / Y·σ)² / π</td></tr>
+<tr title="Paris crack-growth law; closed-form life for m ≠ 2"><td>Paris Law</td><td>da/dN = C·ΔK^m → N = (a_c^e − a₀^e)/(C·(YΔσ√π)^m·e), e = 1−m/2</td></tr>
+<tr title="Howland net-section fit for a circular hole in a finite plate; exactly 3 in the infinite limit"><td>K_t Hole in Plate</td><td>K_t = 3 − 3.14(d/w) + 3.667(d/w)² − 1.527(d/w)³</td></tr>
+<tr title="Inglis exact elasticity solution; a is the semi-axis across the load — a crack (b→0) diverges, use LEFM"><td>K_t Ellipse</td><td>K_t = 1 + 2a/b</td></tr>
+<tr title="Fatigue notch factor from notch sensitivity q (0 = insensitive, 1 = full theoretical)"><td>Fatigue Notch</td><td>K_f = 1 + q·(K_t − 1)</td></tr>
+</tbody></table>
+</div>
+<div class="card">
+<h3>GEAR TRAINS (EPICYCLIC)</h3>
+<table class="data table-static"><tbody>
+<tr title="Meshing constraint of a simple planetary set"><td>Ring Teeth</td><td>Z_r = Z_s + 2·Z_p</td></tr>
+<tr title="Willis-equation ratios by fixed member; carrier-fixed reverses direction"><td>Ratios</td><td>ring: 1+Z_r/Z_s · sun: 1+Z_s/Z_r · carrier: −Z_r/Z_s</td></tr>
+<tr title="Equal planet spacing demands this divisibility; stage ratios multiply"><td>Assembly</td><td>(Z_s + Z_r) / n_planets ∈ ℤ</td></tr>
+<tr title="Per-mesh tangential load; torque splits across the planets"><td>Sun-Mesh Load</td><td>W_t = 2000·T / (n_p·m·Z_s)</td></tr>
+</tbody></table>
+</div>
+<div class="card">
+<h3>METERING &amp; REFRIGERATION</h3>
+<table class="data table-static"><tbody>
+<tr title="Universal ΔP-metering equation; C_d ≈ 0.61 orifice, 0.96 nozzle, 0.98 venturi at high Re"><td>ΔP Flow Meter</td><td>Q = C_d·A_t·√(2ΔP/ρ) / √(1−β⁴)</td></tr>
+<tr title="What the element permanently costs the system; venturi recovers all but 10-15%"><td>Permanent Loss</td><td>orifice ≈ (1−β²)·ΔP</td></tr>
+<tr title="Vapor-compression cooling COP from cycle enthalpies (h1 suction, h2 discharge, h4 after expansion)"><td>Refrigeration COP</td><td>COP = (h₁−h₄)/(h₂−h₁), always &lt; T_e/(T_c−T_e)</td></tr>
+<tr title="Isobar approximation used for discharge enthalpy from saturation data"><td>Discharge Enthalpy</td><td>h₂s ≈ h_g(T_c) + T_c·(s₁ − s_g(T_c))</td></tr>
 </tbody></table>
 </div>
 <div class="card">
@@ -2926,7 +2956,7 @@ window._calcSealWasm=(...args)=>calc_seal(...args);
 <script src="./calc-fixes.js?v=eng21" defer></script>
 <script src="./calc-units.js?v=units1" defer></script>
 <script src="./calc-qol.js" defer></script>
-<script src="./calc-engineer.js?v=eng16" defer></script>
+<script src="./calc-engineer.js?v=eng17" defer></script>
 <script src="./calc-cad.js?v=cad4" defer></script>
 </body>
 </html>

@@ -1,5 +1,9 @@
 # Architecture Map — amni-scient.com
 
+## v5.85.0 Amni-Calc: coherence pass (2026-07-10, loop iter 14 — FINAL)
+- index.html v-equations: +3 cards (FRACTURE & NOTCHES 6 rows, GEAR TRAINS 4, METERING & REFRIGERATION 4) + lug row in LIFTING & RIGGING → 49 static equation tables. calc-engineer.js (`?v=eng17`): 8 DESC lines updated (fluids/gears/fatigue/stress/cycles/shafts/bolts/rigging) to mention their iters-8-12 cards.
+- LOOP CLOSED after 14 iterations, v5.69.0 → v5.85.0: machining module, CAD Studio (7 primitives/booleans/mass props/STL), rigging module, keyways, SEO pages ×6 + hash-router, equations catch-up ×2, conical/wave springs + 3D renders, torus/tube/chamfer, flow metering, planetary + AGMA handoff, fracture/Kt/lug from research sweep, VCC on sourced R134a, DIN 471 on sourced tables, PCC-1 sequences. 481 anchors / 18 suites, every ship live-verified. Remaining by-architecture exclusions: 2D FEA, fracture-materials DB.
+
 ## v5.84.0 Amni-Calc: chamfer demo + planetary-AGMA handoff (2026-07-10, loop iter 13)
 - calc-cad.js (`?v=cad4`): PRESETS.chamf = flanged bushing + bore + two 45-deg cone cuts (cone r1:10-r2:14 h4 at y15; inverted at y-15 — slope crosses the edge, radius delta = height = 45 deg). Modeler card note states the technique. cad_audit +5 (chamfer ring ~134mm3 band, CoG shift sign, Wt anchor).
 - calc-fixes.js (`?v=eng21`): gt-card +gt-t/gt-m inputs; applyPlanetaryAgma -> ag-np=Zs, ag-mg=Zp/Zs, ag-m, ag-wt=2000T/(np.m.Zs) (torque splits across planets), fires calcAgmaPitting + scrolls to ag-card.
