@@ -1,5 +1,12 @@
 # Changelog 
 
+## Amni-Calc v5.81.0 — Fracture mechanics, stress concentrations, and lug checks (research sweep) - 2026-07-10
+- A sweep of Engineers-Edge-class sites (MechaniCalc's catalog in particular) surfaced three staples the suite lacked; all three are textbook-exact and now live:
+- **FRACTURE / CRACK GROWTH (Fatigue module)**: K_I = Y·sigma·sqrt(pi·a) for center/edge/penny cracks, the critical crack size where K_I hits K_IC, and closed-form Paris-law life from current crack to critical — with the anchor suite proving the sobering parts (doubling stress range cuts life eightfold at m=3; a third of the 1-to-25 mm life is spent before the crack even reaches 2 mm — inspect early).
+- **STRESS CONCENTRATION K_t (Stress module)**: Howland's net-section polynomial for a hole in a finite plate (exactly 3.0 in the infinite limit, ~2.16 at d/w=0.5 matching Peterson's chart) and Inglis's EXACT elliptical solution (1 + 2a/b) — whose blow-up as the ellipse flattens is the segue the card makes to LEFM. Peterson shoulder/groove charts deliberately not approximated.
+- **PAD-EYE / LUG CHECK (Rigging module)**: the screening triple every lifted lug needs — pin bearing, net-section tension, double-plane shear tear-out — against Fy-based allowables at selectable BTH-1-basis design factors, with the governing mode named and BTH-1 Chapter 3 pointed to for the real design. Closes the loop the Rigging FAQ opened.
+- 20 new anchors; all 16 suites green, 448 total. Cache-buster fixes?v=eng18. (Note: Amni-Learn's v5.79.0 above duplicates a number already used by Amni-Calc — concurrent-agent race, both entries stand.)
+
 ## Amni-Learn v5.79.0 — Toddler phonics speech + wait for natural voice - 2026-07-10
 - **Phonics no longer says "B bah like ball."** Letter teaching uses a toddler script: word first, then pure sound, then letter (`Ball. Ball starts with buh. The letter B says buh.`). Sound map retuned for neural TTS (buh/kuh/mmm/sss..., not bah/kah). Letter Catch + blend path share the same helpers.
 - **No more stock Windows TTS while HD loads.** In Phonics/Storybook (and HD-on), `speakSeq` queues speech, shows `Loading natural voice... please wait` (with download %), and only speaks after Piper is ready. Device voice is last-resort on failure, not the first thing kids hear.

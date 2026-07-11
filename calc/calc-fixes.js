@@ -1795,6 +1795,112 @@ window.calcSlingCg=function(){
     (low?'<div class="note warn" style="margin-top:.4rem">A leg is below 30° — re-rig before lifting.</div>':'')+
     '<p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem">Statics: the leg NEARER the CoG carries more — vertical share V₁ = W·d₂/(d₁+d₂), tension T = V·L/h. Size BOTH slings for the near-leg tension so the load can&#39;t be hooked backwards. Hook must sit plumb over the CoG or the load rotates on pick.</p>');
 };
+const FR_Y={center:['Center through-crack (wide plate)',1.0],edge:['Edge crack',1.12],penny:['Embedded penny crack',2/Math.PI]};
+function injectFracture(){
+  const vw=$('v-fatigue');if(!vw||$('fr-card'))return;
+  const host=vw.querySelector('.split>div:first-child')||vw;
+  const card=document.createElement('div');card.className='card';card.id='fr-card';card.style.marginTop='.6rem';
+  card.innerHTML='<h3>FRACTURE / CRACK GROWTH (LEFM)</h3>'+
+    '<div class="row">'+
+    '<div class="field"><label for="fr-geo">CRACK GEOMETRY</label><select id="fr-geo">'+Object.entries(FR_Y).map(([k,g])=>`<option value="${k}">${g[0]} (Y=${g[1].toFixed(2)})</option>`).join('')+'</select></div>'+
+    '<div class="field"><label for="fr-s">σ MAX (MPa)</label><input type="number" id="fr-s" value="150" step="any"></div>'+
+    '<div class="field"><label for="fr-ds">Δσ RANGE (MPa)</label><input type="number" id="fr-ds" value="100" step="any"></div>'+
+    '<div class="field"><label for="fr-a0">CRACK a₀ (mm)</label><input type="number" id="fr-a0" value="1" step="any"></div>'+
+    '<div class="field"><label for="fr-kic">K_IC (MPa·√m)</label><input type="number" id="fr-kic" value="100" step="any"></div>'+
+    '<div class="field"><label for="fr-c">PARIS C (m/cyc)</label><input type="number" id="fr-c" value="6.9e-12" step="any"></div>'+
+    '<div class="field"><label for="fr-m">PARIS m</label><input type="number" id="fr-m" value="3" step="any"></div>'+
+    '</div><button class="btn btn-sm" onclick="calcFracture()" style="margin-top:.6rem">K / LIFE</button><div id="fr-out"></div>';
+  host.appendChild(card);
+}
+window.calcFracture=function(){
+  const o=$('fr-out');if(!o)return;
+  const Y=FR_Y[sv('fr-geo')]?FR_Y[sv('fr-geo')][1]:1,s=v('fr-s'),ds=v('fr-ds'),a0=v('fr-a0')/1000,KIC=v('fr-kic'),Cp=v('fr-c')||6.9e-12,m=v('fr-m')||3;
+  if(!(s>0)||!(a0>0)||!(KIC>0)){_mr(o,'<div class="note warn" style="margin-top:.5rem">Need σ, a₀ and K_IC &gt; 0.</div>');return;}
+  const K=Y*s*Math.sqrt(Math.PI*a0);
+  const ac=Math.pow(KIC/(Y*s),2)/Math.PI;
+  const crit=K>=KIC;
+  let N=null;
+  if(!crit&&ds>0&&Math.abs(m-2)>1e-9&&ac>a0){
+    const e=1-m/2;
+    N=(Math.pow(ac,e)-Math.pow(a0,e))/(Cp*Math.pow(Y*ds*Math.sqrt(Math.PI),m)*e);
+  }
+  _mr(o,'<div class="result-grid" style="margin-top:.6rem">'+[
+    ['K_I at a₀',K.toFixed(1)+' MPa·√m',crit?'err':'ok'],
+    ['vs K_IC',(K/KIC*100).toFixed(0)+' % of toughness',crit?'err':K/KIC>0.7?'warn':'ok'],
+    ['CRITICAL CRACK a_c',(ac*1000).toFixed(1)+' mm','ok'],
+    ['Margin on size',(ac/a0).toFixed(1)+'× current crack',ac/a0<2?'warn':'ok'],
+    N!==null?['PARIS LIFE a₀ → a_c','≈ '+(N>=1e6?(N/1e6).toFixed(2)+' M cycles':Math.round(N).toLocaleString()+' cycles'),'ok']:['Paris life',crit?'— ALREADY CRITICAL':'needs Δσ > 0 and m ≠ 2']
+  ].filter(Boolean).map(x=>`<div class="result-item"><div class="lbl">${x[0]}</div><div class="val ${x[2]||''}">${x[1]}</div></div>`).join('')+'</div>'+
+    '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">LEFM: K_I = Y·σ·√(πa); failure when K_I hits the material toughness K_IC, so a_c = (K_IC/Yσ)²/π. Life integrates Paris da/dN = C·ΔK^m in closed form. Y here is the wide-plate value — finite width, surface flaws and corner cracks raise it (Y = √sec(πa/w) for center cracks). Steel ballpark: C ≈ 7×10⁻¹² m/cyc, m ≈ 3 (MPa·√m units); K_IC from certs, not tables, for anything that matters. Most of the life is spent while the crack is SMALL — inspect early, inspect often.</p>');
+};
+function injectKtCard(){
+  const vw=$('v-stress');if(!vw||$('kt-card'))return;
+  const host=vw.querySelector('.split>div:first-child')||vw;
+  const card=document.createElement('div');card.className='card';card.id='kt-card';card.style.marginTop='.6rem';
+  card.innerHTML='<h3>STRESS CONCENTRATION K_t</h3>'+
+    '<div class="row">'+
+    '<div class="field"><label for="kt-case">CASE</label><select id="kt-case"><option value="hole">Circular hole in finite plate (Howland)</option><option value="ellipse">Elliptical hole (Inglis, exact)</option></select></div>'+
+    '<div class="field"><label for="kt-d">HOLE Ø d / 2a ACROSS LOAD (mm)</label><input type="number" id="kt-d" value="10" step="any"></div>'+
+    '<div class="field"><label for="kt-w">PLATE WIDTH w / 2b ALONG LOAD (mm)</label><input type="number" id="kt-w" value="50" step="any"></div>'+
+    '<div class="field"><label for="kt-snom">σ NOMINAL (MPa)</label><input type="number" id="kt-snom" value="100" step="any"></div>'+
+    '</div><button class="btn btn-sm" onclick="calcKt()" style="margin-top:.6rem">K_t</button><div id="kt-out"></div>';
+  host.appendChild(card);
+}
+window.calcKt=function(){
+  const o=$('kt-out');if(!o)return;
+  const cs=sv('kt-case')||'hole',d=v('kt-d'),w=v('kt-w'),sn=v('kt-snom')||0;
+  if(!(d>0)||!(w>0)){_mr(o,'<div class="note warn" style="margin-top:.5rem">Both dimensions required.</div>');return;}
+  let Kt,label,note2,warn=false;
+  if(cs==='hole'){
+    const r=d/w;
+    if(r>=1){_mr(o,'<div class="note warn" style="margin-top:.5rem">Hole must be smaller than the plate width.</div>');return;}
+    warn=r>0.65;
+    Kt=3-3.14*r+3.667*r*r-1.527*r*r*r;
+    label='d/w = '+r.toFixed(3);
+    note2='Howland polynomial on the NET section: K_t = 3 − 3.14(d/w) + 3.667(d/w)² − 1.527(d/w)³, exact 3.0 in the infinite-plate limit'+(warn?' — d/w &gt; 0.65 is outside the fit&#39;s comfort zone':'')+'. Peak stress sits at the hole edge, transverse to load.';
+  }else{
+    Kt=1+2*(d/2)/(w/2);
+    label='a/b = '+((d/2)/(w/2)).toFixed(3);
+    note2='Inglis exact elasticity solution: K_t = 1 + 2a/b with a the semi-axis ACROSS the load. A circle (a = b) gives exactly 3; a slit (b → 0) blows up to infinity — which is precisely why cracks get LEFM instead of K_t (use the FRACTURE card in Fatigue).';
+  }
+  _mr(o,'<div class="result-grid" style="margin-top:.6rem">'+[
+    ['K_t',Kt.toFixed(3),warn?'warn':'ok'],['Geometry',label],
+    sn>0?['σ PEAK',(Kt*sn).toFixed(0)+' MPa','ok']:null,
+    sn>0?['Check','compare '+(Kt*sn).toFixed(0)+' MPa against Sy (static, ductile: local yielding blunts it) or use K_f for fatigue',null]:null
+  ].filter(Boolean).map(x=>`<div class="result-item"><div class="lbl">${x[0]}</div><div class="val ${x[2]||''}">${x[1]}</div></div>`).join('')+'</div>'+
+    '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">'+note2+' Ductile static parts shrug K_t off by local yielding; FATIGUE does not — carry K_f = 1 + q(K_t − 1) into the Fatigue module. Shoulder-fillet and groove cases follow Peterson charts — not reproduced here rather than approximated loosely.</p>');
+};
+function injectLugCard(){
+  const vw=$('v-rigging');if(!vw||$('lg-card'))return;
+  const host=vw.querySelector('.split>div:first-child')||vw;
+  const card=document.createElement('div');card.className='card';card.id='lg-card';card.style.marginTop='.6rem';
+  card.innerHTML='<h3>PAD-EYE / LUG CHECK (SIMPLIFIED)</h3>'+
+    '<div class="row">'+
+    '<div class="field"><label for="lg-p">LEG TENSION P (kN)</label><input type="number" id="lg-p" value="10" step="any"></div>'+
+    '<div class="field"><label for="lg-d">PIN / SHACKLE Ø (mm)</label><input type="number" id="lg-d" value="20" step="any"></div>'+
+    '<div class="field"><label for="lg-t">PLATE t (mm)</label><input type="number" id="lg-t" value="15" step="any"></div>'+
+    '<div class="field"><label for="lg-a">HOLE CTR → EDGE, LOAD DIR (mm)</label><input type="number" id="lg-a" value="35" step="any"></div>'+
+    '<div class="field"><label for="lg-w">PLATE WIDTH AT HOLE (mm)</label><input type="number" id="lg-w" value="70" step="any"></div>'+
+    '<div class="field"><label for="lg-fy">PLATE F_y (MPa)</label><input type="number" id="lg-fy" value="250" step="any"></div>'+
+    '<div class="field"><label for="lg-fos">DESIGN FACTOR</label><select id="lg-fos"><option value="2">2.0 (BTH-1 Cat A basis)</option><option value="3" selected>3.0 (BTH-1 Cat B basis)</option><option value="5">5.0 (unpredictable service)</option></select></div>'+
+    '</div><button class="btn btn-sm" onclick="calcLug()" style="margin-top:.6rem">CHECK LUG</button><div id="lg-out"></div>';
+  host.appendChild(card);
+}
+window.calcLug=function(){
+  const o=$('lg-out');if(!o)return;
+  const P=v('lg-p')*1000,d=v('lg-d'),t=v('lg-t'),a=v('lg-a'),w=v('lg-w'),Fy=v('lg-fy')||250,n=parseFloat(sv('lg-fos'))||3;
+  if(!(P>0)||!(d>0)||!(t>0)||!(a>d/2)||!(w>d)){_mr(o,'<div class="note warn" style="margin-top:.5rem">Need P, pin Ø, thickness; edge distance &gt; pin radius; width &gt; pin Ø.</div>');return;}
+  const sb=P/(d*t),st=P/((w-d)*t),tv=P/(2*t*(a-d/2));
+  const ab=Fy/n,at=Fy/n,av=0.577*Fy/n;
+  const rows=[['Bearing on pin',sb,ab],['Net-section tension',st,at],['Shear tear-out (2 planes)',tv,av]];
+  const worst=Math.max(sb/ab,st/at,tv/av);
+  _mr(o,'<div class="result-grid" style="margin-top:.6rem">'+
+    rows.map(([l,sig,al])=>`<div class="result-item"><div class="lbl">${l}</div><div class="val ${sig<=al?'ok':'err'}">${sig.toFixed(0)} / ${al.toFixed(0)} MPa</div></div>`).join('')+
+    `<div class="result-item"><div class="lbl">VERDICT</div><div class="val ${worst<=1?'ok':'err'}">${worst<=1?'PASSES at design factor '+n:'FAILS — utilization '+(worst*100).toFixed(0)+' %'}</div></div>`+
+    `<div class="result-item"><div class="lbl">Governing</div><div class="val">${rows.reduce((b2,r)=>r[1]/r[2]>b2[1]/b2[2]?r:b2)[0]}</div></div>`+
+    '</div>'+
+    '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">First-principles checks with a straight-plane tear-out (conservative): bearing P/(d·t), net tension P/((w−d)·t), double-plane shear P/(2t·(a−d/2)); allowables F_y/N and 0.577·F_y/N. Real lifting devices are governed by ASME BTH-1 Chapter 3 (pin-hole effective width, dishing limits t ≥ 0.5·d for narrow lugs, weld checks) — treat this card as the screening pass and BTH-1 as the design document. A loose-fitting shackle pin concentrates bearing — keep pin-to-hole clearance small.</p>');
+};
 function boltSeq(N){
   if(N<3)return Array.from({length:N},(_,i)=>i+1);
   if(N%4===0)return Array.from({length:N/2},(_,j)=>Math.floor(j/2)+1+(j%2)*(N/4)).flatMap(x=>[x,x+N/2]);
@@ -3896,6 +4002,9 @@ window.addEventListener('DOMContentLoaded',()=>{
     injectFlowMeter();
     injectPlanetary();
     injectBoltSeq();
+    injectFracture();
+    injectKtCard();
+    injectLugCard();
     window.calcFits();
     const typeEl=$('sp-type');if(typeEl)typeEl.addEventListener('change',()=>{gateBellevillePresets();window.calcSpring();});
     wireLive('v-springs',window.calcSpring);
