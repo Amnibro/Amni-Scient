@@ -328,6 +328,7 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <button class="tab" data-v="shafts" role="tab" id="tab-shafts" aria-controls="v-shafts" aria-selected="false" tabindex="-1">Shafts</button>
 <button class="tab" data-v="fits" role="tab" id="tab-fits" aria-controls="v-fits" aria-selected="false" tabindex="-1">Fits &amp; Tol</button>
 <button class="tab" data-v="machining" role="tab" id="tab-machining" aria-controls="v-machining" aria-selected="false" tabindex="-1">Machining</button>
+<button class="tab" data-v="cad" role="tab" id="tab-cad" aria-controls="v-cad" aria-selected="false" tabindex="-1">CAD Studio</button>
 <button class="tab" data-v="welds" role="tab" id="tab-welds" aria-controls="v-welds" aria-selected="false" tabindex="-1">Welds</button>
 <button class="tab" data-v="bearings" role="tab" id="tab-bearings" aria-controls="v-bearings" aria-selected="false" tabindex="-1">Bearings</button>
 <button class="tab" data-v="gears" role="tab" id="tab-gears" aria-controls="v-gears" aria-selected="false" tabindex="-1">Gears</button>
@@ -2026,6 +2027,41 @@ n_out = n_in/GR &nbsp;|&nbsp; T_out = T_in&middot;GR&middot;&eta;<br>
 </div>
 </div>
 </div>
+<div class="view" id="v-cad">
+<h2>CAD STUDIO</h2>
+<div class="split">
+<div>
+<div class="card"><h3>&#9889; PARAMETRIC MODELER — START HERE</h3>
+<p style="font-size:.72rem;color:var(--dim);margin:0 0 .5rem">Stack primitives, flip any of them to CUT, and the solid rebuilds live — with exact mass properties and a printable STL. Runs entirely in your browser.</p>
+<div class="row">
+<button class="btn btn-sm" onclick="cadAdd('box')">+ BOX</button>
+<button class="btn btn-sm" onclick="cadAdd('cyl')">+ CYLINDER</button>
+<button class="btn btn-sm" onclick="cadAdd('cone')">+ CONE</button>
+<button class="btn btn-sm" onclick="cadAdd('sphere')">+ SPHERE</button>
+</div>
+<div class="row" style="margin-top:.5rem">
+<div class="field"><label for="cad-preset">PRESET</label><select id="cad-preset"></select></div>
+<button class="btn btn-sm" onclick="cadPreset()" style="align-self:end">LOAD</button>
+</div>
+</div>
+<div id="cad-feats"></div>
+</div>
+<div>
+<div class="card"><h3>MODEL</h3>
+<canvas id="cad-canvas" style="width:100%;height:380px;border-radius:3px;background:#0a0a0a;display:block;cursor:grab"></canvas>
+<div id="cad-stats" style="font-size:.65rem;color:var(--dim);margin-top:.3rem"></div>
+<div class="row" style="margin-top:.5rem">
+<button class="btn btn-fill" onclick="cadRebuild()">REBUILD</button>
+<button class="btn" onclick="cadSTL()">&#11015; EXPORT STL</button>
+</div>
+</div>
+<div class="card"><h3>MASS PROPERTIES</h3>
+<div class="row"><div class="field"><label for="cad-dens">MATERIAL (g/cm&sup3;)</label><select id="cad-dens"></select></div></div>
+<div id="cad-props-out"></div>
+</div>
+</div>
+</div>
+</div>
 <div class="view" id="v-machining">
 <h2>MACHINING / MANUFACTURING</h2>
 <div class="split">
@@ -2793,5 +2829,6 @@ window._calcSealWasm=(...args)=>calc_seal(...args);
 <script src="./calc-units.js?v=units1" defer></script>
 <script src="./calc-qol.js" defer></script>
 <script src="./calc-engineer.js?v=eng14" defer></script>
+<script src="./calc-cad.js?v=cad1" defer></script>
 </body>
 </html>

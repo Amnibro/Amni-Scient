@@ -1,5 +1,11 @@
 # Changelog 
 
+## Amni-Calc v5.71.0 — CAD STUDIO: a real parametric modeler, in your browser - 2026-07-10
+- **NEW: CAD Studio tab** — a locally-running parametric CSG modeler. Stack boxes, cylinders, cones and spheres, flip any feature to CUT, and the solid rebuilds live in 3D (orbit/zoom/pan). No account, no cloud, no upload — the geometry kernel is ~250 lines of BSP boolean math running entirely in your browser.
+- **Real engineering outputs, not a toy**: exact mass properties by the divergence theorem — volume, surface area, center of gravity, and mass for six materials — plus **watertight binary STL export** ready for a 3D printer or CAM. The mass-properties card states its one honest caveat (32-segment curved faces read ~0.3% under true pi-r-squared).
+- Three presets show the point in one click: plate with 4 holes, flanged bushing, L-bracket. Feature cards expose every dimension, position and rotation; edits rebuild after a 400 ms breath, with polygon count and rebuild time shown.
+- The test suite imports the SHIPPED kernel into node and proves it: boolean volumes land on the analytic answers (union 12000 / intersect 4000 / subtract 4000 on offset cubes, drilled plate to 0.01%), a rotated cylinder matches the inscribed-prism formula to 1e-6, the cone's CoG sits at exactly -h/4, and the STL byte layout is verified field by field. 22 new anchors; all 11 suites green, 344 total.
+
 ## Amni-Learn v5.70.0 — Kokoro at full precision + sentence-streamed reading - 2026-07-10
 - Anthony flagged the CPU-tier voice as still bad — the q8 quantized Kokoro is known-metallic. Amni-AI's proven integration (amni/voice/tts.py) runs Kokoro **full-precision on CPU**, so the learn app now does the same: the WASM tier loads **fp32** instead of q8. Zero new download on machines that already tried the GPU tier — fp32 is the same model file the WebGPU attempt cached.
 - **Sentence-streamed synthesis** (mirrors KPipeline's per-sentence chunk stream): storybook pages and long teach-card facts are split into sentence chunks (~140 chars, offset-tracked) and the next chunk generates *while the current one plays* — first words start in a couple of seconds on CPU instead of waiting for the whole page. Word-by-word highlight now maps through per-chunk character spans (more accurate than the old whole-page proportional mapping).
