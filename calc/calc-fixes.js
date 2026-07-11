@@ -1501,6 +1501,118 @@ window.applyHxDesign=function(){
   window.calcHxDesign();
   if(typeof window.calcLMTD==='function')try{window.calcLMTD();}catch(e){}
 };
+const PIPE_SCH40=[['½"','DN15',15.80],['¾"','DN20',20.93],['1"','DN25',26.64],['1¼"','DN32',35.05],['1½"','DN40',40.89],['2"','DN50',52.50],['2½"','DN65',62.71],['3"','DN80',77.93],['4"','DN100',102.26],['5"','DN125',128.19],['6"','DN150',154.05],['8"','DN200',202.72],['10"','DN250',254.51],['12"','DN300',303.23]];
+const PIPE_FLUIDS={water20:{n:'Water 20 °C',rho:998,mu:1.0e-3},water60:{n:'Water 60 °C',rho:983,mu:4.66e-4},glycol50:{n:'50% glycol 20 °C',rho:1071,mu:3.8e-3},oil32:{n:'Hyd. oil ISO VG32 40 °C',rho:857,mu:2.75e-2},air20:{n:'Air 20 °C, 1 atm',rho:1.204,mu:1.825e-5}};
+const PIPE_SVC={suction:{n:'Pump suction',vmax:1.5},discharge:{n:'Pump discharge / general',vmax:3.0},gravity:{n:'Gravity / drain',vmax:1.2},gas:{n:'Compressed air / gas',vmax:20}};
+const PIPE_ROUGH={steel:{n:'Commercial steel',e:4.5e-5},pvc:{n:'PVC (Sch 40)',e:1.5e-6},galv:{n:'Galvanized steel',e:1.5e-4},ss:{n:'Stainless (Sch 40S)',e:1.5e-5}};
+function injectPipeDesigner(){
+  const vw=$('v-fluids');if(!vw||$('fld-card'))return;
+  const host=vw.querySelector('.split>div:first-child')||vw;
+  const card=document.createElement('div');card.className='card';card.id='fld-card';
+  card.innerHTML='<h3>⚡ PIPE DESIGNER — START HERE</h3>'+
+    '<p style="font-size:.72rem;color:var(--dim);margin:0 0 .5rem">Flow + run + pressure-drop budget → the pipe size to buy.</p>'+
+    '<div class="row">'+
+    '<div class="field"><label for="fld-q">FLOW (m³/h)</label><input type="number" id="fld-q" value="10" step="any"></div>'+
+    '<div class="field"><label for="fld-l">RUN LENGTH (m)</label><input type="number" id="fld-l" value="50" step="any"></div>'+
+    '<div class="field"><label for="fld-dp">ALLOWABLE ΔP (kPa)</label><input type="number" id="fld-dp" value="50" step="any"></div>'+
+    '<div class="field"><label for="fld-fl">FLUID</label><select id="fld-fl">'+Object.entries(PIPE_FLUIDS).map(([k,f])=>`<option value="${k}">${f.n}</option>`).join('')+'</select></div>'+
+    '<div class="field"><label for="fld-mat">PIPE MATERIAL</label><select id="fld-mat">'+Object.entries(PIPE_ROUGH).map(([k,m])=>`<option value="${k}">${m.n}</option>`).join('')+'</select></div>'+
+    '<div class="field"><label for="fld-svc">SERVICE</label><select id="fld-svc">'+Object.entries(PIPE_SVC).map(([k,s])=>`<option value="${k}"${k==='discharge'?' selected':''}>${s.n} (≤${s.vmax} m/s)</option>`).join('')+'</select></div>'+
+    '<div class="field"><label for="fld-k">ΣK FITTINGS</label><input type="number" id="fld-k" value="5" step="any"></div>'+
+    '</div><div class="row" style="margin-top:.6rem"><button class="btn btn-fill" onclick="calcPipeDesign()">DESIGN IT</button><button class="btn" onclick="applyPipeDesign()">APPLY TO ANALYSIS →</button></div><div id="fld-out"></div>';
+  host.insertBefore(card,host.firstChild);
+}
+function pipeF(Re,rr){return Re<2300?64/Re:0.25/Math.pow(Math.log10(rr/3.7+5.74/Math.pow(Re,0.9)),2);}
+function pipeDesignPick(){
+  const Q=v('fld-q')/3600,L=v('fld-l'),dpA=v('fld-dp')*1000,K=v('fld-k')||0;
+  const fl=PIPE_FLUIDS[sv('fld-fl')]||PIPE_FLUIDS.water20,mat=PIPE_ROUGH[sv('fld-mat')]||PIPE_ROUGH.steel,svc=PIPE_SVC[sv('fld-svc')]||PIPE_SVC.discharge;
+  let pick=null,last=null;
+  for(const[nps,dn,idmm]of PIPE_SCH40){
+    const D=idmm/1000,A=Math.PI*D*D/4,vel=Q/A,Re=fl.rho*vel*D/fl.mu;
+    const f=pipeF(Re,mat.e/D),dp=(f*L/D+K)*fl.rho*vel*vel/2;
+    last={nps,dn,idmm,vel,Re,f,dp};
+    if(dp<=dpA&&vel<=svc.vmax){pick=last;break;}
+  }
+  return{Q,L,dpA,K,fl,mat,svc,pick,last};
+}
+window.calcPipeDesign=function(){
+  const o=$('fld-out');if(!o)return;
+  const R=pipeDesignPick();
+  if(!(R.Q>0)||!(R.L>0)||!(R.dpA>0)){_mr(o,'<div class="note warn" style="margin-top:.5rem">Need flow, length and ΔP budget &gt; 0.</div>');return;}
+  if(!R.pick){_mr(o,'<div class="note warn" style="margin-top:.5rem">Nothing ≤ 12" passes — even DN300 gives '+(R.last.dp/1000).toFixed(1)+' kPa at '+R.last.vel.toFixed(2)+' m/s. Raise the ΔP budget, shorten the run, split the flow, or go to large-bore (&gt;12") pipe.</div>');return;}
+  const P=R.pick,regime=P.Re<2300?'laminar':P.Re<4000?'transitional':'turbulent';
+  _mr(o,'<div class="result-grid" style="margin-top:.6rem">'+[
+    ['PIPE',P.nps+' Sch 40 ('+P.dn+')','ok'],['Inside Ø',P.idmm.toFixed(2)+' mm'],
+    ['Velocity',P.vel.toFixed(2)+' m/s (cap '+R.svc.vmax+')','ok'],
+    ['Reynolds',P.Re<2300?P.Re.toFixed(0)+' — laminar':(P.Re/1000).toFixed(1)+'k — '+regime],
+    ['Friction f',P.f.toFixed(4)],['ΔP actual',(P.dp/1000).toFixed(1)+' kPa of '+(R.dpA/1000).toFixed(0)+' allowed','ok'],
+    ['Head loss',(P.dp/(R.fl.rho*9.81)).toFixed(2)+' m of fluid']
+  ].map(x=>`<div class="result-item"><div class="lbl">${x[0]}</div><div class="val ${x[2]||''}">${x[1]}</div></div>`).join('')+'</div>'+
+    '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">Walks ASME B36.10 Sch 40 bores (PVC Sch 40 and stainless Sch 40S share these dimensions); Swamee-Jain friction, 64/Re below Re 2300, ΔP = (fL/D + ΣK)·ρv²/2. Velocity caps are standard practice — keep suction slow to protect NPSH. APPLY loads the Moody card; refine ΣK with your real fitting count there.</p>');
+};
+window.applyPipeDesign=function(){
+  const R=pipeDesignPick();if(!R.pick)return void window.calcPipeDesign();
+  const set=(id,val)=>{const el=$(id);if(el)el.value=val;};
+  [['fl-d',+(R.pick.idmm/1000).toFixed(5)],['fl-l',R.L],['fl-q',+R.Q.toFixed(6)],['fl-rho',R.fl.rho],['fl-mu',R.fl.mu],['fl-e',R.mat.e],['fl-k',R.K]].forEach(([id,val])=>set(id,val));
+  window.calcPipeDesign();
+  if(typeof window.calcMoody==='function')try{window.calcMoody();}catch(e){}
+};
+const NEMA_HP=[1,1.5,2,3,5,7.5,10,15,20,25,30,40,50,60,75,100,125,150,200,250];
+const MTR_LOADS={fan:{n:'Fan / blower',des:'B'},pump:{n:'Centrifugal pump',des:'B'},tool:{n:'Machine tool',des:'B'},conv:{n:'Conveyor / compressor (loaded start)',des:'C'},punch:{n:'Punch press / hoist / high inertia',des:'D'}};
+function injectMotorDesigner(){
+  const vw=$('v-motors');if(!vw||$('mtd-card'))return;
+  const host=vw.querySelector('.split>div:first-child')||vw;
+  const card=document.createElement('div');card.className='card';card.id='mtd-card';
+  card.innerHTML='<h3>⚡ MOTOR DESIGNER — START HERE</h3>'+
+    '<p style="font-size:.72rem;color:var(--dim);margin:0 0 .5rem">Load torque + speed → the motor to buy: kW/HP rating, poles, NEMA design & frame.</p>'+
+    '<div class="row">'+
+    '<div class="field"><label for="mtd-t">LOAD TORQUE (N·m)</label><input type="number" id="mtd-t" value="40" step="any"></div>'+
+    '<div class="field"><label for="mtd-n">SPEED (rpm)</label><input type="number" id="mtd-n" value="1750" step="any"></div>'+
+    '<div class="field"><label for="mtd-load">LOAD TYPE</label><select id="mtd-load">'+Object.entries(MTR_LOADS).map(([k,l])=>`<option value="${k}"${k==='pump'?' selected':''}>${l.n}</option>`).join('')+'</select></div>'+
+    '<div class="field"><label for="mtd-hz">SUPPLY</label><select id="mtd-hz"><option value="60">60 Hz</option><option value="50">50 Hz</option></select></div>'+
+    '<div class="field"><label for="mtd-mg">SIZING MARGIN</label><select id="mtd-mg"><option value="1.15">Standard 15%</option><option value="1.1">Tight 10%</option><option value="1.25">Generous 25%</option></select></div>'+
+    '<div class="field"><label for="mtd-v">V_LL (V)</label><input type="number" id="mtd-v" value="460" step="any"></div>'+
+    '</div><div class="row" style="margin-top:.6rem"><button class="btn btn-fill" onclick="calcMotorDesign()">DESIGN IT</button><button class="btn" onclick="applyMotorDesign()">APPLY TO ANALYSIS →</button></div><div id="mtd-out"></div>';
+  host.insertBefore(card,host.firstChild);
+}
+function motorDesignPick(){
+  const T=v('mtd-t'),N=v('mtd-n'),hz=parseInt(sv('mtd-hz'))||60,mg=parseFloat(sv('mtd-mg'))||1.15,V=v('mtd-v')||460;
+  const load=MTR_LOADS[sv('mtd-load')]||MTR_LOADS.pump,des=NEMA_DESIGN[load.des];
+  const Preq=T*N*2*Math.PI/60000;
+  const sy=[2,4,6,8].map(p=>({p,ns:120*hz/p})).filter(s=>s.ns>=N).sort((a,b)=>a.ns-b.ns)[0];
+  const kw=MOTOR_KW.find(k=>k>=Preq*mg);
+  const hp=NEMA_HP.find(h=>h>=Preq*mg/0.7457);
+  const nfl=sy?Math.round(sy.ns*(1-des.slip)):0;
+  const fla=kw?kw*1000/(Math.sqrt(3)*V*0.85*0.90):0;
+  const tavail=kw&&nfl?kw*9550/nfl:0;
+  return{T,N,hz,mg,V,load,des,Preq,sy,kw,hp,nfl,fla,tavail};
+}
+window.calcMotorDesign=function(){
+  const o=$('mtd-out');if(!o)return;
+  const R=motorDesignPick();
+  if(!(R.T>0)||!(R.N>0)){_mr(o,'<div class="note warn" style="margin-top:.5rem">Need torque and speed &gt; 0.</div>');return;}
+  if(!R.sy){_mr(o,'<div class="note warn" style="margin-top:.5rem">'+R.N+' rpm is above the '+(120*R.hz/2)+' rpm 2-pole synchronous ceiling at '+R.hz+' Hz — direct drive is impossible. Use a VFD above base speed, a speed-increasing gearbox, or a different machine.</div>');return;}
+  if(!R.kw||!R.hp){_mr(o,'<div class="note warn" style="margin-top:.5rem">'+R.Preq.toFixed(0)+' kW required — beyond the standard ladder (200 kW / 250 HP). Engineered / medium-voltage machine territory.</div>');return;}
+  _mr(o,'<div class="result-grid" style="margin-top:.6rem">'+[
+    ['Required power',R.Preq.toFixed(2)+' kW ('+(R.Preq/0.7457).toFixed(1)+' HP)'],
+    ['MOTOR (IEC)',R.kw+' kW','ok'],['MOTOR (NEMA)',R.hp+' HP','ok'],
+    ['Poles / sync',R.sy.p+'-pole — '+R.sy.ns+' rpm'],
+    ['Est. FL speed','≈ '+R.nfl+' rpm ('+(R.des.slip*100).toFixed(0)+'% slip)',Math.abs(R.nfl-R.N)/R.N>0.05?'warn':'ok'],
+    ['NEMA design',R.load.des+' — LRT '+(R.des.LRT*100).toFixed(0)+'% FL'],
+    ['FL torque avail.',R.tavail.toFixed(1)+' N·m vs '+R.T+' needed',R.tavail>=R.T?'ok':'warn'],
+    ['Est. FLA @ '+R.V+' V',R.fla.toFixed(1)+' A']
+  ].map(x=>`<div class="result-item"><div class="lbl">${x[0]}</div><div class="val ${x[2]||''}">${x[1]}</div></div>`).join('')+'</div>'+
+    '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">P = Tω exactly; rating picked with your margin on the IEC kW / NEMA HP ladders; poles = smallest synchronous speed above your rpm (induction runs a few % below sync — need the speed exact? that&#39;s a VFD). Design letter from load type: B general purpose, C loaded starts, D punch/hoist. FLA assumes PF 0.85, η 0.90 — the nameplate governs. APPLY floods the torque, FLA, service-factor, slip, frame and torque-speed cards.</p>');
+};
+window.applyMotorDesign=function(){
+  const R=motorDesignPick();if(!R.sy||!R.kw)return void window.calcMotorDesign();
+  const set=(id,val)=>{const el=$(id);if(el)el.value=val;};
+  [['mt-pk',R.kw],['mt-n',R.nfl],['fla-p',R.kw],['fla-v',R.V],['sf-p',R.kw],['mt-f',R.hz],['mt-p',R.sy.p],['mt-nr',R.nfl],['mt-fr-hp',R.hp],['mt-ts-pfl',R.kw],['mt-ts-nfl',R.nfl],['mt-ts-ns',R.sy.ns]].forEach(([id,val])=>set(id,val));
+  const fr=$('mt-fr-rpm');fr&&[].some.call(fr.options,op=>parseInt(op.textContent)===R.sy.ns&&((fr.value=op.value),true));
+  const dsel=$('mt-ts-design');dsel&&(dsel.value=R.load.des);
+  window.calcMotorDesign();
+  ['calcMotorT','calcFLA','calcSF','calcSync','calcNemaFrame','calcMotorTSC'].forEach(fn=>{if(typeof window[fn]==='function')try{window[fn]();}catch(e){}});
+};
 function injectThreadEngage(){
   const vw=$('v-bolts');if(!vw||$('te-card'))return;
   const host=vw.querySelector('.split>div:last-child')||vw;
@@ -3368,6 +3480,8 @@ window.addEventListener('DOMContentLoaded',()=>{
     injectSealDesigner();
     injectPumpDesigner();
     injectHxDesigner();
+    injectPipeDesigner();
+    injectMotorDesigner();
     window.calcFits();
     const typeEl=$('sp-type');if(typeEl)typeEl.addEventListener('change',()=>{gateBellevillePresets();window.calcSpring();});
     wireLive('v-springs',window.calcSpring);
