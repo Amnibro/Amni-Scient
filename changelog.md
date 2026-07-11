@@ -1,5 +1,10 @@
 # Changelog 
 
+## Amni-Calc v5.82.0 — The refusal lifts: vapor-compression cycle on real R134a data - 2026-07-10
+- **Cycles gains a VAPOR-COMPRESSION card** — the item twice refused for lack of refrigerant data now ships the right way: 28 rows of published R134a saturation properties (Ohio University thermodynamic tables) embedded with the source named. Evaporating + condensing temperature + isentropic efficiency + duty -> COP against the Carnot limit (with the %-of-Carnot shown), evap/cond pressures and the ratio that flags two-stage territory past ~8, refrigerating effect, mass flow, compressor power and condenser duty.
+- One approximation in the whole card, and it is stated on the card: discharge enthalpy integrates dh = T·ds along the condenser isobar. The anchors hold the model to textbook reality — ideal COP lands at 81% of Carnot (inside the canonical 75-90% band) and 10 kW of cooling needs ~70 g/s (the classic ~7 g/s per kW for R134a).
+- 14 new anchors; all 17 suites green, 462 total. Cache-buster fixes?v=eng19.
+
 ## Amni-Calc v5.81.0 — Fracture mechanics, stress concentrations, and lug checks (research sweep) - 2026-07-10
 - A sweep of Engineers-Edge-class sites (MechaniCalc's catalog in particular) surfaced three staples the suite lacked; all three are textbook-exact and now live:
 - **FRACTURE / CRACK GROWTH (Fatigue module)**: K_I = Y·sigma·sqrt(pi·a) for center/edge/penny cracks, the critical crack size where K_I hits K_IC, and closed-form Paris-law life from current crack to critical — with the anchor suite proving the sobering parts (doubling stress range cuts life eightfold at m=3; a third of the 1-to-25 mm life is spent before the crack even reaches 2 mm — inspect early).

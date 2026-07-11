@@ -1,0 +1,33 @@
+let pass=0,fail=0;
+const ok=(c,m)=>{c?pass++:(fail++,console.log('FAIL: '+m))};
+const ap=(a,b,m,r)=>ok(typeof a==='number'&&isFinite(a)&&Math.abs(a-b)<=Math.abs(b)*(r||1e-9)+1e-12,m+' got '+a+' want '+b);
+const SAT=[[-36.9,60,3.9,227.8,0.9645],[-26.4,100,17.3,234.5,0.9519],[-10.1,200,38.5,244.5,0.9378],[0.7,300,52.8,250.9,0.9311],[8.9,400,64.0,255.6,0.9270],[15.7,500,73.4,259.3,0.9241],[26.7,700,88.8,265.1,0.9200],[39.4,1000,107.4,271.0,0.9157],[52.4,1400,127.3,276.2,0.9106],[67.5,2000,151.8,280.1,0.9020]];
+function interp(T){
+  let i=0;while(i<SAT.length-2&&SAT[i+1][0]<T)i++;
+  const f=(T-SAT[i][0])/(SAT[i+1][0]-SAT[i][0]),g=c=>SAT[i][c]+f*(SAT[i+1][c]-SAT[i][c]);
+  return{P:g(1),hf:g(2),hg:g(3),sg:g(4)};
+}
+const ev=interp(0.7),cd=interp(39.4);
+ap(ev.hg,250.9,'table node exact: hg at 0.7C');
+ap(cd.hf,107.4,'table node exact: hf at 39.4C');
+const h1=ev.hg,h4=cd.hf,h2s=cd.hg+(39.4+273.15)*(ev.sg-cd.sg);
+ap(h2s,275.814,'h2s via dh=T.ds isobar approx = 275.8',1e-3);
+const cop=(h1-h4)/(h2s-h1);
+ap(cop,5.7607,'ideal COP 0.7C evap / 39.4C cond = 5.76',1e-3);
+const copC=(0.7+273.15)/(39.4-0.7);
+ap(copC,7.0762,'Carnot 7.08',1e-3);
+ok(cop<copC,'ideal cycle strictly under Carnot');
+ok(cop/copC>0.75&&cop/copC<0.9,'ideal VCC lands 75-90% of Carnot (textbook band), got '+(cop/copC).toFixed(3));
+const mdot=10/(h1-h4);
+ok(mdot*1000>68&&mdot*1000<72,'10 kW needs ~69.7 g/s = ~7 g/s per kW (textbook R134a), got '+(mdot*1000).toFixed(1));
+const h2=h1+(h2s-h1)/0.75;
+ok((h1-h4)/(h2-h1)<cop,'real compressor (eta .75) lowers COP');
+ap((h1-h4)/(h2-h1),cop*0.75,'COP scales linearly with isentropic efficiency',1e-9);
+const evC=interp(-26.4),cop2=(evC.hg-h4)/((cd.hg+(39.4+273.15)*(evC.sg-cd.sg))-evC.hg);
+ok(cop2<cop,'colder evaporator = worse COP');
+ok(cd.P/ev.P>3&&cd.P/ev.P<3.5,'pressure ratio 1000/300 = 3.33 sane');
+const mid=interp(20);
+ok(mid.P>500&&mid.P<600,'20C interpolates between 500 and 600 kPa rows, got '+mid.P.toFixed(0));
+ok(mid.hg>259.3&&mid.hg<262.4,'20C hg between neighbors');
+console.log(pass+' passed, '+fail+' failed');
+process.exitCode=fail?1:0;

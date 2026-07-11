@@ -1,5 +1,10 @@
 # Architecture Map — amni-scient.com
 
+## v5.82.0 Amni-Calc: vapor-compression cycle, refusal lifted with sourced data (2026-07-10, loop iter 11)
+- Data sourcing: engineeringtoolbox 403d; Ohio Univ (people.ohio.edu/urieli) R134a pressure-sat table fetched clean -> R134A_SAT 28 rows [T,P,hf,hg,sg] (60-2000 kPa / -36.9-67.5 C; 2500/3000 rows dropped, too near 101 C critical). r134a(T) linear interp, clamps -> explicit out-of-range verdict.
+- calc-fixes.js (`?v=eng19`): injectVcc vc-card in v-cycles (vc-te/tc/eta/q). Ideal cycle: h1=hg(Te), h4=hf(Tc) isenthalpic, h2s=hg(Tc)+(Tc+273.15)(s1-sg(Tc)) — the ONE approximation (dh=T·ds isobar), stated on card. h2 via eta. COP + Carnot + %, P ratio >8 warn, mdot/W_comp/Q_cond. Anchors: node-exact interp, h2s 275.81, COP 5.7607 = 81% Carnot (75-90 textbook band), ~7 g/s/kW, COP linear in eta identity.
+- tests/vcc_audit.js 14. All 17 suites green (462).
+
 ## v5.81.0 Amni-Calc: fracture + Kt + lug cards from research sweep (2026-07-10, loop iter 10)
 - Research: WebSearch/WebFetch of MechaniCalc catalog vs our 39 modules -> gaps: fracture mechanics, Kt, lug analysis (also present: 2D FEA, fracture-materials DB — out of scope). calc-fixes.js (`?v=eng18`) three cards: fr-card in v-fatigue (FR_Y center 1.0/edge 1.12/penny 2/pi; K_I=Y·s·sqrt(pi·a); a_c=(KIC/Ys)^2/pi; Paris closed form N=[ac^e−a0^e]/[C·(Y·ds·sqrt(pi))^m·e], e=1−m/2, guarded m≠2 + already-critical), kt-card in v-stress (Howland 3−3.14r+3.667r²−1.527r³ net-section w/ d/w>0.65 warn; Inglis 1+2a/b EXACT; Peterson shoulder charts REFUSED not approximated), lg-card in v-rigging (bearing P/dt, net tension P/(w−d)t, straight-plane tear-out P/2t(a−d/2) vs Fy/N and 0.577Fy/N, BTH-1-basis N select 2/3/5, governing mode named).
 - tests/fracture_kt_lug_audit.js 20 anchors (1.317M-cycle Paris anchor, 2^3 life law, 36.6% front-loading exact, Howland 2.156 ≈ Peterson 2.16, Inglis circle=Howland limit=3 cross-check, lug 33.3/13.3/13.3 triple + edge-distance explosion). All 16 suites green (448). NOTE: learn agent duplicated version v5.79.0 (37e04ba) after calc 13112ad already used it — left standing, jumped calc to v5.81.0.

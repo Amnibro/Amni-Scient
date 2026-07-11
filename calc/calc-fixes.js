@@ -1795,6 +1795,52 @@ window.calcSlingCg=function(){
     (low?'<div class="note warn" style="margin-top:.4rem">A leg is below 30° — re-rig before lifting.</div>':'')+
     '<p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem">Statics: the leg NEARER the CoG carries more — vertical share V₁ = W·d₂/(d₁+d₂), tension T = V·L/h. Size BOTH slings for the near-leg tension so the load can&#39;t be hooked backwards. Hook must sit plumb over the CoG or the load rotates on pick.</p>');
 };
+const R134A_SAT=[[-36.9,60,3.9,227.8,0.9645],[-31.1,80,11.3,231.5,0.9572],[-26.4,100,17.3,234.5,0.9519],[-22.3,120,22.5,237.0,0.9478],[-18.8,140,27.1,239.2,0.9446],[-15.6,160,31.2,241.1,0.9420],[-12.7,180,35.0,242.9,0.9397],[-10.1,200,38.5,244.5,0.9378],[-7.6,220,41.7,245.9,0.9361],[-5.4,240,44.7,247.3,0.9347],[-3.2,260,47.5,248.6,0.9333],[-1.2,280,50.2,249.7,0.9322],[0.7,300,52.8,250.9,0.9311],[2.5,320,55.2,251.9,0.9301],[4.2,340,57.5,252.9,0.9293],[5.8,360,59.8,253.8,0.9284],[8.9,400,64.0,255.6,0.9270],[15.7,500,73.4,259.3,0.9241],[21.6,600,81.5,262.4,0.9219],[26.7,700,88.8,265.1,0.9200],[31.3,800,95.5,267.3,0.9184],[35.5,900,101.6,269.3,0.9170],[39.4,1000,107.4,271.0,0.9157],[46.3,1200,117.8,273.9,0.9131],[52.4,1400,127.3,276.2,0.9106],[57.9,1600,136.0,277.9,0.9080],[62.9,1800,144.1,279.2,0.9051],[67.5,2000,151.8,280.1,0.9020]];
+function r134a(T){
+  const t=R134A_SAT;
+  if(T<=t[0][0])return{P:t[0][1],hf:t[0][2],hg:t[0][3],sg:t[0][4],clamped:T<t[0][0]};
+  const last=t[t.length-1];
+  if(T>=last[0])return{P:last[1],hf:last[2],hg:last[3],sg:last[4],clamped:T>last[0]};
+  let i=0;while(t[i+1][0]<T)i++;
+  const f=(T-t[i][0])/(t[i+1][0]-t[i][0]);
+  const g=c=>t[i][c]+f*(t[i+1][c]-t[i][c]);
+  return{P:g(1),hf:g(2),hg:g(3),sg:g(4),clamped:false};
+}
+function injectVcc(){
+  const vw=$('v-cycles');if(!vw||$('vc-card'))return;
+  const host=vw.querySelector('.split>div:first-child')||vw;
+  const card=document.createElement('div');card.className='card';card.id='vc-card';card.style.marginTop='.6rem';
+  card.innerHTML='<h3>VAPOR-COMPRESSION CYCLE (R134a)</h3>'+
+    '<div class="row">'+
+    '<div class="field"><label for="vc-te">T EVAP (°C)</label><input type="number" id="vc-te" value="0" step="any"></div>'+
+    '<div class="field"><label for="vc-tc">T COND (°C)</label><input type="number" id="vc-tc" value="40" step="any"></div>'+
+    '<div class="field"><label for="vc-eta">ISENTROPIC η</label><input type="number" id="vc-eta" value="0.75" step="0.05" min="0.3" max="1"></div>'+
+    '<div class="field"><label for="vc-q">COOLING DUTY (kW)</label><input type="number" id="vc-q" value="10" step="any"></div>'+
+    '</div><button class="btn btn-sm" onclick="calcVcc()" style="margin-top:.6rem">COP / FLOWS</button><div id="vc-out"></div>';
+  host.appendChild(card);
+}
+window.calcVcc=function(){
+  const o=$('vc-out');if(!o)return;
+  const Te=v('vc-te'),Tc=v('vc-tc'),eta=Math.min(1,Math.max(0.3,v('vc-eta')||0.75)),Q=v('vc-q')||0;
+  if(!(Tc>Te)){_mr(o,'<div class="note warn" style="margin-top:.5rem">Condensing temperature must exceed evaporating temperature.</div>');return;}
+  const ev=r134a(Te),cd=r134a(Tc);
+  if(ev.clamped||cd.clamped){_mr(o,'<div class="note warn" style="margin-top:.5rem">Outside the table (−36.9 to 67.5 °C saturation) — R134a nears its 101 °C critical point above this range; pick another refrigerant regime.</div>');return;}
+  const h1=ev.hg,s1=ev.sg,h4=cd.hf;
+  const h2s=cd.hg+(Tc+273.15)*(s1-cd.sg);
+  const h2=h1+(h2s-h1)/eta;
+  const cop=(h1-h4)/(h2-h1),copC=(Te+273.15)/(Tc-Te);
+  const mdot=Q>0?Q/(h1-h4):0;
+  _mr(o,'<div class="result-grid" style="margin-top:.6rem">'+[
+    ['COP (cooling)',cop.toFixed(2),'ok'],['Carnot limit',copC.toFixed(2)+' ('+(cop/copC*100).toFixed(0)+'% of it)'],
+    ['P evap / P cond',ev.P.toFixed(0)+' / '+cd.P.toFixed(0)+' kPa (ratio '+(cd.P/ev.P).toFixed(2)+')',cd.P/ev.P>8?'warn':'ok'],
+    ['Refrigerating effect',(h1-h4).toFixed(1)+' kJ/kg'],
+    Q>0?['Mass flow',(mdot*1000).toFixed(1)+' g/s for '+Q+' kW','ok']:null,
+    Q>0?['COMPRESSOR POWER',(mdot*(h2-h1)).toFixed(2)+' kW','ok']:null,
+    Q>0?['Condenser duty',(mdot*(h2-h4)).toFixed(2)+' kW']:null,
+    ['Discharge enthalpy',h2.toFixed(1)+' kJ/kg (h2s '+h2s.toFixed(1)+')']
+  ].filter(Boolean).map(x=>`<div class="result-item"><div class="lbl">${x[0]}</div><div class="val ${x[2]||''}">${x[1]}</div></div>`).join('')+'</div>'+
+    '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">Ideal cycle on published R134a saturation data (Ohio Univ. thermo tables): saturated vapor in, isenthalpic expansion, isentropic compression corrected by η. The one approximation: discharge enthalpy uses dh = T·ds along the condenser isobar — good to a few % here, and stated rather than hidden. Pressure ratios past ~8 want two stages or an economizer. Suction superheat and liquid subcooling both help real COP — this is the conservative baseline.</p>');
+};
 const FR_Y={center:['Center through-crack (wide plate)',1.0],edge:['Edge crack',1.12],penny:['Embedded penny crack',2/Math.PI]};
 function injectFracture(){
   const vw=$('v-fatigue');if(!vw||$('fr-card'))return;
@@ -4005,6 +4051,7 @@ window.addEventListener('DOMContentLoaded',()=>{
     injectFracture();
     injectKtCard();
     injectLugCard();
+    injectVcc();
     window.calcFits();
     const typeEl=$('sp-type');if(typeEl)typeEl.addEventListener('change',()=>{gateBellevillePresets();window.calcSpring();});
     wireLive('v-springs',window.calcSpring);
