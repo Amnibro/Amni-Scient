@@ -1,5 +1,9 @@
 # Architecture Map — amni-scient.com
 
+## v5.79.0 Amni-Calc: dP flow metering + planetary trains (2026-07-10, loop iter 8)
+- calc-fixes.js (`?v=eng16`): injectFlowMeter dp-card appended to v-fluids left (fm- prefix TAKEN by fatigue Marin — used dp-): Q = Cd·At·sqrt(2dP/rho)/sqrt(1-beta^4), DP_CD textbook high-Re coefficients (orifice .61 / nozzle .96 / venturi .98 / custom), beta 0.2-0.75 band flag, permanent loss (1-beta^2)·dP orifice vs ~13% venturi. injectPlanetary gt-card in v-gears left: Willis kinematics — Zr = Zs+2Zp meshing constraint, ring-fixed 1+Zr/Zs, sun-fixed 1+Zs/Zr, carrier-fixed -Zr/Zs (reversed), assembly (Zs+Zr) % n_planets, torque multiplication note.
+- tests/flow_planetary_audit.js 17 anchors (8.69 m3/h at beta .5/25 kPa water, sqrt-dP scaling exact, velocity-of-approach 1.0328, 3.5/1.4/-2.5 ratio triple, 84/3 assembles 84/5 does not, Willis closure check ring speed = 0). All 14 suites green (405).
+
 ## v5.78.0 Amni-Learn Piper-primary TTS (buzz-proof) (2026-07-10)
 - Priority inverted: **Piper VITS is the default HD neural voice**; Kokoro only if `amni-learn-kk==='on'`.
 - Why: browser Kokoro (onnxruntime-web jsep) keeps producing non-speech on this hardware even after CPU-first; Amni-AI's good path is native PyTorch CPU, not the browser stack. Piper was already the working HD path from v5.51.

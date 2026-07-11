@@ -1,5 +1,10 @@
 # Changelog 
 
+## Amni-Calc v5.79.0 — Flow metering and planetary gear trains - 2026-07-10
+- **Fluids gains a dP FLOW MEASUREMENT card**: pipe ID + throat + dP + fluid -> flow rate through the universal metering equation with the textbook coefficients for sharp-edge orifice (0.61), flow nozzle (0.96) and venturi (0.98) — plus beta-ratio guidance, throat velocity, mass flow, and the permanent pressure loss that separates a cheap orifice from a venturi that gives the dP back. ISO 5167 calibration note for custody transfer.
+- **Gears gains a PLANETARY / EPICYCLIC card**: sun and planet teeth in, Willis-equation kinematics out — ring teeth from the meshing constraint, all three classic configurations (ring fixed, sun fixed, carrier fixed with its direction reversal), output speed, and the equal-spacing assembly check that catches gear sets which cannot physically be built ((Zs+Zr) must divide by the planet count).
+- 17 new anchors incl. an algebraic Willis closure proof; all 14 suites green, 405 total. Cache-buster fixes?v=eng16.
+
 ## Amni-Learn v5.78.0 — Piper-primary neural voice (buzz-proof) - 2026-07-10
 - **Root problem still biting after v5.75**: even CPU-first Kokoro auto-attempted on any `navigator.gpu` machine, and the quiet-frame-only quality gate still let AMD-style continuous buzz through. Users heard noise instead of coherent speech.
 - **Default HD path is now Piper VITS** (`en_US-hfc_female-medium`) — the proven natural neural voice already vendored for Learn. One-time ~63MB download, then offline. Phonics + Storybook warm Piper first; profile toggle labels it clearly.

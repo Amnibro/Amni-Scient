@@ -1795,6 +1795,69 @@ window.calcSlingCg=function(){
     (low?'<div class="note warn" style="margin-top:.4rem">A leg is below 30° — re-rig before lifting.</div>':'')+
     '<p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem">Statics: the leg NEARER the CoG carries more — vertical share V₁ = W·d₂/(d₁+d₂), tension T = V·L/h. Size BOTH slings for the near-leg tension so the load can&#39;t be hooked backwards. Hook must sit plumb over the CoG or the load rotates on pick.</p>');
 };
+const DP_CD={orifice:['Sharp-edge orifice',0.61],nozzle:['Flow nozzle',0.96],venturi:['Venturi',0.98],custom:['Custom C_d',0]};
+function injectFlowMeter(){
+  const vw=$('v-fluids');if(!vw||$('dp-card'))return;
+  const host=vw.querySelector('.split>div:first-child')||vw;
+  const card=document.createElement('div');card.className='card';card.id='dp-card';card.style.marginTop='.6rem';
+  card.innerHTML='<h3>FLOW MEASUREMENT (ΔP METER)</h3>'+
+    '<div class="row">'+
+    '<div class="field"><label for="dp-type">ELEMENT</label><select id="dp-type">'+Object.entries(DP_CD).map(([k,c])=>`<option value="${k}">${c[0]}${c[1]?' (C_d '+c[1]+')':''}</option>`).join('')+'</select></div>'+
+    '<div class="field"><label for="dp-cd">C_d CUSTOM</label><input type="number" id="dp-cd" value="0.61" step="any"></div>'+
+    '<div class="field"><label for="dp-pd">PIPE ID D (mm)</label><input type="number" id="dp-pd" value="52.5" step="any"></div>'+
+    '<div class="field"><label for="dp-td">THROAT d (mm)</label><input type="number" id="dp-td" value="26.25" step="any"></div>'+
+    '<div class="field"><label for="dp-dp">ΔP (kPa)</label><input type="number" id="dp-dp" value="25" step="any"></div>'+
+    '<div class="field"><label for="dp-rho">ρ (kg/m³)</label><input type="number" id="dp-rho" value="998" step="any"></div>'+
+    '</div><button class="btn btn-sm" onclick="calcFlowMeter()" style="margin-top:.6rem">FLOW RATE</button><div id="dp-out"></div>';
+  host.appendChild(card);
+}
+window.calcFlowMeter=function(){
+  const o=$('dp-out');if(!o)return;
+  const type=sv('dp-type')||'orifice',Cd=type==='custom'?(v('dp-cd')||0.61):DP_CD[type][1];
+  const D=v('dp-pd')/1000,d=v('dp-td')/1000,dP=v('dp-dp')*1000,rho=v('dp-rho')||998;
+  if(!(d>0)||!(D>d)||!(dP>0)){_mr(o,'<div class="note warn" style="margin-top:.5rem">Need throat &lt; pipe ID and ΔP &gt; 0.</div>');return;}
+  const beta=d/D,At=Math.PI*d*d/4;
+  const Q=Cd*At*Math.sqrt(2*dP/rho)/Math.sqrt(1-Math.pow(beta,4));
+  const vth=Q/At,loss=type==='venturi'?dP*0.13:dP*(1-beta*beta);
+  _mr(o,'<div class="result-grid" style="margin-top:.6rem">'+[
+    ['FLOW',(Q*3600).toFixed(2)+' m³/h ('+(Q*1000).toFixed(3)+' L/s)','ok'],
+    ['Mass flow',(Q*rho).toFixed(3)+' kg/s'],['β = d/D',beta.toFixed(3),beta>=0.2&&beta<=0.75?'ok':'warn'],
+    ['Throat velocity',vth.toFixed(2)+' m/s'],['C_d used',Cd.toFixed(3)],
+    ['Permanent loss','≈ '+(loss/1000).toFixed(1)+' kPa'+(type==='venturi'?' (venturi recovers most ΔP)':'')]
+  ].map(x=>`<div class="result-item"><div class="lbl">${x[0]}</div><div class="val ${x[2]||''}">${x[1]}</div></div>`).join('')+'</div>'+
+    '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">Q = C_d·A_t·√(2ΔP/ρ) / √(1−β⁴) — the universal ΔP-metering equation. Defaults are the textbook high-Re coefficients (sharp orifice 0.61, nozzle 0.96, venturi 0.98); ISO 5167 refines C_d with Reynolds and tap geometry — calibrate for custody transfer. Keep β between 0.2 and 0.75. Orifice permanent loss ≈ (1−β²)·ΔP; a venturi recovers all but ~10-15%.</p>');
+};
+function injectPlanetary(){
+  const vw=$('v-gears');if(!vw||$('gt-card'))return;
+  const host=vw.querySelector('.split>div:first-child')||vw;
+  const card=document.createElement('div');card.className='card';card.id='gt-card';card.style.marginTop='.6rem';
+  card.innerHTML='<h3>PLANETARY / EPICYCLIC TRAIN</h3>'+
+    '<div class="row">'+
+    '<div class="field"><label for="gt-zs">SUN TEETH Z_s</label><input type="number" id="gt-zs" value="24" step="1"></div>'+
+    '<div class="field"><label for="gt-zp">PLANET TEETH Z_p</label><input type="number" id="gt-zp" value="18" step="1"></div>'+
+    '<div class="field"><label for="gt-np"># PLANETS</label><input type="number" id="gt-np" value="3" step="1"></div>'+
+    '<div class="field"><label for="gt-fix">FIXED MEMBER</label><select id="gt-fix"><option value="ring">RING (sun in → carrier out)</option><option value="sun">SUN (ring in → carrier out)</option><option value="carrier">CARRIER (sun in → ring out)</option></select></div>'+
+    '<div class="field"><label for="gt-n">INPUT SPEED (rpm)</label><input type="number" id="gt-n" value="1800" step="any"></div>'+
+    '</div><button class="btn btn-sm" onclick="calcPlanetary()" style="margin-top:.6rem">RATIOS</button><div id="gt-out"></div>';
+  host.appendChild(card);
+}
+window.calcPlanetary=function(){
+  const o=$('gt-out');if(!o)return;
+  const Zs=Math.round(v('gt-zs')),Zp=Math.round(v('gt-zp')),np=Math.max(1,Math.round(v('gt-np')||3)),fix=sv('gt-fix')||'ring',N=v('gt-n')||0;
+  if(!(Zs>6)||!(Zp>6)){_mr(o,'<div class="note warn" style="margin-top:.5rem">Sun and planet teeth &gt; 6 required.</div>');return;}
+  const Zr=Zs+2*Zp;
+  const i=fix==='ring'?1+Zr/Zs:fix==='sun'?1+Zs/Zr:-Zr/Zs;
+  const Nout=i?N/i:0;
+  const asm=(Zs+Zr)%np===0;
+  _mr(o,'<div class="result-grid" style="margin-top:.6rem">'+[
+    ['RING TEETH Z_r',Zr+' (= Z_s + 2·Z_p)'],
+    ['RATIO',Math.abs(i).toFixed(3)+' : 1'+(i<0?' (REVERSED)':''),'ok'],
+    ['Output speed',Math.abs(Nout).toFixed(1)+' rpm'+(i<0?' opposite':'')],
+    ['Assembly',(Zs+Zr)+' / '+np+' = '+((Zs+Zr)/np).toFixed(2)+(asm?' ✓ planets space equally':' ✗ NOT an integer'),asm?'ok':'err'],
+    ['Torque multiplication','× '+Math.abs(i).toFixed(2)+' (minus mesh losses ~1-2%/mesh)']
+  ].map(x=>`<div class="result-item"><div class="lbl">${x[0]}</div><div class="val ${x[2]||''}">${x[1]}</div></div>`).join('')+'</div>'+
+    '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">Willis equation kinematics: ring fixed → i = 1 + Z_r/Z_s (compact reducer, same direction); sun fixed → i = 1 + Z_s/Z_r (mild ratio); carrier fixed → i = −Z_r/Z_s (star arrangement, reverses). Ring teeth follow from the meshing constraint Z_r = Z_s + 2·Z_p. Equal planet spacing needs (Z_s + Z_r) divisible by the planet count; check neighboring-planet tip clearance for big planets. Stage ratios multiply — two 3.5:1 stages give 12.25:1.</p>');
+};
 const MC_VC={alu:['Aluminum alloys',75,105,240,600],steel1018:['Mild steel (1018)',27,34,90,200],steel4140:['Alloy steel (4140 HT)',20,27,75,150],ss304:['Stainless 304/316',12,18,60,120],ci:['Gray cast iron',20,30,75,150],brass:['Brass',60,90,180,300],cu:['Copper',45,60,150,250],ti:['Ti-6Al-4V',8,12,30,60],acetal:['Plastics (acetal)',90,150,250,450]};
 function mcPopulate(){
   const s=$('mc-mat');if(!s||s.options.length)return;
@@ -3797,6 +3860,8 @@ window.addEventListener('DOMContentLoaded',()=>{
     window.calcHyd();
     mcPopulate();
     injectKeyway();
+    injectFlowMeter();
+    injectPlanetary();
     window.calcFits();
     const typeEl=$('sp-type');if(typeEl)typeEl.addEventListener('change',()=>{gateBellevillePresets();window.calcSpring();});
     wireLive('v-springs',window.calcSpring);
