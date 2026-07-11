@@ -2247,6 +2247,41 @@ window.calcSpring=function(){
     items.push(['δ to solid',delta_solid>0?delta_solid.toFixed(1)+' mm':'AT SOLID',delta_solid>0?'ok':'err']);
     items.push(['L under load',(fl-delta).toFixed(1)+' mm',fl-delta>Lsolid?'ok':'err']);
     extra='Shigley spring design. C between 4 and 12 is good practice; below 4 the wire is hard to coil, above 12 the spring can buckle. τ < 0.45·Sy for static, τ < 0.30·Sy for fatigue.';
+  }else if(type==='conical'){
+    const D2=D,D1=Math.min(v('sp-cd1')||D2*0.5,D2);
+    k=G*Math.pow(d,4)/(2*na*(D1+D2)*(D1*D1+D2*D2));
+    delta=F/k;
+    const C2=D2/d,Kw2=(4*C2-1)/(4*C2-4)+0.615/C2;
+    const tau=Kw2*8*F*D2/(Math.PI*Math.pow(d,3));
+    const tau_allow=0.45*Sy;Fmax=tau_allow*Math.PI*Math.pow(d,3)/(Kw2*8*D2);
+    const nest=(D2-D1)/(2*na)>d;
+    Lsolid=nest?2*d:(na+2)*d;
+    const gap=fl>0?Math.max(0,(fl-(na+2)*d)/na):0;
+    const Fg1=gap>0?gap*G*Math.pow(d,4)/(8*Math.pow(D2,3)):0;
+    items.push(['Type','CONICAL (SMI constant-pitch)']);
+    items.push(['D₁ → D₂',D1.toFixed(1)+' → '+D2.toFixed(1)+' mm']);
+    items.push(['k initial rate',k.toFixed(2)+' N/mm']);
+    items.push(['δ at applied F',delta.toFixed(2)+' mm',Fg1&&F>Fg1?'warn':'ok']);
+    Fg1&&items.push(['Linear up to','≈ '+Math.round(Fg1)+' N (largest coil grounds)',F>Fg1?'warn':'ok']);
+    items.push(['τ at largest coil',tau.toFixed(0)+' MPa',tau<tau_allow?'ok':'err']);
+    items.push(['F_max safe',Math.round(Fmax)+' N']);
+    items.push(['Nesting',nest?'TELESCOPING — solid ≈ '+(2*d).toFixed(1)+' mm':'Non-nesting — solid '+((na+2)*d).toFixed(1)+' mm']);
+    extra='k = G·d⁴/[2·N_a·(D₁+D₂)(D₁²+D₂²)] — SMI constant-pitch conical rate; set D₁ = COIL Ø to recover the plain helical formula. Stress governs at the LARGEST coil. Past the linear range the largest coils ground out one by one and the rate rises — that progressive stiffening is why you buy conical. Coils telescope (solid ≈ two wire diameters) when (D₂−D₁)/2N_a > d.';
+  }else if(type==='wave'){
+    const E=200000,b=v('sp-wb')||10,tw=v('sp-wt')||0.5,Nw=v('sp-wnw')||3.5,Nt2=v('sp-wnt')||nt||4,Dm=D,Kf=3.88;
+    k=E*b*Math.pow(tw,3)*Math.pow(Nw,4)/(Kf*Math.pow(Dm,3)*Nt2);
+    delta=F/k;Lsolid=Nt2*tw;
+    const sig=3*Math.PI*F*Dm/(4*b*tw*tw*Nw*Nw);
+    const sig_allow=0.75*(Sy||1200);
+    Fmax=sig_allow*4*b*tw*tw*Nw*Nw/(3*Math.PI*Dm);
+    items.push(['Type','WAVE — crest-to-crest (Smalley form)']);
+    items.push(['b × t / N_w / N_t',b+' × '+tw+' mm / '+Nw+' / '+Nt2]);
+    items.push(['k spring rate',k.toFixed(2)+' N/mm']);
+    items.push(['δ at applied F',delta.toFixed(2)+' mm']);
+    items.push(['σ bending',sig.toFixed(0)+' MPa',sig<sig_allow?'ok':'err']);
+    items.push(['F_max (σ ≤ 0.75·Sy)',Math.round(Fmax)+' N']);
+    items.push(['L_solid',Lsolid.toFixed(2)+' mm']);
+    extra='Smalley design-manual forms: f = P·K·D_m³·N_t/(E·b·t³·N_w⁴) with K = 3.88 (multi-wave), σ = 3π·P·D_m/(4·b·t²·N_w²), E = 200 GPa steel strip. The COIL Ø field is the mean diameter D_m; wire Ø and G are unused for wave. Wave springs buy roughly half the axial space of an equal-force coil — verify work height against the vendor load curve.';
   }else if(type==='torsion'){
     const E=200000;
     k=E*Math.pow(d,4)/(64*D*na);
@@ -2294,7 +2329,7 @@ window.calcSpring=function(){
     isFinite(dSt)&&dSt>0&&traces.push({x:[dSt],y:[F],mode:'markers',marker:{color:'#fff',size:11,symbol:'diamond',line:{color:'#000',width:1.5}},name:'Operating point'});
   }
   plot('p-spring-fd',traces,{xaxis:{title:'δ deflection (mm)',range:[0,xTop*1.05]},yaxis:{title:'F force (N)',range:[0,yTop*1.1]},shapes,showlegend:stacked,legend:{x:0.02,y:0.98,bgcolor:'rgba(0,0,0,0)',font:{size:9}}});
-  bell?drawSpringAnim(_bellT,_bellDe,1,_bellH0+_bellT,Math.max(_bellT,_bellH0+_bellT-delta),type):drawSpringAnim(d,D,nt,fl,Math.max(0.1,fl-delta),type);
+  bell?drawSpringAnim(_bellT,_bellDe,1,_bellH0+_bellT,Math.max(_bellT,_bellH0+_bellT-delta),type):fl>0&&drawSpringAnim(d,D,nt,fl,Math.max(0.1,fl-delta),type);
   drawSpringPack(type,arr,ns,np,{d:d,D:D,fl:fl,nt:nt,delta:delta,De:_bellDe,Di:_bellDi,t:_bellT,h0:_bellH0});
   if(window.calc3DUpdate)try{window.calc3DUpdate('springs');}catch(e){}
 };
@@ -2406,7 +2441,10 @@ function gateBellevillePresets(){
   const h3=card?card.querySelector('h3'):null;
   if(h3)h3.textContent='PRESETS — '+set.label;
   const br=$('sp-bell-row');if(br)br.style.display=type==='belleville'?'':'none';
-  ['sp-d','sp-D','sp-na','sp-nt','sp-fl'].forEach(id=>{const el=$(id),f=el&&el.closest('.field');if(f)f.style.display=type==='belleville'?'none':'';});
+  const cr=$('sp-con-row');if(cr)cr.style.display=type==='conical'?'':'none';
+  const wr=$('sp-wave-row');if(wr)wr.style.display=type==='wave'?'':'none';
+  const hideMap={belleville:['sp-d','sp-D','sp-na','sp-nt','sp-fl'],wave:['sp-d','sp-g','sp-na','sp-nt','sp-fl']};
+  ['sp-d','sp-D','sp-na','sp-nt','sp-fl','sp-g'].forEach(id=>{const el=$(id),f=el&&el.closest('.field');if(f)f.style.display=(hideMap[type]||[]).indexOf(id)>=0?'none':'';});
   populateSpringPresets();
 }
 
