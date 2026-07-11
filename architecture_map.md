@@ -1,5 +1,10 @@
 # Architecture Map — amni-scient.com
 
+## v5.83.0 Amni-Calc: DIN 471 retaining rings, sourced (2026-07-10, loop iter 12)
+- Sourcing: roymech.co.uk DIN 471 table via WebFetch → DIN471 13 rows [d1,d2,m,s,Fn,Fr] 8-60mm; the 6 groove dims previously half-recalled ALL match the source (recall was right, but now it is sourced — the refusal rule held). Non-monotonic Fr rows (25, 60) shipped with explicit verify-against-catalog caveat; Fn (groove) governs everywhere in range, asserted as a table invariant.
+- calc-fixes.js (`?v=eng20`): injectRetRing rr-card in v-shafts right (rr-d exact-size select — NO interpolation on discrete standard sizes; rr-f) → groove d2/m/depth/s, Fn/Fr, 3-band verdict (ok ≤2/3 cap, warn ≤cap, err), bearing screen F/(π·d2·depth). Notes: sharp-corner abutment assumption, chamfer derate, groove Kt≈3 fatigue flag, ring-thickness edge margin.
+- tests/retring_audit.js 14 (dimension cross-checks, m≥s and ascending-d2 invariants, 0.5mm depth, 100.5 MPa screen, 3-band boundaries; caught my own mislabeled band assertion — 60% is ok-band not warn). All 18 suites green (476).
+
 ## v5.82.0 Amni-Calc: vapor-compression cycle, refusal lifted with sourced data (2026-07-10, loop iter 11)
 - Data sourcing: engineeringtoolbox 403d; Ohio Univ (people.ohio.edu/urieli) R134a pressure-sat table fetched clean -> R134A_SAT 28 rows [T,P,hf,hg,sg] (60-2000 kPa / -36.9-67.5 C; 2500/3000 rows dropped, too near 101 C critical). r134a(T) linear interp, clamps -> explicit out-of-range verdict.
 - calc-fixes.js (`?v=eng19`): injectVcc vc-card in v-cycles (vc-te/tc/eta/q). Ideal cycle: h1=hg(Te), h4=hf(Tc) isenthalpic, h2s=hg(Tc)+(Tc+273.15)(s1-sg(Tc)) — the ONE approximation (dh=T·ds isobar), stated on card. h2 via eta. COP + Carnot + %, P ratio >8 warn, mdot/W_comp/Q_cond. Anchors: node-exact interp, h2s 275.81, COP 5.7607 = 81% Carnot (75-90 textbook band), ~7 g/s/kW, COP linear in eta identity.

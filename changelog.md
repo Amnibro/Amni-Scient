@@ -1,5 +1,11 @@
 # Changelog 
 
+## Amni-Calc v5.83.0 — Retaining rings: the last data refusal lifts - 2026-07-10
+- **Shafts gains a RETAINING RING GROOVE card (DIN 471)**: pick the shaft size, get the groove to cut — diameter (h11), width (H13 minimum), depth per side, ring thickness — plus the published groove and ring load capacities with a three-band verdict against your axial load and a first-principles bearing screen on the shoulder.
+- Shipped the same way the vapor-compression card was: the standard's table web-sourced (RoyMech extract of DIN 471) — and every groove dimension cross-checks against the values this suite REFUSED to ship from memory two iterations ago. The refusal rule worked exactly as intended: wait for the source, then ship.
+- The card says the quiet parts out loud: ratings assume a sharp-cornered abutting part (chamfers lever the ring open and derate it hard — catalog governs near the limit), the groove is a K_t-3-class stress raiser on a rotating shaft, and you keep a ring-thickness of shaft beyond the groove.
+- 14 new anchors (incl. structural invariants across the whole table: m >= s always, groove capacity always governs); all 18 suites green, 476 total. Cache-buster fixes?v=eng20.
+
 ## Amni-Calc v5.82.0 — The refusal lifts: vapor-compression cycle on real R134a data - 2026-07-10
 - **Cycles gains a VAPOR-COMPRESSION card** — the item twice refused for lack of refrigerant data now ships the right way: 28 rows of published R134a saturation properties (Ohio University thermodynamic tables) embedded with the source named. Evaporating + condensing temperature + isentropic efficiency + duty -> COP against the Carnot limit (with the %-of-Carnot shown), evap/cond pressures and the ratio that flags two-stage territory past ~8, refrigerating effect, mass flow, compressor power and condenser duty.
 - One approximation in the whole card, and it is stated on the card: discharge enthalpy integrates dh = T·ds along the condenser isobar. The anchors hold the model to textbook reality — ideal COP lands at 81% of Carnot (inside the canonical 75-90% band) and 10 kW of cooling needs ~70 g/s (the classic ~7 g/s per kW for R134a).

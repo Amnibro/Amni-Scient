@@ -1795,6 +1795,34 @@ window.calcSlingCg=function(){
     (low?'<div class="note warn" style="margin-top:.4rem">A leg is below 30° — re-rig before lifting.</div>':'')+
     '<p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem">Statics: the leg NEARER the CoG carries more — vertical share V₁ = W·d₂/(d₁+d₂), tension T = V·L/h. Size BOTH slings for the near-leg tension so the load can&#39;t be hooked backwards. Hook must sit plumb over the CoG or the load rotates on pick.</p>');
 };
+const DIN471=[[8,7.6,0.90,0.80,0.8,3.0],[9,8.6,1.10,1.00,0.9,3.5],[10,9.6,1.10,1.00,1.0,4.0],[12,11.5,1.10,1.00,1.5,5.0],[14,13.4,1.10,1.00,2.1,6.4],[16,15.2,1.10,1.00,3.2,7.4],[18,17.0,1.30,1.20,4.5,17.0],[20,19.0,1.30,1.20,5.0,17.1],[25,23.9,1.30,1.20,7.0,16.2],[30,28.6,1.60,1.50,10.7,32.1],[40,37.5,1.85,1.75,25.3,51.0],[50,47.0,2.15,2.00,38.0,73.3],[60,57.0,2.15,2.00,46.0,69.2]];
+function injectRetRing(){
+  const vw=$('v-shafts');if(!vw||$('rr-card'))return;
+  const host=vw.querySelector('.split>div:last-child')||vw;
+  const card=document.createElement('div');card.className='card';card.id='rr-card';card.style.marginTop='.6rem';
+  card.innerHTML='<h3>RETAINING RING GROOVE (DIN 471)</h3>'+
+    '<div class="row">'+
+    '<div class="field"><label for="rr-d">SHAFT Ø</label><select id="rr-d">'+DIN471.map(r=>`<option value="${r[0]}"${r[0]===20?' selected':''}>${r[0]} mm</option>`).join('')+'</select></div>'+
+    '<div class="field"><label for="rr-f">AXIAL LOAD (kN)</label><input type="number" id="rr-f" value="3" step="any"></div>'+
+    '</div><button class="btn btn-sm" onclick="calcRetRing()" style="margin-top:.6rem">GROOVE / CAPACITY</button><div id="rr-out"></div>';
+  host.appendChild(card);
+}
+window.calcRetRing=function(){
+  const o=$('rr-out');if(!o)return;
+  const d1=parseFloat(sv('rr-d'))||20,F=v('rr-f')||0;
+  const r=DIN471.find(x=>x[0]===d1);if(!r)return;
+  const[,d2,m,s,Fn,Fr]=r;
+  const depth=(d1-d2)/2,cap=Math.min(Fn,Fr);
+  const sb=F>0?F*1000/(Math.PI*d2*depth):0;
+  _mr(o,'<div class="result-grid" style="margin-top:.6rem">'+[
+    ['GROOVE Ø d₂',d2.toFixed(1)+' mm (h11)','ok'],['GROOVE WIDTH m',m.toFixed(2)+' mm min (H13)','ok'],
+    ['Ring thickness s',s.toFixed(2)+' mm'],['Groove depth',depth.toFixed(2)+' mm per side'],
+    ['Groove capacity F_n',Fn.toFixed(1)+' kN'],['Ring capacity F_r',Fr.toFixed(1)+' kN'],
+    F>0?['APPLIED vs governing',F.toFixed(1)+' / '+cap.toFixed(1)+' kN ('+(F/cap*100).toFixed(0)+'%)',F<=cap/1.5?'ok':F<=cap?'warn':'err']:null,
+    F>0?['Groove bearing screen',sb.toFixed(0)+' MPa on the shoulder']:null
+  ].filter(Boolean).map(x=>`<div class="result-item"><div class="lbl">${x[0]}</div><div class="val ${x[2]||''}">${x[1]}</div></div>`).join('')+'</div>'+
+    '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">DIN 471 groove dimensions and load ratings (RoyMech extract of the standard tables). Ratings assume a SHARP-CORNERED abutting part — a chamfered or radiused part levers the ring open and derates it hard (ring makers publish the chamfer-derate curves; verify F_r against the catalog for anything near the limit). Grooves are stress raisers: for rotating shafts in fatigue, check the shaft at the groove root with a K_t ≈ 3-and-up. Keep at least one ring thickness of shaft beyond the groove.</p>');
+};
 const R134A_SAT=[[-36.9,60,3.9,227.8,0.9645],[-31.1,80,11.3,231.5,0.9572],[-26.4,100,17.3,234.5,0.9519],[-22.3,120,22.5,237.0,0.9478],[-18.8,140,27.1,239.2,0.9446],[-15.6,160,31.2,241.1,0.9420],[-12.7,180,35.0,242.9,0.9397],[-10.1,200,38.5,244.5,0.9378],[-7.6,220,41.7,245.9,0.9361],[-5.4,240,44.7,247.3,0.9347],[-3.2,260,47.5,248.6,0.9333],[-1.2,280,50.2,249.7,0.9322],[0.7,300,52.8,250.9,0.9311],[2.5,320,55.2,251.9,0.9301],[4.2,340,57.5,252.9,0.9293],[5.8,360,59.8,253.8,0.9284],[8.9,400,64.0,255.6,0.9270],[15.7,500,73.4,259.3,0.9241],[21.6,600,81.5,262.4,0.9219],[26.7,700,88.8,265.1,0.9200],[31.3,800,95.5,267.3,0.9184],[35.5,900,101.6,269.3,0.9170],[39.4,1000,107.4,271.0,0.9157],[46.3,1200,117.8,273.9,0.9131],[52.4,1400,127.3,276.2,0.9106],[57.9,1600,136.0,277.9,0.9080],[62.9,1800,144.1,279.2,0.9051],[67.5,2000,151.8,280.1,0.9020]];
 function r134a(T){
   const t=R134A_SAT;
@@ -4052,6 +4080,7 @@ window.addEventListener('DOMContentLoaded',()=>{
     injectKtCard();
     injectLugCard();
     injectVcc();
+    injectRetRing();
     window.calcFits();
     const typeEl=$('sp-type');if(typeEl)typeEl.addEventListener('change',()=>{gateBellevillePresets();window.calcSpring();});
     wireLive('v-springs',window.calcSpring);
