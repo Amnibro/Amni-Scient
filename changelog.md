@@ -1,5 +1,10 @@
 # Changelog 
 
+## Amni-Learn v5.64.0 — Pre-K quiz cards re-leveled to age - 2026-07-10
+- The "📚 Learn First!" teach cards shown before Pre-K (Level 1) quizzes carried facts written for much older kids: place value, clock arithmetic (60 min/24 hr), coin totals, measurement units, the commutative property, triangle angle sums (180°), rhombus/annulus geometry vocabulary, subitizing, word-origin trivia, 30,000°C lightning, exact bone counts and ocean depth stats, deposition/scattering physics terms, chlorophyll and crayon-invention trivia, and animal speeds in km/h.
+- Rewrote 24 cards across 7 subjects (math, shapes, counting, science, weather, colors, opposites) into short, concrete, playful Pre-K language — same factual ground truth, no jargon or arithmetic a 4-6 year old hasn't met yet. Math's "Tens & Ones" and "Money Math" cards were swapped for age-appropriate topics (Patterns, Coins) since place value and coin arithmetic are inherently grade-1+ concepts. Card counts and the {emoji,title,fact} shape untouched; Level 2+ cards untouched.
+- Applied via an audited node transform keyed on exact subject/index so no adjacent card was touched. Verified: node --check, re-extraction confirms all 13 subjects still parse with 16 L1 cards each, headless probe opens all 7 touched subjects' quizzes at Level 1 and confirms the new card text renders with zero page errors, and a teach→"I'm Ready!"→quiz transition probe confirms the flow into the actual quiz still works. SW cache v1264→v1265.
+
 ## Amni-Learn v5.63.0 — Fun R4: daily anagram, clicky idle games, tactile tetris - 2026-07-10
 - **📅 Daily Word in Anagrams**: every day the first puzzle is the same date-seeded word for everyone, marked with a gold Daily badge; solving it flips the HUD chip to ✅ and grows a 🔥 daily-streak counter (localStorage, consecutive-day logic). Miss a day, streak resets to 1. First real daily-comeback mechanic in the app.
 - **Idle games feel clicky**: the big 🍪/🌻/⛏️ buttons in Cookie Clicker, Garden Grower and Auto Miner now tick on click (throttled to ≤1 sound per 80ms so mashing doesn't buzz) — pairing with their existing press-scale animation.
