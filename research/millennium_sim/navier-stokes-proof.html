@@ -112,12 +112,16 @@ footer .sig span{color:var(--accent)}
 <div class="hero">
   <h1>Navier-Stokes Regularity</h1>
   <div class="subtitle">Master Momentum Closure</div>
-  <div class="tagline">Global regularity for 3D incompressible flow via Bakry-&Eacute;mery curvature, Wasserstein optimal transport, and adaptive eddy viscosity. 12 equations. Zero blow-up.</div>
+  <div class="tagline">Global regularity for an adaptive-viscosity <em>closure</em> of 3D incompressible flow &mdash; enstrophy-feedback eddy viscosity, zero blow-up in the closed system. 12 equations. The classical constant-&nu; Clay problem remains open.</div>
   <div class="cta-row">
     <a href="#proof" class="btn solid">Read Proof</a>
     <a href="fluid_sim_3d.html" class="btn">3D Simulation</a>
     <a href="curvature_proof.html" class="btn">Visual Proof</a>
   </div>
+</div>
+
+<div style="max-width:900px;margin:0 auto;padding:18px 24px;border:1px solid var(--dim);border-radius:8px;font-size:13px;line-height:1.6">
+  <strong>Revision v2 (2026-07-10).</strong> External review found three errors in v1, corrected throughout this page and in the underlying proof document: <strong>(E1)</strong> the v1 &ldquo;Step A&rdquo; inequality 1&minus;s &ge; &alpha;<sub>0</sub>Z<sup>1/2</sup> is false (counterexample: v = U + k<sup>&minus;1/2</sup>sin(kx) has Z &rarr; &infin; with vanishing coefficient of variation) &mdash; the viscosity floor is now supplied <em>by construction</em> via an amended closure term &nu;<sub>glob</sub> = &gamma;<sub>1</sub>&#8214;&omega;&#8214;<sub>L&sup2;</sub> (Eq 11&prime;, Chollet-Lesieur-style global feedback); <strong>(E2)</strong> the v1 Morrey claim H&sup1;(T&sup3;) &#8618; C<sup>0,1/2</sup> is wrong (H&sup1; embeds only in L&#8310; in 3D) &mdash; replaced by the Ladyzhenskaya-Prodi-Serrin ladder; <strong>(E3)</strong> the Bakry-&Eacute;mery/LSV curvature transfer from the (s,v) parameter manifold to T&sup3; is invalid as a proof (chain-rule Hessian terms are uncontrolled; the weight degenerates at v = 0) &mdash; Stages 2&ndash;4 are retained as <em>heuristic motivation only</em>. The main theorem is now unconditional for the amended closure, with stronger Z<sup>5/2</sup> dissipation. Scope: this is a theorem about a <em>modified system</em> in the tradition of Ladyzhenskaya (1967) and Lions (1969); it is <em>not</em> a result about classical constant-&nu; Navier-Stokes, and the Clay Millennium Problem remains open.
 </div>
 
 <!-- 12 EQUATIONS -->
@@ -174,7 +178,7 @@ footer .sig span{color:var(--accent)}
   <!-- STAGE 2 -->
   <div class="deriv reveal">
     <h3>Stage 2: Bakry-&Eacute;mery Curvature on (s, v) Manifold</h3>
-    <span class="tag pf">Derivation</span>
+    <span class="tag sup">Heuristic &mdash; not load-bearing (v2)</span>
     <p>Define the parameter manifold M = {(s,v) : s &isin; (0,1), v &gt; 0} with logarithmic potential:</p>
     <div class="math-row" id="d2a"></div>
     <p><span class="step-num">2.1</span> First derivatives:</p>
@@ -197,7 +201,7 @@ footer .sig span{color:var(--accent)}
   <!-- STAGE 3: SPATIAL HESSIAN -->
   <div class="deriv reveal">
     <h3>Stage 3: Spatial Hessian &mdash; From Parameter Manifold to T&sup3;</h3>
-    <span class="tag key">Key Bridge</span>
+    <span class="tag sup">Heuristic &mdash; transfer invalid as proof (v2, E3)</span>
     <p>The Bakry-&Eacute;mery curvature was computed on the abstract 2D manifold M. To apply LSV theory on the physical domain T&sup3;, we need Ric<sub>BE</sub> &ge; &kappa; on (T&sup3;, d, &nu;<sub>t</sub>dx). This requires computing Hess<sub>x</sub>(&Phi;) &mdash; the spatial Hessian &mdash; via the chain rule.</p>
     <p><span class="step-num">3.1</span> The weight on T&sup3; is the composition &nu;<sub>t</sub>(x) = w(&Phi;(x)) where &Phi;: T&sup3; &rarr; M maps x &mapsto; (s(x), |v(x)|).</p>
     <div class="math-row" id="d3a"></div>
@@ -213,13 +217,13 @@ footer .sig span{color:var(--accent)}
     <div class="math-row" id="d3f"></div>
     <p><span class="step-num">3.7</span> The positive terms dominate because their coefficients grow as 1/(1-s)&sup2; and 1/v&sup2; while the corrections stay bounded. Combining:</p>
     <div class="math-row result" id="d3g"></div>
-    <div class="note">The spatial Hessian corrections are bounded by enstrophy. Since we prove Z &le; Z<sub>c</sub> &lt; &infin;, the corrections are uniformly controlled, and &kappa;<sub>eff</sub> &gt; 0 is maintained globally. The parameter curvature dominates because it blows up near degeneracies (v &rarr; 0, s &rarr; 0,1) while the corrections remain O(Z).</div>
+    <div class="note"><strong>v2 erratum (E3):</strong> the domination claim in 3.7 is not a proof &mdash; the chain-rule correction terms carry second derivatives of s(x) and |v(x)|, which are exactly the quantities under investigation, and the weight &nu;<sub>t</sub> vanishes at stagnation points (v = 0), where CD(&kappa;,&infin;) fails. This stage records why an adaptive weight is <em>expected</em> to be confining; the main theorem no longer uses it.</div>
   </div>
 
   <!-- STAGE 4: WASSERSTEIN -->
   <div class="deriv reveal">
     <h3>Stage 4: Wasserstein-Ricci Transfer (LSV Framework)</h3>
-    <span class="tag pf">Derivation</span>
+    <span class="tag sup">Heuristic &mdash; depends on Stage 3 (v2)</span>
     <p><span class="step-num">4.1</span> Equip T&sup3; with the weighted metric measure space structure:</p>
     <div class="math-row" id="d4a"></div>
     <p><span class="step-num">4.2</span> From Stage 3, Ric<sub>BE</sub> &ge; &kappa;<sub>eff</sub> &gt; 0 on (T&sup3;, d, &mu;). By the Lott-Villani-Sturm characterization (Villani 2009, Thm 30.22):</p>
@@ -243,32 +247,32 @@ footer .sig span{color:var(--accent)}
     <div class="math-row" id="d5a"></div>
     <p><span class="step-num">5.2</span> Bound vortex stretching (standard, using Sobolev interpolation on T&sup3;):</p>
     <div class="math-row" id="d5b"></div>
-    <p><span class="step-num">5.3</span> Dissipation integral via integration by parts (no boundary terms on T&sup3;):</p>
+    <p><span class="step-num">5.3</span> Dissipation from the amended closure (Eq 11&prime;): the global term &nu;<sub>glob</sub>(t) = &gamma;<sub>1</sub>&#8214;&omega;&#8214;<sub>L&sup2;</sub> is constant in space, so it commutes with curl &mdash; <strong>no cross term</strong> (the local term contributes under hypothesis (H-loc) only):</p>
     <div class="math-row" id="d5c"></div>
-    <p><span class="step-num">5.4</span> Bound the cross term by Cauchy-Schwarz + H&ouml;lder:</p>
+    <p><span class="step-num">5.4</span> Coercivity of &#8214;&nabla;&omega;&#8214; by divergence-free duality (Z = &int;v&middot;(&nabla;&times;&omega;), Cauchy-Schwarz, energy bound E &le; E<sub>0</sub>):</p>
     <div class="math-row" id="d5d"></div>
-    <p><span class="step-num">5.5</span> Lower bound on &nu;<sub>t</sub>. From Stage 1: &nu;<sub>t</sub> = C<sub>&mu;</sub>(1-s)(s+&delta;)|v|. When Z &gt; Z<sub>0</sub>, Step A gives 1-s &ge; &alpha;<sub>0</sub>Z<sup>1/2</sup>:</p>
+    <p><span class="step-num">5.5</span> Viscosity floor &mdash; <strong>by construction</strong> from Eq 11&prime; (v2 erratum E1: the v1 &ldquo;Step A&rdquo; bound 1-s &ge; &alpha;<sub>0</sub>Z<sup>1/2</sup> is false and is no longer used):</p>
     <div class="math-row" id="d5e"></div>
-    <p><span class="step-num">5.6</span> Apply Ladyzhenskaya interpolation on T&sup3;:</p>
+    <p><span class="step-num">5.6</span> Combine 5.3&ndash;5.5 into the dissipation lower bound:</p>
     <div class="math-row" id="d5f"></div>
-    <p><span class="step-num">5.7</span> Combine steps 5.5 and 5.6 into the dissipation bound:</p>
+    <p><span class="step-num">5.7</span> Split the stretching term by Young's inequality against half the dissipation:</p>
     <div class="math-row highlight" id="d5g"></div>
-    <p><span class="step-num">5.8</span> Assemble the enstrophy inequality (stretching - dissipation + cross term):</p>
+    <p><span class="step-num">5.8</span> Assemble the v2 enstrophy inequality:</p>
     <div class="math-row result" id="d5h"></div>
-    <p><span class="step-num">5.9</span> Since 2 &gt; 3/2, the Z&sup2; term dominates for Z &gt; Z<sub>c</sub>:</p>
+    <p><span class="step-num">5.9</span> Since 5/2 &gt; 3/2, the Z<sup>5/2</sup> term dominates for Z &gt; Z<sub>c</sub>:</p>
     <div class="math-row result" id="d5i"></div>
-    <div class="note">The critical exponent gap: classical NS has &nu;Z (exponent 1) vs Z<sup>3/2</sup> stretching &mdash; stretching wins. Our closure gives &gamma;'s<sub>min</sub>Z&sup2; (exponent 2) vs Z<sup>3/2</sup> stretching &mdash; dissipation wins.</div>
+    <div class="note">The critical exponent gap: classical NS has &nu;Z (exponent 1) vs Z<sup>3/2</sup> stretching &mdash; stretching wins, and that problem stays open. The amended closure gives (&gamma;<sub>1</sub>/E<sub>0</sub>)Z<sup>5/2</sup> vs Z<sup>3/2</sup> &mdash; dissipation wins for any &gamma;<sub>1</sub> &gt; 0, with no s<sub>min</sub> assumption.</div>
   </div>
 
   <!-- STAGE 6: BOOTSTRAP -->
   <div class="deriv reveal">
     <h3>Stage 6: Bootstrap &amp; Global Regularity</h3>
     <span class="tag pf">Derivation</span>
-    <p><span class="step-num">6.1</span> The enstrophy inequality requires s<sub>min</sub> &gt; 0. Prove it from the dynamics (not assumed):</p>
+    <p><span class="step-num">6.1</span> From bounded enstrophy to smoothness via the Ladyzhenskaya-Prodi-Serrin ladder (v2 erratum E2: the v1 Morrey chain H&sup1; &#8618; C<sup>0,1/2</sup> is wrong &mdash; H&sup1;(T&sup3;) embeds only in L&#8310;):</p>
     <div class="math-row" id="d6a"></div>
-    <p><span class="step-num">6.2</span> Bootstrap (resolving the apparent circularity):</p>
+    <p><span class="step-num">6.2</span> Bootstrap (no circularity in v2 &mdash; the enstrophy inequality contains no s<sub>min</sub>):</p>
     <div class="math-row" id="d6b"></div>
-    <p><span class="step-num">6.3</span> Comparison principle: f(Z) = C<sub>1</sub>Z<sup>3/2</sup> - &gamma;'s<sub>min</sub>Z&sup2; = Z<sup>3/2</sup>(C<sub>1</sub> - &gamma;'s<sub>min</sub>Z<sup>1/2</sup>) &lt; 0 for Z &gt; Z<sub>c</sub>.</p>
+    <p><span class="step-num">6.3</span> Comparison principle: f(Z) = C&#771;<sub>1</sub>(Z<sup>3/2</sup>+Z) - (&gamma;<sub>1</sub>/E<sub>0</sub>)Z<sup>5/2</sup> &lt; 0 for Z &gt; Z<sub>c</sub>.</p>
     <div class="math-row" id="d6c"></div>
     <p><span class="step-num">6.4</span> From bounded enstrophy to smoothness &mdash; Sobolev bootstrap:</p>
     <div class="math-row" id="d6d"></div>
@@ -284,12 +288,13 @@ footer .sig span{color:var(--accent)}
   <div class="controls reveal">
     <div class="cg"><label>|v|</label><input type="range" id="slV" min="0.1" max="2" step="0.1" value="1.0"><span class="val" id="vV">1.0</span></div>
     <div class="cg"><label>s<sub>min</sub></label><input type="range" id="slS" min="0.01" max="0.5" step="0.01" value="0.05"><span class="val" id="vS">0.05</span></div>
-    <div class="cg"><label>C/&gamma;'</label><input type="range" id="slCG" min="0.5" max="10" step="0.5" value="3.0"><span class="val" id="vCG">3.0</span></div>
+    <div class="cg"><label>C&#771;<sub>1</sub></label><input type="range" id="slCG" min="0.5" max="10" step="0.5" value="3.0"><span class="val" id="vCG">3.0</span></div>
+    <div class="cg"><label>&gamma;<sub>1</sub></label><input type="range" id="slG" min="0.05" max="1" step="0.05" value="0.30"><span class="val" id="vG">0.30</span></div>
   </div>
   <div class="viz-wrap reveal">
     <div class="viz-box viz-3d"><div class="viz-lbl">&nu;<sub>t</sub> hourglass &mdash; pinch ~ 1/|v|, color = Gaussian curvature K</div><div id="three-box" style="width:100%;height:100%"></div></div>
     <div class="viz-box viz-plot"><div class="viz-lbl">Bakry-&Eacute;mery &kappa;(s) at current |v|</div><canvas id="plotCurv"></canvas></div>
-    <div class="viz-box viz-plot"><div class="viz-lbl">dZ/dt = C<sub>1</sub>Z<sup>1.5</sup> &minus; &gamma;'s<sub>min</sub>Z&sup2;</div><canvas id="plotEnst"></canvas></div>
+    <div class="viz-box viz-plot"><div class="viz-lbl">v2: dZ/dt = C&#771;<sub>1</sub>(Z<sup>1.5</sup>+Z) &minus; &gamma;<sub>1</sub>Z<sup>2.5</sup> (E<sub>0</sub>=1)</div><canvas id="plotEnst"></canvas></div>
   </div>
 </section>
 
@@ -299,7 +304,7 @@ footer .sig span{color:var(--accent)}
   <div class="sub">Global regularity for the master momentum closure</div>
   <div class="theorem reveal">
     <h3>Theorem (Global Regularity)</h3>
-    <div style="margin-bottom:14px;font-size:13px">Let <strong>v</strong><sub>0</sub> &isin; H<sup>s</sup>(T&sup3;) with s &gt; 5/2 and &nabla;&middot;<strong>v</strong><sub>0</sub> = 0. Let <strong>v</strong>(t) solve the Master Momentum Equation (Eqs 1&ndash;12). Then:</div>
+    <div style="margin-bottom:14px;font-size:13px">Let <strong>v</strong><sub>0</sub> &isin; H<sup>s</sup>(T&sup3;) with s &gt; 5/2 and &nabla;&middot;<strong>v</strong><sub>0</sub> = 0. Let <strong>v</strong>(t) solve the Master Momentum Equation with the <em>amended</em> closure (Eqs 1&ndash;10, 11&prime;, 12), &gamma;<sub>0</sub> &gt; 0, &gamma;<sub>1</sub> &gt; 0, and either C<sub>&mu;</sub> = 0 or hypothesis (H-loc). Then (for the closed system &mdash; not classical constant-&nu; NS):</div>
     <ol>
       <li><div id="thm1" style="margin:4px 0"></div></li>
       <li><div id="thm2" style="margin:4px 0"></div></li>
@@ -310,19 +315,22 @@ footer .sig span{color:var(--accent)}
     <table class="summary-table">
       <tr><th>Component</th><th>Status</th><th>Method</th></tr>
       <tr><td>&nu;<sub>t</sub> closed form</td><td><span class="badge pf">Proven</span></td><td>k-&epsilon; algebra (Stage 1)</td></tr>
-      <tr><td>Ric<sub>BE</sub> &gt; 0 on M</td><td><span class="badge pf">Proven</span></td><td>Direct Hessian (Stage 2)</td></tr>
-      <tr><td>Spatial Hessian transfer</td><td><span class="badge pf">Proven</span></td><td>Chain rule + Sobolev bounds (Stage 3)</td></tr>
-      <tr><td>Weighted Poincar&eacute;</td><td><span class="badge pf">Proven</span></td><td>LSV + HWI (Stage 4)</td></tr>
-      <tr><td>Z&sup2; supercritical</td><td><span class="badge pf">Proven</span></td><td>Ladyzhenskaya (Stage 5)</td></tr>
-      <tr><td>s<sub>min</sub> &gt; 0 bootstrap</td><td><span class="badge pf">Proven</span></td><td>Morrey + continuation (Stage 6)</td></tr>
-      <tr><td>Reffelt no-go</td><td><span class="badge sup">Supplementary</span></td><td>Topological corroboration</td></tr>
+      <tr><td>Viscosity floor &nu;<sub>t</sub><sup>(2)</sup> &ge; &gamma;<sub>1</sub>Z<sup>1/2</sup></td><td><span class="badge pf">By construction</span></td><td>Amended closure Eq 11&prime; (v2; v1 Step A was false)</td></tr>
+      <tr><td>Ric<sub>BE</sub> &gt; 0 on M</td><td><span class="badge sup">Heuristic</span></td><td>Direct Hessian (Stage 2; parameter space only)</td></tr>
+      <tr><td>Spatial Hessian transfer</td><td><span class="badge sup">Open</span></td><td>v1 proof invalid (E3); conjecture</td></tr>
+      <tr><td>Weighted Poincar&eacute;</td><td><span class="badge sup">Conjecture</span></td><td>Depends on Stage 3</td></tr>
+      <tr><td>Z<sup>5/2</sup> supercritical</td><td><span class="badge pf">Proven</span></td><td>Div-free duality + Young (Stage 5, v2)</td></tr>
+      <tr><td>Continuation ladder</td><td><span class="badge pf">Proven</span></td><td>H&sup1; &#8618; L&#8310; + Serrin (Stage 6, v2; v1 Morrey was wrong)</td></tr>
+      <tr><td>s<sub>min</sub> &gt; 0 bootstrap</td><td><span class="badge sup">Retired</span></td><td>Not needed in v2</td></tr>
+      <tr><td>Reffelt no-go</td><td><span class="badge sup">Supplementary</span></td><td>Topological corroboration (heuristic)</td></tr>
+      <tr><td>Classical constant-&nu; NS (Clay)</td><td><span class="badge sup">Open</span></td><td>Untouched by this result</td></tr>
     </table>
   </div>
 </section>
 
 <footer>
   <div class="sig">&copy; 2025&ndash;2026 <span>Amnibro</span> &mdash; Amni-Scient</div>
-  <div style="color:var(--dim);font-size:11px;margin-top:8px;letter-spacing:1px">Master Momentum Closure &bull; 12 Equations &bull; Zero Blow-Up</div>
+  <div style="color:var(--dim);font-size:11px;margin-top:8px;letter-spacing:1px">Master Momentum Closure v2 &bull; 12 Equations &bull; Zero Blow-Up in the Closed System &bull; Clay Problem Open</div>
 </footer>
 
 <script>
@@ -378,24 +386,24 @@ kR("\\boxed{\\int_{\\mathbb{T}^3}\\nu_t|\\nabla\\boldsymbol{\\omega}|^2\\,dx\\ge
 
 // Stage 5: Enstrophy
 kR("\\frac{1}{2}\\frac{dZ}{dt}=\\underbrace{\\int\\boldsymbol{\\omega}\\cdot(\\boldsymbol{\\omega}\\cdot\\nabla)\\mathbf{v}\\,dx}_{\\text{stretching}}\\;-\\;\\underbrace{\\int\\nu_t|\\nabla\\boldsymbol{\\omega}|^2\\,dx+\\int(\\nabla\\nu_t\\cdot\\nabla)\\boldsymbol{\\omega}\\cdot\\boldsymbol{\\omega}\\,dx}_{\\mathcal{D}(t)\\text{ dissipation}}",document.getElementById("d5a"));
-kR("\\left|\\int\\boldsymbol{\\omega}\\cdot(\\boldsymbol{\\omega}\\cdot\\nabla)\\mathbf{v}\\,dx\\right|\\leq\\|\\boldsymbol{\\omega}\\|_{L^3}^2\\|\\nabla\\mathbf{v}\\|_{L^3}\\leq C_1 Z^{3/2}",document.getElementById("d5b"));
-kR("\\mathcal{D}(t)=\\int\\nu_t|\\nabla\\boldsymbol{\\omega}|^2dx+\\underbrace{\\int(\\nabla\\nu_t\\cdot\\nabla)\\boldsymbol{\\omega}\\cdot\\boldsymbol{\\omega}\\,dx}_{\\text{cross term}}",document.getElementById("d5c"));
-kR("|\\text{cross term}|\\leq\\|\\nabla\\nu_t\\|_{L^3}\\|\\nabla\\boldsymbol{\\omega}\\|_{L^2}\\|\\boldsymbol{\\omega}\\|_{L^6}\\leq C_2 Z^{3/2}",document.getElementById("d5d"));
-kR("\\nu_t\\geq C_\\mu\\underbrace{(1-s)}_{\\geq\\alpha_0 Z^{1/2}}\\underbrace{(s+\\delta)}_{\\geq\\delta}\\underbrace{|\\mathbf{v}|}_{\\geq v_{\\text{rms}}}\\;\\geq\\;\\underbrace{C_\\mu\\alpha_0\\delta\\, v_{\\text{rms}}}_{=:\\,\\gamma_1}Z^{1/2}",document.getElementById("d5e"));
-kR("\\|\\nabla\\boldsymbol{\\omega}\\|_{L^2}^2\\geq C_L\\frac{Z^{3/2}}{\\|\\mathbf{v}\\|_{L^2}}\\geq C_L\\frac{Z^{3/2}}{\\|\\mathbf{v}_0\\|_{L^2}}\\quad\\text{(Ladyzhenskaya + energy conservation)}",document.getElementById("d5f"));
-kR("\\mathcal{D}\\geq\\gamma_1 Z^{1/2}\\cdot C_L\\frac{Z^{3/2}}{\\|\\mathbf{v}_0\\|}\\;-\\;C_2 Z^{3/2}=\\frac{\\gamma_1 C_L}{\\|\\mathbf{v}_0\\|}Z^2-C_2 Z^{3/2}",document.getElementById("d5g"));
-kR("\\boxed{\\frac{dZ}{dt}\\leq C_1 Z^{3/2}-\\gamma' s_{\\min}\\,Z^2}\\qquad\\gamma':=\\frac{2\\gamma_1 C_L}{\\|\\mathbf{v}_0\\|_{L^2}}",document.getElementById("d5h"));
-kR("Z>Z_c\\;\\Rightarrow\\;\\gamma' s_{\\min}Z^2>C_1 Z^{3/2}\\;\\Rightarrow\\;\\frac{dZ}{dt}<0\\qquad Z_c=\\left(\\frac{C_1}{\\gamma' s_{\\min}}\\right)^{\\!2}",document.getElementById("d5i"));
+kR("\\left|\\int\\boldsymbol{\\omega}\\cdot(\\boldsymbol{\\omega}\\cdot\\nabla)\\mathbf{v}\\,dx\\right|\\leq\\|\\boldsymbol{\\omega}\\|_{L^3}^2\\|\\nabla\\mathbf{v}\\|_{L^3}\\leq C\\|\\boldsymbol{\\omega}\\|_{L^3}^3\\leq C_{\\text{str}}\\,Z^{3/4}\\|\\nabla\\boldsymbol{\\omega}\\|_{L^2}^{3/2}",document.getElementById("d5b"));
+kR("\\nu_{\\text{glob}}(t)=\\gamma_1\\|\\boldsymbol{\\omega}(t)\\|_{L^2}\\;\\text{(uniform in }x\\text{)}\\;\\Longrightarrow\\;\\mathcal{D}_{\\text{glob}}(t)=\\gamma_1 Z^{1/2}\\,\\|\\nabla\\boldsymbol{\\omega}\\|_{L^2}^2\\quad\\text{(no cross term)}",document.getElementById("d5c"));
+kR("Z=\\int\\mathbf{v}\\cdot(\\nabla\\times\\boldsymbol{\\omega})\\,dx\\leq\\|\\mathbf{v}\\|_{L^2}\\|\\nabla\\boldsymbol{\\omega}\\|_{L^2}\\;\\Longrightarrow\\;\\|\\nabla\\boldsymbol{\\omega}\\|_{L^2}^2\\geq\\frac{Z^2}{E_0}",document.getElementById("d5d"));
+kR("\\nu_t^{(2)}=\\nu_{\\text{loc}}+\\gamma_1\\|\\boldsymbol{\\omega}\\|_{L^2}\\;\\geq\\;\\gamma_1 Z^{1/2}\\qquad\\text{(Eq 11}'\\text{, by construction, pointwise)}",document.getElementById("d5e"));
+kR("\\mathcal{D}_{\\text{glob}}\\geq\\gamma_1 Z^{1/2}\\cdot\\frac{Z^2}{E_0}=\\frac{\\gamma_1}{E_0}\\,Z^{5/2}",document.getElementById("d5f"));
+kR("C_{\\text{str}}Z^{3/4}\\|\\nabla\\boldsymbol{\\omega}\\|_{L^2}^{3/2}\\;\\leq\\;\\frac{\\gamma_1 Z^{1/2}}{2}\\|\\nabla\\boldsymbol{\\omega}\\|_{L^2}^2+C'\\gamma_1^{-3}Z^{3/2}\\quad\\text{(Young, }4/3\\text{-}4\\text{)}",document.getElementById("d5g"));
+kR("\\boxed{\\frac{dZ}{dt}\\leq \\tilde{C}_1(Z^{3/2}+Z)-\\frac{\\gamma_1}{E_0}Z^{5/2}}\\qquad\\tilde{C}_1:=C_1(1+\\gamma_1^{-3})",document.getElementById("d5h"));
+kR("Z>Z_c\\;\\Rightarrow\\;\\frac{\\gamma_1}{E_0}Z^{5/2}>\\tilde{C}_1(Z^{3/2}+Z)\\;\\Rightarrow\\;\\frac{dZ}{dt}<0\\qquad Z_c=\\frac{2\\tilde{C}_1 E_0}{\\gamma_1}\\vee 1",document.getElementById("d5i"));
 
 // Stage 6: Bootstrap
-kR("Z<\\infty\\;\\Rightarrow\\;\\mathbf{v}\\in H^1\\hookrightarrow C^{0,1/2}\\text{ (Morrey)}\\;\\Rightarrow\\;\\|\\nabla\\mathbf{v}\\|_{L^\\infty}<\\infty\\;\\Rightarrow\\;s>0",document.getElementById("d6a"));
-kR("\\begin{aligned}&\\textbf{1.}\\;\\text{Short-time: }Z<\\infty\\text{ on }[0,T^*)\\\\&\\textbf{2.}\\;s_{\\min}(T^*)>0\\text{ (by Morrey above)}\\\\&\\textbf{3.}\\;Z\\leq\\max(Z(0),Z_c)<\\infty\\text{ on }[0,T^*)\\text{ (Stage 5 inequality)}\\\\&\\textbf{4.}\\;\\text{Extend past }T^*\\text{ (Beale-Kato-Majda)}\\;\\Rightarrow\\;T^*=\\infty\\\\&\\textbf{5.}\\;Z\\leq Z_{\\max}<\\infty\\text{ globally}\\;\\Rightarrow\\;s_{\\min}>0\\text{ globally}\\end{aligned}",document.getElementById("d6b"));
+kR("Z<\\infty\\;\\Rightarrow\\;\\mathbf{v}\\in L^\\infty H^1\\hookrightarrow L^\\infty L^6,\\;\\;\\tfrac{2}{\\infty}+\\tfrac{3}{6}=\\tfrac12\\leq 1\\;\\text{(Serrin)}\\;\\Rightarrow\\;\\mathbf{v}\\text{ smooth}",document.getElementById("d6a"));
+kR("\\begin{aligned}&\\textbf{1.}\\;\\text{Short-time: }Z<\\infty\\text{ on }[0,T^*)\\;(R_{\\text{eff}}\\geq\\gamma_0>0)\\\\&\\textbf{2.}\\;Z\\leq\\max(Z(0),Z_c)<\\infty\\text{ on }[0,T^*)\\text{ (Stage 5, no }s_{\\min}\\text{ needed)}\\\\&\\textbf{3.}\\;\\text{Serrin ladder extends past }T^*\\;\\Rightarrow\\;T^*=\\infty\\end{aligned}",document.getElementById("d6b"));
 kR("Z(t)\\leq\\max(Z(0),Z_c)<\\infty\\quad\\forall\\,t\\geq 0",document.getElementById("d6c"));
 kR("Z\\leq Z_{\\max}\\;\\Rightarrow\\;\\mathbf{v}\\in L^\\infty(H^1)\\cap L^2(H^2)\\;\\xrightarrow{\\text{differentiate }k\\text{ times}}\\;\\mathbf{v}\\in L^\\infty(H^m)\\;\\forall\\,m",document.getElementById("d6d"));
 kR("\\boxed{\\mathbf{v}\\in C^\\infty(\\mathbb{T}^3\\times[0,\\infty)),\\qquad p\\in C^\\infty(\\mathbb{T}^3\\times[0,\\infty))}",document.getElementById("d6e"));
 
 // Theorem
-kR("Z(t)\\leq\\max\\!\\left(Z(0),\\left(\\frac{C_1}{\\gamma' s_{\\min}}\\right)^{\\!2}\\right)<\\infty\\quad\\forall\\,t>0",document.getElementById("thm1"));
+kR("Z(t)\\leq\\max\\!\\left(Z(0),\\;\\frac{2\\tilde{C}_1 E_0}{\\gamma_1}\\vee 1\\right)<\\infty\\quad\\forall\\,t>0",document.getElementById("thm1"));
 kR("\\mathbf{v}\\in C^\\infty(\\mathbb{T}^3\\times[0,\\infty))",document.getElementById("thm2"));
 kR("p\\in C^\\infty(\\mathbb{T}^3\\times[0,\\infty))",document.getElementById("thm3"));
 
@@ -501,6 +509,7 @@ function sliderUpdate(){plotsDirty=true;buildManifold();}
 document.getElementById('slV').oninput=function(){document.getElementById('vV').textContent=parseFloat(this.value).toFixed(1);sliderUpdate();};
 document.getElementById('slS').oninput=function(){document.getElementById('vS').textContent=parseFloat(this.value).toFixed(2);sliderUpdate();};
 document.getElementById('slCG').oninput=function(){document.getElementById('vCG').textContent=parseFloat(this.value).toFixed(1);sliderUpdate();};
+document.getElementById('slG').oninput=function(){document.getElementById('vG').textContent=parseFloat(this.value).toFixed(2);sliderUpdate();};
 
 function renderPlot(id,fn){
   const c=document.getElementById(id);if(!c)return;
@@ -536,29 +545,29 @@ function drawCurv(ctx,w,h){
 }
 
 function drawEnst(ctx,w,h){
-  const smin=parseFloat(document.getElementById('slS').value);
+  const g1=parseFloat(document.getElementById('slG').value);
   const cg=parseFloat(document.getElementById('slCG').value);
   const pad=40,pw=w-2*pad,ph=h-2*pad;
-  const Zc=cg*cg/(smin*smin),maxZ=Math.min(Zc*3,5000),C1=cg,gp=1,n=300;
+  const Zc=Math.max(2*cg/g1,1),maxZ=Math.min(Zc*3,5000),C1=cg,n=300;
   ctx.strokeStyle='#333';ctx.lineWidth=1;ctx.beginPath();
   ctx.moveTo(pad,h/2);ctx.lineTo(w-pad,h/2);ctx.moveTo(pad,pad);ctx.lineTo(pad,h-pad);ctx.stroke();
   ctx.fillStyle='#666';ctx.font='10px JetBrains Mono';
   ctx.fillText('Z',w-pad+4,h/2+4);ctx.fillText('dZ/dt',pad+4,pad-6);ctx.fillText('0',pad-12,h/2+4);
-  const scale=C1*Math.pow(maxZ,1.5);
+  const scale=C1*(Math.pow(maxZ,1.5)+maxZ);
   // Stretching
   ctx.beginPath();ctx.strokeStyle='#ff3366';ctx.lineWidth=1.5;
-  for(let i=1;i<=n;i++){const Z=(i/n)*maxZ;const val=C1*Math.pow(Z,1.5);
+  for(let i=1;i<=n;i++){const Z=(i/n)*maxZ;const val=C1*(Math.pow(Z,1.5)+Z);
     const x=pad+(Z/maxZ)*pw,y=h/2-(val/scale)*(ph/2)*0.8;
     if(y<pad)continue;i===1?ctx.moveTo(x,y):ctx.lineTo(x,y);}ctx.stroke();
   // Dissipation
   ctx.beginPath();ctx.strokeStyle='#4488ff';ctx.lineWidth=1.5;
-  for(let i=1;i<=n;i++){const Z=(i/n)*maxZ;const val=-gp*smin*Z*Z;
+  for(let i=1;i<=n;i++){const Z=(i/n)*maxZ;const val=-g1*Math.pow(Z,2.5);
     const x=pad+(Z/maxZ)*pw,y=h/2-(val/scale)*(ph/2)*0.8;
     if(y>h-pad)continue;i===1?ctx.moveTo(x,y):ctx.lineTo(x,y);}ctx.stroke();
   // Net
   ctx.beginPath();ctx.strokeStyle='#00ff9d';ctx.lineWidth=2.5;
   let started=false;
-  for(let i=1;i<=n;i++){const Z=(i/n)*maxZ;const val=C1*Math.pow(Z,1.5)-gp*smin*Z*Z;
+  for(let i=1;i<=n;i++){const Z=(i/n)*maxZ;const val=C1*(Math.pow(Z,1.5)+Z)-g1*Math.pow(Z,2.5);
     const x=pad+(Z/maxZ)*pw,y=h/2-(val/scale)*(ph/2)*0.8;
     if(y<pad||y>h-pad)continue;!started?(ctx.moveTo(x,y),started=true):ctx.lineTo(x,y);}ctx.stroke();
   // Zc
@@ -567,8 +576,8 @@ function drawEnst(ctx,w,h){
     ctx.beginPath();ctx.moveTo(xc,pad);ctx.lineTo(xc,h-pad);ctx.stroke();ctx.setLineDash([]);
     ctx.fillStyle='#ffd700';ctx.font='10px JetBrains Mono';ctx.fillText('Z_c='+Math.round(Zc),xc+4,pad+14);}
   ctx.font='10px JetBrains Mono';
-  ctx.fillStyle='#ff3366';ctx.fillText('CZ^1.5 (stretch)',w-pad-88,pad+14);
-  ctx.fillStyle='#4488ff';ctx.fillText('-\u03B3\'sZ\u00B2 (dissip)',w-pad-88,pad+28);
+  ctx.fillStyle='#ff3366';ctx.fillText('C\u0303\u2081(Z^1.5+Z) (stretch)',w-pad-130,pad+14);
+  ctx.fillStyle='#4488ff';ctx.fillText('-\u03B3\u2081Z^2.5 (dissip)',w-pad-130,pad+28);
   ctx.fillStyle='#00ff9d';ctx.fillText('net dZ/dt',w-pad-60,pad+42);
 }
 
