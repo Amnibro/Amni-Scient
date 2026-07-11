@@ -1302,6 +1302,64 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <tr title="Power conversion"><td>1 HP</td><td>= 745.7 W</td></tr>
 </tbody></table>
 </div>
+<div class="card">
+<h3>MACHINING</h3>
+<table class="data table-static"><tbody>
+<tr title="Spindle speed from cutting speed. Vc in m/min, D in mm"><td>Spindle Speed</td><td>N = 1000·V_c / (π·D)</td></tr>
+<tr title="Table feed from chip load per tooth, flute count, and rpm"><td>Feed Rate</td><td>v_f = f_z · z · N</td></tr>
+<tr title="Material removal rate from depth, width, and feed"><td>MRR</td><td>MRR = a_p·a_e·v_f / 1000</td></tr>
+<tr title="Machinery's Handbook percent-of-thread formula, metric"><td>Tap Drill (metric)</td><td>drill = d − p·% / 76.98</td></tr>
+<tr title="Percent-of-thread formula, unified inch threads. 1/4-20 @75% = 0.2013 = #7"><td>Tap Drill (unified)</td><td>drill = d − 0.01299·% / TPI</td></tr>
+<tr title="Bend allowance: arc length of the neutral axis. θ in radians, K locates neutral axis"><td>Bend Allowance</td><td>BA = θ·(R + K·t)</td></tr>
+<tr title="Setback and bend deduction give flat length = A + B − BD"><td>Bend Deduction</td><td>BD = 2·(R+t)·tan(θ/2) − BA</td></tr>
+<tr title="Standard steel estimate, ±10%. Not a substitute for a tensile cert"><td>UTS from Hardness</td><td>σ_UTS ≈ 3.45·HB [MPa]</td></tr>
+</tbody></table>
+</div>
+<div class="card">
+<h3>HYDRAULICS / FLUID POWER</h3>
+<table class="data table-static"><tbody>
+<tr title="Extend force on full piston area, with mechanical-hydraulic efficiency"><td>Cylinder Extend</td><td>F = P·(π·D²/4)·η</td></tr>
+<tr title="Retract acts on the annulus: piston minus rod area"><td>Cylinder Retract</td><td>F = P·π(D²−d²)/4·η</td></tr>
+<tr title="Speed from flow over acting area"><td>Cylinder Speed</td><td>v = Q / A</td></tr>
+<tr title="Area ratio: intensification factor and speed ratio between directions"><td>Area Ratio</td><td>φ = A_bore / A_annulus</td></tr>
+<tr title="Meter-out on the rod side multiplies pressure by the area ratio"><td>Intensification</td><td>P_rod = P·φ</td></tr>
+<tr title="Euler column buckling of the extended rod. Industry FoS 3.5"><td>Rod Buckling</td><td>P_cr = π²·E·I / (K·L)²</td></tr>
+<tr title="Bladder accumulator gas volume between P_min and P_max, ABSOLUTE pressures, n=1 slow / 1.4 rapid"><td>Accumulator Volume</td><td>V₀ = ΔV / [(P₀/P₁)^(1/n) − (P₀/P₂)^(1/n)]</td></tr>
+<tr title="Hydraulic power from pressure and flow (SI: Pa · m³/s = W)"><td>Hydraulic Power</td><td>P_hyd = p·Q</td></tr>
+</tbody></table>
+</div>
+<div class="card">
+<h3>LIFTING &amp; RIGGING</h3>
+<table class="data table-static"><tbody>
+<tr title="Per-leg sling tension. θ measured from HORIZONTAL; n_eff = 2 for rigid loads on 3-4 legs"><td>Sling Tension</td><td>T = W / (n·sin θ)</td></tr>
+<tr title="Tension multiplier: 1.155 @60°, 1.414 @45°, 2.0 @30° — below 30° do not lift"><td>Angle Factor</td><td>AF = 1 / sin θ</td></tr>
+<tr title="Standard hitch capacity factors on vertical rating"><td>Hitch Factors</td><td>vertical ×1.0 · choker ×0.75 · basket ×2.0</td></tr>
+<tr title="Vertical share of the leg nearer the CoG (moment balance)"><td>CoG Offset Share</td><td>V₁ = W·d₂ / (d₁+d₂)</td></tr>
+<tr title="Leg tension from its vertical share and geometry"><td>Offset Leg Tension</td><td>T = V·L / h, L = √(d²+h²)</td></tr>
+<tr title="Shoulder eyebolts derate steeply with pull angle; plain eyebolts take no angular load"><td>Eyebolt Derate</td><td>100% in-line · ~30% @45° · ~25% @90°</td></tr>
+</tbody></table>
+</div>
+<div class="card">
+<h3>FITS &amp; PRESS FITS (ISO 286)</h3>
+<table class="data table-static"><tbody>
+<tr title="Clearance/interference from the four limit dimensions"><td>Fit Extremes</td><td>c_min = hole_min − shaft_max, c_max = hole_max − shaft_min</td></tr>
+<tr title="Lamé contact pressure, solid shaft and hub of the same material"><td>Press-Fit Pressure</td><td>p = E·δ/d · (d_o²−d²)/(2·d_o²)</td></tr>
+<tr title="Friction torque capacity of an interference fit"><td>Torque Capacity</td><td>T = μ·p·π·d²·L / 2</td></tr>
+<tr title="Hoop stress at the hub bore — check against hub yield at MAX interference"><td>Hub Hoop Stress</td><td>σ = p·(d_o²+d²)/(d_o²−d²)</td></tr>
+<tr title="Oven temperature rise to assemble with working clearance c"><td>Assembly ΔT</td><td>ΔT = (δ+c)/(α·d)</td></tr>
+<tr title="Parallel key checks (DIN 6885 section): shear and the crush check that usually governs"><td>Key Length</td><td>L ≥ max[ 2Tn/(d·b·0.577·S_y), 4Tn/(d·h·S_y) ]</td></tr>
+</tbody></table>
+</div>
+<div class="card">
+<h3>SOLID MODELING (CAD)</h3>
+<table class="data table-static"><tbody>
+<tr title="Divergence-theorem volume over mesh triangles — exact for the tessellated solid"><td>Mesh Volume</td><td>V = Σ v₁·(v₂×v₃) / 6</td></tr>
+<tr title="Center of gravity as volume-weighted tetrahedron centroids"><td>Mesh CoG</td><td>CoG = Σ (v₁+v₂+v₃)/4 · V_tet / V</td></tr>
+<tr title="Mass from density — steel 7.85, aluminum 2.70, Ti-6Al-4V 4.43 g/cm³"><td>Mass</td><td>m = ρ·V</td></tr>
+<tr title="Binary STL file size: 80-byte header + count + 50 bytes per triangle"><td>STL Size</td><td>bytes = 84 + 50·n</td></tr>
+<tr title="Inscribed-polygon volume deficit of an n-segment cylinder vs the smooth ideal"><td>Tessellation Deficit</td><td>V_n/V = sin(2π/n)/(2π/n)</td></tr>
+</tbody></table>
+</div>
 </div>
 <div class="view" id="v-units">
 <h2>UNIT CONVERTER</h2>

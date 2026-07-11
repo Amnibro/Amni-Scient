@@ -1,5 +1,8 @@
 # Changelog 
 
+## Amni-Calc v5.74.0 — Equations reference catches up with the new modules - 2026-07-10
+- Five new cards in the EQUATIONS tab so the formula catalog matches the calculator suite again: Machining (speeds/feeds, both tap-drill percent formulas, bend allowance & deduction, the 3.45-HB tensile estimate), Hydraulics (cylinder forces and speeds, area ratio & intensification, rod Euler buckling, the absolute-pressure accumulator gas law), Lifting & Rigging (sling tension, angle factors, hitch factors, CoG-offset shares, eyebolt derates), Fits & Press Fits (limit extremes, Lame pressure, torque capacity, hub hoop stress, assembly temperature, DIN 6885 key length), and Solid Modeling (divergence-theorem volume/CoG, STL layout, tessellation deficit). Every row keeps the hover-tooltip explanation pattern.
+
 ## Amni-Calc v5.73.0 — Six new module landing pages + deep links that actually work - 2026-07-10
 - **Google can now find the new modules**: full SEO landing pages for Beam Deflection (somehow never had one), Fits & Tolerances, Machining, Hydraulics, Lifting & Rigging, and CAD Studio — each with the theory, governing equations, cited standards, a worked example lifted from the audited test anchors (the 600 cm-4 walkway beam, the 75 MPa shrink fit, the number-7 tap drill, the bore-80 press cylinder, the offset-CoG skid, the 455 g drilled plate), a design procedure, a pitfalls list, and an FAQ with schema.org markup. Sitemap updated.
 - **Deep links fixed suite-wide**: every landing page's "OPEN CALCULATOR" button targets #tab-<module> — which until today just scrolled the sidebar without switching tabs, on all 37 pages. A tiny hash-router in the engineer layer now activates the right module on arrival.

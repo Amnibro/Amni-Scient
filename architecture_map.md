@@ -1,5 +1,8 @@
 # Architecture Map — amni-scient.com
 
+## v5.74.0 Amni-Calc: Equations tab covers the new modules (2026-07-10, loop iter 5)
+- index.html v-equations: 5 new static cards appended before the view close (pattern: table.data.table-static, tr title= tooltips) — MACHINING (N=1000Vc/piD, feed, MRR, both tap-drill % formulas, BA/BD, 3.45HB), HYDRAULICS (extend/retract/speed/phi/intensification/rod Euler/accumulator gas law/p.Q), LIFTING & RIGGING (T=W/n.sin, angle factors, hitch 1.0/0.75/2.0, CoG shares, eyebolt derates), FITS & PRESS FITS (four-limit extremes, Lame p, torque capacity, hub hoop, assembly dT, DIN 6885 key length), SOLID MODELING (divergence-theorem V/CoG, STL bytes, tessellation deficit sin(2pi/n)/(2pi/n)). Static-only change, no JS, no busters.
+
 ## v5.73.0 Amni-Calc: SEO pages for 6 modules + hash-router (2026-07-10, loop iter 4)
 - src/gen-calc-modules.js: M array grew 31->37 entries — beam (was ALSO missing, huge search term), fits, machining, hydraulics, rigging, cad. Each with about/use/eqs/std + deep (worked example reusing the audited test anchors, procedure, pitfalls, FAQ w/ JSON-LD FAQPage schema). Regen is IDEMPOTENT (37 written, git shows only 6 new files — template untouched). Gotchas hit: entries must be comma-separated (missing comma after refs entry) and single-quoted strings cannot hold 's (Machinery's) — use backticks.
 - calc-engineer.js (`?v=eng16`): hash-router in init — /^#tab-[a-z]+$/ clicks the sidebar button after 700ms. Every SEO page CTA links ./#tab-<k>; before this it only scrolled, never activated, on all 37 pages.
