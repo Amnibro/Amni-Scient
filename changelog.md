@@ -1,5 +1,10 @@
 # Changelog 
 
+## Amni-Calc v5.84.0 — Chamfer technique + planetary-to-AGMA handoff - 2026-07-10
+- **CAD Studio teaches the chamfer move**: a new chamfered-bushing preset cuts a true 45-degree chamfer on both bore edges with cone subtractions (radius change = height), and the modeler card now states the technique so nobody waits for a fillet button that is not coming. The audit proves the cut: the 2 mm chamfer ring removes its analytic ~134 mm-cubed and shifts the CoG the right way.
+- **Planetary card hands off to AGMA**: sun torque + module inputs added, and CHECK SUN MESH IN AGMA computes the per-mesh tangential load (torque split across the planets — 3 planets cut it to a third), loads the sun-planet pair into the pitting card, and scrolls you to it. The gear train and the tooth-stress check finally speak to each other.
+- 5 new anchors; all 18 suites green, 481 total. Cache-busters fixes?v=eng21, cad?v=cad4.
+
 ## Amni-Calc v5.83.0 — Retaining rings: the last data refusal lifts - 2026-07-10
 - **Shafts gains a RETAINING RING GROOVE card (DIN 471)**: pick the shaft size, get the groove to cut — diameter (h11), width (H13 minimum), depth per side, ring thickness — plus the published groove and ring load capacities with a three-band verdict against your axial load and a first-principles bearing screen on the shoulder.
 - Shipped the same way the vapor-compression card was: the standard's table web-sourced (RoyMech extract of DIN 471) — and every groove dimension cross-checks against the values this suite REFUSED to ship from memory two iterations ago. The refusal rule worked exactly as intended: wait for the source, then ship.

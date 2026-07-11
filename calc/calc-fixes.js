@@ -2051,7 +2051,9 @@ function injectPlanetary(){
     '<div class="field"><label for="gt-np"># PLANETS</label><input type="number" id="gt-np" value="3" step="1"></div>'+
     '<div class="field"><label for="gt-fix">FIXED MEMBER</label><select id="gt-fix"><option value="ring">RING (sun in → carrier out)</option><option value="sun">SUN (ring in → carrier out)</option><option value="carrier">CARRIER (sun in → ring out)</option></select></div>'+
     '<div class="field"><label for="gt-n">INPUT SPEED (rpm)</label><input type="number" id="gt-n" value="1800" step="any"></div>'+
-    '</div><button class="btn btn-sm" onclick="calcPlanetary()" style="margin-top:.6rem">RATIOS</button><div id="gt-out"></div>';
+    '<div class="field"><label for="gt-t">SUN TORQUE (N·m)</label><input type="number" id="gt-t" value="100" step="any"></div>'+
+    '<div class="field"><label for="gt-m">MODULE m (mm)</label><input type="number" id="gt-m" value="2" step="any"></div>'+
+    '</div><div class="row" style="margin-top:.6rem"><button class="btn btn-sm" onclick="calcPlanetary()">RATIOS</button><button class="btn btn-sm" onclick="applyPlanetaryAgma()">CHECK SUN MESH IN AGMA →</button></div><div id="gt-out"></div>';
   host.appendChild(card);
 }
 window.calcPlanetary=function(){
@@ -2070,6 +2072,16 @@ window.calcPlanetary=function(){
     ['Torque multiplication','× '+Math.abs(i).toFixed(2)+' (minus mesh losses ~1-2%/mesh)']
   ].map(x=>`<div class="result-item"><div class="lbl">${x[0]}</div><div class="val ${x[2]||''}">${x[1]}</div></div>`).join('')+'</div>'+
     '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">Willis equation kinematics: ring fixed → i = 1 + Z_r/Z_s (compact reducer, same direction); sun fixed → i = 1 + Z_s/Z_r (mild ratio); carrier fixed → i = −Z_r/Z_s (star arrangement, reverses). Ring teeth follow from the meshing constraint Z_r = Z_s + 2·Z_p. Equal planet spacing needs (Z_s + Z_r) divisible by the planet count; check neighboring-planet tip clearance for big planets. Stage ratios multiply — two 3.5:1 stages give 12.25:1.</p>');
+};
+window.applyPlanetaryAgma=function(){
+  const Zs=Math.round(v('gt-zs')),Zp=Math.round(v('gt-zp')),np=Math.max(1,Math.round(v('gt-np')||3)),T=v('gt-t')||0,m=v('gt-m')||2;
+  if(!(Zs>6)||!(Zp>6))return void window.calcPlanetary();
+  const set=(id,val)=>{const el=$(id);if(el)el.value=val;};
+  set('ag-np',Zs);set('ag-mg',+(Zp/Zs).toFixed(3));set('ag-m',m);
+  T>0&&set('ag-wt',+(2000*T/(np*m*Zs)).toFixed(1));
+  window.calcPlanetary();
+  if(typeof window.calcAgmaPitting==='function')try{window.calcAgmaPitting();}catch(e){}
+  const card=$('ag-card');card&&card.scrollIntoView({behavior:'smooth',block:'center'});
 };
 const MC_VC={alu:['Aluminum alloys',75,105,240,600],steel1018:['Mild steel (1018)',27,34,90,200],steel4140:['Alloy steel (4140 HT)',20,27,75,150],ss304:['Stainless 304/316',12,18,60,120],ci:['Gray cast iron',20,30,75,150],brass:['Brass',60,90,180,300],cu:['Copper',45,60,150,250],ti:['Ti-6Al-4V',8,12,30,60],acetal:['Plastics (acetal)',90,150,250,450]};
 function mcPopulate(){

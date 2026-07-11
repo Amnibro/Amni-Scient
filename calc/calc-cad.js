@@ -286,6 +286,12 @@ const PRESETS={
     {type:'cyl',op:'add',p:{r:20,h:30},pos:{x:0,y:0,z:0},rot:{x:0,y:0,z:0}},
     {type:'cyl',op:'add',p:{r:28,h:6},pos:{x:0,y:-12,z:0},rot:{x:0,y:0,z:0}},
     {type:'cyl',op:'sub',p:{r:10,h:50},pos:{x:0,y:0,z:0},rot:{x:0,y:0,z:0}}]},
+  chamf:{n:'Chamfered bushing (cone-cut demo)',f:[
+    {type:'cyl',op:'add',p:{r:20,h:30},pos:{x:0,y:0,z:0},rot:{x:0,y:0,z:0}},
+    {type:'cyl',op:'add',p:{r:28,h:6},pos:{x:0,y:-12,z:0},rot:{x:0,y:0,z:0}},
+    {type:'cyl',op:'sub',p:{r:10,h:50},pos:{x:0,y:0,z:0},rot:{x:0,y:0,z:0}},
+    {type:'cone',op:'sub',p:{r1:10,r2:14,h:4},pos:{x:0,y:15,z:0},rot:{x:0,y:0,z:0}},
+    {type:'cone',op:'sub',p:{r1:14,r2:10,h:4},pos:{x:0,y:-15,z:0},rot:{x:0,y:0,z:0}}]},
   bracket:{n:'L-bracket + holes',f:[
     {type:'box',op:'add',p:{sx:80,sy:10,sz:60},pos:{x:0,y:0,z:0},rot:{x:0,y:0,z:0}},
     {type:'box',op:'add',p:{sx:80,sy:60,sz:10},pos:{x:0,y:25,z:-25},rot:{x:0,y:0,z:0}},

@@ -1,5 +1,10 @@
 # Architecture Map — amni-scient.com
 
+## v5.84.0 Amni-Calc: chamfer demo + planetary-AGMA handoff (2026-07-10, loop iter 13)
+- calc-cad.js (`?v=cad4`): PRESETS.chamf = flanged bushing + bore + two 45-deg cone cuts (cone r1:10-r2:14 h4 at y15; inverted at y-15 — slope crosses the edge, radius delta = height = 45 deg). Modeler card note states the technique. cad_audit +5 (chamfer ring ~134mm3 band, CoG shift sign, Wt anchor).
+- calc-fixes.js (`?v=eng21`): gt-card +gt-t/gt-m inputs; applyPlanetaryAgma -> ag-np=Zs, ag-mg=Zp/Zs, ag-m, ag-wt=2000T/(np.m.Zs) (torque splits across planets), fires calcAgmaPitting + scrolls to ag-card.
+- All 18 suites green (481). Known backlog now EMPTY (2D FEA + fracture-materials DB remain out of scope by architecture). Next: coherence pass — equations tab + DESC lines lag the iters 8-12 cards — then evaluate stopping.
+
 ## v5.83.0 Amni-Calc: DIN 471 retaining rings, sourced (2026-07-10, loop iter 12)
 - Sourcing: roymech.co.uk DIN 471 table via WebFetch → DIN471 13 rows [d1,d2,m,s,Fn,Fr] 8-60mm; the 6 groove dims previously half-recalled ALL match the source (recall was right, but now it is sourced — the refusal rule held). Non-monotonic Fr rows (25, 60) shipped with explicit verify-against-catalog caveat; Fn (groove) governs everywhere in range, asserted as a table invariant.
 - calc-fixes.js (`?v=eng20`): injectRetRing rr-card in v-shafts right (rr-d exact-size select — NO interpolation on discrete standard sizes; rr-f) → groove d2/m/depth/s, Fn/Fr, 3-band verdict (ok ≤2/3 cap, warn ≤cap, err), bearing screen F/(π·d2·depth). Notes: sharp-corner abutment assumption, chamfer derate, groove Kt≈3 fatigue flag, ring-thickness edge margin.
