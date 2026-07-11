@@ -10453,12 +10453,38 @@ function playAnimalSound(type) {
   function _ttsVoice(){if(_ttsVoiceCache)return _ttsVoiceCache;_ttsVoiceCache=_ttsPickVoice(window.speechSynthesis.getVoices());return _ttsVoiceCache;}
   if('speechSynthesis' in window){try{window.speechSynthesis.getVoices();window.speechSynthesis.addEventListener('voiceschanged',()=>{_ttsVoiceCache=_ttsPickVoice(window.speechSynthesis.getVoices());});}catch(e){}}
   let _hdMod=null,_hdReady=false,_hdInit=null,_hdAudio=null,_hdGen=0;const _HDVOICE='en_US-hfc_female-medium';
-  let _kkTTS=null,_kkReady=false,_kkInit=null,_kkFailed=false;const _KKVOICE='af_heart';
-  function _kkCan(){try{return !!navigator.gpu&&!_kkFailed&&localStorage.getItem('amni-learn-kk')!=='off';}catch(e){return !!navigator.gpu&&!_kkFailed;}}
+  let _kkTTS=null,_kkReady=false,_kkInit=null,_kkFailed=false,_kkTier=null;const _KKVOICE='af_heart';
+  function _kkAudioOk(a){
+    const x=a&&a.audio;if(!x||!x.length)return false;
+    let clip=0;for(let i=0;i<x.length;i++){const v=x[i];if(v!==v)return false;if(v>0.98||v<-0.98)clip++;}
+    if(clip/x.length>0.15)return false;
+    const fr=480,rms=[];let maxR=0;
+    for(let o=0;o+fr<=x.length;o+=fr){let s=0;for(let i=o;i<o+fr;i++)s+=x[i]*x[i];const r=Math.sqrt(s/fr);rms.push(r);r>maxR&&(maxR=r);}
+    if(!rms.length||maxR<1e-4)return false;
+    let quiet=0;const thr=Math.max(0.02,maxR*0.1);for(const r of rms)r<thr&&quiet++;
+    return quiet/rms.length>=0.04;
+  }
+  function _kkCan(){try{return !_kkFailed&&localStorage.getItem('amni-learn-kk')!=='off'&&(!!navigator.gpu||localStorage.getItem('amni-learn-kk-device')==='wasm');}catch(e){return !!navigator.gpu&&!_kkFailed;}}
   async function _kkLoad(onProg){
     if(_kkReady)return _kkTTS;
     if(_kkInit)return _kkInit;
-    _kkInit=(async()=>{const m=await import('/learn/vendor/kokoro/kokoro.js');try{m.env.backends.onnx.wasm.wasmPaths='/learn/vendor/kokoro/';}catch(e){}const tts=await m.KokoroTTS.from_pretrained('onnx-community/Kokoro-82M-v1.0-ONNX',{dtype:'fp32',device:'webgpu',progress_callback:d=>{if(onProg&&d&&d.status==='progress'&&/\.onnx$/.test(d.file||''))onProg(Math.round(d.progress||0));}});const a=await tts.generate('Ready.',{voice:_KKVOICE});if(!a||!a.audio||!a.audio.length)throw new Error('kk-empty');_kkTTS=tts;_kkReady=true;return tts;})();
+    _kkInit=(async()=>{
+      const m=await import('/learn/vendor/kokoro/kokoro.js');
+      try{m.env.backends.onnx.wasm.wasmPaths='/learn/vendor/kokoro/';}catch(e){}
+      let force=null;try{force=localStorage.getItem('amni-learn-kk-device');}catch(e){}
+      const tiers=force==='wasm'?[{device:'wasm',dtype:'q8'}]:force==='webgpu'?[{device:'webgpu',dtype:'fp32'}]:navigator.gpu?[{device:'webgpu',dtype:'fp32'},{device:'wasm',dtype:'q8'}]:[{device:'wasm',dtype:'q8'}];
+      let last=null;
+      for(const t of tiers){
+        let tts=null;
+        try{
+          tts=await m.KokoroTTS.from_pretrained('onnx-community/Kokoro-82M-v1.0-ONNX',{dtype:t.dtype,device:t.device,progress_callback:d=>{if(onProg&&d&&d.status==='progress'&&/\.onnx$/.test(d.file||''))onProg(Math.round(d.progress||0));}});
+          const a=await tts.generate('Hello there! Ready to read a story?',{voice:_KKVOICE});
+          if(!_kkAudioOk(a))throw new Error('kk-garbage-'+t.device);
+          _kkTTS=tts;_kkReady=true;_kkTier=t.device;return tts;
+        }catch(e){last=e;try{tts&&tts.model&&tts.model.dispose&&tts.model.dispose();}catch(_){}}
+      }
+      throw last||new Error('kk-no-tier');
+    })();
     try{return await _kkInit;}catch(e){_kkInit=null;_kkFailed=true;throw e;}
   }
   async function _kkWav(text,speed){const t=await _kkLoad();const a=await t.generate(text,{voice:_KKVOICE,speed:speed||1});return a.toBlob();}
