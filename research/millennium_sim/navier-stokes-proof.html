@@ -257,7 +257,7 @@ footer .sig span{color:var(--accent)}
     <div class="math-row" id="d5f"></div>
     <p><span class="step-num">5.7</span> Split the stretching term by Young's inequality against half the dissipation:</p>
     <div class="math-row highlight" id="d5g"></div>
-    <p><span class="step-num">5.8</span> Assemble the v2 enstrophy inequality:</p>
+    <p><span class="step-num">5.8</span> Assemble the v2.1 enstrophy inequality (the +1 carries the forcing constant &mdash; F<sub>PID</sub> pairs by parts into the &gamma;<sub>0</sub> dissipation plus a constant):</p>
     <div class="math-row result" id="d5h"></div>
     <p><span class="step-num">5.9</span> Since 5/2 &gt; 3/2, the Z<sup>5/2</sup> term dominates for Z &gt; Z<sub>c</sub>:</p>
     <div class="math-row result" id="d5i"></div>
@@ -272,7 +272,7 @@ footer .sig span{color:var(--accent)}
     <div class="math-row" id="d6a"></div>
     <p><span class="step-num">6.2</span> Bootstrap (no circularity in v2 &mdash; the enstrophy inequality contains no s<sub>min</sub>):</p>
     <div class="math-row" id="d6b"></div>
-    <p><span class="step-num">6.3</span> Comparison principle: f(Z) = C&#771;<sub>1</sub>(Z<sup>3/2</sup>+Z) - (&gamma;<sub>1</sub>/E<sub>0</sub>)Z<sup>5/2</sup> &lt; 0 for Z &gt; Z<sub>c</sub>.</p>
+    <p><span class="step-num">6.3</span> Comparison principle: f(Z) = C&#771;<sub>1</sub>(1+Z+Z<sup>3/2</sup>) - (&gamma;<sub>1</sub>/E<sub>0</sub>)Z<sup>5/2</sup> &lt; 0 for Z &gt; Z<sub>c</sub>.</p>
     <div class="math-row" id="d6c"></div>
     <p><span class="step-num">6.4</span> From bounded enstrophy to smoothness &mdash; Sobolev bootstrap:</p>
     <div class="math-row" id="d6d"></div>
@@ -294,7 +294,7 @@ footer .sig span{color:var(--accent)}
   <div class="viz-wrap reveal">
     <div class="viz-box viz-3d"><div class="viz-lbl">&nu;<sub>t</sub> hourglass &mdash; pinch ~ 1/|v|, color = Gaussian curvature K</div><div id="three-box" style="width:100%;height:100%"></div></div>
     <div class="viz-box viz-plot"><div class="viz-lbl">Bakry-&Eacute;mery &kappa;(s) at current |v|</div><canvas id="plotCurv"></canvas></div>
-    <div class="viz-box viz-plot"><div class="viz-lbl">v2: dZ/dt = C&#771;<sub>1</sub>(Z<sup>1.5</sup>+Z) &minus; &gamma;<sub>1</sub>Z<sup>2.5</sup> (E<sub>0</sub>=1)</div><canvas id="plotEnst"></canvas></div>
+    <div class="viz-box viz-plot"><div class="viz-lbl">v2.1: dZ/dt = C&#771;<sub>1</sub>(1+Z+Z<sup>1.5</sup>) &minus; &gamma;<sub>1</sub>Z<sup>2.5</sup> (E<sub>0</sub>=1)</div><canvas id="plotEnst"></canvas></div>
   </div>
 </section>
 
@@ -392,8 +392,8 @@ kR("Z=\\int\\mathbf{v}\\cdot(\\nabla\\times\\boldsymbol{\\omega})\\,dx\\leq\\|\\
 kR("\\nu_t^{(2)}=\\nu_{\\text{loc}}+\\gamma_1\\|\\boldsymbol{\\omega}\\|_{L^2}\\;\\geq\\;\\gamma_1 Z^{1/2}\\qquad\\text{(Eq 11}'\\text{, by construction, pointwise)}",document.getElementById("d5e"));
 kR("\\mathcal{D}_{\\text{glob}}\\geq\\gamma_1 Z^{1/2}\\cdot\\frac{Z^2}{E_0}=\\frac{\\gamma_1}{E_0}\\,Z^{5/2}",document.getElementById("d5f"));
 kR("C_{\\text{str}}Z^{3/4}\\|\\nabla\\boldsymbol{\\omega}\\|_{L^2}^{3/2}\\;\\leq\\;\\frac{\\gamma_1 Z^{1/2}}{2}\\|\\nabla\\boldsymbol{\\omega}\\|_{L^2}^2+C'\\gamma_1^{-3}Z^{3/2}\\quad\\text{(Young, }4/3\\text{-}4\\text{)}",document.getElementById("d5g"));
-kR("\\boxed{\\frac{dZ}{dt}\\leq \\tilde{C}_1(Z^{3/2}+Z)-\\frac{\\gamma_1}{E_0}Z^{5/2}}\\qquad\\tilde{C}_1:=C_1(1+\\gamma_1^{-3})",document.getElementById("d5h"));
-kR("Z>Z_c\\;\\Rightarrow\\;\\frac{\\gamma_1}{E_0}Z^{5/2}>\\tilde{C}_1(Z^{3/2}+Z)\\;\\Rightarrow\\;\\frac{dZ}{dt}<0\\qquad Z_c=\\frac{2\\tilde{C}_1 E_0}{\\gamma_1}\\vee 1",document.getElementById("d5i"));
+kR("\\boxed{\\frac{dZ}{dt}\\leq \\tilde{C}_1(1+Z+Z^{3/2})-\\frac{\\gamma_1}{E_0}Z^{5/2}}\\qquad\\tilde{C}_1:=C_1(1+\\gamma_1^{-3})",document.getElementById("d5h"));
+kR("Z>Z_c\\;\\Rightarrow\\;\\frac{\\gamma_1}{E_0}Z^{5/2}>3\\tilde{C}_1 Z^{3/2}\\geq\\tilde{C}_1(1+Z+Z^{3/2})\\;\\Rightarrow\\;\\frac{dZ}{dt}<0\\qquad Z_c=\\max\\!\\left(\\frac{3\\tilde{C}_1 E_0}{\\gamma_1},1\\right)",document.getElementById("d5i"));
 
 // Stage 6: Bootstrap
 kR("Z<\\infty\\;\\Rightarrow\\;\\mathbf{v}\\in L^\\infty H^1\\hookrightarrow L^\\infty L^6,\\;\\;\\tfrac{2}{\\infty}+\\tfrac{3}{6}=\\tfrac12\\leq 1\\;\\text{(Serrin)}\\;\\Rightarrow\\;\\mathbf{v}\\text{ smooth}",document.getElementById("d6a"));
@@ -403,7 +403,7 @@ kR("Z\\leq Z_{\\max}\\;\\Rightarrow\\;\\mathbf{v}\\in L^\\infty(H^1)\\cap L^2(H^
 kR("\\boxed{\\mathbf{v}\\in C^\\infty(\\mathbb{T}^3\\times[0,\\infty)),\\qquad p\\in C^\\infty(\\mathbb{T}^3\\times[0,\\infty))}",document.getElementById("d6e"));
 
 // Theorem
-kR("Z(t)\\leq\\max\\!\\left(Z(0),\\;\\frac{2\\tilde{C}_1 E_0}{\\gamma_1}\\vee 1\\right)<\\infty\\quad\\forall\\,t>0",document.getElementById("thm1"));
+kR("Z(t)\\leq\\max\\!\\left(Z(0),\\;\\frac{3\\tilde{C}_1 E_0}{\\gamma_1},\\;1\\right)<\\infty\\quad\\forall\\,t>0",document.getElementById("thm1"));
 kR("\\mathbf{v}\\in C^\\infty(\\mathbb{T}^3\\times[0,\\infty))",document.getElementById("thm2"));
 kR("p\\in C^\\infty(\\mathbb{T}^3\\times[0,\\infty))",document.getElementById("thm3"));
 
@@ -548,15 +548,15 @@ function drawEnst(ctx,w,h){
   const g1=parseFloat(document.getElementById('slG').value);
   const cg=parseFloat(document.getElementById('slCG').value);
   const pad=40,pw=w-2*pad,ph=h-2*pad;
-  const Zc=Math.max(2*cg/g1,1),maxZ=Math.min(Zc*3,5000),C1=cg,n=300;
+  const Zc=Math.max(3*cg/g1,1),maxZ=Math.min(Zc*3,5000),C1=cg,n=300;
   ctx.strokeStyle='#333';ctx.lineWidth=1;ctx.beginPath();
   ctx.moveTo(pad,h/2);ctx.lineTo(w-pad,h/2);ctx.moveTo(pad,pad);ctx.lineTo(pad,h-pad);ctx.stroke();
   ctx.fillStyle='#666';ctx.font='10px JetBrains Mono';
   ctx.fillText('Z',w-pad+4,h/2+4);ctx.fillText('dZ/dt',pad+4,pad-6);ctx.fillText('0',pad-12,h/2+4);
-  const scale=C1*(Math.pow(maxZ,1.5)+maxZ);
+  const scale=C1*(1+Math.pow(maxZ,1.5)+maxZ);
   // Stretching
   ctx.beginPath();ctx.strokeStyle='#ff3366';ctx.lineWidth=1.5;
-  for(let i=1;i<=n;i++){const Z=(i/n)*maxZ;const val=C1*(Math.pow(Z,1.5)+Z);
+  for(let i=1;i<=n;i++){const Z=(i/n)*maxZ;const val=C1*(1+Math.pow(Z,1.5)+Z);
     const x=pad+(Z/maxZ)*pw,y=h/2-(val/scale)*(ph/2)*0.8;
     if(y<pad)continue;i===1?ctx.moveTo(x,y):ctx.lineTo(x,y);}ctx.stroke();
   // Dissipation
@@ -567,7 +567,7 @@ function drawEnst(ctx,w,h){
   // Net
   ctx.beginPath();ctx.strokeStyle='#00ff9d';ctx.lineWidth=2.5;
   let started=false;
-  for(let i=1;i<=n;i++){const Z=(i/n)*maxZ;const val=C1*(Math.pow(Z,1.5)+Z)-g1*Math.pow(Z,2.5);
+  for(let i=1;i<=n;i++){const Z=(i/n)*maxZ;const val=C1*(1+Math.pow(Z,1.5)+Z)-g1*Math.pow(Z,2.5);
     const x=pad+(Z/maxZ)*pw,y=h/2-(val/scale)*(ph/2)*0.8;
     if(y<pad||y>h-pad)continue;!started?(ctx.moveTo(x,y),started=true):ctx.lineTo(x,y);}ctx.stroke();
   // Zc
@@ -576,7 +576,7 @@ function drawEnst(ctx,w,h){
     ctx.beginPath();ctx.moveTo(xc,pad);ctx.lineTo(xc,h-pad);ctx.stroke();ctx.setLineDash([]);
     ctx.fillStyle='#ffd700';ctx.font='10px JetBrains Mono';ctx.fillText('Z_c='+Math.round(Zc),xc+4,pad+14);}
   ctx.font='10px JetBrains Mono';
-  ctx.fillStyle='#ff3366';ctx.fillText('C\u0303\u2081(Z^1.5+Z) (stretch)',w-pad-130,pad+14);
+  ctx.fillStyle='#ff3366';ctx.fillText('C\u0303\u2081(1+Z+Z^1.5) (stretch)',w-pad-140,pad+14);
   ctx.fillStyle='#4488ff';ctx.fillText('-\u03B3\u2081Z^2.5 (dissip)',w-pad-130,pad+28);
   ctx.fillStyle='#00ff9d';ctx.fillText('net dZ/dt',w-pad-60,pad+42);
 }
