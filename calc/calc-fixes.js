@@ -1722,6 +1722,79 @@ window.calcAccum=function(){
   ].map(([l,val])=>`<div class="result-item"><div class="lbl">${l}</div><div class="val">${val}</div></div>`).join('')+'</div>'+
     '<p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem">Gas-law sizing (P·Vⁿ constant, absolute pressures): V₀ = ΔV / [(P₀/P₁)^(1/n) − (P₀/P₂)^(1/n)]. Slow duty (leakage make-up, thermal expansion) → isothermal; shock/rapid discharge → adiabatic and a bigger shell. Bladder accumulators want P₀ ≈ 0.9·P_min so the bladder never slams the poppet.</p>');
 };
+const DIN6885=[[8,2,2],[10,3,3],[12,4,4],[17,5,5],[22,6,6],[30,8,7],[38,10,8],[44,12,8],[50,14,9],[58,16,10],[65,18,11],[75,20,12],[85,22,14],[95,25,14],[110,28,16],[130,32,18]];
+const KEY_MAT={c45:['C45 / 1045 key steel',340],mild:['Mild steel key',250],alloy:['4140 HT key',655],ss:['Stainless A2 key',205]};
+function injectKeyway(){
+  const vw=$('v-shafts');if(!vw||$('ky-card'))return;
+  const host=vw.querySelector('.split>div:last-child')||vw;
+  const card=document.createElement('div');card.className='card';card.id='ky-card';card.style.marginTop='.6rem';
+  card.innerHTML='<h3>KEYWAY / PARALLEL KEY (DIN 6885)</h3>'+
+    '<div class="row">'+
+    '<div class="field"><label for="ky-t">TORQUE (N·m)</label><input type="number" id="ky-t" value="100" step="any"></div>'+
+    '<div class="field"><label for="ky-d">SHAFT Ø (mm)</label><input type="number" id="ky-d" value="35" step="any"></div>'+
+    '<div class="field"><label for="ky-mat">KEY MATERIAL</label><select id="ky-mat">'+Object.entries(KEY_MAT).map(([k,m])=>`<option value="${k}">${m[0]} (Sy ${m[1]})</option>`).join('')+'</select></div>'+
+    '<div class="field"><label for="ky-fos">FoS</label><input type="number" id="ky-fos" value="2" step="any"></div>'+
+    '</div><button class="btn btn-sm" onclick="calcKeyway()" style="margin-top:.6rem">SIZE THE KEY</button><div id="ky-out"></div>';
+  host.appendChild(card);
+}
+window.calcKeyway=function(){
+  const o=$('ky-out');if(!o)return;
+  const T=v('ky-t')*1000,d=v('ky-d'),m=KEY_MAT[sv('ky-mat')]||KEY_MAT.c45,n=Math.max(1,v('ky-fos')||2);
+  if(!(T>0)||!(d>5)){_mr(o,'<div class="note warn" style="margin-top:.5rem">Need torque &gt; 0 and shaft Ø &gt; 5 mm.</div>');return;}
+  const row=DIN6885.find(r=>d<=r[0]);
+  if(!row){_mr(o,'<div class="note warn" style="margin-top:.5rem">Ø'+d+' mm is beyond the DIN 6885 table (130 mm) — spline or interference-fit territory.</div>');return;}
+  const[,b,h]=row,Sy=m[1];
+  const Ls=2*T*n/(d*b*0.577*Sy),Lc=4*T*n/(d*h*Sy);
+  const Lreq=Math.max(Ls,Lc),L=Math.ceil(Lreq/5)*5;
+  const tooLong=L>1.5*d;
+  _mr(o,'<div class="result-grid" style="margin-top:.6rem">'+[
+    ['KEY SECTION',b+' × '+h+' mm (DIN 6885)','ok'],
+    ['Length — shear',Ls.toFixed(1)+' mm'],['Length — crush (governs '+(Lc>=Ls?'✓':'✗')+')',Lc.toFixed(1)+' mm'],
+    ['KEY LENGTH',tooLong?L+' mm — TOO LONG':L+' mm stock',tooLong?'warn':'ok'],
+    ['L / d',(L/d).toFixed(2)+(tooLong?' > 1.5':' (≤ 1.5 ✓)')]
+  ].map(x=>`<div class="result-item"><div class="lbl">${x[0]}</div><div class="val ${x[2]||''}">${x[1]}</div></div>`).join('')+'</div>'+
+    (tooLong?'<div class="note warn" style="margin-top:.4rem">Key longer than 1.5·d can&#39;t load evenly — use TWO keys at 90-120°, a spline, or an interference fit.</div>':'')+
+    '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">Shigley key checks: shear τ = 2T/(d·b·L) against 0.577·Sy/FoS, crush σ = 4T/(d·h·L) against Sy/FoS on the h/2 bearing face — crush usually governs. Section from the DIN 6885-1 shaft-diameter table; hub material softer than the key? Re-run with the hub&#39;s Sy, the weakest face rules.</p>');
+};
+const HITCH={vert:['Vertical',1.0],chok:['Choker',0.75],bask:['Basket (legs vertical)',2.0]};
+window.calcSling=function(){
+  const res=$('rigging-results');if(!res)return;
+  const Wt=v('rg-w'),n=Math.max(1,Math.round(v('rg-n')||2)),ang=v('rg-ang'),h=HITCH[sv('rg-hitch')]||HITCH.vert;
+  if(!(Wt>0)||!(ang>0)||ang>90){_mr(res,'<h3>RESULTS</h3><div class="note warn">Need load &gt; 0 and angle 0-90°.</div>');return;}
+  const W=Wt*9.81;
+  if(ang<30){_mr(res,'<h3>SLING TENSION</h3><div class="note warn">'+ang+'° is BELOW the 30° minimum — leg tension is '+(1/Math.sin(ang*Math.PI/180)).toFixed(1)+'× the share it carries and rises toward infinity as the sling flattens. Rigging practice refuses this lift: raise the hook, use longer slings or a spreader beam.</div>');return;}
+  const neff=n>2?2:n;
+  const T=W/(neff*Math.sin(ang*Math.PI/180)),wll=T/h[1];
+  _mr(res,'<h3>SLING TENSION</h3><div class="result-grid">'+[
+    ['Load',Wt+' t = '+W.toFixed(1)+' kN'],
+    ['PER-LEG TENSION',T.toFixed(2)+' kN ('+(T/9.81).toFixed(2)+' t)','ok'],
+    ['Angle factor',(1/Math.sin(ang*Math.PI/180)).toFixed(3)+' at '+ang+'°'],
+    ['Legs carrying',neff+(n>2?' of '+n+' (rigid load — assume 2 carry unless a spreader guarantees sharing)':'')],
+    ['Hitch',h[0]+' × '+h[1]],
+    ['REQUIRED SLING WLL','≥ '+(wll/9.81).toFixed(2)+' t per leg','ok'],
+    [ang<45?'CAUTION':'Angle check',ang<45?ang+'° is workable but 45-60° is the comfort zone':ang+'° ✓',ang<45?'warn':'ok']
+  ].map(x=>`<div class="result-item"><div class="lbl">${x[0]}</div><div class="val ${x[2]||''}">${x[1]}</div></div>`).join('')+'</div>'+
+    '<p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem">T = W/(n·sin θ), θ from HORIZONTAL — at 30° each leg carries its full share ×2. Hitch factors are the standard vertical 1.0 / choker 0.75 / basket 2.0; choker below 120° of wrap derates further. Shoulder eyebolts: 100% in-line, ~30% at 45°, ~25% at 90° — plain eyebolts take NO angular load. Manufacturer charts and a qualified rigger govern every real lift.</p>');
+};
+window.calcSlingCg=function(){
+  const res=$('rigging-results');if(!res)return;
+  const Wt=v('rgu-w'),d1=v('rgu-d1'),d2=v('rgu-d2'),hh=v('rgu-h');
+  if(!(Wt>0)||!(d1>0)||!(d2>0)||!(hh>0)){_mr(res,'<h3>RESULTS</h3><div class="note warn">Need load, both CoG distances and hook height &gt; 0.</div>');return;}
+  const W=Wt*9.81,L1=Math.hypot(d1,hh),L2=Math.hypot(d2,hh);
+  const V1=W*d2/(d1+d2),V2=W*d1/(d1+d2);
+  const T1=V1*L1/hh,T2=V2*L2/hh;
+  const a1=Math.atan2(hh,d1)*180/Math.PI,a2=Math.atan2(hh,d2)*180/Math.PI;
+  const low=Math.min(a1,a2)<30;
+  _mr(res,'<h3>UNEQUAL LEGS (CoG OFFSET)</h3><div class="result-grid">'+[
+    ['Leg 1 (near, d='+d1+' m)',T1.toFixed(2)+' kN @ '+a1.toFixed(1)+'°','ok'],
+    ['Leg 2 (far, d='+d2+' m)',T2.toFixed(2)+' kN @ '+a2.toFixed(1)+'°'],
+    ['Vertical shares',V1.toFixed(2)+' + '+V2.toFixed(2)+' = '+W.toFixed(2)+' kN ✓'],
+    ['Leg lengths',L1.toFixed(2)+' / '+L2.toFixed(2)+' m'],
+    ['NEAR LEG WLL','≥ '+(T1/9.81).toFixed(2)+' t',low?'warn':'ok']
+  ].map(x=>`<div class="result-item"><div class="lbl">${x[0]}</div><div class="val ${x[2]||''}">${x[1]}</div></div>`).join('')+'</div>'+
+    (low?'<div class="note warn" style="margin-top:.4rem">A leg is below 30° — re-rig before lifting.</div>':'')+
+    '<p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem">Statics: the leg NEARER the CoG carries more — vertical share V₁ = W·d₂/(d₁+d₂), tension T = V·L/h. Size BOTH slings for the near-leg tension so the load can&#39;t be hooked backwards. Hook must sit plumb over the CoG or the load rotates on pick.</p>');
+};
 const MC_VC={alu:['Aluminum alloys',75,105,240,600],steel1018:['Mild steel (1018)',27,34,90,200],steel4140:['Alloy steel (4140 HT)',20,27,75,150],ss304:['Stainless 304/316',12,18,60,120],ci:['Gray cast iron',20,30,75,150],brass:['Brass',60,90,180,300],cu:['Copper',45,60,150,250],ti:['Ti-6Al-4V',8,12,30,60],acetal:['Plastics (acetal)',90,150,250,450]};
 function mcPopulate(){
   const s=$('mc-mat');if(!s||s.options.length)return;
@@ -3685,6 +3758,7 @@ window.addEventListener('DOMContentLoaded',()=>{
     injectCylDesigner();
     window.calcHyd();
     mcPopulate();
+    injectKeyway();
     window.calcFits();
     const typeEl=$('sp-type');if(typeEl)typeEl.addEventListener('change',()=>{gateBellevillePresets();window.calcSpring();});
     wireLive('v-springs',window.calcSpring);

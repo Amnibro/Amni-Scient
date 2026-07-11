@@ -1,5 +1,10 @@
 # Changelog 
 
+## Amni-Calc v5.72.0 — Keyway sizing + NEW Lifting & Rigging module - 2026-07-10
+- **Shafts gets a KEYWAY card (DIN 6885)**: torque + shaft diameter + key material -> the standard key section for that shaft, required length from BOTH Shigley checks (shear at 0.577.Sy/FoS and the crush check that usually governs), rounded to 5 mm stock — and an honest "use two keys or a spline" verdict when the length passes 1.5.d, or "spline/interference-fit territory" beyond the 130 mm table.
+- **NEW: Lifting & Rigging module** — pure statics, the way riggers actually think: load + legs + sling angle + hitch -> per-leg tension and the sling WLL to buy (vertical/choker/basket factors). Below 30 degrees it REFUSES with an explanation instead of printing a number, 30-45 gets a caution row, and 3-4 leg bridles are honestly treated as two-legs-carry unless a spreader guarantees sharing. The CoG-offset card solves unequal legs exactly (near leg carries more, verticals provably sum to the load) and tells you to size both slings for the near-leg tension so the load can't be hooked backwards.
+- Tests: rigging_keyway_audit.js (22 anchors incl. the classic 30-degree per-leg-equals-full-load trap, exact) — all 12 suites green, 366 anchors. Cache-busters fixes?v=eng14, engineer?v=eng15.
+
 ## Amni-Calc v5.71.0 — CAD STUDIO: a real parametric modeler, in your browser - 2026-07-10
 - **NEW: CAD Studio tab** — a locally-running parametric CSG modeler. Stack boxes, cylinders, cones and spheres, flip any feature to CUT, and the solid rebuilds live in 3D (orbit/zoom/pan). No account, no cloud, no upload — the geometry kernel is ~250 lines of BSP boolean math running entirely in your browser.
 - **Real engineering outputs, not a toy**: exact mass properties by the divergence theorem — volume, surface area, center of gravity, and mass for six materials — plus **watertight binary STL export** ready for a 3D printer or CAM. The mass-properties card states its one honest caveat (32-segment curved faces read ~0.3% under true pi-r-squared).

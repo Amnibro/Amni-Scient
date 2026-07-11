@@ -334,6 +334,7 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <button class="tab" data-v="gears" role="tab" id="tab-gears" aria-controls="v-gears" aria-selected="false" tabindex="-1">Gears</button>
 <button class="tab" data-v="fatigue" role="tab" id="tab-fatigue" aria-controls="v-fatigue" aria-selected="false" tabindex="-1">Fatigue</button>
 <button class="tab" data-v="vibration" role="tab" id="tab-vibration" aria-controls="v-vibration" aria-selected="false" tabindex="-1">Vibration</button>
+<button class="tab" data-v="rigging" role="tab" id="tab-rigging" aria-controls="v-rigging" aria-selected="false" tabindex="-1">Lifting &amp; Rigging</button>
 <div class="sidebar-cat">Fluids &amp; Thermal</div>
 <button class="tab" data-v="fluids" role="tab" id="tab-fluids" aria-controls="v-fluids" aria-selected="false" tabindex="-1">Fluids</button>
 <button class="tab" data-v="pumps" role="tab" id="tab-pumps" aria-controls="v-pumps" aria-selected="false" tabindex="-1">Pumps</button>
@@ -1778,6 +1779,34 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 </div>
 </div>
 </div>
+<div class="view" id="v-rigging">
+<h2>LIFTING &amp; RIGGING</h2>
+<div class="split">
+<div>
+<div class="card"><h3>&#9889; SLING TENSION — START HERE</h3>
+<div class="row">
+<div class="field"><label for="rg-w">LOAD (tonnes)</label><input type="number" id="rg-w" value="1" step="any"></div>
+<div class="field"><label for="rg-n">SLING LEGS</label><input type="number" id="rg-n" value="2" step="1" min="1" max="4"></div>
+<div class="field"><label for="rg-ang">ANGLE FROM HORIZONTAL (&deg;)</label><input type="number" id="rg-ang" value="60" step="any"></div>
+<div class="field"><label for="rg-hitch">HITCH</label><select id="rg-hitch"><option value="vert">Vertical</option><option value="chok">Choker</option><option value="bask">Basket</option></select></div>
+</div>
+<button class="btn btn-sm" onclick="calcSling()">LEG TENSION / WLL</button>
+</div>
+<div class="card"><h3>UNEQUAL LEGS — CoG OFFSET</h3>
+<div class="row">
+<div class="field"><label for="rgu-w">LOAD (tonnes)</label><input type="number" id="rgu-w" value="1" step="any"></div>
+<div class="field"><label for="rgu-d1">CoG &rarr; LUG 1 (m)</label><input type="number" id="rgu-d1" value="1" step="any"></div>
+<div class="field"><label for="rgu-d2">CoG &rarr; LUG 2 (m)</label><input type="number" id="rgu-d2" value="2" step="any"></div>
+<div class="field"><label for="rgu-h">HOOK HEIGHT ABOVE LUGS (m)</label><input type="number" id="rgu-h" value="2" step="any"></div>
+</div>
+<button class="btn btn-sm" onclick="calcSlingCg()">LEG TENSIONS</button>
+</div>
+</div>
+<div>
+<div class="card" id="rigging-results"><h3>RESULTS</h3><p class="muted">Results compute live from whichever card you use.</p></div>
+</div>
+</div>
+</div>
 <div class="view" id="v-vibration">
 <h2>VIBRATION</h2>
 <div class="split">
@@ -2825,10 +2854,10 @@ window._calcSealWasm=(...args)=>calc_seal(...args);
 <script src="./calc-unit-core.js?v=units1" defer></script>
 <script src="./calc-overrides.js?v=eng3" defer></script>
 <script src="./calc-3d.js?v=eng3" defer></script>
-<script src="./calc-fixes.js?v=eng13" defer></script>
+<script src="./calc-fixes.js?v=eng14" defer></script>
 <script src="./calc-units.js?v=units1" defer></script>
 <script src="./calc-qol.js" defer></script>
-<script src="./calc-engineer.js?v=eng14" defer></script>
+<script src="./calc-engineer.js?v=eng15" defer></script>
 <script src="./calc-cad.js?v=cad1" defer></script>
 </body>
 </html>
