@@ -1722,6 +1722,97 @@ window.calcAccum=function(){
   ].map(([l,val])=>`<div class="result-item"><div class="lbl">${l}</div><div class="val">${val}</div></div>`).join('')+'</div>'+
     '<p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem">Gas-law sizing (P·Vⁿ constant, absolute pressures): V₀ = ΔV / [(P₀/P₁)^(1/n) − (P₀/P₂)^(1/n)]. Slow duty (leakage make-up, thermal expansion) → isothermal; shock/rapid discharge → adiabatic and a bigger shell. Bladder accumulators want P₀ ≈ 0.9·P_min so the bladder never slams the poppet.</p>');
 };
+const MC_VC={alu:['Aluminum alloys',75,105,240,600],steel1018:['Mild steel (1018)',27,34,90,200],steel4140:['Alloy steel (4140 HT)',20,27,75,150],ss304:['Stainless 304/316',12,18,60,120],ci:['Gray cast iron',20,30,75,150],brass:['Brass',60,90,180,300],cu:['Copper',45,60,150,250],ti:['Ti-6Al-4V',8,12,30,60],acetal:['Plastics (acetal)',90,150,250,450]};
+function mcPopulate(){
+  const s=$('mc-mat');if(!s||s.options.length)return;
+  s.innerHTML=Object.entries(MC_VC).map(([k,m])=>`<option value="${k}"${k==='steel1018'?' selected':''}>${m[0]}</option>`).join('');
+}
+window.calcSpeeds=function(){
+  const res=$('machining-results');if(!res)return;
+  const m=MC_VC[sv('mc-mat')]||MC_VC.steel1018,tool=sv('mc-tool')||'carb';
+  const lo=tool==='hss'?m[1]:m[3],hi=tool==='hss'?m[2]:m[4],Vc=(lo+hi)/2;
+  const D=v('mc-d'),z=Math.max(1,Math.round(v('mc-z')||2)),fz=v('mc-fz'),ap=v('mc-doc')||0,ae=v('mc-woc')||0;
+  if(!(D>0)||!(fz>0)){_mr(res,'<h3>RESULTS</h3><div class="note warn">Need tool Ø and chip load &gt; 0.</div>');return;}
+  const N=1000*Vc/(Math.PI*D),vf=fz*z*N,MRR=ap*ae*vf/1000;
+  _mr(res,'<h3>SPEEDS &amp; FEEDS</h3><div class="result-grid">'+[
+    ['Cutting speed V_c',Vc.toFixed(0)+' m/min (band '+lo+'–'+hi+')'],
+    ['SPINDLE',N.toFixed(0)+' rpm','ok'],['FEED',vf.toFixed(0)+' mm/min','ok'],
+    ['Feed per rev',(fz*z).toFixed(3)+' mm'],['MRR',MRR>0?MRR.toFixed(1)+' cm³/min':'—']
+  ].map(([l,val,c])=>`<div class="result-item"><div class="lbl">${l}</div><div class="val ${c||''}">${val}</div></div>`).join('')+'</div>'+
+    '<p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem">N = 1000·V_c/(πD), feed = f_z·z·N, computed at MID-band — start there and listen to the cut; slot cuts and long stickout want the low end, finishing passes the high end. Aluminum takes roughly double the steel chip load; halve f_z below Ø4 mm. Bands are standard reference ranges for sharp tools with flood/mist.</p>');
+};
+window.calcTapDrill=function(){
+  const res=$('machining-results');if(!res)return;
+  const sys=sv('td-sys')||'m',d=v('td-d'),p=v('td-p'),pct=Math.min(85,Math.max(50,v('td-pct')||75));
+  if(!(d>0)||!(p>0)){_mr(res,'<h3>RESULTS</h3><div class="note warn">Need major Ø and pitch/TPI &gt; 0.</div>');return;}
+  const drill=sys==='m'?d-p*pct/76.98:d-0.01299*pct/p;
+  const mm=sys==='m'?drill:drill*25.4,inch=sys==='m'?drill/25.4:drill;
+  _mr(res,'<h3>TAP DRILL</h3><div class="result-grid">'+[
+    ['DRILL Ø',mm.toFixed(2)+' mm','ok'],['(inch)',inch.toFixed(4)+' in'],
+    ['Thread engagement',pct.toFixed(0)+' %'],['Nearest 0.1 mm',(Math.round(mm*10)/10).toFixed(1)+' mm']
+  ].map(([l,val,c])=>`<div class="result-item"><div class="lbl">${l}</div><div class="val ${c||''}">${val}</div></div>`).join('')+'</div>'+
+    '<p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem">Machinery&#39;s Handbook percent-of-thread formulas: metric drill = d − p·%/76.98 (the familiar d − p rule ≈ 77%), unified drill = d − 0.01299·%/TPI (¼-20 at 75% → 0.2013″ — the classic #7). 75% is the sweet spot: going 100% doubles tapping torque for ~5% more strength. Use 65-70% in tough stainless/Ti to save taps.</p>');
+};
+window.calcBend=function(){
+  const res=$('machining-results');if(!res)return;
+  const t=v('ba-t'),R=v('ba-r'),a=v('ba-a'),K=Math.min(0.5,Math.max(0.2,v('ba-k')||0.33)),L1=v('ba-l1')||0,L2=v('ba-l2')||0;
+  if(!(t>0)||!(R>=0)||!(a>0)){_mr(res,'<h3>RESULTS</h3><div class="note warn">Need thickness, radius and angle.</div>');return;}
+  const th=a*Math.PI/180,BA=th*(R+K*t);
+  const hem=a>170;
+  const OSSB=hem?null:(R+t)*Math.tan(th/2),BD=hem?null:2*OSSB-BA,flat=hem?null:L1+L2-BD;
+  _mr(res,'<h3>BEND / FLAT PATTERN</h3><div class="result-grid">'+[
+    ['Bend allowance BA',BA.toFixed(3)+' mm','ok'],
+    ['Setback OSSB',hem?'— (hem: legs+BA directly)':OSSB.toFixed(3)+' mm'],
+    ['Bend deduction BD',hem?'—':BD.toFixed(3)+' mm'],
+    ['FLAT LENGTH',hem?(L1+L2+BA-2*t).toFixed(2)+' mm (approx)':flat.toFixed(2)+' mm','ok'],
+    ['Neutral axis at',(K*t).toFixed(2)+' mm from inside']
+  ].map(([l,val,c])=>`<div class="result-item"><div class="lbl">${l}</div><div class="val ${c||''}">${val}</div></div>`).join('')+'</div>'+
+    '<p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem">BA = θ·(R + K·t), OSSB = (R+t)·tan(θ/2), BD = 2·OSSB − BA, flat = A + B − BD with legs measured to the apex (mold line). K ≈ 0.33 for air bending R&lt;2t, ≈ 0.40-0.45 for R&gt;2t, 0.50 = pure geometric neutral axis. Your press brake&#39;s real K beats any table — bend a test coupon and back-solve.</p>');
+};
+const E140=[[65,832,739],[60,697,654],[55,595,560],[50,513,481],[45,446,421],[40,392,371],[35,345,327],[30,302,286],[25,266,253],[20,238,226]];
+window.calcHardness=function(){
+  const res=$('machining-results');if(!res)return;
+  const scale=sv('hc-scale')||'hrc',val=v('hc-val'),col=scale==='hrc'?0:scale==='hv'?1:2;
+  if(!isFinite(val)){_mr(res,'<h3>RESULTS</h3><div class="note warn">Enter a hardness value.</div>');return;}
+  const t=E140.slice().sort((x,y)=>x[col]-y[col]);
+  const lo=t[0][col],hi=t[t.length-1][col];
+  const clamped=val<lo||val>hi,cv=Math.min(hi,Math.max(lo,val));
+  let i=0;while(i<t.length-2&&t[i+1][col]<cv)i++;
+  const f=(cv-t[i][col])/(t[i+1][col]-t[i][col]);
+  const out=[0,1,2].map(c=>t[i][c]+f*(t[i+1][c]-t[i][c]));
+  const uts=3.45*out[2];
+  _mr(res,'<h3>HARDNESS (STEEL)</h3><div class="result-grid">'+[
+    ['HRC',out[0].toFixed(1),'ok'],['HV (Vickers)',out[1].toFixed(0),'ok'],['HB (Brinell)',out[2].toFixed(0),'ok'],
+    ['UTS estimate','≈ '+uts.toFixed(0)+' MPa ('+(uts/6.895).toFixed(0)+' ksi)']
+  ].map(([l,val2,c])=>`<div class="result-item"><div class="lbl">${l}</div><div class="val ${c||''}">${val2}</div></div>`).join('')+'</div>'+
+    (clamped?'<div class="note warn" style="margin-top:.4rem">Outside the ASTM E140 table (HRC 20-65) — clamped to the nearest end, not extrapolated.</div>':'')+
+    '<p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem">Linear interpolation of the ASTM E140 non-austenitic steel table. Valid for steels only — aluminum, copper and austenitic stainless follow different tables. UTS ≈ 3.45·HB is the standard steel estimate (±10%); it is NOT a substitute for a cert.</p>');
+};
+window.calcBoltCircle=function(){
+  const res=$('machining-results');if(!res)return;
+  const n=Math.max(2,Math.round(v('bc-n')||6)),D=v('bc-d'),a0=v('bc-a0')||0;
+  if(!(D>0)){_mr(res,'<h3>RESULTS</h3><div class="note warn">Need circle Ø &gt; 0.</div>');return;}
+  const r=D/2,pts=Array.from({length:n},(_,i)=>{const th=(a0+i*360/n)*Math.PI/180;return[r*Math.cos(th),r*Math.sin(th),a0+i*360/n];});
+  _mr(res,'<h3>BOLT CIRCLE — '+n+' × Ø'+D+'</h3><div style="max-height:260px;overflow-y:auto"><table style="width:100%;font-size:.75rem;border-collapse:collapse">'+
+    '<tr style="color:var(--dim)"><th style="text-align:left">#</th><th style="text-align:right">θ°</th><th style="text-align:right">X</th><th style="text-align:right">Y</th></tr>'+
+    pts.map((p,i)=>`<tr><td>${i+1}</td><td style="text-align:right">${p[2].toFixed(1)}</td><td style="text-align:right">${p[0].toFixed(3)}</td><td style="text-align:right">${p[1].toFixed(3)}</td></tr>`).join('')+'</table></div>'+
+    '<p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem">X = R·cos θ, Y = R·sin θ from circle center, CCW from +X. Chord between adjacent holes = '+(2*r*Math.sin(Math.PI/n)).toFixed(3)+' mm. GD&amp;T true position of an as-drilled hole = 2·√(ΔX² + ΔY²). The BOLTS module&#39;s PATTERN card takes it from here for load analysis.</p>');
+  const c=$('c-mach');if(c&&c.getContext){
+    const x=c.getContext('2d'),th2=pTheme(),cx=c.width/2,cy=c.height/2,cr=c.width/2-40;
+    x.clearRect(0,0,c.width,c.height);
+    x.strokeStyle=th2.dim;x.lineWidth=1;x.setLineDash([6,4]);
+    x.beginPath();x.arc(cx,cy,cr,0,2*Math.PI);x.stroke();x.setLineDash([]);
+    x.beginPath();x.moveTo(cx-8,cy);x.lineTo(cx+8,cy);x.moveTo(cx,cy-8);x.lineTo(cx,cy+8);x.stroke();
+    x.font='10px monospace';x.textAlign='center';
+    pts.forEach((p,i)=>{
+      const px2=cx+p[0]/r*cr,py2=cy-p[1]/r*cr;
+      x.strokeStyle=th2.accent;x.lineWidth=2;
+      x.beginPath();x.arc(px2,py2,9,0,2*Math.PI);x.stroke();
+      x.fillStyle=th2.text;x.fillText(String(i+1),px2,py2-13);
+    });
+    x.fillStyle=th2.dim;x.fillText('Ø'+D,cx,cy+cr+24>c.height?cy+18:cy+cr+18);
+  }
+};
 function injectThreadEngage(){
   const vw=$('v-bolts');if(!vw||$('te-card'))return;
   const host=vw.querySelector('.split>div:last-child')||vw;
@@ -3593,6 +3684,7 @@ window.addEventListener('DOMContentLoaded',()=>{
     injectMotorDesigner();
     injectCylDesigner();
     window.calcHyd();
+    mcPopulate();
     window.calcFits();
     const typeEl=$('sp-type');if(typeEl)typeEl.addEventListener('change',()=>{gateBellevillePresets();window.calcSpring();});
     wireLive('v-springs',window.calcSpring);

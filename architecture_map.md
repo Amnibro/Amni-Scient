@@ -1,5 +1,10 @@
 # Architecture Map — amni-scient.com
 
+## v5.69.0 Amni-Calc NEW MODULE: Machining / Manufacturing (2026-07-10, loop iter 1)
+- index.html: tab data-v="machining" after Fits; `#v-machining` view before v-hydraulics — SPEEDS & FEEDS (mc-mat select populated at init by `mcPopulate()` from MC_VC, mc-tool/d/z/fz/doc/woc), TAP DRILL (td-sys/d/p/pct), SHEET-METAL BEND (ba-t/r/a/k/l1/l2), HARDNESS (hc-scale/val), BOLT CIRCLE (bc-n/d/a0), `#machining-results`, `#c-mach` 360×360 canvas.
+- calc-fixes.js (`?v=eng13`): MC_VC 9 materials [name,hssLo,hssHi,carbLo,carbHi] standard reference bands, calcSpeeds = mid-band V_c → N=1000Vc/πD, vf=fz·z·N, MRR=ap·ae·vf/1000 (band always displayed). calcTapDrill Machinery's Handbook % formulas: metric d−p·%/76.98, unified d−0.01299·%/TPI (¼-20@75 → 0.2013 = #7 anchor), % clamped 50-85. calcBend BA=θ(R+Kt), OSSB=(R+t)tan(θ/2), BD=2OSSB−BA, flat=A+B−BD legs-to-apex; a>170° hem branch skips OSSB (tan blowup) → approx flat=L1+L2+BA−2t; K clamped .2-.5. E140 table (10 rows HRC 20-65 non-austenitic steel) + calcHardness col-sorted interp, CLAMPS with explicit warning never extrapolates, UTS≈3.45·HB estimate. calcBoltCircle X=Rcosθ/Y=Rsinθ CCW table + chord + canvas plot + GD&T TP note. Init: mcPopulate().
+- calc-engineer.js (`?v=eng14`): machining DESC. tests/machining_audit.js 27 anchors (tap-drill #7 proof, 4616 rpm mid-band, BA 5.749/OSSB 5 exact/flat 125.749, HRC42→HV413.6/HB391, HV513→HRC50 table-exact, HRC70-clamps proof, hex chord=R). All 10 suites green (322).
+
 ## v5.68.0 Amni-Learn Kokoro garbage-output guard (2026-07-10)
 - Device ear check: WebGPU fp32 Kokoro BUZZED on Anthony's hardware (known ONNX WebGPU EP numerical-garbage failure, AMD/Windows combos). Fix is detection, not dtype roulette.
 - `_kkAudioOk(a)` (learn-app.js, beside _kk layer): warm-up waveform gate — reject on any NaN, clip fraction >0.15 (|x|>0.98), or quiet-frame fraction <0.04 (20ms frames @480 samples, quiet = rms < max(0.02, 10% of peak-frame rms)). Rationale: speech always contains silence gaps; GPU garbage is continuous full-band buzz with none. Also rejects all-zero output (maxR<1e-4).

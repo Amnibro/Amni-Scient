@@ -327,6 +327,7 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <button class="tab" data-v="columns" role="tab" id="tab-columns" aria-controls="v-columns" aria-selected="false" tabindex="-1">Columns</button>
 <button class="tab" data-v="shafts" role="tab" id="tab-shafts" aria-controls="v-shafts" aria-selected="false" tabindex="-1">Shafts</button>
 <button class="tab" data-v="fits" role="tab" id="tab-fits" aria-controls="v-fits" aria-selected="false" tabindex="-1">Fits &amp; Tol</button>
+<button class="tab" data-v="machining" role="tab" id="tab-machining" aria-controls="v-machining" aria-selected="false" tabindex="-1">Machining</button>
 <button class="tab" data-v="welds" role="tab" id="tab-welds" aria-controls="v-welds" aria-selected="false" tabindex="-1">Welds</button>
 <button class="tab" data-v="bearings" role="tab" id="tab-bearings" aria-controls="v-bearings" aria-selected="false" tabindex="-1">Bearings</button>
 <button class="tab" data-v="gears" role="tab" id="tab-gears" aria-controls="v-gears" aria-selected="false" tabindex="-1">Gears</button>
@@ -2025,6 +2026,64 @@ n_out = n_in/GR &nbsp;|&nbsp; T_out = T_in&middot;GR&middot;&eta;<br>
 </div>
 </div>
 </div>
+<div class="view" id="v-machining">
+<h2>MACHINING / MANUFACTURING</h2>
+<div class="split">
+<div>
+<div class="card"><h3>&#9889; SPEEDS &amp; FEEDS — START HERE</h3>
+<div class="row">
+<div class="field"><label for="mc-mat">MATERIAL</label><select id="mc-mat"></select></div>
+<div class="field"><label for="mc-tool">TOOL</label><select id="mc-tool"><option value="hss">HSS</option><option value="carb" selected>Carbide</option></select></div>
+<div class="field"><label for="mc-d">TOOL &Oslash; (mm)</label><input type="number" id="mc-d" value="10" step="any"></div>
+<div class="field"><label for="mc-z">FLUTES</label><input type="number" id="mc-z" value="2" step="1"></div>
+<div class="field"><label for="mc-fz">CHIP LOAD (mm/tooth)</label><input type="number" id="mc-fz" value="0.05" step="any"></div>
+<div class="field"><label for="mc-doc">DOC ap (mm)</label><input type="number" id="mc-doc" value="5" step="any"></div>
+<div class="field"><label for="mc-woc">WOC ae (mm)</label><input type="number" id="mc-woc" value="4" step="any"></div>
+</div>
+<button class="btn btn-sm" onclick="calcSpeeds()">RPM / FEED / MRR</button>
+</div>
+<div class="card"><h3>TAP DRILL</h3>
+<div class="row">
+<div class="field"><label for="td-sys">THREAD</label><select id="td-sys"><option value="m">Metric</option><option value="u">Unified (inch)</option></select></div>
+<div class="field"><label for="td-d">MAJOR &Oslash; (mm or in)</label><input type="number" id="td-d" value="10" step="any"></div>
+<div class="field"><label for="td-p">PITCH (mm) / TPI</label><input type="number" id="td-p" value="1.5" step="any"></div>
+<div class="field"><label for="td-pct">% THREAD</label><input type="number" id="td-pct" value="75" step="any"></div>
+</div>
+<button class="btn btn-sm" onclick="calcTapDrill()">DRILL SIZE</button>
+</div>
+<div class="card"><h3>SHEET-METAL BEND</h3>
+<div class="row">
+<div class="field"><label for="ba-t">THICKNESS (mm)</label><input type="number" id="ba-t" value="2" step="any"></div>
+<div class="field"><label for="ba-r">INSIDE R (mm)</label><input type="number" id="ba-r" value="3" step="any"></div>
+<div class="field"><label for="ba-a">ANGLE (&deg;)</label><input type="number" id="ba-a" value="90" step="any"></div>
+<div class="field"><label for="ba-k">K-FACTOR</label><input type="number" id="ba-k" value="0.33" step="any"></div>
+<div class="field"><label for="ba-l1">LEG A to apex (mm)</label><input type="number" id="ba-l1" value="50" step="any"></div>
+<div class="field"><label for="ba-l2">LEG B to apex (mm)</label><input type="number" id="ba-l2" value="80" step="any"></div>
+</div>
+<button class="btn btn-sm" onclick="calcBend()">FLAT PATTERN</button>
+</div>
+<div class="card"><h3>HARDNESS CONVERSION (STEEL, ASTM E140)</h3>
+<div class="row">
+<div class="field"><label for="hc-scale">FROM</label><select id="hc-scale"><option value="hrc">HRC</option><option value="hv">HV</option><option value="hb">HB</option></select></div>
+<div class="field"><label for="hc-val">VALUE</label><input type="number" id="hc-val" value="42" step="any"></div>
+</div>
+<button class="btn btn-sm" onclick="calcHardness()">CONVERT</button>
+</div>
+<div class="card"><h3>BOLT CIRCLE COORDINATES</h3>
+<div class="row">
+<div class="field"><label for="bc-n">HOLES</label><input type="number" id="bc-n" value="6" step="1"></div>
+<div class="field"><label for="bc-d">CIRCLE &Oslash; (mm)</label><input type="number" id="bc-d" value="100" step="any"></div>
+<div class="field"><label for="bc-a0">START ANGLE (&deg;)</label><input type="number" id="bc-a0" value="0" step="any"></div>
+</div>
+<button class="btn btn-sm" onclick="calcBoltCircle()">X-Y TABLE</button>
+</div>
+</div>
+<div>
+<div class="card" id="machining-results"><h3>RESULTS</h3><p class="muted">Results compute live from whichever card you use.</p></div>
+<div class="card"><h3>BOLT CIRCLE</h3><canvas id="c-mach" width="360" height="360" style="width:100%;max-width:360px;margin:0 auto;display:block"></canvas></div>
+</div>
+</div>
+</div>
 <div class="view" id="v-hydraulics">
 <h2>HYDRAULICS / FLUID POWER</h2>
 <div class="split">
@@ -2730,9 +2789,9 @@ window._calcSealWasm=(...args)=>calc_seal(...args);
 <script src="./calc-unit-core.js?v=units1" defer></script>
 <script src="./calc-overrides.js?v=eng3" defer></script>
 <script src="./calc-3d.js?v=eng3" defer></script>
-<script src="./calc-fixes.js?v=eng12" defer></script>
+<script src="./calc-fixes.js?v=eng13" defer></script>
 <script src="./calc-units.js?v=units1" defer></script>
 <script src="./calc-qol.js" defer></script>
-<script src="./calc-engineer.js?v=eng13" defer></script>
+<script src="./calc-engineer.js?v=eng14" defer></script>
 </body>
 </html>

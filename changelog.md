@@ -1,5 +1,14 @@
 # Changelog 
 
+## Amni-Calc v5.69.0 — NEW MODULE: Machining / Manufacturing - 2026-07-10
+- **The suite's first manufacturing module** (sidebar, after Fits & Tol) — the Engineers-Edge-class gap: nothing on the site previously answered shop-floor questions. Five cards:
+- **⚡ SPEEDS & FEEDS**: material (9 standard reference bands, HSS and carbide) + tool Ø + flutes + chip load → spindle RPM (N = 1000·V_c/πD), table feed, feed/rev and MRR — always showing the published band so you know where mid-band sits, with real starting-point guidance (slots low, finishing high, aluminum doubles chip load, halve below Ø4 mm).
+- **TAP DRILL**: the actual Machinery's Handbook percent-of-thread formulas (metric d − p·%/76.98, unified d − 0.01299·%/TPI) — ¼-20 at 75% lands on 0.2013″, the classic #7 drill, exactly. Explains why 75% beats 100% (double the tapping torque for ~5% more strength).
+- **SHEET-METAL BEND**: BA = θ(R + K·t), setback, bend deduction, and the flat-pattern length from legs-to-apex — with K-factor guidance by radius ratio and a hem branch that refuses the tan(θ/2) blow-up past 170°.
+- **HARDNESS CONVERSION**: ASTM E140 non-austenitic steel table, interpolated HRC ↔ HV ↔ HB plus the standard UTS ≈ 3.45·HB estimate — clamps at the table ends with a warning instead of extrapolating, and says plainly it's steel-only.
+- **BOLT CIRCLE**: N holes + Ø + start angle → full X-Y coordinate table, chord spacing, a to-scale canvas plot, and the GD&T true-position formula — hands off to the BOLTS pattern card for load analysis.
+- Tests: machining_audit.js (27 anchors incl. the #7-drill proof and table-exact HV513→HRC50) — all 10 suites green, 322 anchors. Cache-busters fixes?v=eng13, engineer?v=eng14.
+
 ## Amni-Learn v5.68.0 — Kokoro voice: buzzing GPU output auto-detected, falls to CPU cleanly - 2026-07-10
 - Anthony's device ear check caught the Kokoro tier **buzzing instead of speaking** — a known WebGPU failure where some GPU/driver combos (notably AMD on Windows) compute the neural vocoder wrong and emit static. The plumbing was fine; the GPU output was numerical garbage.
 - **Warm-up quality gate**: `_kkAudioOk()` now inspects the actual warm-up waveform — NaN anywhere, >15% clipped samples, or no quiet frames (real speech always has silence gaps; continuous buzz has none) flags the tier as garbage.
