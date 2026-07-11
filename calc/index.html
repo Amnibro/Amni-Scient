@@ -335,6 +335,7 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <div class="sidebar-cat">Fluids &amp; Thermal</div>
 <button class="tab" data-v="fluids" role="tab" id="tab-fluids" aria-controls="v-fluids" aria-selected="false" tabindex="-1">Fluids</button>
 <button class="tab" data-v="pumps" role="tab" id="tab-pumps" aria-controls="v-pumps" aria-selected="false" tabindex="-1">Pumps</button>
+<button class="tab" data-v="hydraulics" role="tab" id="tab-hydraulics" aria-controls="v-hydraulics" aria-selected="false" tabindex="-1">Hydraulics</button>
 <button class="tab" data-v="thermal" role="tab" id="tab-thermal" aria-controls="v-thermal" aria-selected="false" tabindex="-1">Thermal</button>
 <button class="tab" data-v="hx" role="tab" id="tab-hx" aria-controls="v-hx" aria-selected="false" tabindex="-1">Heat Exchangers</button>
 <button class="tab" data-v="pv" role="tab" id="tab-pv" aria-controls="v-pv" aria-selected="false" tabindex="-1">Pressure Vessels</button>
@@ -2024,6 +2025,36 @@ n_out = n_in/GR &nbsp;|&nbsp; T_out = T_in&middot;GR&middot;&eta;<br>
 </div>
 </div>
 </div>
+<div class="view" id="v-hydraulics">
+<h2>HYDRAULICS / FLUID POWER</h2>
+<div class="split">
+<div>
+<div class="card"><h3>CYLINDER ANALYSIS</h3>
+<div class="row">
+<div class="field"><label for="hy-bore">BORE (mm)</label><input type="number" id="hy-bore" value="80" step="any"></div>
+<div class="field"><label for="hy-rod">ROD &Oslash; (mm)</label><input type="number" id="hy-rod" value="45" step="any"></div>
+<div class="field"><label for="hy-p">P (bar)</label><input type="number" id="hy-p" value="160" step="any"></div>
+<div class="field"><label for="hy-q">FLOW (L/min)</label><input type="number" id="hy-q" value="30" step="any"></div>
+<div class="field"><label for="hy-eff">MECH-HYD &eta; (0-1)</label><input type="number" id="hy-eff" value="0.9" step="any"></div>
+</div>
+<button class="btn btn-sm" onclick="calcHyd()">FORCES / SPEEDS</button>
+</div>
+<div class="card"><h3>ACCUMULATOR SIZING (BLADDER)</h3>
+<div class="row">
+<div class="field"><label for="ac-dv">&Delta;V NEEDED (L)</label><input type="number" id="ac-dv" value="2" step="any"></div>
+<div class="field"><label for="ac-p1">P_min (bar g)</label><input type="number" id="ac-p1" value="150" step="any"></div>
+<div class="field"><label for="ac-p2">P_max (bar g)</label><input type="number" id="ac-p2" value="210" step="any"></div>
+<div class="field"><label for="ac-n">PROCESS</label><select id="ac-n"><option value="1">Isothermal (slow discharge)</option><option value="1.4" selected>Adiabatic (rapid discharge)</option></select></div>
+</div>
+<button class="btn btn-sm" onclick="calcAccum()">GAS VOLUME</button>
+</div>
+</div>
+<div>
+<div class="card" id="hydraulics-results"><h3>RESULTS</h3><p class="muted">Results compute live from whichever card you use.</p></div>
+<div class="card"><h3>CYLINDER SCHEMATIC</h3><canvas id="c-hyd" width="560" height="220" style="width:100%"></canvas></div>
+</div>
+</div>
+</div>
 <div class="view" id="v-combustion">
 <h2>COMBUSTION</h2>
 <div class="split">
@@ -2699,9 +2730,9 @@ window._calcSealWasm=(...args)=>calc_seal(...args);
 <script src="./calc-unit-core.js?v=units1" defer></script>
 <script src="./calc-overrides.js?v=eng3" defer></script>
 <script src="./calc-3d.js?v=eng3" defer></script>
-<script src="./calc-fixes.js?v=eng11" defer></script>
+<script src="./calc-fixes.js?v=eng12" defer></script>
 <script src="./calc-units.js?v=units1" defer></script>
 <script src="./calc-qol.js" defer></script>
-<script src="./calc-engineer.js?v=eng12" defer></script>
+<script src="./calc-engineer.js?v=eng13" defer></script>
 </body>
 </html>

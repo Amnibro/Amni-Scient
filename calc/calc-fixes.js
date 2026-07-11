@@ -1613,6 +1613,115 @@ window.applyMotorDesign=function(){
   window.calcMotorDesign();
   ['calcMotorT','calcFLA','calcSF','calcSync','calcNemaFrame','calcMotorTSC'].forEach(fn=>{if(typeof window[fn]==='function')try{window[fn]();}catch(e){}});
 };
+const HYD_BORES=[25,32,40,50,63,80,100,125,160,200,250];
+const HYD_RODS=[12,14,16,18,20,22,25,28,32,36,40,45,50,56,63,70,80,90,100,110,125,140,160,180];
+const HYD_MOUNT={pp:{n:'Pinned both ends',K:1.0},fp:{n:'Fixed-pinned',K:0.7},ff:{n:'Fixed-fixed (rigidly guided)',K:0.5},fr:{n:'Fixed-free (unguided)',K:2.0}};
+function injectCylDesigner(){
+  const vw=$('v-hydraulics');if(!vw||$('hyd-card'))return;
+  const host=vw.querySelector('.split>div:first-child')||vw;
+  const card=document.createElement('div');card.className='card';card.id='hyd-card';
+  card.innerHTML='<h3>⚡ CYLINDER DESIGNER — START HERE</h3>'+
+    '<p style="font-size:.72rem;color:var(--dim);margin:0 0 .5rem">Force + pressure + stroke → the bore and rod to buy.</p>'+
+    '<div class="row">'+
+    '<div class="field"><label for="hyd-f">FORCE NEEDED (kN)</label><input type="number" id="hyd-f" value="50" step="any"></div>'+
+    '<div class="field"><label for="hyd-dir">ACTION</label><select id="hyd-dir"><option value="push">PUSH (extend)</option><option value="pull">PULL (retract)</option></select></div>'+
+    '<div class="field"><label for="hyd-p">SYSTEM P (bar)</label><input type="number" id="hyd-p" value="160" step="any"></div>'+
+    '<div class="field"><label for="hyd-s">STROKE (mm)</label><input type="number" id="hyd-s" value="800" step="any"></div>'+
+    '<div class="field"><label for="hyd-mt">MOUNTING</label><select id="hyd-mt">'+Object.entries(HYD_MOUNT).map(([k,m])=>`<option value="${k}">${m.n} (K=${m.K})</option>`).join('')+'</select></div>'+
+    '<div class="field"><label for="hyd-v">TARGET SPEED (mm/s)</label><input type="number" id="hyd-v" value="100" step="any"></div>'+
+    '</div><div class="row" style="margin-top:.6rem"><button class="btn btn-fill" onclick="calcCylDesign()">DESIGN IT</button><button class="btn" onclick="applyCylDesign()">APPLY TO ANALYSIS →</button></div><div id="hyd-out"></div>';
+  host.insertBefore(card,host.firstChild);
+}
+function cylDesignPick(){
+  const F=v('hyd-f')*1000,dir=sv('hyd-dir')||'push',Pb=v('hyd-p'),P=Pb*1e5,S=v('hyd-s')/1000,mt=HYD_MOUNT[sv('hyd-mt')]||HYD_MOUNT.pp,vt=v('hyd-v')||100;
+  const eta=0.9,E=2.1e11,FoS=3.5,Areq=F/(P*eta);
+  let rodReq;
+  if(dir==='push'){const Ireq=FoS*F*Math.pow(mt.K*S,2)/(Math.PI*Math.PI*E);rodReq=Math.pow(64*Ireq/Math.PI,0.25)*1000;}
+  else rodReq=Math.sqrt(4*F/(100e6*Math.PI))*1000;
+  const rod=HYD_RODS.find(r=>r>=rodReq);
+  let pick=null;
+  if(rod)for(const b of HYD_BORES){
+    if(rod>=b)continue;
+    const Ab=Math.PI*b*b/4e6,Aact=dir==='push'?Ab:Ab-Math.PI*rod*rod/4e6;
+    if(Aact>=Areq){pick={b,rod};break;}
+  }
+  if(!pick)return{F,dir,Pb,P,S,mt,vt,eta,Areq,rodReq,rod};
+  const Ab=Math.PI*pick.b*pick.b/4e6,Aann=Ab-Math.PI*pick.rod*pick.rod/4e6;
+  const Fext=P*Ab*eta,Fret=P*Aann*eta;
+  const I=Math.PI*Math.pow(pick.rod/1000,4)/64,Pcr=Math.PI*Math.PI*E*I/Math.pow(mt.K*S,2),fosB=S>0?Pcr/F:Infinity;
+  const Aact=dir==='push'?Ab:Aann,Q=Aact*(vt/1000)*60000,Pw=P*Q/60000/1000;
+  return{F,dir,Pb,P,S,mt,vt,eta,Areq,rodReq,rod,pick,Ab,Aann,Fext,Fret,fosB,Q,Pw,phi:Ab/Aann};
+}
+window.calcCylDesign=function(){
+  const o=$('hyd-out');if(!o)return;
+  const R=cylDesignPick();
+  if(!(R.F>0)||!(R.Pb>0)){_mr(o,'<div class="note warn" style="margin-top:.5rem">Need force and pressure &gt; 0.</div>');return;}
+  if(!R.rod){_mr(o,'<div class="note warn" style="margin-top:.5rem">Rod would need Ø'+R.rodReq.toFixed(0)+' mm — beyond the 180 mm standard ladder. Shorten the stroke, guide the rod (better mounting K), or use a telescopic/multiple cylinders.</div>');return;}
+  if(!R.pick){_mr(o,'<div class="note warn" style="margin-top:.5rem">'+(R.Areq*1e6).toFixed(0)+' mm² of piston needed — beyond a 250 mm bore at '+R.Pb+' bar. Raise system pressure or split across multiple cylinders.</div>');return;}
+  _mr(o,'<div class="result-grid" style="margin-top:.6rem">'+[
+    ['BORE',R.pick.b+' mm (ISO 3320)','ok'],['ROD',R.pick.rod+' mm (ISO 4395)','ok'],
+    ['Force available',(R.dir==='push'?R.Fext:R.Fret)/1000>=R.F/1000?((R.dir==='push'?R.Fext:R.Fret)/1000).toFixed(1)+' kN '+R.dir:'—','ok'],
+    ['Other direction',(R.dir==='push'?R.Fret:R.Fext)/1000>0?((R.dir==='push'?R.Fret:R.Fext)/1000).toFixed(1)+' kN '+(R.dir==='push'?'pull':'push'):'—'],
+    ['Rod buckling FoS',R.dir==='push'?R.fosB.toFixed(1)+' (target 3.5)':'n/a — rod in tension',R.dir==='push'&&R.fosB<3.5?'warn':'ok'],
+    ['Flow for '+R.vt+' mm/s',R.Q.toFixed(1)+' L/min'],['Hydraulic power',R.Pw.toFixed(1)+' kW'],
+    ['Area ratio φ',R.phi.toFixed(2)]
+  ].map(x=>`<div class="result-item"><div class="lbl">${x[0]}</div><div class="val ${x[2]||''}">${x[1]}</div></div>`).join('')+'</div>'+
+    '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">F = P·A with 0.9 mechanical-hydraulic efficiency; push rods sized by Euler P_cr = π²EI/(KL)² at FoS 3.5 over the stroke, pulled rods by tension ≤ 100 MPa (CK45 at FoS ≈ 4). Bore/rod from the ISO 3320 / ISO 4395 series — manufacturers bind specific pairs, so confirm in the catalog. Meter-out on the rod side intensifies pressure by φ — check valve and seal ratings. APPLY loads the analysis card with the flow above; size the supply in PUMPS and the lines in FLUIDS.</p>');
+};
+window.applyCylDesign=function(){
+  const R=cylDesignPick();if(!R.pick)return void window.calcCylDesign();
+  const set=(id,val)=>{const el=$(id);if(el)el.value=val;};
+  [['hy-bore',R.pick.b],['hy-rod',R.pick.rod],['hy-p',R.Pb],['hy-q',+R.Q.toFixed(1)],['hy-eff',R.eta]].forEach(([id,val])=>set(id,val));
+  window.calcCylDesign();
+  if(typeof window.calcHyd==='function')try{window.calcHyd();}catch(e){}
+};
+function drawCylSchematic(bore,rod,stroke){
+  const c=$('c-hyd');if(!c||!c.getContext)return;
+  const x=c.getContext('2d'),t=pTheme();
+  x.clearRect(0,0,c.width,c.height);
+  const cy=c.height/2-14,bx=70,bw=300;
+  const bh=Math.max(40,Math.min(110,bore*0.8)),rh=Math.max(8,bh*rod/bore);
+  x.lineWidth=3;x.strokeStyle=t.accent;x.strokeRect(bx,cy-bh/2,bw,bh);
+  x.fillStyle=t.grid;x.fillRect(bx+bw*0.55,cy-bh/2+3,10,bh-6);
+  x.fillRect(bx+bw*0.55+10,cy-rh/2,bw*0.45+70,rh);
+  x.strokeStyle=t.dim;x.lineWidth=1.5;
+  x.strokeRect(bx+18,cy-bh/2-14,10,14);x.strokeRect(bx+bw-38,cy-bh/2-14,10,14);
+  x.fillStyle=t.text;x.font='11px monospace';x.textAlign='center';
+  x.fillText('Ø'+bore+' bore',bx+bw/2,cy+bh/2+18);
+  x.fillText('Ø'+rod+' rod',bx+bw+55,cy+rh/2+16);
+  x.fillText('cap port',bx+23,cy-bh/2-20);x.fillText('rod port',bx+bw-33,cy-bh/2-20);
+  stroke>0&&x.fillText('stroke '+stroke+' mm',bx+bw/2,cy-bh/2-20);
+}
+window.calcHyd=function(){
+  const bore=v('hy-bore'),rod=v('hy-rod'),Pb=v('hy-p'),Q=v('hy-q'),eta=Math.min(1,Math.max(0.5,v('hy-eff')||0.9));
+  const res=$('hydraulics-results');if(!res)return;
+  if(!(bore>0)||!(rod>0)||rod>=bore){_mr(res,'<h3>RESULTS</h3><div class="note warn">Need bore &gt; rod &gt; 0.</div>');return;}
+  const P=Pb*1e5,Ab=Math.PI*bore*bore/4e6,Aann=Ab-Math.PI*rod*rod/4e6,Qm=Q/60000;
+  const Fext=P*Ab*eta/1000,Fret=P*Aann*eta/1000,vext=Qm/Ab*1000,vret=Qm/Aann*1000,phi=Ab/Aann,Pw=P*Qm/1000;
+  _mr(res,'<h3>CYLINDER</h3><div class="result-grid">'+[
+    ['F extend',Fext.toFixed(1)+' kN'],['F retract',Fret.toFixed(1)+' kN'],
+    ['v extend',vext.toFixed(0)+' mm/s'],['v retract',vret.toFixed(0)+' mm/s'],
+    ['Area ratio φ',phi.toFixed(2)],['Hydraulic power',Pw.toFixed(1)+' kW'],
+    ['Piston area',(Ab*1e6).toFixed(0)+' mm²'],['Annulus area',(Aann*1e6).toFixed(0)+' mm²']
+  ].map(([l,val])=>`<div class="result-item"><div class="lbl">${l}</div><div class="val">${val}</div></div>`).join('')+'</div>'+
+    '<p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem">η = '+eta+' applied to force. Retract is faster but weaker (annulus). <strong>Intensification:</strong> metering out the rod side while extending multiplies rod-side pressure by φ = '+phi.toFixed(2)+' → up to '+(Pb*phi).toFixed(0)+' bar there — check valve and seal ratings.</p>');
+  drawCylSchematic(bore,rod,0);
+};
+window.calcAccum=function(){
+  const dv=v('ac-dv'),p1=v('ac-p1'),p2=v('ac-p2'),n=parseFloat(sv('ac-n'))||1.4;
+  const res=$('hydraulics-results');if(!res)return;
+  if(!(dv>0)||!(p1>0)||!(p2>p1)){_mr(res,'<h3>RESULTS</h3><div class="note warn">Need ΔV &gt; 0 and P_max &gt; P_min &gt; 0.</div>');return;}
+  const p0g=0.9*p1,atm=1.013,p0=p0g+atm,p1a=p1+atm,p2a=p2+atm;
+  const frac=Math.pow(p0/p1a,1/n)-Math.pow(p0/p2a,1/n);
+  const V0=dv/frac;
+  _mr(res,'<h3>ACCUMULATOR</h3><div class="result-grid">'+[
+    ['GAS VOLUME V₀',V0.toFixed(2)+' L — round UP to catalog size'],
+    ['Precharge P₀',p0g.toFixed(0)+' bar g (90% of P_min)'],
+    ['Usable ΔV check',dv+' L between '+p1+' and '+p2+' bar'],
+    ['Process','n = '+n+(n===1?' (isothermal)':' (adiabatic)')]
+  ].map(([l,val])=>`<div class="result-item"><div class="lbl">${l}</div><div class="val">${val}</div></div>`).join('')+'</div>'+
+    '<p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem">Gas-law sizing (P·Vⁿ constant, absolute pressures): V₀ = ΔV / [(P₀/P₁)^(1/n) − (P₀/P₂)^(1/n)]. Slow duty (leakage make-up, thermal expansion) → isothermal; shock/rapid discharge → adiabatic and a bigger shell. Bladder accumulators want P₀ ≈ 0.9·P_min so the bladder never slams the poppet.</p>');
+};
 function injectThreadEngage(){
   const vw=$('v-bolts');if(!vw||$('te-card'))return;
   const host=vw.querySelector('.split>div:last-child')||vw;
@@ -3482,6 +3591,8 @@ window.addEventListener('DOMContentLoaded',()=>{
     injectHxDesigner();
     injectPipeDesigner();
     injectMotorDesigner();
+    injectCylDesigner();
+    window.calcHyd();
     window.calcFits();
     const typeEl=$('sp-type');if(typeEl)typeEl.addEventListener('change',()=>{gateBellevillePresets();window.calcSpring();});
     wireLive('v-springs',window.calcSpring);
