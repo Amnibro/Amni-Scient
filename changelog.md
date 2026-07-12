@@ -1,5 +1,9 @@
 # Changelog 
 
+## Amni-Learn v5.80.1 — Unstick silent phonics (CDN + 8s device-voice fallback) - 2026-07-12
+- Users still saw old label `Sound: "aaa" · Apple starts with it` and heard nothing: Cloudflare/Fastly was caching `learn-app.js` for up to 4h (`max-age=14400`) so v5.80 never reached the browser.
+- Fix: cache-bust script to `learn-app.js?v=v1280`, SW `amni-learn-v1280`. After 8s if Kokoro/Piper still not ready, speak with device voice so Hear is never silent forever.
+
 ## Amni-Learn v5.80.0 — Kokoro primary + real Pre-K letter teaching - 2026-07-11
 - **Voice priority flipped**: Kokoro natural neural is primary (on by default unless `amni-learn-kk=off`); Piper is backup; device Web Speech last. Still waits with a loading banner — no stock Windows voice first. WASM-only Kokoro + garbage gate kept so AMD buzz does not return.
 - **Phonics teaches letters/sounds/reading** (not word lists): multi-step scripts with pauses — name the letter, isolate the sound, connect to a picture word, "say it with me"; blend path says "Let us sound out cat" then each phoneme then the word. Letter Catch / Rhyme use the same paced teach language. UI shows letter-says-sound and the full word on the blend card.

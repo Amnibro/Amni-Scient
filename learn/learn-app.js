@@ -10567,6 +10567,15 @@ function playAnimalSound(type) {
     try{if('speechSynthesis' in window)window.speechSynthesis.cancel();}catch(e){}
     _hdBanner('Loading natural voice... please wait');
     _hdWarm();
+    const token=arr;
+    setTimeout(()=>{
+      if(_speakWait!==token)return;
+      if(_kkReady||_hdReady)return;
+      _speakWait=null;
+      _hdBanner('Still loading natural voice — using device voice for now');
+      setTimeout(()=>{if(!(_kkReady||_hdReady))_hdBanner(null);},2200);
+      _webSeq(token);
+    },8000);
   }
   function stopSpeech(){ try { if('speechSynthesis' in window) window.speechSynthesis.cancel(); } catch(e) {} _hdStop(); _speakWait=null;_storyWait=null; }
   function ttsAuto(){ try { return localStorage.getItem('amni-learn-tts') === 'on'; } catch(e) { return false; } }
