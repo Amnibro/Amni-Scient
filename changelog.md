@@ -1,5 +1,9 @@
 # Changelog 
 
+## Amni-Learn v5.80.2 — Per-click voice lag: stop killing Kokoro on short phonics - 2026-07-12
+- **Root cause of "every tap waits ~a minute"**: `_kkWav` ran `_kkAudioOk` on *every* utterance. Short letter sounds ("buh", "aaa") fail that speech-vs-buzz gate → disposed Kokoro → slow Piper/reload path **every click**.
+- Fix: quality gate stays **warm-up only**. Per-utterance only rejects empty audio. Blob cache for repeated phrases. Phonics scripts collapsed to **one** dense line so one synth covers a full teach. `_ttsBatch` merges short multi-line arrays. Cache-bust `learn-app.js?v=v1281`, SW `v1281`.
+
 ## Amni-Learn v5.80.1 — Unstick silent phonics (CDN + 8s device-voice fallback) - 2026-07-12
 - Users still saw old label `Sound: "aaa" · Apple starts with it` and heard nothing: Cloudflare/Fastly was caching `learn-app.js` for up to 4h (`max-age=14400`) so v5.80 never reached the browser.
 - Fix: cache-bust script to `learn-app.js?v=v1280`, SW `amni-learn-v1280`. After 8s if Kokoro/Piper still not ready, speak with device voice so Hear is never silent forever.

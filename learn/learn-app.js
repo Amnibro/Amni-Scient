@@ -1519,11 +1519,11 @@
   const _phonSnd=(x)=>{const k=String(x).toLowerCase();return PHON_SP[k]||k;};
   function _phonLetterName(c){return 'This is the letter '+c.l+'.';}
   function _phonLetterSound(c){const snd=_phonSnd(c.l);return 'The letter '+c.l+' says '+snd+'.';}
-  function _phonLetterSay(c){const snd=_phonSnd(c.l);return [_phonLetterName(c), 'Listen to the sound. '+snd+'.', _phonLetterSound(c), c.w+' starts with '+snd+'.', 'Say it with me. '+snd+'. '+c.w+'.'];}
-  function _phonSoundAsk(c){const snd=_phonSnd(c.l);return ['Listen to the sound.', snd+'.', 'Which letter says '+snd+'?'];}
-  function _phonSoundYes(c){const snd=_phonSnd(c.l);return ['Yes!', 'The letter '+c.l+' says '+snd+'.', c.w+' starts with '+snd+'.'];}
-  function _phonBlendSay(cur){const sounds=cur.c.map(_phonSnd);return ['Let us sound out '+cur.w+'.', ...sounds.map(x=>x+'.'), sounds.join(' ')+'.', cur.w+'!'];}
-  function _phonRhymeAsk(w){return ['Listen.', w+'.', 'Which word rhymes with '+w+'?'];}
+  function _phonLetterSay(c){const snd=_phonSnd(c.l);return ['This is the letter '+c.l+'. It says '+snd+'. '+c.w+' starts with '+snd+'. Say it with me: '+snd+', '+c.w+'.'];}
+  function _phonSoundAsk(c){const snd=_phonSnd(c.l);return ['Listen. '+snd+'. Which letter says '+snd+'?'];}
+  function _phonSoundYes(c){const snd=_phonSnd(c.l);return ['Yes! '+c.l+' says '+snd+'. '+c.w+' starts with '+snd+'.'];}
+  function _phonBlendSay(cur){const sounds=cur.c.map(_phonSnd);return ['Let us sound out '+cur.w+'. '+sounds.join(', ')+'. '+cur.w+'!'];}
+  function _phonRhymeAsk(w){return ['Which word rhymes with '+w+'?'];}
   let phonIdx=0,phonWordIdx=0,phonMatch=null,phonRhyme=null;
   function _phonSpeak(text){const items=Array.isArray(text)?text:[text];if(typeof speakSeq==='function')speakSeq(items);else if(typeof speakText==='function')speakText(items.join(' '));}
   function _phonMark(){localStorage.setItem('phon-words-seen',String(_intLS('phon-words-seen')+1));}
@@ -10522,7 +10522,18 @@ function playAnimalSound(type) {
   }
   function _kkPrep(t){t=String(t).replace(/([.!?])\s*(?=[A-Z])/g,'$1 ').replace(/,\s*/g,', ').replace(/!{2,}/g,'!').replace(/\.{3,}/g,'…');const a=t.replace(/[^a-zA-Z]/g,'');if(a&&a.replace(/[^A-Z]/g,'').length/a.length>0.6){t=t.toLowerCase().replace(/(^|[.!?]\s+)([a-z])/g,(m,p,c)=>p+c.toUpperCase()).replace(/\bi\b/g,'I');}return t;}
   function _chunkSpans(text){const spans=[];const re=/[^.!?]*[.!?]+\s*/g;let m;while((m=re.exec(text))){if(m[0].trim())spans.push({s:m.index,e:m.index+m[0].length,t:m[0]});}spans.length?(spans[spans.length-1].e<text.length&&text.slice(spans[spans.length-1].e).trim()&&spans.push({s:spans[spans.length-1].e,e:text.length,t:text.slice(spans[spans.length-1].e)})):spans.push({s:0,e:text.length,t:text});const out=[];for(const sp of spans){const last=out[out.length-1];last&&(last.e-last.s)+(sp.e-sp.s)<140?(last.e=sp.e,last.t+=sp.t):out.push({s:sp.s,e:sp.e,t:sp.t});}return out;}
-  async function _kkWav(text,speed){const t=await _kkLoad();const a=await t.generate(_kkPrep(text),{voice:_KKVOICE,speed:speed||1});if(!_kkAudioOk(a)){_kkFailed=true;_kkReady=false;try{t.model&&t.model.dispose&&t.model.dispose();}catch(e){}throw new Error('kk-garbage-utt');}return a.toBlob();}
+  let _kkBlobCache=new Map();
+  async function _kkWav(text,speed){
+    const key=_kkPrep(text)+'|'+(speed||1);
+    if(_kkBlobCache.has(key))return _kkBlobCache.get(key);
+    const t=await _kkLoad();
+    const a=await t.generate(_kkPrep(text),{voice:_KKVOICE,speed:speed||1});
+    if(!a||!a.audio||!a.audio.length)throw new Error('kk-empty');
+    const blob=a.toBlob();
+    if(_kkBlobCache.size>80)_kkBlobCache.clear();
+    _kkBlobCache.set(key,blob);
+    return blob;
+  }
   async function _synthWav(text,speed){if(_kkReady){try{return await _kkWav(text,speed);}catch(e){}}if(_hdReady){try{const m=await _hdLoad();return await m.predict({text:text,voiceId:_HDVOICE});}catch(e){}}if(_kkCan()&&!_kkFailed){try{return await _kkWav(text,speed);}catch(e){}}try{const m=await _hdLoad();return await m.predict({text:text,voiceId:_HDVOICE});}catch(e){}throw new Error('no-synth');}
   function hdOn(){try{return localStorage.getItem('amni-learn-tts-hd')==='on';}catch(e){return false;}}
   function _hdCtx(){return currentGame==='phonics'||currentGame==='storybook';}
@@ -10543,7 +10554,29 @@ function playAnimalSound(type) {
   }
   function _hdStop(){_hdGen++;try{if(_hdAudio){_hdAudio.onended=null;_hdAudio.onerror=null;_hdAudio.pause();_hdAudio.src='';_hdAudio=null;}}catch(e){}}
   function _hdPlayBlob(b){return new Promise(res=>{let a;try{a=new Audio(URL.createObjectURL(b));}catch(e){return res();}_hdAudio=a;const done=()=>{try{URL.revokeObjectURL(a.src);}catch(e){}res();};a.onended=done;a.onerror=done;a.play().catch(done);});}
-  async function _hdSay(items){_hdStop();const gen=_hdGen;if(!_kkReady&&!_hdReady){if(_kkCan()){try{await _kkLoad();}catch(e){try{await _hdLoad();}catch(_){}}}else{try{await _hdLoad();}catch(_){}}}if(gen!==_hdGen)return;const arr=(Array.isArray(items)?items:[items]).map(_ttsClean).filter(Boolean);const parts=arr.flatMap(t=>_chunkSpans(t).map(c=>c.t));const pre=t=>{const p=_synthWav(t);p.catch(()=>{});return p;};let next=parts.length?pre(parts[0]):null;for(let i=0;i<parts.length;i++){if(gen!==_hdGen)return;let wav;try{wav=await next;}catch(e){if(gen!==_hdGen)return;_webSeq([parts[i]]);continue;}next=i+1<parts.length?pre(parts[i+1]):null;if(gen!==_hdGen)return;await _hdPlayBlob(wav);}}
+  function _ttsBatch(arr){
+    if(arr.length<=1)return arr.slice();
+    const allShort=arr.every(t=>t.length<=90);
+    if(!allShort)return arr.flatMap(t=>_chunkSpans(t).map(c=>c.t));
+    const joined=arr.join(' ');
+    return joined.length<=320?[joined]:arr.flatMap(t=>_chunkSpans(t).map(c=>c.t));
+  }
+  async function _hdSay(items){
+    _hdStop();const gen=_hdGen;
+    if(!_kkReady&&!_hdReady){if(_kkCan()){try{await _kkLoad();}catch(e){try{await _hdLoad();}catch(_){}}}else{try{await _hdLoad();}catch(_){}}}
+    if(gen!==_hdGen)return;
+    const arr=(Array.isArray(items)?items:[items]).map(_ttsClean).filter(Boolean);
+    const parts=_ttsBatch(arr);
+    const pre=t=>{const p=_synthWav(t);p.catch(()=>{});return p;};
+    let next=parts.length?pre(parts[0]):null;
+    for(let i=0;i<parts.length;i++){
+      if(gen!==_hdGen)return;
+      let wav;try{wav=await next;}catch(e){if(gen!==_hdGen)return;_webSeq([parts[i]]);continue;}
+      next=i+1<parts.length?pre(parts[i+1]):null;
+      if(gen!==_hdGen)return;
+      await _hdPlayBlob(wav);
+    }
+  }
   function _webSeq(items){
     if(!('speechSynthesis' in window)) return;
     try {
