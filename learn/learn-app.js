@@ -755,7 +755,7 @@
     html.push(_pickerSection('✨ Cursor Trail','cursors','profile-cursor',cursor));
     const ttsOn=localStorage.getItem('amni-learn-tts')==='on';
     const ttsHd=localStorage.getItem('amni-learn-tts-hd')==='on';
-    html.push(`<div style="margin:14px 0 6px;color:#4db8ff;font-size:0.88rem;font-weight:bold">🔊 Read Aloud</div><div style="font-size:0.72rem;color:#7a8a9a;margin-bottom:6px">Off by default. Tap the 🔊 button up top to mute/unmute anytime. When on, auto-speaks questions &amp; choices at Level 1 (Pre-K). The 🔊 buttons in games always work.</div><label style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.18);border-radius:8px;color:var(--text,#ecf0f1);font-family:JetBrains Mono;font-size:0.82rem;cursor:pointer"><input type="checkbox" id="prof-tts" ${ttsOn?'checked':''} style="width:18px;height:18px;cursor:pointer">Read questions aloud automatically (Pre-K)</label><label style="display:flex;align-items:center;gap:10px;padding:8px 10px;margin-top:8px;background:rgba(255,255,255,0.04);border:1px solid rgba(77,184,255,0.35);border-radius:8px;color:var(--text,#ecf0f1);font-family:JetBrains Mono;font-size:0.82rem;cursor:pointer"><input type="checkbox" id="prof-tts-hd" ${ttsHd?'checked':''} style="width:18px;height:18px;cursor:pointer"><span>🎙️ HD neural voice (Piper) <span style="color:#7a8a9a;font-size:0.7rem">— one-time ~63MB, natural offline speech</span></span></label>`);
+    html.push(`<div style="margin:14px 0 6px;color:#4db8ff;font-size:0.88rem;font-weight:bold">🔊 Read Aloud</div><div style="font-size:0.72rem;color:#7a8a9a;margin-bottom:6px">Off by default. Tap the 🔊 button up top to mute/unmute anytime. When on, auto-speaks questions &amp; choices at Level 1 (Pre-K). The 🔊 buttons in games always work.</div><label style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.18);border-radius:8px;color:var(--text,#ecf0f1);font-family:JetBrains Mono;font-size:0.82rem;cursor:pointer"><input type="checkbox" id="prof-tts" ${ttsOn?'checked':''} style="width:18px;height:18px;cursor:pointer">Read questions aloud automatically (Pre-K)</label><label style="display:flex;align-items:center;gap:10px;padding:8px 10px;margin-top:8px;background:rgba(255,255,255,0.04);border:1px solid rgba(77,184,255,0.35);border-radius:8px;color:var(--text,#ecf0f1);font-family:JetBrains Mono;font-size:0.82rem;cursor:pointer"><input type="checkbox" id="prof-tts-hd" ${ttsHd?'checked':''} style="width:18px;height:18px;cursor:pointer"><span>🎙️ HD natural voice (Kokoro + Piper backup) <span style="color:#7a8a9a;font-size:0.7rem">— Kokoro first; Piper backup if needed</span></span></label>`);
     html.push('<div style="margin-top:14px;display:flex;gap:8px"><button id="prof-save" class="retro-btn" style="flex:1">SAVE</button><button id="prof-cancel" class="retro-btn" style="flex:1">CLOSE</button></div></div>');
     ov.innerHTML=html.join('');
     document.body.appendChild(ov);
@@ -1517,30 +1517,33 @@
   ];
   const PHON_SP={a:'aaa',b:'buh',c:'kuh',d:'duh',e:'ehh',f:'fff',g:'guh',h:'huh',i:'ihh',j:'juh',k:'kuh',l:'lll',m:'mmm',n:'nnn',o:'aww',p:'puh',q:'kwuh',r:'rrr',s:'sss',t:'tuh',u:'uhh',v:'vvv',w:'wuh',x:'ks',y:'yuh',z:'zzz',sh:'shhh',ch:'chuh',ck:'kuh',oo:'ooo',ee:'eee',ai:'ayy',oa:'ohh',ng:'nng',ke:'kuh'};
   const _phonSnd=(x)=>{const k=String(x).toLowerCase();return PHON_SP[k]||k;};
-  function _phonLetterSay(c){const snd=_phonSnd(c.l);return c.w+'. '+c.w+' starts with '+snd+'. The letter '+c.l+' says '+snd+'.';}
-  function _phonSoundAsk(c){const snd=_phonSnd(c.l);return 'Listen. '+snd+'. Which letter says '+snd+'?';}
-  function _phonSoundYes(c){const snd=_phonSnd(c.l);return 'Yes! '+c.l+' says '+snd+'. '+c.w+' starts with '+snd+'.';}
-  function _phonBlendSay(cur){return [...cur.c.map(_phonSnd), 'That makes '+cur.w+'!'];}
+  function _phonLetterName(c){return 'This is the letter '+c.l+'.';}
+  function _phonLetterSound(c){const snd=_phonSnd(c.l);return 'The letter '+c.l+' says '+snd+'.';}
+  function _phonLetterSay(c){const snd=_phonSnd(c.l);return [_phonLetterName(c), 'Listen to the sound. '+snd+'.', _phonLetterSound(c), c.w+' starts with '+snd+'.', 'Say it with me. '+snd+'. '+c.w+'.'];}
+  function _phonSoundAsk(c){const snd=_phonSnd(c.l);return ['Listen to the sound.', snd+'.', 'Which letter says '+snd+'?'];}
+  function _phonSoundYes(c){const snd=_phonSnd(c.l);return ['Yes!', 'The letter '+c.l+' says '+snd+'.', c.w+' starts with '+snd+'.'];}
+  function _phonBlendSay(cur){const sounds=cur.c.map(_phonSnd);return ['Let us sound out '+cur.w+'.', ...sounds.map(x=>x+'.'), sounds.join(' ')+'.', cur.w+'!'];}
+  function _phonRhymeAsk(w){return ['Listen.', w+'.', 'Which word rhymes with '+w+'?'];}
   let phonIdx=0,phonWordIdx=0,phonMatch=null,phonRhyme=null;
-  function _phonSpeak(text){if(typeof speakSeq==='function')speakSeq([text]);else if(typeof speakText==='function')speakText(text);}
+  function _phonSpeak(text){const items=Array.isArray(text)?text:[text];if(typeof speakSeq==='function')speakSeq(items);else if(typeof speakText==='function')speakText(items.join(' '));}
   function _phonMark(){localStorage.setItem('phon-words-seen',String(_intLS('phon-words-seen')+1));}
   function renderPhonLetters(){
     const pane=$$('#phon-letters-pane');if(!pane)return;
     const cur=PHON_LETTERS[phonIdx];
     const grid=PHON_LETTERS.map((p,i)=>`<button class="phon-tile${i===phonIdx?' on':''}" data-i="${i}" aria-label="Letter ${p.l}">${p.l}</button>`).join('');
-    pane.innerHTML=`<div class="phon-letter-grid">${grid}</div><div class="phon-detail"><div class="pd-emoji">${cur.e}</div><div class="pd-letter">${cur.l}</div><div class="pd-sound">Sound: &quot;${cur.s}&quot; · ${cur.w} starts with it</div><button class="phon-hear-btn" id="phon-hear">🔊 Hear It</button></div>`;
+    pane.innerHTML=`<div class="phon-letter-grid">${grid}</div><div class="phon-detail"><div class="pd-emoji">${cur.e}</div><div class="pd-letter">${cur.l}</div><div class="pd-sound">Letter ${cur.l} says &quot;${cur.s}&quot; · like ${cur.w}</div><button class="phon-hear-btn" id="phon-hear">Hear letter sound</button></div>`;
     pane.querySelectorAll('.phon-tile').forEach(btn=>btn.addEventListener('click',()=>{phonIdx=Number(btn.dataset.i);renderPhonLetters();_phonSpeak(_phonLetterSay(PHON_LETTERS[phonIdx]));}));
-    $('#phon-hear').addEventListener('click',()=>_phonSpeak(_phonLetterSay(PHON_LETTERS[phonIdx])));
+    $$('#phon-hear').addEventListener('click',()=>_phonSpeak(_phonLetterSay(PHON_LETTERS[phonIdx])));
   }
   function renderPhonWord(){
     const pane=$$('#phon-words-pane');if(!pane)return;
     const cur=PHON_WORDS[phonWordIdx];
     const chunks=cur.c.map(c=>`<button class="phon-chunk" data-c="${c}">${c}</button>`).join('');
-    pane.innerHTML=`<div class="phon-word-card"><div class="phon-word-emoji">${cur.e}</div><div class="phon-blend-row">${chunks}</div><button class="phon-hear-btn" id="phon-blend-btn">🔊 Blend It</button><div class="phon-word-nav"><button class="phon-tab" id="phon-word-prev">◀ Prev</button><button class="phon-tab" id="phon-word-next">Next ▶</button></div></div>`;
-    pane.querySelectorAll('.phon-chunk').forEach(btn=>btn.addEventListener('click',()=>{const snd=_phonSnd(btn.dataset.c);_phonSpeak(snd+'. '+snd+'.');}));
-    $('#phon-blend-btn').addEventListener('click',()=>{if(typeof speakSeq==='function')speakSeq(_phonBlendSay(cur));else _phonSpeak(cur.w);});
-    $('#phon-word-prev').addEventListener('click',()=>{phonWordIdx=(phonWordIdx-1+PHON_WORDS.length)%PHON_WORDS.length;renderPhonWord();const c=PHON_WORDS[phonWordIdx];if(typeof speakSeq==='function')speakSeq(_phonBlendSay(c));});
-    $('#phon-word-next').addEventListener('click',()=>{phonWordIdx=(phonWordIdx+1)%PHON_WORDS.length;_phonMark();renderPhonWord();const c=PHON_WORDS[phonWordIdx];if(typeof speakSeq==='function')speakSeq(_phonBlendSay(c));});
+    pane.innerHTML=`<div class="phon-word-card"><div class="phon-word-emoji">${cur.e}</div><div class="pd-letter" style="font-size:2rem;margin:6px 0">${cur.w}</div><div class="pd-sound" style="margin-bottom:8px">Tap each sound, then Blend</div><div class="phon-blend-row">${chunks}</div><button class="phon-hear-btn" id="phon-blend-btn">Blend the word</button><div class="phon-word-nav"><button class="phon-tab" id="phon-word-prev">◀ Prev</button><button class="phon-tab" id="phon-word-next">Next ▶</button></div></div>`;
+    pane.querySelectorAll('.phon-chunk').forEach(btn=>btn.addEventListener('click',()=>{const ch=btn.dataset.c;const snd=_phonSnd(ch);_phonSpeak(['This part says '+snd+'.', snd+'.']);}));
+    $$('#phon-blend-btn').addEventListener('click',()=>{if(typeof speakSeq==='function')speakSeq(_phonBlendSay(cur));else _phonSpeak(cur.w);});
+    $$('#phon-word-prev').addEventListener('click',()=>{phonWordIdx=(phonWordIdx-1+PHON_WORDS.length)%PHON_WORDS.length;renderPhonWord();const c=PHON_WORDS[phonWordIdx];if(typeof speakSeq==='function')speakSeq(_phonBlendSay(c));});
+    $$('#phon-word-next').addEventListener('click',()=>{phonWordIdx=(phonWordIdx+1)%PHON_WORDS.length;_phonMark();renderPhonWord();const c=PHON_WORDS[phonWordIdx];if(typeof speakSeq==='function')speakSeq(_phonBlendSay(c));});
   }
   function _phonPickN(pool,n,skip){
     const arr=pool.filter(x=>x!==skip),res=[];
@@ -1564,9 +1567,9 @@
     const others=_phonPickN(PHON_LETTERS,2,target);
     const tiles=_phonPickN([target,...others],3,null);
     phonMatch.firstTry=true;
-    pane.innerHTML=_phonGameHUD(phonMatch,10)+'<p class="phon-game-q">Which letter says <strong>&quot;'+target.s+'&quot;</strong>?</p><div class="phon-blend-row">'+tiles.map(t=>'<button class="phon-game-tile" data-l="'+t.l+'"'+(t===target?' data-ok="1"':'')+'>'+t.l+'</button>').join('')+'</div><button class="phon-hear-btn" id="phon-match-replay">🔊 Hear It Again</button>';
+    pane.innerHTML=_phonGameHUD(phonMatch,10)+'<p class="phon-game-q">Which letter says <strong>&quot;'+target.s+'&quot;</strong>?</p><div class="phon-blend-row">'+tiles.map(t=>'<button class="phon-game-tile" data-l="'+t.l+'"'+(t===target?' data-ok="1"':'')+'>'+t.l+'</button>').join('')+'</div><button class="phon-hear-btn" id="phon-match-replay">Hear it again</button>';
     _phonSpeak(_phonSoundAsk(target));
-    $('#phon-match-replay').onclick=()=>_phonSpeak(_phonSoundAsk(target));
+    $$('#phon-match-replay').onclick=()=>_phonSpeak(_phonSoundAsk(target));
     pane.querySelectorAll('.phon-game-tile').forEach(btn=>btn.addEventListener('click',()=>{
       if(btn.dataset.ok){
         if(phonMatch.firstTry){phonMatch.score++;if(typeof addScore==='function')addScore(1);}
@@ -1597,19 +1600,19 @@
     }
     const tiles=_phonPickN([answer,...distractors],3,null);
     phonRhyme.firstTry=true;
-    pane.innerHTML=_phonGameHUD(phonRhyme,10)+'<div class="phon-word-emoji">'+target[1]+'</div><p class="phon-game-q">Which one rhymes with <strong>'+target[0]+'</strong>?</p><div class="phon-blend-row">'+tiles.map(t=>'<button class="phon-game-tile phon-pic" data-w="'+t[0]+'"'+(t===answer?' data-ok="1"':'')+'><span class="pt-emoji">'+t[1]+'</span><span class="pt-word">'+t[0]+'</span></button>').join('')+'</div><button class="phon-hear-btn" id="phon-rhyme-replay">🔊 Hear It Again</button>';
-    if(typeof speakSeq==='function')speakSeq([target[0]+'. Which one rhymes with '+target[0]+'?']);
-    $$('#phon-rhyme-replay').onclick=()=>{if(typeof speakSeq==='function')speakSeq([target[0]+'. '+tiles.map(t=>t[0]).join('. ')]);};
+    pane.innerHTML=_phonGameHUD(phonRhyme,10)+'<div class="phon-word-emoji">'+target[1]+'</div><p class="phon-game-q">Which one rhymes with <strong>'+target[0]+'</strong>?</p><div class="phon-blend-row">'+tiles.map(t=>'<button class="phon-game-tile phon-pic" data-w="'+t[0]+'"'+(t===answer?' data-ok="1"':'')+'><span class="pt-emoji">'+t[1]+'</span><span class="pt-word">'+t[0]+'</span></button>').join('')+'</div><button class="phon-hear-btn" id="phon-rhyme-replay">Hear it again</button>';
+    _phonSpeak(_phonRhymeAsk(target[0]));
+    $$('#phon-rhyme-replay').onclick=()=>_phonSpeak([..._phonRhymeAsk(target[0]), 'Choices: '+tiles.map(t=>t[0]).join(', ')+'.']);
     pane.querySelectorAll('.phon-game-tile').forEach(btn=>btn.addEventListener('click',()=>{
       if(btn.dataset.ok){
         if(phonRhyme.firstTry){phonRhyme.score++;if(typeof addScore==='function')addScore(1);}
         btn.classList.add('phon-right');
-        _phonSpeak(btn.dataset.w+'! '+target[0]+' and '+btn.dataset.w+' rhyme!');
+        _phonSpeak([btn.dataset.w+'!', target[0]+' and '+btn.dataset.w+' rhyme!']);
         phonRhyme.idx++;
         setTimeout(()=>{if(currentGame==='phonics')phonRhymeRound();},1300);
       }else{
         phonRhyme.firstTry=false;btn.classList.add('phon-wrong');
-        _phonSpeak(btn.dataset.w+' does not rhyme with '+target[0]+'. Try again!');
+        _phonSpeak([btn.dataset.w+' does not rhyme with '+target[0]+'.', 'Try again!']);
       }
     }));
   }
@@ -1623,7 +1626,7 @@
     els.forEach(([t],i)=>{t.onclick=()=>{show(i);if(i===2){phonMatch={idx:0,score:0};phonMatchRound();}if(i===3){phonRhyme={idx:0,score:0};phonRhymeRound();}};});
     show(0);
     renderPhonLetters();renderPhonWord();
-    if(currentLevel===1&&typeof ttsAuto==='function'&&ttsAuto())_phonSpeak(_phonLetterSay(PHON_LETTERS[0]));
+    if(currentLevel<=2&&typeof ttsAuto==='function'&&ttsAuto())_phonSpeak(_phonLetterSay(PHON_LETTERS[0]));
   }
   function spawnComboPopup(text, near) {
     const el = document.createElement('div'); el.className='combo-popup'; el.textContent=text;
@@ -2177,7 +2180,7 @@
       _storyWait=text;_speakWait=null;
       try{if('speechSynthesis' in window)window.speechSynthesis.cancel();}catch(e){}
       _hdBanner('Loading natural voice... please wait');
-      _piperWarm();
+      _hdWarm();
       return;
     }
     if (!('speechSynthesis' in window)) return;
@@ -10492,7 +10495,7 @@ function playAnimalSound(type) {
     if(varR<1e-6&&meanR>0.01)return false;
     return true;
   }
-  function _kkCan(){try{return !_kkFailed&&localStorage.getItem('amni-learn-kk')==='on';}catch(e){return false;}}
+  function _kkCan(){try{return !_kkFailed&&localStorage.getItem('amni-learn-kk')!=='off';}catch(e){return !_kkFailed;}}
   async function _kkLoad(onProg){
     if(_kkReady)return _kkTTS;
     if(_kkInit)return _kkInit;
@@ -10520,7 +10523,7 @@ function playAnimalSound(type) {
   function _kkPrep(t){t=String(t).replace(/([.!?])\s*(?=[A-Z])/g,'$1 ').replace(/,\s*/g,', ').replace(/!{2,}/g,'!').replace(/\.{3,}/g,'…');const a=t.replace(/[^a-zA-Z]/g,'');if(a&&a.replace(/[^A-Z]/g,'').length/a.length>0.6){t=t.toLowerCase().replace(/(^|[.!?]\s+)([a-z])/g,(m,p,c)=>p+c.toUpperCase()).replace(/\bi\b/g,'I');}return t;}
   function _chunkSpans(text){const spans=[];const re=/[^.!?]*[.!?]+\s*/g;let m;while((m=re.exec(text))){if(m[0].trim())spans.push({s:m.index,e:m.index+m[0].length,t:m[0]});}spans.length?(spans[spans.length-1].e<text.length&&text.slice(spans[spans.length-1].e).trim()&&spans.push({s:spans[spans.length-1].e,e:text.length,t:text.slice(spans[spans.length-1].e)})):spans.push({s:0,e:text.length,t:text});const out=[];for(const sp of spans){const last=out[out.length-1];last&&(last.e-last.s)+(sp.e-sp.s)<140?(last.e=sp.e,last.t+=sp.t):out.push({s:sp.s,e:sp.e,t:sp.t});}return out;}
   async function _kkWav(text,speed){const t=await _kkLoad();const a=await t.generate(_kkPrep(text),{voice:_KKVOICE,speed:speed||1});if(!_kkAudioOk(a)){_kkFailed=true;_kkReady=false;try{t.model&&t.model.dispose&&t.model.dispose();}catch(e){}throw new Error('kk-garbage-utt');}return a.toBlob();}
-  async function _synthWav(text,speed){if(_hdReady){try{const m=await _hdLoad();return await m.predict({text:text,voiceId:_HDVOICE});}catch(e){}}if(_kkReady||_kkCan()){try{return await _kkWav(text,speed);}catch(e){}}throw new Error('no-synth');}
+  async function _synthWav(text,speed){if(_kkReady){try{return await _kkWav(text,speed);}catch(e){}}if(_hdReady){try{const m=await _hdLoad();return await m.predict({text:text,voiceId:_HDVOICE});}catch(e){}}if(_kkCan()&&!_kkFailed){try{return await _kkWav(text,speed);}catch(e){}}try{const m=await _hdLoad();return await m.predict({text:text,voiceId:_HDVOICE});}catch(e){}throw new Error('no-synth');}
   function hdOn(){try{return localStorage.getItem('amni-learn-tts-hd')==='on';}catch(e){return false;}}
   function _hdCtx(){return currentGame==='phonics'||currentGame==='storybook';}
   let _speakWait=null,_storyWait=null,_hdWarming=false;
@@ -10528,8 +10531,9 @@ function playAnimalSound(type) {
     if(_storyWait!=null){const t=_storyWait;_storyWait=null;_hdBanner(null);if(typeof _hdReadPage==='function')_hdReadPage(t);return;}
     if(_speakWait){const q=_speakWait;_speakWait=null;_hdBanner(null);_hdSay(q).catch(()=>_webSeq(q));}
   }
-  function _piperWarm(){if(_hdReady){_flushHdQueue();return;}if(_hdWarming)return;_hdWarming=true;_hdBanner('Loading natural voice... please wait');_hdLoad(p=>_hdBanner('Loading natural voice... '+(p||0)+'%')).then(()=>{_hdWarming=false;_hdBanner('Natural voice ready!');setTimeout(()=>{if(!_speakWait&&_storyWait==null)_hdBanner(null);},1400);_flushHdQueue();}).catch(()=>{_hdWarming=false;const q=_speakWait;const st=_storyWait;_speakWait=null;_storyWait=null;_hdBanner('Using device voice for now');setTimeout(()=>_hdBanner(null),1800);if(st!=null&&typeof playCurrentPage==='function'){_storyState.webFallback=true;playCurrentPage(true);}else if(q)_webSeq(q);});}
-  function _hdWarm(){if(!_hdReady)_piperWarm();if(_kkCan()&&!_kkReady&&!_kkFailed){let shown=false;_kkLoad(p=>{shown=true;_hdBanner('Loading experimental voice... '+(p||0)+'%');}).then(()=>{if(shown){_hdBanner('Experimental voice ready');setTimeout(()=>_hdBanner(null),1600);}}).catch(()=>_hdBanner(null));}}
+  function _piperWarm(){if(_hdReady){_flushHdQueue();return;}_hdBanner('Loading backup voice... please wait');_hdLoad(p=>_hdBanner('Loading backup voice... '+(p||0)+'%')).then(()=>{_hdBanner('Backup voice ready');setTimeout(()=>{if(!_speakWait&&_storyWait==null)_hdBanner(null);},1400);_flushHdQueue();}).catch(()=>{const q=_speakWait;const st=_storyWait;_speakWait=null;_storyWait=null;_hdBanner('Using device voice for now');setTimeout(()=>_hdBanner(null),1800);if(st!=null&&typeof playCurrentPage==='function'){_storyState.webFallback=true;playCurrentPage(true);}else if(q)_webSeq(q);});}
+  function _kkWarm(){if(_kkReady){_flushHdQueue();return;}if(_kkFailed||!_kkCan())return _piperWarm();if(_hdWarming)return;_hdWarming=true;_hdBanner('Loading natural voice... please wait');_kkLoad(p=>_hdBanner('Loading natural voice... '+(p||0)+'%')).then(()=>{_hdWarming=false;_hdBanner('Natural voice ready!');setTimeout(()=>{if(!_speakWait&&_storyWait==null)_hdBanner(null);},1400);_flushHdQueue();}).catch(()=>{_hdWarming=false;_hdBanner('Natural voice unavailable — trying backup...');_piperWarm();});}
+  function _hdWarm(){if(_kkReady||_hdReady)return;if(_kkCan())_kkWarm();else _piperWarm();}
   function _hdBanner(msg){let b=document.getElementById('hd-tts-banner');if(!msg){if(b)b.remove();return;}if(!b){b=document.createElement('div');b.id='hd-tts-banner';b.setAttribute('role','status');b.setAttribute('aria-live','polite');b.style.cssText='position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:99999;background:#1a1f2e;border:2px solid #4db8ff;color:#cfe8ff;font-family:system-ui,sans-serif;font-size:1rem;font-weight:600;padding:12px 18px;border-radius:12px;box-shadow:0 8px 28px rgba(0,0,0,0.55);max-width:90vw;text-align:center';document.body.appendChild(b);}b.textContent=msg;}
   async function _hdLoad(onProg){
     if(_hdReady)return _hdMod;
@@ -10539,7 +10543,7 @@ function playAnimalSound(type) {
   }
   function _hdStop(){_hdGen++;try{if(_hdAudio){_hdAudio.onended=null;_hdAudio.onerror=null;_hdAudio.pause();_hdAudio.src='';_hdAudio=null;}}catch(e){}}
   function _hdPlayBlob(b){return new Promise(res=>{let a;try{a=new Audio(URL.createObjectURL(b));}catch(e){return res();}_hdAudio=a;const done=()=>{try{URL.revokeObjectURL(a.src);}catch(e){}res();};a.onended=done;a.onerror=done;a.play().catch(done);});}
-  async function _hdSay(items){_hdStop();const gen=_hdGen;if(!_hdReady&&!_kkReady){try{await _hdLoad();}catch(e){if(_kkCan())try{await _kkLoad();}catch(_){}}}if(gen!==_hdGen)return;const arr=(Array.isArray(items)?items:[items]).map(_ttsClean).filter(Boolean);const parts=arr.flatMap(t=>_chunkSpans(t).map(c=>c.t));const pre=t=>{const p=_synthWav(t);p.catch(()=>{});return p;};let next=parts.length?pre(parts[0]):null;for(let i=0;i<parts.length;i++){if(gen!==_hdGen)return;let wav;try{wav=await next;}catch(e){if(gen!==_hdGen)return;_webSeq([parts[i]]);continue;}next=i+1<parts.length?pre(parts[i+1]):null;if(gen!==_hdGen)return;await _hdPlayBlob(wav);}}
+  async function _hdSay(items){_hdStop();const gen=_hdGen;if(!_kkReady&&!_hdReady){if(_kkCan()){try{await _kkLoad();}catch(e){try{await _hdLoad();}catch(_){}}}else{try{await _hdLoad();}catch(_){}}}if(gen!==_hdGen)return;const arr=(Array.isArray(items)?items:[items]).map(_ttsClean).filter(Boolean);const parts=arr.flatMap(t=>_chunkSpans(t).map(c=>c.t));const pre=t=>{const p=_synthWav(t);p.catch(()=>{});return p;};let next=parts.length?pre(parts[0]):null;for(let i=0;i<parts.length;i++){if(gen!==_hdGen)return;let wav;try{wav=await next;}catch(e){if(gen!==_hdGen)return;_webSeq([parts[i]]);continue;}next=i+1<parts.length?pre(parts[i+1]):null;if(gen!==_hdGen)return;await _hdPlayBlob(wav);}}
   function _webSeq(items){
     if(!('speechSynthesis' in window)) return;
     try {
@@ -10562,7 +10566,7 @@ function playAnimalSound(type) {
     _speakWait=arr;_storyWait=null;
     try{if('speechSynthesis' in window)window.speechSynthesis.cancel();}catch(e){}
     _hdBanner('Loading natural voice... please wait');
-    _piperWarm();
+    _hdWarm();
   }
   function stopSpeech(){ try { if('speechSynthesis' in window) window.speechSynthesis.cancel(); } catch(e) {} _hdStop(); _speakWait=null;_storyWait=null; }
   function ttsAuto(){ try { return localStorage.getItem('amni-learn-tts') === 'on'; } catch(e) { return false; } }

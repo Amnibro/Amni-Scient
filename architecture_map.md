@@ -1,5 +1,10 @@
 # Architecture Map — amni-scient.com
 
+## v5.80.0 Amni-Learn Kokoro-primary + Pre-K letter pedagogy (2026-07-11)
+- TTS: `_kkCan` default on; `_kkWarm` / `_synthWav` / `_hdSay` try Kokoro first, Piper second; wait banner still blocks stock TTS until a neural path is ready.
+- Phonics: `_phonLetterSay` multi-utterance arrays (letter name → isolated sound → letter says → picture word → say-with-me). Blend/rhyme/match share paced arrays. `$('#phon-*)` → `$$`.
+- SW v1271→v1272.
+
 ## v5.85.0 Amni-Calc: coherence pass (2026-07-10, loop iter 14 — FINAL)
 - index.html v-equations: +3 cards (FRACTURE & NOTCHES 6 rows, GEAR TRAINS 4, METERING & REFRIGERATION 4) + lug row in LIFTING & RIGGING → 49 static equation tables. calc-engineer.js (`?v=eng17`): 8 DESC lines updated (fluids/gears/fatigue/stress/cycles/shafts/bolts/rigging) to mention their iters-8-12 cards.
 - LOOP CLOSED after 14 iterations, v5.69.0 → v5.85.0: machining module, CAD Studio (7 primitives/booleans/mass props/STL), rigging module, keyways, SEO pages ×6 + hash-router, equations catch-up ×2, conical/wave springs + 3D renders, torus/tube/chamfer, flow metering, planetary + AGMA handoff, fracture/Kt/lug from research sweep, VCC on sourced R134a, DIN 471 on sourced tables, PCC-1 sequences. 481 anchors / 18 suites, every ship live-verified. Remaining by-architecture exclusions: 2D FEA, fracture-materials DB.

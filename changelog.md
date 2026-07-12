@@ -1,5 +1,10 @@
 # Changelog 
 
+## Amni-Learn v5.80.0 — Kokoro primary + real Pre-K letter teaching - 2026-07-11
+- **Voice priority flipped**: Kokoro natural neural is primary (on by default unless `amni-learn-kk=off`); Piper is backup; device Web Speech last. Still waits with a loading banner — no stock Windows voice first. WASM-only Kokoro + garbage gate kept so AMD buzz does not return.
+- **Phonics teaches letters/sounds/reading** (not word lists): multi-step scripts with pauses — name the letter, isolate the sound, connect to a picture word, "say it with me"; blend path says "Let us sound out cat" then each phoneme then the word. Letter Catch / Rhyme use the same paced teach language. UI shows letter-says-sound and the full word on the blend card.
+- **Bugfix**: phonics Hear/Blend/Match/Rhyme controls used bare `$('#…')` (undefined) so clicks never wired — fixed to `$$`. SW `amni-learn-v1272`.
+
 ## Amni-Calc v5.85.0 — Coherence pass: the catalog catches up with itself - 2026-07-10
 - **Equations tab gains three cards + lug rows** so every formula shipped in the last five iterations is in the reference: FRACTURE & NOTCHES (stress intensity, critical crack, Paris law with its closed form, Howland and Inglis K_t, fatigue notch factor), GEAR TRAINS (meshing constraint, all three Willis ratios, assembly divisibility, per-mesh load), METERING & REFRIGERATION (the dP-meter equation, permanent loss, refrigeration COP with its Carnot bound, the discharge-enthalpy approximation) — and the pad-eye screening triple joins LIFTING & RIGGING.
 - **Eight module descriptions updated** so the sidebar tells the truth about what each module now does: Fluids mentions flow metering, Gears mentions planetary trains, Fatigue mentions LEFM fracture, Stress mentions K_t, Cycles mentions the R134a cycle, Shafts mentions keyways and ring grooves, Bolts mentions PCC-1 sequences, Rigging mentions lug checks.
