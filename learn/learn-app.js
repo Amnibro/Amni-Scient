@@ -1480,13 +1480,13 @@
     }
   }
   const PHON_LETTERS=[
-    {l:'A',s:'aaa',w:'Apple',e:'🍎'},{l:'B',s:'buh',w:'Ball',e:'⚽'},{l:'C',s:'kuh',w:'Cat',e:'🐱'},
-    {l:'D',s:'duh',w:'Dog',e:'🐶'},{l:'E',s:'ehh',w:'Egg',e:'🥚'},{l:'F',s:'fff',w:'Fish',e:'🐟'},
-    {l:'G',s:'guh',w:'Goat',e:'🐐'},{l:'H',s:'huh',w:'Hat',e:'🎩'},{l:'I',s:'ihh',w:'Igloo',e:'🧊'},
-    {l:'J',s:'juh',w:'Jam',e:'🍯'},{l:'K',s:'kuh',w:'Kite',e:'🪁'},{l:'L',s:'lll',w:'Lion',e:'🦁'},
-    {l:'M',s:'mmm',w:'Moon',e:'🌙'},{l:'N',s:'nnn',w:'Nest',e:'🪺'},{l:'O',s:'aww',w:'Octopus',e:'🐙'},
+    {l:'A',s:'ah',w:'Apple',e:'🍎'},{l:'B',s:'buh',w:'Ball',e:'⚽'},{l:'C',s:'kuh',w:'Cat',e:'🐱'},
+    {l:'D',s:'duh',w:'Dog',e:'🐶'},{l:'E',s:'eh',w:'Egg',e:'🥚'},{l:'F',s:'fff',w:'Fish',e:'🐟'},
+    {l:'G',s:'guh',w:'Goat',e:'🐐'},{l:'H',s:'huh',w:'Hat',e:'🎩'},{l:'I',s:'ih',w:'Igloo',e:'🧊'},
+    {l:'J',s:'juh',w:'Jam',e:'🍯'},{l:'K',s:'kuh',w:'Kite',e:'🪁'},{l:'L',s:'luh',w:'Lion',e:'🦁'},
+    {l:'M',s:'mmm',w:'Moon',e:'🌙'},{l:'N',s:'nnn',w:'Nest',e:'🪺'},{l:'O',s:'aw',w:'Octopus',e:'🐙'},
     {l:'P',s:'puh',w:'Pig',e:'🐷'},{l:'Q',s:'kwuh',w:'Queen',e:'👑'},{l:'R',s:'rrr',w:'Rain',e:'🌧️'},
-    {l:'S',s:'sss',w:'Sun',e:'☀️'},{l:'T',s:'tuh',w:'Tree',e:'🌳'},{l:'U',s:'uhh',w:'Umbrella',e:'☂️'},
+    {l:'S',s:'sss',w:'Sun',e:'☀️'},{l:'T',s:'tuh',w:'Tree',e:'🌳'},{l:'U',s:'uh',w:'Umbrella',e:'☂️'},
     {l:'V',s:'vvv',w:'Van',e:'🚐'},{l:'W',s:'wuh',w:'Watermelon',e:'🍉'},{l:'X',s:'ks',w:'Fox',e:'🦊'},
     {l:'Y',s:'yuh',w:'Yarn',e:'🧶'},{l:'Z',s:'zzz',w:'Zebra',e:'🦓'}
   ];
@@ -1515,14 +1515,14 @@
     ['sock','🧦','clock','🕐','rock','🪨'],['fox','🦊','box','📦'],['star','⭐','car','🚗','guitar','🎸'],
     ['mouse','🐭','house','🏠'],['ball','⚽','wall','🧱'],['fish','🐟','dish','🍽️']
   ];
-  const PHON_SP={a:'aaa',b:'buh',c:'kuh',d:'duh',e:'ehh',f:'fff',g:'guh',h:'huh',i:'ihh',j:'juh',k:'kuh',l:'lll',m:'mmm',n:'nnn',o:'aww',p:'puh',q:'kwuh',r:'rrr',s:'sss',t:'tuh',u:'uhh',v:'vvv',w:'wuh',x:'ks',y:'yuh',z:'zzz',sh:'shhh',ch:'chuh',ck:'kuh',oo:'ooo',ee:'eee',ai:'ayy',oa:'ohh',ng:'nng',ke:'kuh'};
-  const _phonSnd=(x)=>{const k=String(x).toLowerCase();return PHON_SP[k]||k;};
+  const PHON_SP={a:'ah',b:'buh',c:'kuh',d:'duh',e:'eh',f:'fff',g:'guh',h:'huh',i:'ih',j:'juh',k:'kuh',l:'luh',m:'mmm',n:'nnn',o:'aw',p:'puh',q:'kwuh',r:'rrr',s:'sss',t:'tuh',u:'uh',v:'vvv',w:'wuh',x:'kss',y:'yuh',z:'zzz',sh:'shh',ch:'chuh',ck:'kuh',oo:'ooo',ee:'eee',ai:'ay',oa:'oh',ng:'ing',ke:'kuh'};
+  const _phonSnd=(x)=>{const k=String(x).toLowerCase();if(PHON_SP[k])return PHON_SP[k];if(/^[a-z]$/.test(k))return PHON_SP[k]||'uh';return k;};
   function _phonLetterName(c){return 'This is the letter '+c.l+'.';}
   function _phonLetterSound(c){const snd=_phonSnd(c.l);return 'The letter '+c.l+' says '+snd+'.';}
-  function _phonLetterSay(c){const snd=_phonSnd(c.l);return ['This is the letter '+c.l+'. It says '+snd+'. '+c.w+' starts with '+snd+'. Say it with me: '+snd+', '+c.w+'.'];}
-  function _phonSoundAsk(c){const snd=_phonSnd(c.l);return ['Listen. '+snd+'. Which letter says '+snd+'?'];}
-  function _phonSoundYes(c){const snd=_phonSnd(c.l);return ['Yes! '+c.l+' says '+snd+'. '+c.w+' starts with '+snd+'.'];}
-  function _phonBlendSay(cur){const sounds=cur.c.map(_phonSnd);return ['Let us sound out '+cur.w+'. '+sounds.join(', ')+'. '+cur.w+'!'];}
+  function _phonLetterSay(c){const snd=_phonSnd(c.l);return ['This is the letter '+c.l+'. Its sound is '+snd+'. '+c.w+' starts with '+snd+'. Say '+snd+'. '+c.w+'.'];}
+  function _phonSoundAsk(c){const snd=_phonSnd(c.l);return ['Listen for the sound '+snd+'. Which letter makes '+snd+'?'];}
+  function _phonSoundYes(c){const snd=_phonSnd(c.l);return ['Yes! Letter '+c.l+' makes the sound '+snd+'. '+c.w+' starts with '+snd+'.'];}
+  function _phonBlendSay(cur){const sounds=cur.c.map(_phonSnd);return ['Let us sound out '+cur.w+'. '+sounds.join(', then ')+', makes '+cur.w+'.'];}
   function _phonRhymeAsk(w){return ['Which word rhymes with '+w+'?'];}
   let phonIdx=0,phonWordIdx=0,phonMatch=null,phonRhyme=null;
   function _phonSpeak(text){const items=Array.isArray(text)?text:[text];if(typeof speakSeq==='function')speakSeq(items);else if(typeof speakText==='function')speakText(items.join(' '));}

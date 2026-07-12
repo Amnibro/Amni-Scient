@@ -1,5 +1,8 @@
 # Changelog 
 
+## Amni-Learn v5.80.3 — Letter sounds say "ah/buh" not "A A A" - 2026-07-12
+- Kokoro was reading `aaa` as the letter name A three times. Phonics speak map is now TTS-true (`ah`, `eh`, `ih`, `buh`, `kuh`…) and scripts say **"Its sound is ah"** / **"makes the sound buh"**, never bare letter tokens as the sound. Display matches. Cache-bust `v=v1282`.
+
 ## Amni-Learn v5.80.2 — Per-click voice lag: stop killing Kokoro on short phonics - 2026-07-12
 - **Root cause of "every tap waits ~a minute"**: `_kkWav` ran `_kkAudioOk` on *every* utterance. Short letter sounds ("buh", "aaa") fail that speech-vs-buzz gate → disposed Kokoro → slow Piper/reload path **every click**.
 - Fix: quality gate stays **warm-up only**. Per-utterance only rejects empty audio. Blob cache for repeated phrases. Phonics scripts collapsed to **one** dense line so one synth covers a full teach. `_ttsBatch` merges short multi-line arrays. Cache-bust `learn-app.js?v=v1281`, SW `v1281`.
