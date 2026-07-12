@@ -10572,7 +10572,7 @@ function playAnimalSound(type) {
       if(_speakWait!==token)return;
       if(_kkReady||_hdReady)return;
       _speakWait=null;
-      _hdBanner('Still loading natural voice — using device voice for now');
+      _hdBanner('Still loading natural voice - using device voice for now');
       setTimeout(()=>{if(!(_kkReady||_hdReady))_hdBanner(null);},2200);
       _webSeq(token);
     },8000);
