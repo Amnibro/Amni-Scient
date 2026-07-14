@@ -1985,7 +1985,7 @@
     speechSynthesis.speak(u);
   }
   function initStorybook() {
-    if(typeof _hdWarm==='function')_hdWarm();
+    if(typeof _hdWarm==='function'&&(typeof _voiceMan==='undefined'||!_voiceMan))_hdWarm();
     _storyState.book = null;
     _storyState.pageIdx = 0;
     _storyState.webFallback = false;
@@ -2022,7 +2022,7 @@
     document.getElementById('story-title').textContent = book.title;
     document.getElementById('story-cover-large').textContent = book.cover;
     renderPage();
-    (_kkReady||_hdReady)&&book.pages[0]&&_synthWav(_chunkSpans(book.pages[0])[0].t,0.95).catch(()=>{});
+    (_kkReady||_hdReady||_voiceMan)&&book.pages[0]&&_synthWav(_chunkSpans(book.pages[0])[0].t,0.95).catch(()=>{});
     if (currentLevel === 1 && typeof ttsAuto === 'function' && ttsAuto() && typeof playCurrentPage === 'function') setTimeout(() => { if (_storyState.book === book && _storyState.pageIdx === 0 && !_storyState.utterance) playCurrentPage(); }, 700);
   }
   function renderPage() {
@@ -2182,7 +2182,7 @@
     if (!book) return;
     const text = book.pages[_storyState.pageIdx] || '';
     if((hdOn()||_hdCtx())&&!_storyState.webFallback){
-      if(_kkReady||_hdReady){_hdReadPage(text);return;}
+      if(_kkReady||_hdReady||_voiceHas(_chunkSpans(text).map(c=>c.t),0.95)){_hdReadPage(text);return;}
       _storyWait=text;_speakWait=null;
       try{if('speechSynthesis' in window)window.speechSynthesis.cancel();}catch(e){}
       _hdBanner('Loading natural voice... please wait');
@@ -10541,7 +10541,10 @@ function playAnimalSound(type) {
     return blob;
   }
   let _synthCache=new Map();
-  function _synthWav(text,speed){const key=text+'|'+(speed||1);if(_synthCache.has(key))return _synthCache.get(key);const p=_synthRaw(text,speed);p.catch(()=>_synthCache.delete(key));_synthCache.size>120&&_synthCache.clear();_synthCache.set(key,p);return p;}
+  let _voiceMan=null;
+  fetch('assets/voice/manifest.json').then(r=>r.ok?r.json():null).then(m=>{_voiceMan=m||null;}).catch(()=>{});
+  function _synthWav(text,speed){const key=text+'|'+(speed||1);if(_synthCache.has(key))return _synthCache.get(key);const f=_voiceMan&&_voiceMan[key];const p=f?fetch('assets/voice/'+f).then(r=>{if(!r.ok)throw new Error('vf-'+r.status);return r.blob();}).catch(()=>_synthRaw(text,speed)):_synthRaw(text,speed);p.catch(()=>_synthCache.delete(key));_synthCache.size>120&&_synthCache.clear();_synthCache.set(key,p);return p;}
+  function _voiceHas(parts,speed){return !!_voiceMan&&parts.every(t=>_voiceMan[t+'|'+(speed||1)]);}
   async function _synthRaw(text,speed){if(_kkReady){try{return await _kkWav(text,speed);}catch(e){}}if(_hdReady){try{const m=await _hdLoad();return await m.predict({text:text,voiceId:_HDVOICE});}catch(e){}}if(_kkCan()&&!_kkFailed){try{return await _kkWav(text,speed);}catch(e){}}try{const m=await _hdLoad();return await m.predict({text:text,voiceId:_HDVOICE});}catch(e){}throw new Error('no-synth');}
   function hdOn(){try{return localStorage.getItem('amni-learn-tts-hd')==='on';}catch(e){return false;}}
   function _hdCtx(){return currentGame==='phonics'||currentGame==='storybook';}
@@ -10554,10 +10557,10 @@ function playAnimalSound(type) {
   function _kkWarm(){if(_kkReady){_flushHdQueue();return;}if(_kkFailed||!_kkCan())return _piperWarm();if(_hdWarming)return;_hdWarming=true;_hdBanner('Loading natural voice... please wait');_kkLoad(p=>_hdBanner('Loading natural voice... '+(p||0)+'%')).then(()=>{_hdWarming=false;_hdBanner('Natural voice ready!');setTimeout(()=>{if(!_speakWait&&_storyWait==null)_hdBanner(null);},1400);_flushHdQueue();}).catch(()=>{_hdWarming=false;_hdBanner('Natural voice unavailable — trying backup...');_piperWarm();});}
   function _hdWarm(){if(_kkReady||_hdReady)return;if(_kkCan())_kkWarm();else _piperWarm();}
   function _hdBanner(msg){let b=document.getElementById('hd-tts-banner');if(!msg){if(b)b.remove();return;}if(!b){b=document.createElement('div');b.id='hd-tts-banner';b.setAttribute('role','status');b.setAttribute('aria-live','polite');b.style.cssText='position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:99999;background:#1a1f2e;border:2px solid #4db8ff;color:#cfe8ff;font-family:system-ui,sans-serif;font-size:1rem;font-weight:600;padding:12px 18px;border-radius:12px;box-shadow:0 8px 28px rgba(0,0,0,0.55);max-width:90vw;text-align:center';document.body.appendChild(b);}b.textContent=msg;}
-  async function _hdLoad(onProg){
+  async function _hdLoad(onProg,quiet){
     if(_hdReady)return _hdMod;
     if(_hdInit)return _hdInit;
-    _hdInit=(async()=>{_hdBanner('Loading natural voice... please wait');const m=await import('/learn/vendor/vits-web/vits-web.js');const have=await m.stored().catch(()=>[]);if(!have.includes(_HDVOICE)){await m.download(_HDVOICE,p=>{const pct=p&&p.total?Math.round(p.loaded/p.total*100):0;if(onProg)onProg(pct);else _hdBanner('Loading natural voice... '+pct+'%');});}else{_hdBanner('Warming up natural voice...');}const blob=await m.predict({text:'Hello! Ready to learn.',voiceId:_HDVOICE});if(!blob||!(blob.size>1000))throw new Error('hd-empty');_hdMod=m;_hdReady=true;return m;})();
+    _hdInit=(async()=>{quiet||_hdBanner('Loading natural voice... please wait');const m=await import('/learn/vendor/vits-web/vits-web.js');const have=await m.stored().catch(()=>[]);if(!have.includes(_HDVOICE)){await m.download(_HDVOICE,p=>{const pct=p&&p.total?Math.round(p.loaded/p.total*100):0;if(onProg)onProg(pct);else quiet||_hdBanner('Loading natural voice... '+pct+'%');});}else{quiet||_hdBanner('Warming up natural voice...');}const blob=await m.predict({text:'Hello! Ready to learn.',voiceId:_HDVOICE});if(!blob||!(blob.size>1000))throw new Error('hd-empty');_hdMod=m;_hdReady=true;return m;})();
     try{return await _hdInit;}catch(e){_hdInit=null;throw e;}
   }
   function _hdStop(){_hdGen++;try{if(_hdAudio){_hdAudio.onended=null;_hdAudio.onerror=null;_hdAudio.pause();_hdAudio.src='';_hdAudio=null;}}catch(e){}}
@@ -10565,10 +10568,10 @@ function playAnimalSound(type) {
   function _ttsBatch(arr){return arr.flatMap(t=>_chunkSpans(t).map(c=>c.t));}
   async function _hdSay(items){
     _hdStop();const gen=_hdGen;
-    if(!_kkReady&&!_hdReady){if(_kkCan()){try{await _kkLoad();}catch(e){try{await _hdLoad();}catch(_){}}}else{try{await _hdLoad();}catch(_){}}}
-    if(gen!==_hdGen)return;
     const arr=(Array.isArray(items)?items:[items]).map(_ttsClean).filter(Boolean);
     const parts=_ttsBatch(arr);
+    if(!_kkReady&&!_hdReady&&!_voiceHas(parts,1)){if(_kkCan()){try{await _kkLoad();}catch(e){try{await _hdLoad();}catch(_){}}}else{try{await _hdLoad();}catch(_){}}}
+    if(gen!==_hdGen)return;
     const pre=t=>{const p=_synthWav(t);p.catch(()=>{});return p;};
     let next=parts.length?pre(parts[0]):null;
     for(let i=0;i<parts.length;i++){
@@ -10597,7 +10600,7 @@ function playAnimalSound(type) {
     if(!arr.length)return;
     const wantHd=hdOn()||_hdCtx();
     if(!wantHd)return _webSeq(arr);
-    if(_hdReady||_kkReady)return void _hdSay(arr).catch(()=>_webSeq(arr));
+    if(_hdReady||_kkReady||_voiceHas(_ttsBatch(arr.map(_ttsClean).filter(Boolean)),1))return void _hdSay(arr).catch(()=>_webSeq(arr));
     _speakWait=arr;_storyWait=null;
     try{if('speechSynthesis' in window)window.speechSynthesis.cancel();}catch(e){}
     _hdBanner('Loading natural voice... please wait');
@@ -10615,7 +10618,7 @@ function playAnimalSound(type) {
   function stopSpeech(){ try { if('speechSynthesis' in window) window.speechSynthesis.cancel(); } catch(e) {} _hdStop(); _speakWait=null;_storyWait=null; }
   function ttsAuto(){ try { return localStorage.getItem('amni-learn-tts') === 'on'; } catch(e) { return false; } }
   function _syncTTSBtn(){const b=document.getElementById('tts-btn');if(!b)return;const on=ttsAuto();b.textContent=on?'🔊':'🔇';b.setAttribute('aria-pressed',on?'true':'false');b.title='Read aloud ('+(on?'on':'off')+')';}
-  function _toggleTTS(){const on=!ttsAuto();try{localStorage.setItem('amni-learn-tts',on?'on':'off');}catch(e){}if(!on)stopSpeech();_syncTTSBtn();if(typeof showFeedback==='function')showFeedback(on?'🔊 Read aloud ON':'🔇 Muted',on?'#2ecc71':'#7a8a9a');if(on&&(hdOn()||_hdCtx())&&!(_kkReady||_hdReady))_hdWarm();}
+  function _toggleTTS(){const on=!ttsAuto();try{localStorage.setItem('amni-learn-tts',on?'on':'off');}catch(e){}if(!on)stopSpeech();_syncTTSBtn();if(typeof showFeedback==='function')showFeedback(on?'🔊 Read aloud ON':'🔇 Muted',on?'#2ecc71':'#7a8a9a');if(on&&(hdOn()||_hdCtx())&&!(_kkReady||_hdReady)&&!_voiceMan)_hdWarm();}
   (function(){const b=document.getElementById('tts-btn');if(b)b.onclick=_toggleTTS;_syncTTSBtn();})();
   function speakText(text) {
     if(["Moo","Woof","Meow","Oink","Baa","Quack","Neigh","Ribbit","Roar","Hoot","Buzz","Chirp","Tweet","Gobble","Howl","Cluck","Cock-a-doodle-doo","Hiss","Squawk","Purr","Bleat","Trumpet","Chatter","Screech","Caw","Croak","Bark","Chitter","Hee-Haw","Coo","Snort","Bay","Yip","Snap","Whinny","Squeak","Growl","Scream"].includes(text)) { playAnimalSound(text); return; }

@@ -1,6 +1,10 @@
 # Changelog 
 
-## Amni-Learn v5.81.0 — Storybook/phonics TTS speed + word-tap duplicate voices - 2026-07-14
+## Amni-Learn v5.82.0 — Pre-baked natural voice for all phonics & storybooks - 2026-07-14
+- Every phonics script line, storybook page, and story quiz is now pre-generated audio (763 Opus clips, 11MB, same Piper voice) shipped with the site. Pages start speaking instantly — no model download, no synthesis wait, no "Loading natural voice" banner. Word-by-word follow-along works exactly as before, and clips cache on-device after first play.
+- Tapping a word still uses the instant device voice so kids hear the word right away.
+- Neural engines remain as automatic fallback for anything not in the baked set. Re-bake with `tools/voice_bake/` after editing story/phonics content.
+- Probes: headless end-to-end with engines blocked (all audio from static files, zero engine requests) + 24/24 unit asserts. Cache-bust `learn-app.js?v=v1286`, SW `amni-learn-v1286`.
 - Tapping a word while the neural voice read a page used to leave the page audio playing AND restart the whole passage → two voices. Now: page audio pauses, the word speaks, the same audio resumes exactly where it was (rapid double-taps hand off cleanly; a user-paused page stays paused).
 - Pages start speaking much sooner: first chunk is now a single sentence (was up to 140 chars), all synth results are cached (Piper included — re-reads are instant), the next page's opening is synthesized while the current page's last chunk plays, and opening a book pre-warms page 1. Phonics no longer batches its whole script into one big synth before speaking — the first line starts immediately.
 - Probe: `learn/tests/_tts_perf_worddup_test.js` (19/19). Cache-bust `learn-app.js?v=v1284`, SW `amni-learn-v1284`.

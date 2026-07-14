@@ -34,6 +34,22 @@ const _synthWav=new Function('_synthRaw',synthSrc+';return _synthWav;')(_synthRa
   rawFail=false;
   await _synthWav('bad',1);
   assert('rejection not cached',rawCalls===4);
+  const fetches=[];
+  let fetchOk=true;
+  const MAN={'hello|1':'v0001.ogg','world|0.95':'v0002.ogg'};
+  const fakeFetch=u=>{fetches.push(u);return Promise.resolve(u.endsWith('manifest.json')?{ok:true,json:()=>Promise.resolve(MAN)}:{ok:fetchOk,blob:()=>Promise.resolve('OGG:'+u)});};
+  const env2=new Function('fetch','_synthRaw',synthSrc+';return {synth:_synthWav,voiceHas:_voiceHas};')(fakeFetch,_synthRaw);
+  await new Promise(r=>setTimeout(r,0));
+  const preRaw=rawCalls;
+  const m1=await env2.synth('hello',1);
+  assert('manifest hit plays static file, no synth',m1==='OGG:assets/voice/v0001.ogg'&&rawCalls===preRaw);
+  await env2.synth('offmanifest',1);
+  assert('manifest miss falls back to synth',rawCalls===preRaw+1);
+  fetchOk=false;
+  await env2.synth('world',0.95);
+  assert('static fetch failure falls back to synth',rawCalls===preRaw+2);
+  assert('voiceHas true when all covered',env2.voiceHas(['hello'],1)===true);
+  assert('voiceHas false on any gap',env2.voiceHas(['hello','nope'],1)===false);
   const wordSrc=slice('function speakWord(text, near){','\n  function initStorybook');
   const calls=[];
   function FakeAudio(){this.paused=false;this.pause=()=>{this.paused=true;calls.push('hd-pause');};this.play=()=>{this.paused=false;calls.push('hd-play');return Promise.resolve();};}
