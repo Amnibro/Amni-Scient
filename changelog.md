@@ -1,5 +1,8 @@
 # Changelog 
 
+## Amni-Learn v5.80.4 — Username entry contrast fix - 2026-07-13
+- Welcome + profile name inputs were dark-on-dark (near-black field, unreadable typed text on tablets). Fields are now white background with dark text (`#fff` / `#111`). Cache-bust `learn-app.js?v=v1283`, SW `amni-learn-v1283`.
+
 ## Amni-Learn v5.80.3 — Letter sounds say "ah/buh" not "A A A" - 2026-07-12
 - Kokoro was reading `aaa` as the letter name A three times. Phonics speak map is now TTS-true (`ah`, `eh`, `ih`, `buh`, `kuh`…) and scripts say **"Its sound is ah"** / **"makes the sound buh"**, never bare letter tokens as the sound. Display matches. Cache-bust `v=v1282`.
 

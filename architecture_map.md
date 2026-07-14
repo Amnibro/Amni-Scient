@@ -1,5 +1,8 @@
 # Architecture Map — amni-scient.com
 
+## v5.80.4 Amni-Learn username input contrast (2026-07-13)
+- `learn/learn-app.js` welcome (`#wel-name`) + profile (`#prof-name`) text inputs: white bg + dark text (was rgba white 0.08 + var(--text) — unreadable on dark modal / tablet). SW v1282→v1283, script `?v=v1283`.
+
 ## v5.80.0 Amni-Learn Kokoro-primary + Pre-K letter pedagogy (2026-07-11)
 - TTS: `_kkCan` default on; `_kkWarm` / `_synthWav` / `_hdSay` try Kokoro first, Piper second; wait banner still blocks stock TTS until a neural path is ready.
 - Phonics: `_phonLetterSay` multi-utterance arrays (letter name → isolated sound → letter says → picture word → say-with-me). Blend/rhyme/match share paced arrays. `$('#phon-*)` → `$$`.

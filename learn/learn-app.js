@@ -719,7 +719,7 @@
   function _welcomeModal(){
     if(localStorage.getItem('profile-name')||localStorage.getItem('profile-welcomed')==='1')return;
     const ov=document.createElement('div');ov.className='hs-overlay';
-    ov.innerHTML=`<div class="hs-modal" role="dialog" aria-modal="true" style="min-width:320px;max-width:480px"><div class="hs-title">👋 Welcome to Amni-Learn!</div><div style="font-size:0.85rem;color:#bbb;margin:10px 0 14px;line-height:1.5">Pick a username for your progress card. It stays on this device — no password, no email, no sign-in needed.</div><input id="wel-name" type="text" placeholder="e.g. Anthony, Rikku, BrainNinja…" maxlength="24" style="width:100%;padding:10px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.18);border-radius:6px;color:var(--text,#ecf0f1);font-family:JetBrains Mono;font-size:0.95rem;margin-bottom:14px"><div style="display:flex;gap:8px"><button id="wel-save" class="retro-btn" style="flex:2">Save & Start</button><button id="wel-skip" class="retro-btn" style="flex:1">Skip</button></div></div>`;
+    ov.innerHTML=`<div class="hs-modal" role="dialog" aria-modal="true" style="min-width:320px;max-width:480px"><div class="hs-title">👋 Welcome to Amni-Learn!</div><div style="font-size:0.85rem;color:#bbb;margin:10px 0 14px;line-height:1.5">Pick a username for your progress card. It stays on this device — no password, no email, no sign-in needed.</div><input id="wel-name" type="text" placeholder="e.g. Anthony, Rikku, BrainNinja…" maxlength="24" style="width:100%;padding:10px;background:#fff;border:1px solid #ccc;border-radius:6px;color:#111;caret-color:#111;font-family:JetBrains Mono;font-size:0.95rem;margin-bottom:14px"><div style="display:flex;gap:8px"><button id="wel-save" class="retro-btn" style="flex:2">Save & Start</button><button id="wel-skip" class="retro-btn" style="flex:1">Skip</button></div></div>`;
     document.body.appendChild(ov);
     const inp=ov.querySelector('#wel-name');inp.focus();
     function save(){const nm=inp.value.trim();if(nm)localStorage.setItem('profile-name',nm);localStorage.setItem('profile-welcomed','1');ov.remove();_refreshProfileChip();if(nm&&typeof showFeedback==='function')showFeedback(`Welcome, ${nm}! 🌟`,'#2ecc71');}
@@ -737,7 +737,7 @@
     const ov=document.createElement('div');ov.className='hs-overlay';ov.onclick=e=>{if(e.target===ov)ov.remove();};
     const html=['<div class="hs-modal" role="dialog" aria-modal="true" style="max-height:88vh;overflow-y:auto;min-width:340px;max-width:580px"><div class="hs-title">👤 PROFILE</div>'];
     html.push('<div style="font-size:0.78rem;color:#7a8a9a;margin-bottom:8px">Set a display name. Pick a theme, mascot, and cursor trail — unlock more by playing.</div>');
-    html.push(`<div style="margin:8px 0"><label style="font-size:0.82rem;color:#bbb">Display name<br><input id="prof-name" type="text" value="${name.replace(/"/g,'&quot;')}" maxlength="24" style="width:100%;padding:8px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.18);border-radius:6px;color:var(--text,#ecf0f1);font-family:JetBrains Mono;font-size:0.9rem"></label></div>`);
+    html.push(`<div style="margin:8px 0"><label style="font-size:0.82rem;color:#bbb">Display name<br><input id="prof-name" type="text" value="${name.replace(/"/g,'&quot;')}" maxlength="24" style="width:100%;padding:8px;background:#fff;border:1px solid #ccc;border-radius:6px;color:#111;caret-color:#111;font-family:JetBrains Mono;font-size:0.9rem"></label></div>`);
     function _pickerSection(title,key,storageKey,active){
       const list=window._unlockables[key];
       let h=`<div style="margin:14px 0 6px;color:#4db8ff;font-size:0.88rem;font-weight:bold">${title}</div>`;
@@ -1601,7 +1601,7 @@
     const tiles=_phonPickN([answer,...distractors],3,null);
     phonRhyme.firstTry=true;
     pane.innerHTML=_phonGameHUD(phonRhyme,10)+'<div class="phon-word-emoji">'+target[1]+'</div><p class="phon-game-q">Which one rhymes with <strong>'+target[0]+'</strong>?</p><div class="phon-blend-row">'+tiles.map(t=>'<button class="phon-game-tile phon-pic" data-w="'+t[0]+'"'+(t===answer?' data-ok="1"':'')+'><span class="pt-emoji">'+t[1]+'</span><span class="pt-word">'+t[0]+'</span></button>').join('')+'</div><button class="phon-hear-btn" id="phon-rhyme-replay">Hear it again</button>';
-    _phonSpeak(_phonRhymeAsk(target[0]));
+    _phonSpeak(_phonRhymeAsk(target[0]));
     $$('#phon-rhyme-replay').onclick=()=>_phonSpeak([..._phonRhymeAsk(target[0]), 'Choices: '+tiles.map(t=>t[0]).join(', ')+'.']);
     pane.querySelectorAll('.phon-game-tile').forEach(btn=>btn.addEventListener('click',()=>{
       if(btn.dataset.ok){
