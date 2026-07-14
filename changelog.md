@@ -1,6 +1,9 @@
 # Changelog 
 
-## Amni-Learn v5.80.4 — Username entry contrast fix - 2026-07-13
+## Amni-Learn v5.81.0 — Storybook/phonics TTS speed + word-tap duplicate voices - 2026-07-14
+- Tapping a word while the neural voice read a page used to leave the page audio playing AND restart the whole passage → two voices. Now: page audio pauses, the word speaks, the same audio resumes exactly where it was (rapid double-taps hand off cleanly; a user-paused page stays paused).
+- Pages start speaking much sooner: first chunk is now a single sentence (was up to 140 chars), all synth results are cached (Piper included — re-reads are instant), the next page's opening is synthesized while the current page's last chunk plays, and opening a book pre-warms page 1. Phonics no longer batches its whole script into one big synth before speaking — the first line starts immediately.
+- Probe: `learn/tests/_tts_perf_worddup_test.js` (19/19). Cache-bust `learn-app.js?v=v1284`, SW `amni-learn-v1284`.
 - Welcome + profile name inputs were dark-on-dark (near-black field, unreadable typed text on tablets). Fields are now white background with dark text (`#fff` / `#111`). Cache-bust `learn-app.js?v=v1283`, SW `amni-learn-v1283`.
 
 ## Amni-Learn v5.80.3 — Letter sounds say "ah/buh" not "A A A" - 2026-07-12

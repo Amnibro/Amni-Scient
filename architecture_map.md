@@ -1,5 +1,10 @@
 # Architecture Map — amni-scient.com
 
+## v5.81.0 Amni-Learn TTS perf + word-tap duplicate-voice fix (2026-07-14)
+- Word tap (`speakWord`): pauses `_hdAudio` → speaks the word → resumes the SAME audio (never `playCurrentPage(true)` on the HD path, which used to launch a second `_hdReadPage` over the still-playing first = duplicated voices). Tap token `_storyState.wordTok` (incremented FIRST — `cancel()` fires the old utterance's `onend` synchronously) + `_storyState.hdResume` hand resume duty across rapid re-taps; user-paused audio stays paused; web-fallback path keeps cancel+restart (single-channel, no dup). HD-path taps no longer kill `autoplay`.
+- Synth latency: `_synthWav` now a promise-cache wrapper (key `text|speed`, cap 120, rejections evicted, in-flight dedupe) over `_synthRaw` (old body) — covers Piper too, not just `_kkBlobCache`. `_chunkSpans` never merges into the FIRST span → first audio = one sentence, not a 140-char blob. `_ttsBatch` join removed → first phonics item speaks immediately, pipeline prefetch covers the rest + paced gaps return. `_hdReadPage` prefetches next page's chunk 0 when the last chunk of the current page starts; `openStorybook` warm-prefetches page 0 chunk 0 when a neural engine is ready.
+- Probe: `learn/tests/_tts_perf_worddup_test.js` (19 asserts, slices REAL source: chunking, batching, cache dedupe/rejection, single/double-tap pause-resume). SW v1283→v1284, script `?v=v1284`. Backup `backups/v5.81.0_tts_perf/`.
+
 ## v5.80.4 Amni-Learn username input contrast (2026-07-13)
 - `learn/learn-app.js` welcome (`#wel-name`) + profile (`#prof-name`) text inputs: white bg + dark text (was rgba white 0.08 + var(--text) — unreadable on dark modal / tablet). SW v1282→v1283, script `?v=v1283`.
 
