@@ -353,7 +353,11 @@ body{background:#fff!important;color:#111!important;padding-top:0!important}
 .skip-cell{width:30px;height:30px}
 .stretch{padding:.3rem .5rem;margin:.25rem 0}
 .story-box{padding:.4rem .6rem}
-#sheets.scale-xl .trace-row.guided{min-height:104px}
+#sheets.scale-xl .trace-row.guided{min-height:136px}
+#sheets.scale-xl .trace-letter{font-size:6rem}
+#sheets.scale-xl .trace-letter.mid{font-size:4.2rem}
+#sheets.scale-xl .trace-letter.small{font-size:3.8rem}
+#sheets.scale-xl .trace-letter.sm2{font-size:3.2rem}
 #sheets.scale-lg .trace-row.guided{min-height:64px}
 .match-cols{margin:.2rem auto .35rem}
 .match-col{gap:9px}
@@ -365,6 +369,7 @@ body{background:#fff!important;color:#111!important;padding-top:0!important}
 #sheets.fmt-adventure.scale-xl .match-col{font-size:1.4rem;gap:9px}
 #sheets.fmt-adventure.scale-xl .wavy-sec{display:none}
 #sheets.fmt-adventure.scale-xl .prac-h{margin:.35rem 0 .2rem}
+.act-card,.trace-row.guided,.draw-box,.quest-stop,.shape-row,.side-q,.plan-row,.match-cols,.ws-grid,.stamp-track,.prob-grid,.circle-row,.pattern-row,.point-row,.theme-banner,.story-box,.stretch,.sing-line,.choice-row,.maze-wrap,.color-pic,.skip-row{break-inside:avoid;page-break-inside:avoid}
 *{print-color-adjust:exact;-webkit-print-color-adjust:exact}
 @page{size:letter;margin:.5in}
 }
@@ -588,6 +593,7 @@ var bandOf=function(age){return age<=2?'t12':age<=4?'p34':age<=6?'k56':age<=8?'g
 var xmur3=function(str){for(var i=0,h=1779033703^str.length;i<str.length;i++){h=Math.imul(h^str.charCodeAt(i),3432918353);h=h<<13|h>>>19;}return function(){h=Math.imul(h^(h>>>16),2246822507);h=Math.imul(h^(h>>>13),3266489909);return (h^=h>>>16)>>>0;};};
 var mulberry32=function(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;var t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return ((t^t>>>14)>>>0)/4294967296;};};
 var pickN=function(rnd,pool,n){var arr=pool.slice(),res=[];for(var i=0;i<n&&arr.length;i++){res.push(arr.splice(Math.floor(rnd()*arr.length),1)[0]);}return res;};
+var laneSVG=function(kind){var d='stroke="#6d7585" stroke-width="6" stroke-dasharray="12 10" fill="none" stroke-linecap="round"';var body=kind==='line'?'<line x1="14" y1="40" x2="626" y2="40" '+d+'/>':'<path d="M14 40 Q 55 6 96 40 T 178 40 T 260 40 T 342 40 T 424 40 T 506 40 T 588 40 L 626 40" '+d+'/>';return '<svg width="100%" height="64" viewBox="0 0 640 80" preserveAspectRatio="xMidYMid meet" style="display:block;margin:.2rem 0">'+body+'<circle cx="14" cy="40" r="9" fill="#2fa860"/></svg>';};
 var shapeSVG=function(kind,size){var s=size||110,d='stroke="#6d7585" stroke-width="5" stroke-dasharray="10 8" fill="none" stroke-linecap="round" stroke-linejoin="round"';
 var dotAt={circle:[55,9],square:[12,12],triangle:[55,10],star:[55,8],heart:[55,34],zigzag:[5,45]}[kind]||[0,0];
 var dot='<circle cx="'+dotAt[0]+'" cy="'+dotAt[1]+'" r="8" fill="#2fa860"/>';
@@ -828,7 +834,7 @@ var shape=pickN(rnd,['circle','square','heart'],1)[0];
 var pts=pickN(rnd,POINT_ITEMS,4);
 var v=Math.floor(rnd()*2);
 var fourth=v===0?'<h4 class="prac-h">👉 Point &amp; Name</h4><p class="prac-p">Caregiver: ask &quot;Where is the '+pts.map(function(p){return p[1];}).join(', the ')+'?&quot; and let them point.</p><div class="point-row">'+pts.map(function(p){return p[0];}).join('')+'</div>':oddOneOutHTML(rnd);
-return '<h4 class="prac-h">✏️ Trace Together (hand over hand)</h4><p class="prac-p">Start at the <strong style="color:#2fa860">green dot</strong> — big slow strokes!</p><div class="shape-row">'+shapeSVG(shape,250)+shapeSVG('zigzag',185)+'</div><h4 class="prac-h">🖍️ Scribble Zone</h4><div class="draw-box" style="min-height:170px"><div class="draw-label">Free scribbling — any marks count!</div></div>'+fourth;
+return '<h4 class="prac-h">✏️ Big Strokes (hand over hand)</h4><p class="prac-p">Start at the <strong style="color:#2fa860">green dot</strong> — big slow strokes!</p>'+laneSVG('line')+laneSVG('wave')+'<div class="shape-row">'+shapeSVG(shape,230)+'</div><h4 class="prac-h">🖍️ Scribble Zone</h4><div class="draw-box" style="min-height:150px"><div class="draw-label">Free scribbling — any marks count!</div></div>'+fourth;
 };
 var page3HTML=function(band,rnd,creativeItem){
 var weather=['&#9728;&#65039; Sunny','&#9729;&#65039; Cloudy','&#127783;&#65039; Rainy','&#10052;&#65039; Snowy'].map(function(w){return '<span class="choice"><span class="choice-circle"></span>'+w+'</span>';}).join('');
