@@ -127,6 +127,7 @@
 .trace-row{display:flex;gap:14px;flex-wrap:wrap;margin:.35rem 0;align-items:flex-end}
 .trace-row.guided{position:relative;width:100%;min-height:56px;border-bottom:2px solid #7d8595;padding:0 8px 2px}
 .trace-row.guided::before{content:'';position:absolute;left:0;right:0;top:52%;border-top:2px dashed #cfd5df}
+.trace-row.guided::after{content:'';position:absolute;left:0;right:0;top:4px;border-top:2px solid #e3e7ee}
 .trace-letter{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:2.4rem;color:transparent;-webkit-text-stroke:1.5px #7d8595;letter-spacing:2px;line-height:1;position:relative;z-index:1}
 .trace-letter.small{font-size:1.7rem}
 .trace-letter.mid{font-size:2rem}
@@ -188,16 +189,16 @@
 #sheets.scale-lg .hunt-grid{grid-template-columns:repeat(8,36px)}
 #sheets.scale-lg .hunt-cell{width:36px;height:36px;font-size:1rem}
 #sheets.scale-lg .circle-row{font-size:1.85rem;letter-spacing:10px}
-#sheets.scale-xl .trace-letter{font-size:3.2rem;-webkit-text-stroke:1.75px #7d8595}
-#sheets.scale-xl .trace-letter.mid{font-size:2.5rem}
-#sheets.scale-xl .trace-letter.sm2{font-size:2rem}
-#sheets.scale-xl .trace-letter.small{font-size:2.25rem}
-#sheets.scale-xl .trace-row.guided{min-height:84px}
-#sheets.scale-xl .trace-wavy{font-size:2.1rem}
-#sheets.scale-xl .point-row{font-size:2.7rem;letter-spacing:16px}
-#sheets.scale-xl .circle-row{font-size:2.1rem;letter-spacing:11px}
-#sheets.scale-xl .pattern-row{font-size:2.1rem}
-#sheets.scale-xl .pn-q{width:48px;height:48px;line-height:44px;font-size:1.5rem}
+#sheets.scale-xl .trace-letter{font-size:5rem;-webkit-text-stroke:2.25px #6d7585}
+#sheets.scale-xl .trace-letter.mid{font-size:3.6rem}
+#sheets.scale-xl .trace-letter.sm2{font-size:2.9rem}
+#sheets.scale-xl .trace-letter.small{font-size:3.3rem}
+#sheets.scale-xl .trace-row.guided{min-height:128px;border-bottom-width:3px}
+#sheets.scale-xl .trace-wavy{font-size:3rem;letter-spacing:5px}
+#sheets.scale-xl .point-row{font-size:3.8rem;letter-spacing:26px}
+#sheets.scale-xl .circle-row{font-size:2.6rem;letter-spacing:14px}
+#sheets.scale-xl .pattern-row{font-size:2.6rem}
+#sheets.scale-xl .pn-q{width:58px;height:58px;line-height:54px;font-size:1.9rem}
 #sheets.scale-xl .write-lines{gap:18px}
 #sheets.scale-xl .match-col{font-size:2.2rem;gap:18px}
 #sheets.scale-xl .act-box{width:28px;height:28px}
@@ -261,22 +262,38 @@
 #sheets .plan-row{border-left-color:var(--band-accent)}
 #sheets .theme-banner{border-color:var(--band-accent)}
 #sheets .stars-row div{font-family:var(--font-body)}
-#sheets.band-t12 .sheet-mascot,#sheets.band-p34 .sheet-mascot{font-size:3.1rem}
+#sheets.band-t12 .sheet-mascot,#sheets.band-p34 .sheet-mascot{font-size:3.8rem}
+#sheets.band-t12 .prac-h,#sheets.band-p34 .prac-h{display:inline-block;border:2.5px solid var(--band-accent);border-radius:999px;padding:.14rem .9rem;color:var(--band-accent);background:#fff}
+#sheets.band-t12 .sheet-page,#sheets.band-p34 .sheet-page{border:3px solid var(--band-accent);border-radius:20px}
+#sheets.band-t12 .draw-box,#sheets.band-p34 .draw-box{border:3px dashed var(--band-accent);border-radius:16px}
+#sheets.band-t12 .act-card,#sheets.band-p34 .act-card{border-left-width:6px}
+#sheets.band-t12 .act-ic,#sheets.band-p34 .act-ic{font-size:calc(var(--fs-emoji)*1.25)}
+#sheets.band-t12 .sing-line,#sheets.band-p34 .sing-line{border:2.5px solid var(--band-accent);border-radius:14px;padding:.4rem .7rem}
 #sheets.band-t1113 .sheet-mascot{display:none}
 #sheets.band-t1113 .sheet-head{border-bottom-width:2px}
 #sheets.band-t1113 .sheet-head h2{letter-spacing:3.5px}
 #sheets.scale-lg{--fs-emoji:1.6rem;--fs-title:1.7rem}
-#sheets.scale-xl{--fs-base:17px;--fs-title:1.95rem;--fs-body:1.06rem;--fs-mono:1.2rem;--fs-emoji:1.95rem}
+#sheets.scale-xl{--fs-base:17px;--fs-title:2.15rem;--fs-body:1.1rem;--fs-mono:1.2rem;--fs-emoji:2.4rem}
 #sheets.scale-lg .act-box{width:30px;height:30px}
 #sheets.scale-lg .q-num{width:40px;height:40px}
 #sheets.scale-lg .stamp{width:44px;height:44px}
-#sheets.scale-xl .act-box{width:34px;height:34px;border-width:2.5px}
+#sheets.scale-xl .act-box{width:44px;height:44px;border-width:3px;border-radius:10px}
 #sheets.scale-xl .q-num{width:46px;height:46px}
 #sheets.scale-xl .stamp{width:50px;height:50px;font-size:1.15rem}
 #sheets.scale-xl .supply-box{width:26px;height:26px}
-#sheets.scale-xl .choice-circle{width:22px;height:22px}
+#sheets.scale-xl .choice-circle{width:28px;height:28px}
 .done-box{display:inline-block;width:22px;height:22px;border:2px solid var(--accent);border-radius:6px;margin:0 7px;vertical-align:middle}
 #sheets.fmt-adventure .sheet-grid{display:flex;flex-direction:column;gap:0}
+#sheets.fmt-adventure.scale-xl .trace-row.guided{min-height:88px}
+#sheets.fmt-adventure.scale-xl .trace-letter{font-size:3.5rem}
+#sheets.fmt-adventure.scale-xl .match-col{font-size:1.7rem;gap:10px}
+#sheets.fmt-adventure.scale-xl .circle-row{font-size:2rem;letter-spacing:9px}
+#sheets.fmt-adventure.scale-xl .prac-h{margin:.4rem 0 .2rem}
+#sheets.fmt-adventure.scale-xl .prac-p{margin:.15rem 0}
+#sheets.fmt-adventure.scale-xl .trace-letter.mid{font-size:3rem}
+#sheets.fmt-adventure.scale-xl .trace-letter.small{font-size:2.8rem}
+#sheets.fmt-adventure.scale-xl .trace-letter.sm2{font-size:2.4rem}
+#sheets.fmt-adventure.scale-xl .wavy-sec{display:none}
 @media print{
 @page{size:letter;margin:.5in}
 nav,footer,.hamburger,.grid-bg,.scanlines,.crumbs,.product-hero,.curr-controls,.support-cta,section.curr-intro,section.curr-how,section.curr-why,.curr-keep,.curr-cta,.page-sep{display:none!important}
@@ -284,10 +301,11 @@ body{background:#fff!important;color:#111!important;padding-top:0!important}
 .curr-wrap{max-width:100%;padding:0}
 #sheets{display:block!important;font-size:11pt;--fs-base:11pt;--fs-title:16pt;--fs-sub:10pt;--fs-h:10pt;--fs-body:10.5pt;--fs-small:9pt;--fs-chip:8pt;--fs-mono:11pt;--fs-emoji:13pt;--page-min:0;--page-pad:0;--line:1.35}
 #sheets.scale-lg{--fs-base:11.5pt;--fs-title:17.5pt;--fs-sub:10.5pt;--fs-h:10.5pt;--fs-body:11.5pt;--fs-small:9.5pt;--fs-chip:8.5pt;--fs-mono:12pt;--fs-emoji:15pt}
-#sheets.scale-xl{--fs-base:12.5pt;--fs-title:19pt;--fs-sub:11pt;--fs-h:11pt;--fs-body:12.5pt;--fs-small:10pt;--fs-chip:9pt;--fs-mono:13.5pt;--fs-emoji:17pt;--line:1.32}
+#sheets.scale-xl{--fs-base:12.5pt;--fs-title:20pt;--fs-sub:11pt;--fs-h:11.5pt;--fs-body:12.5pt;--fs-small:10pt;--fs-chip:9pt;--fs-mono:13.5pt;--fs-emoji:21pt;--line:1.32}
 #sheets.band-t1113{--fs-emoji:11pt}
 .sheet-page{page-break-after:always;break-after:page;box-shadow:none;border-radius:0;padding:0;margin:0;max-width:none;min-height:0;width:100%;font-size:11pt}
 .sheet-page:last-child{page-break-after:auto;break-after:auto}
+#sheets.band-t12 .sheet-page,#sheets.band-p34 .sheet-page{border-radius:14pt;padding:6pt 9pt}
 .sheet-head,.mini-head{border-bottom-color:#111!important}
 .act-card{border-color:#333!important;border-left-color:inherit}
 .act-box{border-color:#111}
@@ -298,6 +316,7 @@ body{background:#fff!important;color:#111!important;padding-top:0!important}
 .write-line{border-bottom-color:#333!important}
 .blank,.hunt-cell,.ws-cell,.supply-box{border-color:#555!important}
 .draw-box{border-color:#333!important}
+#sheets.band-t12 .draw-box,#sheets.band-p34 .draw-box{border-color:var(--band-accent)!important}
 .choice-circle{border-color:#111!important}
 .pn-q{border-color:#555!important}
 .sing-line{border-color:#999!important;background:#fff!important}
@@ -327,19 +346,25 @@ body{background:#fff!important;color:#111!important;padding-top:0!important}
 .sheet-fields{margin-top:.35rem}
 .prac-h{margin:.45rem 0 .25rem}
 #sheets.scale-xl .q-body p,#sheets.scale-xl .q-steps,#sheets.scale-lg .q-body p,#sheets.scale-lg .q-steps{font-size:10.5pt}
-#sheets.scale-xl .circle-row{font-size:1.5rem;letter-spacing:7px}
-#sheets.scale-xl .trace-wavy{font-size:1.8rem}
+#sheets.scale-xl .circle-row{font-size:1.9rem;letter-spacing:9px}
+#sheets.scale-xl .trace-wavy{font-size:2.3rem}
 #sheets.scale-xl .match-col{font-size:1.7rem;gap:12px}
 .prob-grid{gap:6px 16px}
 .skip-cell{width:30px;height:30px}
 .stretch{padding:.3rem .5rem;margin:.25rem 0}
 .story-box{padding:.4rem .6rem}
-#sheets.scale-xl .trace-row.guided{min-height:74px}
+#sheets.scale-xl .trace-row.guided{min-height:104px}
 #sheets.scale-lg .trace-row.guided{min-height:64px}
 .match-cols{margin:.2rem auto .35rem}
 .match-col{gap:9px}
 #sheets.scale-xl .match-col{font-size:1.6rem;gap:10px}
 .write-lines{gap:10px;margin:.35rem 0 .6rem}
+#sheets.fmt-adventure.scale-xl .trace-row.guided{min-height:78px}
+#sheets.fmt-adventure.scale-xl .trace-letter{font-size:2.9rem}
+#sheets.fmt-adventure.scale-xl .circle-row{font-size:1.5rem;letter-spacing:7px}
+#sheets.fmt-adventure.scale-xl .match-col{font-size:1.4rem;gap:9px}
+#sheets.fmt-adventure.scale-xl .wavy-sec{display:none}
+#sheets.fmt-adventure.scale-xl .prac-h{margin:.35rem 0 .2rem}
 *{print-color-adjust:exact;-webkit-print-color-adjust:exact}
 @page{size:letter;margin:.5in}
 }
@@ -563,13 +588,15 @@ var bandOf=function(age){return age<=2?'t12':age<=4?'p34':age<=6?'k56':age<=8?'g
 var xmur3=function(str){for(var i=0,h=1779033703^str.length;i<str.length;i++){h=Math.imul(h^str.charCodeAt(i),3432918353);h=h<<13|h>>>19;}return function(){h=Math.imul(h^(h>>>16),2246822507);h=Math.imul(h^(h>>>13),3266489909);return (h^=h>>>16)>>>0;};};
 var mulberry32=function(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;var t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return ((t^t>>>14)>>>0)/4294967296;};};
 var pickN=function(rnd,pool,n){var arr=pool.slice(),res=[];for(var i=0;i<n&&arr.length;i++){res.push(arr.splice(Math.floor(rnd()*arr.length),1)[0]);}return res;};
-var shapeSVG=function(kind,size){var s=size||110,d='stroke="#7d8595" stroke-width="4" stroke-dasharray="9 7" fill="none" stroke-linecap="round" stroke-linejoin="round"';
-return kind==='circle'?'<svg width="'+s+'" height="'+s+'" viewBox="0 0 110 110"><circle cx="55" cy="55" r="46" '+d+'/></svg>':
-kind==='square'?'<svg width="'+s+'" height="'+s+'" viewBox="0 0 110 110"><rect x="12" y="12" width="86" height="86" rx="6" '+d+'/></svg>':
-kind==='triangle'?'<svg width="'+s+'" height="'+s+'" viewBox="0 0 110 110"><polygon points="55,10 102,96 8,96" '+d+'/></svg>':
-kind==='star'?'<svg width="'+s+'" height="'+s+'" viewBox="0 0 110 110"><polygon points="55,8 67,40 102,42 75,64 84,98 55,79 26,98 35,64 8,42 43,40" '+d+'/></svg>':
-kind==='heart'?'<svg width="'+s+'" height="'+s+'" viewBox="0 0 110 110"><path d="M55 96 C20 68 8 48 16 32 C24 16 46 16 55 34 C64 16 86 16 94 32 C102 48 90 68 55 96 Z" '+d+'/></svg>':
-'<svg width="'+(s*2)+'" height="'+Math.round(s/2)+'" viewBox="0 0 220 55"><polyline points="5,45 35,10 65,45 95,10 125,45 155,10 185,45 215,10" '+d+'/></svg>';};
+var shapeSVG=function(kind,size){var s=size||110,d='stroke="#6d7585" stroke-width="5" stroke-dasharray="10 8" fill="none" stroke-linecap="round" stroke-linejoin="round"';
+var dotAt={circle:[55,9],square:[12,12],triangle:[55,10],star:[55,8],heart:[55,34],zigzag:[5,45]}[kind]||[0,0];
+var dot='<circle cx="'+dotAt[0]+'" cy="'+dotAt[1]+'" r="8" fill="#2fa860"/>';
+return kind==='circle'?'<svg width="'+s+'" height="'+s+'" viewBox="0 0 110 110"><circle cx="55" cy="55" r="46" '+d+'/>'+dot+'</svg>':
+kind==='square'?'<svg width="'+s+'" height="'+s+'" viewBox="0 0 110 110"><rect x="12" y="12" width="86" height="86" rx="6" '+d+'/>'+dot+'</svg>':
+kind==='triangle'?'<svg width="'+s+'" height="'+s+'" viewBox="0 0 110 110"><polygon points="55,10 102,96 8,96" '+d+'/>'+dot+'</svg>':
+kind==='star'?'<svg width="'+s+'" height="'+s+'" viewBox="0 0 110 110"><polygon points="55,8 67,40 102,42 75,64 84,98 55,79 26,98 35,64 8,42 43,40" '+d+'/>'+dot+'</svg>':
+kind==='heart'?'<svg width="'+s+'" height="'+s+'" viewBox="0 0 110 110"><path d="M55 96 C20 68 8 48 16 32 C24 16 46 16 55 34 C64 16 86 16 94 32 C102 48 90 68 55 96 Z" '+d+'/>'+dot+'</svg>':
+'<svg width="'+(s*2)+'" height="'+Math.round(s/2)+'" viewBox="0 0 220 55"><polyline points="5,45 35,10 65,45 95,10 125,45 155,10 185,45 215,10" '+d+'/>'+dot+'</svg>';};
 var ANS=[];
 var countWrite=function(rnd,count){var out=[],ns=[];for(var i=0;i<count;i++){var n=1+Math.floor(rnd()*5);out.push(n);ns.push(n);}ANS.push('Count & Write: '+ns.join(', '));return out;};
 var countCircle=function(rnd,rows){var out=[];for(var i=0;i<rows;i++){var em=COUNT_EMOJI[Math.floor(rnd()*COUNT_EMOJI.length)],n=3+Math.floor(rnd()*4);out.push({em:em,n:n,total:n+2+Math.floor(rnd()*3)});ANS.push('Circle '+n+' '+em);}return out;};
@@ -672,7 +699,7 @@ return '<h4 class="prac-h">Match It Up!</h4><p class="prac-p">Draw a line from e
 var oddOneOutHTML=function(rnd){
 var p=ODD_SETS[Math.floor(rnd()*ODD_SETS.length)],pos=Math.floor(rnd()*5),row=[];ANS.push('Odd one out: '+p[1]+' (spot '+(pos+1)+')');
 for(var i=0;i<5;i++)row.push(i===pos?p[1]:p[0]);
-return '<h4 class="prac-h">Odd One Out</h4><p class="prac-p">Circle the one that is different:</p><div class="circle-row">'+row.join('')+'</div>';
+return '<h4 class="prac-h">🔍 Odd One Out</h4><p class="prac-p">Circle the one that is different:</p><div class="circle-row">'+row.join('')+'</div>';
 };
 var dotToDotHTML=function(rnd){
 var keys=['triangle','square','house','diamond'],k=keys[Math.floor(rnd()*keys.length)],pts=DOT_SHAPES[k];
@@ -709,7 +736,7 @@ return '<h4 class="prac-h">Maze Time</h4><p class="prac-p">Help the mouse find t
 };
 var colorPicHTML=function(rnd){
 var keys=['sun','fish','house'],k=keys[Math.floor(rnd()*keys.length)];
-return '<h4 class="prac-h">Color Together!</h4>'+COLOR_PICS[k];
+return '<h4 class="prac-h">🎨 Color Together!</h4>'+COLOR_PICS[k];
 };
 var guidedRow=function(inner){return '<div class="trace-row guided">'+inner+'</div>';};
 var nameCls=function(name){return name.length<=6?'':name.length<=9?' mid':' sm2';};
@@ -719,11 +746,11 @@ var tv=Math.floor(rnd()*3);
 var letters=pickN(rnd,LETTERS_P34,3),nums=pickN(rnd,NUMBERS_P34,3),shapes=pickN(rnd,['circle','square','triangle','star','heart'],3);
 name?tv=0:0;
 if(tv===0){
-if(name)return '<h4 class="prac-h">Trace Your Name</h4>'+[0,1].map(function(){return guidedRow('<span class="trace-letter'+nameCls(name)+'">'+name.toUpperCase()+'</span>');}).join('')+guidedRow('<span class="try-label">now you try!</span>')+'<h4 class="prac-h">Trace the Line</h4><div class="trace-wavy">~~~~~~~~~~~~~~</div>';
-return '<h4 class="prac-h">Trace Your Letters</h4>'+letters.map(function(l){return guidedRow('<span class="trace-letter">'+l+'</span><span class="trace-letter">'+l+'</span><span class="try-label">now you try!</span>');}).join('')+'<h4 class="prac-h">Trace the Line</h4><div class="trace-wavy">~~~~~~~~~~~~~~</div>';
+if(name)return '<h4 class="prac-h">✏️ Trace Your Name</h4>'+[0,1].map(function(){return guidedRow('<span class="trace-letter'+nameCls(name)+'">'+name.toUpperCase()+'</span>');}).join('')+guidedRow('<span class="try-label">now you try!</span>')+'<div class="wavy-sec"><h4 class="prac-h">〰️ Trace the Line</h4><div class="trace-wavy">~~~~~~~~~~~~~~</div></div>';
+return '<h4 class="prac-h">🔤 Trace Your Letters</h4>'+letters.map(function(l){return guidedRow('<span class="trace-letter">'+l+'</span><span class="trace-letter">'+l+'</span><span class="try-label">now you try!</span>');}).join('')+'<div class="wavy-sec"><h4 class="prac-h">〰️ Trace the Line</h4><div class="trace-wavy">~~~~~~~~~~~~~~</div></div>';
 }
-if(tv===1)return '<h4 class="prac-h">Trace Your Numbers</h4>'+nums.map(function(nn){return guidedRow('<span class="trace-letter">'+nn+'</span><span class="trace-letter">'+nn+'</span><span class="try-label">now you try!</span>');}).join('')+'<h4 class="prac-h">Trace the Line</h4><div class="trace-wavy">~~~~~~~~~~~~~~</div>';
-return '<h4 class="prac-h">Trace the Shapes</h4><div class="shape-row">'+shapes.map(function(sh){return shapeSVG(sh,110);}).join('')+'</div>';
+if(tv===1)return '<h4 class="prac-h">🔢 Trace Your Numbers</h4>'+nums.map(function(nn){return guidedRow('<span class="trace-letter">'+nn+'</span><span class="trace-letter">'+nn+'</span><span class="try-label">now you try!</span>');}).join('')+'<div class="wavy-sec"><h4 class="prac-h">〰️ Trace the Line</h4><div class="trace-wavy">~~~~~~~~~~~~~~</div></div>';
+return '<h4 class="prac-h">⭐ Trace the Shapes</h4><p class="prac-p">Start at the <strong style="color:#2fa860">green dot</strong>!</p><div class="shape-row">'+shapes.map(function(sh){return shapeSVG(sh,150);}).join('')+'</div>';
 }
 if(band==='k56'){
 var kv=Math.floor(rnd()*4);
@@ -754,8 +781,8 @@ return '<h4 class="prac-h">Journal Prompt</h4><p class="prac-p">'+jS+'</p><div c
 var p34GameHTML=function(rnd){
 var v=Math.floor(rnd()*6);
 if(v===0){var items=countWrite(rnd,4).map(function(n){return '<div class="prob cw"><span>'+'&#9679; '.repeat(n)+'</span><span class="blank"></span></div>';}).join('');return '<h4 class="prac-h">Count &amp; Write</h4><div class="prob-grid">'+items+'</div>';}
-if(v===1){var rows=countCircle(rnd,2).map(function(r){return '<p class="prac-p">Circle <strong>'+r.n+'</strong>:</p><div class="circle-row">'+Array(r.total+1).join(r.em)+'</div>';}).join('');return '<h4 class="prac-h">Count &amp; Circle</h4>'+rows;}
-if(v===2){ANS.push('Blue circles: 4');return '<h4 class="prac-h">Shape Spotting</h4><p class="prac-p">Circle all the <strong>blue circles</strong>!</p><div class="circle-row">🔵🔺🟩🔵⭐🔵❤️🔵</div><p class="prac-p">How many did you find? <span class="blank"></span></p>';}
+if(v===1){var rows=countCircle(rnd,2).map(function(r){return '<p class="prac-p">Circle <strong>'+r.n+'</strong>:</p><div class="circle-row">'+Array(r.total+1).join(r.em)+'</div>';}).join('');return '<h4 class="prac-h">🔢 Count &amp; Circle</h4>'+rows;}
+if(v===2){ANS.push('Blue circles: 4');return '<h4 class="prac-h">🔵 Shape Spotting</h4><p class="prac-p">Circle all the <strong>blue circles</strong>!</p><div class="circle-row">🔵🔺🟩🔵⭐🔵❤️🔵</div><p class="prac-p">How many did you find? <span class="blank"></span></p>';}
 if(v===3)return matchUpHTML(rnd);
 if(v===4)return dotToDotHTML(rnd);
 return colorCountHTML(rnd);
@@ -798,10 +825,10 @@ return '<h4 class="prac-h">Integer Addition</h4><div class="prob-grid">'+ii+'</d
 };
 var littleHandsHTML=function(rnd){
 var shape=pickN(rnd,['circle','square','heart'],1)[0];
-var pts=pickN(rnd,POINT_ITEMS,6);
+var pts=pickN(rnd,POINT_ITEMS,4);
 var v=Math.floor(rnd()*2);
-var fourth=v===0?'<h4 class="prac-h">Point &amp; Name</h4><p class="prac-p">Caregiver: ask &quot;Where is the '+pts.map(function(p){return p[1];}).join(', the ')+'?&quot; and let them point.</p><div class="point-row">'+pts.map(function(p){return p[0];}).join('')+'</div>':oddOneOutHTML(rnd);
-return '<h4 class="prac-h">Trace Together (hand over hand)</h4><div class="shape-row">'+shapeSVG(shape,190)+shapeSVG('zigzag',140)+'</div><h4 class="prac-h">Scribble Zone</h4><div class="draw-box"><div class="draw-label">Free scribbling — any marks count!</div></div>'+fourth;
+var fourth=v===0?'<h4 class="prac-h">👉 Point &amp; Name</h4><p class="prac-p">Caregiver: ask &quot;Where is the '+pts.map(function(p){return p[1];}).join(', the ')+'?&quot; and let them point.</p><div class="point-row">'+pts.map(function(p){return p[0];}).join('')+'</div>':oddOneOutHTML(rnd);
+return '<h4 class="prac-h">✏️ Trace Together (hand over hand)</h4><p class="prac-p">Start at the <strong style="color:#2fa860">green dot</strong> — big slow strokes!</p><div class="shape-row">'+shapeSVG(shape,250)+shapeSVG('zigzag',185)+'</div><h4 class="prac-h">🖍️ Scribble Zone</h4><div class="draw-box" style="min-height:170px"><div class="draw-label">Free scribbling — any marks count!</div></div>'+fourth;
 };
 var page3HTML=function(band,rnd,creativeItem){
 var weather=['&#9728;&#65039; Sunny','&#9729;&#65039; Cloudy','&#127783;&#65039; Rainy','&#10052;&#65039; Snowy'].map(function(w){return '<span class="choice"><span class="choice-circle"></span>'+w+'</span>';}).join('');
@@ -815,7 +842,7 @@ return pic+'<p class="prac-p">Caregiver: write down anything they said about it:
 }
 if(band==='p34'){
 var pv=Math.floor(rnd()*2);
-var bonus=pv===0?(function(){var pair=PATTERN_PAIRS[Math.floor(rnd()*PATTERN_PAIRS.length)],distractor=PATTERN_PAIRS[(PATTERN_PAIRS.indexOf(pair)+1)%PATTERN_PAIRS.length][0],choices=pickN(rnd,[pair[0],pair[1],distractor],3);ANS.push('Pattern next: '+pair[1]);return '<h4 class="prac-h">What Comes Next?</h4><div class="pattern-row">'+pair[0]+pair[1]+pair[0]+pair[1]+pair[0]+' <span class="pn-q">?</span></div><p class="prac-p">Circle the answer:</p><div class="circle-row">'+choices.join(' &nbsp; ')+'</div>';})():mazeHTML(rnd,5,44);
+var bonus=pv===0?(function(){var pair=PATTERN_PAIRS[Math.floor(rnd()*PATTERN_PAIRS.length)],distractor=PATTERN_PAIRS[(PATTERN_PAIRS.indexOf(pair)+1)%PATTERN_PAIRS.length][0],choices=pickN(rnd,[pair[0],pair[1],distractor],3);ANS.push('Pattern next: '+pair[1]);return '<h4 class="prac-h">🧩 What Comes Next?</h4><div class="pattern-row">'+pair[0]+pair[1]+pair[0]+pair[1]+pair[0]+' <span class="pn-q">?</span></div><p class="prac-p">Circle the answer:</p><div class="circle-row">'+choices.join(' &nbsp; ')+'</div>';})():mazeHTML(rnd,5,44);
 var rhy2=pickN(rnd,RHYMES,1)[0];
 return '<div class="draw-box"><div class="draw-label">Draw or design: '+creativeItem.t+'</div></div><p class="prac-p">Tell me about it:</p><div class="write-lines"><span class="write-line"></span></div>'+checksLite+bonus+'<h4 class="prac-h">Sing Together</h4><div class="sing-line">🎵 Today&apos;s song: <strong>'+rhy2+'</strong> — sing it with the motions!</div>';
 }
