@@ -24,7 +24,9 @@
 <canvas id="map"></canvas>
 <canvas id="overlay"></canvas>
 <canvas id="wind"></canvas>
+<canvas id="haz"></canvas>
 </div>
+<div id="hover-chip" class="hover-chip" aria-live="polite"></div>
 <div id="boot-err"></div>
 <div class="zoom-fab">
 <button type="button" id="zin" aria-label="Zoom in">+</button>
@@ -33,7 +35,7 @@
 <div class="hud" id="topbar">
 <div class="pnl" id="brand">
 <h1>Amni-Weather</h1>
-<div class="sub">pack fields · satellite · OSM</div>
+<div class="sub">pack · carto dark · hazards · reports</div>
 </div>
 <div class="pnl" id="search-wrap">
 <input id="q" type="search" placeholder="City or lat,lon…" autocomplete="off" spellcheck="false">
@@ -82,9 +84,16 @@
 </div>
 <label class="chk"><input id="wind-on" type="checkbox" checked> Wind streamlines</label>
 <label class="chk"><input id="iso-on" type="checkbox"> Pressure striations</label>
+<label class="chk"><input id="haz-on" type="checkbox" checked> Active hazards</label>
+<label class="chk"><input id="hover-on" type="checkbox" checked> Hover probe</label>
 <label class="chk"><input id="reverse" type="checkbox"> Reverse palette</label>
 <label class="chk"><input id="autorange" type="checkbox" checked> Auto range</label>
 <label class="chk"><input id="smooth" type="checkbox" checked> Field smooth</label>
+<h2>Report @ probe / map center</h2>
+<div class="ctrl-row"><label>Type</label><select id="rep-type"></select></div>
+<div class="ctrl-row"><label>Note</label><input id="rep-note" type="text" maxlength="160" placeholder="Optional short note"></div>
+<button type="button" id="btn-report" class="lbtn" style="width:100%;margin-top:4px">Submit report</button>
+<div id="haz-count" class="haz-count">hazards loading…</div>
 <div class="ctrl-row">
 <label>Units</label>
 <div id="units" class="seg">
@@ -122,6 +131,6 @@ window.__wxBootErr=function(e){var el=document.getElementById('boot-err');var st
 window.addEventListener('error',function(ev){window.__wxBootErr(ev.error||ev.message);});
 window.addEventListener('unhandledrejection',function(ev){window.__wxBootErr(ev.reason);});
 </script>
-<script type="module" src="/weather/wx-boot.122.js"></script>
+<script type="module" src="/weather/wx-boot.123.js"></script>
 </body>
 </html>
