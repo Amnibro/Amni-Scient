@@ -7,7 +7,6 @@
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="favicon.ico" sizes="any">
-
 <meta name="description" content="Amni-Weather: real satellite, OpenStreetMap & CARTO basemaps with multi-layer weather, customizable colormaps, smooth pan/zoom. Same tile stack as Amni-Drive.">
 <meta name="keywords" content="amni-weather,openstreetmap,esri satellite,carto,weather map,open-meteo,colormap">
 <link rel="canonical" href="https://amni-scient.com/weather/">
@@ -19,12 +18,21 @@
 <style>html,body{margin:0;background:#02060e;color:#d4e8f8}#boot-err{display:none;position:fixed;left:12px;right:12px;bottom:90px;z-index:99;padding:12px;background:rgba(80,20,20,.92);border:1px solid #f66;border-radius:8px;font-size:12px;white-space:pre-wrap}</style>
 </head>
 <body>
-<a id="home-link" href="/amni-weather.html">← Product page</a>
 <div id="stage">
 <canvas id="map"></canvas>
 <canvas id="overlay"></canvas>
 <canvas id="wind"></canvas>
 <canvas id="haz"></canvas>
+<canvas id="ref"></canvas>
+</div>
+<div id="loc-marker" class="loc-marker" hidden>
+<div class="loc-pulse"></div>
+<div class="loc-cross"></div>
+<div class="loc-chip">
+<div class="lc-title" id="lc-title">Selected</div>
+<div class="lc-val"><span id="lc-val">—</span><span id="lc-unit"></span></div>
+<div class="lc-sub" id="lc-sub"></div>
+</div>
 </div>
 <div id="hover-chip" class="hover-chip" aria-live="polite"></div>
 <div id="boot-err"></div>
@@ -34,11 +42,18 @@
 </div>
 <div class="hud" id="topbar">
 <div class="pnl" id="brand">
+<div class="brand-row">
 <h1>Amni-Weather</h1>
-<div class="sub">pack · carto dark · hazards · reports</div>
+<a id="home-link" href="/amni-weather.html">Product</a>
+</div>
+<div class="sub">pack · zones · hazards · reports</div>
 </div>
 <div class="pnl" id="search-wrap">
-<input id="q" type="search" placeholder="City or lat,lon…" autocomplete="off" spellcheck="false">
+<div class="search-box">
+<input id="q" type="search" placeholder="City, place, or lat,lon…" autocomplete="off" spellcheck="false" role="combobox" aria-autocomplete="list" aria-controls="suggest" aria-expanded="false">
+<div id="suggest" class="suggest" role="listbox" hidden></div>
+</div>
+<button id="btn-locate" type="button" title="Use my location" aria-label="Use my location">◎</button>
 <button id="btn-search" type="button">Find</button>
 </div>
 <div class="pnl" id="mode-wrap">
@@ -48,11 +63,38 @@
 <button id="btn-refresh" type="button" title="Reload pack / live">↻</button>
 </div>
 </div>
+<div id="sheet-backdrop" class="sheet-backdrop" hidden></div>
+<nav class="hud pnl" id="m-dock" aria-label="Mobile tools">
+<button type="button" class="md-btn" data-sheet="layers" id="md-layers">Layers</button>
+<button type="button" class="md-btn" data-sheet="forecast" id="md-forecast">Forecast</button>
+<button type="button" class="md-btn" data-sheet="probe" id="md-probe">Point</button>
+<button type="button" class="md-btn" id="md-map">Map</button>
+</nav>
 <div class="hud pnl" id="layers">
-<h2>Basemap</h2>
-<div class="layer-grid" id="basemap-row"></div>
-<h2>Weather layers</h2>
-<div class="layer-grid" id="layer-grid"></div>
+<div class="sheet-bar"><span>Layers</span><button type="button" class="sheet-x" data-close-sheet="layers" aria-label="Close">×</button></div>
+<section class="wx-sec open" data-sec="basemap">
+<button type="button" class="wx-sec-hd" data-toggle="1"><span>Basemap</span><i class="chev">▾</i></button>
+<div class="wx-sec-body"><div class="layer-grid" id="basemap-row"></div></div>
+</section>
+<section class="wx-sec open" data-sec="atmosphere">
+<button type="button" class="wx-sec-hd" data-toggle="1"><span>Atmosphere</span><i class="chev">▾</i></button>
+<div class="wx-sec-body"><div class="layer-grid" id="grid-atmosphere"></div></div>
+</section>
+<section class="wx-sec open" data-sec="moisture">
+<button type="button" class="wx-sec-hd" data-toggle="1"><span>Moisture</span><i class="chev">▾</i></button>
+<div class="wx-sec-body"><div class="layer-grid" id="grid-moisture"></div></div>
+</section>
+<section class="wx-sec open" data-sec="dynamics">
+<button type="button" class="wx-sec-hd" data-toggle="1"><span>Dynamics</span><i class="chev">▾</i></button>
+<div class="wx-sec-body"><div class="layer-grid" id="grid-dynamics"></div></div>
+</section>
+<section class="wx-sec" data-sec="solar">
+<button type="button" class="wx-sec-hd" data-toggle="1"><span>Solar &amp; air</span><i class="chev">▾</i></button>
+<div class="wx-sec-body"><div class="layer-grid" id="grid-solar"></div></div>
+</section>
+<section class="wx-sec" data-sec="appearance">
+<button type="button" class="wx-sec-hd" data-toggle="1"><span>Appearance</span><i class="chev">▾</i></button>
+<div class="wx-sec-body">
 <div id="controls">
 <div class="ctrl-row">
 <label>Colormap preset</label>
@@ -84,16 +126,18 @@
 </div>
 <label class="chk"><input id="wind-on" type="checkbox" checked> Wind streamlines</label>
 <label class="chk"><input id="iso-on" type="checkbox"> Pressure striations</label>
-<label class="chk"><input id="haz-on" type="checkbox" checked> Active hazards</label>
+<label class="chk"><input id="haz-on" type="checkbox" checked> All hazards layer</label>
+<label class="chk"><input id="warn-on" type="checkbox" checked> Warnings (zones)</label>
+<label class="chk"><input id="watch-on" type="checkbox" checked> Watches (zones)</label>
+<label class="chk"><input id="advisory-on" type="checkbox" checked> Advisories / statements</label>
+<label class="chk"><input id="otherhaz-on" type="checkbox" checked> Quakes / volcanoes / reports</label>
+<label class="chk"><input id="cities-on" type="checkbox" checked> City labels (LOD)</label>
+<label class="chk"><input id="borders-on" type="checkbox" checked> State / country borders</label>
 <label class="chk"><input id="hover-on" type="checkbox" checked> Hover probe</label>
+<label class="chk"><input id="pin-on" type="checkbox" checked> Click location pin</label>
 <label class="chk"><input id="reverse" type="checkbox"> Reverse palette</label>
 <label class="chk"><input id="autorange" type="checkbox" checked> Auto range</label>
 <label class="chk"><input id="smooth" type="checkbox" checked> Field smooth</label>
-<h2>Report @ probe / map center</h2>
-<div class="ctrl-row"><label>Type</label><select id="rep-type"></select></div>
-<div class="ctrl-row"><label>Note</label><input id="rep-note" type="text" maxlength="160" placeholder="Optional short note"></div>
-<button type="button" id="btn-report" class="lbtn" style="width:100%;margin-top:4px">Submit report</button>
-<div id="haz-count" class="haz-count">hazards loading…</div>
 <div class="ctrl-row">
 <label>Units</label>
 <div id="units" class="seg">
@@ -103,18 +147,61 @@
 </div>
 </div>
 </div>
+</section>
+<section class="wx-sec" data-sec="reports">
+<button type="button" class="wx-sec-hd" data-toggle="1"><span>Reports</span><i class="chev">▾</i></button>
+<div class="wx-sec-body">
+<div class="ctrl-row"><label>Type</label><select id="rep-type"></select></div>
+<div class="ctrl-row"><label>Note</label><input id="rep-note" type="text" maxlength="160" placeholder="Optional short note"></div>
+<button type="button" id="btn-report" class="lbtn" style="width:100%;margin-top:4px">Submit report</button>
+<div id="haz-legend" class="haz-legend"></div>
+<div id="haz-count" class="haz-count">hazards loading…</div>
+</div>
+</section>
+</div>
+<div class="hud" id="left-dock">
 <div class="hud pnl" id="legend">
 <div class="title" id="leg-title">Temperature 2 m</div>
 <div id="leg-bar"></div>
+<div class="leg-mid" id="leg-mid"></div>
 <div id="leg-scale"><span id="leg-lo">—</span><span id="leg-hi">—</span></div>
+<div class="leg-cue" id="leg-cue"></div>
 </div>
+</div>
+<div class="hud" id="right-dock">
 <div class="hud pnl" id="probe">
-<h3>Point probe</h3>
+<div class="sheet-bar m-only"><span>Point</span><button type="button" class="sheet-x" data-close-sheet="probe" aria-label="Close">×</button></div>
+<h3 id="probe-h">Selected location</h3>
 <div class="coords" id="probe-coords">—</div>
-<div><span class="val" id="probe-val">—</span><span class="unit" id="probe-unit"></span></div>
+<div class="probe-main"><span class="val" id="probe-val">—</span><span class="unit" id="probe-unit"></span></div>
+<div class="probe-feel" id="probe-feel"></div>
+<div id="probe-info" class="probe-info"></div>
 <div class="meta" id="probe-meta"></div>
+<button type="button" id="btn-clear-pin" class="lbtn pin-clear">Clear pin</button>
+<button type="button" id="btn-forecast" class="lbtn pin-clear fc-open-btn">Open forecast</button>
 </div>
-<div class="hud" id="hint">drag pan · scroll zoom · tap probe</div>
+<div class="hud pnl" id="forecast">
+<div class="sheet-bar m-only"><span>Forecast</span><button type="button" class="sheet-x" data-close-sheet="forecast" aria-label="Close">×</button></div>
+<div class="fc-head">
+<div class="fc-titles"><h3>Forecast</h3><span id="fc-place">—</span></div>
+<div class="fc-actions">
+<button type="button" id="fc-refresh" title="Refresh">↻</button>
+<button type="button" id="fc-toggle" title="Collapse">▾</button>
+<button type="button" class="sheet-x d-only" data-close-sheet="forecast" aria-label="Close">×</button>
+</div>
+</div>
+<div class="fc-tabs" id="fc-tabs">
+<button type="button" data-tab="summary" class="active">Now</button>
+<button type="button" data-tab="hourly">Hourly</button>
+<button type="button" data-tab="daily">7-day</button>
+<button type="button" data-tab="surf">Surf</button>
+<button type="button" data-tab="uv">UV / Air</button>
+</div>
+<div id="fc-body" class="fc-body"><div class="fc-empty">Drop a pin or locate to load forecast</div></div>
+<div class="fc-src" id="fc-src">Open-Meteo · UV · marine · air</div>
+</div>
+</div>
+<div class="hud" id="hint">drag pan · scroll zoom · tap pin · forecast panel</div>
 <div class="hud pnl" id="timebar">
 <div class="row">
 <button id="t-prev" type="button">◀</button>
@@ -131,6 +218,6 @@ window.__wxBootErr=function(e){var el=document.getElementById('boot-err');var st
 window.addEventListener('error',function(ev){window.__wxBootErr(ev.error||ev.message);});
 window.addEventListener('unhandledrejection',function(ev){window.__wxBootErr(ev.reason);});
 </script>
-<script type="module" src="/weather/wx-boot.123.js"></script>
+<script type="module" src="/weather/wx-boot.129.js"></script>
 </body>
 </html>

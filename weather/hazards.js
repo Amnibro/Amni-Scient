@@ -4,7 +4,8 @@ week:'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojson
 sig:'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_month.geojson'
 };
 const VOLC_URL='https://volcanoes.usgs.gov/hans-public/api/volcano/getVolcanoGeoJSON';
-const NWS_URL='https://api.weather.gov/alerts/active?status=actual&message_type=alert';
+const NWS_URL='https://api.weather.gov/alerts/active?status=actual';
+const UA='AmniWeather/1.3 (https://amni-scient.com; weather-map)';
 const FALLBACK_VOLCANOES=[
 {name:'Kīlauea',lat:19.421,lon:-155.287,level:'WATCH'},
 {name:'Mauna Loa',lat:19.475,lon:-155.608,level:'ADVISORY'},
@@ -17,12 +18,12 @@ const FALLBACK_VOLCANOES=[
 {name:'Sakurajima',lat:31.585,lon:130.657,level:'WATCH'},
 {name:'Merapi',lat:-7.54,lon:110.446,level:'WATCH'}
 ];
-function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
-async function fetchJson(url,timeout=12000){
+const zoneCache=new Map();
+async function fetchJson(url,timeout=15000){
 const ctrl=new AbortController();
 const t=setTimeout(()=>ctrl.abort(),timeout);
 try{
-const r=await fetch(url,{signal:ctrl.signal,headers:{'Accept':'application/json','User-Agent':'(Amni-Weather; amni-scient.com)'}});
+const r=await fetch(url,{signal:ctrl.signal,headers:{'Accept':'application/geo+json,application/json',UserAgent:UA,'User-Agent':UA}});
 clearTimeout(t);
 if(!r.ok)throw new Error('HTTP '+r.status);
 return await r.json();
@@ -37,6 +38,34 @@ return{minMag:2.0,feed:'day',max:200};
 function inView(lat,lon,vb,pad=0.15){
 const dlat=(vb.lat1-vb.lat0)*pad,dlon=(vb.lon1-vb.lon0)*pad;
 return lat>=vb.lat0-dlat&&lat<=vb.lat1+dlat&&lon>=vb.lon0-dlon&&lon<=vb.lon1+dlon;
+}
+function ringCentroid(ring){
+if(!ring?.length)return null;
+let sx=0,sy=0,n=0;
+for(const c of ring){if(c&&Number.isFinite(+c[0])&&Number.isFinite(+c[1])){sx+=+c[0];sy+=+c[1];n++;}}
+return n?{lon:sx/n,lat:sy/n}:null;
+}
+function extractRings(geometry){
+if(!geometry)return[];
+const t=geometry.type;
+const c=geometry.coordinates;
+if(t==='Polygon'&&Array.isArray(c))return[c[0]].filter(Boolean);
+if(t==='MultiPolygon'&&Array.isArray(c))return c.map(p=>p?.[0]).filter(Boolean);
+return[];
+}
+function classifyAlert(event,msgType){
+const e=(event||'').toLowerCase();
+const m=(msgType||'').toLowerCase();
+if(/\bwarning\b/.test(e)||m==='alert'&&/\bwarning\b/.test(e))return'warning';
+if(/\bwatch\b/.test(e))return'watch';
+if(/\badvisory\b/.test(e)||/\bstatement\b/.test(e))return'advisory';
+if(m==='update'||m==='cancel')return'advisory';
+return/\bwarning\b|\btornado\b|\bflood\b|\bhurricane\b/.test(e)?'warning':(/\bwatch\b/.test(e)?'watch':'advisory');
+}
+function alertColor(classif,sev){
+if(classif==='warning')return sev==='extreme'?'#ff0033':sev==='severe'?'#ff2244':'#ff5522';
+if(classif==='watch')return'#ffcc00';
+return'#33aaff';
 }
 export async function loadEarthquakes(zoom){
 const lod=lodEq(zoom);
@@ -84,29 +113,56 @@ return out.length?out:FALLBACK_VOLCANOES.filter(v=>v.level!=='NORMAL').map(v=>({
 return FALLBACK_VOLCANOES.filter(v=>v.level!=='NORMAL').map(v=>({id:'volc-'+v.name,kind:'volcano',...v,title:v.name,time:Date.now(),ttl:72*3600e3,pulse:0.75}));
 }
 }
+async function resolveZoneRings(zoneUrls,limit=2){
+const rings=[];
+for(const z of (zoneUrls||[]).slice(0,limit)){
+if(zoneCache.has(z)){const r=zoneCache.get(z);if(r?.length)rings.push(...r);continue;}
+try{
+const zgeo=await fetchJson(z,8000);
+const zr=extractRings(zgeo.geometry||zgeo);
+zoneCache.set(z,zr);
+if(zr.length)rings.push(...zr);
+}catch{zoneCache.set(z,[]);}
+}
+return rings;
+}
 export async function loadNwsAlerts(){
 try{
-const j=await fetchJson(NWS_URL,10000);
+const j=await fetchJson(NWS_URL,20000);
 const out=[];
 for(const f of j.features||[]){
 const p=f.properties||{};
-const g=f.geometry;
-let lat=null,lon=null;
-if(g?.type==='Point'){lon=g.coordinates[0];lat=g.coordinates[1];}
-else if(g?.type==='Polygon'&&g.coordinates?.[0]?.[0]){const ring=g.coordinates[0];let sx=0,sy=0;for(const c of ring){sx+=c[0];sy+=c[1];}lon=sx/ring.length;lat=sy/ring.length;}
-else if(p.geocode?.SAME){continue;}
-if(!Number.isFinite(lat)||!Number.isFinite(lon))continue;
-const sev=(p.severity||'Unknown').toLowerCase();
 const event=p.event||'Weather alert';
+const msg=p.messageType||'';
+const classif=classifyAlert(event,msg);
+const sev=(p.severity||'Unknown').toLowerCase();
+let rings=extractRings(f.geometry);
+if(!rings.length&&p.geocode?.UGC){/* skip */}
+if(!rings.length&&Array.isArray(p.affectedZones)&&p.affectedZones.length){
+rings=await resolveZoneRings(p.affectedZones,2);
+}
+let lat=null,lon=null;
+if(rings[0]){const c=ringCentroid(rings[0]);if(c){lat=c.lat;lon=c.lon;}}
+else if(f.geometry?.type==='Point'){lon=f.geometry.coordinates[0];lat=f.geometry.coordinates[1];}
+if(!Number.isFinite(lat)||!Number.isFinite(lon))continue;
+const expires=Date.parse(p.expires||0);
 out.push({
 id:'nws-'+(p.id||`${lat},${lon},${event}`),
-kind:'alert',lat,lon,title:event,sev,
+kind:'alert',
+classif,
+lat,lon,
+rings,
+title:event,
+sev,
+area:p.areaDesc||'',
+headline:p.headline||'',
 time:Date.parse(p.sent||p.effective)||Date.now(),
-ttl:Math.max(1,Math.min(48,(Date.parse(p.expires||0)-Date.now())/3600e3||6))*3600e3,
-pulse:sev==='extreme'?1:sev==='severe'?0.85:0.55,
-url:p['@id']||''
+ttl:Math.max(1,Math.min(48,(expires?expires-Date.now():6*3600e3)/3600e3))*3600e3,
+pulse:classif==='warning'?1:classif==='watch'?0.85:0.55,
+url:p['@id']||p.id||'',
+color:alertColor(classif,sev)
 });
-if(out.length>=100)break;
+if(out.length>=180)break;
 }
 return out;
 }catch{return[];}
@@ -123,10 +179,10 @@ for(let i=step;i<w-step;i+=step){
 const idx=j*w+i;
 const c=cape?cape[idx]:0,p=pr?pr[idx]:0;
 let kind=null,pulse=0.5,title='';
-if(c>2000&&p>1){kind:'storm';pulse=0.9;title=`Severe CAPE ${c|0}`;}
-else if(c>1500){kind:'storm';pulse=0.7;title=`Elevated CAPE ${c|0}`;}
-else if(p>8){kind:'flood';pulse=0.75;title=`Heavy precip ${p.toFixed(1)}`;}
-else if(p>3){kind:'flood';pulse=0.5;title=`Precip ${p.toFixed(1)}`;}
+if(c>2000&&p>1){kind='storm';pulse=0.9;title=`Severe CAPE ${c|0}`;}
+else if(c>1500){kind='storm';pulse=0.7;title=`Elevated CAPE ${c|0}`;}
+else if(p>8){kind='flood';pulse=0.75;title=`Heavy precip ${p.toFixed(1)}`;}
+else if(p>3){kind='flood';pulse=0.5;title=`Precip ${p.toFixed(1)}`;}
 if(!kind)continue;
 const lat=lat1-(lat1-lat0)*(j/(h-1));
 const lon=lon0+(lon1-lon0)*(i/(w-1));
@@ -137,66 +193,137 @@ return out.slice(0,zoom<5?30:80);
 }
 export function createHazardLayer(canvas,{lonToX,latToY,clampZoom,getView,PERF}){
 const ctx=canvas.getContext('2d',{alpha:true});
-let items=[],raf=0,running=false,t0=performance.now(),enabled=true;
+let items=[],raf=0,running=false,enabled=true;
+let showWarn=true,showWatch=true,showAdvisory=true,showOther=true;
 function resize(){
 const dpr=PERF.dpr;const w=innerWidth,h=innerHeight;
 canvas.width=(w*dpr)|0;canvas.height=(h*dpr)|0;canvas.style.width=w+'px';canvas.style.height=h+'px';
 }
 function setItems(list){items=list||[];}
 function setEnabled(on){enabled=!!on;if(!enabled)ctx.clearRect(0,0,canvas.width,canvas.height);}
+function setFilters(f){
+if(!f)return;
+if(f.warnings!=null)showWarn=!!f.warnings;
+if(f.watches!=null)showWatch=!!f.watches;
+if(f.advisories!=null)showAdvisory=!!f.advisories;
+if(f.other!=null)showOther=!!f.other;
+}
 function project(lat,lon){
 const v=getView();const B=v.bm;const zf=clampZoom(v.zoom,B);const z=Math.floor(zf);const scale=Math.pow(2,zf-z);
 const dpr=PERF.dpr;
 const cx=lonToX(v.lon,z)*scale*dpr,cy=latToY(v.lat,z)*scale*dpr;
 return{x:lonToX(lon,z)*scale*dpr-cx+canvas.width/2,y:latToY(lat,z)*scale*dpr-cy+canvas.height/2};
 }
-function color(kind,sev){
+function color(kind,sev,classif,fallback){
+if(fallback)return fallback;
 if(kind==='earthquake')return'#ff6b3d';
 if(kind==='volcano')return'#ff3355';
-if(kind==='alert')return sev==='extreme'||sev==='severe'?'#ff2244':'#ffaa33';
+if(kind==='alert')return alertColor(classif||'advisory',sev);
 if(kind==='storm')return'#c44dff';
 if(kind==='flood')return'#33aaff';
 if(kind==='report')return'#ffe066';
 return'#88ccff';
+}
+function hexA(hex,a){
+if(!hex||hex[0]!=='#')return hex||`rgba(136,204,255,${a})`;
+const n=parseInt(hex.slice(1),16);const r=(n>>16)&255,g=(n>>8)&255,b=n&255;
+return`rgba(${r},${g},${b},${a})`;
+}
+function allowed(h){
+if(h.kind==='alert'){
+const c=h.classif||classifyAlert(h.title,'');
+if(c==='warning')return showWarn;
+if(c==='watch')return showWatch;
+return showAdvisory;
+}
+return showOther;
+}
+function drawRing(ring){
+if(!ring?.length)return false;
+let started=false;
+for(const c of ring){
+const lon=+c[0],lat=+c[1];
+if(!Number.isFinite(lat)||!Number.isFinite(lon))continue;
+const p=project(lat,lon);
+if(!started){ctx.moveTo(p.x,p.y);started=true;}
+else ctx.lineTo(p.x,p.y);
+}
+if(started)ctx.closePath();
+return started;
+}
+function drawZones(nowPulse){
+const v=getView();
+const maxZones=v.zoom<5?40:v.zoom<8?80:120;
+let drawn=0;
+for(const h of items){
+if(h.kind!=='alert'||!h.rings?.length||!allowed(h))continue;
+if(Date.now()-(h.time||0)>(h.ttl||36e5))continue;
+const col=color(h.kind,h.sev,h.classif,h.color);
+const fillA=h.classif==='warning'?0.16:h.classif==='watch'?0.12:0.08;
+const strokeA=0.75+0.2*nowPulse;
+ctx.beginPath();
+let any=false;
+for(const ring of h.rings){if(drawRing(ring))any=true;}
+if(!any)continue;
+ctx.fillStyle=hexA(col,fillA);ctx.fill();
+ctx.strokeStyle=hexA(col,strokeA);
+ctx.lineWidth=(h.classif==='warning'?2.4:2)*PERF.dpr;
+ctx.setLineDash(h.classif==='watch'?[8*PERF.dpr,6*PERF.dpr]:[]);
+ctx.stroke();
+ctx.setLineDash([]);
+drawn++;if(drawn>=maxZones)break;
+}
+}
+function drawPoints(pulse){
+const v=getView();
+const vb={lat0:v.lat-40/Math.pow(2,Math.max(0,v.zoom-2)),lat1:v.lat+40/Math.pow(2,Math.max(0,v.zoom-2)),lon0:v.lon-60/Math.pow(2,Math.max(0,v.zoom-2)),lon1:v.lon+60/Math.pow(2,Math.max(0,v.zoom-2))};
+const zoom=v.zoom;
+let drawn=0,maxDraw=zoom<4?40:zoom<7?90:160;
+for(const h of items){
+if(!allowed(h))continue;
+if(Date.now()-(h.time||0)>(h.ttl||36e5))continue;
+if(h.kind==='alert'&&h.rings?.length&&zoom>=4)continue;
+if(!inView(h.lat,h.lon,vb,0.2))continue;
+const p=project(h.lat,h.lon);
+if(p.x<-40||p.y<-40||p.x>canvas.width+40||p.y>canvas.height+40)continue;
+const col=color(h.kind,h.sev,h.classif,h.color);
+const base=h.kind==='earthquake'?6+Math.min(14,(h.mag||3)*2):h.kind==='volcano'?10:h.kind==='alert'?9:8;
+const r=base*(0.85+0.25*pulse*(h.pulse||0.6))*PERF.dpr;
+const a=0.35+0.35*pulse*(h.pulse||0.6);
+ctx.beginPath();ctx.arc(p.x,p.y,r*2.2,0,Math.PI*2);ctx.fillStyle=hexA(col,0.15*a);ctx.fill();
+ctx.beginPath();ctx.arc(p.x,p.y,r,0,Math.PI*2);ctx.fillStyle=hexA(col,0.55+0.25*pulse);ctx.fill();
+ctx.strokeStyle=hexA('#ffffff',0.55);ctx.lineWidth=1*PERF.dpr;ctx.stroke();
+if(zoom>=5.5&&h.title){
+ctx.font=`${10*PERF.dpr}px system-ui,sans-serif`;ctx.fillStyle=hexA('#e8f4ff',0.9);
+const label=h.kind==='alert'?(h.classif?`[${h.classif[0].toUpperCase()}] `:'')+h.title.slice(0,26):h.title.slice(0,28);
+ctx.fillText(label,p.x+r+3*PERF.dpr,p.y+3*PERF.dpr);
+}
+drawn++;if(drawn>=maxDraw)break;
+}
 }
 function draw(){
 if(!running)return;
 const now=performance.now();
 const pulse=0.5+0.5*Math.sin(now*0.004);
 ctx.clearRect(0,0,canvas.width,canvas.height);
-if(!enabled){raf=requestAnimationFrame(draw);return;}
-const v=getView();
-const vb={lat0:v.lat-40/Math.pow(2,Math.max(0,v.zoom-2)),lat1:v.lat+40/Math.pow(2,Math.max(0,v.zoom-2)),lon0:v.lon-60/Math.pow(2,Math.max(0,v.zoom-2)),lon1:v.lon+60/Math.pow(2,Math.max(0,v.zoom-2))};
-const zoom=v.zoom;
-let drawn=0,maxDraw=zoom<4?40:zoom<7?90:160;
-for(const h of items){
-if(Date.now()-(h.time||0)>(h.ttl||36e5))continue;
-if(!inView(h.lat,h.lon,vb,0.2))continue;
-const p=project(h.lat,h.lon);
-if(p.x<-40||p.y<-40||p.x>canvas.width+40||p.y>canvas.height+40)continue;
-const col=color(h.kind,h.sev);
-const base=h.kind==='earthquake'?6+Math.min(14,(h.mag||3)*2):h.kind==='volcano'?10:8;
-const r=base*(0.85+0.25*pulse*(h.pulse||0.6))*PERF.dpr;
-const a=0.35+0.35*pulse*(h.pulse||0.6);
-ctx.beginPath();ctx.arc(p.x,p.y,r*2.2,0,Math.PI*2);ctx.fillStyle=hexA(col,0.15*a);ctx.fill();
-ctx.beginPath();ctx.arc(p.x,p.y,r,0,Math.PI*2);ctx.fillStyle=hexA(col,0.55+0.25*pulse);ctx.fill();
-ctx.strokeStyle=hexA('#ffffff',0.5);ctx.lineWidth=1*PERF.dpr;ctx.stroke();
-if(zoom>=6&&h.title){
-ctx.font=`${10*PERF.dpr}px system-ui,sans-serif`;ctx.fillStyle=hexA('#e8f4ff',0.85);
-ctx.fillText(h.title.slice(0,28),p.x+r+3*PERF.dpr,p.y+3*PERF.dpr);
-}
-drawn++;if(drawn>=maxDraw)break;
-}
+if(enabled){drawZones(pulse);drawPoints(pulse);}
 raf=requestAnimationFrame(draw);
-}
-function hexA(hex,a){
-if(hex[0]!=='#')return hex;
-const n=parseInt(hex.slice(1),16);const r=(n>>16)&255,g=(n>>8)&255,b=n&255;
-return`rgba(${r},${g},${b},${a})`;
 }
 function start(){if(running)return;running=true;resize();raf=requestAnimationFrame(draw);}
 function stop(){running=false;cancelAnimationFrame(raf);}
-return{resize,setItems,setEnabled,start,stop,project,inView};
+function counts(){
+const c={warning:0,watch:0,advisory:0,other:0,zones:0};
+for(const h of items){
+if(Date.now()-(h.time||0)>(h.ttl||36e5))continue;
+if(h.kind==='alert'){
+const cl=h.classif||'advisory';
+if(cl==='warning')c.warning++;else if(cl==='watch')c.watch++;else c.advisory++;
+if(h.rings?.length)c.zones++;
+}else c.other++;
+}
+return c;
+}
+return{resize,setItems,setEnabled,setFilters,start,stop,project,inView,counts};
 }
 export async function refreshHazards({zoom,capeField,precipField,tIndex,reports}){
 const [eq,volc,nws]=await Promise.all([loadEarthquakes(zoom),loadVolcanoes(),loadNwsAlerts()]);
