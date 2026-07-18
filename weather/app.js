@@ -1,6 +1,6 @@
-import {BASEMAPS,loadTile,lonToX,latToY,xToLon,yToLat,clampZoom,MOBILE} from './tiles.js?v=1.1.4';
-import {fetchLiveBundle,extractField,fetchPointDetail,lodForZoom} from './meteo.js?v=1.1.4';
-import {createWindLayer,drawIsobars} from './wind.js?v=1.1.4';
+import {BASEMAPS,loadTile,lonToX,latToY,xToLon,yToLat,clampZoom,MOBILE} from './tiles.js?v=157efe6';
+import {fetchLiveBundle,extractField,fetchPointDetail,lodForZoom} from './meteo.js?v=157efe6';
+import {createWindLayer,drawIsobars} from './wind.js?v=157efe6';
 const PERF={
 mobile:MOBILE,
 dpr:MOBILE?1:Math.min(devicePixelRatio||1,2),
