@@ -1,2 +1,2 @@
-// Amni-Weather retired entry — loads current boot.
-import '/weather/wx-boot.121.js';
+// Amni-Weather entry — pack-first, no API spam.
+import '/weather/wx-boot.122.js';
