@@ -1,5 +1,44 @@
 # Architecture Map — amni-scient.com
 
+## v1.1.3 Amni-Weather LOD + wind/isobars + geo fix (2026-07-17)
+- Geo: success+error callbacks. LOD tiers in `meteo.js`. Wind particles `wind.js` + pressure isobars. NWP roadmap `weather/docs/NWP_ROADMAP.md`.
+
+## v1.1.1 Amni-Weather live meteo hardened (2026-07-17)
+- `weather/meteo.js`: single forecast multi-var pull (retry/429 backoff), air + marine side packs, viewport+global lattice, progressive `onPartial`, station probe. ~40 forecast + AQI + marine layers. Avoids prior multi-pack 429 live failures.
+
+## v1.1.0 Amni-Weather slippy maps (Drive tiles) + color custom (2026-07-17)
+- `weather/tiles.js` mirrors Amni-Drive `TileStore` URLs: Esri satellite, OSM, CARTO dark/light, OpenTopoMap.
+- Canvas slippy map + weather overlay; fractional zoom + inertia. Color: presets, stop pickers, gamma, soft mask.
+- WASM field engine retained for IDW/upsample/smooth. Live Open-Meteo global grid.
+
+## v1.0.2 Amni-Weather real Earth + global fields (2026-07-17)
+- Basemap: vendored NASA Blue Marble / topology / water / night under `weather/assets/`. Field = full equirectangular Float Red DataTexture + GLSL colormap shader. Global multi-point Open-Meteo (chunked). Globe + flat views.
+
+## v1.0.1 Amni-Weather boot fix (2026-07-17)
+- Blank white “Booting…”: `/weather` without slash broke relative assets. Fixed with trailing-slash redirect + absolute `/weather/*` paths + local Three.js vendor (no CDN). Boot error banner for module failures.
+
+## v1.0.0 Amni-Weather — multi-layer interactive weather maps (2026-07-17)
+- **Product:** `amni-weather.html` (SEO/marketing) → app `weather/` (fullscreen globe maps). Privacy: `privacy-weather.html`.
+- **Render:** Three.js r160 WebGL2 sphere + weather overlay `DataTexture` (512×256), orbit controls, graticule, atmosphere, starfield.
+- **Compute:** Rust crate `weather/wasm` (`amni_weather_wasm`) → `weather/pkg` via wasm-pack. Exports: `idw_grid`, `upsample_bilinear`, `smooth_box`, `render_field`, `sample_bilinear`, `field_stats`, `synthetic_field`, unit converters, heat-index/wind-chill/dewpoint helpers, palette catalog.
+- **Shaders:** `weather/shaders/field.frag.glsl` (active WebGL path intent) + `weather/shaders/field.wgsl` (WebGPU colorizer contract). v1 colorizes in WASM CPU LUT → RGBA texture for maximum compatibility.
+- **Data:** Live = Open-Meteo multi-lat/lon hourly forecast (7 days) for regional lattice around map center + Open-Meteo geocoding. Demo = WASM synthetic fields. JS fallback engine if WASM fails to load.
+- **Layers (20):** temp, apparent, dewpoint, RH, precip, snow, wind speed/gust/dir, MSLP, clouds, visibility, CAPE, UV, SW/direct/diffuse rad, soil 0cm, VPD, ET₀.
+- **Site:** index hero wheel entry `weather`, PROJECTS nav across product pages, sitemap URLs for product/app/privacy.
+
+## v5.86.1 Amni-Calc Schnorr disc DB + US unit leak fix (2026-07-14)
+- **Schnorr Product Range US** parsed into `calc/schnorr-discs.js` + `calc/data/schnorr_discs.json`: **204** standard-material C75S/51CrV4 discs (DIN EN 16983), De 6–200 mm, published F@0.75h₀ and F@flat (lbf→N), art. nos., series A/B/C, bolt ID guess. Presets + AUTOSELECT pull from this table (not synthetic McMaster SKUs).
+- **US unit system**: `UCORE` display helpers (`fDisp/lDisp/kDisp/pDisp` + scales); engineer layer TOK gains `N/mm`↔`lbf/in`; `__usys` now flips **native** `select[id$="-u"]` inputs (was only auto-attached dropdowns) and fires `amni-units-sys` so springs/bolts recalculate; spring results + F–δ axes render in active system so US mode does not leave bare “N” on curves/results.
+- Cache: unit-core/units `?v=units2`, fixes `?v=eng23`, engineer `?v=eng18`, schnorr `?v=sch1`.
+
+## v5.86.0 Amni-Calc Belleville catalog + op-point/viz fix (2026-07-14)
+- **Root cause of “op point off curve”**: pure Almen-Laszlo math was correct (`Fs(dAt(F))=F`), but Plotly axes used fixed `xTop/yTop` from curve peak only — when F > F_peak, δ past solid, or stack ops near capacity, the diamond was **clipped outside the axis box** (looked “off the curve”). Helical high-F past solid had the same clip.
+- **Belleville pack (calc-fixes.js `?v=eng22`)**: shared `bellGeom` (M/K2/K3, Fs, peak scan, dAt, OM/ID stress); `BELL_CATALOG` 19 DIN-2093-style rows with bolt fit + F@0.75h₀; presets rebuilt from catalog; conical/wave preset sets added; validation requires De/Di/t (not wire d/D); secant k at F; σ_OM/σ_ID/FoS; plot ranges include op + overload vertical “flat” branch; `drawBellAnim` free/loaded true disc sections; stack note flags capacity.
+- **⚡ BELLEVILLE CATALOG — AUTOSELECT** (`bvd-card`): force + max δ + OD envelope + bolt → lightest ns×np pack via `bellCatalogPick`; APPLY writes geometry/stack/type. Helical designer hidden while type=belleville.
+- **Honest labeling**: catalog is McMaster-*style selection flow* on standard disc dims — not a live McMaster SKU scrape (no invented part numbers).
+- **Tests**: `calc/tests/spring_belleville_audit.js` 18 anchors (op on single+stack curves, stresses, pick, overload clamp, snap-through). All 21 suites green (was 20). Backups `backups/v5.86.0_belleville/`.
+- **Module validation sweep** (this pass): 21 node audit suites pass; known open finding `beam_audit.js` reports cantilever moment/defl sign still wrong under current FIXSIGN (SS OK) — not fixed here.
+
 ## v5.82.0 Amni-Learn baked static voice — PC-generated Piper audio for all phonics/storybooks (2026-07-14)
 - ALL phonics scripts + storybook page chunks + story quizzes are pre-synthesized ON THE PC (`tools/voice_bake/`: `gen_tasks.js` slices the REAL `_ttsClean`/`_chunkSpans`/`_ttsBatch`/PHON_*/STORYBOOKS/STORY_QUIZZES out of learn-app.js so keys match runtime byte-for-byte; `bake.py` = piper-tts python API `en_US-hfc_female-medium` → ffmpeg libopus 32k). 763 unique clips, 11MB, `learn/assets/voice/v####.ogg` + `manifest.json` (765 keys `text|speed` — story 0.95, phonics/quiz 1; degenerate no-speech chunks like a lone `'` bake as 0.15s silence).
 - Runtime: `_voiceMan` manifest fetched at boot; `_synthWav` = memory → manifest static fetch → `_synthRaw` engine fallback. `_voiceHas(parts,speed)` gates: `_hdSay`/`speakSeq`/`playCurrentPage` play covered content with NO neural engine load at all (no 60MB model download, no wait banner); `initStorybook`/`_toggleTTS` skip `_hdWarm` when manifest present. Word taps stay plain Web Speech (kid presses a word → instant). Engine paths remain intact as fallback for uncovered lines. `_hdLoad(onProg,quiet)` gained quiet flag.

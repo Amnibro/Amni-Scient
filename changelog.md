@@ -1,5 +1,52 @@
 # Changelog 
 
+## Amni-Weather v1.1.3 — Geo fix, zoom LOD, wind streamlines + isobars - 2026-07-17
+- **Boot crash fix:** `getCurrentPosition` needs success + error callbacks before options (phone was throwing TypeError).
+- **Zoom LOD:** global/synoptic/regional/meso/local sampling — far zoom = sparse + core vars; zoom in for density + air/marine.
+- **Wind streamlines** + **pressure striation** overlays (meteoblue-style motion cues). Toggle in layer panel.
+- NWP roadmap stub: `weather/docs/NWP_ROADMAP.md` (Reynolds-closed GPU path — not claimed as live yet).
+
+## Amni-Weather v1.1.2 — Mobile performance mode - 2026-07-17
+- Phone path: DPR 1, weather overlay ~28% res + LUT, skip overlay while panning, lighter field grid (360×180), default CARTO Dark (not satellite @2x), smaller live sample, tile cache cap, no per-tile placeholder CPU scan.
+
+## Amni-Weather v1.1.1 — Live meteo hardened + more variables - 2026-07-17
+- **Live path rewrite** (`weather/meteo.js`): variable packs with retry/backoff, viewport+global lattice, partial-pack survival (no instant demo bail), air-quality + marine pulls, station probe detail.
+- **48 layers**: surface/precip/wind/radiation/soil/severe + PM2.5/PM10/AQI/O₃/NO₂ + waves/swell/current. Soft coverage warnings; Refresh live button; re-fetch on pan/zoom settle.
+
+## Amni-Weather v1.1.0 — OSM/Esri/CARTO slippy maps + full color custom - 2026-07-17
+- **Amni-Drive basemap stack:** Esri World Imagery (satellite), OpenStreetMap, CARTO dark/light, OpenTopoMap via `weather/tiles.js`.
+- **Primary UX = smooth slippy map** (fractional zoom, inertia pan, ± fab) with weather overlay compositing — not fake blob Earth.
+- **Coloration:** preset LUTs + live color-stop pickers, gamma, soft mask, reverse, opacity, auto/manual range.
+- Attribution strip for Esri/OSM/CARTO. Global Open-Meteo field + WASM smooth still power the overlay.
+
+## Amni-Weather v1.0.2 — Real Earth basemap + smoother global fields - 2026-07-17
+- **Killed fake blob continents:** NASA Blue Marble + topology bump + water specular + city lights emissive under `weather/assets/`.
+- **Weather is full-Earth equirectangular** (not a wrong regional patch on the sphere). Global Open-Meteo grid (chunked), denser IDW + upsample to 1024×512.
+- **GPU field shader** (float Red texture + soft alpha for precip/cloud-style layers), higher-res globe mesh, better damping, auto-spin, Globe/Flat view, basemap modes (Marble/Night/Relief).
+
+## Amni-Weather v1.0.1 — Fix blank white Booting screen (trailing slash + local Three) - 2026-07-17
+- **Root cause:** opening `/weather` (no trailing slash) made relative `style.css` / `app.js` resolve to site root → 404 → unstyled page stuck on “Booting…”.
+- **Fix:** force trailing-slash redirect, `<base href="/weather/">`, absolute `/weather/*` asset URLs, boot error banner.
+- **Vendored Three.js 0.160** under `weather/vendor/three/` so LAN/mobile does not depend on jsDelivr CDN.
+
+## Amni-Weather v1.0.0 — Interactive multi-layer weather maps - 2026-07-17
+- **New product** competing on the meteoblue-style map surface: `amni-weather.html` marketing page + fullscreen app at `weather/`.
+- **Stack:** Rust → WASM field engine (`weather/wasm` → `weather/pkg`), Three.js WebGL2 globe, GLSL field path + WGSL sources under `weather/shaders/`.
+- **20 layers:** temperature, feels-like, dew point, humidity, precip, snow, wind speed/gust/direction, MSL pressure, clouds, visibility, CAPE, UV, shortwave/direct/diffuse radiation, soil temp, VPD, ET₀.
+- **UX:** customizable palettes (8 LUTs + reverse + opacity + auto/manual range), orbit zoom/pan, point probe, city/lat-lon search, hourly 7-day scrubber with play, SI/US units, Live (Open-Meteo multi-point) + Demo (WASM synthetic) modes.
+- **Site wiring:** hero wheel, PROJECTS nav, sitemap, `privacy-weather.html`, privacy hub card.
+- Docs: `docs/checklists/checklist_amni_weather_v1.0.0.md`, `docs/guardian_councils/guardian_council_amni_weather_v1.md`.
+
+## Amni-Calc v5.86.1 — Real Schnorr disc database + US mode stops leaking Newtons - 2026-07-14
+- **204 SCHNORR standard discs** from the Product Range US PDF (DIN EN 16983, C75S/51CrV4, Ø6–200 mm) with article numbers, A/B/C series, published catalog forces at 0.75·h₀ and flat. Presets + ⚡ AUTOSELECT use this table.
+- **US units**: toggling US now converts native unit dropdowns (not just the auto-attached ones), spring force/length/rate and F–δ axes switch to lbf / in / lbf/in, and the engineer layer understands N/mm. Hard refresh so `units2` / `eng23` / `sch1` load.
+
+## Amni-Calc v5.86.0 — Belleville catalog autoselect + operating points that stay on the curve - 2026-07-14
+- **Belleville finally sizes like a parts book**: 19 DIN 2093-style catalog discs (bolt fit M3–M48+, F at 75% of h₀) drive the presets, and a new ⚡ BELLEVILLE CATALOG — AUTOSELECT card picks the lightest series×parallel stack for your force, deflection, OD envelope, and bolt size, then APPLY loads the full analysis.
+- **Operating points were never “wrong math” — they were clipped**: Almen-Laszlo already put F on the curve (`Fs(dAt(F))=F`), but the F–δ plot locked axes to peak force/deflection only. High load, overload past flat, and coil travel past solid parked the diamond **outside the box**. Axes now expand to include the op; overload draws a red flat branch; past-solid coil ops mark red.
+- **Stress and secant rate**: outer (OM) and ID edge stresses with FoS vs Sy; k_secant at the working point; free/loaded disc-section animation instead of generic chevrons. Catalog is standard-table dims with a McMaster-style pick flow — not invented vendor SKUs.
+- Tests: `spring_belleville_audit.js` 18 anchors; all 21 calc suites green. Cache-buster `calc-fixes.js?v=eng22`.
+
 ## Amni-Learn v5.82.0 — Pre-baked natural voice for all phonics & storybooks - 2026-07-14
 - Every phonics script line, storybook page, and story quiz is now pre-generated audio (763 Opus clips, 11MB, same Piper voice) shipped with the site. Pages start speaking instantly — no model download, no synthesis wait, no "Loading natural voice" banner. Word-by-word follow-along works exactly as before, and clips cache on-device after first play.
 - Tapping a word still uses the instant device voice so kids hear the word right away.
