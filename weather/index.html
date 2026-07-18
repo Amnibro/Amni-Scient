@@ -15,7 +15,7 @@
 <style>html,body{margin:0;background:#02060e;color:#d4e8f8}#boot-err{display:none;position:fixed;left:12px;right:12px;bottom:90px;z-index:99;padding:12px;background:rgba(80,20,20,.92);border:1px solid #f66;border-radius:8px;font-size:12px;white-space:pre-wrap}</style>
 </head>
 <body>
-<a id="home-link" href="/amni-weather.html">← Product</a>
+<a id="home-link" href="/amni-weather.html">← Product page</a>
 <div id="stage">
 <canvas id="map"></canvas>
 <canvas id="overlay"></canvas>
@@ -29,16 +29,17 @@
 <div class="hud" id="topbar">
 <div class="pnl" id="brand">
 <h1>Amni-Weather</h1>
-<div class="sub">satellite · OSM · live models</div>
+<div class="sub">pack fields · satellite · OSM</div>
 </div>
 <div class="pnl" id="search-wrap">
 <input id="q" type="search" placeholder="City or lat,lon…" autocomplete="off" spellcheck="false">
 <button id="btn-search" type="button">Find</button>
 </div>
 <div class="pnl" id="mode-wrap">
-<button id="go-live" type="button" class="on">Live</button>
+<button id="go-pack" type="button" class="on" title="Prebaked field pack — no API">Pack</button>
+<button id="go-live" type="button" title="Open-Meteo (rate limited)">Live</button>
 <button id="go-demo" type="button">Demo</button>
-<button id="btn-refresh" type="button" title="Force refetch live packs">↻</button>
+<button id="btn-refresh" type="button" title="Reload pack / live">↻</button>
 </div>
 </div>
 <div class="hud pnl" id="layers">
@@ -76,7 +77,7 @@
 <input id="rmax" type="range" min="-40" max="120" value="40" step="0.5">
 </div>
 <label class="chk"><input id="wind-on" type="checkbox" checked> Wind streamlines</label>
-<label class="chk"><input id="iso-on" type="checkbox" checked> Pressure striations</label>
+<label class="chk"><input id="iso-on" type="checkbox"> Pressure striations</label>
 <label class="chk"><input id="reverse" type="checkbox"> Reverse palette</label>
 <label class="chk"><input id="autorange" type="checkbox" checked> Auto range</label>
 <label class="chk"><input id="smooth" type="checkbox" checked> Field smooth</label>
@@ -117,6 +118,6 @@ window.__wxBootErr=function(e){var el=document.getElementById('boot-err');var st
 window.addEventListener('error',function(ev){window.__wxBootErr(ev.error||ev.message);});
 window.addEventListener('unhandledrejection',function(ev){window.__wxBootErr(ev.reason);});
 </script>
-<script type="module" src="/weather/wx-app.js?v=20260718b"></script>
+<script type="module" src="/weather/wx-app.js?v=1.2.0"></script>
 </body>
 </html>
