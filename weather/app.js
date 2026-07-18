@@ -201,7 +201,6 @@ return state.wasm;
 }
 const W=()=>state.wasm||jsFallback;
 const layerMeta=()=>LAYERS[state.layer]||LAYERS[0];
-const bm=()=>BASEMAPS[state.basemap]||BASEMAPS.satellite;
 function formatVal(raw){
 const L=layerMeta(),toUs=state.units==='us',k=L.key;let v=raw,u=L.unitSi;
 if(k.includes('temperature')||k.includes('dewpoint')||k==='apparent_temperature'||k.includes('soil_temperature')){v=W().convert_temp(raw,toUs);u=toUs?L.unitUs:L.unitSi;}
