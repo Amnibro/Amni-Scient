@@ -1,6 +1,6 @@
-import {BASEMAPS,loadTile,lonToX,latToY,xToLon,yToLat,clampZoom,MOBILE} from './tiles.js';
-import {fetchLiveBundle,extractField,fetchPointDetail,lodForZoom} from './meteo.js';
-import {createWindLayer,drawIsobars} from './wind.js';
+import {BASEMAPS,loadTile,lonToX,latToY,xToLon,yToLat,clampZoom,MOBILE} from './tiles.js?v=1.1.4';
+import {fetchLiveBundle,extractField,fetchPointDetail,lodForZoom} from './meteo.js?v=1.1.4';
+import {createWindLayer,drawIsobars} from './wind.js?v=1.1.4';
 const PERF={
 mobile:MOBILE,
 dpr:MOBILE?1:Math.min(devicePixelRatio||1,2),
@@ -118,10 +118,10 @@ const status=t=>{const s=el('status-text');if(s)s.innerHTML=t;};
 const map=el('map'),ov=el('overlay');
 const mctx=map.getContext('2d',{alpha:false});
 const octx=ov.getContext('2d',{alpha:true});
-function bm(){return BASEMAPS[state.basemap]||BASEMAPS.satellite;}
+function getBasemap(){return BASEMAPS[state.basemap]||BASEMAPS.satellite;}
 windLayer=createWindLayer(el('wind'),{
 lonToX,latToY,xToLon,yToLat,clampZoom,PERF,
-getView:()=>({lat:state.lat,lon:state.lon,zoom:state.zoom,bm:bm()})
+getView:()=>({lat:state.lat,lon:state.lon,zoom:state.zoom,bm:getBasemap()})
 });
 const jsFallback={
 version:()=>'js-fallback',
@@ -328,7 +328,7 @@ el('leg-hi').textContent=`${hi.v.toFixed(1)} ${hi.u}`;
 legendBar();
 el('rmin-l').textContent=state.autorange?'auto':state.vmin.toFixed(1);
 el('rmax-l').textContent=state.autorange?'auto':state.vmax.toFixed(1);
-el('attr').textContent=`${bm().attr} · Weather fields Open-Meteo · Amni-Weather`;
+el('attr').textContent=`${getBasemap().attr} · Weather fields Open-Meteo · Amni-Weather`;
 }
 async function refreshField(opts={}){
 const force=!!opts.force;
@@ -379,7 +379,7 @@ updateLegend();schedule(true);
 }
 }
 function drawBasemap(gen){
-const B=bm();const zf=clampZoom(state.zoom,B);const z=Math.floor(zf);const scale=Math.pow(2,zf-z);
+const B=getBasemap();const zf=clampZoom(state.zoom,B);const z=Math.floor(zf);const scale=Math.pow(2,zf-z);
 const dpr=PERF.dpr;const Wpx=map.width,Hpx=map.height;
 const cx=lonToX(state.lon,z)*scale*dpr,cy=latToY(state.lat,z)*scale*dpr;
 const left=cx-Wpx/2,top=cy-Hpx/2,ts=256*scale*dpr;
@@ -401,7 +401,7 @@ function drawOverlay(){
 if(state.panning&&PERF.mobile){octx.clearRect(0,0,ov.width,ov.height);return;}
 if(!state.field){octx.clearRect(0,0,ov.width,ov.height);return;}
 const Wpx=ov.width,Hpx=ov.height;
-const B=bm();const zf=clampZoom(state.zoom,B);const z=Math.floor(zf);const scale=Math.pow(2,zf-z);
+const B=getBasemap();const zf=clampZoom(state.zoom,B);const z=Math.floor(zf);const scale=Math.pow(2,zf-z);
 const dpr=PERF.dpr*PERF.ovScale;
 const cx=lonToX(state.lon,z)*scale*dpr,cy=latToY(state.lat,z)*scale*dpr;
 const left=cx-Wpx/2,top=cy-Hpx/2;
@@ -437,7 +437,7 @@ for(let dx=0;dx<xMax;dx++){data[o]=r;data[o+1]=g;data[o+2]=b;data[o+3]=aa;o+=4;}
 }
 octx.putImageData(img,0,0);
 if(state.isoOn&&state.presField&&!state.panning){
-drawIsobars(octx,state.presField,state.fw,state.fh,{lat:state.lat,lon:state.lon,zoom:state.zoom,bm:bm()},{lonToX,latToY,xToLon,yToLat,clampZoom,PERF},PERF.mobile?5:7);
+drawIsobars(octx,state.presField,state.fw,state.fh,{lat:state.lat,lon:state.lon,zoom:state.zoom,bm:getBasemap()},{lonToX,latToY,xToLon,yToLat,clampZoom,PERF},PERF.mobile?5:7);
 }
 }
 let mapBusy=false,pendingRender=false,pendingFull=false;
@@ -467,12 +467,12 @@ el('probe').classList.add('open');
 el('probe-coords').textContent=`${lat.toFixed(3)}°, ${lon.toFixed(3)}°`;
 el('probe-val').textContent=Number.isFinite(f.v)?f.v.toFixed(2):'—';
 el('probe-unit').textContent=f.u;
-el('probe-meta').textContent=`${layerMeta().name}\n${bm().label} · z${state.zoom.toFixed(1)}\n${state.mode} · loading station…`;
-if(state.mode!=='live'){el('probe-meta').textContent=`${layerMeta().name}\n${bm().label} · demo · ${W().version()}`;return;}
+el('probe-meta').textContent=`${layerMeta().name}\n${getBasemap().label} · z${state.zoom.toFixed(1)}\n${state.mode} · loading station…`;
+if(state.mode!=='live'){el('probe-meta').textContent=`${layerMeta().name}\n${getBasemap().label} · demo · ${W().version()}`;return;}
 try{
 const det=await fetchPointDetail(lat,lon);
 const h=det.forecast?.hourly;const ti=state.tIndex;
-const lines=[layerMeta().name,`${bm().label} · z${state.zoom.toFixed(1)}`];
+const lines=[layerMeta().name,`${getBasemap().label} · z${state.zoom.toFixed(1)}`];
 if(h){
 const pick=(k,lab,fmt=x=>x?.toFixed?.(1)??x)=>{const a=h[k];if(!a||a[ti]==null)return;lines.push(`${lab}: ${fmt(+a[ti])}`);};
 pick('temperature_2m','T °C');pick('apparent_temperature','Feels °C');pick('dewpoint_2m','Td °C');
@@ -503,13 +503,13 @@ function screenToLL(clientX,clientY){
 const r=map.getBoundingClientRect();
 const dpr=PERF.dpr;
 const px=(clientX-r.left)*dpr,py=(clientY-r.top)*dpr;
-const B=bm();const zf=clampZoom(state.zoom,B);const z=Math.floor(zf);const scale=Math.pow(2,zf-z);
+const B=getBasemap();const zf=clampZoom(state.zoom,B);const z=Math.floor(zf);const scale=Math.pow(2,zf-z);
 const cx=lonToX(state.lon,z)*scale*dpr,cy=latToY(state.lat,z)*scale*dpr;
 const x=(cx-map.width/2+px)/(scale*dpr),y=(cy-map.height/2+py)/(scale*dpr);
 return {lat:yToLat(y,z),lon:xToLon(x,z)};
 }
 function panBy(dx,dy){
-const B=bm();const zf=clampZoom(state.zoom,B);const z=Math.floor(zf);const scale=Math.pow(2,zf-z);
+const B=getBasemap();const zf=clampZoom(state.zoom,B);const z=Math.floor(zf);const scale=Math.pow(2,zf-z);
 const dpr=PERF.dpr;
 const cx=lonToX(state.lon,z)*scale*dpr-dx,cy=latToY(state.lat,z)*scale*dpr-dy;
 state.lon=xToLon(cx/(scale*dpr),z);state.lat=Math.max(-85,Math.min(85,yToLat(cy/(scale*dpr),z)));
@@ -517,7 +517,7 @@ schedule(false);maybeRefetchView();
 }
 function zoomAt(clientX,clientY,dz){
 const before=screenToLL(clientX,clientY);
-state.zoom=clampZoom(state.zoom+dz,bm());
+state.zoom=clampZoom(state.zoom+dz,getBasemap());
 const after=screenToLL(clientX,clientY);
 state.lon+=before.lon-after.lon;state.lat=Math.max(-85,Math.min(85,state.lat+(before.lat-after.lat)));
 schedule(true);maybeRefetchView();
