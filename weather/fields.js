@@ -1,25 +1,42 @@
 const cache=new Map();
 let manifest=null;
-export async function loadManifest(base='/weather/data/'){
-if(manifest)return manifest;
-const r=await fetch(base+'manifest.json',{cache:'force-cache'});
+export async function loadManifest(base='/weather/data/',opts={}){
+const force=!!opts.force;
+if(manifest&&!force)return manifest;
+const bust=force?Date.now():'';
+const url=base+'manifest.json'+(bust?`?t=${bust}`:'');
+const r=await fetch(url,{cache:force?'no-store':'default'});
 if(!r.ok)throw new Error('field pack missing ('+r.status+')');
 manifest=await r.json();
 manifest._base=base;
+if(force)cache.clear();
 return manifest;
 }
 export function packHours(){return manifest?.hours||[];}
 export function packMeta(){return manifest;}
+export function packAgeMs(){
+if(!manifest?.bakedAt)return null;
+const t=Date.parse(manifest.bakedAt);
+return Number.isFinite(t)?Date.now()-t:null;
+}
+export function packIsStale(maxHours){
+const age=packAgeMs();
+if(age==null)return true;
+const maxH=maxHours!=null?maxHours:(manifest?.maxAgeHours||18);
+return age>maxH*3600e3;
+}
 async function loadVarBuf(key){
 if(!manifest)throw new Error('no manifest');
-if(cache.has(key))return cache.get(key);
+const ver=manifest.bakedAt||manifest.version||'1';
+const ck=key+'|'+ver;
+if(cache.has(ck))return cache.get(ck);
 const file=manifest.files[key];
 if(!file)throw new Error('no pack file for '+key);
-const r=await fetch(manifest._base+file,{cache:'force-cache'});
+const r=await fetch(manifest._base+file+`?v=${encodeURIComponent(ver)}`,{cache:'force-cache'});
 if(!r.ok)throw new Error('pack fetch '+key+' '+r.status);
 const ab=await r.arrayBuffer();
 const f32=new Float32Array(ab);
-cache.set(key,f32);
+cache.set(ck,f32);
 return f32;
 }
 export async function getHourField(key,hourIndex){

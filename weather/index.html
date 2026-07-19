@@ -14,7 +14,7 @@
 (function(){var p=location.pathname;if(p.slice(-1)!=='/'&&!/\.[a-zA-Z0-9]+$/.test(p))location.replace(p+'/'+location.search+location.hash);})();
 </script>
 <base href="/weather/">
-<link rel="stylesheet" href="/weather/style.css?v=136">
+<link rel="stylesheet" href="/weather/style.css?v=137">
 <style>html,body{margin:0;background:#02060e;color:#d4e8f8}#boot-err{display:none;position:fixed;left:12px;right:12px;bottom:90px;z-index:99;padding:12px;background:rgba(80,20,20,.92);border:1px solid #f66;border-radius:8px;font-size:12px;white-space:pre-wrap}#units-fab{position:fixed!important;left:14px!important;right:auto!important;top:auto!important;bottom:14px!important;z-index:50!important}</style>
 </head>
 <body>
@@ -61,6 +61,7 @@
 <button type="button" class="wx-load-skip" id="wx-load-skip" hidden>Use global fields</button>
 </div>
 </div>
+<div id="pack-age" class="pack-age" hidden title="Field pack age"></div>
 <div id="live-chip" class="live-chip" hidden>
 <span class="live-spin" aria-hidden="true"></span>
 <span id="live-chip-text">Live loading…</span>
@@ -76,7 +77,7 @@
 <h1>Amni-Weather</h1>
 <a id="home-link" href="/amni-weather.html">Product</a>
 </div>
-<div class="sub">live · zones · hazards · reports</div>
+<div class="sub">pack · hazards · reports</div>
 </div>
 <div class="pnl" id="search-wrap">
 <div class="search-box">
@@ -87,7 +88,7 @@
 <button id="btn-search" type="button">Find</button>
 </div>
 <div class="pnl" id="mode-wrap">
-<button id="btn-refresh" type="button" class="on" title="Reload live weather">↻ Live</button>
+<button id="btn-refresh" type="button" class="on" title="Reload field pack">↻ Pack</button>
 </div>
 </div>
 <div id="sheet-backdrop" class="sheet-backdrop" hidden></div>
@@ -246,6 +247,6 @@ window.__wxBootErr=function(e){var el=document.getElementById('boot-err');var st
 window.addEventListener('error',function(ev){window.__wxBootErr(ev.error||ev.message);});
 window.addEventListener('unhandledrejection',function(ev){window.__wxBootErr(ev.reason);});
 </script>
-<script type="module" src="/weather/wx-boot.136.js?v=136"></script>
+<script type="module" src="/weather/wx-boot.137.js?v=137"></script>
 </body>
 </html>
