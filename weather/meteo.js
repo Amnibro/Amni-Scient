@@ -4,8 +4,11 @@ const MARINE='https://marine-api.open-meteo.com/v1/marine';
 const CORE_VARS=['temperature_2m','dewpoint_2m','apparent_temperature','relative_humidity_2m','pressure_msl','cloud_cover','weather_code','precipitation','precipitation_probability','wind_speed_10m','wind_direction_10m','wind_gusts_10m'];
 const EXT_VARS=['surface_pressure','cloud_cover_low','cloud_cover_mid','cloud_cover_high','rain','showers','snowfall','snow_depth','shortwave_radiation','uv_index','cape','visibility','is_day'];
 const AIR_VARS=['pm10','pm2_5','us_aqi','ozone'];
-const MARINE_VARS=['wave_height','wave_direction','wave_period'];
+const MARINE_VARS=['wave_height','wave_direction','wave_period','wind_wave_height','swell_wave_height','swell_wave_period','swell_wave_direction','sea_surface_temperature'];
 const FORECAST_VARS=CORE_VARS.concat(EXT_VARS);
+const POINT_HOURLY=['temperature_2m','apparent_temperature','dewpoint_2m','relative_humidity_2m','precipitation','precipitation_probability','weather_code','cloud_cover','pressure_msl','wind_speed_10m','wind_direction_10m','wind_gusts_10m','uv_index','visibility','cape','is_day','shortwave_radiation'];
+const POINT_DAILY=['weather_code','temperature_2m_max','temperature_2m_min','apparent_temperature_max','apparent_temperature_min','uv_index_max','precipitation_sum','precipitation_probability_max','precipitation_hours','wind_speed_10m_max','wind_gusts_10m_max','wind_direction_10m_dominant','sunrise','sunset'];
+const pointCache=new Map();
 const IS_MOBILE=/Mobi|Android|iPhone|iPad/i.test(typeof navigator!=='undefined'?navigator.userAgent:'')||(typeof navigator!=='undefined'&&navigator.maxTouchPoints>1&&typeof screen!=='undefined'&&Math.min(screen.width,screen.height)<900);
 const rate={blockedUntil:0,lastAt:0,minGap:900,failStreak:0};
 function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
@@ -21,7 +24,7 @@ return{name:'local',gw:0,gh:0,localW:8,localH:6,days:3,vars:FORECAST_VARS,air:fa
 async function fetchJson(url,opts={}){
 const tries=opts.tries!=null?opts.tries:2;
 const allowRetry429=opts.retry429!==false;
-if(circuitOpen())throw new Error('Open-Meteo cooling down (429) — use Pack mode');
+if(circuitOpen())throw new Error('Forecast API busy — try again in a minute');
 let last;
 for(let i=0;i<tries;i++){
 const waitGap=Math.max(0,rate.minGap-(Date.now()-rate.lastAt));
@@ -34,7 +37,7 @@ const r=await fetch(url,{signal:ctrl.signal,headers:{'Accept':'application/json'
 clearTimeout(to);
 if(r.status===429||r.status===503){
 tripCircuit(r.status===429?120000:60000);
-if(!allowRetry429||i>=tries-1)throw new Error(`HTTP ${r.status} rate limited — switch to Pack`);
+if(!allowRetry429||i>=tries-1)throw new Error('Forecast API busy — map pack still works');
 await sleep(2500*Math.pow(2,i));
 continue;
 }
@@ -119,7 +122,7 @@ return`${MARINE}?${q.toString()}`;
 async function fetchLocations(urlBuilder,lats,lons,chunkSize,onProg,gapMs=500){
 const rows=new Array(lats.length);
 for(let i=0;i<lats.length;i+=chunkSize){
-if(circuitOpen())throw new Error('Open-Meteo cooling down (429) — use Pack mode');
+if(circuitOpen())throw new Error('Forecast API busy — try again in a minute');
 const sl=lats.slice(i,i+chunkSize),so=lons.slice(i,i+chunkSize);
 const data=await fetchJson(urlBuilder(sl,so),{tries:2,retry429:false});
 const part=asRows(data);
@@ -157,7 +160,7 @@ lats:plan.lats,lons:plan.lons,hours:[],bounds:plan.bounds,view:plan.view,lod:pla
 };
 }
 async function fetchLiveBundle({lat,lon,zoom,activeKey,onStatus,onPartial}){
-if(circuitOpen())throw new Error('Open-Meteo cooling down — use Pack (no API)');
+if(circuitOpen())throw new Error('Live map API busy — stay on Pack');
 const status=m=>onStatus&&onStatus(m);
 const errors=[];
 const plan=makeSamplePlan(lat,lon,zoom);
@@ -200,11 +203,61 @@ const fill=hit?sum/hit:0;
 for(let i=0;i<vals.length;i++)if(!Number.isFinite(vals[i]))vals[i]=fill;
 return{lats:Float32Array.from(lats),lons:Float32Array.from(lons),vals,b:bounds||{lat0:-85,lat1:85,lon0:-180,lon1:180},coverage:hit/Math.max(1,lats.length)};
 }
+function pointUrl(lat,lon,days){
+const q=new URLSearchParams();
+q.set('latitude',String(+lat.toFixed(4)));
+q.set('longitude',String(+lon.toFixed(4)));
+q.set('hourly',POINT_HOURLY.join(','));
+q.set('daily',POINT_DAILY.join(','));
+q.set('forecast_days',String(days||7));
+q.set('timezone','auto');
+q.set('temperature_unit','celsius');
+q.set('wind_speed_unit','ms');
+q.set('precipitation_unit','mm');
+return`${FORECAST}?${q.toString()}`;
+}
+function pointAirUrl(lat,lon){
+const q=new URLSearchParams();
+q.set('latitude',String(+lat.toFixed(4)));
+q.set('longitude',String(+lon.toFixed(4)));
+q.set('hourly',AIR_VARS.join(','));
+q.set('forecast_days','3');
+q.set('timezone','auto');
+return`${AIR}?${q.toString()}`;
+}
+function pointMarineUrl(lat,lon,days){
+const q=new URLSearchParams();
+q.set('latitude',String(+lat.toFixed(4)));
+q.set('longitude',String(+lon.toFixed(4)));
+q.set('hourly',MARINE_VARS.join(','));
+q.set('forecast_days',String(Math.min(days||7,7)));
+q.set('timezone','auto');
+return`${MARINE}?${q.toString()}`;
+}
+function cacheKey(lat,lon){return`${(Math.round(lat*20)/20).toFixed(2)},${(Math.round(lon*20)/20).toFixed(2)}`;}
 async function fetchPointDetail(lat,lon){
-if(circuitOpen())throw new Error('cooling down');
-const url=forecastUrl([+lat.toFixed(3)],[+lon.toFixed(3)],CORE_VARS,1);
-const data=await fetchJson(url,{tries:1,retry429:false});
-return{forecast:asRows(data)[0],air:null,marine:null};
+return fetchPointForecast(lat,lon,{days:2,marine:false,air:false});
+}
+async function fetchPointForecast(lat,lon,opts={}){
+const days=opts.days||7;
+const wantMarine=opts.marine!==false;
+const wantAir=opts.air!==false;
+const key=cacheKey(lat,lon)+'|'+days+(wantMarine?'m':'')+(wantAir?'a':'');
+const hit=pointCache.get(key);
+if(hit&&Date.now()-hit.at<900000)return hit.data;
+if(circuitOpen())throw new Error('Forecast API busy — try again in a minute');
+const la=+lat.toFixed(4),lo=+lon.toFixed(4);
+const fcP=fetchJson(pointUrl(la,lo,days),{tries:2,retry429:false});
+const airP=wantAir?fetchJson(pointAirUrl(la,lo),{tries:1,retry429:false}).catch(()=>null):Promise.resolve(null);
+const marP=wantMarine?fetchJson(pointMarineUrl(la,lo,days),{tries:1,retry429:false}).catch(()=>null):Promise.resolve(null);
+const[fcRaw,airRaw,marRaw]=await Promise.all([fcP,airP,marP]);
+const fc=asRows(fcRaw)[0]||fcRaw;
+const air=airRaw?asRows(airRaw)[0]||airRaw:null;
+const marine=marRaw?asRows(marRaw)[0]||marRaw:null;
+const data={lat:la,lon:lo,timezone:fc.timezone||'auto',utcOffset:fc.utc_offset_seconds||0,hourly:fc.hourly||null,daily:fc.daily||null,air:air?.hourly||null,marine:marine?.hourly||null,fetchedAt:Date.now(),source:'open-meteo'};
+if(pointCache.size>40){const first=pointCache.keys().next().value;pointCache.delete(first);}
+pointCache.set(key,{at:Date.now(),data});
+return data;
 }
 function isRateBlocked(){return circuitOpen();}
-export{FORECAST_VARS,CORE_VARS,AIR_VARS,MARINE_VARS,lodForZoom,fetchLiveBundle,extractField,fetchPointDetail,viewBounds,makeSamplePlan,isRateBlocked,circuitOpen};
+export{FORECAST_VARS,CORE_VARS,AIR_VARS,MARINE_VARS,POINT_HOURLY,POINT_DAILY,lodForZoom,fetchLiveBundle,extractField,fetchPointDetail,fetchPointForecast,viewBounds,makeSamplePlan,isRateBlocked,circuitOpen,cacheKey};

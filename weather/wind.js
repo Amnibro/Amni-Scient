@@ -13,27 +13,33 @@ export function createWindLayer(canvas,{lonToX,latToY,xToLon,yToLat,clampZoom,ge
 const ctx=canvas.getContext('2d',{alpha:true});
 let particles=[],running=false,raf=0,uF=null,vF=null,fw=0,fh=0,enabled=true;
 let lastT=0,bounds={lat0:-85,lat1:85,lon0:-180,lon1:180};
-const N=()=>PERF.mobile?220:420;
+let lastView={lat:NaN,lon:NaN,zoom:NaN},skipTrails=0;
+const N=()=>PERF.mobile?160:380;
 function resize(){
 const dpr=PERF.dpr;const w=innerWidth,h=innerHeight;
 canvas.width=(w*dpr)|0;canvas.height=(h*dpr)|0;
 canvas.style.width=w+'px';canvas.style.height=h+'px';
-seed();
+seed(true);
 }
-function seed(){
-const n=N();particles=new Array(n);
+function seed(hard){
+const n=N();
+if(hard||particles.length!==n)particles=new Array(n);
 for(let i=0;i<n;i++)particles[i]=spawn(true);
+lastT=0;skipTrails=2;
+const v=getView();lastView={lat:v.lat,lon:v.lon,zoom:v.zoom};
 }
 function spawn(randAge){
 const view=getView();
-const lat=view.lat+(Math.random()-0.5)*Math.min(40,90/Math.pow(2,Math.max(0,view.zoom-2)));
-const lon=view.lon+(Math.random()-0.5)*Math.min(80,180/Math.pow(2,Math.max(0,view.zoom-2)));
-return{lat,lon,age:randAge?Math.random()*70:0,max:50+Math.random()*40,px:NaN,py:NaN};
+const spanLat=Math.min(50,70/Math.pow(2,Math.max(0,view.zoom-1.5)));
+const spanLon=Math.min(100,140/Math.pow(2,Math.max(0,view.zoom-1.5)));
+const lat=view.lat+(Math.random()-0.5)*spanLat;
+const lon=view.lon+(Math.random()-0.5)*spanLon;
+return{lat:Math.max(-85,Math.min(85,lat)),lon:((lon+540)%360)-180,age:randAge?Math.random()*60:0,max:40+Math.random()*35};
 }
 function setFields(uField,vField,w,h,b){
 uF=uField;vF=vField;fw=w;fh=h;
 if(b)bounds=b;
-if(!particles.length)seed();
+if(!particles.length)seed(true);
 }
 function setEnabled(on){enabled=!!on;if(!enabled)ctx.clearRect(0,0,canvas.width,canvas.height);}
 function uvAtLatLon(lat,lon){
@@ -51,44 +57,61 @@ const dpr=PERF.dpr;
 const cx=lonToX(view.lon,z)*scale*dpr,cy=latToY(view.lat,z)*scale*dpr;
 const x=lonToX(lon,z)*scale*dpr-cx+canvas.width/2;
 const y=latToY(lat,z)*scale*dpr-cy+canvas.height/2;
-return{x,y,z,scale,dpr};
+return{x,y};
+}
+function viewShifted(view){
+if(!Number.isFinite(lastView.zoom))return true;
+const dz=Math.abs(view.zoom-lastView.zoom);
+const dlat=Math.abs(view.lat-lastView.lat);
+const dlon=Math.abs(((view.lon-lastView.lon+540)%360)-180);
+const thrLat=12/Math.pow(2,Math.max(0,view.zoom-2));
+const thrLon=20/Math.pow(2,Math.max(0,view.zoom-2));
+return dz>0.08||dlat>thrLat||dlon>thrLon;
 }
 function step(now){
 raf=requestAnimationFrame(step);
 if(!enabled)return;
-const dt=Math.min(0.05,(now-(lastT||now))/1000);lastT=now;
+const view=getView();
+if(view.panning){ctx.clearRect(0,0,canvas.width,canvas.height);lastT=now;return;}
+if(viewShifted(view)){seed(false);lastView={lat:view.lat,lon:view.lon,zoom:view.zoom};}
+const dt=Math.min(0.033,(now-(lastT||now))/1000);lastT=now;
 const W=canvas.width,H=canvas.height;
 ctx.clearRect(0,0,W,H);
 if(!uF||!vF)return;
-const view=getView();
-const B=view.bm;const zf=clampZoom(view.zoom,B);const z=Math.floor(zf);
-const mPerPx=156543.03392*Math.cos(view.lat*Math.PI/180)/Math.pow(2,z);
-const speedScale=PERF.mobile?0.55:0.85;
-ctx.lineWidth=PERF.mobile?1.1:1.35;
+if(skipTrails>0){skipTrails--;for(let i=0;i<particles.length;i++){const p=particles[i];const b=project(p.lat,p.lon);if(b.x<-20||b.y<-20||b.x>W+20||b.y>H+20)particles[i]=spawn(false);}return;}
+const speedScale=PERF.mobile?0.45:0.75;
+const maxStep=PERF.mobile?0.35:0.55;
+ctx.lineWidth=PERF.mobile?1:1.25;
 ctx.lineCap='round';
+const maxSeg=PERF.mobile?28:48;
 for(let i=0;i<particles.length;i++){
 const p=particles[i];
 const wind=uvAtLatLon(p.lat,p.lon);
 const mps=Math.hypot(wind.u,wind.v)||0.01;
-const dLon=(wind.u*dt*speedScale*12)/(111320*Math.max(0.2,Math.cos(p.lat*Math.PI/180)));
-const dLat=(wind.v*dt*speedScale*12)/111320;
+let dLon=(wind.u*dt*speedScale*10)/(111320*Math.max(0.2,Math.cos(p.lat*Math.PI/180)));
+let dLat=(wind.v*dt*speedScale*10)/111320;
+const stepMag=Math.hypot(dLon,dLat);
+if(stepMag>maxStep*0.01){const s=(maxStep*0.01)/stepMag;dLon*=s;dLat*=s;}
 const lat0=p.lat,lon0=p.lon;
 p.lat=Math.max(-85,Math.min(85,p.lat+dLat));
 p.lon=((p.lon+dLon+540)%360)-180;
 p.age++;
 const a=project(lat0,lon0),b=project(p.lat,p.lon);
-if(Number.isFinite(a.x)&&Number.isFinite(b.x)){
+const seg=Math.hypot(b.x-a.x,b.y-a.y);
+if(Number.isFinite(a.x)&&Number.isFinite(b.x)&&seg>0.4&&seg<maxSeg){
 const t=Math.min(1,mps/22);
-ctx.strokeStyle=`rgba(${50+t*170|0},${170+t*50|0},${230-t*90|0},${0.25+t*0.5})`;
+ctx.strokeStyle=`rgba(${50+t*170|0},${170+t*50|0},${230-t*90|0},${0.22+t*0.45})`;
 ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();
 }
-const off=b.x<-40||b.y<-40||b.x>W+40||b.y>H+40;
-if(p.age>p.max||off)particles[i]=spawn(false);
+const off=b.x<-50||b.y<-50||b.x>W+50||b.y>H+50;
+if(p.age>p.max||off||seg>=maxSeg)particles[i]=spawn(false);
 }
+lastView={lat:view.lat,lon:view.lon,zoom:view.zoom};
 }
 function start(){if(running)return;running=true;resize();lastT=0;raf=requestAnimationFrame(step);}
 function stop(){running=false;cancelAnimationFrame(raf);}
-return{resize,setFields,setEnabled,start,stop,seed};
+function onViewChange(){seed(false);}
+return{resize,setFields,setEnabled,start,stop,seed,onViewChange};
 }
 export function buildIsoPolylines(field,fw,fh,bounds,levels=6){
 if(!field||!fw||!fh)return[];
@@ -121,22 +144,18 @@ lines.push({thr,segs});
 }
 return lines;
 }
-export function drawIsoPolylines(ctx,isoLines,projectFn,PERF){
-if(!isoLines?.length)return;
+export function drawIsoPolylines(ctx,lines,project,PERF){
+if(!lines?.length)return;
 ctx.save();
-ctx.setLineDash([5,7]);
-ctx.lineWidth=1;
-ctx.strokeStyle='rgba(255,255,255,0.28)';
-for(const band of isoLines){
-ctx.beginPath();
-for(const seg of band.segs){
-const a=projectFn(seg[0].lat,seg[0].lon);
-const b=projectFn(seg[1].lat,seg[1].lon);
+ctx.lineWidth=(PERF.mobile?0.9:1.15)* (PERF.dpr||1);
+ctx.strokeStyle='rgba(220,235,255,0.45)';
+for(const L of lines){
+for(const seg of L.segs){
+const a=project(seg[0].lat,seg[0].lon),b=project(seg[1].lat,seg[1].lon);
 if(!Number.isFinite(a.x)||!Number.isFinite(b.x))continue;
-ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);
+ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();
 }
-ctx.stroke();
 }
 ctx.restore();
 }
-export function drawIsobars(){}
+export{meteoToUV};
