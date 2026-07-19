@@ -3,7 +3,8 @@ day:'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.geojson',
 week:'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojson',
 sig:'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_month.geojson'
 };
-const VOLC_URL='https://volcanoes.usgs.gov/hans-public/api/volcano/getVolcanoGeoJSON';
+const VOLC_ELEV='https://volcanoes.usgs.gov/hans-public/api/volcano/getElevatedVolcanoes';
+const VOLC_US='https://volcanoes.usgs.gov/hans-public/api/volcano/getUSVolcanoes';
 const NWS_URL='https://api.weather.gov/alerts/active?status=actual';
 const FALLBACK_VOLCANOES=[
 {name:'Kīlauea',lat:19.421,lon:-155.287,level:'WATCH'},
@@ -90,27 +91,24 @@ return out;
 }catch{return[];}
 }
 export async function loadVolcanoes(){
+const fb=()=>FALLBACK_VOLCANOES.filter(v=>v.level!=='NORMAL').map(v=>({id:'volc-'+v.name,kind:'volcano',...v,title:v.name,time:Date.now(),ttl:72*3600e3,pulse:0.75}));
 try{
-const geo=await fetchJson(VOLC_URL,10000);
+const [elev,us]=await Promise.all([fetchJson(VOLC_ELEV,10000).catch(()=>[]),fetchJson(VOLC_US,15000).catch(()=>[])]);
+const byV=new Map();
+for(const u of (Array.isArray(us)?us:[])){if(u?.vnum)byV.set(String(u.vnum),u);if(u?.volcano_cd)byV.set(String(u.volcano_cd),u);}
 const out=[];
-for(const f of geo.features||geo||[]){
-const g=f.geometry||f;
-const p=f.properties||f;
-const coords=g.coordinates||[p.lon,p.lat];
-const lon=+coords[0],lat=+coords[1];
+const list=Array.isArray(elev)&&elev.length?elev:(Array.isArray(us)?us.filter(u=>{const c=(u.color_code||u.alert_level||'').toString().toUpperCase();return c&&c!=='GREEN'&&c!=='NORMAL'&&c!=='UNASSIGNED';}):[]);
+for(const p of list){
+const meta=byV.get(String(p.vnum||''))||byV.get(String(p.volcano_cd||''))||p;
+const lat=+(meta.latitude??p.latitude??p.lat);
+const lon=+(meta.longitude??p.longitude??p.lon);
 if(!Number.isFinite(lat)||!Number.isFinite(lon))continue;
-const level=(p.alert_level||p.colorCode||p.status||'UNKNOWN').toString().toUpperCase();
+const level=(p.alert_level||p.color_code||meta.alert_level||meta.color_code||'UNKNOWN').toString().toUpperCase();
 if(level==='NORMAL'||level==='UNASSIGNED'||level==='GREEN')continue;
-out.push({
-id:'volc-'+(p.volcano_id||p.id||p.name||`${lat},${lon}`),
-kind:'volcano',lat,lon,level,title:p.volcano_name||p.name||'Volcano',
-time:Date.now(),ttl:72*3600e3,pulse:level.includes('WARN')||level.includes('RED')?1:0.7
-});
+out.push({id:'volc-'+(p.vnum||p.volcano_cd||p.volcano_name||`${lat},${lon}`),kind:'volcano',lat,lon,level,title:p.volcano_name||meta.volcano_name||'Volcano',time:(p.sent_unixtime?p.sent_unixtime*1000:Date.now()),ttl:72*3600e3,pulse:level.includes('WARN')||level.includes('RED')||level.includes('ORANGE')?1:0.7,url:p.notice_url||''});
 }
-return out.length?out:FALLBACK_VOLCANOES.filter(v=>v.level!=='NORMAL').map(v=>({id:'volc-'+v.name,kind:'volcano',...v,title:v.name,time:Date.now(),ttl:72*3600e3,pulse:0.75}));
-}catch{
-return FALLBACK_VOLCANOES.filter(v=>v.level!=='NORMAL').map(v=>({id:'volc-'+v.name,kind:'volcano',...v,title:v.name,time:Date.now(),ttl:72*3600e3,pulse:0.75}));
-}
+return out.length?out:fb();
+}catch{return fb();}
 }
 async function resolveZoneRings(zoneUrls,limit=2){
 const rings=[];
