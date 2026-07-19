@@ -1,4 +1,4 @@
-import {lonToX,latToY,clampZoom,MOBILE} from './tiles.js?v=129';
+import {lonToX,latToY,clampZoom,MOBILE} from './tiles.js?v=130';
 const CITIES=[
 {n:'Tokyo',la:35.68,lo:139.69,p:37.4,c:1},{n:'Delhi',la:28.61,lo:77.21,p:32.9,c:1},{n:'Shanghai',la:31.23,lo:121.47,p:28.5,c:0},
 {n:'São Paulo',la:-23.55,lo:-46.63,p:22.4,c:0},{n:'Mexico City',la:19.43,lo:-99.13,p:22.1,c:1},{n:'Cairo',la:30.04,lo:31.24,p:21.3,c:1},
