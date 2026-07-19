@@ -2525,12 +2525,12 @@ function __wbg_get_imports() {
         },
         __wbindgen_cast_0000000000000002: function(arg0, arg1) {
             // Cast intrinsic for `Closure(Closure { dtor_idx: 14, function: Function { arguments: [NamedExternref("MessageEvent")], shim_idx: 15, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
-            const ret = makeMutClosure(arg0, arg1, wasm.__wasm_bindgen_func_elem_675, __wasm_bindgen_func_elem_676);
+            const ret = makeMutClosure(arg0, arg1, wasm.__wasm_bindgen_func_elem_673, __wasm_bindgen_func_elem_674);
             return addHeapObject(ret);
         },
         __wbindgen_cast_0000000000000003: function(arg0, arg1) {
             // Cast intrinsic for `Closure(Closure { dtor_idx: 14, function: Function { arguments: [NamedExternref("RTCDataChannelEvent")], shim_idx: 15, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
-            const ret = makeMutClosure(arg0, arg1, wasm.__wasm_bindgen_func_elem_675, __wasm_bindgen_func_elem_676_2);
+            const ret = makeMutClosure(arg0, arg1, wasm.__wasm_bindgen_func_elem_673, __wasm_bindgen_func_elem_674_2);
             return addHeapObject(ret);
         },
         __wbindgen_cast_0000000000000004: function(arg0, arg1) {
@@ -2666,12 +2666,12 @@ function __wasm_bindgen_func_elem_11233(arg0, arg1) {
     wasm.__wasm_bindgen_func_elem_11233(arg0, arg1);
 }
 
-function __wasm_bindgen_func_elem_676(arg0, arg1, arg2) {
-    wasm.__wasm_bindgen_func_elem_676(arg0, arg1, addHeapObject(arg2));
+function __wasm_bindgen_func_elem_674(arg0, arg1, arg2) {
+    wasm.__wasm_bindgen_func_elem_674(arg0, arg1, addHeapObject(arg2));
 }
 
-function __wasm_bindgen_func_elem_676_2(arg0, arg1, arg2) {
-    wasm.__wasm_bindgen_func_elem_676_2(arg0, arg1, addHeapObject(arg2));
+function __wasm_bindgen_func_elem_674_2(arg0, arg1, arg2) {
+    wasm.__wasm_bindgen_func_elem_674_2(arg0, arg1, addHeapObject(arg2));
 }
 
 function __wasm_bindgen_func_elem_8357(arg0, arg1, arg2) {

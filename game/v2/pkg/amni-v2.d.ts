@@ -138,14 +138,14 @@ export interface InitOutput {
     readonly __wbg_set_streamconfig_sample_rate: (a: number, b: number) => void;
     readonly __wbg_streamconfig_free: (a: number, b: number) => void;
     readonly __wasm_bindgen_func_elem_4550: (a: number, b: number) => void;
-    readonly __wasm_bindgen_func_elem_675: (a: number, b: number) => void;
+    readonly __wasm_bindgen_func_elem_673: (a: number, b: number) => void;
     readonly __wasm_bindgen_func_elem_6961: (a: number, b: number) => void;
     readonly __wasm_bindgen_func_elem_8356: (a: number, b: number) => void;
     readonly __wasm_bindgen_func_elem_11222: (a: number, b: number) => void;
     readonly __wasm_bindgen_func_elem_6962: (a: number, b: number, c: number, d: number) => void;
     readonly __wasm_bindgen_func_elem_11231: (a: number, b: number, c: number, d: number) => void;
-    readonly __wasm_bindgen_func_elem_676: (a: number, b: number, c: number) => void;
-    readonly __wasm_bindgen_func_elem_676_2: (a: number, b: number, c: number) => void;
+    readonly __wasm_bindgen_func_elem_674: (a: number, b: number, c: number) => void;
+    readonly __wasm_bindgen_func_elem_674_2: (a: number, b: number, c: number) => void;
     readonly __wasm_bindgen_func_elem_8357: (a: number, b: number, c: number) => void;
     readonly __wasm_bindgen_func_elem_8357_5: (a: number, b: number, c: number) => void;
     readonly __wasm_bindgen_func_elem_11223: (a: number, b: number, c: number) => void;
