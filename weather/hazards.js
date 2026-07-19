@@ -5,7 +5,6 @@ sig:'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_month
 };
 const VOLC_URL='https://volcanoes.usgs.gov/hans-public/api/volcano/getVolcanoGeoJSON';
 const NWS_URL='https://api.weather.gov/alerts/active?status=actual';
-const UA='AmniWeather/1.3 (https://amni-scient.com; weather-map)';
 const FALLBACK_VOLCANOES=[
 {name:'Kīlauea',lat:19.421,lon:-155.287,level:'WATCH'},
 {name:'Mauna Loa',lat:19.475,lon:-155.608,level:'ADVISORY'},
@@ -23,7 +22,7 @@ async function fetchJson(url,timeout=15000){
 const ctrl=new AbortController();
 const t=setTimeout(()=>ctrl.abort(),timeout);
 try{
-const r=await fetch(url,{signal:ctrl.signal,headers:{'Accept':'application/geo+json,application/json',UserAgent:UA,'User-Agent':UA}});
+const r=await fetch(url,{signal:ctrl.signal});
 clearTimeout(t);
 if(!r.ok)throw new Error('HTTP '+r.status);
 return await r.json();

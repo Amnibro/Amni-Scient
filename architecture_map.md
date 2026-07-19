@@ -1,4 +1,8 @@
-﻿
+
+## v1.4.4 Amni-Weather CORS hazards + glass UI (2026-07-18)
+- Fix NWS/USGS CORS: stop sending `User-Agent` / custom headers (preflight blocked `useragent`).
+- Glass UI polish to match design target: softer panels, pill search/modes, cyan SI/US, denser checks, rounded timebar.
+- Boot `wx-boot.131.js`, `style.css?v=131`.
 ## v1.4.3 Amni-Weather CDN 404 bust — ref/forecast (2026-07-18)
 - Live 404 on `ref.js?v=129` / `forecast.js?v=129` was **cached 404** (Fastly/GH Pages max-age 4h), not missing source — modules shipped in 5021333.
 - Boot `wx-boot.130.js` + `?v=130` imports; `ref.js` cache param; index + stubs re-export 130.

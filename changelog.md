@@ -1,4 +1,8 @@
-﻿## 2026-07-18 — v1.4.3 Amni-Weather CDN 404 bust
+## 2026-07-18 — v1.4.4 Amni-Weather CORS + glass UI
+- Hazards fetch: no custom User-Agent (fixes NWS/USGS CORS preflight).
+- UI glass polish toward design screenshot; boot 131.
+
+## 2026-07-18 — v1.4.3 Amni-Weather CDN 404 bust
 - Poisoned CDN cache for `/weather/ref.js?v=129` and `forecast.js?v=129` (modules already on main).
 - New entry `wx-boot.130.js`, query `?v=130`; old boots re-export 130.
 ## 2026-07-18 — v1.4.2 zoom + wind glitch fix

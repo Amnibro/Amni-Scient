@@ -14,7 +14,7 @@
 (function(){var p=location.pathname;if(p.slice(-1)!=='/'&&!/\.[a-zA-Z0-9]+$/.test(p))location.replace(p+'/'+location.search+location.hash);})();
 </script>
 <base href="/weather/">
-<link rel="stylesheet" href="/weather/style.css">
+<link rel="stylesheet" href="/weather/style.css?v=131">
 <style>html,body{margin:0;background:#02060e;color:#d4e8f8}#boot-err{display:none;position:fixed;left:12px;right:12px;bottom:90px;z-index:99;padding:12px;background:rgba(80,20,20,.92);border:1px solid #f66;border-radius:8px;font-size:12px;white-space:pre-wrap}</style>
 </head>
 <body>
@@ -46,11 +46,11 @@
 <h1>Amni-Weather</h1>
 <a id="home-link" href="/amni-weather.html">Product</a>
 </div>
-<div class="sub">pack · zones · hazards · reports</div>
+<div class="sub">live maps · pack · hazards</div>
 </div>
 <div class="pnl" id="search-wrap">
 <div class="search-box">
-<input id="q" type="search" placeholder="City, place, or lat,lon…" autocomplete="off" spellcheck="false" role="combobox" aria-autocomplete="list" aria-controls="suggest" aria-expanded="false">
+<input id="q" type="search" placeholder="City, place, or lat, lon…" autocomplete="off" spellcheck="false" role="combobox" aria-autocomplete="list" aria-controls="suggest" aria-expanded="false">
 <div id="suggest" class="suggest" role="listbox" hidden></div>
 </div>
 <button id="btn-locate" type="button" title="Use my location" aria-label="Use my location">◎</button>
@@ -204,10 +204,10 @@
 <div class="hud" id="hint">drag pan · scroll zoom · tap pin · forecast panel</div>
 <div class="hud pnl" id="timebar">
 <div class="row">
-<button id="t-prev" type="button">◀</button>
+<button id="t-prev" type="button" title="Previous hour">‹</button>
 <input id="t-slider" type="range" min="0" max="167" value="0">
-<button id="t-next" type="button">▶</button>
-<button id="t-play" type="button">Play</button>
+<button id="t-next" type="button" title="Next hour">›</button>
+<button id="t-play" type="button" title="Play">▶</button>
 </div>
 <div class="tlabel" id="t-label">Now</div>
 </div>
@@ -218,6 +218,6 @@ window.__wxBootErr=function(e){var el=document.getElementById('boot-err');var st
 window.addEventListener('error',function(ev){window.__wxBootErr(ev.error||ev.message);});
 window.addEventListener('unhandledrejection',function(ev){window.__wxBootErr(ev.reason);});
 </script>
-<script type="module" src="/weather/wx-boot.130.js"></script>
+<script type="module" src="/weather/wx-boot.131.js"></script>
 </body>
 </html>
