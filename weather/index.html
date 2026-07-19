@@ -14,8 +14,8 @@
 (function(){var p=location.pathname;if(p.slice(-1)!=='/'&&!/\.[a-zA-Z0-9]+$/.test(p))location.replace(p+'/'+location.search+location.hash);})();
 </script>
 <base href="/weather/">
-<link rel="stylesheet" href="/weather/style.css?v=131">
-<style>html,body{margin:0;background:#02060e;color:#d4e8f8}#boot-err{display:none;position:fixed;left:12px;right:12px;bottom:90px;z-index:99;padding:12px;background:rgba(80,20,20,.92);border:1px solid #f66;border-radius:8px;font-size:12px;white-space:pre-wrap}</style>
+<link rel="stylesheet" href="/weather/style.css?v=134">
+<style>html,body{margin:0;background:#02060e;color:#d4e8f8}#boot-err{display:none;position:fixed;left:12px;right:12px;bottom:90px;z-index:99;padding:12px;background:rgba(80,20,20,.92);border:1px solid #f66;border-radius:8px;font-size:12px;white-space:pre-wrap}#units-fab{position:fixed!important;left:14px!important;right:auto!important;top:auto!important;bottom:14px!important;z-index:50!important}</style>
 </head>
 <body>
 <div id="stage">
@@ -151,12 +151,6 @@
 </div>
 </section>
 </div>
-<div class="hud pnl" id="units-fab" aria-label="Units">
-<div id="units" class="seg">
-<button type="button" data-u="si" class="active">SI</button>
-<button type="button" data-u="us">US</button>
-</div>
-</div>
 <div class="hud" id="left-dock">
 <div class="hud pnl" id="legend">
 <div class="title" id="leg-title">Temperature 2 m</div>
@@ -211,6 +205,12 @@
 </div>
 <div class="hud pnl" id="status"><span id="status-text">Booting…</span></div>
 <div id="attr">Imagery © Esri · Amni-Weather</div>
+<div id="units-fab" class="pnl" aria-label="Units">
+<div id="units" class="seg">
+<button type="button" data-u="si" class="active">SI</button>
+<button type="button" data-u="us">US</button>
+</div>
+</div>
 <script>
 window.__wxBootErr=function(e){var el=document.getElementById('boot-err');var st=document.getElementById('status-text');var msg=(e&&e.message)?e.message:String(e);if(el){el.style.display='block';el.textContent='Boot failed: '+msg+(e&&e.stack?'\n'+e.stack:'');}if(st)st.innerHTML='<span class="warn">Boot failed</span>';console.error(e);};
 window.addEventListener('error',function(ev){window.__wxBootErr(ev.error||ev.message);});

@@ -148,9 +148,9 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);font-famil
 .wx-sec.open .wx-sec-body>.wx-sec-inner,.wx-sec.open .wx-sec-body>:only-child{padding:4px 8px 10px}
 .wx-sec:not(.open) .wx-sec-body{max-height:0}
 .wx-sec.open .wx-sec-body{max-height:none}
-#units-fab{position:fixed;left:14px;bottom:14px;z-index:34;padding:5px;pointer-events:auto;background:linear-gradient(145deg,rgba(8,18,32,.88),rgba(4,12,24,.78));border-radius:999px;box-shadow:0 10px 28px rgba(0,0,0,.4)}
-#units-fab .seg{min-width:104px}
-#units-fab .seg button{padding:8px 14px;font-size:11px}
+#units-fab{position:fixed!important;left:14px!important;right:auto!important;top:auto!important;bottom:14px!important;z-index:50!important;margin:0!important;transform:none!important;padding:5px;pointer-events:auto;background:linear-gradient(145deg,rgba(8,18,32,.88),rgba(4,12,24,.78));border-radius:999px;box-shadow:0 10px 28px rgba(0,0,0,.4);width:auto;height:auto;max-width:none}
+#units-fab .seg{min-width:104px;pointer-events:auto}
+#units-fab .seg button{padding:8px 14px;font-size:11px;pointer-events:auto}
 .layer-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px}
 .lbtn{padding:8px 8px;font-size:10px;letter-spacing:1px;text-transform:uppercase;border:1px solid rgba(70,140,220,.28);background:transparent;color:var(--cd);cursor:pointer;border-radius:6px;text-align:left;transition:border-color .18s,color .15s,background .18s,transform .15s cubic-bezier(.34,1.4,.64,1),box-shadow .22s;position:relative;overflow:hidden}
 .lbtn::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at var(--px,50%) var(--py,50%),rgba(77,184,255,.22),transparent 55%);opacity:0;transition:opacity .25s;pointer-events:none}
@@ -252,7 +252,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);font-famil
 #timebar{bottom:calc(58px + env(safe-area-inset-bottom,0px));left:8px;right:8px;width:auto;transform:none;padding:8px 10px;z-index:30}
 #timebar .tlabel{font-size:10px}
 #timebar button{padding:6px 8px;font-size:10px}
-#units-fab{left:8px;bottom:calc(112px + env(safe-area-inset-bottom,0px));z-index:37;padding:4px}
+#units-fab{left:8px!important;right:auto!important;top:auto!important;bottom:calc(112px + env(safe-area-inset-bottom,0px))!important;z-index:50!important;padding:4px}
 #units-fab .seg{min-width:88px}
 #units-fab .seg button{padding:7px 10px;font-size:10px}
 #status{left:50%;right:auto;bottom:auto;top:auto;transform:translateX(-50%);bottom:calc(118px + env(safe-area-inset-bottom,0px));max-width:min(92vw,320px);text-align:center;z-index:36;font-size:11px;padding:8px 12px}
@@ -279,6 +279,7 @@ body.wx-mobile.sheet-active #legend{opacity:.2}
 #layers{max-height:calc(100vh - 76px - 12px - 96px - 88px)}
 #probe:not(.open){display:none}
 #forecast:not(.open){display:none}
+#units-fab{left:14px!important;bottom:14px!important;top:auto!important;right:auto!important;z-index:50!important}
 }
 
 /* glass polish v1.4.4 */
