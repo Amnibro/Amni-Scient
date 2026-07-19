@@ -1,10 +1,14 @@
+## Field pack
+- Live bake: `node weather/tools/bake_fields_live.mjs` (`--quick` for coarse). CI: `weather-pack` every 6h.
+- Map uses pack only (no browser Open-Meteo lattice). Pin forecast is the optional live API call.
+
 # Amni-Weather v1.0.0
 
 Interactive multi-layer weather maps for amni-scient.com.
 
 ## Run
 
-Serve the **site root** (or this folder) over HTTP — ES modules + WASM require a server:
+Serve the **site root** (or this folder) over HTTP â€” ES modules + WASM require a server:
 
 ```bat
 cd amni-scient-site
@@ -31,5 +35,5 @@ wasm-pack build --target web --release --out-dir ..\pkg
 
 ## Modes
 
-- **Live** — multi-point Open-Meteo forecast (no API key)
-- **Demo** — synthetic fields from WASM (works offline)
+- **Live** â€” multi-point Open-Meteo forecast (no API key)
+- **Demo** â€” synthetic fields from WASM (works offline)
