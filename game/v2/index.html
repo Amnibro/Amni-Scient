@@ -46,7 +46,7 @@ main{width:100%;max-width:1320px;padding:22px 18px 40px;display:flex;flex-direct
 #overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;
   background:radial-gradient(ellipse at center,#1a2c24 0%,#0a0d09 100%);z-index:5;padding:0 18px;text-align:center}
 #overlay .crest{font-size:3.2rem;filter:drop-shadow(0 4px 10px rgba(0,0,0,.5))}
-#overlay h2{color:var(--gold);font-size:2.1rem;letter-spacing:.12em}
+#overlay h2{color:var(--gold);font-size:2.2rem;letter-spacing:.12em}
 #overlay p{color:#c2cbb2;max-width:580px;line-height:1.6}
 #playBtn{background:linear-gradient(180deg,#f7d262,#e0a82f);color:#241f10;border:none;
   font-size:1.15rem;font-weight:800;padding:14px 52px;border-radius:999px;cursor:pointer;
@@ -88,7 +88,7 @@ footer a{color:var(--muted)}
 <main>
   <div class="hero">
     <h1>AMNI V2</h1>
-    <div class="badge">TERRARIUM REMAKE · 2.1</div>
+    <div class="badge">TERRARIUM REMAKE · 2.2</div>
     <div class="tag">A full content rewrite: clock-ring hub, path-spined realms, themed portals &amp; tyrants, nine robot skins — same original soundtrack.</div>
   </div>
   <div id="stage">
@@ -173,7 +173,7 @@ btn.addEventListener('click', async () => {
   if(reason === 'no-adapter') return fail('⚠️ WebGPU present but no GPU adapter responded. Enable hardware acceleration / update drivers.');
   status.textContent = 'Fetching the world seed...';
   try {
-    const V = '2101';
+    const V = '2200';
     const { default: init } = await import('./pkg/amni-v2.js?v=' + V);
     status.textContent = 'Growing thirteen realms — about 15 seconds...';
     await new Promise(r => setTimeout(r, 60));
