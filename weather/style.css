@@ -302,3 +302,36 @@ body.wx-mobile.sheet-active #legend{opacity:.2}
 #btn-search{border-radius:999px}
 input[type=range]::-webkit-slider-thumb{appearance:none;width:14px;height:14px;border-radius:50%;background:#6ad0ff;border:2px solid #e8f6ff;box-shadow:0 0 10px rgba(94,200,255,.55);cursor:pointer}
 input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:#6ad0ff;border:2px solid #e8f6ff;cursor:pointer}
+/* Amni-Weather live compute loader */
+#wx-loader{position:fixed;inset:0;z-index:80;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:0;transition:opacity .35s ease;background:radial-gradient(ellipse at center,rgba(2,12,28,.55) 0%,rgba(2,6,14,.72) 70%);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+#wx-loader.on{opacity:1;pointer-events:auto}
+#wx-loader.out{opacity:0;pointer-events:none}
+.wx-load-core{position:relative;width:min(320px,72vw);display:flex;flex-direction:column;align-items:center;gap:22px;transform:translateY(-4%)}
+.wx-ring-wrap{position:relative;width:220px;height:220px;filter:drop-shadow(0 0 28px rgba(60,200,255,.35))}
+.wx-ring-wrap svg{width:100%;height:100%;display:block}
+.wx-ring-bg{fill:none;stroke:rgba(80,160,220,.18);stroke-width:3}
+.wx-ring-track{fill:none;stroke:rgba(40,100,160,.35);stroke-width:8;stroke-linecap:round}
+.wx-ring-prog{fill:none;stroke:url(#wxLoadGrad);stroke-width:8;stroke-linecap:round;stroke-dasharray: 534;transform:rotate(-90deg);transform-origin:50% 50%;transition:stroke-dashoffset .25s ease;filter:drop-shadow(0 0 6px rgba(80,220,255,.65))}
+.wx-ring-glow{position:absolute;inset:18%;border-radius:50%;background:radial-gradient(circle,rgba(40,160,255,.2),transparent 70%);animation:wx-pulse 2.4s ease-in-out infinite}
+.wx-ring-spin{position:absolute;inset:0;border-radius:50%;border:1px solid transparent;border-top-color:rgba(100,220,255,.55);border-right-color:rgba(100,255,180,.25);animation:wx-spin 3.2s linear infinite;pointer-events:none}
+.wx-ring-spin2{position:absolute;inset:12px;border-radius:50%;border:1px dashed rgba(80,180,255,.2);animation:wx-spin 8s linear infinite reverse;pointer-events:none}
+.wx-load-brand{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;pointer-events:none}
+.wx-load-brand h2{margin:0;font-size:15px;letter-spacing:4px;font-weight:700;color:#e8f6ff;text-shadow:0 0 18px rgba(100,220,255,.55)}
+.wx-load-brand span{margin-top:6px;font-size:11px;letter-spacing:3.5px;color:#5ec8ff;text-transform:uppercase;animation:wx-blink 1.4s ease-in-out infinite}
+.wx-load-bar{width:min(280px,70vw);height:6px;border-radius:999px;background:rgba(20,50,80,.55);border:1px solid rgba(90,170,230,.28);overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,.4)}
+.wx-load-bar>i{display:block;height:100%;width:0%;border-radius:999px;background:linear-gradient(90deg,#3a9fd8,#6ad0ff 40%,#9ef0c0 75%,#e8ff6a);box-shadow:0 0 12px rgba(100,220,255,.55);transition:width .28s ease}
+.wx-load-meta{font-size:10px;letter-spacing:1.6px;text-transform:uppercase;color:#7aa0b8;text-align:center;min-height:1.4em}
+.wx-load-meta b{color:#8fd4ff;font-weight:600}
+.wx-load-skip{margin-top:2px;padding:8px 16px;font-size:10px;letter-spacing:1.4px;text-transform:uppercase;border-radius:999px;border:1px solid rgba(90,170,230,.4);background:rgba(0,60,110,.35);color:#d4e8f8;cursor:pointer;pointer-events:auto;transition:all .15s}
+.wx-load-skip:hover{border-color:#5ec8ff;background:rgba(0,120,200,.4);color:#fff}
+@keyframes wx-spin{to{transform:rotate(360deg)}}
+@keyframes wx-pulse{0%,100%{opacity:.55;transform:scale(.96)}50%{opacity:1;transform:scale(1.04)}}
+@keyframes wx-blink{0%,100%{opacity:1}50%{opacity:.45}}
+.live-chip{position:fixed;left:50%;bottom:78px;transform:translateX(-50%);z-index:55;display:none;align-items:center;gap:10px;padding:10px 16px;border-radius:999px;background:rgba(6,16,28,.9);border:1px solid rgba(94,200,255,.4);box-shadow:0 12px 32px rgba(0,0,0,.45);color:#d4e8f8;font-size:12px;letter-spacing:.8px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);max-width:min(92vw,420px)}
+.live-chip.on{display:inline-flex}
+.live-chip[hidden]{display:none!important}
+.live-spin{width:14px;height:14px;border-radius:50%;border:2px solid rgba(94,200,255,.25);border-top-color:#6ad0ff;animation:wx-spin .8s linear infinite;flex-shrink:0}
+#live-chip-text{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media(max-width:720px),(pointer:coarse){
+.live-chip{bottom:calc(128px + env(safe-area-inset-bottom,0px));font-size:11px;padding:8px 12px}
+}
