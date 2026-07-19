@@ -16,10 +16,11 @@ function circuitOpen(){return Date.now()<rate.blockedUntil;}
 function tripCircuit(ms){rate.blockedUntil=Date.now()+(ms||90000);rate.failStreak++;}
 function lodForZoom(zoom){
 const z=Math.max(1,zoom||3);
-if(z<4)return{name:'global',gw:5,gh:3,localW:0,localH:0,days:1,vars:CORE_VARS.slice(0,8).concat(['wind_speed_10m','wind_direction_10m']),air:false,marine:false,chunk:8,gap:400};
-if(z<6)return{name:'synoptic',gw:6,gh:4,localW:5,localH:4,days:2,vars:CORE_VARS.concat(['rain','cape','visibility']),air:false,marine:false,chunk:10,gap:450};
-if(z<9)return{name:'regional',gw:4,gh:3,localW:7,localH:5,days:3,vars:CORE_VARS.concat(EXT_VARS.slice(0,8)),air:false,marine:false,chunk:10,gap:500};
-return{name:'local',gw:0,gh:0,localW:8,localH:6,days:3,vars:FORECAST_VARS,air:false,marine:false,chunk:8,gap:550};
+const mob=IS_MOBILE;
+if(z<3.8)return{name:'global',gw:mob?9:14,gh:mob?5:8,localW:0,localH:0,days:1,vars:CORE_VARS.slice(0,8).concat(['wind_speed_10m','wind_direction_10m','visibility','pressure_msl']),air:false,marine:false,chunk:mob?8:12,gap:mob?500:380};
+if(z<6)return{name:'synoptic',gw:mob?8:12,gh:mob?5:7,localW:mob?5:7,localH:mob?4:5,days:2,vars:CORE_VARS.concat(['rain','cape','visibility','uv_index']),air:false,marine:false,chunk:mob?8:12,gap:mob?480:400};
+if(z<9)return{name:'regional',gw:mob?4:6,gh:mob?3:4,localW:mob?8:10,localH:mob?6:7,days:2,vars:CORE_VARS.concat(EXT_VARS.slice(0,8)),air:false,marine:false,chunk:10,gap:450};
+return{name:'local',gw:0,gh:0,localW:mob?8:11,localH:mob?6:8,days:3,vars:FORECAST_VARS,air:false,marine:false,chunk:10,gap:500};
 }
 async function fetchJson(url,opts={}){
 const tries=opts.tries!=null?opts.tries:2;
@@ -37,7 +38,7 @@ const r=await fetch(url,{signal:ctrl.signal,headers:{'Accept':'application/json'
 clearTimeout(to);
 if(r.status===429||r.status===503){
 tripCircuit(r.status===429?120000:60000);
-if(!allowRetry429||i>=tries-1)throw new Error('Forecast API busy — map pack still works');
+if(!allowRetry429||i>=tries-1)throw new Error('Forecast API busy — try again shortly');
 await sleep(2500*Math.pow(2,i));
 continue;
 }
@@ -160,7 +161,7 @@ lats:plan.lats,lons:plan.lons,hours:[],bounds:plan.bounds,view:plan.view,lod:pla
 };
 }
 async function fetchLiveBundle({lat,lon,zoom,activeKey,onStatus,onPartial}){
-if(circuitOpen())throw new Error('Live map API busy — stay on Pack');
+if(circuitOpen())throw new Error('Live map API busy — retry shortly');
 const status=m=>onStatus&&onStatus(m);
 const errors=[];
 const plan=makeSamplePlan(lat,lon,zoom);

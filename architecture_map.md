@@ -1,4 +1,8 @@
-
+﻿
+## v1.4.5 Live-only map + sane ranges + smooth fields (2026-07-18)
+- Legend/range floors: visibility, wind, precip, CAPE, UV, humidity never autorange negative; pressure/temp bounded.
+- UI: removed Pack/Demo mode buttons — always Live (`↻ Live`); silent global-field fallback if API busy.
+- Live field: denser Open-Meteo lattice + IDW raster up to 360×180 (not nearest-neighbor mega-tiles). Boot `wx-boot.133.js`.
 ## v1.4.4 Amni-Weather CORS hazards + glass UI (2026-07-18)
 - Fix NWS/USGS CORS: stop sending `User-Agent` / custom headers (preflight blocked `useragent`).
 - Glass UI polish to match design target: softer panels, pill search/modes, cyan SI/US, denser checks, rounded timebar.
