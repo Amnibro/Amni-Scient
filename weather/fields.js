@@ -53,3 +53,46 @@ await loadManifest();
 const keys=['temperature_2m','wind_u','wind_v','pressure_msl','wind_speed_10m','cloud_cover','precipitation'];
 await Promise.all(keys.map(k=>getHourField(k,hourIndex).catch(()=>null)));
 }
+export function upsampleBilinear(src,sw,sh,dw,dh){
+const out=new Float32Array(dw*dh);
+const xDen=Math.max(1,dw-1),yDen=Math.max(1,dh-1);
+for(let j=0;j<dh;j++){
+const y=j/yDen*(sh-1),y0=y|0,y1=Math.min(sh-1,y0+1),fy=y-y0;
+for(let i=0;i<dw;i++){
+const x=i/xDen*(sw-1),x0=x|0,x1=Math.min(sw-1,x0+1),fx=x-x0;
+const i00=src[y0*sw+x0],i10=src[y0*sw+x1],i01=src[y1*sw+x0],i11=src[y1*sw+x1];
+out[j*dw+i]=i00+(i10-i00)*fx+((i01+(i11-i01)*fx)-(i00+(i10-i00)*fx))*fy;
+}
+}
+return out;
+}
+export function smoothBox(src,w,h,radius=1){
+const r=Math.max(0,radius|0);if(!r)return src;
+const out=new Float32Array(w*h);
+for(let j=0;j<h;j++){
+for(let i=0;i<w;i++){
+let s=0,c=0;
+for(let dy=-r;dy<=r;dy++){
+const yy=j+dy;if(yy<0||yy>=h)continue;
+for(let dx=-r;dx<=r;dx++){
+const xx=i+dx;if(xx<0||xx>=w)continue;
+const v=src[yy*w+xx];if(Number.isFinite(v)){s+=v;c++;}
+}
+}
+out[j*w+i]=c?s/c:src[j*w+i];
+}
+}
+return out;
+}
+export function enhanceField(field,opts={}){
+if(!field?.data)return field;
+const maxW=opts.maxW||720,maxH=opts.maxH||360;
+const scale=opts.scale||4;
+const tw=Math.min(maxW,Math.max(field.w,field.w*scale|0));
+const th=Math.min(maxH,Math.max(field.h,field.h*scale|0));
+let data=field.data,w=field.w,h=field.h;
+if(tw>w||th>h){data=upsampleBilinear(data,w,h,tw,th);w=tw;h=th;}
+const passes=opts.smooth!=null?opts.smooth:2;
+for(let p=0;p<passes;p++)data=smoothBox(data,w,h,1);
+return{...field,data,w,h};
+}

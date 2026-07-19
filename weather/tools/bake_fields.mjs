@@ -4,7 +4,7 @@ import {fileURLToPath} from 'url';
 const __dir=dirname(fileURLToPath(import.meta.url));
 const out=join(__dir,'../data');
 mkdirSync(out,{recursive:true});
-const W=144,H=72,HOURS=12;
+const W=288,H=144,HOURS=12;
 const LAT0=-85,LAT1=85,LON0=-180,LON1=180;
 const VARS=['temperature_2m','apparent_temperature','dewpoint_2m','relative_humidity_2m','precipitation','cloud_cover','pressure_msl','wind_speed_10m','wind_direction_10m','wind_u','wind_v','cape','uv_index','visibility'];
 function lerp(a,b,t){return a+(b-a)*t;}

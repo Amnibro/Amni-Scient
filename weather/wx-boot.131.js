@@ -1,1 +1,1 @@
-import '/weather/wx-boot.132.js';
+import '/weather/wx-boot.134.js';

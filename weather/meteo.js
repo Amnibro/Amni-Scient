@@ -17,10 +17,10 @@ function tripCircuit(ms){rate.blockedUntil=Date.now()+(ms||90000);rate.failStrea
 function lodForZoom(zoom){
 const z=Math.max(1,zoom||3);
 const mob=IS_MOBILE;
-if(z<3.8)return{name:'global',gw:mob?9:14,gh:mob?5:8,localW:0,localH:0,days:1,vars:CORE_VARS.slice(0,8).concat(['wind_speed_10m','wind_direction_10m','visibility','pressure_msl']),air:false,marine:false,chunk:mob?8:12,gap:mob?500:380};
-if(z<6)return{name:'synoptic',gw:mob?8:12,gh:mob?5:7,localW:mob?5:7,localH:mob?4:5,days:2,vars:CORE_VARS.concat(['rain','cape','visibility','uv_index']),air:false,marine:false,chunk:mob?8:12,gap:mob?480:400};
-if(z<9)return{name:'regional',gw:mob?4:6,gh:mob?3:4,localW:mob?8:10,localH:mob?6:7,days:2,vars:CORE_VARS.concat(EXT_VARS.slice(0,8)),air:false,marine:false,chunk:10,gap:450};
-return{name:'local',gw:0,gh:0,localW:mob?8:11,localH:mob?6:8,days:3,vars:FORECAST_VARS,air:false,marine:false,chunk:10,gap:500};
+if(z<3.5)return{name:'global',gw:mob?12:18,gh:mob?7:10,localW:mob?6:10,localH:mob?4:7,days:1,vars:CORE_VARS.slice(0,8).concat(['wind_speed_10m','wind_direction_10m','visibility','pressure_msl']),air:false,marine:false,chunk:mob?8:12,gap:mob?420:320};
+if(z<5.5)return{name:'synoptic',gw:mob?10:14,gh:mob?6:8,localW:mob?8:12,localH:mob?6:9,days:2,vars:CORE_VARS.concat(['rain','cape','visibility','uv_index']),air:false,marine:false,chunk:mob?8:12,gap:mob?400:340};
+if(z<8)return{name:'regional',gw:mob?6:10,gh:mob?4:6,localW:mob?10:14,localH:mob?8:11,days:2,vars:CORE_VARS.concat(EXT_VARS.slice(0,8)),air:false,marine:false,chunk:10,gap:380};
+return{name:'local',gw:mob?4:8,gh:mob?3:5,localW:mob?12:16,localH:mob?9:12,days:3,vars:FORECAST_VARS,air:false,marine:false,chunk:10,gap:400};
 }
 async function fetchJson(url,opts={}){
 const tries=opts.tries!=null?opts.tries:2;

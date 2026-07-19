@@ -1,4 +1,8 @@
-﻿
+## v1.4.6 Amni-Weather LOD + pack anti-tile (2026-07-18)
+- Live LOD re-fetch on zoom/pan; denser sample plan; k-NN IDW + smooth/upsample.
+- Pack 288x144 smoother bake + enhanceField; Field smooth wired. Boot `wx-boot.134.js`.
+
+
 ## v1.4.5 Live-only map + sane ranges + smooth fields (2026-07-18)
 - Legend/range floors: visibility, wind, precip, CAPE, UV, humidity never autorange negative; pressure/temp bounded.
 - UI: removed Pack/Demo mode buttons — always Live (`↻ Live`); silent global-field fallback if API busy.
