@@ -138,26 +138,27 @@
 <label class="chk"><input id="reverse" type="checkbox"> Reverse palette</label>
 <label class="chk"><input id="autorange" type="checkbox" checked> Auto range</label>
 <label class="chk"><input id="smooth" type="checkbox" checked> Field smooth</label>
-<div class="ctrl-row">
-<label>Units</label>
-<div id="units" class="seg">
-<button type="button" data-u="si" class="active">SI</button>
-<button type="button" data-u="us">US</button>
-</div>
-</div>
 </div>
 </div>
 </section>
 <section class="wx-sec" data-sec="reports">
 <button type="button" class="wx-sec-hd" data-toggle="1"><span>Reports</span><i class="chev">▾</i></button>
 <div class="wx-sec-body">
+<div class="wx-sec-inner">
 <div class="ctrl-row"><label>Type</label><select id="rep-type"></select></div>
 <div class="ctrl-row"><label>Note</label><input id="rep-note" type="text" maxlength="160" placeholder="Optional short note"></div>
 <button type="button" id="btn-report" class="lbtn" style="width:100%;margin-top:4px">Submit report</button>
 <div id="haz-legend" class="haz-legend"></div>
 <div id="haz-count" class="haz-count">hazards loading…</div>
 </div>
+</div>
 </section>
+</div>
+<div class="hud pnl" id="units-fab" aria-label="Units">
+<div id="units" class="seg">
+<button type="button" data-u="si" class="active">SI</button>
+<button type="button" data-u="us">US</button>
+</div>
 </div>
 <div class="hud" id="left-dock">
 <div class="hud pnl" id="legend">
@@ -218,6 +219,6 @@ window.__wxBootErr=function(e){var el=document.getElementById('boot-err');var st
 window.addEventListener('error',function(ev){window.__wxBootErr(ev.error||ev.message);});
 window.addEventListener('unhandledrejection',function(ev){window.__wxBootErr(ev.reason);});
 </script>
-<script type="module" src="/weather/wx-boot.131.js"></script>
+<script type="module" src="/weather/wx-boot.132.js"></script>
 </body>
 </html>
