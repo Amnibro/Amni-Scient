@@ -173,7 +173,7 @@ btn.addEventListener('click', async () => {
   if(reason === 'no-adapter') return fail('⚠️ WebGPU present but no GPU adapter responded. Enable hardware acceleration / update drivers.');
   status.textContent = 'Fetching the world seed...';
   try {
-    const V = '2300';
+    const V = '2310';
     const { default: init } = await import('./pkg/amni-v2.js?v=' + V);
     status.textContent = 'Growing thirteen realms — about 15 seconds...';
     await new Promise(r => setTimeout(r, 60));
