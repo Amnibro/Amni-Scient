@@ -243,23 +243,55 @@ async function webgpuReason(){
   try { const a = await navigator.gpu.requestAdapter({powerPreference:'high-performance'}); return a ? 'ok' : 'no-adapter'; }
   catch(e){ return 'no-adapter'; }
 }
+async function unlockBrowserAudio(){
+  try {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return { ok: false, detail: 'No AudioContext in this browser' };
+    const ctx = window.__amniAudioCtx || new AC();
+    window.__amniAudioCtx = ctx;
+    if (ctx.state === 'suspended') await ctx.resume();
+    const n = Math.max(1, Math.floor(ctx.sampleRate * 0.025));
+    const buf = ctx.createBuffer(1, n, ctx.sampleRate);
+    const ch = buf.getChannelData(0);
+    for (let i = 0; i < n; i++) ch[i] = 0;
+    const src = ctx.createBufferSource();
+    src.buffer = buf;
+    src.connect(ctx.destination);
+    src.start(0);
+    if (ctx.state === 'suspended') await ctx.resume();
+    window.__amniAudioUnlocked = (ctx.state === 'running');
+    return { ok: true, state: ctx.state };
+  } catch (e) {
+    return { ok: false, detail: String(e && e.message ? e.message : e) };
+  }
+}
+async function keepAudioUnlocked(){
+  try {
+    const ctx = window.__amniAudioCtx;
+    if (ctx && ctx.state === 'suspended') await ctx.resume();
+  } catch (e) {}
+}
 if(!navigator.gpu){ fail('no-api'); }
 btn.addEventListener('click', async () => {
   btn.disabled = true;
-  btn.textContent = '? PLAY V2';
+  btn.textContent = 'PLAY V2';
   spin.style.display = 'block';
   const bar = document.getElementById('loadBar');
   const fill = document.getElementById('loadBarFill');
   bar.style.display = 'block';
-  fill.style.width = '4%';
-  status.textContent = 'Checking WebGPU... (PLAY also unlocks audio)';
+  fill.style.width = '3%';
+  status.textContent = 'Unlocking audio (PLAY gesture)...';
+  const audioUnlock = await unlockBrowserAudio();
+  if (!audioUnlock.ok) return fail('audio', audioUnlock.detail);
+  fill.style.width = '6%';
+  status.textContent = 'Checking WebGPU...';
   const reason = await webgpuReason();
   if(reason === 'no-api') return fail('no-api');
   if(reason === 'no-adapter') return fail('no-adapter');
   status.textContent = 'Downloading game engine...';
   fill.style.width = '12%';
   try {
-    const V = '3240';
+    const V = '3250';
     const bust = V + '-' + Date.now().toString(36);
     const jsUrl = new URL('./pkg/amni-v2.js', import.meta.url);
     jsUrl.searchParams.set('v', bust);
@@ -270,6 +302,7 @@ btn.addEventListener('click', async () => {
     fill.style.width = '22%';
     await new Promise(r => setTimeout(r, 40));
     await init({ module_or_path: wasmUrl.href });
+    await keepAudioUnlocked();
     status.textContent = 'Streaming textures, models, and music...';
     fill.style.width = '30%';
     const t0 = Date.now();
@@ -284,10 +317,12 @@ btn.addEventListener('click', async () => {
         else if (tick % 4 === 0) {
           const soft = Math.min(92, 30 + Math.floor((Date.now() - t0) / 1200));
           if (parseInt(fill.style.width, 10) < soft) fill.style.width = soft + '%';
+          if (tick % 8 === 0) keepAudioUnlocked();
         }
       }, 250);
     });
     if (!appeared) return fail('timeout');
+    await keepAudioUnlocked();
     fill.style.width = '100%';
     status.textContent = 'Welcome to the terrarium.';
     document.getElementById('overlay').style.display = 'none';
@@ -298,6 +333,7 @@ btn.addEventListener('click', async () => {
       document.getElementById('overlay').style.display = 'none';
       playing = true;
       armCanvas();
+      keepAudioUnlocked();
       return;
     }
     const msg = String(e && e.message ? e.message : e);
