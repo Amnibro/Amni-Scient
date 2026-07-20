@@ -57,13 +57,21 @@ html,body{overscroll-behavior:none;-webkit-text-size-adjust:100%}
   letter-spacing:.1em;box-shadow:0 6px 22px rgba(240,195,60,.35);transition:transform .12s ease,box-shadow .12s}
 #playBtn:hover{transform:translateY(-2px) scale(1.03);box-shadow:0 10px 30px rgba(240,195,60,.5)}
 #playBtn:disabled{opacity:.6;cursor:wait;transform:none}
-#status{color:#93a085;font-size:.86rem;min-height:1.2em;max-width:420px}
+#status{color:#93a085;font-size:.86rem;min-height:1.2em;max-width:460px;line-height:1.45}
 #spin{width:34px;height:34px;border:4px solid #3a4530;border-top-color:var(--gold);border-radius:50%;animation:sp .9s linear infinite;display:none}
 #loadBar{width:min(320px,70vw);height:8px;background:#1a2218;border:1px solid #3a4530;border-radius:999px;overflow:hidden;display:none;margin-top:4px}
 #loadBarFill{height:100%;width:0%;background:linear-gradient(90deg,#6dcea0,#f5c44b);transition:width .2s ease;border-radius:999px}
 @keyframes sp{to{transform:rotate(360deg)}}
 .note{color:var(--muted);font-size:.82rem}
 .note b{color:var(--accent)}
+.err-card{text-align:left;max-width:440px;margin:0 auto;padding:14px 16px;border-radius:12px;border:1px solid #5a4030;background:linear-gradient(180deg,#2a1c14,#1a120e);box-shadow:0 8px 28px rgba(0,0,0,.35)}
+.err-card h3{color:#f5c44b;font-size:.95rem;letter-spacing:.08em;margin:0 0 8px;text-transform:uppercase}
+.err-card p{color:#e0d4c0;font-size:.88rem;line-height:1.5;margin:0 0 8px}
+.err-card .tip{color:#9aa3b2;font-size:.8rem;margin:0 0 12px}
+.err-card .actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.err-card button.retry{background:linear-gradient(180deg,#f7d262,#e0a82f);color:#241f10;border:none;font-weight:800;padding:8px 18px;border-radius:999px;cursor:pointer;letter-spacing:.06em}
+.err-card button.retry:hover{filter:brightness(1.05)}
+.err-card a.help{color:#6cb6e6;font-size:.82rem;font-weight:600}
 .controls{width:100%;max-width:1280px;background:linear-gradient(180deg,var(--panel),var(--panel2));
   border:1px solid var(--edge);border-radius:14px;padding:18px 20px}
 .controls h3{color:var(--gold);font-size:.82rem;letter-spacing:.18em;text-transform:uppercase;margin-bottom:14px}
@@ -100,14 +108,14 @@ footer a{color:var(--muted)}
   <div id="stage">
     <div id="amni-game"></div>
     <div id="overlay">
-      <div class="crest">ðŸª´</div>
+      <div class="crest">🪴</div>
       <h2>AMNI V2</h2>
-      <p>Thirteen coherent realms on a map grammar (arrival â†’ spine â†’ heartland â†’ boss sanctum). Separate save slots from classic. WebGPU required.</p>
-      <button id="playBtn">â–¶&nbsp; PLAY V2</button>
+      <p>Thirteen coherent realms on a map grammar (arrival → spine → heartland → boss sanctum). Separate save slots from classic. WebGPU required. Press PLAY once to unlock audio.</p>
+      <button id="playBtn">▶ PLAY V2</button>
       <div id="spin"></div>
       <div id="loadBar"><div id="loadBarFill"></div></div>
       <div id="status"></div>
-      <div class="note">Needs <b>WebGPU</b> â€” Chrome, Edge, Firefox, or Safari 26+. First load streams textures + models, then grows the realms.</div>
+      <div class="note" id="bootNote">Needs <b>WebGPU</b> — Chrome, Edge, Firefox 141+, or Safari 26+. First load streams textures + models, then grows the realms.</div>
     </div>
   </div>
   <div class="whats">
@@ -171,28 +179,87 @@ const armCanvas = () => {
     catch (e) { try { canvas.requestPointerLock(); } catch (e2) {} }
   });
 };
-const fail = (html) => { status.innerHTML = html; spin.style.display = 'none'; btn.disabled = false; };
+const BOOT = {
+  'no-api': {
+    title: 'WebGPU needed',
+    body: 'Amni v2 draws with WebGPU. Open this page in Chrome, Edge, Firefox 141+, or Safari 26+.',
+    tip: 'Tip: chrome://gpu shows WebGPU status on Chromium browsers.',
+    retry: false
+  },
+  'no-adapter': {
+    title: 'No GPU adapter',
+    body: 'WebGPU is here but the GPU adapter did not answer. Turn on hardware acceleration and update graphics drivers, then retry.',
+    tip: 'Tip: close other heavy GPU apps, then Retry.',
+    retry: true
+  },
+  timeout: {
+    title: 'World took too long',
+    body: 'The terrarium never appeared. Network or GPU may be stuck. Tap Retry — or hard-refresh if it keeps hanging.',
+    tip: 'Tip: a slower first load is normal on mobile data.',
+    retry: true
+  },
+  cache: {
+    title: 'Out-of-date engine files',
+    body: 'The browser mixed old and new engine files. Hard refresh (Ctrl+Shift+R / Cmd+Shift+R) and press PLAY again.',
+    tip: 'Tip: private/incognito windows always fetch a clean cache.',
+    retry: true
+  },
+  audio: {
+    title: 'Audio blocked',
+    body: 'The browser blocked sound until a click. Press PLAY once — music and SFX unlock after that gesture.',
+    tip: 'Tip: keep the tab focused when pressing PLAY.',
+    retry: true
+  },
+  generic: {
+    title: 'Could not start',
+    body: 'Something went wrong while starting. Check the network, then Retry. If it keeps failing, hard-refresh the page.',
+    tip: 'Tip: open the browser console only if you are debugging.',
+    retry: true
+  }
+};
+function classifyBootError(msg) {
+  const m = String(msg || '').toLowerCase();
+  if (m.includes('linkerror') || m.includes('import requires a callable') || m.includes('webassembly.instantiate')) return 'cache';
+  if (m.includes('audio') || m.includes('autoplay') || m.includes('notallowed')) return 'audio';
+  if (m.includes('webgpu') || m.includes('adapter') || m.includes('device lost')) return 'no-adapter';
+  return 'generic';
+}
+const fail = (kind, detail) => {
+  const e = BOOT[kind] || BOOT.generic;
+  const detailHtml = detail ? '<p style="opacity:.7;font-size:.78em;word-break:break-word">' + String(detail).slice(0, 180) + '</p>' : '';
+  const actions = e.retry
+    ? '<div class="actions"><button type="button" class="retry" id="retryBtn">Retry PLAY</button><a class="help" href="https://caniuse.com/webgpu" target="_blank" rel="noopener">WebGPU help</a></div>'
+    : '<div class="actions"><a class="help" href="https://caniuse.com/webgpu" target="_blank" rel="noopener">Supported browsers</a></div>';
+  status.innerHTML = '<div class="err-card"><h3>' + e.title + '</h3><p>' + e.body + '</p><p class="tip">' + e.tip + '</p>' + detailHtml + actions + '</div>';
+  spin.style.display = 'none';
+  document.getElementById('loadBar').style.display = 'none';
+  btn.disabled = false;
+  btn.textContent = e.retry ? '▶ RETRY V2' : '▶ PLAY V2';
+  const rb = document.getElementById('retryBtn');
+  if (rb) rb.onclick = () => { btn.click(); };
+};
 async function webgpuReason(){
   if(!navigator.gpu) return 'no-api';
   try { const a = await navigator.gpu.requestAdapter({powerPreference:'high-performance'}); return a ? 'ok' : 'no-adapter'; }
   catch(e){ return 'no-adapter'; }
 }
-if(!navigator.gpu){ status.innerHTML = 'âš ï¸ No <b>WebGPU</b> detected â€” Amni needs it. Chrome, Edge, Firefox, or Safari 26+.'; }
+if(!navigator.gpu){ fail('no-api'); }
 btn.addEventListener('click', async () => {
   btn.disabled = true;
+  btn.textContent = '▶ PLAY V2';
   spin.style.display = 'block';
   const bar = document.getElementById('loadBar');
   const fill = document.getElementById('loadBarFill');
   bar.style.display = 'block';
   fill.style.width = '4%';
-  status.textContent = 'Checking WebGPU...';
+  status.textContent = 'Checking WebGPU... (PLAY also unlocks audio)';
   const reason = await webgpuReason();
-  if(reason === 'no-api') return fail('âš ï¸ <b>WebGPU</b> isn\'t available.<br>Use Chrome, Edge, Firefox 141+, or Safari 26+.');
-  if(reason === 'no-adapter') return fail('âš ï¸ WebGPU present but no GPU adapter responded. Enable hardware acceleration / update drivers.');
+  if(reason === 'no-api') return fail('no-api');
+  if(reason === 'no-adapter') return fail('no-adapter');
   status.textContent = 'Downloading game engine...';
   fill.style.width = '12%';
   try {
-    const V = '2940';
+    const V = '2950';
     const bust = V + '-' + Date.now().toString(36);
     const jsUrl = new URL('./pkg/amni-v2.js', import.meta.url);
     jsUrl.searchParams.set('v', bust);
@@ -220,7 +287,7 @@ btn.addEventListener('click', async () => {
         }
       }, 250);
     });
-    if (!appeared) return fail('Hmm â€” the world didn\'t appear in time. Reload to retry.');
+    if (!appeared) return fail('timeout');
     fill.style.width = '100%';
     status.textContent = 'Welcome to the terrarium.';
     document.getElementById('overlay').style.display = 'none';
@@ -234,10 +301,7 @@ btn.addEventListener('click', async () => {
       return;
     }
     const msg = String(e && e.message ? e.message : e);
-    if (msg.includes('LinkError') || msg.includes('import requires a callable') || msg.includes('WebAssembly.instantiate')) {
-      return fail('Engine assets were out of date (cache mix).<br><b>Hard refresh</b> (Ctrl+Shift+R) and try again.<br><span style="opacity:.75;font-size:.8em">' + msg.slice(0, 160) + '</span>');
-    }
-    fail('Could not start: ' + e);
+    return fail(classifyBootError(msg), msg);
   }
 });
 </script>
