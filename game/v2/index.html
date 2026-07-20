@@ -115,7 +115,7 @@ footer a{color:var(--muted)}
       <div id="spin"></div>
       <div id="loadBar"><div id="loadBarFill"></div></div>
       <div id="status"></div>
-      <div class="note" id="bootNote">Needs <b>WebGPU</b> — Chrome, Edge, Firefox 141+, or Safari 26+. First load streams textures + models, then grows the realms.</div>
+      <div class="note" id="bootNote">Needs <b>WebGPU</b> ï¿½ Chrome, Edge, Firefox 141+, or Safari 26+. First load streams textures + models, then grows the realms.</div>
     </div>
   </div>
   <div class="whats">
@@ -194,7 +194,7 @@ const BOOT = {
   },
   timeout: {
     title: 'World took too long',
-    body: 'The terrarium never appeared. Network or GPU may be stuck. Tap Retry — or hard-refresh if it keeps hanging.',
+    body: 'The terrarium never appeared. Network or GPU may be stuck. Tap Retry ï¿½ or hard-refresh if it keeps hanging.',
     tip: 'Tip: a slower first load is normal on mobile data.',
     retry: true
   },
@@ -206,7 +206,7 @@ const BOOT = {
   },
   audio: {
     title: 'Audio blocked',
-    body: 'The browser blocked sound until a click. Press PLAY once — music and SFX unlock after that gesture.',
+    body: 'The browser blocked sound until a click. Press PLAY once ï¿½ music and SFX unlock after that gesture.',
     tip: 'Tip: keep the tab focused when pressing PLAY.',
     retry: true
   },
@@ -259,7 +259,7 @@ btn.addEventListener('click', async () => {
   status.textContent = 'Downloading game engine...';
   fill.style.width = '12%';
   try {
-    const V = '3150';
+    const V = '3160';
     const bust = V + '-' + Date.now().toString(36);
     const jsUrl = new URL('./pkg/amni-v2.js', import.meta.url);
     jsUrl.searchParams.set('v', bust);
