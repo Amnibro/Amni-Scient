@@ -181,12 +181,17 @@ btn.addEventListener('click', async () => {
   status.textContent = 'Downloading game engine...';
   fill.style.width = '12%';
   try {
-    const V = '2430';
-    const { default: init } = await import('./pkg/amni-v2.js?v=' + V);
+    const V = '2460';
+    const bust = V + '-' + Date.now().toString(36);
+    const jsUrl = new URL('./pkg/amni-v2.js', import.meta.url);
+    jsUrl.searchParams.set('v', bust);
+    const wasmUrl = new URL('./pkg/amni-v2_bg.wasm', import.meta.url);
+    wasmUrl.searchParams.set('v', bust);
+    const { default: init } = await import(jsUrl.href);
     status.textContent = 'Compiling WebGPU module...';
     fill.style.width = '22%';
     await new Promise(r => setTimeout(r, 40));
-    await init({ module_or_path: './pkg/amni-v2_bg.wasm?v=' + V });
+    await init({ module_or_path: wasmUrl.href });
     status.textContent = 'Streaming textures, models, and music...';
     fill.style.width = '30%';
     const t0 = Date.now();
@@ -216,6 +221,10 @@ btn.addEventListener('click', async () => {
       playing = true;
       armCanvas();
       return;
+    }
+    const msg = String(e && e.message ? e.message : e);
+    if (msg.includes('LinkError') || msg.includes('import requires a callable') || msg.includes('WebAssembly.instantiate')) {
+      return fail('Engine assets were out of date (cache mix).<br><b>Hard refresh</b> (Ctrl+Shift+R) and try again.<br><span style="opacity:.75;font-size:.8em">' + msg.slice(0, 160) + '</span>');
     }
     fail('Could not start: ' + e);
   }
