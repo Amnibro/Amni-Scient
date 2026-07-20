@@ -181,7 +181,7 @@ btn.addEventListener('click', async () => {
   status.textContent = 'Downloading game engine...';
   fill.style.width = '12%';
   try {
-    const V = '2370';
+    const V = '2380';
     const { default: init } = await import('./pkg/amni-v2.js?v=' + V);
     status.textContent = 'Compiling WebGPU module...';
     fill.style.width = '22%';
