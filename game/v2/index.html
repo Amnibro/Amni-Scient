@@ -5,7 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>Amni v2 — Terrarium Remake | Amni-Scient</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='80' font-size='80'>🪴</text></svg>">
-<meta name="description" content="Amni v2: a full rewrite of the cozy 3D collect-a-thon. Coherent realms, new map grammar, themed portals and tyrants — same soundtrack.">
+<meta name="description" content="Amni v2: a full rewrite of the cozy 3D collect-a-thon. Coherent realms, new map grammar, themed portals and tyrants — same soundtrack. WebGPU. Desktop recommended.">
+<meta name="theme-color" content="#0c0e12">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Amni-Scient">
+<meta property="og:title" content="Amni v2 — Terrarium Remake">
+<meta property="og:description" content="Cozy 3D collect-a-thon remake: clock-ring hub, path-spined realms, tyrants, nine skins. WebGPU. Desktop recommended.">
+<meta property="og:url" content="https://amni-scient.com/game/v2/">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Amni v2 — Terrarium Remake">
+<meta name="twitter:description" content="Cozy 3D collect-a-thon remake on WebGPU. Desktop recommended for the full session.">
 <style>
 :root{
   --gold:#f5c44b; --gold-soft:#e0b23e;
@@ -104,6 +114,7 @@ footer a{color:var(--muted)}
     <h1>AMNI V2</h1>
     <div class="badge">TERRARIUM REMAKE · 2.3</div>
     <div class="tag">A full content rewrite: clock-ring hub, path-spined realms, themed portals &amp; tyrants, nine robot skins — same original soundtrack.</div>
+    <div class="note" style="margin-top:10px">Platforms: <b>Windows</b> native · <b>Chrome / Edge</b> · Firefox 141+ · Safari 26+ · <b>Desktop recommended</b> (touch works; full session is best on keyboard/mouse or gamepad).</div>
   </div>
   <div id="stage">
     <div id="amni-game"></div>
@@ -115,7 +126,7 @@ footer a{color:var(--muted)}
       <div id="spin"></div>
       <div id="loadBar"><div id="loadBarFill"></div></div>
       <div id="status"></div>
-      <div class="note" id="bootNote">Needs <b>WebGPU</b> � Chrome, Edge, Firefox 141+, or Safari 26+. First load streams textures + models, then grows the realms.</div>
+      <div class="note" id="bootNote">Needs <b>WebGPU</b> — Chrome, Edge, Firefox 141+, or Safari 26+. First load streams textures + models, then grows the realms. Phone/tablet: playable with touch; desktop recommended.</div>
     </div>
   </div>
   <div class="whats">
@@ -291,7 +302,7 @@ btn.addEventListener('click', async () => {
   status.textContent = 'Downloading game engine...';
   fill.style.width = '12%';
   try {
-    const V = '3370';
+    const V = '3380';
     const bust = V + '-' + Date.now().toString(36);
     const jsUrl = new URL('./pkg/amni-v2.js', import.meta.url);
     jsUrl.searchParams.set('v', bust);
