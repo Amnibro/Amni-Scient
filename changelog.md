@@ -1,3 +1,14 @@
+## 2026-07-21 — weather-pack CI: rebase+retry push
+- Scheduled bake was succeeding but **push rejected** (`main` moved by game/pages commits during ~4m bake).
+- `.github/workflows/weather-pack.yml`: `fetch-depth: 0`, `git fetch` + `rebase origin/main` + push with up to 6 retries.
+
+## 2026-07-20 — v1.4.7 Amni-Weather defaults + international reports
+- **No Cohoes (or any city) hard-default for everyone.** Map starts world-zoom; each user is located via browser geolocation, then client-side IP geo fallback; last place/units remembered in localStorage.
+- **Default units = US** (°F, mph, in, mi); SI remains one tap away.
+- **Alerts outside the US:** GDACS Orange/Red global severe events alongside NWS for the US; user reports already work worldwide.
+- Geocode country tokens expanded (Japan, France, Brazil, …) so non-US city search ranks better.
+- Boot `wx-boot.138.js` + hazards.js GDACS loader.
+
 ## 2026-07-18 — v1.4.4 Amni-Weather CORS + glass UI
 - Hazards fetch: no custom User-Agent (fixes NWS/USGS CORS preflight).
 - UI glass polish toward design screenshot; boot 131.

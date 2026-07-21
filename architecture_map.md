@@ -1,3 +1,13 @@
+## weather-pack CI race fix (2026-07-21)
+- Failure mode: bake OK, commit OK, `git push` rejected (non-FF vs concurrent main). Workflow now rebases onto `origin/main` and retries push.
+
+## v1.4.7 Amni-Weather defaults + international alerts (2026-07-20)
+- No hardcoded home city: world view until locate; browser geolocation → client IP geo (geojs/ipwho) → search; last place + units in `localStorage` (`amni-wx-prefs-v1`).
+- Default units **US** (°F/mph/in/mi); SI still toggleable.
+- Hazards: keep NWS (US) + **GDACS** Orange/Red global (TC/FL/VO/WF/DR/TS/ET/EQ).
+- Search: broader country-code parse (EU/APAC/LatAm/etc.) for non-US places.
+- Boot `wx-boot.138.js`; backups `backups/v1.4.7_weather_defaults_intl/`.
+
 ## v1.4.6 Amni-Weather LOD + pack anti-tile (2026-07-18)
 - Live LOD re-fetch on zoom/pan; denser sample plan; k-NN IDW + smooth/upsample.
 - Pack 288x144 smoother bake + enhanceField; Field smooth wired. Boot `wx-boot.134.js`.
