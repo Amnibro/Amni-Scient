@@ -1,3 +1,16 @@
+## 2026-07-25 — v1.5.0 Amniscient, LLC entity rollout
+- **AMNISCIENT, LLC** formed as a New York domestic LLC (Articles of Organization, existence date 2026-07-25). All products now published under it.
+- **Brand unchanged.** `Amni-Scient` / `AMNI-SCIENT` stays the display brand in nav, titles, canonicals, OG tags and the domain. Only ownership and legal strings moved to the entity — zero SEO impact.
+- Copyright footers: `© 2025-2026 Amni-Scient` → `© 2025-2026 Amniscient, LLC` (109 strings / 106 files, incl. the Amni-AI CC BY-NC and Amni-LLM MIT variants, `amni-life`, `symphony`, `learn/index`, `lib/amni-llm`, `amnitex-overview`, `licensing`).
+- `terms.html`: new **G0. Publishing Entity** clause establishing Amni-Scient as a trade name of Amniscient, LLC and binding every `Amni-Scient` reference in the doc to the entity. G9 contact gains the entity + member line. C1 (Amni-Crypt ownership) names the LLC.
+- `terms.html` **G8 Governing Law → New York** (was "jurisdiction of the end user"), with a mandatory-consumer-law carve-out and US arbitration seated in NY. ⚠ Substantive change — review.
+- `privacy.html`: entity identified as data controller with contact.
+- JSON-LD: `legalName: "Amniscient, LLC"` + `addressRegion: NY` on `index.html` and `about.html`; `index.html` founder corrected from Organization→Person.
+- `LICENSE` → `Copyright (c) 2025-2026 Amniscient, LLC`. Same for Amni-Ai, Amni-Browse, Amni-Connect LICENSEs.
+- Amni-Learn `Learn-Mobile` mirrored assets (12 html) kept byte-identical to the site footers.
+- **No street address, no DOS ID published** — contact is entity + state + email by design.
+- Untouched on purpose: research paper bylines (`Reffelt, A.`), Esri/OSM/CARTO tile attributions.
+- Backups `backups/v1.5.0_llc_entity/`. Checklist `docs/checklists/checklist_llc_entity_v1.5.0.md`.
 ## 2026-07-21 — weather-pack CI: rebase+retry push
 - Scheduled bake was succeeding but **push rejected** (`main` moved by game/pages commits during ~4m bake).
 - `.github/workflows/weather-pack.yml`: `fetch-depth: 0`, `git fetch` + `rebase origin/main` + push with up to 6 retries.

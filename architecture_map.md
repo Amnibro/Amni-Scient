@@ -1,3 +1,9 @@
+## v1.5.0 Amniscient, LLC entity rollout (2026-07-25)
+- Legal owner of every product is now **Amniscient, LLC** (NY domestic LLC). Display brand stays `Amni-Scient` — nav/titles/canonical/domain untouched, so no SEO churn.
+- Entity strings live in exactly four places: page copyright footers, `terms.html` G0/G8/G9 + C1, `privacy.html` controller line, and JSON-LD `legalName`. Anything else saying "Amni-Scient" is brand, not entity, and G0 binds those references to the LLC.
+- `LICENSE` files (site + Amni-Ai + Amni-Browse + Amni-Connect) name the LLC. NOTE: copyright *notice* changed; an IP assignment from Anthony Reffelt personally to the LLC is what actually transfers title.
+- Learn-Mobile `src/main/assets/learn/*.html` are mirrors of `learn/` — footer edits must be applied to BOTH or the app ships a stale entity.
+- Deliberate non-targets: paper bylines, third-party map attributions, `build/intermediates` generated copies.
 ## weather-pack CI race fix (2026-07-21)
 - Failure mode: bake OK, commit OK, `git push` rejected (non-FF vs concurrent main). Workflow now rebases onto `origin/main` and retries push.
 
