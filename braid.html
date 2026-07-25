@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Braid &mdash; Every AI You Already Pay For, At One Table | AMNI-SCIENT</title>
+<meta name="description" content="Braid puts Claude, Grok, Gemini and a local model in one room. Ask once, every seat answers, and each one reads the others before it replies. Your existing subscriptions, no extra API metering.">
+<meta name="keywords" content="braid,multi ai,ai roundtable,claude grok gemini,compare ai answers,local llm,ollama,ai consensus">
+<meta property="og:title" content="Braid &mdash; Every AI You Already Pay For, At One Table">
+<meta property="og:description" content="Ask once. Claude, Grok, Gemini and your local model each answer, read each other, and build on it. Runs on the subscriptions you already have.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://amni-scient.com/braid">
+<meta property="og:image" content="https://amni-scient.com/assets/braid/braid-og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Braid &mdash; Every AI You Already Pay For, At One Table">
+<meta name="twitter:description" content="Ask once. Every seat answers, and each one reads the others before it replies.">
+<meta name="twitter:image" content="https://amni-scient.com/assets/braid/braid-og.jpg">
+<link rel="canonical" href="https://amni-scient.com/braid">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Braid","url":"https://amni-scient.com/braid.html","description":"A multi-model round table. Ask once and Claude, Grok, Gemini and a local model each answer, reading the answers before them. Runs on your existing subscriptions or your own API keys.","applicationCategory":"DeveloperApplication","operatingSystem":"Windows","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Organization","name":"AMNI-SCIENT","url":"https://amni-scient.com"},"image":"https://amni-scient.com/assets/braid/braid-og.jpg"}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<style>
+.braid-mark{width:min(420px,74vw);height:auto;display:block;margin:0 auto}
+.braid-mark path{stroke-dasharray:var(--L,600);stroke-dashoffset:var(--L,600);animation:braidin 2.1s cubic-bezier(.45,.05,.2,1) forwards}
+.braid-mark path:nth-child(2){animation-delay:.32s}
+.braid-mark path:nth-child(3){animation-delay:.64s}
+@keyframes braidin{to{stroke-dashoffset:0}}
+@media (prefers-reduced-motion:reduce){.braid-mark path{animation:none;stroke-dashoffset:0}}
+.film{max-width:1080px;margin:0 auto;border:1px solid var(--line,#1e2430);border-radius:10px;overflow:hidden;
+ background:#0B0C0E;box-shadow:0 24px 70px -30px rgba(0,0,0,.8)}
+.film video{display:block;width:100%;height:auto}
+.filmcap{text-align:center;color:var(--dim);font-size:.78rem;margin:.9rem auto 0;max-width:720px}
+.seatgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.6rem;max-width:900px;margin:2rem auto 0}
+.seatchip{display:flex;align-items:center;gap:.55rem;border:1px solid var(--line,#1e2430);border-radius:8px;
+ padding:.6rem .75rem;font-size:.76rem;letter-spacing:.04em}
+.seatchip i{width:9px;height:9px;border-radius:50%;flex:0 0 9px}
+.seatchip.soon{opacity:.5}
+</style>
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+</head>
+<body class="theme-ai">
+<div class="grid-bg"></div>
+<div class="scanlines"></div>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu">
+<a href="braid.html" class="active">BRAID</a>
+<a href="amni-ai.html">AMNI-AI</a>
+<a href="amni-browse.html">AMNI-BROWSE</a>
+<a href="amni-calc.html">AMNI-CALC</a>
+<a href="amni-explore.html">AMNI-EXPLORE</a>
+<a href="amni-weather.html">AMNI-WEATHER</a>
+<a href="amni-learn.html">AMNI-LEARN</a>
+<a href="amni-llm.html">AMNI-LLM</a>
+<a href="amni-connect.html">AMNI-CONNECT</a>
+<a href="amni-code.html">AMNI-CODE</a>
+<a href="amni-haven.html">AMNI-HAVEN</a>
+<a href="amni-life.html">AMNI-LIFE</a>
+<a href="amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</div>
+<a href="about.html">ABOUT</a>
+<a href="faq.html">FAQ</a>
+<a href="privacy.html">PRIVACY</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<div class="product-hero">
+<svg class="braid-mark float" viewBox="0 0 440 185" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Braid"></svg>
+<h1>BRAID</h1>
+<p class="desc">ASK ONCE &bull; EVERY SEAT ANSWERS &bull; EACH ONE READS THE LAST</p>
+<div class="cta-row" style="justify-content:center;margin-top:2rem;margin-bottom:1rem">
+<a href="#film" class="btn btn-primary">WATCH IT WORK</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="btn btn-outline">&#9749; SUPPORT</a>
+</div>
+</div>
+
+<section id="film">
+<h2>NINETY SECONDS, NOTHING STAGED</h2>
+<p style="text-align:center;color:var(--dim);max-width:760px;margin:0 auto 2rem;font-size:.9rem">Every answer in this film is real output from the seats, captured live &mdash; including the part where they were asked to rename the product and argued their way to a single word.</p>
+<div class="film">
+<video controls playsinline preload="metadata" poster="assets/braid/braid-poster.jpg">
+<source src="assets/braid/braid-usage.mp4" type="video/mp4">
+Your browser cannot play this video.
+</video>
+</div>
+<p class="filmcap">Greeting &rarr; side-by-side &bull; naming rounds &rarr; sequential &bull; rendered math, code review, agentic graph, shared memory</p>
+</section>
+
+<section>
+<h2>ONE QUESTION, EVERY SEAT</h2>
+<p style="text-align:center;color:var(--dim);max-width:740px;margin:0 auto 2rem;font-size:.9rem">You already pay for more than one AI. Braid stops them being four browser tabs that never talk. Ask once and the question goes to every seat &mdash; then, if you want, each seat reads the answers before it and builds on them instead of repeating them.</p>
+<div class="features">
+<div class="feature">
+<div class="icon">&#9863;</div>
+<h4>SIDE-BY-SIDE OR SEQUENTIAL</h4>
+<p>Side-by-side gives every model its own column so you can compare them cold. Sequential passes the question down the line, each seat reading the ones before it. One toggle, same conversation.</p>
+</div>
+<div class="feature">
+<div class="icon">&#128273;</div>
+<h4>YOUR SUBSCRIPTIONS, NOT OUR METER</h4>
+<p>Braid drives the CLI tools you are already signed into, so a seat costs what your existing plan costs. Bring pay-as-you-go API keys or a local Ollama model instead if you prefer. Keys stay in your environment &mdash; never stored, never transmitted to us.</p>
+</div>
+<div class="feature">
+<div class="icon">&#129504;</div>
+<h4>IT REMEMBERS BEING WRONG</h4>
+<p>When a seat is corrected, the correction is written to a shared memory as an addressable cell. The next question pulls only the cells it needs &mdash; not the whole transcript &mdash; so the room stops repeating mistakes without dragging context along.</p>
+</div>
+<div class="feature">
+<div class="icon">&#128279;</div>
+<h4>AGENTIC GRAPHS</h4>
+<p>Draw who answers whom. Fan one goal out to several workers, route their output to a reviewer and a verifier, and loop the whole thing back until it meets the goal or a set number of laps runs out.</p>
+</div>
+<div class="feature">
+<div class="icon">&#8721;</div>
+<h4>MATH THAT RENDERS</h4>
+<p>LaTeX comes back rendered, not as raw backslashes. Long derivations stay readable and scroll on their own instead of breaking the column.</p>
+</div>
+<div class="feature">
+<div class="icon">&#128736;</div>
+<h4>REAL TOOLS, REAL FILES</h4>
+<p>Seats run with their own tools in a shared working directory, so one can write a file and the next can read it. Code review works because both seats are looking at the same diff.</p>
+</div>
+</div>
+</section>
+
+<section>
+<h2>SEATS</h2>
+<p style="text-align:center;color:var(--dim);max-width:700px;margin:0 auto 1rem;font-size:.9rem">Whichever ones you have. Missing tools simply do not appear &mdash; nothing breaks, and nothing is required.</p>
+<div class="seatgrid">
+<div class="seatchip"><i style="background:#C96442"></i>CLAUDE</div>
+<div class="seatchip"><i style="background:#8A9199"></i>GROK</div>
+<div class="seatchip"><i style="background:#3B82F6"></i>GEMINI</div>
+<div class="seatchip"><i style="background:#00915C"></i>LOCAL MODEL</div>
+<div class="seatchip soon"><i style="background:#10A37F"></i>CHATGPT</div>
+<div class="seatchip soon"><i style="background:#8957E5"></i>COPILOT</div>
+<div class="seatchip soon"><i style="background:#0EA5E9"></i>CURSOR</div>
+<div class="seatchip soon"><i style="background:#D97706"></i>OPENCODE</div>
+</div>
+</section>
+
+<section style="text-align:center">
+<h2>WHY &ldquo;BRAID&rdquo;</h2>
+<p style="color:var(--dim);max-width:720px;margin:0 auto 1.4rem;font-size:.9rem">Because the seats picked it. Asked to rename the product in one word, they proposed <em>Quorum</em>, <em>Alloy</em> and <em>Braid</em>, ruled out the first two on live trademark and domain collisions, and voted unanimously for the third &mdash; strand over strand, each one laid over the last. That exchange is in the film above, unedited.</p>
+<p style="color:var(--dim);font-size:.8rem;margin-bottom:2rem">Windows desktop app &bull; bring your own subscriptions, API keys, or local models &bull; keys never leave your machine</p>
+<div class="cta-row" style="justify-content:center">
+<a href="mailto:amnibro7@gmail.com?subject=Braid%20early%20access" class="btn btn-primary">REQUEST EARLY ACCESS</a>
+<a href="about.html" class="btn btn-outline">ABOUT AMNI-SCIENT</a>
+</div>
+</section>
+
+<aside class="support-cta" aria-label="Support"><a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="support-link"><span class="support-ico">&#9749;</span><span>Enjoying this? <strong>Support on Ko-fi</strong></span></a></aside>
+<footer>
+<div class="footer-links">
+<a href="about.html">ABOUT</a>
+<a href="faq.html">FAQ</a>
+<a href="privacy.html">PRIVACY</a>
+<a href="terms.html">TERMS</a>
+<a href="/">AMNI-SCIENT</a>
+<a href="mailto:amnibro7@gmail.com">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
+</footer>
+<script>
+(function(){
+ var svg=document.querySelector('.braid-mark');if(!svg)return;
+ var W=440,H=185,mid=H/2,amp=H*0.30,cols=['#E08363','#5B9BF8','#12B478'],ns='http://www.w3.org/2000/svg';
+ cols.forEach(function(c,i){
+  var ph=i*(2*Math.PI/3),d='';
+  for(var x=0;x<=W;x+=2){var y=mid+Math.sin(x/W*Math.PI*3+ph)*amp;d+=(x?' L ':'M ')+x.toFixed(1)+' '+y.toFixed(1)}
+  var p=document.createElementNS(ns,'path');
+  p.setAttribute('d',d);p.setAttribute('fill','none');p.setAttribute('stroke',c);
+  p.setAttribute('stroke-width','22');p.setAttribute('stroke-linecap','round');
+  svg.appendChild(p);
+  var L=Math.ceil(p.getTotalLength());p.style.setProperty('--L',L);
+ });
+})();
+</script>
+</body>
+</html>
