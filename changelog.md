@@ -9144,3 +9144,15 @@ This release re-applies work that was previously reverted in commit `72c7964`. T
 
 
 
+
+## Braid product page — 2026-07-25
+- New `braid.html`: the multi-model round table (formerly Amni-Delve). Hero mark is a self-drawing
+  three-strand braid, one strand per seat colour, path lengths measured with `getTotalLength()` so the
+  draw spans the full transition instead of finishing in the first fraction of it.
+- Embeds the 93.2s usage film (`assets/braid/braid-usage.mp4`, 1080p60) + poster + 1200x630 og image.
+  Every answer in the film is real captured seat output, including the naming round.
+- `index.html`: project-belt card, nav entry, and `IC.braid` icon — the belt renderer reads `IC[p.k]`,
+  so a card without an icon entry renders "undefinedBRAID".
+- Nav entry added across 35 other pages. `amni-browse.html` needed its own pass because its own link
+  carries `class="active"` and did not match the plain-anchor replacement.
+- Left untouched: pre-existing uncommitted work in `calc/`, `weather/`, `game/v2/`, `docs/`.
