@@ -1,7 +1,7 @@
 (function(){
-var DIMX={length:{u:{mm:1,cm:10,m:1000,'µm':1e-3,'in':25.4,ft:304.8}},area:{u:{'mm²':1,'cm²':100,'m²':1e6,'in²':645.16,'ft²':92903.04}},pressure:{u:{Pa:1e-6,kPa:1e-3,MPa:1,GPa:1e3,bar:0.1,psi:0.00689475729316836,ksi:6.89475729316836}},force:{u:{N:1,kN:1e3,lbf:4.4482216152605,kip:4448.2216152605}},torque:{u:{'N·m':1,'N·mm':1e-3,'kN·m':1e3,'lbf·ft':1.3558179483314004,'lbf·in':0.11298482902761671}},power:{u:{W:1,kW:1e3,MW:1e6,hp:745.6998715822702,'BTU/h':0.2930710701722222}},velocity:{u:{'m/s':1,'km/h':1/3.6,'ft/s':0.3048,mph:0.44704}},mass:{u:{kg:1,g:1e-3,t:1e3,lb:0.45359237,oz:0.028349523125}},flow:{u:{'m³/s':1,'m³/hr':1/3600,'m³/h':1/3600,'L/s':1e-3,'L/min':1/60000,gpm:6.30901964e-5,cfm:4.719474432e-4}},inertia:{u:{'mm⁴':1,'cm⁴':1e4,'in⁴':416231.4256}},smod:{u:{'mm³':1,'cm³':1e3,'in³':16387.064}},temp:{u:{'°C':1,'°F':1,K:1}}};
+var DIMX={length:{u:{mm:1,cm:10,m:1000,'µm':1e-3,'in':25.4,ft:304.8}},area:{u:{'mm²':1,'cm²':100,'m²':1e6,'in²':645.16,'ft²':92903.04}},pressure:{u:{Pa:1e-6,kPa:1e-3,MPa:1,GPa:1e3,bar:0.1,psi:0.00689475729316836,ksi:6.89475729316836}},force:{u:{N:1,kN:1e3,lbf:4.4482216152605,kip:4448.2216152605,kgf:9.80665}},torque:{u:{'N·m':1,'N·mm':1e-3,'kN·m':1e3,'lbf·ft':1.3558179483314004,'lbf·in':0.11298482902761671}},power:{u:{W:1,kW:1e3,MW:1e6,hp:745.6998715822702,'BTU/h':0.2930710701722222}},velocity:{u:{'m/s':1,'km/h':1/3.6,'ft/s':0.3048,mph:0.44704}},mass:{u:{kg:1,g:1e-3,t:1e3,lb:0.45359237,oz:0.028349523125}},flow:{u:{'m³/s':1,'m³/hr':1/3600,'m³/h':1/3600,'L/s':1e-3,'L/min':1/60000,gpm:6.30901964e-5,cfm:4.719474432e-4}},inertia:{u:{'mm⁴':1,'cm⁴':1e4,'in⁴':416231.4256}},smod:{u:{'mm³':1,'cm³':1e3,'in³':16387.064}},temp:{u:{'°C':1,'°F':1,K:1}},rate:{u:{'N/mm':1,'N/m':0.001,'kN/m':1,'lbf/in':0.175126835,'lbf/ft':0.0145939029}}};
 var TOK={};for(var _d in DIMX)for(var _u in DIMX[_d].u)TOK[_u]=TOK[_u]||_d;
-var IMP={mm:'in',cm:'in','µm':'in',m:'ft','mm²':'in²','cm²':'in²','m²':'ft²',Pa:'psi',kPa:'psi',MPa:'psi',GPa:'ksi',bar:'psi',N:'lbf',kN:'lbf','N·m':'lbf·ft','N·mm':'lbf·in','kN·m':'lbf·ft',W:'BTU/h',kW:'hp',MW:'hp','m/s':'ft/s','km/h':'mph',kg:'lb',g:'oz',t:'lb','m³/s':'gpm','m³/hr':'gpm','m³/h':'gpm','L/s':'gpm','L/min':'gpm','mm⁴':'in⁴','cm⁴':'in⁴','mm³':'in³','cm³':'in³','°C':'°F',K:'°F'};
+var IMP={mm:'in',cm:'in','µm':'in',m:'ft','mm²':'in²','cm²':'in²','m²':'ft²',Pa:'psi',kPa:'psi',MPa:'psi',GPa:'ksi',bar:'psi',N:'lbf',kN:'lbf',kgf:'lbf','N·m':'lbf·ft','N·mm':'lbf·in','kN·m':'lbf·ft',W:'BTU/h',kW:'hp',MW:'hp','m/s':'ft/s','km/h':'mph',kg:'lb',g:'oz',t:'lb','m³/s':'gpm','m³/hr':'gpm','m³/h':'gpm','L/s':'gpm','L/min':'gpm','mm⁴':'in⁴','cm⁴':'in⁴','mm³':'in³','cm³':'in³','°C':'°F',K:'°F','N/mm':'lbf/in','N/m':'lbf/ft','kN/m':'lbf/in'};
 function tconv(v,f,t){var c=f==='°C'?v:f==='°F'?(v-32)*5/9:v-273.15;return t==='°C'?c:t==='°F'?c*9/5+32:c+273.15}
 function conv(n,f,t){if(f===t||!isFinite(n))return n;var d=TOK[f];return d==null||TOK[t]!==d?n:d==='temp'?tconv(n,f,t):n*DIMX[d].u[f]/DIMX[d].u[t]}
 function fmt(n){if(!isFinite(n))return String(n);var a=Math.abs(n);return a!==0&&(a>=1e5||a<1e-3)?n.toExponential(3):String(parseFloat(n.toPrecision(6)))}
@@ -34,9 +34,15 @@ function render(el){var bu=el.dataset.bu,bv=parseFloat(el.dataset.bv),d=TOK[bu],
 if(!pref&&tu!==bu){n1=conv(bv,bu,tu);var su=stepUp(n1,tu);su!==tu&&(tu=su,n1=conv(bv,bu,tu))}else n1=tu===bu?bv:conv(bv,bu,tu);
 var want=tu===bu?el.dataset.orig:fmt(n1)+' '+tu;
 el.dataset.du=tu;el.textContent!==want&&(el.textContent=want)}
-function scan(){document.querySelectorAll('.result-item .val').forEach(function(el){
+function scan(){document.querySelectorAll('.result-item .val, #sp-stack-out, .sp-unit-out').forEach(function(el){
+if(el.children&&el.children.length&&!el.classList.contains('val')&&el.id!=='sp-stack-out')return;
+if(el.id==='sp-stack-out'||el.classList.contains('sp-unit-out')){
+var html=el.innerHTML;if(!html)return;
+var m=html.replace(/(-?(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?)\s*(N\/mm|N·m|N·mm|kN|N|mm|MPa|GPa|lbf\/in|lbf|in|psi|ksi)/g,function(_,num,u){
+var d=TOK[u];if(!d)return num+' '+u;var n=parseFloat(num),tu=MODE==='imp'?(IMP[u]||u):u;if(tu===u)return num+' '+u;return fmt(conv(n,u,tu))+' '+tu});
+if(m!==html)el.innerHTML=m;return}
 if(el.children.length)return;
-if(!el.dataset.bu){var p=parseVal(el.textContent);if(!p||!p.dim)return;
+if(!el.dataset.bu||el.dataset.orig!==el.textContent.trim()){var p=parseVal(el.textContent);if(!p||!p.dim)return;
 if(p.dim==='temp'){var lb=el.parentElement&&el.parentElement.querySelector('.lbl');if(lb&&lb.textContent.indexOf('Δ')>-1)return}
 el.dataset.bu=p.u;el.dataset.bv=p.n;el.dataset.orig=el.textContent.trim();el.dataset.dim=p.dim;el.title='click to change units'}
 render(el)})}

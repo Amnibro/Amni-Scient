@@ -65,6 +65,30 @@
     });
     return n;
   }
+  function flipNativeUnitSelects(sys) {
+    var tok = {};
+    for (var d in DIMS) for (var nm in DIMS[d].u) tok[nm] = d;
+    document.querySelectorAll('select[id$="-u"]').forEach(function (sel) {
+      var cur = sel.value, dim = tok[cur];
+      if (!dim || !DIMS[dim]) return;
+      var want = DIMS[dim][sys];
+      if (!want || want === cur) return;
+      var has = false;
+      for (var i = 0; i < sel.options.length; i++) if (sel.options[i].value === want) { has = true; break; }
+      if (!has) return;
+      var row = sel.closest('.field-row') || sel.parentElement;
+      var inp = row && row.querySelector('input[type="number"]');
+      if (inp) {
+        var curN = parseFloat(inp.value);
+        if (isFinite(curN)) inp.value = fmtNum(toUnit(curN, cur, want, dim));
+      }
+      sel.value = want;
+      try { sel.dispatchEvent(new Event('change', { bubbles: true })); } catch (e) {}
+      if (inp) {
+        try { inp.dispatchEvent(new Event('input', { bubbles: true })); } catch (e2) {}
+      }
+    });
+  }
   // global SI / Imperial toggle: set every attached dropdown to that system's unit + convert numbers
   window.__usys = function (sys) {
     document.querySelectorAll('input[type="number"]').forEach(function (inp) {
@@ -75,8 +99,11 @@
       if (isFinite(cur)) inp.value = fmtNum(toUnit(cur, sel.value, want, dim));
       sel._prev = want; sel.value = want;
     });
+    flipNativeUnitSelects(sys);
     try { localStorage.setItem('calc-units-sys', sys); } catch (e) {}
+    try { window.dispatchEvent(new CustomEvent('amni-units-sys', { detail: { sys: sys } })); } catch (e3) {}
   };
+  window.__uMode = function () { try { return localStorage.getItem('calc-units-sys') === 'imp' ? 'imp' : 'si'; } catch (e) { return 'si'; } };
   function injectToggle() {
     if (document.getElementById('units-toggle')) return;
     var host = document.querySelector('.sidebar');

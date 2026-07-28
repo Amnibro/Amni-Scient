@@ -2385,6 +2385,59 @@ function rethemeCanvases(){
 /* ============================================================
  * SPRINGS — type-gated presets, series/parallel, F-δ chart, anim
  * ============================================================ */
+const BELL_E=210000,BELL_NU=0.3;
+function bellGeom(De,Di,t,h0){
+  const dlt=De/Di,ln=Math.log(dlt);
+  const M=(6/Math.PI)*Math.pow((dlt-1)/dlt,2)/ln;
+  const K2=(6/Math.PI)*((dlt-1)/ln-1)/ln;
+  const K3=(3/Math.PI)*(dlt-1)/ln;
+  const CAL=4*BELL_E/((1-BELL_NU*BELL_NU)*M*De*De);
+  const Fs=s=>CAL*t*t*t*s*((h0-s)*(h0-s/2)/(t*t)+1);
+  const k0=CAL*t*t*t*(h0*h0/(t*t)+1);
+  let sPk=h0,FPk=Fs(h0),prevF=0;
+  for(let i=1;i<=400;i++){const s2=h0*i/400,f2=Fs(s2);if(f2<prevF){sPk=h0*(i-1)/400;FPk=prevF;break;}prevF=f2;}
+  const dAt=Ff=>{if(!(Ff>0))return 0;if(Ff>=FPk)return sPk;let lo=0,hi=sPk;for(let i=0;i<80;i++){const m2=(lo+hi)/2;Fs(m2)<Ff?lo=m2:hi=m2;}return(lo+hi)/2;};
+  const stress=(s,F)=>{const sc=-(4*BELL_E*s)/((1-BELL_NU*BELL_NU)*M*De*De);const om=sc*(K2*(h0-s/2)+K3*t),id=sc*(K2*(h0-s/2)-K3*t);return{om,id,max:Math.max(Math.abs(om),Math.abs(id))};};
+  return{De,Di,t,h0,dlt,M,K2,K3,CAL,Fs,k0,sPk,FPk,dAt,stress,F75:Fs(0.75*Math.min(h0,sPk))};
+}
+function buildBellCatalog(){
+  const src=window.SCHNORR_DISCS;
+  if(Array.isArray(src)&&src.length){
+    return src.map(r=>{
+      const g=bellGeom(r.De,r.Di,r.t,r.h0);
+      const ser=r.series?(' '+r.series):'';
+      return{cat:'Schnorr '+r.art+ser+' · '+r.De+'×'+r.Di+'×'+r.t,art:r.art,bolt:r.bolt||'—',series:r.series||'—',De:r.De,Di:r.Di,t:r.t,h0:r.h0,mat:r.mat||'C75S/51CrV4',F75:r.F75_N,Fflat:r.Fflat_N,FPk:Math.max(g.FPk,r.Fflat_N),sPk:g.sPk,k0:g.k0,F75_lbf:r.F75_lbf,Fflat_lbf:r.Fflat_lbf};
+    });
+  }
+  return[{cat:'A 31.5×16.3×1.75 (fallback)',bolt:'M16',series:'A',De:31.5,Di:16.3,t:1.75,h0:0.7,mat:'C75S'}].map(r=>{const g=bellGeom(r.De,r.Di,r.t,r.h0);return Object.assign({},r,{F75:g.F75,Fflat:g.Fs(g.h0),FPk:g.FPk,sPk:g.sPk,k0:g.k0});});
+}
+const BELL_CATALOG=buildBellCatalog();
+window.__BELL_CATALOG=BELL_CATALOG;window.__bellGeom=bellGeom;
+function _fU(N,d){return(window.UCORE&&UCORE.fDisp)?UCORE.fDisp(N,d):(Math.round(N)+' N');}
+function _lU(mm,d){return(window.UCORE&&UCORE.lDisp)?UCORE.lDisp(mm,d):(mm.toFixed(d!=null?d:2)+' mm');}
+function _kU(k,d){return(window.UCORE&&UCORE.kDisp)?UCORE.kDisp(k,d):(k.toFixed(d!=null?d:1)+' N/mm');}
+function _pU(MPa,d){return(window.UCORE&&UCORE.pDisp)?UCORE.pDisp(MPa,d):(Math.round(MPa)+' MPa');}
+function _fSc(){return(window.UCORE&&UCORE.fScale)?UCORE.fScale():1;}
+function _lSc(){return(window.UCORE&&UCORE.lScale)?UCORE.lScale():1;}
+function _fUn(){return(window.UCORE&&UCORE.fUnit)?UCORE.fUnit():'N';}
+function _lUn(){return(window.UCORE&&UCORE.lUnit)?UCORE.lUnit():'mm';}
+function bellCatalogPick(F,dMax,boltPref,dflMax){
+  const need=F>0?F:1,env=dMax>0?dMax:1e9,dfl=dflMax>0?dflMax:1e9;
+  const boltOk=p=>!boltPref||boltPref==='any'||p.bolt===boltPref||(boltPref==='M56+'&&p.bolt==='M56+');
+  let best=null;
+  for(const p of BELL_CATALOG){
+    if(!boltOk(p)||p.De>env+1e-9)continue;
+    for(let np=1;np<=6;np++){
+      for(let ns=1;ns<=12;ns++){
+        const cap=np*p.F75,dWork=ns*0.75*Math.min(p.h0,p.sPk);
+        if(cap+1e-9<need||dWork>dfl+1e-9)continue;
+        const score=ns*np*1000+(p.De)+(need>0?Math.abs(cap-need)/need:0);
+        if(!best||score<best.score)best={p,ns,np,cap,dWork,score,F75:p.F75};
+      }
+    }
+  }
+  return best;
+}
 const SPRING_PRESETS={
   compression:{
     label:'COMPRESSION',
@@ -2422,28 +2475,8 @@ const SPRING_PRESETS={
     }
   },
   belleville:{
-    label:'BELLEVILLE / DISC (DIN 2093)',
-    items:{
-      'M3 washer 7×3.2×0.4':{d:0.4,D:7,na:1,nt:1,fl:0.2,sy:1500,F:250,bell:{De:7,Di:3.2,h0:0.2,t:0.4}},
-      'A 8×4.2×0.4 (M4)':{d:0.4,D:8,na:1,nt:1,fl:0.2,sy:1500,F:215,bell:{De:8,Di:4.2,h0:0.2,t:0.4}},
-      'M5 washer 11×5.2×0.6':{d:0.6,D:11,na:1,nt:1,fl:0.3,sy:1500,F:525,bell:{De:11,Di:5.2,h0:0.3,t:0.6}},
-      'M6 washer 14×6.4×0.8':{d:0.8,D:14,na:1,nt:1,fl:0.4,sy:1500,F:1005,bell:{De:14,Di:6.4,h0:0.4,t:0.8}},
-      'M12 washer 31×13×1.5':{d:1.5,D:31,na:1,nt:1,fl:0.75,sy:1500,F:2460,bell:{De:31,Di:13,h0:0.75,t:1.5}},
-      'B 12×6.2×0.4 (M6)':{d:0.4,D:12,na:1,nt:1,fl:0.35,sy:1500,F:180,bell:{De:12,Di:6.2,h0:0.35,t:0.4}},
-      'A 20×10.2×1.1 (M10)':{d:1.1,D:20,na:1,nt:1,fl:0.45,sy:1500,F:1560,bell:{De:20,Di:10.2,h0:0.45,t:1.1}},
-      'B 20×10.2×0.7 (M10)':{d:0.7,D:20,na:1,nt:1,fl:0.55,sy:1500,F:525,bell:{De:20,Di:10.2,h0:0.55,t:0.7}},
-      'A 31.5×16.3×1.75 (M16)':{d:1.75,D:31.5,na:1,nt:1,fl:0.7,sy:1500,F:3980,bell:{De:31.5,Di:16.3,h0:0.7,t:1.75}},
-      'B 31.5×16.3×1.25 (M16)':{d:1.25,D:31.5,na:1,nt:1,fl:0.9,sy:1500,F:1960,bell:{De:31.5,Di:16.3,h0:0.9,t:1.25}},
-      'C 31.5×16.3×0.8 (M16)':{d:0.8,D:31.5,na:1,nt:1,fl:1.05,sy:1500,F:705,bell:{De:31.5,Di:16.3,h0:1.05,t:0.8}},
-      'A 50×25.4×3 (M24)':{d:3,D:50,na:1,nt:1,fl:1.1,sy:1500,F:12300,bell:{De:50,Di:25.4,h0:1.1,t:3.0}},
-      'B 50×25.4×2 (M24)':{d:2,D:50,na:1,nt:1,fl:1.4,sy:1500,F:4890,bell:{De:50,Di:25.4,h0:1.4,t:2.0}},
-      'C 50×25.4×1.25 (M24)':{d:1.25,D:50,na:1,nt:1,fl:1.6,sy:1500,F:1590,bell:{De:50,Di:25.4,h0:1.6,t:1.25}},
-      'A 63×31×3.5 (M30)':{d:3.5,D:63,na:1,nt:1,fl:1.3,sy:1500,F:14290,bell:{De:63,Di:31,h0:1.3,t:3.5}},
-      'B 80×41×3 (M39)':{d:3,D:80,na:1,nt:1,fl:2.3,sy:1500,F:10800,bell:{De:80,Di:41,h0:2.3,t:3.0}},
-      'B 100×51×4 (M48)':{d:4,D:100,na:1,nt:1,fl:2.7,sy:1500,F:18800,bell:{De:100,Di:51,h0:2.7,t:4.0}},
-      'A 100×51×5.5 (M48)':{d:5.5,D:100,na:1,nt:1,fl:2.2,sy:1500,F:38100,bell:{De:100,Di:51,h0:2.2,t:5.5}},
-      'B 125×64×5 (heavy press)':{d:5,D:125,na:1,nt:1,fl:3.5,sy:1500,F:30700,bell:{De:125,Di:64,h0:3.5,t:5.0}}
-    }
+    label:'SCHNORR DISC SPRINGS (DIN EN 16983 / product range)',
+    items:Object.fromEntries(BELL_CATALOG.map(p=>[p.cat,{d:p.t,D:p.De,na:1,nt:1,fl:p.h0,sy:1500,F:Math.round(p.F75),bell:{De:p.De,Di:p.Di,h0:p.h0,t:p.t},cat:p.cat,bolt:p.bolt,art:p.art}]))
   },
   die:{
     label:'DIE SPRING (ISO 10243)',
@@ -2453,6 +2486,22 @@ const SPRING_PRESETS={
       'Medium (blue stripe)':{d:8,D:40,na:7,nt:9,fl:80,sy:1500,F:2200},
       'Heavy (red stripe)':{d:12,D:50,na:6,nt:8,fl:100,sy:1700,F:6000},
       'Extra heavy (large die)':{d:15,D:60,na:5,nt:7,fl:110,sy:1700,F:11000}
+    }
+  },
+  conical:{
+    label:'CONICAL (TAPERED)',
+    items:{
+      'Light cone (D1=0.6D)':{d:2,D:25,na:6,nt:8,fl:40,sy:1200,F:40,cd1:15},
+      'Valve-style progressive':{d:3.5,D:30,na:5,nt:7,fl:45,sy:1400,F:200,cd1:18},
+      'Heavy taper nest':{d:5,D:50,na:4,nt:6,fl:50,sy:1400,F:400,cd1:25}
+    }
+  },
+  wave:{
+    label:'WAVE (CREST-TO-CREST)',
+    items:{
+      'Light multi-wave':{d:0.5,D:40,na:1,nt:4,fl:4,sy:1200,F:50,wb:8,wt:0.4,wnw:3.5,wnt:4},
+      'Bearing preload wave':{d:0.5,D:50,na:1,nt:6,fl:5,sy:1200,F:80,wb:10,wt:0.5,wnw:3.5,wnt:6},
+      'Heavy strip wave':{d:0.8,D:60,na:1,nt:4,fl:6,sy:1400,F:150,wb:12,wt:0.8,wnw:4,wnt:4}
     }
   }
 };
@@ -2470,8 +2519,13 @@ window.applySpringPreset=function(){
   const type=sv('sp-type')||'compression';
   const set=SPRING_PRESETS[type];if(!set)return;
   const p=set.items[sel.value];if(!p)return;
-  ['d','D','na','nt','fl','sy','F'].forEach(k=>{const el=$('sp-'+k);if(el)el.value=p[k];});
+  ['d','D','na','nt','fl','sy','F'].forEach(k=>{const el=$('sp-'+k);if(el&&p[k]!=null)el.value=p[k];});
   if(p.bell)[['de','De'],['di','Di'],['t','t'],['h0','h0']].forEach(([i,k])=>{const el=$('sp-'+i);if(el&&p.bell[k]!=null)el.value=p.bell[k];});
+  if(p.cd1!=null){const el=$('sp-cd1');if(el)el.value=p.cd1;}
+  if(p.wb!=null){const el=$('sp-wb');if(el)el.value=p.wb;}
+  if(p.wt!=null){const el=$('sp-wt');if(el)el.value=p.wt;}
+  if(p.wnw!=null){const el=$('sp-wnw');if(el)el.value=p.wnw;}
+  if(p.wnt!=null){const el=$('sp-wnt');if(el)el.value=p.wnt;}
   window.calcSpring();
 };
 function unitVal(id,multipliers){const u=sv(id+'-u');return v(id)*(multipliers[u]||1);}
@@ -2489,34 +2543,39 @@ window.calcSpring=function(){
   const F=v('sp-f')*(fMult[sv('sp-f-u')]||1);
   const Sy=v('sp-sy')||0;
   const out=$('spring-results');if(!out)return;
-  if(!d||!D){out.innerHTML='<div class="note warn">Wire diameter and coil diameter required.</div>';return;}
+  if(type!=='belleville'&&type!=='wave'&&(!d||!D)){out.innerHTML='<div class="note warn">Wire diameter and coil diameter required.</div>';return;}
+  if(type==='belleville'&&!(v('sp-de')>0&&v('sp-di')>0&&v('sp-t')>0)){out.innerHTML='<div class="note warn">Belleville needs D_e, D_i, and thickness t — load a catalog preset or use the designer.</div>';return;}
   const items=[];let k=0,delta=0,Lsolid=0,Fmax=0;let extra='';
-  let _bellFs=null,_bellSPk=0,_bellFPk=0,_bellH0=0,_bellT=0,_bellDe=0,_bellDi=0;
-  const C=D/d;
+  let _bellFs=null,_bellSPk=0,_bellFPk=0,_bellH0=0,_bellT=0,_bellDe=0,_bellDi=0,_bellG=null;
+  const C=(d>0)?D/d:0;
   if(type==='belleville'){
-    const De=v('sp-de')||D,Di=v('sp-di')||De*0.51,t=v('sp-t')||d,h0=v('sp-h0')||fl||(d*1.5);
-    const E=210000,nu=0.3;
-    const a=De/2,b=Di/2,M=6/Math.PI*Math.pow(a/b-1,2)/Math.log(a/b)/Math.pow(a/b,2);
-    const CAL=4*E/((1-nu*nu)*M*De*De);
-    const Fs=s=>CAL*t*t*t*s*((h0-s)*(h0-s/2)/(t*t)+1);
+    const De=v('sp-de')||D,Di=v('sp-di')||De*0.51,t=v('sp-t')||d,h0=v('sp-h0')||fl||(t*0.4);
+    if(!(De>Di&&t>0&&h0>0)){out.innerHTML='<div class="note warn">Need D_e &gt; D_i, t &gt; 0, h_0 &gt; 0.</div>';return;}
+    const g=bellGeom(De,Di,t,h0);_bellG=g;
     const ratio=h0/t;
-    const F_at_h0=Fs(h0);
-    k=CAL*t*t*t*(h0*h0/(t*t)+1);
-    let sPk=h0,FPk=F_at_h0,prevF=0;
-    for(let i=1;i<=400;i++){const s2=h0*i/400,f2=Fs(s2);if(f2<prevF){sPk=h0*(i-1)/400;FPk=prevF;break;}prevF=f2;}
-    const dAt=Ff=>{if(!(Ff>0))return 0;if(Ff>=FPk)return sPk;let lo=0,hi=sPk;for(let i=0;i<80;i++){const m2=(lo+hi)/2;Fs(m2)<Ff?lo=m2:hi=m2;}return(lo+hi)/2;};
-    delta=dAt(F);Lsolid=t;Fmax=FPk;
-    _bellFs=Fs;_bellSPk=sPk;_bellFPk=FPk;_bellH0=h0;_bellT=t;_bellDe=De;_bellDi=Di;window.__bellDAt=dAt;
-    items.push(['Type','Belleville (Almen-Laszlo)']);
-    items.push(['D_e / D_i',De.toFixed(1)+' / '+Di.toFixed(1)+' mm']);
-    items.push(['h_0 / t',h0.toFixed(2)+' / '+t.toFixed(2)+' mm (ratio '+ratio.toFixed(2)+')']);
-    items.push(['k_0 initial rate',k.toFixed(1)+' N/mm']);
-    items.push(['F at flat (s=h_0)',Math.round(F_at_h0)+' N']);
-    items.push(['F usable peak',Math.round(FPk)+' N (s='+sPk.toFixed(2)+' mm)']);
-    items.push(['δ at applied F',delta.toFixed(3)+' mm',F<=FPk?'ok':'err']);
-    if(F>FPk)items.push(['Overload','F exceeds peak — disc goes flat','err']);
-    items.push(['Behavior',ratio<0.4?'~Linear':ratio<1.42?'Progressive-degressive':ratio<2.83?'Plateau (near-constant force)':'Snap-through (bistable)']);
-    extra='Almen-Laszlo load-deflection, E=210 GPa, ν=0.3 (DIN 2092 basis). Work discs at 15–75% of h_0. Build stacks below: series-alternating discs add deflection (k/n_s), parallel-nested discs add force (k·n_p, plus ~2–3% friction per contact surface).';
+    k=g.k0;delta=g.dAt(F);Lsolid=t;Fmax=g.FPk;
+    _bellFs=g.Fs;_bellSPk=g.sPk;_bellFPk=g.FPk;_bellH0=h0;_bellT=t;_bellDe=De;_bellDi=Di;window.__bellDAt=g.dAt;
+    const st=g.stress(delta,F),secK=delta>1e-12?F/delta:g.k0,fos=st.max>0&&Sy>0?Sy/st.max:Infinity;
+    const hit=BELL_CATALOG.find(p=>Math.abs(p.De-De)<1e-6&&Math.abs(p.Di-Di)<1e-6&&Math.abs(p.t-t)<1e-6&&Math.abs(p.h0-h0)<0.05);
+    items.push(['Type','Belleville (Almen-Laszlo / DIN EN 16983)']);
+    if(hit)items.push(['Schnorr art.',(hit.art||hit.cat)+' · bolt '+hit.bolt+(hit.series&&hit.series!=='—'?' · series '+hit.series:''),'ok']);
+    items.push(['D_e',_lU(De,2)]);
+    items.push(['D_i',_lU(Di,2)]);
+    items.push(['t / h_0',_lU(t,3)+' / '+_lU(h0,3)+' (h₀/t = '+ratio.toFixed(2)+')']);
+    items.push(['δ = De/Di',(De/Di).toFixed(3)+' · M = '+g.M.toFixed(3)]);
+    items.push(['k_0 initial rate',_kU(g.k0,1)]);
+    items.push(['k_secant at F',_kU(secK,1)]);
+    items.push(['F at flat (s=h_0)',_fU(hit&&hit.Fflat?hit.Fflat:g.Fs(h0),0)]);
+    items.push(['F at 0.75·h_0 (catalog)',_fU(hit&&hit.F75?hit.F75:g.F75,0),'ok']);
+    items.push(['F usable peak',_fU(g.FPk,0)+' @ s='+_lU(g.sPk,3)]);
+    items.push(['δ at applied F',_lU(delta,3),F<=g.FPk?'ok':'err']);
+    items.push(['σ outer (OM)',_pU(st.om,0),Math.abs(st.om)<Sy?'ok':'err']);
+    items.push(['σ ID edge',_pU(st.id,0),Math.abs(st.id)<Sy?'ok':'err']);
+    items.push(['FoS (Sy / σ_max)',isFinite(fos)?fos.toFixed(2):'∞',fos>=1.2?'ok':fos>=1?'warn':'err']);
+    if(F>g.FPk)items.push(['Overload','F exceeds peak — disc flat; δ clamped to s_peak','err']);
+    items.push(['Behavior',ratio<0.4?'~Linear (A-series)':ratio<1.42?'Progressive-degressive (B)':ratio<2.83?'Plateau / near-constant (C)':'Snap-through (bistable)']);
+    k=secK>0?secK:g.k0;
+    extra='SCHNORR Product Range US disc tables (standard C75S/51CrV4, DIN EN 16983). Catalog F at 0.75·h₀ and flat are published Schnorr values; curve shape is Almen-Laszlo (E=210 GPa, ν=0.3). Work 15–75% of h₀. Series adds δ; parallel adds F.';
   }else if(type==='compression'||type==='extension'||type==='die'){
     k=G*Math.pow(d,4)/(8*Math.pow(D,3)*na);
     delta=F/k;Lsolid=nt*d;
@@ -2527,13 +2586,13 @@ window.calcSpring=function(){
     items.push(['Type',type.toUpperCase()+' (Shigley)']);
     items.push(['Index C = D/d',C.toFixed(2),C>=4&&C<=12?'ok':'warn']);
     items.push(['Wahl K_w',Kw.toFixed(3)]);
-    items.push(['k spring rate',k.toFixed(2)+' N/mm']);
-    items.push(['δ at applied F',delta.toFixed(2)+' mm']);
-    items.push(['τ shear stress',tau.toFixed(0)+' MPa',tau<tau_allow?'ok':'err']);
-    items.push(['F_max safe',Math.round(Fmax)+' N']);
-    items.push(['L_solid',Lsolid.toFixed(1)+' mm']);
-    items.push(['δ to solid',delta_solid>0?delta_solid.toFixed(1)+' mm':'AT SOLID',delta_solid>0?'ok':'err']);
-    items.push(['L under load',(fl-delta).toFixed(1)+' mm',fl-delta>Lsolid?'ok':'err']);
+    items.push(['k spring rate',_kU(k,2)]);
+    items.push(['δ at applied F',_lU(delta,2)]);
+    items.push(['τ shear stress',_pU(tau,0),tau<tau_allow?'ok':'err']);
+    items.push(['F_max safe',_fU(Fmax,0)]);
+    items.push(['L_solid',_lU(Lsolid,1)]);
+    items.push(['δ to solid',delta_solid>0?_lU(delta_solid,1):'AT SOLID',delta_solid>0?'ok':'err']);
+    items.push(['L under load',_lU(fl-delta,1),fl-delta>Lsolid?'ok':'err']);
     extra='Shigley spring design. C between 4 and 12 is good practice; below 4 the wire is hard to coil, above 12 the spring can buckle. τ < 0.45·Sy for static, τ < 0.30·Sy for fatigue.';
   }else if(type==='conical'){
     const D2=D,D1=Math.min(v('sp-cd1')||D2*0.5,D2);
@@ -2589,38 +2648,81 @@ window.calcSpring=function(){
   let ns=Math.max(1,Math.round(v('sp-ns'))||1),np=Math.max(1,Math.round(v('sp-np'))||1);
   arr==='single'?(ns=1,np=1):arr==='series'?(np=1):arr==='parallel'&&(ns=1);
   const bell=type==='belleville';
-  const k_eq=k*np/ns;
-  const dSt=bell&&window.__bellDAt?ns*window.__bellDAt(F/np):F/k_eq;
+  const dSt=bell&&window.__bellDAt?ns*window.__bellDAt(F/np):(k>0?F/(k*np/ns):0);
+  const Fcurve=bell&&_bellFs&&window.__bellDAt?(np*_bellFs(dSt/Math.max(ns,1))):F;
+  const opOnCurve=bell?Math.min(F,Fcurve):F;
+  const k_eq=bell?(dSt>1e-12?F/dSt:k*np/ns):(k*np/ns);
   const L0st=bell?ns*(_bellH0+np*_bellT):(ns>1?ns*fl:fl);
   const solidSt=bell?ns*np*_bellT:ns*Lsolid;
   const capSt=np*Fmax;
   const so=$('sp-stack-out');
-  if(so)_mr(so,`<strong>${arr==='single'?'SINGLE UNIT':ns+' IN SERIES × '+np+' IN PARALLEL'}</strong> &mdash; k_eq <strong>${k_eq.toFixed(2)} N/mm</strong> · δ_stack at F <strong>${dSt.toFixed(3)} mm</strong> · free ${bell?'stack height L_0':'length'} <strong>${L0st.toFixed(1)} mm</strong> · solid <strong>${solidSt.toFixed(1)} mm</strong> · capacity <strong>${Math.round(capSt)} N</strong>${bell&&np>1?' · parallel nesting adds ~2–3% friction per surface':''}`);
+  if(so)_mr(so,`<strong>${arr==='single'?'SINGLE UNIT':ns+' IN SERIES × '+np+' IN PARALLEL'}</strong> &mdash; k_eq <strong>${_kU(k_eq,2)}</strong> · δ_stack at F <strong>${_lU(dSt,3)}</strong> · free ${bell?'stack height L_0':'length'} <strong>${_lU(L0st,1)}</strong> · solid <strong>${_lU(solidSt,1)}</strong> · capacity <strong>${_fU(capSt,0)}</strong>${bell&&np>1?' · parallel nesting adds ~2–3% friction per surface':''}${bell&&F>capSt?' · <span style="color:var(--err)">OVERLOAD vs 0.75·h₀ catalog capacity</span>':''}`);
   const stacked=ns*np>1,colStack='#3b82f6';
+  const ls=_lSc(),fs=_fSc(),lu=_lUn(),fu=_fUn();
   let traces,shapes,xTop,yTop;
   if(bell&&_bellFs){
-    const npts=90,xs1=[],ys1=[],xsS=[],ysS=[];
-    for(let i=0;i<=npts;i++){const s2=_bellSPk*i/npts;xs1.push(s2);ys1.push(_bellFs(s2));xsS.push(s2*ns);ysS.push(_bellFs(s2)*np);}
-    xTop=_bellSPk*ns;yTop=_bellFPk*np;
+    const npts=120,xs1=[],ys1=[],xsS=[],ysS=[];
+    for(let i=0;i<=npts;i++){const s2=_bellSPk*i/npts;xs1.push(s2*ls);ys1.push(_bellFs(s2)*fs);xsS.push(s2*ns*ls);ysS.push(_bellFs(s2)*np*fs);}
+    const opY=Math.min(F,np*_bellFPk);
+    xTop=Math.max(_bellSPk*ns,(isFinite(dSt)?dSt:0))*ls*1.05||_bellSPk*ns*ls;
+    yTop=Math.max(_bellFPk*np,F,opY)*fs*1.08;
     traces=[{x:xs1,y:ys1,mode:'lines',line:{color:pTheme().accent,width:2.5},name:'Single disc'}];
     stacked&&traces.push({x:xsS,y:ysS,mode:'lines',line:{color:colStack,width:2,dash:'dash'},name:ns+'S×'+np+'P stack'});
-    shapes=[{type:'rect',x0:0.15*_bellH0*ns,x1:Math.min(0.75*_bellH0,_bellSPk)*ns,y0:0,y1:yTop,fillcolor:'rgba(34,197,94,0.12)',line:{width:0}}];
-    isFinite(dSt)&&dSt>0&&traces.push({x:[dSt],y:[F],mode:'markers',marker:{color:'#fff',size:11,symbol:'diamond',line:{color:'#000',width:1.5}},name:'Operating point'});
+    if(F>np*_bellFPk){traces.push({x:[_bellSPk*ns*ls,_bellSPk*ns*ls],y:[np*_bellFPk*fs,F*fs],mode:'lines',line:{color:'#ef4444',width:1.5,dash:'dot'},name:'Flat (overload)'});}
+    const bandTop=Math.max(yTop,1);
+    shapes=[{type:'rect',x0:0.15*_bellH0*ns*ls,x1:Math.min(0.75*_bellH0,_bellSPk)*ns*ls,y0:0,y1:bandTop,fillcolor:'rgba(34,197,94,0.12)',line:{width:0}}];
+    if(isFinite(dSt)&&dSt>=0&&F>0){
+      const yMark=F>np*_bellFPk?F:opOnCurve;
+      traces.push({x:[dSt*ls],y:[yMark*fs],mode:'markers',marker:{color:F>np*_bellFPk?'#ef4444':'#fff',size:12,symbol:'diamond',line:{color:'#000',width:1.5}},name:F>np*_bellFPk?'Op (OVERLOAD)':'Operating point'});
+    }
   }else{
-    const Lavail=fl-Lsolid,xMax=Lavail>0?Lavail:fl*0.8,xMaxStack=xMax*ns;
-    xTop=Math.max(xMax,xMaxStack);
-    const npts=80,xs=Array.from({length:npts},(_,i)=>i*xTop/(npts-1));
-    traces=[{x:xs,y:xs.map(x=>x<=xMax?k*x:null),mode:'lines',line:{color:pTheme().accent,width:2.5},name:'Single (k='+k.toFixed(1)+' N/mm)'}];
-    stacked&&traces.push({x:xs,y:xs.map(x=>x<=xMaxStack?k_eq*x:null),mode:'lines',line:{color:colStack,width:2,dash:'dash'},name:ns+'S×'+np+'P (k_eq='+k_eq.toFixed(1)+' N/mm)'});
-    yTop=Math.max(k*xMax,k_eq*xMaxStack);
-    shapes=[{type:'rect',x0:xMax*0.15,x1:xMax*0.80,y0:0,y1:yTop,fillcolor:'rgba(34,197,94,0.12)',line:{width:0}},{type:'line',x0:xMax,x1:xMax,y0:0,y1:yTop*1.05,line:{color:'#ef4444',width:1.5,dash:'dash'}}];
-    isFinite(dSt)&&dSt>0&&traces.push({x:[dSt],y:[F],mode:'markers',marker:{color:'#fff',size:11,symbol:'diamond',line:{color:'#000',width:1.5}},name:'Operating point'});
+    const Lavail=fl-Lsolid,xMax=Lavail>0?Lavail:Math.max(fl*0.8,delta*1.2,1);
+    const xMaxStack=xMax*ns;
+    const dPlot=Math.max(delta,dSt,xMax*0.01);
+    const xTopSi=Math.max(xMax,xMaxStack,dPlot)*1.08;
+    xTop=xTopSi*ls;
+    const npts=100,xs=Array.from({length:npts},(_,i)=>i*xTopSi/(npts-1));
+    const kLine=type==='torsion'?0:k;
+    traces=[{x:xs.map(x=>x*ls),y:xs.map(x=>x<=xMax&&kLine?kLine*x*fs:null),mode:'lines',line:{color:pTheme().accent,width:2.5},name:'Single (k='+_kU(k,1)+')'}];
+    stacked&&traces.push({x:xs.map(x=>x*ls),y:xs.map(x=>x<=xMaxStack?k_eq*x*fs:null),mode:'lines',line:{color:colStack,width:2,dash:'dash'},name:ns+'S×'+np+'P'});
+    yTop=Math.max(kLine*xMax,k_eq*xMaxStack,F)*fs*1.1;
+    shapes=[{type:'rect',x0:xMax*0.15*ls,x1:xMax*0.80*ls,y0:0,y1:yTop,fillcolor:'rgba(34,197,94,0.12)',line:{width:0}},{type:'line',x0:xMax*ls,x1:xMax*ls,y0:0,y1:yTop,line:{color:'#ef4444',width:1.5,dash:'dash'}}];
+    if(isFinite(dSt)&&dSt>0&&F>0){
+      const onLin=dSt<=xMaxStack+1e-9;
+      const yOp=onLin?F:Math.min(F,k_eq*xMaxStack);
+      traces.push({x:[Math.min(dSt,xTopSi)*ls],y:[yOp*fs],mode:'markers',marker:{color:onLin?'#fff':'#ef4444',size:12,symbol:'diamond',line:{color:'#000',width:1.5}},name:onLin?'Operating point':'Op (past solid)'});
+    }
   }
-  plot('p-spring-fd',traces,{xaxis:{title:'δ deflection (mm)',range:[0,xTop*1.05]},yaxis:{title:'F force (N)',range:[0,yTop*1.1]},shapes,showlegend:stacked,legend:{x:0.02,y:0.98,bgcolor:'rgba(0,0,0,0)',font:{size:9}}});
-  bell?drawSpringAnim(_bellT,_bellDe,1,_bellH0+_bellT,Math.max(_bellT,_bellH0+_bellT-delta),type):fl>0&&drawSpringAnim(d,D,nt,fl,Math.max(0.1,fl-delta),type);
+  plot('p-spring-fd',traces,{xaxis:{title:'δ deflection ('+lu+')',range:[0,Math.max(xTop,1e-9)]},yaxis:{title:'F force ('+fu+')',range:[0,Math.max(yTop,1e-9)]},shapes,showlegend:true,legend:{x:0.02,y:0.98,bgcolor:'rgba(0,0,0,0)',font:{size:9}}});
+  if(bell)drawBellAnim(_bellDe,_bellDi,_bellT,_bellH0,delta,ns,np,arr);else if(fl>0)drawSpringAnim(d,D,nt,fl,Math.max(0.1,fl-delta),type);
   drawSpringPack(type,arr,ns,np,{d:d,D:D,fl:fl,nt:nt,delta:delta,De:_bellDe,Di:_bellDi,t:_bellT,h0:_bellH0});
   if(window.calc3DUpdate)try{window.calc3DUpdate('springs');}catch(e){}
 };
+function drawBellAnim(De,Di,t,h0,delta,ns,np,arr){
+  const c=$('c-spring-anim');if(!c)return;
+  const ctx=c.getContext('2d'),W=c.width,H=c.height,th=pTheme();
+  ctx.fillStyle=th.plot;ctx.fillRect(0,0,W,H);
+  const freeH=h0+t,loadH=Math.max(t,freeH-delta);
+  const sc=Math.min((W*0.28)/Math.max(De,1),(H-70)/Math.max(freeH*Math.max(ns,1),1));
+  function disc(cx,y,hcone,up){
+    const ro=De*sc/2,ri=Di*sc/2,hh=hcone*sc,tt=t*sc;
+    const L=up?[[cx-ro,y+hh],[cx-ri,y],[cx-ri,y+tt],[cx-ro,y+hh+tt]]:[[cx-ro,y],[cx-ri,y+hh],[cx-ri,y+hh+tt],[cx-ro,y+tt]];
+    const R=L.map(p=>[2*cx-p[0],p[1]]);
+    [L,R].forEach(q=>{ctx.beginPath();ctx.moveTo(q[0][0],q[0][1]);q.slice(1).forEach(p=>ctx.lineTo(p[0],p[1]));ctx.closePath();ctx.fillStyle=(/^#[0-9a-f]{6}$/i.test(th.accent)?th.accent+'55':'rgba(255,153,102,0.35)');ctx.fill();ctx.strokeStyle=th.accent||'#f96';ctx.lineWidth=1.5;ctx.stroke();});
+  }
+  function stack(cx,label,hcone){
+    const unit=hcone+np*t,total=ns*unit,y0=(H-40-total*sc)/2+18;
+    let y=y0;
+    for(let i=0;i<ns;i++){const up=arr==='parallel'||i%2===0;for(let j=0;j<np;j++)disc(cx,y+j*t*sc,hcone,up);y+=unit*sc;}
+    ctx.fillStyle=th.text;ctx.font='11px JetBrains Mono,monospace';ctx.textAlign='center';
+    ctx.fillText(label,cx,H-12);ctx.fillStyle=th.dim;ctx.fillText((ns*unit).toFixed(2)+' mm',cx,H-24);
+  }
+  stack(W*0.28,'FREE',h0);stack(W*0.72,'LOADED',Math.max(0.02,h0-delta));
+  ctx.strokeStyle=th.accent;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(W*0.42,H/2);ctx.lineTo(W*0.58,H/2);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(W*0.56,H/2-4);ctx.lineTo(W*0.58,H/2);ctx.lineTo(W*0.56,H/2+4);ctx.stroke();
+  ctx.fillStyle=th.dim;ctx.font='10px JetBrains Mono,monospace';ctx.textAlign='left';
+  ctx.fillText('δ = '+delta.toFixed(3)+' mm  ·  h₀/t = '+(h0/t).toFixed(2),10,14);
+}
 function drawSpringAnim(d,D,nt,fl,deflectedL,type){
   const c=$('c-spring-anim');if(!c)return;
   const ctx=c.getContext('2d');const w=c.width,h=c.height;
@@ -2720,9 +2822,6 @@ function drawSpringPack(type,arr,ns,np,g){
   }
 }
 function gateBellevillePresets(){
-  /* Card always visible since every spring type has presets, but the
-   * dropdown contents are filtered per type so Belleville items only
-   * appear when type=belleville. Update card title label too. */
   const card=$('spring-presets-card');if(card)card.style.display='block';
   const type=sv('sp-type')||'compression';
   const set=SPRING_PRESETS[type]||SPRING_PRESETS.compression;
@@ -2731,10 +2830,77 @@ function gateBellevillePresets(){
   const br=$('sp-bell-row');if(br)br.style.display=type==='belleville'?'':'none';
   const cr=$('sp-con-row');if(cr)cr.style.display=type==='conical'?'':'none';
   const wr=$('sp-wave-row');if(wr)wr.style.display=type==='wave'?'':'none';
-  const hideMap={belleville:['sp-d','sp-D','sp-na','sp-nt','sp-fl'],wave:['sp-d','sp-g','sp-na','sp-nt','sp-fl']};
+  const bvd=$('bvd-card');if(bvd)bvd.style.display=type==='belleville'?'':'none';
+  const spd=$('spd-card');if(spd)spd.style.display=type==='belleville'?'none':'';
+  const hideMap={belleville:['sp-d','sp-D','sp-na','sp-nt','sp-fl','sp-g'],wave:['sp-d','sp-g','sp-na','sp-nt','sp-fl']};
   ['sp-d','sp-D','sp-na','sp-nt','sp-fl','sp-g'].forEach(id=>{const el=$(id),f=el&&el.closest('.field');if(f)f.style.display=(hideMap[type]||[]).indexOf(id)>=0?'none':'';});
+  const prev=selValBeforePopulate();
   populateSpringPresets();
+  if(type==='belleville'){
+    const sel=$('sp-preset');
+    if(sel&&sel.options.length){
+      const want=prev&&[...sel.options].some(o=>o.value===prev)?prev:sel.options[0].value;
+      sel.value=want;
+      const p=set.items[sel.value];
+      if(p&&p.bell){
+        const de=$('sp-de');
+        const bare=!(v('sp-de')>0&&v('sp-di')>0&&v('sp-t')>0);
+        if(de&&bare)applySpringPreset();
+      }
+    }
+  }
 }
+function selValBeforePopulate(){const sel=$('sp-preset');return sel?sel.value:'';}
+function injectBellevilleDesigner(){
+  const vw=$('v-springs');if(!vw||$('bvd-card'))return;
+  const host=vw.querySelector('.split>div:first-child')||vw;
+  const card=document.createElement('div');card.className='card';card.id='bvd-card';card.style.display='none';
+  const bolts=['any',...Array.from(new Set(BELL_CATALOG.map(p=>p.bolt)))];
+  card.innerHTML='<h3>⚡ SCHNORR CATALOG — AUTOSELECT</h3>'+
+    '<p style="font-size:.72rem;color:var(--dim);margin:0 0 .5rem">Force + bolt → published SCHNORR disc (DIN EN 16983 product range, C75S/51CrV4) and lightest series×parallel stack. '+BELL_CATALOG.length+' articles loaded.</p>'+
+    '<div class="row">'+
+    '<div class="field"><label for="bvd-f">TARGET FORCE</label><div class="field-row"><input type="number" id="bvd-f" value="2000" step="any"><select id="bvd-f-u" aria-label="unit"><option>N</option><option>lbf</option></select></div></div>'+
+    '<div class="field"><label for="bvd-dfl">MAX DEFLECTION</label><div class="field-row"><input type="number" id="bvd-dfl" value="2" step="any"><select id="bvd-dfl-u" aria-label="unit"><option>mm</option><option>in</option></select></div></div>'+
+    '<div class="field"><label for="bvd-de">MAX OD ENVELOPE</label><div class="field-row"><input type="number" id="bvd-de" value="80" step="any"><select id="bvd-de-u" aria-label="unit"><option>mm</option><option>in</option></select></div></div>'+
+    '<div class="field"><label for="bvd-bolt">BOLT / ID FIT</label><select id="bvd-bolt">'+bolts.map(b=>`<option value="${b}">${b}</option>`).join('')+'</select></div>'+
+    '</div><div class="row" style="margin-top:.6rem"><button class="btn btn-fill" onclick="calcBellDesign()">AUTOSELECT</button><button class="btn" onclick="applyBellDesign()">APPLY TO ANALYSIS →</button></div><div id="bvd-out"></div>';
+  host.insertBefore(card,host.firstChild);
+}
+window.calcBellDesign=function(){
+  const o=$('bvd-out');if(!o)return;
+  const fMult=(_UC&&_UC.tables.FORCE_TO_N)||{N:1,lbf:4.4482216152605};
+  const dMult=(_UC&&_UC.tables.LEN_TO_MM)||{mm:1,'in':25.4};
+  const F=v('bvd-f')*(fMult[sv('bvd-f-u')]||1),dfl=(v('bvd-dfl')||1e9)*(dMult[sv('bvd-dfl-u')]||1),env=(v('bvd-de')||1e9)*(dMult[sv('bvd-de-u')]||1),bolt=sv('bvd-bolt')||'any';
+  if(!(F>0)){window.__bellDesign=null;_mr(o,'<div class="note warn" style="margin-top:.5rem">Need target force &gt; 0.</div>');return;}
+  const R=bellCatalogPick(F,env,bolt,dfl);
+  if(!R){window.__bellDesign=null;_mr(o,'<div class="note warn" style="margin-top:.5rem">No Schnorr disc fits force '+_fU(F,0)+' within OD ≤ '+_lU(env,1)+(bolt!=='any'?' and bolt '+bolt:'')+' and δ ≤ '+_lU(dfl,2)+'. Raise envelope, relax deflection, or lower force.</div>');return;}
+  const g=bellGeom(R.p.De,R.p.Di,R.p.t,R.p.h0),dSt=R.ns*g.dAt(F/R.np);
+  window.__bellDesign=R;
+  _mr(o,'<div class="result-grid" style="margin-top:.6rem">'+[
+    ['USE',R.p.cat,'ok'],['Art. no.',R.p.art||'—'],['Bolt fit',R.p.bolt],['Series × Parallel',R.ns+' × '+R.np],
+    ['D_e',_lU(R.p.De,2)],['D_i',_lU(R.p.Di,2)],['t / h₀',_lU(R.p.t,3)+' / '+_lU(R.p.h0,3)],
+    ['F @ 0.75·h₀ (each)',_fU(R.F75,0)],['Stack capacity',_fU(R.cap,0),'ok'],
+    ['δ_stack at F',_lU(dSt,3),dSt<=dfl?'ok':'warn'],['h₀/t',(R.p.h0/R.p.t).toFixed(2)+' ('+R.p.series+')']
+  ].map(x=>`<div class="result-item"><div class="lbl">${x[0]}</div><div class="val ${x[2]||''}">${x[1]}</div></div>`).join('')+'</div>'+
+    '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">Picked the lightest stack (fewest discs, then smaller OD) with Schnorr catalog work capacity ≥ F at ≤ 75% of h₀. APPLY writes geometry, force, and stack counts into the analysis.</p>');
+};
+window.applyBellDesign=function(){
+  const R=window.__bellDesign||null;
+  if(!R){window.calcBellDesign();return void(window.__bellDesign&&window.applyBellDesign());}
+  const fMult=(_UC&&_UC.tables.FORCE_TO_N)||{N:1,lbf:4.4482216152605};
+  const F=v('bvd-f')*(fMult[sv('bvd-f-u')]||1);
+  const set=(id,val)=>{const el=$(id);if(el)el.value=val;};
+  const tp=$('sp-type');if(tp)tp.value='belleville';
+  set('sp-de',R.p.De);set('sp-di',R.p.Di);set('sp-t',R.p.t);set('sp-h0',R.p.h0);
+  set('sp-f',F);const fu=$('sp-f-u');if(fu)fu.value='N';
+  set('sp-sy',1500);set('sp-d',R.p.t);set('sp-D',R.p.De);
+  set('sp-ns',R.ns);set('sp-np',R.np);
+  const arr=$('sp-stack-arr');if(arr)arr.value=R.ns>1&&R.np>1?'serpar':R.ns>1?'series':R.np>1?'parallel':'single';
+  gateBellevillePresets();
+  const sel=$('sp-preset');if(sel){const opt=[...sel.options].find(o=>o.value===R.p.cat);if(opt)sel.value=R.p.cat;}
+  window.calcBellDesign();
+  if(typeof window.calcSpring==='function')try{window.calcSpring();}catch(e){}
+};
 
 /* Override drawSealDiagram with theme-aware version (original used hardcoded pLayout from closure) */
 window.addEventListener('DOMContentLoaded',()=>{
@@ -4067,6 +4233,7 @@ window.addEventListener('DOMContentLoaded',()=>{
     injectThreadEngage();
     injectBoltDesigner();
     injectSpringDesigner();
+    injectBellevilleDesigner();
     injectShaftDesigner();
     injectBearingDesigner();
     injectWeldDesigner();
@@ -4094,8 +4261,9 @@ window.addEventListener('DOMContentLoaded',()=>{
     injectVcc();
     injectRetRing();
     window.calcFits();
-    const typeEl=$('sp-type');if(typeEl)typeEl.addEventListener('change',()=>{gateBellevillePresets();window.calcSpring();});
+    const typeEl=$('sp-type');if(typeEl)typeEl.addEventListener('change',()=>{gateBellevillePresets();const bvd=$('bvd-card');if(bvd)bvd.style.display=sv('sp-type')==='belleville'?'block':'none';window.calcSpring();});
     wireLive('v-springs',window.calcSpring);
+    window.addEventListener('amni-units-sys',()=>{try{if(typeof window.calcSpring==='function')window.calcSpring();if(typeof window.calcBolt==='function')window.calcBolt();if(typeof window.calcBellDesign==='function'&&$('bvd-out'))window.calcBellDesign();}catch(e){}});
     /* Hide CALCULATE button on springs since live-compute */
     const springBtn=document.querySelector('#v-springs button[onclick="calcSpring()"]');
     if(springBtn)springBtn.style.display='none';

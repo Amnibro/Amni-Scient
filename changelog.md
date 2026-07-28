@@ -1,3 +1,10 @@
+## 2026-07-28 — v1.9.0 Calc app Braid skin + ship pending v5.86.1 Schnorr set
+- **calc/index.html (source of truth, edited directly per rule):** :root tokens swapped to Braid — dark #0A0B0E/#13161C/#181C24 borders #242832/#313641 accent #FF8A5E, light = paper #FBFAF8/#FFF/#F8F6F2 accent #D84315; color-scheme both themes; radii 3px→8px (18) + 4px→9px (8); Google Fonts links removed (local Cascadia/Consolas); light nav rgba matched to paper. App logic untouched — CSS tokens only.
+- **Shipped the pending Schnorr/Belleville set** (was uncommitted since v5.86.1 07-14; calc/index.html referenced schnorr-discs.js?v=sch1 which was untracked → would have 404'd if index shipped alone): calc-engineer/fixes/unit-core/units.js edits + schnorr-discs.js + calc/data/schnorr_discs.json + data_schnorr_raw.json + tests/spring_belleville_audit.js. **All 21 node audit suites run green locally before ship.**
+- Learn app hub deliberately NOT reskinned: hard-coded colors + body.light-mode per-component overrides across a fragile hand-patched 6k-line file; kid-facing colorful identity is intentional. Learn SEO pages already ride style.css.
+- Research pages verified inheriting Braid tokens — no changes needed.
+- Backups backups/v1.9.0_app_shells/.
+
 ## 2026-07-28 — v1.8.0 Privacy polish + nav-markup repair (Braid round 3)
 - **Google Fonts removed from 110 marketing pages** (preconnects + JetBrains Mono css2 link) — no third-party font request; --font-mono rides local Cascadia/Consolas. Privacy-first copy now matches network behavior.
 - `<meta name="theme-color">` added site-wide (dark #0A0B0E default); shared toggle script now syncs it (#FBFAF8 in light) — Android chrome tints with the theme.
