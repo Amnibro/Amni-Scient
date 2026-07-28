@@ -134,6 +134,7 @@
 <script>
 (function(){
 var API="https://braid-license.amnibro7.workers.dev";
+var STRIPE_TOPUP="https://buy.stripe.com/28E28kgOUc1ycNt1kH3cc03";
 var P={
  claude:{label:"Claude",hue:"#C96442",mtok:6.00},
  openai:{label:"OpenAI",hue:"#10A37F",mtok:5.00},
@@ -237,11 +238,15 @@ $("pay").onclick=async function(){
    body:JSON.stringify({amount:ST.budget,providers:ST.pct})});
   var j=await r.json().catch(function(){return{}});
   if(r.ok&&j&&j.url){location.href=j.url;return}
-  err.textContent=(j&&j.error)||"Could not start checkout. Try again in a moment.";
-  err.className="err on";
+  // Worker not deployed yet, or transient error: fall back to hosted Payment Link.
+  // Amount is re-confirmed on Stripe; your split is kept in this tab for after you return.
+  try{sessionStorage.setItem("braid_topup_split",JSON.stringify({amount:ST.budget,providers:ST.pct,ts:Date.now()}))}catch(e){}
+  location.href=STRIPE_TOPUP;
+  return;
  }catch(e){
-  err.textContent="Could not reach the billing service. Check your connection.";
-  err.className="err on";
+  try{sessionStorage.setItem("braid_topup_split",JSON.stringify({amount:ST.budget,providers:ST.pct,ts:Date.now()}))}catch(x){}
+  location.href=STRIPE_TOPUP;
+  return;
  }
  $("pay").disabled=false;$("pay").textContent="PAY WITH STRIPE";
 };
