@@ -22,7 +22,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=b160">
+<link rel="stylesheet" href="css/style.css?v=b170">
 <style>
 .braid-mark{width:min(640px,88vw);height:auto;display:block;margin:0 auto -1.4rem}
 .product-hero h1{position:relative}
@@ -31,13 +31,14 @@
 @keyframes bflow{to{transform:translateX(calc(var(--p) * -1))}}
 .bflow{animation:bflow var(--d,9s) linear infinite}
 @media (prefers-reduced-motion:reduce){.bflow{animation:none}}
-.film{max-width:1080px;margin:0 auto;border:1px solid var(--line,#1e2430);border-radius:10px;overflow:hidden;
- background:#0B0C0E;box-shadow:0 24px 70px -30px rgba(0,0,0,.8)}
+.film{max-width:1080px;margin:0 auto;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;
+ background:#0B0C0E;box-shadow:var(--elev-3)}
 .film video{display:block;width:100%;height:auto}
 .filmcap{text-align:center;color:var(--dim);font-size:.78rem;margin:.9rem auto 0;max-width:720px}
 .seatgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.6rem;max-width:900px;margin:2rem auto 0}
-.seatchip{display:flex;align-items:center;gap:.55rem;border:1px solid var(--line,#1e2430);border-radius:8px;
- padding:.6rem .75rem;font-size:.76rem;letter-spacing:.04em}
+.seatchip{display:flex;align-items:center;gap:.55rem;border:1px solid var(--border);border-radius:11px;background:var(--panel);box-shadow:var(--elev-1);
+ padding:.6rem .75rem;font-size:.76rem;font-weight:550;letter-spacing:.04em;transition:transform var(--dur) var(--ease),box-shadow var(--dur) var(--ease)}
+.seatchip:not(.soon):hover{transform:translateY(-2px);box-shadow:var(--elev-2)}
 .seatchip i{width:9px;height:9px;border-radius:50%;flex:0 0 9px}
 .seatchip.soon{opacity:.5}
 .plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1rem;max-width:1000px;margin:0 auto}
