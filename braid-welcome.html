@@ -205,14 +205,13 @@ function braidSVG(o){
  })();
  function show(d){
   var topup=String(d.tier||"")==="topup";
-  var siteDl='assets/braid/Braid.exe';
+  var siteDl='';
   var dl=d.download
    ? '<a href="'+esc(d.download)+'" class="btn btn-primary" style="font-size:.95rem;padding:.85rem 1.8rem">'+
      'DOWNLOAD BRAID'+(d.version?' '+esc(d.version):'')+'</a>'+
      (d.sha256?'<div class="hashline">SHA-256 '+esc(d.sha256)+'</div>':'')
-   : '<a href="'+siteDl+'" class="btn btn-primary" style="font-size:.95rem;padding:.85rem 1.8rem" download>DOWNLOAD BRAID</a>'+
-     '<div class="hashline">Direct from amni-scient.com · Windows x64</div>'+
-     '<p style="color:var(--dim);font-size:.8rem;margin-top:.8rem">Your licence key above is live — run the exe and paste it when asked.</p>';
+   : '<div class="warn"><b>Your key is live.</b><br>The app is not posted publicly. Use the private download link you were given, or email amnibro7@gmail.com and we will send it.</div>'+
+     '<p style="color:var(--dim);font-size:.8rem;margin-top:.8rem">Paste your key when Braid asks on first launch.</p>';
   var thanks=topup
    ? 'Thank you &mdash; your token top-up is in. Here is your licence key. Keep it: it unlocks Braid and carries the prepaid pool you just funded'+(d.budget?' ($'+Number(d.budget).toFixed(2)+')':'')+'.'
    : 'Thank you &mdash; your subscription is active. Here is your licence key. Keep it: it is what unlocks Braid, on up to three machines.';
