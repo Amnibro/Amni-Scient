@@ -18,13 +18,14 @@
 <meta name="twitter:description" content="Ask once. Every seat answers, and each one reads the others before it replies.">
 <meta name="twitter:image" content="https://amni-scient.com/assets/braid/braid-og.jpg?v=2">
 <link rel="canonical" href="https://amni-scient.com/braid">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Braid","url":"https://amni-scient.com/braid.html","description":"A multi-model round table. Ask once and Claude, Grok, Gemini and a local model each answer, reading the answers before them. Runs on your existing subscriptions or your own API keys.","applicationCategory":"DeveloperApplication","operatingSystem":"Windows","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Organization","name":"AMNI-SCIENT","url":"https://amni-scient.com"},"image":"https://amni-scient.com/assets/braid/braid-og.jpg?v=2"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Braid","url":"https://amni-scient.com/braid.html","description":"A multi-model round table. Ask once and Claude, Grok, Gemini and a local model each answer, reading the answers before them. Runs on your existing subscriptions or your own API keys.","applicationCategory":"DeveloperApplication","operatingSystem":"Windows","offers":{"@type":"Offer","price":"10.00","priceCurrency":"USD","category":"subscription","availability":"https://schema.org/InStock"},"author":{"@type":"Organization","name":"AMNI-SCIENT","url":"https://amni-scient.com"},"image":"https://amni-scient.com/assets/braid/braid-og.jpg?v=2"}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 <style>
-.braid-mark{width:min(640px,88vw);height:auto;display:block;margin:0 auto}
+.braid-mark{width:min(640px,88vw);height:auto;display:block;margin:0 auto -1.4rem}
+.product-hero h1{position:relative}
 @keyframes bflow{to{transform:translateX(calc(var(--p) * -1))}}
 .bflow{animation:bflow var(--d,9s) linear infinite}
 @media (prefers-reduced-motion:reduce){.bflow{animation:none}}
@@ -37,6 +38,23 @@
  padding:.6rem .75rem;font-size:.76rem;letter-spacing:.04em}
 .seatchip i{width:9px;height:9px;border-radius:50%;flex:0 0 9px}
 .seatchip.soon{opacity:.5}
+.plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1rem;max-width:1000px;margin:0 auto}
+.plan{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:1.4rem 1.2rem;
+ text-align:left;display:flex;flex-direction:column;position:relative;background-image:var(--glass)}
+.plan.best{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent-dim),var(--shadow)}
+.plan .tag{position:absolute;top:-9px;left:1.2rem;background:var(--accent);color:#00120b;font-family:var(--font-mono);
+ font-size:.58rem;font-weight:700;letter-spacing:1px;padding:2px 8px;border-radius:999px}
+.plan h3{font-family:var(--font-mono);font-size:.82rem;letter-spacing:1.5px;color:var(--text);margin-bottom:.5rem}
+.plan .amt{font-family:var(--font-mono);font-size:1.9rem;color:var(--accent);line-height:1}
+.plan .amt s{color:var(--dim);font-size:1rem;margin-right:.45rem;text-decoration-thickness:1px}
+.plan .per{color:var(--dim);font-size:.72rem;margin:.3rem 0 .9rem}
+.plan ul{list-style:none;margin:0 0 1.1rem;font-size:.79rem;color:var(--text-soft);flex:1}
+.plan li{padding:.24rem 0 .24rem 1.05rem;position:relative;line-height:1.45}
+.plan li::before{content:"•";position:absolute;left:0;color:var(--accent)}
+.plan .btn{width:100%;justify-content:center;text-align:center}
+.plan .fine{color:var(--dim);font-size:.68rem;margin-top:.6rem;line-height:1.4}
+.beta-note{max-width:760px;margin:0 auto 2rem;color:var(--dim);font-size:.82rem;line-height:1.6}
+.beta-note b{color:var(--text-soft)}
 </style>
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
@@ -81,8 +99,8 @@
 <h1>BRAID</h1>
 <p class="desc">ASK ONCE &bull; EVERY SEAT ANSWERS &bull; EACH ONE READS THE LAST</p>
 <div class="cta-row" style="justify-content:center;margin-top:2rem;margin-bottom:1rem">
-<a href="#film" class="btn btn-primary">WATCH IT WORK</a>
-<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="btn btn-outline">&#9749; SUPPORT</a>
+<a href="#pricing" class="btn btn-primary">GET BRAID &mdash; $10/MO</a>
+<a href="#film" class="btn btn-outline">WATCH IT WORK</a>
 </div>
 </div>
 
@@ -150,12 +168,68 @@ Your browser cannot play this video.
 </div>
 </section>
 
+<section id="pricing" style="text-align:center">
+<h2>GET BRAID</h2>
+<p class="beta-note">Braid is in <b>open beta</b>, so every price below is the beta price and stays there for as long
+ as you keep the subscription. You subscribe, you get your licence key and the download on the next screen.
+ <b>Cancel any time</b> &mdash; it is a Stripe subscription, not a contract.</p>
+<div class="plans">
+
+ <div class="plan best"><span class="tag">MOST PEOPLE</span>
+  <h3>BETA &mdash; MONTHLY</h3>
+  <div class="amt"><s>$20</s>$10</div><div class="per">per month, while the beta lasts</div>
+  <ul><li>Every seat you already pay for, at one table</li>
+   <li>Flows, review breaks, memory, code mode</li>
+   <li>Adam-3B local seat, free to run</li>
+   <li>3 machines per licence</li>
+   <li>Signed automatic updates</li></ul>
+  <a href="https://buy.stripe.com/8x25kw7ek2qY6p59Rd3cc00" class="btn btn-primary">SUBSCRIBE &amp; DOWNLOAD</a>
+ </div>
+
+ <div class="plan">
+  <h3>BETA &mdash; YEARLY</h3>
+  <div class="amt"><s>$120</s>$102</div><div class="per">per year &mdash; 15% off the monthly</div>
+  <ul><li>Everything in monthly</li>
+   <li>Two months back, effectively</li>
+   <li>Price locked for the year</li>
+   <li>3 machines per licence</li></ul>
+  <a href="https://buy.stripe.com/6oU3co7ek8Pm3cT9Rd3cc01" class="btn btn-outline">SUBSCRIBE YEARLY</a>
+ </div>
+
+ <div class="plan">
+  <h3>BETA TESTER</h3>
+  <div class="amt">$5</div><div class="per">per month, feedback included</div>
+  <ul><li>Everything in monthly, half price</li>
+   <li>You send real feedback as you use it</li>
+   <li>Your reports jump the queue</li>
+   <li>Built-in reporter &mdash; keys and paths stripped first</li></ul>
+  <a href="https://buy.stripe.com/00weV6aqw6He00H9Rd3cc02" class="btn btn-outline">JOIN THE TESTERS</a>
+  <p class="fine">On the honour system. If the feedback stops we will just ask, not cut you off.</p>
+ </div>
+
+ <div class="plan">
+  <h3>TEAMS</h3>
+  <div class="amt">from $6</div><div class="per">per seat / month, the more seats the lower</div>
+  <ul><li>Volume pricing &mdash; 20 seats is $6 each, not $10</li>
+   <li>One invoice, seats you manage</li>
+   <li>Shared flows across the team</li>
+   <li>Token top-ups at cost</li></ul>
+  <a href="mailto:amnibro7@gmail.com?subject=Braid%20for%20teams" class="btn btn-outline">TALK TO US</a>
+  <p class="fine">Tell us the seat count and we will send a link priced for it.</p>
+ </div>
+
+</div>
+<p class="beta-note" style="margin-top:1.6rem">Prefer to pay as you go? A <a href="https://buy.stripe.com/28E28kgOUc1ycNt1kH3cc03" style="color:var(--accent)">one-off token top-up</a>
+ works without a subscription. Payments run through <b>Stripe</b> &mdash; card, Apple&nbsp;Pay, Google&nbsp;Pay and Link,
+ with Cash&nbsp;App and Klarna where Stripe offers them. Amni-Scient never sees your card number.</p>
+</section>
+
 <section style="text-align:center">
 <h2>WHY &ldquo;BRAID&rdquo;</h2>
 <p style="color:var(--dim);max-width:720px;margin:0 auto 1.4rem;font-size:.9rem">Because the seats picked it. Asked to rename the product in one word, they proposed <em>Quorum</em>, <em>Alloy</em> and <em>Braid</em>, ruled out the first two on live trademark and domain collisions, and voted unanimously for the third &mdash; strand over strand, each one laid over the last. That exchange is in the film above, unedited.</p>
 <p style="color:var(--dim);font-size:.8rem;margin-bottom:2rem">Windows desktop app &bull; bring your own subscriptions, API keys, or local models &bull; keys never leave your machine</p>
 <div class="cta-row" style="justify-content:center">
-<a href="mailto:amnibro7@gmail.com?subject=Braid%20early%20access" class="btn btn-primary">REQUEST EARLY ACCESS</a>
+<a href="#pricing" class="btn btn-primary">GET BRAID</a>
 <a href="about.html" class="btn btn-outline">ABOUT AMNI-SCIENT</a>
 </div>
 </section>
@@ -183,11 +257,13 @@ const brb=a=>"rgb("+a.map(v=>Math.max(0,Math.min(255,Math.round(v)))).join(",")+
 function braidSVG(o){
  const W=o.w,N=o.n||4,PER=o.per||1.5,secs=o.secs||12,glow=o.glow!==false,
   H=o.h||W*0.30,mid=H/2,amp=H*(o.amp||0.30),sw=H*(o.sw||0.135),
+  pad=H*(o.pad||0),VH=H+2*pad,
   uid="v"+(++BUID),Pxl=W/PER,TOT=W+Pxl,K=Math.PI*2*PER/W,
   ph=k=>k*(2*Math.PI/N),
   yy=(k,x)=>mid+Math.sin(K*x+ph(k))*amp,
-  zz=(k,x)=>Math.cos(K*x+ph(k)+(k%2)*Math.PI),
-  pa=(k,a,b)=>{let d="";for(let x=a;x<=b;x+=0.8)d+=(d?" L ":"M ")+x.toFixed(1)+" "+yy(k,x).toFixed(1);return d};
+  zz=(k,x)=>Math.cos(K*x+ph(k)),
+  pa=(k,a,b)=>{const n=Math.max(2,Math.ceil((b-a)/0.8)),st=(b-a)/n;let d="";
+   for(let i=0;i<=n;i++){const x=a+i*st;d+=(d?" L ":"M ")+x.toFixed(2)+" "+yy(k,x).toFixed(2)}return d};
  let defs="";
  for(let k=0;k<N;k++){
   const base=bhx(BPAL[k%BPAL.length]);let st="";
@@ -197,22 +273,31 @@ function braidSVG(o){
   }
   defs+='<linearGradient id="s'+uid+k+'" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="'+TOT+'" y2="0">'+st+'</linearGradient>';
  }
- const tube=(k,d)=>'<path d="'+d+'" fill="none" stroke="url(#s'+uid+k+')" stroke-width="'+sw+'" stroke-linecap="round"/>';
+ const tube=(k,d,cap)=>'<path d="'+d+'" fill="none" stroke="url(#s'+uid+k+')" stroke-width="'+sw+
+  '" stroke-linecap="'+cap+'" stroke-linejoin="round"/>';
+ /* Over-under, done where the seams cannot be seen.
+    Each strand is a helix: y = sin(Kx+phase), depth z = cos(Kx+phase). Two strands meet
+    in y only where their depths have opposite sign, so at every crossing exactly ONE of
+    the pair is in front - draw all four, then redraw each strand over just its z>0 arcs
+    and the right one always wins. The redraw starts and stops at z=0, which is the top
+    or bottom of that strand's wave, a full amplitude clear of every other strand, so the
+    cut ends are invisible and no depth sorting is needed anywhere.
+    The previous build patched a fixed span either side of each crossing with round
+    linecaps, which left a blunt stub wherever a patch ended on top of another strand -
+    unnoticeable on the 54px mark in the app, glaring at 680px on the site. */
  let g="";
- for(const k of [...Array(N).keys()])g+=tube(k,pa(k,0,TOT));
- const events=[];
- for(let i=0;i<N;i++)for(let j=i+1;j<N;j++){
-  const t0=(Math.PI-ph(i)-ph(j))/2;
-  for(let m=-6;m<90;m++){
-   const t=t0+m*Math.PI,x=t/K;
-   if(x<-sw*2||x>TOT+sw*2)continue;
-   events.push([x,zz(i,x)>zz(j,x)?i:j]);
+ for(let k=0;k<N;k++)g+=tube(k,pa(k,0,TOT),"round");
+ for(let k=0;k<N;k++){
+  const m0=Math.floor((K*0+ph(k)+Math.PI/2)/(2*Math.PI))-1,
+        m1=Math.ceil((K*TOT+ph(k)+Math.PI/2)/(2*Math.PI))+1;
+  for(let m=m0;m<=m1;m++){
+   const a=(-Math.PI/2-ph(k)+2*Math.PI*m)/K,b=(Math.PI/2-ph(k)+2*Math.PI*m)/K,
+         ca=Math.max(0,a),cb=Math.min(TOT,b);
+   if(cb-ca<0.4)continue;
+   g+=tube(k,pa(k,ca,cb),(ca<=0||cb>=TOT)?"round":"butt");
   }
  }
- events.sort((a,b)=>a[0]-b[0]);
- const h=sw*1.8;
- for(const [xc,f] of events)g+=tube(f,pa(f,Math.max(0,xc-h),Math.min(TOT,xc+h)));
- return '<svg width="'+W+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'">'
+ return '<svg width="'+W+'" height="'+VH+'" viewBox="0 '+(-pad)+' '+W+' '+VH+'">'
   +'<defs>'+defs
   +'<filter id="g'+uid+'" x="-15%" y="-55%" width="130%" height="210%">'
   +'<feGaussianBlur stdDeviation="'+(sw*0.4).toFixed(2)+'" result="b"/>'
@@ -220,10 +305,10 @@ function braidSVG(o){
   +'<linearGradient id="f'+uid+'" x1="0" x2="1">'
   +'<stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="0.09" stop-color="#fff" stop-opacity="1"/>'
   +'<stop offset="0.91" stop-color="#fff" stop-opacity="1"/><stop offset="1" stop-color="#fff" stop-opacity="0"/>'
-  +'</linearGradient><mask id="m'+uid+'"><rect x="0" y="'+(-H)+'" width="'+W+'" height="'+(3*H)+'" fill="url(#f'+uid+')"/></mask></defs>'
+  +'</linearGradient><mask id="m'+uid+'"><rect x="0" y="'+(-H-pad)+'" width="'+W+'" height="'+(3*H+2*pad)+'" fill="url(#f'+uid+')"/></mask></defs>'
   +'<g mask="url(#m'+uid+')"><g class="bflow" style="--p:'+Pxl.toFixed(2)+'px;--d:'+secs+'s"'
   +(glow?' filter="url(#g'+uid+')"':"")+'>'+g+'</g></g></svg>'}
- host.outerHTML=braidSVG({w:680,n:4,secs:12}).replace('<svg ','<svg class="braid-mark float" aria-label="Braid" ');
+ host.outerHTML=braidSVG({w:680,n:4,secs:12,sw:0.075,amp:0.34,pad:0.28}).replace('<svg ','<svg class="braid-mark" aria-label="Braid" ');
 })();
 </script>
 </body>
