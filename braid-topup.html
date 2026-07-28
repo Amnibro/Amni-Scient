@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Braid token top-up | AMNI-SCIENT</title>
+<meta name="description" content="Allocate a prepaid pool across Claude, OpenAI, Grok and Gemini. See estimated tokens per model before you pay.">
+<meta name="robots" content="noindex,nofollow">
+<link rel="canonical" href="https://amni-scient.com/braid-topup.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<style>
+.wrap{max-width:820px;margin:0 auto;padding:5.2rem 1.3rem 3.5rem}
+.wrap h1{font-family:var(--font-mono);font-size:clamp(1.4rem,3.5vw,2rem);color:var(--accent);letter-spacing:1.5px;margin-bottom:.45rem}
+.lead{color:var(--text-soft);font-size:.9rem;line-height:1.55;margin-bottom:1.6rem;max-width:58ch}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:1.15rem 1.2rem;margin-bottom:1rem;background-image:var(--glass)}
+.panel h2{font-family:var(--font-mono);font-size:.68rem;letter-spacing:1.4px;color:var(--dim);margin:0 0 .85rem;font-weight:700}
+.money{display:flex;align-items:center;gap:.55rem;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.45rem .9rem}
+.money b{font-family:var(--font-mono);font-size:1.35rem;color:var(--dim);font-weight:500}
+.money input{border:0;background:none;color:var(--text);font-family:var(--font-mono);font-size:1.55rem;font-weight:700;width:100%;outline:none;letter-spacing:-.02em}
+.hint{font-size:.78rem;color:var(--dim);margin-top:.55rem;line-height:1.5}
+.pvgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.55rem}
+.pv{display:flex;align-items:center;gap:.55rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:.7rem .75rem;cursor:pointer;background:var(--bg2);transition:border-color .15s,background .15s;user-select:none}
+.pv:hover{border-color:var(--vc,var(--accent))}
+.pv.on{border-color:var(--vc,var(--accent));background:color-mix(in srgb,var(--vc,var(--accent)) 10%,var(--bg2))}
+.pv .dot{width:9px;height:9px;border-radius:50%;background:var(--vc);flex-shrink:0}
+.pv b{font-size:.82rem;flex:1}
+.pv small{color:var(--dim);font-size:.68rem;white-space:nowrap}
+.pv .tick{width:14px;text-align:center;color:var(--vc);font-weight:700;font-size:.85rem}
+.srow{display:flex;align-items:center;gap:.65rem;padding:.55rem 0;border-top:1px solid var(--border);flex-wrap:wrap}
+.srow:first-child{border-top:0;padding-top:0}
+.srow .sl{width:72px;font-size:.82rem;font-weight:650;color:var(--vc)}
+.srow input[type=range]{flex:1;min-width:100px;accent-color:var(--vc)}
+.srow .pctin{width:58px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:var(--font-mono);font-size:.78rem;padding:.28rem .35rem;text-align:right}
+.srow .pctin:focus{outline:none;border-color:var(--vc,var(--accent))}
+.srow .unit{color:var(--dim);font-size:.72rem;font-family:var(--font-mono)}
+.srow .stok{min-width:78px;text-align:right;font-family:var(--font-mono);font-size:.72rem;color:var(--dim)}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.55rem;margin-top:.85rem}
+.tile{border:1px solid var(--border);border-left:3px solid var(--vc);border-radius:var(--radius-sm);padding:.75rem .85rem;background:var(--bg2)}
+.tile .tl{font-family:var(--font-mono);font-size:.62rem;font-weight:700;color:var(--vc);letter-spacing:.08em;text-transform:uppercase}
+.tile .tv{font-size:1.25rem;font-weight:700;letter-spacing:-.02em;margin-top:.15rem;font-family:var(--font-mono)}
+.tile .tv small{font-size:.68rem;color:var(--dim);font-weight:400}
+.tile .ts{font-size:.72rem;color:var(--dim);margin-top:.15rem}
+.sum{border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg2);padding:.85rem 1rem;margin-top:.9rem;font-size:.82rem;line-height:1.6;color:var(--text-soft)}
+.sum b{color:var(--text)}
+.actions{display:flex;gap:.7rem;flex-wrap:wrap;align-items:center;margin-top:1.2rem}
+.actions .btn{cursor:pointer}
+.actions .btn:disabled{opacity:.4;cursor:default;transform:none}
+.err{color:var(--error);font-size:.8rem;margin-top:.55rem;display:none}
+.err.on{display:block}
+.fine{font-size:.72rem;color:var(--dim);margin-top:.7rem;line-height:1.45}
+.back{font-family:var(--font-mono);font-size:.72rem;letter-spacing:1px;color:var(--dim);display:inline-block;margin-bottom:1rem}
+.back:hover{color:var(--accent);opacity:1}
+</style>
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+</head>
+<body class="theme-ai">
+<div class="grid-bg"></div>
+<div class="scanlines"></div>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu">
+<a href="braid.html" class="active">BRAID</a>
+<a href="amni-ai.html">AMNI-AI</a>
+<a href="amni-browse.html">AMNI-BROWSE</a>
+<a href="amni-calc.html">AMNI-CALC</a>
+<a href="amni-explore.html">AMNI-EXPLORE</a>
+<a href="amni-weather.html">AMNI-WEATHER</a>
+<a href="amni-learn.html">AMNI-LEARN</a>
+<a href="amni-llm.html">AMNI-LLM</a>
+<a href="amni-connect.html">AMNI-CONNECT</a>
+<a href="amni-code.html">AMNI-CODE</a>
+<a href="amni-haven.html">AMNI-HAVEN</a>
+<a href="amni-life.html">AMNI-LIFE</a>
+<a href="amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</div>
+<a href="about.html">ABOUT</a>
+<a href="faq.html">FAQ</a>
+<a href="privacy.html">PRIVACY</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<div class="wrap">
+<a class="back" href="braid.html#pricing">← BACK TO PLANS</a>
+<h1>PAY AS YOU GO</h1>
+<p class="lead">Pick an amount, split it across the models you want in the room, and see roughly how many tokens each slice buys. Then Stripe takes the payment — card, Apple&nbsp;Pay, Google&nbsp;Pay, Link.</p>
+<div class="panel">
+<h2>AMOUNT</h2>
+<div class="money"><b>$</b><input id="budget" type="number" min="1" max="10000" step="1" value="25" inputmode="decimal" aria-label="Top-up amount in dollars"></div>
+<p class="hint">One-off prepaid pool. Floor $1. No software subscription required for this path — this only funds tokens.</p>
+</div>
+<div class="panel">
+<h2>MODELS IN THE ROOM</h2>
+<div class="pvgrid" id="provgrid"></div>
+</div>
+<div class="panel">
+<h2>SPLIT THE POOL</h2>
+<div id="sliders"></div>
+<div class="tiles" id="tiles"></div>
+<div class="sum" id="sum">Tick at least one model to see your split.</div>
+</div>
+<div class="actions">
+<button class="btn btn-primary" id="pay" disabled>PAY WITH STRIPE</button>
+<a class="btn btn-outline" href="braid.html#pricing">SEE SUBSCRIPTIONS</a>
+</div>
+<div class="err" id="err"></div>
+<p class="fine">Estimates use list rates per million tokens (before any team discount). Actual models route through OpenRouter once your licence is provisioned. Amni-Scient never sees your card number.</p>
+</div>
+<aside class="support-cta" aria-label="Support"><a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="support-link"><span class="support-ico">&#9749;</span><span>Enjoying this? <strong>Support on Ko-fi</strong></span></a></aside>
+<footer>
+<div class="footer-links">
+<a href="about.html">ABOUT</a>
+<a href="faq.html">FAQ</a>
+<a href="privacy.html">PRIVACY</a>
+<a href="terms.html">TERMS</a>
+<a href="/">AMNI-SCIENT</a>
+<a href="mailto:amnibro7@gmail.com">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
+</footer>
+<script>
+(function(){
+var API="https://braid-license.amnibro7.workers.dev";
+var P={
+ claude:{label:"Claude",hue:"#C96442",mtok:6.00},
+ openai:{label:"OpenAI",hue:"#10A37F",mtok:5.00},
+ grok:{label:"Grok",hue:"#5F6670",mtok:4.00},
+ gemini:{label:"Gemini",hue:"#3B82F6",mtok:3.00}
+};
+var TE=1800;
+var ST={budget:25,pct:{claude:25,openai:25,grok:25,gemini:25}};
+var $=function(id){return document.getElementById(id)};
+var esc=function(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})};
+var fmtTok=function(t){return t>=1e9?(t/1e9).toFixed(2)+"B":t>=1e6?(t/1e6).toFixed(1)+"M":t>=1e3?Math.round(t/1e3)+"k":String(Math.round(t))};
+var fmtUsd=function(v){return "$"+(+v).toFixed(2)};
+var enabled=function(){return Object.keys(ST.pct)};
+function toggleProv(k,on){
+ var ks=enabled();
+ if(on&&ST.pct[k]==null){var share=100/(ks.length+1),f=(100-share)/100;ks.forEach(function(o){ST.pct[o]*=f});ST.pct[k]=share}
+ else if(!on&&ST.pct[k]!=null){delete ST.pct[k];var rest=enabled(),su=rest.reduce(function(a,o){return a+ST.pct[o]},0);rest.forEach(function(o){ST.pct[o]=su>0?ST.pct[o]*100/su:100/rest.length})}
+ build();
+}
+function setPct(k,v,fromType){
+ v=Math.max(0,Math.min(100,+v||0));
+ var others=enabled().filter(function(o){return o!==k});
+ if(!others.length){ST.pct[k]=100;return sync()}
+ var su=others.reduce(function(a,o){return a+ST.pct[o]},0),rest=100-v;
+ others.forEach(function(o){ST.pct[o]=su>0?ST.pct[o]*rest/su:rest/others.length});
+ ST.pct[k]=v;sync(fromType?k:null);
+}
+function quoteLocal(){
+ var ks=enabled();if(!ks.length)return{err:"none"};
+ var net=ST.budget;if(!(net>0))return{err:"low"};
+ var cost={},C=0;ks.forEach(function(k){cost[k]=TE*P[k].mtok/1e6;C+=cost[k]});
+ var rows={},lim=null;
+ ks.forEach(function(k){
+  var a=net*ST.pct[k]/100,b=net*cost[k]/C;
+  rows[k]={pct:ST.pct[k],usd:a,tokens:a/P[k].mtok*1e6,prompts:Math.floor(a/cost[k]),delta:a-b};
+  if(lim===null||rows[k].prompts<rows[lim].prompts)lim=k;
+ });
+ return{rows:rows,net:net,lim:lim,room:rows[lim].prompts,balanced:Math.floor(net/C)};
+}
+function build(){
+ $("provgrid").innerHTML=Object.keys(P).map(function(k){
+  var on=ST.pct[k]!=null;
+  return '<div class="pv'+(on?" on":"")+'" data-k="'+k+'" style="--vc:'+P[k].hue+'"><span class="dot"></span><b>'+esc(P[k].label)+'</b><small>$'+P[k].mtok.toFixed(2)+'/Mtok</small><span class="tick">'+(on?"✓":"")+'</span></div>';
+ }).join("");
+ Array.prototype.forEach.call(document.querySelectorAll(".pv"),function(el){
+  el.onclick=function(){toggleProv(el.dataset.k,ST.pct[el.dataset.k]==null)};
+ });
+ var ks=enabled();
+ $("sliders").innerHTML=ks.length?ks.map(function(k){
+  return '<div class="srow" style="--vc:'+P[k].hue+'"><span class="sl">'+esc(P[k].label)+'</span>'+
+   '<input type="range" min="0" max="100" step="1" data-sk="'+k+'" value="'+Math.round(ST.pct[k])+'" aria-label="'+esc(P[k].label)+' share">'+
+   '<input class="pctin" type="number" min="0" max="100" step="1" data-pk="'+k+'" value="'+Math.round(ST.pct[k])+'" aria-label="'+esc(P[k].label)+' percent">'+
+   '<span class="unit">%</span><span class="stok" data-stok="'+k+'"></span></div>';
+ }).join(""):'<p class="hint">Tick at least one model above and the sliders appear here.</p>';
+ Array.prototype.forEach.call(document.querySelectorAll("[data-sk]"),function(r){
+  r.oninput=function(){setPct(r.dataset.sk,+r.value)};
+ });
+ Array.prototype.forEach.call(document.querySelectorAll("[data-pk]"),function(r){
+  r.oninput=function(){setPct(r.dataset.pk,+r.value,true)};
+ });
+ $("tiles").innerHTML=ks.map(function(k){
+  return '<div class="tile" style="--vc:'+P[k].hue+'"><div class="tl">'+esc(P[k].label)+'</div><div class="tv" data-tv="'+k+'"></div><div class="ts" data-ts="'+k+'"></div></div>';
+ }).join("");
+ sync();
+}
+function sync(typedKey){
+ var q=quoteLocal(),ks=enabled();
+ ks.forEach(function(k){
+  var r=document.querySelector('[data-sk="'+k+'"]');
+  if(r&&+r.value!==Math.round(ST.pct[k]))r.value=Math.round(ST.pct[k]);
+  var pk=document.querySelector('[data-pk="'+k+'"]');
+  if(pk&&(typedKey!==k)&&+pk.value!==Math.round(ST.pct[k]))pk.value=Math.round(ST.pct[k]);
+ });
+ if(q.err){
+  $("sum").textContent=q.err==="none"?"Pick at least one model to see your split.":"Enter at least $1.";
+  $("tiles").innerHTML="";
+  $("pay").disabled=true;
+  return;
+ }
+ ks.forEach(function(k){
+  var r=q.rows[k],stok=document.querySelector('[data-stok="'+k+'"]');
+  if(stok)stok.textContent=fmtTok(r.tokens)+" tok";
+  var tv=document.querySelector('[data-tv="'+k+'"]');
+  if(tv)tv.innerHTML=fmtTok(r.tokens)+' <small>tokens</small>';
+  var ts=document.querySelector('[data-ts="'+k+'"]');
+  if(ts)ts.textContent=fmtUsd(r.usd)+" · ~"+r.prompts.toLocaleString()+" prompts";
+ });
+ var L=P[q.lim].label;
+ $("sum").innerHTML='You put <b>'+fmtUsd(q.net)+'</b> on the table. If every prompt fans to all <b>'+ks.length+'</b> seats, the room answers ≈<b>'+q.room.toLocaleString()+'</b> full exchanges — <b style="color:'+P[q.lim].hue+'">'+esc(L)+'</b> runs dry first.'+
+  (q.room<q.balanced?' A cost-balanced split would reach ≈'+q.balanced.toLocaleString()+'.':' That is already the balanced split.');
+ $("pay").disabled=!(ST.budget>=1&&ks.length);
+}
+$("budget").oninput=function(e){ST.budget=Math.max(0,+e.target.value||0);sync()};
+$("pay").onclick=async function(){
+ var err=$("err");err.className="err";err.textContent="";
+ var ks=enabled();
+ if(!(ST.budget>=1)||!ks.length)return;
+ $("pay").disabled=true;$("pay").textContent="OPENING STRIPE…";
+ try{
+  var r=await fetch(API+"/checkout/topup",{method:"POST",headers:{"Content-Type":"application/json"},
+   body:JSON.stringify({amount:ST.budget,providers:ST.pct})});
+  var j=await r.json().catch(function(){return{}});
+  if(r.ok&&j&&j.url){location.href=j.url;return}
+  err.textContent=(j&&j.error)||"Could not start checkout. Try again in a moment.";
+  err.className="err on";
+ }catch(e){
+  err.textContent="Could not reach the billing service. Check your connection.";
+  err.className="err on";
+ }
+ $("pay").disabled=false;$("pay").textContent="PAY WITH STRIPE";
+};
+build();
+})();
+</script>
+</body>
+</html>

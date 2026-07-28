@@ -1,3 +1,12 @@
+## 2026-07-27 — Braid pay-as-you-go allocator + welcome page ship
+- **Root cause of post-pay 404:** Stripe success URLs pointed at `/braid-welcome` (no `.html`)
+  and `braid-welcome.html` was never committed — GitHub Pages 404 after every successful pay.
+- **NEW `braid-topup.html`:** amount + model pick + % sliders (and typed %) + estimated
+  tokens/prompts per provider, then Worker checkout. Linked from `braid.html` pay-as-you-go.
+- **Ship `braid-welcome.html`:** claim licence key after Stripe; top-up vs subscription copy.
+- Stripe Payment Links repaired to `braid-welcome.html?session_id={CHECKOUT_SESSION_ID}`.
+- Backups: `backups/braid.html.v_pre_payg.bak`, `braid-welcome.html.v_pre_payg.bak`.
+
 ## 2026-07-25 — v1.5.0 Amniscient, LLC entity rollout
 - **AMNISCIENT, LLC** formed as a New York domestic LLC (Articles of Organization, existence date 2026-07-25). All products now published under it.
 - **Brand unchanged.** `Amni-Scient` / `AMNI-SCIENT` stays the display brand in nav, titles, canonicals, OG tags and the domain. Only ownership and legal strings moved to the entity — zero SEO impact.

@@ -26,6 +26,8 @@
 <style>
 .braid-mark{width:min(640px,88vw);height:auto;display:block;margin:0 auto -1.4rem}
 .product-hero h1{position:relative}
+.product-hero h1.wm{font-family:"Bodoni MT","Didot","Playfair Display","Palatino Linotype",Georgia,serif;font-weight:500;letter-spacing:.015em;font-size:clamp(2.8rem,6.5vw,4.8rem);text-shadow:none;background-image:linear-gradient(168deg,#F4EEFF 8%,#CBB8F8 52%,#8F76DC 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+:root[data-theme=light] .product-hero h1.wm{background-image:linear-gradient(168deg,#5A48B0 8%,#7B62CC 52%,#8F76DC 100%)}
 @keyframes bflow{to{transform:translateX(calc(var(--p) * -1))}}
 .bflow{animation:bflow var(--d,9s) linear infinite}
 @media (prefers-reduced-motion:reduce){.bflow{animation:none}}
@@ -96,7 +98,7 @@
 </nav>
 <div class="product-hero">
 <svg class="braid-mark float" viewBox="0 0 440 185" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Braid"></svg>
-<h1>BRAID</h1>
+<h1 class="wm">Braid</h1>
 <p class="desc">ASK ONCE &bull; EVERY SEAT ANSWERS &bull; EACH ONE READS THE LAST</p>
 <div class="cta-row" style="justify-content:center;margin-top:2rem;margin-bottom:1rem">
 <a href="#pricing" class="btn btn-primary">GET BRAID &mdash; $10/MO</a>
@@ -219,9 +221,10 @@ Your browser cannot play this video.
  </div>
 
 </div>
-<p class="beta-note" style="margin-top:1.6rem">Prefer to pay as you go? A <a href="https://buy.stripe.com/28E28kgOUc1ycNt1kH3cc03" style="color:var(--accent)">one-off token top-up</a>
- works without a subscription. Payments run through <b>Stripe</b> &mdash; card, Apple&nbsp;Pay, Google&nbsp;Pay and Link,
- with Cash&nbsp;App and Klarna where Stripe offers them. Amni-Scient never sees your card number.</p>
+<p class="beta-note" style="margin-top:1.6rem">Prefer to pay as you go? Open the
+ <a href="braid-topup.html" style="color:var(--accent)">token top-up allocator</a>
+ — pick an amount, split it across models with sliders, see estimated tokens per seat, then pay once through
+ <b>Stripe</b> (card, Apple&nbsp;Pay, Google&nbsp;Pay, Link). No subscription required. Amni-Scient never sees your card number.</p>
 </section>
 
 <section style="text-align:center">
