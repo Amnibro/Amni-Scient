@@ -1,3 +1,7 @@
+## 2026-07-27 — Braid Teams "from" type + topup checkout fallback
+- Teams card: `from` is small uppercase sans, not giant mono accent next to `$7`.
+- `braid-topup.html` falls back to the hosted Stripe Payment Link if Worker `/checkout/topup` is 404.
+
 ## 2026-07-27 — Braid teams: 5 seat minimum
 - Teams no longer quote 1 seat at $8 (undercut individual $10). Floor is **5 seats**, entry **$7**/seat; volume $6 at 20, $5 at 50+.
 
