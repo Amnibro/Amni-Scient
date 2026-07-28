@@ -302,7 +302,7 @@ btn.addEventListener('click', async () => {
   status.textContent = 'Downloading game engine...';
   fill.style.width = '12%';
   try {
-    const V = '6903';
+    const V = '6904';
     const bust = V + '-' + Date.now().toString(36);
     const jsUrl = new URL('./pkg/amni-v2.js', import.meta.url);
     jsUrl.searchParams.set('v', bust);
@@ -322,8 +322,8 @@ btn.addEventListener('click', async () => {
     await new Promise(res => {
       const iv = setInterval(() => {
         tick++;
-        const c = document.querySelector('#amni-game canvas');
-        if (c && c.width > 8) { appeared = true; clearInterval(iv); res(); }
+        const host = document.getElementById('amni-game');
+        if (host && host.dataset.ready === '1') { appeared = true; clearInterval(iv); res(); }
         else if (Date.now() - t0 > 120000) { clearInterval(iv); res(); }
         else if (tick % 4 === 0) {
           const soft = Math.min(92, 30 + Math.floor((Date.now() - t0) / 1200));
