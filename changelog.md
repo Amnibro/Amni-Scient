@@ -1,3 +1,6 @@
+## 2026-07-27 — Braid teams: 5 seat minimum
+- Teams no longer quote 1 seat at $8 (undercut individual $10). Floor is **5 seats**, entry **$7**/seat; volume $6 at 20, $5 at 50+.
+
 ## 2026-07-27 — Braid pay-as-you-go allocator + welcome page ship
 - **Root cause of post-pay 404:** Stripe success URLs pointed at `/braid-welcome` (no `.html`)
   and `braid-welcome.html` was never committed — GitHub Pages 404 after every successful pay.
