@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#0A0B0E">
 <title>Adam &mdash; Texture-Native Local AI Assistant | AMNI-SCIENT</title>
 <meta name="description" content="Adam is a GF(17) texture-native local AI assistant. 4 GB VRAM, lossless. Closed-loop self-improving memory &mdash; corrected once, never wrong twice. Voice + vision + trainable gesture-controlled Jarvis-style UI with wake-word, Socratic coach mode, self-verifying edits (auto-runs sibling tests), inline KaTeX + Mermaid rendering. Broad extensible skill set, autonomous learning daemon, live data widgets. Drop-in Ollama + OpenAI API replacement on one port. Source-available, CC BY-NC 4.0.">
 <meta name="keywords" content="adam,amni-ai,local ai,gf17,texture native,ptex,ollama drop-in,openai api drop-in,open webui,continue.dev,cline,aider,lossless ai,self-improving llm,self-verifying ai,sandbox code,coding assistant,jarvis ui,gesture control,local voice assistant,piper tts,whisper stt,mediapipe hands,blip vision,mcp server,socratic tutor,coach mode,wake word ai,auto pytest,self-inspect,proposal log,sandboxed venv">
@@ -18,12 +19,9 @@
 <meta name="twitter:description" content="4 GB VRAM. Lossless GF(17). Closed-loop self-improving memory &mdash; corrected once, never wrong twice. Voice + vision + trainable gestures + wake-word + self-verifying edits + Socratic coach. Drop-in Ollama + OpenAI API replacement.">
 <meta name="twitter:image" content="https://amni-scient.com/assets/explore/og-explore.png">
 <link rel="canonical" href="https://amni-scient.com/amni-ai">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=b170">
+<link rel="stylesheet" href="css/style.css?v=b180">
 <script>
-(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
 <style>
 .arch-svg-wrap{max-width:900px;margin:2rem auto;padding:0 1rem}

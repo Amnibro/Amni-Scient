@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#0A0B0E">
 <title>Amni-Prayer &mdash; Catholic Bible Nodal Map | AMNI-SCIENT</title>
 <meta name="description" content="Amni-Prayer: Interactive 3D nodal map of the entire Catholic Bible — 35,817 verses, 64,497 cross-references visualized across 17 layouts with Tandem reading mode. Rust/WASM engine, runs in-browser.">
 <meta name="keywords" content="amni-prayer,bible visualization,catholic bible,3d bible map,cross-references,imago nuntii divini,wasm,three.js,interactive bible">
@@ -19,12 +20,9 @@
 <meta name="twitter:image" content="https://amni-scient.com/assets/prayer/og-prayer.png">
 <link rel="canonical" href="https://amni-scient.com/amni-prayer">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Amni-Prayer","url":"https://amni-scient.com/amni-prayer","description":"Interactive 3D Catholic Bible nodal map with 35,817 verses and 64,497 cross-references across 17 sacred geometry layouts plus Tandem reading mode.","applicationCategory":"ReligiousApplication","operatingSystem":"Any (WebGL2)","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Organization","name":"AMNI-SCIENT","url":"https://amni-scient.com"}}</script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=b170">
+<link rel="stylesheet" href="css/style.css?v=b180">
 <script>
-(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
 <style>
 .prayer-hero{text-align:center;padding:6rem 2rem 3rem;position:relative}

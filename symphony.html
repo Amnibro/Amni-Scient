@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#0A0B0E">
 <title>Symphony &mdash; Private Family &amp; Community App | AMNI-SCIENT</title>
 <meta name="description" content="Symphony: a private, end-to-end-encrypted family & community app. Feeds, chat, calls, photos, stories, polls and full-palette theming — decentralized, no account, install in seconds.">
 <meta name="keywords" content="symphony,private social,family app,end-to-end encrypted,decentralized chat,amni-scient">
@@ -14,13 +15,10 @@
 <meta name="twitter:title" content="Symphony &mdash; Private Family &amp; Community App">
 <meta name="twitter:description" content="A private, end-to-end-encrypted family & community app. No account, decentralized.">
 <link rel="canonical" href="https://amni-scient.com/symphony">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=b170">
+<link rel="stylesheet" href="css/style.css?v=b180">
 <style>.theme-symphony{--accent:#2563eb;--accent-glow:rgba(37,99,235,.4)}.dl-steps{max-width:760px;margin:0 auto;counter-reset:step}.dl-steps li{list-style:none;position:relative;padding:.6rem 0 .6rem 2.6rem;color:var(--dim);font-size:.9rem;line-height:1.6}.dl-steps li::before{counter-increment:step;content:counter(step);position:absolute;left:0;top:.55rem;width:1.7rem;height:1.7rem;border:1px solid var(--accent);border-radius:5px;color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:.8rem}</style>
 <script>
-(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
 </head>
 <body class="theme-symphony">

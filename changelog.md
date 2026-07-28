@@ -1,3 +1,11 @@
+## 2026-07-28 — v1.8.0 Privacy polish + nav-markup repair (Braid round 3)
+- **Google Fonts removed from 110 marketing pages** (preconnects + JetBrains Mono css2 link) — no third-party font request; --font-mono rides local Cascadia/Consolas. Privacy-first copy now matches network behavior.
+- `<meta name="theme-color">` added site-wide (dark #0A0B0E default); shared toggle script now syncs it (#FBFAF8 in light) — Android chrome tints with the theme.
+- **Nav markup bug (pre-existing, live):** amni-crypt / amni-haven / privacy / terms closed `.links` early, orphaning ABOUT/FAQ/PRIVACY outside the styled container (rendered giant purple defaults). Repaired to proper structure.
+- **Custom-property gotcha fixed:** `--grad-accent` defined on :root baked green into per-product pages (var() in a custom property resolves where DEFINED, not used) — gradient now inline in .btn-primary so theme-haven etc. get their accents.
+- body.home section cards (soft 22px panels on index), product-hero aurora glow + drift, wheel stage hairline panel.
+- Re-key `?v=b180` + generator. Backups `backups/v1.8.0_privacy_polish/`.
+
 ## 2026-07-28 — v1.7.0 AAA theming + layout pass (Braid round 2)
 - style.css depth: `color-scheme` per theme (native form controls/scrollbars match), triple-radial aurora page glow, hero dual drift glows (`hero-drift`, reduced-motion safe), gradient primary buttons w/ inner highlight, feature icons in 52px accent-dim chips, card top hairline warms to accent-glow on hover, animated growing underlines (prose/refs/portfolio links), footer fade-edge hairline, uppercase spec-table headers, nav gains scroll shadow via `animation-timeline:scroll()` (progressive), `[id]{scroll-margin-top}` + `text-wrap:balance`.
 - index.html hero: CTA row (EXPLORE CALCULATORS / START LEARNING) + honest stat chips (17 PROJECTS · FREE IN YOUR BROWSER · NO SIGN-UP).

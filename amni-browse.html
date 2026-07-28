@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#0A0B0E">
 <title>Amni-Browse &mdash; Privacy-First Web Browser | AMNI-SCIENT</title>
 <meta name="description" content="Amni-Browse: privacy-first, zero-telemetry web browser in a single Rust binary. Built-in ad blocker, DNS-over-HTTPS, encrypted password vault, multi-profile, private tabs.">
 <meta name="keywords" content="amni-browse,private browser,privacy browser,rust browser,no telemetry,ad blocker,dns over https,password vault">
@@ -19,12 +20,9 @@
 <meta name="twitter:image" content="https://amni-scient.com/assets/browse/Interface.png">
 <link rel="canonical" href="https://amni-scient.com/amni-browse">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Amni-Browse","url":"https://amni-scient.com/amni-browse.html","description":"Privacy-first, zero-telemetry web browser in a single Rust binary. Built-in ad blocker, DNS-over-HTTPS, encrypted password vault, multi-profile, private tabs.","applicationCategory":"WebBrowser","operatingSystem":"Windows, macOS, Linux","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Organization","name":"AMNI-SCIENT","url":"https://amni-scient.com"},"image":"https://amni-scient.com/assets/browse/Interface.png"}</script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=b170">
+<link rel="stylesheet" href="css/style.css?v=b180">
 <script>
-(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
 </head>
 <body class="theme-ai">
