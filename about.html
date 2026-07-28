@@ -22,7 +22,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/style.css?v=b160">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
@@ -42,6 +42,7 @@
 <a href="amni-browse.html">AMNI-BROWSE</a>
 <a href="amni-calc.html">AMNI-CALC</a>
 <a href="amni-explore.html">AMNI-EXPLORE</a>
+<a href="amni-weather.html">AMNI-WEATHER</a>
 <a href="amni-learn.html">AMNI-LEARN</a>
 <a href="amni-llm.html">AMNI-LLM</a>
 <a href="amni-connect.html">AMNI-CONNECT</a>
@@ -63,7 +64,7 @@
 <section class="hero" style="min-height:auto;padding:8rem 2rem 3rem">
 <h1>ABOUT AMNI-SCIENT</h1>
 <p class="subtitle">INDEPENDENT SOFTWARE STUDIO</p>
-<p class="tagline">One developer. Eleven products. Zero compromises on privacy.</p>
+<p class="tagline">One developer. A full product portfolio. Zero compromises on privacy. Operated by Amniscient, LLC.</p>
 </section>
 <section>
 <h2>THE STORY</h2>
@@ -131,13 +132,13 @@
 <p>Amni-Scient products span multiple platforms and technologies, chosen for each product&rsquo;s specific requirements:</p>
 <table class="spec-table" style="margin-top:1.5rem">
 <tr><th>TECHNOLOGY</th><th>USED IN</th></tr>
-<tr><td>Rust / WebAssembly</td><td>Amni-Explore (galaxy engine), Amni-Browse (single Rust binary), Amni-Calc (FC-Calc WASM, 30+ engineering modules), Amni-Code (agentic CLI binary), Amni-Connect (input daemon)</td></tr>
-<tr><td>Three.js / WebGL2</td><td>Amni-Explore (3D galaxy + planet textures), Amni-Calc (live 3D for 18 modules), Amni-Prayer (3D nodal scripture map)</td></tr>
-<tr><td>Kotlin / Android</td><td>Amni-Haven (native messaging client), Amni-Crypt (1024-bit file encryption)</td></tr>
-<tr><td>Python / Taichi / ROCm</td><td>Amni-AI (GPU texture inference, dictionary atlas, 9-mode self-evolution)</td></tr>
-<tr><td>HTML5 Canvas / vanilla JS</td><td>Amni-Learn (60+ games across 5 levels + adult brain exercise)</td></tr>
+<tr><td>Rust / WebAssembly</td><td>Amni-Explore, Amni-Weather (field engine), Amni-Browse (Servo browser), Amni-Calc (37 engineering modules), Amni-Life, Amni-Code, Amni-Connect, Amni-Game</td></tr>
+<tr><td>Three.js / WebGL2 / Canvas</td><td>Amni-Explore, Amni-Weather (slippy maps + overlays), Amni-Calc (live 3D), Amni-Prayer, Amni-Life, Amni-Construct tools</td></tr>
+<tr><td>Kotlin / Android</td><td>Amni-Haven (messaging), Amni-Crypt (1024-bit file encryption), Symphony (family app APK)</td></tr>
+<tr><td>Python / Taichi / ROCm / CUDA</td><td>Amni-AI / Adam (GF(17) texture inference, self-evolution banks, local serve on :7700)</td></tr>
+<tr><td>HTML5 Canvas / vanilla JS</td><td>Amni-Learn (60+ games, Pre-K through college + adult brain tiers, baked neural voice)</td></tr>
 <tr><td>llama.cpp WASM (wllama)</td><td>Amni-LLM (in-browser GGUF runtime, MIT license)</td></tr>
-<tr><td>WebRTC / Socket.IO</td><td>Amni-Haven (voice/video over WebRTC), Amni-Connect (E2E remote desktop)</td></tr>
+<tr><td>WebRTC / Socket.IO / multi-agent CLIs</td><td>Amni-Haven, Amni-Connect, Braid (roundtable over existing AI seats)</td></tr>
 <tr><td>GitHub Pages</td><td>All web properties (static hosting, push-to-deploy)</td></tr>
 </table>
 </div>
@@ -145,23 +146,29 @@
 <section>
 <h2>PRODUCT PORTFOLIO</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
-<p>Amni-Scient currently maintains eleven products across web, desktop, and Android platforms:</p>
+<p>Amni-Scient (trade name of <strong style="color:var(--text)">Amniscient, LLC</strong>) ships a portfolio across free web tools, desktop binaries, Android, and local AI &mdash; not a fixed &ldquo;eleven products&rdquo; count. Highlights:</p>
 <div style="margin-top:1.5rem">
-<h4 style="color:var(--text);margin-bottom:.5rem">LIVE &mdash; Available Now</h4>
-<p><strong style="color:#00b4ff">Amni-Explore</strong> &mdash; 80K-particle galaxy explorer with NASA exoplanet data. Rust/WASM engine, Three.js renderer. Free in-browser at <a href="explore/" style="color:#00b4ff">amni-scient.com/explore</a>.</p>
-<p style="margin-top:.8rem"><strong style="color:#2ecc71">Amni-Learn</strong> &mdash; 60+ educational mini-games across Pre-K, K-2, 3-5, middle school, high school/STEM, plus a dedicated adult brain exercise tier (sudoku, card pairs, speed math, word search, logic puzzles). Free at <a href="learn/" style="color:#2ecc71">amni-scient.com/learn</a>.</p>
-<p style="margin-top:.8rem"><strong style="color:#ff6b35">Amni-Calc</strong> &mdash; Engineering calculator suite: 30+ WASM modules covering stress, FEA, fatigue, electrochemistry, batteries, fluids, heat exchangers, pressure vessels, and more. Live 3D for 18 modules via Three.js. Free at <a href="calc/" style="color:#ff6b35">amni-scient.com/calc</a>.</p>
-<p style="margin-top:.8rem"><strong style="color:#a88cff">Amni-LLM</strong> &mdash; Universal in-browser GGUF language-model runtime. Load any HuggingFace GGUF model client-side, no pre-compilation step. Open source MIT (<a href="https://github.com/Amnibro/amni-llm" target="_blank" rel="noopener" style="color:#a88cff">github.com/Amnibro/amni-llm</a>). Try at <a href="lib/amni-llm/" style="color:#a88cff">amni-scient.com/lib/amni-llm</a>.</p>
-<p style="margin-top:.8rem"><strong style="color:#f5c842">Amni-Prayer</strong> &mdash; Imago Nuntii Divini: the entire Catholic Bible as a 3D nodal map (35,817 verses, 64,497 cross-references, 17 layouts, Tandem reading mode). Free at <a href="prayer/" style="color:#f5c842">amni-scient.com/prayer</a>.</p>
-<p style="margin-top:.8rem"><strong style="color:#7c5cfc">Amni-Haven</strong> &mdash; Native Android client for ANCSemi's Haven self-hosted chat platform. Socket.IO messaging, FCM push, WebRTC voice/video. On Google Play.</p>
-<h4 style="color:var(--text);margin-top:1.5rem;margin-bottom:.5rem">BETA / ALPHA</h4>
-<p><strong style="color:#2979ff">Amni-Crypt</strong> &mdash; 1024-bit file encryption app for Android with proprietary block cipher and Shadow Texture Protocol. Currently in closed beta on Google Play.</p>
-<p style="margin-top:.8rem"><strong style="color:#00d4ff">Amni-Browse</strong> &mdash; Privacy-first desktop web browser. Single Rust binary, zero telemetry, navigation-layer ad blocking, DNS-over-HTTPS, AES-256-GCM password vault. Alpha.</p>
-<p style="margin-top:.8rem"><strong style="color:#00ffaa">Amni-Connect</strong> &mdash; End-to-end encrypted remote desktop over WebRTC. Self-hostable signaling, zero logs, zero cloud. Alpha.</p>
-<h4 style="color:var(--text);margin-top:1.5rem;margin-bottom:.5rem">IN DEVELOPMENT</h4>
-<p><strong style="color:#e91e63">Amni-Code</strong> &mdash; Agentic AI coding assistant in a single Rust binary. 15-iteration autonomous tool loop, multi-provider LLM support, local GGUF model discovery, six built-in tools.</p>
-<p style="margin-top:.8rem"><strong style="color:#ff6b35">Amni-AI</strong> &mdash; Local, self-improving AI assistant (v6.11.16). GF(17) texture-native inference on an IBM Granite 4.1 3B base in ~4&nbsp;GB VRAM; closed-loop memory so corrections stick and a mistake is never repeated; a 24/7 self-teaching loop; drop-in Ollama + OpenAI APIs. Fully local, no cloud. Free at <a href="amni-ai.html" style="color:#ff6b35">amni-scient.com/amni-ai</a>.</p>
-<p style="margin-top:.8rem"><strong style="color:#ef5350">Amni-Core</strong> &mdash; Long-horizon quantum-safe systems platform project. Ground-up design with GPU-forward architecture.</p>
+<h4 style="color:var(--text);margin-bottom:.5rem">LIVE &mdash; Free in-browser</h4>
+<p><strong style="color:#ff6b35">Amni-Calc</strong> &mdash; 37 engineering modules (stress, FEA beam, bolts, springs/Belleville catalog, seals, fatigue, fluids, HX, PV, HVAC, NEC, electrochem, batteries, machining, hydraulics, rigging, CAD Studio, and more). Live 3D where it helps. Free at <a href="calc/" style="color:#ff6b35">amni-scient.com/calc</a>.</p>
+<p style="margin-top:.8rem"><strong style="color:#2ecc71">Amni-Learn</strong> &mdash; 60+ educational mini-games, Pre-K through college prep plus adult brain exercise, with baked natural voice for phonics and storybooks. Free at <a href="learn/" style="color:#2ecc71">amni-scient.com/learn</a>.</p>
+<p style="margin-top:.8rem"><strong style="color:#00b4ff">Amni-Explore</strong> &mdash; 80K-particle galaxy explorer with NASA exoplanet data. Free at <a href="explore/" style="color:#00b4ff">amni-scient.com/explore</a>.</p>
+<p style="margin-top:.8rem"><strong style="color:#4db8ff">Amni-Weather</strong> &mdash; Interactive weather maps (v1.4.7): slippy basemaps, live Open-Meteo fields, point forecast (hourly/7-day/surf/UV/air), NWS + GDACS hazards, US units default. Free at <a href="weather/" style="color:#4db8ff">amni-scient.com/weather</a>.</p>
+<p style="margin-top:.8rem"><strong style="color:#d8893a">Amni-Construct</strong> &mdash; Deck, patio, pool, floor, roof, frame, plumb, elec, HVAC, plan, garden &mdash; photo-trace design tools for outdoor and whole-house builds. Free at <a href="construct/" style="color:#d8893a">amni-scient.com/construct</a>.</p>
+<p style="margin-top:.8rem"><strong style="color:#f0c33c">Amni-Game</strong> &mdash; 3D collect-a-thon adventure (v1 + v2) playable in-browser. Free at <a href="game/" style="color:#f0c33c">amni-scient.com/game</a> and <a href="game/v2/" style="color:#f0c33c">/game/v2/</a>.</p>
+<p style="margin-top:.8rem"><strong style="color:#a88cff">Amni-LLM</strong> &mdash; Universal in-browser GGUF runtime (MIT). Try at <a href="lib/amni-llm/" style="color:#a88cff">amni-scient.com/lib/amni-llm</a>.</p>
+<p style="margin-top:.8rem"><strong style="color:#f5c842">Amni-Prayer</strong> &mdash; Imago Nuntii Divini: Catholic Bible as a 3D nodal map (35,817 verses, 64,497 cross-references). Free at <a href="prayer/" style="color:#f5c842">amni-scient.com/prayer</a>.</p>
+<p style="margin-top:.8rem"><strong style="color:#ff9f43">Amni-Life</strong> &mdash; 3D memory map for life fragments (v0.26.0): seven layouts, photo/EXIF import, encrypted shares, offline PWA. Free at <a href="amni-life/" style="color:#ff9f43">amni-scient.com/amni-life</a>.</p>
+<p style="margin-top:.8rem"><strong style="color:#7c5cfc">Amni-Haven</strong> &mdash; Native Android client for ANCSemi&rsquo;s Haven self-hosted chat. On Google Play.</p>
+<h4 style="color:var(--text);margin-top:1.5rem;margin-bottom:.5rem">LOCAL AI &amp; DESKTOP</h4>
+<p><strong style="color:#ffb74d">Amni-AI (Adam)</strong> &mdash; Local self-improving assistant (v6.20+). GF(17) texture-native inference on IBM Granite 4.1 3B in ~4&nbsp;GB VRAM; closed-loop memory; 24/7 learning; Ollama + OpenAI-compatible APIs on one port. Free at <a href="amni-ai.html" style="color:#ffb74d">amni-scient.com/amni-ai</a>.</p>
+<p style="margin-top:.8rem"><strong style="color:#00d4ff">Amni-Browse</strong> &mdash; Privacy-first desktop browser (v0.10.3 Windows). Servo primary engine, WebView media/DRM window, zero telemetry, ad block, DoH, AES-256-GCM vault. Download on the product page.</p>
+<p style="margin-top:.8rem"><strong style="color:#e91e63">Amni-Code</strong> &mdash; Agentic AI coding assistant in a single Rust binary (multi-provider + local GGUF discovery).</p>
+<p style="margin-top:.8rem"><strong style="color:#00ffaa">Amni-Connect</strong> &mdash; End-to-end encrypted remote desktop over WebRTC. Self-hostable signaling, zero cloud logs. Alpha.</p>
+<h4 style="color:var(--text);margin-top:1.5rem;margin-bottom:.5rem">BETA / MOBILE / LONG-HORIZON</h4>
+<p><strong style="color:#5B9BF8">Braid</strong> &mdash; Multi-model roundtable (open beta): Claude, Grok, Gemini, and local seats at one table; side-by-side or sequential; pay-as-you-go top-up. <a href="braid.html" style="color:#5B9BF8">amni-scient.com/braid</a>.</p>
+<p style="margin-top:.8rem"><strong style="color:#2979ff">Amni-Crypt</strong> &mdash; 1024-bit file encryption for Android with Shadow Texture Protocol. Closed beta on Google Play.</p>
+<p style="margin-top:.8rem"><strong style="color:#2563eb">Symphony</strong> &mdash; Private E2E family/community Android app (sideloaded APK). <a href="symphony.html" style="color:#2563eb">amni-scient.com/symphony</a>.</p>
+<p style="margin-top:.8rem"><strong style="color:#ef5350">Amni-Core</strong> &mdash; From-scratch OS research platform (UEFI builds published as active-development images).</p>
 </div>
 </div>
 </section>

@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/style.css?v=b160">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
@@ -38,6 +38,7 @@
 <a href="amni-browse.html">AMNI-BROWSE</a>
 <a href="amni-calc.html">AMNI-CALC</a>
 <a href="amni-explore.html">AMNI-EXPLORE</a>
+<a href="amni-weather.html">AMNI-WEATHER</a>
 <a href="amni-learn.html">AMNI-LEARN</a>
 <a href="amni-llm.html">AMNI-LLM</a>
 <a href="amni-connect.html">AMNI-CONNECT</a>
@@ -158,7 +159,7 @@
 <div style="max-width:800px;margin:0 auto">
 <div class="faq-item" style="margin-bottom:2rem">
 <h4 style="color:var(--text);margin-bottom:.5rem">What modules does Amni-Calc include?</h4>
-<p style="color:var(--dim);line-height:1.8;font-size:.9rem">30+ modules: stress &amp; Mohr's circle, beam sections, bolts (with pattern selector + torque sequence), springs (Belleville presets, series/parallel combiner), seals (symmetric squeeze physics), columns (Euler/Johnson), shafts, welds (AWS), bearings (ISO 281), gears (involute mesh + isometric 3D), fatigue (Goodman/Gerber), vibration, fluids (Moody), pumps (NPSH), thermal, heat exchangers (LMTD/NTU), pressure vessels (Lam&eacute;/ASME), thermodynamic cycles, HVAC, combustion, electrical, motors, NEC wire, electrochemistry (Nernst/Tafel/BV), batteries, materials, finishes, math, equations, units, references.</p>
+<p style="color:var(--dim);line-height:1.8;font-size:.9rem">37 modules: beam FEA, stress &amp; Mohr's circle (incl. K<sub>t</sub>), beam sections, bolts (pattern selector + PCC-1 torque sequence), springs (helical, Belleville catalog autoselect, conical, wave), seals (symmetric squeeze), columns (Euler/Johnson), shafts (keyway DIN 6885, DIN 471 rings), welds (AWS), bearings (ISO 281), gears (involute + planetary + AGMA handoff), fatigue (Goodman/Gerber + LEFM fracture), vibration, fluids (Moody + pipe designer + dP metering), pumps (NPSH), hydraulics (cylinder designer + accumulators), thermal, heat exchangers (LMTD/NTU), pressure vessels (Lam&eacute;/ASME), cycles (incl. R134a VCC), HVAC, combustion, electrical, motors, NEC wire, electrochemistry (Nernst/Tafel/BV), batteries, materials, finishes, fits &amp; press fits, machining (speeds/feeds, tap drill, bend, hardness), rigging (slings + lugs), CAD Studio (CSG + STL), math, equations, units, references.</p>
 </div>
 <div class="faq-item" style="margin-bottom:2rem">
 <h4 style="color:var(--text);margin-bottom:.5rem">Is the optional AI assistant required?</h4>
@@ -167,6 +168,19 @@
 <div class="faq-item" style="margin-bottom:2rem">
 <h4 style="color:var(--text);margin-bottom:.5rem">Can I rely on Amni-Calc for safety-critical engineering?</h4>
 <p style="color:var(--dim);line-height:1.8;font-size:.9rem">Treat Amni-Calc as a design aid. Standards references inside the app (ASME, AWS, ISO 281, NEC) are paraphrased for context, not authoritative copies. Always verify safety-critical results against the published standard and a licensed Professional Engineer where required. See the <a href="terms.html#calc">Amni-Calc terms addendum</a>.</p>
+</div>
+</div>
+</section>
+<section>
+<h2>AMNI-WEATHER &mdash; INTERACTIVE MAPS</h2>
+<div style="max-width:800px;margin:0 auto">
+<div class="faq-item" style="margin-bottom:2rem">
+<h4 style="color:var(--text);margin-bottom:.5rem">What does Amni-Weather do?</h4>
+<p style="color:var(--dim);line-height:1.8;font-size:.9rem">Browser-native weather maps (v1.4.7) with slippy basemaps (Esri/OSM/CARTO/OpenTopo), live Open-Meteo field sampling with zoom LOD, a baked pack for fast global coverage, pin forecast panels (hourly, 7-day, surf, UV&middot;air), and hazard overlays from NWS (US) plus GDACS (global). Default units are US; SI is one tap away. Free at <a href="weather/">amni-scient.com/weather</a>.</p>
+</div>
+<div class="faq-item" style="margin-bottom:2rem">
+<h4 style="color:var(--text);margin-bottom:.5rem">Do you run your own forecast model?</h4>
+<p style="color:var(--dim);line-height:1.8;font-size:.9rem">No. Live meteorology comes from Open-Meteo public models. Amni-Weather is a visualization and field-processing product &mdash; the map surface, WASM pipeline, coloration, and hazards UX are ours. See the <a href="privacy-weather.html">weather privacy policy</a>.</p>
 </div>
 </div>
 </section>
@@ -209,7 +223,7 @@
 <div style="max-width:800px;margin:0 auto">
 <div class="faq-item" style="margin-bottom:2rem">
 <h4 style="color:var(--text);margin-bottom:.5rem">What's the status of Amni-Browse?</h4>
-<p style="color:var(--dim);line-height:1.8;font-size:.9rem">Alpha. It's a single Rust binary with zero telemetry, navigation-layer ad blocking, DNS-over-HTTPS, an AES-256-GCM password vault, and multi-profile support. Browser security is a deep, evolving discipline; we don't recommend Amni-Browse as your sole browser for high-stakes activity (banking, medical) until it leaves alpha. See the <a href="terms.html#browse">Amni-Browse terms addendum</a>.</p>
+<p style="color:var(--dim);line-height:1.8;font-size:.9rem">Early release (v0.10.3 Windows x64). It's a single Rust binary with Servo as the primary engine, a dedicated WebView window for DRM/media streaming, zero telemetry, navigation-layer ad blocking, DNS-over-HTTPS, an AES-256-GCM password vault, and multi-profile support. Browser security is a deep, evolving discipline; we don't recommend Amni-Browse as your sole browser for high-stakes activity (banking, medical) yet. See the <a href="terms.html#browse">Amni-Browse terms addendum</a>.</p>
 </div>
 <div class="faq-item" style="margin-bottom:2rem">
 <h4 style="color:var(--text);margin-bottom:.5rem">How does the password vault work?</h4>

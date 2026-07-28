@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/style.css?v=b160">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
@@ -48,27 +48,29 @@
 </nav>
 <div class="legal">
 <h1>AMNI-WEATHER &mdash; PRIVACY POLICY</h1>
-<p class="effective">Effective Date: July 17, 2026 &nbsp;|&nbsp; Last Updated: July 17, 2026</p>
-<p>This privacy policy describes how Amni-Weather, a browser-based weather map application developed by Amni-Scient ("we", "us", "our"), handles user information.</p>
+<p class="effective">Effective Date: July 17, 2026 &nbsp;|&nbsp; Last Updated: July 28, 2026</p>
+<p>This privacy policy describes how Amni-Weather, a browser-based weather map application published by Amniscient, LLC under the Amni-Scient brand (&quot;we&quot;, &quot;us&quot;, &quot;our&quot;), handles user information.</p>
 <h2>1. DATA WE COLLECT</h2>
 <p><strong>We collect no personal data on Amni-Scient servers.</strong> Amni-Weather does not require accounts, registration, email, or payment. We do not operate an application backend that receives weather-probe coordinates, search queries, or session state from your browser.</p>
 <h2>2. DATA HANDLING</h2>
-<p>Field processing (gridding, smoothing, colormap rasterization, unit conversion) executes in your browser via WebAssembly and JavaScript. Three.js rendering runs locally on your GPU/CPU. Preferences you set in the UI may persist only in your browser (e.g. theme on marketing pages via localStorage) and are not transmitted to us.</p>
+<p>Field processing (gridding, smoothing, colormap rasterization, unit conversion) executes in your browser via WebAssembly and JavaScript. Map rendering runs locally on your GPU/CPU. Preferences (last place, units, UI choices) may persist only in your browser via <code>localStorage</code> (e.g. <code>amni-wx-prefs-v1</code>) and are not transmitted to us.</p>
 <h2>3. THIRD-PARTY SERVICES</h2>
-<h3>3.1 Open-Meteo (live mode)</h3>
-<p>When Live mode is enabled, the application requests forecast and geocoding data from Open-Meteo public APIs (<code>api.open-meteo.com</code>, <code>geocoding-api.open-meteo.com</code>). Requests include map-region coordinates and selected meteorological variables. They do not include your name or account identifiers. Open-Meteo&rsquo;s own policies govern their processing; see <a href="https://open-meteo.com/" target="_blank" rel="noopener">open-meteo.com</a>.</p>
+<h3>3.1 Open-Meteo (live + point forecast)</h3>
+<p>The application requests forecast, marine, air-quality, and geocoding data from Open-Meteo public APIs (<code>api.open-meteo.com</code>, <code>marine-api.open-meteo.com</code>, <code>air-quality-api.open-meteo.com</code>, <code>geocoding-api.open-meteo.com</code>). Requests include map-region or pin coordinates and selected meteorological variables. They do not include your name or account identifiers. Open-Meteo&rsquo;s own policies govern their processing; see <a href="https://open-meteo.com/" target="_blank" rel="noopener">open-meteo.com</a>.</p>
 <h3>3.1b Map tiles (basemap)</h3>
 <p>Basemap imagery is fetched directly by your browser from public tile hosts matching the Amni-Drive stack: Esri World Imagery, OpenStreetMap, CARTO basemaps, and OpenTopoMap (depending on the basemap you select). Tile requests include zoom/x/y only. Those providers&rsquo; terms and privacy policies apply to their tile services.</p>
-<h3>3.2 Optional browser geolocation</h3>
-<p>If you allow it, the browser may share your approximate location with the page solely to center the map. That permission is controlled by your browser; we do not receive that coordinate on our servers.</p>
-<h3>3.3 CDN libraries</h3>
-<p>Three.js may load from a public CDN (jsDelivr). Standard HTTP requests for static scripts occur; we do not control CDN logs.</p>
+<h3>3.1c Hazards (NWS + GDACS)</h3>
+<p>Alert overlays may fetch public hazard feeds from the US National Weather Service (api.weather.gov) and GDACS global severe-event feeds. Requests are coordinate- or region-scoped public API calls; we do not receive those responses on Amni-Scient servers.</p>
+<h3>3.2 Optional browser geolocation and IP approximate locate</h3>
+<p>If you allow it, the browser may share your approximate location with the page solely to center the map. That permission is controlled by your browser; we do not receive that coordinate on our servers. If geolocation is denied or fails, the page may call a client-side IP geolocation service (e.g. geojs / ipwho-style public endpoints) to estimate a rough city-level center &mdash; still browser-direct, not via our servers.</p>
+<h3>3.3 Static libraries</h3>
+<p>Map and UI libraries are preferably served from amni-scient.com (including vendored assets under <code>/weather/</code>). If a CDN is used for a dependency, standard HTTP requests for static scripts occur; we do not control CDN logs.</p>
 <h3>3.4 Google AdSense (hosting pages)</h3>
 <p>Marketing pages on amni-scient.com may display AdSense ads. Google may process cookies and device data per <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google&rsquo;s Privacy Policy</a>. We do not receive that data.</p>
-<h2>4. DEMO MODE</h2>
-<p>Demo mode synthesizes weather fields locally and does not call Open-Meteo. If a live fetch fails, the app may switch to demo automatically.</p>
+<h2>4. PACK / FALLBACK FIELDS</h2>
+<p>Baked field packs and silent live-to-pack fallback are processed locally. They do not invent a separate cloud account path. Live API calls still follow section 3 when active.</p>
 <h2>5. DATA SHARING</h2>
-<p>We do not sell or trade user data. The only network destinations initiated by the weather app itself are the Open-Meteo endpoints described above (when live/search is used) and static asset hosts.</p>
+<p>We do not sell or trade user data. Network destinations initiated by the weather app itself are the Open-Meteo, tile, hazard, and optional IP-geo endpoints described above (when those features are used) plus static asset hosts.</p>
 <h2>6. DATA RETENTION</h2>
 <p>We retain no Amni-Weather user data because we collect none server-side. Clearing site data removes local caches.</p>
 <h2>7. SECURITY</h2>

@@ -1,3 +1,20 @@
+## 2026-07-28 — v1.6.0 Braid-aesthetic site reskin
+- `css/style.css` fully consolidated (3 stacked override generations → 1 clean layer) to the Braid app design language: warm paper/ink light theme (#FBFAF8/#FFF/#E7E3DB rules), Braid dark (#0A0B0E/#13161C/#242832), sans-first type (Segoe UI Variable stack), 14px radii, layered soft shadows, .18s cubic-bezier transitions, backdrop-blur nav, pill controls. Scanlines + grid-bg retired (`display:none`, selectors kept). Every legacy selector preserved — all 39 root pages + calc/construct/learn/research subpages restyle from the one file. Per-product accents kept, plus dark-mode variants and `--accent-ink` for on-accent text contrast.
+- `index.html` hero-wheel inline styles de-neoned (pulse/glow animations, icon drop-shadows, hard-coded dark edge buttons removed) so the shared Braid layer wins; panel/cta/refs inherit tokens.
+- Inline CTA glow hacks stripped: `amni-calc.html`, `amni-learn.html`, `amni-llm.html`, all `construct/*.html` (`.btn-construct`), and `src/gen-calc-modules.js` template (calc/*.html regenerated pages already clean). calc/index.html app untouched by design.
+- **Truth fix:** construct pages claimed materials are "PRICED LIVE AT HOME DEPOT AND LOWE'S" — the tool produces paste-to-fill shopping lists, not live price feeds. Now "WITH PASTE-READY HOME DEPOT & LOWE'S SHOPPING LISTS" (desc lines + deck body copy).
+- Cache re-key: every `css/style.css` reference → `?v=b160` (incl. generator). Entity strings untouched (Amniscient, LLC in the 4 canonical places).
+- Backups `backups/v1.6.0_braid_reskin/`. Checklist `docs/checklists/checklist_braid_reskin_v1.6.0.md`. Verified by screenshot rounds: index/braid/calc/bolts/about/deck, light+dark, desktop+375px.
+
+## v1.5.1 Site content sweep — stale marketing truth (2026-07-28)
+- Comprehensive pass on marketing + hub pages so copy matches live products. Brand stays **Amni-Scient**; entity stays **Amniscient, LLC**.
+- **about.html:** dropped “eleven products”; full portfolio (Calc 37, Weather v1.4.7, Construct, Game, Life, Braid, Symphony, AI v6.20+, Browse v0.10.3, …); weather in PROJECTS nav.
+- **amni-weather.html + privacy-weather.html:** version **1.4.7**; slippy maps + pin forecast + NWS/GDACS; removed demo-mode claims; pack/live fallback; US units default; privacy last-updated 2026-07-28.
+- **amni-calc.html:** 31 → **37** modules; cards for beam/fits/machining/hydraulics/rigging/CAD; Belleville catalog + modern spring types.
+- **amni-browse.html:** Media pillar no longer “v0.5+ roadmap” — Servo + WebView/GStreamer media path (v0.10.3).
+- **index.html** hero wheel: weather/life/calc/browse copy; **faq.html** calc list + weather section + Browse status; **sitemap.xml** braid/AI/life/symphony/research.
+- Backups `backups/v1.5.1_content_sweep/`. Checklist `docs/checklists/checklist_content_sweep_v1.5.1.md`.
+
 ## v1.5.0 Amniscient, LLC entity rollout (2026-07-25)
 - Legal owner of every product is now **Amniscient, LLC** (NY domestic LLC). Display brand stays `Amni-Scient` — nav/titles/canonical/domain untouched, so no SEO churn.
 - Entity strings live in exactly four places: page copyright footers, `terms.html` G0/G8/G9 + C1, `privacy.html` controller line, and JSON-LD `legalName`. Anything else saying "Amni-Scient" is brand, not entity, and G0 binds those references to the LLC.

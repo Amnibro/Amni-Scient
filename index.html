@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
@@ -25,7 +25,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/style.css?v=b160">
 <style>
 #hero-wheel{--acc:var(--accent);max-width:980px;margin:0 auto;padding:0 1rem}
 #hero-wheel .stage-wrap{position:relative;max-width:900px;margin:1.2rem auto 0}
@@ -34,36 +34,34 @@
 #hero-wheel .stage:focus-visible{box-shadow:inset 0 0 0 1px var(--acc)}
 #hero-wheel .belt{position:absolute;inset:0}
 #hero-wheel .spin-hint{position:absolute;bottom:6px;left:50%;transform:translateX(-50%);font-size:.62rem;letter-spacing:2px;color:var(--dim);text-transform:uppercase;z-index:3;opacity:.7}
-#hero-wheel .edge{position:absolute;top:calc(50% - 14px);transform:translateY(-50%);z-index:6;width:62px;height:62px;border-radius:50%;background:rgba(10,14,22,.55);border:1px solid var(--border);color:var(--acc);font-size:2.4rem;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(5px);animation:hw-pulse 1.8s ease-in-out infinite;-webkit-tap-highlight-color:transparent}
-#hero-wheel .edge:hover{border-color:var(--acc)}
+#hero-wheel .edge{position:absolute;top:calc(50% - 14px);transform:translateY(-50%);z-index:6;border-radius:50%;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(5px);-webkit-tap-highlight-color:transparent}
 #hero-wheel .edge-l{left:6px}
 #hero-wheel .edge-r{right:6px}
-@keyframes hw-pulse{0%,100%{opacity:.4;box-shadow:0 0 6px -2px var(--acc);text-shadow:0 0 5px var(--acc)}50%{opacity:1;box-shadow:0 0 20px -2px var(--acc);text-shadow:0 0 16px var(--acc)}}
 #hero-wheel .item{position:absolute;left:0;top:0;display:flex;flex-direction:column;align-items:center;gap:.45rem;white-space:nowrap;text-decoration:none;transform-origin:center;will-change:transform,opacity}
-#hero-wheel .item .ico{font-size:1.7rem;line-height:1;padding:.55rem;border-radius:50%;border:1px solid transparent;filter:drop-shadow(0 0 6px var(--ic));transition:background .2s,border-color .2s,box-shadow .2s}
-#hero-wheel .item .lbl{font-size:.82rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--dim)}
-#hero-wheel .item.focus .ico{background:color-mix(in srgb,var(--ic) 16%,transparent);border-color:var(--ic);box-shadow:0 0 20px -4px var(--ic)}
+#hero-wheel .item .ico{font-size:1.7rem;line-height:1;border-radius:50%;border:1px solid transparent}
+#hero-wheel .item .lbl{text-transform:uppercase;color:var(--dim)}
+#hero-wheel .item.focus .ico{background:color-mix(in srgb,var(--ic) 14%,var(--panel));border-color:color-mix(in srgb,var(--ic) 55%,var(--border))}
 #hero-wheel .item.focus .lbl{color:var(--text)}
 #hero-wheel .item.mini .lbl{display:none}
-#hero-wheel .panel{position:relative;z-index:2;max-width:760px;margin:.6rem auto 0;padding:1.4rem 1.6rem 1.8rem;border:1px solid var(--border);border-top:2px solid var(--acc);border-radius:8px;background:linear-gradient(180deg,color-mix(in srgb,var(--acc) 6%,transparent),transparent);transition:opacity .22s ease,transform .22s ease;text-align:left}
+#hero-wheel .panel{position:relative;z-index:2;max-width:760px;text-align:left}
 #hero-wheel .panel.swap{opacity:0;transform:translateY(10px)}
-#hero-wheel .panel h2{font-size:1.3rem;letter-spacing:2px;color:var(--acc);margin:0}
+#hero-wheel .panel h2{font-size:1.3rem;color:var(--text);margin:0}
 #hero-wheel .panel .tag{color:var(--dim);font-size:.85rem;margin:.4rem 0 1.1rem;line-height:1.6}
 #hero-wheel .feat{list-style:none;display:grid;gap:.55rem;margin:0;padding:0}
 #hero-wheel .feat li{font-size:.85rem;line-height:1.5;padding-left:1.4rem;position:relative;opacity:0;transform:translateY(8px);transition:opacity .3s ease,transform .3s ease;color:var(--text)}
 #hero-wheel .panel:not(.swap) .feat li{opacity:1;transform:none}
 #hero-wheel .feat li::before{content:'▸';position:absolute;left:0;color:var(--acc)}
 #hero-wheel .cta-row{display:flex;gap:.8rem;flex-wrap:wrap;margin-top:1.3rem}
-#hero-wheel .cta{font-size:.78rem;letter-spacing:1px;text-transform:uppercase;text-decoration:none;padding:.6rem 1.1rem;border-radius:4px;transition:transform .12s}
+#hero-wheel .cta{text-transform:uppercase;text-decoration:none}
 #hero-wheel .cta:hover{transform:translateY(-1px)}
-#hero-wheel .cta.primary{background:var(--acc);color:#06080d;font-weight:700}
-#hero-wheel .cta.ghost{border:1px solid var(--border);color:var(--text)}
+#hero-wheel .cta.primary{background:var(--acc);color:#06080d}
+#hero-wheel .cta.ghost{border:1px solid var(--border2);color:var(--text)}
 #hero-wheel .shots{margin-top:1.5rem;border-top:1px solid var(--border);padding-top:1.2rem}
 #hero-wheel .deck{position:relative;height:182px;display:flex;align-items:center;justify-content:center;cursor:pointer}
-#hero-wheel .deck .shot-card{position:absolute;height:166px;width:auto;max-width:94%;border-radius:10px;border:1px solid var(--border);box-shadow:0 14px 32px -12px #000;background:#0c121d;transform:translateX(calc(var(--z)*18px)) rotate(calc(var(--z)*4deg)) scale(calc(1 - var(--z)*.06));opacity:calc(1 - var(--z)*.3);transition:filter .2s}
+#hero-wheel .deck .shot-card{position:absolute;height:166px;width:auto;max-width:94%;border:1px solid var(--border);transform:translateX(calc(var(--z)*18px)) rotate(calc(var(--z)*4deg)) scale(calc(1 - var(--z)*.06));opacity:calc(1 - var(--z)*.3);transition:filter .2s}
 #hero-wheel .deck:hover .shot-card.top{filter:brightness(1.08)}
 #hero-wheel .shots-meta{margin-top:.8rem;font-size:.72rem;letter-spacing:1px;text-transform:uppercase;color:var(--dim);text-align:center}
-#hero-wheel .refs{max-width:760px;margin:2.4rem auto 0;padding:1.2rem 1.6rem;border:1px dashed var(--border);border-radius:8px;text-align:left}
+#hero-wheel .refs{max-width:760px;text-align:left}
 #hero-wheel .refs h3{font-size:.72rem;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin:0 0 .8rem}
 #hero-wheel .refs .links{display:flex;flex-wrap:wrap;gap:.5rem .9rem;font-size:.82rem}
 #hero-wheel .refs .links a{color:var(--text);text-decoration:none;border-bottom:1px solid transparent}
@@ -182,7 +180,7 @@
 <div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
 <p>Every Amni-Scient project exists because existing solutions fell short in privacy, transparency, or accessibility. Rather than accept those tradeoffs, we built alternatives from scratch.</p>
 <p style="margin-top:1.2rem"><strong style="color:var(--text)">Engineering calculators</strong> are usually either expensive desktop suites or imprecise web forms. Amni-Calc runs FEA beam analysis, seal design, bolt torque, and thermal calculations in a WASM backend &mdash; interactive, accurate, and free, with theory and worked examples on every module.</p>
-<p style="margin-top:1.2rem"><strong style="color:var(--text)">Educational platforms for children</strong> commonly track behavior, serve ads, or require accounts. Amni-Learn collects zero data, runs offline after loading, and covers Pre-K through high school with 60+ interactive games.</p>
+<p style="margin-top:1.2rem"><strong style="color:var(--text)">Educational platforms for children</strong> commonly track behavior, serve ads, or require accounts. Amni-Learn collects zero data, runs offline after loading, and covers Pre-K through college prep plus adult brain training with 60+ interactive games and baked natural voice.</p>
 <p style="margin-top:1.2rem"><strong style="color:var(--text)">Web browsers</strong> ship with telemetry baked in. Amni-Browse is a single Rust binary with zero telemetry, navigation-layer ad blocking, DNS-over-HTTPS, and an AES-256-GCM password vault &mdash; everything local, nothing phoned home.</p>
 <p style="margin-top:1.2rem">Want to know more? Visit the <a href="about.html">About page</a> or read the <a href="faq.html">FAQ</a>.</p>
 </div>
@@ -201,13 +199,13 @@
 </footer>
 <script>
 const P=[{k:'game',n:'AMNI-GAME',h:'game/',c:'#f0c33c',w:5,t:'Amni — a 3D collect-a-thon adventure you play right in the browser. One brave mouse, eight realms.',f:['Eight worlds: glade, frost, fire, jungle, beach, space, indoors &amp; tundra','Four tyrant bosses, four elemental transforms, 33 canvases to rescue','Procedural everything — world, music &amp; voices in one 5&nbsp;MB download','Rust + WebGPU(WebGL2) — saves stay in your browser, gamepads supported']},{k:'ai',n:'AMNI-AI',h:'amni-ai.html',c:'#ffb74d',w:5,t:'Adam — a local, self-improving AI assistant that gets better the more you use it.',f:['GF(17) texture-native — runs local in ~4&nbsp;GB VRAM, lossless','Self-improving memory: corrected once, never wrong twice','Voice + vision + wake-word, Jarvis-style UI, 42 skills','Drop-in Ollama + OpenAI API replacement on one port']},
-{k:'calc',n:'AMNI-CALC',h:'amni-calc.html',c:'#ff6b35',w:5,t:'Engineering calculator suite — 30+ in-browser WASM modules with theory and worked examples.',f:['Beam FEA, stress &amp; Mohr&rsquo;s circle, section properties','Fatigue (Goodman/Gerber), pressure vessels, columns','Fluids (Moody), heat exchangers (LMTD/NTU), pumps (NPSH)','Every module ships theory, a worked example &amp; cited standards']},
+{k:'calc',n:'AMNI-CALC',h:'amni-calc.html',c:'#ff6b35',w:5,t:'Engineering calculator suite — 37 in-browser WASM modules with theory and worked examples.',f:['Beam FEA, stress &amp; Mohr&rsquo;s circle, bolts, Belleville catalog','Fatigue, PV, machining, hydraulics, rigging, CAD Studio','Fluids (Moody), heat exchangers (LMTD/NTU), pumps (NPSH)','Every module ships theory, a worked example &amp; cited standards']},
 {k:'learn',n:'AMNI-LEARN',h:'amni-learn.html',c:'#2ecc71',w:5,t:'60+ educational games and guides, Pre-K through adult brain training.',f:['Pre-K tracing, phonics &amp; counting','K-12 math, reading, typing &amp; STEM labs','Adult brain training: sudoku, memory, speed math','Zero telemetry — runs fully offline after first load']},
 {k:'construct',n:'AMNI-CONSTRUCT',h:'construct/',c:'#d8893a',w:4,t:'Design your outdoor build — decks &amp; concrete patios, traced from a photo of your actual yard.',f:['📷 Photo trace: set scale with two clicks, trace corners, live dimensions','3D decks (stairs, railing, stain) &amp; concrete slabs (any shape, auto joints)','Printable construction plans + priced materials (HD/Lowe&rsquo;s paste-to-fill)','Location-aware permit &amp; code guidance for your town']},
 {k:'braid',n:'BRAID',h:'braid.html',c:'#5B9BF8',w:1,t:'Every AI you already pay for, answering the same question at one table.',f:['Side-by-side or sequential &mdash; each seat reads the last','Runs on your existing subscriptions, keys stay local','Shared memory so the room stops repeating mistakes','Agentic graphs: fan out, review, loop to a goal']},
 {k:'explore',n:'AMNI-EXPLORE',h:'amni-explore.html',c:'#00b4ff',w:3,t:'An 80K-particle galaxy explorer with a real-data star map and idle empire layer.',f:['Real NASA exoplanet data','Procedurally generated star systems','Rust/WASM engine, runs in-browser','Build an interstellar economy']},
-{k:'weather',n:'AMNI-WEATHER',h:'amni-weather.html',c:'#4db8ff',w:4,t:'Interactive multi-layer weather maps — smooth globe, customizable colormaps, live models.',f:['20 layers: temp, wind, precip, CAPE, radiation &amp; more','Rust/WASM field engine + Three.js globe','Custom palettes, auto range, SI/US units','Live Open-Meteo grids + offline demo']},
-{k:'browse',n:'AMNI-BROWSE',h:'amni-browse.html',c:'#00d4ff',w:2,t:'A privacy-first web browser in a single Rust binary.',f:['Zero telemetry','Built-in ad blocker + DNS-over-HTTPS','AES-256-GCM password vault','Multi-profile']},
+{k:'weather',n:'AMNI-WEATHER',h:'amni-weather.html',c:'#4db8ff',w:4,t:'Interactive multi-layer weather maps — slippy basemaps, pin forecast, live models (v1.4.7).',f:['Temp, wind, precip, CAPE, UV, pressure &amp; more','Pin forecast: hourly / 7-day / surf / UV·air','NWS + GDACS hazards · US units default','Live Open-Meteo + pack fallback, Rust/WASM fields']},
+{k:'browse',n:'AMNI-BROWSE',h:'amni-browse.html',c:'#00d4ff',w:2,t:'A privacy-first web browser in a single Rust binary (v0.10.3).',f:['Servo primary · WebView media/DRM window','Zero telemetry · ad blocker · DNS-over-HTTPS','AES-256-GCM password vault','Multi-profile']},
 {k:'haven',n:'AMNI-HAVEN',h:'amni-haven.html',c:'#7c5cfc',w:2,t:'Encrypted messaging on your own server.',f:['E2E DMs: ECDH P-256 + HKDF + AES-256-GCM','WebRTC voice, video &amp; screen share','FCM push, Socket.IO real-time delivery','Live on the Play Store']},
 {k:'llm',n:'AMNI-LLM',h:'amni-llm.html',c:'#a88cff',w:2,t:'A universal in-browser GGUF runtime.',f:['Run any HuggingFace GGUF model client-side','Qwen, DeepSeek, Mistral &amp; more','Nothing leaves your device','Open source (MIT)']},
 {k:'code',n:'AMNI-CODE',h:'amni-code.html',c:'#e91e63',w:1,t:'An agentic AI coding assistant in one Rust binary.',f:['15-iteration autonomous tool loop','Multi-provider LLM + local GGUF discovery','Six built-in tools','Single binary, no install']},
@@ -215,7 +213,7 @@ const P=[{k:'game',n:'AMNI-GAME',h:'game/',c:'#f0c33c',w:5,t:'Amni — a 3D coll
 {k:'crypt',n:'AMNI-CRYPT',h:'amni-crypt.html',c:'#ff4444',w:2,t:'Proprietary 1024-bit file encryption for Android.',f:['1024-bit encryption with a 16-round SPN','Shadow Texture Protocol key derivation','Encrypt any file type','Free on Android (ad-supported); premium removes ads']},
 {k:'core',n:'AMNI-CORE',h:'amni-core.html',c:'#6c7ae0',w:1,t:'A from-scratch OS that runs real Windows, Linux &amp; macOS apps natively &mdash; with a frosted-glass desktop.',f:['Built from zero &mdash; no Linux/BSD/NT base','Runs real .exe / ELF / Mach-O &mdash; no VM or emulator','UEFI-boot frosted-glass, GPU-forward desktop','Septidecimal (base-17) computational core']},
 {k:'prayer',n:'AMNI-PRAYER',h:'amni-prayer.html',c:'#f5c842',w:2,t:'The entire Catholic Bible as a living 3D nodal map.',f:['35,817 verses as nodes','64,497 cross-references','17 layouts + Tandem reading mode','Imago Nuntii Divini']},
-{k:'life',n:'AMNI-LIFE',h:'amni-life.html',c:'#ff9f43',w:1,t:'An on-device personal life dashboard (installable PWA).',f:['Installs as an offline PWA','Private by default, fully on-device','Snapshots, media, QR sharing, geolocation']}];
+{k:'life',n:'AMNI-LIFE',h:'amni-life.html',c:'#ff9f43',w:1,t:'A 3D memory map for the fragments of a life (installable PWA, v0.26.0).',f:['Seven layouts: constellation, timeline, spiral &amp; more','Photo/EXIF import + encrypted shareable maps','Local-first offline PWA — zero telemetry']}];
 const IC={braid:'🧵',game:'🐭',ai:'✨',calc:'⚙️',learn:'📚',construct:'🏗️',explore:'🌌',weather:'🌦️',browse:'🛡️',haven:'💬',llm:'🧠',code:'🤖',connect:'🖥️',crypt:'🔐',core:'🧱',prayer:'✝️',life:'🌱'};
 const SHOTS={calc:['assets/calc/ss_seal_analysis.png','assets/calc/ss_materials_1.png','assets/calc/ss_finishes_1.png','assets/calc/ss_finishes_2.png'],explore:['assets/explore/ss_galaxy.png','assets/explore/ss_planet.png','assets/explore/ss_solar_system.png'],browse:['assets/browse/Screenshot%202026-04-17%20110302.png','assets/browse/Screenshot%202026-04-17%20110316.png'],haven:['assets/haven/Screenshot_32.png','assets/haven/Screenshot_33.png','assets/haven/Screenshot_34.png','assets/haven/Screenshot_35.png','assets/haven/Screenshot_36.png','assets/haven/Screenshot_37.png'],code:['assets/code/Interface.png','assets/code/Response.png','assets/code/Thinking.png','assets/code/terminal.png','assets/code/Settings.png'],connect:['assets/connect/Screenshot%202026-04-17%20105239.png','assets/connect/Screenshot%202026-04-17%20105354.png'],crypt:['assets/crypt/feature_graphic.png'],learn:['assets/learn/ss_prek.png','assets/learn/ss_brain.png'],prayer:['assets/prayer/ss_map.png'],llm:['assets/llm/ss_loader.png'],core:['assets/core/desktop.jpg','assets/core/frosted-window.png','assets/core/real-binaries.png']};
 const N=P.length;

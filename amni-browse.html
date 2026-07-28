@@ -22,7 +22,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/style.css?v=b160">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
@@ -126,7 +126,7 @@
 <tr><td>Encryption</td><td>AES-256-GCM vault, PBKDF2-HMAC-SHA256 KDF, encrypted autofill</td></tr>
 <tr><td>Platform</td><td>OS windowing: tao+wry or winit+wgpu+egui compositor</td></tr>
 <tr><td>Engine</td><td>Tabs, ad blocker, extensions, permissions, devtools, app launcher</td></tr>
-<tr><td>Media</td><td>Audio/video playback hooks (v0.5+ roadmap)</td></tr>
+<tr><td>Media</td><td>GStreamer-backed media path + dedicated WebView/Chromium window for DRM/MSE sites (Netflix, YouTube, &hellip;) while Servo stays primary for browsing</td></tr>
 </table>
 </section>
 <section>

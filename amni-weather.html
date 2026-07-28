@@ -4,22 +4,22 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Amni-Weather &mdash; Interactive Weather Maps | AMNI-SCIENT</title>
-<meta name="description" content="Amni-Weather: meteoblue-class interactive weather maps in the browser. Temperature, precip, wind, pressure, clouds, CAPE, radiation and more. Three.js + Rust/WASM, customizable colormaps, smooth zoom.">
-<meta name="keywords" content="amni-weather,weather map,interactive weather,three.js,wasm,open-meteo,temperature map,wind map,meteoblue alternative,custom colormap">
+<meta name="description" content="Amni-Weather v1.4.7: interactive weather maps in the browser. Live Open-Meteo fields, point forecast (hourly/7-day/surf/UV/air), NWS + GDACS hazards, US units default, Rust/WASM field engine.">
+<meta name="keywords" content="amni-weather,weather map,interactive weather,open-meteo,NWS alerts,GDACS,point forecast,wasm,meteoblue alternative,custom colormap">
 <meta property="og:title" content="Amni-Weather &mdash; Interactive Weather Maps">
-<meta property="og:description" content="GPU-smooth multi-layer weather maps. Customizable coloration, zoom, point probe. Free in-browser WASM engine.">
+<meta property="og:description" content="v1.4.7 multi-layer weather maps. Live fields, pin forecast, NWS/GDACS hazards, US units. Free in-browser WASM engine.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://amni-scient.com/amni-weather">
 <meta property="og:image" content="https://amni-scient.com/assets/explore/og-explore.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Amni-Weather &mdash; Interactive Weather Maps">
-<meta name="twitter:description" content="Multi-layer weather maps with customizable colormaps. Three.js + Rust/WASM. Free in-browser.">
+<meta name="twitter:description" content="v1.4.7 weather maps: live Open-Meteo, pin forecast, NWS/GDACS hazards. Free in-browser WASM.">
 <link rel="canonical" href="https://amni-scient.com/amni-weather">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Amni-Weather","url":"https://amni-scient.com/weather/","description":"Interactive global weather maps with multi-layer fields, customizable colormaps, and point probe. Three.js + Rust/WASM engine. Live Open-Meteo models.","applicationCategory":"WeatherApplication","operatingSystem":"Any (WebGL2)","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Organization","name":"AMNI-SCIENT","url":"https://amni-scient.com"},"softwareVersion":"1.0.0"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Amni-Weather","url":"https://amni-scient.com/weather/","description":"Interactive weather maps with live Open-Meteo fields, point forecast panels, NWS and GDACS hazards, customizable colormaps, and Rust/WASM field engine.","applicationCategory":"WeatherApplication","operatingSystem":"Any (Modern Browser)","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Organization","name":"AMNI-SCIENT","url":"https://amni-scient.com"},"softwareVersion":"1.4.7"}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/style.css?v=b160">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
@@ -70,59 +70,59 @@
 <div class="wx-hero">
 <div class="wx-icon" aria-hidden="true"></div>
 <h1>AMNI-WEATHER</h1>
-<p class="desc">SATELLITE &amp; OSM MAPS &bull; 20 LAYERS &bull; CUSTOM COLORMAPS &bull; RUST/WASM &bull; LIVE MODELS</p>
+<p class="desc">v1.4.7 &bull; SLIPPY MAPS &bull; LIVE FIELDS &bull; PIN FORECAST &bull; NWS + GDACS &bull; RUST/WASM</p>
 <div class="cta-row" style="justify-content:center;margin-top:1rem;margin-bottom:.8rem">
 <a href="weather/" class="btn btn-primary">LAUNCH MAPS</a>
 <a href="privacy-weather.html" class="btn">PRIVACY</a>
 </div>
-<p style="color:var(--dim);font-size:.72rem;letter-spacing:.04em">WebGL2 &nbsp;&bull;&nbsp; free &amp; in-browser &nbsp;&bull;&nbsp; Open-Meteo live data &nbsp;&bull;&nbsp; offline demo fields</p>
+<p style="color:var(--dim);font-size:.72rem;letter-spacing:.04em">Free &amp; in-browser &nbsp;&bull;&nbsp; Open-Meteo live + baked pack fields &nbsp;&bull;&nbsp; US units default</p>
 </div>
 <div class="layer-chips">
-<span>Temperature</span><span>Feels like</span><span>Dew point</span><span>Humidity</span><span>Precipitation</span><span>Snowfall</span><span>Wind speed</span><span>Wind gusts</span><span>Wind direction</span><span>Pressure</span><span>Cloud cover</span><span>Visibility</span><span>CAPE</span><span>UV index</span><span>Shortwave</span><span>Direct / diffuse</span><span>Soil temp</span><span>VPD</span><span>ET₀</span>
+<span>Temperature</span><span>Feels like</span><span>Dew point</span><span>Humidity</span><span>Precipitation</span><span>Clouds</span><span>Pressure</span><span>Wind</span><span>CAPE</span><span>UV</span><span>Visibility</span><span>Hourly forecast</span><span>7-day</span><span>Surf</span><span>Air quality</span><span>NWS alerts</span><span>GDACS</span>
 </div>
 <section>
 <h2>BUILT TO COMPETE ON THE MAP</h2>
-<p style="text-align:center;color:var(--dim);max-width:720px;margin:0 auto 2rem;font-size:.9rem">Amni-Weather is a browser-native weather map aimed at the same job as meteoblue&rsquo;s interactive maps: dense multi-variable fields, smooth pan/zoom, and full control over coloration. Basemaps reuse the <strong>Amni-Drive tile stack</strong> &mdash; Esri satellite, OpenStreetMap, CARTO dark/light, OpenTopoMap &mdash; with a <strong>Rust/WASM field engine</strong> and live Open-Meteo models (demo offline path included).</p>
+<p style="text-align:center;color:var(--dim);max-width:720px;margin:0 auto 2rem;font-size:.9rem">Amni-Weather is a browser-native weather map for dense multi-variable fields, smooth pan/zoom, and full control over coloration. Basemaps reuse the <strong>Amni-Drive tile stack</strong> &mdash; Esri satellite, OpenStreetMap, CARTO dark/light, OpenTopoMap &mdash; with a <strong>Rust/WASM field engine</strong>, live Open-Meteo sampling (zoom LOD), a baked global pack for fast coverage, and a full <strong>point forecast panel</strong> when you drop a pin.</p>
 <div class="features">
 <div class="feature">
 <div class="icon">&#127777;</div>
-<h4>20 WEATHER LAYERS</h4>
-<p>Temperature, feels-like, dew point, humidity, precip, snow, wind speed/gust/dir, MSL pressure, clouds, visibility, CAPE, UV, radiation suite, soil temp, VPD, and ET₀.</p>
+<h4>MAP LAYERS + LOD</h4>
+<p>Temperature, feels-like, dew point, humidity, precip, clouds, MSL pressure, wind, CAPE, UV, visibility. Zoom densifies the live lattice; far-out stays light so the map stays snappy.</p>
+</div>
+<div class="feature">
+<div class="icon">&#128200;</div>
+<h4>POINT FORECAST</h4>
+<p>Drop a pin for Now / Hourly / 7-day / Surf / UV&middot;Air tabs &mdash; WMO icons, sparklines, marine waves when available. Refresh on demand; no account required.</p>
+</div>
+<div class="feature">
+<div class="icon">&#9888;</div>
+<h4>HAZARDS</h4>
+<p>US <strong>NWS</strong> alerts plus global <strong>GDACS</strong> Orange/Red severe events (storms, floods, volcanoes, wildfires, drought, quakes, and more).</p>
 </div>
 <div class="feature">
 <div class="icon">&#127912;</div>
 <h4>CUSTOM COLORATION</h4>
-<p>Eight palettes (Thermal, Precipitation, Jet, Dust, Chlorophyll, Turbo, Grayscale, Inferno), reverse toggle, opacity, and manual or auto value ranges.</p>
+<p>Palette presets, reverse, opacity, gamma, soft mask, auto or manual ranges &mdash; paint the field the way you want to read it.</p>
 </div>
 <div class="feature">
 <div class="icon">&#128269;</div>
-<h4>SMOOTH ZOOM &amp; ORBIT</h4>
-<p>Full orbit camera with damping, scroll zoom, and pan. Click any point on the globe for an instant probe with unit-aware readouts.</p>
+<h4>SLIPPY MAP UX</h4>
+<p>Fractional zoom, inertia pan, pinch on mobile, wind streamlines, pressure isobars, city labels + borders. Locate via browser geo, then IP fallback; last place remembered.</p>
 </div>
 <div class="feature">
 <div class="icon">&#9881;</div>
 <h4>RUST / WASM ENGINE</h4>
-<p>IDW gridding, bilinear upsample, box smooth, field stats, palette rasterization, and unit conversion compile to a compact WASM binary.</p>
-</div>
-<div class="feature">
-<div class="icon">&#128200;</div>
-<h4>TIME SCRUBBER</h4>
-<p>Hourly forecast timeline with play/pause. Scrub seven days of fields without leaving the map.</p>
+<p>IDW gridding, upsample, smooth, field stats, and palette work compile to WASM with a JS fallback if WASM is blocked.</p>
 </div>
 <div class="feature">
 <div class="icon">&#127760;</div>
-<h4>LIVE + DEMO</h4>
-<p>Live mode pulls multi-point Open-Meteo grids (no API key). Demo mode synthesizes realistic fields in WASM so the map never bricks offline.</p>
-</div>
-<div class="feature">
-<div class="icon">&#128736;</div>
-<h4>GPU SHADERS</h4>
-<p>WebGL2 field path ships today; WGSL sources under <code>weather/shaders/</code> document the WebGPU colorizer contract for the next renderer track.</p>
+<h4>LIVE + PACK</h4>
+<p>Always-on live path with silent pack/global-field fallback when APIs are busy. No fake &ldquo;demo mode&rdquo; switch &mdash; the map should never brick.</p>
 </div>
 <div class="feature">
 <div class="icon">&#128274;</div>
 <h4>PRIVACY-HONEST</h4>
-<p>No accounts. Processing stays in your browser. Live fetches go only to Open-Meteo / geocoding APIs &mdash; see the dedicated privacy page.</p>
+<p>No accounts. Processing stays in your browser. Prefs (place, units) in localStorage only. Live fetches go to Open-Meteo, map tiles, and public hazard feeds &mdash; see the privacy page.</p>
 </div>
 </div>
 </section>
@@ -130,15 +130,17 @@
 <h2>SPECIFICATIONS</h2>
 <table class="spec-table">
 <tr><th>PARAMETER</th><th>VALUE</th></tr>
-<tr><td>Version</td><td>1.0.0</td></tr>
+<tr><td>Version</td><td>1.4.7</td></tr>
 <tr><td>Engine</td><td>Rust/WASM field engine + canvas slippy map</td></tr>
 <tr><td>Basemaps</td><td>Esri World Imagery, OSM, CARTO dark/light, OpenTopoMap (Amni-Drive stack)</td></tr>
-<tr><td>Map UX</td><td>Fractional zoom, inertia pan, point probe</td></tr>
-<tr><td>Layers</td><td>20 meteorological variables</td></tr>
-<tr><td>Coloration</td><td>Presets + per-stop color pickers, gamma, soft mask, reverse, opacity, range</td></tr>
-<tr><td>Live data</td><td>Open-Meteo multi-point forecast (7-day hourly)</td></tr>
-<tr><td>Geocoding</td><td>Open-Meteo geocoding API</td></tr>
-<tr><td>Units</td><td>SI / US toggle</td></tr>
+<tr><td>Map UX</td><td>Fractional zoom, inertia pan, pinch, pin marker, cities/borders, mobile dock</td></tr>
+<tr><td>Field layers</td><td>Temp, feels-like, dew, RH, precip, clouds, pressure, wind, CAPE, UV, visibility</td></tr>
+<tr><td>Point forecast</td><td>Hourly + daily 7d, marine/surf, UV, air quality (Open-Meteo)</td></tr>
+<tr><td>Hazards</td><td>NWS (US) + GDACS Orange/Red global</td></tr>
+<tr><td>Coloration</td><td>Presets + stops, gamma, soft mask, reverse, opacity, range</td></tr>
+<tr><td>Live data</td><td>Open-Meteo multi-point forecast with zoom LOD</td></tr>
+<tr><td>Geocoding</td><td>Open-Meteo geocoding + reverse label; optional browser/IP locate</td></tr>
+<tr><td>Units</td><td>US default (&deg;F, mph, in, mi); SI one tap away</td></tr>
 <tr><td>Requirements</td><td>Modern browser with canvas + network for tiles/live</td></tr>
 </table>
 </section>
@@ -146,27 +148,27 @@
 <h2>HOW IT WORKS</h2>
 <div class="how-works-grid">
 <div class="card">
-<h3>1. GRID SAMPLE</h3>
-<p>Live mode samples a regional lat/lon lattice through Open-Meteo&rsquo;s multi-coordinate forecast endpoint for the active map center.</p>
+<h3>1. LOCATE &amp; SAMPLE</h3>
+<p>World view until you search or allow locate. Live mode samples a lat/lon lattice through Open-Meteo for the active viewport; density follows zoom LOD.</p>
 </div>
 <div class="card">
 <h3>2. WASM FIELD BUILD</h3>
-<p>Points are IDW-gridded, optionally box-smoothed, then bilinear-upsampled to a dense field texture entirely in Rust/WASM (JS fallback if WASM is blocked).</p>
+<p>Points are IDW-gridded, smoothed, and upsampled to a dense field texture in Rust/WASM (JS fallback if WASM is blocked). Pack fields fill gaps fast.</p>
 </div>
 <div class="card">
-<h3>3. COLORIZE</h3>
-<p>Palette LUTs map value ranges to RGBA with opacity and reverse controls. Legend and point probe stay unit-aware (SI/US).</p>
+<h3>3. COLORIZE &amp; OVERLAY</h3>
+<p>Palette LUTs map value ranges to color. Wind trails and isobars sit on the slippy basemap with unit-aware probe chips.</p>
 </div>
 <div class="card">
-<h3>4. GLOBE RENDER</h3>
-<p>Three.js draws the Earth mesh, atmosphere, graticule, and weather overlay with orbit controls for smooth interactive inspection.</p>
+<h3>4. PIN FORECAST</h3>
+<p>Click the map for a pin: forecast panel loads hourly/daily/surf/UV&middot;air for that point while hazards stay in view.</p>
 </div>
 </div>
 </section>
 <section style="text-align:center">
 <h2>LAUNCH AMNI-WEATHER</h2>
 <p style="color:var(--dim);margin-bottom:.5rem;font-size:.9rem">Run directly in your browser. No download, no account.</p>
-<p style="color:var(--dim);font-size:.8rem;margin-bottom:2rem">Requires WebGL2 &bull; network for live models (demo works offline)</p>
+<p style="color:var(--dim);font-size:.8rem;margin-bottom:2rem">Modern browser &bull; network for live models and tiles &bull; pack covers gaps</p>
 <div class="cta-row" style="justify-content:center">
 <a href="weather/" class="btn btn-primary">OPEN WEATHER MAPS</a>
 </div>
@@ -174,8 +176,8 @@
 <section>
 <h2>DATA &amp; HONESTY</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
-<p>Amni-Weather is a <strong style="color:var(--text)">visualization and field-processing product</strong>. Live meteorology comes from <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> public forecast models &mdash; we do not claim to operate our own global NWP suite. The competitive surface is the map: smooth multi-layer interaction, customizable coloration, zoom, and a WASM-accelerated field pipeline you can trust to run locally.</p>
-<p style="margin-top:1.2rem">Demo mode generates synthetic fields with the same engine so you can evaluate the UI and shaders without a network. When live fetch fails, the app falls back to demo automatically.</p>
+<p>Amni-Weather is a <strong style="color:var(--text)">visualization and field-processing product</strong>. Live meteorology comes from <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> public forecast models &mdash; we do not claim to operate our own global NWP suite. Alerts come from NWS and GDACS public feeds. The competitive surface is the map: smooth multi-layer interaction, customizable coloration, pin forecasts, and a WASM-accelerated field pipeline that runs in your browser.</p>
+<p style="margin-top:1.2rem">When live fetch is rate-limited or offline, the app falls back to baked pack / global fields so the UI stays usable. We do not ship a separate &ldquo;demo mode&rdquo; product path.</p>
 </div>
 </section>
 <aside class="support-cta" aria-label="Support"><a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="support-link"><span class="support-ico">&#9749;</span><span>Enjoying this? <strong>Support on Ko-fi</strong></span></a></aside>
