@@ -208,19 +208,20 @@ function braidSVG(o){
    ? '<a href="'+esc(d.download)+'" class="btn btn-primary" style="font-size:.95rem;padding:.85rem 1.8rem">'+
      'DOWNLOAD BRAID'+(d.version?' '+esc(d.version):'')+'</a>'+
      (d.sha256?'<div class="hashline">SHA-256 '+esc(d.sha256)+'</div>':'')+
+     '<p style="color:var(--dim);font-size:.8rem;margin-top:.55rem">One-time download link — opens once, then expires. Reload this page for a new link if needed.</p>'+
      '<p style="color:var(--dim);font-size:.8rem;margin-top:.8rem">Paste your key when Braid asks on first launch.</p>'
    : '<div class="warn"><b>Your key is live.</b><br>The Windows build is only handed out after payment (or by invitation). Check your email, or write amnibro7@gmail.com with your purchase reference.</div>'+
      '<p style="color:var(--dim);font-size:.8rem;margin-top:.8rem">Paste your key when Braid asks on first launch.</p>';
   var thanks=topup
    ? 'Thank you &mdash; your token top-up is in. Here is your licence key. Keep it: it unlocks Braid and carries the prepaid pool you just funded'+(d.budget?' ($'+Number(d.budget).toFixed(2)+')':'')+'.'
-   : 'Thank you &mdash; your subscription is active. Here is your licence key. Keep it: it is what unlocks Braid, on up to three machines.';
+   : 'Thank you &mdash; your subscription is active. Here is your licence key. Keep it: it is what unlocks Braid, on one computer (this licence cannot be shared).';
   var steps=topup
    ? '<li>Download and run it. Windows may warn about a new publisher &mdash; expected until the signing certificate ages in.</li>'+
-     '<li>Braid asks for your licence key on first launch. Paste the key above.</li>'+
+     '<li>Braid asks for your licence key on first launch. Paste the key above (binds to this one computer only).</li>'+
      '<li>On first open, pick Sign up for usage &mdash; your prepaid split is on this key and mints capped provider keys when you provision.</li>'+
      '<li>Add Adam-3B if you want a free local seat. Everything it learns stays on your disk.</li>'
    : '<li>Download and run it. Windows may warn about a new publisher &mdash; expected until the signing certificate ages in.</li>'+
-     '<li>Braid asks for your licence key on first launch. Paste the key above.</li>'+
+     '<li>Braid asks for your licence key on first launch. Paste the key above (binds to this one computer only).</li>'+
      '<li>Pick the models you already pay for. Braid drives their own CLIs with your own logins, so your keys never leave the machine.</li>'+
      '<li>Add Adam-3B if you want a free local seat. Everything it learns stays on your disk.</li>';
   el.innerHTML=
