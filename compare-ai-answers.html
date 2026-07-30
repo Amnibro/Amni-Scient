@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#0A0B0E">
+<title>Compare AI Answers Side by Side &mdash; Claude vs Grok vs Gemini | AMNI-SCIENT</title>
+<meta name="description" content="Compare AI answers side by side: same prompt, Claude, Grok and Gemini in parallel columns, plus a sequential mode where each model critiques the answers before it. Catch hallucinations one model would sail past.">
+<meta property="og:title" content="Compare AI Answers Side by Side &mdash; Claude vs Grok vs Gemini">
+<meta property="og:description" content="Same prompt, every model, parallel columns. The fastest way to see which AI actually knows the answer.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://amni-scient.com/compare-ai-answers">
+<meta property="og:image" content="https://amni-scient.com/assets/braid/braid-og.jpg?v=2">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://amni-scient.com/compare-ai-answers">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Compare AI Answers Side by Side","description":"Why comparing Claude, Grok and Gemini on the same prompt catches errors a single model sails past, and how a round-table app automates it.","author":{"@type":"Organization","name":"AMNI-SCIENT","url":"https://amni-scient.com"},"mainEntityOfPage":"https://amni-scient.com/compare-ai-answers","image":"https://amni-scient.com/assets/braid/braid-og.jpg?v=2","datePublished":"2026-07-30"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"AMNI-SCIENT","item":"https://amni-scient.com/"},{"@type":"ListItem","position":2,"name":"Braid","item":"https://amni-scient.com/braid"},{"@type":"ListItem","position":3,"name":"Compare AI Answers Side by Side","item":"https://amni-scient.com/compare-ai-answers"}]}</script>
+<link rel="stylesheet" href="css/style.css?v=b180">
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+</head>
+<body class="theme-ai">
+<div class="grid-bg"></div>
+<div class="scanlines"></div>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<a href="braid.html" class="active">BRAID</a>
+<a href="about.html">ABOUT</a>
+<a href="faq.html">FAQ</a>
+<a href="privacy.html">PRIVACY</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+
+<div class="product-hero">
+<h1 style="font-size:clamp(2rem,4.5vw,3.2rem)">Compare AI Answers Side by Side</h1>
+<p class="desc">SAME PROMPT &bull; PARALLEL COLUMNS &bull; THE DISAGREEMENTS ARE THE SIGNAL</p>
+</div>
+
+<section style="max-width:820px;margin:0 auto">
+<p style="color:var(--text-soft);line-height:1.7">A single AI answer always sounds right. That is the problem. Confidence is free; correctness is not, and without a second opinion you cannot tell them apart. The cheapest hallucination detector available today is another frontier model looking at the same prompt &mdash; Claude, Grok and Gemini are trained differently enough that they rarely make the <em>same</em> mistake.</p>
+<h2 style="margin-top:2.2rem">Column mode: comparing them cold</h2>
+<p style="color:var(--text-soft);line-height:1.7">Side-by-side columns put every model's answer to the same prompt on one screen. Read across, not down. In thirty seconds you see who committed to an answer, who hedged, whose citation looks invented, and where all three quietly agree &mdash; which is usually the part you can trust.</p>
+<h2 style="margin-top:2.2rem">Sequential mode: making them argue</h2>
+<p style="color:var(--text-soft);line-height:1.7">Cold comparison misses errors that <em>sound</em> plausible to a human. The fix is to make the models read each other. In sequential mode each seat sees every answer before it: the second model flags what the first missed, the third has to pick a side and say why. Disagreement between models is the most reliable "look closer here" signal there is &mdash; and it surfaces automatically instead of depending on your skim.</p>
+<h2 style="margin-top:2.2rem">What we see in real sessions</h2>
+<p style="color:var(--text-soft);line-height:1.7">Different seats earn their keep on different jobs &mdash; one tends to write the tightest code, another catches edge cases in review, another is fastest to a straight factual answer. The honest summary: no single model wins everything, which is precisely the argument for putting them at one table and letting the question decide.</p>
+<h2 style="margin-top:2.2rem">Doing this without three browser tabs</h2>
+<p style="color:var(--text-soft);line-height:1.7"><a href="braid.html" style="color:var(--accent)">Braid</a> is a Windows desktop app that runs this round table on the subscriptions you already pay for &mdash; it drives the official Claude, Grok and Gemini CLIs you are signed into, plus optional API keys or a free local seat. One prompt in, every answer back, columns or sequence, with a shared memory so corrections stick. There is an unedited one-minute capture of a real session on the <a href="braid.html#film" style="color:var(--accent)">Braid page</a>, and a deeper explainer on <a href="multi-ai-chat.html" style="color:var(--accent)">chatting with multiple AIs at once</a>.</p>
+<div class="cta-row" style="justify-content:center;margin:2.4rem 0 1rem">
+<a href="braid.html" class="btn btn-primary">TRY BRAID &mdash; $10/MO BETA</a>
+<a href="multi-ai-chat.html" class="btn btn-outline">HOW THE ROUND TABLE WORKS</a>
+</div>
+</section>
+
+<footer>
+<div class="footer-links">
+<a href="about.html">ABOUT</a>
+<a href="faq.html">FAQ</a>
+<a href="privacy.html">PRIVACY</a>
+<a href="terms.html">TERMS</a>
+<a href="/">AMNI-SCIENT</a>
+<a href="mailto:amnibro7@gmail.com">CONTACT</a>
+</div>
+<p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
+</footer>
+</body>
+</html>
