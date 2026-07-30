@@ -204,11 +204,15 @@ function braidSVG(o){
  function show(d){
   var topup=String(d.tier||"")==="topup";
   var siteDl='';
-  var dl=d.download
-   ? '<a href="'+esc(d.download)+'" class="btn btn-primary" style="font-size:.95rem;padding:.85rem 1.8rem">'+
-     'DOWNLOAD BRAID'+(d.version?' '+esc(d.version):'')+'</a>'+
-     (d.sha256?'<div class="hashline">SHA-256 '+esc(d.sha256)+'</div>':'')
-   : '<div class="warn"><b>Your key is live.</b><br>The app is not posted publicly. Use the private download link you were given, or email amnibro7@gmail.com and we will send it.</div>'+
+  var FALLBACK_DL='https://github.com/Amnibro/Amni-Scient/releases/download/braid-v3.5.33/Braid.exe';
+  var FALLBACK_VER='3.5.33';
+  var FALLBACK_SHA='d2c4fc0b42471533e7ed1552ac37ca98ac9e2ea697dc74119a3911d6c9759009';
+  var dlUrl=d.download||FALLBACK_DL;
+  var dlVer=d.version||FALLBACK_VER;
+  var dlSha=d.sha256||FALLBACK_SHA;
+  var dl='<a href="'+esc(dlUrl)+'" class="btn btn-primary" style="font-size:.95rem;padding:.85rem 1.8rem">'+
+     'DOWNLOAD BRAID '+esc(dlVer)+'</a>'+
+     (dlSha?'<div class="hashline">SHA-256 '+esc(dlSha)+'</div>':'')+
      '<p style="color:var(--dim);font-size:.8rem;margin-top:.8rem">Paste your key when Braid asks on first launch.</p>';
   var thanks=topup
    ? 'Thank you &mdash; your token top-up is in. Here is your licence key. Keep it: it unlocks Braid and carries the prepaid pool you just funded'+(d.budget?' ($'+Number(d.budget).toFixed(2)+')':'')+'.'
