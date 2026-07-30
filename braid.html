@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
@@ -20,7 +20,7 @@
 <meta name="twitter:image" content="https://amni-scient.com/assets/braid/braid-og.jpg?v=2">
 <link rel="canonical" href="https://amni-scient.com/braid">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Braid","url":"https://amni-scient.com/braid","description":"A multi-model round table. Ask once and Claude, Grok, Gemini and a local model each answer, reading the answers before them. Runs on your existing subscriptions or your own API keys.","applicationCategory":"DeveloperApplication","operatingSystem":"Windows","offers":{"@type":"Offer","price":"10.00","priceCurrency":"USD","category":"subscription","availability":"https://schema.org/InStock"},"author":{"@type":"Organization","name":"AMNI-SCIENT","url":"https://amni-scient.com"},"image":"https://amni-scient.com/assets/braid/braid-og.jpg?v=2"}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoObject","name":"Braid demo &mdash; a real multi-AI session, captured live","description":"Real screen recording of Braid: one engineering question goes to the round table, the seats commit, check each other's math in rendered tables, and a follow-up has them converge on one recommendation. Nothing staged &mdash; including a seat erroring out and the room carrying on.","thumbnailUrl":"https://amni-scient.com/assets/braid/braid-poster.jpg?v=4","contentUrl":"https://amni-scient.com/assets/braid/braid-usage.mp4?v=4","uploadDate":"2026-07-30","duration":"PT40S"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoObject","name":"Braid demo &mdash; a real multi-AI session, captured live","description":"Real screen recording of Braid: one question to the round table, then a tour of views, Flows presets, loop modes and per-seat permissions, then an adversarial round where the seats hunt real flaws in their own committed design. Nothing staged.","thumbnailUrl":"https://amni-scient.com/assets/braid/braid-poster.jpg?v=5","contentUrl":"https://amni-scient.com/assets/braid/braid-usage.mp4?v=5","uploadDate":"2026-07-30","duration":"PT41S"}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Can I chat with Claude, Grok and Gemini at the same time?","acceptedAnswer":{"@type":"Answer","text":"Yes. Braid sends one question to every connected seat at once. You can view the answers side by side in columns, or sequentially where each model reads the answers before it and builds on them."}},{"@type":"Question","name":"Do I need API keys, or does Braid charge for AI usage?","acceptedAnswer":{"@type":"Answer","text":"Neither is required. Braid drives the CLI tools you are already signed into (Claude, Grok, Gemini), so a seat costs whatever your existing subscription costs. You can also bring pay-as-you-go API keys or a local model. Braid never meters or resells tokens."}},{"@type":"Question","name":"Can the AIs see each other's answers?","acceptedAnswer":{"@type":"Answer","text":"That is the point of the round table. In sequential mode each seat reads every answer before it and responds to them - agreeing, correcting, or building on top - instead of answering blind."}},{"@type":"Question","name":"Does Braid work with local models like Ollama?","acceptedAnswer":{"@type":"Answer","text":"Yes. A local model seat (including Ollama models or the bundled Adam-3B) joins the same table as the subscription seats, at zero per-token cost."}},{"@type":"Question","name":"How much does Braid cost?","acceptedAnswer":{"@type":"Answer","text":"Open-beta pricing is $10/month (or $102/year), locked in for as long as you keep the subscription. There is a $5/month beta-tester tier and team pricing from $7 per seat. Cancel any time - it is a Stripe subscription, not a contract."}},{"@type":"Question","name":"What platforms does Braid run on?","acceptedAnswer":{"@type":"Answer","text":"Braid is a Windows desktop app today. Your keys and sessions stay on your machine - nothing is proxied through our servers."}}]}</script>
 <link rel="stylesheet" href="css/style.css?v=b180">
 <style>
@@ -54,7 +54,7 @@
 .plan .per{color:var(--dim);font-size:.72rem;margin:.3rem 0 .9rem}
 .plan ul{list-style:none;margin:0 0 1.1rem;font-size:.79rem;color:var(--text-soft);flex:1}
 .plan li{padding:.24rem 0 .24rem 1.05rem;position:relative;line-height:1.45}
-.plan li::before{content:"•";position:absolute;left:0;color:var(--accent)}
+.plan li::before{content:"â€¢";position:absolute;left:0;color:var(--accent)}
 .plan .btn{width:100%;justify-content:center;text-align:center}
 .plan .fine{color:var(--dim);font-size:.68rem;margin-top:.6rem;line-height:1.4}
 .beta-note{max-width:760px;margin:0 auto 2rem;color:var(--dim);font-size:.82rem;line-height:1.6}
@@ -110,14 +110,14 @@
 
 <section id="film">
 <h2>FORTY SECONDS, NOTHING STAGED</h2>
-<p style="text-align:center;color:var(--dim);max-width:760px;margin:0 auto 2rem;font-size:.9rem">A real session in the real app, captured live: one engineering question goes to the table, the seats commit and check each other's math, and a follow-up makes them converge on a single recommendation &mdash; rendered tables, live handoffs, even a seat erroring out while the room carries on. That is what real looks like.</p>
+<p style="text-align:center;color:var(--dim);max-width:760px;margin:0 auto 2rem;font-size:.9rem">A real session in the real app, captured live: one question goes to the table and the seats commit &mdash; then the views (columns, stack, thread), the Flows presets, loop modes and per-seat permissions, then an <b>adversarial round</b>: builders vs attackers hunting real flaws in their own design, with a local seat and live handoffs. Nothing staged, nothing mocked.</p>
 <div class="film">
-<video controls playsinline preload="metadata" poster="assets/braid/braid-poster.jpg?v=4">
-<source src="assets/braid/braid-usage.mp4?v=4" type="video/mp4">
+<video controls playsinline preload="metadata" poster="assets/braid/braid-poster.jpg?v=5">
+<source src="assets/braid/braid-usage.mp4?v=5" type="video/mp4">
 Your browser cannot play this video.
 </video>
 </div>
-<p class="filmcap">One question &rarr; the seats commit &bull; follow-up &rarr; the table converges &bull; real CLIs, real subscriptions &mdash; nothing cut but the waiting</p>
+<p class="filmcap">Ask once &rarr; seats commit &bull; views &bull; Flows &bull; loops &bull; permissions &bull; adversarial round &rarr; flaws found &mdash; real CLIs, real subscriptions, nothing cut but the waiting</p>
 </section>
 
 <section>
@@ -188,7 +188,7 @@ Your browser cannot play this video.
 <section id="pricing" style="text-align:center">
 <h2>GET BRAID</h2>
 <p class="beta-note">Braid is in <b>open beta</b>, so every price below is the beta price and stays there for as long
- as you keep the subscription. You subscribe, you get your licence key on the next screen. The Windows build is shared only with paid or invited users — not as a public download.
+ as you keep the subscription. You subscribe, you get your licence key on the next screen. The Windows build is shared only with paid or invited users â€” not as a public download.
  <b>Cancel any time</b> &mdash; it is a Stripe subscription, not a contract.</p>
 <div class="plans">
 
@@ -238,7 +238,7 @@ Your browser cannot play this video.
 </div>
 <p class="beta-note" style="margin-top:1.6rem">Prefer to pay as you go? Open the
  <a href="braid-topup.html" style="color:var(--accent)">token top-up allocator</a>
- — pick an amount, split it across models with sliders, see estimated tokens per seat, then pay once through
+ â€” pick an amount, split it across models with sliders, see estimated tokens per seat, then pay once through
  <b>Stripe</b> (card, Apple&nbsp;Pay, Google&nbsp;Pay, Link). No subscription required. Amni-Scient never sees your card number.</p>
 </section>
 <section style="text-align:center">
