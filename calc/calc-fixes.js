@@ -537,13 +537,34 @@ function resolveBoltGrade(key){
   const k=aliases[key]||aliases[String(key||'').trim()]||key;
   return BOLT_GRADES[k]?{key:k,g:BOLT_GRADES[k]}:{key:'SAE-5',g:BOLT_GRADES['SAE-5']};
 }
+function getBoltPressN(){if($('bl-press-u'))return getForce('bl-press');const raw=v('bl-press');return isFinite(raw)?raw:NaN;}
+function getStiffNperMM(id){
+  const el=$(id);if(!el)return 0;
+  const raw=parseFloat(el.value);if(!isFinite(raw)||raw<=0)return 0;
+  const u=sv(id+'-u')||'N/mm';
+  return u==='lbf/in'?raw*0.175126835:raw;
+}
+function _boltKDisp(Npm){
+  if(!(Npm>0))return '—';
+  const imp=window.UCORE?UCORE.isImp():(window.__uMode&&window.__uMode()==='imp');
+  if(imp)return(Npm/0.175126835).toFixed(0)+' lbf/in';
+  return Npm.toFixed(1)+' N/mm';
+}
 window.toggleBoltPreloadMode=function(){
-  const mode=sv('bl-mode')||'proof';
-  const pw=$('bl-preload-wrap'),fw=$('bl-fi-wrap'),mw=$('bl-margin-wrap'),cEl=$('bl-c');
-  if(pw)pw.style.display=mode==='proof'?'':'none';
-  if(fw)fw.style.display=mode==='target'?'':'none';
-  if(mw)mw.style.display=mode==='stack'?'':'none';
-  if(cEl&&mode==='stack'&&!cEl.dataset.userTouched){cEl.value='0';}
+  const mode=sv('bl-mode')||'underload';
+  const isUL=mode==='underload',isStack=mode==='stack',isTarget=mode==='target',isProof=mode==='proof';
+  const show=(id,on)=>{const el=$(id);if(el)el.style.display=on?'':'none';};
+  show('bl-preload-wrap',isProof);
+  show('bl-fi-wrap',isTarget);
+  show('bl-margin-wrap',isUL||isStack);
+  show('bl-press-wrap',isUL);
+  show('bl-kb-wrap',isUL);
+  show('bl-km-wrap',isUL);
+  show('bl-c-wrap',isProof||isStack);
+  const lab=$('bl-fext-lab');
+  if(lab)lab.textContent=isUL?'DESIRED RESIDUAL (after press release)':isStack?'STACK LOAD (press stays on)':isTarget?'REFERENCE LOAD (optional)':'EXTERNAL LOAD';
+  const cEl=$('bl-c');
+  if(cEl&&isStack&&!cEl.dataset.userTouched)cEl.value='0';
   if(typeof window.calcBolt==='function')try{window.calcBolt();}catch(e){}
 };
 window.calcBolt=function(){
@@ -553,7 +574,7 @@ window.calcBolt=function(){
   const n=Math.max(1,parseInt(sv('bl-num'))||parseInt(v('bl-num'))||1);
   const Fext=getForce('bl-fext');
   const Fshear=getBoltShearN();
-  const mode=sv('bl-mode')||'proof';
+  const mode=sv('bl-mode')||'underload';
   let preloadPct=v('bl-preload');
   if(!isFinite(preloadPct))preloadPct=75;
   preloadPct=preloadPct>1.5?preloadPct/100:preloadPct;
@@ -561,66 +582,95 @@ window.calcBolt=function(){
   let K=v('bl-mu');if(!isFinite(K)||K<=0)K=0.20;
   let margin=v('bl-margin');if(!isFinite(margin)||margin<=0)margin=1;
   const out=$('bolt-results');if(!out)return;
-  if(!isFinite(Fext)){out.innerHTML='<div class="note warn">Stack / external load required.</div>';return;}
+  if(!isFinite(Fext)&&mode!=='target'){out.innerHTML='<div class="note warn">Enter the operational / residual load.</div>';return;}
   const At=size.At,Sp=grade.Sp,Sy=grade.Sy,Su=grade.Su,dmm=size.d;
   if(!(At>0)||!(Sp>0)||!(dmm>0)){out.innerHTML='<div class="note warn">Invalid bolt size/grade table data.</div>';return;}
   const Fproof=Sp*At,Fyield=Sy*At;
-  const Fshare=Fext/n,FshPer=Fshear/n;
-  let Fi,fiNote,modeNote;
+  const Fop=isFinite(Fext)?Fext:0;
+  const Fshare=Fop/n,FshPer=Fshear/n;
+  let Fi,fiNote,modeNote,itemsExtra=[],Fb,Fj,sepFactor,C_b=null,Fpress=NaN,F_res_snug=NaN,F_press_snug=NaN,Fi_extra=0;
   if(mode==='target'){
     Fi=getBoltFiN();
     if(!isFinite(Fi)||Fi<=0){out.innerHTML='<div class="note warn">Enter a target F_i (preload force).</div>';return;}
     fiNote='target F_i';
-    modeNote='Target-force mode: torque from the F_i you typed (not % of proof). Use when you already know the desired rod tension.';
+    modeNote='Target-force mode: torque from the F_i you typed. Ignores proof % and stack spring-back.';
+    Fb=Fi+C*Fshare;Fj=Fi-(1-C)*Fshare;sepFactor=Fshare>0&&(1-C)>0?Fi/(Fshare*(1-C)):Infinity;
   }else if(mode==='stack'){
     Fi=margin*Fshare;
-    fiNote='margin×F/n = '+margin.toFixed(2)+'× share';
-    modeNote='Stack / tie-rod at load: members already compressed; bolts tightened under that load. Equal share F/n = '+_boltFDisp(Fshare)+' per rod. F_i = margin·F/n (margin=1.0 snugs to the already-applied stack). C≈0 — no extra classic “external on top of high preload.” Torque is for this F_i, NOT 75% of proof. Residual after press release depends on stack spring-back; raise margin if the press is removed.';
+    fiNote='margin×F/n (press stays on)';
+    modeNote='Stack share with press still on: equal share F/n per rod. Torque to that tension. Not for press-released residual.';
+    Fb=Fi;Fj=Fi;sepFactor=Fshare>0?Fi/Fshare:Infinity;
+  }else if(mode==='underload'){
+    const F_op_tgt=margin*Fop;
+    Fi=F_op_tgt/n;
+    fiNote='margin×F_op/n residual after release';
+    Fpress=getBoltPressN();
+    if(!isFinite(Fpress)||Fpress<=0)Fpress=Fop;
+    const kb1=getStiffNperMM('bl-kb'),km=getStiffNperMM('bl-km'),kb_tot=n*kb1;
+    if(kb_tot>0&&km>0){
+      C_b=kb_tot/(kb_tot+km);
+      F_res_snug=Fpress*C_b;
+      F_press_snug=F_op_tgt/C_b;
+      Fi_extra=Math.max(0,(F_op_tgt-F_res_snug)/n);
+      itemsExtra=[
+        ['Press load while bolting',_boltFDisp(Fpress)],
+        ['k_b per rod',_boltKDisp(kb1)],
+        ['k_b total (n·k_b)',_boltKDisp(kb_tot)],
+        ['k_m stack',_boltKDisp(km)],
+        ['C_b = k_b/(k_b+k_m)',C_b.toFixed(3)],
+        ['Residual if only SNUGGED then release',_boltFDisp(F_res_snug),F_res_snug+1>=F_op_tgt?'ok':'warn'],
+        ['Press needed if snug-only → F_op',_boltFDisp(F_press_snug)],
+        ['Extra F_i under press (per rod)',_boltFDisp(Fi_extra),Fi_extra>0?'warn':'ok'],
+        ['Torque that extra (same K)',_boltTDisp(K*Fi_extra*dmm/1000)]
+      ];
+      modeNote='Bolt under load → press released after: (1) compress stack with press F_press, (2) snug/torque rods under that load, (3) release press. Desired residual clamp F_op = '+_boltFDisp(F_op_tgt)+' total → '+_boltFDisp(Fi)+' per rod. If only snugged at compressed length, residual after release is F_press·k_b/(k_b+k_m). Shortfall is closed by extra rod tension under the press. Primary torque below is for residual F_op/n (what the rods should carry after release).';
+    }else{
+      modeNote='Bolt under load → press released after: target residual F_op = '+_boltFDisp(F_op_tgt)+' after unload → torque each rod to F_i = F_op/n = '+_boltFDisp(Fi)+'. Enter rod stiffness k_b and stack stiffness k_m to estimate snug-only spring-back residual and how much extra F_i under the press is needed. Without stiffness, torque-to-F_op/n is the field target for residual load after release.';
+      itemsExtra=[
+        ['Press load while bolting',_boltFDisp(Fpress)],
+        ['Stiffness note','Enter k_b & k_m for spring-back split']
+      ];
+    }
+    Fb=Fi;Fj=Fi;sepFactor=Fshare>0?Fi/Fshare:Infinity;
   }else{
     Fi=preloadPct*Fproof;
     fiNote=(preloadPct*100).toFixed(0)+'% of proof';
-    modeNote='Classic Shigley preloaded joint: set high F_i first, then external load is shared via C. Torque for F_i = %·Sp·A_t. Wrong model if you compress the stack first and only snug rods at load.';
+    modeNote='Classic Shigley preloaded joint: high F_i first, then external load shared via C. Wrong model for press-on / bolt / press-off stacks.';
+    Fb=Fi+C*Fshare;Fj=Fi-(1-C)*Fshare;sepFactor=Fshare>0&&(1-C)>0?Fi/(Fshare*(1-C)):Infinity;
   }
-  const Fb=mode==='stack'?Fi:Fi+C*Fshare;
-  const Fj=mode==='stack'?Fi:Fi-(1-C)*Fshare;
   const sigma_b=Fb/At,sigma_proof_ratio=sigma_b/Sp,sigma_i=Fi/At;
   const tau=FshPer/At;
   const IR=Math.pow(sigma_b/Sp,2)+Math.pow(tau/(0.577*Sp),2);
   const T=K*Fi*dmm/1000;
-  const T_K02=0.20*Fi*dmm/1000;
   const T_K015=0.15*Fi*dmm/1000;
-  const T_share=K*Fshare*dmm/1000;
   const T_proof75=K*(0.75*Fproof)*dmm/1000;
-  const sepFactor=mode==='stack'?(Fshare>0?Fi/Fshare:Infinity):(Fshare>0&&(1-C)>0?Fi/(Fshare*(1-C)):Infinity);
   const items=[
-    ['F_stack / F_ext (total)',_boltFDisp(Fext)],
-    ['Share F/n (per rod)',_boltFDisp(Fshare)],
+    ['Desired residual F_op (total)',_boltFDisp(Fop*margin)],
+    ['Target residual per rod',_boltFDisp(Fi)+' ('+fiNote+')'],
     ['F_proof (single)',_boltFDisp(Fproof)],
     ['F_yield (single)',_boltFDisp(Fyield)],
-    ['F_i used for torque',_boltFDisp(Fi)+' ('+fiNote+')'],
-    ['F_b bolt tension',_boltFDisp(Fb),Fb<Fyield?'ok':'err'],
-    ['F_j clamp (classic)',mode==='stack'?'n/a (stack @ load)':_boltFDisp(Fj),mode==='stack'?'':(Fj>0?'ok':'err')],
-    ['σ from F_i',_boltPDisp(sigma_i)],
-    ['σ_b working',_boltPDisp(sigma_b),sigma_b<Sy?'ok':'err'],
-    ['Proof use (working)',(sigma_proof_ratio*100).toFixed(1)+'%',sigma_proof_ratio<0.85?'ok':sigma_proof_ratio<1?'warn':'err'],
+    ['σ at residual F_i',_boltPDisp(sigma_i),sigma_i<Sy?'ok':'err'],
+    ['Proof use at residual',(100*sigma_i/Sp).toFixed(1)+'%',sigma_i/Sp<0.85?'ok':sigma_i/Sp<1?'warn':'err'],
     ['τ shear',_boltPDisp(tau)],
     ['IR (tens+shear)',IR.toFixed(3),IR<1?'ok':'err'],
-    ['T for F_i (K='+K.toFixed(2)+')',_boltTDisp(T),'ok'],
-    ['T if only share F/n',_boltTDisp(T_share)],
-    ['T if 75% proof (classic)',_boltTDisp(T_proof75)],
+    ['★ TORQUE for residual F_i (K='+K.toFixed(2)+')',_boltTDisp(T),'ok'],
     ['T (K=0.15 lubed, same F_i)',_boltTDisp(T_K015)],
-    ['Separation / hold margin',isFinite(sepFactor)?sepFactor.toFixed(2)+'×':'∞',sepFactor>=1?'ok':sepFactor>0.9?'warn':'err']
-  ];
-  _mr(out,'<h3>JOINT RESULTS — '+(sizeKey||'?')+' '+gradeKey+' × '+n+'</h3>'+
+    ['T if classic 75% proof (different problem)',_boltTDisp(T_proof75)],
+    ['Hold vs residual share',isFinite(sepFactor)?sepFactor.toFixed(2)+'×':'∞',sepFactor>=1?'ok':'warn']
+  ].concat(itemsExtra);
+  if(mode==='proof'||mode==='target'){
+    items.splice(4,0,['F_b = F_i + C·F/n',_boltFDisp(Fb),Fb<Fyield?'ok':'err'],['F_j clamp',_boltFDisp(Fj),Fj>0?'ok':'err']);
+  }
+  _mr(out,'<h3>JOINT RESULTS — '+(sizeKey||'?')+' '+gradeKey+' × '+n+' · '+(mode==='underload'?'BOLT UNDER LOAD':mode.toUpperCase())+'</h3>'+
     '<div class="result-grid">'+items.map(i=>`<div class="result-item"><div class="lbl">${i[0]}</div><div class="val ${i[2]||''}">${i[1]}</div></div>`).join('')+'</div>'+
     '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem"><strong>Mode:</strong> '+modeNote+'</p>'+
-    '<p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.72rem"><strong>Standard:</strong> '+grade.std+'. <strong>Size:</strong> '+size.kind+', d_nom='+_boltLenDisp(dmm)+', pitch='+_boltLenDisp(size.p)+', A_t='+_boltAreaDisp(At)+'. <strong>T = K·F_i·d</strong> (d in consistent units). K≈0.20 dry, 0.15 lubricated — torque control scatter often ±25%.</p>'+
-    '<p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem"><strong>Example check:</strong> 7200 lbf · 10× #10-32 B7 · K=0.20 · stack@load → share 720 lbf/rod, T≈2.3 lbf·ft (not ~5.5). Classic 75% proof on the same rod is a different (higher) Fi and torque.</p>');
+    '<p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.72rem"><strong>Standard:</strong> '+grade.std+'. <strong>Size:</strong> '+size.kind+', d_nom='+_boltLenDisp(dmm)+', pitch='+_boltLenDisp(size.p)+', A_t='+_boltAreaDisp(At)+'. <strong>T = K·F_i·d</strong>. Torque-control scatter often ±25% — use stretch or load cells for critical stacks.</p>'+
+    (mode==='underload'?'<p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem"><strong>Procedure:</strong> apply press → torque rods to ★ residual F_i (and any “extra under press” if k_b/k_m given) → release press → residual clamp ≈ F_op. Example: 7200 lbf residual · 10× #10-32 · K=0.20 → 720 lbf/rod → ~2.3 lbf·ft, not ~5 ft·lb (that was 75% proof).</p>':''));
   const _bpn=$('bp-n');
   if(_bpn&&_bpn!==document.activeElement&&parseInt(_bpn.value)!==n){_bpn.value=n;if(typeof window.drawBoltPattern==='function')try{window.drawBoltPattern();}catch(e){}}
   const _teb=$('te-sub');
   if(_teb&&_teb!==document.activeElement&&parseFloat(_teb.value)!==Su){_teb.value=Su;if(typeof window.calcThreadEngage==='function')try{window.calcThreadEngage();}catch(e){}}
-  const _bsync={'bts-fi':Fi,'bts-d':dmm,'bts-pitch':size.p,'bts-kn':K,'bts-c':C,'bts-fext':Fshare};
+  const _bsync={'bts-fi':Fi,'bts-d':dmm,'bts-pitch':size.p,'bts-kn':K,'bts-c':C_b!=null?C_b:C,'bts-fext':Fshare};
   let _bany=false;
   for(const _bk in _bsync){const _be=$(_bk),_bv=_bsync[_bk];if(_be&&_be!==document.activeElement&&isFinite(_bv)){const _bs=String(Math.round(_bv*1000)/1000);_be.value!==_bs&&(_be.value=_bs,_bany=true);}}
   if(_bany&&typeof window.calcBoltTorqueSeq==='function')try{window.calcBoltTorqueSeq();}catch(e){}
