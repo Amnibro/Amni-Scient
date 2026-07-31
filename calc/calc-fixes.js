@@ -515,51 +515,63 @@ function populateBoltDropdowns(){
   const gtbl=$('bl-grade-tbl');if(gtbl){gtbl.innerHTML=Object.entries(BOLT_GRADES).map(([k,g])=>`<tr><td>${k}</td><td>${g.Sp}</td><td>${g.Sy}</td><td>${g.Su}</td></tr>`).join('');}
   const stbl=$('bl-size-tbl');if(stbl){stbl.innerHTML=fams.map(([kind,list])=>`<tr><td colspan="4" style="color:var(--accent);font-size:.65rem;letter-spacing:1px">${kind.toUpperCase()}</td></tr>`+list.map(([k,z])=>`<tr><td>${k}</td><td>${z.d}</td><td>${z.p}</td><td>${z.At}</td></tr>`).join('')).join('');}
 }
+function _boltFDisp(N){if(window.UCORE&&UCORE.fDisp)return UCORE.fDisp(N,window.UCORE.isImp()?1:0);const imp=window.__uMode&&window.__uMode()==='imp';return imp?(N/4.4482216152605).toFixed(1)+' lbf':Math.round(N)+' N';}
+function _boltTDisp(Nm){if(!isFinite(Nm))return '—';const imp=window.UCORE?UCORE.isImp():(window.__uMode&&window.__uMode()==='imp');if(imp){const ft=Nm/1.3558179483314004;return(window.UCORE?UCORE.fmtNum(ft,2):ft.toFixed(2))+' lbf·ft';}return(window.UCORE?UCORE.fmtNum(Nm,2):Nm.toFixed(2))+' N·m';}
+function _boltPDisp(MPa){if(window.UCORE&&UCORE.pDisp)return UCORE.pDisp(MPa,window.UCORE.isImp()?0:1);const imp=window.__uMode&&window.__uMode()==='imp';return imp?(MPa/0.00689475729316836).toFixed(0)+' psi':MPa.toFixed(1)+' MPa';}
+function _boltLenDisp(mm){if(window.UCORE&&UCORE.lDisp)return UCORE.lDisp(mm,window.UCORE.isImp()?3:2);const imp=window.__uMode&&window.__uMode()==='imp';return imp?(mm/25.4).toFixed(3)+' in':mm.toFixed(2)+' mm';}
+function _boltAreaDisp(mm2){const imp=window.UCORE?UCORE.isImp():(window.__uMode&&window.__uMode()==='imp');if(imp)return(mm2/645.16).toFixed(4)+' in²';return mm2.toFixed(1)+' mm²';}
+function getBoltShearN(){const el=$('bl-shear');if(!el)return 0;if($('bl-shear-u'))return getForce('bl-shear');const raw=v('bl-shear');return isFinite(raw)?raw:0;}
 window.calcBolt=function(){
   const grade=BOLT_GRADES[sv('bl-grade')]||BOLT_GRADES['SAE-5'];
   const size=BOLT_SIZES[sv('bl-size')]||BOLT_SIZES['1/2-13'];
-  const n=Math.max(1,parseInt(v('bl-num'))||1);
+  const n=Math.max(1,parseInt(sv('bl-num'))||parseInt(v('bl-num'))||1);
   const Fext=getForce('bl-fext');
-  const Fshear=v('bl-shear')||0;
-  const preloadPct=v('bl-preload')/100;
-  const C=v('bl-c');
-  const mu=v('bl-mu');
+  const Fshear=getBoltShearN();
+  let preloadPct=v('bl-preload');
+  if(!isFinite(preloadPct))preloadPct=75;
+  preloadPct=preloadPct>1.5?preloadPct/100:preloadPct;
+  let C=v('bl-c');if(!isFinite(C))C=0.25;C=Math.max(0,Math.min(0.99,C));
+  let K=v('bl-mu');if(!isFinite(K)||K<=0)K=0.20;
   const out=$('bolt-results');if(!out)return;
   if(!isFinite(Fext)){out.innerHTML='<div class="note warn">External load required.</div>';return;}
-  const At=size.At,Sp=grade.Sp,Sy=grade.Sy,Su=grade.Su;
+  const At=size.At,Sp=grade.Sp,Sy=grade.Sy,Su=grade.Su,dmm=size.d;
+  if(!(At>0)||!(Sp>0)||!(dmm>0)){out.innerHTML='<div class="note warn">Invalid bolt size/grade table data.</div>';return;}
   const Fproof=Sp*At,Fyield=Sy*At;
   const Fi=preloadPct*Fproof;
-  const FextPer=Fext/n;
+  const FextPer=Fext/n,FshPer=Fshear/n;
   const Fb=Fi+C*FextPer;
   const Fj=Fi-(1-C)*FextPer;
   const sigma_b=Fb/At,sigma_proof_ratio=sigma_b/Sp;
-  const tau=(Fshear/n)/At,IR=Math.pow(sigma_b/Sp,2)+Math.pow(tau/(0.577*Sp),2);
-  const T=mu*Fi*size.d/1000;
-  const T_K=0.20*Fi*size.d/1000;
-  const sepFactor=Fi/(FextPer*(1-C));
+  const tau=FshPer/At;
+  const IR=Math.pow(sigma_b/Sp,2)+Math.pow(tau/(0.577*Sp),2);
+  const T=K*Fi*dmm/1000;
+  const T_K02=0.20*Fi*dmm/1000;
+  const T_K015=0.15*Fi*dmm/1000;
+  const sepFactor=FextPer>0?Fi/(FextPer*(1-C)):Infinity;
   const items=[
-    ['F_proof (single)',Math.round(Fproof)+' N'],
-    ['F_yield (single)',Math.round(Fyield)+' N'],
-    ['F_i preload',Math.round(Fi)+' N ('+(preloadPct*100).toFixed(0)+'% Fp)'],
-    ['F_b bolt load',Math.round(Fb)+' N',Fb<Fyield?'ok':'err'],
-    ['F_j joint clamp',Math.round(Fj)+' N',Fj>0?'ok':'err'],
-    ['σ_b tension',sigma_b.toFixed(1)+' MPa',sigma_b<Sy?'ok':'err'],
+    ['F_proof (single)',_boltFDisp(Fproof)],
+    ['F_yield (single)',_boltFDisp(Fyield)],
+    ['F_i preload',_boltFDisp(Fi)+' ('+(preloadPct*100).toFixed(0)+'% Fp)'],
+    ['F_b bolt load',_boltFDisp(Fb),Fb<Fyield?'ok':'err'],
+    ['F_j joint clamp',_boltFDisp(Fj),Fj>0?'ok':'err'],
+    ['σ_b tension',_boltPDisp(sigma_b),sigma_b<Sy?'ok':'err'],
     ['Proof use',(sigma_proof_ratio*100).toFixed(1)+'%',sigma_proof_ratio<0.85?'ok':sigma_proof_ratio<1?'warn':'err'],
-    ['τ shear',tau.toFixed(1)+' MPa'],
+    ['τ shear',_boltPDisp(tau)],
     ['IR (tens+shear)',IR.toFixed(3),IR<1?'ok':'err'],
-    ['T = μ·F_i·d',T.toFixed(2)+' N·m'],
-    ['T (K=0.20)',T_K.toFixed(2)+' N·m'],
+    ['T = K·F_i·d (K='+K.toFixed(2)+')',_boltTDisp(T)],
+    ['T (K=0.20 dry)',_boltTDisp(T_K02)],
+    ['T (K=0.15 lubed)',_boltTDisp(T_K015)],
     ['Separation safety',isFinite(sepFactor)?sepFactor.toFixed(2)+'×':'∞',sepFactor>1.5?'ok':sepFactor>1?'warn':'err']
   ];
   _mr(out,'<h3>JOINT RESULTS — '+sv('bl-size')+' '+sv('bl-grade')+' × '+n+'</h3>'+
     '<div class="result-grid">'+items.map(i=>`<div class="result-item"><div class="lbl">${i[0]}</div><div class="val ${i[2]||''}">${i[1]}</div></div>`).join('')+'</div>'+
-    '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem"><strong>Standard:</strong> '+grade.std+'. <strong>Size:</strong> '+size.kind+', d_nom='+size.d+' mm, pitch='+size.p+' mm, A_t='+size.At+' mm².<br><strong>Method:</strong> Shigley joint stiffness — F_b = F_i + C·F_ext, F_j = F_i − (1−C)·F_ext. Stiffness ratio C = k_bolt/(k_bolt + k_member) — typical 0.2–0.4 for steel-on-steel. Preload 75% of proof for reusable; up to 90% for permanent. Torque T=K·F_i·d with K≈0.20 dry, 0.15 lubricated. Interaction IR = (σ/Sp)² + (τ/0.577·Sp)² &lt; 1.</p>'+
+    '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem"><strong>Standard:</strong> '+grade.std+'. <strong>Size:</strong> '+size.kind+', d_nom='+_boltLenDisp(dmm)+', pitch='+_boltLenDisp(size.p)+', A_t='+_boltAreaDisp(At)+'.<br><strong>Method:</strong> Shigley — F_b = F_i + C·F_ext/n, F_j = F_i − (1−C)·F_ext/n, F_i = (% preload)·Sp·A_t, T = K·F_i·d. Preload 75% proof reusable / 90% permanent. IR = (σ/Sp)² + (τ/0.577·Sp)² &lt; 1. Results follow SI/US unit mode.</p>'+
     '<p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem"><strong>Thin-material rule of thumb:</strong> tap depth ≥ 1.0·d in steel, 1.5·d in aluminum, 2.0·d in plastic for full strength. Below 0.5·d the joint will strip the threads before the bolt yields.</p>');
   const _bpn=$('bp-n');
   if(_bpn&&_bpn!==document.activeElement&&parseInt(_bpn.value)!==n){_bpn.value=n;if(typeof window.drawBoltPattern==='function')try{window.drawBoltPattern();}catch(e){}}
   const _teb=$('te-sub');
   if(_teb&&_teb!==document.activeElement&&parseFloat(_teb.value)!==Su){_teb.value=Su;if(typeof window.calcThreadEngage==='function')try{window.calcThreadEngage();}catch(e){}}
-  const _bsync={'bts-fi':Fi,'bts-d':size.d,'bts-pitch':size.p,'bts-kn':mu,'bts-c':C,'bts-fext':FextPer};
+  const _bsync={'bts-fi':Fi,'bts-d':dmm,'bts-pitch':size.p,'bts-kn':K,'bts-c':C,'bts-fext':FextPer};
   let _bany=false;
   for(const _bk in _bsync){const _be=$(_bk),_bv=_bsync[_bk];if(_be&&_be!==document.activeElement&&isFinite(_bv)){const _bs=String(Math.round(_bv*1000)/1000);_be.value!==_bs&&(_be.value=_bs,_bany=true);}}
   if(_bany&&typeof window.calcBoltTorqueSeq==='function')try{window.calcBoltTorqueSeq();}catch(e){}
@@ -4220,7 +4232,7 @@ window.addEventListener('DOMContentLoaded',()=>{
     populateBoltDropdowns();
     wireLive('v-bolts',window.calcBolt);
     window.calcBolt();
-    /* Hide the "ANALYZE JOINT" button since we have live-compute */
+    window.addEventListener('amni-units-sys',()=>{try{window.calcBolt();}catch(e){}});
     const boltBtn=document.querySelector('#v-bolts button[onclick="calcBolt()"]');
     if(boltBtn)boltBtn.style.display='none';
     /* Springs init */
