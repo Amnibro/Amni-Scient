@@ -649,8 +649,11 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 <div class="field"><label for="bl-shear">SHEAR LOAD</label><div class="field-row"><input type="number" id="bl-shear" value="0" step="any"><select id="bl-shear-u" aria-label="unit"><option>N</option><option>kN</option><option>lbf</option><option>kip</option></select></div></div>
 </div>
 <div class="row" style="margin-top:.5rem">
-<div class="field"><label for="bl-preload">PRELOAD %</label><input type="number" id="bl-preload" value="75" min="0" max="100"></div>
-<div class="field"><label for="bl-c">STIFFNESS RATIO C</label><input type="number" id="bl-c" value="0.25" min="0" max="1" step="0.05"></div>
+<div class="field"><label for="bl-mode">PRELOAD MODE</label><select id="bl-mode" onchange="if(window.toggleBoltPreloadMode)toggleBoltPreloadMode()"><option value="proof">% OF PROOF (classic joint)</option><option value="stack">STACK / TIE-ROD AT LOAD</option><option value="target">TARGET F_i (force)</option></select></div>
+<div class="field" id="bl-preload-wrap"><label for="bl-preload">PRELOAD % OF PROOF</label><input type="number" id="bl-preload" value="75" min="0" max="100"></div>
+<div class="field" id="bl-fi-wrap" style="display:none"><label for="bl-fi">TARGET F_i</label><div class="field-row"><input type="number" id="bl-fi" value="720" step="any"><select id="bl-fi-u" aria-label="unit"><option>N</option><option>kN</option><option selected>lbf</option><option>kip</option></select></div></div>
+<div class="field" id="bl-margin-wrap" style="display:none"><label for="bl-margin">STACK MARGIN</label><input type="number" id="bl-margin" value="1.0" min="0.5" max="3" step="0.05" title="Fi = margin · F_stack / n. Use 1.0 when bolting at the already-applied stack load."></div>
+<div class="field"><label for="bl-c">STIFFNESS RATIO C</label><input type="number" id="bl-c" value="0.25" min="0" max="1" step="0.05" title="Shigley C = kb/(kb+km). Use ~0 for pure tie-rod / stack share (load already on members)."></div>
 <div class="field"><label for="bl-coat">COATING → K</label><select id="bl-coat" onchange="var m=document.getElementById('bl-mu');if(m){m.value=this.value;m.dispatchEvent(new Event('input',{bubbles:true}));}"><option value="0.20">Plain / as-received (0.20)</option><option value="0.22">Zinc plated (0.22)</option><option value="0.25">Hot-dip galvanized (0.25)</option><option value="0.16">Cadmium plated (0.16)</option><option value="0.18">Black oxide (0.18)</option><option value="0.15">Phosphate &amp; oil (0.15)</option><option value="0.13">Anti-seize Ni/Cu (0.13)</option><option value="0.12">Waxed / PTFE (0.12)</option><option value="0.10">MoS₂ moly (0.10)</option></select></div><div class="field"><label for="bl-mu">NUT FACTOR K</label><input type="number" id="bl-mu" value="0.20" step="0.01"></div>
 </div>
 <button class="btn btn-fill" onclick="calcBolt()" style="margin-top:.75rem">ANALYZE JOINT</button>
@@ -2951,7 +2954,7 @@ window._calcSealWasm=(...args)=>calc_seal(...args);
 <script src="./schnorr-discs.js?v=sch1" defer></script>
 <script src="./calc-overrides.js?v=eng3" defer></script>
 <script src="./calc-3d.js?v=eng4" defer></script>
-<script src="./calc-fixes.js?v=bolt57" defer></script>
+<script src="./calc-fixes.js?v=bolt571" defer></script>
 <script src="./calc-units.js?v=units2" defer></script>
 <script src="./calc-qol.js" defer></script>
 <script src="./calc-engineer.js?v=eng18" defer></script>

@@ -427,10 +427,10 @@ const BOLT_SIZES={
   '#3-48':{d:2.51,p:0.529,At:4.20,kind:'Inch UNC'},
   '#4-40':{d:2.84,p:0.635,At:5.42,kind:'Inch UNC'},
   '#5-40':{d:3.17,p:0.635,At:6.78,kind:'Inch UNC'},
-  '#6-32':{d:3.51,p:0.794,At:7.81,kind:'Inch UNC'},
-  '#8-32':{d:4.17,p:0.794,At:11.0,kind:'Inch UNC'},
-  '#10-24':{d:4.83,p:1.058,At:14.2,kind:'Inch UNC'},
-  '#12-24':{d:5.49,p:1.058,At:18.6,kind:'Inch UNC'},
+  '#6-32':{d:3.51,p:0.794,At:5.86,kind:'Inch UNC'},
+  '#8-32':{d:4.17,p:0.794,At:9.03,kind:'Inch UNC'},
+  '#10-24':{d:4.83,p:1.058,At:11.3,kind:'Inch UNC'},
+  '#12-24':{d:5.49,p:1.058,At:15.6,kind:'Inch UNC'},
   '1/4-20':{d:6.35,p:1.270,At:20.5,kind:'Inch UNC'},
   '5/16-18':{d:7.94,p:1.411,At:33.9,kind:'Inch UNC'},
   '3/8-16':{d:9.53,p:1.587,At:50.3,kind:'Inch UNC'},
@@ -478,16 +478,25 @@ const BOLT_SIZES={
   'M39':{d:39.0,p:4.00,At:976,kind:'Metric coarse'},
   'M42':{d:42.0,p:4.50,At:1121,kind:'Metric coarse'},
   'M48':{d:48.0,p:5.00,At:1473,kind:'Metric coarse'},
-  '1/4-28':{d:6.4,p:0.907,At:23.5,kind:'Inch UNF (fine)'},
-  '5/16-24':{d:7.9,p:1.058,At:37.5,kind:'Inch UNF (fine)'},
-  '3/8-24':{d:9.5,p:1.058,At:56.7,kind:'Inch UNF (fine)'},
-  '7/16-20':{d:11.1,p:1.27,At:76.6,kind:'Inch UNF (fine)'},
-  '1/2-20':{d:12.7,p:1.27,At:103.2,kind:'Inch UNF (fine)'},
-  '9/16-18':{d:14.3,p:1.411,At:131,kind:'Inch UNF (fine)'},
-  '5/8-18':{d:15.9,p:1.411,At:165.1,kind:'Inch UNF (fine)'},
-  '3/4-16':{d:19,p:1.588,At:240.6,kind:'Inch UNF (fine)'},
-  '7/8-14':{d:22.2,p:1.814,At:328.7,kind:'Inch UNF (fine)'},
-  '1-12':{d:25.4,p:2.117,At:427.8,kind:'Inch UNF (fine)'},
+  '#2-64':{d:2.18,p:0.397,At:3.54,kind:'Inch UNF (fine)'},
+  '#3-56':{d:2.51,p:0.454,At:4.68,kind:'Inch UNF (fine)'},
+  '#4-48':{d:2.84,p:0.529,At:4.26,kind:'Inch UNF (fine)'},
+  '#5-44':{d:3.18,p:0.577,At:5.35,kind:'Inch UNF (fine)'},
+  '#6-40':{d:3.51,p:0.635,At:6.55,kind:'Inch UNF (fine)'},
+  '#8-36':{d:4.17,p:0.706,At:9.52,kind:'Inch UNF (fine)'},
+  '#10-32':{d:4.826,p:0.794,At:12.90,kind:'Inch UNF (fine)'},
+  '#12-28':{d:5.49,p:0.907,At:16.6,kind:'Inch UNF (fine)'},
+  '1/4-28':{d:6.35,p:0.907,At:23.2,kind:'Inch UNF (fine)'},
+  '5/16-24':{d:7.94,p:1.058,At:37.4,kind:'Inch UNF (fine)'},
+  '3/8-24':{d:9.53,p:1.058,At:57.7,kind:'Inch UNF (fine)'},
+  '7/16-20':{d:11.11,p:1.27,At:80.0,kind:'Inch UNF (fine)'},
+  '1/2-20':{d:12.70,p:1.27,At:106.0,kind:'Inch UNF (fine)'},
+  '9/16-18':{d:14.29,p:1.411,At:132,kind:'Inch UNF (fine)'},
+  '5/8-18':{d:15.88,p:1.411,At:167,kind:'Inch UNF (fine)'},
+  '3/4-16':{d:19.05,p:1.588,At:245,kind:'Inch UNF (fine)'},
+  '7/8-14':{d:22.23,p:1.814,At:333,kind:'Inch UNF (fine)'},
+  '1-12':{d:25.4,p:2.117,At:430,kind:'Inch UNF (fine)'},
+  '1-14':{d:25.4,p:1.814,At:450,kind:'Inch UNF (fine)'},
   'M8x1':{d:8,p:1,At:39.2,kind:'Metric fine'},
   'M10x1.25':{d:10,p:1.25,At:61.2,kind:'Metric fine'},
   'M12x1.25':{d:12,p:1.25,At:92.1,kind:'Metric fine'},
@@ -516,62 +525,102 @@ function populateBoltDropdowns(){
   const stbl=$('bl-size-tbl');if(stbl){stbl.innerHTML=fams.map(([kind,list])=>`<tr><td colspan="4" style="color:var(--accent);font-size:.65rem;letter-spacing:1px">${kind.toUpperCase()}</td></tr>`+list.map(([k,z])=>`<tr><td>${k}</td><td>${z.d}</td><td>${z.p}</td><td>${z.At}</td></tr>`).join('')).join('');}
 }
 function _boltFDisp(N){if(window.UCORE&&UCORE.fDisp)return UCORE.fDisp(N,window.UCORE.isImp()?1:0);const imp=window.__uMode&&window.__uMode()==='imp';return imp?(N/4.4482216152605).toFixed(1)+' lbf':Math.round(N)+' N';}
-function _boltTDisp(Nm){if(!isFinite(Nm))return '—';const imp=window.UCORE?UCORE.isImp():(window.__uMode&&window.__uMode()==='imp');if(imp){const ft=Nm/1.3558179483314004;return(window.UCORE?UCORE.fmtNum(ft,2):ft.toFixed(2))+' lbf·ft';}return(window.UCORE?UCORE.fmtNum(Nm,2):Nm.toFixed(2))+' N·m';}
+function _boltTDisp(Nm){if(!isFinite(Nm))return '—';const imp=window.UCORE?UCORE.isImp():(window.__uMode&&window.__uMode()==='imp');if(imp){const ft=Nm/1.3558179483314004,inch=Nm/0.11298482902761671;return(window.UCORE?UCORE.fmtNum(ft,2):ft.toFixed(2))+' lbf·ft ('+(window.UCORE?UCORE.fmtNum(inch,1):inch.toFixed(1))+' lbf·in)';}return(window.UCORE?UCORE.fmtNum(Nm,2):Nm.toFixed(2))+' N·m';}
 function _boltPDisp(MPa){if(window.UCORE&&UCORE.pDisp)return UCORE.pDisp(MPa,window.UCORE.isImp()?0:1);const imp=window.__uMode&&window.__uMode()==='imp';return imp?(MPa/0.00689475729316836).toFixed(0)+' psi':MPa.toFixed(1)+' MPa';}
 function _boltLenDisp(mm){if(window.UCORE&&UCORE.lDisp)return UCORE.lDisp(mm,window.UCORE.isImp()?3:2);const imp=window.__uMode&&window.__uMode()==='imp';return imp?(mm/25.4).toFixed(3)+' in':mm.toFixed(2)+' mm';}
 function _boltAreaDisp(mm2){const imp=window.UCORE?UCORE.isImp():(window.__uMode&&window.__uMode()==='imp');if(imp)return(mm2/645.16).toFixed(4)+' in²';return mm2.toFixed(1)+' mm²';}
 function getBoltShearN(){const el=$('bl-shear');if(!el)return 0;if($('bl-shear-u'))return getForce('bl-shear');const raw=v('bl-shear');return isFinite(raw)?raw:0;}
+function getBoltFiN(){if($('bl-fi-u'))return getForce('bl-fi');const raw=v('bl-fi');return isFinite(raw)?raw:NaN;}
+function resolveBoltGrade(key){
+  if(BOLT_GRADES[key])return{key,g:BOLT_GRADES[key]};
+  const aliases={B7:'A193-B7','A193 B7':'A193-B7',b7:'A193-B7','SAE5':'SAE-5','Grade 5':'SAE-5','Grade 8':'SAE-8'};
+  const k=aliases[key]||aliases[String(key||'').trim()]||key;
+  return BOLT_GRADES[k]?{key:k,g:BOLT_GRADES[k]}:{key:'SAE-5',g:BOLT_GRADES['SAE-5']};
+}
+window.toggleBoltPreloadMode=function(){
+  const mode=sv('bl-mode')||'proof';
+  const pw=$('bl-preload-wrap'),fw=$('bl-fi-wrap'),mw=$('bl-margin-wrap'),cEl=$('bl-c');
+  if(pw)pw.style.display=mode==='proof'?'':'none';
+  if(fw)fw.style.display=mode==='target'?'':'none';
+  if(mw)mw.style.display=mode==='stack'?'':'none';
+  if(cEl&&mode==='stack'&&!cEl.dataset.userTouched){cEl.value='0';}
+  if(typeof window.calcBolt==='function')try{window.calcBolt();}catch(e){}
+};
 window.calcBolt=function(){
-  const grade=BOLT_GRADES[sv('bl-grade')]||BOLT_GRADES['SAE-5'];
-  const size=BOLT_SIZES[sv('bl-size')]||BOLT_SIZES['1/2-13'];
+  const gRes=resolveBoltGrade(sv('bl-grade'));
+  const grade=gRes.g,gradeKey=gRes.key;
+  const sizeKey=sv('bl-size'),size=BOLT_SIZES[sizeKey]||BOLT_SIZES['1/2-13'];
   const n=Math.max(1,parseInt(sv('bl-num'))||parseInt(v('bl-num'))||1);
   const Fext=getForce('bl-fext');
   const Fshear=getBoltShearN();
+  const mode=sv('bl-mode')||'proof';
   let preloadPct=v('bl-preload');
   if(!isFinite(preloadPct))preloadPct=75;
   preloadPct=preloadPct>1.5?preloadPct/100:preloadPct;
-  let C=v('bl-c');if(!isFinite(C))C=0.25;C=Math.max(0,Math.min(0.99,C));
+  let C=v('bl-c');if(!isFinite(C))C=mode==='stack'?0:0.25;C=Math.max(0,Math.min(0.99,C));
   let K=v('bl-mu');if(!isFinite(K)||K<=0)K=0.20;
+  let margin=v('bl-margin');if(!isFinite(margin)||margin<=0)margin=1;
   const out=$('bolt-results');if(!out)return;
-  if(!isFinite(Fext)){out.innerHTML='<div class="note warn">External load required.</div>';return;}
+  if(!isFinite(Fext)){out.innerHTML='<div class="note warn">Stack / external load required.</div>';return;}
   const At=size.At,Sp=grade.Sp,Sy=grade.Sy,Su=grade.Su,dmm=size.d;
   if(!(At>0)||!(Sp>0)||!(dmm>0)){out.innerHTML='<div class="note warn">Invalid bolt size/grade table data.</div>';return;}
   const Fproof=Sp*At,Fyield=Sy*At;
-  const Fi=preloadPct*Fproof;
-  const FextPer=Fext/n,FshPer=Fshear/n;
-  const Fb=Fi+C*FextPer;
-  const Fj=Fi-(1-C)*FextPer;
-  const sigma_b=Fb/At,sigma_proof_ratio=sigma_b/Sp;
+  const Fshare=Fext/n,FshPer=Fshear/n;
+  let Fi,fiNote,modeNote;
+  if(mode==='target'){
+    Fi=getBoltFiN();
+    if(!isFinite(Fi)||Fi<=0){out.innerHTML='<div class="note warn">Enter a target F_i (preload force).</div>';return;}
+    fiNote='target F_i';
+    modeNote='Target-force mode: torque from the F_i you typed (not % of proof). Use when you already know the desired rod tension.';
+  }else if(mode==='stack'){
+    Fi=margin*Fshare;
+    fiNote='margin×F/n = '+margin.toFixed(2)+'× share';
+    modeNote='Stack / tie-rod at load: members already compressed; bolts tightened under that load. Equal share F/n = '+_boltFDisp(Fshare)+' per rod. F_i = margin·F/n (margin=1.0 snugs to the already-applied stack). C≈0 — no extra classic “external on top of high preload.” Torque is for this F_i, NOT 75% of proof. Residual after press release depends on stack spring-back; raise margin if the press is removed.';
+  }else{
+    Fi=preloadPct*Fproof;
+    fiNote=(preloadPct*100).toFixed(0)+'% of proof';
+    modeNote='Classic Shigley preloaded joint: set high F_i first, then external load is shared via C. Torque for F_i = %·Sp·A_t. Wrong model if you compress the stack first and only snug rods at load.';
+  }
+  const Fb=mode==='stack'?Fi:Fi+C*Fshare;
+  const Fj=mode==='stack'?Fi:Fi-(1-C)*Fshare;
+  const sigma_b=Fb/At,sigma_proof_ratio=sigma_b/Sp,sigma_i=Fi/At;
   const tau=FshPer/At;
   const IR=Math.pow(sigma_b/Sp,2)+Math.pow(tau/(0.577*Sp),2);
   const T=K*Fi*dmm/1000;
   const T_K02=0.20*Fi*dmm/1000;
   const T_K015=0.15*Fi*dmm/1000;
-  const sepFactor=FextPer>0?Fi/(FextPer*(1-C)):Infinity;
+  const T_share=K*Fshare*dmm/1000;
+  const T_proof75=K*(0.75*Fproof)*dmm/1000;
+  const sepFactor=mode==='stack'?(Fshare>0?Fi/Fshare:Infinity):(Fshare>0&&(1-C)>0?Fi/(Fshare*(1-C)):Infinity);
   const items=[
+    ['F_stack / F_ext (total)',_boltFDisp(Fext)],
+    ['Share F/n (per rod)',_boltFDisp(Fshare)],
     ['F_proof (single)',_boltFDisp(Fproof)],
     ['F_yield (single)',_boltFDisp(Fyield)],
-    ['F_i preload',_boltFDisp(Fi)+' ('+(preloadPct*100).toFixed(0)+'% Fp)'],
-    ['F_b bolt load',_boltFDisp(Fb),Fb<Fyield?'ok':'err'],
-    ['F_j joint clamp',_boltFDisp(Fj),Fj>0?'ok':'err'],
-    ['σ_b tension',_boltPDisp(sigma_b),sigma_b<Sy?'ok':'err'],
-    ['Proof use',(sigma_proof_ratio*100).toFixed(1)+'%',sigma_proof_ratio<0.85?'ok':sigma_proof_ratio<1?'warn':'err'],
+    ['F_i used for torque',_boltFDisp(Fi)+' ('+fiNote+')'],
+    ['F_b bolt tension',_boltFDisp(Fb),Fb<Fyield?'ok':'err'],
+    ['F_j clamp (classic)',mode==='stack'?'n/a (stack @ load)':_boltFDisp(Fj),mode==='stack'?'':(Fj>0?'ok':'err')],
+    ['σ from F_i',_boltPDisp(sigma_i)],
+    ['σ_b working',_boltPDisp(sigma_b),sigma_b<Sy?'ok':'err'],
+    ['Proof use (working)',(sigma_proof_ratio*100).toFixed(1)+'%',sigma_proof_ratio<0.85?'ok':sigma_proof_ratio<1?'warn':'err'],
     ['τ shear',_boltPDisp(tau)],
     ['IR (tens+shear)',IR.toFixed(3),IR<1?'ok':'err'],
-    ['T = K·F_i·d (K='+K.toFixed(2)+')',_boltTDisp(T)],
-    ['T (K=0.20 dry)',_boltTDisp(T_K02)],
-    ['T (K=0.15 lubed)',_boltTDisp(T_K015)],
-    ['Separation safety',isFinite(sepFactor)?sepFactor.toFixed(2)+'×':'∞',sepFactor>1.5?'ok':sepFactor>1?'warn':'err']
+    ['T for F_i (K='+K.toFixed(2)+')',_boltTDisp(T),'ok'],
+    ['T if only share F/n',_boltTDisp(T_share)],
+    ['T if 75% proof (classic)',_boltTDisp(T_proof75)],
+    ['T (K=0.15 lubed, same F_i)',_boltTDisp(T_K015)],
+    ['Separation / hold margin',isFinite(sepFactor)?sepFactor.toFixed(2)+'×':'∞',sepFactor>=1?'ok':sepFactor>0.9?'warn':'err']
   ];
-  _mr(out,'<h3>JOINT RESULTS — '+sv('bl-size')+' '+sv('bl-grade')+' × '+n+'</h3>'+
+  _mr(out,'<h3>JOINT RESULTS — '+(sizeKey||'?')+' '+gradeKey+' × '+n+'</h3>'+
     '<div class="result-grid">'+items.map(i=>`<div class="result-item"><div class="lbl">${i[0]}</div><div class="val ${i[2]||''}">${i[1]}</div></div>`).join('')+'</div>'+
-    '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem"><strong>Standard:</strong> '+grade.std+'. <strong>Size:</strong> '+size.kind+', d_nom='+_boltLenDisp(dmm)+', pitch='+_boltLenDisp(size.p)+', A_t='+_boltAreaDisp(At)+'.<br><strong>Method:</strong> Shigley — F_b = F_i + C·F_ext/n, F_j = F_i − (1−C)·F_ext/n, F_i = (% preload)·Sp·A_t, T = K·F_i·d. Preload 75% proof reusable / 90% permanent. IR = (σ/Sp)² + (τ/0.577·Sp)² &lt; 1. Results follow SI/US unit mode.</p>'+
-    '<p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem"><strong>Thin-material rule of thumb:</strong> tap depth ≥ 1.0·d in steel, 1.5·d in aluminum, 2.0·d in plastic for full strength. Below 0.5·d the joint will strip the threads before the bolt yields.</p>');
+    '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem"><strong>Mode:</strong> '+modeNote+'</p>'+
+    '<p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.72rem"><strong>Standard:</strong> '+grade.std+'. <strong>Size:</strong> '+size.kind+', d_nom='+_boltLenDisp(dmm)+', pitch='+_boltLenDisp(size.p)+', A_t='+_boltAreaDisp(At)+'. <strong>T = K·F_i·d</strong> (d in consistent units). K≈0.20 dry, 0.15 lubricated — torque control scatter often ±25%.</p>'+
+    '<p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem"><strong>Example check:</strong> 7200 lbf · 10× #10-32 B7 · K=0.20 · stack@load → share 720 lbf/rod, T≈2.3 lbf·ft (not ~5.5). Classic 75% proof on the same rod is a different (higher) Fi and torque.</p>');
   const _bpn=$('bp-n');
   if(_bpn&&_bpn!==document.activeElement&&parseInt(_bpn.value)!==n){_bpn.value=n;if(typeof window.drawBoltPattern==='function')try{window.drawBoltPattern();}catch(e){}}
   const _teb=$('te-sub');
   if(_teb&&_teb!==document.activeElement&&parseFloat(_teb.value)!==Su){_teb.value=Su;if(typeof window.calcThreadEngage==='function')try{window.calcThreadEngage();}catch(e){}}
-  const _bsync={'bts-fi':Fi,'bts-d':dmm,'bts-pitch':size.p,'bts-kn':K,'bts-c':C,'bts-fext':FextPer};
+  const _bsync={'bts-fi':Fi,'bts-d':dmm,'bts-pitch':size.p,'bts-kn':K,'bts-c':C,'bts-fext':Fshare};
   let _bany=false;
   for(const _bk in _bsync){const _be=$(_bk),_bv=_bsync[_bk];if(_be&&_be!==document.activeElement&&isFinite(_bv)){const _bs=String(Math.round(_bv*1000)/1000);_be.value!==_bs&&(_be.value=_bs,_bany=true);}}
   if(_bany&&typeof window.calcBoltTorqueSeq==='function')try{window.calcBoltTorqueSeq();}catch(e){}
@@ -4231,7 +4280,9 @@ window.addEventListener('DOMContentLoaded',()=>{
     populateSecPresets();applyPreset();
     populateBoltDropdowns();
     wireLive('v-bolts',window.calcBolt);
-    window.calcBolt();
+    const cEl0=$('bl-c');if(cEl0){cEl0.addEventListener('input',()=>{cEl0.dataset.userTouched='1';});}
+    if(typeof window.toggleBoltPreloadMode==='function')window.toggleBoltPreloadMode();
+    else window.calcBolt();
     window.addEventListener('amni-units-sys',()=>{try{window.calcBolt();}catch(e){}});
     const boltBtn=document.querySelector('#v-bolts button[onclick="calcBolt()"]');
     if(boltBtn)boltBtn.style.display='none';
