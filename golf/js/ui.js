@@ -39,11 +39,12 @@ else{el.textContent=`+${vsPar}`;el.className="vs over"}
 }
 if($("#h-mull"))$("#h-mull").textContent=mulligans!=null?`Mulligan ${mulligans}`:"";
 }
-function setPower(p){
+function setPower(p,extra=""){
 $("#power-fill").style.width=`${Math.round(p*100)}%`;
-const label=p>0.02?(p<0.35?"Tap":p<0.7?"Firm":"Crush")+` · ${Math.round(p*100)}%`:"Drag to aim · release to putt";
+const mode=p<=0?(null):(p<0.28?"Feather":p<0.55?"Soft":p<0.8?"Firm":"Crush");
+const label=p>0.02?`${mode} · ${Math.round(p*100)}%${extra||""}`:"Drag aim · ←→/A D fine angle · Shift=0.15°";
 $("#power-label").textContent=label;
-$("#power-fill").style.filter=p>0.7?"brightness(1.15)":"none";
+$("#power-fill").style.filter=p>0.7?"brightness(1.15)":p>0&&p<0.28?"brightness(1.05) saturate(0.85)":"none";
 }
 let toastT=0;
 function showToast(msg,ms=2200){toast.textContent=msg;toast.classList.add("show");clearTimeout(toastT);toastT=setTimeout(()=>toast.classList.remove("show"),ms)}

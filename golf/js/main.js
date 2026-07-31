@@ -238,8 +238,10 @@ fx.pushTrail(ball.x,ballMesh.position.y,ball.z,!!ball.moving);
 chase.update(ball,game.holeData,dt,!!ball.moving||wasMoving);
 if(input&&input.dragging&&input.power>0&&canPutt()){
 const dir=aimDirFromInput();
-updateAimGraphic(aimLine,ball.x,0.2,ball.z,dir,input.power);
-ui.setPower(input.power);
+const aimY=(ball.y??0.12)+0.1;
+updateAimGraphic(aimLine,ball.x,aimY,ball.z,dir,input.power);
+const fine=input.fineDeg?` · fine ${input.fineDeg>0?"+":""}${input.fineDeg.toFixed(1)}°`:"";
+ui.setPower(input.power,fine);
 }else{aimLine.visible=false;ui.setPower(0)}
 ui.drawMinimap(game.holeData,ball);
 if(ambient)ambient.update(dt,ball.x,ball.z);

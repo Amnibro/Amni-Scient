@@ -64,22 +64,37 @@ const sc=L/Math.max(1e-3,pathLen(pts));
 for(let i=1;i<pts.length;i++){pts[i].x*=sc;pts[i].z*=sc}
 return pts;
 }
+function smoothstep(e0,e1,x){const t=clamp((x-e0)/(e1-e0),0,1);return t*t*(3-2*t)}
 function heightAt(terrain,t,phase,scale){
 const s=scale||1;
 const ph=typeof phase==="function"?phase():(phase||0);
 if(terrain==="flat")return 0;
-if(terrain==="gentle_roll")return Math.sin(t*Math.PI*2.2)*0.35*s+Math.sin(t*9+ph)*0.08*s;
-if(terrain==="washboard")return Math.sin(t*Math.PI*10)*0.12*s;
-if(terrain==="ramp_up")return t*2.4*s;
-if(terrain==="ramp_down")return(1-t)*2.2*s;
-if(terrain==="valley")return Math.sin(t*Math.PI)*-1.1*s;
-if(terrain==="ridge")return Math.sin(t*Math.PI)*1.3*s;
-if(terrain==="stairs")return Math.floor(t*6)*0.38*s;
-if(terrain==="wave")return Math.sin(t*Math.PI*3)*0.7*s+Math.sin(t*Math.PI)*0.3*s;
-if(terrain==="terrace")return Math.floor(t*4)*0.85*s;
-if(terrain==="bowl_mid")return Math.sin(t*Math.PI)*-0.9*s+(t>0.7?(t-0.7)*2:0);
-if(terrain==="drop_shelf")return t<0.55?1.6*s:0.05*s;
-return Math.sin(t*4)*0.2*s;
+if(terrain==="gentle_roll")return Math.sin(t*Math.PI*2.2)*0.35*s+Math.sin(t*9+ph)*0.06*s;
+if(terrain==="washboard")return Math.sin(t*Math.PI*8)*0.1*s;
+if(terrain==="ramp_up")return t*t*(3-2*t)*2.2*s;
+if(terrain==="ramp_down")return(1-t)*(1-t)*(3-2*(1-t))*2.0*s;
+if(terrain==="valley")return Math.sin(t*Math.PI)*-1.0*s;
+if(terrain==="ridge")return Math.sin(t*Math.PI)*1.15*s;
+if(terrain==="stairs"){
+const steps=6,u=t*steps,i=Math.floor(u),f=u-i;
+const y0=i*0.36*s,y1=Math.min(steps,i+1)*0.36*s;
+return y0+(y1-y0)*smoothstep(0.15,0.85,f);
+}
+if(terrain==="wave")return Math.sin(t*Math.PI*3)*0.55*s+Math.sin(t*Math.PI)*0.25*s;
+if(terrain==="terrace"){
+const steps=4,u=t*steps,i=Math.floor(u),f=u-i;
+const y0=i*0.75*s,y1=Math.min(steps,i+1)*0.75*s;
+return y0+(y1-y0)*smoothstep(0.2,0.8,f);
+}
+if(terrain==="bowl_mid")return Math.sin(t*Math.PI)*-0.85*s+smoothstep(0.68,1,t)*0.9*s;
+if(terrain==="drop_shelf")return 1.5*s*(1-smoothstep(0.48,0.62,t))+0.05*s;
+return Math.sin(t*4)*0.15*s;
+}
+function smoothHeights(center,passes=4){
+for(let p=0;p<passes;p++){
+const ny=center.map(c=>c.y||0);
+for(let i=1;i<center.length-1;i++)center[i].y=ny[i]*0.5+(ny[i-1]+ny[i+1])*0.25;
+}
 }
 function widthProfile(layout,t,base,rng){
 let w=base*(1+0.1*Math.sin(t*7+rng()));
@@ -93,11 +108,22 @@ return w;
 }
 function buildEdges(center,widths){
 const left=[],right=[];
-for(let i=0;i<center.length;i++){
+const n=center.length;
+const tang=[];
+for(let i=0;i<n;i++){
+const a=center[Math.max(0,i-1)],b=center[Math.min(n-1,i+1)];
+let dx=b.x-a.x,dz=b.z-a.z,len=Math.hypot(dx,dz)||1;
+tang.push({x:dx/len,z:dz/len});
+}
+for(let i=0;i<n;i++){
 const p=center[i];
-const a=center[Math.max(0,i-1)],b=center[Math.min(center.length-1,i+1)];
-let dx=b.x-a.x,dz=b.z-a.z,len=Math.hypot(dx,dz)||1;dx/=len;dz/=len;
-const nx=-dz,nz=dx,hw=widths[i]*0.5,y=p.y||0;
+let nx=-tang[i].z,nz=tang[i].x;
+if(i>0&&i<n-1){
+const n0x=-tang[i-1].z,n0z=tang[i-1].x,n1x=-tang[i].z,n1z=tang[i].x;
+nx=n0x+n1x;nz=n0z+n1z;
+const nl=Math.hypot(nx,nz)||1;nx/=nl;nz/=nl;
+}
+const hw=widths[i]*0.5,y=p.y||0;
 left.push({x:p.x+nx*hw,z:p.z+nz*hw,y});
 right.push({x:p.x-nx*hw,z:p.z-nz*hw,y});
 }
@@ -108,10 +134,10 @@ const walls=[];
 for(let i=0;i<edge.length-1;i++){
 const a=edge[i],b=edge[i+1];
 const dx=b.x-a.x,dz=b.z-a.z,len=Math.hypot(dx,dz);
-if(len<0.05)continue;
+if(len<0.04)continue;
 const y=((a.y||0)+(b.y||0))*0.5;
-const hh=h*(0.85+0.25*Math.sin(i*0.7));
-walls.push({cx:(a.x+b.x)*0.5,cz:(a.z+b.z)*0.5,cy:y,sx:thick,sz:len+0.08,rot:Math.atan2(dx,dz),h:hh+Math.abs((b.y||0)-(a.y||0))*0.5});
+const dy=Math.abs((b.y||0)-(a.y||0));
+walls.push({cx:(a.x+b.x)*0.5,cz:(a.z+b.z)*0.5,cy:y,sx:thick,sz:len+0.12,rot:Math.atan2(dx,dz),h:h+dy*0.35});
 }
 return walls;
 }
@@ -146,18 +172,24 @@ const elevScale=isAqua?1.35:0.85+diff*0.4;
 const length=clamp(24+rng()*16+diff*12+(isAqua?4:0),22,52);
 const baseW=clamp(4.0+rng()*1.8-diff*0.45+(layout==="narrow_gate"||layout==="canyon"||layout==="tank_crawl"?-0.7:0),3.1,6.4);
 const ctrl=makeCtrl(layout,length,rng);
-const center=resample(ctrl,0.38);
+const center=resample(ctrl,0.28);
+const phase=rng()*6.28;
 for(let i=0;i<center.length;i++){
 const t=i/Math.max(1,center.length-1);
-center[i].y=heightAt(terrain,t,rng()*6.28,elevScale);
+center[i].y=heightAt(terrain,t,phase,elevScale);
 if(isAqua&&layout==="elevator_hop"){
-if(t>0.28&&t<0.42)center[i].y=2.4;
-if(t>=0.42&&t<0.55)center[i].y=2.4-(t-0.42)*8;
-if(t>=0.55)center[i].y=Math.max(0,1.2-(t-0.55)*2);
+const up=smoothstep(0.22,0.34,t)*2.35;
+const across=1-smoothstep(0.42,0.58,t);
+const down=smoothstep(0.55,0.78,t);
+center[i].y=up*across+(1-across)*Math.max(0,2.35*(1-down)*0.15);
 }
-if(layout==="stair_climb")center[i].y=Math.floor(t*7)*0.42;
-if(layout==="drop_run")center[i].y=t<0.5?1.8*(1-t*1.2):0.05;
+if(layout==="stair_climb"){
+const steps=7,u=t*steps,si=Math.floor(u),f=u-si;
+center[i].y=si*0.4+(Math.min(steps,si+1)-si)*0.4*smoothstep(0.2,0.8,f);
 }
+if(layout==="drop_run")center[i].y=1.65*(1-smoothstep(0.35,0.55,t))+0.04;
+}
+smoothHeights(center,layout==="stair_climb"||terrain==="stairs"||terrain==="terrace"?2:5);
 const widths=center.map((_,i)=>widthProfile(layout,i/Math.max(1,center.length-1),baseW,rng));
 const{left,right}=buildEdges(center,widths);
 const wallH=biome.id===5||isAqua?0.75:biome.id===3?0.62:0.55;

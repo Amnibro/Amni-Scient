@@ -119,12 +119,12 @@ let dist=0;
 const yo=yOff||0;
 for(let i=0;i<n;i++){
 if(i>0)dist+=Math.hypot(left[i].x-left[i-1].x,left[i].z-left[i-1].z);
-const u=dist*0.35;
+const u=dist*0.28;
 const L=left[i],R=right[i];
-const yL=(L.y||0)+yo,yR=(R.y||0)+yo;
+const y=((L.y||0)+(R.y||0))*0.5+yo;
 const i0=i*2,i1=i*2+1;
-pos[i0*3]=L.x;pos[i0*3+1]=yL;pos[i0*3+2]=L.z;
-pos[i1*3]=R.x;pos[i1*3+1]=yR;pos[i1*3+2]=R.z;
+pos[i0*3]=L.x;pos[i0*3+1]=y;pos[i0*3+2]=L.z;
+pos[i1*3]=R.x;pos[i1*3+1]=y;pos[i1*3+2]=R.z;
 uv[i0*2]=0;uv[i0*2+1]=u;
 uv[i1*2]=1;uv[i1*2+1]=u;
 if(i<n-1){const a=i0,b=i1,c=i0+2,d=i1+2;idx.push(a,b,c,b,d,c)}
@@ -134,6 +134,7 @@ geo.setAttribute("position",new THREE.BufferAttribute(pos,3));
 geo.setAttribute("uv",new THREE.BufferAttribute(uv,2));
 geo.setIndex(idx);
 geo.computeVertexNormals();
+if(mat){mat.flatShading=false;mat.polygonOffset=true;mat.polygonOffsetFactor=-1;mat.polygonOffsetUnits=-1}
 const mesh=new THREE.Mesh(geo,mat);
 mesh.receiveShadow=true;
 return mesh;
@@ -143,13 +144,74 @@ const L=[],R=[];
 const n=Math.min(left.length,right.length);
 for(let i=0;i<n;i++){
 const lx=left[i].x,lz=left[i].z,rx=right[i].x,rz=right[i].z;
-const mx=(lx+rx)*0.5,mz=(lz+rz)*0.5;
+const mx=(lx+rx)*0.5,mz=(lz+rz)*0.5,y=((left[i].y||0)+(right[i].y||0))*0.5;
 let dx=lx-mx,dz=lz-mz,len=Math.hypot(dx,dz)||1;
 const s=(len+extra)/len;
-L.push({x:mx+dx*s,z:mz+dz*s});
-R.push({x:mx-dx*s,z:mz-dz*s});
+L.push({x:mx+dx*s,z:mz+dz*s,y});
+R.push({x:mx-dx*s,z:mz-dz*s,y});
 }
 return{L,R};
+}
+function smoothRailMesh(edge,railH,thick,mat){
+const n=edge.length;
+if(n<2)return null;
+const half=thick*0.5;
+const verts=[],uvs=[],idx=[];
+let dist=0;
+for(let i=0;i<n;i++){
+if(i>0)dist+=Math.hypot(edge[i].x-edge[i-1].x,edge[i].z-edge[i-1].z);
+const a=edge[Math.max(0,i-1)],b=edge[Math.min(n-1,i+1)];
+let tx=b.x-a.x,tz=b.z-a.z,tl=Math.hypot(tx,tz)||1;tx/=tl;tz/=tl;
+const nx=-tz,nz=tx;
+const p=edge[i],y=p.y||0,h=railH;
+const ox=nx*half,oz=nz*half;
+const base=verts.length/3;
+verts.push(p.x+ox,y,p.z+oz,p.x-ox,y,p.z-oz,p.x-ox,y+h,p.z-oz,p.x+ox,y+h,p.z+oz);
+const u=dist*0.4;
+uvs.push(0,u,1,u,1,u+0.2,0,u+0.2);
+if(i<n-1){
+const b0=base,b1=base+4;
+idx.push(b0,b0+1,b1,b0+1,b1+1,b1);
+idx.push(b0+1,b0+2,b1+1,b0+2,b1+2,b1+1);
+idx.push(b0+2,b0+3,b1+2,b0+3,b1+3,b1+2);
+idx.push(b0+3,b0,b1+3,b0,b1,b1+3);
+}
+}
+const geo=new THREE.BufferGeometry();
+geo.setAttribute("position",new THREE.Float32BufferAttribute(verts,3));
+geo.setAttribute("uv",new THREE.Float32BufferAttribute(uvs,2));
+geo.setIndex(idx);
+geo.computeVertexNormals();
+if(mat){mat.flatShading=false}
+const mesh=new THREE.Mesh(geo,mat);
+mesh.castShadow=true;mesh.receiveShadow=true;
+return mesh;
+}
+function smoothRailCap(edge,railH,thick,mat){
+const n=edge.length;
+if(n<2)return null;
+const half=thick*0.58;
+const pos=new Float32Array(n*2*3);
+const uv=new Float32Array(n*2*2);
+const idx=[];
+let dist=0;
+for(let i=0;i<n;i++){
+if(i>0)dist+=Math.hypot(edge[i].x-edge[i-1].x,edge[i].z-edge[i-1].z);
+const a=edge[Math.max(0,i-1)],b=edge[Math.min(n-1,i+1)];
+let tx=b.x-a.x,tz=b.z-a.z,tl=Math.hypot(tx,tz)||1;tx/=tl;tz/=tl;
+const nx=-tz,nz=tx;
+const p=edge[i],y=(p.y||0)+railH+0.02;
+const i0=i*2,i1=i*2+1;
+pos[i0*3]=p.x+nx*half;pos[i0*3+1]=y;pos[i0*3+2]=p.z+nz*half;
+pos[i1*3]=p.x-nx*half;pos[i1*3+1]=y;pos[i1*3+2]=p.z-nz*half;
+uv[i0*2]=0;uv[i0*2+1]=dist*0.4;uv[i1*2]=1;uv[i1*2+1]=dist*0.4;
+if(i<n-1)idx.push(i0,i1,i0+2,i1,i1+2,i0+2);
+}
+const geo=new THREE.BufferGeometry();
+geo.setAttribute("position",new THREE.BufferAttribute(pos,3));
+geo.setAttribute("uv",new THREE.BufferAttribute(uv,2));
+geo.setIndex(idx);geo.computeVertexNormals();
+const mesh=new THREE.Mesh(geo,mat);mesh.castShadow=true;return mesh;
 }
 function sandDivotGeo(radius,depth){
 const pts=[];
@@ -387,17 +449,29 @@ const ground=new THREE.Mesh(new THREE.PlaneGeometry(gw,gd,1,1),M(b.ground,{rough
 ground.rotation.x=-Math.PI/2;ground.position.set(cx,-0.04,cz);ground.receiveShadow=true;g.add(ground);
 for(const hill of(hole.hills||[]))addHill(g,hill,b,groundMap);
 const outer=expand(hole.left,hole.right,2.2);
-const rough=flatRibbon(outer.L,outer.R,0.0,M(b.rough,{rough:0.95,map:roughMap}));
+const rough=flatRibbon(outer.L,outer.R,-0.01,M(b.rough,{rough:0.95,map:roughMap}));
 if(rough)g.add(rough);
-const fair=flatRibbon(hole.left,hole.right,0.022,M(b.fairway,{rough:0.76,map:fairMap}));
+const fair=flatRibbon(hole.left,hole.right,0.012,M(b.fairway,{rough:0.76,map:fairMap}));
 if(fair)g.add(fair);
-const inner=expand(hole.left,hole.right,-Math.max(0.3,hole.width*0.16));
-const lane=flatRibbon(inner.L,inner.R,0.032,M(b.grass,{rough:0.7,map:grassMap}));
+const inner=expand(hole.left,hole.right,-Math.max(0.28,hole.width*0.14));
+const lane=flatRibbon(inner.L,inner.R,0.02,M(b.grass,{rough:0.7,map:grassMap}));
 if(lane)g.add(lane);
-const skirtL=flatRibbon(outer.L,hole.left,-0.015,M(b.ground,{rough:0.98,map:groundMap}));
-const skirtR=flatRibbon(hole.right,outer.R,-0.015,M(b.ground,{rough:0.98,map:groundMap}));
+const skirtL=flatRibbon(outer.L,hole.left,-0.02,M(b.ground,{rough:0.98,map:groundMap}));
+const skirtR=flatRibbon(hole.right,outer.R,-0.02,M(b.ground,{rough:0.98,map:groundMap}));
 if(skirtL)g.add(skirtL);if(skirtR)g.add(skirtR);
-for(const w of hole.walls)addWall(g,w,b,railMap);
+const railH=b.id===5||b.id===7?0.68:0.52;
+const railMat=M(b.rail,{rough:b.id===5||b.id===7?0.28:0.65,metal:b.id===5||b.id===7?0.7:0.1,em:b.id===5||b.id===7?b.rail:0,emi:b.id===5||b.id===7?0.4:0,map:railMap});
+const capMat=M(b.id===5||b.id===7?b.accent:b.id===2?0xa8c8d8:0x8a5528,{rough:0.4,metal:b.id===5||b.id===7?0.55:0.12,em:b.id===5||b.id===7?b.accent:0,emi:b.id===5||b.id===7?0.28:0});
+const railL=smoothRailMesh(hole.left,railH,0.32,railMat.clone());
+const railR=smoothRailMesh(hole.right,railH,0.32,railMat.clone());
+if(railL)g.add(railL);if(railR)g.add(railR);
+const capL=smoothRailCap(hole.left,railH,0.32,capMat.clone());
+const capR=smoothRailCap(hole.right,railH,0.32,capMat.clone());
+if(capL)g.add(capL);if(capR)g.add(capR);
+for(const w of hole.walls){
+if(Math.abs(w.sx-0.3)<0.05&&w.sz>0.5)continue;
+addWall(g,w,b,railMap);
+}
 addCup(g,hole,b,grassMap);
 const teeY=(hole.tee.y||0.14)-0.1;
 const teeMat=M(0xb8956a,{rough:0.88,map:makeNoiseTex("tee",0xb8956a,0x8a6840,"dirt",128,2)});
