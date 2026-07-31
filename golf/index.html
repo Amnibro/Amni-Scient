@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<title>Amni-Minigolf</title>
+<link rel="stylesheet" href="css/style.css"/>
+<script type="importmap">
+{"imports":{
+"three":"https://unpkg.com/three@0.160.0/build/three.module.js",
+"three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"
+}}
+</script>
+<script defer src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="fade"></div>
+<div id="ui">
+<div id="menu">
+<div class="menu-card panel">
+<div class="logo">AMNI MINIGOLF</div>
+<div class="tag">WebGL · 8 biomes · 144 holes · Aqua Dome elevators · hills & tanks</div>
+<label>Course</label>
+<select id="biome-select"></select>
+<label>Hot-seat players (2–4)</label>
+<input id="player-count" type="number" min="2" max="4" value="2"/>
+<div class="row">
+<button class="btn-primary" id="btn-solo" type="button">Solo Play</button>
+<button class="btn-secondary" id="btn-hotseat" type="button">Hot-Seat</button>
+</div>
+<label>Online room (PeerJS · rotating host)</label>
+<input id="room-code" type="text" placeholder="Room code / peer id"/>
+<div class="row">
+<button class="btn-neon" id="btn-create-room" type="button">Create Room</button>
+<button class="btn-secondary" id="btn-join-room" type="button">Join</button>
+</div>
+<div class="row">
+<button class="btn-primary" id="btn-online-start" type="button">Start Online Round</button>
+</div>
+<p class="hint">Left-drag aim (pull = power). Right-drag orbit. <b>R</b> restart · <b>M</b> mulligan · <b>N</b> skip · <b>Tab</b> score · <b>S</b> mute · <b>Esc</b> menu. Hard-refresh after updates.</p>
+</div>
+</div>
+<div id="hud" class="hidden">
+<div class="hud-block panel">
+<span>Course</span><b id="h-biome">—</b>
+<span id="h-hole">Hole 1/18</span>
+<span id="h-layout" class="layout">—</span>
+</div>
+<div class="hud-block panel">
+<span>Par / Score</span><b id="h-par">Par 3</b>
+<span>Strokes <b id="h-vs" class="vs even">E</b></span>
+<b id="h-strokes">0</b>
+</div>
+<div class="hud-block panel">
+<span>Total</span><b id="h-total">0</b>
+<span id="h-best">Best —</span>
+<span id="h-mull">Mulligan 1</span>
+</div>
+<div class="hud-block panel" style="pointer-events:auto">
+<span>Turn / Host</span><b><span id="h-player">—</span> · <span id="h-host">—</span></b>
+<div class="btn-col">
+<button class="btn-secondary" id="btn-show-score" type="button">Score</button>
+<button class="btn-secondary" id="btn-mulligan" type="button">Mulligan</button>
+<button class="btn-secondary" id="btn-restart" type="button">Restart</button>
+<button class="btn-secondary" id="btn-mute" type="button">Mute</button>
+<button class="btn-secondary" id="btn-menu" type="button">Menu</button>
+<button class="btn-primary" id="btn-next" type="button">Skip</button>
+</div>
+</div>
+</div>
+<canvas id="minimap" class="hidden" width="148" height="148"></canvas>
+<div id="power-wrap" class="hidden">
+<div id="power-track"><div id="power-fill"></div></div>
+<div id="power-label">Drag to aim · release to putt</div>
+</div>
+<div id="aim-hint" class="hidden">Pull back to charge · release to putt</div>
+<div id="toast" class="panel"></div>
+<div id="mp-bar" class="panel hidden">
+<div>Room <code id="mp-code">—</code></div>
+<div class="players" id="mp-players"></div>
+</div>
+<div id="scorecard">
+<div class="score-card panel">
+<h2 id="score-title">Scorecard</h2>
+<div id="score-grid" class="score-grid"></div>
+<p id="score-totals"></p>
+<div class="row">
+<button class="btn-primary" id="btn-close-score" type="button">Close</button>
+</div>
+</div>
+</div>
+</div>
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
