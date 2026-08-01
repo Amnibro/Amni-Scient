@@ -3,4 +3,5 @@
 - [x] Move units toggle bottom-left
 - [x] Fix collapsed reports blank box
 - [x] Smart geocode
-- [ ] Boot 132 + push + verify
+- [x] Boot 132 + push + verify
+

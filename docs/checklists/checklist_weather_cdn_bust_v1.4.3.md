@@ -7,6 +7,6 @@
 - [x] Update ref.js tiles import to `?v=130`
 - [x] Point index.html + stubs (app/wx-app/121–129) at wx-boot.130.js
 - [x] Guardian council + architecture_map + changelog
-- [ ] Commit + push main
-- [ ] Verify live HEAD 200 on ref.js?v=130 and forecast.js?v=130
-- [ ] User hard-refresh /weather/
+- [x] Commit + push main (b5a7ddf)
+- [x] Verify live HEAD 200 on ref.js?v=130 and forecast.js?v=130 (+ wx-boot.130)
+- [ ] User hard-refresh /weather/ (confirm no console 404)
