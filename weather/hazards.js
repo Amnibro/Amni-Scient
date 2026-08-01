@@ -6,6 +6,7 @@ sig:'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_month
 const VOLC_ELEV='https://volcanoes.usgs.gov/hans-public/api/volcano/getElevatedVolcanoes';
 const VOLC_US='https://volcanoes.usgs.gov/hans-public/api/volcano/getUSVolcanoes';
 const NWS_URL='https://api.weather.gov/alerts/active?status=actual';
+const GDACS_URL=()=>{const t=new Date(),t0=new Date(t.getTime()-14*864e5);const f=d=>d.toISOString().slice(0,10);return`https://www.gdacs.org/gdacsapi/api/events/geteventlist/SEARCH?fromdate=${f(t0)}&todate=${f(t)}&alertlevel=Orange;Red`;};
 const FALLBACK_VOLCANOES=[
 {name:'Kīlauea',lat:19.421,lon:-155.287,level:'WATCH'},
 {name:'Mauna Loa',lat:19.475,lon:-155.608,level:'ADVISORY'},
@@ -160,6 +161,53 @@ url:p['@id']||p.id||'',
 color:alertColor(classif,sev)
 });
 if(out.length>=180)break;
+}
+return out;
+}catch{return[];}
+}
+function gdacsClassif(level,etype){
+const L=(level||'').toUpperCase();
+if(L==='RED')return'warning';
+if(L==='ORANGE')return etype==='TC'||etype==='FL'||etype==='WF'?'warning':'watch';
+return'advisory';
+}
+export async function loadGdacsAlerts(){
+try{
+const j=await fetchJson(GDACS_URL(),20000);
+const out=[];
+const want=new Set(['TC','FL','VO','WF','DR','TS','ET']);
+for(const f of j.features||[]){
+const p=f.properties||{};
+const et=(p.eventtype||'').toUpperCase();
+if(!want.has(et)&&et!=='EQ')continue;
+const coords=f.geometry?.coordinates;
+const lon=coords?+coords[0]:NaN,lat=coords?+coords[1]:NaN;
+if(!Number.isFinite(lat)||!Number.isFinite(lon))continue;
+const level=(p.alertlevel||p.episodealertlevel||'Green').toString();
+const classif=gdacsClassif(level,et);
+const name=p.name||p.eventname||p.description||`${et} event`;
+const country=p.country||(p.affectedcountries||[]).map(c=>c.countryname||c.iso3).filter(Boolean).join(', ')||'';
+const sev=level.toLowerCase()==='red'?'extreme':level.toLowerCase()==='orange'?'severe':'moderate';
+const from=Date.parse(p.fromdate||p.datemodified||0)||Date.now();
+const to=Date.parse(p.todate||0);
+out.push({
+id:'gdacs-'+(p.eventtype||'x')+'-'+(p.eventid||`${lat},${lon}`),
+kind:'alert',
+classif,
+lat,lon,
+rings:[],
+title:`${et} · ${name}`,
+sev,
+area:country,
+headline:p.htmldescription||p.description||name,
+time:from,
+ttl:Math.max(6,Math.min(72,(to&&to>Date.now()?(to-Date.now()):36*3600e3)/3600e3))*3600e3,
+pulse:classif==='warning'?1:classif==='watch'?0.85:0.55,
+url:(p.url&&(p.url.report||p.url.details))||'',
+color:alertColor(classif,sev),
+src:'gdacs'
+});
+if(out.length>=120)break;
 }
 return out;
 }catch{return[];}
@@ -323,8 +371,8 @@ return c;
 return{resize,setItems,setEnabled,setFilters,start,stop,project,inView,counts};
 }
 export async function refreshHazards({zoom,capeField,precipField,tIndex,reports}){
-const [eq,volc,nws]=await Promise.all([loadEarthquakes(zoom),loadVolcanoes(),loadNwsAlerts()]);
+const [eq,volc,nws,gdacs]=await Promise.all([loadEarthquakes(zoom),loadVolcanoes(),loadNwsAlerts(),loadGdacsAlerts()]);
 const wx=weatherHazardsFromPack(capeField,precipField,tIndex,zoom);
 const rep=(reports||[]).map(r=>({...r,kind:'report',pulse:0.8}));
-return{eq,volc,nws,wx,all:[...eq,...volc,...nws,...wx,...rep]};
+return{eq,volc,nws,gdacs,wx,all:[...eq,...volc,...nws,...gdacs,...wx,...rep]};
 }
