@@ -32,6 +32,12 @@
   window.__uconv = function (el, raw) {
     el = (typeof el === 'string') ? document.getElementById(el) : el;
     if (!el || !el.dataset || !el.dataset.udim || !el._uSel) return raw;
+    /* if the field still shows exactly what we wrote, return the exact base value
+       instead of re-converting the rounded display (kills float drift) */
+    if (el.dataset.uexact !== undefined && el.dataset.ushown === String(el.value)) {
+      var ex = parseFloat(el.dataset.uexact);
+      if (isFinite(ex)) return ex;
+    }
     return toUnit(raw, el._uSel.value, el.dataset.ubase, el.dataset.udim);
   };
   var fmtNum = function (n) { if (!isFinite(n)) return n; var a = Math.abs(n); return (a !== 0 && (a >= 1e5 || a < 1e-3)) ? n.toExponential(4) : parseFloat(n.toPrecision(6)); };
@@ -56,10 +62,30 @@
       var sel = makeSelect(dim, base); inp._uSel = sel; sel._prev = base;
       sel.addEventListener('change', function () {
         var cur = parseFloat(inp.value);
-        if (isFinite(cur)) inp.value = fmtNum(toUnit(cur, sel._prev, sel.value, dim));
+        if (isFinite(cur)) {
+          /* v5.87.0 lossless round-trip. Convert FROM the remembered exact base value
+             whenever the field still shows what we last wrote, so repeated unit flips
+             cannot accumulate float noise (50 mm -> 1.9685 in -> 49.9999 mm). */
+          var exact;
+          if (inp.dataset.uexact !== undefined && inp.dataset.ushown === String(inp.value)) {
+            exact = parseFloat(inp.dataset.uexact);
+            if (!isFinite(exact)) exact = toUnit(cur, sel._prev, inp.dataset.ubase, dim);
+          } else {
+            exact = toUnit(cur, sel._prev, inp.dataset.ubase, dim);
+          }
+          inp.value = fmtNum(toUnit(exact, inp.dataset.ubase, sel.value, dim));
+          inp.dataset.uexact = String(exact);
+          inp.dataset.ushown = String(inp.value);
+        }
         sel._prev = sel.value;
         inp.dispatchEvent(new Event('input', { bubbles: true }));
         inp.dispatchEvent(new Event('change', { bubbles: true }));
+      });
+      /* a manual edit invalidates the remembered exact value */
+      inp.addEventListener('input', function () {
+        if (inp.dataset.ushown !== undefined && String(inp.value) !== inp.dataset.ushown) {
+          delete inp.dataset.uexact; delete inp.dataset.ushown;
+        }
       });
       row.appendChild(sel); n++;
     });

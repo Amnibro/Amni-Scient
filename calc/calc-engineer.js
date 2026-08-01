@@ -4,7 +4,7 @@ var TOK={};for(var _d in DIMX)for(var _u in DIMX[_d].u)TOK[_u]=TOK[_u]||_d;
 var IMP={mm:'in',cm:'in','µm':'in',m:'ft','mm²':'in²','cm²':'in²','m²':'ft²',Pa:'psi',kPa:'psi',MPa:'psi',GPa:'ksi',bar:'psi',N:'lbf',kN:'lbf',kgf:'lbf','N·m':'lbf·ft','N·mm':'lbf·in','kN·m':'lbf·ft',W:'BTU/h',kW:'hp',MW:'hp','m/s':'ft/s','km/h':'mph',kg:'lb',g:'oz',t:'lb','m³/s':'gpm','m³/hr':'gpm','m³/h':'gpm','L/s':'gpm','L/min':'gpm','mm⁴':'in⁴','cm⁴':'in⁴','mm³':'in³','cm³':'in³','°C':'°F',K:'°F','N/mm':'lbf/in','N/m':'lbf/ft','kN/m':'lbf/in'};
 function tconv(v,f,t){var c=f==='°C'?v:f==='°F'?(v-32)*5/9:v-273.15;return t==='°C'?c:t==='°F'?c*9/5+32:c+273.15}
 function conv(n,f,t){if(f===t||!isFinite(n))return n;var d=TOK[f];return d==null||TOK[t]!==d?n:d==='temp'?tconv(n,f,t):n*DIMX[d].u[f]/DIMX[d].u[t]}
-function fmt(n){if(!isFinite(n))return String(n);var a=Math.abs(n);return a!==0&&(a>=1e5||a<1e-3)?n.toExponential(3):String(parseFloat(n.toPrecision(6)))}
+function fmt(n,q){if(!isFinite(n))return String(n);var a=Math.abs(n);if(a!==0&&(a>=1e5||a<1e-3))return n.toExponential(3);/* v5.87.0 the source display carried a quantum q (half of its last decimal place). Showing 6 significant figures after a unit conversion invents precision the number never had: 2.0 mm became 0.0787402 in. Round to the converted quantum instead. */if(q&&isFinite(q)&&q>0){var dp=Math.max(0,Math.min(9,Math.ceil(-Math.log10(q*2))+1));/* never drop below 3 significant figures — quantum-only rounding can be too coarse (2.5 mm -> 0.1 in loses a digit the reader needs) */var mag=a>0?Math.floor(Math.log10(a)):0,minDp=Math.max(0,2-mag);dp=Math.min(9,Math.max(dp,minDp));return String(parseFloat(n.toFixed(dp)));}return String(parseFloat(n.toPrecision(6)))}
 var RX=/^(-?(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?)(?:\s+(\S[^]*))?$/i;
 function parseVal(s){s=String(s).trim();var m=RX.exec(s);if(!m)return null;var num=m[1],u=m[2]?m[2].trim():null,dm=/\.(\d+)/.exec(num),ex=/e([+-]?\d+)/i.exec(num),q=0.5*Math.pow(10,(ex?+ex[1]:0)-(dm?dm[1].length:0));return{n:parseFloat(num),u:u,dim:u?TOK[u]||null:null,q:q}}
 function stepUp(n,u){return u==='psi'&&Math.abs(n)>=1e3?'ksi':u==='lbf'&&Math.abs(n)>=1e4?'kip':u}
@@ -32,8 +32,12 @@ window.__ENG=API;
 var LSP='calc-out-pref',MODE='si',PREF={};
 function render(el){var bu=el.dataset.bu,bv=parseFloat(el.dataset.bv),d=TOK[bu],pref=PREF[d],tu=pref||(MODE==='imp'?IMP[bu]||bu:bu),n1;
 if(!pref&&tu!==bu){n1=conv(bv,bu,tu);var su=stepUp(n1,tu);su!==tu&&(tu=su,n1=conv(bv,bu,tu))}else n1=tu===bu?bv:conv(bv,bu,tu);
-var want=tu===bu?el.dataset.orig:fmt(n1)+' '+tu;
-el.dataset.du=tu;el.textContent!==want&&(el.textContent=want)}
+var bq=parseFloat(el.dataset.bq),q1=(isFinite(bq)&&bq>0&&d!=='temp')?Math.abs(conv(bv+bq,bu,tu)-conv(bv,bu,tu)):0;
+var want=tu===bu?el.dataset.orig:fmt(n1,q1)+' '+tu;
+/* remember exactly what WE wrote so scan() can tell our own output apart from a
+   fresh value written by the calculator — otherwise it re-captures the converted
+   text as the new base and the value is stuck in imperial forever. */
+el.dataset.du=tu;el.dataset.rendered=want;el.textContent!==want&&(el.textContent=want)}
 function scan(){document.querySelectorAll('.result-item .val, #sp-stack-out, .sp-unit-out').forEach(function(el){
 if(el.children&&el.children.length&&!el.classList.contains('val')&&el.id!=='sp-stack-out')return;
 if(el.id==='sp-stack-out'||el.classList.contains('sp-unit-out')){
@@ -42,11 +46,26 @@ var m=html.replace(/(-?(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?)\s*(N\/mm|N·m|N·mm|kN
 var d=TOK[u];if(!d)return num+' '+u;var n=parseFloat(num),tu=MODE==='imp'?(IMP[u]||u):u;if(tu===u)return num+' '+u;return fmt(conv(n,u,tu))+' '+tu});
 if(m!==html)el.innerHTML=m;return}
 if(el.children.length)return;
-if(!el.dataset.bu||el.dataset.orig!==el.textContent.trim()){var p=parseVal(el.textContent);if(!p||!p.dim)return;
+var _cur=el.textContent.trim();
+var _isOurs=el.dataset.rendered!==undefined&&el.dataset.rendered===_cur;
+if(!el.dataset.bu||(!_isOurs&&el.dataset.orig!==_cur)){var p=parseVal(_cur);if(!p||!p.dim)return;
 if(p.dim==='temp'){var lb=el.parentElement&&el.parentElement.querySelector('.lbl');if(lb&&lb.textContent.indexOf('Δ')>-1)return}
-el.dataset.bu=p.u;el.dataset.bv=p.n;el.dataset.orig=el.textContent.trim();el.dataset.dim=p.dim;el.title='click to change units'}
+el.dataset.bu=p.u;el.dataset.bv=p.n;el.dataset.bq=p.q;el.dataset.orig=_cur;el.dataset.dim=p.dim;delete el.dataset.rendered;el.title='click to change units'}
 render(el)})}
-function wrapUsys(){var _us=window.__usys;window.__usys=function(s){_us&&_us(s);MODE=s==='imp'?'imp':'si';PREF={};try{localStorage.setItem(LSP,'{}')}catch(e){}scan()}}
+function recomputeActive(){
+/* v5.87.0 many cards build their result strings through the UCORE display helpers at
+   COMPUTE time, so a unit switch has to re-run them — scan() alone can only convert
+   plain 'number unit' text and cannot touch composite strings or engineering notation
+   like 4.167x10^6 mm^4. */
+try{var vw=document.querySelector('.view.active')||document.querySelector('.view:not([style*="display: none"])');
+if(!vw)return;
+var btns=vw.querySelectorAll('button[onclick]');
+for(var i=0;i<btns.length;i++){var oc=btns[i].getAttribute('onclick')||'';
+if(!/^\s*(calc|solve|draw)\w*\s*\(\s*\)/.test(oc))continue;
+if(/apply|reset|clear|add|remove|export|load/i.test(oc))continue;
+try{btns[i].click()}catch(e){}}
+}catch(e){}}
+function wrapUsys(){var _us=window.__usys;window.__usys=function(s){_us&&_us(s);MODE=s==='imp'?'imp':'si';PREF={};try{localStorage.setItem(LSP,'{}')}catch(e){}recomputeActive();setTimeout(scan,60);setTimeout(scan,260)}}
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;')}
 function fieldLabel(inp){var l=inp.id?document.querySelector('label[for="'+(window.CSS&&CSS.escape?CSS.escape(inp.id):inp.id)+'"]'):null;if(l)return l.textContent.trim();var f=inp.closest('.field'),h=f&&f.querySelector('label');return h?h.textContent.trim():inp.id||'input'}
 function calcName(btn){var m=/^\s*(calc\w+|solve\w+)\s*\(\s*\)/.exec(btn.getAttribute('onclick')||'');return m?m[1]:null}

@@ -7,6 +7,36 @@
  *  - Bolts: live-compute, expanded grade + size lookup
  *  - Springs: type-gated presets + series/parallel + range overlay
  */
+/* v5.87.0 unit-aware display shims — every result writer routes through UCORE so the
+   sidebar SI/US toggle reaches ALL modules, not just the ones with bespoke helpers.
+   Each takes the SI base value; falls back to the SI literal if UCORE is absent. */
+function _uc(){return typeof window!=='undefined'&&window.UCORE?window.UCORE:null;}
+function _uFix(n,d,unit){return (isFinite(n)?Number(n).toFixed(d==null?2:d):'—')+' '+unit;}
+function _uL(mm,d){const U=_uc();return U?U.lDisp(mm,d):_uFix(mm,d,'mm');}
+function _uEng(x,d){if(!isFinite(x))return '—';const a=Math.abs(x);return a>=1e6?(x/1e6).toFixed(d||3)+'×10⁶':a>=1e4?(x/1e3).toFixed(d||2)+'×10³':x.toFixed(d==null?3:d);}
+function _uA(mm2,d){const U=_uc();if(!U)return _uEng(mm2,d)+' mm²';return U.isImp()?_uEng(mm2/645.16,d==null?4:d)+' in²':_uEng(mm2,d)+' mm²';}
+function _uZ(mm3,d){const U=_uc();if(!U)return _uEng(mm3,d)+' mm³';return U.isImp()?_uEng(mm3/16387.064,d==null?3:d)+' in³':_uEng(mm3,d)+' mm³';}
+function _uI(mm4,d){const U=_uc();if(!U)return _uEng(mm4,d)+' mm⁴';return U.isImp()?_uEng(mm4/416231.4256,d==null?3:d)+' in⁴':_uEng(mm4,d)+' mm⁴';}
+function _uF(N,d){const U=_uc();return U?U.fDisp(N,d):_uFix(N,d,'N');}
+function _uFk(kN,d){const U=_uc();return U?(U.isImp()?U.fmtNum(kN*1000/4.4482216152605/1000,d==null?2:d)+' kip':U.fmtNum(kN,d==null?2:d)+' kN'):_uFix(kN,d,'kN');}
+function _uT(Nm,d){const U=_uc();return U?U.tDisp(Nm,d):_uFix(Nm,d,'N·m');}
+function _uK(Npm,d){const U=_uc();return U?U.kDisp(Npm,d):_uFix(Npm,d,'N/mm');}
+function _uP(MPa,d){const U=_uc();return U?U.pDisp(MPa,d):_uFix(MPa,d,'MPa');}
+function _uPg(GPa,d){const U=_uc();return U?(U.isImp()?U.fmtNum(GPa*1000/0.00689475729316836/1e6,d==null?2:d)+' Msi':U.fmtNum(GPa,d==null?2:d)+' GPa'):_uFix(GPa,d,'GPa');}
+function _uPk(kPa,d){const U=_uc();return U?(U.isImp()?U.fmtNum(kPa/6.89475729316836,d==null?2:d)+' psi':U.fmtNum(kPa,d==null?2:d)+' kPa'):_uFix(kPa,d,'kPa');}
+function _uTemp(C,d){const U=_uc();return U?U.TDisp(C,d):_uFix(C,d,'°C');}
+function _uW(kW,d){const U=_uc();return U?U.wDisp(kW*1000,d):_uFix(kW,d,'kW');}
+function _uV(ms,d){const U=_uc();return U?U.vDisp(ms,d):_uFix(ms,d,'m/s');}
+function _uAcc(ms2,d){const U=_uc();return U?U.accDisp(ms2,d):_uFix(ms2,d,'m/s²');}
+function _uQ(m3h,d){const U=_uc();return U?U.qDisp(m3h,d):_uFix(m3h,d,'m³/h');}
+function _uQls(Ls,d){const U=_uc();return U?(U.isImp()?U.fmtNum(Ls*3.6/0.2271247,d==null?2:d)+' gpm':U.fmtNum(Ls,d==null?2:d)+' L/s'):_uFix(Ls,d,'L/s');}
+function _uM(kg,d){const U=_uc();return U?U.mDisp(kg,d):_uFix(kg,d,'kg');}
+function _uMdot(kgs,d){const U=_uc();return U?U.mdotDisp(kgs,d):_uFix(kgs,d,'kg/s');}
+function _uH(h,d){const U=_uc();return U?U.hDisp(h,d):_uFix(h,d,'W/m²K');}
+function _uFlux(q,d){const U=_uc();return U?U.fluxDisp(q,d):_uFix(q,d,'W/m²');}
+function _uSE(kJkg,d){const U=_uc();return U?U.seDisp(kJkg*1000,d):_uFix(kJkg,d,'kJ/kg');}
+function _uKI(k,d){const U=_uc();return U?U.kiDisp(k,d):_uFix(k,d,'MPa·√m');}
+
 (function(){
 'use strict';
 const $=id=>document.getElementById(id);
@@ -20,7 +50,7 @@ function loadCustomSection(){if(window.__customSection)return window.__customSec
 function injectSectionImportChip(){const bm=$('bm-i');if(!bm)return;const wrap=bm.closest('.field');if(!wrap||wrap.querySelector('.sec-import-chip'))return;const chip=document.createElement('button');chip.type='button';chip.className='btn btn-sm sec-import-chip';chip.style.cssText='margin-top:.3rem;font-size:.65rem;padding:3px 8px;background:var(--accent);color:#000;border:0;border-radius:3px;cursor:pointer';chip.textContent='↙ USE CUSTOM SECTION';chip.onclick=()=>{const s=loadCustomSection();if(!s||!s.Ix){cfToast('No custom section saved yet — visit the Sections tab and Calculate first.');return;}bm.value=(s.Ix/1e4).toFixed(3);const u=$('bm-i-u');if(u)u.value='cm4';bm.dispatchEvent(new Event('input',{bubbles:true}));chip.textContent='✅ LOADED '+s.label+' (I_x='+(s.Ix/1e4).toFixed(2)+' cm⁴)';setTimeout(()=>{chip.textContent='↙ USE CUSTOM SECTION';},2200);};wrap.appendChild(chip);}
 function injectSectionExportButton(){const out=$('sec-results');if(!out)return;if(out.querySelector('.sec-export-row'))return;const last=window.__customSection;if(!last||!last.Ix)return;const row=document.createElement('div');row.className='sec-export-row';row.style.cssText='margin-top:.6rem;display:flex;gap:.4rem;flex-wrap:wrap';row.innerHTML='<button type="button" class="btn btn-sm" onclick="window.__sectionToBeam()" style="font-size:.7rem">→ LOAD INTO BEAM (I_x)</button><button type="button" class="btn btn-sm" onclick="window.__sectionToColumns()" style="font-size:.7rem">→ LOAD INTO COLUMNS (r, A)</button><button type="button" class="btn btn-sm" onclick="window.__sectionToShaft()" style="font-size:.7rem">→ LOAD INTO SHAFTS (J)</button><span style="font-size:.65rem;color:var(--dim);align-self:center">Saved: '+last.label+'</span>';out.appendChild(row);}
 window.__sectionToBeam=function(){const s=loadCustomSection();if(!s||!s.Ix){cfToast('Calculate a section first.');return;}const bm=$('bm-i');if(!bm){cfToast('Open the Beams tab.');return;}bm.value=(s.Ix/1e4).toFixed(3);const u=$('bm-i-u');if(u)u.value='cm4';bm.dispatchEvent(new Event('input',{bubbles:true}));const tab=document.querySelector('[data-v="beam"]');if(tab)tab.click();};
-window.__sectionToShaft=function(){const s=loadCustomSection();if(!s||!s.J){cfToast('This section has no J (torsion constant) — works only for closed solid/hollow sections.');return;}const sh=$('sh-do')||$('sh-J');if(!sh){cfToast('Open the Shafts tab.');return;}if(sh.id==='sh-J'){sh.value=s.J.toFixed(2);sh.dispatchEvent(new Event('input',{bubbles:true}));}else cfToast('Shaft tab uses d_outer / d_inner directly. J='+s.J.toFixed(2)+' mm⁴ — set Do/Di to a pipe geometry that matches.');const tab=document.querySelector('[data-v="shafts"]');if(tab)tab.click();};
+window.__sectionToShaft=function(){const s=loadCustomSection();if(!s||!s.J){cfToast('This section has no J (torsion constant) — works only for closed solid/hollow sections.');return;}const sh=$('sh-do')||$('sh-J');if(!sh){cfToast('Open the Shafts tab.');return;}if(sh.id==='sh-J'){sh.value=s.J.toFixed(2);sh.dispatchEvent(new Event('input',{bubbles:true}));}else cfToast('Shaft tab uses d_outer / d_inner directly. J='+_uI(s.J,2)+' — set Do/Di to a pipe geometry that matches.');const tab=document.querySelector('[data-v="shafts"]');if(tab)tab.click();};
 window.__sectionToColumns=function(){const s=loadCustomSection();if(!s||!isFinite(s.A)){cfToast('Calculate a section first.');return;}const cr=$('cl-r'),ca=$('cl-a');if(!cr||!ca){cfToast('Open the Columns tab.');return;}const rs=[s.rx,s.ry].filter(x=>isFinite(x)&&x>0),rmin=rs.length?Math.min.apply(null,rs):null;rmin&&(cr.value=rmin.toFixed(3),cr.dispatchEvent(new Event('input',{bubbles:true})));ca.value=s.A.toFixed(1);ca.dispatchEvent(new Event('input',{bubbles:true}));const tab=document.querySelector('[data-v="columns"]');if(tab)tab.click();};
 function pTheme(){
   const css=getComputedStyle(document.documentElement);
@@ -154,7 +184,7 @@ window.solveBeam=function(){
       else if(ld.type==='moment'){MF+=ld.mag;}
     });
     reactions[f.x]={V:-RF,M:-MF,type:'fixed'};
-    extraNote='Cantilever (fixed at '+f.x.toFixed(0)+' mm). Other supports ignored.';
+    extraNote='Cantilever (fixed at '+_uL(f.x,0)+'). Other supports ignored.';
   }else if(supports.length>=2){
     const A=supports[0],B=supports[supports.length-1];
     let MA=0,Ftot=0;
@@ -167,7 +197,7 @@ window.solveBeam=function(){
     const RA=-Ftot-RB;
     reactions[A.x]={V:RA,M:0,type:A.type};
     reactions[B.x]={V:RB,M:0,type:B.type};
-    if(supports.length>2)extraNote='Solving as simply supported between extreme supports ('+A.x.toFixed(0)+' / '+B.x.toFixed(0)+' mm). Intermediate supports ignored — use a typed pin/roller pair for now.';
+    if(supports.length>2)extraNote='Solving as simply supported between extreme supports ('+A.x.toFixed(0)+' / '+_uL(B.x,0)+'). Intermediate supports ignored — use a typed pin/roller pair for now.';
   }
   function shearAt(x){
     let V=0;
@@ -217,7 +247,7 @@ window.solveBeam=function(){
   const rxLines=Object.entries(reactions).map(([x,r])=>{
     const xN=parseFloat(x);
     const VkN=(r.V/1000).toFixed(3);
-    const MNm=r.type==='fixed'?(r.M/1000).toFixed(3)+' N·m':'-';
+    const MNm=r.type==='fixed'?_uT((r.M/1000),3):'-';
     return `<tr><td>${r.type.toUpperCase()} @ ${xN.toFixed(0)} mm</td><td>${VkN} kN</td><td>${MNm}</td></tr>`;
   }).join('');
   out.innerHTML=`
@@ -345,7 +375,7 @@ function drawPresetOutline(key,p){
   x.fillStyle='rgba(255,107,53,0.18)';x.fill('evenodd');
   x.strokeStyle='#ff6b35';x.lineWidth=2;x.stroke();
   x.fillStyle='#9aa';x.font='11px JetBrains Mono,monospace';x.textAlign='center';
-  x.fillText((maxX-minX).toFixed(0)+' mm wide × '+(maxY-minY).toFixed(0)+' mm tall (to scale)',c.width/2,c.height-8);
+  x.fillText(_uL((maxX-minX),0)+' wide × '+_uL((maxY-minY),0)+' tall (to scale)',c.width/2,c.height-8);
 }
 window.applyPreset=function(){
   const sel=$('sec-presets');if(!sel)return;
@@ -355,20 +385,20 @@ window.applyPreset=function(){
   const out=$('sec-results');if(!out)return;
   const fmt=(x,d)=>!isFinite(x)?'—':Math.abs(x)>=1e6?(x/1e6).toFixed(d||3)+'×10⁶':Math.abs(x)>=1e4?(x/1e3).toFixed(d||2)+'×10³':x.toFixed(d||3);
   const items=[];
-  if(res.A!==undefined)items.push(['A',fmt(res.A)+' mm²']);
-  if(res.Ix!==undefined)items.push(['I_x',fmt(res.Ix)+' mm⁴']);
-  if(res.Iy!==undefined)items.push(['I_y',fmt(res.Iy)+' mm⁴']);
-  if(res.Sx!==undefined)items.push(['S_x',fmt(res.Sx)+' mm³']);
-  if(res.Sy!==undefined)items.push(['S_y',fmt(res.Sy)+' mm³']);
-  if(res.Sx_top!==undefined)items.push(['S_x (top)',fmt(res.Sx_top)+' mm³']);
-  if(res.Sx_bot!==undefined)items.push(['S_x (bot)',fmt(res.Sx_bot)+' mm³']);
-  if(res.Zx!==undefined)items.push(['Z_x (plastic)',fmt(res.Zx)+' mm³']);
-  if(res.Zy!==undefined)items.push(['Z_y (plastic)',fmt(res.Zy)+' mm³']);
-  if(res.rx!==undefined)items.push(['r_x',fmt(res.rx,3)+' mm']);
-  if(res.ry!==undefined)items.push(['r_y',fmt(res.ry,3)+' mm']);
-  if(res.J!==undefined)items.push(['J (torsion)',fmt(res.J)+' mm⁴']);
-  if(res.yCentroid!==undefined)items.push(['ȳ',fmt(res.yCentroid,3)+' mm']);
-  if(res.xCentroid!==undefined)items.push(['x̄',fmt(res.xCentroid,3)+' mm']);
+  if(res.A!==undefined)items.push(['A',_uA(res.A)]);
+  if(res.Ix!==undefined)items.push(['I_x',_uI(res.Ix)]);
+  if(res.Iy!==undefined)items.push(['I_y',_uI(res.Iy)]);
+  if(res.Sx!==undefined)items.push(['S_x',_uZ(res.Sx)]);
+  if(res.Sy!==undefined)items.push(['S_y',_uZ(res.Sy)]);
+  if(res.Sx_top!==undefined)items.push(['S_x (top)',_uZ(res.Sx_top)]);
+  if(res.Sx_bot!==undefined)items.push(['S_x (bot)',_uZ(res.Sx_bot)]);
+  if(res.Zx!==undefined)items.push(['Z_x (plastic)',_uZ(res.Zx)]);
+  if(res.Zy!==undefined)items.push(['Z_y (plastic)',_uZ(res.Zy)]);
+  if(res.rx!==undefined)items.push(['r_x',_uL(res.rx,3)]);
+  if(res.ry!==undefined)items.push(['r_y',_uL(res.ry,3)]);
+  if(res.J!==undefined)items.push(['J (torsion)',_uI(res.J)]);
+  if(res.yCentroid!==undefined)items.push(['ȳ',_uL(res.yCentroid,3)]);
+  if(res.xCentroid!==undefined)items.push(['x̄',_uL(res.xCentroid,3)]);
   out.innerHTML='<h3>SECTION PROPERTIES — '+preset.label.toUpperCase()+'</h3>'+
     '<div class="result-grid">'+items.map(i=>`<div class="result-item"><div class="lbl">${i[0]}</div><div class="val">${i[1]}</div></div>`).join('')+'</div>'+
     '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.7rem">A = area, I = second moment of area, S = elastic section modulus (I/c), Z = plastic section modulus, r = radius of gyration (√(I/A)), J = polar/torsion constant. All bending values are about the centroidal axis. Values change instantly when you edit inputs above.</p>';
@@ -524,11 +554,11 @@ function populateBoltDropdowns(){
   const gtbl=$('bl-grade-tbl');if(gtbl){gtbl.innerHTML=Object.entries(BOLT_GRADES).map(([k,g])=>`<tr><td>${k}</td><td>${g.Sp}</td><td>${g.Sy}</td><td>${g.Su}</td></tr>`).join('');}
   const stbl=$('bl-size-tbl');if(stbl){stbl.innerHTML=fams.map(([kind,list])=>`<tr><td colspan="4" style="color:var(--accent);font-size:.65rem;letter-spacing:1px">${kind.toUpperCase()}</td></tr>`+list.map(([k,z])=>`<tr><td>${k}</td><td>${z.d}</td><td>${z.p}</td><td>${z.At}</td></tr>`).join('')).join('');}
 }
-function _boltFDisp(N){if(window.UCORE&&UCORE.fDisp)return UCORE.fDisp(N,window.UCORE.isImp()?1:0);const imp=window.__uMode&&window.__uMode()==='imp';return imp?(N/4.4482216152605).toFixed(1)+' lbf':Math.round(N)+' N';}
+function _boltFDisp(N){if(window.UCORE&&UCORE.fDisp)return UCORE.fDisp(N,window.UCORE.isImp()?1:0);const imp=window.__uMode&&window.__uMode()==='imp';return imp?(N/4.4482216152605).toFixed(1)+' lbf':_uF(N,0);}
 function _boltTDisp(Nm){if(!isFinite(Nm))return '—';const imp=window.UCORE?UCORE.isImp():(window.__uMode&&window.__uMode()==='imp');if(imp){const ft=Nm/1.3558179483314004,inch=Nm/0.11298482902761671;return(window.UCORE?UCORE.fmtNum(ft,2):ft.toFixed(2))+' lbf·ft ('+(window.UCORE?UCORE.fmtNum(inch,1):inch.toFixed(1))+' lbf·in)';}return(window.UCORE?UCORE.fmtNum(Nm,2):Nm.toFixed(2))+' N·m';}
-function _boltPDisp(MPa){if(window.UCORE&&UCORE.pDisp)return UCORE.pDisp(MPa,window.UCORE.isImp()?0:1);const imp=window.__uMode&&window.__uMode()==='imp';return imp?(MPa/0.00689475729316836).toFixed(0)+' psi':MPa.toFixed(1)+' MPa';}
-function _boltLenDisp(mm){if(window.UCORE&&UCORE.lDisp)return UCORE.lDisp(mm,window.UCORE.isImp()?3:2);const imp=window.__uMode&&window.__uMode()==='imp';return imp?(mm/25.4).toFixed(3)+' in':mm.toFixed(2)+' mm';}
-function _boltAreaDisp(mm2){const imp=window.UCORE?UCORE.isImp():(window.__uMode&&window.__uMode()==='imp');if(imp)return(mm2/645.16).toFixed(4)+' in²';return mm2.toFixed(1)+' mm²';}
+function _boltPDisp(MPa){if(window.UCORE&&UCORE.pDisp)return UCORE.pDisp(MPa,window.UCORE.isImp()?0:1);const imp=window.__uMode&&window.__uMode()==='imp';return imp?(MPa/0.00689475729316836).toFixed(0)+' psi':_uP(MPa,1);}
+function _boltLenDisp(mm){if(window.UCORE&&UCORE.lDisp)return UCORE.lDisp(mm,window.UCORE.isImp()?3:2);const imp=window.__uMode&&window.__uMode()==='imp';return imp?(mm/25.4).toFixed(3)+' in':_uL(mm,2);}
+function _boltAreaDisp(mm2){const imp=window.UCORE?UCORE.isImp():(window.__uMode&&window.__uMode()==='imp');if(imp)return(mm2/645.16).toFixed(4)+' in²';return _uA(mm2,1);}
 function getBoltShearN(){const el=$('bl-shear');if(!el)return 0;if($('bl-shear-u'))return getForce('bl-shear');const raw=v('bl-shear');return isFinite(raw)?raw:0;}
 function getBoltFiN(){if($('bl-fi-u'))return getForce('bl-fi');const raw=v('bl-fi');return isFinite(raw)?raw:NaN;}
 function resolveBoltGrade(key){
@@ -548,7 +578,7 @@ function _boltKDisp(Npm){
   if(!(Npm>0))return '—';
   const imp=window.UCORE?UCORE.isImp():(window.__uMode&&window.__uMode()==='imp');
   if(imp)return(Npm/0.175126835).toFixed(0)+' lbf/in';
-  return Npm.toFixed(1)+' N/mm';
+  return _uK(Npm,1);
 }
 window.toggleBoltPreloadMode=function(){
   const mode=sv('bl-mode')||'underload';
@@ -562,7 +592,7 @@ window.toggleBoltPreloadMode=function(){
   show('bl-km-wrap',isUL);
   show('bl-c-wrap',isProof||isStack);
   const lab=$('bl-fext-lab');
-  if(lab)lab.textContent=isUL?'DESIRED RESIDUAL (after press release)':isStack?'STACK LOAD (press stays on)':isTarget?'REFERENCE LOAD (optional)':'EXTERNAL LOAD';
+  if(lab)lab.textContent=isUL?'DESIRED RESIDUAL (after press release)':isStack?'APPLIED LOAD (stays on during bolting)':isTarget?'REFERENCE LOAD (optional)':'EXTERNAL LOAD';
   const cEl=$('bl-c');
   if(cEl&&isStack&&!cEl.dataset.userTouched)cEl.value='0';
   if(typeof window.calcBolt==='function')try{window.calcBolt();}catch(e){}
@@ -593,12 +623,12 @@ window.calcBolt=function(){
     Fi=getBoltFiN();
     if(!isFinite(Fi)||Fi<=0){out.innerHTML='<div class="note warn">Enter a target F_i (preload force).</div>';return;}
     fiNote='target F_i';
-    modeNote='Target-force mode: torque from the F_i you typed. Ignores proof % and stack spring-back.';
+    modeNote='Target-force mode: torque from the F_i you typed. Ignores proof % and joint spring-back.';
     Fb=Fi+C*Fshare;Fj=Fi-(1-C)*Fshare;sepFactor=Fshare>0&&(1-C)>0?Fi/(Fshare*(1-C)):Infinity;
   }else if(mode==='stack'){
     Fi=margin*Fshare;
     fiNote='margin×F/n (press stays on)';
-    modeNote='Stack share with press still on: equal share F/n per rod. Torque to that tension. Not for press-released residual.';
+    modeNote='Share under a load that stays applied: equal share F/n per bolt. Torque to that tension. Not for the press-released residual case.';
     Fb=Fi;Fj=Fi;sepFactor=Fshare>0?Fi/Fshare:Infinity;
   }else if(mode==='underload'){
     const F_op_tgt=margin*Fop;
@@ -614,18 +644,18 @@ window.calcBolt=function(){
       Fi_extra=Math.max(0,(F_op_tgt-F_res_snug)/n);
       itemsExtra=[
         ['Press load while bolting',_boltFDisp(Fpress)],
-        ['k_b per rod',_boltKDisp(kb1)],
+        ['k_b per bolt',_boltKDisp(kb1)],
         ['k_b total (n·k_b)',_boltKDisp(kb_tot)],
-        ['k_m stack',_boltKDisp(km)],
+        ['k_m members',_boltKDisp(km)],
         ['C_b = k_b/(k_b+k_m)',C_b.toFixed(3)],
         ['Residual if only SNUGGED then release',_boltFDisp(F_res_snug),F_res_snug+1>=F_op_tgt?'ok':'warn'],
         ['Press needed if snug-only → F_op',_boltFDisp(F_press_snug)],
         ['Extra F_i under press (per rod)',_boltFDisp(Fi_extra),Fi_extra>0?'warn':'ok'],
         ['Torque that extra (same K)',_boltTDisp(K*Fi_extra*dmm/1000)]
       ];
-      modeNote='Bolt under load → press released after: (1) compress stack with press F_press, (2) snug/torque rods under that load, (3) release press. Desired residual clamp F_op = '+_boltFDisp(F_op_tgt)+' total → '+_boltFDisp(Fi)+' per rod. If only snugged at compressed length, residual after release is F_press·k_b/(k_b+k_m). Shortfall is closed by extra rod tension under the press. Primary torque below is for residual F_op/n (what the rods should carry after release).';
+      modeNote='Bolt under load → press released after: (1) load the joint with F_press, (2) snug/torque the bolts under that load, (3) release the load. Desired residual clamp F_op = '+_boltFDisp(F_op_tgt)+' total → '+_boltFDisp(Fi)+' per rod. If only snugged at compressed length, residual after release is F_press·k_b/(k_b+k_m). Shortfall is closed by extra rod tension under the press. Primary torque below is for residual F_op/n (what the rods should carry after release).';
     }else{
-      modeNote='Bolt under load → press released after: target residual F_op = '+_boltFDisp(F_op_tgt)+' after unload → torque each rod to F_i = F_op/n = '+_boltFDisp(Fi)+'. Enter rod stiffness k_b and stack stiffness k_m to estimate snug-only spring-back residual and how much extra F_i under the press is needed. Without stiffness, torque-to-F_op/n is the field target for residual load after release.';
+      modeNote='Bolt under load → press released after: target residual F_op = '+_boltFDisp(F_op_tgt)+' after unload → torque each rod to F_i = F_op/n = '+_boltFDisp(Fi)+'. Enter bolt stiffness k_b and member stiffness k_m (the JOINT STIFFNESS card computes both) to estimate snug-only spring-back residual and how much extra F_i under the press is needed. Without stiffness, torque-to-F_op/n is the field target for residual load after release.';
       itemsExtra=[
         ['Press load while bolting',_boltFDisp(Fpress)],
         ['Stiffness note','Enter k_b & k_m for spring-back split']
@@ -635,7 +665,7 @@ window.calcBolt=function(){
   }else{
     Fi=preloadPct*Fproof;
     fiNote=(preloadPct*100).toFixed(0)+'% of proof';
-    modeNote='Classic Shigley preloaded joint: high F_i first, then external load shared via C. Wrong model for press-on / bolt / press-off stacks.';
+    modeNote='Classic Shigley preloaded joint: high F_i first, then external load shared via C. Wrong model for a press-on / bolt / press-off sequence.';
     Fb=Fi+C*Fshare;Fj=Fi-(1-C)*Fshare;sepFactor=Fshare>0&&(1-C)>0?Fi/(Fshare*(1-C)):Infinity;
   }
   const sigma_b=Fb/At,sigma_proof_ratio=sigma_b/Sp,sigma_i=Fi/At;
@@ -664,7 +694,7 @@ window.calcBolt=function(){
   _mr(out,'<h3>JOINT RESULTS — '+(sizeKey||'?')+' '+gradeKey+' × '+n+' · '+(mode==='underload'?'BOLT UNDER LOAD':mode.toUpperCase())+'</h3>'+
     '<div class="result-grid">'+items.map(i=>`<div class="result-item"><div class="lbl">${i[0]}</div><div class="val ${i[2]||''}">${i[1]}</div></div>`).join('')+'</div>'+
     '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem"><strong>Mode:</strong> '+modeNote+'</p>'+
-    '<p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.72rem"><strong>Standard:</strong> '+grade.std+'. <strong>Size:</strong> '+size.kind+', d_nom='+_boltLenDisp(dmm)+', pitch='+_boltLenDisp(size.p)+', A_t='+_boltAreaDisp(At)+'. <strong>T = K·F_i·d</strong>. Torque-control scatter often ±25% — use stretch or load cells for critical stacks.</p>'+
+    '<p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.72rem"><strong>Standard:</strong> '+grade.std+'. <strong>Size:</strong> '+size.kind+', d_nom='+_boltLenDisp(dmm)+', pitch='+_boltLenDisp(size.p)+', A_t='+_boltAreaDisp(At)+'. <strong>T = K·F_i·d</strong>. Torque-control scatter often ±25% — use stretch or load cells for critical joints.</p>'+
     (mode==='underload'?'<p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem"><strong>Procedure:</strong> apply press → torque rods to ★ residual F_i (and any “extra under press” if k_b/k_m given) → release press → residual clamp ≈ F_op. Example: 7200 lbf residual · 10× #10-32 · K=0.20 → 720 lbf/rod → ~2.3 lbf·ft, not ~5 ft·lb (that was 75% proof).</p>':''));
   const _bpn=$('bp-n');
   if(_bpn&&_bpn!==document.activeElement&&parseInt(_bpn.value)!==n){_bpn.value=n;if(typeof window.drawBoltPattern==='function')try{window.drawBoltPattern();}catch(e){}}
@@ -766,10 +796,10 @@ window.calcPressFit=function(){
   const a=one(dmin),b=one(dmax);
   const dT=(dmax+clr)/(al*d/1000);
   _mr(o,'<div class="result-grid" style="margin-top:.6rem">'+[
-    ['p contact @ δmin',a.p.toFixed(1)+' MPa'],['p contact @ δmax',b.p.toFixed(1)+' MPa'],
-    ['T holding @ δmin',a.T.toFixed(1)+' N·m',a.T>0?'ok':'warn'],['T holding @ δmax',b.T.toFixed(1)+' N·m'],
-    ['F axial @ δmin',Math.round(a.F)+' N'],['F axial @ δmax',Math.round(b.F)+' N'],
-    ['σ_t hub bore @ δmax',b.st.toFixed(1)+' MPa',b.st<250?'ok':'warn'],['ΔT to slip on (hub heat)',Math.round(dT)+' K']
+    ['p contact @ δmin',_uP(a.p,1)],['p contact @ δmax',_uP(b.p,1)],
+    ['T holding @ δmin',_uT(a.T,1),a.T>0?'ok':'warn'],['T holding @ δmax',_uT(b.T,1)],
+    ['F axial @ δmin',_uF(a.F,0)],['F axial @ δmax',_uF(b.F,0)],
+    ['σ_t hub bore @ δmax',_uP(b.st,1),b.st<250?'ok':'warn'],['ΔT to slip on (hub heat)',Math.round(dT)+' K']
   ].map(r=>`<div class="result-item"><div class="lbl">${r[0]}</div><div class="val ${r[2]||''}">${r[1]}</div></div>`).join('')+'</div>'+
     '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">Lamé thick-cylinder contact pressure, diametral interference. Rate holding capacity at δ_min (worst case); check hub bore tangential stress at δ_max against yield with FoS. Heating ΔT includes the assembly clearance; keep below the hub temper temperature.</p>');
 };
@@ -824,11 +854,11 @@ window.calcTolStack=function(){
   const big=rows.slice().sort((a,b)=>b.tol-a.tol)[0];
   const pct=rss>0?(big.tol*big.tol/(rss*rss)*100):0;
   _mr(out,'<div class="result-grid" style="margin-top:.6rem">'+[
-    ['Nominal gap',nom.toFixed(3)+' mm'],
-    ['Worst case','± '+wc.toFixed(3)+' mm'],
-    ['WC limits',(nom-wc).toFixed(3)+' – '+(nom+wc).toFixed(3)+' mm',nom-wc<0&&nom>0?'warn':''],
-    ['RSS (±3σ)','± '+rss.toFixed(3)+' mm'],
-    ['RSS limits',(nom-rss).toFixed(3)+' – '+(nom+rss).toFixed(3)+' mm'],
+    ['Nominal gap',_uL(nom,3)],
+    ['Worst case','± '+_uL(wc,3)],
+    ['WC limits',(nom-wc).toFixed(3)+' – '+_uL((nom+wc),3),nom-wc<0&&nom>0?'warn':''],
+    ['RSS (±3σ)','± '+_uL(rss,3)],
+    ['RSS limits',(nom-rss).toFixed(3)+' – '+_uL((nom+rss),3)],
     ['Top contributor',big.lbl+' ('+pct.toFixed(0)+'% of RSS²)']
   ].map(r=>`<div class="result-item"><div class="lbl">${r[0]}</div><div class="val ${r[2]||''}">${r[1]}</div></div>`).join('')+'</div>'+
     '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">WC guarantees assembly at any in-tolerance combination; RSS (√Σtol²) reflects ±3σ statistical stacking when each dimension is an independent, centered ±3σ process — typical for &gt;4-dim chains. Negative WC minimum with a positive nominal gap means worst-case interference: tighten the top contributor first.</p>');
@@ -876,8 +906,8 @@ window.calcNatConv=function(){
   const h=Nu*pr2.k/L,q=h*dT;
   const hEl=$('tv-h');if(hEl&&hEl!==document.activeElement){hEl.value=h.toFixed(2);}
   _mr(out,'<h3>NATURAL CONVECTION — '+(geo==='hcyl'?'HORIZONTAL CYLINDER':'VERTICAL PLATE')+'</h3><div class="result-grid">'+[
-    ['Ra Rayleigh',Ra.toExponential(3)],['Nu',Nu.toFixed(1)],['h',h.toFixed(2)+' W/m²K'],['q″ = h·ΔT',q.toFixed(1)+' W/m²'],
-    ['Film T',(Tf-273.15).toFixed(1)+' °C'],['Regime',Ra<1e9?'Laminar':'Turbulent']
+    ['Ra Rayleigh',Ra.toExponential(3)],['Nu',Nu.toFixed(1)],['h',_uH(h,2)],['q″ = h·ΔT',_uFlux(q,1)],
+    ['Film T',_uTemp((Tf-273.15),1)],['Regime',Ra<1e9?'Laminar':'Turbulent']
   ].map(r=>`<div class="result-item"><div class="lbl">${r[0]}</div><div class="val">${r[1]}</div></div>`).join('')+'</div>'+
     '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">'+valid+(pr2.clamped?'⚠ Film temperature outside the 250–500 K air-property table — props clamped. ':'')+'Churchill-Chu all-Ra correlation; h auto-filled into the CONVECTION card above. Air properties interpolated at film temperature (Incropera Table A.4). For horizontal plates or enclosures use the geometry-specific correlations.</p>');
 };
@@ -905,7 +935,7 @@ window.calcFouledU=function(){
   const Ud=1/(1/Uc+Rh+Rc),der=(1-Ud/Uc)*100;
   const uEl=$('hx-u');if(uEl&&uEl!==document.activeElement&&Math.abs(parseFloat(uEl.value)-Ud)>0.05){uEl.value=Ud.toFixed(1);if(typeof window.calcLMTD==='function')try{window.calcLMTD();}catch(e){}}
   _mr(o,'<div class="result-grid" style="margin-top:.6rem">'+[
-    ['U dirty',Ud.toFixed(1)+' W/m²K'],['Derate',der.toFixed(1)+' %',der<30?'ok':'warn'],['ΣRf',(Rh+Rc).toExponential(2)+' m²K/W'],['Extra area needed','+'+(Uc/Ud*100-100).toFixed(1)+' %']
+    ['U dirty',_uH(Ud,1)],['Derate',der.toFixed(1)+' %',der<30?'ok':'warn'],['ΣRf',(Rh+Rc).toExponential(2)+' m²K/W'],['Extra area needed','+'+(Uc/Ud*100-100).toFixed(1)+' %']
   ].map(r=>`<div class="result-item"><div class="lbl">${r[0]}</div><div class="val ${r[2]||''}">${r[1]}</div></div>`).join('')+'</div>'+
     '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">U_dirty = 1/(1/U_clean + ΣRf), TEMA typical fouling resistances. The fouled U is written into the LMTD card so Q reflects end-of-service performance; size A for the dirty condition.</p>');
 };
@@ -942,8 +972,8 @@ window.calcAgmaPitting=function(){
   const Sc=2.22*HB+200;
   const SH=Sc/sH;
   _mr(out,'<h3>AGMA PITTING — SPUR, EXTERNAL MESH</h3><div class="result-grid">'+[
-    ['d_p pinion',d1.toFixed(1)+' mm'],['Z_I geometry',ZI.toFixed(4)],['σ_H contact',sH.toFixed(0)+' MPa',''],
-    ['S_c allowable (Gr.1, HB'+HB+')',Sc.toFixed(0)+' MPa'],['S_H = S_c/σ_H',SH.toFixed(2),SH>=1.2?'ok':SH>=1?'warn':'err'],
+    ['d_p pinion',_uL(d1,1)],['Z_I geometry',ZI.toFixed(4)],['σ_H contact',_uP(sH,0),''],
+    ['S_c allowable (Gr.1, HB'+HB+')',_uP(Sc,0)],['S_H = S_c/σ_H',SH.toFixed(2),SH>=1.2?'ok':SH>=1?'warn':'err'],
     ['Status',SH>=1.2?'PITTING OK':SH>=1?'MARGINAL':'PITTING RISK',SH>=1.2?'ok':SH>=1?'warn':'err']
   ].map(r=>`<div class="result-item"><div class="lbl">${r[0]}</div><div class="val ${r[2]||''}">${r[1]}</div></div>`).join('')+'</div>'+
     '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">Shigley/AGMA 2101: σ_H = Z_E·√(W_t·K_o·K_v·K_H/(d_p·b·Z_I)), Z_I = cosφ·sinφ/2 · m_G/(m_G+1) (spur, m_N=1). S_c = 2.22·HB+200 MPa (Grade 1 through-hardened steel, 10⁷ cycles, 99% reliability); apply Z_N life and Z_W hardness-ratio factors for other conditions. K_s and Z_R taken as 1. Complements the Lewis BENDING card — pitting usually governs hardened industrial gears.</p>');
@@ -1017,14 +1047,14 @@ window.calcBoltDesign=function(){
   const Kn=z.d-1.0825*z.p,leSteel=D.grade.Su*z.At/Math.min(0.6*D.grade.Su*0.75*Math.PI*Kn,0.6*D.grade.Su*0.875*Math.PI*z.d),leAl=D.grade.Su*z.At/(0.6*310*0.875*Math.PI*z.d);
   const rows=[
     ['USE',key+' × '+D.n,'ok'],
-    ['Torque to',r.T.toFixed(1)+' N·m ('+(r.T*0.7376).toFixed(1)+' lbf·ft)','ok'],
-    ['Preload F_i (each)',(r.Fi/1000).toFixed(2)+' kN ('+(D.pre*100).toFixed(0)+'% proof)'],
+    ['Torque to',_uT(r.T,1)+' ('+(r.T*0.7376).toFixed(1)+' lbf·ft)','ok'],
+    ['Preload F_i (each)',_uFk((r.Fi/1000),2)+' ('+(D.pre*100).toFixed(0)+'% proof)'],
     ['Proof usage',(r.use*100).toFixed(0)+' %',r.use<0.85?'ok':'warn'],
     ['Separation safety',r.sep===Infinity?'∞':r.sep.toFixed(2)+'×',r.sep>=1.5?'ok':'warn'],
     ['Shear interaction IR',r.IR.toFixed(3),r.IR<1?'ok':'err'],
-    ['Min engagement — steel',leSteel.toFixed(1)+' mm'],
-    ['Min engagement — aluminum',leAl.toFixed(1)+' mm'],
-    ['Next size up',D.next?D.next.key+' (proof '+(D.next.r.use*100).toFixed(0)+'%, T='+D.next.r.T.toFixed(1)+' N·m)':'—']
+    ['Min engagement — steel',_uL(leSteel,1)],
+    ['Min engagement — aluminum',_uL(leAl,1)],
+    ['Next size up',D.next?D.next.key+' (proof '+(D.next.r.use*100).toFixed(0)+'%, T='+_uT(D.next.r.T,1)+')':'—']
   ];
   r.nf!==null&&r.nf!==undefined&&rows.splice(6,0,['Fatigue n_f (Goodman)',r.nf.toFixed(2),r.nf>=1.5?'ok':'err']);
   _mr(o,'<div class="result-grid" style="margin-top:.6rem">'+rows.map(x=>`<div class="result-item"><div class="lbl">${x[0]}</div><div class="val ${x[2]||''}">${x[1]}</div></div>`).join('')+'</div>'+
@@ -1081,10 +1111,10 @@ window.calcSpringDesign=function(){
   const R=springDesignPick(F,dfl,C,sv('spd-mat')||'auto',cond);
   if(R.fail){_mr(o,'<div class="note warn" style="margin-top:.5rem">'+R.fail+'</div>');return;}
   _mr(o,'<div class="result-grid" style="margin-top:.6rem">'+[
-    ['USE',R.M.n,'ok'],['Wire d',R.d+' mm (calc '+R.dCalc.toFixed(2)+')','ok'],['Coil D (mean)',R.D.toFixed(1)+' mm'],
-    ['Active coils n_a',R.na.toFixed(1)],['Free length L₀',R.L0.toFixed(1)+' mm'],['Rate k',R.k.toFixed(2)+' N/mm'],
-    ['τ at F',R.tau.toFixed(0)+' / '+R.ta.toFixed(0)+' MPa allow',R.tau<=R.ta?'ok':'err'],
-    ['τ at solid (~1.15F)',R.tauSolid.toFixed(0)+' MPa',R.tauSolid<=R.ta*1.1?'ok':'warn'],
+    ['USE',R.M.n,'ok'],['Wire d',R.d+' mm (calc '+R.dCalc.toFixed(2)+')','ok'],['Coil D (mean)',_uL(R.D,1)],
+    ['Active coils n_a',R.na.toFixed(1)],['Free length L₀',_uL(R.L0,1)],['Rate k',_uK(R.k,2)],
+    ['τ at F',R.tau.toFixed(0)+' / '+_uP(R.ta,0)+' allow',R.tau<=R.ta?'ok':'err'],
+    ['τ at solid (~1.15F)',_uP(R.tauSolid,0),R.tauSolid<=R.ta*1.1?'ok':'warn'],
     ['Buckling L₀/D',R.buck.toFixed(2),R.buck<5.2?'ok':'warn']
   ].map(x=>`<div class="result-item"><div class="lbl">${x[0]}</div><div class="val ${x[2]||''}">${x[1]}</div></div>`).join('')+'</div>'+
     '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">Shigley sizing at τ_allow = '+(R.frac*100)+'%·S_ut ('+(cond.load==='static'?'static':'cyclic — unpeened; shot-peening buys ~20%')+'), S_ut = A/d^m (Table 10-4: A='+R.M.A+', m='+R.M.m+'), squared-ground ends (n_t = n_a+2), L₀ sized for 15% solid margin. L₀/D ≥ 5.2 risks buckling — guide the spring or split it. APPLY loads this into the spring analysis with S_y set so the module reproduces the same allowable.</p>');
@@ -1132,10 +1162,10 @@ window.calcShaftDesign=function(){
   if(!R.d){_mr(o,'<div class="note warn" style="margin-top:.5rem">Needs Ø &gt; 160 mm — check bending too and consider a hollow section.</div>');return;}
   const J=Math.PI*Math.pow(R.d,4)/32,tau=R.T*1000*(R.d/2)/J,thL=R.T*1000/(79300*J)*1000*180/Math.PI;
   _mr(o,'<div class="result-grid" style="margin-top:.6rem">'+[
-    ['USE Ø',R.d+' mm','ok'],['Strength needs',R.dStr.toFixed(1)+' mm'],
-    ['Stiffness needs',R.useStiff?R.dStiff.toFixed(1)+' mm':'—'],
+    ['USE Ø',R.d+' mm','ok'],['Strength needs',_uL(R.dStr,1)],
+    ['Stiffness needs',R.useStiff?_uL(R.dStiff,1):'—'],
     ['Governing',R.useStiff&&R.dStiff>R.dStr?'STIFFNESS':'STRENGTH'],
-    ['τ actual',tau.toFixed(1)+' MPa vs '+(0.4*R.Sy/R.nd).toFixed(0)+' allow',tau<=0.4*R.Sy/R.nd*1.001?'ok':'err'],
+    ['τ actual',_uP(tau,1)+' vs '+(0.4*R.Sy/R.nd).toFixed(0)+' allow',tau<=0.4*R.Sy/R.nd*1.001?'ok':'err'],
     ['θ/L actual',thL.toFixed(3)+' °/m',thL<=0.25*1.001?'ok':'warn']
   ].map(x=>`<div class="result-item"><div class="lbl">${x[0]}</div><div class="val ${x[2]||''}">${x[1]}</div></div>`).join('')+'</div>'+
     '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">Torsion-only sizing: τ_allow = 0.4·S_y/n_d, stiffness per 0.25°/m machine-design practice; rounded up to preferred stock. Combined bending+torsion or keyways need the full shaft analysis (ASME/DE-Goodman) — this is the starting diameter. APPLY loads it into torsion analysis below.</p>');
@@ -1172,8 +1202,8 @@ window.calcBearingDesign=function(){
   if(!(R.P>0)||!(R.n>0)||!(R.h>0)){_mr(o,'<div class="note warn" style="margin-top:.5rem">Need P, rpm and hours &gt; 0.</div>');return;}
   _mr(o,'<div class="result-grid" style="margin-top:.6rem">'+[
     ['L10 required',R.L10.toFixed(0)+' Mrev'],
-    ['C required — BALL',R.Cball.toFixed(1)+' kN','ok'],
-    ['C required — ROLLER',R.Croll.toFixed(1)+' kN','ok'],
+    ['C required — BALL',_uFk(R.Cball,1),'ok'],
+    ['C required — ROLLER',_uFk(R.Croll,1),'ok'],
     ['Shop for','catalog C ≥ these at your bore']
   ].map(x=>`<div class="result-item"><div class="lbl">${x[0]}</div><div class="val ${x[2]||''}">${x[1]}</div></div>`).join('')+'</div>'+
     '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">ISO 281: C = P·L10^(1/p), p = 3 ball / 10⁄3 roller, 90% reliability (a₁=1). For 95%+ reliability or marginal lubrication apply a₁/a_ISO from the bearing catalog. APPLY loads C and speed into the L10 card for the inverse check.</p>');
@@ -1214,8 +1244,8 @@ window.calcWeldDesign=function(){
   const tau=R.F*1000/(0.707*R.a*R.L);
   _mr(o,'<div class="result-grid" style="margin-top:.6rem">'+[
     ['USE LEG a',R.a+' mm (calc '+R.aReq.toFixed(2)+')','ok'],
-    ['τ actual',tau.toFixed(1)+' MPa vs '+(0.3*R.Fexx).toFixed(0)+' allow',tau<=0.3*R.Fexx?'ok':'err'],
-    ['Throat',(0.707*R.a).toFixed(2)+' mm'],
+    ['τ actual',_uP(tau,1)+' vs '+(0.3*R.Fexx).toFixed(0)+' allow',tau<=0.3*R.Fexx?'ok':'err'],
+    ['Throat',_uL((0.707*R.a),2)],
     ['Weld metal volume',(R.a*R.a/2*R.L/1000).toFixed(1)+' cm³']
   ].map(x=>`<div class="result-item"><div class="lbl">${x[0]}</div><div class="val ${x[2]||''}">${x[1]}</div></div>`).join('')+'</div>'+
     '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">AISC static allowable 0.30·F_EXX on the throat, parallel loading (conservative for transverse). Leg must also be ≥ plate-thickness minimums (AWS D1.1 Table 5.8) and base metal checked at 0.40·F_y.'+(R.dyn?' <b>⚠ CYCLIC:</b> static sizing is NOT sufficient — size against the AWS fatigue category (stress range) for the detail; expect a substantially larger or full-penetration weld.':'')+'</p>');
@@ -1327,9 +1357,9 @@ window.calcIsolatorDesign=function(){
   const R=isolatorDesignPick();
   if(!(R.m>0)||!(R.f>0)){_mr(o,'<div class="note warn" style="margin-top:.5rem">Need mass and disturbing frequency.</div>');return;}
   _mr(o,'<div class="result-grid" style="margin-top:.6rem">'+[
-    ['Total k',(R.k/1000).toFixed(1)+' kN/m','ok'],['k per mount ('+R.nm+')',(R.kEach/1000).toFixed(2)+' kN/m','ok'],
+    ['Total k',_uFk((R.k/1000),1)+'/m','ok'],['k per mount ('+R.nm+')',_uFk((R.kEach/1000),2)+'/m','ok'],
     ['Mount f_n',R.fn.toFixed(2)+' Hz'],['f/f_n ratio',R.r.toFixed(2)],
-    ['Static deflection',R.dfl.toFixed(1)+' mm',R.dfl<25?'ok':'warn'],['Transmissibility',(R.TR*100).toFixed(0)+' %']
+    ['Static deflection',_uL(R.dfl,1),R.dfl<25?'ok':'warn'],['Transmissibility',(R.TR*100).toFixed(0)+' %']
   ].map(x=>`<div class="result-item"><div class="lbl">${x[0]}</div><div class="val ${x[2]||''}">${x[1]}</div></div>`).join('')+'</div>'+
     '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">Undamped SDOF: isolation needs f/f_n = √(1+1/TR) &gt; √2. Real elastomer damping (ζ ≈ 0.05–0.1) slightly reduces isolation but tames startup resonance pass-through. Static deflection &gt; 25 mm usually means coil-spring mounts, not pads. APPLY loads m and k into the SDOF card.</p>');
 };
@@ -1372,9 +1402,9 @@ window.calcGearDesign=function(){
   const R=gearDesignPick();
   if(!R.found){_mr(o,'<div class="note warn" style="margin-top:.5rem">Even m=12 fails — raise hardness, widen face beyond 10m, split into two stages, or go helical.</div>');return;}
   _mr(o,'<div class="result-grid" style="margin-top:.6rem">'+[
-    ['USE MODULE',R.m+' mm','ok'],['Pinion',R.Np+'T, Ø'+R.d1.toFixed(0)+' mm'],['Gear',Math.round(R.Np*R.mG)+'T'],
-    ['Face width b',R.b.toFixed(0)+' mm (10·m)'],['Pitch-line V',R.V.toFixed(2)+' m/s'],['W_t',R.Wt.toFixed(0)+' N'],
-    ['σ_H / S_c',R.sH.toFixed(0)+' / '+R.Sc.toFixed(0)+' MPa'],['Pitting S_H',R.SH.toFixed(2),'ok']
+    ['USE MODULE',R.m+' mm','ok'],['Pinion',R.Np+'T, Ø'+_uL(R.d1,0)],['Gear',Math.round(R.Np*R.mG)+'T'],
+    ['Face width b',_uL(R.b,0)+' (10·m)'],['Pitch-line V',_uV(R.V,2)],['W_t',_uF(R.Wt,0)],
+    ['σ_H / S_c',R.sH.toFixed(0)+' / '+_uP(R.Sc,0)],['Pitting S_H',R.SH.toFixed(2),'ok']
   ].map(x=>`<div class="result-item"><div class="lbl">${x[0]}</div><div class="val ${x[2]||''}">${x[1]}</div></div>`).join('')+'</div>'+
     '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">Smallest standard module with pitting S_H ≥ 1.2 (AGMA contact stress, Barth K_v, K_H = 1.6, Grade-1 steel S_c = 2.22·HB+200, b = 10·m, 20° spur). Bending usually has more margin — APPLY loads both the AGMA and Lewis cards to confirm.</p>');
 };
@@ -1416,8 +1446,8 @@ window.calcBeamDesign=function(){
   const IfromS=R.Scm3;
   _mr(o,'<div class="result-grid" style="margin-top:.6rem">'+[
     ['REQUIRED I_x',R.Icm4.toFixed(0)+' cm⁴','ok'],['REQUIRED S_x',R.Scm3.toFixed(1)+' cm³','ok'],
-    ['M_max',(R.M/1000).toFixed(2)+' kN·m'],['δ allowed',(R.dAll*1000).toFixed(1)+' mm (L/'+R.rat+')'],
-    ['σ allowable',(0.6*R.Sy).toFixed(0)+' MPa (0.6·S_y)'],
+    ['M_max',(R.M/1000).toFixed(2)+' kN·m'],['δ allowed',_uL((R.dAll*1000),1)+' (L/'+R.rat+')'],
+    ['σ allowable',_uP((0.6*R.Sy),0)+' (0.6·S_y)'],
     ['Governs','pick a section meeting BOTH']
   ].map(x=>`<div class="result-item"><div class="lbl">${x[0]}</div><div class="val ${x[2]||''}">${x[1]}</div></div>`).join('')+'</div>'+
     '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">Closed-form sizing (self-weight excluded — add ~5-10% or re-run with it in the load). Find a section with I_x and S_x above both requirements in SECTIONS (its → LOAD INTO BEAM button carries it over), or APPLY here to preload span + required I into the beam solver directly.</p>');
@@ -1459,7 +1489,7 @@ window.calcColumnDesign=function(){
   _mr(o,'<div class="result-grid" style="margin-top:.6rem">'+[
     ['REQUIRED I (weak axis)',R.Icm4.toFixed(1)+' cm⁴','ok'],['REQUIRED A',R.Acm2.toFixed(1)+' cm²','ok'],
     ['Effective length',(R.K*R.L).toFixed(2)+' m (K='+R.K+')'],['Implied r at both limits',R.rMin.toFixed(1)+' cm'],
-    ['Euler capacity check','P_cr ≥ '+(R.fos*R.P/1000).toFixed(0)+' kN']
+    ['Euler capacity check','P_cr ≥ '+_uFk((R.fos*R.P/1000),0)]
   ].map(x=>`<div class="result-item"><div class="lbl">${x[0]}</div><div class="val ${x[2]||''}">${x[1]}</div></div>`).join('')+'</div>'+
     '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">Euler sizing (I from elastic buckling with FoS, A from squash). If the section you pick lands in the intermediate range, the COLUMNS card automatically switches to Johnson — APPLY preloads it; use SECTIONS → LOAD INTO COLUMNS to carry a real section\'s r and A here.</p>');
 };
@@ -1509,7 +1539,7 @@ window.calcSealDesign=function(){
   _mr(o,'<div class="result-grid" style="margin-top:.6rem">'+[
     ['CROSS-SECTION',R.cs+' mm (AS568 series)','ok'],['MATERIAL',R.mat.n,'ok'],
     ['Squeeze',(R.sq*100).toFixed(0)+' % ('+(R.gl==='face'?'axial':'radial')+')'],
-    ['Groove depth',R.depth.toFixed(2)+' mm'],['Groove width',R.width.toFixed(2)+' mm'],
+    ['Groove depth',_uL(R.depth,2)],['Groove width',_uL(R.width,2)],
     ['Backup ring',R.backup?'REQUIRED (P > 8.3 MPa)':'not needed',R.backup?'warn':'ok'],
     ['Material window',R.mat.tmin+' … '+R.mat.tmax+' °C']
   ].map(x=>`<div class="result-item"><div class="lbl">${x[0]}</div><div class="val ${x[2]||''}">${x[1]}</div></div>`).join('')+'</div>'+
@@ -1552,7 +1582,7 @@ window.calcPumpDesign=function(){
   const R=pumpDesignPick();
   if(!(R.Q>0)||!(R.H>0)){_mr(o,'<div class="note warn" style="margin-top:.5rem">Need flow and head &gt; 0.</div>');return;}
   _mr(o,'<div class="result-grid" style="margin-top:.6rem">'+[
-    ['Hydraulic power',R.Pw.toFixed(2)+' kW'],['Shaft power',R.Ps.toFixed(2)+' kW','ok'],
+    ['Hydraulic power',_uW(R.Pw,2)],['Shaft power',_uW(R.Ps,2),'ok'],
     ['MOTOR (IEC, +15%)',R.motor?R.motor+' kW':'&gt; 200 kW — engineered drive',R.motor?'ok':'warn'],
     ['Specific speed N_s',R.NsUS.toFixed(0)+' (US)'],['Pump type',R.type]
   ].map(x=>`<div class="result-item"><div class="lbl">${x[0]}</div><div class="val ${x[2]||''}">${x[1]}</div></div>`).join('')+'</div>'+
@@ -1600,7 +1630,7 @@ window.calcHxDesign=function(){
   if(!(R.Q>0)){_mr(o,'<div class="note warn" style="margin-top:.5rem">Duty required.</div>');return;}
   _mr(o,'<div class="result-grid" style="margin-top:.6rem">'+[
     ['AREA (counterflow)',R.A.toFixed(2)+' m²','ok'],['LMTD',R.lmtd.toFixed(1)+' K'],
-    ['Hot flow (if water)',R.mh.toFixed(2)+' kg/s'],['Cold flow (if water)',R.mc.toFixed(2)+' kg/s'],
+    ['Hot flow (if water)',_uMdot(R.mh,2)],['Cold flow (if water)',_uMdot(R.mc,2)],
     ['With 25% fouling margin',(R.A*1.25).toFixed(2)+' m²']
   ].map(x=>`<div class="result-item"><div class="lbl">${x[0]}</div><div class="val ${x[2]||''}">${x[1]}</div></div>`).join('')+'</div>'+
     '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">A = Q/(U·LMTD), true counterflow (apply the F-factor in the LMTD card for shell-and-tube). Typical-U presets are mid-range — the FOULED U card refines U for end-of-service. Flows assume water c_p; scale for other fluids.</p>');
@@ -1650,13 +1680,13 @@ window.calcPipeDesign=function(){
   const o=$('fld-out');if(!o)return;
   const R=pipeDesignPick();
   if(!(R.Q>0)||!(R.L>0)||!(R.dpA>0)){_mr(o,'<div class="note warn" style="margin-top:.5rem">Need flow, length and ΔP budget &gt; 0.</div>');return;}
-  if(!R.pick){_mr(o,'<div class="note warn" style="margin-top:.5rem">Nothing ≤ 12" passes — even DN300 gives '+(R.last.dp/1000).toFixed(1)+' kPa at '+R.last.vel.toFixed(2)+' m/s. Raise the ΔP budget, shorten the run, split the flow, or go to large-bore (&gt;12") pipe.</div>');return;}
+  if(!R.pick){_mr(o,'<div class="note warn" style="margin-top:.5rem">Nothing ≤ 12" passes — even DN300 gives '+_uPk((R.last.dp/1000),1)+' at '+_uV(R.last.vel,2)+'. Raise the ΔP budget, shorten the run, split the flow, or go to large-bore (&gt;12") pipe.</div>');return;}
   const P=R.pick,regime=P.Re<2300?'laminar':P.Re<4000?'transitional':'turbulent';
   _mr(o,'<div class="result-grid" style="margin-top:.6rem">'+[
-    ['PIPE',P.nps+' Sch 40 ('+P.dn+')','ok'],['Inside Ø',P.idmm.toFixed(2)+' mm'],
-    ['Velocity',P.vel.toFixed(2)+' m/s (cap '+R.svc.vmax+')','ok'],
+    ['PIPE',P.nps+' Sch 40 ('+P.dn+')','ok'],['Inside Ø',_uL(P.idmm,2)],
+    ['Velocity',_uV(P.vel,2)+' (cap '+R.svc.vmax+')','ok'],
     ['Reynolds',P.Re<2300?P.Re.toFixed(0)+' — laminar':(P.Re/1000).toFixed(1)+'k — '+regime],
-    ['Friction f',P.f.toFixed(4)],['ΔP actual',(P.dp/1000).toFixed(1)+' kPa of '+(R.dpA/1000).toFixed(0)+' allowed','ok'],
+    ['Friction f',P.f.toFixed(4)],['ΔP actual',_uPk((P.dp/1000),1)+' of '+(R.dpA/1000).toFixed(0)+' allowed','ok'],
     ['Head loss',(P.dp/(R.fl.rho*9.81)).toFixed(2)+' m of fluid']
   ].map(x=>`<div class="result-item"><div class="lbl">${x[0]}</div><div class="val ${x[2]||''}">${x[1]}</div></div>`).join('')+'</div>'+
     '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">Walks ASME B36.10 Sch 40 bores (PVC Sch 40 and stainless Sch 40S share these dimensions); Swamee-Jain friction, 64/Re below Re 2300, ΔP = (fL/D + ΣK)·ρv²/2. Velocity caps are standard practice — keep suction slow to protect NPSH. APPLY loads the Moody card; refine ΣK with your real fitting count there.</p>');
@@ -1703,14 +1733,14 @@ window.calcMotorDesign=function(){
   const R=motorDesignPick();
   if(!(R.T>0)||!(R.N>0)){_mr(o,'<div class="note warn" style="margin-top:.5rem">Need torque and speed &gt; 0.</div>');return;}
   if(!R.sy){_mr(o,'<div class="note warn" style="margin-top:.5rem">'+R.N+' rpm is above the '+(120*R.hz/2)+' rpm 2-pole synchronous ceiling at '+R.hz+' Hz — direct drive is impossible. Use a VFD above base speed, a speed-increasing gearbox, or a different machine.</div>');return;}
-  if(!R.kw||!R.hp){_mr(o,'<div class="note warn" style="margin-top:.5rem">'+R.Preq.toFixed(0)+' kW required — beyond the standard ladder (200 kW / 250 HP). Engineered / medium-voltage machine territory.</div>');return;}
+  if(!R.kw||!R.hp){_mr(o,'<div class="note warn" style="margin-top:.5rem">'+_uW(R.Preq,0)+' required — beyond the standard ladder (200 kW / 250 HP). Engineered / medium-voltage machine territory.</div>');return;}
   _mr(o,'<div class="result-grid" style="margin-top:.6rem">'+[
-    ['Required power',R.Preq.toFixed(2)+' kW ('+(R.Preq/0.7457).toFixed(1)+' HP)'],
+    ['Required power',_uW(R.Preq,2)+' ('+(R.Preq/0.7457).toFixed(1)+' HP)'],
     ['MOTOR (IEC)',R.kw+' kW','ok'],['MOTOR (NEMA)',R.hp+' HP','ok'],
     ['Poles / sync',R.sy.p+'-pole — '+R.sy.ns+' rpm'],
     ['Est. FL speed','≈ '+R.nfl+' rpm ('+(R.des.slip*100).toFixed(0)+'% slip)',Math.abs(R.nfl-R.N)/R.N>0.05?'warn':'ok'],
     ['NEMA design',R.load.des+' — LRT '+(R.des.LRT*100).toFixed(0)+'% FL'],
-    ['FL torque avail.',R.tavail.toFixed(1)+' N·m vs '+R.T+' needed',R.tavail>=R.T?'ok':'warn'],
+    ['FL torque avail.',_uT(R.tavail,1)+' vs '+R.T+' needed',R.tavail>=R.T?'ok':'warn'],
     ['Est. FLA @ '+R.V+' V',R.fla.toFixed(1)+' A']
   ].map(x=>`<div class="result-item"><div class="lbl">${x[0]}</div><div class="val ${x[2]||''}">${x[1]}</div></div>`).join('')+'</div>'+
     '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">P = Tω exactly; rating picked with your margin on the IEC kW / NEMA HP ladders; poles = smallest synchronous speed above your rpm (induction runs a few % below sync — need the speed exact? that&#39;s a VFD). Design letter from load type: B general purpose, C loaded starts, D punch/hoist. FLA assumes PF 0.85, η 0.90 — the nameplate governs. APPLY floods the torque, FLA, service-factor, slip, frame and torque-speed cards.</p>');
@@ -1767,14 +1797,14 @@ window.calcCylDesign=function(){
   const o=$('hyd-out');if(!o)return;
   const R=cylDesignPick();
   if(!(R.F>0)||!(R.Pb>0)){_mr(o,'<div class="note warn" style="margin-top:.5rem">Need force and pressure &gt; 0.</div>');return;}
-  if(!R.rod){_mr(o,'<div class="note warn" style="margin-top:.5rem">Rod would need Ø'+R.rodReq.toFixed(0)+' mm — beyond the 180 mm standard ladder. Shorten the stroke, guide the rod (better mounting K), or use a telescopic/multiple cylinders.</div>');return;}
-  if(!R.pick){_mr(o,'<div class="note warn" style="margin-top:.5rem">'+(R.Areq*1e6).toFixed(0)+' mm² of piston needed — beyond a 250 mm bore at '+R.Pb+' bar. Raise system pressure or split across multiple cylinders.</div>');return;}
+  if(!R.rod){_mr(o,'<div class="note warn" style="margin-top:.5rem">Rod would need Ø'+_uL(R.rodReq,0)+' — beyond the 180 mm standard ladder. Shorten the stroke, guide the rod (better mounting K), or use a telescopic/multiple cylinders.</div>');return;}
+  if(!R.pick){_mr(o,'<div class="note warn" style="margin-top:.5rem">'+_uA((R.Areq*1e6),0)+' of piston needed — beyond a 250 mm bore at '+R.Pb+' bar. Raise system pressure or split across multiple cylinders.</div>');return;}
   _mr(o,'<div class="result-grid" style="margin-top:.6rem">'+[
     ['BORE',R.pick.b+' mm (ISO 3320)','ok'],['ROD',R.pick.rod+' mm (ISO 4395)','ok'],
-    ['Force available',(R.dir==='push'?R.Fext:R.Fret)/1000>=R.F/1000?((R.dir==='push'?R.Fext:R.Fret)/1000).toFixed(1)+' kN '+R.dir:'—','ok'],
-    ['Other direction',(R.dir==='push'?R.Fret:R.Fext)/1000>0?((R.dir==='push'?R.Fret:R.Fext)/1000).toFixed(1)+' kN '+(R.dir==='push'?'pull':'push'):'—'],
+    ['Force available',(R.dir==='push'?R.Fext:R.Fret)/1000>=R.F/1000?_uFk(((R.dir==='push'?R.Fext:R.Fret)/1000),1)+' '+R.dir:'—','ok'],
+    ['Other direction',(R.dir==='push'?R.Fret:R.Fext)/1000>0?_uFk(((R.dir==='push'?R.Fret:R.Fext)/1000),1)+' '+(R.dir==='push'?'pull':'push'):'—'],
     ['Rod buckling FoS',R.dir==='push'?R.fosB.toFixed(1)+' (target 3.5)':'n/a — rod in tension',R.dir==='push'&&R.fosB<3.5?'warn':'ok'],
-    ['Flow for '+R.vt+' mm/s',R.Q.toFixed(1)+' L/min'],['Hydraulic power',R.Pw.toFixed(1)+' kW'],
+    ['Flow for '+R.vt+' mm/s',R.Q.toFixed(1)+' L/min'],['Hydraulic power',_uW(R.Pw,1)],
     ['Area ratio φ',R.phi.toFixed(2)]
   ].map(x=>`<div class="result-item"><div class="lbl">${x[0]}</div><div class="val ${x[2]||''}">${x[1]}</div></div>`).join('')+'</div>'+
     '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">F = P·A with 0.9 mechanical-hydraulic efficiency; push rods sized by Euler P_cr = π²EI/(KL)² at FoS 3.5 over the stroke, pulled rods by tension ≤ 100 MPa (CK45 at FoS ≈ 4). Bore/rod from the ISO 3320 / ISO 4395 series — manufacturers bind specific pairs, so confirm in the catalog. Meter-out on the rod side intensifies pressure by φ — check valve and seal ratings. APPLY loads the analysis card with the flow above; size the supply in PUMPS and the lines in FLUIDS.</p>');
@@ -1810,10 +1840,10 @@ window.calcHyd=function(){
   const P=Pb*1e5,Ab=Math.PI*bore*bore/4e6,Aann=Ab-Math.PI*rod*rod/4e6,Qm=Q/60000;
   const Fext=P*Ab*eta/1000,Fret=P*Aann*eta/1000,vext=Qm/Ab*1000,vret=Qm/Aann*1000,phi=Ab/Aann,Pw=P*Qm/1000;
   _mr(res,'<h3>CYLINDER</h3><div class="result-grid">'+[
-    ['F extend',Fext.toFixed(1)+' kN'],['F retract',Fret.toFixed(1)+' kN'],
-    ['v extend',vext.toFixed(0)+' mm/s'],['v retract',vret.toFixed(0)+' mm/s'],
-    ['Area ratio φ',phi.toFixed(2)],['Hydraulic power',Pw.toFixed(1)+' kW'],
-    ['Piston area',(Ab*1e6).toFixed(0)+' mm²'],['Annulus area',(Aann*1e6).toFixed(0)+' mm²']
+    ['F extend',_uFk(Fext,1)],['F retract',_uFk(Fret,1)],
+    ['v extend',_uL(vext,0)+'/s'],['v retract',_uL(vret,0)+'/s'],
+    ['Area ratio φ',phi.toFixed(2)],['Hydraulic power',_uW(Pw,1)],
+    ['Piston area',_uA((Ab*1e6),0)],['Annulus area',_uA((Aann*1e6),0)]
   ].map(([l,val])=>`<div class="result-item"><div class="lbl">${l}</div><div class="val">${val}</div></div>`).join('')+'</div>'+
     '<p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem">η = '+eta+' applied to force. Retract is faster but weaker (annulus). <strong>Intensification:</strong> metering out the rod side while extending multiplies rod-side pressure by φ = '+phi.toFixed(2)+' → up to '+(Pb*phi).toFixed(0)+' bar there — check valve and seal ratings.</p>');
   drawCylSchematic(bore,rod,0);
@@ -1860,7 +1890,7 @@ window.calcKeyway=function(){
   const tooLong=L>1.5*d;
   _mr(o,'<div class="result-grid" style="margin-top:.6rem">'+[
     ['KEY SECTION',b+' × '+h+' mm (DIN 6885)','ok'],
-    ['Length — shear',Ls.toFixed(1)+' mm'],['Length — crush (governs '+(Lc>=Ls?'✓':'✗')+')',Lc.toFixed(1)+' mm'],
+    ['Length — shear',_uL(Ls,1)],['Length — crush (governs '+(Lc>=Ls?'✓':'✗')+')',_uL(Lc,1)],
     ['KEY LENGTH',tooLong?L+' mm — TOO LONG':L+' mm stock',tooLong?'warn':'ok'],
     ['L / d',(L/d).toFixed(2)+(tooLong?' > 1.5':' (≤ 1.5 ✓)')]
   ].map(x=>`<div class="result-item"><div class="lbl">${x[0]}</div><div class="val ${x[2]||''}">${x[1]}</div></div>`).join('')+'</div>'+
@@ -1877,8 +1907,8 @@ window.calcSling=function(){
   const neff=n>2?2:n;
   const T=W/(neff*Math.sin(ang*Math.PI/180)),wll=T/h[1];
   _mr(res,'<h3>SLING TENSION</h3><div class="result-grid">'+[
-    ['Load',Wt+' t = '+W.toFixed(1)+' kN'],
-    ['PER-LEG TENSION',T.toFixed(2)+' kN ('+(T/9.81).toFixed(2)+' t)','ok'],
+    ['Load',Wt+' t = '+_uFk(W,1)],
+    ['PER-LEG TENSION',_uFk(T,2)+' ('+(T/9.81).toFixed(2)+' t)','ok'],
     ['Angle factor',(1/Math.sin(ang*Math.PI/180)).toFixed(3)+' at '+ang+'°'],
     ['Legs carrying',neff+(n>2?' of '+n+' (rigid load — assume 2 carry unless a spreader guarantees sharing)':'')],
     ['Hitch',h[0]+' × '+h[1]],
@@ -1897,9 +1927,9 @@ window.calcSlingCg=function(){
   const a1=Math.atan2(hh,d1)*180/Math.PI,a2=Math.atan2(hh,d2)*180/Math.PI;
   const low=Math.min(a1,a2)<30;
   _mr(res,'<h3>UNEQUAL LEGS (CoG OFFSET)</h3><div class="result-grid">'+[
-    ['Leg 1 (near, d='+d1+' m)',T1.toFixed(2)+' kN @ '+a1.toFixed(1)+'°','ok'],
-    ['Leg 2 (far, d='+d2+' m)',T2.toFixed(2)+' kN @ '+a2.toFixed(1)+'°'],
-    ['Vertical shares',V1.toFixed(2)+' + '+V2.toFixed(2)+' = '+W.toFixed(2)+' kN ✓'],
+    ['Leg 1 (near, d='+d1+' m)',_uFk(T1,2)+' @ '+a1.toFixed(1)+'°','ok'],
+    ['Leg 2 (far, d='+d2+' m)',_uFk(T2,2)+' @ '+a2.toFixed(1)+'°'],
+    ['Vertical shares',V1.toFixed(2)+' + '+V2.toFixed(2)+' = '+_uFk(W,2)+' ✓'],
     ['Leg lengths',L1.toFixed(2)+' / '+L2.toFixed(2)+' m'],
     ['NEAR LEG WLL','≥ '+(T1/9.81).toFixed(2)+' t',low?'warn':'ok']
   ].map(x=>`<div class="result-item"><div class="lbl">${x[0]}</div><div class="val ${x[2]||''}">${x[1]}</div></div>`).join('')+'</div>'+
@@ -1926,11 +1956,11 @@ window.calcRetRing=function(){
   const depth=(d1-d2)/2,cap=Math.min(Fn,Fr);
   const sb=F>0?F*1000/(Math.PI*d2*depth):0;
   _mr(o,'<div class="result-grid" style="margin-top:.6rem">'+[
-    ['GROOVE Ø d₂',d2.toFixed(1)+' mm (h11)','ok'],['GROOVE WIDTH m',m.toFixed(2)+' mm min (H13)','ok'],
-    ['Ring thickness s',s.toFixed(2)+' mm'],['Groove depth',depth.toFixed(2)+' mm per side'],
-    ['Groove capacity F_n',Fn.toFixed(1)+' kN'],['Ring capacity F_r',Fr.toFixed(1)+' kN'],
-    F>0?['APPLIED vs governing',F.toFixed(1)+' / '+cap.toFixed(1)+' kN ('+(F/cap*100).toFixed(0)+'%)',F<=cap/1.5?'ok':F<=cap?'warn':'err']:null,
-    F>0?['Groove bearing screen',sb.toFixed(0)+' MPa on the shoulder']:null
+    ['GROOVE Ø d₂',_uL(d2,1)+' (h11)','ok'],['GROOVE WIDTH m',_uL(m,2)+' min (H13)','ok'],
+    ['Ring thickness s',_uL(s,2)],['Groove depth',_uL(depth,2)+' per side'],
+    ['Groove capacity F_n',_uFk(Fn,1)],['Ring capacity F_r',_uFk(Fr,1)],
+    F>0?['APPLIED vs governing',F.toFixed(1)+' / '+_uFk(cap,1)+' ('+(F/cap*100).toFixed(0)+'%)',F<=cap/1.5?'ok':F<=cap?'warn':'err']:null,
+    F>0?['Groove bearing screen',_uP(sb,0)+' on the shoulder']:null
   ].filter(Boolean).map(x=>`<div class="result-item"><div class="lbl">${x[0]}</div><div class="val ${x[2]||''}">${x[1]}</div></div>`).join('')+'</div>'+
     '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">DIN 471 groove dimensions and load ratings (RoyMech extract of the standard tables). Ratings assume a SHARP-CORNERED abutting part — a chamfered or radiused part levers the ring open and derates it hard (ring makers publish the chamfer-derate curves; verify F_r against the catalog for anything near the limit). Grooves are stress raisers: for rotating shafts in fatigue, check the shaft at the groove root with a K_t ≈ 3-and-up. Keep at least one ring thickness of shaft beyond the groove.</p>');
 };
@@ -1971,12 +2001,12 @@ window.calcVcc=function(){
   const mdot=Q>0?Q/(h1-h4):0;
   _mr(o,'<div class="result-grid" style="margin-top:.6rem">'+[
     ['COP (cooling)',cop.toFixed(2),'ok'],['Carnot limit',copC.toFixed(2)+' ('+(cop/copC*100).toFixed(0)+'% of it)'],
-    ['P evap / P cond',ev.P.toFixed(0)+' / '+cd.P.toFixed(0)+' kPa (ratio '+(cd.P/ev.P).toFixed(2)+')',cd.P/ev.P>8?'warn':'ok'],
-    ['Refrigerating effect',(h1-h4).toFixed(1)+' kJ/kg'],
+    ['P evap / P cond',ev.P.toFixed(0)+' / '+_uPk(cd.P,0)+' (ratio '+(cd.P/ev.P).toFixed(2)+')',cd.P/ev.P>8?'warn':'ok'],
+    ['Refrigerating effect',_uSE((h1-h4),1)],
     Q>0?['Mass flow',(mdot*1000).toFixed(1)+' g/s for '+Q+' kW','ok']:null,
-    Q>0?['COMPRESSOR POWER',(mdot*(h2-h1)).toFixed(2)+' kW','ok']:null,
-    Q>0?['Condenser duty',(mdot*(h2-h4)).toFixed(2)+' kW']:null,
-    ['Discharge enthalpy',h2.toFixed(1)+' kJ/kg (h2s '+h2s.toFixed(1)+')']
+    Q>0?['COMPRESSOR POWER',_uW((mdot*(h2-h1)),2),'ok']:null,
+    Q>0?['Condenser duty',_uW((mdot*(h2-h4)),2)]:null,
+    ['Discharge enthalpy',_uSE(h2,1)+' (h2s '+h2s.toFixed(1)+')']
   ].filter(Boolean).map(x=>`<div class="result-item"><div class="lbl">${x[0]}</div><div class="val ${x[2]||''}">${x[1]}</div></div>`).join('')+'</div>'+
     '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">Ideal cycle on published R134a saturation data (Ohio Univ. thermo tables): saturated vapor in, isenthalpic expansion, isentropic compression corrected by η. The one approximation: discharge enthalpy uses dh = T·ds along the condenser isobar — good to a few % here, and stated rather than hidden. Pressure ratios past ~8 want two stages or an economizer. Suction superheat and liquid subcooling both help real COP — this is the conservative baseline.</p>');
 };
@@ -2010,9 +2040,9 @@ window.calcFracture=function(){
     N=(Math.pow(ac,e)-Math.pow(a0,e))/(Cp*Math.pow(Y*ds*Math.sqrt(Math.PI),m)*e);
   }
   _mr(o,'<div class="result-grid" style="margin-top:.6rem">'+[
-    ['K_I at a₀',K.toFixed(1)+' MPa·√m',crit?'err':'ok'],
+    ['K_I at a₀',_uKI(K,1),crit?'err':'ok'],
     ['vs K_IC',(K/KIC*100).toFixed(0)+' % of toughness',crit?'err':K/KIC>0.7?'warn':'ok'],
-    ['CRITICAL CRACK a_c',(ac*1000).toFixed(1)+' mm','ok'],
+    ['CRITICAL CRACK a_c',_uL((ac*1000),1),'ok'],
     ['Margin on size',(ac/a0).toFixed(1)+'× current crack',ac/a0<2?'warn':'ok'],
     N!==null?['PARIS LIFE a₀ → a_c','≈ '+(N>=1e6?(N/1e6).toFixed(2)+' M cycles':Math.round(N).toLocaleString()+' cycles'),'ok']:['Paris life',crit?'— ALREADY CRITICAL':'needs Δσ > 0 and m ≠ 2']
   ].filter(Boolean).map(x=>`<div class="result-item"><div class="lbl">${x[0]}</div><div class="val ${x[2]||''}">${x[1]}</div></div>`).join('')+'</div>'+
@@ -2050,8 +2080,8 @@ window.calcKt=function(){
   }
   _mr(o,'<div class="result-grid" style="margin-top:.6rem">'+[
     ['K_t',Kt.toFixed(3),warn?'warn':'ok'],['Geometry',label],
-    sn>0?['σ PEAK',(Kt*sn).toFixed(0)+' MPa','ok']:null,
-    sn>0?['Check','compare '+(Kt*sn).toFixed(0)+' MPa against Sy (static, ductile: local yielding blunts it) or use K_f for fatigue',null]:null
+    sn>0?['σ PEAK',_uP((Kt*sn),0),'ok']:null,
+    sn>0?['Check','compare '+_uP((Kt*sn),0)+' against Sy (static, ductile: local yielding blunts it) or use K_f for fatigue',null]:null
   ].filter(Boolean).map(x=>`<div class="result-item"><div class="lbl">${x[0]}</div><div class="val ${x[2]||''}">${x[1]}</div></div>`).join('')+'</div>'+
     '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">'+note2+' Ductile static parts shrug K_t off by local yielding; FATIGUE does not — carry K_f = 1 + q(K_t − 1) into the Fatigue module. Shoulder-fillet and groove cases follow Peterson charts — not reproduced here rather than approximated loosely.</p>');
 };
@@ -2109,7 +2139,7 @@ window.calcBoltSeq=function(){
   const o=$('bsq-out');if(!o)return;
   const N=Math.max(3,Math.min(48,Math.round(v('bsq-n')||8))),T=v('bsq-t')||0;
   const seq=boltSeq(N);
-  const pass=f=>T>0?' — '+Math.round(T*f)+' N·m':'';
+  const pass=f=>T>0?' — '+_uT(T*f,0):'';
   _mr(o,'<div style="margin-top:.6rem"><div class="result-grid">'+[
     ['STAR ORDER',seq.join(' → '),'ok'],
     ['Pass 1 (20-30%)','star order'+pass(0.25)],
@@ -2144,10 +2174,10 @@ window.calcFlowMeter=function(){
   const Q=Cd*At*Math.sqrt(2*dP/rho)/Math.sqrt(1-Math.pow(beta,4));
   const vth=Q/At,loss=type==='venturi'?dP*0.13:dP*(1-beta*beta);
   _mr(o,'<div class="result-grid" style="margin-top:.6rem">'+[
-    ['FLOW',(Q*3600).toFixed(2)+' m³/h ('+(Q*1000).toFixed(3)+' L/s)','ok'],
-    ['Mass flow',(Q*rho).toFixed(3)+' kg/s'],['β = d/D',beta.toFixed(3),beta>=0.2&&beta<=0.75?'ok':'warn'],
-    ['Throat velocity',vth.toFixed(2)+' m/s'],['C_d used',Cd.toFixed(3)],
-    ['Permanent loss','≈ '+(loss/1000).toFixed(1)+' kPa'+(type==='venturi'?' (venturi recovers most ΔP)':'')]
+    ['FLOW',_uQ((Q*3600),2)+' ('+_uQls((Q*1000),3)+')','ok'],
+    ['Mass flow',_uMdot((Q*rho),3)],['β = d/D',beta.toFixed(3),beta>=0.2&&beta<=0.75?'ok':'warn'],
+    ['Throat velocity',_uV(vth,2)],['C_d used',Cd.toFixed(3)],
+    ['Permanent loss','≈ '+_uPk((loss/1000),1)+(type==='venturi'?' (venturi recovers most ΔP)':'')]
   ].map(x=>`<div class="result-item"><div class="lbl">${x[0]}</div><div class="val ${x[2]||''}">${x[1]}</div></div>`).join('')+'</div>'+
     '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">Q = C_d·A_t·√(2ΔP/ρ) / √(1−β⁴) — the universal ΔP-metering equation. Defaults are the textbook high-Re coefficients (sharp orifice 0.61, nozzle 0.96, venturi 0.98); ISO 5167 refines C_d with Reynolds and tap geometry — calibrate for custody transfer. Keep β between 0.2 and 0.75. Orifice permanent loss ≈ (1−β²)·ΔP; a venturi recovers all but ~10-15%.</p>');
 };
@@ -2208,8 +2238,8 @@ window.calcSpeeds=function(){
   const N=1000*Vc/(Math.PI*D),vf=fz*z*N,MRR=ap*ae*vf/1000;
   _mr(res,'<h3>SPEEDS &amp; FEEDS</h3><div class="result-grid">'+[
     ['Cutting speed V_c',Vc.toFixed(0)+' m/min (band '+lo+'–'+hi+')'],
-    ['SPINDLE',N.toFixed(0)+' rpm','ok'],['FEED',vf.toFixed(0)+' mm/min','ok'],
-    ['Feed per rev',(fz*z).toFixed(3)+' mm'],['MRR',MRR>0?MRR.toFixed(1)+' cm³/min':'—']
+    ['SPINDLE',N.toFixed(0)+' rpm','ok'],['FEED',_uL(vf,0)+'/min','ok'],
+    ['Feed per rev',_uL((fz*z),3)],['MRR',MRR>0?MRR.toFixed(1)+' cm³/min':'—']
   ].map(([l,val,c])=>`<div class="result-item"><div class="lbl">${l}</div><div class="val ${c||''}">${val}</div></div>`).join('')+'</div>'+
     '<p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem">N = 1000·V_c/(πD), feed = f_z·z·N, computed at MID-band — start there and listen to the cut; slot cuts and long stickout want the low end, finishing passes the high end. Aluminum takes roughly double the steel chip load; halve f_z below Ø4 mm. Bands are standard reference ranges for sharp tools with flood/mist.</p>');
 };
@@ -2220,8 +2250,8 @@ window.calcTapDrill=function(){
   const drill=sys==='m'?d-p*pct/76.98:d-0.01299*pct/p;
   const mm=sys==='m'?drill:drill*25.4,inch=sys==='m'?drill/25.4:drill;
   _mr(res,'<h3>TAP DRILL</h3><div class="result-grid">'+[
-    ['DRILL Ø',mm.toFixed(2)+' mm','ok'],['(inch)',inch.toFixed(4)+' in'],
-    ['Thread engagement',pct.toFixed(0)+' %'],['Nearest 0.1 mm',(Math.round(mm*10)/10).toFixed(1)+' mm']
+    ['DRILL Ø',_uL(mm,2),'ok'],['(inch)',inch.toFixed(4)+' in'],
+    ['Thread engagement',pct.toFixed(0)+' %'],['Nearest 0.1 mm',_uL((Math.round(mm*10)/10),1)]
   ].map(([l,val,c])=>`<div class="result-item"><div class="lbl">${l}</div><div class="val ${c||''}">${val}</div></div>`).join('')+'</div>'+
     '<p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem">Machinery&#39;s Handbook percent-of-thread formulas: metric drill = d − p·%/76.98 (the familiar d − p rule ≈ 77%), unified drill = d − 0.01299·%/TPI (¼-20 at 75% → 0.2013″ — the classic #7). 75% is the sweet spot: going 100% doubles tapping torque for ~5% more strength. Use 65-70% in tough stainless/Ti to save taps.</p>');
 };
@@ -2233,11 +2263,11 @@ window.calcBend=function(){
   const hem=a>170;
   const OSSB=hem?null:(R+t)*Math.tan(th/2),BD=hem?null:2*OSSB-BA,flat=hem?null:L1+L2-BD;
   _mr(res,'<h3>BEND / FLAT PATTERN</h3><div class="result-grid">'+[
-    ['Bend allowance BA',BA.toFixed(3)+' mm','ok'],
-    ['Setback OSSB',hem?'— (hem: legs+BA directly)':OSSB.toFixed(3)+' mm'],
-    ['Bend deduction BD',hem?'—':BD.toFixed(3)+' mm'],
-    ['FLAT LENGTH',hem?(L1+L2+BA-2*t).toFixed(2)+' mm (approx)':flat.toFixed(2)+' mm','ok'],
-    ['Neutral axis at',(K*t).toFixed(2)+' mm from inside']
+    ['Bend allowance BA',_uL(BA,3),'ok'],
+    ['Setback OSSB',hem?'— (hem: legs+BA directly)':_uL(OSSB,3)],
+    ['Bend deduction BD',hem?'—':_uL(BD,3)],
+    ['FLAT LENGTH',hem?_uL((L1+L2+BA-2*t),2)+' (approx)':_uL(flat,2),'ok'],
+    ['Neutral axis at',_uL((K*t),2)+' from inside']
   ].map(([l,val,c])=>`<div class="result-item"><div class="lbl">${l}</div><div class="val ${c||''}">${val}</div></div>`).join('')+'</div>'+
     '<p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem">BA = θ·(R + K·t), OSSB = (R+t)·tan(θ/2), BD = 2·OSSB − BA, flat = A + B − BD with legs measured to the apex (mold line). K ≈ 0.33 for air bending R&lt;2t, ≈ 0.40-0.45 for R&gt;2t, 0.50 = pure geometric neutral axis. Your press brake&#39;s real K beats any table — bend a test coupon and back-solve.</p>');
 };
@@ -2255,7 +2285,7 @@ window.calcHardness=function(){
   const uts=3.45*out[2];
   _mr(res,'<h3>HARDNESS (STEEL)</h3><div class="result-grid">'+[
     ['HRC',out[0].toFixed(1),'ok'],['HV (Vickers)',out[1].toFixed(0),'ok'],['HB (Brinell)',out[2].toFixed(0),'ok'],
-    ['UTS estimate','≈ '+uts.toFixed(0)+' MPa ('+(uts/6.895).toFixed(0)+' ksi)']
+    ['UTS estimate','≈ '+_uP(uts,0)+' ('+(uts/6.895).toFixed(0)+' ksi)']
   ].map(([l,val2,c])=>`<div class="result-item"><div class="lbl">${l}</div><div class="val ${c||''}">${val2}</div></div>`).join('')+'</div>'+
     (clamped?'<div class="note warn" style="margin-top:.4rem">Outside the ASTM E140 table (HRC 20-65) — clamped to the nearest end, not extrapolated.</div>':'')+
     '<p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem">Linear interpolation of the ASTM E140 non-austenitic steel table. Valid for steels only — aluminum, copper and austenitic stainless follow different tables. UTS ≈ 3.45·HB is the standard steel estimate (±10%); it is NOT a substitute for a cert.</p>');
@@ -2268,7 +2298,7 @@ window.calcBoltCircle=function(){
   _mr(res,'<h3>BOLT CIRCLE — '+n+' × Ø'+D+'</h3><div style="max-height:260px;overflow-y:auto"><table style="width:100%;font-size:.75rem;border-collapse:collapse">'+
     '<tr style="color:var(--dim)"><th style="text-align:left">#</th><th style="text-align:right">θ°</th><th style="text-align:right">X</th><th style="text-align:right">Y</th></tr>'+
     pts.map((p,i)=>`<tr><td>${i+1}</td><td style="text-align:right">${p[2].toFixed(1)}</td><td style="text-align:right">${p[0].toFixed(3)}</td><td style="text-align:right">${p[1].toFixed(3)}</td></tr>`).join('')+'</table></div>'+
-    '<p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem">X = R·cos θ, Y = R·sin θ from circle center, CCW from +X. Chord between adjacent holes = '+(2*r*Math.sin(Math.PI/n)).toFixed(3)+' mm. GD&amp;T true position of an as-drilled hole = 2·√(ΔX² + ΔY²). The BOLTS module&#39;s PATTERN card takes it from here for load analysis.</p>');
+    '<p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem">X = R·cos θ, Y = R·sin θ from circle center, CCW from +X. Chord between adjacent holes = '+_uL((2*r*Math.sin(Math.PI/n)),3)+'. GD&amp;T true position of an as-drilled hole = 2·√(ΔX² + ΔY²). The BOLTS module&#39;s PATTERN card takes it from here for load analysis.</p>');
   const c=$('c-mach');if(c&&c.getContext){
     const x=c.getContext('2d'),th2=pTheme(),cx=c.width/2,cy=c.height/2,cr=c.width/2-40;
     x.clearRect(0,0,c.width,c.height);
@@ -2285,6 +2315,113 @@ window.calcBoltCircle=function(){
     x.fillStyle=th2.dim;x.fillText('Ø'+D,cx,cy+cr+24>c.height?cy+18:cy+cr+18);
   }
 };
+/* ---- v5.87.0 JOINT STIFFNESS card: k_b, k_m and C = k_b/(k_b+k_m).
+   k_b : Shigley eq 8-17, unthreaded shank + threaded length in series.
+   k_m : Rotscher 30-deg frustum (Shigley eq 8-20) per clamped layer, layers in series;
+         Wileman exponential fit offered as a cross-check for a single material.
+   Verified against Shigley Ex 8-4 geometry: frustum 2705 kN/mm, Wileman 2644 (2.3% apart),
+   C = 0.205 against the textbook's typical 0.2. ---- */
+function _frustumK(E,d,D,t){
+  if(!(E>0&&d>0&&D>d&&t>0))return NaN;
+  const num=(1.155*t+D-d)*(D+d), den=(1.155*t+D+d)*(D-d);
+  if(!(num>0&&den>0))return NaN;
+  const lg=Math.log(num/den); if(!(lg>0))return NaN;
+  return 0.5774*Math.PI*E*d/lg;
+}
+function injectBoltStiffness(){
+  const vw=$('v-bolts'); if(!vw||$('bs-card'))return;
+  const host=vw.querySelector('.split>div:last-child')||vw;
+  const c=document.createElement('div'); c.className='card bolt-x'; c.id='bs-card';
+  c.innerHTML='<h3>JOINT STIFFNESS &mdash; k_b / k_m / C</h3>'+
+   '<p style="font-size:.7rem;color:var(--dim);margin:0 0 .5rem">Computes the two stiffnesses the JOINT card asks for. k_b = unthreaded shank and threaded length in series; k_m = Rotscher 30&deg; frustums, one per clamped layer, in series.</p>'+
+   '<div class="row">'+
+   '<div class="field"><label for="bs-d">BOLT d (mm)</label><input type="number" id="bs-d" value="12" step="any"></div>'+
+   '<div class="field"><label for="bs-at">A_t (mm&sup2;)</label><input type="number" id="bs-at" value="84.3" step="any"></div>'+
+   '<div class="field"><label for="bs-eb">BOLT E (GPa)</label><input type="number" id="bs-eb" value="207" step="any"></div>'+
+   '<div class="field"><label for="bs-dw">WASHER FACE D (mm)</label><input type="number" id="bs-dw" value="18" step="any" title="Bearing face diameter under the head, typically 1.5d."></div>'+
+   '</div>'+
+   '<div class="row">'+
+   '<div class="field"><label for="bs-ld">UNTHREADED SHANK IN GRIP (mm)</label><input type="number" id="bs-ld" value="0" step="any" title="0 = fully threaded through the grip."></div>'+
+   '<div class="field"><label for="bs-meth">k_m METHOD</label><select id="bs-meth"><option value="frustum">Rotscher frustum (per layer)</option><option value="wileman">Wileman fit (single material)</option></select></div>'+
+   '</div>'+
+   '<div style="font-size:.7rem;color:var(--dim);margin:.4rem 0 .2rem">CLAMPED LAYERS (thickness 0 skips the layer)</div>'+
+   '<div class="row">'+
+   '<div class="field"><label for="bs-t1">LAYER 1 t (mm)</label><input type="number" id="bs-t1" value="12.5" step="any"></div>'+
+   '<div class="field"><label for="bs-e1">LAYER 1 E (GPa)</label><input type="number" id="bs-e1" value="207" step="any"></div>'+
+   '<div class="field"><label for="bs-t2">LAYER 2 t (mm)</label><input type="number" id="bs-t2" value="12.5" step="any"></div>'+
+   '<div class="field"><label for="bs-e2">LAYER 2 E (GPa)</label><input type="number" id="bs-e2" value="207" step="any"></div>'+
+   '</div>'+
+   '<div class="row">'+
+   '<div class="field"><label for="bs-t3">LAYER 3 t (mm)</label><input type="number" id="bs-t3" value="0" step="any"></div>'+
+   '<div class="field"><label for="bs-e3">LAYER 3 E (GPa)</label><input type="number" id="bs-e3" value="207" step="any"></div>'+
+   '</div>'+
+   '<button class="btn btn-sm" onclick="calcBoltStiff()">COMPUTE</button> '+
+   '<button class="btn btn-sm" onclick="applyBoltStiff()">APPLY &rarr; JOINT CARD</button>'+
+   '<div id="bs-out" style="margin-top:.5rem"></div>';
+  host.appendChild(c);
+}
+window.calcBoltStiff=function(){
+  const o=$('bs-out'); if(!o)return null;
+  const d=v('bs-d'),At=v('bs-at'),Eb=v('bs-eb')*1000,Dw=v('bs-dw'),ld=Math.max(0,v('bs-ld')||0),meth=sv('bs-meth');
+  const L=[[v('bs-t1'),v('bs-e1')],[v('bs-t2'),v('bs-e2')],[v('bs-t3'),v('bs-e3')]].filter(x=>x[0]>0&&x[1]>0);
+  const grip=L.reduce((a,x)=>a+x[0],0);
+  if(!(d>0&&At>0&&Eb>0&&grip>0)){_mr(o,'<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.7rem">Need bolt d, A_t, bolt E and at least one clamped layer.</p>');return null;}
+  const Dwu=Dw>d?Dw:1.5*d;
+  const Ad=Math.PI*d*d/4, lt=Math.max(grip-ld,0);
+  let kb;
+  if(ld>0&&lt>0) kb=Ad*At*Eb/(Ad*lt+At*ld);
+  else if(lt>0) kb=At*Eb/lt;
+  else kb=Ad*Eb/Math.max(ld,1e-9);
+  let km,rows=[],wil=NaN;
+  if(meth==='wileman'){
+    const Em=L[0][1]*1000;
+    km=0.78715*Em*d*Math.exp(0.62873*d/grip);
+    rows.push(['Method','Wileman fit, E = '+L[0][1]+' GPa']);
+  }else{
+    const half=grip/2; let inv=0,pos=0,idx=0;
+    L.forEach(function(ly){
+      const t=ly[0],Em=ly[1]*1000,a=pos,b=pos+t;
+      const segs=(a<half&&b>half)?[[a,half],[half,b]]:[[a,b]];
+      segs.forEach(function(sg){
+        const th=sg[1]-sg[0];
+        const fromFace=sg[1]<=half?sg[0]:grip-sg[1];
+        const D=Dwu+2*fromFace*Math.tan(Math.PI/6);
+        const k=_frustumK(Em,d,D,th);
+        idx++;
+        if(isFinite(k)&&k>0){inv+=1/k;rows.push(['Frustum '+idx+'  t='+_uL(th,1),_uK(k,0)]);}
+      });
+      pos=b;
+    });
+    km=inv>0?1/inv:NaN;
+    wil=0.78715*(L[0][1]*1000)*d*Math.exp(0.62873*d/grip);
+  }
+  const C=(isFinite(kb)&&isFinite(km)&&kb+km>0)?kb/(kb+km):NaN;
+  let out=[['Grip length',_uL(grip,2)],['k_b (bolt)',_uK(kb,0)],['k_m (members)',_uK(km,0)]];
+  out=out.concat(rows);
+  out.push(['C = k_b/(k_b+k_m)',isFinite(C)?C.toFixed(3):'—']);
+  out.push(['Bolt takes',isFinite(C)?(C*100).toFixed(1)+' % of external load':'—']);
+  out.push(['Members shed',isFinite(C)?((1-C)*100).toFixed(1)+' % of external load':'—']);
+  if(isFinite(wil)&&meth!=='wileman')out.push(['Wileman cross-check',_uK(wil,0)+' ('+(100*Math.abs(km-wil)/km).toFixed(1)+'% from frustum)']);
+  _mr(o,'<div class="result-grid" style="margin-top:.4rem">'+out.map(function(r){return '<div class="result-item"><div class="lbl">'+r[0]+'</div><div class="val">'+r[1]+'</div></div>';}).join('')+'</div>'+
+    '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.7rem">k_b = A_d·A_t·E/(A_d·l_t + A_t·l_d); k_m from 30° Rotscher frustums in series (Shigley 8-20). C is the fraction of an external tensile load that actually reaches the bolt — typical steel joints land near 0.2, and a high C means the bolt is carrying most of it.</p>');
+  return {kb:kb,km:km,C:C,grip:grip};
+};
+window.applyBoltStiff=function(){
+  const r=window.calcBoltStiff(); if(!r||!isFinite(r.kb)||!isFinite(r.km))return;
+  const put=function(id,val){
+    const el=$(id); if(!el)return;
+    const us=$(id+'-u');
+    let x=val;
+    if(us&&us.value==='lbf/in')x=val/0.175126835;
+    el.value=parseFloat(x.toPrecision(6));
+    el.dispatchEvent(new Event('input',{bubbles:true}));
+  };
+  put('bl-kb',r.kb); put('bl-km',r.km);
+  const c=$('bl-c');
+  if(c&&isFinite(r.C)){c.value=r.C.toFixed(3);c.dataset.userTouched='1';c.dispatchEvent(new Event('input',{bubbles:true}));}
+  if(typeof window.calcBolt==='function'){try{window.calcBolt();}catch(e){}}
+};
+
 function injectThreadEngage(){
   const vw=$('v-bolts');if(!vw||$('te-card'))return;
   const host=vw.querySelector('.split>div:last-child')||vw;
@@ -2311,10 +2448,10 @@ window.calcThreadEngage=function(){
   const LeMin=Fbreak/Math.min(0.6*Sub*0.75*Math.PI*Kn,0.6*Sun*0.875*Math.PI*d);
   const mode=Fbreak<=Fmin?'BOLT BREAKS FIRST (ductile, preferred)':FstripB<FstripN?'BOLT THREADS STRIP':'INTERNAL THREADS STRIP';
   _mr(o,'<div class="result-grid" style="margin-top:.6rem">'+[
-    ['Size',sv('bl-size')+' (d='+d+', p='+p+')'],['F bolt break',Math.round(Fbreak/1000)+' kN'],
-    ['F strip — bolt threads',Math.round(FstripB/1000)+' kN'],['F strip — internal threads',Math.round(FstripN/1000)+' kN'],
+    ['Size',sv('bl-size')+' (d='+d+', p='+p+')'],['F bolt break',_uFk(Fbreak/1000,0)],
+    ['F strip — bolt threads',_uFk(FstripB/1000,0)],['F strip — internal threads',_uFk(FstripN/1000,0)],
     ['Governing mode',mode,Fbreak<=Fmin?'ok':'err'],
-    ['L_e min (break-before-strip)',LeMin.toFixed(1)+' mm',Le>=LeMin?'ok':'err'],
+    ['L_e min (break-before-strip)',_uL(LeMin,1),Le>=LeMin?'ok':'err'],
     ['L_e / d',(Le/d).toFixed(2),Le/d>=0.8?'ok':'warn']
   ].map(r=>`<div class="result-item"><div class="lbl">${r[0]}</div><div class="val ${r[2]||''}">${r[1]}</div></div>`).join('')+'</div>'+
     '<p class="note" style="margin-top:.5rem;color:var(--dim);font-size:.72rem">Thread shear strength taken as 0.6·S_u; basic-size areas (no allowance/tolerance derating) — apply ≥1.5× on L_e_min for production. Soft tapped materials (aluminum ≈ 1.5·d, plastics ≈ 2·d) drive the internal-strip line down fast: drop S_u nut/tap accordingly.</p>');
@@ -2524,10 +2661,10 @@ function buildBellCatalog(){
 }
 const BELL_CATALOG=buildBellCatalog();
 window.__BELL_CATALOG=BELL_CATALOG;window.__bellGeom=bellGeom;
-function _fU(N,d){return(window.UCORE&&UCORE.fDisp)?UCORE.fDisp(N,d):(Math.round(N)+' N');}
+function _fU(N,d){return(window.UCORE&&UCORE.fDisp)?UCORE.fDisp(N,d):(_uF(N,0));}
 function _lU(mm,d){return(window.UCORE&&UCORE.lDisp)?UCORE.lDisp(mm,d):(mm.toFixed(d!=null?d:2)+' mm');}
 function _kU(k,d){return(window.UCORE&&UCORE.kDisp)?UCORE.kDisp(k,d):(k.toFixed(d!=null?d:1)+' N/mm');}
-function _pU(MPa,d){return(window.UCORE&&UCORE.pDisp)?UCORE.pDisp(MPa,d):(Math.round(MPa)+' MPa');}
+function _pU(MPa,d){return(window.UCORE&&UCORE.pDisp)?UCORE.pDisp(MPa,d):(_uP(MPa,0));}
 function _fSc(){return(window.UCORE&&UCORE.fScale)?UCORE.fScale():1;}
 function _lSc(){return(window.UCORE&&UCORE.lScale)?UCORE.lScale():1;}
 function _fUn(){return(window.UCORE&&UCORE.fUnit)?UCORE.fUnit():'N';}
@@ -2717,13 +2854,13 @@ window.calcSpring=function(){
     const gap=fl>0?Math.max(0,(fl-(na+2)*d)/na):0;
     const Fg1=gap>0?gap*G*Math.pow(d,4)/(8*Math.pow(D2,3)):0;
     items.push(['Type','CONICAL (SMI constant-pitch)']);
-    items.push(['D₁ → D₂',D1.toFixed(1)+' → '+D2.toFixed(1)+' mm']);
-    items.push(['k initial rate',k.toFixed(2)+' N/mm']);
-    items.push(['δ at applied F',delta.toFixed(2)+' mm',Fg1&&F>Fg1?'warn':'ok']);
-    Fg1&&items.push(['Linear up to','≈ '+Math.round(Fg1)+' N (largest coil grounds)',F>Fg1?'warn':'ok']);
-    items.push(['τ at largest coil',tau.toFixed(0)+' MPa',tau<tau_allow?'ok':'err']);
-    items.push(['F_max safe',Math.round(Fmax)+' N']);
-    items.push(['Nesting',nest?'TELESCOPING — solid ≈ '+(2*d).toFixed(1)+' mm':'Non-nesting — solid '+((na+2)*d).toFixed(1)+' mm']);
+    items.push(['D₁ → D₂',D1.toFixed(1)+' → '+_uL(D2,1)]);
+    items.push(['k initial rate',_uK(k,2)]);
+    items.push(['δ at applied F',_uL(delta,2),Fg1&&F>Fg1?'warn':'ok']);
+    Fg1&&items.push(['Linear up to','≈ '+_uF(Fg1,0)+' (largest coil grounds)',F>Fg1?'warn':'ok']);
+    items.push(['τ at largest coil',_uP(tau,0),tau<tau_allow?'ok':'err']);
+    items.push(['F_max safe',_uF(Fmax,0)]);
+    items.push(['Nesting',nest?'TELESCOPING — solid ≈ '+_uL((2*d),1):'Non-nesting — solid '+_uL(((na+2)*d),1)]);
     extra='k = G·d⁴/[2·N_a·(D₁+D₂)(D₁²+D₂²)] — SMI constant-pitch conical rate; set D₁ = COIL Ø to recover the plain helical formula. Stress governs at the LARGEST coil. Past the linear range the largest coils ground out one by one and the rate rises — that progressive stiffening is why you buy conical. Coils telescope (solid ≈ two wire diameters) when (D₂−D₁)/2N_a > d.';
   }else if(type==='wave'){
     const E=200000,b=v('sp-wb')||10,tw=v('sp-wt')||0.5,Nw=v('sp-wnw')||3.5,Nt2=v('sp-wnt')||nt||4,Dm=D,Kf=3.88;
@@ -2734,11 +2871,11 @@ window.calcSpring=function(){
     Fmax=sig_allow*4*b*tw*tw*Nw*Nw/(3*Math.PI*Dm);
     items.push(['Type','WAVE — crest-to-crest (Smalley form)']);
     items.push(['b × t / N_w / N_t',b+' × '+tw+' mm / '+Nw+' / '+Nt2]);
-    items.push(['k spring rate',k.toFixed(2)+' N/mm']);
-    items.push(['δ at applied F',delta.toFixed(2)+' mm']);
-    items.push(['σ bending',sig.toFixed(0)+' MPa',sig<sig_allow?'ok':'err']);
-    items.push(['F_max (σ ≤ 0.75·Sy)',Math.round(Fmax)+' N']);
-    items.push(['L_solid',Lsolid.toFixed(2)+' mm']);
+    items.push(['k spring rate',_uK(k,2)]);
+    items.push(['δ at applied F',_uL(delta,2)]);
+    items.push(['σ bending',_uP(sig,0),sig<sig_allow?'ok':'err']);
+    items.push(['F_max (σ ≤ 0.75·Sy)',_uF(Fmax,0)]);
+    items.push(['L_solid',_uL(Lsolid,2)]);
     extra='Smalley design-manual forms: f = P·K·D_m³·N_t/(E·b·t³·N_w⁴) with K = 3.88 (multi-wave), σ = 3π·P·D_m/(4·b·t²·N_w²), E = 200 GPa steel strip. The COIL Ø field is the mean diameter D_m; wire Ø and G are unused for wave. Wave springs buy roughly half the axial space of an equal-force coil — verify work height against the vendor load curve.';
   }else if(type==='torsion'){
     const E=200000;
@@ -2749,7 +2886,7 @@ window.calcSpring=function(){
     items.push(['Index C',C.toFixed(2)]);
     items.push(['k angular',k.toFixed(2)+' N·mm/rad']);
     items.push(['Angle at applied moment',delta.toFixed(2)+' °']);
-    items.push(['σ bending',sigma.toFixed(0)+' MPa',sigma<Sy*0.78?'ok':'err']);
+    items.push(['σ bending',_uP(sigma,0),sigma<Sy*0.78?'ok':'err']);
     extra='Torsion springs use bending stress, not shear. F input acts as moment in N·mm. K_b correction omitted (typical static design).';
   }
   _mr(out,'<h3>SPRING RESULTS — '+type.toUpperCase()+'</h3>'+
@@ -2826,13 +2963,13 @@ function drawBellAnim(De,Di,t,h0,delta,ns,np,arr){
     let y=y0;
     for(let i=0;i<ns;i++){const up=arr==='parallel'||i%2===0;for(let j=0;j<np;j++)disc(cx,y+j*t*sc,hcone,up);y+=unit*sc;}
     ctx.fillStyle=th.text;ctx.font='11px JetBrains Mono,monospace';ctx.textAlign='center';
-    ctx.fillText(label,cx,H-12);ctx.fillStyle=th.dim;ctx.fillText((ns*unit).toFixed(2)+' mm',cx,H-24);
+    ctx.fillText(label,cx,H-12);ctx.fillStyle=th.dim;ctx.fillText(_uL((ns*unit),2),cx,H-24);
   }
   stack(W*0.28,'FREE',h0);stack(W*0.72,'LOADED',Math.max(0.02,h0-delta));
   ctx.strokeStyle=th.accent;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(W*0.42,H/2);ctx.lineTo(W*0.58,H/2);ctx.stroke();
   ctx.beginPath();ctx.moveTo(W*0.56,H/2-4);ctx.lineTo(W*0.58,H/2);ctx.lineTo(W*0.56,H/2+4);ctx.stroke();
   ctx.fillStyle=th.dim;ctx.font='10px JetBrains Mono,monospace';ctx.textAlign='left';
-  ctx.fillText('δ = '+delta.toFixed(3)+' mm  ·  h₀/t = '+(h0/t).toFixed(2),10,14);
+  ctx.fillText('δ = '+_uL(delta,3)+'  ·  h₀/t = '+(h0/t).toFixed(2),10,14);
 }
 function drawSpringAnim(d,D,nt,fl,deflectedL,type){
   const c=$('c-spring-anim');if(!c)return;
@@ -2874,7 +3011,7 @@ function drawSpringAnim(d,D,nt,fl,deflectedL,type){
     }
     ctx.fillStyle=t.text;ctx.font='11px JetBrains Mono,monospace';ctx.textAlign='center';
     ctx.fillText(label,cx,yBot+15);
-    ctx.fillText(usable.toFixed(0)+' px ('+len.toFixed(1)+' mm)',cx,yBot+30);
+    ctx.fillText(usable.toFixed(0)+' px ('+_uL(len,1)+')',cx,yBot+30);
   }
   const scaleY=Math.min(1.5,(h-80)/Math.max(fl,deflectedL,1));
   drawCoil(w*0.30,scaleY,fl,'#22c55e','FREE');
@@ -2919,7 +3056,7 @@ function drawSpringPack(type,arr,ns,np,g){
     const xr=cx+De*sc/2+16;
     x.beginPath();x.moveTo(xr,y0);x.lineTo(xr,y0+total*sc);x.stroke();
     x.beginPath();x.moveTo(xr-4,y0+5);x.lineTo(xr,y0);x.lineTo(xr+4,y0+5);x.moveTo(xr-4,y0+total*sc-5);x.lineTo(xr,y0+total*sc);x.lineTo(xr+4,y0+total*sc-5);x.stroke();
-    x.fillText('L0 = '+total.toFixed(1)+' mm',Math.min(xr+8,W-110),y0+total*sc/2);
+    x.fillText('L0 = '+_uL(total,1),Math.min(xr+8,W-110),y0+total*sc/2);
     x.fillStyle=th.dim;
     x.fillText(arr==='parallel'?np+' discs nested — same orientation (force adds)':ns>1?'alternating ⟨⟩ orientation (deflection adds)'+(np>1?' · '+np+' nested per group':''):np>1?np+' discs nested (parallel)':'single disc',10,H-10);
   }else{
@@ -3106,7 +3243,7 @@ window.calcShock=function(){
   const out=$('shock-out');if(out){
     const pulse_label={'half-sine':'half-sine','sawtooth':'sawtooth (terminal-peak)','rectangular':'rectangular (square)','haversine':'haversine'}[shape];
     out.innerHTML='<div class="result-grid">'+
-      [['Peak accel',G+' G ('+a_peak.toFixed(0)+' m/s²)'],['Pulse '+pulse_label,(tau*1000).toFixed(1)+' ms'],['ΔV (impulse)',(dV*1000).toFixed(1)+' mm/s ('+dV.toFixed(3)+' m/s)'],['Response @ '+fn+' Hz',a_response.toFixed(2)+' G ('+(a_response*9.81).toFixed(0)+' m/s²)'],['Amplification',(a_response/G).toFixed(2)+'×']].map(([l,v])=>`<div class="result-item"><div class="lbl">${window.GK?window.GK(l):l}</div><div class="val">${v}</div></div>`).join('')+
+      [['Peak accel',G+' G ('+_uAcc(a_peak,0)+')'],['Pulse '+pulse_label,(tau*1000).toFixed(1)+' ms'],['ΔV (impulse)',_uL((dV*1000),1)+'/s ('+_uV(dV,3)+')'],['Response @ '+fn+' Hz',a_response.toFixed(2)+' G ('+_uAcc((a_response*9.81),0)+')'],['Amplification',(a_response/G).toFixed(2)+'×']].map(([l,v])=>`<div class="result-item"><div class="lbl">${window.GK?window.GK(l):l}</div><div class="val">${v}</div></div>`).join('')+
       '</div>'+
       '<p style="margin-top:.4rem;color:var(--dim);font-size:.7rem">Half-sine ΔV = 2·a_peak·τ/π. SRS peaks near f_n ≈ 1/(2τ). MIL-STD-810 standard half-sine: 50G/11ms (functional shock), 100G/6ms (crash safety). Equipment design: target SRS amp factor ≤ 1.5 by stiffening (raise f_n) or isolating (lower f_n well below 1/τ).</p>';
   }
@@ -3299,32 +3436,40 @@ window.calcMotorTSC=function(){
   /* Approximate normalized torque-speed curve following NEMA shape:
    * locked-rotor torque at s=1, falls slightly to pull-up at s~0.7,
    * climbs to breakdown at s~0.2-0.3, drops to zero at s=0 (sync) */
+  /* v5.87.0 the FULL-LOAD point must lie ON the curve — by definition the motor
+     develops exactly T_fl at N_fl. The old low-slip branch was a free-standing
+     parabola, so the FL marker floated off the line. Anchor the low-slip region with
+     Kloss, choosing the breakdown slip so the curve passes through BOTH (s_fl, 1)
+     and (s_bd, BDT); blend to locked-rotor above s_bd. */
+  const sFL=(Ns-Nfl)/Ns;
+  const kRoot=d.BDT-Math.sqrt(Math.max(d.BDT*d.BDT-1,0));
+  let sBD=(sFL>0&&kRoot>0)?sFL/kRoot:0.18;
+  sBD=Math.min(Math.max(sBD,Math.max(sFL*1.5,0.06)),0.35);
+  const pullupS=0.7;
   const torques=speeds.map(N=>{
     const s=(Ns-N)/Ns;
     if(s<=0)return 0;
     if(s>=1)return Tfl*d.LRT;
-    /* Composite curve: pull-up minimum then breakdown peak */
-    const pullupS=0.7,breakdownS=0.2;
     let t;
-    if(s>=pullupS){
+    if(s<=sBD){
+      t=2*d.BDT/(s/sBD+sBD/s);            /* Kloss, exact at s_fl and s_bd */
+    }else if(s>=pullupS){
       t=d.PUT+(d.LRT-d.PUT)*((s-pullupS)/(1-pullupS));
-    }else if(s>=breakdownS){
-      t=d.BDT-(d.BDT-d.PUT)*((s-breakdownS)/(pullupS-breakdownS));
     }else{
-      t=d.BDT*(s/breakdownS)*(2-s/breakdownS);
+      t=d.BDT-(d.BDT-d.PUT)*((s-sBD)/(pullupS-sBD));
     }
     return t*Tfl;
   });
   const t=pTheme();
   plot('p-motor-ts',[
     {x:speeds,y:torques,mode:'lines',line:{color:t.accent,width:2.5},name:'Motor T-N curve',fill:'tozeroy',fillcolor:'rgba(255,107,53,0.10)'},
-    {x:[Nfl],y:[Tfl],mode:'markers+text',marker:{color:'#22c55e',size:11,symbol:'star'},text:['FL: '+Tfl.toFixed(1)+' N·m'],textposition:'top right',textfont:{color:t.text,size:10},name:'FL'},
+    {x:[Nfl],y:[Tfl],mode:'markers+text',marker:{color:'#22c55e',size:11,symbol:'star'},text:['FL: '+_uT(Tfl,1)],textposition:'top right',textfont:{color:t.text,size:10},name:'FL'},
     {x:[0],y:[Tfl*d.LRT],mode:'markers+text',marker:{color:'#ef4444',size:9,symbol:'square'},text:['LRT'],textposition:'top right',textfont:{color:t.text,size:10},name:'LRT'},
     {x:[Ns*(1-0.20)],y:[Tfl*d.BDT],mode:'markers+text',marker:{color:'#f59e0b',size:9,symbol:'triangle-up'},text:['BDT'],textposition:'top center',textfont:{color:t.text,size:10},name:'Breakdown'}
   ],{xaxis:{title:'Speed (rpm)',range:[0,Ns*1.05]},yaxis:{title:'Torque (N·m)',range:[0,Tfl*d.LRT*1.2]},showlegend:false});
   const out=$('motor-ts-out');if(out){
     out.innerHTML='<div class="result-grid">'+
-      [['Design',dKey],['T_FL (full load)',Tfl.toFixed(2)+' N·m'],['T_LR (locked rotor)',(Tfl*d.LRT).toFixed(1)+' N·m ('+(d.LRT*100).toFixed(0)+'% FL)'],['T_BD (breakdown)',(Tfl*d.BDT).toFixed(1)+' N·m ('+(d.BDT*100).toFixed(0)+'%)'],['I_LR / I_FL',(d.LRC).toFixed(1)+'×'],['Rated slip',(d.slip*100).toFixed(1)+'%']].map(([l,v])=>`<div class="result-item"><div class="lbl">${window.GK?window.GK(l):l}</div><div class="val">${v}</div></div>`).join('')+
+      [['Design',dKey],['T_FL (full load)',_uT(Tfl,2)],['T_LR (locked rotor)',_uT((Tfl*d.LRT),1)+' ('+(d.LRT*100).toFixed(0)+'% FL)'],['T_BD (breakdown)',_uT((Tfl*d.BDT),1)+' ('+(d.BDT*100).toFixed(0)+'%)'],['I_LR / I_FL',(d.LRC).toFixed(1)+'×'],['Rated slip',(d.slip*100).toFixed(1)+'%']].map(([l,v])=>`<div class="result-item"><div class="lbl">${window.GK?window.GK(l):l}</div><div class="val">${v}</div></div>`).join('')+
       '</div><p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem"><strong>'+dKey+':</strong> '+d.note+'.<br><strong>Starting current:</strong> ~'+d.LRC.toFixed(1)+'× FLA across-the-line. Use soft-start or VFD to limit inrush. <strong>Across-the-line OK</strong> if utility transformer ≥ 5× motor kVA. <strong>Code letter:</strong> NEMA Code G ≈ 6.0 kVA/HP locked rotor; B/C usually fall in F-G.</p>';
   }
 };
@@ -3438,7 +3583,7 @@ window.calcPumpCurve=function(){
   plot('p-pump-curve',[
     {x:Qs,y:Hpump,mode:'lines',line:{color:t.accent,width:2.5},name:'Pump H-Q'},
     {x:Qs,y:Hsys,mode:'lines',line:{color:'#3b82f6',width:2.5,dash:'dash'},name:'System curve'},
-    {x:[Qop],y:[Hop],mode:'markers+text',marker:{color:'#22c55e',size:13,symbol:'star',line:{color:'#000',width:1}},text:['OP: '+Qop.toFixed(0)+' m³/h, '+Hop.toFixed(1)+' m'],textposition:'top right',textfont:{color:t.text,size:11}},
+    {x:[Qop],y:[Hop],mode:'markers+text',marker:{color:'#22c55e',size:13,symbol:'star',line:{color:'#000',width:1}},text:['OP: '+_uQ(Qop,0)+', '+Hop.toFixed(1)+' m'],textposition:'top right',textfont:{color:t.text,size:11}},
     {x:[model.Qbep],y:[model.Hbep],mode:'markers+text',marker:{color:'#f59e0b',size:10,symbol:'diamond'},text:['BEP'],textposition:'bottom right',textfont:{color:t.text,size:10}}
   ],{xaxis:{title:'Flow Q (m³/h)',range:[0,Qmax]},yaxis:{title:'Head H (m)',range:[0,model.Hmax*1.1]},showlegend:true,legend:{x:0.65,y:0.98,bgcolor:'rgba(0,0,0,0)',font:{size:10,color:t.text}}});
   const out=$('pump-op-out');if(out){
@@ -3446,7 +3591,7 @@ window.calcPumpCurve=function(){
     const opStatus=offBep<10?'ok':offBep<30?'warn':'err';
     const opLabel=offBep<10?'In sweet spot':offBep<30?'Off BEP — efficiency drop':'Far from BEP — recirc/cavitation risk';
     out.innerHTML='<div class="result-grid">'+
-      [['Operating Q',Qop.toFixed(1)+' m³/h'],['Operating H',Hop.toFixed(1)+' m'],['Off-BEP %',offBep.toFixed(1)+'%',opStatus],['Efficiency',(effOp*100).toFixed(1)+'%'],['Brake power',Pbrake.toFixed(2)+' kW'],['NPSHr (BEP)',model.NPSHr.toFixed(1)+' m']].map(([l,v,c])=>`<div class="result-item"><div class="lbl">${window.GK?window.GK(l):l}</div><div class="val ${c||''}">${v}</div></div>`).join('')+
+      [['Operating Q',_uQ(Qop,1)],['Operating H',Hop.toFixed(1)+' m'],['Off-BEP %',offBep.toFixed(1)+'%',opStatus],['Efficiency',(effOp*100).toFixed(1)+'%'],['Brake power',_uW(Pbrake,2)],['NPSHr (BEP)',model.NPSHr.toFixed(1)+' m']].map(([l,v,c])=>`<div class="result-item"><div class="lbl">${window.GK?window.GK(l):l}</div><div class="val ${c||''}">${v}</div></div>`).join('')+
       '</div><p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem"><strong>'+opLabel+'</strong>. '+model.note+'. Operate within ±20% of BEP. Verify NPSHa &gt; NPSHr+1m. Below 50% BEP risk: recirculation, vibration, seal failure. Above 120% BEP: low NPSHa margin, cavitation, motor overload.</p>';
   }
 };
@@ -3513,7 +3658,7 @@ window.calcPVHead=function(){
   }
   const tTotal=t+CA;
   setCardOut('pv-head-card','<div class="result-grid">'+
-    [['t_required',t.toFixed(3)+' mm'],['t_total (with C.A.)',tTotal.toFixed(3)+' mm'],['Head type',type==='hemi'?'Hemispherical':type==='ellip'?'Ellipsoidal 2:1':type==='tori'?'Torispherical F&D':'Flat']].map(([l,v])=>`<div class="result-item"><div class="lbl">${window.GK?window.GK(l):l}</div><div class="val">${v}</div></div>`).join('')+
+    [['t_required',_uL(t,3)],['t_total (with C.A.)',_uL(tTotal,3)],['Head type',type==='hemi'?'Hemispherical':type==='ellip'?'Ellipsoidal 2:1':type==='tori'?'Torispherical F&D':'Flat']].map(([l,v])=>`<div class="result-item"><div class="lbl">${window.GK?window.GK(l):l}</div><div class="val">${v}</div></div>`).join('')+
     '</div><p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem"><strong>Formula:</strong> '+formula+'. <strong>Selection:</strong> Hemi gives thinnest head but tallest profile and most expensive. Ellipsoidal 2:1 is standard process choice. Torispherical (F&D) uses flat-bottom forming, common low-pressure storage. Add corrosion allowance per service. Verify spot-radiography per UW-12 for E (1.0 full RT, 0.85 spot, 0.70 none).</p>');
 };
 window.calcPVNozzle=function(){
@@ -3528,7 +3673,7 @@ window.calcPVNozzle=function(){
   const A_short=A_req-A_avail;
   const pad_t=pad_needed?A_short/(2*dO):0;
   setCardOut('pv-nozzle-card','<div class="result-grid">'+
-    [['Opening d',d.toFixed(1)+' mm'],['A required',A_req.toFixed(1)+' mm²'],['A from shell',A1.toFixed(1)+' mm²'],['A from nozzle',A2.toFixed(1)+' mm²'],['A total available',A_avail.toFixed(1)+' mm²',A_avail>=A_req?'ok':'err'],['Pad needed?',pad_needed?'YES':'NO',pad_needed?'warn':'ok'],['Pad t (min)',pad_needed?pad_t.toFixed(1)+' mm':'—']].map(([l,v,c])=>`<div class="result-item"><div class="lbl">${window.GK?window.GK(l):l}</div><div class="val ${c||''}">${v}</div></div>`).join('')+
+    [['Opening d',_uL(d,1)],['A required',_uA(A_req,1)],['A from shell',_uA(A1,1)],['A from nozzle',_uA(A2,1)],['A total available',_uA(A_avail,1),A_avail>=A_req?'ok':'err'],['Pad needed?',pad_needed?'YES':'NO',pad_needed?'warn':'ok'],['Pad t (min)',pad_needed?_uL(pad_t,1):'—']].map(([l,v,c])=>`<div class="result-item"><div class="lbl">${window.GK?window.GK(l):l}</div><div class="val ${c||''}">${v}</div></div>`).join('')+
     '</div><p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem">UG-37 area-replacement rule: cross-sectional area removed from shell by the opening (A_req = d·t_r) must be replaced by metal within the reinforcement zone. Available metal = excess shell thickness × d + nozzle wall × 2.5·t_n on each side. If short, add a reinforcement pad. Pad diameter typically d_pad = 2·d for full credit.</p>');
 };
 window.calcPVLug=function(){
@@ -3544,7 +3689,7 @@ window.calcPVLug=function(){
   const A_net=(w-d)*t;
   const sigma_tens=F_design/A_net;
   setCardOut('pv-lug-card','<div class="result-grid">'+
-    [['F per lug (1g)',F_per.toFixed(0)+' N'],['F design (×'+factor+')',F_design.toFixed(0)+' N'],['σ bearing',sigma_bear.toFixed(1)+' MPa',sigma_bear<S?'ok':'err'],['τ tear-out',tau_tear.toFixed(1)+' MPa',tau_tear<0.6*S?'ok':'err'],['σ tensile (net sec)',sigma_tens.toFixed(1)+' MPa',sigma_tens<S?'ok':'err'],['Allowable',S+' MPa']].map(([l,v,c])=>`<div class="result-item"><div class="lbl">${window.GK?window.GK(l):l}</div><div class="val ${c||''}">${v}</div></div>`).join('')+
+    [['F per lug (1g)',_uF(F_per,0)],['F design (×'+factor+')',_uF(F_design,0)],['σ bearing',_uP(sigma_bear,1),sigma_bear<S?'ok':'err'],['τ tear-out',_uP(tau_tear,1),tau_tear<0.6*S?'ok':'err'],['σ tensile (net sec)',_uP(sigma_tens,1),sigma_tens<S?'ok':'err'],['Allowable',S+' MPa']].map(([l,v,c])=>`<div class="result-item"><div class="lbl">${window.GK?window.GK(l):l}</div><div class="val ${c||''}">${v}</div></div>`).join('')+
     '</div><p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem"><strong>ASME B30.20 / OSHA:</strong> Design factor 2× for fixed lugs, 5× for slings. Bearing stress on pin: F/(d·t). Tear-out (double shear): F/(2·a·t) where a = edge distance. Tensile through net section: F/((w-d)·t). All < S_allow. Welded lug to shell: check fillet weld + base metal HAZ separately.</p>');
 };
 
@@ -3616,12 +3761,12 @@ window.calcBoltTorqueSeq=function(){
   const totalTheta=(Fi-snugF)*degPerN;
   summary+='<div class="result-grid" style="margin-top:.5rem">'+
     [['Method',method.toUpperCase()],
-     ...(angleMode?[['Snug torque (pass 1)',fmt(T_target*ratios[0]/100,2)+' N·m'],['θ total snug→100%',fmt(totalTheta,0)+'°'],['k_b bolt stiffness',fmt(kb/1000,0)+' kN/mm'],['Stretch at F_i',fmt(Fi/kb,3)+' mm']]:[]),
-     ['T_target',fmt(T_target,2)+' N·m'],
-     ['T range (K-scatter)',fmt(T_lo,2)+' – '+fmt(T_hi,2)+' N·m'],
-     ['F_preload range',fmt(F_lo,0)+' – '+fmt(F_hi,0)+' N'],
-     ['F_bolt @ ext load',fmt(F_b,0)+' N'],
-     ['F_joint @ ext load',fmt(F_j,0)+' N',F_j>0?'ok':'err'],
+     ...(angleMode?[['Snug torque (pass 1)',_uT(T_target*ratios[0]/100,2)],['θ total snug→100%',fmt(totalTheta,0)+'°'],['k_b bolt stiffness',_uFk(kb/1000,0)+'/mm'],['Stretch at F_i',_uL(Fi/kb,3)]]:[]),
+     ['T_target',_uT(T_target,2)],
+     ['T range (K-scatter)',fmt(T_lo,2)+' – '+_uT(T_hi,2)],
+     ['F_preload range',fmt(F_lo,0)+' – '+_uF(F_hi,0)],
+     ['F_bolt @ ext load',_uF(F_b,0)],
+     ['F_joint @ ext load',_uF(F_j,0),F_j>0?'ok':'err'],
      ['Separation margin',isFinite(sepMargin)?fmt(sepMargin,2)+'×':'∞',sepMargin>1.5?'ok':sepMargin>1?'warn':'err'],
      ['Joint stiffness ratio C',fmt(C,2)]].map(([l,v,c])=>`<div class="result-item"><div class="lbl">${window.GK?window.GK(l):l}</div><div class="val ${c||''}">${v}</div></div>`).join('')+'</div>';
   summary+='<p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem"><strong>Method notes:</strong> Torque control ±25% preload scatter typical. Torque + angle (e.g. snug then 90°) cuts scatter to ±10%. Yield-control (or ultrasonic) reaches ±5%. <strong>Sequence:</strong> star/cross pattern, opposite bolts in pairs, work outward for circular flanges. <strong>ASME PCC-1</strong> is the canonical assembly guideline. Re-torque after gasket relaxation typically 10–20% of original preload for compressed-fiber sheet, lower for spiral-wound, higher for soft sheet.</p>';
@@ -3754,7 +3899,7 @@ window.calcDeposition=function(){
   const depRateLbHr=depRate*2.205;
   const heat=tts>0?(amp*volt*0.06/tts):NaN;
   setCardOut('weld-rate-card','<div class="result-grid">'+
-    [['Melt rate',meltRate.toFixed(3)+' kg/hr'],['Deposit rate',depRate.toFixed(3)+' kg/hr'],['Deposit rate',depRateLbHr.toFixed(2)+' lb/hr'],['Heat input',isFinite(heat)?heat.toFixed(2)+' kJ/mm':'—',heat>3.5?'warn':heat>1.5?'ok':'warn'],['Process',proc]].map(([l,v,c])=>`<div class="result-item"><div class="lbl">${window.GK?window.GK(l):l}</div><div class="val ${c||''}">${v}</div></div>`).join('')+
+    [['Melt rate',_uM(meltRate,3)+'/hr'],['Deposit rate',_uM(depRate,3)+'/hr'],['Deposit rate',depRateLbHr.toFixed(2)+' lb/hr'],['Heat input',isFinite(heat)?heat.toFixed(2)+' kJ/mm':'—',heat>3.5?'warn':heat>1.5?'ok':'warn'],['Process',proc]].map(([l,v,c])=>`<div class="result-item"><div class="lbl">${window.GK?window.GK(l):l}</div><div class="val ${c||''}">${v}</div></div>`).join('')+
     '</div><p class="note" style="margin-top:.4rem;color:var(--dim);font-size:.7rem"><strong>Heat input:</strong> H = (A·V·0.06)/v_travel kJ/mm. <strong>Limits:</strong> Carbon steel 0.8–3.5 kJ/mm; HSLA 0.8–2.5; Duplex 0.5–2.0 (over-heat embrittlement); aluminum 0.6–2.0. Below 0.8 kJ/mm risks lack of fusion; above max risks HAZ softening / grain growth. <strong>Deposition efficiency:</strong> SMAW 60-65%, GMAW 92-95% (short-arc) / 88% (spray), FCAW 78-85%, GTAW 100% (no spatter), SAW 95-100%.</p>');
 };
 
@@ -3968,7 +4113,7 @@ window.rebuildGear3D=function(){
     const fw=v('g3d-fw')||20;
     const ra=r+m,rd=Math.max(r-1.25*m,0.5),rb=r*Math.cos(phi*Math.PI/180);
     const p=Math.PI*m,da=2*ra,db=2*rb,dd=2*rd;
-    out.innerHTML='<strong>Computed:</strong> d (pitch) = '+(2*r).toFixed(2)+' mm · d_a (addendum/OD) = '+da.toFixed(2)+' mm · d_b (base) = '+db.toFixed(2)+' mm · d_d (dedendum/root) = '+dd.toFixed(2)+' mm · circular pitch = '+p.toFixed(3)+' mm · face width = '+fw.toFixed(1)+' mm';
+    out.innerHTML='<strong>Computed:</strong> d (pitch) = '+_uL((2*r),2)+' · d_a (addendum/OD) = '+_uL(da,2)+' · d_b (base) = '+_uL(db,2)+' · d_d (dedendum/root) = '+_uL(dd,2)+' · circular pitch = '+_uL(p,3)+' · face width = '+_uL(fw,1);
   }
 };
 function geomToSTL(geom,name){
@@ -4344,6 +4489,7 @@ window.addEventListener('DOMContentLoaded',()=>{
     injectFouledU();
     injectAgmaPitting();
     injectThreadEngage();
+    injectBoltStiffness();
     injectBoltDesigner();
     injectSpringDesigner();
     injectBellevilleDesigner();
@@ -4520,7 +4666,7 @@ window.addEventListener('DOMContentLoaded',()=>{
       });
       const out=$('mohr-x-out');if(out){
         out.innerHTML='<div class="result-grid">'+
-          [['σ₁',s1.toFixed(2)+' MPa'],['σ₂',s2.toFixed(2)+' MPa'],['τ_max',tmax.toFixed(2)+' MPa'],['Center σ_avg',cx.toFixed(2)+' MPa'],['Radius R',R.toFixed(2)+' MPa'],['θ_p',tp.toFixed(2)+'°'],['σ_vM (2D)',sv0.toFixed(2)+' MPa'],['τ_Tresca',tr.toFixed(2)+' MPa']].map(([l,v])=>`<div class="result-item"><div class="lbl">${window.GK?window.GK(l):l}</div><div class="val">${v}</div></div>`).join('')+
+          [['σ₁',_uP(s1,2)],['σ₂',_uP(s2,2)],['τ_max',_uP(tmax,2)],['Center σ_avg',_uP(cx,2)],['Radius R',_uP(R,2)],['θ_p',tp.toFixed(2)+'°'],['σ_vM (2D)',_uP(sv0,2)],['τ_Tresca',_uP(tr,2)]].map(([l,v])=>`<div class="result-item"><div class="lbl">${window.GK?window.GK(l):l}</div><div class="val">${v}</div></div>`).join('')+
           '</div><p style="margin-top:.4rem;color:var(--dim);font-size:.72rem">Principal axes rotate '+tp.toFixed(1)+'° from x-axis. Use σ_vM for ductile-yield FoS, σ₁ for brittle/fatigue. Tresca more conservative than vM by ~15%.</p>';
       }
     };
