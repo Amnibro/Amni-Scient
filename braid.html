@@ -20,7 +20,7 @@
 <meta name="twitter:image" content="https://amni-scient.com/assets/braid/braid-og.jpg?v=2">
 <link rel="canonical" href="https://amni-scient.com/braid">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Braid","url":"https://amni-scient.com/braid","description":"A multi-model round table. Ask once and Claude, Grok, Gemini and a local model each answer, reading the answers before them. Runs on your existing subscriptions or your own API keys.","applicationCategory":"DeveloperApplication","operatingSystem":"Windows","offers":{"@type":"Offer","price":"10.00","priceCurrency":"USD","category":"subscription","availability":"https://schema.org/InStock"},"author":{"@type":"Organization","name":"AMNI-SCIENT","legalName":"Amniscient, LLC","url":"https://amni-scient.com"},"image":"https://amni-scient.com/assets/braid/braid-og.jpg?v=2"}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoObject","name":"Braid demo &mdash; a real multi-AI session, captured live","description":"Real screen recording of Braid: one question to the round table, then a tour of views, Flows presets, loop modes and per-seat permissions, then an adversarial round where the seats hunt real flaws in their own committed design. Nothing staged.","thumbnailUrl":"https://amni-scient.com/assets/braid/braid-poster.jpg?v=8","contentUrl":"https://amni-scient.com/assets/braid/braid-usage.mp4?v=8","uploadDate":"2026-07-30","duration":"PT51S"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoObject","name":"Braid demo - a real multi-AI session, captured live","description":"Real screen recording of Braid: one question to the round table, then a tour of views, Flows presets, loop modes and per-seat permissions, then an adversarial round where the seats hunt real flaws in their own committed design. Nothing staged.","thumbnailUrl":"https://amni-scient.com/assets/braid/braid-poster.jpg?v=9","contentUrl":"https://amni-scient.com/assets/braid/braid-usage.mp4?v=8","uploadDate":"2026-07-30","duration":"PT51S","inLanguage":"en","isFamilyFriendly":true,"publisher":{"@type":"Organization","name":"Amniscient, LLC","url":"https://amni-scient.com/"},"caption":{"@type":"MediaObject","contentUrl":"https://amni-scient.com/assets/braid/braid-captions.vtt?v=1","encodingFormat":"text/vtt"},"hasPart":[{"@type":"Clip","name":"Every AI you already pay for","startOffset":0,"endOffset":4,"url":"https://amni-scient.com/braid#t=0"},{"@type":"Clip","name":"Ask once - every seat answers","startOffset":4,"endOffset":15,"url":"https://amni-scient.com/braid#t=4"},{"@type":"Clip","name":"Three views: side by side, stacked, one thread","startOffset":15,"endOffset":22,"url":"https://amni-scient.com/braid#t=15"},{"@type":"Clip","name":"Flows - presets that set who answers whom","startOffset":22,"endOffset":25,"url":"https://amni-scient.com/braid#t=22"},{"@type":"Clip","name":"Loops - once, N laps, or run to a goal","startOffset":25,"endOffset":29,"url":"https://amni-scient.com/braid#t=25"},{"@type":"Clip","name":"Permissions - what each seat sees and touches","startOffset":29,"endOffset":34,"url":"https://amni-scient.com/braid#t=29"},{"@type":"Clip","name":"Adversarial round - builders vs attackers","startOffset":34,"endOffset":47,"url":"https://amni-scient.com/braid#t=34"},{"@type":"Clip","name":"Open beta - $10/mo","startOffset":47,"endOffset":51,"url":"https://amni-scient.com/braid#t=47"}],"potentialAction":{"@type":"SeekToAction","target":"https://amni-scient.com/braid#t={seek_to_second_number}","startOffset-input":"required name=seek_to_second_number"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Can I chat with Claude, Grok and Gemini at the same time?","acceptedAnswer":{"@type":"Answer","text":"Yes. Braid sends one question to every connected seat at once. You can view the answers side by side in columns, or sequentially where each model reads the answers before it and builds on them."}},{"@type":"Question","name":"Do I need API keys, or does Braid charge for AI usage?","acceptedAnswer":{"@type":"Answer","text":"Neither is required. Braid drives the CLI tools you are already signed into (Claude, Grok, Gemini), so a seat costs whatever your existing subscription costs. You can also bring pay-as-you-go API keys or a local model. Braid never meters or resells tokens."}},{"@type":"Question","name":"Can the AIs see each other's answers?","acceptedAnswer":{"@type":"Answer","text":"That is the point of the round table. In sequential mode each seat reads every answer before it and responds to them - agreeing, correcting, or building on top - instead of answering blind."}},{"@type":"Question","name":"Does Braid work with local models like Ollama?","acceptedAnswer":{"@type":"Answer","text":"Yes. A local model seat (including Ollama models or the bundled Adam-3B) joins the same table as the subscription seats, at zero per-token cost."}},{"@type":"Question","name":"How much does Braid cost?","acceptedAnswer":{"@type":"Answer","text":"Open-beta pricing is $10/month (or $102/year), locked in for as long as you keep the subscription. There is a $5/month beta-tester tier and team pricing from $7 per seat. Cancel any time - it is a Stripe subscription, not a contract."}},{"@type":"Question","name":"Why don't I just build this myself - or use another agent harness?","acceptedAnswer":{"@type":"Answer","text":"Build it yourself: the bill shows up in tokens and subscription burn, not just evenings. Wiring multi-model orchestration, sequential handoffs, seat failures, and a room that keeps working costs more in model usage while you reinvent it than sitting on Braid and letting us carry development. Other agent harnesses (CrewAI, AutoGen, LangGraph, OpenAI/Claude agent stacks, multi-agent IDE runners) are usually one vendor under one roof, or they re-meter tokens through their API - they do not put Claude, Grok, Gemini, and a local seat in the same room on subscriptions you already pay for, with each seat reading the last. Keep your AI budget for your work; use Braid for the table."}},{"@type":"Question","name":"What platforms does Braid run on?","acceptedAnswer":{"@type":"Answer","text":"Braid is a Windows desktop app today. Your keys and sessions stay on your machine - nothing is proxied through our servers."}}]}</script>
 <link rel="stylesheet" href="css/style.css?v=b180">
 <style>
@@ -31,9 +31,39 @@
 @keyframes bflow{to{transform:translateX(calc(var(--p) * -1))}}
 .bflow{animation:bflow var(--d,9s) linear infinite}
 @media (prefers-reduced-motion:reduce){.bflow{animation:none}}
-.film{max-width:1080px;margin:0 auto;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;
- background:#0B0C0E;box-shadow:var(--elev-3)}
-.film video{display:block;width:100%;height:auto}
+.film{position:relative;max-width:1080px;margin:0 auto;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;
+ background:#0B0C0E;box-shadow:var(--elev-3);aspect-ratio:16/9}
+.film video{display:block;width:100%;height:100%;object-fit:cover}
+.film.playing .film-cta{opacity:0;pointer-events:none}
+/* poster overlay: a branded invitation instead of the browser's default control bar */
+.film-cta{position:absolute;inset:0;width:100%;height:100%;display:block;padding:0;border:0;cursor:pointer;
+ background:transparent;color:var(--text);text-align:left;transition:opacity var(--dur-slow) var(--ease)}
+.film-scrim{position:absolute;inset:0;background:
+ radial-gradient(58% 58% at 50% 46%,rgba(4,5,7,.52) 0%,rgba(4,5,7,.34) 55%,rgba(4,5,7,.26) 100%),
+ linear-gradient(to top,rgba(6,7,9,.90) 0%,rgba(6,7,9,.38) 24%,rgba(6,7,9,.10) 50%)}
+.film-play{position:absolute;left:50%;top:46%;transform:translate(-50%,-50%);width:78px;height:78px;border-radius:50%;
+ display:grid;place-items:center;color:#0B0C0E;background:var(--accent);
+ box-shadow:0 10px 34px -8px rgba(0,0,0,.8),0 0 0 0 var(--accent-glow);
+ transition:transform var(--dur) var(--ease),box-shadow var(--dur-slow) var(--ease)}
+.film-play svg{margin-left:3px}
+.film-cta:hover .film-play,.film-cta:focus-visible .film-play{transform:translate(-50%,-50%) scale(1.07);
+ box-shadow:0 10px 34px -8px rgba(0,0,0,.8),0 0 0 14px var(--accent-dim)}
+.film-cta:focus-visible{outline:2px solid var(--accent);outline-offset:-4px}
+.film-label{position:absolute;left:clamp(1rem,3vw,1.9rem);bottom:clamp(.9rem,2.6vw,1.5rem);right:6.5rem;display:grid;gap:.22rem}
+.film-label b{font-size:clamp(.95rem,2.1vw,1.18rem);font-weight:650;letter-spacing:.01em}
+.film-label em{font-style:normal;font-size:clamp(.68rem,1.5vw,.8rem);color:var(--text-soft);letter-spacing:.02em}
+.film-dur{position:absolute;right:clamp(1rem,3vw,1.9rem);bottom:clamp(.9rem,2.6vw,1.5rem);
+ font-family:var(--font-mono);font-size:.72rem;letter-spacing:.06em;color:var(--text);
+ background:rgba(10,11,14,.72);border:1px solid var(--border2);border-radius:999px;padding:.24rem .6rem}
+@media (prefers-reduced-motion:reduce){.film-cta,.film-play{transition:none}}
+/* chapter rail — also the on-page text Google reads alongside the Clip markup */
+.film-chapters{display:flex;flex-wrap:wrap;gap:.45rem;justify-content:center;max-width:1080px;margin:1rem auto 0}
+.film-chapters button{font-family:var(--font-mono);font-size:.68rem;letter-spacing:.02em;color:var(--text-soft);
+ background:var(--panel);border:1px solid var(--border);border-radius:999px;padding:.34rem .7rem;cursor:pointer;
+ transition:color var(--dur) var(--ease),border-color var(--dur) var(--ease),transform var(--dur) var(--ease)}
+.film-chapters button:hover{color:var(--text);border-color:var(--border2);transform:translateY(-1px)}
+.film-chapters button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.film-chapters button[aria-current=true]{color:var(--accent-ink);background:var(--accent);border-color:var(--accent)}
 .filmcap{text-align:center;color:var(--dim);font-size:.78rem;margin:.9rem auto 0;max-width:720px}
 .seatgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.6rem;max-width:900px;margin:2rem auto 0}
 .seatchip{display:flex;align-items:center;gap:.55rem;border:1px solid var(--border);border-radius:11px;background:var(--panel);box-shadow:var(--elev-1);
@@ -74,7 +104,7 @@
 <div class="nav-dd nav-dd--active">
 <button class="nav-dd-trigger">PROJECTS</button>
 <div class="nav-dd-menu">
-<a href="braid.html" class="active">BRAID</a>
+<a href="/braid" class="active">BRAID</a>
 <a href="amni-ai.html">AMNI-AI</a>
 <a href="amni-browse.html">AMNI-BROWSE</a>
 <a href="amni-calc.html">AMNI-CALC</a>
@@ -111,12 +141,32 @@
 <section id="film">
 <h2>UNDER A MINUTE, NOTHING STAGED</h2>
 <p style="text-align:center;color:var(--dim);max-width:760px;margin:0 auto 2rem;font-size:.9rem">A real session in the real app, captured live: one question goes to the table and the seats commit &mdash; then the views (columns, stack, thread), the Flows presets, loop modes and per-seat permissions, then an <b>adversarial round</b>: builders vs attackers hunting real flaws in their own design, with a local seat and live handoffs. Nothing staged, nothing mocked.</p>
-<div class="film">
-<video controls playsinline preload="metadata" poster="assets/braid/braid-poster.jpg?v=8">
+<div class="film" id="film-shell">
+<video id="braid-film" playsinline preload="none" width="1920" height="1080"
+       poster="assets/braid/braid-poster.jpg?v=9"
+       aria-label="Braid demo — a real multi-AI session, captured live">
 <source src="assets/braid/braid-usage.mp4?v=8" type="video/mp4">
-Your browser cannot play this video.
+<track kind="captions" src="assets/braid/braid-captions.vtt?v=1" srclang="en" label="English" default>
+<track kind="chapters" src="assets/braid/braid-chapters.vtt?v=1" srclang="en" label="Chapters">
+Your browser cannot play this video. <a href="assets/braid/braid-usage.mp4?v=8">Download the demo (MP4, 51s)</a>.
 </video>
+<button class="film-cta" id="film-cta" type="button" aria-controls="braid-film">
+<span class="film-scrim" aria-hidden="true"></span>
+<span class="film-play" aria-hidden="true"><svg viewBox="0 0 24 24" width="30" height="30"><path d="M9 6.5v11l9-5.5-9-5.5z" fill="currentColor"/></svg></span>
+<span class="film-label"><b>Watch the 51-second demo</b><em>Real session &middot; real CLIs &middot; nothing staged</em></span>
+<span class="film-dur">0:51</span>
+</button>
 </div>
+<nav class="film-chapters" aria-label="Jump to a moment in the demo">
+<button type="button" data-t="0">0:00 &middot; Every AI you already pay for</button>
+<button type="button" data-t="4">0:04 &middot; Ask once &mdash; every seat answers</button>
+<button type="button" data-t="15.5">0:15 &middot; Three views: side, stacked, thread</button>
+<button type="button" data-t="22.6">0:22 &middot; Flows &mdash; who answers whom</button>
+<button type="button" data-t="25.6">0:25 &middot; Loops &mdash; N laps or to a goal</button>
+<button type="button" data-t="29.2">0:29 &middot; Permissions per seat</button>
+<button type="button" data-t="34.3">0:34 &middot; Adversarial round</button>
+<button type="button" data-t="47.2">0:47 &middot; Open beta &mdash; $10/mo</button>
+</nav>
 <p class="filmcap">Ask once &rarr; seats commit &bull; views &bull; Flows &bull; loops &bull; permissions &bull; adversarial round &rarr; flaws found &mdash; real CLIs, real subscriptions, nothing cut but the waiting</p>
 </section>
 
@@ -327,6 +377,45 @@ function braidSVG(o){
   +'<g mask="url(#m'+uid+')"><g class="bflow" style="--p:'+Pxl.toFixed(2)+'px;--d:'+secs+'s"'
   +(glow?' filter="url(#g'+uid+')"':"")+'>'+g+'</g></g></svg>'}
  host.outerHTML=braidSVG({w:680,n:4,secs:12,sw:0.075,amp:0.34,pad:0.28}).replace('<svg ','<svg class="braid-mark" aria-label="Braid" ');
+})();
+</script>
+<script>
+(function(){
+  var v=document.getElementById('braid-film'),shell=document.getElementById('film-shell'),
+      cta=document.getElementById('film-cta'),rail=document.querySelector('.film-chapters');
+  if(!v||!shell||!cta)return;
+  var marks=rail?Array.prototype.slice.call(rail.querySelectorAll('button')):[];
+  function start(t){
+    shell.classList.add('playing');
+    v.setAttribute('controls','');
+    var go=function(){
+      if(typeof t==='number'){try{v.currentTime=t;}catch(e){}}
+      var p=v.play(); if(p&&p.catch)p.catch(function(){});
+    };
+    /* preload="none" means metadata is not there yet on first click — seeking before
+       loadedmetadata is silently dropped and the film starts at 0. Wait for it. */
+    if(v.readyState<1){v.addEventListener('loadedmetadata',go,{once:true});v.load();}
+    else go();
+  }
+  cta.addEventListener('click',function(){start();v.focus();});
+  /* the overlay is a real <button>, so Enter/Space already fire click — no key handler needed */
+  marks.forEach(function(b){
+    b.addEventListener('click',function(){
+      start(parseFloat(b.dataset.t)||0);
+      shell.scrollIntoView({block:'center',behavior:(matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth')});
+    });
+  });
+  /* keep the rail in sync so the viewer can see where they are */
+  v.addEventListener('timeupdate',function(){
+    if(!marks.length)return;
+    var t=v.currentTime,cur=null;
+    marks.forEach(function(b){if(t+0.25>=(parseFloat(b.dataset.t)||0))cur=b;});
+    marks.forEach(function(b){
+      var on=b===cur;
+      if((b.getAttribute('aria-current')==='true')!==on)b.setAttribute('aria-current',on?'true':'false');
+    });
+  });
+  v.addEventListener('ended',function(){shell.classList.remove('playing');v.removeAttribute('controls');});
 })();
 </script>
 </body>
