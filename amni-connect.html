@@ -20,12 +20,12 @@
 <meta name="twitter:image" content="https://amni-scient.com/assets/connect/hero.png">
 <link rel="canonical" href="https://amni-scient.com/amni-connect">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Amni-Connect","url":"https://amni-scient.com/amni-connect.html","description":"End-to-end encrypted remote desktop over WebRTC. Rust input daemon, self-hostable signaling, zero logs.","applicationCategory":"UtilitiesApplication","operatingSystem":"Windows, macOS, Linux","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Organization","name":"AMNI-SCIENT","legalName":"Amniscient, LLC","url":"https://amni-scient.com"}}</script>
-<link rel="stylesheet" href="css/style.css?v=b220">
+<link rel="stylesheet" href="css/style.css?v=b230">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
 </head>
-<body class="theme-ai">
+<body class="pp theme-ai">
 <div class="grid-bg"></div>
 <div class="scanlines"></div>
 <nav>
@@ -65,31 +65,23 @@
 </div>
 </nav>
 <div class="product-hero">
-<div class="shield-icon float">
-<svg viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-<circle cx="35" cy="55" r="18" stroke="#00ffaa" stroke-width="2" fill="rgba(0,255,170,0.05)"/>
-<circle cx="65" cy="55" r="18" stroke="#00ffaa" stroke-width="2" fill="rgba(0,255,170,0.05)"/>
-<line x1="53" y1="55" x2="47" y2="55" stroke="#00ffaa" stroke-width="2.5"/>
-<circle cx="35" cy="55" r="4" fill="#00ffaa"/>
-<circle cx="65" cy="55" r="4" fill="#00ffaa"/>
-<path d="M18 30 Q10 55 18 80" stroke="#00ffaa" stroke-width="1" fill="none" opacity="0.6"/>
-<path d="M82 30 Q90 55 82 80" stroke="#00ffaa" stroke-width="1" fill="none" opacity="0.6"/>
-<path d="M25 22 Q10 55 25 88" stroke="#00ffaa" stroke-width="0.8" fill="none" opacity="0.35"/>
-<path d="M75 22 Q90 55 75 88" stroke="#00ffaa" stroke-width="0.8" fill="none" opacity="0.35"/>
-<rect x="30" y="95" width="40" height="3" fill="#00ffaa" opacity="0.7"/>
-<text x="50" y="110" text-anchor="middle" fill="#00ffaa" font-size="6" font-family="monospace" opacity="0.8">E2EE</text>
+<div class="shield-icon">
+<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+<rect x="5" y="8" width="30" height="21" rx="2" stroke="#00ffaa" stroke-width="2.6"/>
+<rect x="29" y="35" width="30" height="21" rx="2" stroke="#00ffaa" stroke-width="2.6"/>
+<path d="M20 29v6a5 5 0 0 0 5 5h4M44 35v-6a5 5 0 0 0-5-5h-4" stroke="#00ffaa" stroke-width="2.6" stroke-linecap="square"/>
 </svg>
 </div>
 <h1>AMNI-CONNECT</h1>
 <p class="desc">E2EE REMOTE DESKTOP &bull; PEER-TO-PEER &bull; SELF-HOSTABLE</p>
-<div class="cta-row" style="justify-content:center;margin-top:2rem;margin-bottom:1rem">
+<div class="cta-row" style="margin-top:2rem;margin-bottom:1rem">
 <a href="#how" class="btn btn-primary">HOW IT WORKS</a>
 <a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="btn btn-outline">&#9749; SUPPORT</a>
 </div>
 </div>
 <section>
 <h2>REMOTE CONTROL WITHOUT THE CLOUD</h2>
-<p style="text-align:center;color:var(--dim);max-width:720px;margin:0 auto 2rem;font-size:.9rem">A modern alternative to Windows Remote Desktop &mdash; screen + input streamed directly between your devices over WebRTC. Signaling runs on a tiny Node server <em>you host</em>. No third-party relay sees your frames, no vendor stores your session, no account required.</p>
+<p style="color:var(--dim);max-width:720px;margin:0 0 2rem;font-size:.9rem">A modern alternative to Windows Remote Desktop &mdash; screen + input streamed directly between your devices over WebRTC. Signaling runs on a tiny Node server <em>you host</em>. No third-party relay sees your frames, no vendor stores your session, no account required.</p>
 <div class="features"><div class="feature">
 <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10" width="16" height="11"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div>
 <h4>END-TO-END ENCRYPTED</h4>
@@ -134,7 +126,7 @@
 </section>
 <section>
 <h2>THREE-COMPONENT ARCHITECTURE</h2>
-<p style="text-align:center;color:var(--dim);max-width:720px;margin:0 auto 2rem;font-size:.9rem">Amni-Connect splits into three isolated processes. Each can be restarted, replaced, or audited independently.</p>
+<p style="color:var(--dim);max-width:720px;margin:0 0 2rem;font-size:.9rem">Amni-Connect splits into three isolated processes. Each can be restarted, replaced, or audited independently.</p>
 <table class="spec-table">
 <tr><th>COMPONENT</th><th>ROLE</th></tr>
 <tr><td>Electron Host</td><td>Screen capture (desktopCapturer), WebRTC peer, UI chrome &mdash; runs on the machine being controlled</td></tr>
@@ -184,7 +176,7 @@
 <h2>GET AMNI-CONNECT</h2>
 <p style="color:var(--dim);margin-bottom:.5rem;font-size:.9rem">Host your own signaling, control your own hardware. No SaaS, no relay fees, no rate limits.</p>
 <p style="color:var(--dim);font-size:.8rem;margin-bottom:2rem">Open source under CC BY-NC 4.0 &bull; source available on GitHub &bull; non-commercial use</p>
-<div class="cta-row" style="justify-content:center">
+<div class="cta-row" style="">
 <a href="https://github.com/amnibro/Amni-Connect" target="_blank" class="btn btn-primary">VIEW ON GITHUB</a>
 <a href="privacy-connect.html" class="btn btn-outline">PRIVACY POLICY</a>
 </div>

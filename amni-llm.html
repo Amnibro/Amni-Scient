@@ -21,7 +21,7 @@
 <meta name="twitter:image" content="https://amni-scient.com/assets/explore/og-explore.png">
 <link rel="canonical" href="https://amni-scient.com/amni-llm.html">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Amni-LLM","url":"https://amni-scient.com/amni-llm.html","description":"Universal in-browser GGUF runtime. Load any GGUF model from HuggingFace, no pre-compilation step. WebLLM-compatible API.","applicationCategory":"DeveloperApplication","operatingSystem":"Any (Modern Browser)","browserRequirements":"Requires JavaScript and WebAssembly","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Organization","name":"AMNI-SCIENT","legalName":"Amniscient, LLC","url":"https://amni-scient.com"},"license":"https://opensource.org/licenses/MIT","codeRepository":"https://github.com/Amnibro/amni-llm"}</script>
-<link rel="stylesheet" href="css/style.css?v=b220">
+<link rel="stylesheet" href="css/style.css?v=b230">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
@@ -39,7 +39,7 @@
 .code-block .str{color:#5d6}
 </style>
 </head>
-<body class="theme-ai">
+<body class="pp theme-ai">
 <div class="grid-bg"></div>
 <div class="scanlines"></div>
 <nav>
@@ -92,7 +92,7 @@
 </div>
 <h1>AMNI-LLM</h1>
 <p class="desc">UNIVERSAL IN-BROWSER GGUF RUNTIME &bull; LOAD ANY MODEL &bull; OPEN SOURCE (MIT)</p>
-<div style="margin-top:2rem;display:flex;gap:.8rem;flex-wrap:wrap;justify-content:center">
+<div style="margin-top:2rem;display:flex;gap:.8rem;flex-wrap:wrap">
 <a href="lib/amni-llm/" class="btn btn-primary" style="background:#a8f;color:var(--bg)">LAUNCH AMNI-LLM &rarr;</a>
 <a href="https://github.com/Amnibro/amni-llm" target="_blank" rel="noopener" class="btn btn-outline">GITHUB</a>
 </div>
@@ -100,7 +100,7 @@
 
 <section>
 <h2>WHY ANOTHER IN-BROWSER LLM?</h2>
-<p style="text-align:center;color:var(--dim);max-width:780px;margin:0 auto 2rem;font-size:.9rem">Existing in-browser runtimes like WebLLM (MLC) require every model to be specifically TVM-compiled to WebGPU shaders before it runs. New base models &mdash; Qwen 3.5, DeepSeek-R1, Mistral Nemo, Llama 4 &mdash; sit on the MLC team's compile queue before they're available. Amni-LLM uses GGUF, the format with the broadest community coverage on HuggingFace: most popular models have GGUF builds within days of release. Tradeoff is honest: llama.cpp WASM is currently CPU-SIMD-only, so per-token throughput is lower than WebGPU stacks. The win is universal model availability and arbitrary URL/file loading.</p>
+<p style="color:var(--dim);max-width:780px;margin:0 0 2rem;font-size:.9rem">Existing in-browser runtimes like WebLLM (MLC) require every model to be specifically TVM-compiled to WebGPU shaders before it runs. New base models &mdash; Qwen 3.5, DeepSeek-R1, Mistral Nemo, Llama 4 &mdash; sit on the MLC team's compile queue before they're available. Amni-LLM uses GGUF, the format with the broadest community coverage on HuggingFace: most popular models have GGUF builds within days of release. Tradeoff is honest: llama.cpp WASM is currently CPU-SIMD-only, so per-token throughput is lower than WebGPU stacks. The win is universal model availability and arbitrary URL/file loading.</p>
 <div class="features">
 <div class="feature">
 <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 3 2.6 15 0 18M12 3c-2.6 3-2.6 15 0 18"/></svg></div>
@@ -137,7 +137,7 @@
 
 <section>
 <h2>HOW IT COMPARES</h2>
-<div style="max-width:900px;margin:0 auto">
+<div style="max-width:900px;margin:0 0">
 <table class="llm-cmp">
 <tr><th>Feature</th><th>Amni-LLM</th><th>WebLLM (MLC)</th></tr>
 <tr><td>Load arbitrary HuggingFace model</td><td class="win">Yes &mdash; any GGUF</td><td class="loss">No &mdash; only MLC pre-compiled</td></tr>
@@ -158,7 +158,7 @@
 
 <section>
 <h2>QUICK API</h2>
-<div style="max-width:800px;margin:0 auto">
+<div style="max-width:800px;margin:0 0">
 <div class="code-block">
 <span class="kw">import</span> { createEngine } <span class="kw">from</span> <span class="str">'/lib/amni-llm/amni-llm.js'</span>;<br><br>
 <span class="com">// SOTA default by id</span><br>
@@ -180,7 +180,7 @@
 
 <section>
 <h2>HONEST STACK</h2>
-<div style="max-width:800px;margin:0 auto;line-height:1.85;color:var(--dim);font-size:.88rem">
+<div style="max-width:800px;margin:0 0;line-height:1.85;color:var(--dim);font-size:.88rem">
 <p>The transformer math runs through <a href="https://github.com/ngxson/wllama" target="_blank" rel="noopener" style="color:#a8f">wllama</a> (MIT-licensed llama.cpp WASM port). Amni-LLM owns the loader, registry, browser UI, HuggingFace search and install, arbitrary URL/file loading, and WebLLM-compatible API surface on top. We list the dependency by name in the README and on the demo page; the value-add is the integration and developer experience, not a from-scratch inference engine.</p>
 <p style="margin-top:1.2rem">Performance honesty: per-token throughput is lower than MLC's WebGPU stack because llama.cpp WASM hasn't shipped mature WebGPU support yet. For interactive chat at small models the difference is barely noticeable. For high-throughput production workloads where MLC supports the model you need, MLC remains faster.</p>
 <p style="margin-top:1.2rem">Memory note: in-browser models are bounded by the browser's allocator. Mobile browsers cap around 1 GB; desktop typically allows 2-4 GB without cross-origin isolation, more with it. Amni-LLM ships a service worker that enables COOP/COEP headers on static hosts (GitHub Pages, etc.) so SharedArrayBuffer becomes available and multi-thread WASM with larger memory works.</p>
@@ -190,7 +190,7 @@
 <section style="text-align:center">
 <h2>OPEN AMNI-LLM</h2>
 <p style="color:var(--dim);margin-bottom:1.5rem;font-size:.9rem">No install, no sign-up. Pick a model and start chatting.</p>
-<div class="cta-row" style="justify-content:center;gap:1rem;flex-wrap:wrap">
+<div class="cta-row" style="gap:1rem;flex-wrap:wrap">
 <a href="lib/amni-llm/" class="btn btn-primary" style="background:#a8f;color:var(--bg)">LAUNCH AMNI-LLM</a>
 <a href="https://github.com/Amnibro/amni-llm" target="_blank" rel="noopener" class="btn btn-outline">SOURCE (MIT)</a>
 <a href="amni-calc.html" class="btn btn-outline">AMNI-CALC</a>

@@ -19,7 +19,7 @@
 <meta name="twitter:description" content="4 GB VRAM. Lossless GF(17). Closed-loop self-improving memory &mdash; corrected once, never wrong twice. Voice + vision + trainable gestures + wake-word + self-verifying edits + Socratic coach. Drop-in Ollama + OpenAI API replacement.">
 <meta name="twitter:image" content="https://amni-scient.com/assets/explore/og-explore.png">
 <link rel="canonical" href="https://amni-scient.com/amni-ai">
-<link rel="stylesheet" href="css/style.css?v=b220">
+<link rel="stylesheet" href="css/style.css?v=b230">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
@@ -36,9 +36,9 @@
 .diff-table td:nth-child(2){color:#5a6168}
 .diff-table td:nth-child(3){color:#ffb74d}
 .persona-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:.6rem;max-width:880px;margin:1.5rem auto}
-.persona-chip{padding:.5rem .8rem;border:1px solid var(--border);border-radius:20px;text-align:center;font-size:.78rem;color:var(--dim);background:rgba(255,255,255,0.02)}
+.persona-chip{padding:.5rem .8rem;border:1px solid var(--border);border-radius:20px;font-size:.78rem;color:var(--dim);background:rgba(255,255,255,0.02)}
 .persona-chip strong{display:block;color:var(--accent);font-size:.85rem;margin-bottom:.2rem}
-.flow-row{display:flex;align-items:center;justify-content:center;gap:.4rem;flex-wrap:wrap;margin:1rem 0;font-size:.78rem}
+.flow-row{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;margin:1rem 0;font-size:.78rem}
 .flow-step{padding:.4rem .8rem;border:1px solid var(--border);border-radius:4px;background:rgba(255,183,77,0.04);color:#c9ccd1;white-space:nowrap}
 .flow-step.terminal{border-color:var(--accent);background:rgba(255,183,77,0.12);color:var(--accent)}
 .flow-arrow{color:var(--accent);font-weight:700}
@@ -51,7 +51,7 @@
 .bench-row-adam td{color:var(--accent)}
 .bench-num{font-weight:700;color:var(--accent)}
 .loop-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;max-width:900px;margin:1.5rem auto}
-.loop-stat{border:1px solid var(--border);border-radius:8px;padding:1rem .8rem;text-align:center;background:rgba(255,255,255,.02)}
+.loop-stat{border:1px solid var(--border);border-radius:8px;padding:1rem .8rem;background:rgba(255,255,255,.02)}
 .loop-stat .big{font-size:1.5rem;font-weight:700;color:var(--accent);display:block;line-height:1.1}
 .loop-stat .lbl{font-size:.72rem;color:var(--dim);margin-top:.4rem;line-height:1.35}
 .footnote{text-align:center;color:var(--dim);max-width:760px;margin:1rem auto 0;font-size:.76rem;line-height:1.5}
@@ -63,7 +63,7 @@
 .shot-wide{grid-column:1/-1}
 </style>
 </head>
-<body class="theme-ai">
+<body class="pp theme-ai">
 <div class="grid-bg"></div>
 <div class="scanlines"></div>
 <nav>
@@ -151,8 +151,8 @@
 
 <section style="text-align:center">
 <h2>LOCAL AI THAT GETS BETTER THE MORE YOU USE IT</h2>
-<p style="text-align:center;color:var(--dim);max-width:740px;margin:0 auto 1.5rem;font-size:.9rem">Adam runs on consumer GPUs (4 GB VRAM minimum). Weights are stored as GF(17) RGBA pixel atlases &mdash; bit-exact lossless, streamed from NVMe through GPU texture units instead of GEMM kernels. Every code response is executed in a sandbox + validated against its own asserts. Test-passing answers are persisted into a permanent semantic lesson bank, so the second time you ask the same question, it returns in <strong>~80ms instead of 80 seconds</strong>. And when you correct Adam, the correction <em>sticks</em>: a closed-loop memory substrate (PTEX&nbsp;+&nbsp;ATEX) verifies every fact before it&rsquo;s stored, suppresses any answer you&rsquo;ve corrected away, and grounds future replies in it &mdash; so the same error is <strong>never reported twice</strong>. A 24/7 learning loop crawls, self-verifies, and teaches Adam through that same discipline, so it iterates on itself across five fundamentals &mdash; <strong>learning, memory, context, knowledge, and wisdom</strong>.</p>
-<div class="cta-row" style="justify-content:center;flex-wrap:wrap;gap:1rem;margin:2rem 0">
+<p style="color:var(--dim);max-width:740px;margin:0 0 1.5rem;font-size:.9rem">Adam runs on consumer GPUs (4 GB VRAM minimum). Weights are stored as GF(17) RGBA pixel atlases &mdash; bit-exact lossless, streamed from NVMe through GPU texture units instead of GEMM kernels. Every code response is executed in a sandbox + validated against its own asserts. Test-passing answers are persisted into a permanent semantic lesson bank, so the second time you ask the same question, it returns in <strong>~80ms instead of 80 seconds</strong>. And when you correct Adam, the correction <em>sticks</em>: a closed-loop memory substrate (PTEX&nbsp;+&nbsp;ATEX) verifies every fact before it&rsquo;s stored, suppresses any answer you&rsquo;ve corrected away, and grounds future replies in it &mdash; so the same error is <strong>never reported twice</strong>. A 24/7 learning loop crawls, self-verifies, and teaches Adam through that same discipline, so it iterates on itself across five fundamentals &mdash; <strong>learning, memory, context, knowledge, and wisdom</strong>.</p>
+<div class="cta-row" style="flex-wrap:wrap;gap:1rem;margin:2rem 0">
 <a href="https://github.com/Amnibro/Amni-Ai" target="_blank" rel="noopener" class="btn btn-primary">VIEW ON GITHUB</a>
 <a href="https://github.com/Amnibro/Amni-Ai/archive/refs/heads/main.zip" class="btn btn-outline" id="dl-btn">DOWNLOAD LATEST (ZIP)</a>
 <a href="#install" class="btn btn-outline">INSTALL GUIDE</a>
@@ -162,7 +162,7 @@
 
 <section>
 <h2>ADAM vs A TRADITIONAL LLM</h2>
-<p style="text-align:center;color:var(--dim);max-width:700px;margin:0 auto 1rem;font-size:.9rem">Same query. Two architectures. One of them works on a 4 GB GPU.</p>
+<p style="color:var(--dim);max-width:700px;margin:0 0 1rem;font-size:.9rem">Same query. Two architectures. One of them works on a 4 GB GPU.</p>
 <div class="arch-svg-wrap">
 <img src="https://raw.githubusercontent.com/Amnibro/Amni-Ai/main/docs/architecture.svg" alt="Adam vs Traditional LLM architecture comparison" loading="lazy">
 </div>
@@ -184,7 +184,7 @@
 
 <section>
 <h2>ADAM ON THE BENCHMARKS</h2>
-<p style="text-align:center;color:var(--dim);max-width:740px;margin:0 auto 1rem;font-size:.9rem">The headline isn&rsquo;t the raw score &mdash; it&rsquo;s the <strong>lift</strong>. Same 3B weights, same MMLU-Pro questions. With its closed loop engaged, a frozen 3B climbs a full weight tier &mdash; the gain comes from <em>how Adam thinks</em>, not from a bigger model.</p>
+<p style="color:var(--dim);max-width:740px;margin:0 0 1rem;font-size:.9rem">The headline isn&rsquo;t the raw score &mdash; it&rsquo;s the <strong>lift</strong>. Same 3B weights, same MMLU-Pro questions. With its closed loop engaged, a frozen 3B climbs a full weight tier &mdash; the gain comes from <em>how Adam thinks</em>, not from a bigger model.</p>
 <table class="bench-table">
 <thead><tr><th>MODEL &mdash; MMLU-Pro (same benchmark)</th><th>SCORE</th><th style="width:42%"></th></tr></thead>
 <tbody>
@@ -206,8 +206,8 @@
 
 <section>
 <h2>THE LEARNING LOOP &mdash; HOW A 3B PUNCHES ABOVE ITS WEIGHT</h2>
-<p style="text-align:center;color:var(--dim);max-width:740px;margin:0 auto 1rem;font-size:.9rem">Adam doesn&rsquo;t just answer &mdash; it <em>works the problem</em>. It recognizes when it&rsquo;s unsure instead of bluffing, goes and finds what it&rsquo;s missing, checks its own answer before handing it to you, and remembers what worked. The payoff is a small model that behaves like a much larger one on the questions that matter &mdash; and one that keeps getting sharper the more you use it.</p>
-<p style="text-align:center;color:var(--dim);max-width:740px;margin:0 auto 1rem;font-size:.88rem">Every verified answer and every corrected mistake is written to Adam&rsquo;s GF(17) memory, so it never re-learns the same thing twice and never repeats an error you&rsquo;ve corrected. <strong>Adam is a 3B that keeps learning &mdash; not one frozen at a training cut-off.</strong></p>
+<p style="color:var(--dim);max-width:740px;margin:0 0 1rem;font-size:.9rem">Adam doesn&rsquo;t just answer &mdash; it <em>works the problem</em>. It recognizes when it&rsquo;s unsure instead of bluffing, goes and finds what it&rsquo;s missing, checks its own answer before handing it to you, and remembers what worked. The payoff is a small model that behaves like a much larger one on the questions that matter &mdash; and one that keeps getting sharper the more you use it.</p>
+<p style="color:var(--dim);max-width:740px;margin:0 0 1rem;font-size:.88rem">Every verified answer and every corrected mistake is written to Adam&rsquo;s GF(17) memory, so it never re-learns the same thing twice and never repeats an error you&rsquo;ve corrected. <strong>Adam is a 3B that keeps learning &mdash; not one frozen at a training cut-off.</strong></p>
 <div class="loop-grid">
 <div class="loop-stat"><span class="big">~35&times;</span><span class="lbl">faster on a repeat question &mdash; banked answers recall instantly instead of re-deriving</span></div>
 <div class="loop-stat"><span class="big">0&rarr;60%</span><span class="lbl">knowledge-gap questions (TriviaQA) once the crawl-and-bank step fires</span></div>
@@ -217,7 +217,7 @@
 
 <section>
 <h2>WHY ADAM &mdash; NOT CURSOR, CLAUDE-CODE, OR GROK</h2>
-<p style="text-align:center;color:var(--dim);max-width:740px;margin:0 auto 1rem;font-size:.9rem">Those are excellent front-ends to a <em>frozen cloud model</em>. Adam is a different bet entirely &mdash; it&rsquo;s yours, it runs on your own GPU, and it&rsquo;s the only one that gets permanently smarter from the way <em>you</em> use it.</p>
+<p style="color:var(--dim);max-width:740px;margin:0 0 1rem;font-size:.9rem">Those are excellent front-ends to a <em>frozen cloud model</em>. Adam is a different bet entirely &mdash; it&rsquo;s yours, it runs on your own GPU, and it&rsquo;s the only one that gets permanently smarter from the way <em>you</em> use it.</p>
 <table class="diff-table">
 <thead><tr><th>CAPABILITY</th><th>CLOUD ASSISTANTS</th><th>ADAM</th></tr></thead>
 <tbody>
@@ -236,7 +236,7 @@
 
 <section>
 <h2>SEE ADAM IN ACTION</h2>
-<p style="text-align:center;color:var(--dim);max-width:740px;margin:0 auto 1rem;font-size:.9rem">Real captures of Adam running locally &mdash; the neon Jarvis interface, voice + vision panels, live data widgets, the built-in Socratic coach, and the closed-loop coding flow. Everything below runs on one consumer GPU, fully offline.</p>
+<p style="color:var(--dim);max-width:740px;margin:0 0 1rem;font-size:.9rem">Real captures of Adam running locally &mdash; the neon Jarvis interface, voice + vision panels, live data widgets, the built-in Socratic coach, and the closed-loop coding flow. Everything below runs on one consumer GPU, fully offline.</p>
 <div class="shot-grid">
 <div class="shot shot-wide"><img src="assets/adam/hud.png" alt="Adam HUD dashboard — voice, sessions, and skills" loading="lazy"><div class="cap"><strong>The HUD dashboard</strong>Live voice controls, recent sessions, and the full skill palette &mdash; one local surface for everything Adam can do.</div></div>
 <div class="shot"><img src="assets/adam/chat.png" alt="Adam answering a question in the chat UI" loading="lazy"><div class="cap"><strong>Conversational chat</strong>Ask anything &mdash; answers stream back locally with live token-rate readouts.</div></div>
@@ -248,7 +248,7 @@
 
 <section id="install">
 <h2>INSTALL IN 60 SECONDS</h2>
-<p style="text-align:center;color:var(--dim);max-width:680px;margin:0 auto 1.5rem;font-size:.9rem">Three paths depending on how you want to use Adam.</p>
+<p style="color:var(--dim);max-width:680px;margin:0 0 1.5rem;font-size:.9rem">Three paths depending on how you want to use Adam.</p>
 
 <div class="card-grid">
 <div class="card">
@@ -290,12 +290,12 @@ OPENAI_API_KEY=anything</pre>
 </div>
 </div>
 
-<p style="text-align:center;margin-top:1.5rem"><a href="https://github.com/Amnibro/Amni-Ai/blob/main/docs/INSTALL.md" target="_blank" rel="noopener" class="btn btn-outline">FULL INSTALL GUIDE &rarr;</a></p>
+<p style="margin-top:1.5rem"><a href="https://github.com/Amnibro/Amni-Ai/blob/main/docs/INSTALL.md" target="_blank" rel="noopener" class="btn btn-outline">FULL INSTALL GUIDE &rarr;</a></p>
 </section>
 
 <section>
 <h2>WHAT HAPPENS WHEN YOU ASK FOR CODE</h2>
-<p style="text-align:center;color:var(--dim);max-width:700px;margin:0 auto 1rem;font-size:.9rem">Adam's code path is a closed loop. Generation, execution, and validation all happen before the response ships.</p>
+<p style="color:var(--dim);max-width:700px;margin:0 0 1rem;font-size:.9rem">Adam's code path is a closed loop. Generation, execution, and validation all happen before the response ships.</p>
 
 <div class="flow-row">
 <span class="flow-step">USER QUERY</span>
@@ -331,7 +331,7 @@ OPENAI_API_KEY=anything</pre>
 <span class="flow-arrow">&rarr;</span>
 <span class="flow-step terminal">RECOVER OR REPORT</span>
 </div>
-<p style="text-align:center;color:var(--dim);max-width:720px;margin:1.5rem auto .5rem;font-size:.88rem">When Adam writes a file, a second loop verifies the change is actually functional:</p>
+<p style="color:var(--dim);max-width:720px;margin:1.5rem auto .5rem;font-size:.88rem">When Adam writes a file, a second loop verifies the change is actually functional:</p>
 <div class="flow-row">
 <span class="flow-step">FILE WRITTEN</span>
 <span class="flow-arrow">&rarr;</span>
@@ -359,13 +359,13 @@ OPENAI_API_KEY=anything</pre>
 <span class="flow-arrow">&rarr;</span>
 <span class="flow-step terminal">MARK TESTED WHEN HUMAN CONFIRMS</span>
 </div>
-<p style="text-align:center;color:var(--dim);max-width:720px;margin:1.5rem auto .5rem;font-size:.88rem">Adam can also look at <em>itself</em> &mdash; inspect its own subsystems, propose improvements against an append-only audit log, and run experiments in isolated, time-boxed sandboxes before anything is adopted. Every proposal moves through a tracked lifecycle (proposed &rarr; validated &rarr; deployed, declined, or reverted) so nothing changes silently.</p>
+<p style="color:var(--dim);max-width:720px;margin:1.5rem auto .5rem;font-size:.88rem">Adam can also look at <em>itself</em> &mdash; inspect its own subsystems, propose improvements against an append-only audit log, and run experiments in isolated, time-boxed sandboxes before anything is adopted. Every proposal moves through a tracked lifecycle (proposed &rarr; validated &rarr; deployed, declined, or reverted) so nothing changes silently.</p>
 </section>
 
 <section>
 <h2>THE PERSONA SYSTEM</h2>
-<p style="text-align:center;color:var(--dim);max-width:720px;margin:0 auto 1rem;font-size:.9rem">Built-in voices. Each is a tone-atlas overlay applied to the same underlying Adam reasoner &mdash; different personality, same reasoning quality. Default is <strong>Alfred</strong> (loyal British butler, paternal and formal). Switch from the topbar dropdown in <code>/</code> or the clickable persona pill in <code>/jarvis</code>. Create your own via <code>/persona create</code> (tone description) or the in-UI &quot;learn new&quot; flow (auto-scrapes voice from a name).</p>
-<p style="text-align:center;color:var(--dim);max-width:720px;margin:0 auto 1rem;font-size:.78rem;letter-spacing:.05em">All personas inherit a SAFETY BASELINE: voice and style only, never behavior or worldview. No persona may belittle the user, push politics, or assert any religious / philosophical / metaphysical position. If the persona&rsquo;s flavor would conflict, Adam drops it for that response and answers plainly and truthfully.</p>
+<p style="color:var(--dim);max-width:720px;margin:0 0 1rem;font-size:.9rem">Built-in voices. Each is a tone-atlas overlay applied to the same underlying Adam reasoner &mdash; different personality, same reasoning quality. Default is <strong>Alfred</strong> (loyal British butler, paternal and formal). Switch from the topbar dropdown in <code>/</code> or the clickable persona pill in <code>/jarvis</code>. Create your own via <code>/persona create</code> (tone description) or the in-UI &quot;learn new&quot; flow (auto-scrapes voice from a name).</p>
+<p style="color:var(--dim);max-width:720px;margin:0 0 1rem;font-size:.78rem;letter-spacing:.05em">All personas inherit a SAFETY BASELINE: voice and style only, never behavior or worldview. No persona may belittle the user, push politics, or assert any religious / philosophical / metaphysical position. If the persona&rsquo;s flavor would conflict, Adam drops it for that response and answers plainly and truthfully.</p>
 <div class="persona-grid">
 <div class="persona-chip"><strong>Alfred</strong>loyal butler (default)</div>
 <div class="persona-chip"><strong>Adam</strong>raw underlying</div>
@@ -383,7 +383,7 @@ OPENAI_API_KEY=anything</pre>
 
 <section>
 <h2>MULTI-LAYER SAFETY SCREENING</h2>
-<p style="text-align:center;color:var(--dim);max-width:740px;margin:0 auto 1rem;font-size:.9rem">Most prompt filters lose to paraphrase and encoded variants. Adam stacks three independent screening layers that run on every message before any inference cost. Refusals come back in &lt;50ms with zero LLM call.</p>
+<p style="color:var(--dim);max-width:740px;margin:0 0 1rem;font-size:.9rem">Most prompt filters lose to paraphrase and encoded variants. Adam stacks three independent screening layers that run on every message before any inference cost. Refusals come back in &lt;50ms with zero LLM call.</p>
 <div class="card-grid">
 <div class="card">
 <h3>LEXICAL FILTER</h3>
@@ -398,7 +398,7 @@ OPENAI_API_KEY=anything</pre>
 <p>Embedding-based intent matching against a canonical bank, with pre-decoding of common encoding tricks so the screen sees the real intent, not the obfuscation.</p>
 </div>
 </div>
-<p style="text-align:center;color:var(--dim);max-width:660px;margin:1.5rem auto 0;font-size:.78rem">Validated against a held-out benign set with no measurable false positives. We don't publish per-family bypass rates &mdash; that would be a roadmap for attackers. Legitimate security researchers can request the internal harness via <a href="mailto:amnibro7@gmail.com" style="color:var(--accent)">amnibro7@gmail.com</a>.</p>
+<p style="color:var(--dim);max-width:660px;margin:1.5rem auto 0;font-size:.78rem">Validated against a held-out benign set with no measurable false positives. We don't publish per-family bypass rates &mdash; that would be a roadmap for attackers. Legitimate security researchers can request the internal harness via <a href="mailto:amnibro7@gmail.com" style="color:var(--accent)">amnibro7@gmail.com</a>.</p>
 </section>
 
 <section>
@@ -440,7 +440,7 @@ OPENAI_API_KEY=anything</pre>
 <section style="text-align:center">
 <h2>READY TO RUN ADAM?</h2>
 <p style="color:var(--dim);font-size:.9rem;max-width:600px;margin:1rem auto 2rem">Source on GitHub, full install guide, 30-minute tutorial &mdash; everything you need to get Adam answering questions on your own hardware.</p>
-<div class="cta-row" style="justify-content:center;flex-wrap:wrap;gap:1rem">
+<div class="cta-row" style="flex-wrap:wrap;gap:1rem">
 <a href="https://github.com/Amnibro/Amni-Ai" target="_blank" rel="noopener" class="btn btn-primary">VIEW SOURCE</a>
 <a href="https://github.com/Amnibro/Amni-Ai/blob/main/docs/INSTALL.md" target="_blank" rel="noopener" class="btn btn-outline">INSTALL GUIDE</a>
 <a href="https://github.com/Amnibro/Amni-Ai/blob/main/docs/TUTORIAL.md" target="_blank" rel="noopener" class="btn btn-outline">30-MIN TUTORIAL</a>

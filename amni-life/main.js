@@ -1784,11 +1784,11 @@ async function computeLayouts() {
     positions = { timeline: apply(all.timeline), constellation: apply(all.constellation), spiral: apply(all.spiral), cluster: apply(all.cluster), radial: apply(all.radial), map: computeMapLayout(), calendar: computeCalendarLayout() };
 }
 function makeSpriteTexture() {
-    const c = document.createElement('canvas'); c.width = 128; c.height = 128;
+    const c = document.createElement('canvas'); c.width = 256; c.height = 256;
     const ctx = c.getContext('2d');
-    const g = ctx.createRadialGradient(64,64,0,64,64,64);
-    g.addColorStop(0,'rgba(255,255,255,1)'); g.addColorStop(0.35,'rgba(255,255,255,0.85)'); g.addColorStop(0.7,'rgba(255,255,255,0.18)'); g.addColorStop(1,'rgba(255,255,255,0)');
-    ctx.fillStyle = g; ctx.fillRect(0,0,128,128);
+    const g = ctx.createRadialGradient(128,128,0,128,128,128);
+    g.addColorStop(0,'rgba(255,255,255,1)'); g.addColorStop(0.44,'rgba(255,255,255,1)'); g.addColorStop(0.5,'rgba(255,255,255,0.55)'); g.addColorStop(0.62,'rgba(255,255,255,0.14)'); g.addColorStop(1,'rgba(255,255,255,0)');
+    ctx.fillStyle = g; ctx.fillRect(0,0,256,256);
     const t = new THREE.CanvasTexture(c); t.needsUpdate = true; return t;
 }
 let searchFilterActive = false, searchFilterQuery = '';

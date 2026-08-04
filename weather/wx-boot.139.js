@@ -1,17 +1,17 @@
-import {BASEMAPS,loadTile,lonToX,latToY,xToLon,yToLat,clampZoom,MOBILE} from './tiles.js?v=138';
-import {createWindLayer,buildIsoPolylines,drawIsoPolylines} from './wind.js?v=138';
-import {loadManifest,getHourField,sampleField,fieldStats,preloadCore,packHours,packMeta,packAgeMs,packIsStale,enhanceField,upsampleBilinear,smoothBox} from './fields.js?v=138';
-import {fetchLiveBundle,extractField,lodForZoom,isRateBlocked,fetchPointForecast,circuitRemaining} from './meteo.js?v=138';
-import {createHazardLayer,refreshHazards} from './hazards.js?v=138';
-import {listReports,addReport,reportTypes,advectReports,clearExpired} from './reports.js?v=138';
-import {createRefLayer,loadBorders,projectScreen} from './ref.js?v=138';
-import {renderForecastPanel,setForecastLoading,setForecastError} from './forecast.js?v=138';
+import {BASEMAPS,loadTile,lonToX,latToY,xToLon,yToLat,clampZoom,MOBILE} from './tiles.js?v=139';
+import {createWindLayer,buildIsoPolylines,drawIsoPolylines} from './wind.js?v=139';
+import {loadManifest,getHourField,sampleField,fieldStats,preloadCore,packHours,packMeta,packAgeMs,packIsStale,enhanceField,upsampleBilinear,smoothBox} from './fields.js?v=139';
+import {fetchLiveBundle,extractField,lodForZoom,isRateBlocked,fetchPointForecast,circuitRemaining} from './meteo.js?v=139';
+import {createHazardLayer,refreshHazards} from './hazards.js?v=139';
+import {listReports,addReport,reportTypes,advectReports,clearExpired} from './reports.js?v=139';
+import {createRefLayer,loadBorders,projectScreen} from './ref.js?v=139';
+import {renderForecastPanel,setForecastLoading,setForecastError} from './forecast.js?v=139';
 const PREF_KEY='amni-wx-prefs-v1';
 function loadPrefs(){try{return JSON.parse(localStorage.getItem(PREF_KEY)||'{}')||{};}catch{return{};}}
 function savePrefs(p){try{localStorage.setItem(PREF_KEY,JSON.stringify({...loadPrefs(),...p}));}catch{}}
 const _prefs=loadPrefs();
 if(MOBILE)document.body.classList.add('wx-mobile');
-const PERF={mobile:MOBILE,dpr:MOBILE?1:Math.min(devicePixelRatio||1,2),ovScale:MOBILE?0.32:0.6};
+const PERF={mobile:MOBILE,dpr:MOBILE?1:Math.min(devicePixelRatio||1,1.5),ovScale:MOBILE?0.32:0.5};
 const LAYERS=[
 {key:'temperature_2m',name:'Temperature 2m',unitSi:'°C',unitUs:'°F',kind:'temp',soft:0,pack:true,group:'atmosphere',barMin:-20,barMax:40},
 {key:'apparent_temperature',name:'Feels like',unitSi:'°C',unitUs:'°F',kind:'temp',soft:0,pack:true,group:'atmosphere',barMin:-20,barMax:40},

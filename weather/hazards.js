@@ -348,6 +348,7 @@ drawn++;if(drawn>=maxDraw)break;
 }
 function draw(){
 if(!running)return;
+if(document.hidden){raf=requestAnimationFrame(draw);return;}
 const now=performance.now();
 const pulse=0.5+0.5*Math.sin(now*0.004);
 ctx.clearRect(0,0,canvas.width,canvas.height);

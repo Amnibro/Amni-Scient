@@ -20,12 +20,12 @@
 <meta name="twitter:image" content="https://amni-scient.com/assets/browse/Interface.png">
 <link rel="canonical" href="https://amni-scient.com/amni-browse">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Amni-Browse","url":"https://amni-scient.com/amni-browse.html","description":"Privacy-first, zero-telemetry web browser in a single Rust binary. Built-in ad blocker, DNS-over-HTTPS, encrypted password vault, multi-profile, private tabs.","applicationCategory":"WebBrowser","operatingSystem":"Windows, macOS, Linux","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Organization","name":"AMNI-SCIENT","legalName":"Amniscient, LLC","url":"https://amni-scient.com"},"image":"https://amni-scient.com/assets/browse/Interface.png"}</script>
-<link rel="stylesheet" href="css/style.css?v=b220">
+<link rel="stylesheet" href="css/style.css?v=b230">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
 </head>
-<body class="theme-ai">
+<body class="pp theme-ai">
 <div class="grid-bg"></div>
 <div class="scanlines"></div>
 <nav>
@@ -78,14 +78,14 @@
 </div>
 <h1>AMNI-BROWSE</h1>
 <p class="desc">PRIVACY-FIRST &bull; ZERO TELEMETRY &bull; SINGLE RUST BINARY</p>
-<div class="cta-row" style="justify-content:center;margin-top:2rem;margin-bottom:1rem">
+<div class="cta-row" style="margin-top:2rem;margin-bottom:1rem">
 <a href="https://github.com/amnibro/Amni-Browse" target="_blank" rel="noopener noreferrer" class="btn btn-primary">VIEW ON GITHUB</a>
 <a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="btn btn-outline">&#9749; SUPPORT</a>
 </div>
 </div>
 <section>
 <h2>YOUR BROWSING IS YOURS</h2>
-<p style="text-align:center;color:var(--dim);max-width:720px;margin:0 auto 2rem;font-size:.9rem">A ground-up web browser built in Rust around one principle &mdash; <em>nothing leaves your machine unless you tell it to</em>. No accounts, no sync servers, no telemetry pings. Bookmarks, history, vault, sessions &mdash; all local. Tracking parameters stripped before the request even fires.</p>
+<p style="color:var(--dim);max-width:720px;margin:0 0 2rem;font-size:.9rem">A ground-up web browser built in Rust around one principle &mdash; <em>nothing leaves your machine unless you tell it to</em>. No accounts, no sync servers, no telemetry pings. Bookmarks, history, vault, sessions &mdash; all local. Tracking parameters stripped before the request even fires.</p>
 <div class="features">
 <div class="feature">
 <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.6 8.2-8 9-4.4-.8-8-4-8-9V6z"/></svg></div>
@@ -121,7 +121,7 @@
 </section>
 <section>
 <h2>SEVEN-PILLAR ARCHITECTURE</h2>
-<p style="text-align:center;color:var(--dim);max-width:720px;margin:0 auto 2rem;font-size:.9rem">The source tree is organized into seven isolated pillars. Each pillar has a single responsibility and communicates over an explicit IPC boundary.</p>
+<p style="color:var(--dim);max-width:720px;margin:0 0 2rem;font-size:.9rem">The source tree is organized into seven isolated pillars. Each pillar has a single responsibility and communicates over an explicit IPC boundary.</p>
 <table class="spec-table">
 <tr><th>PILLAR</th><th>ROLE</th></tr>
 <tr><td>UI</td><td>HTML/CSS/JS chrome (webview) or native egui chrome (servo-engine)</td></tr>
@@ -176,7 +176,7 @@
 <h2>GET AMNI-BROWSE</h2>
 <p style="color:var(--dim);margin-bottom:.5rem;font-size:.9rem">A native Rust binary on the real Servo engine. No Electron, no bundled Chromium &mdash; streaming/DRM sites open in a dedicated media window via your system WebView.</p>
 <p style="color:var(--dim);font-size:.8rem;margin-bottom:2rem">v0.10.3 for Windows x64 &bull; requires the free <a href="https://gstreamer.freedesktop.org/download/" target="_blank" rel="noopener noreferrer" style="color:var(--dim);text-decoration:underline">GStreamer 1.26 MSVC runtime</a> &bull; open source under CC BY-NC 4.0 &bull; non-commercial use</p>
-<div class="cta-row" style="justify-content:center">
+<div class="cta-row" style="">
 <a href="https://github.com/Amnibro/Amni-Browse/releases/download/v0.10.3/amni-browse-v0.10.3-win64.zip" class="btn btn-primary">DOWNLOAD v0.10.3 (WIN64)</a>
 <a href="https://github.com/amnibro/Amni-Browse" target="_blank" class="btn btn-outline">VIEW ON GITHUB</a>
 <a href="privacy-browse.html" class="btn btn-outline">PRIVACY POLICY</a>

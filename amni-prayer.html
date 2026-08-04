@@ -20,7 +20,7 @@
 <meta name="twitter:image" content="https://amni-scient.com/assets/prayer/og-prayer.png">
 <link rel="canonical" href="https://amni-scient.com/amni-prayer">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Amni-Prayer","url":"https://amni-scient.com/amni-prayer","description":"Interactive 3D Catholic Bible nodal map with 35,817 verses and 64,497 cross-references across 17 sacred geometry layouts plus Tandem reading mode.","applicationCategory":"ReligiousApplication","operatingSystem":"Any (WebGL2)","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Organization","name":"AMNI-SCIENT","legalName":"Amniscient, LLC","url":"https://amni-scient.com"}}</script>
-<link rel="stylesheet" href="css/style.css?v=b220">
+<link rel="stylesheet" href="css/style.css?v=b230">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
@@ -35,7 +35,7 @@
 .viz-frame{width:100%;aspect-ratio:16/9;border:1px solid rgba(245,200,66,.2);border-radius:4px;background:#0a0a12;overflow:hidden}
 .viz-frame iframe{width:100%;height:100%;border:none;display:block}
 .viz-note{text-align:center;color:var(--dim);font-size:.72rem;margin-top:.6rem;letter-spacing:.05em}
-.stat-row{display:flex;justify-content:center;gap:3rem;flex-wrap:wrap;padding:2rem 1rem;margin-bottom:1rem}
+.stat-row{display:flex;gap:3rem;flex-wrap:wrap;padding:2rem 1rem;margin-bottom:1rem}
 .stat-item{text-align:center}
 .stat-num{font-size:clamp(1.4rem,3vw,2rem);color:#f5c842;letter-spacing:.05em;display:block}
 .stat-label{font-size:.7rem;color:var(--dim);letter-spacing:.1em;margin-top:.2rem}
@@ -47,7 +47,7 @@
 .layout-tag{display:inline-block;font-size:.6rem;padding:.15rem .4rem;border-radius:2px;margin-bottom:.5rem;letter-spacing:.05em;border:1px solid rgba(245,200,66,.3);color:rgba(245,200,66,.7)}
 </style>
 </head>
-<body>
+<body class="pp">
 <div class="grid-bg"></div>
 <div class="scanlines"></div>
 <nav>
@@ -90,7 +90,7 @@
 <div class="prayer-cross-icon"></div>
 <h1>AMNI-PRAYER</h1>
 <p class="desc">IMAGO NUNTII DIVINI &bull; CATHOLIC BIBLE NODAL MAP &bull; 35,817 VERSES &bull; 64,497 CROSS-REFERENCES &bull; WASM ENGINE</p>
-<div class="cta-row" style="justify-content:center;margin-top:1rem;margin-bottom:2rem">
+<div class="cta-row" style="margin-top:1rem;margin-bottom:2rem">
 <a href="prayer/" class="btn btn-primary" style="background:linear-gradient(135deg,#b8960c,#f5c842);color:#0a0a12;border:none">OPEN IMAGO NUNTII DIVINI</a>
 </div>
 </div>
@@ -102,10 +102,10 @@
 </div>
 <section>
 <h2>NAVIGATE THE WORD</h2>
-<p style="text-align:center;color:var(--dim);max-width:700px;margin:0 auto 2rem;font-size:.9rem">Imago Nuntii Divini renders the entire Douay-Rheims Catholic Bible as a live 3D pointcloud. Every verse is a node; every cross-reference is an edge. Click any verse to fly to it, read its chapter, and trace its connections through scripture. Tandem Mode splits the screen into book reading + visualizer + connected passages.</p>
-<div style="text-align:center;max-width:700px;margin:0 auto 3rem;padding:0 1rem">
+<p style="color:var(--dim);max-width:700px;margin:0 0 2rem;font-size:.9rem">Imago Nuntii Divini renders the entire Douay-Rheims Catholic Bible as a live 3D pointcloud. Every verse is a node; every cross-reference is an edge. Click any verse to fly to it, read its chapter, and trace its connections through scripture. Tandem Mode splits the screen into book reading + visualizer + connected passages.</p>
+<div style="max-width:700px;margin:0 auto 3rem;padding:0 1rem">
 <p style="color:var(--dim);font-size:.88rem;margin-bottom:1.5rem">Open directly in your browser — no download, no account, no install required. Full-screen interactive 3D pointcloud.</p>
-<div class="cta-row" style="justify-content:center;margin-bottom:1rem">
+<div class="cta-row" style="margin-bottom:1rem">
 <a href="prayer/" class="btn btn-primary" style="background:linear-gradient(135deg,#b8960c,#f5c842);color:#0a0a12;border:none;font-size:1rem;padding:.85rem 2.8rem;letter-spacing:.1em">&#9997; OPEN IMAGO NUNTII DIVINI</a>
 </div>
 <p style="color:var(--dim);font-size:.72rem;letter-spacing:.04em">WebGL2 required &nbsp;&bull;&nbsp; ~10 MB scripture data &nbsp;&bull;&nbsp; Desktop recommended</p>

@@ -17,7 +17,7 @@
 <meta name="twitter:description" content="v1.4.7 weather maps: live Open-Meteo, pin forecast, NWS/GDACS hazards. Free in-browser WASM.">
 <link rel="canonical" href="https://amni-scient.com/amni-weather">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Amni-Weather","url":"https://amni-scient.com/weather/","description":"Interactive weather maps with live Open-Meteo fields, point forecast panels, NWS and GDACS hazards, customizable colormaps, and Rust/WASM field engine.","applicationCategory":"WeatherApplication","operatingSystem":"Any (Modern Browser)","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Organization","name":"AMNI-SCIENT","legalName":"Amniscient, LLC","url":"https://amni-scient.com"},"softwareVersion":"1.4.7"}</script>
-<link rel="stylesheet" href="css/style.css?v=b220">
+<link rel="stylesheet" href="css/style.css?v=b230">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
@@ -27,11 +27,11 @@
 .wx-hero .desc{color:var(--dim);font-size:.78rem;letter-spacing:.12em;margin-bottom:1.6rem}
 .wx-icon{width:72px;height:72px;margin:0 auto 1.2rem;border-radius:50%;border:1px solid rgba(77,184,255,.35);background:radial-gradient(circle at 35% 30%,rgba(77,184,255,.25),transparent 60%),radial-gradient(circle at 70% 70%,rgba(255,154,60,.2),transparent 55%);position:relative}
 .wx-icon::after{content:'';position:absolute;inset:18px;border-radius:50%;border:2px solid rgba(61,222,160,.5);box-shadow:0 0 18px rgba(77,184,255,.35)}
-.layer-chips{display:flex;flex-wrap:wrap;gap:.45rem;justify-content:center;max-width:820px;margin:0 auto 2rem;padding:0 1rem}
+.layer-chips{display:flex;flex-wrap:wrap;gap:.45rem;max-width:820px;margin:0 auto 2rem;padding:0 1rem}
 .layer-chips span{font-size:.65rem;letter-spacing:.08em;text-transform:uppercase;padding:.35rem .55rem;border:1px solid rgba(77,184,255,.25);border-radius:3px;color:rgba(180,220,255,.75)}
 </style>
 </head>
-<body class="theme-explore">
+<body class="pp theme-explore">
 <div class="grid-bg"></div>
 <div class="scanlines"></div>
 <nav>
@@ -74,7 +74,7 @@
 <div class="wx-icon" aria-hidden="true"></div>
 <h1>AMNI-WEATHER</h1>
 <p class="desc">v1.4.7 &bull; SLIPPY MAPS &bull; LIVE FIELDS &bull; PIN FORECAST &bull; NWS + GDACS &bull; RUST/WASM</p>
-<div class="cta-row" style="justify-content:center;margin-top:1rem;margin-bottom:.8rem">
+<div class="cta-row" style="margin-top:1rem;margin-bottom:.8rem">
 <a href="weather/" class="btn btn-primary">LAUNCH MAPS</a>
 <a href="privacy-weather.html" class="btn">PRIVACY</a>
 </div>
@@ -85,7 +85,7 @@
 </div>
 <section>
 <h2>BUILT TO COMPETE ON THE MAP</h2>
-<p style="text-align:center;color:var(--dim);max-width:720px;margin:0 auto 2rem;font-size:.9rem">Amni-Weather is a browser-native weather map for dense multi-variable fields, smooth pan/zoom, and full control over coloration. Basemaps reuse the <strong>Amni-Drive tile stack</strong> &mdash; Esri satellite, OpenStreetMap, CARTO dark/light, OpenTopoMap &mdash; with a <strong>Rust/WASM field engine</strong>, live Open-Meteo sampling (zoom LOD), a baked global pack for fast coverage, and a full <strong>point forecast panel</strong> when you drop a pin.</p>
+<p style="color:var(--dim);max-width:720px;margin:0 0 2rem;font-size:.9rem">Amni-Weather is a browser-native weather map for dense multi-variable fields, smooth pan/zoom, and full control over coloration. Basemaps reuse the <strong>Amni-Drive tile stack</strong> &mdash; Esri satellite, OpenStreetMap, CARTO dark/light, OpenTopoMap &mdash; with a <strong>Rust/WASM field engine</strong>, live Open-Meteo sampling (zoom LOD), a baked global pack for fast coverage, and a full <strong>point forecast panel</strong> when you drop a pin.</p>
 <div class="features">
 <div class="feature">
 <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 14V4a2 2 0 0 0-4 0v10a4 4 0 1 0 4 0z"/><path d="M12 8v6"/></svg></div>
@@ -172,13 +172,13 @@
 <h2>LAUNCH AMNI-WEATHER</h2>
 <p style="color:var(--dim);margin-bottom:.5rem;font-size:.9rem">Run directly in your browser. No download, no account.</p>
 <p style="color:var(--dim);font-size:.8rem;margin-bottom:2rem">Modern browser &bull; network for live models and tiles &bull; pack covers gaps</p>
-<div class="cta-row" style="justify-content:center">
+<div class="cta-row" style="">
 <a href="weather/" class="btn btn-primary">OPEN WEATHER MAPS</a>
 </div>
 </section>
 <section>
 <h2>DATA &amp; HONESTY</h2>
-<div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
+<div style="max-width:800px;margin:0 0;line-height:1.9;color:var(--dim);font-size:.9rem">
 <p>Amni-Weather is a <strong style="color:var(--text)">visualization and field-processing product</strong>. Live meteorology comes from <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> public forecast models &mdash; we do not claim to operate our own global NWP suite. Alerts come from NWS and GDACS public feeds. The competitive surface is the map: smooth multi-layer interaction, customizable coloration, pin forecasts, and a WASM-accelerated field pipeline that runs in your browser.</p>
 <p style="margin-top:1.2rem">When live fetch is rate-limited or offline, the app falls back to baked pack / global fields so the UI stays usable. We do not ship a separate &ldquo;demo mode&rdquo; product path.</p>
 </div>

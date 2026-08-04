@@ -12,12 +12,12 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://amni-scient.com/amnitex-overview">
 <link rel="canonical" href="https://amni-scient.com/amnitex-overview">
-<link rel="stylesheet" href="css/style.css?v=b220">
+<link rel="stylesheet" href="css/style.css?v=b230">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
 <style>
-.overview-hero{padding:10rem 2rem 4rem;text-align:center;position:relative;overflow:hidden}
+.overview-hero{padding:10rem 2rem 4rem;position:relative;overflow:hidden}
 .overview-hero::before{content:'';position:absolute;top:50%;left:50%;width:800px;height:800px;background:radial-gradient(circle,var(--accent-dim) 0%,transparent 60%);transform:translate(-50%,-50%);pointer-events:none}
 .overview-hero h1{font-size:clamp(2rem,5vw,3.5rem);color:var(--accent);letter-spacing:4px;position:relative;z-index:1}
 .overview-hero .big-stat{font-size:clamp(4rem,10vw,8rem);font-weight:700;color:var(--text);position:relative;z-index:1;margin:1rem 0}
@@ -31,7 +31,7 @@
 .ps-col.solution h3{color:var(--accent)}
 .ps-col p{color:var(--dim);font-size:.85rem;line-height:1.8;margin-bottom:1rem}
 .ps-col .highlight{color:var(--text);font-weight:700}
-.stat-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1.5rem;max-width:800px;margin:2rem auto;text-align:center}
+.stat-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1.5rem;max-width:800px;margin:2rem auto}
 .stat-item .stat-num{font-size:2rem;font-weight:700;color:var(--accent)}
 .stat-item .stat-label{color:var(--dim);font-size:.75rem;letter-spacing:1px;margin-top:.25rem}
 .explain-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:2rem;max-width:900px;margin:2rem auto}
@@ -40,7 +40,7 @@
 .explain-card .step-n{color:var(--accent);font-size:.7rem;letter-spacing:2px;margin-bottom:.5rem}
 .explain-card h4{color:var(--text);font-size:.95rem;letter-spacing:1px;margin-bottom:.75rem}
 .explain-card p{color:var(--dim);font-size:.8rem;line-height:1.7}
-.analogy{max-width:700px;margin:2rem auto;background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:2.5rem;text-align:center}
+.analogy{max-width:700px;margin:2rem auto;background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:2.5rem}
 .analogy h3{color:var(--accent);letter-spacing:2px;margin-bottom:1.5rem}
 .analogy p{color:var(--dim);font-size:.9rem;line-height:1.9}
 .analogy .accent{color:var(--accent);font-weight:700}
@@ -53,10 +53,10 @@
 .cta-section{text-align:center;padding:4rem 2rem;max-width:600px;margin:0 auto}
 .cta-section h2{margin-bottom:1rem}
 .cta-section p{color:var(--dim);font-size:.9rem;line-height:1.8;margin-bottom:2rem}
-.cta-row{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+.cta-row{display:flex;gap:1rem;flex-wrap:wrap}
 </style>
 </head>
-<body>
+<body class="pp">
 <div class="grid-bg"></div>
 <div class="scanlines"></div>
 <nav>
@@ -189,7 +189,7 @@
 
 <section>
 <h2>CORRECTIONS THAT STICK</h2>
-<p style="text-align:center;color:var(--dim);max-width:740px;margin:0 auto 1.25rem;font-size:.9rem">The same lossless ATEX layer powers Adam&rsquo;s closed-loop memory. When you correct the model, the fix is bit-exact &mdash; verified before it&rsquo;s stored, and structurally impossible to un-learn.</p>
+<p style="color:var(--dim);max-width:740px;margin:0 auto 1.25rem;font-size:.9rem">The same lossless ATEX layer powers Adam&rsquo;s closed-loop memory. When you correct the model, the fix is bit-exact &mdash; verified before it&rsquo;s stored, and structurally impossible to un-learn.</p>
 <div class="explain-grid">
 <div class="explain-card"><h3>Verify-after-write</h3><p>Every learned fact is written to all stores, then immediately recalled to confirm it landed. If the read-back doesn&rsquo;t match, the write is rolled back &mdash; no silent half-writes.</p></div>
 <div class="explain-card"><h3>Anti-pattern suppression</h3><p>A wrong answer you&rsquo;ve corrected is added to a permanent suppression set &mdash; it can never be returned again on any recall tier, and it never federates to other instances.</p></div>

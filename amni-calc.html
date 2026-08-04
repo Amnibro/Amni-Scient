@@ -21,12 +21,12 @@
 <meta name="twitter:image" content="https://amni-scient.com/assets/explore/og-explore.png">
 <link rel="canonical" href="https://amni-scient.com/amni-calc.html">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Amni-Calc","url":"https://amni-scient.com/calc/","description":"Browser-native engineering calculator suite with 37 modules: beams, stress, sections, bolts, springs, seals, columns, shafts, welds, bearings, gears, fatigue, vibration, fluids, pumps, thermal, heat exchangers, pressure vessels, cycles, HVAC, combustion, electrical, motors, NEC wire, electrochemistry, batteries, materials, finishes, fits, machining, hydraulics, rigging, CAD Studio, math, equations, units, references.","applicationCategory":"EngineeringApplication","operatingSystem":"Any (Modern Browser)","browserRequirements":"Requires JavaScript and WebAssembly","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Organization","name":"AMNI-SCIENT","legalName":"Amniscient, LLC","url":"https://amni-scient.com"}}</script>
-<link rel="stylesheet" href="css/style.css?v=b220">
+<link rel="stylesheet" href="css/style.css?v=b230">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
 </head>
-<body class="theme-calc">
+<body class="pp theme-calc">
 <div class="grid-bg"></div>
 <div class="scanlines"></div>
 <nav>
@@ -84,7 +84,7 @@
 </div>
 <section>
 <h2>ENGINEERING MATH, WITHOUT THE INSTALL</h2>
-<p style="text-align:center;color:var(--dim);max-width:750px;margin:0 auto 2rem;font-size:.9rem">Amni-Calc is a suite of 37 mechanical, electrical, fluid, thermal, manufacturing, and electrochemical engineering calculators that run entirely in your browser. No downloads, no license servers, no Python environment to configure. Open a tab, pick a calculator, enter loads and geometry, and read plotted results. The numerics run on WebAssembly for near-native speed; the interface is plain HTML, Plotly, and live Three.js 3D where it helps.</p>
+<p style="color:var(--dim);max-width:750px;margin:0 0 2rem;font-size:.9rem">Amni-Calc is a suite of 37 mechanical, electrical, fluid, thermal, manufacturing, and electrochemical engineering calculators that run entirely in your browser. No downloads, no license servers, no Python environment to configure. Open a tab, pick a calculator, enter loads and geometry, and read plotted results. The numerics run on WebAssembly for near-native speed; the interface is plain HTML, Plotly, and live Three.js 3D where it helps.</p>
 <div class="features">
 <div class="feature">
 <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18M6 21h12M5 8h14M5 8l-3 6h6zM19 8l3 6h-6z"/></svg></div>
@@ -120,7 +120,7 @@
 </section>
 <section>
 <h2>WHY IN-BROWSER ENGINEERING TOOLS</h2>
-<div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
+<div style="max-width:800px;margin:0 0;line-height:1.9;color:var(--dim);font-size:.9rem">
 <p>Traditional engineering software falls into two camps. On one end are full FEA suites &mdash; ANSYS, Abaqus, SolidWorks Simulation &mdash; which cost thousands per seat and require Windows workstations with non-trivial setup. On the other end are hand-calc spreadsheets: cheap and portable but error-prone, unversioned, and full of magic numbers from handbooks nobody quite remembers.</p>
 <p style="margin-top:1.2rem"><strong style="color:var(--text)">In-browser calculators split the difference.</strong> They run anywhere a modern browser does &mdash; desktops, laptops, Chromebooks, tablets. They deploy instantly to a team without IT approval. And because computation is local, proprietary design inputs never leave the device. The page loads, executes the kernel against your inputs, and renders results &mdash; no server round trip.</p>
 <p style="margin-top:1.2rem"><strong style="color:var(--text)">WebAssembly matters here.</strong> JavaScript is great for UI but slow for dense numerical work like solving stiffness matrices, integrating beam deflection curves, or iterating Colebrook for friction factor. Amni-Calc compiles its numerical kernels to WASM, delivering 5&ndash;20x speedups. A beam analysis with 1000 elements renders in under 50 ms; a thermal transient with fine time steps in under 100 ms. Fast enough that you treat the calculator as interactive, iterating like a spreadsheet.</p>
@@ -129,7 +129,7 @@
 </section>
 <section>
 <h2>BROWSE BY CATEGORY</h2>
-<p style="text-align:center;color:var(--dim);max-width:750px;margin:0 auto 2rem;font-size:.9rem">Each calculator has its own deep-dive page covering theory, equations, when to use it, and which standards it follows. Open the calculator to run inputs, or read the page first if you want to brush up on the formulas.</p>
+<p style="color:var(--dim);max-width:750px;margin:0 0 2rem;font-size:.9rem">Each calculator has its own deep-dive page covering theory, equations, when to use it, and which standards it follows. Open the calculator to run inputs, or read the page first if you want to brush up on the formulas.</p>
 <h3 style="color:var(--text);margin:1.5rem 0 .8rem;font-size:.95rem;letter-spacing:1px">MECHANICAL &amp; STRUCTURAL</h3>
 <div class="card-grid">
 <a href="calc/beam.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">BEAM FEA</h3><p>Shear, moment, and deflection for multi-support beams with interactive load placement.</p></a>
@@ -206,7 +206,7 @@
 </section>
 <section>
 <h2>PRIVACY &amp; DATA</h2>
-<div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
+<div style="max-width:800px;margin:0 0;line-height:1.9;color:var(--dim);font-size:.9rem">
 <p>Amni-Calc runs entirely in your browser. Design inputs, material choices, and calculated results stay on your device &mdash; they are never transmitted to Amni-Scient or any third party. Browser local storage is used only to remember UI preferences (theme, last-opened tab) and cached material data. No accounts, no telemetry, no analytics of your engineering work.</p>
 <p style="margin-top:1.2rem">The app is ad-supported on the informational landing pages (this page and the per-module pages). The calculator app itself, at <a href="calc/" style="color:#ff6b35">/calc/</a>, carries a single Ko-fi support panel and no AdSense banners so you can focus on the work.</p>
 </div>
@@ -214,7 +214,7 @@
 <section style="text-align:center">
 <h2>OPEN AMNI-CALC</h2>
 <p style="color:var(--dim);margin-bottom:1.5rem;font-size:.9rem">Runs in any modern browser. No install, no sign-up.</p>
-<div class="cta-row" style="justify-content:center;gap:1rem;flex-wrap:wrap">
+<div class="cta-row" style="gap:1rem;flex-wrap:wrap">
 <a href="calc/" class="btn btn-primary">LAUNCH CALCULATOR</a>
 <a href="faq.html" class="btn btn-outline">FAQ</a>
 <a href="about.html" class="btn btn-outline">ABOUT</a>

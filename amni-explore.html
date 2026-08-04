@@ -20,12 +20,12 @@
 <meta name="twitter:image" content="https://amni-scient.com/assets/explore/og-explore.png">
 <link rel="canonical" href="https://amni-scient.com/amni-explore">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"Amni-Explore","url":"https://amni-scient.com/explore/","description":"WebGL space game: 80K-particle galaxy explorer, component-level rocket engineering with launch simulation, and idle-tycoon colony mechanics. Compiled WASM engine, NASA Exoplanet Archive data.","genre":["Space Exploration","Educational","Simulation","Idle Game","Tycoon Game"],"gamePlatform":"Web Browser","operatingSystem":"Any (WebGL2)","applicationCategory":"Game","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Organization","name":"AMNI-SCIENT","legalName":"Amniscient, LLC","url":"https://amni-scient.com"},"image":"https://amni-scient.com/assets/explore/og-explore.png"}</script>
-<link rel="stylesheet" href="css/style.css?v=b220">
+<link rel="stylesheet" href="css/style.css?v=b230">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
 </head>
-<body class="theme-explore">
+<body class="pp theme-explore">
 <div class="grid-bg"></div>
 <div class="scanlines"></div>
 <nav>
@@ -79,13 +79,13 @@
 </div>
 <h1>AMNI-EXPLORE</h1>
 <p class="desc">GALAXY EXPLORER &bull; ROCKET ENGINEERING LAB &bull; IDLE-TYCOON COLONIES &bull; NASA DATA &bull; WASM</p>
-<div class="cta-row" style="justify-content:center;margin-top:2rem;margin-bottom:1rem">
+<div class="cta-row" style="margin-top:2rem;margin-bottom:1rem">
 <a href="explore/" class="btn btn-primary">LAUNCH EXPLORER</a>
 </div>
 </div>
 <section>
 <h2>NAVIGATE THE GALAXY</h2>
-<p style="text-align:center;color:var(--dim);max-width:700px;margin:0 auto 2rem;font-size:.9rem">A browser space game in three layers. <strong>Explore</strong> an 80,000-particle procedural galaxy in real-time WebGL &mdash; zoom from galaxy-wide down to individual star systems built from real NASA exoplanet data. <strong>Engineer</strong> rockets component-by-component (engines, stages, materials) and fly RK4 launch/ascent simulations to solve payload-to-orbit. <strong>Build</strong> a spacefaring economy with idle-tycoon mechanics: funding tiers, research trees, and colony infrastructure that earn while you are away. All compiled to WebAssembly.</p>
+<p style="color:var(--dim);max-width:700px;margin:0 0 2rem;font-size:.9rem">A browser space game in three layers. <strong>Explore</strong> an 80,000-particle procedural galaxy in real-time WebGL &mdash; zoom from galaxy-wide down to individual star systems built from real NASA exoplanet data. <strong>Engineer</strong> rockets component-by-component (engines, stages, materials) and fly RK4 launch/ascent simulations to solve payload-to-orbit. <strong>Build</strong> a spacefaring economy with idle-tycoon mechanics: funding tiers, research trees, and colony infrastructure that earn while you are away. All compiled to WebAssembly.</p>
 <div class="features">
 <div class="feature">
 <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 15a4 4 0 0 1 1-7.9A5.5 5.5 0 0 1 16 7a4 4 0 0 1 .6 8H5z"/><path d="M8 19l1.5 2M13 19l1.5 2"/></svg></div>
@@ -170,7 +170,7 @@
 </section>
 <section>
 <h2>GALLERY</h2>
-<p style="text-align:center;color:var(--dim);font-size:.85rem;margin-bottom:1.5rem">Click to enlarge</p>
+<p style="color:var(--dim);font-size:.85rem;margin-bottom:1.5rem">Click to enlarge</p>
 <div class="screenshot-strip">
 <div class="screenshot-desktop"><img class="gallery-thumb" src="assets/explore/ss_galaxy.png" alt="Amni-Explore galaxy view with 80K particles" onclick="openLightbox(this.src,this.alt)"></div>
 <div class="screenshot-desktop"><img class="gallery-thumb" src="assets/explore/ss_solar_system.png" alt="Amni-Explore Sol System with planet list" onclick="openLightbox(this.src,this.alt)"></div>
@@ -181,13 +181,13 @@
 <h2>LAUNCH AMNI-EXPLORE</h2>
 <p style="color:var(--dim);margin-bottom:.5rem;font-size:.9rem">Run directly in your browser. No download, no account, no installation.</p>
 <p style="color:var(--dim);font-size:.8rem;margin-bottom:2rem">Requires WebGL2 &bull; Desktop recommended for best experience</p>
-<div class="cta-row" style="justify-content:center">
+<div class="cta-row" style="">
 <a href="explore/" class="btn btn-primary">LAUNCH EXPLORER</a>
 </div>
 </section>
 <section>
 <h2>UNDERSTANDING PROCEDURAL GALAXY GENERATION</h2>
-<div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
+<div style="max-width:800px;margin:0 0;line-height:1.9;color:var(--dim);font-size:.9rem">
 <p>Procedural generation is a technique where content is created algorithmically rather than manually. In Amni-Explore, the entire galaxy &mdash; 80,000 particles forming spiral arms, a central bar, a galactic bulge, and a diffuse halo &mdash; is generated from mathematical functions compiled to WebAssembly.</p>
 <p style="margin-top:1.2rem"><strong style="color:var(--text)">Spiral arm formation</strong> uses logarithmic spiral equations with added Gaussian noise to create the characteristic shape of barred spiral galaxies (similar to the Milky Way&rsquo;s SBbc classification). Each arm has a pitch angle, width gradient, and star density profile that controls how particles distribute from the core outward.</p>
 <p style="margin-top:1.2rem"><strong style="color:var(--text)">Star classification</strong> follows the Hertzsprung-Russell diagram &mdash; hot blue stars (O/B type) appear in arm regions where star formation is active, while cooler orange and red stars (K/M type) populate the bulge and inter-arm regions. The color temperature mapping uses real astrophysical blackbody radiation curves.</p>

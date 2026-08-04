@@ -11,19 +11,19 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://amni-scient.com/licensing">
 <link rel="canonical" href="https://amni-scient.com/licensing">
-<link rel="stylesheet" href="css/style.css?v=b220">
+<link rel="stylesheet" href="css/style.css?v=b230">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
 <style>
 .tier-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:2rem;max-width:1000px;margin:2rem auto}
-.tier{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:2.5rem 2rem;text-align:center;transition:border-color .3s,transform .2s;position:relative}
+.tier{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:2.5rem 2rem;transition:border-color .3s,transform .2s;position:relative}
 .tier:hover{border-color:var(--accent);transform:translateY(-3px)}
 .tier.featured{border-color:var(--accent);box-shadow:0 0 30px var(--accent-dim)}
 .tier.featured::before{content:'RECOMMENDED';position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--accent);color:var(--bg);font-size:.6rem;letter-spacing:2px;padding:3px 12px;border-radius:3px;font-weight:700}
 .tier li{color:var(--text);font-size:.8rem;padding:.5rem 0;border-bottom:1px solid var(--border);display:flex;gap:.5rem;align-items:flex-start}
 .tier li::before{content:'✓';color:var(--accent);font-weight:700;flex-shrink:0}
-.tier .btn{width:100%;justify-content:center;margin-top:1rem}
+.tier .btn{width:100%;margin-top:1rem}
 .process-steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.5rem;max-width:900px;margin:2rem auto}
 .step{text-align:center;padding:1.5rem}
 .step-num{font-size:2rem;color:var(--accent);font-weight:700;margin-bottom:.5rem}
@@ -37,12 +37,12 @@
 .faq-a{max-height:0;overflow:hidden;transition:max-height .3s ease}
 .faq-item.open .faq-a{max-height:500px}
 .faq-a-inner{padding:0 1.5rem 1.5rem;color:var(--dim);font-size:.8rem;line-height:1.7}
-.nda-box{max-width:600px;margin:2rem auto;background:var(--panel);border:1px solid var(--accent);border-radius:8px;padding:2rem;text-align:center}
+.nda-box{max-width:600px;margin:2rem auto;background:var(--panel);border:1px solid var(--accent);border-radius:8px;padding:2rem}
 .nda-box h3{color:var(--accent);letter-spacing:2px;margin-bottom:1rem}
 .nda-box p{color:var(--dim);font-size:.85rem;line-height:1.7;margin-bottom:1.5rem}
 </style>
 </head>
-<body>
+<body class="pp">
 <div class="grid-bg"></div>
 <div class="scanlines"></div>
 <nav>

@@ -1,3 +1,41 @@
+## 2026-08-04 — v1.15.0 Editorial product pages + six product fixes
+
+Review: learn badge overlap, /braid 404 from the nav, PROJECTS mojibake, no way back from
+the game, weather performance, the connect logo, amni-life "super incomplete", and product
+pages still centered/AI-looking.
+
+- **Editorial product layout (`body.pp`, 21 pages).** Product heroes are left-aligned
+  editorial blocks — eyebrow above a wide-cut title, CTAs left — and every section h2 is
+  left-aligned with a small leading section counter (real numbering, CSS counters). The
+  centered inline styles (`text-align:center`, `margin:0 auto`, centered CTA rows) were
+  stripped mechanically. Sections widened to 1240.
+- **PROJECTS mojibake:** the dropdown caret was a raw `▾` in style.css; some decode paths
+  (live b220 served it cp1252) rendered `â–¾`. Now the ASCII escape `\25BE` — the file is
+  pure ASCII, the failure class is gone. (A first attempt wrote 0x15 into the file — shell
+  transport ate the backslash; rewritten byte-safe via chr(92).)
+- **/braid 404:** live `/braid` is 200 (GH Pages extensionless) — the user likely hit the
+  deploy window. Added a branded `404.html` with a smart redirect: known extensionless slugs
+  bounce to their `.html`, everything else gets a designed not-found page. Heals every
+  transient/edge case sitewide.
+- **Game:** header now carries an explicit "← ALL PROJECTS" plate + the AMNI-SCIENT wordmark
+  (v1 and v2).
+- **Amni-Life — found the real bug.** The app's global `canvas{width:100vw;height:100vh}`
+  rule also hit the 180px `#minimap` canvas, stretching it fullscreen — and its
+  `backdrop-filter: blur(10px)` fogged the ENTIRE app. Everything looked permanently
+  out-of-focus. Fix: explicit 180px size on `#minimap`. Also sharpened the node sprite
+  (crisp core + tight halo, 256px) and bumped the PWA cache to v0.26.1 so installs pick it
+  up. Product page: standard hero/system buttons and two fresh in-app screenshots
+  (constellation, labels+minimap) captured post-fix.
+- **Amni-Weather perf:** wind + hazards RAF loops now idle when the tab is hidden; wind
+  particles 380 -> 300; overlay budget dpr ≤1.5 × ovScale 0.5 (was ≤2 × 0.6 — ~44% fewer
+  overlay pixels per repaint on hiDPI). Shipped as `wx-boot.139.js` with all module
+  imports re-keyed `?v=139`. Zero console errors.
+- **Amni-Connect:** the wavy "E2EE" doodle mark replaced with a clean two-displays-linked
+  stroke mark.
+- **Amni-Learn:** the NEW badge no longer overhangs the card corner (inset 9px, 3px radius,
+  flat #ff3b7f, no glow); SW cache bumped v1287.
+- Re-key `?v=b230`. Backups in `backups/v1.14.0_consistency/`.
+
 ## 2026-08-04 — v1.14.0 Consistency pass + film re-cut + Braid app type (staged)
 
 Review: "font, format, and layouts are inconsistent, as well as the button borders. The video is

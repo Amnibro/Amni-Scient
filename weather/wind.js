@@ -14,7 +14,7 @@ const ctx=canvas.getContext('2d',{alpha:true});
 let particles=[],running=false,raf=0,uF=null,vF=null,fw=0,fh=0,enabled=true;
 let lastT=0,bounds={lat0:-85,lat1:85,lon0:-180,lon1:180};
 let lastView={lat:NaN,lon:NaN,zoom:NaN},skipTrails=0;
-const N=()=>PERF.mobile?160:380;
+const N=()=>PERF.mobile?160:300;
 function resize(){
 const dpr=PERF.dpr;const w=innerWidth,h=innerHeight;
 canvas.width=(w*dpr)|0;canvas.height=(h*dpr)|0;
@@ -70,7 +70,7 @@ return dz>0.08||dlat>thrLat||dlon>thrLon;
 }
 function step(now){
 raf=requestAnimationFrame(step);
-if(!enabled)return;
+if(!enabled||document.hidden)return;
 const view=getView();
 if(view.panning){ctx.clearRect(0,0,canvas.width,canvas.height);lastT=now;return;}
 if(viewShifted(view)){seed(false);lastView={lat:view.lat,lon:view.lon,zoom:view.zoom};}
