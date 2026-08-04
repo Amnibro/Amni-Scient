@@ -92,7 +92,7 @@
 </div>
 <section>
 <h2>NAVIGATE THE GALAXY</h2>
-<p style="color:var(--dim);max-width:700px;margin:0 0 2rem;font-size:.9rem">A browser space game in three layers. <strong>Explore</strong> an 80,000-particle procedural galaxy in real-time WebGL &mdash; zoom from galaxy-wide down to individual star systems built from real NASA exoplanet data. <strong>Engineer</strong> rockets component-by-component (engines, stages, materials) and fly RK4 launch/ascent simulations to solve payload-to-orbit. <strong>Build</strong> a spacefaring economy with idle-tycoon mechanics: funding tiers, research trees, and colony infrastructure that earn while you are away. All compiled to WebAssembly.</p>
+<p style="color:var(--dim);max-width:640px;margin:0 0 1rem;font-size:.9rem">A browser space game in three layers.</p>
 <div class="features">
 <div class="feature">
 <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 15a4 4 0 0 1 1-7.9A5.5 5.5 0 0 1 16 7a4 4 0 0 1 .6 8H5z"/><path d="M8 19l1.5 2M13 19l1.5 2"/></svg></div>
@@ -199,7 +199,7 @@
 <p style="margin-top:1.2rem"><strong style="color:var(--text)">Spiral arm formation</strong> uses logarithmic spiral equations with added Gaussian noise to create the characteristic shape of barred spiral galaxies (similar to the Milky Way&rsquo;s SBbc classification). Each arm has a pitch angle, width gradient, and star density profile that controls how particles distribute from the core outward.</p>
 <p style="margin-top:1.2rem"><strong style="color:var(--text)">Star classification</strong> follows the Hertzsprung-Russell diagram &mdash; hot blue stars (O/B type) appear in arm regions where star formation is active, while cooler orange and red stars (K/M type) populate the bulge and inter-arm regions. The color temperature mapping uses real astrophysical blackbody radiation curves.</p>
 <p style="margin-top:1.2rem"><strong style="color:var(--text)">Planet textures</strong> use fractional Brownian motion (fBm), a layered noise algorithm where multiple octaves of Perlin-like noise are summed at decreasing amplitudes and increasing frequencies. The result produces realistic-looking terrain, gas cloud bands, lava cracks, and ice shelf patterns &mdash; all computed per-pixel in the WASM module without any pre-baked texture files.</p>
-<p style="margin-top:1.2rem"><strong style="color:var(--text)">NASA integration</strong> bridges procedural and real data by querying the Exoplanet Archive&rsquo;s Table Access Protocol (TAP) API for confirmed planets. The API returns standardized parameters (stellar effective temperature, planet radius in Jupiter radii, orbital semi-major axis) that Amni-Explore maps onto the same rendering pipeline as procedural systems. This lets you compare real exoplanets against procedurally generated worlds using the NASA/Calc filter toggle.</p>
+<p style="margin-top:1.2rem"><strong style="color:var(--text)">NASA integration</strong> bridges procedural and real data by querying the Exoplanet Archive&rsquo;s Table Access Protocol (TAP) API for confirmed planets.</p>
 </div>
 </section>
 <aside class="support-cta" aria-label="Support"><a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="support-link"><span class="support-ico">&#9749;</span><span>Enjoying this? <strong>Support on Ko-fi</strong></span></a></aside>

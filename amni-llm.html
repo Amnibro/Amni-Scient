@@ -107,7 +107,7 @@
 </div>
 <section>
 <h2>WHY ANOTHER IN-BROWSER LLM?</h2>
-<p style="color:var(--dim);max-width:780px;margin:0 0 2rem;font-size:.9rem">Existing in-browser runtimes like WebLLM (MLC) require every model to be specifically TVM-compiled to WebGPU shaders before it runs. New base models &mdash; Qwen 3.5, DeepSeek-R1, Mistral Nemo, Llama 4 &mdash; sit on the MLC team's compile queue before they're available. Amni-LLM uses GGUF, the format with the broadest community coverage on HuggingFace: most popular models have GGUF builds within days of release. Tradeoff is honest: llama.cpp WASM is currently CPU-SIMD-only, so per-token throughput is lower than WebGPU stacks. The win is universal model availability and arbitrary URL/file loading.</p>
+<p style="color:var(--dim);max-width:640px;margin:0 0 1rem;font-size:.9rem">Existing in-browser runtimes like WebLLM (MLC) require every model to be specifically TVM-compiled to WebGPU shaders before it runs.</p>
 <div class="features">
 <div class="feature">
 <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 3 2.6 15 0 18M12 3c-2.6 3-2.6 15 0 18"/></svg></div>
@@ -188,7 +188,7 @@
 <section>
 <h2>HONEST STACK</h2>
 <div style="max-width:800px;margin:0 0;line-height:1.85;color:var(--dim);font-size:.88rem">
-<p>The transformer math runs through <a href="https://github.com/ngxson/wllama" target="_blank" rel="noopener" style="color:#a8f">wllama</a> (MIT-licensed llama.cpp WASM port). Amni-LLM owns the loader, registry, browser UI, HuggingFace search and install, arbitrary URL/file loading, and WebLLM-compatible API surface on top. We list the dependency by name in the README and on the demo page; the value-add is the integration and developer experience, not a from-scratch inference engine.</p>
+<p>The transformer math runs through <a href="https://github.com/ngxson/wllama" target="_blank" rel="noopener" style="color:#a8f">wllama</a> (MIT-licensed llama.cpp WASM port).</p>
 <p style="margin-top:1.2rem">Performance honesty: per-token throughput is lower than MLC's WebGPU stack because llama.cpp WASM hasn't shipped mature WebGPU support yet. For interactive chat at small models the difference is barely noticeable. For high-throughput production workloads where MLC supports the model you need, MLC remains faster.</p>
 <p style="margin-top:1.2rem">Memory note: in-browser models are bounded by the browser's allocator. Mobile browsers cap around 1 GB; desktop typically allows 2-4 GB without cross-origin isolation, more with it. Amni-LLM ships a service worker that enables COOP/COEP headers on static hosts (GitHub Pages, etc.) so SharedArrayBuffer becomes available and multi-thread WASM with larger memory works.</p>
 </div>

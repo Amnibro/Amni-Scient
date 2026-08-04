@@ -61,6 +61,24 @@
 .shot .cap{padding:.7rem .9rem;font-size:.8rem;color:var(--dim)}
 .shot .cap strong{color:var(--accent);display:block;font-size:.85rem;margin-bottom:.15rem}
 .shot-wide{grid-column:1/-1}
+
+.bench-bar,.mini-bar i{transform-origin:left}
+@supports (animation-timeline:view()){
+.bench-bar{animation:bar-grow .9s cubic-bezier(.22,1,.36,1) both;animation-timeline:view();animation-range:entry 20% cover 45%}
+.mini-bar i{animation:bar-grow .9s cubic-bezier(.22,1,.36,1) both;animation-timeline:view();animation-range:entry 20% cover 45%}
+}
+@keyframes bar-grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.mini-charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:2.5rem;max-width:900px;margin:2.2rem 0 0}
+.mini-chart h3{font-size:.72rem;font-weight:700;font-stretch:80%;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);margin:0 0 1rem}
+.mini-row{display:grid;grid-template-columns:minmax(120px,38%) 1fr;gap:.8rem;align-items:center;margin:.55rem 0}
+.mini-row .lbl{font-size:.78rem;color:var(--text-soft);line-height:1.35;text-align:right}
+.mini-bar{position:relative;height:14px;background:color-mix(in srgb,var(--border) 55%,transparent)}
+.mini-bar i{position:absolute;inset:0 auto 0 0;background:var(--border2);display:block}
+.mini-bar.hot i{background:linear-gradient(90deg,var(--accent),color-mix(in srgb,var(--accent) 40%,transparent))}
+.mini-bar b{position:absolute;left:calc(var(--w) + 8px);top:50%;transform:translateY(-50%);font-size:.72rem;font-weight:700;color:var(--text);white-space:nowrap}
+.mini-bar i{width:var(--w)}
+.mini-note{font-size:.72rem;color:var(--dim);margin-top:.6rem}
+@media(prefers-reduced-motion:reduce){.bench-bar,.mini-bar i{animation:none!important}}
 </style>
 </head>
 <body class="pp theme-ai">
@@ -180,12 +198,24 @@
 <tr><td>Qwen-3.5 9B <span style="color:var(--dim)">(vendor-reported)</span></td><td>~82%</td><td><span class="bench-bar dim" style="width:99%"></span></td></tr>
 </tbody>
 </table>
-<p class="footnote">Base measured with lm-eval-harness, 5-shot. A 4B/9B still wins one-shot &mdash; the point is <strong>+10.7 points without touching a weight</strong>.</p>
+<p class="footnote">lm-eval-harness, 5-shot. The point: <strong>+10.7 points without touching a weight</strong>.</p>
+<div class="mini-charts">
+<div class="mini-chart"><h3>Repeat a question</h3>
+<div class="mini-row"><span class="lbl">first ask</span><span class="mini-bar" style="--w:92%"><i></i><b>80 s</b></span></div>
+<div class="mini-row"><span class="lbl">asked again</span><span class="mini-bar hot" style="--w:3px"><i></i><b>0.08 s &mdash; ~1000&times;</b></span></div>
+<p class="mini-note">Verified answers persist to the lesson bank and return instantly.</p>
+</div>
+<div class="mini-chart"><h3>VRAM to serve</h3>
+<div class="mini-row"><span class="lbl">7B fp16, full load</span><span class="mini-bar" style="--w:92%"><i></i><b>14 GB</b></span></div>
+<div class="mini-row"><span class="lbl">Adam 3B GF(17), hot set</span><span class="mini-bar hot" style="--w:26.3%"><i></i><b>4 GB</b></span></div>
+<p class="mini-note">NVMe&rarr;VRAM streaming keeps only the hot tier resident.</p>
+</div>
+</div>
 <div class="loop-grid">
-<div class="loop-stat"><span class="big">+10.7pp</span><span class="lbl">MMLU-Pro, base &rarr; loop</span></div>
-<div class="loop-stat"><span class="big">+8.4pp</span><span class="lbl">MBPP+ code, sandbox-verified</span></div>
-<div class="loop-stat"><span class="big">~35&times;</span><span class="lbl">faster on repeat questions</span></div>
-<div class="loop-stat"><span class="big">74% vs 30%</span><span class="lbl">accuracy when confident vs unsure &mdash; it knows when it doesn&rsquo;t know</span></div>
+<div class="loop-stat"><span class="big"><span data-cu="10.7" data-pre="+" data-suf="pp">+10.7pp</span></span><span class="lbl">MMLU-Pro, base &rarr; loop</span></div>
+<div class="loop-stat"><span class="big"><span data-cu="8.4" data-pre="+" data-suf="pp">+8.4pp</span></span><span class="lbl">MBPP+ code, sandbox-verified</span></div>
+<div class="loop-stat"><span class="big"><span data-cu="35" data-pre="~" data-suf="&times;">~35&times;</span></span><span class="lbl">faster on repeat questions</span></div>
+<div class="loop-stat"><span class="big"><span data-cu="74" data-suf="%">74%</span> vs 30%</span><span class="lbl">accuracy when confident vs unsure</span></div>
 </div>
 </section>
 
@@ -239,7 +269,7 @@
 <pre class="code-block">git clone https://github.com/Amnibro/Amni-Ai
 cd Amni-Ai
 python install.py</pre>
-<p><code>install.py</code> does everything &mdash; venv, the right PyTorch (CUDA/ROCm/CPU), the <strong>pre-built GF(17) bake</strong> from HuggingFace (you never re-encode), then opens <code>localhost:7700</code>. Windows: double-click <code>install.bat</code>.</p>
+<p>One script: venv, the right PyTorch, the <strong>pre-built GF(17) bake</strong> (you never re-encode), opens <code>localhost:7700</code>. Windows: <code>install.bat</code>.</p>
 </div>
 <div class="card">
 <h3>2. OLLAMA DROP-IN</h3>
@@ -312,14 +342,16 @@ OPENAI_API_KEY=anything</pre>
 <tr><td>Learning</td><td>24/7 daemon &mdash; crawls gaps, distills, consolidates, spaced repetition &middot; yields when you&rsquo;re active</td></tr>
 <tr><td>APIs</td><td>Ollama shape &middot; OpenAI <code>/v1</code> with tool-calling &middot; MCP &middot; native REST &mdash; one port (:7700)</td></tr>
 <tr><td>UI surfaces</td><td><code>/</code> unified &middot; <code>/jarvis</code> neon + gestures &middot; <code>/hud</code> dashboard</td></tr>
-<tr><td>Voice</td><td>Piper TTS + faster-whisper STT, streaming, wake-word (&ldquo;Adam, &hellip;&rdquo;), barge-in</td></tr>
-<tr><td>Vision</td><td>BLIP caption + VQA &mdash; paste an image, ask follow-ups</td></tr>
-<tr><td>Gestures</td><td>MediaPipe hands, 6 built-in + trainable custom, portable JSON packs</td></tr>
-<tr><td>Rendering</td><td>Markdown &middot; KaTeX &middot; Mermaid &middot; syntax highlighting &middot; 9 live widget types</td></tr>
-<tr><td>Coach</td><td>Socratic ask-answer-ask, 5 levels, voice-native, Anki export, streaks</td></tr>
-<tr><td>Auditability</td><td>Every action logged (shell, edits, tests, skills) &middot; one-tap 24-hour briefing</td></tr>
 <tr><td>License</td><td>CC BY-NC 4.0 (Amnibro code) &middot; Apache 2.0 (IBM Granite base)</td></tr>
 </table>
+<div class="persona-grid" style="margin-top:1.4rem;max-width:760px">
+<div class="persona-chip"><strong>Voice</strong>Piper TTS + Whisper, wake-word</div>
+<div class="persona-chip"><strong>Vision</strong>paste an image, ask about it</div>
+<div class="persona-chip"><strong>Gestures</strong>6 built-in + trainable</div>
+<div class="persona-chip"><strong>Math &amp; diagrams</strong>KaTeX + Mermaid inline</div>
+<div class="persona-chip"><strong>Coach</strong>Socratic tutoring, Anki export</div>
+<div class="persona-chip"><strong>Audit</strong>every action logged + daily brief</div>
+</div>
 </section>
 
 <section>
@@ -344,5 +376,19 @@ OPENAI_API_KEY=anything</pre>
 </div>
 <p>&copy; 2025-2026 Amniscient, LLC. Amnibro's original Adam code is licensed CC BY-NC 4.0. Granite 4.1 base weights (&copy; IBM) are licensed Apache 2.0. <em>Granite</em> is an IBM trademark; this product is not endorsed by or affiliated with IBM.</p>
 </footer>
+<script>
+(function(){
+if(matchMedia('(prefers-reduced-motion:reduce)').matches)return;
+var els=[].slice.call(document.querySelectorAll('[data-cu]'));if(!els.length)return;
+var io=new IntersectionObserver(function(en){en.forEach(function(e){
+ if(!e.isIntersecting)return;io.unobserve(e.target);
+ var el=e.target,t=parseFloat(el.dataset.cu),pre=el.dataset.pre||'',suf=el.dataset.suf||'',dec=(el.dataset.cu.split('.')[1]||'').length,t0=null;
+ function f(ts){if(!t0)t0=ts;var k=Math.min(1,(ts-t0)/900);k=1-Math.pow(1-k,3);
+  el.textContent=pre+(t*k).toFixed(dec)+suf.replace('&times;','\u00d7');
+  if(k<1)requestAnimationFrame(f);}
+ requestAnimationFrame(f);});},{threshold:.6});
+els.forEach(function(el){io.observe(el);});
+})();
+</script>
 </body>
 </html>

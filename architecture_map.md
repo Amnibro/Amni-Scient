@@ -1,3 +1,18 @@
+## 2026-08-04 — v1.17.4 Text-weight sweep + Adam chart animations
+
+- **Adam deeper cut: 1,017 -> 895 words**, and the charts now move. Two new mini-charts under
+  The Lift — "Repeat a question" (80 s vs 0.08 s, ~1000x) and "VRAM to serve" (14 GB fp16
+  full-load vs 4 GB GF(17) hot set) — same bar language as the bench chart. All bars grow in
+  on scroll (animation-timeline:view, scaleX from the left), and the stat-tile numbers count
+  up on first sight (IntersectionObserver, 900 ms ease-out; both respect reduced motion).
+  Six feature rows of the spec table became a chip strip.
+- **Sweep across 13 product pages:** section intros cut to their first sentence when long,
+  and any paragraph over ~380 plain characters (the AdSense-era "what is encryption"
+  educational blocks) cut to its lead sentence — the funding correction removed their reason
+  to exist. Biggest drops: learn 764->558, crypt 844->642, haven 824->635, calc 1334->1176,
+  life 781->704, llm 784->667, weather 759->665, explore 811->708, core 927->856.
+  Tag-balance verified on all 14 edited pages.
+
 ## 2026-08-04 — v1.17.3 Amni-AI page: 3,275 words -> 1,017, visuals lead
 
 Review: "amni-ai is a good example of WAY too much text and not enough visuals/straightforward

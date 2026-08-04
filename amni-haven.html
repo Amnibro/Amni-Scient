@@ -90,7 +90,7 @@
 </div>
 <section>
 <h2>YOUR MESSAGES. YOUR SERVER.</h2>
-<p style="color:var(--dim);max-width:700px;margin:0 0 2rem;font-size:.9rem">Amni-Haven is the native Android client for <a href="https://github.com/ancsemi/Haven" target="_blank" rel="noopener">Haven</a>, a self-hosted chat platform created by <a href="https://github.com/ancsemi" target="_blank" rel="noopener">ANCSemi</a> (MIT-NC licensed). Connect to any Haven server. Messages route through your chosen server, not ours. Free tier is ad-supported (AdMob); push notifications via FCM. You control the infrastructure.</p>
+<p style="color:var(--dim);max-width:640px;margin:0 0 1rem;font-size:.9rem">Amni-Haven is the native Android client for <a href="https://github.com/ancsemi/Haven" target="_blank" rel="noopener">Haven</a>, a self-hosted chat platform created by <a href="https://github.com/ancsemi" target="_blank" rel="noopener">ANCSemi</a> (MIT-NC licensed).</p>
 <div class="features">
 <div class="feature">
 <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v12H9l-5 4z"/></svg></div>
@@ -213,7 +213,7 @@
 </section>
 <section>
 <h2>THANK YOU, BETA TESTERS</h2>
-<p style="color:var(--dim);max-width:700px;margin:0 0 1.5rem;font-size:.9rem;line-height:1.7">Amni-Haven wouldn't be here without the testers who put the early builds through their paces. Every bug report, crash log, and piece of feedback helped shape the app into what it is today. You helped us ship&mdash;thank you.</p>
+<p style="color:var(--dim);max-width:640px;margin:0 0 1rem;font-size:.9rem">Amni-Haven wouldn't be here without the testers who put the early builds through their paces.</p>
 <p style="color:var(--dim);max-width:700px;margin:0 0 2rem;font-size:.85rem;line-height:1.7">Want to keep testing? We're always working on new Amni-Scient apps and features. Sign up below and we'll reach out when the next beta opens.</p>
 <div class="cta-row" style="">
 <button class="btn btn-outline" onclick="openBetaOptIn()">JOIN FUTURE BETAS</button>
@@ -225,10 +225,10 @@ Haven is created and maintained by <a href="https://github.com/ancsemi" target="
 <section>
 <h2>SELF-HOSTED MESSAGING EXPLAINED</h2>
 <div style="max-width:800px;margin:0 0;text-align:left">
-<p><strong>Self-hosted messaging</strong> means running your own server infrastructure rather than relying on a third-party service. When you use platforms like Discord, Slack, or WhatsApp, your messages pass through (and are stored on) servers controlled by those companies. With a self-hosted approach, you control where data lives, who can access it, and how long it's retained. This is the architecture Haven is built around.</p>
-<p><strong>Socket.IO and real-time communication:</strong> Haven uses Socket.IO, a library built on top of WebSockets, for real-time bidirectional communication. Unlike traditional HTTP request-response cycles, WebSockets maintain a persistent connection between client and server. This enables instant message delivery without polling. Socket.IO adds automatic reconnection, room-based broadcasting, and fallback to HTTP long-polling when WebSocket connections aren't available&mdash;making it resilient across different network conditions.</p>
-<p><strong>Push notifications and FCM:</strong> Mobile operating systems aggressively manage battery by suspending background apps. Firebase Cloud Messaging (FCM) solves this by maintaining a single persistent connection per device that all apps share. When a Haven server needs to notify an offline user, it sends a lightweight signal through FCM that wakes the app just enough to display a notification&mdash;no background service drain required. The actual message content can be fetched on-demand when the user opens the app, keeping sensitive data off Google's infrastructure.</p>
-<p><strong>Federation vs. centralization:</strong> Haven occupies a middle ground between fully centralized platforms (one company controls everything) and federated protocols like Matrix or XMPP (servers interoperate across domains). Each Haven instance is independent, giving server operators complete sovereignty. This makes it ideal for families, small teams, and communities who want messaging without external dependencies or data harvesting.</p>
+<p><strong>Self-hosted messaging</strong> means running your own server infrastructure rather than relying on a third-party service.</p>
+<p><strong>Socket.IO and real-time communication:</strong> Haven uses Socket.IO, a library built on top of WebSockets, for real-time bidirectional communication.</p>
+<p><strong>Push notifications and FCM:</strong> Mobile operating systems aggressively manage battery by suspending background apps.</p>
+<p><strong>Federation vs. centralization:</strong> Haven occupies a middle ground between fully centralized platforms (one company controls everything) and federated protocols like Matrix or XMPP (servers interoperate across domains).</p>
 </div>
 </section>
 <aside class="support-cta" aria-label="Support"><a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="support-link"><span class="support-ico">&#9749;</span><span>Enjoying this? <strong>Support on Ko-fi</strong></span></a></aside>
