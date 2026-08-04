@@ -1,3 +1,12 @@
+## 2026-08-04 — v1.17.2 Bio correction: Anthony Reffelt, mechanical engineer + LinkedIn
+
+- v1.17.1 wrote "electrochemical engineer" — wrong. Anthony is a **mechanical engineer**
+  (Senior ME). Bio now credits **Anthony Reffelt** (Amnibro) by name, linked to his LinkedIn
+  (linkedin.com/in/anthony-reffelt-87181059), card back to MECHANICAL ENGINEERING with
+  additive manufacturing added.
+- Organization JSON-LD founder on index + about: "Anthony Reffelt", alternateName "Amnibro",
+  sameAs LinkedIn.
+
 ## 2026-08-04 — v1.17.1 About page: legible portfolio colors, funding + bio corrections
 
 - **Portfolio colors were dark-theme neon hardcoded inline** (#f0c33c, #00ffaa, #00d4ff …) —
