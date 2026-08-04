@@ -1,3 +1,42 @@
+## 2026-08-04 — v1.14.0 Consistency pass + film re-cut + Braid app type (staged)
+
+Review: "font, format, and layouts are inconsistent, as well as the button borders. The video is
+text heavy with no smooth transitions. The font in the program for Braid itself is not primed for
+maximum legibility."
+
+- **One nav, one footer.** 42 root pages carried six different nav variants (most had no
+  CALCULATORS/LEARN/RESEARCH, SEO pages had a BRAID link, symphony its own). Every root page now
+  carries the canonical index nav — full PROJECTS dropdown, per-page active states preserved
+  programmatically — and the canonical 6-link footer (40 pages).
+- **One radius system.** Focus ring 6px -> 2px (was rounder than the buttons it rings), dropdown
+  13px -> 3px and its items 2px, support pill and hero chips 999px -> 2px plates, privacy-card
+  badge matched to the card badge (sans, square, transparent), scrollbar squared, screenshot
+  frame imgs 13/9px -> 3/2px. Phone-frame 22px kept — device mock is semantic.
+- **One display face.** `.product-hero h1`, `.hero h1` and `.legal h1` join the wide axis
+  (112%, w800, −.005em) that the index wordmark and Braid title already use — display = wide,
+  section heads = condensed, one rule everywhere. Dead `#hero-wheel` block (24 rules) deleted;
+  only hero-proto.html referenced it.
+- **Film re-cut (v9).** The seven hard cuts are now 0.5s crossfades (video xfade + audio
+  acrossfade), 51.4s -> 47.9s, single-pass re-encode CRF 19 (text stays legible), 6.9 MB.
+  Everything on the old timeline retimed: chapter buttons (data-t + shown times), chapters VTT,
+  captions VTT (11 cues remapped t−0.5k with overlap clamping), JSON-LD Clip offsets, PT48S,
+  uploadDate, film-dur pill, poster re-pulled at the same frame (t=11.5 new timeline), homepage
+  loop clamp 4–47 -> 3.5–43.5. Blend frames verified at four boundaries.
+- **Chapter seek hardened.** start() now retries the seek via progress/canplaythrough until
+  v.seekable covers the target — python http.server serves no ranges, which exposed that a seek
+  fired at loadedmetadata clamps to 0 on any range-less host. Verified against a local
+  Range-capable server (206s): first seek lands 31.3, mid-play second seek lands 21.1,
+  aria-current tracks. Live host serves Accept-Ranges (verified v1.11).
+- **Braid app (Amni-Delve, staged for 3.5.55):** web/index.html is the UI source of truth
+  (_build_ui.py is stale — old midnight shell; do not run). Scient dark+light `--font` now leads
+  with "Segoe UI Variable Text" (optical body cut; Display was set — a headline cut at 14.5px),
+  mono leads with Cascadia (SF Mono first entry was mac-only). Base 14.5/1.5 -> 15/1.6 with
+  tabular-nums + antialiasing; message leading 1.62; code 13px on --font-mono; seat name 12.5;
+  micro-type floor raised across 28 rules. VERSION -> 3.5.55; not built/signed/published.
+- Re-key b210 -> b220 (124 files) + generator stamp. Zero console errors (browse, about, braid,
+  privacy-haven). Backups `backups/v1.14.0_consistency/` + Amni-Delve
+  `backups/index.html.v3.5.54-pre-type.bak`.
+
 ## 2026-08-04 — v1.13.0 Split tiles, wider grid, Braid film overhaul
 
 Follow-up on v1.12.0 from review: "overlapping text with images-with-text is cluttering,

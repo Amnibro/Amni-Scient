@@ -16,7 +16,7 @@
 <meta property="og:image:height" content="630">
 <link rel="canonical" href="https://amni-scient.com/faq">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is Amni-Scient?","acceptedAnswer":{"@type":"Answer","text":"Amni-Scient is an independent software studio building privacy-first tools for encryption, engineering, space exploration, and education. All products are solo-developed."}},{"@type":"Question","name":"Is Amni-Crypt secure?","acceptedAnswer":{"@type":"Answer","text":"Amni-Crypt uses a proprietary 1024-bit block cipher with 16-round SPN, PBKDF2-HMAC-SHA512 key derivation (1,000,000 iterations), and HMAC-SHA512 integrity verification. All encryption runs locally on your device."}},{"@type":"Question","name":"Does Amni-Explore use real NASA data?","acceptedAnswer":{"@type":"Answer","text":"Yes. Amni-Explore fetches confirmed exoplanet data from the NASA Exoplanet Archive TAP API, including star temperatures, planet radii, masses, and orbital parameters."}},{"@type":"Question","name":"Is Amni-Learn safe for children?","acceptedAnswer":{"@type":"Answer","text":"Yes. Amni-Learn runs 100% locally in the browser with zero data collection, no accounts, no tracking, and no external server calls. It is ad-free."}},{"@type":"Question","name":"What is WebAssembly and why do you use it?","acceptedAnswer":{"@type":"Answer","text":"WebAssembly (WASM) is a compiled binary format that runs in web browsers at near-native speed. We compile Rust code to WASM for performance-critical features like galaxy generation."}}]}</script>
-<link rel="stylesheet" href="css/style.css?v=b210">
+<link rel="stylesheet" href="css/style.css?v=b220">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
@@ -28,6 +28,9 @@
 <a href="/" class="logo">AMNI<span>-SCIENT</span></a>
 <div class="links" id="nav-links">
 <a href="/">HOME</a>
+<a href="amni-calc.html">CALCULATORS</a>
+<a href="amni-learn.html">LEARN</a>
+<a href="research.html">RESEARCH</a>
 <div class="nav-dd">
 <button class="nav-dd-trigger">PROJECTS</button>
 <div class="nav-dd-menu">
@@ -37,18 +40,20 @@
 <a href="amni-calc.html">AMNI-CALC</a>
 <a href="amni-explore.html">AMNI-EXPLORE</a>
 <a href="amni-weather.html">AMNI-WEATHER</a>
+<a href="game/">AMNI-GAME</a>
 <a href="amni-learn.html">AMNI-LEARN</a>
 <a href="amni-llm.html">AMNI-LLM</a>
 <a href="amni-connect.html">AMNI-CONNECT</a>
 <a href="amni-code.html">AMNI-CODE</a>
+<a href="amni-core.html">AMNI-CORE</a>
 <a href="amni-haven.html">AMNI-HAVEN</a>
+<a href="amni-crypt.html">AMNI-CRYPT</a>
 <a href="amni-life.html">AMNI-LIFE</a>
 <a href="amni-prayer.html">AMNI-PRAYER</a>
 </div>
 </div>
 <a href="about.html">ABOUT</a>
-<a href="faq.html">FAQ</a>
-<a href="privacy.html">PRIVACY</a>
+<a href="faq.html" class="active">FAQ</a>
 </div>
 <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
 <div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
@@ -288,7 +293,6 @@
 <a href="faq.html">FAQ</a>
 <a href="privacy.html">PRIVACY</a>
 <a href="terms.html">TERMS</a>
-<a href="/">AMNI-SCIENT</a>
 <a href="mailto:amnibro7@gmail.com">CONTACT</a>
 <a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
 </div>

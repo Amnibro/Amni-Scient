@@ -1,7 +1,7 @@
 const fs=require('fs');
 let h=fs.readFileSync('weather/index.html','utf8');
 h=h.replace(/wx-boot\.\d+\.js/g,'wx-boot.134.js');
-h=h.replace(/style\.css(\?v=[A-Za-z0-9._-]+)?/g,'style.css?v=b210');
+h=h.replace(/style\.css(\?v=[A-Za-z0-9._-]+)?/g,'style.css?v=b220');
 fs.writeFileSync('weather/index.html',h);
 const stub="import '/weather/wx-boot.134.js';\n";
 for(const f of ['app.js','wx-app.js','wx-boot.133.js','wx-boot.132.js','wx-boot.131.js','wx-boot.130.js']){
