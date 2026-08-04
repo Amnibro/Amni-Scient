@@ -1,3 +1,23 @@
+## 2026-08-04 — v1.16.0 Product pages on the Home idiom; light by default
+
+Review: "Title -> subtitle -> chart -> fluff -> KPIs reads AI-generated. Make product pages
+read like Home: minimal text, self-explanatory visuals, concise info. Light default with a
+dark button. Better section separation."
+
+- **`.ptile` — the Home tile idiom inside product pages.** Injected on 13 product pages
+  directly under the hero: full-bleed split (serif one-liner + four square-marker facts on
+  the left, edge-to-edge product media right), same scroll choreography as Home. Copy mined
+  from the old index wheel data — already concise, already human.
+- **Full-bleed striped bands.** `body.pp section` is now full-width with content locked to a
+  1240 grid via padding math; even sections sit on `--bg2` with hairline tops. Sections read
+  as bands, like Home's tiles — not floating centered columns. `.stat-row` KPI strips hidden.
+- **Light is the default everywhere on the marketing system** (112 pages): `data-theme`,
+  the `||'dark'` fallback, and the initial `theme-color` all flipped; the toggle shows DARK
+  top-right and localStorage still wins for returning visitors. Apps (learn hub, weather,
+  life, game) keep their own theming. The Braid film band stays cinema-dark by design.
+- amni-ai's dead remote architecture image (404 + a third-party request) removed in v1.15.1.
+- Re-key `?v=b240` (125 files).
+
 ## 2026-08-04 — v1.15.0 Editorial product pages + six product fixes
 
 Review: learn badge overlap, /braid 404 from the nav, PROJECTS mojibake, no way back from

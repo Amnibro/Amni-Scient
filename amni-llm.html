@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<meta name="theme-color" content="#0A0B0E">
+<meta name="theme-color" content="#FBFAF8">
 <title>Amni-LLM &mdash; Universal In-Browser GGUF Runtime | AMNI-SCIENT</title>
 <meta name="description" content="Amni-LLM: load any GGUF model from HuggingFace in the browser. Built-in HF search and one-click install. WebLLM-compatible API. Open source under MIT.">
 <meta name="keywords" content="amni-llm,in-browser llm,gguf browser,llama.cpp wasm,huggingface search,client-side ai,webgpu llm,wllama,private ai,qwen 3.5,llama 4">
@@ -21,9 +21,9 @@
 <meta name="twitter:image" content="https://amni-scient.com/assets/explore/og-explore.png">
 <link rel="canonical" href="https://amni-scient.com/amni-llm.html">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Amni-LLM","url":"https://amni-scient.com/amni-llm.html","description":"Universal in-browser GGUF runtime. Load any GGUF model from HuggingFace, no pre-compilation step. WebLLM-compatible API.","applicationCategory":"DeveloperApplication","operatingSystem":"Any (Modern Browser)","browserRequirements":"Requires JavaScript and WebAssembly","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Organization","name":"AMNI-SCIENT","legalName":"Amniscient, LLC","url":"https://amni-scient.com"},"license":"https://opensource.org/licenses/MIT","codeRepository":"https://github.com/Amnibro/amni-llm"}</script>
-<link rel="stylesheet" href="css/style.css?v=b230">
+<link rel="stylesheet" href="css/style.css?v=b240">
 <script>
-(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
 <style>
 .llm-cmp{width:100%;border-collapse:collapse;font-size:.82rem;margin-top:.5rem}
@@ -98,6 +98,13 @@
 </div>
 </div>
 
+<div class="ptile">
+<div class="ptile-copy">
+<p class="ptile-line">A universal in-browser GGUF runtime.</p>
+<ul class="ptile-feats"><li>Run any HuggingFace GGUF model client-side</li><li>Qwen, DeepSeek, Mistral &amp; more</li><li>Nothing leaves your device</li><li>Open source (MIT)</li></ul>
+</div>
+<div class="ptile-media"><img src="assets/llm/ss_loader.png" alt="Amni-LLM model loader" loading="lazy"></div>
+</div>
 <section>
 <h2>WHY ANOTHER IN-BROWSER LLM?</h2>
 <p style="color:var(--dim);max-width:780px;margin:0 0 2rem;font-size:.9rem">Existing in-browser runtimes like WebLLM (MLC) require every model to be specifically TVM-compiled to WebGPU shaders before it runs. New base models &mdash; Qwen 3.5, DeepSeek-R1, Mistral Nemo, Llama 4 &mdash; sit on the MLC team's compile queue before they're available. Amni-LLM uses GGUF, the format with the broadest community coverage on HuggingFace: most popular models have GGUF builds within days of release. Tradeoff is honest: llama.cpp WASM is currently CPU-SIMD-only, so per-token throughput is lower than WebGPU stacks. The win is universal model availability and arbitrary URL/file loading.</p>
