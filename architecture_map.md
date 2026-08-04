@@ -1,3 +1,17 @@
+## 2026-08-04 — v1.17.1 About page: legible portfolio colors, funding + bio corrections
+
+- **Portfolio colors were dark-theme neon hardcoded inline** (#f0c33c, #00ffaa, #00d4ff …) —
+  invisible on the new light default. All 31 spots swapped to the theme-aware `.p-*` classes
+  (deep tones in light, bright in dark; both defined in style.css since v1.6).
+- **Funding corrected in both places it was claimed:** the story paragraph and the
+  "SUSTAINABLE MONETIZATION" card said revenue comes from AdSense/AdMob ads + premium tiers.
+  Reality per Anthony: development is funded personally, out of pocket, plus optional Ko-fi
+  donations — card retitled "PERSONALLY FUNDED". faq.html's "How does Amni-Scient make money?"
+  aligned to the same (with a one-line nod to Braid's paid beta so it can't contradict the
+  pricing page). App privacy policies untouched — they disclose SDK presence, not funding.
+- **Bio:** "a mechanical engineer" → "an electrochemical engineer"; background card retitled
+  ELECTROCHEMICAL & MECHANICAL ENGINEERING with electrochemical systems added.
+
 ## 2026-08-04 — v1.17.0 Uniform format everywhere + Explore glow-up
 
 Review: "quite a few pages don't have the same format; the modules themselves as well;
