@@ -1,3 +1,26 @@
+## 2026-08-04 — v1.18.0 User-feedback pass: density, framed media, calculators up front
+
+External user feedback: "Scaling feels way off — can't get enough information on-screen.
+Images feel like they wrap off the side of the screen (no padding). Clicking Calculators
+should show a list of calcs — instead I scroll way down."
+
+- **Calculators up front.** amni-calc.html now opens: compact hero -> "ALL 37 CALCULATORS" —
+  a dense, grouped module index (Mechanical / Fluids & thermal / Electrical & electrochem /
+  Shop & field / Reference & tools), every row linking its calc/<module>.html page, arrow
+  affordance, suite CTA under it. Generated from the module pages' own titles. Marketing
+  content moved below the list.
+- **Density pass.** pp heroes: padding clamp(5rem,13vh,8rem) -> clamp(3.25rem,7vh,4.5rem),
+  h1 down a step; pp sections clamp(3rem,7vh,4.5rem) -> clamp(2rem,4.5vh,3rem); h2 down;
+  ptile min-height 76svh -> 52svh with tighter copy padding; home tiles 92svh -> 74svh with
+  smaller h2; wordmark cap 12.4 -> 10.4rem. Roughly a third more information per screen.
+- **Framed media.** Tile and ptile images/videos no longer run edge-to-edge: the media half
+  is a padded flex frame (clamp .9-1.6rem) and the shot sits inside a hairline-bordered,
+  radius-2 panel. First attempt used absolute inset + the old scale-push zoom, which blew the
+  image over its frame — the zoom is a full-bleed-era holdover and is removed; framing is
+  flow-layout (bulletproof). Verified headlessly with a fresh profile (the first re-render
+  silently served cached CSS — same query key, same profile; deleted both).
+- Re-key b260.
+
 ## 2026-08-04 — v1.17.4 Text-weight sweep + Adam chart animations
 
 - **Adam deeper cut: 1,017 -> 895 words**, and the charts now move. Two new mini-charts under
