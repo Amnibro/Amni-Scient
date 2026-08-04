@@ -21,7 +21,7 @@
 <meta name="twitter:image" content="https://amni-scient.com/assets/explore/og-explore.png">
 <link rel="canonical" href="https://amni-scient.com/amni-llm.html">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Amni-LLM","url":"https://amni-scient.com/amni-llm.html","description":"Universal in-browser GGUF runtime. Load any GGUF model from HuggingFace, no pre-compilation step. WebLLM-compatible API.","applicationCategory":"DeveloperApplication","operatingSystem":"Any (Modern Browser)","browserRequirements":"Requires JavaScript and WebAssembly","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Organization","name":"AMNI-SCIENT","legalName":"Amniscient, LLC","url":"https://amni-scient.com"},"license":"https://opensource.org/licenses/MIT","codeRepository":"https://github.com/Amnibro/amni-llm"}</script>
-<link rel="stylesheet" href="css/style.css?v=b180">
+<link rel="stylesheet" href="css/style.css?v=b200">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
@@ -98,32 +98,32 @@
 <p style="text-align:center;color:var(--dim);max-width:780px;margin:0 auto 2rem;font-size:.9rem">Existing in-browser runtimes like WebLLM (MLC) require every model to be specifically TVM-compiled to WebGPU shaders before it runs. New base models &mdash; Qwen 3.5, DeepSeek-R1, Mistral Nemo, Llama 4 &mdash; sit on the MLC team's compile queue before they're available. Amni-LLM uses GGUF, the format with the broadest community coverage on HuggingFace: most popular models have GGUF builds within days of release. Tradeoff is honest: llama.cpp WASM is currently CPU-SIMD-only, so per-token throughput is lower than WebGPU stacks. The win is universal model availability and arbitrary URL/file loading.</p>
 <div class="features">
 <div class="feature">
-<div class="icon">&#127760;</div>
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 3 2.6 15 0 18M12 3c-2.6 3-2.6 15 0 18"/></svg></div>
 <h4>ANY GGUF, ANY DAY</h4>
 <p>Search HuggingFace live from inside the app. Pick a model, pick a quantization, click Load or Install. Works for anything with a GGUF build &mdash; including Qwen 3.5, DeepSeek-R1, Mistral Nemo, Phi-4, plus thousands of community fine-tunes. Models too large for browser memory (e.g. Llama 4 Scout's 29 GB minimum quant) appear in search but won't load on most machines.</p>
 </div>
 <div class="feature">
-<div class="icon">&#128190;</div>
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h13l3 3v13H4z"/><rect x="8" y="4" width="8" height="6"/><rect x="7" y="14" width="10" height="6"/></svg></div>
 <h4>LOCAL FILES</h4>
 <p>Drop a `.gguf` file straight from your disk. Bytes never leave your machine. Useful for proprietary fine-tunes you can't host publicly, or large models you've already downloaded for desktop tools like Ollama or LM Studio.</p>
 </div>
 <div class="feature">
-<div class="icon">&#128274;</div>
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10" width="16" height="11"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div>
 <h4>FULLY CLIENT-SIDE</h4>
 <p>Inference runs in your browser via WebAssembly. Your prompts, your weights, your replies &mdash; nothing transits a server. The HuggingFace search hits HF's public API; the model download is a direct browser-to-HF transfer.</p>
 </div>
 <div class="feature">
-<div class="icon">&#128218;</div>
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="7" height="16"/><rect x="12" y="4" width="7" height="16"/><path d="M3 9h7M12 9h7"/></svg></div>
 <h4>6 SOTA DEFAULTS</h4>
 <p>Curated short list of current Qwen GGUF builds that fit a typical browser memory budget &mdash; Qwen 3.5 (0.8B, 4B, 9B) plus Qwen 2.5 (0.5B, 1.5B, Math 7B), six in all. One click to load. For math/engineering or any other niche, use the built-in HF search.</p>
 </div>
 <div class="feature">
-<div class="icon">&#128270;</div>
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5 5"/></svg></div>
 <h4>HUGGINGFACE SEARCH</h4>
 <p>Built-in live search of `huggingface.co/api/models?library=gguf`. Type any keyword, expand a result to see GGUF files with quantization labels and sizes, then Load or Install. The Installed tab keeps your picks under `localStorage`.</p>
 </div>
 <div class="feature">
-<div class="icon">&#128295;</div>
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 5.5a5 5 0 0 1-6.6 6.6L6 19.5 4.5 18l7.4-7.4A5 5 0 0 1 18.5 4z"/></svg></div>
 <h4>WEBLLM-COMPATIBLE API</h4>
 <p>Drop-in `chatCompletions.create({messages, temperature, max_tokens})`, plus async iterator streaming via `chatStream()`. Migrating an existing WebLLM integration is mostly a one-line import change.</p>
 </div>

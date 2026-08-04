@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<meta name="theme-color" content="#0A0B0E">
+<meta name="theme-color" content="#08090B">
 <title>AMNI-SCIENT — Free In-Browser Tools, Learning Games &amp; Field References</title>
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
@@ -22,66 +22,14 @@
 <meta name="twitter:description" content="Free engineering calculators, learning games, and field references — no install, no tracking.">
 <meta name="twitter:image" content="https://amni-scient.com/assets/explore/og-explore.png">
 <link rel="canonical" href="https://amni-scient.com">
+<link rel="preload" href="/assets/fonts/archivo-var.woff2" as="font" type="font/woff2" crossorigin>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"AMNI-SCIENT","legalName":"Amniscient, LLC","url":"https://amni-scient.com","description":"Independent software studio publishing free in-browser tools, learning games, and field references, plus privacy-first apps.","founder":{"@type":"Person","name":"Amnibro"},"foundingDate":"2025","address":{"@type":"PostalAddress","addressRegion":"NY","addressCountry":"US"},"sameAs":[]}</script>
-<link rel="stylesheet" href="css/style.css?v=b180">
-<style>
-#hero-wheel{--acc:var(--accent);max-width:980px;margin:0 auto;padding:0 1rem}
-#hero-wheel .stage-wrap{position:relative;max-width:900px;margin:1.2rem auto 0}
-#hero-wheel .stage{position:relative;height:188px;overflow:hidden;-webkit-mask-image:linear-gradient(to right,transparent,#000 16%,#000 84%,transparent);mask-image:linear-gradient(to right,transparent,#000 16%,#000 84%,transparent);touch-action:pan-y;cursor:grab;outline:none}
-#hero-wheel .stage:active{cursor:grabbing}
-#hero-wheel .stage:focus-visible{box-shadow:inset 0 0 0 1px var(--acc)}
-#hero-wheel .belt{position:absolute;inset:0}
-#hero-wheel .spin-hint{position:absolute;bottom:6px;left:50%;transform:translateX(-50%);font-size:.62rem;letter-spacing:2px;color:var(--dim);text-transform:uppercase;z-index:3;opacity:.7}
-#hero-wheel .edge{position:absolute;top:calc(50% - 14px);transform:translateY(-50%);z-index:6;border-radius:50%;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(5px);-webkit-tap-highlight-color:transparent}
-#hero-wheel .edge-l{left:6px}
-#hero-wheel .edge-r{right:6px}
-#hero-wheel .item{position:absolute;left:0;top:0;display:flex;flex-direction:column;align-items:center;gap:.45rem;white-space:nowrap;text-decoration:none;transform-origin:center;will-change:transform,opacity}
-#hero-wheel .item .ico{font-size:1.7rem;line-height:1;border-radius:50%;border:1px solid transparent}
-#hero-wheel .item .lbl{text-transform:uppercase;color:var(--dim)}
-#hero-wheel .item.focus .ico{background:color-mix(in srgb,var(--ic) 14%,var(--panel));border-color:color-mix(in srgb,var(--ic) 55%,var(--border))}
-#hero-wheel .item.focus .lbl{color:var(--text)}
-#hero-wheel .item.mini .lbl{display:none}
-#hero-wheel .panel{position:relative;z-index:2;max-width:760px;text-align:left}
-#hero-wheel .panel.swap{opacity:0;transform:translateY(10px)}
-#hero-wheel .panel h2{font-size:1.3rem;color:var(--text);margin:0}
-#hero-wheel .panel .tag{color:var(--dim);font-size:.85rem;margin:.4rem 0 1.1rem;line-height:1.6}
-#hero-wheel .feat{list-style:none;display:grid;gap:.55rem;margin:0;padding:0}
-#hero-wheel .feat li{font-size:.85rem;line-height:1.5;padding-left:1.4rem;position:relative;opacity:0;transform:translateY(8px);transition:opacity .3s ease,transform .3s ease;color:var(--text)}
-#hero-wheel .panel:not(.swap) .feat li{opacity:1;transform:none}
-#hero-wheel .feat li::before{content:'▸';position:absolute;left:0;color:var(--acc)}
-#hero-wheel .cta-row{display:flex;gap:.8rem;flex-wrap:wrap;margin-top:1.3rem}
-#hero-wheel .cta{text-transform:uppercase;text-decoration:none}
-#hero-wheel .cta:hover{transform:translateY(-1px)}
-#hero-wheel .cta.primary{background:var(--acc);color:#06080d}
-#hero-wheel .cta.ghost{border:1px solid var(--border2);color:var(--text)}
-#hero-wheel .shots{margin-top:1.5rem;border-top:1px solid var(--border);padding-top:1.2rem}
-#hero-wheel .deck{position:relative;height:182px;display:flex;align-items:center;justify-content:center;cursor:pointer}
-#hero-wheel .deck .shot-card{position:absolute;height:166px;width:auto;max-width:94%;border:1px solid var(--border);transform:translateX(calc(var(--z)*18px)) rotate(calc(var(--z)*4deg)) scale(calc(1 - var(--z)*.06));opacity:calc(1 - var(--z)*.3);transition:filter .2s}
-#hero-wheel .deck:hover .shot-card.top{filter:brightness(1.08)}
-#hero-wheel .shots-meta{margin-top:.8rem;font-size:.72rem;letter-spacing:1px;text-transform:uppercase;color:var(--dim);text-align:center}
-#hero-wheel .refs{max-width:760px;text-align:left}
-#hero-wheel .refs h3{font-size:.72rem;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin:0 0 .8rem}
-#hero-wheel .refs .links{display:flex;flex-wrap:wrap;gap:.5rem .9rem;font-size:.82rem}
-#hero-wheel .refs .links a{color:var(--text);text-decoration:none;border-bottom:1px solid transparent}
-#hero-wheel .refs .links a:hover{border-color:var(--acc);color:var(--acc)}
-#hero-wheel .refs .note{margin:1rem 0 0;font-size:.72rem;color:var(--dim);line-height:1.6}
-#hero-wheel .lb{position:fixed;inset:0;background:rgba(2,4,9,.94);display:none;align-items:center;justify-content:center;z-index:200}
-#hero-wheel .lb.open{display:flex}
-#hero-wheel .lb img{max-width:92vw;max-height:84vh;object-fit:contain;border-radius:8px;border:1px solid var(--border)}
-#hero-wheel .lb-x{position:absolute;top:12px;right:18px;background:none;border:none;color:#fff;font-size:2.6rem;line-height:1;cursor:pointer}
-#hero-wheel .lb-nav{position:absolute;top:50%;transform:translateY(-50%);background:rgba(10,14,22,.6);border:1px solid var(--border);color:var(--acc);width:54px;height:54px;border-radius:50%;font-size:2rem;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center}
-#hero-wheel .lb-prev{left:10px}
-#hero-wheel .lb-next{right:10px}
-#hero-wheel .lb-count{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);color:var(--dim);font-size:.8rem;letter-spacing:1px}
-@media (prefers-reduced-motion:reduce){#hero-wheel .item,#hero-wheel .item .ico{transition:none}#hero-wheel .panel,#hero-wheel .feat li{transition:opacity .2s ease}#hero-wheel .edge{animation:none;opacity:.7}}
-</style>
+<link rel="stylesheet" href="css/style.css?v=b200">
 <script>
-(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#08090B':'#F3F2EF');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
 </head>
-<body class="home">
-<div class="grid-bg"></div>
-<div class="scanlines"></div>
+<body class="home immersive">
 <nav>
 <a href="/" class="logo">AMNI<span>-SCIENT</span></a>
 <div class="links" id="nav-links">
@@ -118,80 +66,183 @@
 <span></span><span></span><span></span>
 </div>
 </nav>
-<section class="hero">
-<h1>AMNI-SCIENT</h1>
-<p class="subtitle">FREE IN-BROWSER TOOLS &amp; REFERENCES</p>
-<p class="tagline">Engineering calculators, learning games for all ages, and field references — plus privacy-first apps. No install. No tracking. Spin the wheel or pick what you need.</p>
-<div class="cta-row">
-<a href="amni-calc.html" class="btn btn-primary">EXPLORE CALCULATORS</a>
-<a href="amni-learn.html" class="btn btn-outline">START LEARNING</a>
+
+<header class="masthead">
+<div class="masthead-ground" aria-hidden="true"></div>
+<div class="masthead-head">
+<p class="eyebrow">Amniscient, LLC — independent studio</p>
+<h1 class="wordmark"><span class="l1">Amni</span><span class="l2 half">Scient</span></h1>
+<p class="masthead-line">Engineering tools, learning games and privacy-first software. Most of it runs in the tab you already have open. <b>None of it watches you.</b></p>
 </div>
-<div class="stats">
-<span class="chip"><i></i>17 PROJECTS</span>
-<span class="chip"><i></i>FREE IN YOUR BROWSER</span>
-<span class="chip"><i></i>NO SIGN-UP</span>
+<div class="masthead-foot">
+<div class="masthead-meta">
+<div><span class="k">Products</span><span class="v">17</span></div>
+<div><span class="k">Install</span><span class="v">None</span></div>
+<div><span class="k">Sign-up</span><span class="v">None</span></div>
+<div><span class="k">Trackers</span><span class="v">Zero</span></div>
 </div>
-</section>
-<div id="hero-wheel">
-<div class="stage-wrap">
-<div class="stage" id="stage" tabindex="0" role="listbox" aria-label="Project wheel — swipe sideways, or use arrow keys">
-<div class="belt" id="belt"></div>
-<div class="spin-hint">swipe · scroll · ← → · tap to pick</div>
+<a class="scroll-cue" href="#braid">Start</a>
 </div>
-<button class="edge edge-l" id="edge-l" aria-label="Previous project">&#8249;</button>
-<button class="edge edge-r" id="edge-r" aria-label="Next project">&#8250;</button>
-</div>
-<div class="panel" id="panel"></div>
-<div class="refs">
-<h3>Popular references — straight to the good stuff</h3>
-<div class="links">
-<a href="calc/bolts.html">Bolt Torque &amp; Preload</a><a href="calc/stress.html">Beam Stress &amp; Mohr</a><a href="calc/fatigue.html">Fatigue Life</a><a href="calc/hx.html">Heat Exchangers</a><a href="calc/pumps.html">Pump NPSH</a><a href="learn/elementary.html">Elementary Pack</a><a href="learn/brain-cognitive.html">Adult Brain Training</a><a href="learn/subjects.html">Subject Quizzes</a><a href="game/">Play Amni — 3D Adventure</a>
-</div>
-<p class="note">Free, in-browser, no sign-up — jump straight into the calculators and learning guides.</p>
-</div>
-<div class="lb" id="lb" aria-hidden="true">
-<button class="lb-x" id="lb-x" aria-label="Close">&times;</button>
-<button class="lb-nav lb-prev" id="lb-prev" aria-label="Previous">&#8249;</button>
-<img id="lb-img" alt="Screenshot">
-<button class="lb-nav lb-next" id="lb-next" aria-label="Next">&#8250;</button>
-<div class="lb-count" id="lb-count"></div>
-</div>
-</div>
-<section>
-<h2>PHILOSOPHY</h2>
-<div class="features-2x2">
-<div class="feature">
-<div class="icon">&#128270;</div>
-<h4>TRANSPARENT</h4>
-<p>Every product discloses exactly what data it handles. Separate privacy policies per app — no blanket claims.</p>
-</div>
-<div class="feature">
-<div class="icon">&#9889;</div>
-<h4>HARDWARE-ACCELERATED</h4>
-<p>GPU compute, vectorized ops, and parallel pipelines where the product demands it. Vulkan, ROCm, and Taichi on desktop.</p>
-</div>
-<div class="feature">
-<div class="icon">&#128736;</div>
-<h4>BUILT TO LAST</h4>
-<p>Documented architecture. Rigorous testing. Proprietary where it protects you.</p>
-</div>
-<div class="feature">
-<div class="icon">&#127759;</div>
-<h4>INDEPENDENT</h4>
-<p>Solo-built. No VC funding. No corporate influence. Honest privacy disclosures per product.</p>
-</div>
+</header>
+
+<section class="tile" id="braid" style="--tint:#A88FE8">
+<div class="tile-media"><video id="braid-loop" muted loop playsinline preload="none" poster="assets/braid/tile-braid.jpg" aria-hidden="true"></video></div>
+<div class="tile-scrim" aria-hidden="true"></div>
+<div class="tile-body">
+<p class="eyebrow">Windows desktop — open beta</p>
+<h2>Braid</h2>
+<p class="tile-line">Every AI you already pay for, answering the same question at one table. Each seat reads the last one before it replies.</p>
+<div class="tile-specs"><span>Claude · Grok · Gemini · local</span><span>Your subscriptions, not our meter</span><span>$10/mo</span></div>
+<div class="cta-row"><a class="btn btn-primary" href="/braid">See Braid</a><a class="btn btn-outline" href="/braid#film">Watch the demo</a></div>
 </div>
 </section>
-<section>
-<h2>WHAT WE BUILD &amp; WHY</h2>
-<div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
-<p>Every Amni-Scient project exists because existing solutions fell short in privacy, transparency, or accessibility. Rather than accept those tradeoffs, we built alternatives from scratch.</p>
-<p style="margin-top:1.2rem"><strong style="color:var(--text)">Engineering calculators</strong> are usually either expensive desktop suites or imprecise web forms. Amni-Calc runs FEA beam analysis, seal design, bolt torque, and thermal calculations in a WASM backend &mdash; interactive, accurate, and free, with theory and worked examples on every module.</p>
-<p style="margin-top:1.2rem"><strong style="color:var(--text)">Educational platforms for children</strong> commonly track behavior, serve ads, or require accounts. Amni-Learn collects zero data, runs offline after loading, and covers Pre-K through college prep plus adult brain training with 60+ interactive games and baked natural voice.</p>
-<p style="margin-top:1.2rem"><strong style="color:var(--text)">Web browsers</strong> ship with telemetry baked in. Amni-Browse is a single Rust binary with zero telemetry, navigation-layer ad blocking, DNS-over-HTTPS, and an AES-256-GCM password vault &mdash; everything local, nothing phoned home.</p>
-<p style="margin-top:1.2rem">Want to know more? Visit the <a href="about.html">About page</a> or read the <a href="faq.html">FAQ</a>.</p>
+
+<section class="tile right" style="--tint:#F0C33C">
+<div class="tile-media"><img src="assets/game/tile-game.jpg" alt="Amni, a 3D collect-a-thon platformer, running in the browser" loading="lazy" width="1600" height="1000"></div>
+<div class="tile-scrim" aria-hidden="true"></div>
+<div class="tile-body">
+<p class="eyebrow">Plays in the browser</p>
+<h2>Amni</h2>
+<p class="tile-line">One brave mouse, eight realms, four tyrant bosses. The world, the music and the voices are all generated — the whole game is a 5&nbsp;MB download.</p>
+<div class="tile-specs"><span>Rust + WebGPU</span><span>Gamepad ready</span><span>Saves stay local</span></div>
+<div class="cta-row"><a class="btn btn-primary" href="game/">Play now</a></div>
 </div>
 </section>
+
+<section class="tile" style="--tint:#FF8A5E">
+<div class="tile-media"><img src="assets/calc/ss_seal_analysis.png" alt="Amni-Calc seal analysis module" loading="lazy" width="1711" height="1119"></div>
+<div class="tile-scrim" aria-hidden="true"></div>
+<div class="tile-body">
+<p class="eyebrow">37 modules — free, no sign-up</p>
+<h2>Amni-Calc</h2>
+<p class="tile-line">Beam FEA, Mohr's circle, bolt preload, seal design, fatigue life, heat exchangers, NPSH. Every module ships the theory, a worked example and the standard it cites.</p>
+<div class="tile-specs"><span>WASM solver</span><span>Cited standards</span><span>Runs offline</span></div>
+<div class="cta-row"><a class="btn btn-primary" href="amni-calc.html">Open the suite</a><a class="btn btn-outline" href="calc/bolts.html">Bolt torque</a></div>
+</div>
+</section>
+
+<section class="tile right" style="--tint:#E58B67">
+<div class="tile-media"><img src="assets/adam/hud.png" alt="Adam, a local AI assistant, showing its heads-up interface" loading="lazy" width="1366" height="900"></div>
+<div class="tile-scrim" aria-hidden="true"></div>
+<div class="tile-body">
+<p class="eyebrow">Runs on your machine</p>
+<h2>Adam</h2>
+<p class="tile-line">A local assistant that stops being wrong. Correct it once and the correction sticks — no cloud round-trip, no transcript leaving the desk.</p>
+<div class="tile-specs"><span>~4 GB VRAM</span><span>Voice · vision · wake word</span><span>Drop-in Ollama + OpenAI API</span></div>
+<div class="cta-row"><a class="btn btn-primary" href="amni-ai.html">Meet Adam</a></div>
+</div>
+</section>
+
+<section class="tile" style="--tint:#4DB8FF">
+<div class="tile-media"><img src="assets/weather/tile-weather.jpg" alt="Amni-Weather global temperature layer over a dark basemap" loading="lazy" width="1600" height="1000"></div>
+<div class="tile-scrim" aria-hidden="true"></div>
+<div class="tile-body">
+<p class="eyebrow">Live models — no account</p>
+<h2>Amni-Weather</h2>
+<p class="tile-line">Temperature, wind, precipitation, CAPE, UV and pressure as layers you can scrub through time. Drop a pin for the hourly, the 7-day, the surf and the air.</p>
+<div class="tile-specs"><span>Open-Meteo + NWS</span><span>GDACS hazards</span><span>Rust/WASM fields</span></div>
+<div class="cta-row"><a class="btn btn-primary" href="weather/">Open the map</a><a class="btn btn-outline" href="amni-weather.html">What's in it</a></div>
+</div>
+</section>
+
+<section class="tile right" style="--tint:#6BC6FF">
+<div class="tile-media"><img src="assets/explore/ss_galaxy.png" alt="Amni-Explore galaxy view with 80,000 particles" loading="lazy" width="1714" height="1264"></div>
+<div class="tile-scrim" aria-hidden="true"></div>
+<div class="tile-body">
+<p class="eyebrow">80,000 particles, in a tab</p>
+<h2>Amni-Explore</h2>
+<p class="tile-line">A galaxy you can fly through, built on real NASA exoplanet data — then an idle empire layer on top of it, because someone has to run the trade routes.</p>
+<div class="tile-specs"><span>Real star catalogue</span><span>Procedural systems</span><span>Rust/WASM</span></div>
+<div class="cta-row"><a class="btn btn-primary" href="explore/">Launch</a><a class="btn btn-outline" href="amni-explore.html">Details</a></div>
+</div>
+</section>
+
+<section class="tile" style="--tint:#E8B04B">
+<div class="tile-media"><img src="assets/construct/tile-construct.jpg" alt="Amni-Construct 3D deck builder with live cost estimate" loading="lazy" width="1600" height="1000"></div>
+<div class="tile-scrim" aria-hidden="true"></div>
+<div class="tile-body">
+<p class="eyebrow">Decks · patios · pools · framing</p>
+<h2>Amni-Construct</h2>
+<p class="tile-line">Trace your actual yard from a photo, set the scale with two clicks, and build it on screen. Printable construction plans and a priced cut list come out the other end.</p>
+<div class="tile-specs"><span>Live cost estimate</span><span>Six printable plan sheets</span><span>Local code notes</span></div>
+<div class="cta-row"><a class="btn btn-primary" href="construct/">Start a build</a><a class="btn btn-outline" href="deck/">Deck designer</a></div>
+</div>
+</section>
+
+<section class="tile right" style="--tint:#4ADE80">
+<div class="tile-media"><img src="assets/learn/ss_prek.png" alt="Amni-Learn Pre-K game selection screen" loading="lazy" width="1280" height="820"></div>
+<div class="tile-scrim" aria-hidden="true"></div>
+<div class="tile-body">
+<p class="eyebrow">Pre-K through college prep</p>
+<h2>Amni-Learn</h2>
+<p class="tile-line">Sixty-plus games and guides — tracing, phonics, math, typing, STEM labs, and brain training for the adults in the room. It collects nothing and works with the wifi off.</p>
+<div class="tile-specs"><span>Zero telemetry</span><span>Offline after first load</span><span>Baked natural voice</span></div>
+<div class="cta-row"><a class="btn btn-primary" href="learn/">Start learning</a><a class="btn btn-outline" href="learn/brain-cognitive.html">Adult brain training</a></div>
+</div>
+</section>
+
+<section class="tile" style="--tint:#FF6B6B">
+<div class="tile-media"><img src="assets/core/desktop.jpg" alt="Amni-Core desktop with frosted-glass windows" loading="lazy" width="1366" height="1025"></div>
+<div class="tile-scrim" aria-hidden="true"></div>
+<div class="tile-body">
+<p class="eyebrow">Built from zero — no Linux, no NT</p>
+<h2>Amni-Core</h2>
+<p class="tile-line">An operating system with its own kernel that runs real Windows, Linux and macOS binaries natively. No VM underneath it, and a septidecimal core doing the arithmetic.</p>
+<div class="tile-specs"><span>UEFI boot</span><span>Real .exe / ELF / Mach-O</span><span>Base-17 core</span></div>
+<div class="cta-row"><a class="btn btn-primary" href="amni-core.html">Read the build</a></div>
+</div>
+</section>
+
+<section class="wide">
+<div class="sec-head">
+<h2>Everything else</h2>
+<p>Eight more products, and the references people land on most.</p>
+</div>
+<div class="index-list">
+<a class="index-row" href="amni-haven.html" style="--tint:#A78BFA"><span class="index-n">01</span><span class="index-name">Amni-Haven</span><span class="index-desc">Encrypted messaging on a server you own — E2E DMs, WebRTC voice and video.</span><span class="index-tag">Play Store</span></a>
+<a class="index-row" href="amni-browse.html" style="--tint:#5EEAD4"><span class="index-n">02</span><span class="index-name">Amni-Browse</span><span class="index-desc">A web browser in one Rust binary. No telemetry, ad blocking at the navigation layer, AES-256 vault.</span><span class="index-tag">v0.10.3</span></a>
+<a class="index-row" href="amni-crypt.html" style="--tint:#6BA5FF"><span class="index-n">03</span><span class="index-name">Amni-Crypt</span><span class="index-desc">1024-bit file encryption for Android with a 16-round SPN and Shadow Texture key derivation.</span><span class="index-tag">Android</span></a>
+<a class="index-row" href="amni-llm.html" style="--tint:#A78BFA"><span class="index-n">04</span><span class="index-name">Amni-LLM</span><span class="index-desc">Run any Hugging Face GGUF model client-side. Nothing leaves the device.</span><span class="index-tag">MIT</span></a>
+<a class="index-row" href="amni-code.html" style="--tint:#F472B6"><span class="index-n">05</span><span class="index-name">Amni-Code</span><span class="index-desc">An agentic coding assistant in a single binary — 15-iteration tool loop, multi-provider or local.</span><span class="index-tag">Rust</span></a>
+<a class="index-row" href="amni-connect.html" style="--tint:#34D399"><span class="index-n">06</span><span class="index-name">Amni-Connect</span><span class="index-desc">End-to-end encrypted remote desktop over peer-to-peer WebRTC. Self-hostable signaling, zero logs.</span><span class="index-tag">P2P</span></a>
+<a class="index-row" href="amni-prayer.html" style="--tint:#F5C842"><span class="index-n">07</span><span class="index-name">Amni-Prayer</span><span class="index-desc">The Catholic Bible as a 3D nodal map — 35,817 verses, 64,497 cross-references, 17 layouts.</span><span class="index-tag">3D</span></a>
+<a class="index-row" href="amni-life.html" style="--tint:#FF9F43"><span class="index-n">08</span><span class="index-name">Amni-Life</span><span class="index-desc">A 3D memory map for the fragments of a life. Photo and EXIF import, encrypted shareable maps.</span><span class="index-tag">PWA</span></a>
+</div>
+<div class="sec-head" style="margin-top:clamp(3rem,6vw,4.5rem)">
+<h2>Straight to the good stuff</h2>
+<p>The references that get used the most.</p>
+</div>
+<div class="index-list plain">
+<a class="index-row" href="calc/bolts.html"><span class="index-name">Bolt torque &amp; preload</span><span class="index-desc">Preload, torque coefficient, and joint stiffness with the standards cited.</span><span class="index-tag">Calc</span></a>
+<a class="index-row" href="calc/stress.html"><span class="index-name">Beam stress &amp; Mohr</span><span class="index-desc">Section properties, bending and shear, principal stress on the circle.</span><span class="index-tag">Calc</span></a>
+<a class="index-row" href="calc/fatigue.html"><span class="index-name">Fatigue life</span><span class="index-desc">S-N and strain-life with surface, size and reliability factors.</span><span class="index-tag">Calc</span></a>
+<a class="index-row" href="calc/hx.html"><span class="index-name">Heat exchangers</span><span class="index-desc">LMTD and effectiveness-NTU, both directions.</span><span class="index-tag">Calc</span></a>
+<a class="index-row" href="calc/pumps.html"><span class="index-name">Pump NPSH</span><span class="index-desc">Available versus required, with the vapour-pressure correction.</span><span class="index-tag">Calc</span></a>
+<a class="index-row" href="learn/subjects.html"><span class="index-name">Subject quizzes</span><span class="index-desc">Math, reading, science and history, graded as you go.</span><span class="index-tag">Learn</span></a>
+</div>
+</section>
+
+<section class="wide">
+<div class="sec-head">
+<h2>How this gets built</h2>
+<p>One engineer, no funding, and a rule about what leaves your machine.</p>
+</div>
+<div class="creed">
+<div class="creed-row">
+<h3>Nothing phones home</h3>
+<p>Every product says exactly what data it touches, in its own privacy policy rather than one blanket page. The browser has no telemetry, the learning games collect nothing, and the AI assistant runs on your own GPU. Where something does need a server — messaging, licence checks — it is a server you can run yourself.</p>
+</div>
+<div class="creed-row">
+<h3>The hardware gets used</h3>
+<p>GPU compute, vectorised kernels and parallel pipelines wherever the work deserves them: Vulkan, ROCm and Taichi on the desktop, WebGPU and WASM in the browser. A galaxy of 80,000 particles and a finite-element beam solver both belong in a tab, and both run there.</p>
+</div>
+<div class="creed-row">
+<h3>It has to survive contact</h3>
+<p>These are working tools, so the calculators cite the standard they follow and ship a worked example you can check by hand. The architecture is documented, the changes are logged, and anything that claims a number can show where the number came from.</p>
+</div>
+</div>
+</section>
+
 <aside class="support-cta" aria-label="Support"><a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="support-link"><span class="support-ico">&#9749;</span><span>Enjoying this? <strong>Support on Ko-fi</strong></span></a></aside>
 <footer>
 <div class="footer-links">
@@ -205,63 +256,21 @@
 <p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
 </footer>
 <script>
-const P=[{k:'game',n:'AMNI-GAME',h:'game/',c:'#f0c33c',w:5,t:'Amni — a 3D collect-a-thon adventure you play right in the browser. One brave mouse, eight realms.',f:['Eight worlds: glade, frost, fire, jungle, beach, space, indoors &amp; tundra','Four tyrant bosses, four elemental transforms, 33 canvases to rescue','Procedural everything — world, music &amp; voices in one 5&nbsp;MB download','Rust + WebGPU(WebGL2) — saves stay in your browser, gamepads supported']},{k:'ai',n:'AMNI-AI',h:'amni-ai.html',c:'#ffb74d',w:5,t:'Adam — a local, self-improving AI assistant that gets better the more you use it.',f:['GF(17) texture-native — runs local in ~4&nbsp;GB VRAM, lossless','Self-improving memory: corrected once, never wrong twice','Voice + vision + wake-word, Jarvis-style UI, 42 skills','Drop-in Ollama + OpenAI API replacement on one port']},
-{k:'calc',n:'AMNI-CALC',h:'amni-calc.html',c:'#ff6b35',w:5,t:'Engineering calculator suite — 37 in-browser WASM modules with theory and worked examples.',f:['Beam FEA, stress &amp; Mohr&rsquo;s circle, bolts, Belleville catalog','Fatigue, PV, machining, hydraulics, rigging, CAD Studio','Fluids (Moody), heat exchangers (LMTD/NTU), pumps (NPSH)','Every module ships theory, a worked example &amp; cited standards']},
-{k:'learn',n:'AMNI-LEARN',h:'amni-learn.html',c:'#2ecc71',w:5,t:'60+ educational games and guides, Pre-K through adult brain training.',f:['Pre-K tracing, phonics &amp; counting','K-12 math, reading, typing &amp; STEM labs','Adult brain training: sudoku, memory, speed math','Zero telemetry — runs fully offline after first load']},
-{k:'construct',n:'AMNI-CONSTRUCT',h:'construct/',c:'#d8893a',w:4,t:'Design your outdoor build — decks &amp; concrete patios, traced from a photo of your actual yard.',f:['📷 Photo trace: set scale with two clicks, trace corners, live dimensions','3D decks (stairs, railing, stain) &amp; concrete slabs (any shape, auto joints)','Printable construction plans + priced materials (HD/Lowe&rsquo;s paste-to-fill)','Location-aware permit &amp; code guidance for your town']},
-{k:'braid',n:'BRAID',h:'braid.html',c:'#5B9BF8',w:1,t:'Every AI you already pay for, answering the same question at one table.',f:['Side-by-side or sequential &mdash; each seat reads the last','Runs on your existing subscriptions, keys stay local','Shared memory so the room stops repeating mistakes','Agentic graphs: fan out, review, loop to a goal']},
-{k:'explore',n:'AMNI-EXPLORE',h:'amni-explore.html',c:'#00b4ff',w:3,t:'An 80K-particle galaxy explorer with a real-data star map and idle empire layer.',f:['Real NASA exoplanet data','Procedurally generated star systems','Rust/WASM engine, runs in-browser','Build an interstellar economy']},
-{k:'weather',n:'AMNI-WEATHER',h:'amni-weather.html',c:'#4db8ff',w:4,t:'Interactive multi-layer weather maps — slippy basemaps, pin forecast, live models (v1.4.7).',f:['Temp, wind, precip, CAPE, UV, pressure &amp; more','Pin forecast: hourly / 7-day / surf / UV·air','NWS + GDACS hazards · US units default','Live Open-Meteo + pack fallback, Rust/WASM fields']},
-{k:'browse',n:'AMNI-BROWSE',h:'amni-browse.html',c:'#00d4ff',w:2,t:'A privacy-first web browser in a single Rust binary (v0.10.3).',f:['Servo primary · WebView media/DRM window','Zero telemetry · ad blocker · DNS-over-HTTPS','AES-256-GCM password vault','Multi-profile']},
-{k:'haven',n:'AMNI-HAVEN',h:'amni-haven.html',c:'#7c5cfc',w:2,t:'Encrypted messaging on your own server.',f:['E2E DMs: ECDH P-256 + HKDF + AES-256-GCM','WebRTC voice, video &amp; screen share','FCM push, Socket.IO real-time delivery','Live on the Play Store']},
-{k:'llm',n:'AMNI-LLM',h:'amni-llm.html',c:'#a88cff',w:2,t:'A universal in-browser GGUF runtime.',f:['Run any HuggingFace GGUF model client-side','Qwen, DeepSeek, Mistral &amp; more','Nothing leaves your device','Open source (MIT)']},
-{k:'code',n:'AMNI-CODE',h:'amni-code.html',c:'#e91e63',w:1,t:'An agentic AI coding assistant in one Rust binary.',f:['15-iteration autonomous tool loop','Multi-provider LLM + local GGUF discovery','Six built-in tools','Single binary, no install']},
-{k:'connect',n:'AMNI-CONNECT',h:'amni-connect.html',c:'#00ffaa',w:1,t:'End-to-end encrypted remote desktop over WebRTC.',f:['Peer-to-peer WebRTC','Rust input daemon','Self-hostable signaling','Zero logs, zero cloud']},
-{k:'crypt',n:'AMNI-CRYPT',h:'amni-crypt.html',c:'#ff4444',w:2,t:'Proprietary 1024-bit file encryption for Android.',f:['1024-bit encryption with a 16-round SPN','Shadow Texture Protocol key derivation','Encrypt any file type','Free on Android (ad-supported); premium removes ads']},
-{k:'core',n:'AMNI-CORE',h:'amni-core.html',c:'#6c7ae0',w:1,t:'A from-scratch OS that runs real Windows, Linux &amp; macOS apps natively &mdash; with a frosted-glass desktop.',f:['Built from zero &mdash; no Linux/BSD/NT base','Runs real .exe / ELF / Mach-O &mdash; no VM or emulator','UEFI-boot frosted-glass, GPU-forward desktop','Septidecimal (base-17) computational core']},
-{k:'prayer',n:'AMNI-PRAYER',h:'amni-prayer.html',c:'#f5c842',w:2,t:'The entire Catholic Bible as a living 3D nodal map.',f:['35,817 verses as nodes','64,497 cross-references','17 layouts + Tandem reading mode','Imago Nuntii Divini']},
-{k:'life',n:'AMNI-LIFE',h:'amni-life.html',c:'#ff9f43',w:1,t:'A 3D memory map for the fragments of a life (installable PWA, v0.26.0).',f:['Seven layouts: constellation, timeline, spiral &amp; more','Photo/EXIF import + encrypted shareable maps','Local-first offline PWA — zero telemetry']}];
-const IC={braid:'🧵',game:'🐭',ai:'✨',calc:'⚙️',learn:'📚',construct:'🏗️',explore:'🌌',weather:'🌦️',browse:'🛡️',haven:'💬',llm:'🧠',code:'🤖',connect:'🖥️',crypt:'🔐',core:'🧱',prayer:'✝️',life:'🌱'};
-const SHOTS={calc:['assets/calc/ss_seal_analysis.png','assets/calc/ss_materials_1.png','assets/calc/ss_finishes_1.png','assets/calc/ss_finishes_2.png'],explore:['assets/explore/ss_galaxy.png','assets/explore/ss_planet.png','assets/explore/ss_solar_system.png'],browse:['assets/browse/Screenshot%202026-04-17%20110302.png','assets/browse/Screenshot%202026-04-17%20110316.png'],haven:['assets/haven/Screenshot_32.png','assets/haven/Screenshot_33.png','assets/haven/Screenshot_34.png','assets/haven/Screenshot_35.png','assets/haven/Screenshot_36.png','assets/haven/Screenshot_37.png'],code:['assets/code/Interface.png','assets/code/Response.png','assets/code/Thinking.png','assets/code/terminal.png','assets/code/Settings.png'],connect:['assets/connect/Screenshot%202026-04-17%20105239.png','assets/connect/Screenshot%202026-04-17%20105354.png'],crypt:['assets/crypt/feature_graphic.png'],learn:['assets/learn/ss_prek.png','assets/learn/ss_brain.png'],prayer:['assets/prayer/ss_map.png'],llm:['assets/llm/ss_loader.png'],core:['assets/core/desktop.jpg','assets/core/frosted-window.png','assets/core/real-binaries.png']};
-const N=P.length;
-const hw=document.getElementById('hero-wheel'),stage=document.getElementById('stage'),belt=document.getElementById('belt'),panel=document.getElementById('panel');
-const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
-let pos=0,focusI=-1,raf=0,S=160;
-const items=P.map(p=>{const a=document.createElement('a');a.className='item';a.href=p.h;a.setAttribute('role','option');a.style.setProperty('--ic',p.c);a.innerHTML=`<span class="ico">${IC[p.k]}</span><span class="lbl">${p.n}</span>`;a.addEventListener('click',e=>e.preventDefault());belt.appendChild(a);return a;});
-const norm=d=>((d%360)+360)%360;
-const wrap=v=>{v=((v%N)+N)%N;return v>N/2?v-N:v;};
-const ctr=()=>((Math.round(pos)%N)+N)%N;
-const layout=()=>{S=Math.min(165,stage.clientWidth*0.44);const cx=stage.clientWidth/2,cy=stage.clientHeight/2-6,ti=ctr();items.forEach((el,i)=>{const d=wrap(i-pos),ad=Math.abs(d),x=cx+d*S,yo=Math.min(ad,2.6)*7,sc=Math.max(.55,1.28-ad*.4);el.style.transform=`translate(${x}px,${cy+yo}px) translate(-50%,-50%) scale(${sc})`;el.style.opacity=Math.max(0,1-ad*.42).toFixed(3);el.style.zIndex=Math.round((6-ad)*10);el.classList.toggle('mini',i!==ti);});};
-const ease=t=>1-Math.pow(1-t,3);
-const select=i=>{if(i===focusI)return;focusI=i;const p=P[i];items.forEach((el,j)=>el.classList.toggle('focus',j===i));hw.style.setProperty('--acc',p.c);panel.classList.add('swap');const build=()=>{panel.style.setProperty('--acc',p.c);const sh=SHOTS[p.k]||[];const deck=sh.length?`<div class="shots"><div class="deck" tabindex="0" role="button" aria-label="${p.n} screenshots">${sh.slice(0,3).map((src,z)=>`<img src="${src}" alt="${p.n} screenshot" class="shot-card${z===0?' top':''}" style="--z:${z};z-index:${3-z}" loading="lazy">`).join('')}</div><div class="shots-meta">${sh.length} screenshot${sh.length>1?'s':''} &mdash; tap to enlarge</div></div>`:'';panel.innerHTML=`<h2>${IC[p.k]} ${p.n}</h2><p class="tag">${p.t}</p><ul class="feat">${p.f.map(f=>`<li>${f}</li>`).join('')}</ul>${deck}<div class="cta-row"><a class="cta primary" href="${p.h}">Open ${p.n} &rarr;</a><a class="cta ghost" href="${p.h}">Details &amp; docs</a></div>`;requestAnimationFrame(()=>{panel.classList.remove('swap');[...panel.querySelectorAll('.feat li')].forEach((li,k)=>li.style.transitionDelay=(k*70)+'ms');const dk=panel.querySelector('.deck');dk&&dk.addEventListener('click',()=>openShots(sh));dk&&dk.addEventListener('keydown',ev=>{(ev.key==='Enter'||ev.key===' ')&&(ev.preventDefault(),openShots(sh));});});};reduce?build():setTimeout(build,180);};
-const spinTo=(target,extra)=>{cancelAnimationFrame(raf);let d=target-ctr();d=((d%N)+N)%N;if(d>N/2)d-=N;let end=Math.round(pos)+d+(extra?N:0);if(reduce){pos=end;layout();select(target);return;}const start=pos,dist=Math.abs(end-start),dur=extra?2600:Math.max(360,dist*210),t0=performance.now();const tick=now=>{const k=Math.min(1,(now-t0)/dur);pos=start+(end-start)*ease(k);layout();if(k<1)raf=requestAnimationFrame(tick);else{pos=end;layout();select(target);}};raf=requestAnimationFrame(tick);};
-const snap=()=>spinTo(ctr(),0);
-const step=dir=>{const b=focusI<0?ctr():focusI;spinTo((b+dir+N)%N,0);};
-const wRand=()=>{const pool=[];P.forEach((p,i)=>{for(let j=0;j<p.w;j++)pool.push(i);});return pool[Math.floor(Math.random()*pool.length)];};
-const lb=document.getElementById('lb'),lbImg=document.getElementById('lb-img'),lbCount=document.getElementById('lb-count');
-let lbArr=[],lbI=0,lsx=0,lsd=false;
-const lbRender=()=>{lbImg.src=lbArr[lbI];lbCount.textContent=(lbI+1)+' / '+lbArr.length;};
-const openShots=a=>{if(!a||!a.length)return;lbArr=a;lbI=0;lbRender();lb.classList.add('open');};
-const lbGo=d=>{lbI=(lbI+d+lbArr.length)%lbArr.length;lbRender();};
-const lbClose=()=>lb.classList.remove('open');
-document.getElementById('lb-x').addEventListener('click',lbClose);
-document.getElementById('lb-prev').addEventListener('click',e=>{e.stopPropagation();lbGo(-1);});
-document.getElementById('lb-next').addEventListener('click',e=>{e.stopPropagation();lbGo(1);});
-lb.addEventListener('click',e=>{e.target===lb&&lbClose();});
-lb.addEventListener('pointerdown',e=>{lsd=true;lsx=e.clientX;});
-lb.addEventListener('pointerup',e=>{if(!lsd)return;lsd=false;const dx=e.clientX-lsx;Math.abs(dx)>40&&lbGo(dx<0?1:-1);});
-let drag=false,sx=0,sy=0,sp=0,lock=0,acc=0;
-stage.addEventListener('pointerdown',e=>{drag=true;sx=e.clientX;sy=e.clientY;sp=pos;lock=0;cancelAnimationFrame(raf);stage.focus({preventScroll:true});});
-addEventListener('pointermove',e=>{if(!drag)return;const dx=e.clientX-sx,dy=e.clientY-sy;if(!lock){if(Math.hypot(dx,dy)<7)return;lock=Math.abs(dx)>=Math.abs(dy)?1:2;if(lock===2){drag=false;return;}}pos=sp-dx/S;layout();});
-addEventListener('pointerup',e=>{if(!drag)return;drag=false;if(lock===1){snap();}else{const it=e.target&&e.target.closest&&e.target.closest('.item');it?spinTo(items.indexOf(it),0):snap();}lock=0;});
-addEventListener('pointercancel',()=>{if(drag){drag=false;lock=0;snap();}});
-stage.addEventListener('wheel',e=>{if(document.activeElement!==stage)return;e.preventDefault();acc+=(Math.abs(e.deltaX)>Math.abs(e.deltaY)?e.deltaX:e.deltaY);if(Math.abs(acc)>=28){step(acc>0?1:-1);acc=0;}},{passive:false});
-addEventListener('keydown',e=>{if(lb.classList.contains('open')){if(e.key==='Escape')lbClose();else if(e.key==='ArrowRight')lbGo(1);else if(e.key==='ArrowLeft')lbGo(-1);return;}if(e.key==='ArrowRight'){e.preventDefault();step(1);}else if(e.key==='ArrowLeft'){e.preventDefault();step(-1);}});
-document.getElementById('edge-l').addEventListener('click',()=>step(-1));
-document.getElementById('edge-r').addEventListener('click',()=>step(1));
-addEventListener('resize',layout);
-layout();
-if(reduce){pos=0;layout();select(0);}else{var _seed=wRand();select(_seed);spinTo(_seed,1);}
+(function(){
+var nav=document.querySelector('body>nav'),tick=0;
+function dock(){if(tick)return;tick=requestAnimationFrame(function(){tick=0;nav.classList.toggle('docked',scrollY>40);});}
+if(nav){dock();addEventListener('scroll',dock,{passive:true});}
+var v=document.getElementById('braid-loop'),tile=v&&v.closest('.tile');
+if(v&&tile&&'IntersectionObserver'in window&&!matchMedia('(prefers-reduced-motion:reduce)').matches){
+var io=new IntersectionObserver(function(e){
+ if(e[0].isIntersecting){
+  if(!v.src){v.src='assets/braid/braid-usage.mp4?v=8';}
+  var p=v.play();if(p&&p.catch)p.catch(function(){});
+ }else if(!v.paused){v.pause();}
+},{rootMargin:'200px 0px'});
+io.observe(tile);
+}
+})();
 </script>
 </body>
 </html>

@@ -17,7 +17,7 @@
 <meta name="twitter:description" content="v1.4.7 weather maps: live Open-Meteo, pin forecast, NWS/GDACS hazards. Free in-browser WASM.">
 <link rel="canonical" href="https://amni-scient.com/amni-weather">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Amni-Weather","url":"https://amni-scient.com/weather/","description":"Interactive weather maps with live Open-Meteo fields, point forecast panels, NWS and GDACS hazards, customizable colormaps, and Rust/WASM field engine.","applicationCategory":"WeatherApplication","operatingSystem":"Any (Modern Browser)","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Organization","name":"AMNI-SCIENT","legalName":"Amniscient, LLC","url":"https://amni-scient.com"},"softwareVersion":"1.4.7"}</script>
-<link rel="stylesheet" href="css/style.css?v=b180">
+<link rel="stylesheet" href="css/style.css?v=b200">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
@@ -83,42 +83,42 @@
 <p style="text-align:center;color:var(--dim);max-width:720px;margin:0 auto 2rem;font-size:.9rem">Amni-Weather is a browser-native weather map for dense multi-variable fields, smooth pan/zoom, and full control over coloration. Basemaps reuse the <strong>Amni-Drive tile stack</strong> &mdash; Esri satellite, OpenStreetMap, CARTO dark/light, OpenTopoMap &mdash; with a <strong>Rust/WASM field engine</strong>, live Open-Meteo sampling (zoom LOD), a baked global pack for fast coverage, and a full <strong>point forecast panel</strong> when you drop a pin.</p>
 <div class="features">
 <div class="feature">
-<div class="icon">&#127777;</div>
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 14V4a2 2 0 0 0-4 0v10a4 4 0 1 0 4 0z"/><path d="M12 8v6"/></svg></div>
 <h4>MAP LAYERS + LOD</h4>
 <p>Temperature, feels-like, dew point, humidity, precip, clouds, MSL pressure, wind, CAPE, UV, visibility. Zoom densifies the live lattice; far-out stays light so the map stays snappy.</p>
 </div>
 <div class="feature">
-<div class="icon">&#128200;</div>
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 20h18"/><path d="M5 16l4.5-5 3.5 3L20 6"/></svg></div>
 <h4>POINT FORECAST</h4>
 <p>Drop a pin for Now / Hourly / 7-day / Surf / UV&middot;Air tabs &mdash; WMO icons, sparklines, marine waves when available. Refresh on demand; no account required.</p>
 </div>
 <div class="feature">
-<div class="icon">&#9888;</div>
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l10 18H2z"/><path d="M12 9v5M12 17.5v.5"/></svg></div>
 <h4>HAZARDS</h4>
 <p>US <strong>NWS</strong> alerts plus global <strong>GDACS</strong> Orange/Red severe events (storms, floods, volcanoes, wildfires, drought, quakes, and more).</p>
 </div>
 <div class="feature">
-<div class="icon">&#127912;</div>
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="8.5" cy="10" r="1.3"/><circle cx="12" cy="7.6" r="1.3"/><circle cx="15.5" cy="10" r="1.3"/></svg></div>
 <h4>CUSTOM COLORATION</h4>
 <p>Palette presets, reverse, opacity, gamma, soft mask, auto or manual ranges &mdash; paint the field the way you want to read it.</p>
 </div>
 <div class="feature">
-<div class="icon">&#128269;</div>
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5 5"/></svg></div>
 <h4>SLIPPY MAP UX</h4>
 <p>Fractional zoom, inertia pan, pinch on mobile, wind streamlines, pressure isobars, city labels + borders. Locate via browser geo, then IP fallback; last place remembered.</p>
 </div>
 <div class="feature">
-<div class="icon">&#9881;</div>
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.2"/><path d="M12 3v2.4M12 18.6V21M3 12h2.4M18.6 12H21M5.6 5.6l1.7 1.7M16.7 16.7l1.7 1.7M18.4 5.6l-1.7 1.7M7.3 16.7l-1.7 1.7"/></svg></div>
 <h4>RUST / WASM ENGINE</h4>
 <p>IDW gridding, upsample, smooth, field stats, and palette work compile to WASM with a JS fallback if WASM is blocked.</p>
 </div>
 <div class="feature">
-<div class="icon">&#127760;</div>
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 3 2.6 15 0 18M12 3c-2.6 3-2.6 15 0 18"/></svg></div>
 <h4>LIVE + PACK</h4>
 <p>Always-on live path with silent pack/global-field fallback when APIs are busy. No fake &ldquo;demo mode&rdquo; switch &mdash; the map should never brick.</p>
 </div>
 <div class="feature">
-<div class="icon">&#128274;</div>
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10" width="16" height="11"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div>
 <h4>PRIVACY-HONEST</h4>
 <p>No accounts. Processing stays in your browser. Prefs (place, units) in localStorage only. Live fetches go to Open-Meteo, map tiles, and public hazard feeds &mdash; see the privacy page.</p>
 </div>

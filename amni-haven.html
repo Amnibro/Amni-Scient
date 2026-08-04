@@ -19,7 +19,7 @@
 <meta name="twitter:description" content="Native Android client for Haven chat. Real-time messaging, push, voice/video/screen-share, E2E-encrypted DMs.">
 <meta name="twitter:image" content="https://amni-scient.com/assets/haven/FfNHy.jpg">
 <link rel="canonical" href="https://amni-scient.com/amni-haven">
-<link rel="stylesheet" href="css/style.css?v=b180">
+<link rel="stylesheet" href="css/style.css?v=b200">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
@@ -81,42 +81,42 @@
 <p style="text-align:center;color:var(--dim);max-width:700px;margin:0 auto 2rem;font-size:.9rem">Amni-Haven is the native Android client for <a href="https://github.com/ancsemi/Haven" target="_blank" rel="noopener">Haven</a>, a self-hosted chat platform created by <a href="https://github.com/ancsemi" target="_blank" rel="noopener">ANCSemi</a> (MIT-NC licensed). Connect to any Haven server. Messages route through your chosen server, not ours. Free tier is ad-supported (AdMob); push notifications via FCM. You control the infrastructure.</p>
 <div class="features">
 <div class="feature">
-<div class="icon">&#128172;</div>
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v12H9l-5 4z"/></svg></div>
 <h4>REAL-TIME CHAT</h4>
 <p>Socket.IO persistent connection with JWT authentication. Typing indicators, message grouping, instant delivery.</p>
 </div>
 <div class="feature">
-<div class="icon">&#128276;</div>
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 17V11a6 6 0 0 1 12 0v6l2 3H4z"/><path d="M10 21h4"/></svg></div>
 <h4>FCM PUSH</h4>
 <p>Firebase Cloud Messaging with per-channel deep links. Never miss a message, even when the app is closed.</p>
 </div>
 <div class="feature">
-<div class="icon">&#127897;</div>
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4M9 22h6"/></svg></div>
 <h4>VOICE + VIDEO + SCREEN SHARE</h4>
 <p>WebRTC peer-to-peer calls with direct device-to-device connection when possible. Share your screen mid-call via MediaProjection (1280&times;720 @ 15&nbsp;fps).</p>
 </div>
 <div class="feature">
-<div class="icon">&#128274;</div>
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10" width="16" height="11"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div>
 <h4>END-TO-END ENCRYPTED DMs</h4>
 <p>Direct messages are E2E-encrypted with ECDH P-256 + HKDF-SHA256 + AES-256-GCM, with a per-server key namespace. The server relays ciphertext it can't read.</p>
 </div>
 <div class="feature">
-<div class="icon">&#127916;</div>
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="8" width="18" height="13"/><path d="M3 8l3-5 4 5M11 8l3-5 4 5"/></svg></div>
 <h4>INLINE MEDIA</h4>
 <p>Images and video (mp4/webm/mkv/avi/mov) play inline in the chat thread. E2E-encrypted images deep-link via the <code>e2e-img:</code> scheme for a mime-aware gallery.</p>
 </div>
 <div class="feature">
-<div class="icon">&#128271;</div>
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10" width="16" height="11"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/><path d="M10 15l4-1"/></svg></div>
 <h4>SELF-HOSTED</h4>
 <p>Point at any Haven server URL. Self-signed cert support included. Your server, your data, your rules. Invite-code registration is supported on invite-required servers.</p>
 </div>
 <div class="feature">
-<div class="icon">&#128260;</div>
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 0 1-13.7 5.6M4 12a8 8 0 0 1 13.7-5.6"/><path d="M17.7 2.5v4h-4M6.3 21.5v-4h4"/></svg></div>
 <h4>AUTO-RECONNECT</h4>
 <p>Exponential backoff with 10 retry attempts. Connection error screen with one-tap retry or server switch.</p>
 </div>
 <div class="feature">
-<div class="icon">&#128241;</div>
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="2" width="10" height="20" rx="1"/><path d="M10.5 19h3"/></svg></div>
 <h4>DEEP LINKS</h4>
 <p>haven:// URI scheme for direct server connections. Share links to auto-connect with optional SSL flag.</p>
 </div>
@@ -270,3 +270,4 @@ closeBetaOptIn();
 </div>
 </div>
 </body>
+</html>

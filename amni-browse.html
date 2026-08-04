@@ -20,7 +20,7 @@
 <meta name="twitter:image" content="https://amni-scient.com/assets/browse/Interface.png">
 <link rel="canonical" href="https://amni-scient.com/amni-browse">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Amni-Browse","url":"https://amni-scient.com/amni-browse.html","description":"Privacy-first, zero-telemetry web browser in a single Rust binary. Built-in ad blocker, DNS-over-HTTPS, encrypted password vault, multi-profile, private tabs.","applicationCategory":"WebBrowser","operatingSystem":"Windows, macOS, Linux","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Organization","name":"AMNI-SCIENT","legalName":"Amniscient, LLC","url":"https://amni-scient.com"},"image":"https://amni-scient.com/assets/browse/Interface.png"}</script>
-<link rel="stylesheet" href="css/style.css?v=b180">
+<link rel="stylesheet" href="css/style.css?v=b200">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
@@ -82,32 +82,32 @@
 <p style="text-align:center;color:var(--dim);max-width:720px;margin:0 auto 2rem;font-size:.9rem">A ground-up web browser built in Rust around one principle &mdash; <em>nothing leaves your machine unless you tell it to</em>. No accounts, no sync servers, no telemetry pings. Bookmarks, history, vault, sessions &mdash; all local. Tracking parameters stripped before the request even fires.</p>
 <div class="features">
 <div class="feature">
-<div class="icon">&#128737;</div>
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.6 8.2-8 9-4.4-.8-8-4-8-9V6z"/></svg></div>
 <h4>ZERO TELEMETRY</h4>
 <p>No analytics, no crash reporting, no phone-home. The binary makes network requests only to the pages you navigate to and the DoH resolver you pick.</p>
 </div>
 <div class="feature">
-<div class="icon">&#128683;</div>
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/></svg></div>
 <h4>BUILT-IN AD BLOCKER</h4>
 <p>Ad networks, tracking pixels, fingerprinting scripts blocked at the navigation layer. Filter rules bundled in the binary &mdash; no external list downloads.</p>
 </div>
 <div class="feature">
-<div class="icon">&#128274;</div>
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10" width="16" height="11"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div>
 <h4>DNS-OVER-HTTPS</h4>
 <p>Encrypted DNS by default with Cloudflare, Google, or Quad9. Your resolver can&rsquo;t see plaintext queries; your ISP can&rsquo;t build a browsing profile.</p>
 </div>
 <div class="feature">
-<div class="icon">&#128273;</div>
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="7.5" cy="12" r="3.5"/><path d="M11 12h10M18 12v3.5M15 12v2.5"/></svg></div>
 <h4>ENCRYPTED VAULT</h4>
 <p>AES-256-GCM password vault with PBKDF2-HMAC-SHA256 (600,000 iterations). Master password never stored &mdash; only the derived key lives in memory while unlocked.</p>
 </div>
 <div class="feature">
-<div class="icon">&#128065;</div>
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.8-6 10-6 10 6 10 6-3.8 6-10 6-10-6-10-6z"/><circle cx="12" cy="12" r="2.8"/></svg></div>
 <h4>PRIVATE TABS</h4>
 <p>Private browsing mode keeps history, cookies, and cache out of persistent storage. Tracking parameters (UTM, fbclid, gclid) are stripped on every request.</p>
 </div>
 <div class="feature">
-<div class="icon">&#128101;</div>
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 5.5a3.2 3.2 0 0 1 0 5M17 14.4c2.4.7 4 2.9 4 5.6"/></svg></div>
 <h4>MULTI-PROFILE</h4>
 <p>Isolated data directories per profile &mdash; separate bookmarks, history, vault, and session. Create, switch, rename, and delete without ever crossing streams.</p>
 </div>
