@@ -16,12 +16,12 @@
 <meta property="og:image:height" content="630">
 <link rel="canonical" href="https://amni-scient.com/faq">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is Amni-Scient?","acceptedAnswer":{"@type":"Answer","text":"Amni-Scient is an independent software studio building privacy-first tools for encryption, engineering, space exploration, and education. All products are solo-developed."}},{"@type":"Question","name":"Is Amni-Crypt secure?","acceptedAnswer":{"@type":"Answer","text":"Amni-Crypt uses a proprietary 1024-bit block cipher with 16-round SPN, PBKDF2-HMAC-SHA512 key derivation (1,000,000 iterations), and HMAC-SHA512 integrity verification. All encryption runs locally on your device."}},{"@type":"Question","name":"Does Amni-Explore use real NASA data?","acceptedAnswer":{"@type":"Answer","text":"Yes. Amni-Explore fetches confirmed exoplanet data from the NASA Exoplanet Archive TAP API, including star temperatures, planet radii, masses, and orbital parameters."}},{"@type":"Question","name":"Is Amni-Learn safe for children?","acceptedAnswer":{"@type":"Answer","text":"Yes. Amni-Learn runs 100% locally in the browser with zero data collection, no accounts, no tracking, and no external server calls. It is ad-free."}},{"@type":"Question","name":"What is WebAssembly and why do you use it?","acceptedAnswer":{"@type":"Answer","text":"WebAssembly (WASM) is a compiled binary format that runs in web browsers at near-native speed. We compile Rust code to WASM for performance-critical features like galaxy generation."}}]}</script>
-<link rel="stylesheet" href="css/style.css?v=b240">
+<link rel="stylesheet" href="css/style.css?v=b250">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
 </head>
-<body>
+<body class="pp">
 <div class="grid-bg"></div>
 <div class="scanlines"></div>
 <nav>
@@ -66,7 +66,7 @@
 </section>
 <section>
 <h2>GENERAL</h2>
-<div style="max-width:800px;margin:0 auto">
+<div style="max-width:800px;margin:0 0">
 <div class="faq-item" style="margin-bottom:2rem">
 <h4 style="color:var(--text);margin-bottom:.5rem">What is Amni-Scient?</h4>
 <p style="color:var(--dim);line-height:1.8;font-size:.9rem">Amni-Scient is an independent software studio that builds privacy-first tools spanning encryption, mechanical engineering, space exploration, and early education. Every product is designed, built, and maintained by a single developer. The studio was founded in 2025 with a focus on honest data disclosures and technically rigorous software, and is operated by Amniscient, LLC, a New York limited liability company. You can read more on the <a href="about.html">About page</a>.</p>
@@ -87,7 +87,7 @@
 </section>
 <section>
 <h2>AMNI-CRYPT &mdash; FILE ENCRYPTION</h2>
-<div style="max-width:800px;margin:0 auto">
+<div style="max-width:800px;margin:0 0">
 <div class="faq-item" style="margin-bottom:2rem">
 <h4 style="color:var(--text);margin-bottom:.5rem">How secure is Amni-Crypt&rsquo;s encryption?</h4>
 <p style="color:var(--dim);line-height:1.8;font-size:.9rem">Amni-Crypt uses a proprietary 1024-bit (8192-bit state) block cipher with a 16-round substitution-permutation network (SPN). Key derivation uses PBKDF2-HMAC-SHA512 with 1,000,000 iterations, producing a 1024-bit derived key. The Shadow Texture Protocol creates a second independent stream via SHAKE-256 (a Keccak-based extendable output function), which co-evolves with the data through each round, effectively doubling the cipher state. Integrity is verified with HMAC-SHA512 before decryption begins, detecting both corruption and wrong passphrases instantly.</p>
@@ -108,7 +108,7 @@
 </section>
 <section>
 <h2>AMNI-EXPLORE &mdash; GALAXY EXPLORER</h2>
-<div style="max-width:800px;margin:0 auto">
+<div style="max-width:800px;margin:0 0">
 <div class="faq-item" style="margin-bottom:2rem">
 <h4 style="color:var(--text);margin-bottom:.5rem">Where does the NASA data come from?</h4>
 <p style="color:var(--dim);line-height:1.8;font-size:.9rem">Amni-Explore fetches confirmed exoplanet data from the <strong>NASA Exoplanet Archive TAP API</strong> (Table Access Protocol, an IVOA standard). The query retrieves star names, temperatures, radii, and planet orbital parameters, masses, and radii for up to 500 confirmed planets. This data is fetched live each time you load the explorer, so it reflects the latest archive updates. NASA systems are visually distinguished on the galaxy map with a green glow.</p>
@@ -129,7 +129,7 @@
 </section>
 <section>
 <h2>AMNI-LEARN &mdash; EDUCATIONAL GAMES</h2>
-<div style="max-width:800px;margin:0 auto">
+<div style="max-width:800px;margin:0 0">
 <div class="faq-item" style="margin-bottom:2rem">
 <h4 style="color:var(--text);margin-bottom:.5rem">Is Amni-Learn safe for children?</h4>
 <p style="color:var(--dim);line-height:1.8;font-size:.9rem">Yes. Amni-Learn runs entirely in the browser with <strong>zero data collection</strong>. There are no user accounts, no server communications, no cookies, no trackers, and no advertisements. All game logic and content runs locally on the device. No personal information of any kind is transmitted. This makes it safe for children of all ages, including use in classroom settings where student privacy is a concern.</p>
@@ -146,7 +146,7 @@
 </section>
 <section>
 <h2>AMNI-HAVEN &mdash; SELF-HOSTED MESSAGING</h2>
-<div style="max-width:800px;margin:0 auto">
+<div style="max-width:800px;margin:0 0">
 <div class="faq-item" style="margin-bottom:2rem">
 <h4 style="color:var(--text);margin-bottom:.5rem">What is a self-hosted chat platform?</h4>
 <p style="color:var(--dim);line-height:1.8;font-size:.9rem">Unlike platforms like Discord, Slack, or WhatsApp where your messages are stored on the company&rsquo;s servers, a self-hosted platform means the server software runs on hardware you control. <a href="https://github.com/ancsemi/Haven" target="_blank" rel="noopener noreferrer">Haven</a> (created by ANCSemi) is the server. Amni-Haven is the Android client that connects to it. Your messages route through your chosen Haven server &mdash; not through Amni-Scient or any third party. If you run your own server, you control the data completely.</p>
@@ -159,7 +159,7 @@
 </section>
 <section>
 <h2>AMNI-CALC &mdash; ENGINEERING SUITE</h2>
-<div style="max-width:800px;margin:0 auto">
+<div style="max-width:800px;margin:0 0">
 <div class="faq-item" style="margin-bottom:2rem">
 <h4 style="color:var(--text);margin-bottom:.5rem">What modules does Amni-Calc include?</h4>
 <p style="color:var(--dim);line-height:1.8;font-size:.9rem">37 modules: beam FEA, stress &amp; Mohr's circle (incl. K<sub>t</sub>), beam sections, bolts (pattern selector + PCC-1 torque sequence), springs (helical, Belleville catalog autoselect, conical, wave), seals (symmetric squeeze), columns (Euler/Johnson), shafts (keyway DIN 6885, DIN 471 rings), welds (AWS), bearings (ISO 281), gears (involute + planetary + AGMA handoff), fatigue (Goodman/Gerber + LEFM fracture), vibration, fluids (Moody + pipe designer + dP metering), pumps (NPSH), hydraulics (cylinder designer + accumulators), thermal, heat exchangers (LMTD/NTU), pressure vessels (Lam&eacute;/ASME), cycles (incl. R134a VCC), HVAC, combustion, electrical, motors, NEC wire, electrochemistry (Nernst/Tafel/BV), batteries, materials, finishes, fits &amp; press fits, machining (speeds/feeds, tap drill, bend, hardness), rigging (slings + lugs), CAD Studio (CSG + STL), math, equations, units, references.</p>
@@ -176,7 +176,7 @@
 </section>
 <section>
 <h2>AMNI-WEATHER &mdash; INTERACTIVE MAPS</h2>
-<div style="max-width:800px;margin:0 auto">
+<div style="max-width:800px;margin:0 0">
 <div class="faq-item" style="margin-bottom:2rem">
 <h4 style="color:var(--text);margin-bottom:.5rem">What does Amni-Weather do?</h4>
 <p style="color:var(--dim);line-height:1.8;font-size:.9rem">Browser-native weather maps (v1.4.7) with slippy basemaps (Esri/OSM/CARTO/OpenTopo), live Open-Meteo field sampling with zoom LOD, a baked pack for fast global coverage, pin forecast panels (hourly, 7-day, surf, UV&middot;air), and hazard overlays from NWS (US) plus GDACS (global). Default units are US; SI is one tap away. Free at <a href="weather/">amni-scient.com/weather</a>.</p>
@@ -189,7 +189,7 @@
 </section>
 <section>
 <h2>AMNI-LLM &mdash; IN-BROWSER GGUF RUNTIME</h2>
-<div style="max-width:800px;margin:0 auto">
+<div style="max-width:800px;margin:0 0">
 <div class="faq-item" style="margin-bottom:2rem">
 <h4 style="color:var(--text);margin-bottom:.5rem">How is Amni-LLM different from WebLLM?</h4>
 <p style="color:var(--dim);line-height:1.8;font-size:.9rem">WebLLM (MLC) requires every model to be specifically TVM-compiled to WebGPU shaders before it can run. Amni-LLM uses GGUF, the format with the broadest community coverage on HuggingFace. You can load any GGUF model from HuggingFace, an arbitrary URL, or a local file. Tradeoff: llama.cpp WASM is currently CPU-SIMD-only, so per-token throughput (~3&ndash;8 t/s on a 7B Q4 desktop) is lower than WebLLM's WebGPU stack (~15&ndash;30 t/s). For interactive chat at small models the gap is barely noticeable.</p>
@@ -210,7 +210,7 @@
 </section>
 <section>
 <h2>AMNI-PRAYER &mdash; SCRIPTURE MAP</h2>
-<div style="max-width:800px;margin:0 auto">
+<div style="max-width:800px;margin:0 0">
 <div class="faq-item" style="margin-bottom:2rem">
 <h4 style="color:var(--text);margin-bottom:.5rem">What's actually in Amni-Prayer?</h4>
 <p style="color:var(--dim);line-height:1.8;font-size:.9rem">Imago Nuntii Divini renders the entire Catholic Bible (35,817 verses) as a 3D nodal map with 64,497 cross-references between verses. Choose from 17 visual layouts (force-directed, hierarchical, era-clustered, etc.). Tandem reading mode pairs the graph with full chapter text where available; books without bundled fulltext fall back to per-verse preview snippets so the connection graph still works.</p>
@@ -223,7 +223,7 @@
 </section>
 <section>
 <h2>AMNI-BROWSE &mdash; PRIVACY-FIRST BROWSER</h2>
-<div style="max-width:800px;margin:0 auto">
+<div style="max-width:800px;margin:0 0">
 <div class="faq-item" style="margin-bottom:2rem">
 <h4 style="color:var(--text);margin-bottom:.5rem">What's the status of Amni-Browse?</h4>
 <p style="color:var(--dim);line-height:1.8;font-size:.9rem">Early release (v0.10.3 Windows x64). It's a single Rust binary with Servo as the primary engine, a dedicated WebView window for DRM/media streaming, zero telemetry, navigation-layer ad blocking, DNS-over-HTTPS, an AES-256-GCM password vault, and multi-profile support. Browser security is a deep, evolving discipline; we don't recommend Amni-Browse as your sole browser for high-stakes activity (banking, medical) yet. See the <a href="terms.html#browse">Amni-Browse terms addendum</a>.</p>
@@ -236,7 +236,7 @@
 </section>
 <section>
 <h2>AMNI-CODE &mdash; AGENTIC AI ASSISTANT</h2>
-<div style="max-width:800px;margin:0 auto">
+<div style="max-width:800px;margin:0 0">
 <div class="faq-item" style="margin-bottom:2rem">
 <h4 style="color:var(--text);margin-bottom:.5rem">What can Amni-Code do?</h4>
 <p style="color:var(--dim);line-height:1.8;font-size:.9rem">Single Rust binary that runs a 15-iteration autonomous tool loop with six built-in tools (read, write, edit, bash, search, ls). Multi-provider LLM support (Anthropic, OpenAI, others). Local GGUF model discovery so you can point it at models you've already downloaded for desktop tools.</p>
@@ -249,7 +249,7 @@
 </section>
 <section>
 <h2>AMNI-CONNECT &mdash; E2E REMOTE DESKTOP</h2>
-<div style="max-width:800px;margin:0 auto">
+<div style="max-width:800px;margin:0 0">
 <div class="faq-item" style="margin-bottom:2rem">
 <h4 style="color:var(--text);margin-bottom:.5rem">Where does the signaling traffic go?</h4>
 <p style="color:var(--dim);line-height:1.8;font-size:.9rem">Through whichever signaling server you operate. Amni-Scient runs no public signaling service. Once peers connect, the WebRTC media flow is end-to-end encrypted and goes peer-to-peer (or via your own TURN server if direct connection isn't possible).</p>
@@ -262,7 +262,7 @@
 </section>
 <section>
 <h2>AMNI-AI / AMNI-CORE &mdash; IN DEVELOPMENT</h2>
-<div style="max-width:800px;margin:0 auto">
+<div style="max-width:800px;margin:0 0">
 <div class="faq-item" style="margin-bottom:2rem">
 <h4 style="color:var(--text);margin-bottom:.5rem">When are Amni-AI and Amni-Core releasing?</h4>
 <p style="color:var(--dim);line-height:1.8;font-size:.9rem">No public release date for either. Amni-AI is the local self-evolving intelligence engine (dual-server inference, 9-mode growth, GPU texture inference via Dictionary Atlas, opt-in KnowledgeNet). Amni-Core is the long-horizon quantum-safe systems platform. Both run entirely on local hardware with no cloud dependency. Email <a href="mailto:amnibro7@gmail.com">amnibro7@gmail.com</a> if you want pre-release access for evaluation.</p>
@@ -271,7 +271,7 @@
 </section>
 <section>
 <h2>TECHNICAL</h2>
-<div style="max-width:800px;margin:0 auto">
+<div style="max-width:800px;margin:0 0">
 <div class="faq-item" style="margin-bottom:2rem">
 <h4 style="color:var(--text);margin-bottom:.5rem">What browsers are supported?</h4>
 <p style="color:var(--dim);line-height:1.8;font-size:.9rem">The web applications (Explore, Learn) require a modern browser that supports WebGL2 and WebAssembly. This includes Chrome 57+, Firefox 52+, Edge 79+, and Safari 15+. Desktop browsers provide the best experience for canvas-intensive tools like the galaxy renderer. Mobile browsers work for lighter tools and Amni-Learn.</p>

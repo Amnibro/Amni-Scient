@@ -1,3 +1,28 @@
+## 2026-08-04 — v1.17.0 Uniform format everywhere + Explore glow-up
+
+Review: "quite a few pages don't have the same format; the modules themselves as well;
+the explore module could use a massive glow up."
+
+- **Every page on the system now.** pp editorial layout extended to `.hero` pages (about,
+  faq, privacy hub, licensing, research — eyebrow above wide title, left CTAs, banded
+  numbered sections), plus terms + braid-welcome/topup, and the three custom heroes
+  (prayer `prayer-hero`, weather `wx-hero`, amnitex `overview-hero`) converted to
+  `product-hero`. Legal doc column widened onto the band grid.
+- **Modules too:** all 37 `calc/*.html` module pages + learn SEO pages + research subpages
+  carry `pp` (57 files) — banding, numbering, left alignment, light default. The calc page
+  generator (`src/gen-calc-modules.js`) stamps `pp` + light so regenerated pages stay on
+  system.
+- **Explore glow-up (shell — engine is obfuscated by design):** self-hosted Archivo wired
+  into the HUD (condensed caps everywhere: labels, buttons, panel titles), deeper glass
+  panels (gradient sheen + saturated blur + layered shadow), tuned palette (#5BC8FF cyan,
+  brighter dims for legibility), a branded loading screen (AMNI-EXPLORE wordmark +
+  STELLAR CARTOGRAPHICS + wider bar), a vignette + bottom-glow atmosphere layer over the
+  canvas, a subtle saturate/contrast grade on the starfield (disabled on touch devices),
+  and an `← AMNI-SCIENT` plate. No engine/JS identifiers touched.
+- **Way home from every app:** amni-life topbar plate, construct hub plate; calc app and
+  weather already had one; game got its in v1.15.
+- Re-key `?v=b250` (125 files). Backups `backups/v1.17.0_uniform/`.
+
 ## 2026-08-04 — v1.16.0 Product pages on the Home idiom; light by default
 
 Review: "Title -> subtitle -> chart -> fluff -> KPIs reads AI-generated. Make product pages

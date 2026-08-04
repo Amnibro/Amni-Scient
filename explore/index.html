@@ -20,11 +20,12 @@
 <link rel="canonical" href="https://amni-scient.com/explore/">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--cm:#00b4ff;--ca:#ff8800;--cd:#4a6a8a;--cp:rgba(3,8,20,0.9);--cb:rgba(0,120,200,0.45);--ct:#c8dcf0;--cn:#22cc66}
-body{overflow:hidden;background:#010208;font-family:'Segoe UI',sans-serif;color:var(--ct);cursor:default}
+:root{--cm:#5BC8FF;--ca:#FFA43D;--cd:#7C93AC;--cp:rgba(4,9,18,0.80);--cb:rgba(96,180,255,0.30);--ct:#DCE9F7;--cn:#3DDC84;--fs:"Archivo","Segoe UI Variable Text","Segoe UI",system-ui,sans-serif}
+@font-face{font-family:Archivo;font-style:normal;font-weight:100 900;font-stretch:62% 125%;font-display:swap;src:url(/assets/fonts/archivo-var.woff2) format('woff2')}
+body{overflow:hidden;background:#010208;font-family:var(--fs);color:var(--ct);cursor:default}
 canvas{display:block;position:fixed;top:0;left:0;z-index:0;cursor:grab}
 canvas:active{cursor:grabbing}
-.pnl{background:var(--cp);border:1px solid var(--cb);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.pnl{background:linear-gradient(160deg,rgba(255,255,255,.03),transparent 55%),var(--cp);border:1px solid var(--cb);backdrop-filter:blur(14px) saturate(140%);-webkit-backdrop-filter:blur(14px) saturate(140%);box-shadow:0 14px 44px -20px rgba(0,0,0,.85),inset 0 1px 0 rgba(255,255,255,.05)}
 .hud{position:fixed;z-index:10;pointer-events:none}
 .hud>*{pointer-events:auto}
 #g-hud{top:16px;left:16px}
@@ -110,8 +111,10 @@ canvas:active{cursor:grabbing}
 #fade{position:fixed;top:0;left:0;width:100%;height:100%;background:#010208;z-index:30;opacity:0;pointer-events:none;transition:opacity 0.4s}
 #fade.on{opacity:1;pointer-events:all}
 #loading{position:fixed;top:0;left:0;width:100%;height:100%;z-index:50;background:#010208;display:flex;align-items:center;justify-content:center;flex-direction:column}
-#loading h1{font-size:14px;font-weight:300;letter-spacing:6px;color:var(--cm);margin-bottom:10px}
-#loading .bar{width:180px;height:2px;background:rgba(0,60,120,0.3);border-radius:1px;overflow:hidden}
+#loading h1{font-size:15px;font-weight:700;font-stretch:80%;letter-spacing:.34em;color:var(--cm);margin-bottom:14px}
+#loading::before{content:'AMNI-EXPLORE';font-weight:800;font-stretch:112%;font-size:clamp(28px,5vw,44px);letter-spacing:.02em;color:var(--ct);margin-bottom:6px}
+#loading::after{content:'STELLAR CARTOGRAPHICS';position:absolute;margin-top:118px;font-size:10px;letter-spacing:.4em;color:var(--cd)}
+#loading .bar{width:260px;height:3px;background:rgba(0,60,120,0.3);border-radius:1px;overflow:hidden}
 #loading .fill{height:100%;width:0%;background:var(--cm);transition:width 0.3s;box-shadow:0 0 6px var(--cm)}
 #pause{position:fixed;top:0;left:0;width:100%;height:100%;z-index:25;display:none;align-items:center;justify-content:center;background:rgba(1,2,8,0.85);backdrop-filter:blur(6px)}
 #pause.open{display:flex}
@@ -221,9 +224,20 @@ canvas:active{cursor:grabbing}
 .title-badge{display:inline-block;margin-left:8px;padding:1px 6px;font-size:7px;letter-spacing:1.5px;border:1px solid rgba(255,204,0,0.4);color:#ffcc00;text-transform:uppercase;vertical-align:middle}
 @media (max-width:960px){#game-ad{width:calc(100vw - 32px);min-width:0}#g-hint{display:none}}
 @media (max-width:720px){#ad-tx{bottom:164px;width:calc(100vw - 32px);max-width:240px}#site-back{bottom:164px}#game-ad{bottom:56px;width:calc(100vw - 16px)}}
+
+.fbtn,.mbtn,.enter-btn,.infra-btn,#s-back,#p-back,.nasa-hdr h3,#g-info h2,#s-top h1,#p-title h1,#pause-box h2,.nl-nm,.p-entry .p-nm,#g-sel h3,#s-pinfo h4,#p-data h4{font-family:var(--fs);font-weight:600;font-stretch:80%}
+#s-top h1,#p-title h1,#pause-box h2{font-weight:700;letter-spacing:.3em}
+.fbtn,.mbtn,.enter-btn,.infra-btn,#s-back,#p-back{letter-spacing:.16em}
+canvas{filter:saturate(1.10) contrast(1.03)}
+@media(pointer:coarse){canvas{filter:none}}
+#vig{position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(120% 92% at 50% 42%,transparent 56%,rgba(0,3,10,.5) 100%),radial-gradient(60% 38% at 50% 110%,rgba(20,120,220,.10),transparent 62%)}
+#site-home{position:fixed;right:14px;bottom:14px;z-index:12;font-family:var(--fs);font-weight:700;font-stretch:80%;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--cd);text-decoration:none;border:1px solid var(--cb);padding:7px 12px;background:var(--cp);backdrop-filter:blur(10px);transition:color .18s,border-color .18s}
+#site-home:hover{color:var(--ct);border-color:var(--cm)}
 </style>
 </head>
 <body>
+<div id="vig" aria-hidden="true"></div>
+<a id="site-home" href="/">&#8592; AMNI-SCIENT</a>
 <div id="loading"><h1>COSMOS COMMANDER</h1><div class="bar"><div class="fill" id="lbar"></div></div></div>
 <div id="g-hud" class="hud">
 <div id="g-info" class="pnl">

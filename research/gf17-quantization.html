@@ -15,7 +15,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="https://amni-scient.com/research/gf17-quantization">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"ScholarlyArticle","name":"GF(17) Quantization Strategies for Neural Network Weight Compression","author":{"@type":"Person","name":"Amnibro"},"description":"Finite-field quantization codecs using GF(17) arithmetic with proprietary optimization. Compared against Google TurboQuant.","url":"https://amni-scient.com/research/gf17-quantization","publisher":{"@type":"Organization","name":"AMNI-SCIENT"},"datePublished":"2026-04-02"}</script>
-<link rel="stylesheet" href="../css/style.css?v=b240">
+<link rel="stylesheet" href="../css/style.css?v=b250">
 <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 <script>
@@ -54,7 +54,7 @@
 .codec-card .codec-stats{display:flex;gap:.75rem;margin-top:.75rem;flex-wrap:wrap}
 .codec-card .codec-stat{font-size:.7rem;padding:.2rem .5rem;border:1px solid var(--border);border-radius:3px;color:var(--text);letter-spacing:.5px}
 .codec-card .codec-stat strong{color:var(--accent)}
-.license-box{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem;margin:1.5rem 0;text-align:center}
+.license-box{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem;margin:1.5rem 0}
 .license-box .cc-icon{font-size:2rem;margin-bottom:.5rem}
 .license-box p{color:var(--dim);font-size:.8rem;line-height:1.7}
 .license-box a{color:var(--accent)}
@@ -67,10 +67,10 @@
 .scenario-table td:nth-child(2){color:var(--text);font-weight:700}
 .redacted{background:var(--border);color:var(--border);border-radius:2px;padding:0 .3rem;cursor:help;transition:all .3s;user-select:none;letter-spacing:1px}
 .redacted:hover{color:var(--dim);font-style:italic;background:rgba(255,255,255,.08)}
-.classified-banner{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(231,76,60,.9);color:#fff;text-align:center;font-size:.6rem;letter-spacing:4px;padding:.35rem 0;font-weight:700;text-transform:uppercase;backdrop-filter:blur(4px)}
+.classified-banner{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(231,76,60,.9);color:#fff;font-size:.6rem;letter-spacing:4px;padding:.35rem 0;font-weight:700;text-transform:uppercase;backdrop-filter:blur(4px)}
 </style>
 </head>
-<body>
+<body class="pp">
 <div class="classified-banner">PROPRIETARY &bull; SELECTIVE DISCLOSURE &bull; FULL DETAILS AVAILABLE UNDER NDA</div>
 <div class="grid-bg"></div>
 <div class="scanlines"></div>
@@ -347,7 +347,7 @@ $$w(x) = \frac{h(x)}{\text{\small<span class="redacted" title="Proprietary">[PRO
 </tbody>
 </table>
 </div>
-<p style="color:var(--dim);font-size:.8rem;margin-top:1rem;text-align:center">GF(17) compresses weights 4&times; independently of any activation-side compression. Combined with TurboQuant KV-cache compression = best of both.</p>
+<p style="color:var(--dim);font-size:.8rem;margin-top:1rem">GF(17) compresses weights 4&times; independently of any activation-side compression. Combined with TurboQuant KV-cache compression = best of both.</p>
 </div>
 </section>
 <section>

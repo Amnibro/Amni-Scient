@@ -15,7 +15,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="https://amni-scient.com/research/amnitex-railgun">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","name":"AmniTex Railgun: 16× Compression with Zero Quality Loss","author":{"@type":"Person","name":"Amnibro"},"description":"Proprietary VRAM compression achieving 16× compression ratio with mathematically lossless recovery. 10M+ token context stability. Datacenter-scale ROI analysis.","url":"https://amni-scient.com/research/amnitex-railgun","publisher":{"@type":"Organization","name":"AMNI-SCIENT"},"datePublished":"2026-04-02"}</script>
-<link rel="stylesheet" href="../css/style.css?v=b240">
+<link rel="stylesheet" href="../css/style.css?v=b250">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();reThemeCharts();};})();
@@ -23,7 +23,7 @@
 <style>
 .breadcrumb{font-size:.7rem;letter-spacing:2px;color:var(--dim);margin-bottom:1rem}
 .breadcrumb a{color:var(--accent);text-decoration:none}
-.hero-stat{display:inline-block;background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:.75rem 1.25rem;margin:.25rem;text-align:center}
+.hero-stat{display:inline-block;background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:.75rem 1.25rem;margin:.25rem}
 .hero-stat .val{font-size:1.8rem;font-weight:700;color:var(--accent);display:block}
 .hero-stat .lbl{font-size:.55rem;letter-spacing:2px;color:var(--dim);text-transform:uppercase}
 .hero-cta{display:inline-block;margin-top:2rem;padding:.8rem 2.5rem;background:var(--accent);color:#0a0a0a;font-family:inherit;font-size:.8rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;border-radius:4px;text-decoration:none;transition:opacity .2s}
@@ -31,12 +31,12 @@
 .hero-cta-ghost{display:inline-block;margin-top:2rem;margin-left:1rem;padding:.8rem 2.5rem;border:1px solid var(--accent);color:var(--accent);font-family:inherit;font-size:.8rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;border-radius:4px;text-decoration:none;transition:all .2s}
 .hero-cta-ghost:hover{background:var(--accent);color:#0a0a0a}
 .problem-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.25rem;max-width:900px;margin:2rem auto 0}
-.problem-card{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem;text-align:center}
+.problem-card{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem}
 .problem-card .pc-num{font-size:2rem;font-weight:700;color:#e74c3c;display:block}
 .problem-card .pc-label{font-size:.65rem;letter-spacing:2px;color:var(--dim);text-transform:uppercase;margin-top:.25rem}
 .problem-card .pc-detail{font-size:.8rem;color:var(--text);margin-top:.5rem;line-height:1.5}
 .solution-flow{display:flex;align-items:center;justify-content:center;gap:.75rem;max-width:900px;margin:2.5rem auto;flex-wrap:wrap}
-.solution-step{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.25rem 1.5rem;text-align:center;flex:1;min-width:180px}
+.solution-step{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.25rem 1.5rem;flex:1;min-width:180px}
 .solution-step .ss-num{font-size:1.5rem;font-weight:700;color:var(--accent);display:block}
 .solution-step .ss-title{font-size:.75rem;letter-spacing:2px;color:var(--text);text-transform:uppercase;margin-top:.25rem}
 .solution-step .ss-desc{font-size:.75rem;color:var(--dim);margin-top:.5rem;line-height:1.5;word-break:break-word}
@@ -59,7 +59,7 @@
 .tab-panel{display:none;padding:1.5rem 0}
 .tab-panel.active{display:block}
 .roi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin:1.5rem 0}
-.roi-card{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.25rem;text-align:center}
+.roi-card{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.25rem}
 .roi-card .big{font-size:2rem;font-weight:700;color:var(--accent)}
 .roi-card .sub{font-size:.7rem;color:var(--dim);letter-spacing:1px;text-transform:uppercase;margin-top:.25rem}
 .roi-card .detail{font-size:.75rem;color:var(--text);margin-top:.5rem;line-height:1.5}
@@ -101,24 +101,24 @@
 .cta-btn:hover{opacity:.85}
 .fabric-diagram{display:grid;grid-template-columns:1fr auto 1fr;gap:1.5rem;align-items:center;max-width:800px;margin:2rem auto}
 .fabric-col{display:flex;flex-direction:column;gap:.75rem}
-.fabric-gpu{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:.75rem 1rem;font-size:.75rem;color:var(--text);text-align:center}
+.fabric-gpu{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:.75rem 1rem;font-size:.75rem;color:var(--text)}
 .fabric-gpu .fg-label{font-size:.6rem;letter-spacing:2px;color:var(--dim);text-transform:uppercase;display:block;margin-bottom:.25rem}
 .fabric-center{text-align:center;color:var(--accent);font-size:.7rem;letter-spacing:2px;text-transform:uppercase;line-height:2.2}
-.fabric-ssd{background:linear-gradient(135deg,rgba(0,255,157,.08),rgba(0,255,157,.02));border:1px solid var(--accent);border-radius:6px;padding:.75rem 1rem;font-size:.75rem;color:var(--accent);text-align:center}
+.fabric-ssd{background:linear-gradient(135deg,rgba(0,255,157,.08),rgba(0,255,157,.02));border:1px solid var(--accent);border-radius:6px;padding:.75rem 1rem;font-size:.75rem;color:var(--accent)}
 .fabric-ssd .fg-label{font-size:.6rem;letter-spacing:2px;color:var(--dim);text-transform:uppercase;display:block;margin-bottom:.25rem}
-@media(max-width:768px){.fabric-diagram{grid-template-columns:1fr;text-align:center}}
+@media(max-width:768px){.fabric-diagram{grid-template-columns:1fr}}
 .multiplexing-visual{display:grid;grid-template-columns:1fr auto 1fr;gap:2rem;align-items:center;max-width:800px;margin:2rem auto}
-.mx-card{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem;text-align:center}
+.mx-card{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem}
 .mx-card h4{font-size:.75rem;letter-spacing:2px;color:var(--dim);text-transform:uppercase;margin-bottom:1rem}
 .mx-slot{padding:.4rem .8rem;margin:.3rem 0;border-radius:4px;font-size:.7rem;font-weight:700;letter-spacing:1px}
 .mx-slot.used{background:rgba(231,76,60,.15);border:1px solid #e74c3c;color:#e74c3c}
 .mx-slot.free{background:rgba(102,102,102,.1);border:1px solid var(--border);color:var(--dim)}
 .mx-slot.rg{background:rgba(0,255,157,.1);border:1px solid var(--accent);color:var(--accent)}
-.mx-vs{font-size:1.5rem;color:var(--accent);font-weight:700;text-align:center}
-@media(max-width:768px){.multiplexing-visual{grid-template-columns:1fr;text-align:center}}
+.mx-vs{font-size:1.5rem;color:var(--accent);font-weight:700}
+@media(max-width:768px){.multiplexing-visual{grid-template-columns:1fr}}
 .redacted{background:var(--border);color:var(--border);border-radius:2px;padding:0 .3rem;cursor:help;transition:all .3s;user-select:none;letter-spacing:1px}
 .redacted:hover{color:var(--dim);font-style:italic;background:rgba(255,255,255,.08)}
-.classified-banner{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(231,76,60,.9);color:#fff;text-align:center;font-size:.6rem;letter-spacing:4px;padding:.35rem 0;font-weight:700;text-transform:uppercase;backdrop-filter:blur(4px)}
+.classified-banner{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(231,76,60,.9);color:#fff;font-size:.6rem;letter-spacing:4px;padding:.35rem 0;font-weight:700;text-transform:uppercase;backdrop-filter:blur(4px)}
 .glow-accent{animation:glowPulse 3s ease-in-out infinite}
 @keyframes glowPulse{0%,100%{box-shadow:0 0 5px rgba(0,255,157,.1)}50%{box-shadow:0 0 20px rgba(0,255,157,.3),0 0 40px rgba(0,255,157,.1)}}
 .infinity-stat{font-size:3rem !important;line-height:1;background:linear-gradient(135deg,var(--accent),#2ecc71);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
@@ -134,8 +134,8 @@
 .silicon-pipe .pipe-block.tmu{background:rgba(0,255,157,.1);border:1px solid var(--accent);color:var(--accent)}
 .silicon-pipe .pipe-block.tex{background:rgba(46,204,113,.1);border:1px solid #2ecc71;color:#2ecc71}
 .silicon-pipe .pipe-block.dark{background:rgba(102,102,102,.1);border:1px solid var(--border);color:var(--dim)}
-.silicon-vs{font-size:1.5rem;color:var(--accent);font-weight:700;text-align:center}
-@media(max-width:768px){.silicon-grid{grid-template-columns:1fr;text-align:center}}
+.silicon-vs{font-size:1.5rem;color:var(--accent);font-weight:700}
+@media(max-width:768px){.silicon-grid{grid-template-columns:1fr}}
 .proof-box{background:linear-gradient(135deg,rgba(0,255,157,.04),rgba(0,255,157,.01));border:1px solid var(--accent);border-radius:8px;padding:2rem;max-width:800px;margin:2rem auto;position:relative;overflow:hidden}
 .proof-box::before{content:'EMPIRICALLY VERIFIED';position:absolute;top:.75rem;right:1rem;font-size:.55rem;letter-spacing:3px;color:var(--accent);opacity:.5}
 .proof-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin:1rem 0}
@@ -144,7 +144,7 @@
 .proof-stat .ps-lbl{font-size:.6rem;letter-spacing:2px;color:var(--dim);text-transform:uppercase;margin-top:.25rem}
 .proof-stat .ps-detail{font-size:.7rem;color:var(--text);margin-top:.5rem}
 .evo-flow{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.75rem;max-width:900px;margin:2.5rem auto}
-.evo-step{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.25rem .75rem;text-align:center;position:relative;overflow:hidden}
+.evo-step{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.25rem .75rem;position:relative;overflow:hidden}
 .evo-step .es-num{font-size:1.2rem;font-weight:700;color:var(--accent);display:block}
 .evo-step .es-title{font-size:.6rem;letter-spacing:2px;color:var(--text);text-transform:uppercase;margin-top:.25rem}
 .evo-step .es-desc{font-size:.65rem;color:var(--dim);margin-top:.5rem;line-height:1.4;word-break:break-word}
@@ -152,7 +152,7 @@
 .evo-step:last-child::after{content:''}
 @media(max-width:768px){.evo-step::after{content:'\2193';right:auto;bottom:-.6rem;top:auto;left:50%;transform:translateX(-50%)}}
 .training-comparison{display:grid;grid-template-columns:1fr 1fr;gap:2rem;max-width:800px;margin:2rem auto}
-.training-box{background:var(--panel);border-radius:8px;padding:2rem;text-align:center}
+.training-box{background:var(--panel);border-radius:8px;padding:2rem}
 .training-box.before{border:1px solid #e74c3c}
 .training-box.after{border:1px solid var(--accent)}
 .training-box .tb-val{font-size:2.5rem;font-weight:700;display:block}
@@ -163,7 +163,7 @@
 @media(max-width:768px){.training-comparison{grid-template-columns:1fr}}
 </style>
 </head>
-<body>
+<body class="pp">
 <div class="classified-banner">PROPRIETARY &bull; SELECTIVE DISCLOSURE &bull; FULL DETAILS AVAILABLE UNDER NDA</div>
 <div class="grid-bg"></div>
 <div class="scanlines"></div>
@@ -202,18 +202,18 @@
 <h1 style="font-size:clamp(1.5rem,4vw,2.5rem);line-height:1.2">WHAT IF EVERY GPU IN YOUR<br>DATACENTER HAD <span style="color:var(--accent)">16&times;</span> MORE ROOM?</h1>
 <p class="subtitle" style="margin-top:1rem">AMNITEX RAILGUN &mdash; PROPRIETARY VRAM COMPRESSION</p>
 <p class="tagline" style="max-width:700px;margin:1rem auto 0">A fundamentally new approach to GPU memory management. Keep only a tiny routing index in VRAM. Stream full precision from NVMe on demand. <strong style="color:var(--text)">Mathematically lossless. Infinite context. Training-compatible.</strong></p>
-<div style="margin-top:2rem;text-align:center">
+<div style="margin-top:2rem">
 <div class="hero-stat"><span class="val">16&times;</span><span class="lbl">Compression ratio</span></div>
 <div class="hero-stat glow-accent"><span class="val infinity-stat">&infin;</span><span class="lbl">Context stability &bull; proven</span></div>
 <div class="hero-stat"><span class="val">5&times;</span><span class="lbl">Throughput/watt &bull; <span class="redacted" title="Proprietary">[▓▓▓]</span></span></div>
 <div class="hero-stat"><span class="val">$750M</span><span class="lbl">Saved &bull; 100K GPU cluster</span></div>
 <div class="hero-stat"><span class="val">1.000000</span><span class="lbl">Cosine similarity &bull; lossless</span></div>
 </div>
-<div style="text-align:center;margin-top:2rem">
+<div style="margin-top:2rem">
 <a href="#demo" class="hero-cta">DOWNLOAD DEMO</a>
 <a href="#contact" class="hero-cta-ghost">LICENSING INQUIRY</a>
 </div>
-<div style="text-align:center;margin-top:1.25rem;display:flex;justify-content:center;gap:1rem;flex-wrap:wrap">
+<div style="margin-top:1.25rem;display:flex;justify-content:center;gap:1rem;flex-wrap:wrap">
 <a href="coherence_proof.json" class="hero-cta-ghost" style="font-size:.65rem;padding:.5rem 1.5rem;margin:0" download>COHERENCE PROOF JSON</a>
 </div>
 </section>
@@ -254,7 +254,7 @@
 <!-- ====== THE SOLUTION ====== -->
 <section>
 <h2>THE RAILGUN SOLUTION</h2>
-<div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem;text-align:center">
+<div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
 <p>Railgun doesn&rsquo;t quantize your model. It <strong style="color:var(--text)">reorganizes where the data lives</strong>.</p>
 </div>
 <div class="solution-flow">
@@ -276,7 +276,7 @@
 <span class="ss-desc">Refinement data streams from SSD on demand. Progressive tiers: <span class="redacted" title="Proprietary">[REDACTED]</span> &rarr; <span class="redacted" title="Proprietary">[REDACTED]</span> &rarr; lossless fp16.</span>
 </div>
 </div>
-<div style="max-width:800px;margin:2rem auto 0;text-align:center">
+<div style="max-width:800px;margin:2rem auto 0">
 <div class="results-bar">
 <span class="rb-label">VRAM ROUTING (1-2 bit)</span>
 <span class="rb-bar"><span class="rb-fill" style="width:6.25%;background:var(--accent)"></span></span>
@@ -356,17 +356,17 @@
 </div>
 <div style="max-width:800px;margin:2.5rem auto 0">
 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.25rem">
-<div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem;text-align:center">
+<div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem">
 <span style="font-size:1.6rem;font-weight:700;color:var(--accent);display:block"><span class="redacted" title="Proprietary">[OPERATION A]</span> &rarr; <span class="redacted" title="Proprietary">[OPERATION B]</span></span>
 <span style="font-size:.65rem;letter-spacing:2px;color:var(--dim);margin-top:.25rem;display:block">FUNDAMENTAL OPERATION SHIFT</span>
 <span style="font-size:.8rem;color:var(--text);display:block;margin-top:.75rem;line-height:1.6">Standard: <code style="color:#e74c3c">a &times; b + c</code> (FMA on ALU)<br>Railgun: <code style="color:var(--accent)"><span class="redacted" title="Proprietary">[CLASSIFIED]</span></code></span>
 </div>
-<div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem;text-align:center">
+<div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem">
 <span style="font-size:1.6rem;font-weight:700;color:var(--accent);display:block">0 FLOPs</span>
 <span style="font-size:.65rem;letter-spacing:2px;color:var(--dim);margin-top:.25rem;display:block">MULTIPLICATIONS IN MATMUL</span>
 <span style="font-size:.8rem;color:var(--text);display:block;margin-top:.75rem;line-height:1.6">Matrix-vector multiply becomes <span class="redacted" title="Proprietary">[CLASSIFIED OPERATIONS]</span>. Zero multiplications needed.</span>
 </div>
-<div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem;text-align:center">
+<div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem">
 <span style="font-size:1.6rem;font-weight:700;color:var(--accent);display:block">5&times;</span>
 <span style="font-size:.65rem;letter-spacing:2px;color:var(--dim);margin-top:.25rem;display:block">THROUGHPUT PER WATT</span>
 <span style="font-size:.8rem;color:var(--text);display:block;margin-top:.75rem;line-height:1.6"><span class="redacted" title="Proprietary">[CLASSIFIED PIPELINE FACTORS]</span> = ~5&times; efficiency gain for sparse layers.</span>
@@ -475,17 +475,17 @@ SHARED<br>SSD POOL
 </div>
 <div style="max-width:800px;margin:2rem auto 0">
 <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem">
-<div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.25rem;text-align:center">
+<div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.25rem">
 <span style="font-size:1.5rem;font-weight:700;color:var(--accent);display:block">NO</span>
 <span style="font-size:.65rem;letter-spacing:2px;color:var(--dim)">TENSOR PARALLELISM NEEDED</span>
 <span style="font-size:.75rem;color:var(--text);display:block;margin-top:.5rem">Each GPU has its own routing index. No cross-GPU weight sync.</span>
 </div>
-<div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.25rem;text-align:center">
+<div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.25rem">
 <span style="font-size:1.5rem;font-weight:700;color:var(--accent);display:block">ANY</span>
 <span style="font-size:.65rem;letter-spacing:2px;color:var(--dim)">GPU &harr; ANY SSD BANK</span>
 <span style="font-size:.75rem;color:var(--text);display:block;margin-top:.5rem">NVMe-oF and CXL 3.0 enable fabric-attached SSD pools.</span>
 </div>
-<div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.25rem;text-align:center">
+<div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.25rem">
 <span style="font-size:1.5rem;font-weight:700;color:var(--accent);display:block">10M+</span>
 <span style="font-size:.65rem;letter-spacing:2px;color:var(--dim)">CONTEXT MULTIPLEXED</span>
 <span style="font-size:.75rem;color:var(--text);display:block;margin-top:.5rem">GPU-1 processes tokens 0&ndash;5M, GPU-2 processes 5M&ndash;10M. Parallel.</span>
@@ -537,7 +537,7 @@ SHARED<br>SSD POOL
 <tr class="highlight"><td>70B &times; 10K instances</td><td>20,000</td><td>5,000</td><td class="best">$450M/yr</td><td>10.5 MW</td></tr>
 <tr class="highlight"><td>405B &times; 1K instances</td><td>12,000</td><td>3,000</td><td class="best">$270M/yr</td><td>6.3 MW</td></tr>
 <tr class="highlight"><td>Mixed fleet &mdash; 100K GPUs</td><td>100,000</td><td>25,000</td><td class="best">$2.25B/yr</td><td>52.5 MW</td></tr>
-<tr class="baseline"><td colspan="5" style="text-align:center;font-size:.7rem;padding:1rem">Assumes H100 SXM5 @ $30K, 700W TDP, $0.08/kWh, 3-year depreciation. Railgun licensing cost not included.</td></tr>
+<tr class="baseline"><td colspan="5" style="font-size:.7rem;padding:1rem">Assumes H100 SXM5 @ $30K, 700W TDP, $0.08/kWh, 3-year depreciation. Railgun licensing cost not included.</td></tr>
 </tbody>
 </table>
 </div>
@@ -704,7 +704,7 @@ SHARED<br>SSD POOL
 </div>
 </div>
 <div style="max-width:800px;margin:0 auto;margin-top:2.5rem">
-<h3 style="color:var(--accent);font-size:.85rem;letter-spacing:3px;text-align:center;margin-bottom:1.5rem">THE EVOLUTIONARY TRAINING LOOP</h3>
+<h3 style="color:var(--accent);font-size:.85rem;letter-spacing:3px;margin-bottom:1.5rem">THE EVOLUTIONARY TRAINING LOOP</h3>
 <div class="evo-flow">
 <div class="evo-step"><span class="es-num">1</span><span class="es-title">ENCODE</span><span class="es-desc">Weights &rarr; <span class="redacted" title="Proprietary">[CLASSIFIED]</span></span></div>
 <div class="evo-step"><span class="es-num">2</span><span class="es-title">MUTATE</span><span class="es-desc"><span class="redacted" title="Proprietary">[CLASSIFIED OPERATORS]</span> on <span class="redacted" title="Proprietary">[CLASSIFIED]</span> deltas</span></div>
@@ -735,8 +735,8 @@ SHARED<br>SSD POOL
 <div class="case-stat"><span class="cs-val" style="color:#e74c3c">7.22 GB</span><span class="cs-lbl">DEFICIT</span></div>
 <div class="case-stat"><span class="cs-val" style="color:#e74c3c">OOM</span><span class="cs-lbl">STATUS</span></div>
 </div>
-<p style="text-align:center;margin-top:1rem;color:#e74c3c;font-size:.8rem;font-weight:700;letter-spacing:2px">torch.OutOfMemoryError &mdash; CONFIRMED</p>
-<p style="text-align:center;color:var(--dim);font-size:.75rem;margin-top:.5rem">A 9.65-billion parameter model at fp16 requires 19.31 GB. Consumer GPUs top out at 16 GB. It does not fit. This is the industry problem.</p>
+<p style="margin-top:1rem;color:#e74c3c;font-size:.8rem;font-weight:700;letter-spacing:2px">torch.OutOfMemoryError &mdash; CONFIRMED</p>
+<p style="color:var(--dim);font-size:.75rem;margin-top:.5rem">A 9.65-billion parameter model at fp16 requires 19.31 GB. Consumer GPUs top out at 16 GB. It does not fit. This is the industry problem.</p>
 </div>
 <!-- PROOF 2: RAILGUN MAKES IT FIT -->
 <div class="case-banner" style="max-width:900px;margin-bottom:2rem">
@@ -748,7 +748,7 @@ SHARED<br>SSD POOL
 <div class="case-stat"><span class="cs-val" style="color:var(--accent)">1.21 GB</span><span class="cs-lbl">RAILGUN BINARY</span></div>
 <div class="case-stat"><span class="cs-val">16&times;</span><span class="cs-lbl">COMPRESSION</span></div>
 </div>
-<div style="margin-top:1rem;text-align:center">
+<div style="margin-top:1rem">
 <table class="bench-table" style="font-size:.75rem;max-width:500px;margin:0 auto">
 <thead><tr><th>FORMAT</th><th>VRAM</th><th>vs fp16</th></tr></thead>
 <tbody>
@@ -759,8 +759,8 @@ SHARED<br>SSD POOL
 </tbody>
 </table>
 </div>
-<p style="text-align:center;margin-top:1rem;color:var(--accent);font-size:.8rem;font-weight:700;letter-spacing:2px">ALL 20 SAMPLED TENSORS: BIT-EXACT fp16 ROUNDTRIP</p>
-<p style="text-align:center;color:var(--dim);font-size:.75rem">Decode throughput: 143.5M params/s &bull; Full model decode est: 67s</p>
+<p style="margin-top:1rem;color:var(--accent);font-size:.8rem;font-weight:700;letter-spacing:2px">ALL 20 SAMPLED TENSORS: BIT-EXACT fp16 ROUNDTRIP</p>
+<p style="color:var(--dim);font-size:.75rem">Decode throughput: 143.5M params/s &bull; Full model decode est: 67s</p>
 </div>
 <!-- PROOF 3: ZERO INFERENCE DEGRADATION -->
 <div class="case-banner" style="max-width:900px;margin-bottom:2rem">
@@ -783,7 +783,7 @@ SHARED<br>SSD POOL
 </tbody>
 </table>
 </div>
-<p style="text-align:center;margin-top:1rem;color:var(--accent);font-size:.85rem;font-weight:700;letter-spacing:2px">ALL OUTPUTS BYTE-FOR-BYTE IDENTICAL BEFORE &amp; AFTER FULL-TIER ROUNDTRIP</p>
+<p style="margin-top:1rem;color:var(--accent);font-size:.85rem;font-weight:700;letter-spacing:2px">ALL OUTPUTS BYTE-FOR-BYTE IDENTICAL BEFORE &amp; AFTER FULL-TIER ROUNDTRIP</p>
 </div>
 <!-- PROOF 4: 4x SCALE -->
 <div class="case-banner" style="max-width:900px;margin-bottom:2rem">
@@ -795,8 +795,8 @@ SHARED<br>SSD POOL
 <div class="case-stat"><span class="cs-val" style="color:var(--accent)">4.83 GB</span><span class="cs-lbl">RAILGUN BINARY</span></div>
 <div class="case-stat"><span class="cs-val" style="color:var(--accent)">FITS</span><span class="cs-lbl">GPU ALLOC</span></div>
 </div>
-<p style="text-align:center;margin-top:1rem;color:var(--dim);font-size:.75rem">77.2 GB at fp16 &rarr; 4.83 GB via Railgun Binary. GPU allocation proven on 16 GB card with 9.37 GB headroom remaining.</p>
-<p style="text-align:center;color:var(--accent);font-size:.8rem;font-weight:700;letter-spacing:2px;margin-top:.5rem">10 SAMPLED TENSORS: BIT-EXACT &bullet; DECODE: 141.6M PARAMS/S</p>
+<p style="margin-top:1rem;color:var(--dim);font-size:.75rem">77.2 GB at fp16 &rarr; 4.83 GB via Railgun Binary. GPU allocation proven on 16 GB card with 9.37 GB headroom remaining.</p>
+<p style="color:var(--accent);font-size:.8rem;font-weight:700;letter-spacing:2px;margin-top:.5rem">10 SAMPLED TENSORS: BIT-EXACT &bullet; DECODE: 141.6M PARAMS/S</p>
 </div>
 <!-- PROOF 5: 3x CONCURRENT -->
 <div class="case-banner" style="max-width:900px;margin-bottom:2rem">
@@ -808,8 +808,8 @@ SHARED<br>SSD POOL
 <div class="case-stat"><span class="cs-val" style="color:var(--accent)">3.62 GB</span><span class="cs-lbl">RAILGUN TOTAL</span></div>
 <div class="case-stat"><span class="cs-val">13.3 GB</span><span class="cs-lbl">HEADROOM LEFT</span></div>
 </div>
-<p style="text-align:center;margin-top:1rem;color:var(--dim);font-size:.75rem">Each 9.65B model: 19.31 GB at fp16 &rarr; 1.21 GB via Railgun Binary. Three instances = 3.62 GB. A single consumer GPU runs 3 expert models simultaneously.</p>
-<p style="text-align:center;color:var(--accent);font-size:.8rem;font-weight:700;letter-spacing:2px;margin-top:.5rem">fp16: IMPOSSIBLE &bullet; RAILGUN: 3&times; WITH 13 GB TO SPARE</p>
+<p style="margin-top:1rem;color:var(--dim);font-size:.75rem">Each 9.65B model: 19.31 GB at fp16 &rarr; 1.21 GB via Railgun Binary. Three instances = 3.62 GB. A single consumer GPU runs 3 expert models simultaneously.</p>
+<p style="color:var(--accent);font-size:.8rem;font-weight:700;letter-spacing:2px;margin-top:.5rem">fp16: IMPOSSIBLE &bullet; RAILGUN: 3&times; WITH 13 GB TO SPARE</p>
 </div>
 <!-- PROOF 6: CONTEXT STABILITY -->
 <div class="case-banner" style="max-width:900px;margin-bottom:2rem">
@@ -821,8 +821,8 @@ SHARED<br>SSD POOL
 <div class="case-stat"><span class="cs-val" style="color:var(--accent)">0.0</span><span class="cs-lbl">GF17 MAX ERROR</span></div>
 <div class="case-stat"><span class="cs-val" style="color:#e74c3c">7.85</span><span class="cs-lbl">FP16 MAX ERROR</span></div>
 </div>
-<p style="text-align:center;margin-top:1rem;color:var(--dim);font-size:.75rem">After 20 million multiply-accumulate operations, fp16 cosine similarity collapses to &minus;0.03 (anti-correlated). GF(17) remains bit-exact at CS=1.0 with zero error. At 1M token sequences, fp16 relative error reaches 95.5%.</p>
-<p style="text-align:center;color:var(--accent);font-size:.8rem;font-weight:700;letter-spacing:2px;margin-top:.5rem">GF(17): ALGEBRAICALLY DRIFT-FREE &bullet; FP16: CATASTROPHIC ACCUMULATION</p>
+<p style="margin-top:1rem;color:var(--dim);font-size:.75rem">After 20 million multiply-accumulate operations, fp16 cosine similarity collapses to &minus;0.03 (anti-correlated). GF(17) remains bit-exact at CS=1.0 with zero error. At 1M token sequences, fp16 relative error reaches 95.5%.</p>
+<p style="color:var(--accent);font-size:.8rem;font-weight:700;letter-spacing:2px;margin-top:.5rem">GF(17): ALGEBRAICALLY DRIFT-FREE &bullet; FP16: CATASTROPHIC ACCUMULATION</p>
 </div>
 <!-- PROOF 7: SPEED THROUGHPUT -->
 <div class="case-banner" style="max-width:900px;margin-bottom:2rem">
@@ -834,8 +834,8 @@ SHARED<br>SSD POOL
 <div class="case-stat"><span class="cs-val" style="color:var(--accent)">16&times;</span><span class="cs-lbl">COMPRESSION</span></div>
 <div class="case-stat"><span class="cs-val" style="color:var(--accent)">10/10</span><span class="cs-lbl">BIT-EXACT</span></div>
 </div>
-<p style="text-align:center;margin-top:1rem;color:var(--dim);font-size:.75rem">10 sampled tensors (503M params) from Qwen3.5-9B. Encode: 96.6M params/s, Decode: 121.7M params/s. All 10 tensors bit-exact (CS=1.0, SNR &gt;147 dB). Full model estimated: encode 100s, decode 79s.</p>
-<p style="text-align:center;color:var(--accent);font-size:.8rem;font-weight:700;letter-spacing:2px;margin-top:.5rem">GPU CODEC: 121.7M PARAMS/S DECODE &bullet; ALL BIT-EXACT</p>
+<p style="margin-top:1rem;color:var(--dim);font-size:.75rem">10 sampled tensors (503M params) from Qwen3.5-9B. Encode: 96.6M params/s, Decode: 121.7M params/s. All 10 tensors bit-exact (CS=1.0, SNR &gt;147 dB). Full model estimated: encode 100s, decode 79s.</p>
+<p style="color:var(--accent);font-size:.8rem;font-weight:700;letter-spacing:2px;margin-top:.5rem">GPU CODEC: 121.7M PARAMS/S DECODE &bullet; ALL BIT-EXACT</p>
 </div>
 <!-- PROOF 8: REAL INFERENCE LATENCY -->
 <div class="case-banner" style="max-width:900px;margin-bottom:2rem">
@@ -847,11 +847,11 @@ SHARED<br>SSD POOL
 <div class="case-stat"><span class="cs-val" style="color:var(--accent)">0.99 GB</span><span class="cs-lbl">RAILGUN VRAM</span></div>
 <div class="case-stat"><span class="cs-val" style="color:var(--accent)">7&times;</span><span class="cs-lbl">TTFT SPEEDUP</span></div>
 </div>
-<p style="text-align:center;margin-top:1rem;color:var(--dim);font-size:.75rem">31.74 GB model compressed to 0.99 GB (32&times;). Entire 8.95B model on GPU with ZERO CPU offload. TTFT: 960ms warm vs 7245ms baseline (7.5&times;). Avg latency: 676ms/tok. Baseline required 12/39 layers on CPU due to VRAM limits.</p>
-<p style="text-align:center;color:var(--accent);font-size:.8rem;font-weight:700;letter-spacing:2px;margin-top:.5rem">1.7&times; THROUGHPUT &bullet; 7.5&times; TTFT &bullet; ZERO CPU OFFLOAD</p>
+<p style="margin-top:1rem;color:var(--dim);font-size:.75rem">31.74 GB model compressed to 0.99 GB (32&times;). Entire 8.95B model on GPU with ZERO CPU offload. TTFT: 960ms warm vs 7245ms baseline (7.5&times;). Avg latency: 676ms/tok. Baseline required 12/39 layers on CPU due to VRAM limits.</p>
+<p style="color:var(--accent);font-size:.8rem;font-weight:700;letter-spacing:2px;margin-top:.5rem">1.7&times; THROUGHPUT &bullet; 7.5&times; TTFT &bullet; ZERO CPU OFFLOAD</p>
 </div>
 <!-- DOWNLOAD LINKS -->
-<div style="text-align:center;margin-top:1.5rem">
+<div style="margin-top:1.5rem">
 <p style="color:var(--accent);font-size:.85rem;font-weight:700;letter-spacing:2px;margin-bottom:1rem">8 INDEPENDENT PROOFS &mdash; ALL CLAIMS VERIFIED ON REAL HARDWARE</p>
 <div style="display:flex;justify-content:center;gap:1rem;flex-wrap:wrap">
 <a href="proof_1_fp16_crash.json" class="demo-dl" style="font-size:.65rem;padding:.5rem 1.5rem;background:transparent;border:1px solid var(--accent);color:var(--accent);text-decoration:none" download>PROOF 1: FP16 CRASH</a>
@@ -905,7 +905,7 @@ SHARED<br>SSD POOL
 </ul>
 </div>
 </div>
-<div style="text-align:center;margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--border)">
+<div style="margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--border)">
 <button class="demo-dl" onclick="window.location.href='mailto:amnibro7@gmail.com?subject=Railgun%20Evaluation%20Access%20Request&body=I%20am%20interested%20in%20evaluating%20the%20AmniTex%20Railgun%20compression%20technology.%0A%0AOrganization%3A%20%0AUse%20case%3A%20'">REQUEST EVALUATION ACCESS</button>
 <div style="display:flex;justify-content:center;gap:1rem;margin-top:1rem;flex-wrap:wrap">
 <a href="proof_2_railgun_9b.json" class="demo-dl" style="background:transparent;border:1px solid var(--accent);color:var(--accent);text-decoration:none;font-size:.7rem;padding:.5rem 1.5rem" download>DOWNLOAD 9B PROOF (JSON)</a>
@@ -937,7 +937,7 @@ SHARED<br>SSD POOL
 </section>
 
 <!-- ====== FOOTER ====== -->
-<footer style="max-width:800px;margin:3rem auto;padding:2rem;text-align:center;border-top:1px solid var(--border)">
+<footer style="max-width:800px;margin:3rem auto;padding:2rem;border-top:1px solid var(--border)">
 <p style="color:var(--dim);font-size:.75rem;letter-spacing:1px;line-height:2">
 AMNI-SCIENT &copy; 2026 &bull; Reffelt, A. <em>AmniTex Railgun: Proprietary VRAM Compression Technology.</em><br>
 <a href="../research.html" style="color:var(--accent)">BACK TO RESEARCH</a> &bull; <a href="mailto:amnibro7@gmail.com" style="color:var(--accent)">CONTACT</a>

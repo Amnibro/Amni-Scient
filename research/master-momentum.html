@@ -15,7 +15,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="https://amni-scient.com/research/master-momentum">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"ScholarlyArticle","name":"Master Momentum Equation","author":{"@type":"Person","name":"Amnibro"},"description":"A 12-equation closed PDE system achieving complete Navier-Stokes turbulence closure.","url":"https://amni-scient.com/research/master-momentum","publisher":{"@type":"Organization","name":"AMNI-SCIENT"},"datePublished":"2025","dateModified":"2026"}</script>
-<link rel="stylesheet" href="../css/style.css?v=b240">
+<link rel="stylesheet" href="../css/style.css?v=b250">
 <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 <script>
@@ -34,7 +34,7 @@
 .breadcrumb a{color:var(--accent);text-decoration:none}
 .dep-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.75rem}
 .dep-table th{text-align:left;color:var(--accent);font-size:.65rem;letter-spacing:1px;padding:.4rem;border-bottom:1px solid var(--border)}
-.dep-table td{color:var(--dim);padding:.4rem;border-bottom:1px solid rgba(255,255,255,.05);text-align:center}
+.dep-table td{color:var(--dim);padding:.4rem;border-bottom:1px solid rgba(255,255,255,.05)}
 .dep-table td:first-child{text-align:left;color:var(--text)}
 .dep-table .used{color:var(--accent);font-weight:700}
 .viz-section{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem;margin:1.5rem 0}
@@ -51,7 +51,7 @@
 .proof-stage p{color:var(--dim);font-size:.85rem;line-height:1.7;margin-bottom:.75rem}
 .proof-stage .eq-block{margin:.75rem 0}
 .proof-chain{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:.5rem;margin:2rem 0}
-.proof-chain .pc-node{background:var(--panel);border:1px solid var(--accent);border-radius:6px;padding:.5rem 1rem;color:var(--accent);font-size:.65rem;letter-spacing:1px;text-align:center}
+.proof-chain .pc-node{background:var(--panel);border:1px solid var(--accent);border-radius:6px;padding:.5rem 1rem;color:var(--accent);font-size:.65rem;letter-spacing:1px}
 .proof-chain .pc-arrow{color:var(--accent);font-size:1.2rem}
 .theorem-box{background:rgba(0,255,157,.05);border:2px solid var(--accent);border-radius:8px;padding:2rem;margin:2rem 0}
 .theorem-box h4{color:var(--accent);font-size:.85rem;letter-spacing:2px;margin-bottom:1rem}
@@ -61,7 +61,7 @@
 .proof-status.partial{background:rgba(255,200,50,.15);color:#ffc832;border:1px solid #ffc832}
 </style>
 </head>
-<body>
+<body class="pp">
 <div class="grid-bg"></div>
 <div class="scanlines"></div>
 <nav>
@@ -103,7 +103,7 @@
 <div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
 <p>The <strong style="color:var(--text)">Master Momentum Equation</strong> is the culmination of the Reffelt framework: a closed system of 12 coupled equations that fully determine the evolution of momentum in a resistance field. Unlike the standard Navier-Stokes equations (which require external turbulence models like RANS or LES), this system achieves <strong style="color:var(--text)">internal closure</strong> &mdash; every variable is defined by other variables within the system.</p>
 <p style="margin-top:1.2rem">The system builds from primitive observables (velocity, mass, curvature) through intermediate constructions (PID forcing, smoothness, turbulent kinetic energy) to a k-&epsilon; turbulence model that feeds back into a dynamic resistance field. The final equation (Eq. 12) is a modified Navier-Stokes momentum equation with all terms internally resolved.</p>
-<div style="margin-top:2rem;text-align:center;">
+<div style="margin-top:2rem;">
 <a href="millennium_sim/index.html" style="display:inline-block;background:var(--accent);color:var(--bg);padding:1rem 2rem;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.85rem;letter-spacing:2px;text-decoration:none;font-weight:bold;transition:transform 0.2s,box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 4px 15px rgba(var(--accent-rgb,100,200,255),0.4)'" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='none'">LAUNCH INTERACTIVE SIMULATION &rarr;</a>
 </div>
 </div>
@@ -301,7 +301,7 @@ $$\frac{dv}{dt} = \frac{F_{\text{PID}}}{m} + v\frac{\partial v}{\partial p} - s 
 <div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
 <p>The 12-equation system above is not merely a computational tool &mdash; it admits a <strong style="color:var(--text)">rigorous proof of global regularity</strong>. Because the eddy viscosity &nu;<sub>t</sub> is a closed-form function of the system's own variables (smoothness s and velocity v), the effective viscosity grows with enstrophy fast enough to prevent finite-time blow-up.</p>
 <p style="margin-top:1rem">The proof proceeds in six stages, from establishing the parameter manifold geometry through Bakry-&Eacute;mery curvature analysis, optimal transport theory (Wasserstein-Ricci framework), and a supercritical energy inequality to the final global continuation argument.</p>
-<div style="margin-top:2rem;text-align:center;">
+<div style="margin-top:2rem;">
 <a href="millennium_sim/navier-stokes-proof.html" style="display:inline-block;background:var(--accent);color:var(--bg);padding:1rem 2rem;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.85rem;letter-spacing:2px;text-decoration:none;font-weight:bold;transition:transform 0.2s,box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 4px 15px rgba(var(--accent-rgb,100,200,255),0.4)'" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='none'">VIEW INTERACTIVE PROOF &rarr;</a>
 </div>
 </div>
@@ -439,7 +439,7 @@ $$\sup_{t \geq 0} \|\nabla v(t)\|_{L^2}^2 < \infty$$
 <h4 style="color:var(--accent);font-size:.75rem;letter-spacing:2px;margin-bottom:1rem">SCOPE &amp; DISTINCTION</h4>
 <p style="color:var(--dim);font-size:.85rem;line-height:1.7">This result proves regularity for the <strong style="color:var(--text)">Master Momentum system</strong> (variable &nu;<sub>t</sub>), not the classical constant-viscosity Navier-Stokes equations (which remain a Millennium Prize Problem). The critical difference is that the Master system&rsquo;s eddy viscosity grows with |v|, providing the extra dissipation that prevents blow-up &mdash; a mechanism absent in the constant-&nu; case.</p>
 <p style="color:var(--dim);font-size:.85rem;line-height:1.7;margin-top:.75rem">The full derivation with step-by-step algebra, interactive 3D manifold visualization, and numerical verification is available in the interactive proof page.</p>
-<div style="margin-top:1.5rem;text-align:center">
+<div style="margin-top:1.5rem">
 <a href="millennium_sim/navier-stokes-proof.html" style="display:inline-block;background:transparent;color:var(--accent);padding:.75rem 1.5rem;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.75rem;letter-spacing:2px;text-decoration:none;font-weight:bold;border:1px solid var(--accent);transition:all 0.2s;" onmouseover="this.style.background='var(--accent)';this.style.color='var(--bg)'" onmouseout="this.style.background='transparent';this.style.color='var(--accent)'">FULL INTERACTIVE PROOF &rarr;</a>
 <a href="millennium_sim/curvature_proof.html" style="display:inline-block;background:transparent;color:var(--accent);padding:.75rem 1.5rem;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.75rem;letter-spacing:2px;text-decoration:none;font-weight:bold;border:1px solid var(--accent);transition:all 0.2s;margin-left:.75rem" onmouseover="this.style.background='var(--accent)';this.style.color='var(--bg)'" onmouseout="this.style.background='transparent';this.style.color='var(--accent)'">CURVATURE EXPLORER &rarr;</a>
 </div>
