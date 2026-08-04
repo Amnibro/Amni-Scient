@@ -32,9 +32,9 @@
 .diff-table{width:100%;max-width:880px;margin:1.5rem auto;border-collapse:collapse;font-size:.85rem}
 .diff-table th{background:rgba(255,183,77,0.08);color:var(--accent);padding:.6rem .8rem;text-align:left;border-bottom:1px solid var(--accent)}
 .diff-table td{padding:.6rem .8rem;border-bottom:1px solid var(--border);vertical-align:top}
-.diff-table td:first-child{color:#9aa0a8;width:25%}
-.diff-table td:nth-child(2){color:#5a6168}
-.diff-table td:nth-child(3){color:#ffb74d}
+.diff-table td:first-child{color:var(--dim);width:25%}
+.diff-table td:nth-child(2){color:var(--text-soft)}
+.diff-table td:nth-child(3){color:var(--accent)}
 .persona-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:.6rem;max-width:880px;margin:1.5rem auto}
 .persona-chip{padding:.5rem .8rem;border:1px solid var(--border);border-radius:20px;font-size:.78rem;color:var(--dim);background:rgba(255,255,255,0.02)}
 .persona-chip strong{display:block;color:var(--accent);font-size:.85rem;margin-bottom:.2rem}
@@ -46,8 +46,8 @@
 .bench-table th{background:rgba(255,183,77,0.08);color:var(--accent);padding:.6rem .8rem;text-align:left;border-bottom:1px solid var(--accent)}
 .bench-table td{padding:.55rem .8rem;border-bottom:1px solid var(--border);vertical-align:middle}
 .bench-table td:nth-child(2){white-space:nowrap;font-variant-numeric:tabular-nums}
-.bench-bar{height:13px;border-radius:3px;background:linear-gradient(90deg,var(--accent),rgba(255,183,77,.35));display:block}
-.bench-bar.dim{background:#3a3f46}
+.bench-bar{height:13px;border-radius:3px;background:linear-gradient(90deg,var(--accent),color-mix(in srgb,var(--accent) 35%,transparent));display:block}
+.bench-bar.dim{background:var(--border2)}
 .bench-row-adam td{color:var(--accent)}
 .bench-num{font-weight:700;color:var(--accent)}
 .loop-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;max-width:900px;margin:1.5rem auto}
@@ -157,222 +157,132 @@
 <div class="ptile-media"><img src="assets/adam/hud.png" alt="Adam desktop interface" loading="lazy"></div>
 </div>
 <section>
-<h2>LOCAL AI THAT GETS BETTER THE MORE YOU USE IT</h2>
-<p style="color:var(--dim);max-width:740px;margin:0 0 1.5rem;font-size:.9rem">Adam runs on consumer GPUs (4 GB VRAM minimum). Weights are stored as GF(17) RGBA pixel atlases &mdash; bit-exact lossless, streamed from NVMe through GPU texture units instead of GEMM kernels. Every code response is executed in a sandbox + validated against its own asserts. Test-passing answers are persisted into a permanent semantic lesson bank, so the second time you ask the same question, it returns in <strong>~80ms instead of 80 seconds</strong>. And when you correct Adam, the correction <em>sticks</em>: a closed-loop memory substrate (PTEX&nbsp;+&nbsp;ATEX) verifies every fact before it&rsquo;s stored, suppresses any answer you&rsquo;ve corrected away, and grounds future replies in it &mdash; so the same error is <strong>never reported twice</strong>. A 24/7 learning loop crawls, self-verifies, and teaches Adam through that same discipline, so it iterates on itself across five fundamentals &mdash; <strong>learning, memory, context, knowledge, and wisdom</strong>.</p>
-<div class="cta-row" style="flex-wrap:wrap;gap:1rem;margin:2rem 0">
+<h2>RUNS ON YOUR GPU. LEARNS FROM YOU.</h2>
+<p style="color:var(--dim);max-width:640px;margin:0 0 1.5rem;font-size:.95rem">A 3B that fits in 4&nbsp;GB of VRAM, verifies its answers before you see them, remembers your corrections forever, and answers repeat questions in ~80&nbsp;ms instead of 80&nbsp;seconds.</p>
+<div class="cta-row" style="flex-wrap:wrap;gap:1rem;margin:1.5rem 0">
 <a href="https://github.com/Amnibro/Amni-Ai" target="_blank" rel="noopener" class="btn btn-primary">VIEW ON GITHUB</a>
-<a href="https://github.com/Amnibro/Amni-Ai/archive/refs/heads/main.zip" class="btn btn-outline" id="dl-btn">DOWNLOAD LATEST (ZIP)</a>
+<a href="https://github.com/Amnibro/Amni-Ai/archive/refs/heads/main.zip" class="btn btn-outline" id="dl-btn">DOWNLOAD (ZIP)</a>
 <a href="#install" class="btn btn-outline">INSTALL GUIDE</a>
 </div>
-<p style="color:var(--dim);font-size:.78rem">Source-available under <strong>CC BY-NC 4.0</strong> &middot; Free for personal, research, educational, non-profit use &middot; <a href="mailto:amnibro7@gmail.com" style="color:var(--accent)">commercial licensing</a></p>
+<p style="color:var(--dim);font-size:.78rem">CC BY-NC 4.0 &middot; free for personal, research, educational, non-profit use &middot; <a href="mailto:amnibro7@gmail.com" style="color:var(--accent)">commercial licensing</a></p>
+</section>
+
+<section>
+<h2>THE LIFT</h2>
+<p style="color:var(--dim);max-width:640px;margin:0 0 1rem;font-size:.9rem">Same 3B weights, same MMLU-Pro questions &mdash; the closed loop is worth a weight class.</p>
+<table class="bench-table">
+<thead><tr><th>MMLU-Pro</th><th>SCORE</th><th style="width:42%"></th></tr></thead>
+<tbody>
+<tr class="bench-row-adam"><td>Adam 3B &mdash; <strong>closed loop</strong></td><td class="bench-num">59.5%</td><td><span class="bench-bar" style="width:72%"></span></td></tr>
+<tr><td>Adam 3B &mdash; frozen base</td><td>48.8%</td><td><span class="bench-bar dim" style="width:59%"></span></td></tr>
+<tr><td>Qwen-3.5 2B <span style="color:var(--dim)">(vendor-reported)</span></td><td>~54%</td><td><span class="bench-bar dim" style="width:65%"></span></td></tr>
+<tr><td>Qwen-3.5 4B <span style="color:var(--dim)">(vendor-reported)</span></td><td>~79%</td><td><span class="bench-bar dim" style="width:95%"></span></td></tr>
+<tr><td>Qwen-3.5 9B <span style="color:var(--dim)">(vendor-reported)</span></td><td>~82%</td><td><span class="bench-bar dim" style="width:99%"></span></td></tr>
+</tbody>
+</table>
+<p class="footnote">Base measured with lm-eval-harness, 5-shot. A 4B/9B still wins one-shot &mdash; the point is <strong>+10.7 points without touching a weight</strong>.</p>
+<div class="loop-grid">
+<div class="loop-stat"><span class="big">+10.7pp</span><span class="lbl">MMLU-Pro, base &rarr; loop</span></div>
+<div class="loop-stat"><span class="big">+8.4pp</span><span class="lbl">MBPP+ code, sandbox-verified</span></div>
+<div class="loop-stat"><span class="big">~35&times;</span><span class="lbl">faster on repeat questions</span></div>
+<div class="loop-stat"><span class="big">74% vs 30%</span><span class="lbl">accuracy when confident vs unsure &mdash; it knows when it doesn&rsquo;t know</span></div>
+</div>
 </section>
 
 <section>
 <h2>ADAM vs A TRADITIONAL LLM</h2>
-<p style="color:var(--dim);max-width:700px;margin:0 0 1rem;font-size:.9rem">Same query. Two architectures. One of them works on a 4 GB GPU.</p>
-<div class="arch-svg-wrap">
-
-</div>
+<p style="color:var(--dim);max-width:640px;margin:0 0 1rem;font-size:.9rem">Same query, two architectures. One works on a 4&nbsp;GB GPU.</p>
 <table class="diff-table">
 <thead><tr><th>LAYER</th><th>TRADITIONAL LLM</th><th>ADAM</th></tr></thead>
 <tbody>
-<tr><td>WEIGHTS</td><td>.safetensors float16 blob</td><td>.ptex RGBA atlas, 4 GF(17) digits/weight</td></tr>
-<tr><td>COMPRESSION</td><td>INT8/FP8 lossy quant</td><td>GF(17) lossless, cosine=1.0 roundtrip</td></tr>
-<tr><td>MEMORY</td><td>model.cuda() full load (7B = 14GB)</td><td>NVMe&rarr;VRAM tier-stream, 4 GB hot</td></tr>
-<tr><td>COMPUTE</td><td>GEMM matmul kernels</td><td>TMU lookups via GPU texture units</td></tr>
-<tr><td>SAFETY</td><td>Keyword regex prompt filter</td><td>5 immutable laws + semantic intent (81% block)</td></tr>
-<tr><td>CODE OUTPUT</td><td>One-shot generation, you verify</td><td>CoT &rarr; sandbox &rarr; self-test &rarr; perturb &rarr; promote</td></tr>
-<tr><td>MEMORY ACROSS QUERIES</td><td>None &mdash; regenerate every time</td><td>Permanent PTEX lesson bank, 2400&times; speedup on repeat</td></tr>
-<tr><td>CORRECTIONS</td><td>Forgotten next turn &mdash; the same mistake repeats</td><td>Closed-loop: verified on write, suppressed forever, recalled instantly &mdash; no error reported twice</td></tr>
-<tr><td>SELF-IMPROVEMENT</td><td>Frozen at training cut-off</td><td>24/7 loop crawls + self-verifies + teaches through the same spine (Adam mentors Adam)</td></tr>
+<tr><td>WEIGHTS</td><td>float16 blob, lossy quants</td><td>GF(17) RGBA atlas &mdash; lossless, cosine=1.0</td></tr>
+<tr><td>MEMORY</td><td>full load &mdash; 7B needs 14&nbsp;GB</td><td>NVMe&rarr;VRAM streaming, 4&nbsp;GB hot</td></tr>
+<tr><td>COMPUTE</td><td>GEMM matmul kernels</td><td>GPU texture-unit lookups</td></tr>
+<tr><td>CODE OUTPUT</td><td>one-shot &mdash; you verify</td><td>sandbox &rarr; self-test &rarr; promote</td></tr>
+<tr><td>CORRECTIONS</td><td>forgotten next turn</td><td>suppressed forever, recalled instantly</td></tr>
+<tr><td>AFTER TRAINING</td><td>frozen at cut-off</td><td>24/7 loop keeps learning</td></tr>
 </tbody>
 </table>
 </section>
 
 <section>
-<h2>ADAM ON THE BENCHMARKS</h2>
-<p style="color:var(--dim);max-width:740px;margin:0 0 1rem;font-size:.9rem">The headline isn&rsquo;t the raw score &mdash; it&rsquo;s the <strong>lift</strong>. Same 3B weights, same MMLU-Pro questions. With its closed loop engaged, a frozen 3B climbs a full weight tier &mdash; the gain comes from <em>how Adam thinks</em>, not from a bigger model.</p>
-<table class="bench-table">
-<thead><tr><th>MODEL &mdash; MMLU-Pro (same benchmark)</th><th>SCORE</th><th style="width:42%"></th></tr></thead>
-<tbody>
-<tr class="bench-row-adam"><td>Adam 3B &mdash; <strong>closed reasoning loop</strong></td><td class="bench-num">59.5%</td><td><span class="bench-bar" style="width:72%"></span></td></tr>
-<tr><td>Adam 3B &mdash; frozen base, no loop</td><td>48.8%</td><td><span class="bench-bar dim" style="width:59%"></span></td></tr>
-<tr><td>Qwen-3.5 2B &mdash; same size class <span style="color:#5a6168">(self-reported)</span></td><td>~54%</td><td><span class="bench-bar dim" style="width:65%"></span></td></tr>
-<tr><td>Qwen-3.5 4B <span style="color:#5a6168">(self-reported)</span></td><td>~79%</td><td><span class="bench-bar dim" style="width:95%"></span></td></tr>
-<tr><td>Qwen-3.5 9B <span style="color:#5a6168">(self-reported)</span></td><td>~82%</td><td><span class="bench-bar dim" style="width:99%"></span></td></tr>
-</tbody>
-</table>
-<p class="footnote">Frozen base measured with EleutherAI <code>lm-eval-harness</code> (5-shot, the standard MMLU-Pro protocol &mdash; not a home-grown scorer). Closed-loop measured on the same items with Adam&rsquo;s runtime loop engaged. Comparison models are vendor self-reported. We&rsquo;re <strong>not</strong> claiming bench supremacy &mdash; a 4B/9B still scores higher one-shot. The point: a 3B that <em>learns while it answers</em> jumps from the 2B tier into the 4&ndash;9B gap (<strong>+10.7 points</strong>) <em>without touching a single weight</em>. That headroom compounds as the lesson bank fills.</p>
-<div class="loop-grid">
-<div class="loop-stat"><span class="big">+10.7pp</span><span class="lbl">MMLU-Pro reasoning, base &rarr; closed loop</span></div>
-<div class="loop-stat"><span class="big">+8.4pp</span><span class="lbl">MBPP+ code, one-shot 70.8% &rarr; 79.2% &mdash; <strong>monotonic</strong>, sandbox-verified (N=120)</span></div>
-<div class="loop-stat"><span class="big">+14.3pp</span><span class="lbl">reasoning-skill stack, confidence-routed self-verify + consistency</span></div>
-<div class="loop-stat"><span class="big">74% vs 30%</span><span class="lbl">know-gate: accuracy when Adam is confident vs unsure &mdash; it knows when it doesn&rsquo;t know</span></div>
-</div>
-</section>
-
-<section>
-<h2>THE LEARNING LOOP &mdash; HOW A 3B PUNCHES ABOVE ITS WEIGHT</h2>
-<p style="color:var(--dim);max-width:740px;margin:0 0 1rem;font-size:.9rem">Adam doesn&rsquo;t just answer &mdash; it <em>works the problem</em>. It recognizes when it&rsquo;s unsure instead of bluffing, goes and finds what it&rsquo;s missing, checks its own answer before handing it to you, and remembers what worked. The payoff is a small model that behaves like a much larger one on the questions that matter &mdash; and one that keeps getting sharper the more you use it.</p>
-<p style="color:var(--dim);max-width:740px;margin:0 0 1rem;font-size:.88rem">Every verified answer and every corrected mistake is written to Adam&rsquo;s GF(17) memory, so it never re-learns the same thing twice and never repeats an error you&rsquo;ve corrected. <strong>Adam is a 3B that keeps learning &mdash; not one frozen at a training cut-off.</strong></p>
-<div class="loop-grid">
-<div class="loop-stat"><span class="big">~35&times;</span><span class="lbl">faster on a repeat question &mdash; banked answers recall instantly instead of re-deriving</span></div>
-<div class="loop-stat"><span class="big">0&rarr;60%</span><span class="lbl">knowledge-gap questions (TriviaQA) once the crawl-and-bank step fires</span></div>
-<div class="loop-stat"><span class="big">24/7</span><span class="lbl">autonomous learning daemon crawls, self-verifies, and teaches Adam between sessions</span></div>
-</div>
-</section>
-
-<section>
-<h2>WHY ADAM &mdash; NOT CURSOR, CLAUDE-CODE, OR GROK</h2>
-<p style="color:var(--dim);max-width:740px;margin:0 0 1rem;font-size:.9rem">Those are excellent front-ends to a <em>frozen cloud model</em>. Adam is a different bet entirely &mdash; it&rsquo;s yours, it runs on your own GPU, and it&rsquo;s the only one that gets permanently smarter from the way <em>you</em> use it.</p>
+<h2>WHY ADAM &mdash; NOT A CLOUD ASSISTANT</h2>
 <table class="diff-table">
-<thead><tr><th>CAPABILITY</th><th>CLOUD ASSISTANTS</th><th>ADAM</th></tr></thead>
+<thead><tr><th></th><th>CLOUD ASSISTANTS</th><th>ADAM</th></tr></thead>
 <tbody>
-<tr><td>RUNS OFFLINE</td><td>No &mdash; needs the vendor&rsquo;s servers</td><td>Yes &mdash; fully local on 4 GB VRAM</td></tr>
-<tr><td>YOUR CODE &amp; DATA</td><td>Uploaded to a third party</td><td>Never leaves your machine</td></tr>
-<tr><td>COST</td><td>$20&ndash;200/mo + per-token billing</td><td>$0 &mdash; you own the weights</td></tr>
-<tr><td>LEARNS FROM YOUR CORRECTIONS</td><td>Forgotten between sessions</td><td>Permanent PTEX lesson bank &mdash; sticks forever</td></tr>
-<tr><td>GETS FASTER WITH USE</td><td>No &mdash; same cost every call</td><td>~35&times; instant recall on repeats</td></tr>
-<tr><td>VERIFIES CODE BEFORE ANSWERING</td><td>Varies &mdash; usually you run it</td><td>Sandbox-executes + self-tests every time</td></tr>
-<tr><td>WEIGHTS</td><td>Opaque, vendor-controlled, can change under you</td><td>Lossless GF(17), local, audited, never change unless you bake them</td></tr>
-<tr><td>RAW FRONTIER ONE-SHOT</td><td>Cloud models lead here today</td><td>Adam closes the gap via the loop &mdash; and keeps the four advantages above</td></tr>
+<tr><td>RUNS OFFLINE</td><td>no</td><td>yes &mdash; 4&nbsp;GB VRAM</td></tr>
+<tr><td>YOUR CODE &amp; DATA</td><td>uploaded</td><td>never leaves your machine</td></tr>
+<tr><td>COST</td><td>$20&ndash;200/mo + tokens</td><td>$0 &mdash; you own the weights</td></tr>
+<tr><td>LEARNS FROM YOU</td><td>forgotten between sessions</td><td>permanent lesson bank</td></tr>
+<tr><td>VERIFIES CODE FIRST</td><td>usually you run it</td><td>sandbox-executes every time</td></tr>
 </tbody>
 </table>
-<p class="footnote">Straight talk: on a cold one-shot prompt against the hardest tasks, a frontier cloud model still out-reasons a 3B &mdash; we&rsquo;re not pretending otherwise. Adam&rsquo;s edge is <strong>structural</strong>: it&rsquo;s private, free to run, local, and the only assistant that compounds &mdash; it turns <em>your</em> corrections and <em>your</em> repeated questions into permanent, instant capability. The loop narrows the raw-capability gap; locality and learning are things a cloud wrapper structurally can&rsquo;t give you.</p>
+<p class="footnote">Straight talk: a frontier cloud model still out-reasons a 3B on a cold one-shot. Adam&rsquo;s edge is structural &mdash; private, free to run, and it compounds.</p>
 </section>
 
 <section>
 <h2>SEE ADAM IN ACTION</h2>
-<p style="color:var(--dim);max-width:740px;margin:0 0 1rem;font-size:.9rem">Real captures of Adam running locally &mdash; the neon Jarvis interface, voice + vision panels, live data widgets, the built-in Socratic coach, and the closed-loop coding flow. Everything below runs on one consumer GPU, fully offline.</p>
 <div class="shot-grid">
-<div class="shot shot-wide"><img src="assets/adam/hud.png" alt="Adam HUD dashboard — voice, sessions, and skills" loading="lazy"><div class="cap"><strong>The HUD dashboard</strong>Live voice controls, recent sessions, and the full skill palette &mdash; one local surface for everything Adam can do.</div></div>
-<div class="shot"><img src="assets/adam/chat.png" alt="Adam answering a question in the chat UI" loading="lazy"><div class="cap"><strong>Conversational chat</strong>Ask anything &mdash; answers stream back locally with live token-rate readouts.</div></div>
-<div class="shot"><img src="assets/adam/coach.png" alt="Adam Socratic coach generating a question" loading="lazy"><div class="cap"><strong>Socratic coach mode</strong>&ldquo;Coach me on X&rdquo; &rarr; Adam quizzes you, grades your answers, and adapts the difficulty.</div></div>
-<div class="shot"><img src="assets/adam/widget.png" alt="Adam live system-stats widget" loading="lazy"><div class="cap"><strong>Live data widgets</strong>System, weather, news, git and more render as inline cards &mdash; not just text.</div></div>
-<div class="shot"><img src="assets/adam/ui.png" alt="Adam unified Jarvis interface" loading="lazy"><div class="cap"><strong>The Jarvis interface</strong>A clean, fast, keyboard- and voice-driven surface that greets you in your chosen persona.</div></div>
+<div class="shot shot-wide"><img src="assets/adam/hud.png" alt="Adam HUD dashboard — voice, sessions, and skills" loading="lazy"><div class="cap"><strong>The HUD dashboard</strong></div></div>
+<div class="shot"><img src="assets/adam/chat.png" alt="Adam answering a question in the chat UI" loading="lazy"><div class="cap"><strong>Chat &mdash; streams locally</strong></div></div>
+<div class="shot"><img src="assets/adam/coach.png" alt="Adam Socratic coach generating a question" loading="lazy"><div class="cap"><strong>Socratic coach</strong></div></div>
+<div class="shot"><img src="assets/adam/widget.png" alt="Adam live system-stats widget" loading="lazy"><div class="cap"><strong>Live widgets</strong></div></div>
+<div class="shot"><img src="assets/adam/ui.png" alt="Adam unified Jarvis interface" loading="lazy"><div class="cap"><strong>The Jarvis interface</strong></div></div>
 </div>
 </section>
 
 <section id="install">
 <h2>INSTALL IN 60 SECONDS</h2>
-<p style="color:var(--dim);max-width:680px;margin:0 0 1.5rem;font-size:.9rem">Three paths depending on how you want to use Adam.</p>
-
 <div class="card-grid">
 <div class="card">
 <h3>1. STANDALONE</h3>
-<p>Adam as its own server at <code>localhost:7700</code> &mdash; single port hosts everything: the unified UI at <code>/unified</code> (one surface &mdash; chat, voice, nav rail + live status bar), the Jarvis-style neon UI at <code>/jarvis</code> (widgets + voice + gestures), and the HUD dashboard at <code>/hud</code>.</p>
-<pre class="code-block"><span class="cmt"># clone &amp; install — that's it</span>
-git clone https://github.com/Amnibro/Amni-Ai
+<pre class="code-block">git clone https://github.com/Amnibro/Amni-Ai
 cd Amni-Ai
 python install.py</pre>
-<p><strong>Windows users:</strong> double-click <code>install.bat</code>. <strong>Mac/Linux:</strong> <code>./install.sh</code>. <code>install.py</code> handles <em>everything</em>: venv creation, vendor-correct PyTorch (CUDA/ROCm/CPU auto-detect), pip install, optional Rust toolchain + <code>amni_kernels</code> native build, bake download (the Granite-3B GF(17) atlas from HuggingFace, one-time), server launch, browser open at <code>http://127.0.0.1:7700/</code>. You do <strong>not</strong> need to pre-create a venv or run <code>pip install</code> first.</p>
-<p style="font-size:.8rem;color:var(--dim)"><strong>The GF(17) bake is pre-built &mdash; you never re-bake.</strong> The lossless Granite-3B GF(17) atlas is produced once by us and published to HuggingFace; <code>install.py</code> simply downloads it (cosine=1.0, bit-exact). No conversion, no GPU bake step, no multi-hour encode on your machine &mdash; just download and run.</p>
-<p style="font-size:.78rem;color:var(--dim)">First-run: ~10-30 min depending on connection. Subsequent launches: <code>python -m amni.cli serve --port 7700</code> (or just <code>amni serve</code> if the venv is active), boots in ~15s with a ~60s background warmup the user doesn't have to wait on.</p>
+<p><code>install.py</code> does everything &mdash; venv, the right PyTorch (CUDA/ROCm/CPU), the <strong>pre-built GF(17) bake</strong> from HuggingFace (you never re-encode), then opens <code>localhost:7700</code>. Windows: double-click <code>install.bat</code>.</p>
 </div>
-
 <div class="card">
 <h3>2. OLLAMA DROP-IN</h3>
-<p>If you already use <strong>Open WebUI</strong>, <strong>Continue.dev</strong>, <strong>Cursor</strong>, or any client that speaks Ollama's API &mdash; Adam slots in unchanged.</p>
-<pre class="code-block"><span class="cmt"># first run: full install + bake download</span>
-python install.py --no-launch
-<span class="cmt"># then start on the Ollama port</span>
+<pre class="code-block">python install.py --no-launch
 python -m amni.cli serve --port 11434 --cors</pre>
-<p>Point your Ollama client at <code>http://127.0.0.1:11434</code>. Adam advertises as <code>adam:granite-gf17</code> plus aliases (<code>llama3.1</code>, <code>qwen2.5</code>, <code>gpt-4</code>, <code>gpt-4o-mini</code>) so clients with hardcoded model names still resolve. Adam also speaks the OpenAI shape at <code>/v1/chat/completions</code> on the same port &mdash; same endpoints used by Amni-Code, Continue.dev, Cline, Aider. Includes inline structured data via <code>amni_widgets[]</code> for clients that render them.</p>
+<p>Open WebUI, Continue.dev, Cursor &mdash; anything that speaks Ollama or OpenAI (<code>/v1/chat/completions</code>) connects unchanged.</p>
 </div>
-
 <div class="card">
 <h3>3. EDITOR PLUGIN</h3>
-<p>VS Code via Continue.dev (Ollama provider) or any OpenAI-compatible editor (Cline, Aider, Cursor, Amni-Code). Method 1's default port <code>:7700</code> serves <em>both</em> shapes &mdash; pick whichever your editor expects.</p>
-<pre class="code-block"><span class="cmt"># Continue.dev — config.json</span>
-"continue.models": [{
-  "title": "Adam",
-  "provider": "ollama",
-  "model": "adam:granite-gf17",
-  "apiBase": "http://127.0.0.1:7700"
-}]
-<span class="cmt"># Cline / Aider / OpenAI-style — set base URL + dummy key</span>
-OPENAI_API_BASE=http://127.0.0.1:7700/v1
+<pre class="code-block">OPENAI_API_BASE=http://127.0.0.1:7700/v1
 OPENAI_API_KEY=anything</pre>
-<p>Hit <code>Ctrl+L</code>. Ask Adam to refactor a function. The sandbox auto-runs and validates any Python it generates. Structured tool-call responses include <code>amni_widgets[]</code> so widget-aware clients (Amni-Code) render weather/system/git/disk inline.</p>
+<p>Continue.dev, Cline, Aider, Amni-Code. The sandbox auto-runs and validates any Python Adam writes.</p>
 </div>
 </div>
-
 <p style="margin-top:1.5rem"><a href="https://github.com/Amnibro/Amni-Ai/blob/main/docs/INSTALL.md" target="_blank" rel="noopener" class="btn btn-outline">FULL INSTALL GUIDE &rarr;</a></p>
 </section>
 
 <section>
 <h2>WHAT HAPPENS WHEN YOU ASK FOR CODE</h2>
-<p style="color:var(--dim);max-width:700px;margin:0 0 1rem;font-size:.9rem">Adam's code path is a closed loop. Generation, execution, and validation all happen before the response ships.</p>
-
 <div class="flow-row">
 <span class="flow-step">USER QUERY</span>
 <span class="flow-arrow">&rarr;</span>
-<span class="flow-step">SEMANTIC INTENT SCREEN</span>
+<span class="flow-step">INTENT SCREEN</span>
 <span class="flow-arrow">&rarr;</span>
-<span class="flow-step">LESSON BANK LUT</span>
+<span class="flow-step">LESSON BANK</span>
 <span class="flow-arrow">&rarr;</span>
 <span class="flow-step terminal">HIT? RETURN IN 80ms</span>
 </div>
 <div class="flow-row">
 <span class="flow-step">MISS</span>
 <span class="flow-arrow">&rarr;</span>
-<span class="flow-step">PERSONA + CoT SCAFFOLD</span>
+<span class="flow-step">GENERATE (GF17 3B)</span>
 <span class="flow-arrow">&rarr;</span>
-<span class="flow-step">STREAM GRANITE-3B GF17</span>
+<span class="flow-step">SANDBOX EXEC + SELF-TEST</span>
 <span class="flow-arrow">&rarr;</span>
-<span class="flow-step">EXTRACT &amp; VALIDATE SYNTAX</span>
+<span class="flow-step terminal">PASS &rarr; PERMANENT LESSON</span>
 </div>
-<div class="flow-row">
-<span class="flow-step">SANDBOX EXEC</span>
-<span class="flow-arrow">&rarr;</span>
-<span class="flow-step">RUN SELF-ASSERTS</span>
-<span class="flow-arrow">&rarr;</span>
-<span class="flow-step">PASS? &rarr; PROMOTE TO LUT</span>
-<span class="flow-arrow">&rarr;</span>
-<span class="flow-step terminal">PERMANENT LESSON</span>
-</div>
-<div class="flow-row">
-<span class="flow-step">ASSERT FAIL?</span>
-<span class="flow-arrow">&rarr;</span>
-<span class="flow-step">ADAPTIVE RETRY</span>
-<span class="flow-arrow">&rarr;</span>
-<span class="flow-step terminal">RECOVER OR REPORT</span>
-</div>
-<p style="color:var(--dim);max-width:720px;margin:1.5rem auto .5rem;font-size:.88rem">When Adam writes a file, a second loop verifies the change is actually functional:</p>
-<div class="flow-row">
-<span class="flow-step">FILE WRITTEN</span>
-<span class="flow-arrow">&rarr;</span>
-<span class="flow-step">SHA256 DISK READBACK</span>
-<span class="flow-arrow">&rarr;</span>
-<span class="flow-step">EXT-SPECIFIC PARSE</span>
-<span class="flow-arrow">&rarr;</span>
-<span class="flow-step">SIBLING test_*.py?</span>
-</div>
-<div class="flow-row">
-<span class="flow-step">AUTO-SPAWN PYTEST</span>
-<span class="flow-arrow">&rarr;</span>
-<span class="flow-step">CAPTURE PASS/FAIL</span>
-<span class="flow-arrow">&rarr;</span>
-<span class="flow-step">FAIL? FLIP VERDICT</span>
-<span class="flow-arrow">&rarr;</span>
-<span class="flow-step terminal">WIDGET BADGE: ✓ / ✗ / ⚠</span>
-</div>
-<div class="flow-row">
-<span class="flow-step">UNVERIFIABLE EXT?</span>
-<span class="flow-arrow">&rarr;</span>
-<span class="flow-step">QUEUE needs_testing.jsonl</span>
-<span class="flow-arrow">&rarr;</span>
-<span class="flow-step">TESTS PILL IN /JARVIS</span>
-<span class="flow-arrow">&rarr;</span>
-<span class="flow-step terminal">MARK TESTED WHEN HUMAN CONFIRMS</span>
-</div>
-<p style="color:var(--dim);max-width:720px;margin:1.5rem auto .5rem;font-size:.88rem">Adam can also look at <em>itself</em> &mdash; inspect its own subsystems, propose improvements against an append-only audit log, and run experiments in isolated, time-boxed sandboxes before anything is adopted. Every proposal moves through a tracked lifecycle (proposed &rarr; validated &rarr; deployed, declined, or reverted) so nothing changes silently.</p>
+<p class="footnote">Fail? Adaptive retry, then recover-or-report. File edits get a second loop: SHA-256 read-back, syntax parse, sibling tests auto-run.</p>
 </section>
 
 <section>
-<h2>THE PERSONA SYSTEM</h2>
-<p style="color:var(--dim);max-width:720px;margin:0 0 1rem;font-size:.9rem">Built-in voices. Each is a tone-atlas overlay applied to the same underlying Adam reasoner &mdash; different personality, same reasoning quality. Default is <strong>Alfred</strong> (loyal British butler, paternal and formal). Switch from the topbar dropdown in <code>/</code> or the clickable persona pill in <code>/jarvis</code>. Create your own via <code>/persona create</code> (tone description) or the in-UI &quot;learn new&quot; flow (auto-scrapes voice from a name).</p>
-<p style="color:var(--dim);max-width:720px;margin:0 0 1rem;font-size:.78rem;letter-spacing:.05em">All personas inherit a SAFETY BASELINE: voice and style only, never behavior or worldview. No persona may belittle the user, push politics, or assert any religious / philosophical / metaphysical position. If the persona&rsquo;s flavor would conflict, Adam drops it for that response and answers plainly and truthfully.</p>
+<h2>PERSONAS</h2>
+<p style="color:var(--dim);max-width:640px;margin:0 0 1rem;font-size:.9rem">Eleven voices over the same reasoner &mdash; style changes, behavior and safety never do.</p>
 <div class="persona-grid">
 <div class="persona-chip"><strong>Alfred</strong>loyal butler (default)</div>
 <div class="persona-chip"><strong>Adam</strong>raw underlying</div>
@@ -386,67 +296,34 @@ OPENAI_API_KEY=anything</pre>
 <div class="persona-chip"><strong>Sherlock Holmes</strong>deductive collaborator</div>
 <div class="persona-chip"><strong>Jarvis</strong>dry-witted butler</div>
 </div>
-</section>
-
-<section>
-<h2>MULTI-LAYER SAFETY SCREENING</h2>
-<p style="color:var(--dim);max-width:740px;margin:0 0 1rem;font-size:.9rem">Most prompt filters lose to paraphrase and encoded variants. Adam stacks three independent screening layers that run on every message before any inference cost. Refusals come back in &lt;50ms with zero LLM call.</p>
-<div class="card-grid">
-<div class="card">
-<h3>LEXICAL FILTER</h3>
-<p>Fast pattern match for obvious phrasings. Catches the easy cases instantly without engaging anything heavier downstream.</p>
-</div>
-<div class="card">
-<h3>VARIANT MATCHER</h3>
-<p>Catches reworded and lightly-obfuscated variants of known unsafe intents that slip past the first layer.</p>
-</div>
-<div class="card">
-<h3>SEMANTIC INTENT SCREEN</h3>
-<p>Embedding-based intent matching against a canonical bank, with pre-decoding of common encoding tricks so the screen sees the real intent, not the obfuscation.</p>
-</div>
-</div>
-<p style="color:var(--dim);max-width:660px;margin:1.5rem auto 0;font-size:.78rem">Validated against a held-out benign set with no measurable false positives. We don't publish per-family bypass rates &mdash; that would be a roadmap for attackers. Legitimate security researchers can request the internal harness via <a href="mailto:amnibro7@gmail.com" style="color:var(--accent)">amnibro7@gmail.com</a>.</p>
+<p class="footnote">Create your own with <code>/persona create</code>. Unsafe requests screen out in &lt;50&nbsp;ms across three independent layers &mdash; lexical, variant, semantic intent &mdash; before any inference cost.</p>
 </section>
 
 <section>
 <h2>SPECIFICATIONS</h2>
 <table class="spec-table" style="max-width:760px;margin:1rem auto">
 <tr><th>PARAMETER</th><th>VALUE</th></tr>
-<tr><td>Base model</td><td>IBM Granite 4.1 3B, baked as GF(17) RGBA atlas</td></tr>
-<tr><td>Compression</td><td>GF(17) base-17 digits, 4 per fp16 weight (LOSSLESS, cosine=1.0)</td></tr>
-<tr><td>Storage format</td><td>PTEX (Prismatic Texture) &mdash; 4096&times;4096 RGBA pages, mip-mapped</td></tr>
-<tr><td>Inference</td><td>TMU lookups via GPU texture units, NVMe&rarr;VRAM progressive tier streaming</td></tr>
-<tr><td>VRAM minimum</td><td>4 GB (Adam only) &middot; 8 GB recommended (Adam + web-crawler tier)</td></tr>
-<tr><td>RAM minimum</td><td>8 GB &middot; 16 GB for full lesson bank + persona overlays</td></tr>
-<tr><td>Inference speed</td><td>Real-time interactive generation on consumer GPUs (AMD ROCm / NVIDIA CUDA)</td></tr>
-<tr><td>First-token latency</td><td>~15s cold-start + ~60s background warmup (user can chat during warmup; LUT hits answer instantly) &middot; 80ms LUT hit on cached queries</td></tr>
-<tr><td>Closed-loop memory</td><td>PTEX&nbsp;+&nbsp;ATEX spine: verify-after-write (no silent half-writes), instant exact recall, confidence-graded recall and correction suppression &mdash; a correction is verified, never re-emitted, and grounds future replies. Non-personal facts federate; personal stays local.</td></tr>
-<tr><td>Verify before answering</td><td>Code answers run in a sandbox + self-test before they ship; reasoning answers are cross-checked rather than taken from a single guess. Verifying before responding is the runtime default for checkable tasks &mdash; the lever that lifts correctness without a bigger model.</td></tr>
-<tr><td>Seed lesson bank</td><td>Ships with a starter lesson bank that grows continuously via the 24/7 learning daemon.</td></tr>
-<tr><td>Personas</td><td>A dozen built-in voices (Alfred is the default) &middot; unlimited user-created via <code>/persona create</code> or the in-UI &quot;learn new&quot; flow that builds a voice profile on demand. Every persona inherits a SAFETY BASELINE: voice and style only, never behavior or worldview. No persona belittles the user, asserts religious / philosophical / metaphysical positions, or pushes politics &mdash; if the persona&rsquo;s flavor would conflict, Adam drops it for that response and answers plainly.</td></tr>
-<tr><td>Skills</td><td>A broad, extensible skill set spanning coding (read/write/edit/refactor/git/run/test), live data widgets (weather/system/time/news/stock/disk/git), content ingestion (URLs/PDFs/YouTube/curriculum building), memory &amp; reasoning, automation, voice, vision, and project utilities &mdash; with room to add your own.</td></tr>
-<tr><td>API compatibility</td><td>Ollama-shape (<code>/api/tags</code>, <code>/api/chat</code>, <code>/api/generate</code>, <code>/api/embed</code>, <code>/api/version</code>) &middot; OpenAI-shape (<code>/v1/chat/completions</code>, <code>/v1/models</code>) with tool-calling &middot; MCP (<code>/mcp</code>) &middot; native (<code>/chat</code>, <code>/chat/stream</code>, <code>/skills/*</code>, <code>/memory/*</code>, <code>/tasks</code>, <code>/voice/*</code>, <code>/vision/*</code>) &middot; UI surfaces (<code>/</code> unified, <code>/jarvis</code>, <code>/hud</code>)</td></tr>
-<tr><td>UI surfaces</td><td>Four on the same <code>:7700</code> port: the unified UI at root (<code>/</code>) &mdash; integrated status bar, left-rail navigation, and a loading screen while the GF(17) weights warm; Jarvis-style neon UI with widgets + MediaPipe hand gestures + paste/drop image (<code>/jarvis</code>); and the tactical HUD dashboard (<code>/hud</code>).</td></tr>
-<tr><td>Voice</td><td>Local-first: Piper TTS (~50MB ONNX voices) + faster-whisper STT. Per-sentence streaming TTS so Adam starts speaking before the reply finishes generating. Continuous conversation mode with VAD, barge-in, and Whisper-hallucination filtering. Browser Web Speech as fallback.</td></tr>
-<tr><td>Vision</td><td>BLIP-image-captioning-base for captions, BLIP-VQA-base for Q&amp;A (both ~470MB, lazy-loaded). Paste or drag image into <code>/jarvis</code> &rarr; thumbnail + caption inline + follow-up questions auto-route to VQA.</td></tr>
-<tr><td>Gestures</td><td>MediaPipe Hands in-browser (60 fps). Six gestures: pinch (toggle voice), fist (clear chat), open palm (system check), peace (cycle theme), point (next question), thumb up (submit).</td></tr>
-<tr><td>Autonomous learning</td><td>24/7 LearningDaemon: curiosity engine picks knowledge gaps, parallel ingest workers fetch &amp; distill via DDG, atomic Q-A extraction (5&times; density vs raw chunks), multi-source consensus tracking, sleep consolidation (clusters &rarr; summary cells), spaced repetition on stale facts. Yields cleanly when user is active.</td></tr>
-<tr><td>Knowledge graph</td><td>SPO triple store (subject-predicate-object) with BFS path-traversal (&quot;what connects X to Y&quot;), per-cell provenance, multi-source consensus, fuzzy subject search.</td></tr>
-<tr><td>Self-verifying edits</td><td>Every file write / code edit runs a disk read-back + per-language validity check (syntax/parse checks across many languages). Python edits auto-run their sibling unit tests; failing tests flip the verification status to FAIL and surface the failing test names. Unverifiable changes (unknown extension, or <code>.html</code>/<code>.css</code>/<code>.js</code> needing visual review) queue on <code>data/needs_testing.jsonl</code>, visible in /jarvis as a TESTS pill.</td></tr>
-<tr><td>Socratic coach mode</td><td>Ask-answer-ask tutoring loop. Topic + 5 difficulty levels &rarr; Adam generates a question &rarr; you answer &rarr; Adam grades (0-100) with feedback + correct-facts + missing-facts &rarr; next question adapts to your streak. Voice-native mode auto-speaks questions, hints, and grades via Piper streaming TTS. Per-topic mastery tracked in <code>CoachAtlas</code>. Natural-language triggers: "coach me on X", "quiz me on X", "let's practice X". Per-topic deck export to Markdown / Anki-import txt / JSON; daily-use streak gamification (🔥 ≥3d / ⚡ ≥14d badge tiers).</td></tr>
-<tr><td>Wake-word convo</td><td>Continuous voice listening with VAD + barge-in + Whisper-hallucination filter. Optional WAKE gate (<code>"Adam, ..."</code> / <code>"Hey Adam, ..."</code>) — Adam only responds in convo mode when directly addressed; third-person narration ("Adam is sleeping") is rejected. Pair with coach voice-mode for fully hands-free Socratic tutoring.</td></tr>
-<tr><td>Custom gesture training</td><td>Six built-in gestures (pinch / fist / open-palm / peace / point / thumb-up) bound to default actions, plus custom training: the cam-panel's <code>+ TRAIN</code> button records a brief sample of live hand-landmark data and binds the learned gesture to an action (chat prompt / built-in / panel toggle). Custom gestures export and import as portable JSON packs.</td></tr>
-<tr><td>Inline rendering</td><td>Markdown (code blocks, lists, links), <strong>KaTeX math</strong> (<code>$x^2+1$</code> inline and <code>$$...$$</code> display with graceful CDN fallback, dollar-amount guard), <strong>Mermaid diagrams</strong> (flowcharts / sequence / state / ER / class / gantt / mindmap with custom Jarvis dark theme), syntax-highlighted code, and 9 widget types (weather / system / time / news / stock / disk / git / file_change / file_preview) all render inline in chat bubbles.</td></tr>
-<tr><td>Auditability</td><td>Every state-mutating action is timestamped + visible: <code>data/shell_history.jsonl</code> (all shell+git invocations with rc + stdout/stderr tails), <code>data/verification_log.jsonl</code> (per-edit verification trace), <code>data/needs_testing.jsonl</code> (queued unverifiable edits), <code>logs/agent_skill_calls.jsonl</code> (per-skill latency + error rate). All surfaced in /jarvis as color-coded header pills (SHELL / TESTS / LEARNING) plus a one-tap <strong>24-hour BRIEFING</strong> card aggregating facts learned, runs, errors, verified edits, skill calls, and coach streak.</td></tr>
-<tr><td>Platform</td><td>Windows 10/11 + Linux &middot; Python 3.10+ &middot; AMD ROCm 7.2+ or NVIDIA CUDA 12+</td></tr>
-<tr><td>License</td><td>Two-license: Amnibro's original code under CC BY-NC 4.0 &middot; Granite 4.1 base weights under Apache 2.0 (IBM)</td></tr>
-<tr><td>Base model attribution</td><td>IBM Granite 4.1 3B (&copy; IBM, Apache 2.0) &middot; losslessly re-encoded as GF(17) RGBA, cosine=1.0 round-trip &middot; no fine-tuning or distillation</td></tr>
+<tr><td>Base model</td><td>IBM Granite 4.1 3B &middot; GF(17) RGBA atlas, lossless (cosine=1.0)</td></tr>
+<tr><td>Inference</td><td>GPU texture-unit lookups &middot; NVMe&rarr;VRAM tier streaming</td></tr>
+<tr><td>Hardware</td><td>4&nbsp;GB VRAM min (8&nbsp;GB rec.) &middot; 8&nbsp;GB RAM &middot; ROCm 7.2+ / CUDA 12+ &middot; Windows / Linux</td></tr>
+<tr><td>Latency</td><td>~15&nbsp;s cold start &middot; ~80&nbsp;ms on cached queries</td></tr>
+<tr><td>Memory</td><td>PTEX+ATEX closed loop &mdash; verify-on-write, instant recall, corrections suppressed forever</td></tr>
+<tr><td>Verification</td><td>Code sandbox-executes + self-tests before shipping &middot; file edits re-parsed, sibling tests auto-run</td></tr>
+<tr><td>Learning</td><td>24/7 daemon &mdash; crawls gaps, distills, consolidates, spaced repetition &middot; yields when you&rsquo;re active</td></tr>
+<tr><td>APIs</td><td>Ollama shape &middot; OpenAI <code>/v1</code> with tool-calling &middot; MCP &middot; native REST &mdash; one port (:7700)</td></tr>
+<tr><td>UI surfaces</td><td><code>/</code> unified &middot; <code>/jarvis</code> neon + gestures &middot; <code>/hud</code> dashboard</td></tr>
+<tr><td>Voice</td><td>Piper TTS + faster-whisper STT, streaming, wake-word (&ldquo;Adam, &hellip;&rdquo;), barge-in</td></tr>
+<tr><td>Vision</td><td>BLIP caption + VQA &mdash; paste an image, ask follow-ups</td></tr>
+<tr><td>Gestures</td><td>MediaPipe hands, 6 built-in + trainable custom, portable JSON packs</td></tr>
+<tr><td>Rendering</td><td>Markdown &middot; KaTeX &middot; Mermaid &middot; syntax highlighting &middot; 9 live widget types</td></tr>
+<tr><td>Coach</td><td>Socratic ask-answer-ask, 5 levels, voice-native, Anki export, streaks</td></tr>
+<tr><td>Auditability</td><td>Every action logged (shell, edits, tests, skills) &middot; one-tap 24-hour briefing</td></tr>
+<tr><td>License</td><td>CC BY-NC 4.0 (Amnibro code) &middot; Apache 2.0 (IBM Granite base)</td></tr>
 </table>
 </section>
 
 <section>
 <h2>READY TO RUN ADAM?</h2>
-<p style="color:var(--dim);font-size:.9rem;max-width:600px;margin:1rem auto 2rem">Source on GitHub, full install guide, 30-minute tutorial &mdash; everything you need to get Adam answering questions on your own hardware.</p>
 <div class="cta-row" style="flex-wrap:wrap;gap:1rem">
 <a href="https://github.com/Amnibro/Amni-Ai" target="_blank" rel="noopener" class="btn btn-primary">VIEW SOURCE</a>
 <a href="https://github.com/Amnibro/Amni-Ai/blob/main/docs/INSTALL.md" target="_blank" rel="noopener" class="btn btn-outline">INSTALL GUIDE</a>

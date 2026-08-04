@@ -1,3 +1,14 @@
+## 2026-08-04 — v1.17.3 Amni-AI page: 3,275 words -> 1,017, visuals lead
+
+Review: "amni-ai is a good example of WAY too much text and not enough visuals/straightforward
+charts." Rebuilt the body: every section is now a chart, table, screenshot grid, flow strip,
+or stat tiles with a one-line caption. The MMLU-Pro bar chart leads ("THE LIFT"), the two
+comparison tables trimmed to their sharpest 5-6 rows, the install cards cut to command + one
+line, the file-verify flow + persona/safety essays compressed into footnote lines and the spec
+table, and the spec table's paragraph-cells cut to one-line values. No numbers changed — every
+stat on the page was already there. Table/bar colors made theme-aware (hardcoded #ffb74d ->
+var(--accent)) so the Adam column is legible in light. 12 sections -> 10.
+
 ## 2026-08-04 — v1.17.2 Bio correction: Anthony Reffelt, mechanical engineer + LinkedIn
 
 - v1.17.1 wrote "electrochemical engineer" — wrong. Anthony is a **mechanical engineer**
