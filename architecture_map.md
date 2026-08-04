@@ -1,3 +1,18 @@
+## 2026-08-04 — v1.18.1 Module app polish: brand type in the tools themselves
+
+- Five module apps moved off the all-mono terminal look onto the brand type system, keeping
+  mono where it earns its place (inputs, values, code) and their own accent identities:
+  - **calc app** (calc/index.html): --font -> Archivo/Segoe UI Variable Text; new --mono for
+    inputs/outputs/code; radii 8/9/999px -> 3px; tabular numerals on body; tracked labels.
+  - **construct hub**: base type -> sans (--sans), mono kept for prices/numbers; radii 12/13
+    -> 4px, pills -> 3px.
+  - **amni-llm loader**: sans UI + mono for logs/stats; radii unified.
+  - **prayer app**: UI chrome 'Segoe UI' -> Archivo stack (Georgia verse serif untouched —
+    that is content, not chrome).
+  - **golf**: --font -> Archivo stack.
+  All five load the self-hosted Archivo face via /assets/fonts (absolute path works from any
+  depth). Headless-verified: calc disclaimer + construct hub render in brand type.
+
 ## 2026-08-04 — v1.18.0 User-feedback pass: density, framed media, calculators up front
 
 External user feedback: "Scaling feels way off — can't get enough information on-screen.

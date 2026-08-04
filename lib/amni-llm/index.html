@@ -9,8 +9,10 @@
 <link rel="canonical" href="https://amni-scient.com/lib/amni-llm/">
 <script src="./coi-register.js"></script>
 <style>
+@font-face{font-family:Archivo;font-style:normal;font-weight:100 900;font-stretch:62% 125%;font-display:swap;src:url(/assets/fonts/archivo-var.woff2) format('woff2')}
+
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#0a0a0a;--panel:#111;--panel2:#161616;--border:#1f1f1f;--accent:#7cf;--accent2:#a8f;--text:#e0e0e0;--dim:#888;--ok:#5d6;--warn:#fa3;--err:#f55;--font:'JetBrains Mono','SF Mono',Consolas,monospace}
+:root{--bg:#0a0a0a;--panel:#111;--panel2:#161616;--border:#1f1f1f;--accent:#7cf;--accent2:#a8f;--text:#e0e0e0;--dim:#888;--ok:#5d6;--warn:#fa3;--err:#f55;--font:"Archivo","Segoe UI Variable Text","Segoe UI",system-ui,sans-serif;--mono:'JetBrains Mono','SF Mono',Consolas,monospace}
 body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14px;line-height:1.55;min-height:100vh}
 a{color:var(--accent)}
 header{padding:1.4rem 1.5rem 1rem;border-bottom:1px solid var(--border);background:var(--panel)}
@@ -18,7 +20,7 @@ header h1{font-size:1.4rem;font-weight:700;letter-spacing:2px;color:var(--accent
 header h1 span{color:var(--dim);font-weight:400}
 header .sub{color:var(--dim);font-size:.78rem;margin-top:.3rem}
 .wrap{max-width:1100px;margin:0 auto;padding:1.4rem 1.5rem}
-.card{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:1rem 1.2rem;margin-bottom:1rem}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:1rem 1.2rem;margin-bottom:1rem}
 .card h2{color:var(--accent);font-size:.95rem;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:.7rem}
 .card h3{color:var(--text);font-size:.82rem;letter-spacing:1px;text-transform:uppercase;margin:.7rem 0 .4rem}
 .row{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center}
@@ -47,7 +49,7 @@ button:disabled{opacity:.4;cursor:not-allowed}
 .msg.system{background:rgba(255,170,50,0.08);border-left:3px solid var(--warn);font-size:.76rem;color:var(--dim)}
 .composer{display:flex;gap:.5rem;margin-top:.6rem}
 .composer textarea{flex:1;min-height:60px;resize:vertical}
-.tag{display:inline-block;padding:2px 7px;border-radius:999px;background:rgba(124,200,255,0.1);color:var(--accent);font-size:.62rem;letter-spacing:.5px;text-transform:uppercase;margin-right:3px}
+.tag{display:inline-block;padding:2px 7px;border-radius:3px;background:rgba(124,200,255,0.1);color:var(--accent);font-size:.62rem;letter-spacing:.5px;text-transform:uppercase;margin-right:3px}
 .tag.tier-mobile{background:rgba(93,229,160,0.1);color:#5de5a0}
 .tag.tier-balanced{background:rgba(124,200,255,0.1);color:var(--accent)}
 .tag.tier-reasoning{background:rgba(168,140,255,0.1);color:var(--accent2)}
@@ -73,6 +75,7 @@ button:disabled{opacity:.4;cursor:not-allowed}
 pre{background:var(--panel2);color:var(--text);padding:.7rem .9rem;border-radius:4px;overflow-x:auto;font-size:.78rem;line-height:1.5;border:1px solid var(--border)}
 code{background:var(--panel2);color:var(--accent);padding:1px 5px;border-radius:2px;font-size:.78rem}
 footer{padding:1.5rem;text-align:center;color:var(--dim);font-size:.7rem;border-top:1px solid var(--border);margin-top:2rem}
+input,select,textarea,pre,code,.log,.stat{font-family:var(--mono)}
 </style>
 </head>
 <body>
