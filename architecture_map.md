@@ -1,3 +1,35 @@
+## 2026-08-04 — v1.13.0 Split tiles, wider grid, Braid film overhaul
+
+Follow-up on v1.12.0 from review: "overlapping text with images-with-text is cluttering,
+layout not fully using the space, braid video needs an overhaul to better showcase the
+product and the animated logo."
+
+- **Tiles: overlay -> split.** Text over UI screenshots was text-on-text. `section.tile` is now
+  a two-column grid — copy column (43%, tinted radial wash, vertically centred) and a media
+  column filling its half edge-to-edge — alternating via `.right` (order swap). The scrims are
+  gone entirely, media runs unfiltered, and copy inherits theme colours, so tiles now read
+  correctly in light mode too (light copy panel against the dark media half). Mobile stacks
+  media (16/10) above copy — no overlay anywhere. `.tile-body` renamed `.tile-copy`;
+  `tile-push` softened 1.09→1.
+- **Wider grid.** Masthead, directory, creed, sec-heads 1180 -> 1420; `section.wide` 1480;
+  wordmark cap raised to 12.4rem. Tiles are full-bleed by construction.
+- **Braid page: the film is now the centrepiece.** Hero is full-viewport so the animated braid
+  mark (enlarged to min(780px,92vw)) presents as the identity moment, with a scroll cue to
+  #film. The film section became a full-width cinema band (#060709, stays dark in light theme):
+  left-aligned header row, the 16:9 player, and a numbered chapter rail docked to its right —
+  eight `01–08` rows with title + timestamp that seek on click and track playback via
+  `aria-current` (inset accent bar). Under 1000px the rail becomes a horizontal scroll strip.
+  Same buttons, same data-t/JS contract, VideoObject Clip markup untouched.
+- **Animated braid divider.** The braidSVG generator now also renders any `.braid-hr` host —
+  a thin three-strand flowing braid sits above GET BRAID. Reduced-motion already freezes it
+  (`.bflow{animation:none}`).
+- **Homepage braid loop clamped to the good part.** The tile video seeks to 4s on metadata and
+  wraps at 47s, so the background loop always shows the product, never the title/end cards.
+- Cache re-key b200 -> b210 via exact-string replace (124 files; the regex approach is retired).
+  Verified: dark+light, 1440 + 390 (proper mobile emulation — the earlier 390 "resize" was
+  clamped to 500 by the window minimum and hid nothing), chapter seek + aria-current live,
+  zero console errors/warnings on index and braid. Backups `backups/v1.13.0_split_tiles/`.
+
 ## 2026-08-04 — v1.12.0 Site identity: own typeface, full-bleed product tiles, mojibake fix
 
 Brief: mojibake on /braid, and "the site screams made by AI — I want a top-tier look, nice

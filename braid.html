@@ -22,18 +22,24 @@
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Braid","url":"https://amni-scient.com/braid","description":"A multi-model round table. Ask once and Claude, Grok, Gemini and a local model each answer, reading the answers before them. Runs on your existing subscriptions or your own API keys.","applicationCategory":"DeveloperApplication","operatingSystem":"Windows","offers":{"@type":"Offer","price":"10.00","priceCurrency":"USD","category":"subscription","availability":"https://schema.org/InStock"},"author":{"@type":"Organization","name":"AMNI-SCIENT","legalName":"Amniscient, LLC","url":"https://amni-scient.com"},"image":"https://amni-scient.com/assets/braid/braid-og.jpg?v=2"}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoObject","name":"Braid demo - a real multi-AI session, captured live","description":"Real screen recording of Braid: one question to the round table, then a tour of views, Flows presets, loop modes and per-seat permissions, then an adversarial round where the seats hunt real flaws in their own committed design. Nothing staged.","thumbnailUrl":"https://amni-scient.com/assets/braid/braid-poster.jpg?v=9","contentUrl":"https://amni-scient.com/assets/braid/braid-usage.mp4?v=8","uploadDate":"2026-07-30","duration":"PT51S","inLanguage":"en","isFamilyFriendly":true,"publisher":{"@type":"Organization","name":"Amniscient, LLC","url":"https://amni-scient.com/"},"caption":{"@type":"MediaObject","contentUrl":"https://amni-scient.com/assets/braid/braid-captions.vtt?v=1","encodingFormat":"text/vtt"},"hasPart":[{"@type":"Clip","name":"Every AI you already pay for","startOffset":0,"endOffset":4,"url":"https://amni-scient.com/braid#t=0"},{"@type":"Clip","name":"Ask once - every seat answers","startOffset":4,"endOffset":15,"url":"https://amni-scient.com/braid#t=4"},{"@type":"Clip","name":"Three views: side by side, stacked, one thread","startOffset":15,"endOffset":22,"url":"https://amni-scient.com/braid#t=15"},{"@type":"Clip","name":"Flows - presets that set who answers whom","startOffset":22,"endOffset":25,"url":"https://amni-scient.com/braid#t=22"},{"@type":"Clip","name":"Loops - once, N laps, or run to a goal","startOffset":25,"endOffset":29,"url":"https://amni-scient.com/braid#t=25"},{"@type":"Clip","name":"Permissions - what each seat sees and touches","startOffset":29,"endOffset":34,"url":"https://amni-scient.com/braid#t=29"},{"@type":"Clip","name":"Adversarial round - builders vs attackers","startOffset":34,"endOffset":47,"url":"https://amni-scient.com/braid#t=34"},{"@type":"Clip","name":"Open beta - $10/mo","startOffset":47,"endOffset":51,"url":"https://amni-scient.com/braid#t=47"}],"potentialAction":{"@type":"SeekToAction","target":"https://amni-scient.com/braid#t={seek_to_second_number}","startOffset-input":"required name=seek_to_second_number"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Can I chat with Claude, Grok and Gemini at the same time?","acceptedAnswer":{"@type":"Answer","text":"Yes. Braid sends one question to every connected seat at once. You can view the answers side by side in columns, or sequentially where each model reads the answers before it and builds on them."}},{"@type":"Question","name":"Do I need API keys, or does Braid charge for AI usage?","acceptedAnswer":{"@type":"Answer","text":"Neither is required. Braid drives the CLI tools you are already signed into (Claude, Grok, Gemini), so a seat costs whatever your existing subscription costs. You can also bring pay-as-you-go API keys or a local model. Braid never meters or resells tokens."}},{"@type":"Question","name":"Can the AIs see each other's answers?","acceptedAnswer":{"@type":"Answer","text":"That is the point of the round table. In sequential mode each seat reads every answer before it and responds to them - agreeing, correcting, or building on top - instead of answering blind."}},{"@type":"Question","name":"Does Braid work with local models like Ollama?","acceptedAnswer":{"@type":"Answer","text":"Yes. A local model seat (including Ollama models or the bundled Adam-3B) joins the same table as the subscription seats, at zero per-token cost."}},{"@type":"Question","name":"How much does Braid cost?","acceptedAnswer":{"@type":"Answer","text":"Open-beta pricing is $10/month (or $102/year), locked in for as long as you keep the subscription. There is a $5/month beta-tester tier and team pricing from $7 per seat. Cancel any time - it is a Stripe subscription, not a contract."}},{"@type":"Question","name":"Why don't I just build this myself - or use another agent harness?","acceptedAnswer":{"@type":"Answer","text":"Build it yourself: the bill shows up in tokens and subscription burn, not just evenings. Wiring multi-model orchestration, sequential handoffs, seat failures, and a room that keeps working costs more in model usage while you reinvent it than sitting on Braid and letting us carry development. Other agent harnesses (CrewAI, AutoGen, LangGraph, OpenAI/Claude agent stacks, multi-agent IDE runners) are usually one vendor under one roof, or they re-meter tokens through their API - they do not put Claude, Grok, Gemini, and a local seat in the same room on subscriptions you already pay for, with each seat reading the last. Keep your AI budget for your work; use Braid for the table."}},{"@type":"Question","name":"What platforms does Braid run on?","acceptedAnswer":{"@type":"Answer","text":"Braid is a Windows desktop app today. Your keys and sessions stay on your machine - nothing is proxied through our servers."}}]}</script>
-<link rel="stylesheet" href="css/style.css?v=b200">
+<link rel="stylesheet" href="css/style.css?v=b210">
 <link rel="preload" href="/assets/fonts/archivo-var.woff2" as="font" type="font/woff2" crossorigin>
 <style>
-.braid-mark{width:min(640px,88vw);height:auto;display:block;margin:0 auto -1.4rem}
-.product-hero{padding-top:clamp(6rem,14vh,9rem)}
+.braid-mark{width:min(780px,92vw);height:auto;display:block;margin:0 auto -1.2rem}
+.product-hero{min-height:calc(100svh - 56px);display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;padding:2rem 1.5rem 4.5rem}
+.product-hero .scroll-cue{position:absolute;bottom:1.4rem;left:50%;transform:translateX(-50%)}
 .product-hero h1{position:relative}
 .product-hero h1.wm{font-family:var(--font-sans);font-weight:800;font-stretch:112%;letter-spacing:-.005em;font-size:clamp(3.2rem,9vw,6.4rem);line-height:.9;text-transform:uppercase;color:var(--text)}
 @keyframes bflow{to{transform:translateX(calc(var(--p) * -1))}}
 .bflow{animation:bflow var(--d,9s) linear infinite}
 @media (prefers-reduced-motion:reduce){.bflow{animation:none}}
-.film{position:relative;max-width:1080px;margin:0 auto;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;
- background:#0B0C0E;box-shadow:var(--elev-3);aspect-ratio:16/9}
+#film{max-width:none;width:100%;margin:0;padding:4.5rem clamp(1rem,4vw,3.25rem) 4rem;background:#060709;border-top:1px solid rgba(255,255,255,.07);border-bottom:1px solid rgba(255,255,255,.07)}
+#film .film-head{max-width:1560px;margin:0 auto 1.6rem;display:flex;align-items:flex-end;justify-content:space-between;gap:1.5rem 3rem;flex-wrap:wrap}
+#film .film-head h2{text-align:left;margin:0;color:#F2F4F7;font-size:clamp(1.7rem,3.4vw,2.5rem)}
+#film .film-head p{font-family:var(--font-serif);color:#9AA1AB;font-size:.95rem;line-height:1.6;max-width:58ch;margin:0}
+#film .film-head b{color:#C9CFD8}
+.film-stage{display:grid;grid-template-columns:minmax(0,1fr) clamp(230px,22vw,320px);max-width:1560px;margin:0 auto;border:1px solid #20242C;background:#08090C}
+.film{position:relative;overflow:hidden;background:#0B0C0E;aspect-ratio:16/9;min-width:0}
 .film video{display:block;width:100%;height:100%;object-fit:cover}
 .film.playing .film-cta{opacity:0;pointer-events:none}
 /* poster overlay: a branded invitation instead of the browser's default control bar */
@@ -58,13 +64,24 @@
  background:rgba(10,11,14,.72);border:1px solid var(--border2);border-radius:999px;padding:.24rem .6rem}
 @media (prefers-reduced-motion:reduce){.film-cta,.film-play{transition:none}}
 /* chapter rail — also the on-page text Google reads alongside the Clip markup */
-.film-chapters{display:flex;flex-wrap:wrap;gap:.45rem;justify-content:center;max-width:1080px;margin:1rem auto 0}
-.film-chapters button{font-family:var(--font-mono);font-size:.68rem;letter-spacing:.02em;color:var(--text-soft);
- background:var(--panel);border:1px solid var(--border);border-radius:999px;padding:.34rem .7rem;cursor:pointer;
- transition:color var(--dur) var(--ease),border-color var(--dur) var(--ease),transform var(--dur) var(--ease)}
-.film-chapters button:hover{color:var(--text);border-color:var(--border2);transform:translateY(-1px)}
-.film-chapters button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.film-chapters button[aria-current=true]{color:var(--accent-ink);background:var(--accent);border-color:var(--accent)}
+.film-chapters{display:flex;flex-direction:column;margin:0;border-left:1px solid #20242C;min-width:0}
+.film-chapters button{flex:1;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:.7rem;align-items:baseline;text-align:left;
+ background:none;border:0;border-bottom:1px solid #15181E;padding:.6rem 1rem;cursor:pointer;color:#8E959F;
+ font-family:var(--font-sans);font-weight:600;font-stretch:var(--w-cond);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;
+ transition:background var(--dur) var(--ease),color var(--dur) var(--ease)}
+.film-chapters button:last-child{border-bottom:0}
+.film-chapters button i,.film-chapters button em{font-style:normal;font-family:var(--font-mono);font-size:.6rem;letter-spacing:.05em;color:#565D67}
+.film-chapters button span{white-space:normal}
+.film-chapters button:hover{color:#fff;background:#0D1016}
+.film-chapters button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.film-chapters button[aria-current=true]{color:#fff;background:#11141B;box-shadow:inset 2px 0 0 var(--accent)}
+.film-chapters button[aria-current=true] i{color:var(--accent)}
+#film .filmcap{max-width:1560px;margin:.9rem auto 0;text-align:right;color:#6E757F;font-size:.72rem}
+@media(max-width:1000px){.film-stage{grid-template-columns:1fr}.film-chapters{flex-direction:row;overflow-x:auto;border-left:0;border-top:1px solid #20242C}
+.film-chapters button{flex:0 0 auto;display:flex;align-items:baseline;gap:.5rem;border-bottom:0;border-right:1px solid #15181E;white-space:nowrap;padding:.7rem .9rem}
+.film-chapters button span{white-space:nowrap}}
+.braid-hr{display:flex;justify-content:center;padding:3rem 1rem 0;overflow:hidden}
+.braid-hr svg{width:min(900px,92vw);height:auto;opacity:.85}
 .filmcap{text-align:center;color:var(--dim);font-size:.78rem;margin:.9rem auto 0;max-width:720px}
 .seatgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.6rem;max-width:900px;margin:2rem auto 0}
 .seatchip{display:flex;align-items:center;gap:.55rem;border:1px solid var(--border);border-radius:11px;background:var(--panel);box-shadow:var(--elev-1);
@@ -90,12 +107,8 @@
 .plan .fine{color:var(--dim);font-size:.68rem;margin-top:.6rem;line-height:1.4}
 .beta-note{max-width:760px;margin:0 auto 2rem;color:var(--dim);font-size:.86rem;line-height:1.65;font-family:var(--font-serif)}
 .beta-note b{color:var(--text-soft)}
-.film{max-width:1320px;border-radius:3px;border-color:var(--border2)}
-.film-chapters{max-width:1320px}
-.film-chapters button{font-family:var(--font-sans);font-size:.63rem;font-weight:600;font-stretch:var(--w-cond);letter-spacing:.13em;text-transform:uppercase;border-radius:2px;background:transparent}
 .film-label b{font-stretch:var(--w-cond);letter-spacing:.06em;text-transform:uppercase}
 .film-dur{font-family:var(--font-sans);font-weight:600;font-stretch:var(--w-cond);letter-spacing:.14em;border-radius:2px}
-.filmcap{font-family:var(--font-serif);font-size:.85rem}
 .seatgrid{grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:0;border-top:1px solid var(--border);border-left:1px solid var(--border)}
 .seatchip{border:0;border-right:1px solid var(--border);border-bottom:1px solid var(--border);border-radius:0;background:transparent;box-shadow:none;padding:.95rem 1rem;font-family:var(--font-sans);font-weight:600;font-stretch:var(--w-cond);letter-spacing:.16em;font-size:.7rem}
 .seatchip:not(.soon):hover{transform:none;box-shadow:none;background:var(--accent-dim)}
@@ -169,11 +182,18 @@
 <a href="#pricing" class="btn btn-primary">GET BRAID &mdash; $10/MO</a>
 <a href="#film" class="btn btn-outline">WATCH IT WORK</a>
 </div>
+<a class="scroll-cue" href="#film">Watch</a>
 </div>
 
 <section id="film">
-<h2>UNDER A MINUTE, NOTHING STAGED</h2>
-<p style="text-align:center;color:var(--dim);max-width:760px;margin:0 auto 2rem;font-size:.9rem">A real session in the real app, captured live: one question goes to the table and the seats commit &mdash; then the views (columns, stack, thread), the Flows presets, loop modes and per-seat permissions, then an <b>adversarial round</b>: builders vs attackers hunting real flaws in their own design, with a local seat and live handoffs. Nothing staged, nothing mocked.</p>
+<div class="film-head">
+<div>
+<p class="eyebrow">Under a minute &mdash; nothing staged</p>
+<h2>Watch a real session</h2>
+</div>
+<p>One question goes to the table and the seats commit &mdash; then the views (columns, stack, thread), the Flows presets, loop modes and per-seat permissions, then an <b>adversarial round</b>: builders vs attackers hunting real flaws in their own design, with a local seat and live handoffs. Real CLIs, real subscriptions, nothing mocked.</p>
+</div>
+<div class="film-stage">
 <div class="film" id="film-shell">
 <video id="braid-film" playsinline preload="none" width="1920" height="1080"
        poster="assets/braid/braid-poster.jpg?v=9"
@@ -191,16 +211,17 @@ Your browser cannot play this video. <a href="assets/braid/braid-usage.mp4?v=8">
 </button>
 </div>
 <nav class="film-chapters" aria-label="Jump to a moment in the demo">
-<button type="button" data-t="0">0:00 &middot; Every AI you already pay for</button>
-<button type="button" data-t="4">0:04 &middot; Ask once &mdash; every seat answers</button>
-<button type="button" data-t="15.5">0:15 &middot; Three views: side, stacked, thread</button>
-<button type="button" data-t="22.6">0:22 &middot; Flows &mdash; who answers whom</button>
-<button type="button" data-t="25.6">0:25 &middot; Loops &mdash; N laps or to a goal</button>
-<button type="button" data-t="29.2">0:29 &middot; Permissions per seat</button>
-<button type="button" data-t="34.3">0:34 &middot; Adversarial round</button>
-<button type="button" data-t="47.2">0:47 &middot; Open beta &mdash; $10/mo</button>
+<button type="button" data-t="0"><i>01</i><span>Every AI you already pay for</span><em>0:00</em></button>
+<button type="button" data-t="4"><i>02</i><span>Ask once &mdash; every seat answers</span><em>0:04</em></button>
+<button type="button" data-t="15.5"><i>03</i><span>Side, stacked, or one thread</span><em>0:15</em></button>
+<button type="button" data-t="22.6"><i>04</i><span>Flows &mdash; who answers whom</span><em>0:22</em></button>
+<button type="button" data-t="25.6"><i>05</i><span>Loops &mdash; N laps or to a goal</span><em>0:25</em></button>
+<button type="button" data-t="29.2"><i>06</i><span>Permissions per seat</span><em>0:29</em></button>
+<button type="button" data-t="34.3"><i>07</i><span>Adversarial round</span><em>0:34</em></button>
+<button type="button" data-t="47.2"><i>08</i><span>Open beta &mdash; $10/mo</span><em>0:47</em></button>
 </nav>
-<p class="filmcap">Ask once &rarr; seats commit &bull; views &bull; Flows &bull; loops &bull; permissions &bull; adversarial round &rarr; flaws found &mdash; real CLIs, real subscriptions, nothing cut but the waiting</p>
+</div>
+<p class="filmcap">Ask once &rarr; seats commit &bull; views &bull; Flows &bull; loops &bull; permissions &bull; adversarial round &rarr; flaws found &mdash; nothing cut but the waiting</p>
 </section>
 
 <section>
@@ -269,6 +290,7 @@ Your browser cannot play this video. <a href="assets/braid/braid-usage.mp4?v=8">
 </div>
 </section>
 
+<div class="braid-hr" aria-hidden="true"></div>
 <section id="pricing" style="text-align:center">
 <h2>GET BRAID</h2>
 <p class="beta-note">Braid is in <b>open beta</b>, so every price below is the beta price and stays there for as long
@@ -410,6 +432,7 @@ function braidSVG(o){
   +'<g mask="url(#m'+uid+')"><g class="bflow" style="--p:'+Pxl.toFixed(2)+'px;--d:'+secs+'s"'
   +(glow?' filter="url(#g'+uid+')"':"")+'>'+g+'</g></g></svg>'}
  host.outerHTML=braidSVG({w:680,n:4,secs:12,sw:0.075,amp:0.34,pad:0.28}).replace('<svg ','<svg class="braid-mark" aria-label="Braid" ');
+ document.querySelectorAll('.braid-hr').forEach(function(el){el.innerHTML=braidSVG({w:960,h:52,n:3,per:3,secs:18,sw:0.10,amp:0.30,pad:0.6});});
 })();
 </script>
 <script>
