@@ -1039,3 +1039,8 @@ R=8.314462618, F=96485.33212, n_e=2, E0_STD=1.229, E_TN=1.481, T0=298.15, dE_dT=
 
 
 
+
+## Amni-Learn Adventure v1.19.0 (2026-08-05)
+- learn-app.js 19857-19940ish: adventure block grew — advSpec/advQT state, advHeroPaint (HP color tiers + heartbeat), advSpecUI/advSpecial (5-pip meter, +1/+2crit, boss-only in practice — regular foes die before 5), advPotUI/advPotion (advS.pot 0-3, +30 heal capped), advBanner (boss entrance), swift = answer<6s at level>=2 (+4, #adv-swift CSS bar restarts per question), drift spans per region icon, shop rarity tcs[] + p:0 potion buy branch, advWin sequential star reveal (star1/2/3 sfx) + rAF count-ups + coin fountain, advLose taunt/tip pools, map: adv-conn.live ants + region ⭐n/12 + advNodeIn stagger (:not(.cur) guard — .cur keeps pulse), heropick flavor names
+- __advT adds spec/pot. Achievement adv-spec5 via adv-specials counter
+- PROBE GOTCHA: chrome-devtools-mcp evaluate_script on async fns >~5s TIMES OUT, returns partial, and RETRIES the whole fn invisibly — stacked retries auto-farmed battles (multi-minute ghost driving). Keep evals <4s, one action each, idempotent

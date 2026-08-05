@@ -1,3 +1,20 @@
+## 2026-08-05 — v1.19.0 Amni-Learn: Adventure Mode quest overhaul
+
+- Battle: ⚡ Special meter (correct answers charge 5 pips, crits +2; unleash for burst damage
+  with screen flash + triple particle wave), 🧪 potions (shop consumable, max 3, +30 HP
+  mid-battle button when hurt), SWIFT bonus (+4 damage answering under 6s, countdown bar
+  under the question, level 2+ only), hero HP bar color-shifts green→amber→red with a
+  heartbeat pulse below 30%, foe bar flashes on hits, boss entrance banner + roar stinger,
+  enrage now reddens the whole battle frame, region-themed emojis drift up the backdrop.
+- Map: node entrance pop stagger, marching-ants connector guides to your next node, region
+  star-progress chips (⭐ n/12), XP bar shimmer sweep.
+- Win/lose: stars reveal one-by-one with rising chimes, XP/coin count-up, coin fountain;
+  defeat screens taunt you (per-foe flavor) and rotate comeback tips.
+- Shop: gear rarity accents (grey/blue/purple/gold), potion row; hero picker gains named
+  heroes with flavor (Blaze the Brave, Sage the Wise, …) and a pick pop.
+- New sounds: roar/special/potion/swift/star-pops on the Adventure synth; achievement
+  "Unleashed" (5 Specials). learn/sw.js CACHE → v1288.
+
 ## 2026-08-04 — v1.18.1 Module app polish: brand type in the tools themselves
 
 - Five module apps moved off the all-mono terminal look onto the brand type system, keeping
