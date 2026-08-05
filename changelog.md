@@ -1,3 +1,21 @@
+## 2026-08-05 — v1.19.1 Amni-Learn: brain-game juice sweep
+
+- New shared kit (_bxBurst/_bxFloat/_bxRing/_bxKind): element-anchored particle bursts,
+  floating score text, correct-answer ring pulses, and streak-escalating sound picks
+  (pop → hit → score → combo) available to every game.
+- Deep pass on the quietest brain games: Card Pairs (3D flip animation, match pop + ring +
+  burst, combo floats, mismatch shake, first-ever win fanfare + confetti), Tower of London
+  (lift/drop sounds, star burst, optimal-solve fanfare), Chess Puzzles (mate fanfare, queen
+  burst, board shake), Reverse Recall + Corsi Blocks (per-digit ticks, span bursts + floats,
+  display shake), Spot the Change / Spotlight / Dot Estimate / Simon / Flanker (per-trial
+  streak sounds, ring/shake feedback, 90%+ accuracy now earns the win jingle).
+- Kid-tier Memory Sequence + Pattern finally make sound (round fanfares, wrong-pad buzz +
+  shake, ring on found patterns) — they had zero sfx.
+- 22 end/streak jingles across logic, stroop, anagram, word games, reaction, symbol coding,
+  task switch, chimp, dot tracking, visual scan, mental rotation, trail making, periodic,
+  map clicker, morse, and ear training now scale with performance instead of always "pop".
+- learn/sw.js CACHE → v1289.
+
 ## 2026-08-05 — v1.19.0 Amni-Learn: Adventure Mode quest overhaul
 
 - Battle: ⚡ Special meter (correct answers charge 5 pips, crits +2; unleash for burst damage
