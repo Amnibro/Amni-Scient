@@ -1,3 +1,21 @@
+## 2026-08-05 — v1.19.2 Construct apps join the brand: shared app chrome
+
+- New assets/app-brand.css — one shared layer that re-grounds all eleven trade apps
+  (deck, patio, pool, floor, roof, frame, plumb, elec, plan, garden, hvac) onto the
+  v1.12 identity: graphite ground/panels/hairlines, Archivo width axis (condensed-caps
+  app bar, tabs, and panel eyebrows), machined 4/3/2 radii, mono + tabular numerals in
+  inputs and readouts, brass reserved for chrome/wayfinding, hairline-underline tabs.
+  Each app keeps its trade color, now keyed to the hub palette (pool/floor/roof/frame/
+  plumb/elec/plan were all sitting on the same steel default).
+- App bars: emoji chrome removed (h1, tabs, crumbs); each app is marked by a square
+  swatch in its trade color — the site''s square-marker idiom instead of glyph soup.
+- Construct hub retokened to the site system (was blue-black + amber glow + glass +
+  16px rounds): graphite/brass, flat panels, 4px radii, radial halo and text glows
+  deleted, card titles use square tint markers; theme-color meta → brass. Dashboard
+  retokened to match. Hub SW cache → amni-construct-hub-v2.
+- Verified via isolated headless Chrome (the CDP browser was in use): hub, deck,
+  plumb, elec all render the shared chrome; trade accents intact.
+
 ## 2026-08-05 — v1.19.1 Amni-Learn: brain-game juice sweep
 
 - New shared kit (_bxBurst/_bxFloat/_bxRing/_bxKind): element-anchored particle bursts,

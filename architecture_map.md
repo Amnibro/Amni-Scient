@@ -1049,3 +1049,10 @@ R=8.314462618, F=96485.33212, n_e=2, E0_STD=1.229, E_TN=1.481, T0=298.15, dE_dT=
 - _bx kit at learn-app.js ~1659 (after _jzShake): _bxC/_bxBurst/_bxFloat/_bxRing (position:fixed body-appended — immune to game-container overflow) + _bxKind(n) streak→sfx tier
 - Wired: cardpairs (cpFlip/cpMatchPop keyframes in index.html ~1021; text set +110ms after flip, mismatch reset 500→650ms), tol, chess (normal-spaced code region ~13240), backspan, corsi, posner, numerosity, simon, flanker, changedet (comma-form injections into respond() ternaries), memseq, pattern
 - 22 (_jzSfx('pop'),showFeedback) sites → performance-gated. FILE ENCODING GOTCHA: emoji appear as LITERAL backslash-u escapes in SOME lines and real UTF-8 in others — python single/double-quoted '✅' RESOLVES the escape (use chr(92)+'u2705' or index-splicing); Edit tool auto-tries both forms but mixed-encoding lines defeat it — anchor on pure-ASCII substrings
+
+## Construct app brand layer v1.19.2 (2026-08-05)
+- assets/app-brand.css = shared chrome for the 11 trade app shells (all share the SAME :root var vocabulary --bg/--panel/--ink/--mut/--acc/--line — one later-loaded sheet re-tokens the family; loaded via <link> inserted after each app's inline </style>)
+- Per-app --acc keyed to construct hub trade palette (most apps had steel #8fa8b8 default); h1/tab/crumb emoji stripped by regex (leading [^A-Za-z0-9<&]+ preserves 2D/3D digit-led tabs); h1::before square = trade marker
+- Hub construct/index.html retokened in place (site graphite/brass, --radius 16px→4px, glass/halo/text-shadow glows deleted); .app h2::before square markers via per-card --tile vars; dashboard.html retokened + linked
+- construct/*.html product pages were ALREADY on site css (v1.18.x) — the APPS live at /deck/ /plumb/ etc, NOT under /construct/
+- Screenshots via `chrome.exe --headless=new --screenshot --user-data-dir=<fresh dir per capture>` (exit 21 = profile lock from rapid same-dir reuse; CDP browser belonged to Anthony — check MainWindowTitle before killing)

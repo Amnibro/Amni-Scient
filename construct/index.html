@@ -10,12 +10,12 @@
 <style>
 @font-face{font-family:Archivo;font-style:normal;font-weight:100 900;font-stretch:62% 125%;font-display:swap;src:url(/assets/fonts/archivo-var.woff2) format('woff2')}
 
-:root{--bg:#0e1014;--bg2:#12151b;--panel:#161a21;--panel2:#1b1f28;--ink:#e8eaed;--mut:#9aa0aa;--acc:#e0954a;--deck:#e8a33d;--patio:#8fa8b8;--pool:#2f9bd6;--floor:#b5894e;--roof:#7d93a4;--frame:#caa46a;--plumb:#2db4e0;--elec:#e8c33d;--plan:#9a8cf0;--garden:#5fae5f;--hvac:#e07b4a;--line:#262a33;--line2:#323744;--radius:16px;--shadow:0 14px 36px -18px rgba(0,0,0,.72);--glass:linear-gradient(165deg,rgba(255,255,255,.04),rgba(255,255,255,.008) 55%,transparent);--sans:"Archivo","Segoe UI Variable Text","Segoe UI",system-ui,sans-serif;--mono:'JetBrains Mono',ui-monospace,'SF Mono',Consolas,monospace}
+:root{--bg:#08090B;--bg2:#0D0F12;--panel:#111418;--panel2:#161A20;--ink:#E7E4DC;--mut:#8E959E;--acc:#C89B4E;--deck:#e8a33d;--patio:#8fa8b8;--pool:#2f9bd6;--floor:#b5894e;--roof:#7d93a4;--frame:#caa46a;--plumb:#2db4e0;--elec:#e8c33d;--plan:#9a8cf0;--garden:#5fae5f;--hvac:#e07b4a;--line:#20242B;--line2:#2E343D;--radius:4px;--shadow:0 10px 26px -18px rgba(0,0,0,.55);--glass:none;--sans:"Archivo","Segoe UI Variable Text","Segoe UI",system-ui,sans-serif;--mono:'JetBrains Mono',ui-monospace,'SF Mono',Consolas,monospace}
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{overscroll-behavior-y:none}
-body{background-color:var(--bg);background-image:radial-gradient(900px 480px at 50% -60px,rgba(216,137,58,.11),transparent 66%);background-repeat:no-repeat;color:var(--ink);font:15px/1.6 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+body{background-color:var(--bg);background-repeat:no-repeat;color:var(--ink);font:15px/1.6 var(--sans);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
 header{padding:48px 20px 18px;text-align:center}
-header h1{font-family:var(--sans);font-size:clamp(22px,7vw,38px);color:var(--acc);letter-spacing:1px;overflow-wrap:break-word;text-shadow:0 0 34px rgba(216,137,58,.32)}
+header h1{font-family:var(--sans);font-size:clamp(22px,7vw,38px);color:var(--ink);letter-spacing:-.01em;font-stretch:112%;font-weight:800;overflow-wrap:break-word}
 header p{color:var(--mut);max-width:660px;margin:14px auto 0;line-height:1.65}
 .apps{display:flex;gap:22px;justify-content:center;flex-wrap:wrap;padding:28px 20px}
 .app{position:relative;background:var(--glass),var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:26px;width:380px;max-width:100%;text-decoration:none;color:var(--ink);transition:transform .2s,border-color .25s,box-shadow .3s;display:block;overflow:hidden}
@@ -49,7 +49,7 @@ header p{color:var(--mut);max-width:660px;margin:14px auto 0;line-height:1.65}
 .app ul{list-style:none;font-size:13.5px;color:var(--mut)}
 .app li{padding:4px 0 4px 22px;position:relative}
 .app li:before{content:'›';position:absolute;left:6px;color:var(--acc)}
-.app .go{font-family:var(--sans);display:inline-flex;align-items:center;gap:6px;margin-top:18px;padding:10px 20px;border-radius:10px;font-weight:700;font-size:13px;letter-spacing:.5px;color:#0a0a0a;transition:transform .18s,filter .2s}
+.app .go{font-family:var(--sans);display:inline-flex;align-items:center;gap:6px;margin-top:18px;padding:10px 20px;border-radius:3px;font-weight:700;font-size:13px;letter-spacing:.5px;color:#0a0a0a;transition:transform .18s,filter .2s}
 .app:hover .go{transform:translateX(2px);filter:brightness(1.08)}
 .app.deck .go{background:var(--deck)}
 .app.patio .go{background:var(--patio)}
@@ -110,20 +110,20 @@ body{overflow-x:hidden}
 .site-back:hover{color:#e8ecf2;border-color:#9aa3b2}
 input,select,textarea,pre,code,.price,.num{font-family:var(--mono)}
 body{font-variant-numeric:tabular-nums}
-</style>
+.app h2::before{content:"";display:inline-block;width:8px;height:8px;margin-right:9px;background:var(--tile,var(--acc));vertical-align:1px}.app.deck{--tile:var(--deck)}.app.patio{--tile:var(--patio)}.app.pool{--tile:var(--pool)}.app.floor{--tile:var(--floor)}.app.roof{--tile:var(--roof)}.app.frame{--tile:var(--frame)}.app.plumb{--tile:var(--plumb)}.app.elec{--tile:var(--elec)}.app.plan{--tile:var(--plan)}.app.garden{--tile:var(--garden)}.app.hvac{--tile:var(--hvac)}</style>
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#e0954a">
+<meta name="theme-color" content="#C89B4E">
 </head>
 <body>
 <header>
   <a class="site-back" href="/">&#8592; AMNI-SCIENT</a>
-  <h1>🏗️ AMNI-CONSTRUCT</h1>
+  <h1>AMNI-CONSTRUCT</h1>
   <p>Design any work on your house before you swing a hammer. Trace from a photo or satellite, model it in 3D, print real construction plans, price every board, bag and fixture, and know what your town requires — free, in your browser. Building toward the whole house: decks, patios, pools, flooring, framing, roofing, plumbing &amp; electrical. New — <a href="../scan/" style="color:#6cc0d8;text-decoration:none">scan a space with your phone</a> and drop the real dimensions into any project.</p>
 </header>
 <a href="pro.html" class="pro-strip"><span class="pro-strip-badge">💼 NEW</span><span><b>Amni-Construct Pro</b> — contractor mode: branded client quotes with your rates &amp; markup, permit packets, showcases. <u>Free 14-day trial</u> in every estimator.</span><span class="pro-strip-go">→</span></a>
 <div class="apps">
   <a class="app deck" href="../deck/">
-    <h2>🛠️ DECK</h2>
+    <h2>DECK</h2>
     <div class="sub">Framed wood decks — ledger or freestanding</div>
     <ul>
       <li>📷 Photo trace — fit the deck to your yard</li>
@@ -134,7 +134,7 @@ body{font-variant-numeric:tabular-nums}
     <span class="go">Design a deck →</span>
   </a>
   <a class="app patio" href="../patio/">
-    <h2>🧱 PATIO</h2>
+    <h2>PATIO</h2>
     <div class="sub">Concrete slabs — any shape, even L-shapes</div>
     <ul>
       <li>📷 Photo trace — exact outline, live edge lengths</li>
@@ -145,7 +145,7 @@ body{font-variant-numeric:tabular-nums}
     <span class="go">Design a patio →</span>
   </a>
   <a class="app pool" href="../pool/">
-    <h2>🏊 POOL</h2>
+    <h2>POOL</h2>
     <div class="sub">Swimming pools — in-ground or above-ground</div>
     <ul>
       <li>📷 Photo trace — fit the pool to your yard</li>
@@ -156,7 +156,7 @@ body{font-variant-numeric:tabular-nums}
     <span class="go">Design a pool →</span>
   </a>
   <a class="app floor" href="../floor/">
-    <h2>🪵 FLOOR</h2>
+    <h2>FLOOR</h2>
     <div class="sub">Flooring estimator — LVP, laminate, hardwood, tile, carpet</div>
     <ul>
       <li>📷 Trace a room — exact outline, live edge lengths</li>
@@ -167,7 +167,7 @@ body{font-variant-numeric:tabular-nums}
     <span class="go">Estimate a floor →</span>
   </a>
   <a class="app roof" href="../roof/">
-    <h2>🏠 ROOF</h2>
+    <h2>ROOF</h2>
     <div class="sub">Roofing estimator — shingles or metal, gable or hip</div>
     <ul>
       <li>📷 Trace the footprint — pitch sets the slope factor</li>
@@ -178,7 +178,7 @@ body{font-variant-numeric:tabular-nums}
     <span class="go">Estimate a roof →</span>
   </a>
   <a class="app frame" href="../frame/">
-    <h2>🔩 FRAME</h2>
+    <h2>FRAME</h2>
     <div class="sub">Wall framing — studs, plates, headers, sheathing</div>
     <ul>
       <li>📷 Trace the footprint — perimeter = exterior wall</li>
@@ -189,7 +189,7 @@ body{font-variant-numeric:tabular-nums}
     <span class="go">Estimate framing →</span>
   </a>
   <a class="app plumb" href="../plumb/">
-    <h2>🚿 PLUMB</h2>
+    <h2>PLUMB</h2>
     <div class="sub">Plumbing — supply, drain, vent sizing &amp; takeoff</div>
     <ul>
       <li>Fixtures → WSFU, demand GPM, main + drain size</li>
@@ -200,7 +200,7 @@ body{font-variant-numeric:tabular-nums}
     <span class="go">Estimate plumbing →</span>
   </a>
   <a class="app elec" href="../elec/">
-    <h2>⚡ ELEC</h2>
+    <h2>ELEC</h2>
     <div class="sub">Electrical — load calc, circuits, panel schedule</div>
     <ul>
       <li>NEC dwelling load calc → service size (100–400 A)</li>
@@ -211,7 +211,7 @@ body{font-variant-numeric:tabular-nums}
     <span class="go">Estimate electrical →</span>
   </a>
   <a class="app hvac" href="../hvac/">
-    <h2>🌡️ HVAC</h2>
+    <h2>HVAC</h2>
     <div class="sub">Ductwork — draw it, size it, price it</div>
     <ul>
       <li>Draw air handler → supply registers + returns, run duct</li>
@@ -222,7 +222,7 @@ body{font-variant-numeric:tabular-nums}
     <span class="go">Design ductwork →</span>
   </a>
   <a class="app plan" href="../plan/">
-    <h2>🗺️ PLAN</h2>
+    <h2>PLAN</h2>
     <div class="sub">Whole-house planner — the unifier</div>
     <ul>
       <li>List your rooms → auto-arranged floor plan + 3D massing</li>
@@ -233,7 +233,7 @@ body{font-variant-numeric:tabular-nums}
     <span class="go">Plan the house →</span>
   </a>
   <a class="app garden" href="../garden/">
-    <h2>🌱 GARDEN</h2>
+    <h2>GARDEN</h2>
     <div class="sub">Raised-bed &amp; vegetable garden planner</div>
     <ul>
       <li>List your beds + plants → scaled layout with plant rows</li>

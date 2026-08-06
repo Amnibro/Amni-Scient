@@ -1,0 +1,76 @@
+/* AMNI-SCIENT app chrome — shared brand layer for the Construct trade apps.
+   Loaded after each app's inline <style>, so these rules win the cascade.
+   Re-grounds the old terminal look onto the v1.12 site identity: cool
+   graphite, machined brass, Archivo width axis, 4/3/2 radii, hairlines
+   instead of glows. Each app keeps its own trade color in --acc; brass
+   (--brand) is reserved for chrome and wayfinding. */
+
+@font-face{font-family:Archivo;font-style:normal;font-weight:100 900;font-stretch:62% 125%;font-display:swap;src:url(/assets/fonts/archivo-var.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:Archivo;font-style:normal;font-weight:100 900;font-stretch:62% 125%;font-display:swap;src:url(/assets/fonts/archivo-var-ext.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+
+:root{
+  --bg:#0B0D10;
+  --panel:#111418;
+  --ink:#E7E4DC;
+  --mut:#8E959E;
+  --line:#20242B;
+  --line2:#2E343D;
+  --brand:#C89B4E;
+  --brand-dim:rgba(200,155,78,.10);
+  --sans:"Archivo","Segoe UI Variable Text","Segoe UI",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,"Cascadia Mono",Consolas,monospace;
+}
+
+body{font-family:var(--sans)}
+::selection{background:var(--brand-dim);color:var(--ink)}
+:focus-visible{outline:2px solid var(--brand);outline-offset:1px}
+
+/* ── App bar: the site's condensed-caps machined bar ── */
+header{background:#0D0F12;border-bottom:1px solid var(--line);gap:14px}
+header h1{
+  font-family:var(--sans);font-stretch:80%;font-weight:700;font-size:13px;
+  text-transform:uppercase;letter-spacing:.14em;color:var(--ink);
+  display:inline-flex;align-items:center;gap:9px;text-shadow:none;
+}
+header h1::before{content:"";width:7px;height:7px;background:var(--acc);flex:0 0 auto}
+header .crumb{font-family:var(--sans);font-stretch:80%;text-transform:uppercase;letter-spacing:.09em;font-size:10px !important}
+header .crumb a{color:var(--brand) !important;text-decoration:none}
+header .crumb a:hover{text-decoration:underline;text-underline-offset:3px}
+header #menubtn{
+  background:transparent;border:1px solid var(--line);border-radius:3px;
+  color:var(--mut);width:30px;height:30px;cursor:pointer;font-size:14px;line-height:1;
+}
+header #menubtn:hover{color:var(--ink);border-color:var(--line2)}
+
+/* ── Tabs: hairline underline, condensed caps ── */
+.tab{
+  font-family:var(--sans);font-stretch:80%;font-weight:600;font-size:11.5px;
+  text-transform:uppercase;letter-spacing:.1em;
+  border-radius:0;border:0;border-bottom:2px solid transparent;padding:9px 12px 8px;
+}
+.tab:hover{color:var(--ink)}
+.tab.on{background:transparent;border-color:var(--acc);color:var(--ink)}
+
+/* ── Side panel labels: quiet eyebrows, not accent shouts ── */
+#side h3{color:var(--mut);font-family:var(--sans);font-stretch:80%;font-weight:650;font-size:10.5px;letter-spacing:.12em}
+
+/* ── Controls: mono where numbers live, 3px machine radius ── */
+.row input[type=number],.row input[type=text],.row select,
+input[type=number],input[type=text],select,textarea{
+  font-family:var(--mono);font-size:12.5px;font-variant-numeric:tabular-nums;
+  background:#0D0F12;border:1px solid var(--line);border-radius:3px;color:var(--ink);
+}
+.row input:focus,.row select:focus,input:focus,select:focus,textarea:focus{border-color:var(--brand);outline:none}
+.seg button{border-radius:3px;font-family:var(--sans);font-size:11.5px;letter-spacing:.02em;background:#0D0F12}
+.seg button.on{background:var(--acc);border-color:var(--acc);color:#0F1114;font-weight:700}
+.sw{border-radius:2px}
+.sw.on{box-shadow:0 0 0 2px color-mix(in srgb,var(--acc) 45%,transparent)}
+.addbtn,.stair-item,.warn,.bed-item,.item,.card{border-radius:3px}
+button.btn,.btn{border-radius:3px;font-family:var(--sans);letter-spacing:.03em}
+
+/* ── Surfaces: hairlines carry structure, never glows ── */
+.pane{background:var(--bg)}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:var(--line2);border-radius:0;border:2px solid var(--bg);background-clip:padding-box}
+::-webkit-scrollbar-track{background:transparent}
+*{scrollbar-width:thin;scrollbar-color:var(--line2) transparent}

@@ -1,4 +1,4 @@
-const C = 'amni-construct-hub-v1'
+const C = 'amni-construct-hub-v2'
 self.addEventListener('install', e => { self.skipWaiting(); e.waitUntil(caches.open(C).then(c => c.addAll(['./', './dashboard.html', './pro.html', './manifest.webmanifest', './icon-192.png']).catch(() => {}))) })
 self.addEventListener('activate', e => { e.waitUntil((async () => { for (const k of await caches.keys()) k !== C && await caches.delete(k); await self.clients.claim() })()) })
 self.addEventListener('fetch', e => {
