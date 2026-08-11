@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#FBFAF8">
+<title>Grok-Remote &mdash; Pilot Grok Build From Your Phone | AMNI-SCIENT</title>
+<meta name="description" content="Grok-Remote: a live phone cockpit for Grok Build. Pair with one QR, watch thinking and tool calls stream in real time, run multiple sessions, and keep the link through restarts. Open source.">
+<meta name="keywords" content="grok remote,grok build,phone control,acp,remote agent,live stream,amni-scient">
+<meta property="og:title" content="Grok-Remote &mdash; Pilot Grok Build From Your Phone">
+<meta property="og:description" content="A live phone cockpit for Grok Build — one-QR pairing, streamed thinking and tools, multi-session, self-healing link. Open source.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://amni-scient.com/grok-remote">
+<link rel="canonical" href="https://amni-scient.com/grok-remote">
+<link rel="stylesheet" href="css/style.css?v=b260">
+<style>
+.theme-grokr{--accent:#00C48C;--accent-glow:rgba(0,196,140,.4)}
+.grdemo{display:flex;gap:2rem;justify-content:center;align-items:stretch;flex-wrap:wrap;max-width:900px;margin:0 auto}
+.grphone{width:300px;min-height:540px;border:1px solid var(--accent);border-radius:22px;background:#0b0f0e;box-shadow:0 0 34px rgba(0,196,140,.14);overflow:hidden;display:flex;flex-direction:column;flex:0 0 auto}
+.grbar{display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid #1c2422;font-size:.62rem;letter-spacing:1px;color:#9fb5ad;font-family:monospace}
+.grdot{width:7px;height:7px;border-radius:50%;background:#00C48C;flex:0 0 7px;transition:background .3s}
+.grdot.warn{background:#e8b04b;animation:grblink 1s infinite}
+@keyframes grblink{50%{opacity:.3}}
+.grbody{flex:1;padding:12px;display:flex;flex-direction:column;gap:8px;overflow:hidden;font-size:.7rem;line-height:1.5}
+.grchips{display:flex;gap:6px;flex-wrap:wrap}
+.grchip{border:1px solid #2a3532;border-radius:999px;padding:3px 10px;color:#9fb5ad;font-size:.58rem;font-family:monospace}
+.grchip.on{border-color:#00C48C;color:#00C48C}
+.grsess{border:1px solid #1c2422;border-radius:10px;padding:8px 10px;color:#cfe3dc}
+.grsess small{display:block;color:#5f7570;font-size:.55rem;margin-top:2px}
+.grsess.hot{border-color:#00C48C}
+.grbub{border-radius:12px;padding:8px 11px;max-width:88%;color:#e8f4ef;background:#14201c;border:1px solid #1e2c28;white-space:pre-wrap;word-break:break-word}
+.grbub.you{align-self:flex-end;background:#0f2a22;border-color:#1d4436}
+.grbub.think{color:#7f9891;font-style:italic;border-style:dashed}
+.grtool{align-self:flex-start;border:1px solid #2a3532;border-radius:8px;padding:5px 9px;font-family:monospace;font-size:.58rem;color:#9fb5ad}
+.grtool b{color:#00C48C;font-weight:600}
+.grbanner{background:#2a2113;border:1px solid #6b5525;color:#e8b04b;border-radius:8px;padding:6px 9px;font-size:.6rem;text-align:center}
+.grbanner.ok{background:#0f2a22;border-color:#1d4436;color:#00C48C}
+.grcap{flex:1 1 260px;min-width:240px;max-width:320px;display:flex;flex-direction:column;justify-content:center;gap:.6rem;text-align:left}
+.grcap .step{color:var(--dim);font-size:.8rem;line-height:1.65;padding:.55rem .8rem;border-left:2px solid #2a3532;opacity:.45;transition:all .35s}
+.grcap .step.on{border-left-color:var(--accent);opacity:1;color:var(--fg,#222)}
+[data-theme=dark] .grcap .step.on{color:#e8f4ef}
+.grcap .replay{margin-top:.6rem;align-self:flex-start}
+.grcursor::after{content:"▋";color:#00C48C;animation:grblink .8s infinite}
+@media (prefers-reduced-motion:reduce){.grdot.warn,.grcursor::after{animation:none}}
+</style>
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+</head>
+<body class="pp theme-grokr">
+<div class="grid-bg"></div>
+<div class="scanlines"></div>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<a href="amni-calc.html">CALCULATORS</a>
+<a href="amni-learn.html">LEARN</a>
+<a href="research.html">RESEARCH</a>
+<div class="nav-dd">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu">
+<a href="/braid">BRAID</a>
+<a href="symphony.html">SYMPHONY</a>
+<a href="grok-remote.html">GROK-REMOTE</a>
+<a href="amni-ai.html">AMNI-AI</a>
+<a href="amni-browse.html">AMNI-BROWSE</a>
+<a href="amni-calc.html">AMNI-CALC</a>
+<a href="amni-explore.html">AMNI-EXPLORE</a>
+<a href="amni-weather.html">AMNI-WEATHER</a>
+<a href="game/">AMNI-GAME</a>
+<a href="amni-learn.html">AMNI-LEARN</a>
+<a href="amni-llm.html">AMNI-LLM</a>
+<a href="amni-connect.html">AMNI-CONNECT</a>
+<a href="amni-code.html">AMNI-CODE</a>
+<a href="amni-core.html">AMNI-CORE</a>
+<a href="amni-haven.html">AMNI-HAVEN</a>
+<a href="amni-crypt.html">AMNI-CRYPT</a>
+<a href="amni-life.html">AMNI-LIFE</a>
+<a href="amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</div>
+<a href="about.html">ABOUT</a>
+<a href="faq.html">FAQ</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<div class="product-hero">
+<div class="shield-icon float">
+<svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect x="34" y="18" width="32" height="64" rx="6" stroke="#00C48C" stroke-width="2.5" fill="rgba(0,196,140,0.05)"/>
+<path d="M46 74h8" stroke="#00C48C" stroke-width="2.5" stroke-linecap="round"/>
+<path d="M20 40c6-10 14-16 14-16M20 60c6 10 14 16 14 16M80 40c-6-10-14-16-14-16M80 60c-6 10-14 16-14 16" stroke="#00C48C" stroke-width="2" stroke-linecap="round" opacity=".6"/>
+<circle cx="50" cy="46" r="9" stroke="#00C48C" stroke-width="2.5" fill="rgba(0,196,140,0.08)"/>
+</svg>
+</div>
+<h1>GROK-REMOTE</h1>
+<p class="desc">A LIVE PHONE COCKPIT FOR GROK BUILD &bull; ONE-QR PAIRING &bull; OPEN SOURCE</p>
+<div class="cta-row" style="margin-top:1.5rem;margin-bottom:1rem;gap:1rem;flex-wrap:wrap">
+<a href="https://github.com/Amnibro/grok-remote" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="text-decoration:none">&#128214; GET IT ON GITHUB</a>
+<a href="https://github.com/Amnibro/grok-remote#readme" target="_blank" rel="noopener noreferrer" class="btn btn-outline" style="text-decoration:none">&#128218; SETUP GUIDE</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="btn btn-outline" style="text-decoration:none">&#9749; SUPPORT DEVELOPMENT</a>
+</div>
+<p style="color:var(--dim);font-size:.72rem;letter-spacing:1px">v1.7.0 &bull; Windows host &bull; any phone or browser &bull; MIT-style licensed</p>
+<p style="color:var(--dim);font-size:.7rem;letter-spacing:.5px;margin-top:.5rem;font-family:monospace">grok plugin install Amnibro/grok-remote@v1.7.0 --trust</p>
+</div>
+<section>
+<h2>YOUR AGENT, IN YOUR POCKET</h2>
+<p style="color:var(--dim);max-width:720px;margin:0 0 2rem;font-size:.9rem">Grok Build runs on your desk; life doesn't. Grok-Remote puts a live cockpit for the agent on your phone &mdash; scan one QR to pair, then send prompts, watch the thinking and every tool call stream in real time, and hop between sessions from the couch, the shop floor or the driveway. The link is engineered to survive the messy parts: Wi-Fi drops, agent restarts, even the server being killed mid-answer.</p>
+<div class="features">
+<div class="feature"><div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M3 8c2-3 4-4 4-4M3 16c2 3 4 4 4 4M21 8c-2-3-4-4-4-4M21 16c-2 3-4 4-4 4"/></svg></div><h4>LIVE STREAM, NOT A TRANSCRIPT</h4><p>Agent thinking, tool calls with their output, and the final answer arrive as they happen &mdash; with catch-up polling so a throttled phone tab never silently freezes.</p></div>
+<div class="feature"><div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="8" height="8"/><rect x="13" y="3" width="8" height="8"/><rect x="3" y="13" width="8" height="8"/><path d="M15 15h4v4h-4z"/></svg></div><h4>PAIR WITH ONE QR</h4><p>Scan once &mdash; a 30-day key cookie does the rest. The pairing page only renders on the host machine, and every remote request is key-gated.</p></div>
+<div class="feature"><div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v12H9l-5 4z"/><path d="M8 9h8M8 12h5"/></svg></div><h4>MULTI-SESSION, ORGANIZED</h4><p>Your chats stay yours: apps that drive the same agent (Braid, watchers, loops) are auto-filed into their own buckets by origin, so the active list is only what you actually opened.</p></div>
+<div class="feature"><div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v6M12 15v6M3 12h6M15 12h6"/><circle cx="12" cy="12" r="3"/></svg></div><h4>A LINK THAT HEALS ITSELF</h4><p>Agent died? The hub respawns it and re-initializes on the same socket. Server killed? The supervisor restarts it and your phone reconnects in seconds &mdash; turns in flight stay on the hub.</p></div>
+<div class="feature"><div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg></div><h4>SKILLS &amp; SLASH PALETTE</h4><p>Every installed skill is a tap away. <code>/loop 15m &hellip;</code> schedules recurring prompts that keep firing even with the phone in your pocket.</p></div>
+<div class="feature"><div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10" width="16" height="11"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div><h4>YOUR NETWORK ONLY</h4><p>Runs on your LAN or private mesh &mdash; nothing routes through a third party. Unauthenticated requests get a 401 and a polite pairing page, nothing else.</p></div>
+</div>
+</section>
+<section>
+<h2>SEE IT FLY</h2>
+<p style="color:var(--dim);text-align:center;font-size:.8rem;margin:0 auto 1.6rem;max-width:640px">A simulated session &mdash; the same interface, driven by a script so you can watch every feature without installing anything.</p>
+<div class="grdemo">
+<div class="grphone">
+<div class="grbar"><span class="grdot" id="gdot"></span><span id="gconn">connected</span><span style="margin-left:auto" id="gsid">sessions</span></div>
+<div class="grbody" id="gbody"></div>
+</div>
+<div class="grcap" id="gcap">
+<div class="step" data-s="0">Open the cockpit: your chats up front, app-driven sessions filed under their own chips.</div>
+<div class="step" data-s="1">Send a prompt from the phone &mdash; watch the agent think and run tools live.</div>
+<div class="step" data-s="2">Schedule it: <code>/loop</code> keeps a prompt firing on an interval, phone in pocket.</div>
+<div class="step" data-s="3">Break the link on purpose: the hub heals it and the same socket carries on.</div>
+<button class="btn btn-outline replay" onclick="grReplay()" style="font-size:.7rem">&#8635; REPLAY</button>
+</div>
+</div>
+</section>
+<section>
+<h2>SPECIFICATIONS</h2>
+<table class="spec-table">
+<tr><th>PARAMETER</th><th>VALUE</th></tr>
+<tr><td>Host</td><td>Windows + Python 3.12, Grok Build CLI</td></tr>
+<tr><td>Client</td><td>Any modern browser &mdash; phone, tablet, watch page included</td></tr>
+<tr><td>Protocol</td><td>ACP over WebSocket, hub-proxied multi-client</td></tr>
+<tr><td>Pairing</td><td>One QR &rarr; 30-day HttpOnly key cookie; key-gated LAN/mesh access</td></tr>
+<tr><td>Resilience</td><td>Auto-reconnect, agent auto-respawn, supervisor stand-down, same-socket re-init</td></tr>
+<tr><td>Sessions</td><td>Multi-session; origin-classified (your chats vs. app-driven)</td></tr>
+<tr><td>Extras</td><td>Skills palette, /loop scheduler, voice mode, git &amp; file browser</td></tr>
+<tr><td>Price</td><td>Free &amp; open source</td></tr>
+</table>
+</section>
+<footer style="padding:3rem 1rem;color:var(--dim);font-size:.75rem;letter-spacing:1px">
+<p>&copy; Amniscient, LLC &bull; <a href="privacy.html">PRIVACY</a> &bull; <a href="/">HOME</a></p>
+</footer>
+<script>
+(function(){
+var body=document.getElementById('gbody'),dot=document.getElementById('gdot'),conn=document.getElementById('gconn'),sid=document.getElementById('gsid');
+var steps=[].slice.call(document.querySelectorAll('#gcap .step'));
+var timers=[],dead=false;
+function T(fn,ms){timers.push(setTimeout(function(){if(!dead)fn()},ms))}
+function clearT(){timers.forEach(clearTimeout);timers=[];}
+function el(cls,txt){var d=document.createElement('div');d.className=cls;if(txt!=null)d.textContent=txt;body.appendChild(d);body.scrollTop=1e6;return d}
+function scene(n){steps.forEach(function(s){s.classList.toggle('on',+s.dataset.s===n)})}
+function type(node,txt,done){var i=0;node.classList.add('grcursor');(function tick(){if(dead)return;node.textContent=txt.slice(0,++i);body.scrollTop=1e6;if(i<txt.length)T(tick,26);else{node.classList.remove('grcursor');done&&done()}})()}
+function run(){
+ dead=false;body.innerHTML='';dot.className='grdot';conn.textContent='connected';sid.textContent='sessions';
+ scene(0);
+ var chips=el('grchips');['Active · 3|on','Live · 1','Archived','Apps · 185','Azno · 1'].forEach(function(c){var p=c.split('|');var s=document.createElement('span');s.className='grchip'+(p[1]?' on':'');s.textContent=p[0];chips.appendChild(s)});
+ T(function(){var a=el('grsess hot');a.innerHTML='fix the pump-curve interpolation<small>2 min ago · grok-4.5 · 41 msgs</small>'},500);
+ T(function(){var a=el('grsess');a.innerHTML='seal stack tolerance review<small>yesterday · 12 msgs</small>'},900);
+ T(function(){var a=el('grsess');a.innerHTML='weekend reading list<small>Sunday · 5 msgs</small>'},1300);
+ T(function(){sid.textContent='pump-curve';body.innerHTML='';scene(1);
+  var q=el('grbub you','');type(q,'why does the interpolation overshoot near shutoff?',function(){
+   T(function(){el('grbub think','Reading pump_curve.py — cubic spline with no monotonicity constraint near the flat head region…')},400);
+   T(function(){var t=el('grtool');t.innerHTML='<b>▸ read</b> pump_curve.py · 220 lines'},1500);
+   T(function(){var t=el('grtool');t.innerHTML='<b>▸ run</b> python probe_shutoff.py · exit 0'},2600);
+   T(function(){el('grbub','Cubic splines overshoot on flat data. Near shutoff your head curve is nearly flat, so the spline rings. Switch to PCHIP — monotone, no overshoot. Patched and verified: max error 0.3% across the test curves.')},3900);
+  })},2400);
+ T(function(){body.innerHTML='';scene(2);sid.textContent='loop';
+  var q=el('grbub you','');type(q,'/loop 15m rerun the seal FEA sweep and flag deltas >2%',function(){
+   T(function(){var t=el('grtool');t.innerHTML='<b>⟳ loop armed</b> · every 15m · fires with the phone in your pocket'},500);
+   T(function(){el('grbub','Loop scheduled. First run: 14 cases queued, baseline stored. You’ll only hear from me when a delta crosses 2%.')},1400);
+  })},10500);
+ T(function(){scene(3);
+  dot.className='grdot warn';conn.textContent='agent restarting…';
+  el('grbanner','agent restarting… hub is holding your turn');
+  T(function(){dot.className='grdot';conn.textContent='reconnected';
+   el('grbanner ok','agent back · re-initialized on the same socket · sessions refreshed');
+   T(function(){el('grbub','Sweep resumed where it left off — nothing lost. 3 of 14 cases done, no deltas yet.')},900);
+  },2600);
+ },16500);
+ T(function(){if(!dead)run()},24500);
+}
+window.grReplay=function(){dead=true;clearT();setTimeout(function(){dead=false;run()},80)};
+var seen=false;
+try{
+ new IntersectionObserver(function(en){
+  if(en[0]&&en[0].isIntersecting&&!seen){seen=true;run()}
+ },{threshold:.25}).observe(document.querySelector('.grphone'));
+}catch(e){run()}
+})();
+</script>
+</body>
+</html>
