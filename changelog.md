@@ -1,3 +1,16 @@
+## 2026-08-11 — v1.19.3 Symphony: screenshot gallery + og image
+
+- **symphony.html** new SEE IT IN ACTION section between features and install steps:
+  three .screenshot-phone cards (230px override via .shot-row) — chat w/ photo+reactions,
+  feed post w/ likes+comments, stories strip+composer+event — plus a full-width
+  .screenshot-desktop (.shot-wide, max 960px) showing the wide feed w/ event post + poll.
+  Caption: "Real app, demo family — this is what your family sees." All imgs lazy +
+  width/height attrs (height:auto guard against attr-hint distortion).
+- **symphony/img/** symphony-chat/feed/stories.png 390x844 (true viewport emulation,
+  demo-mode Riveras family), symphony-desktop.png 1360x850; Pillow-optimized, 67-84KB.
+- **Head:** og:image + twitter:image -> https://amni-scient.com/symphony/img/symphony-feed.png
+  (page had summary_large_image with no image).
+
 ## 2026-08-05 — v1.19.2 Construct apps join the brand: shared app chrome
 
 - New assets/app-brand.css — one shared layer that re-grounds all eleven trade apps
