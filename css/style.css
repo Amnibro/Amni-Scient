@@ -88,8 +88,8 @@ body>nav .links.open{right:0}
 .hero .support-link{font-family:var(--font-sans);margin-top:.9rem;font-size:.7rem;font-weight:550;letter-spacing:.08em;color:var(--dim);position:relative;z-index:1;text-transform:uppercase}
 .hero .support-link:hover{color:var(--text)}
 .btn{font-family:var(--font-sans);position:relative;display:inline-flex;align-items:center;justify-content:center;gap:.5rem;padding:.78rem 1.6rem;border-radius:2px;font-size:.72rem;font-weight:700;font-stretch:var(--w-cond);letter-spacing:.17em;text-transform:uppercase;cursor:pointer;border:1px solid transparent;overflow:hidden;isolation:isolate;transition:transform var(--dur) var(--ease),box-shadow var(--dur) var(--ease),background var(--dur) var(--ease),color var(--dur) var(--ease),border-color var(--dur) var(--ease)}
-.btn::before{content:'';position:absolute;inset:0;z-index:-1;background:currentColor;transform:scaleX(0);transform-origin:left;transition:transform .34s var(--ease-out)}
-.btn:hover::before{transform:scaleX(1)}
+.btn::before{content:'';position:absolute;inset:0;z-index:-1;background:var(--text);transform:scaleX(0);transform-origin:left;transition:transform .34s var(--ease-out)}
+.btn:hover::before{transform:scaleX(1)}.btn:hover{color:var(--bg)}
 .btn:active{transform:scale(.985)}
 .btn-primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 .btn-primary::before{background:var(--text)}
