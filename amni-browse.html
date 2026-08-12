@@ -5,10 +5,10 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="theme-color" content="#FBFAF8">
 <title>Amni-Browse &mdash; Privacy-First Web Browser | AMNI-SCIENT</title>
-<meta name="description" content="Amni-Browse: privacy-first, zero-telemetry web browser in a single Rust binary. Built-in ad blocker, DNS-over-HTTPS, encrypted password vault, multi-profile, private tabs.">
+<meta name="description" content="Amni-Browse: privacy-first, zero-telemetry web browser in a single Rust binary on the real Servo engine. Built-in ad blocker, private tabs, multi-profile; DoH and encrypted vault in the WebView2 flavor.">
 <meta name="keywords" content="amni-browse,private browser,privacy browser,rust browser,no telemetry,ad blocker,dns over https,password vault">
 <meta property="og:title" content="Amni-Browse &mdash; Privacy-First Web Browser">
-<meta property="og:description" content="Zero-telemetry browser in a single Rust binary. Ad blocker, DoH, encrypted vault, private tabs, multi-profile. Local-only — your browsing never leaves your device.">
+<meta property="og:description" content="Zero-telemetry browser in a single Rust binary on the real Servo engine. Ad blocker, private tabs, multi-profile. Local-only — your browsing never leaves your device.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://amni-scient.com/amni-browse">
 <meta property="og:image" content="https://amni-scient.com/assets/browse/Interface.png">
@@ -16,10 +16,10 @@
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Amni-Browse &mdash; Privacy-First Web Browser">
-<meta name="twitter:description" content="Zero-telemetry browser in a single Rust binary. Ad blocker, DoH, encrypted vault, private tabs.">
+<meta name="twitter:description" content="Zero-telemetry browser in a single Rust binary on the real Servo engine. Ad blocker, private tabs, multi-profile.">
 <meta name="twitter:image" content="https://amni-scient.com/assets/browse/Interface.png">
 <link rel="canonical" href="https://amni-scient.com/amni-browse">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Amni-Browse","url":"https://amni-scient.com/amni-browse.html","description":"Privacy-first, zero-telemetry web browser in a single Rust binary. Built-in ad blocker, DNS-over-HTTPS, encrypted password vault, multi-profile, private tabs.","applicationCategory":"WebBrowser","operatingSystem":"Windows, macOS, Linux","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Organization","name":"AMNI-SCIENT","legalName":"Amniscient, LLC","url":"https://amni-scient.com"},"image":"https://amni-scient.com/assets/browse/Interface.png"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Amni-Browse","url":"https://amni-scient.com/amni-browse.html","description":"Privacy-first, zero-telemetry web browser in a single Rust binary on the real Servo engine. Built-in ad blocker, private tabs, multi-profile.","applicationCategory":"WebBrowser","operatingSystem":"Windows, macOS, Linux","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Organization","name":"AMNI-SCIENT","legalName":"Amniscient, LLC","url":"https://amni-scient.com"},"image":"https://amni-scient.com/assets/browse/Interface.png"}</script>
 <link rel="stylesheet" href="css/style.css?v=b261">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
@@ -88,8 +88,8 @@
 </div>
 <div class="ptile">
 <div class="ptile-copy">
-<p class="ptile-line">A privacy-first web browser powered by the real Servo engine (v0.11.12).</p>
-<ul class="ptile-feats"><li>Real Servo engine (libservo) · WebView2 flavor builds from source</li><li>Zero telemetry · ad blocker · DNS-over-HTTPS</li><li>AES-256-GCM password vault</li><li>Multi-profile</li></ul>
+<p class="ptile-line">A privacy-first web browser powered by the real Servo engine (v0.11.13).</p>
+<ul class="ptile-feats"><li>Real Servo engine (libservo) · WebView2 flavor builds from source</li><li>Zero telemetry · ad blocker · private tabs</li><li>DoH + AES-256-GCM vault (WebView2 flavor)</li><li>Multi-profile</li></ul>
 </div>
 <div class="ptile-media"><img src="assets/browse/Screenshot%202026-04-17%20110302.png" alt="Amni-Browse browsing a page" loading="lazy"></div>
 </div>
@@ -100,7 +100,7 @@
 <div class="feature">
 <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.6 8.2-8 9-4.4-.8-8-4-8-9V6z"/></svg></div>
 <h4>ZERO TELEMETRY</h4>
-<p>No analytics, no crash reporting, no phone-home. The binary makes network requests only to the pages you navigate to and the DoH resolver you pick.</p>
+<p>No analytics, no crash reporting, no phone-home. The binary makes network requests only to the pages you navigate to.</p>
 </div>
 <div class="feature">
 <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/></svg></div>
@@ -109,13 +109,13 @@
 </div>
 <div class="feature">
 <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10" width="16" height="11"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div>
-<h4>DNS-OVER-HTTPS</h4>
-<p>Encrypted DNS by default with Cloudflare, Google, or Quad9. Your resolver can&rsquo;t see plaintext queries; your ISP can&rsquo;t build a browsing profile.</p>
+<h4>DNS-OVER-HTTPS <span style="font-size:.65em;color:var(--dim)">(WEBVIEW2 FLAVOR)</span></h4>
+<p>Encrypted DNS with Cloudflare, Google, or Quad9 in the WebView2 flavor. Coming to the Servo build; Servo currently uses your system resolver.</p>
 </div>
 <div class="feature">
 <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="7.5" cy="12" r="3.5"/><path d="M11 12h10M18 12v3.5M15 12v2.5"/></svg></div>
-<h4>ENCRYPTED VAULT</h4>
-<p>AES-256-GCM password vault with PBKDF2-HMAC-SHA256 (600,000 iterations). Master password never stored &mdash; only the derived key lives in memory while unlocked.</p>
+<h4>ENCRYPTED VAULT <span style="font-size:.65em;color:var(--dim)">(WEBVIEW2 FLAVOR)</span></h4>
+<p>AES-256-GCM password vault with PBKDF2-HMAC-SHA256 (600,000 iterations) in the WebView2 flavor. Master password never stored &mdash; only the derived key lives in memory while unlocked. Coming to the Servo build.</p>
 </div>
 <div class="feature">
 <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.8-6 10-6 10 6 10 6-3.8 6-10 6-10-6-10-6z"/><circle cx="12" cy="12" r="2.8"/></svg></div>
@@ -151,8 +151,8 @@
 <tr><td>Language</td><td>Rust 2021 (single binary)</td></tr>
 <tr><td>Platforms</td><td>Windows, macOS, Linux</td></tr>
 <tr><td>Rendering</td><td>Servo (real libservo, rev 68ca280) &mdash; engine in the shipped build &bull; system WebView2 (tao + wry 0.46) available as a from-source build flavor</td></tr>
-<tr><td>DNS</td><td>DoH via Cloudflare, Google, Quad9 &mdash; pick your resolver</td></tr>
-<tr><td>Encryption</td><td>AES-256-GCM &bull; PBKDF2-HMAC-SHA256 &bull; 600,000 iterations</td></tr>
+<tr><td>DNS</td><td>DoH via Cloudflare, Google, Quad9 (WebView2 flavor) &bull; system resolver in the shipped Servo build</td></tr>
+<tr><td>Encryption</td><td>AES-256-GCM &bull; PBKDF2-HMAC-SHA256 &bull; 600,000 iterations (vault UI in WebView2 flavor)</td></tr>
 <tr><td>Ad Blocking</td><td>Navigation-layer filter &bull; built-in rules &bull; no external fetch</td></tr>
 <tr><td>Tracking Strip</td><td>UTM, fbclid, gclid, and 20+ click-ID params removed from every URL</td></tr>
 <tr><td>Storage</td><td>Local only &mdash; OS config dir &bull; no cloud, no sync</td></tr>
@@ -170,7 +170,7 @@
 </div>
 <div class="card">
 <h3>2. RESOLVE</h3>
-<p>DNS queries go out over HTTPS to the resolver you picked. Requests are scrubbed of tracking parameters before the socket opens.</p>
+<p>Requests are scrubbed of tracking parameters before the socket opens. In the WebView2 flavor, DNS queries go out over HTTPS to the resolver you picked.</p>
 </div>
 <div class="card">
 <h3>3. BLOCK</h3>
@@ -185,9 +185,9 @@
 <section>
 <h2>GET AMNI-BROWSE</h2>
 <p style="color:var(--dim);margin-bottom:.5rem;font-size:.9rem">A native Rust binary &mdash; no Electron, no bundled Chromium. The shipped build renders through the real Servo engine (libservo) &mdash; codec libraries bundled in the zip, nothing to install.</p>
-<p style="color:var(--dim);font-size:.8rem;margin-bottom:2rem">v0.11.12 for Windows x64 &bull; no extra runtime installs (GStreamer codecs bundled) &bull; source builds need <a href="https://gstreamer.freedesktop.org/download/" target="_blank" rel="noopener noreferrer" style="color:var(--dim);text-decoration:underline">GStreamer 1.26 MSVC</a> &bull; open source under CC BY-NC 4.0 &bull; non-commercial use</p>
+<p style="color:var(--dim);font-size:.8rem;margin-bottom:2rem">v0.11.13 for Windows x64 &bull; no extra runtime installs (GStreamer codecs bundled) &bull; source builds need <a href="https://gstreamer.freedesktop.org/download/" target="_blank" rel="noopener noreferrer" style="color:var(--dim);text-decoration:underline">GStreamer 1.26 MSVC</a> &bull; open source under CC BY-NC 4.0 &bull; non-commercial use</p>
 <div class="cta-row" style="">
-<a href="https://github.com/Amnibro/Amni-Browse/releases/download/v0.11.12/amni-browse-v0.11.12-win64.zip" class="btn btn-primary">DOWNLOAD v0.11.12 (WIN64)</a>
+<a href="https://github.com/Amnibro/Amni-Browse/releases/download/v0.11.13/amni-browse-v0.11.13-win64.zip" class="btn btn-primary">DOWNLOAD v0.11.13 (WIN64)</a>
 <a href="https://github.com/amnibro/Amni-Browse" target="_blank" class="btn btn-outline">VIEW ON GITHUB</a>
 <a href="privacy-browse.html" class="btn btn-outline">PRIVACY POLICY</a>
 </div>
