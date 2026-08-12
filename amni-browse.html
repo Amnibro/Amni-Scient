@@ -88,8 +88,8 @@
 </div>
 <div class="ptile">
 <div class="ptile-copy">
-<p class="ptile-line">A privacy-first web browser in a single Rust binary (v0.11.10).</p>
-<ul class="ptile-feats"><li>System WebView2 engine · Servo engine build from source</li><li>Zero telemetry · ad blocker · DNS-over-HTTPS</li><li>AES-256-GCM password vault</li><li>Multi-profile</li></ul>
+<p class="ptile-line">A privacy-first web browser powered by the real Servo engine (v0.11.11).</p>
+<ul class="ptile-feats"><li>Real Servo engine (libservo) · WebView2 flavor builds from source</li><li>Zero telemetry · ad blocker · DNS-over-HTTPS</li><li>AES-256-GCM password vault</li><li>Multi-profile</li></ul>
 </div>
 <div class="ptile-media"><img src="assets/browse/Screenshot%202026-04-17%20110302.png" alt="Amni-Browse browsing a page" loading="lazy"></div>
 </div>
@@ -140,7 +140,7 @@
 <tr><td>Encryption</td><td>AES-256-GCM vault, PBKDF2-HMAC-SHA256 KDF, encrypted autofill</td></tr>
 <tr><td>Platform</td><td>OS windowing: tao+wry or winit+wgpu+egui compositor</td></tr>
 <tr><td>Engine</td><td>Tabs, ad blocker, extensions, permissions, devtools, app launcher</td></tr>
-<tr><td>Media</td><td>Native WebView2 playback for DRM/MSE sites (Netflix, YouTube, &hellip;) in the shipped build &bull; GStreamer-backed media path in Servo-engine builds</td></tr>
+<tr><td>Media</td><td>GStreamer-backed media path in the shipped Servo-engine build (codecs bundled) &bull; native WebView2 playback for DRM/MSE sites (Netflix, YouTube, &hellip;) in the WebView2 build flavor</td></tr>
 </table>
 </section>
 <section>
@@ -150,7 +150,7 @@
 <tr><td>Type</td><td>Privacy-First Web Browser</td></tr>
 <tr><td>Language</td><td>Rust 2021 (single binary)</td></tr>
 <tr><td>Platforms</td><td>Windows, macOS, Linux</td></tr>
-<tr><td>Rendering</td><td>System WebView2 (tao + wry 0.46) &mdash; engine in the shipped build &bull; Servo (real libservo, rev 68ca280) available as a from-source build flavor</td></tr>
+<tr><td>Rendering</td><td>Servo (real libservo, rev 68ca280) &mdash; engine in the shipped build &bull; system WebView2 (tao + wry 0.46) available as a from-source build flavor</td></tr>
 <tr><td>DNS</td><td>DoH via Cloudflare, Google, Quad9 &mdash; pick your resolver</td></tr>
 <tr><td>Encryption</td><td>AES-256-GCM &bull; PBKDF2-HMAC-SHA256 &bull; 600,000 iterations</td></tr>
 <tr><td>Ad Blocking</td><td>Navigation-layer filter &bull; built-in rules &bull; no external fetch</td></tr>
@@ -184,10 +184,10 @@
 </section>
 <section>
 <h2>GET AMNI-BROWSE</h2>
-<p style="color:var(--dim);margin-bottom:.5rem;font-size:.9rem">A native Rust binary &mdash; no Electron, no bundled Chromium. The shipped build renders through the WebView2 runtime already on your system; a real-Servo engine flavor builds from source.</p>
-<p style="color:var(--dim);font-size:.8rem;margin-bottom:2rem">v0.11.10 for Windows x64 &bull; no extra runtime installs (WebView2 ships with Windows 10/11) &bull; Servo-engine source builds need <a href="https://gstreamer.freedesktop.org/download/" target="_blank" rel="noopener noreferrer" style="color:var(--dim);text-decoration:underline">GStreamer 1.26 MSVC</a> &bull; open source under CC BY-NC 4.0 &bull; non-commercial use</p>
+<p style="color:var(--dim);margin-bottom:.5rem;font-size:.9rem">A native Rust binary &mdash; no Electron, no bundled Chromium. The shipped build renders through the real Servo engine (libservo) &mdash; codec libraries bundled in the zip, nothing to install.</p>
+<p style="color:var(--dim);font-size:.8rem;margin-bottom:2rem">v0.11.11 for Windows x64 &bull; no extra runtime installs (GStreamer codecs bundled) &bull; source builds need <a href="https://gstreamer.freedesktop.org/download/" target="_blank" rel="noopener noreferrer" style="color:var(--dim);text-decoration:underline">GStreamer 1.26 MSVC</a> &bull; open source under CC BY-NC 4.0 &bull; non-commercial use</p>
 <div class="cta-row" style="">
-<a href="https://github.com/Amnibro/Amni-Browse/releases/download/v0.11.10/amni-browse-v0.11.10-win64.zip" class="btn btn-primary">DOWNLOAD v0.11.10 (WIN64)</a>
+<a href="https://github.com/Amnibro/Amni-Browse/releases/download/v0.11.11/amni-browse-v0.11.11-win64.zip" class="btn btn-primary">DOWNLOAD v0.11.11 (WIN64)</a>
 <a href="https://github.com/amnibro/Amni-Browse" target="_blank" class="btn btn-outline">VIEW ON GITHUB</a>
 <a href="privacy-browse.html" class="btn btn-outline">PRIVACY POLICY</a>
 </div>
