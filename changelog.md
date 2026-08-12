@@ -1,3 +1,7 @@
+## 2026-08-12 — v1.19.4 Home stat-row fact fix
+
+- **index.html** masthead stats: Products 17 → 18 (10 featured + 8 "Everything else" cards on the page itself), Install None → Optional (Braid/Browse/Haven/Crypt are installed apps; web tools need none). Claim audit: 37 calc modules exact, 92 learn game launchers ≥ "60+", game wasm transfers 2.9 MB gz (+models ≈ 5 MB claim holds), home page serves zero AdSense so Trackers Zero stands.
+
 ## 2026-08-11 — v1.19.3 Symphony: screenshot gallery + og image
 
 - **symphony.html** new SEE IT IN ACTION section between features and install steps:
