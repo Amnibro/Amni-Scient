@@ -88,8 +88,8 @@
 </div>
 <div class="ptile">
 <div class="ptile-copy">
-<p class="ptile-line">A privacy-first web browser powered by the real Servo engine (v0.11.13).</p>
-<ul class="ptile-feats"><li>Real Servo engine (libservo) · WebView2 flavor builds from source</li><li>Zero telemetry · ad blocker · private tabs</li><li>DoH + AES-256-GCM vault (WebView2 flavor)</li><li>Multi-profile</li></ul>
+<p class="ptile-line">A privacy-first web browser powered by the real Servo engine (v0.12.1). One Windows exe, click-to-install, auto-updates from this site.</p>
+<ul class="ptile-feats"><li>Real Servo (libservo) is the default · WebView2 only for DRM/MSE</li><li>Zero telemetry · ad blocker · private tabs · omnibox</li><li>AES-256-GCM vault + Bitwarden / 1Password / KeePassXC fill</li><li>One-click install + in-app updates from amni-scient.com / GitHub</li></ul>
 </div>
 <div class="ptile-media"><img src="assets/browse/Screenshot%202026-04-17%20110302.png" alt="Amni-Browse browsing a page" loading="lazy"></div>
 </div>
@@ -109,13 +109,13 @@
 </div>
 <div class="feature">
 <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10" width="16" height="11"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div>
-<h4>DNS-OVER-HTTPS <span style="font-size:.65em;color:var(--dim)">(WEBVIEW2 FLAVOR)</span></h4>
-<p>Encrypted DNS with Cloudflare, Google, or Quad9 in the WebView2 flavor. Coming to the Servo build; Servo currently uses your system resolver.</p>
+<h4>CLICK-TO-INSTALL</h4>
+<p>One Setup command downloads the win64 zip, drops <code>amni-browse.exe</code> in <code>%LOCALAPPDATA%\AmniBrowse</code>, pins Start Menu + Desktop, and registers as a browser. The app then checks this site (then GitHub) for updates.</p>
 </div>
 <div class="feature">
 <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="7.5" cy="12" r="3.5"/><path d="M11 12h10M18 12v3.5M15 12v2.5"/></svg></div>
-<h4>ENCRYPTED VAULT <span style="font-size:.65em;color:var(--dim)">(WEBVIEW2 FLAVOR)</span></h4>
-<p>AES-256-GCM password vault with PBKDF2-HMAC-SHA256 (600,000 iterations) in the WebView2 flavor. Master password never stored &mdash; only the derived key lives in memory while unlocked. Coming to the Servo build.</p>
+<h4>BRING YOUR OWN VAULT</h4>
+<p>Amni vault (AES-256-GCM, PBKDF2 600k) plus Bitwarden CLI, 1Password CLI, and KeePassXC. A key icon on the URL bar fills the login like Chrome. One-match autofill is a toggle. Secrets stay on your machine.</p>
 </div>
 <div class="feature">
 <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.8-6 10-6 10 6 10 6-3.8 6-10 6-10-6-10-6z"/><circle cx="12" cy="12" r="2.8"/></svg></div>
@@ -150,9 +150,11 @@
 <tr><td>Type</td><td>Privacy-First Web Browser</td></tr>
 <tr><td>Language</td><td>Rust 2021 (single binary)</td></tr>
 <tr><td>Platforms</td><td>Windows, macOS, Linux</td></tr>
-<tr><td>Rendering</td><td>Servo (real libservo, rev 68ca280) &mdash; engine in the shipped build &bull; system WebView2 (tao + wry 0.46) available as a from-source build flavor</td></tr>
-<tr><td>DNS</td><td>DoH via Cloudflare, Google, Quad9 (WebView2 flavor) &bull; system resolver in the shipped Servo build</td></tr>
-<tr><td>Encryption</td><td>AES-256-GCM &bull; PBKDF2-HMAC-SHA256 &bull; 600,000 iterations (vault UI in WebView2 flavor)</td></tr>
+<tr><td>Rendering</td><td>Servo (real libservo, rev 68ca280) is the default shipped engine &bull; system WebView2 only as a DRM/MSE hatch or a from-source stub</td></tr>
+<tr><td>Install</td><td>Windows x64 exe via one-click Setup &bull; lives in %LOCALAPPDATA%\AmniBrowse &bull; auto-update from amni-scient.com/browse/latest.json then GitHub</td></tr>
+<tr><td>Passwords</td><td>Amni vault + Bitwarden (bw) + 1Password (op) + KeePassXC CLI &bull; Chrome-style key-icon fill</td></tr>
+<tr><td>DNS</td><td>DoH resolver in the custom pipeline &bull; Servo uses the system resolver for page loads</td></tr>
+<tr><td>Encryption</td><td>AES-256-GCM &bull; PBKDF2-HMAC-SHA256 &bull; 600,000 iterations (vault on the Servo build)</td></tr>
 <tr><td>Ad Blocking</td><td>Navigation-layer filter &bull; built-in rules &bull; no external fetch</td></tr>
 <tr><td>Tracking Strip</td><td>UTM, fbclid, gclid, and 20+ click-ID params removed from every URL</td></tr>
 <tr><td>Storage</td><td>Local only &mdash; OS config dir &bull; no cloud, no sync</td></tr>
@@ -184,10 +186,11 @@
 </section>
 <section>
 <h2>GET AMNI-BROWSE</h2>
-<p style="color:var(--dim);margin-bottom:.5rem;font-size:.9rem">A native Rust binary &mdash; no Electron, no bundled Chromium. The shipped build renders through the real Servo engine (libservo) &mdash; codec libraries bundled in the zip, nothing to install.</p>
-<p style="color:var(--dim);font-size:.8rem;margin-bottom:2rem">v0.11.13 for Windows x64 &bull; no extra runtime installs (GStreamer codecs bundled) &bull; source builds need <a href="https://gstreamer.freedesktop.org/download/" target="_blank" rel="noopener noreferrer" style="color:var(--dim);text-decoration:underline">GStreamer 1.26 MSVC</a> &bull; open source under CC BY-NC 4.0 &bull; non-commercial use</p>
+<p style="color:var(--dim);margin-bottom:.5rem;font-size:.9rem">A native Rust <strong>exe</strong> &mdash; no Electron, no bundled Chromium. The shipped build is <code>amni-browse.exe</code> on the real Servo engine. Click Setup, or grab the zip.</p>
+<p style="color:var(--dim);font-size:.8rem;margin-bottom:1rem">v0.12.1 for Windows x64 &bull; installs to %LOCALAPPDATA%\AmniBrowse &bull; codec libraries bundled &bull; source builds need <a href="https://gstreamer.freedesktop.org/download/" target="_blank" rel="noopener noreferrer" style="color:var(--dim);text-decoration:underline">GStreamer 1.26 MSVC</a> &bull; CC BY-NC 4.0</p>
+<pre style="max-width:720px;margin:0 0 1.4rem;padding:12px 14px;background:var(--panel,#111);border:1px solid var(--border);border-radius:6px;overflow:auto;font:12px/1.45 ui-monospace,Consolas,monospace;color:var(--text)">powershell -NoProfile -ExecutionPolicy Bypass -Command "irm https://amni-scient.com/browse/install.ps1 | iex"</pre>
 <div class="cta-row" style="">
-<a href="https://github.com/Amnibro/Amni-Browse/releases/download/v0.11.13/amni-browse-v0.11.13-win64.zip" class="btn btn-primary">DOWNLOAD v0.11.13 (WIN64)</a>
+<a href="https://github.com/Amnibro/Amni-Browse/releases/latest/download/amni-browse-v0.12.1-win64.zip" class="btn btn-primary">DOWNLOAD v0.12.1 EXE (WIN64 ZIP)</a>
 <a href="https://github.com/amnibro/Amni-Browse" target="_blank" class="btn btn-outline">VIEW ON GITHUB</a>
 <a href="privacy-browse.html" class="btn btn-outline">PRIVACY POLICY</a>
 </div>

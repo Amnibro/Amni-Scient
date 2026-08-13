@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#F3F2EF">
+<title>Privacy Policy — Amni-Mail | AMNI-SCIENT</title>
+<meta name="description" content="Privacy policy for Amni-Mail. Local-first email client. Mail and credentials stay on your machine. No amni-scient telemetry.">
+<link rel="canonical" href="https://amni-scient.com/privacy-mail">
+<link rel="stylesheet" href="css/style.css?v=b261">
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#08090B':'#F3F2EF');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+</head>
+<body>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<a href="amni-mail.html">AMNI-MAIL</a>
+<a href="about.html">ABOUT</a>
+<a href="faq.html">FAQ</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+</nav>
+<section class="wide" style="padding-top:5rem;max-width:720px">
+<h1>Amni-Mail privacy</h1>
+<p>Amni-Mail is a desktop client that runs on your computer. Amniscient, LLC does not operate a mail server for it and does not receive your messages.</p>
+<h2>What stays on the machine</h2>
+<p>Message bodies, headers, attachments, contacts, calendar events, rules, and search indexes live in a local SQLite file under the install directory. Passwords and OAuth tokens are stored in an encrypted credentials file keyed on that machine.</p>
+<h2>What leaves the machine</h2>
+<p>IMAP and SMTP traffic goes to the mail host <em>you</em> configure (Google, Microsoft, Fastmail, and so on). If you paste your own OAuth client, token exchange goes to that provider. Optional AI features call only the URL you set (default a local server). The amni-scient.com website is not in that path.</p>
+<h2>What we do not do</h2>
+<p>No accounts at amni-scient. No analytics. No crash reports. No advertising identifiers. The download zip and install script are static files.</p>
+<p style="margin-top:2rem"><a href="amni-mail.html">Back to Amni-Mail</a></p>
+</section>
+</body>
+</html>

@@ -1,3 +1,7 @@
+## 2026-08-12 — v1.19.5 Home zigzag + Browse v0.12.1
+- **index.html tiles:** Adam and Grok-Remote were both `tile right`, so two media columns sat on the same side. Featured Amni-Browse (v0.12.1 exe) as the missing left tile between them — zigzag is LRLR… again. Browse promoted out of the index list (renumbered 01–08). Products 19.
+- **amni-browse.html / about / faq:** shipped as a Windows exe — one-click `irm https://amni-scient.com/browse/install.ps1 | iex`, zip download, BYO vault (Amni / Bitwarden / 1Password / KeePassXC), in-app updates from `/browse/latest.json`.
+- **browse/latest.json + browse/install.ps1** hosted for the updater and Setup clicker.
 ## 2026-08-12 — v1.19.4 Home stat-row fact fix
 
 - **index.html** masthead stats: Products 17 → 18 (10 featured + 8 "Everything else" cards on the page itself), Install None → Optional (Braid/Browse/Haven/Crypt are installed apps; web tools need none). Claim audit: 37 calc modules exact, 92 learn game launchers ≥ "60+", game wasm transfers 2.9 MB gz (+models ≈ 5 MB claim holds), home page serves zero AdSense so Trackers Zero stands.

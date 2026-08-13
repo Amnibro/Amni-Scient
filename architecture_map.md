@@ -1,3 +1,5 @@
+## 2026-08-12 v1.19.5 home tile zigzag + Browse v0.12.1
+- index.html: Amni-Browse featured as a left tile between Adam and Grok-Remote (fixes two consecutive `tile right`). Public feeds: `/browse/latest.json`, `/browse/install.ps1`.
 ## 2026-08-11 — v1.19.3 Symphony: screenshot gallery + og image
 
 - **symphony.html** new SEE IT IN ACTION section between features and install steps:
