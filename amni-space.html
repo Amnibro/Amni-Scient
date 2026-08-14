@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#FBFAF8">
+<title>Amni-Space &mdash; Visual Disk Map with an AI Seat | AMNI-SCIENT</title>
+<meta name="description" content="Amni-Space maps a whole Windows drive in about 20 seconds by reading the NTFS $MFT directly. Treemap and sunburst views, duplicate and cache detection, and an AI seat that proposes a cleanup you approve. Deletes go to the Recycle Bin and every run is undoable.">
+<meta name="keywords" content="amni-space,disk space analyzer,treemap,spacesniffer alternative,wiztree alternative,ntfs mft scanner,disk cleanup,windows disk usage,find duplicate files">
+<meta property="og:title" content="Amni-Space &mdash; Visual Disk Map with an AI Seat">
+<meta property="og:description" content="A whole drive mapped in about 20 seconds. Treemap and sunburst, duplicate and cache detection, and an AI that proposes a cleanup you approve. Nothing is deleted without you.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://amni-scient.com/amni-space">
+<meta property="og:image" content="https://amni-scient.com/assets/space/treemap.png">
+<meta property="og:image:width" content="1600">
+<meta property="og:image:height" content="900">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Amni-Space &mdash; Visual Disk Map with an AI Seat">
+<meta name="twitter:description" content="A whole drive mapped in about 20 seconds. Treemap and sunburst, duplicates and caches, and an AI that proposes a cleanup you approve.">
+<meta name="twitter:image" content="https://amni-scient.com/assets/space/treemap.png">
+<link rel="canonical" href="https://amni-scient.com/amni-space">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Amni-Space","url":"https://amni-scient.com/amni-space.html","description":"Visual disk-space map for Windows that reads the NTFS $MFT directly, with treemap and sunburst views and an AI seat that proposes a cleanup you approve.","applicationCategory":"UtilitiesApplication","operatingSystem":"Windows 10, Windows 11","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Organization","name":"AMNI-SCIENT","legalName":"Amniscient, LLC","url":"https://amni-scient.com"},"image":"https://amni-scient.com/assets/space/treemap.png"}</script>
+<link rel="stylesheet" href="css/style.css?v=b261">
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+</head>
+<body class="pp theme-ai">
+<div class="grid-bg"></div>
+<div class="scanlines"></div>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<a href="amni-calc.html">CALCULATORS</a>
+<a href="amni-learn.html">LEARN</a>
+<a href="research.html">RESEARCH</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu">
+<a href="/braid">BRAID</a>
+<a href="symphony.html">SYMPHONY</a>
+<a href="grok-remote.html">GROK-REMOTE</a>
+<a href="amni-ai.html">AMNI-AI</a>
+<a href="amni-browse.html">AMNI-BROWSE</a>
+<a href="amni-calc.html">AMNI-CALC</a>
+<a href="amni-explore.html">AMNI-EXPLORE</a>
+<a href="amni-space.html" class="active">AMNI-SPACE</a>
+<a href="amni-weather.html">AMNI-WEATHER</a>
+<a href="game/">AMNI-GAME</a>
+<a href="amni-learn.html">AMNI-LEARN</a>
+<a href="amni-llm.html">AMNI-LLM</a>
+<a href="amni-connect.html">AMNI-CONNECT</a>
+<a href="amni-code.html">AMNI-CODE</a>
+<a href="amni-core.html">AMNI-CORE</a>
+<a href="amni-haven.html">AMNI-HAVEN</a>
+<a href="amni-crypt.html">AMNI-CRYPT</a>
+<a href="amni-life.html">AMNI-LIFE</a>
+<a href="amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</div>
+<a href="about.html">ABOUT</a>
+<a href="faq.html">FAQ</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer">SUPPORT</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<div class="product-hero">
+<div class="shield-icon float">
+<svg viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect x="12" y="18" width="46" height="46" stroke="#C89B4E" stroke-width="2" fill="rgba(200,155,78,0.10)"/>
+<rect x="62" y="18" width="26" height="26" stroke="#C89B4E" stroke-width="1.4" fill="rgba(200,155,78,0.05)"/>
+<rect x="62" y="48" width="26" height="16" stroke="#C89B4E" stroke-width="1.2" fill="none"/>
+<rect x="12" y="68" width="28" height="30" stroke="#C89B4E" stroke-width="1.4" fill="rgba(200,155,78,0.05)"/>
+<rect x="44" y="68" width="44" height="30" stroke="#C89B4E" stroke-width="1.2" fill="none"/>
+<line x1="12" y1="18" x2="12" y2="98" stroke="#C89B4E" stroke-width="2"/>
+</svg>
+</div>
+<h1>AMNI-SPACE</h1>
+<p class="desc">WHOLE DRIVE IN ~20 SECONDS &bull; TREEMAP + SUNBURST &bull; AI THAT ASKS FIRST</p>
+<div class="cta-row" style="margin-top:2rem;margin-bottom:1rem">
+<a href="#get" class="btn btn-primary">DOWNLOAD FOR WINDOWS</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="btn btn-outline">&#9749; SUPPORT</a>
+</div>
+</div>
+<div class="ptile">
+<div class="ptile-copy">
+<p class="ptile-line">See where your disk went. Amni-Space reads the NTFS master file table directly instead of walking folders, so a 930 GB drive with 2.7 million files draws in about twenty seconds.</p>
+<ul class="ptile-feats"><li>Treemap or sunburst &middot; click to zoom, breadcrumb to jump</li><li>Finds caches, build output, duplicates and stale copies</li><li>An AI seat reads the map and proposes a cleanup &mdash; you approve every line</li><li>Deletes go to the Recycle Bin &middot; every run is journalled and undoable</li></ul>
+</div>
+<div class="ptile-media"><img src="assets/space/treemap.png" alt="Amni-Space treemap of a Windows folder" loading="lazy" onclick="openLightbox(this.src,this.alt)"></div>
+</div>
+<section>
+<h2>IT READS THE FILE TABLE, NOT THE FOLDERS</h2>
+<p style="color:var(--dim);max-width:640px;margin:0 0 1rem;font-size:.9rem">Most disk tools open every directory in turn. Amni-Space reads the volume&rsquo;s own index once and rebuilds the whole tree from it &mdash; and it sees files Explorer cannot open, like <code>pagefile.sys</code>.</p>
+<div class="features">
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18v6H3zM3 13h10v6H3zM15 13h6v6h-6z"/></svg></div>
+<h4>TWENTY SECONDS</h4>
+<p>A 930 GB drive with 2,700,000 files maps in about 20 seconds. Any folder, any non-NTFS drive, or a run without admin falls back to a threaded walker automatically.</p>
+</div>
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3v9l6 4"/></svg></div>
+<h4>TWO WAYS TO LOOK</h4>
+<p>A nested treemap, or a sunburst where the top level is the outer ring and depth runs inward. Color by file type, age, size, or one hue per top-level folder.</p>
+</div>
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10"/></svg></div>
+<h4>FINDS THE FAT</h4>
+<p>Cache, build output, temp and crash-dump folders. Duplicate groups by name and size. Biggest files, biggest folders, age buckets, and a breakdown by extension.</p>
+</div>
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg></div>
+<h4>AN AI THAT ASKS FIRST</h4>
+<p>Point it at a local model on your own machine, or a Claude, OpenAI, Grok or Gemini key you already have. It reads the map and proposes a plan. You approve it line by line.</p>
+</div>
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14l-1 13H6z"/><path d="M9 7V5h6v2"/><path d="M10 11v6M14 11v6"/></svg></div>
+<h4>NOTHING VANISHES</h4>
+<p>Deletes go to the Recycle Bin, never <code>unlink</code>. Tidying moves folders to a review folder you purge later. Every applied run is journalled and can be undone.</p>
+</div>
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.6 8.2-8 9-4.4-.8-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg></div>
+<h4>IT REFUSES BAD IDEAS</h4>
+<p>Windows, Program Files, <code>.git</code> histories, model weights, checkpoints, backups and keys are off limits at any depth. It will not move a folder that holds a virtual environment, a running program or a scheduled task.</p>
+</div>
+</div>
+</section>
+<section>
+<h2>WHAT IT WILL NOT DO</h2>
+<p style="color:var(--dim);max-width:680px;margin:0 0 1rem;font-size:.9rem">A tool that deletes files has to be honest about its limits. These are enforced in code, not by the model&rsquo;s good manners.</p>
+<table class="spec-table">
+<tr><td>Deleting</td><td>Recycle Bin only &bull; blocked if your bin lacks the space, or if it is set to delete immediately</td></tr>
+<tr><td>Version control</td><td><code>.git</code>, <code>.svn</code>, <code>.hg</code> refused at any depth &mdash; history is never regenerable</td></tr>
+<tr><td>Irreplaceable</td><td>model weights, bakes, checkpoints, datasets, backups, keys and credentials are never offered</td></tr>
+<tr><td>In use</td><td>a folder holding a venv, a running executable, a service or a scheduled task cannot be moved</td></tr>
+<tr><td>The AI</td><td>proposes only &bull; cannot execute unless you switch autonomy on, and then only under a byte cap</td></tr>
+<tr><td>Network</td><td>binds to 127.0.0.1 &bull; your file names leave the machine only if you choose a cloud AI seat</td></tr>
+<tr><td>Keys</td><td>stored in <code>%APPDATA%\AmniSpace</code> &bull; sent only to the provider you picked, over HTTPS</td></tr>
+<tr><td>License</td><td>Free for personal use &bull; &copy; Amniscient, LLC</td></tr>
+</table>
+</section>
+<section>
+<h2>HOW IT WORKS</h2>
+<div class="how-works-grid">
+<div class="card">
+<h3>1. SCAN</h3>
+<p>Pick a drive and press Scan. On NTFS it reads the master file table directly; everything else falls back to a fast threaded walk. The map draws as soon as it lands.</p>
+</div>
+<div class="card">
+<h3>2. LOOK</h3>
+<p>Zoom into what is big. Switch to the sunburst when you want the shape of a whole tree at once. Hotspots, Duplicates and Biggest do the obvious hunting for you.</p>
+</div>
+<div class="card">
+<h3>3. PROPOSE</h3>
+<p>Ask a seat for a plan, or drag folders on the map to build one by hand. You get a before-and-after picture with the numbers that decide whether it is actually better.</p>
+</div>
+<div class="card">
+<h3>4. APPROVE</h3>
+<p>Dry-run it, untick anything you disagree with, then apply. The map updates instantly. If you change your mind, one button puts everything back.</p>
+</div>
+</div>
+</section>
+<section id="get">
+<h2>GET AMNI-SPACE</h2>
+<p style="color:var(--dim);margin-bottom:.5rem;font-size:.9rem">One Windows executable. No installer, no runtime to fetch, no account. Run it and your browser opens on the map.</p>
+<p style="color:var(--dim);font-size:.8rem;margin-bottom:1rem">v1.5.0 for Windows 10/11 x64 &bull; 34.8 MB &bull; asks for administrator so it can read the file table &bull; a plain folder scan works without it</p>
+<pre style="max-width:720px;margin:0 0 1rem;padding:12px 14px;background:var(--panel,#111);border:1px solid var(--border);border-radius:6px;overflow:auto;font:12px/1.45 ui-monospace,Consolas,monospace;color:var(--text)">SHA-256  80f51f4e79bbb267a3c3d40ff0e14687190d9e10abfb7bf52b6e0213dfaea730</pre>
+<p style="color:var(--dim);font-size:.8rem;margin-bottom:1rem">Windows will warn that the publisher is unrecognized, because this build is not code-signed yet. Choose <em>More info</em> then <em>Run anyway</em>, or verify the hash above first.</p>
+<div class="cta-row">
+<a href="https://github.com/Amnibro/Amni-Scient/releases/download/amni-space-v1.5.0/AmniSpace.exe" class="btn btn-primary">DOWNLOAD v1.5.0 (WIN64 EXE)</a>
+<a href="privacy.html" class="btn btn-outline">PRIVACY POLICY</a>
+</div>
+</section>
+
+<aside class="support-cta" aria-label="Support"><a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="support-link"><span class="support-ico">&#9749;</span><span>Enjoying this? <strong>Support on Ko-fi</strong></span></a></aside>
+<footer>
+<div class="footer-links">
+<a href="about.html">ABOUT</a>
+<a href="faq.html">FAQ</a>
+<a href="privacy.html">PRIVACY</a>
+<a href="terms.html">TERMS</a>
+<a href="mailto:amnibro7@gmail.com">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
+</footer>
+<div class="lightbox" onclick="closeLightbox(event)"><span class="lightbox-close">&times;</span><img></div>
+<script>function openLightbox(s,a){const l=document.querySelector('.lightbox'),i=l.querySelector('img');i.src=s;i.alt=a;l.classList.add('open')}function closeLightbox(e){e.target.tagName!=='IMG'&&document.querySelector('.lightbox').classList.remove('open')}</script>
+</body>
+</html>
