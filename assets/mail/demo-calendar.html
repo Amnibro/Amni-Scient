@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>Amni-Mail — Calendar</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#08090B;color:#E8E4DC;font-family:Archivo,system-ui,sans-serif;overflow:hidden}
+.app{display:grid;grid-template-columns:232px 1fr;height:100vh}
+.rail{background:#111418;border-right:1px solid #24282E;padding:18px 14px;display:flex;flex-direction:column;gap:18px}
+.brand{font-size:11px;letter-spacing:.22em;color:#C89B4E;font-weight:700}
+.nav a{display:block;color:#9A958C;text-decoration:none;padding:7px 10px;font-size:12px;letter-spacing:.08em}
+.nav a.on{color:#C89B4E}
+.main{display:flex;flex-direction:column;min-width:0}
+.bar{height:56px;border-bottom:1px solid #24282E;display:flex;align-items:center;padding:0 24px;justify-content:space-between}
+.bar h1{font-size:16px;letter-spacing:.16em;font-weight:600}
+.grid{display:grid;grid-template-columns:repeat(7,1fr);flex:1}
+.dow{padding:10px 8px;font-size:10px;letter-spacing:.14em;color:#7A756C;border-bottom:1px solid #24282E;border-right:1px solid #1A1D22}
+.cell{min-height:118px;border-right:1px solid #1A1D22;border-bottom:1px solid #1A1D22;padding:8px}
+.cell .n{font-size:11px;color:#9A958C;margin-bottom:6px}
+.cell.today .n{color:#C89B4E;font-weight:700}
+.ev{font-size:11px;background:#1A1712;border-left:2px solid #C89B4E;color:#F3EBD8;padding:4px 6px;margin-bottom:4px}
+.ev.mute{border-left-color:#4A5560;background:#14181C;color:#C7C2B8}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="rail">
+<div class="brand">AMNI-MAIL</div>
+<nav class="nav">
+<a>INBOX</a>
+<a class="on">CALENDAR</a>
+<a>CLEAN REVIEW</a>
+<a>SUBSCRIPTIONS</a>
+</nav>
+</aside>
+<section class="main">
+<div class="bar"><h1>AUGUST 2026</h1><span style="color:#9A958C;font-size:12px;letter-spacing:.1em">NORTH STUDIO · MONTH</span></div>
+<div class="grid">
+<div class="dow">SUN</div><div class="dow">MON</div><div class="dow">TUE</div><div class="dow">WED</div><div class="dow">THU</div><div class="dow">FRI</div><div class="dow">SAT</div>
+<div class="cell"><div class="n">2</div></div>
+<div class="cell"><div class="n">3</div><div class="ev">Board packet due</div></div>
+<div class="cell"><div class="n">4</div></div>
+<div class="cell"><div class="n">5</div><div class="ev mute">Freight window</div></div>
+<div class="cell"><div class="n">6</div></div>
+<div class="cell"><div class="n">7</div><div class="ev">Studio walkthrough 3pm</div></div>
+<div class="cell"><div class="n">8</div></div>
+<div class="cell"><div class="n">9</div></div>
+<div class="cell"><div class="n">10</div><div class="ev mute">Print lock</div></div>
+<div class="cell"><div class="n">11</div></div>
+<div class="cell today"><div class="n">12</div><div class="ev">Q3 review</div><div class="ev mute">Interview · Lumen</div></div>
+<div class="cell"><div class="n">13</div></div>
+<div class="cell"><div class="n">14</div><div class="ev">Civic lighting bid</div></div>
+<div class="cell"><div class="n">15</div></div>
+<div class="cell"><div class="n">16</div></div>
+<div class="cell"><div class="n">17</div></div>
+<div class="cell"><div class="n">18</div><div class="ev mute">Dock 4 follow-up</div></div>
+<div class="cell"><div class="n">19</div></div>
+<div class="cell"><div class="n">20</div><div class="ev">Launch freeze</div></div>
+<div class="cell"><div class="n">21</div></div>
+<div class="cell"><div class="n">22</div></div>
+</div>
+</section>
+</div>
+</body>
+</html>

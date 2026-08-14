@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>Amni-Mail — Inbox</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#08090B;color:#E8E4DC;font-family:Archivo,system-ui,sans-serif;overflow:hidden}
+.app{display:grid;grid-template-columns:232px 360px 1fr;height:100vh}
+.rail{background:#111418;border-right:1px solid #24282E;padding:18px 14px;display:flex;flex-direction:column;gap:18px}
+.brand{font-size:11px;letter-spacing:.22em;color:#C89B4E;font-weight:700}
+.acct{display:flex;flex-direction:column;gap:6px}
+.acct button{text-align:left;background:transparent;border:1px solid transparent;color:#C7C2B8;padding:8px 10px;font:inherit;font-size:12px;letter-spacing:.04em;cursor:default}
+.acct button.on{border-color:#C89B4E;color:#F3EBD8;background:#1A1712}
+.nav{display:flex;flex-direction:column;gap:2px}
+.nav a{color:#9A958C;text-decoration:none;padding:7px 10px;font-size:12px;letter-spacing:.08em}
+.nav a.on{color:#C89B4E}
+.mid{background:#0C0E11;border-right:1px solid #24282E;display:flex;flex-direction:column}
+.top{height:52px;border-bottom:1px solid #24282E;display:flex;align-items:center;padding:0 14px;gap:10px;color:#9A958C;font-size:12px;letter-spacing:.1em}
+.search{flex:1;background:#111418;border:1px solid #2A2E34;color:#E8E4DC;padding:7px 10px;font:inherit;font-size:12px}
+.row{padding:12px 14px;border-bottom:1px solid #1A1D22;cursor:default}
+.row.on{background:#1A1712;border-left:2px solid #C89B4E}
+.row .who{font-size:13px;font-weight:600;color:#F3EBD8}
+.row .sub{font-size:12px;color:#C7C2B8;margin-top:3px}
+.row .sn{font-size:11px;color:#7A756C;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .when{float:right;font-size:10px;color:#7A756C;letter-spacing:.06em}
+.read{display:flex;flex-direction:column;min-width:0}
+.rhead{padding:22px 32px 16px;border-bottom:1px solid #24282E}
+.rhead h1{font-size:22px;font-weight:600;letter-spacing:.01em;margin-bottom:10px}
+.meta{font-size:12px;color:#9A958C}
+.body{padding:28px 32px;font-size:15px;line-height:1.65;max-width:720px;color:#D6D1C7}
+.body p{margin-bottom:14px}
+.sig{color:#C89B4E;margin-top:22px;font-size:13px;letter-spacing:.08em}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="rail">
+<div class="brand">AMNI-MAIL</div>
+<div class="acct">
+<button class="on">North Studio · Gmail</button>
+<button>River Lab · Outlook</button>
+<button>Harbor Desk · IMAP</button>
+</div>
+<nav class="nav">
+<a class="on">INBOX</a>
+<a>STARRED</a>
+<a>SENT</a>
+<a>ARCHIVE</a>
+<a>CALENDAR</a>
+<a>CLEAN REVIEW</a>
+<a>SUBSCRIPTIONS</a>
+</nav>
+</aside>
+<section class="mid">
+<div class="top">INBOX · 6 UNREAD<div class="search">Search mail</div></div>
+<div class="row on"><span class="when">9:14 AM</span><div class="who">Mira Chen</div><div class="sub">Q3 launch checklist — ready for your pass</div><div class="sn">Draft deck is in the shared folder. Need a yes/no on the brass lockup by Friday.</div></div>
+<div class="row"><span class="when">8:02 AM</span><div class="who">Harbor Desk</div><div class="sub">Dock 4 inspection cleared</div><div class="sn">All three bays signed. Photos attached for the insurance packet.</div></div>
+<div class="row"><span class="when">YESTERDAY</span><div class="who">Lumen Press</div><div class="sub">Interview window next week</div><div class="sn">We can do Tuesday 10 or Thursday 2. Remote is fine.</div></div>
+<div class="row"><span class="when">YESTERDAY</span><div class="who">Atlas Freight</div><div class="sub">Shipment 4418 departed Oakland</div><div class="sn">ETA Thursday. Tracking stays live until signature.</div></div>
+<div class="row"><span class="when">MON</span><div class="who">Nova Civic</div><div class="sub">Board packet attached</div><div class="sn">Minutes, budget addendum, and the park lighting bid.</div></div>
+<div class="row"><span class="when">MON</span><div class="who">Kade Ortega</div><div class="sub">Re: studio visit</div><div class="sn">I can be there at 3. Bringing the linen swatches.</div></div>
+</section>
+<article class="read">
+<div class="rhead">
+<h1>Q3 launch checklist — ready for your pass</h1>
+<div class="meta">Mira Chen · mira@north-studio.example · to you · Today 9:14 AM</div>
+</div>
+<div class="body">
+<p>Morning — the launch list is tight enough to review in one sitting.</p>
+<p>Site hero is locked on graphite and brass. Sample shots use only simulated names. Calendar events are the studio tour, freight window, and the civic board. Cleanup review still sits one click off the rail if you want to undo a sender.</p>
+<p>Need a yes or no on the lockup by Friday so print can start Monday. I left the alternate wordmark in the same folder if you want to flip it.</p>
+<p>See you at the 3pm walkthrough.</p>
+<div class="sig">MIRA CHEN · NORTH STUDIO</div>
+</div>
+</article>
+</div>
+</body>
+</html>
