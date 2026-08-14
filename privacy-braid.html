@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#F3F2EF">
+<title>Privacy Policy &mdash; Braid | AMNI-SCIENT</title>
+<meta name="description" content="How Braid handles data: prompts stay on your machine and go to the AI seats you already pay for. Amni-Scient does not proxy chats. Licence checks and Stripe payments are the only Amni-side traffic.">
+<link rel="canonical" href="https://amni-scient.com/privacy-braid">
+<link rel="stylesheet" href="css/style.css?v=b261">
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#F3F2EF');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+</head>
+<body class="theme-braid">
+<div class="grid-bg"></div>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<a href="amni-calc.html">CALCULATORS</a>
+<a href="amni-learn.html">LEARN</a>
+<a href="research.html">RESEARCH</a>
+<div class="nav-dd">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu">
+<a href="/braid">BRAID</a>
+<a href="symphony.html">SYMPHONY</a>
+<a href="grok-remote.html">GROK-REMOTE</a>
+<a href="amni-ai.html">AMNI-AI</a>
+<a href="amni-browse.html">AMNI-BROWSE</a>
+<a href="amni-calc.html">AMNI-CALC</a>
+<a href="amni-explore.html">AMNI-EXPLORE</a>
+<a href="amni-space.html">AMNI-SPACE</a>
+<a href="amni-weather.html">AMNI-WEATHER</a>
+<a href="game/">AMNI-GAME</a>
+<a href="amni-learn.html">AMNI-LEARN</a>
+<a href="amni-llm.html">AMNI-LLM</a>
+<a href="amni-connect.html">AMNI-CONNECT</a>
+<a href="amni-code.html">AMNI-CODE</a>
+<a href="amni-core.html">AMNI-CORE</a>
+<a href="amni-haven.html">AMNI-HAVEN</a>
+<a href="amni-crypt.html">AMNI-CRYPT</a>
+<a href="amni-life.html">AMNI-LIFE</a>
+<a href="amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</div>
+<a href="about.html">ABOUT</a>
+<a href="faq.html">FAQ</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer">SUPPORT</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<div class="legal">
+<h1>BRAID &mdash; PRIVACY POLICY</h1>
+<p class="effective">Effective Date: August 14, 2026 &nbsp;|&nbsp; Last Updated: August 14, 2026</p>
+<p>This policy covers <strong>Braid</strong>, the Windows desktop roundtable published by Amniscient, LLC (&ldquo;we&rdquo;, &ldquo;us&rdquo;, &ldquo;our&rdquo;). Braid is a local orchestrator. It is not an AI provider and it does not sit in the middle of your model traffic.</p>
+<h2>1. THE SHORT VERSION</h2>
+<p><strong>Your prompts, answers, files, API keys, and CLI logins never go to Amni-Scient.</strong> When you ask the table a question, Braid drives the tools already on your computer &mdash; Claude Code, Grok, Gemini CLI, optional API keys, or a local seat (Ollama / bundled Adam). Those seats talk to <em>their</em> vendors (or to nothing, if the seat is local). We do not proxy, store, or train on chat content.</p>
+<p>What we <em>do</em> see is the minimum needed to sell a licence: a Stripe checkout (card details stay with Stripe), and later a licence check from the app (key + a machine fingerprint). That is it.</p>
+<h2>2. WHAT STAYS ON YOUR MACHINE</h2>
+<ul>
+<li><strong>Chats, memory cells, flows, workspace files</strong> &mdash; written under Braid&rsquo;s local store / the working directory you pick. We cannot read them.</li>
+<li><strong>API keys you paste into Braid</strong> &mdash; stored locally in Braid config. They are sent only to the provider you chose, the same way any other client would.</li>
+<li><strong>Vendor CLI sessions</strong> &mdash; Claude, Grok, Gemini, and similar stay signed in through <em>their</em> apps. Braid launches those CLIs; it does not upload their cookies or tokens to us.</li>
+<li><strong>Licence cache</strong> &mdash; a signed entitlement file on disk (<code>braid_license.json</code>). The app ships only the public verification key, so that file can be read locally but not forged.</li>
+</ul>
+<h2>3. WHAT LEAVES THE MACHINE (AMNI-SCIENT)</h2>
+<h3>3.1 Licence activation and re-check</h3>
+<p>On first activate, and about twice a day afterward, Braid POSTs to our licence server:</p>
+<ul>
+<li>the licence key you pasted (or a bootstrap token from checkout)</li>
+<li>a 24-character SHA-256 fingerprint of hostname + MAC (not the raw identifiers)</li>
+<li>a short hostname for the &ldquo;this computer&rdquo; label in the UI</li>
+</ul>
+<p>The server returns a signed entitlement (tier, expiry, bound key fingerprint + machine). If you are offline, the cached entitlement keeps working until it expires. Deactivate tells the server to drop that machine binding.</p>
+<p>We do <strong>not</strong> send prompts, transcripts, file paths, or API keys on this channel.</p>
+<h3>3.2 Payments (Stripe)</h3>
+<p>Subscriptions and token top-ups are Stripe Checkout. Card number, Apple Pay, Google Pay, and Link stay with Stripe. After payment, Stripe tells us enough to issue or top up a licence (typically email + payment status + amount). See <a href="https://stripe.com/privacy" target="_blank" rel="noopener">Stripe&rsquo;s privacy policy</a>.</p>
+<h3>3.3 Email you send us</h3>
+<p>If you write <a href="mailto:amnibro7@gmail.com">amnibro7@gmail.com</a> for teams, a lost key, or support, we keep that thread so we can help. We do not add you to a marketing list from Braid.</p>
+<h3>3.4 Optional tester reports</h3>
+<p>The $5 tester tier can send feedback through an in-app reporter. That path strips keys and filesystem paths before anything is packaged. You choose to send it.</p>
+<h2>4. WHAT LEAVES THE MACHINE (AI VENDORS &mdash; NOT US)</h2>
+<p>This is the part a careful user actually cares about. Braid is a table. The seats still belong to Anthropic, xAI, Google, OpenAI, and whoever else you plug in.</p>
+<ul>
+<li><strong>Cloud seats</strong> receive the prompt Braid built for that turn (your question, plus whatever context you allowed: other seats&rsquo; answers, memory cells, file excerpts). Their retention, training, and logging follow <em>your account with that vendor</em>, not this policy.</li>
+<li><strong>Local seats</strong> (Ollama, Adam) stay on-box. Nothing is required to leave.</li>
+<li>Braid injects launch environment flags so the CLIs skip their own telemetry where they honour it: <code>DO_NOT_TRACK</code>, <code>DISABLE_TELEMETRY</code>, <code>DISABLE_ERROR_REPORTING</code>, <code>OTEL_SDK_DISABLED</code>, Claude non-essential traffic off, Gemini usage statistics off. It can also write the documented opt-outs into Claude&rsquo;s and Gemini&rsquo;s local settings files if you use that hardener.</li>
+<li>Vendor <em>training</em> opt-outs are still account settings (claude.ai privacy, Google account data controls, xAI / OpenAI data controls). A CLI flag cannot rewrite a consumer-plan training toggle. We tell you that in-app; we do not pretend otherwise.</li>
+</ul>
+<h2>5. WHAT WE DO NOT DO</h2>
+<ul>
+<li>No analytics SDK in the Braid binary. No crash phone-home to us. No product telemetry of chats.</li>
+<li>No resale or metering of your model tokens. You pay Anthropic / xAI / Google / your API bill yourself.</li>
+<li>No advertising inside the app.</li>
+<li>No sale of user data. We do not have your chats to sell.</li>
+</ul>
+<h2>6. THE WEBSITE (AMNI-SCIENT.COM)</h2>
+<p>The marketing site that hosts this policy may show Google AdSense on some pages. That is the website, not the Braid exe. Ads there follow <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google&rsquo;s privacy policy</a>. The desktop app contains no AdSense.</p>
+<h2>7. RETENTION</h2>
+<ul>
+<li><strong>On your disk:</strong> until you delete Braid&rsquo;s store / workspace, or uninstall.</li>
+<li><strong>Licence records:</strong> we keep what we need to honour, revoke, or transfer a paid key (key, machine fingerprints, tier, expiry). Cancel Stripe and we stop issuing fresh entitlements; ask us if you want the licence row deleted.</li>
+<li><strong>Stripe:</strong> Stripe retains payment records under its own policy.</li>
+<li><strong>Vendor chats:</strong> whatever that vendor retains on your account.</li>
+</ul>
+<h2>8. YOUR RIGHTS</h2>
+<p>Local data is yours: delete the Braid config directory and workspace. For licence or payment records we hold, email <a href="mailto:amnibro7@gmail.com">amnibro7@gmail.com</a>. For chat history sitting at Anthropic / xAI / Google / OpenAI, use those providers&rsquo; export and delete tools.</p>
+<h2>9. CHILDREN</h2>
+<p>Braid is a professional desktop tool. It is not directed at children under 13.</p>
+<h2>10. CHANGES</h2>
+<p>If this policy changes, the date at the top moves. Material changes will be noted on <a href="/braid">the Braid page</a> when we can.</p>
+<h2>11. CONTACT</h2>
+<ul>
+<li><strong>Email:</strong> <a href="mailto:amnibro7@gmail.com">amnibro7@gmail.com</a></li>
+<li><strong>Publisher:</strong> Amniscient, LLC (New York)</li>
+<li><strong>Product:</strong> <a href="https://amni-scient.com/braid">amni-scient.com/braid</a></li>
+</ul>
+</div>
+<footer>
+<div class="footer-links">
+<a href="about.html">ABOUT</a>
+<a href="faq.html">FAQ</a>
+<a href="privacy.html">PRIVACY</a>
+<a href="privacy-braid.html">BRAID PRIVACY</a>
+<a href="terms.html">TERMS</a>
+<a href="mailto:amnibro7@gmail.com">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
+</footer>
+</body>
+</html>
