@@ -166,14 +166,31 @@
 </section>
 <section id="get">
 <h2>GET AMNI-SPACE</h2>
-<p style="color:var(--dim);margin-bottom:.5rem;font-size:.9rem">One Windows executable. No installer, no runtime to fetch, no account. Run it and your browser opens on the map.</p>
-<p style="color:var(--dim);font-size:.8rem;margin-bottom:1rem">v1.5.0 for Windows 10/11 x64 &bull; 34.8 MB &bull; asks for administrator so it can read the file table &bull; a plain folder scan works without it</p>
-<pre style="max-width:720px;margin:0 0 1rem;padding:12px 14px;background:var(--panel,#111);border:1px solid var(--border);border-radius:6px;overflow:auto;font:12px/1.45 ui-monospace,Consolas,monospace;color:var(--text)">SHA-256  80f51f4e79bbb267a3c3d40ff0e14687190d9e10abfb7bf52b6e0213dfaea730</pre>
-<p style="color:var(--dim);font-size:.8rem;margin-bottom:1rem">Windows will warn that the publisher is unrecognized, because this build is not code-signed yet. Choose <em>More info</em> then <em>Run anyway</em>, or verify the hash above first.</p>
-<div class="cta-row">
-<a href="https://github.com/Amnibro/Amni-Scient/releases/download/amni-space-v1.5.0/AmniSpace.exe" class="btn btn-primary">DOWNLOAD v1.5.0 (WIN64 EXE)</a>
+<p style="color:var(--dim);margin-bottom:.5rem;font-size:.9rem">One Windows executable. No runtime to fetch, no account, nothing to configure. Two ways in &mdash; pick either.</p>
+<p style="color:var(--dim);font-size:.8rem;margin-bottom:1.2rem">v1.5.0 for Windows 10/11 x64 &bull; 34.8 MB &bull; hosted here on amni-scient.com</p>
+
+<h3 style="font-size:1rem;margin:0 0 .4rem">Easiest &mdash; one line, does everything</h3>
+<p style="color:var(--dim);font-size:.85rem;margin:0 0 .6rem">Press <kbd>Win</kbd>, type <em>PowerShell</em>, open it, then paste this and press Enter.</p>
+<pre style="max-width:720px;margin:0 0 .6rem;padding:12px 14px;background:var(--panel,#111);border:1px solid var(--border);border-radius:6px;overflow:auto;font:12px/1.45 ui-monospace,Consolas,monospace;color:var(--text)">powershell -NoProfile -ExecutionPolicy Bypass -Command "irm https://amni-scient.com/space/install.ps1 | iex"</pre>
+<p style="color:var(--dim);font-size:.8rem;margin:0 0 1.4rem">It downloads the exe, checks it against the published SHA-256, installs to <code>%LOCALAPPDATA%\AmniSpace</code>, adds Start Menu and Desktop shortcuts, writes an uninstaller next to it, and starts the app. Nothing else is touched.</p>
+
+<h3 style="font-size:1rem;margin:0 0 .4rem">Or just take the exe</h3>
+<p style="color:var(--dim);font-size:.85rem;margin:0 0 .8rem">Download, double-click. It runs from wherever you put it &mdash; there is no install step.</p>
+<div class="cta-row" style="margin-bottom:1.2rem">
+<a href="space/AmniSpace.exe" class="btn btn-primary">DOWNLOAD v1.5.0 (WIN64 EXE)</a>
+<a href="https://github.com/Amnibro/Amni-Scient/releases/tag/amni-space-v1.5.0" class="btn btn-outline">MIRROR ON GITHUB</a>
 <a href="privacy.html" class="btn btn-outline">PRIVACY POLICY</a>
 </div>
+
+<h3 style="font-size:1rem;margin:0 0 .4rem">What happens the first time</h3>
+<ol style="color:var(--dim);font-size:.85rem;max-width:680px;margin:0 0 1rem;padding-left:1.1rem;line-height:1.75">
+<li><strong>Windows asks for administrator.</strong> That is only so it can read the drive&rsquo;s file table &mdash; the thing that makes a whole-drive scan take twenty seconds instead of ten minutes. Decline it and you can still scan any single folder.</li>
+<li><strong>Windows may say the publisher is unrecognized.</strong> This build is not code-signed yet. Choose <em>More info</em> then <em>Run anyway</em>, or check the hash below first.</li>
+<li><strong>Your browser opens on the map.</strong> The app is a local server on 127.0.0.1 &mdash; nothing leaves your machine.</li>
+<li><strong>Pick a drive and press Scan.</strong> That is the whole setup.</li>
+</ol>
+<pre style="max-width:720px;margin:0 0 1rem;padding:12px 14px;background:var(--panel,#111);border:1px solid var(--border);border-radius:6px;overflow:auto;font:12px/1.45 ui-monospace,Consolas,monospace;color:var(--text)">SHA-256  80f51f4e79bbb267a3c3d40ff0e14687190d9e10abfb7bf52b6e0213dfaea730</pre>
+<p style="color:var(--dim);font-size:.8rem;margin-bottom:0">To remove it: <code>powershell -File "$env:LOCALAPPDATA\AmniSpace\uninstall.ps1"</code>, or just delete the exe if you took the direct download.</p>
 </section>
 
 <aside class="support-cta" aria-label="Support"><a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="support-link"><span class="support-ico">&#9749;</span><span>Enjoying this? <strong>Support on Ko-fi</strong></span></a></aside>
