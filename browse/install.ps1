@@ -15,9 +15,12 @@ function Get-Remote {
 }
 if($Local){
   $root=Split-Path -Parent $PSScriptRoot
-  $exe=Join-Path $root "target\release\amni-browse.exe"
+  if(-not (Test-Path (Join-Path $root "target\release\amni-browse.exe"))){ $root=Split-Path -Parent $root }
+  $rel=Join-Path $root "target\release"
+  $exe=Join-Path $rel "amni-browse.exe"
   if(-not (Test-Path $exe)){ throw "Local build missing: $exe" }
   Copy-Item $exe (Join-Path $dest "amni-browse.exe") -Force
+  Get-ChildItem $rel -Filter "*.dll" | ForEach-Object { Copy-Item $_.FullName $dest -Force }
   $assets=Join-Path $root "assets"
   if(Test-Path $assets){ Copy-Item $assets (Join-Path $dest "assets") -Recurse -Force }
   Write-Host "Installed local build to $dest"
@@ -70,7 +73,7 @@ foreach($row in $pairs){
   if($row[1] -eq "(default)"){ Set-ItemProperty -Path $row[0] -Name "(default)" -Value $row[2] }
   else { New-ItemProperty -Path $row[0] -Name $row[1] -Value $row[2] -PropertyType String -Force|Out-Null }
 }
-Copy-Item (Join-Path $PSScriptRoot "uninstall.ps1") (Join-Path $dest "uninstall.ps1") -Force -ErrorAction SilentlyContinue
+if($PSScriptRoot){ $un=Join-Path $PSScriptRoot "uninstall.ps1"; if(Test-Path $un){ Copy-Item $un (Join-Path $dest "uninstall.ps1") -Force } }
 Write-Host "Installed. Launching..."
 Start-Process $launch
 Start-Process "ms-settings:defaultapps"
