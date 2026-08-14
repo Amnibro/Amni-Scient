@@ -89,6 +89,13 @@
 .seatchip:not(.soon):hover{transform:translateY(-2px);box-shadow:var(--elev-2)}
 .seatchip i{width:9px;height:9px;border-radius:50%;flex:0 0 9px}
 .seatchip.soon{opacity:.5}
+.priv-strip{max-width:1000px;margin:0 auto}
+.priv-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.85rem;margin:1.4rem 0 1.5rem}
+.priv-tile{border:1px solid var(--border);background:var(--panel);border-radius:var(--radius);padding:1.15rem 1.2rem;text-align:left}
+.priv-tile .k{font-family:var(--font-sans);font-size:.62rem;font-weight:650;font-stretch:var(--w-cond);letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin:0 0 .45rem}
+.priv-tile h3{font-family:var(--font-sans);font-size:.88rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;margin:0 0 .45rem;color:var(--text)}
+.priv-tile p{color:var(--dim);font-size:.82rem;line-height:1.55;margin:0}
+@media(max-width:800px){.priv-grid{grid-template-columns:1fr}}
 .plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1rem;max-width:1000px;margin:0 auto}
 .plan{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:1.4rem 1.2rem;
  text-align:left;display:flex;flex-direction:column;position:relative;background-image:var(--glass)}
@@ -285,6 +292,19 @@ Your browser cannot play this video. <a href="assets/braid/braid-usage.mp4?v=9">
 </div>
 </section>
 
+<section id="privacy">
+<h2>HOW DATA MOVES</h2>
+<p style="text-align:center;color:var(--dim);max-width:640px;margin:0 auto;font-size:.88rem">Braid is software on your computer. Amniscient does not sit in the path of your prompts.</p>
+<div class="priv-strip">
+<div class="priv-grid">
+<div class="priv-tile"><p class="k">On the device</p><h3>Chats &amp; keys</h3><p>Transcripts, memory, workspace files, and any API keys you paste stay in Braid&rsquo;s local store. We cannot read them.</p></div>
+<div class="priv-tile"><p class="k">Your seats</p><h3>Vendors you already use</h3><p>Cloud seats send that turn to Claude, Grok, Gemini, or an API you configured. Local seats (Ollama, Adam) never need the network. Their privacy policies apply to what they receive.</p></div>
+<div class="priv-tile"><p class="k">Amniscient</p><h3>Licence only</h3><p>Stripe handles payment. The app later checks a licence: the key, a hashed machine id, and a short hostname. No prompts on that channel.</p></div>
+</div>
+<p style="text-align:center;margin:0"><a href="privacy-braid.html" class="btn btn-outline">Read the privacy policy</a></p>
+</div>
+</section>
+<div class="braid-hr" aria-hidden="true"></div>
 <section id="faq-braid">
 <h2>QUESTIONS PEOPLE ACTUALLY ASK</h2>
 <div style="max-width:820px;margin:0 auto">
@@ -360,7 +380,7 @@ Your browser cannot play this video. <a href="assets/braid/braid-usage.mp4?v=9">
 <section style="text-align:center">
 <h2>WHY &ldquo;BRAID&rdquo;</h2>
 <p style="color:var(--dim);max-width:720px;margin:0 auto 1.4rem;font-size:.9rem">Because the seats picked it. Asked to rename the product in one word, they proposed <em>Quorum</em>, <em>Alloy</em> and <em>Braid</em>, ruled out the first two on live trademark and domain collisions, and voted unanimously for the third &mdash; strand over strand, each one laid over the last.</p>
-<p style="color:var(--dim);font-size:.8rem;margin-bottom:2rem">Windows desktop app &bull; bring your own subscriptions, API keys, or local models &bull; keys never leave your machine &bull; <a href="privacy-braid.html" style="color:var(--accent)">privacy</a></p>
+<p style="color:var(--dim);font-size:.8rem;margin-bottom:2rem">Windows desktop app &bull; bring your own subscriptions, API keys, or local models &bull; keys never leave your machine</p>
 <div class="cta-row" style="justify-content:center">
 <a href="#pricing" class="btn btn-primary">GET BRAID</a>
 <a href="about.html" class="btn btn-outline">ABOUT AMNI-SCIENT</a>
@@ -373,7 +393,6 @@ Your browser cannot play this video. <a href="assets/braid/braid-usage.mp4?v=9">
 <a href="about.html">ABOUT</a>
 <a href="faq.html">FAQ</a>
 <a href="privacy.html">PRIVACY</a>
-<a href="privacy-braid.html">BRAID PRIVACY</a>
 <a href="terms.html">TERMS</a>
 <a href="mailto:amnibro7@gmail.com">CONTACT</a>
 <a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>

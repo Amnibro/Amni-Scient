@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="theme-color" content="#F3F2EF">
-<title>Privacy Policy &mdash; Braid | AMNI-SCIENT</title>
-<meta name="description" content="How Braid handles data: prompts stay on your machine and go to the AI seats you already pay for. Amni-Scient does not proxy chats. Licence checks and Stripe payments are the only Amni-side traffic.">
+<title>Braid Privacy Policy | Amniscient, LLC</title>
+<meta name="description" content="Privacy policy for Braid. Amniscient, LLC does not receive, store, or process chat content. Model traffic is sent by you to the providers you configure. Licence validation and Stripe payments are described below.">
 <link rel="canonical" href="https://amni-scient.com/privacy-braid">
 <link rel="stylesheet" href="css/style.css?v=b261">
 <script>
@@ -55,78 +55,80 @@
 </div>
 </nav>
 <div class="legal">
-<h1>BRAID &mdash; PRIVACY POLICY</h1>
-<p class="effective">Effective Date: August 14, 2026 &nbsp;|&nbsp; Last Updated: August 14, 2026</p>
-<p>This policy covers <strong>Braid</strong>, the Windows desktop roundtable published by Amniscient, LLC (&ldquo;we&rdquo;, &ldquo;us&rdquo;, &ldquo;our&rdquo;). Braid is a local orchestrator. It is not an AI provider and it does not sit in the middle of your model traffic.</p>
-<h2>1. THE SHORT VERSION</h2>
-<p><strong>Your prompts, answers, files, API keys, and CLI logins never go to Amni-Scient.</strong> When you ask the table a question, Braid drives the tools already on your computer &mdash; Claude Code, Grok, Gemini CLI, optional API keys, or a local seat (Ollama / bundled Adam). Those seats talk to <em>their</em> vendors (or to nothing, if the seat is local). We do not proxy, store, or train on chat content.</p>
-<p>What we <em>do</em> see is the minimum needed to sell a licence: a Stripe checkout (card details stay with Stripe), and later a licence check from the app (key + a machine fingerprint). That is it.</p>
-<h2>2. WHAT STAYS ON YOUR MACHINE</h2>
+<p class="eyebrow">Amniscient, LLC &middot; Product policy</p>
+<h1>Braid Privacy Policy</h1>
+<p class="effective">Effective 14 August 2026 &nbsp;&middot;&nbsp; Last updated 14 August 2026</p>
+<p>This Privacy Policy describes how <strong>Amniscient, LLC</strong>, a New York limited liability company (&ldquo;Amniscient&rdquo;, &ldquo;we&rdquo;, &ldquo;us&rdquo;), handles information in connection with <strong>Braid</strong>, a Windows desktop application that orchestrates locally installed AI clients and optional local models.</p>
+<p>Braid is not an artificial-intelligence service. Amniscient does not operate the language models you use in Braid and does not interpose a proxy between your computer and those providers.</p>
+<p>Related documents: <a href="privacy.html">product privacy index</a> &middot; <a href="/braid">Braid product page</a> &middot; <a href="terms.html">Terms</a>.</p>
+<h2>1. Roles and scope</h2>
+<p><strong>Controller.</strong> Amniscient is the controller of the limited licence and billing information described in Section 4.</p>
+<p><strong>Not a processor of chat content.</strong> Prompts, completions, files, workspace contents, and credentials for third-party AI services are processed on your device and, where you have configured a cloud seat, by that third party under its own terms. Amniscient does not receive that content.</p>
+<p><strong>Independent controllers.</strong> Anthropic, xAI, Google, OpenAI, Stripe, and any other provider you enable are independent controllers of the data you send them. This Policy does not govern their processing.</p>
+<h2>2. Information processed on your device</h2>
+<p>The following is stored locally under Braid&rsquo;s application directory and any working folder you designate. Amniscient has no remote access to it.</p>
+<table class="spec-table">
+<thead><tr><th>Category</th><th>Location / handling</th></tr></thead>
+<tbody>
+<tr><td>Conversation history, memory cells, flows</td><td>Local application store</td></tr>
+<tr><td>Workspace files created or edited by seats</td><td>Directory you select</td></tr>
+<tr><td>Optional API keys entered in Braid</td><td>Local configuration; transmitted only to the provider you selected</td></tr>
+<tr><td>Vendor CLI sessions (Claude Code, Grok, Gemini CLI, and similar)</td><td>Remain with those applications; Braid launches them and does not upload their tokens to Amniscient</td></tr>
+<tr><td>Cached licence entitlement</td><td><code>braid_license.json</code>, signed with Ed25519; the application contains only the public verification key</td></tr>
+</tbody>
+</table>
+<h2>3. Information we collect</h2>
+<h3>3.1 Licence administration</h3>
+<p>To activate a paid or trial entitlement, and approximately twice per day thereafter while the application can reach the network, Braid submits an HTTPS request to Amniscient&rsquo;s licence service containing:</p>
 <ul>
-<li><strong>Chats, memory cells, flows, workspace files</strong> &mdash; written under Braid&rsquo;s local store / the working directory you pick. We cannot read them.</li>
-<li><strong>API keys you paste into Braid</strong> &mdash; stored locally in Braid config. They are sent only to the provider you chose, the same way any other client would.</li>
-<li><strong>Vendor CLI sessions</strong> &mdash; Claude, Grok, Gemini, and similar stay signed in through <em>their</em> apps. Braid launches those CLIs; it does not upload their cookies or tokens to us.</li>
-<li><strong>Licence cache</strong> &mdash; a signed entitlement file on disk (<code>braid_license.json</code>). The app ships only the public verification key, so that file can be read locally but not forged.</li>
+<li>the licence key (or a one-time checkout bootstrap token);</li>
+<li>a 24-character SHA-256 digest derived from hostname and network interface identifier (the raw identifiers are not transmitted);</li>
+<li>a truncated hostname (at most 60 characters) used only as a device label in the application.</li>
 </ul>
-<h2>3. WHAT LEAVES THE MACHINE (AMNI-SCIENT)</h2>
-<h3>3.1 Licence activation and re-check</h3>
-<p>On first activate, and about twice a day afterward, Braid POSTs to our licence server:</p>
-<ul>
-<li>the licence key you pasted (or a bootstrap token from checkout)</li>
-<li>a 24-character SHA-256 fingerprint of hostname + MAC (not the raw identifiers)</li>
-<li>a short hostname for the &ldquo;this computer&rdquo; label in the UI</li>
-</ul>
-<p>The server returns a signed entitlement (tier, expiry, bound key fingerprint + machine). If you are offline, the cached entitlement keeps working until it expires. Deactivate tells the server to drop that machine binding.</p>
-<p>We do <strong>not</strong> send prompts, transcripts, file paths, or API keys on this channel.</p>
-<h3>3.2 Payments (Stripe)</h3>
-<p>Subscriptions and token top-ups are Stripe Checkout. Card number, Apple Pay, Google Pay, and Link stay with Stripe. After payment, Stripe tells us enough to issue or top up a licence (typically email + payment status + amount). See <a href="https://stripe.com/privacy" target="_blank" rel="noopener">Stripe&rsquo;s privacy policy</a>.</p>
-<h3>3.3 Email you send us</h3>
-<p>If you write <a href="mailto:amnibro7@gmail.com">amnibro7@gmail.com</a> for teams, a lost key, or support, we keep that thread so we can help. We do not add you to a marketing list from Braid.</p>
+<p>The service returns a signed entitlement (tier, expiry, key fingerprint, machine binding). If the device is offline, a previously cached entitlement remains valid until its stated expiry. Deactivation instructs the service to release that machine binding.</p>
+<p>This channel does not include prompts, transcripts, file paths, or API keys.</p>
+<h3>3.2 Payments</h3>
+<p>Subscriptions and prepaid token allocations are processed by Stripe, Inc. Payment-card and wallet data are submitted to Stripe and are not available to Amniscient. Stripe provides Amniscient with the information required to issue or replenish a licence (typically purchaser email, payment status, and amount). See the <a href="https://stripe.com/privacy" target="_blank" rel="noopener">Stripe Privacy Policy</a>.</p>
+<h3>3.3 Correspondence</h3>
+<p>If you contact us (for example at <a href="mailto:amnibro7@gmail.com">amnibro7@gmail.com</a>), we retain the message in order to respond. Braid does not enrol users in marketing lists.</p>
 <h3>3.4 Optional tester reports</h3>
-<p>The $5 tester tier can send feedback through an in-app reporter. That path strips keys and filesystem paths before anything is packaged. You choose to send it.</p>
-<h2>4. WHAT LEAVES THE MACHINE (AI VENDORS &mdash; NOT US)</h2>
-<p>This is the part a careful user actually cares about. Braid is a table. The seats still belong to Anthropic, xAI, Google, OpenAI, and whoever else you plug in.</p>
+<p>Users on the tester plan may submit in-application feedback. That facility removes credential material and filesystem paths before a report is assembled. Submission is voluntary.</p>
+<h2>4. Information sent to third-party AI providers</h2>
+<p>When you enable a cloud seat, Braid constructs a prompt for that turn (your question and any context you have permitted, which may include other seats&rsquo; answers, memory cells, or file excerpts) and delivers it through the client or API you configured. Retention, logging, and any use for model improvement are determined by that provider and by the settings on <em>your</em> account with them.</p>
+<p>Local seats (including Ollama and the bundled Adam model) perform inference on the device. No network transmission is required for those seats.</p>
+<p>Braid sets process environment variables intended to disable vendor-CLI telemetry where those tools honour them, including <code>DO_NOT_TRACK</code>, <code>DISABLE_TELEMETRY</code>, <code>DISABLE_ERROR_REPORTING</code>, <code>OTEL_SDK_DISABLED</code>, Claude Code non-essential traffic flags, and Gemini usage-statistics flags. An optional hardener can write the documented opt-outs into Claude and Gemini local settings files.</p>
+<p>Account-level training or retention controls (for example on claude.ai, Google Account data settings, xAI, or OpenAI) are not overridden by Braid. Users who require those opt-outs must configure them with the relevant provider.</p>
+<h2>5. Purposes and legal bases</h2>
+<p>Where applicable law requires a legal basis, Amniscient processes licence and payment-related information to perform the contract for the software (issue, validate, and revoke entitlements) and, for correspondence, on the basis of legitimate interests in providing support. We do not process chat content.</p>
+<h2>6. Sharing</h2>
+<p>Amniscient does not sell personal information. Licence and payment metadata may be processed by hosting and payment subprocessors solely to operate checkout and entitlement. Chat content is not shared by Amniscient because it is not received.</p>
+<h2>7. Retention</h2>
 <ul>
-<li><strong>Cloud seats</strong> receive the prompt Braid built for that turn (your question, plus whatever context you allowed: other seats&rsquo; answers, memory cells, file excerpts). Their retention, training, and logging follow <em>your account with that vendor</em>, not this policy.</li>
-<li><strong>Local seats</strong> (Ollama, Adam) stay on-box. Nothing is required to leave.</li>
-<li>Braid injects launch environment flags so the CLIs skip their own telemetry where they honour it: <code>DO_NOT_TRACK</code>, <code>DISABLE_TELEMETRY</code>, <code>DISABLE_ERROR_REPORTING</code>, <code>OTEL_SDK_DISABLED</code>, Claude non-essential traffic off, Gemini usage statistics off. It can also write the documented opt-outs into Claude&rsquo;s and Gemini&rsquo;s local settings files if you use that hardener.</li>
-<li>Vendor <em>training</em> opt-outs are still account settings (claude.ai privacy, Google account data controls, xAI / OpenAI data controls). A CLI flag cannot rewrite a consumer-plan training toggle. We tell you that in-app; we do not pretend otherwise.</li>
+<li><strong>Device.</strong> Local stores remain until you delete them or uninstall the application.</li>
+<li><strong>Licence records.</strong> Retained as needed to honour, revoke, or transfer a paid key (key, machine fingerprints, tier, expiry). Upon request after cancellation we will delete the licence record except where we must keep a minimal payment reconciliation record.</li>
+<li><strong>Stripe.</strong> Retained under Stripe&rsquo;s policy.</li>
+<li><strong>Provider accounts.</strong> Retained under each provider&rsquo;s policy.</li>
 </ul>
-<h2>5. WHAT WE DO NOT DO</h2>
-<ul>
-<li>No analytics SDK in the Braid binary. No crash phone-home to us. No product telemetry of chats.</li>
-<li>No resale or metering of your model tokens. You pay Anthropic / xAI / Google / your API bill yourself.</li>
-<li>No advertising inside the app.</li>
-<li>No sale of user data. We do not have your chats to sell.</li>
-</ul>
-<h2>6. THE WEBSITE (AMNI-SCIENT.COM)</h2>
-<p>The marketing site that hosts this policy may show Google AdSense on some pages. That is the website, not the Braid exe. Ads there follow <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google&rsquo;s privacy policy</a>. The desktop app contains no AdSense.</p>
-<h2>7. RETENTION</h2>
-<ul>
-<li><strong>On your disk:</strong> until you delete Braid&rsquo;s store / workspace, or uninstall.</li>
-<li><strong>Licence records:</strong> we keep what we need to honour, revoke, or transfer a paid key (key, machine fingerprints, tier, expiry). Cancel Stripe and we stop issuing fresh entitlements; ask us if you want the licence row deleted.</li>
-<li><strong>Stripe:</strong> Stripe retains payment records under its own policy.</li>
-<li><strong>Vendor chats:</strong> whatever that vendor retains on your account.</li>
-</ul>
-<h2>8. YOUR RIGHTS</h2>
-<p>Local data is yours: delete the Braid config directory and workspace. For licence or payment records we hold, email <a href="mailto:amnibro7@gmail.com">amnibro7@gmail.com</a>. For chat history sitting at Anthropic / xAI / Google / OpenAI, use those providers&rsquo; export and delete tools.</p>
-<h2>9. CHILDREN</h2>
-<p>Braid is a professional desktop tool. It is not directed at children under 13.</p>
-<h2>10. CHANGES</h2>
-<p>If this policy changes, the date at the top moves. Material changes will be noted on <a href="/braid">the Braid page</a> when we can.</p>
-<h2>11. CONTACT</h2>
-<ul>
-<li><strong>Email:</strong> <a href="mailto:amnibro7@gmail.com">amnibro7@gmail.com</a></li>
-<li><strong>Publisher:</strong> Amniscient, LLC (New York)</li>
-<li><strong>Product:</strong> <a href="https://amni-scient.com/braid">amni-scient.com/braid</a></li>
-</ul>
+<h2>8. Security</h2>
+<p>Licence entitlements are verified with Ed25519 signatures. The signing private key is held on the licence service and is not shipped in the application. Transport to the licence service and to Stripe uses TLS. Local configuration permissions follow ordinary desktop practice (restricted file mode on non-Windows systems).</p>
+<h2>9. Children</h2>
+<p>Braid is intended for professional and adult use. It is not directed to children under 13, and we do not knowingly collect personal information from children.</p>
+<h2>10. International users</h2>
+<p>The licence service and Stripe may process information in the United States and other jurisdictions where those services operate. By using a paid Braid licence you acknowledge that licence-validation data may be transferred to those locations.</p>
+<h2>11. Your choices</h2>
+<p>You may delete local data by removing Braid&rsquo;s configuration directory and workspace. You may request deletion of licence records we hold by writing to <a href="mailto:amnibro7@gmail.com">amnibro7@gmail.com</a>. Export and deletion of conversations held by a model provider must be requested from that provider.</p>
+<h2>12. The amni-scient.com website</h2>
+<p>Some pages on the marketing website may display advertising served by Google AdSense. That processing is described in <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google&rsquo;s Privacy Policy</a> and applies to the website only. The Braid application does not contain advertising software.</p>
+<h2>13. Changes</h2>
+<p>We may revise this Policy. The &ldquo;Last updated&rdquo; date will change when we do. Material revisions will be noted on the Braid product page when practicable. Continued use of the software after an update constitutes acceptance of the revised Policy to the extent permitted by law.</p>
+<h2>14. Contact</h2>
+<p>Amniscient, LLC<br>Email: <a href="mailto:amnibro7@gmail.com">amnibro7@gmail.com</a><br>Product: <a href="https://amni-scient.com/braid">amni-scient.com/braid</a></p>
 </div>
 <footer>
 <div class="footer-links">
 <a href="about.html">ABOUT</a>
 <a href="faq.html">FAQ</a>
 <a href="privacy.html">PRIVACY</a>
-<a href="privacy-braid.html">BRAID PRIVACY</a>
 <a href="terms.html">TERMS</a>
 <a href="mailto:amnibro7@gmail.com">CONTACT</a>
 <a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>

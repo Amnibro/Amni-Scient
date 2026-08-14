@@ -1,5 +1,5 @@
 ## 2026-08-14 — Braid privacy page
-- **privacy-braid.html:** how Braid handles data — chats/keys stay local and go to vendor seats; Amni sees Stripe + licence ping (key, hashed machine id, hostname). Linked from braid.html, privacy hub, faq, sitemap.
+- **privacy-braid.html:** controller-style policy (licence/Stripe vs vendor seats). Hub tile on privacy.html only — not a extra footer item. braid.html has a three-tile “How data moves” strip plus FAQ.
 ## 2026-08-12 — v1.19.5 Home zigzag + Browse v0.12.1
 - **index.html tiles:** Adam and Grok-Remote were both `tile right`, so two media columns sat on the same side. Featured Amni-Browse (v0.12.1 exe) as the missing left tile between them — zigzag is LRLR… again. Browse promoted out of the index list (renumbered 01–08). Products 19.
 - **amni-browse.html / about / faq:** shipped as a Windows exe — one-click `irm https://amni-scient.com/browse/install.ps1 | iex`, zip download, BYO vault (Amni / Bitwarden / 1Password / KeePassXC), in-app updates from `/browse/latest.json`.
