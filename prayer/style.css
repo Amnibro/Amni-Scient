@@ -76,10 +76,21 @@ body.tandem-on #patterns-panel{right:0;width:60%;border-radius:0;border-top:1px 
 #discussBtn{background:rgba(100,200,140,.07);color:#7dd6a0;border:1px solid rgba(100,200,140,.28);border-radius:3px;padding:3px 10px;font-size:.72rem;cursor:pointer;letter-spacing:.04em;font-family:inherit;transition:background .2s}
 #discussBtn:hover{background:rgba(100,200,140,.2)}
 #search-row{display:flex;gap:6px;align-items:center;margin-top:5px;pointer-events:all}
-#search-input{background:#12121e;color:#ccc;border:1px solid #2a2a3a;border-radius:3px;padding:3px 8px;font-size:.75rem;width:170px;font-family:inherit;outline:none;transition:border-color .2s}
+#search-wrap{position:relative;flex:1;min-width:0}
+#search-input{background:#12121e;color:#ccc;border:1px solid #2a2a3a;border-radius:3px;padding:3px 8px;font-size:.75rem;width:220px;max-width:100%;font-family:inherit;outline:none;transition:border-color .2s}
 #search-input:focus{border-color:rgba(240,200,80,.5)}
 #search-btn{background:rgba(240,200,80,.08);color:#f0c850;border:1px solid rgba(240,200,80,.25);border-radius:3px;padding:3px 8px;font-size:.75rem;cursor:pointer;font-family:inherit}
 #search-result{font-size:.68rem;color:#888;white-space:nowrap}
+#search-hits{display:none;position:absolute;left:0;right:0;top:100%;z-index:40;max-height:240px;overflow:auto;background:#0e0e16;border:1px solid #2a2a3a;border-top:0;border-radius:0 0 3px 3px}
+#search-hits button{display:block;width:100%;text-align:left;background:transparent;border:0;border-bottom:1px solid #1c1c28;color:#ddd;padding:6px 8px;font:inherit;font-size:.7rem;cursor:pointer}
+#search-hits button:hover,#search-hits button.on{background:#1a1a28}
+#search-hits .sr{color:#f0c850;font-weight:650}
+#search-hits .st{color:#888;display:block;font-size:.62rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.msg-ai a.vref{color:#f0c850;text-decoration:none;border-bottom:1px solid rgba(240,200,80,.35);cursor:pointer}
+.msg-ai a.vref:hover{color:#fff}
+#discuss-chips{display:flex;flex-wrap:wrap;gap:4px;padding:4px 8px 0}
+#discuss-chips button{background:rgba(240,200,80,.08);border:1px solid rgba(240,200,80,.22);color:#c9b88a;border-radius:3px;padding:3px 7px;font:650 .62rem inherit;letter-spacing:.04em;cursor:pointer}
+#discuss-chips button:hover{border-color:#f0c850;color:#f0c850}
 #discuss-panel{position:fixed;bottom:52px;right:24px;width:370px;max-height:min(480px,calc(100vh - 80px));z-index:26;background:rgba(8,10,20,.98);border:1px solid rgba(100,200,140,.2);border-radius:6px;flex-direction:column;backdrop-filter:blur(10px)}
 #discuss-header{flex-shrink:0;display:flex;justify-content:space-between;align-items:center;padding:8px 13px;border-bottom:1px solid rgba(100,200,140,.18);font-size:.75rem;font-weight:600;color:#7dd6a0;letter-spacing:.06em}
 #discuss-close{background:none;border:none;color:#555;font-size:.9rem;cursor:pointer;padding:0 2px}

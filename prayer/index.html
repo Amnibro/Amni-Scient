@@ -42,8 +42,11 @@
     <button id="discussBtn" title="Discuss this passage with the AI guide">&#x2756; DISCUSS</button>
     <button id="prayBtn" title="Catholic prayers in Latin and English">&#x271D; PRAY</button></div>
   <div id="search-row">
-    <input type="text" id="search-input" placeholder="Mark 13:34 or search text&hellip;" autocomplete="off" spellcheck="false"/>
-    <button id="search-btn">&#x1F50D;</button>
+    <div id="search-wrap">
+    <input type="text" id="search-input" placeholder="Jn 3:16, love, Mary, Sinai&hellip;" autocomplete="off" spellcheck="false"/>
+    <div id="search-hits" role="listbox"></div>
+    </div>
+    <button id="search-btn">Find</button>
     <span id="search-result"></span>
   </div>
   <div id="book-legend"></div>
@@ -96,6 +99,7 @@
 <div id="discuss-panel" style="display:none">
   <div id="discuss-header"><span>&#x2756; DISCUSS <span id="adam-badge" title="Click to configure local AI" style="font-size:0.6rem;opacity:0.5;margin-left:4px;cursor:pointer">&#x25CF; local</span> <button id="ai-setup-btn" title="Configure local AI (Amni-Ai)">&#x2699;</button></span><button id="discuss-close">&#x2715;</button></div>
   <div id="discuss-log"></div>
+  <div id="discuss-chips"></div>
   <div id="discuss-input-row">
     <textarea id="discuss-input" placeholder="Ask about this passage&hellip;" rows="2"></textarea>
     <button id="discuss-send">SEND</button>

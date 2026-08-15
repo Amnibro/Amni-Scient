@@ -22,9 +22,10 @@ ERAS.forEach(era => {
     BOOK_COLORS[bid] = new THREE.Color().setHSL(hue/360, 0.7, 0.55);
   });
 });
-const EDGE_OT    = new THREE.Color(0x6b5020);
-const EDGE_NT    = new THREE.Color(0x224488);
-const EDGE_CROSS = new THREE.Color(0x553366);
+const EDGE_OT    = new THREE.Color(0x8a6a2e);
+const EDGE_NT    = new THREE.Color(0x3a6ab0);
+const EDGE_CROSS = new THREE.Color(0xc4a050);
+const BOOK_ALIAS={gen:'genesis',gn:'genesis',ge:'genesis',ex:'exodus',exod:'exodus',lev:'leviticus',lv:'leviticus',num:'numbers',nm:'numbers',deut:'deuteronomy',dt:'deuteronomy',josh:'joshua',jos:'joshua',judg:'judges',jdg:'judges',ruth:'ruth',ru:'ruth','1sam':'1 samuel','1sa':'1 samuel','2sam':'2 samuel','2sa':'2 samuel','1kgs':'1 kings','1ki':'1 kings','2kgs':'2 kings','2ki':'2 kings','1chr':'1 chronicles','1ch':'1 chronicles','2chr':'2 chronicles','2ch':'2 chronicles',ezra:'ezra',neh:'nehemiah',tob:'tobit',jdt:'judith',esth:'esther',est:'esther',job:'job',ps:'psalms',psa:'psalms',psalm:'psalms',prov:'proverbs',pr:'proverbs',eccl:'ecclesiastes',ecc:'ecclesiastes',song:'song of solomon',ss:'song of solomon',cant:'song of solomon',wis:'wisdom',sir:'sirach',ecclus:'sirach',isa:'isaiah',is:'isaiah',jer:'jeremiah',lam:'lamentations',bar:'baruch',ezek:'ezekiel',eze:'ezekiel',dan:'daniel',hos:'hosea',joel:'joel',amos:'amos',obad:'obadiah',jonah:'jonah',jon:'jonah',mic:'micah',nah:'nahum',hab:'habakkuk',zeph:'zephaniah',hag:'haggai',zech:'zechariah',zec:'zechariah',mal:'malachi','1mac':'1 maccabees','1macc':'1 maccabees','2mac':'2 maccabees','2macc':'2 maccabees',mt:'matthew',matt:'matthew',mk:'mark',mr:'mark',lk:'luke',jn:'john',joh:'john',acts:'acts',rom:'romans',ro:'romans','1cor':'1 corinthians','1co':'1 corinthians','2cor':'2 corinthians','2co':'2 corinthians',gal:'galatians',eph:'ephesians',phil:'philippians',php:'philippians',col:'colossians','1thess':'1 thessalonians','1th':'1 thessalonians','2thess':'2 thessalonians','2th':'2 thessalonians','1tim':'1 timothy','1ti':'1 timothy','2tim':'2 timothy','2ti':'2 timothy',tit:'titus',phlm:'philemon',phm:'philemon',heb:'hebrews',jas:'james',jam:'james','1pet':'1 peter','1pe':'1 peter','2pet':'2 peter','2pe':'2 peter','1jn':'1 john','1jo':'1 john','2jn':'2 john','3jn':'3 john',jude:'jude',rev:'revelation',apoc:'revelation'};
 const VOICE_GROUPS=[
   {l:'Parable',        c:'#f0c850',m:nd=>nd.kind==='parable'},
   {l:'Praise & Song',  c:'#60ff90',m:nd=>nd.kind==='praise'},
@@ -46,7 +47,7 @@ let fulltext = null;
 const bookPanel = () => document.getElementById('book-panel');
 const bookBody = () => document.getElementById('book-panel-body');
 const bookTitle = () => document.getElementById('book-panel-title');
-let silhouettePos=null,waterfallPos=null,timelinePos=null,graphPos=null,radialPos=null,spiralPos=null,crossPos=null,iamPos=null,cleanPos=null,voicePos=null,bookPos=null,kindPos=null,degreePos=null,flatPos=null,sabbathPos=null,helixPos=null,crownPos=null;let mode='timeline';let lerpSrc=null,lerpDst=null,lerpT=1.0;const LERP_FRAMES=90;const ease=t=>t<0.5?2*t*t:-1+(4-2*t)*t;const SCALE=1.8;let camSrc=null,camDst=null,camTgtSrc=null,camTgtDst=null,camT=1.0;const CAM_FRAMES=60;let pulsePhase=0;let clickTimer=null;let clickPrevAR=false;let downX=0,downY=0,wasDrag=false;let tandemActive=false;let userAlpha=1.0;let edgeAlphaBase=0.06;let patternsActive=false;let discHistory=[];let adamOnline=null;
+let silhouettePos=null,waterfallPos=null,timelinePos=null,graphPos=null,radialPos=null,spiralPos=null,crossPos=null,iamPos=null,cleanPos=null,voicePos=null,bookPos=null,kindPos=null,degreePos=null,flatPos=null,sabbathPos=null,helixPos=null,crownPos=null;let mode='timeline';let lerpSrc=null,lerpDst=null,lerpT=1.0;const LERP_FRAMES=90;const ease=t=>t<0.5?2*t*t:-1+(4-2*t)*t;const SCALE=1.8;let camSrc=null,camDst=null,camTgtSrc=null,camTgtDst=null,camT=1.0;const CAM_FRAMES=60;let pulsePhase=0;let clickTimer=null;let clickPrevAR=false;let downX=0,downY=0,wasDrag=false;let tandemActive=false;let userAlpha=1.0;let edgeAlphaBase=0.13;let patternsActive=false;let discHistory=[];let adamOnline=null;let searchHitIdx=-1;let lastSearchHits=[];
 const AI_DEFAULTS={url:'http://localhost:7700',model:'adam-1'};
 const AI_STORAGE_KEY='amni-prayer-ai-config';
 const WEBLLM_STORAGE_KEY='amni-prayer-webllm';
@@ -473,7 +474,8 @@ function setupScene() {
     if (adamOnline) html = await askAdam(adamQ, selectedIdx);
     if (!html && webllmReady) html = await askBrowser(adamQ, selectedIdx);
     if (!html) html = generateDiscussResponse(q, selectedIdx);
-    td.innerHTML = html;
+    td.innerHTML = linkifyRefs(html);
+    bindVerseLinks(td);
     log.scrollTop = log.scrollHeight;
   });
   document.getElementById('discuss-input').addEventListener('keydown', e => {
@@ -481,7 +483,17 @@ function setupScene() {
   });
   const si = document.getElementById('search-input');
   document.getElementById('search-btn').addEventListener('click', () => searchVerse(si.value));
-  si.addEventListener('keydown', e => { if (e.key === 'Enter') searchVerse(si.value); });
+  let sugTimer=null;
+  si.addEventListener('input',()=>{clearTimeout(sugTimer);sugTimer=setTimeout(()=>{const q=si.value.trim();if(q.length<2){hideSearchHits();return;}searchHitIdx=0;renderSearchHits(collectSearchHits(q));},80);});
+  si.addEventListener('keydown', e => {
+    const box=document.getElementById('search-hits');
+    const open=box&&box.style.display==='block'&&lastSearchHits.length;
+    if(e.key==='ArrowDown'&&open){e.preventDefault();searchHitIdx=Math.min(lastSearchHits.length-1,searchHitIdx+1);renderSearchHits(lastSearchHits);return;}
+    if(e.key==='ArrowUp'&&open){e.preventDefault();searchHitIdx=Math.max(0,searchHitIdx-1);renderSearchHits(lastSearchHits);return;}
+    if(e.key==='Enter'){e.preventDefault();if(open&&lastSearchHits[searchHitIdx])goToSearchHit(lastSearchHits[searchHitIdx].i);else searchVerse(si.value);return;}
+    if(e.key==='Escape')hideSearchHits();
+  });
+  si.addEventListener('blur',()=>setTimeout(hideSearchHits,180));
 }
 
 function ensureLayout(m){
@@ -801,20 +813,25 @@ function highlightNode(idx) {
   const sizes = pointsMesh.geometry.attributes.size;
   const colors = pointsMesh.geometry.attributes.color;
   const connSet = new Set(adj[idx]);
+  const hop2 = new Set();
+  for (const j of connSet) for (const k of adj[j]) if (k !== idx && !connSet.has(k)) hop2.add(k);
   for (let i = 0; i < graph.nodes.length; i++) {
     const vis = (kindFilter === 'all' || graph.nodes[i].kind === kindFilter);
     if (!vis) { sizes.array[i] = 0; continue; }
     if (i === idx) {
-      sizes.array[i] = 12.0;
-      colors.array[i*3] = 1; colors.array[i*3+1] = 0.9; colors.array[i*3+2] = 0.3;
+      sizes.array[i] = 13.0;
+      colors.array[i*3] = 1; colors.array[i*3+1] = 0.92; colors.array[i*3+2] = 0.32;
     } else if (connSet.has(i)) {
-      sizes.array[i] = 7.0;
-      colors.array[i*3] = 0.5; colors.array[i*3+1] = 0.7; colors.array[i*3+2] = 1.0;
+      sizes.array[i] = 7.4;
+      colors.array[i*3] = 0.95; colors.array[i*3+1] = 0.78; colors.array[i*3+2] = 0.35;
+    } else if (hop2.has(i)) {
+      sizes.array[i] = 4.6;
+      colors.array[i*3] = 0.42; colors.array[i*3+1] = 0.58; colors.array[i*3+2] = 0.95;
     } else {
-      sizes.array[i] = baseSizes[i] * 0.4;
-      colors.array[i*3] = baseColors[i*3] * 0.25;
-      colors.array[i*3+1] = baseColors[i*3+1] * 0.25;
-      colors.array[i*3+2] = baseColors[i*3+2] * 0.25;
+      sizes.array[i] = baseSizes[i] * 0.28;
+      colors.array[i*3] = baseColors[i*3] * 0.16;
+      colors.array[i*3+1] = baseColors[i*3+1] * 0.16;
+      colors.array[i*3+2] = baseColors[i*3+2] * 0.16;
     }
   }
   sizes.needsUpdate = true;
@@ -823,12 +840,16 @@ function highlightNode(idx) {
     const ec = edgesMesh.geometry.attributes.color.array;
     for (let i = 0; i < graph.edges.length; i++) {
       const e = graph.edges[i];
-      const hot = (e.s === idx || e.t === idx);
-      ec[i*6]   = hot ? 1.0 : 0; ec[i*6+1] = hot ? 0.85 : 0; ec[i*6+2] = hot ? 0.4 : 0;
-      ec[i*6+3] = hot ? 1.0 : 0; ec[i*6+4] = hot ? 0.85 : 0; ec[i*6+5] = hot ? 0.4 : 0;
+      const a = e.s === idx || e.t === idx;
+      const b = !a && ((connSet.has(e.s) && (connSet.has(e.t) || hop2.has(e.t))) || (connSet.has(e.t) && hop2.has(e.s)));
+      const r = a ? 1.0 : b ? 0.48 : 0.03;
+      const g = a ? 0.86 : b ? 0.55 : 0.03;
+      const bl = a ? 0.32 : b ? 0.88 : 0.04;
+      ec[i*6]=r; ec[i*6+1]=g; ec[i*6+2]=bl;
+      ec[i*6+3]=r; ec[i*6+4]=g; ec[i*6+5]=bl;
     }
     edgesMesh.geometry.attributes.color.needsUpdate = true;
-    edgesMesh.material.opacity = Math.min(1, 0.7 * userAlpha);
+    edgesMesh.material.opacity = Math.min(1, 0.82 * userAlpha);
     edgesMesh.visible = true;
   }
   if (tandemActive) populateTandem(idx);
@@ -1022,28 +1043,79 @@ function analyzePatterns(idx){
   ins.forEach(s=>html+='<div class="pat-insight">'+escHtml(s)+'</div>');
   tandemActive?(()=>{const ce=document.getElementById('tandem-connections');const old=ce.querySelector('#patterns-inline');if(old)old.remove();ce.insertAdjacentHTML('beforeend','<div id="patterns-inline" class="patterns-inline-wrap"><div class="pat-header">\u2726 PATTERN ANALYSIS</div>'+html+'</div>');})():(document.getElementById('patterns-body').innerHTML=html,document.getElementById('patterns-panel').style.display='block');
 }
+function normBook(s){
+  let t=s.toLowerCase().replace(/\./g,'').replace(/\s+/g,' ').trim();
+  t=t.replace(/^i\s/,'1 ').replace(/^ii\s/,'2 ').replace(/^iii\s/,'3 ');
+  t=t.replace(/^(\d)([a-z])/,'$1 $2');
+  const key=t.replace(/\s+/g,'');
+  return BOOK_ALIAS[key]||BOOK_ALIAS[t]||t;
+}
+function parseRef(q){
+  const m=q.match(/^((?:\d+\s*)?[A-Za-z][A-Za-z']*(?:\s+[A-Za-z][A-Za-z']*)?)\s+(\d+)(?:[:\.\s]+(\d+))?$/);
+  if(!m)return null;
+  return {book:normBook(m[1]),ch:+m[2],v:m[3]?+m[3]:null};
+}
+function scoreNode(n,ql,ref){
+  let s=0;
+  const bk=n.book.toLowerCase();
+  if(ref){
+    if(bk===ref.book||bk.includes(ref.book)||ref.book.includes(bk))s+=80;
+    else return -1;
+    if(n.ch===ref.ch)s+=40; else return s>80?s-60:-1;
+    if(ref.v==null)s+=5; else if(n.v===ref.v)s+=50; else s-=20;
+  }
+  const prev=(n.preview||'').toLowerCase();
+  if(ql&&prev.includes(ql))s+=30+(prev.startsWith(ql)?10:0);
+  if(ql&&bk.includes(ql))s+=12;
+  if(ql&&(n.ppl||[]).some(p=>p.toLowerCase().includes(ql)))s+=36;
+  if(ql&&(n.loc||[]).some(p=>p.toLowerCase().includes(ql)))s+=34;
+  if(ql&&n.kind&&n.kind.toLowerCase().includes(ql))s+=8;
+  if((n.mass||1)>1.5)s+=4;
+  return s;
+}
+function collectSearchHits(q){
+  const ql=q.toLowerCase().trim();
+  const ref=parseRef(q);
+  const hits=[];
+  for(let i=0;i<graph.nodes.length;i++){
+    const sc=scoreNode(graph.nodes[i],ql,ref);
+    if(sc>=12)hits.push({i,sc});
+  }
+  hits.sort((a,b)=>b.sc-a.sc);
+  return hits.slice(0,12);
+}
+function hideSearchHits(){const el=document.getElementById('search-hits');if(el){el.style.display='none';el.innerHTML='';}searchHitIdx=-1;}
+function renderSearchHits(hits){
+  const box=document.getElementById('search-hits');
+  if(!box)return;
+  lastSearchHits=hits;
+  if(!hits.length){box.style.display='none';box.innerHTML='';return;}
+  box.innerHTML=hits.map((h,k)=>{
+    const n=graph.nodes[h.i];
+    const prev=escHtml((n.preview||'').slice(0,90));
+    return `<button type="button" role="option" data-i="${h.i}" class="${k===searchHitIdx?'on':''}"><span class="sr">${escHtml(n.book)} ${n.ch}:${n.v}</span><span class="st">${prev}</span></button>`;
+  }).join('');
+  box.style.display='block';
+  box.querySelectorAll('button').forEach(b=>b.addEventListener('mousedown',e=>{e.preventDefault();goToSearchHit(+b.dataset.i);}));
+}
+function goToSearchHit(idx){
+  hideSearchHits();
+  selectedIdx=idx;highlightNode(idx);flyToNode(idx);
+  if(tandemActive)populateTandem(idx);
+  if(patternsActive)analyzePatterns(idx);
+  const n=graph.nodes[idx];
+  const res=document.getElementById('search-result');
+  res.textContent=`${n.book} ${n.ch}:${n.v} · ${(adj[idx]||[]).length} links`;
+  res.style.color='#f0c850';
+}
 function searchVerse(q) {
-  q = q.trim(); const res = document.getElementById('search-result');
-  if (!q) { res.textContent = ''; return; }
-  const m = q.match(/^([\w\s']+?)\s+(\d+)[:\s](\d+)$/i);
-  let idx = -1;
-  if (m) {
-    const bl = m[1].toLowerCase().replace(/^(\d+)\s*/, '$1 ').trim();
-    const ch = +m[2], v = +m[3];
-    idx = graph.nodes.findIndex(n => n.book.toLowerCase().includes(bl) && n.ch === ch && n.v === v);
-  }
-  if (idx < 0) {
-    const ql = q.toLowerCase();
-    idx = graph.nodes.findIndex(n => (n.preview||'').toLowerCase().includes(ql) || n.book.toLowerCase().includes(ql));
-  }
-  if (idx >= 0) {
-    selectedIdx = idx; highlightNode(idx); flyToNode(idx);
-    tandemActive ? populateTandem(idx) : toggleTandem();
-    if (patternsActive) analyzePatterns(idx);
-    const n = graph.nodes[idx];
-    res.textContent = `→ ${n.book} ${n.ch}:${n.v}`;
-    res.style.color = '#f0c850';
-  } else { res.textContent = 'not found'; res.style.color = '#888'; }
+  q=q.trim(); const res=document.getElementById('search-result');
+  if(!q){res.textContent='';hideSearchHits();return;}
+  const hits=collectSearchHits(q);
+  if(!hits.length){res.textContent='not found';res.style.color='#888';hideSearchHits();return;}
+  searchHitIdx=0;
+  renderSearchHits(hits);
+  goToSearchHit(hits[0].i);
 }
 function updateBadge(){
   const badge=document.getElementById('adam-badge');
@@ -1067,14 +1139,30 @@ async function probeAdam() {
   }
   updateBadge();
 }
+function verseText(n){return fulltext?.[`${n.book_id}:${n.ch}`]?.[n.v-1]||n.preview||'';}
+function linkifyRefs(html){
+  return String(html).replace(/\b((?:[123]\s)?[A-Z][A-Za-z]+(?:\s+[A-Z][A-Za-z]+)?)\s+(\d+):(\d+)\b/g,(m,bk,ch,v)=>{
+    const hits=collectSearchHits(`${bk} ${ch}:${v}`);
+    if(!hits.length)return m;
+    return `<a class="vref" href="#" data-idx="${hits[0].i}">${m}</a>`;
+  });
+}
+function bindVerseLinks(root){
+  root.querySelectorAll('a.vref').forEach(a=>a.addEventListener('click',e=>{
+    e.preventDefault();
+    const i=+a.dataset.idx;
+    if(Number.isFinite(i))goToSearchHit(i);
+  }));
+}
 function buildTheologicalPrompt(idx){
-  const nd = graph.nodes[idx], conns = adj[idx], cns = conns.map(ci => graph.nodes[ci]);
-  const vt = fulltext?.[`${nd.book_id}:${nd.ch}`]?.[nd.v-1] || nd.preview || '';
-  const era = ERAS[BOOK_ERA[nd.book_id]]?.name || '';
-  const ppl = [...new Set([nd,...cns].flatMap(n => n.ppl||[]))].slice(0,5);
-  const locs = [...new Set([nd,...cns].flatMap(n => n.loc||[]))].slice(0,4);
-  const connRefs = cns.slice(0,5).map(c => `${c.book} ${c.ch}:${c.v}`);
-  return `You are a Catholic theological guide for "Imago Nuntii Divini", a Bible visualization of 35,817 Douay-Rheims verses. The user is viewing ${nd.book} ${nd.ch}:${nd.v} (${era} era, ${nd.testament}, kind: ${nd.kind}).\nVerse: "${vt}"\nCross-refs (${conns.length} total): ${connRefs.join(', ')}${conns.length>5?' and more':''}\n${ppl.length?'Figures: '+ppl.join(', '):''}\n${locs.length?'Locations: '+locs.join(', '):''}\nRespond concisely (2-4 sentences). Use Catholic theological tradition. Reference specific cross-references when relevant. Key symbolic numbers: 3=Trinity/divine, 7=completion/sabbath, 8=new creation/circumcision, 12=governance/apostles, 40=trial/testing.`;
+  const nd=graph.nodes[idx],conns=adj[idx],cns=conns.map(ci=>graph.nodes[ci]);
+  const vt=verseText(nd);
+  const era=ERAS[BOOK_ERA[nd.book_id]]?.name||'';
+  const ppl=[...new Set([nd,...cns].flatMap(n=>n.ppl||[]))].slice(0,6);
+  const locs=[...new Set([nd,...cns].flatMap(n=>n.loc||[]))].slice(0,4);
+  const bridges=cns.filter(c=>c.testament!==nd.testament).slice(0,4);
+  const tops=cns.slice(0,6).map(c=>`${c.book} ${c.ch}:${c.v} — "${(verseText(c)||'').slice(0,90)}"`);
+  return `You are a Catholic theological guide inside Imago Nuntii Divini (Douay-Rheims, ${graph.nodes.length} verses). Cite verses as Book Chapter:Verse so they stay clickable.\nFocus: ${nd.book} ${nd.ch}:${nd.v} (${era}, ${nd.testament}, ${nd.kind}).\nText: "${vt}"\n${conns.length} cross-references. Strongest: ${tops.join(' | ')||'none'}\n${bridges.length?'Testament bridges: '+bridges.map(c=>c.book+' '+c.ch+':'+c.v).join(', '):''}\n${ppl.length?'Figures: '+ppl.join(', '):''}\n${locs.length?'Places: '+locs.join(', '):''}\nAnswer in 3–6 sentences. Prefer the connections above. If the user names a theme, show how this verse and one or two cited links carry it. Do not invent citations.`;
 }
 async function loadBrowserEngine(modelId){
   if (webllmLoading) return;
@@ -1141,13 +1229,27 @@ async function askBrowser(query, idx){
   discHistory.slice(-6).forEach(h=>messages.push({role:h.role,content:h.content}));
   messages.push({role:'user',content:query});
   try {
-    const reply = await webllmEngine.chat.completions.create({messages, temperature:0.7, max_tokens:300});
+    const reply = await webllmEngine.chat.completions.create({messages, temperature:0.65, max_tokens:420});
     const text = reply.choices?.[0]?.message?.content;
     if (!text) return null;
     discHistory.push({role:'user',content:query},{role:'assistant',content:text});
     if (discHistory.length > 20) discHistory = discHistory.slice(-10);
     return escHtml(text).replace(/\n/g,'<br>');
   } catch { return null; }
+}
+function paintDiscussChips(idx){
+  const row=document.getElementById('discuss-chips');
+  if(!row)return;
+  if(idx<0){row.innerHTML='';return;}
+  const nd=graph.nodes[idx];
+  const chips=['How does this connect?','Who is here?','How do I pray this?','What does it mean?'];
+  if((nd.ppl||[])[0])chips.splice(1,1,'Who is '+(nd.ppl[0])+'?');
+  row.innerHTML=chips.map(c=>`<button type="button">${escHtml(c)}</button>`).join('');
+  row.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{
+    const inp=document.getElementById('discuss-input');
+    inp.value=b.textContent;
+    document.getElementById('discuss-send').click();
+  }));
 }
 function openAISetup(){
   const cfg=getAIConfig();
@@ -1226,7 +1328,7 @@ async function askAdam(query, idx) {
     const resp = await fetch(`${cfg.url}/v1/chat/completions`, {
       method:'POST', headers:{'Content-Type':'application/json'},
       body:JSON.stringify({model:cfg.model, messages, temperature:0.7, max_tokens:300}),
-      signal: AbortSignal.timeout(15000)
+      signal: AbortSignal.timeout(45000)
     });
     if (!resp.ok) return null;
     const data = await resp.json();
@@ -1250,6 +1352,7 @@ async function toggleDiscuss() {
       if (!html && webllmReady) html = await askBrowser('Give a brief theological overview of this verse, its era, and its cross-references.', selectedIdx);
       if (!html) html = generateDiscussResponse('', selectedIdx);
       addDiscussMsg(html, 'ai');
+      paintDiscussChips(selectedIdx);
     }
   }
 }
@@ -1257,8 +1360,9 @@ function addDiscussMsg(html, role) {
   const log = document.getElementById('discuss-log');
   const d = document.createElement('div');
   d.className = role === 'user' ? 'msg-user' : 'msg-ai';
-  d.innerHTML = html;
+  d.innerHTML = role==='ai'?linkifyRefs(html):html;
   log.appendChild(d);
+  if(role==='ai')bindVerseLinks(d);
   log.scrollTop = log.scrollHeight;
 }
 function generateDiscussResponse(query, idx) {
