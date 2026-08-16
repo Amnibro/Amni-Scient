@@ -1,5 +1,6 @@
 const fs = require('fs');
-const h = fs.readFileSync('C:/Users/antho/Documents/ai/amni-scient-site/learn/index.html', 'utf8');
+const path = require('path');
+const h = fs.readFileSync(path.join(__dirname, '..', 'learn', 'index.html'), 'utf8');
 const lines = h.split('\n');
 const subs = [
   {name:'animals', start:6468},

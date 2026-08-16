@@ -8277,7 +8277,7 @@ This replaces what would have been ~30 module-specific `wireLive()` calls with o
 - `lib/amni-llm/coi-sw.js` (new) — service worker
 - `lib/amni-llm/coi-register.js` (new) — auto-register on demo page
 - `lib/amni-llm/index.html` — coi script tag, COI status banner
-- Standalone repo: `C:\Users\antho\Documents\ai\Amni-LLM\` → github.com/Amnibro/amni-llm
+- Standalone repo: `Amni-LLM` → github.com/Amnibro/amni-llm
 
 ## [5.0.0] - 2026-04-27 - Amni-LLM v0.1.0 — universal in-browser GGUF runtime
 
