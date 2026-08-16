@@ -1,4 +1,8 @@
 const puppeteer = require('puppeteer-core');
+const fs = require('fs');
+const path = require('path');
+const OUT_DIR = process.env.GP_OUT || path.join(__dirname, 'out');
+fs.mkdirSync(OUT_DIR, { recursive: true });
 (async () => {
   const browser = await puppeteer.launch({
     executablePath: 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe',
@@ -14,7 +18,7 @@ const puppeteer = require('puppeteer-core');
   const wgpu = await page.evaluate(() => !!navigator.gpu);
   await page.click('#playBtn');
   await new Promise(r => setTimeout(r, 5000));
-  await page.screenshot({ path: 'C:\\Users\\antho\\Documents\\ai\\Amni-Game\\docs\\web_t5.png' });
+  await page.screenshot({ path: path.join(OUT_DIR, 'web_t5.png') });
   await new Promise(r => setTimeout(r, 15000));
   const geom = await page.evaluate(() => {
     const c = document.querySelector('#amni-game canvas');
@@ -22,7 +26,7 @@ const puppeteer = require('puppeteer-core');
     const r = c.getBoundingClientRect();
     return { attrW: c.width, attrH: c.height, cssW: r.width, cssH: r.height, dpr: window.devicePixelRatio };
   });
-  await page.screenshot({ path: 'C:\\Users\\antho\\Documents\\ai\\Amni-Game\\docs\\web_t20.png' });
+  await page.screenshot({ path: path.join(OUT_DIR, 'web_t20.png') });
   console.log(JSON.stringify({ wgpu, geom, logs: logs.slice(0, 12) }, null, 1));
   await browser.close();
 })();

@@ -1,4 +1,8 @@
 const puppeteer = require('puppeteer-core');
+const fs = require('fs');
+const path = require('path');
+const OUT_DIR = process.env.GP_OUT || path.join(__dirname, 'out');
+fs.mkdirSync(OUT_DIR, { recursive: true });
 (async () => {
   const browser = await puppeteer.launch({
     executablePath: 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe',
@@ -43,7 +47,7 @@ const puppeteer = require('puppeteer-core');
     await page.keyboard.down('ControlLeft'); await new Promise(r => setTimeout(r, 360)); await page.keyboard.up('ControlLeft');
     await page.keyboard.press('KeyF');
     await new Promise(r => setTimeout(r, 220));
-    if (i === 12 || i === 28) await page.screenshot({ path: `C:\\Users\\antho\\Documents\\ai\\Amni-Game\\shot_fight_${i}.png` });
+    if (i === 12 || i === 28) await page.screenshot({ path: `${OUT_DIR}\\shot_fight_${i}.png` });
     if ((await dead()) || bad()) { crashedAt = i; break; }
   }
   await page.keyboard.up('KeyW');
