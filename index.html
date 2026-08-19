@@ -316,11 +316,11 @@ function dock(){if(tick)return;tick=requestAnimationFrame(function(){tick=0;nav.
 if(nav){dock();addEventListener('scroll',dock,{passive:true});}
 var v=document.getElementById('braid-loop'),tile=v&&v.closest('.tile');
 if(v&&tile&&'IntersectionObserver'in window&&!matchMedia('(prefers-reduced-motion:reduce)').matches){
-v.addEventListener('loadedmetadata',function(){try{v.currentTime=3.5;}catch(e){}});
-v.addEventListener('timeupdate',function(){if(v.currentTime>43.5)try{v.currentTime=3.5;}catch(e){}});
+v.addEventListener('loadedmetadata',function(){try{v.currentTime=7.2;}catch(e){}});
+v.addEventListener('timeupdate',function(){if(v.currentTime>48.9)try{v.currentTime=7.2;}catch(e){}});
 var io=new IntersectionObserver(function(e){
  if(e[0].isIntersecting){
-  if(!v.src){v.src='assets/braid/braid-usage.mp4?v=9';}
+  if(!v.src){v.src='assets/braid/braid-showcase-2026-08.mp4?v=1';}
   var p=v.play();if(p&&p.catch)p.catch(function(){});
  }else if(!v.paused){v.pause();}
 },{rootMargin:'200px 0px'});
