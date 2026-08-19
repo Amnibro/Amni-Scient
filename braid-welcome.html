@@ -49,31 +49,14 @@
 <a href="/" class="logo">AMNI<span>-SCIENT</span></a>
 <div class="links" id="nav-links">
 <a href="/">HOME</a>
-<a href="amni-calc.html">CALCULATORS</a>
-<a href="amni-learn.html">LEARN</a>
-<a href="research.html">RESEARCH</a>
+<a href="/braid" class="active">BRAID</a>
 <div class="nav-dd">
-<button class="nav-dd-trigger">PROJECTS</button>
+<button class="nav-dd-trigger">MORE</button>
 <div class="nav-dd-menu">
-<a href="/braid">BRAID</a>
 <a href="symphony.html">SYMPHONY</a>
 <a href="grok-remote.html">GROK-REMOTE</a>
-<a href="amni-ai.html">AMNI-AI</a>
-<a href="amni-browse.html">AMNI-BROWSE</a>
-<a href="amni-calc.html">AMNI-CALC</a>
-<a href="amni-explore.html">AMNI-EXPLORE</a>
-<a href="amni-space.html">AMNI-SPACE</a>
-<a href="amni-weather.html">AMNI-WEATHER</a>
-<a href="game/">AMNI-GAME</a>
-<a href="amni-learn.html">AMNI-LEARN</a>
-<a href="amni-llm.html">AMNI-LLM</a>
-<a href="amni-connect.html">AMNI-CONNECT</a>
-<a href="amni-code.html">AMNI-CODE</a>
-<a href="amni-core.html">AMNI-CORE</a>
 <a href="amni-haven.html">AMNI-HAVEN</a>
-<a href="amni-crypt.html">AMNI-CRYPT</a>
-<a href="amni-life.html">AMNI-LIFE</a>
-<a href="amni-prayer.html">AMNI-PRAYER</a>
+<a href="/">ALL PROJECTS</a>
 </div>
 </div>
 <a href="about.html">ABOUT</a>
@@ -224,14 +207,14 @@ function braidSVG(o){
    ? 'Thank you &mdash; your token top-up is in. Here is your licence key. Keep it: it unlocks Braid and carries the prepaid pool you just funded'+(d.budget?' ($'+Number(d.budget).toFixed(2)+')':'')+'.'
    : 'Thank you &mdash; your subscription is active. Here is your licence key. Keep it: it is what unlocks Braid, on one computer (this licence cannot be shared).';
   var steps=topup
-   ? '<li>Download and run it. Windows may warn about a new publisher &mdash; expected until the signing certificate ages in.</li>'+
-     '<li>Braid asks for your licence key on first launch. Paste the key above (binds to this one computer only).</li>'+
+   ? '<li>Download and run the Windows build. SmartScreen may warn about a new publisher &mdash; expected until the signing certificate ages in. Linux and macOS builds are in progress.</li>'+
+     '<li>Paste your licence key when Braid asks (binds to this machine).</li>'+
      '<li>On first open, pick Sign up for usage &mdash; your prepaid split is on this key and mints capped provider keys when you provision.</li>'+
-     '<li>Add Adam-3B if you want a free local seat. Everything it learns stays on your disk.</li>'
-   : '<li>Download and run it. Windows may warn about a new publisher &mdash; expected until the signing certificate ages in.</li>'+
-     '<li>Braid asks for your licence key on first launch. Paste the key above (binds to this one computer only).</li>'+
-     '<li>Pick the models you already pay for. Braid drives their own CLIs with your own logins, so your keys never leave the machine.</li>'+
-     '<li>Add Adam-3B if you want a free local seat. Everything it learns stays on your disk.</li>';
+     '<li>Run <b>One-at-a-time</b> once: ask a real question, watch each seat read the last. That is the product &mdash; under ten minutes if your CLIs are already logged in.</li>'
+   : '<li>Download and run the Windows build. SmartScreen may warn about a new publisher &mdash; expected until the signing certificate ages in. Linux and macOS builds are in progress.</li>'+
+     '<li>Paste your licence key when Braid asks (binds to this machine; up to 3 machines per licence on Beta).</li>'+
+     '<li>Sign in the seats you already pay for (Claude, Grok, Gemini CLIs). Missing tools stay hidden &mdash; nothing breaks.</li>'+
+     '<li><b>First win (&lt;10 min):</b> pick <b>One-at-a-time</b>, ask one real question, watch each seat read the answers before it. Then try <b>All-at-once</b> or <b>Squads</b> when you want a different recipe.</li>';
   el.innerHTML=
    '<div style="width:100%">'+
    '<p style="color:var(--text-soft);font-size:.92rem">'+thanks+'</p>'+
@@ -239,6 +222,7 @@ function braidSVG(o){
    '<div class="keyrow"><div class="keyval" id="k">'+esc(d.key)+'</div>'+
    '<button class="btn btn-outline" id="copy">COPY</button></div></div>'+
    dl+
+   '<p style="color:var(--dim);font-size:.82rem;margin:1.4rem 0 .4rem;font-family:var(--font-sans);font-weight:700;font-stretch:condensed;letter-spacing:.12em;text-transform:uppercase">Your first ten minutes</p>'+
    '<ol class="steps">'+steps+'</ol>'+
    '<div class="warn">Keep this key somewhere safe. Lost it? '+
    '<a href="mailto:amnibro7@gmail.com?subject=Braid%20licence%20lookup" style="color:var(--accent)">Ask us</a> '+

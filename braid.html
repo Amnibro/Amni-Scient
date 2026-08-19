@@ -261,8 +261,8 @@ Your browser cannot play this video. <a href="assets/braid/braid-showcase-2026-0
 <div class="recipes" id="recipes">
 <div class="recipe">
 <div class="stage">
-<video muted loop playsinline preload="metadata" poster="assets/braid/shot-all.jpg?v=2" aria-label="All-at-once preview">
-<source src="assets/braid/clip-all.mp4?v=2" type="video/mp4">
+<video muted loop playsinline preload="metadata" poster="assets/braid/shot-all.jpg?v=3" aria-label="All-at-once preview">
+<source src="assets/braid/clip-all.mp4?v=3" type="video/mp4">
 </video>
 </div>
 <div class="body">
@@ -273,8 +273,8 @@ Your browser cannot play this video. <a href="assets/braid/braid-showcase-2026-0
 </div>
 <div class="recipe star">
 <div class="stage">
-<video muted loop playsinline preload="metadata" poster="assets/braid/shot-one.jpg?v=2" aria-label="One-at-a-time preview">
-<source src="assets/braid/clip-one.mp4?v=2" type="video/mp4">
+<video muted loop playsinline preload="metadata" poster="assets/braid/shot-one.jpg?v=3" aria-label="One-at-a-time preview">
+<source src="assets/braid/clip-one.mp4?v=3" type="video/mp4">
 </video>
 </div>
 <div class="body">
@@ -285,8 +285,8 @@ Your browser cannot play this video. <a href="assets/braid/braid-showcase-2026-0
 </div>
 <div class="recipe">
 <div class="stage">
-<video muted loop playsinline preload="metadata" poster="assets/braid/shot-squads.jpg?v=2" aria-label="Squads preview">
-<source src="assets/braid/clip-squads.mp4?v=2" type="video/mp4">
+<video muted loop playsinline preload="metadata" poster="assets/braid/shot-squads.jpg?v=3" aria-label="Squads preview">
+<source src="assets/braid/clip-squads.mp4?v=3" type="video/mp4">
 </video>
 </div>
 <div class="body">
@@ -305,7 +305,7 @@ Your browser cannot play this video. <a href="assets/braid/braid-showcase-2026-0
 <div class="sc-frame">
 <div class="sc-chrome" aria-hidden="true"><i></i><i></i><i></i><span id="sc-chrome-lbl">Layout</span></div>
 <div class="sc-stage">
-<video id="sc-a" class="on" muted playsinline preload="metadata" poster="assets/braid/shot-views.jpg?v=2" aria-label="Feature preview"></video>
+<video id="sc-a" class="on" muted playsinline preload="metadata" poster="assets/braid/shot-views.jpg?v=3" aria-label="Feature preview"></video>
 <video id="sc-b" muted playsinline preload="metadata" aria-hidden="true"></video>
 </div>
 <div class="sc-cap">
@@ -558,7 +558,6 @@ function braidSVG(o){
 <script>
 (function(){
   var reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
-  /* Recipe cards: play muted loops only when visible */
   var recipeVids=document.querySelectorAll('#recipes video');
   if('IntersectionObserver' in window){
     var rio=new IntersectionObserver(function(ents){
@@ -567,31 +566,33 @@ function braidSVG(o){
         if(e.isIntersecting&&!reduce){var p=el.play();if(p&&p.catch)p.catch(function(){})}
         else el.pause();
       });
-    },{threshold:.35});
+    },{threshold:.4});
     recipeVids.forEach(function(v){rio.observe(v)});
   }else if(!reduce){
     recipeVids.forEach(function(v){var p=v.play();if(p&&p.catch)p.catch(function(){})});
   }
 
+  /* Dual-buffer crossfade. Advance when a clip ends — never cut mid-shot on a timer. */
   var items=[
-    {k:'01',lbl:'Views',title:'Side, stack, or thread',desc:'Same conversation. Switch how you read it.',
-     clip:'assets/braid/clip-views.mp4',poster:'assets/braid/shot-views.jpg?v=1'},
-    {k:'02',lbl:'Subscriptions',title:'Your plans, not our meter',desc:'Braid drives CLIs you already signed into. Keys stay on your machine.',
-     clip:'assets/braid/clip-flows.mp4',poster:'assets/braid/shot-flows.jpg?v=1'},
-    {k:'03',lbl:'Control',title:'Permissions per seat',desc:'What each seat sees and what it may touch — Plan, Edit, or Bypass.',
-     clip:'assets/braid/clip-perms.mp4',poster:'assets/braid/shot-perms.jpg?v=1'},
-    {k:'04',lbl:'All-at-once',title:'Every seat answers together',desc:'Blind parallel answers so you can compare them cold.',
-     clip:'assets/braid/clip-all.mp4',poster:'assets/braid/shot-all.jpg?v=1'},
-    {k:'05',lbl:'One-at-a-time',title:'Each seat reads the last',desc:'Sequential handoff — the default recipe.',
-     clip:'assets/braid/clip-one.mp4',poster:'assets/braid/shot-one.jpg?v=1'},
-    {k:'06',lbl:'Squads',title:'Builders vs attackers',desc:'One side proposes. The other hunts real flaws.',
-     clip:'assets/braid/clip-squads.mp4',poster:'assets/braid/shot-squads.jpg?v=1'}
+    {lbl:'Layout',title:'Side by side, stacked, or a thread',desc:'One conversation; three ways to read it. Change the layout without starting over.',
+     clip:'assets/braid/clip-views.mp4?v=3',poster:'assets/braid/shot-views.jpg?v=3'},
+    {lbl:'Subscriptions',title:'Your accounts, not a token meter',desc:'Braid talks to the CLIs you already signed into. We do not resell usage.',
+     clip:'assets/braid/clip-flows.mp4?v=3',poster:'assets/braid/shot-flows.jpg?v=3'},
+    {lbl:'Permissions',title:'Plan, Edit, or Bypass — per seat',desc:'Decide what each seat may read and write before the round starts.',
+     clip:'assets/braid/clip-perms.mp4?v=3',poster:'assets/braid/shot-perms.jpg?v=3'},
+    {lbl:'All-at-once',title:'Parallel answers, blind',desc:'Same question to every seat at once. Useful when you want an honest side-by-side.',
+     clip:'assets/braid/clip-all.mp4?v=3',poster:'assets/braid/shot-all.jpg?v=3'},
+    {lbl:'One-at-a-time',title:'Each seat reads the last',desc:'Order matters. The next voice has to deal with what was just said.',
+     clip:'assets/braid/clip-one.mp4?v=3',poster:'assets/braid/shot-one.jpg?v=3'},
+    {lbl:'Squads',title:'Builders vs attackers',desc:'One side commits to a design. The other looks for the cracks.',
+     clip:'assets/braid/clip-squads.mp4?v=3',poster:'assets/braid/shot-squads.jpg?v=3'}
   ];
   var root=document.getElementById('showcase');
-  var vid=document.getElementById('sc-video');
+  var a=document.getElementById('sc-a');
+  var b=document.getElementById('sc-b');
   var thumbs=document.getElementById('sc-thumbs');
-  if(!root||!vid||!thumbs)return;
-  var idx=0,timer=null,paused=false;
+  if(!root||!a||!b||!thumbs)return;
+  var idx=0,front=a,back=b,busy=false,userHold=false,visible=true,holdTimer=null;
 
   function paintThumbs(){
     thumbs.innerHTML=items.map(function(it,i){
@@ -599,53 +600,84 @@ function braidSVG(o){
         '<img src="'+it.poster+'" width="320" height="180" loading="lazy" alt="">'+
         '<span class="lbl">'+it.lbl+'</span></button>';
     }).join('');
-    Array.prototype.forEach.call(thumbs.querySelectorAll('button'),function(b){
-      b.addEventListener('click',function(){show(+b.dataset.i,true)});
+    Array.prototype.forEach.call(thumbs.querySelectorAll('button'),function(btn){
+      btn.addEventListener('click',function(){show(+btn.dataset.i,true)});
     });
   }
-  function show(i,user){
-    idx=(i+items.length)%items.length;
-    var it=items[idx];
-    document.getElementById('sc-k').textContent=it.k;
+  function markThumbs(){
+    Array.prototype.forEach.call(thumbs.querySelectorAll('button'),function(btn,j){
+      var on=j===idx;
+      btn.setAttribute('aria-current',on?'true':'false');
+      btn.setAttribute('aria-selected',on?'true':'false');
+    });
+  }
+  function cap(it){
+    document.getElementById('sc-k').textContent=it.lbl;
     document.getElementById('sc-title').textContent=it.title;
     document.getElementById('sc-desc').textContent=it.desc;
     document.getElementById('sc-chrome-lbl').textContent=it.lbl;
-    root.dataset.idx=String(idx);
-    Array.prototype.forEach.call(thumbs.querySelectorAll('button'),function(b,j){
-      var on=j===idx;
-      b.setAttribute('aria-current',on?'true':'false');
-      b.setAttribute('aria-selected',on?'true':'false');
-    });
-    vid.poster=it.poster;
-    if(reduce){vid.removeAttribute('src');vid.load();return}
-    vid.src=it.clip;
-    vid.load();
-    var p=vid.play();if(p&&p.catch)p.catch(function(){});
-    if(user){paused=true;clearInterval(timer);timer=null;
-      setTimeout(function(){paused=false;arm()},8000)}
   }
-  function arm(){
-    clearInterval(timer);
-    if(reduce||paused)return;
-    timer=setInterval(function(){if(!paused)show(idx+1,false)},4500);
+  function show(i,fromUser){
+    if(busy&&!fromUser)return;
+    idx=(i+items.length)%items.length;
+    var it=items[idx];
+    root.dataset.idx=String(idx);
+    markThumbs();
+    cap(it);
+    if(reduce){
+      front.removeAttribute('src');front.poster=it.poster;front.load();
+      front.classList.add('on');back.classList.remove('on');
+      return;
+    }
+    if(fromUser){
+      userHold=true;
+      clearTimeout(holdTimer);
+      holdTimer=setTimeout(function(){userHold=false},12000);
+    }
+    busy=true;
+    back.onended=null;
+    back.poster=it.poster;
+    back.src=it.clip;
+    back.loop=false;
+    back.onended=function(){
+      if(!userHold&&visible)show(idx+1,false);
+    };
+    var started=false;
+    var start=function(){
+      if(started)return;
+      started=true;
+      back.classList.add('on');
+      front.classList.remove('on');
+      var tmp=front;front=back;back=tmp;
+      busy=false;
+      var p=front.play();if(p&&p.catch)p.catch(function(){});
+    };
+    if(back.readyState>=2)start();
+    else back.addEventListener('canplay',start,{once:true});
+    back.load();
   }
   document.getElementById('sc-prev').addEventListener('click',function(){show(idx-1,true)});
   document.getElementById('sc-next').addEventListener('click',function(){show(idx+1,true)});
-  root.addEventListener('mouseenter',function(){paused=true;clearInterval(timer)});
-  root.addEventListener('mouseleave',function(){paused=false;arm()});
-  root.addEventListener('focusin',function(){paused=true;clearInterval(timer)});
-  root.addEventListener('focusout',function(){paused=false;arm()});
   paintThumbs();
-  show(0,false);
+  (function(){
+    var it=items[0];
+    cap(it);markThumbs();
+    if(reduce){a.poster=it.poster;return}
+    a.poster=it.poster;a.src=it.clip;a.loop=false;
+    a.onended=function(){if(!userHold&&visible)show(1,false)};
+    a.classList.add('on');
+    var p=a.play();if(p&&p.catch)p.catch(function(){});
+  })();
   if('IntersectionObserver' in window){
     var sio=new IntersectionObserver(function(ents){
       ents.forEach(function(e){
-        if(e.isIntersecting){if(!reduce){var p=vid.play();if(p&&p.catch)p.catch(function(){})}arm()}
-        else{vid.pause();clearInterval(timer)}
+        visible=e.isIntersecting;
+        if(visible){if(!reduce){var p=front.play();if(p&&p.catch)p.catch(function(){})}}
+        else{front.pause();back.pause()}
       });
-    },{threshold:.25});
+    },{threshold:.3});
     sio.observe(root);
-  }else arm();
+  }
 })();
 </script>
 </body>

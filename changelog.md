@@ -1,4 +1,31 @@
-## 2026-08-14 — Braid privacy page
+## 2026-08-18 — Braid feature clips match current UI
+- Recut `clip-all`, `clip-views`, `clip-flows`, `clip-perms`, `clip-squads` from tonight’s current-UI film `braid-showcase-2026-08.mp4` (not the old `braid-usage.mp4`). Matching `shot-*.jpg` posters refreshed. Cache-bust `?v=3`.
+- `clip-one` was not in that film as a selected recipe, so it was captured from the live local Braid session at `http://127.0.0.1:8788/basic.html` (One-at-a-time + Side, existing conversation) and encoded as a short Ken Burns clip. Main demo film left untouched.
+- Showcase already uses dual-buffer `#sc-a` / `#sc-b` and advances on clip `ended`.
+
+## 2026-08-18 — Braid showcase: smoother motion + human copy
+- Showcase advances only when a clip **ends** (no mid-clip timer cuts); dual-buffer crossfade between `sc-a` / `sc-b`.
+- Longer loops (~6–7s) with soft in/out fades (`clip-*.mp4?v=2`).
+- Page copy rewritten in plain voice (hero, recipes, showcase, FAQ, pricing) — less slogan cadence.
+
+## 2026-08-18 — Braid showcase: letterboxed carousel + loops
+- Replaced tall cover-cropped feature rows with a **16:9 windowed stage** (`object-fit: contain`), chrome bezel, prev/next, and thumb rail.
+- Cut six short muted loops from `braid-usage.mp4` (`assets/braid/clip-*.mp4`); autoplay only when in view; respects `prefers-reduced-motion`.
+- Recipe cards use the same letterboxed stages with looping previews (All-at-once / One-at-a-time / Squads).
+
+## 2026-08-18 — Braid page: media-first layout
+- Hero shortened (“Ask once. Every seat answers.”). Seats are non-interactive legend chips in a clean 4×2 grid. Recipes are spaced media cards with demo stills. Features replaced by SpaceX-style alternating shot rows. Teams shows **Talk to us** (no $7). Plan CTAs bottom-aligned with equal min heights. Stills extracted from braid-usage.mp4 into `assets/braid/shot-*.jpg`.
+
+## 2026-08-18 — Braid positioning pass (site)
+- **Own one job:** hero sells multi-AI debate on BYO subscriptions; plain-language subhead; Windows today / Linux & macOS coming near CTAs.
+- **Wedge early:** “why not build / other harness” moved above features as a callout.
+- **Three recipes:** All-at-once · One-at-a-time · Squads; advanced features demoted under “What stays out of the way.”
+- **Nav:** Braid pages drop the mega Projects menu for HOME / BRAID / slim MORE (Symphony, Grok-Remote, Haven, All projects).
+- **Pricing:** Teams marked not self-serve; token top-up framed as optional API path (does not replace BYO-subscription seats).
+- **Activation:** braid-welcome first-ten-minutes steps push One-at-a-time as the first win; platform note for Linux/macOS in progress.
+- **Memory claim** softened to “can be written” until cell UX is unmistakable.
+
+
 - **privacy-braid.html:** controller-style policy (licence/Stripe vs vendor seats). Hub tile on privacy.html only — not a extra footer item. braid.html has a three-tile “How data moves” strip plus FAQ.
 ## 2026-08-12 — v1.19.5 Home zigzag + Browse v0.12.1
 - **index.html tiles:** Adam and Grok-Remote were both `tile right`, so two media columns sat on the same side. Featured Amni-Browse (v0.12.1 exe) as the missing left tile between them — zigzag is LRLR… again. Browse promoted out of the index list (renumbered 01–08). Products 19.
