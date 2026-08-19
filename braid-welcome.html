@@ -201,19 +201,19 @@ function braidSVG(o){
      (d.sha256?'<div class="hashline">SHA-256 '+esc(d.sha256)+'</div>':'')+
      '<p style="color:var(--dim);font-size:.8rem;margin-top:.55rem">One-time download link — opens once, then expires. Reload this page for a new link if needed.</p>'+
      '<p style="color:var(--dim);font-size:.8rem;margin-top:.8rem">Paste your key when Braid asks on first launch.</p>'
-   : '<div class="warn"><b>Your key is live.</b><br>The Windows build is only handed out after payment (or by invitation). Check your email, or write amnibro7@gmail.com with your purchase reference.</div>'+
+   : '<div class="warn"><b>Your key is live.</b><br>Builds are handed out after payment (or by invitation). Check your email, or write amnibro7@gmail.com with your purchase reference &mdash; say which OS you need (Windows .exe, Linux binary, or macOS .tar.gz).</div>'+
      '<p style="color:var(--dim);font-size:.8rem;margin-top:.8rem">Paste your key when Braid asks on first launch.</p>';
   var thanks=topup
    ? 'Thank you &mdash; your token top-up is in. Here is your licence key. Keep it: it unlocks Braid and carries the prepaid pool you just funded'+(d.budget?' ($'+Number(d.budget).toFixed(2)+')':'')+'.'
    : 'Thank you &mdash; your subscription is active. Here is your licence key. Keep it: it is what unlocks Braid, on one computer (this licence cannot be shared).';
   var steps=topup
-   ? '<li>Download and run the Windows build. SmartScreen may warn about a new publisher &mdash; expected until the signing certificate ages in. Linux and macOS builds are in progress.</li>'+
+   ? '<li>Download the build for your OS. <b>Windows:</b> SmartScreen may warn about a new publisher until the certificate ages in. <b>Linux:</b> needs glibc 2.39+ (Ubuntu 24.04+ / Fedora 40+). <b>macOS:</b> unpack the .tar.gz, double-click <code>Braid.command</code>; first open may need right-click &rarr; Open for Gatekeeper.</li>'+
      '<li>Paste your licence key when Braid asks (binds to this machine).</li>'+
      '<li>On first open, pick Sign up for usage &mdash; your prepaid split is on this key and mints capped provider keys when you provision.</li>'+
      '<li>Run <b>One-at-a-time</b> once: ask a real question, watch each seat read the last. That is the product &mdash; under ten minutes if your CLIs are already logged in.</li>'
-   : '<li>Download and run the Windows build. SmartScreen may warn about a new publisher &mdash; expected until the signing certificate ages in. Linux and macOS builds are in progress.</li>'+
+   : '<li>Download the build for your OS. <b>Windows:</b> SmartScreen may warn about a new publisher until the certificate ages in. <b>Linux:</b> needs glibc 2.39+ (Ubuntu 24.04+ / Fedora 40+). <b>macOS:</b> unpack the .tar.gz, double-click <code>Braid.command</code>; first open may need right-click &rarr; Open for Gatekeeper.</li>'+
      '<li>Paste your licence key when Braid asks (binds to this machine; up to 3 machines per licence on Beta).</li>'+
-     '<li>Sign in the seats you already pay for (Claude, Grok, Gemini CLIs). Missing tools stay hidden &mdash; nothing breaks.</li>'+
+     '<li>Sign in the seats you already pay for (Claude, Grok, Gemini, ChatGPT, Copilot, Cursor, OpenCode). Missing tools stay hidden &mdash; nothing breaks.</li>'+
      '<li><b>First win (&lt;10 min):</b> pick <b>One-at-a-time</b>, ask one real question, watch each seat read the answers before it. Then try <b>All-at-once</b> or <b>Squads</b> when you want a different recipe.</li>';
   el.innerHTML=
    '<div style="width:100%">'+
