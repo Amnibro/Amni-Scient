@@ -11,14 +11,14 @@ image: /assets/braid/tile-braid.jpg
 
 # All eight Braid seats are live
 
-I was sick of alt-tabbing. I wanted one question, every model I already pay for, sitting in the same room.
+I was sick of alt-tabbing, so I wanted one question, every model I already pay for, sitting in the same room.
 
-Four of those chairs were still marked "soon." That's on me. They're in now: ChatGPT, Copilot, Cursor, and OpenCode, next to Claude, Grok, Gemini, and a local seat.
+Four of those chairs were still marked "soon." They're in now: ChatGPT, Copilot, Cursor, and OpenCode, next to Claude, Grok, Gemini, and a local seat.
 
-Each one can read what the last one said before it answers, or they all go at once and you look at them side by side. Sequential mode is why I built it. Blind parallel answers are six tabs with extra steps.
+Blind parallel answers are six tabs with extra steps, so I built sequential mode, where each one can read what the last one said before it answers. You can still run them all at once and look at them side by side if you want.
 
-Braid does not sell you tokens. It drives the CLIs you're already signed into. Open beta is $10/month. Teams are quote-by-email. I fixed the site so it doesn't pretend otherwise.
+Braid does not sell you tokens. It drives the CLIs you're already signed into. Open beta is $10/month, teams are quote-by-email, and I fixed the site so it matches that.
 
-If you want to roll your own table, the bill shows up in tokens and evenings. I already paid that bill.
+If you want to roll your own table, the bill shows up in tokens and evenings, and I already paid that bill.
 
 [Open Braid](/braid) and ask one real question from the seats you already have.
