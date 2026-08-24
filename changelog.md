@@ -1,3 +1,40 @@
+## 2026-08-23 — Grok-Remote wordmark on the product page
+- Hero on `grok-remote.html` uses `assets/grok-remote/logo.jpg` (Grok-Remote wordmark). Windows CTA is `downloads/GrokRemote.exe`.
+
+## 2026-08-23 — Amni-Type on the rest of the PROJECTS menus
+- Live home was still the pre-Type catalog (eight “everything else” rows, no AMNI-TYPE in the nav people actually click on blog/calc/learn). Local index already had row 09.
+- Inserted AMNI-TYPE after AMNI-PRAYER on 61 remaining full PROJECTS dropdowns (blog, calc modules, learn, research papers) plus construct short navs. Product page `amni-type.html` already existed; download is `downloads/amni-type.apk` (signed 0.8.0). Privacy page `privacy-type.html` + card on `privacy.html`.
+- Needs a site deploy before amni-scient.com shows it.
+
+## 2026-08-23 — Grok desktop is Tauri; Amni-Type is in the catalog
+- `grok-remote.html` Windows CTA is `/downloads/GrokDesktop.exe` (Tauri/WebView2). The Electron portable on GitHub v1.9.6 is retired from the site button.
+- `amni-type.html` is linked from Projects nav (42 pages) and home “everything else” row 09.
+
+## 2026-08-23 — Amni-Browse Android beta APK
+- Signed release `downloads/amni-browse.apk` (0.16.0-android.0, private by default). Version feed `browse/android-latest.json`. Product page CTA on `amni-browse.html`.
+
+## 2026-08-19 — Public ship log at /blog
+- Markdown posts in `blog/posts/` generate index, permalinks, RSS, sitemap, and a BLOG nav link.
+- First posts: studio log launch + Braid eight seats. Voice is Linear-style (change → meaning → value → CTA).
+- `npm run blog` is the publish step before deploy.
+
+## 2026-08-18 — Root cleanup: 60 dev files out of the site root
+- Triage rule: never move anything a live URL serves. Every candidate grepped against all
+  *.html first (one false positive — "latest.json" contains the substring "test.js").
+- 37 spent one-off scripts/outputs → `backups/root_scratch_20260818/` (16 .py fixers/patchers,
+  11 .js drivers, 2 .ps1, 4 *_out.txt dumps, 2 stray root .bak, hero-proto.html; README inside
+  explains provenance). 23 stray root `checklist_*.md` → `docs/checklists/` (no collisions).
+- The 11 .js + 4 _out.txt were git-TRACKED — dev scratch sitting on the public Pages repo.
+  Their moves are left as 15 UNCOMMITTED deletions for review; pushing un-publishes them.
+- Root now holds only served pages, site infra (CNAME/robots/sitemap/ads/favicons),
+  package.json + obfuscate.js (the `npm run build` entry — stays, and is gitignored), and the
+  three local docs. Untouched: /x/ drop, calc/calc-fixes.js + calc-overrides.js patcher pair,
+  and the Braid-film session's in-flight files.
+
+## 2026-08-18 — All eight Braid seats are live
+- ChatGPT, Copilot, Cursor, and OpenCode are no longer marked “soon” on `/braid`. Hero is “Eight seats. One room.” FAQ, JSON-LD, welcome steps, home tile, and the compare landing page match the live product.
+- JSON-LD team price no longer claims $7/seat (Teams stay quote-by-email).
+
 ## 2026-08-18 — Braid feature clips match current UI
 - Recut `clip-all`, `clip-views`, `clip-flows`, `clip-perms`, `clip-squads` from tonight’s current-UI film `braid-showcase-2026-08.mp4` (not the old `braid-usage.mp4`). Matching `shot-*.jpg` posters refreshed. Cache-bust `?v=3`.
 - `clip-one` was not in that film as a selected recipe, so it was captured from the live local Braid session at `http://127.0.0.1:8788/basic.html` (One-at-a-time + Side, existing conversation) and encoded as a short Ken Burns clip. Main demo film left untouched.
