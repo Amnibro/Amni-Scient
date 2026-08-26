@@ -11,6 +11,7 @@
 <meta property="og:description" content="A live phone cockpit for Grok Build — one-QR pairing, streamed thinking and tools, multi-session, self-healing link. Open source.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://amni-scient.com/grok-remote">
+<meta property="og:image" content="https://amni-scient.com/assets/grok-remote/logo.jpg">
 <link rel="canonical" href="https://amni-scient.com/grok-remote">
 <link rel="stylesheet" href="css/style.css?v=b261">
 <style>
@@ -42,6 +43,8 @@
 .grcap .replay{margin-top:.6rem;align-self:flex-start}
 .grcursor::after{content:"▋";color:#00C48C;animation:grblink .8s infinite}
 @media (prefers-reduced-motion:reduce){.grdot.warn,.grcursor::after{animation:none}}
+.gr-wordmark{display:block;width:min(560px,92vw);height:auto;margin:0 0 1.25rem;background:#fff;border-radius:8px;padding:.6rem .9rem}
+body.pp .product-hero .gr-wordmark{order:-2;margin:0 0 1.4rem}
 </style>
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
@@ -80,6 +83,7 @@
 <a href="amni-crypt.html">AMNI-CRYPT</a>
 <a href="amni-life.html">AMNI-LIFE</a>
 <a href="amni-prayer.html">AMNI-PRAYER</a>
+<a href="amni-type.html">AMNI-TYPE</a>
 </div>
 </div>
 <a href="about.html">ABOUT</a>
@@ -92,27 +96,20 @@
 </div>
 </nav>
 <div class="product-hero">
-<div class="shield-icon float">
-<svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect x="34" y="18" width="32" height="64" rx="6" stroke="#00C48C" stroke-width="2.5" fill="rgba(0,196,140,0.05)"/>
-<path d="M46 74h8" stroke="#00C48C" stroke-width="2.5" stroke-linecap="round"/>
-<path d="M20 40c6-10 14-16 14-16M20 60c6 10 14 16 14 16M80 40c-6-10-14-16-14-16M80 60c-6 10-14 16-14 16" stroke="#00C48C" stroke-width="2" stroke-linecap="round" opacity=".6"/>
-<circle cx="50" cy="46" r="9" stroke="#00C48C" stroke-width="2.5" fill="rgba(0,196,140,0.08)"/>
-</svg>
-</div>
+<img class="gr-wordmark" src="assets/grok-remote/logo.jpg" alt="Grok-Remote" width="1168" height="784">
 <h1>GROK-REMOTE</h1>
 <p class="desc">A LIVE PHONE COCKPIT FOR GROK BUILD &bull; ONE-QR PAIRING &bull; OPEN SOURCE</p>
 <div class="cta-row" style="margin-top:1.5rem;margin-bottom:1rem;gap:1rem;flex-wrap:wrap">
-<a href="https://github.com/Amnibro/grok-remote/releases/download/v1.9.6/GrokRemote-windows-portable.exe" class="btn btn-primary" style="text-decoration:none">&#11015; DOWNLOAD FOR WINDOWS</a>
-<a href="/downloads/grok-remote-1.9.6.tar.gz" class="btn btn-outline" style="text-decoration:none">&#128039; LINUX / MAC (RUN start.sh)</a>
-<a href="https://github.com/Amnibro/grok-remote" target="_blank" rel="noopener noreferrer" class="btn btn-outline" style="text-decoration:none">&#128214; GET IT ON GITHUB</a>
+<a href="/downloads/GrokRemote.exe" class="btn btn-primary" style="text-decoration:none">&#11015; DOWNLOAD DESKTOP (TAURI)</a>
+<a href="https://github.com/Amnibro/grok-remote/archive/refs/tags/v1.9.20.tar.gz" class="btn btn-outline" style="text-decoration:none">&#128039; LINUX / MAC (RUN start.sh)</a>
+<a href="https://github.com/Amnibro/grok-remote" target="_blank" rel="noopener noreferrer" class="btn btn-outline" style="text-decoration:none">&#128214; PHONE HUB ON GITHUB</a>
 <a href="https://github.com/Amnibro/grok-remote#readme" target="_blank" rel="noopener noreferrer" class="btn btn-outline" style="text-decoration:none">&#128218; SETUP GUIDE</a>
 <a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="btn btn-outline" style="text-decoration:none">&#9749; SUPPORT DEVELOPMENT</a>
 </div>
-<p style="color:var(--dim);font-size:.72rem;letter-spacing:1px">Desktop app: Windows 10/11, needs <code>grok</code> installed &bull; wraps a running grok-remote or starts its own &bull; phones pair by QR</p>
+<p style="color:var(--dim);font-size:.72rem;letter-spacing:1px">Windows desktop is the Tauri app (<code>GrokRemote.exe</code>, WebView2) &mdash; needs <code>grok</code> on PATH. It wraps a running hub or starts one. Phones pair by QR.</p>
 <p style="color:var(--dim);font-size:.72rem;letter-spacing:1px">Linux / macOS: unpack the tarball, run <code>./start.sh</code> (Python 3.10+), open the printed URL or QR from any phone</p>
-<p style="color:var(--dim);font-size:.72rem;letter-spacing:1px">v1.9.6 &bull; any phone or browser &bull; MIT-style licensed &bull; Wear OS companion in the repo</p>
-<p style="color:var(--dim);font-size:.7rem;letter-spacing:.5px;margin-top:.5rem;font-family:monospace"><!--email_off-->grok plugin install Amnibro/grok-remote&#64;v1.7.0 --trust<!--/email_off--></p>
+<p style="color:var(--dim);font-size:.72rem;letter-spacing:1px">Desktop 1.4.4 &bull; hub plugin 1.9.20 &bull; Braid + Legacy layouts &bull; any phone or browser &bull; Wear OS companion in the hub repo</p>
+<p style="color:var(--dim);font-size:.7rem;letter-spacing:.5px;margin-top:.5rem;font-family:monospace"><!--email_off-->grok plugin install Amnibro/grok-remote&#64;v1.9.20 --trust<!--/email_off--></p>
 </div>
 <section>
 <h2>YOUR AGENT, IN YOUR POCKET</h2>
@@ -147,7 +144,8 @@
 <h2>SPECIFICATIONS</h2>
 <table class="spec-table">
 <tr><th>PARAMETER</th><th>VALUE</th></tr>
-<tr><td>Host</td><td>Windows + Python 3.12, Grok Build CLI</td></tr>
+<tr><td>Desktop</td><td>Tauri 2 + WebView2 (<code>GrokRemote.exe</code>) &mdash; actively developed; Chromium/Electron portable is retired</td></tr>
+<tr><td>Host</td><td>Windows + Grok Build CLI; Python hub on :2421 when the plugin is running</td></tr>
 <tr><td>Client</td><td>Any modern browser &mdash; phone, tablet, watch page included</td></tr>
 <tr><td>Protocol</td><td>ACP over WebSocket, hub-proxied multi-client</td></tr>
 <tr><td>Pairing</td><td>One QR &rarr; 30-day HttpOnly key cookie; key-gated LAN/mesh access</td></tr>
