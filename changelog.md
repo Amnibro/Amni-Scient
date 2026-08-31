@@ -1,3 +1,9 @@
+## 2026-08-31 — Amni-Browse Windows 0.12.6 exe
+- Win64 Servo zip on GitHub Releases (`Amnibro/Amni-Browse` v0.12.6). Feed `browse/latest.json` → that asset. Product page + home tile restore Windows CTA alongside Android 0.16.7. Fixes tab visibility desync, sticky tab titles, and tab-strip flicker.
+
+## 2026-08-31 — Amni-Type 0.9.26 APK
+- Signed release `downloads/amni-type.apk` (0.9.26, versionCode 29). Version feed `type/version.json`. Product page CTAs on `amni-type.html` show v0.9.26 with cache-busted download URL.
+
 ## 2026-08-30 — Amni-Browse Android 0.16.7 APK
 - Signed release `downloads/amni-browse.apk` (0.16.7-android.0). Version feed `browse/android-latest.json`. Product page Android CTA restored on `amni-browse.html`.
 
