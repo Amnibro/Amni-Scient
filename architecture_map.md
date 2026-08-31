@@ -1,3 +1,36 @@
+## 2026-08-30 Amni-Browse Android 0.16.7 on the product page
+- `downloads/amni-browse.apk` signed 0.16.7-android.0 (sha256 ae537383…). Feed `browse/android-latest.json`. CTA under GET AMNI-BROWSE on `amni-browse.html`.
+
+## 2026-08-23 Grok-Remote brand
+- Wordmark: `assets/grok-remote/logo.jpg` on `grok-remote.html` hero. Desktop exe: `downloads/GrokRemote.exe` from `grok-remote/desktop-tauri`.
+
+## 2026-08-23 Grok desktop download + Amni-Type discoverability
+- Live Windows binary for Grok-Remote: `downloads/GrokRemote.exe` from `grok-remote/desktop-tauri` (Tauri). Do not relink the GitHub Electron portable.
+- Amni-Type product page already existed (`amni-type.html`, APK + `type/version.json`); it was missing from nav and the home index. Nav insert is after AMNI-PRAYER.
+
+## 2026-08-23 Amni-Browse Android beta on the product page
+- `downloads/amni-browse.apk` signed 0.16.0-android.0 (sha256 3713b495…). Feed `browse/android-latest.json`. CTA under GET AMNI-BROWSE on `amni-browse.html`.
+## 2026-08-19 blog ship log
+- Source: `blog/posts/*.md` (skip `_` prefix). Voice: `docs/blog-voice.md`.
+- Build: `npm run blog` → `tools/build-blog.js` writes `/blog/`, `/blog/<slug>/`, `/blog/rss.xml`, patches `sitemap.xml`, inserts BLOG into root HTML nav.
+- Theme: same `css/style.css` (`.blog-*`, cache `?v=b262` on generated pages).
+- Gate: one post per user-visible release. Not every commit.
+
+## 2026-08-18 the root is the served surface, dev work lives in docs/ and backups/
+
+- **Root contract:** only what a URL serves (49 html, CNAME, robots.txt, sitemap.xml,
+  ads.txt/app-ads.txt, favicons) plus package.json/obfuscate.js (`npm run build` obfuscates
+  the explore engine; both gitignored) and the three local docs (README, this map, changelog
+  — gitignored). Anything else that lands at root is clutter: fixers go to
+  `backups/root_scratch_<date>/` when spent, task checklists go to `docs/checklists/`.
+- **Before moving ANY root file:** grep all *.html for the filename (substring traps:
+  "latest.json" matches "test.js"), check `package.json` scripts, and check `git ls-files` —
+  tracked means public on the Pages repo. The 2026-08-18 sweep found 11 .js + 4 _out.txt
+  scratch files tracked-and-public; their removal deletes them from the public repo at the
+  next push.
+- The deployed calc patcher pair (`calc/calc-fixes.js`, `calc-overrides.js`) and the `/x/`
+  drop are live product surface — never sweep those.
+
 ## 2026-08-12 v1.19.5 home tile zigzag + Browse v0.12.1
 - index.html: Amni-Browse featured as a left tile between Adam and Grok-Remote (fixes two consecutive `tile right`). Public feeds: `/browse/latest.json`, `/browse/install.ps1`.
 ## 2026-08-11 — v1.19.3 Symphony: screenshot gallery + og image

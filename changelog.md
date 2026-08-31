@@ -1,3 +1,6 @@
+## 2026-08-30 — Amni-Browse Android 0.16.7 APK
+- Signed release `downloads/amni-browse.apk` (0.16.7-android.0). Version feed `browse/android-latest.json`. Product page Android CTA restored on `amni-browse.html`.
+
 ## 2026-08-23 — Grok-Remote wordmark on the product page
 - Hero on `grok-remote.html` uses `assets/grok-remote/logo.jpg` (Grok-Remote wordmark). Windows CTA is `downloads/GrokRemote.exe`.
 
