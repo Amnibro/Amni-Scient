@@ -1,3 +1,6 @@
+## 2026-09-02 — HedgeDoc for Android on the catalog
+- Unofficial Kotlin client for HedgeDoc 1.x and 2. Product page `amni-hedgedoc.html`, privacy `privacy-hedgedoc.html`. Signed and unsigned APKs stay on GitHub Release `Amnibro/hedgedoc-android` v1.1.0. Home row 10, About, FAQ, sitemap.
+
 ## 2026-09-02 — Amni-Connect v1.5.11 Linux packages on the product page
 - GitHub Release adds AppImage, .deb, .rpm alongside Windows Setup. Hero + GET CTAs on `amni-connect.html`. Feed `connect/latest.json` lists all platform URLs + curl|bash installer.
 

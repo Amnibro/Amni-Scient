@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#FBFAF8">
+<title>HedgeDoc for Android &mdash; Unofficial native client | AMNI-SCIENT</title>
+<meta name="description" content="Unofficial native Kotlin client for HedgeDoc 1.x and 2. Sideload the signed APK from GitHub. Connect to the server you already run.">
+<meta name="keywords" content="hedgedoc android,hedgedoc client,markdown notes android,self-hosted notes,amni-scient">
+<meta property="og:title" content="HedgeDoc for Android &mdash; Unofficial native client">
+<meta property="og:description" content="Native Kotlin client for HedgeDoc 1.x and 2. Sideload APK, AGPL source on GitHub.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://amni-scient.com/amni-hedgedoc">
+<meta property="og:image" content="https://amni-scient.com/assets/hedgedoc/connect.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://amni-scient.com/amni-hedgedoc">
+<link rel="stylesheet" href="css/style.css?v=b261">
+<style>
+.theme-hedge{--accent:#C89B4E;--accent-glow:rgba(200,155,78,.4)}
+.hd-shots{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin:1.5rem 0 0}
+.hd-shots img{width:min(280px,42vw);height:auto;border:1px solid var(--border,#2a2a2a);border-radius:4px}
+</style>
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+</head>
+<body class="pp theme-hedge">
+<div class="grid-bg"></div>
+<div class="scanlines"></div>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<a href="amni-calc.html">CALCULATORS</a>
+<a href="amni-learn.html">LEARN</a>
+<a href="/blog/">BLOG</a>
+<a href="research.html">RESEARCH</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu">
+<a href="/braid">BRAID</a>
+<a href="symphony.html">SYMPHONY</a>
+<a href="grok-remote.html">GROK-REMOTE</a>
+<a href="amni-ai.html">AMNI-AI</a>
+<a href="amni-browse.html">AMNI-BROWSE</a>
+<a href="amni-calc.html">AMNI-CALC</a>
+<a href="amni-explore.html">AMNI-EXPLORE</a>
+<a href="amni-space.html">AMNI-SPACE</a>
+<a href="amni-weather.html">AMNI-WEATHER</a>
+<a href="game/">AMNI-GAME</a>
+<a href="amni-learn.html">AMNI-LEARN</a>
+<a href="amni-llm.html">AMNI-LLM</a>
+<a href="amni-connect.html">AMNI-CONNECT</a>
+<a href="amni-code.html">AMNI-CODE</a>
+<a href="amni-core.html">AMNI-CORE</a>
+<a href="amni-haven.html">AMNI-HAVEN</a>
+<a href="amni-hedgedoc.html" class="active">HEDGEDOC</a>
+<a href="amni-crypt.html">AMNI-CRYPT</a>
+<a href="amni-life.html">AMNI-LIFE</a>
+<a href="amni-prayer.html">AMNI-PRAYER</a>
+<a href="amni-type.html">AMNI-TYPE</a>
+<a href="amni-mail.html">AMNI-MAIL</a>
+</div>
+</div>
+<a href="about.html">ABOUT</a>
+<a href="faq.html">FAQ</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer">SUPPORT</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<div class="product-hero">
+<h1>HEDGEDOC</h1>
+<p class="desc">UNOFFICIAL NATIVE ANDROID CLIENT &bull; HEDGEDOC 1.x AND 2 &bull; AGPL</p>
+<div class="cta-row" style="margin-top:1.5rem;margin-bottom:1rem;gap:1rem;flex-wrap:wrap">
+<a href="https://github.com/Amnibro/hedgedoc-android/releases/latest/download/hedgedoc-android-1.1.0-signed.apk" class="btn btn-primary" style="text-decoration:none">DOWNLOAD SIGNED APK</a>
+<a href="https://github.com/Amnibro/hedgedoc-android/releases/latest/download/hedgedoc-android-1.1.0-unsigned.apk" class="btn btn-outline" style="text-decoration:none">UNSIGNED APK</a>
+<a href="https://github.com/Amnibro/hedgedoc-android" target="_blank" rel="noopener noreferrer" class="btn btn-outline" style="text-decoration:none">SOURCE ON GITHUB</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="btn btn-outline" style="text-decoration:none">&#9749; SUPPORT</a>
+</div>
+<p style="color:var(--dim);font-size:.72rem;letter-spacing:1px">v1.1.0 &bull; Android 8.0+ &bull; debug-cert signature, Play Protect may warn &bull; package <code>org.hedgedoc.android</code></p>
+<p style="color:var(--dim);font-size:.72rem;letter-spacing:1px">Not affiliated with the HedgeDoc project. Their logo is not used here. <a href="privacy-hedgedoc.html">Privacy</a>.</p>
+<div class="hd-shots">
+<img src="assets/hedgedoc/connect.png" alt="Connect screen with Scient theme">
+<img src="assets/hedgedoc/editor.png" alt="New note editor">
+</div>
+</div>
+<section>
+<h2>NOTES FROM THE SERVER YOU ALREADY RUN</h2>
+<p style="color:var(--dim);max-width:720px;margin:0 0 2rem;font-size:.9rem">Point it at your HedgeDoc instance, or <code>demo.hedgedoc.org</code>. The app asks <code>/api/private/config</code> whether you are on 2, then uses REST for 2 and the old Socket.IO save path for 1.x.</p>
+<div class="features">
+<div class="feature"><div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="1"/><path d="M8 7h8M8 11h8M8 15h5"/></svg></div><h4>1.x AND 2</h4><p>History, create, edit, pin, delete, revisions. 2 talks <code>/api/private</code> and <code>/api/v2</code>. 1.x still saves over Socket.IO OT.</p></div>
+<div class="feature"><div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10" width="16" height="11"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div><h4>YOUR LOGIN, YOUR COOKIES</h4><p>Local username, LDAP, guest, a session cookie, or a HedgeDoc 2 API token. Nothing phones home to Amni-Scient. The session lives on the phone and on your server.</p></div>
+<div class="feature"><div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19l8-14 8 14z"/></svg></div><h4>SCIENT THEMES</h4><p>The same twelve Amni-Scient palettes as Browse: Scient, Emerald, Amni, Haven, Crypt, and the rest, plus Light.</p></div>
+<div class="feature"><div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4z"/><path d="M8 8h8v8H8z"/></svg></div><h4>AGPL SOURCE</h4><p>HedgeDoc is AGPL, so the client is too. Read it, fork it, build it. <a href="https://github.com/Amnibro/hedgedoc-android" target="_blank" rel="noopener noreferrer">github.com/Amnibro/hedgedoc-android</a>.</p></div>
+</div>
+</section>
+<section>
+<h2>SPECIFICATIONS</h2>
+<table class="spec-table">
+<tr><th>PARAMETER</th><th>VALUE</th></tr>
+<tr><td>Platform</td><td>Android 8.0+ (API 26)</td></tr>
+<tr><td>Language</td><td>Kotlin + Jetpack Compose</td></tr>
+<tr><td>Servers</td><td>HedgeDoc 1.x and HedgeDoc 2</td></tr>
+<tr><td>Auth</td><td>Local, LDAP, guest, session cookie, API token (2)</td></tr>
+<tr><td>License</td><td>AGPL-3.0-or-later</td></tr>
+<tr><td>Price</td><td>Free. Sideload from GitHub Releases.</td></tr>
+</table>
+</section>
+<aside class="support-cta" aria-label="Support"><a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="support-link"><span class="support-ico">&#9749;</span><span>Enjoying this? <strong>Support on Ko-fi</strong></span></a></aside>
+<footer>
+<div class="footer-links">
+<a href="about.html">ABOUT</a>
+<a href="faq.html">FAQ</a>
+<a href="privacy.html">PRIVACY</a>
+<a href="terms.html">TERMS</a>
+<a href="mailto:amnibro7@gmail.com">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amniscient, LLC. Unofficial HedgeDoc client. HedgeDoc is AGPL.</p>
+</footer>
+</body>
+</html>
