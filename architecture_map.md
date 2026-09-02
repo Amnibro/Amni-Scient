@@ -1,3 +1,6 @@
+## 2026-09-02 Amni-Connect v1.5.11 multi-platform download
+- Product page CTAs: Windows Setup, Linux AppImage, .deb, .rpm. `connect/latest.json` adds `linux.appImage|deb|rpm|install`.
+
 ## 2026-09-01 Amni-Connect v1.5.10 download on amni-connect.html
 - Windows CTA → `github.com/Amnibro/Amni-Connect/releases/latest/download/Amni-Connect-Setup-1.5.10.exe`. Version feed `connect/latest.json` for in-app updater parity.
 

@@ -1,3 +1,6 @@
+## 2026-09-02 — Amni-Connect v1.5.11 Linux packages on the product page
+- GitHub Release adds AppImage, .deb, .rpm alongside Windows Setup. Hero + GET CTAs on `amni-connect.html`. Feed `connect/latest.json` lists all platform URLs + curl|bash installer.
+
 ## 2026-09-01 — Amni-Connect v1.5.10 Windows Setup on the product page
 - GitHub Release `Amnibro/Amni-Connect` v1.5.10. Feed `connect/latest.json` → `Amni-Connect-Setup-1.5.10.exe`. Hero + GET AMNI-CONNECT CTAs on `amni-connect.html` (was GitHub-only).
 
