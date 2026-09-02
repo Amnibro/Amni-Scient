@@ -1,3 +1,6 @@
+## 2026-09-01 Amni-Connect v1.5.10 download on amni-connect.html
+- Windows CTA → `github.com/Amnibro/Amni-Connect/releases/latest/download/Amni-Connect-Setup-1.5.10.exe`. Version feed `connect/latest.json` for in-app updater parity.
+
 ## 2026-08-30 Amni-Browse Android 0.16.7 on the product page
 - `downloads/amni-browse.apk` signed 0.16.7-android.0 (sha256 ae537383…). Feed `browse/android-latest.json`. CTA under GET AMNI-BROWSE on `amni-browse.html`.
 

@@ -1,3 +1,6 @@
+## 2026-09-01 — Amni-Connect v1.5.10 Windows Setup on the product page
+- GitHub Release `Amnibro/Amni-Connect` v1.5.10. Feed `connect/latest.json` → `Amni-Connect-Setup-1.5.10.exe`. Hero + GET AMNI-CONNECT CTAs on `amni-connect.html` (was GitHub-only).
+
 ## 2026-08-30 — Amni-Browse Android 0.16.7 APK
 - Signed release `downloads/amni-browse.apk` (0.16.7-android.0). Version feed `browse/android-latest.json`. Product page Android CTA restored on `amni-browse.html`.
 
