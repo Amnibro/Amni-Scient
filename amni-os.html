@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#FBFAF8">
+<title>Amni OS &mdash; The Desktop for People Leaving Windows | AMNI-SCIENT</title>
+<meta name="description" content="Amni OS: an Arch-based Linux desktop for people leaving Windows. Bottom bar and Start menu, double-click a .exe and Wine opens it, Steam with Proton, local AI, Amni-Browse, Btrfs restore points, one-click Ubuntu and Fedora boxes. Amni Control does the terminal work for you.">
+<meta name="keywords" content="amni os,linux for windows users,arch linux desktop,plasma,wine,proton,steam linux,calamares,distrobox,privacy linux">
+<meta property="og:title" content="Amni OS &mdash; The Desktop for People Leaving Windows">
+<meta property="og:description" content="Arch-based Linux desktop that already knows what a Windows user expects. Steam, Wine, local AI, Amni-Browse, restore points, one-click Ubuntu and Fedora boxes.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://amni-scient.com/amni-os">
+<meta property="og:image" content="https://amni-scient.com/assets/os/desktop.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Amni OS &mdash; The Desktop for People Leaving Windows">
+<meta name="twitter:description" content="Arch-based Linux desktop for Windows migrants: Steam, Wine, local AI, Amni-Browse, restore points, Ubuntu and Fedora boxes.">
+<meta name="twitter:image" content="https://amni-scient.com/assets/os/desktop.png">
+<link rel="canonical" href="https://amni-scient.com/amni-os">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Amni OS","url":"https://amni-scient.com/amni-os.html","description":"Arch-based Linux desktop for people leaving Windows, with Amni Control doing the terminal work.","applicationCategory":"OperatingSystem","operatingSystem":"Linux","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Organization","name":"Amniscient, LLC","url":"https://amni-scient.com"}}</script>
+<link rel="stylesheet" href="css/style.css?v=b261">
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+</head>
+<body class="pp theme-ai">
+<div class="grid-bg"></div>
+<div class="scanlines"></div>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<a href="amni-calc.html">CALCULATORS</a>
+<a href="amni-learn.html">LEARN</a>
+<a href="/blog/">BLOG</a>
+<a href="research.html">RESEARCH</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu">
+<a href="/braid">BRAID</a>
+<a href="symphony.html">SYMPHONY</a>
+<a href="grok-remote.html">GROK-REMOTE</a>
+<a href="amni-os.html" class="active">AMNI-OS</a>
+<a href="amni-ai.html">AMNI-AI</a>
+<a href="amni-browse.html">AMNI-BROWSE</a>
+<a href="amni-calc.html">AMNI-CALC</a>
+<a href="amni-explore.html">AMNI-EXPLORE</a>
+<a href="amni-space.html">AMNI-SPACE</a>
+<a href="amni-weather.html">AMNI-WEATHER</a>
+<a href="game/">AMNI-GAME</a>
+<a href="amni-learn.html">AMNI-LEARN</a>
+<a href="amni-llm.html">AMNI-LLM</a>
+<a href="amni-connect.html">AMNI-CONNECT</a>
+<a href="amni-code.html">AMNI-CODE</a>
+<a href="amni-core.html">AMNI-CORE</a>
+<a href="amni-haven.html">AMNI-HAVEN</a>
+<a href="amni-hedgedoc.html">HEDGEDOC</a>
+<a href="amni-crypt.html">AMNI-CRYPT</a>
+<a href="amni-life.html">AMNI-LIFE</a>
+<a href="amni-prayer.html">AMNI-PRAYER</a>
+<a href="amni-type.html">AMNI-TYPE</a>
+</div>
+</div>
+<a href="about.html">ABOUT</a>
+<a href="faq.html">FAQ</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer">SUPPORT</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<div class="product-hero">
+<div class="shield-icon float">
+<svg viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect x="14" y="20" width="72" height="72" rx="8" stroke="#C89B4E" stroke-width="2" fill="rgba(200,155,78,0.06)"/>
+<path d="M50 34 L66 78 L58 78 L54.5 68 L45.5 68 L42 78 L34 78 Z M47.5 61 L52.5 61 L50 52 Z" fill="#C89B4E"/>
+<line x1="14" y1="84" x2="86" y2="84" stroke="#C89B4E" stroke-width="1"/>
+</svg>
+</div>
+<h1>AMNI OS</h1>
+<p class="desc">THE DESKTOP FOR PEOPLE LEAVING WINDOWS &bull; ARCH + PLASMA 6 &bull; v0.4</p>
+<div class="cta-row" style="margin-top:2rem;margin-bottom:1rem">
+<a href="#get" class="btn btn-primary">GET THE ISO</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="btn btn-outline">&#9749; SUPPORT</a>
+</div>
+</div>
+<div class="ptile">
+<div class="ptile-copy">
+<p class="ptile-line">Bottom bar, Start menu, double-click to open. Steam with Proton, Wine for the .exe you still need, a local model already running, Amni-Browse as the default browser, and restore points you can boot into. Amni Control is the window that does the terminal work: drivers, updates, printers, Windows apps, Ubuntu and Fedora boxes, AI seats, all buttons.</p>
+<ul class="ptile-feats"><li>Arch Linux base, Plasma 6, Btrfs snapshots with GRUB rollback</li><li>Steam + Proton, Wine Staging, Bottles, Lutris, controller rules, CoreCtrl, MangoHud</li><li>Ollama on the box, one click to put it on your GPU, Alpaca chat, six AI coding seats</li><li>Amni-Browse (Servo engine), Firefox as the second browser</li><li>Ubuntu 24.04 and Fedora 42 boxes for .deb and .rpm software, Flathub, AppImage</li><li>Calamares installer keeps an existing Windows in the boot menu</li></ul>
+</div>
+<div class="ptile-media"><img src="assets/os/desktop.png" alt="Amni OS desktop with the gold clock and the bottom bar" loading="lazy"></div>
+</div>
+<section>
+<h2>YOU ALREADY KNOW THIS DESKTOP</h2>
+<p style="color:var(--dim);max-width:640px;margin:0 0 1rem;font-size:.9rem">I built it for the person who has a Windows machine, a Steam library, a printer and a pile of .exe installers, and wants out without learning a shell. The rule behind every package on the image: <em>Plasma ships the settings panel, Amni OS ships the engine behind it.</em></p>
+<div class="features">
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 18h18M8 21h8"/></svg></div>
+<h4>WINDOWS SHAPED</h4>
+<p>Bottom bar, Start menu, Files with Desktop, Documents and Downloads, smb:// shares, Print to PDF, .docx that keeps its layout, NTFS and exFAT drives that just mount.</p>
+</div>
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12h12M9 9l-3 3 3 3M15 9l3 3-3 3"/><rect x="2" y="5" width="20" height="14" rx="3"/></svg></div>
+<h4>GAMES ON DAY ONE</h4>
+<p>Steam with Proton on the image, ProtonPlus for Proton-GE, Lutris and Bottles for the other stores, GameMode, MangoHud, controller udev rules, CoreCtrl for AMD tuning.</p>
+</div>
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4M5 5l3 3M16 16l3 3M5 19l3-3M16 8l3-3"/></svg></div>
+<h4>AI ON THE BOX</h4>
+<p>Ollama runs locally out of the box. One button installs the ROCm or CUDA build for your card. Alpaca for chat, and the AI bench installs Grok, Claude Code, Codex, OpenCode and Cursor seats.</p>
+</div>
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.6 8.2-8 9-4.4-.8-8-4-8-9V6z"/></svg></div>
+<h4>AMNI-BROWSE BY DEFAULT</h4>
+<p>The privacy-first browser on the Servo engine is the default handler for http and https. Zero telemetry, ad and tracker blocking on, DuckDuckGo. Firefox rides along as a second browser.</p>
+</div>
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.3-5.7"/><path d="M4 4v5h5"/></svg></div>
+<h4>RESTORE POINTS THAT BOOT</h4>
+<p>Btrfs snapshots around every package change, and a GRUB entry to boot straight into one. Timeshift covers ext4 roots. A second kernel (LTS) is one menu entry away.</p>
+</div>
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg></div>
+<h4>ANY LINUX SOFTWARE</h4>
+<p>Arch repos through Discover, Flathub, AppImage, and one-click Ubuntu or Fedora boxes for the .deb and .rpm world, with the apps landing in your menu.</p>
+</div>
+</div>
+</section>
+<section>
+<h2>AMNI CONTROL</h2>
+<p style="color:var(--dim);max-width:720px;margin:0 0 1.5rem;font-size:.9rem">The first window you see. Nine panes, every one a button: Welcome, Suite, AI bench, Gaming, Windows apps, System, Get apps, Drivers, Colors. It runs the privileged work through polkit with one password prompt, and opens a Konsole window so you can watch pacman instead of a spinner.</p>
+<div class="ptile"><div class="ptile-media"><img src="assets/os/control.png" alt="Amni Control inside Amni-Browse" loading="lazy"></div><div class="ptile-copy"><ul class="ptile-feats"><li>Drivers: scan the GPU, apply the AMD, NVIDIA or Intel stack</li><li>System: firewall, Bluetooth, printers, Windows file sharing, restore points, dual boot</li><li>Get apps: Discover, Flathub, AppImage, Ubuntu box, Fedora box, optional sets</li><li>Colors: eight accents from the site, dark and light, applied to the whole desktop</li></ul></div></div>
+</section>
+<section>
+<h2>SPECIFICATIONS</h2>
+<table class="spec-table">
+<tr><th>PARAMETER</th><th>DETAILS</th></tr>
+<tr><td>Base</td><td>Arch Linux, rolling, kernel <code>linux</code> and <code>linux-lts</code></td></tr>
+<tr><td>Desktop</td><td>KDE Plasma 6 (X11 session), Amni Scient look-and-feel, Archivo and Cascadia Code</td></tr>
+<tr><td>Installer</td><td>Calamares, erase-disk or manual partitioning, Btrfs default, os-prober keeps Windows in GRUB</td></tr>
+<tr><td>Graphics</td><td>Mesa (AMD, Intel), NVIDIA open modules (Turing and newer), VirtualBox guest stack, picked at first boot</td></tr>
+<tr><td>Gaming</td><td>Steam, Proton, ProtonPlus, Lutris, Wine Staging, Bottles, GameMode, MangoHud, Gamescope, vkd3d, DXVK via Proton</td></tr>
+<tr><td>AI</td><td>Ollama (CPU on the image, ROCm or CUDA build on request), Alpaca, AI bench seats</td></tr>
+<tr><td>Browser</td><td>Amni-Browse 0.13 (Servo lane), Firefox</td></tr>
+<tr><td>Other Linuxes</td><td>distrobox + podman: Ubuntu 24.04, Fedora 42, Debian 13 boxes</td></tr>
+<tr><td>Office and media</td><td>LibreOffice with the Microsoft fonts, VLC, Elisa, GIMP/Inkscape/Krita one click away</td></tr>
+<tr><td>Image</td><td>4.8 GB ISO, UEFI and BIOS, live session with the installer on the dock</td></tr>
+<tr><td>Privacy</td><td>No telemetry anywhere on the image. Control never phones home.</td></tr>
+</table>
+</section>
+<section>
+<h2>HOW THE IMAGE IS BUILT</h2>
+<p style="color:var(--dim);max-width:720px;margin:0 0 1rem;font-size:.9rem">Every ISO comes out of one script on a build VM: it builds Amni-Browse and the other local packages into a local repo, lays the theme and Control into the image, and runs mkarchiso. The same rig boots the result, clicks every dock launcher with a liveness probe, and runs the installer end to end before an image is called good. What each bake taught is written up in the repo's <code>docs/bake-findings-*.md</code>.</p>
+<div class="ptile"><div class="ptile-media"><img src="assets/os/installer.png" alt="Calamares installer in Amni OS branding" loading="lazy"></div><div class="ptile-copy"><p class="ptile-line">The installer wears the same ink and gold as the desktop, erases or resizes, and leaves the live session's user, autologin and repo behind before the first reboot.</p></div></div>
+</section>
+<section id="get">
+<h2>GET AMNI OS</h2>
+<p style="color:var(--dim);max-width:720px;margin:0 0 1rem;font-size:.9rem">The image is 4.8 GB, bigger than this site's host will serve, so the download mirror is the next thing being wired up. The current build is <code>amni-os-2026.09.04-x86_64.iso</code>, SHA-256 <code>09bfe1a32f8f72b1ed52ed9caa90ba038fe16b4858a0f079a6ffecf071aa6121</code>. Until the mirror is live, ask for a USB or a link at <a href="mailto:hello@amni-scient.com">hello@amni-scient.com</a>.</p>
+<div class="cta-row">
+<a href="downloads/amni-os/latest.json" class="btn btn-primary">LATEST.JSON</a>
+<a href="mailto:hello@amni-scient.com?subject=Amni%20OS%20ISO" class="btn btn-outline">ASK FOR THE ISO</a>
+</div>
+<p style="color:var(--dim);max-width:720px;margin:1rem 0 0;font-size:.85rem">Write it to a USB stick with Rufus, Ventoy or <code>dd</code>, boot it, click Install Amni OS on the dock. An existing Windows stays in the boot menu.</p>
+</section>
+<footer>
+<div class="footer-links">
+<a href="about.html">ABOUT</a>
+<a href="faq.html">FAQ</a>
+<a href="privacy.html">PRIVACY</a>
+<a href="terms.html">TERMS</a>
+<a href="mailto:amnibro7@gmail.com">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
+</footer>
+<div class="lightbox" onclick="closeLightbox(event)"><span class="lightbox-close">&times;</span><img></div>
+<script>function openLightbox(s,a){const l=document.querySelector('.lightbox'),i=l.querySelector('img');i.src=s;i.alt=a;l.classList.add('open')}function closeLightbox(e){e.target.tagName!=='IMG'&&document.querySelector('.lightbox').classList.remove('open')}</script>
+</body>
+</html>
