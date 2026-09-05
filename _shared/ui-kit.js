@@ -12,6 +12,72 @@ setTimeout(finishLd, 3200)
 const lp = setInterval(() => { (ldone || (matHost && matHost.textContent.trim())) && (finishLd(), clearInterval(lp)) }, 140)
 const toast = (msg, ms) => { const t = document.createElement('div'); t.className = 'uk-toast'; t.textContent = msg; document.body.appendChild(t); requestAnimationFrame(() => t.classList.add('on')); setTimeout(() => { t.classList.remove('on'); setTimeout(() => t.remove(), 380) }, ms || 3600) }
 const tabs = [...document.querySelectorAll('.tab')]
+const tablist = document.querySelector('.tabs')
+if (tablist && tabs.length) {
+  tablist.setAttribute('role', 'tablist')
+  tablist.setAttribute('aria-label', 'Editor views')
+  const syncTabs = active => {
+    tabs.forEach((tab, i) => {
+      const paneName = tab.dataset.pane
+      const pane = document.getElementById('pane-' + paneName)
+      const fallback = pane || (paneName === '3d' && document.getElementById('c3d')) || document.getElementById('view')
+      if (!tab.id) tab.id = 'editor-tab-' + paneName
+      tab.setAttribute('role', 'tab')
+      tab.setAttribute('aria-controls', fallback && fallback.id ? fallback.id : 'view')
+      const selected = active ? tab === active : tab.classList.contains('on')
+      tab.setAttribute('aria-selected', String(selected))
+      tab.tabIndex = selected ? 0 : -1
+      if (pane) {
+        pane.setAttribute('role', 'tabpanel')
+        pane.setAttribute('aria-labelledby', tab.id)
+      } else if (fallback && fallback.tagName === 'CANVAS') {
+        fallback.setAttribute('role', 'region')
+        fallback.setAttribute('aria-label', tab.textContent.trim())
+      }
+      if (!active && i === 0 && !tabs.some(item => item.classList.contains('on'))) tab.tabIndex = 0
+    })
+  }
+  syncTabs()
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => setTimeout(() => syncTabs(tab), 0))
+    tab.addEventListener('keydown', event => {
+      const current = tabs.indexOf(tab)
+      let next = -1
+      if (event.key === 'ArrowRight' || event.key === 'ArrowDown') next = (current + 1) % tabs.length
+      if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') next = (current - 1 + tabs.length) % tabs.length
+      if (event.key === 'Home') next = 0
+      if (event.key === 'End') next = tabs.length - 1
+      if (next < 0) return
+      event.preventDefault()
+      tabs[next].focus()
+      tabs[next].click()
+    })
+  })
+}
+document.querySelectorAll('#side .row').forEach((row, i) => {
+  const label = row.querySelector('label')
+  const control = row.querySelector('input,select,textarea')
+  if (!label || !control) return
+  if (!control.id) control.id = 'editor-field-' + i
+  if (!label.htmlFor) label.htmlFor = control.id
+})
+const menuButton = $('#menubtn')
+const sidePanel = $('#side')
+const backdrop = $('#backdrop')
+if (menuButton && sidePanel) {
+  menuButton.setAttribute('aria-controls', 'side')
+  const syncMenu = () => menuButton.setAttribute('aria-expanded', String(sidePanel.classList.contains('open')))
+  syncMenu()
+  menuButton.addEventListener('click', () => setTimeout(syncMenu, 0))
+  backdrop && backdrop.addEventListener('click', () => setTimeout(syncMenu, 0))
+  document.addEventListener('keydown', event => {
+    if (event.key !== 'Escape' || !sidePanel.classList.contains('open')) return
+    sidePanel.classList.remove('open')
+    backdrop && backdrop.classList.remove('open')
+    syncMenu()
+    menuButton.focus()
+  })
+}
 const matTab = tabs.find(t => t.dataset.pane === 'mat')
 const readTot = () => {
   if (!matHost) return ''
@@ -23,18 +89,35 @@ const readTot = () => {
 const pill = document.createElement('div')
 pill.id = 'uk-quote'
 pill.innerHTML = '<span class="uk-qlab">Live<br>estimate</span><b></b><button id="uk-share" title="Copy a shareable link to this exact design">🔗</button>'
+pill.setAttribute('role', 'button')
+pill.setAttribute('aria-label', 'Open materials and pricing')
+pill.tabIndex = 0
 document.body.appendChild(pill)
+$('#uk-share').setAttribute('aria-label', 'Copy a shareable link to this design')
 const qv = pill.querySelector('b')
 const upd = () => { const v = readTot(); pill.classList.toggle('on', !!v); v && (qv.textContent = v) }
 matHost && new MutationObserver(upd).observe(matHost, { childList: true, subtree: true, characterData: true })
 upd(); setTimeout(upd, 1600); setTimeout(upd, 4200)
 pill.addEventListener('click', e => { e.target.id !== 'uk-share' && matTab && matTab.click() })
+pill.addEventListener('keydown', e => {
+  if ((e.key === 'Enter' || e.key === ' ') && e.target === pill) {
+    e.preventDefault()
+    matTab && matTab.click()
+  }
+})
 $('#uk-share').addEventListener('click', e => {
   e.stopPropagation()
-  const d = {}
-  Object.keys(localStorage).filter(k => k.startsWith('amni' + mod + '.')).forEach(k => { d[k] = localStorage.getItem(k) })
-  if (!Object.keys(d).length) return toast('Nothing to share yet — tweak your design first!')
-  const u = location.origin + location.pathname + '#share=' + btoa(unescape(encodeURIComponent(JSON.stringify(d))))
+  const api = window.AmniShareImport
+  if (!api) return toast('Sharing is unavailable right now.')
+  let d, encoded
+  try {
+    d = api.collectShareData(mod, localStorage)
+    if (!Object.keys(d).length) return toast('Nothing to share yet — tweak your design first!')
+    encoded = api.encodePayload(d)
+  } catch (error) {
+    return toast(error && error.message ? error.message : 'This design could not be shared safely.')
+  }
+  const u = location.origin + location.pathname + '#share=' + encoded
   const ok = () => toast('🔗 Link copied — anyone who opens it sees this exact design')
   navigator.clipboard && navigator.clipboard.writeText ? navigator.clipboard.writeText(u).then(ok, () => prompt('Copy this share link:', u)) : prompt('Copy this share link:', u)
 })
@@ -65,11 +148,9 @@ const stepify = () => document.querySelectorAll('#side .row input[type=number]')
 })
 stepify(); setTimeout(stepify, 1500)
 const AFF = window.AMNI_AFF || { hd: '', lowes: '' }
-const GC = window.AMNI_GC || ''
 const affFor = h => /homedepot\.com/.test(h) ? AFF.hd : /lowes\.com/.test(h) ? AFF.lowes : ''
 document.addEventListener('click', e => { const a = e.target.closest ? e.target.closest('a[href]') : null; const t = a && !a.dataset.ukAff ? affFor(a.href) : ''; t && (a.dataset.ukAff = '1', a.rel = 'sponsored noopener', a.href = t.replace('{u}', encodeURIComponent(a.href))) }, true)
 ;(AFF.hd || AFF.lowes) && matHost && matHost.parentNode.insertAdjacentHTML('beforeend', '<div class="uk-affnote">Store links are affiliate links — qualifying purchases may earn this site a commission at no extra cost to you.</div>')
-if (GC) { const s = document.createElement('script'); s.async = !0; s.src = 'https://gc.zgo.at/count.js'; s.setAttribute('data-goatcounter', 'https://' + GC + '.goatcounter.com/count'); document.head.appendChild(s) }
 mod && $('#side') && fetch('../_shared/presets.json?v=p1').then(r => r.ok ? r.json() : {}).then(P => { const list = P[mod] || []; if (!list.length) return; const side = $('#side'), w = document.createElement('div'); w.id = 'uk-presets'; w.innerHTML = '<span>⚡ Quick start</span>' + list.map((p, i) => `<button type="button" data-i="${i}" title="${p.tip || ''}">${p.name}</button>`).join(''); side.insertBefore(w, side.firstChild); w.addEventListener('click', e => { const b = e.target.closest('button'); b && (location.hash = '#share=' + list[+b.dataset.i].h, location.reload()) }) }).catch(() => {})
 mod && $('#side') && $('#side').insertAdjacentHTML('beforeend', `<a class="uk-guide" href="../construct/${mod}.html">📖 Full cost guide &amp; how-to</a>`)
 })()

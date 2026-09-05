@@ -5,6 +5,18 @@ const MODNAME = { deck: 'Deck', patio: 'Patio & Slab', pool: 'Pool', floor: 'Flo
 const matHost = $('#mat-table') || $('#mat-body')
 const tabs = $('.tabs')
 if (!tabs || !mod) return
+const shareApi = window.AmniShareImport
+const collectDesign = () => {
+  if (!shareApi) throw new Error('Safe sharing is unavailable.')
+  return shareApi.collectShareData(mod, localStorage)
+}
+const encodeDesign = data => {
+  if (!shareApi) throw new Error('Safe sharing is unavailable.')
+  return shareApi.encodePayload(data)
+}
+const playBilling = window.AmniPlayBilling
+const nativeBilling = !!(playBilling && playBilling.isNative)
+let nativeBillingState = nativeBilling ? playBilling.getState() : null
 const PS = (() => { try { return JSON.parse(localStorage.getItem('amni.pro.v1')) || {} } catch { return {} } })()
 PS.co = PS.co || { name: '', phone: '', email: '', lic: '', addr: '', web: '', logo: '', terms: '' }
 PS.def = PS.def || { markup: 20, tax: 0, overhead: 0, rate: 75 }
@@ -23,19 +35,28 @@ const saveP = () => localStorage.setItem('amni.pro.v1', JSON.stringify(PS))
 const saveQ = () => localStorage.setItem(QK, JSON.stringify(Q))
 const TRIAL_MS = 14 * 864e5
 const chk = k => { const m = k.match(/^AMNI-PRO-([A-Z0-9]{5})-([A-Z0-9]{5})$/); if (!m) return false; const p = m[1] + m[2]; let s = 0; for (let i = 0; i < 9; i++) s += p.charCodeAt(i) * (i + 3); return p[9] === (s % 36).toString(36).toUpperCase() }
-const isPro = () => PS.key ? true : PS.trialStart ? Date.now() < PS.trialStart + TRIAL_MS : false
+const isPro = () => nativeBilling
+  ? nativeBillingState && nativeBillingState.entitled === true
+  : PS.key ? true : PS.trialStart ? Date.now() < PS.trialStart + TRIAL_MS : false
 const trialDays = () => PS.trialStart ? Math.max(0, Math.ceil((PS.trialStart + TRIAL_MS - Date.now()) / 864e5)) : 0
 const lsqCheck = k => window.AMNI_LSQ ? fetch('https://api.lemonsqueezy.com/v1/licenses/validate', { method: 'POST', headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' }, body: JSON.stringify({ license_key: k }) }).then(r => r.json()).then(j => !!j.valid).catch(() => chk(k)) : Promise.resolve(chk(k))
 const money = n => '$' + (+n || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 const matRaw = () => { if (!matHost) return 0; const t = matHost.querySelector('.tot.best') || matHost.querySelector('.tot'); const m = (t ? t.textContent : matHost.textContent).match(/\$\s*([\d,]+(?:\.\d{2})?)/g); return m && m.length ? Math.max(...m.map(x => +x.replace(/[$,\s]/g, ''))) : 0 }
 const calc = () => { const mr = matRaw(), ms = mr * (1 + (+Q.r.markup || 0) / 100), lb = Q.labor.reduce((a, l) => a + (+l.hrs || 0) * (+l.rate || 0), 0), ex = Q.extras.reduce((a, x) => a + (+x.amt || 0), 0), oh = +Q.r.overhead || 0, di = +Q.r.discount || 0, sub = ms + lb + ex + oh - di, tax = sub * (+Q.r.tax || 0) / 100, grand = sub + tax; return { mr, ms, lb, ex, oh, di, sub, tax, grand, dep: grand * (+Q.r.deposit || 0) / 100 } }
-const btn = document.createElement('div')
+const btn = document.createElement('button')
+btn.type = 'button'
 btn.className = 'pro-tab'
 btn.id = 'pro-open'
 btn.textContent = '💼 Pro'
-tabs.appendChild(btn)
+btn.setAttribute('aria-expanded', 'false')
+btn.setAttribute('aria-controls', 'pro-drawer')
+tabs.parentNode.insertBefore(btn, tabs.nextSibling)
 const drawer = document.createElement('div')
 drawer.id = 'pro-drawer'
+drawer.setAttribute('role', 'dialog')
+drawer.setAttribute('aria-label', 'Amni-Construct Pro')
+drawer.setAttribute('aria-modal', 'false')
+drawer.setAttribute('aria-hidden', 'true')
 drawer.innerHTML = `<div id="pro-head"><b>💼 AMNI-CONSTRUCT PRO</b><span id="pro-status"></span><a href="../construct/dashboard.html" title="Quotes & projects dashboard" style="color:#e8b565;text-decoration:none;font-size:16px;margin-left:auto">📊</a><button class="pro-x" title="Close" style="margin-left:6px">✕</button></div><div id="pro-body">
 <h3>Your company</h3><div class="pro-grid">
 <div class="full pro-logo-row"><img id="pro-logo-img" alt="" style="display:none"><button class="pro-btn pro-logo-btn" id="pro-logo-btn">Upload logo</button><input type="file" id="pro-logo-file" accept="image/*" style="display:none"><span class="pro-note">shows on quotes</span></div>
@@ -82,10 +103,90 @@ drawer.innerHTML = `<div id="pro-head"><b>💼 AMNI-CONSTRUCT PRO</b><span id="p
 document.body.appendChild(drawer)
 const gate = document.createElement('div')
 gate.id = 'pro-gate'
-gate.innerHTML = `<div class="gate-card"><h2>💼 Amni-Construct Pro</h2><p>Branded client quotes, your labor rates and markup, permit-ready packets — built for contractors. Try every Pro feature free for 14 days, no card needed.</p><button class="pro-btn big" id="pro-trial">Start free 14-day trial</button><input type="text" id="pro-key" placeholder="AMNI-PRO-XXXXX-XXXXX" spellcheck="false"><p class="gate-err" id="pro-key-err"></p><button class="pro-btn ghost big" id="pro-activate" style="margin-top:2px">Activate license key</button><p class="gate-alt"><a href="../construct/pro.html" target="_blank">Plans & pricing ↗</a></p></div>`
+gate.innerHTML = nativeBilling
+  ? `<div class="gate-card"><h2>💼 Amni-Construct Pro</h2><p>Choose monthly or annual Pro through Google Play. Prices shown below come directly from Play for your account and region. Entitlement is restored from your active Play subscription and is never imported from a project or share link.</p><div id="pro-play-plans" role="group" aria-label="Google Play subscription plans"></div><button class="pro-btn ghost big" id="pro-play-restore" style="margin-top:8px">Restore purchase</button><p class="gate-err" id="pro-play-msg" role="status" aria-live="polite"></p></div>`
+  : `<div class="gate-card"><h2>💼 Amni-Construct Pro</h2><p>Branded client quotes, your labor rates and markup, permit-ready packets — built for contractors. Try every Pro feature free for 14 days, no card needed.</p><button class="pro-btn big" id="pro-trial">Start free 14-day trial</button><input type="text" id="pro-key" placeholder="AMNI-PRO-XXXXX-XXXXX" spellcheck="false"><p class="gate-err" id="pro-key-err"></p><button class="pro-btn ghost big" id="pro-activate" style="margin-top:2px">Activate license key</button><p class="gate-alt"><a href="../construct/pro.html" target="_blank">Plans & pricing ↗</a></p></div>`
 document.body.appendChild(gate)
 const S = id => drawer.querySelector('#' + id)
-const status = () => { const el = S('pro-status'); PS.key ? (el.className = 'ok', el.textContent = 'PRO ACTIVE') : isPro() ? (el.className = 'trial', el.textContent = 'TRIAL — ' + trialDays() + 'd left') : (el.className = 'off', el.textContent = 'LOCKED'); el.id = 'pro-status'; S('pro-lic-row').innerHTML = PS.key ? `<p class="pro-note" style="margin-top:16px">License: ${PS.key.slice(0, 14)}••• · <a href="#" id="pro-deact" style="color:#c96b6b">deactivate</a></p>` : `<p class="pro-note" style="margin-top:16px"><a href="#" id="pro-unlock" style="color:#e8b565">${isPro() ? 'Enter license key' : 'Unlock Pro'}</a> · <a href="../construct/pro.html" target="_blank" style="color:#e8b565">pricing ↗</a></p>`; const d = S('pro-deact'); d && (d.onclick = e => { e.preventDefault(); PS.key = ''; saveP(); status() }); const u = S('pro-unlock'); u && (u.onclick = e => { e.preventDefault(); gate.classList.add('on') }) }
+const status = () => {
+  const el = S('pro-status')
+  if (nativeBilling) {
+    nativeBillingState = playBilling.getState()
+    if (isPro()) {
+      el.className = 'ok'
+      el.textContent = 'PRO ACTIVE'
+      S('pro-lic-row').innerHTML = '<p class="pro-note" style="margin-top:16px">Entitlement verified from an active Google Play subscription.</p>'
+    } else {
+      el.className = nativeBillingState.status === 'pending' ? 'trial' : 'off'
+      el.textContent = nativeBillingState.status === 'pending' ? 'PURCHASE PENDING' : 'LOCKED'
+      S('pro-lic-row').innerHTML = '<p class="pro-note" style="margin-top:16px"><a href="#" id="pro-unlock" style="color:#e8b565">Manage Pro through Google Play</a></p>'
+      const unlock = S('pro-unlock')
+      unlock && (unlock.onclick = e => { e.preventDefault(); gate.classList.add('on'); syncPlayBillingUI() })
+    }
+    el.id = 'pro-status'
+    return
+  }
+  PS.key ? (el.className = 'ok', el.textContent = 'PRO ACTIVE') : isPro() ? (el.className = 'trial', el.textContent = 'TRIAL — ' + trialDays() + 'd left') : (el.className = 'off', el.textContent = 'LOCKED')
+  el.id = 'pro-status'
+  S('pro-lic-row').innerHTML = PS.key ? `<p class="pro-note" style="margin-top:16px">License: ${PS.key.slice(0, 14)}••• · <a href="#" id="pro-deact" style="color:#c96b6b">deactivate</a></p>` : `<p class="pro-note" style="margin-top:16px"><a href="#" id="pro-unlock" style="color:#e8b565">${isPro() ? 'Enter license key' : 'Unlock Pro'}</a> · <a href="../construct/pro.html" target="_blank" style="color:#e8b565">pricing ↗</a></p>`
+  const d = S('pro-deact')
+  d && (d.onclick = e => { e.preventDefault(); PS.key = ''; saveP(); status() })
+  const u = S('pro-unlock')
+  u && (u.onclick = e => { e.preventDefault(); gate.classList.add('on') })
+}
+const syncPlayBillingUI = () => {
+  if (!nativeBilling) return
+  nativeBillingState = playBilling.getState()
+  const plans = gate.querySelector('#pro-play-plans')
+  const restore = gate.querySelector('#pro-play-restore')
+  const msg = gate.querySelector('#pro-play-msg')
+  const busy = ['connecting', 'loading', 'purchasing', 'verifying'].includes(nativeBillingState.status)
+  plans.replaceChildren()
+  if (nativeBillingState.entitled) {
+    const active = document.createElement('button')
+    active.type = 'button'
+    active.className = 'pro-btn big'
+    active.disabled = true
+    active.textContent = 'Pro active through Google Play'
+    plans.appendChild(active)
+  } else if (nativeBillingState.plans.length) {
+    nativeBillingState.plans.forEach(plan => {
+      const buy = document.createElement('button')
+      buy.type = 'button'
+      buy.className = 'pro-btn big'
+      buy.style.marginTop = '8px'
+      buy.disabled = !nativeBillingState.canPurchase || busy
+      const period = plan.key === 'monthly' ? ' / month' : ' / year'
+      buy.textContent = `${plan.label}${plan.formattedPrice ? ' — ' + plan.formattedPrice + period : ''}`
+      if (plan.key === 'annual' && nativeBillingState.annualSavingsPercent > 0) {
+        buy.textContent += ` · Save ${nativeBillingState.annualSavingsPercent}%`
+      }
+      buy.onclick = () => playBilling.purchase(plan.key)
+      plans.appendChild(buy)
+    })
+  } else {
+    const unavailable = document.createElement('button')
+    unavailable.type = 'button'
+    unavailable.className = 'pro-btn big'
+    unavailable.disabled = true
+    unavailable.textContent = nativeBillingState.status === 'unconfigured'
+      ? 'Google Play subscription not configured'
+      : busy ? 'Checking Google Play…' : 'Purchase unavailable'
+    plans.appendChild(unavailable)
+  }
+  restore.disabled = busy
+  msg.textContent = nativeBillingState.message || ''
+  if (nativeBillingState.entitled) gate.classList.remove('on')
+  status()
+}
+if (nativeBilling) {
+  gate.querySelector('#pro-play-restore').onclick = () => {
+    const msg = gate.querySelector('#pro-play-msg')
+    msg.textContent = 'Checking Google Play purchases…'
+    playBilling.restore()
+  }
+  window.addEventListener('amni-billing-state', syncPlayBillingUI)
+}
 const bindCo = (id, k) => { const el = S(id); el.value = PS.co[k] || ''; el.addEventListener('input', () => { PS.co[k] = el.value; saveP() }) }
 bindCo('pro-co-name', 'name'); bindCo('pro-co-phone', 'phone'); bindCo('pro-co-email', 'email'); bindCo('pro-co-lic', 'lic'); bindCo('pro-co-web', 'web'); bindCo('pro-co-addr', 'addr'); bindCo('pro-co-terms', 'terms')
 const bindCl = (id, k) => { const el = S(id); el.value = Q.client[k] || ''; el.addEventListener('input', () => { Q.client[k] = el.value; saveQ() }) }
@@ -96,8 +197,8 @@ const getPj = () => { try { return JSON.parse(localStorage.getItem(PJ)) || [] } 
 const clList = () => { S('pro-cl-list').innerHTML = getCl().map(c => `<option value="${esc(c.name)}">`).join('') }
 S('pro-cl-name').addEventListener('input', () => { const c = getCl().find(x => x.name === S('pro-cl-name').value); c && (Q.client.addr = c.addr || '', Q.client.contact = c.contact || '', S('pro-cl-addr').value = Q.client.addr, S('pro-cl-contact').value = Q.client.contact, saveQ()) })
 S('pro-cl-save').onclick = () => { const n = Q.client.name.trim(); if (!n) return; const cl = getCl(), ex = cl.find(x => x.name === n); ex ? Object.assign(ex, { addr: Q.client.addr, contact: Q.client.contact }) : cl.push({ id: Date.now().toString(36), name: n, addr: Q.client.addr, contact: Q.client.contact }); localStorage.setItem(CK, JSON.stringify(cl)); clList(); S('pro-cl-save').textContent = '✓ Client saved'; setTimeout(() => S('pro-cl-save').textContent = '＋ Save client for reuse', 1600) }
-const pjUI = () => { const w = S('pro-projects'); const list = getPj().filter(p => p.mod === mod); w.innerHTML = list.length ? list.map(p => `<div class="pro-labor" style="align-items:center"><span style="flex:1;font-size:12px;color:var(--ink,#dfe6ee)">${esc(p.name)}<span style="color:var(--mut,#8a94a0);font-size:10px"> · ${new Date(p.ts).toLocaleDateString()}</span></span><button class="pro-btn ghost" data-load="${p.id}" style="font-size:10.5px;padding:4px 9px">Open</button><button class="l-del" data-del="${p.id}" title="Delete">✕</button></div>`).join('') : '<p class="pro-note">No saved projects for this module yet — design something and save it.</p>'; w.querySelectorAll('[data-load]').forEach(b => b.onclick = () => { const p = getPj().find(x => x.id === b.dataset.load); p && (location.hash = '#share=' + btoa(unescape(encodeURIComponent(JSON.stringify(p.data)))), location.reload()) }); w.querySelectorAll('[data-del]').forEach(b => b.onclick = () => { localStorage.setItem(PJ, JSON.stringify(getPj().filter(x => x.id !== b.dataset.del))); pjUI() }) }
-S('pro-proj-save').onclick = () => { if (!isPro()) return gate.classList.add('on'); const data = {}; Object.keys(localStorage).filter(k => k.startsWith('amni' + mod + '.')).forEach(k => data[k] = localStorage.getItem(k)); if (!Object.keys(data).length) return; const name = prompt('Project name:', (Q.client.name ? Q.client.name + ' — ' : '') + MODNAME) || ''; if (!name.trim()) return; const pj = getPj(); pj.unshift({ id: Date.now().toString(36), name: name.trim(), mod, client: Q.client.name || '', ts: Date.now(), data }); localStorage.setItem(PJ, JSON.stringify(pj.slice(0, 100))); pjUI() }
+const pjUI = () => { const w = S('pro-projects'); const list = getPj().filter(p => p.mod === mod); w.innerHTML = list.length ? list.map(p => `<div class="pro-labor" style="align-items:center"><span style="flex:1;font-size:12px;color:var(--ink,#dfe6ee)">${esc(p.name)}<span style="color:var(--mut,#8a94a0);font-size:10px"> · ${new Date(p.ts).toLocaleDateString()}</span></span><button class="pro-btn ghost" data-load="${p.id}" style="font-size:10.5px;padding:4px 9px">Open</button><button class="l-del" data-del="${p.id}" title="Delete">✕</button></div>`).join('') : '<p class="pro-note">No saved projects for this module yet — design something and save it.</p>'; w.querySelectorAll('[data-load]').forEach(b => b.onclick = () => { const p = getPj().find(x => x.id === b.dataset.load); if (!p) return; try { location.hash = '#share=' + encodeDesign(p.data); location.reload() } catch (error) { alert(error.message || 'That saved project is not safe to open.') } }); w.querySelectorAll('[data-del]').forEach(b => b.onclick = () => { localStorage.setItem(PJ, JSON.stringify(getPj().filter(x => x.id !== b.dataset.del))); pjUI() }) }
+S('pro-proj-save').onclick = () => { if (!isPro()) return gate.classList.add('on'); let data; try { data = collectDesign() } catch (error) { return alert(error.message || 'This project cannot be saved safely.') } if (!Object.keys(data).length) return; const name = prompt('Project name:', (Q.client.name ? Q.client.name + ' — ' : '') + MODNAME) || ''; if (!name.trim()) return; const pj = getPj(); pj.unshift({ id: Date.now().toString(36), name: name.trim(), mod, client: Q.client.name || '', ts: Date.now(), data }); localStorage.setItem(PJ, JSON.stringify(pj.slice(0, 100))); pjUI() }
 const sc = S('pro-scope'); sc.value = Q.scope; sc.addEventListener('input', () => { Q.scope = sc.value; saveQ() })
 const bindR = (id, k) => { const el = S(id); el.value = Q.r[k] ?? ''; el.addEventListener('input', () => { Q.r[k] = +el.value || 0; PS.def[k === 'rate' ? 'rate' : k] = Q.r[k]; saveQ(); saveP(); totals() }) }
 Q.r.rate = Q.r.rate ?? PS.def.rate
@@ -234,11 +335,12 @@ snapPrev()
 S('pro-snap').onclick = () => { const cv = document.querySelector('#view canvas') || document.querySelector('canvas'); if (!cv) return alert('No 3D view found on this module.'); requestAnimationFrame(() => { try { const d = cv.toDataURL('image/jpeg', 0.9); const im = new Image(); im.onload = () => { const t = document.createElement('canvas'); t.width = 8; t.height = 8; const tc = t.getContext('2d'); tc.drawImage(im, 0, 0, 8, 8); const px = tc.getImageData(0, 0, 8, 8).data; let mn = 255, mx = 0; for (let i = 0; i < px.length; i += 4) { const v = (px[i] + px[i + 1] + px[i + 2]) / 3; mn = Math.min(mn, v); mx = Math.max(mx, v) } if (mx - mn < 6) return alert('Snapshot came back empty — drag the 3D view slightly, then snap again.'); const sc2 = Math.min(1, 760 / im.width), o = document.createElement('canvas'); o.width = Math.round(im.width * sc2); o.height = Math.round(im.height * sc2); o.getContext('2d').drawImage(im, 0, 0, o.width, o.height); Q.snap = o.toDataURL('image/jpeg', 0.82); saveQ(); snapPrev() }; im.src = d } catch (e) { alert('Snapshot failed: ' + e.message) } }) }
 S('pro-show').onclick = () => {
   if (!isPro()) return gate.classList.add('on')
-  const d = {}
-  Object.keys(localStorage).filter(k => k.startsWith('amni' + mod + '.')).forEach(k => d[k] = localStorage.getItem(k))
+  let d
+  try { d = collectDesign() } catch (error) { return alert(error.message || 'This design cannot be shared safely.') }
   if (!Object.keys(d).length) return alert('Design something first — the showcase link carries the whole design.')
   d['amni.showcase.brand'] = JSON.stringify({ n: PS.co.name, p: PS.co.phone, w: PS.co.web, m: mod, ts: Date.now() })
-  const u = location.origin + location.pathname + '#share=' + btoa(unescape(encodeURIComponent(JSON.stringify(d))))
+  let u
+  try { u = location.origin + location.pathname + '#share=' + encodeDesign(d) } catch (error) { return alert(error.message || 'This design cannot be shared safely.') }
   const ok = () => { S('pro-show').textContent = '✓ Link copied'; setTimeout(() => S('pro-show').textContent = '🏗️ Copy showcase link', 1800) }
   navigator.clipboard && navigator.clipboard.writeText ? navigator.clipboard.writeText(u).then(ok, () => prompt('Copy this showcase link:', u)) : prompt('Copy this showcase link:', u)
 }
@@ -254,15 +356,30 @@ S('pro-sug-send').onclick = () => {
   const txt = S('pro-sug').value.trim(), em = S('pro-sug-mail').value.trim(), note = S('pro-sug-note')
   if (txt.length < 8) return note.textContent = 'Tell us a little more first!'
   note.textContent = 'Sending…'
-  const ctx = `module: ${mod} · status: ${PS.key ? 'pro' : isPro() ? 'trial' : 'free'} · ua: ${navigator.userAgent.slice(0, 60)}`
+  const entitlement = nativeBilling ? (isPro() ? 'pro' : 'free') : PS.key ? 'pro' : isPro() ? 'trial' : 'free'
+  const ctx = `module: ${mod} · status: ${entitlement} · ua: ${navigator.userAgent.slice(0, 60)}`
   fetch('https://formsubmit.co/ajax/amnibro7@gmail.com', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify({ _subject: 'Amni-Construct suggestion (' + mod + ')', suggestion: txt, reply_to: em || '(none)', context: ctx, _template: 'table' }) }).then(r => r.json()).then(j => { j.success === 'true' || j.success === true ? (note.textContent = '✓ Sent — thank you!', S('pro-sug').value = '') : Promise.reject(0) }).catch(() => { location.href = 'mailto:amnibro7@gmail.com?subject=' + encodeURIComponent('Amni-Construct suggestion (' + mod + ')') + '&body=' + encodeURIComponent(txt + '\n\n' + ctx + (em ? '\nreply: ' + em : '')); note.textContent = 'Opening your email app instead…' })
 }
 S('pro-gen').onclick = () => isPro() ? quoteDoc() : gate.classList.add('on')
-btn.addEventListener('click', () => { const ck2 = document.querySelector('#uk-coach'); ck2 && ck2.remove(); drawer.classList.add('on'); status(); totals(); pjUI(); clList() })
-drawer.querySelector('.pro-x').onclick = () => drawer.classList.remove('on')
+btn.addEventListener('click', () => { const ck2 = document.querySelector('#uk-coach'); ck2 && ck2.remove(); drawer.classList.add('on'); drawer.setAttribute('aria-hidden', 'false'); btn.setAttribute('aria-expanded', 'true'); status(); totals(); pjUI(); clList(); drawer.querySelector('.pro-x').focus() })
+drawer.querySelector('.pro-x').setAttribute('aria-label', 'Close Pro panel')
+drawer.querySelector('.pro-x').onclick = () => { drawer.classList.remove('on'); drawer.setAttribute('aria-hidden', 'true'); btn.setAttribute('aria-expanded', 'false'); btn.focus() }
 gate.addEventListener('click', e => e.target === gate && gate.classList.remove('on'))
-document.addEventListener('keydown', e => e.key === 'Escape' && (gate.classList.remove('on'), drawer.classList.remove('on')))
-gate.querySelector('#pro-trial').onclick = () => { PS.trialStart = PS.trialStart || Date.now(); saveP(); gate.classList.remove('on'); status() }
-gate.querySelector('#pro-activate').onclick = () => { const k = gate.querySelector('#pro-key').value.trim().toUpperCase(), err = gate.querySelector('#pro-key-err'); err.textContent = 'Checking…'; lsqCheck(k).then(ok => { ok ? (PS.key = k, saveP(), err.textContent = '', gate.classList.remove('on'), status()) : err.textContent = 'That key doesn’t validate — check for typos or contact support.' }) }
-status()
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return
+  gate.classList.remove('on')
+  if (drawer.classList.contains('on')) {
+    drawer.classList.remove('on')
+    drawer.setAttribute('aria-hidden', 'true')
+    btn.setAttribute('aria-expanded', 'false')
+    btn.focus()
+  }
+})
+if (nativeBilling) {
+  syncPlayBillingUI()
+} else {
+  gate.querySelector('#pro-trial').onclick = () => { PS.trialStart = PS.trialStart || Date.now(); saveP(); gate.classList.remove('on'); status() }
+  gate.querySelector('#pro-activate').onclick = () => { const k = gate.querySelector('#pro-key').value.trim().toUpperCase(), err = gate.querySelector('#pro-key-err'); err.textContent = 'Checking…'; lsqCheck(k).then(ok => { ok ? (PS.key = k, saveP(), err.textContent = '', gate.classList.remove('on'), status()) : err.textContent = 'That key doesn’t validate — check for typos or contact support.' }) }
+  status()
+}
 })()

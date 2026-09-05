@@ -4,7 +4,8 @@
 <meta charset="utf-8">
 <meta name="amni-trade" content="hvac">
 <title>Amni-HVAC — Duct Layout, Sizing &amp; Materials</title>
-<script id="uk-restore">(()=>{if(!location.hash.startsWith('#share='))return;try{const d=JSON.parse(decodeURIComponent(escape(atob(location.hash.slice(7)))));Object.entries(d).forEach(([k,v])=>localStorage.setItem(k,v))}catch(e){}history.replaceState(null,'',location.pathname+location.search)})()</script>
+<script src="../_shared/share-import.js?v=s1"></script>
+<script id="uk-restore">window.AmniShareImport.restoreFromLocation('hvac')</script>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="Free HVAC duct designer — draw your air handler, supply registers, returns and ducts; get live CFM duct sizing (Manual D), airflow vs tonnage, supply/return balance, a priced materials list, and mechanical-permit notes.">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230a0a0a'/%3E%3Ctext x='32' y='44' font-size='34' text-anchor='middle' font-family='monospace' font-weight='bold' fill='%23e07b4a'%3EAH%3C/text%3E%3C/svg%3E">
@@ -66,8 +67,8 @@ td a{color:var(--acc2);text-decoration:none}
 }
 </style>
 <link rel="stylesheet" href="/assets/app-brand.css?v=1">
-<link rel="stylesheet" href="../_shared/ui-kit.css?v=u3">
-<link rel="stylesheet" href="../_shared/pro.css?v=p4">
+<link rel="stylesheet" href="../_shared/ui-kit.css?v=u4">
+<link rel="stylesheet" href="../_shared/pro.css?v=p5">
 <link rel="manifest" href="../construct/manifest.webmanifest">
 <meta name="theme-color" content="#e0954a">
 </head>
@@ -76,12 +77,12 @@ td a{color:var(--acc2);text-decoration:none}
   <button id="menubtn" aria-label="Open setup">☰</button>
   <h1>Amni-HVAC</h1>
   <span class="crumb" style="color:var(--mut);font-size:12px">part of <a href="../construct/" style="color:#d8893a;text-decoration:none">AMNI-CONSTRUCT</a><a href="../elec/" style="color:#8fa8b8;text-decoration:none">Elec</a><a href="../plumb/" style="color:#2a9ec2;text-decoration:none">Plumb</a></span>
-  <div class="tabs"><div class="tab on" data-pane="sketch">Layout</div>
-    <div class="tab" data-pane="3d">3D View</div>
-    <div class="tab" data-pane="plans">2D Plans</div>
-    <div class="tab" data-pane="best">Best Practices</div>
-    <div class="tab" data-pane="mat">Materials &amp; Pricing</div>
-    <div class="tab" data-pane="guide">Build Guide</div>
+  <div class="tabs"><button type="button" class="tab on" data-pane="sketch">Layout</button>
+    <button type="button" class="tab" data-pane="3d">3D View</button>
+    <button type="button" class="tab" data-pane="plans">2D Plans</button>
+    <button type="button" class="tab" data-pane="best">Best Practices</button>
+    <button type="button" class="tab" data-pane="mat">Materials &amp; Pricing</button>
+    <button type="button" class="tab" data-pane="guide">Build Guide</button>
   </div>
 </header>
 <div id="backdrop"></div>
@@ -110,8 +111,8 @@ td a{color:var(--acc2);text-decoration:none}
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
 <script type="module" src="app.js?v=mep2"></script>
 <script>(function(){var b=document.getElementById("menubtn"),s=document.getElementById("side"),d=document.getElementById("backdrop");if(!b||!s||!d)return;function set(o){s.classList.toggle("open",o);d.classList.toggle("open",o)}b.addEventListener("click",function(){set(!s.classList.contains("open"))});d.addEventListener("click",function(){set(false)});s.addEventListener("click",function(e){if(e.target.closest(".seg-b,.addbtn"))setTimeout(function(){set(false)},160)})})();</script>
-<script src="../_shared/ui-kit.js?v=u2" defer></script>
+<script src="../_shared/ui-kit.js?v=u3" defer></script>
 <script src="../_shared/pro-config.js?v=c1"></script>
-<script src="../_shared/pro.js?v=p6" defer></script>
+<script src="../_shared/pro.js?v=p7" defer></script>
 </body>
 </html>

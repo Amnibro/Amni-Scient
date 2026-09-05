@@ -1,1 +1,0 @@
-const fs = require('fs'); const html = fs.readFileSync('learn/index.html', 'utf8'); const m = html.match(/function initDots\(\)\{([\s\S]*?)\s*\}\s*function initCircuitLab/); if(!m) console.log('no match'); else { fs.writeFileSync('test.js', 'function initDots() {' + m[1] + '}'); console.log('wrote test.js'); }
