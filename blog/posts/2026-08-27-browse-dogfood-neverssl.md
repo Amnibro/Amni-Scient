@@ -1,20 +1,18 @@
 ---
-title: Dogfooding Browse on neverssl
+title: Dogfooding Amni-Browse on NeverSSL and HN
 date: 2026-08-27
 slug: browse-dogfood-neverssl
 product: Amni-Browse
-summary: I used Amni-Browse on neverssl.com so I would know if the daily driver actually works.
+description: After the Linux paint path landed, I pointed the omnibox at plain HTTP and a busy site — boring checks, useful failures.
 cta: /amni-browse.html
 cta_label: Amni-Browse
 image: /assets/explore/og-explore.png
 ---
 
-# Dogfooding Browse on neverssl
+Once Linux stopped being a white rectangle, I did the boring checks.
 
-A browser that only loads HTTPS demos is a toy. I pointed Amni-Browse at [neverssl.com](http://neverssl.com) — the plain-HTTP page people use to poke captive portals — and used that as the first tab of the day.
+NeverSSL is a plain-HTTP canary — if the omnibox and navigation stack only pretend to work on HTTPS marketing pages, you find out fast. Hacker News is the other canary: lots of links, tight layout, no patience for a broken focus ring or a dead Ctrl+L.
 
-I want the address bar, the blocker, and the private-tab path to survive a site with no certificate and no polish. If I cannot open a hotel login page, I do not get to call this a daily driver.
+Neither test makes Amni-Browse “done.” They just prove the GTK-packed WebKit surface will load a real document and take a URL from the sibling omnibox. Servo paths and chrome polish are still their own queue.
 
-That is the whole note. I am still using it. Broken bits come back as code, not as a status page.
-
-Windows zip and the Android APK are on [amni-browse.html](/amni-browse.html).
+Build from [Amni-Browse](/amni-browse.html) / Amnibro/Amni-Browse if you want to poke it. Alpha, local-only storage, zero telemetry by design — and still not your bank browser.

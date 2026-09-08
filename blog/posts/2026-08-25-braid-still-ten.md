@@ -1,20 +1,18 @@
 ---
-title: Braid is still $10
+title: Braid is still $10/mo and still yours
 date: 2026-08-25
 slug: braid-still-ten
 product: Braid
-summary: Open beta stays $10 a month. The seats you already pay for, one room.
+description: Soft product note — eight seats, the CLIs you already pay for, licence check only. No token resale story.
 cta: /braid
-cta_label: See Braid
+cta_label: Open Braid
 image: /assets/braid/tile-braid.jpg
 ---
 
-# Braid is still $10
+Quick Braid note so the pricing page and the product stay honest with each other.
 
-I keep getting asked if the price moved. It did not. Open beta is $10/month, or $102/year if you want that, locked while you stay subscribed.
+Open beta is still $10/month (or $102/year). Braid does not resell tokens. It drives the seats you already have — Claude, Grok, Gemini, ChatGPT, Copilot, Cursor, OpenCode, plus a local/Ollama-style chair — and asks them in one room.
 
-Braid still does not sell you tokens. It drives the CLIs you already signed into — Claude, Grok, Gemini, ChatGPT, Copilot, Cursor, OpenCode, plus a local seat. A seat costs whatever that subscription already costs.
+Billing is Stripe + licence. Chats and API keys stay on your machine. That is the whole privacy pitch; I am not adding a proxy “for your convenience.”
 
-Teams stay quote-by-email. There is a $5 tester tier if you will actually send feedback. Cancel any time.
-
-If you already paid, nothing changes. If you have not, the page is [/braid](/braid).
+[Open Braid](/braid) if you want the table. Teams are still quote-by-email. If a seat’s CLI moves under you, say which one — that is the kind of bug I actually fix.

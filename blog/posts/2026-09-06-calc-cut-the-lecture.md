@@ -1,20 +1,18 @@
 ---
-title: Calc cut the lecture
+title: Cutting the lecture walls on Calc pages
 date: 2026-09-06
 slug: calc-cut-the-lecture
 product: Amni-Calc
-summary: Module pages keep the equation and one worked number. The syllabus walls are gone.
+description: Human pass on the module pages — keep equations and one worked example, cut the syllabus voice. Shipping carefully.
 cta: /amni-calc.html
 cta_label: Open Amni-Calc
 image: /assets/explore/og-explore.png
 ---
 
-# Calc cut the lecture
+Some Amni-Calc module pages read like a semester outline. Useful once. Exhausting when you already know you want the calculator.
 
-I got tired of opening a calculator and hitting a textbook. Stress, fatigue, beams, springs, seals, shafts, heat exchangers, pumps — the module pages were lecturing before they let you type a number.
+I am cutting that down by hand: short problem statement, governing equations, one worked example, real FAQs, standards citations, and the CTA into the WASM module. Triple restatements and keyword laundry lists go. Soft one-liners to Braid or Adam only where they fit — never as a pitch deck.
 
-The rule I used: if a hostile PE would say "just let me use the calculator," it went. If a student needs the equation and one worked example to trust the result, that stayed. Problem statements are a few sentences. Procedures that restated the tool are gone.
+Bolts is first in line; stress, fatigue, and beam follow. Site PRs may still be catching up to the copy brief, so treat this as **shipping** — if live HTML still looks lecture-heavy, that is lag, not a bait-and-switch.
 
-The suite page is an index again, not an essay. You still get pitfalls and an FAQ where they earn their keep.
-
-Open a module from [amni-calc.html](/amni-calc.html) and skip to the inputs.
+Smell test: if a hostile PE would say “just let me use the calculator,” cut. Open [/calc/bolts.html](/calc/bolts.html) or [/calc/](/calc/) and see if the page gets out of the way.

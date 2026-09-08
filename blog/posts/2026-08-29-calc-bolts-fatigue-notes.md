@@ -1,20 +1,20 @@
 ---
-title: Bolts and fatigue notes next to the tools
+title: Bolts, fatigue, springs — notes that stuck
 date: 2026-08-29
 slug: calc-bolts-fatigue-notes
 product: Amni-Calc
-summary: Engineer notes on the bolts and fatigue calculators — equations and one worked number, not a syllabus.
+description: A tighter pass on the modules I actually use — preload/torque, fatigue criteria on one FoS shape, spring rates that match the book.
 cta: /calc/bolts.html
 cta_label: Bolts calculator
 image: /assets/explore/og-explore.png
 ---
 
-# Bolts and fatigue notes next to the tools
+Three Calc modules got more of my attention after the WASM F-row pass: bolts, fatigue, and springs.
 
-I write notes beside the calculators I actually use. This pass was [bolts](/calc/bolts.html) and [fatigue](/calc/fatigue.html).
+Bolts: preload as a fraction of proof load × stress area, torque via nut factor K (and the friction-split path when you have μ). Grades/sizes are in-crate tables — useful, but cite your own standard edition for critical joints.
 
-Bolts: nut factor, thread and face friction, yield check, preload scatter. The equation is still `T = K·D·F`. Fatigue: Goodman / Soderberg / Gerber and the endurance-limit modifiers, with one worked cascade so you can see the number move.
+Fatigue: Goodman and Soderberg were already on the proportional load-line form; Gerber now follows the same shape instead of a const-mean-only shortcut. Marin factors still expect you to know whether Sut is in MPa — the UI path matters.
 
-If a hostile PE would say "just let me use the calculator," the lecture is gone. If a student needs the equation and one worked number to trust the result, that stayed.
+Springs: helical rate on the usual Gd⁴/8D³n path, Belleville on Almen-Laszlo/DIN-ish, torsion on the Shigley radian divisor. Extension/Wahl stress coverage is thinner than compression — do not treat every mode as equally golden.
 
-Open the module, change a load, read the plot. Nothing leaves the tab.
+Try [/calc/bolts.html](/calc/bolts.html), fatigue under stress, and the springs tab in [/calc/](/calc/). Local WASM. If your handbook disagrees, send the case.

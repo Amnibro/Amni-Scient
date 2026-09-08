@@ -1,20 +1,18 @@
 ---
-title: Braid CLI seats and what we don't see
+title: CLI seats and what stays on your machine
 date: 2026-09-02
 slug: braid-cli-seats-privacy
 product: Braid
-summary: Cloud seats talk through the CLIs you already signed into. Prompts do not come to Amni-Scient.
+description: Braid’s privacy story is boring on purpose — your CLIs, your keys, licence check only.
 cta: /braid
 cta_label: See Braid
 image: /assets/braid/tile-braid.jpg
 ---
 
-# Braid CLI seats and what we don't see
+Braid’s privacy story is intentionally dull.
 
-Braid is a table, not a proxy. When you turn on a cloud seat it launches the CLI you already pay for — Claude, Grok, Gemini, ChatGPT, Copilot, Cursor, OpenCode — and that vendor sees whatever you sent that seat.
+Each seat is a CLI or subscription you already signed into, or a local model you run yourself. Prompts are not shipped through an Amniscient proxy so I can “securely relay” them. The cloud piece is Stripe and a licence check. Chats and keys stay on the device.
 
-Amni-Scient does not get the prompt. We see Stripe payment events and a licence check (key plus a short machine fingerprint). That is the whole remote list. Details sit on [privacy-braid.html](/privacy-braid.html).
+That means when a vendor changes a CLI flag, Braid feels it — same as you would in a terminal. I would rather fix that class of break than invent a hosted middlebox.
 
-Local seats (Ollama, Adam) can stay offline. Their policies cover what they receive. Vendor CLI tokens stay with those apps; Braid does not upload them.
-
-If that split was fuzzy on the product page, it should not be now. Open [/braid](/braid) and look at the privacy strip before you sign in.
+Modes are still the same: all-at-once, one-at-a-time (each seat can read the last), squads. Details on [/braid](/braid). $10/mo beta. If you need a team arrangement, email — do not expect a self-serve enterprise maze.

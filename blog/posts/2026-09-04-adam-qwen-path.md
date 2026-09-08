@@ -1,20 +1,18 @@
 ---
-title: A Qwen path for Adam — in progress
+title: Qwen3-8B path for Adam — in progress
 date: 2026-09-04
 slug: adam-qwen-path
 product: Adam
-summary: Trying a Qwen path. Granite at ~4.6 bpw is still the baseline. No quality win yet.
+description: Loader work toward a Qwen3-8B GF17 atex bake. Path in progress — no bpw win and no quality claim yet.
 cta: /amni-ai.html
 cta_label: Meet Adam
 image: /assets/explore/og-explore.png
 ---
 
-# A Qwen path for Adam — in progress
+Short status on Adam’s Qwen side so nobody hears “in progress” as “done.”
 
-I am trying a Qwen path for Adam. That is all this note is. It is in progress.
+We are wiring a Qwen3-8B path that can load a GF17 atex-shaped bake (manifest + codes + scales) the same way the granite atex serve path does. Checkpoint pull and GPU smoke live on the HIP box when it is online — not on a laptop GUI session.
 
-The thing you can actually run is still IBM Granite 4.1 3B on the GF(17)/ATEX stack, at about **4.6 bits per weight all-in**. That number has not moved. I do not have a quality win on Qwen yet, so I am not swapping the default.
+What this is **not**: a claim that Qwen is at 1 bpw, or that quality matched the dense checkpoint. The granite tied bake is still the honest baseline at ~4.6 bpw all-in. Rate/distortion experiments that chase lower bpw without act-path numbers stay lab notes until they survive serve.
 
-If a later bake beats Granite on the work I care about, I will say so with the same all-in count. Until then, treat Qwen as a branch, not the product.
-
-Adam is still local. [amni-ai.html](/amni-ai.html).
+Follow [amni-ai.html](/amni-ai.html) and Amnibro/Amni-Ai for what actually merges. I will post again when there is a bake folder and a measured bill — not before.

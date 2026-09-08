@@ -18,6 +18,8 @@ function parseFront(raw) {
     if ((v[0] === '"' && v.endsWith('"')) || (v[0] === "'" && v.endsWith("'"))) v = v.slice(1, -1);
     meta[k] = v;
   }
+  if (!meta.summary && meta.description) meta.summary = meta.description;
+  delete meta.source_work;
   return { meta, body: raw.slice(end + 4).replace(/^\s+/, '') };
 }
 function esc(s) {

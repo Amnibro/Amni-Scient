@@ -1,20 +1,18 @@
 ---
-title: Calc's WASM kernels got a polish
+title: What landed in the Amni-Calc WASM suite
 date: 2026-08-21
 slug: calc-wasm-polish
 product: Amni-Calc
-summary: The in-browser numerics are tighter. Same calculators, less friction when you iterate.
+description: Mid-August polish notes on the in-browser engineering kernels — beams, bolts, springs, seals, fatigue load-line, and the rest of the F-row fixes.
 cta: /amni-calc.html
 cta_label: Open Amni-Calc
 image: /assets/explore/og-explore.png
 ---
 
-# Calc's WASM kernels got a polish
+I spent a stretch of August fixing the Amni-Calc WASM kernels against textbook goldens instead of arguing with the UI.
 
-I spent a pass on the WebAssembly kernels that actually solve the modules — beams, fluids, the stuff JavaScript is slow at — so the calculators feel less sticky when you change a load and watch the plot move.
+What landed, in plain terms: propped-beam moment sign, Belleville spring schema defaults, torsion rate on the Shigley radian form, fatigue Gerber moved onto the same load-line FoS shape as Goodman/Soderberg, plus bolts preload/torque consistency, seals, sections, and the other F-rows that had been open. Plane stress and the full-component von Mises path were already behaving; the messy ones were the eigen/unit edge cases.
 
-Nothing new to learn. You still open a tab, pick a module, type geometry, and read a result. Inputs still stay in the browser. I just cleaned the path the numbers take.
+How to try it: open [Amni-Calc](/amni-calc.html) or jump straight into a module under [/calc/](/calc/). Everything still runs in the tab — no account, no upload.
 
-If a plot used to hitch when you dragged a load, try it again. If it still does, tell me which module.
-
-The suite is [amni-calc.html](/amni-calc.html). The bolts calculator is still the one I open first: [calc/bolts.html](/calc/bolts.html).
+Honest limits: this is a calculator suite, not FEA. Table editions and a few heuristics (gasket E_eff, hollow UI holes) are called out where they are soft. If a number disagrees with your handbook, tell me which case — I keep the audit scripts.

@@ -1,20 +1,18 @@
 ---
-title: Adam's GF(17)/ATEX baseline is ~4.6 bpw all-in
+title: Adam GF17 atex: honest baseline
 date: 2026-08-31
 slug: adam-gf17-atex-baseline
 product: Adam
-summary: The working Granite baseline is about 4.6 bits per weight all-in. That is not 1 bpw, and it is not near-lossless.
+description: Granite GF17 atex bake bills ~4.6 bpw all-in. That is the baseline — not a 1 bpw win, not near-lossless.
 cta: /amni-ai.html
 cta_label: Meet Adam
 image: /assets/explore/og-explore.png
 ---
 
-# Adam's GF(17)/ATEX baseline is ~4.6 bpw all-in
+People ask where Adam’s GF17 atex bake sits on bits-per-weight. Here is the honest number.
 
-I am writing the number down so it stops drifting. The Granite path Adam actually runs — GF(17) weights plus the ATEX byte-page memory layer, counted all-in — sits at about **4.6 bits per weight**.
+The shipped-style granite GF17 atex tied bake bills about **4.6 bpw all-in** (codes + scales + headers, tied lm_head in the denom). Stored-only is in the same ballpark (~4.8). Group size 128. That is a working local bake, not a miracle compression paper.
 
-That is the baseline. It is not 1 bpw. It is not near-lossless. If you saw a smaller number or a lossless claim attached to this bake, treat that as stale.
+I am **not** claiming 1 bpw. I am **not** claiming near-lossless. Earlier probes that push rate hard blow relative error; the wall around ~5 bpw for near-lossless still matters. Anything tighter has to survive act-path checks, not just a spreadsheet of averages.
 
-ATEX is the local page store that keeps a verified fact on disk so a later turn can recall it. GF(17) is how the weights are packed. Together they are the working stack, not a slogan.
-
-Adam still runs on your machine. Correct it once and the correction is supposed to stick. The product page is [amni-ai.html](/amni-ai.html).
+Adam’s product page is [amni-ai.html](/amni-ai.html). Local serve, your machine, CC BY-NC for personal/research use. If you only remember one line from this post: **~4.6 bpw baseline, work ongoing.**

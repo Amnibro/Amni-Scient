@@ -1,20 +1,20 @@
 ---
-title: Listed — Braid, Calc, and Adam
+title: Listed Braid, Calc, and Adam where makers look
 date: 2026-09-07
 slug: listed-braid-calc-adam
 product: Studio
-summary: The three you can actually use right now, in one place: Braid, Amni-Calc, and Adam.
+description: Soft note — Braid, Amni-Calc, and Adam now have Indie Hackers product pages and SaaSHub listings. Same tools, findable in one more place.
 cta: /
 cta_label: Home
 image: /assets/explore/og-explore.png
 ---
 
-# Listed — Braid, Calc, and Adam
+I put Braid, Amni-Calc, and Adam on Indie Hackers product pages and SaaSHub — three separate listings, not one mushy “suite” card.
 
-I keep shipping tools. These three are the ones I will point at if you ask what you can use today.
+That is it. Same tools, same limits, one more place a maker might stumble on them. No identical mass paste across every directory on earth, and nothing about gaming rankings.
 
-[Braid](/braid) is the table: eight seats on the CLIs you already pay for, $10/month open beta. [Amni-Calc](/amni-calc.html) is the in-browser engineering suite — bolts, fatigue, beams, the rest — WASM, no sign-up. [Adam](/amni-ai.html) is the local assistant on the Granite GF(17)/ATEX path.
+- [Braid](/braid) — multi-AI table, $10/mo beta, your CLIs
+- [Amni-Calc](/amni-calc.html) — free in-browser engineering modules
+- [Adam](/amni-ai.html) — local assistant, CC BY-NC for non-commercial
 
-That is the list. File-shuffling and half-built branches stay off this page. If a limit matters — Braid is beta, Adam's baseline is ~4.6 bpw all-in, Calc is a calculator not a PE stamp — I already said it in the earlier notes.
-
-Home still has the tiles. This log is how you see what changed without hunting GitHub.
+If you found this post from one of those listings, welcome. The honest product pages above are the source of truth.

@@ -1,20 +1,18 @@
 ---
-title: Amni-Browse runs on Linux
+title: Amni-Browse paints on Linux
 date: 2026-08-23
 slug: amni-browse-linux
 product: Amni-Browse
-summary: A Linux build of the privacy-first browser. Same local-only deal as the Windows exe.
+description: WebKitGTK finally packs into the GTK window, with a sibling omnibox and Ctrl+L — alpha, but the page is no longer a blank white box.
 cta: /amni-browse.html
 cta_label: Amni-Browse
 image: /assets/explore/og-explore.png
 ---
 
-# Amni-Browse runs on Linux
+Amni-Browse on Linux used to open a titled window and then sit there white. That was not a TLS bug and not a failed chrome inject — the WebKit widget never got packed into tao’s GTK box.
 
-I needed Browse on a Linux box, not just the Windows zip. The chrome is the same idea: my window, my tabs, nothing phoning home.
+The fix is the Unix attach path: `default_vbox()` + `build_gtk`, WebKitGTK in the client area, and a sibling GTK omnibox so address entry is not trapped inside a blank compositor. Ctrl+L focuses the bar the way you expect.
 
-Bookmarks, history, and the vault stay in the OS config directory. No account, no sync, no crash ping. If a site needs a system WebView hatch, that is a hatch, not the product.
+Alpha still means alpha. Do not make this your only browser for banking. Build notes and deps live on the [Amni-Browse](/amni-browse.html) page and the Amnibro/Amni-Browse repo (Linux needs `libwebkit2gtk-4.1-dev` and `libgtk-3-dev`).
 
-I am using it as the daily driver on Linux so I find the broken bits before you do. Windows is still the one-click zip on the product page.
-
-[amni-browse.html](/amni-browse.html) has the downloads. Source is [Amnibro/Amni-Browse](https://github.com/Amnibro/Amni-Browse).
+If you already had a blank Linux build, rebuild from the tree that includes the GTK pack. If the window paints DuckDuckGo or a cold-start URL, you are on the right binary.

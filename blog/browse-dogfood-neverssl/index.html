@@ -4,26 +4,26 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="theme-color" content="#F3F2EF">
-<title>Dogfooding Browse on neverssl — AMNI-SCIENT</title>
+<title>Dogfooding Amni-Browse on NeverSSL and HN — AMNI-SCIENT</title>
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<meta name="description" content="I used Amni-Browse on neverssl.com so I would know if the daily driver actually works.">
+<meta name="description" content="After the Linux paint path landed, I pointed the omnibox at plain HTTP and a busy site — boring checks, useful failures.">
 <meta name="author" content="Amni-Scient">
-<meta property="og:title" content="Dogfooding Browse on neverssl — AMNI-SCIENT">
-<meta property="og:description" content="I used Amni-Browse on neverssl.com so I would know if the daily driver actually works.">
+<meta property="og:title" content="Dogfooding Amni-Browse on NeverSSL and HN — AMNI-SCIENT">
+<meta property="og:description" content="After the Linux paint path landed, I pointed the omnibox at plain HTTP and a busy site — boring checks, useful failures.">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://amni-scient.com/blog/browse-dogfood-neverssl/">
 <meta property="og:image" content="https://amni-scient.com/assets/explore/og-explore.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Dogfooding Browse on neverssl — AMNI-SCIENT">
-<meta name="twitter:description" content="I used Amni-Browse on neverssl.com so I would know if the daily driver actually works.">
+<meta name="twitter:title" content="Dogfooding Amni-Browse on NeverSSL and HN — AMNI-SCIENT">
+<meta name="twitter:description" content="After the Linux paint path landed, I pointed the omnibox at plain HTTP and a busy site — boring checks, useful failures.">
 <meta name="twitter:image" content="https://amni-scient.com/assets/explore/og-explore.png">
 <link rel="canonical" href="https://amni-scient.com/blog/browse-dogfood-neverssl/">
 <link rel="alternate" type="application/rss+xml" title="AMNI-SCIENT updates" href="https://amni-scient.com/blog/rss.xml">
 <link rel="preload" href="/assets/fonts/archivo-var.woff2" as="font" type="font/woff2" crossorigin>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"Dogfooding Browse on neverssl","datePublished":"2026-08-27","dateModified":"2026-08-27","description":"I used Amni-Browse on neverssl.com so I would know if the daily driver actually works.","url":"https://amni-scient.com/blog/browse-dogfood-neverssl/","image":"https://amni-scient.com/assets/explore/og-explore.png","author":{"@type":"Person","name":"Anthony Reffelt","alternateName":"Amnibro"},"publisher":{"@type":"Organization","name":"AMNI-SCIENT","legalName":"Amniscient, LLC","url":"https://amni-scient.com"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"Dogfooding Amni-Browse on NeverSSL and HN","datePublished":"2026-08-27","dateModified":"2026-08-27","description":"After the Linux paint path landed, I pointed the omnibox at plain HTTP and a busy site — boring checks, useful failures.","url":"https://amni-scient.com/blog/browse-dogfood-neverssl/","image":"https://amni-scient.com/assets/explore/og-explore.png","author":{"@type":"Person","name":"Anthony Reffelt","alternateName":"Amnibro"},"publisher":{"@type":"Organization","name":"AMNI-SCIENT","legalName":"Amniscient, LLC","url":"https://amni-scient.com"}}</script>
 <link rel="stylesheet" href="/css/style.css?v=b262">
 <script>(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#08090B':'#F3F2EF');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();</script>
 </head>
@@ -74,14 +74,14 @@
 </nav>
 <article class="blog-wrap">
 <p class="eyebrow">Amni-Browse — August 27, 2026</p>
-<h1>Dogfooding Browse on neverssl</h1>
-<p class="blog-deck">I used Amni-Browse on neverssl.com so I would know if the daily driver actually works.</p>
+<h1>Dogfooding Amni-Browse on NeverSSL and HN</h1>
+<p class="blog-deck">After the Linux paint path landed, I pointed the omnibox at plain HTTP and a busy site — boring checks, useful failures.</p>
 <div class="blog-hero"><img src="https://amni-scient.com/assets/explore/og-explore.png" alt="" width="1600" height="900"></div>
 <div class="blog-prose">
-<p>A browser that only loads HTTPS demos is a toy. I pointed Amni-Browse at <a href="http://neverssl.com">neverssl.com</a> — the plain-HTTP page people use to poke captive portals — and used that as the first tab of the day.</p>
-<p>I want the address bar, the blocker, and the private-tab path to survive a site with no certificate and no polish. If I cannot open a hotel login page, I do not get to call this a daily driver.</p>
-<p>That is the whole note. I am still using it. Broken bits come back as code, not as a status page.</p>
-<p>Windows zip and the Android APK are on <a href="/amni-browse.html">amni-browse.html</a>.</p>
+<p>Once Linux stopped being a white rectangle, I did the boring checks.</p>
+<p>NeverSSL is a plain-HTTP canary — if the omnibox and navigation stack only pretend to work on HTTPS marketing pages, you find out fast. Hacker News is the other canary: lots of links, tight layout, no patience for a broken focus ring or a dead Ctrl+L.</p>
+<p>Neither test makes Amni-Browse “done.” They just prove the GTK-packed WebKit surface will load a real document and take a URL from the sibling omnibox. Servo paths and chrome polish are still their own queue.</p>
+<p>Build from <a href="/amni-browse.html">Amni-Browse</a> / Amnibro/Amni-Browse if you want to poke it. Alpha, local-only storage, zero telemetry by design — and still not your bank browser.</p>
 </div>
 <div class="cta-row"><a class="btn btn-primary" href="/amni-browse.html">Amni-Browse</a><a class="btn btn-outline" href="/blog/">All updates</a></div>
 </article>
