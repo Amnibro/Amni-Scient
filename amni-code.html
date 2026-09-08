@@ -5,10 +5,10 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="theme-color" content="#FBFAF8">
 <title>Amni-Code &mdash; AI Coding Assistant | AMNI-SCIENT</title>
-<meta name="description" content="Amni-Code: Agentic AI coding assistant. Single Rust binary with autonomous tool use, multi-provider LLM support, and local model discovery.">
+<meta name="description" content="Amni-Code: agentic AI coding assistant. Single Rust binary, autonomous tool use, any LLM provider or your Claude Code / Codex / Copilot / Cursor subscription, rich markdown answers.">
 <meta name="keywords" content="amni-code,ai coding assistant,ai tools,developer tools,programming,machine learning">
 <meta property="og:title" content="Amni-Code &mdash; AI Coding Assistant">
-<meta property="og:description" content="Agentic AI coding assistant with autonomous tool use, multi-provider LLM support, diff viewer, and local GGUF model discovery. Single Rust binary.">
+<meta property="og:description" content="Agentic AI coding assistant with autonomous tool use, any LLM provider or your coding-CLI subscription (Claude Code, Codex, Copilot, Cursor), diff viewer, and local GGUF model discovery. Single Rust binary.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://amni-scient.com/amni-code">
 <meta property="og:image" content="https://amni-scient.com/assets/code/Interface.png">
@@ -16,7 +16,7 @@
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Amni-Code &mdash; AI Coding Assistant">
-<meta name="twitter:description" content="Agentic AI coding assistant. Autonomous tool loop, multi-provider LLM, local model discovery. Single Rust binary.">
+<meta name="twitter:description" content="Agentic AI coding assistant. Autonomous tool loop, any provider or your coding-CLI subscription, local model discovery. Single Rust binary.">
 <meta name="twitter:image" content="https://amni-scient.com/assets/code/Interface.png">
 <link rel="canonical" href="https://amni-scient.com/amni-code">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Amni-Code","url":"https://amni-scient.com/amni-code.html","description":"Agentic AI coding assistant with autonomous tool use, multi-provider LLM support, and local model discovery. Single Rust binary.","applicationCategory":"SoftwareApplication","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Organization","name":"AMNI-SCIENT","legalName":"Amniscient, LLC","url":"https://amni-scient.com"},"image":"https://amni-scient.com/assets/code/Interface.png"}</script>
@@ -84,7 +84,7 @@
 </svg>
 </div>
 <h1>AMNI-CODE</h1>
-<p class="desc">AGENTIC AI CODING ASSISTANT &bull; MULTI-PROVIDER &bull; AUTONOMOUS TOOL USE</p>
+<p class="desc">AGENTIC AI CODING ASSISTANT &bull; ANY PROVIDER OR SUBSCRIPTION &bull; AUTONOMOUS TOOL USE</p>
 <div class="cta-row" style="margin-top:2rem;margin-bottom:1rem">
 <a href="#gallery" class="btn btn-primary">VIEW INTERFACE</a>
 <a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="btn btn-outline">&#9749; SUPPORT</a>
@@ -93,7 +93,7 @@
 <div class="ptile">
 <div class="ptile-copy">
 <p class="ptile-line">An agentic AI coding assistant in one Rust binary.</p>
-<ul class="ptile-feats"><li>15-iteration autonomous tool loop</li><li>Multi-provider LLM + local GGUF discovery</li><li>Six built-in tools</li><li>Single binary, no install</li></ul>
+<ul class="ptile-feats"><li>Autonomous tool loop with plan / edit / autonomous modes</li><li>Any LLM provider, or your Claude Code, Codex, Copilot, Cursor, Grok, Antigravity, OpenCode subscription</li><li>19 built-in tools, git, tests, lint, format</li><li>Single binary, no install</li></ul>
 </div>
 <div class="ptile-media"><img src="assets/code/Interface.png" alt="Amni-Code interface" loading="lazy"></div>
 </div>
@@ -108,8 +108,8 @@
 </div>
 <div class="feature">
 <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3v5M15 3v5M7 8h10v3a5 5 0 0 1-10 0z"/><path d="M12 16v5"/></svg></div>
-<h4>MULTI-PROVIDER</h4>
-<p>Switch between Adam (local, default), Google Gemini, xAI Grok, OpenAI GPT, Anthropic Claude, Ollama, or any OpenAI-compatible local server from one settings panel.</p>
+<h4>ANY PROVIDER, OR YOUR SUBSCRIPTION</h4>
+<p>Switch between Adam (local, default), Google Gemini, xAI Grok, OpenAI GPT, Anthropic Claude, Ollama, or any OpenAI-compatible local server from one settings panel. Or pick a subscription seat with no API key at all: Claude Code, Codex CLI, GitHub Copilot CLI, Cursor CLI, Grok CLI, Antigravity, or OpenCode. Sign in once in that CLI and it drives your project folder directly, with plan mode mapped to each tool's read-only flag.</p>
 </div>
 <div class="feature">
 <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h6l2 3h10v12H3z"/></svg></div>
@@ -155,6 +155,8 @@
 <tr><td>Binary</td><td>Single executable &mdash; no runtimes, no dependencies</td></tr>
 <tr><td>Platforms</td><td>Windows, macOS, Linux</td></tr>
 <tr><td>Providers</td><td>Adam (local, default), Google Gemini, xAI Grok, OpenAI, Anthropic Claude, Ollama, Custom Local</td></tr>
+<tr><td>Subscription seats</td><td>Claude Code, Codex CLI (ChatGPT), GitHub Copilot CLI, Cursor CLI, Grok CLI, Antigravity (Google), OpenCode. No API key, the signed-in CLI does the work.</td></tr>
+<tr><td>Answers</td><td>Rich markdown: headings, tables, nested and task lists, blockquotes, fenced code with copy and highlight, set in Archivo / Source Serif 4 / Cascadia Code</td></tr>
 <tr><td>Agent Loop</td><td>Up to 15 autonomous iterations per request</td></tr>
 <tr><td>Tools</td><td>read_file, write_file, edit_file, run_command, list_directory, search_files</td></tr>
 <tr><td>Model Discovery</td><td>Auto-detect GGUF &amp; SafeTensors &bull; Auto-import into Ollama</td></tr>
