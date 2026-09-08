@@ -85,6 +85,7 @@ ${a('/research.html', 'RESEARCH', 'research')}
 <a href="/amni-crypt.html">AMNI-CRYPT</a>
 <a href="/amni-life.html">AMNI-LIFE</a>
 <a href="/amni-prayer.html">AMNI-PRAYER</a>
+<a href="/amni-type.html">AMNI-TYPE</a>
 <a href="/amni-mail.html">AMNI-MAIL</a>
 </div>
 </div>

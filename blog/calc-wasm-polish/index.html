@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#F3F2EF">
+<title>Calc's WASM kernels got a polish — AMNI-SCIENT</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta name="description" content="The in-browser numerics are tighter. Same calculators, less friction when you iterate.">
+<meta name="author" content="Amni-Scient">
+<meta property="og:title" content="Calc's WASM kernels got a polish — AMNI-SCIENT">
+<meta property="og:description" content="The in-browser numerics are tighter. Same calculators, less friction when you iterate.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://amni-scient.com/blog/calc-wasm-polish/">
+<meta property="og:image" content="https://amni-scient.com/assets/explore/og-explore.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Calc's WASM kernels got a polish — AMNI-SCIENT">
+<meta name="twitter:description" content="The in-browser numerics are tighter. Same calculators, less friction when you iterate.">
+<meta name="twitter:image" content="https://amni-scient.com/assets/explore/og-explore.png">
+<link rel="canonical" href="https://amni-scient.com/blog/calc-wasm-polish/">
+<link rel="alternate" type="application/rss+xml" title="AMNI-SCIENT updates" href="https://amni-scient.com/blog/rss.xml">
+<link rel="preload" href="/assets/fonts/archivo-var.woff2" as="font" type="font/woff2" crossorigin>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"Calc's WASM kernels got a polish","datePublished":"2026-08-21","dateModified":"2026-08-21","description":"The in-browser numerics are tighter. Same calculators, less friction when you iterate.","url":"https://amni-scient.com/blog/calc-wasm-polish/","image":"https://amni-scient.com/assets/explore/og-explore.png","author":{"@type":"Person","name":"Anthony Reffelt","alternateName":"Amnibro"},"publisher":{"@type":"Organization","name":"AMNI-SCIENT","legalName":"Amniscient, LLC","url":"https://amni-scient.com"}}</script>
+<link rel="stylesheet" href="/css/style.css?v=b262">
+<script>(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#08090B':'#F3F2EF');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();</script>
+</head>
+<body class="pp blog-page">
+<div class="grid-bg"></div>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<a href="/amni-calc.html">CALCULATORS</a>
+<a href="/amni-learn.html">LEARN</a>
+<a href="/blog/" class="active">BLOG</a>
+<a href="/research.html">RESEARCH</a>
+<div class="nav-dd">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu">
+<a href="/braid">BRAID</a>
+<a href="/symphony.html">SYMPHONY</a>
+<a href="/grok-remote.html">GROK-REMOTE</a>
+<a href="/amni-ai.html">AMNI-AI</a>
+<a href="/amni-browse.html">AMNI-BROWSE</a>
+<a href="/amni-calc.html">AMNI-CALC</a>
+<a href="/amni-explore.html">AMNI-EXPLORE</a>
+<a href="/amni-space.html">AMNI-SPACE</a>
+<a href="/amni-weather.html">AMNI-WEATHER</a>
+<a href="/game/">AMNI-GAME</a>
+<a href="/amni-learn.html">AMNI-LEARN</a>
+<a href="/amni-llm.html">AMNI-LLM</a>
+<a href="/amni-connect.html">AMNI-CONNECT</a>
+<a href="/amni-code.html">AMNI-CODE</a>
+<a href="/amni-core.html">AMNI-CORE</a>
+<a href="/amni-haven.html">AMNI-HAVEN</a>
+<a href="/amni-crypt.html">AMNI-CRYPT</a>
+<a href="/amni-life.html">AMNI-LIFE</a>
+<a href="/amni-prayer.html">AMNI-PRAYER</a>
+<a href="/amni-type.html">AMNI-TYPE</a>
+<a href="/amni-mail.html">AMNI-MAIL</a>
+</div>
+</div>
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer">SUPPORT</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<article class="blog-wrap">
+<p class="eyebrow">Amni-Calc — August 21, 2026</p>
+<h1>Calc's WASM kernels got a polish</h1>
+<p class="blog-deck">The in-browser numerics are tighter. Same calculators, less friction when you iterate.</p>
+<div class="blog-hero"><img src="https://amni-scient.com/assets/explore/og-explore.png" alt="" width="1600" height="900"></div>
+<div class="blog-prose">
+<p>I spent a pass on the WebAssembly kernels that actually solve the modules — beams, fluids, the stuff JavaScript is slow at — so the calculators feel less sticky when you change a load and watch the plot move.</p>
+<p>Nothing new to learn. You still open a tab, pick a module, type geometry, and read a result. Inputs still stay in the browser. I just cleaned the path the numbers take.</p>
+<p>If a plot used to hitch when you dragged a load, try it again. If it still does, tell me which module.</p>
+<p>The suite is <a href="/amni-calc.html">amni-calc.html</a>. The bolts calculator is still the one I open first: <a href="/calc/bolts.html">calc/bolts.html</a>.</p>
+</div>
+<div class="cta-row"><a class="btn btn-primary" href="/amni-calc.html">Open Amni-Calc</a><a class="btn btn-outline" href="/blog/">All updates</a></div>
+</article>
+<aside class="support-cta" aria-label="Support"><a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="support-link"><span class="support-ico">&#9749;</span><span>Enjoying this? <strong>Support on Ko-fi</strong></span></a></aside>
+<footer>
+<div class="footer-links">
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="/blog/">BLOG</a>
+<a href="/blog/rss.xml">RSS</a>
+<a href="/privacy.html">PRIVACY</a>
+<a href="/terms.html">TERMS</a>
+<a href="mailto:amnibro7@gmail.com">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
+</footer>
+</body>
+</html>
