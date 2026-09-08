@@ -4,40 +4,48 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="theme-color" content="#FBFAF8">
-<title>Navier&ndash;Stokes: A Coherence Path &mdash; Proposal, Closed Lemmas and the Open Residue | AMNI-SCIENT Research</title>
-<meta name="description" content="A proposed path to the Clay Navier-Stokes problem: the proof has to be dynamical and scale-covariant, and it lives on one object, direction coherence of vorticity on the stretching-active set. Closed component lemmas, the residue in four equivalent forms, numerics, and what is not claimed.">
-<meta name="keywords" content="Navier-Stokes,Clay Millennium Prize,global regularity,vorticity direction coherence,Constantin-Fefferman,Biot-Savart,vortex stretching,pressure Hessian,coherence identity,cyclostrophic">
+<title>Navier&ndash;Stokes: A Coherence Path | AMNI-SCIENT Research</title>
+<meta name="description" content="A proposed route to the unforced Navier-Stokes regularity problem. Closed component lemmas, the open gap stated in four equivalent forms, numerics, and what is not claimed.">
+<meta name="keywords" content="Navier-Stokes,Clay Millennium Prize,global regularity,vorticity direction coherence,Constantin-Fefferman,Biot-Savart,vortex stretching,pressure Hessian,coherence identity,braid ceiling">
 <meta property="og:title" content="Navier&ndash;Stokes: A Coherence Path &mdash; AMNI-SCIENT Research">
-<meta property="og:description" content="Proposal for a different route to 3D Navier-Stokes regularity: closed lemmas, the residue in four forms, numerics, and what is not claimed.">
+<meta property="og:description" content="A proposed route to the unforced Navier-Stokes regularity problem, with the open gap named.">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://amni-scient.com/research/navier-stokes-program">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="https://amni-scient.com/research/navier-stokes-program">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"ScholarlyArticle","name":"Navier-Stokes: A Coherence Path","author":{"@type":"Person","name":"Anthony Reffelt"},"datePublished":"2026-09-08","description":"A proposed path to the Clay Navier-Stokes problem with closed component lemmas, the open residue stated in four equivalent forms, numerical measurements, and explicit scope limits.","url":"https://amni-scient.com/research/navier-stokes-program"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"ScholarlyArticle","name":"Navier-Stokes: A Coherence Path","author":{"@type":"Person","name":"Anthony Reffelt"},"datePublished":"2026-09-08","description":"A proposed route to the unforced Navier-Stokes regularity problem with closed component lemmas, the open gap in four equivalent forms, numerical measurements, and explicit scope limits.","url":"https://amni-scient.com/research/navier-stokes-program"}</script>
 <link rel="stylesheet" href="../css/style.css?v=b260">
-<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script>
+window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},options:{skipHtmlTags:['script','noscript','style','textarea','pre','code']}};
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK'}document.addEventListener('DOMContentLoaded',function(){u();var b=document.getElementById('theme-toggle');if(b)b.addEventListener('click',function(){h.dataset.theme=h.dataset.theme==='dark'?'light':'dark';localStorage.setItem('amni-theme',h.dataset.theme);u()})})})();
 </script>
 <style>
-.eq-block{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:1.5rem 2rem;margin:1.5rem 0;overflow-x:auto}
-.eq-block .eq-label{font-size:.6rem;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:.75rem}
+.prose{max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem}
+.prose p{margin:0 0 1.2rem}
+.prose strong{color:var(--text)}
+.prose a{color:var(--accent)}
+.eq-block{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:1.25rem 1.5rem;margin:1.25rem 0;overflow-x:auto}
+.eq-block .eq-label{font-size:.6rem;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:.5rem}
 .derivation-step{border-left:2px solid var(--accent);padding-left:1.5rem;margin:1.5rem 0}
 .derivation-step h4{color:var(--accent);font-size:.8rem;letter-spacing:2px;margin-bottom:.5rem}
 .app-card{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem;margin-bottom:1rem}
 .app-card h4{color:var(--accent);font-size:.85rem;letter-spacing:2px;margin-bottom:.5rem}
-.app-card p{color:var(--dim);font-size:.85rem;line-height:1.7}
+.app-card p{color:var(--dim);font-size:.85rem;line-height:1.7;margin:0}
 .breadcrumb{font-size:.7rem;letter-spacing:2px;color:var(--dim);margin-bottom:1rem}
 .breadcrumb a{color:var(--accent);text-decoration:none}
-.status-strip{display:flex;gap:.75rem;flex-wrap:wrap;margin:1.5rem auto;max-width:800px}
+.status-strip{display:flex;gap:.75rem;flex-wrap:wrap;margin:1.5rem auto 0;max-width:800px}
 .status-strip span{font-size:.65rem;letter-spacing:2px;padding:.4rem .8rem;border:1px solid var(--border);border-radius:4px;color:var(--dim);text-transform:uppercase}
 .status-strip span.open{border-color:var(--accent);color:var(--accent)}
-table.ledger{width:100%;max-width:800px;margin:1.5rem auto;border-collapse:collapse;font-size:.82rem}
+table.ledger{width:100%;max-width:800px;margin:1.25rem auto;border-collapse:collapse;font-size:.82rem}
 table.ledger th,table.ledger td{border:1px solid var(--border);padding:.6rem .8rem;text-align:left;vertical-align:top;color:var(--dim)}
 table.ledger th{color:var(--text);font-size:.65rem;letter-spacing:2px;text-transform:uppercase;background:var(--panel)}
 table.ledger td strong{color:var(--text)}
-.callout{max-width:800px;margin:1.5rem auto;padding:1.25rem 1.5rem;border:1px solid var(--accent);border-radius:8px;background:var(--panel);color:var(--dim);font-size:.9rem;line-height:1.8}
+.callout{max-width:800px;margin:1.25rem auto;padding:1.25rem 1.5rem;border:1px solid var(--accent);border-radius:8px;background:var(--panel);color:var(--dim);font-size:.9rem;line-height:1.8}
 .callout strong{color:var(--text)}
+mjx-container[display="true"]{margin:.5rem 0!important}
 </style>
 </head>
 <body class="pp">
@@ -53,190 +61,200 @@ table.ledger td strong{color:var(--text)}
 <button id="theme-toggle" class="theme-toggle" type="button">DARK</button>
 </div>
 </nav>
+
 <section class="hero" style="min-height:auto;padding:8rem 2rem 3rem">
 <div class="breadcrumb"><a href="../research.html">RESEARCH</a> &nbsp;/&nbsp; NAVIER&ndash;STOKES</div>
 <h1>NAVIER&ndash;STOKES: A COHERENCE PATH</h1>
-<p class="subtitle">A PROPOSED ROUTE TO THE CLAY PROBLEM, WITH THE OPEN PIECE NAMED</p>
-<p class="tagline">Every static inequality is provably blind to the blowup question. The proof has to be dynamical, scale-covariant, and it lives on one object: how coherently vorticity points where it is being stretched.</p>
+<p class="subtitle">A PROPOSED ROUTE TO THE UNFORCED REGULARITY PROBLEM</p>
+<p class="tagline">Where I think the proof lives, what I managed to close around it, and the one piece I could not.</p>
 <div class="status-strip">
-<span class="open">Clay (A)&ndash;(D): open</span>
-<span>Component lemmas: 3 peer-closed</span>
+<span class="open">Clay A&ndash;D: open</span>
+<span>3 lemmas peer-closed</span>
 <span>Braid ceiling: conditional</span>
-<span>Residue: 1 object, 4 equivalent forms</span>
-<span>Program: July 2026, ongoing</span>
+<span>1 open gap, 4 equivalent forms</span>
+<span>July 2026, ongoing</span>
 </div>
 </section>
 
 <section>
-<h2>WHY THIS IS PUBLIC NOW</h2>
-<div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
-<p>I'm Anthony Reffelt. I ran this program through the summer of 2026 with two AI systems working adversarially against each other and against me: one proposing, one attacking, every numerical claim pre-registered before the run, every retraction kept on the record. What follows is the state of that work as of this posting. It is <strong style="color:var(--text)">not a proof</strong> of the Millennium problem, and every page of the underlying ledger says so in its header.</p>
-<p style="margin-top:1.2rem">I'm putting it up because there have been recent public claims that this problem is finished. As of this posting, Buckmaster and Alp&ouml;ge have posted Lean-verified finite-time blowup with smooth forcing for 3D Euler, and OpenAI has announced an unreleased internal proof of forced Navier&ndash;Stokes blowup along Fefferman's options C and D. If that proof holds under review it settles the prize through the forced breakdown statements. The unforced smooth-data question, A and B, stays open on its own terms, and that is the question this page is about. Until a proof stands full peer review the door is still open, and I'd rather have my route on the table, with its gap stated in plain language, than sit on it. If the gap below is closed by someone, this page will say so and link to them. If you can attack anything on this page, the contact address is at the bottom and I will publish the outcome either way.</p>
+<h2>WHY I'M POSTING THIS</h2>
+<div class="prose">
+<p>I'm Anthony Reffelt. Over July 2026 I ran a research program on the 3D Navier&ndash;Stokes regularity problem with two AI systems set against each other: one proposed, the other attacked, and I directed. Every numerical claim was registered before the run. Every retraction stayed in the log. What's on this page is the state of that work. It is <strong>not a proof</strong> of the Millennium problem, and the header of every document in the underlying ledger says the same thing.</p>
+<p>I'm posting it now because the problem is suddenly in the news. Tristan Buckmaster and Levent Alp&ouml;ge have put out Lean-verified finite-time blowup with smooth forcing for 3D Euler, and OpenAI has announced an internal proof of forced Navier&ndash;Stokes blowup along Fefferman's options C and D. If that proof holds up under review, the prize is settled through the forced breakdown statements. The unforced question, options A and B, stays open on its own terms, and that's the question this page is about. I'd rather have my route on the table, gap and all, than sit on it.</p>
+<p>If you can break anything here, my address is at the bottom and I'll post the outcome either way.</p>
 </div>
 </section>
 
 <section>
-<h2>WHAT CLAY ACTUALLY ASKS</h2>
-<div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
-<p>The official statement (Fefferman) has four parts. Either show that every smooth, divergence-free, finite-energy initial velocity on \(\mathbb{R}^3\) or \(\mathbb{T}^3\) gives a smooth solution for all time with zero external force (statements A and B), or exhibit one smooth datum together with a smooth, bounded-energy external force \(f(x,t)\) for which the solution breaks down in finite time (C and D). The forcing term in C and D is part of the official text. This program targets A and B, the unforced regularity question, and its blowup lane searched only the unforced case. The working criterion everyone uses is Beale&ndash;Kato&ndash;Majda: the solution stays smooth exactly as long as</p>
+<h2>WHAT THE PROBLEM ACTUALLY ASKS</h2>
+<div class="prose">
+<p>Fefferman's official statement has four options. A and B: show that every smooth, divergence-free, finite-energy starting velocity on \(\mathbb{R}^3\) or \(\mathbb{T}^3\), with no external force, gives a smooth solution for all time. C and D: find one smooth starting velocity and one smooth, bounded-energy force \(f(x,t)\) for which the solution breaks down in finite time. The force in C and D is part of the official wording. This program went after A and B, and its blowup search stayed in the unforced case.</p>
+<p>The test everyone uses is Beale&ndash;Kato&ndash;Majda. A solution stays smooth exactly as long as the vorticity \(\omega=\nabla\times u\) stays integrable in time:</p>
 <div class="eq-block"><div class="eq-label">BKM criterion</div>
-\[ \int_0^T \|\omega(t)\|_{L^\infty}\,dt < \infty , \qquad \omega=\nabla\times u . \]
+\[ \int_0^T \|\omega(t)\|_{L^\infty}\,dt < \infty . \]
 </div>
-<p>So the whole problem is whether vorticity can become unbounded in finite time. Vorticity grows by stretching, \(\dot{\omega} = S\omega + \nu\Delta\omega\), where \(S\) is the strain. Stretching needs the vorticity vector to point along a stretching direction of \(S\). That alignment is the object this program is built around.</p>
+<p>So the whole question is whether vorticity can become infinite in finite time. Vorticity grows by stretching, \(\dot{\omega} = S\omega + \nu\Delta\omega\), where \(S\) is the strain. Stretching only works while the vorticity vector points along a stretching direction of \(S\). How well it stays pointed there is the object everything below is built around.</p>
 </div>
 </section>
 
 <section>
-<h2>THE PROPOSAL IN ONE PARAGRAPH</h2>
+<h2>THE PROPOSAL</h2>
 <div class="callout">
-<strong>Claim of the route.</strong> The known blowup mechanism for 3D Euler (Luo&ndash;Hou, Chen&ndash;Hou, Elgindi) is low-regularity, needs symmetry, and is inviscid; constant viscosity defeats it by a scaling instability (Hou 2024, reproduced independently here). What survives as the genuine open core is the smooth, all-data, possibly non-self-similar case. Three lemmas closed in this program say where that core lives: no static inequality can decide it (GEOM-COMPLETE), the argument must be dynamical (SHADOW), and constant prefactors cannot beat the cubic nonlinearity, so the closing mechanism must be scale-covariant. Put together, the only place a proof can live is a bound on <strong>direction coherence of vorticity on the set where it is actively stretched</strong>. I give that bound in four equivalent forms below. Any one of them, proved, gives Clay A.
+The Euler blowup that is actually proven (Luo&ndash;Hou, Chen&ndash;Hou, Elgindi) is low-regularity, needs symmetry, and has no viscosity. Constant viscosity kills it through a scaling instability (Hou 2024; I reproduced that independently by four routes). What's left open is the smooth, all-data, possibly non-self-similar case. Three lemmas I closed say where that case has to be decided: a static inequality can't do it, the argument has to use the time evolution, and constant prefactors can't beat the cubic nonlinearity, so whatever closes it has to scale with the solution. Put those together and there's exactly one place a proof can live: <strong>a bound on how coherently the vorticity direction holds on the set where it's being stretched.</strong> I state that bound in four equivalent forms further down. Prove any one of them and you have option A.
 </div>
 </section>
 
 <section>
-<h2>WHAT IS CLOSED</h2>
-<div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
-<p>These are component results with complete proofs, each attacked by the second agent under a written protocol before being marked closed. None of them is a regularity statement on its own. Their job is to fence the problem.</p>
+<h2>WHAT'S CLOSED</h2>
+<div class="prose">
+<p>These are component results with complete proofs. Each was attacked by the second system under a written protocol before it got marked closed. None of them is a regularity statement by itself. Their job is to fence the problem in.</p>
+
 <div class="derivation-step">
-<h4>LEMMA 1 &mdash; FAR-FIELD STRAIN BOUND (PEER-CLOSED)</h4>
-<p>Let \(\omega\in L^1(\mathbb{R}^3)\) be supported in a ball \(B(x_0,\delta)\) with vorticity mass \(\Gamma=\|\omega\|_{L^1}\), and let \(u\) be the Biot&ndash;Savart velocity. Then for every \(x\) with \(d=|x-x_0|\ge 2\delta\),</p>
+<h4>1 &mdash; FAR-FIELD STRAIN BOUND (PEER-CLOSED)</h4>
+<p>Take vorticity \(\omega\in L^1(\mathbb{R}^3)\) supported in a ball \(B(x_0,\delta)\) with total mass \(\Gamma=\|\omega\|_{L^1}\), and let \(u\) be its Biot&ndash;Savart velocity. Then at any point \(x\) with \(d=|x-x_0|\ge 2\delta\),</p>
 <div class="eq-block"><div class="eq-label">Explicit constant</div>
 \[ |S(x)| \le |\nabla u(x)| \le \frac{6}{\pi}\,\frac{\Gamma}{d^{3}} . \]
 </div>
-<p>Three lines: the kernel derivative bound \(|\nabla K(z)|\le 3/(4\pi|z|^3)\), the support geometry \(|x-y|\ge d/2\), and the integral. No regularity beyond \(L^1\), no smallness. Sharp constant is \(4/\pi\). This closes the far half of the near/far split; the near zone is the whole problem and this lemma says nothing about it.</p>
+<p>Three lines: the kernel derivative is bounded by \(3/(4\pi|z|^3)\), the geometry gives \(|x-y|\ge d/2\), integrate. No regularity beyond \(L^1\) and no smallness. The sharp constant is \(4/\pi\). This settles the far half of a near/far split. The near zone is the whole problem, and this lemma says nothing about it.</p>
 </div>
+
 <div class="derivation-step">
-<h4>LEMMA 2 &mdash; GEOMETRY COMPLETENESS OF THE ENERGY CLASS (PEER-CLOSED)</h4>
-<p>Let \(G(u)(x)=g(u(x),\nabla u(x))\) be any scale-normalized pointwise observable (alignment angles, normalized \(Q\)&ndash;\(R\) coordinates, stretching efficiency, pressure&ndash;strain correlation). For every kinematically admissible value \(v\) and every \(\varepsilon>0\) there is a smooth, compactly supported, divergence-free unit-energy field that realizes \(G=v\) pointwise on a ball, and one that realizes it in enstrophy-weighted average. Proof: prescribe the germ with a linear field \(A+Mx\), \(\operatorname{tr}M=0\); cut off; repair the divergence in the annulus with the Bogovski&#301; operator; the core is untouched.</p>
-<p><strong style="color:var(--text)">Consequence.</strong> The energy class forces no alignment statistic whatsoever. Every argument of the form "finite energy implies the vorticity cannot align like X" is empty. This retired a whole family of candidate faces at once.</p>
+<h4>2 &mdash; THE ENERGY CLASS FORCES NO GEOMETRY (PEER-CLOSED)</h4>
+<p>Let \(G(u)(x)=g(u(x),\nabla u(x))\) be any scale-normalized pointwise observable: an alignment angle, normalized \(Q\)&ndash;\(R\) coordinates, stretching efficiency, pressure&ndash;strain correlation. For any value \(v\) that's kinematically possible and any \(\varepsilon>0\), there's a smooth, compactly supported, divergence-free field of unit energy with \(G=v\) on a ball, and another with \(G\) within \(\varepsilon\) of \(v\) in enstrophy-weighted average. The construction: write down a linear field \(A+Mx\) with \(\operatorname{tr}M=0\), cut it off, and repair the divergence in the annulus with the Bogovski&#301; operator. The core never gets touched.</p>
+<p><strong>What this kills.</strong> Every argument of the shape "finite energy means the vorticity can't align like X" is empty. A whole family of candidate inequalities went away at once.</p>
 </div>
+
 <div class="derivation-step">
-<h4>LEMMA 3 &mdash; THE PROOF MUST BE DYNAMICAL (PEER-CLOSED)</h4>
-<p>A shadow construction: for any static inequality of the admissible type, there is a divergence-free field that saturates it while sitting arbitrarily close to a field that violates its intended conclusion. Any argument that closes the problem has to use the time evolution, not the state.</p>
+<h4>3 &mdash; THE PROOF HAS TO BE DYNAMICAL (PEER-CLOSED)</h4>
+<p>For any static inequality of the admissible type there's a divergence-free field that saturates it while sitting arbitrarily close to a field that violates its intended conclusion. Whatever closes the problem has to use the time evolution, not a snapshot.</p>
 </div>
+
 <div class="derivation-step">
-<h4>LEMMA 4 &mdash; CONSTANT DEPLETION IS INSUFFICIENT</h4>
-<p>Suppose stretching is depleted by a constant factor \(\rho^*<1\) everywhere. Ladyzhenskaya plus Young still leaves the enstrophy inequality with the cubic term \(Z^3\); the exponent is immune to the prefactor. So whatever closes the problem has to scale with the solution, not multiply it. This is the reason the route below is stated in scale-covariant form.</p>
+<h4>4 &mdash; A CONSTANT DEPLETION FACTOR ISN'T ENOUGH</h4>
+<p>Suppose stretching is weakened by some fixed factor \(\rho^*<1\) everywhere. Ladyzhenskaya plus Young still leaves the enstrophy inequality with its cubic term \(Z^3\). The exponent doesn't care about the prefactor. So whatever closes the problem has to scale with the solution instead of multiplying it, which is why the gap below is written in scale-covariant form.</p>
 </div>
+
 <div class="derivation-step">
-<h4>LEMMA 5 &mdash; THE MOHR DISK</h4>
-<p>With strain eigenvalues \(\lambda_1\ge\lambda_2\ge\lambda_3\), the stretching rate \(\alpha=\xi\cdot S\xi\) and the turning rate \(\tau=|P_\perp S\xi|\) of the vorticity direction \(\xi=\omega/|\omega|\) satisfy</p>
-<div class="eq-block"><div class="eq-label">Growth and reorientation share a disk</div>
+<h4>5 &mdash; THE MOHR DISK</h4>
+<p>With strain eigenvalues \(\lambda_1\ge\lambda_2\ge\lambda_3\), write \(\alpha=\xi\cdot S\xi\) for the stretching rate along the vorticity direction \(\xi=\omega/|\omega|\) and \(\tau=|P_\perp S\xi|\) for the rate at which that direction turns. Then</p>
+<div class="eq-block"><div class="eq-label">Growth and turning share one disk</div>
 \[ \tau^{2} \le (\lambda_1-\alpha)(\alpha-\lambda_3). \]
 </div>
-<p>Maximal stretching forbids turning and maximal turning forbids stretching. This is free algebra, but it is the pointwise constraint that every dynamical form of the residue is written against.</p>
+<p>Full stretching means no turning, full turning means no stretching. It's just algebra, but every dynamical form of the gap gets written against it.</p>
 </div>
+
 <div class="derivation-step">
-<h4>LEMMA 6 &mdash; THE PRESSURE HESSIAN AS HEAT</h4>
-<p>From \((-\Delta)^{-1}=\int_0^\infty e^{s\Delta}ds\), exactly</p>
+<h4>6 &mdash; THE PRESSURE HESSIAN IS A HEAT INTEGRAL</h4>
+<p>Since \((-\Delta)^{-1}=\int_0^\infty e^{s\Delta}\,ds\), exactly</p>
 <div class="eq-block"><div class="eq-label">Heat identity</div>
 \[ \nabla^2 p = \int_0^\infty \nabla^2 e^{s\Delta}\,Q\;ds, \qquad Q=\operatorname{tr}(\nabla u)^2 . \]
 </div>
-<p>Splitting at the coherence heat-time \(s^*=(\theta/K)^2\) reproduces the far-field lemma from Gaussian bounds and puts the Calder&oacute;n&ndash;Zygmund wall in heat coordinates, where the near-field question becomes a statement about a gain of \(K\sqrt{s}\) on the shear sector.</p>
+<p>Split the integral at the coherence heat-time \(s^*=(\theta/K)^2\). The tail reproduces Lemma 1 from Gaussian bounds. The head puts the Calder&oacute;n&ndash;Zygmund wall into heat coordinates, where the near-field question turns into a gain of order \(K\sqrt{s}\) on the shear sector.</p>
 </div>
+
 <div class="derivation-step">
-<h4>LEMMA 7 &mdash; THE COHERENCE IDENTITY (DERIVATION COMPLETE TO SECOND ORDER)</h4>
-<p>Any regular vortex core is locally solid-body, so it is cyclostrophic: \((p'/\rho)|_{\text{axis}}=\omega_0^2/4\). The direct term of the axisymmetric pressure Hessian at the axis is therefore</p>
-<div class="eq-block"><div class="eq-label">Profile-independent brake</div>
-\[ (\nabla^2 p)_{12}\;\to\;-\tfrac14\,\omega_1\omega_2 , \]
+<h4>7 &mdash; THE COHERENCE IDENTITY (DERIVED TO SECOND ORDER)</h4>
+<p>A regular vortex core is locally solid-body rotation, so it's cyclostrophic: \(p'/\rho\) on the axis equals \(\omega_0^2/4\). The direct term of the axisymmetric pressure Hessian on the axis is then</p>
+<div class="eq-block"><div class="eq-label">A profile-independent brake</div>
+\[ (\nabla^2 p)_{12}\;\to\;-\tfrac14\,\omega_1\omega_2 . \]
 </div>
-<p>which is exactly the coefficient that cancels the frame-chase term in the strain evolution on a coherent tube. Measured on tilted tubes in triaxial strain across a fourfold amplitude range the fitted coefficient sits at 0.243 to 0.246, and the first-order correction \([p''-p'/\rho]/(2|\omega|^2)\) vanishes at the axis and is negative off it, which predicts a value slightly under 1/4. The reading: on coherent cores the pressure enforces its own structure's persistence, \(\dot S_{12}\approx 0\), and alignment there is eigenframe enslavement rather than a chase. The remaining hypotheses are slender-tube and near-steady; those are named, not hidden.</p>
+<p>That's exactly the coefficient that cancels the frame-chase term in the strain evolution on a coherent tube. On tilted tubes in triaxial strain, across a fourfold amplitude range, the fitted coefficient came out between 0.243 and 0.246. The first-order correction \([p''-p'/\rho]/(2|\omega|^2)\) vanishes on the axis and goes negative off it, which predicts a number slightly under 1/4. So on coherent cores the pressure holds its own structure in place, \(\dot S_{12}\approx 0\), and the alignment there is the eigenframe being dragged along rather than chased. What's still assumed: a slender tube and a near-steady core. Those are named, not buried.</p>
 </div>
 </div>
 </section>
 
 <section>
 <h2>THE SPAGHETTI RESULT: BRAIDS AND FILAMENTS</h2>
-<div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
-<p>The intense-vorticity regions in a real flow are not clean tubes. They are tangles of flux-coherent strands, spaghetti. Two results on that picture, both tagged conditional in the ledger, both worth having on the table.</p>
+<div class="prose">
+<p>Intense vorticity in a real flow doesn't come as clean tubes. It comes as tangles of flux-carrying strands, spaghetti. Two results on that picture, both marked conditional in the ledger.</p>
+
 <div class="derivation-step">
 <h4>THE BRAID CEILING (CONDITIONAL)</h4>
-<p>Carve a braid \(B\) into \(N\) nearly tube-like strands with circulations \(\Gamma_k\), \(\sum_k\Gamma_k=\Gamma\), under an applied exterior strain \(s\). If each strand is Burgers-slaved at that strain, its peak vorticity is capped at \(\Gamma_k s/(4\pi
-u)\), so</p>
-<div class="eq-block"><div class="eq-label">A tangle cannot out-peak a single tube of the same total circulation</div>
-\[ \|\omega\|_{L^\infty(B)} \le \max_k rac{\Gamma_k\,s}{4\pi
-u} \le rac{\Gamma\,s}{4\pi
-u}. \]
+<p>Carve a braid \(B\) into \(N\) roughly tube-like strands with circulations \(\Gamma_k\) adding up to \(\Gamma\), under an exterior strain \(s\). If each strand is Burgers-slaved at that strain, its peak vorticity is capped at \(\Gamma_k s/(4\pi\nu)\), and so</p>
+<div class="eq-block"><div class="eq-label">A tangle can't out-peak one tube with the same total circulation</div>
+\[ \|\omega\|_{L^\infty(B)} \;\le\; \max_k \frac{\Gamma_k\, s}{4\pi\nu} \;\le\; \frac{\Gamma\, s}{4\pi\nu} . \]
 </div>
-<p>Splitting circulation across strands only lowers the ceiling: at equal shares the ratio to the single-tube cap is \(1/N\), checked at \(N=1,2,3,5,10,20\). Growth past the ceiling needs accretion or an encounter with another braid, and the same-sign case is self-defeating: merger raises the total circulation and lowers the strand count, which lands you back at one tube with one cap. The open constant is \(C_{br}\) for highly tangled braids, where strands are far from tube-like. That is where a reader could push.</p>
+<p>Splitting circulation across strands only lowers the cap: with equal shares the ratio to a single tube is \(1/N\), checked at \(N=1,2,3,5,10,20\). To grow past the cap a braid has to accrete or run into another braid, and a same-sign merger defeats itself, since it raises the total circulation and lowers the strand count, which is one tube with one cap again. What's open is the constant for badly tangled braids whose strands are nowhere near tube-like. That's a place a reader could push.</p>
 </div>
+
 <div class="derivation-step">
-<h4>THE CLASSICAL PINCH TERMINATES ON THE SAME OBJECT</h4>
-<p>Two anti-parallel filaments under Crow's instability tilt, approach at the troughs, and the classical clock gives a finite-time collision, \(b^2(t)=b_0^2-(c\Gamma/\pi)\,t\), so \(t_c=\pi b_0^2/(c\Gamma)\). With viscous cores slaved to the pinch strain the logarithm is exactly constant during the collapse, \(\Lambda=\ln(b/a)=	frac12\ln(Re_\Gamma/8\pi)\), so the filament model is self-consistent all the way down and predicts \(u_{\max}	o\infty\).</p>
-<p>It is singular by construction. The model freezes topology (no reconnection), keeps cores rigid (no core PDE), and its \(\sqrt{t_c-t}\) collapse is precisely the Leray self-similar class that Ne&#269;as&ndash;R&#367;&#382;i&#269;ka&ndash;&Scaron;ver&aacute;k excluded. At the contact scale the real equations must either reconnect or break self-similarity, and that fork is the residue below. Everything up to contact genuinely happens, which is why the pinch stays the persistent candidate and why aircraft trails link.</p>
+<h4>THE CLASSICAL PINCH ENDS ON THE SAME OBJECT</h4>
+<p>Two anti-parallel filaments under Crow's instability tilt, approach at the troughs, and the classical clock predicts a finite-time collision: \(b^2(t)=b_0^2-(c\Gamma/\pi)\,t\), so \(t_c=\pi b_0^2/(c\Gamma)\). With viscous cores slaved to the pinch strain the logarithm stays exactly constant during the collapse, \(\Lambda=\ln(b/a)=\tfrac12\ln(Re_\Gamma/8\pi)\), so the filament model is self-consistent all the way down and predicts an infinite velocity.</p>
+<p>It's singular by construction. The model freezes topology (no reconnection), keeps the cores rigid (no core dynamics), and its \(\sqrt{t_c-t}\) collapse is exactly the Leray self-similar class that Ne&#269;as, R&#367;&#382;i&#269;ka and &Scaron;ver&aacute;k excluded. At the contact scale the real equations have to either reconnect or stop being self-similar, and that fork is the gap below. Everything up to contact genuinely happens, which is why the pinch stays the persistent candidate, and why aircraft trails link up behind the plane.</p>
 </div>
 </div>
 </section>
 
 <section>
-<h2>THE RESIDUE, IN FOUR EQUIVALENT FORMS</h2>
-<div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
-<p>Everything above locates one object. Write \(K_{CF}\) for the Constantin&ndash;Fefferman coherence measure of the vorticity direction on the stretching-active high-vorticity set, \(\theta\) for the local misalignment, \(M\) for the strain amplitude, and \(c_1,c_2,c_\nu\) for constants of the Riccati pair \(\dot M\le(c_1\theta-c_\nu)M^2\), \(\dot K\le c_2\theta M K\). Any one of the following, proved for all smooth finite-energy data, gives Clay A:</p>
+<h2>THE GAP, IN FOUR EQUIVALENT FORMS</h2>
+<div class="prose">
+<p>Everything above points at one object. Write \(K_{CF}\) for the Constantin&ndash;Fefferman coherence of the vorticity direction on the high-vorticity set where stretching is active, \(\theta\) for the local misalignment, \(M\) for the strain amplitude, and \(c_1,c_2,c_\nu\) for the constants in the Riccati pair \(\dot M\le(c_1\theta-c_\nu)M^2\), \(\dot K\le c_2\theta M K\). Any one of the following, proved for all smooth finite-energy data, gives option A.</p>
 <table class="ledger">
 <tr><th>Form</th><th>Statement</th><th>Where it comes from</th></tr>
-<tr><td><strong>D1 &mdash; coherence</strong></td><td>\(\sup_t K_{CF}(t)\le K^*(E_0,\nu)\) on the stretching-active set.</td><td>Constantin&ndash;Fefferman criterion, dynamical form.</td></tr>
-<tr><td><strong>D2 &mdash; heat</strong></td><td>A rigorous \(K\sqrt{s}\) gain for \(\int_0^{s^*}\nabla^2 e^{s\Delta}[\text{BS of }S]\,ds\) on the aligned shear sector, with a \(\Gamma\)-normalized tail.</td><td>Lemma 6 split at \(s^*\).</td></tr>
-<tr><td><strong>D3 &mdash; pitch</strong></td><td>Orbit-averaged \(c_1\theta-c_\nu\le-\delta<0\), uniformly in \(\nu\).</td><td>Riccati pair; the measured pitch of the (amplitude, coherence) helix.</td></tr>
-<tr><td><strong>D4 &mdash; Mohr</strong></td><td>\(\|\nabla(P_\perp S\xi)\|\) subcritical on the shear sector: the gradient layer of the turning rate.</td><td>Lemma 5 lifted one derivative.</td></tr>
+<tr><td><strong>D1 &mdash; coherence</strong></td><td>\(\sup_t K_{CF}(t)\le K^*(E_0,\nu)\) on the stretching-active set.</td><td>Constantin&ndash;Fefferman, in dynamical form.</td></tr>
+<tr><td><strong>D2 &mdash; heat</strong></td><td>A rigorous \(K\sqrt{s}\) gain for \(\int_0^{s^*}\nabla^2 e^{s\Delta}[\text{Biot&ndash;Savart of }S]\,ds\) on the aligned shear sector, with a \(\Gamma\)-normalized tail.</td><td>Lemma 6, split at \(s^*\).</td></tr>
+<tr><td><strong>D3 &mdash; pitch</strong></td><td>Orbit-averaged \(c_1\theta-c_\nu\le-\delta<0\), uniformly in \(\nu\).</td><td>The Riccati pair; the measured pitch of the amplitude&ndash;coherence helix.</td></tr>
+<tr><td><strong>D4 &mdash; Mohr</strong></td><td>\(\|\nabla(P_\perp S\xi)\|\) subcritical on the shear sector: the gradient layer of the turning rate.</td><td>Lemma 5, one derivative up.</td></tr>
 </table>
-<p>The lemmas say what a proof of any of these must look like: dynamical (Lemma 3), scale-covariant (Lemma 4), near-field (Lemma 1 covers the rest), on the shear sector (Lemma 5), and at gradient level. Every route I tried, helix, transform, heat, Mohr, terminated on this same object. That is the proposal: stop looking for a new inequality and prove one of D1&ndash;D4.</p>
+<p>The lemmas say what a proof of any of these has to look like: dynamical (3), scale-covariant (4), near-field only (1 handles the rest), on the shear sector (5), and at the gradient level. Every route I tried, helix, transform, heat, Mohr, ended on this same object. So the proposal is short: stop hunting for a new inequality and prove one of D1 to D4.</p>
 </div>
 </section>
 
 <section>
 <h2>WHAT THE NUMERICS SAY</h2>
-<div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
-<p>All runs are periodic-box pseudo-spectral at \(\nu\ge 0.002\), resolution 48 to 64 per side, about fifteen seeds, with dealiasing and time-step checks and pre-registered outcomes. These are measurements, not theorems, and they cannot reach the \(\nu\to 0\) wall.</p>
+<div class="prose">
+<p>All runs are pseudo-spectral on a periodic box at \(\nu\ge 0.002\), 48 to 64 points per side, about fifteen seeds, with dealiasing and time-step checks, outcomes registered before each run. They're measurements, not theorems, and they can't reach the inviscid limit.</p>
 <table class="ledger">
 <tr><th>Observable</th><th>Measured</th><th>Reading</th></tr>
-<tr><td>Helix pitch in (\(\log A\), \(\log K\))</td><td>\(-0.34\) to \(-0.25\), same sign at every \(\nu\) and resolution</td><td>Amplification and coherence trade against each other along the orbit; the spiral sinks, it does not wind up.</td></tr>
-<tr><td>Rotation of the orbit</td><td>8 of 9 active runs rotate; disordered seeds counter-clockwise, organized seeds clockwise</td><td>Organized structures cohere first and then grow.</td></tr>
-<tr><td>Stretching efficiency \(\rho\)</td><td>0.12 to 0.26 against 0.816 allowed by the Mohr disk</td><td>Real flows use a fraction of the kinematic stretching budget.</td></tr>
-<tr><td>Turning rate \(\tau\)</td><td>40% of the Mohr budget</td><td>Consistent with enslavement on cores.</td></tr>
+<tr><td>Helix pitch in \((\log A,\log K)\)</td><td>\(-0.34\) to \(-0.25\), same sign at every \(\nu\) and resolution</td><td>Amplification and coherence trade against each other along the orbit. The spiral sinks; it doesn't wind up.</td></tr>
+<tr><td>Rotation of the orbit</td><td>8 of 9 active runs rotate; disordered seeds counter-clockwise, organized seeds clockwise</td><td>Organized structures cohere first, then grow.</td></tr>
+<tr><td>Stretching efficiency \(\rho\)</td><td>0.12 to 0.26, against 0.816 allowed by the Mohr disk</td><td>Real flows use a fraction of the stretching they're allowed.</td></tr>
+<tr><td>Turning rate \(\tau\)</td><td>40% of the Mohr budget</td><td>Consistent with the frame being dragged on cores.</td></tr>
 <tr><td>Coherence coefficient</td><td>0.243 to 0.246 against the derived 1/4</td><td>Lemma 7 holds on tubes within 3%.</td></tr>
-<tr><td>Weak-spring corner fraction across a fourfold Reynolds change</td><td>flat, \(\sim Re^{-0.01}\)</td><td>The set where the brake is weak does not shrink with Reynolds number. This is the honest bad news for the route.</td></tr>
-<tr><td>Kerr-type coherent tail, time resolved</td><td>persists at 15.8&times; baseline overlap, then dissolves 64% while production rises</td><td>A transient worn away in place, not a singular set being built.</td></tr>
+<tr><td>Weak-brake corner fraction across a fourfold Reynolds change</td><td>flat, about \(Re^{-0.01}\)</td><td>The set where the brake is weak doesn't shrink with Reynolds number. This is the bad news for the route.</td></tr>
+<tr><td>Kerr-type coherent tail, followed in time</td><td>persists at 15.8&times; baseline overlap, then dissolves by 64% while production rises</td><td>A transient wearing away in place, not a singular set being built.</td></tr>
 </table>
-<p>One result was withdrawn in public after failing out of sample: an early "growth tax" claim that growth rate contracts the helix. The pre-registration caught it. It stays on the record because the method is the point.</p>
+<p>One result was withdrawn in public after it failed out of sample: an early claim that growth rate contracts the helix. The pre-registration caught it. It stays in the record because the method is the point.</p>
 </div>
 </section>
 
 <section>
-<h2>PLACEMENT AGAINST THE LITERATURE</h2>
-<div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
+<h2>WHERE THIS SITS IN THE LITERATURE</h2>
+<div class="prose">
 <table class="ledger">
 <tr><th>Statement</th><th>Status</th><th>Anchor</th></tr>
-<tr><td>3D Euler finite-time blowup, low regularity, symmetric class</td><td><strong>Proven</strong> (computer-assisted)</td><td>Chen&ndash;Hou; Elgindi</td></tr>
+<tr><td>3D Euler finite-time blowup, low regularity, symmetric class, unforced</td><td><strong>Proven</strong> (computer-assisted)</td><td>Chen&ndash;Hou; Elgindi</td></tr>
+<tr><td>3D Euler finite-time blowup with smooth forcing</td><td><strong>Proven</strong>, Lean-verified (2026)</td><td>Buckmaster&ndash;Alp&ouml;ge, on the C&oacute;rdoba&ndash;Mart&iacute;nez-Zoroa program</td></tr>
 <tr><td>Type I (self-similar rate) Navier&ndash;Stokes singularity</td><td><strong>Excluded</strong></td><td>Escauriaza&ndash;Seregin&ndash;&Scaron;ver&aacute;k; Ne&#269;as&ndash;R&#367;&#382;i&#269;ka&ndash;&Scaron;ver&aacute;k</td></tr>
 <tr><td>Constant-viscosity self-similar blowup</td><td><strong>Prevented by a scaling instability</strong> (numerical)</td><td>Hou 2024; reproduced here by four routes</td></tr>
-<tr><td>Bounded ancient solutions trivial (Liouville), general case</td><td>Open, essentially equivalent to Clay A</td><td>Seregin&ndash;&Scaron;ver&aacute;k; Koch&ndash;Nadirashvili&ndash;Seregin&ndash;&Scaron;ver&aacute;k</td></tr>
-<tr><td>Smooth all-data 3D Navier&ndash;Stokes (Clay A)</td><td><strong>Open</strong></td><td>this page proposes where the proof lives</td></tr>
-<tr><td>One rigorous finite-time blowup datum (Clay B)</td><td><strong>Open</strong>, none known</td><td>exact self-similar profiles excluded four ways here; rotating self-similar class unexplored</td></tr>
+<tr><td>Forced Navier&ndash;Stokes blowup (options C, D)</td><td><strong>Announced</strong>, unreleased, unreviewed</td><td>OpenAI, September 2026</td></tr>
+<tr><td>Bounded ancient solutions trivial (Liouville), general case</td><td>Open, essentially equivalent to option A</td><td>Seregin&ndash;&Scaron;ver&aacute;k; Koch&ndash;Nadirashvili&ndash;Seregin&ndash;&Scaron;ver&aacute;k</td></tr>
+<tr><td>Smooth all-data unforced 3D Navier&ndash;Stokes (options A, B)</td><td><strong>Open</strong></td><td>this page says where the proof lives</td></tr>
 </table>
-<p>The Perelman analogy is exact and it is the spine of the route: Type I is already handled by a Perelman-shaped argument (a critical monotone quantity plus exclusion of self-similar profiles). The open case is Type II, the regime that forced Perelman into surgery. A Gaussian-weighted enstrophy in self-similar variables gives a single monotone whose only enemy is the production term, and that production term is exactly the coherence object above.</p>
+<p>The Perelman analogy is exact and it's the spine of the route. Type I is already handled by a Perelman-shaped argument: a critical monotone quantity plus exclusion of self-similar profiles. The open case is Type II, the regime that pushed Perelman into surgery. A Gaussian-weighted enstrophy in self-similar variables gives one monotone quantity whose only enemy is the production term, and that production term is the coherence object above.</p>
 </div>
 </section>
 
 <section>
-<h2>WHAT THIS PAGE DOES NOT CLAIM</h2>
-<div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
+<h2>WHAT THIS PAGE DOESN'T CLAIM</h2>
+<div class="prose">
 <ul style="padding-left:1.2rem">
-<li>It does not claim a proof of any of the four Clay statements.</li>
-<li>Lemmas 1 to 6 are proven; Lemma 7 is derivation-complete through second order under slender-tube and near-steady hypotheses that are still open.</li>
-<li>The numerics are at \(\nu\ge 0.002\) on a periodic box. Nothing here extrapolates to the inviscid limit, and the flat corner fraction across Reynolds number is evidence against an easy version of the route.</li>
-<li>The residue is stated, not closed. Conservation of difficulty held every time: each "last piece" relocated the full problem into D1&ndash;D4.</li>
+<li>A proof of any of Fefferman's four options.</li>
+<li>Lemmas 1 to 6 are proven. Lemma 7 is derived through second order under slender-tube and near-steady assumptions that are still open. The braid ceiling is conditional on Burgers slaving.</li>
+<li>The numerics live at \(\nu\ge 0.002\) on a periodic box. Nothing here extrapolates to zero viscosity, and the flat corner fraction across Reynolds number counts against an easy version of the route.</li>
+<li>The gap is stated, not closed. Every "last piece" I chased moved the full difficulty back into D1 to D4.</li>
 </ul>
 </div>
 </section>
 
 <section>
 <h2>HOW TO ENGAGE</h2>
-<div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
-<p>The full ledger behind this page runs to several hundred dated cards: proofs, attack protocols, pre-registered numerical runs, retractions. I'll share it with anyone who wants to check or attack a specific item, and I'll post the outcome here either way. The most useful thing a reader can do is one of these:</p>
-<div class="app-card"><h4>ATTACK A LEMMA</h4><p>Lemmas 1 to 3 have written peer protocols (P1 analytic check, P2 numeric sanity, P3 label). Break one and it comes off the page.</p></div>
-<div class="app-card"><h4>CLOSE A FORM</h4><p>Prove D1, D2, D3 or D4 for all smooth finite-energy data. If you do, you have Clay A, and the fencing lemmas on this page tell you which shape the argument has to take.</p></div>
-<div class="app-card"><h4>EXHIBIT THE COUNTEREXAMPLE</h4><p>The instrument for Clay B in this program is a sign change of the helix pitch as \(\nu\to 0\). It has never been observed. A rotating self-similar profile is the unexplored class.</p></div>
-<p style="margin-top:1.2rem">Contact: <a href="mailto:amnibro7@gmail.com" style="color:var(--accent)">amnibro7@gmail.com</a>. Posted 2026-09-08. Program dates July 2026. Method: two adversarial AI systems under my direction, every claim labeled LOCAL, CONDITIONAL or NUM, never Clay, until it earned a peer-closed mark.</p>
+<div class="prose">
+<p>The ledger behind this page is several hundred dated cards: proofs, attack protocols, registered runs, retractions. I'll share it with anyone who wants to check or attack a specific item, and I'll post the outcome here either way.</p>
+<div class="app-card"><h4>ATTACK A LEMMA</h4><p>Lemmas 1 to 3 have written peer protocols. Break one and it comes off the page.</p></div>
+<div class="app-card"><h4>CLOSE A FORM</h4><p>Prove D1, D2, D3 or D4 for all smooth finite-energy data and you have option A. The lemmas tell you what shape the argument has to take.</p></div>
+<div class="app-card"><h4>FIND THE UNFORCED COUNTEREXAMPLE</h4><p>The instrument here for a breakdown without forcing is a sign change of the helix pitch as \(\nu\to 0\). It has never been observed. A rotating self-similar profile is the class nobody has looked at.</p></div>
+<p style="margin-top:1.2rem">Contact: <a href="mailto:amnibro7@gmail.com">amnibro7@gmail.com</a>. Posted 2026-09-08. Program dates July 2026. Method: two adversarial AI systems under my direction, every claim labeled LOCAL, CONDITIONAL or NUM and never Clay until it earned a peer-closed mark.</p>
 </div>
 </section>
 
@@ -255,6 +273,7 @@ u}. \]
 </div>
 </div>
 </section>
+
 <footer>
 <div class="footer-links">
 <a href="../about.html">ABOUT</a>
