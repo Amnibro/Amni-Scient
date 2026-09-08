@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#F3F2EF">
+<title>CLI seats and what stays on your machine — AMNI-SCIENT</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta name="description" content="Braid’s privacy story is boring on purpose — your CLIs, your keys, licence check only.">
+<meta name="author" content="Amni-Scient">
+<meta property="og:title" content="CLI seats and what stays on your machine — AMNI-SCIENT">
+<meta property="og:description" content="Braid’s privacy story is boring on purpose — your CLIs, your keys, licence check only.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://amni-scient.com/blog/braid-cli-seats-privacy/">
+<meta property="og:image" content="https://amni-scient.com/assets/braid/tile-braid.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="CLI seats and what stays on your machine — AMNI-SCIENT">
+<meta name="twitter:description" content="Braid’s privacy story is boring on purpose — your CLIs, your keys, licence check only.">
+<meta name="twitter:image" content="https://amni-scient.com/assets/braid/tile-braid.jpg">
+<link rel="canonical" href="https://amni-scient.com/blog/braid-cli-seats-privacy/">
+<link rel="alternate" type="application/rss+xml" title="AMNI-SCIENT updates" href="https://amni-scient.com/blog/rss.xml">
+<link rel="preload" href="/assets/fonts/archivo-var.woff2" as="font" type="font/woff2" crossorigin>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"CLI seats and what stays on your machine","datePublished":"2026-09-02","dateModified":"2026-09-02","description":"Braid’s privacy story is boring on purpose — your CLIs, your keys, licence check only.","url":"https://amni-scient.com/blog/braid-cli-seats-privacy/","image":"https://amni-scient.com/assets/braid/tile-braid.jpg","author":{"@type":"Person","name":"Anthony Reffelt","alternateName":"Amnibro"},"publisher":{"@type":"Organization","name":"AMNI-SCIENT","legalName":"Amniscient, LLC","url":"https://amni-scient.com"}}</script>
+<link rel="stylesheet" href="/css/style.css?v=b262">
+<script>(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#08090B':'#F3F2EF');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();</script>
+</head>
+<body class="pp blog-page">
+<div class="grid-bg"></div>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<a href="/amni-calc.html">CALCULATORS</a>
+<a href="/amni-learn.html">LEARN</a>
+<a href="/blog/" class="active">BLOG</a>
+<a href="/research.html">RESEARCH</a>
+<div class="nav-dd">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu">
+<a href="/braid">BRAID</a>
+<a href="/symphony.html">SYMPHONY</a>
+<a href="/grok-remote.html">GROK-REMOTE</a>
+<a href="/amni-ai.html">AMNI-AI</a>
+<a href="/amni-browse.html">AMNI-BROWSE</a>
+<a href="/amni-calc.html">AMNI-CALC</a>
+<a href="/amni-explore.html">AMNI-EXPLORE</a>
+<a href="/amni-space.html">AMNI-SPACE</a>
+<a href="/amni-weather.html">AMNI-WEATHER</a>
+<a href="/game/">AMNI-GAME</a>
+<a href="/amni-learn.html">AMNI-LEARN</a>
+<a href="/amni-llm.html">AMNI-LLM</a>
+<a href="/amni-connect.html">AMNI-CONNECT</a>
+<a href="/amni-code.html">AMNI-CODE</a>
+<a href="/amni-core.html">AMNI-CORE</a>
+<a href="/amni-haven.html">AMNI-HAVEN</a>
+<a href="/amni-crypt.html">AMNI-CRYPT</a>
+<a href="/amni-life.html">AMNI-LIFE</a>
+<a href="/amni-prayer.html">AMNI-PRAYER</a>
+<a href="/amni-type.html">AMNI-TYPE</a>
+<a href="/amni-mail.html">AMNI-MAIL</a>
+</div>
+</div>
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer">SUPPORT</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<article class="blog-wrap">
+<p class="eyebrow">Braid — September 2, 2026</p>
+<h1>CLI seats and what stays on your machine</h1>
+<p class="blog-deck">Braid’s privacy story is boring on purpose — your CLIs, your keys, licence check only.</p>
+<div class="blog-hero"><img src="https://amni-scient.com/assets/braid/tile-braid.jpg" alt="" width="1600" height="900"></div>
+<div class="blog-prose">
+<p>Braid’s privacy story is intentionally dull.</p>
+<p>Each seat is a CLI or subscription you already signed into, or a local model you run yourself. Prompts are not shipped through an Amniscient proxy so I can “securely relay” them. The cloud piece is Stripe and a licence check. Chats and keys stay on the device.</p>
+<p>That means when a vendor changes a CLI flag, Braid feels it — same as you would in a terminal. I would rather fix that class of break than invent a hosted middlebox.</p>
+<p>Modes are still the same: all-at-once, one-at-a-time (each seat can read the last), squads. Details on <a href="/braid">/braid</a>. $10/mo beta. If you need a team arrangement, email — do not expect a self-serve enterprise maze.</p>
+</div>
+<div class="cta-row"><a class="btn btn-primary" href="/braid">See Braid</a><a class="btn btn-outline" href="/blog/">All updates</a></div>
+</article>
+<aside class="support-cta" aria-label="Support"><a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="support-link"><span class="support-ico">&#9749;</span><span>Enjoying this? <strong>Support on Ko-fi</strong></span></a></aside>
+<footer>
+<div class="footer-links">
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="/blog/">BLOG</a>
+<a href="/blog/rss.xml">RSS</a>
+<a href="/privacy.html">PRIVACY</a>
+<a href="/terms.html">TERMS</a>
+<a href="mailto:amnibro7@gmail.com">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
+</footer>
+</body>
+</html>
