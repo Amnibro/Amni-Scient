@@ -104,20 +104,20 @@ window.MathJax={tex:{inlineMath:[["$","$"],["\\(","\\)"]],displayMath:[["$$","$$
 <div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
 <div class="derivation-step">
 <h4>STEP 1 &mdash; ELITE ARCHIVE SELECTION</h4>
-<p>From the population of evaluated configurations I keep the top N by fitness score. N=4096 is the code constant I use. That keeps the spectral analysis on the region of parameter space I care about, which is the neighborhood of the best configurations.</p>
+<p>From the population of evaluated configurations I keep the top N by fitness score. N=4096 is the size I planned for; there is no published implementation yet, so every constant on this page is a design choice. That keeps the spectral analysis on the region of parameter space I care about, which is the neighborhood of the best configurations.</p>
 </div>
 <div class="derivation-step">
 <h4>STEP 2 &mdash; WASSERSTEIN k-NN GRAPH</h4>
-<p>I build a sparse k-nearest-neighbor graph over the archive with k=64, a code constant, using an approximate Wasserstein-1 distance between output curves. For W<sub>1</sub> I use the one-dimensional form: sort the values of each curve, and take the L1 distance between the two sorted cumulative curves. That's exact for 1-D distributions and it's the building block of sliced Wasserstein (Rabin, Peyr&eacute;, Delon &amp; Bernot, <em>SSVM</em> 2011). Edge weights also carry score similarity:</p>
+<p>I build a sparse k-nearest-neighbor graph over the archive with k=64 (a design choice), using an approximate Wasserstein-1 distance between output curves. For W<sub>1</sub> I use the one-dimensional form: sort the values of each curve, and take the L1 distance between the two sorted cumulative curves. That's exact for 1-D distributions and it's the building block of sliced Wasserstein (Rabin, Peyr&eacute;, Delon &amp; Bernot, <em>SSVM</em> 2011). Edge weights also carry score similarity:</p>
 <div class="eq-block">
 <div class="eq-label">EQUATION E1 &mdash; TRAJECTORY SIMILARITY</div>
 $$w_{ij} = \frac{\exp\left(-\frac{|s_i - s_j|}{\sigma_s}\right)}{W_1(\text{traj}_i, \text{traj}_j) + \epsilon}$$
 </div>
-<p>&sigma;<sub>s</sub> is the standard deviation of the scores across the archive and &epsilon; is set in code to keep the denominator away from zero. W<sub>1</sub> compares the whole shape of two curves. Plain L2 on the samples also sees every point, but it punishes a time shift hard; W<sub>1</sub> doesn't.</p>
+<p>&sigma;<sub>s</sub> is the standard deviation of the scores across the archive and &epsilon; is a small constant I would set to keep the denominator away from zero. W<sub>1</sub> compares the whole shape of two curves. Plain L2 on the samples also sees every point, but it punishes a time shift hard; W<sub>1</sub> doesn't.</p>
 </div>
 <div class="derivation-step">
 <h4>STEP 3 &mdash; LAPLACIAN EIGENDECOMPOSITION</h4>
-<p>I form the symmetric normalized Laplacian and take a rank-16 basis, where 16 is a code constant. The modes I want are the ones with the smallest nonzero eigenvalues, since those vary slowly across the graph. The current implementation gets its basis from a randomized SVD (Halko, Martinsson &amp; Tropp, <em>SIAM Review</em> 53, 2011), which returns the top of the spectrum, and that's a known inconsistency I still have to fix; the right call is a shift-invert or a partial eigensolver on the small end.</p>
+<p>I form the symmetric normalized Laplacian and take a rank-16 basis, where 16 is a design choice. The modes I want are the ones with the smallest nonzero eigenvalues, since those vary slowly across the graph. The current implementation gets its basis from a randomized SVD (Halko, Martinsson &amp; Tropp, <em>SIAM Review</em> 53, 2011), which returns the top of the spectrum, and that's a known inconsistency I still have to fix; the right call is a shift-invert or a partial eigensolver on the small end.</p>
 <div class="eq-block">
 <div class="eq-label">EQUATION E2 &mdash; SPECTRAL BASIS EXTRACTION</div>
 $$L_{\text{norm}} = I - D^{-1/2}AD^{-1/2}, \qquad L_{\text{norm}}\psi_j = \lambda_j \psi_j, \qquad j = 1 \ldots 16$$
@@ -234,7 +234,7 @@ $$d_j = \operatorname{clamp}\left(\left\lfloor 800 \cdot \lambda_j \cdot \text{c
 <section>
 <h2>HOW TO REPRODUCE</h2>
 <div class="prose">
-<p>I haven't published the implementation. The two charts above are the only runnable pieces on this page and both draw hand-set values. To rebuild the pipeline from the text: keep the top N configurations by score, compute the 1-D W<sub>1</sub> distance between every pair of output curves, build the k-NN graph with the E1 weights, form the symmetric normalized Laplacian, take the 16 smallest nonzero eigenpairs, compute the sorted finite-difference weights from E3, and encode with E4. Then repeat at each checkpoint and compare the stretch vectors. The 800 scale, the j mod D pairing, and the 0.9 and 0.7 thresholds are the places where you'd be copying my guesses.</p>
+<p>There is no implementation of this page yet, on disk or published; the only "Reffelt" code I have is an unrelated base-17 addressing scheme in Amni-AI. Every number on this page is a design choice until a linked script says otherwise. The two charts above are the only runnable pieces on this page and both draw hand-set values. To rebuild the pipeline from the text: keep the top N configurations by score, compute the 1-D W<sub>1</sub> distance between every pair of output curves, build the k-NN graph with the E1 weights, form the symmetric normalized Laplacian, take the 16 smallest nonzero eigenpairs, compute the sorted finite-difference weights from E3, and encode with E4. Then repeat at each checkpoint and compare the stretch vectors. The 800 scale, the j mod D pairing, and the 0.9 and 0.7 thresholds are the places where you'd be copying my guesses.</p>
 </div>
 </section>
 <section>
