@@ -206,27 +206,24 @@ The Euler blowup that is actually proven (Luo&ndash;Hou, Chen&ndash;Hou, Elgindi
 <div class="prose">
 <p>Added 2026-09-08, after reading the Alp&ouml;ge&ndash;Buckmaster preprints. Their engine is an exact affine-background wave. On a background with strain \(D(t)\) and gradient \(G(t)\), a wave with phase \(s=\lambda\,\zeta(t)\cdot x\) and amplitudes \(\Theta,\Omega\) solves the equations exactly when</p>
 <div class="eq-block"><div class="eq-label">Their amplitude law (Boussinesq, Lemma 3.1)</div>
-\[ \dot\zeta=-D^{T}\zeta,\qquad \dot\Theta=-rac{J\zeta\cdot G}{\lambda|\zeta|^{2}}\,\Omega,\qquad \dot\Omega=\lambda\,\zeta_{1}\Theta . \]
+\[ \dot\zeta=-D^{T}\zeta,\qquad \dot\Theta=-\frac{J\zeta\cdot G}{\lambda|\zeta|^{2}}\,\Omega,\qquad \dot\Omega=\lambda\,\zeta_{1}\Theta . \]
 </div>
 <p>The growth rate of each new layer is set by the gradient the earlier layers left behind, and a controlled rotation of the whole background steers each layer's vorticity back to zero before the next one grows. That rotation is one of the four places the force enters, and it's the one that carries the physics: a rigid rotation with a time-varying rate is not a solution of the unforced equations. In my language, the force is doing the job the pressure Hessian does on a coherent core, in the opposite direction. The brake in Lemma 7 keeps the current layer coherent; their steering hands the flow to the next one.</p>
 <p>So the unforced question turns into a number. Define a scale-covariant force budget \(J(f)\) for a blowup pair \((u_0,f)\). If every blowup pair has \(J(f)\ge\delta>0\), option A follows in one line, because the zero force has \(J=0\). Their construction bounds \(\delta\) from above. My D3 form is the same statement on cores. That's the forcing gap, and it's what I'm now working on instead of the four forms alone.</p>
 <div class="derivation-step">
 <h4>THE VISCOUS RUNG CONDITION</h4>
-<p>Add dissipation \(
-u(-\Delta)^{lpha}\) to the wave. When both fields are damped, as they are for Navier&ndash;Stokes, the growing eigenvalue is \(\sqrt{A}\sin s-
-u\lambda^{2lpha}\), so a layer at frequency \(\lambda_q\) grows only if</p>
+<p>Add dissipation \(\nu(-\Delta)^{\alpha}\) to the wave. When both fields are damped, as they are for Navier&ndash;Stokes, the growing eigenvalue is \(\sqrt{A}\sin s-\nu\lambda^{2\alpha}\), so a layer at frequency \(\lambda_q\) grows only if</p>
 <div class="eq-block"><div class="eq-label">Rung condition</div>
-\[ \Gamma_q \;\gtrsim\; 
-u\,\lambda_q^{2lpha}. \]
+\[ \Gamma_q \;\gtrsim\; \nu\,\lambda_q^{2\alpha}. \]
 </div>
-<p>In their published schedule the frequencies climb super-exponentially, \(\lambda_q=\lambda_{q-1}^{Q}\) with \(Q\ge 201\), while the growth rate available at rung \(q\) scales like \(\lambda_{q-1}^{1/16}\). The damping acts on the new frequency, so the ladder as written locks only for \(lpha<1/(32Q)\), about \(1.6	imes10^{-4}\), and full Navier&ndash;Stokes misses the second rung by 240 orders of magnitude at \(
-u=10^{-3}\). That's consistent with the only viscous case they mention, hypodissipation with a sufficiently small exponent, and with Tao calling the Navier&ndash;Stokes extension an enormous technical difficulty. It's a statement about this schedule, not about every possible ladder. A ladder that reaches \(lpha=1\) needs the background strain to grow like the square of the new frequency at every rung, which is the Burgers balance \(s=
+<p>In their published schedule the frequencies climb super-exponentially, \(\lambda_q=\lambda_{q-1}^{Q}\) with \(Q\ge 201\), while the growth rate available at rung \(q\) scales like \(\lambda_{q-1}^{1/16}\). The damping acts on the new frequency, so the ladder as written locks only for \(\alpha<1/(32Q)\), about \(1.6	imes10^{-4}\), and full Navier&ndash;Stokes misses the second rung by 240 orders of magnitude at \(
+u=10^{-3}\). That's consistent with the only viscous case they mention, hypodissipation with a sufficiently small exponent, and with Tao calling the Navier&ndash;Stokes extension an enormous technical difficulty. It's a statement about this schedule, not about every possible ladder. A ladder that reaches \(\alpha=1\) needs the background strain to grow like the square of the new frequency at every rung, which is the Burgers balance \(s=
 u\lambda^{2}\), the same balance the braid ceiling above is written against. Unforced Navier&ndash;Stokes sits exactly at the margin of the rung condition on every coherent core.</p>
 </div>
 <div class="derivation-step">
 <h4>FIRST NUMBERS (PRELIMINARY)</h4>
-<p>Two probes, registered before the runs. The ODE probe applies their amplitude law with dissipation added: at \(lpha=1/6432\) every rung locks with the same margin, at \(lpha=1/64\) the ladder dies at rung two, at \(lpha=1\) it dies at rung two by 240 orders. The box probe puts a small vorticity layer at wavenumber \(\lambda\) on the stagnation strain of a Taylor&ndash;Green flow in the real equations at \(64^3\) and measures its growth rate against \(S-
-u\lambda^{2}\). Sign and ordering held: the growth flips sign near \(\lambdapprox12\) at \(
+<p>Two probes, registered before the runs. The ODE probe applies their amplitude law with dissipation added: at \(\alpha=1/6432\) every rung locks with the same margin, at \(\alpha=1/64\) the ladder dies at rung two, at \(\alpha=1\) it dies at rung two by 240 orders. The box probe puts a small vorticity layer at wavenumber \(\lambda\) on the stagnation strain of a Taylor&ndash;Green flow in the real equations at \(64^3\) and measures its growth rate against \(S-
+u\lambda^{2}\). Sign and ordering held: the growth flips sign near \(\lambda\approx12\) at \(
 u=4	imes10^{-3}\) against a predicted 14.5, and stays positive through \(\lambda=16\) at \(
 u=10^{-3}\). The absolute level failed the registered 10% tolerance: measured rates sit 0.2 to 0.25 below the prediction at every \(\lambda\) and \(
 u\), and drop further as the strain compresses the layer. On the real equations the layer never gets the full stagnation strain, so the rung is at least as hard as the ODE says. Next: \(96^3\) to reach \(\lambda=28\), a frozen-background control to split advection loss from viscous loss, and the force budget \(J\) on their solutions once released.</p>
