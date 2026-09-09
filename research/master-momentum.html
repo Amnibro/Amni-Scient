@@ -5,16 +5,16 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="theme-color" content="#FBFAF8">
 <meta name="robots" content="noindex, nofollow">
-<title>Master Momentum Equation — Turbulence Closure &amp; Regularity Proof | AMNI-SCIENT Research</title>
-<meta name=”description” content=”The Master Momentum Equation: a 12-equation closed PDE system achieving complete Navier-Stokes turbulence closure from first principles, with a rigorous proof of global regularity via Bakry-Émery curvature and supercritical enstrophy dissipation.”>
+<title>Master Momentum Equation — A Closed Momentum PDE with Eddy Viscosity | AMNI-SCIENT Research</title>
+<meta name="description" content="The Master Momentum Equation: twelve equations for price momentum, rewritten as a closed momentum PDE with a k-epsilon-style eddy viscosity. Includes the status of the regularity argument after outside review (v2, July 2026).">
 <meta name="keywords" content="master momentum equation,turbulence closure,Navier-Stokes,PDE system,eddy viscosity,k-epsilon,resistance field,closed form">
 <meta property="og:title" content="Master Momentum Equation — AMNI-SCIENT Research">
-<meta property="og:description" content="12-equation closed PDE system for Navier-Stokes turbulence closure with rigorous global regularity proof.">
+<meta property="og:description" content="Twelve momentum equations rewritten as a closed PDE with eddy viscosity, plus the current status of the regularity argument after outside review.">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://amni-scient.com/research/master-momentum">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="https://amni-scient.com/research/master-momentum">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"ScholarlyArticle","name":"Master Momentum Equation","author":{"@type":"Person","name":"Amnibro"},"description":"A 12-equation closed PDE system achieving complete Navier-Stokes turbulence closure.","url":"https://amni-scient.com/research/master-momentum","publisher":{"@type":"Organization","name":"AMNI-SCIENT"},"datePublished":"2025","dateModified":"2026"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"ScholarlyArticle","name":"Master Momentum Equation","author":{"@type":"Person","name":"Anthony Reffelt"},"description":"Twelve momentum equations rewritten as a closed PDE with a k-epsilon-style eddy viscosity, with the status of the regularity argument after outside review.","url":"https://amni-scient.com/research/master-momentum","publisher":{"@type":"Organization","name":"AMNI-SCIENT"},"datePublished":"2025","dateModified":"2026-09-09"}</script>
 <link rel="stylesheet" href="../css/style.css?v=b260">
 <script>
 window.MathJax={tex:{inlineMath:[["$","$"],["\\(","\\)"]],displayMath:[["$$","$$"],["\\[","\\]"]],processEscapes:true},options:{skipHtmlTags:["script","noscript","style","textarea","pre","code"]}};
@@ -62,6 +62,10 @@ window.MathJax={tex:{inlineMath:[["$","$"],["\\(","\\)"]],displayMath:[["$$","$$
 .proof-status{display:inline-block;font-size:.6rem;letter-spacing:1px;padding:3px 8px;border-radius:3px;font-weight:700}
 .proof-status.complete{background:rgba(0,255,157,.15);color:var(--accent);border:1px solid var(--accent)}
 .proof-status.partial{background:rgba(255,200,50,.15);color:#ffc832;border:1px solid #ffc832}
+.callout{max-width:800px;margin:1.25rem auto;padding:1.25rem 1.5rem;border:1px solid var(--accent);border-radius:8px;background:var(--panel);color:var(--dim);font-size:.9rem;line-height:1.8}
+.callout strong{color:var(--text)}
+.prose{max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem}
+.retracted{color:#ffc832;font-size:.75rem;letter-spacing:1px;margin:.5rem 0}
 </style>
 </head>
 <body class="pp">
@@ -99,16 +103,17 @@ window.MathJax={tex:{inlineMath:[["$","$"],["\\(","\\)"]],displayMath:[["$$","$$
 <section class="hero" style="min-height:auto;padding:8rem 2rem 3rem">
 <div class="breadcrumb"><a href="../research.html">RESEARCH</a> &nbsp;/&nbsp; MASTER MOMENTUM EQUATION</div>
 <h1>MASTER MOMENTUM EQUATION</h1>
-<p class="subtitle">12-EQUATION NAVIER-STOKES TURBULENCE CLOSURE</p>
-<p class="tagline">A self-contained PDE system that evolves momentum through space and time via holographic resistance fields, turbulent kinetic energy, and eddy viscosity &mdash; achieving complete closure with zero external data dependencies.</p>
+<p class="subtitle">A CLOSED MOMENTUM PDE WITH EDDY VISCOSITY</p>
+<p class="tagline">Twelve equations I wrote between 2019 and 2025 for price momentum, rewritten as a closed momentum PDE with a k-&epsilon;-style eddy viscosity. Closed means every variable on the right side is built from p(t), five gains, and two windows I have to pick.</p>
 </section>
+<div class="prose"><div class="callout"><strong>Status, 2026-09-09.</strong> The twelve equations and the closure check (every variable in Eq. 12 traces back to p(t)) are derived on this page. Nothing here is measured against flow data or market data. The regularity argument was reviewed from outside in July 2026 and three steps failed; the current v2 proves a Z<sup>5/2</sup> dissipation bound for an amended closure (Eq. 11&prime;), the Bakry-&Eacute;mery step is a heuristic, and the spatial transfer is open. The applications section is a list of directions I haven't tested.</div></div>
 <section>
 <h2>ABSTRACT</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
-<p>The <strong style="color:var(--text)">Master Momentum Equation</strong> is the culmination of the Reffelt framework: a closed system of 12 coupled equations that fully determine the evolution of momentum in a resistance field. Unlike the standard Navier-Stokes equations (which require external turbulence models like RANS or LES), this system achieves <strong style="color:var(--text)">internal closure</strong> &mdash; every variable is defined by other variables within the system.</p>
-<p style="margin-top:1.2rem">The system builds from primitive observables (velocity, mass, curvature) through intermediate constructions (PID forcing, smoothness, turbulent kinetic energy) to a k-&epsilon; turbulence model that feeds back into a dynamic resistance field. The final equation (Eq. 12) is a modified Navier-Stokes momentum equation with all terms internally resolved.</p>
+<p>The <strong style="color:var(--text)">Master Momentum Equation</strong> is a set of twelve coupled equations I first wrote for price momentum (the source is REFFELT_MASTER_EQUATIONS.md in my repo, 2019 to 2025). Here p is price, v is its rate of change, and &sigma;<sub>ATR</sub> is Average True Range, a volatility measure from trading. The eddy viscosity is built from the system's own variables, so the set closes on itself without a separate turbulence model.</p>
+<p style="margin-top:1.2rem">The system builds from primitive observables (velocity, mass, curvature) through intermediate constructions (PID forcing, smoothness, a turbulent kinetic energy analogue) to an eddy viscosity that feeds back into a dynamic resistance field. The last equation (Eq. 12) is a momentum equation with the shape of Navier-Stokes and every term defined above it.</p>
 <div style="margin-top:2rem;">
-<a href="millennium_sim/index.html" style="display:inline-block;background:var(--accent);color:var(--bg);padding:1rem 2rem;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.85rem;letter-spacing:2px;text-decoration:none;font-weight:bold;transition:transform 0.2s,box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 4px 15px rgba(var(--accent-rgb,100,200,255),0.4)'" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='none'">LAUNCH INTERACTIVE SIMULATION &rarr;</a>
+<a href="millennium_sim/index.html" style="display:inline-block;background:var(--accent);color:var(--bg);padding:1rem 2rem;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.85rem;letter-spacing:2px;text-decoration:none;font-weight:bold;transition:transform 0.2s,box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 4px 15px rgba(var(--accent-rgb,100,200,255),0.4)'" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='none'">OPEN THE SOLVER PAGE &rarr;</a>
 </div>
 </div>
 </section>
@@ -122,7 +127,7 @@ window.MathJax={tex:{inlineMath:[["$","$"],["\\(","\\)"]],displayMath:[["$$","$$
 <div class="eq-label">EQ. 1</div>
 $$v(t) = \frac{dp}{dt}$$
 </div>
-<p>The instantaneous rate of change of the system state p. In continuous systems this is the time derivative; in discrete systems it is the first difference &Delta;p/&Delta;t.</p>
+<p>The rate of change of the state p. In the original setting p is a price series, so this is a return per bar; in the solver it is the first difference &Delta;p/&Delta;t.</p>
 </div>
 <div class="derivation-step">
 <h4>EQUATION 2 &mdash; EFFECTIVE MASS</h4>
@@ -130,7 +135,7 @@ $$v(t) = \frac{dp}{dt}$$
 <div class="eq-label">EQ. 2</div>
 $$m(t) = \frac{1}{\sigma_{\text{ATR}}(t)}$$
 </div>
-<p>Mass is inversely proportional to local volatility (Average True Range). High-volatility regions have low inertia (respond quickly to forces); stable regions have high inertia (resist perturbation).</p>
+<p>Mass is the inverse of local volatility. &sigma;<sub>ATR</sub> is Average True Range over a window I pick; the trading code uses 14 bars, and sim.cpp shortcuts it to the one-bar |&Delta;p|. High-volatility stretches get low inertia and respond fast to forcing; quiet stretches get high inertia.</p>
 </div>
 <div class="derivation-step">
 <h4>EQUATION 3 &mdash; STEERING SIGNAL</h4>
@@ -147,7 +152,7 @@ $$i(t) = \operatorname{Hilbert\_imag}(p(t))$$
 <div class="eq-label">EQ. 4</div>
 $$F_{\text{PID}}(t) = k_p \cdot i(t) + k_i \int i \, dt + k_d \cdot \dot{i}(t)$$
 </div>
-<p>A proportional-integral-derivative controller transforms the steering signal into a force. The P-term responds to current state, I-term accumulates historical bias, and D-term anticipates future change.</p>
+<p>A PID controller turns the steering signal into a force. The P-term responds to the current signal, the I-term accumulates its history, and the D-term reacts to its slope. The three gains are inputs I pick. sim.cpp currently hard-codes F<sub>PID</sub> = 0.5 instead of computing Eq. 4.</p>
 </div>
 <div class="derivation-step">
 <h4>EQUATION 5 &mdash; SMOOTHNESS</h4>
@@ -155,7 +160,7 @@ $$F_{\text{PID}}(t) = k_p \cdot i(t) + k_i \int i \, dt + k_d \cdot \dot{i}(t)$$
 <div class="eq-label">EQ. 5</div>
 $$s(t) = 1 - \frac{\operatorname{std}(r_N)}{\operatorname{mean}(r_N)}$$
 </div>
-<p>Smoothness s &isin; [0, 1] measures how regular the recent trajectory has been. s &asymp; 1 indicates laminar flow (low coefficient of variation), s &asymp; 0 indicates turbulent flow (high variation relative to mean).</p>
+<p>Smoothness measures how regular the last N returns r<sub>N</sub> have been. As written s &le; 1, and the solver clamps it at 0 when std exceeds mean, so the working range is [0, 1]. s near 1 means a low coefficient of variation (laminar); s near 0 means the variation is as big as the mean (turbulent). N is a window I pick.</p>
 </div>
 <div class="derivation-step">
 <h4>EQUATION 6 &mdash; CURVATURE</h4>
@@ -165,22 +170,23 @@ $$c(t) = \frac{\partial^2 p}{\partial t^2}$$
 </div>
 <p>The second derivative of the state field. Curvature captures acceleration/deceleration of the trajectory, serving as both a turbulence indicator and a damping term in the master equation.</p>
 </div>
-<h3 style="color:var(--accent);font-size:.75rem;letter-spacing:3px;margin:2.5rem 0 1.5rem">LAYER 3 &mdash; TURBULENCE MODEL (k-&epsilon; CLOSURE)</h3>
+<h3 style="color:var(--accent);font-size:.75rem;letter-spacing:3px;margin:2.5rem 0 1.5rem">LAYER 3 &mdash; EDDY VISCOSITY</h3>
+<p style="margin-bottom:1.5rem">Eq. 10 is the algebraic &nu;<sub>t</sub> = C<sub>&mu;</sub>k&sup2;/&epsilon; relation from Launder &amp; Spalding (1974). Eqs. 8 and 9 are my own definitions of k and &epsilon;, not the k-&epsilon; transport equations, and I haven't validated them against any flow data.</p>
 <div class="derivation-step">
 <h4>EQUATION 7 &mdash; STATIC HOLOGRAPHIC RESISTANCE</h4>
 <div class="eq-block">
 <div class="eq-label">EQ. 7</div>
 $$R_0(p, \ell)$$
 </div>
-<p>The base resistance manifold computed from the holographic membrane framework (see <a href="holographic-membrane.html" style="color:var(--accent)">Holographic Resistance Membrane</a>). This is the static friction landscape before turbulence correction.</p>
+<p>The base resistance manifold from the <a href="holographic-membrane.html" style="color:var(--accent)">Holographic Resistance Membrane</a> page. It's an input here, not a result of this page: the static friction landscape before the turbulence correction.</p>
 </div>
 <div class="derivation-step">
 <h4>EQUATION 8 &mdash; TURBULENT KINETIC ENERGY</h4>
 <div class="eq-block">
 <div class="eq-label">EQ. 8</div>
-$$k(p, \ell) = (1 - s) \cdot \nabla \cdot \mathbf{M}_{\text{grid}}$$
+$$k(p, \ell) = (1 - s) \cdot \nabla \cdot \mathbf{M}_{\text{grid}}, \qquad \mathbf{M}_{\text{grid}} := m\,v$$
 </div>
-<p>Turbulent kinetic energy is the product of non-smoothness (1 &minus; s) and the divergence of the momentum grid. Laminar regions (s &asymp; 1) have near-zero k; turbulent regions have high k proportional to momentum flux divergence.</p>
+<p>My turbulent kinetic energy analogue is non-smoothness (1 &minus; s) times the divergence of the momentum field M<sub>grid</sub> = m&middot;v. In sim.cpp that divergence is the one-step difference m<sub>i</sub>v<sub>i</sub> &minus; m<sub>i&minus;1</sub>v<sub>i&minus;1</sub>, clamped at zero. Laminar stretches (s near 1) give k near zero. The proof page uses a simpler pair, k = (1&minus;s)|v| with a corrected &epsilon;, to get the closed form in Stage 1 below; the two are not the same definition, and I say so there.</p>
 </div>
 <div class="derivation-step">
 <h4>EQUATION 9 &mdash; ENERGY DISSIPATION RATE</h4>
@@ -188,7 +194,7 @@ $$k(p, \ell) = (1 - s) \cdot \nabla \cdot \mathbf{M}_{\text{grid}}$$
 <div class="eq-label">EQ. 9</div>
 $$\varepsilon(p, \ell) = c \cdot \frac{1 - s}{s} \cdot \frac{1}{\ell}$$
 </div>
-<p>Dissipation rate combines curvature c, turbulence ratio (1&minus;s)/s, and inverse scale &ell;<sup>&minus;1</sup>. This captures the cascade of energy from large scales to small scales, analogous to the Kolmogorov energy cascade in classical turbulence theory.</p>
+<p>My dissipation analogue combines curvature c, the ratio (1&minus;s)/s, and the inverse scale 1/&ell;. The shape is meant to echo an energy cascade from large to small scales. That's the intent; I haven't checked it against a Kolmogorov spectrum or any measured dissipation.</p>
 </div>
 <div class="derivation-step">
 <h4>EQUATION 10 &mdash; EDDY VISCOSITY</h4>
@@ -196,7 +202,7 @@ $$\varepsilon(p, \ell) = c \cdot \frac{1 - s}{s} \cdot \frac{1}{\ell}$$
 <div class="eq-label">EQ. 10</div>
 $$\nu_t(p, \ell) = C_\mu \frac{k^2}{\varepsilon} \qquad C_\mu = 0.09$$
 </div>
-<p>The standard k-&epsilon; eddy viscosity formulation with the empirical constant C<sub>&mu;</sub> = 0.09 (matching the Launder-Spalding value from classical CFD). This provides the turbulent diffusion coefficient.</p>
+<p>The algebraic eddy viscosity relation with the constant C<sub>&mu;</sub> = 0.09 from Launder &amp; Spalding, "The numerical computation of turbulent flows", Comp. Meth. Appl. Mech. Eng. 3 (1974) 269-289. I took the constant from CFD; nothing on this page justifies it for this system.</p>
 </div>
 <div class="derivation-step">
 <h4>EQUATION 11 &mdash; DYNAMIC RESISTANCE</h4>
@@ -204,7 +210,7 @@ $$\nu_t(p, \ell) = C_\mu \frac{k^2}{\varepsilon} \qquad C_\mu = 0.09$$
 <div class="eq-label">EQ. 11</div>
 $$R_{\text{eff}}(p, \ell) = \gamma_0 + \nu_t(p, \ell)$$
 </div>
-<p>The effective resistance field combines base viscosity &gamma;<sub>0</sub> with turbulent eddy viscosity. This replaces the static R<sub>0</sub> with a dynamic field that adapts to local turbulence conditions.</p>
+<p>The effective resistance field adds base viscosity &gamma;<sub>0</sub> to the eddy viscosity, so the static R<sub>0</sub> gets a term that moves with local turbulence. The v2 proof page works with an amended version, Eq. 11&prime;, that adds a global feedback term; this page shows the original.</p>
 </div>
 <h3 style="color:var(--accent);font-size:.75rem;letter-spacing:3px;margin:2.5rem 0 1.5rem">LAYER 4 &mdash; MASTER EQUATION</h3>
 <div class="derivation-step">
@@ -213,7 +219,7 @@ $$R_{\text{eff}}(p, \ell) = \gamma_0 + \nu_t(p, \ell)$$
 <div class="eq-label">EQ. 12 &mdash; THE MASTER EQUATION</div>
 $$\frac{dv}{dt} = \frac{F_{\text{PID}}}{m} + v\frac{\partial v}{\partial p} - s \cdot c - \frac{\partial R_{\text{eff}}}{\partial p}$$
 </div>
-<p>Four terms, each with distinct physical meaning:</p>
+<p>Four terms, and what I mean by each:</p>
 <table class="dep-table" style="margin-top:1rem">
 <thead><tr><th style="text-align:left">TERM</th><th style="text-align:left">EXPRESSION</th><th style="text-align:left">PHYSICAL MEANING</th></tr></thead>
 <tbody>
@@ -248,31 +254,32 @@ $$\frac{dv}{dt} = \frac{F_{\text{PID}}}{m} + v\frac{\partial v}{\partial p} - s 
 <tr><td>&ell; (scale)</td><td></td><td></td><td></td><td></td><td></td><td></td><td class="used">&bull;</td><td class="used">&bull;</td><td class="used">&bull;</td><td class="used">&bull;</td><td class="used">&bull;</td><td></td></tr>
 </tbody>
 </table>
-<p style="color:var(--dim);font-size:.85rem;line-height:1.9;margin-top:1rem"><strong style="color:var(--text)">Closure verified:</strong> every variable appearing in Eq. 12 is defined by equations 1&ndash;11. No external data, no free parameters beyond C<sub>&mu;</sub> = 0.09 and base viscosity &gamma;<sub>0</sub>.</p>
+<p style="color:var(--dim);font-size:.85rem;line-height:1.9;margin-top:1rem"><strong style="color:var(--text)">Closure check:</strong> every variable in Eq. 12 traces back to p(t). The tuned inputs are C<sub>&mu;</sub> = 0.09, &gamma;<sub>0</sub>, &delta; = 0.01, the PID gains k<sub>p</sub>, k<sub>i</sub>, k<sub>d</sub>, the ATR and smoothness windows, and the scale &ell;. R<sub>0</sub> comes from the membrane page, so it's an input here, not a result.</p>
 </div>
 </section>
 <section>
-<h2>STATE-OF-THE-ART APPLICATIONS</h2>
+<h2>DIRECTIONS I HAVEN'T TESTED</h2>
 <div style="max-width:800px;margin:0 auto">
+<p style="color:var(--dim);font-size:.85rem;line-height:1.9;margin-bottom:1rem">Each of these is a mapping I'd like to try. None of them has a run behind it.</p>
 <div class="app-card">
-<h4>&#127744; WEATHER &amp; CLIMATE MODELING</h4>
-<p>Atmospheric dynamics are governed by the Navier-Stokes equations with turbulence closure as the primary bottleneck. Current NWP models use parameterized turbulence schemes (Mellor-Yamada, Smagorinsky) tuned per domain. The Master Momentum Equation provides a self-consistent closure where smoothness s naturally detects laminar vs. turbulent regimes, curvature c tracks frontal zones, and the k-&epsilon; model adapts eddy viscosity to local conditions without domain-specific tuning. The Hilbert-transform steering signal (Eq. 3) naturally captures wave-mean flow interaction.</p>
+<h4>WEATHER</h4>
+<p>If s can tell laminar from turbulent air the way it tells quiet from noisy price, Eq. 12 might serve as a closure in a toy atmospheric model; I haven't tried it against any NWP scheme.</p>
 </div>
 <div class="app-card">
-<h4>&#128293; DATACENTER THERMAL MANAGEMENT</h4>
-<p>Server rack airflow is a turbulent heat transfer problem. The 12-equation system models thermal momentum through the datacenter: p = temperature field, v = heat flux, m = thermal capacitance (inverse of local thermal diffusivity), R<sub>eff</sub> = effective thermal resistance (insulation + turbulent mixing). The PID force represents HVAC actuation. Unlike CFD simulations that take hours per configuration, the closed-form nature of the system enables real-time thermal field prediction for dynamic workload routing.</p>
+<h4>DATACENTER AIRFLOW</h4>
+<p>With p as temperature, v as heat flux and F<sub>PID</sub> as the HVAC loop, the system could be a cheap thermal predictor; I haven't compared it to a single CFD run.</p>
 </div>
 <div class="app-card">
-<h4>&#128640; AEROSPACE &mdash; TURBULENT BOUNDARY LAYERS</h4>
-<p>Aircraft wing design requires accurate turbulent boundary layer prediction. The Master Equation's smoothness term (Eq. 5) naturally handles the laminar-to-turbulent transition, while the k-&epsilon; closure (Eqs. 8&ndash;10) models the turbulent region. The holographic resistance field R<sub>0</sub> encodes the wing geometry, and the dynamic resistance R<sub>eff</sub> adapts to local Reynolds number conditions. This provides a unified framework that doesn't require separate transition models (e.g., e<sup>N</sup> method) bolted onto the solver.</p>
+<h4>WING BOUNDARY LAYERS</h4>
+<p>The s term looks like a transition switch and R<sub>0</sub> could carry the geometry; I haven't put it next to any boundary-layer data.</p>
 </div>
 <div class="app-card">
-<h4>&#9889; AI TRAINING DYNAMICS</h4>
-<p>Neural network training is momentum evolution through a loss landscape. The system maps directly: p = model parameters, v = gradient momentum (Adam/SGD), m = adaptive learning rate (inverse of gradient variance, cf. Adam's v&#770;), F<sub>PID</sub> = learning rate scheduler, s = gradient noise stability, c = loss surface curvature (Hessian trace). The Master Equation describes optimal parameter evolution with turbulence closure for noisy mini-batch gradients, potentially replacing ad-hoc learning rate warmup/decay schedules with a principled PDE solution.</p>
+<h4>TRAINING DYNAMICS</h4>
+<p>With p as parameters, m as the inverse gradient variance (like Adam's second moment) and c as curvature, Eq. 12 could be read as a schedule; I haven't trained anything with it.</p>
 </div>
 <div class="app-card">
-<h4>&#128171; MATERIALS SCIENCE &mdash; CRACK PROPAGATION</h4>
-<p>Fracture mechanics in composite materials involves stress field evolution through heterogeneous media. The resistance manifold R<sub>0</sub> encodes material properties (grain boundaries, fiber orientation), momentum v is the stress intensity factor, and the k-&epsilon; closure models the process zone where micro-crack interactions create "turbulent" stress redistribution. The smoothness transition (laminar elastic &rarr; turbulent plastic) maps directly to the yield point, providing a unified elastic-plastic-fracture framework.</p>
+<h4>CRACK PROPAGATION</h4>
+<p>R<sub>0</sub> as a grain-boundary map and the s transition as the yield point is a picture I like; there's no fracture data behind it.</p>
 </div>
 </div>
 </section>
@@ -281,7 +288,7 @@ $$\frac{dv}{dt} = \frac{F_{\text{PID}}}{m} + v\frac{\partial v}{\partial p} - s 
 <div style="max-width:800px;margin:0 auto">
 <div class="viz-section">
 <h4>MASTER EQUATION TERM CONTRIBUTIONS</h4>
-<p style="color:var(--dim);font-size:.8rem;line-height:1.7;margin-bottom:1rem">Simulates the 4 terms of Eq. 12 over time: PID forcing (F/m), advection (v&middot;&part;v/&part;p), damping (&minus;s&middot;c), and resistance gradient (&minus;&part;R<sub>eff</sub>/&part;p). Adjust smoothness and turbulence to see how the balance shifts between laminar and turbulent regimes.</p>
+<p style="color:var(--dim);font-size:.8rem;line-height:1.7;margin-bottom:1rem">This chart plugs sinusoids into the shape of the four terms so you can see how the sliders move the balance. It is not a solve of Eq. 12. The real solver is millennium_sim/sim.cpp. The four traces are PID forcing (F/m), advection (v&middot;&part;v/&part;p), damping (&minus;s&middot;c), and the resistance gradient (&minus;&part;R<sub>eff</sub>/&part;p).</p>
 <div class="viz-controls">
 <label>SMOOTHNESS:</label>
 <input type="range" id="mm-smooth" min="5" max="95" value="60" style="width:80px" oninput="mmUpdate()">
@@ -295,56 +302,58 @@ $$\frac{dv}{dt} = \frac{F_{\text{PID}}}{m} + v\frac{\partial v}{\partial p} - s 
 </div>
 <div class="viz-section" style="margin-top:1.5rem">
 <h4>EQUATION DEPENDENCY FLOW</h4>
-<p style="color:var(--dim);font-size:.8rem;line-height:1.7;margin-bottom:1rem">Visual representation of the 4-layer dependency structure. Click a layer to highlight its connections.</p>
+<p style="color:var(--dim);font-size:.8rem;line-height:1.7;margin-bottom:1rem">A drawing of the four-layer dependency structure, the same information as the table above.</p>
 <canvas id="mm-flow" width="700" height="280" style="width:100%;border-radius:6px;border:1px solid var(--border);background:#0a0a0a;cursor:pointer"></canvas>
 </div>
 </div>
 </section>
 <section>
-<h2>REGULARITY PROOF</h2>
+<h2>REGULARITY ARGUMENT</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
-<p>The 12-equation system above is not merely a computational tool &mdash; it admits a <strong style="color:var(--text)">rigorous proof of global regularity</strong>. Because the eddy viscosity &nu;<sub>t</sub> is a closed-form function of the system's own variables (smoothness s and velocity v), the effective viscosity grows with enstrophy fast enough to prevent finite-time blow-up.</p>
-<p style="margin-top:1rem">The proof proceeds in six stages, from establishing the parameter manifold geometry through Bakry-&Eacute;mery curvature analysis, optimal transport theory (Wasserstein-Ricci framework), and a supercritical energy inequality to the final global continuation argument.</p>
+<p>I tried to prove global regularity for this closed system. Outside review in July 2026 found three errors in the first version, and I've kept them on the proof page. The current v2 argument proves a Z<sup>5/2</sup> dissipation bound and a continuation ladder for an amended closure (Eq. 11&prime;). The Bakry-&Eacute;mery step is now a heuristic, not a proof, and the spatial transfer is open. This says nothing about constant-viscosity Navier-Stokes.</p>
+<p style="margin-top:1rem">The six stages below are the v1 argument as I first wrote it. I've left the mathematics in place and marked each step that v2 retracted, so you can see what failed and where. The v2 status per step: spatial Hessian transfer open, weighted Poincar&eacute; a conjecture, Ric<sub>BE</sub> &gt; 0 a heuristic, the s<sub>min</sub> bootstrap retired, and the dissipation exponent Z<sup>5/2</sup> rather than Z&sup2;.</p>
 <div style="margin-top:2rem;">
-<a href="millennium_sim/navier-stokes-proof.html" style="display:inline-block;background:var(--accent);color:var(--bg);padding:1rem 2rem;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.85rem;letter-spacing:2px;text-decoration:none;font-weight:bold;transition:transform 0.2s,box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 4px 15px rgba(var(--accent-rgb,100,200,255),0.4)'" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='none'">VIEW INTERACTIVE PROOF &rarr;</a>
+<a href="millennium_sim/navier-stokes-proof.html" style="display:inline-block;background:var(--accent);color:var(--bg);padding:1rem 2rem;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.85rem;letter-spacing:2px;text-decoration:none;font-weight:bold;transition:transform 0.2s,box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 4px 15px rgba(var(--accent-rgb,100,200,255),0.4)'" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='none'">PROOF PAGE (V2, WITH ERRATA) &rarr;</a>
 </div>
 </div>
 </section>
 <section>
-<h2>PROOF CHAIN</h2>
+<h2>V1 PROOF CHAIN, WITH V2 STATUS</h2>
 <div style="max-width:800px;margin:0 auto">
 <div class="proof-chain">
-<div class="pc-node">CLOSURE<br>(12 EQS)</div>
+<div class="pc-node">CLOSURE<br>(12 EQS)<br><span style="color:var(--dim)">derived</span></div>
 <div class="pc-arrow">&rarr;</div>
-<div class="pc-node">&nu;<sub>t</sub> LOWER<br>BOUND</div>
+<div class="pc-node">&nu;<sub>t</sub> LOWER<br>BOUND<br><span style="color:#ffc832">v1 step A false</span></div>
 <div class="pc-arrow">&rarr;</div>
-<div class="pc-node">BAKRY-&Eacute;MERY<br>Ric &gt; 0</div>
+<div class="pc-node">BAKRY-&Eacute;MERY<br>Ric &gt; 0<br><span style="color:#ffc832">heuristic</span></div>
 <div class="pc-arrow">&rarr;</div>
-<div class="pc-node">WASSERSTEIN<br>TRANSFER</div>
+<div class="pc-node">WASSERSTEIN<br>TRANSFER<br><span style="color:#ffc832">open</span></div>
 <div class="pc-arrow">&rarr;</div>
-<div class="pc-node">Z&sup2; DISSIPATION<br>(SUPERCRITICAL)</div>
+<div class="pc-node">DISSIPATION<br>BOUND<br><span style="color:var(--dim)">v2: Z<sup>5/2</sup>, Eq. 11&prime;</span></div>
 <div class="pc-arrow">&rarr;</div>
-<div class="pc-node">GLOBAL<br>REGULARITY</div>
+<div class="pc-node">GLOBAL<br>REGULARITY<br><span style="color:#ffc832">not proved</span></div>
 </div>
 </div>
 </section>
 <section>
-<h2>SIX-STAGE DERIVATION</h2>
+<h2>THE V1 SIX-STAGE ARGUMENT</h2>
 <div style="max-width:800px;margin:0 auto">
 
 <div class="proof-stage" data-stage="STAGE 1 &mdash; CLOSURE VERIFICATION">
 <h4>SELF-CONTAINED PDE SYSTEM</h4>
-<p>The dependency graph (above) confirms Eq.&nbsp;12 is fully closed: every variable traces back to p(t) and its derivatives. The system evolves on the <strong style="color:var(--text)">parameter manifold</strong> \(\mathcal{M} = \{(s,|v|)\in(0,1]\times\mathbb{R}_{\geq 0}\}\), where s is smoothness and |v| is velocity magnitude.</p>
+<p class="retracted">Status: derived on this page. v2 works with the amended closure Eq. 11&prime;, which adds a global feedback term to this &nu;<sub>t</sub>.</p>
+<p>The dependency graph above shows Eq.&nbsp;12 is closed: every variable traces back to p(t) and its derivatives. The argument works on the <strong style="color:var(--text)">parameter manifold</strong> \(\mathcal{M} = \{(s,|v|)\in(0,1]\times\mathbb{R}_{\geq 0}\}\), where s is smoothness and |v| is speed.</p>
 <div class="eq-block">
 <div class="eq-label">EDDY VISCOSITY &mdash; CLOSED FORM</div>
 $$\nu_t = C_\mu(1-s)(s+\delta)|v|, \qquad C_\mu = 0.09,\;\delta = 0.01$$
 </div>
-<p>This is obtained by substituting Eqs. 8&ndash;9 into Eq. 10 and simplifying. The key property: &nu;<sub>t</sub> depends only on system variables &mdash; no external models, no tuning beyond C<sub>&mu;</sub>.</p>
+<p>This comes from the proof-page versions of Eqs. 8 and 9, k = (1&minus;s)|v| and &epsilon; = (1&minus;s)|v|/(s+&delta;), substituted into Eq. 10. Those are not the Eqs. 8 and 9 shown above (which use the momentum divergence and curvature); PROOF_FORMATION.md swapped them in for dimensional consistency. &delta; = 0.01 is a regulariser I picked.</p>
 </div>
 
 <div class="proof-stage" data-stage="STAGE 2 &mdash; EDDY VISCOSITY LOWER BOUND">
 <h4>SCALING CHAIN</h4>
-<p>To prevent blow-up, the effective viscosity must grow fast enough to counter the nonlinear advection term. We establish a lower bound on &nu;<sub>t</sub> in terms of enstrophy \(Z = \|\nabla v\|_{L^2}^2\).</p>
+<p class="retracted">Retracted July 2026, see proof page (erratum E1: the Step A inequality is false; Step C's s<sub>min</sub> floor is retired). v2 replaces this with a bound under the amended closure Eq. 11&prime;.</p>
+<p>To stop blow-up, the effective viscosity has to grow fast enough to beat the nonlinear advection term. v1 tried a lower bound on &nu;<sub>t</sub> in terms of enstrophy \(Z = \|\nabla v\|_{L^2}^2\).</p>
 <div class="eq-block">
 <div class="eq-label">STEP A &mdash; SOBOLEV EMBEDDING</div>
 $$\|v\|_{L^\infty} \leq C_{\text{Sob}}\|v\|_{H^1} = C_{\text{Sob}}\left(\|v\|_{L^2}^2 + Z\right)^{1/2}$$
@@ -365,18 +374,19 @@ $$\nu_t = C_\mu(1-s)(s+\delta)|v| \geq \underbrace{C_\mu(1-s_{\max})(s_{\min}+\d
 
 <div class="proof-stage" data-stage="STAGE 3 &mdash; BAKRY-&Eacute;MERY CURVATURE">
 <h4>PARAMETER MANIFOLD GEOMETRY</h4>
-<p>Define the potential \(\Phi(s,|v|) = -\ln\nu_t\) on the parameter manifold \(\mathcal{M}\). The Hessian of &Phi; gives the <strong style="color:var(--text)">Bakry-&Eacute;mery curvature tensor</strong>:</p>
+<p class="retracted">Retracted July 2026, see proof page. v2 keeps this as a heuristic only; the claim that &kappa; &gt; 0 is attained is wrong, since the second entry 1/v&sup2; goes to 0 as v grows, so the infimum is 0.</p>
+<p>Define the potential \(\Phi(s,|v|) = -\ln\nu_t\) on the parameter manifold \(\mathcal{M}\). The Hessian of &Phi; gives the <strong style="color:var(--text)">Bakry-&Eacute;mery curvature tensor</strong> (Bakry &amp; &Eacute;mery, "Diffusions hypercontractives", S&eacute;minaire de probabilit&eacute;s XIX, 1985):</p>
 <div class="eq-block">
 <div class="eq-label">BAKRY-&Eacute;MERY RICCI TENSOR</div>
 $$\operatorname{Ric}_{\text{BE}} = \operatorname{Hess}(-\ln\nu_t) = \operatorname{diag}\!\left(\frac{1}{(1-s)^2}+\frac{1}{(s+\delta)^2},\;\frac{1}{v^2}\right) > 0$$
 </div>
-<p>Both diagonal entries are strictly positive on the interior of \(\mathcal{M}\), establishing that the parameter manifold has <strong style="color:var(--text)">positive Bakry-&Eacute;mery curvature</strong> everywhere.</p>
-<p>The minimum curvature bound \(\kappa = \inf_{\mathcal{M}}\lambda_{\min}(\operatorname{Ric}_{\text{BE}}) > 0\) is attained, since the entries blow up at the boundary (s &rarr; 0 or s &rarr; 1).</p>
+<p>Both diagonal entries are positive on the interior of \(\mathcal{M}\), so the tensor is pointwise positive. That's as far as it goes: v1 claimed a uniform lower bound \(\kappa = \inf_{\mathcal{M}}\lambda_{\min}(\operatorname{Ric}_{\text{BE}}) > 0\) is attained. It isn't. The 1/v&sup2; entry has infimum 0 on an unbounded velocity range, so there is no uniform &kappa;, and everything downstream that needed one falls with it.</p>
 </div>
 
 <div class="proof-stage" data-stage="STAGE 4 &mdash; WASSERSTEIN-RICCI TRANSFER">
 <h4>FROM MANIFOLD CURVATURE TO FUNCTIONAL INEQUALITY</h4>
-<p>The <strong style="color:var(--text)">Lott-Sturm-Villani (LSV) framework</strong> converts geometric curvature into analytic inequalities via optimal transport:</p>
+<p class="retracted">Retracted July 2026, see proof page (erratum E3: the transfer from the parameter manifold to the spatial domain is invalid as a proof). In v2 the weighted Poincar&eacute; inequality is a conjecture and the spatial Hessian transfer is open.</p>
+<p>The <strong style="color:var(--text)">Lott-Sturm-Villani framework</strong> converts curvature bounds into analytic inequalities via optimal transport. References: Villani, Optimal Transport: Old and New (Springer, 2009); Sturm, "On the geometry of metric measure spaces", Acta Math. 196 (2006); Otto &amp; Villani, "Generalization of an inequality by Talagrand and links with the logarithmic Sobolev inequality", J. Funct. Anal. 173 (2000).</p>
 <div class="eq-block">
 <div class="eq-label">LSV EQUIVALENCE (VILLANI 2009, STURM 2006)</div>
 $$\operatorname{Ric}_{\text{BE}} \geq \kappa > 0 \;\;\Longleftrightarrow\;\; \kappa\text{-displacement convexity of Boltzmann entropy along }W_2\text{ geodesics}$$
@@ -385,42 +395,44 @@ $$\operatorname{Ric}_{\text{BE}} \geq \kappa > 0 \;\;\Longleftrightarrow\;\; \ka
 <div class="eq-label">HWI INEQUALITY (OTTO-VILLANI 2000)</div>
 $$H(\rho\|\mu) \leq W_2(\rho,\mu)\sqrt{I(\rho\|\mu)} - \frac{\kappa}{2}W_2(\rho,\mu)^2$$
 </div>
-<p>Optimizing over W<sub>2</sub> yields a <strong style="color:var(--text)">log-Sobolev inequality</strong>, which implies a <strong style="color:var(--text)">weighted Poincar&eacute; inequality</strong> on the parameter manifold. The chain rule transfers this to the spatial domain:</p>
+<p>Optimizing over W<sub>2</sub> would give a <strong style="color:var(--text)">log-Sobolev inequality</strong>, hence a <strong style="color:var(--text)">weighted Poincar&eacute; inequality</strong> on the parameter manifold, if the uniform &kappa; from Stage 3 existed. v1 then used the chain rule to move it to the spatial domain; that step is the one review rejected, and it is where I'm stuck:</p>
 <div class="eq-block">
 <div class="eq-label">SPATIAL TRANSFER (CHAIN RULE)</div>
 $$\int|\nabla v|^2\nu_t\,dx \geq \kappa_{\text{eff}}\int|v-\bar{v}|^2\nu_t\,dx, \qquad \kappa_{\text{eff}} = \kappa \cdot \sigma_{\min}(\nabla_x(s,|v|))^2$$
 </div>
 </div>
 
-<div class="proof-stage" data-stage="STAGE 5 &mdash; SUPERCRITICAL ENSTROPHY INEQUALITY">
-<h4>Z&sup2; BEATS Z<sup>3/2</sup></h4>
-<p>The enstrophy evolution equation for the Master Momentum system, using the Ladyzhenskaya inequality for the advection term and the &nu;<sub>t</sub> &ge; &gamma;<sub>1</sub>Z<sup>1/2</sup> lower bound for dissipation:</p>
+<div class="proof-stage" data-stage="STAGE 5 &mdash; ENSTROPHY INEQUALITY (V1, RETRACTED)">
+<h4>THE V1 ENSTROPHY INEQUALITY</h4>
+<p class="retracted">Retracted July 2026, see proof page. The Z&sup2; dissipation term rested on the Stage 2 bound and the s<sub>min</sub> floor, both retired. v2 proves a Z<sup>5/2</sup> bound instead, for the amended closure Eq. 11&prime;.</p>
+<p>The v1 enstrophy evolution used the Ladyzhenskaya inequality (three-dimensional form \(\|u\|_{L^4}^4 \le C\|u\|_{L^2}\|\nabla u\|_{L^2}^3\); Ladyzhenskaya, The Mathematical Theory of Viscous Incompressible Flow, 1963) for the advection term and the &nu;<sub>t</sub> &ge; &gamma;<sub>1</sub>Z<sup>1/2</sup> lower bound for dissipation:</p>
 <div class="eq-block master">
 <div class="eq-label">FUNDAMENTAL ENSTROPHY INEQUALITY</div>
 $$\frac{dZ}{dt} \leq \underbrace{C_1 Z^{3/2}}_{\text{advection growth}} - \underbrace{\gamma' s_{\min} Z^2}_{\text{turbulent dissipation}}$$
 </div>
-<p>The dissipation exponent <strong style="color:var(--text)">2 &gt; 3/2</strong> &mdash; this is <em>supercritical</em>. For Z sufficiently large, the Z&sup2; term dominates unconditionally:</p>
+<p>If that held, the dissipation exponent 2 would beat the advection exponent 3/2, and for large Z the dissipation term would win:</p>
 <div class="eq-block">
 <div class="eq-label">COMPARISON PRINCIPLE</div>
 $$Z(t) \leq \max\!\left(Z(0),\;\frac{C_1}{\gamma' s_{\min}}\right) < \infty \qquad \forall\, t > 0$$
 </div>
-<p>This is the critical step: bounded enstrophy prevents gradient blow-up, which is precisely the regularity condition.</p>
+<p>Bounded enstrophy would rule out gradient blow-up, which is the regularity condition. The v2 page has the corrected inequality with \(\tilde{C}_1 := C_1(1+\gamma_1^{-3})\) and the Z<sup>5/2</sup> term.</p>
 </div>
 
 <div class="proof-stage" data-stage="STAGE 6 &mdash; GLOBAL CONTINUATION">
 <h4>BOOTSTRAP TO GLOBAL EXISTENCE</h4>
-<p>The argument closes via a continuation bootstrap:</p>
+<p class="retracted">Retracted July 2026, see proof page (erratum E2: the Morrey claim in Step 2 is wrong; the s<sub>min</sub> bootstrap is retired). v2 has a continuation ladder for Eq. 11&prime; that doesn't use s<sub>min</sub>.</p>
+<p>v1 tried to close with a continuation bootstrap:</p>
 <div class="derivation-step" style="border-color:var(--dim)">
 <h4>STEP 1</h4>
 <p><strong style="color:var(--text)">Short-time existence</strong> by standard parabolic PDE theory on [0, T*].</p>
 </div>
 <div class="derivation-step" style="border-color:var(--dim)">
 <h4>STEP 2</h4>
-<p><strong style="color:var(--text)">s<sub>min</sub> &gt; 0</strong> on [0, T*] by Morrey embedding: bounded enstrophy &rArr; H&ouml;lder continuous v &rArr; bounded coefficient of variation &rArr; s bounded away from 0.</p>
+<p><strong style="color:var(--text)">s<sub>min</sub> &gt; 0</strong> on [0, T*] by Morrey embedding: bounded enstrophy &rArr; H&ouml;lder continuous v &rArr; bounded coefficient of variation &rArr; s bounded away from 0. This is the step that fails: in three dimensions H<sup>1</sup> does not embed in a H&ouml;lder space, so bounded enstrophy doesn't give the continuity the chain needs.</p>
 </div>
 <div class="derivation-step" style="border-color:var(--dim)">
 <h4>STEP 3</h4>
-<p><strong style="color:var(--text)">Z bounded</strong> on [0, T*] by the supercritical inequality (Stage 5), using s<sub>min</sub> &gt; 0.</p>
+<p><strong style="color:var(--text)">Z bounded</strong> on [0, T*] by the Stage 5 inequality, using s<sub>min</sub> &gt; 0. Falls with Step 2.</p>
 </div>
 <div class="derivation-step" style="border-color:var(--dim)">
 <h4>STEP 4</h4>
@@ -428,21 +440,26 @@ $$Z(t) \leq \max\!\left(Z(0),\;\frac{C_1}{\gamma' s_{\min}}\right) < \infty \qqu
 </div>
 <div class="derivation-step" style="border-color:var(--dim)">
 <h4>STEP 5</h4>
-<p><strong style="color:var(--text)">Induction</strong>: repeat Steps 1&ndash;4 to extend to [0, &infin;). No finite-time blow-up is possible.</p>
+<p><strong style="color:var(--text)">Induction</strong>: repeat Steps 1&ndash;4 to extend to [0, &infin;). With Step 2 gone, this ladder has no first rung.</p>
 </div>
 </div>
 
 <div class="theorem-box">
-<h4>THEOREM &mdash; GLOBAL REGULARITY OF THE MASTER MOMENTUM SYSTEM</h4>
-<p>Let \((v, s, \nu_t, R_{\text{eff}})\) be a solution of the 12-equation Master Momentum Closure on \(\mathbb{T}^3\) with smooth initial data and \(s(0) \in (0,1]\). Then the solution exists globally in time and satisfies:</p>
+<h4>WHAT V1 CLAIMED, AND WHAT V2 ACTUALLY HAS</h4>
+<p class="retracted">The theorem below is the v1 statement. It is retracted (July 2026). I keep it here so the record is visible.</p>
+<p>v1: Let \((v, s, \nu_t, R_{\text{eff}})\) solve the 12-equation closure on \(\mathbb{T}^3\) with smooth initial data and \(s(0) \in (0,1]\). Then the solution exists for all time and</p>
 $$\sup_{t \geq 0} \|\nabla v(t)\|_{L^2}^2 < \infty$$
-<p style="margin-top:1rem;color:var(--dim);font-size:.85rem"><strong style="color:var(--accent)">Key mechanism:</strong> the closed-form eddy viscosity &nu;<sub>t</sub> = C<sub>&mu;</sub>(1&minus;s)(s+&delta;)|v| provides Z<sup>1/2</sup>-growth in dissipation, yielding a supercritical Z&sup2; damping term that dominates the Z<sup>3/2</sup> advective growth for all time.</p>
+<p style="margin-top:1rem;color:var(--dim);font-size:.85rem">v2, what is proved: a Z<sup>5/2</sup> dissipation bound and a continuation ladder for the amended closure Eq. 11&prime;. What is not proved: global regularity for the system on this page. The Bakry-&Eacute;mery curvature is a heuristic, the weighted Poincar&eacute; inequality is a conjecture, and the spatial transfer is open.</p>
 </div>
 
 <div style="margin-top:2rem;padding:1.5rem;background:var(--panel);border:1px solid var(--border);border-radius:8px">
-<h4 style="color:var(--accent);font-size:.75rem;letter-spacing:2px;margin-bottom:1rem">SCOPE &amp; DISTINCTION</h4>
-<p style="color:var(--dim);font-size:.85rem;line-height:1.7">This result proves regularity for the <strong style="color:var(--text)">Master Momentum system</strong> (variable &nu;<sub>t</sub>), not the classical constant-viscosity Navier-Stokes equations (which remain a Millennium Prize Problem). The critical difference is that the Master system&rsquo;s eddy viscosity grows with |v|, providing the extra dissipation that prevents blow-up &mdash; a mechanism absent in the constant-&nu; case.</p>
-<p style="color:var(--dim);font-size:.85rem;line-height:1.7;margin-top:.75rem">The full derivation with step-by-step algebra, interactive 3D manifold visualization, and numerical verification is available in the interactive proof page.</p>
+<h4 style="color:var(--accent);font-size:.75rem;letter-spacing:2px;margin-bottom:1rem">SCOPE</h4>
+<p style="color:var(--dim);font-size:.85rem;line-height:1.7">Everything in this section is about the <strong style="color:var(--text)">Master Momentum system</strong> with its variable &nu;<sub>t</sub>. Constant-viscosity Navier-Stokes is a different equation and remains a Millennium Prize Problem; nothing here touches it. The reason the variable case looked tractable is that &nu;<sub>t</sub> grows with |v|, which adds dissipation the constant case lacks. Whether that is enough is exactly what's still open.</p>
+<p style="color:var(--dim);font-size:.85rem;line-height:1.7;margin-top:.75rem">The step-by-step algebra, the three errata, and the v2 argument are on the proof page. PROOF_FORMATION.md in millennium_sim is the working draft behind it.</p>
+<h4 style="color:var(--accent);font-size:.75rem;letter-spacing:2px;margin:1.5rem 0 1rem">HOW TO REPRODUCE</h4>
+<p style="color:var(--dim);font-size:.85rem;line-height:1.7">The solver is millennium_sim/sim.cpp (one function, step_master_equation, compiled with Emscripten for the solver page). It implements Eqs. 1-12 as written above, with the shortcuts I flagged: one-bar |&Delta;p| for &sigma;<sub>ATR</sub>, F<sub>PID</sub> = 0.5, s clamped at 0, &epsilon; floored at 0.01. The argument is in millennium_sim/PROOF_FORMATION.md and the v2 proof page, millennium_sim/navier-stokes-proof.html. The original equations are in REFFELT_MASTER_EQUATIONS.md in my repo.</p>
+<h4 style="color:var(--accent);font-size:.75rem;letter-spacing:2px;margin:1.5rem 0 1rem">WHAT ISN'T MEASURED</h4>
+<p style="color:var(--dim);font-size:.85rem;line-height:1.7">Nothing on this page has been checked against flow data, and nothing on this page has been checked against market data either. The solver runs; I haven't compared its output to a DNS result, a wind tunnel, or a backtest. C<sub>&mu;</sub> = 0.09 is borrowed, not fitted. The k and &epsilon; definitions are mine and untested.</p>
 <div style="margin-top:1.5rem">
 <a href="millennium_sim/navier-stokes-proof.html" style="display:inline-block;background:transparent;color:var(--accent);padding:.75rem 1.5rem;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.75rem;letter-spacing:2px;text-decoration:none;font-weight:bold;border:1px solid var(--accent);transition:all 0.2s;" onmouseover="this.style.background='var(--accent)';this.style.color='var(--bg)'" onmouseout="this.style.background='transparent';this.style.color='var(--accent)'">FULL INTERACTIVE PROOF &rarr;</a>
 <a href="millennium_sim/curvature_proof.html" style="display:inline-block;background:transparent;color:var(--accent);padding:.75rem 1.5rem;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.75rem;letter-spacing:2px;text-decoration:none;font-weight:bold;border:1px solid var(--accent);transition:all 0.2s;margin-left:.75rem" onmouseover="this.style.background='var(--accent)';this.style.color='var(--bg)'" onmouseout="this.style.background='transparent';this.style.color='var(--accent)'">CURVATURE EXPLORER &rarr;</a>

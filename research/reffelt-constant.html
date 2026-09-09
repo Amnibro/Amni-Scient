@@ -6,15 +6,15 @@
 <meta name="theme-color" content="#FBFAF8">
 <meta name="robots" content="noindex, nofollow">
 <title>The Reffelt Constant — Spectral Fingerprinting of Parameter Spaces | AMNI-SCIENT Research</title>
-<meta name="description" content="The Reffelt Constant: a base-9 spectral fingerprint encoding the thermodynamic ground state of high-dimensional parameter spaces via eigenvalue decomposition and causal gradient sensitivity.">
+<meta name="description" content="The Reffelt Constant: a digit-string spectral fingerprint of the low-eigenvalue subspace of a graph Laplacian built over evaluated parameter configurations, weighted by finite-difference sensitivity per dimension.">
 <meta name="keywords" content="reffelt constant,spectral fingerprinting,eigenvalue decomposition,graph laplacian,parameter optimization,dimensionality reduction">
 <meta property="og:title" content="The Reffelt Constant — AMNI-SCIENT Research">
-<meta property="og:description" content="Base-9 spectral fingerprint of high-dimensional parameter spaces. Original mathematical framework by Amnibro.">
+<meta property="og:description" content="Digit-string spectral fingerprint of high-dimensional parameter spaces. Working notes by Anthony Reffelt.">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://amni-scient.com/research/reffelt-constant">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="https://amni-scient.com/research/reffelt-constant">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"ScholarlyArticle","name":"The Reffelt Constant","author":{"@type":"Person","name":"Amnibro"},"description":"A base-9 spectral fingerprint encoding the thermodynamic ground state of high-dimensional parameter spaces.","url":"https://amni-scient.com/research/reffelt-constant","publisher":{"@type":"Organization","name":"AMNI-SCIENT"},"datePublished":"2025","dateModified":"2026"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"ScholarlyArticle","name":"The Reffelt Constant","author":{"@type":"Person","name":"Anthony Reffelt"},"description":"A digit-string spectral fingerprint of the low-eigenvalue subspace of a graph Laplacian built over evaluated parameter configurations.","url":"https://amni-scient.com/research/reffelt-constant","publisher":{"@type":"Organization","name":"AMNI-SCIENT"},"datePublished":"2025-01-01","dateModified":"2026-09-09"}</script>
 <link rel="stylesheet" href="../css/style.css?v=b260">
 <script>
 window.MathJax={tex:{inlineMath:[["$","$"],["\\(","\\)"]],displayMath:[["$$","$$"],["\\[","\\]"]],processEscapes:true},options:{skipHtmlTags:["script","noscript","style","textarea","pre","code"]}};
@@ -52,6 +52,9 @@ window.MathJax={tex:{inlineMath:[["$","$"],["\\(","\\)"]],displayMath:[["$$","$$
 .viz-result .digit-valid{background:rgba(100,200,255,.15);color:var(--accent)}
 .viz-result .digit-dead{background:rgba(255,68,68,.15);color:#ff4444}
 .viz-result .digit-sat{background:rgba(255,200,0,.15);color:#ffc800}
+.callout{max-width:800px;margin:1.25rem auto;padding:1.25rem 1.5rem;border:1px solid var(--accent);border-radius:8px;background:var(--panel);color:var(--dim);font-size:.9rem;line-height:1.8}
+.callout strong{color:var(--text)}
+.prose{max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem}
 </style>
 </head>
 <body class="pp">
@@ -90,13 +93,14 @@ window.MathJax={tex:{inlineMath:[["$","$"],["\\(","\\)"]],displayMath:[["$$","$$
 <div class="breadcrumb"><a href="../research.html">RESEARCH</a> &nbsp;/&nbsp; THE REFFELT CONSTANT</div>
 <h1>THE REFFELT CONSTANT</h1>
 <p class="subtitle">SPECTRAL FINGERPRINTING OF HIGH-DIMENSIONAL PARAMETER SPACES</p>
-<p class="tagline">A base-9 encoding of the thermodynamic ground state via eigenvalue decomposition and causal gradient sensitivity.</p>
+<p class="tagline">A digit-string encoding of the low-eigenvalue subspace of a graph Laplacian, weighted by per-dimension sensitivity.</p>
 </section>
+<div class="prose"><div class="callout"><strong>Status, 2026-09-09.</strong> The graph, the normalized Laplacian, and the eigendecomposition on this page are standard spectral graph theory and I cite the sources below. The digit encoding and the causal weights are my own construction, and the 800 scale, the mode-to-dimension pairing, and the 0.01 and 1.0 thresholds are hand-picked placeholders. The only thing that runs on this page is the digit encoder in the explorer, which takes eigenvalues and weights you type in; it doesn't build a graph. None of the application ideas below have been measured.</div></div>
 <section>
 <h2>ABSTRACT</h2>
-<div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
-<p>The <strong style="color:var(--text)">Reffelt Constant (&real;)</strong> is a compact spectral fingerprint that encodes the structure of a high-dimensional parameter space into a human-readable base-9 string. Given a set of evaluated configurations in an N-dimensional space, the constant captures which dimensions causally contribute to performance, which are redundant, and where the global optimum (ground state) resides.</p>
-<p style="margin-top:1.2rem">The constant is computed through three stages: (1) constructing a score-weighted k-nearest-neighbor graph over the parameter space, (2) performing eigenvalue decomposition on its normalized Laplacian, and (3) weighting each spectral eigenfunction by finite-difference gradient sensitivity per dimension. The resulting digits encode the contribution magnitude of each principal direction, with strict validity rules that detect dimensional saturation and dead parameters.</p>
+<div class="prose">
+<p>The <strong style="color:var(--text)">Reffelt Constant (&real;)</strong> is a short digit string I compute from a set of evaluated configurations in a D-dimensional parameter space. I build a graph over the configurations, take the low-eigenvalue modes of its normalized Laplacian, weight each mode by how much it moves along each parameter axis, and print one digit per retained mode. I use the string to see which dimensions the score depends on and which ones I can freeze.</p>
+<p style="margin-top:1.2rem">When I say ground state on this page I mean the low-eigenvalue subspace of the Laplacian. That's an analogy to a physical ground state, and it stops there: there's no temperature and no partition function in the math.</p>
 </div>
 </section>
 <section>
@@ -104,64 +108,64 @@ window.MathJax={tex:{inlineMath:[["$","$"],["\\(","\\)"]],displayMath:[["$$","$$
 <div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
 <div class="derivation-step">
 <h4>STEP 1 &mdash; SCORE-WEIGHTED GRAPH CONSTRUCTION</h4>
-<p>Given N evaluated parameter vectors <strong style="color:var(--text)">p<sub>i</sub> &isin; &reals;<sup>D</sup></strong> with associated fitness scores s<sub>i</sub>, construct a k-nearest-neighbor graph. Edge weights combine spatial proximity with score similarity:</p>
+<p>I start with N evaluated parameter vectors <strong style="color:var(--text)">p<sub>i</sub> &isin; &reals;<sup>D</sup></strong> and their fitness scores s<sub>i</sub>. I rescale every coordinate to [0,1] first, so the distance d(p<sub>i</sub>,p<sub>j</sub>) is a Euclidean distance between normalized points and &epsilon; has no units to worry about. Then I build a k-nearest-neighbor graph, with k set in code, and weight each edge by distance and by score similarity:</p>
 <div class="eq-block">
 <div class="eq-label">EQUATION R1 &mdash; GRAPH WEIGHT</div>
 $$w_{ij} = \frac{\exp\left(-\frac{|s_i - s_j|}{\sigma_s}\right)}{d(p_i, p_j) + \epsilon}$$
 </div>
-<p>where &sigma;<sub>s</sub> is the standard deviation of scores across the population and &epsilon; = 0.1 prevents division by zero. Points with similar scores that are spatially close receive higher edge weights, encouraging the graph to reflect performance topology rather than just geometric distance.</p>
+<p>&sigma;<sub>s</sub> is the standard deviation of the scores across the population and &epsilon; = 0.1 keeps the denominator away from zero. Two points that sit close together and score about the same get a heavy edge. Two points that sit close together but score very differently get a light one, so the graph follows the score surface and not only the geometry. The normalized Laplacian I use next is standard; see Chung, <em>Spectral Graph Theory</em> (1997) and von Luxburg, &ldquo;A tutorial on spectral clustering,&rdquo; <em>Stat. Comput.</em> 17 (2007).</p>
 </div>
 <div class="derivation-step">
 <h4>STEP 2 &mdash; NORMALIZED GRAPH LAPLACIAN</h4>
-<p>From the adjacency matrix A with weights w<sub>ij</sub> and degree matrix D = diag(&Sigma;<sub>j</sub>w<sub>ij</sub>), compute the symmetric normalized Laplacian:</p>
+<p>From the adjacency matrix A with weights w<sub>ij</sub> and degree matrix D = diag(&Sigma;<sub>j</sub>w<sub>ij</sub>), I compute the symmetric normalized Laplacian:</p>
 <div class="eq-block">
 <div class="eq-label">EQUATION R2 &mdash; NORMALIZED LAPLACIAN</div>
 $$L_{\text{norm}} = I - D^{-1/2} A D^{-1/2}$$
 </div>
-<p>The eigenvalues of L<sub>norm</sub> lie in [0, 2] and encode the connectivity structure. Small eigenvalues correspond to slowly varying modes (global structure), while large eigenvalues correspond to high-frequency variation (local noise).</p>
+<p>The eigenvalues of L<sub>norm</sub> lie in [0, 2]. Small eigenvalues belong to modes that vary slowly across the graph, which is the global structure I want. Large eigenvalues belong to modes that flip sign between neighbors, which is local noise.</p>
 </div>
 <div class="derivation-step">
 <h4>STEP 3 &mdash; SPECTRAL DECOMPOSITION</h4>
-<p>Extract the top-k eigenvectors via truncated SVD:</p>
+<p>Take the k smallest nonzero eigenvalues of L<sub>norm</sub> and their eigenvectors. Those are the smooth modes.</p>
 <div class="eq-block">
 <div class="eq-label">EQUATION R3 &mdash; SPECTRAL BASIS</div>
-$$L_{\text{norm}} \approx U \Sigma V^T \quad \Rightarrow \quad \psi_j = U_{:,j}, \quad \lambda_j = \Sigma_{jj}$$
+$$L_{\text{norm}} \psi_j = \lambda_j \psi_j, \qquad 0 < \lambda_1 \le \lambda_2 \le \cdots \le \lambda_k$$
 </div>
-<p>Each &psi;<sub>j</sub> is a spectral eigenfunction that captures a principal mode of variation in the score-weighted parameter topology. The eigenvalues &lambda;<sub>j</sub> quantify the importance of each mode.</p>
+<p>Each &psi;<sub>j</sub> is a vector with one entry per configuration in the archive. The explorer further down doesn't decompose anything; it takes eigenvalues you type in, so there's no sort order to worry about there.</p>
 </div>
 <div class="derivation-step">
 <h4>STEP 4 &mdash; CAUSAL GRADIENT SENSITIVITY</h4>
-<p>For each parameter dimension d, compute how strongly each eigenfunction varies along that axis using sorted finite differences:</p>
+<p>&psi;<sub>j</sub> lives on graph nodes, so there's no derivative along a coordinate axis to take directly. What I do instead, for each dimension d: sort the archive by coordinate d, take the finite difference of the &psi;<sub>j</sub> entries between consecutive configurations in that ordering, and average the absolute value. I sum that over the k modes and normalize across dimensions so the weights add to one:</p>
 <div class="eq-block">
 <div class="eq-label">EQUATION R4 &mdash; CAUSAL WEIGHTS</div>
-$$\text{causal}_d = \frac{\sum_j \left|\frac{\partial \psi_j}{\partial x_d}\right|}{\sum_{d'} \sum_j \left|\frac{\partial \psi_j}{\partial x_{d'}}\right|}$$
+$$g_{j,d} = \frac{1}{N-1}\sum_{i=1}^{N-1}\left|\psi_j(\pi_d(i+1)) - \psi_j(\pi_d(i))\right|, \qquad \text{causal}_d = \frac{\sum_j g_{j,d}}{\sum_{d'} \sum_j g_{j,d'}}$$
 </div>
-<p>Dimensions with high causal weight dominate the structure of the fitness landscape. Dimensions with near-zero causal weight are redundant and can be frozen without performance loss.</p>
+<p>&pi;<sub>d</sub> is the permutation that sorts the archive by coordinate d. A dimension with a large weight is one the smooth modes move along. A dimension with a weight near zero is one they ignore, and that's the one I freeze. Note that this gives me one weight per dimension d, and the digit in Step 5 is indexed by mode j. Pairing mode j with dimension j is a placeholder; I haven't worked out a justified pairing yet.</p>
 </div>
 <div class="derivation-step">
 <h4>STEP 5 &mdash; DIGIT ENCODING</h4>
-<p>Each digit of the Reffelt Constant combines the corresponding eigenvalue with its causal weight:</p>
+<p>I take the eigenvalue of mode j and multiply it by the causal weight of dimension j. I scale that product by 800, add one, and clamp to 1 through 8. The 800 is a scale I picked by hand so that products from my runs land in the middle of the range. It isn't derived from anything. A product under 0.01 gets a 0 and a product over 1.0 gets a 9, so I can see dead and saturated dimensions at a glance.</p>
 <div class="eq-block">
 <div class="eq-label">EQUATION R5 &mdash; THE REFFELT CONSTANT</div>
-$$\Re_j = \left\lfloor \left| \langle \psi_j | \nabla f | \psi_j \rangle \right| \cdot 10 \right\rfloor \in \{1, \ldots, 8\}$$
+$$\Re_j = \operatorname{clamp}\left(\lfloor 800 \cdot \lambda_j \cdot \text{causal}_j \rfloor + 1,\; 1,\; 8\right), \qquad \Re_j = 0 \text{ if } \lambda_j \text{causal}_j < 0.01, \qquad \Re_j = 9 \text{ if } \lambda_j \text{causal}_j > 1.0$$
 </div>
-<p>Equivalently in implementation: <code style="color:var(--text);font-size:.8rem">digit = min(8, max(1, int(|eigenvalue × causal_weight × 100| × 8) + 1))</code></p>
+<p>In code: <code style="color:var(--text);font-size:.8rem">p = abs(eigenvalue * causal_weight); digit = 0 if p &lt; 0.01 else 9 if p &gt; 1.0 else min(8, max(1, int(800 * p) + 1))</code></p>
 </div>
 </div>
 </section>
 <section>
 <h2>VALIDITY RULES</h2>
 <div style="max-width:800px;margin:0 auto">
-<p style="color:var(--dim);font-size:.9rem;line-height:1.9;margin-bottom:1.5rem">The Reffelt Constant obeys strict validity constraints that serve as built-in diagnostics:</p>
+<p style="color:var(--dim);font-size:.9rem;line-height:1.9;margin-bottom:1.5rem">Two digit values are reserved as flags. Both thresholds are on the raw product &lambda;<sub>j</sub> &times; causal<sub>j</sub>, before the 800 scale:</p>
 <table class="validity-table">
-<thead><tr><th>DIGIT VALUE</th><th>INTERPRETATION</th><th>ACTION</th></tr></thead>
+<thead><tr><th>DIGIT VALUE</th><th>CONDITION</th><th>WHAT I DO</th></tr></thead>
 <tbody>
-<tr><td style="color:var(--text);font-weight:700">1 &ndash; 8</td><td>Valid spectral contribution</td><td>Dimension is active and causally relevant</td></tr>
-<tr><td style="color:#ff4444;font-weight:700">0</td><td>Dead dimension</td><td>Parameter has zero causal effect &mdash; freeze it</td></tr>
-<tr><td style="color:#ff4444;font-weight:700">9</td><td>Saturated dimension</td><td>Eigenvalue &times; causal weight exceeds linearity &mdash; renormalize</td></tr>
+<tr><td style="color:var(--text);font-weight:700">1 &ndash; 8</td><td>0.01 &le; product &le; 1.0</td><td>Keep the dimension in the search</td></tr>
+<tr><td style="color:#ff4444;font-weight:700">0</td><td>product &lt; 0.01</td><td>The smooth modes don't move along this dimension. Freeze it.</td></tr>
+<tr><td style="color:#ff4444;font-weight:700">9</td><td>product &gt; 1.0</td><td>The product is off the scale. I rescale or resample and recompute.</td></tr>
 </tbody>
 </table>
-<p style="color:var(--dim);font-size:.85rem;line-height:1.9;margin-top:1rem"><strong style="color:var(--text)">Reffelt&rsquo;s Law:</strong> A valid constant contains no zeros and no nines. If either appears, the parameter space is either under-sampled (dead dimensions) or over-concentrated (saturated dimensions), and the constant should be recomputed after pruning or resampling.</p>
+<p style="color:var(--dim);font-size:.85rem;line-height:1.9;margin-top:1rem">I call a constant valid when it has no 0 and no 9. That's a convention I use, not a law. When a 0 shows up I read it as a dimension I haven't sampled enough or one that doesn't matter; when a 9 shows up I read it as a product that has outgrown the hand-picked 800 scale.</p>
 </div>
 </section>
 <section>
@@ -169,65 +173,66 @@ $$\Re_j = \left\lfloor \left| \langle \psi_j | \nabla f | \psi_j \rangle \right|
 <div style="max-width:800px;margin:0 auto">
 <div class="card-grid">
 <div class="card">
-<h3>COMPRESSION INVARIANT</h3>
-<p>The constant length equals the effective dimensionality of the space, not the nominal dimensionality. A 15D space that reduces to 4 meaningful axes produces a 4-digit constant, giving an immediate compression ratio metric.</p>
+<h3>LENGTH</h3>
+<p>The constant has one digit per retained mode, so its length is k from Step 3, and I choose k. It says nothing by itself about how many dimensions matter; that comes from counting the 0 digits. The explorer's DIMENSIONS control sets the same k.</p>
 </div>
 <div class="card">
-<h3>WALK-FORWARD STABLE</h3>
-<p>Ground state configurations identified by the Reffelt Constant exhibit near-zero walk-forward degradation &mdash; meaning they generalize to unseen data without performance collapse. This is verified by comparing in-sample vs out-of-sample digit patterns.</p>
+<h3>WALK-FORWARD STABILITY</h3>
+<p>I haven't measured walk-forward stability yet. When I do, the dataset and the script will be linked here.</p>
 </div>
 <div class="card">
 <h3>REGIME DIAGNOSTIC</h3>
-<p>Shifts in the Reffelt digit pattern signal regime changes in the underlying system. A stable system produces a stable constant; abrupt digit changes indicate that the fitness landscape has fundamentally restructured.</p>
+<p>If the digit pattern changes between two archives from the same system, I'd read that as the score surface having changed shape. I haven't tested how often the digits change on their own from sampling noise, so I don't know yet how big a change is meaningful.</p>
 </div>
 <div class="card">
-<h3>BASE-9 ENCODING</h3>
-<p>The choice of base-9 (digits 1&ndash;8, with 0 and 9 as diagnostic flags) provides human-readable granularity &mdash; fine enough to distinguish meaningful variation, coarse enough to be communicated verbally.</p>
+<h3>DIGIT ENCODING</h3>
+<p>The digits run 0 to 9, with 0 and 9 reserved as flags. I picked digits because I can read them off a log line and say them out loud.</p>
 </div>
 </div>
 </div>
 </section>
 <section>
-<h2>STATE-OF-THE-ART APPLICATIONS</h2>
+<h2>THINGS I'D LIKE TO TRY</h2>
 <div style="max-width:800px;margin:0 auto">
+<p class="prose" style="margin-bottom:1.5rem">None of these have been run. They're the places I think the constant could earn its keep, written down so I remember to test them.</p>
 <div class="app-card">
-<h4>&#129302; NEURAL ARCHITECTURE SEARCH (NAS)</h4>
-<p>Modern NAS explores spaces with 10<sup>15</sup>+ configurations (layer counts, channel widths, activation functions, skip connections). The Reffelt Constant compresses this into a spectral fingerprint that identifies which architectural decisions actually matter. A 4-digit constant tells you exactly which hyperparameters to tune and which to fix &mdash; reducing search time from GPU-weeks to GPU-hours. The validity rules automatically flag NAS spaces that are over-parameterized (saturated digits) or contain irrelevant dimensions (dead digits).</p>
+<h4>NEURAL ARCHITECTURE SEARCH</h4>
+<p>An architecture search space has a lot of knobs and I'd like to know which ones the score depends on after a first sweep. The plan is to compute the constant on the sweep, freeze the dimensions that print a 0, and see whether the next sweep finds the same architectures with fewer evaluations. I haven't run this.</p>
 </div>
 <div class="app-card">
-<h4>&#127981; DATACENTER WORKLOAD FINGERPRINTING</h4>
-<p>Datacenters run heterogeneous workloads across thousands of nodes. Each workload can be characterized by dozens of parameters: CPU utilization patterns, memory access distributions, I/O burst profiles, network topology pressure. The Reffelt Constant reduces these to a compact signature. Identical constants indicate functionally equivalent workloads &mdash; enabling automated bin-packing, migration decisions, and anomaly detection. A constant that suddenly sprouts a 9-digit indicates a workload that has exceeded its expected resource envelope.</p>
+<h4>WORKLOAD FINGERPRINTING</h4>
+<p>I'd like to compute the constant on per-node resource traces and see whether two workloads that print the same string behave the same when I move them between machines. I don't know yet whether the string is stable enough to use as a key, so that's the first thing to check.</p>
 </div>
 <div class="app-card">
-<h4>&#9881;&#65039; HYPERPARAMETER OPTIMIZATION</h4>
-<p>Bayesian optimization and grid search treat all dimensions equally, wasting evaluations on irrelevant parameters. Computing the Reffelt Constant after an initial exploration phase identifies which parameters drive performance (high digits) vs which are noise (low digits). Subsequent optimization can freeze low-impact dimensions at their ground state values and focus budget exclusively on the 2&ndash;4 dimensions that matter. Empirical validation shows this approach achieves equivalent solutions with 5&ndash;10x fewer evaluations.</p>
+<h4>HYPERPARAMETER OPTIMIZATION</h4>
+<p>The idea is to compute the constant after an initial exploration phase, freeze the dimensions with 0 digits at their best-seen values, and spend the rest of the budget on the dimensions that print high digits. I expect this to cut evaluations, but I haven't run the comparison. No number until I do.</p>
 </div>
 <div class="app-card">
-<h4>&#128300; DRUG DISCOVERY / MOLECULAR OPTIMIZATION</h4>
-<p>Molecular property prediction involves high-dimensional descriptor spaces (topological indices, electronic properties, conformational features). The Reffelt Constant identifies which molecular descriptors causally drive binding affinity or toxicity, collapsing a 200D QSAR space to its effective 8&ndash;12 dimensions. This directly addresses the curse of dimensionality in virtual screening campaigns.</p>
+<h4>MOLECULAR DESCRIPTOR SCREENING</h4>
+<p>QSAR descriptor spaces are wide and most of the descriptors are correlated. I'd like to compute the constant over a descriptor set with binding affinity as the score and see how many dimensions survive. I don't have a number for that.</p>
 </div>
 <div class="app-card">
-<h4>&#128752; LLM TRAINING DIAGNOSTICS</h4>
-<p>Large language model training involves dozens of hyperparameters (learning rate schedule, warmup steps, batch size, gradient clipping, attention dropout, weight decay). Computing the Reffelt Constant at checkpoints during training reveals which hyperparameters the model is sensitive to at different training phases. Early training may show high sensitivity to learning rate (high digit), which shifts to weight decay sensitivity in later phases. Monitoring digit transitions provides an early warning for training instability.</p>
+<h4>TRAINING DIAGNOSTICS</h4>
+<p>I'd like to compute the constant at checkpoints across a set of training runs with varied hyperparameters and watch which digits move as training goes on. If the pattern shifts before a run goes bad, that's useful. Whether it does is untested.</p>
 </div>
 </div>
 </section>
 <section>
 <h2>OUTPUT STRUCTURE</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
-<p>The Reffelt Constant computation produces a structured result containing:</p>
+<p>The computation returns a record with these fields. The string has k digits, one per retained mode:</p>
 <div class="eq-block">
 <div class="eq-label">RESULT SCHEMA</div>
 <pre style="color:var(--text);font-size:.8rem;line-height:1.8;margin:0">
-constant:              str              &larr; the &real; string (e.g. "84407588")
-eigenvalues:           List[float]      &larr; spectral eigenvalues (&lambda;<sub>1</sub>...&lambda;<sub>k</sub>)
-causal_weights:        List[float]      &larr; per-dimension contribution (sum=1)
-effective_dim:         float            &larr; number of meaningful dimensions
-ground_state_params:   Dict[str,float]  &larr; optimal frozen parameter values
-free_params:           List[str]        &larr; dimensions to keep tuning
-frozen_params:         Dict[str,float]  &larr; dimensions safely fixed
-compression_ratio:     float            &larr; original_dims / effective_dims
-walk_forward_degradation: float         &larr; 0.0 = perfect stability</pre>
+constant:              str              &larr; the &real; string, k digits (e.g. "84417588")
+eigenvalues:           List[float]      &larr; the k smallest nonzero eigenvalues (&lambda;<sub>1</sub>...&lambda;<sub>k</sub>)
+causal_weights:        List[float]      &larr; per-dimension weight, D entries, sum=1
+effective_dim:         int              &larr; D minus the count of dimensions I froze
+ground_state_params:   Dict[str,float]  &larr; best-seen values for the frozen dimensions
+free_params:           List[str]        &larr; dimensions I keep tuning
+frozen_params:         Dict[str,float]  &larr; dimensions I fixed
+compression_ratio:     float            &larr; D / effective_dim
+walk_forward_degradation: float         &larr; placeholder, not measured yet</pre>
 </div>
 </div>
 </section>
@@ -236,7 +241,7 @@ walk_forward_degradation: float         &larr; 0.0 = perfect stability</pre>
 <div style="max-width:800px;margin:0 auto">
 <div class="viz-section">
 <h4>REFFELT DIGIT ENCODER</h4>
-<p style="color:var(--dim);font-size:.8rem;line-height:1.7;margin-bottom:1rem">Input eigenvalues and causal weights to compute the Reffelt Constant in real time. Each digit is computed via Eq. R5: &lfloor;|&lambda;<sub>j</sub> &times; causal<sub>j</sub> &times; 100| &times; 8 + 1&rfloor;, clamped to [1,8]. Digits 0 and 9 flag dead/saturated dimensions.</p>
+<p style="color:var(--dim);font-size:.8rem;line-height:1.7;margin-bottom:1rem">Type in eigenvalues and causal weights, or randomize them, and the encoder prints the digits using Eq. R5: clamp(&lfloor;800 &times; &lambda;<sub>j</sub> &times; causal<sub>j</sub>&rfloor; + 1, 1, 8), with a product under 0.01 printing 0 and a product over 1.0 printing 9. The weights are renormalized to sum to one before encoding. DIMENSIONS sets k, the number of digits. This is the encoder only; nothing here builds a graph or decomposes a Laplacian.</p>
 <div id="reffelt-encoder">
 <div class="viz-controls">
 <label>DIMENSIONS:</label>
@@ -252,9 +257,21 @@ walk_forward_degradation: float         &larr; 0.0 = perfect stability</pre>
 </div>
 <div class="viz-section" style="margin-top:1.5rem">
 <h4>EIGENVALUE SPECTRUM</h4>
-<p style="color:var(--dim);font-size:.8rem;line-height:1.7;margin-bottom:1rem">Visualizes the eigenvalue distribution and causal weights from the encoder above. Bar height = eigenvalue magnitude, bar opacity = causal weight strength.</p>
+<p style="color:var(--dim);font-size:.8rem;line-height:1.7;margin-bottom:1rem">Plots the values from the encoder above. Bar height is the eigenvalue you entered, bar opacity is the causal weight, and the line is the weight on the right axis. Press COMPUTE to draw it.</p>
 <div class="viz-canvas-wrap"><canvas id="rc-spectrum-chart"></canvas></div>
 </div>
+</div>
+</section>
+<section>
+<h2>HOW TO REPRODUCE</h2>
+<div class="prose">
+<p>I haven't published the implementation. The digit encoder in the explorer above is the only runnable piece on this page, and it starts from eigenvalues and weights you supply. If you want to rebuild the pipeline from the text: normalize the coordinates, build a k-NN graph with the R1 weights, form the symmetric normalized Laplacian, take the k smallest nonzero eigenpairs, compute the sorted finite-difference weights from R4, and encode with R5. The 800 scale and the mode-to-dimension pairing are the two places where you'd be copying my guesses.</p>
+</div>
+</section>
+<section>
+<h2>RELATED WORK</h2>
+<div class="prose">
+<p>The graph and the Laplacian are the same objects as in Laplacian eigenmaps (Belkin &amp; Niyogi, <em>Neural Computation</em> 15, 2003) and diffusion maps (Coifman &amp; Lafon, <em>Appl. Comput. Harmon. Anal.</em> 21, 2006); both keep the low-eigenvalue modes for the same reason I do. The per-dimension weights in R4 are a crude sensitivity measure, and the established tools for that job are Sobol indices, the Morris method, and, for hyperparameter importance specifically, fANOVA (Hutter, Hoos &amp; Leyton-Brown, <em>ICML</em> 2014). I haven't compared my weights against any of them yet.</p>
 </div>
 </section>
 <section>
@@ -263,11 +280,11 @@ walk_forward_degradation: float         &larr; 0.0 = perfect stability</pre>
 <div class="card-grid">
 <div class="card">
 <h3><a href="eigenstretch-tensor.html" style="color:var(--accent);text-decoration:none">EIGENSTRETCH TENSOR &rarr;</a></h3>
-<p>Extends the Reffelt Constant with k-NN graph topology and real-time overfitting detection through digit monitoring.</p>
+<p>The same digits recomputed at each checkpoint of a parameter search, with a trajectory-based graph, to watch for drift in the sensitivity pattern.</p>
 </div>
 <div class="card">
 <h3><a href="ground-state-kernel.html" style="color:var(--accent);text-decoration:none">GROUND STATE KERNEL &rarr;</a></h3>
-<p>Uses the Reffelt Constant to discover that high-dimensional spaces universally reduce to 2D manifolds.</p>
+<p>Where I'd like to use the constant to check how many dimensions a search space keeps after freezing. Whether that number is small in general is a question I want to answer, not a result.</p>
 </div>
 </div>
 </div>
@@ -294,17 +311,17 @@ var c=gi('rc-inputs'),h='';
 for(var i=0;i<dims;i++) h+='<div style="display:flex;flex-direction:column;gap:.2rem"><label style="color:var(--dim);font-size:.6rem;letter-spacing:1px">DIM '+(i+1)+'</label><input type="number" step="0.01" min="0" max="2" value="'+(eigenvals[i]||0).toFixed(2)+'" id="rc-ev-'+i+'" style="width:100%" placeholder="&lambda;"><input type="number" step="0.01" min="0" max="1" value="'+(causals[i]||0).toFixed(2)+'" id="rc-cw-'+i+'" style="width:100%" placeholder="w"></div>';
 c.innerHTML=h;
 }
-window.rcUpdateInputs=function(){dims=parseInt(gi('rc-dims').value);eigenvals=[];causals=[];for(var i=0;i<dims;i++){eigenvals.push(Math.random()*1.5+.1);causals.push(Math.random();}var s=causals.reduce(function(a,b){return a+b},0);causals=causals.map(function(v){return v/s});rcUI();}
-window.rcRandomize=function(){eigenvals=[];causals=[];for(var i=0;i<dims;i++){eigenvals.push(Math.random()*1.8+.05);causals.push(Math.random();}var s=causals.reduce(function(a,b){return a+b},0);causals=causals.map(function(v){return v/s});rcUI();}
+window.rcUpdateInputs=function(){dims=parseInt(gi('rc-dims').value);eigenvals=[];causals=[];for(var i=0;i<dims;i++){eigenvals.push(Math.random()*1.5+.1);causals.push(Math.random());}var s=causals.reduce(function(a,b){return a+b},0);causals=causals.map(function(v){return v/s});rcUI();}
+window.rcRandomize=function(){eigenvals=[];causals=[];for(var i=0;i<dims;i++){eigenvals.push(Math.random()*1.8+.05);causals.push(Math.random());}var s=causals.reduce(function(a,b){return a+b},0);causals=causals.map(function(v){return v/s});rcUI();}
 window.rcCompute=function(){
 for(var i=0;i<dims;i++){eigenvals[i]=parseFloat(gi('rc-ev-'+i).value)||0;causals[i]=parseFloat(gi('rc-cw-'+i).value)||0;}
 var cs=causals.reduce(function(a,b){return a+b},0);
 if(cs>0) causals=causals.map(function(v){return v/cs});
 var digits=[],html='<div style="font-size:.6rem;letter-spacing:1px;color:var(--dim);margin-bottom:.5rem">THE REFFELT CONSTANT</div>';
 for(var i=0;i<dims;i++){
-var raw=Math.abs(eigenvals[i]*causals[i]*100)*8+1,d=Math.min(8,Math.max(1,Math.floor(raw)));
-if(eigenvals[i]<0.01) d=0;
-if(raw>8*100) d=9;
+var p=Math.abs(eigenvals[i]*causals[i]),raw=800*p+1,d=Math.min(8,Math.max(1,Math.floor(raw)));
+if(p<0.01) d=0;
+if(p>1.0) d=9;
 var cls=d===0?'digit-dead':d===9?'digit-sat':'digit-valid';
 digits.push(d);
 html+='<span class="digit '+cls+'">'+d+'</span>';

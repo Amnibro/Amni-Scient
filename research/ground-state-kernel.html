@@ -5,16 +5,16 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="theme-color" content="#FBFAF8">
 <meta name="robots" content="noindex, nofollow">
-<title>Universal Ground State Kernel — Dimensionality Collapse | AMNI-SCIENT Research</title>
-<meta name="description" content="Universal Ground State Kernel: SVD-based eigenstretch decomposition reveals that all high-dimensional parameter spaces collapse to a 2D manifold (k, regime), enabling extreme compression and universal transfer.">
-<meta name="keywords" content="ground state kernel,dimensionality reduction,SVD,eigenstretch,parameter compression,universal manifold,meta-optimizer,causal weights">
+<title>Universal Ground State Kernel — SVD over Optimizer Winners | AMNI-SCIENT Research</title>
+<meta name="description" content="Universal Ground State Kernel: an SVD over the winning parameter sets from my trading-bot optimizer. One strategy family collapsed to two components (95.6% of score-weighted variance); the other did not.">
+<meta name="keywords" content="ground state kernel,dimensionality reduction,SVD,eigenstretch,parameter compression,meta-optimizer,causal weights">
 <meta property="og:title" content="Universal Ground State Kernel — AMNI-SCIENT Research">
-<meta property="og:description" content="All high-dimensional parameter spaces collapse to a 2D manifold via SVD eigenstretch decomposition.">
+<meta property="og:description" content="SVD over optimizer winners: one strategy family collapsed to two components, the other did not.">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://amni-scient.com/research/ground-state-kernel">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="https://amni-scient.com/research/ground-state-kernel">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"ScholarlyArticle","name":"Universal Ground State Kernel","author":{"@type":"Person","name":"Amnibro"},"description":"SVD eigenstretch decomposition reveals universal 2D ground state manifold in high-dimensional parameter spaces.","url":"https://amni-scient.com/research/ground-state-kernel","publisher":{"@type":"Organization","name":"AMNI-SCIENT"},"datePublished":"2025","dateModified":"2026"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"ScholarlyArticle","name":"Universal Ground State Kernel","author":{"@type":"Person","name":"Anthony Reffelt"},"description":"An SVD over the winning parameter sets from a trading-bot optimizer. One strategy family collapsed to two components; the other did not.","url":"https://amni-scient.com/research/ground-state-kernel","publisher":{"@type":"Organization","name":"AMNI-SCIENT"},"datePublished":"2025","dateModified":"2026-09-09"}</script>
 <link rel="stylesheet" href="../css/style.css?v=b260">
 <script>
 window.MathJax={tex:{inlineMath:[["$","$"],["\\(","\\)"]],displayMath:[["$$","$$"],["\\[","\\]"]],processEscapes:true},options:{skipHtmlTags:["script","noscript","style","textarea","pre","code"]}};
@@ -53,6 +53,9 @@ window.MathJax={tex:{inlineMath:[["$","$"],["\\(","\\)"]],displayMath:[["$$","$$
 .viz-controls button{background:var(--accent);color:var(--bg);border:none;padding:.4rem 1rem;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.75rem;letter-spacing:1px;cursor:pointer}
 .viz-controls button:hover{opacity:.85}
 .viz-charts-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}@media(max-width:600px){.viz-charts-row{grid-template-columns:1fr}}
+.callout{max-width:800px;margin:1.25rem auto;padding:1.25rem 1.5rem;border:1px solid var(--accent);border-radius:8px;background:var(--panel);color:var(--dim);font-size:.9rem;line-height:1.8}
+.callout strong{color:var(--text)}
+.prose{max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem}
 </style>
 </head>
 <body class="pp">
@@ -90,31 +93,33 @@ window.MathJax={tex:{inlineMath:[["$","$"],["\\(","\\)"]],displayMath:[["$$","$$
 <section class="hero" style="min-height:auto;padding:8rem 2rem 3rem">
 <div class="breadcrumb"><a href="../research.html">RESEARCH</a> &nbsp;/&nbsp; UNIVERSAL GROUND STATE KERNEL</div>
 <h1>UNIVERSAL GROUND STATE KERNEL</h1>
-<p class="subtitle">DIMENSIONALITY COLLAPSE TO 2D MANIFOLD</p>
-<p class="tagline">SVD-based eigenstretch decomposition reveals that high-dimensional parameter spaces universally collapse to a 2-dimensional ground state manifold (k, regime), enabling extreme compression, zero-shot transfer, and principled meta-optimization.</p>
+<p class="subtitle">SVD OVER OPTIMIZER WINNERS</p>
+<p class="tagline">I ran an SVD over the winning parameter sets from my trading-bot optimizer. For one strategy family, two components explained 95.6% of the score-weighted variance: a volatility scale k and a trend/reversal switch. The other family didn't collapse. This page shows the method and what I found.</p>
 </section>
+<div class="prose"><div class="callout"><strong>Status, 2026-09-09.</strong> The SVD method (G1 to G6) is derived on this page and matches universal_reffelt_meta_optimizer.py. The 95.6% figure is measured on the winner set my optimizer wrote out on Nov 30 2025 for a 15-parameter trend strategy on BTC, ETH and SOL 15-minute bars; the mean-reversion family came out about 7D. The three charts are illustrations with made-up numbers. The GP-plus-Thompson meta-optimizer is a plan, the applications are conjecture, and the digit encoding in G7 disagrees with the code.</div></div>
 <section>
 <h2>ABSTRACT</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
-<p>The <strong style="color:var(--text)">Universal Ground State Kernel</strong> is the empirical discovery that optimal configurations across diverse parameter spaces are not scattered through the full dimensionality of the space. Instead, they lie on a <strong style="color:var(--text)">2-dimensional manifold</strong> parameterized by a single continuous scaling factor k &isin; [0.3, 3.5] and a discrete regime selector &isin; {0, 1}.</p>
-<p style="margin-top:1.2rem">This is established via SVD decomposition of performance-weighted parameter matrices, combined with causal weight analysis to identify which dimensions actually influence outcomes vs. which are "frozen" at universal constants. The result: parameter spaces of 10&ndash;15+ dimensions collapse to d<sub>eff</sub> = 2 with &gt;95% variance explained, yielding compression ratios of 5&ndash;8&times;.</p>
+<p>The <strong style="color:var(--text)">Universal Ground State Kernel</strong> is what I named the finding that the winning configurations from my optimizer weren't spread through the full parameter space. For one family they sat on a <strong style="color:var(--text)">two-dimensional manifold</strong>: a continuous scaling factor k &isin; [0.3, 3.5] and a regime bit &isin; {0, 1}.</p>
+<p style="margin-top:1.2rem">The one clean case was a 15-parameter trend strategy on BTC, ETH and SOL 15-minute bars. Two singular values carried 95.6%. The mean-reversion family was about 7D, with the regime bit as its main axis. I don't have evidence this holds outside my own optimizer. The method is an SVD of a score-weighted parameter matrix, plus a loading analysis to sort parameters into ones that move the top components and ones I can freeze. On the clean case that takes 15 parameters to 2 components.</p>
+<p style="margin-top:1.2rem"><strong style="color:var(--text)">Data:</strong> strategy family AMR/AGS (trend-following) and ANC (mean-reversion); tickers BTC/USD, ETH/USD, SOL/USD; 15-minute bars; the elite set is the winner list my optimizer saved (I haven't published the count); run date Nov 30 2025. The script header credits Anthony Reffelt with Grok 4.1 assistance.</p>
 </div>
 </section>
 <section>
-<h2>CORE DISCOVERY</h2>
+<h2>WHAT I FOUND</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
 <div class="collapse-visual">
-<div class="dim-label">DIMENSIONALITY COLLAPSE</div>
-<span class="dim-from">15D</span>
+<div class="dim-label">TREND FAMILY, MEASURED NOV 30 2025</div>
+<span class="dim-from">15 parameters</span>
 <span class="dim-arrow">&xrarr;</span>
-<span class="dim-to">2D</span>
-<div class="dim-detail">k &isin; [0.3, 3.5] &nbsp;&bull;&nbsp; regime &isin; {0, 1} &nbsp;&bull;&nbsp; compression ratio: 7.5&times; &nbsp;&bull;&nbsp; variance explained: &gt;95%</div>
+<span class="dim-to">2 components</span>
+<div class="dim-detail">k &isin; [0.3, 3.5] &nbsp;&bull;&nbsp; regime &isin; {0, 1} &nbsp;&bull;&nbsp; variance explained: 95.6% &nbsp;&bull;&nbsp; mean-reversion family: about 7 components, no collapse</div>
 </div>
 <div class="eq-block highlight">
 <div class="eq-label">THE GROUND STATE</div>
 $$\mathcal{G} = \{(k, \; \text{regime}) \;:\; k \in [0.3, 3.5], \;\text{regime} \in \{0, 1\}\}$$
 </div>
-<p>All other parameters are <strong style="color:var(--text)">frozen</strong> at universal constants determined by the ground state analysis. These frozen values are not "defaults" &mdash; they are the weighted medians of the top-performing configurations, verified to be insensitive to perturbation.</p>
+<p>In the trend family, every other parameter is <strong style="color:var(--text)">frozen</strong> at a constant from the analysis: the score-weighted median of the winners, with weights s<sub>i</sub>. I haven't run a perturbation test on the frozen values, so "insensitive" is a guess until I do.</p>
 </div>
 </section>
 <section>
@@ -127,16 +132,16 @@ $$\mathcal{G} = \{(k, \; \text{regime}) \;:\; k \in [0.3, 3.5], \;\text{regime} 
 <div class="eq-label">EQUATION G1 &mdash; PARAMETER SPACE</div>
 $$\mathbf{p} = [p_1, p_2, \ldots, p_N]^T \qquad p_i \in [\min_i, \max_i]$$
 </div>
-<p>Each p<sub>i</sub> has a defined range. For a 15-parameter system, N = 15. The parameter matrix P has shape (M &times; N) where M is the number of observed configurations.</p>
+<p>Each p<sub>i</sub> has a range. In my run N = 15 (the UNIFIED_PARAM_NAMES list in the code, covering both families plus three strategy flags). The parameter matrix P is M &times; N, with M the number of winner configurations loaded.</p>
 </div>
 <div class="derivation-step">
 <h4>STEP G2 &mdash; PERFORMANCE-WEIGHTED NORMALIZATION</h4>
 <p>Normalize parameters to [0, 1] and weight by performance score:</p>
 <div class="eq-block">
 <div class="eq-label">EQUATION G2 &mdash; WEIGHTED NORMALIZATION</div>
-$$\mathbf{P}_{\text{norm}} = \frac{\mathbf{P} - \mathbf{P}_{\min}}{\mathbf{P}_{\max} - \mathbf{P}_{\min}} \qquad \mathbf{P}_{\text{weighted}} = \mathbf{P}_{\text{norm}} \cdot \operatorname{diag}\!\left(\sqrt{\frac{s_i}{s_{\max}}}\right)$$
+$$\mathbf{P}_{\text{norm}} = \frac{\mathbf{P} - \mathbf{P}_{\min}}{\mathbf{P}_{\max} - \mathbf{P}_{\min}} \qquad \mathbf{P}_{\text{weighted}} = \operatorname{diag}\!\left(\sqrt{\frac{s_i}{s_{\max}}}\right)\mathbf{P}_{\text{norm}}$$
 </div>
-<p>where s<sub>i</sub> is the performance score of configuration i. This ensures that high-performing configurations have disproportionate influence on the decomposition.</p>
+<p>where s<sub>i</sub> is the score of configuration i (profit per day in my run). The weight matrix is M &times; M and multiplies from the left, so it scales rows (configurations), which is what the code does. High-scoring rows pull harder on the decomposition.</p>
 </div>
 <div class="derivation-step">
 <h4>STEP G3 &mdash; SVD DECOMPOSITION</h4>
@@ -148,18 +153,18 @@ $$\mathbf{X} = \mathbf{P}_{\text{weighted}} - \bar{\mathbf{P}}_{\text{weighted}}
 <p>Singular values &sigma;<sub>1</sub> &ge; &sigma;<sub>2</sub> &ge; &hellip; &ge; &sigma;<sub>N</sub> reveal the intrinsic dimensionality. Variance explained by dimension j:</p>
 <div class="eq-block">
 <div class="eq-label">EQUATION G4 &mdash; VARIANCE DECOMPOSITION</div>
-$$\lambda_j = \frac{\sigma_j^2}{\sum_i \sigma_i^2} \qquad d_{\text{eff}} = \arg\min_d \sum_{i=1}^{d} \lambda_i \geq 0.95$$
+$$\lambda_j = \frac{\sigma_j^2}{\sum_i \sigma_i^2} \qquad d_{\text{eff}} = \min\Bigl\{d : \sum_{i \le d} \lambda_i \geq 0.95\Bigr\}$$
 </div>
-<p>The discovery: d<sub>eff</sub> = 2 consistently across diverse parameter spaces. Two singular values capture &gt;95% of the performance-weighted variance.</p>
+<p>The 95% cutoff is the usual cumulative-variance rule (Jolliffe, Principal Component Analysis, 2nd ed., Springer 2002). Measured on my Nov 30 2025 run: d<sub>eff</sub> = 2 for the trend family (95.6% in two singular values) and about 7 for the mean-reversion family.</p>
 </div>
 <div class="derivation-step">
 <h4>STEP G4 &mdash; CAUSAL WEIGHT ANALYSIS</h4>
-<p>Determine which parameters actually matter by computing causal contribution:</p>
+<p>Sort parameters by how much they load on the leading components. The weight formula on the earlier version of this page was not well defined (it integrated over a dummy variable with an integrand in another, and called a singular vector an eigenfunction). What the code computes is:</p>
 <div class="eq-block">
-<div class="eq-label">EQUATION G5 &mdash; CAUSAL WEIGHTS</div>
-$$w_d = \int_0^1 \left|\frac{\partial \psi_j(d)}{\partial d}\right|^2 d\xi$$
+<div class="eq-label">EQUATION G5 &mdash; CAUSAL WEIGHTS (AS IN THE CODE)</div>
+$$w_d = \frac{\sum_{i \le K} |V_{d,i}|\,\sigma_i^2}{\sum_{d'} \sum_{i \le K} |V_{d',i}|\,\sigma_i^2}$$
 </div>
-<p>where &psi;<sub>j</sub> is the j-th eigenfunction from the decomposition. Parameters with high w<sub>d</sub> significantly influence the manifold shape (these become "free" parameters); parameters with low w<sub>d</sub> can be frozen without performance loss.</p>
+<p>where V<sub>d,i</sub> is the loading of parameter d on the i-th right singular vector and K = 8 in the current code. So w<sub>d</sub> is the absolute loading of each parameter on the top singular vectors, weighted by variance and normalised to sum to one. High w<sub>d</sub> parameters stay free; low w<sub>d</sub> parameters get frozen. "Causal" is my label for it; it's a loading, not a causal test.</p>
 </div>
 <div class="derivation-step">
 <h4>STEP G5 &mdash; FREEZING &amp; GROUND STATE EXTRACTION</h4>
@@ -168,35 +173,35 @@ $$w_d = \int_0^1 \left|\frac{\partial \psi_j(d)}{\partial d}\right|^2 d\xi$$
 <div class="eq-label">EQUATION G6 &mdash; GROUND STATE</div>
 $$p_i^* = \begin{cases}\text{free} & \text{if } w_i \geq w_{\text{threshold}} \\ \operatorname{median}_{\text{top-5\%}}(p_i) & \text{otherwise (frozen)}\end{cases}$$
 </div>
-<p>Frozen values are set to the weighted median of the top 5% of performers &mdash; the most robust central tendency of elite configurations.</p>
+<p>Frozen values are the weighted median over the winner set, with weights s<sub>i</sub> (the same score weights as G2). The "top 5%" in G6 is how I first wrote it; the code takes the weighted median over all winners it loaded, and I've left the formula so the difference is visible.</p>
 </div>
 </div>
 </section>
 <section>
 <h2>PARAMETER FREEZE MAP</h2>
 <div style="max-width:800px;margin:0 auto">
-<p style="color:var(--dim);font-size:.85rem;line-height:1.9;margin-bottom:1rem">Example ground state extraction from a 15-parameter system, showing which parameters are free vs. frozen:</p>
+<p style="color:var(--dim);font-size:.85rem;line-height:1.9;margin-bottom:1rem">The freeze map for the 15-parameter trend strategy. Rows marked * are placeholders I haven't backed with a run; the code derives threshold_buy from k and never uses ext_lower/ext_upper. None of the causal weight numbers in the last column come from a saved run; they're the shape I expect, not output.</p>
 <table class="freeze-table">
-<thead><tr><th>PARAMETER</th><th>RANGE</th><th>GROUND STATE</th><th>STATUS</th><th>CAUSAL WEIGHT</th></tr></thead>
+<thead><tr><th>PARAMETER</th><th>RANGE</th><th>GROUND STATE</th><th>STATUS</th><th>CAUSAL WEIGHT*</th></tr></thead>
 <tbody>
-<tr><td style="color:var(--text)">k (scaling)</td><td>[0.3, 3.5]</td><td>&mdash;</td><td class="free">FREE</td><td class="free">0.92</td></tr>
-<tr><td style="color:var(--text)">regime</td><td>{0, 1}</td><td>&mdash;</td><td class="free">FREE</td><td class="free">0.87</td></tr>
-<tr><td style="color:var(--text)">threshold_buy</td><td>[5, 50]</td><td>50.0</td><td class="frozen">FROZEN</td><td class="frozen">0.12</td></tr>
-<tr><td style="color:var(--text)">threshold_sell</td><td>[50, 95]</td><td>derived from k</td><td class="frozen">FROZEN</td><td class="frozen">0.09</td></tr>
-<tr><td style="color:var(--text)">ext_lower</td><td>[3, 40]</td><td>25.0</td><td class="frozen">FROZEN</td><td class="frozen">0.07</td></tr>
-<tr><td style="color:var(--text)">ext_upper</td><td>[60, 97]</td><td>75.0</td><td class="frozen">FROZEN</td><td class="frozen">0.06</td></tr>
-<tr><td style="color:var(--text)">indicator_idx</td><td>[0, 5]</td><td>2</td><td class="frozen">FROZEN</td><td class="frozen">0.05</td></tr>
-<tr><td style="color:var(--text)">filter_idx</td><td>[0, 3]</td><td>1</td><td class="frozen">FROZEN</td><td class="frozen">0.04</td></tr>
-<tr><td style="color:var(--text)">signal_idx</td><td>[0, 4]</td><td>2</td><td class="frozen">FROZEN</td><td class="frozen">0.04</td></tr>
-<tr><td style="color:var(--text)">stop_ref</td><td>[0, 8]</td><td>7</td><td class="frozen">FROZEN</td><td class="frozen">0.03</td></tr>
-<tr><td style="color:var(--text)">target_ref</td><td>[0, 8]</td><td>6</td><td class="frozen">FROZEN</td><td class="frozen">0.03</td></tr>
-<tr><td style="color:var(--text)">averaging</td><td>{0, 1}</td><td>0</td><td class="frozen">FROZEN</td><td class="frozen">0.02</td></tr>
+<tr><td style="color:var(--text)">k (scaling)</td><td>[0.3, 3.5]</td><td>&mdash;</td><td class="free">FREE</td><td class="free">0.92*</td></tr>
+<tr><td style="color:var(--text)">regime</td><td>{0, 1}</td><td>&mdash;</td><td class="free">FREE</td><td class="free">0.87*</td></tr>
+<tr><td style="color:var(--text)">threshold_buy</td><td>[5, 50]</td><td>50 &minus; 10k (derived from k in code)</td><td class="frozen">DERIVED</td><td class="frozen">0.12*</td></tr>
+<tr><td style="color:var(--text)">threshold_sell</td><td>[50, 95]</td><td>derived from k</td><td class="frozen">DERIVED</td><td class="frozen">0.09*</td></tr>
+<tr><td style="color:var(--text)">ext_lower*</td><td>[3, 40]</td><td>25.0 (listed as frozen; unused by the code)</td><td class="frozen">UNUSED</td><td class="frozen">0.07*</td></tr>
+<tr><td style="color:var(--text)">ext_upper*</td><td>[60, 97]</td><td>75.0 (listed as frozen; unused by the code)</td><td class="frozen">UNUSED</td><td class="frozen">0.06*</td></tr>
+<tr><td style="color:var(--text)">indicator_idx*</td><td>[0, 5]</td><td>2</td><td class="frozen">FROZEN*</td><td class="frozen">0.05*</td></tr>
+<tr><td style="color:var(--text)">filter_idx*</td><td>[0, 3]</td><td>1</td><td class="frozen">FROZEN*</td><td class="frozen">0.04*</td></tr>
+<tr><td style="color:var(--text)">signal_idx*</td><td>[0, 4]</td><td>2</td><td class="frozen">FROZEN*</td><td class="frozen">0.04*</td></tr>
+<tr><td style="color:var(--text)">stop_ref*</td><td>[0, 8]</td><td>7</td><td class="frozen">FROZEN*</td><td class="frozen">0.03*</td></tr>
+<tr><td style="color:var(--text)">target_ref*</td><td>[0, 8]</td><td>6</td><td class="frozen">FROZEN*</td><td class="frozen">0.03*</td></tr>
+<tr><td style="color:var(--text)">averaging*</td><td>{0, 1}</td><td>0</td><td class="frozen">FROZEN*</td><td class="frozen">0.02*</td></tr>
 </tbody>
 </table>
-<p style="color:var(--dim);font-size:.85rem;line-height:1.9;margin-top:1rem">Regime 0 (continuous) and Regime 1 (discrete) each have frozen parameter sets derived from their respective top performers. The scaling factor k then modulates all regime-specific derived quantities through simple algebraic relationships:</p>
+<p style="color:var(--dim);font-size:.85rem;line-height:1.9;margin-top:1rem">What the code does freeze, per its own docstring: for regime 0 (trend), RSI-21, ADX-14, MACD 5/35 and a 200-bar MA filter; for regime 1 (reversal), window 12, target 6, stop 2%, profit 1%. k then sets the regime-specific quantities through these relationships:</p>
 <div class="eq-block">
 <div class="eq-label">REGIME 0 &mdash; K-DERIVED QUANTITIES</div>
-$$\text{spread} = 15 + 20k \qquad \text{threshold}_{\text{sell}} = \min(50 + \text{spread}, 95)$$
+$$\text{threshold}_{\text{buy}} = 50 - 10k \qquad \text{spread} = 15 + 20k \qquad \text{threshold}_{\text{sell}} = \min(50 + \text{spread}, 95)$$
 </div>
 <div class="eq-block">
 <div class="eq-label">REGIME 1 &mdash; K-DERIVED QUANTITIES</div>
@@ -207,65 +212,67 @@ $$\text{window} = \lfloor 8 + 8k \rfloor \qquad \text{target} = \lfloor 4 + 4k \
 <section>
 <h2>REFFELT CONSTANT AS FINGERPRINT</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
-<p>The eigenstretch decomposition produces singular values that encode directly into the Reffelt Constant (see <a href="reffelt-constant.html" style="color:var(--accent)">Reffelt Constant</a>):</p>
+<p>The singular values can be packed into a digit string, the Reffelt Constant (see <a href="reffelt-constant.html" style="color:var(--accent)">Reffelt Constant</a>). The digit encoding on this page and the one in the code differ. The code uses 8 &minus; 10&middot;var(k) per regime plus a separation digit. I need to pick one and delete the other. The version on this page:</p>
 <div class="eq-block">
-<div class="eq-label">EQUATION G7 &mdash; REFFELT DIGIT ENCODING</div>
-$$\text{ℜ}_j = \begin{cases}\lfloor \lambda_j \cdot 80 \rfloor & 0.01 \leq \lambda_j < 0.12 \\ 9 & \lambda_j \geq 0.12 \;\text{(saturated)} \\ 0 & \lambda_j < 0.01 \;\text{(dead)}\end{cases} \quad \text{clamped to } [1, 8]$$
+<div class="eq-label">EQUATION G7 &mdash; REFFELT DIGIT ENCODING (PAGE VERSION, NOT THE CODE)</div>
+$$\text{ℜ}_j = \begin{cases}9 & \lambda_j \geq 0.12 \;\text{(saturated)} \\ \lfloor 80\lambda_j \rfloor & 0.01 \leq \lambda_j < 0.12 \\ 0 & \lambda_j < 0.01 \;\text{(dead)}\end{cases}$$
 </div>
-<p>A valid Reffelt constant contains no 0s or 9s &mdash; all digits must be in [1, 8], indicating well-distributed variance across active dimensions. A near-maximum constant (e.g., &real; = 99100050) indicates extreme dimensional concentration &mdash; almost all variance in 2 dimensions, confirming the ground state collapse.</p>
+<p>Under this version a 9 means a component carrying most of the variance and a 0 means a dead one, so the string my Nov 30 run printed, &real; = 99100000, reads as two saturated components and the rest dead. The meta-optimizer's compute_reffelt_constant does the same thing (&lfloor;80&lambda;<sub>j</sub>&rfloor; clamped to [0, 8], 9 above 0.12), even though its docstring says &times;10. The kernel script's version (8 &minus; 10&middot;var(k) for each regime, then min(8, max(1, &lfloor;16&middot;separation&rfloor;)) for the third digit) produces a different string from the same run. That's the inconsistency I have to clean up.</p>
 </div>
 </section>
 <section>
 <h2>META-OPTIMIZER</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
-<p>With the ground state identified, optimization becomes a <strong style="color:var(--text)">2D search problem</strong> solvable by a Bayesian + bandit hybrid:</p>
+<p>With the ground state in hand, the search is two-dimensional. Right now the search is a plain grid: 100 values of k times two regimes. A GP-plus-Thompson version is what I want to build; it isn't written.</p>
 <div class="derivation-step">
-<h4>BAYESIAN COMPONENT</h4>
-<p>Gaussian Process regression over (k, regime) &rarr; performance. Acquisition function (Expected Improvement) selects the next k to evaluate:</p>
+<h4>PLANNED: GAUSSIAN PROCESS OVER k</h4>
+<p>The plan is a GP regression from (k, regime) to score, with Expected Improvement picking the next k (Jones, Schonlau &amp; Welch, "Efficient global optimization of expensive black-box functions", J. Global Optim. 13, 1998):</p>
 <div class="eq-block">
-<div class="eq-label">EQUATION G8 &mdash; EXPECTED IMPROVEMENT</div>
+<div class="eq-label">EQUATION G8 &mdash; EXPECTED IMPROVEMENT (PLANNED METHOD, NOT IMPLEMENTED)</div>
 $$\text{EI}(k) = \mathbb{E}\left[\max(f(k) - f^*, 0)\right] = (\mu(k) - f^*)\Phi(z) + \sigma(k)\phi(z)$$
 </div>
 <p>where z = (&mu;(k) &minus; f*) / &sigma;(k), &Phi; is the normal CDF, and &phi; is the normal PDF.</p>
 </div>
 <div class="derivation-step">
-<h4>BANDIT COMPONENT</h4>
-<p>Thompson Sampling over the regime selector {0, 1}. Each regime maintains a Beta distribution of success/failure, updated after each evaluation. This naturally balances exploration vs. exploitation of the discrete regime choice.</p>
+<h4>PLANNED: THOMPSON SAMPLING OVER THE REGIME BIT</h4>
+<p>For the {0, 1} choice I'd keep a Beta posterior per regime and sample it each round (Thompson, "On the likelihood that one unknown probability exceeds another in view of the evidence of two samples", Biometrika 25, 1933). Also not written.</p>
 </div>
-<p>The hybrid meta-optimizer explores the 2D ground state manifold with O(100) evaluations instead of the O(10<sup>N</sup>) required for grid search in the original N-dimensional space.</p>
-</div>
-</section>
-<section>
-<h2>STATE-OF-THE-ART APPLICATIONS</h2>
-<div style="max-width:800px;margin:0 auto">
-<div class="app-card">
-<h4>&#129302; TRANSFER LEARNING &amp; FOUNDATION MODELS</h4>
-<p>Foundation models (GPT, BERT, ViT) are pre-trained with hundreds of hyperparameters, but fine-tuning is effective with very few changes. The Ground State Kernel explains why: the pre-training process finds the ground state manifold, freezing most parameters at universal values. Fine-tuning only adjusts the 2 free dimensions (learning rate scaling k and task regime). This provides theoretical justification for techniques like LoRA, prefix tuning, and adapter layers &mdash; they succeed because they implicitly operate on the ground state manifold.</p>
-</div>
-<div class="app-card">
-<h4>&#128220; MODEL COMPRESSION &amp; PRUNING</h4>
-<p>Neural network pruning removes parameters that don't contribute to performance. The causal weight analysis (Eq. G5) provides a principled criterion: parameters with low w<sub>d</sub> are frozen (prunable) and those with high w<sub>d</sub> must be preserved. Unlike magnitude-based pruning (which can remove important low-magnitude connections), causal weight pruning preserves the manifold structure. The compression ratio prediction (d<sub>eff</sub> / N) gives an a priori estimate of achievable pruning before any pruning is attempted.</p>
-</div>
-<div class="app-card">
-<h4>&#128269; HYPERPARAMETER SEARCH</h4>
-<p>The ground state kernel reduces hyperparameter optimization from an N-dimensional problem to a 2D problem. For any new domain, the procedure is: (1) collect M random configurations with performance scores, (2) run SVD to find d<sub>eff</sub> and identify free parameters, (3) freeze non-causal parameters at top-performer medians, (4) run Bayesian optimization over the 2D ground state. This converts O(10<sup>N</sup>) grid search into O(100) evaluations with guaranteed coverage of the performance-relevant manifold.</p>
-</div>
-<div class="app-card">
-<h4>&#127981; NEURAL ARCHITECTURE SEARCH (NAS)</h4>
-<p>NAS explores architecture spaces with thousands of possible configurations (layer depths, widths, activation functions, skip connections). The ground state analysis reveals that most architecture choices are frozen at universal optima &mdash; only 2&ndash;3 "macro" decisions (depth scaling, width multiplier) actually determine performance. This explains the success of scaling laws (&mu;P, Chinchilla) and provides a principled way to design architecture search spaces that focus on the free dimensions.</p>
-</div>
-<div class="app-card">
-<h4>&#9883; QUANTUM VARIATIONAL CIRCUITS</h4>
-<p>Variational quantum eigensolvers (VQE) optimize parameterized quantum circuits with many rotation angles. The ground state kernel predicts that most rotation angles converge to universal values (frozen), with only 2 effective degrees of freedom controlling the ansatz performance. This addresses the "barren plateau" problem: by identifying and freezing low-causal-weight parameters, the effective landscape becomes 2D and gradient-navigable, potentially enabling efficient VQE optimization for large molecules.</p>
-</div>
+<p>The grid in optimize_universal_ground_state is 100 values of k from 0.3 to 3.5 times two regimes, 200 backtests per ticker; the script's main loop runs a coarser 20 &times; 2 sweep from 0.5 to 2.5. Whether a GP version gets there in fewer is something I'd have to measure once it exists.</p>
 </div>
 </section>
 <section>
-<h2>INTERACTIVE EXPLORER</h2>
+<h2>CONJECTURES I HAVEN'T TESTED</h2>
 <div style="max-width:800px;margin:0 auto">
+<p style="color:var(--dim);font-size:.85rem;line-height:1.9;margin-bottom:1rem">Each of these is a place the same SVD might say something. I have one measured case, in my own optimizer, and nothing beyond it.</p>
+<div class="app-card">
+<h4>FINE-TUNING</h4>
+<p>If this held for neural nets it would be one reason LoRA works (Hu et al., "LoRA: Low-Rank Adaptation of Large Language Models", 2021); I haven't tested that.</p>
+</div>
+<div class="app-card">
+<h4>PRUNING</h4>
+<p>A loading-based freeze criterion might beat magnitude pruning on some nets; I haven't pruned anything with it.</p>
+</div>
+<div class="app-card">
+<h4>HYPERPARAMETER SEARCH</h4>
+<p>The recipe (collect scored configs, SVD, freeze low loaders, search the rest) could transfer to other domains; my only run is the trading one above.</p>
+</div>
+<div class="app-card">
+<h4>ARCHITECTURE SEARCH</h4>
+<p>If a few macro choices carried most of the variance it would rhyme with &mu;P (Yang et al., "Tensor Programs V", 2022) and Chinchilla (Hoffmann et al., "Training Compute-Optimal Large Language Models", 2022); I haven't run the SVD on any architecture sweep.</p>
+</div>
+<div class="app-card">
+<h4>VARIATIONAL QUANTUM CIRCUITS</h4>
+<p>Freezing low-loading rotation angles might shrink the landscape enough to matter for barren plateaus (McClean et al., "Barren plateaus in quantum neural network training landscapes", Nat. Commun. 9, 2018); that's a guess, with no circuit behind it.</p>
+</div>
+</div>
+</section>
+<section>
+<h2>ILLUSTRATIONS</h2>
+<div style="max-width:800px;margin:0 auto">
+<p style="color:var(--dim);font-size:.85rem;line-height:1.9;margin-bottom:1rem">These charts are illustrations with made-up numbers so you can see the shape I'm describing. The real scree values live in universal_reffelt_meta_optimizer.py output, which I haven't published yet. The regenerate button reshuffles the made-up numbers; it doesn't run anything.</p>
 <div class="viz-section">
-<h4>EIGENVALUE SCREE PLOT &mdash; 15D &rarr; 2D COLLAPSE</h4>
-<p style="color:var(--dim);font-size:.8rem;line-height:1.7;margin-bottom:1rem">Singular value decomposition showing the dramatic drop-off after the first 2 dimensions. The first two singular values capture &gt;95% of performance-weighted variance, confirming the universal 2D ground state manifold (Eq. G4).</p>
+<h4>SCREE PLOT, ILLUSTRATIVE</h4>
+<p style="color:var(--dim);font-size:.8rem;line-height:1.7;margin-bottom:1rem">What a 15-to-2 collapse looks like on a scree plot: a steep drop after the second singular value, with the cumulative curve crossing 0.95 there (Eq. G4). The bar heights here are typed in by hand.</p>
 <div class="viz-controls">
 <button onclick="gsRegenerate()">REGENERATE SAMPLE</button>
 </div>
@@ -273,16 +280,23 @@ $$\text{EI}(k) = \mathbb{E}\left[\max(f(k) - f^*, 0)\right] = (\mu(k) - f^*)\Phi
 </div>
 <div class="viz-charts-row" style="margin-top:1.5rem">
 <div class="viz-section">
-<h4>CAUSAL WEIGHT IMPORTANCE</h4>
-<p style="color:var(--dim);font-size:.75rem;line-height:1.6;margin-bottom:.75rem">Per-parameter causal weights (Eq. G5). Blue = free (high causal impact), gray = frozen (safely fixed at ground state).</p>
+<h4>CAUSAL WEIGHTS, ILLUSTRATIVE</h4>
+<p style="color:var(--dim);font-size:.75rem;line-height:1.6;margin-bottom:.75rem">The shape of Eq. G5 output: two tall bars (free) and a tail (frozen). Hand-typed values, not a run.</p>
 <div class="viz-canvas-wrap"><canvas id="gs-causal-chart"></canvas></div>
 </div>
 <div class="viz-section">
-<h4>2D GROUND STATE MANIFOLD</h4>
-<p style="color:var(--dim);font-size:.75rem;line-height:1.6;margin-bottom:.75rem">Scatter of k vs. performance score, colored by regime (blue = Regime 0, orange = Regime 1). The optimal band k &isin; [0.8, 2.0] is highlighted.</p>
+<h4>k VERSUS SCORE, ILLUSTRATIVE</h4>
+<p style="color:var(--dim);font-size:.75rem;line-height:1.6;margin-bottom:.75rem">Random points drawn from two bumps so you can see what a k-versus-score scatter would look like by regime (blue = 0, orange = 1). Not backtest output.</p>
 <div class="viz-canvas-wrap"><canvas id="gs-scatter-chart"></canvas></div>
 </div>
 </div>
+</div>
+</section>
+<section>
+<h2>HOW TO REPRODUCE</h2>
+<div class="prose">
+<p>Two scripts in my repo under src/physics. universal_reffelt_meta_optimizer.py loads the optimizer's winner files, builds the 15-column parameter matrix (UNIFIED_PARAM_NAMES), applies the score weights, runs the SVD (compute_eigenstretch), prints singular values, variance explained, d<sub>eff</sub> at 95%, the loadings-based weights, and the weighted-median frozen values. universal_ground_state_kernel.py is the 2D backtest: optimize_universal_ground_state sweeps k over linspace(0.3, 3.5, 100) for regime 0 and 1, and the main loop runs a 20-point sweep from 0.5 to 2.5 on BTC/USD, ETH/USD and SOL/USD 15-minute bars, then prints the best (k, regime) per ticker and the digit string. Both headers read "Anthony Reffelt + Grok 4.1, November 2025".</p>
+<p style="margin-top:1rem"><strong>What isn't measured:</strong> the causal weight numbers in the freeze table, the three charts, any run outside my own optimizer, any perturbation test of the frozen values, and any GP or Thompson search.</p>
 </div>
 </section>
 <section>
@@ -291,7 +305,7 @@ $$\text{EI}(k) = \mathbb{E}\left[\max(f(k) - f^*, 0)\right] = (\mu(k) - f^*)\Phi
 <div class="card-grid">
 <div class="card">
 <h3><a href="eigenstretch-tensor.html" style="color:var(--accent);text-decoration:none">&larr; EIGENSTRETCH TENSOR</a></h3>
-<p>The spectral decomposition that feeds the SVD analysis to discover the ground state manifold.</p>
+<p>The spectral decomposition that feeds the SVD analysis on this page.</p>
 </div>
 <div class="card">
 <h3><a href="reffelt-constant.html" style="color:var(--accent);text-decoration:none">REFFELT CONSTANT &rarr;</a></h3>

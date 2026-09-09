@@ -111,7 +111,7 @@
 <div class="research-card">
 <div class="rc-tag">SPECTRAL ANALYSIS</div>
 <h3>THE REFFELT CONSTANT</h3>
-<p>A base-9 spectral fingerprint that encodes the thermodynamic ground state of any high-dimensional parameter space. Computed via eigenvalue decomposition of the normalized graph Laplacian, weighted by causal gradient sensitivity.</p>
+<p>A digit string built from the smooth modes of a k-NN graph Laplacian over an optimizer's winning configurations, one digit per retained mode, scaled by a per-dimension sensitivity weight. The scale is picked by hand and the walk-forward claim isn't measured yet; the page says which is which.</p>
 <div class="rc-eq">&real;&#8198;<sub>j</sub> = &lfloor;|&langle;&psi;<sub>j</sub>|&nabla;f|&psi;<sub>j</sub>&rangle;| &middot; 10&rfloor; &isin; {1,&hellip;,8}</div>
 <div class="rc-apps">
 <span>NEURAL ARCHITECTURE SEARCH</span>
@@ -123,7 +123,7 @@
 <div class="research-card">
 <div class="rc-tag">MANIFOLD TOPOLOGY</div>
 <h3>EIGENSTRETCH TENSOR</h3>
-<p>A causal-topological fingerprint of high-dimensional parameter manifolds. Uses k-NN graph Laplacian SVD with per-dimension gradient sensitivity to detect overfitting, regime collapse, and dimensional saturation in real time.</p>
+<p>The Reffelt constant recomputed at each checkpoint of a parameter search, with trajectory similarity (Wasserstein-1 on equity curves) instead of parameter distance. A drift monitor with a four-condition checklist; thresholds are starting values, lead time not yet logged.</p>
 <div class="rc-eq">L<sub>norm</sub> = I &minus; D<sup>&minus;&frac12;</sup>AD<sup>&minus;&frac12;</sup> &nbsp;&rarr;&nbsp; SVD &nbsp;&rarr;&nbsp; causal<sub>d</sub> = |&part;&psi;/&part;x<sub>d</sub>|</div>
 <div class="rc-apps">
 <span>AI MODEL STABILITY</span>
@@ -135,7 +135,7 @@
 <div class="research-card">
 <div class="rc-tag">GPU-ACCELERATED DYNAMICS</div>
 <h3>HOLOGRAPHIC RESISTANCE MEMBRANE</h3>
-<p>A friction-field model where holographic stretch deformation generates a resistance landscape. GPU-accelerated particles advect through the field, producing probabilistic density maps of system evolution.</p>
+<p>Particles advected through a friction field I build from stretch, variance and steering maps with weights picked by eye, then binned into a density map. Live demo on the page; no benchmarks and no validation against real outcomes yet.</p>
 <div class="rc-eq">F = &minus;&nabla;R &middot; 5.0 + F<sub>steering</sub> &nbsp;;&nbsp; v = v + F&middot;dt &nbsp;;&nbsp; x = x + v&middot;dt</div>
 <div class="rc-apps">
 <span>GPU LOAD BALANCING</span>
@@ -147,7 +147,7 @@
 <div class="research-card">
 <div class="rc-tag">STATE-SPACE GEOMETRY</div>
 <h3>TOROIDAL MANIFOLD</h3>
-<p>Maps high-dimensional discrete state spaces onto a 3D toroidal manifold with angular, radial, and azimuthal coordinates. Features an hourglass pinch at maximum entropy and magnetic field-line topology.</p>
+<p>Bit-level state vectors placed on a torus by phase, Hamming weight and parity, with an hourglass map that spreads the crowded middle and a tent-function weight at the pinch. Definitions plus two live plots; collisions and applications unmeasured.</p>
 <div class="rc-eq">&theta; = arctan2(w<sub>hi</sub>&minus;2<sup>15</sup>, w<sub>lo</sub>&minus;2<sup>15</sup>)+&pi; &nbsp;;&nbsp; r = popcount(w)/32</div>
 <div class="rc-apps">
 <span>CRYPTOGRAPHIC ANALYSIS</span>
@@ -159,7 +159,7 @@
 <div class="research-card">
 <div class="rc-tag">TURBULENCE CLOSURE &bull; REGULARITY PROOF</div>
 <h3>MASTER MOMENTUM EQUATION</h3>
-<p>A complete 12-equation system providing Navier-Stokes turbulence closure. Combines Hilbert-space sentiment forces, holographic resistance manifolds, k-&epsilon; turbulence modeling, and eddy viscosity into a single master PDE. <strong style="color:var(--accent)">Includes a rigorous proof of global regularity</strong> via Bakry-&Eacute;mery curvature and supercritical enstrophy dissipation.</p>
+<p>Twelve equations I wrote for price momentum between 2019 and 2025, closed into one momentum PDE with an eddy-viscosity term. The July 2026 regularity argument was corrected after outside review: a Z^{5/2} bound stands, the Bakry&ndash;&Eacute;mery step is a heuristic, and the spatial transfer is open. The page carries the errata in place.</p>
 <div class="rc-eq">dv/dt = F<sub>PID</sub>/m + v(&part;v/&part;p) &minus; s&middot;c &minus; &part;R<sub>eff</sub>/&part;p</div>
 <div class="rc-apps">
 <span>TURBULENCE MODELING</span>
@@ -172,7 +172,7 @@
 <div class="research-card">
 <div class="rc-tag">DIMENSIONALITY REDUCTION</div>
 <h3>GROUND STATE KERNEL</h3>
-<p>SVD analysis that discovers high-dimensional parameter spaces universally reduce to 2D manifolds. Identifies frozen parameters, free variables, and regime boundaries through spectral decomposition of elite solution archives.</p>
+<p>SVD over the winning parameter sets of my trading-bot optimizer. One strategy family collapsed to 2 of 15 parameters at 95.6% of score-weighted variance; the other family stayed about 7D. Method, the one measured result, and which charts are illustrations.</p>
 <div class="rc-eq">15D &rarr; SVD &rarr; k &isin; [0.3, 3.5], regime &isin; {0,1}</div>
 <div class="rc-apps">
 <span>TRANSFER LEARNING</span>
@@ -184,7 +184,7 @@
 <div class="research-card" style="border-color:rgba(0,210,211,.4)">
 <div class="rc-tag">QUANTIZATION &bull; FINITE FIELD &bull; WEIGHT COMPRESSION</div>
 <h3>GF(17) QUANTIZATION STRATEGIES</h3>
-<p>A family of neural network weight compression codecs built on Galois field GF(17) arithmetic. Features distribution-adaptive Membrane codec (from Holographic Membrane M6), LUT-optimized Lloyd-Max, and progressive ATRP texture packing. Benchmarked against Google TurboQuant (ICLR 2026).</p>
+<p>Weight-compression codecs built on GF(17) arithmetic: a distribution-adaptive membrane codec, a Lloyd&ndash;Max variant, and a progressive four-layer container that recovers fp16 exactly at 16 bits per element. All numbers are on synthetic 896&times;896 tensors on CPU; no real-weight or perplexity runs yet, and the page says so.</p>
 <div class="rc-eq">w(x) = h(x) / (1 + 3R(x)) &nbsp;&rarr;&nbsp; Lloyd-Max<sub>LUT</sub> &nbsp;&rarr;&nbsp; GF(17) Legendre 4b</div>
 <div class="rc-apps">
 <span>LLM WEIGHT COMPRESSION</span>
@@ -197,7 +197,7 @@
 <div class="research-card" style="border-color:rgba(231,76,60,.5)">
 <div class="rc-tag">QUANTIZATION &bull; VRAM/SSD TIERED &bull; SUB-2-BIT ROUTING</div>
 <h3>AMNITEX RAILGUN</h3>
-<p>Hierarchical VRAM/SSD tiered quantization with variable routing widths (1&ndash;2 bits). Binary 1-bit mode fits a 7B model in 0.88&nbsp;GB VRAM &mdash; a 16&times; reduction. Progressive SSD streaming through GF(17) residuals, 8-bit LUT, and lossless fp16 tiers. <strong style="color:var(--accent)">Full tier is mathematically bit-exact (CS=1.000000).</strong></p>
+<p>A 1-bit routing index in VRAM (1.21 GB for a 9B model, 16&times; smaller resident footprint) with the exact fp16 residual on NVMe, which is 1.75&times; the original as stored. Bit-exact full-model recovery is measured (byte-identical greedy decode); 1-bit-tier quality is not. The economics are one labelled assumption set.</p>
 <div class="rc-eq">w &rarr; Lloyd(k) &rarr; R[1&ndash;2b VRAM] + G[GF17 SSD] + B[8b SSD] + A[fp16 SSD]</div>
 <div class="rc-apps">
 <span>DATACENTER GPU SAVINGS</span>

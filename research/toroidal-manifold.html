@@ -6,15 +6,15 @@
 <meta name="theme-color" content="#FBFAF8">
 <meta name="robots" content="noindex, nofollow">
 <title>Toroidal Manifold Geometry — State-Space Topology | AMNI-SCIENT Research</title>
-<meta name="description" content="Toroidal Manifold Geometry: mapping high-dimensional state vectors onto a torus surface with hourglass pinch model, magnetic field dynamics, and hierarchical addressing.">
+<meta name="description" content="Toroidal Manifold Geometry: a way to place bit-level state vectors on a torus, stretch the crowded middle with an hourglass map, weight states by a tent function at the pinch, and give trajectories a digit address. Definitions and two live plots; collisions and applications unmeasured.">
 <meta name="keywords" content="toroidal manifold,torus topology,hourglass model,magnetic field,hierarchical addressing,state space,spectral geometry">
 <meta property="og:title" content="Toroidal Manifold Geometry — AMNI-SCIENT Research">
-<meta property="og:description" content="State-space topology on a torus surface with hourglass pinch and hierarchical addressing.">
+<meta property="og:description" content="State vectors on a torus with an hourglass map and a pinch weight. Definitions, two live plots, nothing validated yet.">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://amni-scient.com/research/toroidal-manifold">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="https://amni-scient.com/research/toroidal-manifold">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"ScholarlyArticle","name":"Toroidal Manifold Geometry","author":{"@type":"Person","name":"Amnibro"},"description":"Maps high-dimensional state vectors onto a torus surface with hourglass pinch model and hierarchical addressing.","url":"https://amni-scient.com/research/toroidal-manifold","publisher":{"@type":"Organization","name":"AMNI-SCIENT"},"datePublished":"2025","dateModified":"2026"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"ScholarlyArticle","name":"Toroidal Manifold Geometry","author":{"@type":"Person","name":"Anthony Reffelt"},"description":"Maps high-dimensional state vectors onto a torus surface with hourglass pinch model and hierarchical addressing.","url":"https://amni-scient.com/research/toroidal-manifold","publisher":{"@type":"Organization","name":"AMNI-SCIENT"},"datePublished":"2025-01-01","dateModified":"2026-09-09"}</script>
 <link rel="stylesheet" href="../css/style.css?v=b260">
 <script>
 window.MathJax={tex:{inlineMath:[["$","$"],["\\(","\\)"]],displayMath:[["$$","$$"],["\\[","\\]"]],processEscapes:true},options:{skipHtmlTags:["script","noscript","style","textarea","pre","code"]}};
@@ -25,6 +25,9 @@ window.MathJax={tex:{inlineMath:[["$","$"],["\\(","\\)"]],displayMath:[["$$","$$
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
 <style>
+.callout{max-width:800px;margin:1.25rem auto;padding:1.25rem 1.5rem;border:1px solid var(--accent);border-radius:8px;background:var(--panel);color:var(--dim);font-size:.9rem;line-height:1.8}
+.callout strong{color:var(--text)}
+.prose{max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem}
 .eq-block{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:1.5rem 2rem;margin:1.5rem 0;overflow-x:auto}
 .eq-block .eq-label{font-size:.6rem;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:.75rem}
 .derivation-step{border-left:2px solid var(--accent);padding-left:1.5rem;margin:1.5rem 0}
@@ -91,13 +94,14 @@ window.MathJax={tex:{inlineMath:[["$","$"],["\\(","\\)"]],displayMath:[["$$","$$
 <div class="breadcrumb"><a href="../research.html">RESEARCH</a> &nbsp;/&nbsp; TOROIDAL MANIFOLD GEOMETRY</div>
 <h1>TOROIDAL MANIFOLD GEOMETRY</h1>
 <p class="subtitle">STATE-SPACE TOPOLOGY WITH HOURGLASS PINCH</p>
-<p class="tagline">High-dimensional state vectors map onto a torus surface where angular position encodes phase, radial distance encodes entropy, and an hourglass constriction at maximum entropy creates a universal transit bottleneck.</p>
+<p class="tagline">Fixed-width binary words map onto a torus: angular position from the two half-words, radial distance from bit density, and an hourglass stretch around r = 0.5 that I use as an observation point.</p>
 </section>
+<div class="prose"><div class="callout"><strong>Status, 2026-09-09.</strong> T1 to T8 are coordinate definitions and a few weights I chose, not derivations; the only thing that follows from something else is the torus embedding in T5, which is textbook. The two Chart.js plots below are computed live from T3 and T6; the wireframe torus is a display with a made-up path. I haven't measured how many words collide on the surface, how well the 16-digit address separates trajectories, or whether any of the applications hold. The one place I've used these coordinates is the <a href="millennium_sim/PROOF_FORMATION.md" style="color:var(--accent)">proof-formation notes</a> in the millennium sim folder.</div></div>
 <section>
 <h2>ABSTRACT</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
-<p>The <strong style="color:var(--text)">Toroidal Manifold</strong> is a geometric framework for analyzing systems whose internal states can be decomposed into rotational (phase) and density (entropy) components. Any process that operates on fixed-width binary words &mdash; hash functions, neural network weight tensors, quantum gate sequences &mdash; traces trajectories on a torus parameterized by angular position &theta;, bit density r, and azimuthal lift &phi;.</p>
-<p style="margin-top:1.2rem">The critical feature is an <strong style="color:var(--text)">hourglass pinch</strong> at r = 0.5 (maximum entropy). All well-mixed trajectories must transit this bottleneck, making it a thermodynamic ground state and a natural observation point for characterizing system behavior. A magnetic field model assigns field strength proportional to pinch proximity, enabling energy-based analysis of trajectory dynamics.</p>
+<p>The <strong style="color:var(--text)">Toroidal Manifold</strong> is a way I plot the state of anything that works on fixed-width binary words. Each word gets an angle &theta; from its two halves, a radius r from its bit density, and a second angle &phi; from nibble parities. A sequence of words becomes a path on a torus.</p>
+<p style="margin-top:1.2rem">The part I care about is the <strong style="color:var(--text)">hourglass pinch</strong> at r = 0.5, where half the bits are set. A well-mixed word sits near there, so that's where paths crowd together, and T3 stretches that band out so I can tell them apart. I also define a tent-shaped weight B<sub>&theta;</sub> that peaks at the pinch; I call it a field on this page but it's just a weight.</p>
 </div>
 </section>
 <section>
@@ -105,12 +109,12 @@ window.MathJax={tex:{inlineMath:[["$","$"],["\\(","\\)"]],displayMath:[["$$","$$
 <div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
 <div class="derivation-step">
 <h4>STEP T1 &mdash; ANGULAR COORDINATE</h4>
-<p>Split each state word w into upper and lower halves, then compute phase angle:</p>
+<p>I split each word w into upper and lower halves of N<sub>bits</sub>/2 bits each and take the angle of that pair:</p>
 <div class="eq-block">
 <div class="eq-label">EQUATION T1 &mdash; ANGULAR POSITION</div>
-$$\theta_i = \arctan2\!\left(w_{\text{upper}} - 2^{15},\; w_{\text{lower}} - 2^{15}\right) + \pi \qquad \theta \in [0, 2\pi)$$
+$$\theta_i = \operatorname{atan2}\!\left(w_{\text{upper}} - 2^{N_{\text{bits}}/2 - 1},\; w_{\text{lower}} - 2^{N_{\text{bits}}/2 - 1}\right) + \pi \qquad \theta \in (0, 2\pi]$$
 </div>
-<p>The subtraction of 2<sup>15</sup> centers each half-word at zero, mapping the full range symmetrically around the origin. Adding &pi; shifts the domain to [0, 2&pi;).</p>
+<p>Subtracting 2<sup>N<sub>bits</sub>/2 &minus; 1</sup> centers each half-word on zero. atan2 returns (&minus;&pi;, &pi;], so adding &pi; lands in (0, 2&pi;]. For 32-bit words that offset is 2<sup>15</sup>, which is what my code hardcodes; the formula here is the general one so it matches T2.</p>
 </div>
 <div class="derivation-step">
 <h4>STEP T2 &mdash; RADIAL COORDINATE (BIT DENSITY)</h4>
@@ -119,16 +123,16 @@ $$\theta_i = \arctan2\!\left(w_{\text{upper}} - 2^{15},\; w_{\text{lower}} - 2^{
 <div class="eq-label">EQUATION T2 &mdash; BIT DENSITY</div>
 $$r_i = \frac{\operatorname{popcount}(w_i)}{N_{\text{bits}}} \qquad r \in [0, 1]$$
 </div>
-<p>For 32-bit words, N<sub>bits</sub> = 32. The radius r = 0 means all zeros (minimum entropy), r = 1 means all ones (also minimum entropy), and r = 0.5 represents maximum entropy (half bits set).</p>
+<p>For 32-bit words, N<sub>bits</sub> = 32. popcount is the Hamming weight (Hamming, <em>Bell Syst. Tech. J.</em> 29, 1950). r = 0 is all zeros, r = 1 is all ones, and r = 0.5 is half the bits set, which is where a well-mixed word tends to sit.</p>
 </div>
 <div class="derivation-step">
 <h4>STEP T3 &mdash; HOURGLASS TRANSFORMATION</h4>
-<p>A nonlinear transformation compresses coordinates near the entropy equator:</p>
+<p>A monotone remap of r that I apply before plotting:</p>
 <div class="eq-block">
 <div class="eq-label">EQUATION T3 &mdash; HOURGLASS PINCH</div>
 $$\tilde{r}_i = 0.5 + \operatorname{sign}(r - 0.5) \cdot |r - 0.5|^{\alpha} \qquad \alpha = 0.5$$
 </div>
-<p>With &alpha; = 0.5 (square-root pinch), trajectories near r = 0.5 are compressed into a narrow band, amplifying structural differences between states near maximum entropy while preserving the topological ordering of all states.</p>
+<p>With &alpha; = 0.5 the map pulls states away from r = 0.5 and squeezes the ends toward it. That's the point: I want the crowded middle spread out so I can tell near-maximum-entropy states apart. It's monotone, so ordering is kept. &alpha; = 0.5 is a value I picked; the plot below lets you try others.</p>
 </div>
 <div class="derivation-step">
 <h4>STEP T4 &mdash; AZIMUTHAL LIFT</h4>
@@ -137,44 +141,44 @@ $$\tilde{r}_i = 0.5 + \operatorname{sign}(r - 0.5) \cdot |r - 0.5|^{\alpha} \qqu
 <div class="eq-label">EQUATION T4 &mdash; AZIMUTHAL COORDINATE</div>
 $$\phi_i = \frac{\operatorname{nibble\_parities}(w_i)}{2^{N_{\text{nibbles}}} - 1} \cdot 2\pi \qquad \phi \in [0, 2\pi)$$
 </div>
-<p>Nibble parities compute XOR-parity of each 4-bit sub-group, encoding local bit-structure information that &theta; and r cannot capture.</p>
+<p>nibble_parities is the integer whose bit k is the XOR-parity of the k-th 4-bit group of w, so it has N<sub>nibbles</sub> = N<sub>bits</sub>/4 bits. It carries some local bit structure that &theta; and r blur over.</p>
 </div>
 <div class="derivation-step">
 <h4>STEP T5 &mdash; 3D TORUS EMBEDDING</h4>
-<p>The Cartesian embedding onto a torus with major radius R:</p>
+<p>The standard parametrization of a torus with major radius R and tube radius r (do Carmo, <em>Differential Geometry of Curves and Surfaces</em>, 1976, sec. 2-2):</p>
 <div class="eq-block">
 <div class="eq-label">EQUATION T5 &mdash; TORUS SURFACE</div>
 $$x = (R + r\cos\phi)\cos\theta \qquad y = (R + r\cos\phi)\sin\theta \qquad z = r\sin\phi$$
 </div>
-<p>with R = 2.0. Each state vector now occupies a unique position on the torus surface.</p>
+<p>R = 2 is a display choice; any R &gt; 1 keeps the surface from self-intersecting. This puts every word somewhere on a torus of tube radius r inside R = 2. It isn't one-to-one; different words can land on the same spot, and I haven't measured how often.</p>
 </div>
 </div>
 </section>
 <section>
-<h2>MAGNETIC FIELD MODEL</h2>
+<h2>PINCH WEIGHT</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
-<p>The torus carries an intrinsic magnetic field whose strength is inversely proportional to distance from the pinch:</p>
+<p>I call B<sub>&theta;</sub> a field, but it's just a tent function: 1 at r = 0.5, 0 at the ends, linear between. There's no Maxwell behind it. I use it as a weight for how close a state sits to the pinch.</p>
 <div class="eq-block">
-<div class="eq-label">EQUATION T6 &mdash; TOROIDAL MAGNETIC FIELD</div>
+<div class="eq-label">EQUATION T6 &mdash; PINCH WEIGHT</div>
 $$B_\theta = 1 - 2|r - 0.5|$$
 </div>
-<p>Properties: B<sub>&theta;</sub> = 1 at the pinch (r = 0.5), and B<sub>&theta;</sub> = 0 at the extremes (r = 0 or r = 1). Trajectories passing through the pinch experience maximum field strength, enabling characterization via the field line integral:</p>
+<p>It falls off linearly with distance from r = 0.5. Summing it along a path, weighted by how far the angle moves each step, gives one number per trajectory:</p>
 <div class="eq-block">
-<div class="eq-label">EQUATION T7 &mdash; FIELD LINE INTEGRAL</div>
-$$\oint \mathbf{B} \cdot d\mathbf{l} = \sum_{t=1}^{T} B_\theta(t) \cdot d\theta(t)$$
+<div class="eq-label">EQUATION T7 &mdash; WEIGHTED ANGULAR SUM</div>
+$$\Phi = \sum_{t=1}^{T} B_\theta(t)\, d\theta(t)$$
 </div>
-<p>This integral serves as a trajectory signature: distinct trajectories through the same manifold region produce different field integrals, enabling discrimination even when start/end coordinates coincide.</p>
+<p>where d&theta;(t) is the step in &theta; between consecutive states, &theta;(t) &minus; &theta;(t &minus; 1), wrapped into (&minus;&pi;, &pi;]. &Phi; is a scalar summary of a path. It can't separate trajectories on its own; two different paths can share the same &Phi;, and I use it as one feature among several rather than a signature.</p>
 <div class="eq-block">
 <div class="eq-label">EQUATION T8 &mdash; ENERGY FUNCTIONAL</div>
 $$E = \frac{1}{2}\sum_i (r_i - 0.5)^2 + \frac{1}{2}\sum_i \left(\frac{\phi_i}{\pi}\right)^2$$
 </div>
-<p>The ground state E<sub>min</sub> occurs at r = 0.5, &phi; = 0 &mdash; the pinch equator. This is the thermodynamic attractor for all well-mixed systems.</p>
+<p>E is smallest when every state has r = 0.5 and &phi; = 0, the pinch equator. My conjecture is that well-mixed processes drift toward low E; I haven't tested it on anything beyond a few hash traces, and "thermodynamic" is a loose word for it.</p>
 </div>
 </section>
 <section>
 <h2>HIERARCHICAL ADDRESSING</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
-<p>Every trajectory through the manifold receives a unique <strong style="color:var(--text)">16-digit hierarchical address</strong> in base-9 encoding, structured as four cascading resolution levels:</p>
+<p>Each trajectory gets a <strong style="color:var(--text)">16-digit code</strong> in four groups. Some digits can exceed 8 as written; I need to clip them all to 0-8 before this is really base-9. The example below is illustrative, not from a real run:</p>
 <div class="addr-visual">
 <span class="addr-seg seg-coarse">4 3 2 1<span class="seg-label">COARSE</span></span>
 <span style="color:var(--dim)">-</span>
@@ -191,69 +195,71 @@ $$E = \frac{1}{2}\sum_i (r_i - 0.5)^2 + \frac{1}{2}\sum_i \left(\frac{\phi_i}{\p
 <td style="color:#ff6464">COARSE (CCCC)</td>
 <td>4</td>
 <td>Global manifold region &mdash; angular mean, bit density, winding number, radius variance</td>
-<td>$$C_1 = \left\lfloor\tfrac{\bar\theta + \pi}{2\pi}\cdot 9\right\rfloor \quad C_2 = \lfloor\bar{r}\cdot 9\rfloor \quad C_3 = \left\lfloor\tfrac{\sum\theta}{2\pi}\bmod 9\right\rfloor \quad C_4 = \min(8,\lfloor\text{Var}(r)\cdot 100\rfloor)$$</td>
+<td>$$C_1 = \min\!\left(8,\left\lfloor\tfrac{\bar\theta}{2\pi}\cdot 9\right\rfloor\right) \quad C_2 = \min(8,\lfloor\bar{r}\cdot 9\rfloor) \quad C_3 = \left\lfloor\tfrac{\sum\theta}{2\pi}\bmod 9\right\rfloor \quad C_4 = \min(8,\lfloor\text{Var}(r)\cdot 100\rfloor)$$</td>
 </tr>
 <tr>
 <td style="color:#64c8ff">MEDIUM (MMMM)</td>
 <td>4</td>
 <td>Local dynamics &mdash; angular velocity, radial velocity, angular acceleration, radial acceleration</td>
-<td>$$M_1 = \lfloor|\dot\theta|\cdot 5\rfloor \quad M_2 = \min(8,\lfloor|\dot r|\cdot 50\rfloor) \quad M_3 = \lfloor|\ddot\theta|\cdot 10\rfloor \quad M_4 = \min(8,\lfloor|\ddot r|\cdot 100\rfloor)$$</td>
+<td>$$M_1 = \min(8,\lfloor|\dot\theta|\cdot 5\rfloor) \quad M_2 = \min(8,\lfloor|\dot r|\cdot 50\rfloor) \quad M_3 = \min(8,\lfloor|\ddot\theta|\cdot 10\rfloor) \quad M_4 = \min(8,\lfloor|\ddot r|\cdot 100\rfloor)$$</td>
 </tr>
 <tr>
 <td style="color:#64ff96">FINE (FFFF)</td>
 <td>4</td>
 <td>Spectral features &mdash; peak FFT frequency, spectral energy, skewness, kurtosis of radius</td>
-<td>$$F_1 = \lfloor\arg\max|\mathcal{F}(\theta)|/10\rfloor \quad F_2 = \lfloor\log(\|\mathcal{F}\|^2+1)\rfloor \quad F_3 = \lfloor(E[(r-.5)^3]+.5)\cdot 9\rfloor \quad F_4 = \min(8,\lfloor E[(r-.5)^4]\cdot 100\rfloor)$$</td>
+<td>$$F_1 = \min(8,\lfloor\arg\max|\mathcal{F}(\theta)|/10\rfloor) \quad F_2 = \min(8,\lfloor\log(\|\mathcal{F}\|^2+1)\rfloor) \quad F_3 = \min(8,\lfloor(E[(r-.5)^3]+.5)\cdot 9\rfloor) \quad F_4 = \min(8,\lfloor E[(r-.5)^4]\cdot 100\rfloor)$$</td>
 </tr>
 <tr>
 <td style="color:#ffc864">PINCH (PPPP)</td>
 <td>4</td>
 <td>Transit pattern through r = 0.5 &mdash; entry timing, dwell time, angular displacement, radial velocity at pinch</td>
-<td>$$P_1 = \min(8,\lfloor t_{\text{entry}}/8\rfloor) \quad P_2 = \lfloor\tfrac{\Delta t}{T}\cdot 9\rfloor \quad P_3 = \min(8,\lfloor\tfrac{|\Delta\theta|}{2\pi}\cdot 9\rfloor) \quad P_4 = \min(8,\lfloor|\dot r_{\text{pinch}}|\cdot 50\rfloor)$$</td>
+<td>$$P_1 = \min(8,\lfloor t_{\text{entry}}/8\rfloor) \quad P_2 = \min\!\left(8,\left\lfloor\tfrac{\Delta t}{T}\cdot 9\right\rfloor\right) \quad P_3 = \min(8,\lfloor\tfrac{|\Delta\theta|}{2\pi}\cdot 9\rfloor) \quad P_4 = \min(8,\lfloor|\dot r_{\text{pinch}}|\cdot 50\rfloor)$$</td>
 </tr>
 </tbody>
 </table>
-<p>The addressing scheme enables <strong style="color:var(--text)">hierarchical lookup</strong>: queries at coarse level return broad candidate sets (&sim;10<sup>3</sup>), medium level narrows by &sim;10&times;, fine level isolates individual trajectories. The pinch code provides an independent cross-reference orthogonal to spatial addressing.</p>
+<p>The scale constants (9, 100, 5, 50, 10, 8) are ones I picked; they aren't derived. The min(8, &middot;) clips are what make each digit a base-9 digit; my code doesn't apply all of them yet. In the table, &theta;&#772; and r&#772; are means along the trajectory, dots are first differences per step, t<sub>entry</sub> is the first step with |r &minus; 0.5| &lt; 0.05, &Delta;t is the number of steps spent inside that band out of T total, and &Delta;&theta; is the angle turned while inside it.</p>
+<p style="margin-top:1.2rem">The idea behind the four groups is <strong style="color:var(--text)">hierarchical lookup</strong>: match on the coarse digits first, then medium, then fine, with the pinch digits as a separate check. How many candidates each level returns, and how much the next level narrows it, is not measured. I don't know yet whether the fine digits separate individual trajectories.</p>
 </div>
 </section>
 <section>
 <h2>HOLOGRAPHIC RESONANCE</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
-<p>Multiple manifold views (clusters in different coordinate frames) can be stacked and compared via constructive interference:</p>
+<p>When I've clustered the same trajectories in several coordinate frames, I stack the cluster centers and sum a Gaussian bump at each one. That's a kernel density sum in the sense of Silverman, <em>Density Estimation for Statistics and Data Analysis</em> (1986), ch. 4, with a fixed bandwidth:</p>
 <div class="eq-block">
 <div class="eq-label">EQUATION T9 &mdash; RESONANCE FIELD</div>
 $$\text{Resonance}(p) = \sum_{a=1}^{M} w_a \exp\!\left(-\frac{\|p - c_a\|^2}{2\sigma^2}\right) \qquad \sigma = 5.0$$
 </div>
-<p>Points with high resonance across multiple views are <strong style="color:var(--text)">resonant nodes</strong> &mdash; structurally significant positions where independent analyses converge. The interference field I(p) averages centrality across all M views:</p>
+<p>Here M is the number of cluster centers across all views, c<sub>a</sub> is the a-th center in torus coordinates (&theta;, r&#771;, &phi;), and w<sub>a</sub> is the fraction of trajectories in that cluster. &sigma; = 5.0 is a bandwidth I picked; it isn't derived and it's large next to the coordinate ranges, so the field is smooth. Points where several views put a center nearby score high, and I call those <strong style="color:var(--text)">resonant nodes</strong>. Whether they mean anything beyond "the clusterings agree here" is untested. T10 is the per-view average of the same idea:</p>
 <div class="eq-block">
 <div class="eq-label">EQUATION T10 &mdash; INTERFERENCE FIELD</div>
 $$I(p) = \frac{1}{M}\sum_{v=1}^{M} \exp\!\left(-\frac{d_v(p)^2}{2\sigma_v^2}\right)$$
 </div>
-<p>Facade matrices provide linear transforms between view-local and global coordinates, learned via weighted least squares to minimize reconstruction error for high-value trajectories.</p>
+<p>where M now counts views, d<sub>v</sub>(p) is the distance from p to the nearest center in view v, and &sigma;<sub>v</sub> is a per-view bandwidth. How &sigma;<sub>v</sub> is set is defined in code, not on this page. The "facade matrices" I've mentioned elsewhere are linear maps from each view's local coordinates back to the shared torus frame, fitted by weighted least squares; the weights and the fitting target are defined in code, not on this page.</p>
 </div>
 </section>
 <section>
-<h2>STATE-OF-THE-ART APPLICATIONS</h2>
+<h2>WHERE I'D LIKE TO TRY IT</h2>
 <div style="max-width:800px;margin:0 auto">
+<p style="color:var(--dim);font-size:.9rem;line-height:1.9;margin-bottom:1.5rem">All of this is conjecture. I haven't run the coordinates on any of these problems past a few hash traces, and each card says what I'd expect to see, not what I've seen.</p>
 <div class="app-card">
-<h4>&#128300; CRYPTOGRAPHIC ANALYSIS &amp; HASH FUNCTION DESIGN</h4>
-<p>Hash functions transform input to fixed-width output through sequences of rotation, XOR, and modular addition &mdash; exactly the operations encoded by (&theta;, r, &phi;). Mapping hash round states onto the torus reveals structural biases invisible in raw bit analysis: non-uniform pinch transit patterns indicate weak mixing, asymmetric &theta;-winding exposes rotational symmetry leakage, and anomalous B<sub>&theta;</sub> integrals detect differential characteristics. The hierarchical address provides a compact 16-digit fingerprint for classifying hash behavior across difficulty levels.</p>
+<h4>&#128300; HASH ROUND STATES</h4>
+<p>Hash rounds are rotations, XORs and additions on fixed-width words, so the round states plot straight onto the torus. I think a weakly mixing round would show up as a path that lingers away from r = 0.5, and that the 16-digit code could work as a compact fingerprint of a hash's behaviour. I haven't tested either against a known-weak hash, so I can't say the plot shows anything a bit-level test wouldn't.</p>
 </div>
 <div class="app-card">
-<h4>&#9883; QUANTUM STATE REPRESENTATION</h4>
-<p>Quantum gates (Hadamard, CNOT, T-gate) perform operations directly analogous to the torus coordinates: rotation on the Bloch sphere (&theta;), superposition coefficient magnitude (r as probability amplitude), and relative phase (&phi;). The toroidal manifold provides a classical embedding for quantum circuit analysis where the hourglass pinch at r = 0.5 corresponds to maximum superposition (equal probability amplitudes). Circuit depth optimization can be analyzed via field integral minimization, and decoherence pathways correspond to trajectories that fail to transit the pinch.</p>
+<h4>&#9883; QUBIT-LIKE WORDS</h4>
+<p>I'd like to see whether a bit-string encoding of a small circuit's classical shadow gives readable paths here, with &theta; playing the role of a rotation and &phi; a relative phase. r is a bit density, not an amplitude, so this is only an analogy about the shape of the coordinates. I haven't tested it.</p>
 </div>
 <div class="app-card">
-<h4>&#128293; TOKAMAK PLASMA CONFINEMENT</h4>
-<p>Tokamak fusion reactors confine plasma on a physical torus. The mathematical framework maps directly: &theta; is the toroidal angle, r is the normalized flux coordinate, &phi; is the poloidal angle. The hourglass model's pinch corresponds to the magnetic axis (maximum confinement), and B<sub>&theta;</sub> models the safety factor profile. Hierarchical addressing enables rapid classification of plasma instability modes (ELMs, kink modes, tearing modes) from diagnostic data, providing a compact representation for real-time plasma control systems.</p>
+<h4>&#128293; TOKAMAK COORDINATES</h4>
+<p>A tokamak lives on a physical torus, so the coordinate names line up: toroidal angle, normalized flux coordinate, poloidal angle. The physics doesn't line up the same way. The magnetic axis is at flux coordinate 0, not 0.5, and the safety factor q &asymp; rB<sub>&phi;</sub>/(RB<sub>&theta;</sub>) (Wesson, <em>Tokamaks</em>, 4th ed., sec. 3.4) involves the real toroidal and poloidal fields, which my tent function B<sub>&theta;</sub> isn't. What I'd like to test is whether the hierarchical code can label diagnostic time series by mode; I haven't tried it.</p>
 </div>
 <div class="app-card">
-<h4>&#128421; DATABASE INDEXING &amp; NETWORK ROUTING</h4>
-<p>The hierarchical CCCC-MMMM-FFFF-PPPP addressing scheme is a general-purpose multi-resolution index. Applied to high-dimensional vector databases (e.g., embedding search for LLMs), it provides cascading resolution lookup: coarse level partitions the space into &sim;6561 (9<sup>4</sup>) buckets for O(1) access, with progressive refinement at each level. The pinch code adds an independent verification dimension, enabling cross-validation that reduces false positives. Compression ratio: 16 base-9 digits address a space of 9<sup>16</sup> &asymp; 1.85 &times; 10<sup>15</sup> distinct locations.</p>
+<h4>&#128421; MULTI-RESOLUTION INDEX</h4>
+<p>The four-group code is a multi-resolution key, and 9<sup>4</sup> = 6561 coarse buckets is a plausible first partition for a vector index. I haven't tested it against any vector database, and the address space of 9<sup>16</sup> &asymp; 1.85 &times; 10<sup>15</sup> says nothing about how many trajectories actually land in distinct codes.</p>
 </div>
 <div class="app-card">
-<h4>&#127760; SATELLITE CONSTELLATION MANAGEMENT</h4>
-<p>Satellite orbits are inherently toroidal (right ascension = &theta;, orbital altitude = r, argument of perigee = &phi;). The holographic resonance field identifies orbital slots where multiple constellation requirements constructively interfere &mdash; positions that simultaneously satisfy coverage, inter-satellite link geometry, and ground station visibility. The magnetic field model provides a natural metric for orbital stability, with B<sub>&theta;</sub> peaks at the most stable altitude bands.</p>
+<h4>&#127760; ORBITAL SLOTS</h4>
+<p>Right ascension, altitude and argument of perigee also parametrize a torus, so a constellation could be plotted the same way. I'd like to see whether the resonance sum in T9 picks out slots where coverage, link geometry and ground visibility overlap. I haven't tested it, and B<sub>&theta;</sub> says nothing about orbital stability.</p>
 </div>
 </div>
 </section>
@@ -262,7 +268,7 @@ $$I(p) = \frac{1}{M}\sum_{v=1}^{M} \exp\!\left(-\frac{d_v(p)^2}{2\sigma_v^2}\rig
 <div style="max-width:800px;margin:0 auto">
 <div class="viz-section">
 <h4>3D TORUS WITH TRAJECTORY</h4>
-<p style="color:var(--dim);font-size:.8rem;line-height:1.7;margin-bottom:1rem">Rotating wireframe torus (R=2, r=0.8) with a sample trajectory plotted on the surface. The hourglass pinch at r=0.5 is highlighted in gold. Drag to adjust rotation speed.</p>
+<p style="color:var(--dim);font-size:.8rem;line-height:1.7;margin-bottom:1rem">Wireframe torus (R = 2, tube 0.8) with a made-up sample path. Gold marks the poloidal angle &plusmn;90&deg;, not r = 0.5; I'll fix the highlight. Use the slider for speed. The two plots below are computed live from T3 and T6 as written above; the &alpha; slider feeds T3.</p>
 <div class="viz-controls">
 <button id="tm-toggle" onclick="tmToggle()">START</button>
 <button onclick="tmReset()">RESET</button>
@@ -291,11 +297,15 @@ $$I(p) = \frac{1}{M}\sum_{v=1}^{M} \exp\!\left(-\frac{d_v(p)^2}{2\sigma_v^2}\rig
 <div class="card-grid">
 <div class="card">
 <h3><a href="holographic-membrane.html" style="color:var(--accent);text-decoration:none">&larr; HOLOGRAPHIC MEMBRANE</a></h3>
-<p>Particle dynamics on friction fields derived from the holographic stretch that feeds the toroidal mapping.</p>
+<p>Damped particles on a friction field built from the same stretch maps.</p>
 </div>
 <div class="card">
 <h3><a href="ground-state-kernel.html" style="color:var(--accent);text-decoration:none">GROUND STATE KERNEL &rarr;</a></h3>
-<p>The universal dimensionality reduction that discovers the ground state at the toroidal pinch.</p>
+<p>The reduction I use to look for a low-E state near the pinch.</p>
+</div>
+<div class="card">
+<h3><a href="millennium_sim/PROOF_FORMATION.md" style="color:var(--accent);text-decoration:none">PROOF FORMATION NOTES &rarr;</a></h3>
+<p>The one place I've used these coordinates so far, in the millennium sim folder.</p>
 </div>
 </div>
 </div>

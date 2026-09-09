@@ -6,25 +6,27 @@
 <meta name="theme-color" content="#FBFAF8">
 <meta name="robots" content="noindex, nofollow">
 <title>Holographic Resistance Membrane — GPU-Accelerated Particle Dynamics | AMNI-SCIENT Research</title>
-<meta name="description" content="Holographic Resistance Membrane: GPU-accelerated particle advection through friction fields derived from holographic stretch deformation. Produces probabilistic density maps of system evolution.">
+<meta name="description" content="Holographic Resistance Membrane: particles advected through a friction field I build from stretch, variance and steering maps, with weights picked by eye. A live demo on the page; no benchmarks or validation yet.">
 <meta name="keywords" content="holographic membrane,resistance field,particle dynamics,GPU acceleration,taichi,friction field,probabilistic density">
 <meta property="og:title" content="Holographic Resistance Membrane — AMNI-SCIENT Research">
-<meta property="og:description" content="GPU-accelerated particle dynamics through holographic stretch-derived friction fields.">
+<meta property="og:description" content="Damped particle advection through a hand-built friction field. Demo on the page, untested against real outcomes.">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://amni-scient.com/research/holographic-membrane">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="https://amni-scient.com/research/holographic-membrane">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"ScholarlyArticle","name":"Holographic Resistance Membrane","author":{"@type":"Person","name":"Amnibro"},"description":"GPU-accelerated particle advection through holographic stretch-derived friction fields.","url":"https://amni-scient.com/research/holographic-membrane","publisher":{"@type":"Organization","name":"AMNI-SCIENT"},"datePublished":"2025","dateModified":"2026"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"ScholarlyArticle","name":"Holographic Resistance Membrane","author":{"@type":"Person","name":"Anthony Reffelt"},"description":"GPU-accelerated particle advection through holographic stretch-derived friction fields.","url":"https://amni-scient.com/research/holographic-membrane","publisher":{"@type":"Organization","name":"AMNI-SCIENT"},"datePublished":"2025-01-01","dateModified":"2026-09-09"}</script>
 <link rel="stylesheet" href="../css/style.css?v=b260">
 <script>
 window.MathJax={tex:{inlineMath:[["$","$"],["\\(","\\)"]],displayMath:[["$$","$$"],["\\[","\\]"]],processEscapes:true},options:{skipHtmlTags:["script","noscript","style","textarea","pre","code"]}};
 </script>
 <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
 <style>
+.callout{max-width:800px;margin:1.25rem auto;padding:1.25rem 1.5rem;border:1px solid var(--accent);border-radius:8px;background:var(--panel);color:var(--dim);font-size:.9rem;line-height:1.8}
+.callout strong{color:var(--text)}
+.prose{max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem}
 .eq-block{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:1.5rem 2rem;margin:1.5rem 0;overflow-x:auto}
 .eq-block .eq-label{font-size:.6rem;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:.75rem}
 .derivation-step{border-left:2px solid var(--accent);padding-left:1.5rem;margin:1.5rem 0}
@@ -87,11 +89,12 @@ window.MathJax={tex:{inlineMath:[["$","$"],["\\(","\\)"]],displayMath:[["$$","$$
 <p class="subtitle">GPU-ACCELERATED PARTICLE DYNAMICS ON FRICTION FIELDS</p>
 <p class="tagline">Holographic stretch deformation generates resistance landscapes. Particles advect through the field to produce probabilistic density maps of system evolution.</p>
 </section>
+<div class="prose"><div class="callout"><strong>Status, 2026-09-09.</strong> Nothing on this page is derived from first principles. Equations M1 to M6 are definitions I wrote down, with weights I picked by eye. The only thing that runs is the canvas demo below, which is a small JavaScript version of M4 to M6 with two extra terms I list in its caption. The Taichi build exists on my machine but isn't published, and I haven't benchmarked it or tested its density maps against real outcomes.</div></div>
 <section>
 <h2>ABSTRACT</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
-<p>The <strong style="color:var(--text)">Holographic Resistance Membrane</strong> models system dynamics as particle flow through a derived friction landscape. The "membrane" is a 2D resistance field computed from three deformation sources: spatial gradient magnitude, temporal stretching, and turbulence warping. Thousands of particles are initialized and advected through this field using GPU-parallel Verlet integration (via Taichi), with friction proportional to local resistance.</p>
-<p style="margin-top:1.2rem">The result is a <strong style="color:var(--text)">probabilistic density map</strong> &mdash; regions where particles accumulate indicate high-probability future states of the system. This is fundamentally different from point predictions: the membrane produces a full probability distribution, capturing multi-modal outcomes and uncertainty naturally.</p>
+<p>The <strong style="color:var(--text)">Holographic Resistance Membrane</strong> models a system as particles flowing through a friction landscape. The "membrane" is a 2D resistance field I compute from three maps: spatial gradient magnitude, frame-to-frame change, and a curl-like warp term. I drop a few thousand particles on it and step them with damped semi-implicit Euler in Taichi, with friction set by the local resistance.</p>
+<p style="margin-top:1.2rem">The output is a <strong style="color:var(--text)">density map</strong>. Where particles pile up is where the model says the system is likely to go. I haven't tested that against real outcomes yet. What I can say is that the map is a distribution rather than a single point, so if the particles split into two piles you see both.</p>
 </div>
 </section>
 <section>
@@ -99,52 +102,52 @@ window.MathJax={tex:{inlineMath:[["$","$"],["\\(","\\)"]],displayMath:[["$$","$$
 <div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
 <div class="derivation-step">
 <h4>HOLOGRAPHIC STRETCH FIELD</h4>
-<p>The stretch field combines three independent deformation measurements into a single scalar field:</p>
+<p>I build the stretch field H as a weighted blend of three normalized maps: gradient magnitude of f, its frame-to-frame change T, and a warp term W.</p>
 <div class="eq-block">
 <div class="eq-label">EQUATION M1 &mdash; HOLOGRAPHIC STRETCH</div>
 $$H(x,y) = 0.4\sqrt{(\partial_x f)^2 + (\partial_y f)^2} + 0.4 \cdot T(x,y) + 0.2 \cdot W(x,y)$$
 </div>
-<p>where f is the system state field, T is temporal stretch (rate of change), and W is turbulence warping (local vorticity contribution). Each component is normalized to [0,1] before combination.</p>
+<p>Here f is the scalar state field on the grid. T is |f at this frame minus f at the last frame|, and W is a curl-like finite difference on the gradient field: I take $\mathbf{g} = \nabla f$ with the grid's forward differences, then set $W = |\partial_x g_y - \partial_y g_x|$ with backward differences. For a smooth scalar that's zero on paper; on the grid it isn't, and what it picks up is kinks and noise in f. So W is a roughness measure, not a vorticity, and "turbulence warping" was the wrong name for it. Each of the three maps is divided by its own maximum over the grid so it sits in [0,1] before I blend them. The weights 0.4/0.4/0.2 are ones I picked by eye; they aren't derived and I haven't fitted them to anything yet.</p>
 </div>
 <div class="derivation-step">
-<h4>FRICTION FIELD DERIVATION</h4>
-<p>The resistance membrane is derived from local variance of the holographic stretch:</p>
+<h4>FRICTION FIELD DEFINITION</h4>
+<p>I define the resistance field from the local variance of H:</p>
 <div class="eq-block">
 <div class="eq-label">EQUATION M2 &mdash; FRICTION FIELD</div>
 $$R(x,y) = 0.8 \cdot \frac{\text{Var}_{\text{local}}[H]}{\max(\text{Var}_{\text{local}}[H])} + 0.2 \cdot R_{\text{boundary}}(x,y)$$
 </div>
-<p>High local variance in stretch = high friction (turbulent regions resist motion). Low variance = low friction (laminar regions allow free flow). Boundary effects add a safety margin that prevents particles from escaping the field entirely.</p>
+<p>Var<sub>local</sub> is the variance of H over a square window around each cell; the window size is set in code, not on this page. R<sub>boundary</sub> is a ramp that rises from 0 in the interior to 1 at the grid edge so particles slow down before they leave the field. The 0.8/0.2 split is a choice I made by eye, same as M1. The idea is that where H is choppy, particles should struggle, and where H is smooth they should run free. I haven't checked that this variance is the right choppiness measure.</p>
 </div>
 <div class="derivation-step">
 <h4>STEERING FIELD</h4>
-<p>An optional directional bias field that encodes external forces or known drift:</p>
+<p>An optional bias field for known drift or external forcing:</p>
 <div class="eq-block">
 <div class="eq-label">EQUATION M3 &mdash; STEERING</div>
 $$\mathbf{F}_{\text{steer}}(x,y) = [0, \; S(x,y) \times 10]$$
 </div>
-<p>where S(x,y) is derived from momentum indicators, external forcing terms, or known system biases. The steering field is additive to the gradient-descent force from the resistance field.</p>
+<p>S(x,y) is whatever scalar bias I feed in, in [-1,1]; in my runs it's a momentum indicator sampled onto the grid. The factor of 10 is a gain I picked so steering is visible next to the gradient force. It isn't derived. The steering force is added to the gradient force in M4.</p>
 </div>
 </div>
 </section>
 <section>
 <h2>PARTICLE DYNAMICS</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
-<p>The membrane is populated with n particles (typically 4096&ndash;65536) that evolve under combined forces:</p>
+<p>I put n particles on the membrane and move each one with this force:</p>
 <div class="eq-block">
 <div class="eq-label">EQUATION M4 &mdash; FORCE LAW</div>
 $$\mathbf{F}_i = -\nabla R(\mathbf{x}_i) \cdot \alpha + \mathbf{F}_{\text{steer}}(\mathbf{x}_i)$$
 </div>
-<p>where &alpha; = 5.0 is the resistance gradient coupling constant.</p>
+<p>&alpha; = 5.0 is the gradient gain. I picked it by eye so particles move at a pace I could watch; it isn't derived and I haven't swept it.</p>
 <div class="eq-block">
-<div class="eq-label">EQUATION M5 &mdash; VERLET INTEGRATION</div>
+<div class="eq-label">EQUATION M5 &mdash; DAMPED SEMI-IMPLICIT EULER</div>
 $$\mathbf{v}_i^{n+1} = (\mathbf{v}_i^n + \mathbf{F}_i \cdot \Delta t) \cdot \gamma \qquad \mathbf{x}_i^{n+1} = \mathbf{x}_i^n + \mathbf{v}_i^{n+1} \cdot \Delta t$$
 </div>
-<p>where &gamma; = 0.99 is the friction decay factor. This provides gentle damping that mimics viscous drag without requiring explicit fluid simulation.</p>
+<p>Each step I add the force to the velocity, multiply by a damping factor &gamma;, then move the particle. That's semi-implicit Euler with damping, not true Verlet. &gamma; is 0.99 in the Taichi build and 0.97 in the demo below; both are values I picked by eye. Without the &gamma; multiplier this is the symplectic Euler scheme in Hairer, Lubich and Wanner, <em>Geometric Numerical Integration</em> (Springer, 2006), ch. I.1; with it, the scheme loses that structure and just bleeds energy every step.</p>
 <div class="eq-block">
-<div class="eq-label">EQUATION M6 &mdash; PROBABILITY DEPOSITION</div>
-$$P(x,y) = \sum_i E_i \cdot \delta(\mathbf{x}_i - (x,y))$$
+<div class="eq-label">EQUATION M6 &mdash; DENSITY DEPOSITION</div>
+$$P(x,y) = \frac{\sum_i E_i \, \mathbb{1}[\mathbf{x}_i \in \text{cell}(x,y)]}{\sum_i E_i}$$
 </div>
-<p>Each particle deposits its carried energy E<sub>i</sub> at its grid location, building up the probability density map. Regions where many high-energy particles converge produce strong probability peaks.</p>
+<p>Each particle adds its energy E<sub>i</sub> to the count of the grid cell it's in; P is that binned count divided by the total, so it sums to 1 over the grid. The indicator is just binning to the nearest cell, nothing finer. Cells where many high-energy particles sit come out as peaks.</p>
 </div>
 </section>
 <section>
@@ -162,31 +165,32 @@ $$P(x,y) = \sum_i E_i \cdot \delta(\mathbf{x}_i - (x,y))$$
 <tr><td style="color:var(--text)">probability_map</td><td>f32 scalar</td><td>(res, res)</td><td>Output density P(x,y)</td></tr>
 </tbody>
 </table>
-<p style="color:var(--dim);font-size:.85rem;line-height:1.9;margin-top:1rem">Typical resolution: 512&times;512 or 1024&times;1024. At 65,536 particles on a 1024&sup2; grid, the entire simulation runs at &gt;1000 timesteps/second on consumer GPUs (RTX 3060+).</p>
+<p style="color:var(--dim);font-size:.85rem;line-height:1.9;margin-top:1rem">I haven't benchmarked this yet. When I do, I'll post the script and the numbers for my 9060 XT here.</p>
 </div>
 </section>
 <section>
-<h2>STATE-OF-THE-ART APPLICATIONS</h2>
+<h2>WHERE I'D LIKE TO TRY IT</h2>
 <div style="max-width:800px;margin:0 auto">
+<p style="color:var(--dim);font-size:.9rem;line-height:1.9;margin-bottom:1.5rem">Everything in this section is conjecture. I haven't run the membrane on any of these problems, and I don't know yet whether a damped particle on a friction potential says anything useful about them.</p>
 <div class="app-card">
-<h4>&#128187; GPU WORKLOAD SCHEDULING &amp; LOAD BALANCING</h4>
-<p>Datacenters with heterogeneous GPU clusters face the problem of mapping compute tasks to hardware. The resistance membrane models the GPU cluster as a friction landscape: heavily loaded nodes have high resistance, idle nodes have low resistance. Incoming workloads are modeled as particles that naturally flow toward low-resistance (available) nodes. The probability map shows the optimal distribution, handling multi-tenancy, thermal throttling zones, and network topology constraints simultaneously. Unlike static schedulers, the membrane continuously adapts as load patterns change.</p>
+<h4>&#128187; GPU WORKLOAD SCHEDULING</h4>
+<p>I think the membrane could model a cluster as a friction landscape, busy nodes high, idle nodes low, with jobs as particles that drift toward the low spots. I haven't tested it. I don't know if it would beat a plain queue, and I'd want to measure that before saying anything more.</p>
 </div>
 <div class="app-card">
-<h4>&#9883; PARTICLE PHYSICS &mdash; BEAM DYNAMICS</h4>
-<p>Charged particle beams in accelerators encounter electromagnetic fields that create complex resistance and steering landscapes. The holographic membrane maps directly: the resistance field represents beam pipe impedance and space-charge effects, steering fields model dipole/quadrupole magnets, and particle energies track beam luminosity. The probabilistic output naturally captures beam halo formation, emittance growth, and resonance crossing &mdash; phenomena that are computationally expensive to model with traditional particle-in-cell codes.</p>
+<h4>&#9883; BEAM DYNAMICS</h4>
+<p>I think the pieces line up with an accelerator picture: resistance as impedance and space charge, steering as dipole and quadrupole kicks, particle energy as beam energy. I haven't tested it. Real beam codes solve fields self-consistently and this doesn't, so at best it would be a sketch tool.</p>
 </div>
 <div class="app-card">
-<h4>&#127754; COMPUTATIONAL FLUID DYNAMICS</h4>
-<p>The membrane's friction field + particle advection + probability deposition is structurally analogous to a smoothed particle hydrodynamics (SPH) solver. The key advantage is that the holographic stretch field provides an adaptive viscosity model: regions of high stretch variance (turbulent zones) automatically receive higher friction, mimicking the behavior of sub-grid-scale turbulence models (RANS, LES) without requiring explicit mesh refinement. This makes it suitable for rapid prototyping of flow problems where full Navier-Stokes simulation is too expensive.</p>
+<h4>&#127754; FLUID-LIKE FLOWS</h4>
+<p>I think the variance-based friction might act like a crude local viscosity. I haven't tested it. To be clear about what it is: a damped particle on a potential, which is much simpler than SPH (Monaghan, <em>Ann. Rev. Astron. Astrophys.</em> 30, 1992). There's no pressure, no continuity, and no closure here.</p>
 </div>
 <div class="app-card">
 <h4>&#128752; AI INFERENCE ROUTING</h4>
-<p>Multi-model AI serving systems (e.g., mixture-of-experts routers) need to distribute inference requests across model replicas. The membrane models available compute as resistance landscape, query complexity as particle energy, and model specialization as steering fields. The resulting probability map predicts optimal routing distributions under varying load &mdash; producing better throughput than round-robin or hash-based routing because it accounts for the continuous interaction between load, latency, and model capability.</p>
+<p>I think the membrane could stand in for a router, with compute as resistance, request size as particle energy, and model specialization as steering. I haven't tested it, and I have no throughput numbers against round-robin or hashing.</p>
 </div>
 <div class="app-card">
-<h4>&#128640; ORBITAL MECHANICS &mdash; TRAJECTORY OPTIMIZATION</h4>
-<p>Spacecraft trajectory planning in multi-body gravitational fields creates complex energy landscapes. The membrane's resistance field encodes gravitational potential + atmospheric drag, steering fields represent thrust vectors, and particle simulation explores thousands of trajectory candidates simultaneously. The probability map identifies low-energy transfer orbits, gravity assist windows, and collision-risk corridors &mdash; providing a probabilistic mission planning tool that complements traditional Lambert solvers.</p>
+<h4>&#128640; TRAJECTORY SEARCH</h4>
+<p>I think the resistance field could carry a gravitational potential plus drag and let a few thousand particles sniff out cheap corridors. I haven't tested it. It wouldn't replace a Lambert solver; if it works at all it would only point at regions worth handing to one.</p>
 </div>
 </div>
 </section>
@@ -195,7 +199,7 @@ $$P(x,y) = \sum_i E_i \cdot \delta(\mathbf{x}_i - (x,y))$$
 <div style="max-width:800px;margin:0 auto">
 <div class="viz-section">
 <h4>LIVE PARTICLE MEMBRANE SIMULATION</h4>
-<p style="color:var(--dim);font-size:.8rem;line-height:1.7;margin-bottom:1rem">Particles advect through a procedural resistance field (background heatmap). Bright regions = high resistance (friction), dark regions = low resistance (free flow). Particles deposit probability density as they move, building up the output map. Based on Eqs. M4&ndash;M6 with Verlet integration.</p>
+<p style="color:var(--dim);font-size:.8rem;line-height:1.7;margin-bottom:1rem">Particles move through a procedural resistance field drawn as the background heatmap; brighter means more resistance. Each particle deposits density where it sits, and that builds the output map in blue. The code is M4 to M6 with damped semi-implicit Euler, &gamma; from the slider (default 0.97), &alpha; = 5. The demo also adds a small downward pull from R and decays particle energy by 0.2% a step so the picture settles; those two terms aren't in M4 to M6. A particle stops moving once its energy drops below 0.001.</p>
 <div class="viz-controls">
 <button id="hm-start" onclick="hmToggle()">START</button>
 <button onclick="hmReset()">RESET</button>
@@ -214,16 +218,23 @@ $$P(x,y) = \sum_i E_i \cdot \delta(\mathbf{x}_i - (x,y))$$
 </div>
 </section>
 <section>
+<h2>HOW TO REPRODUCE</h2>
+<div class="prose">
+<p>The Taichi source isn't published yet. The canvas demo above is the only runnable piece on this page; view source and you'll find it in the last script block, about eighty lines with no dependencies. It uses the same M4 to M6 update as the Taichi build, with the two extra terms listed in the caption, on a 60&times;40 procedural field instead of a computed H.</p>
+<p style="margin-top:1.2rem"><strong style="color:var(--text)">Related.</strong> The <a href="master-momentum.html" style="color:var(--accent)">master momentum page</a> is where the friction and forcing ideas come from. The membrane is a toy that shares the momentum-and-friction shape of that system; it doesn't solve it.</p>
+</div>
+</section>
+<section>
 <h2>RELATED FRAMEWORKS</h2>
 <div style="max-width:800px;margin:0 auto">
 <div class="card-grid">
 <div class="card">
 <h3><a href="eigenstretch-tensor.html" style="color:var(--accent);text-decoration:none">&larr; EIGENSTRETCH TENSOR</a></h3>
-<p>The spectral deformation analysis that generates the holographic stretch field feeding the membrane.</p>
+<p>The deformation analysis I use to build the stretch field that feeds the membrane.</p>
 </div>
 <div class="card">
 <h3><a href="master-momentum.html" style="color:var(--accent);text-decoration:none">MASTER MOMENTUM EQUATION &rarr;</a></h3>
-<p>The complete turbulence-closed PDE system that the membrane's particle dynamics approximate.</p>
+<p>The momentum-and-friction system the membrane borrows its shape from. The membrane is a toy next to it.</p>
 </div>
 </div>
 </div>

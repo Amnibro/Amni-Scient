@@ -14,7 +14,7 @@
 <meta property="og:url" content="https://amni-scient.com/research/gf17-quantization">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="https://amni-scient.com/research/gf17-quantization">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"ScholarlyArticle","name":"GF(17) Quantization Strategies for Neural Network Weight Compression","author":{"@type":"Person","name":"Amnibro"},"description":"Finite-field quantization codecs using GF(17) arithmetic with proprietary optimization. Compared against Google TurboQuant.","url":"https://amni-scient.com/research/gf17-quantization","publisher":{"@type":"Organization","name":"AMNI-SCIENT"},"datePublished":"2026-04-02"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"ScholarlyArticle","name":"GF(17) Quantization Strategies for Neural Network Weight Compression","author":{"@type":"Person","name":"Anthony Reffelt"},"description":"Finite-field quantization codecs using GF(17) arithmetic with proprietary optimization. Compared against a re-implementation of Google TurboQuant on synthetic tensors.","url":"https://amni-scient.com/research/gf17-quantization","publisher":{"@type":"Organization","name":"AMNI-SCIENT"},"datePublished":"2026-04-02","dateModified":"2026-09-09"}</script>
 <link rel="stylesheet" href="../css/style.css?v=b260">
 <script>
 window.MathJax={tex:{inlineMath:[["$","$"],["\\(","\\)"]],displayMath:[["$$","$$"],["\\[","\\]"]],processEscapes:true},options:{skipHtmlTags:["script","noscript","style","textarea","pre","code"]}};
@@ -71,6 +71,9 @@ window.MathJax={tex:{inlineMath:[["$","$"],["\\(","\\)"]],displayMath:[["$$","$$
 .redacted{background:var(--border);color:var(--border);border-radius:2px;padding:0 .3rem;cursor:help;transition:all .3s;user-select:none;letter-spacing:1px}
 .redacted:hover{color:var(--dim);font-style:italic;background:rgba(255,255,255,.08)}
 .classified-banner{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(231,76,60,.9);color:#fff;font-size:.6rem;letter-spacing:4px;padding:.35rem 0;font-weight:700;text-transform:uppercase;backdrop-filter:blur(4px)}
+.callout{max-width:800px;margin:1.25rem auto;padding:1.25rem 1.5rem;border:1px solid var(--accent);border-radius:8px;background:var(--panel);color:var(--dim);font-size:.9rem;line-height:1.8}
+.callout strong{color:var(--text)}
+.prose{max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem}
 </style>
 </head>
 <body class="pp">
@@ -110,8 +113,9 @@ window.MathJax={tex:{inlineMath:[["$","$"],["\\(","\\)"]],displayMath:[["$$","$$
 <div class="breadcrumb"><a href="../research.html">RESEARCH</a> &nbsp;/&nbsp; GF(17) QUANTIZATION</div>
 <h1>GF(17) QUANTIZATION</h1>
 <p class="subtitle">NEURAL NETWORK WEIGHT COMPRESSION VIA FINITE-FIELD ARITHMETIC</p>
-<p class="tagline">Distribution-adaptive codecs using Galois field GF(17), <span class="redacted" title="Proprietary">[PROPRIETARY OPTIMIZATION]</span>, and <span class="redacted" title="Proprietary">[CLASSIFIED HARDWARE ACCELERATION]</span> &mdash; benchmarked against TurboQuant (ICLR 2026).</p>
+<p class="tagline">Distribution-adaptive codecs using Galois field GF(17), <span class="redacted" title="Proprietary">[PROPRIETARY OPTIMIZATION]</span>, and <span class="redacted" title="Proprietary">[CLASSIFIED HARDWARE ACCELERATION]</span> &mdash; compared against my re-implementation of TurboQuant (ICLR 2026) on synthetic tensors.</p>
 </section>
+<div class="prose"><div class="callout"><strong>Status, 2026-09-09.</strong> Every quality and timing number on this page is measured on synthetic 896&times;896 tensors on CPU (Python 3.14, NumPy 2.4.3), with normal and heavy-tail draws. The TurboQuant rows are my own NumPy re-implementation of the paper&rsquo;s rotate-then-quantize step, applied to a weight matrix rather than a KV cache. The VRAM table is derived from bits per element and parameter counts. I haven&rsquo;t measured any of these codecs on real model weights or on perplexity, the scripts aren&rsquo;t published, and the radar chart is hand-scored.</div></div>
 <section>
 <div class="license-box" style="border-color:rgba(231,76,60,.4)">
 <div class="cc-icon">&#128274;</div>
@@ -122,32 +126,32 @@ window.MathJax={tex:{inlineMath:[["$","$"],["\\(","\\)"]],displayMath:[["$$","$$
 <section>
 <h2>ABSTRACT</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
-<p>We present a family of quantization strategies built on arithmetic in the Galois field <strong style="color:var(--text)">GF(17)</strong> for compressing neural network weight matrices. Unlike conventional methods operating in floating-point or power-of-two integer domains, our approach maps weights into a prime finite field where all arithmetic &mdash; addition, multiplication, and inversion &mdash; is <strong style="color:var(--text)">exact and drift-free</strong>.</p>
-<p style="margin-top:1.2rem">We introduce five complementary codecs spanning 2-bit to 16-bit operating points: <em>GF(17) Legendre 4-bit</em>, <em>Contextual GF(17)</em>, <em>Membrane GF(17)</em>, <em>ATRP</em>, and <em>AmniTex Progressive</em>. The <strong style="color:var(--text)">Membrane GF(17)</strong> codec &mdash; derived from our <a href="holographic-membrane.html">Holographic Resistance Membrane</a> framework &mdash; achieves cosine similarity <strong style="color:var(--accent)">0.939 at 4 bits/element</strong> on heavy-tail distributions (2.5&times; improvement over uniform quantization), encoding in 17ms via a <span class="redacted" title="Proprietary">[PROPRIETARY ACCELERATION TECHNIQUE]</span>.</p>
-<p style="margin-top:1.2rem">We compare against Google&rsquo;s <strong style="color:var(--text)">TurboQuant</strong> (ICLR 2026) and related methods (QJL, PolarQuant), demonstrating complementary strengths: TurboQuant excels at online KV-cache compression with provable distortion bounds, while GF(17) strategies offer exact arithmetic, <span class="redacted" title="Proprietary">[CLASSIFIED HARDWARE ACCELERATION]</span>, and progressive decoding for persistent weight storage.</p>
+<p>This page covers a family of quantization codecs I built on arithmetic in the Galois field <strong style="color:var(--text)">GF(17)</strong> for compressing neural network weight matrices. Instead of working in floating point or a power-of-two integer grid, I map weights into a prime field where addition, multiplication, and inversion are <strong style="color:var(--text)">exact residues</strong>.</p>
+<p style="margin-top:1.2rem">There are five codecs spanning 2-bit to 16-bit operating points: <em>GF(17) Legendre 4-bit</em>, <em>Contextual GF(17)</em>, <em>Membrane GF(17)</em>, <em>ATRP</em>, and <em>AmniTex Progressive</em>. The <strong style="color:var(--text)">Membrane GF(17)</strong> codec, which comes out of my <a href="holographic-membrane.html">Holographic Resistance Membrane</a> framework, measures cosine similarity <strong style="color:var(--accent)">0.939 at its 4-bit operating point</strong> on a synthetic heavy-tail tensor, against 0.373 for the uniform GF(17) Legendre codec in the same table (about 2.5&times;), and encodes in 17 ms on CPU via a <span class="redacted" title="Proprietary">[PROPRIETARY ACCELERATION TECHNIQUE]</span>.</p>
+<p style="margin-top:1.2rem">I compare against Google&rsquo;s <strong style="color:var(--text)">TurboQuant</strong> (ICLR 2026) and the related QJL and PolarQuant papers [1&ndash;3]. TurboQuant is built for online KV-cache compression and comes with distortion bounds; my GF(17) codecs are for persistent weight storage and give exact arithmetic, <span class="redacted" title="Proprietary">[CLASSIFIED HARDWARE ACCELERATION]</span>, and progressive decoding. The TurboQuant numbers here come from my re-implementation, so read them as a sanity check on my own codecs rather than a verdict on theirs.</p>
 </div>
 </section>
 <section>
 <h2>WHY GF(17)?</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
-<p>The choice of prime <strong style="color:var(--text)">p = 17</strong> is deliberate. The 17 values {0, &hellip;, 16} yield a complete finite field where every non-zero element has a multiplicative inverse. <span class="redacted" title="Proprietary">[ALGEBRAIC PARTITIONING METHOD]</span> enables bijective <strong style="color:var(--text)">4-bit packing</strong> (<span class="redacted" title="Proprietary">[COMPRESSION MECHANISM]</span>).</p>
+<p>I use <strong style="color:var(--text)">p = 17</strong> because it&rsquo;s the smallest prime above 16, so four GF(17) digits (83,521 states) cover every fp16 bit pattern (65,536). The 17 values {0, &hellip;, 16} form a complete field where every non-zero element has a multiplicative inverse. The cost is that 17 symbols don&rsquo;t fit in 4 bits (log<sub>2</sub> 17 is about 4.09); the packing I use is proprietary (<span class="redacted" title="Proprietary">[ALGEBRAIC PARTITIONING METHOD]</span>), and the bits/element figures in the tables are the measured packed size.</p>
 </div>
 <div class="features-2x2" style="max-width:800px;margin:1.5rem auto 0">
 <div class="feature" style="text-align:left;padding:1rem 1.5rem;background:var(--panel);border:1px solid var(--border);border-radius:8px">
 <h4>EXACT ARITHMETIC</h4>
-<p>All operations &mdash; add, multiply, invert &mdash; are exact in mod-17. No rounding, no accumulation error, no drift over arbitrarily long computations.</p>
+<p>Add, multiply, and invert are exact in mod-17. There&rsquo;s nothing to round, so a chain of field operations can&rsquo;t accumulate rounding error.</p>
 </div>
 <div class="feature" style="text-align:left;padding:1rem 1.5rem;background:var(--panel);border:1px solid var(--border);border-radius:8px">
 <h4>HARDWARE ACCELERATION</h4>
-<p>Values 0&ndash;16 map to a <span class="redacted" title="Proprietary">[CLASSIFIED HARDWARE FORMAT]</span>. GPU <span class="redacted" title="Proprietary">[CLASSIFIED HARDWARE UNITS]</span> perform <span class="redacted" title="Proprietary">[CLASSIFIED OPERATION]</span> for free &mdash; dedicated silicon, zero ALU cost.</p>
+<p>Values 0&ndash;16 map to a <span class="redacted" title="Proprietary">[CLASSIFIED HARDWARE FORMAT]</span> so that GPU <span class="redacted" title="Proprietary">[CLASSIFIED HARDWARE UNITS]</span> can do <span class="redacted" title="Proprietary">[CLASSIFIED OPERATION]</span> off the ALU path. This is the design intent; I haven&rsquo;t measured it on a GPU yet.</p>
 </div>
 <div class="feature" style="text-align:left;padding:1rem 1.5rem;background:var(--panel);border:1px solid var(--border);border-radius:8px">
 <h4>PROGRESSIVE REFINEMENT</h4>
 <p>Multi-layer residuals compose coherently in the same field. Decode at any layer for quality/speed tradeoff &mdash; from 2-bit preview to 16-bit exact.</p>
 </div>
 <div class="feature" style="text-align:left;padding:1rem 1.5rem;background:var(--panel);border:1px solid var(--border);border-radius:8px">
-<h4>ZERO DRIFT</h4>
-<p>Cumulative sums cycle within {0, &hellip;, 16}. Linear attention accumulations stay exact regardless of sequence length. fp16 drifts; GF(17) doesn&rsquo;t.</p>
+<h4>EXACT RESIDUE SUMS</h4>
+<p>Cumulative sums cycle within {0, &hellip;, 16}, so a residue sum stays exact at any length. That&rsquo;s a property of the field, and it says nothing about recovering the real-valued sum; see the Cumulative Drift section for what I did and didn&rsquo;t test.</p>
 </div>
 </div>
 </section>
@@ -157,9 +161,9 @@ window.MathJax={tex:{inlineMath:[["$","$"],["\\(","\\)"]],displayMath:[["$$","$$
 <div class="codec-card">
 <div class="codec-tag">BASELINE &bull; 4-BIT</div>
 <h4>GF(17) LEGENDRE</h4>
-<p>Uniform min-max quantization to {0&hellip;16} with <span class="redacted" title="Proprietary">[CLASSIFIED PACKING]</span>. Fastest encode (3ms) but collapses on heavy-tail data.</p>
+<p>Uniform min-max quantization to {0&hellip;16} with <span class="redacted" title="Proprietary">[CLASSIFIED PACKING]</span>. Fastest encode (3 ms) but collapses on heavy-tail data.</p>
 <div class="codec-stats">
-<span class="codec-stat"><strong>4.0</strong> bits/e</span>
+<span class="codec-stat"><strong>4.0</strong> bits/e (packed size, see note)</span>
 <span class="codec-stat"><strong>3ms</strong> enc</span>
 <span class="codec-stat"><strong>0.98</strong> cs (normal)</span>
 </div>
@@ -177,9 +181,9 @@ window.MathJax={tex:{inlineMath:[["$","$"],["\\(","\\)"]],displayMath:[["$$","$$
 <div class="codec-card" style="border-color:var(--accent)">
 <div class="codec-tag">DISTRIBUTION-ADAPTIVE &bull; 4-BIT</div>
 <h4>MEMBRANE GF(17)</h4>
-<p><span class="redacted" title="Proprietary">[PROPRIETARY ADAPTIVE FIELD]</span> steers quantization boundaries toward stable regions. <span class="redacted" title="Proprietary">[CLASSIFIED ACCELERATION]</span> achieves 13&times; speedup. Excels on heavy tails.</p>
+<p><span class="redacted" title="Proprietary">[PROPRIETARY ADAPTIVE FIELD]</span> steers quantization boundaries toward stable regions. <span class="redacted" title="Proprietary">[CLASSIFIED ACCELERATION]</span> cut encode time from 200 ms to 17 ms (about 12&times;). Holds up on heavy tails.</p>
 <div class="codec-stats">
-<span class="codec-stat"><strong>4.0</strong> bits/e</span>
+<span class="codec-stat"><strong>4.0</strong> bits/e (packed size, see note)</span>
 <span class="codec-stat"><strong>17ms</strong> enc</span>
 <span class="codec-stat"><strong>0.939</strong> cs (heavy-tail)</span>
 </div>
@@ -187,7 +191,7 @@ window.MathJax={tex:{inlineMath:[["$","$"],["\\(","\\)"]],displayMath:[["$$","$$
 <div class="codec-card">
 <div class="codec-tag">PROGRESSIVE &bull; 2&ndash;16 BIT</div>
 <h4>ATRP</h4>
-<p>Adaptive <span class="redacted" title="Proprietary">[CLASSIFIED]</span> Residual Packing. Layer-by-layer residual encoding in GF(17). At 4 layers &times; 4 bits = 16b, achieves bit-exact reconstruction (SNR 85dB).</p>
+<p>Adaptive <span class="redacted" title="Proprietary">[CLASSIFIED]</span> Residual Packing. Layer-by-layer residual encoding in GF(17). At 4 layers &times; 4 bits it reconstructs the fp16 input exactly (max abs error 0); at 16 bits/element that&rsquo;s a progressive container, not compression.</p>
 <div class="codec-stats">
 <span class="codec-stat"><strong>2&ndash;16</strong> bits/e</span>
 <span class="codec-stat"><strong>7ms</strong> enc (4L)</span>
@@ -207,7 +211,7 @@ window.MathJax={tex:{inlineMath:[["$","$"],["\\(","\\)"]],displayMath:[["$$","$$
 <div class="codec-card" style="border-color:rgba(1,163,164,.5)">
 <div class="codec-tag">MEMBRANE + PROGRESSIVE &bull; 16-BIT</div>
 <h4>MEMBRANE &times;4L</h4>
-<p>Membrane GF(17) applied at each progressive depth. Best heavy-tail progressive: 0.996 CosSim at 16 bits.</p>
+<p>Membrane GF(17) applied at each progressive depth. Best heavy-tail result among the lossy progressive codecs: 0.996 CosSim at 16 bits.</p>
 <div class="codec-stats">
 <span class="codec-stat"><strong>16.0</strong> bits/e</span>
 <span class="codec-stat"><strong>69ms</strong> enc</span>
@@ -245,7 +249,7 @@ $$w(x) = \frac{h(x)}{\text{\small<span class="redacted" title="Proprietary">[PRO
 <h4>STEP 5 &mdash; <span class="redacted" title="Proprietary">[CLASSIFIED]</span></h4>
 <p><span class="redacted" title="Proprietary">[PROPRIETARY PACKING METHOD]</span></p>
 </div>
-<p style="margin-top:1.5rem">The <span class="redacted" title="Proprietary">[CLASSIFIED OPTIMIZATION]</span> (v3.108.0) achieved a <strong style="color:var(--accent)">13&times; encode speedup</strong> from 200ms to 17ms while slightly improving quality through <span class="redacted" title="Proprietary">[CLASSIFIED TECHNIQUE]</span>.</p>
+<p style="margin-top:1.5rem">The <span class="redacted" title="Proprietary">[CLASSIFIED OPTIMIZATION]</span> (v3.108.0) brought encode time <strong style="color:var(--accent)">from 200 ms to 17 ms</strong>, an 11.8&times; speedup measured on the same 896&times;896 tensor, and slightly improved quality through <span class="redacted" title="Proprietary">[CLASSIFIED TECHNIQUE]</span>.</p>
 </div>
 </section>
 <section>
@@ -253,6 +257,7 @@ $$w(x) = \frac{h(x)}{\text{\small<span class="redacted" title="Proprietary">[PRO
 <div style="max-width:900px;margin:0 auto">
 <h3 style="font-size:.9rem;letter-spacing:2px;color:var(--text);margin-bottom:.5rem">SINGLE-SHOT CODECS &mdash; 4-BIT OPERATING POINT</h3>
 <p style="color:var(--dim);font-size:.8rem;margin-bottom:1rem">802,816 elements (896&times;896 matrix). CPU timing, Python 3.14, NumPy 2.4.3.</p>
+<p style="color:var(--dim);font-size:.85rem;line-height:1.8;margin-bottom:1rem">All numbers below are on synthetic 896&times;896 tensors. I haven&rsquo;t measured these codecs on real model weights or on perplexity yet, and my later work showed synthetic tensors can overstate quality, so treat these as codec sanity checks, not model results. The TurboQuant rows are my NumPy re-implementation of the paper&rsquo;s rotate-then-quantize step applied to a weight matrix; it&rsquo;s not the authors&rsquo; code and it&rsquo;s outside the KV-cache setting they designed for. The bits/e column is the measured packed size; a 17-symbol code can&rsquo;t be exactly 4.00 bits, and the 4.00 entries are rounded to two places.</p>
 <div style="overflow-x:auto">
 <table class="bench-table">
 <thead>
@@ -260,11 +265,11 @@ $$w(x) = \frac{h(x)}{\text{\small<span class="redacted" title="Proprietary">[PRO
 </thead>
 <tbody>
 <tr class="baseline"><td>fp16 (baseline)</td><td>16.00</td><td>1.0&times;</td><td>1.2</td><td>0.8</td><td>1.0000</td><td>1.0000</td><td>73.7</td></tr>
-<tr><td>TQ turbo4</td><td>4.25</td><td>3.8&times;</td><td>25.4</td><td>21.5</td><td>0.9914</td><td>0.9907</td><td>17.6</td></tr>
-<tr><td>TQ turbo3</td><td>3.50</td><td>4.6&times;</td><td>26.1</td><td>21.2</td><td>0.9728</td><td>0.9710</td><td>12.5</td></tr>
-<tr><td>GF(17) Leg 4b</td><td>4.00</td><td>4.0&times;</td><td>3.2</td><td>2.0</td><td>0.9843</td><td>0.3732</td><td>14.9</td></tr>
+<tr><td>TQ turbo4 (my re-impl.)</td><td>4.25</td><td>3.8&times;</td><td>25.4</td><td>21.5</td><td>0.9914</td><td>0.9907</td><td>17.6</td></tr>
+<tr><td>TQ turbo3 (my re-impl.)</td><td>3.50</td><td>4.6&times;</td><td>26.1</td><td>21.2</td><td>0.9728</td><td>0.9710</td><td>12.5</td></tr>
+<tr><td>GF(17) Leg 4b</td><td>4.00 (packed)</td><td>4.0&times;</td><td>3.2</td><td>2.0</td><td>0.9843</td><td>0.3732</td><td>14.9</td></tr>
 <tr><td>Ctx GF17 (2&sigma;)</td><td>5.18</td><td>3.1&times;</td><td>8.4</td><td>3.6</td><td>0.9965</td><td>0.7965</td><td>21.5</td></tr>
-<tr class="highlight"><td>Membrane GF17</td><td>4.00</td><td>4.0&times;</td><td>17.3</td><td>2.8</td><td class="best">0.9911</td><td class="best">0.9391</td><td>17.4</td></tr>
+<tr class="highlight"><td>Membrane GF17</td><td>4.00 (packed)</td><td>4.0&times;</td><td>17.3</td><td>2.8</td><td class="best">0.9911</td><td class="best">0.9391</td><td>17.4</td></tr>
 </tbody>
 </table>
 </div>
@@ -275,6 +280,7 @@ $$w(x) = \frac{h(x)}{\text{\small<span class="redacted" title="Proprietary">[PRO
 </div>
 </div>
 <h3 style="font-size:.9rem;letter-spacing:2px;color:var(--text);margin:2rem 0 .5rem">PROGRESSIVE CODECS &mdash; 16-BIT OPERATING POINT</h3>
+<p style="color:var(--dim);font-size:.85rem;line-height:1.8;margin-bottom:1rem">ATRP at 4 layers &times; 4 bits reconstructs the fp16 input exactly (max abs error 0). The SNR column for it is against an fp32 reference, which is why it exceeds fp16&rsquo;s 73.7 dB in the table above. At 16 bits/element this is a progressive container, not compression; the value is being able to stop at 2, 4, 8, or 12 bits on the way there.</p>
 <div style="overflow-x:auto">
 <table class="bench-table">
 <thead>
@@ -307,23 +313,23 @@ $$w(x) = \frac{h(x)}{\text{\small<span class="redacted" title="Proprietary">[PRO
 </thead>
 <tbody>
 <tr><td>GF(17) Leg 4b</td><td>0.9843</td><td>0.3732</td><td style="color:#ff4444;font-weight:700">0.611</td></tr>
-<tr><td>TQ turbo4</td><td>0.9914</td><td>0.9907</td><td style="color:var(--accent)">0.001</td></tr>
+<tr><td>TQ turbo4 (my re-impl.)</td><td>0.9914</td><td>0.9907</td><td style="color:var(--accent)">0.001</td></tr>
 <tr><td>Ctx GF17</td><td>0.9965</td><td>0.7965</td><td style="color:#ff8844">0.200</td></tr>
 <tr class="highlight"><td>Membrane GF17</td><td>0.9911</td><td>0.9391</td><td style="color:var(--accent)">0.052</td></tr>
 </tbody>
 </table>
 </div>
-<p>TurboQuant&rsquo;s random rotation preprocessing naturally redistributes tail energy across all coordinates, making it inherently distribution-agnostic (&Delta; = 0.001). The Membrane codec achieves comparable robustness (&Delta; = 0.052) through <span class="redacted" title="Proprietary">[CLASSIFIED]</span> adaptation, while maintaining exact finite-field arithmetic that TurboQuant&rsquo;s continuous-domain approach cannot provide.</p>
+<p>TurboQuant&rsquo;s random rotation spreads tail energy across all coordinates, which is why my re-implementation barely moves between the two distributions (&Delta; = 0.001). The Membrane codec gets within striking distance (&Delta; = 0.052) through <span class="redacted" title="Proprietary">[CLASSIFIED]</span> adaptation and keeps the field arithmetic exact. On this synthetic pair, TurboQuant is still the more robust of the two.</p>
 </div>
 </section>
 <section>
 <h2>CUMULATIVE DRIFT</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
-<p>In linear attention mechanisms, key-value pairs accumulate over long sequences. Floating-point representations suffer progressive drift &mdash; GF(17) arithmetic does not:</p>
+<p>Sums in GF(17) are exact residues; they don&rsquo;t accumulate rounding error because there&rsquo;s nothing to round. That&rsquo;s not the same as recovering the real-valued sum, and production kernels already accumulate in fp32, so I don&rsquo;t claim this beats them. The table is a naive fp16 sequential running sum against an fp64 reference, on the same synthetic 896&times;896 tensor; the script isn&rsquo;t published.</p>
 <div style="overflow-x:auto">
 <table class="bench-table" style="max-width:500px;margin:1.5rem auto">
 <thead>
-<tr><th>Sequence Step</th><th>fp16 RMSE</th><th>GF(17) Drift</th></tr>
+<tr><th>Sequence Step</th><th>fp16 RMSE (naive sequential sum vs fp64)</th><th>GF(17) residue drift</th></tr>
 </thead>
 <tbody>
 <tr><td>512</td><td>0.000760</td><td class="best">0 (exact)</td></tr>
@@ -333,31 +339,32 @@ $$w(x) = \frac{h(x)}{\text{\small<span class="redacted" title="Proprietary">[PRO
 </tbody>
 </table>
 </div>
-<p>GF(17) operations cycle within {0, &hellip;, 16} by construction. There is zero accumulation error regardless of sequence length &mdash; a property that floating-point arithmetic fundamentally cannot achieve.</p>
+<p>GF(17) operations cycle within {0, &hellip;, 16} by construction, so the residue column is zero at every length. An fp32 or Kahan-compensated accumulator would also hold the fp16 column far below what&rsquo;s shown here; I didn&rsquo;t run that comparison.</p>
 </div>
 </section>
 <section>
 <h2>VRAM PROJECTIONS</h2>
 <div style="max-width:800px;margin:0 auto">
+<p style="color:var(--dim);font-size:.85rem;line-height:1.8;margin-bottom:1rem">Derived, not measured: fp16 weight size from the parameter count, GF(17) Legendre at 4 bits/element as one quarter of that. I haven&rsquo;t loaded any of these models through the codec.</p>
 <div style="overflow-x:auto">
 <table class="bench-table">
 <thead>
-<tr><th>Model</th><th>fp16</th><th>TQ turbo4</th><th>GF(17) Leg 4b</th><th>GF(17) + TQ KV</th></tr>
+<tr><th>Model</th><th>fp16 weights</th><th>GF(17) Leg 4b (derived)</th></tr>
 </thead>
 <tbody>
-<tr><td>Qwen-0.5B</td><td>1,164 MB</td><td>1,035 MB</td><td class="best">291 MB</td><td class="best">291 MB</td></tr>
-<tr><td>Qwen-3B</td><td>7,208 MB</td><td>6,321 MB</td><td class="best">1,802 MB</td><td class="best">1,802 MB</td></tr>
-<tr><td>Qwen-7B</td><td>15,879 MB</td><td>14,499 MB</td><td class="best">3,970 MB</td><td class="best">3,970 MB</td></tr>
+<tr><td>Qwen-0.5B</td><td>1,164 MB</td><td class="best">291 MB</td></tr>
+<tr><td>Qwen-3B</td><td>7,208 MB</td><td class="best">1,802 MB</td></tr>
+<tr><td>Qwen-7B</td><td>15,879 MB</td><td class="best">3,970 MB</td></tr>
 </tbody>
 </table>
 </div>
-<p style="color:var(--dim);font-size:.8rem;margin-top:1rem">GF(17) compresses weights 4&times; independently of any activation-side compression. Combined with TurboQuant KV-cache compression = best of both.</p>
+<p style="color:var(--dim);font-size:.8rem;margin-top:1rem">GF(17) works on the weights and leaves the KV cache alone, so it could sit alongside a KV-cache method like TurboQuant. I haven&rsquo;t built or measured that combination.</p>
 </div>
 </section>
 <section>
 <h2>COMPARISON WITH TURBOQUANT</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
-<p>The two approaches are <strong style="color:var(--text)">complementary rather than competing</strong>. They target different components of the inference pipeline:</p>
+<p>The two approaches target different parts of the inference pipeline, so I don&rsquo;t read the tables above as a head-to-head. The left column is from the papers [1&ndash;3]; the right column is what I&rsquo;ve measured on synthetic tensors plus what the format gives by construction.</p>
 </div>
 <div class="compare-grid" style="max-width:800px;margin:1.5rem auto 0">
 <div class="compare-card">
@@ -367,7 +374,7 @@ $$w(x) = \frac{h(x)}{\text{\small<span class="redacted" title="Proprietary">[PRO
 <li>Data-oblivious random rotation preprocessing</li>
 <li>Provable near-optimal distortion rate (&asymp;2.7&times; of lower bound)</li>
 <li>1-bit QJL residual for unbiased inner-product estimation</li>
-<li>8&times; speedup on H100 GPUs via CUDA kernels</li>
+<li>8&times; speedup on H100 GPUs via CUDA kernels, as reported in [1]</li>
 <li>Quality-neutral at 3.5 bits/channel</li>
 <li>Continuous floating-point domain</li>
 </ul>
@@ -377,18 +384,19 @@ $$w(x) = \frac{h(x)}{\text{\small<span class="redacted" title="Proprietary">[PRO
 <ul>
 <li>Targets <strong style="color:var(--text)">model weights</strong> (offline, persistent storage)</li>
 <li>Distribution-adaptive <span class="redacted" title="Proprietary">[CLASSIFIED]</span> field</li>
-<li>Exact finite-field arithmetic (zero drift by construction)</li>
-<li>Progressive decode: 2-bit preview to 16-bit exact</li>
-<li><span class="redacted" title="Proprietary">[CLASSIFIED HARDWARE]</span> acceleration (free <span class="redacted" title="Proprietary">[CLASSIFIED]</span> MACs)</li>
-<li>ATRP 4b&times;4L: bit-exact at 16 bits (SNR 85dB)</li>
+<li>Exact finite-field arithmetic (no rounding in the residue domain)</li>
+<li>Progressive decode: 2-bit preview to 16-bit exact (measured on synthetic tensors)</li>
+<li><span class="redacted" title="Proprietary">[CLASSIFIED HARDWARE]</span> acceleration (design; I haven&rsquo;t measured it)</li>
+<li>ATRP 4b&times;4L: exact fp16 reconstruction at 16 bits/element (max abs error 0)</li>
 <li>Discrete algebraic domain (mod-17)</li>
 </ul>
 </div>
 </div>
 </section>
 <section>
-<h2>WHERE EACH APPROACH SHINES</h2>
+<h2>WHERE I&rsquo;D USE EACH</h2>
 <div style="max-width:800px;margin:0 auto">
+<p style="color:var(--dim);font-size:.85rem;line-height:1.8;margin-bottom:1rem">My reading of the tables above; the TurboQuant rows lean on the papers, the GF(17) rows on synthetic-tensor measurements.</p>
 <table class="scenario-table">
 <thead>
 <tr><th>Scenario</th><th>Best Approach</th><th>Rationale</th></tr>
@@ -398,9 +406,9 @@ $$w(x) = \frac{h(x)}{\text{\small<span class="redacted" title="Proprietary">[PRO
 <tr><td>Weight storage &amp; loading</td><td>GF(17) Leg 4b</td><td>4&times; compression, exact field, 3ms encode, <span class="redacted" title="Proprietary">[CLASSIFIED]</span> compatible</td></tr>
 <tr><td>Heavy-tail weight distributions</td><td>Membrane GF(17)</td><td>Distribution-adaptive, 0.939 vs. 0.373 (uniform) at 4 bits</td></tr>
 <tr><td>Progressive level-of-detail</td><td>ATRP / AmniTex</td><td>Multi-layer GF(17) residuals, stop at any layer</td></tr>
-<tr><td>Long-sequence linear attention</td><td>GF(17) cumulative</td><td>Zero drift, exact mod-17 arithmetic at any sequence length</td></tr>
-<tr><td>Lossless at minimum bits</td><td>ATRP 4b&times;4L</td><td>Bit-exact reconstruction, SNR 85dB, 16 bits in algebra-exact field</td></tr>
-<tr><td>Combined deployment</td><td>GF(17) weights + TQ KV</td><td>4&times; weight compression + KV-cache compression in parallel</td></tr>
+<tr><td>Long-sequence residue accumulation</td><td>GF(17) cumulative</td><td>Exact mod-17 sums at any length; not a substitute for an fp32 accumulator, see Cumulative Drift</td></tr>
+<tr><td>Exact fp16 recovery with progressive stops</td><td>ATRP 4b&times;4L</td><td>Exact reconstruction at 16 bits/element (1.0&times;); the win is the 2/4/8/12-bit stops on the way, not size</td></tr>
+<tr><td>Combined deployment</td><td>GF(17) weights + TQ KV</td><td>4&times; weight compression plus KV-cache compression; untested together</td></tr>
 </tbody>
 </table>
 </div>
@@ -424,10 +432,19 @@ $$w(x) = \frac{h(x)}{\text{\small<span class="redacted" title="Proprietary">[PRO
 <h4>INFERENCE INTEGRATION</h4>
 <p>TurboQuant integrates directly into attention computation. GF(17) weight quantization requires dequantization before standard compute, unless <span class="redacted" title="Proprietary">[CLASSIFIED HARDWARE ACCELERATION]</span> is used.</p>
 </div>
+<div class="app-card">
+<h4>SYNTHETIC DATA ONLY</h4>
+<p>Every quality number here is from 896&times;896 synthetic tensors. No real model weights, no perplexity, no downstream task. My later work on other codecs showed synthetic tensors can flatter a codec, so I&rsquo;d expect these numbers to move on real weights.</p>
+</div>
+<div class="app-card">
+<h4>HOW TO REPRODUCE</h4>
+<p>The benchmark scripts and codec implementations aren&rsquo;t published. The setup was CPU-only, Python 3.14, NumPy 2.4.3, normal and Student-t heavy-tail draws at 896&times;896. If you want to check a number, email me and I&rsquo;ll run it with you under NDA.</p>
+</div>
 </div>
 </section>
 <section>
 <h2>RADAR &mdash; MULTI-DIMENSIONAL COMPARISON</h2>
+<p class="prose" style="margin-bottom:1rem">Hand-assigned scores, not measurements. The quality and heavy-tail axes track the tables above; compression, speed, hardware compatibility, and progressive support are my 0&ndash;1 judgments and shouldn&rsquo;t be read as data.</p>
 <div class="viz-section">
 <div class="viz-canvas-wrap" style="max-width:500px">
 <canvas id="chart-radar"></canvas>

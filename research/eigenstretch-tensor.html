@@ -6,15 +6,15 @@
 <meta name="theme-color" content="#FBFAF8">
 <meta name="robots" content="noindex, nofollow">
 <title>Eigenstretch Tensor — Causal-Topological Manifold Analysis | AMNI-SCIENT Research</title>
-<meta name="description" content="The Eigenstretch Tensor: a causal-topological fingerprint that detects overfitting, regime collapse, and dimensional saturation in high-dimensional parameter manifolds via k-NN graph Laplacian SVD.">
+<meta name="description" content="The Eigenstretch Tensor: per-dimension stretch weights and a digit string from a trajectory-similarity graph Laplacian, recomputed at each checkpoint of a parameter search to watch for drift in the sensitivity pattern.">
 <meta name="keywords" content="eigenstretch tensor,manifold analysis,graph laplacian,overfitting detection,regime change,spectral topology">
 <meta property="og:title" content="Eigenstretch Tensor — AMNI-SCIENT Research">
-<meta property="og:description" content="Causal-topological fingerprint for real-time detection of overfitting and regime collapse in parameter manifolds.">
+<meta property="og:description" content="A monitor for drift in the sensitivity pattern of a parameter search, recomputed at each checkpoint. Working notes by Anthony Reffelt.">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://amni-scient.com/research/eigenstretch-tensor">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="https://amni-scient.com/research/eigenstretch-tensor">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"ScholarlyArticle","name":"Eigenstretch Tensor","author":{"@type":"Person","name":"Amnibro"},"description":"Causal-topological fingerprint for detecting overfitting and regime collapse in high-dimensional parameter manifolds.","url":"https://amni-scient.com/research/eigenstretch-tensor","publisher":{"@type":"Organization","name":"AMNI-SCIENT"},"datePublished":"2025","dateModified":"2026"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"ScholarlyArticle","name":"Eigenstretch Tensor","author":{"@type":"Person","name":"Anthony Reffelt"},"description":"Per-dimension stretch weights and a digit string from a trajectory-similarity graph Laplacian, recomputed at each checkpoint of a parameter search.","url":"https://amni-scient.com/research/eigenstretch-tensor","publisher":{"@type":"Organization","name":"AMNI-SCIENT"},"datePublished":"2025-01-01","dateModified":"2026-09-09"}</script>
 <link rel="stylesheet" href="../css/style.css?v=b260">
 <script>
 window.MathJax={tex:{inlineMath:[["$","$"],["\\(","\\)"]],displayMath:[["$$","$$"],["\\[","\\]"]],processEscapes:true},options:{skipHtmlTags:["script","noscript","style","textarea","pre","code"]}};
@@ -45,6 +45,12 @@ window.MathJax={tex:{inlineMath:[["$","$"],["\\(","\\)"]],displayMath:[["$$","$$
 .viz-controls input,.viz-controls select{background:var(--bg);border:1px solid var(--border);color:var(--text);padding:.3rem .5rem;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.8rem}
 .viz-controls button{background:var(--accent);color:var(--bg);border:none;padding:.4rem 1rem;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.75rem;letter-spacing:1px;cursor:pointer}
 .viz-controls button:hover{opacity:.85}
+.callout{max-width:800px;margin:1.25rem auto;padding:1.25rem 1.5rem;border:1px solid var(--accent);border-radius:8px;background:var(--panel);color:var(--dim);font-size:.9rem;line-height:1.8}
+.callout strong{color:var(--text)}
+.prose{max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem}
+.validity-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.8rem}
+.validity-table th{text-align:left;color:var(--accent);font-size:.7rem;letter-spacing:1px;padding:.5rem;border-bottom:1px solid var(--border)}
+.validity-table td{color:var(--dim);padding:.5rem;border-bottom:1px solid rgba(255,255,255,.05)}
 </style>
 </head>
 <body class="pp">
@@ -83,13 +89,14 @@ window.MathJax={tex:{inlineMath:[["$","$"],["\\(","\\)"]],displayMath:[["$$","$$
 <div class="breadcrumb"><a href="../research.html">RESEARCH</a> &nbsp;/&nbsp; EIGENSTRETCH TENSOR</div>
 <h1>EIGENSTRETCH TENSOR</h1>
 <p class="subtitle">CAUSAL-TOPOLOGICAL FINGERPRINT OF PARAMETER MANIFOLDS</p>
-<p class="tagline">Real-time detection of overfitting, regime collapse, and dimensional saturation through spectral graph analysis.</p>
+<p class="tagline">A monitor for drift in the sensitivity pattern of a parameter search, recomputed at each checkpoint.</p>
 </section>
+<div class="prose"><div class="callout"><strong>Status, 2026-09-09.</strong> The Laplacian and its eigendecomposition are standard and cited below; the trajectory graph, the stretch weights, and the digit encoding are my construction, with the 800 scale, the mode-to-dimension pairing, and the 0.9 and 0.7 correlation thresholds all hand-picked. Both charts on this page draw hand-set numbers so you can see the shapes; neither one runs a decomposition. The lead time between a digit spike and a score drop is something I've seen in my own optimizer runs but haven't logged, so there's no measured number on this page.</div></div>
 <section>
 <h2>ABSTRACT</h2>
-<div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
-<p>The <strong style="color:var(--text)">Eigenstretch Tensor</strong> extends the Reffelt Constant into a dynamic monitoring tool. Where the constant captures a snapshot of parameter space structure, the tensor tracks how that structure <em>deforms</em> over time. By computing the eigenstretch at successive evaluation windows, shifts in the digit pattern signal overfitting onset, regime transitions, or dimensional collapse before they manifest as performance degradation.</p>
-<p style="margin-top:1.2rem">The tensor operates on a k-NN graph built from equity-curve similarity (Wasserstein-1 distance approximation) rather than simple Euclidean distance. This means two configurations are considered "close" if they produce similar output trajectories, regardless of how different their parameter values are. The result is a topological representation of <em>functional</em> similarity.</p>
+<div class="prose">
+<p>The <strong style="color:var(--text)">Eigenstretch Tensor</strong> is the Reffelt Constant recomputed at every checkpoint of a parameter search so I can watch the digits move. The name is older than the math; what I actually compute is a vector of per-dimension stretch weights and a digit string, not a tensor. When the digit pattern shifts between checkpoints I read that as the score surface changing shape, and I use it as a flag to look at the run.</p>
+<p style="margin-top:1.2rem">The graph is built from equity-curve similarity, where an equity curve is the running P&amp;L of a strategy. I compare the whole output curve of one configuration to the whole output curve of another with an approximate Wasserstein-1 distance, so two configurations with very different parameter values still sit next to each other if they behave the same. That's the point: I want the graph to follow what the configurations do, not where they are.</p>
 </div>
 </section>
 <section>
@@ -97,101 +104,103 @@ window.MathJax={tex:{inlineMath:[["$","$"],["\\(","\\)"]],displayMath:[["$$","$$
 <div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
 <div class="derivation-step">
 <h4>STEP 1 &mdash; ELITE ARCHIVE SELECTION</h4>
-<p>From a population of N evaluated configurations, select the top archive (typically N=4096) by fitness score. This focuses the spectral analysis on the region of parameter space that matters &mdash; the basin of attraction around optima.</p>
+<p>From the population of evaluated configurations I keep the top N by fitness score. N=4096 is the code constant I use. That keeps the spectral analysis on the region of parameter space I care about, which is the neighborhood of the best configurations.</p>
 </div>
 <div class="derivation-step">
 <h4>STEP 2 &mdash; WASSERSTEIN k-NN GRAPH</h4>
-<p>Build a sparse k-nearest-neighbor graph (k=64) using approximated Wasserstein-1 distance between output trajectories. Edge weights incorporate score similarity:</p>
+<p>I build a sparse k-nearest-neighbor graph over the archive with k=64, a code constant, using an approximate Wasserstein-1 distance between output curves. For W<sub>1</sub> I use the one-dimensional form: sort the values of each curve, and take the L1 distance between the two sorted cumulative curves. That's exact for 1-D distributions and it's the building block of sliced Wasserstein (Rabin, Peyr&eacute;, Delon &amp; Bernot, <em>SSVM</em> 2011). Edge weights also carry score similarity:</p>
 <div class="eq-block">
 <div class="eq-label">EQUATION E1 &mdash; TRAJECTORY SIMILARITY</div>
 $$w_{ij} = \frac{\exp\left(-\frac{|s_i - s_j|}{\sigma_s}\right)}{W_1(\text{traj}_i, \text{traj}_j) + \epsilon}$$
 </div>
-<p>The Wasserstein distance captures distributional differences &mdash; two trajectories that reach the same endpoint via different paths are correctly identified as distinct, unlike L2 distance which only sees the final values.</p>
+<p>&sigma;<sub>s</sub> is the standard deviation of the scores across the archive and &epsilon; is set in code to keep the denominator away from zero. W<sub>1</sub> compares the whole shape of two curves. Plain L2 on the samples also sees every point, but it punishes a time shift hard; W<sub>1</sub> doesn't.</p>
 </div>
 <div class="derivation-step">
 <h4>STEP 3 &mdash; LAPLACIAN EIGENDECOMPOSITION</h4>
-<p>Compute the symmetric normalized Laplacian and extract its spectral basis via randomized SVD (rank=16):</p>
+<p>I form the symmetric normalized Laplacian and take a rank-16 basis, where 16 is a code constant. The modes I want are the ones with the smallest nonzero eigenvalues, since those vary slowly across the graph. The current implementation gets its basis from a randomized SVD (Halko, Martinsson &amp; Tropp, <em>SIAM Review</em> 53, 2011), which returns the top of the spectrum, and that's a known inconsistency I still have to fix; the right call is a shift-invert or a partial eigensolver on the small end.</p>
 <div class="eq-block">
 <div class="eq-label">EQUATION E2 &mdash; SPECTRAL BASIS EXTRACTION</div>
-$$L_{\text{norm}} = I - D^{-1/2}AD^{-1/2} \quad \xrightarrow{\text{rSVD}} \quad U, \Sigma, V^T \quad \Rightarrow \quad \lambda_j = \Sigma_{jj}$$
+$$L_{\text{norm}} = I - D^{-1/2}AD^{-1/2}, \qquad L_{\text{norm}}\psi_j = \lambda_j \psi_j, \qquad j = 1 \ldots 16$$
 </div>
 </div>
 <div class="derivation-step">
 <h4>STEP 4 &mdash; PER-DIMENSION GRADIENT SENSITIVITY</h4>
-<p>For each parameter dimension d, sort the archive by that dimension&rsquo;s values and compute the mean absolute gradient of each eigenfunction along that axis:</p>
+<p>For each parameter dimension d I sort the archive by that coordinate, take the finite difference of each eigenvector's entries between consecutive configurations in that order, and average the absolute value over the archive. &pi;<sub>d</sub> is the sorting permutation:</p>
 <div class="eq-block">
 <div class="eq-label">EQUATION E3 &mdash; CAUSAL CONTRIBUTION VECTOR</div>
-$$\text{causal}_d = \frac{\overline{\left|\frac{\partial \psi_j}{\partial x_d}\right|}}{\sum_{d'} \overline{\left|\frac{\partial \psi_j}{\partial x_{d'}}\right|}}$$
+$$g_{j,d} = \frac{1}{N-1}\sum_{i=1}^{N-1}\left|\psi_j(\pi_d(i+1)) - \psi_j(\pi_d(i))\right|, \qquad \text{causal}_d = \frac{\sum_j g_{j,d}}{\sum_{d'} \sum_j g_{j,d'}}$$
 </div>
-<p>This produces a normalized vector where each component measures how much the spectral eigenfunctions "stretch" along that parameter dimension. High stretch = causally important. Low stretch = safely frozen.</p>
+<p>The result is a vector with D entries that sum to one. Each entry says how much the smooth modes stretch along that parameter axis. That vector is the thing I keep and compare between checkpoints.</p>
 </div>
 <div class="derivation-step">
-<h4>STEP 5 &mdash; BASE-9 DIGIT ENCODING</h4>
-<p>Convert eigenvalue–causal products to base-9 digits:</p>
+<h4>STEP 5 &mdash; DIGIT ENCODING</h4>
+<p>Digit j is eigenvalue j times a causal weight, scaled by 800, plus one, clamped to 1 through 8. Right now I pair mode j with dimension j mod D, which is a placeholder; the pairing isn't justified yet. A product over 1.0 prints as 9 so I can spot saturation, and a product under 0.01 prints as 0. The 800 is a hand-picked scale, same as on the Reffelt page.</p>
 <div class="eq-block">
 <div class="eq-label">EQUATION E4 &mdash; EIGENSTRETCH DIGITS</div>
-$$d_j = \min\left(8, \max\left(1, \left\lfloor |\lambda_j \times \text{causal}_{j \bmod D}| \times 800 \right\rfloor + 1\right)\right)$$
+$$d_j = \operatorname{clamp}\left(\left\lfloor 800 \cdot \lambda_j \cdot \text{causal}_{j \bmod D} \right\rfloor + 1,\; 1,\; 8\right), \qquad d_j = 9 \text{ if } \lambda_j \text{causal}_{j \bmod D} > 1.0, \qquad d_j = 0 \text{ if } \lambda_j \text{causal}_{j \bmod D} < 0.01$$
 </div>
-<p>If the raw product exceeds 1.0, the digit is set to 9 (saturation flag). The result is a 16-digit base-9 string.</p>
+<p>The output is a 16-digit string using digits 0 to 9, with 0 and 9 reserved as flags.</p>
 </div>
 </div>
 </section>
 <section>
 <h2>DIAGNOSTIC SIGNALS</h2>
 <div style="max-width:800px;margin:0 auto">
+<p class="prose" style="margin-bottom:1.5rem">These are the four conditions I check at each checkpoint. Treat them as a checklist I wrote for myself, not as validated detectors.</p>
 <div class="card-grid">
 <div class="card">
-<h3>OVERFITTING DETECTION</h3>
-<p>When eigenstretch digits spike from stable values (3&ndash;5) to 8&ndash;9, the model has entered a region where it is fitting to noise rather than signal. The spectral structure is "stretching" beyond the bounds of generalizable information. This precedes validation loss divergence by 2&ndash;5 epochs, providing an early warning.</p>
+<h3>OVERFITTING</h3>
+<p>In my optimizer runs the digits climb toward 8 and 9 shortly before the out-of-sample score drops. I haven't logged the lead time yet, so I'm not quoting one. When I see the climb I stop and look at the run.</p>
 </div>
 <div class="card">
 <h3>REGIME CHANGE</h3>
-<p>A sudden shift in the digit pattern (e.g., from "84407588" to "35621844") indicates the underlying system has changed its structure. The fitness landscape has reconfigured, and configurations that were optimal are no longer in the basin of attraction. Useful for detecting concept drift in production ML systems.</p>
+<p>If the digit pattern changes a lot between checkpoints, say from "84417588" to "35621844", I read that as the score surface having changed shape and the old best configurations no longer sitting in the same basin. I don't yet have a threshold for how much change counts, because I haven't measured how much the digits wander on their own.</p>
 </div>
 <div class="card">
 <h3>DIMENSIONAL COLLAPSE</h3>
-<p>If multiple digits drop to 1, the effective dimensionality is collapsing &mdash; the system is converging to a lower-dimensional manifold. This is healthy during optimization (finding the ground state) but pathological during deployment (model is losing expressiveness).</p>
+<p>If several digits drop to 1 at once, the smooth modes have stopped moving along those dimensions. During a search that's what convergence looks like. After a search, on a deployed model, it would mean the model is losing sensitivity, and I haven't tested that case.</p>
 </div>
 <div class="card">
 <h3>REFERENCE CORRELATION</h3>
-<p>A frozen reference snapshot is compared with current eigenstretch via correlation. Healthy systems maintain &gt;0.9 reference correlation. A drop below 0.7 triggers a full recomputation and potential model refresh.</p>
+<p>I freeze a reference stretch vector at the start and take the correlation between it and the current one at each checkpoint. Above 0.9 I do nothing, below 0.7 I recompute the reference and look at the run. Both numbers are starting values I picked, not tuned.</p>
 </div>
 </div>
 </div>
 </section>
 <section>
-<h2>STATE-OF-THE-ART APPLICATIONS</h2>
+<h2>THINGS I'D LIKE TO TRY</h2>
 <div style="max-width:800px;margin:0 auto">
+<p class="prose" style="margin-bottom:1.5rem">None of these have been run. I've used the digits on my own optimizer runs and nowhere else.</p>
 <div class="app-card">
-<h4>&#128202; AI MODEL TRAINING STABILITY</h4>
-<p>Modern deep learning pipelines train for days on expensive GPU clusters. The eigenstretch tensor, computed at checkpoint intervals, provides a spectral "heartbeat" of training health. Stable digits = healthy convergence. Digit spikes = overfitting onset or learning rate schedule problems. Digit collapse = mode collapse in generative models. This enables automated early stopping that is more principled than simple patience-based validation loss monitoring.</p>
+<h4>TRAINING STABILITY</h4>
+<p>I'd like to compute the stretch vector at checkpoint intervals during a training run and see whether a digit spike lines up with a learning-rate problem or with the start of overfitting, and whether a digit collapse lines up with mode collapse in a generative model. If it does, it could feed an early-stopping rule. Untested.</p>
 </div>
 <div class="app-card">
-<h4>&#128187; LLM CONVERGENCE DETECTION</h4>
-<p>Large language models have hundreds of hyperparameters and training can cost millions of dollars. Computing the eigenstretch across training runs with varied hyperparameters identifies which settings are actually driving quality (high causal weight) vs which are noise. A 4-digit constant tells an LLM team: "only learning rate, batch size, and warmup matter &mdash; everything else can be frozen." This directly reduces the search space for trillion-parameter model training.</p>
+<h4>HYPERPARAMETER SWEEPS</h4>
+<p>Across a set of training runs with varied hyperparameters, the stretch vector should say which settings the quality depends on. The digit string has 16 digits, one per mode, and the stretch vector has one entry per hyperparameter; it's the vector, not the string, that would tell a team what to freeze. I haven't run this on anyone's sweep.</p>
 </div>
 <div class="app-card">
-<h4>&#9888;&#65039; PRODUCTION ML DRIFT DETECTION</h4>
-<p>Deployed ML models degrade as data distributions shift. The eigenstretch tensor monitors the parameter sensitivity surface in real time. When deployed model predictions start showing digit-pattern divergence from the training-time fingerprint, the system has drifted. This is superior to simple prediction-confidence monitoring because it detects structural drift even when confidence scores remain artificially high.</p>
+<h4>DRIFT ON A DEPLOYED MODEL</h4>
+<p>A monitor for drift in the sensitivity pattern of a parameter search, recomputed at each checkpoint. On a deployed model the idea would be to compare the current stretch vector against the one from training time and flag divergence. I haven't tried it on a deployed model, and I don't know how it compares with watching prediction confidence.</p>
 </div>
 <div class="app-card">
-<h4>&#128300; HARDWARE STRESS TESTING</h4>
-<p>GPU and CPU architectures have multi-dimensional performance envelopes (clock speed, thermal throttling, memory bandwidth, cache utilization). Running parameterized stress tests and computing eigenstretch across the performance space identifies which hardware axes are bottlenecked (high digits), which have headroom (low digits), and which interactions create non-obvious failure modes (digit pattern changes under combined load). This generalizes to FPGA placement optimization and chip yield analysis.</p>
+<h4>HARDWARE STRESS ENVELOPES</h4>
+<p>Untested idea. Run parameterized stress tests over clock, thermal, memory bandwidth and cache settings, compute the stretch vector over the results, and see whether the high-weight axes match the axes the hardware is actually bottlenecked on.</p>
 </div>
 </div>
 </section>
 <section>
 <h2>RELATIONSHIP TO REFFELT CONSTANT</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
-<p>The Reffelt Constant and the Eigenstretch Tensor share the same mathematical substrate (graph Laplacian SVD + causal weights) but differ in purpose:</p>
+<p>Both pages use the same graph Laplacian and the same stretch weights. The difference is what goes into the graph and how often I compute it:</p>
 <table class="validity-table" style="margin-top:1rem">
 <thead><tr><th>ASPECT</th><th>REFFELT CONSTANT</th><th>EIGENSTRETCH TENSOR</th></tr></thead>
 <tbody>
 <tr><td style="color:var(--text)">Purpose</td><td>Ground state identification</td><td>Dynamic monitoring</td></tr>
 <tr><td style="color:var(--text)">Input</td><td>Score-weighted parameter vectors</td><td>Trajectory-similar elite archive</td></tr>
 <tr><td style="color:var(--text)">Distance metric</td><td>Euclidean + score similarity</td><td>Wasserstein-1 + score similarity</td></tr>
-<tr><td style="color:var(--text)">Usage</td><td>One-time optimization</td><td>Continuous real-time monitoring</td></tr>
-<tr><td style="color:var(--text)">Diagnostic</td><td>Compression ratio + ground state</td><td>Overfitting, drift, regime change</td></tr>
+<tr><td style="color:var(--text)">Usage</td><td>Once, after a search</td><td>Recomputed at each checkpoint</td></tr>
+<tr><td style="color:var(--text)">Diagnostic</td><td>Which dimensions to freeze</td><td>Drift in the sensitivity pattern</td></tr>
 </tbody>
 </table>
 </div>
@@ -201,11 +210,9 @@ $$d_j = \min\left(8, \max\left(1, \left\lfloor |\lambda_j \times \text{causal}_{
 <div style="max-width:800px;margin:0 auto">
 <div class="viz-section">
 <h4>EIGENVALUE SCREE PLOT</h4>
-<p style="color:var(--dim);font-size:.8rem;line-height:1.7;margin-bottom:1rem">Simulated eigenvalue decomposition from a 16-rank rSVD. The scree plot shows individual eigenvalue magnitudes (bars) and cumulative variance explained (line). The "elbow" where cumulative variance plateaus reveals effective dimensionality.</p>
+<p style="color:var(--dim);font-size:.8rem;line-height:1.7;margin-bottom:1rem">This chart is a hand-drawn scree curve with noise added so you can see what an elbow looks like. It's not from a real decomposition. Bars are the 16 hand-set values, the line is their running share of the total, and NOISE jitters the values.</p>
 <div class="viz-controls">
-<label>ARCHIVE SIZE:</label>
-<select id="es-archive" onchange="esGenerate()"><option value="1024">1024</option><option value="4096" selected>4096</option><option value="16384">16384</option></select>
-<label style="margin-left:.5rem">NOISE:</label>
+<label>NOISE:</label>
 <input type="range" id="es-noise" min="0" max="100" value="20" style="width:80px" oninput="esGenerate()">
 <button onclick="esGenerate()">REGENERATE</button>
 </div>
@@ -213,7 +220,7 @@ $$d_j = \min\left(8, \max\left(1, \left\lfloor |\lambda_j \times \text{causal}_{
 </div>
 <div class="viz-section" style="margin-top:1.5rem">
 <h4>DIAGNOSTIC SIGNAL MONITOR</h4>
-<p style="color:var(--dim);font-size:.8rem;line-height:1.7;margin-bottom:1rem">Radar chart of the four diagnostic signals (overfitting risk, regime stability, dimensional collapse, reference correlation). Healthy systems fill the "stable" zone (green). Anomalies push axes toward the outer boundary.</p>
+<p style="color:var(--dim);font-size:.8rem;line-height:1.7;margin-bottom:1rem">Hand-set example values. The four axes are the checklist above, and each button loads a set of numbers I typed in to show what each condition might look like against the dashed baseline. Nothing here is computed from data.</p>
 <div class="viz-controls">
 <button onclick="esDiagHealthy()">HEALTHY STATE</button>
 <button onclick="esDiagOverfit()">OVERFITTING</button>
@@ -225,16 +232,28 @@ $$d_j = \min\left(8, \max\left(1, \left\lfloor |\lambda_j \times \text{causal}_{
 </div>
 </section>
 <section>
+<h2>HOW TO REPRODUCE</h2>
+<div class="prose">
+<p>I haven't published the implementation. The two charts above are the only runnable pieces on this page and both draw hand-set values. To rebuild the pipeline from the text: keep the top N configurations by score, compute the 1-D W<sub>1</sub> distance between every pair of output curves, build the k-NN graph with the E1 weights, form the symmetric normalized Laplacian, take the 16 smallest nonzero eigenpairs, compute the sorted finite-difference weights from E3, and encode with E4. Then repeat at each checkpoint and compare the stretch vectors. The 800 scale, the j mod D pairing, and the 0.9 and 0.7 thresholds are the places where you'd be copying my guesses.</p>
+</div>
+</section>
+<section>
+<h2>RELATED WORK</h2>
+<div class="prose">
+<p>The job this page is trying to do, which is flagging a change in a stream of checkpoints, already has established tools. ADWIN (Bifet &amp; Gavald&agrave;, <em>SDM</em> 2007) keeps an adaptive window and flags when the two halves disagree. The Page-Hinkley test is a cumulative-sum test for a shift in the mean. For the overfitting case specifically, Prechelt's early-stopping criteria (&ldquo;Early Stopping, But When?&rdquo;, 1998) are the standard baseline. I haven't run any of them against the digits yet, and until I do I can't say the digits add anything.</p>
+</div>
+</section>
+<section>
 <h2>RELATED FRAMEWORKS</h2>
 <div style="max-width:800px;margin:0 auto">
 <div class="card-grid">
 <div class="card">
 <h3><a href="reffelt-constant.html" style="color:var(--accent);text-decoration:none">&larr; REFFELT CONSTANT</a></h3>
-<p>The foundational spectral fingerprint that Eigenstretch extends with trajectory-based topology and temporal monitoring.</p>
+<p>The single-snapshot version of the same digits, with a Euclidean graph over normalized parameters and the derivation of the stretch weights.</p>
 </div>
 <div class="card">
 <h3><a href="holographic-membrane.html" style="color:var(--accent);text-decoration:none">HOLOGRAPHIC MEMBRANE &rarr;</a></h3>
-<p>Uses eigenstretch deformation fields as the basis for GPU-accelerated particle dynamics on resistance landscapes.</p>
+<p>Where I'd like to use the stretch vector to shape a particle simulation over a score surface. That link is an idea, not a result.</p>
 </div>
 </div>
 </div>
