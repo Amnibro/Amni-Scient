@@ -993,7 +993,7 @@ amni-scient-site/
 ├── calc/<module>.html × 31       # SEO landing pages (v4.4.0): theory + equations + when-to-use + standards
 ├── learn/index.html              # Deployed Amni-Learn app (hand-maintained source-of-truth)
 ├── learn/<category>.html × 11    # SEO landing pages (v4.4.0): category overview + pedagogy + game roster
-├── research/*.html × 8           # Research deep-dives (NOTE: currently noindex — see v4.4.0 changelog)
+├── research/*.html × 8           # Research deep-dives (NOTE: currently noindex — see v4.4.0 changelog; holographic-membrane + toroidal-manifold + gf17-quantization + amnitex-railgun got a claims-labelling pass 2026-09-09, see changelog)
 └── img/                          # Product screenshots
 ```
 
