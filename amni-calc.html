@@ -89,7 +89,7 @@
 </div>
 </div>
 <section class="wide">
-<div class="sec-head"><h2>All 37 calculators</h2><p>Free, in-browser, no sign-up. Theory and a worked example on every module.</p></div>
+<div class="sec-head"><h2>All 37 calculators</h2><p>In-browser. No sign-up. Equations and a worked example on every module page.</p></div>
 <div class="mod-index">
 <h3 class="mod-group">Mechanical</h3>
 <a href="calc/stress.html">Stress Analysis & Mohr's Circle</a>
@@ -139,131 +139,15 @@
 
 <div class="ptile">
 <div class="ptile-copy">
-<p class="ptile-line">Engineering calculator suite — 37 in-browser WASM modules with theory and worked examples.</p>
-<ul class="ptile-feats"><li>Beam FEA, stress &amp; Mohr&rsquo;s circle, bolts, Belleville catalog</li><li>Fatigue, PV, machining, hydraulics, rigging, CAD Studio</li><li>Fluids (Moody), heat exchangers (LMTD/NTU), pumps (NPSH)</li><li>Every module ships theory, a worked example &amp; cited standards</li></ul>
+<p class="ptile-line">37 WASM modules. Numbers stay on the device.</p>
+<ul class="ptile-feats"><li>Beams, stress, bolts, springs, fatigue, shafts</li><li>Fluids, HX, pumps, PV, machining, CAD Studio</li></ul>
 </div>
 <div class="ptile-media"><img src="assets/calc/ss_seal_analysis.png" alt="Amni-Calc seal analysis module" loading="lazy"></div>
 </div>
 <section>
-<h2>ENGINEERING MATH, WITHOUT THE INSTALL</h2>
-<p style="color:var(--dim);max-width:640px;margin:0 0 1rem;font-size:.9rem">Amni-Calc is a suite of 37 mechanical, electrical, fluid, thermal, manufacturing, and electrochemical engineering calculators that run entirely in your browser.</p>
-<div class="features">
-<div class="feature">
-<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18M6 21h12M5 8h14M5 8l-3 6h6zM19 8l3 6h-6z"/></svg></div>
-<h4>STRESS &amp; STRUCTURAL</h4>
-<p>Mohr's circle, beam shear/moment/deflection, cross-section properties, columns (Euler/Johnson), shafts (torsion/critical speed), welds (AWS fillet/group polar), bearings (ISO 281 L10), and fatigue (Goodman/Soderberg/Gerber/ASME-Elliptic).</p>
-</div>
-<div class="feature">
-<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.6 8.2-8 9-4.4-.8-8-4-8-9V6z"/></svg></div>
-<h4>FASTENERS &amp; SEALS</h4>
-<p>Bolt torque (nut-factor and detailed thread/face friction), preload scatter, PCC-1 sequences, Belleville catalog autoselect + coil/conical/wave springs with Wahl correction, O-ring seal design with industry-standard groove geometry, gland selection.</p>
-</div>
-<div class="feature">
-<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 14V4a2 2 0 0 0-4 0v10a4 4 0 1 0 4 0z"/><path d="M12 8v6"/></svg></div>
-<h4>FLUIDS &amp; THERMAL</h4>
-<p>Moody diagram with explicit Colebrook solution, Bernoulli with minor losses, pump NPSH/affinity laws, heat conduction/convection/radiation, fin efficiency, LMTD/NTU heat exchangers, ASME pressure vessels, thermodynamic cycles (Carnot/Otto/Diesel/Brayton/refrigeration).</p>
-</div>
-<div class="feature">
-<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 2L5 13.5h6L10.5 22 19 10.5h-6z"/></svg></div>
-<h4>ELECTRICAL &amp; MOTORS</h4>
-<p>Ohm's law, AC power triangle, three-phase calculations, RC/RL transients, induction-motor synchronous speed and full-load amps, NEC 310.16 wire ampacity with voltage-drop checks, vibration isolator transmissibility, gear-tooth Lewis bending.</p>
-</div>
-<div class="feature">
-<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6v6l3 9H6l3-9z"/><path d="M8 14h8"/></svg></div>
-<h4>ELECTROCHEMISTRY &amp; BATTERIES</h4>
-<p>Nernst potential, Tafel and Butler-Volmer kinetics, Faraday-law mass deposition, corrosion-rate from current density, battery pack sizing with Peukert exponent, runtime/SOC, and series-parallel cell configurations.</p>
-</div>
-<div class="feature">
-<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="7" height="16"/><rect x="12" y="4" width="7" height="16"/><path d="M3 9h7M12 9h7"/></svg></div>
-<h4>REFERENCE LIBRARY</h4>
-<p>Material database (yield, ultimate, modulus, density, thermal conductivity, specific heat) for structural alloys, stainless, polymers. Surface finish recommender, math handbook, equation reference, unit converter, and an indexed catalog of standards (ASME, ASTM, NEC, AWS, ISO).</p>
-</div>
-</div>
-</section>
-<section>
-<h2>WHY IN-BROWSER ENGINEERING TOOLS</h2>
-<div style="max-width:800px;margin:0 0;line-height:1.9;color:var(--dim);font-size:.9rem">
-<p>Traditional engineering software falls into two camps.</p>
-<p style="margin-top:1.2rem"><strong style="color:var(--text)">In-browser calculators split the difference.</strong> They run anywhere a modern browser does &mdash; desktops, laptops, Chromebooks, tablets. They deploy instantly to a team without IT approval. And because computation is local, proprietary design inputs never leave the device. The page loads, executes the kernel against your inputs, and renders results &mdash; no server round trip.</p>
-<p style="margin-top:1.2rem"><strong style="color:var(--text)">WebAssembly matters here.</strong> JavaScript is great for UI but slow for dense numerical work like solving stiffness matrices, integrating beam deflection curves, or iterating Colebrook for friction factor.</p>
-<p style="margin-top:1.2rem"><strong style="color:var(--text)">Interactive charts are the other half.</strong> Comparing two gasket materials or three spring stacks benefits from seeing both curves on one plot with hover-readout. Plotly handles this well in the browser, and because everything is client-side, zooming and panning feel instantaneous &mdash; no server re-render, no spinner between clicks.</p>
-</div>
-</section>
-<section>
-<h2>BROWSE BY CATEGORY</h2>
-<p style="color:var(--dim);max-width:640px;margin:0 0 1rem;font-size:.9rem">Each calculator has its own deep-dive page covering theory, equations, when to use it, and which standards it follows.</p>
-<h3 style="color:var(--text);margin:1.5rem 0 .8rem;font-size:.95rem;letter-spacing:1px">MECHANICAL &amp; STRUCTURAL</h3>
-<div class="card-grid">
-<a href="calc/beam.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">BEAM FEA</h3><p>Shear, moment, and deflection for multi-support beams with interactive load placement.</p></a>
-<a href="calc/stress.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">STRESS</h3><p>Mohr's circle, principal stresses, max shear, von Mises, Tresca yield criterion, K<sub>t</sub>.</p></a>
-<a href="calc/sections.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">SECTIONS</h3><p>Cross-section properties: area, centroid, moment of inertia, section modulus, radius of gyration.</p></a>
-<a href="calc/bolts.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">BOLTS</h3><p>Torque-preload (nut-factor), detailed thread/face friction, yield checks, preload scatter, stretch.</p></a>
-<a href="calc/springs.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">SPRINGS</h3><p>Helical, Belleville catalog + autoselect, conical, wave; stacks; F&ndash;&delta; curves that keep the op on-axis.</p></a>
-<a href="calc/seals.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">SEALS</h3><p>O-ring squeeze, gland design, friction estimate, extrusion-gap check, material selection.</p></a>
-<a href="calc/columns.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">COLUMNS</h3><p>Euler buckling, Johnson short-column transition, end-condition K factors, slenderness ratio.</p></a>
-<a href="calc/shafts.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">SHAFTS</h3><p>Torsional stress, critical speed, key/keyway (DIN 6885), DIN 471 retaining rings, fatigue.</p></a>
-<a href="calc/welds.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">WELDS</h3><p>Fillet throat sizing per AWS, weld-group polar moment for eccentric loads, allowable strength.</p></a>
-<a href="calc/bearings.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">BEARINGS</h3><p>ISO 281 L10 life, dynamic and static load, equivalent load under combined radial/axial.</p></a>
-<a href="calc/gears.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">GEARS</h3><p>Geometry (module, pitch, addendum), ratios, Lewis bending stress, contact ratio, mesh viz.</p></a>
-<a href="calc/fatigue.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">FATIGUE</h3><p>Goodman, Soderberg, Gerber, ASME-Elliptic mean-stress lines; endurance limit modifiers.</p></a>
-<a href="calc/vibration.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">VIBRATION</h3><p>Natural frequency, isolator transmissibility, resonance check, damping ratio.</p></a>
-<a href="calc/fits.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">FITS</h3><p>ISO limit fits, press-fit Lame pressure, torque capacity, assembly temperature, key length.</p></a>
-<a href="calc/machining.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">MACHINING</h3><p>Speeds &amp; feeds, tap drill, sheet-metal bend, hardness conversion, bolt-circle layout.</p></a>
-<a href="calc/rigging.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">RIGGING</h3><p>Sling tension, hitch factors, unequal-leg CoG, pad-eye/lug screening.</p></a>
-<a href="calc/cad.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">CAD STUDIO</h3><p>Parametric CSG modeler in the browser: primitives, booleans, mass properties, STL export.</p></a>
-</div>
-<h3 style="color:var(--text);margin:1.8rem 0 .8rem;font-size:.95rem;letter-spacing:1px">FLUIDS &amp; THERMAL</h3>
-<div class="card-grid">
-<a href="calc/fluids.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">FLUIDS</h3><p>Moody/Colebrook, Bernoulli, pipe designer (Sch 40), dP flow metering, minor losses.</p></a>
-<a href="calc/hydraulics.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">HYDRAULICS</h3><p>Cylinder designer, extend/retract force &amp; speed, intensification, gas accumulators.</p></a>
-<a href="calc/pumps.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">PUMPS</h3><p>NPSH available vs required, affinity laws, specific speed, system curve intersection.</p></a>
-<a href="calc/thermal.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">THERMAL</h3><p>Conduction (1D/multilayer), convection (Nu correlations), radiation, fin efficiency.</p></a>
-<a href="calc/hx.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">HEAT EXCHANGERS</h3><p>LMTD method, NTU-effectiveness, fouling resistance, parallel/counter/cross flow.</p></a>
-<a href="calc/pv.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">PRESSURE VESSELS</h3><p>Thin-wall hoop/longitudinal, Lam&eacute; thick-wall, ASME VIII-1 minimum thickness.</p></a>
-<a href="calc/cycles.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">CYCLES</h3><p>Carnot, Otto, Diesel, Brayton, vapor compression refrigeration, COP and thermal efficiency.</p></a>
-<a href="calc/hvac.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">HVAC</h3><p>Psychrometric properties, sensible/latent heat, mixing, cooling coil, evaporative cooling.</p></a>
-<a href="calc/combustion.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">COMBUSTION</h3><p>Stoichiometric AFR, adiabatic flame temperature, LHV/HHV, excess-air analysis.</p></a>
-</div>
-<h3 style="color:var(--text);margin:1.8rem 0 .8rem;font-size:.95rem;letter-spacing:1px">ELECTRICAL</h3>
-<div class="card-grid">
-<a href="calc/electrical.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">ELECTRICAL</h3><p>Ohm's law, AC power triangle (P/Q/S), three-phase calcs, RC/RL transients, voltage drop.</p></a>
-<a href="calc/motors.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">MOTORS</h3><p>Synchronous speed, slip, full-load amps, torque, starting current, motor service factor.</p></a>
-<a href="calc/nec.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">NEC WIRE</h3><p>NEC 310.16 ampacity tables, voltage-drop check, conduit fill, breaker selection.</p></a>
-</div>
-<h3 style="color:var(--text);margin:1.8rem 0 .8rem;font-size:.95rem;letter-spacing:1px">CHEMISTRY</h3>
-<div class="card-grid">
-<a href="calc/echem.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">ELECTROCHEM</h3><p>Nernst potential, Tafel/Butler-Volmer kinetics, corrosion rate, Faraday deposition.</p></a>
-<a href="calc/battery.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">BATTERY</h3><p>Pack sizing (Wh, kWh), runtime, Peukert capacity, SOC estimation, series/parallel cells.</p></a>
-</div>
-<h3 style="color:var(--text);margin:1.8rem 0 .8rem;font-size:.95rem;letter-spacing:1px">REFERENCE</h3>
-<div class="card-grid">
-<a href="calc/materials.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">MATERIALS</h3><p>Yield, ultimate, modulus, density, k, cp for steels, aluminums, stainless, polymers.</p></a>
-<a href="calc/finishes.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">FINISHES</h3><p>Surface roughness Ra/Rz, achievable finishes by process (turning, grinding, lapping).</p></a>
-<a href="calc/math.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">MATH</h3><p>Calculus identities, Taylor series, common integrals, vector ops, complex numbers.</p></a>
-<a href="calc/equations.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">EQUATIONS</h3><p>Searchable index of every formula in the suite, grouped by discipline and module.</p></a>
-<a href="calc/units.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">UNITS</h3><p>Bidirectional SI &harr; US customary converter for force, pressure, energy, viscosity, more.</p></a>
-<a href="calc/refs.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">REFS &amp; STANDARDS</h3><p>Cross-referenced index of ASME, ASTM, NEC, AWS, ISO standards used by each module.</p></a>
-</div>
-</section>
-<section>
-<h2>TYPICAL WORKFLOW</h2>
-<div class="card-grid">
-<div class="card">
-<h3>1. PICK A MODULE</h3>
-<p>Sidebar lists every calculator. Each opens with inputs on the left, charts and tables on the right. No project files, no save dialogs &mdash; state lives in the URL hash and in browser storage.</p>
-</div>
-<div class="card">
-<h3>2. ENTER GEOMETRY &amp; LOADS</h3>
-<p>Numeric inputs use sensible engineering defaults. Unit toggles for SI and US customary. Material pickers pull from the shared database. Invalid combinations flag inline rather than silently producing garbage.</p>
-</div>
-<div class="card">
-<h3>3. READ THE CHARTS</h3>
-<p>Interactive Plotly plots show the answer: shear/moment diagrams, load-deflection curves, temperature profiles, stress circles. Hover for exact values. Compare configurations by stacking them on one plot.</p>
-</div>
-<div class="card">
-<h3>4. EXPORT OR ITERATE</h3>
-<p>Right-click any chart to save as PNG for a report. Change inputs and the plot updates live. All computation is local, so large parameter sweeps run without network latency.</p>
-</div>
+<div class="soft-strip" style="max-width:800px;margin:0 0 1.5rem;font-size:.8rem;line-height:1.65;color:var(--dim)">
+<p style="margin:0 0 .4rem"><a href="https://amni-scient.com/braid" style="color:#ff6b35">Braid</a> is multi-AI design review on seats you already pay for ($10/mo beta).</p>
+<p style="margin:0"><a href="https://amni-scient.com/amni-ai.html" style="color:#ff6b35">Adam</a> is a local assistant that runs in about 4 GB VRAM.</p>
 </div>
 </section>
 <section>
