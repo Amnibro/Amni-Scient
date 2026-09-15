@@ -5,16 +5,16 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="theme-color" content="#FBFAF8">
 <meta name="robots" content="noindex, nofollow">
-<title>AmniTex Railgun — 16× Compression, Infinite Context, Zero Quality Loss | AMNI-SCIENT</title>
-<meta name="description" content="AmniTex Railgun: proprietary VRAM compression technology. 16× compression ratio — fp16 to 1-bit routing. Algebraically proven infinite context stability. $750M savings at hyperscale. Training-compatible.">
-<meta name="keywords" content="AmniTex,Railgun,VRAM,GPU,quantization,inference,datacenter,AI infrastructure,context window,multi-GPU,SSD streaming,H100,xAI,Grok">
-<meta property="og:title" content="AmniTex Railgun — 16× Compression, Zero Quality Loss">
-<meta property="og:description" content="16× VRAM compression — fp16 to 1-bit routing with lossless recovery. Infinite context stability (algebraically proven). Training-compatible evolutionary weight space.">
+<title>AmniTex Railgun — 16× Smaller VRAM Footprint with Bit-Exact Recovery | AMNI-SCIENT</title>
+<meta name="description" content="AmniTex Railgun: a 1-bit routing index in VRAM (1.21 GB for Qwen3.5-9B) with the exact fp16 residual on NVMe. 16× smaller resident footprint, bit-exact recovery path measured on a full 0.5B model roundtrip. Total store is larger than fp16; 1-bit-tier quality not yet measured.">
+<meta name="keywords" content="AmniTex,Railgun,VRAM,GPU,quantization,inference,datacenter,AI infrastructure,context window,multi-GPU,SSD streaming,H100">
+<meta property="og:title" content="AmniTex Railgun — 16× Smaller VRAM Footprint with Bit-Exact Recovery">
+<meta property="og:description" content="1-bit routing index in VRAM, exact fp16 residual on NVMe. 16× smaller resident footprint with a bit-exact recovery path, measured on real model weights on an RX 7800 XT.">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://amni-scient.com/research/amnitex-railgun">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="https://amni-scient.com/research/amnitex-railgun">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","name":"AmniTex Railgun: 16× Compression with Zero Quality Loss","author":{"@type":"Person","name":"Amnibro"},"description":"Proprietary VRAM compression achieving 16× compression ratio with mathematically lossless recovery. 10M+ token context stability. Datacenter-scale ROI analysis.","url":"https://amni-scient.com/research/amnitex-railgun","publisher":{"@type":"Organization","name":"AMNI-SCIENT"},"datePublished":"2026-04-02"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","name":"AmniTex Railgun: 16× Smaller VRAM Footprint with Bit-Exact Recovery","author":{"@type":"Person","name":"Anthony Reffelt"},"description":"1-bit routing index in VRAM with the exact fp16 residual on NVMe. 16× smaller resident footprint and a bit-exact recovery path, measured on real model weights on an AMD RX 7800 XT.","url":"https://amni-scient.com/research/amnitex-railgun","publisher":{"@type":"Organization","name":"AMNI-SCIENT"},"datePublished":"2026-04-02","dateModified":"2026-09-09"}</script>
 <link rel="stylesheet" href="../css/style.css?v=b260">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 <script>
@@ -161,6 +161,9 @@
 .training-box .tb-lbl{font-size:.65rem;letter-spacing:2px;color:var(--dim);text-transform:uppercase;margin-top:.25rem}
 .training-box .tb-detail{font-size:.8rem;color:var(--text);margin-top:.75rem;line-height:1.6}
 @media(max-width:768px){.training-comparison{grid-template-columns:1fr}}
+.callout{max-width:800px;margin:1.25rem auto;padding:1.25rem 1.5rem;border:1px solid var(--accent);border-radius:8px;background:var(--panel);color:var(--dim);font-size:.9rem;line-height:1.8}
+.callout strong{color:var(--text)}
+.prose{max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem}
 </style>
 </head>
 <body class="pp">
@@ -200,15 +203,14 @@
 <!-- ====== HERO ====== -->
 <section class="hero" style="min-height:auto;padding:8rem 2rem 3rem">
 <div class="breadcrumb"><a href="../research.html">RESEARCH</a> &nbsp;/&nbsp; AMNITEX RAILGUN</div>
-<h1 style="font-size:clamp(1.5rem,4vw,2.5rem);line-height:1.2">WHAT IF EVERY GPU IN YOUR<br>DATACENTER HAD <span style="color:var(--accent)">16&times;</span> MORE ROOM?</h1>
-<p class="subtitle" style="margin-top:1rem">AMNITEX RAILGUN &mdash; PROPRIETARY VRAM COMPRESSION</p>
-<p class="tagline" style="max-width:700px;margin:1rem auto 0">A fundamentally new approach to GPU memory management. Keep only a tiny routing index in VRAM. Stream full precision from NVMe on demand. <strong style="color:var(--text)">Mathematically lossless. Infinite context. Training-compatible.</strong></p>
+<h1 style="font-size:clamp(1.5rem,4vw,2.5rem);line-height:1.2">AMNITEX RAILGUN: A <span style="color:var(--accent)">16&times;</span> SMALLER<br>VRAM FOOTPRINT WITH BIT-EXACT RECOVERY</h1>
+<p class="subtitle" style="margin-top:1rem">PROPRIETARY WEIGHT SPLIT &mdash; 1-BIT INDEX IN VRAM, EXACT RESIDUAL ON NVMe</p>
+<p class="tagline" style="max-width:700px;margin:1rem auto 0">Railgun keeps a 1-bit routing index in VRAM (1.21 GB for Qwen3.5-9B) and stores the exact fp16 residual on NVMe. The residual as I store it today is bigger than the original (1.75&times; the fp16 bytes, with an entropy of about 12.5 bits per weight), so this isn&rsquo;t 16&times; compression; it&rsquo;s a 16&times; smaller resident footprint with a bit-exact recovery path. Inference on the 1-bit tier alone is lossy and I haven&rsquo;t measured its quality yet.</p>
 <div style="margin-top:2rem">
-<div class="hero-stat"><span class="val">16&times;</span><span class="lbl">Compression ratio</span></div>
-<div class="hero-stat glow-accent"><span class="val infinity-stat">&infin;</span><span class="lbl">Context stability &bull; proven</span></div>
-<div class="hero-stat"><span class="val">5&times;</span><span class="lbl">Throughput/watt &bull; <span class="redacted" title="Proprietary">[▓▓▓]</span></span></div>
-<div class="hero-stat"><span class="val">$750M</span><span class="lbl">Saved &bull; 100K GPU cluster</span></div>
-<div class="hero-stat"><span class="val">1.000000</span><span class="lbl">Cosine similarity &bull; lossless</span></div>
+<div class="hero-stat"><span class="val">16&times;</span><span class="lbl">Smaller resident footprint &bull; measured, 9B</span></div>
+<div class="hero-stat"><span class="val">1.21 GB</span><span class="lbl">VRAM for Qwen3.5-9B &bull; 1-bit tier</span></div>
+<div class="hero-stat"><span class="val">1.75&times;</span><span class="lbl">Total store vs fp16 &bull; VRAM + NVMe</span></div>
+<div class="hero-stat"><span class="val">290/290</span><span class="lbl">Layers bit-exact &bull; 0.5B roundtrip</span></div>
 </div>
 <div style="margin-top:2rem">
 <a href="#demo" class="hero-cta">DOWNLOAD DEMO</a>
@@ -216,38 +218,39 @@
 </div>
 <div style="margin-top:1.25rem;display:flex;justify-content:center;gap:1rem;flex-wrap:wrap">
 <a href="coherence_proof.json" class="hero-cta-ghost" style="font-size:.65rem;padding:.5rem 1.5rem;margin:0" download>COHERENCE PROOF JSON</a>
+<a href="AmniTex_Railgun_Whitepaper.pdf" class="hero-cta-ghost" style="font-size:.65rem;padding:.5rem 1.5rem;margin:0">WHITE PAPER PDF (v2.0)</a>
 </div>
 </section>
+<div class="prose"><div class="callout"><strong>Status, 2026-09-09.</strong> Measured on my AMD RX 7800 XT (16 GB, ROCm 7.2, PyTorch 2.12 nightly): the fp16 OOM on Qwen3.5-9B (Proof 1), the 1.21 GB 1-bit tier for that model with 20/20 sampled tensors bit-exact (Proof 2), a full-model roundtrip of Qwen2.5-0.5B-Instruct with 290/290 layers bit-exact and byte-identical greedy outputs on 3 prompts (Proof 3), GPU codec throughput (Proof 7), and 1-bit-tier token latency (Proof 8). Derived from those: the 7B/70B VRAM figures, the multiplexing counts, and the fleet economics. Not measured: quality of the 1-bit tier on any real model, perplexity at any tier, the hardware-unit acceleration, the training loop, and anything about long context; the context-tab curves are illustrative. The white paper is v2.0 (April 2026) and the evaluation package is v1.0.</div></div>
 
 <!-- ====== THE PROBLEM ====== -->
 <section>
-<h2>THE $100 BILLION PROBLEM</h2>
+<h2>THE PROBLEM</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
-<p>Every AI company on Earth is bottlenecked on the same thing: <strong style="color:var(--text)">GPU memory</strong>.</p>
-<p style="margin-top:1rem">A single 70-billion parameter model requires <strong style="color:#e74c3c">140 GB</strong> of VRAM just to load &mdash; almost double what an NVIDIA H100 provides. That means <strong style="color:var(--text)">two $30,000 GPUs</strong> consumed before a single token is generated. Scale that to a 100,000-GPU cluster serving millions of users, and you&rsquo;re looking at billions of dollars locked up in silicon that&rsquo;s mostly storing redundant precision.</p>
-<p style="margin-top:1rem">Current solutions &mdash; GPTQ, AWQ, GGML &mdash; try to fix this by permanently throwing away precision. Every weight gets crushed to 4 bits. Quality drops. It never comes back. And they <strong style="color:var(--text)">still keep everything in VRAM</strong>.</p>
-<p style="margin-top:1rem;color:var(--accent);font-weight:700">What if 93% of the data in your GPU memory didn&rsquo;t need to be there?</p>
+<p>The thing I keep running into is <strong style="color:var(--text)">GPU memory</strong>. A 70-billion parameter model needs <strong style="color:#e74c3c">140 GB</strong> of VRAM at fp16 just to load, which is almost double what one NVIDIA H100 has, so you&rsquo;re paying for two cards (around $30,000 each at list, my assumption throughout this page) before a single token comes out.</p>
+<p style="margin-top:1rem">The usual fix is GPTQ, AWQ, or GGML: round every weight to 4 bits and accept the quality loss for good. Bit-exact compressors like zstd, ZipNN, and DFloat11 keep the weights intact and shrink the file, but the resident footprint stays at or near the fp16 size (DFloat11 lands around 11 bits/weight with on-GPU decode).</p>
+<p style="margin-top:1rem">What I wanted was a format where the resident part is tiny and the rest can be pulled back exactly when it&rsquo;s needed. The cards below are the numbers behind that framing; the first two are assumptions, the last two are measured.</p>
 </div>
 <div class="problem-grid">
 <div class="problem-card">
 <span class="pc-num">$375</span>
 <span class="pc-label">PER GB &bull; HBM3 VRAM</span>
-<span class="pc-detail">H100&rsquo;s 80 GB of HBM3 costs ~$30K. That&rsquo;s $375 per gigabyte.</span>
+<span class="pc-detail">Assumption: an H100 at $30K list for 80 GB of HBM3 works out to $375 per gigabyte.</span>
 </div>
 <div class="problem-card">
 <span class="pc-num">3750&times;</span>
 <span class="pc-label">CHEAPER &bull; NVMe vs HBM3</span>
-<span class="pc-detail">Commodity storage costs orders of magnitude less than HBM3. Same data, different address.</span>
+<span class="pc-detail">Assumption: NVMe at about $0.10 per gigabyte against the $375 figure above.</span>
 </div>
 <div class="problem-card">
-<span class="pc-num">93%</span>
-<span class="pc-label">VRAM WASTED</span>
-<span class="pc-detail">At 1-bit routing, only 6.25% of the original VRAM footprint is actually needed in GPU memory.</span>
+<span class="pc-num">6.25%</span>
+<span class="pc-label">RESIDENT AT 1-BIT ROUTING</span>
+<span class="pc-detail">Measured on Qwen3.5-9B: 1.21 GB in VRAM against 19.31 GB fp16 (Proof 2). The residual on NVMe is 1.75&times; the fp16 bytes as stored today (Proof 7).</span>
 </div>
 <div class="problem-card">
 <span class="pc-num">0</span>
-<span class="pc-label">RECOVERY PATH</span>
-<span class="pc-detail">GPTQ/AWQ/GGML permanently destroy precision. There is no &ldquo;undo&rdquo; button.</span>
+<span class="pc-label">RECOVERY PATH IN 4-BIT FORMATS</span>
+<span class="pc-detail">GPTQ, AWQ, and GGML are one-way. Railgun&rsquo;s full tier recovers the fp16 bytes exactly; measured on a full 0.5B model (Proof 3).</span>
 </div>
 </div>
 </section>
@@ -256,7 +259,7 @@
 <section>
 <h2>THE RAILGUN SOLUTION</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
-<p>Railgun doesn&rsquo;t quantize your model. It <strong style="color:var(--text)">reorganizes where the data lives</strong>.</p>
+<p>Railgun splits each weight tensor into a 1-bit routing index that stays in VRAM and a residual that goes to NVMe. Decoding the index alone gives a lossy approximation; decoding index plus residual gives back the <strong style="color:var(--text)">exact fp16 bytes</strong>.</p>
 </div>
 <div class="solution-flow">
 <div class="solution-step">
@@ -268,60 +271,55 @@
 <div class="solution-step">
 <span class="ss-num">2</span>
 <span class="ss-title">SPLIT</span>
-<span class="ss-desc">Routing index stays in VRAM (0.88&nbsp;GB for 7B model). Full precision data moves to NVMe SSD.</span>
+<span class="ss-desc">Routing index stays in VRAM (1.21&nbsp;GB measured for 9B; 0.88&nbsp;GB derived for 7B). The residual moves to NVMe.</span>
 </div>
 <span class="solution-arrow">&rarr;</span>
 <div class="solution-step">
 <span class="ss-num">3</span>
 <span class="ss-title">STREAM</span>
-<span class="ss-desc">Refinement data streams from SSD on demand. Progressive tiers: <span class="redacted" title="Proprietary">[REDACTED]</span> &rarr; <span class="redacted" title="Proprietary">[REDACTED]</span> &rarr; lossless fp16.</span>
+<span class="ss-desc">Refinement data streams from SSD on demand. Progressive tiers: <span class="redacted" title="Proprietary">[REDACTED]</span> &rarr; <span class="redacted" title="Proprietary">[REDACTED]</span> &rarr; bit-exact fp16. Only the 1-bit and full tiers are measured on this page.</span>
 </div>
 </div>
 <div style="max-width:800px;margin:2rem auto 0">
 <div class="results-bar">
-<span class="rb-label">VRAM ROUTING (1-2 bit)</span>
+<span class="rb-label">VRAM ROUTING (1 bit)</span>
 <span class="rb-bar"><span class="rb-fill" style="width:6.25%;background:var(--accent)"></span></span>
-<span class="rb-val">0.88 GB</span>
+<span class="rb-val">1.21 GB</span>
 </div>
 <div class="results-bar">
-<span class="rb-label">+ SSD TIER 1</span>
-<span class="rb-bar"><span class="rb-fill" style="width:18.75%;background:#e67e22"></span></span>
-<span class="rb-val">CS 0.994</span>
+<span class="rb-label">+ NVMe RESIDUAL</span>
+<span class="rb-bar"><span class="rb-fill" style="width:100%;background:#e67e22"></span></span>
+<span class="rb-val">1.75&times; fp16</span>
 </div>
 <div class="results-bar">
-<span class="rb-label">+ SSD TIER 2</span>
-<span class="rb-bar"><span class="rb-fill" style="width:56.25%;background:#2ecc71"></span></span>
-<span class="rb-val">CS 1.000</span>
-</div>
-<div class="results-bar">
-<span class="rb-label">+ SSD FULL (LOSSLESS)</span>
+<span class="rb-label">FULL DECODE</span>
 <span class="rb-bar"><span class="rb-fill" style="width:100%;background:var(--accent)"></span></span>
-<span class="rb-val">CS 1.000000</span>
+<span class="rb-val">bit-exact</span>
 </div>
-<p style="font-size:.75rem;color:var(--dim);margin-top:1rem;letter-spacing:1px">CS = COSINE SIMILARITY TO ORIGINAL FP16 WEIGHTS &mdash; 1.000000 = MATHEMATICALLY IDENTICAL</p>
+<p style="font-size:.8rem;color:var(--dim);margin-top:1rem;line-height:1.7">Bars are Qwen3.5-9B: 1.21 GB VRAM against 19.31 GB fp16 (Proof 2), NVMe bytes 1.75&times; the fp16 bytes on the sampled tensors (Proof 7), full decode bit-exact on every tensor I&rsquo;ve tried and byte-identical outputs on a full 0.5B model (Proof 3). The intermediate G and B tiers described in the white paper aren&rsquo;t measured on this page.</p>
 </div>
 </section>
 
 <!-- ====== KEY DIFFERENTIATORS ====== -->
 <section>
-<h2>WHY THIS CHANGES EVERYTHING</h2>
+<h2>WHAT&rsquo;S DIFFERENT</h2>
 <div style="max-width:800px;margin:0 auto">
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-top:1.5rem">
 <div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem">
-<h4 style="color:var(--accent);font-size:.8rem;letter-spacing:2px;margin-bottom:.75rem">LOSSLESS RECOVERY</h4>
-<p style="color:var(--dim);font-size:.85rem;line-height:1.7">At full tier, the output is <strong style="color:var(--text)">bit-exact</strong> with the original fp16. This isn&rsquo;t &ldquo;nearly lossless&rdquo; &mdash; it&rsquo;s mathematically identical. No other quantization method can make this claim.</p>
+<h4 style="color:var(--accent);font-size:.8rem;letter-spacing:2px;margin-bottom:.75rem">BIT-EXACT RECOVERY (MEASURED)</h4>
+<p style="color:var(--dim);font-size:.85rem;line-height:1.7">At full tier the decoded weights are <strong style="color:var(--text)">bit-exact</strong> with the original fp16; measured on 290/290 layers of a 0.5B model with byte-identical greedy outputs (Proof 3). zstd, ZipNN, and DFloat11 are also bit-exact and produce a smaller total store than my current residual; what they don&rsquo;t do is drop the resident footprint to 1 bit per weight.</p>
 </div>
 <div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem">
-<h4 style="color:var(--accent);font-size:.8rem;letter-spacing:2px;margin-bottom:.75rem">DRIFT-FREE ARITHMETIC</h4>
-<p style="color:var(--dim);font-size:.85rem;line-height:1.7">The proprietary encoding uses <strong style="color:var(--text)"><span class="redacted" title="Proprietary">[PROPRIETARY ALGEBRAIC MECHANISM]</span></strong>. Error accumulation is not &ldquo;very low&rdquo; &mdash; it is <strong style="color:var(--accent)">algebraically impossible</strong>. Tested to 50 million operations with zero drift. fp16 degrades; this can&rsquo;t.</p>
+<h4 style="color:var(--accent);font-size:.8rem;letter-spacing:2px;margin-bottom:.75rem">RESIDUE ARITHMETIC (BY CONSTRUCTION)</h4>
+<p style="color:var(--dim);font-size:.85rem;line-height:1.7">The encoding uses <strong style="color:var(--text)"><span class="redacted" title="Proprietary">[PROPRIETARY ALGEBRAIC MECHANISM]</span></strong>, and residues in a finite field don&rsquo;t accumulate rounding error because there&rsquo;s nothing to round. I ran 20 million ops and 10,000 pack/unpack cycles and got max error 0 (Proof 6). That&rsquo;s a property of the container; it says nothing about attention arithmetic, which Railgun doesn&rsquo;t touch.</p>
 </div>
 <div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem">
-<h4 style="color:var(--accent);font-size:.8rem;letter-spacing:2px;margin-bottom:.75rem">4&times; VRAM MULTIPLEXING</h4>
-<p style="color:var(--dim);font-size:.85rem;line-height:1.7">With 93% VRAM freed, a single H100 can host <strong style="color:var(--text)">4 independent 70B models</strong> simultaneously. Each gets routing + KV cache. SSD bandwidth is shared across NVMe channels.</p>
+<h4 style="color:var(--accent);font-size:.8rem;letter-spacing:2px;margin-bottom:.75rem">MULTIPLEXING (ALLOCATION ONLY)</h4>
+<p style="color:var(--dim);font-size:.85rem;line-height:1.7">Three 9B routing tiers fit in 3.62 GB on my 16 GB card (Proof 5). Scaling that to &ldquo;four 70B models per H100&rdquo; is arithmetic on the 1-bit footprint, not something I&rsquo;ve run, and it ignores the NVMe bandwidth those models would share.</p>
 </div>
 <div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem">
-<h4 style="color:var(--accent);font-size:.8rem;letter-spacing:2px;margin-bottom:.75rem">MULTI-GPU SSD FABRIC</h4>
-<p style="color:var(--dim);font-size:.85rem;line-height:1.7">Because precision data lives on SSD, <strong style="color:var(--text)">any GPU can stream any model&rsquo;s data</strong>. Context multiplexing across nodes. NVMe-oF enables shared SSD pools. GPU fleet becomes fungible.</p>
+<h4 style="color:var(--accent);font-size:.8rem;letter-spacing:2px;margin-bottom:.75rem">SSD FABRIC (DESIGN IDEA)</h4>
+<p style="color:var(--dim);font-size:.85rem;line-height:1.7">If the residual lives on shared storage, any GPU could pull any model&rsquo;s data over NVMe-oF or CXL. I haven&rsquo;t built or measured any of this; it&rsquo;s where I&rsquo;d take the format next.</p>
 </div>
 </div>
 </div>
@@ -329,10 +327,10 @@
 
 <!-- ====== SILICON-LEVEL INNOVATION ====== -->
 <section>
-<h2>SILICON-LEVEL INNOVATION</h2>
+<h2>SILICON PATH (DESIGN, NOT MEASURED)</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
-<p>Every modern GPU has <strong style="color:var(--text)">dedicated <span class="redacted" title="Proprietary">[CLASSIFIED HARDWARE UNITS]</span></strong> and a <strong style="color:var(--text)"><span class="redacted" title="Proprietary">[DEDICATED CACHE PATHWAY]</span></strong> that sit completely idle during transformer inference. Railgun activates this dead silicon.</p>
-<p style="margin-top:1rem;color:var(--accent);font-weight:700">The result: computation that doesn&rsquo;t compete with your existing ALU pipeline.</p>
+<p>Every modern GPU has <strong style="color:var(--text)">dedicated <span class="redacted" title="Proprietary">[CLASSIFIED HARDWARE UNITS]</span></strong> and a <strong style="color:var(--text)"><span class="redacted" title="Proprietary">[DEDICATED CACHE PATHWAY]</span></strong> that mostly sit idle during transformer inference. The encoding format is laid out so that path could do the tier decode off the ALU pipeline.</p>
+<p style="margin-top:1rem">Nothing in this section is measured. My current decoder runs as ordinary PyTorch ops and decodes before the matmul rather than fusing with it; the diagram and the three cards below are what I intend to build, and the numbers on them are estimates.</p>
 </div>
 <div class="silicon-grid">
 <div class="silicon-col trad">
@@ -364,64 +362,64 @@
 </div>
 <div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem">
 <span style="font-size:1.6rem;font-weight:700;color:var(--accent);display:block">0 FLOPs</span>
-<span style="font-size:.65rem;letter-spacing:2px;color:var(--dim);margin-top:.25rem;display:block">MULTIPLICATIONS IN MATMUL</span>
-<span style="font-size:.8rem;color:var(--text);display:block;margin-top:.75rem;line-height:1.6">Matrix-vector multiply becomes <span class="redacted" title="Proprietary">[CLASSIFIED OPERATIONS]</span>. Zero multiplications needed.</span>
+<span style="font-size:.65rem;letter-spacing:2px;color:var(--dim);margin-top:.25rem;display:block">MULTIPLICATIONS IN MATMUL &bull; UNTESTED</span>
+<span style="font-size:.8rem;color:var(--text);display:block;margin-top:.75rem;line-height:1.6">The idea is that matrix-vector multiply becomes <span class="redacted" title="Proprietary">[CLASSIFIED OPERATIONS]</span> on the 1-bit tier. I haven&rsquo;t written that kernel.</span>
 </div>
 <div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem">
-<span style="font-size:1.6rem;font-weight:700;color:var(--accent);display:block">5&times;</span>
-<span style="font-size:.65rem;letter-spacing:2px;color:var(--dim);margin-top:.25rem;display:block">THROUGHPUT PER WATT</span>
-<span style="font-size:.8rem;color:var(--text);display:block;margin-top:.75rem;line-height:1.6"><span class="redacted" title="Proprietary">[CLASSIFIED PIPELINE FACTORS]</span> = ~5&times; efficiency gain for sparse layers.</span>
+<span style="font-size:1.6rem;font-weight:700;color:var(--accent);display:block">~5&times;</span>
+<span style="font-size:.65rem;letter-spacing:2px;color:var(--dim);margin-top:.25rem;display:block">THROUGHPUT PER WATT &bull; ESTIMATE, UNTESTED</span>
+<span style="font-size:.8rem;color:var(--text);display:block;margin-top:.75rem;line-height:1.6">A paper estimate from <span class="redacted" title="Proprietary">[CLASSIFIED PIPELINE FACTORS]</span> for sparse layers. No power measurement exists yet.</span>
 </div>
 </div>
 </div>
 <div style="max-width:800px;margin:1.5rem auto;padding:1.25rem;background:var(--panel);border-left:3px solid var(--accent);border-radius:0 8px 8px 0">
-<p style="color:var(--text);font-size:.85rem;line-height:1.7"><strong style="color:var(--accent)">Why this matters:</strong> A typical H100 has its <span class="redacted" title="Proprietary">[CLASSIFIED HARDWARE]</span> doing <em>absolutely nothing</em> during transformer inference. Railgun&rsquo;s encoding format is designed from the ground up to <span class="redacted" title="Proprietary">[INTERFACE WITH CLASSIFIED HARDWARE PATH]</span>, activating hardware that every competitor leaves dark. This isn&rsquo;t a software optimization &mdash; it&rsquo;s a <strong style="color:var(--text)">hardware-aware architectural shift</strong> that turns idle silicon into free compute.</p>
+<p style="color:var(--text);font-size:.85rem;line-height:1.7"><strong style="color:var(--accent)">Where this would fit:</strong> the encoding is laid out to <span class="redacted" title="Proprietary">[INTERFACE WITH CLASSIFIED HARDWARE PATH]</span> on hardware that&rsquo;s already in every GPU. Whether it pays off depends on a fused decode-plus-matmul kernel that I haven&rsquo;t built, so I&rsquo;m listing it as the plan, not a result.</p>
 </div>
 </section>
 
 <!-- ====== INTERACTIVE DATA ====== -->
 <section>
-<h2>PROVEN AT SCALE</h2>
+<h2>CHARTS AND WHAT BACKS THEM</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.8;color:var(--dim);font-size:.9rem;margin-bottom:1.5rem">
-<p>These aren&rsquo;t projections. Every chart below is generated from <strong style="color:var(--text)">measured benchmarks</strong> on real hardware with real weight distributions.</p>
+<p>Each tab says up front whether its curves are measured, derived from measured sizes, or illustrative. The Quality and Algebraic tabs are tied to the JSON in the proof battery further down; the Context, Multiplexing, Fabric, and ROI tabs are arithmetic on those sizes plus stated assumptions.</p>
 </div>
 <div class="tab-bar">
-<button class="tab-btn active" onclick="showTab('tab-context')">CONTEXT @ SCALE</button>
-<button class="tab-btn" onclick="showTab('tab-multiplex')">4&times; MULTIPLEXING</button>
-<button class="tab-btn" onclick="showTab('tab-fabric')">MULTI-GPU FABRIC</button>
-<button class="tab-btn" onclick="showTab('tab-roi')">HYPERSCALE ROI</button>
-<button class="tab-btn" onclick="showTab('tab-quality')">QUALITY PROOF</button>
-<button class="tab-btn" onclick="showTab('tab-stability')">ALGEBRAIC PROOF</button>
+<button class="tab-btn active" onclick="showTab('tab-context')">CONTEXT (ILLUSTRATIVE)</button>
+<button class="tab-btn" onclick="showTab('tab-multiplex')">MULTIPLEXING (DERIVED)</button>
+<button class="tab-btn" onclick="showTab('tab-fabric')">SSD FABRIC (IDEA)</button>
+<button class="tab-btn" onclick="showTab('tab-roi')">FLEET ARITHMETIC</button>
+<button class="tab-btn" onclick="showTab('tab-quality')">QUALITY (MEASURED)</button>
+<button class="tab-btn" onclick="showTab('tab-stability')">RESIDUE ARITHMETIC (MEASURED)</button>
 </div>
 
 <!-- TAB: CONTEXT @ SCALE -->
 <div class="tab-panel active" id="tab-context">
 <div style="max-width:800px;margin:0 auto;line-height:1.8;color:var(--dim);font-size:.9rem;margin-bottom:1rem">
-<p><strong style="color:var(--text)">This is the chart that matters.</strong> As context windows push past 256K tokens, fp16 attention quality begins to degrade due to floating-point accumulation error. GPTQ/AWQ start lower and drop faster. Railgun&rsquo;s proprietary encoding maintains <strong style="color:var(--accent)">mathematically perfect fidelity to infinity</strong> because our intermediate arithmetic <strong style="color:var(--text)">operates in a <span class="redacted" title="Proprietary">[PROPRIETARY ALGEBRAIC STRUCTURE]</span></strong> where <span class="redacted" title="Proprietary">[OVERFLOW CONDITION]</span> doesn&rsquo;t exist. Tested to 50M operations &mdash; cosine similarity identical to 10 decimal places at every step.</p>
+<p>The curves in this tab are illustrative, not measured. Railgun doesn&rsquo;t touch attention arithmetic; whatever fp16 does at long context, it still does after a Railgun roundtrip, because the roundtrip hands back the same fp16 bytes. The flat Railgun line is just that statement drawn out. The fp16, GPTQ, and AWQ curves are sketches of how I&rsquo;d expect accumulation error and 4-bit rounding to behave; they don&rsquo;t come from any run I&rsquo;ve done.</p>
 </div>
 <div class="viz-section">
-<h4>CONTEXT FIDELITY: 512 TOKENS &rarr; 10M TOKENS</h4>
+<h4>CONTEXT FIDELITY: 512 TOKENS &rarr; 10M TOKENS (ILLUSTRATIVE)</h4>
 <div class="chart-wrap"><canvas id="chart-context-10m"></canvas></div>
 </div>
 <div class="chart-row">
 <div class="viz-section">
-<h4>EFFECTIVE PRECISION OVER SEQUENCE LENGTH</h4>
+<h4>EFFECTIVE PRECISION OVER SEQUENCE LENGTH (ILLUSTRATIVE)</h4>
 <div class="chart-wrap"><canvas id="chart-effective-precision"></canvas></div>
 </div>
 <div class="viz-section">
-<h4>ATTENTION ERROR ACCUMULATION</h4>
+<h4>ATTENTION ERROR ACCUMULATION (ILLUSTRATIVE)</h4>
 <div class="chart-wrap"><canvas id="chart-attention-error"></canvas></div>
 </div>
 </div>
 <div style="max-width:800px;margin:1rem auto;padding:1.25rem;background:var(--panel);border-left:3px solid var(--accent);border-radius:0 8px 8px 0">
-<p style="color:var(--text);font-size:.85rem;line-height:1.7"><strong style="color:var(--accent)">Why this matters for Grok:</strong> Long-context reasoning over codebases, legal documents, and multi-session conversations requires fidelity past 1M tokens. fp16 can&rsquo;t get there without rope-scaling hacks that further degrade quality. Railgun maintains perfect signal at 10M+ natively.</p>
+<p style="color:var(--text);font-size:.85rem;line-height:1.7"><strong style="color:var(--accent)">Where this would fit:</strong> long-context work over codebases, legal documents, and multi-session conversations is where VRAM pressure bites hardest, because the KV cache competes with the weights. Moving the weights to a 1-bit resident tier frees that room. It doesn&rsquo;t change how the model behaves at long context; that&rsquo;s the base model&rsquo;s problem, and I haven&rsquo;t measured it.</p>
 </div>
-</section>
+</div>
 
 <!-- TAB: 4x MULTIPLEXING -->
 <div class="tab-panel" id="tab-multiplex">
 <div style="max-width:800px;margin:0 auto;line-height:1.8;color:var(--dim);font-size:.9rem;margin-bottom:1rem">
-<p>Traditional deployment: one 70B model fills one H100 (or two). With Railgun, the routing layer for 70B occupies only <strong style="color:var(--accent)">8.75 GB VRAM</strong>. An H100 has 80 GB. That leaves <strong style="color:var(--text)">71.25 GB</strong> for KV caches, additional model instances, or both.</p>
+<p>Derived, not run. At 1 bit per weight the routing tier for a 70B model is <strong style="color:var(--accent)">8.75 GB</strong> (70 &times; 10<sup>9</sup> / 8 bytes); an H100 has 80 GB, so <strong style="color:var(--text)">71.25 GB</strong> is left for KV caches or more instances. The closest thing I&rsquo;ve measured is three 9B routing tiers allocated at once on my 16 GB card (Proof 5), with no inference on them. The chart below is the same arithmetic per model size and ignores NVMe bandwidth shared across instances.</p>
 </div>
 <div class="multiplexing-visual">
 <div class="mx-card">
@@ -444,7 +442,7 @@
 </div>
 </div>
 <div class="viz-section">
-<h4>THROUGHPUT MULTIPLIER: MODELS PER H100</h4>
+<h4>MODELS PER H100 BY RESIDENT SIZE (DERIVED)</h4>
 <div class="chart-wrap"><canvas id="chart-multiplex-throughput"></canvas></div>
 </div>
 </div>
@@ -452,7 +450,7 @@
 <!-- TAB: MULTI-GPU FABRIC -->
 <div class="tab-panel" id="tab-fabric">
 <div style="max-width:800px;margin:0 auto;line-height:1.8;color:var(--dim);font-size:.9rem;margin-bottom:1rem">
-<p>When model weights live on SSD instead of being locked to one GPU&rsquo;s VRAM, the entire compute fabric changes. <strong style="color:var(--text)">GPUs become interchangeable</strong>. Any GPU can stream any model&rsquo;s precision data from any SSD bank. Context processing can be <strong style="color:var(--accent)">distributed across multiple GPUs</strong> without tensor parallelism overhead.</p>
+<p>Design idea, nothing here is built or measured. If the residual lives on shared storage instead of one GPU&rsquo;s VRAM, any GPU could stream any model&rsquo;s data from any SSD bank, and each GPU would only hold its own routing index. The chart is fp16-size payloads divided by nominal link bandwidth; with the residual as I store it today the times would be about 1.75&times; longer.</p>
 </div>
 <div class="fabric-diagram">
 <div class="fabric-col">
@@ -487,14 +485,14 @@ SHARED<br>SSD POOL
 <span style="font-size:.75rem;color:var(--text);display:block;margin-top:.5rem">NVMe-oF and CXL 3.0 enable fabric-attached SSD pools.</span>
 </div>
 <div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.25rem">
-<span style="font-size:1.5rem;font-weight:700;color:var(--accent);display:block">10M+</span>
-<span style="font-size:.65rem;letter-spacing:2px;color:var(--dim)">CONTEXT MULTIPLEXED</span>
-<span style="font-size:.75rem;color:var(--text);display:block;margin-top:.5rem">GPU-1 processes tokens 0&ndash;5M, GPU-2 processes 5M&ndash;10M. Parallel.</span>
+<span style="font-size:1.5rem;font-weight:700;color:var(--accent);display:block">SPLIT</span>
+<span style="font-size:.65rem;letter-spacing:2px;color:var(--dim)">CONTEXT ACROSS GPUs &bull; IDEA</span>
+<span style="font-size:.75rem;color:var(--text);display:block;margin-top:.5rem">Each GPU could take a slice of a long prompt against the same shared weights. Untested.</span>
 </div>
 </div>
 </div>
 <div class="viz-section" style="margin-top:1.5rem">
-<h4>FABRIC THROUGHPUT: MULTI-GPU SSD STREAMING BANDWIDTH</h4>
+<h4>SECONDS TO STREAM AN fp16-SIZE PAYLOAD BY LINK (DERIVED)</h4>
 <div class="chart-wrap"><canvas id="chart-fabric-bandwidth"></canvas></div>
 </div>
 </div>
@@ -502,73 +500,40 @@ SHARED<br>SSD POOL
 <!-- TAB: HYPERSCALE ROI -->
 <div class="tab-panel" id="tab-roi">
 <div style="max-width:800px;margin:0 auto;line-height:1.8;color:var(--dim);font-size:.9rem;margin-bottom:1rem">
-<p>At hyperscale, VRAM savings translate directly to <strong style="color:var(--text)">fewer GPUs purchased, less power consumed, less cooling required, less real estate needed</strong>. The economics are staggering.</p>
-</div>
-<div class="roi-grid">
-<div class="roi-card">
-<div class="big">$750M+</div>
-<div class="sub">SAVED PER YEAR &bull; 100K GPUs</div>
-<div class="detail">4x throughput = 75% fewer GPUs for same workload</div>
-</div>
-<div class="roi-card">
-<div class="big">75%</div>
-<div class="sub">FEWER GPUs NEEDED</div>
-<div class="detail">Or 4x more workload on the same fleet</div>
-</div>
-<div class="roi-card">
-<div class="big">52 MW</div>
-<div class="sub">POWER SAVED &bull; 100K CLUSTER</div>
-<div class="detail">75K fewer H100s &times; 700W = 52.5 MW not consumed</div>
-</div>
-<div class="roi-card">
-<div class="big">&lt;1s</div>
-<div class="sub">70B FULL STREAM &bull; PCIe 5.0</div>
-<div class="detail">Full precision recovery in under a second with zero quality loss</div>
-</div>
+<p>One worked example, all assumptions stated, nothing measured. Assume an H100 at $30K list and 700 W, electricity at $0.08/kWh, three-year depreciation, and that the 1-bit resident footprint lets each GPU serve four model instances instead of one (that 4&times; is the derived multiplexing figure from the previous tab, and it ignores shared NVMe bandwidth and any throughput loss from streaming). On those assumptions a 100,000-GPU fleet becomes 25,000 GPUs: 75,000 fewer cards is $2.25B of hardware, or $750M per year over the depreciation window, and 52.5 MW less draw, about $37M per year at that tariff. If the 4&times; turns out to be 2&times; in practice, halve everything. Licensing cost isn&rsquo;t included. The chart is the same arithmetic across fleet sizes.</p>
 </div>
 <div class="viz-section">
-<h4>TOTAL COST OF OWNERSHIP: GPU FLEET SIZE BY APPROACH</h4>
+<h4>GPU HARDWARE COST BY FLEET SIZE (DERIVED FROM THE ASSUMPTIONS ABOVE)</h4>
 <div class="chart-wrap"><canvas id="chart-tco-fleet"></canvas></div>
-</div>
-<div style="max-width:800px;margin:1.5rem auto">
-<table class="bench-table">
-<thead><tr><th>DEPLOYMENT SCENARIO</th><th>GPUs (FP16)</th><th>GPUs (RAILGUN)</th><th>ANNUAL SAVINGS</th><th>POWER SAVED</th></tr></thead>
-<tbody>
-<tr class="highlight"><td>70B &times; 1K instances</td><td>2,000</td><td>500</td><td class="best">$45M/yr</td><td>1,050 kW</td></tr>
-<tr class="highlight"><td>70B &times; 10K instances</td><td>20,000</td><td>5,000</td><td class="best">$450M/yr</td><td>10.5 MW</td></tr>
-<tr class="highlight"><td>405B &times; 1K instances</td><td>12,000</td><td>3,000</td><td class="best">$270M/yr</td><td>6.3 MW</td></tr>
-<tr class="highlight"><td>Mixed fleet &mdash; 100K GPUs</td><td>100,000</td><td>25,000</td><td class="best">$2.25B/yr</td><td>52.5 MW</td></tr>
-<tr class="baseline"><td colspan="5" style="font-size:.7rem;padding:1rem">Assumes H100 SXM5 @ $30K, 700W TDP, $0.08/kWh, 3-year depreciation. Railgun licensing cost not included.</td></tr>
-</tbody>
-</table>
 </div>
 </div>
 
 <!-- TAB: QUALITY -->
 <div class="tab-panel" id="tab-quality">
 <div style="max-width:800px;margin:0 auto;line-height:1.8;color:var(--dim);font-size:.9rem;margin-bottom:1rem">
-<p>Quality claims backed by measured cosine similarity across <strong style="color:var(--text)">7 weight distributions</strong> (normal, heavy-tail, bimodal, uniform, Laplace, sparse, log-normal) on 500K+ element tensors.</p>
+<p>Full-tier fidelity is measured: bit-exact roundtrips on <strong style="color:var(--text)">7 synthetic weight distributions</strong> (normal, heavy-tail, bimodal, uniform, Laplace, sparse, log-normal) at 500K elements each (Proof 6 JSON), on 20 sampled Qwen3.5-9B tensors (Proof 2), and on all 290 layers of Qwen2.5-0.5B with byte-identical outputs (Proof 3). The GPTQ, AWQ, GGML, and TurboQuant cosine values in the chart and table are typical figures from the literature and my own re-implementation on synthetic tensors, not runs on the same model; the 1-bit-tier cosine for Railgun hasn&rsquo;t been measured on a real model.</p>
 </div>
 <div class="chart-row">
 <div class="viz-section">
-<h4>HEAD-TO-HEAD: RAILGUN vs INDUSTRY</h4>
+<h4>RAILGUN FULL TIER vs 4-BIT FORMATS (COMPARATORS FROM LITERATURE)</h4>
 <div class="chart-wrap"><canvas id="chart-h2h"></canvas></div>
 </div>
 <div class="viz-section">
-<h4>VRAM FOOTPRINT BY MODEL SIZE</h4>
+<h4>RESIDENT VRAM BY MODEL SIZE (DERIVED FROM BITS/WEIGHT)</h4>
 <div class="chart-wrap"><canvas id="chart-vram-scale"></canvas></div>
 </div>
 </div>
 <div style="max-width:800px;margin:1.5rem auto">
 <table class="bench-table">
-<thead><tr><th>METHOD</th><th>BITS/ELEM</th><th>7B VRAM</th><th>70B VRAM</th><th>QUALITY (CS)</th><th>RECOVERY?</th></tr></thead>
+<thead><tr><th>METHOD</th><th>RESIDENT BITS/ELEM</th><th>7B VRAM (DERIVED)</th><th>70B VRAM (DERIVED)</th><th>QUALITY (CS)</th><th>RECOVERY?</th></tr></thead>
 <tbody>
 <tr class="baseline"><td>fp16 baseline</td><td>16.0</td><td>14.0 GB</td><td>140.0 GB</td><td>1.000</td><td>N/A</td></tr>
-<tr class="baseline"><td>GPTQ 4-bit</td><td>4.0</td><td>3.5 GB</td><td>35.0 GB</td><td>~0.995</td><td style="color:#e74c3c">Permanent loss</td></tr>
-<tr class="baseline"><td>AWQ 4-bit</td><td>4.0</td><td>3.5 GB</td><td>35.0 GB</td><td>~0.996</td><td style="color:#e74c3c">Permanent loss</td></tr>
-<tr class="baseline"><td>TurboQuant 4.25b</td><td>4.25</td><td>3.72 GB</td><td>37.2 GB</td><td>0.989</td><td style="color:#e74c3c">Permanent loss</td></tr>
-<tr class="highlight"><td>Railgun (VRAM only)</td><td class="best">1.0</td><td class="best">0.88 GB</td><td class="best">8.75 GB</td><td>0.798</td><td style="color:var(--accent)">Stream to 1.000000</td></tr>
-<tr class="highlight"><td>Railgun (Full tier)</td><td>1.0 VRAM + SSD</td><td class="best">0.88 GB</td><td class="best">8.75 GB</td><td class="best">1.000000</td><td style="color:var(--accent)">Lossless &mdash; bit-exact</td></tr>
+<tr class="baseline"><td>GPTQ 4-bit</td><td>4.0</td><td>3.5 GB</td><td>35.0 GB</td><td>~0.995 (literature)</td><td style="color:#e74c3c">One-way</td></tr>
+<tr class="baseline"><td>AWQ 4-bit</td><td>4.0</td><td>3.5 GB</td><td>35.0 GB</td><td>~0.996 (literature)</td><td style="color:#e74c3c">One-way</td></tr>
+<tr class="baseline"><td>TurboQuant 4.25b</td><td>4.25</td><td>3.72 GB</td><td>37.2 GB</td><td>~0.99 (my re-impl., synthetic)</td><td style="color:#e74c3c">One-way</td></tr>
+<tr class="baseline"><td>zstd / ZipNN / DFloat11</td><td>~11&ndash;16</td><td>~10&ndash;14 GB</td><td>~96&ndash;140 GB</td><td>1.000 (bit-exact)</td><td style="color:var(--accent)">Bit-exact, smaller total store than Railgun today</td></tr>
+<tr class="highlight"><td>Railgun (1-bit tier only)</td><td class="best">1.0</td><td class="best">0.88 GB</td><td class="best">8.75 GB</td><td>not measured on a real model (0.88&ndash;0.94 for the 2-bit tier on synthetic data, white paper)</td><td style="color:var(--accent)">Stream residual to bit-exact</td></tr>
+<tr class="highlight"><td>Railgun (full tier)</td><td>1.0 VRAM + NVMe residual (1.75&times; fp16 bytes)</td><td class="best">0.88 GB</td><td class="best">8.75 GB</td><td class="best">1.000 (bit-exact, Proofs 2, 3, 6, 7)</td><td style="color:var(--accent)">Bit-exact</td></tr>
 </tbody>
 </table>
 </div>
@@ -577,65 +542,65 @@ SHARED<br>SSD POOL
 <!-- TAB: ALGEBRAIC PROOF -->
 <div class="tab-panel" id="tab-stability">
 <div style="max-width:800px;margin:0 auto;line-height:1.8;color:var(--dim);font-size:.9rem;margin-bottom:1rem">
-<p>Railgun&rsquo;s encoding operates in a <strong style="color:var(--text)"><span class="redacted" title="Proprietary">[PROPRIETARY ALGEBRAIC STRUCTURE]</span> with a <span class="redacted" title="Proprietary">[BOUNDED STATE SPACE]</span></strong>. There is no continuum to drift through. Every arithmetic operation produces one of a <span class="redacted" title="Proprietary">[FINITE SET]</span> of values &mdash; like a clock with a fixed number of positions. <strong style="color:var(--accent)">The next position doesn&rsquo;t exist.</strong></p>
-<p style="margin-top:.75rem"><strong style="color:var(--text)">This is not &ldquo;nearly drift-free.&rdquo;</strong> It is mathematically, provably, absolutely impossible for the encoding to accumulate error. We tested it to <strong style="color:var(--accent)">50 million operations</strong>. The result at operation 50,000,000 is identical to operation 1 &mdash; to 10 decimal places.</p>
+<p>Railgun&rsquo;s encoding operates in a <strong style="color:var(--text)"><span class="redacted" title="Proprietary">[PROPRIETARY ALGEBRAIC STRUCTURE]</span> with a <span class="redacted" title="Proprietary">[BOUNDED STATE SPACE]</span></strong>. Every operation lands on one of a <span class="redacted" title="Proprietary">[FINITE SET]</span> of values, so GF(17) residues don&rsquo;t accumulate rounding error, by construction.</p>
+<p style="margin-top:.75rem">I ran 20 million ops and 10,000 pack/unpack cycles; the JSON is linked below as Proof 6. My fp16 comparison in that run used naive sequential summation, which real kernels don&rsquo;t do (they accumulate in fp32), so read it as an illustration of what the field guarantees, not a benchmark against production arithmetic. The fp16 cosine sits at &minus;0.030 for 1M, 10M, and 20M ops alike, which tells you the naive fp16 sum had already saturated by 1M.</p>
 </div>
 <div class="proof-box">
-<h3 style="color:var(--accent);font-size:1rem;letter-spacing:3px;margin-bottom:1rem">EMPIRICAL PROOF: ZERO DRIFT</h3>
+<h3 style="color:var(--accent);font-size:1rem;letter-spacing:3px;margin-bottom:1rem">MEASURED: RESIDUE ARITHMETIC, PROOF 6 JSON</h3>
 <div class="proof-row">
-<div class="proof-stat"><span class="ps-val">50,000,000</span><span class="ps-lbl">Operations Tested</span><span class="ps-detail"><span class="redacted" title="Proprietary">[CLASSIFIED]</span> accumulation, multiply, exponentiation</span></div>
-<div class="proof-stat"><span class="ps-val">IDENTICAL</span><span class="ps-lbl">CS at op 1 vs op 50M</span><span class="ps-detail">0.9872201411 &mdash; same to 10 decimal places</span></div>
-<div class="proof-stat"><span class="ps-val">BIT-EXACT</span><span class="ps-lbl">Roundtrip Fidelity</span><span class="ps-detail">fp16 &amp; fp32 recovered perfectly across all distributions</span></div>
-<div class="proof-stat"><span class="ps-val">100,000</span><span class="ps-lbl">Pack/Unpack Cycles</span><span class="ps-detail">CS unchanged from cycle 1 to cycle 100,000</span></div>
+<div class="proof-stat"><span class="ps-val">20,000,000</span><span class="ps-lbl">Operations run</span><span class="ps-detail"><span class="redacted" title="Proprietary">[CLASSIFIED]</span> accumulation, checkpoints at 1M, 10M, 20M</span></div>
+<div class="proof-stat"><span class="ps-val">1.0 / 0.0</span><span class="ps-lbl">GF(17) CS / max error at every checkpoint</span><span class="ps-detail">fp16 naive sequential sum: CS &minus;0.030, max error 7.85</span></div>
+<div class="proof-stat"><span class="ps-val">BIT-EXACT</span><span class="ps-lbl">Roundtrip fidelity</span><span class="ps-detail">fp16 recovered exactly on 7 distributions at 500K elements; fp32 roundtrip is in the white paper, not this JSON</span></div>
+<div class="proof-stat"><span class="ps-val">10,000</span><span class="ps-lbl">Pack/unpack cycles</span><span class="ps-detail">CS 1.0, max error 0 at cycles 1, 10, 100, 1K, 5K, 10K</span></div>
 </div>
 </div>
 <div class="chart-row">
 <div class="viz-section">
-<h4>50M OPERATION STRESS TEST</h4>
+<h4>GF(17) CS AFTER N OPERATIONS (PROOF 6)</h4>
 <div class="chart-wrap"><canvas id="chart-stress-50m"></canvas></div>
 </div>
 <div class="viz-section">
-<h4>FP16 PRECISION DECAY VS RAILGUN</h4>
+<h4>NAIVE fp16 SEQUENTIAL SUM vs fp64 (PROOF 6, ILLUSTRATION)</h4>
 <div class="chart-wrap"><canvas id="chart-fp16-decay"></canvas></div>
 </div>
 </div>
 <div class="chart-row">
 <div class="viz-section">
-<h4><span class="redacted" title="Proprietary">[CLASSIFIED]</span> MEMORY CYCLE STABILITY (100K CYCLES)</h4>
+<h4><span class="redacted" title="Proprietary">[CLASSIFIED]</span> PACK/UNPACK CYCLE STABILITY (10K CYCLES, PROOF 6)</h4>
 <div class="chart-wrap"><canvas id="chart-cycle-stability"></canvas></div>
 </div>
 <div class="viz-section">
-<h4>ROUNDTRIP FIDELITY: BIT-EXACT ACROSS ALL DISTRIBUTIONS</h4>
+<h4>ROUNDTRIP FIDELITY BY DISTRIBUTION (PROOF 6)</h4>
 <div class="chart-wrap"><canvas id="chart-roundtrip-fidelity"></canvas></div>
 </div>
 </div>
 <div style="max-width:800px;margin:1.5rem auto;padding:1.25rem;background:var(--panel);border-left:3px solid var(--accent);border-radius:0 8px 8px 0">
-<p style="color:var(--text);font-size:.85rem;line-height:1.7"><strong style="color:var(--accent)">The comparison that kills:</strong> fp16 softmax accumulation experiences a <strong style="color:#e74c3c">55&times; increase in relative error</strong> between 64 and 1M tokens (growing as &radic;n). Extrapolating: 10M tokens &asymp; CS 0.9995, 100M &asymp; 0.998, 1B &asymp; 0.993. <strong style="color:var(--accent)">Railgun&rsquo;s encoding error at 1 billion tokens: identical to 1 token.</strong> The ceiling doesn&rsquo;t exist because there is nothing to accumulate.</p>
+<p style="color:var(--text);font-size:.85rem;line-height:1.7"><strong style="color:var(--accent)">What this does and doesn&rsquo;t say:</strong> the field arithmetic inside the codec can&rsquo;t drift, and I&rsquo;ve confirmed that to 20M ops. It doesn&rsquo;t say anything about a model&rsquo;s attention at long context, which runs in the model&rsquo;s own fp16/fp32 arithmetic after the weights are decoded. I haven&rsquo;t measured long-context behavior and I&rsquo;m not extrapolating it here.</p>
 </div>
 </div>
 
 </section>
 
-<!-- ====== CASE STUDY: xAI ====== -->
+<!-- ====== WORKED EXAMPLE: FLEET ARITHMETIC ====== -->
 <section>
-<h2>CASE STUDY: HYPERSCALE AI INFRASTRUCTURE</h2>
+<h2>WORKED EXAMPLE: A 200K-GPU FLEET</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.8;color:var(--dim);font-size:.9rem;margin-bottom:2rem">
-<p>Consider a leading AI company operating a <strong style="color:var(--text)">200,000 H100 GPU cluster</strong> for training and inference of frontier models. The infrastructure represents approximately <strong style="color:var(--text)">$7 billion in GPU hardware</strong> and consumes <strong style="color:var(--text)">140 MW</strong> of power.</p>
+<p>Same assumptions as the ROI tab ($30K and 700 W per H100, $0.08/kWh, three-year depreciation, 4&times; instances per GPU from the 1-bit footprint). A <strong style="color:var(--text)">200,000-GPU cluster</strong> is then <strong style="color:var(--text)">$6B of GPUs</strong> drawing <strong style="color:var(--text)">140 MW</strong>. None of this is measured; it&rsquo;s the arithmetic written out.</p>
 </div>
 <div class="case-banner">
-<h3>RAILGUN IMPACT AT 200K GPU SCALE</h3>
+<h3>THE ARITHMETIC AT 200K GPUs (ASSUMPTIONS ABOVE)</h3>
 <div class="case-stats">
-<div class="case-stat"><span class="cs-val">$5.25B</span><span class="cs-lbl">HARDWARE SAVINGS (INFERENCE)</span></div>
-<div class="case-stat"><span class="cs-val">150K</span><span class="cs-lbl">FEWER GPUs NEEDED</span></div>
-<div class="case-stat"><span class="cs-val">105 MW</span><span class="cs-lbl">POWER NOT CONSUMED</span></div>
-<div class="case-stat"><span class="cs-val">&infin;</span><span class="cs-lbl">CONTEXT STABILITY &bull; PROVEN</span></div>
-<div class="case-stat"><span class="cs-val">4&times;</span><span class="cs-lbl">INFERENCE THROUGHPUT/GPU</span></div>
-<div class="case-stat"><span class="cs-val">0</span><span class="cs-lbl">QUALITY LOSS AT FULL TIER</span></div>
+<div class="case-stat"><span class="cs-val">$4.5B</span><span class="cs-lbl">HARDWARE NOT BOUGHT (150K &times; $30K)</span></div>
+<div class="case-stat"><span class="cs-val">150K</span><span class="cs-lbl">FEWER GPUs AT 4&times; PER CARD</span></div>
+<div class="case-stat"><span class="cs-val">105 MW</span><span class="cs-lbl">LESS DRAW (150K &times; 700 W)</span></div>
+<div class="case-stat"><span class="cs-val">$74M/yr</span><span class="cs-lbl">ELECTRICITY AT $0.08/kWh</span></div>
+<div class="case-stat"><span class="cs-val">4&times;</span><span class="cs-lbl">INSTANCES PER GPU &bull; DERIVED, NOT RUN</span></div>
+<div class="case-stat"><span class="cs-val">0</span><span class="cs-lbl">WEIGHT ERROR AT FULL TIER &bull; MEASURED</span></div>
 </div>
 <div style="margin-top:1.5rem;line-height:1.8;color:var(--dim);font-size:.85rem">
-<p><strong style="color:var(--text)">Scenario A &mdash; Reduce fleet:</strong> Instead of 200K GPUs for inference, deploy 50K with Railgun. Each GPU handles 4x the workload. Save $4.5B in hardware and $74M/yr in electricity.</p>
-<p style="margin-top:.75rem"><strong style="color:var(--text)">Scenario B &mdash; Scale capacity:</strong> Keep 200K GPUs, now serving <strong style="color:var(--accent)">4x more concurrent users</strong>. Same hardware budget, 4x the revenue capacity. Competitive moat in inference cost per token.</p>
-<p style="margin-top:.75rem"><strong style="color:var(--text)">Scenario C &mdash; Long context:</strong> Offer <strong style="color:var(--accent)">10M+ token context windows</strong> without quality degradation. No other compression method maintains fidelity past 256K. This is a product differentiator competitors cannot match without licensing Railgun.</p>
+<p><strong style="color:var(--text)">Scenario A, smaller fleet:</strong> 50K GPUs instead of 200K for the same inference load, if each card really carries four instances. That&rsquo;s the $4.5B and $74M/yr above.</p>
+<p style="margin-top:.75rem"><strong style="color:var(--text)">Scenario B, same fleet:</strong> keep 200K GPUs and serve up to four times the concurrent instances, subject to the NVMe bandwidth those instances share, which I haven&rsquo;t modeled.</p>
+<p style="margin-top:.75rem"><strong style="color:var(--text)">What I&rsquo;d want before believing either:</strong> a 1-bit-tier quality number on a real model, a streamed-tier throughput number under load, and perplexity at each tier. None of those exist yet.</p>
 </div>
 </div>
 </section>
@@ -644,21 +609,21 @@ SHARED<br>SSD POOL
 <section>
 <h2>COMPETITIVE LANDSCAPE</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.8;color:var(--dim);font-size:.9rem;margin-bottom:1.5rem">
-<p>Every existing quantization method makes the same tradeoff: <strong style="color:var(--text)">permanently destroy precision in exchange for smaller VRAM footprint</strong>. Railgun is the only approach that provides a <strong style="color:var(--accent)">recovery path to lossless</strong>.</p>
+<p>The 4-bit formats trade precision for a smaller resident footprint and don&rsquo;t give it back. Bit-exact compressors (zstd, ZipNN, DFloat11) give it back and produce a smaller total store than my current residual, but their resident footprint stays near fp16. Railgun&rsquo;s position is a 1-bit resident tier plus a bit-exact recovery path, at the cost of a total store that&rsquo;s currently larger than fp16. Column entries marked untested are design intent.</p>
 </div>
 <div style="max-width:900px;margin:0 auto">
 <table class="bench-table">
 <thead><tr><th>FEATURE</th><th>GPTQ/AWQ</th><th>GGML</th><th>TURBOQUANT</th><th>BITSANDBYTES</th><th style="color:var(--accent)">RAILGUN</th></tr></thead>
 <tbody>
 <tr><td>VRAM per 7B</td><td>3.5 GB</td><td>3.7 GB</td><td>3.72 GB</td><td>3.5 GB</td><td class="best">0.88 GB</td></tr>
-<tr><td>Quality (CS)</td><td>0.995</td><td>0.994</td><td>0.989</td><td>~0.993</td><td class="best">1.000000</td></tr>
-<tr><td>Lossless recovery</td><td style="color:#e74c3c">No</td><td style="color:#e74c3c">No</td><td style="color:#e74c3c">No</td><td style="color:#e74c3c">No</td><td class="best">Yes</td></tr>
-<tr><td>Context stability</td><td>Degrades &gt;128K</td><td>Degrades &gt;64K</td><td>Unknown</td><td>Degrades</td><td class="best">&infin; (proven)</td></tr>
-<tr><td>Hardware <span class="redacted" title="Proprietary">[▓▓▓]</span> accel.</td><td style="color:#e74c3c">No</td><td style="color:#e74c3c">No</td><td style="color:#e74c3c">No</td><td style="color:#e74c3c">No</td><td class="best">5&times; throughput/W</td></tr>
-<tr><td>Training compatible</td><td style="color:#e74c3c">Inference only</td><td style="color:#e74c3c">Inference only</td><td style="color:#e74c3c">Inference only</td><td style="color:#e74c3c">Inference only</td><td class="best">Full train loop</td></tr>
-<tr><td>Multi-model/GPU</td><td>Limited</td><td>Limited</td><td>No</td><td>No</td><td class="best">4x per H100</td></tr>
-<tr><td>SSD streaming</td><td style="color:#e74c3c">No</td><td style="color:#e74c3c">No</td><td style="color:#e74c3c">No</td><td style="color:#e74c3c">No</td><td class="best">Progressive tiers</td></tr>
-<tr><td>Multi-GPU fabric</td><td style="color:#e74c3c">No</td><td style="color:#e74c3c">No</td><td style="color:#e74c3c">No</td><td style="color:#e74c3c">No</td><td class="best">NVMe-oF / CXL</td></tr>
+<tr><td>Quality (CS)</td><td>~0.995</td><td>~0.994</td><td>~0.99</td><td>~0.993</td><td class="best">1.000 full tier (measured); 1-bit tier not measured</td></tr>
+<tr><td>Bit-exact recovery</td><td style="color:#e74c3c">No</td><td style="color:#e74c3c">No</td><td style="color:#e74c3c">No</td><td style="color:#e74c3c">No</td><td class="best">Yes (also true of zstd / ZipNN / DFloat11)</td></tr>
+<tr><td>Total store vs fp16</td><td>0.25&times;</td><td>0.25&ndash;0.4&times;</td><td>0.27&times;</td><td>0.25&times;</td><td>1.75&times; today (Proof 7)</td></tr>
+<tr><td>Hardware <span class="redacted" title="Proprietary">[▓▓▓]</span> accel.</td><td style="color:#e74c3c">No</td><td style="color:#e74c3c">No</td><td style="color:#e74c3c">No</td><td style="color:#e74c3c">No</td><td>Planned, untested</td></tr>
+<tr><td>Training compatible</td><td style="color:#e74c3c">Inference only</td><td style="color:#e74c3c">Inference only</td><td style="color:#e74c3c">Inference only</td><td style="color:#e74c3c">Inference only</td><td>Design only, untested</td></tr>
+<tr><td>Multi-model/GPU</td><td>Limited</td><td>Limited</td><td>No</td><td>No</td><td>3&times;9B allocated on 16 GB (Proof 5); 4&times;70B per H100 is derived</td></tr>
+<tr><td>SSD streaming</td><td style="color:#e74c3c">No</td><td style="color:#e74c3c">No</td><td style="color:#e74c3c">No</td><td style="color:#e74c3c">No</td><td class="best">Residual tier (measured per-tensor load, Proof 7b)</td></tr>
+<tr><td>Multi-GPU fabric</td><td style="color:#e74c3c">No</td><td style="color:#e74c3c">No</td><td style="color:#e74c3c">No</td><td style="color:#e74c3c">No</td><td>Idea, untested</td></tr>
 <tr><td>Calibration needed</td><td>Yes</td><td>No</td><td>Yes</td><td>No</td><td class="best">No</td></tr>
 </tbody>
 </table>
@@ -667,45 +632,44 @@ SHARED<br>SSD POOL
 
 <!-- ====== BEYOND INFERENCE ====== -->
 <section>
-<h2>BEYOND INFERENCE: THE TRAINING FRONTIER</h2>
+<h2>BEYOND INFERENCE: TRAINING (UNTESTED)</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
-<p>Railgun isn&rsquo;t just an inference optimization. The same encoding that compresses VRAM at inference time has <strong style="color:var(--text)">profound implications for model training</strong>.</p>
-<p style="margin-top:1rem;color:var(--accent);font-weight:700">What if the compression format IS the mutation space?</p>
+<p>Nothing in this section has been run. It&rsquo;s where I think the format could go, written down so the ideas are on record. The question I keep coming back to is whether the compression format can double as the mutation space for evolutionary training.</p>
 </div>
 <div class="training-comparison">
 <div class="training-box before">
-<span class="tb-val">560 GB</span>
-<span class="tb-lbl">70B TRAINING STATE &bull; STANDARD</span>
-<span class="tb-detail">fp16 weights (140 GB) + Adam m,v states (280 GB) + gradients (140 GB). Requires 7&times; H100s minimum.</span>
+<span class="tb-val">840 GB</span>
+<span class="tb-lbl">70B TRAINING STATE &bull; STANDARD (DERIVED)</span>
+<span class="tb-detail">fp16 weights (140 GB) + fp32 Adam m and v (560 GB) + fp16 gradients (140 GB). Mixed-precision setups usually add an fp32 master copy on top (another 280 GB).</span>
 </div>
 <div class="training-box after">
-<span class="tb-val">35 GB</span>
-<span class="tb-lbl">70B TRAINING STATE &bull; RAILGUN</span>
-<span class="tb-detail"><span class="redacted" title="Proprietary">[CLASSIFIED ENCODING]</span> for all three components. Streamed gradients from SSD. <strong>One GPU. Complete state.</strong></span>
+<span class="tb-val">?</span>
+<span class="tb-lbl">70B TRAINING STATE &bull; RAILGUN (NOT MEASURED)</span>
+<span class="tb-detail">The 1-bit tier would hold 8.75 GB per fp16-sized component, but optimizer state and gradients aren&rsquo;t weights and I haven&rsquo;t tried encoding them. No number until I do.</span>
 </div>
 </div>
 <div style="max-width:800px;margin:0 auto">
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-top:2.5rem">
 <div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem">
-<h4 style="color:var(--accent);font-size:.8rem;letter-spacing:2px;margin-bottom:.75rem">DRIFT-FREE GRADIENT ACCUMULATION</h4>
-<p style="color:var(--dim);font-size:.85rem;line-height:1.7">In fp32, gradient accumulation over millions of steps introduces floating-point drift. In Railgun&rsquo;s encoding, accumulated gradients are <strong style="color:var(--text)">exact within the <span class="redacted" title="Proprietary">[ALGEBRAIC STRUCTURE]</span></strong>. Checkpoint after 10 billion steps &mdash; the state is <strong style="color:var(--text)">identical in fidelity</strong> to step 1. And 16&times; smaller.</p>
+<h4 style="color:var(--accent);font-size:.8rem;letter-spacing:2px;margin-bottom:.75rem">RESIDUE GRADIENT ACCUMULATION (UNTESTED)</h4>
+<p style="color:var(--dim);font-size:.85rem;line-height:1.7">Residue accumulation inside the encoding is exact within the <span class="redacted" title="Proprietary">[ALGEBRAIC STRUCTURE]</span>. Whether that helps a training loop depends on mapping real-valued gradients into and out of the field without losing what matters, which I haven&rsquo;t tried. Untested.</p>
 </div>
 <div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem">
 <h4 style="color:var(--accent);font-size:.8rem;letter-spacing:2px;margin-bottom:.75rem">BOUNDED WEIGHT EVOLUTION</h4>
-<p style="color:var(--dim);font-size:.85rem;line-height:1.7">Each weight element maps to one of a <strong style="color:var(--text)"><span class="redacted" title="Proprietary">[BOUNDED STATE SPACE]</span></strong>. Unlike continuous-space perturbation (where mutations blow up activations), Railgun mutations are <strong style="color:var(--text)">bounded by construction</strong>. The mutation space is finite and locally exhaustible &mdash; enabling evolutionary search previously intractable.</p>
+<p style="color:var(--dim);font-size:.85rem;line-height:1.7">Each weight element maps to one of a <strong style="color:var(--text)"><span class="redacted" title="Proprietary">[BOUNDED STATE SPACE]</span></strong>, so a single-element mutation has a finite set of outcomes you could enumerate. That&rsquo;s the appeal for evolutionary search. I haven&rsquo;t run a search, so I don&rsquo;t know whether the enumerable moves are the useful ones.</p>
 </div>
 <div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem">
 <h4 style="color:var(--accent);font-size:.8rem;letter-spacing:2px;margin-bottom:.75rem"><span class="redacted" title="Proprietary">[CLASSIFIED]</span>-SPACE CHECKPOINTING</h4>
-<p style="color:var(--dim);font-size:.85rem;line-height:1.7">Model state as <span class="redacted" title="Proprietary">[CLASSIFIED FORMAT]</span>. Checkpoints as <span class="redacted" title="Proprietary">[CLASSIFIED]</span> snapshots. <strong style="color:var(--text)">16&times; smaller with zero fidelity loss.</strong> Save every epoch instead of every 10. Rollback becomes trivial. Branching training runs becomes cheap.</p>
+<p style="color:var(--dim);font-size:.85rem;line-height:1.7">Model state as <span class="redacted" title="Proprietary">[CLASSIFIED FORMAT]</span>, checkpoints as <span class="redacted" title="Proprietary">[CLASSIFIED]</span> snapshots. The resident part would be 16&times; smaller; the full bit-exact checkpoint is 1.75&times; fp16 as I store it today, so a checkpoint isn&rsquo;t smaller unless the residual gets entropy-coded (about 12.5 bits/weight by entropy, Proof R+I). Untested.</p>
 </div>
 <div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem">
 <h4 style="color:var(--accent);font-size:.8rem;letter-spacing:2px;margin-bottom:.75rem">EVOLUTIONARY MODEL SEARCH</h4>
-<p style="color:var(--dim);font-size:.85rem;line-height:1.7">Combine encoding-space mutations with fitness selection. Graft layers between models. Hybridize architectures. <strong style="color:var(--text)">All in a <span class="redacted" title="Proprietary">[CLASSIFIED ALGEBRAIC DOMAIN]</span> where every mutation is reversible</strong> and the search space is enumerable. Evolutionary AI with mathematical guarantees.</p>
+<p style="color:var(--dim);font-size:.85rem;line-height:1.7">Combine encoding-space mutations with fitness selection, graft layers between models, try hybrid architectures, all in a <span class="redacted" title="Proprietary">[CLASSIFIED ALGEBRAIC DOMAIN]</span> where a mutation can be undone exactly. I have no convergence result and no experiment; this is a plan.</p>
 </div>
 </div>
 </div>
 <div style="max-width:800px;margin:0 auto;margin-top:2.5rem">
-<h3 style="color:var(--accent);font-size:.85rem;letter-spacing:3px;margin-bottom:1.5rem">THE EVOLUTIONARY TRAINING LOOP</h3>
+<h3 style="color:var(--accent);font-size:.85rem;letter-spacing:3px;margin-bottom:1.5rem">THE EVOLUTIONARY TRAINING LOOP (PROPOSED, NOT BUILT)</h3>
 <div class="evo-flow">
 <div class="evo-step"><span class="es-num">1</span><span class="es-title">ENCODE</span><span class="es-desc">Weights &rarr; <span class="redacted" title="Proprietary">[CLASSIFIED]</span></span></div>
 <div class="evo-step"><span class="es-num">2</span><span class="es-title">MUTATE</span><span class="es-desc"><span class="redacted" title="Proprietary">[CLASSIFIED OPERATORS]</span> on <span class="redacted" title="Proprietary">[CLASSIFIED]</span> deltas</span></div>
@@ -716,7 +680,7 @@ SHARED<br>SSD POOL
 </div>
 </div>
 <div style="max-width:800px;margin:2rem auto;padding:1.25rem;background:var(--panel);border-left:3px solid var(--accent);border-radius:0 8px 8px 0">
-<p style="color:var(--text);font-size:.85rem;line-height:1.7"><strong style="color:var(--accent)">The paradigm shift:</strong> Standard evolutionary AI perturbs weights in continuous &Ropf;<sup>70B</sup> space &mdash; astronomically unlikely to find improvements by random search. Railgun operates in a <span class="redacted" title="Proprietary">[CLASSIFIED ALGEBRAIC STRUCTURE]</span> where <strong style="color:var(--text)">every single-element mutation can be exhaustively evaluated</strong>. A <span class="redacted" title="Proprietary">[BOUNDED STATE SPACE]</span> per weight element. Bounded, reversible, enumerable. Combined with drift-free gradient accumulation and 16&times; smaller checkpoints, this enables an evolutionary training loop that is <strong style="color:var(--accent)">provably convergent</strong> over <span class="redacted" title="Proprietary">[CLASSIFIED]</span> space.</p>
+<p style="color:var(--text);font-size:.85rem;line-height:1.7"><strong style="color:var(--accent)">Why I think it&rsquo;s worth trying:</strong> evolutionary search over continuous &Ropf;<sup>70B</sup> weights rarely finds improvements by random perturbation. In a <span class="redacted" title="Proprietary">[CLASSIFIED ALGEBRAIC STRUCTURE]</span> each weight element has a <span class="redacted" title="Proprietary">[BOUNDED STATE SPACE]</span>, so the single-element moves can be listed and each one undone exactly. Whether that search converges on anything useful is an open question I haven&rsquo;t tested, and I&rsquo;m not claiming a proof.</p>
 </div>
 </section>
 
@@ -724,7 +688,8 @@ SHARED<br>SSD POOL
 <section>
 <h2>GPU PROOF BATTERY</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.8;color:var(--dim);font-size:.9rem;margin-bottom:1.5rem">
-<p>Five independent proofs on <strong style="color:var(--text)">real hardware</strong> with <strong style="color:var(--text)">real model weights</strong>. No synthetic data. No simulations. Every claim verified on an AMD Radeon RX 7800 XT (16 GB VRAM).</p>
+<p>Eight runs on my AMD Radeon RX 7800 XT (16 GB VRAM, ROCm 7.2, PyTorch 2.12 nightly), each with its JSON linked at the bottom. The two I&rsquo;d point you at first are <strong style="color:var(--text)">Proof 1</strong> (an fp16 OOM you can reproduce on any 16 GB card) and <strong style="color:var(--text)">Proof 3</strong> (a full-model roundtrip of Qwen2.5-0.5B with greedy decode and byte-identical outputs, coherence_proof.json). Proofs 2, 4, 5, and 7 use real Qwen3.5-9B weights; Proof 6 is synthetic arrays; Proofs 4 and 5 are allocation tests with no inference; Proof 8 is 1-bit-tier latency, not quality.</p>
+<p style="margin-top:.75rem">From the white paper&rsquo;s limitations, still true: the R tier alone is not sufficient for high-quality inference; perplexity has not yet been measured at any tier; and the current implementation decodes before inference rather than fusing with the matmul.</p>
 </div>
 <!-- PROOF 1: FP16 CRASH -->
 <div class="case-banner" style="max-width:900px;margin-bottom:2rem">
@@ -737,7 +702,7 @@ SHARED<br>SSD POOL
 <div class="case-stat"><span class="cs-val" style="color:#e74c3c">OOM</span><span class="cs-lbl">STATUS</span></div>
 </div>
 <p style="margin-top:1rem;color:#e74c3c;font-size:.8rem;font-weight:700;letter-spacing:2px">torch.OutOfMemoryError &mdash; CONFIRMED</p>
-<p style="color:var(--dim);font-size:.75rem;margin-top:.5rem">A 9.65-billion parameter model at fp16 requires 19.31 GB. Consumer GPUs top out at 16 GB. It does not fit. This is the industry problem.</p>
+<p style="color:var(--dim);font-size:.75rem;margin-top:.5rem">A 9.65-billion parameter model at fp16 needs 19.31 GB and my card had 14.09 GB free, so the load throws torch.OutOfMemoryError (proof_1_fp16_crash.json has the exact message). This one you can reproduce on any 16 GB GPU.</p>
 </div>
 <!-- PROOF 2: RAILGUN MAKES IT FIT -->
 <div class="case-banner" style="max-width:900px;margin-bottom:2rem">
@@ -761,18 +726,19 @@ SHARED<br>SSD POOL
 </table>
 </div>
 <p style="margin-top:1rem;color:var(--accent);font-size:.8rem;font-weight:700;letter-spacing:2px">ALL 20 SAMPLED TENSORS: BIT-EXACT fp16 ROUNDTRIP</p>
-<p style="color:var(--dim);font-size:.75rem">Decode throughput: 143.5M params/s &bull; Full model decode est: 67s</p>
+<p style="color:var(--dim);font-size:.75rem">Decode throughput 143.5M params/s; full-model decode estimated at 67 s from that rate. The 1.21 GB is the VRAM-resident tier only; the residual on NVMe is 1.75&times; the fp16 bytes (Proof 7), so the total store is larger than fp16. The per-tensor cosine values in the JSON sit at 0.9999 despite bit-exact flags because the cosine was computed in fp16; the exact flag is the real check.</p>
 </div>
 <!-- PROOF 3: ZERO INFERENCE DEGRADATION -->
 <div class="case-banner" style="max-width:900px;margin-bottom:2rem">
-<h3 style="letter-spacing:3px">PROOF 3 &bull; ZERO INFERENCE DEGRADATION</h3>
-<p style="color:var(--dim);font-size:.8rem">Qwen2.5-0.5B-Instruct &bull; Full model roundtrip &bull; GPU inference comparison</p>
+<h3 style="letter-spacing:3px">PROOF 3 &bull; FULL-MODEL ROUNDTRIP, BYTE-IDENTICAL OUTPUTS</h3>
+<p style="color:var(--dim);font-size:.8rem">Qwen2.5-0.5B-Instruct &bull; every weight tensor encoded and decoded at full tier &bull; greedy decode (do_sample=False), 128 new tokens &bull; coherence_proof.json</p>
 <div class="case-stats">
 <div class="case-stat"><span class="cs-val" style="color:var(--accent)">290/290</span><span class="cs-lbl">LAYERS BIT-EXACT</span></div>
 <div class="case-stat"><span class="cs-val">494M</span><span class="cs-lbl">PARAMETERS</span></div>
-<div class="case-stat"><span class="cs-val" style="color:var(--accent)">3/3</span><span class="cs-lbl">PROMPTS IDENTICAL</span></div>
-<div class="case-stat"><span class="cs-val">166s</span><span class="cs-lbl">ROUNDTRIP TIME</span></div>
+<div class="case-stat"><span class="cs-val" style="color:var(--accent)">3/3</span><span class="cs-lbl">PROMPTS BYTE-IDENTICAL</span></div>
+<div class="case-stat"><span class="cs-val">67.6s</span><span class="cs-lbl">ROUNDTRIP (GPU RUN)</span></div>
 </div>
+<p style="color:var(--dim);font-size:.75rem;margin-top:.75rem">This is the strongest result on the page: the same model produces the same bytes before and after a full encode/decode, so the full tier changes nothing about inference. The 67.6 s is from proof_3_coherence_05b.json; the white paper&rsquo;s 166.5 s was an earlier CPU run. One oddity in coherence_proof.json: embed_tokens reports a cosine of 1.00102598, above 1, because the cosine was computed in fp16 and overflowed on a 136M-element tensor; the bit-exact flag on that layer is true and is the check that matters.</p>
 <div style="margin-top:1.5rem;border-top:1px solid var(--border);padding-top:1.25rem">
 <h4 style="color:var(--accent);font-size:.7rem;letter-spacing:2px;margin-bottom:.75rem">INFERENCE OUTPUT COMPARISON</h4>
 <table class="bench-table" style="font-size:.75rem">
@@ -796,8 +762,8 @@ SHARED<br>SSD POOL
 <div class="case-stat"><span class="cs-val" style="color:var(--accent)">4.83 GB</span><span class="cs-lbl">RAILGUN BINARY</span></div>
 <div class="case-stat"><span class="cs-val" style="color:var(--accent)">FITS</span><span class="cs-lbl">GPU ALLOC</span></div>
 </div>
-<p style="margin-top:1rem;color:var(--dim);font-size:.75rem">77.2 GB at fp16 &rarr; 4.83 GB via Railgun Binary. GPU allocation proven on 16 GB card with 9.37 GB headroom remaining.</p>
-<p style="color:var(--accent);font-size:.8rem;font-weight:700;letter-spacing:2px;margin-top:.5rem">10 SAMPLED TENSORS: BIT-EXACT &bullet; DECODE: 141.6M PARAMS/S</p>
+<p style="margin-top:1rem;color:var(--dim);font-size:.75rem">I allocated a 4&times;-duplicated 38.6B tensor set (4.83 GB at 1 bit/weight) on the 16 GB card with 9.37 GB left. This is an allocation test. I didn&rsquo;t run inference on it. 10 sampled tensors roundtripped bit-exact at 141.6M params/s decode.</p>
+<p style="color:var(--accent);font-size:.8rem;font-weight:700;letter-spacing:2px;margin-top:.5rem">ALLOCATION TEST, NO INFERENCE RUN</p>
 </div>
 <!-- PROOF 5: 3x CONCURRENT -->
 <div class="case-banner" style="max-width:900px;margin-bottom:2rem">
@@ -809,21 +775,21 @@ SHARED<br>SSD POOL
 <div class="case-stat"><span class="cs-val" style="color:var(--accent)">3.62 GB</span><span class="cs-lbl">RAILGUN TOTAL</span></div>
 <div class="case-stat"><span class="cs-val">13.3 GB</span><span class="cs-lbl">HEADROOM LEFT</span></div>
 </div>
-<p style="margin-top:1rem;color:var(--dim);font-size:.75rem">Each 9.65B model: 19.31 GB at fp16 &rarr; 1.21 GB via Railgun Binary. Three instances = 3.62 GB. A single consumer GPU runs 3 expert models simultaneously.</p>
-<p style="color:var(--accent);font-size:.8rem;font-weight:700;letter-spacing:2px;margin-top:.5rem">fp16: IMPOSSIBLE &bullet; RAILGUN: 3&times; WITH 13 GB TO SPARE</p>
+<p style="margin-top:1rem;color:var(--dim);font-size:.75rem">I allocated three 9B routing tiers on one 16 GB card (1.21 GB each, 3.62 GB total, 13.3 GB left). This is an allocation test. I didn&rsquo;t run inference on them, and three instances would share one NVMe link for their residuals.</p>
+<p style="color:var(--accent);font-size:.8rem;font-weight:700;letter-spacing:2px;margin-top:.5rem">ALLOCATION TEST, NO INFERENCE RUN</p>
 </div>
 <!-- PROOF 6: CONTEXT STABILITY -->
 <div class="case-banner" style="max-width:900px;margin-bottom:2rem">
-<h3 style="letter-spacing:3px">PROOF 6 &bull; GF(17) CONTEXT STABILITY</h3>
-<p style="color:var(--dim);font-size:.8rem">Cumulative drift test &bull; 20M multiply-accumulate ops &bull; GF(17) vs fp16</p>
+<h3 style="letter-spacing:3px">PROOF 6 &bull; GF(17) RESIDUE STABILITY (SYNTHETIC)</h3>
+<p style="color:var(--dim);font-size:.8rem">Cumulative sum test on synthetic arrays &bull; 20M ops, 10,000 pack/unpack cycles &bull; GF(17) vs naive sequential fp16</p>
 <div class="case-stats">
 <div class="case-stat"><span class="cs-val" style="color:var(--accent)">1.000</span><span class="cs-lbl">GF17 COSINE SIM</span></div>
 <div class="case-stat"><span class="cs-val" style="color:#e74c3c">&minus;0.030</span><span class="cs-lbl">FP16 COSINE SIM</span></div>
 <div class="case-stat"><span class="cs-val" style="color:var(--accent)">0.0</span><span class="cs-lbl">GF17 MAX ERROR</span></div>
 <div class="case-stat"><span class="cs-val" style="color:#e74c3c">7.85</span><span class="cs-lbl">FP16 MAX ERROR</span></div>
 </div>
-<p style="margin-top:1rem;color:var(--dim);font-size:.75rem">After 20 million multiply-accumulate operations, fp16 cosine similarity collapses to &minus;0.03 (anti-correlated). GF(17) remains bit-exact at CS=1.0 with zero error. At 1M token sequences, fp16 relative error reaches 95.5%.</p>
-<p style="color:var(--accent);font-size:.8rem;font-weight:700;letter-spacing:2px;margin-top:.5rem">GF(17): ALGEBRAICALLY DRIFT-FREE &bullet; FP16: CATASTROPHIC ACCUMULATION</p>
+<p style="margin-top:1rem;color:var(--dim);font-size:.75rem">GF(17) residues don&rsquo;t accumulate rounding error, by construction. My fp16 comparison used naive sequential summation, which real kernels don&rsquo;t do (they accumulate in fp32), so read it as an illustration, not a benchmark. I ran 20M ops and 10,000 pack/unpack cycles; the JSON is linked. The fp16 cosine is &minus;0.030 at 1M, 10M, and 20M ops alike, so the naive sum had saturated by 1M. The 95.5% relative error is a naive fp16 sum of 1M values against fp64, from the same JSON.</p>
+<p style="color:var(--accent);font-size:.8rem;font-weight:700;letter-spacing:2px;margin-top:.5rem">GF(17): EXACT BY CONSTRUCTION &bullet; fp16 COLUMN: NAIVE SUM, ILLUSTRATION ONLY</p>
 </div>
 <!-- PROOF 7: SPEED THROUGHPUT -->
 <div class="case-banner" style="max-width:900px;margin-bottom:2rem">
@@ -835,25 +801,25 @@ SHARED<br>SSD POOL
 <div class="case-stat"><span class="cs-val" style="color:var(--accent)">16&times;</span><span class="cs-lbl">COMPRESSION</span></div>
 <div class="case-stat"><span class="cs-val" style="color:var(--accent)">10/10</span><span class="cs-lbl">BIT-EXACT</span></div>
 </div>
-<p style="margin-top:1rem;color:var(--dim);font-size:.75rem">10 sampled tensors (503M params) from Qwen3.5-9B. Encode: 96.6M params/s, Decode: 121.7M params/s. All 10 tensors bit-exact (CS=1.0, SNR &gt;147 dB). Full model estimated: encode 100s, decode 79s.</p>
+<p style="margin-top:1rem;color:var(--dim);font-size:.75rem">10 sampled tensors (503M params) from Qwen3.5-9B. Encode 96.6M params/s, decode 121.7M params/s, all 10 bit-exact (SNR &gt;147 dB against fp32). Full model estimated from those rates: encode 100 s, decode 79 s. The same JSON gives the store sizes: 62.9 MB in VRAM, 1,761.6 MB on SSD, against 1,006.6 MB of fp16, which is where the 16&times; resident and 1.75&times; total figures on this page come from.</p>
 <p style="color:var(--accent);font-size:.8rem;font-weight:700;letter-spacing:2px;margin-top:.5rem">GPU CODEC: 121.7M PARAMS/S DECODE &bullet; ALL BIT-EXACT</p>
 </div>
 <!-- PROOF 8: REAL INFERENCE LATENCY -->
 <div class="case-banner" style="max-width:900px;margin-bottom:2rem">
-<h3 style="letter-spacing:3px">PROOF 8 &bull; REAL INFERENCE LATENCY (9B MODEL)</h3>
-<p style="color:var(--dim);font-size:.8rem">Qwen3.5-9B &bull; 249 layers Railgun-compressed &bull; Binary (k=2) &bull; ZERO CPU offload</p>
+<h3 style="letter-spacing:3px">PROOF 8 &bull; 1-BIT-TIER TOKEN LATENCY (9B MODEL)</h3>
+<p style="color:var(--dim);font-size:.8rem">Qwen3.5-9B &bull; 249 linear layers on the 1-bit tier &bull; Binary (k=2) &bull; whole model on GPU &bull; latency only, not quality</p>
 <div class="case-stats">
-<div class="case-stat"><span class="cs-val" style="color:var(--accent)">1.5 tok/s</span><span class="cs-lbl">RAILGUN THROUGHPUT</span></div>
-<div class="case-stat"><span class="cs-val" style="color:#e74c3c">0.9 tok/s</span><span class="cs-lbl">BASELINE (OFFLOAD)</span></div>
-<div class="case-stat"><span class="cs-val" style="color:var(--accent)">0.99 GB</span><span class="cs-lbl">RAILGUN VRAM</span></div>
-<div class="case-stat"><span class="cs-val" style="color:var(--accent)">7&times;</span><span class="cs-lbl">TTFT SPEEDUP</span></div>
+<div class="case-stat"><span class="cs-val" style="color:var(--accent)">1.5 tok/s</span><span class="cs-lbl">1-BIT TIER, 676 ms/TOKEN</span></div>
+<div class="case-stat"><span class="cs-val" style="color:#e74c3c">0.9 tok/s</span><span class="cs-lbl">fp16 WITH 12/39 LAYERS ON CPU</span></div>
+<div class="case-stat"><span class="cs-val" style="color:var(--accent)">3.06 GB</span><span class="cs-lbl">VRAM, MODEL + ACTIVATIONS</span></div>
+<div class="case-stat"><span class="cs-val">0.99 GB</span><span class="cs-lbl">OF THAT, THE 249 PATCHED LAYERS</span></div>
 </div>
-<p style="margin-top:1rem;color:var(--dim);font-size:.75rem">31.74 GB model compressed to 0.99 GB (32&times;). Entire 8.95B model on GPU with ZERO CPU offload. TTFT: 960ms warm vs 7245ms baseline (7.5&times;). Avg latency: 676ms/tok. Baseline required 12/39 layers on CPU due to VRAM limits.</p>
-<p style="color:var(--accent);font-size:.8rem;font-weight:700;letter-spacing:2px;margin-top:.5rem">1.7&times; THROUGHPUT &bullet; 7.5&times; TTFT &bullet; ZERO CPU OFFLOAD</p>
+<p style="margin-top:1rem;color:var(--dim);font-size:.75rem">With all 249 layers on the 1-bit tier the 9B model runs at 1.5 tok/s and 676 ms/token on my 7800 XT, with 3.06 GB allocated after warmup (the 0.99 GB in the JSON is the patched layers alone; the 32&times; ratio it reports is against an fp32 reference, not fp16). The baseline I had (fp16 with 12 of 39 layers offloaded to CPU, bench_token_latency.json) ran 0.9 tok/s and produced broken text, so it isn&rsquo;t a fair comparator; a Q4 GGUF of the same model that fits in VRAM would be much faster. Output text at the 1-bit tier is not shown because it&rsquo;s not a quality benchmark.</p>
+<p style="color:var(--accent);font-size:.8rem;font-weight:700;letter-spacing:2px;margin-top:.5rem">LATENCY ONLY &bullet; 1-BIT-TIER QUALITY NOT MEASURED</p>
 </div>
 <!-- DOWNLOAD LINKS -->
 <div style="margin-top:1.5rem">
-<p style="color:var(--accent);font-size:.85rem;font-weight:700;letter-spacing:2px;margin-bottom:1rem">8 INDEPENDENT PROOFS &mdash; ALL CLAIMS VERIFIED ON REAL HARDWARE</p>
+<p style="color:var(--accent);font-size:.85rem;font-weight:700;letter-spacing:2px;margin-bottom:1rem">RAW JSON FOR EACH RUN</p>
 <div style="display:flex;justify-content:center;gap:1rem;flex-wrap:wrap">
 <a href="proof_1_fp16_crash.json" class="demo-dl" style="font-size:.65rem;padding:.5rem 1.5rem;background:transparent;border:1px solid var(--accent);color:var(--accent);text-decoration:none" download>PROOF 1: FP16 CRASH</a>
 <a href="proof_2_railgun_9b.json" class="demo-dl" style="font-size:.65rem;padding:.5rem 1.5rem;background:transparent;border:1px solid var(--accent);color:var(--accent);text-decoration:none" download>PROOF 2: RAILGUN 9B</a>
@@ -871,8 +837,8 @@ SHARED<br>SSD POOL
 <section id="demo">
 <h2>TRY IT YOURSELF</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.8;color:var(--dim);font-size:.9rem;margin-bottom:1.5rem">
-<p>An <strong style="color:var(--text)">encrypted evaluation package</strong> is available that lets you verify these claims on your own hardware. It runs benchmark comparisons between Railgun and industry-standard quantization methods, outputting measured VRAM usage, cosine similarity, and streaming latency.</p>
-<p style="margin-top:.75rem">The implementation is compiled and encrypted. <strong style="color:var(--text)">You can see what it does. You cannot see how it does it.</strong></p>
+<p>An <strong style="color:var(--text)">encrypted evaluation package</strong> (v1.0) lets you rerun the measured parts on your own hardware: VRAM usage, cosine similarity against fp16, and streaming latency, alongside GPTQ, AWQ, and GGML on the same tensors. The white paper is v2.0.</p>
+<p style="margin-top:.75rem">The implementation is compiled and encrypted, so you get the measurements and the harness without the encoder and decoder source.</p>
 </div>
 <div class="demo-section">
 <div class="demo-header">
@@ -888,7 +854,7 @@ SHARED<br>SSD POOL
 <li>Cosine similarity vs fp16 ground truth</li>
 <li>Streaming latency on your NVMe/PCIe</li>
 <li>Head-to-head vs GPTQ, AWQ, GGML</li>
-<li>Context stability test (512 &rarr; 1M tokens)</li>
+<li>Residue stability test (cumulative sums and pack/unpack cycles, synthetic arrays)</li>
 <li>Multi-model loading benchmark</li>
 <li>Full results exported as JSON + charts</li>
 </ul>
@@ -929,10 +895,10 @@ SHARED<br>SSD POOL
 
 <!-- ====== ABOUT THE INVENTOR ====== -->
 <section>
-<h2>ABOUT THE INVENTOR</h2>
+<h2>ABOUT THE AUTHOR</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.8;color:var(--dim);font-size:.9rem">
-<p><strong style="color:var(--text)">Amnibro</strong> is an independent researcher and the sole inventor of AmniTex Railgun. The core insight &mdash; that <span class="redacted" title="Proprietary">[CLASSIFIED ALGEBRAIC STRUCTURE]</span> forms a natural lossless encoding for fp16 values, enabling progressive algebraic compression with zero drift &mdash; is his original intellectual contribution.</p>
-<p style="margin-top:.75rem">Implementation was accelerated using AI coding tools under <strong style="color:var(--text)">full human conceptual control</strong>. All mathematical foundations, architectural decisions, experimental methodology, and research direction are the original work of the author. The AI assisted with code generation and iteration speed &mdash; the ideas, proofs, and engineering judgment are entirely human.</p>
+<p>I&rsquo;m <strong style="color:var(--text)">Anthony Reffelt</strong>, an independent researcher, and Railgun is my work. The core idea, that a <span class="redacted" title="Proprietary">[CLASSIFIED ALGEBRAIC STRUCTURE]</span> gives a bit-exact container for fp16 values with a tiny resident tier, is mine.</p>
+<p style="margin-top:.75rem">I used AI coding tools to move faster on the implementation. The math, the architecture, the experimental setup, and the calls about what to measure and what to say about it are mine, and so are the mistakes.</p>
 <p style="margin-top:.75rem;font-size:.8rem;color:var(--dim)">Contact: <a href="mailto:amnibro7@gmail.com" style="color:var(--accent)">amnibro7@gmail.com</a> &bull; <a href="https://amni-scient.com" style="color:var(--accent)">amni-scient.com</a></p>
 </div>
 </section>
@@ -983,18 +949,18 @@ function initCtx(){
     {label:'GPTQ 4-bit',data:[0.995,0.995,0.994,0.993,0.991,0.988,0.982,0.973,0.960,0.942,0.919,0.891],borderColor:PURPLE,pointRadius:3,tension:0.3,borderWidth:2},
     {label:'AWQ 4-bit',data:[0.996,0.996,0.995,0.994,0.992,0.989,0.984,0.975,0.963,0.946,0.924,0.897],borderColor:BLUE,pointRadius:3,tension:0.3,borderWidth:2},
     {label:'Railgun Full Tier',data:[1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000],borderColor:ACCENT,borderWidth:3,pointRadius:4,tension:0,pointBackgroundColor:ACCENT}
-  ]},options:{scales:{y:{min:0.85,max:1.01,title:{display:true,text:'Cosine Similarity to Ground Truth'}},x:{title:{display:true,text:'Context Length (tokens)'}}},plugins:{tooltip:{callbacks:{label:function(c){return c.dataset.label+': '+c.parsed.y.toFixed(6);}}}}}});
+  ]},options:{scales:{y:{min:0.85,max:1.01,title:{display:true,text:'Cosine Similarity to Ground Truth'}},x:{title:{display:true,text:'Context Length (tokens)'}}},plugins:{title:{display:true,text:'Illustrative curves, not measured',color:ACCENT,font:{size:11,family:'JetBrains Mono'}},tooltip:{callbacks:{label:function(c){return c.dataset.label+': '+c.parsed.y.toFixed(6);}}}}}});
   makeChart('chart-effective-precision',{type:'line',data:{labels:['512','4K','16K','64K','256K','1M','4M','10M'],datasets:[
     {label:'fp16 effective bits',data:[16.0,16.0,15.99,15.97,15.91,15.78,15.52,15.21],borderColor:GRAY,borderDash:[5,5],pointRadius:2,tension:0.3},
     {label:'GPTQ effective bits',data:[4.0,3.99,3.97,3.93,3.84,3.68,3.41,3.11],borderColor:PURPLE,pointRadius:2,tension:0.3},
     {label:'Railgun VRAM (routing)',data:[2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0],borderColor:RED,pointRadius:2,tension:0,borderDash:[3,3]},
     {label:'Railgun effective (streamed)',data:[16.0,16.0,16.0,16.0,16.0,16.0,16.0,16.0],borderColor:ACCENT,borderWidth:2,pointRadius:3,tension:0}
-  ]},options:{scales:{y:{min:0,max:18,title:{display:true,text:'Effective Bits per Element'}},x:{title:{display:true,text:'Context Length'}}}}});
+  ]},options:{scales:{y:{min:0,max:18,title:{display:true,text:'Effective Bits per Element'}},x:{title:{display:true,text:'Context Length'}}},plugins:{title:{display:true,text:'Illustrative, not measured',color:ACCENT,font:{size:11,family:'JetBrains Mono'}}}}});
   makeChart('chart-attention-error',{type:'line',data:{labels:['512','4K','16K','64K','256K','1M','4M','10M'],datasets:[
     {label:'fp16 cumulative drift',data:[1e-12,2e-11,8e-10,3e-8,5e-6,2e-4,8e-3,5e-2],borderColor:GRAY,borderDash:[5,5],pointRadius:2,tension:0.3},
     {label:'GPTQ error',data:[1e-5,3e-5,1e-4,5e-4,3e-3,2e-2,1e-1,5e-1],borderColor:PURPLE,pointRadius:2,tension:0.3},
     {label:'Railgun Full (bounded)',data:[1.7e-11,1.7e-11,1.7e-11,1.7e-11,1.7e-11,1.7e-11,1.7e-11,1.7e-11],borderColor:ACCENT,borderWidth:2,pointRadius:3,tension:0}
-  ]},options:{scales:{y:{type:'logarithmic',min:1e-13,max:1,title:{display:true,text:'Cumulative Attention Error (MSE)'}},x:{title:{display:true,text:'Context Length'}}}}});
+  ]},options:{scales:{y:{type:'logarithmic',min:1e-13,max:1,title:{display:true,text:'Cumulative Attention Error (MSE)'}},x:{title:{display:true,text:'Context Length'}}},plugins:{title:{display:true,text:'Illustrative, not measured',color:ACCENT,font:{size:11,family:'JetBrains Mono'}}}}});
 }
 function initMux(){
   makeChart('chart-multiplex-throughput',{type:'bar',data:{labels:['7B','13B','34B','70B','405B'],datasets:[
@@ -1028,20 +994,20 @@ function initQual(){
   ]},options:{scales:{y:{type:'logarithmic',title:{display:true,text:'VRAM (GB)'},min:0.5},x:{title:{display:true,text:'Model Size'}}}}});
 }
 function initStab(){
-  makeChart('chart-stress-50m',{type:'bar',data:{labels:['1 op','10K ops','100K ops','1M ops','10M ops','50M ops'],datasets:[
-    {label:'Cosine Similarity After N Operations',data:[0.9872,0.9872,0.9872,0.9872,0.9872,0.9872],backgroundColor:['rgba(0,255,157,0.7)','rgba(0,255,157,0.7)','rgba(0,255,157,0.7)','rgba(0,255,157,0.7)','rgba(0,255,157,0.7)','rgba(0,255,157,0.7)'],borderColor:ACCENT,borderWidth:1}
-  ]},options:{scales:{y:{min:0.95,max:1.0,title:{display:true,text:'Cosine Similarity'}},x:{title:{display:true,text:'Cumulative Operations'}}},plugins:{title:{display:true,text:'SAME VALUE. EVERY BAR. 50 MILLION TIMES.',color:ACCENT,font:{size:11,family:'JetBrains Mono'}},tooltip:{callbacks:{label:function(c){return 'CS: 0.9872201411';}}}}}});
-  makeChart('chart-fp16-decay',{type:'line',data:{labels:['64','1K','16K','64K','256K','1M'],datasets:[
-    {label:'fp16 vs fp32 Relative Error',data:[0.000315,0.000632,0.00231,0.00491,0.00884,0.0175],borderColor:RED,pointRadius:4,tension:0.3,borderWidth:2,fill:true,backgroundColor:'rgba(231,76,60,0.1)'},
-    {label:'Railgun Encoding Error',data:[0,0,0,0,0,0],borderColor:ACCENT,borderWidth:3,pointRadius:4,tension:0,borderDash:[5,5],pointBackgroundColor:ACCENT}
-  ]},options:{scales:{y:{min:0,title:{display:true,text:'Relative Error'}},x:{title:{display:true,text:'Context Length (tokens)'}}},plugins:{title:{display:true,text:'55\u00d7 ERROR GROWTH IN FP16 \u2014 ZERO IN RAILGUN',color:ACCENT,font:{size:11,family:'JetBrains Mono'}}}}});
-  makeChart('chart-cycle-stability',{type:'line',data:{labels:['1','100','1K','10K','50K','100K'],datasets:[
-    {label:'CS After N Pack/Unpack Cycles',data:[0.99997,0.99997,0.99997,0.99997,0.99997,0.99997],borderColor:ACCENT,borderWidth:3,pointRadius:5,pointBackgroundColor:ACCENT,tension:0,fill:true,backgroundColor:'rgba(0,255,157,0.05)'}
-  ]},options:{scales:{y:{min:0.998,max:1.001,title:{display:true,text:'Cosine Similarity'}},x:{title:{display:true,text:'Pack/Unpack Cycles'}}},plugins:{title:{display:true,text:'100,000 CYCLES. ZERO ADDITIONAL DRIFT.',color:ACCENT,font:{size:11,family:'JetBrains Mono'}}}}});
-  makeChart('chart-roundtrip-fidelity',{type:'bar',data:{labels:['Normal','Heavy-Tail','Uniform','Sparse','Log-Normal'],datasets:[
-    {label:'fp16 \u2192 Encoding \u2192 fp16',data:[1.000000,1.000000,1.000000,1.000000,1.000000],backgroundColor:'rgba(0,255,157,0.7)',borderColor:ACCENT,borderWidth:1},
-    {label:'fp32 \u2192 Encoding \u2192 fp32',data:[1.000000,1.000000,1.000000,1.000000,1.000000],backgroundColor:'rgba(46,204,113,0.5)',borderColor:GREEN,borderWidth:1}
-  ]},options:{scales:{y:{min:0.990,max:1.005,title:{display:true,text:'Cosine Similarity'}},x:{title:{display:true,text:'Weight Distribution'}}},plugins:{title:{display:true,text:'BIT-EXACT ACROSS EVERY DISTRIBUTION TESTED',color:ACCENT,font:{size:11,family:'JetBrains Mono'}}}}});
+  makeChart('chart-stress-50m',{type:'bar',data:{labels:['1M ops','10M ops','20M ops'],datasets:[
+    {label:'GF(17) cosine similarity (proof_6 cumulative_drift)',data:[1.0,1.0,1.0],backgroundColor:['rgba(0,255,157,0.7)','rgba(0,255,157,0.7)','rgba(0,255,157,0.7)'],borderColor:ACCENT,borderWidth:1},
+    {label:'fp16 naive sequential sum, cosine',data:[-0.0300148231,-0.0300148231,-0.0300148231],backgroundColor:['rgba(231,76,60,0.5)','rgba(231,76,60,0.5)','rgba(231,76,60,0.5)'],borderColor:RED,borderWidth:1}
+  ]},options:{scales:{y:{min:-0.1,max:1.05,title:{display:true,text:'Cosine Similarity'}},x:{title:{display:true,text:'Cumulative Operations'}}},plugins:{title:{display:true,text:'GF(17) CS 1.0 and max error 0 at each checkpoint (measured, synthetic arrays)',color:ACCENT,font:{size:11,family:'JetBrains Mono'}},tooltip:{callbacks:{label:function(c){return c.dataset.label+': '+c.parsed.y.toFixed(10);}}}}}});
+  makeChart('chart-fp16-decay',{type:'line',data:{labels:['1K','8K','32K','128K','1M'],datasets:[
+    {label:'fp16 naive sequential sum, relative error vs fp64 (proof_6)',data:[0.0058019121,0.2598664633,0.5763395345,0.816318557,0.9547895634],borderColor:RED,pointRadius:4,tension:0.3,borderWidth:2,fill:true,backgroundColor:'rgba(231,76,60,0.1)'},
+    {label:'GF(17) residue error',data:[0,0,0,0,0],borderColor:ACCENT,borderWidth:3,pointRadius:4,tension:0,borderDash:[5,5],pointBackgroundColor:ACCENT}
+  ]},options:{scales:{y:{min:0,title:{display:true,text:'Relative Error'}},x:{title:{display:true,text:'Elements summed'}}},plugins:{title:{display:true,text:'Illustration: naive fp16 sum, not an fp32-accumulating kernel',color:ACCENT,font:{size:11,family:'JetBrains Mono'}}}}});
+  makeChart('chart-cycle-stability',{type:'line',data:{labels:['1','10','100','1K','5K','10K'],datasets:[
+    {label:'CS after N pack/unpack cycles (proof_6 cycle_stability)',data:[1.0,1.0,1.0,1.0,1.0,1.0],borderColor:ACCENT,borderWidth:3,pointRadius:5,pointBackgroundColor:ACCENT,tension:0,fill:true,backgroundColor:'rgba(0,255,157,0.05)'}
+  ]},options:{scales:{y:{min:0.998,max:1.001,title:{display:true,text:'Cosine Similarity'}},x:{title:{display:true,text:'Pack/Unpack Cycles'}}},plugins:{title:{display:true,text:'10,000 cycles on 10,000 elements, max error 0 at every checkpoint (measured)',color:ACCENT,font:{size:11,family:'JetBrains Mono'}}}}});
+  makeChart('chart-roundtrip-fidelity',{type:'bar',data:{labels:['Normal','Heavy-Tail','Bimodal','Uniform','Laplace','Sparse 90%','Log-Normal'],datasets:[
+    {label:'fp16 \u2192 Encoding \u2192 fp16, CS after 1,000 cycles (proof_6 cross_distribution)',data:[1.0,1.0,1.0,1.0,1.0,1.0,1.0],backgroundColor:'rgba(0,255,157,0.7)',borderColor:ACCENT,borderWidth:1}
+  ]},options:{scales:{y:{min:0.990,max:1.005,title:{display:true,text:'Cosine Similarity'}},x:{title:{display:true,text:'Weight Distribution (500K elements each)'}}},plugins:{title:{display:true,text:'Bit-exact on all 7 synthetic distributions (measured); fp32 roundtrip is in the white paper only',color:ACCENT,font:{size:11,family:'JetBrains Mono'}}}}});
 }
 initedTabs['tab-context']=true;
 initCtx();
