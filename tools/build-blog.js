@@ -18,6 +18,8 @@ function parseFront(raw) {
     if ((v[0] === '"' && v.endsWith('"')) || (v[0] === "'" && v.endsWith("'"))) v = v.slice(1, -1);
     meta[k] = v;
   }
+  if (!meta.summary && meta.description) meta.summary = meta.description;
+  delete meta.source_work;
   return { meta, body: raw.slice(end + 4).replace(/^\s+/, '') };
 }
 function esc(s) {
@@ -85,6 +87,7 @@ ${a('/research.html', 'RESEARCH', 'research')}
 <a href="/amni-crypt.html">AMNI-CRYPT</a>
 <a href="/amni-life.html">AMNI-LIFE</a>
 <a href="/amni-prayer.html">AMNI-PRAYER</a>
+<a href="/amni-type.html">AMNI-TYPE</a>
 <a href="/amni-mail.html">AMNI-MAIL</a>
 </div>
 </div>
