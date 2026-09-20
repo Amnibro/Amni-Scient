@@ -1,3 +1,12 @@
+## 2026-09-20 — Amni-Type 0.10.0 download, one grouped PROJECTS menu on every page
+- `downloads/amni-type.apk` is the 0.10.0 build (shape-and-location swipe decoder, versionCode 31). Product page shows version, size and Android floor under the button, plus a "New in 0.10.0" paragraph.
+- The PROJECTS dropdown was 26 different lists across 47 pages (18 to 23 entries, no two product pages alike). It is now one block, grouped AI / Desktop & OS / Phone / Learn & Explore / Life, five columns on desktop, three under 1100px, stacked in the phone drawer. Product pages keep `nav-dd--active`. Braid pages keep their own MORE menu.
+- Source of truth for the block is `index.html`; re-stamp with the regex in this entry's commit if it changes again.
+
+## 2026-09-14 — Blog catch-up (Aug 23–Sep 8)
+- Eight ship-log posts for user-visible releases since 2026-08-20: Type, Grok-Remote desktop, Connect installers, HedgeDoc Android, Browse Android+Windows, Amni v2, Amni OS 0.4.4, research honesty pass.
+- Blog PROJECTS nav matches the home catalog (OS, HedgeDoc, Type, Mail, Game v2).
+- `npm run blog` writes `/blog/`, permalinks, RSS, sitemap.
 ## 2026-09-12 — Amni-Connect v1.6.9 on the product page
 - GitHub `releases/latest` is v1.6.9. Feed `connect/latest.json` and `amni-connect.html` version labels match. Windows Setup is live; Linux AppImage/.deb/.rpm attach from the tag CI.
 
