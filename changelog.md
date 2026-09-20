@@ -1,3 +1,7 @@
+## 2026-09-20 — Old-project pass 1: Explore's NASA feed, LLM threads, Calc ad
+- **Amni-Explore** called the NASA Exoplanet Archive straight from the browser and got blocked by CORS on every load, then fell back to its embedded list and threw an uncaught TypeError from `initAds`. A fetch shim in `explore/index.html` reroutes that call to `explore/data/exoplanets.json` (1,000 newest planets, 134 KB), refreshed every Monday by `.github/workflows/exoplanets.yml`. The bundle itself is obfuscated, so the shim lives in the page head.
+- **Amni-LLM** ran without cross-origin isolation on the live site (the service-worker fallback did not take), so wllama was single-threaded. New `_headers` sends COOP `same-origin` + COEP `credentialless` for `/lib/amni-llm/*`.
+
 ## 2026-09-20 — Dead buttons on Amni-AI and Amni-Core
 - Live audit of 39 download/release links across 22 product pages: every binary answers. Two buttons did not: Amni-AI's install guide and tutorial pointed at `docs/` files the public repo does not carry (docs stay local by policy), now the README and changelog; Amni-Core's "View on GitHub" opened a private repo (404 for everyone), now the v3.582 OS image download from the Amni-Scient release.
 

@@ -1,0 +1,36 @@
+name: exoplanets
+on:
+  schedule:
+    - cron: '40 5 * * 1'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: exoplanets
+  cancel-in-progress: false
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Fetch NASA Exoplanet Archive snapshot
+        run: |
+          set -e
+          curl -sf -o /tmp/exo.json "https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+top+1000+pl_name,hostname,pl_rade,pl_bmasse,st_teff,pl_orbsmax,pl_eqt+from+ps+where+st_teff+is+not+null+and+pl_rade+is+not+null+order+by+disc_year+desc&format=json"
+          python3 -c "import json;d=json.load(open('/tmp/exo.json'));assert len(d)>500,len(d);json.dump(d,open('explore/data/exoplanets.json','w'),separators=(',',':'))"
+      - name: Commit if changed
+        run: |
+          set -e
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add explore/data/exoplanets.json
+          git diff --staged --quiet && { echo "No change"; exit 0; }
+          git commit -m "Amni-Explore: refresh NASA exoplanet snapshot ($(date -u +%Y-%m-%d))."
+          for i in 1 2 3 4; do
+            git fetch origin main && git rebase origin/main && git push origin HEAD:main && exit 0
+            git rebase --abort 2>/dev/null || true; sleep 15
+          done
+          exit 1
