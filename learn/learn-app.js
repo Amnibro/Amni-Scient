@@ -14956,7 +14956,7 @@ function playAnimalSound(type) {
     const nmmMode=sessionStorage.getItem('nmm-mode')||'forward';
     const bestKey='nmm-best-'+nmmMode;
     const _lvl=Math.min(currentLevel||3,5);
-    let dg=(_lvl<=2?3:_lvl>=4?5:4),best=parseInt(localStorage.getItem(bestKey)||sessionStorage.getItem(bestKey)||sessionStorage.getItem('nmm-best')||'0'),tgt='',history=[];
+    const dg0=(_lvl<=2?3:_lvl>=4?5:4);let dg=dg0,best=parseInt(localStorage.getItem(bestKey)||sessionStorage.getItem(bestKey)||sessionStorage.getItem('nmm-best')||'0'),tgt='',history=[];
     if(window._nmmTimeout){clearTimeout(window._nmmTimeout);window._nmmTimeout=null;}
     if(window._nmmCount){clearInterval(window._nmmCount);window._nmmCount=null;}
     document.querySelectorAll('.nmm-summary,.nmm-mode-row').forEach(n=>n.remove());
@@ -14981,7 +14981,7 @@ function playAnimalSound(type) {
       else if(reached>=8)(_jzSfx('combo'),spawnConfetti)(window.innerWidth/2,window.innerHeight/3,60);
       showFeedback(`Reached ${reached} digits \u2022 ${t.label} \ud83e\udde0`, wasBest?'#2ecc71':'#f1c40f');
       addScore(Math.max(1,reached-2));
-      const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='TRY AGAIN';rb.style.marginTop='8px';rb.onclick=()=>{dg=3;history=[];$$('#nmm-dg').textContent=3;$$('#nmm-stk').textContent=0;show();};ct.appendChild(rb);
+      const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='TRY AGAIN';rb.style.marginTop='8px';rb.onclick=()=>{dg=dg0;history=[];$$('#nmm-dg').textContent=dg0;$$('#nmm-stk').textContent=0;show();};ct.appendChild(rb);
     }
     function show(){
       tgt='';for(let i=0;i<dg;i++)tgt+=Math.floor(Math.random()*10);
@@ -15021,7 +15021,7 @@ function playAnimalSound(type) {
       },showMs);
     }
     ct.innerHTML=`<div class="nmm-msg">See a number, memorize it, type it back. Length grows each round you nail.</div>`;
-    const sb=document.createElement('button');sb.className='nmm-btn';sb.textContent='START';sb.onclick=()=>{dg=3;history=[];show();};
+    const sb=document.createElement('button');sb.className='nmm-btn';sb.textContent='START';sb.onclick=()=>{dg=dg0;history=[];$$('#nmm-dg').textContent=dg0;show();};
     ct.appendChild(sb);
   }
   function initStroop(){

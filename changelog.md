@@ -1,3 +1,8 @@
+## 2026-09-20 — Amni-Learn brain fixes: NEW badge, Number Memory digits
+- The NEW badge on 11 brain cards painted the whole card red: the base `.game-btn::before` sets `inset:0` and the badge rule only overrode top/right. Badge is a pill again.
+- Number Memory said "5 digits · Lvl 5" but START and TRY AGAIN always dealt a 3-digit number; both now use the level's starting length and the HUD follows.
+- Stress pass over all 32 brain games (button and key mashing for 2.5 s each): no runtime errors, no undefined/NaN text, no horizontal overflow, every game responds.
+
 ## 2026-09-20 — Amni-Learn: Brain Gym (4 new games, daily workout, progress map, new look for the brain level)
 - **Audit first:** all 32 brain games at level 6 launch with zero runtime errors and no dead links, so the work went into what was missing rather than into patches.
 - **Brain Gym** (`learn/brain-gym.js` + `brain-gym.css`, loaded after `learn-app.js`, self-contained overlay so the 7 MB app is untouched): Schulte Table (4×4 to 7×7, adapts to your time), Pattern Matrix (Raven-style 3×3 with four rule families, hard rules unlock at 8/10), Code Breaker (Mastermind, 6 colours, 10 guesses), Word Sprint (45 s category fluency against bundled lists: animals, foods, countries, body, sports). Each keeps a best in localStorage under `bg-*`, and every finish fires a particle burst.
