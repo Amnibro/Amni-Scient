@@ -1,3 +1,6 @@
+## 2026-09-20 — Dead buttons on Amni-AI and Amni-Core
+- Live audit of 39 download/release links across 22 product pages: every binary answers. Two buttons did not: Amni-AI's install guide and tutorial pointed at `docs/` files the public repo does not carry (docs stay local by policy), now the README and changelog; Amni-Core's "View on GitHub" opened a private repo (404 for everyone), now the v3.582 OS image download from the Amni-Scient release.
+
 ## 2026-09-20 — Amni-Type 0.10.0 download, one grouped PROJECTS menu on every page
 - `downloads/amni-type.apk` is the 0.10.0 build (shape-and-location swipe decoder, versionCode 31). Product page shows version, size and Android floor under the button, plus a "New in 0.10.0" paragraph.
 - The PROJECTS dropdown was 26 different lists across 47 pages (18 to 23 entries, no two product pages alike). It is now one block, grouped AI / Desktop & OS / Phone / Learn & Explore / Life, five columns on desktop, three under 1100px, stacked in the phone drawer. Product pages keep `nav-dd--active`. Braid pages keep their own MORE menu.
