@@ -1,3 +1,9 @@
+## 2026-09-20 — Amni-Learn: chess accepts every mate, Sudoku win panel, best scores survive the tab
+- **Chess Puzzles** only accepted the one recorded move. Validated all 282 puzzles offline with a small move generator: every recorded solution is a legal mate-in-one, and **62 puzzles have a second (or third) mating move** that the game called wrong and used to reset the streak. A runtime mate checker now accepts any legal checkmate; recorded solutions still pass 282/282, illegal moves still fail.
+- **Sudoku** ended with only a toast; it now shows a win panel with time, errors, best for that mode and difficulty, and a New Puzzle button.
+- **32 games saved their best scores to sessionStorage**, so bests vanished when the tab closed (Sudoku, Tower of London, Flanker, Corsi, Simon, Go/No-Go, Symbol Coding, Reaction, Anagrams, Snake, Tetris and more). A tiny storage shim in `learn/index.html` mirrors any session key containing best/wins/streak/solved/total/high into localStorage and reads it back, so every game persists without touching its code.
+- Move-based games probed by script: Card Pairs, Word Search, Logic, Tower of London, Anagrams, Morse, Ear Training all respond correctly; no runtime errors.
+
 ## 2026-09-20 — Amni-Learn brain fixes: NEW badge, Number Memory digits
 - The NEW badge on 11 brain cards painted the whole card red: the base `.game-btn::before` sets `inset:0` and the badge rule only overrode top/right. Badge is a pill again.
 - Number Memory said "5 digits · Lvl 5" but START and TRY AGAIN always dealt a 3-digit number; both now use the level's starting length and the HUD follows.
