@@ -1,3 +1,6 @@
+## 2026-09-20 — Amni-Learn Sudoku: real highlighting
+- Same-number cells were tinted 9 RGB points off the board colour, so they were invisible, and nothing marked the selected cell's row, column or box. Selecting a cell now shades its row, column and box (and the diagonals in X-Sudoku when you sit on one), same-number cells get a teal outline with bold white digits, and pencil marks matching the active number light up. Same-number follow the selected cell's value, then the last number you placed.
+
 ## 2026-09-20 — Amni-Learn: chess accepts every mate, Sudoku win panel, best scores survive the tab
 - **Chess Puzzles** only accepted the one recorded move. Validated all 282 puzzles offline with a small move generator: every recorded solution is a legal mate-in-one, and **62 puzzles have a second (or third) mating move** that the game called wrong and used to reset the streak. A runtime mate checker now accepts any legal checkmate; recorded solutions still pass 282/282, illegal moves still fail.
 - **Sudoku** ended with only a toast; it now shows a win panel with time, errors, best for that mode and difficulty, and a New Puzzle button.
