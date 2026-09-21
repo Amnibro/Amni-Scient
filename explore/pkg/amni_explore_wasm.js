@@ -73,6 +73,32 @@ export function planet_color_palette(ptype) {
 }
 
 /**
+ * @param {number} mass
+ * @param {number} rade
+ * @param {number} eqt
+ * @param {number} orbit
+ * @param {number} st_mass
+ * @param {number} lum
+ * @returns {string}
+ */
+export function planet_physics_json(mass, rade, eqt, orbit, st_mass, lum) {
+    let deferred1_0;
+    let deferred1_1;
+    try {
+        const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+        wasm.planet_physics_json(retptr, mass, rade, eqt, orbit, st_mass, lum);
+        var r0 = getDataViewMemory0().getInt32(retptr + 4 * 0, true);
+        var r1 = getDataViewMemory0().getInt32(retptr + 4 * 1, true);
+        deferred1_0 = r0;
+        deferred1_1 = r1;
+        return getStringFromWasm0(r0, r1);
+    } finally {
+        wasm.__wbindgen_add_to_stack_pointer(16);
+        wasm.__wbindgen_export3(deferred1_0, deferred1_1, 1);
+    }
+}
+
+/**
  * @param {number} rade
  * @param {number} mass
  * @param {number} eqt
@@ -123,6 +149,39 @@ export function star_class(temp) {
 export function star_color(temp) {
     const ret = wasm.star_color(temp);
     return takeObject(ret);
+}
+
+/**
+ * @param {number} t
+ * @returns {number}
+ */
+export function star_mass_from_teff(t) {
+    const ret = wasm.star_mass_from_teff(t);
+    return ret;
+}
+
+/**
+ * @param {number} seed
+ * @param {number} st_mass
+ * @param {number} fe_h
+ * @param {number} age_gyr
+ * @returns {string}
+ */
+export function synth_system_json(seed, st_mass, fe_h, age_gyr) {
+    let deferred1_0;
+    let deferred1_1;
+    try {
+        const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+        wasm.synth_system_json(retptr, seed, st_mass, fe_h, age_gyr);
+        var r0 = getDataViewMemory0().getInt32(retptr + 4 * 0, true);
+        var r1 = getDataViewMemory0().getInt32(retptr + 4 * 1, true);
+        deferred1_0 = r0;
+        deferred1_1 = r1;
+        return getStringFromWasm0(r0, r1);
+    } finally {
+        wasm.__wbindgen_add_to_stack_pointer(16);
+        wasm.__wbindgen_export3(deferred1_0, deferred1_1, 1);
+    }
 }
 
 function __wbg_get_imports() {
