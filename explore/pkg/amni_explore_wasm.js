@@ -11,6 +11,18 @@ export function gen_galaxy(particle_count, seed) {
 }
 
 /**
+ * @param {string} json
+ * @param {number} seed
+ * @returns {any}
+ */
+export function gen_hyg_systems(json, seed) {
+    const ptr0 = passStringToWasm0(json, wasm.__wbindgen_export, wasm.__wbindgen_export2);
+    const len0 = WASM_VECTOR_LEN;
+    const ret = wasm.gen_hyg_systems(ptr0, len0, seed);
+    return takeObject(ret);
+}
+
+/**
  * @param {string} ptype
  * @param {number} seed
  * @param {number} rade
