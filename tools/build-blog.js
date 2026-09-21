@@ -69,22 +69,25 @@ ${a('/research.html', 'RESEARCH', 'research')}
 <a href="/braid">BRAID</a>
 <a href="/symphony.html">SYMPHONY</a>
 <a href="/grok-remote.html">GROK-REMOTE</a>
+<a href="/amni-os.html">AMNI-OS</a>
 <a href="/amni-ai.html">AMNI-AI</a>
 <a href="/amni-browse.html">AMNI-BROWSE</a>
 <a href="/amni-calc.html">AMNI-CALC</a>
 <a href="/amni-explore.html">AMNI-EXPLORE</a>
 <a href="/amni-space.html">AMNI-SPACE</a>
 <a href="/amni-weather.html">AMNI-WEATHER</a>
-<a href="/game/">AMNI-GAME</a>
+<a href="/game/v2/">AMNI-GAME</a>
 <a href="/amni-learn.html">AMNI-LEARN</a>
 <a href="/amni-llm.html">AMNI-LLM</a>
 <a href="/amni-connect.html">AMNI-CONNECT</a>
 <a href="/amni-code.html">AMNI-CODE</a>
 <a href="/amni-core.html">AMNI-CORE</a>
 <a href="/amni-haven.html">AMNI-HAVEN</a>
+<a href="/amni-hedgedoc.html">HEDGEDOC</a>
 <a href="/amni-crypt.html">AMNI-CRYPT</a>
 <a href="/amni-life.html">AMNI-LIFE</a>
 <a href="/amni-prayer.html">AMNI-PRAYER</a>
+<a href="/amni-type.html">AMNI-TYPE</a>
 <a href="/amni-mail.html">AMNI-MAIL</a>
 </div>
 </div>
