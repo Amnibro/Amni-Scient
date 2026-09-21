@@ -19,8 +19,12 @@ jobs:
       - name: Fetch NASA Exoplanet Archive snapshot
         run: |
           set -e
-          curl -sf -o /tmp/exo.json "https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+top+1000+pl_name,hostname,pl_rade,pl_bmasse,st_teff,pl_orbsmax,pl_eqt+from+ps+where+st_teff+is+not+null+and+pl_rade+is+not+null+order+by+disc_year+desc&format=json"
-          python3 -c "import json;d=json.load(open('/tmp/exo.json'));assert len(d)>500,len(d);json.dump(d,open('explore/data/exoplanets.json','w'),separators=(',',':'))"
+          curl -sf -o /tmp/exo.json "https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+top+1000+pl_name,hostname,pl_rade,pl_bmasse,st_teff,pl_orbsmax,pl_eqt,ra,dec,sy_dist+from+ps+where+st_teff+is+not+null+and+pl_rade+is+not+null+and+default_flag=1+order+by+disc_year+desc&format=json"
+          curl -sf -o /tmp/comp.json "https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+hostname,ra,dec,sy_dist+from+pscomppars+where+sy_dist+is+not+null&format=json"
+          python3 -c "import json;d=json.load(open('/tmp/exo.json'));assert len(d)>500,len(d);c={r['hostname']:r for r in json.load(open('/tmp/comp.json'))};n=0
+          for r in d:
+              if r.get('sy_dist') is None and r['hostname'] in c:r.update({k:c[r['hostname']][k] for k in ('ra','dec','sy_dist')});n+=1
+          print('filled',n,'of',sum(1 for r in d if r.get('sy_dist') is None)+n);json.dump(d,open('explore/data/exoplanets.json','w'),separators=(',',':'))"
       - name: Commit if changed
         run: |
           set -e
