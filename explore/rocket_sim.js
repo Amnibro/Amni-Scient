@@ -4,6 +4,9 @@ kerolox:{name:'LOX / RP-1',rho_o:1141,rho_f:810,ofMin:1.8,ofMax:3.4,ofOpt:2.55,o
 hydrolox:{name:'LOX / LH2',rho_o:1141,rho_f:70.8,ofMin:3.5,ofMax:8.0,ofOpt:5.5,of:[3.5,4.5,5.5,6.5,8.0],Tc:[2880,3260,3520,3620,3540],M:[8.7,10.4,12.4,14.2,18.0],g:[1.265,1.24,1.22,1.20,1.165]},
 methalox:{name:'LOX / CH4',rho_o:1141,rho_f:423,ofMin:2.6,ofMax:4.2,ofOpt:3.55,of:[2.6,3.1,3.55,3.9,4.2],Tc:[3210,3430,3550,3560,3520],M:[17.1,18.9,20.4,21.7,22.8],g:[1.19,1.175,1.165,1.155,1.15]},
 hypergolic:{name:'N2O4 / UDMH',rho_o:1443,rho_f:793,ofMin:1.8,ofMax:3.2,ofOpt:2.6,of:[1.8,2.2,2.6,2.9,3.2],Tc:[3050,3260,3380,3360,3290],M:[21.0,22.6,23.9,24.8,25.6],g:[1.23,1.215,1.205,1.195,1.185]},
+ethalox:{name:'LOX / Ethanol',rho_o:1141,rho_f:789,ofMin:1.2,ofMax:2.5,ofOpt:1.8,of:[1.2,1.5,1.8,2.1,2.5],Tc:[2950,3200,3320,3330,3260],M:[20.0,21.6,23.0,24.1,25.5],g:[1.22,1.21,1.20,1.19,1.18]},
+h2o2ker:{name:'H2O2 (90%) / Kerosene',rho_o:1390,rho_f:810,ofMin:6.0,ofMax:9.0,ofOpt:7.3,of:[6.0,6.8,7.5,8.2,9.0],Tc:[2740,2830,2870,2860,2810],M:[21.4,22.0,22.6,23.1,23.6],g:[1.215,1.21,1.205,1.20,1.195]},
+hybrid:{name:'N2O / HTPB (hybrid)',rho_o:786,rho_f:920,ofMin:4.5,ofMax:8.5,ofOpt:6.5,of:[4.5,5.5,6.5,7.5,8.5],Tc:[2950,3120,3200,3180,3120],M:[24.4,25.6,26.6,27.3,27.9],g:[1.22,1.21,1.20,1.19,1.185]},
 solid:{name:'APCP (solid)',rho_o:1750,rho_f:1750,ofMin:7.0,ofMax:7.0,ofOpt:7.0,of:[7.0],Tc:[3210],M:[27.5],g:[1.18],solid:true}};
 export const CYCLES={
 pressfed:{name:'Pressure-Fed',pcMax:3.5e6,tw:25,massK:1.0},
@@ -11,11 +14,14 @@ gasgen:{name:'Gas-Generator',pcMax:1.4e7,tw:85,massK:1.0,cstarLoss:0.985},
 tapoff:{name:'Tap-Off',pcMax:1.2e7,tw:90,massK:0.98,cstarLoss:0.99},
 expander:{name:'Expander',pcMax:7e6,tw:55,massK:1.05},
 staged:{name:'Staged-Combustion',pcMax:3.2e7,tw:110,massK:1.15},
+ffsc:{name:'Full-Flow Staged',pcMax:3.5e7,tw:120,massK:1.22,cstarLoss:0.995},
+epump:{name:'Electric Pump',pcMax:1.0e7,tw:45,massK:1.1,cstarLoss:0.99},
 solid:{name:'Solid Motor',pcMax:1.0e7,tw:35,massK:0.7}};
 export const NOZZLES={
 bell:{name:'Bell (de Laval)',cfEff:0.985,massK:1.0},
 conical:{name:'Conical (15°)',cfEff:0.970,massK:0.88},
-aerospike:{name:'Aerospike (alt-comp)',cfEff:0.972,massK:1.25,aero:true}};
+aerospike:{name:'Aerospike (alt-comp)',cfEff:0.972,massK:1.25,aero:true},
+dualbell:{name:'Dual-Bell',cfEff:0.978,massK:1.12,aero:true}};
 const interp=(xs,ys,x)=>{if(x<=xs[0])return ys[0];if(x>=xs[xs.length-1])return ys[ys.length-1];let i=1;while(x>xs[i])i++;const t=(x-xs[i-1])/(xs[i]-xs[i-1]);return ys[i-1]+t*(ys[i]-ys[i-1]);};
 export const combust=(prop,of)=>{const p=PROPS[prop];const o=p.solid?p.of[0]:Math.max(p.ofMin,Math.min(p.ofMax,of));return{Tc:interp(p.of,p.Tc,o),M:interp(p.of,p.M,o),gam:interp(p.of,p.g,o)};};
 export const gammaFn=g=>Math.sqrt(g)*Math.pow(2/(g+1),(g+1)/(2*(g-1)));
@@ -29,7 +35,9 @@ al2219:{name:'Al-2219',rho:2840,sy:2.9e8},
 alli:{name:'Al-Li 2195',rho:2700,sy:4.5e8},
 steel301:{name:'Stainless 301',rho:7900,sy:8.5e8},
 composite:{name:'CFRP',rho:1600,sy:6.0e8},
-titanium:{name:'Ti-6Al-4V',rho:4430,sy:8.8e8}};
+titanium:{name:'Ti-6Al-4V',rho:4430,sy:8.8e8},
+al7075:{name:'Al-7075',rho:2810,sy:5.0e8},
+inconel:{name:'Inconel 718',rho:8190,sy:1.03e9}};
 export function sizeStage(s){
 const e=analyzeEngine(s.engine);const nE=s.nEngines||1;const mat=MATERIALS[s.material]||MATERIALS.alli;const prop=PROPS[s.engine.prop];
 const of=prop.solid?prop.of[0]:s.engine.of;const propMass=s.propMass;
@@ -51,14 +59,17 @@ export const NOSECONES={
 ogive:{name:'Ogive',cd:0.88,massK:1.0},
 cone:{name:'Cone',cd:1.0,massK:0.92},
 blunt:{name:'Blunt (reentry)',cd:1.55,massK:1.35},
-clamshell:{name:'Clamshell Fairing',cd:0.95,massK:1.5}};
+clamshell:{name:'Clamshell Fairing',cd:0.95,massK:1.5},
+haack:{name:'Von Kármán (Haack)',cd:0.82,massK:1.05},
+parabolic:{name:'Parabolic',cd:0.86,massK:0.98}};
 export const CAPSULES={
 none:{name:'None (uncrewed)',mass:0,crew:0},
 mini:{name:'Mini Capsule',mass:1200,crew:1},
 gemini:{name:'2-Crew Pod',mass:3800,crew:2},
 apollo:{name:'Command Module',mass:5800,crew:3},
 orion:{name:'Deep-Space Capsule',mass:10400,crew:4},
-station:{name:'Station Module',mass:19000,crew:7}};
+station:{name:'Station Module',mass:19000,crew:7},
+lander:{name:'Lunar Lander',mass:15000,crew:2}};
 export function buildVehicle(design,bodyG=G0,bodyP0=101325){
 const stages=design.stages.map(sizeStage);const payload=design.payload||0;const fairing=design.fairingMass||0;
 const cap=CAPSULES[design.capsule]||CAPSULES.none;const capMass=cap.mass;const rcsMass=design.rcs?(design.rcsMass||0.004*stages.reduce((a,s)=>a+s.wet,0)):0;
@@ -77,11 +88,18 @@ return{stages,dvs,totalDv,totalWet,payload,fairing,liftoffTWR,frontalA,maxD,tota
 export const BODIES={
 earth:{name:'Earth',R:6.371e6,mu:3.986e14,rho0:1.225,H:8500,P0:101325,omega:7.292e-5,atmTop:1.4e5,gSurf:9.807},
 moon:{name:'Moon',R:1.7374e6,mu:4.903e12,rho0:0,H:1,P0:0,omega:2.66e-6,atmTop:0,gSurf:1.62},
-mars:{name:'Mars',R:3.3895e6,mu:4.283e13,rho0:0.020,H:11100,P0:610,omega:7.088e-5,atmTop:1.0e5,gSurf:3.71}};
+mars:{name:'Mars',R:3.3895e6,mu:4.283e13,rho0:0.020,H:11100,P0:610,omega:7.088e-5,atmTop:1.0e5,gSurf:3.71},
+venus:{name:'Venus',R:6.0518e6,mu:3.2486e14,rho0:65,H:15900,P0:9.2e6,omega:-2.99e-7,atmTop:2.0e5,gSurf:8.87},
+titan:{name:'Titan',R:2.5747e6,mu:8.978e12,rho0:5.3,H:20600,P0:146700,omega:4.56e-6,atmTop:6.0e5,gSurf:1.352},
+mercury:{name:'Mercury',R:2.4397e6,mu:2.2032e13,rho0:0,H:1,P0:0,omega:1.24e-6,atmTop:0,gSurf:3.70},
+europa:{name:'Europa',R:1.5608e6,mu:3.203e12,rho0:0,H:1,P0:0,omega:2.05e-5,atmTop:0,gSurf:1.315},
+ceres:{name:'Ceres',R:4.697e5,mu:6.263e10,rho0:0,H:1,P0:0,omega:1.923e-4,atmTop:0,gSurf:0.28}};
+export const orbitAltOf=B=>B.atmTop>0?B.atmTop+5.0e4:9.0e4;
+export const orbitDvNeed=B=>Math.sqrt(B.mu/(B.R+orbitAltOf(B)))*1.15+440*Math.sqrt(B.P0/101325);
 const machT=a=>a<11000?288.15-0.0065*a:a<20000?216.65:a<32000?216.65+0.001*(a-20000):a<47000?228.65+0.0028*(a-32000):270.65;
 export function simLaunch(design,bodyKey='earth',opt={}){
 const B=BODIES[bodyKey]||BODIES.earth;const v=buildVehicle(design,B.gSurf,B.P0);
-const orbitAlt=opt.orbitAlt||(B.atmTop>0?B.atmTop+5.0e4:9.0e4);const insThresh=B.atmTop>0?B.atmTop*0.9:2.5e4;const turnExp=opt.turnExp||design.turnExp||0.5;const gLimit=opt.gLimit||design.gLimit||0;
+const orbitAlt=opt.orbitAlt||orbitAltOf(B);const insThresh=B.atmTop>0?B.atmTop*0.9:2.5e4;const turnExp=opt.turnExp||design.turnExp||0.5;const gLimit=opt.gLimit||design.gLimit||0;
 const stages=v.stages.map(s=>({...s,rem:s.propMass}));const payload=v.topMass-v.noseMass,fairing=v.noseMass;
 let fairingOn=fairing>0,cur=0,rem=stages[0].propMass,phase='boost';
 let bRem=v.booster?v.booster.prop:0,boostAttached=!!v.booster,bsepT=0;
@@ -125,4 +143,4 @@ if(noFuel&&phase==='boost'&&vr<0){outcome='SUBORBITAL';break;}
 if(!outcome){const o=orbitOf(x,y,vx,vy);outcome=o.en<0&&o.peri>=insThresh?'ORBIT':'SUBORBITAL';}
 const fo=orbitOf(x,y,vx,vy);
 return{outcome,vehicle:v,telemetry:tel,summary:{body:B.name,liftoffTWR:v.liftoffTWR,totalDvIdeal:v.totalDv,dvUsed,gravityLoss:gLoss,dragLoss:dLoss,maxQ,maxQalt,maxG,flightTime:t,meco,boosterSepT:bsepT,apoAlt:fo.apo,periAlt:fo.peri,ecc:fo.e,orbitAlt,insThresh}};}
-export const maxPayloadToOrbit=(design,body='earth',tol=10)=>{const oc=p=>{const d=structuredClone(design);d.payload=p;return simLaunch(d,body).outcome;};let hi=Math.max(1000,design.payload||1000),g=0;while(oc(hi)==='ORBIT'&&hi<1e7&&g++<40)hi*=2;let a=0;if(oc(a)!=='ORBIT'){let f=-1;for(let i=1;i<=40;i++){const p=hi*i/41;if(oc(p)==='ORBIT'){f=p;break;}}if(f<0)return 0;a=f;}let b=hi;while(b-a>tol){const m=(a+b)/2;oc(m)==='ORBIT'?a=m:b=m;}return Math.floor(a);};
+export const maxPayloadToOrbit=(design,body='earth',tol=10)=>{const oc=p=>{const d=structuredClone(design);d.payload=p;const o=simLaunch(d,body).outcome;return o==='ORBIT'||o==='ESCAPE';};let hi=Math.max(1000,design.payload||1000),g=0;while(oc(hi)&&hi<1e7&&g++<40)hi*=2;let a=0;if(!oc(a)){let f=-1;for(let i=1;i<=40;i++){const p=hi*i/41;if(oc(p)){f=p;break;}}if(f<0)return 0;a=f;}let b=hi;while(b-a>tol){const m=(a+b)/2;oc(m)?a=m:b=m;}return Math.floor(a);};
