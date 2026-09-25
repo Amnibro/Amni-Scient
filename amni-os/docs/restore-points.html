@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#FBFAF8">
+<title>Restore points &mdash; Amni OS | AMNI-SCIENT</title>
+<meta name="description" content="Amni OS takes Btrfs snapshots around every update. Boot an older state from the menu, and undo a bad update with Snapper.">
+<meta property="og:title" content="Restore points &mdash; Amni OS">
+<meta property="og:description" content="Amni OS takes Btrfs snapshots around every update. Boot an older state from the menu, and undo a bad update with Snapper.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://amni-scient.com/amni-os/docs/restore-points.html">
+<meta property="og:image" content="https://amni-scient.com/assets/os/desktop.png?v=20260922">
+<link rel="canonical" href="https://amni-scient.com/amni-os/docs/restore-points.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/css/style.css?v=b262">
+<link rel="stylesheet" href="/css/os-docs.css?v=1">
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+</head>
+<body>
+<div class="grid-bg"></div>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<a href="/amni-calc.html">CALCULATORS</a>
+<a href="/amni-learn.html">LEARN</a>
+<a href="/blog/">BLOG</a>
+<a href="/research.html">RESEARCH</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu nav-dd-menu--groups">
+<div class="nav-dd-group"><span class="nav-dd-head">AI</span>
+<a href="/braid">BRAID</a>
+<a href="/amni-ai.html">AMNI-AI</a>
+<a href="/amni-llm.html">AMNI-LLM</a>
+<a href="/amni-code.html">AMNI-CODE</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">DESKTOP &amp; OS</span>
+<a href="/amni-os.html">AMNI-OS</a>
+<a href="/amni-core.html">AMNI-CORE</a>
+<a href="/amni-browse.html">AMNI-BROWSE</a>
+<a href="/amni-connect.html">AMNI-CONNECT</a>
+<a href="/grok-remote.html">GROK-REMOTE</a>
+<a href="/amni-mail.html">AMNI-MAIL</a>
+<a href="/amni-space.html">AMNI-SPACE</a>
+<a href="/amni-crypt.html">AMNI-CRYPT</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">PHONE</span>
+<a href="/amni-type.html">AMNI-TYPE</a>
+<a href="/amni-haven.html">AMNI-HAVEN</a>
+<a href="/amni-hedgedoc.html">HEDGEDOC</a>
+<a href="/symphony.html">SYMPHONY</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">LEARN &amp; EXPLORE</span>
+<a href="/amni-calc.html">AMNI-CALC</a>
+<a href="/amni-learn.html">AMNI-LEARN</a>
+<a href="/amni-explore.html">AMNI-EXPLORE</a>
+<a href="/amni-weather.html">AMNI-WEATHER</a>
+<a href="/game/v2/">AMNI-GAME</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">LIFE</span>
+<a href="/amni-life.html">AMNI-LIFE</a>
+<a href="/amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</div>
+</div>
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer">SUPPORT</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<main class="legal os-doc">
+<p class="eyebrow">Amni OS docs</p>
+<h1>RESTORE POINTS</h1>
+<p class="effective">Updated 25 Sep 2026</p>
+<ul class="doc-nav" aria-label="Amni OS docs"><li><a href="/amni-os/docs/">Install</a></li><li><a href="/amni-os/docs/restore-points.html" aria-current="page">Restore points</a></li><li><a href="/amni-os/docs/drivers.html">Drivers</a></li><li><a href="/amni-os/docs/troubleshooting.html">Troubleshooting</a></li><li><a href="/amni-os/docs/faq.html">FAQ</a></li><li><a href="/amni-os/docs/release-notes.html">Release notes</a></li><li><a href="/amni-os/support.html">Support</a></li><li><a href="/amni-os/privacy.html">Privacy</a></li></ul>
+<p>On Btrfs, which the installer uses by default, Amni OS takes a restore point before and after every package change, plus a rolling set by the hour and day. If an update breaks something, you can boot the machine as it was and then undo the change.</p>
+<h2>What gets saved</h2>
+<table class="spec-table">
+<tr><th>When</th><th>Kept</th></tr>
+<tr><td>Before and after every install, update or removal (snap-pac)</td><td>10 pairs, 5 of them marked important</td></tr>
+<tr><td>Every hour (snapper timeline)</td><td>5 hourly, 7 daily, 2 monthly</td></tr>
+<tr><td>When restore points were switched on</td><td>One &ldquo;Restore points enabled&rdquo; snapshot</td></tr>
+</table>
+<p>Snapshots cover the system (the <code>@</code> subvolume). Your files in <code>/home</code> live on their own subvolume and are <strong>not</strong> rolled back, so going back never loses your documents. It also means they are not a backup: keep a copy of anything important somewhere else.</p>
+<p>Snapshots share unchanged data, so they take little space. Old ones are removed as new ones arrive.</p>
+<h2>Take one now</h2>
+<p>Before you try something risky, open <strong>Amni Control</strong> and take a restore point from the <em>Restore points</em> card. From a terminal:</p>
+<pre><code>sudo snapper -c root create -d "Before trying the new driver"</code></pre>
+<p>To see the list:</p>
+<pre><code>sudo snapper -c root list</code></pre>
+<h2>Boot an older state</h2>
+<ol>
+<li>Restart and hold <kbd>Shift</kbd> (BIOS) or press <kbd>Esc</kbd> (UEFI) if the boot menu does not show.</li>
+<li>Open the <strong>Arch Linux snapshots</strong> submenu. That is grub-btrfs's name for it.</li>
+<li>Pick a snapshot by date and description, then a kernel.</li>
+</ol>
+<p>A snapshot boots read-only with a temporary layer in memory on top. You can log in, open apps and check whether the problem is gone, but nothing you do there is kept. Restart to return to the normal system.</p>
+<h2>Undo a bad update</h2>
+<p>Once you know which update caused the problem, undo it from the normal system. Every update has a <em>pre</em> and <em>post</em> snapshot; find the pair in <code>snapper list</code> (the description shows the pacman command), then check what it changed and revert it:</p>
+<pre><code>sudo snapper -c root status 41..42
+sudo snapper -c root undochange 41..42</code></pre>
+<p>Replace <code>41..42</code> with your pre and post numbers, then reboot. <code>undochange</code> restores the files the update touched, including pacman's own database, so the package list matches again.</p>
+<div class="doc-note"><p>If the normal system will not boot at all, try the <em>Amni OS (LTS kernel)</em> entry first, then safe graphics. If nothing gets you to a desktop, ask on <a href="https://haven.amni-scient.com">Haven</a> and we will walk through it with you.</p></div>
+<h2>On ext4 or XFS</h2>
+<p>Snapper needs Btrfs. On an ext4 install, <strong>Timeshift</strong> takes a restore point before every pacman transaction. Open Timeshift from the menu to browse and restore them.</p>
+<h2>Check that it works</h2>
+<p><code>amni-bug-info</code> has a <em>Restore points</em> section: the Snapper version, whether the root config exists, the snapshot count (with <code>sudo</code>) and whether the timers are enabled.</p>
+</main>
+<footer>
+<div class="footer-links">
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="/amni-os.html">AMNI OS</a>
+<a href="/amni-os/docs/">OS DOCS</a>
+<a href="/amni-os/privacy.html">OS PRIVACY</a>
+<a href="/terms.html">TERMS</a>
+<a href="mailto:amnibro7@gmail.com">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
+</footer>
+</body>
+</html>

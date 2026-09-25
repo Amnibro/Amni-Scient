@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#FBFAF8">
+<title>Troubleshooting &mdash; Amni OS | AMNI-SCIENT</title>
+<meta name="description" content="Fixes for common Amni OS problems: black screen at boot, Secure Boot errors, Wi-Fi, updates, sound, Bluetooth and sharing.">
+<meta property="og:title" content="Troubleshooting &mdash; Amni OS">
+<meta property="og:description" content="Fixes for common Amni OS problems: black screen at boot, Secure Boot errors, Wi-Fi, updates, sound, Bluetooth and sharing.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://amni-scient.com/amni-os/docs/troubleshooting.html">
+<meta property="og:image" content="https://amni-scient.com/assets/os/desktop.png?v=20260922">
+<link rel="canonical" href="https://amni-scient.com/amni-os/docs/troubleshooting.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/css/style.css?v=b262">
+<link rel="stylesheet" href="/css/os-docs.css?v=1">
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+</head>
+<body>
+<div class="grid-bg"></div>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<a href="/amni-calc.html">CALCULATORS</a>
+<a href="/amni-learn.html">LEARN</a>
+<a href="/blog/">BLOG</a>
+<a href="/research.html">RESEARCH</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu nav-dd-menu--groups">
+<div class="nav-dd-group"><span class="nav-dd-head">AI</span>
+<a href="/braid">BRAID</a>
+<a href="/amni-ai.html">AMNI-AI</a>
+<a href="/amni-llm.html">AMNI-LLM</a>
+<a href="/amni-code.html">AMNI-CODE</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">DESKTOP &amp; OS</span>
+<a href="/amni-os.html">AMNI-OS</a>
+<a href="/amni-core.html">AMNI-CORE</a>
+<a href="/amni-browse.html">AMNI-BROWSE</a>
+<a href="/amni-connect.html">AMNI-CONNECT</a>
+<a href="/grok-remote.html">GROK-REMOTE</a>
+<a href="/amni-mail.html">AMNI-MAIL</a>
+<a href="/amni-space.html">AMNI-SPACE</a>
+<a href="/amni-crypt.html">AMNI-CRYPT</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">PHONE</span>
+<a href="/amni-type.html">AMNI-TYPE</a>
+<a href="/amni-haven.html">AMNI-HAVEN</a>
+<a href="/amni-hedgedoc.html">HEDGEDOC</a>
+<a href="/symphony.html">SYMPHONY</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">LEARN &amp; EXPLORE</span>
+<a href="/amni-calc.html">AMNI-CALC</a>
+<a href="/amni-learn.html">AMNI-LEARN</a>
+<a href="/amni-explore.html">AMNI-EXPLORE</a>
+<a href="/amni-weather.html">AMNI-WEATHER</a>
+<a href="/game/v2/">AMNI-GAME</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">LIFE</span>
+<a href="/amni-life.html">AMNI-LIFE</a>
+<a href="/amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</div>
+</div>
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer">SUPPORT</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<main class="legal os-doc">
+<p class="eyebrow">Amni OS docs</p>
+<h1>TROUBLESHOOTING</h1>
+<p class="effective">Updated 25 Sep 2026</p>
+<ul class="doc-nav" aria-label="Amni OS docs"><li><a href="/amni-os/docs/">Install</a></li><li><a href="/amni-os/docs/restore-points.html">Restore points</a></li><li><a href="/amni-os/docs/drivers.html">Drivers</a></li><li><a href="/amni-os/docs/troubleshooting.html" aria-current="page">Troubleshooting</a></li><li><a href="/amni-os/docs/faq.html">FAQ</a></li><li><a href="/amni-os/docs/release-notes.html">Release notes</a></li><li><a href="/amni-os/support.html">Support</a></li><li><a href="/amni-os/privacy.html">Privacy</a></li></ul>
+<p>Start here when something is off. If none of this helps, run <code>amni-bug-info</code> and bring its output to <a href="/amni-os/support.html">support</a>.</p>
+<h2>Black screen or frozen logo at boot</h2>
+<ul>
+<li><strong>From the USB:</strong> choose <em>Amni OS live (safe graphics)</em> in the boot menu.</li>
+<li><strong>Installed:</strong> Amni OS notices a boot that never reached the desktop and starts the next one in safe graphics by itself. Just restart. Once you are logged in, Amni Control's Home says so and offers <em>Use full graphics</em>.</li>
+<li><strong>NVIDIA:</strong> after a failed boot, Amni OS first retries once on the open nouveau driver. Run <em>GPU drivers</em> in Amni Control to set the right driver up again.</li>
+</ul>
+<h2>&ldquo;Verification failed&rdquo; or a Secure Boot violation</h2>
+<p>The machine's key was not enrolled. Turn Secure Boot off, boot Amni OS, run <code>sudo /usr/lib/amni-os/secureboot-setup</code>, and reboot: MokManager appears, choose <em>Enroll MOK</em> and use the password <code>amnios</code>. Then turn Secure Boot back on. Details are in the <a href="/amni-os/docs/#secure-boot">install guide</a>.</p>
+<h2>No Wi-Fi, or it drops after sleep</h2>
+<p>Use <em>Wi-Fi fix</em> in Amni Control. It wakes the adapter back up and reconnects to your saved networks. Broadcom cards get the <code>wl</code> driver automatically when one is detected. If the adapter is not listed at all, send us its line from <code>lspci -nn</code> or <code>lsusb</code> in a <a href="https://github.com/Amnibro/Amni-OS/issues/new/choose">hardware request</a>.</p>
+<h2>An update failed or never arrives</h2>
+<ul>
+<li>Automatic updates run 10 minutes after boot and then daily. They skip quietly when the network or the package manager is busy.</li>
+<li>See the last runs: <code>journalctl -u amni-update --no-pager | tail -30</code></li>
+<li>By default only Amni packages update on their own. <em>Check updates</em> in Amni Control (or Discover) applies everything else.</li>
+<li>The setting is <code>SCOPE</code> in <code>/etc/amni-os/update.conf</code>: <code>os</code> (default), <code>all</code>, or <code>off</code>.</li>
+</ul>
+<h2>Something broke after an update</h2>
+<p>Boot the restore point from before the update, check the problem is gone, then undo the update. The <a href="/amni-os/docs/restore-points.html">restore points guide</a> has the steps.</p>
+<h2>No sound</h2>
+<p>Images before 0.4.6.6 could ship without the PipeWire session manager. Updating <code>amni-os-core</code> repairs it. To fix it by hand:</p>
+<pre><code>systemctl --user enable --now pipewire.socket pipewire-pulse.socket wireplumber.service</code></pre>
+<h2>Bluetooth devices do not show up</h2>
+<p>Turn Bluetooth on from Amni Control, then pair from the Bluetooth tray icon. Keyboards and mice need to be in pairing mode. If a controller pairs but does nothing, the <a href="/amni-os/docs/drivers.html">driver rules</a> install its driver shortly after pairing.</p>
+<h2>Amni Share or KDE Connect cannot see other devices</h2>
+<p>The firewall is on by default. Amni OS opens the KDE Connect ports for your local network only, and re-applies that on every update and whenever you flip the firewall switch in Amni Control. Both devices need to be on the same network.</p>
+<h2>Collecting details for a report</h2>
+<pre><code>amni-bug-info
+journalctl -b -p err --no-pager | tail -50</code></pre>
+<p><code>amni-bug-info</code> leaves out your username, hostname, IP and MAC addresses and serial numbers. Logs can contain personal details, so read them before you post.</p>
+</main>
+<footer>
+<div class="footer-links">
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="/amni-os.html">AMNI OS</a>
+<a href="/amni-os/docs/">OS DOCS</a>
+<a href="/amni-os/privacy.html">OS PRIVACY</a>
+<a href="/terms.html">TERMS</a>
+<a href="mailto:amnibro7@gmail.com">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
+</footer>
+</body>
+</html>

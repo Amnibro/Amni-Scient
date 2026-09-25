@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#FBFAF8">
+<title>FAQ &mdash; Amni OS | AMNI-SCIENT</title>
+<meta name="description" content="Common questions about Amni OS: Arch compatibility, updates, Windows dual boot, Secure Boot, games, apps and privacy.">
+<meta property="og:title" content="FAQ &mdash; Amni OS">
+<meta property="og:description" content="Common questions about Amni OS: Arch compatibility, updates, Windows dual boot, Secure Boot, games, apps and privacy.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://amni-scient.com/amni-os/docs/faq.html">
+<meta property="og:image" content="https://amni-scient.com/assets/os/desktop.png?v=20260922">
+<link rel="canonical" href="https://amni-scient.com/amni-os/docs/faq.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/css/style.css?v=b262">
+<link rel="stylesheet" href="/css/os-docs.css?v=1">
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+</head>
+<body>
+<div class="grid-bg"></div>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<a href="/amni-calc.html">CALCULATORS</a>
+<a href="/amni-learn.html">LEARN</a>
+<a href="/blog/">BLOG</a>
+<a href="/research.html">RESEARCH</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu nav-dd-menu--groups">
+<div class="nav-dd-group"><span class="nav-dd-head">AI</span>
+<a href="/braid">BRAID</a>
+<a href="/amni-ai.html">AMNI-AI</a>
+<a href="/amni-llm.html">AMNI-LLM</a>
+<a href="/amni-code.html">AMNI-CODE</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">DESKTOP &amp; OS</span>
+<a href="/amni-os.html">AMNI-OS</a>
+<a href="/amni-core.html">AMNI-CORE</a>
+<a href="/amni-browse.html">AMNI-BROWSE</a>
+<a href="/amni-connect.html">AMNI-CONNECT</a>
+<a href="/grok-remote.html">GROK-REMOTE</a>
+<a href="/amni-mail.html">AMNI-MAIL</a>
+<a href="/amni-space.html">AMNI-SPACE</a>
+<a href="/amni-crypt.html">AMNI-CRYPT</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">PHONE</span>
+<a href="/amni-type.html">AMNI-TYPE</a>
+<a href="/amni-haven.html">AMNI-HAVEN</a>
+<a href="/amni-hedgedoc.html">HEDGEDOC</a>
+<a href="/symphony.html">SYMPHONY</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">LEARN &amp; EXPLORE</span>
+<a href="/amni-calc.html">AMNI-CALC</a>
+<a href="/amni-learn.html">AMNI-LEARN</a>
+<a href="/amni-explore.html">AMNI-EXPLORE</a>
+<a href="/amni-weather.html">AMNI-WEATHER</a>
+<a href="/game/v2/">AMNI-GAME</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">LIFE</span>
+<a href="/amni-life.html">AMNI-LIFE</a>
+<a href="/amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</div>
+</div>
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer">SUPPORT</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<main class="legal os-doc">
+<p class="eyebrow">Amni OS docs</p>
+<h1>AMNI OS FAQ</h1>
+<p class="effective">Updated 25 Sep 2026</p>
+<ul class="doc-nav" aria-label="Amni OS docs"><li><a href="/amni-os/docs/">Install</a></li><li><a href="/amni-os/docs/restore-points.html">Restore points</a></li><li><a href="/amni-os/docs/drivers.html">Drivers</a></li><li><a href="/amni-os/docs/troubleshooting.html">Troubleshooting</a></li><li><a href="/amni-os/docs/faq.html" aria-current="page">FAQ</a></li><li><a href="/amni-os/docs/release-notes.html">Release notes</a></li><li><a href="/amni-os/support.html">Support</a></li><li><a href="/amni-os/privacy.html">Privacy</a></li></ul>
+<h2>Is it really Arch?</h2>
+<p>Yes. Amni OS uses the Arch repositories plus one of its own, <code>[amnios]</code>, for the Amni apps, the desktop and a few things that are not in Arch (Calamares, the Secure Boot shim). <code>pacman</code>, the Arch Wiki and the AUR all apply.</p>
+<h2>Does it keep Windows?</h2>
+<p>The installer's default is <em>Install alongside</em>, which shrinks Windows and adds Amni OS next to it. Windows stays in the boot menu. See the <a href="/amni-os/docs/">install guide</a> for BitLocker and Fast Startup.</p>
+<h2>Does it work with Secure Boot?</h2>
+<p>An installed system does, after a one-time key enrollment on the first boot. The live USB is easiest with Secure Boot off. <a href="/amni-os/docs/#secure-boot">How it works</a>.</p>
+<h2>What updates automatically?</h2>
+<p>Amni packages (the desktop, Amni-Browse, Haven, Mail and the rest of the suite) and Flatpak apps update daily. Full Arch updates wait for you to press <em>Check updates</em> in Amni Control or Discover. Set <code>SCOPE=all</code> or <code>SCOPE=off</code> in <code>/etc/amni-os/update.conf</code> to change that.</p>
+<h2>Can I undo an update?</h2>
+<p>Yes. Every package change takes a restore point before and after, and you can boot any of them from the menu. <a href="/amni-os/docs/restore-points.html">Restore points</a>.</p>
+<h2>Does Amni OS collect data?</h2>
+<p>No. There is no telemetry, no account and no analytics. The network connections it makes on its own are listed on the <a href="/amni-os/privacy.html">privacy page</a>.</p>
+<h2>Which graphics cards work?</h2>
+<p>AMD and Intel with Mesa, NVIDIA GTX 16xx and RTX cards with the open NVIDIA driver, and older NVIDIA cards with nouveau. <a href="/amni-os/docs/drivers.html">Drivers</a>.</p>
+<h2>Can I play my Steam games?</h2>
+<p>Steam, Proton, Wine and Lutris are on the image. Most Windows games run through Proton. Games with kernel anti-cheat usually do not.</p>
+<h2>Where do apps come from?</h2>
+<p>Discover installs from the Arch repositories and Flathub. Snap works out of the box, and distrobox gives you Ubuntu or Fedora boxes for software that only ships as <code>.deb</code> or <code>.rpm</code>. Double-clicking a <code>.deb</code> or an app tarball installs it too.</p>
+<h2>How much space and memory does it need?</h2>
+<p>The installer asks for 20 GB of disk and 3 GB of RAM. More of both makes it nicer; games and local AI models want a lot more disk.</p>
+<h2>Where do I report a bug?</h2>
+<p>On <a href="https://github.com/Amnibro/Amni-OS/issues/new/choose">GitHub issues</a>, with the output of <code>amni-bug-info</code>. For questions, the <a href="https://haven.amni-scient.com">Haven community</a> is quicker. <a href="/amni-os/support.html">Support</a> has both.</p>
+</main>
+<footer>
+<div class="footer-links">
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="/amni-os.html">AMNI OS</a>
+<a href="/amni-os/docs/">OS DOCS</a>
+<a href="/amni-os/privacy.html">OS PRIVACY</a>
+<a href="/terms.html">TERMS</a>
+<a href="mailto:amnibro7@gmail.com">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
+</footer>
+</body>
+</html>

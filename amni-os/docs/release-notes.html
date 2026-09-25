@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#FBFAF8">
+<title>Release notes &mdash; Amni OS | AMNI-SCIENT</title>
+<meta name="description" content="Every Amni OS change, newest first, generated from the Amni OS changelog.">
+<meta property="og:title" content="Release notes &mdash; Amni OS">
+<meta property="og:description" content="Every Amni OS change, newest first, generated from the Amni OS changelog.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://amni-scient.com/amni-os/docs/release-notes.html">
+<meta property="og:image" content="https://amni-scient.com/assets/os/desktop.png?v=20260922">
+<link rel="canonical" href="https://amni-scient.com/amni-os/docs/release-notes.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/css/style.css?v=b262">
+<link rel="stylesheet" href="/css/os-docs.css?v=1">
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+</head>
+<body>
+<div class="grid-bg"></div>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<a href="/amni-calc.html">CALCULATORS</a>
+<a href="/amni-learn.html">LEARN</a>
+<a href="/blog/">BLOG</a>
+<a href="/research.html">RESEARCH</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu nav-dd-menu--groups">
+<div class="nav-dd-group"><span class="nav-dd-head">AI</span>
+<a href="/braid">BRAID</a>
+<a href="/amni-ai.html">AMNI-AI</a>
+<a href="/amni-llm.html">AMNI-LLM</a>
+<a href="/amni-code.html">AMNI-CODE</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">DESKTOP &amp; OS</span>
+<a href="/amni-os.html">AMNI-OS</a>
+<a href="/amni-core.html">AMNI-CORE</a>
+<a href="/amni-browse.html">AMNI-BROWSE</a>
+<a href="/amni-connect.html">AMNI-CONNECT</a>
+<a href="/grok-remote.html">GROK-REMOTE</a>
+<a href="/amni-mail.html">AMNI-MAIL</a>
+<a href="/amni-space.html">AMNI-SPACE</a>
+<a href="/amni-crypt.html">AMNI-CRYPT</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">PHONE</span>
+<a href="/amni-type.html">AMNI-TYPE</a>
+<a href="/amni-haven.html">AMNI-HAVEN</a>
+<a href="/amni-hedgedoc.html">HEDGEDOC</a>
+<a href="/symphony.html">SYMPHONY</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">LEARN &amp; EXPLORE</span>
+<a href="/amni-calc.html">AMNI-CALC</a>
+<a href="/amni-learn.html">AMNI-LEARN</a>
+<a href="/amni-explore.html">AMNI-EXPLORE</a>
+<a href="/amni-weather.html">AMNI-WEATHER</a>
+<a href="/game/v2/">AMNI-GAME</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">LIFE</span>
+<a href="/amni-life.html">AMNI-LIFE</a>
+<a href="/amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</div>
+</div>
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer">SUPPORT</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<main class="legal os-doc">
+<p class="eyebrow">Amni OS docs</p>
+<h1>RELEASE NOTES</h1>
+<p class="effective">Generated 2026-09-25 from the Amni OS changelog</p>
+<ul class="doc-nav" aria-label="Amni OS docs"><li><a href="/amni-os/docs/">Install</a></li><li><a href="/amni-os/docs/restore-points.html">Restore points</a></li><li><a href="/amni-os/docs/drivers.html">Drivers</a></li><li><a href="/amni-os/docs/troubleshooting.html">Troubleshooting</a></li><li><a href="/amni-os/docs/faq.html">FAQ</a></li><li><a href="/amni-os/docs/release-notes.html" aria-current="page">Release notes</a></li><li><a href="/amni-os/support.html">Support</a></li><li><a href="/amni-os/privacy.html">Privacy</a></li></ul>
+<p>What changed in each Amni OS build, newest first. Entries marked unreleased are merged but not yet on a published ISO; installed systems usually get them through the daily update.</p>
+<h2>Contents</h2>
+<ul><li><a href="#package-and-iso-signing-phase-1">Package and ISO signing, phase 1</a> <span class="rn-date">unreleased, branch <code>signing</code></span></li><li><a href="#hardware-aware-drivers">Hardware-aware drivers</a> <span class="rn-date">unreleased, branch <code>hardware-drivers</code></span></li><li><a href="#restore-points-that-actually-get-taken">Restore points that actually get taken</a> <span class="rn-date">unreleased, branch <code>restore-points</code></span></li><li><a href="#amni-browse-0-15-1">amni-browse 0.15.1</a> <span class="rn-date">2026-09-25</span></li><li><a href="#amni-browse-0-15-0-chromium-engine">amni-browse 0.15.0 — Chromium engine</a> <span class="rn-date">2026-09-25</span></li><li><a href="#amni-os-core-0-4-6-202609242124-haven-desktop-2-5-3">amni-os-core 0.4.6.202609242124, haven-desktop 2.5.3</a> <span class="rn-date">2026-09-24</span></li><li><a href="#amni-os-core-0-4-6-202609242021-haven-desktop-2-5-2">amni-os-core 0.4.6.202609242021, haven-desktop 2.5.2</a> <span class="rn-date">2026-09-24</span></li><li><a href="#unreleased-bluetooth-pairing-sees-keyboards-and-mice-again">Unreleased - Bluetooth pairing sees keyboards and mice again</a> <span class="rn-date">2026-09-23</span></li><li><a href="#unreleased-control-light-dark-or-auto-and-colours-that-follow-th">Unreleased - Control: Light, Dark or Auto, and colours that follow the switch</a> <span class="rn-date">2026-09-23</span></li><li><a href="#unreleased-update-repo-refresh-webrtc-webkit-haven-2-5-1-connect">Unreleased - update repo refresh: WebRTC WebKit, Haven 2.5.1, Connect 1.6.19, Browse 0.14.3</a> <span class="rn-date">2026-09-23</span></li><li><a href="#unreleased-icons-for-the-apps-people-actually-install">Unreleased - icons for the apps people actually install</a> <span class="rn-date">2026-09-22</span></li><li><a href="#unreleased-double-click-to-install-deb-and-app-tarballs">Unreleased - Double-click to install .deb and app tarballs</a> <span class="rn-date">2026-09-22</span></li><li><a href="#unreleased-amni-crypt-is-the-default-encryption">Unreleased - Amni-Crypt is the default encryption</a> <span class="rn-date">2026-09-22</span></li><li><a href="#unreleased-taskbar-and-desktop-act-like-windows">Unreleased - taskbar and desktop act like Windows</a> <span class="rn-date">2026-09-22</span></li><li><a href="#v0-4-6-6-a-usb-that-installs-on-real-hardware">v0.4.6.6 - A USB that installs on real hardware</a> <span class="rn-date">2026-09-22</span></li><li><a href="#v0-4-6-5-haven-2-4-1-is-the-launcher">v0.4.6.5 - Haven 2.4.1 is the launcher</a> <span class="rn-date">2026-09-22</span></li><li><a href="#v0-4-6-4-glass-contrast-connect">v0.4.6.4 - Glass, contrast, Connect</a> <span class="rn-date">2026-09-21</span></li><li><a href="#v0-4-6-3-amni-scient-all-the-way-down">v0.4.6.3 - Amni Scient, all the way down</a> <span class="rn-date">2026-09-18</span></li><li><a href="#v0-4-6-2-no-terminal-windows-from-control-one-click-amni-scient">v0.4.6.2 - No terminal windows from Control, one-click Amni Scient</a> <span class="rn-date">2026-09-18</span></li><li><a href="#v0-4-6-1-desktop-polkit-permissions-wi-fi-amni-browse-0-13-1-med">v0.4.6.1 - Desktop polkit permissions, Wi-Fi, Amni-Browse 0.13.1 &amp; media stack</a> <span class="rn-date">2026-09-16</span></li><li><a href="#v0-4-6-host-download-mirror-stops-opening-a-window">v0.4.6 host - Download mirror stops opening a window</a> <span class="rn-date">2026-09-15</span></li><li><a href="#v0-4-6-suite-on-the-image">v0.4.6 - Suite on the image</a> <span class="rn-date">2026-09-10</span></li><li><a href="#v0-4-5-amni-mail-on-the-os-linux-browser-fixes">v0.4.5 - Amni-Mail on the OS, Linux browser fixes</a> <span class="rn-date">2026-09-09/10</span></li><li><a href="#v0-4-4-first-hardware-debug-session">v0.4.4 - First hardware debug session</a> <span class="rn-date">2026-09-08</span></li><li><a href="#v0-4-3-secure-boot">v0.4.3 - Secure Boot</a> <span class="rn-date">2026-09-08</span></li><li><a href="#v0-4-2-polish-pass">v0.4.2 - polish pass</a> <span class="rn-date">2026-09-07</span></li><li><a href="#v0-4-1-virtualbox-freeze-root-cause-0-13-0-browser-tree-colour-t">v0.4.1 - VirtualBox freeze root cause, 0.13.0 browser tree, colour themes</a> <span class="rn-date">2026-09-03</span></li><li><a href="#v0-4-0-servo-browser-a-control-that-runs-things-an-installer-tha">v0.4.0 - Servo browser, a Control that runs things, an installer that cleans up</a> <span class="rn-date">2026-09-03</span></li><li><a href="#v0-3-2-the-bake-fixed-and-moved-to-the-nvme">v0.3.2 - the bake, fixed and moved to the NVMe</a> <span class="rn-date">2026-09-03</span></li><li><a href="#v0-3-1-it-boots">v0.3.1 - it boots</a> <span class="rn-date">2026-09-02</span></li><li><a href="#v0-3-0-the-real-amni-browse-is-the-default-and-the-desktop-match">v0.3.0 — the real Amni-Browse is the default, and the desktop matches the mockup</a> <span class="rn-date">2026-09-02</span></li><li><a href="#v0-2-0-the-engines-behind-the-panels">v0.2.0 — the engines behind the panels</a> <span class="rn-date">2026-09-02</span></li></ul>
+<section class="rn-entry" id="package-and-iso-signing-phase-1">
+<h2>Package and ISO signing, phase 1</h2>
+<p class="rn-date">unreleased, branch <code>signing</code></p>
+<ul>
+<li><strong>New <code>amnios-keyring</code> package</strong> carries the Amni OS package-signing key (ed25519, fingerprint <code>C40EC8B9A32CF20378261E96210B8C24BF3E7D1E</code>) and populates it into pacman's keyring. <code>amni-os-core</code> now depends on it, so every install gets the key with its next update.
+</li>
+<li><strong>ISOs are signed with minisign by default.</strong>
+<ul>
+<li><code>publish.sh</code> signs, verifies its own signature, and publishes <code>amnios-iso.pub</code>. It refuses to publish unsigned unless <code>AMNI_UNSIGNED=1</code>.
+</li>
+<li><code>latest.json</code> gains <code>minisig_url</code> and <code>minisign_pubkey</code>.
+</li></ul>
+</li>
+<li><strong><code>tools/sign-repo.sh</code></strong> signs every unsigned package in the repo and re-signs the database. It is for phase 2 and has not been run on the published repo.
+</li>
+<li>The repo stays unsigned until the key has reached installs. A test showed that signing first breaks updates on every install that lacks the key. <code>docs/signing.md</code> has the plan.
+</li></ul>
+</section>
+<section class="rn-entry" id="hardware-aware-drivers">
+<h2>Hardware-aware drivers</h2>
+<p class="rn-date">unreleased, branch <code>hardware-drivers</code></p>
+<ul>
+<li><strong><code>amni-driver-apply</code> installs the drivers each machine needs, and only those.</strong> <code>/usr/share/amni-os/drivers.json</code> matches rules against:
+<ul>
+<li>PCI and USB IDs, and USB interface class (printers)
+</li>
+<li>Bluetooth input devices (controllers)
+</li>
+<li>laptop chassis or battery, CPU vendor, hypervisor, and DMI vendor
+</li>
+<li>NVIDIA generation (legacy or Turing+) and GPU count
+</li></ul>
+</li>
+<li>Required rules install their packages, enable their services and add users to groups. Optional ones (Razer, Logitech, NVMe tools, OpenCL, Intel NPU) are only listed until Control installs them (<code>polkit-helper drivers-optional</code>).
+</li>
+<li><strong>It runs:</strong>
+<ul>
+<li>when a USB device is plugged in or a Bluetooth input device pairs (<code>90-amni-drivers.rules</code>, via <code>SYSTEMD_WANTS</code>)
+</li>
+<li>at the end of <code>amni-gpu-apply</code>, which is Control's &quot;GPU drivers&quot; button
+</li>
+<li>from <code>amni-driver-apply.timer</code>, 4 min after boot and then daily, to retry anything that failed offline
+</li></ul>
+</li>
+<li>It skips the live session, waits for the pacman lock, and never runs <code>-Sy</code> (no partial upgrades). It writes its result to <code>/var/lib/amni-os/drivers.json</code> and sends a desktop notification naming what it installed. Nothing leaves the machine.
+</li>
+<li><strong>Rules cover:</strong>
+<ul>
+<li>graphics: Intel and NVIDIA video decoding, hybrid-GPU switching and prime-run on laptops, and NVK Vulkan for pre-Turing NVIDIA
+</li>
+<li>laptops: thermald on Intel laptops, and fingerprint readers
+</li>
+<li>wireless and phones: Bluetooth file transfer, iPhone/iPad, and USB modems
+</li>
+<li>printing: USB driverless printing plus HP, Brother, Samsung and Epson drivers
+</li>
+<li>gaming: Xbox controllers over Bluetooth, and the Xbox Wireless Adapter
+</li>
+<li>docks: DisplayLink
+</li>
+<li>VMs: QEMU, VirtualBox, VMware and Hyper-V guest tools
+</li>
+<li>vendor tools: ASUS laptop controls and GPU modes, and Framework tools
+</li></ul>
+</li>
+<li>Small official drivers now ship on the ISO so offline installs still get them. Their services are enabled only on matching hardware.
+</li>
+<li>The AUR drivers (brlaser, splix, epson-escpr, xpadneo, xone, supergfxctl, evdi, displaylink) go in the new <code>iso/releng/packages.repo</code>. <code>build-local-repo.sh</code> builds them into [amnios] and <code>bake.sh</code> keeps them off the ISO.
+</li>
+<li><code>scripts/gpu-apply.sh</code> had fallen behind the packaged copy (no Turing check or nouveau fallback). It's synced back so the overlay can't regress the package.
+</li>
+<li>Verified on the test PC:
+<ul>
+<li>A real run installed bluez-obex in 1.9 s, and snap-pac took restore points #6/#7 around it.
+</li>
+<li><code>udevadm test</code> on the attached Razer mouse sets <code>SYSTEMD_WANTS=amni-driver-apply.service</code>.
+</li>
+<li>Rule matching was checked on five simulated machines: Dell XPS Intel+NVIDIA, ASUS ROG, a KVM guest, a desktop with an HP printer, iPhone and Xbox pad, and a GTX 1060 with a DisplayLink dock.
+</li></ul>
+</li></ul>
+</section>
+<section class="rn-entry" id="restore-points-that-actually-get-taken">
+<h2>Restore points that actually get taken</h2>
+<p class="rn-date">unreleased, branch <code>restore-points</code></p>
+<ul>
+<li><strong>Snapper was never configured on Calamares installs.</strong> <code>system-setup</code> ran <code>snapper create-config /</code>, which refuses to run when <code>/.snapshots</code> already exists. Calamares mounts the <code>@snapshots</code> subvolume there, so the step failed and only logged &quot;snapper config failed&quot;. snap-pac, the snapper timers and grub-btrfs were all installed and enabled, but no restore point was ever taken.
+</li>
+<li><code>system-setup</code> now writes <code>/etc/snapper/configs/root</code> from snapper's template when <code>/.snapshots</code> is already a subvolume, and still uses <code>create-config</code> when it isn't. It adds <code>root</code> to <code>SNAPPER_CONFIGS</code> and takes a first &quot;Restore points enabled&quot; snapshot.
+</li>
+<li>Retention: 10 update pairs (5 marked important), plus 5 hourly, 7 daily and 2 monthly snapshots. The template default was 50 plus 10 each.
+</li>
+<li><strong>Booting a snapshot works on the systemd initramfs.</strong>
+<ul>
+<li>grub-btrfs's <code>grub-btrfs-overlayfs</code> hook is busybox-only and does nothing under <code>systemd</code>.
+</li>
+<li>The new <code>amni-snapshot-boot</code> initcpio hook packs <code>systemd-volatile-root</code> and <code>overlay.ko</code>.
+</li>
+<li>grub-btrfs adds <code>systemd.volatile=overlay</code> to snapshot entries only, so a snapshot boots read-only with a RAM overlay on top. Normal boots don't carry the parameter, so the service exits immediately.
+</li>
+<li><code>installed-cleanup</code> adds the hook to <code>HOOKS</code> only when the hook file exists. <code>system-setup</code> adds it to existing installs and runs <code>mkinitcpio -P</code>.
+</li></ul>
+</li>
+<li>On btrfs with snapper configured, <code>timeshift-autosnap</code> is set to skip, so updates take one snapshot, not two. Timeshift stays the restore-point path on ext4.
+</li>
+<li>Verified on the test PC:
+<ul>
+<li>The baseline snapshot was taken.
+</li>
+<li>A pacman transaction produced a snap-pac pre/post pair.
+</li>
+<li>grub-btrfsd rebuilt the menu, and each snapshot offers both kernels with the overlay parameter.
+</li>
+<li>Both initramfs images contain <code>systemd-volatile-root</code> and <code>overlay.ko</code>.
+</li></ul>
+</li>
+<li>Not verified yet: an actual boot into a snapshot, and a fresh Calamares install.
+</li></ul>
+</section>
+<section class="rn-entry" id="amni-browse-0-15-1">
+<h2>amni-browse 0.15.1</h2>
+<p class="rn-date">2026-09-25</p>
+<ul>
+<li>Readable quick links bar (full names with icons, » overflow, folder dropdowns, right-click edit, drag to reorder), Widevine fetched from Google's component updater when Chrome isn't installed (so DRM video works on every Amni OS machine), Escape closes Browse's menu, and Ctrl no longer sticks after Ctrl+A. The package now also depends on libarchive (bsdtar unpacks the Widevine CRX).
+</li></ul>
+</section>
+<section class="rn-entry" id="amni-browse-0-15-0-chromium-engine">
+<h2>amni-browse 0.15.0 — Chromium engine</h2>
+<p class="rn-date">2026-09-25</p>
+<ul>
+<li><strong>Amni Browse renders web pages with Chromium (CEF 152)</strong> instead of WebKitGTK, under the same Amni toolbar: DRM video plays (Widevine, H.264/AAC), private tabs use an in-memory profile, the Chromium sandbox is on, and there's a bookmark manager (<code>amnibrowse://bookmarks</code>). Amni's own pages stay on WebKitGTK; <code>AMNI_ENGINE=webkit</code> switches back.
+</li>
+<li>The package builds from the <code>v0.15.0</code> tag with the Spotify minimal CEF 152.0.6 headers and bundles the runtime from Arch's <code>cef</code> 152.0.6-1 (proprietary codecs) under <code>/usr/lib/amni-browse</code>, both sha256-pinned, rather than depending on Arch <code>cef</code>, whose updates would break the exact ABI match. 156 MB download, 384 MB installed. Widevine comes from Google Chrome when it's installed.
+</li></ul>
+</section>
+<section class="rn-entry" id="amni-os-core-0-4-6-202609242124-haven-desktop-2-5-3">
+<h2>amni-os-core 0.4.6.202609242124, haven-desktop 2.5.3</h2>
+<p class="rn-date">2026-09-24</p>
+<ul>
+<li><strong>Haven's icon is the Haven hexagon with an H</strong>, the same mark as the Haven mobile app, in place of the shield-and-house glyph (<code>theme/icons-src/build.py</code>, <code>haven-desktop</code> / <code>amni-haven</code> and their symbolic variants). Drawn in the Amni style like every other app icon.
+</li>
+<li><strong>haven-desktop 2.5.3:</strong> pictures copied from a browser (&quot;Copy image&quot;, an HTML <code>&lt;img&gt;</code> plus the image) paste on Linux; a failed paste shows an error instead of doing nothing.
+</li></ul>
+</section>
+<section class="rn-entry" id="amni-os-core-0-4-6-202609242021-haven-desktop-2-5-2">
+<h2>amni-os-core 0.4.6.202609242021, haven-desktop 2.5.2</h2>
+<p class="rn-date">2026-09-24</p>
+<ul>
+<li><strong>Control → System → Sleep and lock.</strong> Four choices that apply the moment you click them: sleep when idle (plugged in), turn off the screen, lock the screen, and lock after sleep. They write the same <code>powerdevilrc</code> / <code>kscreenlockerrc</code> keys System Settings uses, so either place works, then reload PowerDevil's profile (<code>loadProfile true</code>; <code>reparseConfiguration</code> alone leaves the old idle timer running) and the screen locker.
+</li>
+<li><strong>A look change no longer turns locking back on.</strong> Both Amni look-and-feel packages carried <code>[kscreenlockerrc][Daemon] Autolock=true, Timeout=15, LockOnResume=true</code>, and <code>amni-look</code> runs <code>plasma-apply-lookandfeel -a</code> on every look change, including the automatic light/dark switch, so a user's lock choice was reset each time. The block is gone; first boot still sets the lock defaults once for new users.
+</li>
+<li><strong>AAC plays in Elisa and VLC.</strong> VLC prefers its faad2 decoder, which rejects some AAC-LC ADTS files (&quot;buffer deadlock prevented&quot;), so Elisa played nothing. The <code>amni-vlc-aac</code> pacman hook removes <code>libfaad_plugin.so</code> whenever vlc-plugin-faad2 installs or upgrades and refreshes VLC's plugin cache, so AAC decodes through FFmpeg; the package's install script applies it once too.
+</li>
+<li><strong>haven-desktop 2.5.2:</strong> pasting a clipboard picture works again (the paste rescue's <code>fetch()</code> of a <code>data:</code> URL was blocked by Haven's CSP). Repackaged from the signed <code>v2.5.2-tauri</code> release.
+</li>
+<li><strong><code>tools/usb-maker</code>:</strong> source of the Windows Amni OS USB Maker (one-click download, write and verify, Secure Boot and BitLocker guidance). Built with <code>cargo build --release --target x86_64-pc-windows-gnu</code>; not published until tested on real Windows.
+</li></ul>
+</section>
+<section class="rn-entry" id="unreleased-bluetooth-pairing-sees-keyboards-and-mice-again">
+<h2>Unreleased - Bluetooth pairing sees keyboards and mice again</h2>
+<p class="rn-date">2026-09-23</p>
+<ul>
+<li><strong>BLE devices never showed up when pairing.</strong> KDE Connect's &quot;Bluetooth (beta)&quot; link provider keeps a discovery session open with <code>SetDiscoveryFilter {Transport: &quot;bredr&quot;}</code>, so the adapter only ran Classic inquiry and never an LE scan. Bluetooth Low Energy keyboards and mice (a Dell KB7120W here) stayed invisible while Classic devices appeared, and toggling Bluetooth did not help because KDE Connect re-armed the scan as soon as the adapter came back.
+</li>
+<li><strong>Fix:</strong> new user unit <code>amni-kdeconnect-le.service</code> (enabled globally, runs at Plasma login) calls <code>/usr/lib/amni-os/kdeconnect-le</code>, which turns the Bluetooth provider off through KDE Connect's own D-Bus API (saved as <code>disabled_providers_v2</code> in <code>~/.config/kdeconnect/config</code>) and restarts <code>kdeconnectd</code> once, since the old discovery session only ends when its client leaves the bus. It does nothing when the provider is already off or KDE Connect is not installed. KDE Connect keeps working over LAN, which is what Amni Share uses.
+</li></ul>
+</section>
+<section class="rn-entry" id="unreleased-control-light-dark-or-auto-and-colours-that-follow-th">
+<h2>Unreleased - Control: Light, Dark or Auto, and colours that follow the switch</h2>
+<p class="rn-date">2026-09-23</p>
+<ul>
+<li><strong>Appearance has a Light / Dark / Auto choice.</strong> Auto turns on Plasma's own day/night switch (<code>kdeglobals [KDE] AutomaticLookAndFeel</code>, the <code>lookandfeelautoswitcher</code> kded module, on the Night light times) between <code>com.amniscient.desktop.light</code> and <code>com.amniscient.desktop</code>. The Control host already watches that switch and runs <code>amni-look</code>, so Kvantum, GTK, Konsole, Kate and Flatpak follow. Picking Light or Dark by hand turns Auto off first so Plasma does not flip it back. New host verbs <code>look-state</code> and <code>look-auto</code>.
+</li>
+<li><strong>Auto stopped after its first switch.</strong> <code>plasma-apply-lookandfeel</code> clears <code>AutomaticLookAndFeel</code>, and <code>amni-look</code> runs it on every change, so the first sunset switch turned Auto off. <code>amni-look</code> now keeps the flag.
+</li>
+<li><strong>Control's own colours drifted from the desktop.</strong> The page kept light/dark and the accent in its own localStorage, so a switch from Quick Settings, Auto or another window left it on the old mode. It now reads the real state from the host on load, on focus and every 30 seconds.
+</li>
+<li><strong>Light text on light and dark on dark in Control's fields.</strong> The page declared no <code>color-scheme</code>, so WebKitGTK drew inputs, selects and scrollbars in the colours of the GTK theme the browser started with. The page now sets <code>color-scheme</code> per mode and styles its fields from its own palette.
+</li></ul>
+</section>
+<section class="rn-entry" id="unreleased-update-repo-refresh-webrtc-webkit-haven-2-5-1-connect">
+<h2>Unreleased - update repo refresh: WebRTC WebKit, Haven 2.5.1, Connect 1.6.19, Browse 0.14.3</h2>
+<p class="rn-date">2026-09-23</p>
+<ul>
+<li><strong>webkit2gtk-4.1 2.52.6-1.1 with WebRTC</strong> (<code>packaging-heavy/webkit2gtk-4.1</code>, now on main). Arch's build has no WebRTC, so <code>RTCPeerConnection</code> was missing in every WebKitGTK app: the Amni-Connect viewer in Amni-Browse stayed black and Haven voice had no peer connection. The recipe's <code>pkgrel=1.amni1</code> was invalid (makepkg rejects it), so it had never been built; it is <code>1.1</code> now, one step above Arch's <code>-1</code>. When Arch ships a newer webkit2gtk-4.1 the stock build wins on update and this needs rebuilding at the new version.
+</li>
+<li><strong>haven-desktop 2.5.1</strong>: removing a server no longer freezes the app, <code>confirm()</code> waits for an answer, and the rest of the 2.5.1 fixes.
+</li>
+<li><strong>amni-connect 1.6.19</strong>: a Linux host sends its screen (the normal video track was switched off for hardware-capable viewers even though hardware capture is Windows-only), touch and pad input go through uinput on Wayland, and the viewer explains a browser without WebRTC. The PKGBUILD version had been left at 1.6.10 while the repo carried 1.6.18.
+</li>
+<li><strong>amni-browse 0.14.3</strong>: window buttons match the Amni OS title bar.
+</li>
+<li><strong>amni-mail 1.10.1-3</strong>: Outlook folders sync and token refresh works (the built-in Microsoft client is public, so it has no secret), and password accounts log in with their password. Only these backend fixes were applied to the 1.10.1 source; the AI-assistant-on-CLIs change needs a frontend build from the laptop tree.
+</li>
+<li><strong>amni-os-core</strong>: everything merged in PRs #5 to #7.
+</li></ul>
+</section>
+<section class="rn-entry" id="unreleased-icons-for-the-apps-people-actually-install">
+<h2>Unreleased - icons for the apps people actually install</h2>
+<p class="rn-date">2026-09-22</p>
+<ul>
+<li><strong>74 more app icons</strong> in <code>theme/icons-src/build.py</code>, each a line-art reading of the app's own mark on the ink tile: Firefox, Chrome/Chromium, Brave, Edge, Vivaldi, Opera, Tor Browser, Discord, Telegram, Signal, Slack, Element, Zoom, Teams, WhatsApp, Spotify, VLC, mpv, OBS, Audacity, Kdenlive, HandBrake, Kodi, GIMP, Inkscape, Krita, Blender, darktable, LibreOffice (all seven), Obsidian, calibre, Anki, VS Code, Cursor, Zed, Sublime Text, Vim, Android Studio, Java, GitHub Desktop, Postman, Docker, Lutris, Heroic, Bottles, ProtonPlus, Wine, Prism Launcher, RetroArch, GOverlay, AntiMicroX, CoreCtrl, OpenRGB, Piper, Timeshift, Kvantum, Onboard, virt-manager, qBittorrent, FileZilla, Remmina, Bitwarden, Nextcloud, Etcher, thinkorswim, Amni Share, Clocks and KOrganizer.
+</li>
+<li>About 410 aliases route the Flatpak, distro and fork names to those glyphs, for example <code>org.mozilla.firefox</code>, <code>vesktop</code>, <code>com.vscodium.codium</code>, <code>org.keepassxc.KeePassXC</code>, <code>io.github.celluloid_player.Celluloid</code>. Every one also gets a <code>-symbolic</code> twin.
+</li>
+<li><code>zoom</code>, <code>calendar</code>, <code>office-calendar</code> and <code>alarm-clock</code> are left alone: they are action icons, and taking them would put app logos on toolbar buttons.
+</li></ul>
+</section>
+<section class="rn-entry" id="unreleased-double-click-to-install-deb-and-app-tarballs">
+<h2>Unreleased - Double-click to install .deb and app tarballs</h2>
+<p class="rn-date">2026-09-22</p>
+<ul>
+<li><strong><code>amni-package-install</code></strong> (amni-os-core, <code>/usr/local/bin</code>): double-clicking a <code>.deb</code> or an app <code>.tar.gz</code>/<code>.tar.xz</code>/<code>.tar.bz2</code>/<code>.tar.zst</code> rebuilds it as a pacman package (group <code>amni-downloaded</code>) and installs it through pkexec, so it lands in the Start menu, a newer download upgrades in place and <code>pacman -R</code> / Discover removes it. Tested on Google Chrome's .deb and the Antigravity tarball.
+<ul>
+<li>Dependencies come from the NEEDED libraries of the executables (followed through bundled libs, so dlopen()ed shims like Chrome's Qt ones aren't forced in), plus the .deb's Depends mapped to Arch names. Missing ones are pulled from the repos by pacman.
+</li>
+<li>.deb: <code>/bin</code>, <code>/sbin</code>, <code>/lib*</code> merged into <code>/usr</code>, apt cron jobs dropped, setuid bits kept (chrome-sandbox), conffiles become <code>backup=</code>, icons Debian installs from postinst (<code>product_logo_*.png</code>) put into hicolor. Maintainer scripts are not run (the dialog says so).
+</li>
+<li>Tarballs: unpacked to <code>/opt/&lt;name&gt;</code>, <code>/usr/bin/&lt;name&gt;</code> launcher, <code>.desktop</code> + icon (from the archive, its own .desktop, or an Electron <code>app.asar</code>). Electron apps get their desktop file named after package.json <code>name</code> so the Wayland app_id matches the taskbar. Programs that link no display library are installed as commands only.
+</li>
+<li>Replaces the same app installed another way (a foreign/AUR package owning the files) in one transaction; files a repo package already owns are left to it. Archives with no app inside (source, backups) open in Ark; <code>.pkg.tar.*</code> files go straight to <code>pacman -U</code>.
+</li></ul>
+</li>
+<li><code>amni-package-install.desktop</code> handles the types; <code>/etc/xdg/mimeapps.list</code> (new, in <code>backup=</code>) and skel <code>mimeapps.list</code> make it the default. amni-os-core now depends on kdialog, fakeroot and binutils (makepkg, readelf). Control's &quot;Downloaded apps&quot; card mentions it.
+<ul>
+<li>Plain <code>.tar</code> (<code>application/x-tar</code>) routes here too, so an uncompressed Arch package like <code>amni-browse-0.14.2-1-x86_64.pkg.tar</code> installs with <code>pacman -U</code> on double-click instead of opening in Ark. A plain tar that isn't an app or package (a data transfer, a repo bundle) is still handed to Ark.
+</li>
+<li><strong>.rpm</strong>: the header is read for name, version, summary and URL, the payload is unpacked with bsdtar, and it goes through the same /usr merge, icon fix-up and library-dependency scan as a .deb (setuid bits kept; RPM scriptlets are not run and the dialog says so). Tested on Fedora's xeyes: installs, runs, <code>pacman -R</code> removes it.
+</li>
+<li><strong>AppImage</strong> (type 2): installed as one file in <code>/opt/&lt;name&gt;/</code> with a <code>/usr/bin/&lt;name&gt;</code> launcher (falls back to <code>APPIMAGE_EXTRACT_AND_RUN</code> without FUSE) and the Start menu entry and icon read out of its squashfs with <code>unsquashfs -o &lt;ELF end&gt;</code>; the AppImage is never executed to install it. It never takes over a package it didn't make: <code>Amni-Connect.AppImage</code> becomes <code>amni-connect-appimage</code>, not an &quot;update&quot; of the amni-connect repo package. Type 1 AppImages get told to run directly.
+</li>
+<li><strong>.snap</strong>: snapd isn't used, so it says so and offers to search Discover (Flathub) for the app.
+</li>
+<li>Packages with no Start menu entry now say which command to run instead of &quot;It goes in your Start menu&quot;.
+</li></ul>
+</li>
+<li><strong><code>amni-windows-run</code></strong> (<code>/usr/local/bin</code>) behind <code>wine-exe.desktop</code>: <code>.exe</code> (including the <code>application/x-msdownload</code> type), <code>.msi</code> (<code>msiexec /i</code>), <code>.bat</code> and <code>.lnk</code> run under Wine; the first run shows a &quot;setting up Windows support&quot; notice while the prefix is created instead of appearing to do nothing. Installers' shortcuts land in the Start menu through Wine's menu builder.
+</li>
+<li>Flatpak bundles and refs already open in Discover, which installs them.
+</li></ul>
+</section>
+<section class="rn-entry" id="unreleased-amni-crypt-is-the-default-encryption">
+<h2>Unreleased - Amni-Crypt is the default encryption</h2>
+<p class="rn-date">2026-09-22</p>
+<ul>
+<li><strong>New package <code>amni-crypt</code></strong> (<code>packaging/amni-crypt</code>, source packed from <code>~/ai/Amni-crypt</code> by <code>tools/pack-suite-src.sh</code>): the native Amni-Crypt app (<code>amni-crypt-gui</code>) and CLI (<code>amni-crypt</code>), the <code>application/x-amni-crypt</code> type (<code>*.acrypt</code>, magic <code>ACRYPT</code> / <code>AMNILOCL</code>) with its icon, Dolphin actions (Encrypt with Amni-Crypt…, Encrypt for myself, Decrypt here) and the <code>amni-crypt-backup</code> user timer (daily encrypted backup of the machine's secrets to the owner's public key; off until the user creates an identity and enables it).
+</li>
+<li>amni-os-core no longer ships <code>amni-crypt.desktop</code> (it opened the website) or the hicolor <code>amni-crypt.svg</code>; the amni-crypt package owns both. Control's Crypt tile and the host's <code>crypt</code> launcher run <code>amni-crypt-gui</code>; the manifest lists Amni-Crypt as native.
+</li>
+<li><code>.acrypt</code> opens in Amni-Crypt: <code>/etc/xdg/mimeapps.list</code>, skel <code>mimeapps.list</code> and first boot set the default.
+</li>
+<li>amni-crypt joins the always-installed set (ISO list in <code>bake.sh</code>, <code>auto-update</code>, Control's Update).
+</li></ul>
+</section>
+<section class="rn-entry" id="unreleased-taskbar-and-desktop-act-like-windows">
+<h2>Unreleased - taskbar and desktop act like Windows</h2>
+<p class="rn-date">2026-09-22</p>
+<ul>
+<li><strong>Open apps are obvious.</strong> <code>w_tasks</code> in <code>theme/plasma-src/gen.py</code>: every open state now has a 3px bar and a tinted chip (white 80% bar for open, gold for focused, 50% for minimized). Pinned apps that are closed still draw nothing. Attention is amber (NeutralText), no longer red.
+</li>
+<li><strong>Attention flashes.</strong> New KWin script <code>amniattention</code> pulses the button amber 8 times, then holds it lit until the window is opened, like Windows. Plasma 6.7 has no animation for this. It draws over the icon geometry the task manager publishes to KWin, lets clicks through, and stays hidden while a fullscreen app covers that screen.
+</li>
+<li><strong>Pinned icons stay put.</strong> New KWin script <code>amnitaskorder</code>. When plasmashell starts with pinned apps already open (at login or after a crash), Plasma sorts them after every launcher. They only jump into their slot when the next window opens. The script re-sorts them 2.5s and 7s after the panel appears. Root cause and mechanism are in its header comment.
+</li>
+<li><strong>Desktop right-click has Display Settings and Desktop and Wallpaper again</strong> (Windows' &quot;Display settings&quot; and &quot;Personalize&quot;). First boot turns them on instead of off.
+</li>
+<li><code>gen.py</code> finds the repo from its own path (or <code>AMNI_REPO</code>); the hard-coded <code>~/Amni-OS</code> was gone.
+</li></ul>
+</section>
+<section class="rn-entry" id="v0-4-6-6-a-usb-that-installs-on-real-hardware">
+<h2>v0.4.6.6 - A USB that installs on real hardware</h2>
+<p class="rn-date">2026-09-22</p>
+<ul>
+<li><strong>Black screen or frozen splash after the Amni OS logo (any GPU).</strong> A drop-in on sddm.service (from 0.4.6.3) started X while plymouth still owned the console, slept 30 seconds, then quit plymouth with <code>--retain-splash</code>. Where X lost that race the splash froze on screen, or the screen went black with no text console behind it (a Radeon desktop hit both). The drop-in is gone; the login screen waits for plymouth to quit, the stock order.
+</li>
+<li><strong>Sound on installed systems.</strong> pipewire, wireplumber and xdg-user-dirs enable their per-user units with <code>systemctl --global enable</code> in their package scripts, which pacstrap ran before systemd was in the image, so the image shipped without <code>pipewire.socket</code> and <code>wireplumber.service</code>. PipeWire had no session manager, so no devices, and apps using the PulseAudio API hung or crashed on launch (Golf With Your Friends). The bake links them into the image, <code>installed-cleanup</code> enables them on installs, and the amni-os-core install script enables them on every upgrade, which repairs machines installed from older images.
+</li>
+<li><strong>Start menu opened on &quot;No matches&quot;.</strong> <code>syncHomePage()</code> ran once before the stack had its initial page, so the home page went into the stack twice; after any search, going back home failed (&quot;replace: nothing to push&quot;) and the menu reopened on the empty search view.
+</li>
+<li><strong>Amni-Browse 0.14.2 passes Cloudflare checks.</strong> On Linux it claimed to be Chrome 153 and faked <code>navigator.userAgentData</code> on a WebKitGTK engine; Turnstile saw the mismatch, reset the checkbox after every click and blocked some sites. It now sends WebKit's own Safari-style user agent (the fake Chrome data is only added when the user agent claims Chrome). Tested on a real managed challenge: fails with the old user agent, passes with the new one.
+</li>
+<li><strong>Included by default.</strong> The image adds the GitHub CLI, cloudflared, Azure CLI, ripgrep, tmux, uv, the Rust/clang/cmake toolchain and Thunderbird. At a new account's first login, <code>/usr/lib/amni-os/first-apps</code> installs Spotify and Chrome from Flathub (their licences do not allow shipping them on the ISO) and the AI assistants Claude Code, Grok, Cursor and Agy (<code>amni-ai-bench defaults</code>) in the background, retrying at later logins until they land. It never runs in the live session. Ollama stays CPU-only; the GPU build is still one click in Control.
+</li>
+<li><strong>Amni Share (new).</strong> One window listing nearby devices: pair with one click and a matching code on both screens, then drop files on a device (or &quot;Send files…&quot;); files sent to you land in Downloads with a notification. KDE Connect does the pairing, encryption and transfer underneath, so it pairs with other Amni OS machines, Windows (KDE Connect from the Microsoft Store), Android and iPhone (the KDE Connect app). Its own repo and package: Amnibro/Amni-Share (public), <code>packaging/amni-share</code>, on the ISO with the rest of the suite.
+</li>
+<li><strong>KDE Connect was blocked by the firewall.</strong> Amni OS turns ufw on with incoming denied and no rule for ports 1714-1764, so no device could ever find or pair with the machine. <code>/usr/lib/amni-os/firewall-share</code> allows those ports from private ranges and IPv6 link-local only; system setup, Control's firewall switch and every amni-os-core upgrade run it.
+</li>
+<li><strong>Snap works out of the box.</strong> snapd is built into <code>[amnios]</code> and ships on the image with <code>snapd.socket</code> enabled (image, installs, and the amni-os-core install script) and <code>/snap</code> linked by tmpfiles, so <code>snap install</code> works without building snapd from the AUR and enabling it by hand. Vendors whose installer only knows apt/dnf (NordVPN) usually also publish a snap. AppArmor is not in the kernel's LSM list, so snaps run with partial confinement.
+</li>
+<li><strong>Live desktop clock</strong> moves to the top right so it no longer covers &quot;Install Amni OS&quot;.
+</li>
+<li><strong>The live session no longer locks or blanks the screen under the installer</strong>, and a fresh install no longer prints &quot;Loading Linux linux ...&quot; over the splash.
+</li>
+<li><strong>Tested end to end in a VM</strong>: install from the Control banner, boot the installed disk to the login screen, a hard reset before logging in, the next boot on basic graphics with the Control banner, &quot;Use full graphics&quot;.
+</li>
+<li><strong>Safe graphics, with nothing to type.</strong> GRUB marks each boot pending in a grubenv on the EFI partition (btrfs cannot hold one) and <code>amni-display-check</code> clears it once someone is logged in to a desktop. A boot that never got there is followed by one with <code>nomodeset plymouth.enable=0</code> (through <code>$amni_gfx</code> on the kernel line), and Amni Control's Home says so and offers &quot;Use full graphics&quot;. NVIDIA gets one automatic retry on nouveau first. The live USB menu has an &quot;Amni OS live (safe graphics)&quot; entry.
+</li>
+<li><strong>NVIDIA by generation.</strong> <code>nvidia-open</code> only drives Turing (GTX 16xx / RTX 20xx) and newer, and nvidia-utils blacklists nouveau, so an older card had no driver at all. <code>amni-gpu-apply</code> reads the PCI device id: 0x1E00 and up get nvidia-open, older cards get nouveau.
+</li>
+<li><strong>Boot menu names</strong>: &quot;Amni OS&quot; and &quot;Amni OS (LTS kernel)&quot; instead of &quot;Amni OS Linux, with Linux linux&quot; (<code>/usr/lib/amni-os/grub-titles</code>, re-applied after every grub update). GRUB no longer tries to save the last entry, which it cannot do on btrfs.
+</li>
+<li><strong>SSH key in every install.</strong> Every bake copied a developer key (<code>dev/authorized_keys</code>, &quot;amni-dev&quot;) into <code>/etc/skel/.ssh</code>, so each account the installer created carried it, and the live session ran sshd. The key is out of the repo; <code>AMNI_DEV_KEYS</code> adds keys to the live user of a dev image only, sshd is off in release live images, and the installer strips any such key.
+</li>
+<li><strong>Installs stopped at the boot splash.</strong> The live image carries a VM rendering path (software GL, KWin compositing off, X11 session, software cursor) and <code>amni-live-setup</code> only strips it from the running live session. <code>unpackfs</code> copies the squashfs, so every install got it back, and the shipped SDDM config itself started the greeter with <code>LIBGL_ALWAYS_SOFTWARE=1</code> on X11. <code>amni-os.conf</code> now defaults to Wayland with hardware GL; the VM keys live in an airootfs drop-in (<code>zz-amni-vm.conf</code>) that the live setup and <code>installed-cleanup</code> delete on bare metal.
+</li>
+<li><strong>NVIDIA early KMS.</strong> <code>amni-gpu-apply</code> puts the NVIDIA modules in the initramfs (<code>/etc/mkinitcpio.conf.d/amni-nvidia.conf</code>) and sets <code>nvidia-drm fbdev=1</code>, so the splash and SDDM do not start on simpledrm and lose the display mid-boot. AMD and Intel are unchanged.
+</li>
+<li><strong>linux-lts boots, and is not the default.</strong> archiso leaves <code>linux-lts.preset</code> pointing at a kernel that is not in <code>/boot</code>; the installer now copies every kernel and writes plain presets. Calamares' initcpio step only runs <code>mkinitcpio -p linux</code>, and grub-mkconfig's reverse version sort puts <code>vmlinuz-linux-lts</code> first, so the first USB with the LTS kernel booted it by default with no initramfs (kernel panic: <code>unknown-block(0,0)</code>, btrfs &quot;unknown parameter subvol&quot;). <code>installed-cleanup</code> now builds every other kernel's initramfs itself and sets <code>GRUB_TOP_LEVEL=&quot;/boot/vmlinuz-linux&quot;</code>.
+</li>
+<li><strong>Installer contrast and icons.</strong> Calamares runs as root through pkexec, which drops <code>XDG_CURRENT_DESKTOP</code>, so Qt used Fusion's light palette under our dark stylesheet (light text on light pages) and no icon theme. It now starts with <code>-platformtheme kde</code>, and the live setup gives root the desktop's kdeglobals and Kvantum config.
+</li>
+<li><strong>Hibernate check</strong> restarts logind with <code>--no-block</code> so it can never wait on a unit it is ordered before.
+</li>
+<li><strong>Install is impossible to miss on the USB.</strong> &quot;Install Amni OS&quot; is on the live desktop, first on the dock (the Plasma layout pins it only when <code>amni-install.desktop</code> exists, which is only on the live image) and a banner at the top of Amni Control's Home, shown when the Control host sees <code>/run/archiso</code>. It used to be only in the app menu under System. The installer has its own icon.
+</li>
+<li><strong>Scale in Amni Control works on Wayland.</strong> The Python that picks the screens was indented one level too deep, so <code>amni-scale</code> died with an IndentationError on every Wayland session and nothing rescaled. It also forced a font DPI, which on Wayland scales text a second time; that is X11-only now. Control marks the scale actually in effect (<code>amni-scale --get</code>) instead of the last button pressed, shows values like 145% that match no button, and undoes the mark when a change fails.
+</li>
+<li><strong>Icons</strong>: Steam (piston mark) and Thunderbird (the bird round the envelope) join the app set.
+</li>
+<li><strong>Bake</strong>: <code>bake.sh</code> unmounts anything a failed mkarchiso left under <code>out/work</code> before deleting it (a stale chroot <code>/proc</code> was being walked by <code>rm -rf</code>), and airootfs no longer carries <code>49-amni-desktop.rules</code>, which amni-os-core owns and pacstrap refused as a file conflict. <code>build-local-repo.sh</code> starts each package from a fresh copy (files deleted from the repo kept shipping from the old work copy) and drops package files left in <code>packaging/*/</code> by earlier makepkg runs, which were being copied into the repo beside the fresh build (amni-mail 1.9.0 next to 1.10.1-2).
+</li>
+<li><strong>Haven 2.4.1</strong> is now packaged from the upstream release (<code>v2.4.1-tauri</code> .deb, pinned by sha256), the same binary the in-app updater installs. The source build needed a tarball packed on the Windows tree, so fresh clones fell back to 2.2.0.
+</li>
+<li>The image on the USB was baked from 09-19 packages (Browse 0.13.1 with its non-clickable pages, Connect 1.5.16, Haven 2.2.0). This bake carries Browse 0.14.1, Mail 1.10.1-2, Connect 1.6.10, Haven 2.4.1 and today's amni-os-core.
+</li></ul>
+</section>
+<section class="rn-entry" id="v0-4-6-5-haven-2-4-1-is-the-launcher">
+<h2>v0.4.6.5 - Haven 2.4.1 is the launcher</h2>
+<p class="rn-date">2026-09-22</p>
+<ul>
+<li><strong>Haven.</strong> The dock was still starting the pacman build of Haven 2.2.0. The Tauri updater could see 2.4.1 on GitHub and then fail, because it rewrites the running executable and <code>/usr/lib/amni-os/haven-desktop</code> is root-owned. <code>haven-desktop</code> now keeps a copy under <code>~/.local/share/amni-os/haven/</code> (that is what launches, and what the updater can replace) and refreshes it when the system binary's version file is newer. This machine's system binary is the upstream 2.4.1 build.
+</li></ul>
+</section>
+<section class="rn-entry" id="v0-4-6-4-glass-contrast-connect">
+<h2>v0.4.6.4 - Glass, contrast, Connect</h2>
+<p class="rn-date">2026-09-21</p>
+<ul>
+<li><strong>Glass settings</strong> in Amni Control &gt; Appearance: panel opacity, floating panel, blur and its strength, inactive-window and menu translucency. <code>/usr/lib/amni-os/amni-glass</code> applies and remembers them in <code>~/.config/amni-os/glass</code>; <code>amni-look</code> re-applies them on every accent or light/dark switch. Background contrast is gone from KWin 6.7 and Kvantum translucency is off by design, so neither is offered. Panel opacity needs a plasmashell restart on this Plasma (the scripting API calls the wrong setter), which the script does itself.
+</li>
+<li><strong>System Settings contrast</strong>: the selected sidebar row is now the true accent with ink text and ink icons in both modes (it was ink on a muddy bronze); unchecked check boxes and radios are visible; category icons no longer vanish on the selected row; inactive windows keep the row legible. Sources: <code>theme/kvantum-src</code>, <code>theme/gen/gen-colors.py</code>, <code>theme/icons-src/build.py</code>.
+</li>
+<li><strong>Amni-Connect</strong> packaging: 1.6.10 (the AppImage was already that release), the app's own icon, and a launcher that exports <code>APPDATA</code> (the embedded signaling server otherwise tries to write into app.asar and never starts) and a <code>libxdo.so.3</code> compat path for the bundled input daemon.
+</li>
+<li><strong>Amni-Browse</strong> 0.14.0 pin: tab hover flicker fix and hicolor icons that match the theme.
+</li>
+<li><strong>One place for settings.</strong> Amni Control's System tab opens with a settings grid in plain words (Screen, Sleep and battery, Lock screen, Wi-Fi, Sound, Bluetooth, Touchpad, Mouse, Keyboard, Printers, Date and time, Pop-ups, Night light, Easier to see and use, People, Everything else); each card opens just that KDE page. The Start menu's avatar and gear open Amni Control, and the desktop right-click loses Configure Desktop and Display Configuration (wallpaper and display are in Control); Edit Mode and Add Widgets stay.
+</li>
+<li><strong>Light and dark follow everywhere.</strong> Plasma's own switch (Quick Settings, &quot;dark at night&quot;) only swapped the global theme, so the panel and frames changed while windows stayed dark. The Control host now watches that switch and runs <code>amni-look</code> to finish the job.
+</li>
+<li><strong>Video wallpaper</strong> accepts MPEG (<code>.mpeg .mpg .m2v .ts .m2ts</code>), <code>.m4v</code> and <code>.ogv</code>, and the picker has an &quot;All files&quot; option.
+</li>
+<li><strong>Amni Assist, first cut: an OS you can talk to.</strong> <code>amni-agentd</code> (per user, 127.0.0.1:15920) turns a sentence into verbs: open, switch to and close windows (KWin script, by internal id), settings pages, look, glass, wallpaper, URLs, file search, volume, and Control jobs. A local router answers two-word requests with no model; abilities are JSON manifests under <code>/usr/share/amni-os/abilities</code> and <code>~/.config/amni-os/abilities</code>; a preference sheet holds aliases and people; an optional provider (local or key) plans multi-step requests under a monthly cap with a ledger. The Start menu gains a simple mode (prompt field, drawer of open windows, favourites, &quot;All apps&quot;) and Amni Control a &quot;Talk&quot; tab with the four setup choices, aliases, learned notes, recent actions and abilities. Design contract in <code>docs/assist-design.md</code>.
+</li>
+<li><strong>Suite cards</strong> in Control show Installed / Not installed and offer Open, Install (allow-listed suite packages through the polkit helper) and Website.
+</li>
+<li><strong>Updates never downgrade.</strong> The update action handed pacman an explicit package list, which installs the repo build even when the machine runs a newer one; it now installs only what is missing and lets <code>-Su</code> upgrade. pacman output streams into the job log and the auto-answered &quot;Proceed?&quot; line is hidden.
+</li>
+<li><strong>Amni Browse &quot;W&quot; icon.</strong> A development copy in <code>~/.local/bin</code> shadowed the installed browser and its window carried the app id <code>amni-browse-bin</code>, which no desktop file matched. <code>amni-look</code> moves such copies aside, and the browser pins its app id.
+</li></ul>
+</section>
+<section class="rn-entry" id="v0-4-6-3-amni-scient-all-the-way-down">
+<h2>v0.4.6.3 - Amni Scient, all the way down</h2>
+<p class="rn-date">2026-09-18</p>
+<p>The whole OS now reads as amni-scient.com, from GRUB to the desktop, in ink and in ivory. Every surface derives from one file, <code>theme/tokens.json</code>, taken from the site's stylesheet.</p>
+<ul>
+<li><strong>Window decoration</strong> is native: <code>packaging/amni-decoration</code> (KDecoration3, C++). Flat title bar, gold dash, tracked uppercase title, 1.4px line buttons, hairline outline, site shadows. Replaces the Breeze engine (the Aurorae attempt was choppy).
+</li>
+<li><strong>Qt widgets</strong> use Kvantum themes AmniScient / AmniScientLight: site buttons (hover fills with the text colour), flat tabs with a gold underline, square thin scrollbars, gold focus.
+</li>
+<li><strong>Plasma</strong> theme rebuilt from a generator, plus a real light sibling. Glass panel with hairline, gold dash on the active task, new splash, logout screen, and an Amni window switcher.
+</li>
+<li><strong>Start button</strong> is <code>com.amniscient.start</code>: Kickoff's menu with an animated AMNI button. Letters rise in at login, an ivory fill sweeps in on hover like the site's buttons, gold when open, and a gold glint runs round the border now and then.
+</li>
+<li><strong>Icons</strong>: 3,500 names generated in the site's line language (<code>theme/icons-src</code>). Folders are ink or ivory slabs with a gold dash tab. The old theme fell through to breeze-dark for almost everything.
+</li>
+<li><strong>Cursors</strong>: 44 designs, animated gold wait arc, SVG cursors for crisp scaling.
+</li>
+<li><strong>Colours, GTK, apps</strong>: all 24 schemes regenerated; GTK3/4 and libadwaita themes; Flatpak overrides; Konsole and Kate themes; a soft <code>amni</code> sound theme.
+</li>
+<li><strong>Boot and login</strong>: GRUB theme, Plymouth splash and SDDM login rebuilt (<code>theme/boot-src</code>). Installed systems pick them up through two pacman hooks that fire only when the art changes.
+</li>
+<li><strong>Wallpapers</strong>: every accent paper regenerated with light and dark images; Plasma switches with the scheme.
+</li>
+<li><strong>Control and installer</strong> restyled to match the site.
+</li></ul>
+<p>Fixes found on the way:</p>
+<ul>
+<li>Fonts were stored in the Qt5 10-field form. Qt6 read weight 500 on the old scale and drew Archivo near Black. Every font key is now the Qt6 form.
+</li>
+<li>A fixed <code>AccentColor</code> in kdeglobals forced dark gold onto the light scheme; schemes carry their own.
+</li>
+<li>Stale copies in <code>~/.local/share</code> (icons, desktop theme, GTK theme, Konsole profile) hid the system themes. <code>amni-look</code> moves them aside.
+</li>
+<li>Wallpaper and video-wallpaper directories were installed world-writable; a stray <code>__pycache__</code> shipped in /usr/local/bin.
+</li></ul>
+<p><code>/usr/lib/amni-os/amni-look [dark|light] [accent]</code> is the one place the look is applied. First boot, Control's Apply button, the light/dark toggle and the accent picker all call it.</p>
+</section>
+<section class="rn-entry" id="v0-4-6-2-no-terminal-windows-from-control-one-click-amni-scient">
+<h2>v0.4.6.2 - No terminal windows from Control, one-click Amni Scient</h2>
+<p class="rn-date">2026-09-18</p>
+<ul>
+<li><strong>Control opened Konsole for long jobs.</strong> Check updates, the install sets, GPU drivers, system setup, Steam, Flatpak installs, distrobox and the AI bench all ran inside a Konsole window that waited for Enter. They now run in the Control host, and a progress tray in Control shows the current line, full details on demand, and a plain reason when something stops (a closed password dialog reads as that, not exit 126). The password prompt is the Plasma polkit dialog. The distrobox buttons create the box and no longer drop into a shell.
+</li>
+<li><strong>Existing accounts stayed on Breeze colours.</strong> A look-and-feel package only seeds new users, so an account that touched System Settings kept <code>BreezeLight</code> after the retheme. Control → Colors → <strong>Apply Amni Scient</strong> re-applies the look-and-feel, the colour scheme for the saved accent and mode, the Plasma theme, icons, cursor, GTK 3/4 and the window decoration palette, then reconfigures KWin. Windows keep the Breeze <em>engine</em> with Amni colours (the Aurorae decoration was dropped in 0.4.6.1 for choppy, transparent borders).
+</li>
+<li><strong>Light mode used Breeze Light for the panel.</strong> It now uses Plasma's default theme, which follows the AmniScientLight scheme, so light mode is ivory and gold instead of stock Breeze.
+</li>
+<li>Discover stays Flathub and firmware only (see 0.4.6). Amni apps (Browse, Mail, Haven, ...) update from Control → Check updates and the daily timer, from the <code>[amnios]</code> repo.
+</li></ul>
+</section>
+<section class="rn-entry" id="v0-4-6-1-desktop-polkit-permissions-wi-fi-amni-browse-0-13-1-med">
+<h2>v0.4.6.1 - Desktop polkit permissions, Wi-Fi, Amni-Browse 0.13.1 &amp; media stack</h2>
+<p class="rn-date">2026-09-16</p>
+<ul>
+<li><strong>Wi-Fi and settings permissions resolved.</strong> On installed systems, <code>installed-cleanup.sh</code> removed the live session's <code>49-amni-liveuser.rules</code>, leaving no polkit rules on the system. NetworkManager and KDE System Settings then prompted for root authentication or failed with permission denied whenever modifying Wi-Fi connections, setting time/date, managing power profiles, or mounting disks. Added <code>/etc/polkit-1/rules.d/49-amni-desktop.rules</code> to grant <code>wheel</code> and <code>network</code> members seamless authorization for NetworkManager, timedate1, udisks2, power-profiles-daemon, upower, login1, locale1, hostname1, and KDE system settings.
+</li>
+<li><strong>Amni-Browse 0.13.1 shipped:</strong> Upgraded Amni-Browse to 0.13.1 with GtkOverlay z-order layering (menus and drop-downs now open cleanly above webviews), GTK keyboard focus routing to omnibox on Ctrl+L/Ctrl+T, native WebKitGTK navigation methods, WebGL/WebAudio/WebRTC/MediaSource/clipboard/smooth-scrolling settings enabled, Linux Chrome User-Agent string, omnibox localhost routing, and full WebsiteDataManager browsing data clearing.
+</li>
+<li><strong>Media playback:</strong> Added <code>gst-plugins-bad</code> and <code>gst-libav</code> to Amni-Browse dependencies and ISO packages for hardware/software H.264, MP4, AAC, and YouTube media playback out of the box.
+</li>
+<li>Shipped in <code>amni-os-core</code> 0.4.6.202609162320 and <code>amni-browse</code> 0.13.1-1.
+</li></ul>
+</section>
+<section class="rn-entry" id="v0-4-6-host-download-mirror-stops-opening-a-window">
+<h2>v0.4.6 host - Download mirror stops opening a window</h2>
+<p class="rn-date">2026-09-15</p>
+<ul>
+<li><strong>A terminal window popped up at every boot.</strong> Task <code>\AmniDownloads</code> ran <code>node</code> directly, so Windows Terminal opened a window for it. It now starts through <code>conhost.exe --headless</code> and appends to <code>amni-bake\download.log</code>.
+</li>
+<li><strong>The mirror would have stopped after 72 hours up.</strong> The task carried Task Scheduler's default <code>PT72H</code> limit; it is now <code>PT0S</code>.
+</li>
+<li><strong>amni-bake cleanup.</strong> VirtualBox-era files are gone (<code>archlinux.iso</code>, <code>repo.tar</code>, serve and dl logs, disk probes, stray <code>chromium.rs</code>/<code>Cargo.toml</code>, 09-03 debug captures) along with the duplicate 0.4.4 ISO in <code>incoming</code>. 7205 MiB freed. The 0.4.4 and 0.4.3 releases stay.
+</li>
+<li><code>releases/index.html</code> listed an ISO that no longer existed; it lists 0.4.4 now.
+</li>
+<li><strong>ISO downloads could not resume.</strong> Cloudflare answered every ranged ISO request with the full 5.9 GB, which also broke the torrent web seed. A cache rule turns caching off for <code>.iso</code> on <code>downloads.amni-scient.com</code>, and ranged requests return <code>206</code> again.
+</li></ul>
+</section>
+<section class="rn-entry" id="v0-4-6-suite-on-the-image">
+<h2>v0.4.6 - Suite on the image</h2>
+<p class="rn-date">2026-09-10</p>
+<ul>
+<li><strong>Haven died on NVIDIA.</strong> Tauri uses WebKitGTK; the first frame on Wayland DMA-BUF is enough to kill it. <code>/usr/local/bin/haven-desktop</code> (and a rebuilt haven-desktop package) sets <code>WEBKIT_DISABLE_DMABUF_RENDERER=1</code> and, when the NVIDIA module is loaded, <code>GDK_BACKEND=x11</code>.
+</li>
+<li><strong>One bad package no longer aborts the rest.</strong> Control Check updates and <code>SCOPE=all</code> ignore unused NVIDIA on the first <code>pacman -Su</code>. If anything else conflicts, clashes on disk, or pins a version, that name is skipped and <code>-Su</code> runs again (up to 8 times) so Firefox and Plasma still land. NVIDIA itself is a second transaction only when <code>gpu.json</code> says the stack is NVIDIA.
+</li>
+<li><strong>Video wallpaper.</strong> Desktop type &quot;Amni Video&quot; loops a muted mp4/webm. Control → Colors → Use a video, or right-click the desktop. Needs <code>qt6-multimedia</code>.
+</li>
+<li><strong>Browse pin is 4d9032f</strong> (app menu, Wayland gtk webviews, engine events). GitHub main is still 7db2d58 until that tree is pushed. Mail stays the 1.9.0 tree already on GitHub.
+</li>
+<li><strong>Wi-Fi would not come back after a drop.</strong> The old fixup only ran at boot when the interface was missing. After a lost AP, sleep, or a MediaTek firmware stall the device sat unavailable. Power-save is off, MAC stays permanent, resume and an unavailable dispatcher call <code>wifi-fixup recover</code>, and Control → System has Fix Wi-Fi.
+</li>
+<li><strong>More looks.</strong> Nine extra wallpapers (Tide, Dusk, Ridge, Pulse, Leaf, Mail, Space, Type, Weather) sit next to the existing six. Mail, Space, Weather and Type accents join the color schemes. Control → Colors picks wallpaper and accent; accent also sets a matching paper. Start menu is icon-only, pinned suite in a grid, all-apps as a list, Sleep / Restart / Shut down labeled. New users get it from the look-and-feel; existing ones re-apply Amni Scient or pick papers in Control.
+</li>
+<li><strong>Discover told people to use pacman.</strong> <code>packagekit-qt6</code> is off the image. Discover stays for Flathub and firmware. Control Check updates, daily auto-update, and system setup remove the package if an older install still has it.
+</li>
+<li>Dock and Control ship <strong>Haven Tauri</strong>, <strong>Amni-Mail</strong>, <strong>Amni-Browse</strong>, <strong>Amni-Space</strong> (disk map) and <strong>Amni-Connect</strong>. Calc, Learn, AI, LLM, Crypt, Explore, Weather, Life, Type and Code land in the menu. <code>tools/pack-suite-src.sh</code> packs the sibling trees for bake; missing sources skip that package instead of killing the ISO.
+</li></ul>
+</section>
+<section class="rn-entry" id="v0-4-5-amni-mail-on-the-os-linux-browser-fixes">
+<h2>v0.4.5 - Amni-Mail on the OS, Linux browser fixes</h2>
+<p class="rn-date">2026-09-09/10</p>
+<ul>
+<li><strong>The browser had no menus and swallowed omnibox typing.</strong> The hamburger sent a <code>menu</code> command that no arm in the WebKitGTK/WebView2 lane handled, so nothing opened (the Servo lane had it; the swap to the chrome lane dropped it). New app menu built from the chrome's own embedder-menu renderer: new tab/private tab/window, History, Downloads, bookmark, find, zoom, full screen, print, view source, developer tools, clear data, guide, settings. Picks come back as <code>ctx_pick</code>.
+</li>
+<li><strong>Menus opened invisible on Linux.</strong> The chrome asked for an overlay of <code>window.innerHeight</code>, which inside a 119px chrome view is 119px, so the popup was clipped at the toolbar edge; the state feed now carries the real window height (<code>winh</code>). GtkLayout also stacks later children on top, so <code>raise_chrome</code> now raises the chrome's GdkWindow instead of doing nothing, and the content view no longer slides down when an overlay opens.
+</li>
+<li><strong>Clicks moved DOM focus but not GTK focus</strong>, so keystrokes went to the page while the caret sat in the omnibox. Every webview grabs GTK focus on button-press. Clicking the omnibox also selects its text, so typing replaces the URL instead of appending to it.
+</li>
+<li><code>tools/browse-xvfb-test.sh</code>: Xvfb + openbox + xdotool rig in the WSL Arch build root that drives the real Linux binary and writes screenshots to <code>amni-bake/incoming/shots</code>. Both bugs above were reproduced and verified fixed there. Package amni-browse 0.13.0-5.
+</li></ul>
+<ul>
+<li><strong>Amni-Mail is a package.</strong> <code>packaging/amni-mail</code> ships the FastAPI backend and the prebuilt Vite frontend under <code>/usr/share/amni-mail</code>; <code>/usr/bin/amni-mail</code> builds a per-user venv on first run (Konsole window shows the pip install), starts the backend on 127.0.0.1:8026 with <code>AMNI_MAIL_NO_BROWSER=1</code>, and opens the UI in <code>amni-browse</code>. Data lives in <code>~/.local/share/amni-mail</code>. Dock launcher added; auto-update and the Control Update button pull it (<code>amni-mail</code> is in the update set, <code>optdepends</code> on amni-browse because makepkg cannot resolve repo-local deps).
+</li>
+<li><strong>Linux Amni-Browse had no engine events.</strong> <code>wire_engine</code> returned <code>None</code> off Windows, so back/forward never enabled, favicons never showed, HTML5 fullscreen and the audio badge never fired, and downloads never reported completion. Now wired through WebKitGTK signals (<code>load-changed</code> -&gt; history, <code>enter/leave-fullscreen</code>, <code>is-playing-audio</code> notify) plus an injected favicon script over ipc and wry's download-completed handler. Package amni-browse 0.13.0-4 in <code>[amnios]</code>.
+</li>
+<li>Core tar now includes <code>dbus/</code> (org.freedesktop.secrets D-Bus activation file from the desktop-secrets work).
+</li></ul>
+</section>
+<section class="rn-entry" id="v0-4-4-first-hardware-debug-session">
+<h2>v0.4.4 - First hardware debug session</h2>
+<p class="rn-date">2026-09-08</p>
+<ul>
+<li><strong>Wi-Fi had no interface on the G14 (MT7922).</strong> archiso's releng enables iwd, which deletes the kernel's default wlan netdev and creates its own; <code>amni-live-setup</code> then stopped iwd, which removed that one too, so NetworkManager listed only <code>lo</code> while phy0 and the driver were fine. <code>bake.sh</code> now masks iwd and networkd in airootfs and enables NetworkManager statically; <code>system-setup</code> masks iwd on installed systems. New <code>amni-wifi-fixup.service</code> (<code>scripts/wifi-fixup.sh</code>) reloads the driver and re-adds a managed interface when a wiphy has no netdev. <code>iw</code> added to the package list.
+</li>
+<li><strong>Amni-Browse crashed at launch on Wayland</strong> (<code>chrome webview: UnsupportedWindowHandle</code>, chromium.rs:713). wry on Linux only attaches to an X11 window handle. The desktop entry now runs it with <code>GDK_BACKEND=x11</code> (XWayland) until the Linux lane moves to <code>build_gtk</code>. amni-browse pkgrel 2.
+</li>
+<li><strong>Pairing without typing:</strong> <code>downloads.amni-scient.com/pair</code> installs the dev key, starts sshd and prints the IP; the laptop shows up on the LAN as <code>amnios.local</code>.
+</li>
+<li><strong>Dual boot by default.</strong> The installer's partition page now starts on &quot;Install alongside&quot; with manual partitioning allowed; erase is a deliberate click away. The EFI partition mounts at <code>/boot/efi</code> so an existing Windows ESP (100 MB) only holds shim and GRUB while kernels stay on the Amni root; <code>secureboot-setup</code> and <code>sign-boot</code> follow whichever ESP is mounted.
+</li>
+<li><strong>Amni-Browse runs native Wayland.</strong> Linux lane now builds every webview with wry <code>build_gtk</code> into a <code>gtk::Fixed</code> inside tao's window box (Amni-Browse ef8212b). The X11 shim from earlier today is gone; typing in the top bar works because GTK owns focus.
+</li>
+<li><strong>AI seats installer</strong> (<code>amni-ai-bench</code>) rewritten from the on-box trace: Cursor downloads the official AppImage into <code>~/.local/opt/cursor</code> with a launcher and desktop entry; Codex/OpenCode npm installs use <code>--prefix ~/.local</code>; every seat verifies the binary landed and fails loudly; agy reports &quot;no public installer&quot; instead of pretending. <code>~/.local/bin</code> is on PATH for shells (<code>profile.d</code>) and the Plasma session (<code>environment.d</code>). Control asks the host (<code>seats</code> verb) which binaries exist, shows Installing while the terminal runs, and flips to Ready only when the binary is there.
+</li>
+<li><code>tools/write-usb.ps1</code> takes the disk offline before the raw write; Windows mounted the new partitions mid-write and the handle died with &quot;Access to the path is denied&quot; at 5.1 GB.
+</li>
+<li><code>bake-wsl.sh</code> copies the ISO to <code>incoming/</code> as <code>.part</code> then renames; a WSL 9p I/O error had left a truncated 3.2 GB file with the final name. Release names now carry the version: <code>amni-os-0.4.4-2026.09.08-x86_64.iso</code>, sha256 8b796031a09775af4688c4defe5313a65ae9cd6ec85fd9479b518f572ac4db05.
+</li>
+<li><strong>Automatic updates.</strong> <code>amni-update.timer</code> (10 min after boot, then daily) runs <code>/usr/lib/amni-os/auto-update</code>: refreshes the databases and upgrades every installed package that comes from <code>[amnios]</code> (amni-os-core, amni-browse, calamares, shim, ...) unattended; timeshift-autosnap takes a restore point before each transaction. <code>/etc/amni-os/update.conf</code> <code>SCOPE=os|all|off</code> (default os; <code>all</code> applies the whole Arch upgrade nightly). Arch updates otherwise surface in Discover and apply from Control's button. <code>amni-os-core.install</code> enables the timer on install and upgrade, so systems installed from the 0.4.4 stick get it with their first update (amni-os-core 0.4.4.202609081228 in the repo). Repo-only builds: <code>AMNI_REPO_ONLY=1 tools/bake-wsl.sh</code>.
+</li>
+<li><strong>Installer progress feed.</strong> The dock launcher is now <code>amni-install</code>, which starts <code>install-watch</code> next to Calamares. KPMcore runs ntfsresize without a progress bar, so the Windows shrink showed 1% for its whole run (268 GB relocated in 16 min on the G14, 271 MB/s); the watcher reads the process I/O counters and shows GB moved, MB/s and elapsed time in a Plasma dialog, then announces the copy stage.
+</li>
+<li>Cursor's old download host (<code>downloader.cursor.sh</code>) is gone; the seat installer now asks <code>cursor.com/api/download</code> for the current AppImage URL. <code>amni-control</code> opens Amni-Browse directly instead of <code>xdg-open</code>, which followed Firefox after its make-default prompt and put the first-boot Control window in the wrong browser.
+</li>
+<li><strong>Haven preinstalled.</strong> <code>packaging/haven-desktop</code> builds the Tauri port (Haven-Desktop 2.2.0, 7446cb2) into <code>[amnios]</code>; it is on the dock and Control's Suite pane opens it. Runtime deps: webkit2gtk-4.1, libappindicator-gtk3 (tray), libpulse.
+</li>
+<li>Seats verified on the installed G14: grok 1.0.13, Claude Code 2.1.263, Codex 0.153.4, OpenCode 1.18.29, Cursor 3.19.13. <code>agy</code> has no public installer, so that seat installs Google's Gemini CLI and provides <code>agy</code> as its name. Steam launches on the installed system with no VM GL overrides left.
+</li>
+<li>Boot noise (<code>TDX not supported</code>, ACPI <code>_STA.GC00</code> BIOS bug, <code>No NVIDIA GPU found</code>) is harmless; the live cmdline now carries <code>quiet loglevel=3 udev.log_level=3</code>.
+</li>
+<li>Verified on the G14 over SSH: Wayland session, panel 2560x1600 at scale 1.5 applied by kscreen, Firefox 155 launches, Steam bootstraps. No power-button crash appears in the journal of this boot; still to be captured.
+</li></ul>
+</section>
+<section class="rn-entry" id="v0-4-3-secure-boot">
+<h2>v0.4.3 - Secure Boot</h2>
+<p class="rn-date">2026-09-08</p>
+<ul>
+<li><strong>First boot on real hardware (ASUS ROG, Ryzen 9 / Radeon, 2026-09-07).</strong> It boots and the desktop paints. Bugs from that session: the VM-only graphics overrides (software GL, DRI3 off, vblank off, compositing off) were active on bare metal because <code>system-setup</code> removes them only after login; <code>amni-live-setup</code> now deletes them before sddm starts when not virtualised. That set is the likely cause of Steam not opening, Firefox crashing on launch and WebKit navigation fatals. <code>wl</code> (Broadcom) was loading on a machine without Broadcom and printing a kernel warning; it is blacklisted unless <code>gpu-apply</code> finds a 14e4 wireless device. <code>ScaleFactor=1</code> pinned the UI tiny on a high-DPI panel; the pin is gone and bare metal defaults to the Plasma Wayland session, which scales per display. System Monitor is on the dock and on Ctrl+Alt+Del / Ctrl+Shift+Esc. Open from that session: the power button showing a fatal error (message not captured yet).
+</li>
+<li>amni-os-core: the desktop overlay is a pacman package now (<code>packaging/amni-os-core</code>, built from a tarball of the tree with a build stamp in the version). Installed systems keep <code>[amnios]</code> pointed at downloads.amni-scient.com/repo/amnios, so Control's update button pulls Amni OS changes over the air. <code>tools/publish-repo.sh</code> copies the built repo to the mirror.
+</li>
+<li>Amni-Browse ships the <code>webview</code> lane (Chromium on Windows, WebKitGTK on Linux, same chrome).
+</li></ul>
+<ul>
+<li>Installs boot with Secure Boot on. <code>shim-signed</code> (Microsoft-signed shim + MokManager) goes on the ESP as <code>EFI/AmniOS/shimx64.efi</code> and the removable fallback; <code>secureboot-setup</code> makes a machine owner key at install, signs GRUB and every kernel with it, queues it with <code>mokutil --import</code> (password <code>amnios</code>), and adds an &quot;Amni OS (Secure Boot)&quot; firmware entry. MokManager asks once on the first boot. <code>95-amni-sign-boot.hook</code> re-signs on every kernel or GRUB update. Live USB boots under Secure Boot through Ventoy's enrolment.
+</li></ul>
+</section>
+<section class="rn-entry" id="v0-4-2-polish-pass">
+<h2>v0.4.2 - polish pass</h2>
+<p class="rn-date">2026-09-07</p>
+<ul>
+<li>Desktop clock sits top-left as in the mockup. The folder-view containment ignores <code>geometry</code> from the layout script; it reads <code>ItemGeometriesHorizontal</code> and <code>ItemGeometries-&lt;WxH&gt;</code> at the containment root, with a trailing <code>;</code>. Written for ten common resolutions.
+</li>
+<li>The live disc no longer pops &quot;Disks &amp; Devices&quot; on every boot (<code>UDISKS_IGNORE</code> udev rule for the <code>AMNI_OS_*</code> medium, removed at install).
+</li>
+<li>SDDM defaults to the Plasma X11 session on installs (<code>DefaultSession=plasmax11.desktop</code>).
+</li>
+<li>Control's update and install verbs refresh <code>archlinux-keyring</code> first; a fresh live session otherwise fails installs with &quot;signature is unknown trust&quot;.
+</li>
+<li>Welcome copy no longer promises Braid on the dock.
+</li>
+<li>Rig: <code>tools/vm.sh</code> SSH helpers, <code>scripts/dev-apply.sh</code> overlay push, dev images carry the rig key from <code>dev/authorized_keys</code> (preflight warns; release tars exclude <code>dev/</code>).
+</li>
+<li>Mirror: downloads.amni-scient.com through the amni-inc tunnel with Range support, torrent with web seed, <code>tools/publish.sh</code> emits sha256 + torrent + magnet + latest.json.
+</li></ul>
+</section>
+<section class="rn-entry" id="v0-4-1-virtualbox-freeze-root-cause-0-13-0-browser-tree-colour-t">
+<h2>v0.4.1 - VirtualBox freeze root cause, 0.13.0 browser tree, colour themes</h2>
+<p class="rn-date">2026-09-03</p>
+<h3>Fixed</h3>
+<ul>
+<li><strong>Calamares ran end to end for the first time and failed at the last step.</strong> Disk, unpack, users, locale all fine; the package cleanup <code>pacman -Rs</code> refused because archiso ships <code>archinstall</code>, which depends on <code>arch-install-scripts</code>. <code>archinstall</code> joins the removal list and the operation is <code>try_remove</code>, so a dependency refusal never fails a finished install.
+</li>
+<li>Calamares slideshow painted light text on white; it has an ink background now.
+</li>
+<li>Second Calamares run reached initcpio and died: <code>/boot/vmlinuz-linux</code> is not in the airootfs (archiso lifts it into the ISO boot dir), so mkinitcpio had no kernel to read. The cleanup step now copies the kernel back from <code>/usr/lib/modules/&lt;ver&gt;/vmlinuz</code> (the one whose <code>pkgbase</code> is <code>linux</code>) before initcpio runs.
+</li>
+<li>Live session no longer auto-locks; it locked twice during an install.
+</li>
+<li><strong>The Braid dock icon froze the desktop.</strong> No Braid package ships yet, so <code>amni-braid.desktop</code> pointed at a binary that does not exist, and clicking it hangs plasmashell (the launcher error path deadlocks the notification server; kwin and X stay alive). Bisected with xdotool, one launcher at a time. The launcher is off the dock and off the image until Braid is packaged.
+</li>
+<li><strong>GL in VirtualBox.</strong> Mesa <code>svga</code> over vmwgfx hangs GL clients once a few windows are open; <code>LIBGL_ALWAYS_SOFTWARE=1</code> session-wide in VMs, removed on bare metal. SWcursor stays as well.
+</li>
+<li>Lock screen showed the Breeze wallpaper; pinned to the Amni wallpaper at first boot.
+</li></ul>
+<h3>Verified (installed system, 2026-09-03)</h3>
+<ul>
+<li><strong>Calamares end to end, first time.</strong> Erase disk, btrfs + swap, user, GRUB. Installed system boots to SDDM with the Amni wallpaper, no liveuser, no file:// repo, plymouth hooks with the <code>amni</code> theme, <code>quiet splash</code>, kernel + initramfs on /boot, every service enabled, network up.
+</li></ul>
+<h3>Toward a distro (docs/distro-roadmap.md)</h3>
+<ul>
+<li><code>tools/publish.sh</code>: sha256, optional minisign, <code>latest.json</code> for the site and Control.
+</li>
+<li><code>distrobox</code> + <code>podman</code> on the image; Get Apps creates an Ubuntu 24.04 or Fedora 42 box in one click (<code>box</code> verb), subuids set at first boot.
+</li>
+<li>Bottles is a right-click target for <code>.exe</code> (<code>bottles-exe.desktop</code>) and on the Windows-apps pane.
+</li>
+<li><code>linux-lts</code> beside <code>linux</code>; GRUB remembers the last choice. <code>broadcom-wl-dkms</code> on the image.
+</li>
+<li>Branding through the helper (<code>brand</code> verb, one prompt) and at install time; <code>/etc/issue</code>.
+</li>
+<li>Live session: <code>cow_spacesize=6G</code> on the kernel line (archiso defaults to 256 MB, which one distrobox image fills), <code>fuse-overlayfs</code> so rootless podman works on the overlay root.
+</li>
+<li>Plymouth splash verified on the installed system: ink background, gold &quot;AMNI OS&quot;, progress line.
+</li>
+<li>amni-scient.com/amni-os.html is live with the nav entry, index row and <code>downloads/amni-os/latest.json</code>.
+</li></ul>
+<h3>Changed</h3>
+<ul>
+<li>Amni-Browse builds from the local 0.13.0 tree (Servo lane, vendored patched engine); the Chromium lane is WebView2 and Windows-only.
+</li>
+<li>Bake VM 16 vCPU / 24 GB (24 vCPU would not show a console).
+</li></ul>
+<h3>Added</h3>
+<ul>
+<li>14 accent colour schemes (dark + light per site accent), applied for real from Control's Colors pane; look remembered per user.
+</li>
+<li>Amni clock plasmoid on the desktop, Control sidebar navigation at desktop widths.
+</li></ul>
+</section>
+<section class="rn-entry" id="v0-4-0-servo-browser-a-control-that-runs-things-an-installer-tha">
+<h2>v0.4.0 - Servo browser, a Control that runs things, an installer that cleans up</h2>
+<p class="rn-date">2026-09-03</p>
+<h3>Fixed</h3>
+<ul>
+<li><strong>The ISO baked the WebKit stub of Amni-Browse.</strong> <code>packaging/amni-browse/PKGBUILD</code> now builds the default <code>servo-real</code> feature set at the pinned v0.12.1 commit, LTO off, with Servo's build and runtime deps mapped to Arch names. <code>build-local-repo.sh</code> keys its cache on the PKGBUILD's hash so the old WebKit package is not reused. <code>bootstrap.sh</code> adds a 16 GB swapfile.
+</li>
+<li><strong>Control's buttons did nothing on a real machine.</strong> New <code>amni-control-host</code> daemon on 127.0.0.1:15900 serves the page and runs a fixed verb table, root verbs through the polkit helper, long ones in a Konsole window. Token-gated. <code>amni-control</code> launcher opens it.
+</li>
+<li><strong><code>polkit-kde-agent</code> was not on the image</strong>, so <code>pkexec</code> had no dialog to show.
+</li>
+<li><strong>Calamares kept the live session's leftovers</strong>: liveuser with passwordless sudo, autologin, the archiso initramfs config (the install would not have booted), the file:// repo, sshd root login. <code>installed-cleanup.sh</code> runs as a shellprocess before initcpio.
+</li>
+<li><code>polkit-helper steam-enable</code> referenced <code>steam-native-runtime</code>, which no longer exists.
+</li></ul>
+<h3>Added</h3>
+<ul>
+<li><code>install-set vm|creative|office|media|remote</code>, <code>ai-gpu</code>, <code>flatpak-install</code> verbs, and Control panes that use them: AI (Ollama on the GPU, Alpaca chat), Gaming (Heroic, CoreCtrl, GOverlay, controllers), Get apps (one-click sets). The &quot;in the box&quot; list now matches the image.
+</li>
+<li><code>AmniScientLight.colors</code> from the site's light tokens; LIGHT/DARK in Control switches Plasma.
+</li>
+<li>Suite icons from Amni-Icons, Braid icon, gold-block Start icon, GTK settings seed, plymouth theme with <code>splash</code> on the installed kernel line.
+</li>
+<li>Packages: systemsettings, kde-gtk-config, sddm-kcm, flatpak-kcm, plasma-integration, kscreenlocker, kdenetwork-filesharing, plasma-thunderbolt, drkonqi, kmenuedit, kdialog, filelight, xdg-utils, qt6/qt5-wayland, gst-plugins-bad, gst-plugin-pipewire, libreoffice-fresh, hunspell(-en_us), orca, plymouth, steam-devices, lib32-pipewire, lib32-vulkan-mesa-layers, lib32-libva, vkd3d, lib32-vkd3d, openal, corectrl, goverlay, piper, antimicrox, openrgb, discord, obs-studio, AUR game-devices-udev.
+</li></ul>
+<h3>Removed</h3>
+<ul>
+<li><code>pyside6</code> (unused, pulled qt6-webengine).
+</li></ul>
+<ul>
+<li>Bake rig: the CR-strip walk pruned from <code>out/</code>; <code>build-local-repo.sh</code> no longer nests the package dir and so no longer runs the previous bake's PKGBUILD; PKGBUILD sha256 cache key.
+</li>
+<li>Servo on Arch: glslopt bumped to 0.1.14 (glibc 2.44), <code>no-wgl</code> moved under <code>cfg(windows)</code>.
+</li>
+<li><strong>VirtualBox freeze root-caused to vmwgfx's cursor plane</strong>, not WebKit: software cursor snippet for VMs. <code>control-host.py</code> shebang. liveuser polkit rule for the live session.
+</li></ul>
+<h3>Verified (VM, 2026-09-03)</h3>
+<ul>
+<li>ISO 5,156,349,952 bytes. Plasma + Amni theme, gold Start block, first-boot unattended, Amni-Browse <strong>v0.12.1 Real Servo</strong> painting chrome and pages, Amni Control served from 127.0.0.1:15900 inside Amni-Browse, API verbs opening Dolphin and an HTTPS page.
+</li></ul>
+<ul>
+<li>Bake VM was 6 vCPU / 12 GB on a 32-thread, 62 GB host. <code>create-bake-vm.ps1</code> now gives it 24 vCPU / 32 GB; the existing VM was resized the same way. Untimed at the new size yet.
+</li></ul>
+<h3>Open</h3>
+<ul>
+<li>URL-bar typing through VirtualBox scancode injection showed nothing; needs a real keyboard.
+</li>
+<li>Calamares still not exercised end to end.
+</li></ul>
+</section>
+<section class="rn-entry" id="v0-3-2-the-bake-fixed-and-moved-to-the-nvme">
+<h2>v0.3.2 - the bake, fixed and moved to the NVMe</h2>
+<p class="rn-date">2026-09-03</p>
+<p>The bake had been failing with <code>error: target not found:</code> on every package, including ones as ordinary as <code>curl</code> and <code>base</code>. The cause was a carriage return.</p>
+<p><code>mkarchiso</code> parses the package list with <code>sed '/^[[:blank:]]*#.*/d;s/#.*//;/^[[:blank:]]*$/d'</code>, and <code>[[:blank:]]</code> covers space and tab only. A trailing CR survives that and goes into pacman's target list as part of the name. When pacman prints the error the CR returns the cursor, so the log shows a clean name and reads like 239 packages that vanished from the repos. <code>iso/releng/packages.x86_64</code> had been saved with CRLF, which is why exactly our 239 names failed and none of archiso's 200 did, and why the first error had an empty name - that was the CR-only first line.</p>
+<ul>
+<li><code>iso/releng/packages.x86_64</code> and the rest of the CRLF text files normalised to LF.
+</li>
+<li><code>bootstrap.sh</code> stripped CR from a whitelist of file names and the package list was not on it. It now strips CR from every file that <code>grep -I</code> calls text.
+</li>
+<li><code>bake.sh</code> runs the list through <code>tr -d '\r'</code> and then refuses to start <code>mkarchiso</code> if a CR survives in the staged list.
+</li>
+<li>New <code>tools/preflight.sh</code>: CR, malformed names, duplicates, <code>bash -n</code> on every script. A second on Windows against an hour in the VM.
+</li>
+<li><code>-debug</code> packages no longer go into the local repo or onto the image. <code>calamares-debug</code> alone was 179 MB of symbols.
+</li></ul>
+<p>The rig moved from E: to C:. E: is a WD My Passport, a USB spinning disk, and the build root, package cache, squashfs and xorriso were all paying its latency.</p>
+<ul>
+<li><code>create-bake-vm.ps1</code> builds on <code>C:/amni-bake</code> with <code>--nonrotational on --discard on</code>, and copies <code>archlinux.iso</code> across if it is missing.
+</li>
+<li><code>serve.js</code> receives the ISO into <code>C:/amni-bake/incoming</code>.
+</li>
+<li>VirtualBox 7 refuses guest connections to the host's loopback unless <code>--nat-localhostreachable1 on</code>. Without it the guest gets an instant RST on <code>10.0.2.2:8768</code> and curl reports &quot;Could not connect to server&quot; while the host serves the same URL fine. The create script sets it.
+</li>
+<li>The old VM is unregistered, not deleted. <code>E:/amni-bake/Amni Bake.vdi</code> is 102 GB and only about 20 GB of it was ever live, so it can go once a bake off C: is confirmed.
+</li></ul>
+</section>
+<section class="rn-entry" id="v0-3-1-it-boots">
+<h2>v0.3.1 - it boots</h2>
+<p class="rn-date">2026-09-02</p>
+<p>First real bake, built in a throwaway Arch VM under VirtualBox (<code>tools/bake-vm/</code>) and booted in another. <strong>5.2 GB ISO. Verified: autologin into Plasma, Amni theme, gold AMNI launcher, Amni-Browse installed and set as the default browser.</strong></p>
+<p>Nine bake cycles turned up eighteen faults that every static check had passed. They are written up in full in docs/bake-findings-v0.3.1.md; the ones worth knowing by heart:</p>
+<ul>
+<li><code>bake.sh</code>'s glob <code>*.pkg.tar.*</code> needs a dot after <code>.tar</code>, so once packages became uncompressed every one was silently skipped and amni-browse never reached the ISO despite building fine.
+</li>
+<li>makepkg's zstd pass produced truncated packages that only failed halfway through installing.
+</li>
+<li>Our <code>profiledef.sh</code> replaced archiso's and took its <code>file_permissions</code> with it, so the live session booted to a TTY.
+</li>
+<li>SDDM autologin needs a real session file; <code>plasma-x11-session</code> was missing and <code>/usr/share/xsessions</code> was empty.
+</li>
+<li><code>/usr/lib/os-release</code> is owned by the <code>filesystem</code> package and cannot ship in airootfs.
+</li>
+<li>CRLF from Windows on one <code>set -euo pipefail</code> line aborts the entire bake.
+</li></ul>
+<h3>Added</h3>
+<ul>
+<li><code>tools/bake-vm/</code> - the whole bake rig: a host file server that also receives the finished ISO, a bootstrap that pacstraps a build root inside a live Arch VM, and the VM creation script.
+</li>
+<li><code>installer/</code> - Calamares settings, twelve module configs and Amni branding. The ISO could not install itself before this.
+</li>
+<li>Live session: <code>liveuser</code> autologin into Plasma, and an Install Amni OS launcher.
+</li>
+<li><code>plasma-x11-session</code>, <code>kdeplasma-addons</code>, <code>webkit2gtk-4.1</code>, <code>gtk3</code>, <code>libsoup3</code>.
+</li>
+<li><code>.gitattributes</code> with <code>eol=lf</code>.
+</li></ul>
+<h3>Open</h3>
+<ul>
+<li>WebKitGTK's DMA-BUF renderer wedges the X session under VBox VMSVGA. The disable flags now ship for the live ISO and <code>system-setup.sh</code> drops them on bare metal. Not yet verified.
+</li>
+<li>Calamares has never been run. Installing to disk is untested.
+</li></ul>
+</section>
+<section class="rn-entry" id="v0-3-0-the-real-amni-browse-is-the-default-and-the-desktop-match">
+<h2>v0.3.0 — the real Amni-Browse is the default, and the desktop matches the mockup</h2>
+<p class="rn-date">2026-09-02</p>
+<h3>Added — Amni-Browse, built from source</h3>
+<ul>
+<li><code>packaging/amni-browse/PKGBUILD</code> builds Anthony's own Rust browser (github.com/Amnibro/Amni-Browse) from git and installs <code>/usr/bin/amni-browse</code>, the browser's own icon and its desktop entry. Backend is <code>--features webview</code> (wry on WebKitGTK 4.1), the same engine flavour the Windows release zips ship; <code>servo-real</code> pulls a multi-hour Servo build and is not what the distro package uses.
+</li>
+<li><code>webkit2gtk-4.1</code>, <code>gtk3</code> and <code>libsoup3</code> added as its runtime.
+</li>
+<li><code>desktop/mimeapps.list</code> → <code>/etc/skel/.config/</code>, and <code>xdg-settings set default-web-browser</code> plus <code>xdg-mime default</code> at first boot, for accounts Calamares creates before skel is read.
+</li>
+<li>Amni-Browse takes the second dock slot. Firefox stays on the image as a second browser.
+</li>
+<li>The browser keeps its own start page, config and privacy defaults. No config is seeded, because most <code>BrowserConfig</code> fields have no <code>#[serde(default)]</code> and a partial file fails to deserialize.
+</li></ul>
+<h3>Fixed — packages.aur was decorative</h3>
+<ul>
+<li><code>iso/releng/packages.aur</code> said &quot;Built into a local repo by tools/bake.sh&quot; since v0.1. <strong>Nothing read that file.</strong> <code>bake.sh</code> had no AUR handling, so Calamares never reached the ISO and the image could not install itself. <code>packages.nvidia.x86_64</code> is still read by nothing.
+</li>
+<li><code>tools/build-local-repo.sh</code> builds <code>packaging/*/PKGBUILD</code> and every AUR name, <code>repo-add</code>s them into <code>out/localrepo</code> as <code>[amnios]</code>. <code>bake.sh</code> appends that repo to the staged <code>pacman.conf</code> and the built names to the staged package list. <code>AMNI_SKIP_LOCAL_REPO=1</code> bakes without it.
+</li>
+<li><code>makepkg</code> refuses to run as root, so the bake runs as a normal user with sudo rights.
+</li></ul>
+<h3>Added — the desktop wears amni-scient.com</h3>
+<ul>
+<li><code>theme/look-and-feel/</code> — the <code>com.amniscient.desktop</code> package <code>kdeglobals</code> had been pointing at since v0.1 without it existing. Ships <code>contents/defaults</code> and a Plasma 6 layout script.
+</li>
+<li><code>theme/desktoptheme/</code> — the <code>AmniScient</code> Plasma theme, also referenced but missing before, inheriting breeze-dark geometry with the site colours.
+</li>
+<li><code>theme/wallpaper/amni.svg</code> — built to match <code>preview/shots/amni-os-desktop-dark.png</code>: warm gold bloom centred at 56%/44%, near-black <code>#050506</code> base, vignette, faint grid.
+</li>
+<li>Layout script builds the mockup's screen — gold <code>amni-start</code> kickoff labelled AMNI, icontasks with the dock, tray, clock, and the desktop clock and weather card at top left. <code>kdeplasma-addons</code> added, or the weather applet fails silently.
+</li>
+<li><code>theme/konsole/</code> colour scheme and profile, <code>theme/sddm/</code> login screen, <code>theme/icons/amni-start.svg</code>.
+</li>
+<li>Fonts the theme names now ship: <code>ttf-cascadia-code</code> and <code>inter-font</code> from extra, <code>otf-archivo</code> from AUR.
+</li>
+<li><code>theme/AmniScient.colors</code> retuned to the exact tokens — text <code>#EDEFF2</code>, inactive <code>#6D747D</code>.
+</li>
+<li><code>first-boot.sh</code> applies the look-and-feel once with <code>lookandfeeltool</code>, then pins colour scheme, accent, Plasma theme and Konsole profile with <code>kwriteconfig6</code>.
+</li>
+<li><code>manifest/defaults.json</code> → 0.3.0 with <code>browser</code> and <code>appearance</code> blocks.
+</li></ul>
+<h3>Known gaps</h3>
+<ul>
+<li><strong>Nothing here has been baked.</strong> 262 repo names and 6 AUR names resolve, and the Plasma layout script has never been run by a live plasmashell.
+</li>
+<li>The mockup's Start button is a solid gold block; Plasma paints that from desktop-theme widget SVGs and <code>theme/desktoptheme/</code> only overrides <code>colors</code>, so it takes gold on hover instead. The mockup's AI-bench card has no stock applet. Both need real plasmoid or SVG work.
+</li>
+<li><code>guest/amni-browse</code> is a Firefox-kiosk stand-in for the Alpine mockup VM only. It is not the product and the ISO does not use it.
+</li></ul>
+</section>
+<section class="rn-entry" id="v0-2-0-the-engines-behind-the-panels">
+<h2>v0.2.0 — the engines behind the panels</h2>
+<p class="rn-date">2026-09-02</p>
+<h3>Fixed</h3>
+<ul>
+<li><strong>Bluetooth could never work.</strong> <code>bluedevil</code> shipped without <code>bluez</code>. Added <code>bluez</code>, <code>bluez-utils</code>, <code>bluez-plugins</code>, and <code>bluetooth.service</code> is enabled at first boot.
+</li>
+<li><strong>The firewall page had no firewall.</strong> <code>plasma-firewall</code> shipped without a backend. Added <code>ufw</code>, defaulted to deny-incoming / allow-outgoing, enabled the unit.
+</li>
+<li><strong>Ark could not open an archive.</strong> Added <code>unzip</code>, <code>zip</code>, <code>p7zip</code>, <code>unrar</code>, <code>lrzip</code>, <code>lzop</code>, <code>cpio</code>.
+</li>
+<li><strong>Discover was an almost empty store.</strong> Added <code>flatpak</code>, <code>appstream</code>, <code>appstream-qt</code>, <code>archlinux-appstream-data</code>, and the flathub remote is added at first boot. <code>fuse2</code> so AppImages run.
+</li>
+<li><strong>Dolphin could not reach the network.</strong> Added <code>kio-extras</code> (smb/sftp/mtp), <code>kio-admin</code>, <code>kio-fuse</code>, plus <code>ffmpegthumbs</code>, <code>kdegraphics-thumbnailers</code>, <code>kimageformats</code> so thumbnails render.
+</li>
+<li><strong>Calamares had no bootloader to install.</strong> Added <code>grub</code>, <code>efibootmgr</code>, <code>os-prober</code>, and <code>system-setup.sh</code> writes <code>GRUB_DISABLE_OS_PROBER=false</code> then rebuilds <code>grub.cfg</code> — without that line an existing Windows never appears in the boot menu.
+</li>
+<li><strong>No network printer discovery and no Print to PDF.</strong> Added <code>cups-pdf</code>, <code>cups-filters</code>, <code>cups-pk-helper</code>, <code>gutenprint</code>, the <code>foomatic-db</code> set, <code>ghostscript</code>, <code>nss-mdns</code>, and the <code>hosts:</code> line in <code>/etc/nsswitch.conf</code> is rewritten so <code>.local</code> resolves.
+</li></ul>
+<h3>Added</h3>
+<ul>
+<li><strong>Windows file sharing</strong> — <code>samba</code>, <code>smbclient</code>, <code>gvfs-smb</code>, <code>cifs-utils</code>. <code>smb://</code> opens in Files.
+</li>
+<li><strong>VPN</strong> — WireGuard, OpenVPN, OpenConnect and L2TP plugins in the network tray.
+</li>
+<li><strong>Media that plays out of the box</strong> — <code>ffmpeg</code>, the four gst-plugins sets, <code>gstreamer-vaapi</code>, <code>libdvdcss</code>, VLC, mpv, Elisa.
+</li>
+<li><strong>Documents and images</strong> — LibreOffice with hunspell, GIMP, Inkscape, Krita, and <code>ttf-ms-fonts</code> from AUR so Word documents keep their layout.
+</li>
+<li><strong>Scanners</strong> — <code>sane</code>, <code>sane-airscan</code> for network scanners, <code>skanlite</code>.
+</li>
+<li><strong>Restore points that boot</strong> — <code>snapper</code>, <code>snap-pac</code> (snapshot around every pacman transaction), <code>grub-btrfs</code> (boot straight into a snapshot). Timeshift stays for ext4 roots.
+</li>
+<li><strong>Virtual machines</strong> — <code>qemu-full</code>, <code>libvirt</code>, <code>virt-manager</code>, <code>edk2-ovmf</code>.
+</li>
+<li><strong>Remote desktop beyond our own</strong> — <code>krdc</code>, <code>krfb</code>, <code>freerdp</code>.
+</li>
+<li><strong>Accessibility</strong> — <code>orca</code>, <code>kmag</code>, <code>kmousetool</code>, <code>onboard</code>.
+</li>
+<li><strong>Disk and power</strong> — <code>plasma-disks</code> (SMART), <code>power-profiles-daemon</code>, <code>smartmontools</code>, <code>xfsprogs</code>, <code>f2fs-tools</code>, <code>sof-firmware</code> for modern laptop audio.
+</li>
+<li><code>scripts/system-setup.sh</code> — enables every unit above, idempotent, one polkit prompt shared with GPU apply. Wired into <code>first-boot.sh</code>, <code>bake.sh</code> and <code>profiledef.sh</code>.
+</li>
+<li><code>scripts/polkit-helper.sh</code> — new verbs: <code>system-setup</code>, <code>firewall-on/off</code>, <code>bluetooth-on</code>, <code>printing-on</code>, <code>sharing-on/off</code>, <code>snapshot-now</code>, <code>snapshot-list</code>, <code>flatpak-init</code>.
+</li>
+<li>Amni Control — <strong>System</strong> pane (firewall, Bluetooth, printers, sharing, restore points, dual boot, VPN, VMs) and <strong>Get apps</strong> pane (Arch repos, Flathub, AppImage, <code>.exe</code>). Re-run setup and take a restore point are buttons.
+</li>
+<li>Preview desktop — Discover window, and an OSD toast that answers <code>run:</code> messages.
+</li>
+<li><code>manifest/defaults.json</code> — new <code>system</code>, <code>media</code>, <code>productivity</code> blocks; version 0.2.0.
+</li>
+<li><code>architecture_map.md</code> and this changelog.
+</li></ul>
+<h3>Package names — the ISO could not have built</h3>
+<p>Every name in <code>packages.x86_64</code> was checked against the live Arch repo API, and <code>packages.aur</code> against the AUR RPC. <strong>Thirteen names did not exist</strong>, nine of them already in v0.1.0, so <code>mkarchiso</code> would have aborted before this release too.</p>
+<ul>
+<li>Removed (dropped from Arch): <code>khotkeys</code> (gone in Plasma 6), <code>libva-mesa-driver</code>, <code>mesa-vdpau</code> (both folded into <code>mesa</code>), <code>lib32-giflib</code>, <code>lib32-gpgme</code>, <code>lib32-openal</code>, <code>lib32-v4l-utils</code>, <code>steam-native-runtime</code>, <code>xf86-video-vmware</code>, <code>gstreamer-vaapi</code>, <code>bridge-utils</code>, <code>bluez-plugins</code>, and AUR <code>calamares-extensions</code>.
+</li>
+<li>Renamed: <code>p7zip</code> → <code>7zip</code>, <code>nvidia-dkms</code> → <code>nvidia-open-dkms</code>, <code>python-pyside6</code> → <code>pyside6</code>.
+</li>
+<li>Added in their place: <code>gst-plugin-va</code> for VA-API playback, <code>vulkan-mesa-layers</code>.
+</li>
+<li>All <strong>255</strong> remaining names resolve.
+</li></ul>
+<h3>Known gaps</h3>
+<ul>
+<li>Control's buttons post intents. Nothing executes them on a real install yet — that needs a host wrapper around the browser that forwards <code>run:</code> verbs to <code>pkexec</code>. The helper verbs exist.
+</li>
+<li>The ISO has not been baked. Names resolve, but a name resolving is not a dependency graph resolving — <code>sudo ./tools/bake.sh</code> on an Arch host is the next step and the only real proof.
+</li>
+<li><code>nvidia-open-dkms</code> only covers Turing and newer. Pre-Turing cards need the legacy <code>nvidia-470xx</code> AUR series, which is not on the image.
+</li></ul>
+</section>
+</main>
+<footer>
+<div class="footer-links">
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="/amni-os.html">AMNI OS</a>
+<a href="/amni-os/docs/">OS DOCS</a>
+<a href="/amni-os/privacy.html">OS PRIVACY</a>
+<a href="/terms.html">TERMS</a>
+<a href="mailto:amnibro7@gmail.com">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
+</footer>
+</body>
+</html>

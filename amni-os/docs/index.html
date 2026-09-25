@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#FBFAF8">
+<title>Install guide &mdash; Amni OS | AMNI-SCIENT</title>
+<meta name="description" content="Install Amni OS: download and verify the ISO with minisign, write the USB, Secure Boot, and the Calamares installer.">
+<meta property="og:title" content="Install guide &mdash; Amni OS">
+<meta property="og:description" content="Install Amni OS: download and verify the ISO with minisign, write the USB, Secure Boot, and the Calamares installer.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://amni-scient.com/amni-os/docs/">
+<meta property="og:image" content="https://amni-scient.com/assets/os/desktop.png?v=20260922">
+<link rel="canonical" href="https://amni-scient.com/amni-os/docs/">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/css/style.css?v=b262">
+<link rel="stylesheet" href="/css/os-docs.css?v=1">
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+</head>
+<body>
+<div class="grid-bg"></div>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<a href="/amni-calc.html">CALCULATORS</a>
+<a href="/amni-learn.html">LEARN</a>
+<a href="/blog/">BLOG</a>
+<a href="/research.html">RESEARCH</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu nav-dd-menu--groups">
+<div class="nav-dd-group"><span class="nav-dd-head">AI</span>
+<a href="/braid">BRAID</a>
+<a href="/amni-ai.html">AMNI-AI</a>
+<a href="/amni-llm.html">AMNI-LLM</a>
+<a href="/amni-code.html">AMNI-CODE</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">DESKTOP &amp; OS</span>
+<a href="/amni-os.html">AMNI-OS</a>
+<a href="/amni-core.html">AMNI-CORE</a>
+<a href="/amni-browse.html">AMNI-BROWSE</a>
+<a href="/amni-connect.html">AMNI-CONNECT</a>
+<a href="/grok-remote.html">GROK-REMOTE</a>
+<a href="/amni-mail.html">AMNI-MAIL</a>
+<a href="/amni-space.html">AMNI-SPACE</a>
+<a href="/amni-crypt.html">AMNI-CRYPT</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">PHONE</span>
+<a href="/amni-type.html">AMNI-TYPE</a>
+<a href="/amni-haven.html">AMNI-HAVEN</a>
+<a href="/amni-hedgedoc.html">HEDGEDOC</a>
+<a href="/symphony.html">SYMPHONY</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">LEARN &amp; EXPLORE</span>
+<a href="/amni-calc.html">AMNI-CALC</a>
+<a href="/amni-learn.html">AMNI-LEARN</a>
+<a href="/amni-explore.html">AMNI-EXPLORE</a>
+<a href="/amni-weather.html">AMNI-WEATHER</a>
+<a href="/game/v2/">AMNI-GAME</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">LIFE</span>
+<a href="/amni-life.html">AMNI-LIFE</a>
+<a href="/amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</div>
+</div>
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer">SUPPORT</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<main class="legal os-doc">
+<p class="eyebrow">Amni OS docs</p>
+<h1>INSTALL AMNI OS</h1>
+<p class="effective">Updated 25 Sep 2026</p>
+<ul class="doc-nav" aria-label="Amni OS docs"><li><a href="/amni-os/docs/" aria-current="page">Install</a></li><li><a href="/amni-os/docs/restore-points.html">Restore points</a></li><li><a href="/amni-os/docs/drivers.html">Drivers</a></li><li><a href="/amni-os/docs/troubleshooting.html">Troubleshooting</a></li><li><a href="/amni-os/docs/faq.html">FAQ</a></li><li><a href="/amni-os/docs/release-notes.html">Release notes</a></li><li><a href="/amni-os/support.html">Support</a></li><li><a href="/amni-os/privacy.html">Privacy</a></li></ul>
+<p>Amni OS is Arch Linux with Plasma 6, set up for people coming from Windows. This page takes you from the download to a first login. The other guides cover what happens after that.</p>
+<div class="doc-cards">
+<a href="/amni-os/docs/restore-points.html"><strong>Restore points</strong><span>Snapshots around every update, bootable from the menu.</span></a>
+<a href="/amni-os/docs/drivers.html"><strong>Drivers</strong><span>How Amni OS picks graphics and device drivers.</span></a>
+<a href="/amni-os/docs/troubleshooting.html"><strong>Troubleshooting</strong><span>Black screens, Wi-Fi, updates, sound.</span></a>
+<a href="/amni-os/support.html"><strong>Support</strong><span>Haven community, bug reports, <code>amni-bug-info</code>.</span></a>
+</div>
+<h2>What you need</h2>
+<ul>
+<li>A 64-bit PC (x86_64) that boots UEFI or legacy BIOS.</li>
+<li>At least 3 GB of RAM and 20 GB of free disk space. The installer checks both.</li>
+<li>A USB stick of 8 GB or more. Writing the image erases it.</li>
+<li>A network connection for the install is optional, but updates and some first-login apps need one.</li>
+</ul>
+<h2>1. Download</h2>
+<p>Get the ISO from the <a href="/amni-os.html#get">Amni OS page</a>. Each release on <code>downloads.amni-scient.com/amni-os/</code> sits next to its checks:</p>
+<table class="spec-table">
+<tr><th>File</th><th>What it is</th></tr>
+<tr><td><code>amni-os-&lt;version&gt;-x86_64.iso</code></td><td>The image you write to the USB</td></tr>
+<tr><td><code>.iso.sha256</code></td><td>SHA-256 checksum, catches a broken download</td></tr>
+<tr><td><code>.iso.minisig</code></td><td>minisign signature, proves the image came from us</td></tr>
+<tr><td><code>.iso.torrent</code></td><td>The same image over BitTorrent</td></tr>
+<tr><td><code>latest.json</code></td><td>Version, size, checksum and signature links of the newest release</td></tr>
+</table>
+<h2>2. Verify the ISO</h2>
+<p>A checksum tells you the file arrived intact. A signature tells you who made it. Do both if you can.</p>
+<h3>Checksum</h3>
+<pre><code>sha256sum -c amni-os-&lt;version&gt;-x86_64.iso.sha256</code></pre>
+<p>On Windows, in PowerShell, compare the output with the <code>.sha256</code> file:</p>
+<pre><code>Get-FileHash .\amni-os-&lt;version&gt;-x86_64.iso -Algorithm SHA256</code></pre>
+<h3>Signature (minisign)</h3>
+<p>Amni OS images are signed with <a href="https://jedisct1.github.io/minisign/" target="_blank" rel="noopener noreferrer">minisign</a>. The public key is:</p>
+<pre><code>RWSDVMnkyKyF+mOSqdNRaQ/onOP7h3SUNpmOgmRSYNl9Td5vE3VIyfzM</code></pre>
+<p>It is also in <a href="/amni-os/docs/amnios-iso.pub">amnios-iso.pub</a> (a copy of <code>branding/amnios-iso.pub</code> in the Amni OS source) and in the <code>minisign_pubkey</code> field of <code>latest.json</code>. Put the <code>.minisig</code> file in the same folder as the ISO, then run:</p>
+<pre><code>minisign -Vm amni-os-&lt;version&gt;-x86_64.iso -P RWSDVMnkyKyF+mOSqdNRaQ/onOP7h3SUNpmOgmRSYNl9Td5vE3VIyfzM</code></pre>
+<p>minisign is <code>pacman -S minisign</code> on Arch and in most Linux repos. On Windows, download it from the minisign page and run the same command. A good image prints <code>Signature and comment signature verified</code>. Anything else means do not use that file: download it again, and <a href="/amni-os/support.html">tell us</a> if it still fails.</p>
+<div class="doc-note"><p>Older images published before signing started have only the <code>.sha256</code>. Signed images carry a <code>.minisig</code> beside them.</p></div>
+<h2>3. Write the USB</h2>
+<h3>Windows</h3>
+<ul>
+<li><strong>Rufus</strong>: pick the stick and the ISO, press Start. If Rufus asks, choose <em>Write in DD Image mode</em>.</li>
+<li><strong>Ventoy</strong>: install Ventoy on the stick once, then copy the ISO onto it. The stick keeps working as normal storage.</li>
+</ul>
+<h3>Linux</h3>
+<p>Find the stick with <code>lsblk</code> first. Writing to the wrong device wipes it.</p>
+<pre><code>sudo dd if=amni-os-&lt;version&gt;-x86_64.iso of=/dev/sdX bs=4M status=progress oflag=sync</code></pre>
+<p>KDE ISO Image Writer and GNOME Disks do the same thing with a window.</p>
+<h2 id="secure-boot">4. Secure Boot</h2>
+<p>An <strong>installed</strong> Amni OS boots with Secure Boot on. The <strong>live USB</strong> is simplest with Secure Boot off.</p>
+<ol>
+<li>Before booting the USB, turn Secure Boot off in your firmware settings (or use Ventoy and enroll its key when it asks).</li>
+<li>The installer puts a Microsoft-signed shim on the disk, creates a key that belongs to your machine, signs GRUB and the kernels with it, and queues that key for enrollment.</li>
+<li>On the first boot after installing, a blue <em>MokManager</em> screen appears once. Choose <em>Enroll MOK</em>, <em>Continue</em>, <em>Yes</em>, type the password <code>amnios</code>, then <em>Reboot</em>.</li>
+<li>Now you can turn Secure Boot back on. Kernel and GRUB updates are re-signed automatically.</li>
+</ol>
+<p>If you missed the MokManager screen, run <code>sudo /usr/lib/amni-os/secureboot-setup</code> and reboot to get it again. The same key is also on the EFI partition as <code>ENROLL_THIS_KEY_IN_MOKMANAGER.cer</code>.</p>
+<h2>5. Boot the USB</h2>
+<p>Plug the stick in and open your PC's boot menu (usually F12, F11, F8 or Esc right after power on). Pick the USB entry, the UEFI one if there are two. The menu has:</p>
+<ul>
+<li><strong>Amni OS live</strong>: the normal choice.</li>
+<li><strong>Amni OS live (safe graphics)</strong>: use this if the screen stays black or freezes on the logo.</li>
+</ul>
+<h2>6. Install</h2>
+<p>Click <strong>Install Amni OS</strong>. It is on the live desktop, first on the dock, and in a banner in Amni Control. The installer (Calamares) walks through:</p>
+<ol>
+<li><strong>Location and keyboard.</strong> Pick your time zone on the map. The installer never looks up your location online, so it starts at New York.</li>
+<li><strong>Partitions.</strong> <em>Install alongside</em> is the default and keeps Windows: drag the divider to choose how much space Amni OS gets. <em>Erase disk</em> uses the whole drive. Manual partitioning is there if you want it.</li>
+<li><strong>File system.</strong> Btrfs is the default and is what makes <a href="/amni-os/docs/restore-points.html">restore points</a> bootable. ext4 and XFS work too; on ext4, Timeshift takes the restore points instead.</li>
+<li><strong>Your account</strong>, then <strong>Install</strong>. When it finishes, reboot and remove the stick.</li>
+</ol>
+<div class="doc-note"><p>Installing next to Windows: if BitLocker is on, have your recovery key ready before you shrink the Windows partition, and turn off Windows Fast Startup so the disk is cleanly shut down. Windows stays in the boot menu afterwards.</p></div>
+<h2>7. First boot</h2>
+<ul>
+<li>The graphics driver for your card is set up automatically, and the <a href="/amni-os/docs/drivers.html">driver rules</a> install what the rest of your hardware needs.</li>
+<li>If a boot never reaches the desktop, the next one starts in safe graphics and Amni Control offers <em>Use full graphics</em> once you are logged in. See <a href="/amni-os/docs/troubleshooting.html">troubleshooting</a>.</li>
+<li>At your first login, Spotify and Chrome (from Flathub) and a few AI coding tools install in the background. The <a href="/amni-os/privacy.html">privacy page</a> lists what connects where and how to skip it.</li>
+<li>Amni packages update themselves daily. Full Arch updates stay a click in Amni Control or Discover.</li>
+</ul>
+</main>
+<footer>
+<div class="footer-links">
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="/amni-os.html">AMNI OS</a>
+<a href="/amni-os/docs/">OS DOCS</a>
+<a href="/amni-os/privacy.html">OS PRIVACY</a>
+<a href="/terms.html">TERMS</a>
+<a href="mailto:amnibro7@gmail.com">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
+</footer>
+</body>
+</html>
