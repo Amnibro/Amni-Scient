@@ -136,6 +136,21 @@
 </li>
 <li><strong>For bug reports:</strong> <code>amni-bug-info</code> prints a privacy-safe system summary. <code>os-release</code> links to the new docs, support, privacy and issue pages at amni-scient.com/amni-os.
 </li>
+<li><strong>Installs are complete from the first boot.</strong>
+<ul>
+<li>The installer takes the first restore point as its last step, so it holds the kernels and GRUB lists it right away.
+</li>
+<li>Windows file sharing is off until you switch it on in Control. The switch writes a proper Samba config and opens the firewall to your local network only; before, Samba failed on every install.
+</li>
+<li>Installed systems no longer show Arch's &quot;To install Arch Linux&quot; console message.
+</li>
+<li>Booting a restore point leaves no failed units.
+</li>
+<li>With crash reports off (the default), KDE's crash handler no longer piles up failed units, and upgrading turns off a Samba server that was enabled without a config.
+</li></ul>
+</li>
+<li><strong>If you miss the MokManager prompt</strong> on the first Secure Boot start, shim shows &quot;Verification failed&quot;. Reboot, pick <strong>Enroll key from disk</strong>, and choose <code>ENROLL_THIS_KEY_IN_MOKMANAGER.cer</code>.
+</li>
 <li><strong>Project:</strong> CI runs on the Amni build PC, not GitHub Actions, and reports to PRs as <code>amni-local-ci</code>. Also added: issue templates, a Linux <code>publish-repo.sh</code>, and <code>tools/qvm.py</code> for headless Secure Boot VM tests.
 </li></ul>
 <h3>Package and ISO signing, phase 1</h3>
