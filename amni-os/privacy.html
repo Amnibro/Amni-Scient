@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#FBFAF8">
+<title>Privacy &mdash; Amni OS | AMNI-SCIENT</title>
+<meta name="description" content="Amni OS sends no telemetry. The network connections it makes are update checks, package downloads and the ones you start.">
+<meta property="og:title" content="Privacy &mdash; Amni OS">
+<meta property="og:description" content="Amni OS sends no telemetry. The network connections it makes are update checks, package downloads and the ones you start.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://amni-scient.com/amni-os/privacy.html">
+<meta property="og:image" content="https://amni-scient.com/assets/os/desktop.png?v=20260922">
+<link rel="canonical" href="https://amni-scient.com/amni-os/privacy.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/css/style.css?v=b262">
+<link rel="stylesheet" href="/css/os-docs.css?v=1">
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+</head>
+<body>
+<div class="grid-bg"></div>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<a href="/amni-calc.html">CALCULATORS</a>
+<a href="/amni-learn.html">LEARN</a>
+<a href="/blog/">BLOG</a>
+<a href="/research.html">RESEARCH</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu nav-dd-menu--groups">
+<div class="nav-dd-group"><span class="nav-dd-head">AI</span>
+<a href="/braid">BRAID</a>
+<a href="/amni-ai.html">AMNI-AI</a>
+<a href="/amni-llm.html">AMNI-LLM</a>
+<a href="/amni-code.html">AMNI-CODE</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">DESKTOP &amp; OS</span>
+<a href="/amni-os.html">AMNI-OS</a>
+<a href="/amni-core.html">AMNI-CORE</a>
+<a href="/amni-browse.html">AMNI-BROWSE</a>
+<a href="/amni-connect.html">AMNI-CONNECT</a>
+<a href="/grok-remote.html">GROK-REMOTE</a>
+<a href="/amni-mail.html">AMNI-MAIL</a>
+<a href="/amni-space.html">AMNI-SPACE</a>
+<a href="/amni-crypt.html">AMNI-CRYPT</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">PHONE</span>
+<a href="/amni-type.html">AMNI-TYPE</a>
+<a href="/amni-haven.html">AMNI-HAVEN</a>
+<a href="/amni-hedgedoc.html">HEDGEDOC</a>
+<a href="/symphony.html">SYMPHONY</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">LEARN &amp; EXPLORE</span>
+<a href="/amni-calc.html">AMNI-CALC</a>
+<a href="/amni-learn.html">AMNI-LEARN</a>
+<a href="/amni-explore.html">AMNI-EXPLORE</a>
+<a href="/amni-weather.html">AMNI-WEATHER</a>
+<a href="/game/v2/">AMNI-GAME</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">LIFE</span>
+<a href="/amni-life.html">AMNI-LIFE</a>
+<a href="/amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</div>
+</div>
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer">SUPPORT</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<main class="legal os-doc">
+<p class="eyebrow">Amni OS</p>
+<h1>AMNI OS PRIVACY</h1>
+<p class="effective">Updated 25 Sep 2026</p>
+<ul class="doc-nav" aria-label="Amni OS docs"><li><a href="/amni-os/docs/">Install</a></li><li><a href="/amni-os/docs/restore-points.html">Restore points</a></li><li><a href="/amni-os/docs/drivers.html">Drivers</a></li><li><a href="/amni-os/docs/troubleshooting.html">Troubleshooting</a></li><li><a href="/amni-os/docs/faq.html">FAQ</a></li><li><a href="/amni-os/docs/release-notes.html">Release notes</a></li><li><a href="/amni-os/support.html">Support</a></li><li><a href="/amni-os/privacy.html" aria-current="page">Privacy</a></li></ul>
+<p><strong>Amni OS sends no telemetry.</strong> There is no account, no analytics, no crash reporter and no usage pings. We do not run a server that learns anything about your machine. This page lists every connection the operating system makes on its own, so you can check that for yourself.</p>
+<h2>Connections Amni OS makes on its own</h2>
+<table class="spec-table">
+<tr><th>What</th><th>Where, and when</th></tr>
+<tr><td>Update check and package downloads</td><td><code>downloads.amni-scient.com</code> (the <code>[amnios]</code> repository) and your Arch mirrors. 10 minutes after boot, then daily.</td></tr>
+<tr><td>Flatpak app updates</td><td>Flathub (<code>dl.flathub.org</code>), with the daily update.</td></tr>
+<tr><td>Driver packages</td><td>Your Arch mirrors and <code>[amnios]</code>, when new hardware matches a <a href="/amni-os/docs/drivers.html">driver rule</a>.</td></tr>
+<tr><td>First-login apps</td><td>Flathub (Spotify, Chrome) and the installers of Claude Code, Grok, Cursor and Agy. At your first login, retried until done.</td></tr>
+</table>
+<p>Update checks and package downloads are ordinary HTTPS requests for public files. Like any web server, the mirror sees your IP address and which files you download. It does not see who you are, and there is no identifier in the request.</p>
+<h3>latest.json</h3>
+<p><code>latest.json</code> on the download server describes the newest ISO: version, size, checksum and signature. Download tools and pages read it to find the current image. Fetching it tells us nothing beyond the request itself.</p>
+<h3>During installation</h3>
+<p>The installer checks for an internet connection by contacting <code>amni-scient.com</code>, and can suggest your time zone from KDE's lookup service (<code>geoip.kde.org</code>). You can pick the time zone yourself.</p>
+<h3>Skipping the first-login apps</h3>
+<p>Before your first login (or any time after), create the file that marks them done:</p>
+<pre><code>mkdir -p ~/.config/amni-os &amp;&amp; touch ~/.config/amni-os/first-apps-done</code></pre>
+<h3>Turning off automatic updates</h3>
+<p>Set <code>SCOPE=off</code> in <code>/etc/amni-os/update.conf</code>. We do not recommend it: updates carry security fixes.</p>
+<h2>What stays on your machine</h2>
+<ul>
+<li>Hardware detection for drivers reads your PCI and USB IDs locally. Nothing is uploaded.</li>
+<li>Restore points, the graphics and driver state in <code>/var/lib/amni-os/</code>, and your files stay on your disk.</li>
+<li><code>amni-bug-info</code> prints a summary for you to paste into a bug report. It uploads nothing and leaves out usernames, hostnames, IP and MAC addresses and serial numbers.</li>
+<li>Amni Assist, the built-in assistant, uses no AI provider by default. If you choose a local model, it stays local. If you choose an online provider and enter your own key, your requests go to that provider.</li>
+</ul>
+<h2>Apps you choose to use</h2>
+<p>The Amni apps have their own policies: <a href="/privacy-browse.html">Amni-Browse</a>, <a href="/privacy-mail.html">Amni-Mail</a>, <a href="/privacy-haven.html">Haven</a>, <a href="/privacy-crypt.html">Amni-Crypt</a>, <a href="/privacy-connect.html">Amni-Connect</a>. Third-party apps such as Steam, Chrome or Spotify follow their makers' policies.</p>
+<h2>This website</h2>
+<p>These documentation pages load no analytics and no ads. The theme switch stores your light or dark choice in your browser. The main <a href="/privacy.html">site privacy policy</a> covers the rest of amni-scient.com.</p>
+<h2>Contact</h2>
+<p><a href="mailto:hello@amni-scient.com">hello@amni-scient.com</a></p>
+</main>
+<footer>
+<div class="footer-links">
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="/amni-os.html">AMNI OS</a>
+<a href="/amni-os/docs/">OS DOCS</a>
+<a href="/amni-os/privacy.html">OS PRIVACY</a>
+<a href="/terms.html">TERMS</a>
+<a href="mailto:amnibro7@gmail.com">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
+</footer>
+</body>
+</html>

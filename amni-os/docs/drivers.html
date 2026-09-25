@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#FBFAF8">
+<title>Drivers &mdash; Amni OS | AMNI-SCIENT</title>
+<meta name="description" content="How Amni OS detects your hardware and installs graphics and device drivers from drivers.json rules.">
+<meta property="og:title" content="Drivers &mdash; Amni OS">
+<meta property="og:description" content="How Amni OS detects your hardware and installs graphics and device drivers from drivers.json rules.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://amni-scient.com/amni-os/docs/drivers.html">
+<meta property="og:image" content="https://amni-scient.com/assets/os/desktop.png?v=20260922">
+<link rel="canonical" href="https://amni-scient.com/amni-os/docs/drivers.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/css/style.css?v=b262">
+<link rel="stylesheet" href="/css/os-docs.css?v=1">
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+</head>
+<body>
+<div class="grid-bg"></div>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<a href="/amni-calc.html">CALCULATORS</a>
+<a href="/amni-learn.html">LEARN</a>
+<a href="/blog/">BLOG</a>
+<a href="/research.html">RESEARCH</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu nav-dd-menu--groups">
+<div class="nav-dd-group"><span class="nav-dd-head">AI</span>
+<a href="/braid">BRAID</a>
+<a href="/amni-ai.html">AMNI-AI</a>
+<a href="/amni-llm.html">AMNI-LLM</a>
+<a href="/amni-code.html">AMNI-CODE</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">DESKTOP &amp; OS</span>
+<a href="/amni-os.html">AMNI-OS</a>
+<a href="/amni-core.html">AMNI-CORE</a>
+<a href="/amni-browse.html">AMNI-BROWSE</a>
+<a href="/amni-connect.html">AMNI-CONNECT</a>
+<a href="/grok-remote.html">GROK-REMOTE</a>
+<a href="/amni-mail.html">AMNI-MAIL</a>
+<a href="/amni-space.html">AMNI-SPACE</a>
+<a href="/amni-crypt.html">AMNI-CRYPT</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">PHONE</span>
+<a href="/amni-type.html">AMNI-TYPE</a>
+<a href="/amni-haven.html">AMNI-HAVEN</a>
+<a href="/amni-hedgedoc.html">HEDGEDOC</a>
+<a href="/symphony.html">SYMPHONY</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">LEARN &amp; EXPLORE</span>
+<a href="/amni-calc.html">AMNI-CALC</a>
+<a href="/amni-learn.html">AMNI-LEARN</a>
+<a href="/amni-explore.html">AMNI-EXPLORE</a>
+<a href="/amni-weather.html">AMNI-WEATHER</a>
+<a href="/game/v2/">AMNI-GAME</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">LIFE</span>
+<a href="/amni-life.html">AMNI-LIFE</a>
+<a href="/amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</div>
+</div>
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer">SUPPORT</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<main class="legal os-doc">
+<p class="eyebrow">Amni OS docs</p>
+<h1>DRIVERS</h1>
+<p class="effective">Updated 25 Sep 2026</p>
+<ul class="doc-nav" aria-label="Amni OS docs"><li><a href="/amni-os/docs/">Install</a></li><li><a href="/amni-os/docs/restore-points.html">Restore points</a></li><li><a href="/amni-os/docs/drivers.html" aria-current="page">Drivers</a></li><li><a href="/amni-os/docs/troubleshooting.html">Troubleshooting</a></li><li><a href="/amni-os/docs/faq.html">FAQ</a></li><li><a href="/amni-os/docs/release-notes.html">Release notes</a></li><li><a href="/amni-os/support.html">Support</a></li><li><a href="/amni-os/privacy.html">Privacy</a></li></ul>
+<p>Amni OS installs the drivers your machine needs and nothing else. Two pieces do it: <code>amni-gpu-apply</code> for the display, and <code>amni-driver-apply</code> for everything else. Both use packages from the Arch repositories and the Amni repository. Nothing about your hardware leaves the machine.</p>
+<h2>Graphics</h2>
+<p><code>amni-gpu-apply</code> runs at install and from Amni Control's <em>GPU drivers</em> button. It reads the PCI IDs of your display devices and picks a stack:</p>
+<table class="spec-table">
+<tr><th>Card</th><th>Driver</th></tr>
+<tr><td>AMD, Intel</td><td>Mesa (open source, in the kernel)</td></tr>
+<tr><td>NVIDIA GTX 16xx, RTX 20xx and newer</td><td><code>nvidia-open</code>, loaded early so the boot splash and login screen keep the display</td></tr>
+<tr><td>Older NVIDIA</td><td>nouveau, plus NVK Vulkan through a driver rule</td></tr>
+<tr><td>VirtualBox, VMware, QEMU</td><td>The matching guest graphics path</td></tr>
+</table>
+<p>The result is written to <code>/var/lib/amni-os/gpu.json</code>. If a boot fails to reach the desktop, the next boot uses safe graphics automatically (NVIDIA first gets one retry on nouveau). See <a href="/amni-os/docs/troubleshooting.html">troubleshooting</a>.</p>
+<h2>Everything else</h2>
+<p><code>amni-driver-apply</code> collects facts about the machine, matches them against the rules in <a href="/amni-os/docs/drivers.json">drivers.json</a>, and installs the packages of every rule that matches. It runs:</p>
+<ul>
+<li>when a USB device is plugged in, or a Bluetooth input device pairs,</li>
+<li>after <code>amni-gpu-apply</code>,</li>
+<li>4 minutes after boot and then daily, to retry anything that failed while offline.</li>
+</ul>
+<p>It never runs in the live session, waits for the package manager if it is busy, and never refreshes the package database on its own (no partial upgrades). It shows a notification naming what it installed and writes its result to <code>/var/lib/amni-os/drivers.json</code>.</p>
+<h3>Required and optional</h3>
+<p><em>Required</em> rules install their packages, enable their services and add users to the groups they need. <em>Optional</em> rules (Razer and Logitech tools, NVMe tools, OpenCL, Intel NPU) are only listed until you install them from Amni Control's <em>Optional device tools</em>.</p>
+<h3>What the rules cover</h3>
+<ul>
+<li>Graphics: Intel and NVIDIA video decoding, hybrid-GPU switching and <code>prime-run</code> on laptops, NVK for older NVIDIA</li>
+<li>Laptops: thermald on Intel laptops, fingerprint readers</li>
+<li>Wireless and phones: Bluetooth file transfer, iPhone and iPad, USB modems</li>
+<li>Printing: driverless USB printing, plus HP, Brother, Samsung and Epson drivers</li>
+<li>Gaming: Xbox controllers over Bluetooth and the Xbox Wireless Adapter</li>
+<li>Docks: DisplayLink</li>
+<li>Virtual machines: QEMU, VirtualBox, VMware and Hyper-V guest tools</li>
+<li>Vendor tools: ASUS laptop controls and GPU modes, Framework tools</li>
+</ul>
+<h2>How a rule reads</h2>
+<pre><code>{"id":"intel-thermal","name":"Intel laptop thermal control",
+ "when":["cpu:intel&amp;laptop"],"pkgs":["thermald"],"services":["thermald.service"]}</code></pre>
+<table class="spec-table">
+<tr><th>Field</th><th>Meaning</th></tr>
+<tr><td><code>when</code></td><td>A list of alternatives. Any one matching is enough; <code>&amp;</code> joins facts that must all match. <code>*</code> is a wildcard.</td></tr>
+<tr><td><code>pkgs</code></td><td>Packages to install</td></tr>
+<tr><td><code>services</code></td><td>systemd units to enable once the packages are in</td></tr>
+<tr><td><code>groups</code></td><td>Groups to add every user account to</td></tr>
+<tr><td><code>tier</code></td><td><code>required</code> (default) or <code>optional</code></td></tr>
+</table>
+<h3>Facts a rule can match</h3>
+<table class="spec-table">
+<tr><th>Fact</th><th>Example</th></tr>
+<tr><td>PCI device</td><td><code>pci:8086:*</code>, <code>pciclass:0300</code></td></tr>
+<tr><td>USB device, class, interface</td><td><code>usb:27c6:*</code>, <code>usbclass:07</code>, <code>usbif:03f0:*:07</code></td></tr>
+<tr><td>Bluetooth input device</td><td><code>btinput:045e:*</code>, <code>bluetooth</code></td></tr>
+<tr><td>Graphics</td><td><code>gpu:nvidia</code>, <code>gpu:nvidia-turing+</code>, <code>gpus&gt;=2</code></td></tr>
+<tr><td>Machine</td><td><code>laptop</code>, <code>cpu:intel</code>, <code>virt:kvm</code>, <code>dmi:ASUSTeK*</code></td></tr>
+</table>
+<h2>See what matched on your machine</h2>
+<pre><code>/usr/lib/amni-os/driver-apply --dry-run</code></pre>
+<p>This prints the matched rules, what would be installed and the facts it found, and changes nothing. <code>amni-bug-info</code> shows the last real run.</p>
+<p>To change the rules on one machine, copy them to <code>/etc/amni-os/drivers.json</code> and edit that copy; it takes priority over the packaged file.</p>
+<h2>Hardware that is not covered</h2>
+<p>Open a <a href="https://github.com/Amnibro/Amni-OS/issues/new/choose">hardware or driver request</a> with the output of <code>lspci -nn</code> and <code>lsusb</code>. Those IDs are what a new rule matches on.</p>
+</main>
+<footer>
+<div class="footer-links">
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="/amni-os.html">AMNI OS</a>
+<a href="/amni-os/docs/">OS DOCS</a>
+<a href="/amni-os/privacy.html">OS PRIVACY</a>
+<a href="/terms.html">TERMS</a>
+<a href="mailto:amnibro7@gmail.com">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
+</footer>
+</body>
+</html>

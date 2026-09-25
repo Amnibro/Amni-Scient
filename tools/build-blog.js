@@ -24,7 +24,8 @@ function esc(s) {
   return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 function inline(s) {
-  return esc(s).replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>').replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>').replace(/\*([^*]+)\*/g, '<em>$1</em>').replace(/`([^`]+)`/g, '<code>$1</code>');
+  const code = [];
+  return esc(s).replace(/`([^`]+)`/g, (_, c) => '\u0000' + (code.push(c) - 1) + '\u0000').replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>').replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>').replace(/\*([^*]+)\*/g, '<em>$1</em>').replace(/\u0000(\d+)\u0000/g, (_, i) => '<code>' + code[i] + '</code>');
 }
 function md(src) {
   const lines = src.replace(/\r\n/g, '\n').split('\n');
@@ -275,4 +276,5 @@ function main() {
   patchNav();
   process.stdout.write('blog: ' + posts.length + ' posts\n');
 }
-main();
+if (require.main === module) main();
+module.exports = { esc, inline };
