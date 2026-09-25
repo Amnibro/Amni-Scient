@@ -84,10 +84,76 @@
 <ul class="doc-nav" aria-label="Amni OS docs"><li><a href="/amni-os/docs/">Install</a></li><li><a href="/amni-os/docs/restore-points.html">Restore points</a></li><li><a href="/amni-os/docs/drivers.html">Drivers</a></li><li><a href="/amni-os/docs/troubleshooting.html">Troubleshooting</a></li><li><a href="/amni-os/docs/faq.html">FAQ</a></li><li><a href="/amni-os/docs/release-notes.html" aria-current="page">Release notes</a></li><li><a href="/amni-os/support.html">Support</a></li><li><a href="/amni-os/privacy.html">Privacy</a></li></ul>
 <p>What changed in each Amni OS build, newest first. Entries marked unreleased are merged but not yet on a published ISO; installed systems usually get them through the daily update.</p>
 <h2>Contents</h2>
-<ul><li><a href="#package-and-iso-signing-phase-1">Package and ISO signing, phase 1</a> <span class="rn-date">unreleased, branch <code>signing</code></span></li><li><a href="#hardware-aware-drivers">Hardware-aware drivers</a> <span class="rn-date">unreleased, branch <code>hardware-drivers</code></span></li><li><a href="#restore-points-that-actually-get-taken">Restore points that actually get taken</a> <span class="rn-date">unreleased, branch <code>restore-points</code></span></li><li><a href="#amni-browse-0-15-1">amni-browse 0.15.1</a> <span class="rn-date">2026-09-25</span></li><li><a href="#amni-browse-0-15-0-chromium-engine">amni-browse 0.15.0 — Chromium engine</a> <span class="rn-date">2026-09-25</span></li><li><a href="#amni-os-core-0-4-6-202609242124-haven-desktop-2-5-3">amni-os-core 0.4.6.202609242124, haven-desktop 2.5.3</a> <span class="rn-date">2026-09-24</span></li><li><a href="#amni-os-core-0-4-6-202609242021-haven-desktop-2-5-2">amni-os-core 0.4.6.202609242021, haven-desktop 2.5.2</a> <span class="rn-date">2026-09-24</span></li><li><a href="#unreleased-bluetooth-pairing-sees-keyboards-and-mice-again">Unreleased - Bluetooth pairing sees keyboards and mice again</a> <span class="rn-date">2026-09-23</span></li><li><a href="#unreleased-control-light-dark-or-auto-and-colours-that-follow-th">Unreleased - Control: Light, Dark or Auto, and colours that follow the switch</a> <span class="rn-date">2026-09-23</span></li><li><a href="#unreleased-update-repo-refresh-webrtc-webkit-haven-2-5-1-connect">Unreleased - update repo refresh: WebRTC WebKit, Haven 2.5.1, Connect 1.6.19, Browse 0.14.3</a> <span class="rn-date">2026-09-23</span></li><li><a href="#unreleased-icons-for-the-apps-people-actually-install">Unreleased - icons for the apps people actually install</a> <span class="rn-date">2026-09-22</span></li><li><a href="#unreleased-double-click-to-install-deb-and-app-tarballs">Unreleased - Double-click to install .deb and app tarballs</a> <span class="rn-date">2026-09-22</span></li><li><a href="#unreleased-amni-crypt-is-the-default-encryption">Unreleased - Amni-Crypt is the default encryption</a> <span class="rn-date">2026-09-22</span></li><li><a href="#unreleased-taskbar-and-desktop-act-like-windows">Unreleased - taskbar and desktop act like Windows</a> <span class="rn-date">2026-09-22</span></li><li><a href="#v0-4-6-6-a-usb-that-installs-on-real-hardware">v0.4.6.6 - A USB that installs on real hardware</a> <span class="rn-date">2026-09-22</span></li><li><a href="#v0-4-6-5-haven-2-4-1-is-the-launcher">v0.4.6.5 - Haven 2.4.1 is the launcher</a> <span class="rn-date">2026-09-22</span></li><li><a href="#v0-4-6-4-glass-contrast-connect">v0.4.6.4 - Glass, contrast, Connect</a> <span class="rn-date">2026-09-21</span></li><li><a href="#v0-4-6-3-amni-scient-all-the-way-down">v0.4.6.3 - Amni Scient, all the way down</a> <span class="rn-date">2026-09-18</span></li><li><a href="#v0-4-6-2-no-terminal-windows-from-control-one-click-amni-scient">v0.4.6.2 - No terminal windows from Control, one-click Amni Scient</a> <span class="rn-date">2026-09-18</span></li><li><a href="#v0-4-6-1-desktop-polkit-permissions-wi-fi-amni-browse-0-13-1-med">v0.4.6.1 - Desktop polkit permissions, Wi-Fi, Amni-Browse 0.13.1 &amp; media stack</a> <span class="rn-date">2026-09-16</span></li><li><a href="#v0-4-6-host-download-mirror-stops-opening-a-window">v0.4.6 host - Download mirror stops opening a window</a> <span class="rn-date">2026-09-15</span></li><li><a href="#v0-4-6-suite-on-the-image">v0.4.6 - Suite on the image</a> <span class="rn-date">2026-09-10</span></li><li><a href="#v0-4-5-amni-mail-on-the-os-linux-browser-fixes">v0.4.5 - Amni-Mail on the OS, Linux browser fixes</a> <span class="rn-date">2026-09-09/10</span></li><li><a href="#v0-4-4-first-hardware-debug-session">v0.4.4 - First hardware debug session</a> <span class="rn-date">2026-09-08</span></li><li><a href="#v0-4-3-secure-boot">v0.4.3 - Secure Boot</a> <span class="rn-date">2026-09-08</span></li><li><a href="#v0-4-2-polish-pass">v0.4.2 - polish pass</a> <span class="rn-date">2026-09-07</span></li><li><a href="#v0-4-1-virtualbox-freeze-root-cause-0-13-0-browser-tree-colour-t">v0.4.1 - VirtualBox freeze root cause, 0.13.0 browser tree, colour themes</a> <span class="rn-date">2026-09-03</span></li><li><a href="#v0-4-0-servo-browser-a-control-that-runs-things-an-installer-tha">v0.4.0 - Servo browser, a Control that runs things, an installer that cleans up</a> <span class="rn-date">2026-09-03</span></li><li><a href="#v0-3-2-the-bake-fixed-and-moved-to-the-nvme">v0.3.2 - the bake, fixed and moved to the NVMe</a> <span class="rn-date">2026-09-03</span></li><li><a href="#v0-3-1-it-boots">v0.3.1 - it boots</a> <span class="rn-date">2026-09-02</span></li><li><a href="#v0-3-0-the-real-amni-browse-is-the-default-and-the-desktop-match">v0.3.0 — the real Amni-Browse is the default, and the desktop matches the mockup</a> <span class="rn-date">2026-09-02</span></li><li><a href="#v0-2-0-the-engines-behind-the-panels">v0.2.0 — the engines behind the panels</a> <span class="rn-date">2026-09-02</span></li></ul>
-<section class="rn-entry" id="package-and-iso-signing-phase-1">
-<h2>Package and ISO signing, phase 1</h2>
-<p class="rn-date">unreleased, branch <code>signing</code></p>
+<ul><li><a href="#amni-os-0-5-0">Amni OS 0.5.0</a> <span class="rn-date">2026-09-25</span></li><li><a href="#amni-browse-0-15-1">amni-browse 0.15.1</a> <span class="rn-date">2026-09-25</span></li><li><a href="#amni-browse-0-15-0-chromium-engine">amni-browse 0.15.0 — Chromium engine</a> <span class="rn-date">2026-09-25</span></li><li><a href="#amni-os-core-0-4-6-202609242124-haven-desktop-2-5-3">amni-os-core 0.4.6.202609242124, haven-desktop 2.5.3</a> <span class="rn-date">2026-09-24</span></li><li><a href="#amni-os-core-0-4-6-202609242021-haven-desktop-2-5-2">amni-os-core 0.4.6.202609242021, haven-desktop 2.5.2</a> <span class="rn-date">2026-09-24</span></li><li><a href="#unreleased-bluetooth-pairing-sees-keyboards-and-mice-again">Unreleased - Bluetooth pairing sees keyboards and mice again</a> <span class="rn-date">2026-09-23</span></li><li><a href="#unreleased-control-light-dark-or-auto-and-colours-that-follow-th">Unreleased - Control: Light, Dark or Auto, and colours that follow the switch</a> <span class="rn-date">2026-09-23</span></li><li><a href="#unreleased-update-repo-refresh-webrtc-webkit-haven-2-5-1-connect">Unreleased - update repo refresh: WebRTC WebKit, Haven 2.5.1, Connect 1.6.19, Browse 0.14.3</a> <span class="rn-date">2026-09-23</span></li><li><a href="#unreleased-icons-for-the-apps-people-actually-install">Unreleased - icons for the apps people actually install</a> <span class="rn-date">2026-09-22</span></li><li><a href="#unreleased-double-click-to-install-deb-and-app-tarballs">Unreleased - Double-click to install .deb and app tarballs</a> <span class="rn-date">2026-09-22</span></li><li><a href="#unreleased-amni-crypt-is-the-default-encryption">Unreleased - Amni-Crypt is the default encryption</a> <span class="rn-date">2026-09-22</span></li><li><a href="#unreleased-taskbar-and-desktop-act-like-windows">Unreleased - taskbar and desktop act like Windows</a> <span class="rn-date">2026-09-22</span></li><li><a href="#v0-4-6-6-a-usb-that-installs-on-real-hardware">v0.4.6.6 - A USB that installs on real hardware</a> <span class="rn-date">2026-09-22</span></li><li><a href="#v0-4-6-5-haven-2-4-1-is-the-launcher">v0.4.6.5 - Haven 2.4.1 is the launcher</a> <span class="rn-date">2026-09-22</span></li><li><a href="#v0-4-6-4-glass-contrast-connect">v0.4.6.4 - Glass, contrast, Connect</a> <span class="rn-date">2026-09-21</span></li><li><a href="#v0-4-6-3-amni-scient-all-the-way-down">v0.4.6.3 - Amni Scient, all the way down</a> <span class="rn-date">2026-09-18</span></li><li><a href="#v0-4-6-2-no-terminal-windows-from-control-one-click-amni-scient">v0.4.6.2 - No terminal windows from Control, one-click Amni Scient</a> <span class="rn-date">2026-09-18</span></li><li><a href="#v0-4-6-1-desktop-polkit-permissions-wi-fi-amni-browse-0-13-1-med">v0.4.6.1 - Desktop polkit permissions, Wi-Fi, Amni-Browse 0.13.1 &amp; media stack</a> <span class="rn-date">2026-09-16</span></li><li><a href="#v0-4-6-host-download-mirror-stops-opening-a-window">v0.4.6 host - Download mirror stops opening a window</a> <span class="rn-date">2026-09-15</span></li><li><a href="#v0-4-6-suite-on-the-image">v0.4.6 - Suite on the image</a> <span class="rn-date">2026-09-10</span></li><li><a href="#v0-4-5-amni-mail-on-the-os-linux-browser-fixes">v0.4.5 - Amni-Mail on the OS, Linux browser fixes</a> <span class="rn-date">2026-09-09/10</span></li><li><a href="#v0-4-4-first-hardware-debug-session">v0.4.4 - First hardware debug session</a> <span class="rn-date">2026-09-08</span></li><li><a href="#v0-4-3-secure-boot">v0.4.3 - Secure Boot</a> <span class="rn-date">2026-09-08</span></li><li><a href="#v0-4-2-polish-pass">v0.4.2 - polish pass</a> <span class="rn-date">2026-09-07</span></li><li><a href="#v0-4-1-virtualbox-freeze-root-cause-0-13-0-browser-tree-colour-t">v0.4.1 - VirtualBox freeze root cause, 0.13.0 browser tree, colour themes</a> <span class="rn-date">2026-09-03</span></li><li><a href="#v0-4-0-servo-browser-a-control-that-runs-things-an-installer-tha">v0.4.0 - Servo browser, a Control that runs things, an installer that cleans up</a> <span class="rn-date">2026-09-03</span></li><li><a href="#v0-3-2-the-bake-fixed-and-moved-to-the-nvme">v0.3.2 - the bake, fixed and moved to the NVMe</a> <span class="rn-date">2026-09-03</span></li><li><a href="#v0-3-1-it-boots">v0.3.1 - it boots</a> <span class="rn-date">2026-09-02</span></li><li><a href="#v0-3-0-the-real-amni-browse-is-the-default-and-the-desktop-match">v0.3.0 — the real Amni-Browse is the default, and the desktop matches the mockup</a> <span class="rn-date">2026-09-02</span></li><li><a href="#v0-2-0-the-engines-behind-the-panels">v0.2.0 — the engines behind the panels</a> <span class="rn-date">2026-09-02</span></li></ul>
+<section class="rn-entry" id="amni-os-0-5-0">
+<h2>Amni OS 0.5.0</h2>
+<p class="rn-date">2026-09-25</p>
+<p>The biggest release yet. It was measured against 14 leading distros, and most of the gaps found are closed here.</p>
+<ul>
+<li><strong>Secure Boot works from the USB stick.</strong> The live USB boots with Secure Boot on. You enroll the Amni key once in MokManager (<code>ENROLL_THIS_KEY_IN_MOKMANAGER.cer</code>, SHA-1 <code>A1:8C:DD:28:AF:EB:DA:DD:D8:31:FA:97:BE:31:DC:1D:E1:E9:80:0B</code>). Installed systems boot with Secure Boot on as well: GRUB is rebuilt with SBAT and embedded modules. Steps are in <code>docs/signing.md</code>.
+</li>
+<li><strong>Encrypted installs boot.</strong> LUKS installs now get <code>sd-encrypt</code> and the keyfile in the initramfs. Before this they never booted.
+</li>
+<li><strong>Restore points are real.</strong> Snapper was never configured on Calamares installs; it is now. snap-pac takes a pair around every update, and every snapshot boots from GRUB on a RAM overlay (<code>systemd.volatile=overlay</code>).
+</li>
+<li><strong>Hardware-aware drivers.</strong> <code>amni-driver-apply</code> detects this machine's hardware and installs what it needs, including when you plug a device in or pair it.
+</li>
+<li><strong>Amni Welcome.</strong> A first-login tour covering restore points, drivers, encrypted backups, privacy, your Amni apps and language.
+</li>
+<li><strong>Security Center in Control:</strong>
+<ul>
+<li>Installs ask for your password for sudo and admin actions again.
+</li>
+<li>AppArmor is on for new installs.
+</li>
+<li>Status is shown for encryption, Secure Boot, firewall, updates, restore points and signing.
+</li>
+<li>TPM2 disk unlock with a recovery key.
+</li>
+<li>Opt-in local crash reports and security advisories.
+</li>
+<li>Machines that were passwordless keep that until you switch it in Control.
+</li></ul>
+</li>
+<li><strong>Package and ISO signing.</strong> The new <code>amnios-keyring</code> delivers the package key (phase 1), and ISOs are signed with minisign.
+</li>
+<li><strong>Languages:</strong> Fcitx 5 input methods (Chinese, Japanese, Korean, Vietnamese and more) on Wayland, 23 locales in the live session, and a new <strong>High Contrast</strong> look.
+</li>
+<li><strong>Privacy:</strong> the installer no longer looks up your location online. The time zone starts at New York and you pick yours on the map. <code>docs/privacy.md</code> lists every connection the OS makes, and crash dumps are off by default.
+</li>
+<li><strong>Recovery tools:</strong>
+<ul>
+<li>an opt-in <strong>stable update channel</strong> (the Arch Linux Archive, a few days behind)
+</li>
+<li>kernel choice with a guaranteed fallback
+</li>
+<li><strong>Repair Amni OS</strong> (reinstalls system packages and keeps your files)
+</li>
+<li><strong>Reset my desktop settings</strong>
+</li>
+<li>one-click virtual machines (now with a virtual TPM) and Cockpit
+</li></ul>
+</li>
+<li><strong>For bug reports:</strong> <code>amni-bug-info</code> prints a privacy-safe system summary. <code>os-release</code> links to the new docs, support, privacy and issue pages at amni-scient.com/amni-os.
+</li>
+<li><strong>Installs are complete from the first boot.</strong>
+<ul>
+<li>The installer takes the first restore point as its last step, so it holds the kernels and GRUB lists it right away.
+</li>
+<li>Windows file sharing is off until you switch it on in Control. The switch writes a proper Samba config and opens the firewall to your local network only; before, Samba failed on every install.
+</li>
+<li>Installed systems no longer show Arch's &quot;To install Arch Linux&quot; console message.
+</li>
+<li>Booting a restore point leaves no failed units.
+</li>
+<li>With crash reports off (the default), KDE's crash handler no longer piles up failed units, and upgrading turns off a Samba server that was enabled without a config.
+</li></ul>
+</li>
+<li><strong>If you miss the MokManager prompt</strong> on the first Secure Boot start, shim shows &quot;Verification failed&quot;. Reboot, pick <strong>Enroll key from disk</strong>, and choose <code>ENROLL_THIS_KEY_IN_MOKMANAGER.cer</code>.
+</li>
+<li><strong>Project:</strong> CI runs on the Amni build PC, not GitHub Actions, and reports to PRs as <code>amni-local-ci</code>. Also added: issue templates, a Linux <code>publish-repo.sh</code>, and <code>tools/qvm.py</code> for headless Secure Boot VM tests.
+</li></ul>
+<h3>Package and ISO signing, phase 1</h3>
 <ul>
 <li><strong>New <code>amnios-keyring</code> package</strong> carries the Amni OS package-signing key (ed25519, fingerprint <code>C40EC8B9A32CF20378261E96210B8C24BF3E7D1E</code>) and populates it into pacman's keyring. <code>amni-os-core</code> now depends on it, so every install gets the key with its next update.
 </li>
@@ -102,10 +168,7 @@
 </li>
 <li>The repo stays unsigned until the key has reached installs. A test showed that signing first breaks updates on every install that lacks the key. <code>docs/signing.md</code> has the plan.
 </li></ul>
-</section>
-<section class="rn-entry" id="hardware-aware-drivers">
-<h2>Hardware-aware drivers</h2>
-<p class="rn-date">unreleased, branch <code>hardware-drivers</code></p>
+<h3>Hardware-aware drivers</h3>
 <ul>
 <li><strong><code>amni-driver-apply</code> installs the drivers each machine needs, and only those.</strong> <code>/usr/share/amni-os/drivers.json</code> matches rules against:
 <ul>
@@ -165,10 +228,7 @@
 <li>Rule matching was checked on five simulated machines: Dell XPS Intel+NVIDIA, ASUS ROG, a KVM guest, a desktop with an HP printer, iPhone and Xbox pad, and a GTX 1060 with a DisplayLink dock.
 </li></ul>
 </li></ul>
-</section>
-<section class="rn-entry" id="restore-points-that-actually-get-taken">
-<h2>Restore points that actually get taken</h2>
-<p class="rn-date">unreleased, branch <code>restore-points</code></p>
+<h3>Restore points that actually get taken</h3>
 <ul>
 <li><strong>Snapper was never configured on Calamares installs.</strong> <code>system-setup</code> ran <code>snapper create-config /</code>, which refuses to run when <code>/.snapshots</code> already exists. Calamares mounts the <code>@snapshots</code> subvolume there, so the step failed and only logged &quot;snapper config failed&quot;. snap-pac, the snapper timers and grub-btrfs were all installed and enabled, but no restore point was ever taken.
 </li>
