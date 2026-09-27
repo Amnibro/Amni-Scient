@@ -1,28 +1,20 @@
 User-agent: Mediapartners-Google
 Allow: /
 
-User-agent: Googlebot
-Allow: /
-
 User-agent: *
 Allow: /
-Sitemap: https://amni-scient.com/sitemap.xml
-
-# Internal / non-content areas
+Disallow: /x/
 Disallow: /backups/
 Disallow: /assets/haven/
 Disallow: /src/
 Disallow: /node_modules/
 Disallow: /packs/
 Disallow: /archive/
-
-# Raw research data (not content)
 Disallow: /research/proof_
 Disallow: /research/bench_
 Disallow: /research/*.json$
-
-# Dev helpers / build artifacts
-Disallow: /_
+Disallow: /_idx
+Disallow: /_shared/*.html$
 Disallow: /*.bak$
 Disallow: /*.zip$
 Disallow: /*.log$
@@ -32,6 +24,4 @@ Disallow: /extract.js
 Disallow: /fix_
 Disallow: /obfuscate.js
 
-# private distribution drops — not for crawlers
-User-agent: *
-Disallow: /x/
+Sitemap: https://amni-scient.com/sitemap.xml
