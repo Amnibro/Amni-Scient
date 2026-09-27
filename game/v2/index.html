@@ -22,6 +22,7 @@
 <link rel="canonical" href="https://amni-scient.com/game/v2/">
 <link rel="preload" href="/assets/fonts/archivo-var.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/css/style.css?v=b261">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" crossorigin="anonymous"></script>
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#08090B':'#F3F2EF');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
@@ -70,6 +71,14 @@ body.playing .stage-fs{display:inline-flex}
 kbd{display:inline-flex;align-items:center;justify-content:center;min-width:1.7rem;height:1.5rem;padding:0 .45rem;background:var(--bg);border:1px solid var(--border2);border-bottom-width:2px;border-radius:2px;color:var(--text);font-family:var(--font-sans);font-size:.68rem;font-weight:700;letter-spacing:.04em;white-space:nowrap}
 .tips{display:flex;flex-wrap:wrap;gap:.45rem 1.2rem;margin-top:.9rem;padding-top:.8rem;border-top:1px solid var(--border);color:var(--dim);font-size:.8rem}
 .tips b{color:var(--text-soft);font-weight:650}
+.about h2{margin:1.25rem 0 .6rem}
+.about h2:first-child{margin-top:0}
+.about p,.about li{font-size:.9rem;line-height:1.62;color:var(--text-soft);max-width:74ch}
+.about p{margin:0 0 .7rem}
+.about ul{margin:0 0 .7rem;padding-left:1.15rem}
+.about li{margin:0 0 .4rem}
+.about b{color:var(--text);font-weight:650}
+.about code{font-size:.82rem;color:var(--text)}
 .game-foot{margin-top:auto}
 .game-foot .fine{margin-top:.65rem;color:var(--dim);font-size:.72rem}
 .game-foot .fine a{font-size:.72rem;letter-spacing:.04em;text-transform:none;font-stretch:100%;font-weight:550}
@@ -78,6 +87,7 @@ kbd{display:inline-flex;align-items:center;justify-content:center;min-width:1.7r
   body.playing #stage{max-height:none;min-height:min(86svh,720px)}
 }
 @media(prefers-reduced-motion:reduce){#spin{animation:none;border-top-color:var(--accent)}}
+.game-ad{margin:2.5rem auto 0}
 </style>
 </head>
 <body class="game-shell">
@@ -137,8 +147,8 @@ kbd{display:inline-flex;align-items:center;justify-content:center;min-width:1.7r
     <h2>Controls</h2>
     <div class="grid">
       <div class="row"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd><span>Move</span></div>
-      <div class="row"><kbd>Space</kbd><span>Jump, again for double, hold to flutter</span></div>
-      <div class="row"><kbd>Shift</kbd><span>Dash, including midair</span></div>
+      <div class="row"><kbd>Space</kbd><span>Jump, again midair for double once learned, hold for height</span></div>
+      <div class="row"><kbd>Shift</kbd><span>Dash, including midair, once learned</span></div>
       <div class="row"><kbd>Ctrl</kbd><kbd>C</kbd><span>Ground-pound; hold to dive in water</span></div>
       <div class="row"><kbd>F</kbd><span>Attack; mash for a 3-hit combo</span></div>
       <div class="row"><kbd>Q</kbd><span>Throw cones</span> <kbd>R</kbd><span>Cycle</span></div>
@@ -147,10 +157,42 @@ kbd{display:inline-flex;align-items:center;justify-content:center;min-width:1.7r
     </div>
     <div class="tips">
       <span>Saves as <b>savegame_v2_*</b>, classic files stay put.</span>
-      <span>Pause, then the robot skin row, for unlocked plates.</span>
+      <span>Pause, then the <b>Robot Skin</b> row in Options, to pick any of the nine skins.</span>
     </div>
   </div>
+  <section class="controls about" aria-label="About Amni v2">
+    <h2>How to play</h2>
+    <p>A new game starts in the Clockwork Foundry, and its portal leads to Dewdrop Glade, the hub. Twelve portals ring the glade spring like a clock face, and a side path runs to Hearthwood Den. Portals open by canvas count: Frostwick Sill at 2, Mirewood Bog 4, Canopy Reach 6, the Den 8, Shellshore Cove 10, and so on up to 24 for The Painted Wastes. The Crucible wants 26 canvases and two tyrants felled.</p>
+    <p>Some portals also check your gear; a locked one says what it needs. Each realm ends in a boss lair whose door asks for pebbles: 10 before your first tyrant, then 6 more per tyrant after. Collect 16 canvases and fell 4 tyrants to see the ending. A full clear means 55 canvases, 13 tyrants, 18 journal pages and 24 clovers.</p>
+    <h2>Tips</h2>
+    <ul>
+      <li>The ability signs by the glade spring teach double jump and dash, and four portals stay shut without them.</li>
+      <li>Tinkerer prices: Dig Claws 6 sprockets, Heater Module 10, Obsidian Plating 16, Maple Glider 22. Frostwick needs the heater, Ember Hearth the plating, Sunken Grotto and Cloudtop the glider.</li>
+      <li>You start with 3 lives and can hold 9. Two gold extra-life pickups sit near each realm's arrival pad.</li>
+      <li>Losing your hearts costs a life and drops you on the nearest arrival pad; the tyrant you were fighting heals. Game over sends you back to the Foundry with 3 lives, and you keep your canvases and gear.</li>
+      <li>Classic's shrine transforms are back: axolotl, butterfly, otter and salamander.</li>
+      <li>Set Difficulty to Assist in Options to halve damage and lengthen the safe window after a hit.</li>
+    </ul>
+    <h2>Gamepad</h2>
+    <p>Same layout as classic; press a button once after connecting. Left stick moves, right stick turns the camera. <b>A</b> jump, <b>X</b> attack, <b>B</b> dash, <b>Y</b> interact, <b>LB</b> ground pound, <b>RB</b> throw, <b>D-pad right</b> cycle cones or pause tabs, <b>View</b> photo mode, <b>Menu</b> pause. Option rows still need <kbd>W</kbd>/<kbd>S</kbd> or the arrow keys.</p>
+    <h2>Saves and privacy</h2>
+    <p>v2 keeps three slots of its own in this browser's localStorage, <code>savegame_v2_1.bin</code> to <code>savegame_v2_3.bin</code>, so classic saves are never touched. A slot holds your collection, lives, abilities, position, hearts, play time and achievements, saved every 12 seconds and on pause. Settings and bindings share <code>settings.toml</code> and <code>keybinds.toml</code> with classic. The game never uploads your save. Export Save in Options copies the slot into the <code>amni_v2_export</code> key; Import Save reads a code from <code>amni_v2_import</code>. Live co-op is opt-in and connects two browsers directly over WebRTC.</p>
+    <h2>Requirements and troubleshooting</h2>
+    <p>v2 needs WebGPU: Chrome, Edge, Firefox 141+, or Safari 26+. A slow first load can take up to two minutes. On touchscreens the move stick sits bottom left and the right side turns the camera.</p>
+    <ul>
+      <li><b>WebGPU needed</b>: open the page in one of those browsers.</li>
+      <li><b>No GPU adapter</b>: enable hardware acceleration, update drivers, then Retry.</li>
+      <li><b>World took too long</b>: Retry, then hard refresh (Ctrl+Shift+R, Cmd+Shift+R on Mac).</li>
+      <li>Choppy frame rate: lower Graphics in Options.</li>
+    </ul>
+  </section>
 </div>
+<p class="page-updated">Last updated <time datetime="2026-09-27">September 27, 2026</time></p>
+<aside class="site-ad-banner game-ad" aria-label="Sponsored">
+<span class="ad-note">Sponsored</span>
+<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8345487545441889" data-ad-slot="1720203631" data-ad-format="auto" data-full-width-responsive="true"></ins>
+<script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>
+</aside>
 
 <footer class="game-foot">
   <div class="footer-links">
@@ -158,10 +200,10 @@ kbd{display:inline-flex;align-items:center;justify-content:center;min-width:1.7r
     <a href="/faq.html">FAQ</a>
     <a href="/privacy.html">PRIVACY</a>
     <a href="/terms.html">TERMS</a>
-    <a href="mailto:amnibro7@gmail.com">CONTACT</a>
+    <a href="/contact.html">CONTACT</a>
     <a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">SUPPORT</a>
   </div>
-  <p class="fine"><a href="/game/">Classic Amni</a> · no tracking · <a href="music/CREDITS.md">music credits</a></p>
+  <p class="fine"><a href="/game/">Classic Amni</a> · saves stay on this device · <a href="/game/music/CREDITS.md">music credits</a></p>
   <p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
 </footer>
 

@@ -22,6 +22,7 @@
 <link rel="canonical" href="https://amni-scient.com/game/">
 <link rel="preload" href="/assets/fonts/archivo-var.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/css/style.css?v=b261">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" crossorigin="anonymous"></script>
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#08090B':'#F3F2EF');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
@@ -70,6 +71,14 @@ body.playing .stage-fs{display:inline-flex}
 kbd{display:inline-flex;align-items:center;justify-content:center;min-width:1.7rem;height:1.5rem;padding:0 .45rem;background:var(--bg);border:1px solid var(--border2);border-bottom-width:2px;border-radius:2px;color:var(--text);font-family:var(--font-sans);font-size:.68rem;font-weight:700;letter-spacing:.04em;white-space:nowrap}
 .tips{display:flex;flex-wrap:wrap;gap:.45rem 1.2rem;margin-top:.9rem;padding-top:.8rem;border-top:1px solid var(--border);color:var(--dim);font-size:.8rem}
 .tips b{color:var(--text-soft);font-weight:650}
+.about h2{margin:1.25rem 0 .6rem}
+.about h2:first-child{margin-top:0}
+.about p,.about li{font-size:.9rem;line-height:1.62;color:var(--text-soft);max-width:74ch}
+.about p{margin:0 0 .7rem}
+.about ul{margin:0 0 .7rem;padding-left:1.15rem}
+.about li{margin:0 0 .4rem}
+.about b{color:var(--text);font-weight:650}
+.about code{font-size:.82rem;color:var(--text)}
 .game-foot{margin-top:auto}
 .game-foot .fine{margin-top:.65rem;color:var(--dim);font-size:.72rem}
 .game-foot .fine a{font-size:.72rem;letter-spacing:.04em;text-transform:none;font-stretch:100%;font-weight:550}
@@ -78,6 +87,7 @@ kbd{display:inline-flex;align-items:center;justify-content:center;min-width:1.7r
   body.playing #stage{max-height:none;min-height:min(86svh,720px)}
 }
 @media(prefers-reduced-motion:reduce){#spin{animation:none;border-top-color:var(--accent)}}
+.game-ad{margin:2.5rem auto 0}
 </style>
 </head>
 <body class="game-shell">
@@ -137,7 +147,7 @@ kbd{display:inline-flex;align-items:center;justify-content:center;min-width:1.7r
     <h2>Controls</h2>
     <div class="grid">
       <div class="row"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd><span>Move</span></div>
-      <div class="row"><kbd>Space</kbd><span>Jump, again for double, hold to flutter</span></div>
+      <div class="row"><kbd>Space</kbd><span>Jump, again midair for double, hold for height</span></div>
       <div class="row"><kbd>Shift</kbd><span>Dash, including midair</span></div>
       <div class="row"><kbd>Ctrl</kbd><kbd>C</kbd><span>Ground-pound; hold to dive in water</span></div>
       <div class="row"><kbd>F</kbd><span>Attack; mash for a 3-hit combo, dive-slash in air</span></div>
@@ -152,7 +162,40 @@ kbd{display:inline-flex;align-items:center;justify-content:center;min-width:1.7r
       <span>Autosaves in this browser.</span>
     </div>
   </div>
+  <section class="controls about" aria-label="About classic Amni">
+    <h2>How to play</h2>
+    <p>You are a small robot in Dewdrop Glade, the hub. Thirteen stone portals stand around it, each opening once you carry enough canvases: Frostwick Sill at 4, Canopy Reach 5, Mirewood Bog 6, Ember Hearth 7, up to 22 for The Painted Wastes. The Crucible, sealed in the sky, opens at 10.</p>
+    <p>Canvases sit in plain view, come from timed mote trials, and drop from every tyrant you fell. Freeing all five caged axolotls earns a bonus one. Collect 16 canvases and fell 4 tyrants to see the ending. For a full clear there are 55 canvases and 13 tyrants.</p>
+    <h2>Tips</h2>
+    <ul>
+      <li>Sprockets are money. The Tinkerer sells Dig Claws (8), a Heater Module (12) for blizzards, Obsidian Plating (16) against ember heat, and the Maple Glider (20).</li>
+      <li>Transforms come from shrines in Shellshore Cove, Canopy Reach, Auroral Wastes and Ember Hearth. Press <kbd>E</kbd> at one to become the axolotl (endless air), butterfly (free flight), otter (ice speed) or salamander (lava-proof). Press <kbd>E</kbd> elsewhere to change back.</li>
+      <li>Tyrants only take damage while slumped and tired after an attack: one hit per opening. Leave the arena and they heal.</li>
+      <li>Two power cells make a new heart. Berries heal one, and a canvas heals you fully.</li>
+      <li>Classic has no lives. Run out of hearts and you restart at your last portal with full health and nothing lost.</li>
+      <li>Jump into a wall midair to kick off it. Hold ground-pound in water to dive, and watch your air.</li>
+      <li>Lost? Pause, press <kbd>R</kbd> to reach the Gallery tab, then <kbd>H</kbd> to warp home.</li>
+    </ul>
+    <h2>Gamepad</h2>
+    <p>Standard gamepads work; press a button once after connecting. Left stick moves, right stick turns the camera. <b>A</b> jump, <b>X</b> attack, <b>B</b> dash, <b>Y</b> interact, <b>LB</b> ground pound, <b>RB</b> throw, <b>D-pad right</b> cycle cones, <b>R3</b> gadget, <b>View</b> photo mode, <b>Menu</b> pause. Pause-menu rows still need <kbd>W</kbd>/<kbd>S</kbd> or the arrow keys.</p>
+    <h2>Saves and privacy</h2>
+    <p>The game autosaves every 12 seconds, when you pause, and after purchases or upgrades. Three slots live in this browser's localStorage as <code>savegame_1.bin</code> to <code>savegame_3.bin</code>, holding your collection, abilities, position, hearts and play time. <code>settings.toml</code> and <code>keybinds.toml</code> hold your settings and bindings. The game never uploads your save; clearing site data erases it. Ghost codes and live co-op in the Gallery tab are opt-in: ghost codes are text you copy yourself, and co-op connects two browsers directly over WebRTC, using a public STUN server to find each other.</p>
+    <h2>Requirements and troubleshooting</h2>
+    <p>Amni needs WebGPU: Chrome, Edge, Firefox, or Safari 26+, with a working GPU. The engine is about 8 MB, so first loads are slower on mobile data. On touchscreens, drag the left half to move, the right half to look, and tap the on-screen buttons.</p>
+    <ul>
+      <li><b>WebGPU needed</b>: switch to one of the browsers above.</li>
+      <li><b>No GPU adapter</b>: enable hardware acceleration, update drivers, then Retry.</li>
+      <li><b>Out-of-date engine files</b>: hard refresh with Ctrl+Shift+R (Cmd+Shift+R on Mac).</li>
+      <li><b>No sound</b>: press Play with the tab focused.</li>
+    </ul>
+  </section>
 </div>
+<p class="page-updated">Last updated <time datetime="2026-09-27">September 27, 2026</time></p>
+<aside class="site-ad-banner game-ad" aria-label="Sponsored">
+<span class="ad-note">Sponsored</span>
+<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8345487545441889" data-ad-slot="1720203631" data-ad-format="auto" data-full-width-responsive="true"></ins>
+<script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>
+</aside>
 
 <footer class="game-foot">
   <div class="footer-links">
@@ -160,10 +203,10 @@ kbd{display:inline-flex;align-items:center;justify-content:center;min-width:1.7r
     <a href="/faq.html">FAQ</a>
     <a href="/privacy.html">PRIVACY</a>
     <a href="/terms.html">TERMS</a>
-    <a href="mailto:amnibro7@gmail.com">CONTACT</a>
+    <a href="/contact.html">CONTACT</a>
     <a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">SUPPORT</a>
   </div>
-  <p class="fine"><a href="/game/v2/">v2 remake</a> · no tracking · <a href="music/CREDITS.md">music credits</a></p>
+  <p class="fine"><a href="/game/v2/">v2 remake</a> · saves stay on this device · <a href="music/CREDITS.md">music credits</a></p>
   <p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
 </footer>
 
