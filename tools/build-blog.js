@@ -112,7 +112,7 @@ function footer() {
 <a href="/blog/rss.xml">RSS</a>
 <a href="/privacy.html">PRIVACY</a>
 <a href="/terms.html">TERMS</a>
-<a href="mailto:amnibro7@gmail.com">CONTACT</a>
+<a href="/contact.html">CONTACT</a>
 <a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
 </div>
 <p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
