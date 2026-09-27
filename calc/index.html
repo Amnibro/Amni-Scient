@@ -23,7 +23,6 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230a0a0a'/%3E%3Ctext x='32' y='44' font-size='38' text-anchor='middle' font-family='monospace' font-weight='bold' fill='%23ff6b35'%3EAC%3C/text%3E%3C/svg%3E">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Amni-Calc","url":"https://amni-scient.com/calc/","description":"Browser-native engineering calculator suite: beam FEA, stress, sections, bolts, springs, seals, fatigue, heat transfer, electrochemistry, batteries, fluid mechanics, heat exchangers, pressure vessels, thermodynamic cycles, HVAC, electrical, vibration, gears, columns, shafts, welds, bearings, pumps, combustion, motors, NEC wire, materials, finishes, units. WebAssembly backend.","applicationCategory":"EngineeringApplication","operatingSystem":"Any (Modern Browser)","browserRequirements":"Requires JavaScript and WebAssembly","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Organization","name":"AMNI-SCIENT","url":"https://amni-scient.com"},"featureList":["Beam analysis (point/distributed/moment loads)","Stress (Mohr's circle)","Cross-section property calculator","Bolt torque &amp; preload","Coil &amp; Belleville springs","O-ring seal design","Fatigue analysis (Goodman, Soderberg, Gerber, ASME-Elliptic)","Heat transfer (conduction, convection, radiation, fins)","Electrochemistry (Nernst, Tafel, Butler-Volmer, corrosion, Faraday)","Battery pack sizing, runtime, Peukert, SOC","Fluid mechanics (Moody, Bernoulli, Reynolds)","Heat exchangers (LMTD, NTU-effectiveness)","Pressure vessels (thin-wall, Lam\u00E9, ASME VIII-1)","Thermodynamic cycles (Carnot, Otto, Diesel, Brayton, refrigeration)","HVAC &amp; psychrometrics","Electrical (Ohm, AC power, 3-phase, wire drop, RC/RL)","Vibration (natural frequency, isolator TR, resonance)","Gears (geometry, ratio, Lewis bending)","Columns (Euler &amp; Johnson buckling)","Shafts (torsion, critical speed, keys)","Welds (fillet throat, group polar)","Bearings (ISO 281 L10 life)","Pumps (NPSH, affinity laws, specific speed)","Combustion (AFR, flame temp, LHV)","Motors (synchronous speed, torque, FLA)","NEC wire (310.16 ampacity, voltage drop)","Material database","Surface finish recommender","Unit conversion"]}</script>
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8345487545441889" crossorigin="anonymous" data-overlays="false"></script>
 <script>(()=>{try{const t=localStorage.getItem('calc-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
 <script src="https://cdn.plot.ly/plotly-2.35.2.min.js" charset="utf-8"></script>
 <style>
@@ -175,8 +174,6 @@ footer a{color:var(--accent);font-size:.7rem}
 @keyframes wasm-spin{to{transform:rotate(360deg)}}
 .calc-ad-slot{max-width:970px;margin:1.5rem auto 1rem;padding:0 1rem;text-align:center}
 .calc-ad-slot .ad-tag{font-size:.6rem;color:var(--dim);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px}
-#disclaimer .disc-ad{margin:1.25rem 0 .5rem;padding-top:1rem;border-top:1px solid var(--border2)}
-#disclaimer .disc-ad .ad-tag{font-size:.55rem;color:var(--dim);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px}
 #ad-tx{position:fixed;bottom:24px;left:24px;z-index:99;width:320px;min-height:100px;background:var(--panel2);border:1px solid var(--accent);display:flex;flex-direction:column;pointer-events:auto;overflow:hidden;transition:opacity .4s}
 #ad-tx .ad-hdr{display:flex;justify-content:space-between;align-items:center;padding:4px 10px;border-bottom:1px solid var(--border)}
 #ad-tx .ad-hdr span{font-size:8px;letter-spacing:2px;color:var(--accent);text-transform:uppercase}
@@ -297,11 +294,6 @@ Amni-Scient assumes no liability for designs, decisions, or outcomes based on re
 </div>
 <p style="color:var(--text);font-size:.75rem">By continuing, you acknowledge that this tool is not a substitute for professional engineering judgment.</p>
 <button class="btn btn-fill" id="disc-accept" type="button">I UNDERSTAND &mdash; CONTINUE</button>
-<aside class="disc-ad" aria-label="Sponsored">
-<div class="ad-tag">Sponsored</div>
-<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8345487545441889" data-ad-slot="1720203631" data-ad-format="auto" data-full-width-responsive="true"></ins>
-<script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>
-</aside>
 </div>
 </div>
 <div id="wasm-loading" role="status" aria-live="polite"><span class="spinner" aria-hidden="true"></span><span>Loading WebAssembly engine&hellip;</span></div>
@@ -2568,11 +2560,6 @@ n_out = n_in/GR &nbsp;|&nbsp; T_out = T_in&middot;GR&middot;&eta;<br>
 </div>
 </div>
 </div>
-<aside class="site-ad-banner" aria-label="Sponsored" style="width:100%;margin:1rem 0 0;padding:1rem 1.5rem;border-top:1px solid var(--border);background:var(--panel);text-align:center;box-sizing:border-box">
-<div class="ad-note">Sponsored</div>
-<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8345487545441889" data-ad-slot="1720203631" data-ad-format="auto" data-full-width-responsive="true"></ins>
-<script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>
-</aside>
 <section class="theory-refs" aria-labelledby="theory-title">
 <h2 id="theory-title">Theory, Formulas &amp; Standards Referenced</h2>
 <p class="intro">Amni-Calc implements classical closed-form engineering methods and selected code-based checks for preliminary sizing and conceptual analysis. Results are always first-principles approximations &mdash; final designs must be validated against current editions of the governing codes and by a licensed professional engineer.</p>
