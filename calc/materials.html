@@ -5,19 +5,19 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="theme-color" content="#FBFAF8">
 <title>Materials Database &mdash; Amni-Calc | AMNI-SCIENT</title>
-<meta name="description" content="Yield, ultimate, modulus, density, k, cp for common metals &amp; polymers. In-browser engineering calculator with theory, formulas, when-to-use scenarios, and cited standards. WebAssembly backend, no install.">
-<meta name="keywords" content="amni-calc,materials,yield, ultimate, modulus, density, k, cp for common metals &amp; polymers,engineering calculator,reference">
+<meta name="description" content="Yield, ultimate, modulus, density, k, CTE for common metals &amp; polymers. In-browser engineering calculator with theory, formulas, when-to-use scenarios, and cited standards. Runs in your browser, no install.">
+<meta name="keywords" content="amni-calc,materials,yield, ultimate, modulus, density, k, cte for common metals &amp; polymers,engineering calculator,reference">
 <meta name="author" content="Amni-Scient">
 <meta property="og:title" content="Materials Database &mdash; Amni-Calc">
-<meta property="og:description" content="Yield, ultimate, modulus, density, k, cp for common metals &amp; polymers. In-browser WASM calculator.">
+<meta property="og:description" content="Yield, ultimate, modulus, density, k, CTE for common metals &amp; polymers. In-browser calculator.">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://amni-scient.com/calc/materials.html">
 <meta property="og:image" content="https://amni-scient.com/assets/explore/og-explore.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Materials Database &mdash; Amni-Calc">
-<meta name="twitter:description" content="Yield, ultimate, modulus, density, k, cp for common metals &amp; polymers">
+<meta name="twitter:description" content="Yield, ultimate, modulus, density, k, CTE for common metals &amp; polymers">
 <link rel="canonical" href="https://amni-scient.com/calc/materials.html">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Materials Database","description":"Yield, ultimate, modulus, density, k, cp for common metals &amp; polymers","author":{"@type":"Organization","name":"AMNI-SCIENT"},"publisher":{"@type":"Organization","name":"AMNI-SCIENT","url":"https://amni-scient.com"},"mainEntityOfPage":"https://amni-scient.com/calc/materials.html"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Materials Database","description":"Yield, ultimate, modulus, density, k, CTE for common metals &amp; polymers","author":{"@type":"Organization","name":"AMNI-SCIENT"},"publisher":{"@type":"Organization","name":"AMNI-SCIENT","url":"https://amni-scient.com"},"mainEntityOfPage":"https://amni-scient.com/calc/materials.html"}</script>
 <link rel="stylesheet" href="../css/style.css?v=b260">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8345487545441889" crossorigin="anonymous" data-overlays="false"></script>
 <script>
@@ -99,7 +99,7 @@
 <p class="crumbs"><a href="../">Home</a> &rsaquo; <a href="../amni-calc.html">Amni-Calc</a> &rsaquo; Reference &rsaquo; Materials Database</p>
 <div class="product-hero">
 <h1>MATERIALS DATABASE</h1>
-<p class="desc">YIELD, ULTIMATE, MODULUS, DENSITY, K, CP FOR COMMON METALS & POLYMERS</p>
+<p class="desc">YIELD, ULTIMATE, MODULUS, DENSITY, K, CTE FOR COMMON METALS & POLYMERS</p>
 <div style="margin-top:1.5rem">
 <a href="./#tab-materials" class="btn btn-primary">OPEN MATERIALS CALCULATOR &rarr;</a>
 </div>
@@ -107,7 +107,7 @@
 <section>
 <h2>WHAT IT MODELS</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.85;color:var(--text);font-size:.88rem">
-<p>The materials database provides design properties for common engineering materials: structural steels (A36, 1018, 4140, 4340), stainless (304, 316, 17-4 PH), aluminums (6061-T6, 7075-T6, 2024-T3), copper alloys, titanium grades, and engineering polymers (HDPE, PEEK, PTFE, nylon, polycarbonate). Each entry includes yield strength Sy, ultimate Sut, elastic modulus E, density ρ, thermal conductivity k, specific heat cp, coefficient of thermal expansion α, and Poisson's ratio ν.</p>
+<p>The materials database provides design properties for common engineering materials: structural steels (A36, 1018, 4140, 4340), stainless (304, 316, 17-4 PH), aluminums (6061-T6, 7075-T6, 2024-T3), copper alloys, titanium grades, engineering polymers (HDPE, PEEK, PTFE, nylon, polycarbonate), plus nickel alloys, magnesium, zinc, refractory metals, ceramics and composites. Each entry shows yield strength Sy, ultimate Sut, elastic modulus E, density ρ, Poisson's ratio ν, shear modulus G, elongation, hardness, coefficient of thermal expansion α, and thermal conductivity k.</p>
 </div>
 </section>
 <section>
@@ -120,11 +120,27 @@
 <section>
 <h2>REAL-WORLD USE CASES</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.85;color:var(--text);font-size:.88rem">
-<p>Reference for any sizing or analysis calculation. The values are typical room-temperature properties from MIL-HDBK-5 and ASM Handbook; for high-temperature service or critical applications, consult the actual specification (ASTM, AMS, ASME) for guaranteed minimums and temperature derating curves. The "allowable stress" is typically Sy/FoS where FoS is set by application code (1.5-3 for static, 4-6 for fatigue).</p>
+<p>Reference for any sizing or analysis calculation. The values are typical room-temperature handbook properties; for high-temperature service or critical applications, consult the actual specification (ASTM, AMS, ASME) for guaranteed minimums and temperature derating curves. The "allowable stress" is typically Sy/FoS where FoS is set by application code (1.5-3 for static, 4-6 for fatigue).</p>
 </div>
 </section>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How do I pick between 304 and 316 stainless?","acceptedAnswer":{"@type":"Answer","text":"316 has ~2% molybdenum addition that improves chloride pitting resistance. For marine, brine, swimming-pool, or chlorinated environments: 316. For dry indoor service, food-grade non-saline contact, or cost-sensitive applications: 304. 316L (low carbon) for any welded service to avoid carbide precipitation."}},{"@type":"Question","name":"When should I use a high-strength low-alloy (HSLA) steel?","acceptedAnswer":{"@type":"Answer","text":"When strength-to-weight matters but full Q&amp;T heat treatment is impractical. HSLA grades (A572, A656) achieve 350&ndash;480 MPa yield in the as-rolled or normalized condition through controlled-rolling and microalloying. Common in structural steel, automotive frames, and pipeline."}},{"@type":"Question","name":"How accurate are handbook thermal expansion values?","acceptedAnswer":{"@type":"Answer","text":"Within ±5% for the listed temperature range. Coefficient α varies with temperature (typically rises slightly above room temperature). For precision instruments operating over a wide temperature span, use a polynomial fit to vendor-supplied dilatometry data rather than a single α value."}}]}</script>
 <section class="deep-section"><details class="deep-dive"><summary><span class="deep-icon">&#9776;</span><span class="deep-label">Materials Selection Reference</span><span class="deep-hint">Click to expand &mdash; the full derivation, a case study, pitfalls, and standards notes</span></summary><div class="deep-body"><div class="deep-block deep-table"><h3>Quick-Reference Property Ranges</h3><table class="deep-tbl"><thead><tr><th>Material</th><th>Sy (MPa)</th><th>Sut (MPa)</th><th>E (GPa)</th><th>ρ (kg/m³)</th><th>k (W/m·K)</th></tr></thead><tbody><tr><td>A36 mild steel</td><td>250</td><td>400&ndash;550</td><td>200</td><td>7850</td><td>50</td></tr><tr><td>AISI 1045 (HR)</td><td>310&ndash;415</td><td>565&ndash;625</td><td>200</td><td>7850</td><td>50</td></tr><tr><td>AISI 4140 (Q&amp;T)</td><td>655&ndash;1015</td><td>830&ndash;1080</td><td>205</td><td>7850</td><td>42</td></tr><tr><td>304 stainless</td><td>205</td><td>515</td><td>200</td><td>8000</td><td>16</td></tr><tr><td>316 stainless</td><td>205</td><td>515</td><td>200</td><td>8000</td><td>16</td></tr><tr><td>17-4 PH (H1025)</td><td>1000</td><td>1075</td><td>200</td><td>7800</td><td>17</td></tr><tr><td>6061-T6 aluminum</td><td>275</td><td>310</td><td>69</td><td>2700</td><td>167</td></tr><tr><td>7075-T6 aluminum</td><td>503</td><td>572</td><td>72</td><td>2800</td><td>130</td></tr><tr><td>Ti-6Al-4V</td><td>830</td><td>895</td><td>114</td><td>4430</td><td>7.2</td></tr><tr><td>C36000 free-cut brass</td><td>280</td><td>380</td><td>97</td><td>8500</td><td>115</td></tr><tr><td>HDPE</td><td>25&ndash;30</td><td>30&ndash;35</td><td>0.8</td><td>950</td><td>0.5</td></tr><tr><td>PEEK</td><td>100</td><td>170</td><td>3.6</td><td>1320</td><td>0.25</td></tr></tbody></table><p class="tbl-note">Typical room-temperature values. For high-temperature service or critical applications, consult the actual material specification (ASTM, AMS, ASME II-D) for guaranteed minimums and temperature derating.</p></div><div class="deep-block deep-pitfalls"><h3>Common Pitfalls</h3><ul class="pitfall-list"><li><strong>Using "typical" properties for design</strong><span>Handbook tables list typical values. Codes (ASME, AISC) require minimum specified values from the actual material spec. The 5&ndash;15% difference between typical and minimum can be the difference between code-compliant and not.</span></li><li><strong>Ignoring temperature derating</strong><span>Allowable stress drops sharply with temperature for most metals above 400°C. ASME II-D Table 1A is the authoritative source for code work; for non-code work, ASM Handbook Vol. 1 has curves. Aluminum loses 50% of strength by 200°C; steel by 500°C; nickel alloys retain strength to 800°C+.</span></li><li><strong>Mixing imperial and SI inconsistently</strong><span>MIL-HDBK-5 reports stresses in ksi, ASM in MPa, JIS in kgf/mm². Always convert to a consistent system before substituting into equations. The calc module assumes consistent SI internally.</span></li><li><strong>Forgetting heat-treatment dependence</strong><span>AISI 4140 "annealed" Sy = 415 MPa; same material "Q&amp;T to 32 HRC" Sy = 945 MPa. Both are "4140" &mdash; specify the heat treatment condition (anneal, normalize, Q&amp;T, age) in any material call-out.</span></li><li><strong>Specifying material that&apos;s impossible to source</strong><span>Some MIL-HDBK alloys are no longer produced. Verify commercial availability before specifying for production parts. AISI/SAE common grades, 300-series stainless, 6061/7075 aluminum, 4140 steel are reliably available globally.</span></li></ul></div><div class="deep-block deep-faq"><h3>Engineer FAQ</h3><details class="faq-q"><summary>How do I pick between 304 and 316 stainless?</summary><div>316 has ~2% molybdenum addition that improves chloride pitting resistance. For marine, brine, swimming-pool, or chlorinated environments: 316. For dry indoor service, food-grade non-saline contact, or cost-sensitive applications: 304. 316L (low carbon) for any welded service to avoid carbide precipitation.</div></details><details class="faq-q"><summary>When should I use a high-strength low-alloy (HSLA) steel?</summary><div>When strength-to-weight matters but full Q&amp;T heat treatment is impractical. HSLA grades (A572, A656) achieve 350&ndash;480 MPa yield in the as-rolled or normalized condition through controlled-rolling and microalloying. Common in structural steel, automotive frames, and pipeline.</div></details><details class="faq-q"><summary>How accurate are handbook thermal expansion values?</summary><div>Within ±5% for the listed temperature range. Coefficient α varies with temperature (typically rises slightly above room temperature). For precision instruments operating over a wide temperature span, use a polynomial fit to vendor-supplied dilatometry data rather than a single α value.</div></details></div></div></details></section>
+<section>
+<h2>HOW THIS REFERENCE IS BUILT</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.85;color:var(--text);font-size:.88rem">
+<p>The database is compiled into the calculator's WebAssembly module and loads with the page. It holds 331 named entries under 20 category labels: carbon, alloy, stainless, structural, fastener and tool steels, wrought and cast aluminum, titanium, copper alloys, nickel alloys, magnesium, zinc, refractory metals, polymers, composites, ceramics and a specialty group. Values are stored in SI units.</p>
+<ul>
+<li>The table lists name, E (GPa), Sy (MPa), Su (MPa), density (kg/m³) and Poisson's ratio. Clicking a row opens a detail card that adds shear modulus G (GPa), elongation (%), hardness, thermal expansion (µm/m·K) and thermal conductivity (W/m·K).</li>
+<li>Stress and modulus values in the detail card can be clicked to switch units, for example MPa to ksi.</li>
+<li>The search box matches the material name and category text. The category menu filters to one group.</li>
+<li>Hardness is stored as text in whatever scale the source used (HB, HRB, HRC, HV), so compare within one scale only.</li>
+<li>Each value is a single typical room-temperature number. It is not a specification minimum and it does not change with temperature, section size or product form.</li>
+<li>Some alloys appear more than once under different names with different values. AISI 1018 is listed at 370 MPa and at 285 MPa yield, which reflects different mill conditions. Check the condition before you use a number.</li>
+<li>Below the table are static screening charts: 8 common alloys, spec designations, media compatibility, galvanic pairs, heat-treat conditions, wear pairs and 8 polymers and elastomers.</li>
+</ul>
+<p>Use these numbers for concept sizing and comparison. For code work, take minimum properties from the governing material specification or the code's allowable stress tables.</p>
+</div>
+</section>
 <section>
 <h2>RELATED CALCULATORS</h2>
 <div class="card-grid"><a href="stress.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">STRESS</h3><p>Principal stresses, max shear, von Mises, Tresca yield</p></a><a href="fatigue.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">FATIGUE</h3><p>Mean-stress diagrams, endurance limit modifiers, infinite life</p></a><a href="thermal.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">THERMAL</h3><p>1D conduction, Nu correlations, radiation, fin efficiency</p></a><a href="sections.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">SECTIONS</h3><p>Area, centroid, moment of inertia, section modulus, radius of gyration</p></a></div>
@@ -137,6 +153,7 @@
 <a href="../amni-calc.html" class="btn btn-outline">ALL CALC MODULES</a>
 </div>
 </section>
+<p class="page-updated">Last updated <time datetime="2026-09-27">September 27, 2026</time></p>
 <div class="site-ad-banner">
 <span class="ad-note">Sponsored</span>
 <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8345487545441889" data-ad-slot="1720203631" data-ad-format="auto" data-full-width-responsive="true"></ins>
@@ -149,7 +166,7 @@
 <a href="../amni-calc.html">AMNI-CALC</a>
 <a href="../privacy.html">PRIVACY</a>
 <a href="../terms.html">TERMS</a>
-<a href="mailto:amnibro7@gmail.com">CONTACT</a>
+<a href="/contact.html">CONTACT</a>
 <a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
 </div>
 <p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>

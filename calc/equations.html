@@ -5,19 +5,19 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="theme-color" content="#FBFAF8">
 <title>Equation Index &mdash; Amni-Calc | AMNI-SCIENT</title>
-<meta name="description" content="Searchable cross-discipline formula catalog. In-browser engineering calculator with theory, formulas, when-to-use scenarios, and cited standards. WebAssembly backend, no install.">
-<meta name="keywords" content="amni-calc,equations,searchable cross-discipline formula catalog,engineering calculator,reference">
+<meta name="description" content="Cross-discipline formula catalog. In-browser engineering calculator with theory, formulas, when-to-use scenarios, and cited standards. Runs in your browser, no install.">
+<meta name="keywords" content="amni-calc,equations,cross-discipline formula catalog,engineering calculator,reference">
 <meta name="author" content="Amni-Scient">
 <meta property="og:title" content="Equation Index &mdash; Amni-Calc">
-<meta property="og:description" content="Searchable cross-discipline formula catalog. In-browser WASM calculator.">
+<meta property="og:description" content="Cross-discipline formula catalog. In-browser calculator.">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://amni-scient.com/calc/equations.html">
 <meta property="og:image" content="https://amni-scient.com/assets/explore/og-explore.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Equation Index &mdash; Amni-Calc">
-<meta name="twitter:description" content="Searchable cross-discipline formula catalog">
+<meta name="twitter:description" content="Cross-discipline formula catalog">
 <link rel="canonical" href="https://amni-scient.com/calc/equations.html">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Equation Index","description":"Searchable cross-discipline formula catalog","author":{"@type":"Organization","name":"AMNI-SCIENT"},"publisher":{"@type":"Organization","name":"AMNI-SCIENT","url":"https://amni-scient.com"},"mainEntityOfPage":"https://amni-scient.com/calc/equations.html"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Equation Index","description":"Cross-discipline formula catalog","author":{"@type":"Organization","name":"AMNI-SCIENT"},"publisher":{"@type":"Organization","name":"AMNI-SCIENT","url":"https://amni-scient.com"},"mainEntityOfPage":"https://amni-scient.com/calc/equations.html"}</script>
 <link rel="stylesheet" href="../css/style.css?v=b260">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8345487545441889" crossorigin="anonymous" data-overlays="false"></script>
 <script>
@@ -99,7 +99,7 @@
 <p class="crumbs"><a href="../">Home</a> &rsaquo; <a href="../amni-calc.html">Amni-Calc</a> &rsaquo; Reference &rsaquo; Equation Index</p>
 <div class="product-hero">
 <h1>EQUATION INDEX</h1>
-<p class="desc">SEARCHABLE CROSS-DISCIPLINE FORMULA CATALOG</p>
+<p class="desc">CROSS-DISCIPLINE FORMULA CATALOG</p>
 <div style="margin-top:1.5rem">
 <a href="./#tab-equations" class="btn btn-primary">OPEN EQUATIONS CALCULATOR &rarr;</a>
 </div>
@@ -107,27 +107,40 @@
 <section>
 <h2>WHAT IT COMPUTES</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.85;color:var(--text);font-size:.88rem">
-<p>Indexed catalog of every equation implemented in the suite, grouped by module and discipline. Each entry shows the canonical form, the variables, the typical units, and a back-link to the calculator that uses it. Useful for quickly locating the formula behind a result, citing the source in a report, or verifying a hand-calculation independently.</p>
+<p>Reference sheet of 239 closed-form equations behind the suite, grouped into 32 discipline cards. Each entry shows the equation name and its canonical form; hovering a row shows a short note on the variables or where it applies. Useful for quickly locating the formula behind a result, citing the source in a report, or verifying a hand-calculation independently.</p>
 </div>
 </section>
 <section>
 <h2>THE MATH BEHIND IT</h2>
 <div style="max-width:800px;margin:0 auto">
-<ul class="eq-list"><li><code>(All formulas from every module, indexed)</code></li></ul>
-<p class="std-line"><strong>References &amp; Standards</strong>See per-module standards on linked pages</p>
+<ul class="eq-list"><li><code>(239 reference formulas in 32 groups, beam through CAD)</code></li></ul>
+<p class="std-line"><strong>References &amp; Standards</strong>See per-module standards on the linked pages and the Refs &amp; Standards tab</p>
 </div>
 </section>
 <section>
 <h2>WHEN TO USE THIS MODULE</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.85;color:var(--text);font-size:.88rem">
-<p>Open this page to find a specific equation by name (e.g., "Colebrook", "Lewis bending", "Nernst"), browse all formulas in a category, or jump to the calculator that implements it. Each formula entry links to the relevant reference standard.</p>
+<p>Open this tab to find a specific equation by name (e.g., "Colebrook", "Lewis bending", "Nernst") with the browser's find command, or use the group buttons at the top to jump to a category. Standards and textbook sources for each module are listed on the Refs &amp; Standards tab.</p>
 </div>
 </section>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How do I cite an equation in a design report?","acceptedAnswer":{"@type":"Answer","text":"Reference the original code or textbook section: \"Per ASME VIII-1 UG-27(c)(1), required wall thickness t = P·R/(S·E − 0.6·P).\" Auditors and reviewers expect this traceability. The Amni-Calc module pages link each equation to its standard or textbook source."}},{"@type":"Question","name":"Why do similar-looking equations give different answers?","acceptedAnswer":{"@type":"Answer","text":"Most engineering equations have implicit sign conventions, dimensional assumptions, and validity ranges. For example, Bernoulli (incompressible, frictionless) vs Darcy (incompressible with friction) vs Fanno (compressible, adiabatic): all describe pipe flow, but each only applies under specific conditions. The module pages call out each equation&apos;s validity domain."}},{"@type":"Question","name":"Can I trust a one-line \"rule of thumb\"?","acceptedAnswer":{"@type":"Answer","text":"Rules of thumb (1/4 horsepower per CFM for fans, 100 gal/min per 10 HP for water pumps) are decent for first-pass sizing. They embed unstated assumptions about efficiency, operating point, and service factor. For final design, always run the proper equation with actual operating conditions."}}]}</script>
 <section class="deep-section"><details class="deep-dive"><summary><span class="deep-icon">&#9776;</span><span class="deep-label">Cross-Discipline Formula Index Notes</span><span class="deep-hint">Click to expand &mdash; theory, a worked example, design steps, and gotchas</span></summary><div class="deep-body"><div class="deep-block deep-table"><h3>Most-Cited Equations By Discipline</h3><table class="deep-tbl"><thead><tr><th>Discipline</th><th>Equation</th><th>Module</th></tr></thead><tbody><tr><td>Stress</td><td>σ_vM = sqrt(σ1² − σ1·σ2 + σ2²)</td><td>stress</td></tr><tr><td>Fatigue</td><td>Goodman: σ_a/Se + σ_m/Sut = 1/n</td><td>fatigue</td></tr><tr><td>Bolted joints</td><td>T = K·D·F (nut-factor torque)</td><td>bolts</td></tr><tr><td>Springs</td><td>τ = K_W·8·F·D / (π·d³)</td><td>springs</td></tr><tr><td>Pipe flow</td><td>1/√f = −2·log10(ε/3.7D + 2.51/(Re·√f))</td><td>fluids</td></tr><tr><td>Heat transfer</td><td>Q = U·A·ΔT_LM</td><td>hx</td></tr><tr><td>Pressure vessel</td><td>t = P·R / (S·E − 0.6·P)</td><td>pv</td></tr><tr><td>Heat exchange</td><td>ε = Q / (Cmin·ΔT_max)</td><td>hx</td></tr><tr><td>Electrical</td><td>S₃φ = √3·V_LL·I_L</td><td>electrical</td></tr><tr><td>Motor</td><td>I_FL = P_out / (√3·V·η·PF)</td><td>motors</td></tr><tr><td>Cells</td><td>E = E° − (RT/nF)·ln Q</td><td>echem</td></tr><tr><td>Bearings</td><td>L10 = (C/P)^p · 10⁶ / (60·n) hours</td><td>bearings</td></tr></tbody></table><p class="tbl-note">Use this list to find the relevant module quickly when starting a new analysis.</p></div><div class="deep-block deep-faq"><h3>Equation Reference FAQ</h3><details class="faq-q"><summary>How do I cite an equation in a design report?</summary><div>Reference the original code or textbook section: "Per ASME VIII-1 UG-27(c)(1), required wall thickness t = P·R/(S·E − 0.6·P)." Auditors and reviewers expect this traceability. The Amni-Calc module pages link each equation to its standard or textbook source.</div></details><details class="faq-q"><summary>Why do similar-looking equations give different answers?</summary><div>Most engineering equations have implicit sign conventions, dimensional assumptions, and validity ranges. For example, Bernoulli (incompressible, frictionless) vs Darcy (incompressible with friction) vs Fanno (compressible, adiabatic): all describe pipe flow, but each only applies under specific conditions. The module pages call out each equation&apos;s validity domain.</div></details><details class="faq-q"><summary>Can I trust a one-line "rule of thumb"?</summary><div>Rules of thumb (1/4 horsepower per CFM for fans, 100 gal/min per 10 HP for water pumps) are decent for first-pass sizing. They embed unstated assumptions about efficiency, operating point, and service factor. For final design, always run the proper equation with actual operating conditions.</div></details></div></div></details></section>
 <section>
+<h2>HOW THIS REFERENCE IS BUILT</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.85;color:var(--text);font-size:.88rem">
+<p>The tab is a static table in the calculator page. It holds 239 formulas in 32 cards, one per discipline: beams, stress, fatigue, columns, bolts, shafts and keys, springs, bearings, pressure vessels, pipe and flanges, heat transfer, seals, gears, welds, material relations, fluids, heat exchangers and cycles, compressible flow, HVAC, vibration, electrical and NEC, electrochemistry and batteries, pumps, unit constants, machining, hydraulics, rigging, fracture, epicyclic gear trains, metering and refrigeration, ISO 286 fits, and CAD solid properties.</p>
+<ul>
+<li>Every row has a name, the formula, and a hover note that defines the symbols or states the load case, for example "central point load on simply-supported beam".</li>
+<li>The group buttons at the top jump to each card. There is no search box in the tab itself.</li>
+<li>Formulas are written symbolically without fixed units, so use one consistent unit system. Rows with a numeric constant carry their units in the symbol names: T = 9550·P_kW / n_rpm gives torque in N·m from power in kW and speed in rpm.</li>
+<li>The forms are the standard textbook versions found in references such as Shigley, Roark and Incropera. The Refs &amp; Standards tab lists the sources per module.</li>
+</ul>
+<p>A card shows the core relation, not the full procedure. The calculators often apply more than one line here, such as the Wahl factor with the spring shear stress or Marin factors on the endurance limit, and most rows hold only inside limits that a one-line entry cannot show: thin walls, linear elastic material, laminar or fully turbulent flow. Check that your case fits before using a row on its own.</p>
+</div>
+</section>
+<section>
 <h2>EXPLORE NEXT</h2>
-<div class="card-grid"><a href="math.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">MATH</h3><p>Calculus identities, Taylor series, integrals, vectors</p></a><a href="units.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">UNITS</h3><p>SI ↔ US customary for force, pressure, energy, viscosity</p></a><a href="refs.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">REFS</h3><p>Cross-referenced ASME, ASTM, NEC, AWS, ISO catalog</p></a><a href="materials.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">MATERIALS</h3><p>Yield, ultimate, modulus, density, k, cp for common metals & polymers</p></a></div>
+<div class="card-grid"><a href="math.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">MATH</h3><p>Algebra, calculus, Taylor series, matrices, ODEs</p></a><a href="units.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">UNITS</h3><p>SI ↔ US customary for force, pressure, energy, power</p></a><a href="refs.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">REFS</h3><p>Cross-referenced ASME, ASTM, NEC, AWS, ISO catalog</p></a><a href="materials.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">MATERIALS</h3><p>Yield, ultimate, modulus, density, k, CTE for common metals & polymers</p></a></div>
 </section>
 <section>
 <h2>OPEN THE CALCULATOR</h2>
@@ -137,6 +150,7 @@
 <a href="../amni-calc.html" class="btn btn-outline">ALL CALC MODULES</a>
 </div>
 </section>
+<p class="page-updated">Last updated <time datetime="2026-09-27">September 27, 2026</time></p>
 <div class="site-ad-banner">
 <span class="ad-note">Sponsored</span>
 <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8345487545441889" data-ad-slot="1720203631" data-ad-format="auto" data-full-width-responsive="true"></ins>
@@ -149,7 +163,7 @@
 <a href="../amni-calc.html">AMNI-CALC</a>
 <a href="../privacy.html">PRIVACY</a>
 <a href="../terms.html">TERMS</a>
-<a href="mailto:amnibro7@gmail.com">CONTACT</a>
+<a href="/contact.html">CONTACT</a>
 <a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
 </div>
 <p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>

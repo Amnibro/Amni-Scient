@@ -5,19 +5,19 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="theme-color" content="#FBFAF8">
 <title>HVAC & Psychrometrics &mdash; Amni-Calc | AMNI-SCIENT</title>
-<meta name="description" content="Mixing, sensible/latent, cooling coil, evaporative cooling. In-browser engineering calculator with theory, formulas, when-to-use scenarios, and cited standards. WebAssembly backend, no install.">
-<meta name="keywords" content="amni-calc,hvac,mixing, sensible/latent, cooling coil, evaporative cooling,engineering calculator,fluids & thermal">
+<meta name="description" content="Psychrometric state, sensible/latent load, round duct sizing. In-browser engineering calculator with theory, formulas, when-to-use scenarios, and cited standards. Runs in your browser, no install.">
+<meta name="keywords" content="amni-calc,hvac,psychrometric state, sensible/latent load, round duct sizing,engineering calculator,fluids & thermal">
 <meta name="author" content="Amni-Scient">
 <meta property="og:title" content="HVAC & Psychrometrics &mdash; Amni-Calc">
-<meta property="og:description" content="Mixing, sensible/latent, cooling coil, evaporative cooling. In-browser WASM calculator.">
+<meta property="og:description" content="Psychrometric state, sensible/latent load, round duct sizing. In-browser calculator.">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://amni-scient.com/calc/hvac.html">
 <meta property="og:image" content="https://amni-scient.com/assets/explore/og-explore.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="HVAC & Psychrometrics &mdash; Amni-Calc">
-<meta name="twitter:description" content="Mixing, sensible/latent, cooling coil, evaporative cooling">
+<meta name="twitter:description" content="Psychrometric state, sensible/latent load, round duct sizing">
 <link rel="canonical" href="https://amni-scient.com/calc/hvac.html">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"HVAC &amp; Psychrometrics","description":"Mixing, sensible/latent, cooling coil, evaporative cooling","author":{"@type":"Organization","name":"AMNI-SCIENT"},"publisher":{"@type":"Organization","name":"AMNI-SCIENT","url":"https://amni-scient.com"},"mainEntityOfPage":"https://amni-scient.com/calc/hvac.html"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"HVAC &amp; Psychrometrics","description":"Psychrometric state, sensible/latent load, round duct sizing","author":{"@type":"Organization","name":"AMNI-SCIENT"},"publisher":{"@type":"Organization","name":"AMNI-SCIENT","url":"https://amni-scient.com"},"mainEntityOfPage":"https://amni-scient.com/calc/hvac.html"}</script>
 <link rel="stylesheet" href="../css/style.css?v=b260">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8345487545441889" crossorigin="anonymous" data-overlays="false"></script>
 <script>
@@ -99,7 +99,7 @@
 <p class="crumbs"><a href="../">Home</a> &rsaquo; <a href="../amni-calc.html">Amni-Calc</a> &rsaquo; Fluids & Thermal &rsaquo; HVAC & Psychrometrics</p>
 <div class="product-hero">
 <h1>HVAC & PSYCHROMETRICS</h1>
-<p class="desc">MIXING, SENSIBLE/LATENT, COOLING COIL, EVAPORATIVE COOLING</p>
+<p class="desc">PSYCHROMETRIC STATE, SENSIBLE/LATENT LOAD, DUCT SIZING</p>
 <div style="margin-top:1.5rem">
 <a href="./#tab-hvac" class="btn btn-primary">OPEN HVAC CALCULATOR &rarr;</a>
 </div>
@@ -107,27 +107,42 @@
 <section>
 <h2>WHAT THIS MODULE SOLVES</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.85;color:var(--text);font-size:.88rem">
-<p>Moist-air properties depend on dry-bulb T, wet-bulb T_wb, humidity ratio W, relative humidity φ, dew point, and enthalpy h. Sensible heat changes T (q_s = ṁ·cp·ΔT); latent heat changes W (q_L = ṁ·h_fg·ΔW). Cooling coils typically operate "wet" with simultaneous sensible cooling and dehumidification. Evaporative cooling drops dry-bulb toward wet-bulb at constant enthalpy. Mixing two airstreams gives an outlet on the line connecting their state points, weighted by mass flow.</p>
+<p>Moist-air properties depend on dry-bulb T, wet-bulb T_wb, humidity ratio W, relative humidity φ, dew point, and enthalpy h. Sensible heat changes T (q_s = ṁ·cp·ΔT); latent heat changes W (q_L = ṁ·h_fg·ΔW). Cooling coils typically operate "wet" with simultaneous sensible cooling and dehumidification. Evaporative cooling drops dry-bulb toward wet-bulb at constant enthalpy. Mixing two airstreams gives an outlet on the line connecting their state points, weighted by mass flow. The calculator itself covers the state point (W, h, dew point) from dry-bulb and RH, sensible and latent load for an airflow, and equivalent round duct size; mixing, coil and evaporative processes are worked by hand, as in the example below.</p>
 </div>
 </section>
 <section>
 <h2>FORMULAS USED</h2>
 <div style="max-width:800px;margin:0 auto">
-<ul class="eq-list"><li><code>W = 0.622 · Pw / (P - Pw)</code></li><li><code>h = cp·T + W·(2501 + 1.86·T) (kJ/kg)</code></li><li><code>q_s = ṁ_a · cp · ΔT</code></li><li><code>q_L = ṁ_a · h_fg · ΔW</code></li><li><code>SHR = q_s / (q_s + q_L)</code></li></ul>
+<ul class="eq-list"><li><code>W = 0.622 · Pw / (P - Pw)</code></li><li><code>h = cp·T + W·(2501 + 1.86·T) (kJ/kg)</code></li><li><code>q_s = ṁ_a · cp · ΔT</code></li><li><code>q_L = ṁ_a · h_fg · ΔW</code></li><li><code>P_ws = 0.6108·exp(17.27·T / (T + 237.3)) (kPa, Magnus-Tetens)</code></li></ul>
 <p class="std-line"><strong>References &amp; Standards</strong>ASHRAE Fundamentals Ch. 1, ARI 410, AHRI 410</p>
 </div>
 </section>
 <section>
 <h2>WHERE THIS APPLIES</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.85;color:var(--text);font-size:.88rem">
-<p>Use for HVAC system load calculations, cooling-coil sizing, humidifier/dehumidifier design, energy-recovery wheels, and outdoor-air mixing. Compute sensible heat ratio SHR = q_s/q_total to pick coil bypass factor. For arid climates, evaporative cooling delivers significant capacity at a fraction of mechanical-cooling power.</p>
+<p>Use for first-pass HVAC load calculations and duct sizing, and as a state-point check when working cooling-coil, humidifier, energy-recovery or outdoor-air mixing problems by hand. Compute sensible heat ratio SHR = q_s/q_total from the sensible and latent results to pick coil bypass factor. For arid climates, evaporative cooling delivers significant capacity at a fraction of mechanical-cooling power.</p>
 </div>
 </section>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"When should I use evaporative cooling?","acceptedAnswer":{"@type":"Answer","text":"In hot dry climates (Phoenix, Las Vegas, central interior of any continent). Indirect evaporative cooling can deliver 10°C drop at 30% of the energy of mechanical refrigeration. Direct evaporative adds moisture, useful in &lt;30% RH environments. Combined indirect-direct units work well in moderate humidity."}},{"@type":"Question","name":"How do I size a cooling coil for both sensible and latent load?","acceptedAnswer":{"@type":"Answer","text":"Find the design SHR (sensible / total). Pick a coil with matching ADP: low SHR (high latent) needs lower ADP (~7°C), high SHR needs higher ADP (~12°C). Coil bypass factor (BF) determines outlet conditions; commercial coils typically BF = 0.05&ndash;0.20."}},{"@type":"Question","name":"What&apos;s the difference between ASHRAE Fundamentals and ASHRAE 90.1?","acceptedAnswer":{"@type":"Answer","text":"Fundamentals is the engineering handbook &mdash; correlations, properties, methods. 90.1 is the energy standard adopted as building code in most US states. Fundamentals teaches how, 90.1 mandates what minimum performance is allowed for new construction or major renovation."}}]}</script>
 <section class="deep-section"><details class="deep-dive"><summary><span class="deep-icon">&#9776;</span><span class="deep-label">HVAC & Psychrometric Notes</span><span class="deep-hint">Click to expand &mdash; the full derivation, a case study, pitfalls, and standards notes</span></summary><div class="deep-body"><div class="deep-block deep-worked"><h3>Worked Example: Mixing Outdoor And Return Air</h3><p>An HVAC system mixes 25% outdoor air (32°C dry-bulb, W = 0.018 kg/kg) with 75% return air (24°C, W = 0.010 kg/kg). Find the mixed-air condition.</p><p>By mass-weighted mixing: <code>T_mix = 0.25·32 + 0.75·24 = 26°C</code>. Humidity ratio: <code>W_mix = 0.25·0.018 + 0.75·0.010 = 0.012 kg/kg</code>. Enthalpy: <code>h_mix = cp·T + W·(2501 + 1.86·T) = 1.005·26 + 0.012·(2501 + 1.86·26) = 26.13 + 30.59 = 56.7 kJ/kg</code>.</p><p>Plot on psychrometric chart: mixed state sits on the line connecting outdoor and return state points, 25% of the way from return toward outdoor. Verify relative humidity: at 26°C, P_sat ≈ 3.36 kPa, P_w = W·P/(0.622+W) = 0.012·101.3/0.634 = 1.92 kPa, so RH = 1.92/3.36 = 57%. Comfortable starting point for the cooling coil.</p></div><div class="deep-block deep-pitfalls"><h3>Common Pitfalls</h3><ul class="pitfall-list"><li><strong>Confusing dry-bulb, wet-bulb, and dew-point</strong><span>Dry-bulb (T_db) is ordinary thermometer reading. Wet-bulb (T_wb) is the temperature reached by adiabatic saturation (wet-wick thermometer with airflow). Dew-point (T_dp) is the temperature at which moisture condenses out at constant W. All three give different numbers; specify which the design uses.</span></li><li><strong>Assuming SHR is constant</strong><span>Sensible Heat Ratio depends on the coil ADP (apparent dewpoint) and bypass factor. At part-load, coil SHR rises (more dry cooling, less dehumidification). Many comfort issues come from sizing for design-day SHR and finding moisture control inadequate at part-load.</span></li><li><strong>Mixing psychrometric units carelessly</strong><span>Humidity ratio W is dimensionless (kg moisture / kg dry air) &mdash; not grams or percent. Relative humidity φ is dimensionless ratio of partial pressures. Specific humidity = W/(1+W), often confused with W. Always carry units explicitly through equations.</span></li><li><strong>Treating exhaust air as worthless</strong><span>Energy recovery ventilation (ERV) heat exchangers reclaim 50&ndash;80% of the enthalpy difference between exhaust and outdoor air. For climate extremes, this halves the HVAC load &mdash; pays back capital cost in 2&ndash;4 years for commercial buildings.</span></li><li><strong>Underestimating latent load in humid climates</strong><span>Coastal and tropical climates can have latent load equaling or exceeding sensible load. Standard cooling coils with low ADP and high bypass don&apos;t dehumidify adequately. Use direct expansion with reheat, desiccant wheels, or two-stage cooling for these climates.</span></li></ul></div><div class="deep-block deep-faq"><h3>Engineer FAQ</h3><details class="faq-q"><summary>When should I use evaporative cooling?</summary><div>In hot dry climates (Phoenix, Las Vegas, central interior of any continent). Indirect evaporative cooling can deliver 10°C drop at 30% of the energy of mechanical refrigeration. Direct evaporative adds moisture, useful in &lt;30% RH environments. Combined indirect-direct units work well in moderate humidity.</div></details><details class="faq-q"><summary>How do I size a cooling coil for both sensible and latent load?</summary><div>Find the design SHR (sensible / total). Pick a coil with matching ADP: low SHR (high latent) needs lower ADP (~7°C), high SHR needs higher ADP (~12°C). Coil bypass factor (BF) determines outlet conditions; commercial coils typically BF = 0.05&ndash;0.20.</div></details><details class="faq-q"><summary>What&apos;s the difference between ASHRAE Fundamentals and ASHRAE 90.1?</summary><div>Fundamentals is the engineering handbook &mdash; correlations, properties, methods. 90.1 is the energy standard adopted as building code in most US states. Fundamentals teaches how, 90.1 mandates what minimum performance is allowed for new construction or major renovation.</div></details></div></div></details></section>
 <section>
+<h2>INPUTS, UNITS &amp; ASSUMPTIONS</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.85;color:var(--text);font-size:.88rem">
+<p>The HVAC tab follows common US practice and mixes unit systems. The Psychrometric card takes dry-bulb in °C, RH in % and barometric pressure in kPa (default 101.325). The Cooling Load card takes airflow in CFM, ΔT in °F and ΔW in grains per pound of dry air. The Duct card takes CFM and friction rate in in. w.g. per 100 ft and returns an equivalent round diameter in inches and velocity in fpm.</p>
+<ul>
+<li>Saturation pressure uses the Magnus-Tetens fit over liquid water. It is within about 0.2 % of tabulated values from 0 to 50 °C and does not switch to ice saturation below freezing.</li>
+<li>Humidity ratio, enthalpy (cp 1.006 kJ/kg·K, 2501 + 1.86·T for the vapor) and dew point use ideal-gas moist-air relations. Wet-bulb temperature is not calculated.</li>
+<li>Load uses the sea-level factors 1.08 (sensible) and 0.68 (latent) Btu/h per CFM, so it assumes standard air at 0.075 lb/ft³. Correct airflow for altitude or hot air yourself.</li>
+<li>ΔT is a temperature difference, but its unit menu converts it as an absolute temperature. Keep it in °F: 10 entered as °C is read as 50 °F.</li>
+<li>Duct sizing is a power-law fit to the ASHRAE friction chart for round duct and standard air. It does not size rectangular ducts, fittings or fan static pressure.</li>
+<li>Nothing is range-checked: RH over 100 % or a vapor pressure near P_atm gives nonphysical results. Results print in the units shown and do not follow the SI/Imperial toggle.</li>
+</ul>
+<p>Check with the defaults: 25 °C and 50 % RH at 101.325 kPa gives W = 9.88 g/kg, h = 50.3 kJ/kg and a dew point of 13.9 °C. The load card at 400 CFM, 20 °F and 20 gr/lb returns 8,640 Btu/h sensible, 5,440 Btu/h latent, 1.17 tons.</p>
+</div>
+</section>
+<section>
 <h2>WHERE TO GO NEXT</h2>
-<div class="card-grid"><a href="cycles.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">CYCLES</h3><p>Carnot, Otto, Diesel, Brayton, vapor-compression refrigeration</p></a><a href="thermal.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">THERMAL</h3><p>1D conduction, Nu correlations, radiation, fin efficiency</p></a><a href="hx.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">HX</h3><p>LMTD, NTU-effectiveness, fouling, parallel/counter/cross</p></a><a href="combustion.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">COMBUSTION</h3><p>Stoichiometric AFR, adiabatic flame temperature, excess air</p></a></div>
+<div class="card-grid"><a href="cycles.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">CYCLES</h3><p>Carnot, Otto, Diesel, Brayton, vapor-compression refrigeration</p></a><a href="thermal.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">THERMAL</h3><p>1D conduction, Nu correlations, radiation, fin efficiency</p></a><a href="hx.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">HX</h3><p>LMTD, NTU-effectiveness, fouling, parallel/counter/shell-and-tube</p></a><a href="combustion.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">COMBUSTION</h3><p>Stoichiometric AFR, adiabatic flame temperature, excess air</p></a></div>
 </section>
 <section>
 <h2>START CALCULATING</h2>
@@ -137,6 +152,7 @@
 <a href="../amni-calc.html" class="btn btn-outline">ALL CALC MODULES</a>
 </div>
 </section>
+<p class="page-updated">Last updated <time datetime="2026-09-27">September 27, 2026</time></p>
 <div class="site-ad-banner">
 <span class="ad-note">Sponsored</span>
 <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8345487545441889" data-ad-slot="1720203631" data-ad-format="auto" data-full-width-responsive="true"></ins>
@@ -149,7 +165,7 @@
 <a href="../amni-calc.html">AMNI-CALC</a>
 <a href="../privacy.html">PRIVACY</a>
 <a href="../terms.html">TERMS</a>
-<a href="mailto:amnibro7@gmail.com">CONTACT</a>
+<a href="/contact.html">CONTACT</a>
 <a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
 </div>
 <p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>

@@ -5,19 +5,19 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="theme-color" content="#FBFAF8">
 <title>Engineering Math Reference &mdash; Amni-Calc | AMNI-SCIENT</title>
-<meta name="description" content="Calculus identities, Taylor series, integrals, vectors. In-browser engineering calculator with theory, formulas, when-to-use scenarios, and cited standards. WebAssembly backend, no install.">
-<meta name="keywords" content="amni-calc,math,calculus identities, taylor series, integrals, vectors,engineering calculator,reference">
+<meta name="description" content="Algebra, calculus, Taylor series, matrices, ODEs. In-browser engineering calculator with theory, formulas, when-to-use scenarios, and cited standards. Runs in your browser, no install.">
+<meta name="keywords" content="amni-calc,math,algebra, calculus, taylor series, matrices, odes,engineering calculator,reference">
 <meta name="author" content="Amni-Scient">
 <meta property="og:title" content="Engineering Math Reference &mdash; Amni-Calc">
-<meta property="og:description" content="Calculus identities, Taylor series, integrals, vectors. In-browser WASM calculator.">
+<meta property="og:description" content="Algebra, calculus, Taylor series, matrices, ODEs. In-browser calculator.">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://amni-scient.com/calc/math.html">
 <meta property="og:image" content="https://amni-scient.com/assets/explore/og-explore.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Engineering Math Reference &mdash; Amni-Calc">
-<meta name="twitter:description" content="Calculus identities, Taylor series, integrals, vectors">
+<meta name="twitter:description" content="Algebra, calculus, Taylor series, matrices, ODEs">
 <link rel="canonical" href="https://amni-scient.com/calc/math.html">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Engineering Math Reference","description":"Calculus identities, Taylor series, integrals, vectors","author":{"@type":"Organization","name":"AMNI-SCIENT"},"publisher":{"@type":"Organization","name":"AMNI-SCIENT","url":"https://amni-scient.com"},"mainEntityOfPage":"https://amni-scient.com/calc/math.html"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Engineering Math Reference","description":"Algebra, calculus, Taylor series, matrices, ODEs","author":{"@type":"Organization","name":"AMNI-SCIENT"},"publisher":{"@type":"Organization","name":"AMNI-SCIENT","url":"https://amni-scient.com"},"mainEntityOfPage":"https://amni-scient.com/calc/math.html"}</script>
 <link rel="stylesheet" href="../css/style.css?v=b260">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8345487545441889" crossorigin="anonymous" data-overlays="false"></script>
 <script>
@@ -99,7 +99,7 @@
 <p class="crumbs"><a href="../">Home</a> &rsaquo; <a href="../amni-calc.html">Amni-Calc</a> &rsaquo; Reference &rsaquo; Engineering Math Reference</p>
 <div class="product-hero">
 <h1>ENGINEERING MATH REFERENCE</h1>
-<p class="desc">CALCULUS IDENTITIES, TAYLOR SERIES, INTEGRALS, VECTORS</p>
+<p class="desc">ALGEBRA, CALCULUS, TAYLOR SERIES, MATRICES, ODES</p>
 <div style="margin-top:1.5rem">
 <a href="./#tab-math" class="btn btn-primary">OPEN MATH CALCULATOR &rarr;</a>
 </div>
@@ -107,27 +107,42 @@
 <section>
 <h2>WHAT IT MODELS</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.85;color:var(--text);font-size:.88rem">
-<p>Quick reference for the math that underlies engineering calculations: standard derivatives and integrals, Taylor series expansions for common functions, vector operations (dot, cross, gradient, divergence, curl), matrix operations including inversion and eigenvalues, complex number arithmetic in rectangular and polar form, and Laplace transforms for control-system analysis. Includes common trig identities and the small-angle approximations used in vibration and beam-bending derivations.</p>
+<p>Step-by-step solvers for the math that underlies engineering calculations: quadratic and cubic roots, 2×2 and 3×3 linear systems, areas and volumes of common shapes, polynomial derivatives, definite integrals and limits, Taylor series for common functions, matrix determinant, inverse, product and transpose up to 4×4, 2×2 eigenvalues, and closed-form or Euler solutions of simple ordinary differential equations.</p>
 </div>
 </section>
 <section>
 <h2>CORE FORMULAS</h2>
 <div style="max-width:800px;margin:0 auto">
-<ul class="eq-list"><li><code>d/dx (sin x) = cos x; d/dx (e^x) = e^x</code></li><li><code>∫ 1/x dx = ln|x| + C</code></li><li><code>∫ sin² x dx = x/2 - sin(2x)/4 + C</code></li><li><code>sin x ≈ x - x³/6 (small angle)</code></li><li><code>A · B = |A||B|cosθ; |A × B| = |A||B|sinθ</code></li><li><code>e^(jωt) = cos(ωt) + j·sin(ωt)</code></li></ul>
+<ul class="eq-list"><li><code>x = (−b ± √(b² − 4ac)) / 2a</code></li><li><code>d/dx [a·xⁿ] = n·a·xⁿ⁻¹</code></li><li><code>∫ f dx ≈ (h/3)·[f₀ + 4f₁ + 2f₂ + … + fₙ] (Simpson 1/3)</code></li><li><code>sin x ≈ x − x³/6 + x⁵/120 (Maclaurin)</code></li><li><code>det(A − λI) = 0 (2×2 eigenvalues)</code></li><li><code>yₙ₊₁ = yₙ + f(xₙ, yₙ)·Δx (Euler)</code></li></ul>
 <p class="std-line"><strong>References &amp; Standards</strong>CRC Handbook of Math Tables, Abramowitz & Stegun</p>
 </div>
 </section>
 <section>
 <h2>WHEN TO REACH FOR IT</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.85;color:var(--text);font-size:.88rem">
-<p>Reference page; not a calculator. Use when re-deriving a formula, checking a hand-calc, or remembering the form of a Taylor expansion. Cross-references to the Equations module for complete formula index by discipline.</p>
+<p>Use when re-deriving a formula, checking a hand-calc, or remembering the form of a Taylor expansion. The show-work output lists each step so you can compare it line by line with your own. Cross-references to the Equations module for complete formula index by discipline.</p>
 </div>
 </section>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"When do I need Laplace transforms vs Fourier transforms?","acceptedAnswer":{"@type":"Answer","text":"Laplace for transient analysis (response to a step, impulse, or arbitrary causal input). Fourier for steady-state frequency response (Bode plots, filter design, vibration spectra). Laplace handles initial conditions naturally; Fourier assumes infinite history of the signal. Both reduce ODEs to algebraic equations."}},{"@type":"Question","name":"What&apos;s the difference between dot and cross product physically?","acceptedAnswer":{"@type":"Answer","text":"Dot product gives a scalar &mdash; the projection of one vector onto another. Work done by a force on a displacement: W = F·d. Cross product gives a vector perpendicular to both inputs &mdash; torque, angular momentum, magnetic force on a current. Dot is \"how much do these align\"; cross is \"how much do these twist around each other.\""}},{"@type":"Question","name":"Why do engineers use j for imaginary unit instead of i?","acceptedAnswer":{"@type":"Answer","text":"Electrical engineering reserves i for current. Using i for both current and the imaginary unit creates ambiguity in equations like V = jωL·I. By using j for sqrt(−1), there&apos;s no overlap. Mathematicians and physicists outside EE still use i."}}]}</script>
 <section class="deep-section"><details class="deep-dive"><summary><span class="deep-icon">&#9776;</span><span class="deep-label">Engineering Math Quick Reference & Notes</span><span class="deep-hint">Click to expand &mdash; the full derivation, a case study, pitfalls, and standards notes</span></summary><div class="deep-body"><div class="deep-block deep-table"><h3>Most-Used Engineering Identities</h3><table class="deep-tbl"><thead><tr><th>Category</th><th>Identity</th><th>Where It Shows Up</th></tr></thead><tbody><tr><td>Calculus</td><td>d/dx[u·v] = u&apos;v + uv&apos;</td><td>Lagrangian, control system derivations</td></tr><tr><td>Calculus</td><td>∫ u dv = uv − ∫ v du</td><td>By-parts &mdash; vibration impulse response, heat-equation Green&apos;s functions</td></tr><tr><td>Series</td><td>sin x ≈ x − x³/6</td><td>Small-angle pendulum, mirror tilt, beam slope-deflection</td></tr><tr><td>Series</td><td>e^x ≈ 1 + x + x²/2</td><td>Linearizing exponential decay, Taylor-series control models</td></tr><tr><td>Trig</td><td>sin²θ + cos²θ = 1</td><td>Mohr&apos;s circle, AC power triangle, projectile motion</td></tr><tr><td>Trig</td><td>sin(A±B) = sin A·cos B ± cos A·sin B</td><td>Phasor combining, modulated-signal envelopes</td></tr><tr><td>Vector</td><td>A × (B × C) = B(A·C) − C(A·B)</td><td>Rigid-body kinematics, electromagnetic field expansions</td></tr><tr><td>Complex</td><td>e^(jθ) = cos θ + j·sin θ</td><td>AC impedance, Laplace transforms, controls</td></tr><tr><td>Linear alg</td><td>det(A−λI) = 0</td><td>Mode shapes, principal-stress directions, eigenvalue analysis</td></tr></tbody></table><p class="tbl-note">Knowing these by heart speeds hand-calcs and lets you check FEA outputs against quick estimates.</p></div><div class="deep-block deep-physics"><h3>When To Linearize vs Solve Exactly</h3><p>Engineering math is often the art of knowing when an approximation is good enough. Small-angle approximations (sin θ ≈ θ for |θ| &lt; 0.2 rad) reduce nonlinear pendulum and beam problems to linear ODE&apos;s with closed-form solutions. Linearization breaks down at large amplitude, where you need elliptic integrals (pendulum) or numerical solution (large-deflection beam).</p><p>The standard test: if your variable stays within ±20% of the nominal operating point, linearize. Beyond that, validate the linear answer against numerical solution before using it. Most control-system design assumes linear plant; gain-scheduling or model-reference adaptive control handles the larger nonlinear envelope.</p></div><div class="deep-block deep-faq"><h3>Engineer FAQ</h3><details class="faq-q"><summary>When do I need Laplace transforms vs Fourier transforms?</summary><div>Laplace for transient analysis (response to a step, impulse, or arbitrary causal input). Fourier for steady-state frequency response (Bode plots, filter design, vibration spectra). Laplace handles initial conditions naturally; Fourier assumes infinite history of the signal. Both reduce ODEs to algebraic equations.</div></details><details class="faq-q"><summary>What&apos;s the difference between dot and cross product physically?</summary><div>Dot product gives a scalar &mdash; the projection of one vector onto another. Work done by a force on a displacement: W = F·d. Cross product gives a vector perpendicular to both inputs &mdash; torque, angular momentum, magnetic force on a current. Dot is "how much do these align"; cross is "how much do these twist around each other."</div></details><details class="faq-q"><summary>Why do engineers use j for imaginary unit instead of i?</summary><div>Electrical engineering reserves i for current. Using i for both current and the imaginary unit creates ambiguity in equations like V = jωL·I. By using j for sqrt(−1), there&apos;s no overlap. Mathematicians and physicists outside EE still use i.</div></details></div></div></details></section>
 <section>
+<h2>INPUTS, UNITS &amp; ASSUMPTIONS</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.85;color:var(--text);font-size:.88rem">
+<p>The Math tab is five solvers that work on plain numbers. No units are attached; keep inputs consistent. Each solver can print its steps (SHOW WORK).</p>
+<ul>
+<li>Algebra: quadratic roots from the discriminant, including complex pairs and the vertex; cubic roots by Cardano's method, with the trigonometric form when there are three real roots; 2&times;2 and 3&times;3 linear systems by Cramer's rule.</li>
+<li>Geometry: circle, sphere, cylinder, cone, rectangle, triangle (base-height area plus Heron's formula from three sides), ellipse (Ramanujan perimeter) and torus.</li>
+<li>Calculus works on polynomials entered as comma-separated coefficients, highest power first. Derivatives use the power rule; definite integrals are exact from the antiderivative and cross-checked with Simpson's 1/3 rule on 1000 intervals. Limits evaluate f at x&#8320; &plusmn; &epsilon; for &epsilon; from 0.1 down to 0.00001.</li>
+<li>Taylor series cover sin x, cos x, e<sup>x</sup> and ln(1+x). The coefficients are the Maclaurin (a = 0) values; the CENTER field does not change them in the current build.</li>
+<li>Linear algebra: determinant (cofactor expansion), inverse (Gauss-Jordan above 2&times;2), multiply and transpose for 2&times;2 to 4&times;4. Eigenvalues are 2&times;2 only.</li>
+<li>ODEs: first-order linear with constant P and Q (integrating factor), separable of the form dy/dx = a&middot;x<sup>n</sup>, second-order homogeneous with constant coefficients (real, repeated or complex roots), and Euler's method for dy/dx = a&middot;x + b&middot;y.</li>
+</ul>
+<p>Example: the default Euler problem is dy/dx = x &minus; y with y(0) = 1, solved to x = 2 in 20 steps (&Delta;x = 0.1). The tool returns y(2) = 1.2432. The exact solution is y = x &minus; 1 + 2e<sup>&minus;x</sup>, which gives 1.2707, so the error is 2.2%. With 200 steps the tool returns 1.2680 and the error drops to 0.21%. A tenfold smaller step cuts the error tenfold, as expected for a first-order method.</p>
+</div>
+</section>
+<section>
 <h2>SEE ALSO</h2>
-<div class="card-grid"><a href="equations.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">EQUATIONS</h3><p>Searchable cross-discipline formula catalog</p></a><a href="units.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">UNITS</h3><p>SI ↔ US customary for force, pressure, energy, viscosity</p></a><a href="stress.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">STRESS</h3><p>Principal stresses, max shear, von Mises, Tresca yield</p></a><a href="vibration.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">VIBRATION</h3><p>Natural frequency, transmissibility, resonance check</p></a></div>
+<div class="card-grid"><a href="equations.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">EQUATIONS</h3><p>Cross-discipline formula catalog</p></a><a href="units.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">UNITS</h3><p>SI ↔ US customary for force, pressure, energy, power</p></a><a href="stress.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">STRESS</h3><p>Principal stresses, max shear, von Mises, Tresca yield</p></a><a href="vibration.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">VIBRATION</h3><p>Natural frequency, transmissibility, resonance check</p></a></div>
 </section>
 <section>
 <h2>OPEN THE CALCULATOR</h2>
@@ -137,6 +152,7 @@
 <a href="../amni-calc.html" class="btn btn-outline">ALL CALC MODULES</a>
 </div>
 </section>
+<p class="page-updated">Last updated <time datetime="2026-09-27">September 27, 2026</time></p>
 <div class="site-ad-banner">
 <span class="ad-note">Sponsored</span>
 <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8345487545441889" data-ad-slot="1720203631" data-ad-format="auto" data-full-width-responsive="true"></ins>
@@ -149,7 +165,7 @@
 <a href="../amni-calc.html">AMNI-CALC</a>
 <a href="../privacy.html">PRIVACY</a>
 <a href="../terms.html">TERMS</a>
-<a href="mailto:amnibro7@gmail.com">CONTACT</a>
+<a href="/contact.html">CONTACT</a>
 <a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
 </div>
 <p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
