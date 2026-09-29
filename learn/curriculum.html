@@ -294,7 +294,7 @@
 #sheets.fmt-adventure.scale-xl .wavy-sec{display:none}
 @media print{
 @page{size:letter;margin:.5in}
-nav,footer,.hamburger,.grid-bg,.scanlines,.crumbs,.product-hero,.curr-controls,.support-cta,section.curr-intro,section.curr-how,section.curr-why,.curr-keep,.curr-cta,.page-sep{display:none!important}
+nav,footer,.hamburger,.grid-bg,.scanlines,.crumbs,.product-hero,.page-updated,.curr-controls,.support-cta,section.curr-intro,section.curr-how,section.curr-why,.curr-keep,.curr-cta,.page-sep{display:none!important}
 body{background:#fff!important;color:#111!important;padding-top:0!important}
 .curr-wrap{max-width:100%;padding:0}
 #sheets{display:block!important;font-size:11pt;--fs-base:11pt;--fs-title:16pt;--fs-sub:10pt;--fs-h:10pt;--fs-body:10.5pt;--fs-small:9pt;--fs-chip:8pt;--fs-mono:11pt;--fs-emoji:13pt;--page-min:0;--page-pad:0;--line:1.35}
@@ -371,6 +371,13 @@ body{background:#fff!important;color:#111!important;padding-top:0!important}
 *{print-color-adjust:exact;-webkit-print-color-adjust:exact}
 @page{size:letter;margin:.5in}
 }
+#bp-sheets{display:none}
+.curr-wrap.busy #bp-sheets{display:block}
+.curr-wrap.busy #sheets{display:none}
+.bp-page{background:#fff;max-width:816px;margin:0 auto 1.2rem;padding:34px;box-shadow:0 2px 14px rgba(0,0,0,.18);border-radius:10px;box-sizing:border-box}
+.bp-svg{display:block;width:100%;height:auto}
+#bp-sheets .page-sep{max-width:816px;margin:1.2rem auto .5rem}
+@media print{.curr-wrap.busy #sheets{display:none!important}.curr-wrap.busy #bp-sheets{display:block!important}.bp-page{box-shadow:none;border-radius:0;padding:0;margin:0;max-width:none;width:7.5in;height:9.95in;break-after:page;page-break-after:always;break-inside:avoid}.bp-page:last-child{break-after:auto;page-break-after:auto}.bp-svg{width:7.5in;height:9.95in}}
 </style>
 </head>
 <body class="pp theme-learn">
@@ -410,7 +417,7 @@ body{background:#fff!important;color:#111!important;padding-top:0!important}
 </div>
 <section class="curr-intro">
 <div style="max-width:800px;margin:0 auto;text-align:left;padding:0 1.5rem">
-<p style="color:var(--text);font-size:.88rem;line-height:1.8">A free, screen-free companion to the Amni-Learn games: pick your child's age (1 to 13), choose <strong>Classic Checklist</strong> or the new <strong>Adventure Day</strong> quest format, and print a multi-page packet. Classic keeps the six-category balance (half 🤝 do-together, half ⭐ on-my-own). Adventure Day wraps the day in a fun theme with a quest path, side quests, bigger young-kid print, denser older-kid challenges, rotating worksheets, supplies, and an optional week planner. Ages 1&ndash;2 get a caregiver-guided "Little Hands" edition. Today's picks stay the same all day; tap New Set for a fresh mix.</p>
+<p style="color:var(--text);font-size:.88rem;line-height:1.8">A free, screen-free companion to the Amni-Learn games: pick your child's age (1 to 13), choose <strong>Classic Checklist</strong>, the <strong>Adventure Day</strong> quest format, or the new <strong>Toddler Busy Pack</strong> (7 themed pages of cut-and-glue, tracing, matching, mazes and puzzles for ages 1&ndash;6, with a new theme every day), and print a multi-page packet. Classic keeps the six-category balance (half 🤝 do-together, half ⭐ on-my-own). Adventure Day wraps the day in a fun theme with a quest path, side quests, bigger young-kid print, denser older-kid challenges, rotating worksheets, supplies, and an optional week planner. Ages 1&ndash;2 get a caregiver-guided "Little Hands" edition. Today's picks stay the same all day; tap New Set for a fresh mix.</p>
 </div>
 </section>
 <div class="curr-wrap">
@@ -423,8 +430,9 @@ body{background:#fff!important;color:#111!important;padding-top:0!important}
 <div class="fmt-row" id="fmt-row" role="group" aria-label="Day format">
 <button type="button" class="fmt-btn active" data-fmt="classic" id="fmt-classic">📋 Classic Checklist<small>6 categories · balanced together/solo · original packet</small></button>
 <button type="button" class="fmt-btn" data-fmt="adventure" id="fmt-adventure">🗺️ Adventure Day<small>Themed quest path · more stations · age-tuned fun &amp; stretch challenges</small></button>
+<button type="button" class="fmt-btn" data-fmt="busy" id="fmt-busy">✂️ Toddler Busy Pack<small>7 themed pages · cut &amp; glue, trace, match, mazes · new theme daily · ages 1&ndash;6</small></button>
 </div>
-<div class="opt-row"><label class="opt-chk"><input type="checkbox" id="opt-planner" checked> 📅 Include weekly planner page</label> &nbsp; <label class="opt-chk"><input type="checkbox" id="opt-key"> ✅ Include answer key (for parents)</label></div>
+<div class="opt-row" id="opt-row"><label class="opt-chk"><input type="checkbox" id="opt-planner" checked> 📅 Include weekly planner page</label> &nbsp; <label class="opt-chk"><input type="checkbox" id="opt-key"> ✅ Include answer key (for parents)</label></div>
 <h3>3. Get today's packet</h3>
 <div class="curr-actions">
 <button class="btn btn-primary" id="new-set-btn" style="background:var(--accent);color:#05070a;box-shadow:0 0 10px var(--accent-glow)">&#128256; NEW SET</button>
@@ -470,6 +478,7 @@ body{background:#fff!important;color:#111!important;padding-top:0!important}
 <div id="page6-body"></div>
 </div>
 </div>
+<div id="bp-sheets"></div>
 </div>
 <section class="curr-how">
 <h2>HOW IT WORKS</h2>
@@ -510,6 +519,7 @@ body{background:#fff!important;color:#111!important;padding-top:0!important}
 </div>
 <p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
 </footer>
+<script src="busy-pack.js?v=1"></script>
 <script>
 var CATS=[['rd','Reading & Letters','📖','#c0392b'],['mt','Numbers & Math','🔢','#2471a3'],['fm','Fine Motor & Writing','✂️','#7d3c98'],['sc','Science & Nature','🔬','#1e8449'],['cr','Creative Arts','🎨','#b7950b'],['ls','Life Skills','🏡','#148f77']];
 var CATKEYS=['rd','mt','fm','sc','cr','ls'];
@@ -719,7 +729,7 @@ ANS.push('Color exactly '+n+' stars');
 for(var i=0;i<5;i++)stars+=shapeSVG('star',64);
 return '<h4 class="prac-h">Color &amp; Count</h4><p class="prac-p">Color exactly <strong>'+n+'</strong> of the 5 stars:</p><div class="shape-row" style="gap:14px">'+stars+'</div>';
 };
-var mazeHTML=function(rnd,n,cell){
+var mazeLines=function(rnd,n,cell){
 var cells=[],r,c;for(r=0;r<n;r++){cells.push([]);for(c=0;c<n;c++)cells[r].push({t:1,l:1});}
 var vis={'0,0':1},st=[[0,0]];
 while(st.length){
@@ -730,13 +740,17 @@ var o=opts[Math.floor(rnd()*opts.length)];
 o[2]==='u'?cells[cur[0]][cur[1]].t=0:o[2]==='d'?cells[o[0]][o[1]].t=0:o[2]==='l'?cells[cur[0]][cur[1]].l=0:cells[o[0]][o[1]].l=0;
 vis[o[0]+','+o[1]]=1;st.push([o[0],o[1]]);
 }
-var pad=4,s=n*cell+pad*2,ln=[];
+var ln=[];
 for(r=0;r<n;r++)for(c=0;c<n;c++){
 cells[r][c].t?ln.push([c*cell,r*cell,(c+1)*cell,r*cell]):0;
 cells[r][c].l?ln.push([c*cell,r*cell,c*cell,(r+1)*cell]):0;
 }
 for(c=0;c<n;c++)ln.push([c*cell,n*cell,(c+1)*cell,n*cell]);
 for(r=0;r<n;r++)ln.push([n*cell,r*cell,n*cell,(r+1)*cell]);
+return ln;
+};
+var mazeHTML=function(rnd,n,cell){
+var pad=4,s=n*cell+pad*2,ln=mazeLines(rnd,n,cell);
 var svg='<svg class="maze-wrap" width="'+s+'" height="'+s+'" viewBox="-'+pad+' -'+pad+' '+s+' '+s+'">'+ln.map(function(l){return '<line x1="'+l[0]+'" y1="'+l[1]+'" x2="'+l[2]+'" y2="'+l[3]+'" stroke="#444" stroke-width="3" stroke-linecap="round"/>';}).join('')+'<text x="'+(cell*0.16)+'" y="'+(cell*0.74)+'" font-size="'+(cell*0.55)+'">🐭</text><text x="'+((n-1)*cell+cell*0.16)+'" y="'+((n-1)*cell+cell*0.74)+'" font-size="'+(cell*0.55)+'">🧀</text></svg>';
 return '<h4 class="prac-h">Maze Time</h4><p class="prac-p">Help the mouse find the cheese! Draw the path:</p>'+svg;
 };
@@ -898,7 +912,7 @@ CATKEYS.forEach(function(k){(pk[k].s||[]).forEach(function(it){set[it]=1;});});
 return Object.keys(set).sort();
 };
 
-var currentFmt=sessionStorage.getItem('curr-fmt')||'classic';
+var QS=new URLSearchParams(location.search),currentFmt=['classic','adventure','busy'].indexOf(QS.get('fmt'))>=0?QS.get('fmt'):sessionStorage.getItem('curr-fmt')||'classic';
 var THEMES={
 t12:[
 {id:'snuggle',icon:'🧸',name:'Snuggle & Sound Day',hook:'Today is all about pointing, naming, and cozy listening with you.'},
@@ -1239,12 +1253,15 @@ out+='<div class="plan-row"><div class="plan-day">'+(d===0?'Today':dt.toLocaleDa
 return '<h4 class="prac-h">Adventure Week at a Glance</h4><p class="prac-p" style="font-size:.8rem;color:#6a7180">Each day\'s theme + five quest stations (first activity set of that day).</p>'+out;
 };
 
-var currentAge=6,currentNonce=Number(sessionStorage.getItem('curr-nonce-'+todayStr())||0);
+var currentAge=Math.min(13,Math.max(1,Number(QS.get('age'))||(currentFmt==='busy'?3:6))),currentNonce=Number(sessionStorage.getItem('curr-nonce-'+todayStr())||0);
 var render=function(age){
 currentAge=age;
 document.querySelectorAll('.age-btn').forEach(function(b){b.classList.toggle('active',Number(b.dataset.age)===age);});
 document.querySelectorAll('.fmt-btn').forEach(function(b){b.classList.toggle('active',b.dataset.fmt===currentFmt);});
-var band=bandOf(age),bandLabel=BANDS.find(function(b){return b[0]===band;})[1];
+var band=bandOf(age),bandLabel=BANDS.find(function(b){return b[0]===band;})[1],busy=currentFmt==='busy',wrapEl=document.querySelector('.curr-wrap');
+wrapEl.classList.toggle('busy',busy);document.getElementById('opt-row').style.display=busy?'none':'';
+if(busy){var bp=BP.render(Math.min(age,6),currentNonce,{name:document.getElementById('child-name').value});document.getElementById('bp-sheets').innerHTML=bp.html;document.getElementById('band-label').textContent='Toddler Busy Pack · '+bp.theme.name+' · 7 pages'+(age>6?' · made for ages 1–6, showing the age-6 level':'')+' · print, cut, glue & play';return;}
+document.getElementById('bp-sheets').innerHTML='';
 document.getElementById('band-label').textContent='Selected band: '+bandLabel+(band==='t12'?' (caregiver-guided)':'')+' · Format: '+(currentFmt==='adventure'?'Adventure Day':'Classic Checklist');
 var rnd=mulberry32(xmur3(todayStr()+'|'+band+'|'+currentNonce+'|'+currentFmt)());
 var nameRaw=(document.getElementById('child-name').value||'').replace(/[^a-zA-Z]/g,'');
