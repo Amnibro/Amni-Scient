@@ -22,29 +22,30 @@ a{color:var(--accent)}
 <body>
 <main>
 <h1>Amni-Map Privacy Policy</h1>
-<p class="muted">App: Amni-Map for Android (package com.amniscient.map). Effective: September 28, 2026. Publisher: Amniscient, LLC. Contact: <a href="mailto:amnibro7@gmail.com">amnibro7@gmail.com</a>.</p>
+<p class="muted">App: Amni-Map for Android (package com.amniscient.map). Effective: September 29, 2026. Publisher: Amniscient, LLC. Contact: <a href="mailto:amnibro7@gmail.com">amnibro7@gmail.com</a>.</p>
 <p>Amni-Map is a navigation app. It has no accounts, no ads, no analytics and no crash reporting. It does not collect your name, email, phone number, contacts or any device or advertising ID. This policy explains what the app sends, to whom, and why.</p>
 
 <h2>Location</h2>
 <p>Amni-Map uses your phone's location while the app is open and while a trip you started is running (shown by the "Amni-Map is guiding you" notification). It does not use location in the background at any other time.</p>
-<p>To give you routes, search results, traffic, speed limits and place details, the app sends coordinates to the <strong>Amni-Map gateway</strong>, a server we run on Cloudflare. The gateway forwards only the request itself, never your IP address or phone details, to the routing, search and map-data services listed below, and it does not keep request logs.</p>
+<p>To give you routes, search results, traffic, speed limits and place details, the app sends coordinates to the <strong>Amni-Map gateway</strong>, a server we run on Cloudflare. For routes, search, speed limits and place details the gateway forwards only the request itself (coordinates or search text), never your IP address or phone details, to public OpenStreetMap-based services: the OSRM, FOSSGIS and Valhalla routing servers, Photon (komoot) and Nominatim (OpenStreetMap Foundation) for search, and public Overpass servers for map details. The gateway does not keep request logs.</p>
 
 <h2>What is sent, and where</h2>
 <table>
 <tr><th>What</th><th>Sent to</th><th>Why</th><th>Kept</th></tr>
-<tr><td>Trip start, stops and destination</td><td>Gateway, then OSRM / FOSSGIS / Valhalla routing servers</td><td>Routes and arrival times</td><td>Not stored</td></tr>
+<tr><td>Trip start, stops and destination</td><td>Gateway, then public OSRM, FOSSGIS and Valhalla routing servers</td><td>Routes and arrival times</td><td>Not stored</td></tr>
 <tr><td>Search text and an approximate position</td><td>Gateway, then Photon (komoot) and Nominatim (OpenStreetMap Foundation)</td><td>Search results near you</td><td>Not stored</td></tr>
-<tr><td>Map areas along your route</td><td>Gateway, then TomTom (traffic tiles), public work-zone feeds, public Overpass servers</td><td>Traffic colors, work zones, speed limits, cameras, traffic lights, place details</td><td>Shared cache of the public answers for minutes; nothing about you</td></tr>
+<tr><td>Map areas along your route</td><td>Gateway, then public Overpass servers. For traffic on the phone the gateway asks TomTom for traffic tiles and incidents for the area (never while Android Auto is connected), and reads public feeds (511NY, USDOT work-zone feeds, NYC DOT traffic speeds); TomTom and those feeds see the gateway, not you or your phone</td><td>Traffic colors, work zones, speed limits, cameras, traffic lights, place details</td><td>Shared cache of the public answers for minutes to a day; nothing about you</td></tr>
 <tr><td>Road reports you post and votes</td><td>Gateway</td><td>Show other drivers what is on the road</td><td>Shown until they expire (hours to a few days depending on the kind); expired reports are dropped from storage within 31 days; no identity attached</td></tr>
-<tr><td>"Help map traffic" speed data (on by default, switch in Menu › Driving)</td><td>Gateway</td><td>Learn typical road speeds</td><td>Averages per 100 m square and hour of the week; never the first or last 400 m of a trip; no identity or trip history</td></tr>
+<tr><td>"Help map traffic" speed data (off unless you turn it on, switch in Menu › Driving)</td><td>Gateway</td><td>Show traffic from Amni-Map drivers and learn each road's usual speed</td><td>Only counters per 100 m road square and heading: 5-minute totals for the last hour and hour-of-week totals; never the first or last 400 m of a trip; no identity, no trip history, no per-phone rows. A road only shows traffic after at least 3 drivers have passed.</td></tr>
 <tr><td>Feedback you type</td><td>Gateway</td><td>Improve the app</td><td>Your words, the app version and the day</td></tr>
-<tr><td>Map tiles for the area on screen</td><td>Directly to OpenFreeMap, Amazon Web Services (terrain), Esri (satellite style), OpenTopoMap (topo style)</td><td>Draw the map</td><td>Governed by those providers; they see your IP address and the map area</td></tr>
+<tr><td>Map tiles for the area on screen</td><td>Directly to OpenFreeMap, Amazon Web Services (terrain), NASA GIBS and the U.S. Geological Survey (Orbit and Topo styles), and to MapTiler for close-up Orbit imagery outside the US when that is turned on; Sentinel-2 and close-up US Orbit imagery come through the gateway</td><td>Draw the map</td><td>Governed by those providers; they see your IP address and the map area</td></tr>
 </table>
 
 <h2>On your phone only</h2>
 <ul>
 <li>Home, Work, saved places, recent searches, settings, the last drive's route line, cached map and traffic data, and the traffic speeds your phone has learned stay on your phone. Uninstalling or clearing the app's storage deletes them.</li>
-<li>The music map (Pro) listens to the sound your phone is playing, using Android's audio visualizer, only while you have a music mode on. It needs the microphone permission for that Android API. Nothing is recorded, stored or sent.</li>
+<li>The music map (Pro) reads the beat and loudness of the sound your phone is playing, using Android's audio visualizer, only while music is playing and a music mode is on. Android files that API under the microphone permission. It is analysed on your phone as it plays; nothing is recorded, stored or sent.</li>
+<li>Voice search: when you tap the microphone in search (on the phone or in Android Auto), your words go to your phone's speech recognition service, which runs on the phone when it can (otherwise your phone's speech provider, such as Google, processes them under its own privacy policy). Amni-Map receives only the text, which it uses like typed search text. Amni-Map never records, stores or sends audio. In Android Auto the car's microphone is used for the same thing.</li>
 <li>The on-phone copilot (Pro) uses Gemini Nano through Google's ML Kit on your phone. Your question does not leave the phone.</li>
 <li>If you tap Claude, Gemini or ChatGPT in the copilot section, Amni-Map opens that app with a short text (destination name, next turn, time left, traffic and speed). That app's privacy policy applies to what happens next. Amni-Map never uses or stores API keys or logins for those services.</li>
 <li>When other Amni-Scient apps signed by us are installed, Amni-Map can share your last position with them on the phone, so they can offer "navigate there" shortcuts. This never leaves the phone.</li>
@@ -58,7 +59,7 @@ a{color:var(--accent)}
 <li><strong>Location</strong> (precise and approximate): navigation, search near you, speed limits and traffic.</li>
 <li><strong>Foreground service (location)</strong>: keeps turn-by-turn guidance running with the screen off during a trip you started.</li>
 <li><strong>Notifications</strong>: the ongoing navigation notification.</li>
-<li><strong>Microphone</strong>: only for the music map's audio visualizer, only when you turn it on.</li>
+<li><strong>Microphone</strong>: voice search for places when you tap the microphone, and syncing the music map to the song your phone is playing when a music mode is on. No audio is recorded, stored or sent to us. You can say no and still type searches; the music map then keeps a steady beat.</li>
 <li><strong>Android Auto</strong>: navigation templates and the car map surface.</li>
 </ul>
 
@@ -74,12 +75,13 @@ a{color:var(--accent)}
 </ul>
 
 <h2>Security</h2>
-<p>All network traffic uses HTTPS. The gateway keeps no IP addresses and no request logs.</p>
+<p>All network traffic uses HTTPS. The gateway and our routing, search and map-data servers keep no IP addresses and no request logs.</p>
 
 <h2>Changes</h2>
 <p>If this policy changes, we will update the effective date above and, for material changes, tell you in the app.</p>
 
-<p class="muted">Map data © OpenStreetMap contributors. Traffic flow © TomTom.</p>
+<p class="muted">Map data © OpenStreetMap contributors. Imagery and topo maps: USGS The National Map. Full credits are in the app under Menu › Map data and credits.</p>
+<p>Saved routes: every route you navigate is saved on your phone in a compact form (the route line, turns, timings and the start and end points) so the app can show it instantly next time and use it when you are offline. Saved routes stay in the app's private storage on your phone, are excluded from Android backups and device transfers, are never uploaded, and are removed automatically when there are more than 500 or 50 MB of them. You can delete them all in Menu › Route › Saved routes.</p>
 </main>
 </body>
 </html>
