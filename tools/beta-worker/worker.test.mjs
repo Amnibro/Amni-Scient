@@ -2,11 +2,11 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { DatabaseSync } from 'node:sqlite'
-import worker, { RL_LIMIT, MAX_BODY } from './worker.mjs'
-const ORIGIN = 'https://amni-scient.com', KEY = 'test-admin-key-0123456789abcdef'
+import worker, { RL_LIMIT, MAX_BODY, unsubQuery } from './worker.mjs'
+const ORIGIN = 'https://amni-scient.com', KEY = 'test-admin-key-0123456789abcdef', SECRET = 'unsub-secret-0123456789abcdef'
 const d1 = () => { const db = new DatabaseSync(':memory:'); db.exec(readFileSync(new URL('./schema.sql', import.meta.url), 'utf8')); const stmt = (sql, args = []) => ({ bind: (...a) => stmt(sql, a), run: async () => ({ meta: { changes: Number(db.prepare(sql).run(...args).changes) } }), all: async () => ({ results: db.prepare(sql).all(...args) }), first: async () => db.prepare(sql).get(...args) ?? null }); return { db, prepare: sql => stmt(sql), batch: async s => Promise.all(s.map(x => x.run())) } }
 const kv = () => { const m = new Map(); return { m, get: async k => m.get(k) ?? null, put: async (k, v) => void m.set(k, v) } }
-const mk = () => ({ DB: d1(), RL: kv(), ADMIN_KEY: KEY, RL_SALT: 'salt' })
+const mk = () => ({ DB: d1(), RL: kv(), ADMIN_KEY: KEY, RL_SALT: 'salt', UNSUB_SECRET: SECRET })
 const rows = env => env.DB.db.prepare('SELECT * FROM signups ORDER BY app').all()
 const post = (env, body, { origin = ORIGIN, ip = '203.0.113.7', type = 'application/json', raw } = {}) => worker.fetch(new Request('https://w.test/signup', { method: 'POST', headers: { Origin: origin, 'Content-Type': type, 'CF-Connecting-IP': ip }, body: raw ?? JSON.stringify(body) }), env)
 const good = (o = {}) => ({ email: 'Tester@Gmail.com ', apps: ['chat', 'map'], device: 'android', handle: 'Sam', consent: true, website: '', ...o })
@@ -67,4 +67,42 @@ test('admin delete', async () => {
   assert.equal((await del({ email: 'tester@gmail.com' }, 'wrong')).status, 401)
   assert.deepEqual(await (await del({ email: 'TESTER@gmail.com', app: 'map' })).json(), { ok: true, deleted: 1 })
   assert.deepEqual(await (await del({ email: 'tester@gmail.com' })).json(), { ok: true, deleted: 1 }); assert.equal(rows(env).length, 0)
+})
+const sup = env => env.DB.db.prepare('SELECT * FROM suppressed ORDER BY email').all().map(r => ({ ...r }))
+const form = (env, path, body, type = 'application/x-www-form-urlencoded') => worker.fetch(new Request('https://w.test' + path, { method: 'POST', headers: { 'Content-Type': type }, body }), env)
+const adm = (env, path, b, k = KEY) => worker.fetch(new Request('https://w.test' + path, { method: 'POST', headers: { Authorization: 'Bearer ' + k, 'Content-Type': 'application/json' }, body: JSON.stringify(b) }), env)
+test('unsubscribe GET only confirms, POST suppresses and clears signups, resubscribe undoes', async () => {
+  const env = mk(); await post(env, good()); const q = await unsubQuery(SECRET, 'tester@gmail.com')
+  const g = await get(env, '/unsubscribe?' + q), page = await g.text(); assert.equal(g.status, 200); assert.match(page, /t\*\*\*@gmail\.com/); assert.ok(!page.includes('tester@gmail.com')); assert.match(page, /method="post"/); assert.match(page, /play\.google\.com\/apps\/testing\/com\.amniscient\.chat/); assert.match(page, /groups\.google\.com\/g\/amni-scient-testers/)
+  assert.equal(g.headers.get('Referrer-Policy'), 'no-referrer'); assert.equal(sup(env).length, 0); assert.equal(rows(env).length, 2)
+  const p = await form(env, '/unsubscribe?' + q, 'remove_testing=1'); assert.equal(p.status, 200); assert.match(await p.text(), /unsubscribed[\s\S]*\/resubscribe\?/)
+  assert.deepEqual(sup(env).map(r => [r.email, r.source, r.remove_testing, r.created_day.length]), [['tester@gmail.com', 'link', 1, 10]]); assert.equal(rows(env).length, 0)
+  assert.deepEqual(Object.keys(sup(env)[0]).sort(), ['created_day', 'email', 'remove_testing', 'source'])
+  await form(env, '/unsubscribe?' + q, ''); assert.equal(sup(env).length, 1); assert.equal(sup(env)[0].remove_testing, 1)
+  assert.match(await (await get(env, '/unsubscribe?' + q)).text(), /You're unsubscribed/)
+  const r = await form(env, '/resubscribe?' + q, ''); assert.equal(r.status, 200); assert.match(await r.text(), /resubscribed/); assert.equal(sup(env).length, 0)
+})
+test('one-click unsubscribe (RFC 8058) urlencoded and multipart', async () => {
+  const env = mk(), q = await unsubQuery(SECRET, 'a@b.co'), r = await form(env, '/unsubscribe?' + q, 'List-Unsubscribe=One-Click'); assert.equal(r.status, 200); assert.deepEqual(sup(env).map(x => [x.email, x.remove_testing]), [['a@b.co', 0]])
+  const fd = new FormData(); fd.set('List-Unsubscribe', 'One-Click'); const q2 = await unsubQuery(SECRET, 'c@d.co')
+  assert.equal((await worker.fetch(new Request('https://w.test/unsubscribe?' + q2, { method: 'POST', body: fd }), env)).status, 200); assert.equal(sup(env).length, 2)
+})
+test('bad or forged unsubscribe tokens are rejected', async () => {
+  const env = mk(), q = await unsubQuery(SECRET, 'tester@gmail.com'), forged = await unsubQuery('wrong', 'tester@gmail.com'), other = (await unsubQuery(SECRET, 'x@gmail.com')).split('&')[1]
+  for (const bq of ['', 'e=&s=', forged, q.split('&')[0] + '&' + other, q.replace(/s=./, 's=A'), 'e=%%%&s=x']) { assert.equal((await get(env, '/unsubscribe?' + bq)).status, 400, bq); assert.equal((await form(env, '/unsubscribe?' + bq, 'List-Unsubscribe=One-Click')).status, 400) }
+  assert.equal((await get({ ...env, UNSUB_SECRET: '' }, '/unsubscribe?' + q)).status, 400); assert.equal(sup(env).length, 0)
+})
+test('admin suppression endpoints', async () => {
+  const env = mk(); await post(env, good())
+  assert.equal((await adm(env, '/admin/suppress', { email: 'tester@gmail.com' }, 'wrong')).status, 401); assert.equal((await get(env, '/admin/suppressed')).status, 401)
+  assert.equal((await adm(env, '/admin/suppress', { email: 'nope' })).status, 400); assert.equal((await adm(env, '/admin/suppress', { email: 'a@b.co', source: 'evil' })).status, 400)
+  assert.deepEqual(await (await adm(env, '/admin/suppress', { email: ' Tester@Gmail.com', source: 'reply', remove_testing: true })).json(), { ok: true, email: 'tester@gmail.com', deleted_signups: 2 })
+  await adm(env, '/admin/suppress', { email: 'b@b.co', source: 'bounce' })
+  const l = await (await get(env, '/admin/suppressed', { Authorization: 'Bearer ' + KEY })).json(); assert.equal(l.count, 2); assert.deepEqual(l.suppressed.map(x => [x.email, x.source, x.remove_testing]), [['b@b.co', 'bounce', false], ['tester@gmail.com', 'reply', true]])
+  assert.equal(await (await get(env, '/admin/suppressed?format=emails', { Authorization: 'Bearer ' + KEY })).text(), 'b@b.co\ntester@gmail.com\n')
+  assert.deepEqual(await (await adm(env, '/admin/unsuppress', { email: 'b@b.co' })).json(), { ok: true, removed: 1 }); assert.equal(sup(env).length, 1)
+})
+test('signing up again clears suppression', async () => {
+  const env = mk(); await adm(env, '/admin/suppress', { email: 'tester@gmail.com', source: 'reply' }); assert.equal(sup(env).length, 1)
+  assert.equal((await post(env, good())).status, 200); assert.equal(sup(env).length, 0)
 })
