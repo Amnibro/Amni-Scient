@@ -4,24 +4,113 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="theme-color" content="#FBFAF8">
-<title>Beta Test &mdash; Play &amp; TestFlight | AMNI-SCIENT</title>
-<meta name="description" content="Join the Amni-Scient betas on Google Play and TestFlight. Google Play needs twelve testers opted in for fourteen days straight before a new app can ship.">
-<meta property="og:title" content="Beta Test &mdash; Play &amp; TestFlight | AMNI-SCIENT">
-<meta property="og:description" content="Play and TestFlight invites for the Amni-Scient betas. Twelve testers, fourteen days, for each new Play app.">
+<title>Beta Testing &mdash; Try Amni-Scient Apps Before Launch | AMNI-SCIENT</title>
+<meta name="description" content="Sign up to test Amni-Scient apps on Android and iPhone before they reach the store: Amni-Chat, Amni-Learn, Amni-Map, Amni-Type, Amni-Crypt, ContAIgion, HumAInity and Haven. Free, and you can leave any time.">
+<meta name="google-adsense-account" content="ca-pub-8345487545441889">
+<meta property="og:title" content="Test Amni-Scient apps before they launch">
+<meta property="og:description" content="Early builds of eight Android and iPhone apps. Sign up in a minute, use the app, tell us what breaks.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://amni-scient.com/beta.html">
-<meta property="og:image" content="https://amni-scient.com/assets/explore/og-explore.png">
+<meta property="og:image" content="https://amni-scient.com/assets/beta/og-beta.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Test our apps before they launch: icons for eight Amni-Scient apps">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Beta Test &mdash; Play &amp; TestFlight | AMNI-SCIENT">
-<meta name="twitter:description" content="Play and TestFlight invites for the Amni-Scient betas.">
-<meta name="twitter:image" content="https://amni-scient.com/assets/explore/og-explore.png">
+<meta name="twitter:title" content="Test Amni-Scient apps before they launch">
+<meta name="twitter:description" content="Early builds of eight Android and iPhone apps. Sign up in a minute, use the app, tell us what breaks.">
+<meta name="twitter:image" content="https://amni-scient.com/assets/beta/og-beta.png">
 <link rel="canonical" href="https://amni-scient.com/beta.html">
+<link rel="preconnect" href="https://amni-beta.amni-map-gateway.workers.dev" crossorigin>
 <link rel="stylesheet" href="css/style.css?v=b261">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
+<style>
+.bh{display:grid!important;grid-template-columns:minmax(0,1fr);gap:2rem;align-items:center}
+.bh .lede{margin-top:1.2rem}
+.bh h1{max-width:18ch!important}
+.bh-chips{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1.4rem;padding:0;list-style:none}
+.bh-chips li{display:inline-flex;align-items:center;gap:.45rem;padding:.38rem .85rem;border:1px solid var(--border);border-radius:2px;background:color-mix(in srgb,var(--panel) 72%,transparent);color:var(--text-soft);font-size:.74rem;font-weight:550;letter-spacing:.04em}
+.bh-chips li::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--accent)}
+.bh-icons{display:grid;grid-template-columns:repeat(8,1fr);gap:.5rem;max-width:420px}
+.bh-icons img{width:100%;height:auto;aspect-ratio:1;border-radius:22%;box-shadow:var(--elev-2)}
+@media(min-width:960px){.bh{grid-template-columns:minmax(0,1fr) 340px;gap:4rem}.bh-icons{grid-template-columns:repeat(4,1fr);gap:1rem;max-width:none}.bh-icons img:nth-child(odd){transform:translateY(12px)}}
+.b-steps{counter-reset:bstep}
+.b-steps .feature h4::before{counter-increment:bstep;content:counter(bstep,decimal-leading-zero) '  ';color:var(--accent)}
+.b-intro{font-family:var(--font-serif);color:var(--text-soft);line-height:1.7;max-width:68ch;margin:0 0 1.6rem}
+.b-two{display:grid;grid-template-columns:minmax(0,1fr);gap:1rem;margin-top:1.6rem}
+@media(min-width:760px){.b-two{grid-template-columns:1fr 1fr}}
+.b-two .card:hover,.b-app:hover{transform:none}
+.b-two ul{margin:.6rem 0 0 1.1rem;color:var(--text-soft);font-size:.92rem;line-height:1.7}
+.b-apps{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,330px),1fr));gap:1rem}
+.b-app{display:grid;grid-template-columns:60px minmax(0,1fr);grid-template-rows:1fr auto;gap:1rem;background:var(--glass),var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:1.3rem;box-shadow:var(--elev-1);transition:border-color var(--dur) var(--ease),box-shadow var(--dur) var(--ease)}
+.b-app:hover{border-color:var(--border2);box-shadow:var(--elev-2)}
+.b-app>img{width:60px;height:60px;border-radius:22%;box-shadow:var(--elev-1)}
+.b-app h3{font-size:1.02rem;font-weight:700;font-stretch:var(--w-cond);letter-spacing:.06em;text-transform:uppercase;color:var(--text);margin:.1rem 0 .3rem}
+.b-app h3 a{color:inherit}
+.b-app h3 a:hover{color:var(--accent)}
+.b-app p{color:var(--text-soft);font-size:.9rem;line-height:1.55}
+.b-pills{display:flex;flex-wrap:wrap;gap:.4rem;margin:.8rem 0 0;padding:0;list-style:none}
+.b-pill{display:inline-flex;align-items:center;gap:.4rem;font-size:.66rem;font-weight:650;font-stretch:var(--w-cond);letter-spacing:.12em;text-transform:uppercase;padding:.25rem .6rem;border:1px solid var(--border2);border-radius:2px;color:var(--text-soft)}
+.b-pill::before{content:'';width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.75}
+.b-pill.on{color:var(--accent);border-color:color-mix(in srgb,var(--accent) 45%,transparent);background:var(--accent-dim)}
+.b-pill.off{border-style:dashed}
+.b-acts{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:.5rem;align-self:end}
+.btn.b-sm{padding:.55rem 1rem;min-height:44px;font-size:.66rem;letter-spacing:.14em}
+.b-signup{display:grid;grid-template-columns:minmax(0,1fr);gap:2rem;align-items:start}
+@media(min-width:960px){.b-signup{grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:3rem}}
+.b-panel{background:var(--glass),var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:clamp(1.2rem,3vw,2rem);box-shadow:var(--elev-2)}
+.b-field{border:0;margin:0 0 1.4rem;padding:0;min-width:0}
+.b-field>label,.b-field>legend{display:block;font-size:.74rem;font-weight:700;font-stretch:var(--w-cond);letter-spacing:.14em;text-transform:uppercase;color:var(--text);margin-bottom:.5rem;padding:0}
+.b-field .opt{color:var(--text-soft);font-weight:500;letter-spacing:.06em;text-transform:none}
+.b-input{width:100%;min-height:48px;padding:.7rem .9rem;font:inherit;font-size:1rem;color:var(--text);background:var(--bg);border:1px solid var(--border2);border-radius:var(--radius-sm);transition:border-color var(--dur) var(--ease),box-shadow var(--dur) var(--ease)}
+.b-input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow)}
+.b-input[aria-invalid=true]{border-color:var(--error)}
+.b-hint{color:var(--text-soft);font-size:.82rem;line-height:1.5;margin-top:.45rem}
+.b-err{color:var(--error);font-size:.84rem;font-weight:600;margin-top:.45rem}
+.b-checks{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,140px),1fr));gap:.5rem;margin-top:.6rem}
+.b-check{display:flex;align-items:center;gap:.65rem;min-height:48px;padding:.45rem .7rem;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg);cursor:pointer;font-size:.92rem;color:var(--text);transition:border-color var(--dur) var(--ease),background var(--dur) var(--ease)}
+.b-check:hover{border-color:var(--border2)}
+.b-check:has(input:checked){border-color:color-mix(in srgb,var(--accent) 55%,transparent);background:var(--accent-dim)}
+.b-check:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:2px}
+.b-check img{width:28px;height:28px;border-radius:22%}
+.b-check{white-space:nowrap}
+@media(max-width:420px){.b-check img{display:none}}
+@media(min-width:421px){.b-checks{grid-template-columns:repeat(auto-fill,minmax(180px,1fr))}}
+.b-check input,.b-seg input,.b-consent input{width:18px;height:18px;accent-color:var(--accent);flex:0 0 18px;margin:0}
+.b-seg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.5rem;max-width:440px}
+.b-seg label{display:flex;align-items:center;gap:.55rem;min-height:48px;padding:.45rem 1rem;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg);cursor:pointer;font-size:.92rem;color:var(--text)}
+.b-seg label:has(input:checked){border-color:color-mix(in srgb,var(--accent) 55%,transparent);background:var(--accent-dim)}
+.b-seg label:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:2px}
+.b-consent{display:flex;gap:.7rem;align-items:flex-start;font-size:.9rem;line-height:1.55;color:var(--text-soft);cursor:pointer}
+.b-consent input{margin-top:.2rem}
+.b-consent a{text-decoration:underline;text-underline-offset:2px}
+.b-hp{position:absolute!important;left:-10000px;width:1px;height:1px;overflow:hidden}
+.b-submit{display:flex;flex-wrap:wrap;align-items:center;gap:1rem;margin-top:1.6rem}
+.b-submit .btn{min-height:48px;min-width:200px}
+.b-submit .btn[disabled]{opacity:.6;cursor:progress}
+.b-status{color:var(--text-soft);font-size:.9rem}
+.b-status.bad{color:var(--error);font-weight:600}
+.b-done h3{font-size:1.4rem;font-weight:800;font-stretch:var(--w-cond);letter-spacing:.03em;text-transform:uppercase;color:var(--text);margin-bottom:.6rem}
+.b-done h3:focus{outline:none}
+.b-done p{color:var(--text-soft);line-height:1.65;margin-bottom:.9rem}
+.b-done h4{font-size:.72rem;font-weight:700;font-stretch:var(--w-cond);letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin:1.4rem 0 .6rem}
+.b-links{list-style:none;padding:0;margin:0;display:grid;gap:.5rem}
+.b-links li{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;padding:.6rem .75rem;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg)}
+.b-links img{width:32px;height:32px;border-radius:22%}
+.b-links strong{flex:1 1 8rem;color:var(--text);font-size:.92rem}
+.b-aside h3{font-size:.8rem;font-weight:700;font-stretch:var(--w-cond);letter-spacing:.16em;text-transform:uppercase;color:var(--text);margin:0 0 .7rem}
+.b-aside ol,.b-aside ul{margin:0 0 1.6rem 1.15rem;color:var(--text-soft);line-height:1.7;font-size:.93rem}
+.b-aside li{margin-bottom:.45rem}
+.b-faq{max-width:820px;border-top:1px solid var(--border)}
+.b-faq details{border-bottom:1px solid var(--border)}
+.b-faq summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:1rem;align-items:center;min-height:52px;padding:.9rem .2rem;font-weight:650;color:var(--text);font-size:1rem}
+.b-faq summary::-webkit-details-marker{display:none}
+.b-faq summary::after{content:'+';color:var(--accent);font-size:1.3rem;font-weight:400;line-height:1;transition:transform var(--dur) var(--ease)}
+.b-faq details[open] summary::after{transform:rotate(45deg)}
+.b-faq details>div{padding:0 .2rem 1.1rem;color:var(--text-soft);font-family:var(--font-serif);line-height:1.7;max-width:70ch}
+.b-faq details>div p+p{margin-top:.7rem}
+</style>
 </head>
 <body class="pp">
 <div class="grid-bg"></div>
@@ -72,7 +161,7 @@
 </div>
 </div>
 </div>
-<a href="beta.html" class="active">BETA</a>
+<a href="beta.html" class="active" aria-current="page">BETA</a>
 <a href="about.html">ABOUT</a>
 <a href="faq.html">FAQ</a>
 <a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer">SUPPORT</a>
@@ -82,97 +171,273 @@
 <span></span><span></span><span></span>
 </div>
 </nav>
-<section class="hero" style="min-height:auto">
-<h1>BETA TEST</h1>
-<p class="subtitle">GOOGLE PLAY &amp; TESTFLIGHT</p>
-<p class="tagline">Google Play holds a new app out of production until twelve testers have stayed opted in for fourteen days straight. The same twelve accounts can cover every app on this page.</p>
+<main>
+<header class="product-hero bh">
+<div>
+<p class="eyebrow">Beta program &bull; Android &amp; iPhone</p>
+<h1>Test our apps before they launch</h1>
+<p class="lede">Amni-Scient is one developer building private, no-nonsense apps. Before each one goes into the store, it needs real people using it on real phones. Try the early builds for free, tell us what feels off, and help shape what ships.</p>
+<div class="cta-row">
+<a href="#signup" class="btn btn-primary">Sign up to test</a>
+<a href="#apps" class="btn btn-outline">See the apps</a>
+</div>
+<ul class="bh-chips" aria-label="At a glance">
+<li>Free to join</li>
+<li>Eight apps</li>
+<li>Leave any time</li>
+</ul>
+</div>
+<div class="bh-icons" aria-hidden="true">
+<img src="assets/beta/chat.webp" width="96" height="96" alt="">
+<img src="assets/beta/learn.webp" width="96" height="96" alt="">
+<img src="assets/beta/map.webp" width="96" height="96" alt="">
+<img src="assets/beta/type.webp" width="96" height="96" alt="">
+<img src="assets/beta/crypt.webp" width="96" height="96" alt="">
+<img src="assets/beta/contaigion.webp" width="96" height="96" alt="">
+<img src="assets/beta/humainity.webp" width="96" height="96" alt="">
+<img src="assets/beta/haven.webp" width="96" height="96" alt="">
+</div>
+</header>
+<section id="how" aria-labelledby="how-h">
+<h2 id="how-h">How testing works</h2>
+<p class="b-intro">A beta is the finished app with the paint still drying. Most of it works, some of it won&rsquo;t yet, and the only way to find out which is to put it in the hands of people who didn&rsquo;t build it. You don&rsquo;t need to be technical. If something confuses you, that is exactly the kind of thing we want to hear.</p>
+<div class="features b-steps">
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="14"/><path d="M4 7l8 6 8-6"/></svg></div>
+<h4>Sign up</h4>
+<p>Leave the email of the Google account on your Android phone and pick the apps you want. On iPhone, some apps are open right now through TestFlight.</p>
+</div>
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l4 4 10-10"/></svg></div>
+<h4>We add you</h4>
+<p>We add testers by hand, usually within a day. Your account then gets access to the test version on Google Play.</p>
+</div>
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="3" width="10" height="18"/><path d="M11 17h2"/></svg></div>
+<h4>Install and use it</h4>
+<p>Install from the Play Store like any other app and use it the way you normally would. Updates arrive on their own.</p>
+</div>
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/></svg></div>
+<h4>Tell us what you find</h4>
+<p>Bugs, confusing screens, missing features, things you liked. A sentence is plenty. Screenshots help.</p>
+</div>
+</div>
+<div class="b-two">
+<div class="card">
+<h3>What we ask</h3>
+<ul>
+<li>Keep the app installed and stay signed up for about two weeks. New apps need a steady group of testers before they can launch in the store, so sticking around is the biggest help you can give.</li>
+<li>Open it now and then, not just once.</li>
+<li>Send feedback when something breaks or bugs you.</li>
+</ul>
+</div>
+<div class="card">
+<h3>What you get</h3>
+<ul>
+<li>Early access to every app on this page, free.</li>
+<li>A direct line to the person who builds them. Feedback is read by the developer, not a support queue.</li>
+<li>New builds as soon as they&rsquo;re ready, before anyone else.</li>
+</ul>
+</div>
+</div>
 </section>
-<section>
-<h2>HOW TO JOIN</h2>
-<div style="max-width:800px;margin:0 0;line-height:1.9;color:var(--dim);font-size:.9rem">
-<p>Use the Google account that is on that app&rsquo;s tester list. Open the Play link, tap Become a tester, install the app, and open it once. Stay opted in for fourteen days. If the count falls under twelve, that app&rsquo;s fourteen days start over.</p>
-<p style="margin-top:1.2rem">On iPhone, open the TestFlight link and accept the beta. TestFlight has no fourteen-day count.</p>
-</div>
-<div class="how-works-grid">
-<div class="card">
-<h3>1. THE RIGHT ACCOUNT</h3>
-<p>Sign in on the phone with the Gmail address added in Play Console for that app.</p>
-</div>
-<div class="card">
-<h3>2. BECOME A TESTER</h3>
-<p>Open the Play link for the app and accept the test, then install it from Play.</p>
-</div>
-<div class="card">
-<h3>3. FOURTEEN DAYS</h3>
-<p>Open the app, then leave the test joined. Opting out resets the count for that app.</p>
-</div>
-<div class="card">
-<h3>4. TESTFLIGHT</h3>
-<p>The iPhone links install through TestFlight. Haven, Amni-Chat, Amni-Learn, and Amni-Type have one.</p>
-</div>
-</div>
-</section>
-<section>
-<h2>THE APPS</h2>
-<div class="card-grid">
-<article class="card" id="amni-crypt">
-<span class="badge badge--released">CLOSED BETA</span>
-<h3>Amni-Crypt</h3>
-<p>File encryption for Android. This Play link is the closed test, so joins here count toward the fourteen days.</p>
-<div class="cta-row" style="margin-top:1.25rem"><a class="btn btn-primary" href="https://play.google.com/apps/testing/com.amnicrypt" target="_blank" rel="noopener">GOOGLE PLAY</a></div>
-<p style="color:var(--dim);font-size:.7rem;margin-top:1rem">Closed beta &bull; no TestFlight yet</p>
-</article>
-<article class="card" id="amni-chat">
-<span class="badge">PLAY TEST</span>
+<section id="apps" aria-labelledby="apps-h">
+<h2 id="apps-h">The apps</h2>
+<p class="b-intro">Eight apps are in testing. Everything on Android starts with the sign-up form below. On iPhone, four of them have a public TestFlight beta you can join right now.</p>
+<div class="b-apps">
+<article class="b-app" id="app-chat">
+<img src="assets/beta/chat.webp" width="60" height="60" alt="" loading="lazy">
+<div>
 <h3>Amni-Chat</h3>
-<p>Private messenger. The Play listing is still a draft. TestFlight is open.</p>
-<div class="cta-row" style="margin-top:1.25rem"><a class="btn btn-primary" href="https://play.google.com/apps/internaltest/4700716308554287804" target="_blank" rel="noopener">GOOGLE PLAY</a> <a class="btn btn-outline" href="https://testflight.apple.com/join/PUQxysvc" target="_blank" rel="noopener">TESTFLIGHT</a></div>
-<p style="color:var(--dim);font-size:.7rem;margin-top:1rem">Draft listing &bull; TestFlight open</p>
+<p>A private messenger with voice and video calls and linked devices, built to keep your conversations yours.</p>
+<ul class="b-pills"><li class="b-pill on">iPhone: open now</li><li class="b-pill">Android: sign up</li></ul>
+</div>
+<div class="b-acts"><a class="btn btn-primary b-sm" href="https://testflight.apple.com/join/PUQxysvc" target="_blank" rel="noopener">Join on TestFlight</a><a class="btn btn-outline b-sm" href="#signup" data-app="chat">Android sign-up</a></div>
 </article>
-<article class="card" id="amni-learn">
-<span class="badge">PLAY TEST</span>
-<h3>Amni-Learn</h3>
-<p>Learning games for every age. TestFlight is open.</p>
-<div class="cta-row" style="margin-top:1.25rem"><a class="btn btn-primary" href="https://play.google.com/apps/internaltest/4700962001700751798" target="_blank" rel="noopener">GOOGLE PLAY</a> <a class="btn btn-outline" href="https://testflight.apple.com/join/gnWxJTFg" target="_blank" rel="noopener">TESTFLIGHT</a></div>
-<p style="color:var(--dim);font-size:.7rem;margin-top:1rem">Play test &bull; TestFlight open</p>
+<article class="b-app" id="app-learn">
+<img src="assets/beta/learn.webp" width="60" height="60" alt="" loading="lazy">
+<div>
+<h3><a href="amni-learn.html">Amni-Learn</a></h3>
+<p>Learning games for every age, from pre-K letters and counting to STEM labs and quizzes.</p>
+<ul class="b-pills"><li class="b-pill on">iPhone: open now</li><li class="b-pill">Android: sign up</li></ul>
+</div>
+<div class="b-acts"><a class="btn btn-primary b-sm" href="https://testflight.apple.com/join/gnWxJTFg" target="_blank" rel="noopener">Join on TestFlight</a><a class="btn btn-outline b-sm" href="#signup" data-app="learn">Android sign-up</a></div>
 </article>
-<article class="card" id="amni-map">
-<span class="badge">PLAY TEST</span>
+<article class="b-app" id="app-type">
+<img src="assets/beta/type.webp" width="60" height="60" alt="" loading="lazy">
+<div>
+<h3><a href="amni-type.html">Amni-Type</a></h3>
+<p>A swipe keyboard that predicts and corrects entirely on your phone. Nothing you type is sent anywhere.</p>
+<ul class="b-pills"><li class="b-pill on">iPhone: open now</li><li class="b-pill">Android: sign up</li></ul>
+</div>
+<div class="b-acts"><a class="btn btn-primary b-sm" href="https://testflight.apple.com/join/yTvRRNSE" target="_blank" rel="noopener">Join on TestFlight</a><a class="btn btn-outline b-sm" href="#signup" data-app="type">Android sign-up</a></div>
+</article>
+<article class="b-app" id="app-haven">
+<img src="assets/beta/haven.webp" width="60" height="60" alt="" loading="lazy">
+<div>
+<h3><a href="amni-haven.html">Haven</a></h3>
+<p>Chat for Haven communities: channels, voice and video, and end-to-end encrypted direct messages.</p>
+<ul class="b-pills"><li class="b-pill on">iPhone: open now</li><li class="b-pill on">Android: on Google Play</li></ul>
+</div>
+<div class="b-acts"><a class="btn btn-primary b-sm" href="https://testflight.apple.com/join/ADeG5zRq" target="_blank" rel="noopener">Join on TestFlight</a><a class="btn btn-outline b-sm" href="https://play.google.com/store/apps/details?id=com.havenapp.mobile" target="_blank" rel="noopener">Get it on Google Play</a><a class="btn btn-outline b-sm" href="#signup" data-app="haven">Android beta sign-up</a></div>
+</article>
+<article class="b-app" id="app-map">
+<img src="assets/beta/map.webp" width="60" height="60" alt="" loading="lazy">
+<div>
 <h3>Amni-Map</h3>
-<p>Maps and turn-by-turn navigation. The Play listing is still a draft.</p>
-<div class="cta-row" style="margin-top:1.25rem"><a class="btn btn-primary" href="https://play.google.com/apps/internaltest/4700661525641644155" target="_blank" rel="noopener">GOOGLE PLAY</a></div>
-<p style="color:var(--dim);font-size:.7rem;margin-top:1rem">Draft listing &bull; no TestFlight yet</p>
+<p>Maps and turn-by-turn directions with voice search and saved routes. No account, no ads, no analytics.</p>
+<ul class="b-pills"><li class="b-pill">Android: sign up</li><li class="b-pill off">iPhone: later</li></ul>
+</div>
+<div class="b-acts"><a class="btn btn-outline b-sm" href="#signup" data-app="map">Android sign-up</a></div>
 </article>
-<article class="card" id="amni-type">
-<span class="badge">PLAY TEST</span>
-<h3>Amni-Type</h3>
-<p>An on-device keyboard. Swipe, predict, and correct on the phone. TestFlight is open.</p>
-<div class="cta-row" style="margin-top:1.25rem"><a class="btn btn-primary" href="https://play.google.com/apps/internaltest/4701572168927485436" target="_blank" rel="noopener">GOOGLE PLAY</a> <a class="btn btn-outline" href="https://testflight.apple.com/join/yTvRRNSE" target="_blank" rel="noopener">TESTFLIGHT</a></div>
-<p style="color:var(--dim);font-size:.7rem;margin-top:1rem">Play test &bull; TestFlight open</p>
+<article class="b-app" id="app-crypt">
+<img src="assets/beta/crypt.webp" width="60" height="60" alt="" loading="lazy">
+<div>
+<h3><a href="amni-crypt.html">Amni-Crypt</a></h3>
+<p>Lock files on your phone with strong encryption. The keys and the files stay on the device.</p>
+<ul class="b-pills"><li class="b-pill">Android: sign up</li><li class="b-pill off">iPhone: later</li></ul>
+</div>
+<div class="b-acts"><a class="btn btn-outline b-sm" href="#signup" data-app="crypt">Android sign-up</a></div>
 </article>
-<article class="card" id="contaigion">
-<span class="badge">PLAY TEST</span>
+<article class="b-app" id="app-contaigion">
+<img src="assets/beta/contaigion.webp" width="60" height="60" alt="" loading="lazy">
+<div>
 <h3>ContAIgion</h3>
-<p>An AI outbreak game. No iPhone beta yet.</p>
-<div class="cta-row" style="margin-top:1.25rem"><a class="btn btn-primary" href="https://play.google.com/apps/internaltest/4701285135027464773" target="_blank" rel="noopener">GOOGLE PLAY</a></div>
-<p style="color:var(--dim);font-size:.7rem;margin-top:1rem">Play test &bull; no TestFlight yet</p>
+<p>A strategy game where you guide a runaway AI across the world, one outbreak at a time.</p>
+<ul class="b-pills"><li class="b-pill">Android: sign up</li><li class="b-pill off">iPhone: later</li></ul>
+</div>
+<div class="b-acts"><a class="btn btn-outline b-sm" href="#signup" data-app="contaigion">Android sign-up</a></div>
 </article>
-<article class="card" id="humainity">
-<span class="badge">PLAY TEST</span>
+<article class="b-app" id="app-humainity">
+<img src="assets/beta/humainity.webp" width="60" height="60" alt="" loading="lazy">
+<div>
 <h3>HumAInity</h3>
-<p>Take the world back. No iPhone beta yet.</p>
-<div class="cta-row" style="margin-top:1.25rem"><a class="btn btn-primary" href="https://play.google.com/apps/internaltest/4701416156920129320" target="_blank" rel="noopener">GOOGLE PLAY</a></div>
-<p style="color:var(--dim);font-size:.7rem;margin-top:1rem">Play test &bull; no TestFlight yet</p>
-</article>
-<article class="card" id="haven">
-<span class="badge badge--released">ON GOOGLE PLAY</span>
-<h3>Haven</h3>
-<p>Already in production on Google Play. The test link is the newer build. iPhone is on TestFlight.</p>
-<div class="cta-row" style="margin-top:1.25rem"><a class="btn btn-primary" href="https://play.google.com/apps/internaltest/4701090655403473560" target="_blank" rel="noopener">JOIN THE TEST</a> <a class="btn btn-outline" href="https://play.google.com/store/apps/details?id=com.havenapp.mobile" target="_blank" rel="noopener">PLAY STORE</a> <a class="btn btn-outline" href="https://testflight.apple.com/join/ADeG5zRq" target="_blank" rel="noopener">TESTFLIGHT</a></div>
-<p style="color:var(--dim);font-size:.7rem;margin-top:1rem">Production &bull; test build &bull; TestFlight</p>
+<p>The sister game to ContAIgion. Rally humanity and take the world back from the machines.</p>
+<ul class="b-pills"><li class="b-pill">Android: sign up</li><li class="b-pill off">iPhone: later</li></ul>
+</div>
+<div class="b-acts"><a class="btn btn-outline b-sm" href="#signup" data-app="humainity">Android sign-up</a></div>
 </article>
 </div>
 </section>
+<section id="signup" aria-labelledby="signup-h">
+<h2 id="signup-h">Sign up</h2>
+<div class="b-signup">
+<div class="b-panel">
+<form id="beta-form" novalidate>
+<div class="b-field">
+<label for="bf-email">Google account email</label>
+<input class="b-input" id="bf-email" name="email" type="email" autocomplete="email" inputmode="email" autocapitalize="off" spellcheck="false" maxlength="254" required aria-describedby="bf-email-hint bf-email-err">
+<p class="b-hint" id="bf-email-hint">Use the Google account signed in to the Play Store on your Android phone. That is usually your Gmail address.</p>
+<p class="b-err" id="bf-email-err" hidden></p>
+</div>
+<fieldset class="b-field" aria-describedby="bf-apps-hint bf-apps-err">
+<legend>Apps to test</legend>
+<p class="b-hint" id="bf-apps-hint">All of them are ticked. Untick any you&rsquo;d rather skip.</p>
+<div class="b-checks">
+<label class="b-check"><input type="checkbox" name="apps" value="chat" checked><img src="assets/beta/chat.webp" width="28" height="28" alt="" loading="lazy">Amni-Chat</label>
+<label class="b-check"><input type="checkbox" name="apps" value="learn" checked><img src="assets/beta/learn.webp" width="28" height="28" alt="" loading="lazy">Amni-Learn</label>
+<label class="b-check"><input type="checkbox" name="apps" value="type" checked><img src="assets/beta/type.webp" width="28" height="28" alt="" loading="lazy">Amni-Type</label>
+<label class="b-check"><input type="checkbox" name="apps" value="map" checked><img src="assets/beta/map.webp" width="28" height="28" alt="" loading="lazy">Amni-Map</label>
+<label class="b-check"><input type="checkbox" name="apps" value="crypt" checked><img src="assets/beta/crypt.webp" width="28" height="28" alt="" loading="lazy">Amni-Crypt</label>
+<label class="b-check"><input type="checkbox" name="apps" value="contaigion" checked><img src="assets/beta/contaigion.webp" width="28" height="28" alt="" loading="lazy">ContAIgion</label>
+<label class="b-check"><input type="checkbox" name="apps" value="humainity" checked><img src="assets/beta/humainity.webp" width="28" height="28" alt="" loading="lazy">HumAInity</label>
+<label class="b-check"><input type="checkbox" name="apps" value="haven" checked><img src="assets/beta/haven.webp" width="28" height="28" alt="" loading="lazy">Haven</label>
+</div>
+<p class="b-err" id="bf-apps-err" hidden></p>
+</fieldset>
+<fieldset class="b-field">
+<legend>Your phone</legend>
+<div class="b-seg">
+<label><input type="radio" name="device" value="android" checked>Android</label>
+<label><input type="radio" name="device" value="iphone">iPhone</label>
+<label><input type="radio" name="device" value="both">Both</label>
+</div>
+</fieldset>
+<div class="b-field">
+<label for="bf-handle">Name or handle <span class="opt">(optional)</span></label>
+<input class="b-input" id="bf-handle" name="handle" type="text" autocomplete="nickname" maxlength="40" aria-describedby="bf-handle-hint bf-handle-err">
+<p class="b-hint" id="bf-handle-hint">So we know who to thank. Letters, numbers, spaces and . _ &rsquo; - only.</p>
+<p class="b-err" id="bf-handle-err" hidden></p>
+</div>
+<div class="b-hp" aria-hidden="true"><label for="bf-website">Leave this empty</label><input id="bf-website" name="website" type="text" tabindex="-1" autocomplete="off"></div>
+<label class="b-consent"><input type="checkbox" id="bf-consent" name="consent" aria-describedby="bf-consent-err"><span>I&rsquo;m 13 or older, and Amni-Scient may use this email to add me to the tester list and contact me about the test. Details are in the <a href="privacy.html#beta-signup">privacy policy</a>.</span></label>
+<p class="b-err" id="bf-consent-err" hidden></p>
+<div class="b-submit">
+<button class="btn btn-primary" type="submit" id="bf-submit">Sign me up</button>
+<p class="b-status" id="bf-status" role="status" aria-live="polite"></p>
+</div>
+</form>
+<div class="b-done" id="beta-done" hidden>
+<h3 tabindex="-1" id="beta-done-h">You&rsquo;re on the list</h3>
+<p id="beta-done-msg">Thank you. We add testers by hand, usually within a day.</p>
+<div id="beta-done-play" hidden>
+<h4>After we confirm you</h4>
+<p>Once you&rsquo;re added, open each link on your Android phone while signed in to <strong id="beta-done-email"></strong>, tap <em>Become a tester</em>, then install the app from Google Play. If a link says the test isn&rsquo;t available to you, we haven&rsquo;t added you yet. Give it a little longer.</p>
+<ul class="b-links" id="beta-done-links"></ul>
+</div>
+<div id="beta-done-tf" hidden>
+<h4>On iPhone, open now</h4>
+<p>Install Apple&rsquo;s TestFlight app, then open these. No waiting needed.</p>
+<ul class="b-links" id="beta-done-tflinks"></ul>
+</div>
+<p style="margin-top:1.4rem"><a href="#signup" id="beta-again">Sign up another account</a></p>
+</div>
+</div>
+<aside class="b-aside" aria-label="About this form">
+<h3>What happens next</h3>
+<ol>
+<li>We add your Google account to the tester list for each app you picked, usually within a day.</li>
+<li>After you submit, this page shows the Google Play link for each app. It starts working once you&rsquo;re added.</li>
+<li>Install, use it, and send feedback whenever something comes up.</li>
+</ol>
+<h3>What we keep</h3>
+<ul>
+<li>Your email, the apps you picked, your phone type and the optional name. Nothing else.</li>
+<li>Used only to run the test. No newsletter, never sold or shared beyond the app store&rsquo;s tester list.</li>
+<li>Deleted when testing ends, or sooner if you ask at <a href="mailto:amnibro7@gmail.com">amnibro7@gmail.com</a>.</li>
+</ul>
+</aside>
+</div>
+</section>
+<section id="questions" aria-labelledby="faq-h">
+<h2 id="faq-h">Questions</h2>
+<div class="b-faq">
+<details>
+<summary>Does it cost anything?</summary>
+<div><p>No. Joining a test is free, and the test versions are free to install.</p></div>
+</details>
+<details>
+<summary>Why do you need my Google account email?</summary>
+<div><p>Google Play only lets accounts on an app&rsquo;s tester list install its test version. The address has to be the one signed in to the Play Store on your phone. That is usually a Gmail address, but some Google accounts use a different one.</p><p>On iPhone you don&rsquo;t need to give us anything. The TestFlight links above work for anyone.</p></div>
+</details>
+<details>
+<summary>What do you do with my email?</summary>
+<div><p>We use it to add you to the tester list for the apps you picked and to contact you about the test, nothing else. It isn&rsquo;t added to a mailing list, sold, or shared with anyone other than the app store that runs the test. The <a href="privacy.html#beta-signup">privacy policy</a> has the details.</p></div>
+</details>
+<details>
+<summary>How long should I stay in?</summary>
+<div><p>About two weeks, if you can. New apps need a steady group of testers before they can go live in the store, so keeping the app installed and staying signed up for that stretch really matters. You can still leave any time.</p></div>
+</details>
+<details>
+<summary>How do I send feedback?</summary>
+<div><p>On Android, open the app&rsquo;s page in the Play Store. Testers see a private feedback box there that only the developer can read. On iPhone, take a screenshot in the app and tap <em>Share Beta Feedback</em>, or use <em>Send Beta Feedback</em> in TestFlight.</p><p>Or just email <a href="mailto:amnibro7@gmail.com">amnibro7@gmail.com</a> with the app name, your phone model and what happened.</p></div>
+</details>
+<details>
+<summary>Could a test version mess up my phone?</summary>
+<div><p>A test version is the same app with newer code, so it may have bugs or crash now and then. It doesn&rsquo;t change your other apps or settings, and you can uninstall it whenever you like. When the app launches, your copy simply updates to the store version.</p></div>
+</details>
+<details>
+<summary>How do I leave?</summary>
+<div><p>On Android, open the app&rsquo;s test link again and choose to leave the program, then uninstall if you want. On iPhone, remove the app from TestFlight. To have your email deleted from our list, write to <a href="mailto:amnibro7@gmail.com">amnibro7@gmail.com</a>.</p></div>
+</details>
+<details>
+<summary>What about the other apps on iPhone?</summary>
+<div><p>Amni-Chat, Amni-Learn, Amni-Type and Haven are open on TestFlight today. Amni-Map, Amni-Crypt, ContAIgion and HumAInity are Android-only for now. Sign up with iPhone selected and we&rsquo;ll know you&rsquo;re interested. Their TestFlight links will appear on this page when they open.</p></div>
+</details>
+</div>
+</section>
+</main>
 <p class="page-updated">Last updated <time datetime="2026-09-30">September 30, 2026</time></p>
 <aside class="support-cta" aria-label="Support"><a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="support-link"><span class="support-ico">&#9749;</span><span>Enjoying this? <strong>Support on Ko-fi</strong></span></a></aside>
 <footer>
@@ -187,5 +452,16 @@
 </div>
 <p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
 </footer>
+<script>
+(()=>{const W='https://amni-beta.amni-map-gateway.workers.dev/signup',A={chat:['Amni-Chat','https://play.google.com/apps/internaltest/4700716308554287804','PUQxysvc'],learn:['Amni-Learn','https://play.google.com/apps/internaltest/4700962001700751798','gnWxJTFg'],type:['Amni-Type','https://play.google.com/apps/internaltest/4701572168927485436','yTvRRNSE'],map:['Amni-Map','https://play.google.com/apps/internaltest/4700661525641644155'],crypt:['Amni-Crypt','https://play.google.com/apps/testing/com.amnicrypt'],contaigion:['ContAIgion','https://play.google.com/apps/internaltest/4701285135027464773'],humainity:['HumAInity','https://play.google.com/apps/internaltest/4701416156920129320'],haven:['Haven','https://play.google.com/apps/internaltest/4701090655403473560','ADeG5zRq']},f=document.getElementById('beta-form'),g=id=>document.getElementById(id),em=g('bf-email'),hd=g('bf-handle'),cs=g('bf-consent'),st=g('bf-status'),sb=g('bf-submit'),done=g('beta-done'),E=/^[^\s@]{1,64}@[^\s@]+\.[^\s@]{2,}$/,H=/^[\p{L}\p{N} ._'-]{0,40}$/u,hint={android:'Use the Google account signed in to the Play Store on your Android phone. That is usually your Gmail address.',iphone:'Any email you check. Amni-Chat, Amni-Learn, Amni-Type and Haven are already open on TestFlight above.',both:'Use the Google account signed in to the Play Store on your Android phone. That is usually your Gmail address.'},MSG={invalid_email:['bf-email-err','Enter a valid email address.'],invalid_apps:['bf-apps-err','Pick at least one app.'],invalid_handle:['bf-handle-err','Use up to 40 letters, numbers, spaces or . _ \' -'],consent_required:['bf-consent-err','Please tick the box to continue.']};
+const apps=()=>[...f.querySelectorAll('input[name=apps]:checked')].map(i=>i.value),dev=()=>f.querySelector('input[name=device]:checked').value,show=(id,m)=>{const p=g(id),i=id==='bf-apps-err'?null:g(id.replace('-err',''));p.textContent=m||'';p.hidden=!m;i&&i.setAttribute('aria-invalid',m?'true':'false')};
+const check=()=>{const e=em.value.trim(),h=hd.value.trim(),r=[['bf-email-err',!e?'Enter your email address.':!E.test(e)||e.length>254?'That doesn’t look like an email address.':''],['bf-apps-err',apps().length?'':'Pick at least one app.'],['bf-handle-err',H.test(h)?'':MSG.invalid_handle[1]],['bf-consent-err',cs.checked?'':'Please tick the box to continue.']];r.forEach(([id,m])=>show(id,m));const bad=r.find(([,m])=>m);bad&&({'bf-email-err':em,'bf-apps-err':f.querySelector('input[name=apps]'),'bf-handle-err':hd,'bf-consent-err':cs})[bad[0]].focus();return!bad};
+const li=(k,href,label)=>{const l=document.createElement('li'),i=document.createElement('img'),s=document.createElement('strong'),a=document.createElement('a');i.src='assets/beta/'+k+'.webp';i.width=i.height=32;i.alt='';s.textContent=A[k][0];a.href=href;a.target='_blank';a.rel='noopener';a.className='btn btn-outline b-sm';a.textContent=label;l.append(i,s,a);return l};
+const finish=(ap,d,e)=>{const pl=d!=='iphone'?ap:[],tf=d!=='android'?ap.filter(k=>A[k][2]):[];g('beta-done-email').textContent=e;g('beta-done-links').replaceChildren(...pl.map(k=>li(k,A[k][1],'Google Play test')));g('beta-done-tflinks').replaceChildren(...tf.map(k=>li(k,'https://testflight.apple.com/join/'+A[k][2],'TestFlight')));g('beta-done-play').hidden=!pl.length;g('beta-done-tf').hidden=!tf.length;g('beta-done-msg').textContent=d==='iphone'?'Thank you. We’ll use your email to let you know about iPhone betas for the apps you picked.':'Thank you. We add testers by hand, usually within a day.';f.hidden=true;done.hidden=false;g('beta-done-h').focus()};
+f.addEventListener('change',e=>{e.target.name==='device'&&(g('bf-email-hint').textContent=hint[dev()]);e.target.name==='apps'&&apps().length&&show('bf-apps-err','');e.target===cs&&cs.checked&&show('bf-consent-err','')});
+document.querySelectorAll('a[data-app]').forEach(a=>a.addEventListener('click',()=>{f.querySelector('input[name=apps][value='+a.dataset.app+']').checked=true;done.hidden||(done.hidden=true,f.hidden=false);setTimeout(()=>em.focus({preventScroll:true}),350)}));
+g('beta-again').addEventListener('click',()=>{f.reset();done.hidden=true;f.hidden=false;st.textContent='';setTimeout(()=>em.focus({preventScroll:true}),50)});
+f.addEventListener('submit',async ev=>{ev.preventDefault();st.textContent='';st.classList.remove('bad');if(!check())return;const body={email:em.value.trim(),apps:apps(),device:dev(),handle:hd.value.trim(),consent:true,website:g('bf-website').value},c=new AbortController(),t=setTimeout(()=>c.abort(),15000);sb.disabled=true;st.textContent='Sending…';try{const r=await fetch(W,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body),signal:c.signal,credentials:'omit'}),j=await r.json().catch(()=>({}));r.ok?(st.textContent='',finish(body.apps,body.device,body.email)):r.status===429?(st.classList.add('bad'),st.textContent='Too many sign-ups from this network in the last hour. Please try again later.'):j.error&&MSG[j.error]?(show(...MSG[j.error]),st.textContent=''):(st.classList.add('bad'),st.textContent='Something went wrong on our side. Please try again, or email amnibro7@gmail.com.')}catch{st.classList.add('bad');st.textContent='Couldn’t reach the sign-up server. Check your connection and try again.'}finally{clearTimeout(t);sb.disabled=false}});})();
+</script>
 </body>
 </html>
