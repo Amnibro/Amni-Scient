@@ -55,7 +55,7 @@ body.playing #stage{max-height:calc(100svh - 7.5rem)}
 .stage-fs{position:absolute;right:10px;bottom:10px;z-index:6;display:none;font-family:var(--font-sans);font-size:.62rem;font-weight:650;font-stretch:var(--w-cond);letter-spacing:.16em;text-transform:uppercase;color:#A7ADB6;background:rgba(8,9,11,.72);border:1px solid #2E343D;border-radius:2px;padding:.4rem .7rem;cursor:pointer}
 body.playing .stage-fs{display:inline-flex}
 .stage-fs:hover{color:#EDEFF2;border-color:#C89B4E}
-.err-card{text-align:left;max-width:420px;margin:.2rem auto 0;padding:1rem 1.05rem;border:1px solid #2E343D;border-radius:3px;background:#111418}
+.err-card{text-align:left;max-width:min(560px,94vw);margin:.2rem auto 0;padding:1rem 1.15rem;border:1px solid #2E343D;border-radius:4px;background:#111418}
 .err-card h3{color:#EDEFF2;font-family:var(--font-sans);font-size:.68rem;font-weight:700;font-stretch:var(--w-cond);letter-spacing:.16em;text-transform:uppercase;margin:0 0 .5rem}
 .err-card p{color:#C9CFD8;font-size:.84rem;line-height:1.5;margin:0 0 .55rem}
 .err-card .tip{color:#6D747D;font-size:.76rem;margin:0 0 .85rem}
@@ -184,12 +184,51 @@ kbd{display:inline-flex;align-items:center;justify-content:center;min-width:1.7r
     <h2>Saves and privacy</h2>
     <p>The game autosaves every 12 seconds, when you pause, and after purchases or upgrades. Three slots live in this browser's localStorage as <code>savegame_1.bin</code> to <code>savegame_3.bin</code>, holding your collection, abilities, position, hearts and play time. <code>settings.toml</code> and <code>keybinds.toml</code> hold your settings and bindings. The game never uploads your save; clearing site data erases it. Ghost codes and live co-op in the Gallery tab are opt-in: ghost codes are text you copy yourself, and co-op connects two browsers directly over WebRTC, using a public STUN server to find each other.</p>
     <h2>Requirements and troubleshooting</h2>
-    <p>Amni needs WebGPU: Chrome, Edge, Firefox, or Safari 26+, with a working GPU. The engine is about 8 MB, so first loads are slower on mobile data. On touchscreens, drag the left half to move, the right half to look, and tap the on-screen buttons.</p>
+    <p>Amni draws high-fidelity 3D graphics with WebGPU on Chrome, Edge, Firefox 141+, or Safari 26+. On touchscreen devices, the movement stick sits at the bottom left and dragging the right half rotates the camera.</p>
+    <div style="margin:1.2rem 0;border:1px solid var(--border);border-radius:var(--radius);padding:1.15rem;background:var(--panel)">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:1rem;border-bottom:1px solid var(--border);padding-bottom:.75rem">
+        <b style="color:var(--text);font-size:.88rem;letter-spacing:.02em">WebGPU Browser Setup Guide:</b>
+        <div style="display:flex;gap:6px">
+          <button type="button" class="copy-flag-btn" onclick="document.getElementById('static-guide-chrome').style.display='block';document.getElementById('static-guide-firefox').style.display='none';document.getElementById('static-guide-safari').style.display='none'">Chrome / Edge</button>
+          <button type="button" class="copy-flag-btn" onclick="document.getElementById('static-guide-chrome').style.display='none';document.getElementById('static-guide-firefox').style.display='block';document.getElementById('static-guide-safari').style.display='none'">Firefox</button>
+          <button type="button" class="copy-flag-btn" onclick="document.getElementById('static-guide-chrome').style.display='none';document.getElementById('static-guide-firefox').style.display='none';document.getElementById('static-guide-safari').style.display='block'">Safari</button>
+        </div>
+      </div>
+      <div id="static-guide-chrome">
+        <p style="margin:0 0 .5rem;color:var(--text)"><b>Google Chrome, Microsoft Edge, Brave, Chromium (Windows, Mac, Linux):</b></p>
+        <ol style="margin:0;padding-left:1.2rem;line-height:1.75;color:var(--text-soft);font-size:.85rem">
+          <li><button type="button" class="copy-flag-btn" onclick="navigator.clipboard.writeText('chrome://flags/#enable-unsafe-webgpu').then(()=>{this.textContent='Copied!';setTimeout(()=>this.textContent='Copy',1600)})">Copy</button><code>chrome://flags/#enable-unsafe-webgpu</code> &rarr; set to <b>Enabled</b> <span style="color:var(--dim)">(bypasses driver blocklist on Linux/older GPUs)</span>.</li>
+          <li><button type="button" class="copy-flag-btn" onclick="navigator.clipboard.writeText('chrome://flags/#enable-vulkan').then(()=>{this.textContent='Copied!';setTimeout(()=>this.textContent='Copy',1600)})">Copy</button><code>chrome://flags/#enable-vulkan</code> &rarr; set to <b>Enabled</b>.</li>
+          <li><button type="button" class="copy-flag-btn" onclick="navigator.clipboard.writeText('chrome://flags/#ignore-gpu-blocklist').then(()=>{this.textContent='Copied!';setTimeout(()=>this.textContent='Copy',1600)})">Copy</button><code>chrome://flags/#ignore-gpu-blocklist</code> &rarr; set to <b>Enabled</b>.</li>
+          <li><button type="button" class="copy-flag-btn" onclick="navigator.clipboard.writeText('chrome://settings/system').then(()=>{this.textContent='Copied!';setTimeout(()=>this.textContent='Copy',1600)})">Copy</button><code>chrome://settings/system</code> &rarr; verify <b>Hardware acceleration</b> is ON.</li>
+          <li>Click the blue <b>Relaunch</b> button at the bottom of your browser.</li>
+        </ol>
+      </div>
+      <div id="static-guide-firefox" style="display:none">
+        <p style="margin:0 0 .5rem;color:var(--text)"><b>Mozilla Firefox (Windows, Mac, Linux):</b></p>
+        <ol style="margin:0;padding-left:1.2rem;line-height:1.75;color:var(--text-soft);font-size:.85rem">
+          <li><button type="button" class="copy-flag-btn" onclick="navigator.clipboard.writeText('about:config').then(()=>{this.textContent='Copied!';setTimeout(()=>this.textContent='Copy',1600)})">Copy</button><code>about:config</code> in URL bar &rarr; accept risk.</li>
+          <li>Search <button type="button" class="copy-flag-btn" onclick="navigator.clipboard.writeText('dom.webgpu.enabled').then(()=>{this.textContent='Copied!';setTimeout(()=>this.textContent='Copy',1600)})">Copy</button><code>dom.webgpu.enabled</code> &rarr; double-click to set to <b>true</b>.</li>
+          <li>Search <button type="button" class="copy-flag-btn" onclick="navigator.clipboard.writeText('gfx.webgpu.ignore-blocklist').then(()=>{this.textContent='Copied!';setTimeout(()=>this.textContent='Copy',1600)})">Copy</button><code>gfx.webgpu.ignore-blocklist</code> &rarr; set to <b>true</b> <span style="color:var(--dim)">(for Linux/RADV)</span>.</li>
+          <li>Restart Firefox and reload this page.</li>
+        </ol>
+      </div>
+      <div id="static-guide-safari" style="display:none">
+        <p style="margin:0 0 .5rem;color:var(--text)"><b>Apple Safari (macOS / iOS):</b></p>
+        <ol style="margin:0;padding-left:1.2rem;line-height:1.75;color:var(--text-soft);font-size:.85rem">
+          <li>Open Safari <b>Settings</b> (<kbd>Cmd + ,</kbd>) &rarr; <b>Advanced</b> &rarr; check <i>"Show features for web developers"</i>.</li>
+          <li>In Safari menu bar: <b>Develop</b> &rarr; <b>Feature Flags</b> &rarr; enable <b>WebGPU</b>.</li>
+          <li>Reload this page and press Play.</li>
+        </ol>
+      </div>
+      <div style="margin-top:.9rem;padding:.75rem 1rem;background:rgba(200,155,78,.08);border:1px solid rgba(200,155,78,.3);border-radius:var(--radius);font-size:.84rem">
+        <b style="color:var(--accent)">Looking for the Remake?</b> Try <a href="/game/v2/" style="color:var(--accent);font-weight:700;text-decoration:underline">Amni v2 Remake</a> with enhanced lighting, new mechanics, and photo mode.
+      </div>
+    </div>
     <ul>
-      <li><b>WebGPU needed</b>: switch to one of the browsers above.</li>
-      <li><b>No GPU adapter</b>: enable hardware acceleration, update drivers, then Retry.</li>
-      <li><b>Out-of-date engine files</b>: hard refresh with Ctrl+Shift+R (Cmd+Shift+R on Mac).</li>
-      <li><b>No sound</b>: press Play with the tab focused.</li>
+      <li><b>No GPU adapter</b>: follow the setup guide above to enable WebGPU.</li>
+      <li><b>World took too long</b>: Retry, then hard refresh (Ctrl+Shift+R / Cmd+Shift+R on Mac).</li>
+      <li>Choppy frame rate: lower Graphics in Options.</li>
     </ul>
   </section>
 </div>
@@ -348,33 +387,70 @@ function classifyBootError(msg) {
 }
 function getGpuHelpSnippet() {
   const ua = (navigator.userAgent || '').toLowerCase();
-  const isLinux = ua.includes('linux');
-  const isChrome = ua.includes('chrome') && !ua.includes('edg') && !ua.includes('opr');
   const isFirefox = ua.includes('firefox');
+  const isSafari = ua.includes('safari') && !ua.includes('chrome') && !ua.includes('chromium');
+  const activeTab = isFirefox ? 'firefox' : (isSafari ? 'safari' : 'chrome');
+
   const copyBtn = (val) => '<button type="button" class="copy-flag-btn" onclick="navigator.clipboard.writeText(\'' + val + '\').then(()=>{this.textContent=\'Copied!\';setTimeout(()=>this.textContent=\'Copy\',1600)}).catch(()=>{prompt(\'Copy URL:\',\'' + val + '\')})" title="Click to copy URL to clipboard">Copy</button>';
 
-  if (isLinux && isChrome) {
-    return '<div class="linux-gpu-guide" style="text-align:left;background:#181D24;border:1px solid #363E4B;padding:.75rem;border-radius:4px;margin:.75rem 0 .6rem;font-size:.78rem;line-height:1.6">' +
-      '<b style="color:#E5BA6C;display:block;margin-bottom:.35rem">Linux / Chrome WebGPU Setup:</b>' +
-      '<div style="margin-bottom:.28rem">1. ' + copyBtn('chrome://flags/#enable-unsafe-webgpu') + '<code style="user-select:all;color:#FFF">chrome://flags/#enable-unsafe-webgpu</code> &rarr; set to <b>Enabled</b>.</div>' +
+  return '<div class="gpu-guide-card" style="text-align:left;background:#161A20;border:1px solid #2E343D;padding:.85rem;border-radius:4px;margin:.75rem 0 .6rem;font-size:.78rem;line-height:1.55">' +
+    '<div style="display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin-bottom:.65rem;border-bottom:1px solid #2E343D;padding-bottom:.5rem;flex-wrap:wrap">' +
+      '<span style="color:#E5BA6C;font-weight:700;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase">Enable WebGPU in Your Browser:</span>' +
+      '<div style="display:flex;gap:4px">' +
+        '<button type="button" class="gpu-tab-btn" id="tabbtn-chrome" onclick="window.__switchGpuTab(\'chrome\')" style="background:' + (activeTab==='chrome'?'#2E343D':'transparent') + ';color:' + (activeTab==='chrome'?'#FFF':'#9AA1AB') + ';border:1px solid #363E4B;border-radius:2px;padding:2px 7px;font-size:.65rem;cursor:pointer;font-weight:600">Chrome/Edge</button>' +
+        '<button type="button" class="gpu-tab-btn" id="tabbtn-firefox" onclick="window.__switchGpuTab(\'firefox\')" style="background:' + (activeTab==='firefox'?'#2E343D':'transparent') + ';color:' + (activeTab==='firefox'?'#FFF':'#9AA1AB') + ';border:1px solid #363E4B;border-radius:2px;padding:2px 7px;font-size:.65rem;cursor:pointer;font-weight:600">Firefox</button>' +
+        '<button type="button" class="gpu-tab-btn" id="tabbtn-safari" onclick="window.__switchGpuTab(\'safari\')" style="background:' + (activeTab==='safari'?'#2E343D':'transparent') + ';color:' + (activeTab==='safari'?'#FFF':'#9AA1AB') + ';border:1px solid #363E4B;border-radius:2px;padding:2px 7px;font-size:.65rem;cursor:pointer;font-weight:600">Safari</button>' +
+      '</div>' +
+    '</div>' +
+
+    '<div id="gpu-tab-chrome" style="display:' + (activeTab==='chrome'?'block':'none') + '">' +
+      '<div style="color:#C9CFD8;margin-bottom:.35rem"><b>Google Chrome, Microsoft Edge, Brave, Chromium:</b></div>' +
+      '<div style="margin-bottom:.28rem">1. ' + copyBtn('chrome://flags/#enable-unsafe-webgpu') + '<code style="user-select:all;color:#FFF">chrome://flags/#enable-unsafe-webgpu</code> &rarr; set to <b>Enabled</b> <span style="opacity:.7">(bypasses Linux/Mesa RADV blocklist)</span>.</div>' +
       '<div style="margin-bottom:.28rem">2. ' + copyBtn('chrome://flags/#enable-vulkan') + '<code style="user-select:all;color:#FFF">chrome://flags/#enable-vulkan</code> &rarr; set to <b>Enabled</b>.</div>' +
       '<div style="margin-bottom:.28rem">3. ' + copyBtn('chrome://flags/#ignore-gpu-blocklist') + '<code style="user-select:all;color:#FFF">chrome://flags/#ignore-gpu-blocklist</code> &rarr; set to <b>Enabled</b>.</div>' +
-      '<div style="margin-bottom:.28rem">4. ' + copyBtn('chrome://settings/system') + '<code>chrome://settings/system</code> &rarr; <b>Hardware acceleration</b> is ON.</div>' +
-      '<div style="color:var(--dim);font-size:.71rem;margin-top:.45rem">*(Browsers block direct links to internal settings; click <b>Copy</b>, paste into your address bar, then click <b>Relaunch</b>).*</div>' +
-      '</div>';
-  } else if (isFirefox) {
-    return '<div class="linux-gpu-guide" style="text-align:left;background:#181D24;border:1px solid #363E4B;padding:.75rem;border-radius:4px;margin:.75rem 0 .6rem;font-size:.78rem;line-height:1.6">' +
-      '<b style="color:#E5BA6C;display:block;margin-bottom:.35rem">Firefox WebGPU Setup:</b>' +
-      '<div style="margin-bottom:.28rem">1. ' + copyBtn('about:config') + '<code style="user-select:all;color:#FFF">about:config</code> in URL bar.</div>' +
-      '<div style="margin-bottom:.28rem">2. Search <code style="user-select:all;color:#FFF">dom.webgpu.enabled</code> &rarr; set to <b>true</b>.</div>' +
-      '<div>3. Refresh this tab.</div>' +
-      '</div>';
-  }
-  return '<div class="linux-gpu-guide" style="text-align:left;background:#181D24;border:1px solid #363E4B;padding:.75rem;border-radius:4px;margin:.75rem 0 .6rem;font-size:.78rem;line-height:1.6">' +
-    '<b style="color:#E5BA6C;display:block;margin-bottom:.35rem">GPU Troubleshooting:</b>' +
-    '<div>' + copyBtn('chrome://settings/system') + 'Turn on Hardware Acceleration in browser settings (e.g. <code>chrome://settings/system</code>) and relaunch the browser.</div>' +
-    '</div>';
+      '<div style="margin-bottom:.28rem">4. ' + copyBtn('chrome://settings/system') + '<code>chrome://settings/system</code> &rarr; verify <b>Hardware acceleration</b> is ON.</div>' +
+      '<div style="color:#8A929E;font-size:.71rem;margin-top:.35rem">5. Click the blue <b>Relaunch</b> button at bottom of Chrome, then click <b>Retry</b> here.</div>' +
+    '</div>' +
+
+    '<div id="gpu-tab-firefox" style="display:' + (activeTab==='firefox'?'block':'none') + '">' +
+      '<div style="color:#C9CFD8;margin-bottom:.35rem"><b>Mozilla Firefox (Windows, Mac, Linux):</b></div>' +
+      '<div style="margin-bottom:.28rem">1. ' + copyBtn('about:config') + '<code style="user-select:all;color:#FFF">about:config</code> in URL bar &rarr; accept the warning.</div>' +
+      '<div style="margin-bottom:.28rem">2. Search: ' + copyBtn('dom.webgpu.enabled') + '<code style="user-select:all;color:#FFF">dom.webgpu.enabled</code> &rarr; double-click to set to <b>true</b>.</div>' +
+      '<div style="margin-bottom:.28rem">3. Search: ' + copyBtn('gfx.webgpu.ignore-blocklist') + '<code style="user-select:all;color:#FFF">gfx.webgpu.ignore-blocklist</code> &rarr; set to <b>true</b> <span style="opacity:.7">(for Linux/RADV)</span>.</div>' +
+      '<div style="color:#8A929E;font-size:.71rem;margin-top:.35rem">4. Reload this page and press <b>Play</b>.</div>' +
+    '</div>' +
+
+    '<div id="gpu-tab-safari" style="display:' + (activeTab==='safari'?'block':'none') + '">' +
+      '<div style="color:#C9CFD8;margin-bottom:.35rem"><b>Apple Safari (macOS / iOS):</b></div>' +
+      '<div style="margin-bottom:.28rem">1. Safari <b>Settings</b> (<kbd>Cmd + ,</kbd>) &rarr; <b>Advanced</b> &rarr; check <i>"Show features for web developers"</i>.</div>' +
+      '<div style="margin-bottom:.28rem">2. Menu bar: <b>Develop</b> &rarr; <b>Feature Flags</b> &rarr; enable <b>WebGPU</b>.</div>' +
+      '<div style="color:#8A929E;font-size:.71rem;margin-top:.35rem">3. Reload this page and press <b>Play</b>.</div>' +
+    '</div>' +
+
+    '<div style="color:var(--dim);font-size:.7rem;margin-top:.5rem;border-top:1px solid #242A33;padding-top:.4rem">' +
+      '<i>Note: Browsers block websites from linking directly to internal settings for security. Use <b>Copy</b>, paste into your address bar, and set.</i>' +
+    '</div>' +
+  '</div>' +
+
+  '<div style="margin-top:.7rem;padding:.75rem .9rem;background:rgba(200,155,78,.1);border:1px solid rgba(200,155,78,.4);border-radius:3px">' +
+    '<div style="color:#E5BA6C;font-weight:700;font-size:.75rem;margin-bottom:.2rem">Don't want to change browser flags?</div>' +
+    '<div style="color:#C9CFD8;font-size:.78rem;line-height:1.45;margin-bottom:.55rem">Classic Amni runs on standard WebGL2 — supported out of the box on all browsers and GPUs without any flag configuration:</div>' +
+    '<a href="/game/" style="display:inline-flex;align-items:center;gap:.4rem;background:var(--accent);color:#120C03;font-family:var(--font-sans);font-weight:700;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;padding:.45rem .85rem;border-radius:2px;text-decoration:none">' +
+      '▶ Launch Classic Amni (WebGL2)' +
+    '</a>' +
+  '</div>';
 }
+window.__switchGpuTab = function(tab) {
+  ['chrome', 'firefox', 'safari'].forEach(t => {
+    const el = document.getElementById('gpu-tab-' + t);
+    const btn = document.getElementById('tabbtn-' + t);
+    if (el) el.style.display = (t === tab) ? 'block' : 'none';
+    if (btn) {
+      btn.style.background = (t === tab) ? '#2E343D' : 'transparent';
+      btn.style.color = (t === tab) ? '#FFF' : '#9AA1AB';
+    }
+  });
+};
 const fail = (kind, detail) => {
   const e = BOOT[kind] || BOOT.generic;
   const detailHtml = detail ? '<p style="opacity:.7;font-size:.78em;word-break:break-word">' + String(detail).slice(0, 180) + '</p>' : '';
