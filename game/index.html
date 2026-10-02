@@ -87,7 +87,10 @@ kbd{display:inline-flex;align-items:center;justify-content:center;min-width:1.7r
   body.playing #stage{max-height:none;min-height:min(86svh,720px)}
 }
 @media(prefers-reduced-motion:reduce){#spin{animation:none;border-top-color:var(--accent)}}
-.game-ad{margin:2.5rem auto 0}
+.game-ad{margin:2.5rem auto 0;min-width:250px;width:100%;max-width:920px;box-sizing:border-box;overflow:hidden}
+.linux-gpu-guide code{background:rgba(0,0,0,.35);padding:2px 5px;border-radius:3px;color:#EDEFF2;user-select:all}
+.copy-flag-btn{background:var(--accent);color:#120C03;border:none;border-radius:2px;font-family:var(--font-sans);font-size:.62rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 6px;margin-right:6px;cursor:pointer;vertical-align:middle;transition:background .15s}
+.copy-flag-btn:hover{background:#EDEFF2}
 </style>
 </head>
 <body class="game-shell">
@@ -193,8 +196,32 @@ kbd{display:inline-flex;align-items:center;justify-content:center;min-width:1.7r
 <p class="page-updated">Last updated <time datetime="2026-09-27">September 27, 2026</time></p>
 <aside class="site-ad-banner game-ad" aria-label="Sponsored">
 <span class="ad-note">Sponsored</span>
-<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8345487545441889" data-ad-slot="1720203631" data-ad-format="auto" data-full-width-responsive="true"></ins>
-<script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>
+<ins class="adsbygoogle" style="display:block;min-width:250px;min-height:90px" data-ad-client="ca-pub-8345487545441889" data-ad-slot="1720203631" data-ad-format="auto" data-full-width-responsive="true"></ins>
+<script>
+(function(){
+  function initGameAd(){
+    var ins = document.querySelector('.site-ad-banner.game-ad ins.adsbygoogle');
+    if (!ins || ins.dataset.adStatus || ins.getAttribute('data-adsbygoogle-status')) return;
+    if (ins.offsetWidth >= 250) {
+      try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch(e) {}
+    } else {
+      var fired = false;
+      var retry = function(){
+        if (fired) return;
+        if (ins.offsetWidth >= 250) {
+          fired = true;
+          try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch(e) {}
+          window.removeEventListener('resize', retry);
+        }
+      };
+      window.addEventListener('load', retry, { once: true });
+      window.addEventListener('resize', retry, { passive: true });
+    }
+  }
+  if (document.readyState === 'complete') initGameAd();
+  else window.addEventListener('DOMContentLoaded', initGameAd);
+})();
+</script>
 </aside>
 
 <footer class="game-foot">
@@ -282,9 +309,9 @@ const BOOT = {
     retry: false
   },
   'no-adapter': {
-    title: 'No GPU adapter',
-    body: 'WebGPU is here but the GPU adapter did not answer. Turn on hardware acceleration and update graphics drivers, then retry.',
-    tip: 'Close other heavy GPU apps, then Retry.',
+    title: 'No GPU adapter available',
+    body: 'WebGPU is supported by this browser, but no active GPU adapter answered.',
+    tip: 'On Linux, Chrome blocks experimental Vulkan/RADV drivers by default until enabled in chrome://flags.',
     retry: true
   },
   timeout: {
@@ -319,13 +346,43 @@ function classifyBootError(msg) {
   if (m.includes('webgpu') || m.includes('adapter') || m.includes('device lost')) return 'no-adapter';
   return 'generic';
 }
+function getGpuHelpSnippet() {
+  const ua = (navigator.userAgent || '').toLowerCase();
+  const isLinux = ua.includes('linux');
+  const isChrome = ua.includes('chrome') && !ua.includes('edg') && !ua.includes('opr');
+  const isFirefox = ua.includes('firefox');
+  const copyBtn = (val) => '<button type="button" class="copy-flag-btn" onclick="navigator.clipboard.writeText(\'' + val + '\').then(()=>{this.textContent=\'Copied!\';setTimeout(()=>this.textContent=\'Copy\',1600)}).catch(()=>{prompt(\'Copy URL:\',\'' + val + '\')})" title="Click to copy URL to clipboard">Copy</button>';
+
+  if (isLinux && isChrome) {
+    return '<div class="linux-gpu-guide" style="text-align:left;background:#181D24;border:1px solid #363E4B;padding:.75rem;border-radius:4px;margin:.75rem 0 .6rem;font-size:.78rem;line-height:1.6">' +
+      '<b style="color:#E5BA6C;display:block;margin-bottom:.35rem">Linux / Chrome WebGPU Setup:</b>' +
+      '<div style="margin-bottom:.28rem">1. ' + copyBtn('chrome://flags/#enable-unsafe-webgpu') + '<code style="user-select:all;color:#FFF">chrome://flags/#enable-unsafe-webgpu</code> &rarr; set to <b>Enabled</b>.</div>' +
+      '<div style="margin-bottom:.28rem">2. ' + copyBtn('chrome://flags/#enable-vulkan') + '<code style="user-select:all;color:#FFF">chrome://flags/#enable-vulkan</code> &rarr; set to <b>Enabled</b>.</div>' +
+      '<div style="margin-bottom:.28rem">3. ' + copyBtn('chrome://flags/#ignore-gpu-blocklist') + '<code style="user-select:all;color:#FFF">chrome://flags/#ignore-gpu-blocklist</code> &rarr; set to <b>Enabled</b>.</div>' +
+      '<div style="margin-bottom:.28rem">4. ' + copyBtn('chrome://settings/system') + '<code>chrome://settings/system</code> &rarr; <b>Hardware acceleration</b> is ON.</div>' +
+      '<div style="color:var(--dim);font-size:.71rem;margin-top:.45rem">*(Browsers block direct links to internal settings; click <b>Copy</b>, paste into your address bar, then click <b>Relaunch</b>).*</div>' +
+      '</div>';
+  } else if (isFirefox) {
+    return '<div class="linux-gpu-guide" style="text-align:left;background:#181D24;border:1px solid #363E4B;padding:.75rem;border-radius:4px;margin:.75rem 0 .6rem;font-size:.78rem;line-height:1.6">' +
+      '<b style="color:#E5BA6C;display:block;margin-bottom:.35rem">Firefox WebGPU Setup:</b>' +
+      '<div style="margin-bottom:.28rem">1. ' + copyBtn('about:config') + '<code style="user-select:all;color:#FFF">about:config</code> in URL bar.</div>' +
+      '<div style="margin-bottom:.28rem">2. Search <code style="user-select:all;color:#FFF">dom.webgpu.enabled</code> &rarr; set to <b>true</b>.</div>' +
+      '<div>3. Refresh this tab.</div>' +
+      '</div>';
+  }
+  return '<div class="linux-gpu-guide" style="text-align:left;background:#181D24;border:1px solid #363E4B;padding:.75rem;border-radius:4px;margin:.75rem 0 .6rem;font-size:.78rem;line-height:1.6">' +
+    '<b style="color:#E5BA6C;display:block;margin-bottom:.35rem">GPU Troubleshooting:</b>' +
+    '<div>' + copyBtn('chrome://settings/system') + 'Turn on Hardware Acceleration in browser settings (e.g. <code>chrome://settings/system</code>) and relaunch the browser.</div>' +
+    '</div>';
+}
 const fail = (kind, detail) => {
   const e = BOOT[kind] || BOOT.generic;
   const detailHtml = detail ? '<p style="opacity:.7;font-size:.78em;word-break:break-word">' + String(detail).slice(0, 180) + '</p>' : '';
+  const guideHtml = (kind === 'no-adapter') ? getGpuHelpSnippet() : '';
   const actions = e.retry
-    ? '<div class="actions"><button type="button" class="retry" id="retryBtn">Retry</button><a class="help" href="https://caniuse.com/webgpu" target="_blank" rel="noopener">WebGPU help</a></div>'
-    : '<div class="actions"><a class="help" href="https://caniuse.com/webgpu" target="_blank" rel="noopener">Supported browsers</a></div>';
-  status.innerHTML = '<div class="err-card"><h3>' + e.title + '</h3><p>' + e.body + '</p><p class="tip">' + e.tip + '</p>' + detailHtml + actions + '</div>';
+    ? '<div class="actions"><button type="button" class="retry" id="retryBtn">Retry</button><a class="help" href="/game/v2/">Try Amni v2</a><a class="help" href="https://caniuse.com/webgpu" target="_blank" rel="noopener">WebGPU help</a></div>'
+    : '<div class="actions"><a class="help" href="/game/v2/">Try Amni v2</a><a class="help" href="https://caniuse.com/webgpu" target="_blank" rel="noopener">Supported browsers</a></div>';
+  status.innerHTML = '<div class="err-card"><h3>' + e.title + '</h3><p>' + e.body + '</p>' + guideHtml + '<p class="tip">' + e.tip + '</p>' + detailHtml + actions + '</div>';
   spin.style.display = 'none';
   document.getElementById('loadBar').style.display = 'none';
   btn.disabled = false;
@@ -333,10 +390,26 @@ const fail = (kind, detail) => {
   const rb = document.getElementById('retryBtn');
   if (rb) rb.onclick = () => { btn.click(); };
 };
+async function requestWebGpuAdapter(){
+  if(!navigator.gpu) return null;
+  const tries = [
+    { powerPreference: 'high-performance' },
+    { powerPreference: 'low-power' },
+    undefined,
+    { forceFallbackAdapter: true }
+  ];
+  for(const opt of tries){
+    try {
+      const a = await navigator.gpu.requestAdapter(opt);
+      if(a) return a;
+    } catch(e){}
+  }
+  return null;
+}
 async function webgpuReason(){
   if(!navigator.gpu) return 'no-api';
-  try { const a = await navigator.gpu.requestAdapter({powerPreference:'high-performance'}); return a ? 'ok' : 'no-adapter'; }
-  catch(e){ return 'no-adapter'; }
+  const a = await requestWebGpuAdapter();
+  return a ? 'ok' : 'no-adapter';
 }
 async function unlockBrowserAudio(){
   try {

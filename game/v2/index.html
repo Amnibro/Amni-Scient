@@ -89,6 +89,8 @@ kbd{display:inline-flex;align-items:center;justify-content:center;min-width:1.7r
 @media(prefers-reduced-motion:reduce){#spin{animation:none;border-top-color:var(--accent)}}
 .game-ad{margin:2.5rem auto 0;min-width:250px;width:100%;max-width:920px;box-sizing:border-box;overflow:hidden}
 .linux-gpu-guide code{background:rgba(0,0,0,.35);padding:2px 5px;border-radius:3px;color:#EDEFF2;user-select:all}
+.copy-flag-btn{background:var(--accent);color:#120C03;border:none;border-radius:2px;font-family:var(--font-sans);font-size:.62rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 6px;margin-right:6px;cursor:pointer;vertical-align:middle;transition:background .15s}
+.copy-flag-btn:hover{background:#EDEFF2}
 </style>
 </head>
 <body class="game-shell">
@@ -346,26 +348,28 @@ function getGpuHelpSnippet() {
   const isLinux = ua.includes('linux');
   const isChrome = ua.includes('chrome') && !ua.includes('edg') && !ua.includes('opr');
   const isFirefox = ua.includes('firefox');
+  const copyBtn = (val) => '<button type="button" class="copy-flag-btn" onclick="navigator.clipboard.writeText(\'' + val + '\').then(()=>{this.textContent=\'Copied!\';setTimeout(()=>this.textContent=\'Copy\',1600)}).catch(()=>{prompt(\'Copy URL:\',\'' + val + '\')})" title="Click to copy URL to clipboard">Copy</button>';
+
   if (isLinux && isChrome) {
-    return '<div class="linux-gpu-guide" style="text-align:left;background:#181D24;border:1px solid #363E4B;padding:.75rem;border-radius:4px;margin:.75rem 0 .6rem;font-size:.78rem;line-height:1.5">' +
+    return '<div class="linux-gpu-guide" style="text-align:left;background:#181D24;border:1px solid #363E4B;padding:.75rem;border-radius:4px;margin:.75rem 0 .6rem;font-size:.78rem;line-height:1.6">' +
       '<b style="color:#E5BA6C;display:block;margin-bottom:.35rem">Linux / Chrome WebGPU Setup:</b>' +
-      '<div>1. Open <code style="user-select:all;color:#FFF">chrome://flags/#enable-unsafe-webgpu</code> &rarr; set to <b>Enabled</b>.</div>' +
-      '<div>2. Open <code style="user-select:all;color:#FFF">chrome://flags/#enable-vulkan</code> &rarr; set to <b>Enabled</b>.</div>' +
-      '<div>3. Open <code style="user-select:all;color:#FFF">chrome://flags/#ignore-gpu-blocklist</code> &rarr; set to <b>Enabled</b>.</div>' +
-      '<div>4. Check <code>chrome://settings/system</code> &rarr; <b>Hardware acceleration</b> is ON.</div>' +
-      '<div>5. Click <b>Relaunch</b> at bottom of Chrome, then click Retry here.</div>' +
+      '<div style="margin-bottom:.28rem">1. ' + copyBtn('chrome://flags/#enable-unsafe-webgpu') + '<code style="user-select:all;color:#FFF">chrome://flags/#enable-unsafe-webgpu</code> &rarr; set to <b>Enabled</b>.</div>' +
+      '<div style="margin-bottom:.28rem">2. ' + copyBtn('chrome://flags/#enable-vulkan') + '<code style="user-select:all;color:#FFF">chrome://flags/#enable-vulkan</code> &rarr; set to <b>Enabled</b>.</div>' +
+      '<div style="margin-bottom:.28rem">3. ' + copyBtn('chrome://flags/#ignore-gpu-blocklist') + '<code style="user-select:all;color:#FFF">chrome://flags/#ignore-gpu-blocklist</code> &rarr; set to <b>Enabled</b>.</div>' +
+      '<div style="margin-bottom:.28rem">4. ' + copyBtn('chrome://settings/system') + '<code>chrome://settings/system</code> &rarr; <b>Hardware acceleration</b> is ON.</div>' +
+      '<div style="color:var(--dim);font-size:.71rem;margin-top:.45rem">*(Browsers block direct links to internal settings; click <b>Copy</b>, paste into your address bar, then click <b>Relaunch</b>).*</div>' +
       '</div>';
   } else if (isFirefox) {
-    return '<div class="linux-gpu-guide" style="text-align:left;background:#181D24;border:1px solid #363E4B;padding:.75rem;border-radius:4px;margin:.75rem 0 .6rem;font-size:.78rem;line-height:1.5">' +
+    return '<div class="linux-gpu-guide" style="text-align:left;background:#181D24;border:1px solid #363E4B;padding:.75rem;border-radius:4px;margin:.75rem 0 .6rem;font-size:.78rem;line-height:1.6">' +
       '<b style="color:#E5BA6C;display:block;margin-bottom:.35rem">Firefox WebGPU Setup:</b>' +
-      '<div>1. Open <code>about:config</code> in URL bar.</div>' +
-      '<div>2. Search <code>dom.webgpu.enabled</code> &rarr; set to <b>true</b>.</div>' +
+      '<div style="margin-bottom:.28rem">1. ' + copyBtn('about:config') + '<code style="user-select:all;color:#FFF">about:config</code> in URL bar.</div>' +
+      '<div style="margin-bottom:.28rem">2. Search <code style="user-select:all;color:#FFF">dom.webgpu.enabled</code> &rarr; set to <b>true</b>.</div>' +
       '<div>3. Refresh this tab.</div>' +
       '</div>';
   }
-  return '<div class="linux-gpu-guide" style="text-align:left;background:#181D24;border:1px solid #363E4B;padding:.75rem;border-radius:4px;margin:.75rem 0 .6rem;font-size:.78rem;line-height:1.5">' +
+  return '<div class="linux-gpu-guide" style="text-align:left;background:#181D24;border:1px solid #363E4B;padding:.75rem;border-radius:4px;margin:.75rem 0 .6rem;font-size:.78rem;line-height:1.6">' +
     '<b style="color:#E5BA6C;display:block;margin-bottom:.35rem">GPU Troubleshooting:</b>' +
-    '<div>Turn on Hardware Acceleration in browser settings (e.g. <code>chrome://settings/system</code>) and relaunch the browser.</div>' +
+    '<div>' + copyBtn('chrome://settings/system') + 'Turn on Hardware Acceleration in browser settings (e.g. <code>chrome://settings/system</code>) and relaunch the browser.</div>' +
     '</div>';
 }
 const fail = (kind, detail) => {
@@ -373,8 +377,8 @@ const fail = (kind, detail) => {
   const detailHtml = detail ? '<p style="opacity:.7;font-size:.78em;word-break:break-word">' + String(detail).slice(0, 180) + '</p>' : '';
   const guideHtml = (kind === 'no-adapter') ? getGpuHelpSnippet() : '';
   const actions = e.retry
-    ? '<div class="actions"><button type="button" class="retry" id="retryBtn">Retry</button><a class="help" href="https://caniuse.com/webgpu" target="_blank" rel="noopener">WebGPU help</a></div>'
-    : '<div class="actions"><a class="help" href="https://caniuse.com/webgpu" target="_blank" rel="noopener">Supported browsers</a></div>';
+    ? '<div class="actions"><button type="button" class="retry" id="retryBtn">Retry</button><a class="help" href="/game/">Play Classic (WebGL2)</a><a class="help" href="https://caniuse.com/webgpu" target="_blank" rel="noopener">WebGPU help</a></div>'
+    : '<div class="actions"><a class="help" href="/game/">Play Classic (WebGL2)</a><a class="help" href="https://caniuse.com/webgpu" target="_blank" rel="noopener">Supported browsers</a></div>';
   status.innerHTML = '<div class="err-card"><h3>' + e.title + '</h3><p>' + e.body + '</p>' + guideHtml + '<p class="tip">' + e.tip + '</p>' + detailHtml + actions + '</div>';
   spin.style.display = 'none';
   document.getElementById('loadBar').style.display = 'none';
