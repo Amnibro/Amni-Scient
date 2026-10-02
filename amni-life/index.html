@@ -6,7 +6,7 @@
 <title>Amni-Life — Memory Map</title>
 <meta name="description" content="A memory map for the fragments of a life. WASM/Rust + Three.js, offline-first, zero telemetry."/>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230b0d12'/%3E%3Ccircle cx='10' cy='12' r='2.4' fill='%237cc4ff'/%3E%3Ccircle cx='22' cy='10' r='2' fill='%23ffb060'/%3E%3Ccircle cx='16' cy='22' r='2.6' fill='%23f5c842'/%3E%3Ccircle cx='24' cy='22' r='1.6' fill='%237be0a4'/%3E%3Cpath d='M10 12 L16 22 M22 10 L16 22 M16 22 L24 22' stroke='%23ffffff' stroke-opacity='0.25' stroke-width='1' fill='none'/%3E%3C/svg%3E"/>
-<link rel="stylesheet" href="style.css?v=b260"/>
+<link rel="stylesheet" href="style.css"/>
 <link rel="manifest" href="manifest.webmanifest"/>
 <meta name="theme-color" content="#0b0d12"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
@@ -27,7 +27,6 @@
 <div id="loader"><div id="loader-dot"></div><div id="loader-text">awakening the map…</div></div>
 <button id="burger" title="Menu">☰</button>
 <div id="topbar">
-<a id="site-home" href="/" title="Back to Amni-Scient">&#8592;</a>
 <div id="logo">AMNI<span>-LIFE</span></div>
 <span id="viewlabel">VIEW</span>
 <select id="view-select">
@@ -54,6 +53,7 @@
 <button class="topbtn" id="btn-theme" title="Cycle theme (T) · right-click to build a custom one">THEME</button>
 <button class="topbtn" id="btn-list" title="Toggle fragment list (L)">LIST</button>
 <button class="topbtn" id="btn-add" title="Add fragment (N)">+ ADD</button>
+<button class="topbtn" id="btn-build" title="Import & build life from any files (photos, PDFs, docs, scans) with Auto-OCR" style="border-color:var(--accent);color:var(--accent)">✨ BUILD LIFE</button>
 <button class="topbtn" id="btn-folder" title="Import a folder of photos (auto-fills map from EXIF)">+ FOLDER</button>
 <button class="topbtn" id="btn-connect" title="Connect Google Photos / external timeline">CONNECT</button>
 <button class="topbtn" id="btn-install" title="Install Amni-Life as an app">INSTALL</button>
@@ -191,6 +191,7 @@ Drag to orbit · scroll to zoom · right-click to pan.
 <div id="help-panel"><div id="help-card"><div id="help-head"><span id="help-title">KEYBOARD SHORTCUTS</span><button id="help-close" class="lb-close" title="Close (Esc)">×</button></div><div id="help-body"></div></div></div>
 <canvas id="minimap" width="180" height="180" title="Mini-map · click to fly there"></canvas>
 <div id="print-frame"></div>
+<div id="build-modal"><div id="build-card"><div id="build-head"><span id="build-title">✨ BUILD LIFE · AUTO-INGEST &amp; OCR</span><button id="build-close" class="lb-close" title="Close (Esc)">×</button></div><div id="build-body"><div id="build-dropzone"><div id="build-drop-icon">📂</div><div id="build-drop-text">Drag &amp; drop photos, PDFs, Word docs, notes, scans, or folders here</div><div id="build-drop-sub">JPG, PNG, WebP, HEIC, PDF, DOCX, TXT, MD, CSV, ICS · 100% offline &amp; private</div><div id="build-drop-btns"><button class="topbtn" id="btn-build-browse" style="border-color:var(--accent);color:var(--accent)">BROWSE FILES</button><button class="topbtn" id="btn-build-folder">BROWSE FOLDER</button></div></div><div id="build-options"><label><input type="checkbox" id="build-opt-ocr" checked/> Auto-OCR images &amp; scans (extracts text from documents, signs, receipts)</label><label><input type="checkbox" id="build-opt-split" checked/> Auto-split multi-event documents (resumes, memoirs, journals)</label><label><input type="checkbox" id="build-opt-connect" checked/> Auto-connect shared people, places &amp; eras</label></div><div id="build-progress" style="display:none"><div id="build-progress-label">Preparing ingestion…</div><div class="stat-bar"><div id="build-progress-bar" class="stat-bar-fill" style="width:0%"></div></div><div id="build-progress-status" style="font-family:var(--mono);font-size:0.68rem;color:var(--dim)">0 files processed</div></div><div id="build-staged-wrap" style="display:none"><div id="build-staged-head"><span>STAGED FRAGMENTS (<span id="build-staged-count">0</span>)</span><button class="smallbtn" id="btn-build-clear-all" style="font-size:0.6rem;padding:2px 6px">CLEAR ALL</button></div><div id="build-staged-list"></div></div></div><div id="build-actions"><button class="topbtn" id="build-cancel">CANCEL</button><button class="topbtn" id="build-fresh" style="display:none">✨ START FRESH MAP</button><button class="topbtn" id="build-commit" style="display:none;border-color:var(--accent);color:var(--accent)">+ ADD TO MAP (<span id="build-commit-count">0</span>)</button></div></div></div>
 <div id="modal-bg">
 <div id="modal">
 <div id="modal-head"><span id="modal-title">EDIT FRAGMENT</span><button class="topbtn" id="modal-close">×</button></div>
@@ -275,6 +276,8 @@ Drag to orbit · scroll to zoom · right-click to pan.
 <input type="file" id="file-input" accept="application/json,.json,text/csv,.csv,text/calendar,.ics" style="display:none"/>
 <input type="file" id="media-input" accept="image/*,video/*,audio/*" multiple style="display:none"/>
 <input type="file" id="folder-input" webkitdirectory directory multiple style="display:none"/>
+<input type="file" id="build-files-input" multiple accept="image/*,.pdf,.docx,.txt,.md,.markdown,.csv,.tsv,.ics,.json" style="display:none"/>
+<input type="file" id="build-folder-input" webkitdirectory directory multiple style="display:none"/>
 <div id="tooltip"></div>
 <div id="stats">—</div>
 <div id="toast"></div>

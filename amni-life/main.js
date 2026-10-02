@@ -1572,6 +1572,433 @@ async function importFolder(files) {
     buildPoints(); buildEdges(); renderFragsList(); renderTagFilters(); renderEdgeFilters(); updateStats();
     toast(`Imported ${done}${withSidecar ? ` (${withSidecar} from Takeout)` : ''} · ${fragments.length - startSize} new fragments`);
 }
+let stagedFragments = [];
+let ocrWorker = null;
+function loadScript(src, globalKey) {
+    if (globalKey && window[globalKey]) return Promise.resolve(true);
+    return new Promise((res, rej) => {
+        const s = document.createElement('script');
+        s.src = src;
+        s.onload = () => res(true);
+        s.onerror = () => rej(new Error('Failed to load ' + src));
+        document.head.appendChild(s);
+    });
+}
+async function getOcrWorker(progressCb) {
+    if (ocrWorker) return ocrWorker;
+    await loadScript('https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js', 'Tesseract');
+    if (!window.Tesseract) throw new Error('Tesseract unavailable');
+    ocrWorker = await window.Tesseract.createWorker('eng', 1, {
+        logger: m => { if (m.status === 'recognizing text' && progressCb) progressCb(m.progress); }
+    });
+    return ocrWorker;
+}
+async function ocrImage(imgSrc, progressCb) {
+    try {
+        if ('TextDetector' in window) {
+            try {
+                const img = new Image();
+                img.src = typeof imgSrc === 'string' ? imgSrc : (imgSrc.toDataURL ? imgSrc.toDataURL() : URL.createObjectURL(imgSrc));
+                await img.decode();
+                const detector = new window.TextDetector();
+                const detected = await detector.detect(img);
+                if (detected?.length) return detected.map(d => d.rawValue).join('\n');
+            } catch {}
+        }
+        const worker = await getOcrWorker(progressCb);
+        const ret = await worker.recognize(imgSrc);
+        return ret?.data?.text || '';
+    } catch (err) {
+        console.warn('OCR error:', err);
+        return '';
+    }
+}
+async function parsePDF(file, doOcr, progressCb) {
+    await loadScript('https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js', 'pdfjsLib');
+    if (!window.pdfjsLib) throw new Error('PDF.js unavailable');
+    window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
+    const arrayBuffer = await file.arrayBuffer();
+    const pdf = await window.pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+    let fullText = '', numPages = Math.min(pdf.numPages, 12);
+    for (let i = 1; i <= numPages; i++) {
+        const page = await pdf.getPage(i);
+        const tc = await page.getTextContent();
+        const pageText = tc.items.map(s => s.str).join(' ').trim();
+        if (pageText.length > 30) {
+            fullText += (fullText ? '\n\n' : '') + pageText;
+        } else if (doOcr) {
+            try {
+                const viewport = page.getViewport({ scale: 1.5 });
+                const canvas = document.createElement('canvas');
+                canvas.width = viewport.width; canvas.height = viewport.height;
+                const ctx = canvas.getContext('2d');
+                await page.render({ canvasContext: ctx, viewport }).promise;
+                const scanned = await ocrImage(canvas, progressCb);
+                if (scanned.trim()) fullText += (fullText ? '\n\n' : '') + scanned;
+            } catch {}
+        }
+        if (progressCb) progressCb(i / numPages);
+    }
+    return fullText;
+}
+async function parseDOCX(file) {
+    await loadScript('https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js', 'JSZip');
+    if (!window.JSZip) throw new Error('JSZip unavailable');
+    const zip = await window.JSZip.loadAsync(file);
+    const docXml = zip.file('word/document.xml');
+    if (!docXml) return '';
+    const xmlStr = await docXml.async('string');
+    const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(xmlStr, 'application/xml');
+    const paragraphs = [...xmlDoc.getElementsByTagName('w:p')];
+    return paragraphs.map(p => [...p.getElementsByTagName('w:t')].map(t => t.textContent).join('')).filter(Boolean).join('\n');
+}
+function extractDateDetails(text, fallbackYear) {
+    const spanM = text.match(/\b(19[4-9]\d|20[0-2]\d)\s*[-–—to]+\s*(19[4-9]\d|20[0-2]\d)\b/i);
+    if (spanM) return { year: parseInt(spanM[1], 10), yearEnd: parseInt(spanM[2], 10), isEra: true };
+    const isoM = text.match(/\b(19[4-9]\d|20[0-2]\d)[-/](0?[1-9]|1[0-2])[-/](0?[1-9]|[12]\d|3[01])\b/);
+    if (isoM) return { year: parseInt(isoM[1], 10), month: parseInt(isoM[2], 10), day: parseInt(isoM[3], 10) };
+    const mName = '(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)';
+    const mdyM = text.match(new RegExp('\\b(' + mName + ')\\s+(\\d{1,2}),?\\s+(19[4-9]\\d|20[0-2]\\d)\\b', 'i'));
+    if (mdyM) {
+        const mo = new Date(Date.parse(mdyM[1] + ' 1, 2000')).getMonth() + 1;
+        return { year: parseInt(mdyM[3], 10), month: mo, day: parseInt(mdyM[2], 10) };
+    }
+    const myM = text.match(new RegExp('\\b(' + mName + ')\\s+(19[4-9]\\d|20[0-2]\\d)\\b', 'i'));
+    if (myM) {
+        const mo = new Date(Date.parse(myM[1] + ' 1, 2000')).getMonth() + 1;
+        return { year: parseInt(myM[2], 10), month: mo };
+    }
+    const yrM = text.match(/\b(19[4-9]\d|20[0-2]\d)\b/);
+    if (yrM) return { year: parseInt(yrM[1], 10) };
+    return { year: fallbackYear || null };
+}
+function inferKind(title, text) {
+    const blob = (title + ' ' + text).toLowerCase();
+    const scores = { work: 0, place: 0, person: 0, idea: 0, era: 0, event: 0 };
+    const check = (kind, re, weight) => { if (re.test(blob)) scores[kind] += weight; };
+    check('work', /\b(resume|cv|curriculum vitae|engineer[a-z]*|developer[a-z]*|architect[a-z]*|manager[a-z]*|director[a-z]*|intern[a-z]*|founder[a-z]*|university|college|degree|diploma|bachelor|master|phd|gpa|client[a-z]*|project[a-z]*|employment|company|corp|inc|salary|career|study|student|lead[a-z]*|consultant[a-z]*)\b/i, 4);
+    check('place', /\b(travel|flight|airport|hotel|road trip|vacation|visit|moved to|cottage|beach|mountain|paris|tokyo|london|york|berlin|kyoto|california|italy|france|japan|island|city|cabin)\b/i, 3);
+    check('person', /\b(mom|dad|mother|father|sister|brother|son|daughter|grandmother|grandpa|cousin|wife|husband|partner|fiancé|friend|mentor|baby|born|birth certificate|wedding)\b/i, 3);
+    check('idea', /\b(idea|philosophy|reflection|realized|learned|insight|thoughts on|manifesto|belief|journal|dream|quote|lesson)\b/i, 2.5);
+    check('era', /\b(childhood|years|decade|era|twenties|thirties|the nineties|the 90s|the 2000s)\b/i, 5);
+    check('event', /\b(birthday|anniversary|celebration|concert|festival|ceremony|party|conference|meetup|reunion|first time|award)\b/i, 2);
+    let bestKind = 'event', maxScore = 0;
+    for (const k in scores) if (scores[k] > maxScore) { maxScore = scores[k]; bestKind = k; }
+    if (bestKind === 'event' && /\b(19[4-9]\d|20[0-2]\d)\s*[-–—to]+\s*(19[4-9]\d|20[0-2]\d)\b/.test(blob)) return 'era';
+    return bestKind;
+}
+function extractEntitiesAndTags(title, text, kind, lat, lon) {
+    const tags = new Set();
+    tags.add(kind);
+    if (typeof lat === 'number') tags.add('geo');
+    const blob = (title + ' ' + text).toLowerCase();
+    const kw = [
+        ['family', /\b(mom|dad|mother|father|sister|brother|grandmother|grandpa|family)\b/i],
+        ['career', /\b(work|job|career|engineer|company|project|hire|client)\b/i],
+        ['education', /\b(university|college|school|degree|diploma|graduation|class)\b/i],
+        ['travel', /\b(travel|trip|flight|vacation|hotel|explore|journey)\b/i],
+        ['art', /\b(music|band|painting|photo|concert|album|song|design)\b/i],
+        ['milestone', /\b(milestone|anniversary|birthday|wedding|graduated|moved)\b/i]
+    ];
+    kw.forEach(([t, re]) => { if (re.test(blob)) tags.add(t); });
+    return [...tags];
+}
+function splitDocumentMilestones(text, fileName, fileYear) {
+    const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+    if (lines.length === 0) return [];
+    const yearHeadingRe = /^(?:#{1,4}\s*)?(?:(?:19[4-9]\d|20[0-2]\d)(?:\s*[-–—to]+\s*(?:19[4-9]\d|20[0-2]\d|Present))?|(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+(?:19[4-9]\d|20[0-2]\d))[:\s\-–—]*/i;
+    const sections = [];
+    let cur = null;
+    for (const line of lines) {
+        if (yearHeadingRe.test(line)) {
+            if (cur) sections.push(cur);
+            cur = { heading: line, body: [] };
+        } else if (cur) {
+            cur.body.push(line);
+        }
+    }
+    if (cur) sections.push(cur);
+    if (sections.length >= 2) {
+        return sections.map(s => {
+            const raw = s.heading + '\n' + s.body.join('\n');
+            const d = extractDateDetails(raw, fileYear);
+            const title = s.heading.replace(yearHeadingRe, '').trim() || s.heading;
+            return {
+                title: title.slice(0, 72),
+                kind: inferKind(title, s.body.join(' ')),
+                year: d.year,
+                month: d.month || null,
+                day: d.day || null,
+                summary: s.body.slice(0, 6).join(' ').slice(0, 300) || s.heading
+            };
+        });
+    }
+    const d = extractDateDetails(text, fileYear);
+    const title = (lines[0] || fileName.replace(/\.[^.]+$/, '')).slice(0, 72);
+    return [{
+        title,
+        kind: inferKind(title, text),
+        year: d.year,
+        month: d.month || null,
+        day: d.day || null,
+        summary: lines.slice(1, 6).join(' ').slice(0, 300) || lines[0]
+    }];
+}
+function autoConnectFragments(newFrags, existingFrags = []) {
+    const all = [...existingFrags, ...newFrags];
+    const eras = all.filter(f => f.kind === 'era' && f.year);
+    for (const f of newFrags) {
+        if (!f.connections) f.connections = [];
+        const existingTo = new Set(f.connections.map(c => c.to));
+        if (f.kind !== 'era' && f.year) {
+            for (const era of eras) {
+                if (era.id === f.id) continue;
+                const yEnd = era.yearEnd || (era.year + 4);
+                if (f.year >= era.year && f.year <= yEnd && !existingTo.has(era.id)) {
+                    f.connections.push({ to: era.id, type: 'part-of' });
+                    existingTo.add(era.id);
+                    break;
+                }
+            }
+        }
+        for (const other of all) {
+            if (other.id === f.id || existingTo.has(other.id)) continue;
+            const commonTags = (f.tags || []).filter(t => (other.tags || []).includes(t) && !['geo', 'event', 'photo', 'doc', 'work', 'era'].includes(t));
+            if (commonTags.some(t => ['family', 'friend', 'mentor', 'team'].includes(t)) || (other.kind === 'person' && f.title.toLowerCase().includes(other.title.toLowerCase()))) {
+                f.connections.push({ to: other.id, type: 'with' });
+                existingTo.add(other.id);
+            } else if (typeof f.lat === 'number' && typeof other.lat === 'number' && Math.abs(f.lat - other.lat) < 0.1 && Math.abs(f.lon - other.lon) < 0.1) {
+                f.connections.push({ to: other.id, type: 'at' });
+                existingTo.add(other.id);
+            }
+        }
+    }
+}
+function openBuildModal() {
+    $('build-modal').classList.add('show');
+    stagedFragments = [];
+    renderStagedFragments();
+    $('build-progress').style.display = 'none';
+}
+function closeBuildModal() {
+    $('build-modal').classList.remove('show');
+    stagedFragments = [];
+}
+function renderStagedFragments() {
+    const list = $('build-staged-list');
+    const wrap = $('build-staged-wrap');
+    const commitBtn = $('build-commit');
+    const freshBtn = $('build-fresh');
+    $('build-staged-count').textContent = stagedFragments.length;
+    $('build-commit-count').textContent = stagedFragments.length;
+    if (stagedFragments.length === 0) {
+        wrap.style.display = 'none';
+        commitBtn.style.display = 'none';
+        freshBtn.style.display = 'none';
+        list.innerHTML = '';
+        return;
+    }
+    wrap.style.display = 'flex';
+    commitBtn.style.display = '';
+    freshBtn.style.display = '';
+    list.innerHTML = '';
+    stagedFragments.forEach((f, idx) => {
+        const card = document.createElement('div');
+        card.className = 'staged-card';
+        const thumbDiv = document.createElement('div');
+        thumbDiv.className = 'staged-thumb';
+        if (f.thumbUrl) {
+            const img = document.createElement('img');
+            img.src = f.thumbUrl;
+            img.style.width = '100%'; img.style.height = '100%'; img.style.objectFit = 'cover'; img.style.borderRadius = '4px';
+            thumbDiv.appendChild(img);
+        } else {
+            thumbDiv.textContent = f.kind === 'person' ? '👤' : f.kind === 'place' ? '📍' : f.kind === 'work' ? '💼' : f.kind === 'idea' ? '💡' : f.kind === 'era' ? '⏳' : '📅';
+        }
+        const main = document.createElement('div');
+        main.className = 'staged-main';
+        const hdr = document.createElement('div');
+        hdr.className = 'staged-header';
+        const badge = document.createElement('button');
+        badge.className = `staged-kind-badge staged-kind-${f.kind}`;
+        badge.textContent = f.kind;
+        badge.title = 'Click to switch kind';
+        badge.onclick = () => {
+            const kinds = allKinds();
+            f.kind = kinds[(kinds.indexOf(f.kind) + 1) % kinds.length];
+            renderStagedFragments();
+        };
+        const yr = document.createElement('span');
+        yr.className = 'staged-year';
+        yr.textContent = f.year ? (f.month ? `${f.year}-${String(f.month).padStart(2,'0')}${f.day ? `-${String(f.day).padStart(2,'0')}` : ''}` : f.year) : '—';
+        hdr.appendChild(badge);
+        hdr.appendChild(yr);
+        const titleIn = document.createElement('input');
+        titleIn.className = 'staged-title-input';
+        titleIn.value = f.title;
+        titleIn.onchange = e => { f.title = e.target.value.trim() || f.title; };
+        const sum = document.createElement('div');
+        sum.className = 'staged-summary';
+        sum.textContent = f.summary || '';
+        const tagsDiv = document.createElement('div');
+        tagsDiv.className = 'staged-tags';
+        (f.tags || []).forEach(t => {
+            const tagSpan = document.createElement('span');
+            tagSpan.className = 'staged-tag';
+            tagSpan.textContent = '#' + t;
+            tagsDiv.appendChild(tagSpan);
+        });
+        main.appendChild(hdr);
+        main.appendChild(titleIn);
+        main.appendChild(sum);
+        main.appendChild(tagsDiv);
+        const delBtn = document.createElement('button');
+        delBtn.className = 'staged-del';
+        delBtn.textContent = '×';
+        delBtn.title = 'Remove';
+        delBtn.onclick = () => { stagedFragments.splice(idx, 1); renderStagedFragments(); };
+        card.appendChild(thumbDiv);
+        card.appendChild(main);
+        card.appendChild(delBtn);
+        list.appendChild(card);
+    });
+}
+async function ingestFiles(files) {
+    if (!files || files.length === 0) return;
+    const prog = $('build-progress');
+    const bar = $('build-progress-bar');
+    const label = $('build-progress-label');
+    const status = $('build-progress-status');
+    const doOcr = $('build-opt-ocr').checked;
+    const doSplit = $('build-opt-split').checked;
+    const doConnect = $('build-opt-connect').checked;
+    prog.style.display = 'flex';
+    const sidecars = indexTakeoutSidecars(files);
+    let done = 0;
+    const baseId = (n) => 'u' + Date.now().toString(36).slice(-4) + '-' + n.toString(36);
+    for (const file of files) {
+        const name = file.name || 'file';
+        const lower = name.toLowerCase();
+        if (lower.endsWith('.json') && !sidecars.has(file.webkitRelativePath || name)) {
+            try {
+                const text = await file.text();
+                const j = JSON.parse(text);
+                if (Array.isArray(j.fragments)) {
+                    stagedFragments.push(...j.fragments);
+                }
+            } catch {}
+            done++;
+            continue;
+        }
+        label.textContent = `Processing ${done + 1} of ${files.length}: ${name}…`;
+        bar.style.width = `${Math.round(((done + 0.2) / files.length) * 100)}%`;
+        const path = file.webkitRelativePath || name;
+        const sidecar = sidecars.get(path) ? await readTakeoutSidecar(sidecars.get(path)) : null;
+        let mediaId = null, thumbUrl = null;
+        if (dbHandle && (file.type.startsWith('image/') || file.type.startsWith('video/') || file.type.startsWith('audio/') || lower.endsWith('.pdf'))) {
+            mediaId = newMediaId();
+            await mediaPut(mediaId, file);
+            if (file.type.startsWith('image/')) thumbUrl = URL.createObjectURL(file);
+        }
+        let extractedText = '', year = sidecar?.year || null, lat = sidecar?.lat ?? null, lon = sidecar?.lon ?? null;
+        let month = null, day = null;
+        if (file.type.startsWith('image/')) {
+            const exif = await readExif(file);
+            if (exif) {
+                if (exif.year) year = exif.year;
+                if (exif.month) month = exif.month;
+                if (exif.day) day = exif.day;
+                if (typeof exif.lat === 'number') { lat = exif.lat; lon = exif.lon; }
+            }
+            if (doOcr) {
+                status.textContent = `Running OCR on ${name}…`;
+                const ocrResult = await ocrImage(file, p => {
+                    bar.style.width = `${Math.round(((done + 0.2 + p * 0.7) / files.length) * 100)}%`;
+                });
+                if (ocrResult && ocrResult.trim().length > 5) extractedText = ocrResult.trim();
+            }
+        } else if (lower.endsWith('.pdf') || file.type === 'application/pdf') {
+            status.textContent = `Extracting PDF content: ${name}…`;
+            extractedText = await parsePDF(file, doOcr, p => {
+                bar.style.width = `${Math.round(((done + 0.2 + p * 0.7) / files.length) * 100)}%`;
+            });
+        } else if (lower.endsWith('.docx')) {
+            status.textContent = `Reading Word document: ${name}…`;
+            extractedText = await parseDOCX(file);
+        } else if (lower.endsWith('.csv') || lower.endsWith('.tsv')) {
+            const csvText = await file.text();
+            const frags = csvToFragments(csvText);
+            stagedFragments.push(...frags);
+            done++;
+            continue;
+        } else if (lower.endsWith('.ics')) {
+            const icsText = await file.text();
+            const frags = icsToFragments(icsText);
+            stagedFragments.push(...frags);
+            done++;
+            continue;
+        } else if (file.type.startsWith('text/') || lower.endsWith('.txt') || lower.endsWith('.md')) {
+            extractedText = await file.text();
+        }
+        const fileYear = year || new Date(file.lastModified).getFullYear();
+        if (extractedText.trim().length > 0 && doSplit) {
+            const milestones = splitDocumentMilestones(extractedText, name, fileYear);
+            milestones.forEach((m, mIdx) => {
+                const id = baseId(stagedFragments.length + mIdx + 1);
+                const tags = extractEntitiesAndTags(m.title, m.summary, m.kind, lat, lon);
+                if (lower.endsWith('.pdf')) tags.push('pdf');
+                if (lower.endsWith('.docx')) tags.push('doc');
+                const frag = { id, title: m.title, kind: m.kind, year: m.year || fileYear, month: m.month, day: m.day, summary: m.summary, tags, connections: [], thumbUrl };
+                if (typeof lat === 'number' && typeof lon === 'number') { frag.lat = lat; frag.lon = lon; }
+                if (mediaId && mIdx === 0) frag.media = [{ id: mediaId, kind: file.type.startsWith('image/') ? 'image' : 'doc', name, mime: file.type, size: file.size, lat, lon }];
+                stagedFragments.push(frag);
+            });
+        } else {
+            const d = extractDateDetails(extractedText, fileYear);
+            const cleanName = (sidecar?.takeoutTitle || name).replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ');
+            const title = (extractedText.trim().split('\n')[0] && extractedText.trim().length < 60 ? extractedText.trim().split('\n')[0] : cleanName).slice(0, 72);
+            const kind = inferKind(title, extractedText);
+            const tags = extractEntitiesAndTags(title, extractedText, kind, lat, lon);
+            tags.push(file.type.startsWith('image/') ? 'photo' : (file.type.startsWith('video/') ? 'video' : 'doc'));
+            const summary = extractedText.trim() ? extractedText.trim().slice(0, 400) : `${cleanName} · ${file.size ? (file.size/1024).toFixed(0) + ' KB' : ''}`;
+            const id = baseId(stagedFragments.length + 1);
+            const frag = { id, title, kind, year: d.year || fileYear, month: month || d.month, day: day || d.day, summary, tags, connections: [], thumbUrl };
+            if (typeof lat === 'number' && typeof lon === 'number') { frag.lat = lat; frag.lon = lon; }
+            if (mediaId) frag.media = [{ id: mediaId, kind: file.type.startsWith('image/') ? 'image' : (file.type.startsWith('video/') ? 'video' : 'doc'), name, mime: file.type, size: file.size, lat, lon }];
+            stagedFragments.push(frag);
+        }
+        done++;
+        status.textContent = `${done}/${files.length} files processed · ${stagedFragments.length} fragments created`;
+        renderStagedFragments();
+        if (done % 5 === 0) await new Promise(r => setTimeout(r, 0));
+    }
+    if (doConnect && stagedFragments.length > 0) {
+        autoConnectFragments(stagedFragments, fragments);
+    }
+    bar.style.width = '100%';
+    label.textContent = `Completed! ${stagedFragments.length} milestones staged for review.`;
+    renderStagedFragments();
+}
+async function commitBuild(isFresh = false) {
+    if (stagedFragments.length === 0) return;
+    pushUndo();
+    const cleanList = stagedFragments.map(f => {
+        const copy = { ...f };
+        delete copy.thumbUrl;
+        return copy;
+    });
+    if (isFresh) {
+        fragments = cleanList;
+    } else {
+        fragments = fragments.concat(cleanList);
+    }
+    saveFragments(); rebuildIndex(); recomputeYearBounds();
+    await computeLayouts();
+    buildPoints(); buildEdges(); renderFragsList(); renderTagFilters(); renderEdgeFilters(); updateStats();
+    toast(`${isFresh ? 'Built new map with' : 'Added'} ${cleanList.length} fragments`);
+    closeBuildModal();
+}
 async function loadGSI() {
     if (window.google?.accounts?.oauth2) return true;
     return new Promise((res) => {
@@ -1784,11 +2211,11 @@ async function computeLayouts() {
     positions = { timeline: apply(all.timeline), constellation: apply(all.constellation), spiral: apply(all.spiral), cluster: apply(all.cluster), radial: apply(all.radial), map: computeMapLayout(), calendar: computeCalendarLayout() };
 }
 function makeSpriteTexture() {
-    const c = document.createElement('canvas'); c.width = 256; c.height = 256;
+    const c = document.createElement('canvas'); c.width = 128; c.height = 128;
     const ctx = c.getContext('2d');
-    const g = ctx.createRadialGradient(128,128,0,128,128,128);
-    g.addColorStop(0,'rgba(255,255,255,1)'); g.addColorStop(0.44,'rgba(255,255,255,1)'); g.addColorStop(0.5,'rgba(255,255,255,0.55)'); g.addColorStop(0.62,'rgba(255,255,255,0.14)'); g.addColorStop(1,'rgba(255,255,255,0)');
-    ctx.fillStyle = g; ctx.fillRect(0,0,256,256);
+    const g = ctx.createRadialGradient(64,64,0,64,64,64);
+    g.addColorStop(0,'rgba(255,255,255,1)'); g.addColorStop(0.35,'rgba(255,255,255,0.85)'); g.addColorStop(0.7,'rgba(255,255,255,0.18)'); g.addColorStop(1,'rgba(255,255,255,0)');
+    ctx.fillStyle = g; ctx.fillRect(0,0,128,128);
     const t = new THREE.CanvasTexture(c); t.needsUpdate = true; return t;
 }
 let searchFilterActive = false, searchFilterQuery = '';
@@ -3298,7 +3725,7 @@ function updateStats() {
     const filterStr = (filtCount === fragments.length) ? '' : ` (${filtCount} shown)`;
     const geoCount = fragments.filter(f => fragmentLatLon(f)).length;
     const geoStr = geoCount > 0 ? ` · ${geoCount} geo` : '';
-    $('stats').textContent = `${fragments.length} fragments${filterStr}${geoStr} · ${edges.length} connections · wasm ${version()} · v0.26.0`;
+    $('stats').textContent = `${fragments.length} fragments${filterStr}${geoStr} · ${edges.length} connections · wasm ${version()} · v0.27.0`;
 }
 function setupUI() {
     $('view-select').onchange = e => setView(e.target.value);
@@ -3412,6 +3839,45 @@ function setupUI() {
     $('btn-gphotos-import').onclick = gpImport;
     $('btn-gphotos-disconnect').onclick = gpDisconnect;
     $('folder-input').onchange = e => { const fs = [...e.target.files]; e.target.value = ''; if (fs.length) importFolder(fs); };
+    $('btn-build').onclick = openBuildModal;
+    $('build-close').onclick = closeBuildModal;
+    $('build-cancel').onclick = closeBuildModal;
+    $('btn-build-browse').onclick = () => $('build-files-input').click();
+    $('btn-build-folder').onclick = () => $('build-folder-input').click();
+    $('build-files-input').onchange = e => { const fs = [...e.target.files]; e.target.value = ''; if (fs.length) ingestFiles(fs); };
+    $('build-folder-input').onchange = e => { const fs = [...e.target.files]; e.target.value = ''; if (fs.length) ingestFiles(fs); };
+    $('btn-build-clear-all').onclick = () => { stagedFragments = []; renderStagedFragments(); };
+    $('build-commit').onclick = () => commitBuild(false);
+    $('build-fresh').onclick = () => { if (confirm('Replace your current map with these fragments?')) commitBuild(true); };
+    const bdz = $('build-dropzone');
+    bdz.addEventListener('dragover', e => { e.preventDefault(); bdz.classList.add('dragover'); });
+    bdz.addEventListener('dragleave', () => bdz.classList.remove('dragover'));
+    bdz.addEventListener('drop', async e => {
+        e.preventDefault();
+        bdz.classList.remove('dragover');
+        const items = [...(e.dataTransfer.items || [])];
+        const files = [];
+        if (items.length && items[0].webkitGetAsEntry) {
+            async function readEntry(entry) {
+                if (entry.isFile) {
+                    const f = await new Promise(res => entry.file(res));
+                    files.push(f);
+                } else if (entry.isDirectory) {
+                    const reader = entry.createReader();
+                    const entries = await new Promise(res => reader.readEntries(res));
+                    for (const sub of entries) await readEntry(sub);
+                }
+            }
+            for (const item of items) {
+                const entry = item.webkitGetAsEntry();
+                if (entry) await readEntry(entry);
+            }
+        } else {
+            files.push(...e.dataTransfer.files);
+        }
+        if (files.length) ingestFiles(files);
+    });
+    $('build-modal').addEventListener('click', e => { if (e.target.id === 'build-modal') closeBuildModal(); });
     $('lightbox-prev').onclick = () => lightboxStep(-1);
     $('lightbox-next').onclick = () => lightboxStep(1);
     $('lightbox-close').onclick = closeLightbox;
@@ -3462,7 +3928,7 @@ function setupUI() {
     $('search').addEventListener('focus', e => { if (e.target.value.trim()) renderSearchResults(e.target.value); });
     $('modal-bg').addEventListener('click', e => { if (e.target.id === 'modal-bg') closeModal(); });
     document.addEventListener('keydown', e => {
-        if (e.key === 'Escape') { if (focusMode) { toggleFocus(); return; } if ($('lightbox').classList.contains('open')) { closeLightbox(); return; } if ($('wall').classList.contains('open')) { closeWall(); return; } if (linking) { cancelLink(); return; } if (isTouring()) { stopTour(); return; } closeModal(); selectFragment(-1); }
+        if (e.key === 'Escape') { if (focusMode) { toggleFocus(); return; } if ($('build-modal').classList.contains('show')) { closeBuildModal(); return; } if ($('lightbox').classList.contains('open')) { closeLightbox(); return; } if ($('wall').classList.contains('open')) { closeWall(); return; } if (linking) { cancelLink(); return; } if (isTouring()) { stopTour(); return; } closeModal(); selectFragment(-1); }
         if ($('lightbox').classList.contains('open')) {
             if (e.key === 'ArrowLeft') { lightboxStep(-1); return; }
             if (e.key === 'ArrowRight') { lightboxStep(1); return; }

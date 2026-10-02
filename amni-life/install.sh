@@ -3,7 +3,7 @@
 # Usage: curl -fsSL https://amni-scient.com/amni-life/install.sh | bash
 # Or:    curl -fsSL https://amni-scient.com/amni-life/install.sh | bash -s -- --dir /custom/path
 set -e
-VERSION="0.26.0"
+VERSION="0.27.0"
 BASE="https://amni-scient.com/amni-life"
 ZIP="Amni-Life-v$VERSION.zip"
 DIR="$HOME/amni-life"

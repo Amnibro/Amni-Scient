@@ -56,4 +56,4 @@ In-browser. Top-bar buttons. JSON in, JSON out.
 
 ## License
 
-MIT. Built by Amnibro as part of the Amni-Scient ecosystem.
+MIT. Built by Anthony Reffelt as part of the Amni-Scient ecosystem.

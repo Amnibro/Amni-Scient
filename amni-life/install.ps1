@@ -8,7 +8,7 @@ param(
     [switch]$NoServe
 )
 $ErrorActionPreference = 'Stop'
-$Version = '0.26.0'
+$Version = '0.27.0'
 $Base = 'https://amni-scient.com/amni-life'
 $Zip = "Amni-Life-v$Version.zip"
 Write-Host "[amni-life] installing v$Version to $Dir" -ForegroundColor Cyan
