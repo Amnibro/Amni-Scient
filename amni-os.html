@@ -100,6 +100,7 @@
 <p class="desc">LEAVE WINDOWS &bull; ARCH + PLASMA 6 &bull; v0.4.4</p>
 <div class="cta-row" style="margin-top:2rem;margin-bottom:1rem">
 <a href="#get" class="btn btn-primary">GET THE ISO</a>
+<a href="#update" class="btn btn-outline">UPDATE OS</a>
 <a href="amni-os/docs/" class="btn btn-outline">DOCS</a>
 <a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="btn btn-outline">&#9749; SUPPORT</a>
 </div>
@@ -178,6 +179,33 @@
 <a href="amni-os/privacy.html">Privacy</a>
 </div>
 </section>
+<section id="update">
+<h2>UPDATE &amp; REPAIR</h2>
+<div class="ptile">
+<div class="ptile-copy">
+<p class="ptile-line">Already running Amni OS? Update your system or fix older installations with broken update links or expired keys.</p>
+<ul class="ptile-feats">
+<li>Clears stale package manager locks left by interrupted updates</li>
+<li>Restores dead or outdated Arch Linux package mirrors</li>
+<li>Refreshes expired Arch and Amni PGP cryptographic keyrings</li>
+<li>Upgrades system kernel, GPU drivers, desktop apps, and Flatpaks</li>
+</ul>
+<div class="cta-row" style="margin-top:1.5rem;gap:0.75rem;flex-wrap:wrap">
+<a href="update.sh" download="update-amni-os.sh" class="btn btn-primary" id="btn-update-download" onclick="onUpdateClick()">DOWNLOAD UPDATER</a>
+<a href="amni-update.desktop" download="Update-Amni-OS.desktop" class="btn btn-outline">DESKTOP LAUNCHER</a>
+<button class="btn btn-outline" type="button" onclick="copyUpdateCmd()" id="btn-copy-cmd">COPY TERMINAL COMMAND</button>
+</div>
+<div style="margin-top:1.25rem;background:rgba(0,0,0,0.25);border:1px solid rgba(200,155,78,0.25);border-radius:8px;padding:0.85rem 1.15rem;display:flex;align-items:center;justify-content:space-between;gap:1rem">
+<code id="update-cmd-text" style="font-family:'Cascadia Code',monospace;font-size:0.85rem;color:#C89B4E;word-break:break-all">curl -fsSL https://amni-scient.com/update | bash</code>
+<button type="button" class="btn" style="padding:0.4rem 0.85rem;font-size:0.75rem;flex-shrink:0" onclick="copyUpdateCmd()" id="btn-copy-tag">COPY</button>
+</div>
+<p style="color:var(--dim);font-size:0.85rem;margin-top:0.85rem">
+Run in your terminal (press <kbd style="background:rgba(255,255,255,0.08);padding:2px 6px;border-radius:4px">Ctrl</kbd>+<kbd style="background:rgba(255,255,255,0.08);padding:2px 6px;border-radius:4px">Alt</kbd>+<kbd style="background:rgba(255,255,255,0.08);padding:2px 6px;border-radius:4px">T</kbd>) or double-click the downloaded updater. It will automatically request root permission to repair and upgrade the entire OS.
+</p>
+</div>
+<div class="ptile-media"><img src="assets/os/control.png?v=20260922" alt="Amni OS Update and Control" loading="lazy"></div>
+</div>
+</section>
 <section id="get">
 <h2>GET IT</h2>
 <div class="ptile"><div class="ptile-media"><img src="assets/os/installer.png" alt="Calamares installer in Amni OS branding" loading="lazy"></div><div class="ptile-copy"><p class="ptile-line">0.4.4 &middot; 5.9 GB &middot; 8 Sep 2026</p><p class="ptile-line" style="font-size:.8rem;word-break:break-all">SHA-256 <code>8b796031a09775af4688c4defe5313a65ae9cd6ec85fd9479b518f572ac4db05</code></p></div></div>
@@ -201,6 +229,33 @@
 <p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
 </footer>
 <div class="lightbox" onclick="closeLightbox(event)"><span class="lightbox-close">&times;</span><img></div>
-<script>function openLightbox(s,a){const l=document.querySelector('.lightbox'),i=l.querySelector('img');i.src=s;i.alt=a;l.classList.add('open')}function closeLightbox(e){e.target.tagName!=='IMG'&&document.querySelector('.lightbox').classList.remove('open')}</script>
+<script>
+function openLightbox(s,a){const l=document.querySelector('.lightbox'),i=l.querySelector('img');i.src=s;i.alt=a;l.classList.add('open')}
+function closeLightbox(e){e.target.tagName!=='IMG'&&document.querySelector('.lightbox').classList.remove('open')}
+function copyUpdateCmd(){
+  var cmd="curl -fsSL https://amni-scient.com/update | bash";
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(cmd).then(onCopied);
+  }else{
+    var ta=document.createElement("textarea");ta.value=cmd;document.body.appendChild(ta);ta.select();
+    try{document.execCommand("copy");onCopied();}catch(e){}
+    document.body.removeChild(ta);
+  }
+  function onCopied(){
+    var b=document.getElementById("btn-copy-tag"),c=document.getElementById("btn-copy-cmd");
+    if(b)b.textContent="COPIED!";if(c)c.textContent="COMMAND COPIED!";
+    setTimeout(function(){if(b)b.textContent="COPY";if(c)c.textContent="COPY TERMINAL COMMAND";},2500);
+  }
+}
+function onUpdateClick(){
+  try{
+    var iframe=document.createElement("iframe");
+    iframe.style.display="none";
+    iframe.src="amni-update://launch";
+    document.body.appendChild(iframe);
+    setTimeout(function(){if(iframe.parentNode)document.body.removeChild(iframe);},2000);
+  }catch(e){}
+}
+</script>
 </body>
 </html>
