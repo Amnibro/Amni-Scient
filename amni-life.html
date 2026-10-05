@@ -98,52 +98,50 @@
 </div>
 <div class="stat-row">
 <div class="stat-item"><span class="stat-num">7</span><span class="stat-label">VISUALIZATIONS</span></div>
-<div class="stat-item"><span class="stat-num">4</span><span class="stat-label">THEMES</span></div>
+<div class="stat-item"><span class="stat-num">8</span><span class="stat-label">THEMES</span></div>
 <div class="stat-item"><span class="stat-num">∞</span><span class="stat-label">FRAGMENTS</span></div>
 <div class="stat-item"><span class="stat-num">0</span><span class="stat-label">TELEMETRY</span></div>
 </div>
 <section>
+<h2>WHO IT&rsquo;S FOR</h2>
+<p style="text-align:center;color:var(--dim);max-width:720px;margin:0 auto 1.5rem;font-size:.9rem">It&rsquo;s for people who want to see the shape of their life. People who keep journals but lose them in folders. People who want their grandmother&rsquo;s memories not to die when she does. People who don&rsquo;t want a Big Tech app holding their childhood.</p>
+<p style="text-align:center;color:var(--dim);max-width:720px;margin:0 auto 1.5rem;font-size:.85rem;font-style:italic">&ldquo;A memory map &mdash; to help people connect and visualize the fragments of their lives. No practical reason to build it. Just something I want to have.&rdquo; &mdash; the seed for this project</p>
+</section>
+<section>
 <h2>SEE YOUR LIFE</h2>
-<p style="text-align:center;color:var(--dim);max-width:720px;margin:0 auto 2rem;font-size:.9rem">Every fragment is a node &mdash; a person, place, event, work, idea, or era. Every relationship is an edge. Switch between seven layouts to find the shape that fits the question you&rsquo;re asking. Drop a folder of photos and watch the map populate from EXIF dates and GPS. Encrypt the result and share with one person, or no one.</p>
-<div style="text-align:center;max-width:720px;margin:0 auto 3rem;padding:0 1rem">
-<p style="color:var(--dim);font-size:.88rem;margin-bottom:1.5rem">Open directly in your browser &mdash; no account, no install required (but installable as a PWA).</p>
-<div class="cta-row" style="justify-content:center;margin-bottom:1rem">
-<a href="amni-life/" class="btn btn-primary" style="background:linear-gradient(135deg,#7cc4ff,#a78bfa);color:#0a0a12;border:none;font-size:1rem;padding:.85rem 2.8rem;letter-spacing:.1em">&#9758; OPEN AMNI-LIFE</a>
-</div>
-<p style="color:var(--dim);font-size:.72rem;letter-spacing:.04em">WebGL2 required &nbsp;&bull;&nbsp; ~150 KB cold start &nbsp;&bull;&nbsp; works fully offline after first visit</p>
-</div>
+<p style="text-align:center;color:var(--dim);max-width:720px;margin:0 auto 2rem;font-size:.9rem">Here&rsquo;s how it works. Every fragment is a node: a person, place, event, work, idea or era. Every relationship is an edge. Then you switch between seven layouts until you find the shape that fits the question you&rsquo;re asking.</p>
 <div class="layout-grid">
-<div class="layout-card"><span class="layout-tag">DEFAULT</span><h4>CONSTELLATION</h4><p>Force-directed 3D graph. Connected fragments pull together; lone ones drift. The shape your life makes when you let the relationships speak first.</p></div>
-<div class="layout-card"><span class="layout-tag">CHRONO</span><h4>TIMELINE</h4><p>A clean horizontal line by year. Same-year fragments stack vertically. Useful when you want the story to be linear for a moment.</p></div>
+<div class="layout-card"><span class="layout-tag">DEFAULT</span><h4>CONSTELLATION</h4><p>A force-directed 3D graph. Connected fragments pull together, lone ones drift. It&rsquo;s the shape your life makes when you let the relationships speak first.</p></div>
+<div class="layout-card"><span class="layout-tag">CHRONO</span><h4>TIMELINE</h4><p>A clean horizontal line by year. Same-year fragments stack vertically. Handy when you want the story to be linear for a moment.</p></div>
 <div class="layout-card"><span class="layout-tag">POETIC</span><h4>SPIRAL</h4><p>Golden Fibonacci spiral by date. Earliest at the core, today at the outer arm. Decades become rings.</p></div>
-<div class="layout-card"><span class="layout-tag">TYPOLOGICAL</span><h4>CLUSTER</h4><p>Six clouds, one per kind &mdash; people, places, events, works, ideas, eras. Pulls patterns into focus.</p></div>
+<div class="layout-card"><span class="layout-tag">TYPOLOGICAL</span><h4>CLUSTER</h4><p>Six clouds, one per kind: people, places, events, works, ideas, eras. Patterns jump right into focus.</p></div>
 <div class="layout-card"><span class="layout-tag">EPOCHAL</span><h4>RADIAL</h4><p>Concentric era rings &mdash; childhood at the center, this year at the edge. Easy to scan how big each era was.</p></div>
 <div class="layout-card"><span class="layout-tag">GEOGRAPHIC</span><h4>GLOBE</h4><p>3D wireframe sphere. Geo-tagged fragments project onto the surface; ones without coordinates float in a ring beneath the south pole.</p></div>
 <div class="layout-card"><span class="layout-tag">DENSITY</span><h4>CALENDAR</h4><p>Year &times; month grid. Same-month fragments stack. Surfaces seasons-of-life and the years that were heavy or empty.</p></div>
 </div>
 </section>
 <section>
-<h2>BUILT TO LAST OFFLINE</h2>
+<h2>FILL IT, KEEP IT, SHARE IT</h2>
 <div class="features">
-<div class="feature"><div class="icon">&#128737;</div><h4>LOCAL-FIRST</h4><p>LocalStorage for fragments. IndexedDB for photos, videos, voice notes. URL hash + Web Crypto for encrypted shares. Service Worker caches the entire app shell. After your first visit, Amni-Life works with no network.</p></div>
-<div class="feature"><div class="icon">&#9881;</div><h4>RUST / WASM ENGINE</h4><p>Five layout algorithms compiled to WebAssembly: timeline, force-directed constellation, golden-spiral, cluster, radial. Runs once on load &mdash; ~5 ms for 25 fragments, scales to thousands.</p></div>
-<div class="feature"><div class="icon">&#128247;</div><h4>PHOTOS &amp; PEOPLE</h4><p>Drop a folder of photos &mdash; Amni-Life parses EXIF for dates and GPS, attaches each photo to a new fragment. Drop a Google Takeout export &mdash; sidecar JSON metadata flows in too. Connect Google Photos directly via your own OAuth (BYO Client ID, your data, your account).</p></div>
-<div class="feature"><div class="icon">&#128274;</div><h4>ENCRYPTED SHARES</h4><p>Compress + encrypt your map with a passphrase. AES-GCM 256, PBKDF2-SHA256 with 200k iterations. The result is a URL hash &mdash; nothing leaves your browser. Recipient unlocks with the passphrase. Plaintext shares also available.</p></div>
-<div class="feature"><div class="icon">&#127908;</div><h4>VOICE + TOUR</h4><p>Record voice notes directly in-browser via MediaRecorder. Hit TOUR to walk through your life chronologically; toggle NARRATE and the browser&rsquo;s speech synthesis reads each fragment aloud as you fly between them.</p></div>
-<div class="feature"><div class="icon">&#128202;</div><h4>UNDO &amp; PATH-FINDER</h4><p>Every edit is undoable / redoable (Ctrl+Z / Ctrl+Y). Alt-click between any two fragments to BFS the shortest path through your connection graph. Multi-select for batch tag and delete.</p></div>
+<div class="feature"><div class="icon">&#128247;</div><h4>PHOTOS &amp; PEOPLE</h4><p>Drop a folder of photos and watch the map fill in: Amni-Life reads EXIF for dates and GPS and attaches each photo to a new fragment. Drop a Google Takeout export and its sidecar JSON metadata flows in too. Or connect Google Photos directly with your own OAuth (BYO Client ID, your data, your account).</p></div>
+<div class="feature"><div class="icon">&#127908;</div><h4>VOICE + TOUR</h4><p>Record voice notes right in the browser via MediaRecorder. Hit TOUR to walk through your life chronologically. Toggle NARRATE and the browser&rsquo;s speech synthesis reads each fragment aloud as you fly between them.</p></div>
+<div class="feature"><div class="icon">&#128202;</div><h4>UNDO &amp; PATH-FINDER</h4><p>Every edit can be undone and redone (Ctrl+Z / Ctrl+Y). Alt-click between any two fragments to BFS the shortest path through your connection graph. Multi-select to tag or delete in batches.</p></div>
+<div class="feature"><div class="icon">&#128737;</div><h4>LOCAL-FIRST</h4><p>Fragments live in LocalStorage. Photos, videos and voice notes go in IndexedDB. A Service Worker caches the entire app shell, so after your first visit Amni-Life works with no network at all.</p></div>
+<div class="feature"><div class="icon">&#128274;</div><h4>ENCRYPTED SHARES</h4><p>Compress + encrypt your map with a passphrase: AES-GCM 256, PBKDF2-SHA256 with 200k iterations, through Web Crypto. The result is a URL hash, so nothing leaves your browser. Your recipient unlocks it with the passphrase. Share with one person, or no one. Plaintext shares are there too.</p></div>
+<div class="feature"><div class="icon">&#9881;</div><h4>RUST / WASM ENGINE</h4><p>Five layout algorithms compiled to WebAssembly: timeline, force-directed constellation, golden-spiral, cluster and radial. They run once on load: ~5 ms for 25 fragments, and they scale to thousands.</p></div>
 </div>
 </section>
 <section>
 <h2>SETUP &amp; INSTALL</h2>
-<p style="text-align:center;color:var(--dim);max-width:720px;margin:0 auto 2rem;font-size:.9rem">Three ways to use Amni-Life. Pick the one that fits.</p>
+<p style="text-align:center;color:var(--dim);max-width:720px;margin:0 auto 2rem;font-size:.9rem">Three ways to run Amni-Life. Pick whichever fits!</p>
 <div class="dl-row">
 <div class="dl-card">
 <h5>1. Open in browser</h5>
-Visit <a href="amni-life/" style="color:var(--accent)">amni-scient.com/amni-life</a>. After first visit, the Service Worker caches the app, and you can use it offline forever.
+Visit <a href="amni-life/" style="color:var(--accent)">amni-scient.com/amni-life</a>. After your first visit the Service Worker caches the app, and you can use it offline forever.
 </div>
 <div class="dl-card">
 <h5>2. Install as PWA</h5>
-Click the install icon in your browser address bar (or use the &ldquo;INSTALL&rdquo; button in the top-right of the app). Amni-Life becomes a native-feeling app on your taskbar / home screen.
+Click the install icon in your browser&rsquo;s address bar (or the &ldquo;INSTALL&rdquo; button at the top right of the app). Amni-Life becomes a native-feeling app on your taskbar / home screen.
 </div>
 <div class="dl-card">
 <h5>3. Self-host (one-liner)</h5>
@@ -154,12 +152,14 @@ On Windows:
 Both download v0.27.0 to <code style="display:inline">~/amni-life</code> and start a local server.
 </div>
 </div>
-<p style="text-align:center;color:var(--dim);max-width:720px;margin:2rem auto 0;font-size:.78rem">Or just download the <a href="amni-life/Amni-Life-v0.27.0.zip" style="color:var(--accent)" download>v0.27.0 zip</a> and unzip it anywhere &mdash; double-click <code style="background:var(--bg2);padding:1px 5px;border-radius:3px">index.html</code> and you&rsquo;re running.</p>
-</section>
-<section>
-<h2>WHO IT&rsquo;S FOR</h2>
-<p style="text-align:center;color:var(--dim);max-width:720px;margin:0 auto 1.5rem;font-size:.9rem">People who want to see the shape of their life. People who keep journals but lose them in folders. People who want their grandmother&rsquo;s memories not to die when she does. People who don&rsquo;t want a Big Tech app holding their childhood.</p>
-<p style="text-align:center;color:var(--dim);max-width:720px;margin:0 auto 1.5rem;font-size:.85rem;font-style:italic">&ldquo;A memory map &mdash; to help people connect and visualize the fragments of their lives. No practical reason to build it. Just something I want to have.&rdquo; &mdash; the seed for this project</p>
+<p style="text-align:center;color:var(--dim);max-width:720px;margin:2rem auto 0;font-size:.78rem">Or just grab the <a href="amni-life/Amni-Life-v0.27.0.zip" style="color:var(--accent)" download>v0.27.0 zip</a>, unzip it anywhere and double-click <code style="background:var(--bg2);padding:1px 5px;border-radius:3px">index.html</code>. You&rsquo;re running!</p>
+<div style="text-align:center;max-width:720px;margin:2.5rem auto 0;padding:0 1rem">
+<p style="color:var(--dim);font-size:.88rem;margin-bottom:1.5rem">Ready? No account, no install required (but installable as a PWA). Just open it.</p>
+<div class="cta-row" style="justify-content:center;margin-bottom:1rem">
+<a href="amni-life/" class="btn btn-primary" style="background:linear-gradient(135deg,#7cc4ff,#a78bfa);color:#0a0a12;border:none;font-size:1rem;padding:.85rem 2.8rem;letter-spacing:.1em">&#9758; OPEN AMNI-LIFE</a>
+</div>
+<p style="color:var(--dim);font-size:.72rem;letter-spacing:.04em">WebGL2 required &nbsp;&bull;&nbsp; ~150 KB cold start &nbsp;&bull;&nbsp; works fully offline after first visit</p>
+</div>
 </section>
 <footer>
 <div class="footer-grid">

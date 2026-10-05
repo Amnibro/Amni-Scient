@@ -5,10 +5,10 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="theme-color" content="#FBFAF8">
 <title>Amni-Explore &mdash; Stellar Cartographics | AMNI-SCIENT</title>
-<meta name="description" content="Amni-Explore: WebGL space game combining an 80,000-particle procedural galaxy (NASA Exoplanet Archive data), component-level rocket engineering with launch simulation, and idle-tycoon mechanics. Compiled WASM engine.">
+<meta name="description" content="Amni-Explore is a WebGL space game: explore a 160,000-particle procedural galaxy built on NASA Exoplanet Archive data, engineer rockets component by component and simulate the launch, then grow it all with idle-tycoon mechanics. Compiled WASM engine.">
 <meta name="keywords" content="amni-explore,galaxy explorer,webgl,wasm,nasa exoplanets,procedural generation,three.js">
 <meta property="og:title" content="Amni-Explore &mdash; Stellar Cartographics">
-<meta property="og:description" content="A space game: 80K-particle galaxy explorer + parametric rocket design with launch/ascent simulation + idle-tycoon colony building. WASM engine, NASA exoplanet data.">
+<meta property="og:description" content="A space game in your browser: explore a 160K-particle galaxy with NASA exoplanet data, design parametric rockets and simulate launch and ascent, then build idle-tycoon colonies. WASM engine.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://amni-scient.com/amni-explore">
 <meta property="og:image" content="https://amni-scient.com/assets/explore/og-explore.png">
@@ -16,10 +16,10 @@
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Amni-Explore &mdash; Stellar Cartographics">
-<meta name="twitter:description" content="80K-particle galaxy explorer + rocket engineering lab + idle-tycoon colonies, with NASA exoplanet data and a WASM engine. Free in-browser.">
+<meta name="twitter:description" content="A free in-browser space game: a 160K-particle galaxy explorer with NASA exoplanet data, a rocket engineering lab and idle-tycoon colonies. WASM engine.">
 <meta name="twitter:image" content="https://amni-scient.com/assets/explore/og-explore.png">
 <link rel="canonical" href="https://amni-scient.com/amni-explore">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"Amni-Explore","url":"https://amni-scient.com/explore/","description":"WebGL space game: 80K-particle galaxy explorer, component-level rocket engineering with launch simulation, and idle-tycoon colony mechanics. Compiled WASM engine, NASA Exoplanet Archive data.","genre":["Space Exploration","Educational","Simulation","Idle Game","Tycoon Game"],"gamePlatform":"Web Browser","operatingSystem":"Any (WebGL2)","applicationCategory":"Game","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Organization","name":"AMNI-SCIENT","legalName":"Amniscient, LLC","url":"https://amni-scient.com"},"image":"https://amni-scient.com/assets/explore/og-explore.png"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"Amni-Explore","url":"https://amni-scient.com/explore/","description":"WebGL space game: 160K-particle galaxy explorer, component-level rocket engineering with launch simulation, and idle-tycoon colony mechanics. Compiled WASM engine, NASA Exoplanet Archive data.","genre":["Space Exploration","Educational","Simulation","Idle Game","Tycoon Game"],"gamePlatform":"Web Browser","operatingSystem":"Any (WebGL2)","applicationCategory":"Game","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Organization","name":"AMNI-SCIENT","legalName":"Amniscient, LLC","url":"https://amni-scient.com"},"image":"https://amni-scient.com/assets/explore/og-explore.png"}</script>
 <link rel="stylesheet" href="css/style.css?v=b261">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
@@ -97,62 +97,128 @@
 </svg>
 </div>
 <h1>AMNI-EXPLORE</h1>
-<p class="desc">GALAXY EXPLORER &bull; ROCKET ENGINEERING LAB &bull; IDLE-TYCOON COLONIES &bull; NASA DATA &bull; WASM</p>
+<p class="desc">A SPACE GAME IN YOUR BROWSER &bull; GALAXY EXPLORER &bull; ROCKET ENGINEERING LAB &bull; IDLE-TYCOON COLONIES</p>
 <div class="cta-row" style="margin-top:2rem;margin-bottom:1rem">
 <a href="explore/" class="btn btn-primary">LAUNCH EXPLORER</a>
 </div>
 </div>
 <div class="ptile">
 <div class="ptile-copy">
-<p class="ptile-line">An 80K-particle galaxy explorer with a real-data star map and idle empire layer.</p>
-<ul class="ptile-feats"><li>Real NASA exoplanet data</li><li>Procedurally generated star systems</li><li>Rust/WASM engine, runs in-browser</li><li>Build an interstellar economy</li></ul>
+<p class="ptile-line">Fly through a 160K-particle galaxy with a real-data star map, then build an idle empire across it.</p>
+<ul class="ptile-feats"><li>Real NASA exoplanet data</li><li>Procedurally generated star systems</li><li>Build an interstellar economy</li><li>Rust/WASM engine, runs in-browser</li></ul>
 </div>
 <div class="ptile-media"><img src="assets/explore/ss_galaxy.png" alt="Amni-Explore galaxy view" loading="lazy"></div>
 </div>
 <section>
 <h2>NAVIGATE THE GALAXY</h2>
-<p style="color:var(--dim);max-width:640px;margin:0 0 1rem;font-size:.9rem">A browser space game in three layers.</p>
+<p style="color:var(--dim);max-width:640px;margin:0 0 1rem;font-size:.9rem">The game has three layers: the galaxy, rockets and colonies. Here&rsquo;s the galaxy, from the whole spiral down to a single planet.</p>
 <div class="features">
 <div class="feature">
 <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 15a4 4 0 0 1 1-7.9A5.5 5.5 0 0 1 16 7a4 4 0 0 1 .6 8H5z"/><path d="M8 19l1.5 2M13 19l1.5 2"/></svg></div>
-<h4>80K PARTICLES</h4>
-<p>Four spiral arms, central bar, galactic bulge, and diffuse halo &mdash; all generated by compiled WASM bytecode for maximum performance and IP protection.</p>
-</div>
-<div class="feature">
-<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></div>
-<h4>NASA DATA</h4>
-<p>500 confirmed exoplanets fetched live from the NASA Exoplanet Archive TAP API. Real star temperatures, planet radii, masses, and orbit data.</p>
-</div>
-<div class="feature">
-<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.2"/><path d="M12 3v2.4M12 18.6V21M3 12h2.4M18.6 12H21M5.6 5.6l1.7 1.7M16.7 16.7l1.7 1.7M18.4 5.6l-1.7 1.7M7.3 16.7l-1.7 1.7"/></svg></div>
-<h4>WASM ENGINE</h4>
-<p>Core algorithms (galaxy generation, procedural systems, planet textures) compiled from Rust to WebAssembly. Runs at native speed in compiled binary form.</p>
-</div>
-<div class="feature">
-<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 19a10 10 0 0 1 20 0M6 19a6 6 0 0 1 12 0M10 19a2 2 0 0 1 4 0"/></svg></div>
-<h4>PROCEDURAL TEXTURES</h4>
-<p>Planets get unique surface textures generated via fractal noise (fBm) in WASM &mdash; gas bands, lava cracks, ice sheets, oceans, and terrain.</p>
-</div>
-<div class="feature">
-<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17l14-9M6 21l-2-4 14-9 2 4z"/><circle cx="19" cy="4" r="1.6"/></svg></div>
-<h4>3000+ SYSTEMS</h4>
-<p>Procedurally generated star systems with 1-7 planets each, classified into 8 types: Hot Jupiter, Gas Giant, Ice Giant, Lava World, Temperate, Ice World, Super Earth, Rocky.</p>
+<h4>160K PARTICLES</h4>
+<p>Four spiral arms, a central bar, a galactic bulge and a diffuse halo. All of it comes from compiled WASM bytecode, so it&rsquo;s fast and the code stays protected.</p>
 </div>
 <div class="feature">
 <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5 5"/></svg></div>
 <h4>ZOOM LEVELS</h4>
-<p>Galaxy, Sector, Region, Local &mdash; density map overlay fades in at distance while individual stars emerge up close. Full orbit camera controls.</p>
+<p>Galaxy, Sector, Region, Local. Far out, a density map fades in. Up close, single stars pop out. Full orbit camera controls the whole way.</p>
 </div>
 <div class="feature">
-<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 3 2.6 15 0 18M12 3c-2.6 3-2.6 15 0 18"/></svg></div>
-<h4>PLANET DETAIL VIEW</h4>
-<p>Double-click any planet: zoom into a high-resolution 3D model with axial tilt, spin, orbiting moons, atmosphere glow, and a complete planetary data readout.</p>
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17l14-9M6 21l-2-4 14-9 2 4z"/><circle cx="19" cy="4" r="1.6"/></svg></div>
+<h4>3000+ SYSTEMS</h4>
+<p>Procedurally generated star systems, each with planets grown by a core-accretion formation model and sorted into 12 types, from Hot Jupiter and Warm Neptune to Super Earth, Temperate, Frozen Rocky and Ice World.</p>
+</div>
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></div>
+<h4>NASA DATA</h4>
+<p><span data-live="/explore/data/exoplanets.json|length">1000</span> confirmed exoplanets from a NASA Exoplanet Archive snapshot that gets refreshed every week, with the live TAP API as a backup. Real star temperatures, planet radii, masses and orbit data!</p>
 </div>
 <div class="feature">
 <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20S3.5 14.6 3.5 8.9A4.4 4.4 0 0 1 12 6.8a4.4 4.4 0 0 1 8.5 2.1C20.5 14.6 12 20 12 20z"/></svg></div>
 <h4>NASA/CALC FILTER</h4>
-<p>Toggle between NASA-sourced and procedurally generated systems on the galaxy map. NASA systems glow green for instant identification among thousands of stars.</p>
+<p>Flip between NASA-sourced and procedurally generated systems on the galaxy map. NASA systems glow green, so you can spot them among thousands of stars.</p>
 </div>
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 3 2.6 15 0 18M12 3c-2.6 3-2.6 15 0 18"/></svg></div>
+<h4>PLANET DETAIL VIEW</h4>
+<p>Double-click any planet and you zoom into a high-resolution 3D model: axial tilt, spin, orbiting moons, atmosphere glow and a full planetary data readout.</p>
+</div>
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 19a10 10 0 0 1 20 0M6 19a6 6 0 0 1 12 0M10 19a2 2 0 0 1 4 0"/></svg></div>
+<h4>PROCEDURAL TEXTURES</h4>
+<p>Every planet gets its own surface, generated with fractal noise (fBm) in WASM: gas bands, lava cracks, ice sheets, oceans and terrain.</p>
+</div>
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.2"/><path d="M12 3v2.4M12 18.6V21M3 12h2.4M18.6 12H21M5.6 5.6l1.7 1.7M16.7 16.7l1.7 1.7M18.4 5.6l-1.7 1.7M7.3 16.7l-1.7 1.7"/></svg></div>
+<h4>WASM ENGINE</h4>
+<p>The core algorithms (galaxy generation, procedural systems, planet textures) are compiled from Rust to WebAssembly. They run at native speed as a compiled binary.</p>
+</div>
+</div>
+</section>
+<section>
+<h2>BUILD ROCKETS AND COLONIES</h2>
+<p style="color:var(--dim);max-width:640px;margin:0 0 1rem;font-size:.9rem">Now the other two layers. Design a rocket, fly it, then settle the worlds you find.</p>
+<div class="features">
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17l14-9M6 21l-2-4 14-9 2 4z"/><circle cx="19" cy="4" r="1.6"/></svg></div>
+<h4>ROCKET LAB</h4>
+<p>Build a rocket stage by stage: propellant, engine cycle, injector, nozzle, cooling, tanks and structure. Every number comes out of a component model with a pass or fail verdict. Then you launch it and watch the ascent.</p>
+</div>
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 3 2.6 15 0 18M12 3c-2.6 3-2.6 15 0 18"/></svg></div>
+<h4>8 LAUNCH WORLDS</h4>
+<p>Launch from Earth, the Moon, Mars, Venus, Titan, Mercury, Europa or Ceres. Each world needs a different speed to reach orbit, so the same rocket does very different things.</p>
+</div>
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></div>
+<h4>COLONIES</h4>
+<p>Settle the planets you find and build on them, from a mining outpost all the way up to a Dyson collector. Colonies earn credits and research while you play, and keep earning at half rate while you&rsquo;re away.</p>
+</div>
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.2"/><path d="M12 3v2.4M12 18.6V21M3 12h2.4M18.6 12H21M5.6 5.6l1.7 1.7M16.7 16.7l1.7 1.7M18.4 5.6l-1.7 1.7M7.3 16.7l-1.7 1.7"/></svg></div>
+<h4>SHIP, ROUTES &amp; JOURNAL</h4>
+<p>Supercruise between planets at a fraction of light speed, run trade routes between your colonies, upgrade your ship&rsquo;s modules, and log every system you discover in your journal.</p>
+</div>
+</div>
+</section>
+<section>
+<h2>GALLERY</h2>
+<p style="color:var(--dim);font-size:.85rem;margin-bottom:1.5rem">Click any shot to see it big.</p>
+<div class="screenshot-strip">
+<div class="screenshot-desktop"><img class="gallery-thumb" src="assets/explore/ss_galaxy.png" alt="Amni-Explore galaxy view with 160K particles" onclick="openLightbox(this.src,this.alt)"></div>
+<div class="screenshot-desktop"><img class="gallery-thumb" src="assets/explore/ss_solar_system.png" alt="Amni-Explore Sol System with planet list" onclick="openLightbox(this.src,this.alt)"></div>
+<div class="screenshot-desktop"><img class="gallery-thumb" src="assets/explore/ss_planet.png" alt="Amni-Explore planet detail view GJ 1214 b" onclick="openLightbox(this.src,this.alt)"></div>
+</div>
+</section>
+<section>
+<h2>HOW IT WORKS</h2>
+<div class="how-works-grid">
+<div class="card">
+<h3>1. WASM INITIALIZATION</h3>
+<p>The Rust-compiled WASM module loads first and hands the renderer its generators, among them gen_galaxy, gen_systems and gen_texture.</p>
+</div>
+<div class="card">
+<h3>2. GALAXY GENERATION</h3>
+<p>WASM builds 160K particle positions and colors from spiral-arm math, the bar structure, the bulge distribution and the diffuse halo, and returns them as one packed Float32Array.</p>
+</div>
+<div class="card">
+<h3>3. SYSTEM PLACEMENT</h3>
+<p>Your browser loads the NASA archive snapshot and passes it to WASM, which groups it by host star, classifies the planets, assigns colors and merges it with 3000 procedural systems.</p>
+</div>
+<div class="card">
+<h3>4. REAL-TIME RENDERING</h3>
+<p>Three.js takes the WASM output and builds the point clouds, shader materials and bloom post-processing. Planet textures get generated on demand with WASM fBm noise.</p>
+</div>
+</div>
+</section>
+<section>
+<h2>UNDERSTANDING PROCEDURAL GALAXY GENERATION</h2>
+<div style="max-width:800px;margin:0 0;line-height:1.9;color:var(--dim);font-size:.9rem">
+<p>Procedural generation means the content comes from algorithms instead of being placed by hand. In Amni-Explore the whole galaxy (160,000 particles forming spiral arms, a central bar, a galactic bulge and a diffuse halo) comes from math functions compiled to WebAssembly.</p>
+<p style="margin-top:1.2rem"><strong style="color:var(--text)">Spiral arm formation</strong> uses logarithmic spiral equations plus Gaussian noise to get the shape of a barred spiral galaxy (similar to the Milky Way&rsquo;s SBbc classification). Each arm has a pitch angle, a width gradient and a star density profile that decide how particles spread from the core outward.</p>
+<p style="margin-top:1.2rem"><strong style="color:var(--text)">Star classification</strong> follows the Hertzsprung-Russell diagram. Hot blue stars (O/B type) show up in the arms, where stars are actively forming. Cooler orange and red stars (K/M type) fill the bulge and the gaps between arms. The color temperature mapping uses real astrophysical blackbody radiation curves.</p>
+<p style="margin-top:1.2rem"><strong style="color:var(--text)">Planet textures</strong> use fractional Brownian motion (fBm), a layered noise algorithm that sums several octaves of Perlin-like noise at falling amplitudes and rising frequencies. Out come realistic-looking terrain, gas cloud bands, lava cracks and ice shelf patterns, all computed per pixel in the WASM module. No pre-baked texture files at all!</p>
+<p style="margin-top:1.2rem"><strong style="color:var(--text)">NASA integration</strong> is where procedural meets real: the game pulls confirmed planets from the Exoplanet Archive&rsquo;s Table Access Protocol (TAP) API.</p>
 </div>
 </section>
 <section>
@@ -160,65 +226,27 @@
 <table class="spec-table">
 <tr><th>PARAMETER</th><th>VALUE</th></tr>
 <tr><td>Engine</td><td>Rust/WASM + Three.js (WebGL2)</td></tr>
-<tr><td>Galaxy Particles</td><td>80,000</td></tr>
-<tr><td>Spiral Arms</td><td>4 (2 major + 2 minor)</td></tr>
+<tr><td>Galaxy Particles</td><td>160,000</td></tr>
+<tr><td>Spiral Arms</td><td>4 plus a spur</td></tr>
 <tr><td>Procedural Systems</td><td>3,000</td></tr>
-<tr><td>NASA Systems</td><td>~200 (live API, up to 500 planets)</td></tr>
-<tr><td>Planet Types</td><td>8 classifications</td></tr>
-<tr><td>Texture Resolution</td><td>256&times;256 (WASM-generated fBm)</td></tr>
+<tr><td>NASA Systems</td><td>~900 (1,000 confirmed planets, weekly snapshot)</td></tr>
+<tr><td>Planet Types</td><td>12 classifications</td></tr>
+<tr><td>Texture Resolution</td><td>256&times;256 in a system, 512-1024 up close (WASM-generated fBm)</td></tr>
 <tr><td>Post-Processing</td><td>Unreal Bloom (HDR)</td></tr>
 <tr><td>Shaders</td><td>Custom GLSL vertex + fragment</td></tr>
-<tr><td>WASM Binary</td><td>~97 KB (Rust, release-optimized)</td></tr>
-<tr><td>Data Source</td><td>NASA Exoplanet Archive TAP/sync</td></tr>
+<tr><td>WASM Binary</td><td>~200 KB (Rust, release-optimized)</td></tr>
+<tr><td>Data Source</td><td>NASA Exoplanet Archive TAP/sync, HYG v4.1 star catalogue</td></tr>
+<tr><td>Rocket Lab</td><td>Component engine, structure and ascent models</td></tr>
+<tr><td>Colonies</td><td>7 building types, offline earnings</td></tr>
 <tr><td>Requirements</td><td>WebGL2-capable browser</td></tr>
 </table>
 </section>
 <section>
-<h2>HOW IT WORKS</h2>
-<div class="how-works-grid">
-<div class="card">
-<h3>1. WASM INITIALIZATION</h3>
-<p>The Rust-compiled WASM module loads and initializes, making gen_galaxy, gen_systems, and gen_texture functions available to the renderer.</p>
-</div>
-<div class="card">
-<h3>2. GALAXY GENERATION</h3>
-<p>WASM generates 80K particle positions and colors using spiral arm math, bar structure, bulge distribution, and diffuse halo &mdash; returned as a packed Float32Array.</p>
-</div>
-<div class="card">
-<h3>3. SYSTEM PLACEMENT</h3>
-<p>NASA API data is fetched client-side, then passed to WASM which groups by host star, classifies planets, assigns colors, and merges with 3000 procedural systems.</p>
-</div>
-<div class="card">
-<h3>4. REAL-TIME RENDERING</h3>
-<p>Three.js consumes the WASM output &mdash; building point clouds, shader materials, and bloom post-processing. Planet textures are generated on-demand via WASM fBm noise.</p>
-</div>
-</div>
-</section>
-<section>
-<h2>GALLERY</h2>
-<p style="color:var(--dim);font-size:.85rem;margin-bottom:1.5rem">Click to enlarge</p>
-<div class="screenshot-strip">
-<div class="screenshot-desktop"><img class="gallery-thumb" src="assets/explore/ss_galaxy.png" alt="Amni-Explore galaxy view with 80K particles" onclick="openLightbox(this.src,this.alt)"></div>
-<div class="screenshot-desktop"><img class="gallery-thumb" src="assets/explore/ss_solar_system.png" alt="Amni-Explore Sol System with planet list" onclick="openLightbox(this.src,this.alt)"></div>
-<div class="screenshot-desktop"><img class="gallery-thumb" src="assets/explore/ss_planet.png" alt="Amni-Explore planet detail view GJ 1214 b" onclick="openLightbox(this.src,this.alt)"></div>
-</div>
-</section>
-<section>
 <h2>LAUNCH AMNI-EXPLORE</h2>
-<p style="color:var(--dim);margin-bottom:.5rem;font-size:.9rem">Run directly in your browser. No download, no account, no installation.</p>
-<p style="color:var(--dim);font-size:.8rem;margin-bottom:2rem">Requires WebGL2 &bull; Desktop recommended for best experience</p>
+<p style="color:var(--dim);margin-bottom:.5rem;font-size:.9rem">It runs right in your browser. No download, no account, nothing to install. Go!</p>
+<p style="color:var(--dim);font-size:.8rem;margin-bottom:2rem">Needs WebGL2 &bull; Plays best on desktop</p>
 <div class="cta-row" style="">
 <a href="explore/" class="btn btn-primary">LAUNCH EXPLORER</a>
-</div>
-</section>
-<section>
-<h2>UNDERSTANDING PROCEDURAL GALAXY GENERATION</h2>
-<div style="max-width:800px;margin:0 0;line-height:1.9;color:var(--dim);font-size:.9rem">
-<p>Procedural generation is a technique where content is created algorithmically rather than manually. In Amni-Explore, the entire galaxy &mdash; 80,000 particles forming spiral arms, a central bar, a galactic bulge, and a diffuse halo &mdash; is generated from mathematical functions compiled to WebAssembly.</p>
-<p style="margin-top:1.2rem"><strong style="color:var(--text)">Spiral arm formation</strong> uses logarithmic spiral equations with added Gaussian noise to create the characteristic shape of barred spiral galaxies (similar to the Milky Way&rsquo;s SBbc classification). Each arm has a pitch angle, width gradient, and star density profile that controls how particles distribute from the core outward.</p>
-<p style="margin-top:1.2rem"><strong style="color:var(--text)">Star classification</strong> follows the Hertzsprung-Russell diagram &mdash; hot blue stars (O/B type) appear in arm regions where star formation is active, while cooler orange and red stars (K/M type) populate the bulge and inter-arm regions. The color temperature mapping uses real astrophysical blackbody radiation curves.</p>
-<p style="margin-top:1.2rem"><strong style="color:var(--text)">Planet textures</strong> use fractional Brownian motion (fBm), a layered noise algorithm where multiple octaves of Perlin-like noise are summed at decreasing amplitudes and increasing frequencies. The result produces realistic-looking terrain, gas cloud bands, lava cracks, and ice shelf patterns &mdash; all computed per-pixel in the WASM module without any pre-baked texture files.</p>
-<p style="margin-top:1.2rem"><strong style="color:var(--text)">NASA integration</strong> bridges procedural and real data by querying the Exoplanet Archive&rsquo;s Table Access Protocol (TAP) API for confirmed planets.</p>
 </div>
 </section>
 <aside class="support-cta" aria-label="Support"><a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="support-link"><span class="support-ico">&#9749;</span><span>Enjoying this? <strong>Support on Ko-fi</strong></span></a></aside>
@@ -235,5 +263,6 @@
 </footer>
 <div class="lightbox" onclick="closeLightbox(event)"><span class="lightbox-close">&times;</span><img></div>
 <script>function openLightbox(s,a){const l=document.querySelector('.lightbox'),i=l.querySelector('img');i.src=s;i.alt=a;l.classList.add('open')}function closeLightbox(e){e.target.tagName!=='IMG'&&document.querySelector('.lightbox').classList.remove('open')}</script>
+<script src="/js/live-facts.js" defer></script>
 </body>
 </html>

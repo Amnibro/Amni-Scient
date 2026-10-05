@@ -207,7 +207,7 @@ function writeIndex(posts) {
   const inner = `<header class="blog-mast">
 <p class="eyebrow">Amniscient, LLC — ship log</p>
 <h1>Updates</h1>
-<p class="masthead-line">What changed, what it means for you, and why it is worth your time. One post per user-visible release — not every commit.</p>
+<p class="masthead-line">One post for every release you’ll actually notice, not every commit. What changed, what it means for you, and why it’s worth a look!</p>
 </header>
 <section class="blog-list">${cards}</section>`;
   const jsonLd = JSON.stringify({

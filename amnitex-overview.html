@@ -5,10 +5,10 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="theme-color" content="#FBFAF8">
 <meta name="robots" content="noindex, nofollow">
-<title>AmniTex Railgun &mdash; The AI Memory Problem, Solved | AMNI-SCIENT</title>
-<meta name="description" content="AmniTex Railgun: sub-2-bit quantization that fits a 7B AI model into 0.88 GB of VRAM with zero quality loss. The VRAM wall is over.">
-<meta property="og:title" content="AmniTex Railgun &mdash; The AI Memory Problem, Solved">
-<meta property="og:description" content="Sub-2-bit quantization. 0.88 GB for a 7B model. Cosine similarity = 1.0000000. The VRAM wall is over.">
+<title>AmniTex Railgun &mdash; Fitting AI Models in Less Memory | AMNI-SCIENT</title>
+<meta name="description" content="AmniTex Railgun: a 1-bit resident tier in VRAM (0.88 GB for a 7B model, derived; 1.21 GB measured for 9B) plus an exact fp16 residual on NVMe, so the full weights come back bit for bit.">
+<meta property="og:title" content="AmniTex Railgun &mdash; Fitting AI Models in Less Memory">
+<meta property="og:description" content="A 1-bit resident tier: 0.88 GB of VRAM for a 7B model (derived), with bit-exact fp16 recovery from NVMe at the Full tier.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://amni-scient.com/amnitex-overview">
 <link rel="canonical" href="https://amni-scient.com/amnitex-overview">
@@ -116,9 +116,9 @@
 </nav>
 
 <section class="product-hero">
-<h1>THE AI MEMORY PROBLEM</h1>
+<h1>AMNITEX RAILGUN</h1>
 <div class="big-stat">0.88 <span>GB</span></div>
-<div class="big-label">THAT'S A 7-BILLION PARAMETER MODEL. IN UNDER A GIGABYTE.</div>
+<div class="big-label">OF VRAM HOLDS THE 1-BIT TIER OF A 7-BILLION PARAMETER MODEL. UNDER A GIGABYTE! THE EXACT REST WAITS ON NVMe.</div>
 </section>
 
 <section>
@@ -126,38 +126,16 @@
 <div class="problem-solution">
 <div class="ps-col problem">
 <h3>THE VRAM WALL</h3>
-<p>Every AI model has billions of numbers (called <span class="highlight">weights</span>) that need to live in your GPU's memory to run.</p>
+<p>Here's the wall. Every AI model has billions of numbers (called <span class="highlight">weights</span>), and they need to live in your GPU's memory to run.</p>
 <p>A 7-billion parameter model needs <span class="highlight">14 GB</span> of VRAM at standard precision. A 70B model needs <span class="highlight">140 GB</span>. The biggest models need over <span class="highlight">800 GB</span>.</p>
-<p>Most GPUs have 8&ndash;24 GB. Even datacenter GPUs max out at 80 GB. The math doesn't work.</p>
-<p>Today's solution? Buy more GPUs. Split the model across machines. Spend millions.</p>
+<p>Most consumer GPUs have 8&ndash;24 GB. An H100, the datacenter workhorse, has 80 GB. The math doesn't work.</p>
+<p>The usual fix? Buy more GPUs. Split the model across machines. Spend millions. Ouch.</p>
 </div>
 <div class="ps-col solution">
-<h3>THE RAILGUN SOLUTION</h3>
-<p>AmniTex Railgun compresses those weights using a fundamentally different approach based on <span class="highlight">abstract algebra</span>&mdash;a branch of pure mathematics.</p>
-<p>Instead of rounding numbers and hoping for the best, Railgun encodes weights into a mathematical structure where compression is <span class="highlight">exact</span>.</p>
-<p>The result: a 7B model fits in <span class="highlight">0.88 GB</span>. And when you need the original weights back? They come back <span class="highlight">perfectly</span>. Not approximately. Perfectly.</p>
-</div>
-</div>
-</section>
-
-<section>
-<h2>BY THE NUMBERS</h2>
-<div class="stat-strip">
-<div class="stat-item">
-<div class="stat-num">16&times;</div>
-<div class="stat-label">COMPRESSION AT ROUTING TIER</div>
-</div>
-<div class="stat-item">
-<div class="stat-num">1.0</div>
-<div class="stat-label">COSINE SIMILARITY (FULL)</div>
-</div>
-<div class="stat-item">
-<div class="stat-num">&infin;</div>
-<div class="stat-label">CONTEXT STABILITY</div>
-</div>
-<div class="stat-item">
-<div class="stat-num">5&times;</div>
-<div class="stat-label">TMU THROUGHPUT/WATT</div>
+<h3>WHAT I BUILT</h3>
+<p>So I built AmniTex Railgun. It splits those weights with an approach based on <span class="highlight">abstract algebra</span>, a branch of pure mathematics.</p>
+<p>Instead of rounding numbers and hoping for the best, Railgun keeps a tiny 1-bit index on the GPU and the rest on NVMe, and the round trip is <span class="highlight">exact</span>.</p>
+<p>What you get: the resident part of a 7B model is <span class="highlight">0.88 GB</span> (worked out from the 1.21 GB I measured for a 9B model). And when you need the original weights back? They come back <span class="highlight">perfectly</span>. Not approximately. Perfectly. The catch: the NVMe residual is 1.75&times; the fp16 size today, so the total store is bigger, and running on the 1-bit tier alone is lossy, with quality I haven&rsquo;t measured yet.</p>
 </div>
 </div>
 </section>
@@ -166,9 +144,9 @@
 <h2>HOW IT WORKS (SIMPLY)</h2>
 <div class="analogy">
 <h3>THE BOOK ANALOGY</h3>
-<p>Imagine a 1,000-page book. Normal compression is like summarizing each chapter&mdash;you lose details.</p>
-<p style="margin-top:1rem">Railgun is like writing a <span class="accent">formula</span> that can regenerate any page on demand. The formula fits on an index card, but the full book is always available. No information is ever lost.</p>
-<p style="margin-top:1rem">The <span class="accent">progressive tier system</span> means you can choose: read the chapter summaries for speed (R-only tier), or regenerate the full page when you need it (Full tier). Both from the same index card.</p>
+<p>Picture a 1,000-page book. Normal compression is like summarizing each chapter: handy, but you lose details.</p>
+<p style="margin-top:1rem">Railgun is like keeping an <span class="accent">index card</span> on your desk and the full book on the shelf. The card is what fits in VRAM. Need a page exactly? Pull it from the shelf, and you get it word for word. Today the shelf copy is bigger than the original book (1.75&times;), so this saves desk space, not shelf space.</p>
+<p style="margin-top:1rem">And the <span class="accent">progressive tier system</span> lets you choose: read the card alone for speed (R-only tier, lossy), or pull the full page when you need it (Full tier, exact).</p>
 </div>
 
 <div class="explain-grid">
@@ -180,12 +158,34 @@
 <div class="explain-card">
 <div class="step-n">STEP 2 &mdash; REFINE</div>
 <h4>Progressive Layers</h4>
-<p>Residual errors from routing are captured in successive refinement layers (G, B channels), each adding precision. These layers can stream from fast NVMe storage on demand.</p>
+<p>Residual errors from routing are captured in successive refinement layers (G, B channels), each adding precision. These layers can stream from fast NVMe storage on demand. The in-between tiers aren&rsquo;t measured yet.</p>
 </div>
 <div class="explain-card">
 <div class="step-n">STEP 3 &mdash; RECONSTRUCT</div>
 <h4>Lossless Recovery</h4>
-<p>At the Full tier, the complete fp16 weight is recovered exactly. Not approximately&mdash;bit-exact. This is a mathematical guarantee, not an empirical observation.</p>
+<p>At the Full tier, the complete fp16 weight is recovered exactly. Not approximately&mdash;bit-exact. Measured: every tensor I&rsquo;ve tried, including all 290 layers of a 0.5B model with byte-identical outputs.</p>
+</div>
+</div>
+</section>
+
+<section>
+<h2>BY THE NUMBERS</h2>
+<div class="stat-strip">
+<div class="stat-item">
+<div class="stat-num">16&times;</div>
+<div class="stat-label">SMALLER RESIDENT FOOTPRINT (1-BIT TIER)</div>
+</div>
+<div class="stat-item">
+<div class="stat-num">1.0</div>
+<div class="stat-label">COSINE SIMILARITY (FULL)</div>
+</div>
+<div class="stat-item">
+<div class="stat-num">290/290</div>
+<div class="stat-label">LAYERS BIT-EXACT (0.5B ROUNDTRIP)</div>
+</div>
+<div class="stat-item">
+<div class="stat-num">5&times;</div>
+<div class="stat-label">TMU THROUGHPUT/WATT (ESTIMATE, UNTESTED)</div>
 </div>
 </div>
 </section>
@@ -198,21 +198,11 @@
 <tr><td>Bits per weight (VRAM)</td><td>4.0</td><td>4.0&ndash;6.0</td><td class="win">1.0&ndash;2.0</td></tr>
 <tr><td>7B model VRAM</td><td>3.5 GB</td><td>3.5&ndash;5.3 GB</td><td class="win">0.88&ndash;1.75 GB</td></tr>
 <tr><td>Lossless at full precision?</td><td>No</td><td>No</td><td class="win">Yes</td></tr>
-<tr><td>Progressive quality tiers?</td><td>No</td><td>No</td><td class="win">4 tiers</td></tr>
-<tr><td>Context stability</td><td>Degrades</td><td>Degrades</td><td class="win">Infinite (proven)</td></tr>
-<tr><td>GPU hardware acceleration</td><td>ALU only</td><td>CPU / ALU</td><td class="win">TMU native</td></tr>
-<tr><td>Training compatible?</td><td>Inference only</td><td>Inference only</td><td class="win">Yes</td></tr>
+<tr><td>Progressive quality tiers?</td><td>No</td><td>No</td><td class="win">4 tiers (2 measured)</td></tr>
+<tr><td>Total store vs fp16</td><td>0.25&times;</td><td>0.25&ndash;0.4&times;</td><td>1.75&times; today</td></tr>
+<tr><td>GPU hardware acceleration</td><td>ALU only</td><td>CPU / ALU</td><td>TMU path planned, untested</td></tr>
+<tr><td>Training compatible?</td><td>Inference only</td><td>Inference only</td><td>Design only, untested</td></tr>
 </table>
-</div>
-</section>
-
-<section>
-<h2>CORRECTIONS THAT STICK</h2>
-<p style="color:var(--dim);max-width:740px;margin:0 auto 1.25rem;font-size:.9rem">The same lossless ATEX layer powers Adam&rsquo;s closed-loop memory. When you correct the model, the fix is bit-exact &mdash; verified before it&rsquo;s stored, and structurally impossible to un-learn.</p>
-<div class="explain-grid">
-<div class="explain-card"><h3>Verify-after-write</h3><p>Every learned fact is written to all stores, then immediately recalled to confirm it landed. If the read-back doesn&rsquo;t match, the write is rolled back &mdash; no silent half-writes.</p></div>
-<div class="explain-card"><h3>Anti-pattern suppression</h3><p>A wrong answer you&rsquo;ve corrected is added to a permanent suppression set &mdash; it can never be returned again on any recall tier, and it never federates to other instances.</p></div>
-<div class="explain-card"><h3>Never wrong twice</h3><p>Corrected facts return instantly from an exact lookup and are injected as authoritative grounding even when you ask a reworded question. The same error is never reported twice.</p></div>
 </div>
 </section>
 
@@ -221,25 +211,35 @@
 <div class="explain-grid">
 <div class="explain-card">
 <div class="step-n">AI COMPANIES</div>
-<h4>Cut GPU Costs by 4&ndash;16&times;</h4>
-<p>Run the same models on less hardware. Or run bigger models on the same hardware. Either way, your cloud bill drops.</p>
+<h4>Fit More Models per GPU</h4>
+<p>A 1-bit resident tier could let one card hold several models. On paper that&rsquo;s up to 4&times; fewer GPUs for the same load. I&rsquo;ve allocated three 9B tiers on one 16 GB card, but I haven&rsquo;t measured serving under load.</p>
 </div>
 <div class="explain-card">
 <div class="step-n">RESEARCHERS</div>
-<h4>Run 70B on a Desktop</h4>
-<p>Models that currently need a cluster can run on a single workstation GPU. Faster iteration, lower barrier to entry.</p>
+<h4>70B on a Desktop, Someday</h4>
+<p>A 70B model&rsquo;s 1-bit tier works out to 8.75 GB, which fits a workstation GPU. That&rsquo;s arithmetic, not a run, and the 1-bit tier&rsquo;s quality isn&rsquo;t measured yet.</p>
 </div>
 <div class="explain-card">
 <div class="step-n">EDGE / MOBILE</div>
 <h4>AI on Consumer Hardware</h4>
-<p>7B models running on laptops and phones with 1 GB of available VRAM. Local, private, fast.</p>
+<p>A 7B model&rsquo;s 1-bit tier is 0.88 GB, small enough for laptop-class VRAM. I haven&rsquo;t run it on a laptop or phone, and my 9B run on the 1-bit tier did 1.5 tokens a second, so fast isn&rsquo;t a word I&rsquo;ve earned yet.</p>
 </div>
 </div>
 </section>
 
+<section>
+<h2>CORRECTIONS THAT STICK</h2>
+<p style="color:var(--dim);max-width:740px;margin:0 auto 1.25rem;font-size:.9rem">Same exactness idea, different place! Adam, my local AI assistant, has a closed-loop correction memory. When you correct it, the fix is stored as exact text, read back to check it landed, and the wrong answer goes on a block list.</p>
+<div class="explain-grid">
+<div class="explain-card"><h3>Verify-after-write</h3><p>Every learned fact is written to each memory store Adam has attached, then immediately recalled to confirm it landed. If the read-back doesn&rsquo;t match, the exact-lookup copy is rolled back and the write is reported as not stored.</p></div>
+<div class="explain-card"><h3>Anti-pattern suppression</h3><p>A wrong answer you&rsquo;ve corrected goes into a suppression set kept in a ledger file. Every recall tier skips a stored answer that matches it, and it never federates to other instances. It&rsquo;s an exact-text match after case and spacing are normalized, so it blocks that answer, not every way of phrasing the same mistake.</p></div>
+<div class="explain-card"><h3>Grounding on rewording</h3><p>Corrected facts return instantly from an exact lookup. Ask a reworded question and a close enough match is injected as authoritative grounding. That steers the model hard, but it&rsquo;s an instruction, not a filter, so I don&rsquo;t promise the same error can never come back.</p></div>
+</div>
+</section>
+
 <section class="cta-section">
-<h2>SEE THE PROOF</h2>
-<p>The claims above are verifiable. The evaluation package runs on any machine with Python and NumPy. No GPU required. Results speak for themselves.</p>
+<h2>CHECK IT YOURSELF</h2>
+<p>Don&rsquo;t just take my word for it. The measured Railgun claims above are checkable: the evaluation package, available under NDA, runs with Python and PyTorch, on CUDA, ROCm or plain CPU.</p>
 <div class="cta-row">
 <a href="research/amnitex-railgun.html" class="btn btn-primary">TECHNICAL DEEP DIVE &rarr;</a>
 <a href="licensing.html" class="btn btn-outline">GET EVALUATION ACCESS</a>

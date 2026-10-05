@@ -5,16 +5,16 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="theme-color" content="#FBFAF8">
 <title>Amni-Weather &mdash; Interactive Weather Maps | AMNI-SCIENT</title>
-<meta name="description" content="Amni-Weather v1.4.7: interactive weather maps in the browser. Live Open-Meteo fields, point forecast (hourly/7-day/surf/UV/air), NWS + GDACS hazards, US units default, Rust/WASM field engine.">
+<meta name="description" content="Amni-Weather is interactive weather maps in your browser (v1.4.7). Live Open-Meteo fields, point forecast (hourly/7-day/surf/UV/air), NWS + GDACS hazards, US units default, Rust/WASM field engine.">
 <meta name="keywords" content="amni-weather,weather map,interactive weather,open-meteo,NWS alerts,GDACS,point forecast,wasm,meteoblue alternative,custom colormap">
 <meta property="og:title" content="Amni-Weather &mdash; Interactive Weather Maps">
-<meta property="og:description" content="v1.4.7 multi-layer weather maps. Live fields, pin forecast, NWS/GDACS hazards, US units. Free in-browser WASM engine.">
+<meta property="og:description" content="Multi-layer weather maps in your browser. Live fields, pin forecast, NWS/GDACS hazards, US units. Free in-browser WASM engine, v1.4.7.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://amni-scient.com/amni-weather">
 <meta property="og:image" content="https://amni-scient.com/assets/explore/og-explore.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Amni-Weather &mdash; Interactive Weather Maps">
-<meta name="twitter:description" content="v1.4.7 weather maps: live Open-Meteo, pin forecast, NWS/GDACS hazards. Free in-browser WASM.">
+<meta name="twitter:description" content="Weather maps in your browser: live Open-Meteo, pin forecast, NWS/GDACS hazards. Free in-browser WASM, v1.4.7.">
 <link rel="canonical" href="https://amni-scient.com/amni-weather">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Amni-Weather","url":"https://amni-scient.com/weather/","description":"Interactive weather maps with live Open-Meteo fields, point forecast panels, NWS and GDACS hazards, customizable colormaps, and Rust/WASM field engine.","applicationCategory":"WeatherApplication","operatingSystem":"Any (Modern Browser)","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Organization","name":"AMNI-SCIENT","legalName":"Amniscient, LLC","url":"https://amni-scient.com"},"softwareVersion":"1.4.7"}</script>
 <link rel="stylesheet" href="css/style.css?v=b261">
@@ -92,7 +92,7 @@
 <div class="product-hero">
 <div class="wx-icon" aria-hidden="true"></div>
 <h1>AMNI-WEATHER</h1>
-<p class="desc">v1.4.7 &bull; SLIPPY MAPS &bull; LIVE FIELDS &bull; PIN FORECAST &bull; NWS + GDACS &bull; RUST/WASM</p>
+<p class="desc">SLIPPY WEATHER MAPS &bull; LIVE FIELDS &bull; PIN FORECAST &bull; NWS + GDACS &bull; RUST/WASM &bull; v1.4.7</p>
 <div class="cta-row" style="margin-top:1rem;margin-bottom:.8rem">
 <a href="weather/" class="btn btn-primary">LAUNCH MAPS</a>
 <a href="privacy-weather.html" class="btn">PRIVACY</a>
@@ -104,24 +104,29 @@
 </div>
 <div class="ptile">
 <div class="ptile-copy">
-<p class="ptile-line">Interactive multi-layer weather maps — slippy basemaps, pin forecast, live models (v1.4.7).</p>
+<p class="ptile-line">Interactive weather maps in your browser. Stack live model layers on a slippy basemap, then drop a pin for a forecast (v1.4.7).</p>
 <ul class="ptile-feats"><li>Temp, wind, precip, CAPE, UV, pressure &amp; more</li><li>Pin forecast: hourly / 7-day / surf / UV·air</li><li>NWS + GDACS hazards · US units default</li><li>Live Open-Meteo + pack fallback, Rust/WASM fields</li></ul>
 </div>
 <div class="ptile-media"><img src="assets/weather/tile-weather.jpg" alt="Amni-Weather temperature layer" loading="lazy"></div>
 </div>
 <section>
-<h2>BUILT TO COMPETE ON THE MAP</h2>
-<p style="color:var(--dim);max-width:640px;margin:0 0 1rem;font-size:.9rem">Amni-Weather is a browser-native weather map for dense multi-variable fields, smooth pan/zoom, and full control over coloration.</p>
+<h2>WHAT&rsquo;S ON THE MAP</h2>
+<p style="color:var(--dim);max-width:640px;margin:0 0 1rem;font-size:.9rem">I wanted a weather map that runs natively in the browser, packs dense multi-variable fields, pans and zooms smoothly, and lets you control every color. So that&rsquo;s what I built.</p>
 <div class="features">
 <div class="feature">
 <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 14V4a2 2 0 0 0-4 0v10a4 4 0 1 0 4 0z"/><path d="M12 8v6"/></svg></div>
 <h4>MAP LAYERS + LOD</h4>
-<p>Temperature, feels-like, dew point, humidity, precip, clouds, MSL pressure, wind, CAPE, UV, visibility. Zoom densifies the live lattice; far-out stays light so the map stays snappy.</p>
+<p>Temperature, feels-like, dew point, humidity, precip, clouds, MSL pressure, wind, CAPE, UV, visibility. Zoom in and the live lattice gets denser; zoomed out it stays light, so the map stays snappy.</p>
+</div>
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5 5"/></svg></div>
+<h4>SLIPPY MAP UX</h4>
+<p>Fractional zoom, inertia pan, pinch on mobile, wind streamlines, pressure isobars, city labels and borders. It finds you with browser geolocation, falls back to IP, and remembers your last place.</p>
 </div>
 <div class="feature">
 <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 20h18"/><path d="M5 16l4.5-5 3.5 3L20 6"/></svg></div>
 <h4>POINT FORECAST</h4>
-<p>Drop a pin for Now / Hourly / 7-day / Surf / UV&middot;Air tabs &mdash; WMO icons, sparklines, marine waves when available. Refresh on demand; no account required.</p>
+<p>Drop a pin and get Now / Hourly / 7-day / Surf / UV&middot;Air tabs, with WMO icons, sparklines, and marine waves when available. Refresh whenever you like; no account needed.</p>
 </div>
 <div class="feature">
 <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l10 18H2z"/><path d="M12 9v5M12 17.5v.5"/></svg></div>
@@ -131,27 +136,43 @@
 <div class="feature">
 <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="8.5" cy="10" r="1.3"/><circle cx="12" cy="7.6" r="1.3"/><circle cx="15.5" cy="10" r="1.3"/></svg></div>
 <h4>CUSTOM COLORATION</h4>
-<p>Palette presets, reverse, opacity, gamma, soft mask, auto or manual ranges &mdash; paint the field the way you want to read it.</p>
-</div>
-<div class="feature">
-<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5 5"/></svg></div>
-<h4>SLIPPY MAP UX</h4>
-<p>Fractional zoom, inertia pan, pinch on mobile, wind streamlines, pressure isobars, city labels + borders. Locate via browser geo, then IP fallback; last place remembered.</p>
-</div>
-<div class="feature">
-<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.2"/><path d="M12 3v2.4M12 18.6V21M3 12h2.4M18.6 12H21M5.6 5.6l1.7 1.7M16.7 16.7l1.7 1.7M18.4 5.6l-1.7 1.7M7.3 16.7l-1.7 1.7"/></svg></div>
-<h4>RUST / WASM ENGINE</h4>
-<p>IDW gridding, upsample, smooth, field stats, and palette work compile to WASM with a JS fallback if WASM is blocked.</p>
+<p>Palette presets, reverse, opacity, gamma, soft mask, auto or manual ranges. Paint the field the way you want to read it.</p>
 </div>
 <div class="feature">
 <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 3 2.6 15 0 18M12 3c-2.6 3-2.6 15 0 18"/></svg></div>
 <h4>LIVE + PACK</h4>
-<p>Always-on live path with silent pack/global-field fallback when APIs are busy. No fake &ldquo;demo mode&rdquo; switch &mdash; the map should never brick.</p>
+<p>The live path is always on, with a silent fallback to pack/global fields when APIs are busy. No fake &ldquo;demo mode&rdquo; switch. The map should never brick.</p>
+</div>
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.2"/><path d="M12 3v2.4M12 18.6V21M3 12h2.4M18.6 12H21M5.6 5.6l1.7 1.7M16.7 16.7l1.7 1.7M18.4 5.6l-1.7 1.7M7.3 16.7l-1.7 1.7"/></svg></div>
+<h4>RUST / WASM ENGINE</h4>
+<p>IDW gridding, upsampling, smoothing, field stats and palette work all compile to WASM, with a JS fallback if WASM is blocked.</p>
 </div>
 <div class="feature">
 <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10" width="16" height="11"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div>
 <h4>PRIVACY-HONEST</h4>
-<p>No accounts. Processing stays in your browser. Prefs (place, units) in localStorage only. Live fetches go to Open-Meteo, map tiles, and public hazard feeds &mdash; see the privacy page.</p>
+<p>No accounts. Processing stays in your browser. Prefs (place, units) live in localStorage only. Live fetches go to Open-Meteo, map tiles, and public hazard feeds; the privacy page has the details.</p>
+</div>
+</div>
+</section>
+<section>
+<h2>HOW IT WORKS</h2>
+<div class="how-works-grid">
+<div class="card">
+<h3>1. LOCATE &amp; SAMPLE</h3>
+<p>It starts on the world view until you search or allow locate. Live mode samples a lat/lon lattice through Open-Meteo for the active viewport; density follows zoom LOD.</p>
+</div>
+<div class="card">
+<h3>2. WASM FIELD BUILD</h3>
+<p>Points are IDW-gridded, smoothed, and upsampled to a dense field texture in Rust/WASM (JS fallback if WASM is blocked). Pack fields fill gaps fast.</p>
+</div>
+<div class="card">
+<h3>3. COLORIZE &amp; OVERLAY</h3>
+<p>Palette LUTs map value ranges to color. Wind trails and isobars sit on the slippy basemap with unit-aware probe chips.</p>
+</div>
+<div class="card">
+<h3>4. PIN FORECAST</h3>
+<p>Click the map to drop a pin. The forecast panel loads hourly/daily/surf/UV&middot;air for that point while hazards stay in view.</p>
 </div>
 </div>
 </section>
@@ -174,39 +195,18 @@
 </table>
 </section>
 <section>
-<h2>HOW IT WORKS</h2>
-<div class="how-works-grid">
-<div class="card">
-<h3>1. LOCATE &amp; SAMPLE</h3>
-<p>World view until you search or allow locate. Live mode samples a lat/lon lattice through Open-Meteo for the active viewport; density follows zoom LOD.</p>
-</div>
-<div class="card">
-<h3>2. WASM FIELD BUILD</h3>
-<p>Points are IDW-gridded, smoothed, and upsampled to a dense field texture in Rust/WASM (JS fallback if WASM is blocked). Pack fields fill gaps fast.</p>
-</div>
-<div class="card">
-<h3>3. COLORIZE &amp; OVERLAY</h3>
-<p>Palette LUTs map value ranges to color. Wind trails and isobars sit on the slippy basemap with unit-aware probe chips.</p>
-</div>
-<div class="card">
-<h3>4. PIN FORECAST</h3>
-<p>Click the map for a pin: forecast panel loads hourly/daily/surf/UV&middot;air for that point while hazards stay in view.</p>
-</div>
+<h2>DATA &amp; HONESTY</h2>
+<div style="max-width:800px;margin:0 0;line-height:1.9;color:var(--dim);font-size:.9rem">
+<p>To be clear about what this is: Amni-Weather is a <strong style="color:var(--text)">visualization and field-processing product</strong>.</p>
+<p style="margin-top:1.2rem">When live fetch is rate-limited or offline, the app falls back to baked pack / global fields so the UI stays usable. I don&rsquo;t ship a separate &ldquo;demo mode&rdquo; product path.</p>
 </div>
 </section>
 <section>
 <h2>LAUNCH AMNI-WEATHER</h2>
-<p style="color:var(--dim);margin-bottom:.5rem;font-size:.9rem">Run directly in your browser. No download, no account.</p>
+<p style="color:var(--dim);margin-bottom:.5rem;font-size:.9rem">It runs right in your browser. No download, no account.</p>
 <p style="color:var(--dim);font-size:.8rem;margin-bottom:2rem">Modern browser &bull; network for live models and tiles &bull; pack covers gaps</p>
 <div class="cta-row" style="">
 <a href="weather/" class="btn btn-primary">OPEN WEATHER MAPS</a>
-</div>
-</section>
-<section>
-<h2>DATA &amp; HONESTY</h2>
-<div style="max-width:800px;margin:0 0;line-height:1.9;color:var(--dim);font-size:.9rem">
-<p>Amni-Weather is a <strong style="color:var(--text)">visualization and field-processing product</strong>.</p>
-<p style="margin-top:1.2rem">When live fetch is rate-limited or offline, the app falls back to baked pack / global fields so the UI stays usable. We do not ship a separate &ldquo;demo mode&rdquo; product path.</p>
 </div>
 </section>
 <aside class="support-cta" aria-label="Support"><a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="support-link"><span class="support-ico">&#9749;</span><span>Enjoying this? <strong>Support on Ko-fi</strong></span></a></aside>

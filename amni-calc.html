@@ -5,11 +5,11 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="theme-color" content="#FBFAF8">
 <title>Amni-Calc &mdash; Browser Engineering Calculators (WASM) | AMNI-SCIENT</title>
-<meta name="description" content="Amni-Calc: free in-browser engineering calculator suite. 37 modules covering beam FEA, stress, bolts, springs, seals, fatigue, fluids, heat exchangers, pressure vessels, HVAC, electrical, machining, hydraulics, rigging, CAD Studio, and more. WebAssembly backend. No install, no telemetry.">
-<meta name="keywords" content="amni-calc,engineering calculator,beam fea,stress analysis,bolt torque,spring calculator,seal design,fatigue goodman,heat transfer,heat exchanger lmtd,pressure vessel asme,thermodynamic cycles,hvac psychrometric,electrochemistry nernst,battery sizing,wasm engineering,in-browser fea">
+<meta name="description" content="Amni-Calc: free in-browser engineering calculator suite. 37 modules covering beam analysis, stress, bolts, springs, seals, fatigue, fluids, heat exchangers, pressure vessels, HVAC, electrical, machining, hydraulics, rigging, CAD Studio, and more. WebAssembly backend. No install, no telemetry.">
+<meta name="keywords" content="amni-calc,engineering calculator,beam deflection,stress analysis,bolt torque,spring calculator,seal design,fatigue goodman,heat transfer,heat exchanger lmtd,pressure vessel asme,thermodynamic cycles,hvac psychrometric,electrochemistry nernst,battery sizing,wasm engineering,in-browser beam calculator">
 <meta name="author" content="Amni-Scient">
 <meta property="og:title" content="Amni-Calc &mdash; Browser Engineering Calculator Suite">
-<meta property="og:description" content="37 engineering modules: beam FEA, stress, bolts, springs, seals, fatigue, heat transfer, fluids, machining, hydraulics, rigging, CAD Studio, electrical, batteries, materials. Client-side WASM.">
+<meta property="og:description" content="37 engineering modules: beam analysis, stress, bolts, springs, seals, fatigue, heat transfer, fluids, machining, hydraulics, rigging, CAD Studio, electrical, batteries, materials. Client-side WASM.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://amni-scient.com/amni-calc.html">
 <meta property="og:image" content="https://amni-scient.com/assets/explore/og-explore.png">
@@ -96,13 +96,66 @@
 </svg>
 </div>
 <h1>AMNI-CALC</h1>
-<p class="desc">37 ENGINEERING MODULES &bull; WEBASSEMBLY BACKEND &bull; INTERACTIVE PLOTLY + 3D</p>
+<p class="desc">FREE IN-BROWSER ENGINEERING CALCULATORS &bull; 37 MODULES &bull; WEBASSEMBLY BACKEND &bull; INTERACTIVE PLOTLY + 3D</p>
 <div style="margin-top:2rem">
 <a href="calc/" class="btn btn-primary">LAUNCH AMNI-CALC &rarr;</a>
 </div>
 </div>
+<div class="ptile">
+<div class="ptile-copy">
+<p class="ptile-line">A suite of 37 engineering modules that run right in your browser, on a WASM backend.</p>
+<ul class="ptile-feats"><li>Every calculator ships theory, a worked example &amp; cited standards</li><li>Beam deflection, stress &amp; Mohr&rsquo;s circle, bolts, Belleville catalog</li><li>Fluids (Moody), heat exchangers (LMTD/NTU), pumps (NPSH)</li><li>Fatigue, PV, machining, hydraulics, rigging, CAD Studio</li></ul>
+</div>
+<div class="ptile-media"><img src="assets/calc/ss_seal_analysis.png" alt="Amni-Calc seal analysis module" loading="lazy"></div>
+</div>
+<section>
+<h2>WHY IN-BROWSER ENGINEERING TOOLS</h2>
+<div style="max-width:800px;margin:0 0;line-height:1.9;color:var(--dim);font-size:.9rem">
+<p>Traditional engineering software falls into two camps: desktop packages you have to install, and web tools that do the math on someone else&rsquo;s server.</p>
+<p style="margin-top:1.2rem"><strong style="color:var(--text)">In-browser calculators split the difference.</strong> They run anywhere a modern browser does: desktops, laptops, Chromebooks, tablets. They roll out to a whole team instantly, no IT approval needed. And because the computation is local, proprietary design inputs never leave the device. The page loads, runs the kernel against your inputs and renders the results, with no server round trip.</p>
+<p style="margin-top:1.2rem"><strong style="color:var(--text)">WebAssembly matters here.</strong> JavaScript is great for UI but slow for dense numerical work like integrating beam deflection curves, or iterating Colebrook for friction factor. That heavy lifting is the WebAssembly backend&rsquo;s job.</p>
+<p style="margin-top:1.2rem"><strong style="color:var(--text)">Interactive charts are the other half.</strong> Comparing two gasket materials or three spring stacks is so much easier when every curve sits on one plot with a hover readout. Plotly handles that well in the browser, and since everything is client-side, zooming and panning feel instantaneous: no server re-render, no spinner between clicks.</p>
+</div>
+</section>
+
+<section>
+<h2>ENGINEERING MATH, WITHOUT THE INSTALL</h2>
+<p style="color:var(--dim);max-width:640px;margin:0 0 1rem;font-size:.9rem">Mechanical, electrical, fluid, thermal, manufacturing and electrochemical: all 37 modules run entirely in your browser. Here's what they cover.</p>
+<div class="features">
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18M6 21h12M5 8h14M5 8l-3 6h6zM19 8l3 6h-6z"/></svg></div>
+<h4>STRESS &amp; STRUCTURAL</h4>
+<p>Mohr's circle, beam shear/moment/deflection, cross-section properties, columns (Euler/Johnson), shafts (torsion/critical speed), welds (AWS fillet/group polar), bearings (ISO 281 L10), and fatigue (Goodman/Soderberg/Gerber/ASME-Elliptic).</p>
+</div>
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.6 8.2-8 9-4.4-.8-8-4-8-9V6z"/></svg></div>
+<h4>FASTENERS &amp; SEALS</h4>
+<p>Bolt torque (nut-factor and detailed thread/face friction), preload scatter, PCC-1 sequences, Belleville catalog autoselect + coil/conical/wave springs with Wahl correction, O-ring seal design with industry-standard groove geometry, gland selection.</p>
+</div>
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 14V4a2 2 0 0 0-4 0v10a4 4 0 1 0 4 0z"/><path d="M12 8v6"/></svg></div>
+<h4>FLUIDS &amp; THERMAL</h4>
+<p>Moody diagram with explicit Colebrook solution, Bernoulli with minor losses, pump NPSH/affinity laws, heat conduction/convection/radiation, fin efficiency, LMTD/NTU heat exchangers, ASME pressure vessels, thermodynamic cycles (Carnot/Otto/Diesel/Brayton/refrigeration).</p>
+</div>
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 2L5 13.5h6L10.5 22 19 10.5h-6z"/></svg></div>
+<h4>ELECTRICAL &amp; MOTORS</h4>
+<p>Ohm's law, AC power triangle, three-phase calculations, RC/RL transients, induction-motor synchronous speed and full-load amps, NEC 310.16 wire ampacity with voltage-drop checks, vibration isolator transmissibility, gear-tooth Lewis bending.</p>
+</div>
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6v6l3 9H6l3-9z"/><path d="M8 14h8"/></svg></div>
+<h4>ELECTROCHEMISTRY &amp; BATTERIES</h4>
+<p>Nernst potential, Tafel and Butler-Volmer kinetics, Faraday-law mass deposition, corrosion-rate from current density, battery pack sizing with Peukert exponent, runtime/SOC, and series-parallel cell configurations.</p>
+</div>
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="7" height="16"/><rect x="12" y="4" width="7" height="16"/><path d="M3 9h7M12 9h7"/></svg></div>
+<h4>REFERENCE LIBRARY</h4>
+<p>Material database (yield, ultimate, modulus, density, thermal conductivity, specific heat) for structural alloys, stainless, polymers. Surface finish recommender, math handbook, equation reference, unit converter, and an indexed catalog of standards (ASME, ASTM, NEC, AWS, ISO).</p>
+</div>
+</div>
+</section>
 <section class="wide">
-<div class="sec-head"><h2>All 37 calculators</h2><p>Free, in-browser, no sign-up. Theory and a worked example on every module.</p></div>
+<div class="sec-head"><h2>All 37 modules</h2><p>The full list, grouped by discipline. Every one is free, runs in your browser and needs no sign-up.</p></div>
 <div class="mod-index">
 <h3 class="mod-group">Mechanical</h3>
 <a href="calc/stress.html">Stress Analysis & Mohr's Circle</a>
@@ -149,65 +202,12 @@
 </div>
 <div class="cta-row" style="margin-top:2rem"><a class="btn btn-primary" href="calc/">OPEN THE FULL SUITE</a></div>
 </section>
-
-<div class="ptile">
-<div class="ptile-copy">
-<p class="ptile-line">Engineering calculator suite — 37 in-browser WASM modules with theory and worked examples.</p>
-<ul class="ptile-feats"><li>Beam FEA, stress &amp; Mohr&rsquo;s circle, bolts, Belleville catalog</li><li>Fatigue, PV, machining, hydraulics, rigging, CAD Studio</li><li>Fluids (Moody), heat exchangers (LMTD/NTU), pumps (NPSH)</li><li>Every module ships theory, a worked example &amp; cited standards</li></ul>
-</div>
-<div class="ptile-media"><img src="assets/calc/ss_seal_analysis.png" alt="Amni-Calc seal analysis module" loading="lazy"></div>
-</div>
-<section>
-<h2>ENGINEERING MATH, WITHOUT THE INSTALL</h2>
-<p style="color:var(--dim);max-width:640px;margin:0 0 1rem;font-size:.9rem">Amni-Calc is a suite of 37 mechanical, electrical, fluid, thermal, manufacturing, and electrochemical engineering calculators that run entirely in your browser.</p>
-<div class="features">
-<div class="feature">
-<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18M6 21h12M5 8h14M5 8l-3 6h6zM19 8l3 6h-6z"/></svg></div>
-<h4>STRESS &amp; STRUCTURAL</h4>
-<p>Mohr's circle, beam shear/moment/deflection, cross-section properties, columns (Euler/Johnson), shafts (torsion/critical speed), welds (AWS fillet/group polar), bearings (ISO 281 L10), and fatigue (Goodman/Soderberg/Gerber/ASME-Elliptic).</p>
-</div>
-<div class="feature">
-<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.6 8.2-8 9-4.4-.8-8-4-8-9V6z"/></svg></div>
-<h4>FASTENERS &amp; SEALS</h4>
-<p>Bolt torque (nut-factor and detailed thread/face friction), preload scatter, PCC-1 sequences, Belleville catalog autoselect + coil/conical/wave springs with Wahl correction, O-ring seal design with industry-standard groove geometry, gland selection.</p>
-</div>
-<div class="feature">
-<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 14V4a2 2 0 0 0-4 0v10a4 4 0 1 0 4 0z"/><path d="M12 8v6"/></svg></div>
-<h4>FLUIDS &amp; THERMAL</h4>
-<p>Moody diagram with explicit Colebrook solution, Bernoulli with minor losses, pump NPSH/affinity laws, heat conduction/convection/radiation, fin efficiency, LMTD/NTU heat exchangers, ASME pressure vessels, thermodynamic cycles (Carnot/Otto/Diesel/Brayton/refrigeration).</p>
-</div>
-<div class="feature">
-<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 2L5 13.5h6L10.5 22 19 10.5h-6z"/></svg></div>
-<h4>ELECTRICAL &amp; MOTORS</h4>
-<p>Ohm's law, AC power triangle, three-phase calculations, RC/RL transients, induction-motor synchronous speed and full-load amps, NEC 310.16 wire ampacity with voltage-drop checks, vibration isolator transmissibility, gear-tooth Lewis bending.</p>
-</div>
-<div class="feature">
-<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6v6l3 9H6l3-9z"/><path d="M8 14h8"/></svg></div>
-<h4>ELECTROCHEMISTRY &amp; BATTERIES</h4>
-<p>Nernst potential, Tafel and Butler-Volmer kinetics, Faraday-law mass deposition, corrosion-rate from current density, battery pack sizing with Peukert exponent, runtime/SOC, and series-parallel cell configurations.</p>
-</div>
-<div class="feature">
-<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="7" height="16"/><rect x="12" y="4" width="7" height="16"/><path d="M3 9h7M12 9h7"/></svg></div>
-<h4>REFERENCE LIBRARY</h4>
-<p>Material database (yield, ultimate, modulus, density, thermal conductivity, specific heat) for structural alloys, stainless, polymers. Surface finish recommender, math handbook, equation reference, unit converter, and an indexed catalog of standards (ASME, ASTM, NEC, AWS, ISO).</p>
-</div>
-</div>
-</section>
-<section>
-<h2>WHY IN-BROWSER ENGINEERING TOOLS</h2>
-<div style="max-width:800px;margin:0 0;line-height:1.9;color:var(--dim);font-size:.9rem">
-<p>Traditional engineering software falls into two camps.</p>
-<p style="margin-top:1.2rem"><strong style="color:var(--text)">In-browser calculators split the difference.</strong> They run anywhere a modern browser does &mdash; desktops, laptops, Chromebooks, tablets. They deploy instantly to a team without IT approval. And because computation is local, proprietary design inputs never leave the device. The page loads, executes the kernel against your inputs, and renders results &mdash; no server round trip.</p>
-<p style="margin-top:1.2rem"><strong style="color:var(--text)">WebAssembly matters here.</strong> JavaScript is great for UI but slow for dense numerical work like solving stiffness matrices, integrating beam deflection curves, or iterating Colebrook for friction factor.</p>
-<p style="margin-top:1.2rem"><strong style="color:var(--text)">Interactive charts are the other half.</strong> Comparing two gasket materials or three spring stacks benefits from seeing both curves on one plot with hover-readout. Plotly handles this well in the browser, and because everything is client-side, zooming and panning feel instantaneous &mdash; no server re-render, no spinner between clicks.</p>
-</div>
-</section>
 <section>
 <h2>BROWSE BY CATEGORY</h2>
-<p style="color:var(--dim);max-width:640px;margin:0 0 1rem;font-size:.9rem">Each calculator has its own deep-dive page covering theory, equations, when to use it, and which standards it follows.</p>
+<p style="color:var(--dim);max-width:640px;margin:0 0 1rem;font-size:.9rem">Want the detail first? Every calculator has its own deep-dive page: the theory, the equations, when to use it, and which standards it follows.</p>
 <h3 style="color:var(--text);margin:1.5rem 0 .8rem;font-size:.95rem;letter-spacing:1px">MECHANICAL &amp; STRUCTURAL</h3>
 <div class="card-grid">
-<a href="calc/beam.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">BEAM FEA</h3><p>Shear, moment, and deflection for multi-support beams with interactive load placement.</p></a>
+<a href="calc/beam.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">BEAM ANALYSIS</h3><p>Shear, moment, and deflection for multi-support beams with interactive load placement.</p></a>
 <a href="calc/stress.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">STRESS</h3><p>Mohr's circle, principal stresses, max shear, von Mises, Tresca yield criterion, K<sub>t</sub>.</p></a>
 <a href="calc/sections.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">SECTIONS</h3><p>Cross-section properties: area, centroid, moment of inertia, section modulus, radius of gyration.</p></a>
 <a href="calc/bolts.html" class="card" style="text-decoration:none"><h3 style="color:#ff6b35">BOLTS</h3><p>Torque-preload (nut-factor), detailed thread/face friction, yield checks, preload scatter, stretch.</p></a>
@@ -263,32 +263,32 @@
 <div class="card-grid">
 <div class="card">
 <h3>1. PICK A MODULE</h3>
-<p>Sidebar lists every calculator. Each opens with inputs on the left, charts and tables on the right. No project files, no save dialogs &mdash; state lives in the URL hash and in browser storage.</p>
+<p>The sidebar lists every calculator. Each one opens with inputs on the left and charts and tables on the right. No project files, no save dialogs: state lives in the URL hash and in browser storage.</p>
 </div>
 <div class="card">
 <h3>2. ENTER GEOMETRY &amp; LOADS</h3>
-<p>Numeric inputs use sensible engineering defaults. Unit toggles for SI and US customary. Material pickers pull from the shared database. Invalid combinations flag inline rather than silently producing garbage.</p>
+<p>Numeric inputs start from sensible engineering defaults, with unit toggles for SI and US customary. Material pickers pull from the shared database. Invalid combinations get flagged inline instead of silently producing garbage.</p>
 </div>
 <div class="card">
 <h3>3. READ THE CHARTS</h3>
-<p>Interactive Plotly plots show the answer: shear/moment diagrams, load-deflection curves, temperature profiles, stress circles. Hover for exact values. Compare configurations by stacking them on one plot.</p>
+<p>Interactive Plotly plots show the answer: shear/moment diagrams, load-deflection curves, temperature profiles, stress circles. Hover for exact values, and stack configurations on one plot to compare them.</p>
 </div>
 <div class="card">
 <h3>4. EXPORT OR ITERATE</h3>
-<p>Right-click any chart to save as PNG for a report. Change inputs and the plot updates live. All computation is local, so large parameter sweeps run without network latency.</p>
+<p>Change an input and the plot updates live. When it looks right, right-click any chart to save it as a PNG for your report. All computation is local, so big parameter sweeps run without network latency.</p>
 </div>
 </div>
 </section>
 <section>
 <h2>PRIVACY &amp; DATA</h2>
 <div style="max-width:800px;margin:0 0;line-height:1.9;color:var(--dim);font-size:.9rem">
-<p>Amni-Calc runs entirely in your browser. Design inputs, material choices, and calculated results stay on your device &mdash; they are never transmitted to Amni-Scient or any third party. Browser local storage is used only to remember UI preferences (theme, last-opened tab) and cached material data. No accounts, no telemetry, no analytics of your engineering work.</p>
-<p style="margin-top:1.2rem">The per-module guide pages (for example <a href="calc/beam.html" style="color:#ff6b35">Beam Deflection</a>) carry one Google ad below the article. The calculator app itself, at <a href="calc/" style="color:#ff6b35">/calc/</a>, carries a single Ko-fi support panel and no AdSense banners so you can focus on the work.</p>
+<p>Amni-Calc runs entirely in your browser. Your design inputs, material choices and results stay on your device; they&rsquo;re never sent to Amni-Scient or any third party. Browser local storage only remembers UI preferences (theme, last-opened tab) and cached material data. No accounts, no telemetry, no analytics of your engineering work.</p>
+<p style="margin-top:1.2rem">One honest note about ads: the per-module guide pages (for example <a href="calc/beam.html" style="color:#ff6b35">Beam Deflection</a>) carry one Google ad below the article. The calculator app itself, at <a href="calc/" style="color:#ff6b35">/calc/</a>, has a single Ko-fi support panel and no AdSense banners, so you can focus on the work.</p>
 </div>
 </section>
 <section>
 <h2>OPEN AMNI-CALC</h2>
-<p style="color:var(--dim);margin-bottom:1.5rem;font-size:.9rem">Runs in any modern browser. No install, no sign-up.</p>
+<p style="color:var(--dim);margin-bottom:1.5rem;font-size:.9rem">It runs in any modern browser. No install, no sign-up. Go build something!</p>
 <div class="cta-row" style="gap:1rem;flex-wrap:wrap">
 <a href="calc/" class="btn btn-primary">LAUNCH CALCULATOR</a>
 <a href="faq.html" class="btn btn-outline">FAQ</a>

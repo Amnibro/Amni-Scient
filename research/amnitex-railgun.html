@@ -205,15 +205,15 @@
 <div class="breadcrumb"><a href="../research.html">RESEARCH</a> &nbsp;/&nbsp; AMNITEX RAILGUN</div>
 <h1 style="font-size:clamp(1.5rem,4vw,2.5rem);line-height:1.2">AMNITEX RAILGUN: A <span style="color:var(--accent)">16&times;</span> SMALLER<br>VRAM FOOTPRINT WITH BIT-EXACT RECOVERY</h1>
 <p class="subtitle" style="margin-top:1rem">PROPRIETARY WEIGHT SPLIT &mdash; 1-BIT INDEX IN VRAM, EXACT RESIDUAL ON NVMe</p>
-<p class="tagline" style="max-width:700px;margin:1rem auto 0">Railgun keeps a 1-bit routing index in VRAM (1.21 GB for Qwen3.5-9B) and stores the exact fp16 residual on NVMe. The residual as I store it today is bigger than the original (1.75&times; the fp16 bytes, with an entropy of about 12.5 bits per weight), so this isn&rsquo;t 16&times; compression; it&rsquo;s a 16&times; smaller resident footprint with a bit-exact recovery path. Inference on the 1-bit tier alone is lossy and I haven&rsquo;t measured its quality yet.</p>
+<p class="tagline" style="max-width:700px;margin:1rem auto 0">What if only a sliver of a model had to live on the GPU? Railgun keeps a 1-bit routing index in VRAM (1.21 GB for Qwen3.5-9B) and stores the exact fp16 residual on NVMe, so the full weights can come back bit for bit. To be straight with you: the residual as I store it today is bigger than the original (1.75&times; the fp16 bytes, with an entropy of about 12.5 bits per weight). So this isn&rsquo;t 16&times; compression. It&rsquo;s a 16&times; smaller resident footprint with a bit-exact recovery path. Inference on the 1-bit tier alone is lossy, and I haven&rsquo;t measured its quality yet.</p>
 <div style="margin-top:2rem">
-<div class="hero-stat"><span class="val">16&times;</span><span class="lbl">Smaller resident footprint &bull; measured, 9B</span></div>
 <div class="hero-stat"><span class="val">1.21 GB</span><span class="lbl">VRAM for Qwen3.5-9B &bull; 1-bit tier</span></div>
+<div class="hero-stat"><span class="val">16&times;</span><span class="lbl">Smaller resident footprint &bull; measured, 9B</span></div>
 <div class="hero-stat"><span class="val">1.75&times;</span><span class="lbl">Total store vs fp16 &bull; VRAM + NVMe</span></div>
 <div class="hero-stat"><span class="val">290/290</span><span class="lbl">Layers bit-exact &bull; 0.5B roundtrip</span></div>
 </div>
 <div style="margin-top:2rem">
-<a href="#demo" class="hero-cta">DOWNLOAD DEMO</a>
+<a href="#demo" class="hero-cta">REQUEST THE DEMO</a>
 <a href="#contact" class="hero-cta-ghost">LICENSING INQUIRY</a>
 </div>
 <div style="margin-top:1.25rem;display:flex;justify-content:center;gap:1rem;flex-wrap:wrap">
@@ -221,15 +221,14 @@
 <a href="AmniTex_Railgun_Whitepaper.pdf" class="hero-cta-ghost" style="font-size:.65rem;padding:.5rem 1.5rem;margin:0">WHITE PAPER PDF (v2.0)</a>
 </div>
 </section>
-<div class="prose"><div class="callout"><strong>Status, 2026-09-09.</strong> Measured on my AMD RX 7800 XT (16 GB, ROCm 7.2, PyTorch 2.12 nightly): the fp16 OOM on Qwen3.5-9B (Proof 1), the 1.21 GB 1-bit tier for that model with 20/20 sampled tensors bit-exact (Proof 2), a full-model roundtrip of Qwen2.5-0.5B-Instruct with 290/290 layers bit-exact and byte-identical greedy outputs on 3 prompts (Proof 3), GPU codec throughput (Proof 7), and 1-bit-tier token latency (Proof 8). Derived from those: the 7B/70B VRAM figures, the multiplexing counts, and the fleet economics. Not measured: quality of the 1-bit tier on any real model, perplexity at any tier, the hardware-unit acceleration, the training loop, and anything about long context; the context-tab curves are illustrative. The white paper is v2.0 (April 2026) and the evaluation package is v1.0.</div></div>
 
 <!-- ====== THE PROBLEM ====== -->
 <section>
 <h2>THE PROBLEM</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
 <p>The thing I keep running into is <strong style="color:var(--text)">GPU memory</strong>. A 70-billion parameter model needs <strong style="color:#e74c3c">140 GB</strong> of VRAM at fp16 just to load, which is almost double what one NVIDIA H100 has, so you&rsquo;re paying for two cards (around $30,000 each at list, my assumption throughout this page) before a single token comes out.</p>
-<p style="margin-top:1rem">The usual fix is GPTQ, AWQ, or GGML: round every weight to 4 bits and accept the quality loss for good. Bit-exact compressors like zstd, ZipNN, and DFloat11 keep the weights intact and shrink the file, but the resident footprint stays at or near the fp16 size (DFloat11 lands around 11 bits/weight with on-GPU decode).</p>
-<p style="margin-top:1rem">What I wanted was a format where the resident part is tiny and the rest can be pulled back exactly when it&rsquo;s needed. The cards below are the numbers behind that framing; the first two are assumptions, the last two are measured.</p>
+<p style="margin-top:1rem">The usual fix is GPTQ, AWQ, or GGML: round every weight to 4 bits and live with the quality loss for good. On the other side, bit-exact compressors like zstd, ZipNN, and DFloat11 keep the weights intact and shrink the file, but the resident footprint stays at or near the fp16 size (DFloat11 lands around 11 bits/weight with on-GPU decode).</p>
+<p style="margin-top:1rem">What I wanted was a format where the resident part is tiny and the rest can be pulled back exactly when it&rsquo;s needed. The cards below are the numbers behind that. Fair warning: the first two are assumptions, the last two are measured.</p>
 </div>
 <div class="problem-grid">
 <div class="problem-card">
@@ -259,19 +258,19 @@
 <section>
 <h2>THE RAILGUN SOLUTION</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
-<p>Railgun splits each weight tensor into a 1-bit routing index that stays in VRAM and a residual that goes to NVMe. Decoding the index alone gives a lossy approximation; decoding index plus residual gives back the <strong style="color:var(--text)">exact fp16 bytes</strong>.</p>
+<p>So here&rsquo;s the trick. Railgun splits each weight tensor in two: a 1-bit routing index that stays in VRAM, and a residual that goes to NVMe. Decode the index alone and you get a lossy approximation. Decode index plus residual and you get back the <strong style="color:var(--text)">exact fp16 bytes</strong>.</p>
 </div>
 <div class="solution-flow">
 <div class="solution-step">
 <span class="ss-num">1</span>
 <span class="ss-title">COMPRESS</span>
-<span class="ss-desc">Proprietary encoding analyzes each weight tensor and creates a <strong style="color:var(--accent)">tiny routing index</strong> at 1&ndash;2 bits per element.</span>
+<span class="ss-desc">My proprietary encoding analyzes each weight tensor and builds a <strong style="color:var(--accent)">tiny routing index</strong> at 1&ndash;2 bits per element.</span>
 </div>
 <span class="solution-arrow">&rarr;</span>
 <div class="solution-step">
 <span class="ss-num">2</span>
 <span class="ss-title">SPLIT</span>
-<span class="ss-desc">Routing index stays in VRAM (1.21&nbsp;GB measured for 9B; 0.88&nbsp;GB derived for 7B). The residual moves to NVMe.</span>
+<span class="ss-desc">The routing index stays in VRAM (1.21&nbsp;GB measured for 9B; 0.88&nbsp;GB derived for 7B). The residual moves to NVMe.</span>
 </div>
 <span class="solution-arrow">&rarr;</span>
 <div class="solution-step">
@@ -299,6 +298,7 @@
 <p style="font-size:.8rem;color:var(--dim);margin-top:1rem;line-height:1.7">Bars are Qwen3.5-9B: 1.21 GB VRAM against 19.31 GB fp16 (Proof 2), NVMe bytes 1.75&times; the fp16 bytes on the sampled tensors (Proof 7), full decode bit-exact on every tensor I&rsquo;ve tried and byte-identical outputs on a full 0.5B model (Proof 3). The intermediate G and B tiers described in the white paper aren&rsquo;t measured on this page.</p>
 </div>
 </section>
+<div class="prose"><div class="callout"><strong>Status, 2026-09-09.</strong> Here&rsquo;s exactly where things stand. Measured on my AMD RX 7800 XT (16 GB, ROCm 7.2, PyTorch 2.12 nightly): the fp16 OOM on Qwen3.5-9B (Proof 1), the 1.21 GB 1-bit tier for that model with 20/20 sampled tensors bit-exact (Proof 2), a full-model roundtrip of Qwen2.5-0.5B-Instruct with 290/290 layers bit-exact and byte-identical greedy outputs on 3 prompts (Proof 3), GPU codec throughput (Proof 7), and 1-bit-tier token latency (Proof 8). Derived from those: the 7B/70B VRAM figures, the multiplexing counts, and the fleet economics. Not measured: quality of the 1-bit tier on any real model, perplexity at any tier, the hardware-unit acceleration, the training loop, and anything about long context; the context-tab curves are illustrative. The white paper is v2.0 (April 2026) and the evaluation package is v1.0.</div></div>
 
 <!-- ====== KEY DIFFERENTIATORS ====== -->
 <section>
@@ -325,55 +325,152 @@
 </div>
 </section>
 
-<!-- ====== SILICON-LEVEL INNOVATION ====== -->
+<!-- ====== GPU PROOF BATTERY ====== -->
 <section>
-<h2>SILICON PATH (DESIGN, NOT MEASURED)</h2>
-<div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
-<p>Every modern GPU has <strong style="color:var(--text)">dedicated <span class="redacted" title="Proprietary">[CLASSIFIED HARDWARE UNITS]</span></strong> and a <strong style="color:var(--text)"><span class="redacted" title="Proprietary">[DEDICATED CACHE PATHWAY]</span></strong> that mostly sit idle during transformer inference. The encoding format is laid out so that path could do the tier decode off the ALU pipeline.</p>
-<p style="margin-top:1rem">Nothing in this section is measured. My current decoder runs as ordinary PyTorch ops and decodes before the matmul rather than fusing with it; the diagram and the three cards below are what I intend to build, and the numbers on them are estimates.</p>
+<h2>GPU PROOF BATTERY</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.8;color:var(--dim);font-size:.9rem;margin-bottom:1.5rem">
+<p>Eight runs on my AMD Radeon RX 7800 XT (16 GB VRAM, ROCm 7.2, PyTorch 2.12 nightly), each with its JSON linked at the bottom. The two I&rsquo;d point you at first are <strong style="color:var(--text)">Proof 1</strong> (an fp16 OOM you can reproduce on any 16 GB card) and <strong style="color:var(--text)">Proof 3</strong> (a full-model roundtrip of Qwen2.5-0.5B with greedy decode and byte-identical outputs, coherence_proof.json). Proofs 2, 4, 5, and 7 use real Qwen3.5-9B weights; Proof 6 is synthetic arrays; Proofs 4 and 5 are allocation tests with no inference; Proof 8 is 1-bit-tier latency, not quality.</p>
+<p style="margin-top:.75rem">From the white paper&rsquo;s limitations, still true: the R tier alone is not sufficient for high-quality inference; perplexity has not yet been measured at any tier; and the current implementation decodes before inference rather than fusing with the matmul.</p>
 </div>
-<div class="silicon-grid">
-<div class="silicon-col trad">
-<h4>TRADITIONAL INFERENCE</h4>
-<div class="silicon-pipe"><span class="pipe-block alu">ALU</span><span style="color:var(--dim);font-size:.7rem">&larr; All matmul (FMA ops)</span></div>
-<div class="silicon-pipe"><span class="pipe-block alu">ALU</span><span style="color:var(--dim);font-size:.7rem">&larr; All activations (silu/gelu)</span></div>
-<div class="silicon-pipe"><span class="pipe-block cache">L1/L2</span><span style="color:var(--dim);font-size:.7rem">&larr; Weights + KV cache (shared)</span></div>
-<div class="silicon-pipe"><span class="pipe-block dark"><span class="redacted" title="Proprietary">[▓▓▓]</span></span><span style="color:var(--dim);font-size:.7rem">&larr; Idle (0% utilization)</span></div>
-<div class="silicon-pipe"><span class="pipe-block dark"><span class="redacted" title="Proprietary">[▓▓▓▓▓▓]</span></span><span style="color:var(--dim);font-size:.7rem">&larr; Idle (empty)</span></div>
-<p style="font-size:.7rem;color:#e74c3c;margin-top:1rem;letter-spacing:1px">ALL COMPUTE ON ONE PIPELINE &bull; CACHE THRASHING</p>
+<!-- PROOF 1: FP16 CRASH -->
+<div class="case-banner" style="max-width:900px;margin-bottom:2rem">
+<h3 style="letter-spacing:3px;color:#e74c3c">PROOF 1 &bull; fp16 CANNOT FIT</h3>
+<p style="color:var(--dim);font-size:.8rem">Qwen3.5-9B &bull; 9.65B params &bull; AMD RX 7800 XT &bull; ROCm 7.2</p>
+<div class="case-stats">
+<div class="case-stat"><span class="cs-val" style="color:#e74c3c">19.31 GB</span><span class="cs-lbl">FP16 SIZE</span></div>
+<div class="case-stat"><span class="cs-val">14.06 GB</span><span class="cs-lbl">FREE VRAM</span></div>
+<div class="case-stat"><span class="cs-val" style="color:#e74c3c">7.24 GB</span><span class="cs-lbl">DEFICIT</span></div>
+<div class="case-stat"><span class="cs-val" style="color:#e74c3c">OOM</span><span class="cs-lbl">STATUS</span></div>
 </div>
-<div class="silicon-vs">vs</div>
-<div class="silicon-col railgun" style="border-color:var(--accent)">
-<h4>RAILGUN INFERENCE</h4>
-<div class="silicon-pipe"><span class="pipe-block tmu"><span class="redacted" title="Proprietary">[UNIT A]</span></span><span style="color:var(--dim);font-size:.7rem">&larr; <span class="redacted" title="Proprietary">[CLASSIFIED OPERATION]</span></span></div>
-<div class="silicon-pipe"><span class="pipe-block tex"><span class="redacted" title="Proprietary">[UNIT B]</span></span><span style="color:var(--dim);font-size:.7rem">&larr; <span class="redacted" title="Proprietary">[DEDICATED PATHWAY]</span></span></div>
-<div class="silicon-pipe"><span class="pipe-block tmu"><span class="redacted" title="Proprietary">[DUAL PATH]</span></span><span style="color:var(--dim);font-size:.7rem">&larr; Prefetch layer N+1</span></div>
-<div class="silicon-pipe"><span class="pipe-block alu" style="background:rgba(0,255,157,.1);border-color:var(--accent);color:var(--accent)">ALU</span><span style="color:var(--dim);font-size:.7rem">&larr; Accumulate + attention only</span></div>
-<div class="silicon-pipe"><span class="pipe-block cache" style="background:rgba(0,255,157,.1);border-color:var(--accent);color:var(--accent)">L1/L2</span><span style="color:var(--dim);font-size:.7rem">&larr; KV cache only (no weight pressure)</span></div>
-<p style="font-size:.7rem;color:var(--accent);margin-top:1rem;letter-spacing:1px">PARALLEL PIPELINES &bull; ZERO CACHE CONTENTION</p>
+<p style="margin-top:1rem;color:#e74c3c;font-size:.8rem;font-weight:700;letter-spacing:2px">torch.OutOfMemoryError &mdash; CONFIRMED</p>
+<p style="color:var(--dim);font-size:.75rem;margin-top:.5rem">A 9.65-billion parameter model is 19.31 GB at fp16, 21.31 GB once the run's load overhead is counted, and my card had 14.06 GB free, a 7.24 GB deficit, so the load throws torch.OutOfMemoryError (proof_1_fp16_crash.json has the exact message). This one you can reproduce on any 16 GB GPU.</p>
 </div>
+<!-- PROOF 2: RAILGUN MAKES IT FIT -->
+<div class="case-banner" style="max-width:900px;margin-bottom:2rem">
+<h3 style="letter-spacing:3px">PROOF 2 &bull; RAILGUN MAKES 9B FIT</h3>
+<p style="color:var(--dim);font-size:.8rem">Qwen3.5-9B &bull; 775 tensors &bull; 20 sampled &bull; Full-tier encode/decode</p>
+<div class="case-stats">
+<div class="case-stat"><span class="cs-val" style="color:var(--accent)">20/20</span><span class="cs-lbl">BIT-EXACT</span></div>
+<div class="case-stat"><span class="cs-val">9.65B</span><span class="cs-lbl">PARAMETERS</span></div>
+<div class="case-stat"><span class="cs-val" style="color:var(--accent)">1.21 GB</span><span class="cs-lbl">RAILGUN BINARY</span></div>
+<div class="case-stat"><span class="cs-val">16&times;</span><span class="cs-lbl">SMALLER RESIDENT</span></div>
 </div>
-<div style="max-width:800px;margin:2.5rem auto 0">
-<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.25rem">
-<div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem">
-<span style="font-size:1.6rem;font-weight:700;color:var(--accent);display:block"><span class="redacted" title="Proprietary">[OPERATION A]</span> &rarr; <span class="redacted" title="Proprietary">[OPERATION B]</span></span>
-<span style="font-size:.65rem;letter-spacing:2px;color:var(--dim);margin-top:.25rem;display:block">FUNDAMENTAL OPERATION SHIFT</span>
-<span style="font-size:.8rem;color:var(--text);display:block;margin-top:.75rem;line-height:1.6">Standard: <code style="color:#e74c3c">a &times; b + c</code> (FMA on ALU)<br>Railgun: <code style="color:var(--accent)"><span class="redacted" title="Proprietary">[CLASSIFIED]</span></code></span>
+<div style="margin-top:1rem">
+<table class="bench-table" style="font-size:.75rem;max-width:500px;margin:0 auto">
+<thead><tr><th>FORMAT</th><th>VRAM</th><th>vs fp16</th></tr></thead>
+<tbody>
+<tr><td>fp16 (baseline)</td><td>19.31 GB</td><td style="color:#e74c3c">CRASH</td></tr>
+<tr><td>Railgun Binary</td><td style="color:var(--accent);font-weight:700">1.21 GB</td><td class="best">16.0&times;</td></tr>
+<tr><td>Railgun Ternary</td><td>1.91 GB</td><td>10.1&times;</td></tr>
+<tr><td>Railgun Quaternary</td><td>2.41 GB</td><td>8.0&times;</td></tr>
+</tbody>
+</table>
 </div>
-<div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem">
-<span style="font-size:1.6rem;font-weight:700;color:var(--accent);display:block">0 FLOPs</span>
-<span style="font-size:.65rem;letter-spacing:2px;color:var(--dim);margin-top:.25rem;display:block">MULTIPLICATIONS IN MATMUL &bull; UNTESTED</span>
-<span style="font-size:.8rem;color:var(--text);display:block;margin-top:.75rem;line-height:1.6">The idea is that matrix-vector multiply becomes <span class="redacted" title="Proprietary">[CLASSIFIED OPERATIONS]</span> on the 1-bit tier. I haven&rsquo;t written that kernel.</span>
+<p style="margin-top:1rem;color:var(--accent);font-size:.8rem;font-weight:700;letter-spacing:2px">ALL 20 SAMPLED TENSORS: BIT-EXACT fp16 ROUNDTRIP</p>
+<p style="color:var(--dim);font-size:.75rem">The 1.21 GB is the VRAM-resident tier only; the residual on NVMe is 1.75&times; the fp16 bytes (Proof 7), so the total store is larger than fp16. Decode throughput was 143.5M params/s, and full-model decode is estimated at 67 s from that rate. The per-tensor cosine values in the JSON sit at 0.9999 despite bit-exact flags because the cosine was computed in fp16; the exact flag is the real check.</p>
 </div>
-<div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem">
-<span style="font-size:1.6rem;font-weight:700;color:var(--accent);display:block">~5&times;</span>
-<span style="font-size:.65rem;letter-spacing:2px;color:var(--dim);margin-top:.25rem;display:block">THROUGHPUT PER WATT &bull; ESTIMATE, UNTESTED</span>
-<span style="font-size:.8rem;color:var(--text);display:block;margin-top:.75rem;line-height:1.6">A paper estimate from <span class="redacted" title="Proprietary">[CLASSIFIED PIPELINE FACTORS]</span> for sparse layers. No power measurement exists yet.</span>
+<!-- PROOF 3: ZERO INFERENCE DEGRADATION -->
+<div class="case-banner" style="max-width:900px;margin-bottom:2rem">
+<h3 style="letter-spacing:3px">PROOF 3 &bull; FULL-MODEL ROUNDTRIP, BYTE-IDENTICAL OUTPUTS</h3>
+<p style="color:var(--dim);font-size:.8rem">Qwen2.5-0.5B-Instruct &bull; every weight tensor encoded and decoded at full tier &bull; greedy decode (do_sample=False), 128 new tokens &bull; coherence_proof.json</p>
+<div class="case-stats">
+<div class="case-stat"><span class="cs-val" style="color:var(--accent)">290/290</span><span class="cs-lbl">LAYERS BIT-EXACT</span></div>
+<div class="case-stat"><span class="cs-val">494M</span><span class="cs-lbl">PARAMETERS</span></div>
+<div class="case-stat"><span class="cs-val" style="color:var(--accent)">3/3</span><span class="cs-lbl">PROMPTS BYTE-IDENTICAL</span></div>
+<div class="case-stat"><span class="cs-val">67.6s</span><span class="cs-lbl">ROUNDTRIP (GPU RUN)</span></div>
 </div>
+<p style="color:var(--dim);font-size:.75rem;margin-top:.75rem">This is the strongest result on the page! The same model produces the same bytes before and after a full encode/decode, so the full tier changes nothing about inference. The 67.6 s is from proof_3_coherence_05b.json; the white paper&rsquo;s 166.5 s was an earlier CPU run. One oddity in coherence_proof.json: embed_tokens reports a cosine of 1.00102598, above 1, because the cosine was computed in fp16 and overflowed on a 136M-element tensor; the bit-exact flag on that layer is true and is the check that matters.</p>
+<div style="margin-top:1.5rem;border-top:1px solid var(--border);padding-top:1.25rem">
+<h4 style="color:var(--accent);font-size:.7rem;letter-spacing:2px;margin-bottom:.75rem">INFERENCE OUTPUT COMPARISON</h4>
+<table class="bench-table" style="font-size:.75rem">
+<thead><tr><th style="width:30%">PROMPT</th><th style="width:50%">OUTPUT (TRUNCATED)</th><th>MATCH</th></tr></thead>
+<tbody>
+<tr><td style="color:var(--text)">&ldquo;Explain quantum entanglement in simple terms.&rdquo;</td><td>Quantum entanglement is a phenomenon in quantum mechanics where two or more particles become interconnected&hellip;</td><td class="best">IDENTICAL</td></tr>
+<tr><td style="color:var(--text)">&ldquo;Write a Python function that checks if a number is prime.&rdquo;</td><td>The function should return True if the number is prime and False otherwise. A prime number is a natural number&hellip;</td><td class="best">IDENTICAL</td></tr>
+<tr><td style="color:var(--text)">&ldquo;What are the three laws of thermodynamics?&rdquo;</td><td>1. The first law states that energy cannot be created or destroyed, only transformed&hellip;</td><td class="best">IDENTICAL</td></tr>
+</tbody>
+</table>
 </div>
+<p style="margin-top:1rem;color:var(--accent);font-size:.85rem;font-weight:700;letter-spacing:2px">ALL OUTPUTS BYTE-FOR-BYTE IDENTICAL BEFORE &amp; AFTER FULL-TIER ROUNDTRIP</p>
 </div>
-<div style="max-width:800px;margin:1.5rem auto;padding:1.25rem;background:var(--panel);border-left:3px solid var(--accent);border-radius:0 8px 8px 0">
-<p style="color:var(--text);font-size:.85rem;line-height:1.7"><strong style="color:var(--accent)">Where this would fit:</strong> the encoding is laid out to <span class="redacted" title="Proprietary">[INTERFACE WITH CLASSIFIED HARDWARE PATH]</span> on hardware that&rsquo;s already in every GPU. Whether it pays off depends on a fused decode-plus-matmul kernel that I haven&rsquo;t built, so I&rsquo;m listing it as the plan, not a result.</p>
+<!-- PROOF 4: 4x SCALE -->
+<div class="case-banner" style="max-width:900px;margin-bottom:2rem">
+<h3 style="letter-spacing:3px">PROOF 4 &bull; 38B MODEL ON A CONSUMER GPU</h3>
+<p style="color:var(--dim);font-size:.8rem">4&times; scaled Qwen3.5-9B &bull; 38.6B params &bull; VRAM allocation test</p>
+<div class="case-stats">
+<div class="case-stat"><span class="cs-val" style="color:var(--accent)">38.6B</span><span class="cs-lbl">PARAMETERS</span></div>
+<div class="case-stat"><span class="cs-val" style="color:#e74c3c">77.2 GB</span><span class="cs-lbl">FP16 SIZE</span></div>
+<div class="case-stat"><span class="cs-val" style="color:var(--accent)">4.83 GB</span><span class="cs-lbl">RAILGUN BINARY</span></div>
+<div class="case-stat"><span class="cs-val" style="color:var(--accent)">FITS</span><span class="cs-lbl">GPU ALLOC</span></div>
+</div>
+<p style="margin-top:1rem;color:var(--dim);font-size:.75rem">I allocated a 4&times;-duplicated 38.6B tensor set (4.83 GB at 1 bit/weight) on the 16 GB card with 9.37 GB left. This is an allocation test. I didn&rsquo;t run inference on it. 10 sampled tensors roundtripped bit-exact at 141.6M params/s decode.</p>
+<p style="color:var(--accent);font-size:.8rem;font-weight:700;letter-spacing:2px;margin-top:.5rem">ALLOCATION TEST, NO INFERENCE RUN</p>
+</div>
+<!-- PROOF 5: 3x CONCURRENT -->
+<div class="case-banner" style="max-width:900px;margin-bottom:2rem">
+<h3 style="letter-spacing:3px">PROOF 5 &bull; THREE 9B MODELS ON ONE GPU</h3>
+<p style="color:var(--dim);font-size:.8rem">3&times; Qwen3.5-9B concurrent &bull; 28.96B total params</p>
+<div class="case-stats">
+<div class="case-stat"><span class="cs-val" style="color:var(--accent)">3/3</span><span class="cs-lbl">MODELS ALLOCATED</span></div>
+<div class="case-stat"><span class="cs-val" style="color:#e74c3c">57.9 GB</span><span class="cs-lbl">FP16 TOTAL</span></div>
+<div class="case-stat"><span class="cs-val" style="color:var(--accent)">3.62 GB</span><span class="cs-lbl">RAILGUN TOTAL</span></div>
+<div class="case-stat"><span class="cs-val">13.3 GB</span><span class="cs-lbl">HEADROOM LEFT</span></div>
+</div>
+<p style="margin-top:1rem;color:var(--dim);font-size:.75rem">I allocated three 9B routing tiers on one 16 GB card (1.21 GB each, 3.62 GB total, 13.3 GB left). This is an allocation test. I didn&rsquo;t run inference on them, and three instances would share one NVMe link for their residuals.</p>
+<p style="color:var(--accent);font-size:.8rem;font-weight:700;letter-spacing:2px;margin-top:.5rem">ALLOCATION TEST, NO INFERENCE RUN</p>
+</div>
+<!-- PROOF 6: CONTEXT STABILITY -->
+<div class="case-banner" style="max-width:900px;margin-bottom:2rem">
+<h3 style="letter-spacing:3px">PROOF 6 &bull; GF(17) RESIDUE STABILITY (SYNTHETIC)</h3>
+<p style="color:var(--dim);font-size:.8rem">Cumulative sum test on synthetic arrays &bull; 20M ops, 10,000 pack/unpack cycles &bull; GF(17) vs naive sequential fp16</p>
+<div class="case-stats">
+<div class="case-stat"><span class="cs-val" style="color:var(--accent)">1.000</span><span class="cs-lbl">GF17 COSINE SIM</span></div>
+<div class="case-stat"><span class="cs-val" style="color:#e74c3c">&minus;0.030</span><span class="cs-lbl">FP16 COSINE SIM</span></div>
+<div class="case-stat"><span class="cs-val" style="color:var(--accent)">0.0</span><span class="cs-lbl">GF17 MAX ERROR</span></div>
+<div class="case-stat"><span class="cs-val" style="color:#e74c3c">7.85</span><span class="cs-lbl">FP16 MAX ERROR</span></div>
+</div>
+<p style="margin-top:1rem;color:var(--dim);font-size:.75rem">I ran 20M ops and 10,000 pack/unpack cycles; the JSON is linked. GF(17) residues don&rsquo;t accumulate rounding error, by construction. My fp16 comparison used naive sequential summation, which real kernels don&rsquo;t do (they accumulate in fp32), so read it as an illustration, not a benchmark. The fp16 cosine is &minus;0.030 at 1M, 10M, and 20M ops alike, so the naive sum had saturated by 1M. The 95.5% relative error is a naive fp16 sum of 1M values against fp64, from the same JSON.</p>
+<p style="color:var(--accent);font-size:.8rem;font-weight:700;letter-spacing:2px;margin-top:.5rem">GF(17): EXACT BY CONSTRUCTION &bullet; fp16 COLUMN: NAIVE SUM, ILLUSTRATION ONLY</p>
+</div>
+<!-- PROOF 7: SPEED THROUGHPUT -->
+<div class="case-banner" style="max-width:900px;margin-bottom:2rem">
+<h3 style="letter-spacing:3px">PROOF 7 &bull; GPU CODEC SPEED (9B MODEL)</h3>
+<p style="color:var(--dim);font-size:.8rem">Qwen3.5-9B &bull; 503M sampled params &bull; Binary mode (k=2) &bull; AMD RX 7800 XT</p>
+<div class="case-stats">
+<div class="case-stat"><span class="cs-val" style="color:var(--accent)">96.6 M/s</span><span class="cs-lbl">ENCODE SPEED</span></div>
+<div class="case-stat"><span class="cs-val" style="color:var(--accent)">121.7 M/s</span><span class="cs-lbl">DECODE SPEED</span></div>
+<div class="case-stat"><span class="cs-val" style="color:var(--accent)">16&times;</span><span class="cs-lbl">SMALLER RESIDENT</span></div>
+<div class="case-stat"><span class="cs-val" style="color:var(--accent)">10/10</span><span class="cs-lbl">BIT-EXACT</span></div>
+</div>
+<p style="margin-top:1rem;color:var(--dim);font-size:.75rem">10 sampled tensors (503M params) from Qwen3.5-9B. Encode 96.6M params/s, decode 121.7M params/s, all 10 bit-exact (SNR &gt;147 dB against fp32). Full model estimated from those rates: encode 100 s, decode 79 s. The same JSON gives the store sizes: 62.9 MB in VRAM, 1,761.6 MB on SSD, against 1,006.6 MB of fp16, which is where the 16&times; resident and 1.75&times; total figures on this page come from.</p>
+<p style="color:var(--accent);font-size:.8rem;font-weight:700;letter-spacing:2px;margin-top:.5rem">GPU CODEC: 121.7M PARAMS/S DECODE &bullet; ALL BIT-EXACT</p>
+</div>
+<!-- PROOF 8: REAL INFERENCE LATENCY -->
+<div class="case-banner" style="max-width:900px;margin-bottom:2rem">
+<h3 style="letter-spacing:3px">PROOF 8 &bull; 1-BIT-TIER TOKEN LATENCY (9B MODEL)</h3>
+<p style="color:var(--dim);font-size:.8rem">Qwen3.5-9B &bull; 249 linear layers on the 1-bit tier &bull; Binary (k=2) &bull; whole model on GPU &bull; latency only, not quality</p>
+<div class="case-stats">
+<div class="case-stat"><span class="cs-val" style="color:var(--accent)">1.5 tok/s</span><span class="cs-lbl">1-BIT TIER, 676 ms/TOKEN</span></div>
+<div class="case-stat"><span class="cs-val" style="color:#e74c3c">0.9 tok/s</span><span class="cs-lbl">fp16 WITH 12/39 LAYERS ON CPU</span></div>
+<div class="case-stat"><span class="cs-val" style="color:var(--accent)">3.06 GB</span><span class="cs-lbl">VRAM, MODEL + ACTIVATIONS</span></div>
+<div class="case-stat"><span class="cs-val">0.99 GB</span><span class="cs-lbl">OF THAT, THE 249 PATCHED LAYERS</span></div>
+</div>
+<p style="margin-top:1rem;color:var(--dim);font-size:.75rem">With all 249 layers on the 1-bit tier the 9B model runs at 1.5 tok/s and 676 ms/token on my 7800 XT, with 3.06 GB allocated after warmup (the 0.99 GB in the JSON is the patched layers alone; the 32&times; ratio it reports is against an fp32 reference, not fp16). The baseline I had (fp16 with 12 of 39 layers offloaded to CPU, bench_token_latency.json) ran 0.9 tok/s and produced broken text, so it isn&rsquo;t a fair comparator; a Q4 GGUF of the same model that fits in VRAM would be much faster. Output text at the 1-bit tier is not shown because it&rsquo;s not a quality benchmark.</p>
+<p style="color:var(--accent);font-size:.8rem;font-weight:700;letter-spacing:2px;margin-top:.5rem">LATENCY ONLY &bullet; 1-BIT-TIER QUALITY NOT MEASURED</p>
+</div>
+<!-- DOWNLOAD LINKS -->
+<div style="margin-top:1.5rem">
+<p style="color:var(--accent);font-size:.85rem;font-weight:700;letter-spacing:2px;margin-bottom:1rem">RAW JSON FOR EACH RUN</p>
+<div style="display:flex;justify-content:center;gap:1rem;flex-wrap:wrap">
+<a href="proof_1_fp16_crash.json" class="demo-dl" style="font-size:.65rem;padding:.5rem 1.5rem;background:transparent;border:1px solid var(--accent);color:var(--accent);text-decoration:none" download>PROOF 1: FP16 CRASH</a>
+<a href="proof_2_railgun_9b.json" class="demo-dl" style="font-size:.65rem;padding:.5rem 1.5rem;background:transparent;border:1px solid var(--accent);color:var(--accent);text-decoration:none" download>PROOF 2: RAILGUN 9B</a>
+<a href="coherence_proof.json" class="demo-dl" style="font-size:.65rem;padding:.5rem 1.5rem;background:transparent;border:1px solid var(--accent);color:var(--accent);text-decoration:none" download>PROOF 3: COHERENCE</a>
+<a href="proof_4_32b_scale.json" class="demo-dl" style="font-size:.65rem;padding:.5rem 1.5rem;background:transparent;border:1px solid var(--accent);color:var(--accent);text-decoration:none" download>PROOF 4: 38B SCALE</a>
+<a href="proof_5_3x8b_concurrent.json" class="demo-dl" style="font-size:.65rem;padding:.5rem 1.5rem;background:transparent;border:1px solid var(--accent);color:var(--accent);text-decoration:none" download>PROOF 5: 3&times;9B</a>
+<a href="proof_6_context_stability.json" class="demo-dl" style="font-size:.65rem;padding:.5rem 1.5rem;background:transparent;border:1px solid var(--accent);color:var(--accent);text-decoration:none" download>PROOF 6: GF17 STABILITY</a>
+<a href="proof_7_speed_9b.json" class="demo-dl" style="font-size:.65rem;padding:.5rem 1.5rem;background:transparent;border:1px solid var(--accent);color:var(--accent);text-decoration:none" download>PROOF 7: GPU SPEED</a>
+<a href="proof_8_railgun_inference.json" class="demo-dl" style="font-size:.65rem;padding:.5rem 1.5rem;background:transparent;border:1px solid var(--accent);color:var(--accent);text-decoration:none" download>PROOF 8: INFERENCE</a>
+</div>
 </div>
 </section>
 
@@ -381,7 +478,7 @@
 <section>
 <h2>CHARTS AND WHAT BACKS THEM</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.8;color:var(--dim);font-size:.9rem;margin-bottom:1.5rem">
-<p>Each tab says up front whether its curves are measured, derived from measured sizes, or illustrative. The Quality and Algebraic tabs are tied to the JSON in the proof battery further down; the Context, Multiplexing, Fabric, and ROI tabs are arithmetic on those sizes plus stated assumptions.</p>
+<p>Now the charts. Each tab says up front whether its curves are measured, derived from measured sizes, or illustrative. The Quality and Residue Arithmetic tabs are tied to the JSON in the proof battery above; the Context, Multiplexing, Fabric, and Fleet Arithmetic tabs are arithmetic on those sizes plus stated assumptions.</p>
 </div>
 <div class="tab-bar">
 <button class="tab-btn active" onclick="showTab('tab-context')">CONTEXT (ILLUSTRATIVE)</button>
@@ -500,7 +597,7 @@ SHARED<br>SSD POOL
 <!-- TAB: HYPERSCALE ROI -->
 <div class="tab-panel" id="tab-roi">
 <div style="max-width:800px;margin:0 auto;line-height:1.8;color:var(--dim);font-size:.9rem;margin-bottom:1rem">
-<p>One worked example, all assumptions stated, nothing measured. Assume an H100 at $30K list and 700 W, electricity at $0.08/kWh, three-year depreciation, and that the 1-bit resident footprint lets each GPU serve four model instances instead of one (that 4&times; is the derived multiplexing figure from the previous tab, and it ignores shared NVMe bandwidth and any throughput loss from streaming). On those assumptions a 100,000-GPU fleet becomes 25,000 GPUs: 75,000 fewer cards is $2.25B of hardware, or $750M per year over the depreciation window, and 52.5 MW less draw, about $37M per year at that tariff. If the 4&times; turns out to be 2&times; in practice, halve everything. Licensing cost isn&rsquo;t included. The chart is the same arithmetic across fleet sizes.</p>
+<p>One worked example, all assumptions stated, nothing measured. Assume an H100 at $30K list and 700 W, electricity at $0.08/kWh, three-year depreciation, and that the 1-bit resident footprint lets each GPU serve four model instances instead of one (that 4&times; is the derived multiplexing figure from the Multiplexing tab, and it ignores shared NVMe bandwidth and any throughput loss from streaming). On those assumptions a 100,000-GPU fleet becomes 25,000 GPUs: 75,000 fewer cards is $2.25B of hardware, or $750M per year over the depreciation window, and 52.5 MW less draw, about $37M per year at that tariff. If the 4&times; turns out to be 2&times; in practice, halve everything. Licensing cost isn&rsquo;t included. The chart is the same arithmetic across fleet sizes.</p>
 </div>
 <div class="viz-section">
 <h4>GPU HARDWARE COST BY FLEET SIZE (DERIVED FROM THE ASSUMPTIONS ABOVE)</h4>
@@ -543,7 +640,7 @@ SHARED<br>SSD POOL
 <div class="tab-panel" id="tab-stability">
 <div style="max-width:800px;margin:0 auto;line-height:1.8;color:var(--dim);font-size:.9rem;margin-bottom:1rem">
 <p>Railgun&rsquo;s encoding operates in a <strong style="color:var(--text)"><span class="redacted" title="Proprietary">[PROPRIETARY ALGEBRAIC STRUCTURE]</span> with a <span class="redacted" title="Proprietary">[BOUNDED STATE SPACE]</span></strong>. Every operation lands on one of a <span class="redacted" title="Proprietary">[FINITE SET]</span> of values, so GF(17) residues don&rsquo;t accumulate rounding error, by construction.</p>
-<p style="margin-top:.75rem">I ran 20 million ops and 10,000 pack/unpack cycles; the JSON is linked below as Proof 6. My fp16 comparison in that run used naive sequential summation, which real kernels don&rsquo;t do (they accumulate in fp32), so read it as an illustration of what the field guarantees, not a benchmark against production arithmetic. The fp16 cosine sits at &minus;0.030 for 1M, 10M, and 20M ops alike, which tells you the naive fp16 sum had already saturated by 1M.</p>
+<p style="margin-top:.75rem">I ran 20 million ops and 10,000 pack/unpack cycles; the JSON is linked above as Proof 6. My fp16 comparison in that run used naive sequential summation, which real kernels don&rsquo;t do (they accumulate in fp32), so read it as an illustration of what the field guarantees, not a benchmark against production arithmetic. The fp16 cosine sits at &minus;0.030 for 1M, 10M, and 20M ops alike, which tells you the naive fp16 sum had already saturated by 1M.</p>
 </div>
 <div class="proof-box">
 <h3 style="color:var(--accent);font-size:1rem;letter-spacing:3px;margin-bottom:1rem">MEASURED: RESIDUE ARITHMETIC, PROOF 6 JSON</h3>
@@ -581,30 +678,6 @@ SHARED<br>SSD POOL
 
 </section>
 
-<!-- ====== WORKED EXAMPLE: FLEET ARITHMETIC ====== -->
-<section>
-<h2>WORKED EXAMPLE: A 200K-GPU FLEET</h2>
-<div style="max-width:800px;margin:0 auto;line-height:1.8;color:var(--dim);font-size:.9rem;margin-bottom:2rem">
-<p>Same assumptions as the ROI tab ($30K and 700 W per H100, $0.08/kWh, three-year depreciation, 4&times; instances per GPU from the 1-bit footprint). A <strong style="color:var(--text)">200,000-GPU cluster</strong> is then <strong style="color:var(--text)">$6B of GPUs</strong> drawing <strong style="color:var(--text)">140 MW</strong>. None of this is measured; it&rsquo;s the arithmetic written out.</p>
-</div>
-<div class="case-banner">
-<h3>THE ARITHMETIC AT 200K GPUs (ASSUMPTIONS ABOVE)</h3>
-<div class="case-stats">
-<div class="case-stat"><span class="cs-val">$4.5B</span><span class="cs-lbl">HARDWARE NOT BOUGHT (150K &times; $30K)</span></div>
-<div class="case-stat"><span class="cs-val">150K</span><span class="cs-lbl">FEWER GPUs AT 4&times; PER CARD</span></div>
-<div class="case-stat"><span class="cs-val">105 MW</span><span class="cs-lbl">LESS DRAW (150K &times; 700 W)</span></div>
-<div class="case-stat"><span class="cs-val">$74M/yr</span><span class="cs-lbl">ELECTRICITY AT $0.08/kWh</span></div>
-<div class="case-stat"><span class="cs-val">4&times;</span><span class="cs-lbl">INSTANCES PER GPU &bull; DERIVED, NOT RUN</span></div>
-<div class="case-stat"><span class="cs-val">0</span><span class="cs-lbl">WEIGHT ERROR AT FULL TIER &bull; MEASURED</span></div>
-</div>
-<div style="margin-top:1.5rem;line-height:1.8;color:var(--dim);font-size:.85rem">
-<p><strong style="color:var(--text)">Scenario A, smaller fleet:</strong> 50K GPUs instead of 200K for the same inference load, if each card really carries four instances. That&rsquo;s the $4.5B and $74M/yr above.</p>
-<p style="margin-top:.75rem"><strong style="color:var(--text)">Scenario B, same fleet:</strong> keep 200K GPUs and serve up to four times the concurrent instances, subject to the NVMe bandwidth those instances share, which I haven&rsquo;t modeled.</p>
-<p style="margin-top:.75rem"><strong style="color:var(--text)">What I&rsquo;d want before believing either:</strong> a 1-bit-tier quality number on a real model, a streamed-tier throughput number under load, and perplexity at each tier. None of those exist yet.</p>
-</div>
-</div>
-</section>
-
 <!-- ====== vs COMPETITION ====== -->
 <section>
 <h2>COMPETITIVE LANDSCAPE</h2>
@@ -630,11 +703,87 @@ SHARED<br>SSD POOL
 </div>
 </section>
 
+<!-- ====== WORKED EXAMPLE: FLEET ARITHMETIC ====== -->
+<section>
+<h2>WORKED EXAMPLE: A 200K-GPU FLEET</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.8;color:var(--dim);font-size:.9rem;margin-bottom:2rem">
+<p>Same assumptions as the Fleet Arithmetic tab above ($30K and 700 W per H100, $0.08/kWh, three-year depreciation, 4&times; instances per GPU from the 1-bit footprint). A <strong style="color:var(--text)">200,000-GPU cluster</strong> is then <strong style="color:var(--text)">$6B of GPUs</strong> drawing <strong style="color:var(--text)">140 MW</strong>. None of this is measured; it&rsquo;s the arithmetic written out.</p>
+</div>
+<div class="case-banner">
+<h3>THE ARITHMETIC AT 200K GPUs (ASSUMPTIONS ABOVE)</h3>
+<div class="case-stats">
+<div class="case-stat"><span class="cs-val">$4.5B</span><span class="cs-lbl">HARDWARE NOT BOUGHT (150K &times; $30K)</span></div>
+<div class="case-stat"><span class="cs-val">150K</span><span class="cs-lbl">FEWER GPUs AT 4&times; PER CARD</span></div>
+<div class="case-stat"><span class="cs-val">105 MW</span><span class="cs-lbl">LESS DRAW (150K &times; 700 W)</span></div>
+<div class="case-stat"><span class="cs-val">$74M/yr</span><span class="cs-lbl">ELECTRICITY AT $0.08/kWh</span></div>
+<div class="case-stat"><span class="cs-val">4&times;</span><span class="cs-lbl">INSTANCES PER GPU &bull; DERIVED, NOT RUN</span></div>
+<div class="case-stat"><span class="cs-val">0</span><span class="cs-lbl">WEIGHT ERROR AT FULL TIER &bull; MEASURED</span></div>
+</div>
+<div style="margin-top:1.5rem;line-height:1.8;color:var(--dim);font-size:.85rem">
+<p><strong style="color:var(--text)">Scenario A, smaller fleet:</strong> 50K GPUs instead of 200K for the same inference load, if each card really carries four instances. That&rsquo;s the $4.5B and $74M/yr above.</p>
+<p style="margin-top:.75rem"><strong style="color:var(--text)">Scenario B, same fleet:</strong> keep 200K GPUs and serve up to four times the concurrent instances, subject to the NVMe bandwidth those instances share, which I haven&rsquo;t modeled.</p>
+<p style="margin-top:.75rem"><strong style="color:var(--text)">What I&rsquo;d want before believing either:</strong> a 1-bit-tier quality number on a real model, a streamed-tier throughput number under load, and perplexity at each tier. None of those exist yet.</p>
+</div>
+</div>
+</section>
+
+<!-- ====== SILICON-LEVEL INNOVATION ====== -->
+<section>
+<h2>SILICON PATH (DESIGN, NOT MEASURED)</h2>
+<div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
+<p>Now for where I want to take this next. Every modern GPU has <strong style="color:var(--text)">dedicated <span class="redacted" title="Proprietary">[CLASSIFIED HARDWARE UNITS]</span></strong> and a <strong style="color:var(--text)"><span class="redacted" title="Proprietary">[DEDICATED CACHE PATHWAY]</span></strong> that mostly sit idle during transformer inference. The encoding format is laid out so that path could do the tier decode off the ALU pipeline.</p>
+<p style="margin-top:1rem">Nothing in this section is measured. My current decoder runs as ordinary PyTorch ops and decodes before the matmul rather than fusing with it; the diagram and the three cards below are what I intend to build, and the numbers on them are estimates.</p>
+</div>
+<div class="silicon-grid">
+<div class="silicon-col trad">
+<h4>TRADITIONAL INFERENCE</h4>
+<div class="silicon-pipe"><span class="pipe-block alu">ALU</span><span style="color:var(--dim);font-size:.7rem">&larr; All matmul (FMA ops)</span></div>
+<div class="silicon-pipe"><span class="pipe-block alu">ALU</span><span style="color:var(--dim);font-size:.7rem">&larr; All activations (silu/gelu)</span></div>
+<div class="silicon-pipe"><span class="pipe-block cache">L1/L2</span><span style="color:var(--dim);font-size:.7rem">&larr; Weights + KV cache (shared)</span></div>
+<div class="silicon-pipe"><span class="pipe-block dark"><span class="redacted" title="Proprietary">[▓▓▓]</span></span><span style="color:var(--dim);font-size:.7rem">&larr; Idle (0% utilization)</span></div>
+<div class="silicon-pipe"><span class="pipe-block dark"><span class="redacted" title="Proprietary">[▓▓▓▓▓▓]</span></span><span style="color:var(--dim);font-size:.7rem">&larr; Idle (empty)</span></div>
+<p style="font-size:.7rem;color:#e74c3c;margin-top:1rem;letter-spacing:1px">ALL COMPUTE ON ONE PIPELINE &bull; CACHE THRASHING</p>
+</div>
+<div class="silicon-vs">vs</div>
+<div class="silicon-col railgun" style="border-color:var(--accent)">
+<h4>RAILGUN INFERENCE</h4>
+<div class="silicon-pipe"><span class="pipe-block tmu"><span class="redacted" title="Proprietary">[UNIT A]</span></span><span style="color:var(--dim);font-size:.7rem">&larr; <span class="redacted" title="Proprietary">[CLASSIFIED OPERATION]</span></span></div>
+<div class="silicon-pipe"><span class="pipe-block tex"><span class="redacted" title="Proprietary">[UNIT B]</span></span><span style="color:var(--dim);font-size:.7rem">&larr; <span class="redacted" title="Proprietary">[DEDICATED PATHWAY]</span></span></div>
+<div class="silicon-pipe"><span class="pipe-block tmu"><span class="redacted" title="Proprietary">[DUAL PATH]</span></span><span style="color:var(--dim);font-size:.7rem">&larr; Prefetch layer N+1</span></div>
+<div class="silicon-pipe"><span class="pipe-block alu" style="background:rgba(0,255,157,.1);border-color:var(--accent);color:var(--accent)">ALU</span><span style="color:var(--dim);font-size:.7rem">&larr; Accumulate + attention only</span></div>
+<div class="silicon-pipe"><span class="pipe-block cache" style="background:rgba(0,255,157,.1);border-color:var(--accent);color:var(--accent)">L1/L2</span><span style="color:var(--dim);font-size:.7rem">&larr; KV cache only (no weight pressure)</span></div>
+<p style="font-size:.7rem;color:var(--accent);margin-top:1rem;letter-spacing:1px">PARALLEL PIPELINES &bull; ZERO CACHE CONTENTION</p>
+</div>
+</div>
+<div style="max-width:800px;margin:2.5rem auto 0">
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.25rem">
+<div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem">
+<span style="font-size:1.6rem;font-weight:700;color:var(--accent);display:block"><span class="redacted" title="Proprietary">[OPERATION A]</span> &rarr; <span class="redacted" title="Proprietary">[OPERATION B]</span></span>
+<span style="font-size:.65rem;letter-spacing:2px;color:var(--dim);margin-top:.25rem;display:block">FUNDAMENTAL OPERATION SHIFT</span>
+<span style="font-size:.8rem;color:var(--text);display:block;margin-top:.75rem;line-height:1.6">Standard: <code style="color:#e74c3c">a &times; b + c</code> (FMA on ALU)<br>Railgun: <code style="color:var(--accent)"><span class="redacted" title="Proprietary">[CLASSIFIED]</span></code></span>
+</div>
+<div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem">
+<span style="font-size:1.6rem;font-weight:700;color:var(--accent);display:block">0 FLOPs</span>
+<span style="font-size:.65rem;letter-spacing:2px;color:var(--dim);margin-top:.25rem;display:block">MULTIPLICATIONS IN MATMUL &bull; UNTESTED</span>
+<span style="font-size:.8rem;color:var(--text);display:block;margin-top:.75rem;line-height:1.6">The idea is that matrix-vector multiply becomes <span class="redacted" title="Proprietary">[CLASSIFIED OPERATIONS]</span> on the 1-bit tier. I haven&rsquo;t written that kernel.</span>
+</div>
+<div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.5rem">
+<span style="font-size:1.6rem;font-weight:700;color:var(--accent);display:block">~5&times;</span>
+<span style="font-size:.65rem;letter-spacing:2px;color:var(--dim);margin-top:.25rem;display:block">THROUGHPUT PER WATT &bull; ESTIMATE, UNTESTED</span>
+<span style="font-size:.8rem;color:var(--text);display:block;margin-top:.75rem;line-height:1.6">A paper estimate from <span class="redacted" title="Proprietary">[CLASSIFIED PIPELINE FACTORS]</span> for sparse layers. No power measurement exists yet.</span>
+</div>
+</div>
+</div>
+<div style="max-width:800px;margin:1.5rem auto;padding:1.25rem;background:var(--panel);border-left:3px solid var(--accent);border-radius:0 8px 8px 0">
+<p style="color:var(--text);font-size:.85rem;line-height:1.7"><strong style="color:var(--accent)">Where this would fit:</strong> the encoding is laid out to <span class="redacted" title="Proprietary">[INTERFACE WITH CLASSIFIED HARDWARE PATH]</span> on hardware that&rsquo;s already in every GPU. Whether it pays off depends on a fused decode-plus-matmul kernel that I haven&rsquo;t built, so I&rsquo;m listing it as the plan, not a result.</p>
+</div>
+</section>
+
 <!-- ====== BEYOND INFERENCE ====== -->
 <section>
 <h2>BEYOND INFERENCE: TRAINING (UNTESTED)</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
-<p>Nothing in this section has been run. It&rsquo;s where I think the format could go, written down so the ideas are on record. The question I keep coming back to is whether the compression format can double as the mutation space for evolutionary training.</p>
+<p>The question I keep coming back to: can the compression format double as the mutation space for evolutionary training? Nothing in this section has been run. It&rsquo;s where I think the format could go, written down so the ideas are on record.</p>
 </div>
 <div class="training-comparison">
 <div class="training-box before">
@@ -684,160 +833,11 @@ SHARED<br>SSD POOL
 </div>
 </section>
 
-<!-- ====== GPU PROOF BATTERY ====== -->
-<section>
-<h2>GPU PROOF BATTERY</h2>
-<div style="max-width:800px;margin:0 auto;line-height:1.8;color:var(--dim);font-size:.9rem;margin-bottom:1.5rem">
-<p>Eight runs on my AMD Radeon RX 7800 XT (16 GB VRAM, ROCm 7.2, PyTorch 2.12 nightly), each with its JSON linked at the bottom. The two I&rsquo;d point you at first are <strong style="color:var(--text)">Proof 1</strong> (an fp16 OOM you can reproduce on any 16 GB card) and <strong style="color:var(--text)">Proof 3</strong> (a full-model roundtrip of Qwen2.5-0.5B with greedy decode and byte-identical outputs, coherence_proof.json). Proofs 2, 4, 5, and 7 use real Qwen3.5-9B weights; Proof 6 is synthetic arrays; Proofs 4 and 5 are allocation tests with no inference; Proof 8 is 1-bit-tier latency, not quality.</p>
-<p style="margin-top:.75rem">From the white paper&rsquo;s limitations, still true: the R tier alone is not sufficient for high-quality inference; perplexity has not yet been measured at any tier; and the current implementation decodes before inference rather than fusing with the matmul.</p>
-</div>
-<!-- PROOF 1: FP16 CRASH -->
-<div class="case-banner" style="max-width:900px;margin-bottom:2rem">
-<h3 style="letter-spacing:3px;color:#e74c3c">PROOF 1 &bull; fp16 CANNOT FIT</h3>
-<p style="color:var(--dim);font-size:.8rem">Qwen3.5-9B &bull; 9.65B params &bull; AMD RX 7800 XT &bull; ROCm 7.2</p>
-<div class="case-stats">
-<div class="case-stat"><span class="cs-val" style="color:#e74c3c">19.31 GB</span><span class="cs-lbl">FP16 SIZE</span></div>
-<div class="case-stat"><span class="cs-val">14.09 GB</span><span class="cs-lbl">FREE VRAM</span></div>
-<div class="case-stat"><span class="cs-val" style="color:#e74c3c">7.22 GB</span><span class="cs-lbl">DEFICIT</span></div>
-<div class="case-stat"><span class="cs-val" style="color:#e74c3c">OOM</span><span class="cs-lbl">STATUS</span></div>
-</div>
-<p style="margin-top:1rem;color:#e74c3c;font-size:.8rem;font-weight:700;letter-spacing:2px">torch.OutOfMemoryError &mdash; CONFIRMED</p>
-<p style="color:var(--dim);font-size:.75rem;margin-top:.5rem">A 9.65-billion parameter model at fp16 needs 19.31 GB and my card had 14.09 GB free, so the load throws torch.OutOfMemoryError (proof_1_fp16_crash.json has the exact message). This one you can reproduce on any 16 GB GPU.</p>
-</div>
-<!-- PROOF 2: RAILGUN MAKES IT FIT -->
-<div class="case-banner" style="max-width:900px;margin-bottom:2rem">
-<h3 style="letter-spacing:3px">PROOF 2 &bull; RAILGUN MAKES 9B FIT</h3>
-<p style="color:var(--dim);font-size:.8rem">Qwen3.5-9B &bull; 775 tensors &bull; 20 sampled &bull; Full-tier encode/decode</p>
-<div class="case-stats">
-<div class="case-stat"><span class="cs-val" style="color:var(--accent)">20/20</span><span class="cs-lbl">BIT-EXACT</span></div>
-<div class="case-stat"><span class="cs-val">9.65B</span><span class="cs-lbl">PARAMETERS</span></div>
-<div class="case-stat"><span class="cs-val" style="color:var(--accent)">1.21 GB</span><span class="cs-lbl">RAILGUN BINARY</span></div>
-<div class="case-stat"><span class="cs-val">16&times;</span><span class="cs-lbl">COMPRESSION</span></div>
-</div>
-<div style="margin-top:1rem">
-<table class="bench-table" style="font-size:.75rem;max-width:500px;margin:0 auto">
-<thead><tr><th>FORMAT</th><th>VRAM</th><th>vs fp16</th></tr></thead>
-<tbody>
-<tr><td>fp16 (baseline)</td><td>19.31 GB</td><td style="color:#e74c3c">CRASH</td></tr>
-<tr><td>Railgun Binary</td><td style="color:var(--accent);font-weight:700">1.21 GB</td><td class="best">16.0&times;</td></tr>
-<tr><td>Railgun Ternary</td><td>1.91 GB</td><td>10.1&times;</td></tr>
-<tr><td>Railgun Quaternary</td><td>2.41 GB</td><td>8.0&times;</td></tr>
-</tbody>
-</table>
-</div>
-<p style="margin-top:1rem;color:var(--accent);font-size:.8rem;font-weight:700;letter-spacing:2px">ALL 20 SAMPLED TENSORS: BIT-EXACT fp16 ROUNDTRIP</p>
-<p style="color:var(--dim);font-size:.75rem">Decode throughput 143.5M params/s; full-model decode estimated at 67 s from that rate. The 1.21 GB is the VRAM-resident tier only; the residual on NVMe is 1.75&times; the fp16 bytes (Proof 7), so the total store is larger than fp16. The per-tensor cosine values in the JSON sit at 0.9999 despite bit-exact flags because the cosine was computed in fp16; the exact flag is the real check.</p>
-</div>
-<!-- PROOF 3: ZERO INFERENCE DEGRADATION -->
-<div class="case-banner" style="max-width:900px;margin-bottom:2rem">
-<h3 style="letter-spacing:3px">PROOF 3 &bull; FULL-MODEL ROUNDTRIP, BYTE-IDENTICAL OUTPUTS</h3>
-<p style="color:var(--dim);font-size:.8rem">Qwen2.5-0.5B-Instruct &bull; every weight tensor encoded and decoded at full tier &bull; greedy decode (do_sample=False), 128 new tokens &bull; coherence_proof.json</p>
-<div class="case-stats">
-<div class="case-stat"><span class="cs-val" style="color:var(--accent)">290/290</span><span class="cs-lbl">LAYERS BIT-EXACT</span></div>
-<div class="case-stat"><span class="cs-val">494M</span><span class="cs-lbl">PARAMETERS</span></div>
-<div class="case-stat"><span class="cs-val" style="color:var(--accent)">3/3</span><span class="cs-lbl">PROMPTS BYTE-IDENTICAL</span></div>
-<div class="case-stat"><span class="cs-val">67.6s</span><span class="cs-lbl">ROUNDTRIP (GPU RUN)</span></div>
-</div>
-<p style="color:var(--dim);font-size:.75rem;margin-top:.75rem">This is the strongest result on the page: the same model produces the same bytes before and after a full encode/decode, so the full tier changes nothing about inference. The 67.6 s is from proof_3_coherence_05b.json; the white paper&rsquo;s 166.5 s was an earlier CPU run. One oddity in coherence_proof.json: embed_tokens reports a cosine of 1.00102598, above 1, because the cosine was computed in fp16 and overflowed on a 136M-element tensor; the bit-exact flag on that layer is true and is the check that matters.</p>
-<div style="margin-top:1.5rem;border-top:1px solid var(--border);padding-top:1.25rem">
-<h4 style="color:var(--accent);font-size:.7rem;letter-spacing:2px;margin-bottom:.75rem">INFERENCE OUTPUT COMPARISON</h4>
-<table class="bench-table" style="font-size:.75rem">
-<thead><tr><th style="width:30%">PROMPT</th><th style="width:50%">OUTPUT (TRUNCATED)</th><th>MATCH</th></tr></thead>
-<tbody>
-<tr><td style="color:var(--text)">&ldquo;Explain quantum entanglement in simple terms.&rdquo;</td><td>Quantum entanglement is a phenomenon in quantum mechanics where two or more particles become interconnected&hellip;</td><td class="best">IDENTICAL</td></tr>
-<tr><td style="color:var(--text)">&ldquo;Write a Python function that checks if a number is prime.&rdquo;</td><td>The function should return True if the number is prime and False otherwise. A prime number is a natural number&hellip;</td><td class="best">IDENTICAL</td></tr>
-<tr><td style="color:var(--text)">&ldquo;What are the three laws of thermodynamics?&rdquo;</td><td>1. The first law states that energy cannot be created or destroyed, only transformed&hellip;</td><td class="best">IDENTICAL</td></tr>
-</tbody>
-</table>
-</div>
-<p style="margin-top:1rem;color:var(--accent);font-size:.85rem;font-weight:700;letter-spacing:2px">ALL OUTPUTS BYTE-FOR-BYTE IDENTICAL BEFORE &amp; AFTER FULL-TIER ROUNDTRIP</p>
-</div>
-<!-- PROOF 4: 4x SCALE -->
-<div class="case-banner" style="max-width:900px;margin-bottom:2rem">
-<h3 style="letter-spacing:3px">PROOF 4 &bull; 38B MODEL ON A CONSUMER GPU</h3>
-<p style="color:var(--dim);font-size:.8rem">4&times; scaled Qwen3.5-9B &bull; 38.6B params &bull; VRAM allocation test</p>
-<div class="case-stats">
-<div class="case-stat"><span class="cs-val" style="color:var(--accent)">38.6B</span><span class="cs-lbl">PARAMETERS</span></div>
-<div class="case-stat"><span class="cs-val" style="color:#e74c3c">77.2 GB</span><span class="cs-lbl">FP16 SIZE</span></div>
-<div class="case-stat"><span class="cs-val" style="color:var(--accent)">4.83 GB</span><span class="cs-lbl">RAILGUN BINARY</span></div>
-<div class="case-stat"><span class="cs-val" style="color:var(--accent)">FITS</span><span class="cs-lbl">GPU ALLOC</span></div>
-</div>
-<p style="margin-top:1rem;color:var(--dim);font-size:.75rem">I allocated a 4&times;-duplicated 38.6B tensor set (4.83 GB at 1 bit/weight) on the 16 GB card with 9.37 GB left. This is an allocation test. I didn&rsquo;t run inference on it. 10 sampled tensors roundtripped bit-exact at 141.6M params/s decode.</p>
-<p style="color:var(--accent);font-size:.8rem;font-weight:700;letter-spacing:2px;margin-top:.5rem">ALLOCATION TEST, NO INFERENCE RUN</p>
-</div>
-<!-- PROOF 5: 3x CONCURRENT -->
-<div class="case-banner" style="max-width:900px;margin-bottom:2rem">
-<h3 style="letter-spacing:3px">PROOF 5 &bull; THREE 9B MODELS ON ONE GPU</h3>
-<p style="color:var(--dim);font-size:.8rem">3&times; Qwen3.5-9B concurrent &bull; 28.96B total params</p>
-<div class="case-stats">
-<div class="case-stat"><span class="cs-val" style="color:var(--accent)">3/3</span><span class="cs-lbl">MODELS ALLOCATED</span></div>
-<div class="case-stat"><span class="cs-val" style="color:#e74c3c">57.9 GB</span><span class="cs-lbl">FP16 TOTAL</span></div>
-<div class="case-stat"><span class="cs-val" style="color:var(--accent)">3.62 GB</span><span class="cs-lbl">RAILGUN TOTAL</span></div>
-<div class="case-stat"><span class="cs-val">13.3 GB</span><span class="cs-lbl">HEADROOM LEFT</span></div>
-</div>
-<p style="margin-top:1rem;color:var(--dim);font-size:.75rem">I allocated three 9B routing tiers on one 16 GB card (1.21 GB each, 3.62 GB total, 13.3 GB left). This is an allocation test. I didn&rsquo;t run inference on them, and three instances would share one NVMe link for their residuals.</p>
-<p style="color:var(--accent);font-size:.8rem;font-weight:700;letter-spacing:2px;margin-top:.5rem">ALLOCATION TEST, NO INFERENCE RUN</p>
-</div>
-<!-- PROOF 6: CONTEXT STABILITY -->
-<div class="case-banner" style="max-width:900px;margin-bottom:2rem">
-<h3 style="letter-spacing:3px">PROOF 6 &bull; GF(17) RESIDUE STABILITY (SYNTHETIC)</h3>
-<p style="color:var(--dim);font-size:.8rem">Cumulative sum test on synthetic arrays &bull; 20M ops, 10,000 pack/unpack cycles &bull; GF(17) vs naive sequential fp16</p>
-<div class="case-stats">
-<div class="case-stat"><span class="cs-val" style="color:var(--accent)">1.000</span><span class="cs-lbl">GF17 COSINE SIM</span></div>
-<div class="case-stat"><span class="cs-val" style="color:#e74c3c">&minus;0.030</span><span class="cs-lbl">FP16 COSINE SIM</span></div>
-<div class="case-stat"><span class="cs-val" style="color:var(--accent)">0.0</span><span class="cs-lbl">GF17 MAX ERROR</span></div>
-<div class="case-stat"><span class="cs-val" style="color:#e74c3c">7.85</span><span class="cs-lbl">FP16 MAX ERROR</span></div>
-</div>
-<p style="margin-top:1rem;color:var(--dim);font-size:.75rem">GF(17) residues don&rsquo;t accumulate rounding error, by construction. My fp16 comparison used naive sequential summation, which real kernels don&rsquo;t do (they accumulate in fp32), so read it as an illustration, not a benchmark. I ran 20M ops and 10,000 pack/unpack cycles; the JSON is linked. The fp16 cosine is &minus;0.030 at 1M, 10M, and 20M ops alike, so the naive sum had saturated by 1M. The 95.5% relative error is a naive fp16 sum of 1M values against fp64, from the same JSON.</p>
-<p style="color:var(--accent);font-size:.8rem;font-weight:700;letter-spacing:2px;margin-top:.5rem">GF(17): EXACT BY CONSTRUCTION &bullet; fp16 COLUMN: NAIVE SUM, ILLUSTRATION ONLY</p>
-</div>
-<!-- PROOF 7: SPEED THROUGHPUT -->
-<div class="case-banner" style="max-width:900px;margin-bottom:2rem">
-<h3 style="letter-spacing:3px">PROOF 7 &bull; GPU CODEC SPEED (9B MODEL)</h3>
-<p style="color:var(--dim);font-size:.8rem">Qwen3.5-9B &bull; 503M sampled params &bull; Binary mode (k=2) &bull; AMD RX 7800 XT</p>
-<div class="case-stats">
-<div class="case-stat"><span class="cs-val" style="color:var(--accent)">96.6 M/s</span><span class="cs-lbl">ENCODE SPEED</span></div>
-<div class="case-stat"><span class="cs-val" style="color:var(--accent)">121.7 M/s</span><span class="cs-lbl">DECODE SPEED</span></div>
-<div class="case-stat"><span class="cs-val" style="color:var(--accent)">16&times;</span><span class="cs-lbl">COMPRESSION</span></div>
-<div class="case-stat"><span class="cs-val" style="color:var(--accent)">10/10</span><span class="cs-lbl">BIT-EXACT</span></div>
-</div>
-<p style="margin-top:1rem;color:var(--dim);font-size:.75rem">10 sampled tensors (503M params) from Qwen3.5-9B. Encode 96.6M params/s, decode 121.7M params/s, all 10 bit-exact (SNR &gt;147 dB against fp32). Full model estimated from those rates: encode 100 s, decode 79 s. The same JSON gives the store sizes: 62.9 MB in VRAM, 1,761.6 MB on SSD, against 1,006.6 MB of fp16, which is where the 16&times; resident and 1.75&times; total figures on this page come from.</p>
-<p style="color:var(--accent);font-size:.8rem;font-weight:700;letter-spacing:2px;margin-top:.5rem">GPU CODEC: 121.7M PARAMS/S DECODE &bullet; ALL BIT-EXACT</p>
-</div>
-<!-- PROOF 8: REAL INFERENCE LATENCY -->
-<div class="case-banner" style="max-width:900px;margin-bottom:2rem">
-<h3 style="letter-spacing:3px">PROOF 8 &bull; 1-BIT-TIER TOKEN LATENCY (9B MODEL)</h3>
-<p style="color:var(--dim);font-size:.8rem">Qwen3.5-9B &bull; 249 linear layers on the 1-bit tier &bull; Binary (k=2) &bull; whole model on GPU &bull; latency only, not quality</p>
-<div class="case-stats">
-<div class="case-stat"><span class="cs-val" style="color:var(--accent)">1.5 tok/s</span><span class="cs-lbl">1-BIT TIER, 676 ms/TOKEN</span></div>
-<div class="case-stat"><span class="cs-val" style="color:#e74c3c">0.9 tok/s</span><span class="cs-lbl">fp16 WITH 12/39 LAYERS ON CPU</span></div>
-<div class="case-stat"><span class="cs-val" style="color:var(--accent)">3.06 GB</span><span class="cs-lbl">VRAM, MODEL + ACTIVATIONS</span></div>
-<div class="case-stat"><span class="cs-val">0.99 GB</span><span class="cs-lbl">OF THAT, THE 249 PATCHED LAYERS</span></div>
-</div>
-<p style="margin-top:1rem;color:var(--dim);font-size:.75rem">With all 249 layers on the 1-bit tier the 9B model runs at 1.5 tok/s and 676 ms/token on my 7800 XT, with 3.06 GB allocated after warmup (the 0.99 GB in the JSON is the patched layers alone; the 32&times; ratio it reports is against an fp32 reference, not fp16). The baseline I had (fp16 with 12 of 39 layers offloaded to CPU, bench_token_latency.json) ran 0.9 tok/s and produced broken text, so it isn&rsquo;t a fair comparator; a Q4 GGUF of the same model that fits in VRAM would be much faster. Output text at the 1-bit tier is not shown because it&rsquo;s not a quality benchmark.</p>
-<p style="color:var(--accent);font-size:.8rem;font-weight:700;letter-spacing:2px;margin-top:.5rem">LATENCY ONLY &bullet; 1-BIT-TIER QUALITY NOT MEASURED</p>
-</div>
-<!-- DOWNLOAD LINKS -->
-<div style="margin-top:1.5rem">
-<p style="color:var(--accent);font-size:.85rem;font-weight:700;letter-spacing:2px;margin-bottom:1rem">RAW JSON FOR EACH RUN</p>
-<div style="display:flex;justify-content:center;gap:1rem;flex-wrap:wrap">
-<a href="proof_1_fp16_crash.json" class="demo-dl" style="font-size:.65rem;padding:.5rem 1.5rem;background:transparent;border:1px solid var(--accent);color:var(--accent);text-decoration:none" download>PROOF 1: FP16 CRASH</a>
-<a href="proof_2_railgun_9b.json" class="demo-dl" style="font-size:.65rem;padding:.5rem 1.5rem;background:transparent;border:1px solid var(--accent);color:var(--accent);text-decoration:none" download>PROOF 2: RAILGUN 9B</a>
-<a href="coherence_proof.json" class="demo-dl" style="font-size:.65rem;padding:.5rem 1.5rem;background:transparent;border:1px solid var(--accent);color:var(--accent);text-decoration:none" download>PROOF 3: COHERENCE</a>
-<a href="proof_4_32b_scale.json" class="demo-dl" style="font-size:.65rem;padding:.5rem 1.5rem;background:transparent;border:1px solid var(--accent);color:var(--accent);text-decoration:none" download>PROOF 4: 38B SCALE</a>
-<a href="proof_5_3x8b_concurrent.json" class="demo-dl" style="font-size:.65rem;padding:.5rem 1.5rem;background:transparent;border:1px solid var(--accent);color:var(--accent);text-decoration:none" download>PROOF 5: 3&times;9B</a>
-<a href="proof_6_context_stability.json" class="demo-dl" style="font-size:.65rem;padding:.5rem 1.5rem;background:transparent;border:1px solid var(--accent);color:var(--accent);text-decoration:none" download>PROOF 6: GF17 STABILITY</a>
-<a href="proof_7_speed_9b.json" class="demo-dl" style="font-size:.65rem;padding:.5rem 1.5rem;background:transparent;border:1px solid var(--accent);color:var(--accent);text-decoration:none" download>PROOF 7: GPU SPEED</a>
-<a href="proof_8_railgun_inference.json" class="demo-dl" style="font-size:.65rem;padding:.5rem 1.5rem;background:transparent;border:1px solid var(--accent);color:var(--accent);text-decoration:none" download>PROOF 8: INFERENCE</a>
-</div>
-</div>
-</section>
-
 <!-- ====== ENCRYPTED DEMO ====== -->
 <section id="demo">
 <h2>TRY IT YOURSELF</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.8;color:var(--dim);font-size:.9rem;margin-bottom:1.5rem">
-<p>An <strong style="color:var(--text)">encrypted evaluation package</strong> (v1.0) lets you rerun the measured parts on your own hardware: VRAM usage, cosine similarity against fp16, and streaming latency, alongside GPTQ, AWQ, and GGML on the same tensors. The white paper is v2.0.</p>
+<p>Don&rsquo;t just take my word for it! An <strong style="color:var(--text)">encrypted evaluation package</strong> (v1.0) lets you rerun the measured parts on your own hardware: VRAM usage, cosine similarity against fp16, and streaming latency, alongside GPTQ, AWQ, and GGML on the same tensors. The white paper is v2.0.</p>
 <p style="margin-top:.75rem">The implementation is compiled and encrypted, so you get the measurements and the harness without the encoder and decoder source.</p>
 </div>
 <div class="demo-section">
@@ -877,7 +877,7 @@ SHARED<br>SSD POOL
 <div style="display:flex;justify-content:center;gap:1rem;margin-top:1rem;flex-wrap:wrap">
 <a href="proof_2_railgun_9b.json" class="demo-dl" style="background:transparent;border:1px solid var(--accent);color:var(--accent);text-decoration:none;font-size:.7rem;padding:.5rem 1.5rem" download>DOWNLOAD 9B PROOF (JSON)</a>
 </div>
-<p class="demo-note">Available under NDA. Package includes hardware-locked license key, benchmark harness, and synthetic weight tensors for testing. No real model weights included.</p>
+<p class="demo-note">The package includes a hardware-locked license key, the benchmark harness, and synthetic weight tensors to test with. No real model weights included. Available under NDA.</p>
 </div>
 </div>
 </div>
@@ -887,7 +887,7 @@ SHARED<br>SSD POOL
 <section id="contact">
 <div class="cta-section">
 <h2>INTERESTED?</h2>
-<p>Railgun is available for licensing. Evaluation packages, integration support, and flexible licensing terms available for teams of any size.</p>
+<p>Want Railgun in your stack? It&rsquo;s available for licensing. I can set you up with an evaluation package, help with integration, and work out licensing terms that fit teams of any size.</p>
 <a href="mailto:amnibro7@gmail.com?subject=Railgun%20Licensing%20Inquiry" class="cta-btn">GET IN TOUCH</a>
 <p style="margin-top:1.5rem;font-size:.75rem;color:var(--dim);letter-spacing:1px">TRADE SECRET &bull; ENCRYPTED IMPLEMENTATION &bull; NDA AVAILABLE</p>
 </div>
@@ -897,7 +897,7 @@ SHARED<br>SSD POOL
 <section>
 <h2>ABOUT THE AUTHOR</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.8;color:var(--dim);font-size:.9rem">
-<p>I&rsquo;m <strong style="color:var(--text)">Anthony Reffelt</strong>, an independent researcher, and Railgun is my work. The core idea, that a <span class="redacted" title="Proprietary">[CLASSIFIED ALGEBRAIC STRUCTURE]</span> gives a bit-exact container for fp16 values with a tiny resident tier, is mine.</p>
+<p>Hi! I&rsquo;m <strong style="color:var(--text)">Anthony Reffelt</strong>, an independent researcher, and Railgun is my work. The core idea, that a <span class="redacted" title="Proprietary">[CLASSIFIED ALGEBRAIC STRUCTURE]</span> gives a bit-exact container for fp16 values with a tiny resident tier, is mine.</p>
 <p style="margin-top:.75rem">I used AI coding tools to move faster on the implementation. The math, the architecture, the experimental setup, and the calls about what to measure and what to say about it are mine, and so are the mistakes.</p>
 <p style="margin-top:.75rem;font-size:.8rem;color:var(--dim)">Contact: <a href="mailto:amnibro7@gmail.com" style="color:var(--accent)">amnibro7@gmail.com</a> &bull; <a href="https://amni-scient.com" style="color:var(--accent)">amni-scient.com</a></p>
 </div>

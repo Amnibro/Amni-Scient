@@ -106,97 +106,64 @@
 <div class="ptile">
 <div class="ptile-copy">
 <p class="ptile-line">An agentic AI coding assistant in one Rust binary.</p>
-<ul class="ptile-feats"><li>Autonomous tool loop with plan / edit / autonomous modes</li><li>Any LLM provider, or your Claude Code, Codex, Copilot, Cursor, Grok, Antigravity, OpenCode subscription</li><li>19 built-in tools, git, tests, lint, format</li><li>Single binary, no install</li></ul>
+<ul class="ptile-feats"><li>Autonomous tool loop with plan / edit / autonomous modes</li><li>Any LLM provider, or your Claude Code, Codex, Copilot, Cursor, Grok, Antigravity, OpenCode subscription</li><li>20 built-in tools, git, tests, lint, format</li><li>Single binary, no install</li></ul>
 </div>
 <div class="ptile-media"><img src="assets/code/Interface.png" alt="Amni-Code interface" loading="lazy"></div>
 </div>
 <section>
 <h2>AI CODING WORKFLOW</h2>
-<p style="color:var(--dim);max-width:640px;margin:0 0 1rem;font-size:.9rem">A lightweight, agentic AI coding assistant that lives in a single binary.</p>
+<p style="color:var(--dim);max-width:640px;margin:0 0 1rem;font-size:.9rem">You describe the task. It reads your project, writes the code, runs the commands and checks the result, all on its own.</p>
 <div class="features">
 <div class="feature">
 <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2c3 2.6 4.5 6.2 4.5 10L12 16l-4.5-4C7.5 8.2 9 4.6 12 2z"/><circle cx="12" cy="9.5" r="1.6"/><path d="M8 15l-2 5 4-1.8M16 15l2 5-4-1.8"/></svg></div>
 <h4>AGENTIC TOOL LOOP</h4>
-<p>Up to 15 autonomous iterations per request. The AI reads files, writes code, runs commands, and verifies &mdash; without waiting for you.</p>
+<p>Up to 100 autonomous iterations per request, and you can move the cap. It reads files, writes code, runs commands and verifies the result without waiting on you.</p>
 </div>
 <div class="feature">
 <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3v5M15 3v5M7 8h10v3a5 5 0 0 1-10 0z"/><path d="M12 16v5"/></svg></div>
 <h4>ANY PROVIDER, OR YOUR SUBSCRIPTION</h4>
-<p>Switch between Adam (local, default), Google Gemini, xAI Grok, OpenAI GPT, Anthropic Claude, Ollama, or any OpenAI-compatible local server from one settings panel. Or pick a subscription seat with no API key at all: Claude Code, Codex CLI, GitHub Copilot CLI, Cursor CLI, Grok CLI, Antigravity, or OpenCode. Sign in once in that CLI and it drives your project folder directly, with plan mode mapped to each tool's read-only flag.</p>
+<p>Switch between Adam (local, default), Google Gemini, xAI Grok, OpenAI GPT, Anthropic Claude, Ollama, or any OpenAI-compatible local server from one settings panel. Already paying for a coding CLI? Pick a subscription seat with no API key at all: Claude Code, Codex CLI, GitHub Copilot CLI, Cursor CLI, Grok CLI, Antigravity, or OpenCode. Sign in once in that CLI and it drives your project folder directly, with plan mode mapped to each tool's read-only flag.</p>
 </div>
 <div class="feature">
 <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h6l2 3h10v12H3z"/></svg></div>
 <h4>DEEP FILE SYSTEM</h4>
-<p>Read, write, edit, search, and list files across your entire project. The agent resolves relative paths from your working directory automatically.</p>
+<p>Read, write, edit, search and list files across your whole project. The agent resolves relative paths from your working directory automatically.</p>
 </div>
 <div class="feature">
 <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="12"/><path d="M2 20h20"/></svg></div>
 <h4>INTEGRATED TERMINAL</h4>
-<p>The agent runs shell commands in your project directory &mdash; builds, tests, git, package managers &mdash; and feeds the output back into its reasoning loop.</p>
+<p>The agent runs shell commands in your project directory (builds, tests, git, package managers) and feeds the output back into its reasoning loop.</p>
 </div>
 <div class="feature">
 <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5 5"/></svg></div>
 <h4>LOCAL MODEL DISCOVERY</h4>
-<p>Auto-detects GGUF and SafeTensors model files on disk, and imports them into Ollama on first use. No manual model setup required.</p>
+<p>It auto-detects GGUF and SafeTensors model files on disk and imports them into Ollama on first use. No manual model setup required.</p>
 </div>
 <div class="feature">
 <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="8.5" cy="10" r="1.3"/><circle cx="12" cy="7.6" r="1.3"/><circle cx="15.5" cy="10" r="1.3"/></svg></div>
 <h4>DIFF VIEWER &amp; HISTORY</h4>
-<p>Built-in diff highlighting shows exactly what the agent changed. Persistent chat history across sessions so you never lose context.</p>
+<p>Built-in diff highlighting shows exactly what the agent changed, and chat history persists across sessions, so you never lose context.</p>
 </div>
 </div>
-</section>
-<section>
-<h2>BUILT-IN AGENT TOOLS</h2>
-<p style="color:var(--dim);max-width:640px;margin:0 0 1rem;font-size:.9rem">The AI agent has direct access to 10 tools it can invoke autonomously during each conversation turn: read_file, write_file, edit_file, run_command, list_directory, search_files, web_fetch, web_search, memory_read, and memory_write.</p>
-<table class="spec-table">
-<tr><th>TOOL</th><th>DESCRIPTION</th></tr>
-<tr><td>read_file</td><td>Read a file&rsquo;s full contents from the project directory</td></tr>
-<tr><td>write_file</td><td>Create or overwrite a file with new content</td></tr>
-<tr><td>edit_file</td><td>Surgically replace a specific string inside a file</td></tr>
-<tr><td>run_command</td><td>Execute any shell command and capture stdout/stderr</td></tr>
-<tr><td>list_directory</td><td>List all files and folders in a given path</td></tr>
-<tr><td>search_files</td><td>Search for text across files using grep/findstr</td></tr>
-</table>
-</section>
-<section>
-<h2>SPECIFICATIONS</h2>
-<table class="spec-table">
-<tr><th>PARAMETER</th><th>DETAILS</th></tr>
-<tr><td>Type</td><td>Agentic AI Coding Assistant</td></tr>
-<tr><td>Language</td><td>Rust (Axum + WebView2)</td></tr>
-<tr><td>Binary</td><td>Single executable &mdash; no runtimes, no dependencies</td></tr>
-<tr><td>Platforms</td><td>Windows, macOS, Linux</td></tr>
-<tr><td>Providers</td><td>Adam (local, default), Google Gemini, xAI Grok, OpenAI, Anthropic Claude, Ollama, Custom Local</td></tr>
-<tr><td>Subscription seats</td><td>Claude Code, Codex CLI (ChatGPT), GitHub Copilot CLI, Cursor CLI, Grok CLI, Antigravity (Google), OpenCode. No API key, the signed-in CLI does the work.</td></tr>
-<tr><td>Answers</td><td>Rich markdown: headings, tables, nested and task lists, blockquotes, fenced code with copy and highlight, set in Archivo / Source Serif 4 / Cascadia Code</td></tr>
-<tr><td>Agent Loop</td><td>Up to 15 autonomous iterations per request</td></tr>
-<tr><td>Tools</td><td>read_file, write_file, edit_file, run_command, list_directory, search_files</td></tr>
-<tr><td>Model Discovery</td><td>Auto-detect GGUF &amp; SafeTensors &bull; Auto-import into Ollama</td></tr>
-<tr><td>Themes</td><td>Light &amp; Dark mode with persistence</td></tr>
-<tr><td>Chat History</td><td>Persistent sessions stored locally</td></tr>
-<tr><td>Config Storage</td><td>~/.amni/config.json &bull; survives restarts</td></tr>
-<tr><td>License</td><td>CC BY-NC 4.0</td></tr>
-</table>
 </section>
 <section>
 <h2>HOW IT WORKS</h2>
 <div class="how-works-grid">
 <div class="card">
 <h3>1. CONNECT</h3>
-<p>Pick a provider and model from the settings panel. For local models, point to your GGUF directory &mdash; Amni-Code discovers and imports them automatically.</p>
+<p>Pick a provider and model in the settings panel. For local models, point it at your GGUF directory and Amni-Code discovers and imports them for you.</p>
 </div>
 <div class="card">
 <h3>2. EXPLORE</h3>
-<p>The agent reads your project structure, entry points, and config files to build context before responding. No copy-pasting required.</p>
+<p>The agent reads your project structure, entry points and config files to build context before it answers. No copy-pasting required.</p>
 </div>
 <div class="card">
 <h3>3. ACT</h3>
-<p>Multi-step tool calls &mdash; reading code, writing fixes, running builds, searching for patterns &mdash; executed autonomously across up to 15 iterations.</p>
+<p>It makes multi-step tool calls on its own (reading code, writing fixes, running builds, searching for patterns) across up to 100 iterations.</p>
 </div>
 <div class="card">
 <h3>4. VERIFY</h3>
-<p>The agent runs your tests and build commands, reads the output, and continues iterating until the task is complete or verified passing.</p>
+<p>It runs your tests and build commands, reads the output, and keeps iterating until the task is complete or verified passing.</p>
 </div>
 </div>
 </section>
@@ -213,8 +180,48 @@
 </div>
 </section>
 <section>
+<h2>BUILT-IN AGENT TOOLS</h2>
+<p style="color:var(--dim);max-width:640px;margin:0 0 1rem;font-size:.9rem">The agent has direct access to 20 tools it can call on its own during each turn.</p>
+<table class="spec-table">
+<tr><th>TOOL</th><th>DESCRIPTION</th></tr>
+<tr><td>read_file</td><td>Read a file&rsquo;s full contents from the project directory</td></tr>
+<tr><td>write_file</td><td>Create or overwrite a file with new content</td></tr>
+<tr><td>edit_file</td><td>Surgically replace a specific string inside a file</td></tr>
+<tr><td>run_command</td><td>Execute any shell command and capture stdout/stderr</td></tr>
+<tr><td>list_directory</td><td>List all files and folders in a given path</td></tr>
+<tr><td>search_files</td><td>Search for text across files using grep/findstr</td></tr>
+<tr><td>multi_edit</td><td>Apply several find/replace edits to one file, all or nothing</td></tr>
+<tr><td>find_definition</td><td>Find where a function, class, struct or other symbol is defined</td></tr>
+<tr><td>web_fetch</td><td>Fetch a web page and return its text</td></tr>
+<tr><td>web_search</td><td>Search the web through DuckDuckGo</td></tr>
+<tr><td>memory_read / memory_write</td><td>Read and write notes that persist across sessions</td></tr>
+<tr><td>git_status / git_diff / git_add / git_commit / git_log</td><td>See, stage, commit and review changes without leaving the loop</td></tr>
+<tr><td>run_tests / run_lint / run_format</td><td>Run the project&rsquo;s tests, linter and formatter, auto-detected for cargo, go, Python and npm</td></tr>
+</table>
+</section>
+<section>
+<h2>SPECIFICATIONS</h2>
+<table class="spec-table">
+<tr><th>PARAMETER</th><th>DETAILS</th></tr>
+<tr><td>Type</td><td>Agentic AI Coding Assistant</td></tr>
+<tr><td>Language</td><td>Rust (Axum + wry: WebView2 on Windows, WebKit on macOS/Linux)</td></tr>
+<tr><td>Binary</td><td>Single executable &mdash; no runtimes, no dependencies</td></tr>
+<tr><td>Platforms</td><td>Windows, macOS, Linux</td></tr>
+<tr><td>Providers</td><td>Adam (local, default), Google Gemini, xAI Grok, OpenAI, Anthropic Claude, Ollama, Custom Local</td></tr>
+<tr><td>Subscription seats</td><td>Claude Code, Codex CLI (ChatGPT), GitHub Copilot CLI, Cursor CLI, Grok CLI, Antigravity (Google), OpenCode. No API key, the signed-in CLI does the work.</td></tr>
+<tr><td>Answers</td><td>Rich markdown: headings, tables, nested and task lists, blockquotes, fenced code with copy and highlight, set in Archivo / Source Serif 4 / Cascadia Code</td></tr>
+<tr><td>Agent Loop</td><td>Up to 100 autonomous iterations per request &bull; set AMNI_CODE_MAX_ITERS to change it</td></tr>
+<tr><td>Tools</td><td>20 built in: files, shell, search, definitions, web, memory, git, tests, lint, format</td></tr>
+<tr><td>Model Discovery</td><td>Auto-detect GGUF &amp; SafeTensors &bull; Auto-import into Ollama</td></tr>
+<tr><td>Themes</td><td>Light &amp; Dark mode with persistence</td></tr>
+<tr><td>Chat History</td><td>Persistent sessions stored locally</td></tr>
+<tr><td>Config Storage</td><td>~/.amni/config.json &bull; survives restarts</td></tr>
+<tr><td>License</td><td>CC BY-NC 4.0</td></tr>
+</table>
+</section>
+<section>
 <h2>GET AMNI-CODE</h2>
-<p style="color:var(--dim);margin-bottom:.5rem;font-size:.9rem">A single Rust binary with a native window. No runtimes, no Docker, zero dependencies.</p>
+<p style="color:var(--dim);margin-bottom:.5rem;font-size:.9rem">One Rust binary with a native window. No runtimes, no Docker, zero dependencies. It lives on GitHub.</p>
 <p style="color:var(--dim);font-size:.8rem;margin-bottom:2rem">Works with Adam (local, default), Google Gemini, xAI Grok, OpenAI, Anthropic Claude, Ollama, or any OpenAI-compatible server &bull; Windows, macOS, Linux</p>
 <div class="cta-row" style="">
 <a href="https://github.com/amnibro/Amni-Code" target="_blank" class="btn btn-primary">VIEW ON GITHUB</a>

@@ -104,19 +104,19 @@ window.MathJax={tex:{inlineMath:[["$","$"],["\\(","\\)"]],displayMath:[["$$","$$
 <div class="breadcrumb"><a href="../research.html">RESEARCH</a> &nbsp;/&nbsp; MASTER MOMENTUM EQUATION</div>
 <h1>MASTER MOMENTUM EQUATION</h1>
 <p class="subtitle">A CLOSED MOMENTUM PDE WITH EDDY VISCOSITY</p>
-<p class="tagline">Twelve equations I wrote between 2019 and 2025 for price momentum, rewritten as a closed momentum PDE with a k-&epsilon;-style eddy viscosity. Closed means every variable on the right side is built from p(t), five gains, and two windows I have to pick.</p>
+<p class="tagline">Twelve equations for price momentum, written down in December 2025 from trading variables I'd used since 2019, rewritten as one closed momentum PDE with a k-&epsilon;-style eddy viscosity.</p>
 </section>
-<div class="prose"><div class="callout"><strong>Status, 2026-09-09.</strong> The twelve equations and the closure check (every variable in Eq. 12 traces back to p(t)) are derived on this page. Nothing here is measured against flow data or market data. The regularity argument was reviewed from outside in July 2026 and three steps failed; the current v2 proves a Z<sup>5/2</sup> dissipation bound for an amended closure (Eq. 11&prime;), the Bakry-&Eacute;mery step is a heuristic, and the spatial transfer is open. The applications section is a list of directions I haven't tested.</div></div>
 <section>
 <h2>ABSTRACT</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
-<p>The <strong style="color:var(--text)">Master Momentum Equation</strong> is a set of twelve coupled equations I first wrote for price momentum (the source is REFFELT_MASTER_EQUATIONS.md in my repo, 2019 to 2025). Here p is price, v is its rate of change, and &sigma;<sub>ATR</sub> is Average True Range, a volatility measure from trading. The eddy viscosity is built from the system's own variables, so the set closes on itself without a separate turbulence model.</p>
-<p style="margin-top:1.2rem">The system builds from primitive observables (velocity, mass, curvature) through intermediate constructions (PID forcing, smoothness, a turbulent kinetic energy analogue) to an eddy viscosity that feeds back into a dynamic resistance field. The last equation (Eq. 12) is a momentum equation with the shape of Navier-Stokes and every term defined above it.</p>
+<p>The <strong style="color:var(--text)">Master Momentum Equation</strong> is a set of twelve coupled equations I first wrote for price momentum (the source is REFFELT_MASTER_EQUATIONS.md in a private repo of mine, dated December 2025 and built from variables in my 2019 to 2025 trading code). Here p is price, v is its rate of change, and &sigma;<sub>ATR</sub> is Average True Range, a volatility measure from trading.</p>
+<p style="margin-top:1.2rem">The system builds up in layers: primitive observables (velocity, mass, a steering signal), then intermediate forces (PID forcing, smoothness, curvature), then an eddy viscosity built from turbulent kinetic energy and dissipation analogues, which feeds back into a dynamic resistance field. The last equation (Eq. 12) is a momentum equation with the shape of Navier-Stokes and every term defined above it. The eddy viscosity is built from the system's own variables, so the set closes on itself without a separate turbulence model. Closed means every variable on the right side is built from p(t), plus inputs I pick: C<sub>&mu;</sub>, &gamma;<sub>0</sub>, &delta;, three PID gains, two windows and the scale &ell;, with R<sub>0</sub> coming from the membrane page.</p>
 <div style="margin-top:2rem;">
 <a href="millennium_sim/index.html" style="display:inline-block;background:var(--accent);color:var(--bg);padding:1rem 2rem;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.85rem;letter-spacing:2px;text-decoration:none;font-weight:bold;transition:transform 0.2s,box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 4px 15px rgba(var(--accent-rgb,100,200,255),0.4)'" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='none'">OPEN THE SOLVER PAGE &rarr;</a>
 </div>
 </div>
 </section>
+<div class="prose"><div class="callout"><strong>Status, 2026-09-09.</strong> Before you dig in, here's where it stands. The twelve equations and the closure check (every variable in Eq. 12 traces back to p(t)) are derived on this page. Nothing here is measured against flow data or market data. I also tried to prove the system stays regular. That argument was reviewed from outside in July 2026 and three steps failed. The current v2 proves a Z<sup>5/2</sup> dissipation bound for an amended closure (Eq. 11&prime;), the Bakry-&Eacute;mery curvature step is a heuristic, and the spatial transfer is open. The applications near the end are directions I haven't tested.</div></div>
 <section>
 <h2>THE 12 EQUATIONS</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
@@ -143,7 +143,7 @@ $$m(t) = \frac{1}{\sigma_{\text{ATR}}(t)}$$
 <div class="eq-label">EQ. 3</div>
 $$i(t) = \operatorname{Hilbert\_imag}(p(t))$$
 </div>
-<p>The imaginary component of the analytic signal (via Hilbert transform) extracts the instantaneous phase and amplitude envelope. This provides a 90&deg;-shifted version of p that serves as the steering input for the PID controller.</p>
+<p>The imaginary part of the analytic signal (via Hilbert transform) carries the instantaneous phase and amplitude envelope. It's a 90&deg;-shifted copy of p, and it's the steering input for the PID controller below.</p>
 </div>
 <h3 style="color:var(--accent);font-size:.75rem;letter-spacing:3px;margin:2.5rem 0 1.5rem">LAYER 2 &mdash; INTERMEDIATE FORCES</h3>
 <div class="derivation-step">
@@ -168,10 +168,10 @@ $$s(t) = 1 - \frac{\operatorname{std}(r_N)}{\operatorname{mean}(r_N)}$$
 <div class="eq-label">EQ. 6</div>
 $$c(t) = \frac{\partial^2 p}{\partial t^2}$$
 </div>
-<p>The second derivative of the state field. Curvature captures acceleration/deceleration of the trajectory, serving as both a turbulence indicator and a damping term in the master equation.</p>
+<p>The second derivative of the state field. Curvature tracks the trajectory speeding up or slowing down, and it does two jobs: turbulence indicator, and a damping term in the master equation.</p>
 </div>
 <h3 style="color:var(--accent);font-size:.75rem;letter-spacing:3px;margin:2.5rem 0 1.5rem">LAYER 3 &mdash; EDDY VISCOSITY</h3>
-<p style="margin-bottom:1.5rem">Eq. 10 is the algebraic &nu;<sub>t</sub> = C<sub>&mu;</sub>k&sup2;/&epsilon; relation from Launder &amp; Spalding (1974). Eqs. 8 and 9 are my own definitions of k and &epsilon;, not the k-&epsilon; transport equations, and I haven't validated them against any flow data.</p>
+<p style="margin-bottom:1.5rem">This layer turns the variables above into an eddy viscosity. One piece is borrowed and the rest is mine. The final relation (Eq. 10) is the algebraic &nu;<sub>t</sub> = C<sub>&mu;</sub>k&sup2;/&epsilon; from Launder &amp; Spalding (1974). The k and &epsilon; that feed it (Eqs. 8 and 9) are my own definitions, not the k-&epsilon; transport equations, and I haven't validated them against any flow data.</p>
 <div class="derivation-step">
 <h4>EQUATION 7 &mdash; STATIC HOLOGRAPHIC RESISTANCE</h4>
 <div class="eq-block">
@@ -235,7 +235,7 @@ $$\frac{dv}{dt} = \frac{F_{\text{PID}}}{m} + v\frac{\partial v}{\partial p} - s 
 <section>
 <h2>DEPENDENCY GRAPH</h2>
 <div style="max-width:900px;margin:0 auto;overflow-x:auto">
-<p style="color:var(--dim);font-size:.85rem;line-height:1.9;margin-bottom:1.5rem">Every variable in Eq. 12 is defined by other variables within the system. The dependency matrix shows which variables feed each equation (&bull; = used):</p>
+<p style="color:var(--dim);font-size:.85rem;line-height:1.9;margin-bottom:1.5rem">Here's the closure laid out. Every variable in Eq. 12 is defined by other variables inside the system, and this matrix shows which variables feed each equation (&bull; = used):</p>
 <table class="dep-table">
 <thead><tr><th style="text-align:left">VARIABLE</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th><th>10</th><th>11</th><th>12</th></tr></thead>
 <tbody>
@@ -258,37 +258,11 @@ $$\frac{dv}{dt} = \frac{F_{\text{PID}}}{m} + v\frac{\partial v}{\partial p} - s 
 </div>
 </section>
 <section>
-<h2>DIRECTIONS I HAVEN'T TESTED</h2>
-<div style="max-width:800px;margin:0 auto">
-<p style="color:var(--dim);font-size:.85rem;line-height:1.9;margin-bottom:1rem">Each of these is a mapping I'd like to try. None of them has a run behind it.</p>
-<div class="app-card">
-<h4>WEATHER</h4>
-<p>If s can tell laminar from turbulent air the way it tells quiet from noisy price, Eq. 12 might serve as a closure in a toy atmospheric model; I haven't tried it against any NWP scheme.</p>
-</div>
-<div class="app-card">
-<h4>DATACENTER AIRFLOW</h4>
-<p>With p as temperature, v as heat flux and F<sub>PID</sub> as the HVAC loop, the system could be a cheap thermal predictor; I haven't compared it to a single CFD run.</p>
-</div>
-<div class="app-card">
-<h4>WING BOUNDARY LAYERS</h4>
-<p>The s term looks like a transition switch and R<sub>0</sub> could carry the geometry; I haven't put it next to any boundary-layer data.</p>
-</div>
-<div class="app-card">
-<h4>TRAINING DYNAMICS</h4>
-<p>With p as parameters, m as the inverse gradient variance (like Adam's second moment) and c as curvature, Eq. 12 could be read as a schedule; I haven't trained anything with it.</p>
-</div>
-<div class="app-card">
-<h4>CRACK PROPAGATION</h4>
-<p>R<sub>0</sub> as a grain-boundary map and the s transition as the yield point is a picture I like; there's no fracture data behind it.</p>
-</div>
-</div>
-</section>
-<section>
 <h2>INTERACTIVE EXPLORER</h2>
 <div style="max-width:800px;margin:0 auto">
 <div class="viz-section">
 <h4>MASTER EQUATION TERM CONTRIBUTIONS</h4>
-<p style="color:var(--dim);font-size:.8rem;line-height:1.7;margin-bottom:1rem">This chart plugs sinusoids into the shape of the four terms so you can see how the sliders move the balance. It is not a solve of Eq. 12. The real solver is millennium_sim/sim.cpp. The four traces are PID forcing (F/m), advection (v&middot;&part;v/&part;p), damping (&minus;s&middot;c), and the resistance gradient (&minus;&part;R<sub>eff</sub>/&part;p).</p>
+<p style="color:var(--dim);font-size:.8rem;line-height:1.7;margin-bottom:1rem">Play with the balance! The four traces are the terms of the master equation: PID forcing (F/m), advection (v&middot;&part;v/&part;p), damping (&minus;s&middot;c), and the resistance gradient (&minus;&part;R<sub>eff</sub>/&part;p). The chart plugs sinusoids into their shape so you can see how the sliders move things around. It is not a solve of Eq. 12. The real solver is millennium_sim/sim.cpp.</p>
 <div class="viz-controls">
 <label>SMOOTHNESS:</label>
 <input type="range" id="mm-smooth" min="5" max="95" value="60" style="width:80px" oninput="mmUpdate()">
@@ -310,7 +284,7 @@ $$\frac{dv}{dt} = \frac{F_{\text{PID}}}{m} + v\frac{\partial v}{\partial p} - s 
 <section>
 <h2>REGULARITY ARGUMENT</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
-<p>I tried to prove global regularity for this closed system. Outside review in July 2026 found three errors in the first version, and I've kept them on the proof page. The current v2 argument proves a Z<sup>5/2</sup> dissipation bound and a continuation ladder for an amended closure (Eq. 11&prime;). The Bakry-&Eacute;mery step is now a heuristic, not a proof, and the spatial transfer is open. This says nothing about constant-viscosity Navier-Stokes.</p>
+<p>I tried to prove global regularity for this closed system. It didn't survive as written: outside review in July 2026 found three errors in the first version, and I've kept them on the proof page. The current v2 argument proves a Z<sup>5/2</sup> dissipation bound and a continuation ladder for an amended closure (Eq. 11&prime;). The Bakry-&Eacute;mery step is now a heuristic, not a proof, and the spatial transfer is open. This says nothing about constant-viscosity Navier-Stokes.</p>
 <p style="margin-top:1rem">The six stages below are the v1 argument as I first wrote it. I've left the mathematics in place and marked each step that v2 retracted, so you can see what failed and where. The v2 status per step: spatial Hessian transfer open, weighted Poincar&eacute; a conjecture, Ric<sub>BE</sub> &gt; 0 a heuristic, the s<sub>min</sub> bootstrap retired, and the dissipation exponent Z<sup>5/2</sup> rather than Z&sup2;.</p>
 <div style="margin-top:2rem;">
 <a href="millennium_sim/navier-stokes-proof.html" style="display:inline-block;background:var(--accent);color:var(--bg);padding:1rem 2rem;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.85rem;letter-spacing:2px;text-decoration:none;font-weight:bold;transition:transform 0.2s,box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 4px 15px rgba(var(--accent-rgb,100,200,255),0.4)'" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='none'">PROOF PAGE (V2, WITH ERRATA) &rarr;</a>
@@ -457,7 +431,7 @@ $$\sup_{t \geq 0} \|\nabla v(t)\|_{L^2}^2 < \infty$$
 <p style="color:var(--dim);font-size:.85rem;line-height:1.7">Everything in this section is about the <strong style="color:var(--text)">Master Momentum system</strong> with its variable &nu;<sub>t</sub>. Constant-viscosity Navier-Stokes is a different equation and remains a Millennium Prize Problem; nothing here touches it. The reason the variable case looked tractable is that &nu;<sub>t</sub> grows with |v|, which adds dissipation the constant case lacks. Whether that is enough is exactly what's still open.</p>
 <p style="color:var(--dim);font-size:.85rem;line-height:1.7;margin-top:.75rem">The step-by-step algebra, the three errata, and the v2 argument are on the proof page. PROOF_FORMATION.md in millennium_sim is the working draft behind it.</p>
 <h4 style="color:var(--accent);font-size:.75rem;letter-spacing:2px;margin:1.5rem 0 1rem">HOW TO REPRODUCE</h4>
-<p style="color:var(--dim);font-size:.85rem;line-height:1.7">The solver is millennium_sim/sim.cpp (one function, step_master_equation, compiled with Emscripten for the solver page). It implements Eqs. 1-12 as written above, with the shortcuts I flagged: one-bar |&Delta;p| for &sigma;<sub>ATR</sub>, F<sub>PID</sub> = 0.5, s clamped at 0, &epsilon; floored at 0.01. The argument is in millennium_sim/PROOF_FORMATION.md and the v2 proof page, millennium_sim/navier-stokes-proof.html. The original equations are in REFFELT_MASTER_EQUATIONS.md in my repo.</p>
+<p style="color:var(--dim);font-size:.85rem;line-height:1.7">The solver is millennium_sim/sim.cpp (one function, step_master_equation, compiled with Emscripten for the solver page). It implements Eqs. 1-12 with shortcuts: one-bar |&Delta;p| for &sigma;<sub>ATR</sub>; F<sub>PID</sub> = 0.5, so no Hilbert signal; s from the last two velocity samples, clamped at 0; &epsilon; = max(0.01, |c|(1&minus;s)/s) with s floored at 0.05 and no 1/&ell; factor; and R<sub>eff</sub> = R<sub>0</sub> + &nu;<sub>t</sub> with the input field R<sub>0</sub> in place of &gamma;<sub>0</sub>. The argument is in millennium_sim/PROOF_FORMATION.md and the v2 proof page, millennium_sim/navier-stokes-proof.html. The original equations are in REFFELT_MASTER_EQUATIONS.md in a private repo of mine.</p>
 <h4 style="color:var(--accent);font-size:.75rem;letter-spacing:2px;margin:1.5rem 0 1rem">WHAT ISN'T MEASURED</h4>
 <p style="color:var(--dim);font-size:.85rem;line-height:1.7">Nothing on this page has been checked against flow data, and nothing on this page has been checked against market data either. The solver runs; I haven't compared its output to a DNS result, a wind tunnel, or a backtest. C<sub>&mu;</sub> = 0.09 is borrowed, not fitted. The k and &epsilon; definitions are mine and untested.</p>
 <div style="margin-top:1.5rem">
@@ -469,16 +443,42 @@ $$\sup_{t \geq 0} \|\nabla v(t)\|_{L^2}^2 < \infty$$
 </div>
 </section>
 <section>
+<h2>DIRECTIONS I HAVEN'T TESTED</h2>
+<div style="max-width:800px;margin:0 auto">
+<p style="color:var(--dim);font-size:.85rem;line-height:1.9;margin-bottom:1rem">Where I'd love to point this next. Each of these is a mapping I'd like to try. None of them has a run behind it.</p>
+<div class="app-card">
+<h4>WEATHER</h4>
+<p>If s can tell laminar from turbulent air the way it tells quiet from noisy price, Eq. 12 might serve as a closure in a toy atmospheric model; I haven't tried it against any NWP scheme.</p>
+</div>
+<div class="app-card">
+<h4>DATACENTER AIRFLOW</h4>
+<p>With p as temperature, v as heat flux and F<sub>PID</sub> as the HVAC loop, the system could be a cheap thermal predictor; I haven't compared it to a single CFD run.</p>
+</div>
+<div class="app-card">
+<h4>WING BOUNDARY LAYERS</h4>
+<p>The s term looks like a transition switch and R<sub>0</sub> could carry the geometry; I haven't put it next to any boundary-layer data.</p>
+</div>
+<div class="app-card">
+<h4>TRAINING DYNAMICS</h4>
+<p>With p as parameters, m as the inverse gradient variance (like Adam's second moment) and c as curvature, Eq. 12 could be read as a schedule; I haven't trained anything with it.</p>
+</div>
+<div class="app-card">
+<h4>CRACK PROPAGATION</h4>
+<p>R<sub>0</sub> as a grain-boundary map and the s transition as the yield point is a picture I like; there's no fracture data behind it.</p>
+</div>
+</div>
+</section>
+<section>
 <h2>RELATED FRAMEWORKS</h2>
 <div style="max-width:800px;margin:0 auto">
 <div class="card-grid">
 <div class="card">
 <h3><a href="holographic-membrane.html" style="color:var(--accent);text-decoration:none">&larr; HOLOGRAPHIC MEMBRANE</a></h3>
-<p>Provides the base resistance manifold R<sub>0</sub> (Eq. 7) via GPU-accelerated particle dynamics.</p>
+<p>Its friction field is what I feed in as the static resistance R<sub>0</sub> (Eq. 7). The particle dynamics run on top of that field.</p>
 </div>
 <div class="card">
 <h3><a href="reffelt-constant.html" style="color:var(--accent);text-decoration:none">REFFELT CONSTANT &rarr;</a></h3>
-<p>Spectral fingerprinting of the parameter space that the Master Equation evolves through.</p>
+<p>Spectral fingerprinting of a parameter search. It's a separate tool; the master equation doesn't use it.</p>
 </div>
 </div>
 </div>

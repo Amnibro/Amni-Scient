@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="theme-color" content="#FBFAF8">
 <title>Amni-Haven &mdash; Android Client for Haven | AMNI-SCIENT</title>
-<meta name="description" content="Amni-Haven: native Android client for ANCSemi's Haven chat platform. Socket.IO real-time messaging, FCM push, WebRTC voice/video/screen-share, and end-to-end-encrypted direct messages (ECDH P-256 + AES-256-GCM).">
+<meta name="description" content="Amni-Haven is a native Android client for Haven, the self-hosted chat platform by ANCSemi. Real-time Socket.IO messaging, FCM push, end-to-end-encrypted direct messages (ECDH P-256 + AES-256-GCM) and WebRTC voice/video/screen-share.">
 <meta name="keywords" content="amni-haven,haven,ancsemi,private chat,socket.io,android chat,self-hosted">
 <meta property="og:title" content="Amni-Haven &mdash; Android Client for Haven">
 <meta property="og:description" content="Native Android client for ANCSemi's Haven servers. Real-time messaging, push, voice/video/screen-share calls, and E2E-encrypted DMs.">
@@ -93,7 +93,7 @@
 </svg>
 </div>
 <h1>AMNI-HAVEN</h1>
-<p class="desc">ANDROID CLIENT FOR <a href="https://github.com/ancsemi/Haven" target="_blank" rel="noopener" style="color:#7c5cfc;text-decoration:underline">HAVEN</a> &bull; BY <a href="https://github.com/ancsemi" target="_blank" rel="noopener" style="color:#7c5cfc;text-decoration:underline">ANCSEMI</a></p>
+<p class="desc">A NATIVE ANDROID CLIENT FOR <a href="https://github.com/ancsemi/Haven" target="_blank" rel="noopener" style="color:#7c5cfc;text-decoration:underline">HAVEN</a>, THE SELF-HOSTED CHAT PLATFORM BY <a href="https://github.com/ancsemi" target="_blank" rel="noopener" style="color:#7c5cfc;text-decoration:underline">ANCSEMI</a></p>
 <div class="cta-row" style=" margin-top:1.5rem; margin-bottom:2rem; gap:1rem; flex-wrap:wrap;">
 <a href="downloads/Haven-latest.apk" class="btn btn-primary" download="AmniHaven.apk">DOWNLOAD ANDROID APK</a>
 <a href="https://apps.obtainium.imranr.dev/redirect?r=obtainium%3A%2F%2Fadd%2Fhttps%3A%2F%2Famni-scient.com%2Fdownloads%2FHaven-latest.apk" target="_blank" rel="noopener" class="btn btn-outline" style="text-decoration:none">ADD TO OBTAINIUM</a>
@@ -105,92 +105,75 @@
 </div>
 <div class="ptile">
 <div class="ptile-copy">
-<p class="ptile-line">Encrypted messaging on your own server.</p>
-<ul class="ptile-feats"><li>E2E DMs: ECDH P-256 + HKDF + AES-256-GCM</li><li>WebRTC voice, video &amp; screen share</li><li>FCM push, Socket.IO real-time delivery</li><li>Live on the Play Store</li></ul>
+<p class="ptile-line">Your own Haven server, in your pocket.</p>
+<ul class="ptile-feats"><li>FCM push, Socket.IO real-time delivery</li><li>E2E DMs: ECDH P-256 + HKDF + AES-256-GCM</li><li>WebRTC voice, video &amp; screen share</li><li>Live on the Play Store</li></ul>
 </div>
 <div class="ptile-media"><img src="assets/haven/6Mxdg.jpg" alt="Amni-Haven" loading="lazy"></div>
 </div>
 <section>
 <h2>YOUR MESSAGES. YOUR SERVER.</h2>
-<p style="color:var(--dim);max-width:640px;margin:0 0 1rem;font-size:.9rem">Amni-Haven is the native Android client for <a href="https://github.com/ancsemi/Haven" target="_blank" rel="noopener">Haven</a>, a self-hosted chat platform created by <a href="https://github.com/ancsemi" target="_blank" rel="noopener">ANCSemi</a> (MIT-NC licensed).</p>
+<p style="color:var(--dim);max-width:640px;margin:0 0 1rem;font-size:.9rem"><a href="https://github.com/ancsemi/Haven" target="_blank" rel="noopener">Haven</a> is a self-hosted chat platform created by <a href="https://github.com/ancsemi" target="_blank" rel="noopener">ANCSemi</a> (MIT-NC licensed). Amni-Haven is the native Android client for it. You run the server, and the app brings it to your phone.</p>
 <div class="features">
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10" width="16" height="11"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/><path d="M10 15l4-1"/></svg></div>
+<h4>SELF-HOSTED</h4>
+<p>Point it at any Haven server URL, self-signed certs included. Your server, your data, your rules. Invite-only server? Invite-code registration works too.</p>
+</div>
 <div class="feature">
 <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v12H9l-5 4z"/></svg></div>
 <h4>REAL-TIME CHAT</h4>
-<p>Socket.IO persistent connection with JWT authentication. Typing indicators, message grouping, instant delivery.</p>
+<p>A persistent Socket.IO connection with JWT authentication. Messages arrive instantly, with typing indicators and message grouping.</p>
 </div>
 <div class="feature">
 <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 17V11a6 6 0 0 1 12 0v6l2 3H4z"/><path d="M10 21h4"/></svg></div>
 <h4>FCM PUSH</h4>
-<p>Firebase Cloud Messaging with per-channel deep links. Never miss a message, even when the app is closed.</p>
-</div>
-<div class="feature">
-<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4M9 22h6"/></svg></div>
-<h4>VOICE + VIDEO + SCREEN SHARE</h4>
-<p>WebRTC peer-to-peer calls with direct device-to-device connection when possible. Share your screen mid-call via MediaProjection (1280&times;720 @ 15&nbsp;fps).</p>
+<p>Firebase Cloud Messaging with per-channel deep links. Close the app and you still won&rsquo;t miss a message.</p>
 </div>
 <div class="feature">
 <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10" width="16" height="11"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div>
 <h4>END-TO-END ENCRYPTED DMs</h4>
-<p>Direct messages are E2E-encrypted with ECDH P-256 + HKDF-SHA256 + AES-256-GCM, with a per-server key namespace. The server relays ciphertext it can't read.</p>
+<p>Direct messages are E2E-encrypted with ECDH P-256 + HKDF-SHA256 + AES-256-GCM, with a per-server key namespace. Your server only relays ciphertext it can't read.</p>
+</div>
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4M9 22h6"/></svg></div>
+<h4>VOICE + VIDEO + SCREEN SHARE</h4>
+<p>WebRTC peer-to-peer calls, straight device to device when possible. Share your screen mid-call via MediaProjection (1280&times;720 @ 15&nbsp;fps).</p>
 </div>
 <div class="feature">
 <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="8" width="18" height="13"/><path d="M3 8l3-5 4 5M11 8l3-5 4 5"/></svg></div>
 <h4>INLINE MEDIA</h4>
-<p>Images and video (mp4/webm/mkv/avi/mov) play inline in the chat thread. E2E-encrypted images deep-link via the <code>e2e-img:</code> scheme for a mime-aware gallery.</p>
-</div>
-<div class="feature">
-<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10" width="16" height="11"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/><path d="M10 15l4-1"/></svg></div>
-<h4>SELF-HOSTED</h4>
-<p>Point at any Haven server URL. Self-signed cert support included. Your server, your data, your rules. Invite-code registration is supported on invite-required servers.</p>
+<p>Images and video (mp4/webm/mkv/avi/mov) play right in the chat thread. E2E-encrypted images deep-link through the <code>e2e-img:</code> scheme into a mime-aware gallery.</p>
 </div>
 <div class="feature">
 <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 0 1-13.7 5.6M4 12a8 8 0 0 1 13.7-5.6"/><path d="M17.7 2.5v4h-4M6.3 21.5v-4h4"/></svg></div>
 <h4>AUTO-RECONNECT</h4>
-<p>Exponential backoff with 10 retry attempts. Connection error screen with one-tap retry or server switch.</p>
+<p>Connections drop. The app keeps retrying with exponential backoff, from 2 seconds up to 30 between tries, and never gives up on its own. Still stuck? The error screen gives you a one-tap retry or a server switch.</p>
 </div>
 <div class="feature">
 <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="2" width="10" height="20" rx="1"/><path d="M10.5 19h3"/></svg></div>
 <h4>DEEP LINKS</h4>
-<p>haven:// URI scheme for direct server connections. Share links to auto-connect with optional SSL flag.</p>
+<p>A haven:// URI scheme for direct server connections. Share a link and it auto-connects, with an optional SSL flag.</p>
 </div>
 </div>
-</section>
-<section>
-<h2>SPECIFICATIONS</h2>
-<table class="spec-table">
-<tr><th>PARAMETER</th><th>VALUE</th></tr>
-<tr><td>Platform</td><td>Haven by ANCSemi (MIT-NC)</td></tr>
-<tr><td>Protocol</td><td>Socket.IO 2.1 + REST API</td></tr>
-<tr><td>Auth</td><td>JWT (login/register flows)</td></tr>
-<tr><td>Push</td><td>Firebase Cloud Messaging</td></tr>
-<tr><td>Voice/Video</td><td>WebRTC (Stream SDK 1.3.7)</td></tr>
-<tr><td>Media</td><td>ExoPlayer (Media3 1.5.1)</td></tr>
-<tr><td>HTTP Client</td><td>OkHttp 4.12</td></tr>
-<tr><td>Image Loading</td><td>Glide 4.16</td></tr>
-<tr><td>Min SDK</td><td>Android 8.0 (API 26)</td></tr>
-<tr><td>Target SDK</td><td>36</td></tr>
-<tr><td>Architecture</td><td>Native Kotlin + ViewBinding</td></tr>
-</table>
 </section>
 <section>
 <h2>HOW IT WORKS</h2>
 <div class="card-grid">
 <div class="card">
 <h3>1. CONNECT</h3>
-<p>Enter your Haven server URL. Supports HTTP, HTTPS, and self-signed certificates. Server history with autocomplete.</p>
+<p>Enter your Haven server URL. HTTP, HTTPS and self-signed certificates all work, and your server history autocompletes.</p>
 </div>
 <div class="card">
 <h3>2. AUTHENTICATE</h3>
-<p>Login or register via REST API. JWT token stored locally for persistent sessions. No third-party auth required.</p>
+<p>Log in or register through the REST API. The JWT token is stored locally, so you stay signed in. No third-party auth needed.</p>
 </div>
 <div class="card">
 <h3>3. CHAT</h3>
-<p>Real-time messaging over Socket.IO. Channel sidebar with unread badges. Typing indicators. Message grouping by sender and timestamp.</p>
+<p>Real-time messaging over Socket.IO. A channel sidebar with unread badges, typing indicators, and messages grouped by sender and timestamp.</p>
 </div>
 <div class="card">
 <h3>4. CALL</h3>
-<p>Tap to start voice or video calls via WebRTC. Foreground service keeps audio alive. Peer-to-peer when network allows.</p>
+<p>Tap to start a voice or video call over WebRTC. It goes peer-to-peer when the network allows, and a foreground service keeps the audio alive.</p>
 </div>
 </div>
 </section>
@@ -222,9 +205,26 @@
 </div>
 </section>
 <section>
+<h2>SPECIFICATIONS</h2>
+<table class="spec-table">
+<tr><th>PARAMETER</th><th>VALUE</th></tr>
+<tr><td>Platform</td><td>Haven by ANCSemi (MIT-NC)</td></tr>
+<tr><td>Protocol</td><td>Socket.IO 2.1 + REST API</td></tr>
+<tr><td>Auth</td><td>JWT (login/register flows)</td></tr>
+<tr><td>Push</td><td>Firebase Cloud Messaging</td></tr>
+<tr><td>Voice/Video</td><td>WebRTC (Stream SDK 1.3.7)</td></tr>
+<tr><td>Media</td><td>ExoPlayer (Media3 1.5.1)</td></tr>
+<tr><td>HTTP Client</td><td>OkHttp 4.12</td></tr>
+<tr><td>Image Loading</td><td>Glide 4.16</td></tr>
+<tr><td>Min SDK</td><td>Android 8.0 (API 26)</td></tr>
+<tr><td>Target SDK</td><td>36</td></tr>
+<tr><td>Architecture</td><td>Native Kotlin + ViewBinding</td></tr>
+</table>
+</section>
+<section>
 <h2>GET AMNI-HAVEN</h2>
-<p style="color:var(--dim);margin-bottom:.5rem;font-size:.9rem">Available as a signed <strong style="color:var(--accent)">Standalone Android APK</strong>, on <strong style="color:var(--accent)">Google Play</strong>, and as a desktop app for <strong style="color:var(--accent)">Linux</strong> and <strong style="color:var(--accent)">Windows</strong>.</p>
-<p style="color:var(--dim);font-size:.8rem;margin-bottom:2rem">v8.2.5 &bull; Free &bull; Sideload, Obtainium or Play Store &bull; Connects to any Haven server</p>
+<p style="color:var(--dim);margin-bottom:.5rem;font-size:.9rem">Grab it however you like: a signed <strong style="color:var(--accent)">Standalone Android APK</strong>, <strong style="color:var(--accent)">Google Play</strong>, or the desktop app for <strong style="color:var(--accent)">Linux</strong> and <strong style="color:var(--accent)">Windows</strong>.</p>
+<p style="color:var(--dim);font-size:.8rem;margin-bottom:2rem">v<span data-live="/haven/android-latest.json|versionName|ver">8.2.5</span> &bull; Free &bull; Sideload, Obtainium or Play Store &bull; Connects to any Haven server</p>
 <div class="cta-row" style=" gap:1rem; flex-wrap:wrap;">
 <a href="downloads/Haven-latest.apk" class="btn btn-primary" download="AmniHaven.apk">DOWNLOAD ANDROID APK</a>
 <a href="https://apps.obtainium.imranr.dev/redirect?r=obtainium%3A%2F%2Fadd%2Fhttps%3A%2F%2Famni-scient.com%2Fdownloads%2FHaven-latest.apk" target="_blank" rel="noopener" class="btn btn-outline" style="text-decoration:none">ADD TO OBTAINIUM</a>
@@ -235,14 +235,14 @@
 <a href="https://ko-fi.com/ancsemi" target="_blank" rel="noopener noreferrer" class="btn btn-outline" style="text-decoration:none">&#9749; SUPPORT HAVEN</a>
 <a href="privacy-haven.html" class="btn btn-outline">PRIVACY POLICY</a>
 </div>
-<p style="color:var(--dim);font-size:.7rem;margin-top:1.5rem">Android 8.0+ (API 26) &bull; SHA-256: <code>6ffce6601ee443700c833b1a11ea97fb876f772b43ddafa4813d7e9828ad065e</code> &bull; No root required</p>
+<p style="color:var(--dim);font-size:.7rem;margin-top:1.5rem">Android 8.0+ (API 26) &bull; SHA-256: <code data-live="/haven/android-latest.json|sha256">6ffce6601ee443700c833b1a11ea97fb876f772b43ddafa4813d7e9828ad065e</code> &bull; No root required</p>
 <p style="color:var(--dim);font-size:.7rem;margin-top:.4rem">Desktop: Linux AppImage or .deb, Windows installer &bull; Updates itself &bull; Already installed on Amni OS</p>
-<p style="color:#e09a3e;font-size:.75rem;margin-top:.8rem"><strong>Note:</strong> If switching from the Play Store edition, please uninstall that copy first due to Android signature differences between Google Play App Signing and direct sideload builds.</p>
+<p style="color:#e09a3e;font-size:.75rem;margin-top:.8rem"><strong>Note:</strong> Switching from the Play Store edition? Uninstall that copy first. Google Play App Signing and direct sideload builds carry different Android signatures.</p>
 <p style="color:var(--dim);font-size:.75rem;margin-top:.6rem">Obtainium App Source: <code>https://amni-scient.com/downloads/Haven-latest.apk</code></p>
 </section>
 <section>
 <h2>RELEASE ARCHIVE</h2>
-<p style="color:var(--dim);margin-bottom:1.5rem;font-size:.9rem">Previous standalone APK releases for testing, compatibility, or rollback. You can also view all releases and tags on <a href="https://github.com/Amnibro/Haven/releases" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:underline">GitHub Releases</a>.</p>
+<p style="color:var(--dim);margin-bottom:1.5rem;font-size:.9rem">Need an older standalone APK for testing, compatibility or a rollback? They&rsquo;re all here. Every release and tag is also on <a href="https://github.com/Amnibro/Haven/releases" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:underline">GitHub Releases</a>.</p>
 <table class="spec-table">
 <tr><th>VERSION</th><th>RELEASE DATE</th><th>HIGHLIGHTS</th><th style="text-align:right">DOWNLOAD</th></tr>
 <tr>
@@ -267,8 +267,8 @@
 </section>
 <section>
 <h2>THANK YOU, BETA TESTERS</h2>
-<p style="color:var(--dim);max-width:640px;margin:0 0 1rem;font-size:.9rem">Amni-Haven wouldn't be here without the testers who put the early builds through their paces.</p>
-<p style="color:var(--dim);max-width:700px;margin:0 0 2rem;font-size:.85rem;line-height:1.7">Want to keep testing? We're always working on new Amni-Scient apps and features. Sign up below and we'll reach out when the next beta opens.</p>
+<p style="color:var(--dim);max-width:640px;margin:0 0 1rem;font-size:.9rem">Amni-Haven wouldn't be here without the testers who put the early builds through their paces. Thank you!</p>
+<p style="color:var(--dim);max-width:700px;margin:0 0 2rem;font-size:.85rem;line-height:1.7">Want to keep testing? I'm always working on new Amni-Scient apps and features. Sign up below and I'll reach out when the next beta opens.</p>
 <div class="cta-row" style="">
 <button class="btn btn-outline" onclick="openBetaOptIn()">JOIN FUTURE BETAS</button>
 </div>
@@ -279,9 +279,9 @@ Haven is created and maintained by <a href="https://github.com/ancsemi" target="
 <section>
 <h2>SELF-HOSTED MESSAGING EXPLAINED</h2>
 <div style="max-width:800px;margin:0 0;text-align:left">
-<p><strong>Self-hosted messaging</strong> means running your own server infrastructure rather than relying on a third-party service.</p>
-<p><strong>Socket.IO and real-time communication:</strong> Haven uses Socket.IO, a library built on top of WebSockets, for real-time bidirectional communication.</p>
-<p><strong>Push notifications and FCM:</strong> Mobile operating systems aggressively manage battery by suspending background apps.</p>
+<p><strong>Self-hosted messaging</strong> means you run the server yourself instead of relying on a third-party service.</p>
+<p><strong>Socket.IO and real-time communication:</strong> Haven uses Socket.IO, a library built on top of WebSockets, for real-time two-way communication.</p>
+<p><strong>Push notifications and FCM:</strong> Mobile operating systems save battery by aggressively suspending background apps, which is why notifications come through FCM.</p>
 <p><strong>Federation vs. centralization:</strong> Haven occupies a middle ground between fully centralized platforms (one company controls everything) and federated protocols like Matrix or XMPP (servers interoperate across domains).</p>
 </div>
 </section>
@@ -328,11 +328,12 @@ closeBetaOptIn();
 <button onclick="closeBetaOptIn()" style="position:absolute;top:1rem;right:1.25rem;background:none;border:none;color:var(--dim);font-size:1.4rem;cursor:pointer;font-family:var(--font)">&times;</button>
 <p style="font-size:.7rem;letter-spacing:2px;color:var(--dim);margin-bottom:.5rem">FUTURE BETAS</p>
 <h3 style="color:var(--accent);letter-spacing:2px;font-size:1.3rem;margin-bottom:.75rem">JOIN THE TESTING LIST</h3>
-<p style="color:var(--dim);font-size:.82rem;line-height:1.7;margin-bottom:1.75rem">Enter your email and we'll reach out when new Amni-Scient apps or features are ready for beta testing.</p>
+<p style="color:var(--dim);font-size:.82rem;line-height:1.7;margin-bottom:1.75rem">Enter your email and I'll reach out when new Amni-Scient apps or features are ready for beta testing.</p>
 <input id="beta-optin-email" type="email" placeholder="your@email.com" style="width:100%;background:#0d0d0d;border:1px solid var(--border);border-radius:4px;padding:.75rem 1rem;color:var(--text);font-family:var(--font);font-size:.9rem;outline:none;margin-bottom:1rem;box-sizing:border-box" onfocus="this.style.borderColor=getComputedStyle(document.body).getPropertyValue('--accent')" onblur="this.style.borderColor=''">
 <div id="beta-optin-err" style="color:#ff4444;font-size:.75rem;margin-bottom:.75rem;display:none">Please enter a valid email address.</div>
 <button onclick="submitBetaOptIn()" class="btn btn-primary" style="width:100%">SIGN UP</button>
 </div>
 </div>
+<script src="/js/live-facts.js" defer></script>
 </body>
 </html>

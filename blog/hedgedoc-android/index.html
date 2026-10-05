@@ -2,16 +2,15 @@
 <html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8">
-<meta name="robots" content="noindex, follow">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="theme-color" content="#F3F2EF">
 <title>HedgeDoc on Android — AMNI-SCIENT</title>
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<meta name="description" content="Unofficial native client for HedgeDoc 1.x and 2. Sideload the APK, point it at the server you already run.">
+<meta name="description" content="An unofficial native Android client for HedgeDoc 1.x and 2 that works with the server you already run.">
 <meta name="author" content="Amni-Scient">
 <meta property="og:title" content="HedgeDoc on Android — AMNI-SCIENT">
-<meta property="og:description" content="Unofficial native client for HedgeDoc 1.x and 2. Sideload the APK, point it at the server you already run.">
+<meta property="og:description" content="An unofficial native Android client for HedgeDoc 1.x and 2 that works with the server you already run.">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://amni-scient.com/blog/hedgedoc-android/">
 <meta property="og:image" content="https://amni-scient.com/assets/hedgedoc/connect.png">
@@ -19,12 +18,12 @@
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="HedgeDoc on Android — AMNI-SCIENT">
-<meta name="twitter:description" content="Unofficial native client for HedgeDoc 1.x and 2. Sideload the APK, point it at the server you already run.">
+<meta name="twitter:description" content="An unofficial native Android client for HedgeDoc 1.x and 2 that works with the server you already run.">
 <meta name="twitter:image" content="https://amni-scient.com/assets/hedgedoc/connect.png">
 <link rel="canonical" href="https://amni-scient.com/blog/hedgedoc-android/">
 <link rel="alternate" type="application/rss+xml" title="AMNI-SCIENT updates" href="https://amni-scient.com/blog/rss.xml">
 <link rel="preload" href="/assets/fonts/archivo-var.woff2" as="font" type="font/woff2" crossorigin>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"HedgeDoc on Android","datePublished":"2026-09-02","dateModified":"2026-09-02","description":"Unofficial native client for HedgeDoc 1.x and 2. Sideload the APK, point it at the server you already run.","url":"https://amni-scient.com/blog/hedgedoc-android/","image":"https://amni-scient.com/assets/hedgedoc/connect.png","author":{"@type":"Person","name":"Anthony Reffelt","alternateName":"Amnibro"},"publisher":{"@type":"Organization","name":"AMNI-SCIENT","legalName":"Amniscient, LLC","url":"https://amni-scient.com"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"HedgeDoc on Android","datePublished":"2026-09-02","dateModified":"2026-09-02","description":"An unofficial native Android client for HedgeDoc 1.x and 2 that works with the server you already run.","url":"https://amni-scient.com/blog/hedgedoc-android/","image":"https://amni-scient.com/assets/hedgedoc/connect.png","author":{"@type":"Person","name":"Anthony Reffelt","alternateName":"Amnibro"},"publisher":{"@type":"Organization","name":"AMNI-SCIENT","legalName":"Amniscient, LLC","url":"https://amni-scient.com"}}</script>
 <link rel="stylesheet" href="/css/style.css?v=b262">
 <script>(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#08090B':'#F3F2EF');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();</script>
 </head>
@@ -78,13 +77,14 @@
 <article class="blog-wrap">
 <p class="eyebrow">HedgeDoc — September 2, 2026</p>
 <h1>HedgeDoc on Android</h1>
-<p class="blog-deck">Unofficial native client for HedgeDoc 1.x and 2. Sideload the APK, point it at the server you already run.</p>
+<p class="blog-deck">An unofficial native Android client for HedgeDoc 1.x and 2 that works with the server you already run.</p>
 <div class="blog-hero"><img src="https://amni-scient.com/assets/hedgedoc/connect.png" alt="" width="1600" height="900"></div>
 <div class="blog-prose">
-<p>I keep notes on a HedgeDoc server, and the phone was a browser tab, so I wrote a native Kotlin client that talks to 1.x and 2.</p>
-<p>Sideload the signed APK. Point it at your instance, or <code>demo.hedgedoc.org</code>. It asks <code>/api/private/config</code> whether you are on 2, then uses REST for 2 and the old Socket.IO save path for 1.x. Login is whatever you already use: local, LDAP, guest, a session cookie, or a HedgeDoc 2 API token. Nothing phones home to me.</p>
-<p>HedgeDoc is AGPL, so the client is too. Play Protect may warn, the signature is a debug cert. v1.2.0, Android 8+. I am not affiliated with the HedgeDoc project.</p>
-<p><a href="/amni-hedgedoc.html">HedgeDoc for Android</a>.</p>
+<p>I keep my notes on a HedgeDoc server, and on the phone that meant a browser tab. So I wrote a native Kotlin client that talks to both 1.x and 2.</p>
+<p>Setup is easy. Sideload the signed APK and point it at your instance, or at <code>demo.hedgedoc.org</code>.</p>
+<p>It asks <code>/api/private/config</code> whether you're on 2, then uses REST for 2 and the old Socket.IO save path for 1.x. Login is whatever you already use: local, LDAP, guest, a session cookie, or a HedgeDoc 2 API token. Nothing phones home to me.</p>
+<p>The fine print: v1.2.0, Android 8+. HedgeDoc is AGPL, so the client is too. Play Protect may warn you, because the signature is a debug cert. And I'm not affiliated with the HedgeDoc project.</p>
+<p>Grab it from <a href="/amni-hedgedoc.html">HedgeDoc for Android</a>.</p>
 </div>
 <div class="cta-row"><a class="btn btn-primary" href="/amni-hedgedoc.html">HedgeDoc</a><a class="btn btn-outline" href="/blog/">All updates</a></div>
 </article>

@@ -2,16 +2,15 @@
 <html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8">
-<meta name="robots" content="noindex, follow">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="theme-color" content="#F3F2EF">
 <title>Grok Remote on Windows is a real app — AMNI-SCIENT</title>
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<meta name="description" content="The PC side is a Tauri desktop now, GrokRemote.exe. Phones still pair with one QR.">
+<meta name="description" content="The PC side of Grok Remote used to live in a browser tab. Now it's a proper Windows app.">
 <meta name="author" content="Amni-Scient">
 <meta property="og:title" content="Grok Remote on Windows is a real app — AMNI-SCIENT">
-<meta property="og:description" content="The PC side is a Tauri desktop now, GrokRemote.exe. Phones still pair with one QR.">
+<meta property="og:description" content="The PC side of Grok Remote used to live in a browser tab. Now it's a proper Windows app.">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://amni-scient.com/blog/grok-remote-desktop/">
 <meta property="og:image" content="https://amni-scient.com/assets/grok-remote/logo.jpg">
@@ -19,12 +18,12 @@
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Grok Remote on Windows is a real app — AMNI-SCIENT">
-<meta name="twitter:description" content="The PC side is a Tauri desktop now, GrokRemote.exe. Phones still pair with one QR.">
+<meta name="twitter:description" content="The PC side of Grok Remote used to live in a browser tab. Now it's a proper Windows app.">
 <meta name="twitter:image" content="https://amni-scient.com/assets/grok-remote/logo.jpg">
 <link rel="canonical" href="https://amni-scient.com/blog/grok-remote-desktop/">
 <link rel="alternate" type="application/rss+xml" title="AMNI-SCIENT updates" href="https://amni-scient.com/blog/rss.xml">
 <link rel="preload" href="/assets/fonts/archivo-var.woff2" as="font" type="font/woff2" crossorigin>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"Grok Remote on Windows is a real app","datePublished":"2026-08-23","dateModified":"2026-08-23","description":"The PC side is a Tauri desktop now, GrokRemote.exe. Phones still pair with one QR.","url":"https://amni-scient.com/blog/grok-remote-desktop/","image":"https://amni-scient.com/assets/grok-remote/logo.jpg","author":{"@type":"Person","name":"Anthony Reffelt","alternateName":"Amnibro"},"publisher":{"@type":"Organization","name":"AMNI-SCIENT","legalName":"Amniscient, LLC","url":"https://amni-scient.com"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"Grok Remote on Windows is a real app","datePublished":"2026-08-26","dateModified":"2026-08-26","description":"The PC side of Grok Remote used to live in a browser tab. Now it's a proper Windows app.","url":"https://amni-scient.com/blog/grok-remote-desktop/","image":"https://amni-scient.com/assets/grok-remote/logo.jpg","author":{"@type":"Person","name":"Anthony Reffelt","alternateName":"Amnibro"},"publisher":{"@type":"Organization","name":"AMNI-SCIENT","legalName":"Amniscient, LLC","url":"https://amni-scient.com"}}</script>
 <link rel="stylesheet" href="/css/style.css?v=b262">
 <script>(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#08090B':'#F3F2EF');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();</script>
 </head>
@@ -76,15 +75,16 @@
 </div>
 </nav>
 <article class="blog-wrap">
-<p class="eyebrow">Grok-Remote — August 23, 2026</p>
+<p class="eyebrow">Grok-Remote — August 26, 2026</p>
 <h1>Grok Remote on Windows is a real app</h1>
-<p class="blog-deck">The PC side is a Tauri desktop now, GrokRemote.exe. Phones still pair with one QR.</p>
+<p class="blog-deck">The PC side of Grok Remote used to live in a browser tab. Now it's a proper Windows app.</p>
 <div class="blog-hero"><img src="https://amni-scient.com/assets/grok-remote/logo.jpg" alt="" width="1600" height="900"></div>
 <div class="blog-prose">
-<p>I was running the hub in a browser tab on the PC and losing it behind everything else, so the Windows download is a desktop app, Tauri and WebView2, <code>GrokRemote.exe</code>.</p>
-<p>It wraps a hub that is already running, or it starts one. You still need <code>grok</code> on PATH. Phones pair with one QR, same as before, and the link still heals after Wi-Fi drops and agent restarts.</p>
-<p>Linux and macOS are the tarball plus <code>./start.sh</code> (Python 3.10+). Desktop is 1.4.4, hub plugin 1.9.21.</p>
-<p>The Chromium/Electron portable is retired from the site button. Page is <a href="/grok-remote.html">grok-remote.html</a>.</p>
+<p>I kept losing the hub tab behind everything else on my PC. So the Windows download is a desktop app now: <code>GrokRemote.exe</code>, built on Tauri and WebView2.</p>
+<p>It wraps a hub that's already running, or it starts one for you. You still need <code>grok</code> on PATH.</p>
+<p>Pairing hasn't changed. Phones pair with one QR, same as before, and the link still heals itself after Wi-Fi drops and agent restarts.</p>
+<p>Desktop is 1.4.4, hub plugin 1.9.20. On Linux or macOS? Use the tarball plus <code>./start.sh</code> (Python 3.10+).</p>
+<p>The old Chromium/Electron portable is retired from the site button. Everything's on <a href="/grok-remote.html">grok-remote.html</a>.</p>
 </div>
 <div class="cta-row"><a class="btn btn-primary" href="/grok-remote.html">Grok Remote</a><a class="btn btn-outline" href="/blog/">All updates</a></div>
 </article>

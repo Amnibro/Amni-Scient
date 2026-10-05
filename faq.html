@@ -147,11 +147,11 @@
 </div>
 <div class="faq-item" style="margin-bottom:2rem">
 <h4 style="color:var(--text);margin-bottom:.5rem">What are the system requirements?</h4>
-<p style="color:var(--dim);line-height:1.8;font-size:.9rem">Amni-Explore requires a WebGL2-capable browser (Chrome, Firefox, Edge, Safari 15+). Desktop is recommended for the best experience due to the 80,000-particle render load, but modern mobile browsers can run it at reduced framerates. A dedicated GPU is helpful but not required &mdash; integrated graphics from the last 5 years handle it well. The WASM binary is approximately 97 KB, and total initial load including Three.js is under 2 MB.</p>
+<p style="color:var(--dim);line-height:1.8;font-size:.9rem">Amni-Explore requires a WebGL2-capable browser (Chrome, Firefox, Edge, Safari 15+). Desktop is recommended for the best experience due to the 160,000-particle render load, but modern mobile browsers can run it at reduced framerates. A dedicated GPU is helpful but not required &mdash; integrated graphics from the last 5 years handle it well. The WASM binary is approximately 97 KB, and total initial load including Three.js is under 2 MB.</p>
 </div>
 <div class="faq-item" style="margin-bottom:2rem">
 <h4 style="color:var(--text);margin-bottom:.5rem">What is WebAssembly and why use it for a galaxy explorer?</h4>
-<p style="color:var(--dim);line-height:1.8;font-size:.9rem">WebAssembly (WASM) is a binary instruction format designed to run in web browsers at near-native speed. Unlike JavaScript, which is interpreted or JIT-compiled at runtime, WASM arrives as pre-compiled bytecode that the browser executes directly. For Amni-Explore, this means galaxy generation (placing 80,000 particles with spiral arm math), planet texture computation (fBm noise), and system classification all run at speeds comparable to a native desktop application. The Rust source code is compiled once at build time, producing a compact ~97 KB binary that initializes in milliseconds.</p>
+<p style="color:var(--dim);line-height:1.8;font-size:.9rem">WebAssembly (WASM) is a binary instruction format designed to run in web browsers at near-native speed. Unlike JavaScript, which is interpreted or JIT-compiled at runtime, WASM arrives as pre-compiled bytecode that the browser executes directly. For Amni-Explore, this means galaxy generation (placing 160,000 particles with spiral arm math), planet texture computation (fBm noise), and system classification all run at speeds comparable to a native desktop application. The Rust source code is compiled once at build time, producing a compact ~97 KB binary that initializes in milliseconds.</p>
 </div>
 </div>
 </section>
@@ -315,7 +315,7 @@
 </div>
 <div class="faq-item" style="margin-bottom:2rem">
 <h4 style="color:var(--text);margin-bottom:.5rem">Why Rust and WebAssembly instead of JavaScript?</h4>
-<p style="color:var(--dim);line-height:1.8;font-size:.9rem">Rust compiles to highly optimized native code (or WASM binary). For compute-heavy workloads like generating 80,000 galaxy particles or running 16-round cipher simulations, WASM delivers 5&ndash;20x performance improvements over equivalent JavaScript. Additionally, compiled WASM binaries protect the source code as machine-readable bytecode rather than human-readable script, which matters for proprietary algorithms.</p>
+<p style="color:var(--dim);line-height:1.8;font-size:.9rem">Rust compiles to highly optimized native code (or WASM binary). For compute-heavy workloads like generating 160,000 galaxy particles or running 16-round cipher simulations, WASM delivers 5&ndash;20x performance improvements over equivalent JavaScript. Additionally, compiled WASM binaries protect the source code as machine-readable bytecode rather than human-readable script, which matters for proprietary algorithms.</p>
 </div>
 <div class="faq-item" style="margin-bottom:2rem">
 <h4 style="color:var(--text);margin-bottom:.5rem">How do I report a bug?</h4>

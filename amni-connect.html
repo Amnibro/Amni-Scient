@@ -19,7 +19,7 @@
 <meta name="twitter:description" content="P2P encrypted remote desktop. Rust + Electron. Self-hostable. Zero logs.">
 <meta name="twitter:image" content="https://amni-scient.com/assets/connect/hero.png">
 <link rel="canonical" href="https://amni-scient.com/amni-connect">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Amni-Connect","url":"https://amni-scient.com/amni-connect.html","description":"End-to-end encrypted remote desktop over WebRTC. Rust input daemon, self-hostable signaling, zero logs.","applicationCategory":"UtilitiesApplication","operatingSystem":"Windows, macOS, Linux","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Organization","name":"AMNI-SCIENT","legalName":"Amniscient, LLC","url":"https://amni-scient.com"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Amni-Connect","url":"https://amni-scient.com/amni-connect.html","description":"End-to-end encrypted remote desktop over WebRTC. Rust input daemon, self-hostable signaling, zero logs.","applicationCategory":"UtilitiesApplication","operatingSystem":"Windows, Linux","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Organization","name":"AMNI-SCIENT","legalName":"Amniscient, LLC","url":"https://amni-scient.com"}}</script>
 <link rel="stylesheet" href="css/style.css?v=b261">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
@@ -100,65 +100,85 @@
 <a href="https://github.com/Amnibro/Amni-Connect/releases/latest/download/Amni-Connect.rpm" class="btn btn-outline" style="text-decoration:none">.RPM</a>
 <a href="https://github.com/Amnibro/Amni-Connect" target="_blank" rel="noopener noreferrer" class="btn btn-outline" style="text-decoration:none">&#128214; SOURCE</a>
 </div>
-<p style="color:var(--dim);font-size:.72rem;letter-spacing:1px">v1.6.10 &bull; Windows Setup / Linux AppImage&middot;deb&middot;rpm &bull; viewer in any browser</p>
-<p style="color:var(--dim);font-size:.68rem;letter-spacing:.4px;margin-top:.35rem;max-width:720px">Linux one-liner: <code style="color:var(--ink)">curl -fsSL https://raw.githubusercontent.com/Amnibro/Amni-Connect/main/scripts/install-linux.sh | bash</code> &nbsp;&middot;&nbsp; Windows: if SmartScreen warns, More info &rarr; Run anyway</p>
+<p style="color:var(--dim);font-size:.72rem;letter-spacing:1px">v1.6.21 &bull; Windows Setup / Linux AppImage&middot;deb&middot;rpm &bull; viewer in any browser</p>
 </div>
 <div class="ptile">
 <div class="ptile-copy">
-<p class="ptile-line">End-to-end encrypted remote desktop over WebRTC. One install on Windows or Linux starts the host UI, signaling, and input daemon.</p>
-<ul class="ptile-feats"><li>Peer-to-peer WebRTC</li><li>Rust input daemon</li><li>Self-hostable signaling</li><li>Zero logs, zero cloud</li></ul>
+<p class="ptile-line">Remote desktop with end-to-end encryption, streamed peer-to-peer over WebRTC. One install on Windows or Linux starts the host UI, the signaling and the input daemon.</p>
+<ul class="ptile-feats"><li>Peer-to-peer WebRTC</li><li>Zero logs, zero cloud</li><li>Self-hostable signaling</li><li>Rust input daemon</li></ul>
 </div>
 <div class="ptile-media"><img src="assets/connect/Screenshot%202026-04-17%20105657.png" alt="Amni-Connect controlling a remote desktop" loading="lazy"></div>
 </div>
 <section>
 <h2>REMOTE CONTROL WITHOUT THE CLOUD</h2>
-<p style="color:var(--dim);max-width:640px;margin:0 0 1rem;font-size:.9rem">A modern alternative to Windows Remote Desktop &mdash; screen + input streamed directly between your devices over WebRTC.</p>
+<p style="color:var(--dim);max-width:640px;margin:0 0 1rem;font-size:.9rem">Think Windows Remote Desktop, minus the middleman. Your screen and input stream directly between your own devices over WebRTC.</p>
 <div class="features"><div class="feature">
 <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10" width="16" height="11"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div>
 <h4>END-TO-END ENCRYPTED</h4>
-<p>Video, audio, and input travel over DTLS-SRTP WebRTC channels. Keys are negotiated peer-to-peer &mdash; the signaling server never sees your frames or keystrokes.</p>
-</div>
-<div class="feature">
-<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2c3 2.6 4.5 6.2 4.5 10L12 16l-4.5-4C7.5 8.2 9 4.6 12 2z"/><circle cx="12" cy="9.5" r="1.6"/><path d="M8 15l-2 5 4-1.8M16 15l2 5-4-1.8"/></svg></div>
-<h4>RUST INPUT DAEMON</h4>
-<p>Native mouse + keyboard injection through a small Rust binary (<code>enigo</code> crate). Localhost TCP socket on port 7878 &mdash; no kernel driver, no elevated service.</p>
-</div>
-<div class="feature">
-<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 3 2.6 15 0 18M12 3c-2.6 3-2.6 15 0 18"/></svg></div>
-<h4>SELF-HOSTABLE SIGNALING</h4>
-<p>Drop the Node.js signaling server on any VPS, home Pi, or your own LAN. Port 3389 by default. One JSON env file configures allowed origins.</p>
+<p>Video, audio and input travel over DTLS-SRTP WebRTC channels. Keys are negotiated peer-to-peer, so the signaling server never sees your frames or keystrokes.</p>
 </div>
 <div class="feature">
 <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="2" width="10" height="20" rx="1"/><path d="M10.5 19h3"/></svg></div>
 <h4>BROWSER VIEWER</h4>
-<p>Connect from any device with a browser &mdash; no app install on the viewing side. Phones, tablets, old laptops all work. Full desktop control: mouse move/click/drag, middle-click, double-click, scroll-wheel and wheel-zoom, plus hardware-keyboard input with key-repeat.</p>
-<p>On a touch screen the gesture map is <strong>one finger to control, two to zoom and pan, three to scroll</strong>. One finger drives the remote pointer at every zoom level, so magnifying a small target never costs you control of it. Tap to click, hold for right-click, double-tap-and-hold to drag.</p>
-</div>
-<div class="feature">
-<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="4" width="14" height="17"/><path d="M9 3h6v3H9z"/><path d="M9 11h6M9 15h6"/></svg></div>
-<h4>CLIPBOARD SYNC</h4>
-<p>Copy on one machine, paste on the other. Clipboard text syncs bidirectionally over the encrypted WebRTC data channel &mdash; never through the signaling server.</p>
-</div>
-<div class="feature">
-<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="2" width="10" height="20" rx="1"/><path d="M10.5 19h3"/></svg></div>
-<h4>ADAPTIVE QUALITY</h4>
-<p>An auto-bitrate controller (AIMD) tunes the stream to your link in real time, with a live signal-quality indicator (Excellent / Good / Fair / Poor). On by default, toggleable.</p>
-</div>
-<div class="feature">
-<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l3-1 12-12-2-2L5 17z"/><path d="M15 5l4 4"/></svg></div>
-<h4>CUSTOM ROOM CODES</h4>
-<p>Pick your own 4+ character room ID or let the server generate a UUID slice. Rooms are ephemeral &mdash; destroyed the moment the host disconnects.</p>
+<p>Connect from any device with a browser. There&rsquo;s nothing to install on the viewing side, so phones, tablets and old laptops all work. You get full desktop control: mouse move/click/drag, middle-click, double-click, scroll-wheel and wheel-zoom, plus hardware-keyboard input with key-repeat.</p>
+<p>On a touch screen it&rsquo;s <strong>one finger to control, two to zoom and pan, three to scroll</strong>. One finger drives the remote pointer at every zoom level, so zooming in on a tiny target never costs you control of it. Tap to click, hold for right-click, double-tap-and-hold to drag.</p>
 </div>
 <div class="feature">
 <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.8-6 10-6 10 6 10 6-3.8 6-10 6-10-6-10-6z"/><circle cx="12" cy="12" r="2.8"/></svg></div>
 <h4>ZERO RECORDING</h4>
-<p>Frames are transient. Nothing is written to disk, nothing is buffered beyond the WebRTC jitter window. Close the tab and the session is gone.</p>
+<p>Frames are transient. Nothing gets written to disk, and nothing is buffered beyond the WebRTC jitter window. Close the tab and the session is gone.</p>
+</div>
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 3 2.6 15 0 18M12 3c-2.6 3-2.6 15 0 18"/></svg></div>
+<h4>SELF-HOSTABLE SIGNALING</h4>
+<p>Drop the Node.js signaling server on any VPS, a Pi at home, or your own LAN. It uses port 3389 by default, and one JSON env file sets the allowed origins.</p>
+</div>
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="4" width="14" height="17"/><path d="M9 3h6v3H9z"/><path d="M9 11h6M9 15h6"/></svg></div>
+<h4>CLIPBOARD SYNC</h4>
+<p>Copy on one machine, paste on the other! Clipboard text syncs both ways over the encrypted WebRTC data channel, never through the signaling server.</p>
+</div>
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="2" width="10" height="20" rx="1"/><path d="M10.5 19h3"/></svg></div>
+<h4>ADAPTIVE QUALITY</h4>
+<p>An auto-bitrate controller (AIMD) tunes the stream to your link in real time and shows a live signal-quality indicator (Excellent / Good / Fair / Poor). It&rsquo;s on by default, and you can toggle it off.</p>
+</div>
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l3-1 12-12-2-2L5 17z"/><path d="M15 5l4 4"/></svg></div>
+<h4>CUSTOM ROOM CODES</h4>
+<p>Pick your own room ID (4+ characters) or let the server generate a UUID slice. Rooms live only in the signaling server&rsquo;s memory, so nothing is saved, and a host that drops can rejoin the same code.</p>
+</div>
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2c3 2.6 4.5 6.2 4.5 10L12 16l-4.5-4C7.5 8.2 9 4.6 12 2z"/><circle cx="12" cy="9.5" r="1.6"/><path d="M8 15l-2 5 4-1.8M16 15l2 5-4-1.8"/></svg></div>
+<h4>RUST INPUT DAEMON</h4>
+<p>Mouse and keyboard injection goes through a small native Rust binary (<code>enigo</code> crate) on a localhost TCP socket, port 7878. No kernel driver, no elevated service.</p>
+</div>
+</div>
+</section>
+<section id="how">
+<h2>HOW IT WORKS</h2>
+<div class="how-works-grid">
+<div class="card">
+<h3>1. HOST</h3>
+<p>Launch Amni-Connect on the machine you want to control. The Electron app spawns the Rust input daemon and registers a room with your signaling server.</p>
+</div>
+<div class="card">
+<h3>2. CONNECT</h3>
+<p>On any other device, open the viewer URL and enter the room code. Socket.IO trades the WebRTC offer/answer and ICE candidates in milliseconds.</p>
+</div>
+<div class="card">
+<h3>3. STREAM</h3>
+<p>The DTLS-SRTP handshake completes peer-to-peer. Screen frames flow to the viewer, input events flow to the host, and the signaling server goes silent.</p>
+</div>
+<div class="card">
+<h3>4. CONTROL</h3>
+<p>Your mouse moves, clicks and keystrokes on the viewer are JSON-serialized, sent over the WebRTC data channel, and replayed by the Rust daemon.</p>
 </div>
 </div>
 </section>
 <section>
 <h2>THREE-COMPONENT ARCHITECTURE</h2>
-<p style="color:var(--dim);max-width:720px;margin:0 0 2rem;font-size:.9rem">Amni-Connect splits into three isolated processes. Each can be restarted, replaced, or audited independently.</p>
+<p style="color:var(--dim);max-width:720px;margin:0 0 2rem;font-size:.9rem">Under the hood, Amni-Connect is three isolated processes. You can restart, replace or audit each one on its own.</p>
 <table class="spec-table">
 <tr><th>COMPONENT</th><th>ROLE</th></tr>
 <tr><td>Electron Host</td><td>Screen capture (desktopCapturer), WebRTC peer, UI chrome &mdash; runs on the machine being controlled</td></tr>
@@ -172,42 +192,21 @@
 <tr><th>PARAMETER</th><th>DETAILS</th></tr>
 <tr><td>Type</td><td>End-to-End Encrypted Remote Desktop</td></tr>
 <tr><td>Stack</td><td>Electron 33 (host) &bull; Rust 2021 / tokio / enigo (input) &bull; Node.js + Socket.IO (signaling)</td></tr>
-<tr><td>Platforms</td><td>Host: Windows, macOS, Linux &bull; Viewer: any modern browser</td></tr>
+<tr><td>Platforms</td><td>Host: Windows, Linux (macOS builds from source) &bull; Viewer: any modern browser</td></tr>
 <tr><td>Transport</td><td>WebRTC &mdash; DTLS-SRTP over UDP (TCP fallback)</td></tr>
 <tr><td>Signaling</td><td>Socket.IO on port 3389 &bull; self-hostable &bull; origin allowlist</td></tr>
 <tr><td>Input Channel</td><td>Localhost TCP &bull; JSON-lines &bull; 127.0.0.1:7878</td></tr>
 <tr><td>Media</td><td>Screen capture via <code>desktopCapturer</code> &bull; VP8/H.264 (browser-negotiated)</td></tr>
-<tr><td>Rooms</td><td>4+ char custom ID or UUID slice &bull; ephemeral &bull; destroyed on host disconnect</td></tr>
+<tr><td>Rooms</td><td>4+ char custom ID or UUID slice &bull; in memory only &bull; kept so a dropped host can rejoin</td></tr>
 <tr><td>Recording</td><td>None &mdash; no disk writes, no session logs</td></tr>
 <tr><td>Account</td><td>None &mdash; no signup, no password, no email</td></tr>
 <tr><td>License</td><td>CC BY-NC 4.0 (source-available, non-commercial)</td></tr>
 </table>
 </section>
-<section id="how">
-<h2>HOW IT WORKS</h2>
-<div class="how-works-grid">
-<div class="card">
-<h3>1. HOST</h3>
-<p>Launch Amni-Connect on the machine you want to control. The Electron app spawns the Rust input daemon and registers a room with your signaling server.</p>
-</div>
-<div class="card">
-<h3>2. CONNECT</h3>
-<p>On any other device, open the viewer URL and enter the room code. Socket.IO exchanges the WebRTC offer/answer and ICE candidates in milliseconds.</p>
-</div>
-<div class="card">
-<h3>3. STREAM</h3>
-<p>DTLS-SRTP handshake completes peer-to-peer. Screen frames flow viewer-ward; input events flow host-ward. The signaling server goes silent.</p>
-</div>
-<div class="card">
-<h3>4. CONTROL</h3>
-<p>Mouse moves, clicks, and keystrokes from the viewer are JSON-serialized, sent over the WebRTC data channel, and replayed by the Rust daemon.</p>
-</div>
-</div>
-</section>
 <section>
 <h2>GET AMNI-CONNECT</h2>
-<p style="color:var(--dim);margin-bottom:.5rem;font-size:.9rem">Download the host for your OS, open the viewer on your phone, enter the room code. No npm, no cargo, no account.</p>
-<p style="color:var(--dim);font-size:.8rem;margin-bottom:2rem">Open source under CC BY-NC 4.0 &bull; v1.6.10 &bull; <a href="connect/latest.json">version feed</a></p>
+<p style="color:var(--dim);margin-bottom:.5rem;font-size:.9rem">Download the host for your OS, open the viewer on your phone, and enter the room code. No npm, no cargo, no account.</p>
+<p style="color:var(--dim);font-size:.8rem;margin-bottom:2rem">Source-available under CC BY-NC 4.0 &bull; v1.6.21 &bull; <a href="connect/latest.json">version feed</a></p>
 <div class="cta-row" style="flex-wrap:wrap;gap:1rem">
 <a href="https://github.com/Amnibro/Amni-Connect/releases/latest/download/Amni-Connect-Setup.exe" class="btn btn-primary" style="text-decoration:none">&#11015; WINDOWS SETUP</a>
 <a href="https://github.com/Amnibro/Amni-Connect/releases/latest/download/Amni-Connect.AppImage" class="btn btn-primary" style="text-decoration:none">&#11015; LINUX APPIMAGE</a>
@@ -216,7 +215,7 @@
 <a href="https://github.com/Amnibro/Amni-Connect/releases/latest" target="_blank" rel="noopener noreferrer" class="btn btn-outline" style="text-decoration:none">RELEASES</a>
 <a href="privacy-connect.html" class="btn btn-outline">PRIVACY POLICY</a>
 </div>
-<p style="color:var(--dim);font-size:.75rem;margin-top:1rem;max-width:640px">Host: run the installer (or AppImage), pick a room code, share the link or QR. Phone: open the viewer URL and connect. Pairing address can be Tailscale, DDNS, or a tunnel URL for off-LAN access. Linux one-liner: <code>curl -fsSL https://raw.githubusercontent.com/Amnibro/Amni-Connect/main/scripts/install-linux.sh | bash</code></p>
+<p style="color:var(--dim);font-size:.75rem;margin-top:1rem;max-width:640px">Host: run the installer (or AppImage), pick a room code, and share the link or QR. Phone: open the viewer URL and connect. For off-LAN access, the pairing address can be Tailscale, DDNS or a tunnel URL. Linux one-liner: <code>curl -fsSL https://raw.githubusercontent.com/Amnibro/Amni-Connect/main/scripts/install-linux.sh | bash</code> &middot; Windows: if SmartScreen warns, More info &rarr; Run anyway.</p>
 </section>
 
 <aside class="support-cta" aria-label="Support"><a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="support-link"><span class="support-ico">&#9749;</span><span>Enjoying this? <strong>Support on Ko-fi</strong></span></a></aside>

@@ -5,10 +5,10 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="theme-color" content="#FBFAF8">
 <title>Amni-Browse &mdash; Privacy-First Web Browser | AMNI-SCIENT</title>
-<meta name="description" content="Amni-Browse: privacy-first, zero-telemetry web browser in a single Rust binary on the real Servo engine. Built-in ad blocker, private tabs, multi-profile; DoH and encrypted vault in the WebView2 flavor.">
+<meta name="description" content="Amni-Browse: a privacy-first, zero-telemetry web browser for Android, plus a single Rust exe for Windows on the Chromium (WebView2) engine. Private tabs, tab groups, tracker stripping; ad blocker and DoH on Windows.">
 <meta name="keywords" content="amni-browse,private browser,privacy browser,rust browser,no telemetry,ad blocker,dns over https,password vault">
 <meta property="og:title" content="Amni-Browse &mdash; Privacy-First Web Browser">
-<meta property="og:description" content="Zero-telemetry browser in a single Rust binary on the real Servo engine. Ad blocker, private tabs, multi-profile. Local-only — your browsing never leaves your device.">
+<meta property="og:description" content="Zero-telemetry browser for Android, plus a single Rust exe for Windows on the Chromium (WebView2) engine. Private tabs, tab groups, ad blocker on Windows. Local-only — your browsing never leaves your device.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://amni-scient.com/amni-browse">
 <meta property="og:image" content="https://amni-scient.com/assets/browse/Interface.png">
@@ -16,10 +16,10 @@
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Amni-Browse &mdash; Privacy-First Web Browser">
-<meta name="twitter:description" content="Zero-telemetry browser in a single Rust binary on the real Servo engine. Ad blocker, private tabs, multi-profile.">
+<meta name="twitter:description" content="Zero-telemetry browser for Android, plus a single Rust exe for Windows on the Chromium (WebView2) engine. Private tabs, tab groups, ad blocker on Windows.">
 <meta name="twitter:image" content="https://amni-scient.com/assets/browse/Interface.png">
 <link rel="canonical" href="https://amni-scient.com/amni-browse">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Amni-Browse","url":"https://amni-scient.com/amni-browse.html","description":"Privacy-first, zero-telemetry web browser in a single Rust binary on the real Servo engine. Built-in ad blocker, private tabs, multi-profile.","applicationCategory":"WebBrowser","operatingSystem":"Windows, macOS, Linux","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Organization","name":"AMNI-SCIENT","legalName":"Amniscient, LLC","url":"https://amni-scient.com"},"image":"https://amni-scient.com/assets/browse/Interface.png"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Amni-Browse","url":"https://amni-scient.com/amni-browse.html","description":"Privacy-first, zero-telemetry web browser for Android, plus a single Rust exe for Windows on the Chromium (WebView2) engine. Private tabs, tab groups, ad blocker on Windows.","applicationCategory":"WebBrowser","operatingSystem":"Android, Windows","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Organization","name":"AMNI-SCIENT","legalName":"Amniscient, LLC","url":"https://amni-scient.com"},"image":"https://amni-scient.com/assets/browse/Interface.png"}</script>
 <link rel="stylesheet" href="css/style.css?v=b261">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
@@ -96,7 +96,7 @@
 </svg>
 </div>
 <h1>AMNI-BROWSE</h1>
-<p class="desc">PRIVACY-FIRST &bull; ZERO TELEMETRY &bull; SINGLE RUST BINARY</p>
+<p class="desc">PRIVACY-FIRST BROWSER &bull; ZERO TELEMETRY &bull; ANDROID + WINDOWS</p>
 <div class="cta-row" style="margin-top:2rem;margin-bottom:1rem">
 <a href="https://github.com/amnibro/Amni-Browse" target="_blank" rel="noopener noreferrer" class="btn btn-primary">VIEW ON GITHUB</a>
 <a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="btn btn-outline">&#9749; SUPPORT</a>
@@ -104,50 +104,71 @@
 </div>
 <div class="ptile">
 <div class="ptile-copy">
-<p class="ptile-line">Privacy-first browser for Android (v0.16.9 beta) — tabs, collapsible groups, per-tab favicons, private-by-default. Zero telemetry. Windows desktop v0.13.0 (Chromium/WebView2 engine) downloads below.</p>
-<ul class="ptile-feats"><li>Android: system WebView, signed APK, sideload · Android 8+</li><li>Zero telemetry · ad blocker · private tabs · omnibox</li><li>Tab groups · tile switcher · bookmark folders · import</li><li>Desktop (Servo): experimental builds on GitHub only</li></ul>
+<p class="ptile-line">A privacy-first browser for Android (v<span data-live="/browse/android-latest.json|versionName|ver">0.16.9</span> beta). It's private by default with zero telemetry, and you get tabs, collapsible groups and per-tab favicons. There's a Windows desktop build too: v<span data-live="/browse/latest.json|version">0.13.0</span> on the Chromium/WebView2 engine. Both download below.</p>
+<ul class="ptile-feats"><li>Zero telemetry · tracker stripping · private tabs · omnibox</li><li>Tab groups · tile switcher · bookmark folders · import</li><li>Android: system WebView, signed APK, sideload · Android 8+</li><li>Windows: Chromium (WebView2), ad blocker, DoH · Servo engine parked in the source</li></ul>
 </div>
 <div class="ptile-media"><img src="assets/browse/Screenshot%202026-04-17%20110302.png" alt="Amni-Browse browsing a page" loading="lazy"></div>
 </div>
 <section>
 <h2>YOUR BROWSING IS YOURS</h2>
-<p style="color:var(--dim);max-width:640px;margin:0 0 1rem;font-size:.9rem">A ground-up web browser built in Rust around one principle &mdash; <em>nothing leaves your machine unless you tell it to</em>.</p>
+<p style="color:var(--dim);max-width:640px;margin:0 0 1rem;font-size:.9rem">I built it around one rule, in Rust on Windows and Kotlin on Android: <em>nothing leaves your machine unless you tell it to</em>.</p>
 <div class="features">
 <div class="feature">
 <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.6 8.2-8 9-4.4-.8-8-4-8-9V6z"/></svg></div>
 <h4>ZERO TELEMETRY</h4>
-<p>No analytics, no crash reporting, no phone-home. The binary makes network requests only to the pages you navigate to.</p>
+<p>No analytics, no crash reporting, no phone-home. The only requests it makes are for the pages you open and the search engine you picked.</p>
 </div>
 <div class="feature">
 <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/></svg></div>
 <h4>BUILT-IN AD BLOCKER</h4>
-<p>Ad networks, tracking pixels, fingerprinting scripts blocked at the navigation layer. Filter rules bundled in the binary &mdash; no external list downloads.</p>
-</div>
-<div class="feature">
-<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10" width="16" height="11"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div>
-<h4>CLICK-TO-INSTALL</h4>
-<p>One Setup command downloads the win64 zip, drops <code>amni-browse.exe</code> in <code>%LOCALAPPDATA%\AmniBrowse</code>, pins Start Menu + Desktop, and registers as a browser. The app then checks this site (then GitHub) for updates.</p>
-</div>
-<div class="feature">
-<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="7.5" cy="12" r="3.5"/><path d="M11 12h10M18 12v3.5M15 12v2.5"/></svg></div>
-<h4>BRING YOUR OWN VAULT</h4>
-<p>Amni vault (AES-256-GCM, PBKDF2 600k) plus Bitwarden CLI, 1Password CLI, and KeePassXC. A key icon on the URL bar fills the login like Chrome. One-match autofill is a toggle. Secrets stay on your machine.</p>
+<p>On Windows, ad networks, tracking pixels and beacons get blocked on every request. The filter rules ship inside the exe, so there are no external list downloads. Android blocks third-party cookies.</p>
 </div>
 <div class="feature">
 <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.8-6 10-6 10 6 10 6-3.8 6-10 6-10-6-10-6z"/><circle cx="12" cy="12" r="2.8"/></svg></div>
 <h4>PRIVATE TABS</h4>
-<p>Private browsing mode keeps history, cookies, and cache out of persistent storage. Tracking parameters (UTM, fbclid, gclid) are stripped on every request.</p>
+<p>Private mode keeps history, cookies and cache out of persistent storage. And on Android, 25 tracking parameters (UTM, fbclid, gclid, msclkid and more) get stripped from every link you open.</p>
 </div>
 <div class="feature">
-<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 5.5a3.2 3.2 0 0 1 0 5M17 14.4c2.4.7 4 2.9 4 5.6"/></svg></div>
-<h4>MULTI-PROFILE</h4>
-<p>Isolated data directories per profile &mdash; separate bookmarks, history, vault, and session. Create, switch, rename, and delete without ever crossing streams.</p>
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="15"/><path d="M3 9h18M9 5v4M15 5v4"/></svg></div>
+<h4>TAB GROUPS</h4>
+<p>Name a group, give it a color, and tap its chip to collapse it out of the way. Every tab gets its favicon, and on Windows you can pin the ones you live in.</p>
+</div>
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="7.5" cy="12" r="3.5"/><path d="M11 12h10M18 12v3.5M15 12v2.5"/></svg></div>
+<h4>PASSWORDS, YOUR WAY</h4>
+<p>On Windows, Chromium's own password autosave and form autofill, with a toggle in Settings, saved in a local data folder. On Android, it hands off to the autofill service your phone already uses.</p>
+</div>
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10" width="16" height="11"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div>
+<h4>CLICK-TO-INSTALL</h4>
+<p>One PowerShell line, <code>irm https://amni-scient.com/browse/install.ps1 | iex</code>, downloads the win64 zip, drops <code>amni-browse.exe</code> in <code>%LOCALAPPDATA%\AmniBrowse</code>, pins it to the Start Menu and Desktop, and registers it as a browser. Run it again any time to update: it checks this site first, then GitHub.</p>
+</div>
+</div>
+</section>
+<section>
+<h2>HOW IT WORKS</h2>
+<div class="how-works-grid">
+<div class="card">
+<h3>1. LAUNCH</h3>
+<p>On Windows, a single Rust exe opens a frameless native window. The chrome (toolbar, URL bar, tab strip) lives in its own WebView2, apart from every page, so no site can tamper with it.</p>
+</div>
+<div class="card">
+<h3>2. RESOLVE</h3>
+<p>On Android, tracking parameters get scrubbed from a link before it loads. On Windows, switch on DoH and DNS queries go out over HTTPS to the resolver you picked.</p>
+</div>
+<div class="card">
+<h3>3. BLOCK</h3>
+<p>On Windows, the ad blocker runs at the request layer, not as a content extension. Known ad networks, pixels and beacons are cancelled before they fetch.</p>
+</div>
+<div class="card">
+<h3>4. KEEP LOCAL</h3>
+<p>Bookmarks, history, sessions: every byte stays on your device. No account, no sync, no backup you didn&rsquo;t ask for.</p>
 </div>
 </div>
 </section>
 <section>
 <h2>SEVEN-PILLAR ARCHITECTURE</h2>
-<p style="color:var(--dim);max-width:720px;margin:0 0 2rem;font-size:.9rem">The source tree is organized into seven isolated pillars. Each pillar has a single responsibility and communicates over an explicit IPC boundary.</p>
+<p style="color:var(--dim);max-width:720px;margin:0 0 2rem;font-size:.9rem">Under the hood, the desktop source tree is split into seven isolated pillars. Each one has a single job and talks to the others over an explicit IPC boundary.</p>
 <table class="spec-table">
 <tr><th>PILLAR</th><th>ROLE</th></tr>
 <tr><td>UI</td><td>HTML/CSS/JS chrome (webview) or native egui chrome (servo-engine)</td></tr>
@@ -156,7 +177,7 @@
 <tr><td>Encryption</td><td>AES-256-GCM vault, PBKDF2-HMAC-SHA256 KDF, encrypted autofill</td></tr>
 <tr><td>Platform</td><td>OS windowing: tao+wry or winit+wgpu+egui compositor</td></tr>
 <tr><td>Engine</td><td>Tabs, ad blocker, extensions, permissions, devtools, app launcher</td></tr>
-<tr><td>Media</td><td>GStreamer-backed media path in the shipped Servo-engine build (codecs bundled) &bull; native WebView2 playback for DRM/MSE sites (Netflix, YouTube, &hellip;) in the WebView2 build flavor</td></tr>
+<tr><td>Media</td><td>GStreamer-backed media path for the parked Servo engine &bull; native WebView2 playback, DRM/MSE sites (Netflix, YouTube, &hellip;) included, in the shipped Windows build</td></tr>
 </table>
 </section>
 <section>
@@ -164,55 +185,34 @@
 <table class="spec-table">
 <tr><th>PARAMETER</th><th>DETAILS</th></tr>
 <tr><td>Type</td><td>Privacy-First Web Browser</td></tr>
-<tr><td>Language</td><td>Rust 2021 (single binary)</td></tr>
-<tr><td>Platforms</td><td>Windows, macOS, Linux</td></tr>
-<tr><td>Rendering</td><td>Servo (real libservo, rev 68ca280) is the default shipped engine &bull; system WebView2 only as a DRM/MSE hatch or a from-source stub</td></tr>
-<tr><td>Install</td><td>Windows x64 exe via one-click Setup &bull; lives in %LOCALAPPDATA%\AmniBrowse &bull; auto-update from amni-scient.com/browse/latest.json then GitHub</td></tr>
-<tr><td>Passwords</td><td>Amni vault + Bitwarden (bw) + 1Password (op) + KeePassXC CLI &bull; Chrome-style key-icon fill</td></tr>
-<tr><td>DNS</td><td>DoH resolver in the custom pipeline &bull; Servo uses the system resolver for page loads</td></tr>
-<tr><td>Encryption</td><td>AES-256-GCM &bull; PBKDF2-HMAC-SHA256 &bull; 600,000 iterations (vault on the Servo build)</td></tr>
-<tr><td>Ad Blocking</td><td>Navigation-layer filter &bull; built-in rules &bull; no external fetch</td></tr>
-<tr><td>Tracking Strip</td><td>UTM, fbclid, gclid, and 20+ click-ID params removed from every URL</td></tr>
+<tr><td>Language</td><td>Rust 2021, single exe (Windows) &bull; Kotlin (Android)</td></tr>
+<tr><td>Platforms</td><td>Android 8.0+ (sideloaded APK) &bull; Windows x64</td></tr>
+<tr><td>Rendering</td><td>Android System WebView &bull; Chromium via WebView2 on Windows &bull; Servo (real libservo) parked behind a build flag; v0.12.1 was the last Servo release</td></tr>
+<tr><td>Install</td><td>Android: signed APK, sideload &bull; Windows x64 exe via the Setup script &bull; lives in %LOCALAPPDATA%\AmniBrowse &bull; re-run Setup to update from amni-scient.com/browse/latest.json, then GitHub</td></tr>
+<tr><td>Passwords</td><td>Chromium password autosave + form autofill (Windows) &bull; system autofill service (Android)</td></tr>
+<tr><td>DNS</td><td>DoH on Windows (Cloudflare, Quad9, Google or your own template), off until you switch it on &bull; system resolver on Android</td></tr>
+<tr><td>Encryption</td><td>AES-256-GCM &bull; PBKDF2-HMAC-SHA256 &bull; 600,000 iterations (Amni vault, in the source, not in the shipped builds yet)</td></tr>
+<tr><td>Ad Blocking</td><td>Request-level filter on Windows &bull; built-in rules &bull; no external fetch &bull; third-party cookies blocked on Android</td></tr>
+<tr><td>Tracking Strip</td><td>25 params (UTM, fbclid, gclid, msclkid and more) removed from every link you open on Android</td></tr>
 <tr><td>Storage</td><td>Local only &mdash; OS config dir &bull; no cloud, no sync</td></tr>
-<tr><td>Profiles</td><td>Isolated data dirs &bull; unlimited profiles</td></tr>
+<tr><td>Private Tabs</td><td>In-memory WebView2 profile on Windows &bull; true private tabs on Android</td></tr>
 <tr><td>Telemetry</td><td>None &mdash; zero analytics, zero crash pings, zero ID pings</td></tr>
 <tr><td>License</td><td>CC BY-NC 4.0 (source-available, non-commercial)</td></tr>
 </table>
 </section>
 <section>
-<h2>HOW IT WORKS</h2>
-<div class="how-works-grid">
-<div class="card">
-<h3>1. LAUNCH</h3>
-<p>A single Rust binary opens a native window. The chrome (toolbar, URL bar, tab strip) is injected as a shadow-DOM overlay so no site can tamper with it.</p>
-</div>
-<div class="card">
-<h3>2. RESOLVE</h3>
-<p>Requests are scrubbed of tracking parameters before the socket opens. In the WebView2 flavor, DNS queries go out over HTTPS to the resolver you picked.</p>
-</div>
-<div class="card">
-<h3>3. BLOCK</h3>
-<p>The ad blocker runs at the navigation layer, not as a content extension. Known ad networks, pixels, and fingerprinting scripts are cancelled before they fetch.</p>
-</div>
-<div class="card">
-<h3>4. KEEP LOCAL</h3>
-<p>Bookmarks, history, vault, sessions &mdash; every byte lands in your OS config directory. No account, no sync, no backup you didn&rsquo;t ask for.</p>
-</div>
-</div>
-</section>
-<section>
 <h2>GET AMNI-BROWSE</h2>
-<p style="color:var(--dim);margin-bottom:.5rem;font-size:.9rem">The build we host here is the <strong>Android app</strong> — a signed APK you sideload. Requires Android 8.0+.</p>
-<p style="color:var(--dim);font-size:.8rem;margin-bottom:1rem">v0.16.9-android.0 &bull; system WebView &bull; CC BY-NC 4.0</p>
+<p style="color:var(--dim);margin-bottom:.5rem;font-size:.9rem">The build I host here is the <strong>Android app</strong>: a signed APK you sideload. It needs Android 8.0+.</p>
+<p style="color:var(--dim);font-size:.8rem;margin-bottom:1rem">v<span data-live="/browse/android-latest.json|versionName">0.16.9-android.0</span> &bull; system WebView &bull; CC BY-NC 4.0</p>
 <div class="cta-row">
 <a href="downloads/amni-browse.apk?v=0.16.9" class="btn btn-primary" download="AmniBrowse.apk">DOWNLOAD ANDROID APK</a>
 <a href="browse/android-latest.json" class="btn btn-outline">VERSION FEED</a>
 <a href="privacy-browse.html" class="btn btn-outline">PRIVACY POLICY</a>
 </div>
-<p style="color:var(--dim);font-size:.9rem;margin:1.6rem 0 .5rem">Windows desktop v0.13.0 &mdash; Chromium engine (WebView2) under the Amni chrome: own window frame, tab groups, pinned tabs, favicons, find with highlights, request-level ad and tracker shield, DNT + Global Privacy Control, DoH, clear-on-exit, private tabs, Google/Microsoft/Apple sign-in popups that work. 6 MB zip, no installer required.</p>
+<p style="color:var(--dim);font-size:.9rem;margin:1.6rem 0 .5rem">On Windows? Desktop v<span data-live="/browse/latest.json|version">0.13.0</span> puts the Chromium engine (WebView2) under the Amni chrome. You get its own window frame, tab groups, pinned tabs, favicons, find with highlights, a request-level ad and tracker shield, DNT + Global Privacy Control, DoH, clear-on-exit, private tabs, and Google/Microsoft/Apple sign-in popups that actually work. It's a 3 MB zip, no installer required.</p>
 <div class="cta-row">
 <a href="https://github.com/Amnibro/Amni-Browse/releases/latest/download/amni-browse-win64.zip" class="btn btn-primary">DOWNLOAD WINDOWS x64 (ZIP)</a>
-<a href="https://github.com/Amnibro/Amni-Browse/releases/latest/download/AmniBrowse-Setup.cmd" class="btn btn-outline">ONE-CLICK SETUP</a>
+<a href="browse/install.ps1" class="btn btn-outline">SETUP SCRIPT (PS1)</a>
 <a href="browse/latest.json" class="btn btn-outline">VERSION FEED</a>
 <a href="https://github.com/Amnibro/Amni-Browse" target="_blank" rel="noopener noreferrer" class="btn btn-outline">VIEW DESKTOP SOURCE ON GITHUB</a>
 </div>
@@ -232,5 +232,6 @@
 </footer>
 <div class="lightbox" onclick="closeLightbox(event)"><span class="lightbox-close">&times;</span><img></div>
 <script>function openLightbox(s,a){const l=document.querySelector('.lightbox'),i=l.querySelector('img');i.src=s;i.alt=a;l.classList.add('open')}function closeLightbox(e){e.target.tagName!=='IMG'&&document.querySelector('.lightbox').classList.remove('open')}</script>
+<script src="/js/live-facts.js" defer></script>
 </body>
 </html>
