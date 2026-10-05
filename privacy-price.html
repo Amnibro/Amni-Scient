@@ -22,14 +22,14 @@ a{color:var(--accent)}
 <body>
 <main>
 <h1>Amni-Price Privacy Policy</h1>
-<p class="muted">App: Amni-Price for Android (package com.amniscient.price). Effective: October 5, 2026. Publisher: Amniscient, LLC. Contact: <a href="mailto:amnibro7@gmail.com">amnibro7@gmail.com</a>.</p>
+<p class="muted">App: Amni-Price for Android (package com.amniscient.price). Effective: October 5, 2026 (updated for the F-Droid build). Publisher: Amniscient, LLC. Contact: <a href="mailto:amnibro7@gmail.com">amnibro7@gmail.com</a>.</p>
 <p>Amni-Price records the prices you scan so you can compare stores. It has no accounts, no ads, no analytics of our own and no tracking or advertising SDKs. We run no server for it: your prices, stores, shopping list and location stay on your phone. Amni-Price is open source under the GPL-3.0 at <a href="https://github.com/Amnibro/Amni-Price">github.com/Amnibro/Amni-Price</a>, so anyone can check what it does. This policy explains the little that does leave your phone, to whom, and why.</p>
 
 <h2>What is sent, and where</h2>
 <table>
 <tr><th>What</th><th>Sent to</th><th>Why</th><th>Kept</th></tr>
 <tr><td>Map tile numbers for the area on screen, and your IP address as part of the request</td><td>Directly to the OpenStreetMap tile servers (OpenStreetMap Foundation), only when you open a map</td><td>Draw the price map and the store location picker</td><td>Governed by the <a href="https://osmfoundation.org/wiki/Privacy_Policy">OpenStreetMap Foundation privacy policy</a>; they see your IP address and the map area</td></tr>
-<tr><td>Diagnostics from Google ML Kit, the on-device text and barcode reader: device model and OS version, app package and version, a per-installation ID that is not meant to identify you or your phone, speed and error codes, and image sizes and formats</td><td>Google</td><td>Google uses it to measure and improve ML Kit</td><td>Governed by Google's <a href="https://developers.google.com/ml-kit/android-data-disclosure">ML Kit data disclosure</a>. Camera images and the text read from them are never sent; recognition runs on the phone.</td></tr>
+<tr><td>Google Play and "play" GitHub builds only: diagnostics from Google ML Kit, the on-device text and barcode reader: device model and OS version, app package and version, a per-installation ID that is not meant to identify you or your phone, speed and error codes, and image sizes and formats</td><td>Google</td><td>Google uses it to measure and improve ML Kit</td><td>Governed by Google's <a href="https://developers.google.com/ml-kit/android-data-disclosure">ML Kit data disclosure</a>. Camera images and the text read from them are never sent; recognition runs on the phone. The F-Droid build and the <code>-foss</code> APK use Tesseract and ZXing instead and send nothing to Google.</td></tr>
 </table>
 
 <h2>On your phone only</h2>
