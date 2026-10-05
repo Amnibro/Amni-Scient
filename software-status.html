@@ -83,7 +83,7 @@
   <p id="t-geo">Detecting...</p>
 </div>
 <div class="telemetry-item">
-  <h5>RAY ID</h5>
+  <h5>SECURITY / TLS</h5>
   <p id="t-ray" style="font-size:.78rem">Pending</p>
 </div>
 <div class="telemetry-item">
@@ -261,21 +261,26 @@ function copyText(t){
   });
 }
 
-// Fetch Edge Telemetry
-fetch('/api/metadata').then(r => {
+// Fetch Edge Telemetry via Cloudflare cdn-cgi trace
+fetch('/cdn-cgi/trace').then(r => {
   if (!r.ok) throw new Error();
-  return r.json();
-}).then(data => {
-  if (data.edgeTelemetry) {
-    document.getElementById('t-colo').textContent = data.edgeTelemetry.colo || 'Active';
-    document.getElementById('t-proto').textContent = data.edgeTelemetry.httpProtocol || 'HTTP/2';
-    document.getElementById('t-geo').textContent = (data.edgeTelemetry.city !== 'UNKNOWN' ? data.edgeTelemetry.city + ', ' : '') + data.edgeTelemetry.country;
-    document.getElementById('t-ray').textContent = data.edgeTelemetry.rayId || 'CF Edge';
-  }
+  return r.text();
+}).then(text => {
+  const lines = text.split('\n');
+  const d = {};
+  lines.forEach(l => {
+    const parts = l.split('=');
+    if (parts.length === 2) d[parts[0].trim()] = parts[1].trim();
+  });
+  if (d.colo) document.getElementById('t-colo').textContent = d.colo;
+  if (d.http) document.getElementById('t-proto').textContent = d.http.toUpperCase();
+  if (d.loc) document.getElementById('t-geo').textContent = d.loc;
+  if (d.tls) document.getElementById('t-ray').textContent = d.tls + (d.sni ? ' (' + d.sni + ')' : '');
 }).catch(() => {
-  document.getElementById('t-colo').textContent = 'Edge Proxy Active';
-  document.getElementById('t-geo').textContent = 'Global Edge';
-  document.getElementById('t-ray').textContent = 'CF-Edge';
+  document.getElementById('t-colo').textContent = 'Global Edge';
+  document.getElementById('t-proto').textContent = 'HTTP/2';
+  document.getElementById('t-geo').textContent = 'Global';
+  document.getElementById('t-ray').textContent = 'TLSv1.3';
 });
 
 // Real-time endpoint testing
